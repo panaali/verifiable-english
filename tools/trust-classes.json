@@ -19320,6 +19320,12 @@
         "VE.Acts.Run.actJson",
         "VE.Acts.Run.completionJson",
         "VE.Acts.Run.elaboratedFields",
+        {
+          "name": "VE.Acts.Run.firstsBy",
+          "tied": [
+            "VE.Acts.Run.firstsBy_map"
+          ]
+        },
         "VE.Acts.Run.optJson",
         "VE.Acts.Run.predicatesJson",
         "VE.Acts.Run.readingJson",
@@ -19334,11 +19340,23 @@
         "VE.Acts.Run.listed",
         "VE.Acts.Run.normsSource",
         "VE.Acts.Run.runActReadings",
-        "VE.Acts.Run.runElaborate"
+        "VE.Acts.Run.runElaborate",
+        {
+          "name": "VE.Acts.Run.witnessed",
+          "tied": [
+            "VE.Acts.Run.witnessed_readings"
+          ]
+        }
       ],
       "D[I]": [
+        "VE.Acts.Run.Act.toks",
+        "VE.Acts.Run.Simple.toks",
         "VE.Acts.Run.fromOf",
-        "VE.Acts.Run.spans"
+        "VE.Acts.Run.placeOf",
+        "VE.Acts.Run.spans",
+        "VE.Acts.Run.tagBase",
+        "VE.Acts.Run.tagTree",
+        "VE.Acts.Run.tagged"
       ],
       "G[I]": [
         "VE.Acts.Run.sameTok"
@@ -19555,11 +19573,14 @@
     },
     "VE/Acts/RunExamples.lean": {
       "T": [
+        "VE.Acts.RunExamples.Vsf",
         "VE.Acts.RunExamples.acts",
         "VE.Acts.RunExamples.count",
         "VE.Acts.RunExamples.diag",
         "VE.Acts.RunExamples.f300",
+        "VE.Acts.RunExamples.fnsOf",
         "VE.Acts.RunExamples.frameJ",
+        "VE.Acts.RunExamples.fromsAt",
         "VE.Acts.RunExamples.lastAdv",
         "VE.Acts.RunExamples.p400",
         "VE.Acts.RunExamples.paraphraseAt",

@@ -161,6 +161,8 @@
 'VE.Acts.Lexical.words_cover' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Acts.Lexical.words_data' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Acts.Lexical.words_intercalate' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Acts.Run.firstsBy_map' depends on axioms: [propext]
+'VE.Acts.Run.witnessed_readings' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Acts.Wire.checkAct_joined' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Acts.Wire.checkAct_lexical' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Acts.Wire.checkWith_lex' depends on axioms: [propext, Quot.sound]

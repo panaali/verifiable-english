@@ -9,28 +9,30 @@ open Lean ResponseShape ResponseShape.Skeletons VE.Acts VE.Acts.Run
 variable {req : Json}
 
 theorem actJson_fits (fx : List String) (op : Op) (f : Option Lexical.Form) (plain : Bool) (ps : List Lexical.Tok)
-    (x : Simple) : OkFits req (skel% "act-readings.json#/$defs/act") (actJson fx op f plain ps x) := by
+    (fn : List Nat) (base : Nat) (x x' : Simple) :
+    Fits req (skel% "act-readings.json#/$defs/act") (actJson fx op f plain ps fn base x x') := by
   unfold actJson
-  okfits
-  all_goals fits
+  fits
 
 theorem readingJson_fits (fx : List String) (op : Op) (f : Option Lexical.Form) (plain : Bool)
-    (ps : List Lexical.Tok) (x : List Simple × String) :
-    OkFits req (skel% "act-readings.json#/$defs/reading") (readingJson fx op f plain ps x) := by
+    (ps : List Lexical.Tok) (tags : List (Option Act × List Nat)) (base : Nat)
+    (x : (List Simple × Nat × Nat) × String) :
+    Fits req (skel% "act-readings.json#/$defs/reading") (readingJson fx op f plain ps tags base x) := by
   unfold readingJson
-  okfits
-  rename_i acts hacts
-  have h := OkP.mapM (fun y _ => actJson_fits (req := req) fx op f plain ps y) _ hacts
   fits
-  exact h _ ‹_›
 
-theorem rowsOf_fits (fx : List String) (op : Op) (f : Option Lexical.Form) (plain : Bool) (ps : List Lexical.Tok)
-    (Rs : List (List Simple)) :
-    OkP (fun ys => ∀ y ∈ ys, Fits req (skel% "act-readings.json#/$defs/reading") y) (rowsOf fx op f plain ps Rs) := by
+theorem rowsOf_fits (fx : List String) (V : Vocab) (op : Op) (f : Option Lexical.Form) (plain : Bool)
+    (ps : List Lexical.Tok) (ms : List (Act × VE.Grammar.Tree Lexical.Tok)) (Ws : List (List Simple × Nat × Nat)) :
+    OkP (fun ys => ∀ y ∈ ys, Fits req (skel% "act-readings.json#/$defs/reading") y)
+      (rowsOf fx V op f plain ps ms Ws) := by
   intro ys h
   unfold rowsOf at h
   obtain ⟨_, _, h⟩ := VE.Kit.Except.bind_ok h
-  exact OkP.mapM (fun x _ => readingJson_fits (req := req) fx op f plain ps x) _ h
+  cases h
+  intro y hy
+  simp only [List.mem_map] at hy
+  obtain ⟨_, _, rfl⟩ := hy
+  exact readingJson_fits fx op f plain ps _ _ _
 
 theorem listReadings_fits (id : String) (fx : List String) (V : Vocab) (op : Op) (f : Option Lexical.Form)
     (plain : Bool) (phrase : String) :
@@ -40,7 +42,7 @@ theorem listReadings_fits (id : String) (fx : List String) (V : Vocab) (op : Op)
   all_goals simp only [VE.Route.Wire.ok, List.cons_append, List.nil_append]
   all_goals fits
   rename_i rows hrows _ _
-  exact rowsOf_fits (req := req) fx op f plain _ _ _ hrows _ ‹_›
+  exact rowsOf_fits (req := req) fx V op f plain _ _ _ rows hrows _ ‹_›
 
 theorem refusedRow_fits (id d : String) : Fits req (skel% "act-readings.json#/$defs/result") (refusedRow id d) := by
   have hv : verdictOf d = "LIMIT" ∨ verdictOf d = "REFUSED" := by unfold verdictOf; split <;> simp
