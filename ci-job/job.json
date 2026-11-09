@@ -1,0 +1,19 @@
+{
+ "job": "sc-11.s5of6-8e44661b",
+ "head": "9228853e95d146aec1aec74673f71f2e12c73588",
+ "argv": [
+  "sc-11.s5of6-8e44661b",
+  "9228853e95d146aec1aec74673f71f2e12c73588",
+  "3e4fe503f4c94f49619704f89c1ad53ade5d0acb",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-8f9af81cc73f.tar.zst",
+  "1c76bf72e3e1973cf4b18945fbe4fc8ccad2533b632eb3fa0b8157359d2b5dbe",
+  "--test",
+  "lean/VE/Readings/SoftSupWireExamples.lean",
+  "--budget",
+  "6300",
+  "--shard",
+  "5/6",
+  "--jobs",
+  "4"
+ ]
+}
