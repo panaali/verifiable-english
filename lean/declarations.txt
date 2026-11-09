@@ -22609,7 +22609,7 @@ module VE.Scope.Authoring 03985b833d8e12252125a44218f44c10ff92b067bc2836b76cb238
 188:0-193:13 def VE.Scope.Pinned.parseGovernor@VE.Scope.Authoring
 197:0-205:11 theorem VE.Scope.scope_parseRender@VE.Scope.Authoring
 207:0-210:9 theorem VE.Scope.scope_renderParse@VE.Scope.Authoring
-module VE.Scope.AuthoringExamples 721541d4648c0ae27c2e5f53dff6353f32fd0f54513a40269c6604588e7bbbf0
+module VE.Scope.AuthoringExamples 47b1b886983fff98ce5d924a459150b220af081abbf5876e47efc3186c4fdbed
 11:0-11:63 def VE.Scope.AuthoringExamples.j@VE.Scope.AuthoringExamples
 12:0-14:130 def VE.Scope.AuthoringExamples.trip@VE.Scope.AuthoringExamples
 15:0-16:52 def VE.Scope.AuthoringExamples.para@VE.Scope.AuthoringExamples
