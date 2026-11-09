@@ -1,0 +1,78 @@
+{
+ "item": "bs-sel-defer-broad",
+ "method": "each mutant applied alone to tools/select_tests.py, the named test run alone (uv run pytest -q tests/test_select_defer.py -k <name>), then the file restored",
+ "mutants": [
+  {
+   "id": "B1",
+   "language": "python",
+   "file": "tools/select_tests.py",
+   "mutation": "deferral: share >= BROAD_LEAN_SHARE -> >",
+   "test": "tests/test_select_defer.py::test_the_share_threshold_is_inclusive",
+   "result": "caught (rc 1, the test FAILED)"
+  },
+  {
+   "id": "B2",
+   "language": "python",
+   "file": "tools/select_tests.py",
+   "mutation": "deferral: all(weak or Lean reason) -> any(...)",
+   "test": "tests/test_select_defer.py::test_with_shares_a_broad_lean_consumer_is_deferred_and_the_rest_stays",
+   "result": "caught (rc 1, the test FAILED)"
+  },
+  {
+   "id": "B3",
+   "language": "python",
+   "file": "tools/select_tests.py",
+   "mutation": "deferral: drop the own-source rule (names_changed_lean)",
+   "test": "tests/test_select_defer.py::test_a_familys_own_lean_test_and_a_python_reader_stay_in_the_recorded_sc_7_plan",
+   "result": "caught (rc 1, the test FAILED)"
+  },
+  {
+   "id": "B4",
+   "language": "python",
+   "file": "tools/select_tests.py",
+   "mutation": "lean_shares: every Lean executable reaches every module",
+   "test": "tests/test_select_defer.py::test_a_units_lean_reach_is_what_it_reads_and_the_closures_of_what_it_runs",
+   "result": "caught (rc 1, the test FAILED)"
+  },
+  {
+   "id": "B5",
+   "language": "python",
+   "file": "tools/select_tests.py",
+   "mutation": "names_changed_lean: a sibling module counts as the directory",
+   "test": "tests/test_select_defer.py::test_a_unit_names_a_changed_module_or_its_directory_never_a_sibling",
+   "result": "caught (rc 1, the test FAILED)"
+  },
+  {
+   "id": "B6",
+   "language": "python",
+   "file": "tools/select_tests.py",
+   "mutation": "lean_reason: a Python file under lean/ is a Lean reason",
+   "test": "tests/test_select_defer.py::test_lean_reasons_are_the_lean_trees_files_never_python_or_static",
+   "result": "caught (rc 1, the test FAILED)"
+  },
+  {
+   "id": "B7",
+   "language": "python",
+   "file": "tools/select_tests.py",
+   "mutation": "defer_heavy: keep (failed last time) ignored",
+   "test": "tests/test_select_defer.py::test_each_heavy_lean_wide_file_stays_when_it_changed_or_failed",
+   "result": "caught (rc 1, the test FAILED)"
+  },
+  {
+   "id": "B8",
+   "language": "python",
+   "file": "tools/select_tests.py",
+   "mutation": "main: --defer-broad accepted without --defer-heavy",
+   "test": "tests/test_select_defer.py::test_defer_broad_takes_defer_heavy_and_its_exclusions",
+   "result": "caught (rc 1, the test FAILED)"
+  },
+  {
+   "id": "B9",
+   "language": "python",
+   "file": "tools/select_tests.py",
+   "mutation": "main: broad files not marked in the printed line",
+   "test": "tests/test_select_defer.py::test_the_option_passes_the_maps_shares_and_marks_broad_files",
+   "result": "caught (rc 1, the test FAILED)"
+  }
+ ]
+}
