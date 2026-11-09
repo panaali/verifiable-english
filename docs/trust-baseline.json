@@ -2203,6 +2203,13 @@
    "reason": "sc-7 review F7: lean/VE/Scope/Authoring.lean untied V +5 (sc-7 total K +0, S +37, V +111, trusted +148): Pinned.closers, every closer (Unicode 16.0 Pe, Pf, Pi, the quotes \" ' ＂ ＇, >, Markdown's * _ ` ~) that clause drops before a sentence end",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-7, 2026-11-09",
    "commit": "da5303b7876924d4fba67866390ed6f0d0b36cbc"
+  },
+  {
+   "class": "V",
+   "lines": 2,
+   "reason": "sc-7 recheck F8, F9: lean/VE/Scope/Authoring.lean untied V +2 (sc-7 total K +0, S +37, V +113, trusted +150): Pinned.clause refuses every Unicode 16.0 Sentence_Terminal, ':' and their NFKC forms, after dropping trailing closers and Cf, Mn, Me, Default_Ignorable_Code_Point and U+2800; Pinned.wordChar refuses C1 controls and the five fillers drawn as a space",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-7, 2026-11-09",
+   "commit": "da5303b7876924d4fba67866390ed6f0d0b36cbc"
   }
  ]
 }
