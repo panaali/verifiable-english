@@ -18,7 +18,7 @@
   "lean/VE/EnglishGrammar/Lexer.lean": "8d140e19be05ebf1ce1512a98585fb2e5bc2e18f86264ad9d53d03ea72bb26b1",
   "lean/VE/EnglishGrammar/Lexicon.lean": "fc9641fc6cefdf9ac33ae5443eeaded5ddfe582ce21c5b649b95f57abf6a2e49",
   "lean/VE/EnglishGrammar/Norm/Elab.lean": "cd1cc7419508696013df155fe503d9d81ff87f05e2736832a2cdae62acd37449",
-  "lean/VE/EnglishGrammar/Norm/Owners.lean": "d3dcca7f8b94940e4502679b3e1f35bc58da5974716b91d7621120fa80b396c5",
+  "lean/VE/EnglishGrammar/Norm/Owners.lean": "81aeda20dbef9c8af800eeebcfd90653322efaa0c8048b5a10b6c98b96366fec",
   "lean/VE/EnglishGrammar/Norm/Read.lean": "9a7f187efba43ea5d555a19b66ea61db46d9c0b257b03ef2941c3ecd89422cc2",
   "lean/VE/EnglishGrammar/Norm/Rules.lean": "7cd657e7e8337c7bbc0ff67de2e344a3a3107084ced7596b167bba59f4744e84",
   "lean/VE/EnglishGrammar/Norm/Run.lean": "5b278683c6c9a8f408436237f7717be60df75ede7be6aff5d1fe9f45a6147d5f",
