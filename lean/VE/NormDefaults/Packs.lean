@@ -9,7 +9,11 @@ premises of a list of packs, one per provider, in one fixed order (`packOrder`).
 
 Today's routes give `[soft]` and `[soft, rights]` (`Layered.lean`'s `softPack`, `rightsPack`); a plain norm-defaults
 document gives the empty list (JT-R2). On those lists every output is today's (`legacyIds`, `X_legacy`,
-`elaborateArrays_legacy`; the legacy theorems over `Layered.lean` are in `PacksLegacy.lean`). -/
+`elaborateArrays_legacy`; the legacy theorems over `Layered.lean` are in `PacksLegacy.lean`).
+
+`Pack.conditions` has two readers, both in `Defaults/Uniform.lean`: `packConditions` looks them up by decision key for
+the uniform decision premises (`dfltUniform`), and with `providerConditions` the defaults route refuses a document any
+of whose packs states a condition until EXP-D3 settles (`defaultsRows`, `Defaults/Route.lean`). -/
 namespace VE.NormDefaults.Packs
 open Lean
 open VE.Norms (envAt size)
@@ -33,9 +37,7 @@ structure Pack where
   consts : List (String × String)
   labelled : List (String × VE.Formula)
   origins : List (String × RequestPath)
-  /-- Each stated sufficient condition and its decision (profile-composition 1.9). Read by `packConditions`
-      (`Defaults/Uniform.lean`), which adds them to the decision premises, and by `providerConditions`, with which the
-      defaults route refuses a document any of whose packs states a condition until EXP-D3 settles. -/
+  /-- Each stated sufficient condition and its decision (profile-composition 1.9), read by `packConditions` and `providerConditions`. -/
   conditions : List (VE.SoftNorms.DecisionKey × VE.Formula)
 
 /-- 2.2: the one order of `X`. -/
