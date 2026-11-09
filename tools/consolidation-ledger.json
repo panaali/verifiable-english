@@ -11,9 +11,6 @@
    "removed": [{"module": "VE/Core/Wire.lean"}]},
   {"step": "3", "title": "One logic with profiles", "days": 14, "risk": 2, "adds_est": 10,
    "removed": [
-    {"module": "VE/TableauExtended*.lean"},
-    {"module": "VE/Closure/PathRules.lean"}, {"module": "VE/Closure/Induction.lean"},
-    {"module": "VE/Closure/Substitution.lean"}, {"module": "VE/Closure/Congruence.lean"},
     {"module": "VE/Closure/Syntax.lean", "names": "\\.Formula\\.denote$"},
     {"module": "VE/Closure/Paths.lean"}, {"module": "VE/Closure/Finite.lean"},
     {"module": "VE/Closure/Consequence.lean"}]},

@@ -1,0 +1,262 @@
+{
+  "item": "pk-1-conditions-b",
+  "base": "c2ff64751",
+  "runner": "python3 /tmp/pkb/mut.py (plant, lake build <target>, git checkout)",
+  "mutants": [
+    {
+      "id": "M1",
+      "language": "Lean",
+      "file": "lean/VE/Events/Wire.lean",
+      "behaviour": "eventsPack exports no decision condition (task 3a)",
+      "edits": [
+        {
+          "file": "lean/VE/Events/Wire.lean",
+          "from": "origins := d.origins, conditions := [] }",
+          "to": "origins := d.origins, conditions := [(.excepted \"x\", .top)] }"
+        }
+      ],
+      "test": "WireExamples.lean eventsPack_conditions (line 295)",
+      "also_fails": "WireExamples.lean #guard line 296",
+      "build": {
+        "target": "VE.Events.WireExamples",
+        "exit": 1,
+        "first_errors": [
+          "error: VE/Events/WireExamples.lean:295:80: Type mismatch",
+          "error: VE/Events/WireExamples.lean:296:0: Expression"
+        ]
+      },
+      "failed": true,
+      "restored": true
+    },
+    {
+      "id": "M2",
+      "language": "Lean",
+      "file": "lean/VE/Readings/UnspecifiedWire.lean",
+      "behaviour": "the readings route's soft-branch pack list states no condition: it gains a second pack with one condition (task 3b)",
+      "edits": [
+        {
+          "file": "lean/VE/Readings/UnspecifiedWire.lean",
+          "from": "wfc, [VE.NormDefaults.Wire.softPack U (correlate X)],",
+          "to": "wfc, [VE.NormDefaults.Wire.softPack U (correlate X), ⟨\"extra\", .constraint, [], [], [], [], [(.excepted \"x\", .top)]⟩],"
+        },
+        {
+          "file": "lean/VE/Readings/UnspecifiedWire.lean",
+          "from": "baseEnv, envId, docHash⟩, rfl, VE.NormDefaults.Packs.X_single _, fun a ha => softX_wellFormed N X hws wfc a\n            (by simpa only [VE.NormDefaults.Wire.LayeredU.X, VE.NormDefaults.Packs.X_single] using ha)⟩",
+          "to": "baseEnv, envId, docHash⟩, rfl, sorry, fun a ha => sorry⟩"
+        }
+      ],
+      "test": "UnspecifiedExamples.lean choiceLayeredG_conditions (line 207, the soft branch)",
+      "build": {
+        "target": "VE.Readings.UnspecifiedExamples",
+        "exit": 1,
+        "first_errors": [
+          "error: VE/Readings/UnspecifiedExamples.lean:207:8: unsolved goals"
+        ]
+      },
+      "note": "UnspecifiedWire.lean's own X proof and well-formedness proof of that branch are `sorry` for this run only (the two-pack list breaks X_single there first).",
+      "failed": true,
+      "restored": true
+    },
+    {
+      "id": "M2-control",
+      "language": "Lean",
+      "file": "lean/VE/Readings/UnspecifiedWire.lean",
+      "behaviour": "control for M2: the appended pack states no condition, so the fixture must still pass (it reads members, not the list's length)",
+      "edits": [
+        {
+          "file": "lean/VE/Readings/UnspecifiedWire.lean",
+          "from": "wfc, [VE.NormDefaults.Wire.softPack U (correlate X)],",
+          "to": "wfc, [VE.NormDefaults.Wire.softPack U (correlate X), ⟨\"extra\", .constraint, [], [], [], [], []⟩],"
+        },
+        {
+          "file": "lean/VE/Readings/UnspecifiedWire.lean",
+          "from": "baseEnv, envId, docHash⟩, rfl, VE.NormDefaults.Packs.X_single _, fun a ha => softX_wellFormed N X hws wfc a\n            (by simpa only [VE.NormDefaults.Wire.LayeredU.X, VE.NormDefaults.Packs.X_single] using ha)⟩",
+          "to": "baseEnv, envId, docHash⟩, rfl, sorry, fun a ha => sorry⟩"
+        }
+      ],
+      "build": {
+        "target": "VE.Readings.UnspecifiedExamples",
+        "exit": 0,
+        "first_errors": []
+      },
+      "note": "expected exit 0: the fixture builds; only the sorry'd product proofs warn",
+      "failed": false,
+      "restored": true
+    },
+    {
+      "id": "M2b",
+      "language": "Lean",
+      "file": "lean/VE/Readings/UnspecifiedWire.lean",
+      "behaviour": "the soft branch's one softPack gains a condition",
+      "edits": [
+        {
+          "file": "lean/VE/Readings/UnspecifiedWire.lean",
+          "from": "wfc, [VE.NormDefaults.Wire.softPack U (correlate X)],",
+          "to": "wfc, [{ VE.NormDefaults.Wire.softPack U (correlate X) with conditions := [(.excepted \"x\", .top)] }],"
+        }
+      ],
+      "test": "UnspecifiedExamples.lean choiceLayeredG_conditions (line 207)",
+      "build": {
+        "target": "VE.Readings.UnspecifiedExamples",
+        "exit": 1,
+        "first_errors": [
+          "error: VE/Readings/UnspecifiedExamples.lean:207:8: unsolved goals"
+        ]
+      },
+      "failed": true,
+      "restored": true
+    },
+    {
+      "id": "M3",
+      "language": "Lean",
+      "file": "lean/VE/Service/Document.lean",
+      "behaviour": "a soft document listing events@0 as owned is refused by layeredOf, never a silent case (DRI 2026-11-08 adv1416 item 4)",
+      "edits": [
+        {
+          "file": "lean/VE/Service/Document.lean",
+          "from": "  let environment := wireJson 257 E.lower\n  if VE.NormDefaults.Wire.layeredRoute environment != some \"soft-norms@0\" || (VE.Compose.listedProfiles environment).contains \"events@0\" then .null else",
+          "to": "  let environment0 := wireJson 257 E.lower\n  let environment := environment0.setObjVal! \"profiles\" (toJson ((VE.Compose.listedProfiles environment0).erase \"events@0\"))\n  if VE.NormDefaults.Wire.layeredRoute environment != some \"soft-norms@0\" then .null else"
+        },
+        {
+          "file": "lean/VE/Service/DocumentChain.lean",
+          "from": "  unfold requestOf\n  simp only [hr, hv, bne_self_eq_false, Bool.false_or, if_false, Bool.false_eq_true]\n  apply VE.Calc.Run.mkObj_get\n  · cases (front.getObjVal? \"completions\") <;> simp [Except.toOption]\n  · simp\n",
+          "to": "  sorry\n"
+        },
+        {
+          "file": "lean/VE/Service/DocumentChain.lean",
+          "from": "  unfold layeredOf VE.NormDefaults.Wire.decodeLayered at h\n  obtain ⟨environment, he, h⟩ := VE.Order.ProfileGate.bind_ok h\n  by_cases hr : VE.NormDefaults.Wire.layeredRoute (wireJson 257 E.lower) = some \"soft-norms@0\"\n  · by_cases hv : (VE.Compose.listedProfiles (wireJson 257 E.lower)).contains \"events@0\" = true\n    · have hm : \"events@0\" ∈ VE.Compose.listedProfiles (wireJson 257 E.lower) := by simpa using hv\n      have hn : requestOf E front units = .null := by simp [requestOf, hr, hm]\n      rw [hn] at he\n      cases he\n    · have hv' : (VE.Compose.listedProfiles (wireJson 257 E.lower)).contains \"events@0\" = false := by simpa using hv\n      rw [requestOf_environment E front units hr hv'] at he\n      cases he\n      obtain ⟨H, hH, h⟩ := VE.Order.ProfileGate.bind_ok h\n      have hH' : H = none := by\n        unfold VE.Events.eventsHook at hH\n        rw [if_neg hv] at hH\n        cases hH\n        rfl\n      subst hH'\n      rw [hr] at h\n      exact ⟨_, _, h⟩\n  · have hn : requestOf E front units = .null := by simp [requestOf, hr]\n    rw [hn] at he\n    cases he\n",
+          "to": "  sorry\n"
+        }
+      ],
+      "test": "RouteExamples.lean #guard line 420 (ownedLists: layeredCase toOption.isNone)",
+      "also_fails": "RouteExamples.lean #guard lines 421, 423 (this item) and 383-385 (et-4b's requestIsNull)",
+      "build": {
+        "target": "VE.Events.RouteExamples",
+        "exit": 1,
+        "first_errors": [
+          "error: VE/Events/RouteExamples.lean:383:0: Expression",
+          "error: VE/Events/RouteExamples.lean:384:0: Expression",
+          "error: VE/Events/RouteExamples.lean:385:0: Expression",
+          "error: VE/Events/RouteExamples.lean:420:0: Expression",
+          "error: VE/Events/RouteExamples.lean:421:0: Expression",
+          "error: VE/Events/RouteExamples.lean:423:0: Expression"
+        ]
+      },
+      "note": "DocumentChain.lean's requestOf_environment and layeredOf_soft proofs are `sorry` for this run only, so the fixture module is reached (they fail first otherwise).",
+      "failed": true,
+      "restored": true
+    },
+    {
+      "id": "M4",
+      "language": "Lean",
+      "file": "lean/VE/Events/RouteExamples.lean",
+      "behaviour": "the owned-case fixture reaches requestOf's null path (it must keep events@0 on the Env it passes to layeredOf)",
+      "edits": [
+        {
+          "file": "lean/VE/Events/RouteExamples.lean",
+          "from": "pure { E with json := E.json.setObjVal! \"profiles\" (toJson listed), profiles := listed }",
+          "to": "pure { E with json := E.json.setObjVal! \"profiles\" (toJson (listed.erase \"events@0\")), profiles := listed.erase \"events@0\" }"
+        }
+      ],
+      "test": "RouteExamples.lean #guard line 420",
+      "also_fails": "RouteExamples.lean #guard lines 421, 423",
+      "build": {
+        "target": "VE.Events.RouteExamples",
+        "exit": 1,
+        "first_errors": [
+          "error: VE/Events/RouteExamples.lean:420:0: Expression",
+          "error: VE/Events/RouteExamples.lean:421:0: Expression",
+          "error: VE/Events/RouteExamples.lean:423:0: Expression"
+        ]
+      },
+      "failed": true,
+      "restored": true
+    },
+    {
+      "id": "M5",
+      "language": "Lean",
+      "file": "lean/VE/Service/Document.lean",
+      "behaviour": "the controls: without events@0 the owned-case Env is a case (requestOf not null)",
+      "edits": [
+        {
+          "file": "lean/VE/Service/Document.lean",
+          "from": "  let environment := wireJson 257 E.lower\n  if VE.NormDefaults.Wire.layeredRoute environment != some \"soft-norms@0\" || (VE.Compose.listedProfiles environment).contains \"events@0\" then .null else",
+          "to": "  let environment := wireJson 257 E.lower\n  if true then .null else"
+        },
+        {
+          "file": "lean/VE/Service/DocumentChain.lean",
+          "from": "  unfold requestOf\n  simp only [hr, hv, bne_self_eq_false, Bool.false_or, if_false, Bool.false_eq_true]\n  apply VE.Calc.Run.mkObj_get\n  · cases (front.getObjVal? \"completions\") <;> simp [Except.toOption]\n  · simp\n",
+          "to": "  sorry\n"
+        },
+        {
+          "file": "lean/VE/Service/DocumentChain.lean",
+          "from": "  unfold layeredOf VE.NormDefaults.Wire.decodeLayered at h\n  obtain ⟨environment, he, h⟩ := VE.Order.ProfileGate.bind_ok h\n  by_cases hr : VE.NormDefaults.Wire.layeredRoute (wireJson 257 E.lower) = some \"soft-norms@0\"\n  · by_cases hv : (VE.Compose.listedProfiles (wireJson 257 E.lower)).contains \"events@0\" = true\n    · have hm : \"events@0\" ∈ VE.Compose.listedProfiles (wireJson 257 E.lower) := by simpa using hv\n      have hn : requestOf E front units = .null := by simp [requestOf, hr, hm]\n      rw [hn] at he\n      cases he\n    · have hv' : (VE.Compose.listedProfiles (wireJson 257 E.lower)).contains \"events@0\" = false := by simpa using hv\n      rw [requestOf_environment E front units hr hv'] at he\n      cases he\n      obtain ⟨H, hH, h⟩ := VE.Order.ProfileGate.bind_ok h\n      have hH' : H = none := by\n        unfold VE.Events.eventsHook at hH\n        rw [if_neg hv] at hH\n        cases hH\n        rfl\n      subst hH'\n      rw [hr] at h\n      exact ⟨_, _, h⟩\n  · have hn : requestOf E front units = .null := by simp [requestOf, hr]\n    rw [hn] at he\n    cases he\n",
+          "to": "  sorry\n"
+        }
+      ],
+      "test": "RouteExamples.lean #guard lines 425, 426",
+      "also_fails": "RouteExamples.lean #guard lines 387, 388 (et-4b's requestIsCase)",
+      "build": {
+        "target": "VE.Events.RouteExamples",
+        "exit": 1,
+        "first_errors": [
+          "error: VE/Events/RouteExamples.lean:387:0: Expression",
+          "error: VE/Events/RouteExamples.lean:388:0: Expression",
+          "error: VE/Events/RouteExamples.lean:425:0: Expression",
+          "error: VE/Events/RouteExamples.lean:426:0: Expression"
+        ]
+      },
+      "note": "requestOf always null; DocumentChain.lean's requestOf_environment and layeredOf_soft proofs are `sorry` for this run only.",
+      "failed": true,
+      "restored": true
+    },
+    {
+      "id": "M6",
+      "language": "Lean",
+      "file": "lean/VE/Service/Document.lean",
+      "behaviour": "today a soft document listing events@0 is refused by name before the layered route (ownedProfiles)",
+      "edits": [
+        {
+          "file": "lean/VE/Service/Document.lean",
+          "from": "\"readings@1\", \"relational-fol@0\", \"rights@0\", \"risk@0\", \"soft-norms@0\", \"time@0\"]",
+          "to": "\"readings@1\", \"relational-fol@0\", \"rights@0\", \"risk@0\", \"soft-norms@0\", \"time@0\", \"events@0\"]"
+        }
+      ],
+      "test": "RouteExamples.lean #guard line 416",
+      "build": {
+        "target": "VE.Events.RouteExamples",
+        "exit": 1,
+        "first_errors": [
+          "error: VE/Events/RouteExamples.lean:416:0: Expression"
+        ]
+      },
+      "note": "events@0 added to ownedProfiles. Only :416 fails: et-4b's environmentOf isNone guard still passes, because environmentOf then refuses by name later ('UnsupportedProfile: Unsupported profile events@0', probe on the mutant, /tmp/pkb/Probe3.lean).",
+      "failed": true,
+      "restored": true
+    },
+    {
+      "id": "M7",
+      "language": "Lean",
+      "file": "lean/VE/Readings/UnspecifiedWire.lean",
+      "behaviour": "choiceLayered (readings-choice, Ask) adds no pack with a condition",
+      "edits": [
+        {
+          "file": "lean/VE/Readings/UnspecifiedWire.lean",
+          "from": "(choiceLayeredG r.b r.N c wfc r.hN).map (fun L => ⟨L.1, L.2.1⟩)",
+          "to": "(choiceLayeredG r.b r.N c wfc r.hN).map (fun L => ⟨{ L.1 with packs := L.1.packs ++ [⟨\"extra\", .constraint, [], [], [], [], [(.excepted \"x\", .top)]⟩] }, L.2.1⟩)"
+        }
+      ],
+      "test": "UnspecifiedExamples.lean choiceLayered_conditions (line 222)",
+      "build": {
+        "target": "VE.Readings.UnspecifiedExamples",
+        "exit": 1,
+        "first_errors": [
+          "error: VE/Readings/UnspecifiedExamples.lean:222:36: Type mismatch"
+        ]
+      },
+      "note": "choiceLayered appends a pack with one condition to choiceLayeredG's packs.",
+      "failed": true,
+      "restored": true
+    }
+  ]
+}
