@@ -106,7 +106,7 @@ Each plan was recorded at the item's tip, using that tip's own `tools/select_tes
 
 ## Seeded bugs (Python; docs/infra/bs-sel-defer-broad/seeded-bugs.json)
 
-21 seeded bugs, each planted alone in `tools/select_tests.py` (B15 to B21, the F1 fix: also `tools/history_tests.py`). The named test was run alone each time. All 21 were caught (rc 1), then the file was restored. B15 to B21 are listed under Review fixes. The others:
+21 seeded bugs, each planted alone in `tools/select_tests.py` (B15 to B21, the F1 fix: also `tools/path_expressions.py`). The named test was run alone each time. All 21 were caught (rc 1), then the file was restored. B15 to B21 are listed under Review fixes. The others:
 
 - B1: share `>=` changed to `>`.
 - B2: `all(weak or Lean)` changed to `any`.
@@ -124,10 +124,10 @@ Each plan was recorded at the item's tip, using that tip's own `tools/select_tes
 
 ## Review fixes (bs-sel-defer-broad-review.final.md)
 
-- **F1 (B): a module named by a join was missed.** `names_changed_lean` saw only unbroken spellings, so `tests/test_w6a_looprecheck1.py:316` (`ROOT / "lean" / "VE" / "Time" / "Calendar.lean"`) was deferred as broad for a change to lean/VE/Time/Calendar.lean. The class is every path a unit's source builds from literal parts. The graph's `mentions` do not resolve such a join: its `lean/VE/Time/Calendar.lean` came from the bare `"Calendar.lean"` piece, a file-name guess, so it was not used. The fix reuses the one path evaluator the selector already has, `history_tests._Scanner._path`:
-  - `_Scanner.built` records the path that each outermost path-building expression makes: `/`, `os.path.join`, `Path(a, b)`, `.joinpath`, and `+` of two known parts. A part of a bigger join (`lean/VE/Time` inside `.../Zone.lean`, a `joinpath` receiver) is not recorded.
-  - `_path` now also evaluates `Path(a, b, ...)`, `.joinpath` and `+`, and gives a join with an unknown base (`os.path.join(root, "lean", ...)`) its literal parts after that base, as `/` already did.
-  - `history_tests.built_paths(file)` returns those paths. `unit_text` appends them to the source, so `names_changed_lean` reads them with the rules it already has.
+- **F1 (B): a module named by a join was missed.** `names_changed_lean` saw only unbroken spellings, so `tests/test_w6a_looprecheck1.py:316` (`ROOT / "lean" / "VE" / "Time" / "Calendar.lean"`) was deferred as broad for a change to lean/VE/Time/Calendar.lean. The class is every path a unit's source builds from literal parts. The graph's `mentions` do not resolve such a join: its `lean/VE/Time/Calendar.lean` came from the bare `"Calendar.lean"` piece, a file-name guess, so it was not used. The fix moves the one path evaluator the tools had, `history_tests._Scanner._path`, into its own module, tools/path_expressions.py (`path_of`, with `assignments` and `callee`). history_tests now calls it there and lists the module in its `INPUTS`. select_tests reaches history_tests only in `history_inventory`, and tests/test_history_tests.py checks that.
+  - `path_of` now also evaluates `Path(a, b, ...)`, `.joinpath` and `+` of two known parts. It gives a join with an unknown base (`os.path.join(root, "lean", ...)`) the literal parts after that base, as `/` already did.
+  - `path_expressions.built_paths(source, file)` gives the path of each outermost path-building expression: `/`, `os.path.join`, `Path(a, b)`, `.joinpath`, `+`. A part of a bigger join is not one of those paths (`lean/VE/Time` inside `.../Zone.lean`, a `joinpath` receiver).
+  - `unit_text` appends those paths to the source, so `names_changed_lean` reads them with the rules it already has.
   - `tools/regen_generated.py --check` reports tests/history-dependent.json unchanged.
   - PROBE F1 on map 223babd3d0: it failed before (`AssertionError: broad`) and passes after.
   - Regression tests: `tests/test_select_defer.py::test_a_module_or_directory_a_unit_builds_by_a_join_is_named` (7 spellings, each with a sibling that must not count) and `::test_a_heavy_broad_unit_that_builds_the_changed_modules_path_stays` (the looprecheck line, copied into tmp_path).
