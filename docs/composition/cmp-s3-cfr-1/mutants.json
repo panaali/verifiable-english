@@ -1,0 +1,75 @@
+{
+ "comment": "cmp-s3-cfr-1 seeded bugs, each planted alone, the build rebuilt (Lean) and the named test run, then restored. Trust mutants of the new trusted definitions: trust-mutants.json.",
+ "mutants": [
+  {
+   "name": "decodeRelation-two-relations",
+   "file": "lean/VE/RightClauses/Wire.lean",
+   "definition": "decodeRelation",
+   "change": {
+    "from": "  let bad := s!\"InvalidInput: invalid relation of rule {n}\"",
+    "to": "  let v := match v with | .arr xs => xs.toList.headD v | _ => v\n  let bad := ..."
+   },
+   "verdict": "KILLED",
+   "test": "tests/test_right_clauses.py::test_right_clauses_k_fixtures_service"
+  },
+  {
+   "name": "registration-dropped",
+   "file": "lean/VE/Compose/Dispatch.lean",
+   "definition": "environmentWrappers",
+   "change": {
+    "from": "[\"right-clauses@0\", \"readings@1\"]",
+    "to": "[\"readings@1\"]"
+   },
+   "verdict": "KILLED",
+   "test": "tests/test_right_clauses.py::test_right_clauses_k1_service_identity",
+   "tests": [
+    "tests/test_right_clauses.py::test_right_clauses_k1_service_identity",
+    "lean/VE/Compose/Examples.lean environmentProfiles #guard"
+   ]
+  },
+  {
+   "name": "plainLineJson-keeps-elided",
+   "file": "lean/VE/RightClauses/Wire.lean",
+   "definition": "plainLineJson",
+   "change": {
+    "from": "let l := lineWith headKeys l",
+    "to": "let l := lineWith [\"clauses\", \"relation\"] l"
+   },
+   "verdict": "KILLED",
+   "test": "tests/test_right_clauses.py::test_right_clauses_k1_service_identity"
+  },
+  {
+   "name": "model-reduction-dropped",
+   "file": "ve/profiles.py",
+   "definition": "MODEL_REDUCTIONS",
+   "change": {
+    "from": "\"right-clauses@0\": ModelReduction(),",
+    "to": ""
+   },
+   "verdict": "KILLED",
+   "test": "tests/test_model_environment.py::test_every_registered_profile_has_one_model_reduction"
+  },
+  {
+   "name": "deadline-dropped",
+   "file": "ve/backends/lean_service.py",
+   "definition": "DEADLINES",
+   "change": {
+    "from": "\"clauses-elaborate\": (120.0, 120.0),",
+    "to": ""
+   },
+   "verdict": "KILLED",
+   "test": "tests/test_lean_service.py::test_the_deadline_keys_are_the_handshakes_modes"
+  },
+  {
+   "name": "delta-profile-off-record-changed",
+   "file": "lean/VE/Rights/Run.lean",
+   "definition": "runRightsKind",
+   "change": {
+    "from": "is not available on the rights route\"",
+    "to": "is not available on this rights route\""
+   },
+   "verdict": "KILLED",
+   "test": "tests/test_right_clauses.py::test_right_clauses_profile_off_regression"
+  }
+ ]
+}
