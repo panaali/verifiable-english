@@ -2372,7 +2372,9 @@
       "lean/VE/Words/Situation.lean": "question answering Q2.3 and Q2.4: wording only; reads the environment JSON's constant verbalisations and regulated declarations (constantName, regulatedOf) to word a line, and decides nothing",
       "lean/VE/Defaults/ZoneWireExamples.lean": "fixtures only: #guard checks of the defaults-zone kind through the norm-defaults mode (docs/spec/defeasible.md 8.6, df-5) build request JSON; no runner path",
       "lean/VE/Judgments/Chain.lean": "lean:judgments-rights-reader: `blockFormulas` re-reads a rights block the rights route already accepted with the whole source (`rightsDoc`, `decodeRightsSource`) for the names its formulas use (`VE.Bridge.decodeFormula`, guards and `unless` clauses; a limitation's conditions from the decoded `RightsDoc`); a block it does not read is `CheckerUnavailable` in `UnitContent.judgedIn`; it admits nothing",
-      "lean/VE/Senses/TextsExamples.lean": "fixtures only: #guard checks of the senses runner's sense-map glosses and byte spans and the texts of spec 3.2 (sn-b6c); no runner path"
+      "lean/VE/Senses/TextsExamples.lean": "fixtures only: #guard checks of the senses runner's sense-map glosses and byte spans and the texts of spec 3.2 (sn-b6c); no runner path",
+      "lean/VE/Scope/Authoring.lean": "scope's authoring wordings (SC-7, spec 2.2): `Pinned.parseGovernor` builds the part of a scope@0 block a wording fixes (Json.mkObj, Json.arr) and `classify`/`renderGovernor`/`paraphrase` read it back with getObjValD/getStr?/getNat?; no route or relay decodes a request with them yet (the IDE wiring is sc-7b)",
+      "lean/VE/Scope/AuthoringExamples.lean": "fixtures only: SC-7's #guard checks (scope spec 2.2, 7.8 F5a) write each row's expected block as a JSON literal (Json.parse) and compare it with `parseGovernor`'s; no runtime JSON handling"
     }
   },
   "plan_operations": {
