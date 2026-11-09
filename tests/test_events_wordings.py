@@ -79,7 +79,8 @@ def test_role_wordings_stay_under_the_author_lint():
     is committed on {1}", "was committed on" and "is dissolved on" (BINARY_AUXILIARY), with the block as without it;
     all pass Lean's shape check (`roleWordingOk`)."""
     for wording in ("{0} happens on {1}", "{0} occurs on {1}", "{0} begins on {1}", "{0} ends on {1}"):
-        assert "happens_on" not in _issues(_environment(happens_on=wording)), wording
+        # The fixture's `stay_begins` and `stay_ends` already use the last two: only that collision is reported.
+        assert _issues(_environment(happens_on=wording)).get("happens_on", set()) <= {"DUPLICATE_TEMPLATE"}, wording
     for wording in ("{0} is committed on {1}", "{0} was committed on {1}", "{0} is dissolved on {1}"):
         for environment in (_environment(happens_on=wording), _without_block(_environment(happens_on=wording))):
             assert "BINARY_AUXILIARY" in _issues(environment).get("happens_on", set()), wording
@@ -100,7 +101,7 @@ def _spec_advice():
     rows = {}
     for line in section.splitlines():
         if line.startswith("| `"):
-            patterns, advice = line.split(" | ")[0], line.split(" | ")[1]
+            patterns, advice = line.strip().strip("|").split(" | ")[:2]
             for pattern in re.findall(r"`([a-z ]+?)(?: <|`)", patterns):
                 rows[pattern.strip()] = advice.strip().strip('"')
     return rows
