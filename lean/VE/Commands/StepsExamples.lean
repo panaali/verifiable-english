@@ -62,13 +62,15 @@ def conditionScopeText : String :=
   | .one r => step "If draft is approved, click Ask." == .one r false
   | _ => false
 #guard match web "Click Ask, if draft is approvable." with
-  | .refused code text => code == "NoDerivation" && step "If draft is approvable, click Ask." == .refused code text
+  | .refused code text => code == "NoDerivation" && (text.splitOn "'is approvable'").length > 1 &&
+    step "If draft is approvable, click Ask." == .refused code text
   | _ => false
 #guard step "Then click Use this wording under the one you mean." == noStep
 #guard web "Click Use this wording under the one you mean." == noReadingOutcome
 #guard step "If draft is approved, click Check rule conflict, then click Ask." == .refused "ConditionScope" conditionScopeText
 #guard conditionScope == .refused "ConditionScope" conditionScopeText
 #guard step "Click Ask, if draft is approved, then click Ask." == .refused "ConditionScope" conditionScopeText
+#guard step "Review the meaning, if draft is approved, then click Ask." == conditionScope
 #guard step "Add an exception or precedence, then check for a conflict in plain English." ==
   noStep
 #guard step "Add an exception or precedence, then click Ask." == noStep
@@ -92,6 +94,10 @@ def conditionScopeText : String :=
 #guard combineShapes [(.core "a", .refused "NoDerivation" "x"), (.core "b", .refused "InvalidInput" "y")] ==
   noStep
 #guard combineShapes ((List.range (readingsBound + 1)).map fun i => (.core (toString i), .one ask false)) == .limit
+#guard match combineShapes ((List.range readingsBound).map fun i => (.core (toString i), .one ask false)) with
+  | .many alts => alts.length == readingsBound
+  | _ => false
+#guard combineShapes [(.core "a", .one ask false), (.core "b", .refused "NoDerivation" "x")] == .one ask false
 -- A `many` first step and a `one` second keep the second reading in every alternative.
 #guard readingTuples [[reviewMeaning, reviewIt], [ask]] == [[reviewMeaning, ask], [reviewIt, ask]]
 #guard readingTuples [[ask], [reviewMeaning, reviewIt]] == [[ask, reviewMeaning], [ask, reviewIt]]
@@ -107,24 +113,45 @@ def conditionScopeText : String :=
 
 /-! ## The product is charged before it is built (reviews/dri-decisions-20261109-ci-3a.md item 1) -/
 
-/-- The 64 spellings of `review`, each of its six letters in either case: one obligation each, so "Review." has
-`readingsBound` readings. -/
-def spellings : List String := (List.range 64).map fun i =>
-  String.mk (("review".toList.zipIdx).map fun (c, k) => if (i >>> k) % 2 == 1 then c.toUpper else c)
+/-- The first `n` spellings of `w` with its letters in either case, one obligation each: the wording `w` then has `n`
+readings (64 is the most regulated predicates an environment declares). -/
+def spellings (w : String) (n : Nat) : List (String × Json) := (List.range n).map fun i =>
+  obligation s!"{w}{i}_required" ["user"]
+    ("{0} " ++ String.mk ((w.toList.zipIdx).map fun (c, k) => if (i >>> k) % 2 == 1 then c.toUpper else c))
 
-def wideEnv : Json :=
-  envOf ["user"] (spellings.zipIdx.map fun (w, i) => obligation s!"r{i}_required" ["user"] ("{0} " ++ w))
-    [("reader", "user")] "t" (some ("user", "reader")) []
+def spelled (preds : List (String × Json)) : Json := envOf ["user"] preds [("reader", "user")] "t" (some ("user", "reader")) []
+def wideEnv : Json := spelled (spellings "review" 64)
 
 #guard match read wideEnv "Review." with
   | .many rs => rs.length == readingsBound
   | _ => false
-#guard productSize [[ask, check], [ask], []] == 0 && productSize [[ask, check], [ask, check, ask]] == 6
--- Eight steps of 64 readings: 64^8 products, `limit` without building one (built eagerly, this does not end).
-#guard productSize (List.replicate 8 (List.replicate readingsBound ask)) > maxCandidates
-#guard readS wideEnv (", then ".intercalate (List.replicate 8 "Review") ++ ".") == .limit
+#guard productSize [[ask, check], [ask], []] == 0 && productSize [[ask, check], [ask, check, ask], [ask, check]] == 12
+-- Eight steps of 64 readings: 64^8 products, `limit` without building one. Built eagerly it would not end, so it is
+-- read only once the charge is installed and counts (a mutant sweep blanks a broken `@[csimp]`).
+open Lean Elab Command in
+#eval show CommandElabM Unit from do
+  let installed := (Lean.Compiler.CSimp.ext.getState (← getEnv)).map.contains ``shapeOutcome
+  let steps := if installed then 8 else 0
+  unless installed && productSize (List.replicate steps (List.replicate readingsBound ask)) > maxCandidates do
+    throwError "the product is not charged before it is built"
+  unless readS wideEnv (", then ".intercalate (List.replicate steps "Review") ++ ".") == .limit do
+    throwError "eight steps of 64 readings are not `limit`"
+-- Two steps of 8 readings: exactly `readingsBound` complete alternatives.
+#guard match readS (spelled (spellings "review" 8 ++ spellings "listen" 8)) "Review, then listen." with
+  | .many alts => alts.length == readingsBound
+  | _ => false
 -- Two steps: 4096 products, within `maxCandidates`, more than `readingsBound` alternatives.
 #guard readS wideEnv "Review, then review." == .limit
+
+/-! ## The wording's bytes are charged before its shapes (reviews/dri-decisions-20261109-ci-3a-wording.md item 1) -/
+
+-- About 6 KB with one `, ` every 3 bytes: about 2000 `preposed` shapes, never built.
+#guard step ("If " ++ ", ".intercalate (List.replicate 2000 "a") ++ ", click Ask.") == .limit
+-- Two steps that each read alone, 400 bytes and more in all: `limit`, where the uncharged body gives `steps`.
+def padded : String := String.mk (List.replicate 380 ' ') ++ " click Ask"
+#guard shapes ("Click Check rule conflict, then" ++ padded ++ ".") == [.seq ["Click Check rule conflict", padded.drop 1]]
+#guard web (capitalise (padded.drop 1) ++ ".") == .one ask
+#guard step ("Click Check rule conflict, then" ++ padded ++ ".") == .limit
 
 /-! ## `lift`, `shapeAlts` and `reads` -/
 

@@ -188,8 +188,10 @@ def combineShapes (os : List (Shape × StepOutcome)) : StepOutcome :=
           | _ => false) then conditionScope
       else .refused "InvalidInput" "no single speech-act reading"
 
-/-- A single shape passes through; multiple shapes combine their complete alternatives and limit flags. -/
+/-- A single shape passes through; multiple shapes combine their complete alternatives and limit flags. A wording
+over `maxWordingBytes` is `limit` before any shape is built (reviews/dri-decisions-20261109-ci-3a-wording.md item 1). -/
 def readStep (se : SpeechEnvironment) (sc : Scope) (E : Env) (L : Lexicon) (b : Nat) (s : String) : StepOutcome :=
+  if maxWordingBytes < (trimmed s).utf8ByteSize then .limit else
   let os := (shapes s).map fun sh => (sh, shapeOutcome se sc E L b sh)
   match os with
   | [(_, o)] => o
@@ -324,12 +326,17 @@ theorem shapeOutcome_many {sh : Shape} {alts : List Alt} (h : shapeOutcome se sc
     obtain ⟨all, rfl, h2, _⟩ := seq_many se sc E L b xs alts h
     simpa using h2
 
-theorem readStep_one {sh : Shape} (h : shapes s = [sh]) : readStep se sc E L b s = shapeOutcome se sc E L b sh := by
+theorem readStep_over (h : maxWordingBytes < (trimmed s).utf8ByteSize) : readStep se sc E L b s = .limit := by
   simp [readStep, h]
 
-theorem readStep_combine (h : ∀ sh, shapes s ≠ [sh]) :
+theorem readStep_one {sh : Shape} (hb : (trimmed s).utf8ByteSize ≤ maxWordingBytes) (h : shapes s = [sh]) :
+    readStep se sc E L b s = shapeOutcome se sc E L b sh := by
+  simp [readStep, h, Nat.not_lt.mpr hb]
+
+theorem readStep_combine (hb : (trimmed s).utf8ByteSize ≤ maxWordingBytes) (h : ∀ sh, shapes s ≠ [sh]) :
     readStep se sc E L b s = combineShapes ((shapes s).map fun sh => (sh, shapeOutcome se sc E L b sh)) := by
   unfold readStep
+  rw [if_neg (Nat.not_lt.mpr hb)]
   match hs : shapes s, h with
   | [a], h => exact absurd rfl (h a)
   | [], _ => rfl
@@ -340,15 +347,17 @@ theorem combine_alts (l : List Shape) (f : Shape → StepOutcome) :
       (l.map fun sh => shapeAlts sh (f sh)).flatten := by
   induction l <;> simp_all
 
-theorem after_eq (x : String) (r : Reading) (h : shapes s = [.after x]) :
+theorem after_eq (x : String) (r : Reading) (h : shapes s = [.after x])
+    (hb : (trimmed s).utf8ByteSize ≤ maxWordingBytes) :
     readStep se sc E L b s = .one r true ↔ readCommand se sc E L b (capitalise x ++ ".") = .one r := by
-  rw [readStep_one se sc E L b s h]
+  rw [readStep_one se sc E L b s hb h]
   simp [shapeOutcome, lift_one]
 
-theorem seq_eq (xs : List String) (rs : List Reading) (h : shapes s = [.seq xs]) :
+theorem seq_eq (xs : List String) (rs : List Reading) (h : shapes s = [.seq xs])
+    (hb : (trimmed s).utf8ByteSize ≤ maxWordingBytes) :
     readStep se sc E L b s = .steps rs ↔ xs.length = rs.length ∧
       ∀ p ∈ xs.zip rs, readCommand se sc E L b (capitalise p.1 ++ ".") = .one p.2 ∧ p.2.guard = .top := by
-  rw [readStep_one se sc E L b s h]
+  rw [readStep_one se sc E L b s hb h]
   simp only [shapeOutcome]
   constructor
   · intro h
@@ -406,15 +415,16 @@ theorem seq_eq (xs : List String) (rs : List Reading) (h : shapes s = [.seq xs])
 theorem shapes_ambiguous
     (h : 2 ≤ (((shapes s).map fun sh => shapeAlts sh (shapeOutcome se sc E L b sh)).flatten).length)
     (hc : (((shapes s).map fun sh => shapeAlts sh (shapeOutcome se sc E L b sh)).flatten).length ≤
-      VE.SpeechActs.Wire.readingsBound) :
+      VE.SpeechActs.Wire.readingsBound)
+    (hb : (trimmed s).utf8ByteSize ≤ maxWordingBytes) :
     ∃ alts, readStep se sc E L b s = .many alts ∧ 2 ≤ alts.length := by
   by_cases h1 : ∃ sh, shapes s = [sh]
   · obtain ⟨sh, hs⟩ := h1
-    rw [readStep_one se sc E L b s hs]
+    rw [readStep_one se sc E L b s hb hs]
     simp only [hs, List.map_cons, List.map_nil, List.flatten_cons, List.flatten_nil, List.append_nil] at h
     revert h
     cases shapeOutcome se sc E L b sh <;> simp [shapeAlts]
-  · rw [readStep_combine se sc E L b s (fun sh hs => h1 ⟨sh, hs⟩)]
+  · rw [readStep_combine se sc E L b s hb (fun sh hs => h1 ⟨sh, hs⟩)]
     simp only [combineShapes, combine_alts]
     exact ⟨_, by rw [if_neg (Nat.not_lt.mpr hc), if_pos h], h⟩
 
@@ -422,7 +432,10 @@ theorem shapes_ambiguous
 theorem seq_ambiguous (xs : List String) (alts : List Alt) (hs : shapes s = [.seq xs])
     (hr : readStep se sc E L b s = .many alts) :
     ∀ a ∈ alts, ∃ rs, a = .shape (.seq xs) rs ∧ rs.length = xs.length := by
-  rw [readStep_one se sc E L b s hs] at hr
+  rcases Nat.lt_or_ge maxWordingBytes (trimmed s).utf8ByteSize with hov | hb
+  · rw [readStep_over se sc E L b s hov] at hr
+    cases hr
+  rw [readStep_one se sc E L b s hb hs] at hr
   obtain ⟨all, rfl, _, hl⟩ := seq_many se sc E L b xs alts hr
   intro a ha
   obtain ⟨rs, hrs, rfl⟩ := List.mem_map.1 ha
@@ -432,14 +445,16 @@ theorem seq_ambiguous (xs : List String) (alts : List Alt) (hs : shapes s = [.se
 theorem shapes_limit (hs : 2 > (((shapes s).map fun sh => shapeAlts sh (shapeOutcome se sc E L b sh)).flatten).length)
     (hl : ∃ sh ∈ shapes s, shapeOutcome se sc E L b sh = .limit) :
     readStep se sc E L b s = .limit := by
+  rcases Nat.lt_or_ge maxWordingBytes (trimmed s).utf8ByteSize with hov | hb
+  · exact readStep_over se sc E L b s hov
   obtain ⟨sh, hm, ho⟩ := hl
   by_cases h1 : ∃ sh, shapes s = [sh]
   · obtain ⟨sh', hs'⟩ := h1
-    rw [readStep_one se sc E L b s hs']
+    rw [readStep_one se sc E L b s hb hs']
     rw [hs', List.mem_singleton] at hm
     subst hm
     exact ho
-  · rw [readStep_combine se sc E L b s (fun sh hs => h1 ⟨sh, hs⟩)]
+  · rw [readStep_combine se sc E L b s hb (fun sh hs => h1 ⟨sh, hs⟩)]
     simp only [combineShapes, combine_alts]
     rw [if_neg (by simp only [VE.SpeechActs.Wire.readingsBound]; omega), if_neg (by omega), if_pos]
     simp only [List.any_eq_true, List.mem_map]
@@ -452,15 +467,18 @@ theorem shapes_complete (alts : List Alt)
       VE.SpeechActs.Wire.readingsBound)
     (hr : readStep se sc E L b s = .many alts) :
     ∀ sh ∈ shapes s, ∀ a ∈ shapeAlts sh (shapeOutcome se sc E L b sh), a ∈ alts := by
+  rcases Nat.lt_or_ge maxWordingBytes (trimmed s).utf8ByteSize with hov | hb
+  · rw [readStep_over se sc E L b s hov] at hr
+    cases hr
   by_cases h1 : ∃ sh, shapes s = [sh]
   · obtain ⟨sh', hs'⟩ := h1
-    rw [readStep_one se sc E L b s hs'] at hr
+    rw [readStep_one se sc E L b s hb hs'] at hr
     intro sh hm a ha
     rw [hs', List.mem_singleton] at hm
     subst hm
     rw [hr] at ha
     exact ha
-  · rw [readStep_combine se sc E L b s (fun sh hs => h1 ⟨sh, hs⟩)] at hr
+  · rw [readStep_combine se sc E L b s hb (fun sh hs => h1 ⟨sh, hs⟩)] at hr
     simp only [combineShapes, combine_alts] at hr
     intro sh hm a ha
     have haA : a ∈ ((shapes s).map fun sh => shapeAlts sh (shapeOutcome se sc E L b sh)).flatten :=
