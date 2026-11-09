@@ -3,14 +3,16 @@
 
 Lean lexes the phrase, lists its readings (`phraseReadings`) and paraphrases them, and writes each token's UTF-8 byte
 span and each act's token indices. This module builds the request, relays the row and checks only what a relay checks
-(DRI ruling R8): the row's schema (the service checks `act-readings.json`, which bounds the readings at Lean's 64) and
-its binding to the request: the readings are non-empty exactly when the verdict is `LISTED`; every span lies within
+(DRI ruling R8): the row's schema (`act-readings.json`, which bounds the readings at Lean's 64) and its binding to the
+request: the readings are non-empty exactly when the verdict is `LISTED`; every span lies within
 the phrase's UTF-8 bytes, in order and disjoint; every `from` index names a token, none twice in one act; no two
-readings have the same acts or the same paraphrase; no reading, act, text or diagnostic is empty and no act occurs
-twice in one reading. It lexes nothing and composes no text. Binding cannot see a
-reading dropped with its row (spec 7, "What binding cannot show"): that is Lean's content (`phraseReadings_exact`).
+readings have the same acts (as JSON values) or the same paraphrase; no reading, act, text or diagnostic is empty and
+no act occurs twice in one reading. It lexes nothing and composes no text. Binding cannot see a reading dropped with
+its row (spec 7, "What binding cannot show"): that is Lean's content (`phraseReadings_exact`).
 """
 from __future__ import annotations
+
+import json
 
 from .errors import CheckerUnavailable
 
@@ -24,6 +26,11 @@ def request(phrase: str, *, fixed=(), frames=(), adverbs=(), role: str = "plain"
     case = {"id": case_id, "phrase": phrase, "fixed": list(fixed), "frames": [dict(f) for f in frames],
             "adverbs": list(adverbs), "role": role, "sign": sign}
     return case if form is None else {**case, "form": form}
+
+
+def _value(value) -> str:
+    """A JSON value's canonical text: equal values, whatever their keys' order, have one."""
+    return json.dumps(value, sort_keys=True, separators=(",", ":"))
 
 
 def answer_problem(row, case: dict) -> str | None:
@@ -44,7 +51,7 @@ def answer_problem(row, case: dict) -> str | None:
     for reading in readings:
         if not reading["acts"] or not reading["paraphrase"]:
             return "a reading has no acts or no paraphrase"
-        if len({repr(act) for act in reading["acts"]}) != len(reading["acts"]):
+        if len({_value(act) for act in reading["acts"]}) != len(reading["acts"]):
             return "an act occurs twice in one reading"
         for act in reading["acts"]:
             if not act["act"] or not act["text"] or not act["from"]:
@@ -55,7 +62,7 @@ def answer_problem(row, case: dict) -> str | None:
                 return "a token index occurs twice in one act"
     if verdict != "LISTED" and not row.get("diagnostic"):
         return "a refusal has no diagnostic"
-    if len({repr(r["acts"]) for r in readings}) != len(readings):
+    if len({_value(r["acts"]) for r in readings}) != len(readings):
         return "two readings have the same acts"
     if len({r["paraphrase"] for r in readings}) != len(readings):
         return "two readings have the same paraphrase"

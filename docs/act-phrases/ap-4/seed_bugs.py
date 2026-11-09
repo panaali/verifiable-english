@@ -76,7 +76,7 @@ BUGS = [
     (PY, "py-span-bound-dropped", "ve.acts.answer_problem", "a span past the phrase is accepted",
      ' <= len(case["phrase"].encode("utf-8"))', "", [f"{FUZZ}::test_ar3_a_span_past_the_phrase_is_no_answer"], False),
     (PY, "py-equal-readings", "ve.acts.answer_problem", "two equal readings are accepted",
-     'if len({repr(r["acts"]) for r in readings}) != len(readings):', "if False:",
+     'if len({_value(r["acts"]) for r in readings}) != len(readings):', "if False:",
      [f"{FUZZ}::test_ar4_two_equal_readings_are_no_answer"], False),
     (PY, "py-index-twice", "ve.acts.answer_problem", "an index twice in one act is accepted",
      'if len(set(act["from"])) != len(act["from"]):', "if False:",
