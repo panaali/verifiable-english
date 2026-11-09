@@ -1,17 +1,22 @@
 [
  {"id": 1, "language": "python", "file": "ve/readings.py", "definition": "rights_meaning_id",
   "mutant": "the normal form skipped: the digest is over the content as supplied",
-  "test": "tests/test_rights_meaning_id.py::test_rights_meaning_id_omits_soft_defaults", "result": "killed (20 failed)"},
+  "test": "tests/test_rights_meaning_id.py::test_rights_meaning_id_omits_soft_defaults", "result": "killed (20 failed)",
+  "evidence": "docs/rights/rights-cfr-1/evidence/seeded-1.txt"},
  {"id": 2, "language": "python", "file": "ve/readings.py", "definition": "_soft_default",
   "mutant": "every mode is a default, so mode: default is dropped",
-  "test": "tests/test_rights_meaning_id.py::test_rights_meaning_id_omits_soft_defaults", "result": "killed (5 failed)"},
+  "test": "tests/test_rights_meaning_id.py::test_rights_meaning_id_omits_soft_defaults", "result": "killed (8 failed)",
+  "evidence": "docs/rights/rights-cfr-1/evidence/seeded-2.txt"},
  {"id": 3, "language": "lean", "file": "lean/VE/Service/Document.lean", "definition": "rightsNormalForm",
   "mutant": "null soft fields kept",
-  "test": "#guard lean/VE/Service/Document.lean:177", "result": "killed (build fails)"},
+  "test": "#guard lean/VE/Service/Document.lean:177", "result": "killed (build fails)",
+  "evidence": "docs/rights/rights-cfr-1/evidence/seeded-3.txt"},
  {"id": 4, "language": "lean", "file": "lean/VE/Service/Document.lean", "definition": "rightsContentOf",
   "mutant": "the rights unit bound as written, not its normal form",
-  "test": "tests/test_rights_meaning_id.py::test_lean_and_python_rights_meaning_ids_agree", "result": "killed (4 failed)"},
+  "test": "tests/test_rights_meaning_id.py::test_rights_meaning_id_omits_soft_defaults", "result": "killed (20 failed)",
+  "evidence": "docs/rights/rights-cfr-1/evidence/seeded-4.txt"},
  {"id": 5, "language": "lean", "file": "lean/VE/SoftNorms/Wire.lean", "definition": "softDefault",
   "mutant": "hard: true read as the default in place of hard: false",
-  "test": "#guard lean/VE/Service/Document.lean:177", "result": "killed (build fails)"}
+  "test": "#guard lean/VE/Service/Document.lean:177", "result": "killed (build fails)",
+  "evidence": "docs/rights/rights-cfr-1/evidence/seeded-5.txt"}
 ]
