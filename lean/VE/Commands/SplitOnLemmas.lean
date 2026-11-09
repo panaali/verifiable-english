@@ -57,6 +57,21 @@ theorem splitOnL_none : ∀ {l : List Char}, ¬ sep <:+: l → splitOnL sep l = 
     rw [splitOnL_skip (fun hp => h hp.isInfix), splitOnL_none (fun hi => h (List.infix_cons_iff.2 (.inr hi)))]
     rfl
 
+/-- A prefix without the separator's first character stays inside the first piece. -/
+theorem prefix_first {d : Char} {ds : List Char} : ∀ {P l x : List Char} {xs : List (List Char)}, d ∉ P →
+    P <+: l → splitOnL (d :: ds) l = x :: xs → P <+: x
+  | [], _, _, _, _, _, _ => List.nil_prefix
+  | c :: P, l, x, xs, hP, ⟨t, ht⟩, h => by
+    subst ht
+    simp only [List.mem_cons, not_or] at hP
+    rw [List.cons_append, splitOnL_skip (fun hp => hP.1 (List.cons_prefix_cons.1 hp).1)] at h
+    cases hs : splitOnL (d :: ds) (P ++ t) with
+    | nil => exact absurd hs (splitOnL_ne_nil _)
+    | cons y ys =>
+      rw [hs, List.modifyHead_cons, List.cons.injEq] at h
+      rw [← h.1]
+      exact List.cons_prefix_cons.2 ⟨rfl, prefix_first hP.2 (List.prefix_append P t) hs⟩
+
 /-- The first-occurrence decomposition: `l = a ++ sep ++ b` with `a` free of `sep`, and the pieces are `a`, then
 the pieces of `b`. -/
 theorem splitOnL_first (hs : sep ≠ []) : ∀ {l : List Char}, sep <:+: l →
@@ -280,6 +295,7 @@ theorem splitOn_two (s t : String) (ht : t ≠ "") : 2 ≤ (s.splitOn t).length 
 #guard ", then ".intercalate ("Click a, then click b, then c".splitOn ", then ") == "Click a, then click b, then c"
 #guard ("Click Check rule conflict, then click Ask".splitOn ", then ").all fun p => !(p.splitOn ", then ").length > 1
 #guard "Click Check rule conflict, then click Ask".splitOn ", then " == ["Click Check rule conflict", "click Ask"]
+#guard "x, then y, then z".splitOn ", then " == "x" :: "y, then z".splitOn ", then "
 #guard "draft, is approved, click Ask".splitOn ", " == ["draft", "is approved", "click Ask"]
 #guard (splitOnL ", then ".data "a, the, then b".data).map String.mk == "a, the, then b".splitOn ", then "
 #guard (splitOnL "aab".data "aaab, aa".data).map String.mk == "aaab, aa".splitOn "aab"
