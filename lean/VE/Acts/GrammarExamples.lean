@@ -410,9 +410,10 @@ def measured : List Vocab :=
 /-! ### ap-parse-index: the steps of a growing vocabulary
 
 L6 (`V5`'s 64 readings) with `n` more frames, up to the 128 of D-31. A row is charged every rule and rule position, so
-the steps grow by the same 1,984 with each frame, and the step budget bounds the time: what a step does beyond its
-charge is at most one look-up per end position (`combineFast`) and one insertion (`cap` plus the sentence length),
-measured at most 0.61 microseconds per step on the VM from 2 to 128 frames (docs/act-phrases/ap-parse-index/REPORT.md).
+the steps grow by the same 1,984 with each frame, and the step budget bounds the time (`VE.Grammar` header: a step
+costs at most a constant times `cap` plus the sentence length plus the longest exclusion list; measured at most 0.69
+microseconds per step on the VM from 2 to 128 frames, docs/act-phrases/ap-parse-index/REPORT.md). A step count does not
+see a step's time; the deadline fixtures of `tests/test_ap_parse_index.py` do.
 The grammar is built once per read, in time near-linear in the frames (`closed_eq_fast`, `build_eq_fast`). -/
 
 def padFrames (n : Nat) : List Frame :=

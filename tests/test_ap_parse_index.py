@@ -4,7 +4,7 @@ item 2, ap-parse-index items 1 and 2).
 The act grammar is built in near-linear time and its rule table read once per request, so a request with many frames
 is answered, or refused by the step budget as a deterministic `LIMIT`, never `CheckerUnavailable`. Each request below
 runs under its mode's own CPU deadline (`DEADLINES`, `_CORE`: 5 s), so an answer means it ended within it; before this
-item L6 with 126 frames more needed 305 s of CPU (docs/act-phrases/ap-parse-index/REPORT.md). The steps, which grow by
+item L6 with 126 frames more needed 479 s of CPU (docs/act-phrases/ap-parse-index/REPORT.md). The steps, which grow by
 1,984 per frame, are `#guard`s in `lean/VE/Acts/GrammarExamples.lean`.
 """
 from __future__ import annotations
@@ -35,20 +35,28 @@ def test_l6_reads_the_same_64_readings_with_up_to_128_frames(more):
     assert found["verdict"] == "LISTED" and len(found["readings"]) == 64
 
 
-def test_the_400_byte_phrase_is_listed_with_two_frames_and_a_step_limit_with_32():
-    """ap-4 condition (a): at most 2 frames, `LISTED` as before; with 32 frames the step budget, a `LIMIT`."""
+@pytest.mark.parametrize("more", [31, 127])
+def test_the_400_byte_phrase_is_listed_with_two_frames_and_a_step_limit_with_32_or_128(more):
+    """ap-4 condition (a): at most 2 frames, `LISTED` as before; with 32 or 128 frames the step budget, a `LIMIT`
+    (DRI 2026-11-09 ap-parse-index-2: the 128-frame case within the deadline)."""
     assert len(P400.encode()) == 400
     assert ask(P400, block={"frames": [frame("seek")]})["verdict"] == "LISTED"
     assert ask(P400, block={"frames": V5["frames"]})["verdict"] == "LISTED"
-    over = ask(P400, block={"frames": [frame("seek")] + PAD[:31]})
+    over = ask(P400, block={"frames": [frame("seek")] + PAD[:more]})
     assert over == {"verdict": "LIMIT", "tokens": [], "readings": [],
                     "diagnostic": "ResourceLimit: this act phrase has too many readings to list; split the sentence"}
 
 
-def norms(frames):
-    """The `norms` route's answer, under its CPU deadline, to the joined act of `test_acts_joined_route`."""
-    case = {"id": "c", "kind": "norms-elaborate", "environment": environment(NORM_PROFILES, frames=frames),
-            "norms": [RULE]}
+def norms(frames, acts=0):
+    """The `norms` route's answer, under its CPU deadline, to the joined act of `test_acts_joined_route` and `acts`
+    more joined acts, each with its rule."""
+    env = environment(NORM_PROFILES, frames=frames)
+    rules = [RULE]
+    for i in range(acts):
+        env["vocabulary"]["predicates"][f"q{i}"] = {"arguments": ["person"], "description": "d", "regulated": {
+            "role": "permission", "default": "deny", "act": f"{{0}} to {PAD[i]['head']} asylum or refuge"}}
+        rules.append({"norm": {**RULE["norm"], "name": f"s{i}", "predicate": f"q{i}"}})
+    case = {"id": "c", "kind": "norms-elaborate", "environment": env, "norms": rules}
     with LeanService(lean_build("ve_service") / "ve_service") as service:
         _, response = service.exchange("norms", json.dumps([case], separators=(",", ":")), 1)
     return response["results"][0]["result"]
@@ -57,6 +65,13 @@ def norms(frames):
 def test_a_norms_document_with_128_frames_reads_its_joined_act():
     row = norms((FRAME,) + tuple(PAD))
     assert [t["target"] for t in row["conflict_targets"]] == ["p027__1", "p027__2"]
+
+
+def test_a_norms_document_reads_63_joined_acts_with_one_grammar():
+    """`actsOf` builds the grammar once for all the acts: 63 joined acts (the most regulated predicates the route reads)
+    under 128 frames are read within the deadline (one grammar per act took 4.85 s for 16 acts)."""
+    targets = [t["target"] for t in norms((FRAME,) + tuple(PAD), acts=62)["conflict_targets"]]
+    assert targets[:2] == ["p027__1", "p027__2"] and sorted(targets[2:]) == sorted(f"q{i}" for i in range(62))
 
 
 def test_a_norms_document_with_129_frames_is_a_resource_limit():

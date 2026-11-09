@@ -21,11 +21,19 @@ open Lexical (Tok)
 def readings (V : Vocab) (N b : Nat) (ts : Array Tok) : Listing Act := readingsIn (grammar V) (meaning V) N b ts
 /-- One reading required: `ok` of the one meaning, `none`, `many` with the first two, or `limit` (5.4). -/
 def read (V : Vocab) (N b : Nat) (ts : Array Tok) : ReadOutcome Act := readIn (grammar V) (meaning V) N b ts
+/-- What reading a phrase needs from the vocabulary, built once: the rule table `closed (schema V)` the meaning reads,
+and the grammar numbered from it, prepared. A reader of several phrases under one vocabulary builds it once. -/
+def reader (V : Vocab) : Array RuleS × VE.Grammar.Prepared Term :=
+  let rs := closed (schema V)
+  (rs.toArray, (build rs).prepare)
+/-- `readings` through a reader (`readingsBy_reader`). -/
+def readingsBy (V : Vocab) (R : Array RuleS × VE.Grammar.Prepared Term) (N b : Nat) (ts : Array Tok) : Listing Act :=
+  listing N maxReadings (R.2.parse N b ts) (valueOf (meaningWith R.1 V))
+theorem readingsBy_reader (V : Vocab) (N b : Nat) (ts : Array Tok) : readingsBy V (reader V) N b ts = readings V N b ts :=
+  rfl
 /-- `readings` with the rule table computed once for the grammar and every derivation's meaning; compiled code runs
 it (`readings_eq_once`). -/
-def readingsOnce (V : Vocab) (N b : Nat) (ts : Array Tok) : Listing Act :=
-  let rs := closed (schema V)
-  readingsIn (build rs) (meaningWith rs.toArray V) N b ts
+def readingsOnce (V : Vocab) (N b : Nat) (ts : Array Tok) : Listing Act := readingsBy V (reader V) N b ts
 /-- `read` with the rule table computed once (`read_eq_once`). -/
 def readOnce (V : Vocab) (N b : Nat) (ts : Array Tok) : ReadOutcome Act :=
   let rs := closed (schema V)

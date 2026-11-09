@@ -55,8 +55,3 @@ root = "SpeechActsMain"
 [[lean_exe]]
 name = "ve_senses_route"
 root = "SensesMain"
-
-# ap-parse-index's measurement of reading an act phrase as the frames grow (its REPORT); built on demand.
-[[lean_exe]]
-name = "ve_parse_index_bench"
-root = "ParseIndexBench"
