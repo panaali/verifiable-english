@@ -1,3 +1,4 @@
+- `lean/ResponseShape/Schemas/ActReadings.lean` — The `act-readings` row (act-phrases 7, AP-4): a phrase's readings under a rule's modal words, each as its simple acts and its paraphrase, with Lean's lexing of…
 - `lean/ResponseShape/Schemas/Alternatives.lean` — The source of `ve/backends/lean_service_schema/alternatives.json` (`file`; `tools/response_schemas.py` writes it).
 - `lean/ResponseShape/Schemas/Ask.lean` — The `ask` row (docs/spec/question-answering.md 4.2, 8; plan 4.8), every field typed.
 - `lean/ResponseShape/Schemas/Bundle.lean` — The source of `ve/backends/lean_service_schema/bundle.json` (`file`; `tools/response_schemas.py` writes it).
