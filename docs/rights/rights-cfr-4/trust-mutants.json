@@ -1,7 +1,7 @@
 {
  "base": "268829b1ac9d3a333c2c422efbd9b0beea80b287",
- "head": "5aefbf1e53606a799da46de83792b99d0206e795",
- "tree": "d7770aee2a8a2b8cbe624639d719e034519b14b5",
+ "head": "9eb5a3708b79ecbb0473f7c3305e6981f32fdea8",
+ "tree": "3f72d74a0ce943227b7b3e68a2625122e105460c",
  "jobs": 8,
  "control_probes": "lazy",
  "max_mutants": 1000,
@@ -9,47 +9,47 @@
  "tests": [
   "lean/VE/Rights/OpenActExamples.lean"
  ],
- "seconds": 112,
+ "seconds": 91,
  "steps": {
   "wall": {
-   "plan": 19.5,
-   "scratch": 33.9,
-   "control_build": 0.3,
-   "probe_install": 3.7,
+   "plan": 28.7,
+   "scratch": 21.4,
+   "control_build": 0.2,
+   "probe_install": 2.8,
    "control_probes": 0.0,
-   "mutants": 50.4,
-   "cleanup": 3.9,
-   "reads": 0.1
+   "mutants": 35.0,
+   "cleanup": 3.1,
+   "reads": 0.0
   },
   "lake": {
-   "control_build": 0.3,
-   "probe_install": 3.6,
-   "control_probes": 7.0,
-   "mutant_builds": 151.8,
-   "mutant_checks": 66.6,
+   "control_build": 0.2,
+   "probe_install": 2.8,
+   "control_probes": 6.4,
+   "mutant_builds": 102.2,
+   "mutant_checks": 47.9,
    "outside_checks": 0.0,
-   "stage_controls": 40.9,
-   "mutant_probes": 41.4,
+   "stage_controls": 31.8,
+   "mutant_probes": 32.7,
    "other": 0.0
   },
   "runs": {
    "control_build": 1,
    "probe_install": 1,
-   "control_probes": 2,
-   "mutant_builds": 33,
-   "mutant_checks": 22,
+   "control_probes": 3,
+   "mutant_builds": 31,
+   "mutant_checks": 23,
    "outside_checks": 0,
-   "stage_controls": 6,
-   "mutant_probes": 8,
+   "stage_controls": 7,
+   "mutant_probes": 11,
    "other": 0
   }
  },
  "counts": {
-  "KILLED": 8,
-  "SURVIVOR": 8,
+  "KILLED": 11,
+  "SURVIVOR": 0,
   "UNKNOWN": 0,
   "INVALID": 2,
-  "ALLOWED": 0,
+  "ALLOWED": 5,
   "NOT RUN": 0
  },
  "classes": [
@@ -57,14 +57,14 @@
  ],
  "class_counts": {
   "G[V], trusted": {
-   "KILLED": 8,
-   "SURVIVOR": 8,
-   "INVALID": 2
+   "KILLED": 11,
+   "INVALID": 2,
+   "ALLOWED": 5
   }
  },
  "inputs": {
   "tool": "57a6dcabfba71bf7bf75966f2295fa6af53cb5f5316629ab2ea23dded202ef9b",
-  "lean": "5e5b4aae59ef6f73c9cc6cc1a173724558b270086a1ce9c8aecfc6d154445631",
+  "lean": "91040de31936315ec498c6d6775532d9e68ceaac01e1277215383e695774f836",
   "tests": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
   "base": "268829b1ac9d3a333c2c422efbd9b0beea80b287",
   "options": "{\"deep\": false, \"test\": [\"VE/Rights/OpenActExamples.lean\"], \"classes\": [\"trusted\"]}",
@@ -704,7 +704,7 @@
    "lean/VE/Rights/Correlate.lean": "f1919c9c67e77ab9b613cfcbed7ea396524ecfee25e55060484f7cbf6ab0f1ae",
    "lean/VE/Rights/Distinction.lean": "dd0020b2d5557ebd79933d2bd9fb6c83e1afad470806bb0209f6f4157972c380",
    "lean/VE/Rights/Examples.lean": "a468945e6dee91274ec8b7648e47b719501df8f0562b86be777643f5af22c78c",
-   "lean/VE/Rights/OpenActExamples.lean": "9025e8544d4c77345d9213f6203e6fa9da1534d7eb0b15017d27cb1a756bf827",
+   "lean/VE/Rights/OpenActExamples.lean": "ee1c9d36424a09960db6d72184ac3c98c31ffc4dfea2e945e57d88e5c565c477",
    "lean/VE/Rights/Projections.lean": "9deac7f7140eb400e5bcb5aabec65b8e651105c032063d39f79abae28375f971",
    "lean/VE/Rights/Route.lean": "71d1dd3a09ea0a104336748c491e8e008a21aca44d0d7cbaa0b6468611b361c7",
    "lean/VE/Rights/Run.lean": "ff423322e8808a6bc3c1629edc28ced20a68ba29346a81a19d93c8a97be13ad8",
@@ -898,7 +898,7 @@
    "lean/audit.py": "05fb69c5689a8606fefd6d43e220f23ee6dbedc4bea7245b34ae29a4fd13a1cd",
    "lean/axioms.txt": "35cca807f793dc81600e567ba6aba22fd669f93a26af9264597c918abdd0733a",
    "lean/checkers.lock": "e44d1b4ce4fcdd718f7777a28c0fc800ac78532b39d83f9a637146ff1caa934d",
-   "lean/declarations.txt": "7d8289ef6b1ff4014f4074b4def3d532fb82a73b42b80938ce0b8f8d2f549c76",
+   "lean/declarations.txt": "3940c48e5c5402e912267cc4db51e59230d557aee5f8386ace9f53157ede7eb5",
    "lean/lake-manifest.json": "8579a8594992ccc571614869d24b997dba98134cffdbd5a0b26220a419e0de8e",
    "lean/lakefile.toml": "ffc47dfd06119c3518785b5059d81216b2f82b140509bfd25cd3273cbe04d4f5",
    "lean/lean-toolchain": "42779d67b81608af8a12aa4328d2ab47ca201925b3b2bd68369587b5340bb434",
@@ -920,6 +920,17 @@
    "tools/trust_mutants.py": "b264cbd25647d3a5af41a0972e652c92ec3ce02b39102480603801dcbc0333ba"
   }
  },
+ "rescore": {
+  "file": "docs/rights/rights-cfr-4/trust-mutants.json",
+  "head": "5aefbf1e53606a799da46de83792b99d0206e795",
+  "mode": "checks",
+  "changed": [
+   "lean/VE/Rights/OpenActExamples.lean",
+   "lean/declarations.txt"
+  ],
+  "reused": 2,
+  "rerun": 16
+ },
  "definitions": [
   "lean/VE/Rights/Run.lean: VE.Rights.Run.nodeOpen"
  ],
@@ -939,7 +950,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Rights/OpenActExamples.lean:32: Expression",
    "raw_status": "KILLED",
-   "reads": "bf066ac09cb7dd842dccca349e1e7c7b7894074911762d5d92f55f1f3c8cc133",
+   "reads": "96d8fce75dad9e7c49b34df03aaee55c2a01f88bfc870650a54294e061f763c3",
    "killed_at": [
     32,
     32
@@ -962,7 +973,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Rights/OpenActExamples.lean:31: Expression",
    "raw_status": "KILLED",
-   "reads": "1d2bdfdb2ee569d5b766204119876c6b39ffffec7ee64170d2017b16dba89361",
+   "reads": "c8bb1efd158c5b00ea6b4183b02f6c5d27c32212a29f252712ca60430147a89e",
    "killed_at": [
     31,
     31
@@ -985,7 +996,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Rights/OpenActExamples.lean:32: Expression",
    "raw_status": "KILLED",
-   "reads": "bf066ac09cb7dd842dccca349e1e7c7b7894074911762d5d92f55f1f3c8cc133",
+   "reads": "96d8fce75dad9e7c49b34df03aaee55c2a01f88bfc870650a54294e061f763c3",
    "killed_at": [
     32,
     32
@@ -1005,9 +1016,14 @@
    ],
    "before": "||",
    "after": "&&",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Rights/Run.lean:240",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Rights/OpenActExamples.lean:36: Expression",
+   "raw_status": "KILLED",
+   "reads": "05643c0751514ee58b7e0e065a6f3614f67d1f6b7e670ae2f70ecbf2aff76fe4",
+   "killed_at": [
+    36,
+    36
+   ],
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -1026,7 +1042,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Rights/OpenActExamples.lean:32: Expression",
    "raw_status": "KILLED",
-   "reads": "bf066ac09cb7dd842dccca349e1e7c7b7894074911762d5d92f55f1f3c8cc133",
+   "reads": "96d8fce75dad9e7c49b34df03aaee55c2a01f88bfc870650a54294e061f763c3",
    "killed_at": [
     32,
     32
@@ -1046,9 +1062,10 @@
    ],
    "before": "0",
    "after": "1",
-   "status": "SURVIVOR",
-   "detail": "",
+   "status": "ALLOWED",
+   "detail": "equivalent: the act atom's term is never read; VE.Norms.preds (.unary p t) = [p] for every t, so .var 0 and .var 1 scan the same name",
    "raw_status": "SURVIVOR",
+   "raw_detail": "",
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -1067,6 +1084,8 @@
    "status": "INVALID",
    "detail": "don't know how to synthesize implicit argument `\u03b1`",
    "raw_status": "INVALID",
+   "reused_from": "5aefbf1e53606a799da46de83792b99d0206e795",
+   "carried": "checks",
    "reads": "d23cda47285b88ad0b3dcf3450884cb6dc52160dfeb33a56aae121e71a338015",
    "trust_class": "G[V]",
    "trusted": true
@@ -1086,7 +1105,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Rights/OpenActExamples.lean:31: Expression",
    "raw_status": "KILLED",
-   "reads": "1d2bdfdb2ee569d5b766204119876c6b39ffffec7ee64170d2017b16dba89361",
+   "reads": "c8bb1efd158c5b00ea6b4183b02f6c5d27c32212a29f252712ca60430147a89e",
    "killed_at": [
     31,
     31
@@ -1109,7 +1128,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Rights/OpenActExamples.lean:31: Expression",
    "raw_status": "KILLED",
-   "reads": "1d2bdfdb2ee569d5b766204119876c6b39ffffec7ee64170d2017b16dba89361",
+   "reads": "c8bb1efd158c5b00ea6b4183b02f6c5d27c32212a29f252712ca60430147a89e",
    "killed_at": [
     31,
     31
@@ -1132,6 +1151,8 @@
    "status": "INVALID",
    "detail": "don't know how to synthesize implicit argument `\u03b1`",
    "raw_status": "INVALID",
+   "reused_from": "5aefbf1e53606a799da46de83792b99d0206e795",
+   "carried": "checks",
    "reads": "d23cda47285b88ad0b3dcf3450884cb6dc52160dfeb33a56aae121e71a338015",
    "trust_class": "G[V]",
    "trusted": true
@@ -1148,9 +1169,10 @@
    ],
    "before": "N.alterable",
    "after": "(N.alterable.take 1)",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Rights/Run.lean:240",
+   "status": "ALLOWED",
+   "detail": "equivalent: nodeOpen reads only isEmpty of N.alterable and of the opensIn result, and (l.take 1).isEmpty = l.isEmpty",
    "raw_status": "SURVIVOR",
+   "raw_detail": "the proofs it breaks: lean/VE/Rights/Run.lean:240",
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -1166,9 +1188,14 @@
    ],
    "before": "N.alterable",
    "after": "(N.alterable.dropLast)",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Rights/Run.lean:240",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Rights/OpenActExamples.lean:37: Expression",
+   "raw_status": "KILLED",
+   "reads": "aad53ce383a7cc77bf76b799f967f5d3f082dc63a118923f9b7f057419dc267f",
+   "killed_at": [
+    37,
+    38
+   ],
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -1184,9 +1211,10 @@
    ],
    "before": "(VE.Judgments.opensIn openNames (.unary N.pred (.var 0) :: N.guard :: N.carveOuts))",
    "after": "((VE.Judgments.opensIn openNames (.unary N.pred (.var 0) :: N.guard :: N.carveOuts)).take 1)",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Rights/Run.lean:240",
+   "status": "ALLOWED",
+   "detail": "equivalent: nodeOpen reads only isEmpty of N.alterable and of the opensIn result, and (l.take 1).isEmpty = l.isEmpty",
    "raw_status": "SURVIVOR",
+   "raw_detail": "the proofs it breaks: lean/VE/Rights/Run.lean:240",
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -1205,7 +1233,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Rights/OpenActExamples.lean:31: Expression",
    "raw_status": "KILLED",
-   "reads": "1d2bdfdb2ee569d5b766204119876c6b39ffffec7ee64170d2017b16dba89361",
+   "reads": "c8bb1efd158c5b00ea6b4183b02f6c5d27c32212a29f252712ca60430147a89e",
    "killed_at": [
     31,
     31
@@ -1225,9 +1253,10 @@
    ],
    "before": "N.alterable",
    "after": "(N.alterable.reverse.take 1)",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Rights/Run.lean:240",
+   "status": "ALLOWED",
+   "detail": "equivalent: nodeOpen reads only isEmpty of N.alterable and of the opensIn result, and (l.reverse.take 1).isEmpty = l.isEmpty",
    "raw_status": "SURVIVOR",
+   "raw_detail": "the proofs it breaks: lean/VE/Rights/Run.lean:240",
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -1243,9 +1272,14 @@
    ],
    "before": "N.alterable",
    "after": "(N.alterable.drop 1)",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Rights/Run.lean:240",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Rights/OpenActExamples.lean:37: Expression",
+   "raw_status": "KILLED",
+   "reads": "aad53ce383a7cc77bf76b799f967f5d3f082dc63a118923f9b7f057419dc267f",
+   "killed_at": [
+    37,
+    38
+   ],
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -1261,9 +1295,10 @@
    ],
    "before": "(VE.Judgments.opensIn openNames (.unary N.pred (.var 0) :: N.guard :: N.carveOuts))",
    "after": "((VE.Judgments.opensIn openNames (.unary N.pred (.var 0) :: N.guard :: N.carveOuts)).reverse.take 1)",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Rights/Run.lean:240",
+   "status": "ALLOWED",
+   "detail": "equivalent: nodeOpen reads only isEmpty of N.alterable and of the opensIn result, and (l.reverse.take 1).isEmpty = l.isEmpty",
    "raw_status": "SURVIVOR",
+   "raw_detail": "the proofs it breaks: lean/VE/Rights/Run.lean:240",
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -1282,7 +1317,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Rights/OpenActExamples.lean:31: Expression",
    "raw_status": "KILLED",
-   "reads": "1d2bdfdb2ee569d5b766204119876c6b39ffffec7ee64170d2017b16dba89361",
+   "reads": "c8bb1efd158c5b00ea6b4183b02f6c5d27c32212a29f252712ca60430147a89e",
    "killed_at": [
     31,
     31
