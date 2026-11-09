@@ -1,0 +1,12 @@
+{
+ "job": "testmap-a37fa18e-t202999-s0",
+ "head": "fc430fd2c5acec8af6d37c9158abfa07c2b6952c",
+ "argv": [
+  "testmap-a37fa18e-t202999-s0",
+  "fc430fd2c5acec8af6d37c9158abfa07c2b6952c",
+  "fc430fd2c5acec8af6d37c9158abfa07c2b6952c",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-154ec4691773.tar.zst",
+  "9b5e1f2af725469421178dbb8c80126cea7bb510e166790674413ee3185def2a",
+  "shard=ulimit -s 8192; tc=$(cat lean/lean-toolchain); tc=${tc//\\//--}; mkdir -p ~/.elan/toolchains; ln -sfn /opt/lean ~/.elan/toolchains/${tc//:/---}; mkdir -p ~/.elan/bin; for t in lean lake; do [ -e ~/.elan/bin/$t ] || ln -sfn /opt/lean/bin/$t ~/.elan/bin/$t; done; uv run --frozen python tools/test_map.py record --no-merge --jobs 4 --output \"$RUNNER_TEMP/out/map-s0.json.gz\" tests/test_trust_mutants.py tests/test_select_tests.py tests/test_gate_collection.py tests/test_events_wire_mutants.py tests/test_precommit_hook.py tests/test_regen_generated.py tests/test_document_split.py tests/test_since_pass.py tests/test_batch_evidence.py tests/test_gate_durations.py 2>&1 | tee \"$RUNNER_TEMP/out/shard-full.txt\"; exit ${PIPESTATUS[0]}"
+ ]
+}
