@@ -197,4 +197,13 @@ def rawEnv : Json := .obj ⟨⟨Std.DTreeMap.Internal.Impl.inner 2 "a" (.bool tr
   request proveGo [("q1", goA), ("q2", goB)] (env := goProof), request (proveSpaced 401),
   request "You may share the token."].all encodes
 
+/-! ## CI-5 through the mode: one simple `acts@0` act each; the answer is `encode` of the reader's -/
+
+#guard Examples.choiceRows.all fun (s, a) =>
+  let q := request s (env := Examples.E_acts)
+  encodes q && (get q "reading").getObjValD "command" == Json.mkObj [("force", .str "require"), ("act", .str a),
+    ("args", toJson ([] : List String)), ("guard", VE.Route.Wire.encodeFormula .top)]
+#guard (Run.caseReported (request "Click Check and save." (env := Examples.actsEnv Examples.clickSave (some [])))).getObjValD
+  "error" == .str "InvalidInput: act phrase for click_required joins acts with 'and' outside a fixed phrase"
+
 end VE.Commands.RunExamples
