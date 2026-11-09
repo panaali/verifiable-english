@@ -83,6 +83,13 @@ def internalRow : List Json :=
 #guard get (.ok [.rule ⟨1, []⟩ cPub]) ["status", "code", "class", "text", "sentence"] "Rule 1. X.\nRule 2. Y." == internalRow
 -- only a translation-mode statement is refused: no statements over no blocks are rows, none of them one
 #guard Run.oneSpans "" [] == some [] && Run.oneSpans "" [.source []] == none
+-- fewer blocks than statements is `Internal` too (E12 has more): `zip` must never drop a statement
+#guard get (.ok [.rule ⟨1, []⟩ cPub, .rule ⟨2, []⟩ cPub]) ["status", "code", "class", "text", "sentence"] == internalRow
+-- M10's spans are bytes, not code points: "ë" is two bytes, so the second block starts at byte 14 (character 13)
+#guard Run.statementSpans "Rule 1. Zoë.\nRule 2. Y." == [(0, 13), (14, 24)] &&
+  match (result (.ok [.rule ⟨1, []⟩ cPub, .rule ⟨2, []⟩ cPub]) "Rule 1. Zoë.\nRule 2. Y.").getObjValD "statements" with
+  | .arr rows => rows.toList.map (·.getObjValD "span") == [Json.arr #[0, 13], Json.arr #[14, 24]]
+  | _ => false
 -- E13: a block over two lines is one span, from the lexer's positions: header to period.
 #guard Run.statementSpans "Rule 1.\nX." == [(0, 10)] &&
   get (.ok [.rule ⟨1, []⟩ cPub]) ["status"] "Rule 1.\nX." == str ["one"] &&
@@ -176,13 +183,17 @@ def errorOf (j : Json) : Json := (Run.statementCaseReported j).getObjValD "error
 -- A full case through the whole mode (`JudgmentRunExamples`' environment and lexicon): the optional `overlay` member is
 -- read (its digest joins the identities); `english.grammar` exports english.statement's three tables (M9).
 open VE.EnglishGrammar.JudgmentRunExamples (environment lexicon) in
-def whole (extra : List (String × Json) := []) : Json :=
-  Run.resultOf (Run.statementCaseReported (Json.mkObj ([("id", Json.str "s"), ("environment", environment),
-    ("lexicon", lexicon), ("kind", Json.str "blocks"), ("source", Json.str "Atlas is published.")] ++ extra)))
+def wholeRow (extra : List (String × Json) := []) : Json :=
+  Run.statementCaseReported (Json.mkObj ([("id", Json.str "s"), ("environment", environment),
+    ("lexicon", lexicon), ("kind", Json.str "blocks"), ("source", Json.str "Atlas is published.")] ++ extra))
+def whole (extra : List (String × Json) := []) : Json := Run.resultOf (wholeRow extra)
 #guard ["status", "code", "sentence"].map (whole).getObjValD == str ["none", "NoDerivation"] ++ [toJson 0] &&
   ((whole).getObjValD "identities").getObjValD "overlay_digest" == .null
 #guard ["status", "code"].map (whole [("overlay", Json.mkObj [])]).getObjValD == str ["none", "NoDerivation"] &&
   (((whole [("overlay", Json.mkObj [])]).getObjValD "identities").getObjValD "overlay_digest").getStr?.isOk
+-- the opposite direction: `id`, `kind` or `source` retyped is an error row, never an answer
+#guard (wholeRow).getObjValD "status" == .str "ok" && ["id", "kind", "source"].all fun k =>
+  [Json.num 7, .null, .arr #[]].all fun v => (wholeRow [(k, v)]).getObjValD "status" == .str "error"
 open VE.EnglishGrammar.JudgmentRunExamples (environment lexicon) in
 def grammarExport : Json := ((VE.EnglishGrammar.Run.grammarCase (Json.mkObj [("id", Json.str "g"),
   ("environment", environment), ("lexicon", lexicon)])).toOption.getD .null).getObjValD "result"
