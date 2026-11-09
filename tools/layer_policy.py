@@ -36,7 +36,7 @@ PYTHON = {
     # the senses and speech-source routes (they read the English parser and build environments); `senses.display`
     # renders and re-reads candidates through the senses route.
     4: ("__main__ adapters admission argument ask attacks authoring bundle check "
-        "document equivalence norm_admission norm_defaults norm_defaults_contract norm_defaults_english norm_defaults_route norm_strict "
+        "document equivalence events norm_admission norm_defaults norm_defaults_contract norm_defaults_english norm_defaults_route norm_strict "
         "defaults_english filling_search openterms propose readings search stream_audit vacuity assist discourse words calc scope judgment_lines cardinality "
         "reports reports_route risk rights_route soft_route speech_document readings_route readings_s1 "
         "readings_sup readings_verdicts readings_components readings_s2_wording senses_document defaults "
