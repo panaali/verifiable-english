@@ -1,0 +1,38 @@
+{
+  "item": "cmp-s3a-cfr-1",
+  "note": "Seeded bugs (not trust mutants: the item adds no trusted definition). Each was planted, shown failing, and restored with git checkout; see REPORT.md 'Seeded bugs'.",
+  "seeded_bugs": [
+    {
+      "id": "S1",
+      "language": "Lean",
+      "file": "lean/VE/RightClauses/PlainWellFormed.lean",
+      "bug": "rename plain_wellFormed to plain_wellFormedX",
+      "test": "tests/test_right_clauses_lean.py::test_right_clauses_required_plain_wellformed_theorem",
+      "result": "failed (declaration missing; without VE_NATIVE_PREBUILT=1 the lake build fails first, as Corollaries.lean no longer compiles)"
+    },
+    {
+      "id": "S2",
+      "language": "Lean",
+      "file": "lean/VE/RightClauses/PlainWellFormed.lean",
+      "bug": "add a hypothesis (h1 : True) to plain_wellFormed",
+      "test": "tests/test_right_clauses_lean.py::test_right_clauses_required_plain_wellformed_theorem",
+      "result": "failed (statement differs from 8.3)"
+    },
+    {
+      "id": "S3",
+      "language": "Lean",
+      "file": "lean/VE/RightClauses/PlainWellFormed/Guards.lean",
+      "bug": "okOrRL_ok := sorry",
+      "test": "tests/test_right_clauses_lean.py::test_right_clauses_required_plain_wellformed_theorem",
+      "result": "failed (sorry in the dependency cone)"
+    },
+    {
+      "id": "S4",
+      "language": "Lean",
+      "file": "lean/VE/RightClauses/PlainWellFormed.lean",
+      "bug": "drop the ResourceLimit disjunct from the statement",
+      "test": "lake env lean lean/VE/RightClauses/PlainWellFormed.lean",
+      "result": "failed (Tactic right failed with he : validateRights (plain D) = Except.error e)"
+    }
+  ]
+}
