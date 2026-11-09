@@ -1,4 +1,5 @@
 import VE.RightClauses.Plain
+import VE.RightClauses.PlainWellFormed.Str
 
 /-! Guard extensions (docs/spec/right-clauses.md 8.3, `plain_wellFormed`): the relation `FExt` between a formula and
 the same formula with some subformulas conjoined with typed base formulas, what it keeps (typing, the predicates a
@@ -9,14 +10,22 @@ open VE.Norms (preds anyF)
 
 /-! ## `ResourceLimit` or success -/
 
+/-- A resource-limit diagnostic. -/
+def RL (e : String) : Prop := ∃ t, e = "ResourceLimit: " ++ t
+
+theorem RL.isPrefixOf {e : String} (h : RL e) : "ResourceLimit: ".isPrefixOf e = true := by
+  obtain ⟨t, rfl⟩ := h; exact isPrefixOf_append _ _
+
+/-- An interpolated resource-limit diagnostic. -/
+theorem rl_interp (lit rest x : String) (h : lit = "ResourceLimit: " ++ rest) : RL (toString lit ++ toString x) :=
+  ⟨rest ++ x, by show lit ++ x = _; rw [h, String.append_assoc]⟩
+
 /-- Success, or an error that is a resource limit. -/
-def OkOrRL (x : Except String Unit) : Prop := x = .ok () ∨ ∃ e, x = .error e ∧ "ResourceLimit: ".isPrefixOf e = true
+def OkOrRL (x : Except String Unit) : Prop := x = .ok () ∨ ∃ e, x = .error e ∧ RL e
 
 theorem okOrRL_ok : OkOrRL (.ok ()) := Or.inl rfl
 
-theorem okOrRL_of_eq {x y : Except String Unit} (h : x = y) (hy : y = .ok ()) : OkOrRL x := Or.inl (h.trans hy)
-
-theorem okOrRL_rl (e : String) (h : "ResourceLimit: ".isPrefixOf e = true) : OkOrRL (.error e) := Or.inr ⟨e, rfl, h⟩
+theorem okOrRL_rl (e : String) (h : RL e) : OkOrRL (.error e) := Or.inr ⟨e, rfl, h⟩
 
 theorem okOrRL_bind {x : Except String Unit} {f : Unit → Except String Unit} (hx : OkOrRL x)
     (hf : x = .ok () → OkOrRL (f ())) : OkOrRL (x >>= f) := by
@@ -32,7 +41,7 @@ theorem bind_ok {x : Except String Unit} {f : Unit → Except String Unit} (h : 
 
 /-- A loop whose every throw is a resource limit. -/
 theorem okOrRL_forIn {α : Type} (l : List α) (f : α → PUnit → Except String (ForInStep PUnit))
-    (hf : ∀ a u, f a u = .ok (.yield ()) ∨ ∃ e, f a u = .error e ∧ "ResourceLimit: ".isPrefixOf e = true) :
+    (hf : ∀ a u, f a u = .ok (.yield ()) ∨ ∃ e, f a u = .error e ∧ RL e) :
     OkOrRL (forIn l PUnit.unit f >>= fun _ => pure ()) := by
   induction l with
   | nil => exact Or.inl rfl
