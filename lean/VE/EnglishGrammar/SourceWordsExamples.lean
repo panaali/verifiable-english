@@ -123,6 +123,9 @@ def ev : List String := ["events@0"]
   ("The act resulted in a harm.", "events-resulted-in"), ("The act led to a harm.", "events-led-to"),
   ("The act caused a harm.", "events-caused")].all fun (s, id) => (adviceOf ev s).map (·.1) == some id
 #guard (adviceOf ev "The act caused a harm.").map (·.2) == some eventsLinkAdvice
+-- DRI 2026-11-09 (reviews/dri-decisions-20261109-et-5.md item 2): a source "always" gets its refusal and advice
+-- (above), and events@0 has no reading row for it (no A1/A2 candidate; those rows and the 11-03 tests are et-5b's).
+#guard (sourceWords.filter fun r => r.word == "always" && r.profile == "events@0").map (·.frame) == ["authored"]
 
 -- U1 states its silence (ET-E1's rewording); U2 is ET-E1's measured sentence; T11d's W1-W3 (SR-B4), spec 8.1's
 -- sentences with their dates and verb phrase as placeholders. The literals pin the rows' text.

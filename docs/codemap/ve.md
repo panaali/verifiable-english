@@ -28,6 +28,7 @@
 - `ve/equivalence.py` — Three-valued comparison: checked proofs, checked models, or UNKNOWN.
 - `ve/errors.py` — Stable diagnostics shared by all experimental checking boundaries.
 - `ve/evaluate.py` — Small trusted finite-model evaluator with bounded explanatory traces.
+- `ve/events.py` — The `events@0` relay: Lean's answer about an events document, bound to the request (events-time-causation plan ET-5; spec 1.3, 1.4 and 6.3).
 - `ve/filling_search.py` — The one untrusted flip search (plan Q2.5): candidate fillings that split a target formula.
 - `ve/fluent.py` — Read-only English surface: explicit scope, reversible local contractions.
 - `ve/fol.py` — Explicit adapters from formal first-order AST data to typed VE.
