@@ -80,7 +80,7 @@ fails the R-10 guard (:489).
 27 SURVIVOR and 21 UNKNOWN. The survivors were list edits my guards did not move: an element first or last in `cellOk`'s
 `cs`, the first and middle rows and classes of `tableOk`, plural's `[0, 0]`, a two-step `p`, `R.checked.drop 1`.
 c8571dd8f and d77575f50 add guards for each one (:587-603). The 21 UNKNOWN are constructor drops and bare `[]`s that do not elaborate.
-Each is allowed with a reason that names the hand mutant covering it. Final sweep, head 24928091e, base ee1fb3efa: 179 KILLED, 0 SURVIVOR,
+Each is allowed with a reason that names the hand mutant covering it. Final sweep, head 2059b0b59 (rescore of 24928091e's), base ee1fb3efa: 179 KILLED, 0 SURVIVOR,
 0 UNKNOWN, 21 ALLOWED, exit 0.
 
 ## Trust

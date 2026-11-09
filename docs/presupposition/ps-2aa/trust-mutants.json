@@ -1,45 +1,45 @@
 {
  "base": "ee1fb3efaac4b9c3f2a87d5725e69873d7f77d11",
- "head": "24928091e754168669685534d2dfd02a1fcaae96",
- "tree": "34285a704e2ffb970befb28291ec3fd56eebae78",
+ "head": "2059b0b595d228ca982b3e9920f5032541574aef",
+ "tree": "187d0d769c30e4693a3a45700f917b5c28ee8fad",
  "jobs": 8,
  "max_mutants": 1000,
  "deep": false,
  "tests": [
   "lean/VE/Presupposition/Examples.lean"
  ],
- "seconds": 1680,
+ "seconds": 92,
  "steps": {
   "wall": {
-   "plan": 21.0,
-   "scratch": 26.5,
-   "control_build": 0.3,
+   "plan": 22.9,
+   "scratch": 23.4,
+   "control_build": 0.2,
    "probe_install": 2.7,
-   "control_probes": 29.1,
-   "mutants": 1597.3,
-   "cleanup": 3.6,
+   "control_probes": 28.7,
+   "mutants": 11.4,
+   "cleanup": 2.9,
    "reads": 0.0
   },
   "lake": {
    "control_build": 0.2,
-   "probe_install": 2.6,
-   "control_probes": 25.5,
-   "mutant_builds": 461.9,
-   "mutant_checks": 850.6,
+   "probe_install": 2.7,
+   "control_probes": 24.6,
+   "mutant_builds": 62.6,
+   "mutant_checks": 10.6,
    "outside_checks": 0.0,
-   "stage_controls": 24.6,
-   "mutant_probes": 677.4,
+   "stage_controls": 2.8,
+   "mutant_probes": 0.0,
    "other": 0.0
   },
   "runs": {
    "control_build": 1,
    "probe_install": 1,
    "control_probes": 1,
-   "mutant_builds": 200,
-   "mutant_checks": 189,
+   "mutant_builds": 21,
+   "mutant_checks": 2,
    "outside_checks": 0,
-   "stage_controls": 9,
-   "mutant_probes": 179,
+   "stage_controls": 3,
+   "mutant_probes": 0,
    "other": 0
   }
  },
@@ -65,7 +65,7 @@
  },
  "inputs": {
   "tool": "b99470e08f560850486c2a9ee60cd35b1838c3a42fa0caf14f648b037a8d3354",
-  "lean": "a22dfed68707f4a875de6dc735cdbf0e48d8fe2dd963dcca515b8bc8775502ba",
+  "lean": "1b5fa1e6cf89010e7c0acaa73abd14f0935ca3e657d818db94f027d948e562bc",
   "tests": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
   "base": "ee1fb3efaac4b9c3f2a87d5725e69873d7f77d11",
   "options": "{\"deep\": false, \"test\": [\"VE/Presupposition/Examples.lean\"], \"classes\": [\"trusted\"]}",
@@ -914,7 +914,7 @@
    "lean/lean-toolchain": "42779d67b81608af8a12aa4328d2ab47ca201925b3b2bd68369587b5340bb434",
    "lean/predicates.txt": "c16dabee6d9885c4d9254a48ecc0c8aa444e156982154e8ee472a9611fbfad9d",
    "lean/statements.txt": "00763c714f6fce08868122540454f7efa7e6507779b1458ef41d1926fdbcbb10",
-   "tools/trust-classes.json": "a88c35ce68b1d667d64feeaf093fb38ea3114ce0d59a99acc5c362d03703a902"
+   "tools/trust-classes.json": "5b513655ef2252aa965e23f35ec66d35f2309be89f2a6fb0649269ff4ff2891e"
   },
   "tool_files": {
    "lean/audit.py": "05fb69c5689a8606fefd6d43e220f23ee6dbedc4bea7245b34ae29a4fd13a1cd",
@@ -932,14 +932,16 @@
  },
  "rescore": {
   "file": "docs/presupposition/ps-2aa/trust-mutants.json",
-  "head": "92c4f0417b9ee596f611449bd43e75dd87ea9299",
+  "head": "24928091e754168669685534d2dfd02a1fcaae96",
   "mode": "checks",
   "changed": [
-   "lean/VE/Presupposition/Examples.lean",
-   "lean/declarations.txt"
+   "tools/trust-classes.json"
   ],
-  "reused": 0,
-  "rerun": 200
+  "reused": 179,
+  "rerun": 21,
+  "plan_only": [
+   "tools/trust-classes.json"
+  ]
  },
  "definitions": [
   "lean/VE/Presupposition/Wire.lean: VE.Presupposition.Candidate",
@@ -973,6 +975,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:481: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "3c4563928516c7d4a5a89329f83a71c7c13aad0dba212a308fc269d781eab16d",
    "killed_at": [
     481,
@@ -996,6 +1000,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:484: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "67d5a974d55ad010045d0a801a6e2caef59cea4746fd0e059d6420fdf4450322",
    "killed_at": [
     484,
@@ -1019,6 +1025,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:579: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "d9d701f5e1d59e2ef9ddd781fbbbaf2beb40372678f40bbfa8b26a7381c2a680",
    "killed_at": [
     579,
@@ -1042,6 +1050,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:498: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "f6d003207809a5032817c14e6ac30f80eb8c699b53b058f73175d2bdad2a9b4d",
    "killed_at": [
     498,
@@ -1065,6 +1075,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:498: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "88f18671f02df5054bbbc3602c6a14bf87de5d987b9f0956f4e124140b351159",
    "killed_at": [
     498,
@@ -1088,6 +1100,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:520: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "0f77e40a64fe2b2cf4e43b0329d68a246c88a2cbe0429957a77649b4202c5f56",
    "killed_at": [
     520,
@@ -1111,6 +1125,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:580: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "645f000d150023886ab75ff13b05193e021eb69f2f187cdd022752c5ea0a816a",
    "killed_at": [
     580,
@@ -1134,6 +1150,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:496: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "281b9b1d5036924bb0cebe816def98c510f424e5d24427da3c33a2f3cc0f9af9",
    "killed_at": [
     496,
@@ -1157,6 +1175,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:496: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "486339bbbd83140c2425cdfcdfb553546e198652d4e6c7ebc0966a497fba0b88",
    "killed_at": [
     496,
@@ -1180,6 +1200,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:520: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "0f77e40a64fe2b2cf4e43b0329d68a246c88a2cbe0429957a77649b4202c5f56",
    "killed_at": [
     520,
@@ -1203,6 +1225,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:579: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "e0fbf9beb9aa16816e4cc9bc4dd711f3047eaaf8e8fb890cb7171dd12b9bf4fe",
    "killed_at": [
     579,
@@ -1226,6 +1250,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:496: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "281b9b1d5036924bb0cebe816def98c510f424e5d24427da3c33a2f3cc0f9af9",
    "killed_at": [
     496,
@@ -1249,6 +1275,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:498: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "f6d003207809a5032817c14e6ac30f80eb8c699b53b058f73175d2bdad2a9b4d",
    "killed_at": [
     498,
@@ -1272,6 +1300,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:520: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "0f77e40a64fe2b2cf4e43b0329d68a246c88a2cbe0429957a77649b4202c5f56",
    "killed_at": [
     520,
@@ -1295,6 +1325,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:565: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "fca5e8c54d4694aacbd531c3c07945626a8eb141aee7d6606a40659aa435064e",
    "killed_at": [
     565,
@@ -1318,6 +1350,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:496: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "281b9b1d5036924bb0cebe816def98c510f424e5d24427da3c33a2f3cc0f9af9",
    "killed_at": [
     496,
@@ -1341,6 +1375,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:520: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "0f77e40a64fe2b2cf4e43b0329d68a246c88a2cbe0429957a77649b4202c5f56",
    "killed_at": [
     520,
@@ -1364,6 +1400,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:496: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "281b9b1d5036924bb0cebe816def98c510f424e5d24427da3c33a2f3cc0f9af9",
    "killed_at": [
     496,
@@ -1387,6 +1425,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:551: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "705f1d4c6a48c651c1eed22d6906f77dce96c4167a779506a4ca21f3466b5c3c",
    "killed_at": [
     551,
@@ -1410,6 +1450,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:565: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "fca5e8c54d4694aacbd531c3c07945626a8eb141aee7d6606a40659aa435064e",
    "killed_at": [
     565,
@@ -1433,6 +1475,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:499: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "0fc7c80e48bdfb23b223eef81eb0dbd9082e0d142157bc98fb6adfce79de0410",
    "killed_at": [
     499,
@@ -1456,6 +1500,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:528: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "188e3f97b0fc83e7c9f4cd34ae95a7a76a1375648cd243b06fda8d36ab3fa240",
    "killed_at": [
     528,
@@ -1479,6 +1525,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:497: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "d8741ea05876554224d8adfd79cae0c40e3603a3d16035c711356956461a3bf3",
    "killed_at": [
     497,
@@ -1502,6 +1550,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:509: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "9660ac8a829a3781aa2d3d43508e0999de5d875491cf4bbb9a0818b72dc09efe",
    "killed_at": [
     509,
@@ -1525,6 +1575,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:579: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "e0fbf9beb9aa16816e4cc9bc4dd711f3047eaaf8e8fb890cb7171dd12b9bf4fe",
    "killed_at": [
     579,
@@ -1548,6 +1600,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:485: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "de7913617409b27b61a30b0ee7586b97794ce7ccb5b99f703391e904fe986261",
    "killed_at": [
     485,
@@ -1571,6 +1625,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:496: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "281b9b1d5036924bb0cebe816def98c510f424e5d24427da3c33a2f3cc0f9af9",
    "killed_at": [
     496,
@@ -1594,6 +1650,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:579: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "d9d701f5e1d59e2ef9ddd781fbbbaf2beb40372678f40bbfa8b26a7381c2a680",
    "killed_at": [
     579,
@@ -1617,6 +1675,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:579: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "d9d701f5e1d59e2ef9ddd781fbbbaf2beb40372678f40bbfa8b26a7381c2a680",
    "killed_at": [
     579,
@@ -1659,6 +1719,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:498: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "88f18671f02df5054bbbc3602c6a14bf87de5d987b9f0956f4e124140b351159",
    "killed_at": [
     498,
@@ -1682,6 +1744,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:498: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "f9e633b431bd74cf19772cb482261987612fb5c37ef42a5c0a995f9b17906abf",
    "killed_at": [
     498,
@@ -1705,6 +1769,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:551: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "705f1d4c6a48c651c1eed22d6906f77dce96c4167a779506a4ca21f3466b5c3c",
    "killed_at": [
     551,
@@ -1728,6 +1794,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:520: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "0f77e40a64fe2b2cf4e43b0329d68a246c88a2cbe0429957a77649b4202c5f56",
    "killed_at": [
     520,
@@ -1751,6 +1819,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:580: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "0fad323eb846c5253e1f15bef882d87d15476dac400530ab29b2b25c6d7f9201",
    "killed_at": [
     580,
@@ -1774,6 +1844,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:579: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "e0fbf9beb9aa16816e4cc9bc4dd711f3047eaaf8e8fb890cb7171dd12b9bf4fe",
    "killed_at": [
     579,
@@ -1797,6 +1869,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:565: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "fca5e8c54d4694aacbd531c3c07945626a8eb141aee7d6606a40659aa435064e",
    "killed_at": [
     565,
@@ -1820,6 +1894,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:580: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "645f000d150023886ab75ff13b05193e021eb69f2f187cdd022752c5ea0a816a",
    "killed_at": [
     580,
@@ -1843,6 +1919,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:581: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "609d1e806937dff344de5377bf4dcc1027c8a379e9c1c374edf1292e49d940f2",
    "killed_at": [
     581,
@@ -1923,6 +2001,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:481: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "3c4563928516c7d4a5a89329f83a71c7c13aad0dba212a308fc269d781eab16d",
    "killed_at": [
     481,
@@ -1946,6 +2026,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:484: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "67d5a974d55ad010045d0a801a6e2caef59cea4746fd0e059d6420fdf4450322",
    "killed_at": [
     484,
@@ -1969,6 +2051,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:581: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "2d8836e70305396250375aeaa4a4be8ab481d687ae01116ce79d1f790f7fda53",
    "killed_at": [
     581,
@@ -1992,6 +2076,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:497: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "d8741ea05876554224d8adfd79cae0c40e3603a3d16035c711356956461a3bf3",
    "killed_at": [
     497,
@@ -2015,6 +2101,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:496: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "281b9b1d5036924bb0cebe816def98c510f424e5d24427da3c33a2f3cc0f9af9",
    "killed_at": [
     496,
@@ -2038,6 +2126,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:496: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "281b9b1d5036924bb0cebe816def98c510f424e5d24427da3c33a2f3cc0f9af9",
    "killed_at": [
     496,
@@ -2061,6 +2151,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:506: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "d6866466695e7deff5c10419788765bd5bebca8702bbd035e4b04f3a720ad81d",
    "killed_at": [
     506,
@@ -2084,6 +2176,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:565: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "fca5e8c54d4694aacbd531c3c07945626a8eb141aee7d6606a40659aa435064e",
    "killed_at": [
     565,
@@ -2107,6 +2201,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:498: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "88f18671f02df5054bbbc3602c6a14bf87de5d987b9f0956f4e124140b351159",
    "killed_at": [
     498,
@@ -2130,6 +2226,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:485: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "de7913617409b27b61a30b0ee7586b97794ce7ccb5b99f703391e904fe986261",
    "killed_at": [
     485,
@@ -2153,6 +2251,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:579: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "d9d701f5e1d59e2ef9ddd781fbbbaf2beb40372678f40bbfa8b26a7381c2a680",
    "killed_at": [
     579,
@@ -2176,6 +2276,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:581: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "2d8836e70305396250375aeaa4a4be8ab481d687ae01116ce79d1f790f7fda53",
    "killed_at": [
     581,
@@ -2256,6 +2358,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:580: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "0fad323eb846c5253e1f15bef882d87d15476dac400530ab29b2b25c6d7f9201",
    "killed_at": [
     580,
@@ -2279,6 +2383,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:580: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "645f000d150023886ab75ff13b05193e021eb69f2f187cdd022752c5ea0a816a",
    "killed_at": [
     580,
@@ -2359,6 +2465,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:498: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "f6d003207809a5032817c14e6ac30f80eb8c699b53b058f73175d2bdad2a9b4d",
    "killed_at": [
     498,
@@ -2382,6 +2490,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:507: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "0507f69c726211725efe0146e256109ba659834285482ae304382ed6b2ae57f0",
    "killed_at": [
     507,
@@ -2405,6 +2515,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:579: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "d9d701f5e1d59e2ef9ddd781fbbbaf2beb40372678f40bbfa8b26a7381c2a680",
    "killed_at": [
     579,
@@ -2466,6 +2578,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:580: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "0fad323eb846c5253e1f15bef882d87d15476dac400530ab29b2b25c6d7f9201",
    "killed_at": [
     580,
@@ -2489,6 +2603,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:581: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "609d1e806937dff344de5377bf4dcc1027c8a379e9c1c374edf1292e49d940f2",
    "killed_at": [
     581,
@@ -2569,6 +2685,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:498: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "f6d003207809a5032817c14e6ac30f80eb8c699b53b058f73175d2bdad2a9b4d",
    "killed_at": [
     498,
@@ -2592,6 +2710,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:579: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "d9d701f5e1d59e2ef9ddd781fbbbaf2beb40372678f40bbfa8b26a7381c2a680",
    "killed_at": [
     579,
@@ -2634,6 +2754,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:580: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "0fad323eb846c5253e1f15bef882d87d15476dac400530ab29b2b25c6d7f9201",
    "killed_at": [
     580,
@@ -2657,6 +2779,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:580: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "645f000d150023886ab75ff13b05193e021eb69f2f187cdd022752c5ea0a816a",
    "killed_at": [
     580,
@@ -2699,6 +2823,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:579: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "d9d701f5e1d59e2ef9ddd781fbbbaf2beb40372678f40bbfa8b26a7381c2a680",
    "killed_at": [
     579,
@@ -2760,6 +2886,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:579: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "d9d701f5e1d59e2ef9ddd781fbbbaf2beb40372678f40bbfa8b26a7381c2a680",
    "killed_at": [
     579,
@@ -2802,6 +2930,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:579: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "d9d701f5e1d59e2ef9ddd781fbbbaf2beb40372678f40bbfa8b26a7381c2a680",
    "killed_at": [
     579,
@@ -2844,6 +2974,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:580: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "0fad323eb846c5253e1f15bef882d87d15476dac400530ab29b2b25c6d7f9201",
    "killed_at": [
     580,
@@ -2867,6 +2999,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:582: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "0c5daf84904c7904c3ced4d1e5713e88231d8c88634e15a7885189483f504472",
    "killed_at": [
     582,
@@ -2890,6 +3024,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:581: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "2d8836e70305396250375aeaa4a4be8ab481d687ae01116ce79d1f790f7fda53",
    "killed_at": [
     581,
@@ -2913,6 +3049,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:581: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "2d8836e70305396250375aeaa4a4be8ab481d687ae01116ce79d1f790f7fda53",
    "killed_at": [
     581,
@@ -2936,6 +3074,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:580: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "0fad323eb846c5253e1f15bef882d87d15476dac400530ab29b2b25c6d7f9201",
    "killed_at": [
     580,
@@ -2959,6 +3099,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:589: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "9636bc10cb2817ba6d56ca2e896f68e062850601cb8ef77af6dbbf356ac073df",
    "killed_at": [
     589,
@@ -2982,6 +3124,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:509: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "9660ac8a829a3781aa2d3d43508e0999de5d875491cf4bbb9a0818b72dc09efe",
    "killed_at": [
     509,
@@ -3005,6 +3149,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:509: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "6bd4620ff535e57d24012ef23058eaf41ea93a4e8e4709435fc58b3426f35fe4",
    "killed_at": [
     509,
@@ -3028,6 +3174,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:551: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "705f1d4c6a48c651c1eed22d6906f77dce96c4167a779506a4ca21f3466b5c3c",
    "killed_at": [
     551,
@@ -3051,6 +3199,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:520: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "0f77e40a64fe2b2cf4e43b0329d68a246c88a2cbe0429957a77649b4202c5f56",
    "killed_at": [
     520,
@@ -3074,6 +3224,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:579: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "d9d701f5e1d59e2ef9ddd781fbbbaf2beb40372678f40bbfa8b26a7381c2a680",
    "killed_at": [
     579,
@@ -3097,6 +3249,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:579: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "e0fbf9beb9aa16816e4cc9bc4dd711f3047eaaf8e8fb890cb7171dd12b9bf4fe",
    "killed_at": [
     579,
@@ -3120,6 +3274,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:565: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "fca5e8c54d4694aacbd531c3c07945626a8eb141aee7d6606a40659aa435064e",
    "killed_at": [
     565,
@@ -3143,6 +3299,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:589: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "9636bc10cb2817ba6d56ca2e896f68e062850601cb8ef77af6dbbf356ac073df",
    "killed_at": [
     589,
@@ -3166,6 +3324,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:509: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "9660ac8a829a3781aa2d3d43508e0999de5d875491cf4bbb9a0818b72dc09efe",
    "killed_at": [
     509,
@@ -3189,6 +3349,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:509: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "6bd4620ff535e57d24012ef23058eaf41ea93a4e8e4709435fc58b3426f35fe4",
    "killed_at": [
     509,
@@ -3212,6 +3374,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:551: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "705f1d4c6a48c651c1eed22d6906f77dce96c4167a779506a4ca21f3466b5c3c",
    "killed_at": [
     551,
@@ -3235,6 +3399,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:520: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "0f77e40a64fe2b2cf4e43b0329d68a246c88a2cbe0429957a77649b4202c5f56",
    "killed_at": [
     520,
@@ -3258,6 +3424,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:579: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "d9d701f5e1d59e2ef9ddd781fbbbaf2beb40372678f40bbfa8b26a7381c2a680",
    "killed_at": [
     579,
@@ -3281,6 +3449,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:579: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "e0fbf9beb9aa16816e4cc9bc4dd711f3047eaaf8e8fb890cb7171dd12b9bf4fe",
    "killed_at": [
     579,
@@ -3304,6 +3474,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:565: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "fca5e8c54d4694aacbd531c3c07945626a8eb141aee7d6606a40659aa435064e",
    "killed_at": [
     565,
@@ -3327,6 +3499,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:508: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "799d6a7341e6871075f05e4bd7ea5531e2fc803156d16fcf0911cfef5119320c",
    "killed_at": [
     508,
@@ -3350,6 +3524,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:498: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "88f18671f02df5054bbbc3602c6a14bf87de5d987b9f0956f4e124140b351159",
    "killed_at": [
     498,
@@ -3373,6 +3549,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:551: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "705f1d4c6a48c651c1eed22d6906f77dce96c4167a779506a4ca21f3466b5c3c",
    "killed_at": [
     551,
@@ -3396,6 +3574,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:580: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "0fad323eb846c5253e1f15bef882d87d15476dac400530ab29b2b25c6d7f9201",
    "killed_at": [
     580,
@@ -3419,6 +3599,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:580: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "645f000d150023886ab75ff13b05193e021eb69f2f187cdd022752c5ea0a816a",
    "killed_at": [
     580,
@@ -3442,6 +3624,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:565: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "fca5e8c54d4694aacbd531c3c07945626a8eb141aee7d6606a40659aa435064e",
    "killed_at": [
     565,
@@ -3465,6 +3649,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:508: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "799d6a7341e6871075f05e4bd7ea5531e2fc803156d16fcf0911cfef5119320c",
    "killed_at": [
     508,
@@ -3488,6 +3674,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:509: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "9660ac8a829a3781aa2d3d43508e0999de5d875491cf4bbb9a0818b72dc09efe",
    "killed_at": [
     509,
@@ -3511,6 +3699,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:551: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "705f1d4c6a48c651c1eed22d6906f77dce96c4167a779506a4ca21f3466b5c3c",
    "killed_at": [
     551,
@@ -3534,6 +3724,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:580: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "0fad323eb846c5253e1f15bef882d87d15476dac400530ab29b2b25c6d7f9201",
    "killed_at": [
     580,
@@ -3557,6 +3749,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:580: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "645f000d150023886ab75ff13b05193e021eb69f2f187cdd022752c5ea0a816a",
    "killed_at": [
     580,
@@ -3580,6 +3774,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:565: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "fca5e8c54d4694aacbd531c3c07945626a8eb141aee7d6606a40659aa435064e",
    "killed_at": [
     565,
@@ -3603,6 +3799,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:589: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "9636bc10cb2817ba6d56ca2e896f68e062850601cb8ef77af6dbbf356ac073df",
    "killed_at": [
     589,
@@ -3626,6 +3824,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:551: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "705f1d4c6a48c651c1eed22d6906f77dce96c4167a779506a4ca21f3466b5c3c",
    "killed_at": [
     551,
@@ -3649,6 +3849,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:580: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "0fad323eb846c5253e1f15bef882d87d15476dac400530ab29b2b25c6d7f9201",
    "killed_at": [
     580,
@@ -3672,6 +3874,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:601: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "0261b02a171c75ba249f6a05c4ac7fb653a610d6db88a7a757d30e13bc0e3d72",
    "killed_at": [
     601,
@@ -3695,6 +3899,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:565: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "fca5e8c54d4694aacbd531c3c07945626a8eb141aee7d6606a40659aa435064e",
    "killed_at": [
     565,
@@ -3718,6 +3924,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:501: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "6256c909fd0ef07401dd33db2392909c0bfc908bc42d58b3a5d23c0c4bac1183",
    "killed_at": [
     501,
@@ -3741,6 +3949,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:551: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "705f1d4c6a48c651c1eed22d6906f77dce96c4167a779506a4ca21f3466b5c3c",
    "killed_at": [
     551,
@@ -3764,6 +3974,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:598: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "75f0c7b6ec524197daee84791f14b67682f83cf8e3d21123aa46879599372e59",
    "killed_at": [
     598,
@@ -3787,6 +3999,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:581: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "609d1e806937dff344de5377bf4dcc1027c8a379e9c1c374edf1292e49d940f2",
    "killed_at": [
     581,
@@ -3810,6 +4024,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:565: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "fca5e8c54d4694aacbd531c3c07945626a8eb141aee7d6606a40659aa435064e",
    "killed_at": [
     565,
@@ -3833,6 +4049,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:496: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "281b9b1d5036924bb0cebe816def98c510f424e5d24427da3c33a2f3cc0f9af9",
    "killed_at": [
     496,
@@ -3856,6 +4074,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:581: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "2d8836e70305396250375aeaa4a4be8ab481d687ae01116ce79d1f790f7fda53",
    "killed_at": [
     581,
@@ -3879,6 +4099,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:580: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "645f000d150023886ab75ff13b05193e021eb69f2f187cdd022752c5ea0a816a",
    "killed_at": [
     580,
@@ -3902,6 +4124,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:590: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "e54f388a0fc7decb94bbc450bc0574a0dbe44e14b05b8635257a51e835b54221",
    "killed_at": [
     590,
@@ -3925,6 +4149,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:581: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "2d8836e70305396250375aeaa4a4be8ab481d687ae01116ce79d1f790f7fda53",
    "killed_at": [
     581,
@@ -3948,6 +4174,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:580: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "645f000d150023886ab75ff13b05193e021eb69f2f187cdd022752c5ea0a816a",
    "killed_at": [
     580,
@@ -3971,6 +4199,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:506: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "d6866466695e7deff5c10419788765bd5bebca8702bbd035e4b04f3a720ad81d",
    "killed_at": [
     506,
@@ -3994,6 +4224,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:600: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "43228e506372c7d43e38623828ee24abe7c5cff0c9eaec42fb18cf3a5f39188e",
    "killed_at": [
     600,
@@ -4017,6 +4249,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:498: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "f6d003207809a5032817c14e6ac30f80eb8c699b53b058f73175d2bdad2a9b4d",
    "killed_at": [
     498,
@@ -4040,6 +4274,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:600: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "43228e506372c7d43e38623828ee24abe7c5cff0c9eaec42fb18cf3a5f39188e",
    "killed_at": [
     600,
@@ -4063,6 +4299,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:580: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "0fad323eb846c5253e1f15bef882d87d15476dac400530ab29b2b25c6d7f9201",
    "killed_at": [
     580,
@@ -4086,6 +4324,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:580: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "0fad323eb846c5253e1f15bef882d87d15476dac400530ab29b2b25c6d7f9201",
    "killed_at": [
     580,
@@ -4109,6 +4349,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:508: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "799d6a7341e6871075f05e4bd7ea5531e2fc803156d16fcf0911cfef5119320c",
    "killed_at": [
     508,
@@ -4132,6 +4374,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:594: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "d9639ef522a27a7e69e415e652be4e7f669ff13435f0d137e111a37e4e885cb4",
    "killed_at": [
     594,
@@ -4155,6 +4399,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:594: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "2da39af13b3bb904bf8da5c0e9d16e6fcebd99167e180576a3eebbc8ba892fa4",
    "killed_at": [
     594,
@@ -4178,6 +4424,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:551: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "705f1d4c6a48c651c1eed22d6906f77dce96c4167a779506a4ca21f3466b5c3c",
    "killed_at": [
     551,
@@ -4201,6 +4449,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:520: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "0f77e40a64fe2b2cf4e43b0329d68a246c88a2cbe0429957a77649b4202c5f56",
    "killed_at": [
     520,
@@ -4224,6 +4474,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:579: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "d9d701f5e1d59e2ef9ddd781fbbbaf2beb40372678f40bbfa8b26a7381c2a680",
    "killed_at": [
     579,
@@ -4247,6 +4499,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:579: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "e0fbf9beb9aa16816e4cc9bc4dd711f3047eaaf8e8fb890cb7171dd12b9bf4fe",
    "killed_at": [
     579,
@@ -4270,6 +4524,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:565: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "fca5e8c54d4694aacbd531c3c07945626a8eb141aee7d6606a40659aa435064e",
    "killed_at": [
     565,
@@ -4293,6 +4549,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:508: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "799d6a7341e6871075f05e4bd7ea5531e2fc803156d16fcf0911cfef5119320c",
    "killed_at": [
     508,
@@ -4316,6 +4574,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:594: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "d9639ef522a27a7e69e415e652be4e7f669ff13435f0d137e111a37e4e885cb4",
    "killed_at": [
     594,
@@ -4339,6 +4599,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:594: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "2da39af13b3bb904bf8da5c0e9d16e6fcebd99167e180576a3eebbc8ba892fa4",
    "killed_at": [
     594,
@@ -4362,6 +4624,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:551: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "705f1d4c6a48c651c1eed22d6906f77dce96c4167a779506a4ca21f3466b5c3c",
    "killed_at": [
     551,
@@ -4385,6 +4649,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:520: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "0f77e40a64fe2b2cf4e43b0329d68a246c88a2cbe0429957a77649b4202c5f56",
    "killed_at": [
     520,
@@ -4408,6 +4674,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:579: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "d9d701f5e1d59e2ef9ddd781fbbbaf2beb40372678f40bbfa8b26a7381c2a680",
    "killed_at": [
     579,
@@ -4431,6 +4699,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:579: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "e0fbf9beb9aa16816e4cc9bc4dd711f3047eaaf8e8fb890cb7171dd12b9bf4fe",
    "killed_at": [
     579,
@@ -4454,6 +4724,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:565: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "fca5e8c54d4694aacbd531c3c07945626a8eb141aee7d6606a40659aa435064e",
    "killed_at": [
     565,
@@ -4477,6 +4749,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:501: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "ad7d722ce578015571c3a526f740ad53f805fc73eb826e7866984478d01dda22",
    "killed_at": [
     501,
@@ -4500,6 +4774,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:594: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "2da39af13b3bb904bf8da5c0e9d16e6fcebd99167e180576a3eebbc8ba892fa4",
    "killed_at": [
     594,
@@ -4523,6 +4799,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:579: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "d9d701f5e1d59e2ef9ddd781fbbbaf2beb40372678f40bbfa8b26a7381c2a680",
    "killed_at": [
     579,
@@ -4546,6 +4824,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:589: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "9636bc10cb2817ba6d56ca2e896f68e062850601cb8ef77af6dbbf356ac073df",
    "killed_at": [
     589,
@@ -4569,6 +4849,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:498: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "88f18671f02df5054bbbc3602c6a14bf87de5d987b9f0956f4e124140b351159",
    "killed_at": [
     498,
@@ -4592,6 +4874,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:551: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "705f1d4c6a48c651c1eed22d6906f77dce96c4167a779506a4ca21f3466b5c3c",
    "killed_at": [
     551,
@@ -4615,6 +4899,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:580: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "0fad323eb846c5253e1f15bef882d87d15476dac400530ab29b2b25c6d7f9201",
    "killed_at": [
     580,
@@ -4638,6 +4924,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:580: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "645f000d150023886ab75ff13b05193e021eb69f2f187cdd022752c5ea0a816a",
    "killed_at": [
     580,
@@ -4661,6 +4949,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:565: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "fca5e8c54d4694aacbd531c3c07945626a8eb141aee7d6606a40659aa435064e",
    "killed_at": [
     565,
@@ -4684,6 +4974,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:589: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "9636bc10cb2817ba6d56ca2e896f68e062850601cb8ef77af6dbbf356ac073df",
    "killed_at": [
     589,
@@ -4707,6 +4999,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:594: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "d9639ef522a27a7e69e415e652be4e7f669ff13435f0d137e111a37e4e885cb4",
    "killed_at": [
     594,
@@ -4730,6 +5024,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:551: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "705f1d4c6a48c651c1eed22d6906f77dce96c4167a779506a4ca21f3466b5c3c",
    "killed_at": [
     551,
@@ -4753,6 +5049,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:580: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "0fad323eb846c5253e1f15bef882d87d15476dac400530ab29b2b25c6d7f9201",
    "killed_at": [
     580,
@@ -4776,6 +5074,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:580: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "645f000d150023886ab75ff13b05193e021eb69f2f187cdd022752c5ea0a816a",
    "killed_at": [
     580,
@@ -4799,6 +5099,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:603: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "460c38fc8abb499dcc5fc7e1407bb2603a19c6210b58ddf3b4366583d8e26680",
    "killed_at": [
     603,
@@ -4822,6 +5124,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:594: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "d9639ef522a27a7e69e415e652be4e7f669ff13435f0d137e111a37e4e885cb4",
    "killed_at": [
     594,
@@ -4845,6 +5149,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:598: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "75f0c7b6ec524197daee84791f14b67682f83cf8e3d21123aa46879599372e59",
    "killed_at": [
     598,
@@ -4868,6 +5174,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:589: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "9636bc10cb2817ba6d56ca2e896f68e062850601cb8ef77af6dbbf356ac073df",
    "killed_at": [
     589,
@@ -4891,6 +5199,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:551: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "705f1d4c6a48c651c1eed22d6906f77dce96c4167a779506a4ca21f3466b5c3c",
    "killed_at": [
     551,
@@ -4914,6 +5224,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:580: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "0fad323eb846c5253e1f15bef882d87d15476dac400530ab29b2b25c6d7f9201",
    "killed_at": [
     580,
@@ -4937,6 +5249,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:601: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "0261b02a171c75ba249f6a05c4ac7fb653a610d6db88a7a757d30e13bc0e3d72",
    "killed_at": [
     601,
@@ -4960,6 +5274,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:565: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "fca5e8c54d4694aacbd531c3c07945626a8eb141aee7d6606a40659aa435064e",
    "killed_at": [
     565,
@@ -4983,6 +5299,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:501: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "6256c909fd0ef07401dd33db2392909c0bfc908bc42d58b3a5d23c0c4bac1183",
    "killed_at": [
     501,
@@ -5006,6 +5324,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:551: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "705f1d4c6a48c651c1eed22d6906f77dce96c4167a779506a4ca21f3466b5c3c",
    "killed_at": [
     551,
@@ -5029,6 +5349,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:579: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "d9d701f5e1d59e2ef9ddd781fbbbaf2beb40372678f40bbfa8b26a7381c2a680",
    "killed_at": [
     579,
@@ -5052,6 +5374,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:581: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "609d1e806937dff344de5377bf4dcc1027c8a379e9c1c374edf1292e49d940f2",
    "killed_at": [
     581,
@@ -5075,6 +5399,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:565: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "fca5e8c54d4694aacbd531c3c07945626a8eb141aee7d6606a40659aa435064e",
    "killed_at": [
     565,
@@ -5098,6 +5424,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:596: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "8a5078e9521621bb97cfa4149b905383671d89f857d5cc74b875f451e832eefb",
    "killed_at": [
     596,
@@ -5121,6 +5449,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:598: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "75f0c7b6ec524197daee84791f14b67682f83cf8e3d21123aa46879599372e59",
    "killed_at": [
     598,
@@ -5144,6 +5474,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:496: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "281b9b1d5036924bb0cebe816def98c510f424e5d24427da3c33a2f3cc0f9af9",
    "killed_at": [
     496,
@@ -5167,6 +5499,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:582: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "0c5daf84904c7904c3ced4d1e5713e88231d8c88634e15a7885189483f504472",
    "killed_at": [
     582,
@@ -5190,6 +5524,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:580: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "645f000d150023886ab75ff13b05193e021eb69f2f187cdd022752c5ea0a816a",
    "killed_at": [
     580,
@@ -5213,6 +5549,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:502: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "1c6f6050d37c59888cf9f84d9f32bbad7923b2cb4b4311c6493f17e54cc33b02",
    "killed_at": [
     502,
@@ -5236,6 +5574,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:582: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "0c5daf84904c7904c3ced4d1e5713e88231d8c88634e15a7885189483f504472",
    "killed_at": [
     582,
@@ -5259,6 +5599,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:580: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "645f000d150023886ab75ff13b05193e021eb69f2f187cdd022752c5ea0a816a",
    "killed_at": [
     580,
@@ -5282,6 +5624,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:594: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "d9639ef522a27a7e69e415e652be4e7f669ff13435f0d137e111a37e4e885cb4",
    "killed_at": [
     594,
@@ -5305,6 +5649,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:580: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "0fad323eb846c5253e1f15bef882d87d15476dac400530ab29b2b25c6d7f9201",
    "killed_at": [
     580,
@@ -5328,6 +5674,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:590: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "e54f388a0fc7decb94bbc450bc0574a0dbe44e14b05b8635257a51e835b54221",
    "killed_at": [
     590,
@@ -5351,6 +5699,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:600: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "43228e506372c7d43e38623828ee24abe7c5cff0c9eaec42fb18cf3a5f39188e",
    "killed_at": [
     600,
@@ -5374,6 +5724,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:498: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "f6d003207809a5032817c14e6ac30f80eb8c699b53b058f73175d2bdad2a9b4d",
    "killed_at": [
     498,
@@ -5397,6 +5749,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:600: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "43228e506372c7d43e38623828ee24abe7c5cff0c9eaec42fb18cf3a5f39188e",
    "killed_at": [
     600,
@@ -5420,6 +5774,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:498: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "88f18671f02df5054bbbc3602c6a14bf87de5d987b9f0956f4e124140b351159",
    "killed_at": [
     498,
@@ -5443,6 +5799,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:581: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "2d8836e70305396250375aeaa4a4be8ab481d687ae01116ce79d1f790f7fda53",
    "killed_at": [
     581,
@@ -5466,6 +5824,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:581: Expression",
    "raw_status": "KILLED",
+   "reused_from": "24928091e754168669685534d2dfd02a1fcaae96",
+   "carried": "checks",
    "reads": "2d8836e70305396250375aeaa4a4be8ab481d687ae01116ce79d1f790f7fda53",
    "killed_at": [
     581,

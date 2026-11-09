@@ -35,7 +35,7 @@ first run (d8f3a1b62, no allow file): 152 KILLED, 27 SURVIVOR, 21 UNKNOWN, exit 
 after c8571dd8f: 180 KILLED, 2 SURVIVOR (badAt unclassed; entersRestriction p.reverse.take 1), 21 ALLOWED, exit 1
 trust_mutants: 179 KILLED, 0 SURVIVOR, 0 UNKNOWN, 0 INVALID, 21 ALLOWED, 0 NOT RUN in 1680 s; 0 carried from 9
 [cloud2 06:06:14Z] summary: ran on ve-cloud-2, trust_mutants, exit=0, 1692s
-(head 24928091e, base ee1fb3efa)
+(head 24928091e, base ee1fb3efa; rescored at 2059b0b59 after trust-classes.json kept main's module order: 179 carried, 179 KILLED, 0 SURVIVOR, 0 UNKNOWN, 21 ALLOWED, exit 0)
 
 ## mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run (head 64f06135d; 24928091e changes one comment line of Examples.lean and lean/declarations.txt)
 113/554 test units (map 5fc9d8c7f7, 2.64 s)
