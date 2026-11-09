@@ -1,0 +1,9 @@
+step	rc	seconds
+rust_toolchain	0	5.9
+python_env	0	2.0
+cargo_fetch	0	0.7
+cache_restore	3	0.1
+lake	0	1124.4
+pins	0	22.0
+p1_tokenizer	0	0.2
+gate	0	2041.1
