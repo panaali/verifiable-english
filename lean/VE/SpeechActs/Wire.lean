@@ -467,6 +467,32 @@ def innerKind : VE.Route.Admission.Kind → VE.Route.Admission.Kind
 `_wraps`). -/
 def wraps (kind bare : VE.Route.Admission.Kind) : Bool := innerKind kind == bare
 
+/-- 3.2: the content tag whose role a unit of `kind` reads, by the kind it wraps: `command` for `instruction`,
+`question` for `question`, `norm` for `norm`, a formula (`ast`) for every other kind. The one table of the kind a
+resolved fence must decode to (`Source.readSource`). -/
+def kindTag (kind : VE.Route.Admission.Kind) : String :=
+  match innerKind kind with
+  | .instruction => "command"
+  | .question => "question"
+  | .norm => "norm"
+  | _ => "ast"
+
+/-- The content tag a decoded role was read from; `asserted` and `other` read a formula. -/
+def Role.tag : Role → String
+  | .command _ => "command"
+  | .question _ | .quotedQuestion _ => "question"
+  | .binding _ => "binding"
+  | .norm _ => "norm"
+  | .asserted _ | .other => "ast"
+
+/-- A unit's decoded role is the one its kind (`kindJ`, as `decodeUnit` reads it) reads (`kindTag`); a formula in
+place of a command, question or norm decodes to `Role.other` and fails this. -/
+def roleFits (kindJ : Json) (role : Role) : Bool :=
+  if kindJ == .str "binding" then role.tag == "binding"
+  else match VE.Route.Admission.decodeKind 16 kindJ with
+    | .ok k => role.tag == kindTag k
+    | .error _ => false
+
 def decodeUnit (E : VE.Environment) (j : Json) : Except String SpeechUnitInfo := do
   VE.Bridge.displayFields j ["id", "span", "kind"] ["meaning", "support", "content", "source", "meaning_id"]
   let id ← stringField j "id"

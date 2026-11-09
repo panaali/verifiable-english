@@ -76,14 +76,14 @@ def click : Json := Json.mkObj [("force", .str "require"), ("act", .str "click_r
 def share : Json := Json.mkObj [("force", .str "forbid"), ("act", .str "share_permitted"), ("args", toJson ["token1"]),
   ("guard", toJson ["top"])]
 
-/-- Units `(id, kind, line, content)` laid end to end; a fenced unit (`content` none) reads its own line. -/
+/-- Units `(id, kind, line, content)` laid end to end (a `kind` that is JSON text, a nested kind, is parsed); a fenced unit (`content` none) reads its own line. -/
 def payload (units : List (String × String × String × Option Json)) (resolved : List (String × Json))
     (ctx : Bool := true) (extra : List (String × Json) := []) : Json := Id.run do
   let mut start := 0
   let mut rows := #[]
   for (id, kind, line, content) in units do
     rows := rows.push (Json.mkObj [("id", .str id), ("span", toJson [start, start + line.utf8ByteSize]),
-      ("kind", .str kind), ("meaning", .str "specified"), ("support", .str "none"),
+      ("kind", (Json.parse kind).toOption.getD (.str kind)), ("meaning", .str "specified"), ("support", .str "none"),
       ("content", content.getD (Json.mkObj [("fence", .str id)]))] |>.setObjVal! "surface" (.str "english"))
     start := start + line.utf8ByteSize
   Json.mkObj ([("metadata", Json.mkObj ([("format", .str "ve-document@2"), ("environment", env),
@@ -115,6 +115,36 @@ def mismatch : String := "InvalidInput: resolved speech fences"
 -- Without the context the command is not read: a later fault of the document is the one reported.
 #guard result (payload two [("c1", click), ("c2", share)] (ctx := false) (extra := [("weights", .num 5)])) ==
   "invalid removable reading weights"
+-- 3.2 (ci-2b F1): a resolved fence decodes to the role its kind reads (`Wire.roleFits`). A fence of a kind wrapping
+-- `instruction` resolved as a formula is refused, never dropped unread: plain, attributed, hedged and a `MIXED` part;
+-- so is a question or norm fence resolved as a formula. An attributed command is still read (and dormant).
+def resolving (p : Json) (resolved : List (String × Json)) : Json :=
+  p.setObjVal! "resolved_fences" (Json.mkObj resolved)
+def formula : Json := Json.mkObj [("ast", toJson ["top"])]
+def attributed : String := "[\"attributed\", \"bob\", \"says\", \"instruction\"]"
+def hedged : String := "[\"hedged\", \"likely\", \"instruction\"]"
+def one (kind line : String) : List (String × String × String × Option Json) := [("c1", kind, line, none)]
+/-- `p` with its units as the `CHECKED` parts of one `MIXED` unit `m`. -/
+def mixed (p : Json) : Json :=
+  let md := p.getObjValD "metadata"
+  let parts := match md.getObjValD "units" with
+    | .arr us => Json.arr (us.map (·.setObjVal! "status" (.str "CHECKED")))
+    | j => j
+  md.setObjVal! "units" (Json.arr #[Json.mkObj [("id", .str "m"),
+      ("span", toJson [0, (p.getObjValD "source").getStr?.toOption.getD "" |>.utf8ByteSize]),
+      ("status", .str "MIXED"), ("parts", parts)]]) |> p.setObjVal! "metadata"
+#guard result (payload (one "instruction" "Click Check.\n") [("c1", click)]) == "ok"
+#guard [one "instruction" "Click Check.\n", one attributed "Click Check.\n", one hedged "Click Check.\n",
+    one "question" "Is atlas reviewed?\n", one "norm" "Click Check.\n"].all fun units =>
+  result (resolving (payload units []) [("c1", formula)]) == mismatch
+#guard result (mixed (payload two [("c1", click), ("c2", share)])) == "ok"
+#guard result (mixed (resolving (payload two []) [("c1", formula), ("c2", Json.mkObj [("command", share)])])) ==
+  mismatch
+#guard result (payload (one attributed "Click Check.\n") [("c1", click)]) == "ok"
+#guard result (payload (one attributed "Click Check.\n") [("c1", share)]) == mismatch
+-- An asserted fence resolved as a formula is its assertion.
+#guard result (resolving (payload (one "asserted" "Atlas is reviewed.\n") [] (ctx := false)) [("c1", formula)]) ==
+  "ok"
 -- The fences Python resolves, charged against `maxCases` before any is read (asserted fences, none resolved).
 def fenced (n : Nat) : Json :=
   payload ((List.range n).map fun i => (s!"a{i}", "asserted", "Atlas is reviewed.\n", none)) [] (ctx := false)

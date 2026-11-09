@@ -24,8 +24,9 @@ payload of 3.5, as `Discourse.Loader.payload` builds it from a document text) an
 * the answer, nomination and compliance records of 3.3, each replayed by the checkers `Run` already uses.
 
 What is not done here (named, never a silent acceptance): English fences other than commands need the speech parser,
-which is Python's English layer (`NotImplemented: fenced English content`). Every resolved command fence is read again
-by `VE.Commands.readInstruction` under the payload's `reading_context` (A2, commands-imperatives CI-2). The claim graph is admitted by the `admission` kind over
+which is Python's English layer (`NotImplemented: fenced English content`). Every resolved fence must decode to the
+role its kind reads (`Wire.roleFits`), so every resolved fence of a kind wrapping `instruction` is a command, and each
+is read again by `VE.Commands.readInstruction` under the payload's `reading_context` (A2, commands-imperatives CI-2). The claim graph is admitted by the `admission` kind over
 this wrapper (`Source/Admission.lean`, 8.5's `SpeechAdmitted`). -/
 namespace VE.SpeechActs.Source
 open Lean
@@ -763,8 +764,15 @@ def readSource (payload evidence : Json) : Except String { src : SpeechSource //
      | .ok r => [("reading_sets", r)]
      | .error _ => []))
   let dec ← Run.checkedDocument environment document
-  -- A2: every resolved command fence is Lean's one reading of its wording, read once under one context; a payload
-  -- with none is refused by `decodeSpeechSource`.
+  -- 3.2: every resolved fence decodes to the role its kind reads (`Wire.roleFits`): a fence of a kind wrapping
+  -- `instruction` is a command (so the loop below reads it), one wrapping `question` a question, one wrapping `norm`
+  -- a norm. Formula content in their place would decode to no role and the unit would be dropped, never read.
+  let neededKinds : Std.HashMap String Json := Std.HashMap.ofList (needed.map fun u => (u.id, u.kind))
+  for i in dec.units do
+    if let some k := neededKinds.get? i.id then
+      unless Wire.roleFits k i.role do throw "InvalidInput: resolved speech fences"
+  -- A2: every fence of a kind wrapping `instruction` the wrapper resolves is now a command, and is Lean's one reading
+  -- of its wording, read once under one context; a payload with none is refused by `decodeSpeechSource`.
   let neededIds : Std.HashSet String := Std.HashSet.ofList (needed.map (·.id))
   let commands := dec.units.filterMap fun i => match i.role with
     | .command c => if neededIds.contains i.id then some (i.id, c) else none

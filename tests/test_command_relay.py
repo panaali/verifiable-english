@@ -106,6 +106,64 @@ def test_a_resolved_command_lean_does_not_read_is_refused(change):
                       reading_context=context)
 
 
+_ROLE_KINDS = {"instruction": "instruction", "attributed": ["attributed", "bob", "says", "instruction"],
+               "hedged": ["hedged", "likely", "instruction"], "question": "question", "norm": "norm"}
+
+
+def _as_mixed_part(metadata, source):
+    """The fixture's one unit as the first `CHECKED` part of a `MIXED` unit `m`, an asserted line the second; the
+    source with that line."""
+    line = "Atlas is reviewed.\n"
+    asserted = {**unit("a", 0, "asserted", {"ast": U("reviewed", "atlas")}), "span": [len(source), len(source + line)]}
+    metadata["units"] = [{"id": "m", "span": [0, len(source + line)], "status": "MIXED",
+                          "parts": [{**metadata["units"][0], "status": "CHECKED"}, {**asserted, "status": "CHECKED"}]}]
+    return source + line
+
+
+@pytest.mark.parametrize("mixed", [False, True], ids=["unit", "mixed-part"])
+@pytest.mark.parametrize("kind", list(_ROLE_KINDS))
+def test_a_fence_resolved_as_a_formula_in_place_of_its_role_is_refused(kind, mixed):
+    """ci-2b F1 (3.2, `Wire.roleFits`): a fence whose kind wraps `instruction`, `question` or `norm`, resolved as a
+    formula, would decode to no role and never be read (an instruction would vanish); Lean refuses it, plain, wrapped
+    and as a `MIXED` part, with and without the reading context."""
+    metadata, source, fences, _, context = _fenced()
+    metadata["units"][0]["kind"] = _ROLE_KINDS[kind]
+    if mixed:
+        source = _as_mixed_part(metadata, source)
+    for extra in ({"reading_context": context}, {}):
+        with pytest.raises(VEError, match="^InvalidInput: resolved speech fences$"):
+            decide_source(metadata, source, fences, resolved_fences={"x": {"ast": ["top"]}}, **extra)
+
+
+@pytest.mark.parametrize("mixed", [False, True], ids=["unit", "mixed-part"])
+@pytest.mark.parametrize("kind", ["instruction", "attributed", "hedged"])
+def test_every_instruction_fence_is_read_as_a_command(kind, mixed):
+    """The control of the refusal above: Lean's own reading of the same fence is accepted and read (the plain
+    command active, a quoted one dormant), and a reading Lean does not give is refused."""
+    metadata, source, fences, command, context = _fenced()
+    metadata["units"][0]["kind"] = _ROLE_KINDS[kind]
+    if mixed:
+        source = _as_mixed_part(metadata, source)
+    report = decide_source(metadata, source, fences, resolved_fences={"x": {"command": command}},
+                           reading_context=context)
+    assert ([c["unit"] for c in report["commands"]], report["dormant"]) == \
+        ((["x"], []) if kind == "instruction" else ([], ["x"]))
+    with pytest.raises(VEError, match="^InvalidInput: resolved speech fences$"):
+        decide_source(metadata, source, fences, resolved_fences={"x": {"command": {**command, "force": "forbid",
+                                                                          "act": "click_permitted"}}},
+                      reading_context=context)
+
+
+def test_an_asserted_fence_resolved_as_a_formula_is_its_assertion():
+    """An asserted fence's role is a formula: `roleFits` keeps Python's resolution of it."""
+    env = base_env()
+    source = "Atlas is reviewed.\n"
+    metadata = {"format": "ve-document@2", "environment": env,
+                "units": [{**unit("a", 0, "asserted", {"fence": "a"}), "span": [0, len(source)],
+                           "surface": "english"}]}
+    assert decide_source(metadata, source, {"a": source}, resolved_fences={"a": {"ast": U("reviewed", "atlas")}})
+
+
 def test_a_question_fence_needs_no_reading_context():
     env = base_env()
     source = "Is atlas reviewed?\n"
