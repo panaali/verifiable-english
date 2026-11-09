@@ -26,8 +26,10 @@ def allE {α : Type} (f : α → Except String Unit) : List α → Except String
   | [] => .ok ()
   | a :: as => do f a; allE f as
 
-/-- The id of the first obligation of the block that satisfies `p` (the diagnostic names it). -/
-def firstOb (obs : List Obligation) (p : Obligation → Bool) : String := ((obs.find? p).map (·.id)).getD ""
+/-- The id of the first obligation of the block that satisfies `p`, else of the block's first (the diagnostic names
+    an obligation of the request). -/
+def firstOb (obs : List Obligation) (p : Obligation → Bool) : String :=
+  ((obs.find? p).map (·.id)).getD ((obs.head?.map (·.id)).getD "")
 
 /-! ## Step 2: ids, units and rows -/
 
@@ -165,7 +167,8 @@ def carrierOk (t : CandidateTable) (D : PDoc) (T : VE.Norms.Tree) (c : Checked) 
     s!"PresuppositionCertificate: {c.ob.id}"
   ensure (match c.ob.carrier with
     | .assumed u => unitAsserted D u && unitContent D u == some c.goal && (c.ob.position == .heading || u != c.ob.unit)
-    | .unconditional u => unitAsserted D u && unitContent D u == some (c.frame.close c.pre) && u != c.ob.unit
+    | .unconditional u =>
+      unitAsserted D u && unitContent D u == some (c.frame.close c.pre) && (c.ob.position == .heading || u != c.ob.unit)
     | _ => true) s!"PresuppositionAssumedUnit: {c.ob.id}: {c.ob.carrier.unitName}"
   ensure (c.ob.position != .heading || match c.ob.carrier with | .proved _ | .assumed _ => true | _ => false)
     s!"PresuppositionCandidates: {c.ob.id}"
@@ -176,10 +179,16 @@ def carrierOk (t : CandidateTable) (D : PDoc) (T : VE.Norms.Tree) (c : Checked) 
     s!"PresuppositionCandidates: {c.ob.id}"
   ensure (c.ob.carrier != .unresolved || (unitReadings D c.ob.unit).isSome) s!"PresuppositionUnresolved: {c.ob.id}"
 
+/-- The regenerated formula of a reading (its content or its rule's guard), charged against W1's node budget. -/
+def readingNodes (r : RReading) : Nat := match r.content with
+  | .claim a => VE.Bridge.formulaNodes a
+  | .rule N => VE.Bridge.formulaNodes N.guard
+
 /-- Pass 2: an unresolved obligation's unit carries exactly the expected readings, at least two, and it is the
-    unit's first unresolved obligation. -/
+    unit's first unresolved obligation. The regenerated readings are charged first (step 1). -/
 def openOk (t : CandidateTable) (D : PDoc) (R : Report) (c : Checked) : Except String Unit :=
-  if c.ob.carrier == .unresolved then
+  if c.ob.carrier == .unresolved then do
+    ensure (((expectedReadings t R c).getD []).all (readingNodes · ≤ VE.Limits.maxNodes)) budget
     ensure ((match expectedReadings t R c with
         | some rs => unitReadings D c.ob.unit == some rs && decide (2 ≤ rs.length)
         | none => false) &&
@@ -197,7 +206,8 @@ structure Fixed where
   sits  : List (String × Nat × Nat × VE.Readings.Situation String)
 
 /-- Step 5: the readings@1 document of the open unit `u` with readings `rs`: `D`'s vocabulary and regulated
-    predicates; every other unit a fixed content (an asserted claim, a recorded rule); the set `u`. -/
+    predicates; the declared background and every other unit as fixed contents (an asserted claim, a recorded rule);
+    the set `u` at the first unit of that id. -/
 def readingsDoc (ch : VE.Readings.Chain) (D : PDoc) (u : String) (rs : List RReading) : VE.Readings.Doc :=
   let node (N : VE.Norms.Node) : VE.SoftNorms.SoftNode :=
     { toNode := N, mode := .strict, rank := none, alterable := [], exception := none, hard := false }
@@ -205,23 +215,33 @@ def readingsDoc (ch : VE.Readings.Chain) (D : PDoc) (u : String) (rs : List RRea
     | .claim a => .assertion a | .rule N => .norm (node N)
   ⟨ch, { soft := ⟨D.E, D.lits, ⟨[], [], [], [], .strict, none, none, [], []⟩, ⟨D.norms.regulated, D.norms.definitions, []⟩⟩,
          rights := ⟨[], [], [], []⟩, rs := [], limits := [], bars := [], outsideCites := [], sourceOrder := some [] },
-   D.units.filterMap (fun x => if x.id == u then
-       some (.set ⟨u, u, 1, rs.zipIdx.map (fun (r, i) => ⟨toString i, some (content r), [], []⟩)⟩)
+   D.background.zipIdx.map (fun (a, i) => .fixed s!"background:{i}" (.assertion a) []) ++
+   D.units.filterMap (fun x => if x.id == u then (if unitOf D u == some x then
+       some (.set ⟨u, u, 1, rs.zipIdx.map (fun (r, i) => ⟨toString i, some (content r), [], []⟩)⟩) else none)
      else match x.content with
        | .claim a => if x.asserted then some (.fixed x.id (.assertion a) []) else none
        | .rule n => (D.norms.nodes.find? (·.name == n)).map (fun N => .fixed x.id (.norm (node N)) [])
        | _ => none), [], []⟩
 
-/-- R-8: readings@1's `separates`, or with `norm-defaults@0` readings-defaults' `separates (fillDoc N)` with
-    `fillHolds` on the witness, by a recorded situation for each pair of the set's readings. -/
-def separated (fx : Fixed) (D : PDoc) (u : String) (rs : List RReading) : Option (Nat × Nat) :=
+/-- readings@1's diagnostics for a pair (`lean/VE/Readings/Run.lean`, `setPairsSpec`). -/
+def needsModelText : String := "each other reading needs a distinguishing model id"
+def notSeparatedText : String := "distinguishing model does not separate readings"
+
+/-- R-8: each pair of the set's readings has a recorded situation on which readings@1's `separates` holds, or with
+    `norm-defaults@0` readings-defaults' `separates (fillDoc N)` with `fillHolds` on the witness. The first failing
+    pair's diagnostic, else none. `readingsDoc`'s rules are strict W1 rules and its frame has no soft or rights block,
+    so no decision key is generated and `separates`' 12-cell bound (`maxCells`) is never reached. -/
+def separated (fx : Fixed) (D : PDoc) (u : String) (rs : List RReading) : Option String :=
   let X := readingsDoc fx.chain D u rs
   let N : VE.Readings.NDoc := ⟨X, D.unspec⟩
+  let Y := if D.defaults then VE.Readings.fillDoc N else X
   let ok (w o : Nat) (σ : VE.Readings.Situation String) : Bool :=
-    if D.defaults then VE.Readings.separates (VE.Readings.fillDoc N) u w o σ && VE.Readings.fillHolds N u w σ.base
-    else VE.Readings.separates X u w o σ
+    VE.Readings.separates Y u w o σ && (!D.defaults || VE.Readings.fillHolds N u w σ.base)
   let pairs := (List.range rs.length).flatMap (fun i => ((List.range rs.length).filter (i < ·)).map (i, ·))
-  pairs.find? (fun (i, j) => !fx.sits.any (fun (v, w, o, σ) => v == u && (w, o) ∈ [(i, j), (j, i)] && ok w o σ))
+  pairs.firstM (m := Option) (fun (i, j) =>
+    let ss := fx.sits.filter (fun (v, w, o, _) => v == u && (w, o) ∈ [(i, j), (j, i)])
+    if ss.isEmpty then some needsModelText
+    else if ss.any (fun (_, w, o, σ) => ok w o σ) then none else some notSeparatedText)
 
 def softText : String := "UnsupportedProfile: a conditioned rule reading needs the norms chain (presupposition)"
 
@@ -243,7 +263,7 @@ def unitsOk (fx : Fixed) (D : PDoc) (obs : List Obligation) (R : Report) : Excep
     | .readings rs => do
       ensure (softOk fx rs) softText
       match separated fx D x.id rs with
-      | some (i, j) => .error s!"PresuppositionCandidates: {firstOb obs (·.unit == x.id)}: readings {i} and {j} are not separated"
+      | some e => .error e
       | none => .ok ()
     | _ => .ok ()) (withObligations D obs)
 

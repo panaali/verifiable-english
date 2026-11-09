@@ -771,15 +771,17 @@ def fx1 : Fixed := ⟨.norms, [("u1", 1, 0, sitNo)]⟩
 #guard errOf (admitWith fixtureTable fx1 docA1) == "admitted"
 #guard (admitWith fixtureTable fx1 docA1).toOption.map (fun R => (R.checked.map (·.goal), R.bases)) ==
   some ([theOwnerU], [("u1", theOwner)])
--- step 5's separation: no situation (`admit`'s own inputs), a situation that does not separate (one ready owner), the
--- witness reversed, a situation recorded for another unit: refused, naming the pair
-#guard errOf (admitWith fixtureTable fxN docA1) == "PresuppositionCandidates: p1: readings 0 and 1 are not separated"
-#guard errOf (admitWith fixtureTable ⟨.norms, [("u1", 1, 0, ⟨mOne, [], [], .holds, true⟩)]⟩ docA1) ==
-  "PresuppositionCandidates: p1: readings 0 and 1 are not separated"
-#guard errOf (admitWith fixtureTable ⟨.norms, [("u1", 0, 1, sitNo)]⟩ docA1) ==
-  "PresuppositionCandidates: p1: readings 0 and 1 are not separated"
-#guard errOf (admitWith fixtureTable ⟨.norms, [("u2", 1, 0, sitNo)]⟩ docA1) ==
-  "PresuppositionCandidates: p1: readings 0 and 1 are not separated"
+-- step 5's separation, readings@1's texts: no situation for the pair (`admit`'s own inputs, or one recorded for another
+-- unit); a situation that does not separate (one ready owner), or the witness reversed
+#guard errOf (admitWith fixtureTable fxN docA1) == needsModelText
+#guard errOf (admitWith fixtureTable ⟨.norms, [("u2", 1, 0, sitNo)]⟩ docA1) == needsModelText
+#guard errOf (admitWith fixtureTable ⟨.norms, [("u1", 1, 0, ⟨mOne, [], [], .holds, true⟩)]⟩ docA1) == notSeparatedText
+#guard errOf (admitWith fixtureTable ⟨.norms, [("u1", 0, 1, sitNo)]⟩ docA1) == notSeparatedText
+#guard needsModelText == "each other reading needs a distinguishing model id" && notSeparatedText == "distinguishing model does not separate readings"
+-- the declared background is part of the readings' document: a background with an owner rules the no-owner situation out
+#guard errOf (admitWith fixtureTable fx1 { docA1 with background := [.ex "entity" owner] }) == notSeparatedText
+-- strict rules and no soft or rights block: no decision cell, so `separates`' 12-cell bound is never reached
+#guard VE.Readings.cells (readingsDoc .norms docA1 "u1" [rdAs, rdCo]) "u1" 0 mNone == 0
 #guard errOf (admit docA1) == "PresuppositionCandidates: p1"
 -- A2: the conditioned reading missing; the readings out of the cell's order; a third reading.
 #guard errOf (admitWith fixtureTable fxN (docA [⟨"u1", true, .readings [rdAs]⟩] [pA .unresolved])) ==
@@ -849,18 +851,19 @@ def fx7 (ch : VE.Readings.Chain) : Fixed := ⟨ch, [("u7", 0, 1, sit7)]⟩
 #guard (admitWith fixtureTable (fx7 .norms) (doc7u false ["p"])).toOption.map (·.baseTree.nodes) == some [r7]
 -- with an instruction both readings decide `p`: not separated
 #guard errOf (admitWith fixtureTable ⟨.norms, [("u7", 0, 1, { sit7 with base := m7 [("g", [["s1"]]),
-  ("instruction", [["i1"]])] })]⟩ (doc7u false ["p"])) == "PresuppositionCandidates: p1: readings 0 and 1 are not separated"
+  ("instruction", [["i1"]])] })]⟩ (doc7u false ["p"])) == notSeparatedText
+#guard VE.Readings.cells (VE.Readings.fillDoc ⟨readingsDoc .norms (doc7u false ["p"]) "u7" rr7, ["p"]⟩) "u7" 1
+  (m7 [("g", [["s1"]])]) == 0
 -- with `norm-defaults@0` the separation is the completion's: where `unsaid__p` holds, `F_p` decides `p` under both
 -- readings, so they are not separated there; W1 alone (the document without `norm-defaults@0`) separates them
 def sitU : VE.Readings.Situation String :=
   ⟨m7 [("g", [["s1"]]), ("unsaid__p", [["s1"]])], [], [], .outcome "p" ["s1"], true⟩
-#guard errOf (admitWith fixtureTable ⟨.norms, [("u7", 0, 1, sitU)]⟩ (doc7u false ["p"])) ==
-  "PresuppositionCandidates: p1: readings 0 and 1 are not separated"
+#guard errOf (admitWith fixtureTable ⟨.norms, [("u7", 0, 1, sitU)]⟩ (doc7u false ["p"])) == notSeparatedText
 #guard errOf (admitWith fixtureTable ⟨.norms, [("u7", 0, 1, sitU)]⟩ { doc7u false ["p"] with defaults := false }) ==
   "admitted"
 -- `admit`'s fixed inputs are the norms chain and no situation: S7's open rule is not refused as on the soft chain,
 -- and is not separated
-#guard errOf (admitWith fixtureTable admitInputs (doc7u false ["p"])) == "PresuppositionCandidates: p1: readings 0 and 1 are not separated"
+#guard errOf (admitWith fixtureTable admitInputs (doc7u false ["p"])) == needsModelText
 -- A26 (R-8): the same set on the soft chain is refused at step 5 before separation; on the rights chain this check
 -- does not refuse it (readings@1's `abstention` does, before `admit` runs: A27 below).
 #guard errOf (admitWith fixtureTable (fx7 .soft) (doc7u false ["p"])) == softText
@@ -875,10 +878,12 @@ def sitU : VE.Readings.Situation String :=
   "PresuppositionMismatch: p1: body"
 def coreArgs : Args := { sort := some "entity", restriction := some (.binary "core_value_of" (.var 0) (.const "claude")) }
 def coreU : VE.Formula := .ex "entity" (.binary "core_value_of" (.var 0) (.const "claude"))
-def pH (c : Carrier) (a : Args := coreArgs) : Obligation := obA "p2" "u0013.presupposition" "plural" .heading a c
-def docH (content : VE.Formula) (c : Carrier) (a : Args := coreArgs) : PDoc := docA [cu "u0013.presupposition" content] [pH c a]
-#guard errOf (admit (docH coreU (.assumed "u0013.presupposition") { coreArgs with body := some .top })) ==
-  "PresuppositionMismatch: p2: body"
+def pH (c : Carrier) (a : Args := coreArgs) (id := "p2") : Obligation :=
+  obA id "u0013.presupposition" "plural" .heading a c
+def docH (content : VE.Formula) (c : Carrier) (a : Args := coreArgs) (id := "p2") : PDoc :=
+  docA [cu "u0013.presupposition" content] [pH c a id]
+#guard errOf (admit (docH coreU (.assumed "u0013.presupposition") { coreArgs with body := some .top } "p1")) ==
+  "PresuppositionMismatch: p1: body"
 -- A24 (R-10, DEC 10): a heading assumed on its own unit, whose content is exactly `pre`: admitted, goal `pre`.
 #guard errOf (admit (docH coreU (.assumed "u0013.presupposition"))) == "admitted"
 #guard (admit (docH coreU (.assumed "u0013.presupposition"))).toOption.map (·.checked.map (fun c => (c.goal, c.pos))) ==
@@ -889,9 +894,11 @@ def docH (content : VE.Formula) (c : Carrier) (a : Args := coreArgs) : PDoc := d
   "PresuppositionAssumedUnit: p2: u0013.presupposition"
 -- A19 (R-10): a heading admits only proved and assumed: conditioned, asserted and unresolved are refused.
 -- (the unit records the carried form, so step 3 peels it to `pre`)
-#guard errOf (admit (docH (.implies coreU coreU) .conditioned)) == "PresuppositionCandidates: p2"
-#guard errOf (admit (docH (.and coreU coreU) .asserted)) == "PresuppositionCandidates: p2"
-#guard errOf (admitWith fixtureTable fxN (docH coreU .unresolved)) == "PresuppositionCandidates: p2"
+#guard errOf (admit (docH (.implies coreU coreU) .conditioned (id := "p1"))) == "PresuppositionCandidates: p1"
+#guard errOf (admit (docH (.and coreU coreU) .asserted (id := "p1"))) == "PresuppositionCandidates: p1"
+#guard errOf (admitWith fixtureTable fxN (docH coreU .unresolved (id := "p1"))) == "PresuppositionCandidates: p1"
+-- unconditional at a heading on its own unit: R-10 answers (the own-unit refusal is for paths and rule acts)
+#guard errOf (admit (docH coreU (.unconditional "u0013.presupposition") (id := "p1"))) == "PresuppositionCandidates: p1"
 -- a heading on a rule unit has no position
 #guard errOf (admit (docA [⟨"u0013.presupposition", true, .rule "r1"⟩] [pH (.assumed "u0013.presupposition")]
   (tree7 [r7]))) == "PresuppositionPosition: p2"
@@ -985,6 +992,13 @@ def deep : VE.Formula := wide 13
 #guard VE.Bridge.formulaNodes deep == 16383 && VE.Bridge.formulaNodes (wide 12) == 8191
 #guard errOf (admit (docA [cu "u1" (.implies deep theOwner)] [pA (.assumed "u0") (.path [1])])) ==
   "ResourceLimit: presuppositions"
+-- a small goal in a base over W1's budget: the regenerated unit content (step 5) and the regenerated readings of an
+-- open set (pass 2) are over budget too, before any comparison
+#guard errOf (admit (docA [cu "u0" theOwnerU, cu "u1" (.and theOwner deep)] [pA (.assumed "u0") (.path [0])])) ==
+  "ResourceLimit: presuppositions"
+#guard errOf (admitWith fixtureTable fx1 (docA [⟨"u1", true, .readings [{ rdAs with content := .claim (.and theOwner deep) },
+  { rdCo with content := .claim (.implies theOwnerU (.and theOwner deep)) }]⟩] [pA .unresolved (.path [0])])) ==
+  "ResourceLimit: presuppositions"
 -- A16 (S14): conditioned, the recorded guard `⊤ ∧ pre` with `pre` over the wrong variable order: `rule`.
 def d14 : VE.Formula := .and (.binary "request_in" (.var 0) (.var 1)) (.binary "addressed_to" (.var 0) (.var 2))
 def d14w : VE.Formula := .and (.binary "request_in" (.var 0) (.var 2)) (.binary "addressed_to" (.var 0) (.var 1))
@@ -998,6 +1012,26 @@ def doc14 (guard : VE.Formula) : PDoc :=
 def r7bad : VE.Norms.Node := { r7 with guard := .unary "g" (.var 3) }
 #guard errOf (admit (docA [cu "u0" (ruleGoal (reg7) r7bad pre22), ⟨"u7", true, .rule "r1"⟩] [p7 (.assumed "u0")]
   (tree7 [r7bad]))) == "PresuppositionMismatch: p1: rule"
+-- step 5 names the block's first obligation when no rule-act obligation exists (an ill-formed tree beside claims)
+#guard errOf (admit (docA [cu "u0" theOwnerU, cu "u1" theOwner] [pA (.assumed "u0")] (tree7 [r7bad]))) ==
+  "PresuppositionMismatch: p1: rule"
+-- a rule act on its unit must name that unit's rule: `r2` is u8's, not u7's
+#guard errOf (admit (docA [cu "u0" (ruleGoal (reg7) (rule22 "r2") pre22), ⟨"u7", true, .rule "r1"⟩,
+  ⟨"u8", true, .rule "r2"⟩] [{ p7 (.assumed "u0") with position := .ruleAct "r2" }] (tree7 [r7, rule22 "r2"]))) ==
+  "PresuppositionPosition: p1"
+#guard errOf (admit (docA [cu "u0" (ruleGoal (reg7) (rule22 "r2") pre22), ⟨"u7", true, .rule "r1"⟩,
+  ⟨"u8", true, .rule "r2"⟩] [{ p7 (.assumed "u0") with position := .ruleAct "r2", unit := "u8" }]
+  (tree7 [r7, rule22 "r2"]))) == "admitted"
+-- A2, A21 (one candidate in PS-E1's top cell), A6, A10, A11 and A23 on `admit` itself
+#guard errOf (admit (docA [⟨"u1", true, .readings [rdAs]⟩] [pA .unresolved])) == "PresuppositionCandidates: p1"
+#guard errOf (admit (docA [⟨"u1", true, .readings [rdAs, rdCo]⟩] [pA .unresolved])) == "PresuppositionCandidates: p1"
+#guard errOf (admit (docA [⟨"u7", true, .rule "r1"⟩] [p7 .conditioned { instrArgs with body := some .top }]
+  (tree7 [conditionNode r7 pre22]) true ["p"])) == "PresuppositionMismatch: p1: body"
+#guard errOf (admit (docA [cu "u1" (.implies theOwner theOwnerU)] [pA .conditioned])) ==
+  "PresuppositionMismatch: p1: clause"
+#guard errOf (admit (docA [cu "u1" wrong16] obs16)) == "PresuppositionMismatch: p1: content"
+#guard errOf (admit (docA [cu "u1" (.not (.and theOwner .top))] [pA .inPlace (.path [0, 0])])) ==
+  "PresuppositionCandidates: p1"
 -- A17 (S11): without the block the field is absent, as without PS-2a; with it, `admit`'s answer.
 #guard (admitWrapped { docA1 with block := none }).isNone && (admitBase docA1).isNone
 #guard (admitWrapped docA1).map errOf == some (errOf (admit docA1))
