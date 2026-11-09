@@ -16251,6 +16251,35 @@
         "VE.Acts.listOf"
       ]
     },
+    "VE/Acts/Specialise.lean": {
+      "S": [
+        "VE.Acts.Modifier.restrictive",
+        "VE.Acts.Restrictive",
+        "VE.Acts.specPremises",
+        "VE.Acts.specialises"
+      ],
+      "G[V]": [
+        "VE.Acts.declaredOnce"
+      ]
+    },
+    "VE/Acts/SpecialiseExamples.lean": {
+      "T": [
+        "VE.Acts.SpecialiseExamples.Vs",
+        "VE.Acts.SpecialiseExamples.a",
+        "VE.Acts.SpecialiseExamples.act",
+        "VE.Acts.SpecialiseExamples.b",
+        "VE.Acts.SpecialiseExamples.doc",
+        "VE.Acts.SpecialiseExamples.env",
+        "VE.Acts.SpecialiseExamples.fromP",
+        "VE.Acts.SpecialiseExamples.nearly",
+        "VE.Acts.SpecialiseExamples.noTo",
+        "VE.Acts.SpecialiseExamples.prem",
+        "VE.Acts.SpecialiseExamples.reg",
+        "VE.Acts.SpecialiseExamples.request",
+        "VE.Acts.SpecialiseExamples.sp",
+        "VE.Acts.SpecialiseExamples.ρ"
+      ]
+    },
     "VE/Acts/Readings.lean": {
       "G[V]": [
         {
