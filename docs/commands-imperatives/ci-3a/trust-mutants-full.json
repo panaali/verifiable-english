@@ -1,32 +1,32 @@
 {
  "base": "d55d24faab755047e2131d11487ff3d9c124d3e8",
- "head": "d15a92cafc3c6db57d04b058fa1df4b61719f3c8",
- "tree": "5a1483c5eb2056b1ca894685b632f834082dc4a4",
+ "head": "810467ce4038840f74da6c0e298b70c6844a265e",
+ "tree": "038ccc91d029f96b6f65dd6f8f4f38d5d5438fc1",
  "jobs": 8,
  "max_mutants": 1000,
  "deep": false,
  "tests": [],
- "seconds": 2137,
+ "seconds": 2488,
  "steps": {
   "wall": {
-   "plan": 18.4,
-   "scratch": 21.4,
-   "control_build": 0.5,
-   "probe_install": 3.4,
-   "control_probes": 132.2,
-   "mutants": 1958.6,
-   "cleanup": 2.7,
+   "plan": 19.8,
+   "scratch": 22.9,
+   "control_build": 0.4,
+   "probe_install": 3.3,
+   "control_probes": 133.5,
+   "mutants": 2304.3,
+   "cleanup": 3.5,
    "reads": 0.1
   },
   "lake": {
    "control_build": 0.3,
    "probe_install": 3.2,
-   "control_probes": 131.8,
-   "mutant_builds": 3601.7,
-   "mutant_checks": 8611.1,
+   "control_probes": 133.0,
+   "mutant_builds": 3702.9,
+   "mutant_checks": 8676.6,
    "outside_checks": 0.0,
-   "stage_controls": 1074.7,
-   "mutant_probes": 2170.6,
+   "stage_controls": 1032.1,
+   "mutant_probes": 4557.6,
    "other": 0.0
   },
   "runs": {
@@ -34,17 +34,17 @@
    "probe_install": 1,
    "control_probes": 1,
    "mutant_builds": 456,
-   "mutant_checks": 404,
+   "mutant_checks": 341,
    "outside_checks": 0,
-   "stage_controls": 46,
-   "mutant_probes": 166,
+   "stage_controls": 37,
+   "mutant_probes": 226,
    "other": 0
   }
  },
  "counts": {
-  "KILLED": 147,
-  "SURVIVOR": 13,
-  "UNKNOWN": 142,
+  "KILLED": 175,
+  "SURVIVOR": 20,
+  "UNKNOWN": 107,
   "INVALID": 36,
   "ALLOWED": 0,
   "NOT RUN": 0
@@ -54,15 +54,15 @@
  ],
  "class_counts": {
   "G[V], trusted": {
-   "KILLED": 147,
-   "SURVIVOR": 13,
-   "UNKNOWN": 142,
+   "KILLED": 175,
+   "SURVIVOR": 20,
+   "UNKNOWN": 107,
    "INVALID": 36
   }
  },
  "inputs": {
   "tool": "2c66bd48631e4f0e8e1e77d3a6363448c13119c884fe155137256e5d6878292d",
-  "lean": "a65680d7a54e495f501feb0c0b2bec8f1aee4a9b90c01a38986928c3e3aa9403",
+  "lean": "d033c6b99a74d84a391c9cdfa04c39f2cd9f17f14359b07d9fe23a24998e431c",
   "tests": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
   "base": "d55d24faab755047e2131d11487ff3d9c124d3e8",
   "options": "{\"deep\": false, \"test\": [], \"classes\": [\"trusted\"]}",
@@ -352,8 +352,8 @@
    "lean/VE/Commands/Run.lean": "e10c4a393dff28a7f77fa86d676278c2b24faf76c90e013852c789bd83d9f47b",
    "lean/VE/Commands/RunExamples.lean": "b5cf0eec06e0ed1aec9cb31f4b986f686b89f30edc26d91a2df29d508e26842d",
    "lean/VE/Commands/RunSplit.lean": "a66d0017d75e42630788728d3aee9bf77becdf20cf44fa642c8a141952f39fec",
-   "lean/VE/Commands/Steps.lean": "b2a4a01e42e73ad5f741df10642f06682cc1f1011666211f2600c4a311c34e14",
-   "lean/VE/Commands/StepsExamples.lean": "f5d9443ecd76a17955be4ef4accfaf85d8a44b09e1177dba23abf4a143eaef2b",
+   "lean/VE/Commands/Steps.lean": "bc3a12fb61fc7562fc8cde92594548e6c21696a4374d403a8b03439ccb6c1559",
+   "lean/VE/Commands/StepsExamples.lean": "eab9da5a4dc2c0e6a8ee448bd6cb76e773289dfc1c4f1b9ffd5d1df77057558d",
    "lean/VE/Commands/Texts.lean": "216279f9b9ad99e6ea87c0bae9d33e7b3825685c388020af45af365b85f66ec2",
    "lean/VE/Compose/Adjoin.lean": "ddf66089bf7a18ef98ba674eeab43fa1694cc345c8908ea4c39e524159dcdbb8",
    "lean/VE/Compose/Content.lean": "65dbe0cb8f68d415113e2e92eb16e62ed711268ca5fd0db8caed9b8a4e38f905",
@@ -897,13 +897,13 @@
    "lean/audit.py": "05fb69c5689a8606fefd6d43e220f23ee6dbedc4bea7245b34ae29a4fd13a1cd",
    "lean/axioms.txt": "c388c7d4bf746bdbadd35cdad3fb3cbcfe0f60a01d0e7d83c4d2feab25fd19ef",
    "lean/checkers.lock": "ec90b81eabc36cf5afe1db2fe5deb0a21cafbafd54771e0ab1396d37f2170202",
-   "lean/declarations.txt": "f81bb1586ada809f912b0ebe7c179e87573c997474fa28278f2cbba8d6552025",
+   "lean/declarations.txt": "ec20df544550a0ae0a81dd2157c71bdfac4ac2916cedf2a446e6d9853155119b",
    "lean/lake-manifest.json": "8579a8594992ccc571614869d24b997dba98134cffdbd5a0b26220a419e0de8e",
    "lean/lakefile.toml": "ffc47dfd06119c3518785b5059d81216b2f82b140509bfd25cd3273cbe04d4f5",
    "lean/lean-toolchain": "42779d67b81608af8a12aa4328d2ab47ca201925b3b2bd68369587b5340bb434",
    "lean/predicates.txt": "ff8da757098d6d99e2135ef3cd9c79d49b65daf0ea868f1fd7ba38002f738abe",
    "lean/statements.txt": "46245a8fb1d56bbfeb310311e880d836bee814def3202b3727c17686c4322d61",
-   "tools/trust-classes.json": "6243b423b05323940fd4fa5337bee54f37dc94fffca38bbbad138b4eedc12dcb"
+   "tools/trust-classes.json": "94b714ffe764077cb69abee6e30bdad3942648de5d07fa86c1bd32b5d22933b9"
   },
   "tool_files": {
    "lean/audit.py": "05fb69c5689a8606fefd6d43e220f23ee6dbedc4bea7245b34ae29a4fd13a1cd",
@@ -950,7 +950,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:42: Expression",
    "raw_status": "KILLED",
-   "reads": "b5de4c0cf11629971a291a1252365597e1b2acc8b2fa9fa8e0d27169ae85988d",
+   "reads": "3f69bc9ce38e3b39d4dd2c03f596fd14386be3b78c44e6d0c425e225df4c2dd0",
    "killed_at": [
     42,
     42
@@ -961,22 +961,22 @@
   {
    "id": "M002",
    "file": "VE/Commands/Steps.lean",
-   "line": 202,
+   "line": 212,
    "definition": "VE.Commands.reads",
    "operator": "body-true",
    "lines": [
-    200,
-    202
+    210,
+    212
    ],
    "before": "!(shapeAlts sh (shapeOutcome se sc E L b sh)).isEmpty",
    "after": "true",
    "status": "KILLED",
-   "detail": "lean/VE/Commands/StepsExamples.lean:170: Expression",
+   "detail": "lean/VE/Commands/StepsExamples.lean:181: Expression",
    "raw_status": "KILLED",
-   "reads": "203626a3cf8d280038913230821119bed73e0c983b23062c8614bfd1b67b33ea",
+   "reads": "5bab0523a41ecb1e32b60036cd27067645e28c3e221d98b73c3dc8116849a68b",
    "killed_at": [
-    170,
-    171
+    181,
+    182
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -996,7 +996,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:42: Expression",
    "raw_status": "KILLED",
-   "reads": "b5de4c0cf11629971a291a1252365597e1b2acc8b2fa9fa8e0d27169ae85988d",
+   "reads": "3f69bc9ce38e3b39d4dd2c03f596fd14386be3b78c44e6d0c425e225df4c2dd0",
    "killed_at": [
     42,
     42
@@ -1007,22 +1007,22 @@
   {
    "id": "M004",
    "file": "VE/Commands/Steps.lean",
-   "line": 202,
+   "line": 212,
    "definition": "VE.Commands.reads",
    "operator": "body-false",
    "lines": [
-    200,
-    202
+    210,
+    212
    ],
    "before": "!(shapeAlts sh (shapeOutcome se sc E L b sh)).isEmpty",
    "after": "false",
    "status": "KILLED",
-   "detail": "lean/VE/Commands/StepsExamples.lean:169: Expression",
+   "detail": "lean/VE/Commands/StepsExamples.lean:180: Expression",
    "raw_status": "KILLED",
-   "reads": "4cd2287f6b18470ef568fcef0ad3e783b25eef0d22667fc30b4ae7c4a19658ff",
+   "reads": "ca9f03c9c2a925b971bde06e94d8e321572c3e410e73a9824baa84d92cd16fee",
    "killed_at": [
-    169,
-    169
+    180,
+    180
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -1039,31 +1039,36 @@
    ],
    "before": "!",
    "after": "",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:132: eight steps of 64 readings are not `limit`",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/StepsExamples.lean:45: Expression",
+   "raw_status": "KILLED",
+   "reads": "3cb34daf8ce903400eee9e0ee16d95ce342824357a6f691d0e719f8f8fb883eb",
+   "killed_at": [
+    45,
+    45
+   ],
    "trust_class": "G[V]",
    "trusted": true
   },
   {
    "id": "M006",
    "file": "VE/Commands/Steps.lean",
-   "line": 202,
+   "line": 212,
    "definition": "VE.Commands.reads",
    "operator": "not-drop",
    "lines": [
-    200,
-    202
+    210,
+    212
    ],
    "before": "!",
    "after": "",
    "status": "KILLED",
-   "detail": "lean/VE/Commands/StepsExamples.lean:169: Expression",
+   "detail": "lean/VE/Commands/StepsExamples.lean:180: Expression",
    "raw_status": "KILLED",
-   "reads": "4cd2287f6b18470ef568fcef0ad3e783b25eef0d22667fc30b4ae7c4a19658ff",
+   "reads": "ca9f03c9c2a925b971bde06e94d8e321572c3e410e73a9824baa84d92cd16fee",
    "killed_at": [
-    169,
-    169
+    180,
+    180
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -1083,7 +1088,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:43: Expression",
    "raw_status": "KILLED",
-   "reads": "7ec29d384f7cd675e7e4a4cbd18f717a3aae4a286db67076766bf19a021f536e",
+   "reads": "3d1a8aa962a66230abc2b3bd6dc70d41ba747c86868a0b4e35e2efdab8b540a5",
    "killed_at": [
     43,
     43
@@ -1094,18 +1099,23 @@
   {
    "id": "M008",
    "file": "VE/Commands/Steps.lean",
-   "line": 194,
+   "line": 204,
    "definition": "VE.Commands.readStep",
    "operator": "lt-le",
    "lines": [
-    191,
-    198
+    201,
+    208
    ],
    "before": "<",
    "after": "\u2264",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Commands/Steps.lean:329, lean/VE/Commands/Steps.lean:332, lean/VE/Commands/Steps.lean:336",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/StepsExamples.lean:164: Expression",
+   "raw_status": "KILLED",
+   "reads": "7e2e90d1bb8569c815a239861bd6e6cf5e25bb19fb961769fea3aa9c83710366",
+   "killed_at": [
+    164,
+    164
+   ],
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -1124,7 +1134,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:50: Expression",
    "raw_status": "KILLED",
-   "reads": "ed69f45cf3867e2a6864d2b6f2a740fdaccc708bb6e699e126192377700e322d",
+   "reads": "c476ae67a771fc4e286e03542fa1229ab212ea5e43dd30ae6f984f50f4cc89f1",
    "killed_at": [
     50,
     50
@@ -1145,7 +1155,7 @@
    "before": "\u2264",
    "after": "<",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:123: fails without the mutant too: Function expected at",
+   "detail": "lean/VE/Commands/StepsExamples.lean:151: Expression (it computes through a proof the mutant broke (an instance or `@[csimp]` lemma resting on it))",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -1153,19 +1163,19 @@
   {
    "id": "M011",
    "file": "VE/Commands/Steps.lean",
-   "line": 177,
+   "line": 187,
    "definition": "VE.Commands.combineShapes",
    "operator": "le-lt",
    "lines": [
-    173,
-    189
+    183,
+    199
    ],
    "before": "\u2264",
    "after": "<",
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:89: Expression",
    "raw_status": "KILLED",
-   "reads": "5fc23f543f088c902e7b9e51798ccc21cfbefe2f84c9ae48df98d88ac5591200",
+   "reads": "ce5fb29f67005001b42bbefa1f5362317cd664864746554d21abad15d71b4b19",
    "killed_at": [
     89,
     90
@@ -1176,22 +1186,22 @@
   {
    "id": "M012",
    "file": "VE/Commands/Steps.lean",
-   "line": 194,
+   "line": 204,
    "definition": "VE.Commands.readStep",
    "operator": "lt-eq",
    "lines": [
-    191,
-    198
+    201,
+    208
    ],
    "before": "<",
    "after": "=",
    "status": "KILLED",
-   "detail": "lean/VE/Commands/StepsExamples.lean:154: Expression",
+   "detail": "lean/VE/Commands/StepsExamples.lean:164: Expression",
    "raw_status": "KILLED",
-   "reads": "de903bee47078f4b85215d19b858d4888d9093be8cc9873ba14fb02b03cca49e",
+   "reads": "7e2e90d1bb8569c815a239861bd6e6cf5e25bb19fb961769fea3aa9c83710366",
    "killed_at": [
-    154,
-    155
+    164,
+    164
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -1208,9 +1218,14 @@
    ],
    "before": "\u2264",
    "after": "=",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:132: eight steps of 64 readings are not `limit`",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/StepsExamples.lean:148: Expression",
+   "raw_status": "KILLED",
+   "reads": "2d1f98ee8fd3df2cb33c16013d43619af77e86dcee67ce6fd9a768e6f1f0c763",
+   "killed_at": [
+    148,
+    150
+   ],
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -1227,7 +1242,7 @@
    "before": "\u2264",
    "after": "=",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:123: fails without the mutant too: Function expected at",
+   "detail": "lean/VE/Commands/StepsExamples.lean:79: Expression (it computes through a proof the mutant broke (an instance or `@[csimp]` lemma resting on it))",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -1235,19 +1250,19 @@
   {
    "id": "M015",
    "file": "VE/Commands/Steps.lean",
-   "line": 177,
+   "line": 187,
    "definition": "VE.Commands.combineShapes",
    "operator": "le-eq",
    "lines": [
-    173,
-    189
+    183,
+    199
    ],
    "before": "\u2264",
    "after": "=",
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:97: Expression",
    "raw_status": "KILLED",
-   "reads": "dd57f30e0a829261533266a954017376ed7aedbd8f928f8ce52ea076c904eeb6",
+   "reads": "4832e0e250704cc646f9cce8c90289054741a2a41d54cd77e2e4c12542acebf7",
    "killed_at": [
     97,
     99
@@ -1268,7 +1283,7 @@
    "before": "==",
    "after": "!=",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:123: fails without the mutant too: Function expected at",
+   "detail": "lean/VE/Commands/StepsExamples.lean:59: Expression (it computes through a proof the mutant broke (an instance or `@[csimp]` lemma resting on it))",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -1276,19 +1291,19 @@
   {
    "id": "M017",
    "file": "VE/Commands/Steps.lean",
-   "line": 187,
+   "line": 197,
    "definition": "VE.Commands.combineShapes",
    "operator": "eq-ne",
    "lines": [
-    173,
-    189
+    183,
+    199
    ],
    "before": "==",
    "after": "!=",
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:94: Expression",
    "raw_status": "KILLED",
-   "reads": "eaa6c8a697c2518df78f3b7289b5815bd131b74755009e0fd61590862d69188b",
+   "reads": "222b0c62d8f0a0e26a4bbbdf220860cea4f4059828ace0a25515fdf2099e5acb",
    "killed_at": [
     94,
     95
@@ -1309,7 +1324,7 @@
    "before": "!=",
    "after": "==",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:123: fails without the mutant too: Function expected at",
+   "detail": "lean/VE/Commands/StepsExamples.lean:73: Expression (it computes through a proof the mutant broke (an instance or `@[csimp]` lemma resting on it))",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -1326,28 +1341,28 @@
    ],
    "before": "any",
    "after": "all",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:123: fails without the mutant too: Function expected at",
-   "raw_status": "UNKNOWN",
+   "status": "SURVIVOR",
+   "detail": "the proofs it breaks: lean/VE/Commands/Steps.lean:157, lean/VE/Commands/Steps.lean:301, lean/VE/Commands/Steps.lean:366, lean/VE/Commands/StepsExamples.lean:144, lean/VE/Commands/StepsExamples.lean:148",
+   "raw_status": "SURVIVOR",
    "trust_class": "G[V]",
    "trusted": true
   },
   {
    "id": "M020",
    "file": "VE/Commands/Steps.lean",
-   "line": 178,
+   "line": 188,
    "definition": "VE.Commands.combineShapes",
    "operator": "any-all",
    "lines": [
-    173,
-    189
+    183,
+    199
    ],
    "before": "any",
    "after": "all",
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:88: Expression",
    "raw_status": "KILLED",
-   "reads": "dda3e13ad22f184c86dc154a4d479ea69b22cbbe56146a762e62276ed5d0f8a7",
+   "reads": "5f98fd031fa8651a1526c8452b4ba934f26ff86286076c78c4537aedd64924a3",
    "killed_at": [
     88,
     88
@@ -1370,7 +1385,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:77: Expression",
    "raw_status": "KILLED",
-   "reads": "2b20b79ca8f8532a7f96c9e5935b70f57d306906b9b27e93d740acaeb216f5b8",
+   "reads": "1398921e601487a89fdc41e7270ad5a00600c4f9e98e55d27e6d86239700a12f",
    "killed_at": [
     77,
     77
@@ -1381,19 +1396,19 @@
   {
    "id": "M022",
    "file": "VE/Commands/Steps.lean",
-   "line": 178,
+   "line": 188,
    "definition": "VE.Commands.combineShapes",
    "operator": "bool-flip",
    "lines": [
-    173,
-    189
+    183,
+    199
    ],
    "before": "true",
    "after": "false",
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:88: Expression",
    "raw_status": "KILLED",
-   "reads": "dda3e13ad22f184c86dc154a4d479ea69b22cbbe56146a762e62276ed5d0f8a7",
+   "reads": "5f98fd031fa8651a1526c8452b4ba934f26ff86286076c78c4537aedd64924a3",
    "killed_at": [
     88,
     88
@@ -1416,7 +1431,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:42: Expression",
    "raw_status": "KILLED",
-   "reads": "b5de4c0cf11629971a291a1252365597e1b2acc8b2fa9fa8e0d27169ae85988d",
+   "reads": "3f69bc9ce38e3b39d4dd2c03f596fd14386be3b78c44e6d0c425e225df4c2dd0",
    "killed_at": [
     42,
     42
@@ -1436,28 +1451,33 @@
    ],
    "before": "1",
    "after": "2",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:132: eight steps of 64 readings are not `limit`",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/StepsExamples.lean:45: Expression",
+   "raw_status": "KILLED",
+   "reads": "3cb34daf8ce903400eee9e0ee16d95ce342824357a6f691d0e719f8f8fb883eb",
+   "killed_at": [
+    45,
+    45
+   ],
    "trust_class": "G[V]",
    "trusted": true
   },
   {
    "id": "M025",
    "file": "VE/Commands/Steps.lean",
-   "line": 177,
+   "line": 187,
    "definition": "VE.Commands.combineShapes",
    "operator": "lit-plus",
    "lines": [
-    173,
-    189
+    183,
+    199
    ],
    "before": "2",
    "after": "3",
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:89: Expression",
    "raw_status": "KILLED",
-   "reads": "5fc23f543f088c902e7b9e51798ccc21cfbefe2f84c9ae48df98d88ac5591200",
+   "reads": "ce5fb29f67005001b42bbefa1f5362317cd664864746554d21abad15d71b4b19",
    "killed_at": [
     89,
     90
@@ -1480,7 +1500,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:42: Expression",
    "raw_status": "KILLED",
-   "reads": "b5de4c0cf11629971a291a1252365597e1b2acc8b2fa9fa8e0d27169ae85988d",
+   "reads": "3f69bc9ce38e3b39d4dd2c03f596fd14386be3b78c44e6d0c425e225df4c2dd0",
    "killed_at": [
     42,
     42
@@ -1500,28 +1520,33 @@
    ],
    "before": "1",
    "after": "0",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:132: eight steps of 64 readings are not `limit`",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/StepsExamples.lean:45: Expression",
+   "raw_status": "KILLED",
+   "reads": "3cb34daf8ce903400eee9e0ee16d95ce342824357a6f691d0e719f8f8fb883eb",
+   "killed_at": [
+    45,
+    45
+   ],
    "trust_class": "G[V]",
    "trusted": true
   },
   {
    "id": "M028",
    "file": "VE/Commands/Steps.lean",
-   "line": 177,
+   "line": 187,
    "definition": "VE.Commands.combineShapes",
    "operator": "lit-minus",
    "lines": [
-    173,
-    189
+    183,
+    199
    ],
    "before": "2",
    "after": "1",
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:88: Expression",
    "raw_status": "KILLED",
-   "reads": "dda3e13ad22f184c86dc154a4d479ea69b22cbbe56146a762e62276ed5d0f8a7",
+   "reads": "5f98fd031fa8651a1526c8452b4ba934f26ff86286076c78c4537aedd64924a3",
    "killed_at": [
     88,
     88
@@ -1559,9 +1584,14 @@
    ],
    "before": "let t := trimmed s\n  if !(t.endsWith \".\") then [.core s] else\n  let body := t.dropRight 1\n  let pre : List Shape :=\n    if body.startsWith \"If \" then\n      let ws := (body.drop 3).splitOn \", \"\n      (List.range (ws.length - 1)).map fun i =>\n        .preposed (\", \".intercalate (ws.take (i + 1))) (\", \".intercalate (ws.drop (i + 1)))\n    else []\n  let aft : List Shape := if body.startsWith \"Then \" then [.after (body.drop 5)] else []\n  let xs := body.splitOn \", then \"\n  let sq : List Shape := if 2 \u2264 xs.length && xs.length \u2264 8 && !body.startsWith \"If \" then [.seq xs] else []\n  match pre ++ aft ++ sq with\n  | [] => [.core s]\n  | l => l",
    "after": "[]\n\n\n\n\n\n\n\n\n\n\n\n\n\n",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:132: eight steps of 64 readings are not `limit`",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/StepsExamples.lean:43: Expression",
+   "raw_status": "KILLED",
+   "reads": "3d1a8aa962a66230abc2b3bd6dc70d41ba747c86868a0b4e35e2efdab8b540a5",
+   "killed_at": [
+    43,
+    43
+   ],
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -1580,7 +1610,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:82: Expression",
    "raw_status": "KILLED",
-   "reads": "29253be314ea88af5612b67aaec5715a7532eb3ebf1605e8b0cfaebd371a191e",
+   "reads": "4dbbf2fca2c3d4d52b31bbfa865a18242294fa3c75f5d70cd4c4aeb9937e1419",
    "killed_at": [
     82,
     84
@@ -1619,7 +1649,7 @@
    "before": "xs",
    "after": "[]",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:123: fails without the mutant too: Function expected at",
+   "detail": "lean/VE/Commands/StepsExamples.lean:59: Expression (it computes through a proof the mutant broke (an instance or `@[csimp]` lemma resting on it))",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -1627,12 +1657,12 @@
   {
    "id": "M034",
    "file": "VE/Commands/Steps.lean",
-   "line": 167,
+   "line": 177,
    "definition": "VE.Commands.shapeAlts",
    "operator": "list-empty",
    "lines": [
-    164,
-    171
+    174,
+    181
    ],
    "before": "match o with\n  | .one r _ => [.shape sh [r]]\n  | .steps rs => [.shape sh rs]\n  | .many alts => alts\n  | _ => []",
    "after": "[]\n\n\n\n",
@@ -1645,19 +1675,19 @@
   {
    "id": "M035",
    "file": "VE/Commands/Steps.lean",
-   "line": 175,
+   "line": 185,
    "definition": "VE.Commands.combineShapes",
    "operator": "list-empty",
    "lines": [
-    173,
-    189
+    183,
+    199
    ],
    "before": "os",
    "after": "[]",
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:89: Expression",
    "raw_status": "KILLED",
-   "reads": "5fc23f543f088c902e7b9e51798ccc21cfbefe2f84c9ae48df98d88ac5591200",
+   "reads": "ce5fb29f67005001b42bbefa1f5362317cd664864746554d21abad15d71b4b19",
    "killed_at": [
     89,
     90
@@ -1668,35 +1698,40 @@
   {
    "id": "M036",
    "file": "VE/Commands/Steps.lean",
-   "line": 195,
+   "line": 205,
    "definition": "VE.Commands.readStep",
    "operator": "list-empty",
    "lines": [
-    191,
-    198
+    201,
+    208
    ],
    "before": "(shapes s)",
    "after": "[]",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:132: eight steps of 64 readings are not `limit`",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/StepsExamples.lean:57: Expression",
+   "raw_status": "KILLED",
+   "reads": "29f28917db09ec07da2afca211b029865ad5f5a9edd03b61a19ac056dd807910",
+   "killed_at": [
+    57,
+    57
+   ],
    "trust_class": "G[V]",
    "trusted": true
   },
   {
    "id": "M037",
    "file": "VE/Commands/Steps.lean",
-   "line": 202,
+   "line": 212,
    "definition": "VE.Commands.reads",
    "operator": "list-empty",
    "lines": [
-    200,
-    202
+    210,
+    212
    ],
    "before": "(shapeAlts sh (shapeOutcome se sc E L b sh))",
    "after": "[]",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/Steps.lean:202: don't know how to synthesize implicit argument `\u03b1`",
+   "detail": "lean/VE/Commands/Steps.lean:212: don't know how to synthesize implicit argument `\u03b1`",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -1716,7 +1751,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:45: Expression",
    "raw_status": "KILLED",
-   "reads": "8567f74fcf7ea483c1d3d8cc008353f41f70c6ac07cd19817bba6e365abd04d8",
+   "reads": "3cb34daf8ce903400eee9e0ee16d95ce342824357a6f691d0e719f8f8fb883eb",
    "killed_at": [
     45,
     45
@@ -1739,7 +1774,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:46: Expression",
    "raw_status": "KILLED",
-   "reads": "d0dd0d97a134df4fb7b13107111d31729bcb2796dc57ba0ded703a6898b4dd5b",
+   "reads": "aed5585b61347fa617e64f49e779a19ca5f4b00ca8b09e355de8f906f7b416f1",
    "killed_at": [
     46,
     46
@@ -1778,7 +1813,7 @@
    "before": "  | command | supposition | permission | conditionalClaim | remark | heading",
    "after": "",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:166: Unknown constant `VE.Commands.Form.command`",
+   "detail": "lean/VE/Commands/StepsExamples.lean:177: Unknown constant `VE.Commands.Form.command`",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -1796,7 +1831,7 @@
    "before": "  | shape (sh : Shape) (rs : List Reading)",
    "after": "",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/Steps.lean:266: the failing proof cannot be cut: Unknown constant `VE.Commands.Alt.shape`",
+   "detail": "lean/VE/Commands/Steps.lean:276: the failing proof cannot be cut: Unknown constant `VE.Commands.Alt.shape`",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -1814,7 +1849,7 @@
    "before": "  | one (r : Reading) (afterPrevious : Bool)",
    "after": "",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/Steps.lean:270: the failing proof cannot be cut: Unknown constant `VE.Commands.StepOutcome.one`",
+   "detail": "lean/VE/Commands/Steps.lean:280: the failing proof cannot be cut: Unknown constant `VE.Commands.StepOutcome.one`",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -1831,9 +1866,14 @@
    ],
    "before": "!",
    "after": "",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:132: eight steps of 64 readings are not `limit`",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/StepsExamples.lean:47: Expression",
+   "raw_status": "KILLED",
+   "reads": "d0616e07f08d8421b741acebc3d3550d70883fb68b52de8e69669e02618d1207",
+   "killed_at": [
+    47,
+    49
+   ],
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -1852,7 +1892,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:43: Expression",
    "raw_status": "KILLED",
-   "reads": "7ec29d384f7cd675e7e4a4cbd18f717a3aae4a286db67076766bf19a021f536e",
+   "reads": "3d1a8aa962a66230abc2b3bd6dc70d41ba747c86868a0b4e35e2efdab8b540a5",
    "killed_at": [
     43,
     43
@@ -1872,9 +1912,14 @@
    ],
    "before": "\u2264",
    "after": "<",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:132: eight steps of 64 readings are not `limit`",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/StepsExamples.lean:148: Expression",
+   "raw_status": "KILLED",
+   "reads": "2d1f98ee8fd3df2cb33c16013d43619af77e86dcee67ce6fd9a768e6f1f0c763",
+   "killed_at": [
+    148,
+    150
+   ],
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -1893,7 +1938,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:50: Expression",
    "raw_status": "KILLED",
-   "reads": "ed69f45cf3867e2a6864d2b6f2a740fdaccc708bb6e699e126192377700e322d",
+   "reads": "c476ae67a771fc4e286e03542fa1229ab212ea5e43dd30ae6f984f50f4cc89f1",
    "killed_at": [
     50,
     50
@@ -1914,7 +1959,7 @@
    "before": "any",
    "after": "all",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:123: fails without the mutant too: Function expected at",
+   "detail": "lean/VE/Commands/StepsExamples.lean:113: Expression (it computes through a proof the mutant broke (an instance or `@[csimp]` lemma resting on it))",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -1922,19 +1967,19 @@
   {
    "id": "M049",
    "file": "VE/Commands/Steps.lean",
-   "line": 186,
+   "line": 196,
    "definition": "VE.Commands.combineShapes",
    "operator": "any-all",
    "lines": [
-    173,
-    189
+    183,
+    199
    ],
    "before": "any",
    "after": "all",
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:70: Expression",
    "raw_status": "KILLED",
-   "reads": "61ca362cec79389da32322a2f62ea106bc6781539fe8512d3f8cda33e7a40f71",
+   "reads": "ba17c371971e8ecade04b9ea02617824ea7749158d1b86a70e7677efebf9f8f0",
    "killed_at": [
     70,
     70
@@ -1957,7 +2002,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:60: Expression",
    "raw_status": "KILLED",
-   "reads": "895d8bf79fd4f44f65cbf5ecaa05784a48d5550511efae263b1fd8e4a120a95c",
+   "reads": "25af3b6616c945bdad31095b5cc9407385809250af53b34c053d622da7f135ce",
    "killed_at": [
     60,
     60
@@ -1968,19 +2013,19 @@
   {
    "id": "M051",
    "file": "VE/Commands/Steps.lean",
-   "line": 178,
+   "line": 188,
    "definition": "VE.Commands.combineShapes",
    "operator": "bool-flip",
    "lines": [
-    173,
-    189
+    183,
+    199
    ],
    "before": "false",
    "after": "true",
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:70: Expression",
    "raw_status": "KILLED",
-   "reads": "61ca362cec79389da32322a2f62ea106bc6781539fe8512d3f8cda33e7a40f71",
+   "reads": "ba17c371971e8ecade04b9ea02617824ea7749158d1b86a70e7677efebf9f8f0",
    "killed_at": [
     70,
     70
@@ -2003,7 +2048,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:46: Expression",
    "raw_status": "KILLED",
-   "reads": "d0dd0d97a134df4fb7b13107111d31729bcb2796dc57ba0ded703a6898b4dd5b",
+   "reads": "aed5585b61347fa617e64f49e779a19ca5f4b00ca8b09e355de8f906f7b416f1",
    "killed_at": [
     46,
     46
@@ -2026,7 +2071,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:46: Expression",
    "raw_status": "KILLED",
-   "reads": "d0dd0d97a134df4fb7b13107111d31729bcb2796dc57ba0ded703a6898b4dd5b",
+   "reads": "aed5585b61347fa617e64f49e779a19ca5f4b00ca8b09e355de8f906f7b416f1",
    "killed_at": [
     46,
     46
@@ -2049,7 +2094,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:44: Expression",
    "raw_status": "KILLED",
-   "reads": "1385f70778948378bfe530f303a889109f16f874a5436426cb28738cb3fb9738",
+   "reads": "168056b7a68f5394f23c937f70f89531e8962d725e8f450b02e0be1c82bd5949",
    "killed_at": [
     44,
     44
@@ -2114,19 +2159,19 @@
   {
    "id": "M058",
    "file": "VE/Commands/Steps.lean",
-   "line": 168,
+   "line": 178,
    "definition": "VE.Commands.shapeAlts",
    "operator": "list-empty",
    "lines": [
-    164,
-    171
+    174,
+    181
    ],
    "before": "[.shape sh [r]]",
    "after": "[]",
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:89: Expression",
    "raw_status": "KILLED",
-   "reads": "4edb6c9209d724dee5323345132358c1cd8a6ed0d33e22f97190eedf256fee43",
+   "reads": "2a0757c51cf3c543383c677b72b72be405778e0a02702cbcb04e99d3a89e3ea5",
    "killed_at": [
     89,
     90
@@ -2137,17 +2182,17 @@
   {
    "id": "M059",
    "file": "VE/Commands/Steps.lean",
-   "line": 175,
+   "line": 185,
    "definition": "VE.Commands.combineShapes",
    "operator": "list-empty",
    "lines": [
-    173,
-    189
+    183,
+    199
    ],
    "before": "os.flatMap",
    "after": "[]",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/Steps.lean:175: Function expected at",
+   "detail": "lean/VE/Commands/Steps.lean:185: Function expected at",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -2155,17 +2200,17 @@
   {
    "id": "M060",
    "file": "VE/Commands/Steps.lean",
-   "line": 195,
+   "line": 205,
    "definition": "VE.Commands.readStep",
    "operator": "list-empty",
    "lines": [
-    191,
-    198
+    201,
+    208
    ],
    "before": "(shapes s).map",
    "after": "[]",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/Steps.lean:195: Function expected at",
+   "detail": "lean/VE/Commands/Steps.lean:205: Function expected at",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -2182,9 +2227,14 @@
    ],
    "before": " ++ sq",
    "after": "",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:132: eight steps of 64 readings are not `limit`",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/StepsExamples.lean:50: Expression",
+   "raw_status": "KILLED",
+   "reads": "c476ae67a771fc4e286e03542fa1229ab212ea5e43dd30ae6f984f50f4cc89f1",
+   "killed_at": [
+    50,
+    50
+   ],
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -2203,7 +2253,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:45: Expression",
    "raw_status": "KILLED",
-   "reads": "8567f74fcf7ea483c1d3d8cc008353f41f70c6ac07cd19817bba6e365abd04d8",
+   "reads": "3cb34daf8ce903400eee9e0ee16d95ce342824357a6f691d0e719f8f8fb883eb",
    "killed_at": [
     45,
     45
@@ -2242,7 +2292,7 @@
    "before": "  | form (f : Form)",
    "after": "",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:166: Unknown constant `VE.Commands.Alt.form`",
+   "detail": "lean/VE/Commands/StepsExamples.lean:177: Unknown constant `VE.Commands.Alt.form`",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -2260,7 +2310,7 @@
    "before": "  | steps (rs : List Reading)",
    "after": "",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/Steps.lean:358: the failing proof cannot be cut: Unknown constant `VE.Commands.StepOutcome.steps`",
+   "detail": "lean/VE/Commands/Steps.lean:368: the failing proof cannot be cut: Unknown constant `VE.Commands.StepOutcome.steps`",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -2280,7 +2330,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:57: Expression",
    "raw_status": "KILLED",
-   "reads": "7fa98677ccc5a56eddbd7cd80ae2dbf71dc2a87bcd37ad46fad6599a7727023b",
+   "reads": "20d28e9ea40a568acb776f6ddb4a6029a2c9a13aef3a2ce7a2c003a9f7c29d15",
    "killed_at": [
     57,
     57
@@ -2291,22 +2341,22 @@
   {
    "id": "M067",
    "file": "VE/Commands/Steps.lean",
-   "line": 188,
+   "line": 198,
    "definition": "VE.Commands.combineShapes",
    "operator": "bool-flip",
    "lines": [
-    173,
-    189
+    183,
+    199
    ],
    "before": "false",
    "after": "true",
    "status": "KILLED",
-   "detail": "lean/VE/Commands/StepsExamples.lean:166: Expression",
+   "detail": "lean/VE/Commands/StepsExamples.lean:177: Expression",
    "raw_status": "KILLED",
-   "reads": "b0dbc2a00b8c7f2c011d9d594091a13db1f78705961facc37c77137b74d17448",
+   "reads": "fffb417aedeb5571e429279937466e1e55edcfd8379b7d561841e5d30af595f1",
    "killed_at": [
-    166,
-    168
+    177,
+    179
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -2326,7 +2376,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:46: Expression",
    "raw_status": "KILLED",
-   "reads": "d0dd0d97a134df4fb7b13107111d31729bcb2796dc57ba0ded703a6898b4dd5b",
+   "reads": "aed5585b61347fa617e64f49e779a19ca5f4b00ca8b09e355de8f906f7b416f1",
    "killed_at": [
     46,
     46
@@ -2349,7 +2399,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:46: Expression",
    "raw_status": "KILLED",
-   "reads": "d0dd0d97a134df4fb7b13107111d31729bcb2796dc57ba0ded703a6898b4dd5b",
+   "reads": "aed5585b61347fa617e64f49e779a19ca5f4b00ca8b09e355de8f906f7b416f1",
    "killed_at": [
     46,
     46
@@ -2390,7 +2440,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:82: Expression",
    "raw_status": "KILLED",
-   "reads": "29253be314ea88af5612b67aaec5715a7532eb3ebf1605e8b0cfaebd371a191e",
+   "reads": "4dbbf2fca2c3d4d52b31bbfa865a18242294fa3c75f5d70cd4c4aeb9937e1419",
    "killed_at": [
     82,
     84
@@ -2437,19 +2487,19 @@
   {
    "id": "M074",
    "file": "VE/Commands/Steps.lean",
-   "line": 168,
+   "line": 178,
    "definition": "VE.Commands.shapeAlts",
    "operator": "list-empty",
    "lines": [
-    164,
-    171
+    174,
+    181
    ],
    "before": "[r]",
    "after": "[]",
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:89: Expression",
    "raw_status": "KILLED",
-   "reads": "4edb6c9209d724dee5323345132358c1cd8a6ed0d33e22f97190eedf256fee43",
+   "reads": "2a0757c51cf3c543383c677b72b72be405778e0a02702cbcb04e99d3a89e3ea5",
    "killed_at": [
     89,
     90
@@ -2460,17 +2510,17 @@
   {
    "id": "M075",
    "file": "VE/Commands/Steps.lean",
-   "line": 176,
+   "line": 186,
    "definition": "VE.Commands.combineShapes",
    "operator": "list-empty",
    "lines": [
-    173,
-    189
+    183,
+    199
    ],
    "before": "alts",
    "after": "[]",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/Steps.lean:176: don't know how to synthesize implicit argument `\u03b1`",
+   "detail": "lean/VE/Commands/Steps.lean:186: don't know how to synthesize implicit argument `\u03b1`",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -2478,17 +2528,17 @@
   {
    "id": "M076",
    "file": "VE/Commands/Steps.lean",
-   "line": 197,
+   "line": 207,
    "definition": "VE.Commands.readStep",
    "operator": "list-empty",
    "lines": [
-    191,
-    198
+    201,
+    208
    ],
    "before": "[(_, o)]",
    "after": "[]",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/Steps.lean:197: Unknown identifier `o`",
+   "detail": "lean/VE/Commands/Steps.lean:207: Unknown identifier `o`",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -2506,7 +2556,7 @@
    "before": "  | after (x : String)",
    "after": "",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/Steps.lean:350: the failing proof cannot be cut: Unknown constant `VE.Commands.Shape.after`",
+   "detail": "lean/VE/Commands/Steps.lean:360: the failing proof cannot be cut: Unknown constant `VE.Commands.Shape.after`",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -2524,7 +2574,7 @@
    "before": "  | purpose (r : Reading) (p : String)",
    "after": "",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:167: Unknown constant `VE.Commands.Alt.purpose`",
+   "detail": "lean/VE/Commands/StepsExamples.lean:178: Unknown constant `VE.Commands.Alt.purpose`",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -2542,7 +2592,7 @@
    "before": "  | many (alts : List Alt)",
    "after": "",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/Steps.lean:265: the failing proof cannot be cut: Unknown constant `VE.Commands.StepOutcome.many`",
+   "detail": "lean/VE/Commands/Steps.lean:275: the failing proof cannot be cut: Unknown constant `VE.Commands.StepOutcome.many`",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -2560,7 +2610,7 @@
    "before": "true",
    "after": "false",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:123: fails without the mutant too: Function expected at",
+   "detail": "lean/VE/Commands/StepsExamples.lean:113: Expression (it computes through a proof the mutant broke (an instance or `@[csimp]` lemma resting on it))",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -2580,7 +2630,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:46: Expression",
    "raw_status": "KILLED",
-   "reads": "d0dd0d97a134df4fb7b13107111d31729bcb2796dc57ba0ded703a6898b4dd5b",
+   "reads": "aed5585b61347fa617e64f49e779a19ca5f4b00ca8b09e355de8f906f7b416f1",
    "killed_at": [
     46,
     46
@@ -2603,7 +2653,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:46: Expression",
    "raw_status": "KILLED",
-   "reads": "d0dd0d97a134df4fb7b13107111d31729bcb2796dc57ba0ded703a6898b4dd5b",
+   "reads": "aed5585b61347fa617e64f49e779a19ca5f4b00ca8b09e355de8f906f7b416f1",
    "killed_at": [
     46,
     46
@@ -2668,22 +2718,22 @@
   {
    "id": "M086",
    "file": "VE/Commands/Steps.lean",
-   "line": 169,
+   "line": 179,
    "definition": "VE.Commands.shapeAlts",
    "operator": "list-empty",
    "lines": [
-    164,
-    171
+    174,
+    181
    ],
    "before": "[.shape sh rs]",
    "after": "[]",
    "status": "KILLED",
-   "detail": "lean/VE/Commands/StepsExamples.lean:163: Expression",
+   "detail": "lean/VE/Commands/StepsExamples.lean:174: Expression",
    "raw_status": "KILLED",
-   "reads": "464ee8866ff726731ef9b6132c81c9e65a3724f04daf226930acd06f95c10d08",
+   "reads": "b505a80cc1c1b46738c954a36502b089ca1f94c4040818f4f6e60fbafcb33d35",
    "killed_at": [
-    163,
-    163
+    174,
+    174
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -2691,17 +2741,17 @@
   {
    "id": "M087",
    "file": "VE/Commands/Steps.lean",
-   "line": 177,
+   "line": 187,
    "definition": "VE.Commands.combineShapes",
    "operator": "list-empty",
    "lines": [
-    173,
-    189
+    183,
+    199
    ],
    "before": "alts",
    "after": "[]",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/Steps.lean:177: don't know how to synthesize implicit argument `\u03b1`",
+   "detail": "lean/VE/Commands/Steps.lean:187: don't know how to synthesize implicit argument `\u03b1`",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -2719,7 +2769,7 @@
    "before": "  | seq (xs : List String)",
    "after": "",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/Steps.lean:292: the failing proof cannot be cut: Unknown constant `VE.Commands.Shape.seq`",
+   "detail": "lean/VE/Commands/Steps.lean:302: the failing proof cannot be cut: Unknown constant `VE.Commands.Shape.seq`",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -2737,7 +2787,7 @@
    "before": "  | refused (code text : String)",
    "after": "",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/Steps.lean:279: the failing proof cannot be cut: unexpected token ':='; expected '|'",
+   "detail": "lean/VE/Commands/Steps.lean:289: the failing proof cannot be cut: unexpected token ':='; expected '|'",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -2755,7 +2805,7 @@
    "before": "false",
    "after": "true",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:123: fails without the mutant too: Function expected at",
+   "detail": "lean/VE/Commands/StepsExamples.lean:59: Expression (it computes through a proof the mutant broke (an instance or `@[csimp]` lemma resting on it))",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -2775,7 +2825,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:46: Expression",
    "raw_status": "KILLED",
-   "reads": "d0dd0d97a134df4fb7b13107111d31729bcb2796dc57ba0ded703a6898b4dd5b",
+   "reads": "aed5585b61347fa617e64f49e779a19ca5f4b00ca8b09e355de8f906f7b416f1",
    "killed_at": [
     46,
     46
@@ -2798,7 +2848,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:46: Expression",
    "raw_status": "KILLED",
-   "reads": "d0dd0d97a134df4fb7b13107111d31729bcb2796dc57ba0ded703a6898b4dd5b",
+   "reads": "aed5585b61347fa617e64f49e779a19ca5f4b00ca8b09e355de8f906f7b416f1",
    "killed_at": [
     46,
     46
@@ -2821,7 +2871,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:46: Expression",
    "raw_status": "KILLED",
-   "reads": "d0dd0d97a134df4fb7b13107111d31729bcb2796dc57ba0ded703a6898b4dd5b",
+   "reads": "aed5585b61347fa617e64f49e779a19ca5f4b00ca8b09e355de8f906f7b416f1",
    "killed_at": [
     46,
     46
@@ -2868,17 +2918,17 @@
   {
    "id": "M096",
    "file": "VE/Commands/Steps.lean",
-   "line": 178,
+   "line": 188,
    "definition": "VE.Commands.combineShapes",
    "operator": "list-empty",
    "lines": [
-    173,
-    189
+    183,
+    199
    ],
    "before": "os",
    "after": "[]",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/Steps.lean:178: Invalid dotted identifier notation: The expected type of `.limit` could not be determined",
+   "detail": "lean/VE/Commands/Steps.lean:188: Invalid dotted identifier notation: The expected type of `.limit` could not be determined",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -2896,7 +2946,7 @@
    "before": "  | limit",
    "after": "",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/Steps.lean:329: the failing proof cannot be cut: Unknown constant `VE.Commands.StepOutcome.limit`",
+   "detail": "lean/VE/Commands/Steps.lean:339: the failing proof cannot be cut: Unknown constant `VE.Commands.StepOutcome.limit`",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -2916,7 +2966,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:45: Expression",
    "raw_status": "KILLED",
-   "reads": "8567f74fcf7ea483c1d3d8cc008353f41f70c6ac07cd19817bba6e365abd04d8",
+   "reads": "3cb34daf8ce903400eee9e0ee16d95ce342824357a6f691d0e719f8f8fb883eb",
    "killed_at": [
     45,
     45
@@ -2939,7 +2989,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:45: Expression",
    "raw_status": "KILLED",
-   "reads": "8567f74fcf7ea483c1d3d8cc008353f41f70c6ac07cd19817bba6e365abd04d8",
+   "reads": "3cb34daf8ce903400eee9e0ee16d95ce342824357a6f691d0e719f8f8fb883eb",
    "killed_at": [
     45,
     45
@@ -2986,17 +3036,17 @@
   {
    "id": "M102",
    "file": "VE/Commands/Steps.lean",
-   "line": 179,
+   "line": 189,
    "definition": "VE.Commands.combineShapes",
    "operator": "list-empty",
    "lines": [
-    173,
-    189
+    183,
+    199
    ],
    "before": "os",
    "after": "[]",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/Steps.lean:180: Invalid dotted identifier notation: The expected type of `.one` could not be determined",
+   "detail": "lean/VE/Commands/Steps.lean:190: Invalid dotted identifier notation: The expected type of `.one` could not be determined",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -3014,7 +3064,7 @@
    "before": "  | mixed (r : Reading) (p : String)",
    "after": "",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:168: Unknown constant `VE.Commands.StepOutcome.mixed`",
+   "detail": "lean/VE/Commands/StepsExamples.lean:179: Unknown constant `VE.Commands.StepOutcome.mixed`",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -3034,7 +3084,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:50: Expression",
    "raw_status": "KILLED",
-   "reads": "ed69f45cf3867e2a6864d2b6f2a740fdaccc708bb6e699e126192377700e322d",
+   "reads": "c476ae67a771fc4e286e03542fa1229ab212ea5e43dd30ae6f984f50f4cc89f1",
    "killed_at": [
     50,
     50
@@ -3057,7 +3107,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:43: Expression",
    "raw_status": "KILLED",
-   "reads": "7ec29d384f7cd675e7e4a4cbd18f717a3aae4a286db67076766bf19a021f536e",
+   "reads": "3d1a8aa962a66230abc2b3bd6dc70d41ba747c86868a0b4e35e2efdab8b540a5",
    "killed_at": [
     43,
     43
@@ -3104,17 +3154,17 @@
   {
    "id": "M108",
    "file": "VE/Commands/Steps.lean",
-   "line": 186,
+   "line": 196,
    "definition": "VE.Commands.combineShapes",
    "operator": "list-empty",
    "lines": [
-    173,
-    189
+    183,
+    199
    ],
    "before": "os",
    "after": "[]",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/Steps.lean:187: Invalid dotted identifier notation: The expected type of `.refused` could not be determined",
+   "detail": "lean/VE/Commands/Steps.lean:197: Invalid dotted identifier notation: The expected type of `.refused` could not be determined",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -3134,7 +3184,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:52: Expression",
    "raw_status": "KILLED",
-   "reads": "73474d65bf2f30d564982b17362789d8151604cb3c18e80a9669518c95ea8f67",
+   "reads": "f0c37e2dfac43246814e2a67dd4a4db29243929c8694b150bda085bf4dfbd627",
    "killed_at": [
     52,
     54
@@ -3154,9 +3204,14 @@
    ],
    "before": "8",
    "after": "7",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:132: eight steps of 64 readings are not `limit`",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/StepsExamples.lean:148: Expression",
+   "raw_status": "KILLED",
+   "reads": "2d1f98ee8fd3df2cb33c16013d43619af77e86dcee67ce6fd9a768e6f1f0c763",
+   "killed_at": [
+    148,
+    150
+   ],
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -3175,7 +3230,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:46: Expression",
    "raw_status": "KILLED",
-   "reads": "d0dd0d97a134df4fb7b13107111d31729bcb2796dc57ba0ded703a6898b4dd5b",
+   "reads": "aed5585b61347fa617e64f49e779a19ca5f4b00ca8b09e355de8f906f7b416f1",
    "killed_at": [
     46,
     46
@@ -3196,7 +3251,7 @@
    "before": "[r]",
    "after": "[]",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:123: fails without the mutant too: Function expected at",
+   "detail": "lean/VE/Commands/StepsExamples.lean:59: Expression (it computes through a proof the mutant broke (an instance or `@[csimp]` lemma resting on it))",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -3216,7 +3271,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:46: Expression",
    "raw_status": "KILLED",
-   "reads": "d0dd0d97a134df4fb7b13107111d31729bcb2796dc57ba0ded703a6898b4dd5b",
+   "reads": "aed5585b61347fa617e64f49e779a19ca5f4b00ca8b09e355de8f906f7b416f1",
    "killed_at": [
     46,
     46
@@ -3257,7 +3312,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:46: Expression",
    "raw_status": "KILLED",
-   "reads": "d0dd0d97a134df4fb7b13107111d31729bcb2796dc57ba0ded703a6898b4dd5b",
+   "reads": "aed5585b61347fa617e64f49e779a19ca5f4b00ca8b09e355de8f906f7b416f1",
    "killed_at": [
     46,
     46
@@ -3298,7 +3353,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:46: Expression",
    "raw_status": "KILLED",
-   "reads": "d0dd0d97a134df4fb7b13107111d31729bcb2796dc57ba0ded703a6898b4dd5b",
+   "reads": "aed5585b61347fa617e64f49e779a19ca5f4b00ca8b09e355de8f906f7b416f1",
    "killed_at": [
     46,
     46
@@ -3339,7 +3394,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:45: Expression",
    "raw_status": "KILLED",
-   "reads": "8567f74fcf7ea483c1d3d8cc008353f41f70c6ac07cd19817bba6e365abd04d8",
+   "reads": "3cb34daf8ce903400eee9e0ee16d95ce342824357a6f691d0e719f8f8fb883eb",
    "killed_at": [
     45,
     45
@@ -3360,7 +3415,7 @@
    "before": "alts",
    "after": "[]",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:123: fails without the mutant too: Function expected at",
+   "detail": "lean/VE/Commands/StepsExamples.lean:79: Expression (it computes through a proof the mutant broke (an instance or `@[csimp]` lemma resting on it))",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -3467,9 +3522,14 @@
    ],
    "before": "[.seq xs]",
    "after": "[]",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:132: eight steps of 64 readings are not `limit`",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/StepsExamples.lean:50: Expression",
+   "raw_status": "KILLED",
+   "reads": "c476ae67a771fc4e286e03542fa1229ab212ea5e43dd30ae6f984f50f4cc89f1",
+   "killed_at": [
+    50,
+    50
+   ],
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -3488,7 +3548,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:46: Expression",
    "raw_status": "KILLED",
-   "reads": "d0dd0d97a134df4fb7b13107111d31729bcb2796dc57ba0ded703a6898b4dd5b",
+   "reads": "aed5585b61347fa617e64f49e779a19ca5f4b00ca8b09e355de8f906f7b416f1",
    "killed_at": [
     46,
     46
@@ -3511,7 +3571,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:45: Expression",
    "raw_status": "KILLED",
-   "reads": "8567f74fcf7ea483c1d3d8cc008353f41f70c6ac07cd19817bba6e365abd04d8",
+   "reads": "3cb34daf8ce903400eee9e0ee16d95ce342824357a6f691d0e719f8f8fb883eb",
    "killed_at": [
     45,
     45
@@ -3531,9 +3591,14 @@
    ],
    "before": "sq",
    "after": "[]",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:132: eight steps of 64 readings are not `limit`",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/StepsExamples.lean:50: Expression",
+   "raw_status": "KILLED",
+   "reads": "c476ae67a771fc4e286e03542fa1229ab212ea5e43dd30ae6f984f50f4cc89f1",
+   "killed_at": [
+    50,
+    50
+   ],
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -3552,7 +3617,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:43: Expression",
    "raw_status": "KILLED",
-   "reads": "7ec29d384f7cd675e7e4a4cbd18f717a3aae4a286db67076766bf19a021f536e",
+   "reads": "3d1a8aa962a66230abc2b3bd6dc70d41ba747c86868a0b4e35e2efdab8b540a5",
    "killed_at": [
     43,
     43
@@ -3575,7 +3640,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:42: Expression",
    "raw_status": "KILLED",
-   "reads": "b5de4c0cf11629971a291a1252365597e1b2acc8b2fa9fa8e0d27169ae85988d",
+   "reads": "3f69bc9ce38e3b39d4dd2c03f596fd14386be3b78c44e6d0c425e225df4c2dd0",
    "killed_at": [
     42,
     42
@@ -3598,7 +3663,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:47: Expression",
    "raw_status": "KILLED",
-   "reads": "34fbdd26b23db7c965b15e729564df114c93f3ebfd699bf44f35b94336b4942a",
+   "reads": "d0616e07f08d8421b741acebc3d3550d70883fb68b52de8e69669e02618d1207",
    "killed_at": [
     47,
     49
@@ -3621,7 +3686,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:82: Expression",
    "raw_status": "KILLED",
-   "reads": "29253be314ea88af5612b67aaec5715a7532eb3ebf1605e8b0cfaebd371a191e",
+   "reads": "4dbbf2fca2c3d4d52b31bbfa865a18242294fa3c75f5d70cd4c4aeb9937e1419",
    "killed_at": [
     82,
     84
@@ -3660,7 +3725,7 @@
    "before": "xs",
    "after": "(xs.take 1)",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:123: fails without the mutant too: Function expected at",
+   "detail": "lean/VE/Commands/StepsExamples.lean:59: Expression (it computes through a proof the mutant broke (an instance or `@[csimp]` lemma resting on it))",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -3668,17 +3733,17 @@
   {
    "id": "M136",
    "file": "VE/Commands/Steps.lean",
-   "line": 167,
+   "line": 177,
    "definition": "VE.Commands.shapeAlts",
    "operator": "list-first",
    "lines": [
-    164,
-    171
+    174,
+    181
    ],
    "before": "match o with\n  | .one r _ => [.shape sh [r]]\n  | .steps rs => [.shape sh rs]\n  | .many alts => alts\n  | _ => []",
    "after": "((match o with\n  | .one r _ => [.shape sh [r]]\n  | .steps rs => [.shape sh rs]\n  | .many alts => alts\n  | _ => []).take 1)",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/Steps.lean:168: Invalid dotted identifier notation: The expected type of `.shape` could not be determined",
+   "detail": "lean/VE/Commands/Steps.lean:178: Invalid dotted identifier notation: The expected type of `.shape` could not be determined",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -3686,19 +3751,19 @@
   {
    "id": "M137",
    "file": "VE/Commands/Steps.lean",
-   "line": 175,
+   "line": 185,
    "definition": "VE.Commands.combineShapes",
    "operator": "list-first",
    "lines": [
-    173,
-    189
+    183,
+    199
    ],
    "before": "os",
    "after": "(os.take 1)",
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:89: Expression",
    "raw_status": "KILLED",
-   "reads": "5fc23f543f088c902e7b9e51798ccc21cfbefe2f84c9ae48df98d88ac5591200",
+   "reads": "ce5fb29f67005001b42bbefa1f5362317cd664864746554d21abad15d71b4b19",
    "killed_at": [
     89,
     90
@@ -3709,30 +3774,35 @@
   {
    "id": "M138",
    "file": "VE/Commands/Steps.lean",
-   "line": 195,
+   "line": 205,
    "definition": "VE.Commands.readStep",
    "operator": "list-first",
    "lines": [
-    191,
-    198
+    201,
+    208
    ],
    "before": "(shapes s)",
    "after": "((shapes s).take 1)",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Commands/Steps.lean:336",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/StepsExamples.lean:104: Expression",
+   "raw_status": "KILLED",
+   "reads": "dacce108f393874b2b11d0c5752da295264de788af274080496a2268656a6c86",
+   "killed_at": [
+    104,
+    106
+   ],
    "trust_class": "G[V]",
    "trusted": true
   },
   {
    "id": "M139",
    "file": "VE/Commands/Steps.lean",
-   "line": 202,
+   "line": 212,
    "definition": "VE.Commands.reads",
    "operator": "list-first",
    "lines": [
-    200,
-    202
+    210,
+    212
    ],
    "before": "(shapeAlts sh (shapeOutcome se sc E L b sh))",
    "after": "((shapeAlts sh (shapeOutcome se sc E L b sh)).take 1)",
@@ -3757,7 +3827,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:42: Expression",
    "raw_status": "KILLED",
-   "reads": "b5de4c0cf11629971a291a1252365597e1b2acc8b2fa9fa8e0d27169ae85988d",
+   "reads": "3f69bc9ce38e3b39d4dd2c03f596fd14386be3b78c44e6d0c425e225df4c2dd0",
    "killed_at": [
     42,
     42
@@ -3777,9 +3847,14 @@
    ],
    "before": "let t := trimmed s\n  if !(t.endsWith \".\") then [.core s] else\n  let body := t.dropRight 1\n  let pre : List Shape :=\n    if body.startsWith \"If \" then\n      let ws := (body.drop 3).splitOn \", \"\n      (List.range (ws.length - 1)).map fun i =>\n        .preposed (\", \".intercalate (ws.take (i + 1))) (\", \".intercalate (ws.drop (i + 1)))\n    else []\n  let aft : List Shape := if body.startsWith \"Then \" then [.after (body.drop 5)] else []\n  let xs := body.splitOn \", then \"\n  let sq : List Shape := if 2 \u2264 xs.length && xs.length \u2264 8 && !body.startsWith \"If \" then [.seq xs] else []\n  match pre ++ aft ++ sq with\n  | [] => [.core s]\n  | l => l",
    "after": "((let t := trimmed s\n  if !(t.endsWith \".\") then [.core s] else\n  let body := t.dropRight 1\n  let pre : List Shape :=\n    if body.startsWith \"If \" then\n      let ws := (body.drop 3).splitOn \", \"\n      (List.range (ws.length - 1)).map fun i =>\n        .preposed (\", \".intercalate (ws.take (i + 1))) (\", \".intercalate (ws.drop (i + 1)))\n    else []\n  let aft : List Shape := if body.startsWith \"Then \" then [.after (body.drop 5)] else []\n  let xs := body.splitOn \", then \"\n  let sq : List Shape := if 2 \u2264 xs.length && xs.length \u2264 8 && !body.startsWith \"If \" then [.seq xs] else []\n  match pre ++ aft ++ sq with\n  | [] => [.core s]\n  | l => l).dropLast)",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:132: eight steps of 64 readings are not `limit`",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/StepsExamples.lean:43: Expression",
+   "raw_status": "KILLED",
+   "reads": "3d1a8aa962a66230abc2b3bd6dc70d41ba747c86868a0b4e35e2efdab8b540a5",
+   "killed_at": [
+    43,
+    43
+   ],
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -3798,7 +3873,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:82: Expression",
    "raw_status": "KILLED",
-   "reads": "29253be314ea88af5612b67aaec5715a7532eb3ebf1605e8b0cfaebd371a191e",
+   "reads": "4dbbf2fca2c3d4d52b31bbfa865a18242294fa3c75f5d70cd4c4aeb9937e1419",
    "killed_at": [
     82,
     84
@@ -3837,7 +3912,7 @@
    "before": "xs",
    "after": "(xs.dropLast)",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:123: fails without the mutant too: Function expected at",
+   "detail": "lean/VE/Commands/StepsExamples.lean:59: Expression (it computes through a proof the mutant broke (an instance or `@[csimp]` lemma resting on it))",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -3845,17 +3920,17 @@
   {
    "id": "M145",
    "file": "VE/Commands/Steps.lean",
-   "line": 167,
+   "line": 177,
    "definition": "VE.Commands.shapeAlts",
    "operator": "list-drop-last",
    "lines": [
-    164,
-    171
+    174,
+    181
    ],
    "before": "match o with\n  | .one r _ => [.shape sh [r]]\n  | .steps rs => [.shape sh rs]\n  | .many alts => alts\n  | _ => []",
    "after": "((match o with\n  | .one r _ => [.shape sh [r]]\n  | .steps rs => [.shape sh rs]\n  | .many alts => alts\n  | _ => []).dropLast)",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/Steps.lean:168: Invalid dotted identifier notation: The expected type of `.shape` could not be determined",
+   "detail": "lean/VE/Commands/Steps.lean:178: Invalid dotted identifier notation: The expected type of `.shape` could not be determined",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -3863,19 +3938,19 @@
   {
    "id": "M146",
    "file": "VE/Commands/Steps.lean",
-   "line": 175,
+   "line": 185,
    "definition": "VE.Commands.combineShapes",
    "operator": "list-drop-last",
    "lines": [
-    173,
-    189
+    183,
+    199
    ],
    "before": "os",
    "after": "(os.dropLast)",
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:96: Expression",
    "raw_status": "KILLED",
-   "reads": "46142067ba1d9a5d946792acb6947d99c80cb8aaa2b13efe73e5c1b8b8795b01",
+   "reads": "c88f4bcc52e1a173d02890644e44f80212cf69bb7603bbcfa983f4aa7bac3cde",
    "killed_at": [
     96,
     96
@@ -3886,40 +3961,45 @@
   {
    "id": "M147",
    "file": "VE/Commands/Steps.lean",
-   "line": 195,
+   "line": 205,
    "definition": "VE.Commands.readStep",
    "operator": "list-drop-last",
    "lines": [
-    191,
-    198
+    201,
+    208
    ],
    "before": "(shapes s)",
    "after": "((shapes s).dropLast)",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:132: eight steps of 64 readings are not `limit`",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/StepsExamples.lean:57: Expression",
+   "raw_status": "KILLED",
+   "reads": "29f28917db09ec07da2afca211b029865ad5f5a9edd03b61a19ac056dd807910",
+   "killed_at": [
+    57,
+    57
+   ],
    "trust_class": "G[V]",
    "trusted": true
   },
   {
    "id": "M148",
    "file": "VE/Commands/Steps.lean",
-   "line": 202,
+   "line": 212,
    "definition": "VE.Commands.reads",
    "operator": "list-drop-last",
    "lines": [
-    200,
-    202
+    210,
+    212
    ],
    "before": "(shapeAlts sh (shapeOutcome se sc E L b sh))",
    "after": "((shapeAlts sh (shapeOutcome se sc E L b sh)).dropLast)",
    "status": "KILLED",
-   "detail": "lean/VE/Commands/StepsExamples.lean:169: Expression",
+   "detail": "lean/VE/Commands/StepsExamples.lean:180: Expression",
    "raw_status": "KILLED",
-   "reads": "4cd2287f6b18470ef568fcef0ad3e783b25eef0d22667fc30b4ae7c4a19658ff",
+   "reads": "ca9f03c9c2a925b971bde06e94d8e321572c3e410e73a9824baa84d92cd16fee",
    "killed_at": [
-    169,
-    169
+    180,
+    180
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -3939,7 +4019,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:46: Expression",
    "raw_status": "KILLED",
-   "reads": "d0dd0d97a134df4fb7b13107111d31729bcb2796dc57ba0ded703a6898b4dd5b",
+   "reads": "aed5585b61347fa617e64f49e779a19ca5f4b00ca8b09e355de8f906f7b416f1",
    "killed_at": [
     46,
     46
@@ -4006,38 +4086,38 @@
   {
    "id": "M153",
    "file": "VE/Commands/Steps.lean",
-   "line": 175,
+   "line": 185,
    "definition": "VE.Commands.combineShapes",
    "operator": "list-first",
    "lines": [
-    173,
-    189
+    183,
+    199
    ],
    "before": "os.flatMap",
    "after": "(os.flatMap.take 1)",
    "status": "INVALID",
    "detail": "Invalid field `take`: The environment does not contain `Function.take`",
    "raw_status": "INVALID",
-   "reads": "0223d418e379df91a9c06bb2f9da0f930e2e0d31907de7943ce0bfd6b85dc4ee",
+   "reads": "90ce6a070855697561b2aa567263954ee016a85773560cad8105e95dadcf90e7",
    "trust_class": "G[V]",
    "trusted": true
   },
   {
    "id": "M154",
    "file": "VE/Commands/Steps.lean",
-   "line": 195,
+   "line": 205,
    "definition": "VE.Commands.readStep",
    "operator": "list-first",
    "lines": [
-    191,
-    198
+    201,
+    208
    ],
    "before": "(shapes s).map",
    "after": "(((shapes s).map).take 1)",
    "status": "INVALID",
    "detail": "Invalid field `take`: The environment does not contain `Function.take`",
    "raw_status": "INVALID",
-   "reads": "522ded820e32d1e068c4f4ac9de566f17ba9737367f3a04c4b7e60eee9b2a098",
+   "reads": "290cb7f4d4b351c079f5b5241ac59e564e2f4fda2d266b46871179fed511e628",
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -4056,7 +4136,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:44: Expression",
    "raw_status": "KILLED",
-   "reads": "1385f70778948378bfe530f303a889109f16f874a5436426cb28738cb3fb9738",
+   "reads": "168056b7a68f5394f23c937f70f89531e8962d725e8f450b02e0be1c82bd5949",
    "killed_at": [
     44,
     44
@@ -4122,19 +4202,19 @@
   {
    "id": "M159",
    "file": "VE/Commands/Steps.lean",
-   "line": 168,
+   "line": 178,
    "definition": "VE.Commands.shapeAlts",
    "operator": "list-drop-last",
    "lines": [
-    164,
-    171
+    174,
+    181
    ],
    "before": "[.shape sh [r]]",
    "after": "([.shape sh [r]].dropLast)",
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:89: Expression",
    "raw_status": "KILLED",
-   "reads": "4edb6c9209d724dee5323345132358c1cd8a6ed0d33e22f97190eedf256fee43",
+   "reads": "2a0757c51cf3c543383c677b72b72be405778e0a02702cbcb04e99d3a89e3ea5",
    "killed_at": [
     89,
     90
@@ -4145,38 +4225,38 @@
   {
    "id": "M160",
    "file": "VE/Commands/Steps.lean",
-   "line": 175,
+   "line": 185,
    "definition": "VE.Commands.combineShapes",
    "operator": "list-drop-last",
    "lines": [
-    173,
-    189
+    183,
+    199
    ],
    "before": "os.flatMap",
    "after": "(os.flatMap.dropLast)",
    "status": "INVALID",
    "detail": "Invalid field `dropLast`: The environment does not contain `Function.dropLast`",
    "raw_status": "INVALID",
-   "reads": "0223d418e379df91a9c06bb2f9da0f930e2e0d31907de7943ce0bfd6b85dc4ee",
+   "reads": "90ce6a070855697561b2aa567263954ee016a85773560cad8105e95dadcf90e7",
    "trust_class": "G[V]",
    "trusted": true
   },
   {
    "id": "M161",
    "file": "VE/Commands/Steps.lean",
-   "line": 195,
+   "line": 205,
    "definition": "VE.Commands.readStep",
    "operator": "list-drop-last",
    "lines": [
-    191,
-    198
+    201,
+    208
    ],
    "before": "(shapes s).map",
    "after": "(((shapes s).map).dropLast)",
    "status": "INVALID",
    "detail": "Invalid field `dropLast`: The environment does not contain `Function.dropLast`",
    "raw_status": "INVALID",
-   "reads": "522ded820e32d1e068c4f4ac9de566f17ba9737367f3a04c4b7e60eee9b2a098",
+   "reads": "290cb7f4d4b351c079f5b5241ac59e564e2f4fda2d266b46871179fed511e628",
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -4195,7 +4275,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:46: Expression",
    "raw_status": "KILLED",
-   "reads": "d0dd0d97a134df4fb7b13107111d31729bcb2796dc57ba0ded703a6898b4dd5b",
+   "reads": "aed5585b61347fa617e64f49e779a19ca5f4b00ca8b09e355de8f906f7b416f1",
    "killed_at": [
     46,
     46
@@ -4216,7 +4296,7 @@
    "before": "(readingTuples rest)",
    "after": "((readingTuples rest).take 1)",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:140: Expression (it computes through a proof the mutant broke (an instance or `@[csimp]` lemma resting on it))",
+   "detail": "lean/VE/Commands/StepsExamples.lean:151: Expression (it computes through a proof the mutant broke (an instance or `@[csimp]` lemma resting on it))",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -4234,7 +4314,7 @@
    "before": "os",
    "after": "(os.take 1)",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:123: fails without the mutant too: Function expected at",
+   "detail": "lean/VE/Commands/StepsExamples.lean:116: Expression (it computes through a proof the mutant broke (an instance or `@[csimp]` lemma resting on it))",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -4242,19 +4322,19 @@
   {
    "id": "M165",
    "file": "VE/Commands/Steps.lean",
-   "line": 176,
+   "line": 186,
    "definition": "VE.Commands.combineShapes",
    "operator": "list-first",
    "lines": [
-    173,
-    189
+    183,
+    199
    ],
    "before": "alts",
    "after": "(alts.take 1)",
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:96: Expression",
    "raw_status": "KILLED",
-   "reads": "46142067ba1d9a5d946792acb6947d99c80cb8aaa2b13efe73e5c1b8b8795b01",
+   "reads": "c88f4bcc52e1a173d02890644e44f80212cf69bb7603bbcfa983f4aa7bac3cde",
    "killed_at": [
     96,
     96
@@ -4295,7 +4375,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:82: Expression",
    "raw_status": "KILLED",
-   "reads": "29253be314ea88af5612b67aaec5715a7532eb3ebf1605e8b0cfaebd371a191e",
+   "reads": "4dbbf2fca2c3d4d52b31bbfa865a18242294fa3c75f5d70cd4c4aeb9937e1419",
    "killed_at": [
     82,
     84
@@ -4335,7 +4415,7 @@
    "before": "os",
    "after": "(os.dropLast)",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:123: fails without the mutant too: Function expected at",
+   "detail": "lean/VE/Commands/StepsExamples.lean:116: Expression (it computes through a proof the mutant broke (an instance or `@[csimp]` lemma resting on it))",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -4343,19 +4423,19 @@
   {
    "id": "M170",
    "file": "VE/Commands/Steps.lean",
-   "line": 168,
+   "line": 178,
    "definition": "VE.Commands.shapeAlts",
    "operator": "list-drop-last",
    "lines": [
-    164,
-    171
+    174,
+    181
    ],
    "before": "[r]",
    "after": "([r].dropLast)",
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:89: Expression",
    "raw_status": "KILLED",
-   "reads": "4edb6c9209d724dee5323345132358c1cd8a6ed0d33e22f97190eedf256fee43",
+   "reads": "2a0757c51cf3c543383c677b72b72be405778e0a02702cbcb04e99d3a89e3ea5",
    "killed_at": [
     89,
     90
@@ -4366,19 +4446,19 @@
   {
    "id": "M171",
    "file": "VE/Commands/Steps.lean",
-   "line": 176,
+   "line": 186,
    "definition": "VE.Commands.combineShapes",
    "operator": "list-drop-last",
    "lines": [
-    173,
-    189
+    183,
+    199
    ],
    "before": "alts",
    "after": "(alts.dropLast)",
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:96: Expression",
    "raw_status": "KILLED",
-   "reads": "46142067ba1d9a5d946792acb6947d99c80cb8aaa2b13efe73e5c1b8b8795b01",
+   "reads": "c88f4bcc52e1a173d02890644e44f80212cf69bb7603bbcfa983f4aa7bac3cde",
    "killed_at": [
     96,
     96
@@ -4389,19 +4469,19 @@
   {
    "id": "M172",
    "file": "VE/Commands/Steps.lean",
-   "line": 197,
+   "line": 207,
    "definition": "VE.Commands.readStep",
    "operator": "list-drop-last",
    "lines": [
-    191,
-    198
+    201,
+    208
    ],
    "before": "[(_, o)]",
    "after": "([(_, o)].dropLast)",
    "status": "INVALID",
    "detail": "Invalid pattern",
    "raw_status": "INVALID",
-   "reads": "522ded820e32d1e068c4f4ac9de566f17ba9737367f3a04c4b7e60eee9b2a098",
+   "reads": "290cb7f4d4b351c079f5b5241ac59e564e2f4fda2d266b46871179fed511e628",
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -4420,7 +4500,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:47: Expression",
    "raw_status": "KILLED",
-   "reads": "34fbdd26b23db7c965b15e729564df114c93f3ebfd699bf44f35b94336b4942a",
+   "reads": "d0616e07f08d8421b741acebc3d3550d70883fb68b52de8e69669e02618d1207",
    "killed_at": [
     47,
     49
@@ -4441,7 +4521,7 @@
    "before": "(readingTuples rest).map (x :: \u00b7)",
    "after": "(((readingTuples rest).map (x :: \u00b7)).take 1)",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:140: Expression (it computes through a proof the mutant broke (an instance or `@[csimp]` lemma resting on it))",
+   "detail": "lean/VE/Commands/StepsExamples.lean:151: Expression (it computes through a proof the mutant broke (an instance or `@[csimp]` lemma resting on it))",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -4458,28 +4538,28 @@
    ],
    "before": "rs",
    "after": "(rs.take 1)",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:123: fails without the mutant too: Function expected at",
-   "raw_status": "UNKNOWN",
+   "status": "SURVIVOR",
+   "detail": "the proofs it breaks: lean/VE/Commands/Steps.lean:157, lean/VE/Commands/Steps.lean:301, lean/VE/Commands/Steps.lean:366, lean/VE/Commands/StepsExamples.lean:144, lean/VE/Commands/StepsExamples.lean:148",
+   "raw_status": "SURVIVOR",
    "trust_class": "G[V]",
    "trusted": true
   },
   {
    "id": "M176",
    "file": "VE/Commands/Steps.lean",
-   "line": 177,
+   "line": 187,
    "definition": "VE.Commands.combineShapes",
    "operator": "list-first",
    "lines": [
-    173,
-    189
+    183,
+    199
    ],
    "before": "alts",
    "after": "(alts.take 1)",
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:89: Expression",
    "raw_status": "KILLED",
-   "reads": "5fc23f543f088c902e7b9e51798ccc21cfbefe2f84c9ae48df98d88ac5591200",
+   "reads": "ce5fb29f67005001b42bbefa1f5362317cd664864746554d21abad15d71b4b19",
    "killed_at": [
     89,
     90
@@ -4535,31 +4615,31 @@
    ],
    "before": "rs",
    "after": "(rs.dropLast)",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:123: fails without the mutant too: Function expected at",
-   "raw_status": "UNKNOWN",
+   "status": "SURVIVOR",
+   "detail": "the proofs it breaks: lean/VE/Commands/Steps.lean:157, lean/VE/Commands/Steps.lean:301, lean/VE/Commands/Steps.lean:366, lean/VE/Commands/StepsExamples.lean:144, lean/VE/Commands/StepsExamples.lean:148",
+   "raw_status": "SURVIVOR",
    "trust_class": "G[V]",
    "trusted": true
   },
   {
    "id": "M180",
    "file": "VE/Commands/Steps.lean",
-   "line": 169,
+   "line": 179,
    "definition": "VE.Commands.shapeAlts",
    "operator": "list-drop-last",
    "lines": [
-    164,
-    171
+    174,
+    181
    ],
    "before": "[.shape sh rs]",
    "after": "([.shape sh rs].dropLast)",
    "status": "KILLED",
-   "detail": "lean/VE/Commands/StepsExamples.lean:163: Expression",
+   "detail": "lean/VE/Commands/StepsExamples.lean:174: Expression",
    "raw_status": "KILLED",
-   "reads": "464ee8866ff726731ef9b6132c81c9e65a3724f04daf226930acd06f95c10d08",
+   "reads": "b505a80cc1c1b46738c954a36502b089ca1f94c4040818f4f6e60fbafcb33d35",
    "killed_at": [
-    163,
-    163
+    174,
+    174
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -4567,19 +4647,19 @@
   {
    "id": "M181",
    "file": "VE/Commands/Steps.lean",
-   "line": 177,
+   "line": 187,
    "definition": "VE.Commands.combineShapes",
    "operator": "list-drop-last",
    "lines": [
-    173,
-    189
+    183,
+    199
    ],
    "before": "alts",
    "after": "(alts.dropLast)",
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:89: Expression",
    "raw_status": "KILLED",
-   "reads": "5fc23f543f088c902e7b9e51798ccc21cfbefe2f84c9ae48df98d88ac5591200",
+   "reads": "ce5fb29f67005001b42bbefa1f5362317cd664864746554d21abad15d71b4b19",
    "killed_at": [
     89,
     90
@@ -4619,7 +4699,7 @@
    "before": "os",
    "after": "(os.take 1)",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:123: fails without the mutant too: Function expected at",
+   "detail": "lean/VE/Commands/StepsExamples.lean:113: Expression (it computes through a proof the mutant broke (an instance or `@[csimp]` lemma resting on it))",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -4627,19 +4707,19 @@
   {
    "id": "M184",
    "file": "VE/Commands/Steps.lean",
-   "line": 178,
+   "line": 188,
    "definition": "VE.Commands.combineShapes",
    "operator": "list-first",
    "lines": [
-    173,
-    189
+    183,
+    199
    ],
    "before": "os",
    "after": "(os.take 1)",
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:88: Expression",
    "raw_status": "KILLED",
-   "reads": "dda3e13ad22f184c86dc154a4d479ea69b22cbbe56146a762e62276ed5d0f8a7",
+   "reads": "5f98fd031fa8651a1526c8452b4ba934f26ff86286076c78c4537aedd64924a3",
    "killed_at": [
     88,
     88
@@ -4662,7 +4742,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:46: Expression",
    "raw_status": "KILLED",
-   "reads": "d0dd0d97a134df4fb7b13107111d31729bcb2796dc57ba0ded703a6898b4dd5b",
+   "reads": "aed5585b61347fa617e64f49e779a19ca5f4b00ca8b09e355de8f906f7b416f1",
    "killed_at": [
     46,
     46
@@ -4701,7 +4781,7 @@
    "before": "os",
    "after": "(os.dropLast)",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:123: fails without the mutant too: Function expected at",
+   "detail": "lean/VE/Commands/StepsExamples.lean:113: Expression (it computes through a proof the mutant broke (an instance or `@[csimp]` lemma resting on it))",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -4709,19 +4789,19 @@
   {
    "id": "M188",
    "file": "VE/Commands/Steps.lean",
-   "line": 178,
+   "line": 188,
    "definition": "VE.Commands.combineShapes",
    "operator": "list-drop-last",
    "lines": [
-    173,
-    189
+    183,
+    199
    ],
    "before": "os",
    "after": "(os.dropLast)",
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:88: Expression",
    "raw_status": "KILLED",
-   "reads": "dda3e13ad22f184c86dc154a4d479ea69b22cbbe56146a762e62276ed5d0f8a7",
+   "reads": "5f98fd031fa8651a1526c8452b4ba934f26ff86286076c78c4537aedd64924a3",
    "killed_at": [
     88,
     88
@@ -4744,7 +4824,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:46: Expression",
    "raw_status": "KILLED",
-   "reads": "d0dd0d97a134df4fb7b13107111d31729bcb2796dc57ba0ded703a6898b4dd5b",
+   "reads": "aed5585b61347fa617e64f49e779a19ca5f4b00ca8b09e355de8f906f7b416f1",
    "killed_at": [
     46,
     46
@@ -4765,7 +4845,7 @@
    "before": "os",
    "after": "(os.take 1)",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:123: fails without the mutant too: Function expected at",
+   "detail": "lean/VE/Commands/StepsExamples.lean:59: Expression (it computes through a proof the mutant broke (an instance or `@[csimp]` lemma resting on it))",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -4773,18 +4853,23 @@
   {
    "id": "M191",
    "file": "VE/Commands/Steps.lean",
-   "line": 179,
+   "line": 189,
    "definition": "VE.Commands.combineShapes",
    "operator": "list-first",
    "lines": [
-    173,
-    189
+    183,
+    199
    ],
    "before": "os",
    "after": "(os.take 1)",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Commands/Steps.lean:463",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/StepsExamples.lean:101: Expression",
+   "raw_status": "KILLED",
+   "reads": "666e8faf786729b05b0ec9f88599c7ee05bce0530c7f7314d661c195b1f88213",
+   "killed_at": [
+    101,
+    101
+   ],
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -4820,7 +4905,7 @@
    "before": "os",
    "after": "(os.dropLast)",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:123: fails without the mutant too: Function expected at",
+   "detail": "lean/VE/Commands/StepsExamples.lean:59: Expression (it computes through a proof the mutant broke (an instance or `@[csimp]` lemma resting on it))",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -4828,18 +4913,23 @@
   {
    "id": "M194",
    "file": "VE/Commands/Steps.lean",
-   "line": 179,
+   "line": 189,
    "definition": "VE.Commands.combineShapes",
    "operator": "list-drop-last",
    "lines": [
-    173,
-    189
+    183,
+    199
    ],
    "before": "os",
    "after": "(os.dropLast)",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Commands/Steps.lean:463",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/StepsExamples.lean:101: Expression",
+   "raw_status": "KILLED",
+   "reads": "666e8faf786729b05b0ec9f88599c7ee05bce0530c7f7314d661c195b1f88213",
+   "killed_at": [
+    101,
+    101
+   ],
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -4858,7 +4948,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:47: Expression",
    "raw_status": "KILLED",
-   "reads": "34fbdd26b23db7c965b15e729564df114c93f3ebfd699bf44f35b94336b4942a",
+   "reads": "d0616e07f08d8421b741acebc3d3550d70883fb68b52de8e69669e02618d1207",
    "killed_at": [
     47,
     49
@@ -4888,19 +4978,19 @@
   {
    "id": "M197",
    "file": "VE/Commands/Steps.lean",
-   "line": 186,
+   "line": 196,
    "definition": "VE.Commands.combineShapes",
    "operator": "list-first",
    "lines": [
-    173,
-    189
+    183,
+    199
    ],
    "before": "os",
    "after": "(os.take 1)",
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:93: Expression",
    "raw_status": "KILLED",
-   "reads": "5f44f87c1c37f86cac6f12486e90e870389de62afcad06bf3ef027c01a6c6dad",
+   "reads": "15a008f734e02ac7133524a5d72ff692cc51a02f2f0eecb36404da61f0d211a2",
    "killed_at": [
     93,
     93
@@ -4923,7 +5013,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:46: Expression",
    "raw_status": "KILLED",
-   "reads": "d0dd0d97a134df4fb7b13107111d31729bcb2796dc57ba0ded703a6898b4dd5b",
+   "reads": "aed5585b61347fa617e64f49e779a19ca5f4b00ca8b09e355de8f906f7b416f1",
    "killed_at": [
     46,
     46
@@ -4953,19 +5043,19 @@
   {
    "id": "M200",
    "file": "VE/Commands/Steps.lean",
-   "line": 186,
+   "line": 196,
    "definition": "VE.Commands.combineShapes",
    "operator": "list-drop-last",
    "lines": [
-    173,
-    189
+    183,
+    199
    ],
    "before": "os",
    "after": "(os.dropLast)",
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:93: Expression",
    "raw_status": "KILLED",
-   "reads": "5f44f87c1c37f86cac6f12486e90e870389de62afcad06bf3ef027c01a6c6dad",
+   "reads": "15a008f734e02ac7133524a5d72ff692cc51a02f2f0eecb36404da61f0d211a2",
    "killed_at": [
     93,
     93
@@ -4988,7 +5078,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:47: Expression",
    "raw_status": "KILLED",
-   "reads": "34fbdd26b23db7c965b15e729564df114c93f3ebfd699bf44f35b94336b4942a",
+   "reads": "d0616e07f08d8421b741acebc3d3550d70883fb68b52de8e69669e02618d1207",
    "killed_at": [
     47,
     49
@@ -5008,9 +5098,9 @@
    ],
    "before": "all",
    "after": "(all.take 1)",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:123: fails without the mutant too: Function expected at",
-   "raw_status": "UNKNOWN",
+   "status": "SURVIVOR",
+   "detail": "the proofs it breaks: lean/VE/Commands/Steps.lean:157, lean/VE/Commands/StepsExamples.lean:144, lean/VE/Commands/StepsExamples.lean:148",
+   "raw_status": "SURVIVOR",
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -5045,7 +5135,7 @@
    "before": "[r]",
    "after": "([r].dropLast)",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:123: fails without the mutant too: Function expected at",
+   "detail": "lean/VE/Commands/StepsExamples.lean:59: Expression (it computes through a proof the mutant broke (an instance or `@[csimp]` lemma resting on it))",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -5065,7 +5155,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:46: Expression",
    "raw_status": "KILLED",
-   "reads": "d0dd0d97a134df4fb7b13107111d31729bcb2796dc57ba0ded703a6898b4dd5b",
+   "reads": "aed5585b61347fa617e64f49e779a19ca5f4b00ca8b09e355de8f906f7b416f1",
    "killed_at": [
     46,
     46
@@ -5086,7 +5176,7 @@
    "before": "alts",
    "after": "(alts.take 1)",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:123: fails without the mutant too: Function expected at",
+   "detail": "lean/VE/Commands/StepsExamples.lean:155: Expression (it computes through a proof the mutant broke (an instance or `@[csimp]` lemma resting on it))",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -5106,7 +5196,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:46: Expression",
    "raw_status": "KILLED",
-   "reads": "d0dd0d97a134df4fb7b13107111d31729bcb2796dc57ba0ded703a6898b4dd5b",
+   "reads": "aed5585b61347fa617e64f49e779a19ca5f4b00ca8b09e355de8f906f7b416f1",
    "killed_at": [
     46,
     46
@@ -5126,9 +5216,9 @@
    ],
    "before": "all",
    "after": "(all.dropLast)",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:123: fails without the mutant too: Function expected at",
-   "raw_status": "UNKNOWN",
+   "status": "SURVIVOR",
+   "detail": "the proofs it breaks: lean/VE/Commands/Steps.lean:157, lean/VE/Commands/StepsExamples.lean:144, lean/VE/Commands/StepsExamples.lean:148",
+   "raw_status": "SURVIVOR",
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -5147,7 +5237,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:47: Expression",
    "raw_status": "KILLED",
-   "reads": "34fbdd26b23db7c965b15e729564df114c93f3ebfd699bf44f35b94336b4942a",
+   "reads": "d0616e07f08d8421b741acebc3d3550d70883fb68b52de8e69669e02618d1207",
    "killed_at": [
     47,
     49
@@ -5168,7 +5258,7 @@
    "before": "alts",
    "after": "(alts.take 1)",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:123: fails without the mutant too: Function expected at",
+   "detail": "lean/VE/Commands/StepsExamples.lean:79: Expression (it computes through a proof the mutant broke (an instance or `@[csimp]` lemma resting on it))",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -5188,7 +5278,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:46: Expression",
    "raw_status": "KILLED",
-   "reads": "d0dd0d97a134df4fb7b13107111d31729bcb2796dc57ba0ded703a6898b4dd5b",
+   "reads": "aed5585b61347fa617e64f49e779a19ca5f4b00ca8b09e355de8f906f7b416f1",
    "killed_at": [
     46,
     46
@@ -5230,7 +5320,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:45: Expression",
    "raw_status": "KILLED",
-   "reads": "8567f74fcf7ea483c1d3d8cc008353f41f70c6ac07cd19817bba6e365abd04d8",
+   "reads": "3cb34daf8ce903400eee9e0ee16d95ce342824357a6f691d0e719f8f8fb883eb",
    "killed_at": [
     45,
     45
@@ -5272,7 +5362,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:46: Expression",
    "raw_status": "KILLED",
-   "reads": "d0dd0d97a134df4fb7b13107111d31729bcb2796dc57ba0ded703a6898b4dd5b",
+   "reads": "aed5585b61347fa617e64f49e779a19ca5f4b00ca8b09e355de8f906f7b416f1",
    "killed_at": [
     46,
     46
@@ -5292,9 +5382,9 @@
    ],
    "before": "alts",
    "after": "(alts.dropLast)",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:123: fails without the mutant too: Function expected at",
-   "raw_status": "UNKNOWN",
+   "status": "SURVIVOR",
+   "detail": "the proofs it breaks: lean/VE/Commands/Steps.lean:157, lean/VE/Commands/StepsExamples.lean:144, lean/VE/Commands/StepsExamples.lean:148",
+   "raw_status": "SURVIVOR",
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -5313,7 +5403,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:45: Expression",
    "raw_status": "KILLED",
-   "reads": "8567f74fcf7ea483c1d3d8cc008353f41f70c6ac07cd19817bba6e365abd04d8",
+   "reads": "3cb34daf8ce903400eee9e0ee16d95ce342824357a6f691d0e719f8f8fb883eb",
    "killed_at": [
     45,
     45
@@ -5336,7 +5426,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:45: Expression",
    "raw_status": "KILLED",
-   "reads": "8567f74fcf7ea483c1d3d8cc008353f41f70c6ac07cd19817bba6e365abd04d8",
+   "reads": "3cb34daf8ce903400eee9e0ee16d95ce342824357a6f691d0e719f8f8fb883eb",
    "killed_at": [
     45,
     45
@@ -5357,7 +5447,7 @@
    "before": "alts",
    "after": "(alts.dropLast)",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:123: fails without the mutant too: Function expected at",
+   "detail": "lean/VE/Commands/StepsExamples.lean:79: Expression (it computes through a proof the mutant broke (an instance or `@[csimp]` lemma resting on it))",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -5374,9 +5464,14 @@
    ],
    "before": "xs",
    "after": "(xs.take 1)",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:132: eight steps of 64 readings are not `limit`",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/StepsExamples.lean:50: Expression",
+   "raw_status": "KILLED",
+   "reads": "c476ae67a771fc4e286e03542fa1229ab212ea5e43dd30ae6f984f50f4cc89f1",
+   "killed_at": [
+    50,
+    50
+   ],
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -5433,7 +5528,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:52: Expression",
    "raw_status": "KILLED",
-   "reads": "73474d65bf2f30d564982b17362789d8151604cb3c18e80a9669518c95ea8f67",
+   "reads": "f0c37e2dfac43246814e2a67dd4a4db29243929c8694b150bda085bf4dfbd627",
    "killed_at": [
     52,
     54
@@ -5475,7 +5570,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:47: Expression",
    "raw_status": "KILLED",
-   "reads": "34fbdd26b23db7c965b15e729564df114c93f3ebfd699bf44f35b94336b4942a",
+   "reads": "d0616e07f08d8421b741acebc3d3550d70883fb68b52de8e69669e02618d1207",
    "killed_at": [
     47,
     49
@@ -5498,7 +5593,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:50: Expression",
    "raw_status": "KILLED",
-   "reads": "ed69f45cf3867e2a6864d2b6f2a740fdaccc708bb6e699e126192377700e322d",
+   "reads": "c476ae67a771fc4e286e03542fa1229ab212ea5e43dd30ae6f984f50f4cc89f1",
    "killed_at": [
     50,
     50
@@ -5539,7 +5634,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:52: Expression",
    "raw_status": "KILLED",
-   "reads": "73474d65bf2f30d564982b17362789d8151604cb3c18e80a9669518c95ea8f67",
+   "reads": "f0c37e2dfac43246814e2a67dd4a4db29243929c8694b150bda085bf4dfbd627",
    "killed_at": [
     52,
     54
@@ -5577,9 +5672,14 @@
    ],
    "before": "[.seq xs]",
    "after": "([.seq xs].dropLast)",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:132: eight steps of 64 readings are not `limit`",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/StepsExamples.lean:50: Expression",
+   "raw_status": "KILLED",
+   "reads": "c476ae67a771fc4e286e03542fa1229ab212ea5e43dd30ae6f984f50f4cc89f1",
+   "killed_at": [
+    50,
+    50
+   ],
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -5598,7 +5698,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:46: Expression",
    "raw_status": "KILLED",
-   "reads": "d0dd0d97a134df4fb7b13107111d31729bcb2796dc57ba0ded703a6898b4dd5b",
+   "reads": "aed5585b61347fa617e64f49e779a19ca5f4b00ca8b09e355de8f906f7b416f1",
    "killed_at": [
     46,
     46
@@ -5621,7 +5721,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:45: Expression",
    "raw_status": "KILLED",
-   "reads": "8567f74fcf7ea483c1d3d8cc008353f41f70c6ac07cd19817bba6e365abd04d8",
+   "reads": "3cb34daf8ce903400eee9e0ee16d95ce342824357a6f691d0e719f8f8fb883eb",
    "killed_at": [
     45,
     45
@@ -5641,9 +5741,14 @@
    ],
    "before": "sq",
    "after": "(sq.dropLast)",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:132: eight steps of 64 readings are not `limit`",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/StepsExamples.lean:50: Expression",
+   "raw_status": "KILLED",
+   "reads": "c476ae67a771fc4e286e03542fa1229ab212ea5e43dd30ae6f984f50f4cc89f1",
+   "killed_at": [
+    50,
+    50
+   ],
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -5662,7 +5767,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:43: Expression",
    "raw_status": "KILLED",
-   "reads": "7ec29d384f7cd675e7e4a4cbd18f717a3aae4a286db67076766bf19a021f536e",
+   "reads": "3d1a8aa962a66230abc2b3bd6dc70d41ba747c86868a0b4e35e2efdab8b540a5",
    "killed_at": [
     43,
     43
@@ -5685,7 +5790,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:42: Expression",
    "raw_status": "KILLED",
-   "reads": "b5de4c0cf11629971a291a1252365597e1b2acc8b2fa9fa8e0d27169ae85988d",
+   "reads": "3f69bc9ce38e3b39d4dd2c03f596fd14386be3b78c44e6d0c425e225df4c2dd0",
    "killed_at": [
     42,
     42
@@ -5708,7 +5813,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:47: Expression",
    "raw_status": "KILLED",
-   "reads": "34fbdd26b23db7c965b15e729564df114c93f3ebfd699bf44f35b94336b4942a",
+   "reads": "d0616e07f08d8421b741acebc3d3550d70883fb68b52de8e69669e02618d1207",
    "killed_at": [
     47,
     49
@@ -5731,7 +5836,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:82: Expression",
    "raw_status": "KILLED",
-   "reads": "29253be314ea88af5612b67aaec5715a7532eb3ebf1605e8b0cfaebd371a191e",
+   "reads": "4dbbf2fca2c3d4d52b31bbfa865a18242294fa3c75f5d70cd4c4aeb9937e1419",
    "killed_at": [
     82,
     84
@@ -5770,7 +5875,7 @@
    "before": "xs",
    "after": "(xs.reverse.take 1)",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:123: fails without the mutant too: Function expected at",
+   "detail": "lean/VE/Commands/StepsExamples.lean:59: Expression (it computes through a proof the mutant broke (an instance or `@[csimp]` lemma resting on it))",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -5778,17 +5883,17 @@
   {
    "id": "M240",
    "file": "VE/Commands/Steps.lean",
-   "line": 167,
+   "line": 177,
    "definition": "VE.Commands.shapeAlts",
    "operator": "list-last",
    "lines": [
-    164,
-    171
+    174,
+    181
    ],
    "before": "match o with\n  | .one r _ => [.shape sh [r]]\n  | .steps rs => [.shape sh rs]\n  | .many alts => alts\n  | _ => []",
    "after": "((match o with\n  | .one r _ => [.shape sh [r]]\n  | .steps rs => [.shape sh rs]\n  | .many alts => alts\n  | _ => []).reverse.take 1)",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/Steps.lean:168: Invalid dotted identifier notation: The expected type of `.shape` could not be determined",
+   "detail": "lean/VE/Commands/Steps.lean:178: Invalid dotted identifier notation: The expected type of `.shape` could not be determined",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -5796,19 +5901,19 @@
   {
    "id": "M241",
    "file": "VE/Commands/Steps.lean",
-   "line": 175,
+   "line": 185,
    "definition": "VE.Commands.combineShapes",
    "operator": "list-last",
    "lines": [
-    173,
-    189
+    183,
+    199
    ],
    "before": "os",
    "after": "(os.reverse.take 1)",
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:89: Expression",
    "raw_status": "KILLED",
-   "reads": "5fc23f543f088c902e7b9e51798ccc21cfbefe2f84c9ae48df98d88ac5591200",
+   "reads": "ce5fb29f67005001b42bbefa1f5362317cd664864746554d21abad15d71b4b19",
    "killed_at": [
     89,
     90
@@ -5819,19 +5924,19 @@
   {
    "id": "M242",
    "file": "VE/Commands/Steps.lean",
-   "line": 195,
+   "line": 205,
    "definition": "VE.Commands.readStep",
    "operator": "list-last",
    "lines": [
-    191,
-    198
+    201,
+    208
    ],
    "before": "(shapes s)",
    "after": "((shapes s).reverse.take 1)",
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:70: Expression",
    "raw_status": "KILLED",
-   "reads": "cf63629d1631b5a3760b9ea73fbd1ddc4e59e6f82c249b422f25a258974c21b6",
+   "reads": "c558b5a23a5df1f7edcf0bbcd8cf2575cd4e0e9b51f271a9b20e4bb7de1a1b38",
    "killed_at": [
     70,
     70
@@ -5842,12 +5947,12 @@
   {
    "id": "M243",
    "file": "VE/Commands/Steps.lean",
-   "line": 202,
+   "line": 212,
    "definition": "VE.Commands.reads",
    "operator": "list-last",
    "lines": [
-    200,
-    202
+    210,
+    212
    ],
    "before": "(shapeAlts sh (shapeOutcome se sc E L b sh))",
    "after": "((shapeAlts sh (shapeOutcome se sc E L b sh)).reverse.take 1)",
@@ -5872,7 +5977,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:42: Expression",
    "raw_status": "KILLED",
-   "reads": "b5de4c0cf11629971a291a1252365597e1b2acc8b2fa9fa8e0d27169ae85988d",
+   "reads": "3f69bc9ce38e3b39d4dd2c03f596fd14386be3b78c44e6d0c425e225df4c2dd0",
    "killed_at": [
     42,
     42
@@ -5892,9 +5997,14 @@
    ],
    "before": "let t := trimmed s\n  if !(t.endsWith \".\") then [.core s] else\n  let body := t.dropRight 1\n  let pre : List Shape :=\n    if body.startsWith \"If \" then\n      let ws := (body.drop 3).splitOn \", \"\n      (List.range (ws.length - 1)).map fun i =>\n        .preposed (\", \".intercalate (ws.take (i + 1))) (\", \".intercalate (ws.drop (i + 1)))\n    else []\n  let aft : List Shape := if body.startsWith \"Then \" then [.after (body.drop 5)] else []\n  let xs := body.splitOn \", then \"\n  let sq : List Shape := if 2 \u2264 xs.length && xs.length \u2264 8 && !body.startsWith \"If \" then [.seq xs] else []\n  match pre ++ aft ++ sq with\n  | [] => [.core s]\n  | l => l",
    "after": "((let t := trimmed s\n  if !(t.endsWith \".\") then [.core s] else\n  let body := t.dropRight 1\n  let pre : List Shape :=\n    if body.startsWith \"If \" then\n      let ws := (body.drop 3).splitOn \", \"\n      (List.range (ws.length - 1)).map fun i =>\n        .preposed (\", \".intercalate (ws.take (i + 1))) (\", \".intercalate (ws.drop (i + 1)))\n    else []\n  let aft : List Shape := if body.startsWith \"Then \" then [.after (body.drop 5)] else []\n  let xs := body.splitOn \", then \"\n  let sq : List Shape := if 2 \u2264 xs.length && xs.length \u2264 8 && !body.startsWith \"If \" then [.seq xs] else []\n  match pre ++ aft ++ sq with\n  | [] => [.core s]\n  | l => l).drop 1)",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:132: eight steps of 64 readings are not `limit`",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/StepsExamples.lean:43: Expression",
+   "raw_status": "KILLED",
+   "reads": "3d1a8aa962a66230abc2b3bd6dc70d41ba747c86868a0b4e35e2efdab8b540a5",
+   "killed_at": [
+    43,
+    43
+   ],
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -5913,7 +6023,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:82: Expression",
    "raw_status": "KILLED",
-   "reads": "29253be314ea88af5612b67aaec5715a7532eb3ebf1605e8b0cfaebd371a191e",
+   "reads": "4dbbf2fca2c3d4d52b31bbfa865a18242294fa3c75f5d70cd4c4aeb9937e1419",
    "killed_at": [
     82,
     84
@@ -5952,7 +6062,7 @@
    "before": "xs",
    "after": "(xs.drop 1)",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:123: fails without the mutant too: Function expected at",
+   "detail": "lean/VE/Commands/StepsExamples.lean:59: Expression (it computes through a proof the mutant broke (an instance or `@[csimp]` lemma resting on it))",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -5960,17 +6070,17 @@
   {
    "id": "M249",
    "file": "VE/Commands/Steps.lean",
-   "line": 167,
+   "line": 177,
    "definition": "VE.Commands.shapeAlts",
    "operator": "list-drop-first",
    "lines": [
-    164,
-    171
+    174,
+    181
    ],
    "before": "match o with\n  | .one r _ => [.shape sh [r]]\n  | .steps rs => [.shape sh rs]\n  | .many alts => alts\n  | _ => []",
    "after": "((match o with\n  | .one r _ => [.shape sh [r]]\n  | .steps rs => [.shape sh rs]\n  | .many alts => alts\n  | _ => []).drop 1)",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/Steps.lean:168: Invalid dotted identifier notation: The expected type of `.shape` could not be determined",
+   "detail": "lean/VE/Commands/Steps.lean:178: Invalid dotted identifier notation: The expected type of `.shape` could not be determined",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -5978,19 +6088,19 @@
   {
    "id": "M250",
    "file": "VE/Commands/Steps.lean",
-   "line": 175,
+   "line": 185,
    "definition": "VE.Commands.combineShapes",
    "operator": "list-drop-first",
    "lines": [
-    173,
-    189
+    183,
+    199
    ],
    "before": "os",
    "after": "(os.drop 1)",
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:89: Expression",
    "raw_status": "KILLED",
-   "reads": "5fc23f543f088c902e7b9e51798ccc21cfbefe2f84c9ae48df98d88ac5591200",
+   "reads": "ce5fb29f67005001b42bbefa1f5362317cd664864746554d21abad15d71b4b19",
    "killed_at": [
     89,
     90
@@ -6001,40 +6111,45 @@
   {
    "id": "M251",
    "file": "VE/Commands/Steps.lean",
-   "line": 195,
+   "line": 205,
    "definition": "VE.Commands.readStep",
    "operator": "list-drop-first",
    "lines": [
-    191,
-    198
+    201,
+    208
    ],
    "before": "(shapes s)",
    "after": "((shapes s).drop 1)",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:132: eight steps of 64 readings are not `limit`",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/StepsExamples.lean:57: Expression",
+   "raw_status": "KILLED",
+   "reads": "29f28917db09ec07da2afca211b029865ad5f5a9edd03b61a19ac056dd807910",
+   "killed_at": [
+    57,
+    57
+   ],
    "trust_class": "G[V]",
    "trusted": true
   },
   {
    "id": "M252",
    "file": "VE/Commands/Steps.lean",
-   "line": 202,
+   "line": 212,
    "definition": "VE.Commands.reads",
    "operator": "list-drop-first",
    "lines": [
-    200,
-    202
+    210,
+    212
    ],
    "before": "(shapeAlts sh (shapeOutcome se sc E L b sh))",
    "after": "((shapeAlts sh (shapeOutcome se sc E L b sh)).drop 1)",
    "status": "KILLED",
-   "detail": "lean/VE/Commands/StepsExamples.lean:169: Expression",
+   "detail": "lean/VE/Commands/StepsExamples.lean:180: Expression",
    "raw_status": "KILLED",
-   "reads": "4cd2287f6b18470ef568fcef0ad3e783b25eef0d22667fc30b4ae7c4a19658ff",
+   "reads": "ca9f03c9c2a925b971bde06e94d8e321572c3e410e73a9824baa84d92cd16fee",
    "killed_at": [
-    169,
-    169
+    180,
+    180
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -6116,38 +6231,38 @@
   {
    "id": "M257",
    "file": "VE/Commands/Steps.lean",
-   "line": 175,
+   "line": 185,
    "definition": "VE.Commands.combineShapes",
    "operator": "list-last",
    "lines": [
-    173,
-    189
+    183,
+    199
    ],
    "before": "os.flatMap",
    "after": "(os.flatMap.reverse.take 1)",
    "status": "INVALID",
    "detail": "Invalid field `reverse`: The environment does not contain `Function.reverse`",
    "raw_status": "INVALID",
-   "reads": "0223d418e379df91a9c06bb2f9da0f930e2e0d31907de7943ce0bfd6b85dc4ee",
+   "reads": "90ce6a070855697561b2aa567263954ee016a85773560cad8105e95dadcf90e7",
    "trust_class": "G[V]",
    "trusted": true
   },
   {
    "id": "M258",
    "file": "VE/Commands/Steps.lean",
-   "line": 195,
+   "line": 205,
    "definition": "VE.Commands.readStep",
    "operator": "list-last",
    "lines": [
-    191,
-    198
+    201,
+    208
    ],
    "before": "(shapes s).map",
    "after": "(((shapes s).map).reverse.take 1)",
    "status": "INVALID",
    "detail": "Invalid field `reverse`: The environment does not contain `Function.reverse`",
    "raw_status": "INVALID",
-   "reads": "522ded820e32d1e068c4f4ac9de566f17ba9737367f3a04c4b7e60eee9b2a098",
+   "reads": "290cb7f4d4b351c079f5b5241ac59e564e2f4fda2d266b46871179fed511e628",
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -6166,7 +6281,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:44: Expression",
    "raw_status": "KILLED",
-   "reads": "1385f70778948378bfe530f303a889109f16f874a5436426cb28738cb3fb9738",
+   "reads": "168056b7a68f5394f23c937f70f89531e8962d725e8f450b02e0be1c82bd5949",
    "killed_at": [
     44,
     44
@@ -6232,19 +6347,19 @@
   {
    "id": "M263",
    "file": "VE/Commands/Steps.lean",
-   "line": 168,
+   "line": 178,
    "definition": "VE.Commands.shapeAlts",
    "operator": "list-drop-first",
    "lines": [
-    164,
-    171
+    174,
+    181
    ],
    "before": "[.shape sh [r]]",
    "after": "([.shape sh [r]].drop 1)",
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:89: Expression",
    "raw_status": "KILLED",
-   "reads": "4edb6c9209d724dee5323345132358c1cd8a6ed0d33e22f97190eedf256fee43",
+   "reads": "2a0757c51cf3c543383c677b72b72be405778e0a02702cbcb04e99d3a89e3ea5",
    "killed_at": [
     89,
     90
@@ -6255,38 +6370,38 @@
   {
    "id": "M264",
    "file": "VE/Commands/Steps.lean",
-   "line": 175,
+   "line": 185,
    "definition": "VE.Commands.combineShapes",
    "operator": "list-drop-first",
    "lines": [
-    173,
-    189
+    183,
+    199
    ],
    "before": "os.flatMap",
    "after": "(os.flatMap.drop 1)",
    "status": "INVALID",
    "detail": "Invalid field `drop`: The environment does not contain `Function.drop`",
    "raw_status": "INVALID",
-   "reads": "0223d418e379df91a9c06bb2f9da0f930e2e0d31907de7943ce0bfd6b85dc4ee",
+   "reads": "90ce6a070855697561b2aa567263954ee016a85773560cad8105e95dadcf90e7",
    "trust_class": "G[V]",
    "trusted": true
   },
   {
    "id": "M265",
    "file": "VE/Commands/Steps.lean",
-   "line": 195,
+   "line": 205,
    "definition": "VE.Commands.readStep",
    "operator": "list-drop-first",
    "lines": [
-    191,
-    198
+    201,
+    208
    ],
    "before": "(shapes s).map",
    "after": "(((shapes s).map).drop 1)",
    "status": "INVALID",
    "detail": "Invalid field `drop`: The environment does not contain `Function.drop`",
    "raw_status": "INVALID",
-   "reads": "522ded820e32d1e068c4f4ac9de566f17ba9737367f3a04c4b7e60eee9b2a098",
+   "reads": "290cb7f4d4b351c079f5b5241ac59e564e2f4fda2d266b46871179fed511e628",
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -6321,7 +6436,7 @@
    "before": "(readingTuples rest)",
    "after": "((readingTuples rest).reverse.take 1)",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:140: Expression (it computes through a proof the mutant broke (an instance or `@[csimp]` lemma resting on it))",
+   "detail": "lean/VE/Commands/StepsExamples.lean:151: Expression (it computes through a proof the mutant broke (an instance or `@[csimp]` lemma resting on it))",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -6339,7 +6454,7 @@
    "before": "os",
    "after": "(os.reverse.take 1)",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:123: fails without the mutant too: Function expected at",
+   "detail": "lean/VE/Commands/StepsExamples.lean:72: Expression (it computes through a proof the mutant broke (an instance or `@[csimp]` lemma resting on it))",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -6347,19 +6462,19 @@
   {
    "id": "M269",
    "file": "VE/Commands/Steps.lean",
-   "line": 176,
+   "line": 186,
    "definition": "VE.Commands.combineShapes",
    "operator": "list-last",
    "lines": [
-    173,
-    189
+    183,
+    199
    ],
    "before": "alts",
    "after": "(alts.reverse.take 1)",
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:96: Expression",
    "raw_status": "KILLED",
-   "reads": "46142067ba1d9a5d946792acb6947d99c80cb8aaa2b13efe73e5c1b8b8795b01",
+   "reads": "c88f4bcc52e1a173d02890644e44f80212cf69bb7603bbcfa983f4aa7bac3cde",
    "killed_at": [
     96,
     96
@@ -6382,7 +6497,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:46: Expression",
    "raw_status": "KILLED",
-   "reads": "d0dd0d97a134df4fb7b13107111d31729bcb2796dc57ba0ded703a6898b4dd5b",
+   "reads": "aed5585b61347fa617e64f49e779a19ca5f4b00ca8b09e355de8f906f7b416f1",
    "killed_at": [
     46,
     46
@@ -6405,7 +6520,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:82: Expression",
    "raw_status": "KILLED",
-   "reads": "29253be314ea88af5612b67aaec5715a7532eb3ebf1605e8b0cfaebd371a191e",
+   "reads": "4dbbf2fca2c3d4d52b31bbfa865a18242294fa3c75f5d70cd4c4aeb9937e1419",
    "killed_at": [
     82,
     84
@@ -6445,7 +6560,7 @@
    "before": "os",
    "after": "(os.drop 1)",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:123: fails without the mutant too: Function expected at",
+   "detail": "lean/VE/Commands/StepsExamples.lean:72: Expression (it computes through a proof the mutant broke (an instance or `@[csimp]` lemma resting on it))",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -6453,19 +6568,19 @@
   {
    "id": "M274",
    "file": "VE/Commands/Steps.lean",
-   "line": 168,
+   "line": 178,
    "definition": "VE.Commands.shapeAlts",
    "operator": "list-drop-first",
    "lines": [
-    164,
-    171
+    174,
+    181
    ],
    "before": "[r]",
    "after": "([r].drop 1)",
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:89: Expression",
    "raw_status": "KILLED",
-   "reads": "4edb6c9209d724dee5323345132358c1cd8a6ed0d33e22f97190eedf256fee43",
+   "reads": "2a0757c51cf3c543383c677b72b72be405778e0a02702cbcb04e99d3a89e3ea5",
    "killed_at": [
     89,
     90
@@ -6476,19 +6591,19 @@
   {
    "id": "M275",
    "file": "VE/Commands/Steps.lean",
-   "line": 176,
+   "line": 186,
    "definition": "VE.Commands.combineShapes",
    "operator": "list-drop-first",
    "lines": [
-    173,
-    189
+    183,
+    199
    ],
    "before": "alts",
    "after": "(alts.drop 1)",
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:96: Expression",
    "raw_status": "KILLED",
-   "reads": "46142067ba1d9a5d946792acb6947d99c80cb8aaa2b13efe73e5c1b8b8795b01",
+   "reads": "c88f4bcc52e1a173d02890644e44f80212cf69bb7603bbcfa983f4aa7bac3cde",
    "killed_at": [
     96,
     96
@@ -6499,19 +6614,19 @@
   {
    "id": "M276",
    "file": "VE/Commands/Steps.lean",
-   "line": 197,
+   "line": 207,
    "definition": "VE.Commands.readStep",
    "operator": "list-drop-first",
    "lines": [
-    191,
-    198
+    201,
+    208
    ],
    "before": "[(_, o)]",
    "after": "([(_, o)].drop 1)",
    "status": "INVALID",
    "detail": "Invalid pattern: Expected an identifier in function position, but found",
    "raw_status": "INVALID",
-   "reads": "522ded820e32d1e068c4f4ac9de566f17ba9737367f3a04c4b7e60eee9b2a098",
+   "reads": "290cb7f4d4b351c079f5b5241ac59e564e2f4fda2d266b46871179fed511e628",
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -6530,7 +6645,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:47: Expression",
    "raw_status": "KILLED",
-   "reads": "34fbdd26b23db7c965b15e729564df114c93f3ebfd699bf44f35b94336b4942a",
+   "reads": "d0616e07f08d8421b741acebc3d3550d70883fb68b52de8e69669e02618d1207",
    "killed_at": [
     47,
     49
@@ -6551,7 +6666,7 @@
    "before": "(readingTuples rest).map (x :: \u00b7)",
    "after": "(((readingTuples rest).map (x :: \u00b7)).reverse.take 1)",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:140: Expression (it computes through a proof the mutant broke (an instance or `@[csimp]` lemma resting on it))",
+   "detail": "lean/VE/Commands/StepsExamples.lean:151: Expression (it computes through a proof the mutant broke (an instance or `@[csimp]` lemma resting on it))",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -6568,28 +6683,28 @@
    ],
    "before": "rs",
    "after": "(rs.reverse.take 1)",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:123: fails without the mutant too: Function expected at",
-   "raw_status": "UNKNOWN",
+   "status": "SURVIVOR",
+   "detail": "the proofs it breaks: lean/VE/Commands/Steps.lean:157, lean/VE/Commands/Steps.lean:301, lean/VE/Commands/Steps.lean:366, lean/VE/Commands/StepsExamples.lean:144, lean/VE/Commands/StepsExamples.lean:148",
+   "raw_status": "SURVIVOR",
    "trust_class": "G[V]",
    "trusted": true
   },
   {
    "id": "M280",
    "file": "VE/Commands/Steps.lean",
-   "line": 177,
+   "line": 187,
    "definition": "VE.Commands.combineShapes",
    "operator": "list-last",
    "lines": [
-    173,
-    189
+    183,
+    199
    ],
    "before": "alts",
    "after": "(alts.reverse.take 1)",
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:89: Expression",
    "raw_status": "KILLED",
-   "reads": "5fc23f543f088c902e7b9e51798ccc21cfbefe2f84c9ae48df98d88ac5591200",
+   "reads": "ce5fb29f67005001b42bbefa1f5362317cd664864746554d21abad15d71b4b19",
    "killed_at": [
     89,
     90
@@ -6612,7 +6727,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:46: Expression",
    "raw_status": "KILLED",
-   "reads": "d0dd0d97a134df4fb7b13107111d31729bcb2796dc57ba0ded703a6898b4dd5b",
+   "reads": "aed5585b61347fa617e64f49e779a19ca5f4b00ca8b09e355de8f906f7b416f1",
    "killed_at": [
     46,
     46
@@ -6650,31 +6765,31 @@
    ],
    "before": "rs",
    "after": "(rs.drop 1)",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:123: fails without the mutant too: Function expected at",
-   "raw_status": "UNKNOWN",
+   "status": "SURVIVOR",
+   "detail": "the proofs it breaks: lean/VE/Commands/Steps.lean:157, lean/VE/Commands/Steps.lean:301, lean/VE/Commands/Steps.lean:366, lean/VE/Commands/StepsExamples.lean:144, lean/VE/Commands/StepsExamples.lean:148",
+   "raw_status": "SURVIVOR",
    "trust_class": "G[V]",
    "trusted": true
   },
   {
    "id": "M284",
    "file": "VE/Commands/Steps.lean",
-   "line": 169,
+   "line": 179,
    "definition": "VE.Commands.shapeAlts",
    "operator": "list-drop-first",
    "lines": [
-    164,
-    171
+    174,
+    181
    ],
    "before": "[.shape sh rs]",
    "after": "([.shape sh rs].drop 1)",
    "status": "KILLED",
-   "detail": "lean/VE/Commands/StepsExamples.lean:163: Expression",
+   "detail": "lean/VE/Commands/StepsExamples.lean:174: Expression",
    "raw_status": "KILLED",
-   "reads": "464ee8866ff726731ef9b6132c81c9e65a3724f04daf226930acd06f95c10d08",
+   "reads": "b505a80cc1c1b46738c954a36502b089ca1f94c4040818f4f6e60fbafcb33d35",
    "killed_at": [
-    163,
-    163
+    174,
+    174
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -6682,19 +6797,19 @@
   {
    "id": "M285",
    "file": "VE/Commands/Steps.lean",
-   "line": 177,
+   "line": 187,
    "definition": "VE.Commands.combineShapes",
    "operator": "list-drop-first",
    "lines": [
-    173,
-    189
+    183,
+    199
    ],
    "before": "alts",
    "after": "(alts.drop 1)",
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:89: Expression",
    "raw_status": "KILLED",
-   "reads": "5fc23f543f088c902e7b9e51798ccc21cfbefe2f84c9ae48df98d88ac5591200",
+   "reads": "ce5fb29f67005001b42bbefa1f5362317cd664864746554d21abad15d71b4b19",
    "killed_at": [
     89,
     90
@@ -6733,27 +6848,32 @@
    ],
    "before": "os",
    "after": "(os.reverse.take 1)",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:123: fails without the mutant too: Function expected at",
-   "raw_status": "UNKNOWN",
+   "status": "SURVIVOR",
+   "detail": "the proofs it breaks: lean/VE/Commands/Steps.lean:157, lean/VE/Commands/Steps.lean:366, lean/VE/Commands/StepsExamples.lean:144, lean/VE/Commands/StepsExamples.lean:148",
+   "raw_status": "SURVIVOR",
    "trust_class": "G[V]",
    "trusted": true
   },
   {
    "id": "M288",
    "file": "VE/Commands/Steps.lean",
-   "line": 178,
+   "line": 188,
    "definition": "VE.Commands.combineShapes",
    "operator": "list-last",
    "lines": [
-    173,
-    189
+    183,
+    199
    ],
    "before": "os",
    "after": "(os.reverse.take 1)",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Commands/Steps.lean:444, lean/VE/Commands/Steps.lean:463",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/StepsExamples.lean:102: Expression",
+   "raw_status": "KILLED",
+   "reads": "6ab8881448dfbb7563df5a6ac35a6ea48500038d9a595f06d953314035045339",
+   "killed_at": [
+    102,
+    103
+   ],
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -6772,7 +6892,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:46: Expression",
    "raw_status": "KILLED",
-   "reads": "d0dd0d97a134df4fb7b13107111d31729bcb2796dc57ba0ded703a6898b4dd5b",
+   "reads": "aed5585b61347fa617e64f49e779a19ca5f4b00ca8b09e355de8f906f7b416f1",
    "killed_at": [
     46,
     46
@@ -6810,27 +6930,32 @@
    ],
    "before": "os",
    "after": "(os.drop 1)",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:123: fails without the mutant too: Function expected at",
-   "raw_status": "UNKNOWN",
+   "status": "SURVIVOR",
+   "detail": "the proofs it breaks: lean/VE/Commands/Steps.lean:157, lean/VE/Commands/Steps.lean:366, lean/VE/Commands/StepsExamples.lean:144, lean/VE/Commands/StepsExamples.lean:148",
+   "raw_status": "SURVIVOR",
    "trust_class": "G[V]",
    "trusted": true
   },
   {
    "id": "M292",
    "file": "VE/Commands/Steps.lean",
-   "line": 178,
+   "line": 188,
    "definition": "VE.Commands.combineShapes",
    "operator": "list-drop-first",
    "lines": [
-    173,
-    189
+    183,
+    199
    ],
    "before": "os",
    "after": "(os.drop 1)",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Commands/Steps.lean:444, lean/VE/Commands/Steps.lean:463",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/StepsExamples.lean:102: Expression",
+   "raw_status": "KILLED",
+   "reads": "6ab8881448dfbb7563df5a6ac35a6ea48500038d9a595f06d953314035045339",
+   "killed_at": [
+    102,
+    103
+   ],
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -6849,7 +6974,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:46: Expression",
    "raw_status": "KILLED",
-   "reads": "d0dd0d97a134df4fb7b13107111d31729bcb2796dc57ba0ded703a6898b4dd5b",
+   "reads": "aed5585b61347fa617e64f49e779a19ca5f4b00ca8b09e355de8f906f7b416f1",
    "killed_at": [
     46,
     46
@@ -6870,7 +6995,7 @@
    "before": "os",
    "after": "(os.reverse.take 1)",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:123: fails without the mutant too: Function expected at",
+   "detail": "lean/VE/Commands/StepsExamples.lean:59: Expression (it computes through a proof the mutant broke (an instance or `@[csimp]` lemma resting on it))",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -6878,19 +7003,19 @@
   {
    "id": "M295",
    "file": "VE/Commands/Steps.lean",
-   "line": 179,
+   "line": 189,
    "definition": "VE.Commands.combineShapes",
    "operator": "list-last",
    "lines": [
-    173,
-    189
+    183,
+    199
    ],
    "before": "os",
    "after": "(os.reverse.take 1)",
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:91: Expression",
    "raw_status": "KILLED",
-   "reads": "34fc945b2076a21585400c88c71ce3ebda1d14675faef4a4443f7c6bfc9f30f0",
+   "reads": "3ce3252fed1e6afcc1a7df909f39da040ba2528a82efdebb63f99bafad32c4bf",
    "killed_at": [
     91,
     92
@@ -6930,7 +7055,7 @@
    "before": "os",
    "after": "(os.drop 1)",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:123: fails without the mutant too: Function expected at",
+   "detail": "lean/VE/Commands/StepsExamples.lean:59: Expression (it computes through a proof the mutant broke (an instance or `@[csimp]` lemma resting on it))",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -6938,19 +7063,19 @@
   {
    "id": "M298",
    "file": "VE/Commands/Steps.lean",
-   "line": 179,
+   "line": 189,
    "definition": "VE.Commands.combineShapes",
    "operator": "list-drop-first",
    "lines": [
-    173,
-    189
+    183,
+    199
    ],
    "before": "os",
    "after": "(os.drop 1)",
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:91: Expression",
    "raw_status": "KILLED",
-   "reads": "34fc945b2076a21585400c88c71ce3ebda1d14675faef4a4443f7c6bfc9f30f0",
+   "reads": "3ce3252fed1e6afcc1a7df909f39da040ba2528a82efdebb63f99bafad32c4bf",
    "killed_at": [
     91,
     92
@@ -6973,7 +7098,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:46: Expression",
    "raw_status": "KILLED",
-   "reads": "d0dd0d97a134df4fb7b13107111d31729bcb2796dc57ba0ded703a6898b4dd5b",
+   "reads": "aed5585b61347fa617e64f49e779a19ca5f4b00ca8b09e355de8f906f7b416f1",
    "killed_at": [
     46,
     46
@@ -7003,19 +7128,19 @@
   {
    "id": "M301",
    "file": "VE/Commands/Steps.lean",
-   "line": 186,
+   "line": 196,
    "definition": "VE.Commands.combineShapes",
    "operator": "list-last",
    "lines": [
-    173,
-    189
+    183,
+    199
    ],
    "before": "os",
    "after": "(os.reverse.take 1)",
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:70: Expression",
    "raw_status": "KILLED",
-   "reads": "61ca362cec79389da32322a2f62ea106bc6781539fe8512d3f8cda33e7a40f71",
+   "reads": "ba17c371971e8ecade04b9ea02617824ea7749158d1b86a70e7677efebf9f8f0",
    "killed_at": [
     70,
     70
@@ -7038,7 +7163,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:46: Expression",
    "raw_status": "KILLED",
-   "reads": "d0dd0d97a134df4fb7b13107111d31729bcb2796dc57ba0ded703a6898b4dd5b",
+   "reads": "aed5585b61347fa617e64f49e779a19ca5f4b00ca8b09e355de8f906f7b416f1",
    "killed_at": [
     46,
     46
@@ -7068,19 +7193,19 @@
   {
    "id": "M304",
    "file": "VE/Commands/Steps.lean",
-   "line": 186,
+   "line": 196,
    "definition": "VE.Commands.combineShapes",
    "operator": "list-drop-first",
    "lines": [
-    173,
-    189
+    183,
+    199
    ],
    "before": "os",
    "after": "(os.drop 1)",
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:70: Expression",
    "raw_status": "KILLED",
-   "reads": "61ca362cec79389da32322a2f62ea106bc6781539fe8512d3f8cda33e7a40f71",
+   "reads": "ba17c371971e8ecade04b9ea02617824ea7749158d1b86a70e7677efebf9f8f0",
    "killed_at": [
     70,
     70
@@ -7103,7 +7228,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:47: Expression",
    "raw_status": "KILLED",
-   "reads": "34fbdd26b23db7c965b15e729564df114c93f3ebfd699bf44f35b94336b4942a",
+   "reads": "d0616e07f08d8421b741acebc3d3550d70883fb68b52de8e69669e02618d1207",
    "killed_at": [
     47,
     49
@@ -7123,9 +7248,9 @@
    ],
    "before": "all",
    "after": "(all.reverse.take 1)",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:123: fails without the mutant too: Function expected at",
-   "raw_status": "UNKNOWN",
+   "status": "SURVIVOR",
+   "detail": "the proofs it breaks: lean/VE/Commands/Steps.lean:157, lean/VE/Commands/StepsExamples.lean:144, lean/VE/Commands/StepsExamples.lean:148",
+   "raw_status": "SURVIVOR",
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -7144,7 +7269,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:46: Expression",
    "raw_status": "KILLED",
-   "reads": "d0dd0d97a134df4fb7b13107111d31729bcb2796dc57ba0ded703a6898b4dd5b",
+   "reads": "aed5585b61347fa617e64f49e779a19ca5f4b00ca8b09e355de8f906f7b416f1",
    "killed_at": [
     46,
     46
@@ -7165,7 +7290,7 @@
    "before": "[r]",
    "after": "([r].drop 1)",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:123: fails without the mutant too: Function expected at",
+   "detail": "lean/VE/Commands/StepsExamples.lean:59: Expression (it computes through a proof the mutant broke (an instance or `@[csimp]` lemma resting on it))",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -7185,7 +7310,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:46: Expression",
    "raw_status": "KILLED",
-   "reads": "d0dd0d97a134df4fb7b13107111d31729bcb2796dc57ba0ded703a6898b4dd5b",
+   "reads": "aed5585b61347fa617e64f49e779a19ca5f4b00ca8b09e355de8f906f7b416f1",
    "killed_at": [
     46,
     46
@@ -7206,7 +7331,7 @@
    "before": "alts",
    "after": "(alts.reverse.take 1)",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:123: fails without the mutant too: Function expected at",
+   "detail": "lean/VE/Commands/StepsExamples.lean:155: Expression (it computes through a proof the mutant broke (an instance or `@[csimp]` lemma resting on it))",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -7226,7 +7351,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:46: Expression",
    "raw_status": "KILLED",
-   "reads": "d0dd0d97a134df4fb7b13107111d31729bcb2796dc57ba0ded703a6898b4dd5b",
+   "reads": "aed5585b61347fa617e64f49e779a19ca5f4b00ca8b09e355de8f906f7b416f1",
    "killed_at": [
     46,
     46
@@ -7246,9 +7371,9 @@
    ],
    "before": "all",
    "after": "(all.drop 1)",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:123: fails without the mutant too: Function expected at",
-   "raw_status": "UNKNOWN",
+   "status": "SURVIVOR",
+   "detail": "the proofs it breaks: lean/VE/Commands/Steps.lean:157, lean/VE/Commands/StepsExamples.lean:144, lean/VE/Commands/StepsExamples.lean:148",
+   "raw_status": "SURVIVOR",
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -7267,7 +7392,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:47: Expression",
    "raw_status": "KILLED",
-   "reads": "34fbdd26b23db7c965b15e729564df114c93f3ebfd699bf44f35b94336b4942a",
+   "reads": "d0616e07f08d8421b741acebc3d3550d70883fb68b52de8e69669e02618d1207",
    "killed_at": [
     47,
     49
@@ -7288,7 +7413,7 @@
    "before": "alts",
    "after": "(alts.reverse.take 1)",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:123: fails without the mutant too: Function expected at",
+   "detail": "lean/VE/Commands/StepsExamples.lean:79: Expression (it computes through a proof the mutant broke (an instance or `@[csimp]` lemma resting on it))",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -7308,7 +7433,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:46: Expression",
    "raw_status": "KILLED",
-   "reads": "d0dd0d97a134df4fb7b13107111d31729bcb2796dc57ba0ded703a6898b4dd5b",
+   "reads": "aed5585b61347fa617e64f49e779a19ca5f4b00ca8b09e355de8f906f7b416f1",
    "killed_at": [
     46,
     46
@@ -7388,7 +7513,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:46: Expression",
    "raw_status": "KILLED",
-   "reads": "d0dd0d97a134df4fb7b13107111d31729bcb2796dc57ba0ded703a6898b4dd5b",
+   "reads": "aed5585b61347fa617e64f49e779a19ca5f4b00ca8b09e355de8f906f7b416f1",
    "killed_at": [
     46,
     46
@@ -7408,9 +7533,9 @@
    ],
    "before": "alts",
    "after": "(alts.drop 1)",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:123: fails without the mutant too: Function expected at",
-   "raw_status": "UNKNOWN",
+   "status": "SURVIVOR",
+   "detail": "the proofs it breaks: lean/VE/Commands/Steps.lean:157, lean/VE/Commands/StepsExamples.lean:144, lean/VE/Commands/StepsExamples.lean:148",
+   "raw_status": "SURVIVOR",
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -7448,7 +7573,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:45: Expression",
    "raw_status": "KILLED",
-   "reads": "8567f74fcf7ea483c1d3d8cc008353f41f70c6ac07cd19817bba6e365abd04d8",
+   "reads": "3cb34daf8ce903400eee9e0ee16d95ce342824357a6f691d0e719f8f8fb883eb",
    "killed_at": [
     45,
     45
@@ -7469,7 +7594,7 @@
    "before": "alts",
    "after": "(alts.drop 1)",
    "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:123: fails without the mutant too: Function expected at",
+   "detail": "lean/VE/Commands/StepsExamples.lean:79: Expression (it computes through a proof the mutant broke (an instance or `@[csimp]` lemma resting on it))",
    "raw_status": "UNKNOWN",
    "trust_class": "G[V]",
    "trusted": true
@@ -7486,9 +7611,14 @@
    ],
    "before": "xs",
    "after": "(xs.reverse.take 1)",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:132: eight steps of 64 readings are not `limit`",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/StepsExamples.lean:50: Expression",
+   "raw_status": "KILLED",
+   "reads": "c476ae67a771fc4e286e03542fa1229ab212ea5e43dd30ae6f984f50f4cc89f1",
+   "killed_at": [
+    50,
+    50
+   ],
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -7507,7 +7637,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:45: Expression",
    "raw_status": "KILLED",
-   "reads": "8567f74fcf7ea483c1d3d8cc008353f41f70c6ac07cd19817bba6e365abd04d8",
+   "reads": "3cb34daf8ce903400eee9e0ee16d95ce342824357a6f691d0e719f8f8fb883eb",
    "killed_at": [
     45,
     45
@@ -7549,7 +7679,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:52: Expression",
    "raw_status": "KILLED",
-   "reads": "73474d65bf2f30d564982b17362789d8151604cb3c18e80a9669518c95ea8f67",
+   "reads": "f0c37e2dfac43246814e2a67dd4a4db29243929c8694b150bda085bf4dfbd627",
    "killed_at": [
     52,
     54
@@ -7572,7 +7702,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:45: Expression",
    "raw_status": "KILLED",
-   "reads": "8567f74fcf7ea483c1d3d8cc008353f41f70c6ac07cd19817bba6e365abd04d8",
+   "reads": "3cb34daf8ce903400eee9e0ee16d95ce342824357a6f691d0e719f8f8fb883eb",
    "killed_at": [
     45,
     45
@@ -7595,7 +7725,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:47: Expression",
    "raw_status": "KILLED",
-   "reads": "34fbdd26b23db7c965b15e729564df114c93f3ebfd699bf44f35b94336b4942a",
+   "reads": "d0616e07f08d8421b741acebc3d3550d70883fb68b52de8e69669e02618d1207",
    "killed_at": [
     47,
     49
@@ -7618,7 +7748,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:50: Expression",
    "raw_status": "KILLED",
-   "reads": "ed69f45cf3867e2a6864d2b6f2a740fdaccc708bb6e699e126192377700e322d",
+   "reads": "c476ae67a771fc4e286e03542fa1229ab212ea5e43dd30ae6f984f50f4cc89f1",
    "killed_at": [
     50,
     50
@@ -7659,7 +7789,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:52: Expression",
    "raw_status": "KILLED",
-   "reads": "73474d65bf2f30d564982b17362789d8151604cb3c18e80a9669518c95ea8f67",
+   "reads": "f0c37e2dfac43246814e2a67dd4a4db29243929c8694b150bda085bf4dfbd627",
    "killed_at": [
     52,
     54
@@ -7697,9 +7827,14 @@
    ],
    "before": "[.seq xs]",
    "after": "([.seq xs].drop 1)",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:132: eight steps of 64 readings are not `limit`",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/StepsExamples.lean:50: Expression",
+   "raw_status": "KILLED",
+   "reads": "c476ae67a771fc4e286e03542fa1229ab212ea5e43dd30ae6f984f50f4cc89f1",
+   "killed_at": [
+    50,
+    50
+   ],
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -7718,7 +7853,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:46: Expression",
    "raw_status": "KILLED",
-   "reads": "d0dd0d97a134df4fb7b13107111d31729bcb2796dc57ba0ded703a6898b4dd5b",
+   "reads": "aed5585b61347fa617e64f49e779a19ca5f4b00ca8b09e355de8f906f7b416f1",
    "killed_at": [
     46,
     46
@@ -7741,7 +7876,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:45: Expression",
    "raw_status": "KILLED",
-   "reads": "8567f74fcf7ea483c1d3d8cc008353f41f70c6ac07cd19817bba6e365abd04d8",
+   "reads": "3cb34daf8ce903400eee9e0ee16d95ce342824357a6f691d0e719f8f8fb883eb",
    "killed_at": [
     45,
     45
@@ -7761,9 +7896,14 @@
    ],
    "before": "sq",
    "after": "(sq.drop 1)",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Commands/StepsExamples.lean:132: eight steps of 64 readings are not `limit`",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/StepsExamples.lean:50: Expression",
+   "raw_status": "KILLED",
+   "reads": "c476ae67a771fc4e286e03542fa1229ab212ea5e43dd30ae6f984f50f4cc89f1",
+   "killed_at": [
+    50,
+    50
+   ],
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -7782,7 +7922,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Commands/StepsExamples.lean:43: Expression",
    "raw_status": "KILLED",
-   "reads": "7ec29d384f7cd675e7e4a4cbd18f717a3aae4a286db67076766bf19a021f536e",
+   "reads": "3d1a8aa962a66230abc2b3bd6dc70d41ba747c86868a0b4e35e2efdab8b540a5",
    "killed_at": [
     43,
     43
