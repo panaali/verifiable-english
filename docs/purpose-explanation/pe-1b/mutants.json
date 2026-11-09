@@ -1,7 +1,7 @@
 {
  "item": "pe-1b",
  "language": "Lean",
- "command": "seeded bugs: each mutant's `from` text replaced by its `to` text, alone, in memory, in lean/VE/Purposes/WellFormed.lean; the mutated module and lean/VE/Purposes/Examples.lean (its WellFormed import dropped) elaborated as one file with `lake env lean` from lean/, so a broken proof does not hide the #guards after it; a control run with no mutation has 0 errors; nothing in the checkout is written. fails_at lists every error, mapped back to its source line (WellFormed.lean lines are proofs; Examples.lean lines are #guards, and `test` quotes the first).",
+ "command": "seeded bugs: each mutant's `from` text replaced by its `to` text, alone, in memory, in lean/VE/Purposes/WellFormed.lean; the mutated module and lean/VE/Purposes/Examples.lean (its WellFormed import dropped) elaborated as one file with `lake env lean` from lean/, so a broken proof does not hide the #guards after it; a control run with no mutation has 0 errors; nothing in the checkout is written. fails_at lists every error, mapped back to its line in the unmutated source (WellFormed.lean lines are proofs; Examples.lean lines are #guards, and `test` quotes the first).",
  "control_errors": 0,
  "mutants": [
   {
@@ -15,8 +15,8 @@
    "test": "#guard result (check { F2 with packSources := [\"u0019.s01\"] } ⟨[f2l]⟩) == some packText     -- F2d",
    "fails_at": [
     "WellFormed.lean:327",
-    "Examples.lean:104",
-    "Examples.lean:261"
+    "Examples.lean:105",
+    "Examples.lean:278"
    ],
    "plan_bug": "packsInert reading only the parts, not their unit (PE-R11): F2d must fail"
   },
@@ -31,10 +31,12 @@
    "test": "#guard result (check { F2 with packSources := [\"u0019.s01.p3\"] } ⟨[f2l]⟩) == some packText  -- F2c",
    "fails_at": [
     "WellFormed.lean:320",
-    "Examples.lean:103",
     "Examples.lean:104",
-    "Examples.lean:160",
-    "Examples.lean:261"
+    "Examples.lean:105",
+    "Examples.lean:110",
+    "Examples.lean:113",
+    "Examples.lean:174",
+    "Examples.lean:278"
    ],
    "plan_bug": "packsInert always true: F2c must fail"
   },
@@ -48,9 +50,11 @@
    "killed": true,
    "test": "#guard shownUnder F9 f9l == [(\"f.p3\", [\"rationale\", \"limiting\"])]",
    "fails_at": [
-    "Examples.lean:222",
-    "Examples.lean:244",
-    "Examples.lean:246"
+    "Examples.lean:116",
+    "Examples.lean:117",
+    "Examples.lean:236",
+    "Examples.lean:259",
+    "Examples.lean:261"
    ],
    "plan_bug": "holdsTarget reading the reason's slot instead of the target's (PE-R8): F9's shownUnder must fail"
   },
@@ -62,16 +66,31 @@
    "from": " &&\n      !(B.links.any fun M => M.partIds.contains p.id)).map",
    "to": ").map",
    "killed": true,
-   "test": "#guard unlinkedActive F3 ⟨[f3l1, f3l2]⟩ f3l1 == [] && unlinkedActive F3 ⟨[f3l1, f3l2]⟩ f3l2 == []",
+   "test": "#guard unlinkedActive F10 ⟨[f10l]⟩ f10l == [\"g.p1\"]  (and F3: #guard unlinkedActive F3 ⟨[f3l1, f3l2]⟩ f3l1 == [] && unlinkedActive F3 ⟨[f3l1, f3l2]⟩ f3l2 == [])",
    "fails_at": [
-    "WellFormed.lean:376",
-    "WellFormed.lean:380",
-    "Examples.lean:122",
-    "Examples.lean:223",
-    "Examples.lean:240",
-    "Examples.lean:250"
+    "WellFormed.lean:377",
+    "WellFormed.lean:381",
+    "Examples.lean:136",
+    "Examples.lean:237",
+    "Examples.lean:255",
+    "Examples.lean:266"
    ],
-   "plan_bug": "unlinkedActive keeping inert parts or parts another link names: F10's value, and F3's [], must fail"
+   "plan_bug": "unlinkedActive keeping inert parts or parts another link names: F10's value, and F3's [], must fail (the 'parts another link names' half; H1 is the 'inert parts' half, which F10 and F3 do not separate: every inert part there is linked)"
+  },
+  {
+   "id": "H8",
+   "name": "targetKind's because arm reads the reason's slot",
+   "definition": "targetKind",
+   "file": "lean/VE/Purposes/WellFormed.lean",
+   "from": "some (if L.relation == .because then e else c)",
+   "to": "some (if L.relation == .because then c else c)",
+   "killed": true,
+   "test": "#guard targetKind F2 f2l == some .norm",
+   "fails_at": [
+    "Examples.lean:116",
+    "Examples.lean:117"
+   ],
+   "plan_bug": null
   },
   {
    "id": "H1",
@@ -85,7 +104,7 @@
    "fails_at": [
     "WellFormed.lean:377",
     "WellFormed.lean:381",
-    "Examples.lean:250"
+    "Examples.lean:266"
    ],
    "plan_bug": null
   },
@@ -101,7 +120,7 @@
    "fails_at": [
     "WellFormed.lean:377",
     "WellFormed.lean:381",
-    "Examples.lean:250"
+    "Examples.lean:266"
    ],
    "plan_bug": null
   },
@@ -116,8 +135,9 @@
    "test": "#guard shownUnder F10 f10l == []",
    "fails_at": [
     "WellFormed.lean:356",
-    "Examples.lean:239",
-    "Examples.lean:242"
+    "Examples.lean:254",
+    "Examples.lean:257",
+    "Examples.lean:264"
    ],
    "plan_bug": null
   },
@@ -129,13 +149,14 @@
    "from": "targetKind U L == some k",
    "to": "targetKind U L != some k",
    "killed": true,
-   "test": "#guard shownUnder F9 f9l == [(\"f.p3\", [\"rationale\", \"limiting\"])]",
+   "test": "#guard shownUnder { F2 with parts := F2.parts.map fun p => if p.id == \"u0019.s01.p1\" then",
    "fails_at": [
     "WellFormed.lean:343",
-    "Examples.lean:222",
-    "Examples.lean:225",
-    "Examples.lean:246",
-    "Examples.lean:248"
+    "Examples.lean:117",
+    "Examples.lean:236",
+    "Examples.lean:240",
+    "Examples.lean:261",
+    "Examples.lean:263"
    ],
    "plan_bug": null
   },
@@ -149,7 +170,7 @@
    "killed": true,
    "test": "#guard targetKind F10 f10l == some .exposition && targetKind F9 f9l == some .norm &&",
    "fails_at": [
-    "Examples.lean:244"
+    "Examples.lean:259"
    ],
    "plan_bug": null
   },
@@ -163,9 +184,11 @@
    "killed": true,
    "test": "#guard result (check { F2 with packSources := [\"u0019.s01.p3\"] } ⟨[f2l]⟩) == some packText  -- F2c",
    "fails_at": [
-    "WellFormed.lean:185",
-    "Examples.lean:103",
-    "Examples.lean:104"
+    "WellFormed.lean:187",
+    "Examples.lean:104",
+    "Examples.lean:105",
+    "Examples.lean:110",
+    "Examples.lean:113"
    ],
    "plan_bug": null
   },
@@ -180,7 +203,22 @@
    "test": "#guard !wf F5 ⟨(List.range 257).map fun n => { f5l with id := s!\"l{n}\" }⟩ && !wf F5 ⟨[f5l, f5l]⟩ &&",
    "fails_at": [
     "WellFormed.lean:187",
-    "Examples.lean:261"
+    "Examples.lean:278"
+   ],
+   "plan_bug": null
+  },
+  {
+   "id": "H9",
+   "name": "check runs 6a after step 7 (fault order)",
+   "definition": "check",
+   "file": "lean/VE/Purposes/WellFormed.lean",
+   "from": "    require (packsInert U L)  -- fault 6a, PE-R11\n      s!\"InvalidPurposes: link {L.id} has a side the text does not state, and a pack takes a premise from it\"\n    require (!(L.polarity == .denied && L.share != .plain))\n      s!\"InvalidPurposes: link {L.id} denies a reason and also says how much of the reason it is\"\n",
+   "to": "    require (!(L.polarity == .denied && L.share != .plain))\n      s!\"InvalidPurposes: link {L.id} denies a reason and also says how much of the reason it is\"\n    require (packsInert U L)  -- fault 6a, PE-R11\n      s!\"InvalidPurposes: link {L.id} has a side the text does not state, and a pack takes a premise from it\"\n",
+   "killed": true,
+   "test": "#guard result (check { F2 with packSources := [\"u0019.s01.p3\"] } ⟨[{ f2l with share := .sole }]⟩) ==",
+   "fails_at": [
+    "WellFormed.lean:187",
+    "Examples.lean:110"
    ],
    "plan_bug": null
   }
