@@ -126,7 +126,9 @@ No Rust changed.
   `tests/test_consolidation_tools.py`, `tests/test_assurance_manifest.py` and `tests/test_english_grammar_gen.py`
   exit 0. An earlier run, stopped unfinished, had found `test_committed_trust_table_covers_every_declaration` (95
   unclassified lines), fixed by the classes above. After that run, only a Lean `#guard` (the advice-pattern
-  survivor), `lean/declarations.txt`, docs and the trust-mutant evidence changed.
+  survivor), `lean/declarations.txt`, docs and the trust-mutant evidence changed, so the final selected run is on
+  the committed, clean `fb1e59bca` (VM; the Mac was unreachable): exit 0, "recorded 460 units for tree 7bba0e77f1;
+  1 others left to the static graph until they run; 0 failed", 6,268 s. Only this report changed after it.
 - Pre-existing reds (main-known-red.txt): none was hit.
 
 ## DRI decisions this item read or asked
