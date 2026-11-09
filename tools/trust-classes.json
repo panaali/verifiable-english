@@ -19554,7 +19554,12 @@
         "VE.Events.RouteExamples.chainEnv",
         "VE.Events.RouteExamples.requestCase",
         "VE.Events.RouteExamples.requestIsNull",
-        "VE.Events.RouteExamples.requestIsCase"
+        "VE.Events.RouteExamples.requestIsCase",
+        "VE.Events.RouteExamples.ndListed",
+        "VE.Events.RouteExamples.ownedEnv",
+        "VE.Events.RouteExamples.layeredCase",
+        "VE.Events.RouteExamples.ownedRequestIsNull",
+        "VE.Events.RouteExamples.ownedLists"
       ]
     },
     "VE/Route/Inert.lean": {
