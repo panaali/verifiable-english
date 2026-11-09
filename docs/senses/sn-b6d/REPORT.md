@@ -1,6 +1,7 @@
 # sn-b6d REPORT (senses.read: the re-read of a rendering and Lean's line, for sn-b7b)
 
-Status: (1) the re-read and (2) Lean's line are built; (3) `GlossedNatural` is cut whole to sn-b6e at the size line
+Status: (1) the re-read and (2) Lean's line are built (HEAD: the commit with this report's last edit; selected tests
+exit 0 at `4063532f3`); (3) `GlossedNatural` is cut whole to sn-b6e at the size line
 before it, as the task orders (sn-b7b does not need it). No DRI signature is reserved. Trust V +58, K +0 (R16).
 Decisions: reviews/dri-decisions-20261108-sn-b6c.md items 1-3 (in /home/seyran/code/manage-agents),
 reviews/dri-decisions-20261102-sn-b6b.md item 1, reviews/dri-decisions-20261101-sn-b7b8-reread.md item 1.
@@ -57,17 +58,37 @@ changed.
   introduced since", "allowed V +58"; `VE/Senses/Run.lean` +58 (G[V] `rereadJson`, `decodeReread`, `lineJson`, whose
   text `ve senses resolve` writes into a document, and the `readCase` wiring); the examples' `reread` is T.
   FOLLOW-UPS.md "## sn-b6d" asks for the ties pass.
-- Trust mutants: TRUSTMUT
-- Statement gate and audit: AUDIT
-- Size (hand-written lines added or changed, `git diff --numstat` against the merge base, generated files and the
-  tool's evidence JSONs out): after (2), product code and side tables 160, tests and `#guard`s 236, then these docs
-  and the seeded-bug list ~130: ~525. (3) projects to ~120-130 more (detection over both gloss forms, the rewrite
-  cut from `lexSpans` bytes, a re-read, the hint's wiring and relay, a two-derivation fixture pack, tests, docs):
-  past ~600, so the task's seam before (3) applies.
+- Trust mutants (`zsh mac-pytest.sh --trustmut -- --max-mutants 1000 --json docs/senses/sn-b6d/trust-mutants.json
+  --test lean/VE/Senses/RunExamples.lean --test lean/VE/Senses/TextsExamples.lean`, ve-cloud-2): run 1
+  (`trust-mutants-run1.json`, at `a07e5fada`): 75 KILLED, 12 SURVIVOR, 2 UNKNOWN, 11 INVALID. The survivors were cuts
+  of the member-name list and of `units` (killed by new `#guard`s: both members in one request, a re-read of the
+  second of two units), `drop` cuts of a one-sense word's senses (killed by `lineJson F "tells" "purple"`), and
+  equivalent cuts (lists of at most one entry, `isEmpty` under `take 1`), allowed in `trust-mutants-allow.json`
+  with the two UNKNOWNs, which do not elaborate. Final run (`trust-mutants.json`, `--allow` and `--rescore` of run 1,
+  86 verdicts carried over a check-only change): 81 KILLED, 0 SURVIVOR, 0 UNKNOWN, 11 INVALID, 8 ALLOWED, 0 NOT RUN, exit 0.
+- Statement gate and audit: `uv run python tools/lean_statements.py --check`: "added: 0, removed: 0, changed: 0 ...
+  PASS: 8116 statements"; `python3 lean/audit.py`: "PASS: 789 source files; 8708 named theorem declarations audited
+  ... only the declared standard axiom allowlist" (after the full `lake build`, "Build completed successfully (1319
+  jobs)"; later only `TextsExamples.lean`'s `#guard`s changed, built with `lake build VE.Senses.TextsExamples`).
+- Size (`git diff --numstat 9ba8aeaed`, generated files, the tool's evidence JSONs and the recorded gate cases out):
+  710 added, 37 deleted. Of these, product code and side tables 174 (Run.lean 63, senses.py 78, the gate 13, the
+  trust classes 11, the manifest pin 9), tests and `#guard`s 335 (pytest 266, guards 69), docs and the seeded-bug
+  list 201. Measured after (2), before (3): ~367 of code and tests, ~525 with the docs to come; (3) projected ~120-130
+  more (detection over both gloss forms, the rewrite cut from `lexSpans` bytes, a re-read, the hint's wiring and
+  relay, a two-derivation fixture pack, tests, docs), past ~600, so the task's seam before (3) applies. The item then
+  grew past the line on (1)-(2)'s own fixes: the self-review's two B findings (decode-first, the line's code binding:
+  ~55 lines with their tests) and the `#guard`s that kill the trust mutants (~45). Neither could move to sn-b6e: both
+  are conditions of (1) and (2).
 
 ## Tests run
 
-SELECTED
+- Selected tests once, on the committed tree (`MAC_PYTEST_NO_DEFER=1 zsh mac-pytest.sh --select -- --base 9ba8aeaed
+  --run`, at `4063532f3`, ve-cloud-2): exit 0, "recorded 472 units for tree d1d9e360cc; ... 0 failed" (7119 s). No
+  test of main-known-red.txt failed, and none was touched.
+- `uv run python tools/regen_generated.py --check`: "checked 37 entries"; `uv run python tools/trust_map.py --check`:
+  PASS; `uv run python tools/relay_lint.py`: PASS ("4 senses module(s), no English reader");
+  `uv run python tools/gate_collection.py --check --prebuilt`: "63 added, 0 removed by a trailer, 0 refused, 0 stale
+  and 0 malformed trailers".
 
 - `uv run python tools/relay_mutation_gate.py --route ve_senses_route::senses.read`: 4 fixtures, 2069 mutants, 2059
   refused, 10 allowed, 0 failures.
@@ -105,4 +126,23 @@ FOLLOW-UP: sn-b6b-flipconst the relay accepts a flip model that omits a projecte
 
 ## Self-review against BUILDER-CHECKLIST
 
-SELFREVIEW
+SELF-REVIEW: 0 A, 2 B, 11 C; fixed 12 (both B; C: the line on a refused reading, the relay's line request
+checks, the gate-fixture test, `lineJson` to G[V], the lexer's reason in the refusal, the overlap note, the FOLLOW-UP
+lines, the DELTA claim's evidence, the size figure, "equal canonical JSON" for the goldens; the evaluate-once C is
+answered in Deviation 5 and the flip-model C stays a follow-up).
+
+1. PASS: `test_senses_route.py::test_genuine_response_field_mutations_are_rejected[reread, line]`, `::test_lean_refuses_a_malformed_member_before_reading` (16), relay mutation gate 0 failures.
+2. PASS: deliverables table; (3) cut at the task's named seam (size above); one owner: the line is `lineOf`'s, the re-read Lean's, the relay only binds.
+3. PASS: seeded bugs L1-L4, P1-P4, G1, each with its failing test; trust mutants exit 0 with an allow file.
+4. PASS: `::test_a_golden_request_without_the_members_keeps_its_answer` (9 goldens against main's binary); RunExamples pins unchanged.
+5. PASS: `::test_reread_rebinding_is_refused` (6), `::test_an_unasked_reread_is_refused`, `::test_line_rebinding_is_refused` (8), `::test_a_line_is_there_exactly_when_asked` (2).
+6. PASS: selected tests and evidence on the committed final tree; the chain runs the gate.
+7. PASS: DELTA rows cite R3 and R16 with their tests; nothing reserved.
+8. PASS: DELTA rows 1-3; the emptied-lines refusal is no delta on a genuine answer (Lean writes a line for every candidate).
+9. PASS: the selection ran 472 units, `tests/test_senses_read_members.py` among them.
+10. N.A.: no theorem added or changed (statements unchanged).
+11. PASS: `::test_the_reread_is_unknown_when_its_budget_ends`, `::test_a_refused_reading_has_no_reread` (budget 1); `#guard`s on budget 4000.
+12. PASS: one lex and one budgeted read per request (Deviation 5); `::test_a_long_rendering_ends_within_its_limits`.
+13. PASS: no test removed (`gate_collection.py --check --prebuilt`, 0 removed).
+14. PASS: both directions (same and different, text and code, asked and unasked); the spec re-read above.
+15. PASS: no overclaim (the cut is named; "byte for byte" reworded to equal canonical JSON); the cut point is the task's; every new check has a mutant; limits: the rendering is lexed under S2's limits before any reading.
