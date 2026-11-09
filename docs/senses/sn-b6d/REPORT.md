@@ -13,12 +13,14 @@ reviews/dri-decisions-20261102-sn-b6b.md item 1, reviews/dri-decisions-20261101-
 | (1) the re-read: optional source-request member `reread` `{sentence, candidate, rendering}`, read by `readOne` under the candidate's `linesProjection`, no policy, quoted senses refused; `same` / `different` / `unknown` (budget) | yes, from `3eae10692`; two changes: the member is decoded before any reading (`decodeReread`), and a rendering that is not one sentence is Lean's `InvalidInput` with the lexer's code when it does not lex (it was `different`) | `lean/VE/Senses/Run.lean` `decodeReread`, `rereadJson`, `readCase`; relay `_reread_problem` | `tests/test_senses_read_members.py::test_each_candidate_rereads_under_its_own_projection` (7), `::test_a_base_projection_rendering_is_refused`, `::test_the_reread_is_unknown_when_its_budget_ends`, `::test_a_golden_request_without_the_members_keeps_its_answer` (9), `::test_the_members_only_add_to_the_answer`, `::test_a_rendering_that_is_not_one_sentence_is_refused_by_lean`, `::test_a_long_rendering_ends_within_its_limits`, `::test_a_refused_reading_has_no_reread`, `::test_lean_refuses_a_malformed_member_before_reading` (16), `::test_reread_rebinding_is_refused` (6), `::test_an_unasked_reread_is_refused`; `#guard`s `lean/VE/Senses/TextsExamples.lean:91-95` |
 | (2) Lean's line `In this document, <word> means <gloss>.` for a requested word and gloss | yes, from `3eae10692`: result member `line` `{word, gloss, text}` (`lineOf`, the one owner of the line, `Assignment.lean`), or `{word, gloss, code}` with `UnknownWord` / `UnknownGloss` | `Run.lean` `lineJson`; relay `_line_problem` | `#guard` per slot `TextsExamples.lean:77-81`; `::test_the_line_is_leans` (a refused reading too), `::test_line_rebinding_is_refused` (8), `::test_a_line_is_there_exactly_when_asked` (2), `::test_the_relay_refuses_a_malformed_line_request` (3) |
 | (3) `GlossedNatural` (detection, rewrite, re-read, text) | **no: sn-b6e** (size line, below) | | |
-| typed, bound, fuzzed | yes, in the relay (Deviation 1) | `ve/backends/senses.py` | `tests/test_senses_route.py::test_genuine_response_field_mutations_are_rejected[reread, line]` (every field dropped and retyped); the rebinding tests above; `tools/relay_mutation_gate.py --route ve_senses_route::senses.read` (two asked fixtures; `tests/test_relay_mutation_gate.py::test_the_senses_read_fixtures_ask_for_the_line_and_the_reread`) |
+| typed, bound, fuzzed | yes, in the relay (Deviation 1): every field typed; the unit, candidate, word and gloss bound; Lean's `text` and `outcome` only typed (R8) | `ve/backends/senses.py` | `tests/test_senses_route.py::test_genuine_response_field_mutations_are_rejected[reread, line]` (every field dropped and retyped); the rebinding tests above; `tools/relay_mutation_gate.py --route ve_senses_route::senses.read` (two asked fixtures; `tests/test_relay_mutation_gate.py::test_the_senses_read_fixtures_ask_for_the_line_and_the_reread`) |
 
 ## Deviations
 
-1. Typing stays on `ve_senses_route`: the members are typed and bound by the relay's validator
-   (`_response_problem`, `_reread_problem`, `_line_problem`), not a response shape, as reviews/dri-decisions-20261108-sn-b6c.md
+1. Typing stays on `ve_senses_route`: the members are typed by the relay's validator
+   (`_response_problem`, `_reread_problem`, `_line_problem`), which binds the fields that name the request (unit,
+   candidate, word, gloss, and `text` versus `code`) and only types Lean's line `text` and re-read `outcome` (R8;
+   `tests/test_senses_read_members.py::test_leans_text_and_outcome_are_only_typed`), not a response shape, as reviews/dri-decisions-20261108-sn-b6c.md
    item 1 rules after the sn-b6b precedent (reviews/dri-decisions-20261102-sn-b6b.md item 1). The theorem-level tie
    is the open design row sn-read-shape.
 2. "The rendering is one sentence" is Lean's check, not the relay's: Python has no English reader (relay_lint), so
@@ -132,7 +134,7 @@ lines, the DELTA claim's evidence, the size figure, "equal canonical JSON" for t
 answered in Deviation 5 and the flip-model C stays a follow-up).
 
 1. PASS: `test_senses_route.py::test_genuine_response_field_mutations_are_rejected[reread, line]`, `::test_lean_refuses_a_malformed_member_before_reading` (16), relay mutation gate 0 failures.
-2. PASS: deliverables table; (3) cut at the task's named seam (size above); one owner: the line is `lineOf`'s, the re-read Lean's, the relay only binds.
+2. PASS: deliverables table; (3) cut at the task's named seam (size above); one owner: the line is `lineOf`'s, the re-read Lean's, the relay only types and binds.
 3. PASS: seeded bugs L1-L4, P1-P4, G1, each with its failing test; trust mutants exit 0 with an allow file.
 4. PASS: `::test_a_golden_request_without_the_members_keeps_its_answer` (9 goldens against main's binary); RunExamples pins unchanged.
 5. PASS: `::test_reread_rebinding_is_refused` (6), `::test_an_unasked_reread_is_refused`, `::test_line_rebinding_is_refused` (8), `::test_a_line_is_there_exactly_when_asked` (2).
@@ -145,4 +147,4 @@ answered in Deviation 5 and the flip-model C stays a follow-up).
 12. PASS: one lex and one budgeted read per request (Deviation 5); `::test_a_long_rendering_ends_within_its_limits`.
 13. PASS: no test removed (`gate_collection.py --check --prebuilt`, 0 removed).
 14. PASS: both directions (same and different, text and code, asked and unasked); the spec re-read above.
-15. PASS: no overclaim (the cut is named; "byte for byte" reworded to equal canonical JSON); the cut point is the task's; every new check has a mutant; limits: the rendering is lexed under S2's limits before any reading.
+15. PASS: no overclaim (the cut is named; "byte for byte" reworded to equal canonical JSON); the cut point is the task's; every new check has a mutant except two, which no test fails without (`senses.py` `_reread_problem`'s "one of the answer's units and candidates", and `_line_problem`'s "the code is `UnknownWord` or `UnknownGloss`", apart from P4's choice between them: review F2, a follow-up); limits: the rendering is lexed under S2's limits before any reading.
