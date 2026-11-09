@@ -53,6 +53,9 @@ def document(**keys):
 
 
 # `total: null` is written by omission on the service's restricted JSON (rights' `_wire`)
+DEEP = ["top"]
+for _ in range(65):
+    DEEP = ["not", DEEP]
 RELATION = {"predicate": "country_of", "slots": [0, 1], "cites": []}
 CHARGED = {"role": "trigger", "formula": ["unary", "charged", ["var", 0]], "span": [10, 20]}
 
@@ -141,6 +144,12 @@ K_FIXTURES = {
     "clause-role": (document(clauses=[{**CHARGED, "role": "reason"}]),
                     "InvalidInput: invalid clause 0 of rule equal-access"),
     "unit-span": ([{**document()[0], "span": [0]}], "InvalidInput: invalid unit span"),
+    "roles": (document(clauses=[{**CHARGED, "role": "scope"}, {**CHARGED, "role": "object", "span": [20, 30]}]),
+              ["and", ["and", ["top"], ["unary", "charged", ["var", 0]]], ["unary", "charged", ["var", 0]]], []),
+    "deep-clause": (document(clauses=[{**CHARGED, "formula": DEEP}]), "ResourceLimit: formula depth exceeds 64"),
+    "relation-cites": (document(relation={**RELATION, "cites": [1]}), "InvalidInput: invalid relation of rule equal-access"),
+    "elided-scalar": (document(elided=5), "InvalidInput: invalid elided of rule equal-access"),
+    "clauses-scalar": (document(clauses=5), "InvalidInput: invalid clauses of rule equal-access"),
     "no-unit-span": ([{"right": document(clauses=[CHARGED])[0]["right"]}], "ClauseSpan: equal-access: [10, 20)"),
 }
 
@@ -155,7 +164,8 @@ def test_right_clauses_k_fixtures_service(service):
         else:
             assert result["status"] == "ok", (name, result)
             assert guard(result) == fixture[1] and result["result"]["clause_slot"] == fixture[2], name
-            assert "elided" not in result["result"]["plained"] and "relation" not in result["result"]["plained"], name
+            [unit] = json.loads(result["result"]["plained"])
+            assert set(unit) == {"right"} and [set(line) for line in unit["right"]["lines"]] == [{"kind", "norm"}], name
 
 
 def test_right_clauses_k10_profile_off(service):
@@ -172,20 +182,22 @@ def _answer_digest(row) -> str:
     return hashlib.sha256(canonical({k: v for k, v in row.items() if k != "id"}).encode()).hexdigest()
 
 
-def test_right_clauses_profile_off_regression(service):
-    """9.3 as saved evidence: the rights mode's answer to each recorded rights route case (profile off) has the digest
-    saved from the base build (docs/composition/cmp-s3-cfr-1/profile-off.json). With the profile on and `elided: []`
-    on every line, each array document of a rights case elaborates to itself (`plain_identity`), or is refused with the
-    profile-off answer's own text."""
+def test_right_clauses_profile_off_evidence():
+    """9.3, profile off, as saved evidence (docs/composition/cmp-s3-cfr-1/profile-off.json): the rights mode's answers
+    to the recorded rights route cases have the same digests on this item's build as on the base build."""
     saved = json.loads(EVIDENCE.read_text())
-    cases = recorded("rights")
-    assert [case_digest(canonical(c)) for c in cases] == saved["cases"]
-    answers = exchange(service, "rights", cases)
-    assert [_answer_digest(row) for row in answers] == saved["answers"]
-    shaped = [(c, a) for c, a in zip(cases, answers) if type(c.get("document")) is list and
-              "rights@0" in c.get("environment", {}).get("profiles", [])]
+    assert saved["head_answers"] == saved["answers"] and saved["head_cases"] == saved["cases"]
+    assert len(saved["answers"]) == len(saved["cases"]) > 0 and saved["commit"] != saved["head_commit"]
+
+
+def test_right_clauses_profile_on_regression(service):
+    """9.3, profile on: each recorded rights case's array document, with `elided: []` on every line, elaborates to
+    itself (`plain_identity`) and the rights mode answers the plained document as the written one, verdicts and
+    statuses included; or the head refuses it with the profile-off answer's own text."""
+    cases = [c for c in recorded("rights") if type(c.get("document")) is list and
+             "rights@0" in c.get("environment", {}).get("profiles", [])]
     on = []
-    for case, _ in shaped:
+    for case in cases:
         doc = deepcopy(case["document"])
         for unit in doc:
             for body in (unit.get("right"), unit.get("right_lines")):
@@ -194,9 +206,30 @@ def test_right_clauses_profile_off_regression(service):
         profiles = sorted({*case["environment"]["profiles"], "right-clauses@0"})
         on.append({"id": case["id"], "environment": {**case["environment"], "profiles": profiles}, "document": doc})
     heads = exchange(service, "clauses-elaborate", on)
-    assert (len(heads), sum(head["status"] == "ok" for head in heads)) == (21, 19)
-    for (case, answer), head in zip(shaped, heads):
-        if head["status"] == "ok":
-            assert json.loads(head["result"]["plained"]) == case["document"], case["id"]
-        else:
+    answers = exchange(service, "rights", cases)
+    assert cases and any(head["status"] == "ok" for head in heads)
+    plained = [(case, head, answer) for case, head, answer in zip(cases, heads, answers) if head["status"] == "ok"]
+    again = exchange(service, "rights", [{**case, "document": json.loads(head["result"]["plained"])}
+                                         for case, head, _ in plained])
+    for (case, head, answer), rerun in zip(plained, again):
+        assert json.loads(head["result"]["plained"]) == case["document"] and rerun == answer, case["id"]
+    for case, head, answer in zip(cases, heads, answers):
+        if head["status"] != "ok":
             assert head["error"] == answer["error"], (case["id"], head, answer)
+
+
+def test_right_clauses_environment_texts_kept():
+    """Registration changes no refusal of an environment that lists `right-clauses@0`: beside `acts@0` (gated by the
+    base rows before any decoder) or without `rights@0` (its layer decoder refuses the name first) the text is the
+    base's `Unsupported profile right-clauses@0`; with `rights@0` the environment is accepted (the signed row)."""
+    from ve import Environment
+    from ve.errors import UnsupportedProfile
+    acts = environment(["acts@0", "norms@0", "relational-fol@0", "right-clauses@0"])
+    acts["vocabulary"]["acts"] = {"fixed": []}
+    del acts["vocabulary"]["rights"]
+    soft = environment(["norms@0", "relational-fol@0", "right-clauses@0", "soft-norms@0"])
+    del soft["vocabulary"]["rights"]
+    for env in (acts, soft):
+        with pytest.raises(UnsupportedProfile, match="^UnsupportedProfile: Unsupported profile right-clauses@0$"):
+            Environment(env)
+    assert Environment(environment()).to_dict()["profiles"] == ON

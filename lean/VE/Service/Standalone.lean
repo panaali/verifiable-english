@@ -153,8 +153,6 @@ def typingReduced (environment : Json) : Except String Json := do
   let mut env := environment
   -- `riskReduced` erases `risk@0` and keeps the alternatives block for `alternativesReduced`.
   if profiles.contains "risk@0" then env ← riskReduced env
-  -- `right-clauses@0` adds keys to a rights document's lines only (right-clauses 3)
-  if profiles.contains "right-clauses@0" then env := VE.Compose.withoutClauses env
   if profiles.contains "reports@0" then env ← reportsReduced env
   if profiles.contains "alternatives@0" then env ← alternativesReduced env
   if profiles.contains "speech-acts@0" || profiles.contains "rights@0" then
@@ -254,7 +252,9 @@ def validatedLayerEnvironment (environment : Json) (joined : Bool) :
     pure ()
   -- `acts@0` is read by the norms decoder only: its row's refusals come before every decoder (act-phrases 4.4)
   if rawProfiles.contains "acts@0" then
-    let _ ← VE.Compose.gateOf (VE.Compose.environmentRows rawProfiles) rawProfiles
+    -- with `readings@1` only: `right-clauses@0` beside `acts@0` keeps the base rows' refusal (cmp-s3-cfr-1)
+    let _ ← VE.Compose.gateOf (if rawProfiles.contains "readings@1" then VE.Compose.profileTable
+      else VE.Compose.baseRows) rawProfiles
   let named :=(VE.Route.Gate.profilesOf environment).toOption.getD []
   let empty := Json.arr #[]
   if named.contains "risk@0" || (environment.getObjVal? "risk").isOk then
