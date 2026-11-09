@@ -2,6 +2,7 @@ import VE.Commands.Run
 import VE.Commands.Examples
 import VE.Senses.Run
 import VE.SpeechActs.Source.Run
+import VE.Commands.StepsExamples
 
 /-! The fixtures of docs/spec/commands-imperatives.md section 6 through the `english.command` mode: the proof task's
 rows P1′ to P8, O1's text, O2's readings, O7's budget, O10's byte bound, the request echo, `jsonWF?`'s refusal. -/
@@ -247,6 +248,21 @@ def readingsOf (j : Json) : List Json := ((j.getObjValD "readings").getArr?.toOp
 #guard [request "Then click Ask." (env := E_web), request "Click Check rule conflict, then click Ask." (env := E_web),
   request "Review the meaning, then click Ask." (env := E_web), request "  Click Check, then do not share the token."].all encodes
 
+-- A step's spans start past its leading spaces (readCommand trims them).
+#guard spans (get (request "Then  click Check.") "reading") == [toJson [12, 17]] &&
+  spans (get (request "If atlas is reviewed,  click Check.") "reading") == [toJson [29, 34]] &&
+  (readingsOf (result (request "Click Check, then  click Check."))).map spans == [[toJson [6, 11]], [toJson [25, 30]]]
+-- The charges through the mode (ci-3a's fixtures): 400 bytes read and 401 are `limit`; about 6 KB of `preposed`
+-- splits is `limit` before any shape is built; `readingsBound` complete sequence alternatives are written in full.
+#guard [get (request (StepsExamples.twoSteps 358) (env := E_web)) "outcome",
+  get (request (StepsExamples.twoSteps 359) (env := E_web)) "outcome",
+  get (request ("If " ++ ", ".intercalate (List.replicate 2000 "a") ++ ", click Ask.") (env := E_web)) "outcome"] ==
+  [.str "steps", .str "limit", .str "limit"]
+#guard let q := request "Review, then listen." (env := StepsExamples.spelled
+    (StepsExamples.spellings "review" 8 ++ StepsExamples.spellings "listen" 8))
+  encodes q && ((get q "alternatives").getArr?.toOption.map (·.size)) == some readingsBound &&
+    ((get q "readings").getArr?.toOption.map (·.size)) == some (2 * readingsBound)
+
 /-! The stated order (finding (c)): the seven-unit list, the pilot pattern uweb.tour.552_0, a `Then` unit with no
 earlier instruction unit, and the two-step counterexample. -/
 
@@ -293,14 +309,17 @@ attributed instructions included; a `Then` wording of another kind, or an instru
 def srcUnit (id : String) (kind : Json) (w : String) : VE.SpeechActs.Source.SourceUnit :=
   ⟨id, (0, 0), kind, .null, none, w, none, none, .null⟩
 def attributed : Json := toJson [Json.str "attributed", .str "alice", .str "says", .str "instruction"]
-#guard VE.SpeechActs.Source.thenFault [srcUnit "a" (.str "instruction") "Click Ask.",
+#guard VE.SpeechActs.Source.thenFault (·.kind) [srcUnit "a" (.str "instruction") "Click Ask.",
     srcUnit "b" (.str "instruction") "Then click Ask."] ==
-  some ("ThenWithoutStep: a Then step follows no earlier instruction step; write the steps in one sentence, joined by " ++
-    "', then ' (unit b)")
-#guard [VE.SpeechActs.Source.thenFault [srcUnit "a" (.str "asserted") "Then the draft is approved."],
-  VE.SpeechActs.Source.thenFault [srcUnit "a" (.str "instruction") "Click Check rule conflict, then click Ask."]] ==
+  some ("ThenWithoutStep: a Then step names no earlier instruction step as its antecedent; write the steps in one " ++
+    "sentence, joined by ', then ' (unit b)")
+#guard [VE.SpeechActs.Source.thenFault (·.kind) [srcUnit "a" (.str "asserted") "Then the draft is approved."],
+  VE.SpeechActs.Source.thenFault (·.kind) [srcUnit "a" (.str "instruction") "Click Check rule conflict, then click Ask."]] ==
   [none, none]
 #guard (VE.Route.Admission.decodeKind 16 attributed).isOk &&
-  (VE.SpeechActs.Source.thenFault [srcUnit "q" attributed "Then click Ask."]).isSome
+  (VE.SpeechActs.Source.thenFault (·.kind) [srcUnit "q" attributed "Then click Ask."]).isSome
+-- The effective kind decides: an asserted unit with a signed `instruction` choice is a `Then` step; the reverse is not.
+#guard (VE.SpeechActs.Source.thenFault (fun _ => .str "instruction") [srcUnit "c" (.str "asserted") "Then click Ask."]).isSome &&
+  (VE.SpeechActs.Source.thenFault (fun _ => .str "asserted") [srcUnit "c" (.str "instruction") "Then click Ask."]).isNone
 
 end VE.Commands.RunExamples

@@ -177,12 +177,13 @@ def holeStart (act : String) (fs : List Fill) (k : Nat) : Nat :=
   (fillHoles (((act.drop 4).splitOn s!"\{{k}}").headD "") fun i => ((fs[i - 1]?).map (·.words)).getD "").2.length
 
 /-- Where each step's command text starts in the trimmed wording, in code points: `shapes` cuts at `If <c>, `,
-`Then ` and `, then `, and `capitalise` keeps the length. -/
+`Then ` and `, then `, `capitalise` keeps the length, and `readCommand` reads a step past its leading ASCII spaces. -/
 def stepStarts : Shape → List Nat
   | .core _ => [0]
-  | .preposed c _ => [c.length + 5]
-  | .after _ => [5]
-  | .seq xs => (xs.foldl (fun (acc, k) x => (acc ++ [k], k + x.length + 7)) ([], 0)).1
+  | .preposed c x => [c.length + 5 + lead x]
+  | .after x => [5 + lead x]
+  | .seq xs => (xs.foldl (fun (acc, k) x => (acc ++ [k + lead x], k + x.length + 7)) ([], 0)).1
+where lead (x : String) : Nat := (x.toList.takeWhile VE.SpeechActs.Wire.asciiSpace).length
 
 /-- A reading: its command object (SA 3.2), each fill with its span in code points of the wording (none for the
 proof task's query, or when `start`, the start of the reading's command text, is not known), the proof task's query,
@@ -213,7 +214,7 @@ def shapeName : Shape → String
 
 /-- An alternative of `many`: its shape's name and its readings, each with where its command text starts. -/
 def altParts : Alt → String × List (Option Nat × Reading)
-  | .shape sh rs => (shapeName sh, (rs.zip (stepStarts sh)).map fun (r, k) => (some k, r))
+  | .shape sh rs => (shapeName sh, rs.mapIdx fun i r => ((stepStarts sh)[i]?, r))
   | .form _ => ("form", [])
   | .purpose r _ => ("purpose", [(none, r)])
 

@@ -21,7 +21,7 @@ def queryMismatch : String × String := ("QueryMismatch", "")
 /-- An authored `Then <x>.` instruction unit with no earlier translated instruction unit named as its antecedent
 (section 7, finding (c); OPEN O3 ruled: no unit field names one, so every authored `Then` unit is refused). -/
 def thenWithoutStep : String × String :=
-  ("ThenWithoutStep", "a Then step follows no earlier instruction step; write the steps in one sentence, joined by ', then '")
+  ("ThenWithoutStep", "a Then step names no earlier instruction step as its antecedent; write the steps in one sentence, joined by ', then '")
 
 /-- Every code the reader writes, with its class: `VEError`, the class Python raises for each today. CI-3 adds
 `ConditionScope` and `ThenWithoutStep` (section 10). -/
