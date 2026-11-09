@@ -874,6 +874,7 @@ VE.Ask.checkedWitnessRow@VE.Ask.Lines
 VE.Attitudes.AFormula.denote@VE.Attitudes.Semantics
 VE.Attitudes.AWellFormed@VE.Attitudes.Syntax
 VE.Attitudes.AttModel.J@VE.Attitudes.Semantics
+VE.Attitudes.Examples.Forced@VE.Attitudes.Examples
 VE.Attitudes.Intended@VE.Attitudes.Semantics
 VE.Attitudes.SettledAsX@VE.Attitudes.Route
 VE.Attitudes.UnsaidFree@VE.Attitudes.Route
