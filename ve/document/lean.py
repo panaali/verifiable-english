@@ -23,12 +23,15 @@ from .containers import (_content_environment, _defaults_environment, _free_norm
 PROPOSAL_ELSEWHERE = "InvalidInput: the lexicon names another environment"
 
 
-def _document_case(raw: bytes, admit: bool, directory: Path | None = None, prepared: dict | None = None):
+def _document_case(raw: bytes, admit: bool, directory: Path | None = None, prepared: dict | None = None,
+                   chain_of: bytes | None = None):
     """The `document` mode's case for a text, or None when Python's own path decides it: the text is not UTF-8, which
     the mode cannot be sent, or pending content-bearing readings under norm defaults still need the original Python
     coverage path. A text with English fences carries the lexicon proposal; a senses document's pack files are read
     beside it (`directory`) and sent as texts, with the proposal its senses route reads (batch 16f). A soft document
-    built for the proposal is kept in `prepared` for the document built from the answer (`_lean_document`)."""
+    built for the proposal is kept in `prepared` for the document built from the answer (`_lean_document`). `chain_of`:
+    the chain list document as written whose chain reading `raw` is, which the case names so that Lean checks the text
+    is that reading (`Service.Document.chainBound`)."""
     try:
         text = raw.decode("utf-8")
     except UnicodeDecodeError:
@@ -47,7 +50,8 @@ def _document_case(raw: bytes, admit: bool, directory: Path | None = None, prepa
                 return None
     except (AttributeError, KeyError, TypeError, VEError):
         pass  # Let Lean decide malformed front matter and preserve its diagnostic.
-    case = {"id": "document", "document": text, "admit": admit}
+    case = {"id": "document", "document": text, "admit": admit,
+            **({} if chain_of is None else {"chain_of": chain_of.decode("utf-8")})}
     if meta is not None and "senses" in meta and directory is not None:
         from ..senses_document import pack_texts
         texts = pack_texts(meta["senses"], directory)
@@ -78,17 +82,24 @@ def _document_case(raw: bytes, admit: bool, directory: Path | None = None, prepa
     return case
 
 
-def _lean_answer(raw: bytes, admit: bool, directory: Path | None = None, prepared: dict | None = None):
+def _lean_answer(raw: bytes, admit: bool, directory: Path | None = None, prepared: dict | None = None,
+                 chain_of: bytes | None = None):
     """Lean's `document` row for a `ve-document@1` text, or None when Python's own path decides it: the mode
     answered `CheckerUnavailable` or `ResourceLimit` (it cannot decide, and says so), or the case cannot be sent
     (`_document_case`). A `ResourceLimit` for a document under a wrapper profile (`_lean_only`) is raised: no other
     path can decide it, and the limit is UNKNOWN, never Python's refusal of the profile. Any other rejection is Lean's diagnostic, raised verbatim; a failure of the service itself is
-    raised, never answered by Python."""
-    case = _document_case(raw, admit, directory, prepared)
+    raised, never answered by Python. A chain reading (`chain_of`) is a part of a `cardinality@0` document, which
+    only Lean reads: it is never Python's to decide, so Lean's UNKNOWN is raised and no case is the relay's fault."""
+    case = _document_case(raw, admit, directory, prepared, chain_of)
+    if case is None and chain_of is not None:
+        raise CheckerUnavailable("CheckerUnavailable: the chain reading of a cardinality@0 chain list document has no "
+                                 "Python path")
     if case is None:
         return None
     from ..backends.relay import answer
     row, error = answer("document", case)
+    if chain_of is not None and isinstance(error, (CheckerUnavailable, ResourceLimit)):
+        raise error
     if isinstance(error, ResourceLimit) and _lean_only(raw):
         # Python's own path cannot read a wrapper profile (`chain_environment`), so Lean's UNKNOWN is the answer.
         raise error
@@ -209,7 +220,7 @@ def _lean_document(raw: bytes, path: Path, row: dict, *, admitted: bool, prepare
     except Exception as exc:  # noqa: BLE001 - Lean accepted this front matter
         raise unavailable("is for a front matter Python cannot read") from exc
     if "cardinality@0" in listed_profiles(meta.get("environment")):
-        return _cardinality_document(meta, body, fences, declared, row, path, admitted)
+        return _cardinality_document(raw, meta, body, fences, declared, row, path, admitted)
     try:
         # The identities Lean answered are those of the environment its chain reads (`chain_environment`).
         env = _environment(chain_environment(meta["environment"]))
@@ -319,7 +330,7 @@ def _lean_document(raw: bytes, path: Path, row: dict, *, admitted: bool, prepare
             "lean": {"coverage": row["coverage"], "admitted": admitted}}
 
 
-def _cardinality_document(meta, body, fences, declared, row, path, admitted):
+def _cardinality_document(raw, meta, body, fences, declared, row, path, admitted):
     """The document of a `cardinality@0` text (`Service.Document`, QT-A4), built from Lean's bound answer. Its statements
     stay Lean's: `environment` is its W6a projection, the one environment of it Python models, for display only."""
     from .. import cardinality
@@ -343,13 +354,13 @@ def _cardinality_document(meta, body, fences, declared, row, path, admitted):
             "soft_document": None, "norm_defaults": None, "senses": None, "reports": None, "rights_document": None,
             "readings_s1": None, "readings_s2": None, "readings_components": None, "reading_plan": _reading_plan([], []),
             "cardinality": row.get("cardinality"), "lean": {"coverage": row["coverage"], "admitted": admitted},
-            **({"composed": row["composed"], "chain": _chain_document(path, chain, admitted)} if "composed" in row else {})}
+            **({"composed": row["composed"], "chain": _chain_document(path, chain, admitted, raw)} if "composed" in row else {})}
 
 
-def _chain_document(path, chain, admitted):
-    """The chain's part of a chain list document, on its own Lean request; none when every unit is a counting unit."""
+def _chain_document(path, chain, admitted, parent):
+    """The chain's part of a chain list document `parent`, on its own Lean request, which names `parent` (`chain_of`)."""
     from .load import _load
-    return None if chain is None else _load(path, admit=admitted, raw=chain)
+    return _load(path, admit=admitted, raw=chain, chain_of=parent)
 
 
 # The list lines of a composed block's coverage (`Alternatives.Wire.coverage`), each counted in the residual.
