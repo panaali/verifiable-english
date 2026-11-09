@@ -169,3 +169,16 @@ def test_the_document_caps_on_fixed_phrases_and_frames_are_limits():
     assert ask("{0} to seekaa asylum", block={"frames": frames[:32]})["verdict"] == "LISTED"
     over = ask("{0} to seekaa asylum", block={"frames": frames})
     assert over["verdict"] == "LIMIT" and over["diagnostic"] == "ResourceLimit: more than 128 frames"
+
+
+def test_a_request_over_the_cpu_deadline_is_unavailable_and_the_service_recovers():
+    """DRI 2026-11-09 ap-4 item 1 (c): P64 (L6, 64 readings) with 126 frames more needs minutes of CPU (the parse's
+    cost grows with the frames); the mode's 5 s deadline answers it `CheckerUnavailable` naming the mode, never a
+    verdict, and the next request is answered."""
+    from ve.errors import CheckerUnavailable
+    letters = "abcdefghijklmnopqrstuvwxyz"
+    pad = [frame(f"seek{letters[i // 26]}{letters[i % 26]}") for i in range(126)]
+    phrase = "{0} to seek and to enjoy asylum" + "".join(" in " + c for c in CITIES[:6])
+    with pytest.raises(CheckerUnavailable, match="act-readings"):
+        ask(phrase, CITIES, {"frames": V5["frames"] + pad}, role="obligation")
+    assert len(ask(phrase, CITIES, V5, role="obligation")["readings"]) == 64

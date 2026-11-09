@@ -6,8 +6,8 @@
 - **HEAD:** this branch's final commit; base `da5303b78` (main, `git merge-base HEAD main`).
 - **Changed:** `lean/VE/Acts/Run.lean` (the mode), its shape and encoder theorem, registration, `ve/acts.py`,
   `ve acts readings`, two test files, five route cases.
-- **Open:** the parse's CPU grows with the frame count, so spec 12's limits do not bound a request within the mode's
-  5 s deadline at 128 frames ("Cost at the limits"); asked of the DRI (inbox/dri/20261109T023727Z-ap-4-2985757.md).
+- **Open:** none in this item. The parse's CPU grows with the frame count; the DRI kept spec 12's limits and the 5 s
+  deadline (reviews/dri-decisions-20261109-ap-4.md item 1) and filed the parser row `ap-parse-index` (item 2).
 
 ## Plan rows and task deliverables
 
@@ -22,7 +22,7 @@ line 1280).
 | (3) the mode through AR-10's registry, `MODES`, `ve acts readings` | `lean/VE/Service/Registry.lean` (`Mode.actReadings`), `Protocol.lean` (`runMode`, `runMode_actReadings`), `envelope.json` (generated; `MODES` reads it), `DEADLINES`, `ve/__main__.py` | `tools/repo_map.py --check`: "PASS: 43 modes, each with its schema file"; `RegistryExamples.lean:6`; `test_the_command_line_prints_leans_answer` |
 | (4) `ve/acts.py`, relay only (R8): schema and binding (in range, none repeated in an act, readings distinct); lexes nothing | `ve/acts.py` `read_answer` (`check_row` on `act-readings.json`, then `answer_problem`) | `tools/relay_lint.py`: "PASS: 21 relayed module(s)"; the fuzz below |
 | (5) one `sourceCheck` call per source at readings admission | **not delivered: ap-4c** | DRI 2026-11-08 items 3 (b) and 6 (below) |
-| (6) `tests/test_acts_readings_lean.py`, `tests/test_acts_readings_answer.py` (AR1-AR5 fuzz) | both files | 17 + 12 tests, all passing (Tests) |
+| (6) `tests/test_acts_readings_lean.py`, `tests/test_acts_readings_answer.py` (AR1-AR5 fuzz) | both files | 18 + 12 tests, all passing (Tests) |
 | (7) the plan's Tests: A9, A10, A11 give 2; A5, A8, A12 give 4 | `test_the_pilot_phrases_give_the_readings_the_audit_asks_for`; RunExamples:32 | passes |
 | (7) rs_u055 passes; rs_u105b/c refused under F11 (S1, S8); skipped middle, missing reading, permission to prohibition, `unspecified` to `deny` refused | `sourceCheck`'s fixtures, ap-4b/ap-3r's (`ReadingsExamples.lean:183-239`), unchanged; through admission: ap-4c | `lake build VE.Acts.ReadingsExamples`; plant `e1x-all-dropped` refuses S4 (`ReadingsExamples.lean:213`) |
 | (7) 64 listed, 65 refused, raw cap refused | RunExamples:95-96, `test_64_readings_are_listed_and_more_are_a_limit`, `test_a_saturated_raw_cap_is_a_limit` | passes; "65" is spec 11.4's P65, 128 readings: the L family's counts are powers of two, so no 65-reading phrase exists among the fixtures |
@@ -67,17 +67,21 @@ every route, as on the base.
    file list: the mode's deadline (recipe step 4), the relay lint's module list and the layer map (`ve.acts` in layer
    4, which the import contract requires).
 
-## Cost at the limits (open, with the DRI)
+## Cost at the limits (DRI 2026-11-09, option A)
 
-Through `ve_service` on the VM, deadline lifted for the probe: `{0} to seekaa asylum` with 1, 32, 64 and 128 frames
+The builder's measurements, through `ve_service` on the VM, deadline lifted for the probe: `{0} to seekaa asylum` with 1, 32, 64 and 128 frames
 took 0.06, 0.69, 2.80 and 13.4 s wall; L6 (P64, 64 readings) 0.18 s with V5's two frames and 322.8 s with 126 more;
 L8 (the raw cap) 8.3 s with 126 more; a 400-byte one-act phrase with 128 frames reaches the step budget (`LIMIT`) in
 12.8 s. The time is in `VE.Acts.readings` (ap-2's parse and meaning); the mode's own code reads no frame. The norms
 decoder's `checkAct` (`Acts/Wire.lean` `joinedAct`) and `sourceCheck` call the same `readings`, so a norms document with
 many frames and a joined act costs the same on main. Over its 5 s CPU deadline (`_CORE`) the relay raises
-`CheckerUnavailable`: fail closed, never a verdict. The tests read frames within the deadline (32) and 129 frames
-refused by D-31 before any parse. Recommendation sent: keep spec 12's limits and the deadline and file a parser item
-(rules indexed by their first terminal); alternatives a mode-only limit or a larger deadline.
+`CheckerUnavailable`: fail closed, never a verdict. The DRI signed option (A): spec 12's limits and the 5 s deadline
+stay; its conditions are tests in `tests/test_acts_readings_lean.py`: (a) 32 frames, 64 readings with V5's two frames
+and the 400-byte phrase with one frame, within the deadline; (b) 129 frames refused by D-31 before any parse
+(`test_the_document_caps_on_fixed_phrases_and_frames_are_limits`, 1.37 s for its whole file selection); (c) P64 with 126
+frames more answered `CheckerUnavailable` naming `act-readings`, then the next request answered
+(`test_a_request_over_the_cpu_deadline_is_unavailable_and_the_service_recovers`, 5.95 s); (d) these figures. The parser
+row `ap-parse-index` (rules indexed by their first terminal, so `stepBudget` bounds CPU) is the DRI's (item 2).
 
 ## Seeded bugs
 
@@ -185,9 +189,10 @@ code against the ~600 line (tests and guards exempt, the qt-a4 / jt-3b precedent
     `listReadings-bogus-verdict` breaks it; `lean_statements.py`: 0 changed.
 11. Budgets fail closed: PASS, every limit is `LIMIT` with Lean's text before the work (`test_the_act_phrase_limit_is_400_bytes`,
     `test_the_document_caps_…`, `test_a_saturated_raw_cap_is_a_limit`); over the CPU deadline the relay raises
-    `CheckerUnavailable` (never a verdict); the deadline at 128 frames is open with the DRI.
-12. No CPU regression: PASS for existing paths (no existing route changed); the new mode's cost at the limits is the
-    open item above.
+    `CheckerUnavailable` (never a verdict): `test_a_request_over_the_cpu_deadline_is_unavailable_and_the_service_recovers`
+    (DRI 2026-11-09 item 1).
+12. No CPU regression: PASS for existing paths (no existing route changed); the new mode's cost grows with the frames
+    (measured above), bounded by its deadline under DRI 2026-11-09 item 1, with the parser row `ap-parse-index`.
 13. Removed tests: N.A., none removed or renamed.
 14. Both directions, cited evidence, spec re-read: PASS, 400/401, 300/301, 128/129, 64/128 readings, LISTED and
     refused rows bound and their mutants refused; spec re-read above.
