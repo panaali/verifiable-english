@@ -1,4 +1,5 @@
 - `tests/test_speech_acts.py` — Deterministic experimental speech-act core fixtures (no trusted route).
+- `tests/test_speech_acts_acts0.py` — CI-5: `speech-acts@0` with `acts@0`, simple acts only (commands-imperatives 9), through the service and the saved A/B.
 - `tests/test_speech_acts_conformance.py` — Shared section-9 speech-act fixtures across Python, Lean, and Rust FOL evaluation.
 - `tests/test_speech_acts_lean.py` — The Lean `ve_speech_acts_route` on hand-written fixtures of speech-acts.md section 9.
 - `tests/test_speech_polar_lean.py` — Speech acts' polar questions and their `Must`/`Can` refusal, read by Lean (question answering Q1.4, Q1.4b).
