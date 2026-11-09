@@ -102,18 +102,25 @@ BLOCK_MEMBERS = ("fixed", "frames", "adverbs")
 
 
 def read_block(path: str) -> dict:
-    """The `--acts` file: one JSON object (read as `ve calc` and `ve scope` read theirs, `loads_json` under the
-    package size cap) whose members are among the acts block's `fixed`, `frames` and `adverbs`; their values are
-    sent to Lean as written (`_as_sent`)."""
-    from .__main__ import _read
+    """The `--acts` file (`-` for standard input), read as `ve calc` reads its case (at most the package size cap,
+    then `loads_json`): one JSON object whose members are among the acts block's `fixed`, `frames` and `adverbs`;
+    their values are sent to Lean as written (`_as_sent`)."""
+    import sys
+    from pathlib import Path
+    from .limits import MAX_PACKAGE_BYTES
     from .wire import loads_json
-    block = loads_json(_read(path))
+    if path == "-":
+        data = sys.stdin.buffer.read(MAX_PACKAGE_BYTES + 1)
+    else:
+        with Path(path).open("rb") as stream:
+            data = stream.read(MAX_PACKAGE_BYTES + 1)
+    block = loads_json(data)  # over the package cap: `loads_json`'s ResourceLimit
+    # A file that is no acts block cannot become a request (relay lint: file I/O, as `ve.ask` reads its evidence).
     if type(block) is not dict:
-        raise VEError("the --acts file is not a JSON object with fixed, frames and adverbs")
-    extra = sorted(set(block) - set(BLOCK_MEMBERS))
+        raise VEError("the --acts file is not a JSON object with fixed, frames and adverbs")  # relay-lint: file I/O
+    extra = ", ".join(sorted(set(block) - set(BLOCK_MEMBERS)))
     if extra:
-        raise VEError(f"the --acts file has members other than fixed, frames and adverbs: "
-                      f"{', '.join(extra)}")
+        raise VEError(f"the --acts file has members other than fixed, frames and adverbs: {extra}")  # relay-lint: file I/O
     return block
 
 

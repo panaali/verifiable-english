@@ -254,7 +254,8 @@ def test_a_malformed_acts_file_is_invalid_input_never_coerced(tmp_path, capsys, 
 
 
 def test_an_unreadable_invalid_or_oversized_acts_file_is_invalid_input_or_a_limit(tmp_path, capsys, monkeypatch):
-    import ve.__main__ as cli
+    import ve.limits
+    import ve.wire
     missing = tmp_path / "missing.json"
     broken = tmp_path / "broken.json"
     broken.write_text("{")
@@ -263,7 +264,8 @@ def test_an_unreadable_invalid_or_oversized_acts_file_is_invalid_input_or_a_limi
         assert json.loads(capsys.readouterr().out)["status"] == "InvalidInput"
     big = tmp_path / "big.json"
     big.write_text(json.dumps({"frames": [SEEK]}) + " " * 64)
-    monkeypatch.setattr(cli._read, "__defaults__", (32,))  # the package cap, made small
+    for module in (ve.limits, ve.wire):  # the package cap, made small
+        monkeypatch.setattr(module, "MAX_PACKAGE_BYTES", 32)
     assert main(["acts", "readings", "{0} to seek asylum", "--acts", str(big)]) == 4
     assert json.loads(capsys.readouterr().out)["status"] == "ResourceLimit"
 
