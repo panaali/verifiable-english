@@ -10,7 +10,7 @@ two default readings does not. This is the only module that evaluates the route 
 namespace VE.Readings.SoftSupWireExamples
 open Lean VE.Readings VE.Readings.Wire
 open VE.Readings.SoftSeparateExamples (NSD1 NSD2 NSD4 NSDq NC9 frame4 mustX needNotX D4)
-open VE.Readings.SoftSupExamples (NSD4a NSD4c)
+open VE.Readings.SoftSupExamples (NSD4a NSD4c pullFM satAll m4 m1)
 open VE.Readings.Examples (docK cand binarySet M8)
 open VE.Rights.Examples (strictNode defaultNode)
 
@@ -41,6 +41,10 @@ def NSDd : NDoc := ⟨docK [.set ⟨"rs1", "u1", 1, [cand "must" (defaultNode "m
 #guard (choices NSDd.D).map (labelImage NSDd) == [[], []]
 -- nothing is shown for it, and no other name in its place
 #guard sdShown NSDd [] (supLabels NSDd) == []
+-- it holds at each encoded base, the slot holding (`supLabel_other`): the bit off encodes `(rs1,0)`, on `(rs1,1)`
+#guard [false, true].map (fun b => (satAll (m4 b [] []) (slotP NSDd.D), satAll (m4 b [] []) (supX NSDd),
+  (choices NSDd.D).map fun c => satAll (m4 b [] []) (atoms NSDd.D c))) ==
+  [(true, true, [true, false]), (true, true, [false, true])]
 
 /-! ## W-4: two superposed labels, one choice label -/
 
@@ -61,6 +65,27 @@ def NSDm : NDoc := ⟨docK [.fixed "u0" (.norm needNotX) [], .set ⟨"rs1", "u1"
 -- `fillLabels_choice`: one `Fill_T` label, the same in each choice
 #guard VE.NormDefaults.Admission.fillLabels (supU NSDq) != [] && (choices NSDq.D).all fun c =>
   VE.NormDefaults.Admission.fillLabels (choiceU NSDq c) == VE.NormDefaults.Admission.fillLabels (supU NSDq)
+
+/-! ## W-5, W-5′: one premise at an encoded filled base -/
+
+/-- Each pair of `labelImage N c`: its superposed premise at `M`, its choice premise at the filled pull. -/
+def pairVals (N : NDoc) (c : Choice) (M : VE.FiniteModel String) : List (String × Bool × Bool) :=
+  (labelImage N c).filterMap fun p => do
+    let a ← ((softXL N (choiceDoc N.D c).1).find? (·.1 == p.1)).map (·.2)
+    let a' ← ((softXL N (sup N.D).1).find? (·.1 == p.2)).map (·.2)
+    pure (p.1, a'.eval M [], a.eval (pullFM N c M) [])
+
+-- `supLabel_pull`, NSD4 at `(rs1,1)` with `c = {a}`: the sufficient premise false on both sides with the
+-- exception's table empty, true on both with it `{a}`
+#guard satAll (m4 true [["a"]] []) (slotP NSD4.D) && pairVals NSD4 [("rs1", 1)] (m4 true [["a"]] []) ==
+  [("soft:exception:must-x:sufficient:0", false, false), ("soft:coherence:must-x,need-not-x", true, true)]
+#guard pairVals NSD4 [("rs1", 1)] (m4 true [["a"]] [["a"]]) ==
+  [("soft:exception:must-x:sufficient:0", true, true), ("soft:coherence:must-x,need-not-x", true, true)]
+-- `supLabel_other` needs `hsl`: NSD2 with the bits naming `(rs1,0)` (no image there) and the necessary condition's
+-- table `{(a,u)}`, the slot is broken and the premise false; with the table empty both hold
+#guard labelImage NSD2 [("rs1", 0)] == [] &&
+  [m1 false [["a", "u"]] [], m1 false [] []].map (fun M => (satAll M (slotP NSD2.D), satAll M (supX NSD2))) ==
+  [(false, false), (true, true)]
 
 /-! ## W-6, W-6′: the route, one row per conjunct -/
 
