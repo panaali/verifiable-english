@@ -5,6 +5,7 @@ NOT RUN. The package's declaration and predicate lists come from tools/lean_stat
 from __future__ import annotations
 
 from dataclasses import asdict
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -602,11 +603,12 @@ EXPECTED = {"check-file": ["lean/Demo/Examples.lean"], "statements": ["lean/stat
             "test-file": ["outside/T.lean"], "pycache": [],
             "selected-file": "its inputs differ (lean): lean/Demo/Defs.lean is a selected declaration's file",
             "lakefile": "its inputs differ (lean): lean/lakefile.toml is no module of lean/",
-            "trust-table": "its inputs differ (lean): tools/trust-classes.json is no module of lean/",
+            "trust-table": ["tools/trust-classes.json"],
             "deep": "its inputs differ (options)", "test-option": "its inputs differ (options)",
             "classes": "its inputs differ (options)",
-            "base": "its inputs differ (base)", "tool": "its inputs differ (tool)",
+            "base": ["lean/Demo/Examples.lean"], "tool": "its inputs differ (tool)",
             "no-files": "its inputs differ (lean) and it records no per-file digests"}
+EXPECTED_PLAN_ONLY = {"trust-table": ["tools/trust-classes.json"], "base": ["base"]}  # eff-20261104-1
 
 
 @pytest.mark.parametrize("change", [*CHANGES, "deep", "test-option", "classes", "base", "tool", "no-files"])
@@ -614,9 +616,10 @@ def test_any_changed_input_but_checks_gives_a_full_run(package, tmp_path, change
     """`inputs` digests the bytes, never a commit id (speed-tmrescore), and each file's own (speed-tmchecks). A
     check-only change (a check module outside every selected declaration's file and import closure, an outside
     --test file, a generated inventory) is mode "checks", with the files that changed; a `__pycache__` none at all
-    (review F1). One byte of a selected declaration's file, the lakefile or trust_map's table, or another tool,
-    --deep, --test, --classes or base, is a full run, even beside a check-only change, and so is PREV with no
-    per-file digests (eff-20261026-1b: no verdict carries across another selection)."""
+    (review F1). One byte of a selected declaration's file or the lakefile, or another tool, --deep, --test or
+    --classes, is a full run, even beside a check-only change, and so is PREV with no per-file digests
+    (eff-20261026-1b: no verdict carries across another selection). trust_map's table and base go on to the same
+    checks (eff-20261104-1: PREV's mutants, here none, still decide)."""
     import shutil
     import trust_mutants
     root = tmp_path / "copy"
@@ -629,10 +632,11 @@ def test_any_changed_input_but_checks_gives_a_full_run(package, tmp_path, change
         return trust_mutants.inputs(root, base, list(tests), [root / "outside/T.lean"], deep, classes)
 
     def why_not(names: list[str]) -> str | None:
-        return trust_mutants.check_only(names, {"Demo/Defs.lean"}, {"outside/T.lean"})
+        return trust_mutants.check_only(names, {"Demo/Defs.lean"}, {"outside/T.lean"},
+                                        trust_mutants.lake_reads(root, [root / "outside/T.lean"]))
     prev, before = tmp_path / "prev.json", digests()
     prev.write_text(json.dumps({"inputs": before, "head": "h", "mutants": []}))
-    assert trust_mutants.previous(prev, digests(), [], why_not) == ("identical", "h", {}, [])
+    assert trust_mutants.previous(prev, digests(), [], why_not) == ("identical", "h", {}, [], [])
     if change in CHANGES:
         CHANGES[change](root)
     else:  # a key no check-only change may move, beside one that may
@@ -647,7 +651,8 @@ def test_any_changed_input_but_checks_gives_a_full_run(package, tmp_path, change
                                     "mutants": []}))
     got, expected = trust_mutants.previous(prev, now, [], why_not), EXPECTED[change]
     if isinstance(expected, list):
-        assert got == ("checks" if expected else "identical", "h", {}, expected), got
+        assert got == ("checks" if expected else "identical", "h", {}, expected,
+                       EXPECTED_PLAN_ONLY.get(change, [])), got
     else:
         assert isinstance(got, str) and got.startswith(expected), got
 
@@ -667,7 +672,31 @@ def test_the_inputs_digest_the_tools_own_source(tmp_path, monkeypatch):
     before = trust_mutants.inputs(tmp_path, "b", [], [], False, ("trusted",))
     source.write_text("X = 2\n")
     after = trust_mutants.inputs(tmp_path, "b", [], [], False, ("trusted",))
-    assert [k for k in after if after[k] != before[k]] == ["tool"]
+    assert [k for k in after if after[k] != before[k]] == ["tool", "tool_files"]
+    assert before["tool_files"]["tools/helper.py"] == hashlib.sha256(b"X = 1\n").hexdigest()
+    assert after["tool_files"]["tools/helper.py"] == hashlib.sha256(b"X = 2\n").hexdigest()
+    assert not {k for k in after["files"] if k.startswith("tools/helper")}
+
+
+def test_the_overall_tool_digest_is_what_it_was_with_each_modules_beside_it(tmp_path, monkeypatch):
+    """eff-20261104-1: `tool_files` is added beside `tool`, whose digest (names, lengths, bytes, sorted) is unchanged."""
+    import types
+    import trust_mutants
+    (tmp_path / "tools").mkdir()
+    (tmp_path / "lean").mkdir()
+    helpers = {"tools/a.py": b"A = 1\n", "tools/b.py": b"B = 22\n", "lean/c.py": b"C\n"}
+    monkeypatch.setattr(trust_mutants, "ROOT", tmp_path)
+    for name, data in helpers.items():
+        (tmp_path / name).write_bytes(data)
+        module = types.ModuleType(name)
+        module.__file__ = str(tmp_path / name)
+        monkeypatch.setitem(sys.modules, f"tm_{name}", module)
+    got = trust_mutants.inputs(tmp_path, "b", [], [], False, ("trusted",))
+    whole = hashlib.sha256()
+    for name, data in sorted(helpers.items()):
+        whole.update(f"{name}\0{len(data)}\0".encode() + data)
+    assert got["tool"] == whole.hexdigest()
+    assert got["tool_files"] == {name: hashlib.sha256(data).hexdigest() for name, data in helpers.items()}
 
 
 def test_rescore_of_evidence_whose_mutants_differ_is_a_full_run(tmp_path):
@@ -689,7 +718,7 @@ def test_rescore_of_evidence_whose_mutants_differ_is_a_full_run(tmp_path):
         prev.write_text(json.dumps({"inputs": now, "head": "h", "mutants": rows}))
         got = trust_mutants.previous(prev, now, [m], lambda names: None)
         assert (got == ("identical", "h", {"M001": {"status": "SURVIVOR", "detail": "", "reads": "", "killed_at": None}},
-                        [])) if ok else isinstance(got, str) and (
+                        [], [])) if ok else isinstance(got, str) and (
             "cannot be read" in got) == any(r in unread for r in rows), (rows, got)
     prev.write_text(json.dumps({"inputs": now, "head": "", "mutants": [row]}))
     assert "cannot be read" in trust_mutants.previous(prev, now, [m], lambda names: None)
@@ -781,20 +810,21 @@ def test_a_verdict_carries_only_while_what_it_reads_reads_the_same(tmp_path, nam
 def test_a_check_only_change_lies_outside_every_selected_file_and_its_closure(tmp_path):
     """speed-tmchecks: the files a check-only change may touch: a module of lean/ outside every selected
     declaration's file and import closure (`reach`, read from the imports), an outside --test file or a generated
-    inventory; any other file is a full run."""
+    inventory, or an unread plan input or Markdown file; any other file is a full run."""
     import trust_mutants
     reads = layered(tmp_path, {})
     m = trust_mutants.Mutant("M001", "Demo/Defs.lean", 5, "Demo.small", "lt-le", 0, 0, (5, 5), "<", "≤")
     reach = trust_mutants.reach(reads, [m])
     assert reach == {"Demo/Defs.lean", "Demo/Base.lean"}
     ok = ["lean/Demo/Examples.lean", "lean/Demo/New.lean", "lean/declarations.txt", "lean/statements.txt",
-          "outside/T.lean"]
-    assert trust_mutants.check_only(ok, reach, {"outside/T.lean"}) is None
+          "outside/T.lean", "tools/trust-classes.json", "lean/SCOPE.md"]
+    lake = trust_mutants.lake_reads(tmp_path, [])
+    assert trust_mutants.check_only(ok, reach, {"outside/T.lean"}, lake) is None
     for name, why in (("lean/Demo/Defs.lean", "a selected declaration's file"),
                       ("lean/Demo/Base.lean", "in its import closure"), ("lean/lakefile.toml", "no module"),
-                      ("lean/lean-toolchain", "no module"), ("lean/SCOPE.md", "no module"),
-                      ("tools/trust-classes.json", "no module"), ("outside/U.lean", "no module")):
-        assert why in (trust_mutants.check_only([*ok, name], reach, {"outside/T.lean"}) or ""), name
+                      ("lean/lean-toolchain", "no module"),
+                      ("outside/U.lean", "no module")):
+        assert why in (trust_mutants.check_only([*ok, name], reach, {"outside/T.lean"}, lake) or ""), name
 
 
 def test_rescore_after_a_check_only_change_carries_the_kills_it_reads_the_same(package, default_run, tmp_path,
@@ -2320,6 +2350,9 @@ def sharded(tmp_path, monkeypatch):
         def imported(self, f):
             return set()
 
+        def carry(self, m, p, built):
+            return (p["status"], p["detail"]) if p["status"] in ("KILLED", "INVALID") else None
+
     def run(m, *args):
         ran.append(m.id)
         return VERDICTS[m.id]
@@ -2414,7 +2447,8 @@ def test_the_parts_merged_are_the_one_runs_record(sharded, capsys, n, limit):
     assert printed(capsys.readouterr().out) == printed(out)
     assert bare(merged) == bare(one)
     data, each = json.loads(merged.read_text()), [json.loads(p.read_text()) for p in paths]
-    assert data["shards"] == [{"k": d["shard"]["k"], "n": n, "jobs": d["jobs"], "seconds": d["seconds"],
+    assert data["shards"] == [{"k": d["shard"]["k"], "n": n, "head": d["head"],
+                               "jobs": d["jobs"], "seconds": d["seconds"],
                                "steps": d["steps"]} for d in each]
     assert (data["jobs"], data["seconds"]) == (sum(d["jobs"] for d in each), max(d["seconds"] for d in each))
     assert data["steps"] == {p: {k: (sum(d["steps"][p][k] for d in each) if p == "runs" else
@@ -2450,7 +2484,7 @@ REFUSED_MERGES = [
     ("k-repeated", lambda ps: ps[2]["shard"].update(k=2), "[2] repeated"),
     ("k-missing", lambda ps: ps.pop(), "[3] missing"),
     *((f, lambda ps, f=f: ps[1].update({f: shifted(ps[1][f])}), f"disagree on {f}:")
-      for f in ("base", "head", "max_mutants", "deep", "tests", "classes", "inputs")),
+      for f in ("base", "max_mutants", "deep", "tests", "classes", "inputs")),
     ("inputs-bool-for-int", lambda ps: [d["inputs"].update(x=True if d is ps[1] else 1) for d in ps],
      "disagree on inputs:"),
     ("rescore", lambda ps: ps[2].update(rescore={"file": "p", "head": None, "mode": "full", "changed": [], "reused": 0,
@@ -2607,6 +2641,23 @@ RESCORE_FORGERIES = [
                                                               carried="something else"), "rescore.mode"),
     ("checks-omits-carry", lambda ps: forged_rescore_parts(ps, mode="checks", reused=1, rerun=1, source="h"),
      "rescore.mode"),
+    ("plan-only-on-identical", lambda ps: (forged_rescore_parts(ps),
+                                            [d["rescore"].update(plan_only=["base"]) for d in ps]), "rescore.mode"),
+    ("plan-only-on-full", lambda ps: (forged_rescore_parts(ps, mode="full", head=None),
+                                       [d["rescore"].update(plan_only=["base"]) for d in ps]), "rescore.mode"),
+    ("plan-only-empty", lambda ps: (forged_rescore_parts(ps, mode="checks"),
+                                    [d["rescore"].update(changed=[], plan_only=[]) for d in ps]), "rescore.mode"),
+    ("plan-only-empty-beside-changed", lambda ps: (forged_rescore_parts(ps, mode="checks"),
+                                                    [d["rescore"].update(plan_only=[]) for d in ps]), "rescore.mode"),
+    ("plan-only-names-the-tool", lambda ps: (forged_rescore_parts(ps, mode="checks"), [d["rescore"].update(
+        plan_only=["tools/trust_mutants.py"]) for d in ps]), "rescore.mode"),
+    ("plan-only-names-an-unchanged-file", lambda ps: (forged_rescore_parts(ps, mode="checks"), [d["rescore"].update(
+        plan_only=["tools/trust-classes.json"]) for d in ps]), "rescore.mode"),
+    ("plan-only-disagrees", lambda ps: (forged_rescore_parts(ps, mode="checks"), [d["rescore"].update(
+        changed=[], plan_only=["base"] if d is ps[0] else ["tools/layer_policy.py"]) for d in ps]),
+     "disagree on rescore.plan_only"),
+    ("plan-only-not-a-list", lambda ps: (forged_rescore_parts(ps, mode="checks"),
+                                         [d["rescore"].update(plan_only="base") for d in ps]), "not of its type"),
     ("checks-without-changed-files", lambda ps: (forged_rescore_parts(ps, mode="checks"),
                                                    [d["rescore"].update(changed=[]) for d in ps]), "rescore.mode"),
     ("identical-with-changed-files", lambda ps: (forged_rescore_parts(ps),
@@ -2706,8 +2757,8 @@ def test_plan_prints_the_counts_and_builds_nothing(sharded, capsys):
         assert out.splitlines() == [json.dumps({**counts, **({"owned": owned} if owned is not None else {})})]
 
 
-# eff-tm-partial: --deadline/--budget stop a run and write a partial record; --resume at the same HEAD judges only
-# what it left; another HEAD's record, and a partial record at --merge or --rescore, are never a sweep. The clock is
+# eff-tm-partial: --deadline/--budget stop a run and write a partial record; --resume with identical inputs judges only
+# what it left; a partial record at --merge or --rescore is never a sweep. The clock is
 # injected (`tm.clock`): each mutant `run` takes STEP seconds of it, so no test waits.
 START, STEP = 1000, 100
 
@@ -2886,7 +2937,7 @@ def test_merge_refuses_a_partial_part_as_complete(sharded, monkeypatch, capsys):
 
 
 def test_rescore_of_a_partial_record_is_a_full_run(sharded, monkeypatch, capsys):
-    """--rescore reads no partial record: its verdicts are --resume's, at its HEAD only."""
+    """--rescore reads no partial record: its verdicts are --resume's with identical inputs."""
     clocked(sharded, monkeypatch)
     prev = sharded.tmp / "prev.json"
     sharded("--json", prev, "--max-mutants", 6, "--deadline", START + 250)
@@ -2895,16 +2946,118 @@ def test_rescore_of_a_partial_record_is_a_full_run(sharded, monkeypatch, capsys)
     assert len(ran) == 6 and "a full run, since it is a partial record" in out
 
 
-def commit_again(go):
-    git(go.root, "commit", "-q", "--allow-empty", "-m", "moved")
+def bound_resume_inputs(go, monkeypatch):
+    """Give the synthetic shard run byte hashes for its Lean and selected test inputs."""
+    lean = go.root / "lean/Demo/Defs.lean"
+    test = go.root / "tests/T.lean"
+    lean.parent.mkdir(parents=True, exist_ok=True)
+    test.parent.mkdir(parents=True, exist_ok=True)
+    lean.write_text("def x := 1\n")
+    test.write_text("#check Nat\n")
+    base = "a" * 40  # the unchanged merge base of the synthetic run
+
+    def inputs(root, _base, tests, outside, deep, classes):
+        files = {p.relative_to(root).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest() for p in (lean, test)}
+        return {"tool": "t", "lean": files["lean/Demo/Defs.lean"], "tests": files["tests/T.lean"],
+                "base": base, "options": json.dumps({"deep": deep, "test": [str(p) for p in outside]}),
+                "files": files}
+
+    monkeypatch.setattr(go.tm, "inputs", inputs)
+    return lean, test
+
+
+def commit_file(go, name, content):
+    path = go.root / name
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(content)
+    git(go.root, "add", name)
+    git(go.root, "commit", "-q", "-m", "moved")
+
+
+def test_resume_carries_judged_verdicts_after_a_docs_only_commit(sharded, monkeypatch):
+    clocked(sharded, monkeypatch)
+    bound_resume_inputs(sharded, monkeypatch)
+    prev, again = sharded.tmp / "prev.json", sharded.tmp / "again.json"
+    args = ("--max-mutants", 6, "--test", "tests/T.lean")
+    assert sharded("--json", prev, *args, "--deadline", START + 250)[3] == ["M001", "M002"]
+    old = json.loads(prev.read_text())["head"]
+    commit_file(sharded, "docs/note.md", "docs only\n")
+    got = sharded("--json", again, *args, "--resume", prev)
+    data = json.loads(again.read_text())
+    assert got[3] == ["M003", "M004", "M005", "M006"]
+    assert data["head"] != old and data["resumed"] == {"file": str(prev), "head": old,
+                                                         "kept": 2, "rerun": 4, "carried": "inputs identical"}
+    assert [r["raw_status"] for r in data["mutants"][:2]] == ["KILLED", "SURVIVOR"]
+
+
+@pytest.mark.parametrize("changed", ["lean", "test", "plan"])
+def test_resume_reruns_judged_verdicts_when_an_input_or_plan_changes(sharded, monkeypatch, capsys, changed):
+    clocked(sharded, monkeypatch)
+    lean, test = bound_resume_inputs(sharded, monkeypatch)
+    prev, again = sharded.tmp / "prev.json", sharded.tmp / "again.json"
+    args = ("--max-mutants", 6, "--test", "tests/T.lean")
+    sharded("--json", prev, *args, "--deadline", START + 250)
+    if changed == "plan":
+        original = sharded.tm.plan
+
+        def plan(*a):
+            found, tree, fatal = original(*a)
+            found[0].after = "another edit"
+            return found, tree, fatal
+        monkeypatch.setattr(sharded.tm, "plan", plan)
+        commit_file(sharded, "docs/note.md", "docs only\n")
+    else:
+        path = lean if changed == "lean" else test
+        commit_file(sharded, path.relative_to(sharded.root).as_posix(), "changed\n")
+    _, out, _, ran, _ = sharded("--json", again, *args, "--resume", prev, capsys=capsys)
+    assert ran == [f"M{i:03d}" for i in range(1, 7)]
+    assert json.loads(again.read_text())["resumed"]["kept"] == 0
+    assert ("inputs differ" if changed != "plan" else "mutants are not this tree's") in out
+
+
+def test_merge_carries_parts_from_identical_inputs_at_different_commits(sharded, monkeypatch):
+    now = clocked(sharded, monkeypatch)
+    bound_resume_inputs(sharded, monkeypatch)
+    prev = sharded.tmp / "first.partial.json"
+    first = sharded.tmp / "first.json"
+    second = sharded.tmp / "second.json"
+    merged = sharded.tmp / "merged.json"
+    args = ("--max-mutants", 6, "--test", "tests/T.lean")
+    assert sharded("--shard", "1/2", "--json", prev, *args, "--deadline", START + 150)[3] == ["M001"]
+    now[0] = START
+    sharded("--shard", "2/2", "--json", second, *args)
+    old = json.loads(second.read_text())["head"]
+    commit_file(sharded, "docs/note.md", "docs only\n")
+    assert sharded("--shard", "1/2", "--json", first, *args, "--resume", prev)[3] == ["M003", "M005"]
+    new = json.loads(first.read_text())["head"]
+    assert sharded.tm.main(["--merge", str(merged), str(first), str(second)]) == 1
+    data = json.loads(merged.read_text())
+    assert data["head"] == new and data["shards"][0]["head"] == new
+    assert data["shards"][0]["resumed"]["head"] == old
+    assert data["shards"][0]["resumed"]["carried"] == "inputs identical"
+    assert data["shards"][1]["head"] == old
+    assert data["shards"][1]["carried"] == "inputs identical"
+
+
+def test_the_testing_guide_states_resume_as_the_tool_does():
+    """eff-tm-headmoved review F2: docs/TESTING.md summarises the docstring, so it says what the tool does: --resume
+    carries verdicts across commits whose inputs and plan are identical, with the tool's own `carried` wording, and
+    makes no claim that another HEAD's record is ignored or that --resume needs the same HEAD."""
+    import trust_mutants as tm
+    guide = re.sub(r"\s+", " ", (ROOT / "docs/TESTING.md").read_text())
+    section = guide[guide.index("## Mutants of Lean definitions"):]
+    section = section[:section.index(" ## ")]
+    assert f'carried: "{tm.CARRIED}"' in section and f'carried: "{tm.CARRIED}"' in tm.__doc__
+    for stale in ("another HEAD is ignored", "at the same HEAD (commit, tree", "another HEAD's are ignored"):
+        assert stale not in section and stale not in re.sub(r"\s+", " ", tm.__doc__), stale
 
 
 IGNORED_RESUMES = [  # (name, a change of the run or of PREV, what the line says)
-    ("another-head", lambda go, p: commit_again(go), "not at this HEAD"),
     ("another-tree", lambda go, p: p.update(tree="0" * 40), "not at this HEAD"),
-    ("another-commit-same-tree", lambda go, p: p.update(head="0" * 40), "not at this HEAD"),
     ("no-tree", lambda go, p: p.pop("tree"), "records no tree"),
     ("tree-retyped", lambda go, p: p.update(tree=1), "records no tree"),
+    ("head-missing", lambda go, p: p.pop("head"), "records no HEAD commit"),
+    ("head-retyped", lambda go, p: p.update(head=True), "records no HEAD commit"),
     ("inputs", lambda go, p: p["inputs"].update(lean="other"), "its inputs differ"),
     ("max-mutants", lambda go, p: p.update(max_mutants=5), "--max-mutants or --shard"),
     ("shard", lambda go, p: p.update(shard={"k": 1, "n": 1, "owned": []}), "--max-mutants or --shard"),
@@ -2920,7 +3073,7 @@ IGNORED_RESUMES = [  # (name, a change of the run or of PREV, what the line says
 
 @pytest.mark.parametrize(("name", "change", "says"), IGNORED_RESUMES, ids=[r[0] for r in IGNORED_RESUMES])
 def test_a_resume_of_another_heads_or_unbound_record_is_ignored(sharded, monkeypatch, capsys, name, change, says):
-    """--resume reuses no verdict of a PREV of another commit or tree, other inputs, plan, part or --rescore, or one
+    """--resume reuses no verdict of a PREV with a mismatched tree at this commit, inputs, plan, part or --rescore, or one
     whose rows or `partial` are not what this tool writes: one line says why and every mutant runs again."""
     clocked(sharded, monkeypatch)
     prev, again = sharded.tmp / "prev.json", sharded.tmp / "again.json"
@@ -2935,15 +3088,42 @@ def test_a_resume_of_another_heads_or_unbound_record_is_ignored(sharded, monkeyp
     assert not any("reused_from" in r for r in json.loads(again.read_text())["mutants"])
 
 
-RESUMED_PARTS = [  # a part's `resumed` retyped or given a key too many or too few: no part this tool writes
-    *((f"resumed-{f}-{v!r}", lambda ps, f=f, v=v: ps[0].update(resumed={
-        "file": "p", "head": "h", "kept": 1, "rerun": 1, f: v}), NOT_WRITTEN)
-      for f, v in (("kept", True), ("rerun", "1"), ("head", 1), ("file", None), ("ignored", None), ("x", 1))),
-    ("resumed-missing-kept", lambda ps: ps[0].update(resumed={"file": "p", "head": "h", "rerun": 1}), NOT_WRITTEN),
-    ("resumed-not-a-dict", lambda ps: ps[0].update(resumed=[1]), NOT_WRITTEN),
+MOVED = "0123456789abcdef" * 2 + "01234567"  # another commit than the part's own
+
+
+def resumed_base(part, moved=False):
+    """A `resumed` as `sweep` writes it: PREV at the part's own commit, or at another commit with `carried`. Each
+    RESUMED_PARTS case is one fault of one of these bases, and `test_a_part_resumed_at_its_head_or_carried_merges`
+    shows both bases merge, so a case is refused for its own fault and never for an earlier check (eff-tm-headmoved
+    review F1: a base at a wrong head hid every type check behind the `carried` rule)."""
+    return {"file": "p", "head": MOVED if moved else part["head"], "kept": 1, "rerun": 1,
+            **({"carried": "inputs identical"} if moved else {})}
+
+
+def resumed_fault(change, moved=False):
+    """Part 1's `resumed`: a base, then `change` applied to it (or, when `change` returns a value, that value)."""
+    def go(ps):
+        r = resumed_base(ps[0], moved)
+        ps[0]["resumed"] = r if (v := change(r)) is None else v
+    return go
+
+
+RESUMED_PARTS = [  # one fault of a part's `resumed` (retyped, a key too many or too few) or tree: no part this tool writes
+    *((f"resumed-{f}-{v!r}", resumed_fault(lambda r, f=f, v=v: r.update({f: v})), NOT_WRITTEN)
+      for f, v in (("kept", True), ("rerun", "1"), ("file", None), ("ignored", None), ("x", 1))),
+    # on the moved base, which has `carried`: a head of another type is no other commit's, so only its type refuses it
+    ("resumed-head-1", resumed_fault(lambda r: r.update(head=1), True), NOT_WRITTEN),
+    ("resumed-missing-kept", resumed_fault(lambda r: r.pop("kept") and None), NOT_WRITTEN),
+    ("resumed-not-a-dict", resumed_fault(lambda r: [1]), NOT_WRITTEN),
+    # the `carried` rule: present exactly when PREV's head is another commit than the part's, and only that value
+    ("resumed-carried-wrong-value", resumed_fault(lambda r: r.update(carried="inputs similar"), True), NOT_WRITTEN),
+    ("resumed-carried-retyped", resumed_fault(lambda r: r.update(carried=1), True), NOT_WRITTEN),
+    ("resumed-moved-head-no-carried", resumed_fault(lambda r: r.pop("carried") and None, True), NOT_WRITTEN),
+    ("resumed-carried-at-same-head", resumed_fault(lambda r: r.update(carried="inputs identical")), NOT_WRITTEN),
+    ("resumed-carried-when-ignored", resumed_fault(lambda r: r.update(head=None, ignored="x",
+                                                                      carried="inputs identical")), NOT_WRITTEN),
     ("tree-retyped", lambda ps: ps[0].update(tree=1), NOT_WRITTEN),
     ("tree-missing", lambda ps: ps[0].pop("tree"), NOT_WRITTEN),
-    ("tree", lambda ps: ps[1].update(tree=shifted(ps[1]["tree"])), "disagree on tree:"),
 ]
 
 
@@ -2952,9 +3132,729 @@ def test_merge_refuses_a_part_whose_tree_or_resume_is_not_written_by_this_tool(s
     test_merge_refuses_parts_that_are_not_one_runs(sharded, capsys, name, change, says)
 
 
+@pytest.mark.parametrize("base", [
+    resumed_fault(lambda r: None), resumed_fault(lambda r: None, True),
+    resumed_fault(lambda r: r.update(head=None, ignored="x"))], ids=["own-head", "moved-carried", "ignored"])
+def test_a_part_resumed_at_its_head_or_carried_merges(sharded, capsys, base):
+    """The faultless bases of RESUMED_PARTS merge (exit 0 or 1, never 2) and keep `resumed` in the part's shards entry:
+    each refusal there is its one fault's."""
+    paths = parts(sharded, 3, "--max-mutants", 6)
+    data = [json.loads(p.read_text()) for p in paths]
+    base(data)
+    for p, d in zip(paths, data):
+        p.write_text(json.dumps(d))
+    capsys.readouterr()
+    merged = sharded.tmp / "merged.json"
+    assert sharded.tm.main(["--merge", str(merged), *map(str, paths)]) in (0, 1), capsys.readouterr().err
+    assert json.loads(merged.read_text())["shards"][0]["resumed"] == data[0]["resumed"]
+
+
 def test_a_runs_deadline_ends_with_the_run(sharded, monkeypatch):
     """`DEADLINE` is one run's: after main returns (or stops), no later Lake run in the process reads it."""
     clocked(sharded, monkeypatch)
     sharded("--json", sharded.tmp / "p.json", "--max-mutants", 6, "--deadline", START + 250)
     assert sharded.tm.DEADLINE.at is None and sharded.tm.DEADLINE.left() is None
     assert sharded("--shard", "0/3", "--deadline", START)[0] == 2 and sharded.tm.DEADLINE.at is None
+
+
+# eff-20261104-1: inputs that decide only which mutants exist (`PLAN_ONLY_TOOL`, base, trust_map's table) and files no
+# build reads go on to the checks of mode "checks" (PREV's mutants exactly this plan's, check_only for the rest). On a
+# small tree of plain files, with the real `inputs`, `lake_reads`, `check_only` and `previous` (no Lean).
+PLANNED_TREE = {"lean/Demo/Defs.lean": "import Demo.Base\n", "lean/Demo/Base.lean": "\n", "lean/Demo/Examples.lean": "\n",
+                "lean/lakefile.toml": 'name = "demo"\n', "lean/lean-toolchain": "v\n", "lean/lake-manifest.json": "{}\n",
+                "lean/checkers.lock": "{}\n", "lean/NOTES.md": "notes\n", "lean/Demo/DEEP.md": "deep\n",
+                "lean/axioms.txt": "a\n", "lean/audit.py": "\n", "lean/notes.txt": "t\n",
+                "outside/T.lean": "\n", "tools/trust-classes.json": '{"modules": {}}\n', ".gitignore": ".lake/\n"}
+OTHER_DIGEST, OTHER_BASE = "0" * 64, "f" * 40
+PLANNED_MUTANT = ("M001", "Demo/Defs.lean", 5, "Demo.small", "lt-le", 0, 1, (5, 5), "<", "≤")
+
+
+def planned_tree(root: Path, setup=None) -> None:
+    for name, text in PLANNED_TREE.items():
+        (root / name).parent.mkdir(parents=True, exist_ok=True)
+        (root / name).write_text(text)
+    if setup:
+        setup(root)
+
+
+def planned_previous(root: Path, tmp: Path, change, mutated: str = "≤"):
+    """`previous` on the tree at `root` after `change(root, old inputs)`, PREV the record of the tree before it."""
+    import trust_mutants as tm
+    outside = [root / "outside/T.lean"]
+
+    def digests() -> dict:
+        return tm.inputs(root, "a" * 40, [], outside, False, ("trusted",))
+
+    def why_not(names: list[str]) -> str | None:
+        return tm.check_only(names, {"Demo/Defs.lean", "Demo/Base.lean"}, {"outside/T.lean"}, tm.lake_reads(root, outside))
+    old = digests()
+    change(root, old)
+    row = {"id": "M001", "file": "Demo/Defs.lean", "line": 5, "definition": "Demo.small", "operator": "lt-le",
+           "before": "<", "after": mutated, "status": "KILLED", "raw_status": "KILLED", "detail": "x.lean:1: refuted",
+           "lines": [5, 5], "trust_class": "C", "trusted": True}
+    (tmp / "prev.json").write_text(json.dumps({"inputs": old, "head": "h", "mutants": [row]}))
+    return tm.previous(tmp / "prev.json", digests(), [tm.Mutant(*PLANNED_MUTANT)], why_not)
+
+
+def tool_moved(*names: str):
+    def change(root: Path, old: dict) -> None:
+        old["tool"] = OTHER_DIGEST
+        old["tool_files"].update(dict.fromkeys(names, OTHER_DIGEST))
+    return change
+
+
+def base_moved(root: Path, old: dict) -> None:
+    old["base"] = OTHER_BASE
+
+
+def wrote(*names: str):
+    def change(root: Path, old: dict) -> None:
+        for name in names:
+            (root / name).parent.mkdir(parents=True, exist_ok=True)
+            (root / name).write_text("changed\n")
+    return change
+
+
+def both(*changes):
+    def change(root: Path, old: dict) -> None:
+        for c in changes:
+            c(root, old)
+    return change
+
+
+def gone(name: str):
+    return lambda root, old: (root / name).unlink()
+
+
+# name, the change, the files that changed, the plan-only names
+CARRIES = [
+    ("plan-only-module", tool_moved("tools/layer_policy.py"), [], ["tools/layer_policy.py"]),
+    ("base", base_moved, [], ["base"]),
+    ("module-and-base", both(tool_moved("tools/layer_policy.py"), base_moved), [], ["tools/layer_policy.py", "base"]),
+    ("table", wrote("tools/trust-classes.json"), ["tools/trust-classes.json"], ["tools/trust-classes.json"]),
+    ("lock", wrote("lean/checkers.lock"), ["lean/checkers.lock"], ["lean/checkers.lock"]),
+    ("md", wrote("lean/NOTES.md"), ["lean/NOTES.md"], ["lean/NOTES.md"]),
+    ("md-in-a-directory", wrote("lean/Demo/DEEP.md"), ["lean/Demo/DEEP.md"], ["lean/Demo/DEEP.md"]),
+    ("md-new", wrote("lean/NEW.md"), ["lean/NEW.md"], ["lean/NEW.md"]),
+    ("md-gone", gone("lean/NOTES.md"), ["lean/NOTES.md"], ["lean/NOTES.md"]),
+    ("base-beside-a-check", both(base_moved, wrote("lean/Demo/Examples.lean")), ["lean/Demo/Examples.lean"], ["base"]),
+    ("base-beside-an-inventory", both(base_moved, wrote("lean/axioms.txt")), ["lean/axioms.txt"], ["base"]),
+    ("every-kind", both(tool_moved("tools/layer_policy.py"), base_moved, wrote(
+        "tools/trust-classes.json", "lean/checkers.lock", "lean/NOTES.md", "lean/Demo/Examples.lean")),
+     ["lean/Demo/Examples.lean", "lean/NOTES.md", "lean/checkers.lock", "tools/trust-classes.json"],
+     ["tools/layer_policy.py", "base", "lean/NOTES.md", "lean/checkers.lock", "tools/trust-classes.json"]),
+]
+
+
+@pytest.mark.parametrize(("name", "change", "changed", "plan_only"), CARRIES, ids=[c[0] for c in CARRIES])
+def test_plan_only_inputs_go_on_to_the_checks_and_are_recorded(tmp_path, name, change, changed, plan_only):
+    planned_tree(tmp_path)
+    got = planned_previous(tmp_path, tmp_path, change)
+    assert got[0] == "checks" and got[3:] == (changed, plan_only), got
+    assert got[2]["M001"]["status"] == "KILLED"
+
+
+def test_no_change_at_all_is_identical_with_nothing_plan_only(tmp_path):
+    planned_tree(tmp_path)
+    assert planned_previous(tmp_path, tmp_path, lambda root, old: None)[::3] == ("identical", [])
+
+
+@pytest.mark.parametrize(("name", "change", "changed", "plan_only"), CARRIES, ids=[c[0] for c in CARRIES])
+def test_a_plan_only_input_that_moves_the_mutant_list_is_a_full_run(tmp_path, name, change, changed, plan_only):
+    """The existing list check decides each new case too: one mutant's text differs from PREV's."""
+    planned_tree(tmp_path)
+    assert planned_previous(tmp_path, tmp_path, change, mutated="=") == "its mutants are not this tree's"
+
+
+def module_added(root: Path, old: dict) -> None:
+    old["tool"] = OTHER_DIGEST
+    del old["tool_files"]["tools/lean_share.py"]
+
+
+def old_record(root: Path, old: dict) -> None:
+    tool_moved("tools/layer_policy.py")(root, old)
+    del old["tool_files"]
+
+
+def lean_digest_only(root: Path, old: dict) -> None:
+    base_moved(root, old)
+    old["lean"] = OTHER_DIGEST
+
+
+def no_files(root: Path, old: dict) -> None:
+    base_moved(root, old)
+    del old["files"]
+
+
+def other_options(root: Path, old: dict) -> None:
+    base_moved(root, old)
+    old["options"] = "{}"
+
+
+# name, the change, how the full run's reason starts
+FULL_RUNS = [
+    *((f"tool-{m}", tool_moved(m), f"its inputs differ (tool): {m}") for m in (
+        "tools/trust_mutants.py", "tools/check_lean_imports.py", "tools/lake_outputs.py", "tools/lean_share.py",
+        "tools/trust_map.py", "tools/lean_statements.py", "lean/audit.py")),
+    ("tool-beside-a-plan-only-module", tool_moved("tools/layer_policy.py", "tools/trust_mutants.py"),
+     "its inputs differ (tool): tools/trust_mutants.py"),
+    ("tool-and-base", both(tool_moved("tools/trust_mutants.py"), base_moved),
+     "its inputs differ (tool): tools/trust_mutants.py"),
+    ("tool-module-gone-since", tool_moved("tools/gone.py"), "its inputs differ (tool): tools/gone.py"),
+    ("tool-module-new-since", module_added, "its inputs differ (tool): tools/lean_share.py"),
+    ("old-record-without-tool-files", old_record, "its inputs differ (tool)"),
+    ("tool-digest-with-no-module-moved", tool_moved(), "its inputs differ (tool)"),
+    ("options-beside-base", other_options, "its inputs differ (options)"),
+    ("base-and-the-selected-file", both(base_moved, wrote("lean/Demo/Defs.lean")),
+     "its inputs differ (lean, base): lean/Demo/Defs.lean is a selected declaration's file"),
+    ("base-and-a-file-of-the-import-closure", both(base_moved, wrote("lean/Demo/Base.lean")),
+     "its inputs differ (lean, base): lean/Demo/Base.lean is a selected declaration's file or in its import closure"),
+    ("base-and-the-lakefile", both(base_moved, wrote("lean/lakefile.toml")),
+     "its inputs differ (lean, base): lean/lakefile.toml is no module"),
+    ("base-with-a-lean-digest-and-no-file-moved", lean_digest_only, "its inputs differ (lean, base): its per-file"),
+    ("base-with-no-per-file-digests", no_files, "its inputs differ (base) and it records no per-file digests"),
+    *((f"not-unread-{n}", wrote(f"lean/{n}"), f"its inputs differ (lean): lean/{n} is no module") for n in (
+        "notes.txt", "audit.py", "other.lock", "Demo/checkers.lock", "lean-toolchain", "lake-manifest.json", ".gitignore",
+        "NOTES.md.bak")),
+    ("a-root-gitignore", wrote(".gitignore"), "its inputs differ (lean): .gitignore is no module"),
+]
+
+
+@pytest.mark.parametrize(("name", "change", "says"), FULL_RUNS, ids=[c[0] for c in FULL_RUNS])
+def test_any_other_change_beside_a_plan_only_input_is_a_full_run(tmp_path, name, change, says):
+    planned_tree(tmp_path)
+    got = planned_previous(tmp_path, tmp_path, change)
+    assert isinstance(got, str) and got.startswith(says), got
+
+
+def reader(name: str, text: str):
+    return lambda root: (root / name).write_text(text)
+
+
+def linked(root: Path) -> None:
+    (root / "lean/Demo/Link.lean").symlink_to("../NOTES.md")
+
+
+# name, what names lean/NOTES.md in the tree, and the file edited
+NAMED = [
+    ("include-str", reader("lean/Demo/Examples.lean", 'def n := include_str "../NOTES.md"\n'), "lean/NOTES.md"),
+    ("io-fs", reader("lean/Demo/Examples.lean", '#eval IO.FS.readFile "NOTES.md"\n'), "lean/NOTES.md"),
+    ("bare-name", reader("lean/Demo/Examples.lean", "def n := NOTES.md\n"), "lean/NOTES.md"),
+    ("another-case", reader("lean/Demo/Examples.lean", '#eval IO.FS.readFile "notes.MD"\n'), "lean/NOTES.md"),
+    ("lakefile", reader("lean/lakefile.toml", 'name = "demo"\n# NOTES.md\n'), "lean/NOTES.md"),
+    ("manifest", reader("lean/lake-manifest.json", '{"x": "NOTES.md"}\n'), "lean/NOTES.md"),
+    ("toolchain", reader("lean/lean-toolchain", "NOTES.md\n"), "lean/NOTES.md"),
+    ("outside-test", reader("outside/T.lean", 'def n := include_str "../lean/NOTES.md"\n'), "lean/NOTES.md"),
+    ("symlink", linked, "lean/NOTES.md"),
+    ("read-dir", reader("lean/Demo/Examples.lean", '#eval System.FilePath.readDir "."\n'), "lean/NOTES.md"),
+    ("walk-dir", reader("lean/Demo/Examples.lean", '#eval System.FilePath.walkDir "."\n'), "lean/NOTES.md"),
+    ("input-dir", reader("lean/lakefile.toml", '[[input_dir]]\npath = "."\n'), "lean/NOTES.md"),
+    ("lock-named", reader("lean/Demo/Examples.lean", 'def n := include_str "../checkers.lock"\n'), "lean/checkers.lock"),
+    ("nested-md-named", reader("lean/Demo/Examples.lean", '#eval IO.FS.readFile "DEEP.md"\n'), "lean/Demo/DEEP.md"),
+]
+
+
+@pytest.mark.parametrize(("name", "setup", "edited"), NAMED, ids=[c[0] for c in NAMED])
+def test_a_file_lake_or_lean_may_read_is_a_full_run(tmp_path, name, setup, edited):
+    """Decided from the tree: the file is unread until something Lake or Lean reads names it, or lists a directory."""
+    planned_tree(tmp_path, setup)
+    got = planned_previous(tmp_path, tmp_path, wrote(edited))
+    assert isinstance(got, str) and got.startswith(f"its inputs differ (lean): {edited} is no module"), got
+
+
+@pytest.mark.parametrize(("name", "change"), [
+    ("tools/trust-classes.json", wrote("tools/trust-classes.json")),
+    ("tools/layer_policy.py", tool_moved("tools/layer_policy.py")),
+], ids=["class-table", "plan-only-tool"])
+@pytest.mark.parametrize(("source", "content"), [
+    ("outside/T.lean", 'def s := include_str "../{name}"\n'),
+    ("lean/Demo/Examples.lean", 'def s := include_str "../../{name}"\n'),
+    ("outside/T.lean", '#eval System.FilePath.readDir "."\n'),
+], ids=["outside-check", "lean-check", "directory-listing"])
+def test_a_plan_input_read_by_a_check_forces_a_full_run(tmp_path, name, change, source, content):
+    """The plan-only exemption is conditional on the input being unread by every actual check source."""
+    planned_tree(tmp_path, reader(source, content.format(name=name)))
+    got = planned_previous(tmp_path, tmp_path, change)
+    kind = "tool" if name.endswith(".py") else "lean"
+    assert got == f"its inputs differ ({kind}): {name} may be read by a Lean build or check"
+
+
+def test_what_names_a_file_elsewhere_leaves_it_unread(tmp_path):
+    """The opposite direction: another file's name, a file Lake does not read and the build tree name nothing."""
+    planned_tree(tmp_path, reader("lean/Demo/Examples.lean", "-- see OTHER.md\n"))
+    (tmp_path / "lean/README.md").write_text("NOTES.md\n")
+    (tmp_path / "lean/axioms.txt").write_text("NOTES.md\n")
+    (tmp_path / "lean/audit.py").write_text("NOTES = 'NOTES.md'\n")
+    (tmp_path / "tools/x.lean").write_text("-- NOTES.md\n")
+    (tmp_path / "lean/.lake/packages").mkdir(parents=True)
+    (tmp_path / "lean/.lake/packages/x.lean").write_text("-- NOTES.md\n")
+    assert planned_previous(tmp_path, tmp_path, wrote("lean/NOTES.md"))[3:] == (["lean/NOTES.md"], ["lean/NOTES.md"])
+
+
+# Review F2 (DRI note 2026-11-05): a comment is not a read. Each text reads lean/NOTES.md after something a stripper can
+# take for a comment or for the end of a string; a stripper that does not know it blanks the read.
+READ = 'include_str "../NOTES.md"'
+READ_AFTER = {
+    "string-dashes": f'def s := " -- " ++ {READ}\n',
+    "string-block": f'def s := " /- " ++ {READ} -- -/\n',
+    "string-escaped-quote": f'def s := "\\" -- " ++ {READ}\n',
+    "char-quote": f"def c := '\"'\ndef d := \" -- \" ++ {READ}\n",
+    "char-escaped-quote": f"def c := '\\\"'\ndef d := \" -- \" ++ {READ}\n",
+    "raw-string": f'def r := r#"a" -- "# ++ {READ}\n',
+    "raw-string-backslash": f'def r := r"\\" ++ " -- " ++ {READ}\n',
+    "interpolated": f'def i := s!"a {{" -- "}} b" ++ {READ}\n',
+    "interpolated-nested": f'def i := s!"{{s!"{{1}} -- "}}" ++ " -- " ++ {READ}\n',
+    "interpolated-hole-brace": f'def i := s!"{{ {{ x := " -- " }} }}" ++ {READ}\n',
+    "holes-no-prefix-says": f'def i := throwError "a {{" -- "}} b" ++ {READ}\n',
+    "brace-in-a-plain-string": f'def i := "{{" ++ " -- " ++ "}}" ++ {READ}\n',
+    "escaped-identifier": f"def « --b» := {READ}\n",
+    "primed-word": f"def a' := 1\ndef b' := \" -- \" ++ {READ}\n",
+    "nested-block-end": f"/- a /- b -/ c -/ def n := {READ} -- -/\n",
+    "block-opener-in-a-line-comment": f"-- /-\ndef n := {READ} -- -/\n",
+    "dashes-in-a-block": f"/- -- -/ def n := {READ}\n",
+    "doc-comment-end": f"/--/ a -/ def n := {READ}\n",
+    "dashes-inside-a-token": f"def l := do let a <--{READ}\n",
+    "block-opener-inside-a-token": f"def l := {{ x : Int //-x = {READ} }}\n",
+    "unterminated-comment": "/- NOTES.md\n",
+    "unterminated-nested-comment": "/- /- -/ NOTES.md\n",
+    "unterminated-string": '"NOTES.md\n',
+    "unterminated-raw-string": 'r#"NOTES.md"\n',
+    "unterminated-hole": 's!"{NOTES.md\n',
+    "unterminated-escaped-identifier": "«NOTES.md\n",
+    "no-char-literal": "def c := 'ab' -- NOTES.md\n",
+    "number-then-quote": "def c := 1'a' -- NOTES.md\n",
+}
+
+
+@pytest.mark.parametrize("text", READ_AFTER.values(), ids=READ_AFTER)
+def test_a_read_after_comment_like_text_is_still_a_read(tmp_path, text):
+    """The stripper knows strings and fails towards a full run where it cannot tell (`lean_code`)."""
+    planned_tree(tmp_path, reader("lean/Demo/Examples.lean", text))
+    got = planned_previous(tmp_path, tmp_path, wrote("lean/NOTES.md"))
+    assert isinstance(got, str) and got.startswith("its inputs differ (lean): lean/NOTES.md is no module"), got
+
+
+COMMENTS = {
+    "line": "-- {}\ndef n := 1\n",
+    "line-after-code": "def n := 1 -- {}\n",
+    "doc": "/-- {} -/\ndef n := 1\n",
+    "module-doc": "/-! {} -/\n",
+    "block": "/- {} -/\n",
+    "nested-block": "/- a /- b -/ {} /- c -/ d -/\n",
+    "block-closing-at-once": "/-/ {} -/\n",
+    "doc-with-a-quote": "/-- it's \"{} -/\n",
+    "comment-after-a-string": 'def s := "--" -- {}\n',
+    "comment-after-a-char": "def c := '\"' -- {}\n",
+    "comment-in-a-hole": 'def s := s!"{{1 /- {} -/}}"\n',
+    "comment-with-unicode": "-- α {} ₁\n",
+}
+
+
+@pytest.mark.parametrize("named", ["tools/trust-classes.json", "tools/layer_policy.py", "lean/checkers.lock",
+                                   "lean/NOTES.md", "lean/Demo/DEEP.md"], ids=lambda n: Path(n).name)
+@pytest.mark.parametrize("comment", COMMENTS.values(), ids=COMMENTS)
+def test_a_name_only_in_a_lean_comment_carries(tmp_path, comment, named):
+    """Every input of `unread_by_build` searches the same text, under lean/ and in an outside --test file."""
+    import trust_mutants as tm
+    planned_tree(tmp_path)
+    for where in ("lean/Demo/Examples.lean", "outside/T.lean"):
+        (tmp_path / where).write_text(comment.format(Path(named).name))
+        lake = tm.lake_reads(tmp_path, [tmp_path / "outside/T.lean"])
+        assert Path(named).name.casefold() not in lake
+        assert tm.check_only([named], set(), set(), lake) is None
+        (tmp_path / where).write_text("\n")
+
+
+@pytest.mark.parametrize("listing", ["readDir", "walkDir", "input_dir"])
+def test_a_directory_listing_named_only_in_a_comment_is_no_listing(tmp_path, listing):
+    import trust_mutants as tm
+    (tmp_path / "lean/Demo").mkdir(parents=True)
+    (tmp_path / "lean/Demo/Examples.lean").write_text(f"-- {listing}\n")
+    assert tm.check_only(["lean/NOTES.md"], set(), set(), tm.lake_reads(tmp_path, [])) is None
+
+
+@pytest.mark.parametrize(("name", "text"), [
+    ("lean/lakefile.toml", "-- NOTES.md\n"), ("lean/lean-toolchain", "/- NOTES.md -/\n"),
+    ("lean/lake-manifest.json", "/- NOTES.md -/\n"), ("outside/T.txt", "-- NOTES.md\n"),
+], ids=["lakefile-toml", "toolchain", "manifest", "outside-test-not-lean"])
+def test_a_file_that_is_no_lean_source_stays_whole(tmp_path, name, text):
+    import trust_mutants as tm
+    (tmp_path / name).parent.mkdir(parents=True, exist_ok=True)
+    (tmp_path / "lean").mkdir(exist_ok=True)
+    (tmp_path / name).write_text(text)
+    lake = tm.lake_reads(tmp_path, [tmp_path / name] if name.startswith("outside/") else [])
+    assert tm.check_only(["lean/NOTES.md"], set(), set(), lake) is not None
+
+
+def test_a_lakefile_in_lean_loses_its_comments_and_a_symlink_keeps_its_target(tmp_path):
+    import trust_mutants as tm
+    (tmp_path / "lean").mkdir()
+    (tmp_path / "lean/lakefile.lean").write_text("-- NOTES.md\n")
+    assert tm.check_only(["lean/NOTES.md"], set(), set(), tm.lake_reads(tmp_path, [])) is None
+    (tmp_path / "lean/Link.lean").symlink_to("NOTES.md")
+    (tmp_path / "lean/NOTES.md").write_text("notes\n")
+    assert tm.check_only(["lean/NOTES.md"], set(), set(), tm.lake_reads(tmp_path, [])) is not None
+
+
+def test_text_nested_past_the_recursion_limit_stays_whole():
+    """The comment before it is blanked, and the nesting is unsure, no crash."""
+    import trust_mutants as tm
+    deep = 's!"{' * 100_000
+    assert tm.lean_code(f"-- a\n{deep} -- b\n") == f"    \n{deep} -- b\n"
+
+
+def test_the_real_trees_comments_cost_no_full_run():
+    """PROBE F2: lean/VE/Calc/Ties.lean's doc comment names the table, which forced a full run on every table change."""
+    import trust_mutants as tm
+    assert tm.check_only([tm.CLASS_TABLE], set(), set(), tm.lake_reads(tm.ROOT, [])) is None
+
+
+def test_the_docstring_states_the_condition_where_it_claims_the_carry():
+    """PROBE F3: the table and `PLAN_ONLY_TOOL` modules carry only when nothing Lake or Lean reads names them."""
+    import trust_mutants as tm
+    doc = " ".join(tm.__doc__.split())
+    assert "generated inventory, trust_map's table, or a lean/*.md" not in doc
+    assert ("Trust_map's table, those `PLAN_ONLY_TOOL` modules, a lean/*.md and lean/checkers.lock carry only when "
+            "nothing Lake or Lean reads names them outside a comment") in doc
+
+
+# Lean's own parser as the oracle for `lean_code`: every token it reads, with its byte position (doc comments left out).
+LEAN_TOKENS = """import Lean
+open Lean Parser
+
+partial def tokens (stx : Syntax) (out : Array (Nat × String)) : Array (Nat × String) :=
+  match stx with
+  | .node _ k args =>
+    if k == ``Command.docComment || k == ``Command.moduleDoc then out
+    else args.foldl (fun o a => tokens a o) out
+  | .atom (.original _ p _ _) v => out.push (p.byteIdx, v)
+  | .ident (.original _ p _ _) raw _ _ => out.push (p.byteIdx, raw.toString)
+  | _ => out
+
+def main (paths : List String) : IO Unit := do
+  initSearchPath (← findSysroot)
+  let env ← importModules #[{module := `Lean}] {} (loadExts := true)
+  let pmctx : ParserModuleContext := {env, options := {}}
+  for path in paths do
+    let ctx := mkInputContext (← IO.FS.readFile path) path
+    let mut (head, state, log) ← parseHeader ctx
+    let mut out := tokens head.raw #[]
+    repeat
+      let (cmd, s, l) := parseCommand ctx pmctx state log
+      state := s
+      log := l
+      out := tokens cmd out
+      if isTerminalCommand cmd then break
+    IO.println (Json.compress (Json.mkObj [("errors", toJson log.hasErrors),
+      ("tokens", toJson (out.map fun (p, v) => Json.arr #[toJson p, toJson v]))]))
+"""
+# (commands, whether `lean_code` is sure of them): comments and literals in every form it reads.
+LEAN_PIECES = [
+    ("-- it's \"a\n", True), ("/- a /- \" b -/ ' c -/\n", True), ("/-- doc ' -/\ndef d0 := 1\n", True),
+    ("/-! module ' \" -/\n", True), ("/--/ doc -/\ndef d1 := 1\n", True), ("/-/ block -/\n", True),
+    ("/- α -/ def d2 := 1 -- ₁\n", True), ('def s0 := "--" ++ " -- "\n', True), ('def s1 := " /- " /- c -/\n', True),
+    ('def s2 := "\\" -- " -- c\n', True), ('def s3 := "gap\\\n   -- "\n', True), ('def s4 := "\\x22\\u0022--"\n', True),
+    ("def c0 := '\"'\n", True), ("def c1 := '\\''\n", True), ("def c2 := '\\\\'\n", True), ("def c3 := '\\x41'\n", True),
+    ("def c4 := '-'\n", True), ("def c5 := '\\u0041'\n", True), ("def c6 := '{'\n", True),
+    ('def r0 := r" -- "\n', True), ('def r1 := r"\\" -- c\n', True), ('def r2 := r#"a" -- "#\n', True),
+    ('def r3 := r##"a"# -- "##\n', True), ('def i0 := s!"a {" -- "} b"\n', True), ('def i1 := s!"{s!"{1} -- "} /-"\n', True),
+    ('def i2 := s!"\\{ -- "\n', True), ('def i3 := s! "x {1 /- c -/} y"\n', True), ('def i4 := f!"{1}"\n', True),
+    ('def i5 := m!"{" -- "}"\n', True), ('def i6 := s!"{1 -- c\n}"\n', True), ("def i7 := s!\"{'}'} -- \"\n", True),
+    ('def i8 := s!"{ ({ a := " -- " } : T) }"\n', True), ('def p0 := "{x} -"\n', True), ('def p1 := "} {x - 1}"\n', True),
+    ("def x' := x'' -- c\n", True), ("def α' := β₁' -- c\n", True), ("def é' := ℕ' -- c\n", True),
+    ("def «a b--c» := 1\n", True), ("def n0 := 0xff + 1_000 + 1.5e3 + 0b1 + 0o7 -- c\n", True),
+    ("def a.b' := a.«c d».e' -- c\n", True), ("def n1 := `x' -- c\n", True), ("def n2 := ``Nat.add' -- c\n", True),
+    ('def q0 := "{" ++ " -- " ++ "}"\n', False), ('def t0 : IO Unit := throwError "a {" -- "}"\n', False),
+    ("def l0 := do\n  let a <--1\n  pure a\n", False), ("def e0 := { x : Int //-x = 1 }\n", False), ("def j0 := (1)--c\n", False),
+    ("def j1 := (1)/-c-/\n", False),
+]
+
+
+def test_lean_code_blanks_what_lean_skips_and_nothing_it_reads(tmp_path):
+    """Differential, in the two directions, on every piece and on seeded mixtures of them: every token Lean's parser
+    reads stands at its place in `lean_code`, and when the stripper is sure, nothing else is left."""
+    import random
+
+    import trust_mutants as tm
+    pick = random.Random(20261105)
+    documents = [[piece] for piece in LEAN_PIECES] + [pick.choices(LEAN_PIECES, k=pick.randint(2, 12)) for _ in range(300)]
+    paths = []
+    for i, pieces in enumerate(documents):
+        paths.append(tmp_path / f"D{i}.lean")
+        paths[-1].write_text("".join(text for text, _ in pieces))
+    (tmp_path / "Tokens.lean").write_text(LEAN_TOKENS)
+    done = subprocess.run(["lean", "--run", str(tmp_path / "Tokens.lean"), *map(str, paths)], capture_output=True, text=True,
+                          timeout=HANG_TIMEOUT, cwd=ROOT / "lean", env={**os.environ, **PATH}, check=False)
+    assert done.returncode == 0, done.stderr[-2000:]
+    answers = [json.loads(line) for line in done.stdout.splitlines()]
+    assert len(answers) == len(documents)
+    for pieces, path, answer in zip(documents, paths, answers):
+        raw = path.read_bytes()
+        text, code = raw.decode(), tm.lean_code(raw.decode())
+        assert not answer["errors"], text
+        assert len(code) == len(text) and [i for i, c in enumerate(code) if c == "\n"] == [
+            i for i, c in enumerate(text) if c == "\n"]
+        read: set[int] = set()
+        for position, token in answer["tokens"]:
+            at = len(raw[:position].decode())
+            assert code[at:at + len(token)] == token, (text, token)
+            read |= set(range(at, at + len(token)))
+        if all(sure for _, sure in pieces):
+            assert {i for i, c in enumerate(code) if not c.isspace()} <= read, (text, code)
+
+
+def test_no_file_is_unread_when_no_tree_was_read():
+    import trust_mutants as tm
+    assert tm.no_build_reads("lean/NOTES.md", "") and tm.no_build_reads("lean/checkers.lock", "")
+    assert not tm.no_build_reads("lean/NOTES.md", None) and not tm.no_build_reads("docs/NOTES.md", "")
+    assert tm.check_only(["lean/checkers.lock"], set(), set()) is not None  # no `lake` given: fails closed
+    assert all(tm.check_only([name], set(), set()) is not None for name in tm.PLAN_INPUTS)
+
+
+def test_a_file_that_cannot_be_read_is_a_full_run(tmp_path):
+    """A broken symlink where a Lean file should be: `lake_reads` cannot read it, so it is no acceptance."""
+    planned_tree(tmp_path, lambda root: (root / "lean/Demo/Broken.lean").symlink_to("../absent.lean"))
+    got = planned_previous(tmp_path, tmp_path, wrote("lean/NOTES.md"))
+    assert isinstance(got, str) and got.startswith("it cannot be read"), got
+
+
+def test_the_plan_only_argument_still_holds():
+    """Each line of `PLAN_ONLY_TOOL`'s argument, read off the sources of the modules the tool loads: only
+    tools/check_lean_imports.py imports tools/layer_policy.py; the tool reads one name of that module, `imports`,
+    which reaches neither of layer_policy's names, nor anything derived from them; layer_policy's module level has
+    no effect on anything else and its ROOT is this repository. A module added to the set needs its own argument."""
+    import ast
+    import builtins
+    import check_lean_imports
+    import layer_policy
+    import trust_mutants as tm
+    assert tm.PLAN_ONLY_TOOL == {"tools/layer_policy.py"}
+    code = "import json, sys; import trust_mutants; print(json.dumps([getattr(m, '__file__', None) for m in " \
+           "list(sys.modules.values())]))"
+    done = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True, timeout=HANG_TIMEOUT,
+                          env={**os.environ, "PYTHONPATH": str(ROOT / "tools")}, check=True)
+    loaded = {Path(f).resolve() for f in json.loads(done.stdout.splitlines()[-1]) if f}
+    tool = {p.relative_to(ROOT).as_posix(): ast.parse(p.read_text()) for p in loaded
+            if p.is_relative_to(ROOT / "tools") or p.is_relative_to(ROOT / "lean")}
+    assert "tools/layer_policy.py" in tool and "tools/check_lean_imports.py" in tool
+
+    def imported(tree: ast.Module) -> set[str]:
+        return {a.name for n in ast.walk(tree) if isinstance(n, ast.Import) for a in n.names} | {
+            n.module for n in ast.walk(tree) if isinstance(n, ast.ImportFrom) and n.module}
+    assert sorted(f for f, tree in tool.items() if imported(tree) & {"layer_policy", "tools.layer_policy"}) == [
+        "tools/check_lean_imports.py"]
+    assert sorted(f for f, tree in tool.items() if imported(tree) & {"check_lean_imports", "tools.check_lean_imports"}
+                  ) == ["tools/trust_mutants.py"]
+    assert [[a.name for a in n.names] for n in ast.walk(tool["tools/trust_mutants.py"]) if isinstance(n, ast.ImportFrom)
+            and n.module == "check_lean_imports"] == [["imports"]]
+    # `imports` and what it reaches of its module: none of layer_policy's names or of what the module derives from them
+    tree = tool["tools/check_lean_imports.py"]
+    defs = {n.name: n for n in tree.body if isinstance(n, (ast.FunctionDef, ast.ClassDef))}
+    derived = {"ROOT", "lean_layer"}
+    derived |= {t.id for n in tree.body if isinstance(n, ast.Assign) and {
+        x.id for x in ast.walk(n.value) if isinstance(x, ast.Name)} & derived for t in n.targets
+        if isinstance(t, ast.Name)}
+    seen, todo = set(), ["imports"]
+    while todo:
+        names = {x.id for x in ast.walk(defs[todo.pop()]) if isinstance(x, ast.Name)}
+        assert not names & derived, names & derived
+        todo += [x for x in names - seen if x in defs]
+        seen |= names
+    assert check_lean_imports.imports("import A.B\n") == ["A.B"]
+    # layer_policy's module level: pure tables and functions, and the repository's ROOT
+    policy = tool["tools/layer_policy.py"]
+    assert imported(policy) <= {"__future__", "ast", "functools", "pathlib", "tomllib"}, imported(policy)
+    for n in policy.body:
+        assert isinstance(n, (ast.Import, ast.ImportFrom, ast.Assign, ast.AnnAssign, ast.FunctionDef)) or (
+            isinstance(n, ast.Expr) and isinstance(n.value, ast.Constant)), type(n).__name__
+    top = [n for n in policy.body if not isinstance(n, ast.FunctionDef)]
+    named = {x.id for n in top for x in ast.walk(n) if isinstance(x, ast.Name)}
+    assert not named & {"exec", "eval", "compile", "setattr", "delattr", "globals", "__import__", "open", "print"}
+    assert named & set(dir(builtins)) <= {"frozenset", "set", "dict", "list", "tuple", "sorted", "range", "len", "str"}
+    assert layer_policy.ROOT == ROOT
+
+
+def rewritten(evidence: Path, out: Path, change) -> Path:
+    data = json.loads(evidence.read_text())
+    change(data["inputs"])
+    out.write_text(json.dumps(data))
+    return out
+
+
+def plan_only_copy(package: Path, tmp_path: Path) -> Path:
+    import shutil
+    shutil.copytree(package, tmp_path / "copy", symlinks=True)
+    return tmp_path / "copy"
+
+
+def same_tree_other_base(root: Path) -> str:
+    """A commit with the base's tree and another id: the plan selects the same lines, as after a sync that moved no
+    Lean line of this branch."""
+    done = subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@t", "commit-tree", "HEAD~1^{tree}", "-p",
+                           "HEAD~1", "-m", "moved"], cwd=root, capture_output=True, text=True, timeout=HANG_TIMEOUT,
+                          check=True)
+    return done.stdout.strip()
+
+
+# name, the change to the copy of the package, or to PREV's inputs; the arguments; `changed`, `plan_only`
+def module_was_other(inputs: dict) -> None:
+    inputs["tool"] = OTHER_DIGEST
+    inputs["tool_files"]["tools/layer_policy.py"] = OTHER_DIGEST
+
+
+REAL_CARRIES = ["plan-only-module", "base", "table", "lock", "md"]
+
+
+def test_rescore_on_a_real_tree_carries_across_every_plan_only_input_and_agrees_with_a_full_run(
+        package, default_run, tmp_path, tmp_path_factory):
+    """All of them at once, on the package's whole evidence: every KILLED verdict is carried (it has no INVALID one),
+    each other verdict runs, and all of them are what a full run on that tree gives."""
+    root = plan_only_copy(package, tmp_path)
+    moved = same_tree_other_base(root)
+    (root / "tools/trust-classes.json").write_text('{"comment": "no class moved", "modules": {}}\n')
+    (root / "lean/checkers.lock").write_text("{}\n")
+    (root / "lean/NOTES.md").write_text("notes\n")
+    prev = json.loads((tmp_path_factory.getbasetemp() / "default-evidence.json").read_text())
+    path = rewritten(tmp_path_factory.getbasetemp() / "default-evidence.json", tmp_path / "prev.json", module_was_other)
+    done, data = rescored(root, tmp_path / "rescore", path, "--base", moved)
+    full_done, full = tool(root, tmp_path / "full", "--base", moved)
+    was = {m["id"]: m for m in prev["mutants"]}
+    expected = {i for i, m in was.items() if m["raw_status"] in ("KILLED", "INVALID")}
+    assert {m["raw_status"] for m in was.values()} >= {"KILLED", "SURVIVOR"}, was  # an INVALID one: the sweep below
+    assert {m["id"] for m in data["mutants"] if m.get("carried") == "checks"} == expected, (done.stdout, data["rescore"])
+    assert not [m for m in data["mutants"] if m["id"] not in expected and ("reused_from" in m or "carried" in m)]
+    assert {k: data["rescore"][k] for k in ("head", "mode", "changed", "plan_only", "reused", "rerun")} == {
+        "head": prev["head"], "mode": "checks", "changed": ["lean/NOTES.md", "lean/checkers.lock",
+                                                             "tools/trust-classes.json"],
+        "plan_only": ["tools/layer_policy.py", "base", "lean/NOTES.md", "lean/checkers.lock",
+                      "tools/trust-classes.json"], "reused": len(expected), "rerun": len(was) - len(expected)}
+    assert "plan-only: tools/layer_policy.py, base, lean/NOTES.md" in done.stdout, done.stdout
+    assert [(m["id"], m["status"], m["detail"].split(": ")[0]) for m in data["mutants"]] == [
+        (m["id"], m["status"], m["detail"].split(": ")[0]) for m in full], (done.stdout, full_done.stdout)
+    assert done.returncode == full_done.returncode
+
+
+@pytest.mark.parametrize("name", REAL_CARRIES)
+def test_rescore_on_a_real_tree_carries_across_each_plan_only_input(package, prefix_run, tmp_path, name):
+    """One at a time, on a prefix of four KILLED mutants and one SURVIVOR: the KILLED ones carried, the other run."""
+    root, base, prev = plan_only_copy(package, tmp_path), [], prefix_run
+    plan_only = [{"plan-only-module": "tools/layer_policy.py", "base": "base", "table": "tools/trust-classes.json",
+                  "lock": "lean/checkers.lock", "md": "lean/NOTES.md"}[name]]
+    if name == "plan-only-module":
+        prev = rewritten(prefix_run, tmp_path / "prev.json", module_was_other)
+    elif name == "base":
+        base = ["--base", same_tree_other_base(root)]
+    else:
+        (root / plan_only[0]).write_text('{"comment": "no class moved", "modules": {}}\n')
+    done, data = rescored(root, tmp_path / "rescore", prev, "--max-mutants", "5", *base)
+    rows = {m["id"]: m for m in json.loads(prefix_run.read_text())["mutants"]}
+    killed = {i for i, m in rows.items() if m["raw_status"] == "KILLED"}
+    assert len(killed) == 4, rows
+    assert {m["id"] for m in data["mutants"] if m.get("carried") == "checks"} == killed, (done.stdout, done.stderr)
+    assert not [m for m in data["mutants"] if m["id"] not in killed and "reused_from" in m]
+    assert (data["rescore"]["mode"], data["rescore"]["plan_only"], data["rescore"]["reused"], data["rescore"]["rerun"]
+            ) == ("checks", plan_only, 4, 1), data["rescore"]
+    assert data["rescore"]["changed"] == ([] if name in ("plan-only-module", "base") else plan_only)
+    assert [m["status"] for m in data["mutants"]][:5] == [rows[f"M{i:03d}"]["status"] for i in range(1, 6)]
+
+
+def test_rescore_on_a_real_tree_across_the_tool_itself_is_a_full_run(package, prefix_run, tmp_path):
+    def tool_was_other(inputs: dict) -> None:
+        inputs["tool"] = OTHER_DIGEST
+        inputs["tool_files"]["tools/trust_mutants.py"] = OTHER_DIGEST
+    prev = rewritten(prefix_run, tmp_path / "prev.json", tool_was_other)
+    done, data = rescored(package, tmp_path / "rescore", prev, "--max-mutants", "5")
+    assert (data["rescore"]["mode"], data["rescore"]["reused"], data["rescore"]["rerun"]) == ("full", 0, 5), done.stdout
+    assert data["rescore"]["full_run"] == "its inputs differ (tool): tools/trust_mutants.py"
+    assert "plan_only" not in data["rescore"] and not [m for m in data["mutants"] if "reused_from" in m]
+
+
+def test_rescore_on_a_real_tree_across_a_table_that_moves_the_mutants_is_a_full_run(package, prefix_run, tmp_path):
+    """The table takes `small` (the first four mutants) out of the selection: the same bytes-level case as the carry
+    above, and the mutant list refuses it."""
+    root = plan_only_copy(package, tmp_path)
+    (root / "tools/trust-classes.json").write_text('{"modules": {"Demo/Defs.lean": {"T": ["Demo.small"]}}}\n')
+    done, data = rescored(root, tmp_path / "rescore", prefix_run, "--max-mutants", "5")
+    assert (data["rescore"]["mode"], data["rescore"]["reused"]) == ("full", 0), (done.stdout, done.stderr)
+    assert data["rescore"]["full_run"] == "its mutants are not this tree's"
+
+
+def test_rescore_on_a_real_tree_across_a_base_that_moves_the_mutants_is_a_full_run(package, prefix_run, tmp_path):
+    """The base itself holds the selected lines: no mutant is left, so the list refuses it."""
+    done, data = rescored(package, tmp_path / "rescore", prefix_run, "--base", "HEAD")
+    assert (data["rescore"]["mode"], data["rescore"]["reused"]) == ("full", 0), (done.stdout, done.stderr)
+    assert data["rescore"]["full_run"] == "its mutants are not this tree's"
+
+
+@pytest.fixture
+def plan_only_sweep(sharded, monkeypatch):
+    """`sharded` whose `inputs` hold `tool_files`, and PREV: the evidence of its six mutants that run."""
+    tm, real = sharded.tm, sharded.tm.inputs
+
+    def inputs(*args):
+        return {**real(*args), "tool_files": {"tools/layer_policy.py": "1", "tools/trust_mutants.py": "2"}}
+    monkeypatch.setattr(tm, "inputs", inputs)
+    prev = sharded.tmp / "prev.json"
+    assert sharded("--json", prev, "--max-mutants", 6)[0] == 1
+    return sharded, prev
+
+
+# what PREV's inputs held, what the run makes of it (the plan-only names, or the full run's reason)
+SWEEPS = [
+    ("module", {"tool": "t0", "tool_files": {"tools/layer_policy.py": "0", "tools/trust_mutants.py": "2"}},
+     ["tools/layer_policy.py"]),
+    ("base", {"base": OTHER_BASE}, ["base"]),
+    ("named-table", {"files": {"lean/Demo/Defs.lean": "1", "tools/trust-classes.json": "0"}, "lean": "l0"},
+     ["tools/trust-classes.json"]),
+    ("unread-md", {"files": {"lean/Demo/Defs.lean": "1", "lean/NOTES.md": "0"}, "lean": "l0"}, ["lean/NOTES.md"]),
+    ("the-tool", {"tool": "t0", "tool_files": {"tools/layer_policy.py": "1", "tools/trust_mutants.py": "0"}},
+     "its inputs differ (tool): tools/trust_mutants.py"),
+    ("old-record", {"tool": "t0", "tool_files": None}, "its inputs differ (tool)"),
+]
+
+
+@pytest.mark.parametrize(("name", "old", "says"), SWEEPS, ids=[s[0] for s in SWEEPS])
+def test_a_plan_only_rescore_in_one_run_and_in_parts_gives_one_record(plan_only_sweep, name, old, says):
+    """The whole path in `main` and `--merge` (no Lean): on a carry only the SURVIVOR and UNKNOWN verdicts run, the
+    record names what crossed, and --merge accepts parts with no changed file and gives the one run's record; a full
+    run runs all of them and names no plan-only input."""
+    go, prev = plan_only_sweep
+    data = json.loads(prev.read_text())
+    data["inputs"].update(old)
+    data["inputs"] = {k: v for k, v in data["inputs"].items() if v is not None}
+    prev.write_text(json.dumps(data))
+    one = go.tmp / "one.json"
+    code, _, _, ran, _ = go("--json", one, "--max-mutants", 6, "--rescore", prev)
+    record = json.loads(one.read_text())
+    rescore = record["rescore"]
+    if isinstance(says, list):
+        assert rescore["mode"] == "checks" and rescore["plan_only"] == says and "full_run" not in rescore, rescore
+        assert sorted(ran) == ["M002", "M003", "M005"]
+        assert {m["id"] for m in record["mutants"] if m.get("carried") == "checks"} == {"M001", "M004", "M006"}
+        assert (rescore["reused"], rescore["rerun"]) == (3, 3)
+    else:
+        assert rescore["mode"] == "full" and rescore["full_run"] == says and "plan_only" not in rescore, rescore
+        assert sorted(ran) == [f"M{i:03d}" for i in range(1, 7)]
+    merged = go.tmp / "merged.json"
+    assert go.tm.main(["--merge", str(merged), *map(str, parts(go, 3, "--max-mutants", 6, "--rescore", prev))]) == code
+    together = json.loads(merged.read_text())
+    assert {k: v for k, v in together.items() if k not in RUN_FACTS} == {
+        k: v for k, v in record.items() if k not in RUN_FACTS}
+
+
+def test_a_resume_needs_the_same_plan_only_facts(plan_only_sweep, capsys):
+    """--resume compares --rescore's facts: a record that names another plan-only input is another run's."""
+    go, prev = plan_only_sweep
+    data = json.loads(prev.read_text())
+    data["inputs"]["base"] = OTHER_BASE
+    prev.write_text(json.dumps(data))
+    first = go.tmp / "first.json"
+    go("--json", first, "--max-mutants", 6, "--rescore", prev)
+    assert go("--json", go.tmp / "kept.json", "--max-mutants", 6, "--rescore", prev, "--resume", first)[3] == []
+    assert json.loads((go.tmp / "kept.json").read_text())["resumed"]["kept"] == 6
+    forged = json.loads(first.read_text())
+    forged["rescore"]["plan_only"] = ["tools/layer_policy.py"]
+    first.write_text(json.dumps(forged))
+    _, out, _, ran, _ = go("--json", go.tmp / "again.json", "--max-mutants", 6, "--rescore", prev, "--resume", first,
+                           capsys=capsys)
+    assert "its --rescore is not this run's" in out and sorted(ran) == ["M002", "M003", "M005"]

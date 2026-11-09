@@ -2154,6 +2154,41 @@
    "reason": "df-5: the defaults-zone kind, remeasured at review F1: VE/Defaults/ZoneWire.lean +100 (D[V] zoneFieldsOf, zoneFields, ZoneLine.json, exceptedRule; G[V] ZoneLine, zoneLines, zoneCase, ZoneReplay, ZoneReplay.X, maxZoneObservations, zoneJoins, zoneWordsJson; tied, not counted: decisionOf, outcomeOf, tupleIn, recordEntry, obsEntry, replayZoneOn, ZoneReplay.min, zoneSizes, ZoneLine.row, ZoneLine.kind, zoneHeads, zoneLineWords), VE/Defaults/ZoneWordsMain.lean +2 (G[V] main), ResponseShape/Schemas/NormDefaults.lean +36 (G[V] defaults_zone, defaults_zone_line), VE/Defaults/Route.lean +2 (G[V] defaultsKinds, defaultsRows); K +0, S +0, trusted +140",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-5, 2026-10-18",
    "commit": "c3d9ea9380cba43a96b38bfe59904a20d29a7a0c"
+  },
+  {
+   "class": "V",
+   "lines": 114,
+   "reason": "ap-3dc: VE/Acts/Run.lean +67, ResponseShape/Schemas/Norms.lean +33, VE/Service/Standalone.lean +3, VE/Norms/Run.lean +3, VE/NormDefaults/Wire.lean +3, VE/NormDefaults/Run.lean +3, ResponseShape/Schemas/NormDefaults.lean +2 (K +0, S +0, V +114)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-3dc, 2026-11-05",
+   "commit": "cbffb7633ad21b1cb172933dfb61b74ca4815c4f"
+  },
+  {
+   "class": "V",
+   "lines": 4,
+   "reason": "ap-3dc: the REFUSED row's diagnostic (ResponseShape/Schemas/Norms.lean +3) and the environment hook's joined act (VE/WireContract/Hooks/Acts.lean +1); item total V +118 (K +0, S +0)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-3dc, 2026-10-18",
+   "commit": "cbffb7633ad21b1cb172933dfb61b74ca4815c4f"
+  },
+  {
+   "class": "S",
+   "lines": 87,
+   "reason": "at-1c: S +87, G[V] +22 untied (trusted +109, K +0): Semantics.lean +41, Frame.lean +39, Route.lean +36 (labelOrigin S, reviews/dri-decisions-20261108-at-1c.md item 1), Syntax.lean -7 (baseEnvAtt S to D[V] tied to frame_wellFormed)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), at-1c, 2026-11-08",
+   "commit": "53fdabfde4a66850c82ced932c8ffb749a1a81f7"
+  },
+  {
+   "class": "V",
+   "lines": 22,
+   "reason": "at-1c: S +87, G[V] +22 untied (trusted +109, K +0): Semantics.lean +41, Frame.lean +39, Route.lean +36 (labelOrigin S, reviews/dri-decisions-20261108-at-1c.md item 1), Syntax.lean -7 (baseEnvAtt S to D[V] tied to frame_wellFormed)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), at-1c, 2026-11-08",
+   "commit": "53fdabfde4a66850c82ced932c8ffb749a1a81f7"
+  },
+  {
+   "class": "V",
+   "lines": 25,
+   "reason": "sn-b6c: VE/Senses/Run.lean +25 (V: byteSpan, senseEntryJson, the texts and entries in outcomeJson and readCase); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sn-b6c, 2026-11-08",
+   "commit": "e9a6ec8d5938051a70116918e34fc3cd92aac16e"
   }
  ]
 }

@@ -90,9 +90,14 @@ KILLED and INVALID one what it reads (`reads`, `killed_at`: `Reads`). When PREV'
 - its `inputs` are this run's (mode "identical"): its KILLED, INVALID and SURVIVOR verdicts are the same by
   construction and are reused (`reused_from: <PREV head>`); only its UNKNOWN mutants (a build past its time limit
   among them) and the NOT RUN that now fit --max-mutants run;
-- or only checks changed (mode "checks", speed-tmchecks): the tool, base and options (--deep, --test, --classes)
-  are the same, and every file that changed is a module of lean/ outside every selected declaration's file and
-  import closure, an outside --test file or a generated inventory (`check_only`). Then a KILLED or INVALID verdict
+- or only checks changed, or inputs that decide nothing but the plan (mode "checks", speed-tmchecks,
+  eff-20261104-1): the options (--deep, --test, --classes) are the same; base may differ; the tool is the same but for
+  `PLAN_ONLY_TOOL` modules, both records holding per-module digests (`tool_files`); and every file that changed is a
+  module of lean/ outside every selected declaration's file and import closure, an outside --test file or a generated
+  inventory. Trust_map's table, those `PLAN_ONLY_TOOL` modules, a lean/*.md and lean/checkers.lock carry only when
+  nothing Lake or Lean reads names them outside a comment or lists a directory (`check_only`, `lake_reads`, from the
+  tree; where `lean_code` cannot tell a comment from code, the text counts). Every one of these still needs PREV's mutants to be
+  exactly this plan's, so a change that moves the plan is a full run. Then a KILLED or INVALID verdict
   (before --allow) whose reads read the same (`Reads.carry`) is carried (`reused_from`, `carried: "checks"`); every
   other mutant runs (a SURVIVOR, UNKNOWN or ALLOWED one: a new check may kill it, and a KILLED one whose killing
   check, or what it reads, changed).
@@ -100,7 +105,8 @@ KILLED and INVALID one what it reads (`reads`, `killed_at`: `Reads`). When PREV'
   other way (no refutation: UNKNOWN in a full run) is not looked for. That is why reviewers run without --rescore.
 The current --allow applies to all. With no mutant to run there is no build. Else (no `inputs`, no per-file digests
 for a change, any other change, a file it cannot read) it is a full run, and one line says why. The JSON gains
-`rescore: {file, head, mode, changed, reused, rerun}`.
+`rescore: {file, head, mode, changed, reused, rerun}`, and `plan_only` when mode "checks" crossed such an input: the
+names of the tool modules, `base`, the table and the lean/ files no build reads that changed.
 
 --shard K/N, --merge and --plan (tm-shard) split one run into N parts that run on N machines, and combine them:
 - --shard K/N (1 <= K <= N, else exit 2): after the plan and --max-mutants as without it, part K owns the mutants
@@ -111,12 +117,14 @@ for a change, any other change, a file it cannot read) it is a full run, and one
   with status and raw_status `OTHER SHARD`, a status only a part's record holds (counted under its own key);
 - --merge OUT.json PART.json... reads only the parts (no checkout, no Lean; every other option is ignored) and
   writes the record one run with their options writes, but for "seconds" (the parts' longest), "jobs" and "steps"
-  (their sums) and `shards: [{k, n, jobs, seconds, steps}]`, by k; it prints that run's lines and exits with its
+  (their sums) and `shards: [{k, n, head, jobs, seconds, steps}]`, by k. A part from another commit adds
+  `carried: "inputs identical"`; the merged `head` is the first part's, and the shards name every source commit.
+  It prints that run's lines and exits with its
   code. It refuses (exit 2) parts that are no part as this tool writes one (`unread`: a field or row not of its
-  type, a status not one it writes, counts that are not its rows'), disagree on N, base, head, options, inputs,
-  the plan or --rescore's file, head, mode, changed or full_run, miss or repeat a k, own a mutant twice, never, or
-  with no verdict, or hold anything but the plan's row and its status (`idle`) for a mutant they do not run, OTHER
-  SHARD or NOT RUN;
+  type, a status not one it writes, counts that are not its rows'), disagree on N, base, options, inputs,
+  the plan or --rescore's file, head, mode, changed, plan_only or full_run, miss or repeat a k, own a mutant twice,
+  never, or with no verdict, or hold anything but the plan's row and its status (`idle`) for a mutant they do not
+  run, OTHER SHARD or NOT RUN;
 - --plan prints `{"base", "definitions", "mutants", "to_run", "not_run"}` ("owned" too with --shard) as one JSON
   line and builds nothing: what sizes N.
 
@@ -129,10 +137,11 @@ nothing, so each verdict it had judged was lost):
   `partial: {deadline, unjudged}` (those ids, plan order), one PARTIAL line says so, and the exit code is 4;
 - every --json records `tree`, HEAD's tree, beside `head`, its commit;
 - --resume PREV.json keeps PREV's verdicts (before --allow; the current --allow applies) of the mutants this run
-  owns when PREV ran at this HEAD: the same commit and tree, the same `inputs` (so no worktree edit since), plan,
-  --max-mutants, --shard part and --rescore facts (`resumable`). Only the rest (its `unjudged`) run, and the JSON
-  gains `resumed: {file, head, kept, rerun}`. Any other PREV, another HEAD's above all, is ignored with one line
-  why (`ignored`) and the run is a full one: no verdict of another HEAD is reused;
+  owns, also across commits, when PREV's `inputs` (all of lean/, the tool, the selected test bytes, base and
+  options), plan, --max-mutants, --shard part and --rescore facts are this run's, and at PREV's own commit its tree is
+  HEAD's (`resumable`). Only the rest (its `unjudged`) run, and the JSON
+  gains `resumed: {file, head, kept, rerun}`, with `carried: "inputs identical"` when HEAD moved. Any PREV
+  with different inputs is ignored with one line why (`ignored`) and the run is a full one;
 - a partial record never counts as a sweep: --merge refuses a part that has `partial` (run that part again with
   --resume), --rescore reads none (a full run), and --merge keeps each part's `resumed` in its `shards` entry.
 
@@ -1397,6 +1406,40 @@ REUSED = ("KILLED", "INVALID", "SURVIVOR")  # the verdicts --rescore reuses: no 
 OVERALL = ("tool", "lean", "tests", "base", "options")  # `inputs`' digests; "files" holds the per-file ones
 # the generated inventories of lean/ a check-only change regenerates: no Lean module reads them
 INVENTORIES = {"lean/declarations.txt", "lean/statements.txt", "lean/predicates.txt", "lean/axioms.txt"}
+# The modules of this repository, as `tool_files` names them, whose bytes decide at most which mutants exist, never
+# how one is built, run or judged, so a change to one leaves a verdict standing when PREV's mutants are this plan's
+# (`previous`). A module goes here only after every use of it on the path from `plan` to a verdict has been read:
+# - tools/layer_policy.py: the tool loads it only because tools/check_lean_imports.py does (`from layer_policy import
+#   ROOT, lean_layer`). The tool reads one name of that module, `imports`, which reads a Lean header's text and neither
+#   name, so the import closure (`Reads.imported`, `plan`'s importers) is computed from the current tree alone;
+#   `lean_layer` is read only by that module's own layer check, which the tool never calls, and ROOT by its module-level
+#   LEDGER and sys.path line and that check. No other module the tool loads imports it. Its module level imports and
+#   assigns only: test_the_plan_only_argument_still_holds keeps all of this true.
+PLAN_ONLY_TOOL = frozenset({"tools/layer_policy.py"})
+CLASS_TABLE = "tools/trust-classes.json"  # read by `plan`, unless a Lean check also names it outside a comment
+PLAN_INPUTS = PLAN_ONLY_TOOL | {CLASS_TABLE}
+# What Lake reads, or Lean when it builds or checks a module, whatever a module's own text names; a directory listing
+# there can read a file it never names (`no_build_reads`).
+LAKE_FILES = re.compile(r"(?:.*\.lean|lakefile\..*|lean-toolchain|lake-manifest\.json)")
+LISTS_FILES = re.compile(r"readdir|walkdir|input_?dir")  # as `lake_reads` gives them, casefolded
+# Lean's lexer as far as `lean_code` needs it (toolchain 4.24: Lean/Parser/Basic.lean's whitespace and tokenFnAux, its
+# StrInterpolation.lean, Init/Meta/Defs.lean's isIdFirst and isIdRest). A word is taken whole because `'` continues one.
+LEAN_LETTER = ("_A-Za-z\u00c0-\u00d6\u00d8-\u00f6\u00f8-\u017f\u0391-\u039f\u03a1\u03a2\u03a4-\u03a9\u03b1-\u03ba\u03bc-\u03c9"
+               "\u03ca-\u03fb\u1f00-\u1ffe\u2100-\u214f\U0001d49c-\U0001d59f")
+LEAN_REST = LEAN_LETTER + "0-9'!?\u2080-\u2089\u2090-\u209c\u1d62-\u1d6a\u2c7c"
+LEAN_TOKEN = re.compile(
+    r'(?P<raw>r#*")'
+    rf"|(?P<word>[{LEAN_LETTER}][{LEAN_REST}]*)"
+    r"|(?P<number>0[xX][0-9a-fA-F_]+|0[bB][01_]+|0[oO][0-7_]+|[0-9][0-9_]*(?:[eE][-+]?[0-9]+)?)"
+    r"|(?P<comment>--|/-[-!]?)"
+    r"""|(?P<mark>["'«{}])""")
+LEAN_NESTING = re.compile(r"-/|/-")
+LEAN_CHAR = re.compile(r"""'(?:\\(?:[\\"'rnt]|x[0-9a-fA-F]{2}|u[0-9a-fA-F]{4})|[^\\'])'""", re.DOTALL)
+LEAN_STRING_TAIL = re.compile(r'[^"\\]*(?:\\.[^"\\]*)*"', re.DOTALL)
+LEAN_ESCAPE = re.compile(r"\\.", re.DOTALL)
+LEAN_HOLE = re.compile(r"\{(?:(?!--|/-)[^{}'«])*\}")  # with no comment or nested text, either reading of it is the same
+LEAN_STOP = re.compile(r'["\\{]')
+LEAN_INTERPOLATES = ("s!", "f!", "m!")
 
 
 def sha(*parts: str) -> str:
@@ -1503,16 +1546,16 @@ def inputs(root: Path, base: str, tests: list[str], outside: list[Path], deep: b
     files; the base commit; and the options --deep, --test and --classes (a verdict never carries across another
     selection). --max-mutants is not one: it picks which mutants run, never a verdict, so a larger one runs only the
     mutants that now fit. `files` holds each file's digest (the lean/ ones, the table, .gitignore and the outside
-    --test files), so a later run can tell which files changed."""
+    --test files), so a later run can tell which files changed, and `tool_files` each of the tool's modules'."""
     files: dict[str, str] = {}
+    tool_files: dict[str, str] = {}
 
-    def digest(named: list[tuple[str, Path]], each: bool = True) -> str:
+    def digest(named: list[tuple[str, Path]], each: dict[str, str] = files) -> str:
         h = hashlib.sha256()
         for name, path in sorted(named):
             data = os.readlink(path).encode() if path.is_symlink() else path.read_bytes() if path.is_file() else b""
             h.update(f"{name}\0{len(data)}\0".encode() + data)
-            if each:
-                files[name] = hashlib.sha256(data).hexdigest()
+            each[name] = hashlib.sha256(data).hexdigest()
         return h.hexdigest()
     tool = {Path(f).resolve() for m in list(sys.modules.values()) if isinstance(f := getattr(m, "__file__", None), str)}
     lean = []
@@ -1521,12 +1564,12 @@ def inputs(root: Path, base: str, tests: list[str], outside: list[Path], deep: b
         lean += [Path(top, n) for n in names + [d for d in dirs if Path(top, d).is_symlink()]]
     named = [(Path(os.path.relpath(p, root)).as_posix(), p) for p in outside]
     return {"tool": digest([(p.relative_to(ROOT).as_posix(), p) for p in tool if p.is_relative_to(ROOT / "tools")
-                            or p.is_relative_to(ROOT / "lean")], False),
+                            or p.is_relative_to(ROOT / "lean")], tool_files),
             "lean": digest([(p.relative_to(root).as_posix(), p) for p in [
                 *lean, root / "tools/trust-classes.json", root / ".gitignore"]]),
             "tests": digest(named), "base": base,
             "options": json.dumps({"deep": deep, "test": sorted(tests) + [n for n, _ in named],
-                                   "classes": list(classes)}), "files": files}
+                                   "classes": list(classes)}), "files": files, "tool_files": tool_files}
 
 
 def reach(reads: Reads, found: list[Mutant]) -> set[str]:
@@ -1534,43 +1577,180 @@ def reach(reads: Reads, found: list[Mutant]) -> set[str]:
     return {x for f in {m.file for m in found} for x in {f, *reads.imported(f)}}
 
 
-def check_only(changed: list[str], reach: set[str], tests: set[str]) -> str | None:
+class LeanUnsure(Exception):
+    """`lean_code` cannot tell what the text from here on is."""
+
+
+def lean_interpolated(text: str, i: int, blanks: list[tuple[int, int]]) -> int:
+    """Past the string with holes (`s!"a {f "--"} b"`) whose opening quote ends at `i`."""
+    while stop := LEAN_STOP.search(text, i):
+        i = stop.end()
+        if stop[0] == '"':
+            return i
+        i = i + 1 if stop[0] == "\\" else lean_scan(text, i, blanks, inner=True)
+    raise LeanUnsure
+
+
+def lean_plain(text: str, i: int) -> int:
+    """Past the string whose opening quote ends at `i` and that no `s!` introduces. Other syntax may read one with holes
+    (`throwError "{x}"`) or not (`"{"`), which the text does not say, so a `{` both readings do not close alike is unsure."""
+    tail = LEAN_STRING_TAIL.match(text, i)
+    if not tail or "{" in LEAN_HOLE.sub("", LEAN_ESCAPE.sub("", text[i:tail.end() - 1])):
+        raise LeanUnsure
+    return tail.end()
+
+
+def lean_scan(text: str, i: int, blanks: list[tuple[int, int]], inner: bool = False) -> int:
+    """Read Lean code from `i` as Lean's lexer does, adding each comment's span to `blanks`: to the end of the text, or
+    with `inner` past the `}` that ends a string's hole. `LeanUnsure` where it cannot tell: a literal or comment with no
+    end, and a comment opener no white space precedes (`<--` is the token `<-`, then `-`; a module can declare others)."""
+    depth, word_end = 0, None
+    while token := LEAN_TOKEN.search(text, i):
+        start, i, kind = token.start(), token.end(), token.lastgroup
+        if kind == "word":
+            word_end = i if token[0] in LEAN_INTERPOLATES and text[start - 1:start] != "." else word_end
+        elif kind == "raw":
+            close = text.find('"' + "#" * (i - start - 2), i)
+            if close < 0:
+                raise LeanUnsure
+            i = close + i - start - 1
+        elif kind == "comment":
+            if start and text[start - 1] not in " \n\t\r":
+                raise LeanUnsure
+            if token[0] == "--":
+                i = close + 1 if (close := text.find("\n", i)) >= 0 else len(text)
+            else:
+                nesting = 1
+                for mark in LEAN_NESTING.finditer(text, i):
+                    nesting += 1 if mark[0] == "/-" else -1
+                    if not nesting:
+                        i = mark.end()
+                        break
+                else:
+                    raise LeanUnsure
+            blanks.append((start, i))
+        elif kind == "mark" and token[0] == '"':
+            holes = word_end is not None and not text[word_end:start].strip(" \n")
+            i = lean_interpolated(text, i, blanks) if holes else lean_plain(text, i)
+        elif kind == "mark" and token[0] == "'":
+            char = LEAN_CHAR.match(text, start)
+            if not char or text[start - 1:start].isalnum():
+                raise LeanUnsure
+            i = char.end()
+        elif kind == "mark" and token[0] == "«":
+            if (close := text.find("»", i)) < 0:
+                raise LeanUnsure
+            i = close + 1
+        elif kind == "mark" and token[0] == "}" and inner and not depth:
+            return i
+        elif kind == "mark":
+            depth += 1 if token[0] == "{" else -1
+    if inner:
+        raise LeanUnsure
+    return len(text)
+
+
+def lean_code(text: str) -> str:
+    """`text`, a Lean source, with its comments blanked (line, block and doc comments, nested) and every other position
+    as it was. Failing towards a full run is the rule: from where it cannot tell (`lean_scan`), the text stays whole."""
+    blanks: list[tuple[int, int]] = []
+    try:
+        lean_scan(text, 0, blanks)
+    except (LeanUnsure, RecursionError):
+        pass
+    parts, at = [], 0
+    for start, end in blanks:
+        parts += [text[at:start], re.sub(r"[^\n]", " ", text[start:end])]
+        at = end
+    return "".join([*parts, text[at:]])
+
+
+def lake_text(path: Path) -> str:
+    """A file `lake_reads` searches: a Lean source without its comments (a comment is no read), any other file whole."""
+    text = path.read_bytes().decode(errors="replace")
+    return lean_code(text) if path.suffix == ".lean" else text
+
+
+def lake_reads(root: Path, outside: list[Path]) -> str:
+    """Casefolded (a Mac's file system ignores case), the text (`lake_text`) of every file under lean/ that Lake reads
+    (`LAKE_FILES`), each symlink's target among them, and of the outside --test files: what `no_build_reads` searches.
+    `inputs` walks the same tree."""
+    out = []
+    for top, dirs, names in os.walk(root / "lean"):
+        dirs[:] = [d for d in dirs if d not in (".lake", ".cache", "__pycache__")]
+        out += [os.readlink(Path(top, n)) for n in [*names, *dirs] if Path(top, n).is_symlink()]
+        out += [lake_text(Path(top, n)) for n in names if LAKE_FILES.fullmatch(n)]
+    return "\n".join([*out, *(lake_text(t) for t in outside)]).casefold()
+
+
+def unread_by_build(name: str, lake: str | None) -> bool:
+    """A plan input is absent, outside comments, from every Lake/Lean source and outside test that can read it."""
+    return lake is not None and not (LISTS_FILES.search(lake) or Path(name).name.casefold() in lake)
+
+
+def no_build_reads(name: str, lake: str | None) -> bool:
+    """Whether `name` (root-relative) is lean/checkers.lock or a .md under lean/ that no Lean build or check can read:
+    `lake` (`lake_reads`) names it nowhere outside a comment, by its bare file name, and lists no directory (a name a
+    module computes from pieces is not looked for: reviewers run without --rescore). Any other file is not.
+    `Scratch` restores a shared build by tools/lean_share.py's key, which leaves the lock out ("which no build reads")."""
+    named = name == lean_share.LOCK_PINS or name.startswith("lean/") and name.endswith(".md")
+    return named and unread_by_build(name, lake)
+
+
+def check_only(changed: list[str], reach: set[str], tests: set[str], lake: str | None = None) -> str | None:
     """Why the files that `changed` (root-relative) are no check-only change, else None: each must be a module of
-    lean/ outside `reach` (every selected declaration's file and import closure), an outside --test file (`tests`)
-    or a generated inventory (`INVENTORIES`). A lakefile, toolchain, trust_map's table or any other file is none."""
+    lean/ outside `reach` (every selected declaration's file and import closure), an outside --test file (`tests`), a
+    generated inventory (`INVENTORIES`), an unread plan input (`CLASS_TABLE` or `PLAN_ONLY_TOOL`, with the same
+    mutants), or a file no build reads (`no_build_reads`). A lakefile, toolchain or any other file is none."""
     for name in changed:
-        if name in tests or name in INVENTORIES:
+        if (name in tests or name in INVENTORIES or
+                (name in PLAN_INPUTS and unread_by_build(name, lake)) or
+                no_build_reads(name, lake)):
             continue
+        if name in PLAN_INPUTS:
+            return f"{name} may be read by a Lean build or check"
         if not (name.startswith("lean/") and name.endswith(".lean")):
-            return f"{name} is no module of lean/, --test file or generated inventory"
+            return f"{name} is no module of lean/, --test file, generated inventory or file no build reads"
         if name.removeprefix("lean/") in reach:
             return f"{name} is a selected declaration's file or in its import closure"
     return None
 
 
-def previous(path: Path, now: dict, found: list[Mutant], why_not) -> tuple[str, str, dict[str, dict], list[str]] | str:
+def previous(path: Path, now: dict, found: list[Mutant], why_not
+             ) -> tuple[str, str, dict[str, dict], list[str], list[str]] | str:
     """--rescore PREV: (mode, its head, by mutant id its verdict {status before --allow, detail, reads, killed_at},
-    the files that changed) when its mutants are `found` and its `inputs` are `now` (mode "identical"), or differ
-    only in files `why_not` finds no reason in (mode "checks": the tool, base and options the same, and PREV records
-    per-file digests); else why not (a full run)."""
+    the files that changed, the plan-only inputs that changed) when its mutants are `found` and its `inputs` are `now`
+    (mode "identical"), or differ only in base, `PLAN_ONLY_TOOL` modules (both records holding `tool_files`) and files
+    `why_not` finds no reason in (mode "checks": the options the same, and PREV records per-file digests); else why
+    not (a full run)."""
     try:
         data = json.loads(path.read_text())
         if not isinstance(data, dict) or "inputs" not in data:
             return "it records no inputs"
-        if "partial" in data:  # eff-tm-partial: its judged verdicts are reused by --resume at its HEAD only
-            return "it is a partial record (its --deadline left mutants unjudged): --resume it at its HEAD"
-        old, changed = data["inputs"], []
+        if "partial" in data:  # its judged verdicts are reused by --resume with identical inputs
+            return "it is a partial record (its --deadline left mutants unjudged): --resume it with identical inputs"
+        old, changed, plan_only = data["inputs"], [], []
         if not isinstance(old, dict):
             return "its inputs differ (keys)"
         if differ := [k for k in OVERALL if old.get(k) != now[k]]:
-            if fixed := [k for k in differ if k in ("tool", "base", "options")]:
-                return f"its inputs differ ({', '.join(fixed)})"
+            tools = old.get("tool_files"), now.get("tool_files")
+            moved = sorted(k for k in tools[0].keys() | tools[1].keys() if tools[0].get(k) != tools[1].get(k)) if all(
+                isinstance(x, dict) for x in tools) else []
+            whole = "tool" in differ and (not moved or not PLAN_ONLY_TOOL.issuperset(moved))
+            if fixed := [k for k in differ if k == "options" or k == "tool" and whole]:
+                return f"its inputs differ ({', '.join(fixed)})" + (
+                    f": {', '.join(x for x in moved if x not in PLAN_ONLY_TOOL)}" if whole and moved else "")
+            if "tool" in differ and (why := why_not(moved)):
+                return f"its inputs differ (tool): {why}"
             if not isinstance(old.get("files"), dict):
                 return f"its inputs differ ({', '.join(differ)}) and it records no per-file digests"
             changed = sorted(k for k in old["files"].keys() | now["files"].keys()
                              if old["files"].get(k) != now["files"].get(k))
-            if why := why_not(changed) if changed else "its per-file digests show no change":
+            if why := why_not(changed) if changed else "its per-file digests show no change" if {
+                    "lean", "tests"} & set(differ) else None:
                 return f"its inputs differ ({', '.join(differ)}): {why}"
+            plan_only = [*(moved if "tool" in differ else []), *(["base"] if "base" in differ else []),
+                         *(x for x in changed if x == CLASS_TABLE or no_build_reads(x, ""))]
         rows, head = data["mutants"], data["head"]
         if unwritten(rows) or not isinstance(head, str) or not head or any(r["raw_status"] == OTHER for r in rows):
             return "it cannot be read: a status, detail or digest is not one this tool writes"
@@ -1581,7 +1761,7 @@ def previous(path: Path, now: dict, found: list[Mutant], why_not) -> tuple[str, 
             return "it records no detail before --allow (`raw_detail`) on a row --allow changed"
         verdicts = {r["id"]: {"status": r["raw_status"], "detail": r.get("raw_detail", r["detail"]),
                               "reads": r.get("reads", ""), "killed_at": r.get("killed_at")} for r in rows}
-        return "checks" if differ else "identical", head, verdicts, changed
+        return "checks" if differ else "identical", head, verdicts, changed, plan_only
     except (OSError, ValueError, KeyError, TypeError, AttributeError) as error:
         return f"it cannot be read ({type(error).__name__}: {error})"
 
@@ -1589,8 +1769,7 @@ def previous(path: Path, now: dict, found: list[Mutant], why_not) -> tuple[str, 
 def resumable(path: Path, head: str, tree: str, now: dict, found: list[Mutant], shard: dict | None,
               max_mutants: int, rescore: dict | None) -> tuple[str, dict[str, dict]] | str:
     """--resume PREV (eff-tm-partial): (its head, by mutant id its row) for every mutant of this run's that PREV
-    judged, when PREV ran at this commit and tree (`head`, `tree`: never another HEAD's verdicts), with these
-    `inputs` (the bytes, so a worktree edit since is no resume), plan, --max-mutants, --shard part and --rescore
+    judged, across commits when `inputs` (the bytes), plan, --max-mutants, --shard part and --rescore
     facts, and its rows are rows this tool writes (`unwritten`, `unfinished`); else why not (a full run)."""
     def facts(r):  # --rescore's facts but its counts, which the resumed run makes again
         return r and {k: v for k, v in r.items() if k not in ("reused", "rerun")}
@@ -1598,7 +1777,9 @@ def resumable(path: Path, head: str, tree: str, now: dict, found: list[Mutant], 
         data = json.loads(path.read_text())
         if not isinstance(data, dict) or type(data.get("tree")) is not str or not data["tree"]:
             return "it records no tree (no record this tool writes, or an older one)"
-        if data.get("head") != head or data["tree"] != tree:
+        if type(data.get("head")) is not str or not data["head"]:
+            return "it records no HEAD commit"
+        if data.get("head") == head and data["tree"] != tree:
             return (f"it ran at {str(data.get('head'))[:12]} (tree {data['tree'][:12]}), not at this HEAD "
                     f"{head[:12]} (tree {tree[:12]})")
         if canon(data.get("inputs")) != canon(now):
@@ -1657,9 +1838,12 @@ def summary(found: list[Mutant], part: bool, seconds: int, rescore: dict | None)
     """Print the counts line and the by-class lines; the counts."""
     counts, by_class = tally(found, part)
     mode, head, changed = (rescore["mode"], rescore["head"] or "", rescore["changed"]) if rescore else ("full", "", [])
+    plan_only = rescore.get("plan_only", []) if rescore else []
+    crossed = [*([f"check-only change: {', '.join(c)}"] if (c := [x for x in changed if x not in plan_only]) else []),
+               *([f"plan-only: {', '.join(plan_only)}"] if plan_only else [])]
     print("trust_mutants: " + ", ".join(f"{n} {s}" for s, n in counts.items()) + f" in {seconds} s"
           + (f"; {rescore['reused']} reused from {head[:12]} (identical inputs)" if mode == "identical" else
-             f"; {rescore['reused']} carried from {head[:12]} (check-only change: {', '.join(changed)})"
+             f"; {rescore['reused']} carried from {head[:12]} ({'; '.join(crossed)})"
              if mode == "checks" else ""))
     for k, n in by_class.items():
         print(f"trust_mutants: {k}: " + ", ".join(f"{x} {s}" for s, x in n.items()))
@@ -1698,11 +1882,13 @@ PART = {"base": str, "head": str, "tree": str, "jobs": int, "max_mutants": int, 
         "seconds": int, "classes": list[str], "inputs": dict, "shard": dict}  # what `record` copies from its arguments
 SHARD = {"k": int, "n": int, "owned": list[str]}
 RESCORE = {"file": str, "head": str | None, "mode": str, "changed": list[str], "reused": int, "rerun": int,
-           "full_run": str}  # full_run only when it was one
+           "full_run": str, "plan_only": list[str]}  # full_run only when it was one; plan_only only when mode "checks"
 PARTIAL_RECORD = {"deadline": int, "unjudged": list[str]}
-RESUMED = {"file": str, "head": str | None, "kept": int, "rerun": int, "ignored": str}  # ignored only when it was
+RESUMED = {"file": str, "head": str | None, "kept": int, "rerun": int, "ignored": str,
+           "carried": str}  # ignored only when it was; carried (CARRIED) only when HEAD moved
+CARRIED = "inputs identical"  # the one wording of a verdict kept from another commit (`resumed`, `shards[]`)
 PLANNED = ("id", "file", "line", "definition", "operator", "before", "after", "lines", "trust_class", "trusted")
-AGREED = ("base", "head", "tree", "max_mutants", "deep", "tests", "classes", "inputs")  # definitions: `unread`'s
+AGREED = ("base", "max_mutants", "deep", "tests", "classes", "inputs")  # definitions: `unread`'s
 
 
 def typed(v, t) -> bool:
@@ -1758,9 +1944,12 @@ def unread(d) -> str | None:
     types (`PART`, `SHARD`, `RESCORE`, `PARTIAL_RECORD`, `RESUMED`), its rows `unwritten` and `unfinished`, and the
     rest (counts, by class, definitions) what `record` makes of them."""
     if not (fits({k: v for k, v in d.items() if k in PART}, PART) and fits(d["shard"], SHARD) and (
-            "rescore" not in d or fits(d["rescore"], RESCORE, ("full_run",)) and d["rescore"]["mode"] in (
+            "rescore" not in d or fits(d["rescore"], RESCORE, ("full_run", "plan_only")) and d["rescore"]["mode"] in (
                 "full", "identical", "checks")) and ("partial" not in d or fits(d["partial"], PARTIAL_RECORD))
-            and ("resumed" not in d or fits(d["resumed"], RESUMED, ("ignored",)))):
+            and ("resumed" not in d or fits(d["resumed"], RESUMED, ("ignored", "carried"))
+                 and d["resumed"].get("carried", CARRIED) == CARRIED
+                 and ("carried" in d["resumed"]) == (d["resumed"]["head"] is not None
+                                                    and d["resumed"]["head"] != d["head"]))):
         return "a field is missing or not of its type"
     if "steps" in d and not timed(d["steps"]):
         return "its steps are not a record of seconds by step"
@@ -1804,7 +1993,7 @@ def merge(out: Path, paths: list[Path]) -> int:
         return refuse(f'no "shard" key {{k, n, owned}} (no --shard part): {", ".join(bad)}')
     if bad := next((p for d, p in parts if "partial" in d), None):  # eff-tm-partial: the DRI's condition
         return refuse(f"{bad} is a partial record (its --deadline left mutants unjudged): a merge needs every planned "
-                      f"mutant judged; run that part again with --resume {bad} at its HEAD")
+                      f"mutant judged; run that part again with --resume {bad} with identical inputs")
     if bad := next(((p, why) for d, p in parts if (why := unread(d))), None):
         return refuse(f"{bad[0]} is not a part this tool writes: {bad[1]}")
     parts.sort(key=lambda x: x[0]["shard"]["k"])
@@ -1820,7 +2009,7 @@ def merge(out: Path, paths: list[Path]) -> int:
         for d, p in parts[1:]:
             agreed = [*((f, d.get(f), first.get(f)) for f in AGREED), ("rescore", "rescore" in d, "rescore" in first),
                       *((f"rescore.{x}", (d.get("rescore") or {}).get(x), (first.get("rescore") or {}).get(x))
-                        for x in ("mode", "head", "file", "changed", "full_run"))]
+                        for x in ("mode", "head", "file", "changed", "plan_only", "full_run"))]
             if bad := next((f for f, a, b in agreed if canon(a) != canon(b)), None):
                 return refuse(f"the parts disagree on {bad}: {path} and {p}")
             if len(d["mutants"]) != len(first["mutants"]):
@@ -1863,7 +2052,10 @@ def merge(out: Path, paths: list[Path]) -> int:
                 return refuse(f"{p} rescore.head does not match its reused rows")
             if (mode == "full" and (rescore_part["changed"] or not rescore_part.get("full_run")) or
                     mode == "identical" and (rescore_part["changed"] or "full_run" in rescore_part) or
-                    mode == "checks" and (not rescore_part["changed"] or "full_run" in rescore_part)):
+                    mode == "checks" and (not (rescore_part["changed"] or rescore_part.get("plan_only"))
+                                          or "full_run" in rescore_part)
+                    or "plan_only" in rescore_part and (mode != "checks" or not rescore_part["plan_only"] or set(
+                        rescore_part["plan_only"]) - PLAN_ONLY_TOOL - {"base"} - set(rescore_part["changed"]))):
                 return refuse(f"{p} rescore.mode does not match its run facts")
             if any(r.get("carried") != ("checks" if mode == "checks" and "reused_from" in r else None)
                    for r in owned):
@@ -1874,7 +2066,8 @@ def merge(out: Path, paths: list[Path]) -> int:
         found = [row_mutant(rows.get(r["id"], (r,))[0]) for r in first["mutants"]]
         rescore = first.get("rescore") and {**first["rescore"], **{x: sum(d["rescore"][x] for d, _ in parts)
                                                                    for x in ("reused", "rerun")}}
-        shards = [{"k": d["shard"]["k"], "n": n, "jobs": d["jobs"], "seconds": d["seconds"],
+        shards = [{"k": d["shard"]["k"], "n": n, "head": d["head"], "jobs": d["jobs"], "seconds": d["seconds"],
+                   **({"carried": CARRIED} if d["head"] != first["head"] else {}),
                    **({"steps": d["steps"]} if "steps" in d else {}),
                    **({"resumed": d["resumed"]} if "resumed" in d else {})} for d, _ in parts]
         steps = summed([d["steps"] for d, _ in parts]) if all("steps" in d for d, _ in parts) else None
@@ -1930,8 +2123,8 @@ def sweep(argv: list[str] | None = None) -> int:
                         "unjudged (a partial record, exit 4)")
     parser.add_argument("--budget", type=float, metavar="SECONDS", help="--deadline this many seconds from the start")
     parser.add_argument("--resume", type=Path, metavar="PREV.json",
-                        help="keep PREV's verdicts when it ran at this HEAD (commit, tree and inputs) and judge only "
-                        "the rest; another HEAD's are ignored")
+                        help="keep PREV's verdicts across commits when the plan and inputs are identical, and judge "
+                        "only the rest")
     args = parser.parse_args(argv)
     if args.merge:
         if args.shard or args.plan or len(args.merge) < 2:
@@ -1987,28 +2180,31 @@ def sweep(argv: list[str] | None = None) -> int:
             m.status = m.raw_status = OTHER
     jobs = args.jobs or max(1, min(8, (os.cpu_count() or 1) - int(os.getloadavg()[1])))
     digests = inputs(root, git(root, "rev-parse", base).stdout.strip(), tests, outside, args.deep, classes)
-    reused, rescore, why, mode, changed, verdicts = "", None, "", "full", [], {}
+    reused, rescore, why, mode, changed, plan_only, verdicts = "", None, "", "full", [], [], {}
     head, head_tree = (git(root, "rev-parse", x).stdout.strip() for x in ("HEAD", "HEAD^{tree}"))
     owned = {"k": shard[0], "n": shard[1], "owned": [m.id for m in mine]} if shard else None  # --json's "shard"
     reads = Reads(root, tree, outside) if args.rescore or args.json else None
     if args.rescore:
         got = previous(args.rescore, digests, found, lambda names: check_only(
-            names, reach(reads, found), {Path(os.path.relpath(t, root)).as_posix() for t in outside}))
+            names, reach(reads, found), {Path(os.path.relpath(t, root)).as_posix() for t in outside},
+            lake_reads(root, outside)))
         if isinstance(got, str):
             why = got
             print(f"trust_mutants: --rescore {args.rescore}: a full run, since {why}", flush=True)
         else:
-            mode, reused, verdicts, changed = got
+            mode, reused, verdicts, changed, plan_only = got
         rescore = {"file": str(args.rescore), "head": reused or None, "mode": mode, "changed": changed,
+                   **({"plan_only": plan_only} if plan_only else {}),
                    **({} if reused else {"full_run": why})}  # its facts; the counts are added at the end
     resumed, kept = None, {}
-    if args.resume:  # eff-tm-partial: the verdicts PREV judged at this HEAD, kept as they are
+    if args.resume:  # finished verdicts at identical inputs, even when HEAD moved
         got = resumable(args.resume, head, head_tree, digests, found, owned, args.max_mutants, rescore)
         if isinstance(got, str):
             print(f"trust_mutants: --resume {args.resume}: its verdicts are not reused (a full run), since {got}",
                   flush=True)
         resumed = {"file": str(args.resume), "head": None if isinstance(got, str) else got[0], "kept": 0,
-                   "rerun": 0, **({"ignored": got} if isinstance(got, str) else {})}
+                   "rerun": 0, **({"ignored": got} if isinstance(got, str) else
+                                  {"carried": CARRIED} if got[0] != head else {})}
         kept = {} if isinstance(got, str) else got[1]
     for m in mine:
         if r := kept.get(m.id):
@@ -2113,7 +2309,7 @@ def sweep(argv: list[str] | None = None) -> int:
     if rescore:
         n = sum(bool(m.reused_from) for m in mine)
         rescore = {"file": rescore["file"], "head": rescore["head"], "mode": mode, "changed": changed, "reused": n,
-                   "rerun": len(mine) - n, **({k: v for k, v in rescore.items() if k == "full_run"})}
+                   "rerun": len(mine) - n, **({k: v for k, v in rescore.items() if k in ("full_run", "plan_only")})}
     if resumed:
         resumed.update(kept=len(kept), rerun=len(mine) - len(kept))
     counts = summary(found, shard is not None, seconds, rescore)
@@ -2121,7 +2317,7 @@ def sweep(argv: list[str] | None = None) -> int:
     partial = {"deadline": int(DEADLINE.at or 0), "unjudged": left} if left else None
     if partial:
         print(f"trust_mutants: PARTIAL: the deadline stopped the run with {len(left)} of its {len(mine)} mutants "
-              f"unjudged (NOT RUN); a --resume of its --json at this HEAD judges only those", flush=True)
+              f"unjudged (NOT RUN); a --resume of its --json with identical inputs judges only those", flush=True)
     if args.json:
         for m in found:  # what each KILLED and INVALID verdict reads, for a later --rescore
             reads.verdict(m)
