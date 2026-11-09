@@ -4,7 +4,7 @@ Usage: uv run python docs/rights/rights-cfr-5/line_roundtrip.py [SEEDS] [--carve
 Every claim, liberty and immunity line with a predicate, of every generated document
 (conformance/rights_differential.py, seeds 0..SEEDS-1, default 200) that correlates; prints
 one JSON object: lines, failures, the failures by cause and by carve-out count, and each
-failing line (seed, right, line name, cause). `--carveout-probe` first applies, in memory
+failing line (by cause and seed, `<right>/<line name>`). `--carveout-probe` first applies, in memory
 only, the one-character fix of rights-cfr-5b (ve/norm_english.py:540 drops the second space
 before a carve-out sentence), to show that it is the cause of every remaining failure."""
 import collections
@@ -59,9 +59,16 @@ def main(seeds):
                     causes[cause] += 1
                     by_unless[f"unless={len(norm['unless'])}"] += 1
                     failing.append([seed, name, norm["name"], cause])
-    print(json.dumps({"seeds": seeds, "documents": documents, "lines": lines, "failures": failures,
-                      "causes": dict(causes), "failures_by_carve_outs": dict(by_unless), "failing": failing},
-                     indent=1))
+    report = json.dumps({"seeds": seeds, "documents": documents, "lines": lines, "failures": failures,
+                         "causes": dict(causes), "failures_by_carve_outs": dict(by_unless)}, indent=1)
+    # the failing lines, one row per cause and seed: "<right>/<line name>"
+    rows = collections.defaultdict(lambda: collections.defaultdict(list))
+    for seed, right, line, cause in failing:
+        rows[cause][seed].append(f"{right}/{line}")
+    listed = ",\n".join(f"  {json.dumps(cause)}: {{\n" + ",\n".join(
+        f"   {json.dumps(str(seed))}: {json.dumps(names)}" for seed, names in seeds_.items()) + "\n  }"
+        for cause, seeds_ in rows.items())
+    print(report[:-2] + ',\n "failing": {' + ("\n" + listed + "\n " if listed else "") + "}\n}")
 
 
 if __name__ == "__main__":
