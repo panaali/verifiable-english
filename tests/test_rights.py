@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import pytest
 import json
+import re
 from copy import deepcopy
 
 from tests.test_norms import environment, obligation, permission
@@ -1076,6 +1077,133 @@ def rights_env_without_profile():
     raw["profiles"].remove("rights@0")
     raw["vocabulary"].pop("rights")
     return raw
+
+
+def switch_env(parties=("user",)):
+    raw = rights_env()
+    raw["vocabulary"]["soft"] = {"parties": list(parties), "ranks": [], "outranks": [],
+                                 "outranking": {"mode": "strict"}}
+    return RightsEnvironment(raw)
+
+
+def test_rights_incident_roundtrip_with_switch():
+    """rights-cfr-5 (rights.md :228, :436): a line with a switch carries norm_english's
+    header option and survives render_line -> parse_line with its switch."""
+    env = switch_env()
+    for kind, norm in (("claim", claim()["norm"] | {"alterable": ["user"]}),
+                       ("claim", claim()["norm"] | {"alterable": ["user"], "mode": "default", "exception": {
+                           "decided_by": "unstated", "sufficient": [], "necessary": [], "factors": []}})):
+        source = render_line(env, "life", kind, norm)
+        assert source.startswith("Claim of right life (user may turn off). Every state ")
+        assert parse_line(env, source, name="protect") == {"right": "life", "kind": kind, "norm": norm}
+    two = switch_env(("operator", "user"))
+    norm = claim()["norm"] | {"alterable": ["operator", "user"]}
+    source = render_line(two, "1", "claim", norm)
+    assert source.startswith("Claim of right 1 (operator and user may turn off). ")
+    assert parse_line(two, source, name="protect")["norm"] == norm
+
+
+def test_rights_incident_header_the_renderer_never_writes_is_refused():
+    """The negative test of rights-cfr-5's signed widening: only the header forms
+    render_header_options writes for one rule are read; a precedence option (never
+    rendered on a single line), other spellings and spacings stay refused."""
+    env = switch_env(("operator", "user"))
+    body = "Every state must protect each person."
+    assert parse_line(env, "Claim of right life (user may turn off). " + body,
+                      name="protect")["norm"]["alterable"] == ["user"]
+    for header in (" ()", " (exception to rule 1)", " (exception to rules 1)",
+                   " (exception to rule 1; user may turn off)", " (user may turn off; exception to rule 1)",
+                   " (user may turn off;)", "  (user may turn off)", " (user  may turn off)",
+                   " (User may turn off)", " (user may turn it off)", " (operator, user may turn off)",
+                   " (user may turn off) ", "(user may turn off)", " [user may turn off]",
+                   "\u00a0(user may turn off)", "\t(user may turn off)", " (user\u00a0may turn off)",
+                   " (user may turn off)\r", " \uff08user may turn off\uff09", " (user and user may turn off)"):
+        # refused before any parse, with main's text (no wording delta)
+        with pytest.raises(VEError, match=r"\ASyntaxError: expected Claim, Liberty or Immunity of right\Z"):
+            parse_line(env, "Claim of right life" + header + ". " + body, name="protect")
+    # the rendered spelling, but parties the renderer never writes here (it sorts them;
+    # guest is undeclared): the soft checker refuses them as in a document
+    with pytest.raises(VEError, match="sorted and distinct"):
+        parse_line(env, "Claim of right life (user and operator may turn off). " + body, name="protect")
+    with pytest.raises(VEError, match="party guest"):
+        parse_line(env, "Claim of right life (guest may turn off). " + body, name="protect")
+
+
+def test_rights_incident_header_delta_keeps_base_names_r1():
+    """R1 evidence for rights-cfr-5's saved header delta (docs/rights/rights-cfr-5/
+    header-delta.json): a line whose header is in the rendered spelling but names
+    parties the checker refuses now gets the soft checker's diagnostic in place of the
+    generic one, keeping every name the base quoted; an accepted row is exactly a line
+    render_line writes. Each head answer is recomputed."""
+    from pathlib import Path
+    saved = json.loads((Path(__file__).parents[1] / "docs/rights/rights-cfr-5/header-delta.json").read_text())
+    env = switch_env(tuple(saved["parties"]))
+    assert len(saved["differ"]) == 4 and saved["equal"] == 46
+    for row in saved["differ"]:
+        base = row["base"]["refused"]
+        try:
+            head = {"accepted": parse_line(env, row["source"], name="protect")["norm"].get("alterable", [])}
+        except VEError as error:
+            head = {"refused": f"{type(error).__name__}: {error}"}
+        assert head == row["head"], row["source"]
+        if "refused" in head:
+            assert all(quoted in head["refused"] for quoted in re.findall(r"'[^']*'|\"[^\"]*\"", base))
+            # more specific than the base: it names the refused party or the sortedness rule
+            assert "party guest" in head["refused"] or "sorted and distinct" in head["refused"]
+        else:
+            norm = claim()["norm"] | {"alterable": head["accepted"]}
+            assert render_line(env, "life", "claim", norm) == row["source"]
+
+
+def _generated_lines(seeds):
+    """(env, rights, right, kind, norm) for every claim, liberty and immunity line with a
+    predicate of the rights generator's documents (conformance/rights_differential.py)
+    that correlate."""
+    from conformance.rights_differential import document
+
+    for seed in range(seeds):
+        raw, units = document(seed)
+        try:
+            rights = correlate(raw, units)
+        except VEError:
+            continue
+        env = RightsEnvironment(raw)
+        for unit in units:
+            block = unit.get("right") or unit.get("right_lines") or {}
+            for line in block.get("lines", ()):
+                norm = line.get("norm")
+                if line["kind"] != "power" and norm["predicate"] is not None:
+                    yield env, rights, block.get("name") or block["right"], line["kind"], norm
+
+
+def _round_trips(env, rights, right, kind, norm):
+    source = render_line(env, right, kind, norm, rights=rights)
+    return parse_line(env, source, name=norm["name"], rights=rights) == {"right": right, "kind": kind, "norm": norm}
+
+
+def test_generated_rights_lines_round_trip_one_by_one():
+    """rights-cfr-5 deliverable 3: every line of the rights generator's documents (seeds
+    0-39) with at most one carve-out survives render_line -> parse_line, switch-bearing
+    and default lines included (two or more carve-outs: the pinned refusal below)."""
+    switched = checked = 0
+    for env, rights, right, kind, norm in _generated_lines(40):
+        if len(norm["unless"]) <= 1:
+            assert _round_trips(env, rights, right, kind, norm), (right, norm)
+            checked += 1
+            switched += "alterable" in norm
+    assert checked >= 50 and switched >= 5, (checked, switched)
+
+
+def test_generated_rights_lines_with_two_carve_outs_are_refused_until_rights_cfr_5b():
+    """Known failure, pinned (the gate's skip policy refuses an xfail): norm_english's soft parser does not read
+    its own `Except when` sentences back (double space at ve/norm_english.py:540), so every generated line with
+    two or more carve-outs is refused with this one error. rights-cfr-5b fixes it; this test then fails and
+    becomes the round-trip assertion."""
+    lines = [line for line in _generated_lines(40) if len(line[4]["unless"]) > 1]
+    assert len(lines) >= 5
+    for line in lines:
+        with pytest.raises(VEError, match="^Expected a complete rule sentence$"):
+            _round_trips(*line)
 
 
 def test_line_on_a_base_predicate_is_unknown_not_a_crash():
