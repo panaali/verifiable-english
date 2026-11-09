@@ -160,6 +160,8 @@ DEADLINES: dict[str, tuple[float, float]] = {
     "english.command": _CORE,
     # The `scope` mode (scope SC-1c): the document mode's GOVERN step, without the chain after it.
     "scope": (120.0, 120.0),
+    # The `act-readings` mode (act-phrases AP-4): one phrase's readings, within the parse limits of one act check.
+    "act-readings": _CORE,
 }
 WALL_FACTOR = 10.0
 _MIB = 1 << 20

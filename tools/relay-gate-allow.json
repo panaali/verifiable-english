@@ -2561,6 +2561,16 @@
    "kind": "follow-up",
    "id": "F10",
    "reason": "english.command (ci-2) has no Python relay until ci-2b: ci-2b's `read_command` (ve/backends/english_lean.py) binds the answer to its request, with the english.command rows of tests/test_relay_binding_inventory.py (D9). The legend has one line for the task, one for the addressee and one per definite of the request's scope (VE.SpeechActs.Run.legend); a repeated line is not checked against it."
+  },
+  {
+   "route": "service:act-readings",
+   "mutation": "duplicate",
+   "path": [
+    "results/*/result/readings/*/acts"
+   ],
+   "kind": "by-design",
+   "id": "AP4-F1",
+   "reason": "Which acts a reading lists, one listed twice included, is Lean's content: spec 7's binding list binds the readings (pairwise distinct as their acts lists) and each act's token indices, not a reading's acts, and spec E16's phrase reads one act written twice (ap-4 review F1; tests/test_acts_readings_answer.py::test_e16_one_act_written_twice_is_bound). A duplicated act stays typed and bound to the request (R8)."
   }
  ]
 }

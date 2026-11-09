@@ -444,6 +444,7 @@ def corpus():
             "metered": metered_cases(), "calc": [*calc_cases(), *ADVERSARIAL],
             "cardinality": [*cardinality_cases(), *ADVERSARIAL],
             "scope": [*recorded("scope"), *ADVERSARIAL],
+            "act-readings": [*recorded("act-readings"), *ADVERSARIAL],
             "english.command": [*command_cases(), *ADVERSARIAL]}
 
 
