@@ -3,7 +3,7 @@
 Status: delivered in full. No signature is reserved and no part moved to pe-1c. HEAD: the last commit of
 `feature/pe-1b`. The four † theorems are proved, `check` has step 6a, `check_ok_iff` is re-proved with the new
 conjunct, and every listed fixture is a `#guard`. Trust: S +12, K +0 (R16). No user-visible delta.
-SELECTED: SEE-TESTS. Next item: pe-2.
+SELECTED: 113 of 556 units, exit 0, 0 failed (on 8b55af902). Next item: pe-2.
 
 Plan and spec: `docs/spec/purpose-explanation-PLAN.md` "PE-1" (lines 1009-1045: F2c-F2e, F9, F9a, F10 and the
 seeded bugs) and section 10.3 (PE-R8 and PE-R11 as applied). `docs/spec/purpose-explanation.md` 4.1-4.4, and its
@@ -159,7 +159,10 @@ The method is in `mutants.json`'s `command`:
 - Lean: `cd lean && lake build` prints "Build completed successfully (1319 jobs)". `python3 lean/audit.py` prints
   "PASS: 789 source files; 8712 named theorem declarations audited … only the declared standard axiom allowlist".
 - `uv run python tools/lean_statements.py` prints "removed: 0, changed: 0" (additions only).
-- Selected tests: SEE-TESTS.
+- Selected tests, on the committed tree 8b55af902 (git status clean):
+  `MAC_PYTEST_NO_DEFER=1 zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`. It selected
+  113 of 556 test units and ran them on the VM (ve-mac-1 unreachable): exit 0, "0 failed", 7364 s. The chunked
+  files passed in full: `test_trust_mutants.py` 808, `test_acts_vocab_mutants.py` 643, `test_english_evidence.py` 77.
 - No Python or Rust file changed, so there is no relay, schema or R8 binding to fuzz.
 
 ## Pilot bytes
@@ -190,7 +193,7 @@ alone, cannot be redone from history, so the Size section says so.
    the committed final HEAD (the chain's step).
 7. PASS: DELTA.md row 1 cites R16, with the trust-mutant and seeded-bug evidence R16 asks for.
 8. PASS: DELTA.md says no user-visible delta, and its grep and `git diff --stat` show it.
-9. PASS: `tools/select_tests.py --base $(git merge-base HEAD main)` selects 467 of 556 units, including
+9. PASS: `tools/select_tests.py --base $(git merge-base HEAD main)` selects 113 of 556 units, including
    `test_trust_budget.py`, `test_trust_mutants.py`, `test_lean_default_build.py` and `test_assurance_manifest.py`.
 10. PASS: each seeded bug breaks the proof it should (`packsInert_iff`, `shownUnder_iff`, `unlinkedActive_iff`,
     `check_ok_iff`). The statements are the spec's (the mechanical comparison above). No `tools/check_*_statements.py`
