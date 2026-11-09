@@ -11341,8 +11341,11 @@
         "VE.SpeechActs.Wire.wraps"
       ],
       "D[R]": [
+        "VE.SpeechActs.Wire.Role.tag",
+        "VE.SpeechActs.Wire.kindTag",
         "VE.SpeechActs.Wire.readingSetsError",
-        "VE.SpeechActs.Wire.readingsBound"
+        "VE.SpeechActs.Wire.readingsBound",
+        "VE.SpeechActs.Wire.roleFits"
       ],
       "D[I]": [
         "VE.SpeechActs.Wire.Binding",
@@ -19817,12 +19820,18 @@
     },
     "VE/Commands/RunSplit.lean": {
       "T": [
+        "VE.Commands.SourceExamples.attributed",
         "VE.Commands.SourceExamples.click",
         "VE.Commands.SourceExamples.context",
         "VE.Commands.SourceExamples.env",
         "VE.Commands.SourceExamples.fenced",
+        "VE.Commands.SourceExamples.formula",
+        "VE.Commands.SourceExamples.hedged",
         "VE.Commands.SourceExamples.mismatch",
+        "VE.Commands.SourceExamples.mixed",
+        "VE.Commands.SourceExamples.one",
         "VE.Commands.SourceExamples.payload",
+        "VE.Commands.SourceExamples.resolving",
         "VE.Commands.SourceExamples.result",
         "VE.Commands.SourceExamples.share",
         "VE.Commands.SourceExamples.two"
