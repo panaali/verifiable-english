@@ -15,6 +15,9 @@ sort, and the node limit read on the first premise only. This test plants those 
 - `swap`: each two adjacent check steps of a `do` block swapped when the second does not read what the first binds,
   so the fault order (spec 4's items, then each item's checks, as written) is pinned by a fixture with both faults.
 
+By hand beside them: `HOOK`, et-4b's route hook, one per claimed behaviour, and `ORDER`, the two order pins across
+the `decodeThroughLinks`/`finishEvents` split that no swap of one `do` block reaches (DRI 2026-11-08, et-4b-gate 3).
+
 The checks' own conditions get the tool's operators (`--classes all`: docs/events-time-causation/et-4/
 all-mutants.json). Each mutant is elaborated with `lake env lean` as one file, `Wire.lean` then the fixtures; it is
 killed when `Wire.lean` elaborates and every error is a failed `#guard`. The unmutated file must elaborate cleanly, a
@@ -23,6 +26,8 @@ mutant must change the source, and a mutant listed as equivalent must elaborate 
 from __future__ import annotations
 
 from functools import partial
+import json
+import os
 import re
 import shutil
 import subprocess
@@ -73,6 +78,17 @@ HOOK = {
     "sum-first-only": ("(sized.map (·.2)).sum > limit", "((sized.take 1).map (·.2)).sum > limit"),
     "repeat-ignores-seen": ("Std.HashSet.ofList seen", "(∅ : Std.HashSet String)"),
     "repeat-last-wins": ("| some r => (some r, acc.2)", "| some _ => (if acc.2.contains n then some n else acc.1, acc.2)"),
+}
+
+# Spec 4's item order across the split (reviews/dri-decisions-20261108-et-4b-gate.md item 3): the two swaps the
+# generator made before `decodeEvents` was split into `decodeThroughLinks` and `finishEvents`, each killed by a
+# fixture with both faults in WireExamples.lean: each item-4 sort fault (`EventsSort: deed` and the rest) beside the
+# base block's link, whose sorts are then no role sorts; "Item 5 before item 6" (and `LinkNotOpen` on `badDate`).
+ORDER = {
+    "order-links-before-roles": ("  checkRoles W V0\n  pure ⟨W, V0, ← checkLinks W V0 raw, dates, anchor⟩",
+                                 "  let ls ← checkLinks W V0 raw\n  checkRoles W V0\n  pure ⟨W, V0, ls, dates, anchor⟩"),
+    "order-dates-before-links": ("  pure ⟨W, V0, ← checkLinks W V0 raw, dates, anchor⟩",
+                                 "  let _ ← checkDates W dates anchor\n  pure ⟨W, V0, ← checkLinks W V0 raw, dates, anchor⟩"),
 }
 
 # Lists one check may read for another: each is replaced by each other one of its group.
@@ -185,17 +201,28 @@ def _generated(text: str) -> dict[str, str]:
 
 
 def _review(name: str, text: str) -> str:
-    old, new = REVIEW.get(name) or HOOK[name]
+    old, new = REVIEW.get(name) or HOOK.get(name) or ORDER[name]
     assert text.count(old) == 1, name
     return text.replace(old, new)
 
 
 def _mutants() -> dict[str, str]:
     text = WIRE.read_text()
-    return {**{n: _review(n, text) for n in (*REVIEW, *HOOK)}, **_generated(text)}
+    return {**{n: _review(n, text) for n in (*REVIEW, *HOOK, *ORDER)}, **_generated(text)}
 
 
 MUTANTS = _mutants()
+
+
+def mutant_cases() -> dict[str, str]:
+    """Each mutant's operator, definition and changed lines by name: tools/gate_collection.py pairs by it."""
+    before, out = WIRE.read_text().split("\n"), {}
+    for name, text in MUTANTS.items():
+        after = text.split("\n")
+        start = len(os.path.commonprefix([before, after]))
+        end = len(os.path.commonprefix([before[start:][::-1], after[start:][::-1]]))
+        out[name] = json.dumps([*name.split("-")[:2], before[start:len(before) - end], after[start:len(after) - end]])
+    return out
 
 
 def _assemble(wire: str) -> str:

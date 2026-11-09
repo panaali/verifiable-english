@@ -37,7 +37,7 @@ PYTHON = {
     # renders and re-reads candidates through the senses route.
     4: ("__main__ adapters admission argument ask attacks authoring bundle check "
         "document equivalence events norm_admission norm_defaults norm_defaults_contract norm_defaults_english norm_defaults_route norm_strict "
-        "defaults_english filling_search openterms propose readings search stream_audit vacuity assist discourse words calc scope judgment_lines cardinality "
+        "defaults_english filling_search openterms propose readings search stream_audit vacuity assist discourse words calc scope judgment_lines cardinality acts "
         "reports reports_route risk rights_route soft_route speech_document readings_route readings_s1 "
         "readings_sup readings_verdicts readings_components readings_s2_wording senses_document defaults "
         "backends.senses backends.speech_source senses.display").split(),
@@ -163,10 +163,10 @@ def lean_layer(module: str) -> int | None:
                   "VE.Calc.RunExamples", "VE.Defaults.RouteExamples", "VE.Defaults.ZoneWireExamples", "VE.Readings.ActsExamples",
                   "VE.Cardinality.RunExamples", "VE.Scope.RunExamples", "VE.Senses.RunExamples",
                   "VE.Events.RouteExamples", "VE.Commands.RunExamples", "VE.Commands.RunSplit",
-                  "VE.EnglishGrammar.JudgmentRunExamples", "VE.Senses.TextsExamples",
-                  "VE.EnglishGrammar.SourceWordsExamples"}:
+                  "VE.EnglishGrammar.JudgmentRunExamples", "VE.Senses.TextsExamples", "VE.Acts.RunExamples",
+                  "VE.Rights.OpenActExamples", "VE.EnglishGrammar.SourceWordsExamples"}:
         return 4  # runner-boundary acceptance fixtures import EnglishGrammar.Run, Question.Run, Alternatives.Run, Calc.Run,
-        # NormDefaults.Run, Readings.Run, Cardinality.Run, Scope.Run, Senses.Run or Commands.Run
+        # NormDefaults.Run, Readings.Run, Cardinality.Run, Scope.Run, Senses.Run, Commands.Run, Acts.Run or Rights.Run
     if module in {"VE.Discourse.Compose", "VE.Discourse.ComposeExamples"}:
         return 4  # the composed admission runs the chain routes and states theorems on Service.Document.profilesOf
         # (discourse 14.4 to 14.6, cmp-s4); its fixtures read Discourse.Run
@@ -188,8 +188,8 @@ def lean_layer(module: str) -> int | None:
         return 4  # checks Service.Document.checkDocSets on PC-1's fixtures (profile-composition 5.1)
     if module in {"VE.Question.Spans"}:
         return 4  # states theorems on EnglishGrammar.Run.codepointsBefore (question answering Q1.1)
-    if module == "VE.Commands.Read":
-        return 4  # reads a condition through EnglishGrammar.Run.translation (commands-imperatives CI-1)
+    if module in {"VE.Commands.Read", "VE.Commands.Steps", "VE.Commands.StepsExamples"}:
+        return 4  # reads a condition through EnglishGrammar.Run.translation (commands-imperatives CI-1); CI-3's steps over it
     if module.startswith("VE.Ask."):
         return 4  # question answering Q2: binds a request to Service.Document's split and reads EnglishGrammar.Run
     if module in {"VE.Acts.LexicalBase", "VE.Acts.Lexical", "VE.Acts.LexicalProofs", "VE.Acts.Compat",

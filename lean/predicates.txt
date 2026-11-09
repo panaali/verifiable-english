@@ -10,6 +10,7 @@ module MeteredMain
 module ResponseDecode
 module ResponseShape.CaseDeciders
 module ResponseShape.DefaultsExamples
+module ResponseShape.Encoders.ActReadings
 module ResponseShape.Encoders.Alternatives
 module ResponseShape.Encoders.Ask
 module ResponseShape.Encoders.Calc
@@ -44,6 +45,7 @@ module ResponseShape.Encoders.Words
 module ResponseShape.Encoders
 module ResponseShape.EnumSites
 module ResponseShape.FitsTactic
+module ResponseShape.Schemas.ActReadings
 module ResponseShape.Schemas.Alternatives
 module ResponseShape.Schemas.Ask
 module ResponseShape.Schemas.Bundle
@@ -118,6 +120,7 @@ module VE.Acts.ReadingsExamples
 module VE.Acts.RenderExamples
 module VE.Acts.RuleExamples
 module VE.Acts.Run
+module VE.Acts.RunExamples
 module VE.Acts.Situation
 module VE.Acts.Sources
 module VE.Acts.Syntax
@@ -258,6 +261,8 @@ module VE.Commands.Read
 module VE.Commands.Run
 module VE.Commands.RunExamples
 module VE.Commands.RunSplit
+module VE.Commands.Steps
+module VE.Commands.StepsExamples
 module VE.Commands.Texts
 module VE.Compose.Adjoin
 module VE.Compose.Content
@@ -505,6 +510,8 @@ module VE.Presupposition.Frame
 module VE.Presupposition.Reading
 module VE.Presupposition.Rows
 module VE.Presupposition.Rules
+module VE.Presupposition.Table
+module VE.Presupposition.Wire
 module VE.Purposes.Decl
 module VE.Purposes.Examples
 module VE.Purposes.WellFormed
@@ -599,6 +606,19 @@ module VE.Readings.VerdictsWire
 module VE.Readings.Wire
 module VE.RightClauses.Examples
 module VE.RightClauses.Plain
+module VE.RightClauses.PlainWellFormed.Clauses
+module VE.RightClauses.PlainWellFormed.Corollaries
+module VE.RightClauses.PlainWellFormed.Guards
+module VE.RightClauses.PlainWellFormed.Hyp
+module VE.RightClauses.PlainWellFormed.Lines
+module VE.RightClauses.PlainWellFormed.RightsSem
+module VE.RightClauses.PlainWellFormed.SoftCheck
+module VE.RightClauses.PlainWellFormed.SoftExt
+module VE.RightClauses.PlainWellFormed.SoftValid
+module VE.RightClauses.PlainWellFormed.Str
+module VE.RightClauses.PlainWellFormed.W1Check
+module VE.RightClauses.PlainWellFormed.W1Ext
+module VE.RightClauses.PlainWellFormed
 module VE.RightClauses.Relation
 module VE.RightClauses.Tree
 module VE.Rights.Admission
@@ -606,6 +626,7 @@ module VE.Rights.Bar
 module VE.Rights.Correlate
 module VE.Rights.Distinction
 module VE.Rights.Examples
+module VE.Rights.OpenActExamples
 module VE.Rights.Projections
 module VE.Rights.Route
 module VE.Rights.Run
@@ -661,6 +682,8 @@ module VE.Scales.Intended
 module VE.Scales.Premises
 module VE.Scales.Syntax
 module VE.Scales.Theorems
+module VE.Scope.Authoring
+module VE.Scope.AuthoringExamples
 module VE.Scope.EffectLemmas
 module VE.Scope.Effects
 module VE.Scope.English
@@ -1315,6 +1338,23 @@ VE.Reports.Source.J@VE.Attribution.Semantics
 VE.Reports.UniformPolarity@VE.Attribution.Content
 VE.Reports.WF@VE.Attribution.Facts
 VE.Reports.beliefsIn@VE.Attribution.Semantics
+VE.RightClauses.PWF.DualCtx@VE.RightClauses.PlainWellFormed.SoftExt
+VE.RightClauses.PWF.EnvOK@VE.RightClauses.PlainWellFormed.Guards
+VE.RightClauses.PWF.EnvOKB@VE.RightClauses.PlainWellFormed.SoftValid
+VE.RightClauses.PWF.FExt.below@VE.RightClauses.PlainWellFormed.Guards
+VE.RightClauses.PWF.FExt@VE.RightClauses.PlainWellFormed.Guards
+VE.RightClauses.PWF.Facts@VE.RightClauses.PlainWellFormed.Hyp
+VE.RightClauses.PWF.FromSource@VE.RightClauses.PlainWellFormed.Hyp
+VE.RightClauses.PWF.GHyp@VE.RightClauses.PlainWellFormed.SoftValid
+VE.RightClauses.PWF.NRel@VE.RightClauses.PlainWellFormed.W1Ext
+VE.RightClauses.PWF.NodeOKT@VE.RightClauses.PlainWellFormed.W1Check
+VE.RightClauses.PWF.OkOrRL@VE.RightClauses.PlainWellFormed.Guards
+VE.RightClauses.PWF.OkOrRLV@VE.RightClauses.PlainWellFormed.SoftCheck
+VE.RightClauses.PWF.Plus@VE.RightClauses.PlainWellFormed.Guards
+VE.RightClauses.PWF.QC@VE.RightClauses.PlainWellFormed.SoftValid
+VE.RightClauses.PWF.RL@VE.RightClauses.PlainWellFormed.Guards
+VE.RightClauses.PWF.TRel@VE.RightClauses.PlainWellFormed.W1Ext
+VE.RightClauses.PWF.TypesAt@VE.RightClauses.PlainWellFormed.W1Check
 VE.Rights.Admission.CouplingLeaf@VE.Rights.Admission
 VE.Rights.Admission.LayerLeaf@VE.Rights.Admission
 VE.Rights.Admission.NodeAdmitted@VE.Rights.Admission

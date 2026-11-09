@@ -22,6 +22,7 @@ its merge strategy:
 | english-lexicon-fixtures | `lean/VE/EnglishGrammar/LexiconFixtures.lean` | regenerate |
 | question-fixtures | `lean/VE/Question/Fixtures.lean` | regenerate |
 | calc-units-fixtures | `lean/VE/Calc/UnitsExamples.lean` | regenerate |
+| presupposition-table | `lean/VE/Presupposition/Table.lean` | regenerate |
 | english-run-copy | `lean/VE/Service/EnglishRun.lean` | regenerate |
 | route-cases | `lean/VE/Route/examples/route-cases.json` | regenerate |
 | lean-roots | `lean/VE.lean`, `lean/ResponseShape.lean` | union |
