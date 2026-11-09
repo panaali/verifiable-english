@@ -483,17 +483,15 @@ class Changes:
                                                                               value.values()) else {})
         pairs = {}
         for function in sorted(functions):
-            sides = [{nodeid: cases.get(nodeid[len(function) + 1:-1]) for nodeid in ids
-                      if nodeid.startswith(function + "[")}
-                     for ids, cases in zip((expected, collected), texts[function.partition("::")[0]])]
-            if all(None not in side.values() for side in sides):  # every case has its text on both sides
-                pairs.update(pair_cases(*sides))
+            sides = zip((expected, collected), texts[function.partition("::")[0]])
+            pairs.update(pair_cases(*[{nodeid: cases.get(nodeid[len(function) + 1:-1]) for nodeid in ids
+                                       if nodeid.startswith(function + "[")} for ids, cases in sides]))
         return {nodeid: head for nodeid, head in pairs.items() if nodeid in lost}
 
 
 def pair_cases(base: dict[str, str], head: dict[str, str]) -> dict[str, str]:
-    """{base ID the head lacks: a head ID with its text, one each} from one function's {ID: mutant text} on each
-    side, when every base text has a head case; when one is gone, nothing, so the lost IDs stay refused."""
+    """{base ID the head lacks: a head ID with its text, one each} from one function's {ID: mutant text or None} on
+    each side, when every base text has a head case; when one is gone, nothing. A case with no text never pairs."""
     free: dict[str, list[str]] = {}
     for nodeid, text in head.items():
         if base.get(nodeid) != text:  # not a case that keeps its ID and its text
