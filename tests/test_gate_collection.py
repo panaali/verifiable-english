@@ -541,7 +541,7 @@ def test_the_gate_fails_on_every_missing_id_no_trailer_names_and_lists_the_recor
         "head_ids": 2, "added": 1,
         "removed": {"tests/c.py::test_gone": {"label": "its file is deleted", "reason": "merged into a",
                                               "commit": "r" * 40}},
-        "refused": {"tests/b.py::test_old": "its file is deleted"}, "stale": [], "malformed": []}
+        "refused": {"tests/b.py::test_old": "its file is deleted"}, "stale": [], "malformed": [], "paired": {}}
     text = result["failures"][0]["reason"]
     assert "  tests/b.py::test_old  (its file is deleted)" in text and "b" * 40 in text
     assert "test_gone" not in text and "test_a" not in text
