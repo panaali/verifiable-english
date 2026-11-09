@@ -17382,7 +17382,8 @@
         "VE.Readings.supCertificateCheckSD"
       ],
       "P": [
-        "VE.Readings.FillLite"
+        "VE.Readings.FillLite",
+        "VE.Readings.dropUnsaid"
       ]
     },
     "VE/Readings/SoftSupExamples.lean": {
@@ -17403,7 +17404,17 @@
         "VE.Readings.SoftSupExamples.sides",
         "VE.Readings.SoftSupExamples.closeCert",
         "VE.Readings.SoftSupExamples.q4",
-        "VE.Readings.SoftSupExamples.NSDa"
+        "VE.Readings.SoftSupExamples.NSDa",
+        "VE.Readings.SoftSupExamples.conflictAt",
+        "VE.Readings.SoftSupExamples.fY",
+        "VE.Readings.SoftSupExamples.bothSides",
+        "VE.Readings.SoftSupExamples.q5",
+        "VE.Readings.SoftSupExamples.q6",
+        "VE.Readings.SoftSupExamples.toE",
+        "VE.Readings.SoftSupExamples.avoidAll",
+        "VE.Readings.SoftSupExamples.fillOf",
+        "VE.Readings.SoftSupExamples.checkSides",
+        "VE.Readings.SoftSupExamples.named"
       ]
     },
     "VE/SoftNorms/TreeExamples.lean": {
