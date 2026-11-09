@@ -9813,6 +9813,128 @@ theorem VE.Commands.RunSplit.typed_facts_are_ci1s
                 VE.SpeechActs.commandOk D (VE.Commands.Reading.command u r) = Bool.true
   -- uses VE.Commands.Context.E@VE.Commands.Run VE.Commands.Context.L@VE.Commands.Run VE.Commands.Context.b@VE.Commands.Run VE.Commands.Context.sc@VE.Commands.Run VE.Commands.Context.se@VE.Commands.Run VE.Commands.Context@VE.Commands.Run VE.Commands.Outcome.one@VE.Commands.Read VE.Commands.Outcome@VE.Commands.Read VE.Commands.Reading.command@VE.Commands.Read VE.Commands.Reading@VE.Commands.Read VE.Commands.declared@VE.Commands.Read VE.Commands.readCommand@VE.Commands.Read VE.Environment@VE.Syntax VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Wire.NormsEnvironment.regulated@VE.Norms.Wire VE.Norms.Wire.NormsEnvironment.rv@VE.Norms.Wire VE.Route.Wire.RouteVocabulary.environment@VE.Route.Wire VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.SpeechDoc.E@VE.SpeechActs.Tree VE.SpeechActs.SpeechDoc.regulated@VE.SpeechActs.Tree VE.SpeechActs.SpeechDoc.scope@VE.SpeechActs.Tree VE.SpeechActs.SpeechDoc@VE.SpeechActs.Tree VE.SpeechActs.Wire.SpeechEnvironment.ne@VE.SpeechActs.Wire VE.SpeechActs.commandOk@VE.SpeechActs.Tree VE.SpeechActs.scopeOk@VE.SpeechActs.Tree
   -- expr 902153147
+theorem VE.Commands.SplitOn.intercalate_cons
+  ∀ {sep : List Char} (x : List Char) (l : List (List Char)),
+    sep.intercalate (x :: l) = x ++ List.flatMap (fun x => sep ++ x) l
+  -- uses
+  -- expr 2530804173
+theorem VE.Commands.SplitOn.intercalate_data
+  ∀ (t : String) (l : List (List Char)), (t.intercalate (List.map String.mk l)).data = t.data.intercalate l
+  -- uses
+  -- expr 2717213785
+theorem VE.Commands.SplitOn.intercalate_splitOn
+  ∀ (s t : String), t ≠ "" → t.intercalate (s.splitOn t) = s
+  -- uses
+  -- expr 2782818769
+theorem VE.Commands.SplitOn.intercalate_splitOnL
+  ∀ {sep : List Char}, sep ≠ [] → ∀ (l : List Char), sep.intercalate (VE.Commands.SplitOn.splitOnL sep l) = l
+  -- uses VE.Commands.SplitOn.splitOnL@VE.Commands.SplitOnLemmas
+  -- expr 4219467877
+theorem VE.Commands.SplitOn.modifyHead_comp
+  ∀ (X : List (List Char)) (cur : List Char) (c : Char),
+    List.modifyHead (fun x => cur ++ x) (List.modifyHead (fun x => c :: x) X) =
+      List.modifyHead (fun x => cur ++ [c] ++ x) X
+  -- uses
+  -- expr 3766927044
+theorem VE.Commands.SplitOn.prefix_first
+  ∀ {d : Char} {ds P l x : List Char} {xs : List (List Char)},
+    ¬d ∈ P → P <+: l → VE.Commands.SplitOn.splitOnL (d :: ds) l = x :: xs → P <+: x
+  -- uses VE.Commands.SplitOn.splitOnL@VE.Commands.SplitOnLemmas
+  -- expr 262546722
+theorem VE.Commands.SplitOn.splitOnAux_spec
+  ∀ (s t : String) (n k : Nat) (B cur m rest more : List Char) (r : List String),
+    (m ++ rest).length < n →
+      rest.length < k →
+        s.data = B ++ cur ++ m ++ rest →
+          t.data = m ++ more →
+            more ≠ [] →
+              s.splitOnAux t { byteIdx := String.utf8ByteSize.go B } { byteIdx := String.utf8ByteSize.go (B ++ cur ++ m) }
+                  { byteIdx := String.utf8ByteSize.go m } r =
+                r.reverse ++
+                  List.map String.mk
+                    (List.modifyHead (fun x => cur ++ x) (VE.Commands.SplitOn.splitOnL t.data (m ++ rest)))
+  -- uses VE.Commands.SplitOn.splitOnL@VE.Commands.SplitOnLemmas
+  -- expr 981313037
+theorem VE.Commands.SplitOn.splitOnL_cut
+  ∀ {sep : List Char},
+    sep ≠ [] → ∀ (l : List Char), VE.Commands.SplitOn.splitOnL sep (sep ++ l) = [] :: VE.Commands.SplitOn.splitOnL sep l
+  -- uses VE.Commands.SplitOn.splitOnL@VE.Commands.SplitOnLemmas
+  -- expr 1271586213
+theorem VE.Commands.SplitOn.splitOnL_first
+  ∀ {sep : List Char},
+    sep ≠ [] →
+      ∀ {l : List Char},
+        sep <:+: l →
+          ∃ a b,
+            l = a ++ sep ++ b ∧ ¬sep <:+: a ∧ VE.Commands.SplitOn.splitOnL sep l = a :: VE.Commands.SplitOn.splitOnL sep b
+  -- uses VE.Commands.SplitOn.splitOnL@VE.Commands.SplitOnLemmas
+  -- expr 1325420735
+theorem VE.Commands.SplitOn.splitOnL_free
+  ∀ {sep : List Char}, sep ≠ [] → ∀ (l p : List Char), p ∈ VE.Commands.SplitOn.splitOnL sep l → ¬sep <:+: p
+  -- uses VE.Commands.SplitOn.splitOnL@VE.Commands.SplitOnLemmas
+  -- expr 3883350834
+theorem VE.Commands.SplitOn.splitOnL_ne_nil
+  ∀ {sep : List Char} (l : List Char), VE.Commands.SplitOn.splitOnL sep l ≠ []
+  -- uses VE.Commands.SplitOn.splitOnL@VE.Commands.SplitOnLemmas
+  -- expr 711219533
+theorem VE.Commands.SplitOn.splitOnL_none
+  ∀ {sep l : List Char}, ¬sep <:+: l → VE.Commands.SplitOn.splitOnL sep l = [l]
+  -- uses VE.Commands.SplitOn.splitOnL@VE.Commands.SplitOnLemmas
+  -- expr 71137699
+theorem VE.Commands.SplitOn.splitOnL_short
+  ∀ {sep l : List Char}, l.length < sep.length → VE.Commands.SplitOn.splitOnL sep l = [l]
+  -- uses VE.Commands.SplitOn.splitOnL@VE.Commands.SplitOnLemmas
+  -- expr 3359750413
+theorem VE.Commands.SplitOn.splitOnL_skip
+  ∀ {sep : List Char} {c : Char} {cs : List Char},
+    ¬sep <+: c :: cs →
+      VE.Commands.SplitOn.splitOnL sep (c :: cs) = List.modifyHead (fun x => c :: x) (VE.Commands.SplitOn.splitOnL sep cs)
+  -- uses VE.Commands.SplitOn.splitOnL@VE.Commands.SplitOnLemmas
+  -- expr 3119891364
+theorem VE.Commands.SplitOn.splitOnL_two
+  ∀ {sep : List Char}, sep ≠ [] → ∀ {l : List Char}, 2 ≤ (VE.Commands.SplitOn.splitOnL sep l).length ↔ sep <:+: l
+  -- uses VE.Commands.SplitOn.splitOnL@VE.Commands.SplitOnLemmas
+  -- expr 3188311300
+theorem VE.Commands.SplitOn.splitOn_data
+  ∀ (s t : String), t ≠ "" → s.splitOn t = List.map String.mk (VE.Commands.SplitOn.splitOnL t.data s.data)
+  -- uses VE.Commands.SplitOn.splitOnL@VE.Commands.SplitOnLemmas
+  -- expr 1194215426
+theorem VE.Commands.SplitOn.splitOn_first
+  ∀ (s t : String),
+    t ≠ "" → t.data <:+: s.data → ∃ a b, s = a ++ t ++ b ∧ ¬t.data <:+: a.data ∧ s.splitOn t = a :: b.splitOn t
+  -- uses
+  -- expr 2035094715
+theorem VE.Commands.SplitOn.splitOn_free
+  ∀ (s t : String), t ≠ "" → ∀ (p : String), p ∈ s.splitOn t → ¬t.data <:+: p.data
+  -- uses
+  -- expr 175407255
+theorem VE.Commands.SplitOn.splitOn_none
+  ∀ (s t : String), t ≠ "" → ¬t.data <:+: s.data → s.splitOn t = [s]
+  -- uses
+  -- expr 750906857
+theorem VE.Commands.SplitOn.splitOn_two
+  ∀ (s t : String), t ≠ "" → (2 ≤ (s.splitOn t).length ↔ t.data <:+: s.data)
+  -- uses
+  -- expr 222145710
+theorem VE.Commands.actIn_shape
+  ∀ {ps fx : List String} {name : String} {k : Nat} {raw : Lean.Json} {a : String},
+    VE.Norms.Wire.canonicalActIn ps fx name k raw = Except.ok a →
+      ∃ W,
+        a = " ".intercalate W ∧
+          (∀ (w : String), w ∈ W → w ≠ "" ∧ ∀ (c : Char), c ∈ w.data → VE.Norms.Wire.pyWhitespace c = Bool.false) ∧
+            a.startsWith "{0} " = Bool.true ∧
+              ∀ (w : String), w ∈ W → ¬'{' ∈ w.data → ¬(w.toLower = "if" ∨ w.toLower = "then")
+  -- uses VE.Norms.Wire.canonicalActIn@VE.Norms.Wire VE.Norms.Wire.pyWhitespace@VE.Acts.LexicalBase
+  -- expr 2944762440
+theorem VE.Commands.act_rest
+  ∀ {W : List String},
+    (∀ (w : String), w ∈ W → w ≠ "" ∧ ∀ (c : Char), c ∈ w.data → VE.Norms.Wire.pyWhitespace c = Bool.false) →
+      (" ".intercalate W).startsWith "{0} " = Bool.true →
+        ∃ w1 Ws,
+          W = "{0}" :: w1 :: Ws ∧
+            (" ".intercalate W).data = "{0} ".data ++ w1.data ++ List.flatMap (fun x => ' ' :: x.data) Ws
+  -- uses VE.Norms.Wire.pyWhitespace@VE.Acts.LexicalBase
+  -- expr 1913333548
 theorem VE.Commands.after_eq
   ∀ (se : VE.SpeechActs.Wire.SpeechEnvironment) (sc : VE.SpeechActs.Scope) (E : VE.EnglishGrammar.Env)
     (L : VE.EnglishGrammar.Lexicon) (b : Nat) (s x : String) (r : VE.Commands.Reading),
@@ -9822,12 +9944,24 @@ theorem VE.Commands.after_eq
           VE.Commands.readCommand se sc E L b (VE.Commands.capitalise x ++ ".") = VE.Commands.Outcome.one r)
   -- uses VE.Commands.Outcome.one@VE.Commands.Read VE.Commands.Outcome@VE.Commands.Read VE.Commands.Reading@VE.Commands.Read VE.Commands.Shape.after@VE.Commands.Steps VE.Commands.Shape@VE.Commands.Steps VE.Commands.StepOutcome.one@VE.Commands.Steps VE.Commands.StepOutcome@VE.Commands.Steps VE.Commands.capitalise@VE.Commands.Steps VE.Commands.maxWordingBytes@VE.Commands.Read VE.Commands.readCommand@VE.Commands.Read VE.Commands.readStep@VE.Commands.Steps VE.Commands.shapes@VE.Commands.Steps VE.Commands.trimmed@VE.Commands.Read VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire
   -- expr 2676180946
+theorem VE.Commands.asciiSpace_py
+  ∀ {c : Char}, VE.SpeechActs.Wire.asciiSpace c = Bool.true → VE.Norms.Wire.pyWhitespace c = Bool.true
+  -- uses VE.Norms.Wire.pyWhitespace@VE.Acts.LexicalBase VE.SpeechActs.Wire.asciiSpace@VE.SpeechActs.Wire
+  -- expr 3450374598
 theorem VE.Commands.bind_condition
   ∀ (s : String) {c : String},
     ((VE.Commands.parts s).bind fun x => x.condition) = Option.some c →
       ∃ p, VE.Commands.parts s = Option.some p ∧ p.condition = Option.some c
   -- uses VE.Commands.Parts.condition@VE.Commands.Read VE.Commands.Parts@VE.Commands.Read VE.Commands.parts@VE.Commands.Read
   -- expr 1353461317
+theorem VE.Commands.body_prefix
+  ∀ {s : String} {p : VE.Commands.Parts} {W : String},
+    ¬',' ∈ W.data →
+      W.data.head? ≠ Option.some 'D' →
+        VE.Commands.parts s = Option.some p →
+          W.data <+: ((VE.Commands.trimmed s).dropRight 1).data → W.data <+: p.body.data
+  -- uses VE.Commands.Parts.body@VE.Commands.Read VE.Commands.Parts@VE.Commands.Read VE.Commands.parts@VE.Commands.Read VE.Commands.trimmed@VE.Commands.Read
+  -- expr 824300218
 theorem VE.Commands.candidate_fills
   ∀ (se : VE.SpeechActs.Wire.SpeechEnvironment) (sc : VE.SpeechActs.Scope) (E : VE.EnglishGrammar.Env)
     (L : VE.EnglishGrammar.Lexicon) (b : Nat) (s : String) (r : VE.Commands.Reading),
@@ -9923,6 +10057,20 @@ theorem VE.Commands.decodeClosedField_check
     VE.SpeechActs.Wire.decodeClosedField T j = Except.ok φ → VE.Formula.check T [] φ = Bool.true
   -- uses VE.Environment@VE.Syntax VE.Formula.check@VE.Syntax VE.Formula@VE.Syntax VE.SpeechActs.Wire.decodeClosedField@VE.SpeechActs.Wire
   -- expr 54966758
+theorem VE.Commands.decode_templates
+  ∀ {j : Lean.Json} {se : VE.SpeechActs.Wire.SpeechEnvironment},
+    VE.SpeechActs.Wire.decodeSpeechEnvironmentFull j = Except.ok se →
+      ∃ preds, VE.SpeechActs.Wire.checkTemplates preds se.ne.regulated = Except.ok ()
+  -- uses VE.Norms.Wire.NormsEnvironment.regulated@VE.Norms.Wire VE.SpeechActs.Wire.SpeechEnvironment.ne@VE.SpeechActs.Wire VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire VE.SpeechActs.Wire.checkTemplates@VE.SpeechActs.Wire VE.SpeechActs.Wire.decodeSpeechEnvironmentFull@VE.SpeechActs.Wire
+  -- expr 677780033
+theorem VE.Commands.decoded_actIn
+  ∀ {j : Lean.Json} {se : VE.SpeechActs.Wire.SpeechEnvironment},
+    VE.SpeechActs.Wire.decodeSpeechEnvironmentFull j = Except.ok se →
+      ∀ {g : VE.Norms.Regulated} {a : String},
+        g ∈ se.ne.regulated →
+          g.act = Option.some a → ∃ ps fx k raw, VE.Norms.Wire.canonicalActIn ps fx g.name k raw = Except.ok a
+  -- uses VE.Norms.Regulated.act@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Wire.NormsEnvironment.regulated@VE.Norms.Wire VE.Norms.Wire.canonicalActIn@VE.Norms.Wire VE.SpeechActs.Wire.SpeechEnvironment.ne@VE.SpeechActs.Wire VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire VE.SpeechActs.Wire.decodeSpeechEnvironmentFull@VE.SpeechActs.Wire
+  -- expr 3568225345
 theorem VE.Commands.dedup_sub
   ∀ {α : Type} [inst : BEq α] (n : Nat) (l : List α), l.length ≤ n → ∀ (a : α), a ∈ l.eraseDups → a ∈ l
   -- uses
@@ -9949,6 +10097,43 @@ theorem VE.Commands.fields_obj
     VE.Bridge.fields j = Except.ok l → ∃ kvs, j = Lean.Json.obj kvs ∧ l = kvs.toList
   -- uses VE.Bridge.Fields@VE.Bridge VE.Bridge.fields@VE.Bridge
   -- expr 1400093979
+theorem VE.Commands.fill_copy
+  ∀ (f : Nat → String) (u l : List Char) (n : Nat) (hs : List Nat) (out : List Char),
+    ¬'{' ∈ u →
+      u.length ≤ n →
+        VE.EnglishGrammar.fillHoles.go f n (u ++ l) hs out =
+          VE.EnglishGrammar.fillHoles.go f (n - u.length) l hs (u.reverse ++ out)
+  -- uses VE.EnglishGrammar.fillHoles.go@VE.EnglishGrammar.Lexicon
+  -- expr 544580575
+theorem VE.Commands.fill_nil
+  ∀ (f : Nat → String) (n : Nat) (hs : List Nat) (out : List Char),
+    (VE.EnglishGrammar.fillHoles.go f n [] hs out).snd = out.reverse
+  -- uses VE.EnglishGrammar.fillHoles.go@VE.EnglishGrammar.Lexicon
+  -- expr 3309158008
+theorem VE.Commands.fill_prefix
+  ∀ (f : Nat → String) (n : Nat) (l : List Char) (hs : List Nat) (out : List Char),
+    ∃ z, (VE.EnglishGrammar.fillHoles.go f n l hs out).snd = out.reverse ++ z
+  -- uses VE.EnglishGrammar.fillHoles.go@VE.EnglishGrammar.Lexicon
+  -- expr 1343566870
+theorem VE.Commands.fill_step
+  ∀ (f : Nat → String) {n : Nat} {c : Char} {l : List Char} {hs : List Nat} {out : List Char},
+    c ≠ '{' →
+      VE.EnglishGrammar.fillHoles.go f (n + 1) (c :: l) hs out = VE.EnglishGrammar.fillHoles.go f n l hs (c :: out)
+  -- uses VE.EnglishGrammar.fillHoles.go@VE.EnglishGrammar.Lexicon
+  -- expr 3412991901
+theorem VE.Commands.filled_word
+  ∀ (f : Nat → String) {T w R z : List Char} {N n : Nat},
+    (∀ (x : Char), x ∈ T → x ∈ ['i', 'f', 't', 'h', 'e', 'n']) →
+      (∀ (c : Char), c ∈ w → VE.Norms.Wire.pyWhitespace c = Bool.false) →
+        w.head? ≠ Option.some '{' →
+          R = [] ∨ R.head? = Option.some ' ' →
+            (w ++ R).length < N →
+              (w ++ R).length < n →
+                VE.SpeechActs.Wire.slotsApart n ' ' (w ++ R) = Bool.true →
+                  List.map Char.toLower (VE.EnglishGrammar.fillHoles.go f N (w ++ R) [] []).snd = T ++ ' ' :: z →
+                    List.map Char.toLower w = T
+  -- uses VE.EnglishGrammar.fillHoles.go@VE.EnglishGrammar.Lexicon VE.Norms.Wire.pyWhitespace@VE.Acts.LexicalBase VE.SpeechActs.Wire.slotsApart@VE.SpeechActs.Wire
+  -- expr 1640939711
 theorem VE.Commands.filterMapM_rel
   ∀ {α β γ ε : Type} {f : α → Except ε (Option β)} {R : α → β → Prop} {g : β → γ} {k : α → γ},
     (∀ (x : α) (y : β), f x = Except.ok (Option.some y) → R x y) →
@@ -10001,6 +10186,23 @@ theorem VE.Commands.guard_unread
             VE.Commands.readCommand se sc E L b s = VE.Commands.Outcome.refused code text
   -- uses VE.Commands.Fill@VE.Commands.Read VE.Commands.GuardFault.unread@VE.Commands.Read VE.Commands.GuardFault@VE.Commands.Read VE.Commands.Outcome.refused@VE.Commands.Read VE.Commands.Outcome@VE.Commands.Read VE.Commands.Parts.condition@VE.Commands.Read VE.Commands.Parts@VE.Commands.Read VE.Commands.actMatches@VE.Commands.Read VE.Commands.guardOf@VE.Commands.Read VE.Commands.parts@VE.Commands.Read VE.Commands.readCommand@VE.Commands.Read VE.Commands.withinLimits@VE.Commands.Read VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.Formula@VE.Syntax VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire
   -- expr 433543032
+theorem VE.Commands.hasThen_preposed
+  ∀ {s c x : String},
+    VE.Commands.shapes s = [VE.Commands.Shape.preposed c x] → VE.Commands.hasThen (x ++ ".") = Bool.false
+  -- uses VE.Commands.Shape.preposed@VE.Commands.Steps VE.Commands.Shape@VE.Commands.Steps VE.Commands.hasThen@VE.Commands.Steps VE.Commands.shapes@VE.Commands.Steps
+  -- expr 3448943788
+theorem VE.Commands.if_then_lower
+  ∀ {w : String}, w.toLower = "if" ∨ w.toLower = "then" → VE.Norms.Wire.actReserved.contains w.toLower = Bool.true
+  -- uses VE.Norms.Wire.actReserved@VE.Acts.LexicalBase
+  -- expr 1085743885
+theorem VE.Commands.infix_of_cut
+  ∀ {l u x : List Char} {d : Char}, u ≠ [] → l ++ u <:+: x ++ [d] → l <:+: x
+  -- uses
+  -- expr 206626267
+theorem VE.Commands.intercalate_head
+  ∀ (t a : String) (ys : List String), a.data <+: (t.intercalate (a :: ys)).data
+  -- uses
+  -- expr 3322090876
 theorem VE.Commands.lift_many
   ∀ {sh : VE.Commands.Shape} {a : Bool} {o : VE.Commands.Outcome} {alts : List VE.Commands.Alt},
     VE.Commands.lift sh a o = VE.Commands.StepOutcome.many alts →
@@ -10123,6 +10325,19 @@ theorem VE.Commands.norms_facts
           (List.map (fun x => x.name) ne.regulated).Nodup ∧ (List.map (fun x => x.fst) ne.rv.vocabulary.constants).Nodup
   -- uses VE.Bridge.Vocabulary.constants@VE.Bridge VE.Environment.predicates@VE.Syntax VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated.sorts@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Wire.NormsEnvironment.regulated@VE.Norms.Wire VE.Norms.Wire.NormsEnvironment.rv@VE.Norms.Wire VE.Norms.Wire.NormsEnvironment@VE.Norms.Wire VE.Norms.Wire.decodeNormsEnvironment@VE.Norms.Wire VE.Route.Wire.RouteVocabulary.environment@VE.Route.Wire VE.Route.Wire.RouteVocabulary.vocabulary@VE.Route.Wire VE.Scope.JsonWF@VE.Scope.Govern
   -- expr 3072107644
+theorem VE.Commands.not_if_then
+  ∀ {body : String}, body.startsWith "If " = Bool.true → body.startsWith "Then " = Bool.false
+  -- uses
+  -- expr 3666917685
+theorem VE.Commands.one_begins
+  ∀ (se : VE.SpeechActs.Wire.SpeechEnvironment) (sc : VE.SpeechActs.Scope) (E : VE.EnglishGrammar.Env)
+    (L : VE.EnglishGrammar.Lexicon) (b : Nat) (s : String) (j : Lean.Json),
+    VE.SpeechActs.Wire.decodeSpeechEnvironmentFull j = Except.ok se →
+      ∀ (r : VE.Commands.Reading),
+        VE.Commands.readCommand se sc E L b s = VE.Commands.Outcome.one r →
+          ∀ {W : String}, W = "If " ∨ W = "Then " → ((VE.Commands.trimmed s).dropRight 1).startsWith W = Bool.false
+  -- uses VE.Commands.Outcome.one@VE.Commands.Read VE.Commands.Outcome@VE.Commands.Read VE.Commands.Reading@VE.Commands.Read VE.Commands.readCommand@VE.Commands.Read VE.Commands.trimmed@VE.Commands.Read VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire VE.SpeechActs.Wire.decodeSpeechEnvironmentFull@VE.SpeechActs.Wire
+  -- expr 3548675516
 theorem VE.Commands.outcome_ambiguous
   ∀ (se : VE.SpeechActs.Wire.SpeechEnvironment) (E : VE.EnglishGrammar.Env) (L : VE.EnglishGrammar.Lexicon) {c : String}
     {o : VE.EnglishGrammar.TranslateOutcome} {gs : List VE.Formula},
@@ -10146,6 +10361,16 @@ theorem VE.Commands.parts_prefix
   ∀ {s : String} {p : VE.Commands.Parts}, VE.Commands.parts s = Option.some p → VE.Commands.prefixRefusal s = Option.none
   -- uses VE.Commands.Parts@VE.Commands.Read VE.Commands.parts@VE.Commands.Read VE.Commands.prefixRefusal@VE.Commands.Read
   -- expr 2612302666
+theorem VE.Commands.preposed_eq
+  ∀ (se : VE.SpeechActs.Wire.SpeechEnvironment) (sc : VE.SpeechActs.Scope) (E : VE.EnglishGrammar.Env)
+    (L : VE.EnglishGrammar.Lexicon) (b : Nat) (s c x : String) (r : VE.Commands.Reading),
+    VE.Commands.shapes s = [VE.Commands.Shape.preposed c x] →
+      (VE.Commands.trimmed s).utf8ByteSize ≤ VE.Commands.maxWordingBytes →
+        (VE.Commands.readStep se sc E L b s = VE.Commands.StepOutcome.one r Bool.false ↔
+          VE.Commands.readCommand se sc E L b (VE.Commands.capitalise x ++ ", if " ++ c ++ ".") =
+            VE.Commands.Outcome.one r)
+  -- uses VE.Commands.Outcome.one@VE.Commands.Read VE.Commands.Outcome@VE.Commands.Read VE.Commands.Reading@VE.Commands.Read VE.Commands.Shape.preposed@VE.Commands.Steps VE.Commands.Shape@VE.Commands.Steps VE.Commands.StepOutcome.one@VE.Commands.Steps VE.Commands.StepOutcome@VE.Commands.Steps VE.Commands.capitalise@VE.Commands.Steps VE.Commands.maxWordingBytes@VE.Commands.Read VE.Commands.readCommand@VE.Commands.Read VE.Commands.readStep@VE.Commands.Steps VE.Commands.shapes@VE.Commands.Steps VE.Commands.trimmed@VE.Commands.Read VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire
+  -- expr 3614130083
 theorem VE.Commands.proofMany_one
   ∀ (ctx : VE.Commands.Context) (gs : List VE.Formula) (r : VE.Commands.Reading),
     VE.Commands.proofMany ctx gs ≠ VE.Commands.Outcome.one r
@@ -10325,6 +10550,24 @@ theorem VE.Commands.readStep_combine
             (List.map (fun sh => (sh, VE.Commands.shapeOutcome se sc E L b sh)) (VE.Commands.shapes s))
   -- uses VE.Commands.Shape@VE.Commands.Steps VE.Commands.StepOutcome@VE.Commands.Steps VE.Commands.combineShapes@VE.Commands.Steps VE.Commands.maxWordingBytes@VE.Commands.Read VE.Commands.readStep@VE.Commands.Steps VE.Commands.shapeOutcome@VE.Commands.Steps VE.Commands.shapes@VE.Commands.Steps VE.Commands.trimmed@VE.Commands.Read VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire
   -- expr 1896645534
+theorem VE.Commands.readStep_conservative
+  ∀ (se : VE.SpeechActs.Wire.SpeechEnvironment) (sc : VE.SpeechActs.Scope) (E : VE.EnglishGrammar.Env)
+    (L : VE.EnglishGrammar.Lexicon) (b : Nat) (s : String) (j : Lean.Json) (r : VE.Commands.Reading),
+    VE.SpeechActs.Wire.decodeSpeechEnvironmentFull j = Except.ok se →
+      VE.Commands.readCommand se sc E L b s = VE.Commands.Outcome.one r →
+        VE.Commands.hasThen s = Bool.false → VE.Commands.readStep se sc E L b s = VE.Commands.StepOutcome.one r Bool.false
+  -- uses VE.Commands.Outcome.one@VE.Commands.Read VE.Commands.Outcome@VE.Commands.Read VE.Commands.Reading@VE.Commands.Read VE.Commands.StepOutcome.one@VE.Commands.Steps VE.Commands.StepOutcome@VE.Commands.Steps VE.Commands.hasThen@VE.Commands.Steps VE.Commands.readCommand@VE.Commands.Read VE.Commands.readStep@VE.Commands.Steps VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire VE.SpeechActs.Wire.decodeSpeechEnvironmentFull@VE.SpeechActs.Wire
+  -- expr 1841630498
+theorem VE.Commands.readStep_core
+  ∀ (se : VE.SpeechActs.Wire.SpeechEnvironment) (sc : VE.SpeechActs.Scope) (E : VE.EnglishGrammar.Env)
+    (L : VE.EnglishGrammar.Lexicon) (b : Nat) (s : String) (r : VE.Commands.Reading),
+    VE.Commands.readCommand se sc E L b s = VE.Commands.Outcome.one r →
+      VE.Commands.hasThen s = Bool.false →
+        ((VE.Commands.trimmed s).dropRight 1).startsWith "If " = Bool.false →
+          ((VE.Commands.trimmed s).dropRight 1).startsWith "Then " = Bool.false →
+            VE.Commands.readStep se sc E L b s = VE.Commands.StepOutcome.one r Bool.false
+  -- uses VE.Commands.Outcome.one@VE.Commands.Read VE.Commands.Outcome@VE.Commands.Read VE.Commands.Reading@VE.Commands.Read VE.Commands.StepOutcome.one@VE.Commands.Steps VE.Commands.StepOutcome@VE.Commands.Steps VE.Commands.hasThen@VE.Commands.Steps VE.Commands.readCommand@VE.Commands.Read VE.Commands.readStep@VE.Commands.Steps VE.Commands.trimmed@VE.Commands.Read VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire
+  -- expr 62910469
 theorem VE.Commands.readStep_one
   ∀ (se : VE.SpeechActs.Wire.SpeechEnvironment) (sc : VE.SpeechActs.Scope) (E : VE.EnglishGrammar.Env)
     (L : VE.EnglishGrammar.Lexicon) (b : Nat) (s : String) {sh : VE.Commands.Shape},
@@ -10464,6 +10707,39 @@ theorem VE.Commands.shapes_limit
         VE.Commands.readStep se sc E L b s = VE.Commands.StepOutcome.limit
   -- uses VE.Commands.Alt@VE.Commands.Steps VE.Commands.Shape@VE.Commands.Steps VE.Commands.StepOutcome.limit@VE.Commands.Steps VE.Commands.StepOutcome@VE.Commands.Steps VE.Commands.readStep@VE.Commands.Steps VE.Commands.shapeAlts@VE.Commands.Steps VE.Commands.shapeOutcome@VE.Commands.Steps VE.Commands.shapes@VE.Commands.Steps VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire
   -- expr 403415965
+theorem VE.Commands.shapes_preposed
+  ∀ {s c x : String},
+    VE.Commands.shapes s = [VE.Commands.Shape.preposed c x] →
+      x ∈ (((VE.Commands.trimmed s).dropRight 1).drop 3).splitOn ", "
+  -- uses VE.Commands.Shape.preposed@VE.Commands.Steps VE.Commands.Shape@VE.Commands.Steps VE.Commands.shapes@VE.Commands.Steps VE.Commands.trimmed@VE.Commands.Read
+  -- expr 1412210852
+theorem VE.Commands.slots_copy
+  ∀ (u l : List Char) (n : Nat) (prev : Char),
+    ¬'{' ∈ u →
+      u.length ≤ n →
+        VE.SpeechActs.Wire.slotsApart n prev (u ++ l) =
+          VE.SpeechActs.Wire.slotsApart (n - u.length) (u.getLast?.getD prev) l
+  -- uses VE.SpeechActs.Wire.slotsApart@VE.SpeechActs.Wire
+  -- expr 1943589253
+theorem VE.Commands.slots_open
+  ∀ {n : Nat} {l : List Char},
+    VE.SpeechActs.Wire.slotsApart (n + 4) ' ' ('{' :: '0' :: '}' :: ' ' :: l) = Bool.true →
+      VE.SpeechActs.Wire.slotsApart (n + 2) ' ' l = Bool.true
+  -- uses VE.SpeechActs.Wire.slotsApart@VE.SpeechActs.Wire
+  -- expr 1401864688
+theorem VE.Commands.slots_step
+  ∀ {n : Nat} {prev c : Char} {l : List Char},
+    c ≠ '{' → VE.SpeechActs.Wire.slotsApart (n + 1) prev (c :: l) = VE.SpeechActs.Wire.slotsApart n c l
+  -- uses VE.SpeechActs.Wire.slotsApart@VE.SpeechActs.Wire
+  -- expr 765183819
+theorem VE.Commands.space_inj
+  ∀ {u u' X Y : List Char}, ¬' ' ∈ u → ¬' ' ∈ u' → u ++ ' ' :: X = u' ++ ' ' :: Y → u = u' ∧ X = Y
+  -- uses
+  -- expr 3395149767
+theorem VE.Commands.splitLast_prefix
+  ∀ {u : String} {P : List Char}, ¬',' ∈ P → P <+: u.data → P <+: (VE.Commands.splitLastIf u).fst.data
+  -- uses VE.Commands.splitLastIf@VE.Commands.Read
+  -- expr 1459570524
 theorem VE.Commands.strip_vocabulary
   ∀ {j s v : Lean.Json},
     VE.Scope.JsonWF j →
@@ -10471,6 +10747,33 @@ theorem VE.Commands.strip_vocabulary
         s.getObjVal? "vocabulary" = Except.ok v → j.getObjVal? "vocabulary" = Except.ok v
   -- uses VE.Scope.JsonWF@VE.Scope.Govern VE.SpeechActs.Wire.stripSpeech@VE.SpeechActs.Wire
   -- expr 2250500559
+theorem VE.Commands.templates_act
+  ∀ {preds : List (String × Lean.Json)} {regs : List VE.Norms.Regulated},
+    VE.SpeechActs.Wire.checkTemplates preds regs = Except.ok () →
+      ∀ {g : VE.Norms.Regulated} {a : String},
+        g ∈ regs → g.act = Option.some a → VE.SpeechActs.Wire.slotsApart (a.length + 1) ' ' a.toList = Bool.true
+  -- uses VE.Norms.Regulated.act@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.SpeechActs.Wire.checkTemplates@VE.SpeechActs.Wire VE.SpeechActs.Wire.slotsApart@VE.SpeechActs.Wire
+  -- expr 3399131288
+theorem VE.Commands.toLower_attached
+  ∀ {c x : Char}, c.toLower = x → x ∈ ['i', 'f', 't', 'h', 'e', 'n'] → VE.SpeechActs.Wire.attached c = Bool.true
+  -- uses VE.SpeechActs.Wire.attached@VE.SpeechActs.Wire
+  -- expr 731324382
+theorem VE.Commands.toLower_eq
+  ∀ {c x : Char}, c.toLower = x → c = x ∨ 65 ≤ c.toNat ∧ c.toNat ≤ 90 ∧ c.toNat + 32 = x.toNat
+  -- uses
+  -- expr 1860615097
+theorem VE.Commands.toLower_fixed
+  ∀ {c x : Char}, c.toLower = x → x = ' ' ∨ x = '{' → c = x
+  -- uses
+  -- expr 82511008
+theorem VE.Commands.toNat_ofNat
+  ∀ {n : Nat}, n < 55296 → (Char.ofNat n).toNat = n
+  -- uses
+  -- expr 2734628024
+theorem VE.Commands.trimmed_infix
+  ∀ (y : String), (VE.Commands.trimmed y).data <:+: y.data
+  -- uses VE.Commands.trimmed@VE.Commands.Read
+  -- expr 953727714
 theorem VE.Commands.tuples_typed
   ∀ (se : VE.SpeechActs.Wire.SpeechEnvironment) (sc : VE.SpeechActs.Scope),
     (∀ (c srt : String), (c, srt) ∈ se.ne.rv.vocabulary.constants → se.ne.rv.environment.constants c = Option.some srt) →
@@ -10492,6 +10795,14 @@ theorem VE.Commands.unreadOf_classed
         (VE.Commands.Texts.classOf code).isSome = Bool.true
   -- uses VE.Commands.GuardFault.unread@VE.Commands.Read VE.Commands.GuardFault@VE.Commands.Read VE.Commands.Texts.classOf@VE.Commands.Read VE.Commands.unreadOf@VE.Commands.Read VE.EnglishGrammar.DState@VE.EnglishGrammar.Syntax VE.EnglishGrammar.EFormula@VE.EnglishGrammar.Syntax VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.TranslateOutcome.readings@VE.EnglishGrammar.Read VE.EnglishGrammar.TranslateOutcome@VE.EnglishGrammar.Read
   -- expr 335130948
+theorem VE.Commands.verb_head
+  ∀ {w1 : String} {Ws : List String},
+    (∀ (w : String),
+        w ∈ "{0}" :: w1 :: Ws → w ≠ "" ∧ ∀ (c : Char), c ∈ w.data → VE.Norms.Wire.pyWhitespace c = Bool.false) →
+      (VE.SpeechActs.Wire.actVerb (" ".intercalate ("{0}" :: w1 :: Ws))).isSome = Bool.true →
+        w1.data.head? ≠ Option.some '{'
+  -- uses VE.Norms.Wire.pyWhitespace@VE.Acts.LexicalBase VE.SpeechActs.Wire.actVerb@VE.SpeechActs.Wire
+  -- expr 1435132611
 theorem VE.Commands.vocabulary_facts
   ∀ {profiles : List String} {v : Lean.Json} {rv : VE.Route.Wire.RouteVocabulary},
     VE.Route.Wire.decodeVocabulary profiles v = Except.ok rv →
@@ -10529,6 +10840,11 @@ theorem VE.Commands.wf_strip
   ∀ {j s : Lean.Json}, VE.Scope.JsonWF j → VE.SpeechActs.Wire.stripSpeech j = Except.ok s → VE.Scope.JsonWF s
   -- uses VE.Scope.JsonWF@VE.Scope.Govern VE.SpeechActs.Wire.stripSpeech@VE.SpeechActs.Wire
   -- expr 1351270252
+theorem VE.Commands.words_facts
+  ∀ {z w : String},
+    w ∈ VE.Norms.Wire.words z → w ≠ "" ∧ ∀ (c : Char), c ∈ w.data → VE.Norms.Wire.pyWhitespace c = Bool.false
+  -- uses VE.Norms.Wire.pyWhitespace@VE.Acts.LexicalBase VE.Norms.Wire.words@VE.Acts.LexicalBase
+  -- expr 990523173
 theorem VE.Compose.Contract.Rewriter.Laws.fresh
   ∀ {σ : Type} {WF : σ → Prop} {names : σ → List String} {r : VE.Compose.Contract.Rewriter σ},
     VE.Compose.Contract.Rewriter.Laws WF names r →
