@@ -45,8 +45,9 @@ Not delivered here:
   Units are capped at 1,024; lines per unit are not. cmp-s3-cfr-1b's large-document fixture (W1) must cover lines per
   unit, not only units.
 - **Environments.** No refusal text moves. `right-clauses@0` beside `acts@0` stays refused by the base rows, as before
-  (Standalone keeps that gate's whole-table read for `readings@1` only). The model and typing modes still refuse the
-  profile, and Python's model view drops it. Probe: all 154 lists `relational-fol@0, right-clauses@0` with up to two
+  (Standalone keeps that gate's whole-table read for `readings@1` only). With `rights@0`, the environment and model
+  modes now accept the list, where the base refused it as an unregistered profile (DELTA row 1); Python's model view
+  drops the profile. Probe: all 154 lists `relational-fol@0, right-clauses@0` with up to two
   more environment profiles answer the same text on this build and on the base build (0 differences; script
   /tmp/cfr1seed/probe_lists.py, run in both worktrees). Before the acts gate was kept on the base rows, 15 `acts@0`
   lists differed; that was the self-review's B4.
