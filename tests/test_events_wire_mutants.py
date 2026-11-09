@@ -23,6 +23,8 @@ mutant must change the source, and a mutant listed as equivalent must elaborate 
 from __future__ import annotations
 
 from functools import partial
+import json
+import os
 import re
 import shutil
 import subprocess
@@ -173,6 +175,20 @@ def _mutants() -> dict[str, str]:
 
 
 MUTANTS = _mutants()
+
+
+def mutant_cases() -> dict[str, str]:
+    """Each mutant's operator, definition and text (the lines it replaces and its own), by name: the gate's
+    collection check (tools/gate_collection.py) pairs a renumbered name by it."""
+    before, out = WIRE.read_text().split("\n"), {}
+    for name, text in MUTANTS.items():
+        after = text.split("\n")
+        start = len(os.path.commonprefix([before, after]))
+        end = len(os.path.commonprefix([before[start:][::-1], after[start:][::-1]]))
+        operator, _, rest = name.partition("-")
+        definition = rest if operator == "review" else rest.split("-")[0]
+        out[name] = json.dumps([operator, definition, before[start:len(before) - end], after[start:len(after) - end]])
+    return out
 
 
 def _assemble(wire: str) -> str:
