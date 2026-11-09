@@ -54,8 +54,8 @@ CASES = {
     "deleted-with-trailer": (BASE, [BASE[0], *BASE[2:]], HOOKS, "b-1", False, "c-2:c-1 d-3:d-2", ""),
     "trailer-on-a-twin": ([BASE[0]] * 2, [["n", "x", "y"]] * 2 + [BASE[0]], HOOKS, "a-0", False, "a-1:a-2", ""),
     "kept-first": ([SAME[0]] * 2 + BASE[1:2], [BASE[2], *SAME[1::-1], BASE[1]], HOOKS, "", False, "b-2:b-3", "a-0"),
-    "no-text": ([["k", "x", "y"], ["l", "x", "z"]], [["k", "x", "z"], ["k", "x", "y"]], PARTIAL, "", False, "", "l-1"),
-    # A kept ID's text is gone (`a-0`'s first; the lost `a-2`'s is at `a-1`), or a side has no hook: none pairs.
+    # A kept ID's text is gone (`a-0`'s first; `a-2`'s is at `a-1`) or unknown (`k-0`'s, or no hook): none pairs.
+    "no-text": ("kxz mxy bxy".split(), "kxy mxz mxy bxy".split(), PARTIAL, "", False, "", "b-2"),  # a mutant: 3 letters
     "kept-id-reused": (SAME, SAME[1:], HOOKS, "", False, "", "a-2"),
     "no-hook-at-base": (BASE, INSERTED, ("", HOOK), "", False, "", "b-1 c-2 d-3"),
     "no-hook": (BASE, INSERTED, ("", ""), "", False, "", "b-1 c-2 d-3"),  # an ordinary parametrised test
