@@ -1,0 +1,15 @@
+trust_mutants: 133 definitions, 414 mutants (37 to run), 4 jobs, base a998c06909c3
+SURVIVOR lean/VE/Purposes/WellFormed.lean:167 VE.Purposes.WellFormed (S, trusted) eq-le: = -> ≤ (the proofs it breaks: lean/VE/Purposes/WellFormed.lean:186)
+UNKNOWN lean/VE/Events/Wire.lean:201 VE.Events.finishEvents (D[V], trusted) eq-ne: = -> ≠ (lean/VE/Events/Wire.lean:202: Application type mismatch: The argument)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:167 VE.Purposes.WellFormed (S, trusted) eq-ne: = -> ≠ (lean/VE/Purposes/Examples.lean:275: Expression (VE.Purposes.Examples.wfDecidable, which it reads,...)
+UNKNOWN lean/VE/Acts/Run.lean:291 VE.Acts.Run.readingJson (D[V], trusted) list-empty: A' -> [] (lean/VE/Acts/Run.lean:291: Application type mismatch: The argument)
+UNKNOWN lean/VE/NormDefaults/Layered.lean:112 VE.NormDefaults.Wire.hookNames (D[V], trusted) list-empty: (hookBlock H) -> [] (lean/VE/NormDefaults/Layered.lean:112: Type mismatch)
+SURVIVOR lean/VE/Commands/Steps.lean:95 VE.Commands.shapeOutcome (G[V], trusted) any-all: any -> all (the proofs it breaks: lean/VE/Commands/Steps.lean:157, lean/VE/Commands/Steps.lean:301, lean/VE/C...)
+UNKNOWN lean/VE/Presupposition/Wire.lean:208 VE.Presupposition.expectedReadings (S, trusted) list-empty: ((R.bases.find? (fun x => x.1 == c.ob.unit)).map (·.2)).map (fun B => (emitted t c).map (fun k =>... -> [] (lean/VE/Presupposition/Wire.lean:208: Type mismatch)
+UNKNOWN lean/VE/Presupposition/Wire.lean:55 VE.Presupposition.Position (D[V], trusted) ctor-drop: | path (p : List Nat) ->  (lean/VE/Presupposition/Wire.lean:208: Unknown constant `VE.Presupposition.Position.path`)
+UNKNOWN lean/VE/Events/Wire.lean:249 VE.Events.openTermsOf (D[V], trusted) list-empty: ts.toList -> [] (lean/VE/Events/Wire.lean:250: Invalid field notation: Type of)
+trust_mutants: 28 KILLED, 2 SURVIVOR, 7 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 377 OTHER SHARD in 3511 s
+trust_mutants: D[V], trusted: 2 KILLED, 5 UNKNOWN, 75 OTHER SHARD
+trust_mutants: G[V], trusted: 11 KILLED, 1 SURVIVOR, 139 OTHER SHARD
+trust_mutants: S, trusted: 15 KILLED, 1 SURVIVOR, 2 UNKNOWN, 163 OTHER SHARD
+trust_mutants: steps: wall plan 17.3 s, scratch 4.9 s, control_build 0.4 s, probe_install 1.7 s, mutants 3483.9 s, cleanup 3.1 s, reads 0.3 s; lake control_build 0.4 s (1), probe_install 1.7 s (1), control_probes 331.6 s (27), mutant_builds 636.6 s (48), mutant_checks 5141 s (44), stage_controls 1417.6 s (16), mutant_probes 652.9 s (30)
