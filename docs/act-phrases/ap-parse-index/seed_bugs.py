@@ -8,8 +8,9 @@ import json, os, re, subprocess, sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
-IX, GR, ME, RD, RUN, TB = (f"lean/VE/{m}.lean" for m in ("Acts/Index", "Acts/Grammar", "Acts/Meaning", "Acts/Readings",
-                                                          "Acts/Run", "Grammar/Table"))
+IX, GR, ME, RD, RUN, TB, WI, NW = (f"lean/VE/{m}.lean" for m in (
+    "Acts/Index", "Acts/Grammar", "Acts/Meaning", "Acts/Readings", "Acts/Run", "Grammar/Table", "Acts/Wire", "Norms/Wire"))
+DEC = ["VE.Acts.DecodeExamples", "VE.Service.ActsExamples"]
 GEX = "VE.Acts.GrammarExamples"
 # (file, id, definition, behaviour, before, after, lake targets)
 BUGS = [
@@ -27,6 +28,12 @@ BUGS = [
      "if actOk V A then", "if true then", ["VE.Acts.MeaningExamples"]),
     (RD, "readingsOnce-csimp-dropped", "VE.Acts.readingsOnce", "compiled `readings` computes the rule table per "
      "derivation", "@[csimp] theorem readings_eq_once", "theorem readings_eq_once", [GEX]),
+    (RD, "reader-no-table", "VE.Acts.reader", "the reader's meaning reads no rules",
+     "(rs.toArray, (build rs).prepare)", "(#[], (build rs).prepare)", ["VE.Acts.Readings"]),
+    (RD, "readingsBy-budget", "VE.Acts.readingsBy", "a reader's listing runs with half its budget",
+     "(R.2.parse N b ts)", "(R.2.parse N (b / 2) ts)", ["VE.Acts.Readings"]),
+    (RD, "readingsOnce-budget", "VE.Acts.readingsOnce", "compiled `readings` runs with another budget",
+     "readingsBy V (reader V) N b ts\n", "readingsBy V (reader V) N (b / 2) ts\n", ["VE.Acts.Readings"]),
     (RD, "readOnce-budget", "VE.Acts.readOnce", "`read` runs with another budget than it is given",
      "readIn (build rs) (meaningWith rs.toArray V) N b ts", "readIn (build rs) (meaningWith rs.toArray V) N (b / 2) ts",
      ["VE.Acts.Readings"]),
@@ -36,6 +43,14 @@ BUGS = [
      "taggedWith (closed (schema V)).toArray base t", "taggedWith #[] base t", ["VE.Acts.RunExamples"]),
     (RUN, "rowsOf-empty-table", "VE.Acts.Run.rowsOf", "each reading's acts are read against no rules",
      "let rs := (closed (schema V)).toArray\n  let tags", "let rs : Array RuleS := #[]\n  let tags", ["VE.Acts.RunExamples"]),
+    (RUN, "taggedWith-keeps-words", "VE.Acts.Run.taggedWith", "no content word is tagged by its place",
+     "(tagTree rs base false t 0)", "(tagTree rs base true t 0)", ["VE.Acts.RunExamples"]),
+    (WI, "checkActBy-lexical-text", "VE.Acts.Wire.checkActBy", "a lexical act is returned with another text",
+     "| .ok a => .ok (a, none)", "| .ok a => .ok (a ++ \" \", none)", ["VE.Acts.Wire"]),
+    (WI, "joinedActBy-no-budget", "VE.Acts.Wire.joinedActBy", "a joined act is read with no step budget",
+     "readingsBy V R rawCap stepBudget ts.toArray", "readingsBy V R rawCap 0 ts.toArray", DEC),
+    (NW, "actsOf-no-frames", "VE.Norms.Wire.actsOf", "a document's acts are read under no frames",
+     "let R := VE.Acts.reader V", "let R := VE.Acts.reader ⟨[], []⟩", DEC),
     (TB, "combineFast-dead-end-kept", "VE.Grammar.combineFast", "an end position with an empty suffix still combines",
      "      | [] => []\n", "      | [] => p.2.map fun t => (p.1, [t])\n", ["VE.Grammar.Table"]),
     (TB, "row-charged-a-constant", "VE.Grammar.rowAt", "a row is charged a constant, not its rules and positions",
@@ -70,9 +85,11 @@ def main():
         print(mid, rows[-1]["status"], rows[-1]["test"], flush=True)
     order = [b[1] for b in BUGS]
     rows.sort(key=lambda r: order.index(r["id"]) if r["id"] in order else len(order))
-    rc, _ = lake([GEX, "VE.Acts.RunExamples", "VE.Acts.MeaningExamples"])
-    out.write_text(json.dumps({"item": "ap-parse-index", "command": "python3 docs/act-phrases/ap-parse-index/seed_bugs.py",
-                               "restored_build_returncode": rc, "mutants": rows}, indent=1, ensure_ascii=False) + "\n")
+    rc, _ = lake([GEX, "VE.Acts.RunExamples", "VE.Acts.MeaningExamples", *DEC])
+    head = {"item": "ap-parse-index", "command": "python3 docs/act-phrases/ap-parse-index/seed_bugs.py",
+            "restored_build_returncode": rc}
+    body = ",\n".join("  " + json.dumps(r, ensure_ascii=False) for r in rows)
+    out.write_text(json.dumps(head, ensure_ascii=False)[:-1] + ', "mutants": [\n' + body + "\n]}\n")
     sys.exit(0 if rc == 0 and all(r["status"] == "KILLED" for r in rows) else 1)
 
 

@@ -418,9 +418,8 @@ The grammar is built once per read, in time near-linear in the frames (`closed_e
 
 def padFrames (n : Nat) : List Frame :=
   (List.range n).map fun i => fr ("seek" ++ String.mk [Char.ofNat (97 + i / 26), Char.ofNat (97 + i % 26)]) [""] [] []
-def l6 : String := "{0} to seek and to enjoy asylum in the first city in the second city in the third city in the fourth \
-  city in the fifth city in the sixth city"
 def l6Fixed : List String := ["first", "second", "third", "fourth", "fifth", "sixth"].map fun n => s!"the {n} city"
+def l6 : String := "{0} to seek and to enjoy asylum" ++ String.join (l6Fixed.map (" in " ++ ·))
 def l6Steps (n : Nat) : Option Nat :=
   (grammar ⟨V5.frames ++ padFrames n, []⟩).prepare.steps rawCap stepBudget
     ((Lexical.lex l6Fixed l6).toOption.getD []).toArray
