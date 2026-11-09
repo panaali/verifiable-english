@@ -1,6 +1,7 @@
 import VE.Service.Document
 import VE.Scope.ReadingsExamples
 import VE.Service.ScopeAdmission
+import VE.Scope.FarExamples
 
 /-! scope@0 in the document mode (SC-1b; docs/spec/scope.md 1.6, 3, 5.2 and 7.2) on a small part document built as a
 request carries it: a lead-in "Agents must not:" framing two items, and a closing sentence. F1-doc (the governor's
@@ -186,5 +187,21 @@ example (front : Json) (source : String) (re : VE.Readings.Wire.ReadingsEnvironm
   (VE.Scope.reguard_applies D u c o o' N N' G' h hN (VE.Scope.baseObj_jsonWF D
     (VE.Scope.decodeBlock_jsonWF front source re D hD).1 (VE.Scope.decodeBlock_payloads front source re D hD) u o ho)
     hN' hG S ρ).1
+
+/-! ## F12's pinned u0047.s05-s06: UNFORMALISED in the document mode (sc-4-f12) -/
+
+/-- The pinned rows of u0047.s05-s06 (tests/data/tarch-b8/translation-without-content.ve.txt and nd-op.ve.txt, their
+    spans moved to a part document of exactly their bytes), checked by the document mode (sc-4-f12; F12 itself is in
+    `VE.Scope.FarExamples`). -/
+def u0047Rows : List Json := (VE.Scope.Examples.layoutOf VE.Scope.FarExamples.u0047).map fun x => VE.Scope.Examples.j
+  s!"\{\"id\": \"{x.id}\", \"span\": [{x.span.1}, {x.span.2}], \"support\": \"none\", \"kind\": [\"unformalised\", \"norms\"], \"meaning\": \{\"unformalised\": \"norms\"}}"
+def u0047Statuses : List (String × String) :=
+  let env := VE.Scope.Examples.j "{\"language\": \"ve.core@0.2\", \"profiles\": [\"norms@0\", \"relational-fol@0\"], \"spec_revision\": \"ve-v0.2-expand2-2026-09-25\", \"vocabulary\": {\"sorts\": {}, \"predicates\": {}, \"constants\": {}}}"
+  let front := Json.mkObj [("format", .str "ve-document@1"), ("environment", env), ("units", toJson u0047Rows)]
+  match VE.Service.Document.checkDoc (Json.mkObj [("id", .str "u0047"),
+      ("document", .str ("---\n" ++ front.compress ++ "\n---\n" ++ String.join (VE.Scope.FarExamples.u0047.map (·.2))))]) with
+  | .ok a => VE.Service.Document.unitStatuses a
+  | .error e => [("error", e)]
+#guard u0047Statuses == [("u0047.s05", "UNFORMALISED"), ("u0047.s06", "UNFORMALISED")]
 
 end VE.Service.ScopeExamples

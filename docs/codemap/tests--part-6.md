@@ -1,6 +1,3 @@
-- `tests/test_relay_lint.py` — `tools/relay_lint.py`: a relayed module raises Lean's diagnostics, never its own.
-- `tests/test_relay_mutation_gate.py` — tools/relay_mutation_gate.py: every relayed Lean answer refuses every mutant of a genuine answer.
-- `tests/test_relay_wire_check.py` — Every checker transport sends only values `json` writes as themselves (lf-9 review, B).
 - `tests/test_replay_conservativity.py` — Replay every pre-closure v0 certificate against its frozen original verdict.
 - `tests/test_repo_map.py` — The builders' entry files name only what exists, and tools/repo_map.py derives its map.
 - `tests/test_report_english.py` — The reports@0 English (attribution.md 2.1 to 2.4): the reviewed wordings, one grammar for typed and rendered text, every derivation enumerated, bound to a mani…
@@ -11,7 +8,6 @@
 - `tests/test_reports_status.py` — Directive 2 property: Lean statuses and details for nested content reach unit and document status and the residual through the Python relay.
 - `tests/test_reports_wants.py` — The `wants` test's one owner (docs/spec/attitudes.md section 10 item 6, RC-4; AT-1w): Lean's `reports-wants` kind (`VE.Reports.wantsPhrase?`, `lean/VE/Attribut…
 - `tests/test_response_schemas.py` — The client's response schemas are generated from their one Lean source (lf-1 recheck B).
-- `tests/test_right_clauses_duplicate.py` — cmp-s3a-cfr-2: a rule name on two structured lines gets rights' own `DuplicateDeclaration` text.
 - `tests/test_rights.py` — Rights holder-side elaboration regressions.
 - `tests/test_rights_lean.py` — Lean rights route (docs/spec/rights.md 9.4, item 4) on inputs in the shapes of the item-1 fixtures.
 - `tests/test_rights_licence_relay.py` — rights-licence-relay: Lean returns each narrowing mechanism's licence with the grounds it rests on, and the relay binds them to the request instead of deriving…
@@ -45,6 +41,7 @@
 - `tests/test_scope_5_4_statements.py` — The statement gate for spec 5.4 (SC-2): each proved theorem is the reviewed text, whitespace aside (sc-2c, sc-2d).
 - `tests/test_scope_5_6_statements.py` — The statement gate for spec 5.6 (SC-4): each proved theorem and each definition the statements read is the reviewed text, whitespace aside (sc-4).
 - `tests/test_scope_answer.py` — The explain route (scope SC-1c): `ve scope explain` relays Lean's rows (service mode `scope`) and never shows an answer that is not one about the document it a…
+- `tests/test_scope_authoring.py` — SC-7: scope's authoring wordings (docs/spec/scope.md 2.2, 5.8, 7.8).
 - `tests/test_scope_b1_input.py` — B1's input and its check (docs/spec/scope-PLAN.md, benchmarks B1 and C11): the case `tools/bench/scope_b1.py` builds is F1-doc's block over the full pinned con…
 - `tests/test_scope_document.py` — SC-1b: the Lean document mode admits `scope@0` (docs/spec/scope.md 5.2, 7.2) on the F1 part document, the pinned constitution's hard-constraint block (u0164.s0…
 - `tests/test_scope_forward.py` — SC-4: scope@0's forward declarations (docs/spec/scope.md 1.9, 3, 5.6, 7.6) through the document mode.
@@ -81,3 +78,6 @@
 - `tests/test_speech_acts.py` — Deterministic experimental speech-act core fixtures (no trusted route).
 - `tests/test_speech_acts_conformance.py` — Shared section-9 speech-act fixtures across Python, Lean, and Rust FOL evaluation.
 - `tests/test_speech_acts_lean.py` — The Lean `ve_speech_acts_route` on hand-written fixtures of speech-acts.md section 9.
+- `tests/test_speech_polar_lean.py` — Speech acts' polar questions and their `Must`/`Can` refusal, read by Lean (question answering Q1.4, Q1.4b).
+- `tests/test_speech_source_lean.py` — The Lean decoded-source wrapper (`speech-source`, docs/spec/speech-acts.md 8.5) against Python's `SpeechSource`.
+- `tests/test_speech_source_relay.py` — The bound Python transport for VE.SpeechActs.Source.report.

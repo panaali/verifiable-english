@@ -7445,6 +7445,8 @@
 'VE.Scope.scope_absent_unchanged' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Scope.scope_admission' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Scope.scope_admission_sets' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Scope.scope_parseRender' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Scope.scope_renderParse' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Scope.scope_set_choices' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Scope.setObjVal_get' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Scope.setObjVal_ne' depends on axioms: [propext, Classical.choice, Quot.sound]
