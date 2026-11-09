@@ -1,0 +1,15 @@
+trust_mutants: 133 definitions, 414 mutants (37 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/Purposes/WellFormed.lean:90 VE.Purposes.covered (S, trusted) body-true: s.all fun r => match r.partId? >>= U.find? with | some p => p.status == "CHECKED" || p.status == ... -> true (lean/VE/Purposes/Examples.lean:71: Expression (VE.Purposes.nonfactive, which it reads, is not wha...)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:166 VE.Purposes.WellFormed (S, trusted) body-false: B.links.length ≤ maxLinks ∧ (B.links.map (·.id)).Nodup ∧ (∀ L ∈ B.links, (∀ i ∈ L.partIds, (U.fin... -> False (lean/VE/Purposes/Examples.lean:275: Expression (VE.Purposes.Examples.wfDecidable, which it reads,...)
+UNKNOWN lean/VE/Events/Wire.lean:25 VE.Events.EventsDecoded (D[V], trusted) eq-le: = -> ≤ (lean/VE/Events/Wire.lean:25: failed to synthesize)
+UNKNOWN lean/VE/NormDefaults/Layered.lean:103 VE.NormDefaults.Wire.hookView (D[V], trusted) list-empty: H -> [] (lean/VE/NormDefaults/Layered.lean:103: Application type mismatch: The argument)
+UNKNOWN lean/VE/Commands/Steps.lean:177 VE.Commands.shapeAlts (G[V], trusted) list-empty: match o with | .one r _ => [.shape sh [r]] | .steps rs => [.shape sh rs] | .many alts => alts | _... -> [] (lean/VE/Commands/StepsExamples.lean:89: Expression (VE.Commands.combineShapes, which it reads, is...)
+UNKNOWN lean/VE/NormDefaults/Layered.lean:183 VE.NormDefaults.Wire.layeredElaborate (D[V], trusted) append-right: L.U ++ ->  (lean/VE/NormDefaults/Layered.lean:183: Application type mismatch: The argument)
+UNKNOWN lean/VE/Presupposition/Wire.lean:19 VE.Presupposition.Carrier (S, trusted) ctor-drop: | proved (node : String) ->  (lean/VE/Presupposition/Wire.lean:43: Unknown constant `VE.Presupposition.Carrier.proved`)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:167 VE.Purposes.WellFormed (S, trusted) bool-flip: true -> false (lean/VE/Purposes/Examples.lean:275: Expression (VE.Purposes.Examples.wfDecidable, which it reads,...)
+UNKNOWN lean/VE/Compose/Dispatch.lean:1025 VE.Compose.eventsFault (G[V], trusted) list-empty: ((packRows.flatMap (rowChecks ps)).find? (·.1)).map (·.2) -> [] (lean/VE/Compose/Dispatch.lean:1025: Type mismatch)
+trust_mutants: 25 KILLED, 0 SURVIVOR, 9 UNKNOWN, 3 INVALID, 0 ALLOWED, 0 NOT RUN, 377 OTHER SHARD in 3458 s
+trust_mutants: D[V], trusted: 3 KILLED, 3 UNKNOWN, 76 OTHER SHARD
+trust_mutants: G[V], trusted: 10 KILLED, 2 UNKNOWN, 1 INVALID, 138 OTHER SHARD
+trust_mutants: S, trusted: 12 KILLED, 4 UNKNOWN, 2 INVALID, 163 OTHER SHARD
+trust_mutants: steps: wall plan 11.4 s, scratch 4 s, control_build 0.3 s, probe_install 1.2 s, mutants 3435.9 s, cleanup 5.5 s, reads 0.2 s; lake control_build 0.2 s (1), probe_install 1.1 s (1), control_probes 334.4 s (24), mutant_builds 390.9 s (48), mutant_checks 6047.3 s (39), stage_controls 2099.3 s (15), mutant_probes 464.2 s (30)
