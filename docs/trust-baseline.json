@@ -2266,6 +2266,13 @@
    "reason": "ap-4 review fix (F2, F4): VE/Acts/Run.lean +6 (D[V] readingJson, rowsOf: each reading's acts read against its meaning's tagged derivation; G[V] witnessed and D[V] firstsBy are tied by witnessed_readings and firstsBy_map; tagTree, placeOf, Act.toks, Simple.toks, tagged, tagBase are D[I]); ap-4 in all +63 of R16's 150; K +0, S +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-4, 2026-11-09",
    "commit": "da5303b7876924d4fba67866390ed6f0d0b36cbc"
+  },
+  {
+   "class": "V",
+   "lines": 41,
+   "reason": "ci-5: VE/SpeechActs/Wire.lean +31, VE/Acts/Lexical.lean +9, VE/Compose/Dispatch.lean +1 (trusted +41: D +40, G +1; K +0, S +0)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ci-5, 2026-10-18",
+   "commit": "e9a6ec8d5938051a70116918e34fc3cd92aac16e"
   }
  ]
 }

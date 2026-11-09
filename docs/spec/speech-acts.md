@@ -200,9 +200,11 @@ shortcut (`readings_all_iff`) is inapplicable to such sets.
 
 ### 1.6 Supported combinations at `@0`
 
-The route admits an **allowlist** of profiles and nothing else: an environment used by this route enables exactly
-`relational-fol@0`, `norms@0` and `speech-acts@0` among statement and checker profiles. `speech-acts@0` without
-`norms@0` is `UnsupportedProfile: speech-acts@0 requires norms@0`; every other profile in the environment is
+The route admits an **allowlist** of profiles and nothing else: an environment used by this route enables
+`relational-fol@0`, `norms@0` and `speech-acts@0`, with optional `acts@0`, among statement and checker profiles.
+`acts@0` admits only simple acts under commands-imperatives 9; joined acts outside a declared fixed phrase are
+refused at declaration. `speech-acts@0` without `norms@0` is
+`UnsupportedProfile: speech-acts@0 requires norms@0`; every profile outside this allowlist is
 `UnsupportedProfile: speech-acts@0 with <profile>`, in particular `soft-norms@0` (its ranks, defeasible rules and
 instruction authority compose with commands in no specified or proved way: the combination is rejected until it is
 separately specified and proved, fixture φ), `closure@0`, `order@0` and `nary@0`. W3 `defined` declarations and W5
@@ -544,8 +546,8 @@ differs is stale. Removable weights and JSON layout are outside every identity, 
 
 A speech-act document `D` over `E` is well-formed when, in this order:
 
-1. `E` enables exactly the allowlist `relational-fol@0`, `norms@0`, `speech-acts@0` among statement and checker
-   profiles (1.6; any other profile, `soft-norms@0` included, is `UnsupportedProfile`); the `speech_acts` block
+1. `E` enables only profiles in the allowlist of 1.6 among statement and checker profiles
+   (any other profile, `soft-norms@0` included, is `UnsupportedProfile`); the `speech_acts` block
    decodes (3.1).
 2. Every unit decodes under W2's rules with the kinds and contents of 3.2; spans partition the source; MIXED parts as W2.
 3. Every command's act, role, args and guard type-check (3.2); every command has the addressee bound (`UnboundSlot: you`)
@@ -857,7 +859,7 @@ action glosses earn no C: an action declaration cannot hide a sentence behind an
 
 | Text | When | Kind |
 |---|---|---|
-| `UnsupportedProfile: speech-acts@0 requires norms@0` / `speech-acts@0 with <profile or declaration>` | profile gate: any profile outside the allowlist `relational-fol@0`, `norms@0`, `speech-acts@0` (`soft-norms@0`, `closure@0`, `order@0`, `nary@0`, ...), W3 definitions or W5 flags with the route (1.6) | error |
+| `UnsupportedProfile: speech-acts@0 requires norms@0` / `speech-acts@0 with <profile or declaration>` | profile gate: any profile outside the allowlist of 1.6 (`soft-norms@0`, `closure@0`, `order@0`, `nary@0`, ...), W3 definitions or W5 flags with the route | error |
 | `InvalidInput: speech_acts block` / `force` / `judgment` / `invalid command fields for <u>` / `invalid question fields for <u>` | field consistency (3.1 to 3.3), including a reading question whose `{"open": [...]}` meaning or open-term declaration differs from the derived form (4.6) | error |
 | `InvalidInput: speech template slot must stand apart` | environment load: a slot of an act phrase or a (negative) verbalisation touches a letter, digit, `'`, `-`, `_`, brace or non-ASCII character (3.1) | error |
 | `InvalidInput: non-ASCII speech wording` | a unit's `source`, span or fence, or a wording the speech parser reads, holds a character outside U+0000 to U+007F; checked before the wording is classified or read (3.2) | error |
@@ -1620,8 +1622,8 @@ Each is a point where the plan left a reading open; the review may overturn any 
    and the query record is derived content. A named query form is not offered at `@0`.
 4. **Commands take no precedence edges** and cannot be named in `over`. A conflict between a command and a rule is
    reported as a W1 CONFLICT with its witness; the author's fix is a rule or a rewrite, never an implicit priority.
-5. **`speech-acts@0` requires `norms@0`** and admits only the allowlist `relational-fol@0`, `norms@0`,
-   `speech-acts@0` (1.6): `soft-norms@0` and every other profile are rejected with the route until their composition is
+5. **`speech-acts@0` requires `norms@0`** and admits only the allowlist of 1.6:
+   `soft-norms@0` and every profile outside it are rejected with the route until their composition is
    specified and proved; the norms route's rejection of W3 definitions and W5 flags holds for the whole route,
    questions-only documents included, until INTEGRATION-GAPS closes; one gate, no partial path.
 6. **Compliance reuses W1's `done` base predicates as asserted units with their own support kind.** A proof task's
@@ -1671,7 +1673,7 @@ introduces a defect), then items 2 to 4 start; the proof and fidelity gates stil
 | Astra 6: P0's three-way premise status | 5.3: `premises: model | INCONSISTENT | UNKNOWN` on every certificate line, the status of `Π` for unconditional answers, of `Π ++ [H]` for conditional ones, of `Π_q` for judgments; `vacuous` derived (`no | yes | unknown`); 8.5 `PremiseStatusEvidence`; fixtures (τ) and (υ). |
 | Astra 7: meaning-changing rewrites | 2.2, 2.3, 12.16, fixtures (ρ) and (αα): the permission rewrite is the equality-guarded rule of norms.md 3.3 keeping both bindings, never the universal; the two-command rewrite for a disjunctive object is withdrawn (two demands are not a choice), the unit is U unless the act declares the object. |
 | Astra 8: fixture ψ versus C's formalisation requirement | 1.3, 4.6, 5.5, 6, 12.7, fixtures (ν) and (ψ): "exactly one intended reading" is a W2 open term displayed `intended-reading:<set>@<v>` (decider the addressee, criterion one in-set nomination), counted as an open term; reading questions are class O. Completed in draft 3 (14): the term is encoded in W2's frozen open-term schema under the token name `intended-reading.<u>`. |
-| Astra 9: `soft-norms@0` | 1.6 is an allowlist (`relational-fol@0`, `norms@0`, `speech-acts@0`); 4.1(1), 7 and 12.5 updated; fixture (φ) names `soft-norms@0`. |
+| Astra 9: `soft-norms@0` | Draft 2 made 1.6 an allowlist of three profiles; CI-5 later added `acts@0` for simple acts. Sections 4.1(1), 7 and 12.5 refer to 1.6; fixture (φ) names `soft-norms@0`. |
 | Fable 4: `binding` units at the P0 boundary | 3.2, 8.5 (`bindings_withheld`, `SpeechAdmitted.p0`), 8.6, 12.1, fixture (ψ): withheld from P0 `admit_document` (its frozen kind decoder lacks the kind), present only in the wrapper identity and the coverage projection. |
 | Fable 5: `inst`, `DecidableEq`, missing helpers | 8.3 `inst [.const a] q.body`; 8.1 `Force` (and `Mode`) `deriving DecidableEq`; `pinnedAsserted` and `trivialQuery` defined in 8.1 (with `Query.premiseIds` and asserted unit ids for them to be definable). |
 | Fable 6: single-choice support exclusivity | 8.3 `support_exclusive_one`; 4.5 and 11.4 name it. |
