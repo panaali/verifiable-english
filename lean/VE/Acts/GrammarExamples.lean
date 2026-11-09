@@ -1,4 +1,6 @@
-import VE.Acts.Grammar
+import VE.Acts.Readings
+import Lean.Elab.Term
+import Lean.Compiler.CSimpAttr
 
 /-! Fixtures of the act grammar (docs/spec/act-phrases.md 11.2, 11.2a, 11.2b; D-31 in 10).
 
@@ -424,5 +426,16 @@ def l6Steps (n : Nat) : Option Nat :=
 
 #guard framesOk ⟨V5.frames ++ padFrames 126, []⟩ && !framesOk ⟨V5.frames ++ padFrames 127, []⟩
 #guard [0, 30, 62, 126].all fun n => l6Steps n == some (23152 + 1984 * n)
+
+/-- Whether compiled code runs the forms that build the grammar and read the rule table once, and skip an empty
+suffix (each `@[csimp]` lemma of ap-parse-index is installed), read when the check elaborates. -/
+syntax (name := onceInstalled) "once_installed%" : term
+
+open Lean Elab Term in
+@[term_elab onceInstalled] def elabOnceInstalled : TermElab := fun _ _ => do
+  let m := (Lean.Compiler.CSimp.ext.getState (← getEnv)).map
+  return toExpr ([``closed, ``build, ``VE.Grammar.combine, ``readings, ``read].all m.contains)
+
+#guard once_installed%
 
 end VE.Acts.Examples
