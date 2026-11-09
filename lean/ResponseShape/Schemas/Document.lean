@@ -173,6 +173,17 @@ def judgments : Shape :=
           ("units", n [arr, .minItems 1, .items (ref "common.json#/$defs/token")])]])]),
       ("unused", n [arr, .items (ref "common.json#/$defs/token")])]]
 
+/-- Under `judgments@0`, jt-3's legend and status lines (plan 2.4, judgment-terms.md 9.2): Lean's English, a string to
+the client, which binds each term to the request's open terms and each unit to its units. -/
+def judgmentLines : Shape :=
+  c "Service.Document.linesJson: the legend and status lines of the bound judgments." [
+    obj, .required ["legend", "status"],
+    closed [
+      ("legend", n [arr, .items (n [obj, .required ["term", "lines"],
+        closed [("term", ref "common.json#/$defs/token"), ("lines", n [arr, .minItems 1, .items str])]])]),
+      ("status", n [arr, .items (n [obj, .required ["unit", "line"],
+        closed [("unit", ref "common.json#/$defs/token"), ("line", str)]])])]]
+
 /-- Under `judgments@0`, `Judgments.undeclaredEvaluative` (judgment-terms.md 7 and 8.4): the base predicates whose
 words match english-lean's catalogue and that are not bound. The client binds every name to a base predicate of the
 request (a regulated one included) that is not a declared open term. -/
@@ -249,6 +260,7 @@ def «row» : Shape :=
         ("units", n [arr, .items (ref "#/$defs/unit")]),
         ("coverage", ref "#/$defs/coverage"),
         ("judgments", ref "#/$defs/judgments"),
+        ("judgment_lines", ref "#/$defs/judgment_lines"),
         ("undeclared_evaluative", ref "#/$defs/undeclared_evaluative"),
         ("composed_readings", ref "#/$defs/composed_readings"),
         ("cardinality", copied "Service.Document.cardinalityReport: the cardinality mode's report, its identities and the leaves; the client recomputes `report_id` over the request's graph" <|
@@ -259,7 +271,7 @@ def file : File where
   comment := some "Mode document: W2 wrapper byte partition, inferred unit statuses and base coverage."
   top := [("row", «row»)]
   defs := [("plain_error", .schema plain_error), ("model_error", .schema model_error),
-    ("fence_error", .schema fence_error), ("unit", .schema unit), ("meaning", .schema meaning), ("narrowing", .schema narrowing), ("coverage", .schema coverage), ("judgments", .schema judgments), ("cardinality_report", .schema cardinalityReport), ("undeclared_evaluative", .schema undeclaredEvaluative), ("composed_reading", .schema composedReading), ("composed_set", .schema composedSet), ("composed_readings", .schema composedReadings), ("cells", .schema cells),
+    ("fence_error", .schema fence_error), ("unit", .schema unit), ("meaning", .schema meaning), ("narrowing", .schema narrowing), ("coverage", .schema coverage), ("judgments", .schema judgments), ("judgment_lines", .schema judgmentLines), ("cardinality_report", .schema cardinalityReport), ("undeclared_evaluative", .schema undeclaredEvaluative), ("composed_reading", .schema composedReading), ("composed_set", .schema composedSet), ("composed_readings", .schema composedReadings), ("cells", .schema cells),
     ("block_coverage", .schema blockCoverage), ("soft_exception", .schema soft_exception),
     ("soft_norm", .schema soft_norm), ("cites", .schema cites), ("soft_content", .schema soft_content),
     ("rights_line", .schema rights_line), ("rights_condition", .schema rights_condition),
@@ -267,6 +279,6 @@ def file : File where
 
 -- The document protocol includes every composed-reading field and every existing row.
 -- Its rendered fingerprint is fixed with this wire change; changing the shape requires review.
-#guard (file.render.toOption.map (hash ·.compress)) == some 13020308835680380576
+#guard (file.render.toOption.map (hash ·.compress)) == some 6599105763662197523
 
 end ResponseShape.Schemas.Document
