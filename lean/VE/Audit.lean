@@ -425,6 +425,7 @@ import VE.Scales.Degrees
 import VE.Scales.Examples
 import VE.Scales.Intended
 import VE.Scales.Theorems
+import VE.Scope.Authoring
 import VE.Scope.EffectLemmas
 import VE.Scope.Examples
 import VE.Scope.FarTheorems
@@ -7937,6 +7938,8 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.scope_absent_unchanged
 #print axioms VE.Scope.scope_admission
 #print axioms VE.Scope.scope_admission_sets
+#print axioms VE.Scope.scope_parseRender
+#print axioms VE.Scope.scope_renderParse
 #print axioms VE.Scope.scope_set_choices
 #print axioms VE.Scope.setObjVal_get
 #print axioms VE.Scope.setObjVal_ne
