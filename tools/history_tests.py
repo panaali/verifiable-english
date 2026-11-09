@@ -557,7 +557,9 @@ class _Scanner(ast.NodeVisitor):
     def _built(self, node) -> None:
         """Record the path an outermost path-building expression makes (`built`); a part of a bigger one is not
         a path the file names (`ROOT / "lean" / "VE" / "A.lean"` names lean/VE/A.lean, not lean/VE)."""
-        if self._builds(node) and not (self.parents and self._builds(self.parents[-1])):
+        parent = self.parents[-1] if self.parents else None
+        part = self._builds(parent) or isinstance(parent, ast.Attribute) and parent.attr == "joinpath"
+        if self._builds(node) and not part:
             text, _ = self._path(node)
             if text is not None:
                 self.built.add(text)
