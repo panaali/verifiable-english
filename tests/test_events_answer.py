@@ -202,7 +202,7 @@ def test_every_single_fault_mutant_is_unavailable_or_changes_nothing_shown(genui
     shown = events.answer(row, case)
     mutants = _mutants(row, case)
     assert len(mutants) > 200
-    bad = [d for d, m in mutants if _outcome(row, case, [(d, m)]) not in (None, "unavailable", shown)]
+    bad = [d for d, m in mutants if _outcome(row, case, [(d, m)]) not in ("unavailable", shown)]
     assert not bad, bad[:10]
 
 
