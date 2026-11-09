@@ -60,9 +60,13 @@ Warshall pivot. Its correctness is proved; an O(n^3) matrix implementation and
 complexity bound are not. Body relations are evaluated for all domain pairs
 per outer valuation. The reference bridge has no evaluation work-budget theorem.
 
-The extended checker is in `TableauExtended*.lean`, with semantic helper proofs
-in `Closure/Substitution.lean`, `Closure/Congruence.lean`,
-`Closure/PathRules.lean` and `Closure/Induction.lean`. Its headline theorem is:
+The extended checker is in `Closure/Tableau.lean`: closure's version gate, then
+Core's replay (`Core/TableauExtended*.lean`, with Core's semantic helper proofs in
+`Core/Substitution.lean`, `Core/Congruence.lean`, `Core/PathRules.lean` and
+`Core/Induction.lean`) of the certificate embedded into Core's syntax. Closure's
+own copy of that tableau was deleted in consolidation step 3b (AR-22);
+`VE.Closure.CoreEquiv.checkCertificate_eq_core_replay` is the checker's defining
+equation. Its headline theorem is:
 
 ```lean
 VE.Closure.Tableau.checkCertificate_sound
