@@ -32,6 +32,23 @@ def dropKeys (ks : List String) : Json → Json
 def members : Json → List (String × Json)
   | .obj kvs => kvs.toList
   | _ => []
+/-- An object rebuilt from its members; any other value unchanged (a parsed object is its own rebuilding). -/
+def rebuild : Json → Json
+  | .obj kvs => Json.mkObj kvs.toList
+  | j => j
+/-- An object with member `k`'s value through `f`: its keys, their order and its other values unchanged (no member is
+    added). Any other value unchanged. -/
+def mapMember (k : String) (f : Json → Json) : Json → Json
+  | .obj kvs => .obj (kvs.map fun k' v => if k' == k then f v else v)
+  | j => j
+/-- An array through `f` element by element; any other value unchanged. -/
+def mapArr (f : Json → Json) : Json → Json
+  | .arr xs => .arr (xs.map f)
+  | j => j
+/-- A line object without the members `ks`, its `norm` and `liberty` rebuilt (the soft decoder reads a norm through
+    its member list). -/
+def lineWith (ks : List String) (l : Json) : Json :=
+  mapMember "liberty" rebuild (mapMember "norm" rebuild (dropKeys ks l))
 /-- A unit's line-bearing body (`right` or `right_lines`) with its key. -/
 def unitBody (u : Json) : Option (String × Json) :=
   match u.getObjVal? "right", u.getObjVal? "right_lines" with
@@ -49,9 +66,7 @@ def bodyLines (body : Json) : List Json :=
 def mapUnit (f : String → Json → Json) (u : Json) : Json :=
   let u := dropKeys ["span"] u
   match unitBody u with
-  | some (k, b) => match b.getObjVal? "lines" with
-    | .ok (.arr ls) => u.setObjVal! k (b.setObjVal! "lines" (.arr (ls.map (f (bodyRight k b)))))
-    | _ => u
+  | some (k, b) => mapMember k (mapMember "lines" (mapArr (f (bodyRight k b)))) u
   | none => u
 def mapDoc (f : String → Json → Json) : Json → Json
   | .arr us => .arr (us.map (mapUnit f))
@@ -63,7 +78,7 @@ def unitsOf : Json → List Json
 
 /-- 8.5: removes the mandatory `elided` key from every line object (and each unit's `span`, this wire's reading of
     the unit span). -/
-def stripElided : Json → Json := mapDoc (fun _ => dropKeys ["elided"])
+def stripElided : Json → Json := mapDoc (fun _ => lineWith ["elided"])
 /-- 8.5: no line object has `clauses` or `relation`. -/
 def NoClauseKeys (document : Json) : Prop :=
   ∀ u ∈ unitsOf document, ∀ b ∈ (unitBody (dropKeys ["span"] u)).toList, ∀ l ∈ bodyLines b.2,
@@ -139,7 +154,7 @@ def decodeRelationOpt (n : String) (l : Json) : Except String (Option Relation) 
     `elided`, `clauses` and `relation`. A line with no rule name gets none of the head's checks (rights refuses it). -/
 def headLine (se : SoftEnvironment) (R : String) (span : Nat × Nat) (l : Json) :
     Except String (Option (String × String × CLine)) := do
-  let S ← decodeLine se (dropKeys headKeys l)
+  let S ← decodeLine se (lineWith headKeys l)
   match lineName S with
   | none => pure none
   | some n => do
@@ -163,7 +178,7 @@ def headUnit (se : SoftEnvironment) (u : Json) : Except String (List (String × 
 def headStep (se : SoftEnvironment) (acc : List (String × String × CLine) × Units) (u : Json) :
     Except String (List (String × String × CLine) × Units) := do
   let ls ← headUnit se u
-  let us ← addUnit se acc.2 (mapUnit (fun _ => dropKeys headKeys) u)
+  let us ← addUnit se acc.2 (mapUnit (fun _ => lineWith headKeys) u)
   pure (acc.1 ++ ls, us)
 
 /-- 8.5: the rights document as `decodeRightsSource` builds it (without its `WellFormedRights` check, which runs on
@@ -190,15 +205,15 @@ def jsonLineName (l : Json) : Option String :=
     ((l.getObjValD "liberty").getObjValD "name").getStr?.toOption
 /-- A line object of right `R` without the three keys; a structured line's norm guard is its plain guard. -/
 def plainLineJson (D : ClauseDoc) (R : String) (l : Json) : Json :=
-  let l := dropKeys headKeys l
-  match (jsonLineName l).bind (fun n => D.lines.find? (fun x => x.1 == R && x.2.1 == n)), l.getObjVal? "norm" with
-  | some (_, _, L), .ok raw =>
+  let l := lineWith headKeys l
+  match (jsonLineName l).bind (fun n => D.lines.find? (fun x => x.1 == R && x.2.1 == n)) with
+  | some (_, _, L) =>
     match L.line.norm with
     | some N =>
       if L.clauses.isEmpty && L.relation.isNone then l
-      else l.setObjVal! "norm" (raw.setObjVal! "guard" (enc (plainGuard (lineSorts D.doc.soft L.line).length N.guard L)))
+      else mapMember "norm" (mapMember "guard" (fun _ => enc (plainGuard (lineSorts D.doc.soft L.line).length N.guard L))) l
     | none => l
-  | _, _ => l
+  | none => l
 /-- 8.5: the document under rights@0: every line through `plainLineJson`, the three keys and unit spans dropped. -/
 def elaborateJson (D : ClauseDoc) (document : Json) : Json := mapDoc (plainLineJson D) document
 
