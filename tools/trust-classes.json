@@ -19534,6 +19534,7 @@
       "D[V]": [
         "VE.Scope.Pinned.wordChar",
         "VE.Scope.Pinned.spaced",
+        "VE.Scope.Pinned.closers",
         "VE.Scope.Pinned.clause",
         "VE.Scope.Pinned.listName",
         "VE.Scope.Pinned.cap",
@@ -19568,6 +19569,7 @@
       "T": [
         "VE.Scope.AuthoringExamples.j",
         "VE.Scope.AuthoringExamples.para",
+        "VE.Scope.AuthoringExamples.slotsEnding",
         "VE.Scope.AuthoringExamples.trip",
         "VE.Scope.AuthoringExamples.twoReadings",
         "VE.Scope.AuthoringExamples.u0170s01",

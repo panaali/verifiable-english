@@ -28,10 +28,15 @@ def wordChar (c : Char) : Bool := !VE.Discourse.spaceChar c && 0x20 ≤ c.toNat 
 /-- Words with one space between them, no other space or control character, and at least one word. -/
 def spaced (s : String) : Bool := (s.splitOn " ").all fun w => !w.isEmpty && w.all wordChar
 
+/-- What may close a word after a sentence's end (`clause`): each character of Unicode 16.0's categories Pe (closing
+    brackets), Pf and Pi (final and initial quotes: German and Danish close with “ and «), the quotes `"`, `'`, `＂` and
+    `＇`, `>`, and Markdown's `*`, `_`, `` ` `` and `~`. -/
+def closers : String := "\"')*>]_`}~«»༻༽᚜‘’‛“”‟‹›⁆⁾₎⌉⌋〉❩❫❭❯❱❳❵⟆⟧⟩⟫⟭⟯⦄⦆⦈⦊⦌⦎⦐⦒⦔⦖⦘⧙⧛⧽⸂⸃⸄⸅⸉⸊⸌⸍⸜⸝⸠⸡⸣⸥⸧⸩⹖⹘⹚⹜〉》」』】〕〗〙〛〞〟﴾︘︶︸︺︼︾﹀﹂﹄﹈﹚﹜﹞＂＇）］｝｠｣"
+
 /-- Every slot's text (a condition, a rule, a list name, a section): spaced, and no word ends a sentence or a lead-in
-    (".", "?", "!", ":", "…" or a full-width form, before any closing quote or bracket): a wording is one sentence. -/
+    (".", "?", "!", ":", "…", "‽", "。", "？", "！", "：" or "．", before any `closers`): a wording is one sentence. -/
 def clause (s : String) : Bool := spaced s && (s.splitOn " ").all fun w =>
-  !".?!:…‽。？！：．".contains (w.dropRightWhile ("”’\")]»".contains ·)).back
+  !".?!:…‽。？！：．".contains (w.dropRightWhile (closers.contains ·)).back
 
 /-- A list name: "the" and at least one more word ("the hard constraints"), a slot (`clause`). -/
 def listName (n : String) : Bool := n.startsWith "the " && clause n
