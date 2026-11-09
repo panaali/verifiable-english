@@ -1177,10 +1177,11 @@ def map_seconds(plan: dict) -> dict[str, float]:
     return {unit: float(row.get("seconds") or 0.0) for unit, row in status.items() if isinstance(row, dict)}
 
 
-# --defer-broad (with --defer-heavy only). The map's units split into those that reach under 12% of the lean/VE
-# modules (most reach none; ve_conformance's closure is the largest such reach) and those that reach at least 67%
-# (every ve_service user: its closure; lake, lean or the inventories: all), with no unit in between (map
-# 223babd3d0, 559 units: 125 under 0.12, 344 at 0.67, 90 at >= 0.99). 0.25 sits in that gap.
+# --defer-broad (with --defer-heavy only). `lean_shares` splits the map's units into those that reach at most 12%
+# of the lean/VE modules (most reach none; ve_conformance's closure is the largest such reach) and those that reach
+# at least 66% (a ve_service user: its closure; a reader of every module or a runner of lake or lean: all), with no
+# unit in between (map 223babd3d0, 559 units: 125 at <= 0.1201, 352 in 0.661-0.99, 82 at >= 0.99). 0.25 sits in
+# that gap.
 BROAD_LEAN_SHARE = 0.25
 LEAN_REASONS = ("reads lean/", "runs Lean via lean/", "runs service mode via lean/")
 
