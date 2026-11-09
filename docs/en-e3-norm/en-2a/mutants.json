@@ -14,9 +14,9 @@
     "lean/VE/EnglishGrammar/Norm/Owners.lean:29 theorem opOf_agrees"
    ],
    "test_with_proofs_cut": [
-    "lean/VE/EnglishGrammar/Norm/OwnersExamples.lean:21 O1",
     "lean/VE/EnglishGrammar/Norm/OwnersExamples.lean:22 O1",
-    "lean/VE/EnglishGrammar/Norm/OwnersExamples.lean:26 O2"
+    "lean/VE/EnglishGrammar/Norm/OwnersExamples.lean:23 O1",
+    "lean/VE/EnglishGrammar/Norm/OwnersExamples.lean:27 O2"
    ],
    "status": "KILLED"
   },
@@ -33,8 +33,8 @@
     "lean/VE/EnglishGrammar/Norm/Owners.lean:85 theorem toNodesChecked_ok"
    ],
    "test_with_proofs_cut": [
-    "lean/VE/EnglishGrammar/Norm/OwnersExamples.lean:55 O7 (toNodeChecked)",
-    "lean/VE/EnglishGrammar/Norm/OwnersExamples.lean:57 O7 (toNodesChecked)"
+    "lean/VE/EnglishGrammar/Norm/OwnersExamples.lean:57 O7 (toNodeChecked)",
+    "lean/VE/EnglishGrammar/Norm/OwnersExamples.lean:59 O7 (toNodesChecked)"
    ],
    "status": "KILLED",
    "test_with_proofs_cut_and_O7_off": [
@@ -56,15 +56,15 @@
     "lean/VE/EnglishGrammar/Norm/Run.lean:247-248 theorem Run.answer_stopped (and answer_one_iff, answer_partial_no_node)"
    ],
    "test_with_proofs_cut": [
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:59 E6",
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:61 E6",
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:73 E10",
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:91 E14",
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:95-100 E16",
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:109 E16 (every Reject)",
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:121 E8",
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:125 every row's class",
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:177-178 f18 through the real reader"
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:60 E6",
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:62 E6",
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:76 E10",
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:103 E14",
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:107-112 E16",
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:121 E16 (every Reject)",
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:133 E8",
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:137 every row's class",
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:211-212 f18 through the real reader"
    ],
    "status": "KILLED"
   },
@@ -77,16 +77,16 @@
     "after": "coded f.code f.text"
    },
    "test": [
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:47 E4",
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:52 E9",
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:55 E4 (NoConsequence, StrayCarveOut)",
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:140 the sentence rule"
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:48 E4",
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:53 E9",
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:56 E4 (NoConsequence, StrayCarveOut)",
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:152 the sentence rule"
    ],
    "test_with_proofs_cut": [
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:47 E4",
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:52 E9",
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:55 E4 (NoConsequence, StrayCarveOut)",
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:140 the sentence rule"
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:48 E4",
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:53 E9",
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:56 E4 (NoConsequence, StrayCarveOut)",
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:152 the sentence rule"
    ],
    "status": "KILLED"
   },
@@ -99,14 +99,14 @@
     "after": "\"NodeRefused\""
    },
    "test": [
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:40 E3 (depth)",
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:42 E3 (node budget)",
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:91 E14 (lean-unknown)"
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:41 E3 (depth)",
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:43 E3 (node budget)",
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:103 E14 (lean-unknown)"
    ],
    "test_with_proofs_cut": [
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:40 E3 (depth)",
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:42 E3 (node budget)",
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:91 E14 (lean-unknown)"
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:41 E3 (depth)",
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:43 E3 (node budget)",
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:103 E14 (lean-unknown)"
    ],
    "status": "KILLED"
   },
@@ -122,10 +122,49 @@
     "lean/VE/EnglishGrammar/Norm/Run.lean:247 theorem Run.answer_stopped"
    ],
    "test_with_proofs_cut": [
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:95 E16 (Internal)",
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:99 E16 (EmptyDocument)",
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:109 E16 (every Reject)",
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:140 the sentence rule"
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:107 E16 (Internal)",
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:111 E16 (EmptyDocument)",
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:121 E16 (every Reject)",
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:152 the sentence rule"
+   ],
+   "status": "KILLED"
+  },
+  {
+   "behaviour": "fewer blocks than statements is Internal, never a one answer that zip shortens (self-review B)",
+   "file": "lean/VE/EnglishGrammar/Norm/Run.lean",
+   "plant": {
+    "file": "lean/VE/EnglishGrammar/Norm/Run.lean",
+    "before": "|| sps.length != rs.length then none",
+    "after": "|| sps.length > rs.length then none"
+   },
+   "test": [
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:87 fewer blocks than statements"
+   ],
+   "status": "KILLED"
+  },
+  {
+   "behaviour": "a rule row's span is in bytes, not code points (M10; self-review B)",
+   "file": "lean/VE/EnglishGrammar/Norm/Run.lean",
+   "plant": {
+    "file": "lean/VE/EnglishGrammar/Norm/Run.lean",
+    "before": "let sps := statementSpans source",
+    "after": "let sps := (statementSpans source).map (byte offsets converted to code-point counts)"
+   },
+   "test": [
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:89 non-ASCII byte spans through answerWith"
+   ],
+   "status": "KILLED"
+  },
+  {
+   "behaviour": "a retyped source is refused (self-review B)",
+   "file": "lean/VE/EnglishGrammar/Norm/Run.lean",
+   "plant": {
+    "file": "lean/VE/EnglishGrammar/Norm/Run.lean",
+    "before": "let source ← VE.Bridge.stringField j \"source\"",
+    "after": "let source := ((j.getObjValD \"source\").getStr?.toOption.getD \"\")"
+   },
+   "test": [
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:195 a retyped id, kind or source is an error row"
    ],
    "status": "KILLED"
   }
