@@ -485,6 +485,8 @@ def allCandidates : List Candidate := [.assumed, .conditioned, .asserted, .inPla
 #guard allCandidates.map Candidate.core == [true, true, true, false, false]
 #guard allCarriers.all (fun c => (c.cand.map Candidate.root).getD .bare == c.root)
 #guard ({ sort := some "entity", body := some ready } : Args).tuple == (some "entity", none, some ready, none)
+-- R-10: a heading is a position of its own, not the root path; a rule act is named by its rule.
+#guard Position.heading != .path [] && Position.ruleAct "r1" != .ruleAct "r2" && Position.path [0] != .path [1]
 
 -- table (7.1), `tableOk` (7.2): the fixture table and the empty table pass; `[asserted]` everywhere, at a rule act
 -- alone, `[assumed, asserted]` and `[inPlace]` alone in the negated cell fail (R-2); `[conditioned, inPlace]` passes.
@@ -503,7 +505,7 @@ def fixtureTable : CandidateTable := fun _ pc => match pc with
 #guard !cellOk .top [.conditioned, .conditioned] && cellOk .top [.assumed, .conditioned]
 #guard cellOk .antecedent [.conditioned, .inPlace] && !cellOk .top [.conditioned, .inPlace]
 #guard cellOk .consequent [.unconditional] && !cellOk .top [.unconditional]
-#guard cellOk .top [.asserted] && !cellOk .ruleAct [.asserted]
+#guard cellOk .top [.asserted] && !cellOk .ruleAct [.asserted] && !cellOk .top [.assumed, .asserted]
 #guard !tableOk rowNames (fun r pc => if r == "generic" && pc == .ruleGuard then [.unconditional] else [])
 #guard tableOk [] (fun _ _ => [.assumed, .asserted])
 
