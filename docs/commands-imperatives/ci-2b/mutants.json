@@ -27,6 +27,13 @@
   {"id": "S7", "language": "Lean", "file": "lean/VE/SpeechActs/Source/Run.lean", "definition": "VE.SpeechActs.Source.readSource",
    "bug": "the fence cap removed (`if false && VE.Limits.maxCases < needed.length`), so the fences are resolved before any charge (reviews/dri-decisions-20261109-ci-2b-fences.md item 1's condition)",
    "test": ["lean/VE/Commands/RunSplit.lean SourceExamples #guard `fenced (VE.Limits.maxCases + 1)` (lake build fails)",
-            "tests/test_command_relay.py::test_command_fences_are_charged_before_they_are_read (with that #guard disabled, so the build passes)"]}
+            "tests/test_command_relay.py::test_command_fences_are_charged_before_they_are_read (with that #guard disabled, so the build passes)"]},
+  {"id": "S8", "language": "Lean", "file": "lean/VE/SpeechActs/Source/Run.lean", "definition": "VE.SpeechActs.Source.readSource",
+   "bug": "review F1's role check removed (`unless true || Wire.roleFits k i.role`), so a fence of a kind wrapping `instruction`, `question` or `norm` resolved as a formula decodes to no role and is dropped unread",
+   "test": ["lean/VE/Commands/RunSplit.lean SourceExamples #guards: the formula-in-place-of-role guard over every kind and the MIXED one (lake build fails at both)",
+            "tests/test_command_relay.py::test_a_fence_resolved_as_a_formula_in_place_of_its_role_is_refused (all 10 cases: DID NOT RAISE; with those #guards disabled, so the build passes); its 7 control cases pass"]},
+  {"id": "S9", "language": "Lean", "file": "lean/VE/SpeechActs/Wire.lean", "definition": "VE.SpeechActs.Wire.kindTag",
+   "bug": "`kindTag` reads the kind itself, not the kind it wraps (`match kind with` for `match innerKind kind with`), so an attributed or hedged instruction fence resolved as a formula is accepted and an attributed command is refused",
+   "test": ["lean/VE/Commands/RunSplit.lean SourceExamples #guards: the formula-in-place-of-role guard over every kind, and `one attributed` resolved as `click` == \"ok\" (lake build fails at both)"]}
  ]
 }
