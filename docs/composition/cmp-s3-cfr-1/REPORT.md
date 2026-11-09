@@ -21,10 +21,10 @@ HEAD: the branch tip (the chain's gate records the commit it ran on in gate-resu
 Not delivered here:
 - cmp-s3-cfr-1b: the relay, the Python differential, the remaining 9.1/9.2 fixtures, W1's budget fixture and
   `clauseSlot_wellFormed`.
-- **cmp-s3-cfr-1c (new follow-up, named here):** reading candidates under the profile, that is, 4.1 steps 2-4 for
+- **cmp-s3-cfr-1c (filed by the DRI, reviews/dri-decisions-20261109-cmp-s3-cfr-1.md item 1):** reading candidates under the profile, that is, 4.1 steps 2-4 for
   candidates, `decodeClauseDoc` filling `cands`, and K12. Until then the head refuses a list with `readings@1` by
   name (`UnsupportedProfile: right-clauses@0 with readings@1 is not implemented`); before this item, such a list had
-  no head at all. The DRI is told with the final report.
+  no head at all.
 
 ## The wire (readings made here; for the reviewer and cmp-s3-cfr-1b)
 
@@ -35,8 +35,9 @@ Not delivered here:
   key mirrors a W2 unit's `span` (docs/spec/document.md:21); cmp-s3-cfr-1b's relay must send it.
 - **`total: null`.** The service's restricted JSON has no null; rights' `_wire` writes an optional null by omission.
   So a relation without `total` reads as `total: null`. An explicit null is read too, if one arrives. Spec 7 says
-  a missing key is `invalid relation`, so this is a deviation the wire forces. It is recorded for the DRI, and
-  cmp-s3-cfr-1b's relay must match it.
+  a missing key is `invalid relation`, so this is a deviation the wire forces. The DRI signed both wire readings
+  (reviews/dri-decisions-20261109-cmp-s3-cfr-1.md item 2); the spec erratum is a FOLLOW-UPS line. cmp-s3-cfr-1b's
+  relay must match both.
 - **Order (4.1 step 2, 7).** Units in document order. In each unit, every line object goes through `decodeLine` on
   the object without the three keys (this gives `<n>`), then `elided`, `clauses` (each clause in order) and
   `relation`; then rights' own `addUnit` runs on the unit without its span and keys.
@@ -45,9 +46,10 @@ Not delivered here:
   Units are capped at 1,024; lines per unit are not. cmp-s3-cfr-1b's large-document fixture (W1) must cover lines per
   unit, not only units.
 - **Environments.** No refusal text moves. `right-clauses@0` beside `acts@0` stays refused by the base rows, as before
-  (Standalone keeps that gate's whole-table read for `readings@1` only). With `rights@0`, the environment and model
-  modes now accept the list, where the base refused it as an unregistered profile (DELTA row 1); Python's model view
-  drops the profile. Probe: all 154 lists `relational-fol@0, right-clauses@0` with up to two
+  (Standalone keeps that gate's whole-table read for `readings@1` only). With `rights@0`, the environment mode now
+  accepts the list, where the base refused it as an unregistered profile, and answers as without the profile but for
+  the echoed list and the identity. The model mode still refuses the name (DELTA row 1;
+  test_right_clauses_environment_and_model_answer_as_without_the_profile). Python's model view drops the profile. Probe: all 154 lists `relational-fol@0, right-clauses@0` with up to two
   more environment profiles answer the same text on this build and on the base build (0 differences: docs/composition/cmp-s3-cfr-1/environment-texts.json,
   written by environment_texts_probe.py in both worktrees). Before the acts gate was kept on the base rows, 15 `acts@0`
   lists differed; that was the self-review's B4.
