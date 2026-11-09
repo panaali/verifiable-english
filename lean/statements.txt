@@ -29031,6 +29031,22 @@ theorem VE.Purposes.nonfactive_iff
                 p.kind.inert = Bool.true ∧ ∀ (k : VE.Route.Admission.Kind), k ∈ p.candidates → k.inert = Bool.true
   -- uses VE.Purposes.Link@VE.Purposes.Decl VE.Purposes.Part.candidates@VE.Purposes.WellFormed VE.Purposes.Part.kind@VE.Purposes.WellFormed VE.Purposes.Part@VE.Purposes.WellFormed VE.Purposes.Ref.part@VE.Purposes.Decl VE.Purposes.Ref@VE.Purposes.Decl VE.Purposes.Units.find?@VE.Purposes.WellFormed VE.Purposes.Units@VE.Purposes.WellFormed VE.Purposes.nonfactive@VE.Purposes.WellFormed VE.Purposes.unstated@VE.Purposes.WellFormed VE.Route.Admission.Kind.inert@VE.Route.Inert VE.Route.Admission.Kind@VE.Route.Admission
   -- expr 374592153
+theorem VE.Purposes.packsInert_iff
+  ∀ (U : VE.Purposes.Units) (L : VE.Purposes.Link),
+    VE.Purposes.packsInert U L = Bool.true ↔
+      ∀ (r : VE.Purposes.Ref),
+        r ∈ VE.Purposes.unstated L →
+          ∃ i p,
+            r = VE.Purposes.Ref.part i ∧
+              U.find? i = Option.some p ∧
+                ¬p.id ∈ U.packSources ∧ ∀ (u : String), p.parent = Option.some u → ¬u ∈ U.packSources
+  -- uses VE.Purposes.Link@VE.Purposes.Decl VE.Purposes.Part.id@VE.Purposes.WellFormed VE.Purposes.Part.parent@VE.Purposes.WellFormed VE.Purposes.Part@VE.Purposes.WellFormed VE.Purposes.Ref.part@VE.Purposes.Decl VE.Purposes.Ref@VE.Purposes.Decl VE.Purposes.Units.find?@VE.Purposes.WellFormed VE.Purposes.Units.packSources@VE.Purposes.WellFormed VE.Purposes.Units@VE.Purposes.WellFormed VE.Purposes.packsInert@VE.Purposes.WellFormed VE.Purposes.unstated@VE.Purposes.WellFormed
+  -- expr 332385603
+theorem VE.Purposes.packsInert_nil
+  ∀ (U : VE.Purposes.Units) (L : VE.Purposes.Link),
+    U.packSources = [] → VE.Purposes.nonfactive U L = Bool.true → VE.Purposes.packsInert U L = Bool.true
+  -- uses VE.Purposes.Link@VE.Purposes.Decl VE.Purposes.Units.packSources@VE.Purposes.WellFormed VE.Purposes.Units@VE.Purposes.WellFormed VE.Purposes.nonfactive@VE.Purposes.WellFormed VE.Purposes.packsInert@VE.Purposes.WellFormed
+  -- expr 497178688
 theorem VE.Purposes.require_iff
   ∀ {b : Bool} {m : String}, VE.Route.Gate.require b m = Except.ok () ↔ b = Bool.true
   -- uses VE.Route.Gate.require@VE.Route.Gate
@@ -29060,6 +29076,21 @@ theorem VE.Purposes.shareOk_iff
                     M.reason = L.reason ∧ (M.share = VE.Purposes.Share.plain ∨ M.share = VE.Purposes.Share.sole)
   -- uses VE.Purposes.Block.links@VE.Purposes.Decl VE.Purposes.Block@VE.Purposes.Decl VE.Purposes.Link.id@VE.Purposes.Decl VE.Purposes.Link.polarity@VE.Purposes.Decl VE.Purposes.Link.reason@VE.Purposes.Decl VE.Purposes.Link.relation@VE.Purposes.Decl VE.Purposes.Link.share@VE.Purposes.Decl VE.Purposes.Link.target@VE.Purposes.Decl VE.Purposes.Link@VE.Purposes.Decl VE.Purposes.Polarity.affirmed@VE.Purposes.Decl VE.Purposes.Polarity@VE.Purposes.Decl VE.Purposes.Ref@VE.Purposes.Decl VE.Purposes.Relation@VE.Purposes.Decl VE.Purposes.Share.plain@VE.Purposes.Decl VE.Purposes.Share.sole@VE.Purposes.Decl VE.Purposes.Share@VE.Purposes.Decl VE.Purposes.shareOk@VE.Purposes.WellFormed
   -- expr 911699233
+theorem VE.Purposes.shownUnder_iff
+  ∀ (U : VE.Purposes.Units) (L : VE.Purposes.Link) (i : String) (ns : List String),
+    (i, ns) ∈ VE.Purposes.shownUnder U L ↔
+      ∃ r,
+        r ∈ L.target ∧
+          ∃ p,
+            r = VE.Purposes.Ref.part i ∧
+              U.find? i = Option.some p ∧
+                p.candidates ≠ [] ∧
+                  ns =
+                    List.map (fun x => x.fst)
+                      (List.filter (fun x => Decidable.decide (VE.Purposes.targetKind U L = Option.some x.snd))
+                        (p.readings.zip p.candidates))
+  -- uses VE.Purposes.Link.target@VE.Purposes.Decl VE.Purposes.Link@VE.Purposes.Decl VE.Purposes.Part.candidates@VE.Purposes.WellFormed VE.Purposes.Part.readings@VE.Purposes.WellFormed VE.Purposes.Part@VE.Purposes.WellFormed VE.Purposes.Ref.part@VE.Purposes.Decl VE.Purposes.Ref@VE.Purposes.Decl VE.Purposes.Units.find?@VE.Purposes.WellFormed VE.Purposes.Units@VE.Purposes.WellFormed VE.Purposes.shownUnder@VE.Purposes.WellFormed VE.Purposes.targetKind@VE.Purposes.WellFormed VE.Route.Admission.Kind@VE.Route.Admission VE.Route.Admission.instDecidableEqKind@VE.Route.Admission
+  -- expr 951502366
 theorem VE.Purposes.sideAdjacent_iff
   ∀ (U : VE.Purposes.Units) (s : List VE.Purposes.Ref),
     VE.Purposes.sideAdjacent U s = Bool.true ↔
@@ -29080,6 +29111,17 @@ theorem VE.Purposes.unit_bind
     x >>= f = Except.ok y ↔ x = Except.ok () ∧ f () = Except.ok y
   -- uses
   -- expr 2137658163
+theorem VE.Purposes.unlinkedActive_iff
+  ∀ (U : VE.Purposes.Units) (B : VE.Purposes.Block) (L : VE.Purposes.Link) (i : String),
+    i ∈ VE.Purposes.unlinkedActive U B L ↔
+      ∃ u p,
+        ((U.find? L.marker).bind fun x => x.parent) = Option.some u ∧
+          p ∈ U.parts ∧
+            p.id = i ∧
+              p.parent = Option.some u ∧
+                p.kind.inert = Bool.false ∧ ∀ (M : VE.Purposes.Link), M ∈ B.links → ¬i ∈ M.partIds
+  -- uses VE.Purposes.Block.links@VE.Purposes.Decl VE.Purposes.Block@VE.Purposes.Decl VE.Purposes.Link.marker@VE.Purposes.Decl VE.Purposes.Link.partIds@VE.Purposes.WellFormed VE.Purposes.Link@VE.Purposes.Decl VE.Purposes.Part.id@VE.Purposes.WellFormed VE.Purposes.Part.kind@VE.Purposes.WellFormed VE.Purposes.Part.parent@VE.Purposes.WellFormed VE.Purposes.Part@VE.Purposes.WellFormed VE.Purposes.Units.find?@VE.Purposes.WellFormed VE.Purposes.Units.parts@VE.Purposes.WellFormed VE.Purposes.Units@VE.Purposes.WellFormed VE.Purposes.unlinkedActive@VE.Purposes.WellFormed VE.Route.Admission.Kind.inert@VE.Route.Inert
+  -- expr 3345698364
 theorem VE.Purposes.unstated_eq
   ∀ (L : VE.Purposes.Link),
     VE.Purposes.unstated L =

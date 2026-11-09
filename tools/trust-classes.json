@@ -19589,13 +19589,15 @@
         "VE.Purposes.Units.kind?",
         "VE.Purposes.WellFormed",
         "VE.Purposes.covered",
+        "VE.Purposes.holdsTarget",
         "VE.Purposes.markerAgrees",
         "VE.Purposes.markerHonest",
         "VE.Purposes.markersLinked",
         "VE.Purposes.rivals",
         "VE.Purposes.sameUnit",
         "VE.Purposes.sideOfKind",
-        "VE.Purposes.sidesAdjacent"
+        "VE.Purposes.sidesAdjacent",
+        "VE.Purposes.targetKind"
       ],
       "G[V]": [
         {
@@ -19605,15 +19607,34 @@
           ]
         },
         {
+          "name": "VE.Purposes.packsInert",
+          "tied": [
+            "VE.Purposes.packsInert_iff",
+            "VE.Purposes.packsInert_nil"
+          ]
+        },
+        {
           "name": "VE.Purposes.shareOk",
           "tied": [
             "VE.Purposes.shareOk_iff"
           ]
         },
         {
+          "name": "VE.Purposes.shownUnder",
+          "tied": [
+            "VE.Purposes.shownUnder_iff"
+          ]
+        },
+        {
           "name": "VE.Purposes.sideAdjacent",
           "tied": [
             "VE.Purposes.sideAdjacent_iff"
+          ]
+        },
+        {
+          "name": "VE.Purposes.unlinkedActive",
+          "tied": [
+            "VE.Purposes.unlinkedActive_iff"
           ]
         },
         {
@@ -19787,6 +19808,13 @@
         "VE.Purposes.Examples.F8",
         "VE.Purposes.Examples.f8l",
         "VE.Purposes.Examples.F8b",
+        "VE.Purposes.Examples.packText",
+        "VE.Purposes.Examples.f9u",
+        "VE.Purposes.Examples.F9",
+        "VE.Purposes.Examples.f9l",
+        "VE.Purposes.Examples.f10u",
+        "VE.Purposes.Examples.F10",
+        "VE.Purposes.Examples.f10l",
         "VE.Purposes.Examples.wire",
         "VE.Purposes.Examples.decoded",
         "VE.Purposes.Examples.f1Wire",
