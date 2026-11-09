@@ -1,0 +1,7 @@
+trust_mutants: 3 definitions, 22 mutants (5 to run), 4 jobs, base 560b24d1508c
+UNKNOWN lean/VE/Purposes/WellFormed.lean:168 VE.Purposes.WellFormed (S, trusted) and-or: ∧ -> ∨ (lean/VE/Purposes/Examples.lean:278: Expression (VE.Purposes.Examples.wfDecidable, which it reads,...)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:168 VE.Purposes.WellFormed (S, trusted) and-or: ∧ -> ∨ (lean/VE/Purposes/Examples.lean:278: Expression (VE.Purposes.Examples.wfDecidable, which it reads,...)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:168 VE.Purposes.WellFormed (S, trusted) and-or: ∧ -> ∨ (lean/VE/Purposes/Examples.lean:278: Expression (VE.Purposes.Examples.wfDecidable, which it reads,...)
+trust_mutants: 2 KILLED, 0 SURVIVOR, 3 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 17 OTHER SHARD in 63 s
+trust_mutants: S, trusted: 2 KILLED, 3 UNKNOWN, 17 OTHER SHARD
+trust_mutants: steps: wall plan 9.2 s, scratch 3.3 s, control_build 0.1 s, probe_install 1.1 s, mutants 43.4 s, cleanup 5.9 s; lake control_build 0.1 s (1), probe_install 1.1 s (1), control_probes 4.5 s (3), mutant_builds 54.4 s (9), mutant_checks 40.3 s (9), stage_controls 30.4 s (4), mutant_probes 9.9 s (5)
