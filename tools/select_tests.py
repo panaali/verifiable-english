@@ -1183,14 +1183,21 @@ def map_seconds(plan: dict) -> dict[str, float]:
 # unit in between (map 223babd3d0, 559 units: 125 at <= 0.1201, 352 in 0.661-0.99, 82 at >= 0.99). 0.25 sits in
 # that gap.
 BROAD_LEAN_SHARE = 0.25
-LEAN_REASONS = ("reads lean/", "runs Lean via lean/", "runs service mode via lean/")
+LEAN_REASONS = ("reads ", "runs Lean via ", "runs service mode via ")
+# Lean-wide files: the inventories lean_statements.py and the audit write from the whole tree, and the checker pins
+# (regen_generated.py's checker-pins), which every rebuilt checker rewrites.
+LEAN_INVENTORIES = frozenset({"lean/declarations.txt", "lean/statements.txt", "lean/predicates.txt",
+                              "lean/axioms.txt", "lean/checkers.lock"})
 
 
 def lean_reason(reason: str) -> bool:
-    """A reason that a changed file of the Lean tree gives: the unit reads it (a Lean module, the declarations,
-    statements or predicates inventory) or runs a Lean program or service mode that holds it. A Python file under
-    lean/ (lean/audit.py) is Python, never a Lean reason; a static reason is weak, never this."""
-    return reason.startswith(LEAN_REASONS) and not reason.endswith((".py", " (static)"))
+    """A reason that a changed Lean file gives: the unit reads it or runs a Lean program or service mode that holds
+    it, where the file is a Lean input (`is_lean_input`: a lean/**/*.lean module or a Lean project file) or one of
+    LEAN_INVENTORIES. Any other file under lean/ (lean/audit.py, a JSON or sha256 fixture, a .md) is Python or
+    data, never a Lean reason; a static reason is weak, never this."""
+    prefix = next((prefix for prefix in LEAN_REASONS if reason.startswith(prefix)), None)
+    path = reason[len(prefix):] if prefix else ""
+    return is_lean_input(path) or path in LEAN_INVENTORIES
 
 
 def lean_shares(data: dict, graph: source_graph.Graph) -> dict[str, float]:
@@ -1201,12 +1208,13 @@ def lean_shares(data: dict, graph: source_graph.Graph) -> dict[str, float]:
     (all of them when a Lean header is unreadable, as `executables_using`), plus every module when it ran lake or
     lean (every Lean change selects those runners)."""
     tests = data.get("tests") or []
+    every = range(len(tests))
     known = {path for path in data.get("reads", {}) if path.startswith("lean/VE/") and path.endswith(".lean")}
     if not known:
         return {}
     reach: dict[str, set[str]] = {}
     for path in known:
-        for index in data["reads"][path]:
+        for index in filter(every.__contains__, data["reads"][path]):  # a malformed map reaches nothing
             reach.setdefault(tests[index], set()).add(path)
     roots = lean_executables(graph.root)
     for program, indices in data.get("programs", {}).items():
@@ -1217,7 +1225,7 @@ def lean_shares(data: dict, graph: source_graph.Graph) -> dict[str, float]:
             modules = {graph.lean_modules.get(module) for module in graph.lean_closure(roots[name])} & known
         else:
             continue
-        for index in indices:
+        for index in filter(every.__contains__, indices):
             reach.setdefault(tests[index], set()).update(modules)
     return {unit: len(modules) / len(known) for unit, modules in reach.items()}
 
@@ -1246,6 +1254,19 @@ def names_changed_lean(text: str, changed) -> bool:
     return False
 
 
+def family_test(unit: str, changed) -> bool:
+    """Whether `unit` is by its name a test of a changed Lean module's family: the family (lean/VE/Scope.lean and
+    lean/VE/Scope/Plain.lean: Scope; lean/VE/RightClauses/X.lean: RightClauses) in snake case is a run of the
+    words of its file name (tests/test_scope_answer.py, tests/test_right_clauses_plain.py)."""
+    words = f"_{Path(unit).stem}_"
+    for path in changed:
+        parts = path.removesuffix(".lean").split("/")
+        if path.startswith("lean/") and path.endswith(".lean") and len(parts) > 2:
+            if f"_{re.sub(r'(?<=[a-z0-9])(?=[A-Z])', '_', parts[2]).lower()}_" in words:
+                return True
+    return False
+
+
 def unit_text(unit: str) -> str:
     try:
         return (ROOT / unit).read_text(encoding="utf-8", errors="replace")
@@ -1256,14 +1277,16 @@ def unit_text(unit: str) -> str:
 def deferral(unit: str, reasons: list[str], plan: dict, shares: dict[str, float] | None, text) -> str | None:
     """Why `unit` may be deferred: "weak" when only weak reasons select it; with `shares` (--defer-broad),
     "broad" when every reason is weak or a Lean reason, the unit reaches at least BROAD_LEAN_SHARE of the Lean
-    modules and its own source names no changed Lean module (a family's own Lean test stays). Else None."""
+    modules (a unit `shares` does not hold reaches none), and neither its own source names a changed Lean module
+    or its directory nor its name makes it a test of that module's family (a family's own Lean test stays).
+    Else None."""
     if not reasons:
         return None
     if all(map(weak_reason, reasons)):
         return "weak"
     if shares is not None and shares.get(unit, 0.0) >= BROAD_LEAN_SHARE \
             and all(weak_reason(reason) or lean_reason(reason) for reason in reasons) \
-            and not names_changed_lean(text(unit), plan["changed"]):
+            and not family_test(unit, plan["changed"]) and not names_changed_lean(text(unit), plan["changed"]):
         return "broad"
     return None
 
@@ -2043,10 +2066,11 @@ def main() -> int:
                              "(static graph, a listed directory, smoke) select; the chain gate runs them. For "
                              "builder runs only, never the gate")
     parser.add_argument("--defer-broad", action="store_true",
-                        help=f"with --defer-heavy: also leave out those test files that a broad Lean consumer "
-                             f"(one that reads or runs at least {BROAD_LEAN_SHARE:g} of the lean/VE modules the map "
-                             "knows) is selected for by weak and Lean reasons only, unless its own source names a "
-                             "changed Lean module or its family. For builder runs only, never the gate")
+                        help=f"with --defer-heavy: also leave out the heavy test files that are broad Lean consumers "
+                             f"(each reads or runs at least {BROAD_LEAN_SHARE:g} of the lean/VE modules the map "
+                             "knows), selected only by weak and Lean reasons, unless its source names a changed Lean "
+                             "module or its directory or its name makes it a test of that module's family. For "
+                             "builder runs only, never the gate")
     parser.add_argument("--fast-stage", action="store_true",
                         help=f"with --run: run only the fast-first units (the selected test files the map recorded "
                              f"at <= {FAST_UNIT_SECONDS:g} s each: every one that is or reads the change, then others "

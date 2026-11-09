@@ -27,6 +27,46 @@
    "result": "caught (rc 1, the test FAILED)"
   },
   {
+   "id": "B10",
+   "language": "python",
+   "file": "tools/select_tests.py",
+   "mutation": "deferral: a unit missing from shares counts as reaching every module",
+   "test": "tests/test_select_defer.py::test_with_shares_a_broad_lean_consumer_is_deferred_and_the_rest_stays",
+   "result": "caught (rc 1, the test FAILED)"
+  },
+  {
+   "id": "B11",
+   "language": "python",
+   "file": "tools/select_tests.py",
+   "mutation": "deferral: drop the family-name rule (family_test)",
+   "test": "tests/test_select_defer.py::test_with_shares_a_broad_lean_consumer_is_deferred_and_the_rest_stays",
+   "result": "caught (rc 1, the test FAILED)"
+  },
+  {
+   "id": "B14",
+   "language": "python",
+   "file": "tools/select_tests.py",
+   "mutation": "deferral: drop the own-source rule (recorded sc-7 plan)",
+   "test": "tests/test_select_defer.py::test_a_familys_own_lean_test_and_a_python_reader_stay_in_the_recorded_sc_7_plan",
+   "result": "caught (rc 1, the test FAILED)"
+  },
+  {
+   "id": "B12",
+   "language": "python",
+   "file": "tools/select_tests.py",
+   "mutation": "lean_reason: any file under lean/ is a Lean reason",
+   "test": "tests/test_select_defer.py::test_lean_reasons_are_the_lean_trees_files_never_python_or_static",
+   "result": "caught (rc 1, the test FAILED)"
+  },
+  {
+   "id": "B13",
+   "language": "python",
+   "file": "tools/select_tests.py",
+   "mutation": "family_test: a family matches inside a word",
+   "test": "tests/test_select_defer.py::test_a_test_of_a_changed_modules_family_is_named_for_it",
+   "result": "caught (rc 1, the test FAILED)"
+  },
+  {
    "id": "B4",
    "language": "python",
    "file": "tools/select_tests.py",
@@ -46,7 +86,7 @@
    "id": "B6",
    "language": "python",
    "file": "tools/select_tests.py",
-   "mutation": "lean_reason: a Python file under lean/ is a Lean reason",
+   "mutation": "lean_reason: the Lean inventories are not Lean reasons",
    "test": "tests/test_select_defer.py::test_lean_reasons_are_the_lean_trees_files_never_python_or_static",
    "result": "caught (rc 1, the test FAILED)"
   },
