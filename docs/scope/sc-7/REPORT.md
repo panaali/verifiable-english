@@ -2,8 +2,9 @@
 
 **Summary.** Built (1)-(3): `Pinned.parseGovernor`/`renderGovernor` (spec 2.2), `scope_parseRender`/`scope_renderParse`
 (spec 5.8's text), F5a, one round-trip and one paraphrase `#guard` per 2.2 row, and the folded sc-4-f12. (4), the IDE
-wiring, is cut at the size line as the task directs. Trust: K +0, S +37, V +111 (R16). No DRI signature is reserved.
-Tests: the selected run passes after two classification fixes (see "Tests run"). Fix rounds: "Review F1", "Review F7".
+wiring, is cut at the size line as the task directs. Trust: K +0, S +37, V +113, trusted +150 (R16). No DRI signature is
+reserved. Tests: the selected run passes after two classification fixes (see "Tests run"). Fix rounds: "Review F1",
+"Review F7", "Recheck F8 and F9".
 
 FOLLOW-UP: sc-7b IDE writes the scope block from the 2.2 wordings
 
@@ -56,11 +57,12 @@ relay and binding fuzz tests (docs/ROUTE-RECIPE.md), well past 600.
 
 ## Evidence
 
-- **Trust** (`tools/trust_map.py --check`): K +0, S +37, D +139, trusted +148 against da5303b78769, all in Authoring.lean.
+- **Trust** (`tools/trust_map.py --check`): K +0, S +37, D +141, trusted +150 against da5303b78769, all in Authoring.lean.
 - **Trust mutants**: `mac-pytest.sh --trustmut -- --max-mutants 1000 --test lean/VE/Scope/AuthoringExamples.lean --json
-  docs/scope/sc-7/trust-mutants.json --allow docs/scope/sc-7/trust-mutants-allow.json`, a full run on b4fa6691a (review
-  F7's fix; later commits change no Lean), rescored on 502511501 (its allow-reason edit): 199 KILLED, 0 SURVIVOR, 0 UNKNOWN, 60
-  INVALID, 26 ALLOWED (ill-typed, or one of 3 equivalent), exit 0. F1's full run on 971464587 gave 196 KILLED, 58 INVALID. The first run on 0367744f2 gave 193 KILLED, 60 INVALID, 29 ALLOWED.
+  docs/scope/sc-7/trust-mutants.json --allow docs/scope/sc-7/trust-mutants-allow.json`, a full run on c494438df (recheck
+  F8 and F9's fix; later commits change no Lean), rescored on 5dd5256c5 (its allow-reason edit): 213 KILLED, 0 SURVIVOR, 0
+  UNKNOWN, 60 INVALID, 26 ALLOWED (ill-typed, or one of 3 equivalent), exit 0. F7's full run on b4fa6691a gave 199
+  KILLED. F1's full run on 971464587 gave 196 KILLED, 58 INVALID. The first run on 0367744f2 gave 193 KILLED, 60 INVALID, 29 ALLOWED.
   Earlier runs left 15 survivors; each was closed by a new `#guard` or by giving `attitude` an `Option` degree.
 - **Hand mutants** (`docs/scope/sc-7/mutants.json`): each was planted, `lake build VE.Scope.AuthoringExamples` was run,
   and the code was restored. Every one is KILLED. They cover the 11 definitions the sweep does not kill (`closers`,
@@ -125,8 +127,7 @@ relay and binding fuzz tests (docs/ROUTE-RECIPE.md), well past 600.
   and Markdown's `*`, `_`, `` ` `` and `~`. Its 108 characters were generated from `unicodedata` in code-point order.
   `clause` drops every trailing closer, and its docstring names each terminator, ‽ included (F1's docstring left it
   out). Docstrings, DELTA.md and this report say the same sets. A closer after no sentence end stays in its slot
-  (`users'`, "(as above) is “final”"). Lean only: no Python or Rust reads a wording (sc-7b). F8 (other Unicode
-  sentence terminators) stays sc-7-f8, as the DRI note directs.
+  (`users'`, "(as above) is “final”"). Lean only: no Python or Rust reads a wording (sc-7b).
 - **Regression tests.** `AuthoringExamples.lean:138` (PROBE F7 verbatim, plus `x.› y` and `x.） y`), `:142` (the DRI
   note's closers, the ASCII and Markdown ones and the opening-form quotes are in `closers`), `:150` (every closer, alone
   and before `)”`, after every sentence end, in all 9 slot positions), `:153-:154` (the accepted direction).
@@ -156,6 +157,70 @@ relay and binding fuzz tests (docs/ROUTE-RECIPE.md), well past 600.
   --check`: "checked 37 entries". No test of main-known-red.txt failed. Not run: the full gate (the merge train runs
   it).
 
+## Recheck F8 and F9 (fix round, reviews/sc-7-dri-note-20261109b.md and its amendment, sc-7-c090722-looprecheck1.final.md)
+
+- **Findings (A).** F8: `clause`'s sentence ends were 11 characters, so "the x‼ The rules below are called the y" was one
+  list name, and `x⁉ y`, `x؟ y`, `x｡ y`, `x﹖ y` and `x। y` were conditions. F9: `clause` dropped only `closers` before
+  it read a word's last character, so U+200B, U+2060, U+00AD, U+FE0F or U+0301 after a "." hid the sentence end.
+  PROBE F8 and PROBE F9 exit 1 on 3fa303c51 and 0 on f5b2f2124.
+- **Fix (the class), Lean only** (`lean/VE/Scope/Authoring.lean:24-41`; no Python or Rust reads a wording before sc-7b):
+  - `clause`'s sentence ends are every Unicode 16.0 Sentence_Terminal, ":" and every character whose NFKC form ends in
+    one of them: 199 characters. The NFKC part adds the colons and ellipses (`…`, `：`, `﹕`, `︓`, `︙`), the vertical
+    forms of "!", "?" and "。" (Sentence_Terminal leaves them out), `⒈` to `⒛`, `🄀` and `㏂` `㏇` `㏘`.
+  - Before that test, `clause` drops every trailing character of `closers`, of Unicode 16.0's Cf, Mn and Me, of
+    Default_Ignorable_Code_Point and U+2800, mixed in any order. That is the DRI note's amended set: 5977 characters in
+    369 ranges, looked up by `Array.binSearchContains`. `wordChar` also refuses the C1 controls (its docstring already
+    said "no control character") and the five fillers drawn as a space (U+115F, U+1160, U+2800, U+3164, U+FFA0), which
+    stood in for a space in "x.\u3164The rules below are called the y".
+  - The two docstrings name these sets exactly. No new definition: trusted +2 lines (the `clause` docstring),
+    sc-7 at +150.
+  - A mark or an invisible character after no sentence end stays in its slot: "the cafe\u0301 rules" and
+    "the act is final\u200B" round-trip.
+- **Where the sets come from.** Python's unicodedata (16.0.0, the docstrings' version) gives the categories and NFKC.
+  It has neither property, so the test holds them as literal ranges. Sentence_Terminal is Unicode 15.1's (this
+  checkout's Node, ICU 74) plus the seven characters 16.0 added (U+1B4E, U+1B4F, U+1B7F, U+113D4, U+113D5, U+16D6E,
+  U+16D6F). Default_Ignorable_Code_Point is 15.1's ranges, which 16.0 keeps. Neither list was compared with a 16.0 data
+  file, because no copy of one is available offline.
+- **Regression tests.**
+  - `AuthoringExamples.lean:159`: PROBE F8, verbatim.
+  - `:163`: one guard per added sentence end. Its literal names each of the 188 once (the DRI note's 13 among them),
+    in every slot, alone, before `’`, before `)”` and before U+200B.
+  - `:169`: PROBE F9, verbatim.
+  - `:171`: U+00AD, U+FE0F, "x.)\u0301 y" and the mixed orders.
+  - `:177`: a sample of Cf, Mn, Me and Default_Ignorable characters after each of F7's sentence ends, alone and on either
+    side of a closer.
+  - `:183-:187`: `#guard !clause` on "x." followed by U+3164, U+115F, U+1160, U+FFA0 and U+2800.
+  - `:189`: C1 controls, and fillers in place of a space.
+  - `:194-:195`: the accepted direction.
+  - `tests/test_scope_authoring.py`: the Lean sweep, 8 chunks run side by side (about 30 s), checks every Unicode
+    scalar. `::test_review_f8_clause_refuses_exactly_the_documented_sentence_ends` checks that the characters refused
+    after "x" are exactly the 199, that the docstring names the set, that PROBE F8 is refused and in a guard, and that
+    the `:163` literal is exactly the added ones. `::test_review_f9_no_invisible_character_hides_a_sentence_end` checks
+    that each of the 5977 characters after each of the 199 sentence ends is refused (both mixed orders with `)` after
+    F7's eleven), that the non-word characters are exactly `wordChar`'s docstring's, and that the docstrings, the probe
+    and the DRI note's guards are present. `::test_review_f7_clause_refuses_exactly_the_documented_closers` now expects
+    the refused set after "x." to be sentence ends ∪ closers ∪ the stripped set. `::test_the_docstrings_name_unicode_16_0_the_version_of_this_python`
+    fails first if Python's Unicode version moves, so no version difference enters the expected sets.
+- **Seeded bugs** (`mutants.json`, the 6 marked "sc-7 recheck", each planted and then restored, all KILLED):
+  - `‼` dropped from the sentence ends: fails :159, :163 and :171;
+  - U+200B dropped from the stripped set: fails :163, :169, :171 and :177;
+  - U+0301 dropped: fails :169 and :171;
+  - U+3164 dropped from both the stripped set and `wordChar`: fails :183 and :189;
+  - U+3164 dropped from `wordChar` only: fails :189;
+  - U+0483, which no guard names, dropped: `lake build` passes, and the sweep fails
+    `test_review_f7_clause_refuses_exactly_the_documented_closers` and `test_review_f9_no_invisible_character_hides_a_sentence_end`.
+    This ran with the statement-inventory import stubbed, because the inventory is stale while a mutant is planted.
+- **Trust.** V +2 (the `clause` docstring grew from 2 lines to 4; `wordChar` keeps its 3 lines). sc-7 is K +0, S +37,
+  V +113, trusted +150, at R16's cap (`trust_map.py --allow`, signed by standing ruling R16). Both DELTA Ruling cells
+  cite R16. No DRI signature is reserved. No new definition, so the AUTHORING list in `test_scope_lean.py` is
+  unchanged. The manage-agents FOLLOW-UPS.md sc-7 ties row now says +113/+150. Trust mutants: full run on c494438df
+  (ve-cloud-2): 213 KILLED, 0 SURVIVOR, 0 UNKNOWN, exit 0. Rescored on 5dd5256c5 after `clause`'s allow reason moved
+  from :38/:39 to :40: exit 0.
+- **Tests.** `mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on 8e52487c3 (Claude cloud, 5
+  shards, 3013 s): exit 0, 129 units, 0 failed. `test_scope_authoring.py` and `test_scope_lean.py` were among them.
+  `(cd lean && lake build)`: "Build completed successfully (1329 jobs)". `python3 lean/audit.py`: PASS, 794 files.
+  No test listed in main-known-red.txt failed. Not run: the full gate (the merge train runs it).
+
 ## Spec re-read
 
 The theorems against docs/spec/scope.md:1569-1573 (test). The nine 2.2 rows against :364-374, each wording and
@@ -175,7 +240,7 @@ waits on sc-2c/sc-2d); sc-e1/sc-e2 come after Nov 12; sc-7b is the follow-up.
    pairs, each with its reason.
 4. N.A.: Lean only, with no Python or Rust path. Valid inputs pass: nine `trip`s, plus the curly-quote slot.
 5. N.A.: no relay and no Python reader.
-6. PASS: trust-mutants.json is for head 0367744f2, tree = HEAD. The gate is the chain's, on the final HEAD.
+6. PASS: trust-mutants.json is for head 5dd5256c5, whose Lean tree is HEAD's. The gate is the chain's, on the final HEAD.
 7. PASS: both DELTA rows cite R16 with evidence. Nothing reserved.
 8. PASS: no existing answer changes, since no route reaches the code. The selected run passes after the fix.
 9. PASS: the selection held test_scope_authoring.py, test_scope_lean.py and test_assurance_manifest.py, and it found
