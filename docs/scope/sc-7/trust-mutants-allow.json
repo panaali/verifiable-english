@@ -69,6 +69,11 @@
    "definition": "VE.Scope.Pinned.readings",
    "operator": "list-first",
    "reason": "equivalent where it is a SURVIVOR: the section's `!s.isEmpty` becomes `!(s.take 1).isEmpty`, and a string is empty exactly when its first character is (lean/VE/Scope/Authoring.lean:172); every other `list-first` mutant of `readings` is KILLED (:161, :161, :165, :172, :173, :179)"
+  },
+  {
+   "definition": "VE.Scope.Pinned.wordChar",
+   "operator": "le-lt",
+   "reason": "equivalent where it is a SURVIVOR: `0x20 ≤ c.toNat` and `0x20 < c.toNat` differ only at U+0020, which `!VE.EnglishGrammar.isSpace c` (the conjunct before it, lean/VE/Scope/Authoring.lean:26) already refuses; the other mutants of `wordChar` are KILLED by the slot guards of lean/VE/Scope/AuthoringExamples.lean"
   }
  ]
 }
