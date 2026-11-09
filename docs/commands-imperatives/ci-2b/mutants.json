@@ -23,6 +23,10 @@
    "test": ["docs/commands-imperatives/ci-2b/evidence/ab.py problems(): 5 forbidden `code` rows (`You may open the desk.`, `You may share the token.`, ...: PermissionNotCommand became InvalidInput)"]},
   {"id": "S6", "language": "Lean", "file": "lean/VE/SpeechActs/Source/Run.lean", "definition": "VE.SpeechActs.Source.commandContext",
    "bug": "the wrapper's context drops the document's query records",
-   "test": ["tests/test_command_relay.py::test_a_fenced_proof_task_reads_the_documents_records"]}
+   "test": ["tests/test_command_relay.py::test_a_fenced_proof_task_reads_the_documents_records"]},
+  {"id": "S7", "language": "Lean", "file": "lean/VE/SpeechActs/Source/Run.lean", "definition": "VE.SpeechActs.Source.readSource",
+   "bug": "the fence cap removed (`if false && VE.Limits.maxCases < needed.length`), so the fences are resolved before any charge (reviews/dri-decisions-20261109-ci-2b-fences.md item 1's condition)",
+   "test": ["lean/VE/Commands/RunSplit.lean SourceExamples #guard `fenced (VE.Limits.maxCases + 1)` (lake build fails)",
+            "tests/test_command_relay.py::test_command_fences_are_charged_before_they_are_read (with that #guard disabled, so the build passes)"]}
  ]
 }
