@@ -62,6 +62,7 @@
 - `tools/nested_pytest.py` — The one builder of a pytest command that another process runs: a test, the gate, or a tool.
 - `tools/numbers_phrases.py` — Write the shared comparison phrase table from its Lean owner.
 - `tools/platform_contract.py` — The x86 platform contract suite (test-architecture plan, rank 2, section 3.3).
+- `tools/presupposition_table.py` — Write or check `lean/VE/Presupposition/Table.lean`, PS-E1's candidate table as Lean's `candidateTable`.
 - `tools/profile_table.py` — Write `ve/profile_table.json` from its Lean owner, `VE.Compose.profileTable` (AR-10).
 - `tools/pytest_profile.py` — Pytest plugin: where a test run's time goes (docs/testing-profile.md).
 - `tools/quarantine.py` — The tracked quarantine of tests that fail under machine load: tools/test-quarantine.json.
@@ -95,5 +96,3 @@
 - `tools/source_words_export.lean` — (no module docstring)
 - `tools/stage2_parity.py` — Gate 2 parity: rerun the Stage 0 probe matrix under a backend authority and diff it.
 - `tools/test_chunks.py` — Which tests of one test file a chunk runs: the one rule that splits a file's collected tests into k parts.
-- `tools/test_layer_policy.py` — Boundary checks for the selector's non-import dependencies and fallback.
-- `tools/test_map.py` — Record and load the per-test coverage map used by tools/select_tests.py.
