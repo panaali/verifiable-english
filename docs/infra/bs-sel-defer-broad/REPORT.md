@@ -133,6 +133,10 @@ Each plan was recorded at the item's tip, using that tip's own `tools/select_tes
   - Regression tests: `tests/test_select_defer.py::test_a_module_or_directory_a_unit_builds_by_a_join_is_named` (7 spellings, each with a sibling that must not count) and `::test_a_heavy_broad_unit_that_builds_the_changed_modules_path_stays` (the looprecheck line, copied into tmp_path).
   - Seeded bugs B15 to B21 were all caught.
 - F2, F3 and F4 are C (follow-up) and are not addressed here.
+- **Checks for the review fix:**
+  - The first selected run, on e2c0667dc (ve-cloud-2), failed 1 of 27 files: `tests/test_history_tests.py::test_the_selector_reads_the_list_only_to_run_its_lint`. select_tests called history_tests outside `history_inventory`. The evaluator's move to tools/path_expressions.py (959eb3302) fixes it.
+  - The final selected run, `mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on 64a89890e (ve-mac-1, clean), exited 0 with 0 failed ids. Its plan included tests/test_history_tests.py, tests/test_select_tests.py, tests/test_select_defer.py and tests/test_w6a_looprecheck1.py.
+  - `lake build` succeeded (1328 jobs), and `python3 lean/audit.py` PASSED. There is no Lean change.
 
 ## Checks run
 
