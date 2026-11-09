@@ -2280,6 +2280,34 @@
    "reason": "sn-b6-f8-written (DRI reviews/dri-decisions-20261109-sn-b6-f8-written.md item 1, from sn-b6-f8-trust): reclassification only, no Lean definition change; VE/Senses/Run.lean +13 V (Projection.written +8, SensesOutcome.written +5 moved from G[I] to G[V]: they write the request's profile list into the projection environment senses.project and senses.read return, and admittedIds reads it); K +0, S +0; trusted +13. FOLLOW-UP: a ties pass binding these lines.",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sn-b6-f8-written, 2026-11-09",
    "commit": "223babd3d047fbd14cf5ddd01fdd5dd2ba9ba9a6"
+  },
+  {
+   "class": "V",
+   "lines": 4,
+   "reason": "rights-cfr-4: lean/VE/Rights/Run.lean +4 (G[V]: nodeOpen reads the act)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), rights-cfr-4, 2026-10-18",
+   "commit": "268829b1ac9d3a333c2c422efbd9b0beea80b287"
+  },
+  {
+   "class": "S",
+   "lines": 74,
+   "reason": "ps-2a: lean/VE/Presupposition/Wire.lean +94 (S +51, D[V] +25, G[V] +18), lean/VE/Presupposition/Table.lean +23 (S, generated candidateTable); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ps-2a, 2026-10-18",
+   "commit": "098dbe6886d6fa3cfa6c96549b4e97f0d8fff684"
+  },
+  {
+   "class": "V",
+   "lines": 43,
+   "reason": "ps-2a: lean/VE/Presupposition/Wire.lean +94 (S +51, D[V] +25, G[V] +18), lean/VE/Presupposition/Table.lean +23 (S, generated candidateTable); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ps-2a, 2026-10-18",
+   "commit": "098dbe6886d6fa3cfa6c96549b4e97f0d8fff684"
+  },
+  {
+   "class": "V",
+   "lines": 58,
+   "reason": "sn-b6d: VE/Senses/Run.lean +58 (G[V] rereadJson, decodeReread, lineJson, and the readCase wiring of the re-read and the line)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sn-b6d, 2026-11-09",
+   "commit": "9ba8aeaedfc82fa41258a4f52bcca4820f47b663"
   }
  ]
 }

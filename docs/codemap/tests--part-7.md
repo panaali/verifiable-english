@@ -1,3 +1,4 @@
+- `tests/test_source_words.py` — The source-word table and every boundary fixture are checked by Lean.
 - `tests/test_speech_acts.py` — Deterministic experimental speech-act core fixtures (no trusted route).
 - `tests/test_speech_acts_acts0.py` — CI-5: `speech-acts@0` with `acts@0`, simple acts only (commands-imperatives 9), through the service and the saved A/B.
 - `tests/test_speech_acts_conformance.py` — Shared section-9 speech-act fixtures across Python, Lean, and Rust FOL evaluation.
