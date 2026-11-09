@@ -1,5 +1,6 @@
 import VE.Readings.UnspecifiedWire
 import VE.Readings.Examples
+import VE.NormDefaults.PacksExamples
 
 /-! The fixtures of RD-1 (docs/spec/readings-defaults.md 8.1) and RD-2a's admission limits (8.3: F-ND4, F-ND5,
 F-ND10), each a `#guard` on `fillDoc` and on separation under
@@ -181,5 +182,43 @@ def authorText (U : VE.NormDefaults.UDoc) : Option String :=
 #guard (Wire.reservedUnsaid ND5, Wire.reservedUnsaid ND1) == (some "unsaid--help-required", none)
 -- F-ND1: admission's facts on the instance (`ndRest`, the part of `WellFormedND` after S1's)
 #guard Wire.ndRest ND1 && !Wire.ndRest ND5
+
+/-! ## pk-1-conditions-b: the readings route's packs state no condition
+
+Both branches of `choiceLayeredG` (the norms chain's `norms@0` with no pack, the soft chain's `soft-norms@0` with its
+one `softPack`) give packs whose `conditions` are empty, so PC-9's `*_legacy` theorems (`Defaults/Uniform.lean`)
+apply to every layered source the readings route returns. Each branch is closed by `simp` over the list's members,
+not by its length, so a pack appended without a condition still passes and one with a condition fails. -/
+
+theorem choiceLayeredG_conditions (b : Wire.Admitted2) (N : NDoc) (c : Choice)
+    (wfc : VE.NormDefaults.WellFormedU (choiceU N c) = true) (hN : N.D = b.D) {L}
+    (h : Wire.choiceLayeredG b N c wfc hN = .ok L) : ∀ p ∈ L.1.packs, p.conditions = [] := by
+  unfold Wire.choiceLayeredG at h
+  dsimp only at h
+  by_cases hn : normsShaped N.D = true
+  · rw [dif_pos hn] at h
+    repeat (obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h)
+    cases h
+    simp
+  · rw [dif_neg hn] at h
+    split at h
+    · split at h
+      · split at h
+        · repeat (obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h)
+          cases h
+          simp [VE.NormDefaults.Packs.Fixtures.softPack_conditions]
+        · cases h
+      · cases h
+    · cases h
+
+/-- The same over `choiceLayered`, the source `replayChoiceAt` (readings-choice) and Ask read; the verdict routes
+read `choiceLayeredG` itself. -/
+theorem choiceLayered_conditions (r : Wire.AdmittedND) (c : Choice)
+    (wfc : VE.NormDefaults.WellFormedU (choiceU r.N c) = true) {L} (h : Wire.choiceLayered r c wfc = .ok L) :
+    ∀ p ∈ L.1.packs, p.conditions = [] := by
+  unfold Wire.choiceLayered at h
+  cases hg : Wire.choiceLayeredG r.b r.N c wfc r.hN with
+  | error => rw [hg] at h; cases h
+  | ok L' => rw [hg] at h; cases h; exact choiceLayeredG_conditions r.b r.N c wfc r.hN hg
 
 end VE.Readings.UnspecifiedExamples

@@ -30,6 +30,7 @@
 - `tests/test_et8_completion.py` — ET-8 (events-time-causation plan 5, fixture R2 and the ET-1 component): Asimov's v2 rules and the ET-1 component re-run with `permitted` completed `unspecified…
 - `tests/test_et_e1_probe.py` — ET-E1's pre-registration and scorer (docs/events-time-causation/et-e1): hermetic, no model calls.
 - `tests/test_evaluate_search.py` — (no module docstring)
+- `tests/test_events_route.py` — et-4b: an `events` document through the service's norm-defaults mode, on both layered branches.
 - `tests/test_events_wire_mutants.py` — Mutants of the `events` block's decoder each fail a fixture (et-4 review F1).
 - `tests/test_evidence_bounds.py` — Property-based checks of the probability statements in design/evidence-layer-design.md.
 - `tests/test_evidence_toolkit.py` — The evidence toolkit (tools/evidence, tools/batch_evidence.py --check) fails on evidence that shows nothing.
@@ -42,6 +43,7 @@
 - `tests/test_frozen_sources.py` — AR-2, the narrow freeze (architecture decision D2): `lean/VE/Route/frozen.py` hashes only the files with K declarations and the `ve.core@0.1` decoders, `ve/que…
 - `tests/test_gate.py` — The full gate must reject missing coverage while honoring exact optional cases.
 - `tests/test_gate_collection.py` — The gate's collection is the merge base's, less exactly the tests a `Test-removed:` trailer records, with the diff only labelling each removal (tools/gate_coll…
+- `tests/test_gate_collection_renumber.py` — A renumbered mutant is paired by its text; one whose text is gone stays refused (tools/gate_collection.py).
 - `tests/test_gate_durations.py` — Each gate keeps its suite's per-test seconds in its record, and the next gate on that base orders its suite by them.
 - `tests/test_gate_integrity.py` — Regressions for verification-gate accounting, isolation, and run identity.
 - `tests/test_gate_quarantine.py` — Test speed B5: the gate never stops early, and the tracked quarantine (tools/test-quarantine.json).
@@ -84,6 +86,3 @@
 - `tests/test_lean_document_wrapper.py` — The Lean `document` mode (lean-first batch 16a) against Python's `load_document` and `check_document` wrapper.
 - `tests/test_lean_dump_cache.py` — The Lean dump cache (`tools/lean_dump_cache.py`): a stored dump is replayed only while every input it is keyed on is unchanged, and any doubt is a miss that ru…
 - `tests/test_lean_first_b10a_report.py` — Lean-first batch 10a: the tables of `docs/lean-first/b10a/DELTA.md` are rendered from the evidence files (build checklist 20), the corpus A/B found no differen…
-- `tests/test_lean_first_b10b_report.py` — Lean-first batch 10b: the fuzzer gate accepts only the retired DF-19 difference (build checklist 13), and the recorded evidence shows no unexplained difference…
-- `tests/test_lean_first_b12_report.py` — Batch 12's reported numbers come from its gate evidence.
-- `tests/test_lean_first_b13a.py` — Batch 13a: Lean parse diagnostics, order text and replay ownership.

@@ -2,9 +2,11 @@ import VE.NormDefaults.Packs
 import VE.Rights.Examples
 import VE.Defaults.Examples
 
-/-! The acceptance fixtures of premise packs on `Packs.lean` alone (docs/spec/premise-packs.md 4: A1–A9; 2.10's kind
-table). The fixtures over today's sources (F1, F1′, the kind table's legacy rows) are in `PacksLegacyExamples.lean`;
-A9′ reads the response shape, so it sits with the encoder theorem (`ResponseShape/Encoders/NormDefaults.lean`). -/
+/-! The acceptance fixtures of premise packs (docs/spec/premise-packs.md 4: A1–A9; 2.10's kind table). Its imports
+are `Packs.lean`, `VE.Rights.Examples` (the rights example documents) and `VE.Defaults.Examples` (the decoded soft
+documents, and with them the layered decoder), so the fixtures are not on `Packs.lean` alone. The fixtures over
+today's sources (F1, F1′, the kind table's legacy rows) are in `PacksLegacyExamples.lean`; A9′ reads the response shape,
+so it sits with the encoder theorem (`ResponseShape/Encoders/NormDefaults.lean`). -/
 namespace VE.NormDefaults.Packs.Fixtures
 open VE.NormDefaults.Packs
 
@@ -143,6 +145,12 @@ theorem assemble_conditions {U : UDoc} {used : Nat} {ps qs : List Pack} (h : ass
     (hp : ∀ p ∈ ps, p.conditions = []) : ∀ q ∈ qs, q.conditions = [] :=
   fun q hq => hp q ((assemble_order h).2.1.subset hq)
 
+-- et-4b: the `events` pack's rows under their own key, and no key without the pack (a block-less answer unchanged).
+#guard eventsArray [⟨"soft", .constraint, [], [], [("soft:x", .top)], [], []⟩,
+    ⟨"events", .constraint, [], [], [("events:x", .bottom)], [], []⟩] ==
+  [("events_premises", Lean.Json.arr #[labelledJson "events:x" .bottom none])]
+#guard eventsArray [⟨"soft", .constraint, [], [], [("soft:x", .top)], [], []⟩] == []
+
 /-- Every pack a decoded layered source carries, on both routes, has empty `conditions`. -/
 theorem decodeLayered_conditions {j : Lean.Json} {L : Wire.LayeredU} (h : Wire.decodeLayered j = .ok L) :
     ∀ p ∈ L.packs, p.conditions = [] := by
@@ -151,7 +159,8 @@ theorem decodeLayered_conditions {j : Lean.Json} {L : Wire.LayeredU} (h : Wire.d
   all_goals first
     | (cases h; done)
     | (injection h with h; subst h
-       exact assemble_conditions (by assumption) (by simp [softPack_conditions, rightsPack_conditions]))
+       exact assemble_conditions (by assumption) (by
+         simp [softPack_conditions, rightsPack_conditions, Wire.hookPacks, VE.Events.eventsPack]))
 
 open VE.Rights.Examples (alpha gamma gamma7 rho epsilon) in
 #guard [alpha, gamma, gamma7, rho, epsilon].all fun R =>

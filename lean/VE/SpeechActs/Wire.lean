@@ -9,11 +9,12 @@ import VE.Limits
 
 The frozen P0 envelope gate does not know `speech-acts@0`, and its envelope
 decoder rejects a `speech_acts` field. `decodeSpeechEnvironmentFull` therefore
-runs the profile allowlist of 1.6 (exactly `norms@0`, `relational-fol@0` and
-`speech-acts@0`), rejects W3 definitions and W5 flags with the route, decodes
-the scope block strictly (unknown fields rejected), strips exactly the block
-and the profile, decodes the rest with W1's unchanged `decodeNormsEnvironment`
-and keeps the original environment for identity.
+runs the profile allowlist of 1.6 (`norms@0`, `relational-fol@0` and
+`speech-acts@0`, with `acts@0` from commands-imperatives 9), rejects W3 definitions
+and W5 flags with the route, decodes the scope block strictly (unknown fields
+rejected), strips exactly the block and the profile, decodes the rest with W1's
+unchanged `decodeNormsEnvironment`, its `acts@0` hook on, and keeps the original
+environment for identity.
 
 The scope block is a top-level field `speech_acts` of the environment object
 (the placement `scope_in_identity`, 8.5, states); the canonical environment
@@ -35,11 +36,15 @@ namespace VE.SpeechActs.Wire
 open Lean
 open VE.Bridge (exactFields fields stringField strings)
 open VE.Norms (Regulated Node background elaborate)
+open VE.Norms.Wire (actsProfiles actsFixed readsActs)
 
 def speechProfile : String := "speech-acts@0"
 
-/-- 1.6: the profiles this route admits, and nothing else. -/
-def allowlist : List String := ["norms@0", "relational-fol@0", "speech-acts@0"]
+/-- 1.6: the profiles this route admits without act phrases. -/
+def allowlist₀ : List String := ["norms@0", "relational-fol@0", "speech-acts@0"]
+
+/-- 1.6 with commands-imperatives 9: `acts@0` joins them, for simple acts only (`decoded_act_simple`). -/
+def allowlist : List String := "acts@0" :: allowlist₀
 
 def invalidBlock : String := "InvalidInput: speech_acts block"
 
@@ -109,14 +114,24 @@ def canonicalEnvironmentJson (environment : Json) : Except String Json := do
   pure (Json.obj ((Std.TreeMap.Raw.ofList (fs.filter (·.1 != "speech_acts")) compare).insert
     "speech_acts" (encodeScope sc)))
 
-/-- The profile gate of 1.6, with the section 7 diagnostics. -/
-def profileGate (profiles : List String) : Except String Unit := do
+/-- The first profile outside the allowlist is refused. -/
+def profilesAllowed (allow profiles : List String) : Except String Unit := do
+  for p in profiles do
+    unless allow.contains p do throw s!"UnsupportedProfile: speech-acts@0 with {p}"
+
+/-- The profile gate of 1.6 over an allowlist, with the section 7 diagnostics. -/
+def profileGateOf (allow profiles : List String) : Except String Unit := do
   unless decide (profiles.Pairwise (· < ·)) do
     throw (VE.Route.Gate.unsupported "profiles must be sorted and unique")
   unless profiles.contains speechProfile do throw "UnsupportedProfile: speech-acts@0 is required"
   unless profiles.contains "norms@0" do throw "UnsupportedProfile: speech-acts@0 requires norms@0"
-  for p in profiles do
-    unless allowlist.contains p do throw s!"UnsupportedProfile: speech-acts@0 with {p}"
+  profilesAllowed allow profiles
+
+/-- The gate as merged before `acts@0` joined the allowlist. -/
+def profileGate₀ : List String → Except String Unit := profileGateOf allowlist₀
+
+/-- The profile gate of 1.6 and commands-imperatives 9. -/
+def profileGate : List String → Except String Unit := profileGateOf allowlist
 
 /-- A decoded speech-act environment: W1's decoding of the stripped environment, the scope block, the original
 profiles and JSON, and the canonical environment. -/
@@ -209,20 +224,38 @@ def checkTemplates (preds : List (String × Json)) (regulated : List Regulated) 
   for t in verbalisations ++ regulated.filterMap (·.act) do
     unless slotsApart (t.length + 1) ' ' t.toList do throw attachedSlot
 
-def decodeSpeechEnvironmentFull (environment : Json) : Except String SpeechEnvironment := do
+/-- Under `acts@0`, the fixed phrases of the submitted environment are those the decoder read from the stripped one.
+They differ on a tree with `vocabulary` twice, whose lookup hides the value `stripSpeech` rebuilds (DRI 2026-11-05 item 3).
+Each read is bounded by `Acts.Lexical.maxPhrases`. -/
+def checkActsBlock (profiles : List String) (environment stripped : Json) : Except String Unit :=
+  if profiles.contains "acts@0" &&
+      (VE.Norms.Wire.actsFixed profiles environment).toOption != (VE.Norms.Wire.actsFixed profiles stripped).toOption then
+    throw "InvalidInput: environment acts block"
+  else pure ()
+
+/-- The speech decoder over a profile gate, with `acts@0`'s hook of W1's decoder on or off. -/
+def decodeEnvironmentWith (gate : List String → Except String Unit) (acts : Bool) (environment : Json) :
+    Except String SpeechEnvironment := do
   let profiles ← profilesField environment
-  profileGate profiles
+  gate profiles
   let preds ← predicatesOf environment
   checkDeclarations preds
   let block ← blockOf environment
   let sc ← parseScope block
   let canonical ← canonicalEnvironmentJson environment
   let stripped ← stripSpeech environment
-  let ne ← VE.Norms.Wire.decodeNormsEnvironment stripped
+  let ne ← VE.Norms.Wire.decodeNormsEnvironment stripped (acts := acts)
+  checkActsBlock profiles environment stripped
   checkPhrases ne sc
   checkEnvironmentScope ne sc
   checkTemplates preds ne.regulated
   pure ⟨ne, sc, profiles, environment, canonical⟩
+
+/-- The decoder as merged before `acts@0` joined the allowlist. -/
+def decodeSpeechEnvironmentFull₀ : Json → Except String SpeechEnvironment := decodeEnvironmentWith profileGate₀ false
+
+/-- The decoder of this route: `acts@0` is read by W1's own decoder and hook (`decode_acts_compatible`). -/
+def decodeSpeechEnvironmentFull : Json → Except String SpeechEnvironment := decodeEnvironmentWith profileGate true
 
 /-- 8.5's signature: the complete environment, the scope and the validated regulated declarations. -/
 def decodeSpeechEnvironment (environment : Json) :
@@ -266,7 +299,7 @@ theorem scope_in_identity (j : Json) (E : VE.Environment) (sc : Scope) (rs : Lis
     rw [hf] at h
     simp only [Except.map, Except.ok.injEq, Prod.mk.injEq] at h
     obtain ⟨_, rfl, _⟩ := h
-    unfold decodeSpeechEnvironmentFull at hf
+    unfold decodeSpeechEnvironmentFull decodeEnvironmentWith at hf
     obtain ⟨_, _, hf⟩ := VE.Order.ProfileGate.bind_ok hf
     obtain ⟨_, _, hf⟩ := VE.Order.ProfileGate.bind_ok hf
     obtain ⟨_, _, hf⟩ := VE.Order.ProfileGate.bind_ok hf
@@ -274,6 +307,7 @@ theorem scope_in_identity (j : Json) (E : VE.Environment) (sc : Scope) (rs : Lis
     obtain ⟨blk, hblk, hf⟩ := VE.Order.ProfileGate.bind_ok hf
     obtain ⟨sc', hsc', hf⟩ := VE.Order.ProfileGate.bind_ok hf
     obtain ⟨b, hb, hf⟩ := VE.Order.ProfileGate.bind_ok hf
+    obtain ⟨_, _, hf⟩ := VE.Order.ProfileGate.bind_ok hf
     obtain ⟨_, _, hf⟩ := VE.Order.ProfileGate.bind_ok hf
     obtain ⟨_, _, hf⟩ := VE.Order.ProfileGate.bind_ok hf
     obtain ⟨_, _, hf⟩ := VE.Order.ProfileGate.bind_ok hf
@@ -288,6 +322,283 @@ theorem scope_in_identity (j : Json) (E : VE.Environment) (sc : Scope) (rs : Lis
     refine ⟨b, by rw [hb]; rfl, canonical_scope j b _ ?_ hb⟩
     rw [hblk']
     exact hsc'
+
+/-! ## `acts@0` on this route (commands-imperatives 9) -/
+
+theorem strings_toJson (l : List String) : strings (toJson l) = .ok l := by
+  have h : ∀ l : List String, (l.map (fun x => (toJson x : Json))).mapM Json.getStr? = .ok l := by
+    intro l
+    induction l with
+    | nil => rfl
+    | cons x xs ih =>
+      simp only [List.map_cons, List.mapM_cons, ih]
+      rfl
+  have e : (toJson l : Json) = Json.arr (l.map (fun x => (toJson x : Json))).toArray := by
+    simp only [toJson, List.toJson, Array.toJson, List.map_toArray]
+  rw [e]
+  simpa only [strings, Json.getArr?, pure_bind, List.toList_toArray] using h l
+
+/-- The stripped environment lists the submitted profiles without `speech-acts@0`. -/
+theorem stripSpeech_profiles {j s : Json} {ps : List String} (hp : profilesField j = .ok ps)
+    (hs : stripSpeech j = .ok s) : VE.Route.Gate.profilesOf s = .ok (ps.filter (· != speechProfile)) := by
+  unfold profilesField at hp
+  unfold stripSpeech at hs
+  cases hq : j.getObjVal? "profiles" >>= strings with
+  | error e => rw [hq] at hp; cases hp
+  | ok qs =>
+    rw [hq] at hp
+    cases hp
+    obtain ⟨v, hv, hq⟩ := VE.Order.ProfileGate.bind_ok hq
+    obtain ⟨v', hv', hs⟩ := VE.Order.ProfileGate.bind_ok hs
+    rw [hv] at hv'; cases hv'
+    obtain ⟨qs', hq', hs⟩ := VE.Order.ProfileGate.bind_ok hs
+    rw [hq] at hq'; cases hq'
+    obtain ⟨fs, _, hs⟩ := VE.Order.ProfileGate.bind_ok hs
+    cases hs
+    have hg : ((Json.mkObj (fs.filter (·.1 != "speech_acts"))).setObjVal! "profiles"
+        (toJson (ps.filter (· != speechProfile)))).getObjVal? "profiles" =
+        .ok (toJson (ps.filter (· != speechProfile))) := getObjVal_insert _ _ _
+    simp [VE.Route.Gate.profilesOf, hg, strings_toJson, bind, Except.bind]
+
+theorem map_some_ok {x : Except String String} {a : String} (h : (some <$> x) = .ok (some a)) : x = .ok a := by
+  cases x with
+  | error e => cases h
+  | ok y => cases h; rfl
+
+theorem pure_none_ne {a : String} (h : (pure none : Except String (Option String)) = .ok (some a)) : False := by
+  cases h
+
+/-- A decoded declaration keeps its name, and its act is what the act check accepted. -/
+theorem decodeRegulatedWith_act {acts : Bool} {chk : String → Nat → Json → Except String String} {p : String}
+    {args : List String} {raw : Json} {g : Regulated} {a : String}
+    (h : VE.Norms.Wire.decodeRegulatedWith acts chk p args raw = .ok g) (ha : g.act = some a) :
+    g.name = p ∧ ∃ k raw', chk p k raw' = .ok a := by
+  simp only [VE.Norms.Wire.decodeRegulatedWith] at h
+  repeat' (first
+    | (cases h; done)
+    | (have h' := VE.Order.ProfileGate.bind_ok h; clear h; obtain ⟨_, _, h⟩ := h'; try dsimp only at h)
+    | (have h' := VE.Norms.Wire.ite_ok_cases h; clear h
+       rcases h' with ⟨hc', h⟩ | ⟨hc', h⟩ <;> try (simp at hc'; done))
+    | split at h)
+  all_goals (cases h; dsimp only at ha; subst ha; refine ⟨rfl, ?_⟩)
+  all_goals first
+    | exact ⟨_, _, map_some_ok (by assumption)⟩
+    | exact (pure_none_ne (by assumption)).elim
+
+/-- `decodeRegulatedIn` under `acts@0`: an act is what AP-1's `check` accepted. -/
+theorem decodeRegulatedIn_act {ps fx : List String} {p : String} {args : List String} {raw : Json} {g : Regulated}
+    {a : String} (hc : ps.contains "acts@0" = true) (h : VE.Norms.Wire.decodeRegulatedIn ps fx p args raw = .ok g)
+    (ha : g.act = some a) : g.name = p ∧ ∃ k raw', VE.Acts.Lexical.check fx p k raw' = .ok a := by
+  obtain ⟨hn, k, r, hk⟩ := decodeRegulatedWith_act h ha
+  refine ⟨hn, k, r, ?_⟩
+  have e : VE.Norms.Wire.canonicalActIn ps fx p k r = VE.Acts.Lexical.check fx p k r := if_pos hc
+  exact e ▸ hk
+
+/-- A value `filterMapM` kept is one the function gave. -/
+theorem filterMapM_mem {α β ε : Type} {f : α → Except ε (Option β)} :
+    ∀ {xs : List α} {ys : List β}, xs.filterMapM f = .ok ys → ∀ y ∈ ys, ∃ x ∈ xs, f x = .ok (some y)
+  | [], ys, h, y, hy => by
+    simp only [List.filterMapM_nil] at h
+    cases h
+    cases hy
+  | x :: xs, ys, h, y, hy => by
+    rw [List.filterMapM_cons] at h
+    obtain ⟨b, hb, h⟩ := VE.Order.ProfileGate.bind_ok h
+    cases b with
+    | none =>
+      obtain ⟨x', hx', hf⟩ := filterMapM_mem h y hy
+      exact ⟨x', List.mem_cons_of_mem _ hx', hf⟩
+    | some b =>
+      obtain ⟨bs, hbs, h⟩ := VE.Order.ProfileGate.bind_ok h
+      cases h
+      rcases List.mem_cons.mp hy with rfl | hy
+      · exact ⟨x, List.mem_cons_self, hb⟩
+      · obtain ⟨x', hx', hf⟩ := filterMapM_mem hbs y hy
+        exact ⟨x', List.mem_cons_of_mem _ hx', hf⟩
+
+set_option maxHeartbeats 2000000 in
+/-- What W1's decoder read of `acts@0`: its fixed phrases, and every act checked by AP-1's `check` under them. -/
+theorem decodeNorms_acts {s : Json} {ne : VE.Norms.Wire.NormsEnvironment}
+    (hc : (actsProfiles true s).contains "acts@0" = true)
+    (h : VE.Norms.Wire.decodeNormsEnvironment s (acts := true) = .ok ne) :
+    ∃ fx, actsFixed (actsProfiles true s) s = .ok fx ∧ ∀ g ∈ ne.regulated, ∀ a, g.act = some a →
+      ∃ k raw, VE.Acts.Lexical.check fx g.name k raw = .ok a := by
+  unfold VE.Norms.Wire.decodeNormsEnvironment at h
+  repeat' (first
+    | (cases h; done)
+    | (have h' := VE.Order.ProfileGate.bind_ok h; clear h; obtain ⟨_, _, h⟩ := h')
+    | (have h' := VE.Norms.Wire.ite_ok_cases h; clear h
+       rcases h' with ⟨hc', h⟩ | ⟨hc', h⟩ <;> try (simp at hc'; done))
+    | split at h)
+  all_goals
+    cases h
+    refine ⟨_, by assumption, fun g hg a ha => ?_⟩
+    obtain ⟨⟨p, entry⟩, _, hf⟩ := filterMapM_mem (by assumption) g hg
+    simp only [if_neg Bool.false_ne_true] at hf
+    repeat' (first
+      | (cases hf; done)
+      | (have h' := VE.Order.ProfileGate.bind_ok hf; clear hf; obtain ⟨_, _, hf⟩ := h')
+      | (have h' := VE.Norms.Wire.ite_ok_cases hf; clear hf
+         rcases h' with ⟨hc', hf⟩ | ⟨hc', hf⟩ <;> try (simp at hc'; done))
+      | split at hf)
+    cases hf
+    obtain ⟨hn, k, r, hk⟩ := decodeRegulatedIn_act hc (by assumption) ha
+    exact ⟨k, r, hn ▸ hk⟩
+
+theorem profilesAllowed_congr {a b : List String} (ps : List String) (h : ∀ p ∈ ps, a.contains p = b.contains p) :
+    profilesAllowed a ps = profilesAllowed b ps := by
+  induction ps with
+  | nil => rfl
+  | cons x l ih =>
+    have hl := ih fun p hp => h p (List.mem_cons_of_mem _ hp)
+    have hx := h x List.mem_cons_self
+    simp only [profilesAllowed, List.forIn_cons, hx] at hl ⊢
+    cases b.contains x <;> simp_all
+
+theorem profilesAllowed_mem {a : List String} (ps : List String) (h : profilesAllowed a ps = .ok ()) :
+    ∀ p ∈ ps, a.contains p = true := by
+  induction ps with
+  | nil => simp
+  | cons x l ih =>
+    simp only [profilesAllowed, List.forIn_cons] at h ih
+    cases hx : a.contains x with
+    | false => simp only [hx, Bool.not_false, if_true] at h; cases h
+    | true =>
+      simp only [hx, Bool.not_true, Bool.false_eq_true, if_false] at h
+      intro p hp
+      rcases List.mem_cons.mp hp with rfl | hp
+      · exact hx
+      · exact ih h p hp
+
+theorem profileGateOf_congr {a b ps : List String} (h : ∀ p ∈ ps, a.contains p = b.contains p) :
+    profileGateOf a ps = profileGateOf b ps := by
+  simp only [profileGateOf, profilesAllowed_congr ps h]
+
+/-- What a gate that answered `.ok` read of the list. -/
+theorem profileGateOf_ok {a ps : List String} (h : profileGateOf a ps = .ok ()) :
+    ps.Pairwise (· < ·) ∧ ∀ p ∈ ps, a.contains p = true := by
+  unfold profileGateOf at h
+  by_cases hs : ps.Pairwise (· < ·)
+  · refine ⟨hs, profilesAllowed_mem ps ?_⟩
+    simp only [decide_eq_true hs, Bool.not_true, Bool.false_eq_true, if_false, pure_bind] at h
+    cases hp : ps.contains speechProfile with
+    | false => simp only [hp, Bool.not_false, if_true] at h; cases h
+    | true =>
+      cases hn : ps.contains "norms@0" with
+      | false => simp only [hp, hn, Bool.not_true, Bool.not_false, Bool.false_eq_true, if_false, if_true, pure_bind] at h; cases h
+      | true => simpa only [hp, hn, Bool.not_true, Bool.false_eq_true, if_false, pure_bind] using h
+  · simp only [decide_eq_false hs, Bool.not_false, if_true] at h; cases h
+
+/-- Every profile list the merged gate admits is still admitted. -/
+theorem profileGate_mono (ps : List String) (h : profileGate₀ ps = .ok ()) : profileGate ps = .ok () := by
+  have hm := (profileGateOf_ok h).2
+  have hc : ∀ p ∈ ps, allowlist.contains p = allowlist₀.contains p := fun p hp => by
+    have := hm p hp
+    simp only [allowlist₀, List.contains_cons, List.contains_nil, Bool.or_false, Bool.or_eq_true, beq_iff_eq] at this
+    rcases this with rfl | rfl | rfl <;> rfl
+  rw [show profileGate ps = profileGateOf allowlist ps from rfl, profileGateOf_congr hc]
+  exact h
+
+/-- What a decoded environment holds, step by step. -/
+theorem decode_steps {j : Json} {se : SpeechEnvironment} (h : decodeSpeechEnvironmentFull j = .ok se) :
+    ∃ s, profilesField j = .ok se.profiles ∧ profileGate se.profiles = .ok () ∧ se.json = j ∧ stripSpeech j = .ok s ∧
+      VE.Norms.Wire.decodeNormsEnvironment s (acts := true) = .ok se.ne ∧ checkActsBlock se.profiles j s = .ok () := by
+  unfold decodeSpeechEnvironmentFull decodeEnvironmentWith at h
+  obtain ⟨ps, hp, h⟩ := VE.Order.ProfileGate.bind_ok h
+  obtain ⟨_, hg, h⟩ := VE.Order.ProfileGate.bind_ok h
+  obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
+  obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
+  obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
+  obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
+  obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
+  obtain ⟨s, hs, h⟩ := VE.Order.ProfileGate.bind_ok h
+  obtain ⟨ne, hne, h⟩ := VE.Order.ProfileGate.bind_ok h
+  obtain ⟨_, hb, h⟩ := VE.Order.ProfileGate.bind_ok h
+  obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
+  obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
+  obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
+  cases h
+  exact ⟨s, hp, hg, rfl, hs, hne, hb⟩
+
+/-- Decoder compatibility: the speech route decodes its regulated declarations with the norms decoder, `acts@0`'s hook
+on, on the environment without the speech block. -/
+theorem decode_acts_compatible (j : Json) (se : SpeechEnvironment) (h : decodeSpeechEnvironmentFull j = .ok se) :
+    ∃ j', stripSpeech j = .ok j' ∧ VE.Norms.Wire.decodeNormsEnvironment j' (acts := true) = .ok se.ne := by
+  obtain ⟨s, _, _, _, hs, hne, _⟩ := decode_steps h
+  exact ⟨s, hs, hne⟩
+
+/-- Without `acts@0` the decoded speech environment is the merged one. -/
+theorem decode_without_acts (j : Json) (ps : List String) (hp : profilesField j = .ok ps) (h : "acts@0" ∉ ps) :
+    decodeSpeechEnvironmentFull j = decodeSpeechEnvironmentFull₀ j := by
+  have hg : profileGate ps = profileGate₀ ps := profileGateOf_congr fun p hp' => by
+    have hne : p ≠ "acts@0" := fun e => h (e ▸ hp')
+    simp [allowlist, hne]
+  have hb : ∀ s, checkActsBlock ps j s = .ok () := fun s => by
+    have : ps.contains "acts@0" = false := by simpa using h
+    simp only [checkActsBlock, this, Bool.false_and, Bool.false_eq_true, if_false]
+    rfl
+  have hn : ∀ s, stripSpeech j = .ok s → VE.Norms.Wire.decodeNormsEnvironment s (acts := true) =
+      VE.Norms.Wire.decodeNormsEnvironment s (acts := false) := fun s hs => by
+    have hc : ¬ (ps.filter (· != speechProfile)).contains "acts@0" = true := fun hc =>
+      h (List.mem_filter.mp (List.contains_iff_mem.mp hc)).1
+    have hr : readsActs (ps.filter (· != speechProfile)) = false := by
+      unfold readsActs
+      rw [Bool.eq_false_iff.mpr hc]
+      rfl
+    have he : actsProfiles true s = actsProfiles false s := by
+      simp only [actsProfiles, stripSpeech_profiles hp hs, hr, Bool.false_eq_true, if_false]
+    simp only [VE.Norms.Wire.decodeNormsEnvironment, he]
+  unfold decodeSpeechEnvironmentFull decodeSpeechEnvironmentFull₀ decodeEnvironmentWith
+  simp only [hp, hg, bind, Except.bind]
+  cases hs : stripSpeech j with
+  | error e => rfl
+  | ok s => simp [hn s hs, hb s]
+
+/-- The fixed phrases read from a non-empty profile list do not depend on the list. -/
+theorem actsFixed_nonempty {ps qs : List String} (h : ps.isEmpty = qs.isEmpty) (e : Json) :
+    actsFixed ps e = actsFixed qs e := by
+  simp only [actsFixed, h]
+
+/-- Under `acts@0` every act of a decoded environment is a simple act under the environment's fixed phrases. -/
+theorem decoded_act_simple {j : Json} {se : SpeechEnvironment} (hd : decodeSpeechEnvironmentFull j = .ok se)
+    (h : "acts@0" ∈ se.profiles) {g : Regulated} {a : String} (hg : g ∈ se.ne.regulated) (ha : g.act = some a) :
+    ∃ fx, actsFixed se.profiles se.json = .ok fx ∧ VE.Acts.Lexical.joinFree fx a = true := by
+  obtain ⟨s, hp, hgate, hj, hs, hne, hb⟩ := decode_steps hd
+  have hcs : se.profiles.contains "acts@0" = true := List.contains_iff_mem.mpr h
+  have hf : (se.profiles.filter (· != speechProfile)).contains "acts@0" = true :=
+    List.contains_iff_mem.mpr (List.mem_filter.mpr ⟨h, by decide⟩)
+  have hps : actsProfiles true s = se.profiles.filter (· != speechProfile) := by
+    have hr : readsActs (se.profiles.filter (· != speechProfile)) = true := by
+      simp only [readsActs, hf, Bool.true_and, decide_eq_true_eq]
+      exact (profileGateOf_ok hgate).1.filter _
+    simp only [actsProfiles, stripSpeech_profiles hp hs, hr, if_true]
+  obtain ⟨fx, hfx, hact⟩ := decodeNorms_acts (hps ▸ hf) hne
+  obtain ⟨k, raw, hk⟩ := hact g hg a ha
+  have hne' : (actsProfiles true s).isEmpty = se.profiles.isEmpty := by
+    rw [hps]
+    have e1 : (se.profiles.filter (· != speechProfile)).isEmpty = false := by
+      cases hl : se.profiles.filter (· != speechProfile) with
+      | nil => rw [hl] at hf; simp at hf
+      | cons _ _ => rfl
+    have e2 : se.profiles.isEmpty = false := by
+      cases hl : se.profiles with
+      | nil => rw [hl] at hcs; simp at hcs
+      | cons _ _ => rfl
+    rw [e1, e2]
+  have hfx' : actsFixed se.profiles s = .ok fx := by rw [← actsFixed_nonempty hne' s]; exact hfx
+  have hsame : (actsFixed se.profiles j).toOption = (actsFixed se.profiles s).toOption := by
+    by_cases he : (actsFixed se.profiles j).toOption = (actsFixed se.profiles s).toOption
+    · exact he
+    · have hne : ((actsFixed se.profiles j).toOption != (actsFixed se.profiles s).toOption) = true := by
+        simpa using he
+      simp only [checkActsBlock, hcs, hne, Bool.true_and, if_true] at hb
+      cases hb
+  refine ⟨fx, ?_, VE.Acts.Lexical.check_joinFree hk⟩
+  rw [hj]
+  rw [hfx'] at hsame
+  cases hx : actsFixed se.profiles j with
+  | error e => rw [hx] at hsame; cases hsame
+  | ok y => rw [hx] at hsame; cases hsame; rfl
 
 /-! ## Units (3.2) -/
 
