@@ -2,6 +2,7 @@ import VE.EnglishGrammar.SourceWords
 import VE.EnglishGrammar.Advice
 import VE.EnglishGrammar.Policy
 import VE.Alternatives.Wire
+import VE.EnglishGrammar.JudgmentRunExamples
 
 /-! Boundary fixtures for the Lean-owned source-word catalogue. No fixture row is exported. -/
 namespace VE.EnglishGrammar.SourceWordsExamples
@@ -126,6 +127,14 @@ def ev : List String := ["events@0"]
 -- DRI 2026-11-09 (reviews/dri-decisions-20261109-et-5.md item 2): a source "always" gets its refusal and advice
 -- (above), and events@0 has no reading row for it (no A1/A2 candidate; those rows and the 11-03 tests are et-5b's).
 #guard (sourceWords.filter fun r => r.word == "always" && r.profile == "events@0").map (·.frame) == ["authored"]
+/-- The `english.grammar` export's advice ids, through `grammarCase` on JudgmentRunExamples' request (DELTA row 2). -/
+def exportedAdvice : List String :=
+  match (VE.EnglishGrammar.JudgmentRunExamples.shared []).head? with
+  | some (.ok j) => (((j.getObjValD "result").getObjValD "advice").getArr?.toOption.getD #[]).toList.filterMap
+      fun r => (r.getObjValD "id").getStr?.toOption
+  | _ => []
+#guard exportedAdvice == adviceTable.map (·.id)
+#guard exportedAdvice.drop (exportedAdvice.length - 12) == twelve.map fun w => "events-" ++ w.replace " " "-"
 
 -- U1 states its silence (ET-E1's rewording); U2 is ET-E1's measured sentence; T11d's W1-W3 (SR-B4), spec 8.1's
 -- sentences with their dates and verb phrase as placeholders. The literals pin the rows' text.

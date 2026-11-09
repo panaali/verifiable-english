@@ -137,3 +137,17 @@ def test_the_relay_s_english_vocabulary_exempts_the_profile_wordings(lean_execut
     committed["environment"]["vocabulary"]["predicates"]["happens_on"]["verbalisation"] = "{0} is committed on {1}"
     assert "happens_on" in {i.path.split("/")[3] for i in events.english(committed).issues}
 
+
+
+def test_the_grammar_export_lists_the_twelve_advice_rows_after_the_others(lean_executable):
+    """DELTA row 2: Lean's `english.grammar` export lists every advice row, `events@0`'s twelve last, each with the
+    catalogue's advice (the export reads `adviceTable`; a Lean guard does not reach `grammarCase`)."""
+    from tests.test_english_lean_route import grammar_request, route
+    [row] = route([grammar_request("F")], "english.grammar")
+    advice = row["result"]["advice"]
+    profiles = [r["profile"] for r in advice]
+    assert profiles[-len(TWELVE):] == ["events@0"] * len(TWELVE) and profiles.count("events@0") == len(TWELVE)
+    assert len(advice) > len(TWELVE)
+    rows = {r["word"]: r["kind"]["advice"] for r in source_words()["rows"] if r["frame"] == "authored"}
+    assert [(r["id"], r["patterns"], r["text"]) for r in advice[-len(TWELVE):]] == [
+        ("events-" + word.replace(" ", "-"), [word.split(" ")], rows[word]) for word in TWELVE]
