@@ -8,5 +8,763 @@
  },
  "failures_by_carve_outs": {
   "unless=2": 126
- }
+ },
+ "failing": [
+  [
+   0,
+   "r3",
+   "immunity-7",
+   "Expected a complete rule sentence"
+  ],
+  [
+   1,
+   "r1",
+   "immunity-1",
+   "Expected a complete rule sentence"
+  ],
+  [
+   1,
+   "r2",
+   "claim-8",
+   "Expected a complete rule sentence"
+  ],
+  [
+   10,
+   "r1",
+   "liberty-1",
+   "Expected a complete rule sentence"
+  ],
+  [
+   17,
+   "r1",
+   "liberty-2",
+   "Expected a complete rule sentence"
+  ],
+  [
+   20,
+   "r2",
+   "immunity-3",
+   "Expected a complete rule sentence"
+  ],
+  [
+   25,
+   "r1",
+   "liberty-1",
+   "Expected a complete rule sentence"
+  ],
+  [
+   26,
+   "r1",
+   "claim-1",
+   "Expected a complete rule sentence"
+  ],
+  [
+   27,
+   "r1",
+   "liberty-1",
+   "Expected a complete rule sentence"
+  ],
+  [
+   29,
+   "r2",
+   "immunity-9",
+   "Expected a complete rule sentence"
+  ],
+  [
+   33,
+   "r1",
+   "claim-1",
+   "Expected a complete rule sentence"
+  ],
+  [
+   33,
+   "r1",
+   "liberty-2",
+   "Expected a complete rule sentence"
+  ],
+  [
+   35,
+   "r1",
+   "claim-2",
+   "Expected a complete rule sentence"
+  ],
+  [
+   36,
+   "r1",
+   "claim-1",
+   "Expected a complete rule sentence"
+  ],
+  [
+   36,
+   "r1",
+   "claim-2",
+   "Expected a complete rule sentence"
+  ],
+  [
+   38,
+   "r2",
+   "claim-4",
+   "Expected a complete rule sentence"
+  ],
+  [
+   40,
+   "r3",
+   "claim-12",
+   "Expected a complete rule sentence"
+  ],
+  [
+   42,
+   "r1",
+   "claim-1",
+   "Expected a complete rule sentence"
+  ],
+  [
+   46,
+   "r2",
+   "immunity-5",
+   "Expected a complete rule sentence"
+  ],
+  [
+   46,
+   "r3",
+   "claim-6",
+   "Expected a complete rule sentence"
+  ],
+  [
+   46,
+   "r3",
+   "claim-9",
+   "Expected a complete rule sentence"
+  ],
+  [
+   47,
+   "r1",
+   "claim-2",
+   "Expected a complete rule sentence"
+  ],
+  [
+   47,
+   "r3",
+   "liberty-5",
+   "Expected a complete rule sentence"
+  ],
+  [
+   49,
+   "r1",
+   "claim-3",
+   "Expected a complete rule sentence"
+  ],
+  [
+   49,
+   "r2",
+   "liberty-6",
+   "Expected a complete rule sentence"
+  ],
+  [
+   52,
+   "r1",
+   "claim-1",
+   "Expected a complete rule sentence"
+  ],
+  [
+   53,
+   "r1",
+   "claim-2",
+   "Expected a complete rule sentence"
+  ],
+  [
+   53,
+   "r1",
+   "liberty-3",
+   "Expected a complete rule sentence"
+  ],
+  [
+   53,
+   "r2",
+   "claim-5",
+   "Expected a complete rule sentence"
+  ],
+  [
+   55,
+   "r1",
+   "liberty-1",
+   "Expected a complete rule sentence"
+  ],
+  [
+   57,
+   "r1",
+   "claim-2",
+   "Expected a complete rule sentence"
+  ],
+  [
+   57,
+   "r2",
+   "claim-3",
+   "Expected a complete rule sentence"
+  ],
+  [
+   57,
+   "r2",
+   "liberty-5",
+   "Expected a complete rule sentence"
+  ],
+  [
+   57,
+   "r2",
+   "claim-9",
+   "Expected a complete rule sentence"
+  ],
+  [
+   58,
+   "r1",
+   "liberty-1",
+   "Expected a complete rule sentence"
+  ],
+  [
+   59,
+   "r1",
+   "claim-1",
+   "Expected a complete rule sentence"
+  ],
+  [
+   61,
+   "r2",
+   "claim-7",
+   "Expected a complete rule sentence"
+  ],
+  [
+   62,
+   "r1",
+   "claim-2",
+   "Expected a complete rule sentence"
+  ],
+  [
+   66,
+   "r1",
+   "claim-1",
+   "Expected a complete rule sentence"
+  ],
+  [
+   67,
+   "r1",
+   "claim-2",
+   "Expected a complete rule sentence"
+  ],
+  [
+   68,
+   "r1",
+   "claim-2",
+   "Expected a complete rule sentence"
+  ],
+  [
+   68,
+   "r1",
+   "claim-3",
+   "Expected a complete rule sentence"
+  ],
+  [
+   69,
+   "r1",
+   "immunity-1",
+   "Expected a complete rule sentence"
+  ],
+  [
+   69,
+   "r1",
+   "immunity-2",
+   "Expected a complete rule sentence"
+  ],
+  [
+   70,
+   "r1",
+   "claim-1",
+   "Expected a complete rule sentence"
+  ],
+  [
+   72,
+   "r2",
+   "liberty-4",
+   "Expected a complete rule sentence"
+  ],
+  [
+   73,
+   "r1",
+   "immunity-3",
+   "Expected a complete rule sentence"
+  ],
+  [
+   75,
+   "r1",
+   "immunity-3",
+   "Expected a complete rule sentence"
+  ],
+  [
+   75,
+   "r1",
+   "liberty-4",
+   "Expected a complete rule sentence"
+  ],
+  [
+   75,
+   "r2",
+   "liberty-10",
+   "Expected a complete rule sentence"
+  ],
+  [
+   76,
+   "r2",
+   "immunity-3",
+   "Expected a complete rule sentence"
+  ],
+  [
+   78,
+   "r1",
+   "claim-1",
+   "Expected a complete rule sentence"
+  ],
+  [
+   78,
+   "r3",
+   "immunity-5",
+   "Expected a complete rule sentence"
+  ],
+  [
+   85,
+   "r1",
+   "claim-2",
+   "Expected a complete rule sentence"
+  ],
+  [
+   86,
+   "r1",
+   "claim-4",
+   "Expected a complete rule sentence"
+  ],
+  [
+   86,
+   "r3",
+   "immunity-8",
+   "Expected a complete rule sentence"
+  ],
+  [
+   87,
+   "r2",
+   "claim-4",
+   "Expected a complete rule sentence"
+  ],
+  [
+   88,
+   "r1",
+   "claim-1",
+   "Expected a complete rule sentence"
+  ],
+  [
+   88,
+   "r1",
+   "claim-2",
+   "Expected a complete rule sentence"
+  ],
+  [
+   88,
+   "r3",
+   "claim-6",
+   "Expected a complete rule sentence"
+  ],
+  [
+   91,
+   "r2",
+   "liberty-4",
+   "Expected a complete rule sentence"
+  ],
+  [
+   91,
+   "r2",
+   "claim-6",
+   "Expected a complete rule sentence"
+  ],
+  [
+   92,
+   "r1",
+   "claim-4",
+   "Expected a complete rule sentence"
+  ],
+  [
+   98,
+   "r1",
+   "claim-1",
+   "Expected a complete rule sentence"
+  ],
+  [
+   98,
+   "r1",
+   "liberty-2",
+   "Expected a complete rule sentence"
+  ],
+  [
+   105,
+   "r1",
+   "immunity-2",
+   "Expected a complete rule sentence"
+  ],
+  [
+   105,
+   "r3",
+   "liberty-4",
+   "Expected a complete rule sentence"
+  ],
+  [
+   109,
+   "r2",
+   "immunity-4",
+   "Expected a complete rule sentence"
+  ],
+  [
+   109,
+   "r3",
+   "liberty-7",
+   "Expected a complete rule sentence"
+  ],
+  [
+   112,
+   "r3",
+   "liberty-8",
+   "Expected a complete rule sentence"
+  ],
+  [
+   114,
+   "r2",
+   "claim-2",
+   "Expected a complete rule sentence"
+  ],
+  [
+   117,
+   "r1",
+   "claim-2",
+   "Expected a complete rule sentence"
+  ],
+  [
+   117,
+   "r2",
+   "claim-4",
+   "Expected a complete rule sentence"
+  ],
+  [
+   118,
+   "r1",
+   "liberty-1",
+   "Expected a complete rule sentence"
+  ],
+  [
+   119,
+   "r1",
+   "liberty-3",
+   "Expected a complete rule sentence"
+  ],
+  [
+   121,
+   "r1",
+   "liberty-1",
+   "Expected a complete rule sentence"
+  ],
+  [
+   122,
+   "r1",
+   "liberty-3",
+   "Expected a complete rule sentence"
+  ],
+  [
+   122,
+   "r1",
+   "claim-5",
+   "Expected a complete rule sentence"
+  ],
+  [
+   123,
+   "r1",
+   "claim-4",
+   "Expected a complete rule sentence"
+  ],
+  [
+   124,
+   "r1",
+   "claim-1",
+   "Expected a complete rule sentence"
+  ],
+  [
+   124,
+   "r2",
+   "liberty-4",
+   "Expected a complete rule sentence"
+  ],
+  [
+   126,
+   "r2",
+   "immunity-2",
+   "Expected a complete rule sentence"
+  ],
+  [
+   127,
+   "r1",
+   "liberty-2",
+   "Expected a complete rule sentence"
+  ],
+  [
+   128,
+   "r2",
+   "claim-2",
+   "Expected a complete rule sentence"
+  ],
+  [
+   128,
+   "r2",
+   "liberty-3",
+   "Expected a complete rule sentence"
+  ],
+  [
+   140,
+   "r2",
+   "claim-2",
+   "Expected a complete rule sentence"
+  ],
+  [
+   141,
+   "r1",
+   "liberty-2",
+   "Expected a complete rule sentence"
+  ],
+  [
+   145,
+   "r3",
+   "immunity-9",
+   "Expected a complete rule sentence"
+  ],
+  [
+   156,
+   "r1",
+   "claim-2",
+   "Expected a complete rule sentence"
+  ],
+  [
+   156,
+   "r1",
+   "claim-3",
+   "Expected a complete rule sentence"
+  ],
+  [
+   158,
+   "r2",
+   "claim-11",
+   "Expected a complete rule sentence"
+  ],
+  [
+   164,
+   "r1",
+   "claim-1",
+   "Expected a complete rule sentence"
+  ],
+  [
+   165,
+   "r1",
+   "immunity-1",
+   "Expected a complete rule sentence"
+  ],
+  [
+   165,
+   "r2",
+   "immunity-2",
+   "Expected a complete rule sentence"
+  ],
+  [
+   166,
+   "r1",
+   "liberty-7",
+   "Expected a complete rule sentence"
+  ],
+  [
+   167,
+   "r1",
+   "claim-1",
+   "Expected a complete rule sentence"
+  ],
+  [
+   167,
+   "r1",
+   "claim-3",
+   "Expected a complete rule sentence"
+  ],
+  [
+   167,
+   "r2",
+   "claim-4",
+   "Expected a complete rule sentence"
+  ],
+  [
+   167,
+   "r2",
+   "liberty-5",
+   "Expected a complete rule sentence"
+  ],
+  [
+   169,
+   "r3",
+   "liberty-5",
+   "Expected a complete rule sentence"
+  ],
+  [
+   171,
+   "r2",
+   "claim-4",
+   "Expected a complete rule sentence"
+  ],
+  [
+   171,
+   "r2",
+   "claim-5",
+   "Expected a complete rule sentence"
+  ],
+  [
+   171,
+   "r3",
+   "claim-6",
+   "Expected a complete rule sentence"
+  ],
+  [
+   172,
+   "r1",
+   "immunity-1",
+   "Expected a complete rule sentence"
+  ],
+  [
+   172,
+   "r2",
+   "claim-4",
+   "Expected a complete rule sentence"
+  ],
+  [
+   173,
+   "r2",
+   "claim-6",
+   "Expected a complete rule sentence"
+  ],
+  [
+   174,
+   "r2",
+   "claim-5",
+   "Expected a complete rule sentence"
+  ],
+  [
+   174,
+   "r1",
+   "claim-6",
+   "Expected a complete rule sentence"
+  ],
+  [
+   175,
+   "r2",
+   "liberty-4",
+   "Expected a complete rule sentence"
+  ],
+  [
+   177,
+   "r2",
+   "liberty-2",
+   "Expected a complete rule sentence"
+  ],
+  [
+   177,
+   "r3",
+   "claim-5",
+   "Expected a complete rule sentence"
+  ],
+  [
+   182,
+   "r1",
+   "claim-1",
+   "Expected a complete rule sentence"
+  ],
+  [
+   185,
+   "r2",
+   "liberty-3",
+   "Expected a complete rule sentence"
+  ],
+  [
+   185,
+   "r2",
+   "claim-4",
+   "Expected a complete rule sentence"
+  ],
+  [
+   185,
+   "r3",
+   "claim-7",
+   "Expected a complete rule sentence"
+  ],
+  [
+   188,
+   "r1",
+   "claim-2",
+   "Expected a complete rule sentence"
+  ],
+  [
+   188,
+   "r1",
+   "liberty-3",
+   "Expected a complete rule sentence"
+  ],
+  [
+   191,
+   "r1",
+   "immunity-1",
+   "Expected a complete rule sentence"
+  ],
+  [
+   192,
+   "r2",
+   "liberty-3",
+   "Expected a complete rule sentence"
+  ],
+  [
+   195,
+   "r1",
+   "claim-2",
+   "Expected a complete rule sentence"
+  ],
+  [
+   195,
+   "r2",
+   "immunity-6",
+   "Expected a complete rule sentence"
+  ],
+  [
+   196,
+   "r1",
+   "immunity-2",
+   "Expected a complete rule sentence"
+  ],
+  [
+   197,
+   "r1",
+   "claim-1",
+   "Expected a complete rule sentence"
+  ],
+  [
+   197,
+   "r2",
+   "liberty-6",
+   "Expected a complete rule sentence"
+  ],
+  [
+   197,
+   "r2",
+   "liberty-11",
+   "Expected a complete rule sentence"
+  ],
+  [
+   199,
+   "r1",
+   "claim-5",
+   "Expected a complete rule sentence"
+  ]
+ ]
 }

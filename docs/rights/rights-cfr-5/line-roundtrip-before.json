@@ -11,5 +11,1087 @@
   "unless=2": 126,
   "unless=0": 36,
   "unless=1": 18
- }
+ },
+ "failing": [
+  [
+   0,
+   "r3",
+   "immunity-7",
+   "Expected a complete rule sentence"
+  ],
+  [
+   1,
+   "r1",
+   "immunity-1",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   1,
+   "r2",
+   "claim-4",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   1,
+   "r2",
+   "claim-8",
+   "Expected a complete rule sentence"
+  ],
+  [
+   7,
+   "r1",
+   "liberty-1",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   8,
+   "r1",
+   "claim-1",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   10,
+   "r1",
+   "liberty-1",
+   "Expected a complete rule sentence"
+  ],
+  [
+   11,
+   "r1",
+   "claim-1",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   11,
+   "r1",
+   "immunity-2",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   12,
+   "r2",
+   "claim-6",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   17,
+   "r1",
+   "liberty-2",
+   "Expected a complete rule sentence"
+  ],
+  [
+   20,
+   "r2",
+   "immunity-3",
+   "Expected a complete rule sentence"
+  ],
+  [
+   21,
+   "r1",
+   "claim-2",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   21,
+   "r2",
+   "claim-4",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   25,
+   "r1",
+   "liberty-1",
+   "Expected a complete rule sentence"
+  ],
+  [
+   26,
+   "r1",
+   "claim-1",
+   "Expected a complete rule sentence"
+  ],
+  [
+   27,
+   "r1",
+   "liberty-1",
+   "Expected a complete rule sentence"
+  ],
+  [
+   29,
+   "r2",
+   "immunity-9",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   33,
+   "r1",
+   "claim-1",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   33,
+   "r1",
+   "liberty-2",
+   "Expected a complete rule sentence"
+  ],
+  [
+   33,
+   "r2",
+   "claim-6",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   35,
+   "r1",
+   "claim-1",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   35,
+   "r1",
+   "claim-2",
+   "Expected a complete rule sentence"
+  ],
+  [
+   36,
+   "r1",
+   "claim-1",
+   "Expected a complete rule sentence"
+  ],
+  [
+   36,
+   "r1",
+   "claim-2",
+   "Expected a complete rule sentence"
+  ],
+  [
+   37,
+   "r3",
+   "liberty-6",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   38,
+   "r2",
+   "claim-4",
+   "Expected a complete rule sentence"
+  ],
+  [
+   40,
+   "r3",
+   "claim-12",
+   "Expected a complete rule sentence"
+  ],
+  [
+   42,
+   "r1",
+   "claim-1",
+   "Expected a complete rule sentence"
+  ],
+  [
+   46,
+   "r2",
+   "immunity-5",
+   "Expected a complete rule sentence"
+  ],
+  [
+   46,
+   "r3",
+   "claim-6",
+   "Expected a complete rule sentence"
+  ],
+  [
+   46,
+   "r3",
+   "claim-9",
+   "Expected a complete rule sentence"
+  ],
+  [
+   47,
+   "r1",
+   "immunity-1",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   47,
+   "r1",
+   "claim-2",
+   "Expected a complete rule sentence"
+  ],
+  [
+   47,
+   "r3",
+   "liberty-5",
+   "Expected a complete rule sentence"
+  ],
+  [
+   49,
+   "r1",
+   "claim-1",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   49,
+   "r1",
+   "claim-3",
+   "Expected a complete rule sentence"
+  ],
+  [
+   49,
+   "r2",
+   "claim-4",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   49,
+   "r2",
+   "liberty-6",
+   "Expected a complete rule sentence"
+  ],
+  [
+   50,
+   "r1",
+   "claim-1",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   50,
+   "r1",
+   "claim-2",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   52,
+   "r1",
+   "claim-1",
+   "Expected a complete rule sentence"
+  ],
+  [
+   53,
+   "r1",
+   "claim-1",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   53,
+   "r1",
+   "claim-2",
+   "Expected a complete rule sentence"
+  ],
+  [
+   53,
+   "r1",
+   "liberty-3",
+   "Expected a complete rule sentence"
+  ],
+  [
+   53,
+   "r2",
+   "claim-5",
+   "Expected a complete rule sentence"
+  ],
+  [
+   55,
+   "r1",
+   "liberty-1",
+   "Expected a complete rule sentence"
+  ],
+  [
+   57,
+   "r1",
+   "claim-2",
+   "Expected a complete rule sentence"
+  ],
+  [
+   57,
+   "r2",
+   "claim-3",
+   "Expected a complete rule sentence"
+  ],
+  [
+   57,
+   "r2",
+   "liberty-5",
+   "Expected a complete rule sentence"
+  ],
+  [
+   57,
+   "r2",
+   "claim-9",
+   "Expected a complete rule sentence"
+  ],
+  [
+   58,
+   "r1",
+   "liberty-1",
+   "Expected a complete rule sentence"
+  ],
+  [
+   59,
+   "r1",
+   "claim-1",
+   "Expected a complete rule sentence"
+  ],
+  [
+   59,
+   "r1",
+   "claim-2",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   61,
+   "r2",
+   "claim-7",
+   "Expected a complete rule sentence"
+  ],
+  [
+   62,
+   "r1",
+   "claim-2",
+   "Expected a complete rule sentence"
+  ],
+  [
+   66,
+   "r1",
+   "claim-1",
+   "Expected a complete rule sentence"
+  ],
+  [
+   66,
+   "r1",
+   "claim-2",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   67,
+   "r1",
+   "immunity-1",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   67,
+   "r1",
+   "claim-2",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   67,
+   "r2",
+   "immunity-5",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   68,
+   "r1",
+   "claim-2",
+   "Expected a complete rule sentence"
+  ],
+  [
+   68,
+   "r1",
+   "claim-3",
+   "Expected a complete rule sentence"
+  ],
+  [
+   69,
+   "r1",
+   "immunity-1",
+   "Expected a complete rule sentence"
+  ],
+  [
+   69,
+   "r1",
+   "immunity-2",
+   "Expected a complete rule sentence"
+  ],
+  [
+   70,
+   "r1",
+   "claim-1",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   72,
+   "r1",
+   "claim-1",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   72,
+   "r2",
+   "liberty-4",
+   "Expected a complete rule sentence"
+  ],
+  [
+   73,
+   "r1",
+   "claim-1",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   73,
+   "r1",
+   "immunity-3",
+   "Expected a complete rule sentence"
+  ],
+  [
+   75,
+   "r1",
+   "immunity-3",
+   "Expected a complete rule sentence"
+  ],
+  [
+   75,
+   "r1",
+   "liberty-4",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   75,
+   "r3",
+   "liberty-7",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   75,
+   "r2",
+   "liberty-10",
+   "Expected a complete rule sentence"
+  ],
+  [
+   76,
+   "r2",
+   "immunity-3",
+   "Expected a complete rule sentence"
+  ],
+  [
+   78,
+   "r1",
+   "claim-1",
+   "Expected a complete rule sentence"
+  ],
+  [
+   78,
+   "r2",
+   "immunity-2",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   78,
+   "r3",
+   "immunity-5",
+   "Expected a complete rule sentence"
+  ],
+  [
+   78,
+   "r3",
+   "claim-6",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   82,
+   "r1",
+   "claim-2",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   84,
+   "r2",
+   "immunity-5",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   85,
+   "r1",
+   "claim-2",
+   "Expected a complete rule sentence"
+  ],
+  [
+   86,
+   "r1",
+   "claim-4",
+   "Expected a complete rule sentence"
+  ],
+  [
+   86,
+   "r3",
+   "immunity-8",
+   "Expected a complete rule sentence"
+  ],
+  [
+   87,
+   "r2",
+   "claim-4",
+   "Expected a complete rule sentence"
+  ],
+  [
+   88,
+   "r1",
+   "claim-1",
+   "Expected a complete rule sentence"
+  ],
+  [
+   88,
+   "r1",
+   "claim-2",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   88,
+   "r3",
+   "claim-6",
+   "Expected a complete rule sentence"
+  ],
+  [
+   88,
+   "r3",
+   "liberty-7",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   90,
+   "r1",
+   "liberty-1",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   90,
+   "r1",
+   "immunity-2",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   91,
+   "r2",
+   "liberty-4",
+   "Expected a complete rule sentence"
+  ],
+  [
+   91,
+   "r2",
+   "claim-6",
+   "Expected a complete rule sentence"
+  ],
+  [
+   92,
+   "r1",
+   "claim-4",
+   "Expected a complete rule sentence"
+  ],
+  [
+   98,
+   "r1",
+   "claim-1",
+   "Expected a complete rule sentence"
+  ],
+  [
+   98,
+   "r1",
+   "liberty-2",
+   "Expected a complete rule sentence"
+  ],
+  [
+   105,
+   "r1",
+   "immunity-2",
+   "Expected a complete rule sentence"
+  ],
+  [
+   105,
+   "r3",
+   "liberty-4",
+   "Expected a complete rule sentence"
+  ],
+  [
+   109,
+   "r2",
+   "liberty-2",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   109,
+   "r2",
+   "immunity-4",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   109,
+   "r3",
+   "liberty-7",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   110,
+   "r2",
+   "immunity-9",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   112,
+   "r3",
+   "liberty-8",
+   "Expected a complete rule sentence"
+  ],
+  [
+   112,
+   "r3",
+   "claim-9",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   114,
+   "r2",
+   "claim-2",
+   "Expected a complete rule sentence"
+  ],
+  [
+   117,
+   "r1",
+   "claim-2",
+   "Expected a complete rule sentence"
+  ],
+  [
+   117,
+   "r2",
+   "claim-4",
+   "Expected a complete rule sentence"
+  ],
+  [
+   118,
+   "r1",
+   "liberty-1",
+   "Expected a complete rule sentence"
+  ],
+  [
+   119,
+   "r1",
+   "claim-2",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   119,
+   "r1",
+   "liberty-3",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   120,
+   "r2",
+   "liberty-2",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   121,
+   "r1",
+   "liberty-1",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   122,
+   "r1",
+   "liberty-3",
+   "Expected a complete rule sentence"
+  ],
+  [
+   122,
+   "r1",
+   "claim-5",
+   "Expected a complete rule sentence"
+  ],
+  [
+   123,
+   "r1",
+   "claim-4",
+   "Expected a complete rule sentence"
+  ],
+  [
+   124,
+   "r1",
+   "claim-1",
+   "Expected a complete rule sentence"
+  ],
+  [
+   124,
+   "r2",
+   "liberty-4",
+   "Expected a complete rule sentence"
+  ],
+  [
+   126,
+   "r2",
+   "immunity-2",
+   "Expected a complete rule sentence"
+  ],
+  [
+   127,
+   "r1",
+   "liberty-2",
+   "Expected a complete rule sentence"
+  ],
+  [
+   128,
+   "r1",
+   "liberty-1",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   128,
+   "r2",
+   "claim-2",
+   "Expected a complete rule sentence"
+  ],
+  [
+   128,
+   "r2",
+   "liberty-3",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   135,
+   "r2",
+   "claim-3",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   140,
+   "r2",
+   "claim-2",
+   "Expected a complete rule sentence"
+  ],
+  [
+   141,
+   "r1",
+   "liberty-2",
+   "Expected a complete rule sentence"
+  ],
+  [
+   145,
+   "r3",
+   "immunity-9",
+   "Expected a complete rule sentence"
+  ],
+  [
+   148,
+   "r2",
+   "claim-2",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   148,
+   "r2",
+   "liberty-3",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   149,
+   "r1",
+   "claim-1",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   151,
+   "r2",
+   "claim-3",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   156,
+   "r1",
+   "claim-2",
+   "Expected a complete rule sentence"
+  ],
+  [
+   156,
+   "r1",
+   "claim-3",
+   "Expected a complete rule sentence"
+  ],
+  [
+   158,
+   "r2",
+   "claim-11",
+   "Expected a complete rule sentence"
+  ],
+  [
+   160,
+   "r1",
+   "liberty-4",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   160,
+   "r3",
+   "claim-6",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   164,
+   "r1",
+   "claim-1",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   164,
+   "r2",
+   "liberty-4",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   165,
+   "r1",
+   "immunity-1",
+   "Expected a complete rule sentence"
+  ],
+  [
+   165,
+   "r2",
+   "immunity-2",
+   "Expected a complete rule sentence"
+  ],
+  [
+   166,
+   "r1",
+   "liberty-1",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   166,
+   "r2",
+   "liberty-6",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   166,
+   "r1",
+   "liberty-7",
+   "Expected a complete rule sentence"
+  ],
+  [
+   166,
+   "r1",
+   "liberty-8",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   167,
+   "r1",
+   "claim-1",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   167,
+   "r1",
+   "claim-2",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   167,
+   "r1",
+   "claim-3",
+   "Expected a complete rule sentence"
+  ],
+  [
+   167,
+   "r2",
+   "claim-4",
+   "Expected a complete rule sentence"
+  ],
+  [
+   167,
+   "r2",
+   "liberty-5",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   169,
+   "r3",
+   "liberty-5",
+   "Expected a complete rule sentence"
+  ],
+  [
+   171,
+   "r2",
+   "claim-4",
+   "Expected a complete rule sentence"
+  ],
+  [
+   171,
+   "r2",
+   "claim-5",
+   "Expected a complete rule sentence"
+  ],
+  [
+   171,
+   "r3",
+   "claim-6",
+   "Expected a complete rule sentence"
+  ],
+  [
+   172,
+   "r1",
+   "immunity-1",
+   "Expected a complete rule sentence"
+  ],
+  [
+   172,
+   "r2",
+   "claim-4",
+   "Expected a complete rule sentence"
+  ],
+  [
+   173,
+   "r1",
+   "claim-2",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   173,
+   "r2",
+   "claim-6",
+   "Expected a complete rule sentence"
+  ],
+  [
+   174,
+   "r2",
+   "claim-5",
+   "Expected a complete rule sentence"
+  ],
+  [
+   174,
+   "r1",
+   "claim-6",
+   "Expected a complete rule sentence"
+  ],
+  [
+   175,
+   "r2",
+   "liberty-4",
+   "Expected a complete rule sentence"
+  ],
+  [
+   177,
+   "r1",
+   "immunity-1",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   177,
+   "r2",
+   "liberty-2",
+   "Expected a complete rule sentence"
+  ],
+  [
+   177,
+   "r3",
+   "claim-5",
+   "Expected a complete rule sentence"
+  ],
+  [
+   177,
+   "r2",
+   "immunity-6",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   182,
+   "r1",
+   "claim-1",
+   "Expected a complete rule sentence"
+  ],
+  [
+   185,
+   "r2",
+   "liberty-3",
+   "Expected a complete rule sentence"
+  ],
+  [
+   185,
+   "r2",
+   "claim-4",
+   "Expected a complete rule sentence"
+  ],
+  [
+   185,
+   "r3",
+   "claim-7",
+   "Expected a complete rule sentence"
+  ],
+  [
+   188,
+   "r1",
+   "claim-2",
+   "Expected a complete rule sentence"
+  ],
+  [
+   188,
+   "r1",
+   "liberty-3",
+   "Expected a complete rule sentence"
+  ],
+  [
+   190,
+   "r1",
+   "immunity-1",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   190,
+   "r1",
+   "claim-2",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   191,
+   "r1",
+   "immunity-1",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   192,
+   "r2",
+   "liberty-3",
+   "Expected a complete rule sentence"
+  ],
+  [
+   195,
+   "r1",
+   "claim-2",
+   "Expected a complete rule sentence"
+  ],
+  [
+   195,
+   "r2",
+   "immunity-6",
+   "Expected a complete rule sentence"
+  ],
+  [
+   196,
+   "r1",
+   "immunity-2",
+   "InvalidInput: rights incident must have one rule"
+  ],
+  [
+   197,
+   "r1",
+   "claim-1",
+   "Expected a complete rule sentence"
+  ],
+  [
+   197,
+   "r2",
+   "liberty-6",
+   "Expected a complete rule sentence"
+  ],
+  [
+   197,
+   "r2",
+   "liberty-11",
+   "Expected a complete rule sentence"
+  ],
+  [
+   199,
+   "r1",
+   "claim-5",
+   "Expected a complete rule sentence"
+  ]
+ ]
 }

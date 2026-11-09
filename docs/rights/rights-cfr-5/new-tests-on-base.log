@@ -1,0 +1,11 @@
+$ (ve/surface/rights.py at 49f1682dc) uv run pytest -q tests/test_rights.py -k "roundtrip_with_switch or never_writes or one_by_one or delta_keeps"
+E           ve.errors.VEError: InvalidInput: rights incident must have one rule
+E           ve.errors.VEError: SyntaxError: expected Claim, Liberty or Immunity of right
+E           AssertionError: Claim of right life (user and operator may turn off). Every state must protect each person.
+E             {'refused': 'VEError: SyntaxError: expected Claim, Liberty or Immunity of right'} != {'refused': 'VEError: InvalidInput: alterable of rule rule-1 must be sorted and distinct'}
+E           ve.errors.VEError: InvalidInput: rights incident must have one rule
+FAILED tests/test_rights.py::test_rights_incident_roundtrip_with_switch - ve....
+FAILED tests/test_rights.py::test_rights_incident_header_the_renderer_never_writes_is_refused
+FAILED tests/test_rights.py::test_rights_incident_header_delta_keeps_base_names_r1
+FAILED tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one
+4 failed, 52 deselected in 2.15s
