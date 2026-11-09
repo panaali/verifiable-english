@@ -1013,8 +1013,8 @@ example (U : VE.NormDefaults.UDoc) (B : VE.Structure.{0}) (r : VE.Norms.Regulate
     SettledAsX U [.bottom] B r vs b := fun _ hX => absurd (hX.2 _ (List.mem_singleton_self _)) id
 
 /-! ## 7.4 and 7.5 for at-1d's seven statements, on F-AT1's points. `frame_iff_intended` takes `WellFormedAtt A`,
-which the kernel does not evaluate (`String.map` in a degree's name): its examples take it as a hypothesis, and the
-`#guard` below evaluates it on both documents -/
+which `decide +kernel` does not reduce (probed on F-AT9: its `Decidable` instance gets stuck): its examples take it as a
+hypothesis, and the `#guard` below evaluates it on both documents -/
 
 #guard WellFormedAtt fat1 && WellFormedAtt fat7item
 /-- F-AT1's points with a second instance `2`, the category true. -/
@@ -1129,6 +1129,15 @@ def fat1np : AttDoc := docOf { table with knowsThinks := [] } [] [ruleOf "u0165-
 def RMki : FM := routeModel true [(kn "knows" 1, [0, 1]), (kn "intends" 1, [0, 1])]
 #guard pairNames fat1np == [] && frameHolds fat1np RMki && evalAt fat1np Γ1 [1, 0] RMki guard1 == some true &&
   evalAt fat1np Γ1 [1, 0] RMki qlA == some false && !frameHolds fat1 RMki
+-- 7.4's other `guard_collapse` points: on F-AT1, knows, intends and thinks with the category true (both true); on F-AT5
+-- (a = the hand-named term), knows and thinks with the term and the category true (both true), the term alone (both false)
+def RMkit : FM := routeModel true [(kn "knows" 1, [0, 1]), (kn "intends" 1, [0, 1]), (kn "thinks_quite_likely" 1, [0, 1])]
+def term1 : String × List Nat := ("intentionally_does_restricted_action_1", [0, 1])
+#guard frameHolds fat1 RMkit && evalAt fat1 Γ1 [1, 0] RMkit guard1 == some true &&
+  evalAt fat1 Γ1 [1, 0] RMkit qlA == some true &&
+  [routeModel true [(kn "knows" 1, [0, 1]), (kn "thinks_quite_likely" 1, [0, 1]), term1], routeModel true [term1]].map
+    (fun M => (frameHolds fat5 M, evalAt fat5 Γ1 [1, 0] M (guardP 0), evalAt fat5 Γ1 [1, 0] M qlA)) ==
+  [(true, some true, some true), (true, some false, some false)]
 -- and when the holders differ: instance 2 knows and intends (and so thinks), instance 0 does not think
 def Γ3 : List String := [sortS, sortC, sortC]
 def guardH : AFormula := .or (.and (.att { cond .knows cat0 with holder := .var 2 })

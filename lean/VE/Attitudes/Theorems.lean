@@ -649,6 +649,7 @@ theorem denote_interp_base {A : AttDoc} (h : WellFormedAtt A = true) (m : AttMod
     intro ρ ρ' hφ hρ
     exact exists_congr fun v => and_congr_right fun _ => ih hφ.2 (hcons s v hρ)
 
+/-- `interp` keeps the domains, so a tuple is typed on it exactly when it is typed on the base structure. -/
 theorem tupleTyped_interp (A : AttDoc) (m : AttModel.{u} A) : ∀ (ss : List String) (vs : List m.S.Carrier),
     VE.TupleTyped (interp A m) ss vs ↔ VE.TupleTyped m.S ss vs
   | [], [] | [], _ :: _ | _ :: _, [] => Iff.rfl
