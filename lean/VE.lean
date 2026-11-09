@@ -137,6 +137,7 @@ import VE.Presupposition.Reading
 import VE.Presupposition.Rows
 import VE.Presupposition.Rules
 import VE.Presupposition.Agree
+import VE.Presupposition.Wire
 import VE.Presupposition.Examples
 import VE.RightClauses.Tree
 import VE.RightClauses.Plain
@@ -217,6 +218,7 @@ import VE.Question.Spans
 import VE.Commands.Examples
 import VE.Commands.RunExamples
 import VE.Commands.RunSplit
+import VE.Commands.StepsExamples
 import VE.Ask.Basic
 import VE.Ask.Sound
 import VE.Ask.Sources
