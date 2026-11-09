@@ -387,4 +387,30 @@ def requestIsCase (listed : List String) : Bool :=
 #guard requestIsCase ["soft-norms@0"]
 #guard requestIsCase ["norms@0", "soft-norms@0"]
 
+/-! ## events@0 owned: a refusal, never a silent empty result (pk-1-conditions-b, DRI 2026-11-08, adv1416 item 4)
+
+`events@0` is not in `ownedProfiles`, so today `check` refuses a soft document listing it by name, before
+`requestOf`. The owned case is built the way `requestCase` builds it: the `Env` decoded without events@0, then
+listing it, so `check`'s soft branch reaches `layeredOf` through `requestOf`'s `null`. That case must be refused,
+never a layered source with no pack; the control without events@0 is a case with the soft pack. -/
+
+def ndListed : List String := ["norm-defaults@0", "norms@0", "relational-fol@0", "soft-norms@0"]
+
+def layeredCase (listed : List String) : Except String VE.NormDefaults.Wire.LayeredU := do
+  let E ← VE.Service.Document.environmentOf (chainEnv ndListed)
+  VE.Service.DocumentChain.layeredOf
+    { E with json := E.json.setObjVal! "profiles" (toJson listed), profiles := listed } (Json.mkObj []) []
+
+-- Today: refused by name, before the layered route.
+#guard (match VE.Service.Document.environmentOf (chainEnv ("events@0" :: ndListed)) with
+  | .ok _ => "ok" | .error e => e) ==
+  "CheckerUnavailable: document checks under events@0 need its Lean profile route"
+-- Owned: `requestOf` is `null` and `layeredOf` refuses it; never `.ok`, whatever the list's order.
+#guard [("events@0" :: ndListed), ndListed ++ ["events@0"]].all fun ps =>
+  requestIsNull ps && (layeredCase ps).toOption.isNone
+-- Its text is the decoder's on `null`; it does not name events@0 (reported to the DRI, 2026-11-09).
+#guard (match layeredCase ("events@0" :: ndListed) with | .ok _ => "ok" | .error e => e) == "object expected"
+-- The control: without events@0 the same `Env` is a case whose one pack is soft's.
+#guard (match layeredCase ndListed with | .ok L => L.packs.map (·.id) == ["soft"] | .error _ => false)
+
 end VE.Events.RouteExamples
