@@ -12,8 +12,6 @@ _TOKEN = re.compile(r"[A-Za-z0-9_.-]{1,64}\Z", re.ASCII)
 
 _PHRASE = re.compile(r"the [A-Za-z][A-Za-z'-]*(?: [A-Za-z][A-Za-z'-]*)*\Z", re.ASCII)
 
-PROOF_TASK_ACT = "{0} submit a proof of {1}"
-
 def parse_scope(raw):
     """The block's structure, as Lean's `parseScope`, which the speech route
     reads before the envelope: an object of `task`, `addressee` and
@@ -143,12 +141,3 @@ def wording_text(text):
 def ascii_fold(text):
     """`A`-`Z` folded to `a`-`z` and nothing else, the case rule of `surface_words`."""
     return text.translate(_SURFACE_FOLD)
-
-def act_verb(act):
-    """The first word after `{0}` of an act phrase, normalised as `surface_words`, or None when it is a slot.
-
-    An imperative wording begins with this word (3.2), so only an act with one is
-    read as a command by the speech parser or classifies a wording, as Lean's `actVerb`.
-    """
-    words = surface_words(act).split(" ")
-    return words[1] if len(words) > 1 and words[0] == "{0}" and not words[1].startswith("{") else None
