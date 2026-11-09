@@ -1,59 +1,97 @@
-# sc-11 report: the superposed soft route's labels and route condition (rd-9 14.13, first part)
+# sc-11 report: the superposed soft route's Lean side (rd-9 14.13, first build item)
 
-**Cut by the size rule; nothing reserved for the DRI.** This item delivers the label mapping and the route condition
-of 14.8 with their fixtures, and moves the rest of 14.8 to **sc-11c** (below). The dispatch is unchanged: no answer
-changes, no DELTA row. Spec section 14 came in by cherry-picking 33bc5f48f and ea5b0e420 (docs only).
+**No DRI signature is reserved.** Every 14.8 statement is built and proved; the soft runners moved to **sc-11c** under
+the DRI's pre-approved cut (reviews/dri-decisions-20261109-sc-11-2.md item 1). The dispatch is unchanged: no answer
+changes, no DELTA row, pilot bytes 0 (14.13). Spec section 14 came in by cherry-picking 33bc5f48f and ea5b0e420.
 
-## Delivered
+## Plan rows and directives
 
-| 14.8 / 14.9 / 14.11 | Where |
+| Row | Delivered |
 | --- | --- |
-| `nodeExcLabels`, `labelImage`, `sdShown`; `labelImage_fst`, `labelImage_snd_mem`, `sdShown_mem`, `sdShown_image`, `fillLabels_choice`, proved | `lean/VE/Readings/SoftSupLabels.lean` |
-| `sdSuperposable`, `maxSdCheckWork`, `sdCheckWork`, `sdChecked`, `routeSD`; `routeSD_superposed_iff`, `sdChecked_spec`, `sdCheck_of_admitted`, proved | `lean/VE/Readings/SoftSupWire.lean` |
-| W-2, W-2′, W-3, W-4 (label values), W-6, W-6′ (one row per conjunct, `w2`, `pending`), W-13's route values | `lean/VE/Readings/SoftSupWireExamples.lean` |
-| Statement compare of 14.8 (both blocks; 10 declarations marked not built) | `tools/check_rd9_sc1_statements.py` |
+| SC-11 (plan :1266), Lean side | `SoftSupLabels.lean` (14.8 block 1: 3 definitions, 8 theorems), `SoftSupWire.lean` (block 2: 5 definitions, `SupReplaySD`, 9 theorems), `SoftSupWireExamples.lean` (14.9 W-2 to W-6′, W-3's base column, W-5, W-5′, W-13's route values). Python side: sc-11b |
+| D3 | The enumerated row and its cause are untouched (nothing dispatches on `routeSD`) |
+| D11, D12 | Nothing on the rights chain or own vocabularies; no wording |
+| D13 | Soft-only code in new `Soft*` files; no general definition with `X` moved; `SoftSup.lean`, `SoftSupExamples.lean` unchanged |
+| D14 | The certificate theorem reads `supCertificateCheckSD` (sc-10b), whose premises are `premisesX`; binding is sc-11c's runner |
+| Runners (`readings-conflict`, `-certificate`, `-model`, the soft row, verdict scopes), read-once tests, W-13's conflict in one proof | **sc-11c**, filed (`backlog.sh add sc-11c`, sc-11b blocked by sc-11, sc-11w, sc-11c) |
+| `tools/layer_policy.py` rows | None needed: the `VE.` default puts all three modules at layer 2 (`tools/check_lean_imports.py`: "Lean layer graph kept") |
 
-Each statement equals 14.8's text after whitespace normalisation; `maxSdCheckWork` equals the text as signed on
-2026-11-09 (below). The proofs reuse `softLabelledU_labels_nodup`'s pieces (`PacksLabels.lean`), `fmap_*`,
-`dualPerm_eq`, `search_spec` and `wellFormedU_of_ndDocTextG`; `SoftSup.lean` and `SoftSupExamples.lean` are unchanged.
-W-6′'s per-choice row is a 128-choice document whose readings each fit the vocabulary limit (253 declared names) and
-whose 32 choices taking both default readings do not, the first at position 97. W-3's last column ("holds at each
-encoded base") and W-5, W-5′ read `supLabel_other`/`supLabel_pull` and move with them.
+**Size** (`git diff --numstat` against 33fe04615, generated files excluded): exempt 1,537 lines (the spec copy and its
+two signed edits; statement-gate proofs; ruling-condition fixtures), the rest about 410 (definitions, docs, tests,
+tools, trust classes, this report). RD-6b's analogues of the runners are 636 lines (55 replay, 91 runner, 490
+verdict wire), so with them the rest passes ~600, and the pre-approved cut applies.
 
-## OPEN-SC11-7: `maxSdCheckWork` measured and set (DRI decision 2026-11-09 item 1, SIGNED)
+**Statements.** `tools/check_rd9_sc1_statements.py`: "SC-11 labels PASS: 11 exact", "SC-11 wire PASS: 15 exact",
+nothing not built; `tests/test_rd9_statements.py`: 43 passed (both after the regen). `lean/audit.py`: PASS; each new
+theorem uses only `propext`, `Classical.choice`, `Quot.sound` (`lean/axioms.txt`). `supLabel_pull`/`supLabel_other` are
+`exc_pullF`'s and `coh_pullF`'s per-premise halves: SoftSup.lean keeps those pieces inside its proofs and is read-only
+here, so `sel_pullF` (F1-F4), `excPrem_pullF` and `excPrem_dead` restate them per premise, and `label_unique` locates
+a premise by its label (a choice's document need not pass the soft check, so its names are read through their
+images). The wire theorems apply sc-10b's three theorems and restate none.
 
-`docs/rd-9/sc-11/w13-cpu.md`: compiled Lean on the VM (AMD EPYC 7B12, 32 vCPU, 5-minute load 78 to 108), the route
-check on W-13's shape costs about 29 µs of Lean CPU per `sdCheckWork` unit; NSDbig 10 (1024 choices) took 3.67 s,
-over R4's 1 s. The figure is measured. As the decision signs, `maxSdCheckWork` = 32,768: past 64 choices a document is
-decided in one proof when `sdCheckWork` is within 32,768 (measured: 256 W-13-shaped choices, NSDbig 8, 0.71 s);
-`maxChoiceChecks` 1024 stays as a second bound. It can still bind first: a choice charges the superposed premises and
-rule nodes, which can be few (`NSDcount`, 2048 choices at 9 units each, work 9,225, enumerated by the count). The
-signed spec change (14.8, 14.9 W-13, 14.11, 14.15) is commit b1b2e801f. A wide guard costs more per unit (62 to
-468 µs): row sc-11w makes the charge cost-proportional before sc-11b (item 2); admission's own exposure is row
-sc-admit-cpu (item 3).
+## Measurements and rulings
 
-## Not delivered: sc-11c (the size rule)
+- **OPEN-SC11-7** (DRI 2026-11-09 sc-11 item 1, SIGNED, commit b1b2e801f): `maxSdCheckWork` = 32,768, measured
+  (`docs/rd-9/sc-11/w13-cpu.md`, compiled Lean on the VM, AMD EPYC 7B12, load 78 to 108: ~29 µs per unit on W-13's shape,
+  NSDbig 8 0.71 s, NSDbig 10 3.67 s). Past 64 choices a document is decided in one proof when `sdCheckWork` is within
+  32,768 (256 W-13-shaped choices); `maxChoiceChecks` 1024 stays a second bound and can bind first (`NSDcount`: the cut
+  list stops at 1025 choices, 9 units each, work 9,225, enumerated by the count). Correction sent to the DRI: the two
+  wide-guard rows' cost is `sdSuperposable`'s, not the per-choice texts' (w13-cpu.md); it bears on sc-11w and
+  sc-admit-cpu, not on the constant.
+- **14.2** (sc-11-2 item 2, SIGNED, commit ef6699583): the work limit applies at any choice count; `NSDheavy` (64
+  choices, `sdSuperposable` true, work 34,752) is enumerated (SoftSupWireExamples.lean:174).
+- **W-6′'s `WellFormedU (supU N)` row is not isolated**: `⟨D4, ["bogus"]⟩` fails it and every choice's text too. The
+  checks `WellFormedU` adds to `superposable` on the superposed document are the rule count with the unspecified names
+  and the node count with the fill guards; a superposed document over them whose every choice is under them needs about
+  10,000 guard nodes, whose checks take minutes in a `#guard` (w13-cpu.md). The other conjunct rows are isolated
+  (M8: `sdChecked` true, `superposable` false; NSDlate: only the per-choice texts fail; NSDbig 11: only the count).
+- **Read once (14.11)**: `sdChecked` and `sdCheckWork` each build `checkedChoices`, and `sdSuperposable` and
+  `sdCheckWork` each build `sup N.D`, as 14.8's approved bodies are written; sc-11c's runners read them once per case,
+  and sc-11w's stricter measure may take the computed list. W-6 decodes a small environment (`envWith 0`): the route
+  reads `re` only through `sdChoiceText`'s author checks.
 
-At the cut the item measured 532 hand-written lines outside generated files and the verbatim spec copy, plus the
-17-line signed spec edit. Moved to **sc-11c**, before sc-11b:
+## Seeded bugs and mutants (`docs/rd-9/sc-11/mutants.json`)
 
-- `labelImage_functional` (proved at 8af79f69a), `supLabel_pull`, `supLabel_other`; W-3's base column, W-5, W-5′;
-- `SupReplaySD`, `readings_wire_sd_choices` and the five `readings_wire_sd_*_sound` theorems (proved at a4a17192e
-  from sc-10b's theorems, applied, not restated);
-- the soft runners (`readings-conflict`, `-certificate`, `-model`, the soft row, the verdict scopes), each value read
-  once and charged as 14.11 tables it, reached only from `SoftSupWireExamples.lean`; W-13's "a conflict answer in one
-  proof".
+Lean: M1 `labelImage` (W-2, W-5 fail), M2 `routeSD` without `sdChecked` (W-6′ fails), M3 a no-image label shown as `""`
+(W-3 fails), M4 `sdCheckWork` not charged (W-13's work case and the 64-choice work fixture fail), M4b the work charge
+read after the texts (the statement compare fails), M5 `nodeExcLabels` (W-2′ fails). Python: P1 in the statement
+checker (`test_rd9_statements_match_the_approved_text_with_nothing_unbuilt` fails). Not run: 14.9's W-7 and W-9 bugs
+(sc-11b's wire fixtures). Trust mutants (`docs/rd-9/sc-11/trust-mutants.json`, cloud pool): the first run on `sdShown`
+left 18 survivors (list truncations); five `sdShown` fixtures were added, and the rescored run gives 45 killed,
+0 survivors, 1 unknown (M008, a mutant that does not type-check).
 
-## Seeded bugs
+## Trust
 
-`docs/rd-9/sc-11/mutants.json`: M1 `labelImage` (W-2 fails), M2 `routeSD` without `sdChecked` (W-6′ fails), M3 a
-no-image label shown as `""` (W-3 fails), M4 `sdCheckWork` not charged (W-13's work case fails), M5 `nodeExcLabels`
-(R16, W-2′ fails), P1 in the statement checker. Not run: 14.9's W-7 and W-9 bugs (sc-11b's wire fixtures).
+`tools/trust_map.py --check` against 33fe04615: K +0, S +0, trusted +5 (`sdShown`, untied G[V]; `labelImage` tied to
+`labelImage_fst`, `_snd_mem`, `_functional`, `supLabel_pull`, `supLabel_other`; `nodeExcLabels` to `excLabels_nodes`;
+the route pieces C, `maxSdCheckWork` G[R]). Allowance recorded: "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-11,
+2026-10-18"; FOLLOW-UPS.md row "## sc-11". DELTA: none (no answer changes).
 
-## Trust, DELTA, bytes
+## Tests
 
-TRUST: pending the final trust map. DELTA: none (dispatch unchanged). Pilot bytes expected to move: 0 (14.13).
+TESTS: pending the final selected run.
 
-## Next
+## Spec re-read
 
-sc-11c (above), then sc-11w, then sc-11b (the switch).
+Each 14.8 declaration against the code (the compare above); 14.9 W-2 to W-6′, W-13 (as signed) against each `#guard`;
+14.11's "charged before use" against `sdChecked`'s order (M4, M4b); 14.2 as amended; 14.13's sc-11 bullet.
+
+## Self-review against BUILDER-CHECKLIST
+
+1. N.A.: no relayed answer (no runner, no Python).
+2. PASS: plan rows above; runners cut by DRI ruling sc-11-2 item 1; no Python copy of a Lean decision.
+3. PASS: M1-M5, M4b, P1 each fail a named check; trust mutants 0 survivors.
+4. N.A.: no Python or Rust product code.
+5. N.A.: no relay binding.
+6. PASS: the chain runs the gate on the final HEAD; evidence above names its commands.
+7. PASS: trust growth signed under R16; no DELTA row.
+8. PASS: no user-visible change (dispatch unchanged).
+9. PASS: `tools/select_tests.py --base 33fe04615` selects `tests/test_rd9_statements.py`.
+10. PASS: statement compare PASS; mutants M1, M4b; `lean/audit.py` PASS.
+11. PASS: over a limit the route is enumerated, never superposed (W-13, `NSDheavy`, `NSDcount`).
+12. PASS: no live path changed; W-13's CPU measured (w13-cpu.md).
+13. PASS: `tools/gate_collection.py --check --prebuilt`: 0 refused, 0 stale, 0 malformed.
+14. PASS: each iff has a fixture per direction (W-5, W-5′, W-6/W-6′); claims cite commands.
+15. PASS: overclaim (W-6′ row stated as not isolated); cut by ruling; every new check has a mutant; limits read before work (M4, M4b).
+
+SELF-REVIEW: 2 A, 8 B, 6 C; fixed 15 (B1 documented, not isolated)
