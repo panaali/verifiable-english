@@ -1005,7 +1005,8 @@
         "ResponseShape.Skeletons.words",
         "ResponseShape.Skeletons.cardinality",
         "ResponseShape.Skeletons.scope",
-        "ResponseShape.Skeletons.sensesProject"
+        "ResponseShape.Skeletons.sensesProject",
+        "ResponseShape.Skeletons.actReadings"
       ],
       "G[I]": [
         "ResponseShape.Skeletons.identity"
@@ -19309,22 +19310,40 @@
     },
     "VE/Acts/Run.lean": {
       "D[R]": [
+        "VE.Acts.Run.decodeRequest",
         "VE.Acts.Run.emptyFields",
-        "VE.Acts.Run.partsText"
+        "VE.Acts.Run.partsText",
+        "VE.Acts.Run.refusedRow",
+        "VE.Acts.Run.verdictOf"
       ],
       "D[V]": [
+        "VE.Acts.Run.actJson",
         "VE.Acts.Run.completionJson",
         "VE.Acts.Run.elaboratedFields",
         "VE.Acts.Run.optJson",
         "VE.Acts.Run.predicatesJson",
+        "VE.Acts.Run.readingJson",
         "VE.Acts.Run.roleJson",
         "VE.Acts.Run.rulesJson",
         "VE.Acts.Run.splitRows"
       ],
       "G[V]": [
         "VE.Acts.Run.isElaborate",
+        "VE.Acts.Run.listReadings",
+        "VE.Acts.Run.listed",
         "VE.Acts.Run.normsSource",
+        "VE.Acts.Run.runActReadings",
         "VE.Acts.Run.runElaborate"
+      ],
+      "D[I]": [
+        "VE.Acts.Run.fromOf",
+        "VE.Acts.Run.spans"
+      ],
+      "G[I]": [
+        "VE.Acts.Run.sameTok"
+      ],
+      "G[R]": [
+        "VE.Acts.Run.actReadingsReported"
       ]
     },
     "VE/Presupposition/Rules.lean": {
@@ -19521,6 +19540,31 @@
         "VE.Attitudes.interp",
         "VE.Attitudes.restrict",
         "VE.Attitudes.seedClosure"
+      ]
+    },
+    "ResponseShape/Schemas/ActReadings.lean": {
+      "G[R]": [
+        "ResponseShape.Schemas.ActReadings.act",
+        "ResponseShape.Schemas.ActReadings.file",
+        "ResponseShape.Schemas.ActReadings.nat",
+        "ResponseShape.Schemas.ActReadings.reading",
+        "ResponseShape.Schemas.ActReadings.result",
+        "ResponseShape.Schemas.ActReadings.row"
+      ]
+    },
+    "VE/Acts/RunExamples.lean": {
+      "T": [
+        "VE.Acts.RunExamples.acts",
+        "VE.Acts.RunExamples.count",
+        "VE.Acts.RunExamples.diag",
+        "VE.Acts.RunExamples.f300",
+        "VE.Acts.RunExamples.frameJ",
+        "VE.Acts.RunExamples.lastAdv",
+        "VE.Acts.RunExamples.p400",
+        "VE.Acts.RunExamples.paraphraseAt",
+        "VE.Acts.RunExamples.req",
+        "VE.Acts.RunExamples.row",
+        "VE.Acts.RunExamples.verdict"
       ]
     }
   }

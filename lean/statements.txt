@@ -55423,6 +55423,10 @@ theorem VE.Service.results_eq
       Option.some (VE.Service.caseResultWith r.mode i (entries.getD i Option.none) cases[i])
   -- uses VE.Service.Entry@VE.Service.Protocol VE.Service.Request.mode@VE.Service.Protocol VE.Service.Request@VE.Service.Protocol VE.Service.caseResultWith@VE.Service.Protocol VE.Service.results@VE.Service.Protocol
   -- expr 2848766935
+theorem VE.Service.runMode_actReadings
+  ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.actReadings j = VE.Acts.Run.actReadingsReported j
+  -- uses VE.Acts.Run.actReadingsReported@VE.Acts.Run VE.Service.Mode.actReadings@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
+  -- expr 2628422788
 theorem VE.Service.runMode_alternatives
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.alternatives j = VE.Alternatives.Run.runCaseReported j
   -- uses VE.Alternatives.Run.runCaseReported@VE.Alternatives.Run VE.Service.Mode.alternatives@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
