@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-pe-1b-223babd3-t238652-s4",
+ "head": "c4b322e13d94fd70ee414fa1c1f48159174523fe",
+ "argv": [
+  "armsh-cand-pe-1b-223babd3-t238652-s4",
+  "c4b322e13d94fd70ee414fa1c1f48159174523fe",
+  "9203c90af54251ba4e128d8c595ff3b44ab7948d",
+  "-",
+  "-",
+  "4",
+  "4/4"
+ ]
+}
