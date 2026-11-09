@@ -585,4 +585,99 @@ theorem foldl_order (se : SoftEnvironment) : ∀ (xs : List Json) (a : List (Str
     obtain ⟨t', ht'⟩ := addUnit_order se _ hus
     exact ⟨t' ++ t, by rw [ht, ht', List.append_assoc]⟩
 
+
+theorem unitBody_some {u : Json} {k : String} {b : Json} (h : unitBody u = some (k, b)) :
+    (k = "right" ∨ k = "right_lines") ∧ u.getObjVal? k = .ok b := by
+  unfold unitBody at h
+  cases hr : u.getObjVal? "right" <;> cases hl : u.getObjVal? "right_lines" <;> simp [hr, hl] at h <;>
+    obtain ⟨rfl, rfl⟩ := h <;> simp [hr, hl]
+
+theorem dropKeys_wf (ks : List String) (u : Json) : ∀ t, dropKeys ks u = .obj t → t.WF := by
+  intro t h
+  cases u <;> simp only [dropKeys, Json.mkObj] at h <;> try cases h
+  exact Std.TreeMap.Raw.WF.ofList
+
+/-- The head's fold, read back by rights' fold over the plained units: the plained units. -/
+theorem fold_plain (se : SoftEnvironment) (D : ClauseDoc) (hw : WellFormedClauses D = true) (hd : PlainOnWire D) :
+    ∀ (xs : List Json) (a : List (String × String × CLine) × Units) r, xs.foldlM (headStep se) a = .ok r →
+      (∀ RS ∈ r.2.order, RS ∈ VE.Rights.sourceLines D.doc) →
+      (xs.map (mapUnit (plainLineJson D))).foldlM (addUnit se) (plainUnits D.doc.soft D.lines a.2) =
+        .ok (plainUnits D.doc.soft D.lines r.2)
+  | [], a, r, h, _ => by cases h; rfl
+  | u :: xs, a, r, h, hr => by
+    simp only [List.foldlM_cons, List.map_cons] at h ⊢
+    obtain ⟨a1, h1, h⟩ := VE.Kit.Except.bind_ok h
+    have ih := fold_plain se D hw hd xs a1 r h hr
+    obtain ⟨t, ht⟩ := foldl_order se xs a1 r h
+    unfold headStep at h1
+    obtain ⟨_, -, h1⟩ := VE.Kit.Except.bind_ok h1
+    obtain ⟨us, hus, h1⟩ := VE.Kit.Except.bind_ok h1
+    cases h1
+    have hmem : ∀ RS ∈ us.order, RS ∈ VE.Rights.sourceLines D.doc := fun RS hRS => hr RS (by rw [ht]; simp [hRS])
+    have step : addUnit se (plainUnits D.doc.soft D.lines a.2) (mapUnit (plainLineJson D) u) =
+        .ok (plainUnits D.doc.soft D.lines us) := by
+      unfold mapUnit at hus ⊢
+      dsimp only at hus ⊢
+      cases hb : unitBody (dropKeys ["span"] u) with
+      | none =>
+        simp only [hb] at hus ⊢
+        exact addUnit_plain_none se _ _ _ (dropKeys_wf _ u) hb hus
+      | some kb =>
+        obtain ⟨k, b⟩ := kb
+        simp only [hb] at hus ⊢
+        obtain ⟨hk, hkb⟩ := unitBody_some hb
+        exact addUnit_plain se _ _ _ b k hk hkb _ _ hus fun l hl S hS hm =>
+          plainLine_decode se D hw hd _ l hS (hmem _ hm)
+    rw [ok_bind step]
+    exact ih
+
+
+/-- 8.5: the elaborated output carries none of the three keys and decodes under rights@0 to plain D. The hypothesis
+    `hd` is the DRI's (reviews/dri-decisions-20261104-cmp-s3.md Q1 A1): a plain guard nests one level deeper than its
+    line's guard, so W1's depth and node limits must admit it (`notChain` in Examples.lean). -/
+theorem elaborate_plain (environment document : Lean.Json) (D : ClauseDoc)
+    (h : decodeClauseDoc environment document = .ok D) (hw : WellFormedClauses D = true)
+    (hset : NoReadingSets document)
+    (hp : VE.Rights.WellFormedRights (plain D) = true) (hd : PlainOnWire D) :
+  ∃ src, VE.Rights.Wire.decodeRightsSource (stripProfile environment) (elaborateJson D document) = .ok src ∧
+    src.D = plain D := by
+  unfold decodeClauseDoc at h
+  obtain ⟨re, hre, h⟩ := VE.Kit.Except.bind_ok h
+  unfold VE.Rights.Wire.decodeRightsSource
+  rw [ok_bind hre]
+  simp only [letFun] at h ⊢
+  by_cases c1 : re.se.ne.rv.definitions = []
+  case neg => simp [c1, throw, throwThe, MonadExceptOf.throw, bind, Except.bind, pure, Except.pure] at h
+  by_cases c2 : re.se.ne.rv.flags = []
+  case neg => simp [c1, c2, throw, throwThe, MonadExceptOf.throw, bind, Except.bind, pure, Except.pure] at h
+  have e1 : re.se.ne.rv.definitions.isEmpty = true := by simp [c1]
+  have e2 : re.se.ne.rv.flags.isEmpty = true := by simp [c2]
+  rw [if_pos e1, if_pos e2] at h ⊢
+  rw [pure_bind, pure_bind] at h ⊢
+  cases document with
+  | arr xs =>
+    simp only [elaborateJson, mapDoc, pure_bind, Array.toList_map, List.length_map] at h ⊢
+    by_cases c3 : xs.toList.length > 1024
+    case pos => rw [if_pos c3] at h; cases h
+    rw [if_neg c3] at h ⊢
+    (try rw [pure_bind] at h); (try rw [pure_bind])
+    obtain ⟨⟨lines, us⟩, hf, h⟩ := VE.Kit.Except.bind_ok h
+    cases h
+    have hfold := fold_plain re.se _ hw hd xs.toList ([], {}) (lines, us) hf (fun RS h => h)
+    have hfold' : List.foldlM (addUnit re.se) ({} : Units) (xs.toList.map (mapUnit (plainLineJson _))) =
+        .ok _ := hfold
+    rw [ok_bind hfold']
+    have hv : VE.Rights.validateRightsOnce (plain ⟨⟨⟨re.se.ne.rv.environment, re.se.ne.rv.literals, re.se.soft,
+        ⟨re.se.ne.regulated, [], us.outside⟩⟩, re.block, us.rs, us.limits, us.bars, us.cites, some us.order,
+        us.sourceUnits.getD []⟩, lines, []⟩) = .ok () := by
+      rw [VE.Rights.validateRightsOnce_eq]
+      unfold VE.Rights.WellFormedRights at hp
+      split at hp
+      · assumption
+      · cases hp
+    split
+    · rename_i e heq; cases (heq.symm.trans hv)
+    · exact ⟨_, rfl, rfl⟩
+  | _ => simp [throw, throwThe, MonadExceptOf.throw, bind, Except.bind] at h
+
 end VE.RightClauses
