@@ -156,20 +156,38 @@ def test_concurrent_lazy_control_of_one_file_is_computed_once():
     from concurrent.futures import ThreadPoolExecutor
     from threading import Event
 
-    entered, release = Event(), Event()
+    entered, second, release = Event(), Event(), Event()
     calls = []
 
     def probing(file, only):
         calls.append(only)
+        if len(calls) > 1:  # a second computation (no shared lock): the test fails on `calls`
+            second.set()
+            return {(1, 1): whole()}, {(1, 1)}
         entered.set()
         assert release.wait(timeout=HANG_TIMEOUT)
         return {(1, 1): whole()}, {(1, 1)}
 
+    class Watched:  # the file's lock, which says when the second reader is waiting on it
+        def __init__(self, inner):
+            self.inner, self.tries = inner, 0
+
+        def __enter__(self):
+            self.tries += 1
+            if self.tries == 2:
+                second.set()
+            self.inner.acquire()
+
+        def __exit__(self, *exc):
+            self.inner.release()
+
     cache = tm.ControlProbes({"A.lean": None}, probing)
+    cache.locks["A.lean"] = Watched(cache.locks["A.lean"])
     with ThreadPoolExecutor(max_workers=2) as pool:
         one = pool.submit(cache.get, ("A.lean", (1, 1)), {(1, 1)})
         assert entered.wait(timeout=HANG_TIMEOUT)
         two = pool.submit(cache.get, ("A.lean", (1, 1)), {(1, 1)})
+        assert second.wait(timeout=HANG_TIMEOUT)  # the second reader is at the lock (or computing without it)
         release.set()
         assert one.result() == two.result() == whole()
     assert calls == [{(1, 1)}]
@@ -639,6 +657,12 @@ def test_eager_and_lazy_controls_agree_on_seeded_package(seed_package, tmp_path_
     assert eager_controls and lazy_controls
     assert all(r["only"] is None for r in eager_controls)
     assert any(r["only"] is not None for r in lazy_controls)
+    # eager: today's calls, one whole-file control per check file, all before any mutant; lazy: inside a mutant
+    probes = [r for r in eager_rows if "file" in r]
+    assert probes[:len(eager_controls)] == eager_controls and all(r["id"] is None for r in eager_controls)
+    assert len({r["file"] for r in eager_controls}) == len(eager_controls)
+    assert all(r["id"] is not None for r in lazy_controls)
+    assert {r["file"] for r in lazy_controls} <= {r["file"] for r in eager_controls}
 
 
 def test_the_scoped_probe_classifies_the_seeds_as_the_whole_file_probe(seed_package, tmp_path_factory):
