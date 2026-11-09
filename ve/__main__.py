@@ -161,6 +161,9 @@ def _main(argv=None):
         except VEError as exc:
             _emit({"status": "InvalidInput", "error": exc.to_dict()})
             return 2
+    if argv[:1] == ["acts"]:
+        from .acts import main as acts_main
+        return acts_main(argv[1:])
     if argv[:1] == ["calc"]:
         from .calc import main as calc_main
         return calc_main(argv[1:])
@@ -222,6 +225,7 @@ def _main(argv=None):
             return 2
     parser = argparse.ArgumentParser(prog="python -m ve", description="Experimental VE v0 language checking")
     commands = parser.add_subparsers(dest="command", required=True)
+    commands.add_parser("acts", help="an act phrase's readings under a modal (python -m ve acts readings --help)")
     commands.add_parser("assist", help="interactive assisted formalisation (python -m ve assist --help)")
     commands.add_parser("bundle", help="check a lemma bundle (python -m ve bundle check --help)")
     commands.add_parser("calc", help="check a ve-calc@0 calculation case (python -m ve calc check FILE)")

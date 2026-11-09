@@ -2,6 +2,7 @@
 -- The `#print axioms` audit of every theorem of lean/declarations.txt in a ResponseShape module.
 import ResponseShape.CaseDeciders
 import ResponseShape.Encoders
+import ResponseShape.Encoders.ActReadings
 import ResponseShape.Encoders.Alternatives
 import ResponseShape.Encoders.Ask
 import ResponseShape.Encoders.Calc
@@ -57,6 +58,14 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.CaseCond.path_ok
 #print axioms ResponseShape.CaseCond.path_toBool
 #print axioms ResponseShape.CaseDecider.all_complete
+#print axioms ResponseShape.Encoders.ActReadings.actJson_fits
+#print axioms ResponseShape.Encoders.ActReadings.actReadingsReported_fits
+#print axioms ResponseShape.Encoders.ActReadings.listReadings_fits
+#print axioms ResponseShape.Encoders.ActReadings.listed_fits
+#print axioms ResponseShape.Encoders.ActReadings.readingJson_fits
+#print axioms ResponseShape.Encoders.ActReadings.refusedRow_fits
+#print axioms ResponseShape.Encoders.ActReadings.rowsOf_fits
+#print axioms ResponseShape.Encoders.ActReadings.runActReadings_fits
 #print axioms ResponseShape.Encoders.Alternatives.admission_fits
 #print axioms ResponseShape.Encoders.Alternatives.admitDocument_kinds
 #print axioms ResponseShape.Encoders.Alternatives.chooser_fits
@@ -187,6 +196,7 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.Document.fold_fits
 #print axioms ResponseShape.Encoders.Document.fold_status_mem
 #print axioms ResponseShape.Encoders.Document.fold_with_readings_fits
+#print axioms ResponseShape.Encoders.Document.lines_fits
 #print axioms ResponseShape.Encoders.Document.locatedRow_fits
 #print axioms ResponseShape.Encoders.Document.meaning_fits
 #print axioms ResponseShape.Encoders.Document.rowKind_fits
@@ -256,7 +266,9 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.NormDefaults.of_elaborate
 #print axioms ResponseShape.Encoders.NormDefaults.of_norms
 #print axioms ResponseShape.Encoders.NormDefaults.runAdmissionX_fits
+#print axioms ResponseShape.Encoders.NormDefaults.runCaseE_fits
 #print axioms ResponseShape.Encoders.NormDefaults.runCaseReported_fits
+#print axioms ResponseShape.Encoders.NormDefaults.runCaseRouted_fits
 #print axioms ResponseShape.Encoders.NormDefaults.runCase_fits
 #print axioms ResponseShape.Encoders.NormDefaults.runGated_fits
 #print axioms ResponseShape.Encoders.NormDefaults.runLayered_fits
