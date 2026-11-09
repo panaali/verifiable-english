@@ -97,6 +97,15 @@ def ReadNormAuthoring : Prop := ∀ (E : Env) (O : Overlay) (L : Lexicon) (b : N
     c.mode = .strict ∧ c.residuals = [] ∧ c.args = [] ∧
     ∃ r ∈ regulatedOf E, r.name = c.pred ∧ ∃ s1 rest, r.sorts = s1 :: rest ∧ c.bearer = .every s1
 
+/-- `ReadNormAuthoring` is english-lean-s6.md 4's `readNorm_authoring`, word for word: an edit of either breaks this. -/
+theorem ReadNormAuthoring_eq : ReadNormAuthoring ↔ ∀ (E : Env) (O : Overlay) (L : Lexicon) (b : Nat) (s : String)
+    (rs : List NormStatement),
+  readNorm E O L b s = .ok rs →
+  (∀ r ∈ rs, ∀ cs, r ≠ .source cs) ∧
+  ∀ c ∈ rs.flatMap NormStatement.clauses,
+    c.mode = .strict ∧ c.residuals = [] ∧ c.args = [] ∧
+    ∃ r ∈ regulatedOf E, r.name = c.pred ∧ ∃ s1 rest, r.sorts = s1 :: rest ∧ c.bearer = .every s1 := Iff.rfl
+
 /-- From en-s6b's `readNorm_authoring` (stated in the stub as `ReadNormAuthoring`). -/
 theorem toNodesChecked_authoring : ReadNormAuthoring →
     ∀ (E : Env) (O : Overlay) (L : Lexicon) (b : Nat) (s : String) (rs : List NormStatement),

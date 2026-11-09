@@ -49,11 +49,12 @@ def oE1 : NormOutcome := .ok [.rule ⟨1, []⟩ cPub, .rule ⟨2, []⟩ cPub, .p
     str ["Sentence 1 starts a block that is not numbered 1. Start it with \"Rule 1.\""]
 #guard get (.misplaced (.unknownRule 3)) ["status", "code", "class", "sentence", "text"] ==
   str ["rejected", "UnknownRule", "VEError"] ++ [.null] ++ str ["The text names rule 3, and it has no rule 3."]
-#guard get (.misplaced (.strayConsequence 2)) ["status", "code", "sentence", "text"] ==
-  str ["rejected", "StrayConsequence"] ++ [toJson 2] ++
+#guard get (.misplaced (.strayConsequence 2)) ["status", "code", "class", "sentence", "text"] ==
+  str ["rejected", "StrayConsequence", "SyntaxError"] ++ [toJson 2] ++
     str ["Sentence 3 is a rule sentence outside a block, or a second one in its block."]
-#guard get (.misplaced (.noConsequence 1)) ["code", "sentence"] == str ["NoConsequence"] ++ [toJson 1] &&
-  get (.misplaced (.strayCarveOut 1)) ["code", "sentence"] == str ["StrayCarveOut"] ++ [toJson 1]
+#guard get (.misplaced (.noConsequence 1)) ["code", "class", "sentence"] == str ["NoConsequence", "SyntaxError"] ++
+    [toJson 1] &&
+  get (.misplaced (.strayCarveOut 1)) ["code", "class", "sentence"] == str ["StrayCarveOut", "SyntaxError"] ++ [toJson 1]
 -- E6, E7: no derivation, the budget (UNKNOWN), and a lexical refusal.
 #guard get (.stopped 1 .noDerivation) ["status", "code", "class", "sentence"] ==
   str ["none", "NoDerivation", "SyntaxError"] ++ [toJson 1]
@@ -61,6 +62,11 @@ def oE1 : NormOutcome := .ok [.rule ⟨1, []⟩ cPub, .rule ⟨2, []⟩ cPub, .p
   str ["budget", "Budget", "ResourceLimit"] ++ [toJson 1]
 #guard get (.lexical .emptyDocument) ["status", "code", "class", "text", "sentence"] ==
   str ["rejected", "EmptyDocument", "SyntaxError", "Write at least one statement ending with a period."] ++ [.null]
+-- an invalid grammar and a lexical refusal that names its character (its span, in code points)
+#guard get (.invalidGrammar .notWellFormed) ["status", "code", "class", "fault", "sentence"] ==
+  str ["invalidGrammar", "InvalidGrammar", "CheckerUnavailable", "notWellFormed"] ++ [.null]
+#guard get (.lexical (.badCharacter 3)) ["status", "code", "class", "span", "sentence"] ==
+  str ["rejected", "BadCharacter", "SyntaxError"] ++ [Json.arr #[3, 4], .null]
 -- E10: `many` names its sentence and shows both trees, with the reader's rule tags.
 def tA : VE.Grammar.Tree Tok := .node 0 [.leaf (.word "X" true)]
 def tB : VE.Grammar.Tree Tok := .node 1 [.leaf (.word "X" true)]
@@ -115,6 +121,21 @@ def notOne : List NormOutcome :=
 #guard notOne.all fun o => (result o).getObjValD "status" != .str "one"
 #guard (Run.resultOf (Run.answerWith (fixed oE1) "c1"
   { caseOf with overlayFailure := some ("O1", "constant", "alice") } sE1)).getObjValD "status" == .str "invalidGrammar"
+-- every coded answer above carries its code's class from the one code table (M8)
+#guard (notOne ++ [NormOutcome.misplaced (.expectedRule 0 1), .misplaced (.noConsequence 1), .misplaced (.strayCarveOut 1),
+    .invalidGrammar .notWellFormed]).all fun (o : NormOutcome) =>
+  match (result o).getObjValD "code" with
+  | .str k => (result o).getObjValD "class" == ((VE.EnglishGrammar.Run.codeClasses.lookup k).map Json.str).getD .null &&
+    (VE.EnglishGrammar.Run.codeClasses.lookup k).isSome
+  | _ => false
+-- the identities: the source's SHA-256 beside the case's (spec 8: b9f1e10d…94e1, E12 9d4519a2…94ba, E13 8512791f…0be7)
+def sha (o : NormOutcome) (s : String := "Rule 1. X.") : String :=
+  match ((result o s).getObjValD "identities").getObjValD "source_sha256" with | .str h => h | _ => ""
+#guard ((result (.stopped 1 .budget)).getObjValD "identities").getObjValD "environment_id" == .str "env" &&
+  sha (.stopped 1 .budget) == "b9f1e10dd9b146f928cd661dd716561decb1c7b41a7cf58e9680e90ff3ce94e1" &&
+  (sha (.ok [.rule ⟨1, []⟩ cPub]) "Rule 1. X.\nRule 2. Y.").startsWith "9d4519a2" &&
+  (sha (.ok [.rule ⟨1, []⟩ cPub]) "Rule 1. X.\nRule 2. Y.").endsWith "94ba" &&
+  sha (.ok [.rule ⟨1, []⟩ cPub]) "Rule 1.\nX." == "8512791f5f0c966294769fe99141449daf9ef986cdaa0ac63f70ad95a2da0be7"
 -- every `rejected` answer above names a sentence exactly when its code is not unsentenced
 #guard (notOne ++ [NormOutcome.misplaced (.expectedRule 0 1)]).all fun (o : NormOutcome) =>
   match (result o).getObjValD "status", (result o).getObjValD "code" with
@@ -133,5 +154,34 @@ def caseTwo : VE.EnglishGrammar.Run.Case :=
   | .arr rows => rows.size == 300 && rows[299]?.map (·.getObjValD "span") == some (Json.arr #[9759, 9791])
   | _ => false
 #guard (Run.resultOf (Run.answer "c" caseTwo (big 330))).getObjValD "code" == .str "TextTooLong"
+
+-- E15's kind-`blocks` rows (the EN-2 request): another kind and an extra member are refused before the case is
+-- decoded; a well-formed request reaches `decodeCase`.
+def request (kind : String) (extra : List (String × Json) := []) : Json :=
+  Json.mkObj ([("id", Json.str "c"), ("environment", Json.mkObj []), ("lexicon", Json.mkObj []),
+    ("kind", Json.str kind), ("source", Json.str "Rule 1. X.")] ++ extra)
+def errorOf (j : Json) : Json := (Run.statementCaseReported j).getObjValD "error"
+#guard errorOf (request "lines") == .str "InvalidInput: english.statement reads kind blocks or render"
+#guard errorOf (request "blocks" [("mode", "authoring")]) == .str ("fields do not match: expected [id, environment, " ++
+  "lexicon, kind, source], got [environment, id, kind, lexicon, mode, source]")
+#guard errorOf (request "blocks") ==
+  .str "fields do not match: expected [language, profiles, spec_revision, vocabulary], got []" &&
+  (Run.statementCaseReported (request "blocks")).getObjValD "status" == .str "error"
+
+-- f18 through the real reader (`leanReader`): an ambiguous condition stops the reading at its rule sentence, with both
+-- trees under `normGrammar`'s rule tags (`normTags`).
+def caseD : VE.EnglishGrammar.Run.Case :=
+  { E := Norm.Examples.fd, O := {}, L := Norm.Examples.LD, overlayFailure := none, identities := [] }
+def f18 : Json :=
+  Run.resultOf (Run.answer "c" caseD "Rule 1. Every service may be used, if every deployed service is reviewed.")
+#guard ["status", "code", "sentence"].map f18.getObjValD == str ["many", "Ambiguous"] ++ [toJson 1]
+#guard f18.getObjValD "witnesses" == Json.arr #[
+  Json.arr #[Json.arr #["norm.clause-if", 0, 12], Json.arr #["consequence.used", 0, 5], Json.arr #["formula.universal", 7, 12],
+    Json.arr #["universal.relative", 7, 12], Json.arr #["declaration.noun", 8, 10], Json.arr #["noun.dservice", 8, 10],
+    Json.arr #["relative.reviewed", 10, 12]],
+  Json.arr #[Json.arr #["norm.clause-if", 0, 12], Json.arr #["consequence.used", 0, 5], Json.arr #["formula.natural", 7, 12],
+    Json.arr #["natural.every", 7, 12], Json.arr #["natural-every.subject", 7, 12],
+    Json.arr #["natural-subject.deployed", 8, 10], Json.arr #["natural-tail.relative", 10, 12],
+    Json.arr #["relative.reviewed", 10, 12]]]
 
 end VE.EnglishGrammar.Norm.RunExamples

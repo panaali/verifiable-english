@@ -204,8 +204,6 @@ def test_the_comparison_fails_on_a_changed_node(lake, tmp_path):
     assert out["changed"].startswith("differs") and out["empty"].startswith("differs")
 
 
-
-
 def answers(lake: str, tmp_path: Path, groups: list[tuple[dict, list[tuple[str, str]]]], *, whole: bool) -> dict:
     """`english.statement`'s row for each `(id, source)` of each case, by id: the whole mode
     (`Norm.Run.statementCaseReported`, en-e3-norm 2.3) when `whole`, else its answer on the case decoded once per
@@ -242,7 +240,8 @@ def test_each_pinned_block_through_the_mode(lake, tmp_path):
     whole = answers(lake, tmp_path, [(use_case("rsp"), [("rows-cond", texts["rows-cond"]), (soft, texts[soft])]),
                                      ({**use_case("rsp"), "lexicon": use_case("fsf")["lexicon"]}, [("stale", F21[0])])],
                     whole=True)
-    assert whole.pop("stale")["status"] == "error"
+    assert whole.pop("stale") == {"id": "stale", "status": "error",
+                                  "error": "InvalidInput: the lexicon names another environment"}
     assert whole == {i: out[i] for i in whole}
     for ident, row in out.items():
         result = row["result"]
