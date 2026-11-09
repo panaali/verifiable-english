@@ -153,7 +153,20 @@ None.
 
 ## Selected tests
 
-PENDING: the final selected run on the committed tree.
+- `MAC_PYTEST_NO_DEFER=1 zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` ran on the committed
+  tree at 29c74cfd4 (ve-cloud-2). Result: `1 failed, 287 passed` in the main unit, plus
+  `chunked tests/test_english_evidence.py: … 77 passed, 0 skipped, 0 failed`. The selected units included
+  tests/test_right_clauses_duplicate.py.
+- The one failure was `tests/test_consolidation_tools.py::test_committed_trust_table_covers_every_declaration`
+  (`assert 15 == 0`: the new declarations were unclassified). It is not in main-known-red.txt; this branch caused it.
+  The fix is in 628c22b0f (the Trust section above).
+- Rerun of only that id on the committed tree at 0efe236bd (ve-mac-1): `1 passed`, exit 0.
+
+SELF-REVIEW: 1 A, 3 B, 7 C; fixed 11. The self-reviewer subagent ran once, before the heavy checks.
+- A: the `.rightLines` count.
+- B: the boundary fixtures, the condition in the correction line, and this checklist section.
+- C: the order sentence, the prefix note, R1's evidence note, the Python-only `==` test dropped, the Examples.lean
+  touch explained, the `entry_typed` citation, and the dated decoder wording.
 
 ## Self-review against BUILDER-CHECKLIST
 
@@ -169,14 +182,14 @@ PENDING: the final selected run on the committed tree.
 4. Python, Lean and Rust agree; valid inputs still pass: PASS. Lean only. The accepting `#guard`s of Examples.lean
    still hold (`lake build`). The candidate `ok` guards at Examples.lean:249 and 270 are unchanged.
 5. R8 binding: N.A. No Python reads a field of this answer.
-6. Gate evidence matches the final HEAD: PASS. The final selected run is on the committed final tree (below), and
-   the chain runs the gate.
+6. Gate evidence matches the final HEAD: PASS. The selected run and the failed-id rerun are on committed trees
+   (below); the chain runs the gate on the final HEAD.
 7. No unsigned item: PASS. DELTA row 1 cites R1. Row 2 is SIGNED by the DRI 2026-11-09 (lp0801 item 1), with the
    condition test and S2 as the negative test. The trust growth is under R16, signed. No signature is reserved.
 8. Every user-visible change in DELTA: PASS. There are two rows, and the inputs whose text does not change are named
    (DELTA.md "What does not change"). No corpus reaches the head (no mode).
-9. Test selection: PASS. `tools/select_tests.py --base $(git merge-base HEAD main)` maps the changed Lean and
-   tests/test_right_clauses_duplicate.py (the final selected run includes that file; see below).
+9. Test selection: PASS. The selected run (below) ran tests/test_right_clauses_duplicate.py and the trust-table test
+   that caught the unclassified declarations.
 10. Lean statements: PASS. No theorem statement changed. `checkEntry_ok`, `entry_facts` and `plain_guard` build
     unchanged. `lean/audit.py` PASS.
 11. Budgets fail closed: N.A. No budget, limit or deadline is touched. `entryError` evaluates `checkRights Dr` once,
