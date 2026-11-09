@@ -44927,6 +44927,70 @@ theorem VE.Reports.wf_of
   ∀ {D : VE.Reports.ReportDoc}, VE.Reports.WellFormedReports D = Bool.true → VE.Reports.WF D
   -- uses VE.Reports.ReportDoc@VE.Attribution.Content VE.Reports.WF@VE.Attribution.Facts VE.Reports.WellFormedReports@VE.Attribution.Content
   -- expr 3297433674
+theorem VE.RightClauses.addUnit_order
+  ∀ (se : VE.SoftNorms.Wire.SoftEnvironment) {acc acc' : VE.Rights.Wire.Units} (u : Lean.Json),
+    VE.Rights.Wire.addUnit se acc u = Except.ok acc' → ∃ t, acc'.order = acc.order ++ t
+  -- uses VE.Rights.SourceLine@VE.Rights.Tree VE.Rights.Wire.Units.order@VE.Rights.Wire VE.Rights.Wire.Units@VE.Rights.Wire VE.Rights.Wire.addUnit@VE.Rights.Wire VE.SoftNorms.Wire.SoftEnvironment@VE.SoftNorms.Wire
+  -- expr 2865829047
+theorem VE.RightClauses.addUnit_plain
+  ∀ (se : VE.SoftNorms.Wire.SoftEnvironment) (E : VE.SoftNorms.SoftDoc)
+    (cl : List (String × String × VE.RightClauses.CLine)) (u0 b : Lean.Json) (k : String),
+    k = "right" ∨ k = "right_lines" →
+      u0.getObjVal? k = Except.ok b →
+        ∀ (f1 f2 : Lean.Json → Lean.Json) {acc acc' : VE.Rights.Wire.Units},
+          VE.Rights.Wire.addUnit se acc
+                (VE.RightClauses.mapMember k (VE.RightClauses.mapMember "lines" (VE.RightClauses.mapArr f1)) u0) =
+              Except.ok acc' →
+            (∀ (l : Lean.Json),
+                l ∈ VE.RightClauses.bodyLines b →
+                  ∀ (S : VE.Rights.SourceLine),
+                    VE.Rights.Wire.decodeLine se (f1 l) = Except.ok S →
+                      (VE.RightClauses.bodyRight k b, S) ∈ acc'.order →
+                        VE.Rights.Wire.decodeLine se (f2 l) =
+                          Except.ok (VE.RightClauses.plainSource E cl (VE.RightClauses.bodyRight k b) S)) →
+              VE.Rights.Wire.addUnit se (VE.RightClauses.plainUnits E cl acc)
+                  (VE.RightClauses.mapMember k (VE.RightClauses.mapMember "lines" (VE.RightClauses.mapArr f2)) u0) =
+                Except.ok (VE.RightClauses.plainUnits E cl acc')
+  -- uses VE.RightClauses.CLine@VE.RightClauses.Tree VE.RightClauses.bodyLines@VE.RightClauses.Wire VE.RightClauses.bodyRight@VE.RightClauses.Wire VE.RightClauses.mapArr@VE.RightClauses.Wire VE.RightClauses.mapMember@VE.RightClauses.Wire VE.RightClauses.plainSource@VE.RightClauses.Plain VE.RightClauses.plainUnits@VE.RightClauses.WireTheorems VE.Rights.SourceLine@VE.Rights.Tree VE.Rights.Wire.Units.order@VE.Rights.Wire VE.Rights.Wire.Units@VE.Rights.Wire VE.Rights.Wire.addUnit@VE.Rights.Wire VE.Rights.Wire.decodeLine@VE.Rights.Wire VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.Wire.SoftEnvironment@VE.SoftNorms.Wire
+  -- expr 555281711
+theorem VE.RightClauses.addUnit_plain_none
+  ∀ (se : VE.SoftNorms.Wire.SoftEnvironment) (E : VE.SoftNorms.SoftDoc)
+    (cl : List (String × String × VE.RightClauses.CLine)) (u0 : Lean.Json),
+    (∀ (t : Std.TreeMap.Raw String Lean.Json Ord.compare), u0 = Lean.Json.obj t → t.WF) →
+      VE.RightClauses.unitBody u0 = Option.none →
+        ∀ {acc acc' : VE.Rights.Wire.Units},
+          VE.Rights.Wire.addUnit se acc u0 = Except.ok acc' →
+            VE.Rights.Wire.addUnit se (VE.RightClauses.plainUnits E cl acc) u0 =
+              Except.ok (VE.RightClauses.plainUnits E cl acc')
+  -- uses VE.RightClauses.CLine@VE.RightClauses.Tree VE.RightClauses.plainUnits@VE.RightClauses.WireTheorems VE.RightClauses.unitBody@VE.RightClauses.Wire VE.Rights.Wire.Units@VE.Rights.Wire VE.Rights.Wire.addUnit@VE.Rights.Wire VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.Wire.SoftEnvironment@VE.SoftNorms.Wire
+  -- expr 2289491775
+theorem VE.RightClauses.any_plain
+  ∀ (E : VE.SoftNorms.SoftDoc) (cl : List (String × String × VE.RightClauses.CLine)) (us : VE.Rights.Wire.Units)
+    (r : String), ((VE.RightClauses.plainUnits E cl us).rs.any fun x => x.name == r) = us.rs.any fun x => x.name == r
+  -- uses VE.RightClauses.CLine@VE.RightClauses.Tree VE.RightClauses.plainUnits@VE.RightClauses.WireTheorems VE.Rights.Right.name@VE.Rights.Tree VE.Rights.Right@VE.Rights.Tree VE.Rights.Wire.Units.rs@VE.Rights.Wire VE.Rights.Wire.Units@VE.Rights.Wire VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree
+  -- expr 1561672035
+theorem VE.RightClauses.bind_congr'
+  ∀ {ε α β : Type} (x : Except ε α) {f g : α → Except ε β}, (∀ (a : α), f a = g a) → x >>= f = x >>= g
+  -- uses
+  -- expr 171410809
+theorem VE.RightClauses.bodyLines_mem
+  ∀ {b l : Lean.Json},
+    l ∈ VE.RightClauses.bodyLines b →
+      ∃ kl,
+        kl ∈ VE.RightClauses.members b ∧
+          kl.fst = "lines" ∧
+            l ∈
+              match kl.snd with
+              | Lean.Json.arr ls => ls.toList
+              | x => []
+  -- uses VE.RightClauses.bodyLines@VE.RightClauses.Wire VE.RightClauses.mapArr_congr.match_1@VE.RightClauses.WireTheorems VE.RightClauses.members@VE.RightClauses.Wire
+  -- expr 1813097215
+theorem VE.RightClauses.bodyRight_of
+  ∀ (k : String) (b : Lean.Json) {r : String},
+    VE.Bridge.stringField b (if (k == "right") = Bool.true then "name" else "right") = Except.ok r →
+      VE.RightClauses.bodyRight k b = r
+  -- uses VE.Bridge.stringField@VE.Bridge VE.RightClauses.bodyRight@VE.RightClauses.Wire
+  -- expr 4244141143
 theorem VE.RightClauses.checkEntry_ok
   ∀ {D : VE.RightClauses.ClauseDoc} {cl : List (String × String × VE.RightClauses.CLine)} {Dr : VE.Rights.RightsDoc}
     {src : List (String × VE.Rights.SourceLine)} {x : String × String × VE.RightClauses.CLine},
@@ -44974,6 +45038,179 @@ theorem VE.RightClauses.clause_fails_not_selected
                         ¬VE.Rights.SelectsRN (VE.RightClauses.plain D) S (VE.Norms.tupleVal vs) N
   -- uses VE.Formula.denote@VE.Semantics VE.Norms.Node.name@VE.Norms.Tree VE.Norms.tupleVal@VE.Norms.Basic VE.RightClauses.CLine.clauses@VE.RightClauses.Tree VE.RightClauses.CLine.relation@VE.RightClauses.Tree VE.RightClauses.CLine@VE.RightClauses.Tree VE.RightClauses.Clause.formula@VE.RightClauses.Tree VE.RightClauses.Clause@VE.RightClauses.Tree VE.RightClauses.ClauseDoc.lines@VE.RightClauses.Tree VE.RightClauses.ClauseDoc@VE.RightClauses.Tree VE.RightClauses.Relation@VE.RightClauses.Tree VE.RightClauses.WellFormedClauses@VE.RightClauses.Plain VE.RightClauses.plain@VE.RightClauses.Plain VE.RightClauses.relAtom@VE.RightClauses.Plain VE.Rights.Line.node@VE.Rights.Tree VE.Rights.Line@VE.Rights.Tree VE.Rights.SelectsRN@VE.Rights.Projections VE.Rights.WellFormedRights@VE.Rights.Correlate VE.Rights.linesOf@VE.Rights.Tree VE.Rights.sortsOf@VE.Rights.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.TupleTyped@VE.Semantics
   -- expr 350913553
+theorem VE.RightClauses.contains_of_mem
+  ∀ {L : List (String × Lean.Json)} {k : String} {v : Lean.Json},
+    (k, v) ∈ L → (List.map Prod.fst L).contains k = Bool.true
+  -- uses
+  -- expr 1268915620
+theorem VE.RightClauses.decodeLineNorm_guard
+  ∀ (se : VE.SoftNorms.Wire.SoftEnvironment) (L : List (String × Lean.Json)) {g : Lean.Json} {G : VE.Formula} {c : Nat},
+    VE.Norms.Wire.budgetFormula VE.Limits.maxDepth 0 g = Except.ok (G, c) →
+      ∀ {N : VE.SoftNorms.SoftNode},
+        VE.Rights.Wire.decodeLineNorm se (Lean.Json.mkObj L) Option.none = Except.ok N →
+          VE.Rights.Wire.decodeLineNorm se (VE.RightClauses.mapMember "guard" (fun x => g) (Lean.Json.mkObj L))
+              Option.none =
+            Except.ok
+              { name := N.name, pred := N.pred, sign := N.sign, guard := G, carveOuts := N.carveOuts, over := N.over,
+                mode := N.mode, rank := N.rank, alterable := N.alterable, exception := N.exception, hard := N.hard,
+                splitFrom := N.splitFrom }
+  -- uses VE.Formula@VE.Syntax VE.Limits.maxDepth@VE.Limits VE.Norms.Node.carveOuts@VE.Norms.Tree VE.Norms.Node.mk@VE.Norms.Tree VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node.over@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.Node.sign@VE.Norms.Tree VE.Norms.Wire.budgetFormula@VE.Norms.Wire VE.RightClauses.mapMember@VE.RightClauses.Wire VE.Rights.Wire.decodeLineNorm@VE.Rights.Wire VE.SoftNorms.SoftNode.alterable@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.exception@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.hard@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.mk@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.mode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.rank@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.splitFrom@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.Wire.SoftEnvironment@VE.SoftNorms.Wire
+  -- expr 1345893475
+theorem VE.RightClauses.decodeLineNorm_name
+  ∀ (se : VE.SoftNorms.Wire.SoftEnvironment) (t : Std.TreeMap.Raw String Lean.Json Ord.compare),
+    t.WF →
+      ∀ (fp : Option String) {N : VE.SoftNorms.SoftNode},
+        VE.Rights.Wire.decodeLineNorm se (Lean.Json.obj t) fp = Except.ok N →
+          (Lean.Json.obj t).getObjValD "name" = Lean.Json.str N.name
+  -- uses VE.Norms.Node.name@VE.Norms.Tree VE.Rights.Wire.decodeLineNorm@VE.Rights.Wire VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.Wire.SoftEnvironment@VE.SoftNorms.Wire
+  -- expr 238462590
+theorem VE.RightClauses.decodeLineNorm_obj
+  ∀ (se : VE.SoftNorms.Wire.SoftEnvironment) (v : Lean.Json) (fp : Option String) {N : VE.SoftNorms.SoftNode},
+    VE.Rights.Wire.decodeLineNorm se v fp = Except.ok N → ∃ t, v = Lean.Json.obj t
+  -- uses VE.Rights.Wire.decodeLineNorm@VE.Rights.Wire VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.Wire.SoftEnvironment@VE.SoftNorms.Wire
+  -- expr 1615526376
+theorem VE.RightClauses.decodeLine_guard
+  ∀ (se : VE.SoftNorms.Wire.SoftEnvironment) (l : Lean.Json) {L : List (String × Lean.Json)},
+    l.getObjVal? "norm" = Except.ok (Lean.Json.mkObj L) →
+      ∀ {g : Lean.Json} {G : VE.Formula} {c : Nat},
+        VE.Norms.Wire.budgetFormula VE.Limits.maxDepth 0 g = Except.ok (G, c) →
+          ∀ {S : VE.Rights.SourceLine},
+            VE.Rights.Wire.decodeLine se l = Except.ok S →
+              S.fanOut = [] →
+                VE.Rights.Wire.decodeLine se
+                    (VE.RightClauses.mapMember "norm" (VE.RightClauses.mapMember "guard" fun x => g) l) =
+                  Except.ok
+                    { kind := S.kind,
+                      norm :=
+                        Option.map
+                          (fun N =>
+                            { name := N.name, pred := N.pred, sign := N.sign, guard := G, carveOuts := N.carveOuts,
+                              over := N.over, mode := N.mode, rank := N.rank, alterable := N.alterable,
+                              exception := N.exception, hard := N.hard, splitFrom := N.splitFrom })
+                          S.norm,
+                      liberty := S.liberty, recognition := S.recognition, fanOut := S.fanOut, holderSlot := S.holderSlot,
+                      cites := S.cites }
+  -- uses VE.Formula@VE.Syntax VE.Limits.maxDepth@VE.Limits VE.Norms.Node.carveOuts@VE.Norms.Tree VE.Norms.Node.mk@VE.Norms.Tree VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node.over@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.Node.sign@VE.Norms.Tree VE.Norms.Wire.budgetFormula@VE.Norms.Wire VE.RightClauses.mapMember@VE.RightClauses.Wire VE.Rights.SourceLine.cites@VE.Rights.Tree VE.Rights.SourceLine.fanOut@VE.Rights.Tree VE.Rights.SourceLine.holderSlot@VE.Rights.Tree VE.Rights.SourceLine.kind@VE.Rights.Tree VE.Rights.SourceLine.liberty@VE.Rights.Tree VE.Rights.SourceLine.mk@VE.Rights.Tree VE.Rights.SourceLine.norm@VE.Rights.Tree VE.Rights.SourceLine.recognition@VE.Rights.Tree VE.Rights.SourceLine@VE.Rights.Tree VE.Rights.Wire.decodeLine@VE.Rights.Wire VE.SoftNorms.SoftNode.alterable@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.exception@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.hard@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.mk@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.mode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.rank@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.splitFrom@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.Wire.SoftEnvironment@VE.SoftNorms.Wire
+  -- expr 563364665
+theorem VE.RightClauses.decodeLine_name
+  ∀ (se : VE.SoftNorms.Wire.SoftEnvironment) (l : Lean.Json),
+    (∀ (v : Lean.Json),
+        l.getObjVal? "norm" = Except.ok v →
+          ∀ (t : Std.TreeMap.Raw String Lean.Json Ord.compare), v = Lean.Json.obj t → t.WF) →
+      (∀ (v : Lean.Json),
+          l.getObjVal? "liberty" = Except.ok v →
+            ∀ (t : Std.TreeMap.Raw String Lean.Json Ord.compare), v = Lean.Json.obj t → t.WF) →
+        ∀ {S : VE.Rights.SourceLine},
+          VE.Rights.Wire.decodeLine se l = Except.ok S → VE.RightClauses.jsonLineName l = VE.RightClauses.lineName S
+  -- uses VE.RightClauses.jsonLineName@VE.RightClauses.Wire VE.RightClauses.lineName@VE.RightClauses.Tree VE.Rights.SourceLine@VE.Rights.Tree VE.Rights.Wire.decodeLine@VE.Rights.Wire VE.SoftNorms.Wire.SoftEnvironment@VE.SoftNorms.Wire
+  -- expr 2190634040
+theorem VE.RightClauses.decodeLine_norm
+  ∀ (se : VE.SoftNorms.Wire.SoftEnvironment) (l : Lean.Json) {S : VE.Rights.SourceLine},
+    VE.Rights.Wire.decodeLine se l = Except.ok S →
+      ∀ {N : VE.SoftNorms.SoftNode},
+        S.norm = Option.some N →
+          ∃ v fp, l.getObjVal? "norm" = Except.ok v ∧ VE.Rights.Wire.decodeLineNorm se v fp = Except.ok N
+  -- uses VE.Rights.SourceLine.norm@VE.Rights.Tree VE.Rights.SourceLine@VE.Rights.Tree VE.Rights.Wire.decodeLine@VE.Rights.Wire VE.Rights.Wire.decodeLineNorm@VE.Rights.Wire VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.Wire.SoftEnvironment@VE.SoftNorms.Wire
+  -- expr 659723847
+theorem VE.RightClauses.decodeLines_plain
+  ∀ (se : VE.SoftNorms.Wire.SoftEnvironment) (b : Lean.Json) (f1 f2 : Lean.Json → Lean.Json)
+    (φ : VE.Rights.SourceLine → VE.Rights.SourceLine) {ls : List VE.Rights.SourceLine},
+    VE.Rights.Wire.decodeLines se (VE.RightClauses.mapMember "lines" (VE.RightClauses.mapArr f1) b) = Except.ok ls →
+      (∀ (l : Lean.Json),
+          l ∈ VE.RightClauses.bodyLines b →
+            ∀ (S : VE.Rights.SourceLine),
+              S ∈ ls →
+                VE.Rights.Wire.decodeLine se (f1 l) = Except.ok S →
+                  VE.Rights.Wire.decodeLine se (f2 l) = Except.ok (φ S)) →
+        VE.Rights.Wire.decodeLines se (VE.RightClauses.mapMember "lines" (VE.RightClauses.mapArr f2) b) =
+          Except.ok (List.map φ ls)
+  -- uses VE.RightClauses.bodyLines@VE.RightClauses.Wire VE.RightClauses.mapArr@VE.RightClauses.Wire VE.RightClauses.mapMember@VE.RightClauses.Wire VE.Rights.SourceLine@VE.Rights.Tree VE.Rights.Wire.decodeLine@VE.Rights.Wire VE.Rights.Wire.decodeLines@VE.Rights.Wire VE.SoftNorms.Wire.SoftEnvironment@VE.SoftNorms.Wire
+  -- expr 565763826
+theorem VE.RightClauses.decodeNorm_guard
+  ∀ {F : List (String × Lean.Json)},
+    VE.RightClauses.Distinct F →
+      ∀ {g : Lean.Json} {G : VE.Formula} {c : Nat},
+        VE.Norms.Wire.budgetFormula VE.Limits.maxDepth 0 g = Except.ok (G, c) →
+          ∀ {N : VE.Norms.Node},
+            VE.Norms.Wire.decodeNorm (Lean.Json.mkObj [("norm", Lean.Json.mkObj F)]) Bool.false = Except.ok N →
+              VE.Norms.Wire.decodeNorm
+                  (Lean.Json.mkObj [("norm", Lean.Json.mkObj (List.map (VE.RightClauses.mapPair "guard" fun x => g) F))])
+                  Bool.false =
+                Except.ok
+                  { name := N.name, pred := N.pred, sign := N.sign, guard := G, carveOuts := N.carveOuts, over := N.over }
+  -- uses VE.Formula@VE.Syntax VE.Limits.maxDepth@VE.Limits VE.Norms.Node.carveOuts@VE.Norms.Tree VE.Norms.Node.mk@VE.Norms.Tree VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node.over@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.Node.sign@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree VE.Norms.Wire.budgetFormula@VE.Norms.Wire VE.Norms.Wire.decodeNorm@VE.Norms.Wire VE.RightClauses.Distinct@VE.RightClauses.WireDecode VE.RightClauses.mapPair@VE.RightClauses.WireDecode
+  -- expr 2996118301
+theorem VE.RightClauses.decodeNorm_name
+  ∀ {j : Lean.Json} {sh : Bool} {N : VE.Norms.Node},
+    VE.Norms.Wire.decodeNorm j sh = Except.ok N → (j.getObjValD "norm").getObjValD "name" = Lean.Json.str N.name
+  -- uses VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree VE.Norms.Wire.decodeNorm@VE.Norms.Wire
+  -- expr 1003484759
+theorem VE.RightClauses.decodeRight_name
+  ∀ (se : VE.SoftNorms.Wire.SoftEnvironment) (j : Lean.Json) {R : VE.Rights.Right},
+    VE.Rights.Wire.decodeRight se j = Except.ok R → VE.Bridge.stringField j "name" = Except.ok R.name
+  -- uses VE.Bridge.stringField@VE.Bridge VE.Rights.Right.name@VE.Rights.Tree VE.Rights.Right@VE.Rights.Tree VE.Rights.Wire.decodeRight@VE.Rights.Wire VE.SoftNorms.Wire.SoftEnvironment@VE.SoftNorms.Wire
+  -- expr 3061252243
+theorem VE.RightClauses.decodeRight_plain
+  ∀ (se : VE.SoftNorms.Wire.SoftEnvironment) (b : Lean.Json) (f1 f2 : Lean.Json → Lean.Json)
+    (φ : String → VE.Rights.SourceLine → VE.Rights.SourceLine) {R : VE.Rights.Right},
+    VE.Rights.Wire.decodeRight se (VE.RightClauses.mapMember "lines" (VE.RightClauses.mapArr f1) b) = Except.ok R →
+      (∀ (l : Lean.Json),
+          l ∈ VE.RightClauses.bodyLines b →
+            ∀ (S : VE.Rights.SourceLine),
+              S ∈ R.lines →
+                VE.Rights.Wire.decodeLine se (f1 l) = Except.ok S →
+                  VE.Rights.Wire.decodeLine se (f2 l) = Except.ok (φ R.name S)) →
+        VE.Rights.Wire.decodeRight se (VE.RightClauses.mapMember "lines" (VE.RightClauses.mapArr f2) b) =
+          Except.ok { name := R.name, holder := R.holder, guard := R.guard, lines := List.map (φ R.name) R.lines }
+  -- uses VE.RightClauses.bodyLines@VE.RightClauses.Wire VE.RightClauses.mapArr@VE.RightClauses.Wire VE.RightClauses.mapMember@VE.RightClauses.Wire VE.Rights.Right.guard@VE.Rights.Tree VE.Rights.Right.holder@VE.Rights.Tree VE.Rights.Right.lines@VE.Rights.Tree VE.Rights.Right.mk@VE.Rights.Tree VE.Rights.Right.name@VE.Rights.Tree VE.Rights.Right@VE.Rights.Tree VE.Rights.SourceLine@VE.Rights.Tree VE.Rights.Wire.decodeLine@VE.Rights.Wire VE.Rights.Wire.decodeRight@VE.Rights.Wire VE.SoftNorms.Wire.SoftEnvironment@VE.SoftNorms.Wire
+  -- expr 2387953247
+theorem VE.RightClauses.decode_unstructured
+  ∀ (environment document : Lean.Json) (D : VE.RightClauses.ClauseDoc),
+    VE.RightClauses.decodeClauseDoc environment document = Except.ok D →
+      VE.RightClauses.NoClauseKeys document →
+        ∀ (src : VE.Rights.Wire.RightsSource),
+          VE.Rights.Wire.decodeRightsSource (VE.RightClauses.stripProfile environment)
+                (VE.RightClauses.stripElided document) =
+              Except.ok src →
+            src.D = D.doc ∧
+              ∀ (x : String × String × VE.RightClauses.CLine),
+                x ∈ D.lines → x.snd.snd.clauses = [] ∧ x.snd.snd.relation = Option.none
+  -- uses VE.RightClauses.CLine.clauses@VE.RightClauses.Tree VE.RightClauses.CLine.relation@VE.RightClauses.Tree VE.RightClauses.CLine@VE.RightClauses.Tree VE.RightClauses.Clause@VE.RightClauses.Tree VE.RightClauses.ClauseDoc.doc@VE.RightClauses.Tree VE.RightClauses.ClauseDoc.lines@VE.RightClauses.Tree VE.RightClauses.ClauseDoc@VE.RightClauses.Tree VE.RightClauses.NoClauseKeys@VE.RightClauses.Wire VE.RightClauses.Relation@VE.RightClauses.Tree VE.RightClauses.decodeClauseDoc@VE.RightClauses.Wire VE.RightClauses.stripElided@VE.RightClauses.Wire VE.RightClauses.stripProfile@VE.RightClauses.Wire VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.Wire.RightsSource.D@VE.Rights.Wire VE.Rights.Wire.RightsSource@VE.Rights.Wire VE.Rights.Wire.decodeRightsSource@VE.Rights.Wire
+  -- expr 4107472649
+theorem VE.RightClauses.displayFields_mapMember
+  ∀ (k : String) (f : Lean.Json → Lean.Json) (j : Lean.Json) (r o : List String),
+    VE.Bridge.displayFields (VE.RightClauses.mapMember k f j) r o = VE.Bridge.displayFields j r o
+  -- uses VE.Bridge.displayFields@VE.Bridge VE.RightClauses.mapMember@VE.RightClauses.Wire
+  -- expr 696767159
+theorem VE.RightClauses.distinct_map
+  ∀ {L : List (String × Lean.Json)},
+    VE.RightClauses.Distinct L →
+      ∀ (k : String) (f : Lean.Json → Lean.Json), VE.RightClauses.Distinct (List.map (VE.RightClauses.mapPair k f) L)
+  -- uses VE.RightClauses.Distinct@VE.RightClauses.WireDecode VE.RightClauses.mapPair@VE.RightClauses.WireDecode
+  -- expr 1538885663
+theorem VE.RightClauses.distinct_toList_mkObj
+  ∀ (L : List (String × Lean.Json)), VE.RightClauses.Distinct (Std.TreeMap.Raw.ofList L Ord.compare).toList
+  -- uses VE.RightClauses.Distinct@VE.RightClauses.WireDecode
+  -- expr 2705217379
+theorem VE.RightClauses.dropKeys_wf
+  ∀ (ks : List String) (u : Lean.Json) (t : Std.TreeMap.Raw String Lean.Json Ord.compare),
+    VE.RightClauses.dropKeys ks u = Lean.Json.obj t → t.WF
+  -- uses VE.RightClauses.dropKeys@VE.RightClauses.Wire
+  -- expr 378019486
+theorem VE.RightClauses.elaborate_plain
+  ∀ (environment document : Lean.Json) (D : VE.RightClauses.ClauseDoc),
+    VE.RightClauses.decodeClauseDoc environment document = Except.ok D →
+      VE.RightClauses.WellFormedClauses D = Bool.true →
+        VE.RightClauses.NoReadingSets document →
+          VE.Rights.WellFormedRights (VE.RightClauses.plain D) = Bool.true →
+            VE.RightClauses.PlainOnWire D →
+              ∃ src,
+                VE.Rights.Wire.decodeRightsSource (VE.RightClauses.stripProfile environment)
+                      (VE.RightClauses.elaborateJson D document) =
+                    Except.ok src ∧
+                  src.D = VE.RightClauses.plain D
+  -- uses VE.RightClauses.ClauseDoc@VE.RightClauses.Tree VE.RightClauses.NoReadingSets@VE.RightClauses.Wire VE.RightClauses.PlainOnWire@VE.RightClauses.Wire VE.RightClauses.WellFormedClauses@VE.RightClauses.Plain VE.RightClauses.decodeClauseDoc@VE.RightClauses.Wire VE.RightClauses.elaborateJson@VE.RightClauses.Wire VE.RightClauses.plain@VE.RightClauses.Plain VE.RightClauses.stripProfile@VE.RightClauses.Wire VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.WellFormedRights@VE.Rights.Correlate VE.Rights.Wire.RightsSource.D@VE.Rights.Wire VE.Rights.Wire.RightsSource@VE.Rights.Wire VE.Rights.Wire.decodeRightsSource@VE.Rights.Wire
+  -- expr 399790525
 theorem VE.RightClauses.entry_facts
   ∀ (D : VE.RightClauses.ClauseDoc),
     VE.RightClauses.WellFormedClauses D = Bool.true →
@@ -45020,6 +45257,23 @@ theorem VE.RightClauses.eq_of_nodup_map
   ∀ {α β : Type} (f : α → β) {l : List α}, (List.map f l).Nodup → ∀ {a b : α}, a ∈ l → b ∈ l → f a = f b → a = b
   -- uses
   -- expr 2912099309
+theorem VE.RightClauses.exactFields_mapMember
+  ∀ (k : String) (f : Lean.Json → Lean.Json) (j : Lean.Json) (e : List String),
+    VE.Bridge.exactFields (VE.RightClauses.mapMember k f j) e = VE.Bridge.exactFields j e
+  -- uses VE.Bridge.exactFields@VE.Bridge VE.RightClauses.mapMember@VE.RightClauses.Wire
+  -- expr 1494426608
+theorem VE.RightClauses.exactFields_mkObj_map
+  ∀ {L : List (String × Lean.Json)},
+    VE.RightClauses.Distinct L →
+      ∀ (k : String) (f : Lean.Json → Lean.Json) {e : List String},
+        VE.Bridge.exactFields (Lean.Json.mkObj L) e = Except.ok () →
+          VE.Bridge.exactFields (Lean.Json.mkObj (List.map (VE.RightClauses.mapPair k f) L)) e = Except.ok ()
+  -- uses VE.Bridge.exactFields@VE.Bridge VE.RightClauses.Distinct@VE.RightClauses.WireDecode VE.RightClauses.mapPair@VE.RightClauses.WireDecode
+  -- expr 4046458433
+theorem VE.RightClauses.exactFields_norm
+  ∀ (r : Lean.Json), VE.Bridge.exactFields (Lean.Json.mkObj [("norm", r)]) ["norm"] = Except.ok ()
+  -- uses VE.Bridge.exactFields@VE.Bridge
+  -- expr 2536623815
 theorem VE.RightClauses.fanCount_plain
   ∀ (S : VE.Rights.SourceLine) (g : VE.SoftNorms.SoftNode → VE.Formula),
     VE.Rights.fanCount
@@ -45036,6 +45290,30 @@ theorem VE.RightClauses.fanCount_plain
       VE.Rights.fanCount S
   -- uses VE.Formula@VE.Syntax VE.Norms.Node.carveOuts@VE.Norms.Tree VE.Norms.Node.mk@VE.Norms.Tree VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node.over@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.Node.sign@VE.Norms.Tree VE.Rights.SourceLine.cites@VE.Rights.Tree VE.Rights.SourceLine.fanOut@VE.Rights.Tree VE.Rights.SourceLine.holderSlot@VE.Rights.Tree VE.Rights.SourceLine.kind@VE.Rights.Tree VE.Rights.SourceLine.liberty@VE.Rights.Tree VE.Rights.SourceLine.mk@VE.Rights.Tree VE.Rights.SourceLine.norm@VE.Rights.Tree VE.Rights.SourceLine.recognition@VE.Rights.Tree VE.Rights.SourceLine@VE.Rights.Tree VE.Rights.fanCount@VE.Rights.Tree VE.SoftNorms.SoftNode.alterable@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.exception@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.hard@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.mk@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.mode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.rank@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.splitFrom@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
   -- expr 478718867
+theorem VE.RightClauses.fault_ok
+  ∀ {X : VE.SoftNorms.Phases.Check VE.SoftNorms.SoftNode} {N : VE.SoftNorms.SoftNode},
+    (match X with
+        | Except.ok N => Except.ok N
+        | Except.error f => Except.error f.message) =
+        Except.ok N →
+      X = Except.ok N
+  -- uses VE.RightClauses.fault_ok.match_1@VE.RightClauses.WireName VE.SoftNorms.Phases.Check@VE.SoftNorms.Phases VE.SoftNorms.Phases.Fault.message@VE.SoftNorms.Phases VE.SoftNorms.Phases.Fault@VE.SoftNorms.Phases VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
+  -- expr 2457662643
+theorem VE.RightClauses.fields_mapMember
+  ∀ (k : String) (f : Lean.Json → Lean.Json) (j : Lean.Json),
+    VE.Bridge.fields (VE.RightClauses.mapMember k f j) =
+      (fun l => List.map (VE.RightClauses.mapPair k f) l) <$> VE.Bridge.fields j
+  -- uses VE.Bridge.Fields@VE.Bridge VE.Bridge.fields@VE.Bridge VE.RightClauses.mapMember@VE.RightClauses.Wire VE.RightClauses.mapPair@VE.RightClauses.WireDecode
+  -- expr 495127605
+theorem VE.RightClauses.fields_mkObj_single
+  ∀ (k : String) (v : Lean.Json), VE.Bridge.fields (Lean.Json.mkObj [(k, v)]) = Except.ok [(k, v)]
+  -- uses VE.Bridge.Fields@VE.Bridge VE.Bridge.fields@VE.Bridge
+  -- expr 3134170106
+theorem VE.RightClauses.filterMapM_loop_mem
+  ∀ {α β : Type} (f : α → Except String (Option β)) (as : List α) (bs r : List β),
+    List.filterMapM.loop f as bs = Except.ok r → ∀ (x : β), x ∈ r → x ∈ bs ∨ ∃ a, a ∈ as ∧ f a = Except.ok (Option.some x)
+  -- uses
+  -- expr 3676408614
 theorem VE.RightClauses.filterMap_key
   ∀ {α β γ : Type} (k : α → β) (f g : α → Option γ),
     (∀ (a b : α), k a = k b → f a = g b) →
@@ -45049,26 +45327,193 @@ theorem VE.RightClauses.filterMap_labels_nodup
         ∀ (l : List α), (List.map k l).Nodup → (List.map (fun x => x.fst) (List.filterMap f l)).Nodup
   -- uses
   -- expr 387141581
+theorem VE.RightClauses.filter_mapPair
+  ∀ (L : List (String × Lean.Json)) (k : String) (f : Lean.Json → Lean.Json) (p : String → Bool),
+    List.filter (fun kv => p kv.fst) (List.map (VE.RightClauses.mapPair k f) L) =
+      List.map (VE.RightClauses.mapPair k f) (List.filter (fun kv => p kv.fst) L)
+  -- uses VE.RightClauses.mapPair@VE.RightClauses.WireDecode
+  -- expr 3880802978
 theorem VE.RightClauses.findSome_unique
   ∀ {α β : Type} (f : α → Option β) (a : α) (l : List α),
     (∀ (y : α), y ∈ l → f y ≠ Option.none → y = a) → a ∈ l → List.findSome? f l = f a
   -- uses
   -- expr 3791490199
+theorem VE.RightClauses.fold_lines
+  ∀ (se : VE.SoftNorms.Wire.SoftEnvironment) (P : String × String × VE.RightClauses.CLine → Prop) (xs : List Lean.Json)
+    (a r : List (String × String × VE.RightClauses.CLine) × VE.Rights.Wire.Units),
+    (∀ (x : String × String × VE.RightClauses.CLine), x ∈ a.fst → P x) →
+      (∀ (u : Lean.Json),
+          u ∈ xs →
+            ∀ (ls : List (String × String × VE.RightClauses.CLine)),
+              VE.RightClauses.headUnit se u = Except.ok ls →
+                ∀ (x : String × String × VE.RightClauses.CLine), x ∈ ls → P x) →
+        List.foldlM (VE.RightClauses.headStep se) a xs = Except.ok r →
+          ∀ (x : String × String × VE.RightClauses.CLine), x ∈ r.fst → P x
+  -- uses VE.RightClauses.CLine@VE.RightClauses.Tree VE.RightClauses.headStep@VE.RightClauses.Wire VE.RightClauses.headUnit@VE.RightClauses.Wire VE.Rights.Wire.Units@VE.Rights.Wire VE.SoftNorms.Wire.SoftEnvironment@VE.SoftNorms.Wire
+  -- expr 1712496041
+theorem VE.RightClauses.fold_plain
+  ∀ (se : VE.SoftNorms.Wire.SoftEnvironment) (D : VE.RightClauses.ClauseDoc),
+    VE.RightClauses.WellFormedClauses D = Bool.true →
+      VE.RightClauses.PlainOnWire D →
+        ∀ (xs : List Lean.Json) (a r : List (String × String × VE.RightClauses.CLine) × VE.Rights.Wire.Units),
+          List.foldlM (VE.RightClauses.headStep se) a xs = Except.ok r →
+            (∀ (RS : String × VE.Rights.SourceLine), RS ∈ r.snd.order → RS ∈ VE.Rights.sourceLines D.doc) →
+              List.foldlM (VE.Rights.Wire.addUnit se) (VE.RightClauses.plainUnits D.doc.soft D.lines a.snd)
+                  (List.map (VE.RightClauses.mapUnit (VE.RightClauses.plainLineJson D)) xs) =
+                Except.ok (VE.RightClauses.plainUnits D.doc.soft D.lines r.snd)
+  -- uses VE.RightClauses.CLine@VE.RightClauses.Tree VE.RightClauses.ClauseDoc.doc@VE.RightClauses.Tree VE.RightClauses.ClauseDoc.lines@VE.RightClauses.Tree VE.RightClauses.ClauseDoc@VE.RightClauses.Tree VE.RightClauses.PlainOnWire@VE.RightClauses.Wire VE.RightClauses.WellFormedClauses@VE.RightClauses.Plain VE.RightClauses.headStep@VE.RightClauses.Wire VE.RightClauses.mapUnit@VE.RightClauses.Wire VE.RightClauses.plainLineJson@VE.RightClauses.Wire VE.RightClauses.plainUnits@VE.RightClauses.WireTheorems VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.SourceLine@VE.Rights.Tree VE.Rights.Wire.Units.order@VE.Rights.Wire VE.Rights.Wire.Units@VE.Rights.Wire VE.Rights.Wire.addUnit@VE.Rights.Wire VE.Rights.sourceLines@VE.Rights.Tree VE.SoftNorms.Wire.SoftEnvironment@VE.SoftNorms.Wire
+  -- expr 3008375620
+theorem VE.RightClauses.fold_snd
+  ∀ (se : VE.SoftNorms.Wire.SoftEnvironment) (xs : List Lean.Json)
+    (a r : List (String × String × VE.RightClauses.CLine) × VE.Rights.Wire.Units),
+    List.foldlM (VE.RightClauses.headStep se) a xs = Except.ok r →
+      List.foldlM (VE.Rights.Wire.addUnit se) a.snd
+          (List.map (VE.RightClauses.mapUnit fun x => VE.RightClauses.lineWith VE.RightClauses.headKeys) xs) =
+        Except.ok r.snd
+  -- uses VE.RightClauses.CLine@VE.RightClauses.Tree VE.RightClauses.headKeys@VE.RightClauses.Wire VE.RightClauses.headStep@VE.RightClauses.Wire VE.RightClauses.lineWith@VE.RightClauses.Wire VE.RightClauses.mapUnit@VE.RightClauses.Wire VE.Rights.Wire.Units@VE.Rights.Wire VE.Rights.Wire.addUnit@VE.Rights.Wire VE.SoftNorms.Wire.SoftEnvironment@VE.SoftNorms.Wire
+  -- expr 2830312846
 theorem VE.RightClauses.foldl_and_denote
   ∀ (S : VE.Structure) (ρ : VE.Valuation S) (l : List VE.Formula) (G : VE.Formula),
     VE.Formula.denote S ρ (List.foldl VE.Formula.and G l) ↔
       VE.Formula.denote S ρ G ∧ ∀ (φ : VE.Formula), φ ∈ l → VE.Formula.denote S ρ φ
   -- uses VE.Formula.and@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
   -- expr 769438683
+theorem VE.RightClauses.foldl_order
+  ∀ (se : VE.SoftNorms.Wire.SoftEnvironment) (xs : List Lean.Json)
+    (a r : List (String × String × VE.RightClauses.CLine) × VE.Rights.Wire.Units),
+    List.foldlM (VE.RightClauses.headStep se) a xs = Except.ok r → ∃ t, r.snd.order = a.snd.order ++ t
+  -- uses VE.RightClauses.CLine@VE.RightClauses.Tree VE.RightClauses.headStep@VE.RightClauses.Wire VE.Rights.SourceLine@VE.Rights.Tree VE.Rights.Wire.Units.order@VE.Rights.Wire VE.Rights.Wire.Units@VE.Rights.Wire VE.SoftNorms.Wire.SoftEnvironment@VE.SoftNorms.Wire
+  -- expr 3752308468
+theorem VE.RightClauses.forIn_carve_count
+  ∀ (f : Lean.Json → Except String (VE.Formula × Nat)) (u : List Lean.Json) (a : List VE.Formula) (c c' : Nat)
+    {r : MProd (List VE.Formula) Nat},
+    (ForIn.forIn u ⟨a, c⟩ fun x r => do
+          let d ← f x
+          Pure.pure PUnit.unit
+          Pure.pure (ForInStep.yield ⟨r.fst ++ [d.fst], d.snd⟩)) =
+        Except.ok r →
+      ∃ r',
+        (ForIn.forIn u ⟨a, c'⟩ fun x r => do
+              let d ← f x
+              Pure.pure PUnit.unit
+              Pure.pure (ForInStep.yield ⟨r.fst ++ [d.fst], d.snd⟩)) =
+            Except.ok r' ∧
+          r'.fst = r.fst
+  -- uses VE.Formula@VE.Syntax
+  -- expr 2118979278
 theorem VE.RightClauses.forM_ok
   ∀ {α : Type} (f : α → Except String Unit) (l : List α), l.forM f = Except.ok () → ∀ (x : α), x ∈ l → f x = Except.ok ()
   -- uses
   -- expr 4168660937
+theorem VE.RightClauses.fst_comp_mapPair
+  ∀ (k : String) (f : Lean.Json → Lean.Json), Prod.fst ∘ VE.RightClauses.mapPair k f = Prod.fst
+  -- uses VE.RightClauses.mapPair@VE.RightClauses.WireDecode
+  -- expr 2859607305
+theorem VE.RightClauses.getObjValD_mapMember_ne
+  ∀ {k a : String} (f : Lean.Json → Lean.Json) (j : Lean.Json),
+    a ≠ k → (VE.RightClauses.mapMember k f j).getObjValD a = j.getObjValD a
+  -- uses VE.RightClauses.mapMember@VE.RightClauses.Wire
+  -- expr 112893942
+theorem VE.RightClauses.getObjValD_of_error
+  ∀ {j : Lean.Json} {k e : String}, j.getObjVal? k = Except.error e → j.getObjValD k = Lean.Json.null
+  -- uses
+  -- expr 1390616867
+theorem VE.RightClauses.getObjValD_of_ok
+  ∀ {j v : Lean.Json} {k : String}, j.getObjVal? k = Except.ok v → j.getObjValD k = v
+  -- uses
+  -- expr 2586305039
+theorem VE.RightClauses.getObjVal_mapMember
+  ∀ (k : String) (f : Lean.Json → Lean.Json) (j : Lean.Json) (a : String),
+    (VE.RightClauses.mapMember k f j).getObjVal? a = if a = k then (fun v => f v) <$> j.getObjVal? a else j.getObjVal? a
+  -- uses VE.RightClauses.mapMember@VE.RightClauses.Wire
+  -- expr 4003708116
+theorem VE.RightClauses.getObjVal_mapMember_ne
+  ∀ {k a : String} (f : Lean.Json → Lean.Json) (j : Lean.Json),
+    a ≠ k → (VE.RightClauses.mapMember k f j).getObjVal? a = j.getObjVal? a
+  -- uses VE.RightClauses.mapMember@VE.RightClauses.Wire
+  -- expr 2442961327
+theorem VE.RightClauses.getObjVal_member
+  ∀ {j v : Lean.Json} {k : String}, j.getObjVal? k = Except.ok v → (k, v) ∈ VE.RightClauses.members j
+  -- uses VE.RightClauses.members@VE.RightClauses.Wire
+  -- expr 135221192
+theorem VE.RightClauses.getObjVal_mkObj_map_eq
+  ∀ {L : List (String × Lean.Json)},
+    VE.RightClauses.Distinct L →
+      ∀ {k : String} (w : Lean.Json),
+        (List.map Prod.fst L).contains k = Bool.true →
+          (Lean.Json.mkObj (List.map (VE.RightClauses.mapPair k fun x => w) L)).getObjVal? k = Except.ok w
+  -- uses VE.RightClauses.Distinct@VE.RightClauses.WireDecode VE.RightClauses.mapPair@VE.RightClauses.WireDecode
+  -- expr 4267820982
+theorem VE.RightClauses.getObjVal_mkObj_map_ne
+  ∀ {L : List (String × Lean.Json)},
+    VE.RightClauses.Distinct L →
+      ∀ {k a : String} (f : Lean.Json → Lean.Json),
+        a ≠ k →
+          (Lean.Json.mkObj (List.map (VE.RightClauses.mapPair k f) L)).getObjVal? a = (Lean.Json.mkObj L).getObjVal? a
+  -- uses VE.RightClauses.Distinct@VE.RightClauses.WireDecode VE.RightClauses.mapPair@VE.RightClauses.WireDecode
+  -- expr 2315259264
+theorem VE.RightClauses.getObjVal_mkObj_mem
+  ∀ {L : List (String × Lean.Json)},
+    VE.RightClauses.Distinct L →
+      ∀ {k : String} {v : Lean.Json}, (k, v) ∈ L → (Lean.Json.mkObj L).getObjVal? k = Except.ok v
+  -- uses VE.RightClauses.Distinct@VE.RightClauses.WireDecode
+  -- expr 771575793
+theorem VE.RightClauses.getObjVal_mkObj_not
+  ∀ {L : List (String × Lean.Json)} {k : String},
+    (List.map Prod.fst L).contains k = Bool.false →
+      (Lean.Json.mkObj L).getObjVal? k =
+        MonadExcept.throw (ToString.toString "property not found: " ++ ToString.toString k)
+  -- uses
+  -- expr 3328346332
+theorem VE.RightClauses.getObjVal_obj
+  ∀ (t : Std.TreeMap.Raw String Lean.Json Ord.compare) (k : String),
+    (Lean.Json.obj t).getObjVal? k =
+      match t[k]? with
+      | Option.some v => Except.ok v
+      | Option.none => MonadExcept.throw (ToString.toString "property not found: " ++ ToString.toString k)
+  -- uses VE.RightClauses.getObjVal_obj.match_1@VE.RightClauses.WireName
+  -- expr 3445225733
+theorem VE.RightClauses.getObjVal_single
+  ∀ (k : String) (r : Lean.Json), (Lean.Json.mkObj [(k, r)]).getObjVal? k = Except.ok r
+  -- uses
+  -- expr 1185463154
+theorem VE.RightClauses.headLine_plainless
+  ∀ (se : VE.SoftNorms.Wire.SoftEnvironment) (R : String) (span : Nat × Nat) (l : Lean.Json)
+    {x : String × String × VE.RightClauses.CLine},
+    VE.RightClauses.headLine se R span l = Except.ok (Option.some x) →
+      (∀ (kv : String × Lean.Json), kv ∈ VE.RightClauses.members l → kv.fst ≠ "clauses" ∧ kv.fst ≠ "relation") →
+        x.snd.snd.clauses = [] ∧ x.snd.snd.relation = Option.none
+  -- uses VE.RightClauses.CLine.clauses@VE.RightClauses.Tree VE.RightClauses.CLine.relation@VE.RightClauses.Tree VE.RightClauses.CLine@VE.RightClauses.Tree VE.RightClauses.Clause@VE.RightClauses.Tree VE.RightClauses.Relation@VE.RightClauses.Tree VE.RightClauses.headLine@VE.RightClauses.Wire VE.RightClauses.members@VE.RightClauses.Wire VE.SoftNorms.Wire.SoftEnvironment@VE.SoftNorms.Wire
+  -- expr 1870387615
+theorem VE.RightClauses.headUnit_mem
+  ∀ (se : VE.SoftNorms.Wire.SoftEnvironment) (u : Lean.Json) {ls : List (String × String × VE.RightClauses.CLine)},
+    VE.RightClauses.headUnit se u = Except.ok ls →
+      ∀ (x : String × String × VE.RightClauses.CLine),
+        x ∈ ls →
+          ∃ k b,
+            VE.RightClauses.unitBody (VE.RightClauses.dropKeys ["span"] u) = Option.some (k, b) ∧
+              ∃ l,
+                l ∈ VE.RightClauses.bodyLines b ∧
+                  ∃ R span, VE.RightClauses.headLine se R span l = Except.ok (Option.some x)
+  -- uses VE.RightClauses.CLine@VE.RightClauses.Tree VE.RightClauses.bodyLines@VE.RightClauses.Wire VE.RightClauses.dropKeys@VE.RightClauses.Wire VE.RightClauses.headLine@VE.RightClauses.Wire VE.RightClauses.headUnit@VE.RightClauses.Wire VE.RightClauses.unitBody@VE.RightClauses.Wire VE.SoftNorms.Wire.SoftEnvironment@VE.SoftNorms.Wire
+  -- expr 869706254
 theorem VE.RightClauses.holderConj_left
   ∀ (X : VE.Rights.RightsDoc) (N : VE.Rights.Line) (G : VE.Formula) (S : VE.Structure) (ρ : VE.Valuation S),
     VE.Formula.denote S ρ (VE.Rights.holderConj X N G) → VE.Formula.denote S ρ G
   -- uses VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Rights.Line@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.holderConj@VE.Rights.Correlate VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
   -- expr 121684676
+theorem VE.RightClauses.impl_get_map
+  ∀ (f : String → Lean.Json → Lean.Json) (a : String) (t : Std.DTreeMap.Internal.Impl String fun x => Lean.Json),
+    Std.DTreeMap.Internal.Impl.Const.get? (Std.DTreeMap.Internal.Impl.map f t) a =
+      Option.map (f a) (Std.DTreeMap.Internal.Impl.Const.get? t a)
+  -- uses
+  -- expr 2415859436
+theorem VE.RightClauses.impl_map_congr
+  ∀ {f g : String → Lean.Json → Lean.Json} (t : Std.DTreeMap.Internal.Impl String fun x => Lean.Json),
+    (∀ (p : String × Lean.Json), p ∈ Std.DTreeMap.Internal.Impl.Const.toList t → f p.fst p.snd = g p.fst p.snd) →
+      Std.DTreeMap.Internal.Impl.map f t = Std.DTreeMap.Internal.Impl.map g t
+  -- uses
+  -- expr 2939080455
 theorem VE.RightClauses.instancesOf_key
   ∀ (R : String) (S : VE.Rights.SourceLine) (g : VE.SoftNorms.SoftNode → VE.Formula) (k : Nat),
     List.map (fun N => VE.RightClauses.lineKey (R, N))
@@ -45087,6 +45532,20 @@ theorem VE.RightClauses.instancesOf_key
       List.map (fun N => VE.RightClauses.lineKey (R, N)) (VE.Rights.instancesOf R S k)
   -- uses VE.Formula@VE.Syntax VE.Norms.Node.carveOuts@VE.Norms.Tree VE.Norms.Node.mk@VE.Norms.Tree VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node.over@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.Node.sign@VE.Norms.Tree VE.RightClauses.lineKey@VE.RightClauses.Plain VE.Rights.IKind@VE.Rights.Tree VE.Rights.Kind@VE.Rights.Tree VE.Rights.Line@VE.Rights.Tree VE.Rights.SourceLine.cites@VE.Rights.Tree VE.Rights.SourceLine.fanOut@VE.Rights.Tree VE.Rights.SourceLine.holderSlot@VE.Rights.Tree VE.Rights.SourceLine.kind@VE.Rights.Tree VE.Rights.SourceLine.liberty@VE.Rights.Tree VE.Rights.SourceLine.mk@VE.Rights.Tree VE.Rights.SourceLine.norm@VE.Rights.Tree VE.Rights.SourceLine.recognition@VE.Rights.Tree VE.Rights.SourceLine@VE.Rights.Tree VE.Rights.instancesOf@VE.Rights.Tree VE.SoftNorms.SoftNode.alterable@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.exception@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.hard@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.mk@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.mode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.rank@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.splitFrom@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
   -- expr 3433208201
+theorem VE.RightClauses.key_get
+  ∀ {t : Std.TreeMap.Raw String Lean.Json Ord.compare},
+    t.WF → ∀ {k : String}, k ∈ List.map Prod.fst t.toList → ∃ v, (Lean.Json.obj t).getObjVal? k = Except.ok v
+  -- uses
+  -- expr 914234682
+theorem VE.RightClauses.keysOf_mapMember
+  ∀ (k : String) (f : Lean.Json → Lean.Json) (j : Lean.Json),
+    VE.SoftNorms.Phases.keysOf (VE.RightClauses.mapMember k f j) = VE.SoftNorms.Phases.keysOf j
+  -- uses VE.RightClauses.mapMember@VE.RightClauses.Wire VE.SoftNorms.Phases.keysOf@VE.SoftNorms.Phases
+  -- expr 1318563549
+theorem VE.RightClauses.keysOf_norm
+  ∀ (r : Lean.Json), VE.SoftNorms.Phases.keysOf (Lean.Json.mkObj [("norm", r)]) = Option.some ["norm"]
+  -- uses VE.SoftNorms.Phases.keysOf@VE.SoftNorms.Phases
+  -- expr 1067002638
 theorem VE.RightClauses.limActs_plain
   ∀ (D : VE.RightClauses.ClauseDoc) (L : VE.Rights.Limitation),
     VE.Rights.limActs (VE.RightClauses.plain D) L = VE.Rights.limActs D.doc L
@@ -45103,6 +45562,32 @@ theorem VE.RightClauses.lineRuleNames_plain
     VE.Compose.lineRuleNames (VE.RightClauses.plainSource E cl R S) = VE.Compose.lineRuleNames S
   -- uses VE.Compose.lineRuleNames@VE.Compose.Content VE.RightClauses.CLine@VE.RightClauses.Tree VE.RightClauses.plainSource@VE.RightClauses.Plain VE.Rights.SourceLine@VE.Rights.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree
   -- expr 844391798
+theorem VE.RightClauses.lineWith_congr
+  ∀ (l : Lean.Json),
+    (∀ (kv : String × Lean.Json), kv ∈ VE.RightClauses.members l → kv.fst ≠ "clauses" ∧ kv.fst ≠ "relation") →
+      VE.RightClauses.lineWith ["elided"] l = VE.RightClauses.lineWith VE.RightClauses.headKeys l
+  -- uses VE.RightClauses.headKeys@VE.RightClauses.Wire VE.RightClauses.lineWith@VE.RightClauses.Wire VE.RightClauses.members@VE.RightClauses.Wire
+  -- expr 3421798349
+theorem VE.RightClauses.lineWith_liberty
+  ∀ (ks : List String) (l : Lean.Json),
+    (VE.RightClauses.lineWith ks l).getObjVal? "liberty" =
+      VE.RightClauses.rebuild <$> (VE.RightClauses.dropKeys ks l).getObjVal? "liberty"
+  -- uses VE.RightClauses.dropKeys@VE.RightClauses.Wire VE.RightClauses.lineWith@VE.RightClauses.Wire VE.RightClauses.rebuild@VE.RightClauses.Wire
+  -- expr 2486447346
+theorem VE.RightClauses.lineWith_norm
+  ∀ (ks : List String) (l : Lean.Json),
+    (VE.RightClauses.lineWith ks l).getObjVal? "norm" =
+      VE.RightClauses.rebuild <$> (VE.RightClauses.dropKeys ks l).getObjVal? "norm"
+  -- uses VE.RightClauses.dropKeys@VE.RightClauses.Wire VE.RightClauses.lineWith@VE.RightClauses.Wire VE.RightClauses.rebuild@VE.RightClauses.Wire
+  -- expr 3576500371
+theorem VE.RightClauses.lineWith_wf
+  ∀ (ks : List String) (l : Lean.Json) (k : String),
+    k = "norm" ∨ k = "liberty" →
+      ∀ (v : Lean.Json),
+        (VE.RightClauses.lineWith ks l).getObjVal? k = Except.ok v →
+          ∀ (t : Std.TreeMap.Raw String Lean.Json Ord.compare), v = Lean.Json.obj t → t.WF
+  -- uses VE.RightClauses.lineWith@VE.RightClauses.Wire
+  -- expr 115186676
 theorem VE.RightClauses.linesAux_key
   ∀ (E : VE.SoftNorms.SoftDoc) (cl : List (String × String × VE.RightClauses.CLine))
     (l : List (String × VE.Rights.SourceLine)) (k : Nat),
@@ -45117,11 +45602,126 @@ theorem VE.RightClauses.linesOf_plain_key
       List.map VE.RightClauses.lineKey (VE.Rights.linesOf D.doc)
   -- uses VE.RightClauses.ClauseDoc.doc@VE.RightClauses.Tree VE.RightClauses.ClauseDoc@VE.RightClauses.Tree VE.RightClauses.lineKey@VE.RightClauses.Plain VE.RightClauses.plain@VE.RightClauses.Plain VE.Rights.IKind@VE.Rights.Tree VE.Rights.Kind@VE.Rights.Tree VE.Rights.Line@VE.Rights.Tree VE.Rights.linesOf@VE.Rights.Tree
   -- expr 1253446200
+theorem VE.RightClauses.mapArr_congr
+  ∀ {f g : Lean.Json → Lean.Json} (v : Lean.Json),
+    (∀ (l : Lean.Json),
+        (l ∈
+            match v with
+            | Lean.Json.arr ls => ls.toList
+            | x => []) →
+          f l = g l) →
+      VE.RightClauses.mapArr f v = VE.RightClauses.mapArr g v
+  -- uses VE.RightClauses.mapArr@VE.RightClauses.Wire VE.RightClauses.mapArr_congr.match_1@VE.RightClauses.WireTheorems
+  -- expr 3286861205
+theorem VE.RightClauses.mapM_forward
+  ∀ {α β : Type} {g1 g2 : α → Except String β} {φ : β → β} (xs : List α) (ys : List β),
+    List.mapM g1 xs = Except.ok ys →
+      (∀ (x : α), x ∈ xs → ∀ (y : β), y ∈ ys → g1 x = Except.ok y → g2 x = Except.ok (φ y)) →
+        List.mapM g2 xs = Except.ok (List.map φ ys)
+  -- uses
+  -- expr 3063182050
+theorem VE.RightClauses.mapMember_congr
+  ∀ (k : String) {F G : Lean.Json → Lean.Json} (j : Lean.Json),
+    (∀ (p : String × Lean.Json), p ∈ VE.RightClauses.members j → p.fst = k → F p.snd = G p.snd) →
+      VE.RightClauses.mapMember k F j = VE.RightClauses.mapMember k G j
+  -- uses VE.RightClauses.mapMember@VE.RightClauses.Wire VE.RightClauses.members@VE.RightClauses.Wire
+  -- expr 3613908874
+theorem VE.RightClauses.mapUnit_congr
+  ∀ (u : Lean.Json),
+    (∀ (kb : String × Lean.Json),
+        kb ∈ VE.RightClauses.members (VE.RightClauses.dropKeys ["span"] u) →
+          kb.fst = "right" ∨ kb.fst = "right_lines" →
+            ∀ (kl : String × Lean.Json),
+              kl ∈ VE.RightClauses.members kb.snd →
+                kl.fst = "lines" →
+                  ∀ (l : Lean.Json),
+                    (l ∈
+                        match kl.snd with
+                        | Lean.Json.arr ls => ls.toList
+                        | x => []) →
+                      ∀ (kv : String × Lean.Json),
+                        kv ∈ VE.RightClauses.members l → kv.fst ≠ "clauses" ∧ kv.fst ≠ "relation") →
+      VE.RightClauses.mapUnit (fun x => VE.RightClauses.lineWith ["elided"]) u =
+        VE.RightClauses.mapUnit (fun x => VE.RightClauses.lineWith VE.RightClauses.headKeys) u
+  -- uses VE.RightClauses.dropKeys@VE.RightClauses.Wire VE.RightClauses.headKeys@VE.RightClauses.Wire VE.RightClauses.lineWith@VE.RightClauses.Wire VE.RightClauses.mapArr_congr.match_1@VE.RightClauses.WireTheorems VE.RightClauses.mapUnit@VE.RightClauses.Wire VE.RightClauses.members@VE.RightClauses.Wire
+  -- expr 4278210662
+theorem VE.RightClauses.map_bind'
+  ∀ {ε α β γ : Type} (Φ : β → γ) (x : Except ε α) {f : α → Except ε γ} {g : α → Except ε β},
+    (∀ (a : α), f a = Φ <$> g a) → x >>= f = Φ <$> (x >>= g)
+  -- uses
+  -- expr 794291455
+theorem VE.RightClauses.map_bind₂
+  ∀ {ε α β γ : Type} (Φ Ψ : β → γ) (x : Except ε α) {f : α → Except ε β},
+    (∀ (a : α), Φ <$> f a = Ψ <$> f a) → Φ <$> (x >>= f) = Ψ <$> (x >>= f)
+  -- uses
+  -- expr 594325056
+theorem VE.RightClauses.map_fst_mapPair
+  ∀ (k : String) (f : Lean.Json → Lean.Json) (l : List (String × Lean.Json)),
+    List.map Prod.fst (List.map (VE.RightClauses.mapPair k f) l) = List.map Prod.fst l
+  -- uses VE.RightClauses.mapPair@VE.RightClauses.WireDecode
+  -- expr 3149464677
 theorem VE.RightClauses.map_nodup_of_filter
   ∀ {α : Type} (k : α → String) (l : List α),
     (∀ (x : α), x ∈ l → List.filter (fun y => k y == k x) l = [x]) → (List.map k l).Nodup
   -- uses
   -- expr 4152005545
+theorem VE.RightClauses.map_pure'
+  ∀ {ε β γ : Type} (Φ : β → γ) (b : β), Pure.pure (Φ b) = Φ <$> Pure.pure b
+  -- uses
+  -- expr 2651285045
+theorem VE.RightClauses.member_name
+  ∀ (se : VE.SoftNorms.Wire.SoftEnvironment) (v : Lean.Json),
+    (∀ (t : Std.TreeMap.Raw String Lean.Json Ord.compare), v = Lean.Json.obj t → t.WF) →
+      ∀ (fp : Option String) {N : VE.SoftNorms.SoftNode},
+        VE.Rights.Wire.decodeLineNorm se v fp = Except.ok N → v.getObjValD "name" = Lean.Json.str N.name
+  -- uses VE.Norms.Node.name@VE.Norms.Tree VE.Rights.Wire.decodeLineNorm@VE.Rights.Wire VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.Wire.SoftEnvironment@VE.SoftNorms.Wire
+  -- expr 3236322931
+theorem VE.RightClauses.name_filter
+  ∀ (t : Std.TreeMap.Raw String Lean.Json Ord.compare),
+    t.WF →
+      (Lean.Json.mkObj (List.filter (fun kv => VE.SoftNorms.Phases.w1Keys.contains kv.fst) t.toList)).getObjValD "name" =
+        (Lean.Json.obj t).getObjValD "name"
+  -- uses VE.SoftNorms.Phases.w1Keys@VE.SoftNorms.Phases
+  -- expr 3403380547
+theorem VE.RightClauses.names_mapMember
+  ∀ (k : String) (f : Lean.Json → Lean.Json) (j : Lean.Json),
+    (fun l => List.map (fun x => x.fst) l) <$> VE.Bridge.fields (VE.RightClauses.mapMember k f j) =
+      (fun l => List.map (fun x => x.fst) l) <$> VE.Bridge.fields j
+  -- uses VE.Bridge.Fields@VE.Bridge VE.Bridge.fields@VE.Bridge VE.RightClauses.mapMember@VE.RightClauses.Wire
+  -- expr 660586738
+theorem VE.RightClauses.names_mkObj_contains
+  ∀ (L : List (String × Lean.Json)) (a : String),
+    (List.map Prod.fst (Std.TreeMap.Raw.ofList L Ord.compare).toList).contains a = (List.map Prod.fst L).contains a
+  -- uses
+  -- expr 3636480317
+theorem VE.RightClauses.names_mkObj_length
+  ∀ {L : List (String × Lean.Json)},
+    VE.RightClauses.Distinct L → (List.map Prod.fst (Std.TreeMap.Raw.ofList L Ord.compare).toList).length = L.length
+  -- uses VE.RightClauses.Distinct@VE.RightClauses.WireDecode
+  -- expr 2274115639
+theorem VE.RightClauses.normFields_guard
+  ∀ {F : List (String × Lean.Json)},
+    VE.RightClauses.Distinct F →
+      ∀ (g : Lean.Json) {r : String × String × Bool × Lean.Json × List Lean.Json × List String},
+        VE.Norms.Wire.normFields (Lean.Json.mkObj [("norm", Lean.Json.mkObj F)]) = Except.ok r →
+          VE.Norms.Wire.normFields
+              (Lean.Json.mkObj [("norm", Lean.Json.mkObj (List.map (VE.RightClauses.mapPair "guard" fun x => g) F))]) =
+            Except.ok (r.fst, r.snd.fst, r.snd.snd.fst, g, r.snd.snd.snd.snd)
+  -- uses VE.Norms.Wire.normFields@VE.Norms.Wire VE.RightClauses.Distinct@VE.RightClauses.WireDecode VE.RightClauses.mapPair@VE.RightClauses.WireDecode
+  -- expr 2040888999
+theorem VE.RightClauses.normFields_name
+  ∀ {j : Lean.Json} {r : String × String × Bool × Lean.Json × List Lean.Json × List String},
+    VE.Norms.Wire.normFields j = Except.ok r → (j.getObjValD "norm").getObjValD "name" = Lean.Json.str r.fst
+  -- uses VE.Norms.Wire.normFields@VE.Norms.Wire
+  -- expr 410811411
+theorem VE.RightClauses.null_name
+  (Lean.Json.null.getObjValD "name").getStr?.toOption = Option.none
+  -- uses
+  -- expr 4206682879
+theorem VE.RightClauses.ok_bind
+  ∀ {ε α β : Type} {x : Except ε α} {a : α}, x = Except.ok a → ∀ (f : α → Except ε β), x >>= f = f a
+  -- uses
+  -- expr 1056564200
 theorem VE.RightClauses.own_instance_mem
   ∀ (R : String) (S : VE.Rights.SourceLine) (nm : VE.SoftNorms.SoftNode),
     S.kind ≠ VE.Rights.Kind.power →
@@ -45148,6 +45748,17 @@ theorem VE.RightClauses.plainContent_identity
       ∀ (c : VE.Compose.Content), VE.RightClauses.plainContent E cl c = c
   -- uses VE.Compose.Content@VE.Compose.Content VE.RightClauses.CLine.clauses@VE.RightClauses.Tree VE.RightClauses.CLine.relation@VE.RightClauses.Tree VE.RightClauses.CLine@VE.RightClauses.Tree VE.RightClauses.Clause@VE.RightClauses.Tree VE.RightClauses.Relation@VE.RightClauses.Tree VE.RightClauses.plainContent@VE.RightClauses.Plain VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree
   -- expr 3173875112
+theorem VE.RightClauses.plainLine_decode
+  ∀ (se : VE.SoftNorms.Wire.SoftEnvironment) (D : VE.RightClauses.ClauseDoc),
+    VE.RightClauses.WellFormedClauses D = Bool.true →
+      VE.RightClauses.PlainOnWire D →
+        ∀ (R : String) (l : Lean.Json) {S : VE.Rights.SourceLine},
+          VE.Rights.Wire.decodeLine se (VE.RightClauses.lineWith VE.RightClauses.headKeys l) = Except.ok S →
+            (R, S) ∈ VE.Rights.sourceLines D.doc →
+              VE.Rights.Wire.decodeLine se (VE.RightClauses.plainLineJson D R l) =
+                Except.ok (VE.RightClauses.plainSource D.doc.soft D.lines R S)
+  -- uses VE.RightClauses.ClauseDoc.doc@VE.RightClauses.Tree VE.RightClauses.ClauseDoc.lines@VE.RightClauses.Tree VE.RightClauses.ClauseDoc@VE.RightClauses.Tree VE.RightClauses.PlainOnWire@VE.RightClauses.Wire VE.RightClauses.WellFormedClauses@VE.RightClauses.Plain VE.RightClauses.headKeys@VE.RightClauses.Wire VE.RightClauses.lineWith@VE.RightClauses.Wire VE.RightClauses.plainLineJson@VE.RightClauses.Wire VE.RightClauses.plainSource@VE.RightClauses.Plain VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.SourceLine@VE.Rights.Tree VE.Rights.Wire.decodeLine@VE.Rights.Wire VE.Rights.sourceLines@VE.Rights.Tree VE.SoftNorms.Wire.SoftEnvironment@VE.SoftNorms.Wire
+  -- expr 2875218998
 theorem VE.RightClauses.plainSource_eq
   ∀ (E : VE.SoftNorms.SoftDoc) (cl : List (String × String × VE.RightClauses.CLine)) (R : String)
     (S : VE.Rights.SourceLine),
@@ -45222,6 +45833,10 @@ theorem VE.RightClauses.plain_shape
                                 VE.Rights.lineAct (VE.RightClauses.plain D) RN.snd = VE.Rights.lineAct D.doc RN'.snd
   -- uses VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.RightClauses.ClauseDoc.doc@VE.RightClauses.Tree VE.RightClauses.ClauseDoc@VE.RightClauses.Tree VE.RightClauses.plain@VE.RightClauses.Plain VE.Rights.Bar@VE.Rights.Tree VE.Rights.IKind@VE.Rights.Tree VE.Rights.Kind@VE.Rights.Tree VE.Rights.Limitation@VE.Rights.Tree VE.Rights.Line.bearer@VE.Rights.Tree VE.Rights.Line.ikind@VE.Rights.Tree VE.Rights.Line.kind@VE.Rights.Tree VE.Rights.Line.node@VE.Rights.Tree VE.Rights.Line@VE.Rights.Tree VE.Rights.RightsDoc.bars@VE.Rights.Tree VE.Rights.RightsDoc.limits@VE.Rights.Tree VE.Rights.RightsDoc.rights@VE.Rights.Tree VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.RightsDoc.sourceUnits@VE.Rights.Tree VE.Rights.RightsEnv@VE.Rights.Tree VE.Rights.holderSlot@VE.Rights.Tree VE.Rights.lineAct@VE.Rights.Tree VE.Rights.linesOf@VE.Rights.Tree VE.Rights.sortsOf@VE.Rights.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree
   -- expr 571648068
+theorem VE.RightClauses.rebuild_wf
+  ∀ (v : Lean.Json) (t : Std.TreeMap.Raw String Lean.Json Ord.compare), VE.RightClauses.rebuild v = Lean.Json.obj t → t.WF
+  -- uses VE.RightClauses.rebuild@VE.RightClauses.Wire
+  -- expr 2903215778
 theorem VE.RightClauses.relLabel_at7
   ∀ (D : VE.RightClauses.ClauseDoc) (x : String × VE.Formula),
     x ∈ VE.RightClauses.relPremisesLabelled D → (List.drop 7 x.fst.data).head? = Option.some 'r'
@@ -45279,11 +45894,44 @@ theorem VE.RightClauses.rightOf_plain
       Option.map (fun x => x.holder) (VE.Rights.rightOf D.doc r)
   -- uses VE.RightClauses.ClauseDoc.doc@VE.RightClauses.Tree VE.RightClauses.ClauseDoc@VE.RightClauses.Tree VE.RightClauses.plain@VE.RightClauses.Plain VE.Rights.Right.holder@VE.Rights.Tree VE.Rights.Right@VE.Rights.Tree VE.Rights.rightOf@VE.Rights.Tree
   -- expr 662840221
+theorem VE.RightClauses.ruleFields_guard
+  ∀ (x : Option String) (L : List (String × Lean.Json)) {g : Lean.Json} {G : VE.Formula} {c : Nat},
+    VE.Norms.Wire.budgetFormula VE.Limits.maxDepth 0 g = Except.ok (G, c) →
+      ∀ {R : VE.SoftNorms.SoftNode},
+        VE.SoftNorms.Phases.ruleFields x (Lean.Json.mkObj [("norm", Lean.Json.mkObj L)]) = Except.ok R →
+          VE.SoftNorms.Phases.ruleFields x
+              (Lean.Json.mkObj [("norm", VE.RightClauses.mapMember "guard" (fun x => g) (Lean.Json.mkObj L))]) =
+            Except.ok
+              { name := R.name, pred := R.pred, sign := R.sign, guard := G, carveOuts := R.carveOuts, over := R.over,
+                mode := R.mode, rank := R.rank, alterable := R.alterable, exception := R.exception, hard := R.hard,
+                splitFrom := R.splitFrom }
+  -- uses VE.Formula@VE.Syntax VE.Limits.maxDepth@VE.Limits VE.Norms.Node.carveOuts@VE.Norms.Tree VE.Norms.Node.mk@VE.Norms.Tree VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node.over@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.Node.sign@VE.Norms.Tree VE.Norms.Wire.budgetFormula@VE.Norms.Wire VE.RightClauses.mapMember@VE.RightClauses.Wire VE.SoftNorms.Phases.Check@VE.SoftNorms.Phases VE.SoftNorms.Phases.Fault@VE.SoftNorms.Phases VE.SoftNorms.Phases.ruleFields@VE.SoftNorms.Phases VE.SoftNorms.SoftNode.alterable@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.exception@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.hard@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.mk@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.mode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.rank@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.splitFrom@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
+  -- expr 2598698477
+theorem VE.RightClauses.ruleFields_obj
+  ∀ (x : Option String) (j : Lean.Json) {R : VE.SoftNorms.SoftNode},
+    VE.SoftNorms.Phases.ruleFields x (Lean.Json.mkObj [("norm", j)]) = Except.ok R → ∃ t, j = Lean.Json.obj t
+  -- uses VE.SoftNorms.Phases.Check@VE.SoftNorms.Phases VE.SoftNorms.Phases.Fault@VE.SoftNorms.Phases VE.SoftNorms.Phases.ruleFields@VE.SoftNorms.Phases VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
+  -- expr 323196018
+theorem VE.RightClauses.ruleFields_toNode
+  ∀ (x : Option String) (t : Std.TreeMap.Raw String Lean.Json Ord.compare) {R : VE.SoftNorms.SoftNode},
+    VE.SoftNorms.Phases.ruleFields x (Lean.Json.mkObj [("norm", Lean.Json.obj t)]) = Except.ok R →
+      VE.Norms.Wire.decodeNorm
+          (Lean.Json.mkObj
+            [("norm", Lean.Json.mkObj (List.filter (fun kv => VE.SoftNorms.Phases.w1Keys.contains kv.fst) t.toList))])
+          Bool.false =
+        Except.ok R.toNode
+  -- uses VE.Norms.Node@VE.Norms.Tree VE.Norms.Wire.decodeNorm@VE.Norms.Wire VE.SoftNorms.Phases.Check@VE.SoftNorms.Phases VE.SoftNorms.Phases.Fault@VE.SoftNorms.Phases VE.SoftNorms.Phases.ruleFields@VE.SoftNorms.Phases VE.SoftNorms.Phases.w1Keys@VE.SoftNorms.Phases VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
+  -- expr 1083869171
 theorem VE.RightClauses.selects_own
   ∀ (X : VE.Rights.RightsDoc) (S : VE.Structure) (ρ : VE.Valuation S) (N : VE.Rights.Line),
     VE.Rights.SelectsRN X S ρ N → VE.Formula.denote S ρ (VE.Rights.ownGuard X N)
   -- uses VE.Formula.denote@VE.Semantics VE.Rights.Line@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.SelectsRN@VE.Rights.Projections VE.Rights.ownGuard@VE.Rights.Correlate VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
   -- expr 3430013909
+theorem VE.RightClauses.some_map_ok
+  ∀ {ε α : Type} {x : Except ε α} {w : Option α},
+    Option.some <$> x = Except.ok w → ∃ a, x = Except.ok a ∧ w = Option.some a
+  -- uses
+  -- expr 3424256159
 theorem VE.RightClauses.sourceLines_plain
   ∀ (D : VE.RightClauses.ClauseDoc),
     VE.Rights.sourceLines (VE.RightClauses.plain D) =
@@ -45291,6 +45939,30 @@ theorem VE.RightClauses.sourceLines_plain
         (VE.Rights.sourceLines D.doc)
   -- uses VE.RightClauses.ClauseDoc.doc@VE.RightClauses.Tree VE.RightClauses.ClauseDoc.lines@VE.RightClauses.Tree VE.RightClauses.ClauseDoc@VE.RightClauses.Tree VE.RightClauses.plain@VE.RightClauses.Plain VE.RightClauses.plainSource@VE.RightClauses.Plain VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.SourceLine@VE.Rights.Tree VE.Rights.sourceLines@VE.Rights.Tree
   -- expr 784314181
+theorem VE.RightClauses.str_name
+  ∀ (v : Lean.Json) (s : String),
+    v.getObjValD "name" = Lean.Json.str s → (v.getObjValD "name").getStr?.toOption = Option.some s
+  -- uses
+  -- expr 3057153549
+theorem VE.RightClauses.unitBody_none
+  ∀ {u : Lean.Json},
+    VE.RightClauses.unitBody u = Option.none →
+      ∀ (k : String), k = "right" ∨ k = "right_lines" → ∀ (v : Lean.Json), u.getObjVal? k ≠ Except.ok v
+  -- uses VE.RightClauses.unitBody@VE.RightClauses.Wire
+  -- expr 3657048384
+theorem VE.RightClauses.unitBody_some
+  ∀ {u : Lean.Json} {k : String} {b : Lean.Json},
+    VE.RightClauses.unitBody u = Option.some (k, b) → (k = "right" ∨ k = "right_lines") ∧ u.getObjVal? k = Except.ok b
+  -- uses VE.RightClauses.unitBody@VE.RightClauses.Wire
+  -- expr 854999064
+theorem VE.RightClauses.with_norm_eq
+  ∀ (S : VE.Rights.SourceLine) {n : Option VE.SoftNorms.SoftNode},
+    S.norm = n →
+      { kind := S.kind, norm := n, liberty := S.liberty, recognition := S.recognition, fanOut := S.fanOut,
+          holderSlot := S.holderSlot, cites := S.cites } =
+        S
+  -- uses VE.Rights.SourceLine.cites@VE.Rights.Tree VE.Rights.SourceLine.fanOut@VE.Rights.Tree VE.Rights.SourceLine.holderSlot@VE.Rights.Tree VE.Rights.SourceLine.kind@VE.Rights.Tree VE.Rights.SourceLine.liberty@VE.Rights.Tree VE.Rights.SourceLine.mk@VE.Rights.Tree VE.Rights.SourceLine.norm@VE.Rights.Tree VE.Rights.SourceLine.recognition@VE.Rights.Tree VE.Rights.SourceLine@VE.Rights.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
+  -- expr 2382217029
 theorem VE.Rights.Admission.admitDocument_spec
   ∀ (environment document : Lean.Json) (res : VE.Rights.Admission.Admitted),
     VE.Rights.Admission.admitDocument environment document = Except.ok res →
@@ -55455,6 +56127,10 @@ theorem VE.Service.runMode_checkCertificate
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.checkCertificate j = VE.CertificateWire.runCaseReportedSteps j
   -- uses VE.CertificateWire.runCaseReportedSteps@VE.CertificateWire VE.Service.Mode.checkCertificate@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
   -- expr 4248002304
+theorem VE.Service.runMode_clausesElaborate
+  ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.clausesElaborate j = VE.RightClauses.Run.runCaseReported j
+  -- uses VE.RightClauses.Run.runCaseReported@VE.RightClauses.Run VE.Service.Mode.clausesElaborate@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
+  -- expr 3376070940
 theorem VE.Service.runMode_diagnose
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.diagnose j = VE.Service.Diagnose.diagnoseCase j
   -- uses VE.Service.Diagnose.diagnoseCase@VE.Service.Diagnose VE.Service.Mode.diagnose@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
