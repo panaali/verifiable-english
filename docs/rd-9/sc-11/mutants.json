@@ -1,0 +1,21 @@
+{
+  "comment": "sc-11 seeded bugs. Lean: each planted alone in the final file, the proofs it breaks stubbed with sorry for that run only (so the examples elaborate and the #guards it breaks are listed), `lake build VE.Readings.SoftSupWireExamples` run, the failing #guard recorded, the file restored by git checkout. Python: planted in tools/check_rd9_sc1_statements.py, the checker run. Line numbers are of the files at the commit that adds this file.",
+  "mutants": [
+    {"id": "M1", "definition": "VE.Readings.labelImage", "file": "lean/VE/Readings/SoftSupLabels.lean",
+     "change": "an exception pair's first component is the superposed label (zip of the image's labels with themselves): 14.9's seeded bug 1", "stubbed": ["labelImage_fst", "sdShown_mem", "mem_labelImage"],
+     "test": "lean/VE/Readings/SoftSupWireExamples.lean:21 (W-2), :25, :28 (W-2' NC9), :30 (W-2' NSD2)", "result": "KILLED"},
+    {"id": "M2", "definition": "VE.Readings.Wire.routeSD", "file": "lean/VE/Readings/SoftSupWire.lean",
+     "change": "routeSD without sdChecked: 14.9's seeded bug 3", "stubbed": ["routeSD_superposed_iff"],
+     "test": "lean/VE/Readings/SoftSupWireExamples.lean:103 (W-6', a choice past 64 fails sdChoiceText), :125 to :127 (W-13's enumerated rows)", "result": "KILLED"},
+    {"id": "M3", "definition": "VE.Readings.sdShown", "file": "lean/VE/Readings/SoftSupLabels.lean",
+     "change": "a used label with no image shown as an empty string: 14.9's seeded bug 6 (null shown as \"\")", "stubbed": ["sdShown_mem", "sdShown_image"],
+     "test": "lean/VE/Readings/SoftSupWireExamples.lean:43 (W-3)", "result": "KILLED"},
+    {"id": "M4", "definition": "VE.Readings.Wire.sdChecked", "file": "lean/VE/Readings/SoftSupWire.lean",
+     "change": "sdCheckWork not charged before the first sdChoiceText (the conjunct dropped): the task's seeded bug 4", "stubbed": ["sdChecked_spec", "sdCheck_of_admitted"],
+     "test": "lean/VE/Readings/SoftSupWireExamples.lean:126 (W-13's work case), :127", "result": "KILLED"},
+    {"id": "M5", "definition": "VE.Readings.nodeExcLabels", "file": "lean/VE/Readings/SoftSupLabels.lean",
+     "change": "a necessary condition's label spelled sufficient (R16: one mutant per new trusted definition)", "stubbed": ["every theorem of the file but mem_labelImage and zip_map_same"],
+     "test": "lean/VE/Readings/SoftSupWireExamples.lean:25, :30 (W-2' NSD2)", "result": "KILLED"}
+  ],
+  "not_run": "14.9's other seeded bugs need sc-11b's wire fixtures: sdShown over all choices (W-7 under --under; the A filter is also pinned here at SoftSupWireExamples.lean:59), the nd behaviour off (W-7), Fill_T dropped from the premise list (W-9)."
+}
