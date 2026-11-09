@@ -872,14 +872,25 @@ def layersApart (listed : List String) (apart : List String := documentLayersApa
 until their document hook (QT-A4). -/
 def modeProfiles : List String := ["cardinality@0"]
 
-/-- The one wrapper an environment lists: the environment mode gates a list with it by the whole table, and any
-other list by the base rows. -/
-def environmentWrapper : String := "readings@1"
+/-- The wrappers an environment lists, in stack order: the environment mode gates a list with one of them by the whole
+table, and any other list by the base rows. `right-clauses@0` is registered here (right-clauses 8.1, cmp-s3-cfr-1):
+it declares nothing, and the environment's own decoders read the environment without it (`withoutClauses`). -/
+def environmentWrappers : List String := ["right-clauses@0", "readings@1"]
+
+/-- The environment without `right-clauses@0` in its list: the rights decoder's frame under the profile. -/
+def withoutClauses (environment : Lean.Json) : Lean.Json :=
+  match environment.getObjVal? "profiles" with
+  | .ok (.arr ps) => environment.setObjVal! "profiles" (.arr (ps.filter (· != .str "right-clauses@0")))
+  | _ => environment
+
+/-- The rows an environment's list is gated by: the whole table if it lists a wrapper, else the base rows. -/
+def environmentRows (ps : List String) : List ProfileRow :=
+  if environmentWrappers.any ps.contains then profileTable else baseRows
 
 /-- The profiles whose environments Python models, in table order (`ve/profiles.py` `BY_NAME`): every base row's but
-the document layers, which only the environment and document modes read (JT-2), then the wrapper. -/
+the document layers, which only the environment and document modes read (JT-2), then the wrappers. -/
 def environmentProfiles : List String :=
-  ((baseRows.map (·.profile)).eraseDups.filter (!(documentLayers ++ modeProfiles).contains ·)) ++ [environmentWrapper]
+  ((baseRows.map (·.profile)).eraseDups.filter (!(documentLayers ++ modeProfiles).contains ·)) ++ environmentWrappers
 
 /-- The route heads in precedence order: the first one with a listed row is the route. -/
 def heads : List (String × Route) :=

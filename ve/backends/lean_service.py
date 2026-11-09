@@ -160,6 +160,9 @@ DEADLINES: dict[str, tuple[float, float]] = {
     "english.command": _CORE,
     # The `scope` mode (scope SC-1c): the document mode's GOVERN step, without the chain after it.
     "scope": (120.0, 120.0),
+    # The `clauses-elaborate` mode (right-clauses 8.1): the head's decoding and checks, then the rights decoder and
+    # its checks on the plained document, as the `rights` mode runs them.
+    "clauses-elaborate": (120.0, 120.0),
 }
 WALL_FACTOR = 10.0
 _MIB = 1 << 20
