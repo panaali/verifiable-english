@@ -13,7 +13,8 @@ here (sc-11b switches the dispatch). 14.8's superposed case (`SupReplaySD`) and 
 (docs/rd-9/sc-11/REPORT.md).
 
 `maxSdCheckWork` is measured (14.11, DRI decision 2026-11-09 item 1, docs/rd-9/sc-11/w13-cpu.md): about 29 µs of
-Lean CPU per unit of `sdCheckWork` on W-13's shape, so 32,768 units keep the route check under R4's 1 s. -/
+Lean CPU per unit of `sdCheckWork` on W-13's shape, so 32,768 units keep the route check under R4's 1 s on that
+shape; a wide guard costs more per unit, and row sc-11w makes the charge cost-proportional before sc-11b. -/
 namespace VE.Readings.Wire
 open VE.Readings
 open VE.Bridge (Entity)
