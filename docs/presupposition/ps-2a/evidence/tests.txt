@@ -1,0 +1,16 @@
+# ps-2a evidence extract (commands and their last lines).
+
+## statement probe (script /tmp/ps2a/probe.py): each Wire.lean declaration against the PS-S stub's 4.7 section (SpecStubs_presupposition.lean, Carrier .. before stmt_admit_regenerates) and spec 4.7's lean blocks (presupposition.md:841-1069); comments stripped, whitespace-normalised
+declarations 39 in stub 39 differing from stub ['candidateTable']
+in spec 4.7 blocks 39 differing from spec ['candidateTable']
+not in stub: [] stub 4.7 names not in Wire.lean: ['stmt_candidates_ruleAct']
+
+## uv run python tools/check_lean_imports.py
+Lean layer graph kept (790 modules, 18 reviewed legacy edges)
+
+## grep -c '^#guard' lean/VE/Presupposition/Examples.lean (main: 213)
+251
+
+## hand mutants (mutants.json): one lake build VE.Presupposition.Examples each (script /tmp/ps2a/runmut.py)
+36 mutants, 36 with a failing location, 0 survivors
+first run: 33 KILLED, 3 SURVIVED (L-expectedReadings-rule, L-claimReading-unit, L-ruleReading-rule); the guards at Examples.lean:643-645 and :680-685 kill them
