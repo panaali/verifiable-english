@@ -78,6 +78,11 @@ def softDefault : String × Json → Bool
   | ("hard", .bool false) => true
   | _ => false
 
+#guard [("mode", Json.str "strict"), ("rank", .null), ("alterable", Json.arr #[]), ("exception", .null),
+    ("hard", .bool false)].all softDefault &&
+  ![("mode", Json.str "default"), ("rank", .str "high"), ("alterable", Json.arr #[.str "court"]),
+    ("exception", Json.mkObj []), ("hard", .bool true), ("name", .str "strict"), ("guard", .null)].any softDefault
+
 /-- The canonical object of 3.4: soft fields at their default value omitted. -/
 def canonicalNorm (j : Json) : Json :=
   let raw := j.getObjValD "norm"

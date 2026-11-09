@@ -175,9 +175,11 @@ def rightsNormalForm (content : Json) : Json :=
   | _ => content
 
 #guard
-  let n := fun (soft : List (String × Json)) => Json.mkObj [("right", Json.mkObj [("name", .str "r"),
-    ("lines", Json.arr #[Json.mkObj [("kind", .str "claim"),
-      ("norm", Json.mkObj ([("name", .str "n")] ++ soft))]])])]
+  -- Two lines, and a member on each side of `lines` (`holder` before it, `name` after it in the object's order).
+  let line := fun (soft : List (String × Json)) => Json.mkObj [("kind", .str "claim"),
+    ("norm", Json.mkObj ([("name", .str "n")] ++ soft))]
+  let n := fun (soft : List (String × Json)) => Json.mkObj [("right", Json.mkObj [("holder", .str "p"),
+    ("lines", Json.arr #[line soft, line soft]), ("name", .str "r")])]
   rightsNormalForm (n [("mode", .str "strict"), ("rank", .null), ("alterable", Json.arr #[]), ("exception", .null),
       ("hard", .bool false)]) == n [] &&
     rightsNormalForm (n [("mode", .null), ("hard", .null), ("alterable", .null)]) == n [] &&
@@ -197,6 +199,11 @@ def rightsNormalForm (content : Json) : Json :=
 #guard
   let b := Json.mkObj [("bar", Json.mkObj [("name", .str "b"), ("mode", .str "strict")])]
   rightsNormalForm b == b
+#guard
+  -- `lines` the last member of the body.
+  let n := fun (soft : List (String × Json)) => Json.mkObj [("right", Json.mkObj [("holder", .str "p"),
+    ("lines", Json.arr #[Json.mkObj [("kind", .str "claim"), ("norm", Json.mkObj ([("name", .str "n")] ++ soft))]])])]
+  rightsNormalForm (n [("mode", .str "strict")]) == n []
 
 /-- A `meaning_id` over content that may hold authored nulls (the soft route's nullable decider slots: Python's
 `soft_digest`), with the document identity's canonical JSON. -/

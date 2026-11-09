@@ -1,0 +1,3 @@
+{"allow": [
+  {"definition": "VE.Service.Document.rightsNormalForm", "operator": "list-empty", "reason": "does not typecheck: a bare `[]` in place of the `[(kind, .obj body)]` pattern leaves `kind` and `body` unbound, and in place of `body.toList`, `ls` or `ls.map line` leaves the element type unresolved (Lean reports a type error, not a refutation)"}
+]}
