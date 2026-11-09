@@ -1,0 +1,7 @@
+job=armsh-cand-et-4b-tm-49f1682d-t224748-s1 shard=1/4 nproc=4 arch=aarch64 host=runnervmkb2gk date=2026-11-09T11:47:02Z ulimit_s=16384
+Mem:              15           1           9           0           5          14
+/dev/root       145G   42G  104G  29% /
+ 11:47:02 up 3 min,  0 user,  load average: 1.11, 0.45, 0.18
+pilot/codex branches: 98
+ve-cache: lean-build exact key 6c08a841f27a asset lean-build-6c08a841f27a-linux-aarch64.tar.zst sha256 dab63e9e84aa ok, seal ok, from download, 17.0 s
+p1-tokenizers: 443909a61d42 fetched
