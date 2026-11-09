@@ -1427,10 +1427,6 @@
 'VE.Closure.warshall_iff_path' depends on axioms: [propext, Quot.sound]
 'VE.Closure.warshall_preserves_closed' depends on axioms: [propext, Quot.sound]
 'VE.Closure.warshall_sound' depends on axioms: [propext, Quot.sound]
-'VE.Commands.RunSplit.readInstruction_refused_classed_of_ci1b' depends on axioms: [propext,
- Classical.choice,
- Quot.sound]
-'VE.Commands.RunSplit.typed_facts_are_ci1s' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Commands.after_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Commands.bind_condition' depends on axioms: [propext]
 'VE.Commands.candidate_fills' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -1497,7 +1493,9 @@
 'VE.Commands.readCommand_typed' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Commands.readCommand_typed_of_facts' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Commands.readInstruction_command' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Commands.readInstruction_refused_classed' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Commands.readInstruction_refused_classed_of' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Commands.readInstruction_typed' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Commands.readInstruction_typed_of_facts' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Commands.readStep_combine' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Commands.readStep_one' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -8042,6 +8040,7 @@
 'VE.SpeechActs.Source.SpeechSource.metadata_eq' depends on axioms: [propext, Quot.sound]
 'VE.SpeechActs.Source.SpeechSource.source_eq' depends on axioms: [propext, Quot.sound]
 'VE.SpeechActs.Source.answers_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.SpeechActs.Source.commandFence_needs_context' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.SpeechActs.Source.coverage_partition' depends on axioms: [propext, Quot.sound]
 'VE.SpeechActs.Source.external_records_sound' depends on axioms: [propext, Quot.sound]
 'VE.SpeechActs.Source.gap_records_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
