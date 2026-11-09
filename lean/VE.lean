@@ -145,6 +145,9 @@ import VE.RightClauses.Relation
 import VE.RightClauses.Examples
 import VE.RightClauses.Wire
 import VE.RightClauses.Run
+import VE.RightClauses.WireDecode
+import VE.RightClauses.WireName
+import VE.RightClauses.WireTheorems
 import VE.SpeechActs.Run
 import VE.SpeechActs.Source.Run
 import VE.SpeechActs.Source.Admission.Run
