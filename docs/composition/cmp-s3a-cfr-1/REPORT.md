@@ -80,7 +80,8 @@ are P, because they only drive proofs whose output the kernel checks.
 | S3 | `okOrRL_ok := sorry` | lean/VE/RightClauses/PlainWellFormed/Guards.lean | the same test (`1 failed`) |
 | S4 | drop the `ResourceLimit` disjunct from the statement | lean/VE/RightClauses/PlainWellFormed.lean | `lake env lean`: `Tactic right failed` with `he : validateRights (plain D) = Except.error e`. The proof needs that branch. |
 
-Python changed only in the test; there is no Python or Rust product code.
+Python changed only in the test; there is no Python or Rust product code. The same four bugs are listed, with file
+and test keys, in docs/composition/cmp-s3a-cfr-1/seeded-bugs.json (read by the pre-review [mutants] check).
 
 ## Deviations
 
