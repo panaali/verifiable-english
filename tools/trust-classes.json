@@ -19933,6 +19933,59 @@
         "VE.Presupposition.Checked",
         "VE.Presupposition.Report"
       ]
+    },
+    "VE/Commands/Steps.lean": {
+      "G[R]": [
+        "VE.Commands.conditionScope"
+      ],
+      "G[V]": [
+        "VE.Commands.Alt",
+        "VE.Commands.Form",
+        "VE.Commands.Shape",
+        "VE.Commands.StepOutcome",
+        "VE.Commands.capitalise",
+        "VE.Commands.combineShapes",
+        "VE.Commands.hasThen",
+        "VE.Commands.lift",
+        {
+          "name": "VE.Commands.productSize",
+          "tied": [
+            "VE.Commands.readingTuples_length"
+          ]
+        },
+        "VE.Commands.readStep",
+        "VE.Commands.readingTuples",
+        "VE.Commands.reads",
+        "VE.Commands.shapeAlts",
+        "VE.Commands.shapeOutcome",
+        {
+          "name": "VE.Commands.shapeOutcomeCharged",
+          "tied": [
+            "VE.Commands.shapeOutcome_charged"
+          ]
+        },
+        "VE.Commands.shapes"
+      ]
+    },
+    "VE/Commands/StepsExamples.lean": {
+      "T": [
+        "VE.Commands.StepsExamples.ask",
+        "VE.Commands.StepsExamples.chargeInstalled",
+        "VE.Commands.StepsExamples.check",
+        "VE.Commands.StepsExamples.conditionScopeText",
+        "VE.Commands.StepsExamples.eightReviews",
+        "VE.Commands.StepsExamples.elabChargeInstalled",
+        "VE.Commands.StepsExamples.noStep",
+        "VE.Commands.StepsExamples.readS",
+        "VE.Commands.StepsExamples.readsWeb",
+        "VE.Commands.StepsExamples.reviewIt",
+        "VE.Commands.StepsExamples.reviewMeaning",
+        "VE.Commands.StepsExamples.spelled",
+        "VE.Commands.StepsExamples.spellings",
+        "VE.Commands.StepsExamples.step",
+        "VE.Commands.StepsExamples.twoSteps",
+        "VE.Commands.StepsExamples.wideEnv"
+      ]
     }
   }
 }
