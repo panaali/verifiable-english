@@ -1,0 +1,54 @@
+[
+  {
+    "id": "m1-act-scan-removed",
+    "behaviour": "a strict rule whose act is an open name is open",
+    "definition": "VE.Rights.Run.nodeOpen",
+    "language": "Lean",
+    "file": "lean/VE/Rights/Run.lean",
+    "mutation": ["(.unary N.pred (.var 0) :: N.guard :: N.carveOuts)", "(N.guard :: N.carveOuts)"],
+    "test": "tests/test_rights_open_act_is_open.py::test_rights_open_act_is_open",
+    "tests": [
+      "tests/test_rights_open_act_is_open.py::test_rights_open_act_is_open",
+      "tests/test_rights_open_act_is_open.py::test_rights_open_act_reads_each_rights_own_act",
+      "lean/VE/Rights/OpenActExamples.lean:31",
+      "lean/VE/Rights/OpenActExamples.lean:36",
+      "lean/VE/Rights/OpenActExamples.lean:37",
+      "lean/VE/Rights/Run.lean: theorem nodeOpen_eq (unsolved goals)"
+    ],
+    "killed": true
+  },
+  {
+    "id": "m2-wrong-node-act",
+    "behaviour": "a right's unit reads the act of its own line",
+    "definition": "VE.Rights.Run.unitOpen",
+    "language": "Lean",
+    "file": "lean/VE/Rights/Run.lean",
+    "mutation": ["(nodeOpen openNames (nodeOf D line) ||",
+                 "(nodeOpen openNames { nodeOf D line with pred := ((linesOf D).head?.map (·.2.node.pred)).getD \"\" } ||"],
+    "test": "tests/test_rights_open_act_is_open.py::test_rights_open_act_reads_each_rights_own_act",
+    "tests": [
+      "tests/test_rights_open_act_is_open.py::test_rights_open_act_reads_each_rights_own_act",
+      "lean/VE/Rights/OpenActExamples.lean:36",
+      "lean/VE/Rights/OpenActExamples.lean:37"
+    ],
+    "killed": true
+  },
+  {
+    "id": "m3-any-open-name",
+    "behaviour": "a rule whose act is not an open name keeps its status (claims no more OPEN than 7.2 says)",
+    "definition": "VE.Rights.Run.nodeOpen",
+    "language": "Lean",
+    "file": "lean/VE/Rights/Run.lean",
+    "mutation": ["(.unary N.pred (.var 0) ::", "(.unary (openNames.headD N.pred) (.var 0) ::"],
+    "test": "tests/test_rights_open_act_is_open.py::test_rights_closed_act_stays_checked",
+    "tests": [
+      "tests/test_rights_open_act_is_open.py::test_rights_closed_act_stays_checked",
+      "tests/test_rights_open_act_is_open.py::test_rights_open_act_reads_each_rights_own_act",
+      "lean/VE/Rights/OpenActExamples.lean:32",
+      "lean/VE/Rights/OpenActExamples.lean:36",
+      "lean/VE/Rights/OpenActExamples.lean:37",
+      "lean/VE/Rights/Run.lean: theorem nodeOpen_eq (unsolved goals)"
+    ],
+    "killed": true
+  }
+]
