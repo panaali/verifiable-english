@@ -224,6 +224,11 @@ def twice : RightsDoc := { r21Doc with rs := [⟨"r21", "person", .top, [accessL
 #guard verdict (checkClauses ⟨twice, [("r21", "equal-access", k2)], []⟩) == diag twice
 #guard diag { twice with rights.holders := [] } == "InvalidInput: invalid rights block"
 #guard check k2 { twice with rights.holders := [] } == "InvalidInput: invalid clauses of rule equal-access"
+-- the rule on one line: rights' first fault, a duplicate holder, is not the entry's; the head keeps its text
+def twoHolders : RightsDoc := { r21Doc with rights.holders := ["person", "person"] }
+#guard diag twoHolders == "DuplicateDeclaration: holder person"
+#guard verdict (checkClauses ⟨twoHolders, [("r21", "equal-access", k2), ("r21", "equal-access", k2)], []⟩) ==
+  "InvalidInput: invalid clauses of rule equal-access"
 #guard verdict (checkClauses ⟨r21Doc, [("r9", "equal-access", k1)], []⟩) == "InvalidInput: invalid clauses of rule equal-access"
 #guard verdict (checkClauses ⟨r21Doc, [("r21", "other", k1)], []⟩) == "InvalidInput: invalid clauses of rule other"
 #guard verdict (checkClauses ⟨r21Doc, [("r21", "equal-access", cline [] none [] (charged 0))], []⟩) ==
@@ -246,6 +251,12 @@ def candDoc (L : CLine) : ClauseDoc :=
 -- a candidate whose own right has two lines named `equal-access`: rights' text on that right
 #guard verdict (checkCandidates ⟨r21Doc, [], [("s", 1, .right ⟨"r21", "person", .top, [accessLine, accessLine]⟩,
     [("r21", "equal-access", k2)])]⟩) == "DuplicateDeclaration: rule equal-access"
+-- `.rightLines`: the two lines are the candidate's, not rights' (`D.doc`'s); the head keeps its text, also when
+-- `D.doc` has a fault of its own
+#guard verdict (checkCandidates ⟨r21Doc, [], [("s", 1, .rightLines "r21" [accessLine, accessLine],
+    [("r21", "equal-access", k2)])]⟩) == "InvalidInput: invalid clauses of rule equal-access"
+#guard verdict (checkCandidates ⟨twoHolders, [], [("s", 1, .rightLines "r21" [accessLine, accessLine],
+    [("r21", "equal-access", k2)])]⟩) == "InvalidInput: invalid clauses of rule equal-access"
 #guard verdict (checkCandidates (candDoc (cline [trig (charged 0) 90 110] none []))) == "ClauseSpan: equal-access: [90, 110)"
 -- the candidate's own right gives `H_R`: refused before the abstention
 #guard verdict (checkCandidates ⟨r21Doc, [], [("s", 1, .right (r21 (.unary "vulnerable" (.var 0))),

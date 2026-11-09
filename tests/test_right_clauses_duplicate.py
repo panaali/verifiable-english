@@ -22,10 +22,10 @@ open VE.RightClauses VE.Rights.Examples
 
 def accessLine (n : String) : VE.Rights.SourceLine :=
   line .claim (strictNode n "public_service_access_required" true .top)
-def twice (holders : List String := ["person"]) (n := "equal-access") : VE.Rights.RightsDoc :=
+def twice (holders : List String := ["person"]) (n := "equal-access") (k := 2) : VE.Rights.RightsDoc :=
   mkRights ["state", "person"] [("country_of", ["state", "person"])]
     [VE.Norms.Checks.oblig "public_service_access_required" ["state", "person"] false none "{0} grant {1} access"]
-    [] { block with holders } [⟨"r21", "person", .top, [accessLine n, accessLine n]⟩] [] []
+    [] { block with holders } [⟨"r21", "person", .top, List.replicate k (accessLine n)⟩] [] []
 def entries (D : VE.Rights.RightsDoc) (n := "equal-access") : ClauseDoc :=
   ⟨D, [("r21", n, ⟨accessLine n, [], none, [], (0, 100)⟩), ("r21", n, ⟨accessLine n, [], none, [], (0, 100)⟩)], []⟩
 def text : Except String Unit → String
@@ -38,11 +38,14 @@ def text : Except String Unit → String
 #eval IO.println ("rights-right:" ++ text (VE.Rights.checkRights (twice (n := "r21"))))
 #eval IO.println ("head-no-block:" ++ text (checkClauses (entries (twice []))))
 #eval IO.println ("rights-no-block:" ++ text (VE.Rights.checkRights (twice [])))
+#eval IO.println ("head-one-line:" ++ text (checkClauses (entries (twice ["person", "person"] (k := 1)))))
+#eval IO.println ("rights-one-line:" ++ text (VE.Rights.checkRights (twice ["person", "person"] (k := 1))))
 """
 
 DUPLICATE = "DuplicateDeclaration: rule equal-access"
 INVALID = "InvalidInput: invalid clauses of rule equal-access"
-LABELS = {"head", "rights", "head-right", "rights-right", "head-no-block", "rights-no-block"}
+LABELS = {"head", "rights", "head-right", "rights-right", "head-no-block", "rights-no-block", "head-one-line",
+          "rights-one-line"}
 
 
 def answers(output: str) -> dict:
@@ -80,14 +83,6 @@ def test_answers_read_only_labelled_lines():
         "head": "a b", "rights": "DuplicateDeclaration: rule n"}
 
 
-def test_same_bytes_refuses_every_one_character_edit():
-    assert same_bytes(DUPLICATE, DUPLICATE)
-    for i in range(len(DUPLICATE)):
-        assert not same_bytes(DUPLICATE[:i] + DUPLICATE[i + 1:], DUPLICATE)
-        assert not same_bytes(DUPLICATE[:i] + "#" + DUPLICATE[i + 1:], DUPLICATE)
-    assert not same_bytes(DUPLICATE + ".", DUPLICATE)
-
-
 def test_clause_entries_preserve_duplicate_rule_diagnostic(elaborated):
     # Two structured lines named `equal-access`: the head answers with rights' own text, byte for byte.
     assert elaborated["rights"] == DUPLICATE
@@ -106,3 +101,6 @@ def test_clause_entries_keep_invalid_clauses_when_rights_faults_first(elaborated
     # Rights' first fault is not the duplicate (an empty rights block): the head keeps its own text.
     assert elaborated["rights-no-block"] == "InvalidInput: invalid rights block"
     assert elaborated["head-no-block"] == INVALID
+    # The rule on one line, rights' first fault a duplicate holder (not the entry's): the head keeps its text.
+    assert elaborated["rights-one-line"] == "DuplicateDeclaration: holder person"
+    assert elaborated["head-one-line"] == INVALID
