@@ -19814,6 +19814,19 @@
         "VE.Closure.Tableau.checkCertificate",
         "VE.Closure.Tableau.extraRule"
       ]
+    },
+    "VE/Commands/RunSplit.lean": {
+      "T": [
+        "VE.Commands.SourceExamples.click",
+        "VE.Commands.SourceExamples.context",
+        "VE.Commands.SourceExamples.env",
+        "VE.Commands.SourceExamples.fenced",
+        "VE.Commands.SourceExamples.mismatch",
+        "VE.Commands.SourceExamples.payload",
+        "VE.Commands.SourceExamples.result",
+        "VE.Commands.SourceExamples.share",
+        "VE.Commands.SourceExamples.two"
+      ]
     }
   }
 }

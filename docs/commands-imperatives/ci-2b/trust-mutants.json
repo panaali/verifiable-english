@@ -1,53 +1,53 @@
 {
  "base": "63b2b596f79a2675139900b9a02b00296e7f415d",
- "head": "22a3d961e5b4713b57eed4d91b4f9f4c51bd09a1",
- "tree": "8d6ca074e776e751968828e470e82efa6e9a4d2d",
+ "head": "22eda8ec13b88d500e7e92d1681092b0f840f1de",
+ "tree": "0f0d33254857b75e6e9aacff8fb265597ba17237",
  "jobs": 8,
  "max_mutants": 1000,
  "deep": false,
  "tests": [
   "lean/VE/Commands/RunSplit.lean"
  ],
- "seconds": 261,
+ "seconds": 2198,
  "steps": {
   "wall": {
-   "plan": 21.9,
-   "scratch": 28.4,
-   "control_build": 0.5,
-   "probe_install": 3.8,
-   "control_probes": 15.4,
-   "mutants": 185.4,
-   "cleanup": 5.4,
+   "plan": 30.2,
+   "scratch": 20.3,
+   "control_build": 0.6,
+   "probe_install": 4.1,
+   "control_probes": 165.6,
+   "mutants": 1974.1,
+   "cleanup": 3.1,
    "reads": 0.1
   },
   "lake": {
-   "control_build": 0.4,
-   "probe_install": 3.8,
-   "control_probes": 15.4,
-   "mutant_builds": 1282.5,
-   "mutant_checks": 175.0,
+   "control_build": 0.5,
+   "probe_install": 3.9,
+   "control_probes": 165.5,
+   "mutant_builds": 2927.5,
+   "mutant_checks": 1007.6,
    "outside_checks": 0.0,
-   "stage_controls": 0.0,
-   "mutant_probes": 0.0,
+   "stage_controls": 96.9,
+   "mutant_probes": 11558.3,
    "other": 0.0
   },
   "runs": {
    "control_build": 1,
    "probe_install": 1,
    "control_probes": 1,
-   "mutant_builds": 58,
-   "mutant_checks": 40,
+   "mutant_builds": 185,
+   "mutant_checks": 46,
    "outside_checks": 0,
-   "stage_controls": 0,
-   "mutant_probes": 0,
+   "stage_controls": 6,
+   "mutant_probes": 134,
    "other": 0
   }
  },
  "counts": {
-  "KILLED": 0,
-  "SURVIVOR": 40,
-  "UNKNOWN": 11,
-  "INVALID": 6,
+  "KILLED": 133,
+  "SURVIVOR": 9,
+  "UNKNOWN": 20,
+  "INVALID": 22,
   "ALLOWED": 0,
   "NOT RUN": 0
  },
@@ -55,15 +55,22 @@
   "trusted"
  ],
  "class_counts": {
+  "?, trusted": {
+   "KILLED": 95,
+   "SURVIVOR": 7,
+   "UNKNOWN": 9,
+   "INVALID": 16
+  },
   "D[V], trusted": {
-   "SURVIVOR": 40,
+   "KILLED": 38,
+   "SURVIVOR": 2,
    "UNKNOWN": 11,
    "INVALID": 6
   }
  },
  "inputs": {
   "tool": "9894e72999231ce76ba9aee6b42e2202a46cb39d238bd968bb066ff9560bfa63",
-  "lean": "192947bede545fe437a3fecb5ab34f2f7168caf7ebdf4784fb7298cacada1067",
+  "lean": "4ea4cc9fcc7d8521d346d03c7fdb25f6a0705aad9faec6a6aef833c842c8fd94",
   "tests": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
   "base": "63b2b596f79a2675139900b9a02b00296e7f415d",
   "options": "{\"deep\": false, \"test\": [\"VE/Commands/RunSplit.lean\"], \"classes\": [\"trusted\"]}",
@@ -352,7 +359,7 @@
    "lean/VE/Commands/Read.lean": "d6260a6334128c313c2fe1786bc9ad1835cc7fcdaa798d10fca7c2969c7162e7",
    "lean/VE/Commands/Run.lean": "2ad2a3ccdb2948198ed4a76c28e05c0a46ef64a1a2e7b7579c41152caa54448d",
    "lean/VE/Commands/RunExamples.lean": "b5cf0eec06e0ed1aec9cb31f4b986f686b89f30edc26d91a2df29d508e26842d",
-   "lean/VE/Commands/RunSplit.lean": "b3e28d8b189d7181801e17884d35e32524bdd59bbbdc4ee9cc5df6f92d2070f2",
+   "lean/VE/Commands/RunSplit.lean": "bd8c65180c1b7088de5526bcdf8072dd2e1e0fc08ff8f24ae2ba08d76b1843c4",
    "lean/VE/Commands/Texts.lean": "216279f9b9ad99e6ea87c0bae9d33e7b3825685c388020af45af365b85f66ec2",
    "lean/VE/Compose/Adjoin.lean": "ddf66089bf7a18ef98ba674eeab43fa1694cc345c8908ea4c39e524159dcdbb8",
    "lean/VE/Compose/Content.lean": "65dbe0cb8f68d415113e2e92eb16e62ed711268ca5fd0db8caed9b8a4e38f905",
@@ -896,7 +903,7 @@
    "lean/audit.py": "05fb69c5689a8606fefd6d43e220f23ee6dbedc4bea7245b34ae29a4fd13a1cd",
    "lean/axioms.txt": "590fce601b09092e9fed76c3c5d4c49f9c8a9603204b33534dd8ae71a13889c2",
    "lean/checkers.lock": "3eee3140a3e426d7b2fe9037d5d0b62685f93d7137bd30382a2a59e2f1541b03",
-   "lean/declarations.txt": "07f53d9f233684fb6f8a017283fdcd3dfb6471a9c12775432c930854c4442ad4",
+   "lean/declarations.txt": "93454d616ad1fc64b55c5bf177cd21fe4b18e40c2b4bb7bc1b481bc0df1e5991",
    "lean/lake-manifest.json": "8579a8594992ccc571614869d24b997dba98134cffdbd5a0b26220a419e0de8e",
    "lean/lakefile.toml": "ffc47dfd06119c3518785b5059d81216b2f82b140509bfd25cd3273cbe04d4f5",
    "lean/lean-toolchain": "42779d67b81608af8a12aa4328d2ab47ca201925b3b2bd68369587b5340bb434",
@@ -918,7 +925,22 @@
    "tools/trust_mutants.py": "9e7b72217faa2601a3b61a82f0ba70d932ca1886cdef204dddab05ac551bd8eb"
   }
  },
+ "rescore": {
+  "file": "docs/commands-imperatives/ci-2b/trust-mutants.json",
+  "head": null,
+  "mode": "full",
+  "changed": [],
+  "reused": 0,
+  "rerun": 184,
+  "full_run": "its inputs differ (lean): lean/VE/Commands/RunSplit.lean is a selected declaration's file or in its import closure"
+ },
  "definitions": [
+  "lean/VE/Commands/RunSplit.lean: VE.Commands.SourceExamples.click",
+  "lean/VE/Commands/RunSplit.lean: VE.Commands.SourceExamples.context",
+  "lean/VE/Commands/RunSplit.lean: VE.Commands.SourceExamples.fenced",
+  "lean/VE/Commands/RunSplit.lean: VE.Commands.SourceExamples.payload",
+  "lean/VE/Commands/RunSplit.lean: VE.Commands.SourceExamples.share",
+  "lean/VE/Commands/RunSplit.lean: VE.Commands.SourceExamples.two",
   "lean/VE/SpeechActs/Source/Run.lean: VE.SpeechActs.Source.decodeSpeechSource",
   "lean/VE/SpeechActs/Source/Run.lean: VE.SpeechActs.Source.readSource"
  ],
@@ -935,9 +957,14 @@
    ],
    "before": "!",
    "after": "",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:109: Expression",
+   "raw_status": "KILLED",
+   "reads": "e9a6fc3badba3466838a6ea5dac8f195790070dc7a1ecfafd2f5964a176f64b2",
+   "killed_at": [
+    109,
+    109
+   ],
    "trust_class": "D[V]",
    "trusted": true
   },
@@ -953,9 +980,14 @@
    ],
    "before": "!",
    "after": "",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/SpeechActs/Source/Run.lean:801",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "580649d1ddd8d473475b723f1154359c0ef1c7c6347c19b98413ba85c52427d3",
+   "killed_at": [
+    107,
+    107
+   ],
    "trust_class": "D[V]",
    "trusted": true
   },
@@ -971,9 +1003,14 @@
    ],
    "before": "&&",
    "after": "||",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "580649d1ddd8d473475b723f1154359c0ef1c7c6347c19b98413ba85c52427d3",
+   "killed_at": [
+    107,
+    107
+   ],
    "trust_class": "D[V]",
    "trusted": true
   },
@@ -989,9 +1026,14 @@
    ],
    "before": "||",
    "after": "&&",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:116: Expression",
+   "raw_status": "KILLED",
+   "reads": "1a649029e43535ba39e8fc65fbc47248639e90ee4b664ad8de762a5b726821c9",
+   "killed_at": [
+    116,
+    118
+   ],
    "trust_class": "D[V]",
    "trusted": true
   },
@@ -1007,9 +1049,14 @@
    ],
    "before": "<",
    "after": "\u2264",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:121: Expression",
+   "raw_status": "KILLED",
+   "reads": "5ccbbe2862a36ebe9f096807815e60cffb5549756c9af878dd65619509ab0361",
+   "killed_at": [
+    121,
+    121
+   ],
    "trust_class": "D[V]",
    "trusted": true
   },
@@ -1025,9 +1072,14 @@
    ],
    "before": "<",
    "after": "=",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:121: Expression",
+   "raw_status": "KILLED",
+   "reads": "5ccbbe2862a36ebe9f096807815e60cffb5549756c9af878dd65619509ab0361",
+   "killed_at": [
+    121,
+    121
+   ],
    "trust_class": "D[V]",
    "trusted": true
   },
@@ -1105,6 +1157,42 @@
   },
   {
    "id": "M011",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 81,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "bool-flip",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "true",
+   "after": "false",
+   "status": "UNKNOWN",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression (Lean elaborates it otherwise than without the mutant)",
+   "raw_status": "UNKNOWN",
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M012",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 120,
+   "definition": "VE.Commands.SourceExamples.fenced",
+   "operator": "bool-flip",
+   "lines": [
+    119,
+    120
+   ],
+   "before": "false",
+   "after": "true",
+   "status": "SURVIVOR",
+   "detail": "",
+   "raw_status": "SURVIVOR",
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M013",
    "file": "VE/SpeechActs/Source/Run.lean",
    "line": 779,
    "definition": "VE.SpeechActs.Source.readSource",
@@ -1115,14 +1203,175 @@
    ],
    "before": "false",
    "after": "true",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:111: Expression",
+   "raw_status": "KILLED",
+   "reads": "e098e708f0dc66a03c3ad4db2ce02e01f98c583889130aa9dae05e58e4bd4d28",
+   "killed_at": [
+    111,
+    112
+   ],
    "trust_class": "D[V]",
    "trusted": true
   },
   {
-   "id": "M012",
+   "id": "M014",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 82,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "lit-plus",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "0",
+   "after": "1",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "da3634a1100e393215d8444532788b48218f70537f9bc994ec3b71e6cf6b59ac",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M015",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 70,
+   "definition": "VE.Commands.SourceExamples.context",
+   "operator": "list-empty",
+   "lines": [
+    67,
+    72
+   ],
+   "before": "[(\"lexicon\", RunExamples.lexJson (env.setObjVal! \"speech_acts\"\n      (VE.SpeechActs.Wire.encodeScope se.scope)))]",
+   "after": "[]\n",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "ed24958cbb52dff852c5d909670c5ed3f2815139cfad9ae6b1417255284b1c30",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M016",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 74,
+   "definition": "VE.Commands.SourceExamples.click",
+   "operator": "list-empty",
+   "lines": [
+    74,
+    75
+   ],
+   "before": "[(\"force\", .str \"require\"), (\"act\", .str \"click_required\"), (\"args\", toJson [\"check\"]),\n  (\"guard\", toJson [\"top\"])]",
+   "after": "[]\n",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "e60d56515c8a84a09e6be0cc55b1ede3349cf8d71978f01f373b0ef53ccb3bf1",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M017",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 76,
+   "definition": "VE.Commands.SourceExamples.share",
+   "operator": "list-empty",
+   "lines": [
+    76,
+    77
+   ],
+   "before": "[(\"force\", .str \"forbid\"), (\"act\", .str \"share_permitted\"), (\"args\", toJson [\"token1\"]),\n  (\"guard\", toJson [\"top\"])]",
+   "after": "[]\n",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "65cc63899dea452b5cdba96770e5f2bf5bbfc84c2ef56c6de30e768b072a09f6",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M018",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 85,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-empty",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "[(\"id\", .str id), (\"span\", toJson [start, start + line.utf8ByteSize]),\n      (\"kind\", .str kind), (\"meaning\", .str \"specified\"), (\"support\", .str \"none\"),\n      (\"content\", content.getD (Json.mkObj [(\"fence\", .str id)]))]",
+   "after": "[]\n\n",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "da3634a1100e393215d8444532788b48218f70537f9bc994ec3b71e6cf6b59ac",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M019",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 98,
+   "definition": "VE.Commands.SourceExamples.two",
+   "operator": "list-empty",
+   "lines": [
+    97,
+    98
+   ],
+   "before": "[(\"c1\", \"instruction\", \"Click Check.\\n\", none), (\"c2\", \"instruction\", \"Do not share the token.\\n\", none)]",
+   "after": "[]",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "72fb9b1b97f843480d143f4d7ab33dcd86cb40b577cf9284fe254192048ac56e",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M020",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 120,
+   "definition": "VE.Commands.SourceExamples.fenced",
+   "operator": "list-empty",
+   "lines": [
+    119,
+    120
+   ],
+   "before": "(List.range n)",
+   "after": "[]",
+   "status": "UNKNOWN",
+   "detail": "lean/VE/Commands/RunSplit.lean:120: typeclass instance problem is stuck, it is often due to metavariables",
+   "raw_status": "UNKNOWN",
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M021",
    "file": "VE/SpeechActs/Source/Run.lean",
    "line": 743,
    "definition": "VE.SpeechActs.Source.readSource",
@@ -1141,7 +1390,53 @@
    "trusted": true
   },
   {
-   "id": "M013",
+   "id": "M022",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 90,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "append-left",
+   "lines": [
+    79,
+    95
+   ],
+   "before": " ++ extra",
+   "after": "",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:116: Expression",
+   "raw_status": "KILLED",
+   "reads": "784ee5c6cd99988a3117cad0a7c74a4db8444efd4ef9364c5698088b218fb40b",
+   "killed_at": [
+    116,
+    118
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M023",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 89,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "append-right",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "[(\"format\", .str \"ve-document@2\"), (\"environment\", env),\n      (\"units\", .arr rows)] ++ ",
+   "after": "\n",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "da3634a1100e393215d8444532788b48218f70537f9bc994ec3b71e6cf6b59ac",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M024",
    "file": "VE/SpeechActs/Source/Run.lean",
    "line": 778,
    "definition": "VE.SpeechActs.Source.readSource",
@@ -1152,14 +1447,92 @@
    ],
    "before": "==",
    "after": "!=",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "f4ba1595f6c62d2c3a5d59da47871167cece75eabd3a787500d66489efba5909",
+   "killed_at": [
+    107,
+    107
+   ],
    "trust_class": "D[V]",
    "trusted": true
   },
   {
-   "id": "M014",
+   "id": "M025",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 74,
+   "definition": "VE.Commands.SourceExamples.click",
+   "operator": "list-empty",
+   "lines": [
+    74,
+    75
+   ],
+   "before": "[\"check\"]",
+   "after": "[]",
+   "status": "UNKNOWN",
+   "detail": "lean/VE/Commands/RunSplit.lean:74: typeclass instance problem is stuck, it is often due to metavariables",
+   "raw_status": "UNKNOWN",
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M026",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 76,
+   "definition": "VE.Commands.SourceExamples.share",
+   "operator": "list-empty",
+   "lines": [
+    76,
+    77
+   ],
+   "before": "[\"token1\"]",
+   "after": "[]",
+   "status": "UNKNOWN",
+   "detail": "lean/VE/Commands/RunSplit.lean:76: typeclass instance problem is stuck, it is often due to metavariables",
+   "raw_status": "UNKNOWN",
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M027",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 85,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-empty",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "[start, start + line.utf8ByteSize]",
+   "after": "[]",
+   "status": "UNKNOWN",
+   "detail": "lean/VE/Commands/RunSplit.lean:85: typeclass instance problem is stuck, it is often due to metavariables",
+   "raw_status": "UNKNOWN",
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M028",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 120,
+   "definition": "VE.Commands.SourceExamples.fenced",
+   "operator": "list-empty",
+   "lines": [
+    119,
+    120
+   ],
+   "before": "(List.range n).map",
+   "after": "[]",
+   "status": "INVALID",
+   "detail": "Function expected at",
+   "raw_status": "INVALID",
+   "reads": "d66f05b99349b9293b8e92ed5f0197dff8e49e6ce9253539463cfb2ff3537b3e",
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M029",
    "file": "VE/SpeechActs/Source/Run.lean",
    "line": 768,
    "definition": "VE.SpeechActs.Source.readSource",
@@ -1177,7 +1550,66 @@
    "trusted": true
   },
   {
-   "id": "M015",
+   "id": "M030",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 75,
+   "definition": "VE.Commands.SourceExamples.click",
+   "operator": "list-empty",
+   "lines": [
+    74,
+    75
+   ],
+   "before": "[\"top\"]",
+   "after": "[]",
+   "status": "UNKNOWN",
+   "detail": "lean/VE/Commands/RunSplit.lean:75: typeclass instance problem is stuck, it is often due to metavariables",
+   "raw_status": "UNKNOWN",
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M031",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 77,
+   "definition": "VE.Commands.SourceExamples.share",
+   "operator": "list-empty",
+   "lines": [
+    76,
+    77
+   ],
+   "before": "[\"top\"]",
+   "after": "[]",
+   "status": "UNKNOWN",
+   "detail": "lean/VE/Commands/RunSplit.lean:77: typeclass instance problem is stuck, it is often due to metavariables",
+   "raw_status": "UNKNOWN",
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M032",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 87,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-empty",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "[(\"fence\", .str id)]",
+   "after": "[]",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "da3634a1100e393215d8444532788b48218f70537f9bc994ec3b71e6cf6b59ac",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M033",
    "file": "VE/SpeechActs/Source/Run.lean",
    "line": 768,
    "definition": "VE.SpeechActs.Source.readSource",
@@ -1188,14 +1620,42 @@
    ],
    "before": "needed.map (\u00b7.id)",
    "after": "[]",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:109: Expression",
+   "raw_status": "KILLED",
+   "reads": "e9a6fc3badba3466838a6ea5dac8f195790070dc7a1ecfafd2f5964a176f64b2",
+   "killed_at": [
+    109,
+    109
+   ],
    "trust_class": "D[V]",
    "trusted": true
   },
   {
-   "id": "M016",
+   "id": "M034",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 89,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-empty",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "[(\"metadata\", Json.mkObj ([(\"format\", .str \"ve-document@2\"), (\"environment\", env),\n      (\"units\", .arr rows)] ++ extra)),\n    (\"source\", .str (String.join (units.map (\u00b7.2.2.1)))),\n    (\"fences\", Json.mkObj (units.filterMap fun (id, _, line, c) => if c.isNone then some (id, .str line) else none))]",
+   "after": "[]\n\n\n",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "da3634a1100e393215d8444532788b48218f70537f9bc994ec3b71e6cf6b59ac",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M035",
    "file": "VE/SpeechActs/Source/Run.lean",
    "line": 769,
    "definition": "VE.SpeechActs.Source.readSource",
@@ -1213,7 +1673,30 @@
    "trusted": true
   },
   {
-   "id": "M017",
+   "id": "M036",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 89,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-empty",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "[(\"format\", .str \"ve-document@2\"), (\"environment\", env),\n      (\"units\", .arr rows)]",
+   "after": "[]\n",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "da3634a1100e393215d8444532788b48218f70537f9bc994ec3b71e6cf6b59ac",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M037",
    "file": "VE/SpeechActs/Source/Run.lean",
    "line": 769,
    "definition": "VE.SpeechActs.Source.readSource",
@@ -1231,7 +1714,30 @@
    "trusted": true
   },
   {
-   "id": "M018",
+   "id": "M038",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 90,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-empty",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "extra",
+   "after": "[]",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:116: Expression",
+   "raw_status": "KILLED",
+   "reads": "784ee5c6cd99988a3117cad0a7c74a4db8444efd4ef9364c5698088b218fb40b",
+   "killed_at": [
+    116,
+    118
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M039",
    "file": "VE/SpeechActs/Source/Run.lean",
    "line": 770,
    "definition": "VE.SpeechActs.Source.readSource",
@@ -1242,14 +1748,37 @@
    ],
    "before": "neededIds",
    "after": "[]",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:109: Expression",
+   "raw_status": "KILLED",
+   "reads": "e9a6fc3badba3466838a6ea5dac8f195790070dc7a1ecfafd2f5964a176f64b2",
+   "killed_at": [
+    109,
+    109
+   ],
    "trust_class": "D[V]",
    "trusted": true
   },
   {
-   "id": "M019",
+   "id": "M040",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 91,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-empty",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "units",
+   "after": "[]",
+   "status": "UNKNOWN",
+   "detail": "lean/VE/Commands/RunSplit.lean:91: Invalid projection: Type of",
+   "raw_status": "UNKNOWN",
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M041",
    "file": "VE/SpeechActs/Source/Run.lean",
    "line": 772,
    "definition": "VE.SpeechActs.Source.readSource",
@@ -1268,7 +1797,30 @@
    "trusted": true
   },
   {
-   "id": "M020",
+   "id": "M042",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 91,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-empty",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "units.map (\u00b7.2.2.1)",
+   "after": "[]",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "da3634a1100e393215d8444532788b48218f70537f9bc994ec3b71e6cf6b59ac",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M043",
    "file": "VE/SpeechActs/Source/Run.lean",
    "line": 774,
    "definition": "VE.SpeechActs.Source.readSource",
@@ -1279,14 +1831,37 @@
    ],
    "before": "fences",
    "after": "[]",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "f4ba1595f6c62d2c3a5d59da47871167cece75eabd3a787500d66489efba5909",
+   "killed_at": [
+    107,
+    107
+   ],
    "trust_class": "D[V]",
    "trusted": true
   },
   {
-   "id": "M021",
+   "id": "M044",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 92,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-empty",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "units",
+   "after": "[]",
+   "status": "UNKNOWN",
+   "detail": "lean/VE/Commands/RunSplit.lean:92: Invalid field notation: Type of",
+   "raw_status": "UNKNOWN",
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M045",
    "file": "VE/SpeechActs/Source/Run.lean",
    "line": 774,
    "definition": "VE.SpeechActs.Source.readSource",
@@ -1297,14 +1872,283 @@
    ],
    "before": "fences.reverse",
    "after": "[]",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "f4ba1595f6c62d2c3a5d59da47871167cece75eabd3a787500d66489efba5909",
+   "killed_at": [
+    107,
+    107
+   ],
    "trust_class": "D[V]",
    "trusted": true
   },
   {
-   "id": "M022",
+   "id": "M046",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 92,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-empty",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "units.filterMap",
+   "after": "[]",
+   "status": "INVALID",
+   "detail": "Function expected at",
+   "raw_status": "INVALID",
+   "reads": "6c98619de3b61cf71f1a972c29ec51435294923c6b4ff5918b511c613fb200fe",
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M047",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 93,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-empty",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "resolved",
+   "after": "[]",
+   "status": "INVALID",
+   "detail": "don't know how to synthesize implicit argument `\u03b1`",
+   "raw_status": "INVALID",
+   "reads": "6c98619de3b61cf71f1a972c29ec51435294923c6b4ff5918b511c613fb200fe",
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M048",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 94,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-empty",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "[(\"resolved_fences\", Json.mkObj (resolved.map fun (id, c) => (id, Json.mkObj [(\"command\", c)])))]",
+   "after": "[]",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "da3634a1100e393215d8444532788b48218f70537f9bc994ec3b71e6cf6b59ac",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M049",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 94,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-empty",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "resolved",
+   "after": "[]",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "da3634a1100e393215d8444532788b48218f70537f9bc994ec3b71e6cf6b59ac",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M050",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 94,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-empty",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "resolved.map",
+   "after": "[]",
+   "status": "INVALID",
+   "detail": "Function expected at",
+   "raw_status": "INVALID",
+   "reads": "6c98619de3b61cf71f1a972c29ec51435294923c6b4ff5918b511c613fb200fe",
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M051",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 94,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-empty",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "[(\"command\", c)]",
+   "after": "[]",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "da3634a1100e393215d8444532788b48218f70537f9bc994ec3b71e6cf6b59ac",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M052",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 95,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-empty",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "[(\"reading_context\", context)]",
+   "after": "[]",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "da3634a1100e393215d8444532788b48218f70537f9bc994ec3b71e6cf6b59ac",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M053",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 74,
+   "definition": "VE.Commands.SourceExamples.click",
+   "operator": "list-first",
+   "lines": [
+    74,
+    75
+   ],
+   "before": "[(\"force\", .str \"require\"), (\"act\", .str \"click_required\"), (\"args\", toJson [\"check\"]),\n  (\"guard\", toJson [\"top\"])]",
+   "after": "([(\"force\", .str \"require\"), (\"act\", .str \"click_required\"), (\"args\", toJson [\"check\"]),\n  (\"guard\", toJson [\"top\"])].take 1)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "e60d56515c8a84a09e6be0cc55b1ede3349cf8d71978f01f373b0ef53ccb3bf1",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M054",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 76,
+   "definition": "VE.Commands.SourceExamples.share",
+   "operator": "list-first",
+   "lines": [
+    76,
+    77
+   ],
+   "before": "[(\"force\", .str \"forbid\"), (\"act\", .str \"share_permitted\"), (\"args\", toJson [\"token1\"]),\n  (\"guard\", toJson [\"top\"])]",
+   "after": "([(\"force\", .str \"forbid\"), (\"act\", .str \"share_permitted\"), (\"args\", toJson [\"token1\"]),\n  (\"guard\", toJson [\"top\"])].take 1)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "65cc63899dea452b5cdba96770e5f2bf5bbfc84c2ef56c6de30e768b072a09f6",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M055",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 85,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-first",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "[(\"id\", .str id), (\"span\", toJson [start, start + line.utf8ByteSize]),\n      (\"kind\", .str kind), (\"meaning\", .str \"specified\"), (\"support\", .str \"none\"),\n      (\"content\", content.getD (Json.mkObj [(\"fence\", .str id)]))]",
+   "after": "([(\"id\", .str id), (\"span\", toJson [start, start + line.utf8ByteSize]),\n      (\"kind\", .str kind), (\"meaning\", .str \"specified\"), (\"support\", .str \"none\"),\n      (\"content\", content.getD (Json.mkObj [(\"fence\", .str id)]))].take 1)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "da3634a1100e393215d8444532788b48218f70537f9bc994ec3b71e6cf6b59ac",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M056",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 98,
+   "definition": "VE.Commands.SourceExamples.two",
+   "operator": "list-first",
+   "lines": [
+    97,
+    98
+   ],
+   "before": "[(\"c1\", \"instruction\", \"Click Check.\\n\", none), (\"c2\", \"instruction\", \"Do not share the token.\\n\", none)]",
+   "after": "([(\"c1\", \"instruction\", \"Click Check.\\n\", none), (\"c2\", \"instruction\", \"Do not share the token.\\n\", none)].take 1)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "72fb9b1b97f843480d143f4d7ab33dcd86cb40b577cf9284fe254192048ac56e",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M057",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 120,
+   "definition": "VE.Commands.SourceExamples.fenced",
+   "operator": "list-first",
+   "lines": [
+    119,
+    120
+   ],
+   "before": "(List.range n)",
+   "after": "((List.range n).take 1)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:122: Expression",
+   "raw_status": "KILLED",
+   "reads": "a33007a1c428223f0ad4f75af9496c9b097674ecd7151e210987ff38e5a85441",
+   "killed_at": [
+    122,
+    123
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M058",
    "file": "VE/SpeechActs/Source/Run.lean",
    "line": 743,
    "definition": "VE.SpeechActs.Source.readSource",
@@ -1315,14 +2159,147 @@
    ],
    "before": "needed",
    "after": "(needed.take 1)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:122: Expression",
+   "raw_status": "KILLED",
+   "reads": "c331a6242e1d81d77fbb8cb2393965d61863e740a2cfb63fb85a17405c65934c",
+   "killed_at": [
+    122,
+    123
+   ],
    "trust_class": "D[V]",
    "trusted": true
   },
   {
-   "id": "M023",
+   "id": "M059",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 70,
+   "definition": "VE.Commands.SourceExamples.context",
+   "operator": "list-drop-last",
+   "lines": [
+    67,
+    72
+   ],
+   "before": "[(\"lexicon\", RunExamples.lexJson (env.setObjVal! \"speech_acts\"\n      (VE.SpeechActs.Wire.encodeScope se.scope)))]",
+   "after": "([(\"lexicon\", RunExamples.lexJson (env.setObjVal! \"speech_acts\"\n      (VE.SpeechActs.Wire.encodeScope se.scope)))].dropLast)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "ed24958cbb52dff852c5d909670c5ed3f2815139cfad9ae6b1417255284b1c30",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M060",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 74,
+   "definition": "VE.Commands.SourceExamples.click",
+   "operator": "list-drop-last",
+   "lines": [
+    74,
+    75
+   ],
+   "before": "[(\"force\", .str \"require\"), (\"act\", .str \"click_required\"), (\"args\", toJson [\"check\"]),\n  (\"guard\", toJson [\"top\"])]",
+   "after": "([(\"force\", .str \"require\"), (\"act\", .str \"click_required\"), (\"args\", toJson [\"check\"]),\n  (\"guard\", toJson [\"top\"])].dropLast)",
+   "status": "SURVIVOR",
+   "detail": "",
+   "raw_status": "SURVIVOR",
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M061",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 76,
+   "definition": "VE.Commands.SourceExamples.share",
+   "operator": "list-drop-last",
+   "lines": [
+    76,
+    77
+   ],
+   "before": "[(\"force\", .str \"forbid\"), (\"act\", .str \"share_permitted\"), (\"args\", toJson [\"token1\"]),\n  (\"guard\", toJson [\"top\"])]",
+   "after": "([(\"force\", .str \"forbid\"), (\"act\", .str \"share_permitted\"), (\"args\", toJson [\"token1\"]),\n  (\"guard\", toJson [\"top\"])].dropLast)",
+   "status": "SURVIVOR",
+   "detail": "",
+   "raw_status": "SURVIVOR",
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M062",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 85,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-drop-last",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "[(\"id\", .str id), (\"span\", toJson [start, start + line.utf8ByteSize]),\n      (\"kind\", .str kind), (\"meaning\", .str \"specified\"), (\"support\", .str \"none\"),\n      (\"content\", content.getD (Json.mkObj [(\"fence\", .str id)]))]",
+   "after": "([(\"id\", .str id), (\"span\", toJson [start, start + line.utf8ByteSize]),\n      (\"kind\", .str kind), (\"meaning\", .str \"specified\"), (\"support\", .str \"none\"),\n      (\"content\", content.getD (Json.mkObj [(\"fence\", .str id)]))].dropLast)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:108: Expression",
+   "raw_status": "KILLED",
+   "reads": "d01449efa8614e649221baa28ac40028d7001e1b0df12da85e56e2c6f51c7c9c",
+   "killed_at": [
+    108,
+    108
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M063",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 98,
+   "definition": "VE.Commands.SourceExamples.two",
+   "operator": "list-drop-last",
+   "lines": [
+    97,
+    98
+   ],
+   "before": "[(\"c1\", \"instruction\", \"Click Check.\\n\", none), (\"c2\", \"instruction\", \"Do not share the token.\\n\", none)]",
+   "after": "([(\"c1\", \"instruction\", \"Click Check.\\n\", none), (\"c2\", \"instruction\", \"Do not share the token.\\n\", none)].dropLast)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "72fb9b1b97f843480d143f4d7ab33dcd86cb40b577cf9284fe254192048ac56e",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M064",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 120,
+   "definition": "VE.Commands.SourceExamples.fenced",
+   "operator": "list-drop-last",
+   "lines": [
+    119,
+    120
+   ],
+   "before": "(List.range n)",
+   "after": "((List.range n).dropLast)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:122: Expression",
+   "raw_status": "KILLED",
+   "reads": "a33007a1c428223f0ad4f75af9496c9b097674ecd7151e210987ff38e5a85441",
+   "killed_at": [
+    122,
+    123
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M065",
    "file": "VE/SpeechActs/Source/Run.lean",
    "line": 743,
    "definition": "VE.SpeechActs.Source.readSource",
@@ -1333,14 +2310,61 @@
    ],
    "before": "needed",
    "after": "(needed.dropLast)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:122: Expression",
+   "raw_status": "KILLED",
+   "reads": "c331a6242e1d81d77fbb8cb2393965d61863e740a2cfb63fb85a17405c65934c",
+   "killed_at": [
+    122,
+    123
+   ],
    "trust_class": "D[V]",
    "trusted": true
   },
   {
-   "id": "M024",
+   "id": "M066",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 85,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-first",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "[start, start + line.utf8ByteSize]",
+   "after": "([start, start + line.utf8ByteSize].take 1)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "da3634a1100e393215d8444532788b48218f70537f9bc994ec3b71e6cf6b59ac",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M067",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 120,
+   "definition": "VE.Commands.SourceExamples.fenced",
+   "operator": "list-first",
+   "lines": [
+    119,
+    120
+   ],
+   "before": "(List.range n).map",
+   "after": "(((List.range n).map).take 1)",
+   "status": "INVALID",
+   "detail": "Invalid field `take`: The environment does not contain `Function.take`",
+   "raw_status": "INVALID",
+   "reads": "d66f05b99349b9293b8e92ed5f0197dff8e49e6ce9253539463cfb2ff3537b3e",
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M068",
    "file": "VE/SpeechActs/Source/Run.lean",
    "line": 768,
    "definition": "VE.SpeechActs.Source.readSource",
@@ -1351,14 +2375,107 @@
    ],
    "before": "needed",
    "after": "(needed.take 1)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:110: Expression",
+   "raw_status": "KILLED",
+   "reads": "822a647196a4e3a370fa739a6855282ded6bfa34d3d6e67fb6e7fb7e68237907",
+   "killed_at": [
+    110,
+    110
+   ],
    "trust_class": "D[V]",
    "trusted": true
   },
   {
-   "id": "M025",
+   "id": "M069",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 74,
+   "definition": "VE.Commands.SourceExamples.click",
+   "operator": "list-drop-last",
+   "lines": [
+    74,
+    75
+   ],
+   "before": "[\"check\"]",
+   "after": "([\"check\"].dropLast)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "e60d56515c8a84a09e6be0cc55b1ede3349cf8d71978f01f373b0ef53ccb3bf1",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M070",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 76,
+   "definition": "VE.Commands.SourceExamples.share",
+   "operator": "list-drop-last",
+   "lines": [
+    76,
+    77
+   ],
+   "before": "[\"token1\"]",
+   "after": "([\"token1\"].dropLast)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "65cc63899dea452b5cdba96770e5f2bf5bbfc84c2ef56c6de30e768b072a09f6",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M071",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 85,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-drop-last",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "[start, start + line.utf8ByteSize]",
+   "after": "([start, start + line.utf8ByteSize].dropLast)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "da3634a1100e393215d8444532788b48218f70537f9bc994ec3b71e6cf6b59ac",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M072",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 120,
+   "definition": "VE.Commands.SourceExamples.fenced",
+   "operator": "list-drop-last",
+   "lines": [
+    119,
+    120
+   ],
+   "before": "(List.range n).map",
+   "after": "(((List.range n).map).dropLast)",
+   "status": "INVALID",
+   "detail": "Invalid field `dropLast`: The environment does not contain `Function.dropLast`",
+   "raw_status": "INVALID",
+   "reads": "d66f05b99349b9293b8e92ed5f0197dff8e49e6ce9253539463cfb2ff3537b3e",
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M073",
    "file": "VE/SpeechActs/Source/Run.lean",
    "line": 768,
    "definition": "VE.SpeechActs.Source.readSource",
@@ -1369,14 +2486,42 @@
    ],
    "before": "needed",
    "after": "(needed.dropLast)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:110: Expression",
+   "raw_status": "KILLED",
+   "reads": "822a647196a4e3a370fa739a6855282ded6bfa34d3d6e67fb6e7fb7e68237907",
+   "killed_at": [
+    110,
+    110
+   ],
    "trust_class": "D[V]",
    "trusted": true
   },
   {
-   "id": "M026",
+   "id": "M074",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 89,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-first",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "[(\"metadata\", Json.mkObj ([(\"format\", .str \"ve-document@2\"), (\"environment\", env),\n      (\"units\", .arr rows)] ++ extra)),\n    (\"source\", .str (String.join (units.map (\u00b7.2.2.1)))),\n    (\"fences\", Json.mkObj (units.filterMap fun (id, _, line, c) => if c.isNone then some (id, .str line) else none))]",
+   "after": "([(\"metadata\", Json.mkObj ([(\"format\", .str \"ve-document@2\"), (\"environment\", env),\n      (\"units\", .arr rows)] ++ extra)),\n    (\"source\", .str (String.join (units.map (\u00b7.2.2.1)))),\n    (\"fences\", Json.mkObj (units.filterMap fun (id, _, line, c) => if c.isNone then some (id, .str line) else none))].take 1)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "da3634a1100e393215d8444532788b48218f70537f9bc994ec3b71e6cf6b59ac",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M075",
    "file": "VE/SpeechActs/Source/Run.lean",
    "line": 768,
    "definition": "VE.SpeechActs.Source.readSource",
@@ -1387,14 +2532,88 @@
    ],
    "before": "needed.map (\u00b7.id)",
    "after": "((needed.map (\u00b7.id)).take 1)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:110: Expression",
+   "raw_status": "KILLED",
+   "reads": "822a647196a4e3a370fa739a6855282ded6bfa34d3d6e67fb6e7fb7e68237907",
+   "killed_at": [
+    110,
+    110
+   ],
    "trust_class": "D[V]",
    "trusted": true
   },
   {
-   "id": "M027",
+   "id": "M076",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 75,
+   "definition": "VE.Commands.SourceExamples.click",
+   "operator": "list-drop-last",
+   "lines": [
+    74,
+    75
+   ],
+   "before": "[\"top\"]",
+   "after": "([\"top\"].dropLast)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "e60d56515c8a84a09e6be0cc55b1ede3349cf8d71978f01f373b0ef53ccb3bf1",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M077",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 77,
+   "definition": "VE.Commands.SourceExamples.share",
+   "operator": "list-drop-last",
+   "lines": [
+    76,
+    77
+   ],
+   "before": "[\"top\"]",
+   "after": "([\"top\"].dropLast)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "65cc63899dea452b5cdba96770e5f2bf5bbfc84c2ef56c6de30e768b072a09f6",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M078",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 87,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-drop-last",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "[(\"fence\", .str id)]",
+   "after": "([(\"fence\", .str id)].dropLast)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "da3634a1100e393215d8444532788b48218f70537f9bc994ec3b71e6cf6b59ac",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M079",
    "file": "VE/SpeechActs/Source/Run.lean",
    "line": 768,
    "definition": "VE.SpeechActs.Source.readSource",
@@ -1405,14 +2624,42 @@
    ],
    "before": "needed.map (\u00b7.id)",
    "after": "((needed.map (\u00b7.id)).dropLast)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:110: Expression",
+   "raw_status": "KILLED",
+   "reads": "822a647196a4e3a370fa739a6855282ded6bfa34d3d6e67fb6e7fb7e68237907",
+   "killed_at": [
+    110,
+    110
+   ],
    "trust_class": "D[V]",
    "trusted": true
   },
   {
-   "id": "M028",
+   "id": "M080",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 89,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-first",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "[(\"format\", .str \"ve-document@2\"), (\"environment\", env),\n      (\"units\", .arr rows)]",
+   "after": "([(\"format\", .str \"ve-document@2\"), (\"environment\", env),\n      (\"units\", .arr rows)].take 1)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "da3634a1100e393215d8444532788b48218f70537f9bc994ec3b71e6cf6b59ac",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M081",
    "file": "VE/SpeechActs/Source/Run.lean",
    "line": 769,
    "definition": "VE.SpeechActs.Source.readSource",
@@ -1423,14 +2670,42 @@
    ],
    "before": "dec.units",
    "after": "(dec.units.take 1)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:110: Expression",
+   "raw_status": "KILLED",
+   "reads": "822a647196a4e3a370fa739a6855282ded6bfa34d3d6e67fb6e7fb7e68237907",
+   "killed_at": [
+    110,
+    110
+   ],
    "trust_class": "D[V]",
    "trusted": true
   },
   {
-   "id": "M029",
+   "id": "M082",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 89,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-drop-last",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "[(\"metadata\", Json.mkObj ([(\"format\", .str \"ve-document@2\"), (\"environment\", env),\n      (\"units\", .arr rows)] ++ extra)),\n    (\"source\", .str (String.join (units.map (\u00b7.2.2.1)))),\n    (\"fences\", Json.mkObj (units.filterMap fun (id, _, line, c) => if c.isNone then some (id, .str line) else none))]",
+   "after": "([(\"metadata\", Json.mkObj ([(\"format\", .str \"ve-document@2\"), (\"environment\", env),\n      (\"units\", .arr rows)] ++ extra)),\n    (\"source\", .str (String.join (units.map (\u00b7.2.2.1)))),\n    (\"fences\", Json.mkObj (units.filterMap fun (id, _, line, c) => if c.isNone then some (id, .str line) else none))].dropLast)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "da3634a1100e393215d8444532788b48218f70537f9bc994ec3b71e6cf6b59ac",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M083",
    "file": "VE/SpeechActs/Source/Run.lean",
    "line": 769,
    "definition": "VE.SpeechActs.Source.readSource",
@@ -1441,14 +2716,37 @@
    ],
    "before": "dec.units",
    "after": "(dec.units.dropLast)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:110: Expression",
+   "raw_status": "KILLED",
+   "reads": "822a647196a4e3a370fa739a6855282ded6bfa34d3d6e67fb6e7fb7e68237907",
+   "killed_at": [
+    110,
+    110
+   ],
    "trust_class": "D[V]",
    "trusted": true
   },
   {
-   "id": "M030",
+   "id": "M084",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 90,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-first",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "extra",
+   "after": "(extra.take 1)",
+   "status": "SURVIVOR",
+   "detail": "",
+   "raw_status": "SURVIVOR",
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M085",
    "file": "VE/SpeechActs/Source/Run.lean",
    "line": 769,
    "definition": "VE.SpeechActs.Source.readSource",
@@ -1466,7 +2764,30 @@
    "trusted": true
   },
   {
-   "id": "M031",
+   "id": "M086",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 89,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-drop-last",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "[(\"format\", .str \"ve-document@2\"), (\"environment\", env),\n      (\"units\", .arr rows)]",
+   "after": "([(\"format\", .str \"ve-document@2\"), (\"environment\", env),\n      (\"units\", .arr rows)].dropLast)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "da3634a1100e393215d8444532788b48218f70537f9bc994ec3b71e6cf6b59ac",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M087",
    "file": "VE/SpeechActs/Source/Run.lean",
    "line": 769,
    "definition": "VE.SpeechActs.Source.readSource",
@@ -1484,7 +2805,30 @@
    "trusted": true
   },
   {
-   "id": "M032",
+   "id": "M088",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 91,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-first",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "units",
+   "after": "(units.take 1)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "da3634a1100e393215d8444532788b48218f70537f9bc994ec3b71e6cf6b59ac",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M089",
    "file": "VE/SpeechActs/Source/Run.lean",
    "line": 770,
    "definition": "VE.SpeechActs.Source.readSource",
@@ -1503,7 +2847,30 @@
    "trusted": true
   },
   {
-   "id": "M033",
+   "id": "M090",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 90,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-drop-last",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "extra",
+   "after": "(extra.dropLast)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:116: Expression",
+   "raw_status": "KILLED",
+   "reads": "784ee5c6cd99988a3117cad0a7c74a4db8444efd4ef9364c5698088b218fb40b",
+   "killed_at": [
+    116,
+    118
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M091",
    "file": "VE/SpeechActs/Source/Run.lean",
    "line": 770,
    "definition": "VE.SpeechActs.Source.readSource",
@@ -1522,7 +2889,30 @@
    "trusted": true
   },
   {
-   "id": "M034",
+   "id": "M092",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 91,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-first",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "units.map (\u00b7.2.2.1)",
+   "after": "((units.map (\u00b7.2.2.1)).take 1)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "da3634a1100e393215d8444532788b48218f70537f9bc994ec3b71e6cf6b59ac",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M093",
    "file": "VE/SpeechActs/Source/Run.lean",
    "line": 772,
    "definition": "VE.SpeechActs.Source.readSource",
@@ -1540,7 +2930,30 @@
    "trusted": true
   },
   {
-   "id": "M035",
+   "id": "M094",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 91,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-drop-last",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "units",
+   "after": "(units.dropLast)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "da3634a1100e393215d8444532788b48218f70537f9bc994ec3b71e6cf6b59ac",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M095",
    "file": "VE/SpeechActs/Source/Run.lean",
    "line": 772,
    "definition": "VE.SpeechActs.Source.readSource",
@@ -1551,14 +2964,42 @@
    ],
    "before": "commands",
    "after": "(commands.dropLast)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:111: Expression",
+   "raw_status": "KILLED",
+   "reads": "e098e708f0dc66a03c3ad4db2ce02e01f98c583889130aa9dae05e58e4bd4d28",
+   "killed_at": [
+    111,
+    112
+   ],
    "trust_class": "D[V]",
    "trusted": true
   },
   {
-   "id": "M036",
+   "id": "M096",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 92,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-first",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "units",
+   "after": "(units.take 1)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "da3634a1100e393215d8444532788b48218f70537f9bc994ec3b71e6cf6b59ac",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M097",
    "file": "VE/SpeechActs/Source/Run.lean",
    "line": 774,
    "definition": "VE.SpeechActs.Source.readSource",
@@ -1569,14 +3010,42 @@
    ],
    "before": "fences",
    "after": "(fences.take 1)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "f4ba1595f6c62d2c3a5d59da47871167cece75eabd3a787500d66489efba5909",
+   "killed_at": [
+    107,
+    107
+   ],
    "trust_class": "D[V]",
    "trusted": true
   },
   {
-   "id": "M037",
+   "id": "M098",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 91,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-drop-last",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "units.map (\u00b7.2.2.1)",
+   "after": "((units.map (\u00b7.2.2.1)).dropLast)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "da3634a1100e393215d8444532788b48218f70537f9bc994ec3b71e6cf6b59ac",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M099",
    "file": "VE/SpeechActs/Source/Run.lean",
    "line": 774,
    "definition": "VE.SpeechActs.Source.readSource",
@@ -1587,14 +3056,38 @@
    ],
    "before": "fences",
    "after": "(fences.dropLast)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "f4ba1595f6c62d2c3a5d59da47871167cece75eabd3a787500d66489efba5909",
+   "killed_at": [
+    107,
+    107
+   ],
    "trust_class": "D[V]",
    "trusted": true
   },
   {
-   "id": "M038",
+   "id": "M100",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 92,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-first",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "units.filterMap",
+   "after": "(units.filterMap.take 1)",
+   "status": "INVALID",
+   "detail": "Invalid field `take`: The environment does not contain `Function.take`",
+   "raw_status": "INVALID",
+   "reads": "6c98619de3b61cf71f1a972c29ec51435294923c6b4ff5918b511c613fb200fe",
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M101",
    "file": "VE/SpeechActs/Source/Run.lean",
    "line": 774,
    "definition": "VE.SpeechActs.Source.readSource",
@@ -1605,14 +3098,42 @@
    ],
    "before": "fences.reverse",
    "after": "(fences.reverse.take 1)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "f4ba1595f6c62d2c3a5d59da47871167cece75eabd3a787500d66489efba5909",
+   "killed_at": [
+    107,
+    107
+   ],
    "trust_class": "D[V]",
    "trusted": true
   },
   {
-   "id": "M039",
+   "id": "M102",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 92,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-drop-last",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "units",
+   "after": "(units.dropLast)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "da3634a1100e393215d8444532788b48218f70537f9bc994ec3b71e6cf6b59ac",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M103",
    "file": "VE/SpeechActs/Source/Run.lean",
    "line": 774,
    "definition": "VE.SpeechActs.Source.readSource",
@@ -1623,14 +3144,347 @@
    ],
    "before": "fences.reverse",
    "after": "(fences.reverse.dropLast)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "f4ba1595f6c62d2c3a5d59da47871167cece75eabd3a787500d66489efba5909",
+   "killed_at": [
+    107,
+    107
+   ],
    "trust_class": "D[V]",
    "trusted": true
   },
   {
-   "id": "M040",
+   "id": "M104",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 93,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-first",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "resolved",
+   "after": "(resolved.take 1)",
+   "status": "SURVIVOR",
+   "detail": "",
+   "raw_status": "SURVIVOR",
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M105",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 92,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-drop-last",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "units.filterMap",
+   "after": "(units.filterMap.dropLast)",
+   "status": "INVALID",
+   "detail": "Invalid field `dropLast`: The environment does not contain `Function.dropLast`",
+   "raw_status": "INVALID",
+   "reads": "6c98619de3b61cf71f1a972c29ec51435294923c6b4ff5918b511c613fb200fe",
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M106",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 94,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-first",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "resolved",
+   "after": "(resolved.take 1)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "da3634a1100e393215d8444532788b48218f70537f9bc994ec3b71e6cf6b59ac",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M107",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 93,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-drop-last",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "resolved",
+   "after": "(resolved.dropLast)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:111: Expression",
+   "raw_status": "KILLED",
+   "reads": "d862894fe9d503c56973ddbd52e906360e20f92b91e0a3c648d9186d66eee266",
+   "killed_at": [
+    111,
+    112
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M108",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 94,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-first",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "resolved.map",
+   "after": "(resolved.map.take 1)",
+   "status": "INVALID",
+   "detail": "Invalid field `take`: The environment does not contain `Function.take`",
+   "raw_status": "INVALID",
+   "reads": "6c98619de3b61cf71f1a972c29ec51435294923c6b4ff5918b511c613fb200fe",
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M109",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 94,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-drop-last",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "[(\"resolved_fences\", Json.mkObj (resolved.map fun (id, c) => (id, Json.mkObj [(\"command\", c)])))]",
+   "after": "([(\"resolved_fences\", Json.mkObj (resolved.map fun (id, c) => (id, Json.mkObj [(\"command\", c)])))].dropLast)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "da3634a1100e393215d8444532788b48218f70537f9bc994ec3b71e6cf6b59ac",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M110",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 94,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-drop-last",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "resolved",
+   "after": "(resolved.dropLast)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "da3634a1100e393215d8444532788b48218f70537f9bc994ec3b71e6cf6b59ac",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M111",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 94,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-drop-last",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "resolved.map",
+   "after": "(resolved.map.dropLast)",
+   "status": "INVALID",
+   "detail": "Invalid field `dropLast`: The environment does not contain `Function.dropLast`",
+   "raw_status": "INVALID",
+   "reads": "6c98619de3b61cf71f1a972c29ec51435294923c6b4ff5918b511c613fb200fe",
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M112",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 94,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-drop-last",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "[(\"command\", c)]",
+   "after": "([(\"command\", c)].dropLast)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "da3634a1100e393215d8444532788b48218f70537f9bc994ec3b71e6cf6b59ac",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M113",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 95,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-drop-last",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "[(\"reading_context\", context)]",
+   "after": "([(\"reading_context\", context)].dropLast)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "da3634a1100e393215d8444532788b48218f70537f9bc994ec3b71e6cf6b59ac",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M114",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 74,
+   "definition": "VE.Commands.SourceExamples.click",
+   "operator": "list-last",
+   "lines": [
+    74,
+    75
+   ],
+   "before": "[(\"force\", .str \"require\"), (\"act\", .str \"click_required\"), (\"args\", toJson [\"check\"]),\n  (\"guard\", toJson [\"top\"])]",
+   "after": "([(\"force\", .str \"require\"), (\"act\", .str \"click_required\"), (\"args\", toJson [\"check\"]),\n  (\"guard\", toJson [\"top\"])].reverse.take 1)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "e60d56515c8a84a09e6be0cc55b1ede3349cf8d71978f01f373b0ef53ccb3bf1",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M115",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 76,
+   "definition": "VE.Commands.SourceExamples.share",
+   "operator": "list-last",
+   "lines": [
+    76,
+    77
+   ],
+   "before": "[(\"force\", .str \"forbid\"), (\"act\", .str \"share_permitted\"), (\"args\", toJson [\"token1\"]),\n  (\"guard\", toJson [\"top\"])]",
+   "after": "([(\"force\", .str \"forbid\"), (\"act\", .str \"share_permitted\"), (\"args\", toJson [\"token1\"]),\n  (\"guard\", toJson [\"top\"])].reverse.take 1)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "65cc63899dea452b5cdba96770e5f2bf5bbfc84c2ef56c6de30e768b072a09f6",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M116",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 85,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-last",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "[(\"id\", .str id), (\"span\", toJson [start, start + line.utf8ByteSize]),\n      (\"kind\", .str kind), (\"meaning\", .str \"specified\"), (\"support\", .str \"none\"),\n      (\"content\", content.getD (Json.mkObj [(\"fence\", .str id)]))]",
+   "after": "([(\"id\", .str id), (\"span\", toJson [start, start + line.utf8ByteSize]),\n      (\"kind\", .str kind), (\"meaning\", .str \"specified\"), (\"support\", .str \"none\"),\n      (\"content\", content.getD (Json.mkObj [(\"fence\", .str id)]))].reverse.take 1)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "da3634a1100e393215d8444532788b48218f70537f9bc994ec3b71e6cf6b59ac",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M117",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 98,
+   "definition": "VE.Commands.SourceExamples.two",
+   "operator": "list-last",
+   "lines": [
+    97,
+    98
+   ],
+   "before": "[(\"c1\", \"instruction\", \"Click Check.\\n\", none), (\"c2\", \"instruction\", \"Do not share the token.\\n\", none)]",
+   "after": "([(\"c1\", \"instruction\", \"Click Check.\\n\", none), (\"c2\", \"instruction\", \"Do not share the token.\\n\", none)].reverse.take 1)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "72fb9b1b97f843480d143f4d7ab33dcd86cb40b577cf9284fe254192048ac56e",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M118",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 120,
+   "definition": "VE.Commands.SourceExamples.fenced",
+   "operator": "list-last",
+   "lines": [
+    119,
+    120
+   ],
+   "before": "(List.range n)",
+   "after": "((List.range n).reverse.take 1)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:122: Expression",
+   "raw_status": "KILLED",
+   "reads": "a33007a1c428223f0ad4f75af9496c9b097674ecd7151e210987ff38e5a85441",
+   "killed_at": [
+    122,
+    123
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M119",
    "file": "VE/SpeechActs/Source/Run.lean",
    "line": 743,
    "definition": "VE.SpeechActs.Source.readSource",
@@ -1641,14 +3495,157 @@
    ],
    "before": "needed",
    "after": "(needed.reverse.take 1)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:122: Expression",
+   "raw_status": "KILLED",
+   "reads": "c331a6242e1d81d77fbb8cb2393965d61863e740a2cfb63fb85a17405c65934c",
+   "killed_at": [
+    122,
+    123
+   ],
    "trust_class": "D[V]",
    "trusted": true
   },
   {
-   "id": "M041",
+   "id": "M120",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 70,
+   "definition": "VE.Commands.SourceExamples.context",
+   "operator": "list-drop-first",
+   "lines": [
+    67,
+    72
+   ],
+   "before": "[(\"lexicon\", RunExamples.lexJson (env.setObjVal! \"speech_acts\"\n      (VE.SpeechActs.Wire.encodeScope se.scope)))]",
+   "after": "([(\"lexicon\", RunExamples.lexJson (env.setObjVal! \"speech_acts\"\n      (VE.SpeechActs.Wire.encodeScope se.scope)))].drop 1)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "ed24958cbb52dff852c5d909670c5ed3f2815139cfad9ae6b1417255284b1c30",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M121",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 74,
+   "definition": "VE.Commands.SourceExamples.click",
+   "operator": "list-drop-first",
+   "lines": [
+    74,
+    75
+   ],
+   "before": "[(\"force\", .str \"require\"), (\"act\", .str \"click_required\"), (\"args\", toJson [\"check\"]),\n  (\"guard\", toJson [\"top\"])]",
+   "after": "([(\"force\", .str \"require\"), (\"act\", .str \"click_required\"), (\"args\", toJson [\"check\"]),\n  (\"guard\", toJson [\"top\"])].drop 1)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "e60d56515c8a84a09e6be0cc55b1ede3349cf8d71978f01f373b0ef53ccb3bf1",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M122",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 76,
+   "definition": "VE.Commands.SourceExamples.share",
+   "operator": "list-drop-first",
+   "lines": [
+    76,
+    77
+   ],
+   "before": "[(\"force\", .str \"forbid\"), (\"act\", .str \"share_permitted\"), (\"args\", toJson [\"token1\"]),\n  (\"guard\", toJson [\"top\"])]",
+   "after": "([(\"force\", .str \"forbid\"), (\"act\", .str \"share_permitted\"), (\"args\", toJson [\"token1\"]),\n  (\"guard\", toJson [\"top\"])].drop 1)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "65cc63899dea452b5cdba96770e5f2bf5bbfc84c2ef56c6de30e768b072a09f6",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M123",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 85,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-drop-first",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "[(\"id\", .str id), (\"span\", toJson [start, start + line.utf8ByteSize]),\n      (\"kind\", .str kind), (\"meaning\", .str \"specified\"), (\"support\", .str \"none\"),\n      (\"content\", content.getD (Json.mkObj [(\"fence\", .str id)]))]",
+   "after": "([(\"id\", .str id), (\"span\", toJson [start, start + line.utf8ByteSize]),\n      (\"kind\", .str kind), (\"meaning\", .str \"specified\"), (\"support\", .str \"none\"),\n      (\"content\", content.getD (Json.mkObj [(\"fence\", .str id)]))].drop 1)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "da3634a1100e393215d8444532788b48218f70537f9bc994ec3b71e6cf6b59ac",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M124",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 98,
+   "definition": "VE.Commands.SourceExamples.two",
+   "operator": "list-drop-first",
+   "lines": [
+    97,
+    98
+   ],
+   "before": "[(\"c1\", \"instruction\", \"Click Check.\\n\", none), (\"c2\", \"instruction\", \"Do not share the token.\\n\", none)]",
+   "after": "([(\"c1\", \"instruction\", \"Click Check.\\n\", none), (\"c2\", \"instruction\", \"Do not share the token.\\n\", none)].drop 1)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "72fb9b1b97f843480d143f4d7ab33dcd86cb40b577cf9284fe254192048ac56e",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M125",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 120,
+   "definition": "VE.Commands.SourceExamples.fenced",
+   "operator": "list-drop-first",
+   "lines": [
+    119,
+    120
+   ],
+   "before": "(List.range n)",
+   "after": "((List.range n).drop 1)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:122: Expression",
+   "raw_status": "KILLED",
+   "reads": "a33007a1c428223f0ad4f75af9496c9b097674ecd7151e210987ff38e5a85441",
+   "killed_at": [
+    122,
+    123
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M126",
    "file": "VE/SpeechActs/Source/Run.lean",
    "line": 743,
    "definition": "VE.SpeechActs.Source.readSource",
@@ -1659,14 +3656,130 @@
    ],
    "before": "needed",
    "after": "(needed.drop 1)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:122: Expression",
+   "raw_status": "KILLED",
+   "reads": "c331a6242e1d81d77fbb8cb2393965d61863e740a2cfb63fb85a17405c65934c",
+   "killed_at": [
+    122,
+    123
+   ],
    "trust_class": "D[V]",
    "trusted": true
   },
   {
-   "id": "M042",
+   "id": "M127",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 74,
+   "definition": "VE.Commands.SourceExamples.click",
+   "operator": "list-drop-middle",
+   "lines": [
+    74,
+    75
+   ],
+   "before": " (\"act\", .str \"click_required\"),",
+   "after": "",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "e60d56515c8a84a09e6be0cc55b1ede3349cf8d71978f01f373b0ef53ccb3bf1",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M128",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 76,
+   "definition": "VE.Commands.SourceExamples.share",
+   "operator": "list-drop-middle",
+   "lines": [
+    76,
+    77
+   ],
+   "before": " (\"act\", .str \"share_permitted\"),",
+   "after": "",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "65cc63899dea452b5cdba96770e5f2bf5bbfc84c2ef56c6de30e768b072a09f6",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M129",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 85,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-drop-middle",
+   "lines": [
+    79,
+    95
+   ],
+   "before": " (\"span\", toJson [start, start + line.utf8ByteSize]),",
+   "after": "",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "da3634a1100e393215d8444532788b48218f70537f9bc994ec3b71e6cf6b59ac",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M130",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 85,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-last",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "[start, start + line.utf8ByteSize]",
+   "after": "([start, start + line.utf8ByteSize].reverse.take 1)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "da3634a1100e393215d8444532788b48218f70537f9bc994ec3b71e6cf6b59ac",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M131",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 120,
+   "definition": "VE.Commands.SourceExamples.fenced",
+   "operator": "list-last",
+   "lines": [
+    119,
+    120
+   ],
+   "before": "(List.range n).map",
+   "after": "(((List.range n).map).reverse.take 1)",
+   "status": "INVALID",
+   "detail": "Invalid field `reverse`: The environment does not contain `Function.reverse`",
+   "raw_status": "INVALID",
+   "reads": "d66f05b99349b9293b8e92ed5f0197dff8e49e6ce9253539463cfb2ff3537b3e",
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M132",
    "file": "VE/SpeechActs/Source/Run.lean",
    "line": 768,
    "definition": "VE.SpeechActs.Source.readSource",
@@ -1677,14 +3790,107 @@
    ],
    "before": "needed",
    "after": "(needed.reverse.take 1)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:109: Expression",
+   "raw_status": "KILLED",
+   "reads": "e9a6fc3badba3466838a6ea5dac8f195790070dc7a1ecfafd2f5964a176f64b2",
+   "killed_at": [
+    109,
+    109
+   ],
    "trust_class": "D[V]",
    "trusted": true
   },
   {
-   "id": "M043",
+   "id": "M133",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 74,
+   "definition": "VE.Commands.SourceExamples.click",
+   "operator": "list-drop-first",
+   "lines": [
+    74,
+    75
+   ],
+   "before": "[\"check\"]",
+   "after": "([\"check\"].drop 1)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "e60d56515c8a84a09e6be0cc55b1ede3349cf8d71978f01f373b0ef53ccb3bf1",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M134",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 76,
+   "definition": "VE.Commands.SourceExamples.share",
+   "operator": "list-drop-first",
+   "lines": [
+    76,
+    77
+   ],
+   "before": "[\"token1\"]",
+   "after": "([\"token1\"].drop 1)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "65cc63899dea452b5cdba96770e5f2bf5bbfc84c2ef56c6de30e768b072a09f6",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M135",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 85,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-drop-first",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "[start, start + line.utf8ByteSize]",
+   "after": "([start, start + line.utf8ByteSize].drop 1)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "da3634a1100e393215d8444532788b48218f70537f9bc994ec3b71e6cf6b59ac",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M136",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 120,
+   "definition": "VE.Commands.SourceExamples.fenced",
+   "operator": "list-drop-first",
+   "lines": [
+    119,
+    120
+   ],
+   "before": "(List.range n).map",
+   "after": "(((List.range n).map).drop 1)",
+   "status": "INVALID",
+   "detail": "Invalid field `drop`: The environment does not contain `Function.drop`",
+   "raw_status": "INVALID",
+   "reads": "d66f05b99349b9293b8e92ed5f0197dff8e49e6ce9253539463cfb2ff3537b3e",
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M137",
    "file": "VE/SpeechActs/Source/Run.lean",
    "line": 768,
    "definition": "VE.SpeechActs.Source.readSource",
@@ -1695,14 +3901,111 @@
    ],
    "before": "needed",
    "after": "(needed.drop 1)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:109: Expression",
+   "raw_status": "KILLED",
+   "reads": "e9a6fc3badba3466838a6ea5dac8f195790070dc7a1ecfafd2f5964a176f64b2",
+   "killed_at": [
+    109,
+    109
+   ],
    "trust_class": "D[V]",
    "trusted": true
   },
   {
-   "id": "M044",
+   "id": "M138",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 74,
+   "definition": "VE.Commands.SourceExamples.click",
+   "operator": "list-drop-middle",
+   "lines": [
+    74,
+    75
+   ],
+   "before": " (\"args\", toJson [\"check\"]),",
+   "after": "",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "e60d56515c8a84a09e6be0cc55b1ede3349cf8d71978f01f373b0ef53ccb3bf1",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M139",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 76,
+   "definition": "VE.Commands.SourceExamples.share",
+   "operator": "list-drop-middle",
+   "lines": [
+    76,
+    77
+   ],
+   "before": " (\"args\", toJson [\"token1\"]),",
+   "after": "",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "65cc63899dea452b5cdba96770e5f2bf5bbfc84c2ef56c6de30e768b072a09f6",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M140",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 85,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-drop-middle",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "\n      (\"kind\", .str kind),",
+   "after": "\n",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "da3634a1100e393215d8444532788b48218f70537f9bc994ec3b71e6cf6b59ac",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M141",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 89,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-last",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "[(\"metadata\", Json.mkObj ([(\"format\", .str \"ve-document@2\"), (\"environment\", env),\n      (\"units\", .arr rows)] ++ extra)),\n    (\"source\", .str (String.join (units.map (\u00b7.2.2.1)))),\n    (\"fences\", Json.mkObj (units.filterMap fun (id, _, line, c) => if c.isNone then some (id, .str line) else none))]",
+   "after": "([(\"metadata\", Json.mkObj ([(\"format\", .str \"ve-document@2\"), (\"environment\", env),\n      (\"units\", .arr rows)] ++ extra)),\n    (\"source\", .str (String.join (units.map (\u00b7.2.2.1)))),\n    (\"fences\", Json.mkObj (units.filterMap fun (id, _, line, c) => if c.isNone then some (id, .str line) else none))].reverse.take 1)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "da3634a1100e393215d8444532788b48218f70537f9bc994ec3b71e6cf6b59ac",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M142",
    "file": "VE/SpeechActs/Source/Run.lean",
    "line": 768,
    "definition": "VE.SpeechActs.Source.readSource",
@@ -1713,14 +4016,88 @@
    ],
    "before": "needed.map (\u00b7.id)",
    "after": "((needed.map (\u00b7.id)).reverse.take 1)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:109: Expression",
+   "raw_status": "KILLED",
+   "reads": "e9a6fc3badba3466838a6ea5dac8f195790070dc7a1ecfafd2f5964a176f64b2",
+   "killed_at": [
+    109,
+    109
+   ],
    "trust_class": "D[V]",
    "trusted": true
   },
   {
-   "id": "M045",
+   "id": "M143",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 75,
+   "definition": "VE.Commands.SourceExamples.click",
+   "operator": "list-drop-first",
+   "lines": [
+    74,
+    75
+   ],
+   "before": "[\"top\"]",
+   "after": "([\"top\"].drop 1)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "e60d56515c8a84a09e6be0cc55b1ede3349cf8d71978f01f373b0ef53ccb3bf1",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M144",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 77,
+   "definition": "VE.Commands.SourceExamples.share",
+   "operator": "list-drop-first",
+   "lines": [
+    76,
+    77
+   ],
+   "before": "[\"top\"]",
+   "after": "([\"top\"].drop 1)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "65cc63899dea452b5cdba96770e5f2bf5bbfc84c2ef56c6de30e768b072a09f6",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M145",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 87,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-drop-first",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "[(\"fence\", .str id)]",
+   "after": "([(\"fence\", .str id)].drop 1)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "da3634a1100e393215d8444532788b48218f70537f9bc994ec3b71e6cf6b59ac",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M146",
    "file": "VE/SpeechActs/Source/Run.lean",
    "line": 768,
    "definition": "VE.SpeechActs.Source.readSource",
@@ -1731,14 +4108,65 @@
    ],
    "before": "needed.map (\u00b7.id)",
    "after": "((needed.map (\u00b7.id)).drop 1)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:109: Expression",
+   "raw_status": "KILLED",
+   "reads": "e9a6fc3badba3466838a6ea5dac8f195790070dc7a1ecfafd2f5964a176f64b2",
+   "killed_at": [
+    109,
+    109
+   ],
    "trust_class": "D[V]",
    "trusted": true
   },
   {
-   "id": "M046",
+   "id": "M147",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 86,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-drop-middle",
+   "lines": [
+    79,
+    95
+   ],
+   "before": " (\"meaning\", .str \"specified\"),",
+   "after": "",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "da3634a1100e393215d8444532788b48218f70537f9bc994ec3b71e6cf6b59ac",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M148",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 89,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-last",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "[(\"format\", .str \"ve-document@2\"), (\"environment\", env),\n      (\"units\", .arr rows)]",
+   "after": "([(\"format\", .str \"ve-document@2\"), (\"environment\", env),\n      (\"units\", .arr rows)].reverse.take 1)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "da3634a1100e393215d8444532788b48218f70537f9bc994ec3b71e6cf6b59ac",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M149",
    "file": "VE/SpeechActs/Source/Run.lean",
    "line": 769,
    "definition": "VE.SpeechActs.Source.readSource",
@@ -1749,14 +4177,42 @@
    ],
    "before": "dec.units",
    "after": "(dec.units.reverse.take 1)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:109: Expression",
+   "raw_status": "KILLED",
+   "reads": "e9a6fc3badba3466838a6ea5dac8f195790070dc7a1ecfafd2f5964a176f64b2",
+   "killed_at": [
+    109,
+    109
+   ],
    "trust_class": "D[V]",
    "trusted": true
   },
   {
-   "id": "M047",
+   "id": "M150",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 89,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-drop-first",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "[(\"metadata\", Json.mkObj ([(\"format\", .str \"ve-document@2\"), (\"environment\", env),\n      (\"units\", .arr rows)] ++ extra)),\n    (\"source\", .str (String.join (units.map (\u00b7.2.2.1)))),\n    (\"fences\", Json.mkObj (units.filterMap fun (id, _, line, c) => if c.isNone then some (id, .str line) else none))]",
+   "after": "([(\"metadata\", Json.mkObj ([(\"format\", .str \"ve-document@2\"), (\"environment\", env),\n      (\"units\", .arr rows)] ++ extra)),\n    (\"source\", .str (String.join (units.map (\u00b7.2.2.1)))),\n    (\"fences\", Json.mkObj (units.filterMap fun (id, _, line, c) => if c.isNone then some (id, .str line) else none))].drop 1)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "da3634a1100e393215d8444532788b48218f70537f9bc994ec3b71e6cf6b59ac",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M151",
    "file": "VE/SpeechActs/Source/Run.lean",
    "line": 769,
    "definition": "VE.SpeechActs.Source.readSource",
@@ -1767,14 +4223,60 @@
    ],
    "before": "dec.units",
    "after": "(dec.units.drop 1)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:109: Expression",
+   "raw_status": "KILLED",
+   "reads": "e9a6fc3badba3466838a6ea5dac8f195790070dc7a1ecfafd2f5964a176f64b2",
+   "killed_at": [
+    109,
+    109
+   ],
    "trust_class": "D[V]",
    "trusted": true
   },
   {
-   "id": "M048",
+   "id": "M152",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 86,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-drop-middle",
+   "lines": [
+    79,
+    95
+   ],
+   "before": " (\"support\", .str \"none\"),",
+   "after": "",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "da3634a1100e393215d8444532788b48218f70537f9bc994ec3b71e6cf6b59ac",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M153",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 90,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-last",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "extra",
+   "after": "(extra.reverse.take 1)",
+   "status": "SURVIVOR",
+   "detail": "",
+   "raw_status": "SURVIVOR",
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M154",
    "file": "VE/SpeechActs/Source/Run.lean",
    "line": 769,
    "definition": "VE.SpeechActs.Source.readSource",
@@ -1792,7 +4294,30 @@
    "trusted": true
   },
   {
-   "id": "M049",
+   "id": "M155",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 89,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-drop-first",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "[(\"format\", .str \"ve-document@2\"), (\"environment\", env),\n      (\"units\", .arr rows)]",
+   "after": "([(\"format\", .str \"ve-document@2\"), (\"environment\", env),\n      (\"units\", .arr rows)].drop 1)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "da3634a1100e393215d8444532788b48218f70537f9bc994ec3b71e6cf6b59ac",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M156",
    "file": "VE/SpeechActs/Source/Run.lean",
    "line": 769,
    "definition": "VE.SpeechActs.Source.readSource",
@@ -1810,7 +4335,53 @@
    "trusted": true
   },
   {
-   "id": "M050",
+   "id": "M157",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 89,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-drop-middle",
+   "lines": [
+    79,
+    95
+   ],
+   "before": " (\"environment\", env),",
+   "after": "",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "da3634a1100e393215d8444532788b48218f70537f9bc994ec3b71e6cf6b59ac",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M158",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 91,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-last",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "units",
+   "after": "(units.reverse.take 1)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "da3634a1100e393215d8444532788b48218f70537f9bc994ec3b71e6cf6b59ac",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M159",
    "file": "VE/SpeechActs/Source/Run.lean",
    "line": 770,
    "definition": "VE.SpeechActs.Source.readSource",
@@ -1829,7 +4400,30 @@
    "trusted": true
   },
   {
-   "id": "M051",
+   "id": "M160",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 90,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-drop-first",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "extra",
+   "after": "(extra.drop 1)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:116: Expression",
+   "raw_status": "KILLED",
+   "reads": "784ee5c6cd99988a3117cad0a7c74a4db8444efd4ef9364c5698088b218fb40b",
+   "killed_at": [
+    116,
+    118
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M161",
    "file": "VE/SpeechActs/Source/Run.lean",
    "line": 770,
    "definition": "VE.SpeechActs.Source.readSource",
@@ -1848,7 +4442,53 @@
    "trusted": true
   },
   {
-   "id": "M052",
+   "id": "M162",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 90,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-drop-middle",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "\n    (\"source\", .str (String.join (units.map (\u00b7.2.2.1)))),",
+   "after": "\n",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "da3634a1100e393215d8444532788b48218f70537f9bc994ec3b71e6cf6b59ac",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M163",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 91,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-last",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "units.map (\u00b7.2.2.1)",
+   "after": "((units.map (\u00b7.2.2.1)).reverse.take 1)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "da3634a1100e393215d8444532788b48218f70537f9bc994ec3b71e6cf6b59ac",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M164",
    "file": "VE/SpeechActs/Source/Run.lean",
    "line": 772,
    "definition": "VE.SpeechActs.Source.readSource",
@@ -1866,7 +4506,30 @@
    "trusted": true
   },
   {
-   "id": "M053",
+   "id": "M165",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 91,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-drop-first",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "units",
+   "after": "(units.drop 1)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "da3634a1100e393215d8444532788b48218f70537f9bc994ec3b71e6cf6b59ac",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M166",
    "file": "VE/SpeechActs/Source/Run.lean",
    "line": 772,
    "definition": "VE.SpeechActs.Source.readSource",
@@ -1877,14 +4540,42 @@
    ],
    "before": "commands",
    "after": "(commands.drop 1)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:111: Expression",
+   "raw_status": "KILLED",
+   "reads": "e098e708f0dc66a03c3ad4db2ce02e01f98c583889130aa9dae05e58e4bd4d28",
+   "killed_at": [
+    111,
+    112
+   ],
    "trust_class": "D[V]",
    "trusted": true
   },
   {
-   "id": "M054",
+   "id": "M167",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 92,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-last",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "units",
+   "after": "(units.reverse.take 1)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "da3634a1100e393215d8444532788b48218f70537f9bc994ec3b71e6cf6b59ac",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M168",
    "file": "VE/SpeechActs/Source/Run.lean",
    "line": 774,
    "definition": "VE.SpeechActs.Source.readSource",
@@ -1895,14 +4586,42 @@
    ],
    "before": "fences",
    "after": "(fences.reverse.take 1)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "f4ba1595f6c62d2c3a5d59da47871167cece75eabd3a787500d66489efba5909",
+   "killed_at": [
+    107,
+    107
+   ],
    "trust_class": "D[V]",
    "trusted": true
   },
   {
-   "id": "M055",
+   "id": "M169",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 91,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-drop-first",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "units.map (\u00b7.2.2.1)",
+   "after": "((units.map (\u00b7.2.2.1)).drop 1)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "da3634a1100e393215d8444532788b48218f70537f9bc994ec3b71e6cf6b59ac",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M170",
    "file": "VE/SpeechActs/Source/Run.lean",
    "line": 774,
    "definition": "VE.SpeechActs.Source.readSource",
@@ -1913,14 +4632,38 @@
    ],
    "before": "fences",
    "after": "(fences.drop 1)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "f4ba1595f6c62d2c3a5d59da47871167cece75eabd3a787500d66489efba5909",
+   "killed_at": [
+    107,
+    107
+   ],
    "trust_class": "D[V]",
    "trusted": true
   },
   {
-   "id": "M056",
+   "id": "M171",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 92,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-last",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "units.filterMap",
+   "after": "(units.filterMap.reverse.take 1)",
+   "status": "INVALID",
+   "detail": "Invalid field `reverse`: The environment does not contain `Function.reverse`",
+   "raw_status": "INVALID",
+   "reads": "6c98619de3b61cf71f1a972c29ec51435294923c6b4ff5918b511c613fb200fe",
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M172",
    "file": "VE/SpeechActs/Source/Run.lean",
    "line": 774,
    "definition": "VE.SpeechActs.Source.readSource",
@@ -1931,14 +4674,42 @@
    ],
    "before": "fences.reverse",
    "after": "(fences.reverse.reverse.take 1)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "f4ba1595f6c62d2c3a5d59da47871167cece75eabd3a787500d66489efba5909",
+   "killed_at": [
+    107,
+    107
+   ],
    "trust_class": "D[V]",
    "trusted": true
   },
   {
-   "id": "M057",
+   "id": "M173",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 92,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-drop-first",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "units",
+   "after": "(units.drop 1)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "da3634a1100e393215d8444532788b48218f70537f9bc994ec3b71e6cf6b59ac",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M174",
    "file": "VE/SpeechActs/Source/Run.lean",
    "line": 774,
    "definition": "VE.SpeechActs.Source.readSource",
@@ -1949,10 +4720,228 @@
    ],
    "before": "fences.reverse",
    "after": "(fences.reverse.drop 1)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "f4ba1595f6c62d2c3a5d59da47871167cece75eabd3a787500d66489efba5909",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "D[V]",
+   "trusted": true
+  },
+  {
+   "id": "M175",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 93,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-last",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "resolved",
+   "after": "(resolved.reverse.take 1)",
    "status": "SURVIVOR",
    "detail": "",
    "raw_status": "SURVIVOR",
-   "trust_class": "D[V]",
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M176",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 92,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-drop-first",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "units.filterMap",
+   "after": "(units.filterMap.drop 1)",
+   "status": "INVALID",
+   "detail": "Invalid field `drop`: The environment does not contain `Function.drop`",
+   "raw_status": "INVALID",
+   "reads": "6c98619de3b61cf71f1a972c29ec51435294923c6b4ff5918b511c613fb200fe",
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M177",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 94,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-last",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "resolved",
+   "after": "(resolved.reverse.take 1)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "da3634a1100e393215d8444532788b48218f70537f9bc994ec3b71e6cf6b59ac",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M178",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 93,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-drop-first",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "resolved",
+   "after": "(resolved.drop 1)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:111: Expression",
+   "raw_status": "KILLED",
+   "reads": "d862894fe9d503c56973ddbd52e906360e20f92b91e0a3c648d9186d66eee266",
+   "killed_at": [
+    111,
+    112
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M179",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 94,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-last",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "resolved.map",
+   "after": "(resolved.map.reverse.take 1)",
+   "status": "INVALID",
+   "detail": "Invalid field `reverse`: The environment does not contain `Function.reverse`",
+   "raw_status": "INVALID",
+   "reads": "6c98619de3b61cf71f1a972c29ec51435294923c6b4ff5918b511c613fb200fe",
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M180",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 94,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-drop-first",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "[(\"resolved_fences\", Json.mkObj (resolved.map fun (id, c) => (id, Json.mkObj [(\"command\", c)])))]",
+   "after": "([(\"resolved_fences\", Json.mkObj (resolved.map fun (id, c) => (id, Json.mkObj [(\"command\", c)])))].drop 1)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "da3634a1100e393215d8444532788b48218f70537f9bc994ec3b71e6cf6b59ac",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M181",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 94,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-drop-first",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "resolved",
+   "after": "(resolved.drop 1)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "da3634a1100e393215d8444532788b48218f70537f9bc994ec3b71e6cf6b59ac",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M182",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 94,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-drop-first",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "resolved.map",
+   "after": "(resolved.map.drop 1)",
+   "status": "INVALID",
+   "detail": "Invalid field `drop`: The environment does not contain `Function.drop`",
+   "raw_status": "INVALID",
+   "reads": "6c98619de3b61cf71f1a972c29ec51435294923c6b4ff5918b511c613fb200fe",
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M183",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 94,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-drop-first",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "[(\"command\", c)]",
+   "after": "([(\"command\", c)].drop 1)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "da3634a1100e393215d8444532788b48218f70537f9bc994ec3b71e6cf6b59ac",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
+   "trusted": true
+  },
+  {
+   "id": "M184",
+   "file": "VE/Commands/RunSplit.lean",
+   "line": 95,
+   "definition": "VE.Commands.SourceExamples.payload",
+   "operator": "list-drop-first",
+   "lines": [
+    79,
+    95
+   ],
+   "before": "[(\"reading_context\", context)]",
+   "after": "([(\"reading_context\", context)].drop 1)",
+   "status": "KILLED",
+   "detail": "lean/VE/Commands/RunSplit.lean:107: Expression",
+   "raw_status": "KILLED",
+   "reads": "da3634a1100e393215d8444532788b48218f70537f9bc994ec3b71e6cf6b59ac",
+   "killed_at": [
+    107,
+    107
+   ],
+   "trust_class": "?",
    "trusted": true
   }
  ],
