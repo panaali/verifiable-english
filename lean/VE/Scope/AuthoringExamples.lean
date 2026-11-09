@@ -153,13 +153,12 @@ def slotsEnding (e : String) : List String :=
 #guard trip "The rules below are called the users' rules." "{\"list_name\": \"the users' rules\"}"
 #guard trip "The hard constraints apply only where the act (as above) is “final”." "{\"reach\": {\"list_name\": \"the hard constraints\"}, \"effect\": {\"reguard\": [\"and\", \"own\", {\"english\": \"the act (as above) is “final”\"}]}}"
 
-/-! ## sc-7 review F8: every sentence end ends a slot: Unicode 16.0's Sentence_Terminal, ":" and their NFKC forms -/
+/-! ## sc-7 review F8: a sentence end of any script ends a slot (no one of them is in `clause`'s allow-list) -/
 
 -- the recheck's PROBE F8, verbatim
 #guard ["The rules below are called the x‼ The rules below are called the y.", "The hard constraints apply only where x⁉ y.", "The hard constraints apply only where x؟ y.", "The hard constraints apply only where x｡ y.", "The hard constraints apply only where x﹖ y.", "The hard constraints apply only where x। y."].all (VE.Scope.Pinned.parseGovernor · == none)
--- one guard for each sentence end `clause` refuses besides F7's eleven, each named once in the literal (the DRI note's
--- ‼ ⁉ ⁈ ⁇ ؟ ۔ ｡ ﹖ ﹗ ﹒ ։ ። । among them): in every slot, alone, before a closer, two closers and an invisible character
--- (tests/test_scope_authoring.py checks the literal and F7's eleven are exactly the characters `clause` refuses)
+-- the sentence ends recheck F8 named besides F7's eleven (the DRI note's ‼ ⁉ ⁈ ⁇ ؟ ۔ ｡ ﹖ ﹗ ﹒ ։ ። । among them): in every
+-- slot, alone, before a closer, two closers and an invisible character (tests/test_scope_authoring.py sweeps every character)
 #guard "։؝؞؟۔܀܁܂߹࠷࠹࠽࠾।॥၊။።፧፨᙮᜵᜶។៕᠃᠉᥄᥅᪨᪩᪪᪫᭎᭏᭚᭛᭞᭟᭽᭾᭿᰻᰼᱾᱿․‥‼⁇⁈⁉⒈⒉⒊⒋⒌⒍⒎⒏⒐⒑⒒⒓⒔⒕⒖⒗⒘⒙⒚⒛⸮⸼⹓⹔㏂㏇㏘꓿꘎꘏꛳꛷꡶꡷꣎꣏꤯꧈꧉꩝꩞꩟꫰꫱꯫︒︓︕︖︙︰﹒﹕﹖﹗｡𐩖𐩗𐽕𐽖𐽗𐽘𐽙𐾆𐾇𐾈𐾉𑁇𑁈𑂾𑂿𑃀𑃁𑅁𑅂𑅃𑇅𑇆𑇍𑇞𑇟𑈸𑈹𑈻𑈼𑊩𑏔𑏕𑑋𑑌𑗂𑗃𑗉𑗊𑗋𑗌𑗍𑗎𑗏𑗐𑗑𑗒𑗓𑗔𑗕𑗖𑗗𑙁𑙂𑜼𑜽𑜾𑥄𑥆𑩂𑩃𑪛𑪜𑱁𑱂𑻷𑻸𑽃𑽄𖩮𖩯𖫵𖬷𖬸𖭄𖵮𖵯𖺘𛲟𝪈🄀".toList.all fun t =>
   [t.toString, t.toString ++ "’", t.toString ++ ")”", t.toString ++ "\u200B"].all fun e => (slotsEnding e).all (parseGovernor · == none)
 
@@ -172,14 +171,14 @@ def slotsEnding (e : String) : List String :=
   "The hard constraints apply only where x.)\u0301 y.", "The hard constraints apply only where x.\u200B) y.",
   "The rules below are called the x‼\u200B”\u0301 The rules below are called the y."].all (parseGovernor · == none)
 -- the class: a sample of Cf, Mn, Me and Default_Ignorable_Code_Point characters (range ends among them), alone, after a
--- closer and before one, after each of F7's sentence ends, in every slot (tests/test_scope_authoring.py sweeps every one
--- after every sentence end)
+-- closer and before one, after each of F7's sentence ends, in every slot (tests/test_scope_authoring.py sweeps every
+-- character)
 #guard [0xAD, 0x300, 0x36F, 0x488, 0x489, 0x600, 0x61C, 0x200B, 0x200F, 0x202A, 0x202E, 0x2060, 0x2064, 0x2065, 0x206F, 0x20DD,
   0x20F0, 0xFE00, 0xFE0F, 0xFE20, 0xFEFF, 0xFFF0, 0xFFFB, 0x110BD, 0x13430, 0x1BCA3, 0x1D173, 0x1E944, 0xE0000, 0xE0001,
   0xE007F, 0xE0100, 0xE01EF, 0xE0FFF].all fun n => ".?!:…‽。？！：．".toList.all fun t =>
   [s!"{t}{Char.ofNat n}", s!"{t}’{Char.ofNat n}", s!"{t}{Char.ofNat n}”"].all fun e => (slotsEnding e).all (parseGovernor · == none)
 -- the DRI note's amendment: a Hangul filler or the braille blank after a sentence end (`wordChar` refuses each anywhere,
--- and `clause` drops each before the sentence-end test)
+-- and none is in `clause`'s allow-list)
 #guard !clause "x.\u3164"
 #guard !clause "x.\u115F"
 #guard !clause "x.\u1160"
@@ -190,8 +189,37 @@ def slotsEnding (e : String) : List String :=
   "The rules below are called the x.\u3164The rules below are called the y.", "The hard constraints apply only where x.\u2800y.",
   "The hard constraints apply only where x.\u115Fy.", "The hard constraints apply only where x.\u1160y.",
   "The hard constraints apply only where x.\uFFA0y."].all (parseGovernor · == none)
--- the other direction: a mark or an invisible character after no sentence end stays in its slot
-#guard trip "The rules below are called the cafe\u0301 rules." "{\"list_name\": \"the cafe\u0301 rules\"}"
-#guard trip "The hard constraints apply only where the act is final\u200B." "{\"reach\": {\"list_name\": \"the hard constraints\"}, \"effect\": {\"reguard\": [\"and\", \"own\", {\"english\": \"the act is final\u200B\"}]}}"
+-- a word that ends in a mark or an invisible character is refused even after no sentence end (sc-7 note 2026-11-09 (c):
+-- no mark or format character is in `clause`'s allow-list); a precomposed letter takes its place ("café", below)
+#guard ["The rules below are called the cafe\u0301 rules.", "The hard constraints apply only where the act is final\u200B."].all
+  (parseGovernor · == none)
+
+/-! ## sc-7 recheck F10 and the DRI note 2026-11-09 (c): `clause` is an allow-list -/
+
+-- the recheck's PROBE F10, verbatim: the Coptic Old Nubian full stop and question marks
+#guard ["The hard constraints apply only where x\u2CF9 y.", "The hard constraints apply only where x\u2CFA y.", "The rules below are called the x\u2CFB The rules below are called the y."].all (VE.Scope.Pinned.parseGovernor · == none)
+-- the recheck's blank-looking characters after a ".": U+1D159 (musical null notehead), U+E000 (private use), U+FFFC
+-- (object replacement), as a condition and as a list name, and in every slot
+#guard ["The hard constraints apply only where x.\uFFFC y.", "The rules below are called the x.\uFFFC The rules below are called the y.",
+  "The hard constraints apply only where x.\uE000 y.", "The rules below are called the x.\uE000 The rules below are called the y."].all
+  (parseGovernor · == none)
+#guard [0x1D159, 0xE000, 0xFFFC].all fun n => [s!".{Char.ofNat n}", s!"{Char.ofNat n}", s!".{Char.ofNat n}”"].all fun e =>
+  (slotsEnding e).all (parseGovernor · == none)
+-- a word that is empty once its closers are dropped is refused
+#guard [")", "x )", "x ”’", "\"", "x *_"].all (!clause ·)
+#guard ["The hard constraints apply only where x ) y.", "The rules below are called the x ” The rules below are called the y."].all
+  (parseGovernor · == none)
+-- one accepted word ending in each class of the allow-list: an ASCII letter, a digit, a Latin letter (the range's ends
+-- and "café"), and each allowed ASCII punctuation character; and the characters just beside them are refused
+#guard ["xa", "xz", "xA", "xZ", "x0", "x9", "xÀ", "xÖ", "xØ", "xö", "xø", "xÿ", "xő", "xɏ", "café", "x,", "x;", "x-", "x%", "x/",
+  "x&", "x+", "x=", "x#", "x$", "x@", "x@)”"].all clause
+#guard ["x×", "x÷", "x¿", "xɐ", "x.", "x!", "x?", "x:", "x\u0301", "x\u200B", "xα", "x٣", "x'.", "x<", "x^", "x|", "x\\"].all (!clause ·)
+-- U+01C3 "ǃ" (Latin letter retroflex click) is drawn as "!", so it is left out of the Latin range; its neighbours stay in
+#guard ["The rules below are called the xǃ The rules below are called the y.", "The hard constraints apply only where xǃ y."].all
+  (parseGovernor · == none)
+#guard !clause "xǃ" && ["xǀ", "xǁ", "xǂ", "xǄ"].all clause
+#guard trip "The rules below are called the café rules." "{\"list_name\": \"the café rules\"}"
+#guard trip "The hard constraints apply only where the act is in Claude’s café." "{\"reach\": {\"list_name\": \"the hard constraints\"}, \"effect\": {\"reguard\": [\"and\", \"own\", {\"english\": \"the act is in Claude’s café\"}]}}"
+#guard trip "The hard constraints apply only where a, b; c- 5% d/ e& f+ g= h# i$ j@ k." "{\"reach\": {\"list_name\": \"the hard constraints\"}, \"effect\": {\"reguard\": [\"and\", \"own\", {\"english\": \"a, b; c- 5% d/ e& f+ g= h# i$ j@ k\"}]}}"
 
 end VE.Scope.AuthoringExamples
