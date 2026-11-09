@@ -73,7 +73,7 @@ two trust files; their contents are the same.)
   own lag ("regenerated on every merge to main"), none from this item, so that was reverted;
   `regen_generated.py --check` then passed ("checked 37 entries"). `lean/declarations.txt` is from
   `tools/lean_statements.py`.
-- Selected tests: SELECTED_RUN_PENDING
+- Selected tests: `MAC_PYTEST_NO_DEFER=1 mac-pytest.sh --select -- --base 223babd3d --run` on committed `cd8bc6332` (clean tree): exit 0; "recorded 103 units for tree bf8cea9e8a; ... 0 failed" (ve-cloud-3, 7484 s).
 - Not run: the full gate (the chain runs it).
 
 ## Self-review
