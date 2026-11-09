@@ -68,6 +68,12 @@ The other definitions:
 - `shapeOutcomeCharged`: without `@[csimp]`, 132; without the pre-count, out of memory under a 6 GB cap;
 - `productSize` 128 and 132.
 
-TRUST-PLACEHOLDER
+## Trust (R16), size, pilot bytes
 
-SIZE-PLACEHOLDER Pilot bytes moved: 0. CI-3's +2 segments / 46 B are counted when ci-3 wires the entry.
+`uv run python tools/trust_map.py --check` against d55d24faab75 gives K +0, S +0, trusted +136, all in
+lean/VE/Commands/Steps.lean, and passes with the allowance in docs/trust-baseline.json. That allowance is SIGNED by
+standing ruling R16, and the FOLLOW-UPS.md row "## ci-3a" asks for the ties pass. Every new trusted definition fails a
+fixture under its mutants (above). The `trust_mutants` sweep is in `trust-mutants.json`.
+
+Size, by `git diff --numstat $(git merge-base HEAD main)` without generated files: 849 hand-written lines at
+7077a3447 plus this REPORT's edits, under the DRI's raised cap of about 850 (wording ruling, item 2). Pilot bytes moved: 0. CI-3's +2 segments / 46 B are counted when ci-3 wires the entry.
