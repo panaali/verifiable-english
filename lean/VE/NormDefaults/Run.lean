@@ -327,8 +327,11 @@ else today's. -/
 def decoderOf (environment : Json) : Wire.UDecoder :=
   if VE.Norms.Run.underActs environment then VE.Acts.Decode.elaboratedU else Wire.decodeSourceU
 
-/-- The norm-defaults route's public entry: `runCaseIn` at the decoder of the case's environment. -/
-def runCaseRouted (j : Json) : Except String Json := runCaseIn (decoderOf (j.getObjValD "environment")) j
+/-- The norm-defaults route's public entry: `acts-elaborate` (act-phrases 6.7); else `runCaseIn` at the decoder of
+the case's environment. -/
+def runCaseRouted (j : Json) : Except String Json :=
+  if VE.Acts.Run.isElaborate j then VE.Acts.Run.runElaborate Wire.decodeSourceU j
+  else runCaseIn (decoderOf (j.getObjValD "environment")) j
 
 /-- The public admission branch: from raw JSON under the profile, a successful answer
 satisfies the full admission obligation on `fill U` for the case's own id, environment

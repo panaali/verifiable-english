@@ -4600,6 +4600,48 @@ theorem VE.Attitudes.Examples.awf_iff
     VE.Attitudes.Examples.awf A Γ a = Bool.true ↔ VE.Attitudes.AWellFormed A Γ a
   -- uses VE.Attitudes.AFormula@VE.Attitudes.Syntax VE.Attitudes.AWellFormed@VE.Attitudes.Syntax VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.Examples.awf@VE.Attitudes.Examples
   -- expr 2747630870
+theorem VE.Attitudes.Examples.keys_fat1
+  VE.Attitudes.keys VE.Attitudes.Examples.fat1 =
+    [VE.Attitudes.Examples.keyK,
+      have __src := VE.Attitudes.Examples.keyK;
+      { mode := VE.Attitudes.Mode.act VE.Reports.Act.intends, holderSort := __src.holderSort, slotSort := __src.slotSort,
+        content := __src.content },
+      VE.Attitudes.Examples.keyQ]
+  -- uses VE.Attitudes.Examples.fat1@VE.Attitudes.Examples VE.Attitudes.Examples.keyK@VE.Attitudes.Examples VE.Attitudes.Examples.keyQ@VE.Attitudes.Examples VE.Attitudes.Key.content@VE.Attitudes.Syntax VE.Attitudes.Key.holderSort@VE.Attitudes.Syntax VE.Attitudes.Key.mk@VE.Attitudes.Syntax VE.Attitudes.Key.slotSort@VE.Attitudes.Syntax VE.Attitudes.Key@VE.Attitudes.Syntax VE.Attitudes.Mode.act@VE.Attitudes.Syntax VE.Attitudes.keys@VE.Attitudes.Syntax VE.Reports.Act.intends@VE.Attribution.Content
+  -- expr 1928094738
+theorem VE.Attitudes.Examples.pairs_fat1
+  VE.Attitudes.framePairs VE.Attitudes.Examples.fat1 = [(VE.Attitudes.Examples.keyK, VE.Attitudes.Examples.keyQ)]
+  -- uses VE.Attitudes.Examples.fat1@VE.Attitudes.Examples VE.Attitudes.Examples.keyK@VE.Attitudes.Examples VE.Attitudes.Examples.keyQ@VE.Attitudes.Examples VE.Attitudes.Key@VE.Attitudes.Syntax VE.Attitudes.framePairs@VE.Attitudes.Frame
+  -- expr 3571132232
+theorem VE.Attitudes.atomAt_qfree
+  ∀ (A : VE.Attitudes.AttDoc) (k : VE.Attitudes.Key), VE.Norms.Formula.qfree (VE.Attitudes.atomAt A k) = Bool.true
+  -- uses VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.Key@VE.Attitudes.Syntax VE.Attitudes.atomAt@VE.Attitudes.Frame VE.Norms.Formula.qfree@VE.Norms.SmallModel
+  -- expr 2731148559
+theorem VE.Attitudes.atomAt_wellFormed
+  ∀ (A : VE.Attitudes.AttDoc),
+    VE.Attitudes.WellFormedAtt A = Bool.true →
+      ∀ {k k2 : VE.Attitudes.Key},
+        k2 ∈ VE.Attitudes.keys A →
+          k.holderSort = k2.holderSort ∧ k.slotSort = k2.slotSort →
+            VE.Formula.WellFormed (VE.Attitudes.baseEnvAtt A) (k.slotSort.toList ++ [k.holderSort])
+              (VE.Attitudes.atomAt A k2)
+  -- uses VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.Key.holderSort@VE.Attitudes.Syntax VE.Attitudes.Key.slotSort@VE.Attitudes.Syntax VE.Attitudes.Key@VE.Attitudes.Syntax VE.Attitudes.WellFormedAtt@VE.Attitudes.Syntax VE.Attitudes.atomAt@VE.Attitudes.Frame VE.Attitudes.baseEnvAtt@VE.Attitudes.Syntax VE.Attitudes.keys@VE.Attitudes.Syntax VE.Formula.WellFormed@VE.Syntax
+  -- expr 2037254817
+theorem VE.Attitudes.baseEnvAtt_extends
+  ∀ (A : VE.Attitudes.AttDoc),
+    VE.Attitudes.WellFormedAtt A = Bool.true →
+      ∀ {Γ : List String} {φ : VE.Formula},
+        VE.Formula.WellFormed (VE.Attitudes.baseEnv A) Γ φ → VE.Formula.WellFormed (VE.Attitudes.baseEnvAtt A) Γ φ
+  -- uses VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.WellFormedAtt@VE.Attitudes.Syntax VE.Attitudes.baseEnv@VE.Attitudes.Syntax VE.Attitudes.baseEnvAtt@VE.Attitudes.Syntax VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax
+  -- expr 2738125427
+theorem VE.Attitudes.checkAtt_conds
+  ∀ {A : VE.Attitudes.AttDoc},
+    VE.Attitudes.WellFormedAtt A = Bool.true →
+      (∀ (s : String), s ∈ A.holders → s ∈ A.E.sorts) ∧
+        VE.Attitudes.checkConds A (VE.Attitudes.condsOf A) = Except.ok () ∧
+          VE.Attitudes.checkParts A A.parts = Except.ok ()
+  -- uses VE.Attitudes.AttDoc.E@VE.Attitudes.Syntax VE.Attitudes.AttDoc.holders@VE.Attitudes.Syntax VE.Attitudes.AttDoc.parts@VE.Attitudes.Syntax VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.WellFormedAtt@VE.Attitudes.Syntax VE.Attitudes.checkConds@VE.Attitudes.Syntax VE.Attitudes.checkParts@VE.Attitudes.Syntax VE.Attitudes.condsOf@VE.Attitudes.Syntax VE.Environment.sorts@VE.Syntax
+  -- expr 498888587
 theorem VE.Attitudes.checkAtt_tail
   ∀ {A : VE.Attitudes.AttDoc},
     VE.Attitudes.WellFormedAtt A = Bool.true →
@@ -4608,6 +4650,27 @@ theorem VE.Attitudes.checkAtt_tail
           ∃ D, VE.Attitudes.toNorms A = Option.some D ∧ VE.Norms.validate D = Except.ok ()
   -- uses VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.Key@VE.Attitudes.Syntax VE.Attitudes.WellFormedAtt@VE.Attitudes.Syntax VE.Attitudes.checkNames@VE.Attitudes.Syntax VE.Attitudes.keys@VE.Attitudes.Syntax VE.Attitudes.name@VE.Attitudes.Syntax VE.Attitudes.toNorms@VE.Attitudes.Syntax VE.Norms.Doc@VE.Norms.Tree VE.Norms.validate@VE.Norms.Tree
   -- expr 390254502
+theorem VE.Attitudes.checkCond_key
+  ∀ {A : VE.Attitudes.AttDoc} {Γ : List String} {c : VE.Attitudes.Cond} {part : Bool} {k : VE.Attitudes.Key},
+    VE.Attitudes.checkCond A Γ c part = Except.ok () →
+      VE.Attitudes.Cond.key A Γ c = Option.some k →
+        (∀ (s : String), k.slotSort = Option.some s → s ∈ A.E.sorts) ∧
+          VE.Norms.Formula.qfree k.content = Bool.true ∧
+            VE.Formula.check (VE.Attitudes.baseEnv A) k.slotSort.toList k.content = Bool.true ∧
+              A.holders.contains k.holderSort = Bool.true
+  -- uses VE.Attitudes.AttDoc.E@VE.Attitudes.Syntax VE.Attitudes.AttDoc.holders@VE.Attitudes.Syntax VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.Cond.key@VE.Attitudes.Syntax VE.Attitudes.Cond@VE.Attitudes.Syntax VE.Attitudes.Key.content@VE.Attitudes.Syntax VE.Attitudes.Key.holderSort@VE.Attitudes.Syntax VE.Attitudes.Key.slotSort@VE.Attitudes.Syntax VE.Attitudes.Key@VE.Attitudes.Syntax VE.Attitudes.baseEnv@VE.Attitudes.Syntax VE.Attitudes.checkCond@VE.Attitudes.Syntax VE.Environment.sorts@VE.Syntax VE.Formula.check@VE.Syntax VE.Norms.Formula.qfree@VE.Norms.SmallModel
+  -- expr 2088245218
+theorem VE.Attitudes.checkConds_mem
+  ∀ {A : VE.Attitudes.AttDoc} {l : List (List String × VE.Attitudes.Cond)},
+    VE.Attitudes.checkConds A l = Except.ok () →
+      ∀ (p : List String × VE.Attitudes.Cond), p ∈ l → VE.Attitudes.checkCond A p.fst p.snd = Except.ok ()
+  -- uses VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.Cond@VE.Attitudes.Syntax VE.Attitudes.checkCond@VE.Attitudes.Syntax VE.Attitudes.checkConds@VE.Attitudes.Syntax
+  -- expr 751062917
+theorem VE.Attitudes.checkNames_colon
+  ∀ {A : VE.Attitudes.AttDoc} {l : List VE.Attitudes.Key},
+    VE.Attitudes.checkNames A l = Except.ok () → ∀ (k : VE.Attitudes.Key), k ∈ l → ¬':' ∈ (VE.Attitudes.name A k).data
+  -- uses VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.Key@VE.Attitudes.Syntax VE.Attitudes.checkNames@VE.Attitudes.Syntax VE.Attitudes.name@VE.Attitudes.Syntax
+  -- expr 1412592241
 theorem VE.Attitudes.checkNames_mem
   ∀ {A : VE.Attitudes.AttDoc} {l : List VE.Attitudes.Key},
     VE.Attitudes.checkNames A l = Except.ok () →
@@ -4618,6 +4681,35 @@ theorem VE.Attitudes.checkNames_mem
               ¬VE.Attitudes.name A k ∈ List.map (fun x => x.name) A.regulated ++ List.map (fun x => x.name) A.definitions
   -- uses VE.Attitudes.AttDoc.E@VE.Attitudes.Syntax VE.Attitudes.AttDoc.definitions@VE.Attitudes.Syntax VE.Attitudes.AttDoc.regulated@VE.Attitudes.Syntax VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.Key@VE.Attitudes.Syntax VE.Attitudes.checkNames@VE.Attitudes.Syntax VE.Attitudes.name@VE.Attitudes.Syntax VE.Environment.predicates@VE.Syntax VE.Norms.Definition.name@VE.Norms.Tree VE.Norms.Definition@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree
   -- expr 620294592
+theorem VE.Attitudes.checkParts_mem
+  ∀ {A : VE.Attitudes.AttDoc} {l : List VE.Attitudes.Cond},
+    VE.Attitudes.checkParts A l = Except.ok () →
+      ∀ (c : VE.Attitudes.Cond), c ∈ l → VE.Attitudes.checkCond A [] c Bool.true = Except.ok ()
+  -- uses VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.Cond@VE.Attitudes.Syntax VE.Attitudes.checkCond@VE.Attitudes.Syntax VE.Attitudes.checkParts@VE.Attitudes.Syntax
+  -- expr 4259128643
+theorem VE.Attitudes.closeOver_universalQF
+  ∀ {k : VE.Attitudes.Key} {a b : VE.Formula},
+    VE.Norms.Formula.qfree (a.implies b) = Bool.true →
+      VE.NormDefaults.UniversalQF (VE.Attitudes.closeOver k (a.implies b))
+  -- uses VE.Attitudes.Key@VE.Attitudes.Syntax VE.Attitudes.closeOver@VE.Attitudes.Frame VE.Formula.implies@VE.Syntax VE.Formula@VE.Syntax VE.NormDefaults.UniversalQF@VE.NormDefaults.Evidence VE.Norms.Formula.qfree@VE.Norms.SmallModel
+  -- expr 3681453874
+theorem VE.Attitudes.closeOver_wellFormed
+  ∀ (A : VE.Attitudes.AttDoc) {k : VE.Attitudes.Key} {body : VE.Formula},
+    k.holderSort ∈ A.E.sorts →
+      (∀ (s : String), k.slotSort = Option.some s → s ∈ A.E.sorts) →
+        VE.Formula.WellFormed (VE.Attitudes.baseEnvAtt A) (k.slotSort.toList ++ [k.holderSort]) body →
+          VE.Formula.WellFormed (VE.Attitudes.baseEnvAtt A) [] (VE.Attitudes.closeOver k body)
+  -- uses VE.Attitudes.AttDoc.E@VE.Attitudes.Syntax VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.Key.holderSort@VE.Attitudes.Syntax VE.Attitudes.Key.slotSort@VE.Attitudes.Syntax VE.Attitudes.Key@VE.Attitudes.Syntax VE.Attitudes.baseEnvAtt@VE.Attitudes.Syntax VE.Attitudes.closeOver@VE.Attitudes.Frame VE.Environment.sorts@VE.Syntax VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax
+  -- expr 4059388143
+theorem VE.Attitudes.colon_split
+  ∀ {a b c d : List Char}, ¬':' ∈ a → ¬':' ∈ c → a ++ ':' :: b = c ++ ':' :: d → a = c ∧ b = d
+  -- uses
+  -- expr 861720422
+theorem VE.Attitudes.empty_relations_frame
+  ∀ (A : VE.Attitudes.AttDoc) (S : VE.Structure),
+    VE.Norms.Sat (VE.Attitudes.interp A { S := S, J := fun x x => False }) (VE.Attitudes.framePremises A)
+  -- uses VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.AttModel.mk@VE.Attitudes.Semantics VE.Attitudes.Key@VE.Attitudes.Syntax VE.Attitudes.framePremises@VE.Attitudes.Frame VE.Attitudes.interp@VE.Attitudes.Semantics VE.Norms.Sat@VE.Norms.Prefix VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 2431949764
 theorem VE.Attitudes.envAtt_extends
   ∀ (A : VE.Attitudes.AttDoc),
     VE.Attitudes.WellFormedAtt A = Bool.true →
@@ -4632,6 +4724,50 @@ theorem VE.Attitudes.envAtt_keeps
         A.E.predicates p = Option.some sig → (VE.Attitudes.envAtt A).predicates p = Option.some sig
   -- uses VE.Attitudes.AttDoc.E@VE.Attitudes.Syntax VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.WellFormedAtt@VE.Attitudes.Syntax VE.Attitudes.envAtt@VE.Attitudes.Syntax VE.Environment.predicates@VE.Syntax
   -- expr 3135929563
+theorem VE.Attitudes.forIn_throwIf
+  ∀ {l : List String} {P : String → Bool} {m : String → String},
+    (ForIn.forIn l PUnit.unit fun s x => do
+          VE.Attitudes.throwIf (P s) (m s)
+          Pure.pure (ForInStep.yield PUnit.unit)) =
+        Except.ok PUnit.unit →
+      ∀ (s : String), s ∈ l → P s = Bool.false
+  -- uses VE.Attitudes.throwIf@VE.Attitudes.Syntax
+  -- expr 3009394849
+theorem VE.Attitudes.frameLabels_nodup
+  ∀ (A : VE.Attitudes.AttDoc),
+    VE.Attitudes.WellFormedAtt A = Bool.true →
+      (VE.Attitudes.frameLabels A).length = (VE.Attitudes.framePremises A).length ∧ (VE.Attitudes.frameLabels A).Nodup
+  -- uses VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.WellFormedAtt@VE.Attitudes.Syntax VE.Attitudes.frameLabels@VE.Attitudes.Frame VE.Attitudes.framePremises@VE.Attitudes.Frame VE.Formula@VE.Syntax
+  -- expr 620032507
+theorem VE.Attitudes.framePairs_modes
+  ∀ (A : VE.Attitudes.AttDoc) (p : VE.Attitudes.Key × VE.Attitudes.Key),
+    p ∈ VE.Attitudes.framePairs A →
+      (p.fst.mode = VE.Attitudes.Mode.knows ∨ ∃ w, p.fst.mode = VE.Attitudes.Mode.thinks w) ∧
+        p.snd.mode ≠ VE.Attitudes.Mode.knows
+  -- uses VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.Key.mode@VE.Attitudes.Syntax VE.Attitudes.Key@VE.Attitudes.Syntax VE.Attitudes.Mode.knows@VE.Attitudes.Syntax VE.Attitudes.Mode.thinks@VE.Attitudes.Syntax VE.Attitudes.Mode@VE.Attitudes.Syntax VE.Attitudes.Word@VE.Attitudes.Scale VE.Attitudes.framePairs@VE.Attitudes.Frame
+  -- expr 1084766230
+theorem VE.Attitudes.framePairs_nodup
+  ∀ (A : VE.Attitudes.AttDoc), VE.Attitudes.WellFormedAtt A = Bool.true → (VE.Attitudes.framePairs A).Nodup
+  -- uses VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.Key@VE.Attitudes.Syntax VE.Attitudes.WellFormedAtt@VE.Attitudes.Syntax VE.Attitudes.framePairs@VE.Attitudes.Frame
+  -- expr 3723703777
+theorem VE.Attitudes.framePairs_transitive
+  ∀ (A : VE.Attitudes.AttDoc) (k1 k2 k3 : VE.Attitudes.Key),
+    (k1, k2) ∈ VE.Attitudes.framePairs A →
+      (k2, k3) ∈ VE.Attitudes.framePairs A → k1 ≠ k3 → (k1, k3) ∈ VE.Attitudes.framePairs A
+  -- uses VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.Key@VE.Attitudes.Syntax VE.Attitudes.framePairs@VE.Attitudes.Frame
+  -- expr 479550622
+theorem VE.Attitudes.frame_universalQF
+  ∀ (A : VE.Attitudes.AttDoc),
+    VE.Attitudes.WellFormedAtt A = Bool.true →
+      ∀ (φ : VE.Formula), φ ∈ VE.Attitudes.framePremises A → VE.NormDefaults.UniversalQF φ
+  -- uses VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.WellFormedAtt@VE.Attitudes.Syntax VE.Attitudes.framePremises@VE.Attitudes.Frame VE.Formula@VE.Syntax VE.NormDefaults.UniversalQF@VE.NormDefaults.Evidence
+  -- expr 660306680
+theorem VE.Attitudes.frame_wellFormed
+  ∀ (A : VE.Attitudes.AttDoc),
+    VE.Attitudes.WellFormedAtt A = Bool.true →
+      ∀ (φ : VE.Formula), φ ∈ VE.Attitudes.framePremises A → VE.Formula.WellFormed (VE.Attitudes.baseEnvAtt A) [] φ
+  -- uses VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.WellFormedAtt@VE.Attitudes.Syntax VE.Attitudes.baseEnvAtt@VE.Attitudes.Syntax VE.Attitudes.framePremises@VE.Attitudes.Frame VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax
+  -- expr 3920348073
 theorem VE.Attitudes.inj_of_nodup_map
   ∀ {α β : Type} {f : α → β} {l : List α}, (List.map f l).Nodup → ∀ (a : α), a ∈ l → ∀ (b : α), b ∈ l → f a = f b → a = b
   -- uses
@@ -4642,6 +4778,29 @@ theorem VE.Attitudes.keyOf_name
       ∀ (k : VE.Attitudes.Key), k ∈ VE.Attitudes.keys A → VE.Attitudes.keyOf A (VE.Attitudes.name A k) = Option.some k
   -- uses VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.Key@VE.Attitudes.Syntax VE.Attitudes.WellFormedAtt@VE.Attitudes.Syntax VE.Attitudes.keyOf@VE.Attitudes.Syntax VE.Attitudes.keys@VE.Attitudes.Syntax VE.Attitudes.name@VE.Attitudes.Syntax
   -- expr 2586438831
+theorem VE.Attitudes.key_checked
+  ∀ {A : VE.Attitudes.AttDoc},
+    VE.Attitudes.WellFormedAtt A = Bool.true →
+      ∀ (k : VE.Attitudes.Key),
+        k ∈ VE.Attitudes.keys A →
+          k.holderSort ∈ A.E.sorts ∧
+            (∀ (s : String), k.slotSort = Option.some s → s ∈ A.E.sorts) ∧
+              VE.Norms.Formula.qfree k.content = Bool.true ∧
+                VE.Formula.check (VE.Attitudes.baseEnv A) k.slotSort.toList k.content = Bool.true
+  -- uses VE.Attitudes.AttDoc.E@VE.Attitudes.Syntax VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.Key.content@VE.Attitudes.Syntax VE.Attitudes.Key.holderSort@VE.Attitudes.Syntax VE.Attitudes.Key.slotSort@VE.Attitudes.Syntax VE.Attitudes.Key@VE.Attitudes.Syntax VE.Attitudes.WellFormedAtt@VE.Attitudes.Syntax VE.Attitudes.baseEnv@VE.Attitudes.Syntax VE.Attitudes.keys@VE.Attitudes.Syntax VE.Environment.sorts@VE.Syntax VE.Formula.check@VE.Syntax VE.Norms.Formula.qfree@VE.Norms.SmallModel
+  -- expr 2872634018
+theorem VE.Attitudes.keys_nodup
+  ∀ (A : VE.Attitudes.AttDoc), VE.Attitudes.WellFormedAtt A = Bool.true → (VE.Attitudes.keys A).Nodup
+  -- uses VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.Key@VE.Attitudes.Syntax VE.Attitudes.WellFormedAtt@VE.Attitudes.Syntax VE.Attitudes.keys@VE.Attitudes.Syntax
+  -- expr 2878884293
+theorem VE.Attitudes.mem_framePairs
+  ∀ {A : VE.Attitudes.AttDoc} {k k2 : VE.Attitudes.Key},
+    (k, k2) ∈ VE.Attitudes.framePairs A ↔
+      k ∈ VE.Attitudes.keys A ∧
+        k2 ∈ VE.Attitudes.keys A ∧
+          VE.Attitudes.sameSubject k k2 = Bool.true ∧ VE.Attitudes.entailsMode A k.mode k2.mode = Bool.true
+  -- uses VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.Key.mode@VE.Attitudes.Syntax VE.Attitudes.Key@VE.Attitudes.Syntax VE.Attitudes.entailsMode@VE.Attitudes.Frame VE.Attitudes.framePairs@VE.Attitudes.Frame VE.Attitudes.keys@VE.Attitudes.Syntax VE.Attitudes.sameSubject@VE.Attitudes.Frame
+  -- expr 2280194609
 theorem VE.Attitudes.names_fresh
   ∀ (A : VE.Attitudes.AttDoc),
     VE.Attitudes.WellFormedAtt A = Bool.true →
@@ -4660,6 +4819,11 @@ theorem VE.Attitudes.names_injective
           ∀ (k2 : VE.Attitudes.Key), k2 ∈ VE.Attitudes.keys A → VE.Attitudes.name A k = VE.Attitudes.name A k2 → k = k2
   -- uses VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.Key@VE.Attitudes.Syntax VE.Attitudes.WellFormedAtt@VE.Attitudes.Syntax VE.Attitudes.keys@VE.Attitudes.Syntax VE.Attitudes.name@VE.Attitudes.Syntax
   -- expr 2029822371
+theorem VE.Attitudes.nodup_map_on
+  ∀ {α β : Type} {f : α → β} {l : List α},
+    l.Nodup → (∀ (a : α), a ∈ l → ∀ (b : α), b ∈ l → f a = f b → a = b) → (List.map f l).Nodup
+  -- uses
+  -- expr 1827740593
 theorem VE.Attitudes.not_of_throwIf
   ∀ {b : Bool} {m : String}, VE.Attitudes.throwIf b m = Except.ok () → b = Bool.false
   -- uses VE.Attitudes.throwIf@VE.Attitudes.Syntax
@@ -4669,6 +4833,12 @@ theorem VE.Attitudes.ok_of_bind
     x >>= f = Except.ok b → ∃ a, x = Except.ok a ∧ f a = Except.ok b
   -- uses
   -- expr 3172643631
+theorem VE.Attitudes.sameSubject_eq
+  ∀ {k k2 : VE.Attitudes.Key},
+    VE.Attitudes.sameSubject k k2 = Bool.true →
+      k.holderSort = k2.holderSort ∧ k.slotSort = k2.slotSort ∧ k.content = k2.content
+  -- uses VE.Attitudes.Key.content@VE.Attitudes.Syntax VE.Attitudes.Key.holderSort@VE.Attitudes.Syntax VE.Attitudes.Key.slotSort@VE.Attitudes.Syntax VE.Attitudes.Key@VE.Attitudes.Syntax VE.Attitudes.sameSubject@VE.Attitudes.Frame VE.Formula@VE.Syntax
+  -- expr 2943233522
 theorem VE.Attitudes.table_reviewed
   VE.Attitudes.table.reviewed = Bool.true
   -- uses VE.Attitudes.Table.reviewed@VE.Attitudes.Scale VE.Attitudes.table@VE.Attitudes.Scale
@@ -4679,6 +4849,11 @@ theorem VE.Attitudes.toNorms_wellFormed
       ∃ D, VE.Attitudes.toNorms A = Option.some D ∧ VE.Norms.WellFormed D = Bool.true
   -- uses VE.Attitudes.AttDoc@VE.Attitudes.Syntax VE.Attitudes.WellFormedAtt@VE.Attitudes.Syntax VE.Attitudes.toNorms@VE.Attitudes.Syntax VE.Norms.Doc@VE.Norms.Tree VE.Norms.WellFormed@VE.Norms.Tree
   -- expr 1170091834
+theorem VE.Attitudes.wellFormed_append
+  ∀ {E : VE.Environment} {Γ Δ : List String} {φ : VE.Formula},
+    VE.Formula.WellFormed E Γ φ → VE.Formula.WellFormed E (Γ ++ Δ) φ
+  -- uses VE.Environment@VE.Syntax VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax
+  -- expr 3433869311
 theorem VE.Bridge.CountermodelQuery.conclusion_typed
   ∀ {E : VE.Environment} (self : VE.Bridge.CountermodelQuery E), VE.Formula.WellFormed E [] self.conclusion
   -- uses VE.Bridge.CountermodelQuery.conclusion@VE.Bridge VE.Bridge.CountermodelQuery@VE.Bridge VE.Environment@VE.Syntax VE.Formula.WellFormed@VE.Syntax
@@ -10473,6 +10648,28 @@ theorem VE.Commands.RunSplit.typed_facts_are_ci1s
                 VE.SpeechActs.commandOk D (VE.Commands.Reading.command u r) = Bool.true
   -- uses VE.Commands.Context.E@VE.Commands.Run VE.Commands.Context.L@VE.Commands.Run VE.Commands.Context.b@VE.Commands.Run VE.Commands.Context.sc@VE.Commands.Run VE.Commands.Context.se@VE.Commands.Run VE.Commands.Context@VE.Commands.Run VE.Commands.Outcome.one@VE.Commands.Read VE.Commands.Outcome@VE.Commands.Read VE.Commands.Reading.command@VE.Commands.Read VE.Commands.Reading@VE.Commands.Read VE.Commands.declared@VE.Commands.Read VE.Commands.readCommand@VE.Commands.Read VE.Environment@VE.Syntax VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Wire.NormsEnvironment.regulated@VE.Norms.Wire VE.Norms.Wire.NormsEnvironment.rv@VE.Norms.Wire VE.Route.Wire.RouteVocabulary.environment@VE.Route.Wire VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.SpeechDoc.E@VE.SpeechActs.Tree VE.SpeechActs.SpeechDoc.regulated@VE.SpeechActs.Tree VE.SpeechActs.SpeechDoc.scope@VE.SpeechActs.Tree VE.SpeechActs.SpeechDoc@VE.SpeechActs.Tree VE.SpeechActs.Wire.SpeechEnvironment.ne@VE.SpeechActs.Wire VE.SpeechActs.commandOk@VE.SpeechActs.Tree VE.SpeechActs.scopeOk@VE.SpeechActs.Tree
   -- expr 902153147
+theorem VE.Commands.bind_condition
+  ∀ (s : String) {c : String},
+    ((VE.Commands.parts s).bind fun x => x.condition) = Option.some c →
+      ∃ p, VE.Commands.parts s = Option.some p ∧ p.condition = Option.some c
+  -- uses VE.Commands.Parts.condition@VE.Commands.Read VE.Commands.Parts@VE.Commands.Read VE.Commands.parts@VE.Commands.Read
+  -- expr 1353461317
+theorem VE.Commands.candidate_fills
+  ∀ (se : VE.SpeechActs.Wire.SpeechEnvironment) (sc : VE.SpeechActs.Scope) (E : VE.EnglishGrammar.Env)
+    (L : VE.EnglishGrammar.Lexicon) (b : Nat) (s : String) (r : VE.Commands.Reading),
+    r ∈ VE.Commands.candidates se sc E L b s →
+      ∀ (f : VE.Commands.Fill), f ∈ r.fills → f.words = f.const ∨ (f.words, f.const) ∈ sc.definites
+  -- uses VE.Commands.Fill.const@VE.Commands.Read VE.Commands.Fill.words@VE.Commands.Read VE.Commands.Fill@VE.Commands.Read VE.Commands.Reading.fills@VE.Commands.Read VE.Commands.Reading@VE.Commands.Read VE.Commands.candidates@VE.Commands.Read VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.SpeechActs.Scope.definites@VE.SpeechActs.Tree VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire
+  -- expr 4031128325
+theorem VE.Commands.candidate_guard
+  ∀ (se : VE.SpeechActs.Wire.SpeechEnvironment) (sc : VE.SpeechActs.Scope) (E : VE.EnglishGrammar.Env)
+    (L : VE.EnglishGrammar.Lexicon) (b : Nat) (s : String) (r : VE.Commands.Reading),
+    r ∈ VE.Commands.candidates se sc E L b s →
+      match (VE.Commands.parts s).bind fun x => x.condition with
+      | Option.none => r.guard = VE.Formula.top
+      | Option.some c => r.guard ∈ VE.Commands.guardsOf se E L b c
+  -- uses VE.Commands.Parts.condition@VE.Commands.Read VE.Commands.Parts@VE.Commands.Read VE.Commands.Reading.guard@VE.Commands.Read VE.Commands.Reading@VE.Commands.Read VE.Commands.candidate_guard.match_1@VE.Commands.Read VE.Commands.candidates@VE.Commands.Read VE.Commands.guardsOf@VE.Commands.Read VE.Commands.parts@VE.Commands.Read VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.Formula.top@VE.Syntax VE.Formula@VE.Syntax VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire
+  -- expr 2925467655
 theorem VE.Commands.candidate_reads_back
   ∀ (se : VE.SpeechActs.Wire.SpeechEnvironment) (sc : VE.SpeechActs.Scope) (E : VE.EnglishGrammar.Env)
     (L : VE.EnglishGrammar.Lexicon) (b : Nat) (s : String) (r : VE.Commands.Reading),
@@ -10504,6 +10701,25 @@ theorem VE.Commands.checked_one
     VE.Commands.checkedAddressee se sc r = VE.Commands.Outcome.one r' ↔ r = r' ∧ VE.Commands.addressed se sc r = Bool.true
   -- uses VE.Commands.Outcome.one@VE.Commands.Read VE.Commands.Outcome@VE.Commands.Read VE.Commands.Reading@VE.Commands.Read VE.Commands.addressed@VE.Commands.Read VE.Commands.checkedAddressee@VE.Commands.Read VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire
   -- expr 1943089036
+theorem VE.Commands.classOf_run
+  ∀ {c : String},
+    (List.lookup c VE.EnglishGrammar.Run.codeClasses).isSome = Bool.true →
+      (VE.Commands.Texts.classOf c).isSome = Bool.true
+  -- uses VE.Commands.Texts.classOf@VE.Commands.Read VE.EnglishGrammar.Run.codeClasses@VE.EnglishGrammar.Run
+  -- expr 3856190741
+theorem VE.Commands.conditionOf_classed
+  ∀ (se : VE.SpeechActs.Wire.SpeechEnvironment) (E : VE.EnglishGrammar.Env) (L : VE.EnglishGrammar.Lexicon) (b : Nat)
+    {p : VE.Commands.Parts} {ms : List (String × List VE.Commands.Fill)} {code text : String},
+    VE.Commands.conditionOf se E L b p ms = Except.error (VE.Commands.GuardFault.unread code text) →
+      (VE.Commands.Texts.classOf code).isSome = Bool.true
+  -- uses VE.Commands.Fill@VE.Commands.Read VE.Commands.GuardFault.unread@VE.Commands.Read VE.Commands.GuardFault@VE.Commands.Read VE.Commands.Parts@VE.Commands.Read VE.Commands.Texts.classOf@VE.Commands.Read VE.Commands.conditionOf@VE.Commands.Read VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.Formula@VE.Syntax VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire
+  -- expr 1138586084
+theorem VE.Commands.declared_of_decode
+  ∀ {j : Lean.Json} {se : VE.SpeechActs.Wire.SpeechEnvironment},
+    VE.Scope.JsonWF j →
+      VE.SpeechActs.Wire.decodeSpeechEnvironmentFull j = Except.ok se → VE.Commands.declared se = Bool.true
+  -- uses VE.Commands.declared@VE.Commands.Read VE.Scope.JsonWF@VE.Scope.Govern VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire VE.SpeechActs.Wire.decodeSpeechEnvironmentFull@VE.SpeechActs.Wire
+  -- expr 687150063
 theorem VE.Commands.decodeClosedField_check
   ∀ {T : VE.Environment} {j : Lean.Json} {φ : VE.Formula},
     VE.SpeechActs.Wire.decodeClosedField T j = Except.ok φ → VE.Formula.check T [] φ = Bool.true
@@ -10513,6 +10729,81 @@ theorem VE.Commands.dedup_sub
   ∀ {α : Type} [inst : BEq α] (n : Nat) (l : List α), l.length ≤ n → ∀ (a : α), a ∈ l.eraseDups → a ∈ l
   -- uses
   -- expr 2914230514
+theorem VE.Commands.envelope_vocabulary
+  ∀ {env : Lean.Json} {e : VE.Route.Gate.Envelope},
+    VE.Route.Gate.decodeEnvelope env = Except.ok e → env.getObjVal? "vocabulary" = Except.ok e.vocabulary
+  -- uses VE.Route.Gate.Envelope.vocabulary@VE.Route.Gate VE.Route.Gate.Envelope@VE.Route.Gate VE.Route.Gate.decodeEnvelope@VE.Route.Gate
+  -- expr 1473185530
+theorem VE.Commands.eraseDups_nodup
+  ∀ {α : Type} [inst : BEq α] [LawfulBEq α] (n : Nat) (l : List α), l.length ≤ n → l.eraseDups.Nodup
+  -- uses
+  -- expr 3759583158
+theorem VE.Commands.eraseDups_sublist
+  ∀ {α : Type} [inst : BEq α] (n : Nat) (l : List α), l.length ≤ n → l.eraseDups.Sublist l
+  -- uses
+  -- expr 4256818198
+theorem VE.Commands.fields_obj
+  ∀ {j : Lean.Json} {l : List (String × Lean.Json)},
+    VE.Bridge.fields j = Except.ok l → ∃ kvs, j = Lean.Json.obj kvs ∧ l = kvs.toList
+  -- uses VE.Bridge.Fields@VE.Bridge VE.Bridge.fields@VE.Bridge
+  -- expr 1400093979
+theorem VE.Commands.filterMapM_rel
+  ∀ {α β γ ε : Type} {f : α → Except ε (Option β)} {R : α → β → Prop} {g : β → γ} {k : α → γ},
+    (∀ (x : α) (y : β), f x = Except.ok (Option.some y) → R x y) →
+      (∀ (x : α) (y : β), R x y → g y = k x) →
+        ∀ {l : List α} {t : List β},
+          List.filterMapM f l = Except.ok t →
+            (List.map g t).Sublist (List.map k l) ∧ ∀ (y : β), y ∈ t → ∃ x, x ∈ l ∧ R x y
+  -- uses
+  -- expr 243627597
+theorem VE.Commands.find?_of_nodup
+  ∀ {g : VE.Norms.Regulated} {l : List VE.Norms.Regulated},
+    g ∈ l → (List.map (fun x => x.name) l).Nodup → List.find? (fun x => x.name == g.name) l = Option.some g
+  -- uses VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree
+  -- expr 1076808390
+theorem VE.Commands.guardOf_classed
+  ∀ (se : VE.SpeechActs.Wire.SpeechEnvironment) (E : VE.EnglishGrammar.Env) (L : VE.EnglishGrammar.Lexicon) (b : Nat)
+    (c code text : String),
+    VE.Commands.guardOf se E L b c = Except.error (VE.Commands.GuardFault.unread code text) →
+      (VE.Commands.Texts.classOf code).isSome = Bool.true
+  -- uses VE.Commands.GuardFault.unread@VE.Commands.Read VE.Commands.GuardFault@VE.Commands.Read VE.Commands.Texts.classOf@VE.Commands.Read VE.Commands.guardOf@VE.Commands.Read VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.Formula@VE.Syntax VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire
+  -- expr 2267814547
+theorem VE.Commands.guard_ambiguous
+  ∀ (se : VE.SpeechActs.Wire.SpeechEnvironment) (sc : VE.SpeechActs.Scope) (E : VE.EnglishGrammar.Env)
+    (L : VE.EnglishGrammar.Lexicon) (b : Nat) (s c : String) (gs : List VE.Formula) (m : String × List VE.Commands.Fill),
+    VE.Commands.withinLimits se sc s = Bool.true →
+      ((VE.Commands.parts s).bind fun x => x.condition) = Option.some c →
+        VE.Commands.guardOf se E L b c = Except.error (VE.Commands.GuardFault.ambiguous gs) →
+          m ∈ VE.Commands.actMatches se sc s →
+            (VE.Commands.candidates se sc E L b s).eraseDups.length ≤ VE.SpeechActs.Wire.readingsBound →
+              ∃ rs,
+                VE.Commands.readCommand se sc E L b s = VE.Commands.Outcome.many rs ∧
+                  ∀ (g : VE.Formula), g ∈ gs → ∃ r, r ∈ rs ∧ r.guard = g
+  -- uses VE.Commands.Fill@VE.Commands.Read VE.Commands.GuardFault.ambiguous@VE.Commands.Read VE.Commands.GuardFault@VE.Commands.Read VE.Commands.Outcome.many@VE.Commands.Read VE.Commands.Outcome@VE.Commands.Read VE.Commands.Parts.condition@VE.Commands.Read VE.Commands.Parts@VE.Commands.Read VE.Commands.Reading.guard@VE.Commands.Read VE.Commands.Reading@VE.Commands.Read VE.Commands.actMatches@VE.Commands.Read VE.Commands.candidates@VE.Commands.Read VE.Commands.guardOf@VE.Commands.Read VE.Commands.instDecidableEqReading@VE.Commands.Read VE.Commands.parts@VE.Commands.Read VE.Commands.readCommand@VE.Commands.Read VE.Commands.withinLimits@VE.Commands.Read VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.Formula@VE.Syntax VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire VE.SpeechActs.Wire.readingsBound@VE.SpeechActs.Wire
+  -- expr 4058279452
+theorem VE.Commands.guard_limit
+  ∀ (se : VE.SpeechActs.Wire.SpeechEnvironment) (sc : VE.SpeechActs.Scope) (E : VE.EnglishGrammar.Env)
+    (L : VE.EnglishGrammar.Lexicon) (b : Nat) (s c : String),
+    ((VE.Commands.parts s).bind fun x => x.condition) = Option.some c →
+      VE.Commands.guardOf se E L b c = Except.error VE.Commands.GuardFault.limit →
+        (VE.Commands.actMatches se sc s).length = 1 → VE.Commands.readCommand se sc E L b s = VE.Commands.Outcome.limit
+  -- uses VE.Commands.Fill@VE.Commands.Read VE.Commands.GuardFault.limit@VE.Commands.Read VE.Commands.GuardFault@VE.Commands.Read VE.Commands.Outcome.limit@VE.Commands.Read VE.Commands.Outcome@VE.Commands.Read VE.Commands.Parts.condition@VE.Commands.Read VE.Commands.Parts@VE.Commands.Read VE.Commands.actMatches@VE.Commands.Read VE.Commands.guardOf@VE.Commands.Read VE.Commands.parts@VE.Commands.Read VE.Commands.readCommand@VE.Commands.Read VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.Formula@VE.Syntax VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire
+  -- expr 1728737209
+theorem VE.Commands.guard_unread
+  ∀ (se : VE.SpeechActs.Wire.SpeechEnvironment) (sc : VE.SpeechActs.Scope) (E : VE.EnglishGrammar.Env)
+    (L : VE.EnglishGrammar.Lexicon) (b : Nat) (s c code text : String),
+    VE.Commands.withinLimits se sc s = Bool.true →
+      ((VE.Commands.parts s).bind fun x => x.condition) = Option.some c →
+        VE.Commands.guardOf se E L b c = Except.error (VE.Commands.GuardFault.unread code text) →
+          (VE.Commands.actMatches se sc s).length = 1 →
+            VE.Commands.readCommand se sc E L b s = VE.Commands.Outcome.refused code text
+  -- uses VE.Commands.Fill@VE.Commands.Read VE.Commands.GuardFault.unread@VE.Commands.Read VE.Commands.GuardFault@VE.Commands.Read VE.Commands.Outcome.refused@VE.Commands.Read VE.Commands.Outcome@VE.Commands.Read VE.Commands.Parts.condition@VE.Commands.Read VE.Commands.Parts@VE.Commands.Read VE.Commands.actMatches@VE.Commands.Read VE.Commands.guardOf@VE.Commands.Read VE.Commands.parts@VE.Commands.Read VE.Commands.readCommand@VE.Commands.Read VE.Commands.withinLimits@VE.Commands.Read VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.Formula@VE.Syntax VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire
+  -- expr 433543032
+theorem VE.Commands.lookup_of_mem
+  ∀ {β : Type} {k : String} {b : β} {l : List (String × β)},
+    (k, b) ∈ l → (List.map (fun x => x.fst) l).Nodup → VE.Bridge.lookup l k = Option.some b
+  -- uses VE.Bridge.lookup@VE.Bridge
+  -- expr 1030631592
 theorem VE.Commands.manyOf_iff
   ∀ (l rs : List VE.Commands.Reading),
     VE.Commands.manyOf l = VE.Commands.Outcome.many rs ↔ l = rs ∧ l.length ≤ VE.SpeechActs.Wire.readingsBound
@@ -10522,6 +10813,44 @@ theorem VE.Commands.manyOf_one
   ∀ (l : List VE.Commands.Reading) (r : VE.Commands.Reading), VE.Commands.manyOf l ≠ VE.Commands.Outcome.one r
   -- uses VE.Commands.Outcome.one@VE.Commands.Read VE.Commands.Outcome@VE.Commands.Read VE.Commands.Reading@VE.Commands.Read VE.Commands.manyOf@VE.Commands.Read
   -- expr 2346121978
+theorem VE.Commands.mapM_keys
+  ∀ {α β γ ε : Type} {f : α → Except ε β} {g : β → γ} {k : α → γ},
+    (∀ (x : α) (y : β), f x = Except.ok y → g y = k x) →
+      ∀ {l : List α} {t : List β}, List.mapM f l = Except.ok t → List.map g t = List.map k l
+  -- uses
+  -- expr 2500522164
+theorem VE.Commands.mapM_length
+  ∀ {α β ε : Type} {f : α → Except ε β} {l : List α} {t : List β}, List.mapM f l = Except.ok t → t.length = l.length
+  -- uses
+  -- expr 2962629296
+theorem VE.Commands.mapM_out
+  ∀ {α β ε : Type} {f : α → Except ε β} {l : List α} {t : List β},
+    List.mapM f l = Except.ok t → ∀ (x : α), x ∈ l → ∃ y, y ∈ t ∧ f x = Except.ok y
+  -- uses
+  -- expr 2741401135
+theorem VE.Commands.mapM_rel
+  ∀ {α β γ ε : Type} {f : α → Except ε β} {R : α → β → Prop} {g : β → γ} {k : α → γ},
+    (∀ (x : α) (y : β), f x = Except.ok y → R x y) →
+      (∀ (x : α) (y : β), R x y → g y = k x) →
+        ∀ {l : List α} {t : List β},
+          List.mapM f l = Except.ok t → List.map g t = List.map k l ∧ ∀ (x : α), x ∈ l → ∃ y, y ∈ t ∧ R x y
+  -- uses
+  -- expr 3894908987
+theorem VE.Commands.map_some_ok
+  ∀ {ε β : Type} {m : Except ε β} {y : β}, Option.some <$> m = Except.ok (Option.some y) → m = Except.ok y
+  -- uses
+  -- expr 1256618961
+theorem VE.Commands.mem_candidates
+  ∀ (se : VE.SpeechActs.Wire.SpeechEnvironment) (sc : VE.SpeechActs.Scope) (E : VE.EnglishGrammar.Env)
+    (L : VE.EnglishGrammar.Lexicon) (b : Nat) (s : String) {r : VE.Commands.Reading},
+    r ∈ VE.Commands.candidates se sc E L b s →
+      ∃ p a fs g,
+        VE.Commands.parts s = Option.some p ∧
+          (a, fs) ∈ VE.Commands.actMatches se sc s ∧
+            g ∈ VE.Commands.guardList (VE.Commands.conditionOf se E L b p (VE.Commands.actMatches se sc s)) ∧
+              r = { force := p.force, act := a, fills := fs, guard := g }
+  -- uses VE.Commands.Fill@VE.Commands.Read VE.Commands.Parts.force@VE.Commands.Read VE.Commands.Parts@VE.Commands.Read VE.Commands.Reading.mk@VE.Commands.Read VE.Commands.Reading@VE.Commands.Read VE.Commands.actMatches@VE.Commands.Read VE.Commands.candidates@VE.Commands.Read VE.Commands.conditionOf@VE.Commands.Read VE.Commands.guardList@VE.Commands.Read VE.Commands.parts@VE.Commands.Read VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.Formula@VE.Syntax VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire
+  -- expr 428425416
 theorem VE.Commands.mem_dedup
   ∀ {α : Type} [inst : BEq α] [LawfulBEq α] (n : Nat) (l : List α), l.length ≤ n → ∀ (a : α), a ∈ l.eraseDups ↔ a ∈ l
   -- uses
@@ -10559,6 +10888,29 @@ theorem VE.Commands.mem_slotFills
       (f.const, srt) ∈ se.ne.rv.vocabulary.constants ∧ (f.words = f.const ∨ (f.words, f.const) ∈ sc.definites)
   -- uses VE.Bridge.Vocabulary.constants@VE.Bridge VE.Commands.Fill.const@VE.Commands.Read VE.Commands.Fill.words@VE.Commands.Read VE.Commands.Fill@VE.Commands.Read VE.Commands.slotFills@VE.Commands.Read VE.Norms.Wire.NormsEnvironment.rv@VE.Norms.Wire VE.Route.Wire.RouteVocabulary.vocabulary@VE.Route.Wire VE.SpeechActs.Scope.definites@VE.SpeechActs.Tree VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.Wire.SpeechEnvironment.ne@VE.SpeechActs.Wire VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire
   -- expr 547825848
+theorem VE.Commands.mem_tuples
+  ∀ {xss : List (List VE.Commands.Fill)} {fs : List VE.Commands.Fill},
+    fs ∈ VE.Commands.tuples xss → ∀ (f : VE.Commands.Fill), f ∈ fs → ∃ xs, xs ∈ xss ∧ f ∈ xs
+  -- uses VE.Commands.Fill@VE.Commands.Read VE.Commands.tuples@VE.Commands.Read
+  -- expr 1655258685
+theorem VE.Commands.nodup_of_eraseDups
+  ∀ {α : Type} [inst : BEq α] [LawfulBEq α] {l : List α}, l.eraseDups.length = l.length → l.Nodup
+  -- uses
+  -- expr 3738076891
+theorem VE.Commands.norms_facts
+  ∀ {env : Lean.Json} {ne : VE.Norms.Wire.NormsEnvironment},
+    VE.Norms.Wire.decodeNormsEnvironment env = Except.ok ne →
+      (∀ (v : Lean.Json), env.getObjVal? "vocabulary" = Except.ok v → VE.Scope.JsonWF v) →
+        (∀ (g : VE.Norms.Regulated), g ∈ ne.regulated → ne.rv.environment.predicates g.name = Option.some g.sorts) ∧
+          (List.map (fun x => x.name) ne.regulated).Nodup ∧ (List.map (fun x => x.fst) ne.rv.vocabulary.constants).Nodup
+  -- uses VE.Bridge.Vocabulary.constants@VE.Bridge VE.Environment.predicates@VE.Syntax VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated.sorts@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Wire.NormsEnvironment.regulated@VE.Norms.Wire VE.Norms.Wire.NormsEnvironment.rv@VE.Norms.Wire VE.Norms.Wire.NormsEnvironment@VE.Norms.Wire VE.Norms.Wire.decodeNormsEnvironment@VE.Norms.Wire VE.Route.Wire.RouteVocabulary.environment@VE.Route.Wire VE.Route.Wire.RouteVocabulary.vocabulary@VE.Route.Wire VE.Scope.JsonWF@VE.Scope.Govern
+  -- expr 885044498
+theorem VE.Commands.outcome_ambiguous
+  ∀ (se : VE.SpeechActs.Wire.SpeechEnvironment) (E : VE.EnglishGrammar.Env) (L : VE.EnglishGrammar.Lexicon) {c : String}
+    {o : VE.EnglishGrammar.TranslateOutcome} {gs : List VE.Formula},
+    VE.Commands.guardOfOutcome se E L c o = Except.error (VE.Commands.GuardFault.ambiguous gs) → gs.Nodup ∧ 2 ≤ gs.length
+  -- uses VE.Commands.GuardFault.ambiguous@VE.Commands.Read VE.Commands.GuardFault@VE.Commands.Read VE.Commands.guardOfOutcome@VE.Commands.Read VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.TranslateOutcome@VE.EnglishGrammar.Read VE.Formula@VE.Syntax VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire
+  -- expr 3525002602
 theorem VE.Commands.outcome_checked
   ∀ (se : VE.SpeechActs.Wire.SpeechEnvironment) (E : VE.EnglishGrammar.Env) (L : VE.EnglishGrammar.Lexicon) {c : String}
     {o : VE.EnglishGrammar.TranslateOutcome} {g : VE.Formula},
@@ -10635,6 +10987,21 @@ theorem VE.Commands.readCommand_empty
         ∀ (rs : List VE.Commands.Reading), VE.Commands.readCommand se sc E L b s ≠ VE.Commands.Outcome.many rs
   -- uses VE.Commands.Outcome.many@VE.Commands.Read VE.Commands.Outcome.one@VE.Commands.Read VE.Commands.Outcome@VE.Commands.Read VE.Commands.Reading@VE.Commands.Read VE.Commands.candidates@VE.Commands.Read VE.Commands.readCommand@VE.Commands.Read VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire
   -- expr 2594479699
+theorem VE.Commands.readCommand_fault
+  ∀ (se : VE.SpeechActs.Wire.SpeechEnvironment) (sc : VE.SpeechActs.Scope) (E : VE.EnglishGrammar.Env)
+    (L : VE.EnglishGrammar.Lexicon) (b : Nat) (s : String) {c : String} {f : VE.Commands.GuardFault},
+    VE.Commands.withinLimits se sc s = Bool.true →
+      ((VE.Commands.parts s).bind fun x => x.condition) = Option.some c →
+        VE.Commands.guardOf se E L b c = Except.error f →
+          VE.Commands.guardList (Except.error f) = [] →
+            (VE.Commands.actMatches se sc s).length = 1 →
+              ∃ p,
+                VE.Commands.parts s = Option.some p ∧
+                  VE.Commands.readCommand se sc E L b s =
+                    VE.Commands.refusalOf s p (VE.Commands.phraseMatches se sc p.body) (VE.Commands.actMatches se sc s)
+                      (Except.error f)
+  -- uses VE.Commands.Fill@VE.Commands.Read VE.Commands.GuardFault@VE.Commands.Read VE.Commands.Outcome@VE.Commands.Read VE.Commands.Parts.body@VE.Commands.Read VE.Commands.Parts.condition@VE.Commands.Read VE.Commands.Parts@VE.Commands.Read VE.Commands.actMatches@VE.Commands.Read VE.Commands.guardList@VE.Commands.Read VE.Commands.guardOf@VE.Commands.Read VE.Commands.parts@VE.Commands.Read VE.Commands.phraseMatches@VE.Commands.Read VE.Commands.readCommand@VE.Commands.Read VE.Commands.refusalOf@VE.Commands.Read VE.Commands.withinLimits@VE.Commands.Read VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.Formula@VE.Syntax VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire
+  -- expr 3255729171
 theorem VE.Commands.readCommand_many
   ∀ (se : VE.SpeechActs.Wire.SpeechEnvironment) (sc : VE.SpeechActs.Scope) (E : VE.EnglishGrammar.Env)
     (L : VE.EnglishGrammar.Lexicon) (b : Nat) (s : String) (rs : List VE.Commands.Reading),
@@ -10673,6 +11040,20 @@ theorem VE.Commands.readCommand_read
           | rs => VE.Commands.manyOf rs
   -- uses VE.Commands.Outcome@VE.Commands.Read VE.Commands.Parts.body@VE.Commands.Read VE.Commands.Parts@VE.Commands.Read VE.Commands.Reading@VE.Commands.Read VE.Commands.actMatches@VE.Commands.Read VE.Commands.candidates@VE.Commands.Read VE.Commands.checkedAddressee@VE.Commands.Read VE.Commands.conditionOf@VE.Commands.Read VE.Commands.instDecidableEqReading@VE.Commands.Read VE.Commands.manyOf@VE.Commands.Read VE.Commands.parts@VE.Commands.Read VE.Commands.phraseMatches@VE.Commands.Read VE.Commands.readCommand.match_1@VE.Commands.Read VE.Commands.readCommand@VE.Commands.Read VE.Commands.refusalOf@VE.Commands.Read VE.Commands.withinLimits@VE.Commands.Read VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire
   -- expr 1818908793
+theorem VE.Commands.readCommand_typed
+  ∀ (se : VE.SpeechActs.Wire.SpeechEnvironment) (sc : VE.SpeechActs.Scope) (E : VE.EnglishGrammar.Env)
+    (L : VE.EnglishGrammar.Lexicon) (b : Nat) (s : String) (j : Lean.Json) (r : VE.Commands.Reading)
+    (D : VE.SpeechActs.SpeechDoc) (u : String),
+    VE.Scope.JsonWF j →
+      VE.SpeechActs.Wire.decodeSpeechEnvironmentFull j = Except.ok se →
+        VE.Commands.readCommand se sc E L b s = VE.Commands.Outcome.one r →
+          D.E = se.ne.rv.environment →
+            D.scope = sc →
+              D.regulated = se.ne.regulated →
+                VE.SpeechActs.scopeOk D = Bool.true →
+                  VE.SpeechActs.commandOk D (VE.Commands.Reading.command u r) = Bool.true
+  -- uses VE.Commands.Outcome.one@VE.Commands.Read VE.Commands.Outcome@VE.Commands.Read VE.Commands.Reading.command@VE.Commands.Read VE.Commands.Reading@VE.Commands.Read VE.Commands.readCommand@VE.Commands.Read VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.Environment@VE.Syntax VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Wire.NormsEnvironment.regulated@VE.Norms.Wire VE.Norms.Wire.NormsEnvironment.rv@VE.Norms.Wire VE.Route.Wire.RouteVocabulary.environment@VE.Route.Wire VE.Scope.JsonWF@VE.Scope.Govern VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.SpeechDoc.E@VE.SpeechActs.Tree VE.SpeechActs.SpeechDoc.regulated@VE.SpeechActs.Tree VE.SpeechActs.SpeechDoc.scope@VE.SpeechActs.Tree VE.SpeechActs.SpeechDoc@VE.SpeechActs.Tree VE.SpeechActs.Wire.SpeechEnvironment.ne@VE.SpeechActs.Wire VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire VE.SpeechActs.Wire.decodeSpeechEnvironmentFull@VE.SpeechActs.Wire VE.SpeechActs.commandOk@VE.SpeechActs.Tree VE.SpeechActs.scopeOk@VE.SpeechActs.Tree
+  -- expr 3409680215
 theorem VE.Commands.readCommand_typed_of_facts
   ∀ (se : VE.SpeechActs.Wire.SpeechEnvironment) (sc : VE.SpeechActs.Scope) (E : VE.EnglishGrammar.Env)
     (L : VE.EnglishGrammar.Lexicon) (b : Nat) (s : String) (r : VE.Commands.Reading) (D : VE.SpeechActs.SpeechDoc)
@@ -10723,6 +11104,25 @@ theorem VE.Commands.refusalOf_refused
       ∀ (rs : List VE.Commands.Reading), VE.Commands.refusalOf s p pm ms gr ≠ VE.Commands.Outcome.many rs
   -- uses VE.Commands.Fill@VE.Commands.Read VE.Commands.GuardFault@VE.Commands.Read VE.Commands.Outcome.many@VE.Commands.Read VE.Commands.Outcome.one@VE.Commands.Read VE.Commands.Outcome@VE.Commands.Read VE.Commands.Parts@VE.Commands.Read VE.Commands.Reading@VE.Commands.Read VE.Commands.refusalOf@VE.Commands.Read VE.Formula@VE.Syntax VE.Norms.Regulated@VE.Norms.Tree
   -- expr 1083155752
+theorem VE.Commands.refused_classed
+  ∀ (se : VE.SpeechActs.Wire.SpeechEnvironment) (sc : VE.SpeechActs.Scope) (E : VE.EnglishGrammar.Env)
+    (L : VE.EnglishGrammar.Lexicon) (b : Nat) (s code text : String),
+    VE.Commands.readCommand se sc E L b s = VE.Commands.Outcome.refused code text →
+      (VE.Commands.Texts.classOf code).isSome = Bool.true
+  -- uses VE.Commands.Outcome.refused@VE.Commands.Read VE.Commands.Outcome@VE.Commands.Read VE.Commands.Texts.classOf@VE.Commands.Read VE.Commands.readCommand@VE.Commands.Read VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire
+  -- expr 3427859515
+theorem VE.Commands.regulated_shape
+  ∀ {ps fx : List String} {p : String} {args : List String} {raw : Lean.Json} {g : VE.Norms.Regulated},
+    VE.Norms.Wire.decodeRegulatedIn ps fx p args raw = Except.ok g → g.name = p ∧ g.sorts = args
+  -- uses VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated.sorts@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Wire.decodeRegulatedIn@VE.Norms.Wire
+  -- expr 3618292377
+theorem VE.Commands.strip_vocabulary
+  ∀ {j s v : Lean.Json},
+    VE.Scope.JsonWF j →
+      VE.SpeechActs.Wire.stripSpeech j = Except.ok s →
+        s.getObjVal? "vocabulary" = Except.ok v → j.getObjVal? "vocabulary" = Except.ok v
+  -- uses VE.Scope.JsonWF@VE.Scope.Govern VE.SpeechActs.Wire.stripSpeech@VE.SpeechActs.Wire
+  -- expr 2250500559
 theorem VE.Commands.tuples_typed
   ∀ (se : VE.SpeechActs.Wire.SpeechEnvironment) (sc : VE.SpeechActs.Scope),
     (∀ (c srt : String), (c, srt) ∈ se.ne.rv.vocabulary.constants → se.ne.rv.environment.constants c = Option.some srt) →
@@ -10731,6 +11131,40 @@ theorem VE.Commands.tuples_typed
           VE.SpeechActs.constsTyped se.ne.rv.environment (List.map (fun x => x.const) fs) ss = Bool.true
   -- uses VE.Bridge.Vocabulary.constants@VE.Bridge VE.Commands.Fill.const@VE.Commands.Read VE.Commands.Fill@VE.Commands.Read VE.Commands.slotFills@VE.Commands.Read VE.Commands.tuples@VE.Commands.Read VE.Environment.constants@VE.Syntax VE.Norms.Wire.NormsEnvironment.rv@VE.Norms.Wire VE.Route.Wire.RouteVocabulary.environment@VE.Route.Wire VE.Route.Wire.RouteVocabulary.vocabulary@VE.Route.Wire VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.Wire.SpeechEnvironment.ne@VE.SpeechActs.Wire VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire VE.SpeechActs.constsTyped@VE.SpeechActs.Tree
   -- expr 3987018052
+theorem VE.Commands.unreadOf_classed
+  ∀ (E : VE.EnglishGrammar.Env) (L : VE.EnglishGrammar.Lexicon) {c code text : String}
+    {o : VE.EnglishGrammar.TranslateOutcome},
+    (∀ (r : VE.EnglishGrammar.EFormula × Bool × VE.EnglishGrammar.DState),
+        o ≠ VE.EnglishGrammar.TranslateOutcome.readings [r] Bool.true) →
+      VE.Commands.unreadOf E L c o = VE.Commands.GuardFault.unread code text →
+        (VE.Commands.Texts.classOf code).isSome = Bool.true
+  -- uses VE.Commands.GuardFault.unread@VE.Commands.Read VE.Commands.GuardFault@VE.Commands.Read VE.Commands.Texts.classOf@VE.Commands.Read VE.Commands.unreadOf@VE.Commands.Read VE.EnglishGrammar.DState@VE.EnglishGrammar.Syntax VE.EnglishGrammar.EFormula@VE.EnglishGrammar.Syntax VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.TranslateOutcome.readings@VE.EnglishGrammar.Read VE.EnglishGrammar.TranslateOutcome@VE.EnglishGrammar.Read
+  -- expr 335130948
+theorem VE.Commands.vocabulary_facts
+  ∀ {profiles : List String} {v : Lean.Json} {rv : VE.Route.Wire.RouteVocabulary},
+    VE.Route.Wire.decodeVocabulary profiles v = Except.ok rv →
+      ∃ P predicates,
+        v.getObjVal? "predicates" = Except.ok P ∧
+          VE.Bridge.fields P = Except.ok predicates ∧
+            (List.map (fun x => x.fst) rv.vocabulary.predicates).Nodup ∧
+              (List.map (fun x => x.fst) rv.vocabulary.constants).Nodup ∧
+                ∀ (p : String) (e : Lean.Json),
+                  (p, e) ∈ predicates →
+                    ∃ a ss,
+                      e.getObjVal? "arguments" = Except.ok a ∧
+                        VE.Bridge.strings a = Except.ok ss ∧ (p, ss) ∈ rv.vocabulary.predicates
+  -- uses VE.Bridge.Fields@VE.Bridge VE.Bridge.Vocabulary.constants@VE.Bridge VE.Bridge.Vocabulary.predicates@VE.Bridge VE.Bridge.fields@VE.Bridge VE.Bridge.strings@VE.Bridge VE.Route.Wire.RouteVocabulary.vocabulary@VE.Route.Wire VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.Wire.decodeVocabulary@VE.Route.Wire
+  -- expr 2161052879
+theorem VE.Commands.wf_get
+  ∀ {j v : Lean.Json} {k : String}, VE.Scope.JsonWF j → j.getObjVal? k = Except.ok v → VE.Scope.JsonWF v
+  -- uses VE.Scope.JsonWF@VE.Scope.Govern
+  -- expr 1396930589
+theorem VE.Commands.wf_member
+  ∀ {kvs : Std.TreeMap.Raw String Lean.Json Ord.compare},
+    VE.Scope.JsonWF (Lean.Json.obj kvs) →
+      ∀ {k : String} {v : Lean.Json}, (k, v) ∈ kvs.toList → (Lean.Json.obj kvs).getObjVal? k = Except.ok v
+  -- uses VE.Scope.JsonWF@VE.Scope.Govern
+  -- expr 2585814663
 theorem VE.Compose.Contract.Rewriter.Laws.fresh
   ∀ {σ : Type} {WF : σ → Prop} {names : σ → List String} {r : VE.Compose.Contract.Rewriter σ},
     VE.Compose.Contract.Rewriter.Laws WF names r →
