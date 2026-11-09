@@ -233,3 +233,22 @@ def test_right_clauses_environment_texts_kept():
         with pytest.raises(UnsupportedProfile, match="^UnsupportedProfile: Unsupported profile right-clauses@0$"):
             Environment(env)
     assert Environment(environment()).to_dict()["profiles"] == ON
+
+
+def test_right_clauses_environment_and_model_answer_as_without_the_profile(service):
+    """DRI condition (dri-decisions-20261109-cmp-s3-cfr-1 item 4): the profile carries nothing into the environment and
+    model modes. The environment mode answers an environment listing `right-clauses@0` as the same environment without
+    it, but for the profile list it echoes and the identity, which binds that list (spec 3). The model mode decides no model under the profile:
+    it refuses the name as on main, and the same model without it is valid. Python's model view drops the profile
+    (`MODEL_REDUCTIONS`), so no relay asks it."""
+    on, off = (exchange(service, "environment", [{"id": "e", "environment": environment(ps)}])[0] for ps in (ON, OFF))
+    assert on["environment_id"] != off["environment_id"] and on["profiles"] == ON and off["profiles"] == OFF
+    bound = ("environment_id", "profiles")
+    assert {k: v for k, v in on.items() if k not in bound} == {k: v for k, v in off.items() if k not in bound}
+    model = {"complete": True, "domains": {"state": ["texas"], "person": ["ann", "bob"]},
+             "constants": {"texas": "texas", "ann": "ann", "bob": "bob"},
+             "relations": {"charged": [["ann"]], "country_of": [["texas", "ann"]], "public_service_access_required": []}}
+    on, off = (exchange(service, "model", [{"id": "m", "environment": environment(ps), "model": model}])[0]
+               for ps in (ON, OFF))
+    assert on == {"id": "m", "status": "error", "error": "UnsupportedProfile: Unsupported profile right-clauses@0"}
+    assert off["status"] == "ok" and off["valid"] is True
