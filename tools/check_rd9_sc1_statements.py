@@ -1,7 +1,7 @@
 """Compare the implemented RD-9 declarations against the approved Lean blocks of docs/spec/rd-9-soft-chain.md 6.
 
 Each section of 6 is one batch's block (SC-1's 6.3 to 6.5, SC-2's 6.6, SC-3's 6.7, SC-4's 6.8, SC-5's 6.9, SC-6's
-6.10; SC-10's block is 13.3), compared with the files 6.1 (13.3 for SC-10) places it in by
+6.10; SC-10's block is 13.3, SC-11's the two blocks of 14.8), compared with the files 6.1 (13.3 for SC-10) places it in by
 `check_readings_defaults_statements.compare`: every declaration of the block, a theorem up to its proof's `:=`, a
 definition stated without a body up to its signature.
 
@@ -39,6 +39,12 @@ SECTIONS = (
      {"theorem": 6, "def": 18, "structure": 2}, set()),
     ("SC-10 superposition", "### 13.3", "### 13.4", [LEAN / "Readings/SoftSup.lean"],
      {"theorem": 7, "def": 4, "structure": 0}, set()),
+    # 14.8's two blocks; the second starts inside its code fence, at its file line. The per-premise transfers are
+    # sc-11c's (docs/rd-9/sc-11/REPORT.md, the size rule).
+    ("SC-11 labels", "### 14.8", "-- lean/VE/Readings/SoftSupWire.lean", [LEAN / "Readings/SoftSupLabels.lean"],
+     {"theorem": 8, "def": 3, "structure": 0}, {"supLabel_pull", "supLabel_other"}),
+    ("SC-11 wire", "-- lean/VE/Readings/SoftSupWire.lean", "### 14.9", [LEAN / "Readings/SoftSupWire.lean"],
+     {"theorem": 9, "def": 5, "structure": 1}, set()),
 )
 
 
@@ -95,7 +101,8 @@ def signed_edits(approved: dict) -> tuple[list[str], list[str]]:
 
 def approved_block(start: str, stop: str) -> dict:
     section = SPEC.read_text().split(start, 1)[1].split(stop, 1)[0]
-    code = section.split("```lean", 1)[1].split("```", 1)[0]
+    # a block whose start marker lies inside its code fence runs to the fence's end
+    code = (section.split("```lean", 1)[1] if "```lean" in section else section).split("```", 1)[0]
     # Line comments (`-- proved in the stub`) are dropped; a docstring's `/--` is kept, so it still ends the
     # declaration before it.
     return declarations(re.sub(r"(?<![/-])--[^\n]*", "", code), statements_only=True)

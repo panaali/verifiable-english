@@ -110,7 +110,7 @@ def NSDlate : NDoc := ⟨docK ([.fixed "u0" (.norm needNotX) [], softSet 0, soft
 /-! ## W-13 (14.11): large, well formed
 
 `NSDbig n`: `n` sets of a strict and a default reading with a sufficient condition, one fixed unit, `2^n` choices.
-At `maxSdCheckWork` = 32,768 (measured, docs/rd-9/sc-11/w13-cpu.md) the largest is 8 sets (256 choices, work
+At `maxSdCheckWork` = 32,768 (measured, docs/rd-9/sc-11/w13-cpu.md; DRI decision 2026-11-09 item 1) the largest is 8 sets (256 choices, work
 24,832, 0.71 s of compiled Lean CPU); 11 sets have more than `maxChoiceChecks` choices; and 8 sets with one wide
 guard, or 10 sets, are over the work limit, which is read before any choice's text (`sdChecked`'s `&&`). -/
 
@@ -125,5 +125,10 @@ def NSDbig (n : Nat) (g : VE.Formula := .top) : NDoc :=
 #guard routeFacts (NSDbig 11) == "enumerated true 1025 136325 enumerated" && (choices (NSDbig 11).D).length == 65
 #guard routeFacts (NSDbig 8 (wide 5)) == "enumerated true 256 48896 enumerated"
 #guard routeFacts (NSDbig 10) == "enumerated true 1024 123904 enumerated"
+-- `maxChoiceChecks` still binds first where a choice charges few units: 2048 choices, 9 units each
+def NSDcount : NDoc := ⟨docK (.set ⟨"rs0", "u0", 1, [cand "do" (strictNode "must-x" "x_required" true),
+  cand "need-not" (strictNode "need-not-x" "x_required" false)]⟩ :: (List.range 10).map (fun k => binarySet (k + 1)))
+  .soft frame4, ["y_permitted"]⟩
+#guard routeFacts NSDcount == "enumerated true 1025 9225 enumerated"
 
 end VE.Readings.SoftSupWireExamples
