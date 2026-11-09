@@ -85,6 +85,13 @@ mutants (`mac-pytest.sh --trustmut -- --max-mutants 1000 --json …/trust-mutant
 
 ## Tests
 
+- After review F1 (`mac-pytest.sh --select -- --base 63b2b596f --run`, at 000085f8a, tree 912e4ab723, on ve-cloud-2):
+  exit 0, 486 units recorded, 0 failed (`tests/test_command_relay.py`: 626 functions, exit 0); three weakly selected
+  files over 120 s were deferred to the chain gate (`test_gate_collection.py`, `test_gate_collection_renumber.py`,
+  `test_shape_binding_mutants.py`). `lake build` (1319 jobs) and `python3 lean/audit.py` PASS on that tree;
+  `regen_generated.py --check`: "checked 37 entries"; `gate_collection.py --check --prebuilt`: "48 added, 0 removed by
+  a trailer, 0 refused, 0 stale and 0 malformed trailers". PROBE F1 fails before the fix (`DID NOT RAISE VEError`) and
+  passes after it.
 - Selected tests on committed code (`MAC_PYTEST_NO_DEFER=1 mac-pytest.sh --select -- --base 63b2b596f --run`, at
   7b4a1becd, run ci-2b-7b4a1bec-t217961, 488 of 559 units): shards 1, 2, 3, 5 passed; shard 4 failed
   `tests/test_assurance_manifest.py::test_every_json_handling_lean_file_is_classified` and
@@ -105,6 +112,17 @@ speech_document.py 30, speech_english.py 15, speech_source.py 12, relay_mutation
 line; the rest are the statement gate, the ruling's condition tests and fixtures, the verbatim frozen copy (126) and
 evidence (reviews/dri-decisions-20261109-ci-2b-size.md item 1). Pilot bytes: CI-1's +9 units / +273 B can now reach
 a document through this wrapper (an estimate; nothing is claimed before a pilot audit).
+
+## Review fixes (round 1, review of 7d1e1333c)
+
+| Finding | Fix | Regression tests | Commits |
+|---|---|---|---|
+| F1 (A): an instruction fence resolved to non-command content was never read by Lean | One table in `Wire.lean` (`kindTag`, `Role.tag`, `roleFits`: the role each kind reads, by the kind it wraps); `readSource` refuses every resolved fence whose decoded role is not its kind's (`InvalidInput: resolved speech fences`), after `checkedDocument`. The class: plain, attributed, hedged and `MIXED`-part instruction fences, and question and norm fences, wherever they stand among the fences. False claims corrected: `Source/Run.lean`'s header and A2 comment, both manifest reasons, `decide_source`'s docstring, this report and DELTA's intro and row 6 | `tests/test_command_relay.py::test_a_fence_resolved_as_a_formula_in_place_of_its_role_is_refused` (10, PROBE F1 among them), `::test_every_instruction_fence_is_read_as_a_command` (6), `::test_every_resolved_fence_is_checked_for_its_role` (3), `::test_an_asserted_fence_resolved_as_a_formula_is_its_assertion`; RunSplit.lean's `SourceExamples` role guards; seeds S8, S9 | 52d164873, d3e16f607, 37ef893ed, a853d420e, 000085f8a |
+
+F2 to F6 are C (follow-ups) and are left as the review files them. Not in F1's scope: a unit whose authored inline content (no
+fence) is a formula under an instruction kind still decodes to no role, as on main. A refusal there would change
+the verdict of an authored document, which needs a spec decision (3.2 rules only on misplaced command, question and
+norm content).
 
 ## Next item
 
