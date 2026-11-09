@@ -1,0 +1,19 @@
+{
+ "job": "ap-5.s8of8-0e4ec44f",
+ "head": "41c80214c25978954a72079d0f7699e5e8ceceb5",
+ "argv": [
+  "ap-5.s8of8-0e4ec44f",
+  "41c80214c25978954a72079d0f7699e5e8ceceb5",
+  "3e4fe503f4c94f49619704f89c1ad53ade5d0acb",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-8f9af81cc73f.tar.zst",
+  "1c76bf72e3e1973cf4b18945fbe4fc8ccad2533b632eb3fa0b8157359d2b5dbe",
+  "--max-mutants",
+  "1000",
+  "--budget",
+  "6300",
+  "--shard",
+  "8/8",
+  "--jobs",
+  "4"
+ ]
+}
