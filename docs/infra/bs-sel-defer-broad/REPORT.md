@@ -124,7 +124,34 @@ Each plan was recorded at the item's tip, using that tip's own `tools/select_tes
 
 ## Checks run
 
-- `uv run pytest -q tests/test_select_defer.py` -> `39 passed`.
-- `uv run python tools/regen_generated.py --write` (once) rewrote docs/codemap. Besides this branch's docstring, it also fixed entries that were already stale on main: a removed `runmut.py` and a missing `test_speech_acts_acts0.py`.
-- The final selected run: see the section below.
+- `uv run pytest -q tests/test_select_defer.py` -> `39 passed`. The same 39 also passed inside the ve-mac-1 rerun below.
+- `uv run python tools/regen_generated.py --write` (run once) rewrote docs/codemap. Besides this branch's docstring, it also fixed entries that were already stale on main: a removed `runmut.py` and a missing `test_speech_acts_acts0.py`.
+- **The final selected run.** Command: `MAC_PYTEST_NO_DEFER=1 zsh mac-pytest.sh --select -- --base a0102f0e5 --run`, on committed 82dc869b9, on ve-cloud-2 (5827 s). It ran 237 of 560 units; 2 failed, and both failures came from this branch:
+  - `tests/test_inventory_path.py::test_no_train_only_path_is_read_outside_the_accessor`
+  - `tests/test_gen_inv_design.py::test_gi2b_names_every_pin_reader`
+
+  The cause: the first version of `LEAN_INVENTORIES` spelled out train-only paths. 8eb1e173b fixes it by taking them from `regen_generated.train_only()`. I reran those ids plus tests/test_select_defer.py with `mac-pytest.sh -- <ids>` on ve-mac-1 (HEAD 8eb1e173, clean): `41 passed`, exit 0. Neither failure is in main-known-red.
 - There was no Lean change, so no lake build, `lean/audit.py` or trust_mutants (checklist 13a covers trusted Lean growth only). The full gate is run by the chain.
+
+## Self-review against BUILDER-CHECKLIST
+
+SELF-REVIEW: 1 A, 4 B, 6 C; fixed 11.
+- The A: Lean reasons were narrowed to Lean inputs and the named inventories.
+- The 4 Bs: a missing share and empty shares now stay; the family-name rule was added; the recorded-plan tests are now hermetic; the report sections were added.
+- The 6 Cs: all fixed.
+
+1. Lean answers typed and contained: N.A. No relayed Lean answer or schema changed.
+2. Every deliverable built, no rule broken: PASS. See the task lines table; `tests/test_inventory_path.py` and `tests/test_gen_inv_design.py` pass after 8eb1e173b.
+3. Tests and gates can fail: PASS. All 14 seeded bugs were caught (seeded-bugs.json), e.g. by `test_with_shares_a_broad_lean_consumer_is_deferred_and_the_rest_stays`.
+4. Python, Lean and Rust agree: N.A. Python tooling only.
+5. R8 binding: N.A. No relay.
+6. Gate evidence matches the final HEAD: PASS. The chain runs the gate on the final HEAD; the selected run and reruns are above.
+7. No unsigned item: PASS. DELTA.md says none and has no Ruling table rows.
+8. Every user-visible change in DELTA: PASS. DELTA.md records the `class` field on `--defer-heavy` rows (`test_a_heavy_file_selected_only_for_weak_reasons_is_deferred`).
+9. Test selection still finds the tests: PASS. The selected run picked tests/test_select_defer.py (changed) and the inventory lints, which caught the inventory-literal regression above. `--defer-broad` is opt-in, and gate.py, `--full` and the chain's runs never use it (`test_the_option_refuses_full_impacted_and_tier_runs`, `test_defer_broad_takes_defer_heavy_and_its_exclusions`).
+10. Lean statements and proofs: N.A. No Lean change.
+11. Budgets fail closed: PASS for the analogue here: a missing share or an unreadable map defers nothing broad (`test_with_shares_a_broad_lean_consumer_is_deferred_and_the_rest_stays`, seeded bug B10). The tests use no sleeps and no deadlines.
+12. No CPU or memory regression: PASS. `--defer-broad` adds one map load and the source graph. A whole `select_tests.py --paths lean/VE/RightClauses/Plain.lean --defer-heavy --defer-broad` run took 13.4 s. Without the option nothing changes.
+13. Test-removed trailers: N.A. No test was removed or renamed; tests were only added.
+14. Both directions, cited evidence, spec re-read: PASS. Accept and refuse cases are in `test_lean_reasons_are_the_lean_trees_files_never_python_or_static`, `test_a_unit_names_a_changed_module_or_its_directory_never_a_sibling` and `test_a_test_of_a_changed_modules_family_is_named_for_it`. The spec re-read section is above.
+15. No overclaim, no silent cut, checks can fail, limits charged: PASS. Every number above cites its test or command. No deliverable was cut; the task itself makes the hook a separate row. Seeded bugs B1-B14 cover the checks. Limits: N.A.
