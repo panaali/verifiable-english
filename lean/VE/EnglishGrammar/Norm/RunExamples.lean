@@ -1,6 +1,7 @@
 import VE.EnglishGrammar.Norm.Run
 import VE.EnglishGrammar.Norm.OwnersExamples
 import VE.EnglishGrammar.Norm.Examples
+import VE.EnglishGrammar.JudgmentRunExamples
 
 /-! EN-2's answers, fixtures E1-E14 and E16 (docs/spec/en-e3-norm.md section 8; E15 is EN-3's): `answerWith` on given
 reader outcomes. The source is "Rule 1. X." unless a row names another; it feeds only the rule rows' spans and
@@ -31,10 +32,9 @@ def oE1 : NormOutcome := .ok [.rule ⟨1, []⟩ cPub, .rule ⟨2, []⟩ cPub, .p
   "{\"exception_to\":[],\"kind\":\"rule\",\"node\":{\"norm\":{\"guard\":[\"unary\",\"publicly_deployed\",[\"var\",0]]," ++
   "\"name\":\"rule-2\",\"over\":[\"rule-1\"],\"predicate\":\"in_scope\",\"sign\":true,\"unless\":[]}},\"number\":2," ++
   "\"span\":[11,21]},{\"kind\":\"precedence\",\"over\":1,\"rule\":2}],\"status\":\"one\"}"
--- E2: a clause with a span has the status `Run.partialStatus`, with its span row and no statements.
-#guard VE.EnglishGrammar.Run.partialStatus == "parti" ++ "al" && VE.EnglishGrammar.Run.partialStatus.length == 7
+-- E2: a clause with a span is `unformalised` (DRI 2026-11-09 item 2), with its span row and no statements.
 #guard get (.ok [.rule ⟨1, []⟩ cSpan]) ["status", "code", "class", "statements"] ==
-  str [VE.EnglishGrammar.Run.partialStatus, "UnformalisedSpan", "VEError"] ++ [.null]
+  str ["unformalised", "UnformalisedSpan", "VEError"] ++ [.null]
 #guard (result (.ok [.rule ⟨1, []⟩ cSpan])).getObjValD "spans" == Json.arr #[Json.mkObj [("start", 30), ("stop", 46),
   ("row", "every|norm.modifier|norms@0"), ("owner", "ET-T1"), ("place", "act")]]
 -- E3: the decoder's refusals; each resource limit is `NodeLimit`, any other refusal `NodeRefused`.
@@ -68,6 +68,8 @@ def oE1 : NormOutcome := .ok [.rule ⟨1, []⟩ cPub, .rule ⟨2, []⟩ cPub, .p
   str ["invalidGrammar", "InvalidGrammar", "CheckerUnavailable", "notWellFormed"] ++ [.null]
 #guard get (.lexical (.badCharacter 3)) ["status", "code", "class", "span", "sentence"] ==
   str ["rejected", "BadCharacter", "SyntaxError"] ++ [Json.arr #[3, 4], .null]
+-- a lexical outcome's text is `rejectText 0` (the lexer's own refusals name no sentence; spec 2.3)
+#guard get (.lexical .nestingLimit) ["text"] == str ["Sentence 1 is nested more than 64 levels deep."]
 -- E10: `many` names its sentence and shows both trees, with the reader's rule tags.
 def tA : VE.Grammar.Tree Tok := .node 0 [.leaf (.word "X" true)]
 def tB : VE.Grammar.Tree Tok := .node 1 [.leaf (.word "X" true)]
@@ -168,6 +170,24 @@ def errorOf (j : Json) : Json := (Run.statementCaseReported j).getObjValD "error
 #guard errorOf (request "blocks") ==
   .str "fields do not match: expected [language, profiles, spec_revision, vocabulary], got []" &&
   (Run.statementCaseReported (request "blocks")).getObjValD "status" == .str "error"
+
+-- A full case through the whole mode (`JudgmentRunExamples`' environment and lexicon): the optional `overlay` member is
+-- read (its digest joins the identities); `english.grammar` exports english.statement's three tables (M9).
+open VE.EnglishGrammar.JudgmentRunExamples (environment lexicon) in
+def whole (extra : List (String × Json) := []) : Json :=
+  Run.resultOf (Run.statementCaseReported (Json.mkObj ([("id", Json.str "s"), ("environment", environment),
+    ("lexicon", lexicon), ("kind", Json.str "blocks"), ("source", Json.str "Atlas is published.")] ++ extra)))
+#guard ["status", "code", "sentence"].map (whole).getObjValD == str ["none", "NoDerivation"] ++ [toJson 0] &&
+  ((whole).getObjValD "identities").getObjValD "overlay_digest" == .null
+#guard ["status", "code"].map (whole [("overlay", Json.mkObj [])]).getObjValD == str ["none", "NoDerivation"] &&
+  (((whole [("overlay", Json.mkObj [])]).getObjValD "identities").getObjValD "overlay_digest").getStr?.isOk
+open VE.EnglishGrammar.JudgmentRunExamples (environment lexicon) in
+def grammarExport : Json := ((VE.EnglishGrammar.Run.grammarCase (Json.mkObj [("id", Json.str "g"),
+  ("environment", environment), ("lexicon", lexicon)])).toOption.getD .null).getObjValD "result"
+#guard grammarExport.getObjValD "statement_statuses" == toJson VE.EnglishGrammar.Run.statementStatusCodes &&
+  grammarExport.getObjValD "statement_fields" == toJson VE.EnglishGrammar.Run.statementFields &&
+  grammarExport.getObjValD "statement_unsentenced" == toJson VE.EnglishGrammar.Run.statementUnsentenced &&
+  grammarExport.getObjValD "codes" == toJson VE.EnglishGrammar.Run.codeClasses
 
 -- f18 through the real reader (`leanReader`): an ambiguous condition stops the reading at its rule sentence, with both
 -- trees under `normGrammar`'s rule tags (`normTags`).

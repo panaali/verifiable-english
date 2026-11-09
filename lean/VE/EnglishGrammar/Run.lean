@@ -161,14 +161,10 @@ def unsentencedCodes : List String :=
   ["SourceTooLong", "TextTooLong", "BadCharacter", "OpenQuote", "BadNumeral", "EmptyDocument", "EmptySentence",
    "Unterminated", "BadSpacing", "NotOneSentence"]
 
-/-- english.statement's status for a text with unformalised spans (spec 2.3's table; M5), spelled in two pieces:
-`lean/audit.py` refuses the word, a Lean keyword, anywhere in a Lean source. The wire word is unchanged. -/
-def partialStatus : String := "parti" ++ "al"
-
 /-- english.statement's statuses and the codes each may carry (`rendered` and the four render codes join with
 EN-3's rows). -/
 def statementStatusCodes : List (String × List String) :=
-  [("one", []), (partialStatus, ["UnformalisedSpan"]), ("none", ["NoDerivation"]), ("many", ["Ambiguous"]),
+  [("one", []), ("unformalised", ["UnformalisedSpan"]), ("none", ["NoDerivation"]), ("many", ["Ambiguous"]),
    ("budget", ["Budget"]), ("invalidGrammar", ["InvalidGrammar", "InvalidOverlay"]), ("rendered", []),
    ("rejected", VE.EnglishGrammar.Run.rejectCodes ++
      ["ExpectedRule", "NoConsequence", "StrayConsequence", "StrayCarveOut", "UnknownRule", "NodeRefused", "NodeLimit",
@@ -178,7 +174,7 @@ def statementStatusCodes : List (String × List String) :=
 schema (recipe step 2) reads it; `english.grammar` exports it, `tools/english_codes.py` writes it to
 `ve/english_grammar/codes.json`, and the relay reads it there. -/
 def statementFields : List (String × List String × List String) :=
-  [("one", ["statements"], []), (partialStatus, ["code", "text", "class", "spans"], []),
+  [("one", ["statements"], []), ("unformalised", ["code", "text", "class", "spans"], []),
    ("none", ["code", "text", "class", "sentence"], []),
    ("many", ["code", "text", "class", "sentence", "witnesses"], []),
    ("budget", ["code", "text", "class", "sentence"], []),

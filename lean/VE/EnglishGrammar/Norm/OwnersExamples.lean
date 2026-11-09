@@ -42,6 +42,11 @@ def viewFailures (A : List (String × String × Bool)) : List String :=
 #guard viewFailures [] == []
 #guard viewFailures [("deployed", "{0} is rolled out", false)] == []
 #guard viewFailures [("deployed", "{0} is reviewed", false)] == ["V4 predicate deployed", "V4 predicate reviewed"]
+-- the source spellings follow the aliases the environment and the lexicon already have, in both
+#guard let a := [("owns", "{0} holds {1}", false)]
+  let b := [("deployed", "{0} is rolled out", false)]
+  let (E, L) := sourceView { envF with forms := { envF.forms with aliases := a } } { LF with aliases := a } b
+  E.forms.aliases == a ++ b && L.aliases == a ++ b && E.forms.wordings == envF.forms.wordings && L.nouns == LF.nouns
 -- a spelling selected in the lexicon only, not fixed in the environment's forms, is refused (V2)
 #guard failureSet envF { LF with aliases := [("deployed", "{0} is rolled out", false)] } == ["V2 alias deployed"]
 
