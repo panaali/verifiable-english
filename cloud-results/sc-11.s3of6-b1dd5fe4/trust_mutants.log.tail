@@ -1,0 +1,4 @@
+trust_mutants: 1 definitions, 46 mutants (6 to run), 4 jobs, base 3e4fe503f4c9
+trust_mutants: 8 KILLED, 0 SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 38 OTHER SHARD in 391 s; 2 carried from 8e44661bb32e (check-only change: lean/VE/Readings/SoftSupWireExamples.lean, lean/declarations.txt)
+trust_mutants: G[V], trusted: 8 KILLED, 38 OTHER SHARD
+trust_mutants: steps: wall plan 13.7 s, scratch 4.6 s, control_build 0.1 s, probe_install 1.4 s, mutants 367.7 s, cleanup 3.7 s; lake control_build 0.1 s (1), probe_install 1.4 s (1), control_probes 8.3 s (4), mutant_builds 141.8 s (12), mutant_checks 793.3 s (10), stage_controls 377.1 s (4), mutant_probes 13.5 s (6)
