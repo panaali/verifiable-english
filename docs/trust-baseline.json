@@ -2287,6 +2287,20 @@
    "reason": "pe-1b: VE/Purposes/WellFormed.lean S +12 (Part.readings +1, Units.packSources +1, targetKind +7, holdsTarget +3, each counted from its docstring to the next declaration); packsInert, shownUnder, unlinkedActive are G[V] tied by packsInert_iff and packsInert_nil, shownUnder_iff, unlinkedActive_iff; K +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pe-1b, 2026-11-09",
    "commit": "0f9fc890970e06cb7c330a3dc84bfaa580144875"
+  },
+  {
+   "class": "S",
+   "lines": 46,
+   "reason": "en-e3a: Norm/Run.lean +82, Norm/Owners.lean +36, Norm/Rules.lean +13, EnglishGrammar/Run.lean +12 (K +0, S +46, V +97; trusted +143)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), en-e3a, 2026-10-18",
+   "commit": "a0102f0e5350727e99ddcae2e0b59ed03f2f4192"
+  },
+  {
+   "class": "V",
+   "lines": 97,
+   "reason": "en-e3a: Norm/Run.lean +82, Norm/Owners.lean +36, Norm/Rules.lean +13, EnglishGrammar/Run.lean +12 (K +0, S +46, V +97; trusted +143)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), en-e3a, 2026-10-18",
+   "commit": "a0102f0e5350727e99ddcae2e0b59ed03f2f4192"
   }
  ]
 }

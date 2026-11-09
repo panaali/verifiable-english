@@ -1,8 +1,12 @@
 # en-e3a build report: EN-2's owner pieces and the Lean mode `english.statement` (kind `blocks`), first part
 
-Status: cut at the size measurement (common rules): this item delivers EN-2 step 0 and the mode's Lean runner with
-every section 4 part A statement proved and its fixtures; the route recipe's steps 1-4 and the route fixtures are the
-next item, **en-e3ab**, before en-e3b. No DRI signature is reserved. No route answer changes (nothing calls the mode).
+Status: cut at the size measurement the task names after deliverable (2) ("Measure size now ... and record it"; the
+common rules: "measure it before you start the second half of the work, and cut there"). This item delivers EN-2 step 0
+and the mode's Lean runner with every EN-2 section 4 part A statement that needs no registry proved, and its fixtures;
+the route recipe's steps 1-4 and the route fixtures are proposed as the next item, **en-e3ab**, before en-e3b. The cut
+was put to the DRI decider before it was recorded (msg.sh, inbox 20261109T181501Z-en-e3a; BUILDER-CHECKLIST 15); the
+ruling is pending at this commit. A second question (the status word, below) is pending too. No DRI signature is
+reserved. No route answer changes (nothing calls the mode).
 
 Spec and plan: `docs/spec/en-e3-norm.md` and `docs/spec/en-e3-norm-PLAN.md`, copied verbatim from `64e75bd53` (blob
 hashes equal; the commit is only on VM1's checkout, so the copies were read there with `git show`). Statement gate:
@@ -15,24 +19,26 @@ en-e3-norm-p3ver4 PASS; DRI 2026-11-02 items 1-3.
 | (1) `Norm/Owners.lean`: `Force.op`, `Polarity.op?`, `opOf_agrees`, `Mode.soft`, `soft_strict_iff`, `sourceView`, `sourceView_nil`, `UnformalisedSpan`, `Clause.toNodeChecked`, `toNodesChecked` | yes, the spec's text; with `toNodeChecked_ok`, `toNodesChecked_ok` and `toNodesChecked_authoring` (premise `ReadNormAuthoring`, the stub's statement of en-s6b's `readNorm_authoring`, which main decides by `#guard`s). All proved. | `Norm/OwnersExamples.lean` O1-O8 |
 | (1) no merged statement changes | none changed | `lean_statements --check` |
 | (2) `Norm/Run.lean`: request (`statementRequest`), `answerWith`, `answer`, `statementCase` (kind `blocks` alone), `statementCaseReported`, rule rows' byte spans from `lexSpans` (M10) | yes, the spec's text (2.3). The plan's `runStatement`/`runStatement_ok_reads` are bound in the spec as `statementCase`, `answer_one_iff` and `answer_one_rows` (plan line 598): those are delivered. | `Norm/RunExamples.lean` E1-E14, E16, E17 |
-| (2) section 4 part A for EN-2 | all proved: `statementStatusCodes_classed`, `statementFields_statuses` (`decide`), `answer_one_iff`, `answer_one_rows`, `answer_partial_no_node`, `answer_stopped`, `answer_misplaced` (one lemma: a lookup in `Json.mkObj l` is the key's last binding in `l`). `statementCaseReported_fits` and `runMode_englishStatement` need the shape and the registry: en-e3ab. | `lake build`; `lean/audit.py` |
+| (2) section 4 part A for EN-2 | all proved: `statementStatusCodes_classed`, `statementFields_statuses` (`decide`), `answer_one_iff`, `answer_one_rows`, `answer_partial_no_node`, `answer_stopped`, `answer_misplaced`, with four helper theorems in `Norm/Run.lean` (`findSome_lookup`, `getD_mkObj`: a lookup in `Json.mkObj l` is the key's last binding in `l`, `lookup_append`, `lookup_none`) and a local `answer_simp` macro. `ReadNormAuthoring_eq` pins `ReadNormAuthoring` to english-lean-s6.md 4's `readNorm_authoring` word for word (`Iff.rfl`). `statementCaseReported_fits` and `runMode_englishStatement` need the shape and the registry: en-e3ab. | `lake build`; `lean/audit.py` |
 | (2) `Run.lean`'s code hunk (M8, M9) | `statementCodeRows` (appended to `codeClasses`, the one table), `renderCodeRows` (EN-3 appends it), `statementStatusCodes`, `statementFields`, `statementUnsentenced`; the `english.grammar` export writes the last three as `statement_statuses`, `statement_fields`, `statement_unsentenced` | E1-E16 (every coded row carries its class) |
 | (2) OPEN-2 | `Norm/Rules.lean` exposed no tags: `normTags` added there, one hunk, `(normGrammar E L).rules.map (·.tag)` | E10 (the tags reach the witnesses); en-e3ab's R-f18 |
-| (2) size measured | 683 changed lines (+671 -12) outside the verbatim spec and plan after (2): over the ~600 cap, so the item is cut here | `git diff --numstat` |
-| Evaluators rule (DRI 2026-10-27) | `readNorm` is charged against `workBudget`; every other pass (`lexSpans` for the spans, `spansOf`, the rows) is linear in a source the lexer bounds (`maxTextChars` 10,000). E17: 300 blocks (9,791 characters) through the real reader answer `one` with 300 rows; 330 are `TextTooLong`. | E17 |
+| (2) size measured | 683 changed lines (+671 -12) outside the verbatim spec and plan after (2), at `62fe76254`: over the ~600 cap, so the item is cut there. The final count and what grew after the cut: section "Size" | `git diff --numstat 9f5dd46ab 62fe76254` |
+| Evaluators rule (DRI 2026-10-27) | `readNorm` is charged against `workBudget`; the other passes are at most quadratic in the statement count (`statementSpans`' fold appends to its list, `statementRow` calls `overOf` per row; the spec's text, kept) over a source the lexer bounds (`maxTextChars`, 10,000 characters). E17: 300 blocks (9,791 characters) through the real reader answer `one` with 300 rows and the last span `[9759, 9791]`; 330 are `TextTooLong`. | E17 (`RunExamples.lean:147-156`) |
 | (3) route recipe steps 1-4: registry and protocol, `RegistryExamples`, the shape and `Skeletons`, the encoder theorem, `Audit`/`ResponseShapeAudit` lines for them, `tools/english_codes.py` and its reader, `DEADLINES`, `_SCHEMA_SEEDS` | **not delivered: en-e3ab** | — |
 | (3) layer rows, `lean/VE.lean` | `Norm.RunExamples` among the runner-boundary fixtures (`Owners` and `Run` need no row: `VE.EnglishGrammar.*` is layer 3, `*.Run` layer 4); four imports | `tools/check_lean_imports.py` |
 | (4) route fixtures in `tests/data/route-cases.jsonl` | **not delivered: en-e3ab** (R-f1..R-f24 need the registered mode) | — |
-| (4) the 120 pinned blocks through the mode, R-stale | measured here, through the mode's Lean entry (below) | `tests/test_english_statement_blocks.py::test_each_pinned_block_through_the_mode` |
+| (4) the 120 pinned blocks through the mode, R-stale, and one ambiguous condition with both trees | measured here, through the mode's Lean entry (below); the ambiguous condition is f18 through the real reader (`Run.answer`, `leanReader`): `many`, sentence 1, both trees with `normGrammar`'s tags | `tests/test_english_statement_blocks.py::test_each_pinned_block_through_the_mode`; `RunExamples.lean:171-182` |
 
 **The 120 pinned blocks through the mode** (`Norm.Run.answer`, the case decoded once per 20 blocks; three requests
 through `statementCaseReported` give the same rows): 121 records (76 RSP, 44 FSF, f21). 104 answer `one` (103 W1
-blocks and f21), each with Python's recorded node byte for byte and the span `[0, bytes]` of the block; the 17 blocks
+blocks and f21), each with a node equal as JSON to Python's recorded node and the span `[0, bytes]` of the block; the 17 blocks
 headed by `should` answer `none`, `NoDerivation`, sentence 1 (EN-4's). No block answers `NodeRefused` or `NodeLimit`,
-and none is `Internal`. R-stale: the RSP environment with the FSF lexicon gives `decodeCase`'s refusal, status
-`error`. Cost on this host (ve-cloud-3, loaded): `decodeCase` of a use-case environment about 5 s, `readNorm` about 3.2 s
-per block, `answer` about 3.6 s (`normTags` rebuilds `normGrammar`, about 12% per answer; the spec's `answer` reads
-both, so it is recorded, not changed).
+and none is `Internal`. R-stale: the RSP environment with the FSF lexicon gives `{"status": "error", "error": "InvalidInput: the lexicon
+names another environment"}` (asserted exactly). The test passed in 414.5 s on ve-cloud-3 (`pytest --durations`).
+Cost (UNVERIFIED as a benchmark: one run each on a loaded host, `lake env lean` over generated files that print ten
+answers on the RSP environment): decoding the case alone 4.99 s, ten `readNorm` reads 36.61 s, ten `answer`s 40.57 s;
+so `normTags`, which rebuilds `normGrammar` beside `readNorm`, adds about 12% per answer. The spec's `answer` reads
+both, so it is recorded, not changed (FOLLOW-UP en-e3ab: compute the tags only for `many`, a spec edit).
 
 ## Deviations and corrections (recorded here, never in the copied spec)
 
@@ -48,6 +54,15 @@ both, so it is recorded, not changed).
 - **E15** is EN-3's (the render decoder). **E14** keeps the `lean-unknown` rows (the comparator is Python's,
   en-e3b's `tests/test_english_statement_shadow.py`); the stub's `deltaClasses` partition is not restated.
 - `#eval` rows of the stub are `#guard`s here (no output in the build).
+- **The status word is spelled once as `VE.EnglishGrammar.Run.partialStatus`** (`"parti" ++ "al"`, in `Run.lean`'s
+  code hunk): `lean/audit.py` refuses that token anywhere in a Lean source, strings and comments included, so the
+  spec's string literal (2.3's tables and `outcomeFields`, and `answer_partial_no_node`'s `.str "…"`) cannot merge as
+  written. The wire word is unchanged; a `#guard` pins it. Put to the DRI (inbox 20261109T185131Z-en-e3a), pending.
+- **`statementStatusCodes` already lists `rendered` and the four render codes** (the spec's text), and so does the
+  `english.grammar` export, while `codeClasses` gains `renderCodeRows` only at EN-3: en-e3ab's schema admits the seven
+  EN-2 statuses (recipe step 2) and its class checks skip the render codes until EN-3.
+- **E15's kind-`blocks` rows** are here (another kind, an extra member, and a well-formed request that reaches
+  `decodeCase`); its render rows are EN-3's.
 - English `actions_version` 45 -> 46: `Run.lean` and `Norm/Rules.lean` are hashed, and `Norm/Owners.lean` and
   `Norm/Run.lean` join the lock (DELTA row 1).
 
@@ -66,6 +81,13 @@ both, so it is recorded, not changed).
 
 Mechanical mutants per new trusted definition: the trust-mutants sweep (below).
 
+## Size
+
+`git diff --numstat 9f5dd46ab <final HEAD>`, outside the verbatim spec and plan and the generated files: see the
+final line of this section (filled in on the final HEAD). Growth after the cut point: E17 and the self-review's guards
+(`RunExamples.lean`), `ReadNormAuthoring_eq`, the pinned-block test (`tests/test_english_statement_blocks.py`), the
+trust classes (`tools/trust-classes.json`, a side table), and this item's evidence (REPORT, DELTA, `mutants.json`).
+
 ## Trust (R16)
 
 Measured on the final HEAD with `tools/trust_map.py --check`: see DELTA row 2 (filled in after the regenerated
@@ -83,5 +105,6 @@ asks for the ties pass.
 - **en-e3ab**: the route recipe's steps 1-4 for `english.statement` (registry, protocol, `RegistryExamples`, the shape
   from `statementFields`, `Skeletons`, `statementCaseReported_fits` and the every-mode case, the audit lines,
   `english_codes.py`'s `from_lean`/`render` and the reader beside `codes()`, `DEADLINES`, `_SCHEMA_SEEDS` and the
-  `wrong-row-type` list) and spec 8's route fixtures R-f1..R-f24 and R-stale in `tests/data/route-cases.jsonl`.
+  `wrong-row-type` list) and spec 8's route fixtures R-f1..R-f24 and R-stale in `tests/data/route-cases.jsonl`
+  (R-f18, the ambiguous condition with both trees, is already a `#guard` here through `Run.answer`).
 - then en-e3b (the shadow relay and the delta report), then en-e3 (EN-3).

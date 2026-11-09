@@ -4354,6 +4354,7 @@
         "VE.EnglishGrammar.Run.notOneSentenceText",
         "VE.EnglishGrammar.Run.optionalFields",
         "VE.EnglishGrammar.Run.pairs",
+        "VE.EnglishGrammar.Run.partialStatus",
         "VE.EnglishGrammar.Run.q",
         "VE.EnglishGrammar.Run.readCase",
         "VE.EnglishGrammar.Run.readCaseReported",
@@ -20085,19 +20086,41 @@
     },
     "VE/EnglishGrammar/Norm/Owners.lean": {
       "S": [
-        "VE.EnglishGrammar.Norm.Clause.toNodeChecked",
         "VE.EnglishGrammar.Norm.Force.op",
-        "VE.EnglishGrammar.Norm.Mode.soft",
-        "VE.EnglishGrammar.Norm.Polarity.op?",
         "VE.EnglishGrammar.Norm.ReadNormAuthoring",
         "VE.EnglishGrammar.Norm.Residual.span",
         "VE.EnglishGrammar.Norm.UnformalisedSpan",
         "VE.EnglishGrammar.Norm.sourceView",
-        "VE.EnglishGrammar.Norm.spansOf",
-        "VE.EnglishGrammar.Norm.toNodesChecked"
+        "VE.EnglishGrammar.Norm.spansOf"
       ],
       "G[R]": [
         "VE.EnglishGrammar.Norm.unformalisedText"
+      ],
+      "G[V]": [
+        {
+          "name": "VE.EnglishGrammar.Norm.Clause.toNodeChecked",
+          "tied": [
+            "VE.EnglishGrammar.Norm.toNodeChecked_ok"
+          ]
+        },
+        {
+          "name": "VE.EnglishGrammar.Norm.Mode.soft",
+          "tied": [
+            "VE.EnglishGrammar.Norm.soft_strict_iff"
+          ]
+        },
+        {
+          "name": "VE.EnglishGrammar.Norm.Polarity.op?",
+          "tied": [
+            "VE.EnglishGrammar.Norm.opOf_agrees"
+          ]
+        },
+        {
+          "name": "VE.EnglishGrammar.Norm.toNodesChecked",
+          "tied": [
+            "VE.EnglishGrammar.Norm.toNodesChecked_ok"
+          ]
+        }
       ]
     },
     "VE/EnglishGrammar/Norm/OwnersExamples.lean": {
@@ -20110,7 +20133,7 @@
         "VE.EnglishGrammar.Norm.OwnersExamples.cWide",
         "VE.EnglishGrammar.Norm.OwnersExamples.deep",
         "VE.EnglishGrammar.Norm.OwnersExamples.fitting",
-        "VE.EnglishGrammar.Norm.OwnersExamples.instBEqExcept",
+        "VE.EnglishGrammar.Norm.OwnersExamples.instBEqExcept_vE",
         "VE.EnglishGrammar.Norm.OwnersExamples.nPub",
         "VE.EnglishGrammar.Norm.OwnersExamples.reg",
         "VE.EnglishGrammar.Norm.OwnersExamples.viewFailures"
@@ -20135,11 +20158,8 @@
         "VE.EnglishGrammar.Norm.Run.decoderCode",
         "VE.EnglishGrammar.Norm.Run.leanReader",
         "VE.EnglishGrammar.Norm.Run.oneSpans",
-        "VE.EnglishGrammar.Norm.Run.opensStatement",
-        "VE.EnglishGrammar.Norm.Run.sentenceBytes",
         "VE.EnglishGrammar.Norm.Run.statementCase",
         "VE.EnglishGrammar.Norm.Run.statementCaseReported",
-        "VE.EnglishGrammar.Norm.Run.statementSpans",
         "VE.EnglishGrammar.Norm.Run.stoppedFields"
       ],
       "G[R]": [
@@ -20151,7 +20171,13 @@
         "VE.EnglishGrammar.Norm.Run.stopNamesSentence"
       ],
       "G[I]": [
-        "VE.EnglishGrammar.Norm.Run.resultOf"
+        "VE.EnglishGrammar.Norm.Run.opensStatement",
+        "VE.EnglishGrammar.Norm.Run.resultOf",
+        "VE.EnglishGrammar.Norm.Run.sentenceBytes",
+        "VE.EnglishGrammar.Norm.Run.statementSpans"
+      ],
+      "P": [
+        "VE.EnglishGrammar.Norm.tacticAnswer_simp"
       ]
     },
     "VE/EnglishGrammar/Norm/RunExamples.lean": {
