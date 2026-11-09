@@ -5,7 +5,8 @@ import VE.Defaults.Examples
 /-! The acceptance fixtures of premise packs (docs/spec/premise-packs.md 4: A1–A9; 2.10's kind table). Its imports
 are `Packs.lean`, `VE.Rights.Examples` (the rights example documents) and `VE.Defaults.Examples` (the decoded soft
 documents, and with them the layered decoder), so the fixtures are not on `Packs.lean` alone. The fixtures over
-today's sources (F1, F1′, the kind table's legacy rows) are in `PacksLegacyExamples.lean`; A9′ reads the response shape, so it sits with the encoder theorem (`ResponseShape/Encoders/NormDefaults.lean`). -/
+today's sources (F1, F1′, the kind table's legacy rows) are in `PacksLegacyExamples.lean`; A9′ reads the response shape,
+so it sits with the encoder theorem (`ResponseShape/Encoders/NormDefaults.lean`). -/
 namespace VE.NormDefaults.Packs.Fixtures
 open VE.NormDefaults.Packs
 
