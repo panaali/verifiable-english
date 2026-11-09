@@ -18770,6 +18770,10 @@ theorem VE.Events.EventsDecoded.typed
   ∀ (self : VE.Events.EventsDecoded), VE.Events.EventsTyped self.E self.V = Bool.true
   -- uses VE.Events.EventsDecoded.E@VE.Events.Wire VE.Events.EventsDecoded.V@VE.Events.Wire VE.Events.EventsDecoded@VE.Events.Wire VE.Events.EventsTyped@VE.Events.Decl
   -- expr 1728719048
+theorem VE.Events.WireExamples.eventsPack_conditions
+  ∀ (d : VE.Events.EventsDecoded), (VE.Events.eventsPack d).conditions = []
+  -- uses VE.Events.EventsDecoded@VE.Events.Wire VE.Events.eventsPack@VE.Events.Wire VE.Formula@VE.Syntax VE.NormDefaults.Packs.Pack.conditions@VE.NormDefaults.Packs VE.SoftNorms.DecisionKey@VE.SoftNorms.Tree
+  -- expr 4073115506
 theorem VE.Events.boundRole_mem
   ∀ {V : VE.Events.EventsEnv} {s bd : String},
     VE.Events.boundRole V s = Option.some bd →
@@ -31772,6 +31776,26 @@ theorem VE.Readings.TwinDocs.twin
               VE.Readings.Twin (VE.Rights.correlate (VE.Readings.one D s i).fst) Nd
   -- uses VE.Compose.Content@VE.Compose.Content VE.Formula@VE.Syntax VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Readings.Candidate.content@VE.Readings.Doc VE.Readings.Candidate@VE.Readings.Doc VE.Readings.Doc@VE.Readings.Doc VE.Readings.Twin@VE.Readings.Force VE.Readings.TwinDocs@VE.Readings.Force VE.Readings.WellFormedDoc@VE.Readings.Doc VE.Readings.candidate@VE.Readings.Doc VE.Readings.one@VE.Readings.Doc VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.act@VE.SoftNorms.Tree
   -- expr 974540504
+theorem VE.Readings.UnspecifiedExamples.choiceLayeredG_conditions
+  ∀ (b : VE.Readings.Wire.Admitted2) (N : VE.Readings.NDoc) (c : VE.Readings.Choice)
+    (wfc : VE.NormDefaults.WellFormedU (VE.Readings.choiceU N c) = Bool.true) (hN : N.D = b.D)
+    {L :
+      { L //
+        L.U = VE.Readings.choiceU N c ∧
+          L.X = VE.Readings.choiceX N c ∧
+            ∀ (a : VE.Formula), a ∈ L.X → VE.Formula.WellFormed (VE.Norms.envAt (VE.NormDefaults.fill L.U) 0) [] a }},
+    VE.Readings.Wire.choiceLayeredG b N c wfc hN = Except.ok L →
+      ∀ (p : VE.NormDefaults.Packs.Pack), p ∈ L.val.packs → p.conditions = []
+  -- uses VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax VE.NormDefaults.Packs.Pack.conditions@VE.NormDefaults.Packs VE.NormDefaults.Packs.Pack@VE.NormDefaults.Packs VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.X@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.packs@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.envAt@VE.Norms.Tree VE.Readings.Choice@VE.Readings.Choice VE.Readings.Doc@VE.Readings.Doc VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.Wire.Admitted2.D@VE.Readings.SupWire VE.Readings.Wire.Admitted2@VE.Readings.SupWire VE.Readings.Wire.choiceLayeredG@VE.Readings.UnspecifiedWire VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.choiceX@VE.Readings.SoftDefaults VE.SoftNorms.DecisionKey@VE.SoftNorms.Tree
+  -- expr 113387539
+theorem VE.Readings.UnspecifiedExamples.choiceLayered_conditions
+  ∀ (r : VE.Readings.Wire.AdmittedND) (c : VE.Readings.Choice)
+    (wfc : VE.NormDefaults.WellFormedU (VE.Readings.choiceU r.N c) = Bool.true)
+    {L : { L // L.U = VE.Readings.choiceU r.N c }},
+    VE.Readings.Wire.choiceLayered r c wfc = Except.ok L →
+      ∀ (p : VE.NormDefaults.Packs.Pack), p ∈ L.val.packs → p.conditions = []
+  -- uses VE.Formula@VE.Syntax VE.NormDefaults.Packs.Pack.conditions@VE.NormDefaults.Packs VE.NormDefaults.Packs.Pack@VE.NormDefaults.Packs VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.packs@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.Readings.Choice@VE.Readings.Choice VE.Readings.Wire.AdmittedND.N@VE.Readings.UnspecifiedWire VE.Readings.Wire.AdmittedND@VE.Readings.UnspecifiedWire VE.Readings.Wire.choiceLayered@VE.Readings.UnspecifiedWire VE.Readings.choiceU@VE.Readings.Unspecified VE.SoftNorms.DecisionKey@VE.SoftNorms.Tree
+  -- expr 1337428221
 theorem VE.Readings.Wire.Admitted.ones_eq
   ∀ (self : VE.Readings.Wire.Admitted), self.ones = VE.Readings.Wire.onesOf (VE.Readings.Wire.docOf self.re self.doc)
   -- uses VE.Formula@VE.Syntax VE.Readings.Wire.Admitted.doc@VE.Readings.Wire VE.Readings.Wire.Admitted.ones@VE.Readings.Wire VE.Readings.Wire.Admitted.re@VE.Readings.Wire VE.Readings.Wire.Admitted@VE.Readings.Wire VE.Readings.Wire.docOf@VE.Readings.Wire VE.Readings.Wire.onesOf@VE.Readings.Wire VE.Rights.RightsDoc@VE.Rights.Tree
