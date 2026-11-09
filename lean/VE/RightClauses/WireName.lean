@@ -5,7 +5,7 @@ import VE.RightClauses.WireDecode
 namespace VE.RightClauses
 open Lean
 
-theorem map_bind₂ {ε α β γ : Type} (Φ Ψ : β → γ) (x : Except ε α) {f : α → Except ε β}
+theorem map_bind_two {ε α β γ : Type} (Φ Ψ : β → γ) (x : Except ε α) {f : α → Except ε β}
     (h : ∀ a, Φ <$> f a = Ψ <$> f a) : Φ <$> (x >>= f) = Ψ <$> (x >>= f) := by
   cases x <;> simp [bind, Except.bind, h] <;> rfl
 
@@ -49,8 +49,8 @@ theorem ruleFields_toNode (x : Option String) (t : Std.TreeMap.Raw String Json c
     by_cases r2 : N1.carveOuts.length > 8
     case pos => rw [if_pos r2]; rfl
     rw [if_neg r2, pure_bind]
-    refine map_bind₂ _ _ _ fun _ => ?_
-    repeat (first | rfl | (simp only [pure_bind]) | (refine map_bind₂ _ _ _ fun _ => ?_) | split)
+    refine map_bind_two _ _ _ fun _ => ?_
+    repeat (first | rfl | (simp only [pure_bind]) | (refine map_bind_two _ _ _ fun _ => ?_) | split)
   cases key; rfl
 
 
@@ -68,7 +68,7 @@ theorem normFields_name {j : Json} {r : String × String × Bool × Json × List
     have key : (fun r : String × String × Bool × Json × List Json × List String => r.1) <$>
         (Except.ok r : Except String _) = (fun _ => s) <$> (Except.ok r : Except String _) := by
       rw [← h]
-      repeat (first | rfl | (simp only [pure_bind]) | (refine map_bind₂ _ _ _ fun _ => ?_) | split)
+      repeat (first | rfl | (simp only [pure_bind]) | (refine map_bind_two _ _ _ fun _ => ?_) | split)
     cases key; rfl
   | _ => rw [hname] at h; cases h
 
@@ -81,7 +81,7 @@ theorem decodeNorm_name {j : Json} {sh : Bool} {N : VE.Norms.Node} (h : VE.Norms
   have key : (fun N : VE.Norms.Node => N.name) <$> (Except.ok N : Except String _) =
       (fun _ => n) <$> (Except.ok N : Except String _) := by
     rw [← h]
-    repeat (first | rfl | (simp only [pure_bind]) | (refine map_bind₂ _ _ _ fun _ => ?_) | split)
+    repeat (first | rfl | (simp only [pure_bind]) | (refine map_bind_two _ _ _ fun _ => ?_) | split)
   cases key; rfl
 
 

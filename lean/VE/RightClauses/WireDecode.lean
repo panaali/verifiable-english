@@ -90,15 +90,9 @@ theorem fields_mkObj_single (k : String) (v : Json) : VE.Bridge.fields (Json.mkO
 theorem ok_bind {ε α β : Type} {x : Except ε α} {a : α} (h : x = .ok a) (f : α → Except ε β) : (x >>= f) = f a := by
   rw [h]; rfl
 
-theorem bind_congr' {ε α β : Type} (x : Except ε α) {f g : α → Except ε β} (h : ∀ a, f a = g a) :
-    (x >>= f) = (x >>= g) := by
-  rw [show f = g from funext h]
-
-theorem map_bind' {ε α β γ : Type} (Φ : β → γ) (x : Except ε α) {f : α → Except ε γ} {g : α → Except ε β}
+theorem map_bind_eq {ε α β γ : Type} (Φ : β → γ) (x : Except ε α) {f : α → Except ε γ} {g : α → Except ε β}
     (h : ∀ a, f a = Φ <$> g a) : (x >>= f) = Φ <$> (x >>= g) := by
   cases x <;> simp [bind, Except.bind, h, Functor.map, Except.map]
-
-theorem map_pure' {ε β γ : Type} (Φ : β → γ) (b : β) : (pure (Φ b) : Except ε γ) = Φ <$> pure b := rfl
 
 theorem distinct_map {L : List (String × Json)} (hd : Distinct L) (k : String) (f : Json → Json) :
     Distinct (L.map (mapPair k f)) := by
@@ -318,7 +312,7 @@ theorem ruleFields_guard (x : Option String) (L : List (String × Json)) {g : Js
   by_cases r2 : co.length > 8
   case pos => rw [if_pos r2, if_pos r2]; rfl
   rw [if_neg r2, if_neg r2, pure_bind, pure_bind]
-  refine map_bind' _ _ fun _ => ?_
-  repeat (first | rfl | (simp only [pure_bind]) | (refine map_bind' _ _ fun _ => ?_) | split)
+  refine map_bind_eq _ _ fun _ => ?_
+  repeat (first | rfl | (simp only [pure_bind]) | (refine map_bind_eq _ _ fun _ => ?_) | split)
 
 end VE.RightClauses

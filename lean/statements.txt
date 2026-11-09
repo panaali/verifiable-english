@@ -44969,10 +44969,6 @@ theorem VE.RightClauses.any_plain
     (r : String), ((VE.RightClauses.plainUnits E cl us).rs.any fun x => x.name == r) = us.rs.any fun x => x.name == r
   -- uses VE.RightClauses.CLine@VE.RightClauses.Tree VE.RightClauses.plainUnits@VE.RightClauses.WireTheorems VE.Rights.Right.name@VE.Rights.Tree VE.Rights.Right@VE.Rights.Tree VE.Rights.Wire.Units.rs@VE.Rights.Wire VE.Rights.Wire.Units@VE.Rights.Wire VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree
   -- expr 1561672035
-theorem VE.RightClauses.bind_congr'
-  ∀ {ε α β : Type} (x : Except ε α) {f g : α → Except ε β}, (∀ (a : α), f a = g a) → x >>= f = x >>= g
-  -- uses
-  -- expr 171410809
 theorem VE.RightClauses.bodyLines_mem
   ∀ {b l : Lean.Json},
     l ∈ VE.RightClauses.bodyLines b →
@@ -45645,12 +45641,12 @@ theorem VE.RightClauses.mapUnit_congr
         VE.RightClauses.mapUnit (fun x => VE.RightClauses.lineWith VE.RightClauses.headKeys) u
   -- uses VE.RightClauses.dropKeys@VE.RightClauses.Wire VE.RightClauses.headKeys@VE.RightClauses.Wire VE.RightClauses.lineWith@VE.RightClauses.Wire VE.RightClauses.mapArr_congr.match_1@VE.RightClauses.WireTheorems VE.RightClauses.mapUnit@VE.RightClauses.Wire VE.RightClauses.members@VE.RightClauses.Wire
   -- expr 4278210662
-theorem VE.RightClauses.map_bind'
+theorem VE.RightClauses.map_bind_eq
   ∀ {ε α β γ : Type} (Φ : β → γ) (x : Except ε α) {f : α → Except ε γ} {g : α → Except ε β},
     (∀ (a : α), f a = Φ <$> g a) → x >>= f = Φ <$> (x >>= g)
   -- uses
   -- expr 794291455
-theorem VE.RightClauses.map_bind₂
+theorem VE.RightClauses.map_bind_two
   ∀ {ε α β γ : Type} (Φ Ψ : β → γ) (x : Except ε α) {f : α → Except ε β},
     (∀ (a : α), Φ <$> f a = Ψ <$> f a) → Φ <$> (x >>= f) = Ψ <$> (x >>= f)
   -- uses
@@ -45665,10 +45661,6 @@ theorem VE.RightClauses.map_nodup_of_filter
     (∀ (x : α), x ∈ l → List.filter (fun y => k y == k x) l = [x]) → (List.map k l).Nodup
   -- uses
   -- expr 4152005545
-theorem VE.RightClauses.map_pure'
-  ∀ {ε β γ : Type} (Φ : β → γ) (b : β), Pure.pure (Φ b) = Φ <$> Pure.pure b
-  -- uses
-  -- expr 2651285045
 theorem VE.RightClauses.member_name
   ∀ (se : VE.SoftNorms.Wire.SoftEnvironment) (v : Lean.Json),
     (∀ (t : Std.TreeMap.Raw String Lean.Json Ord.compare), v = Lean.Json.obj t → t.WF) →
