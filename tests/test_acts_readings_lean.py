@@ -13,6 +13,7 @@ import pytest
 from tests import lean_routes
 from ve import acts
 from ve.__main__ import main
+from ve.errors import VEError
 
 pytestmark = pytest.mark.skipif(not lean_routes.SERVICE.exists(), reason="ve_service is not built")
 
@@ -88,6 +89,73 @@ def test_p11s_answer_has_leans_token_spans_and_indices():
     assert whole["paraphrase"].endswith(", as one act done in any one of these ways (not each way on its own).")
 
 
+# ap-4 review F4: `from` is read off each reading's derivation (`witnessed`, `tagTree`), never searched for by a token's
+# text, so a word repeated in another item (*food*, *asylum*, E16's whole second item) is that item's token; a shared
+# token (one *to*, one object) is read by each act that shares it, and once in a whole join, in the act's order.
+SEEK_SHARE = [frame("seek"), frame("share")]
+SEEK_ENJOY = [frame("seek"), frame("enjoy")]
+A5_FROM = [[[0, 1, 2, 8, 9, 10], [0, 4, 5, 8, 9, 10, 6, 7]], [[0, 1, 2, 8, 9, 10, 3, 4, 5, 6, 7]],
+           [[0, 1, 2, 8, 9, 10, 6, 7], [0, 4, 5, 8, 9, 10, 6, 7]], [[0, 1, 2, 8, 9, 10, 6, 7, 3, 4, 5]]]
+# (phrase, fixed, acts block, role, `from` per act per reading)
+FROM = [
+    ("{0} to seek food and to share food", [], {"frames": SEEK_SHARE}, "plain",
+     [[[0, 1, 2, 3], [0, 5, 6, 7]], [list(range(8))]]),
+    ("{0} to seek food and to share food", [], {"frames": SEEK_SHARE}, "obligation", [[[0, 2, 3], [0, 6, 7]]]),
+    ("{0} to seek asylum and to enjoy asylum", [], {"frames": SEEK_ENJOY}, "plain",
+     [[[0, 1, 2, 3], [0, 5, 6, 7]], [list(range(8))]]),
+    ("{0} to seek asylum and to seek asylum", [], {"frames": [frame("seek")]}, "plain",
+     [[[0, 1, 2, 3], [0, 5, 6, 7]], [list(range(8))]]),
+    ("{0} to seek and to enjoy asylum", [], {"frames": SEEK_ENJOY}, "plain",
+     [[[0, 1, 2, 6], [0, 4, 5, 6]], [[0, 1, 2, 6, 3, 4, 5]]]),
+    ("{0} to seek and enjoy asylum", [], {"frames": SEEK_ENJOY}, "plain",
+     [[[0, 1, 2, 5], [0, 1, 4, 5]], [[0, 1, 2, 5, 3, 4]]]),
+    ("{0} to seek asylum in France and in Spain", [], {"frames": [frame("seek", modifiers=["in"])]}, "plain",
+     [[[0, 1, 2, 3, 4, 5], [0, 1, 2, 3, 7, 8]], [list(range(9))]]),
+    ("{0} to seek food and water", [], {"frames": [frame("seek", split=[""])]}, "plain",
+     [[[0, 1, 2, 3], [0, 1, 2, 5]]]),
+    ("{0} to seek, to enjoy and to keep asylum", [], {"frames": SEEK_ENJOY + [frame("keep")]}, "plain",
+     [[[0, 1, 2, 9], [0, 4, 5, 9], [0, 7, 8, 9]], [[0, 1, 2, 9, 3, 4, 5, 6, 7, 8]]]),
+    (*PILOT["A11"][:3], "plain", [[[0, 1, 6, 2, 3, 4, 5], [0, 1, 2, 3, 4, 5, 8, 9]], [[0, 1, 6, 2, 3, 4, 5, 7, 8, 9]]]),
+    # A5's readings 3 and 4 come from its second meaning, each read off that meaning's own derivation
+    (*PILOT["A5"][:3], "plain", A5_FROM),
+]
+
+
+@pytest.mark.parametrize("phrase, fixed, block, role, expected", FROM)
+def test_from_names_the_tokens_each_act_is_made_of(phrase, fixed, block, role, expected):
+    found = ask(phrase, fixed, block, role=role)
+    assert [[act["from"] for act in reading["acts"]] for reading in found["readings"]] == expected
+
+
+def _token_texts(phrase, found):
+    return [phrase.encode()[a:b].decode().lower() for a, b in found["tokens"]]
+
+
+@pytest.mark.parametrize("case", [*PILOT, *range(len(FROM))])
+def test_every_from_token_is_a_token_of_its_acts_text(case):
+    """Each index of `from` names a phrase token that the act's text writes (a fixed phrase as one token), so no act
+    reads a token its text lacks; over the pilot and the F4 phrases."""
+    phrase, fixed, block, role, *_ = PILOT[case] if case in PILOT else FROM[case]
+    found = pilot(case) if case in PILOT else ask(phrase, fixed, block, role=role)
+    texts = _token_texts(phrase, found)
+    for reading in found["readings"]:
+        for act in reading["acts"]:
+            written = act["act"].lower().replace(",", " , ")
+            for i in act["from"]:
+                assert f" {texts[i]} " in f" {written} ", (act, texts[i])
+
+
+def test_each_act_is_read_off_the_parse_not_lexed_again():
+    """ap-4 review F2: with 128 fixed phrases of about 120 bytes, P64's 128 acts are listed within the mode's deadline.
+    Each act's tokens come from the reading's derivation, so `decodeFixed` runs once per request, not once per act
+    (which took about 50 s of CPU here, over the 5 s deadline: `CheckerUnavailable`)."""
+    pad = [" ".join(["a"] * 40 + ["x" + a + b]) for a in "abcde" for b in "abcdefghijklmnopqrstuvwxyz"][:120]
+    phrase = "{0} to seek and to enjoy asylum" + "".join(" in " + c for c in CITIES[:6])
+    found = ask(phrase, CITIES + pad, V5, role="obligation")
+    assert found["verdict"] == "LISTED" and len(found["readings"]) == 64
+    assert sum(len(r["acts"]) for r in found["readings"]) == 128
+
+
 def test_spans_are_bytes_of_the_phrase_as_written():
     phrase = "{0}  to\tseek  asylum’s"
     found = ask(phrase, block={"frames": [frame("seek")]})
@@ -154,6 +222,58 @@ def test_the_command_line_prints_leans_answer(tmp_path, capsys):
     assert shown["readings"][0]["paraphrase"].startswith("{0} is entitled to directly take part in {1}, and ")
     assert main(["acts", "readings", PILOT["A11"][0], "--acts", str(block), "--negated"]) == 2
     capsys.readouterr()
+
+
+# ap-4 review F3: the `--acts` file is read as `ve calc` reads its files (`_read`, `loads_json`) and sent as written:
+# a member of the wrong type is refused by Lean's decoder (never split into letters or iterated), and a file that is
+# not an acts block is invalid input; no traceback, never exit 1 ("violated").
+SEEK = frame("seek")
+BAD_BLOCKS = {
+    "adverbs a string": ({"frames": [SEEK], "adverbs": "ab"}, "REFUSED", "array expected"),
+    "frames a number": ({"frames": 5}, "REFUSED", "array expected"),
+    "frames an object": ({"frames": SEEK}, "REFUSED", "array expected"),
+    "a frame a number": ({"frames": [5]}, "REFUSED", "object expected"),
+    "fixed a string": ({"frames": [SEEK], "fixed": "abc"}, "InvalidInput", "array expected"),
+    "a list, not a block": ([SEEK], "InvalidInput", "not a JSON object"),
+    "a member not of the block": ({"frames": [SEEK], "frame": []}, "InvalidInput", "other than fixed, frames and "
+                                                                                    "adverbs: frame"),
+}
+
+
+@pytest.mark.parametrize("name", BAD_BLOCKS)
+def test_a_malformed_acts_file_is_invalid_input_never_coerced(tmp_path, capsys, name):
+    body, status, text = BAD_BLOCKS[name]
+    path = tmp_path / "acts.json"
+    path.write_text(json.dumps(body))
+    assert main(["acts", "readings", "{0} to seek asylum", "--acts", str(path)]) == 2
+    shown = json.loads(capsys.readouterr().out)
+    if status == "REFUSED":
+        assert shown["verdict"] == "REFUSED" and shown["diagnostic"] == text
+    else:
+        assert shown["status"] == status and text in shown["error"]["message"]
+
+
+def test_an_unreadable_invalid_or_oversized_acts_file_is_invalid_input_or_a_limit(tmp_path, capsys, monkeypatch):
+    import ve.__main__ as cli
+    missing = tmp_path / "missing.json"
+    broken = tmp_path / "broken.json"
+    broken.write_text("{")
+    for path in (missing, broken):
+        assert main(["acts", "readings", "{0} to seek asylum", "--acts", str(path)]) == 2
+        assert json.loads(capsys.readouterr().out)["status"] == "InvalidInput"
+    big = tmp_path / "big.json"
+    big.write_text(json.dumps({"frames": [SEEK]}) + " " * 64)
+    monkeypatch.setattr(cli._read, "__defaults__", (32,))  # the package cap, made small
+    assert main(["acts", "readings", "{0} to seek asylum", "--acts", str(big)]) == 4
+    assert json.loads(capsys.readouterr().out)["status"] == "ResourceLimit"
+
+
+def test_the_request_coerces_no_member():
+    """`acts.request` sends each member as given (a tuple as its list): Lean's decoder types them."""
+    case = acts.request("{0} to seek asylum", fixed="abc", frames=5, adverbs=("freely",))
+    assert (case["fixed"], case["frames"], case["adverbs"]) == ("abc", 5, ["freely"])
+    with pytest.raises(VEError, match="array expected"):
+        acts.readings("{0} to seek asylum", fixed="abc", frames=[SEEK])
 
 
 def test_the_document_caps_on_fixed_phrases_and_frames_are_limits():

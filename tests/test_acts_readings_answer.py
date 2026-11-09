@@ -15,7 +15,7 @@ import re
 import pytest
 
 from tests import lean_routes
-from tests.test_acts_readings_lean import PILOT, V5, frame
+from tests.test_acts_readings_lean import FROM, PILOT, V5, frame
 from tests.test_discourse_answer import _nodes, _replaced
 from ve import acts
 from ve.backends import relay
@@ -33,11 +33,19 @@ UNSEEN = [
     # the readings, a reading's acts or an act's tokens reordered, or one dropped with its row (AR5)
     (r"\('readings',\) (reversed|first dropped)", "AR5: the readings and their order are Lean's content"),
     (r"\('readings', \d+, 'acts'\) (reversed|first dropped)", "a reading's acts are Lean's content"),
-    (r"\('readings', \d+, 'acts', \d+, 'from'\) (reversed|first dropped|first replaced by last|last replaced by first)",
+    # an act listed twice in a reading: spec 7 binds the readings, not a reading's acts (E16 writes one act twice)
+    (r"\('readings', \d+, 'acts'\) (duplicated first|duplicated last|first replaced by last|last replaced by first)",
+     "which acts a reading lists, one twice included, is Lean's content (spec 7's binding list; ap-4 review F1)"),
+    (r"\('readings', \d+, 'acts', \d+, 'from'\) (reversed|first dropped)",
      "which tokens an act reads is Lean's content while each index names a token once"),
-    # an index or span moved, still naming a token or lying within the phrase in order
-    (r"\('readings', \d+, 'acts', \d+, 'from', \d+\) := -?\d+", "an index that still names a token once"),
-    (r"\('tokens', \d+, [01]\) := \d+", "a span bound that keeps the spans within the phrase, in order"),
+]
+# An int moved within the request: unseen only while it stays in range (spec 7 asks that each index and span pushed
+# out of range is refused, so an out-of-range value is never waived: ap-4 review C1).
+IN_RANGE = [
+    (r"\('readings', \d+, 'acts', \d+, 'from', \d+\) := (-?\d+)", lambda v, row, case: 0 <= v < len(row["tokens"]),
+     "an index that still names a token once"),
+    (r"\('tokens', \d+, [01]\) := (-?\d+)", lambda v, row, case: 0 <= v <= len(case["phrase"].encode("utf-8")),
+     "a span bound that keeps the spans within the phrase, in order"),
 ]
 
 
@@ -88,8 +96,32 @@ def mutants(row):
         yield f"without {key}", {k: v for k, v in row.items() if k != key}
 
 
-def unseen(label):
-    return any(re.fullmatch(pattern, label) for pattern, _ in UNSEEN)
+def unseen(label, row=None, case=None):
+    if any(re.fullmatch(pattern, label) for pattern, _ in UNSEEN):
+        return True
+    for pattern, within, _ in IN_RANGE:
+        found = re.fullmatch(pattern, label)
+        if found and row is not None and within(int(found.group(1)), row, case):
+            return True
+    return False
+
+
+def pushed(row, case):
+    """Spec 7's fuzz: each `from` index pushed out of range (past the last token, below 0) or made a copy of the
+    act's other index, and each span bound pushed past the phrase."""
+    end = len(case["phrase"].encode("utf-8"))
+    for r, reading in enumerate(row["readings"]):
+        for a, act in enumerate(reading["acts"]):
+            for i in range(len(act["from"])):
+                path = ("readings", r, "acts", a, "from", i)
+                for other in (len(row["tokens"]), len(row["tokens"]) + 7, -1):
+                    yield f"{path} := {other}", _replaced(row, path, other)
+                if len(act["from"]) > 1:
+                    yield f"{path} copied", _replaced(row, path, act["from"][i - 1])
+    for t in range(len(row["tokens"])):
+        for bound in (0, 1):
+            path = ("tokens", t, bound)
+            yield f"{path} := {end + 1}", _replaced(row, path, end + 1)
 
 
 @pytest.mark.parametrize("name", ["A11", "A12", "A9"])
@@ -97,7 +129,9 @@ def test_every_mutant_is_no_answer_or_lean_content_binding_cannot_see(name):
     case = case_of(name)
     row = genuine(case)
     assert bound(row, case)
-    accepted = [label for label, mutant in mutants(row) if bound(mutant, case) and not unseen(label)]
+    accepted = [label for label, mutant in mutants(row) if bound(mutant, case) and not unseen(label, row, case)]
+    assert not accepted, accepted
+    accepted = [label for label, mutant in pushed(row, case) if bound(mutant, case)]
     assert not accepted, accepted
 
 
@@ -106,7 +140,7 @@ def test_a_refusal_and_a_limit_are_bound_and_their_mutants_are_not():
                  acts.request("{0} to seek" + " a" * 200, frames=[frame("seek")])):
         row = genuine(case)
         assert row["verdict"] in ("REFUSED", "LIMIT") and bound(row, case)
-        accepted = [label for label, mutant in mutants(row) if bound(mutant, case) and not unseen(label)]
+        accepted = [label for label, mutant in mutants(row) if bound(mutant, case) and not unseen(label, row, case)]
         assert not accepted, accepted
         # a refusal relayed as a listing of nothing, or with a reading, is no answer
         assert not bound({**row, "verdict": "LISTED"}, case)
@@ -191,3 +225,43 @@ def test_a_listing_needs_readings_and_a_refusal_has_no_tokens():
     refusal = genuine(refusal_case)
     assert bound(refusal, refusal_case)
     assert not bound({**refusal, "tokens": [[0, 3]]}, refusal_case)
+
+
+def test_e16_one_act_written_twice_is_bound():
+    """ap-4 review F1: spec E16's phrase reads one act written twice; its two readings are Lean's genuine answer and
+    are bound (the relay checked "an act occurs twice in one reading", which spec 7 does not list). The two acts read
+    each its own item's tokens (F4)."""
+    case = acts.request("{0} to seek asylum and to seek asylum", frames=[frame("seek")])
+    shown = acts.read_answer(genuine(case), case)
+    assert shown["verdict"] == "LISTED" and len(shown["readings"]) == 2
+    split = shown["readings"][0]["acts"]
+    assert split[0]["act"] == split[1]["act"] and [a["from"] for a in split] == [[0, 1, 2, 3], [0, 5, 6, 7]]
+    # the same act listed twice, its indices too, is still bound: which acts a reading lists is Lean's content
+    row = genuine(case)
+    row["readings"][0]["acts"][1] = copy.deepcopy(row["readings"][0]["acts"][0])
+    assert bound(row, case)
+
+
+EDGE = [
+    ("{0} to seek asylum", [], {"frames": [frame("seek")]}, "plain", True),
+    ("{0} to seek asylum", [], V5, "plain", False),
+    ("{0} to seek" + " a" * 200, [], {"frames": [frame("seek")]}, "plain", True),
+    ("{0} to seek asylum,", [], {"frames": [frame("seek")]}, "plain", True),
+    ("{0} to seek food and to share food", [], {"frames": [frame("seek"), frame("share")]}, "permission", False),
+]
+
+
+@pytest.mark.parametrize("case", [*PILOT, *[("from", i) for i in range(len(FROM))], *[("edge", i) for i in
+                                                                                         range(len(EDGE))]])
+def test_every_genuine_answer_is_bound(case):
+    """The class of F1: the relay checks only spec 7's binding list and R8's "no row empty", so Lean's genuine answer
+    to every phrase of the pilot, of `from`'s fixtures and of the edges (a refusal, a limit, a lexing fault, *must
+    not*) is bound, whatever readings it lists."""
+    if case in PILOT:
+        request = case_of(case)
+    else:
+        phrase, fixed, block, role, sign = (FROM[case[1]][:4] + (True,) if case[0] == "from" else EDGE[case[1]])
+        request = acts.request(phrase, fixed=fixed, frames=block.get("frames", []), adverbs=block.get("adverbs", []),
+                               role=role, sign=sign)
+    row = genuine(request)
+    assert bound(row, request), acts.answer_problem(row, request)
