@@ -1,0 +1,11 @@
+trust_mutants: 14 definitions, 200 mutants (34 to run), 4 jobs, base 66242432df01
+UNKNOWN lean/VE/Presupposition/Wire.lean:86 VE.Presupposition.cellOk (S, trusted) list-empty: cs -> [] (lean/VE/Presupposition/Wire.lean:86: Invalid dotted identifier notation: The expected type of `.a...)
+UNKNOWN lean/VE/Presupposition/Wire.lean:116 VE.Presupposition.unitModes (S, trusted) list-empty: R.checked.filter (fun c => c.ob.unit == u) -> [] (lean/VE/Presupposition/Wire.lean:116: Invalid field notation: Type of)
+UNKNOWN lean/VE/Presupposition/Wire.lean:18 VE.Presupposition.Carrier (S, trusted) ctor-drop: | assumed (unit : String) ->  (lean/VE/Presupposition/Wire.lean:36: Unknown constant `VE.Presupposition.Carrier.assumed`)
+UNKNOWN lean/VE/Presupposition/Wire.lean:23 VE.Presupposition.Carrier (S, trusted) ctor-drop: | unresolved ->  (lean/VE/Presupposition/Wire.lean:41: Unknown constant `VE.Presupposition.Carrier.unresolved`)
+SURVIVOR lean/VE/Presupposition/Wire.lean:86 VE.Presupposition.cellOk (S, trusted) list-first: cs -> (cs.take 1)
+SURVIVOR lean/VE/Presupposition/Wire.lean:98 VE.Presupposition.rowNames (S, trusted) list-drop-first: ["definite", "plural", "generic"] -> (["definite", "plural", "generic"].drop 1)
+trust_mutants: 28 KILLED, 2 SURVIVOR, 4 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 166 OTHER SHARD in 169 s
+trust_mutants: D[V], trusted: 3 OTHER SHARD
+trust_mutants: S, trusted: 28 KILLED, 2 SURVIVOR, 4 UNKNOWN, 163 OTHER SHARD
+trust_mutants: steps: wall plan 9.1 s, scratch 2.7 s, control_build 0.2 s, probe_install 1.1 s, control_probes 7.9 s, mutants 143.3 s, cleanup 4.5 s; lake control_build 0.1 s (1), probe_install 1.1 s (1), control_probes 6 s (1), mutant_builds 49 s (34), mutant_checks 96 s (34), stage_controls 7.6 s (5), mutant_probes 62.6 s (28)
