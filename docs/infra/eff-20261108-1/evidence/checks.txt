@@ -1,0 +1,36 @@
+# eff-20261108-1 check outputs (copied from the logs named; HEAD 24302b941)
+## /tmp/eff-seed-drift.log
+FAILED tests/test_trust_mutants_probe_scope.py::test_run_reads_the_unmutated_control_for_a_drifted_constant
+1 failed, 34 deselected in 0.77s
+## /tmp/eff-seed-fallback.log
+FAILED tests/test_trust_mutants_probe_scope.py::test_lazy_control_incomplete_scope_falls_back_and_timeout_stays_unknown
+1 failed, 33 deselected in 0.89s
+## /tmp/eff-seed-scratch.log
+FAILED tests/test_trust_mutants.py::test_control_scratch_is_never_given_to_a_mutant
+1 failed, 767 deselected in 2.16s
+## /tmp/eff-seed-lock.log
+FAILED tests/test_trust_mutants_probe_scope.py::test_concurrent_lazy_control_of_one_file_is_computed_once
+1 failed, 33 deselected in 0.75s
+## /tmp/eff-post-seed-probe.log
+5 passed, 30 deselected in 165.58s (0:02:45)
+## /tmp/eff-post-seed-tests.log
+2 passed, 801 deselected in 0.62s
+## seeded bug (iv) rerun on the deterministic lock test (this session): 'with threading.Lock():' for 'with self.locks[f]:'
+FAILED tests/test_trust_mutants_probe_scope.py::test_concurrent_lazy_control_of_one_file_is_computed_once (assert calls == [{(1, 1)}]); restored: 1 passed
+## /tmp/eff-regen-check2.log (uv run python tools/regen_generated.py --check, after the merge of main)
+regen_generated: checked 37 entries
+## /tmp/eff-select.log (mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run, at 11be24c14)
+FAILED tests/test_trust_mutants.py (exit 1): tests/test_trust_mutants.py::test_a_run_records_where_its_time_goes; log /var/tmp/cct/ve-select-run-_ejxcloe/tests__test_trust_mutants.py::chunk(4__4).log
+=========================== short test summary info ============================
+FAILED tests/test_trust_mutants.py::test_a_run_records_where_its_time_goes - ...
+SHARD 2/4: exit 1 in 452.8 s; 20 units, 19 passed
+SHARD 3/4: exit 0 in 517.3 s; 13 units, 13 passed
+SHARD 1/4: exit 0 in 649.9 s; 21 units, 21 passed
+SHARD 4/4: exit 0 in 727.5 s; 13 units, 13 passed
+[gha-select 03:53:54Z] summary: selected tests ran on the Claude cloud (4 shards, run eff-20261108-1-0e417db4-t195485); exit=1; 949s
+## rerun of the failed id after the fix (mac-pytest.sh -- tests/test_trust_mutants.py::test_a_run_records_where_its_time_goes)
+1 passed in 45.41s
+## A/B row comparison (status, raw_status, detail of every row, eager vs lazy)
+1of8 head 03ade26e1 03ade26e1 rows 415 415 owned 8 differing []
+2of8 head fb40d6659 fb40d6659 rows 415 415 owned 8 differing []
+1of32 head 5febd940f 5febd940f rows 415 415 owned 2 differing []

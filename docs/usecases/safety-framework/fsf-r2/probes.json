@@ -38,7 +38,7 @@
  },
  "JT-a": {
   "admitted": false,
-  "diagnostic": "CheckerUnavailable: soft-norms with norm-defaults, readings, alternatives or risk needs its composed Lean route",
+  "diagnostic": "CheckerUnavailable: soft-norms with readings, alternatives or risk needs its composed Lean route",
   "what": "s134-rra in D1's environment with judgments@0"
  },
  "JT-b": {
@@ -132,7 +132,7 @@
  },
  "SC-a": {
   "admitted": false,
-  "diagnostic": "CheckerUnavailable: soft-norms with norm-defaults, readings, alternatives or risk needs its composed Lean route",
+  "diagnostic": "CheckerUnavailable: soft-norms with readings, alternatives or risk needs its composed Lean route",
   "what": "D1 chain: s135-bullet2-only as a governor re-guarding f9-dm, with RS8's set on it"
  },
  "SC-b": {
