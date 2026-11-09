@@ -5,7 +5,7 @@ reads. Trusted growth is +117 (K +0, S +74, V +43), covered by standing ruling R
 Status: built to the cut the DRI signed: deliverables (1) and (2) (reviews/dri-decisions-20261109-ps-2a.md item 1).
 `admit`, A1-A28, the 19 `admit_*` statements and Run.lean go to ps-2ab (see "Cut").
 Checks: probe 38/39 equal (`candidateTable` is filled by design), audit PASS, trust_map --check PASS, trust_mutants
-exit 0, selected tests: see "Final checks". Size: about 690 hand-written lines, over the ~600 line (see "Size").
+exit 0, selected tests: see "Final checks". Size: 767 hand-written lines, over the ~600 line (see "Size").
 Open: the chain runs the full gate on the final HEAD. Next item: ps-2ab.
 
 Feature item ps-2a (PS-2a's second part, after ps-2aa; plan `docs/spec/presupposition-PLAN.md:847-863`, 4.6
@@ -118,8 +118,8 @@ gains two allowances (S 74, V 43), each "SIGNED by standing ruling R16 (DRI-RULI
 - **Size.** `git diff --numstat 098dbe688`, without generated files (codemap, inventories, trust-baseline, Table.lean,
   `.gitattributes`, `tests/history-dependent.json`) and the sweep's output `trust-mutants.json`: Examples.lean 133,
   Wire.lean 112, tools/presupposition_table.py 79, tests/test_presupposition_table.py 60, trust-classes.json 43,
-  mutants.json 44, trust-mutants-allow.json 44, evidence 43, regen_generated.py 3, VE.lean 1, DELTA.md 9, and
-  this REPORT. That is about 690 lines, over the ~600 line. The overage is the generator and its tests (142 lines),
+  mutants.json 44, trust-mutants-allow.json 44, evidence 64, regen_generated.py 3, VE.lean 1, merge-tooling.md 1,
+  DELTA.md 9, and this REPORT. That is 767 lines with this REPORT (174), over the ~600 line. The overage is the generator and its tests (142 lines),
   which spec 6 requires and which the self-review asked for (one owner for the table). The rest is 9cdd78473's copied
   guards and the sweep's survivor fixtures. There is no product code left to cut. I did not cut the generator,
   because a hand copy of the table is the finding it fixes.
@@ -140,7 +140,19 @@ gains two allowances (S 74, V 43), each "SIGNED by standing ruling R16 (DRI-RULI
 
 ## Final checks
 
-PENDING (filled after the self-review and the once-only checks).
+Each ran once, on committed trees of this branch (`evidence/tests.txt`):
+- `uv run python tools/regen_generated.py --write --skip route-cases`: exit 0, 37 entries (codemap, inventories,
+  `.gitattributes` with the new entry, `tests/history-dependent.json`).
+- Full `lake build` (inside regen) and `python3 lean/audit.py`: PASS, 791 source files.
+- `tools/trust_map.py --check`: PASS, trusted +117, K +0.
+- trust_mutants (`mac-pytest.sh --trustmut`): first run exit 1 (16 survivors), rescore exit 0 (see "Seeded bugs").
+- Selected tests, `MAC_PYTEST_NO_DEFER=1 mac-pytest.sh --select -- --base 098dbe688 --run` at e5591823d (clean):
+  498 units, 1 failed: `tests/test_merge_tooling_evidence.py::test_the_generated_file_table_names_every_entry`.
+  `docs/merge-tooling.md` lacked the new `presupposition-table` row. I fixed it (fcded573) and reran only that id
+  through `mac-pytest.sh`: 1 passed, exit 0. That run does not count as the gate's same-tree reuse, so the chain
+  gate runs in full.
+- Size: `git diff --numstat 098dbe688` without generated files: 767 lines (753 added, 14 deleted), REPORT.md 174 of
+  them. That is over the ~600 line (see "Size, bytes, evaluators").
 
 ## Self-review against BUILDER-CHECKLIST
 
