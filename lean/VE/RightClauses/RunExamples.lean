@@ -90,12 +90,36 @@ def countryOf : String := "[\"and\",[\"top\"],[\"binary\",\"country_of\",[\"var\
 -- without `right-clauses@0`
 #guard (VE.Compose.environmentRows ["right-clauses@0"]).length == VE.Compose.profileTable.length &&
   (VE.Compose.environmentRows ["readings@1"]).length == VE.Compose.profileTable.length &&
-  (VE.Compose.environmentRows ["norms@0"]).length == VE.Compose.baseRows.length
+  (VE.Compose.environmentRows ["norms@0"]).length == VE.Compose.baseRows.length &&
+  (VE.Compose.environmentRows ["norms@0", "readings@1", "relational-fol@0"]).length ==
+    VE.Compose.profileTable.length
 #guard (VE.Compose.withoutClauses (parse (profiles on))).getObjValD "profiles" ==
   parse "[\"norms@0\",\"relational-fol@0\",\"rights@0\",\"soft-norms@0\"]"
 -- the runner's row: the id echoed, the result typed
 #guard (runCaseReported (Json.mkObj [("id", "k"), ("environment", parse (profiles on)), ("document", doc ",\"elided\":[]")])
   ).getObjValD "status" == "ok"
-#guard (runCaseReported (Json.mkObj [("id", "k")])).getObjValD "status" == "error"
+#guard runCaseReported (Json.mkObj [("id", "k")]) == Json.mkObj [("id", "k"), ("status", "error"),
+  ("error", "fields do not match: expected [id, environment, document], got [id]")]
+-- two units (a `right` and its `right_lines`), each line with a total relation: both units plained, two premises
+def twoLines : Json := parse <|
+  "[{\"right\":{\"name\":\"r21\",\"holder\":\"person\",\"lines\":[{\"kind\":\"claim\",\"norm\":{\"name\":" ++
+  "\"equal-access\",\"predicate\":\"public_service_access_required\",\"sign\":true,\"guard\":[\"top\"],\"unless\":[]," ++
+  "\"over\":[]},\"elided\":[],\"relation\":{" ++ rel ++ ",\"total\":1}}]},\"span\":[0,100]}," ++
+  "{\"right_lines\":{\"right\":\"r21\",\"lines\":[{\"kind\":\"claim\",\"norm\":{\"name\":\"equal-access-2\"," ++
+  "\"predicate\":\"public_service_access_required\",\"sign\":true,\"guard\":[\"top\"],\"unless\":[],\"over\":[]}," ++
+  "\"elided\":[],\"relation\":{" ++ rel ++ ",\"total\":1}}]},\"span\":[100,200]}]"
+#guard ((ask twoLines).map fun r => ((r.getObjValD "clause_slot").getArr?.toOption.map (·.size),
+  (parse ((r.getObjValD "plained").getStr?.toOption.getD "")).getArr?.toOption.map (·.size))).toOption ==
+  some (some 2, some 2)
+#guard says (doc ",\"elided\":[[30,40],[35,45]]") == "ClauseSpan: equal-access: [35, 45)"
+-- an extra member that sorts first, then last
+#guard says (doc (",\"elided\":[],\"relation\":{\"aaa\":1," ++ rel ++ "}")) ==
+  "InvalidInput: invalid relation of rule equal-access"
+#guard says (doc ",\"elided\":[],\"clauses\":[{\"aaa\":1,\"role\":\"trigger\",\"formula\":[\"top\"],\"span\":[10,20]}]") ==
+  "InvalidInput: invalid clause 0 of rule equal-access"
+#guard says (doc (",\"elided\":[],\"relation\":{" ++ rel ++ ",\"zzz\":1}")) ==
+  "InvalidInput: invalid relation of rule equal-access"
+#guard says (doc ",\"elided\":[],\"clauses\":[{\"role\":\"trigger\",\"formula\":[\"top\"],\"span\":[10,20],\"zzz\":1}]") ==
+  "InvalidInput: invalid clause 0 of rule equal-access"
 
 end VE.RightClauses.RunExamples
