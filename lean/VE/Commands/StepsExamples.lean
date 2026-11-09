@@ -30,6 +30,8 @@ def check : Reading := ⟨.require, "click_check_required", [], .top⟩
 def reviewMeaning : Reading := ⟨.require, "review_meaning_required", [], .top⟩
 def reviewIt : Reading := ⟨.require, "review_required", [⟨"meaning1", "the meaning"⟩], .top⟩
 
+def noStep : StepOutcome := .refused "InvalidInput" "no single speech-act reading"
+
 def conditionScopeText : String :=
   "a condition with a sequence of steps: write one sentence per step, with the condition on each step or on the first only"
 
@@ -62,14 +64,14 @@ def conditionScopeText : String :=
 #guard match web "Click Ask, if draft is approvable." with
   | .refused code text => code == "NoDerivation" && step "If draft is approvable, click Ask." == .refused code text
   | _ => false
-#guard step "Then click Use this wording under the one you mean." == .refused "InvalidInput" "no single speech-act reading"
+#guard step "Then click Use this wording under the one you mean." == noStep
 #guard web "Click Use this wording under the one you mean." == noReadingOutcome
 #guard step "If draft is approved, click Check rule conflict, then click Ask." == .refused "ConditionScope" conditionScopeText
 #guard conditionScope == .refused "ConditionScope" conditionScopeText
 #guard step "Click Ask, if draft is approved, then click Ask." == .refused "ConditionScope" conditionScopeText
 #guard step "Add an exception or precedence, then check for a conflict in plain English." ==
-  .refused "InvalidInput" "no single speech-act reading"
-#guard step "Add an exception or precedence, then click Ask." == .refused "InvalidInput" "no single speech-act reading"
+  noStep
+#guard step "Add an exception or precedence, then click Ask." == noStep
 #guard step "Click Check rule conflict." == .one check false
 #guard web "Review the meaning." == .many [reviewMeaning, reviewIt]
 #guard step "Review the meaning, then click Ask." == .many
@@ -88,7 +90,7 @@ def conditionScopeText : String :=
   .steps [check, ask]
 #guard combineShapes [(.core "a", .refused "NoDerivation" "x"), (.core "b", conditionScope)] == conditionScope
 #guard combineShapes [(.core "a", .refused "NoDerivation" "x"), (.core "b", .refused "InvalidInput" "y")] ==
-  .refused "InvalidInput" "no single speech-act reading"
+  noStep
 #guard combineShapes ((List.range (readingsBound + 1)).map fun i => (.core (toString i), .one ask false)) == .limit
 -- A `many` first step and a `one` second keep the second reading in every alternative.
 #guard readingTuples [[reviewMeaning, reviewIt], [ask]] == [[reviewMeaning, ask], [reviewIt, ask]]
@@ -99,9 +101,9 @@ def conditionScopeText : String :=
 #guard web "Click Ask, if draft is approved." 0 == .limit
 #guard step "Click Ask, then click Ask, if draft is approved." 0 == .limit
 #guard step "Add an exception or precedence, then click Ask, if draft is approved." 0 ==
-  .refused "InvalidInput" "no single speech-act reading"
+  noStep
 #guard step "Click Ask, if draft is approved, then add an exception or precedence." 0 ==
-  .refused "InvalidInput" "no single speech-act reading"
+  noStep
 
 /-! ## `lift`, `shapeAlts` and `reads` -/
 
@@ -112,6 +114,10 @@ def conditionScopeText : String :=
 #guard shapeAlts (.core "x") (.one ask false) == [.shape (.core "x") [ask]]
 #guard shapeAlts (.seq ["x", "y"]) (.steps [ask, check]) == [.shape (.seq ["x", "y"]) [ask, check]]
 #guard shapeAlts (.core "x") .limit == [] && shapeAlts (.core "x") (.refused "a" "b") == []
+-- Later batches' alternatives pass through `many` unchanged; `mixed` (CI-7b) is no completed shape alternative.
+#guard let fs := [Form.command, .supposition, .permission, .conditionalClaim, .remark, .heading].map Alt.form
+  shapeAlts (.core "x") (.many (fs ++ [.purpose ask "p"])) == fs ++ [.purpose ask "p"] &&
+    shapeAlts (.core "x") (.mixed ask "p") == [] && combineShapes [(.core "x", .mixed ask "p")] == noStep
 #guard readsWeb (.seq ["Review the meaning", "click Ask"]) && readsWeb (.after "click Ask")
 #guard !readsWeb (.seq ["Add an exception or precedence", "click Ask"]) && !readsWeb (.core "Then click Ask.")
 
