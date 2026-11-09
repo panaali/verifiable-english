@@ -2189,6 +2189,13 @@
    "reason": "sc-7: lean/VE/Scope/Authoring.lean K +0, S +37, untied V +104 (trusted +141): scope's authoring wordings (spec 2.2), Pinned.parseGovernor/renderGovernor and their readers",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-7, 2026-11-08",
    "commit": "da5303b7876924d4fba67866390ed6f0d0b36cbc"
+  },
+  {
+   "class": "V",
+   "lines": 2,
+   "reason": "sc-7 review F1: lean/VE/Scope/Authoring.lean untied V +2 (sc-7 total K +0, S +37, V +106, trusted +143): Pinned.clause refuses a sentence end in every slot",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-7, 2026-11-09",
+   "commit": "da5303b7876924d4fba67866390ed6f0d0b36cbc"
   }
  ]
 }
