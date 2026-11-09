@@ -1,3 +1,11 @@
+- `tests/test_english_e2_boundary.py` — The E2 boundary validates every block its typing view drops (review B2 of English Lean E2; spec D7).
+- `tests/test_english_e2_integer_marks.py` — The spacing of the integer marks: Lean reads exactly the spacing Python reads (spec R1; english-lean-e2.md 13).
+- `tests/test_english_e2_ledger_sites.py` — Every call into Python's own English reader is a site the deletion ledger keeps (spec 2.9; recheck 1 of E2, B).
+- `tests/test_english_e2_overlay.py` — The overlay refusals at the public boundary (spec D16, D17, 2.8; fixtures rl8 to rl10, ev15c, ev17, ovc; review A2 of English Lean E2).
+- `tests/test_english_e2_profile_matrix.py` — Lean reads what Python reads on every environment of the probe matrix (review A of English Lean E2, recheck 1).
+- `tests/test_english_e2_python.py` — Python producer behavior needed by the E2 overlay relay (spec 2.8, 8.11).
+- `tests/test_english_e2_relay.py` — E2's Lean-authoritative admission and untrusted response boundary.
+- `tests/test_english_e2_report.py` — The integration report's gate and three-way figures come from committed results.
 - `tests/test_english_e2_responses.py` — E2's untrusted `english.read` answers: every status, every node, against the real service (review B1, B3, B4, B5 of English Lean E2; build checklist 4, 5, 13, …
 - `tests/test_english_e2_saved_evidence.py` — The E2.5 records, saved: the readability failure that kept Python authority then (E2.6 replays it in `test_english_e26_evidence.py`), the directed coverage and…
 - `tests/test_english_e2_selection.py` — Python never selects a wording Lean's lexicon validity refuses (recheck 1 of E2, B).
@@ -79,10 +87,3 @@
 - `tests/test_lean_authority_values.py` — No reported evaluation value or count is Rust's (lean-first batch 15b, review B3; batch 18: Lean is the one authority).
 - `tests/test_lean_budget_types.py` — Present replay budgets must never silently become the default.
 - `tests/test_lean_build.py` — `tests/lean_build.py`: a fixture naming a Lean target the lakefile lacks fails, prebuilt or not.
-- `tests/test_lean_certificates.py` — The Python prover searches; the independently proved Lean checker decides.
-- `tests/test_lean_conformance.py` — Portable JSON differential tests.
-- `tests/test_lean_decided_share.py` — `tools/lean_decided_share.py` (readings-defaults 1.10 and 10; plan 3.9, RD-5): sums Lean's decided units' span bytes and decides nothing; Lean's list is untrus…
-- `tests/test_lean_default_build.py` — Every Lean source is compiled by the default `lake build` (et-7 review F2).
-- `tests/test_lean_document_wrapper.py` — The Lean `document` mode (lean-first batch 16a) against Python's `load_document` and `check_document` wrapper.
-- `tests/test_lean_dump_cache.py` — The Lean dump cache (`tools/lean_dump_cache.py`): a stored dump is replayed only while every input it is keyed on is unchanged, and any doubt is a miss that ru…
-- `tests/test_lean_first_b10a_report.py` — Lean-first batch 10a: the tables of `docs/lean-first/b10a/DELTA.md` are rendered from the evidence files (build checklist 20), the corpus A/B found no differen…
