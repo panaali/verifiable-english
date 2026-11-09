@@ -10,6 +10,7 @@ module MeteredMain
 module ResponseDecode
 module ResponseShape.CaseDeciders
 module ResponseShape.DefaultsExamples
+module ResponseShape.Encoders.ActReadings
 module ResponseShape.Encoders.Alternatives
 module ResponseShape.Encoders.Ask
 module ResponseShape.Encoders.Calc
@@ -44,6 +45,7 @@ module ResponseShape.Encoders.Words
 module ResponseShape.Encoders
 module ResponseShape.EnumSites
 module ResponseShape.FitsTactic
+module ResponseShape.Schemas.ActReadings
 module ResponseShape.Schemas.Alternatives
 module ResponseShape.Schemas.Ask
 module ResponseShape.Schemas.Bundle
@@ -118,6 +120,7 @@ module VE.Acts.ReadingsExamples
 module VE.Acts.RenderExamples
 module VE.Acts.RuleExamples
 module VE.Acts.Run
+module VE.Acts.RunExamples
 module VE.Acts.Situation
 module VE.Acts.Sources
 module VE.Acts.Syntax
@@ -258,6 +261,8 @@ module VE.Commands.Read
 module VE.Commands.Run
 module VE.Commands.RunExamples
 module VE.Commands.RunSplit
+module VE.Commands.Steps
+module VE.Commands.StepsExamples
 module VE.Commands.Texts
 module VE.Compose.Adjoin
 module VE.Compose.Content
