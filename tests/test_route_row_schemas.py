@@ -178,7 +178,9 @@ def test_dropped_retyped_or_emptied_fields_are_rejected(genuine):
     # A document row's report is optional (`document.json`): the relay refuses a row without the one `check` asked for
     # (`tests/test_cardinality_answer.py::test_a_document_row_answers_the_case_it_asked`).
     assert set(accepted) == {("readings-route", "readings-verdicts", "drop decided_units"),
-                             ("document", None, "drop cardinality")}, accepted[:10]
+                             ("document", None, "drop cardinality"), ("document", None, "drop judgment_lines"),
+                             ("document", None, "drop judgments"),
+                             ("document", None, "drop undeclared_evaluative")}, accepted[:10]
     assert set(checked) >= set(ROUTE_MODES) and min(checked.values()) > 0
 
 
