@@ -414,6 +414,9 @@ def exhibit (src : RightsSource) (j : Json) : Except String (Option (VE.FiniteMo
     pure (some M)
   | .error _ => pure none
 
+/-- The budget an UNKNOWN on the rights route names (7.3: `UNKNOWN (<budget>)`). -/
+def conflictBudget : Nat := 10000
+
 /-- A rights-conflict answer over certificate packages. CONFLICT-FREE carries 7.3's status line: the premises it is
 conditional on with their labels, the weighing points open (the colliding default pairs no ranking resolves; no pair
 evidence is taken here) and whether a situation is exhibited, or UNKNOWN with the budget; beside it the same parts as
@@ -424,7 +427,7 @@ def conflictAnswer (id : String) (res : RightsConflictReplay) (M : Option (VE.Fi
   let coherence := conditional.filter (fun l => l.startsWith "soft:")
   let limitation := conditional.filter (fun l => l.startsWith "rights:")
   let weighing := VE.SoftNorms.Wire.openCoherence (correlate res.src.D)
-  let exhibited := if M.isSome then "yes" else "UNKNOWN (budget 10000)"
+  let exhibited := if M.isSome then "yes" else s!"UNKNOWN (budget {conflictBudget})"
   let statusText := if res.conflictFree then
     s!"CONFLICT-FREE among rules on the same act, conditional on {coherence.length} coherence premises and {limitation.length} limitation premises ({", ".intercalate conditional}); {weighing.length} weighing points open; situation exhibited: {exhibited}"
     else s!"UNKNOWN: {(firstFailure res).getD "target unspecified"}, budget 10000"
@@ -432,7 +435,7 @@ def conflictAnswer (id : String) (res : RightsConflictReplay) (M : Option (VE.Fi
     ("targets", toJson ((targets (soften (correlate res.src.D))).map (·.1))),
     ("conditional_on", toJson conditional)] ++
     (if res.conflictFree then [("weighing_points", toJson weighing), ("situation_exhibited", .bool M.isSome),
-      ("budget", toJson (10000 : Nat)), ("situation", (M.map (situationTables res.src.D)).getD .null)] else []) ++
+      ("budget", toJson conflictBudget), ("situation", (M.map (situationTables res.src.D)).getD .null)] else []) ++
     match firstFailure res with
     | some d => if res.conflictFree then [] else [("detail", .str d)]
     | none => [])

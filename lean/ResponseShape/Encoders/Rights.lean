@@ -189,7 +189,7 @@ theorem runRightsKind_packages (id : String) (j answer : Json)
       (∃ rest C W e S, answer = VE.Route.Wire.ok id [("verdict", .str "CONFLICT-FREE"),
           ("status_text", .str ("CONFLICT-FREE among rules on the same act, conditional on " ++ rest)),
           ("targets", T), ("conditional_on", C), ("weighing_points", W), ("situation_exhibited", .bool e),
-          ("budget", toJson (10000 : Nat)), ("situation", S)]) := by
+          ("budget", toJson conflictBudget), ("situation", S)]) := by
   unfold runRightsKind at h
   simp only [String.reduceBEq, Bool.false_eq_true, ↓reduceIte, hw, Bool.and_false] at h
   cases hr : replayRightsConflict j with

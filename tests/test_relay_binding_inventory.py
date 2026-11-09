@@ -126,6 +126,12 @@ BOUND, UNORDERED = "bound", "bound, unordered"
 COUNTED = "bound count, each item Lean's"  # rows are bound one per request item; their values are Lean's
 FUZZED = (BOUND, UNORDERED, COUNTED)
 
+# rights-cfr-3: each finding beside its text, with its line's span (rights_route._bind_findings).
+_LOCATED_FINDINGS = {
+    "located_findings": BOUND, "located_findings[].code": BOUND, "located_findings[].right": BOUND,
+    "located_findings[].rule": BOUND, "located_findings[].span": BOUND, "located_findings[].text": BOUND,
+}
+
 
 def lean(reason):
     return "lean: " + reason
@@ -223,7 +229,7 @@ INVENTORY = {
         "distinction[].hits": lean("which lines in the cone mention a protected predicate; each hit is bound"),
         "distinction[].hits[].cited": BOUND, "distinction[].hits[].protected": BOUND,
         "distinction[].hits[].right": BOUND, "distinction[].hits[].rule": BOUND,
-        "findings": BOUND, "findings[]": BOUND,
+        "findings": BOUND, "findings[]": BOUND, **_LOCATED_FINDINGS,
         "generated": UNORDERED, "generated[].act": BOUND, "generated[].condition": BOUND,
         "generated[].kind": BOUND, "generated[].limitation": BOUND, "generated[].name": BOUND,
         "generated[].predicate": BOUND,
@@ -243,6 +249,7 @@ INVENTORY = {
     },
     "rights-scope": {
         **_NARROWINGS, "id": BOUND, "status": BOUND, "findings": BOUND, "findings[]": BOUND, "licensed": BOUND,
+        **_LOCATED_FINDINGS,
     },
     "rights-bar": {
         "id": BOUND, "status": BOUND, "bars": BOUND, "bars[].aimed": BOUND, "bars[].barred": BOUND,
@@ -255,6 +262,10 @@ INVENTORY = {
         "id": BOUND, "status": BOUND, "targets": BOUND, "targets[]": BOUND,
         "conditional_on": lean("which premises Lean's conflict check used; each label is bound"),
         "conditional_on[]": BOUND, "detail": BOUND, "verdict": lean("Lean's verdict"), "status_text": BOUND,
+        # rights-cfr-2: 7.3's report parts beside a CONFLICT-FREE line (rights_route._bind_conflict).
+        "weighing_points": BOUND, "weighing_points[]": BOUND, "situation_exhibited": BOUND,
+        "budget": BOUND, "situation": BOUND, "situation[].predicate": BOUND, "situation[].tuples": BOUND,
+        "situation[].tuples[]": BOUND, "situation[].tuples[][]": BOUND,
     },
     "soft-pairs": {
         "id": BOUND, "status": BOUND, "pairs": BOUND, "pairs[].pair": BOUND, "pairs[].pair[]": BOUND,
@@ -782,7 +793,13 @@ def test_another_requests_genuine_answer_is_unavailable(relays, route):
 _WITNESS_ROWS = "test_unrequested_witness_rows_are_unavailable"
 _ACTS_PRIME = {"environment_prime.vocabulary.acts": "test_a_soft_views_prime_acts_block_not_bound_to_the_request_is_unavailable"}
 UNEXERCISED = {
-    "rights-conflict": {"conditional_on[]": "test_f15_rights_conflict_identities_are_bound"},
+    "rights-conflict": {"conditional_on[]": "test_f15_rights_conflict_identities_are_bound",
+                        # A CONFLICT-FREE line needs certified packages, which the report never sends; its 7.3
+                        # parts are fuzzed in tests/test_rights_report_parts.py.
+                        **dict.fromkeys(("weighing_points", "weighing_points[]", "situation_exhibited", "budget",
+                                         "situation", "situation[].predicate", "situation[].tuples",
+                                         "situation[].tuples[]", "situation[].tuples[][]"),
+                                        "test_a_mutated_conflict_report_part_is_refused")},
     # `acts@0` refuses `rights@0`; the rights route's prime is bound by the soft route's binder (ap-1bg)
     "rights-elaborate": _ACTS_PRIME,
     "soft-elaborate": {
