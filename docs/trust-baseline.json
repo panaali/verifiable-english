@@ -2224,6 +2224,34 @@
    "reason": "sn-b6d: VE/Senses/Run.lean +58 (G[V] rereadJson, decodeReread, lineJson, and the readCase wiring of the re-read and the line)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sn-b6d, 2026-11-09",
    "commit": "9ba8aeaedfc82fa41258a4f52bcca4820f47b663"
+  },
+  {
+   "class": "V",
+   "lines": 136,
+   "reason": "ci-3a: lean/VE/Commands/Steps.lean V +136 (G[V] Shape, Form, Alt, StepOutcome, capitalise, hasThen, shapes, lift, readingTuples, shapeOutcome, shapeAlts, combineShapes, readStep, reads; G[R] conditionScope is reject-only; productSize and shapeOutcomeCharged tied to readingTuples_length and shapeOutcome_charged); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ci-3a, 2026-11-09",
+   "commit": "d55d24faab755047e2131d11487ff3d9c124d3e8"
+  },
+  {
+   "class": "V",
+   "lines": 38,
+   "reason": "sn-b6-f8-trust (DRI reviews/dri-decisions-20261105-cfr2.md, regrade of sn-b6-review-ov F8): reclassification only, no Lean change; VE/Senses/Run.lean +38 V (projectionIds +10, admittedIds +24, usedOf +4 moved from G[I] to G[V]: they build the projection's lexicon, the used words and an admitted reading's identities on the decision path); K +0, S +0; trusted +38. FOLLOW-UP: a ties pass binding these lines.",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sn-b6-f8-trust, 2026-11-09",
+   "commit": "9ba8aeaedfc82fa41258a4f52bcca4820f47b663"
+  },
+  {
+   "class": "S",
+   "lines": 79,
+   "reason": "ps-2aa: lean/VE/Presupposition/Wire.lean S +79, D[V] +26, G[V] +15 (trusted +120, K +0)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ps-2aa, 2026-10-18",
+   "commit": "b8266ee19562e5488d27d8a87fa50dcb8f633ab5"
+  },
+  {
+   "class": "V",
+   "lines": 41,
+   "reason": "ps-2aa: lean/VE/Presupposition/Wire.lean S +79, D[V] +26, G[V] +15 (trusted +120, K +0)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ps-2aa, 2026-10-18",
+   "commit": "b8266ee19562e5488d27d8a87fa50dcb8f633ab5"
   }
  ]
 }
