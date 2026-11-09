@@ -44,6 +44,41 @@
    "bug": "missing pairs IDs a Test-removed trailer already records",
    "test": "tests/test_gate_collection_renumber.py::test_a_renumbered_mutant_is_paired_by_its_text_and_a_gone_one_refused[trailer-first]",
    "result": "1 failed"
+  },
+  {
+   "id": "S7",
+   "file": "tools/gate_collection.py",
+   "bug": "pair_cases pairs nothing in a function once any base text is gone (the review's F1 rule)",
+   "test": "tests/test_gate_collection_renumber.py::test_a_renumbered_mutant_is_paired_by_its_text_and_a_gone_one_refused[text-changed] tests/test_gate_collection_renumber.py::test_a_renumbered_mutant_is_paired_by_its_text_and_a_gone_one_refused[case-deleted]",
+   "result": "2 failed"
+  },
+  {
+   "id": "S8",
+   "file": "tools/gate_collection.py",
+   "bug": "pair_cases matches the base cases in ID order, not the kept IDs first",
+   "test": "tests/test_gate_collection_renumber.py::test_a_renumbered_mutant_is_paired_by_its_text_and_a_gone_one_refused[kept-first]",
+   "result": "1 failed"
+  },
+  {
+   "id": "S9",
+   "file": "tools/gate_collection.py",
+   "bug": "pair_cases lets a head case with no text (None) be claimed",
+   "test": "tests/test_gate_collection_renumber.py::test_a_renumbered_mutant_is_paired_by_its_text_and_a_gone_one_refused[no-text]",
+   "result": "1 failed"
+  },
+  {
+   "id": "S10",
+   "file": "tools/gate_collection.py",
+   "bug": "missing passes every base ID to renumbered, so a trailer-recorded ID takes a head case",
+   "test": "tests/test_gate_collection_renumber.py::test_a_renumbered_mutant_is_paired_by_its_text_and_a_gone_one_refused[trailer-on-a-twin]",
+   "result": "1 failed"
+  },
+  {
+   "id": "S11",
+   "file": "tools/gate_collection.py",
+   "bug": "pair_cases skips a kept ID whose text is gone instead of pairing nothing",
+   "test": "tests/test_gate_collection_renumber.py::test_a_renumbered_mutant_is_paired_by_its_text_and_a_gone_one_refused[kept-id-reused]",
+   "result": "1 failed"
   }
  ]
 }

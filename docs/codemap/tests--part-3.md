@@ -42,7 +42,7 @@
 - `tests/test_frozen_sources.py` — AR-2, the narrow freeze (architecture decision D2): `lean/VE/Route/frozen.py` hashes only the files with K declarations and the `ve.core@0.1` decoders, `ve/que…
 - `tests/test_gate.py` — The full gate must reject missing coverage while honoring exact optional cases.
 - `tests/test_gate_collection.py` — The gate's collection is the merge base's, less exactly the tests a `Test-removed:` trailer records, with the diff only labelling each removal (tools/gate_coll…
-- `tests/test_gate_collection_renumber.py` — A mutant renumbered by an inserted one is paired by its text; a gone one stays refused (gate_collection.py).
+- `tests/test_gate_collection_renumber.py` — A renumbered mutant is paired by its text; one whose text is gone stays refused (tools/gate_collection.py).
 - `tests/test_gate_durations.py` — Each gate keeps its suite's per-test seconds in its record, and the next gate on that base orders its suite by them.
 - `tests/test_gate_integrity.py` — Regressions for verification-gate accounting, isolation, and run identity.
 - `tests/test_gate_quarantine.py` — Test speed B5: the gate never stops early, and the tracked quarantine (tools/test-quarantine.json).
