@@ -1,0 +1,45 @@
+{
+  "$id": "clauses-elaborate.json",
+  "$comment": "Lean's head of right-clauses@0 on one document: the plained document and its premise slot.",
+  "row": {
+    "anyOf": [
+      {"$ref": "common.json#/$defs/case_error"},
+      {
+        "additionalProperties": false,
+        "properties": {"error": {"$ref": "common.json#/$defs/text"}, "id": {"x-echo": "/id"}, "status": {"const": "error"}},
+        "required": ["id", "status", "error"],
+        "type": "object"
+      },
+      {
+        "additionalProperties": false,
+        "properties": {
+          "id": {"type": "string", "x-equals": "/id"},
+          "result": {"$ref": "#/$defs/result"},
+          "status": {"const": "ok"}
+        },
+        "required": ["id", "status", "result"],
+        "type": "object"
+      }
+    ]
+  },
+  "$defs": {
+    "result": {
+      "$comment": "VE.RightClauses.Run.elaborateCase: the plained document's canonical bytes and clauseSlotLabelled.",
+      "additionalProperties": false,
+      "properties": {
+        "clause_slot": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {"ast": {"$ref": "common.json#/$defs/generated_formula"}, "label": {"type": "string"}},
+            "required": ["label", "ast"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "plained": {"type": "string"}
+      },
+      "required": ["plained", "clause_slot"],
+      "type": "object"
+    }
+  }
+}

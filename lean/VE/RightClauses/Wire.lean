@@ -87,10 +87,11 @@ def decodeRole : Json → Option Role
   | .str "trigger" => some .trigger
   | .str "object" => some .object
   | _ => none
-/-- The member names of an object are exactly `ks`. -/
-def hasKeys (j : Json) (ks : List String) : Bool :=
+/-- The member names of an object are the required `ks` and some of the optional `os`. -/
+def hasKeys (j : Json) (ks : List String) (os : List String := []) : Bool :=
   let names := (members j).map (·.1)
-  (match j with | .obj _ => true | _ => false) && names.length == ks.length && ks.all names.contains
+  (match j with | .obj _ => true | _ => false) && ks.all names.contains &&
+    names.all (fun k => ks.contains k || os.contains k) && names.length == (names.eraseDups).length
 
 def decodeClause (n : String) (ci : Json × Nat) : Except String Clause := do
   let (c, i) := ci
@@ -105,7 +106,8 @@ def decodeClause (n : String) (ci : Json × Nat) : Except String Clause := do
   pure ⟨role, formula, span⟩
 def decodeRelation (n : String) (v : Json) : Except String Relation := do
   let bad := s!"InvalidInput: invalid relation of rule {n}"
-  unless hasKeys v ["predicate", "slots", "total", "cites"] do throw bad
+  -- `total: null` is written by omission: the service's restricted JSON has no null (rights' `_wire`)
+  unless hasKeys v ["predicate", "slots", "cites"] ["total"] do throw bad
   let .str pred := v.getObjValD "predicate" | throw bad
   let some slots := decodeSpan (v.getObjValD "slots") | throw bad
   let total ← match v.getObjValD "total" with

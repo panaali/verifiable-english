@@ -1,0 +1,202 @@
+"""`right-clauses@0` on the service (docs/spec/right-clauses.md 8.1, 9.1, 9.3; cmp-s3-cfr-1): the registered profile's
+`clauses-elaborate` mode reads 9.1's documents in the head's order (4.1, 7), and with the profile off nothing changes
+(K10, the saved 9.3 regression). Lean is the authority; the relay and the Python differential are cmp-s3-cfr-1b's."""
+from __future__ import annotations
+
+from copy import deepcopy
+import hashlib
+import json
+from pathlib import Path
+
+import pytest
+
+from tests.lean_build import lean_build
+from tests.lean_service_corpus import recorded
+from tests.subprocesses import HANG_TIMEOUT
+from ve.backends.lean_service import LeanService, case_digest, case_texts
+from ve.backends.service_schema import check_response
+
+ROOT = Path(__file__).resolve().parents[1]
+EVIDENCE = ROOT / "docs/composition/cmp-s3-cfr-1/profile-off.json"
+OFF = ["norms@0", "relational-fol@0", "rights@0", "soft-norms@0"]
+ON = ["norms@0", "relational-fol@0", "right-clauses@0", "rights@0", "soft-norms@0"]
+
+
+def environment(profiles=ON):
+    """9.1's environment: rights' state Texas and persons Ann, Bob, with the base predicates `country_of` and
+    `charged`, and the regulated `public_service_access_required`."""
+    def base(*sorts):
+        return {"arguments": list(sorts), "description": "base"}
+    return {"language": "ve.core@0.2", "profiles": profiles, "spec_revision": "ve-v0.2-expand2-2026-09-25",
+            "vocabulary": {
+                "sorts": {"state": {"description": "state"}, "person": {"description": "person"}},
+                "predicates": {
+                    "public_service_access_required": {
+                        "arguments": ["state", "person"], "description": "obligation",
+                        "regulated": {"role": "obligation", "default": "deny",
+                                      "act": "{0} give {1} equal access to public service"}},
+                    "country_of": base("state", "person"), "charged": base("person")},
+                "constants": {"texas": {"sort": "state", "description": "Texas"},
+                              "ann": {"sort": "person", "description": "Ann"},
+                              "bob": {"sort": "person", "description": "Bob"}},
+                "rights": {"holders": ["person"], "bearers": ["state", "person"]}}}
+
+
+def document(**keys):
+    """Right `r21` (holder person, guard top) with the claim line `equal-access`, unit span [0, 100); `keys` are the
+    line's head keys (`elided: []` unless given; None drops a key)."""
+    line = {"kind": "claim", "norm": {"name": "equal-access", "predicate": "public_service_access_required",
+                                      "sign": True, "guard": ["top"], "unless": [], "over": []},
+            **{"elided": []}, **keys}
+    line = {k: v for k, v in line.items() if v is not None}
+    return [{"right": {"name": "r21", "holder": "person", "lines": [line]}, "span": [0, 100]}]
+
+
+# `total: null` is written by omission on the service's restricted JSON (rights' `_wire`)
+RELATION = {"predicate": "country_of", "slots": [0, 1], "cites": []}
+CHARGED = {"role": "trigger", "formula": ["unary", "charged", ["var", 0]], "span": [10, 20]}
+
+
+@pytest.fixture(scope="module")
+def service():
+    with LeanService(lean_build("ve_service") / "ve_service", timeout=HANG_TIMEOUT) as running:
+        yield running
+
+
+def exchange(service, mode, cases):
+    text = json.dumps(cases, ensure_ascii=False)
+    _, response = service.exchange(mode, text, len(cases), timeout=HANG_TIMEOUT)
+    request = {"id": response["id"], "mode": mode, "cases": cases,
+               "digests": [case_digest(t) for t in case_texts(text)], "bytes": len(text.encode())}
+    check_response(mode, response, request)
+    return [bound["result"] for bound in response["results"]]
+
+
+def elaborate(service, *documents, profiles=ON):
+    return exchange(service, "clauses-elaborate",
+                    [{"id": str(i), "environment": environment(profiles), "document": d}
+                     for i, d in enumerate(documents)])
+
+
+def canonical(value) -> str:
+    return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+
+
+def without_head_keys(doc):
+    """The profile-off document: no unit span, no line keys of the head."""
+    out = deepcopy(doc)
+    for unit in out:
+        unit.pop("span", None)
+        for body in (unit.get("right"), unit.get("right_lines")):
+            for line in (body or {}).get("lines", []):
+                for key in ("elided", "clauses", "relation"):
+                    line.pop(key, None)
+    return out
+
+
+def guard(result):
+    return json.loads(result["result"]["plained"])[0]["right"]["lines"][0]["norm"]["guard"]
+
+
+def test_right_clauses_k1_service_identity(service):
+    """K1 through the registered profile: Python models the environment (`right-clauses@0` is in the profile table's
+    environment list, so Lean's environment mode gates it by the whole table), `clauses-elaborate` accepts the
+    unstructured line, its plained bytes are the profile-off document's, the slot is `Lim_D = []`, and the rights
+    mode answers the plained document as it answers the profile-off one."""
+    from ve import Environment
+    from ve.profiles import BY_NAME
+    assert "right-clauses@0" in BY_NAME
+    assert Environment(environment()).to_dict()["profiles"] == ON
+    [k1] = elaborate(service, document())
+    assert k1["status"] == "ok", k1
+    off = without_head_keys(document())
+    assert k1["result"] == {"plained": canonical(off), "clause_slot": []}
+    plained, written = (exchange(service, "rights", [{"id": "k1", "kind": "rights-elaborate", "environment":
+                                                      environment(OFF), "document": d}])[0]
+                        for d in (json.loads(k1["result"]["plained"]), off))
+    assert plained == written and plained["status"] == "ok", plained
+
+
+# 9.1 on the service, in the head's order (4.1, 7): each document's answer, the error text or the plain guard and slot.
+TOTAL = {**RELATION, "total": 1}
+K_FIXTURES = {
+    "K2": (document(relation=RELATION), ["and", ["top"], ["binary", "country_of", ["var", 1], ["var", 0]]], []),
+    "K3": (document(relation=TOTAL), ["and", ["top"], ["binary", "country_of", ["var", 1], ["var", 0]]],
+           [{"label": "rights:relation:equal-access:total",
+             "ast": ["forall", "person", ["implies", ["top"], ["exists", "state",
+                                                               ["binary", "country_of", ["var", 0], ["var", 1]]]]]}]),
+    "K4": (document(clauses=[CHARGED], elided=[[30, 40]]), ["and", ["top"], ["unary", "charged", ["var", 0]]], []),
+    "K5": (document(clauses=[{**CHARGED, "span": [90, 110]}], elided=[[30, 40]]), "ClauseSpan: equal-access: [90, 110)"),
+    "K6": (document(clauses=[CHARGED], elided=[[15, 25]]), "ClauseSpan: equal-access: [15, 25)"),
+    "K7": (document(clauses=[{**CHARGED, "formula": ["unary", "charged", ["var", 1]]}]),
+           "InvalidInput: ill-typed clause 0 of rule equal-access"),
+    "K8a": (document(relation={**RELATION, "slots": [1, 1]}), "RelationShape: equal-access"),
+    "K8b": (document(relation={**RELATION, "total": 0}), "RelationShape: equal-access"),
+    "K9": (document(elided=None), "InvalidInput: elided missing on rule equal-access"),
+    "K15": (document(elided=None, clauses=[]), "InvalidInput: elided missing on rule equal-access"),
+    "two-relations": (document(relation=[RELATION, TOTAL]), "InvalidInput: invalid relation of rule equal-access"),
+    "relation-key": (document(relation={**RELATION, "extra": 1}), "InvalidInput: invalid relation of rule equal-access"),
+    "elided-shape": (document(elided=[[1, 2, 3]]), "InvalidInput: invalid elided of rule equal-access"),
+    "clauses-empty": (document(clauses=[]), "InvalidInput: invalid clauses of rule equal-access"),
+    "clause-role": (document(clauses=[{**CHARGED, "role": "reason"}]),
+                    "InvalidInput: invalid clause 0 of rule equal-access"),
+    "unit-span": ([{**document()[0], "span": [0]}], "InvalidInput: invalid unit span"),
+    "no-unit-span": ([{"right": document(clauses=[CHARGED])[0]["right"]}], "ClauseSpan: equal-access: [10, 20)"),
+}
+
+
+def test_right_clauses_k_fixtures_service(service):
+    """K2 to K9, K15 and the decoder's refusals: structured lines plain into the guard (1.2), a total relation adds
+    its premise to the slot after `Lim_D` (1.3), and each refusal is section 7's text, in 4.1's order."""
+    results = elaborate(service, *(fixture[0] for fixture in K_FIXTURES.values()))
+    for name, fixture, result in zip(K_FIXTURES, K_FIXTURES.values(), results):
+        if isinstance(fixture[1], str):
+            assert result == {"id": result["id"], "status": "error", "error": fixture[1]}, name
+        else:
+            assert result["status"] == "ok", (name, result)
+            assert guard(result) == fixture[1] and result["result"]["clause_slot"] == fixture[2], name
+            assert "elided" not in result["result"]["plained"] and "relation" not in result["result"]["plained"], name
+
+
+def test_right_clauses_k10_profile_off(service):
+    """K10: with the profile off, K2's line is refused by the rights decoder with today's text, and the
+    `clauses-elaborate` mode refuses the list (its head is not listed)."""
+    [rights] = exchange(service, "rights", [{"id": "k10", "kind": "rights-elaborate", "environment": environment(OFF),
+                                             "document": [{"right": document(relation=RELATION)[0]["right"]}]}])
+    assert rights["error"] == "fields do not match: expected [kind, norm], got [elided, kind, norm, relation]", rights
+    [head] = elaborate(service, document(), profiles=OFF)
+    assert head["error"] == "UnsupportedProfile: clauses-elaborate requires right-clauses@0", head
+
+
+def _answer_digest(row) -> str:
+    return hashlib.sha256(canonical({k: v for k, v in row.items() if k != "id"}).encode()).hexdigest()
+
+
+def test_right_clauses_profile_off_regression(service):
+    """9.3 as saved evidence: the rights mode's answer to each recorded rights route case (profile off) has the digest
+    saved from the base build (docs/composition/cmp-s3-cfr-1/profile-off.json). With the profile on and `elided: []`
+    on every line, each array document of a rights case elaborates to itself (`plain_identity`), or is refused with the
+    profile-off answer's own text."""
+    saved = json.loads(EVIDENCE.read_text())
+    cases = recorded("rights")
+    assert [case_digest(canonical(c)) for c in cases] == saved["cases"]
+    answers = exchange(service, "rights", cases)
+    assert [_answer_digest(row) for row in answers] == saved["answers"]
+    shaped = [(c, a) for c, a in zip(cases, answers) if type(c.get("document")) is list and
+              "rights@0" in c.get("environment", {}).get("profiles", [])]
+    on = []
+    for case, _ in shaped:
+        doc = deepcopy(case["document"])
+        for unit in doc:
+            for body in (unit.get("right"), unit.get("right_lines")):
+                for line in body.get("lines", []) if type(body) is dict else []:
+                    line["elided"] = []
+        profiles = sorted({*case["environment"]["profiles"], "right-clauses@0"})
+        on.append({"id": case["id"], "environment": {**case["environment"], "profiles": profiles}, "document": doc})
+    heads = exchange(service, "clauses-elaborate", on)
+    assert (len(heads), sum(head["status"] == "ok" for head in heads)) == (21, 19)
+    for (case, answer), head in zip(shaped, heads):
+        if head["status"] == "ok":
+            assert json.loads(head["result"]["plained"]) == case["document"], case["id"]
+        else:
+            assert head["error"] == answer["error"], (case["id"], head, answer)
