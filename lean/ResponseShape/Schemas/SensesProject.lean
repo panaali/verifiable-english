@@ -32,7 +32,8 @@ blocks. -/
 def profileMembers : List (String × List String × List String) := [
   ("acts@0", [], ["acts"]), ("alternatives@0", ["alternatives"], []),
   ("cardinality@0", ["cardinality", "cardinality_schema", "unit_schema", "units"], []), ("closure@0", [], []),
-  ("data@0", [], []), ("definitions@0", [], []), ("documents@1", [], []), ("judgments@0", [], []),
+  ("data@0", [], []), ("definitions@0", [], []), ("documents@1", [], []), ("events@0", ["events"], []),
+  ("judgments@0", [], []),
   ("nary@0", [], []), ("norm-defaults@0", [], []), ("norms@0", [], []), ("order@0", [], []), ("readings@1", [], []),
   ("relational-fol@0", [], []), ("reports@0", [], ["reports"]), ("right-clauses@0", [], []), ("rights@0", [], ["rights"]),
   ("risk@0", ["alternatives", "risk", "unit_schema", "units"], []), ("scope@0", [], []), ("soft-norms@0", [], ["soft"]),
