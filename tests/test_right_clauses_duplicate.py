@@ -2,8 +2,8 @@
 
 The right-clauses head (`checkClauses`, lean/VE/RightClauses/Plain.lean) refused an entry whose rule is on two source
 lines with `InvalidInput: invalid clauses of rule <n>`, where rights (lean/VE/Rights/Correlate.lean `checkRights`)
-says `DuplicateDeclaration: rule <n>`. `entryError` now answers with rights' own text when rights' first fault is
-that duplicate. Lean is the oracle: the check elaborates under `tmp_path` and prints the head's answer and rights'
+says `DuplicateDeclaration: rule <n>`. `entryError`, the one refusal of an entry fault (its right known or not), now
+answers with rights' own text when rights' first fault is that duplicate. Lean is the oracle: the check elaborates under `tmp_path` and prints the head's answer and rights'
 answer for the document a decoder builds from two lines named `equal-access` (one entry per line).
 """
 import shutil
@@ -26,8 +26,8 @@ def twice (holders : List String := ["person"]) (n := "equal-access") (k := 2) :
   mkRights ["state", "person"] [("country_of", ["state", "person"])]
     [VE.Norms.Checks.oblig "public_service_access_required" ["state", "person"] false none "{0} grant {1} access"]
     [] { block with holders } [⟨"r21", "person", .top, List.replicate k (accessLine n)⟩] [] []
-def entries (D : VE.Rights.RightsDoc) (n := "equal-access") : ClauseDoc :=
-  ⟨D, [("r21", n, ⟨accessLine n, [], none, [], (0, 100)⟩), ("r21", n, ⟨accessLine n, [], none, [], (0, 100)⟩)], []⟩
+def entries (D : VE.Rights.RightsDoc) (n := "equal-access") (r := "r21") : ClauseDoc :=
+  ⟨D, [(r, n, ⟨accessLine n, [], none, [], (0, 100)⟩), (r, n, ⟨accessLine n, [], none, [], (0, 100)⟩)], []⟩
 def text : Except String Unit → String
   | .ok () => "ok"
   | .error e => e
@@ -40,12 +40,14 @@ def text : Except String Unit → String
 #eval IO.println ("rights-no-block:" ++ text (VE.Rights.checkRights (twice [])))
 #eval IO.println ("head-one-line:" ++ text (checkClauses (entries (twice ["person", "person"] (k := 1)))))
 #eval IO.println ("rights-one-line:" ++ text (VE.Rights.checkRights (twice ["person", "person"] (k := 1))))
+#eval IO.println ("head-unknown-right:" ++ text (checkClauses (entries (twice) (r := "r9"))))
+#eval IO.println ("head-unknown-right-no-block:" ++ text (checkClauses (entries (twice []) (r := "r9"))))
 """
 
 DUPLICATE = "DuplicateDeclaration: rule equal-access"
 INVALID = "InvalidInput: invalid clauses of rule equal-access"
 LABELS = {"head", "rights", "head-right", "rights-right", "head-no-block", "rights-no-block", "head-one-line",
-          "rights-one-line"}
+          "rights-one-line", "head-unknown-right", "head-unknown-right-no-block"}
 
 
 def answers(output: str) -> dict:
@@ -104,3 +106,13 @@ def test_clause_entries_keep_invalid_clauses_when_rights_faults_first(elaborated
     # The rule on one line, rights' first fault a duplicate holder (not the entry's): the head keeps its text.
     assert elaborated["rights-one-line"] == "DuplicateDeclaration: holder person"
     assert elaborated["head-one-line"] == INVALID
+
+
+def test_clause_entries_with_unknown_right_take_rights_duplicate_text(elaborated):
+    # Review F1: an entry whose right `r9` is not in the document fails `entryOk` too, so it is refused by
+    # `entryError` like any other entry fault: with the rule on two lines, rights' own text, byte for byte (it was
+    # `InvalidInput: invalid clauses of rule equal-access` from a second refusal path in `checkEntry`).
+    assert same_bytes(elaborated["head-unknown-right"], elaborated["rights"])
+    assert elaborated["head-unknown-right"] == DUPLICATE
+    # Rights' first fault not a duplicate: the head keeps its own text, as for a known right.
+    assert elaborated["head-unknown-right-no-block"] == INVALID
