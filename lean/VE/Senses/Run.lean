@@ -357,20 +357,27 @@ def lineJson (D : Dictionary) (w g : String) : Json :=
     | some s => [("text", .str (lineOf w s))]
     | none => [("code", .str (if (D.sensesOf w).isEmpty then "UnknownWord" else "UnknownGloss"))])
 
-/-- The re-read of a rendering of candidate `j` of the unit at `sentence` (plan 2.8, sn-b6d;
-reviews/dri-decisions-20261101-sn-b7b8-reread.md item 1): the rendering, which must lex to one sentence, read by
-the senses reader (`readOne`, without S2's policy) under the candidate's own projection (its lines over the body's
-`used` words, as its identities are computed) from the state before the unit, within the request's budget `b`.
-`same` when it reads with no quoted sense to the candidate's formula and mark, `unknown` when the budget ends, else
-`different`. -/
+/-- A request's `reread` member, decoded before any reading: the unit's sentence, the candidate's index and the
+rendering's one sentence (S2's lexer, under its length limits). -/
+def decodeReread (r : Json) : Except String (Nat × Nat × Array Tok) := do
+  VE.Bridge.exactFields r ["sentence", "candidate", "rendering"]
+  let sentence ← VE.Senses.natOf (← r.getObjVal? "sentence")
+  let j ← VE.Senses.natOf (← r.getObjVal? "candidate")
+  match lex (← VE.Bridge.stringField r "rendering") with
+  | .ok #[w] => pure (sentence, j, w)
+  | .ok _ => throw "InvalidInput: the re-read's rendering is not one sentence"
+  | .error r => throw s!"InvalidInput: the re-read's rendering does not lex ({r.code})"
+
+/-- The re-read of a rendering `w` of candidate `j` of the unit at `sentence` (plan 2.8, sn-b6d;
+reviews/dri-decisions-20261101-sn-b7b8-reread.md item 1): the rendering's one sentence read by the senses reader
+(`readOne`, without S2's policy) under the candidate's own projection (its lines over the body's `used` words, as its
+identities are computed) from the state before the unit, within the request's budget `b`. `same` when it reads with
+no quoted sense to the candidate's formula and mark, `unknown` when the budget ends, else `different`. -/
 def rereadJson (D : Dictionary) (c : VE.EnglishGrammar.Run.Case) (b start : Nat) (used : List String)
-    (units : List SenseUnit) (sentence j : Nat) (rendering : String) : Except String Json := do
+    (units : List SenseUnit) (sentence j : Nat) (w : Array Tok) : Except String Json := do
   let some u := (if sentence < start then none else units[sentence - start]?)
     | throw "InvalidInput: the re-read names no unit of the answer"
   let some cand := u.candidates[j]? | throw "InvalidInput: the re-read names no candidate of its unit"
-  let w ← match lex rendering with
-    | .ok #[w] => pure w
-    | _ => throw "InvalidInput: the re-read's rendering does not lex to one sentence"
   let Q ← match ← linesProjection D c b cand.lines used with
     | .ok Q => pure Q
     | .error _ => throw "a candidate's resolving lines do not project"
@@ -393,6 +400,15 @@ def readCase (j : Json) (identified : Bool := false) : Except String Json := do
     (if fenced then ["fence_ids", "reading_set_units"] else ["line", "reread"].filter (has j)) ++
     (["overlay", "defaults"].filter (has j)))
   let id ← VE.Bridge.stringField j "id"
+  -- sn-b6d: the asked members, decoded before any reading
+  let line ← match j.getObjVal? "line" with
+    | .ok l => do
+      VE.Bridge.exactFields l ["word", "gloss"]
+      pure (some (← VE.Bridge.stringField l "word", ← VE.Bridge.stringField l "gloss"))
+    | .error _ => pure none
+  let asked ← match j.getObjVal? "reread" with
+    | .ok r => some <$> decodeReread r
+    | .error _ => pure none
   let c ← VE.EnglishGrammar.Run.decodeCase j
   let D ← decodeDictionary j
   let text ← if has j "fences" then do pure (SenseText.fences (← VE.Bridge.strings (← j.getObjVal? "fences")))
@@ -433,12 +449,9 @@ def readCase (j : Json) (identified : Bool := false) : Except String Json := do
         | .source s => (lexSpans s).toOption
         | .fences _ => none
       -- sn-b6d: the re-read of a rendering, on an admitted reading of a source
-      let reread ← match out, j.getObjVal? "reread" with
-        | .ok units _ _ _ P, .ok r => do
-          VE.Bridge.exactFields r ["sentence", "candidate", "rendering"]
-          pure [("reread", ← rereadJson D c budget (count - units.length) (usedOf P) units
-            (← VE.Senses.natOf (← r.getObjVal? "sentence")) (← VE.Senses.natOf (← r.getObjVal? "candidate"))
-            (← VE.Bridge.stringField r "rendering"))]
+      let reread ← match out, asked with
+        | .ok units _ _ _ P, some (sentence, k, w) =>
+          pure [("reread", ← rereadJson D c budget (count - units.length) (usedOf P) units sentence k w)]
         | _, _ => pure []
       let entry := match out with
         | .ok _ _ _ _ P => senseEntryJson P spans d
@@ -446,15 +459,10 @@ def readCase (j : Json) (identified : Bool := false) : Except String Json := do
       outcomeJson c (refusalSource A text) count fences unitText admitted ids out true entry
         (textsJson D c budget d body out ++ reread)
     else outcomeJson c (refusalSource A text) count fences unitText admitted ids out
-  -- sn-b6d: Lean's line for a requested word and gloss
-  let line ← match j.getObjVal? "line" with
-    | .ok l => do
-      VE.Bridge.exactFields l ["word", "gloss"]
-      pure [("line", lineJson D (← VE.Bridge.stringField l "word") (← VE.Bridge.stringField l "gloss"))]
-    | .error _ => pure []
   pure (VE.Route.Wire.ok id [("result", Json.mkObj
     ([("request_id", .str requestId), ("dictionary_id", .str (dictionaryId D)),
-     ("senses_version", .str sensesVersion), ("reading", result)] ++ line))])
+     ("senses_version", .str sensesVersion), ("reading", result)] ++
+     line.toList.map fun (w, g) => ("line", lineJson D w g)))])
 
 def runCaseReported (j : Json) : Json :=
   match readCase j true with

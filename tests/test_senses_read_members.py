@@ -204,8 +204,9 @@ def test_a_base_projection_rendering_is_refused():
 
 
 def test_a_rendering_that_is_not_one_sentence_is_refused_by_lean():
-    for rendering in (TWO + " " + TWO, "", "The riddle is funny"):
-        with pytest.raises(VEError, match="does not lex to one sentence"):
+    for rendering, why in ((TWO + " " + TWO, "is not one sentence"), ("", r"does not lex \(EmptyDocument\)"),
+                           ("The riddle is funny", r"does not lex \(Unterminated\)")):
+        with pytest.raises(VEError, match=why):
             reread(TWO, 0, 0, rendering)
     with pytest.raises(VEError, match="no candidate"):
         reread(TWO, 0, 2, TWO)
@@ -230,13 +231,44 @@ def test_a_long_rendering_ends_within_its_limits():
     the request's budget; a large well-formed one ends within the deadline, a longer one is refused by the lexer."""
     chain = LONG[:-1] + " and every joke that is funny is funny" * 50 + "."
     assert reread(TWO, 0, 0, chain)["reread"]["outcome"] == "different"
-    with pytest.raises(VEError, match="does not lex to one sentence"):
+    with pytest.raises(VEError, match=r"does not lex \(TextTooLong\)"):
         reread(TWO, 0, 0, LONG[:-1] + " and every joke that is funny is funny" * 300 + ".")
 
 
 def test_a_refused_reading_has_no_reread():
     answer = reread("Alice tells the riddle.", 0, 0, TWO, budget=1)
     assert answer["status"] == "budget" and "reread" not in answer
+
+
+def _raw(member, value, budget=route.WORK_BUDGET):
+    """Lean's row for a request whose member is `value`, past the relay's own request checks."""
+    env, overlay = WORLDS["joke"]()
+    case = route.request(env, TWO, [PACK.decode()], overlay=overlay, budget=budget, **{member: value})
+    [row] = lean_backend.run("senses.read", route.EXECUTABLE, [case], runner="ve_senses_route",
+                             timeout=lean_backend.configured_timeout(lean_backend.ROUTE_TIMEOUT))
+    return row
+
+
+@pytest.mark.parametrize("budget", [route.WORK_BUDGET, 1], ids=["admitted", "refused"])
+@pytest.mark.parametrize("member, value", [
+    ("reread", 7), ("reread", {}), ("reread", {"sentence": 0, "candidate": 0}),
+    ("reread", {"sentence": True, "candidate": 0, "rendering": TWO}),
+    ("reread", {"sentence": 0, "candidate": 0, "rendering": TWO + " " + TWO}),
+    ("line", 7), ("line", {"word": 1, "gloss": "amusing"}), ("line", {"word": "funny", "gloss": "amusing", "x": 1}),
+])
+def test_lean_refuses_a_malformed_member_before_reading(member, value, budget):
+    """The members are decoded before any reading, on an admitted and on a refused reading alike."""
+    row = _raw(member, value, budget)
+    assert row["status"] == "error" and "result" not in row
+    assert _raw(member, {"reread": {"sentence": 0, "candidate": 0, "rendering": TWO},
+                         "line": {"word": "funny", "gloss": "amusing"}}[member], budget)["status"] == "ok"
+
+
+@pytest.mark.parametrize("value", [["funny", "amusing"], ("funny",), ("funny", 1)])
+def test_the_relay_refuses_a_malformed_line_request(value):
+    env, overlay = WORLDS["joke"]()
+    with pytest.raises(VEError, match="Invalid senses request"):
+        route.read(env, TWO, [PACK], overlay=overlay, line=value)
 
 
 # sha256 of each GENUINE answer (`json.dumps(result, sort_keys=True, separators=(",", ":"))`), recorded with main's
@@ -322,6 +354,9 @@ def test_the_line_is_leans():
     assert line("tells", "says aloud")["text"] == "In this document, tells means says aloud."
     assert line("funny", "purple") == {"word": "funny", "gloss": "purple", "code": "UnknownGloss"}
     assert line("zany", "amusing") == {"word": "zany", "gloss": "amusing", "code": "UnknownWord"}
+    env, overlay = WORLDS["joke"]()  # on a refused reading too
+    assert route.read(env, "Alice tells the riddle.", [PACK], overlay=overlay, budget=1, line=("odd", "strange"))[
+        "line"] == {"word": "odd", "gloss": "strange", "text": "In this document, odd means strange."}
 
 
 LINES_TAMPERED = {
@@ -330,6 +365,8 @@ LINES_TAMPERED = {
     "text-for-unknown": ("funny", "purple", lambda l: (l.pop("code"), l.update(text="x"))),
     "code-for-known": ("funny", "amusing", lambda l: (l.pop("text"), l.update(code="UnknownGloss"))),
     "code-other": ("zany", "amusing", lambda l: l.update(code="Unresolved")),
+    "code-word-for-gloss": ("funny", "purple", lambda l: l.update(code="UnknownWord")),
+    "code-gloss-for-word": ("zany", "amusing", lambda l: l.update(code="UnknownGloss")),
     "text-empty": ("funny", "amusing", lambda l: l.update(text="")),
 }
 

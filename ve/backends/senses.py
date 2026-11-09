@@ -498,9 +498,12 @@ def _line_problem(answer: object, asked: dict, binding: dict | None) -> str | No
         return "the line does not name the request's word and gloss"
     pair = (asked["word"], asked["gloss"])
     if "text" in answer and (not answer["text"] or binding is not None and pair not in binding["glosses"]) \
-            or "code" in answer and (answer["code"] not in ("UnknownWord", "UnknownGloss")
-                                     or binding is not None and pair in binding["glosses"]):
+            or "code" in answer and answer["code"] not in ("UnknownWord", "UnknownGloss"):
         return "the line is not one of a sense of the request's dictionary"
+    # A code names what the request's dictionary lacks: the word (UnknownWord), else the word's gloss.
+    if "code" in answer and binding is not None and (pair in binding["glosses"] or (answer["code"] == "UnknownWord")
+                                                     != all(word != pair[0] for word, _ in binding["glosses"])):
+        return "the line's code is not what the request's dictionary lacks"
     return None
 
 
