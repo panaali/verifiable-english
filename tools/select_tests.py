@@ -72,6 +72,7 @@ from layer_policy import APP_AREAS, ROOT, lean_default_targets, lean_executables
 import lean_mode_deps
 import nested_pytest
 import quarantine
+import regen_generated
 import source_graph
 import test_chunks
 import test_map
@@ -1184,10 +1185,10 @@ def map_seconds(plan: dict) -> dict[str, float]:
 # that gap.
 BROAD_LEAN_SHARE = 0.25
 LEAN_REASONS = ("reads ", "runs Lean via ", "runs service mode via ")
-# Lean-wide files: the inventories lean_statements.py and the audit write from the whole tree, and the checker pins
-# (regen_generated.py's checker-pins), which every rebuilt checker rewrites.
-LEAN_INVENTORIES = frozenset({"lean/declarations.txt", "lean/statements.txt", "lean/predicates.txt",
-                              "lean/axioms.txt", "lean/checkers.lock"})
+# Lean-wide files: the train-only files under lean/ that are not modules (regen_generated.train_only, their one
+# list): the inventories the train writes from the whole Lean tree and the checker pins every rebuilt checker rewrites.
+LEAN_INVENTORIES = frozenset(path for path in regen_generated.train_only()
+                             if path.startswith("lean/") and not path.endswith(".lean"))
 
 
 def lean_reason(reason: str) -> bool:
