@@ -1113,6 +1113,12 @@ theorem VE.Acts.decides_tracks
                 ∀ (sign : Bool), VE.Norms.DecidesD T S₁ ρ₁ p sign ↔ VE.Norms.DecidesD T' S₂ ρ₂ q sign
   -- uses VE.Norms.AppliesD@VE.Norms.Elaborate VE.Norms.DecidesD@VE.Norms.Elaborate VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node.over@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.Node.sign@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree VE.Norms.Tree.nodes@VE.Norms.Tree VE.Norms.Tree@VE.Norms.Tree VE.Norms.precedenceNodes@VE.Norms.Tree VE.Route.DagAcyclic@VE.Route.Route VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
   -- expr 4243355742
+theorem VE.Acts.declaredOnce_mem
+  ∀ {E : VE.Norms.Doc} {n : String} {r : VE.Norms.Regulated},
+    VE.Acts.declaredOnce E n = Option.some r →
+      r ∈ E.T.regulated ∧ r.name = n ∧ ∀ (r' : VE.Norms.Regulated), r' ∈ E.T.regulated → r'.name = n → r' = r
+  -- uses VE.Acts.declaredOnce@VE.Acts.Specialise VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Doc@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Tree.regulated@VE.Norms.Tree
+  -- expr 370694635
 theorem VE.Acts.denote_preds_congr
   ∀ (S : VE.Structure) (R R' : String → List S.Carrier → Prop) {E : VE.Environment} (a : VE.Formula) (Γ : List String)
     (ρ : List S.Carrier),
@@ -1319,6 +1325,23 @@ theorem VE.Acts.mem_partNamesIn
         VE.Acts.partsOf sa p = [] ∧ q = p ∨ ∃ x, x ∈ VE.Acts.partsOf sa p ∧ q = VE.Acts.partPred p x.snd)
   -- uses VE.Acts.ActsDoc.U@VE.Acts.Elaborate VE.Acts.ActsDoc@VE.Acts.Elaborate VE.Acts.Atom@VE.Acts.Tree VE.Acts.partNamesIn@VE.Acts.Elaborate VE.Acts.partPred@VE.Acts.Elaborate VE.Acts.partsOf@VE.Acts.Elaborate VE.Acts.splitMap@VE.Acts.Elaborate VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Tree.regulated@VE.Norms.Tree
   -- expr 4162673854
+theorem VE.Acts.mem_preds_atom
+  ∀ {p n : String} {ss : List String}, n ∈ VE.Norms.preds (VE.Norms.atom p ss) → n = p
+  -- uses VE.Norms.atom@VE.Norms.Basic VE.Norms.preds@VE.Norms.Tree
+  -- expr 3423978402
+theorem VE.Acts.mem_specPremises
+  ∀ {E : VE.Norms.Doc} {ρ : VE.Acts.Restrictive} {acts : List (String × VE.Acts.Atom)} {φ : VE.Formula},
+    φ ∈ VE.Acts.specPremises E ρ acts →
+      ∃ pa pb ra rb,
+        VE.Acts.declaredOnce E pa = Option.some ra ∧
+          VE.Acts.declaredOnce E pb = Option.some rb ∧
+            ra.role ≠ VE.Norms.Role.plain ∧
+              ra.role = rb.role ∧
+                ra.sorts = rb.sorts ∧
+                  φ =
+                    VE.Norms.bindAll ra.sorts ((VE.Norms.atom ra.name ra.sorts).implies (VE.Norms.atom rb.name ra.sorts))
+  -- uses VE.Acts.Atom@VE.Acts.Tree VE.Acts.Restrictive@VE.Acts.Specialise VE.Acts.declaredOnce@VE.Acts.Specialise VE.Acts.specPremises@VE.Acts.Specialise VE.Formula.implies@VE.Syntax VE.Formula@VE.Syntax VE.Norms.Doc@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated.role@VE.Norms.Tree VE.Norms.Regulated.sorts@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Role.plain@VE.Norms.Tree VE.Norms.Role@VE.Norms.Tree VE.Norms.atom@VE.Norms.Basic VE.Norms.bindAll@VE.Norms.Basic
+  -- expr 1404146166
 theorem VE.Acts.mem_splitNode
   ∀ {sa : String → Option (List VE.Acts.Atom)} {N K : VE.Norms.Node},
     K ∈ VE.Acts.splitNode sa N ↔
@@ -1414,6 +1437,10 @@ theorem VE.Acts.pick_forall₂
   ∀ {cs rs σ : List (List (Option VE.Acts.View))}, VE.Acts.pick cs rs = Option.some σ → List.Forall₂ List.Perm σ rs
   -- uses List.Forall₂@VE.Acts.Sources VE.Acts.View@VE.Acts.Sources VE.Acts.pick@VE.Acts.Sources
   -- expr 1719054101
+theorem VE.Acts.preds_bindAll
+  ∀ (body : VE.Formula) (ss : List String), VE.Norms.preds (VE.Norms.bindAll ss body) = VE.Norms.preds body
+  -- uses VE.Formula@VE.Syntax VE.Norms.bindAll@VE.Norms.Basic VE.Norms.preds@VE.Norms.Tree
+  -- expr 1928101943
 theorem VE.Acts.readIn_many
   ∀ {α : Type} [inst : DecidableEq α] {G : VE.Grammar.Grammar VE.Acts.Term}
     {μ : VE.Grammar.Meaning VE.Acts.Lexical.Tok Unit String α} {N b : Nat} {ts : Array VE.Acts.Lexical.Tok},
@@ -1578,6 +1605,27 @@ theorem VE.Acts.sourceCheck_exact
       VE.Acts.sourceCheck D unspec V fx N b s = Except.ok () → VE.Acts.SourceExact D unspec V fx N b s
   -- uses VE.Acts.Source@VE.Acts.Sources VE.Acts.SourceExact@VE.Acts.Sources VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.framesOk@VE.Acts.Syntax VE.Acts.sourceCheck@VE.Acts.Sources VE.Readings.Doc@VE.Readings.Doc
   -- expr 3181368861
+theorem VE.Acts.specPremises_plain
+  ∀ (E : VE.Norms.Doc) (ρ : VE.Acts.Restrictive) (acts : List (String × VE.Acts.Atom)) (r : VE.Norms.Regulated),
+    r ∈ E.T.regulated →
+      r.role = VE.Norms.Role.plain → ∀ (φ : VE.Formula), φ ∈ VE.Acts.specPremises E ρ acts → ¬r.name ∈ VE.Norms.preds φ
+  -- uses VE.Acts.Atom@VE.Acts.Tree VE.Acts.Restrictive@VE.Acts.Specialise VE.Acts.specPremises@VE.Acts.Specialise VE.Formula@VE.Syntax VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Doc@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated.role@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Role.plain@VE.Norms.Tree VE.Norms.Role@VE.Norms.Tree VE.Norms.Tree.regulated@VE.Norms.Tree VE.Norms.preds@VE.Norms.Tree
+  -- expr 1439997042
+theorem VE.Acts.specPremises_typed
+  ∀ (E : VE.Norms.Doc) (ρ : VE.Acts.Restrictive) (acts : List (String × VE.Acts.Atom)),
+    VE.Norms.WellFormed E = Bool.true →
+      ∀ (φ : VE.Formula), φ ∈ VE.Acts.specPremises E ρ acts → VE.Formula.check E.E [] φ = Bool.true
+  -- uses VE.Acts.Atom@VE.Acts.Tree VE.Acts.Restrictive@VE.Acts.Specialise VE.Acts.specPremises@VE.Acts.Specialise VE.Formula.check@VE.Syntax VE.Formula@VE.Syntax VE.Norms.Doc.E@VE.Norms.Tree VE.Norms.Doc@VE.Norms.Tree VE.Norms.WellFormed@VE.Norms.Tree
+  -- expr 2980727228
+theorem VE.Acts.specialises_refl
+  ∀ (ρ : VE.Acts.Restrictive) (a : VE.Acts.Atom), VE.Acts.specialises ρ a a = Bool.true
+  -- uses VE.Acts.Atom@VE.Acts.Tree VE.Acts.Restrictive@VE.Acts.Specialise VE.Acts.specialises@VE.Acts.Specialise
+  -- expr 275172254
+theorem VE.Acts.specialises_trans
+  ∀ {ρ : VE.Acts.Restrictive} {a b c : VE.Acts.Atom},
+    VE.Acts.specialises ρ a b = Bool.true → VE.Acts.specialises ρ b c = Bool.true → VE.Acts.specialises ρ a c = Bool.true
+  -- uses VE.Acts.Atom@VE.Acts.Tree VE.Acts.Restrictive@VE.Acts.Specialise VE.Acts.specialises@VE.Acts.Specialise
+  -- expr 232234736
 theorem VE.Acts.splitDoc_none
   ∀ (D : VE.Acts.ActsDoc), VE.Acts.splitDoc D (fun x => Option.none) (VE.Acts.splitMap D fun x => Option.none) = D.U
   -- uses VE.Acts.ActsDoc.U@VE.Acts.Elaborate VE.Acts.ActsDoc@VE.Acts.Elaborate VE.Acts.Atom@VE.Acts.Tree VE.Acts.splitDoc@VE.Acts.Elaborate VE.Acts.splitMap@VE.Acts.Elaborate VE.NormDefaults.UDoc@VE.NormDefaults.Tree

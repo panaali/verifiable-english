@@ -15,6 +15,7 @@ import VE.Acts.Read
 import VE.Acts.Readings
 import VE.Acts.Run
 import VE.Acts.Sources
+import VE.Acts.Specialise
 import VE.Acts.Table
 import VE.Acts.Wire
 import VE.Alternatives.Admission
@@ -672,6 +673,7 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.closed_ok
 #print axioms VE.Acts.compareViews_ok
 #print axioms VE.Acts.decides_tracks
+#print axioms VE.Acts.declaredOnce_mem
 #print axioms VE.Acts.denote_preds_congr
 #print axioms VE.Acts.derived_iff
 #print axioms VE.Acts.distinctTexts_ok
@@ -702,6 +704,8 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.mapM_ok
 #print axioms VE.Acts.mem_firsts
 #print axioms VE.Acts.mem_partNamesIn
+#print axioms VE.Acts.mem_preds_atom
+#print axioms VE.Acts.mem_specPremises
 #print axioms VE.Acts.mem_splitNode
 #print axioms VE.Acts.mem_splitReg
 #print axioms VE.Acts.modifier_edges
@@ -716,6 +720,7 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.phraseReadings_length
 #print axioms VE.Acts.phraseReadings_nodup
 #print axioms VE.Acts.pick_forall₂
+#print axioms VE.Acts.preds_bindAll
 #print axioms VE.Acts.readIn_many
 #print axioms VE.Acts.readIn_none
 #print axioms VE.Acts.readIn_ok
@@ -736,6 +741,10 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.selects_tracks
 #print axioms VE.Acts.sourceCheck_choices_le
 #print axioms VE.Acts.sourceCheck_exact
+#print axioms VE.Acts.specPremises_plain
+#print axioms VE.Acts.specPremises_typed
+#print axioms VE.Acts.specialises_refl
+#print axioms VE.Acts.specialises_trans
 #print axioms VE.Acts.splitDoc_none
 #print axioms VE.Acts.splits_eq
 #print axioms VE.Acts.table_free_all_own

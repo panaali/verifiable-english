@@ -123,6 +123,8 @@ module VE.Acts.Run
 module VE.Acts.RunExamples
 module VE.Acts.Situation
 module VE.Acts.Sources
+module VE.Acts.Specialise
+module VE.Acts.SpecialiseExamples
 module VE.Acts.Syntax
 module VE.Acts.Table
 module VE.Acts.TableExamples
