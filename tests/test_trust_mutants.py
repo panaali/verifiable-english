@@ -258,7 +258,8 @@ def test_a_check_wrapped_in_guard_msgs_kills(default_run):
 
 def test_a_run_records_where_its_time_goes(default_run, tmp_path_factory):
     """eff-tm-control: every Lake run of a sweep counts under its step (none under "other"), each step that ran took
-    time, the phases add up to the run's seconds, and the one line prints them."""
+    time, the phases add up to the run's seconds, and the one line prints them. The lazy controls' wall phase is near
+    0: their probes run inside the mutants' phase, counted under the "control_probes" Lake step (eff-20261108-1)."""
     import trust_mutants as tm
     done, mutants, _, _ = default_run
     data = json.loads((tmp_path_factory.getbasetemp() / "default-evidence.json").read_text())
@@ -269,7 +270,10 @@ def test_a_run_records_where_its_time_goes(default_run, tmp_path_factory):
     assert runs["mutant_builds"] >= len(built) and min(runs[k] for k in (
         "control_probes", "mutant_checks", "stage_controls", "mutant_probes")) >= 1, runs
     assert all((lake[k] > 0) == (runs[k] > 0) for k in tm.LAKE), steps
-    assert all(steps["wall"][k] > 0 for k in ("control_build", "probe_install", "control_probes", "mutants")), steps
+    assert all(steps["wall"][k] > 0 for k in ("control_build", "probe_install", "mutants")), steps
+    # lazy controls (the default, eff-20261108-1) run inside the mutants' phase, still under their Lake step
+    assert data["control_probes"] == "lazy" and lake["control_probes"] > 0, steps
+    assert steps["wall"]["control_probes"] < steps["wall"]["mutants"], steps
     # the phases up to the mutants' end are the run's "seconds" (each rounded to 0.1 s, it to 1 s)
     assert abs(sum(steps["wall"][k] for k in tm.WALL[:6]) - data["seconds"]) <= 1.5, (steps, data["seconds"])
 
@@ -1583,8 +1587,17 @@ REFUSALS = [
     ("synthesize", "failed to synthesize\n  LE Bool", False, "UNKNOWN"),
     ("synthesize-budget", "failed to synthesize\n  Small 79\n(deterministic) timeout at `typeclass`, maximum number "
      "of heartbeats (200) has been reached", False, "UNKNOWN"),
-    ("implicit", "don't know how to synthesize implicit argument `α`", False, "UNKNOWN"),
-    ("function-expected", "Function expected at\n  x", False, "UNKNOWN"),  # hunt N5: a coercion's search, out of size
+    # tm-elab-unknown: a term the mutant wrote that Lean cannot elaborate is a refusal (outside it: hunt N5, below)
+    ("implicit", "don't know how to synthesize implicit argument `α`", False, "INVALID"),
+    ("implicit-in-tactic", "don't know how to synthesize implicit argument `α`", True, "UNKNOWN"),
+    ("function-expected", "Function expected at\n  x", False, "INVALID"),
+    ("function-expected-elsewhere", "Function expected at\n  x", True, "UNKNOWN"),  # hunt N5: a coercion's search
+    ("dotted", "Invalid dotted identifier notation: The expected type of `.str` could not be determined", False,
+     "INVALID"),
+    ("dotted-in-tactic", "Invalid dotted identifier notation: The expected type of `.str` could not be determined",
+     True, "UNKNOWN"),
+    ("implicit-budget", "don't know how to synthesize implicit argument `α`\n(deterministic) timeout at `elaborator`, "
+     "maximum number of heartbeats (200000) has been reached", False, "UNKNOWN"),
     ("refusal-quoting-budget", "Invalid field `x`: maximum recursion depth has been reached", False, "UNKNOWN"),
     ("recursion", "maximum recursion depth has been reached", False, "UNKNOWN"),
     ("heartbeats", "(deterministic) timeout at `whnf`, maximum number of heartbeats (200000) has been reached",
@@ -1623,6 +1636,118 @@ def test_invalid_needs_every_error_of_the_mutated_declaration_to_be_a_refusal(er
     assert text[32] == "(" and text[62] == "0"
     edit = (62, 63) if errors[0][3] == 62 and "`x`" in errors[0][2] else (32, 42)  # `(o.take 1)`, or the `0`
     assert trust_mutants.invalid(errors, text, (1, 1), edit)[0] == verdict
+
+
+# tm-elab-unknown: the mutated declarations of df-5's record (reviews/tm-targeted/df-5-df-5-c050431.json,
+# `VE.Defaults.Wire.zoneWordsJson`, ZoneWire.lean:399-404) and et-4b's (et-4b-et-4b-c050416.json, `softCase`), each
+# with the mutant's text in it, and Lean's errors as `lake env lean` reported them on the mutated file (line in the
+# declaration, column). FUNCTION, DOTTED, IMPLICIT: the messages those records hold.
+ZONE = ('def zoneWordsJson : Json := Json.mkObj [\n  ("heads", toJson ({} fun (z, f, r, w) =>\n'
+        '    {})),\n  ("lines", toJson (zoneLineWords.map fun (r, k, s, i) =>\n'
+        '    Json.mkObj [("row", .str r), ("kind", .str k), ("sentence", .str s), ("inline", .str i)])),\n'
+        '  ("joins", Json.mkObj (zoneJoins.map fun (k, w) => (k, .str w)))]\n')
+HEADS = '[("zone", .str z), ("form", .str f), ("row", .str r), ("words", .str w)]'
+SOFT = ('def softCase (id kind : String) (j : Json) : Except String (Option Json) := do\n'
+        '  if kind == "admission" then\n    let environment ← j.getObjVal? "environment"\n'
+        '    let document ← j.getObjVal? "document"\n    return some (← runAdmissionX id environment document)\n'
+        '  if kind == "norm-defaults-certificate" then\n    let r ← Wire.replayLayeredEntailment j\n'
+        '    return some (VE.Route.Wire.ok id [("valid", .bool r.valid),\n      ("premises", toJson [].length)])\n'
+        '  return none\n')
+FUNCTION = ("Function expected at\n  []\nbut this term has type\n  List ?m.6\n\nNote: Expected a function because this "
+            "term is being applied to the argument\n  fun (z, f, r, w) => Json.mkObj [(\"zone\", .str z)]")
+DOTTED = "Invalid dotted identifier notation: The expected type of `.str` could not be determined"
+IMPLICIT = ("don't know how to synthesize implicit argument `α`\n  @List.nil (?m.89 id kind j y✝ r)\ncontext:\n"
+            "id kind : String")
+FIELD = "Invalid field `take`: The environment does not contain `Function.take`"
+MUTANTS = {  # the mutant's id (and those of its class in the record): its declaration, its text and where it starts
+    "M041": (ZONE.format("[]", f"Json.mkObj {HEADS}"), "[]", (2, 20)),  # and M058, M073
+    "M170": (ZONE.format("zoneHeads.map", f"Json.mkObj ({HEADS}.take 1)"), f"({HEADS}.take 1)", (3, 15)),  # +7 more
+    "M034": (SOFT, "[]", (9, 26)),
+    "M158": (ZONE.format("(zoneHeads.map.take 1)", f"Json.mkObj {HEADS}"), "(zoneHeads.map.take 1)", (2, 20)),
+}
+ELABORATION = [
+    ("M041", [(2, 20, FUNCTION)], "INVALID"),
+    ("M041-after-the-edit", [(2, 22, FUNCTION)], "UNKNOWN"),
+    ("M041-next-line", [(3, 4, FUNCTION)], "UNKNOWN"),
+    ("M170", [(3, 26, DOTTED), (3, 44, DOTTED), (3, 61, DOTTED), (3, 80, DOTTED)], "INVALID"),
+    ("M170-before-the-edit", [(3, 14, DOTTED)], "UNKNOWN"),
+    ("M170-next-line", [(4, 2, DOTTED)], "UNKNOWN"),
+    ("M170-one-outside", [(3, 26, DOTTED), (5, 26, DOTTED)], "UNKNOWN"),
+    ("M034", [(9, 26, IMPLICIT), (9, 26, IMPLICIT)], "INVALID"),
+    ("M034-after-the-edit", [(9, 28, IMPLICIT)], "UNKNOWN"),
+    ("M034-next-line", [(10, 2, IMPLICIT)], "UNKNOWN"),
+    ("M034-beside-a-type-mismatch", [(9, 26, IMPLICIT), (9, 26, "Type mismatch\n  []\nhas type")], "UNKNOWN"),
+    ("M158-invalid-field", [(2, 21, FIELD)], "INVALID"),  # the rule these join, unchanged
+    ("M158-invalid-field-next-line", [(3, 4, FIELD)], "UNKNOWN"),
+    ("M041-type-mismatch", [(2, 20, "Type mismatch\n  []\nhas type\n  List ?m.6")], "UNKNOWN"),  # F12 unchanged
+]
+
+
+@pytest.mark.parametrize(("case", "errors", "verdict"), ELABORATION, ids=[c[0] for c in ELABORATION])
+def test_an_elaboration_error_in_the_mutants_own_text_is_invalid(case, errors, verdict):
+    """tm-elab-unknown (reviews/dri-decisions-20261108-df-5-tm.md item 2): df-5's 11 UNKNOWN ids and et-4b's M034
+    failed to elaborate at the mutant's own text ("Function expected", "Invalid dotted identifier notation", "don't
+    know how to synthesize implicit argument"): INVALID, as "Invalid field" already is (M158). The same error just
+    outside the mutant's text, before it, after it or on the next line, stays UNKNOWN, and so does a type mismatch
+    there (review F12)."""
+    import trust_mutants
+    text, after, (line, column) = MUTANTS[case.split("-")[0]]
+    starts = [0, *(i + 1 for i, ch in enumerate(text) if ch == "\n")]
+    edit = (starts[line - 1] + column, starts[line - 1] + column + len(after))
+    assert text[edit[0]:edit[1]] == after
+    found = [("VE/X.lean", n, message, c) for n, c, message in errors]
+    assert trust_mutants.invalid(found, text, (1, text.count("\n")), edit)[0] == verdict
+
+
+# tm-column-per-copy (review tm-elab-unknown-ov F2, DRI adv0314 item 1): the M170 mutant at ZoneWire.lean's lines
+# 399-404, its text at 401, columns 15 to 95 (81 characters), and Lake's errors on the mutated file (column,
+# message), each read through `run`'s own build: the same message twice on one line keeps each copy's column, so
+# one outside the mutant's text is no refusal, whichever copy Lake prints last.
+COPIES = [
+    ("M170-four-inside", [(26, DOTTED), (44, DOTTED), (61, DOTTED), (80, DOTTED)], "INVALID"),
+    ("F2-outside-then-inside", [(4, DOTTED), (26, DOTTED)], "UNKNOWN"),
+    ("F2-inside-then-outside", [(26, DOTTED), (4, DOTTED)], "UNKNOWN"),
+    ("F2-inside-then-after-the-edit", [(26, DOTTED), (96, DOTTED)], "UNKNOWN"),
+    ("invalid-field-twice-inside", [(16, FIELD), (90, FIELD)], "INVALID"),
+    ("invalid-field-outside-then-inside", [(4, FIELD), (16, FIELD)], "UNKNOWN"),
+]
+
+
+@pytest.mark.parametrize(("case", "errors", "verdict"), COPIES, ids=[c[0] for c in COPIES])
+def test_each_copy_of_an_error_is_read_at_its_own_column(tmp_path, monkeypatch, case, errors, verdict):
+    """tm-column-per-copy: `run` read each error's column from a dict keyed by (file, line, message), so every copy
+    of a message on one line took the last copy's column, and a copy outside the mutant's text could be read as
+    inside it: INVALID (never a survivor) where it is UNKNOWN. Now each copy is judged at its own column, through
+    the build path itself (Lake's output, `located`, `build`, `invalid`)."""
+    import trust_mutants as tm
+    before, after = HEADS, f"({HEADS}.take 1)"
+    pad = "".join(f"-- {i}\n" for i in range(1, 399))  # the declaration starts at line 399
+    text = pad + ZONE.format("zoneHeads.map", f"Json.mkObj {before}")
+    start = len(pad) + text[len(pad):].index(before)
+    assert text.count("\n", 0, start) + 1 == 401 and start - text.rindex("\n", 0, start) - 1 == 15
+    assert 15 + len(after) == 96
+    lean = tmp_path / "lean"
+    (lean / "Demo").mkdir(parents=True)
+    (lean / "Demo/X.lean").write_text(text)
+    m = tm.Mutant("M170", "Demo/X.lean", 401, "zoneWordsJson", "x", start, start + len(before), (399, 404), before,
+                  after, edit=(start + len(before), after))
+    output = "".join(f"error: Demo/X.lean:401:{c}: {message}\n" for c, message in errors) + "error: build failed\n"
+    builds = []
+
+    class Scratch:
+        def __init__(self):
+            self.lean = lean
+
+        def lake(self, env, *args, timeout=None):
+            builds.append(args)
+            mutated = (lean / "Demo/X.lean").read_text()
+            assert mutated.split("\n")[400][15:96] == after  # the mutant's text, where the columns say
+            return 1, output
+    monkeypatch.setattr(tm, "targets", lambda tree, m, tests, deep=False: ["Demo.X"])
+    tree = tm.Tree({"Demo/X.lean": [(399, 404, "other", "zoneWordsJson")]}, {}, {"Demo.X": "Demo/X.lean"}, {})
+    status, detail = tm.run(m, Scratch(), tree, [], [], {})
+    assert (status, builds) == (verdict, [("build", "+Demo.X")]), detail
+    assert (lean / "Demo/X.lean").read_text() == text  # restored
 
 
 def test_named_writes_each_check_as_a_declaration_of_what_it_states():
@@ -2390,6 +2515,50 @@ def parts(go, n: int, *args) -> list[Path]:
         out.append(go.tmp / f"part-{k}-of-{n}.json")
         assert go("--shard", f"{k}/{n}", "--json", out[-1], *args)[0] in (0, 1, 3)
     return out
+
+
+def test_control_probe_mode_is_recorded_but_not_a_verdict_input(sharded, capsys):
+    first = sharded.tmp / "old.json"
+    sharded("--json", first, "--max-mutants", 6)
+    old = json.loads(first.read_text())
+    assert old["control_probes"] == "lazy"
+    del old["control_probes"]  # records written before this option are eager
+    first.write_text(json.dumps(old))
+    resumed = sharded.tmp / "resumed.json"
+    assert sharded("--json", resumed, "--resume", first, "--control-probes", "eager",
+                   "--max-mutants", 6)[3] == []
+    assert json.loads(resumed.read_text())["resumed"]["kept"] == 6
+    rescored = sharded.tmp / "rescored.json"
+    assert sharded("--json", rescored, "--rescore", first, "--max-mutants", 6)[0] in (0, 1)
+    assert json.loads(rescored.read_text())["rescore"]["mode"] == "identical"
+
+    paths = parts(sharded, 2, "--max-mutants", 6)
+    second = json.loads(paths[1].read_text())
+    del second["control_probes"]
+    paths[1].write_text(json.dumps(second))
+    merged = sharded.tmp / "mixed.json"
+    assert sharded.tm.main(["--merge", str(merged), *map(str, paths)]) in (0, 1)
+    assert json.loads(merged.read_text())["control_probes"] == "mixed"
+
+
+def test_control_scratch_is_never_given_to_a_mutant(sharded, monkeypatch):
+    tm = sharded.tm
+    original_scratch, original_run = tm.Scratch, tm.run
+    control = []
+
+    class TrackedScratch(original_scratch):
+        def __init__(self, lean, parent, source=None):
+            super().__init__(lean, parent, source)
+            if source is None:
+                control.append(self)
+
+    def checked_run(m, scratch, *args):
+        assert control and scratch is not control[0]
+        return original_run(m, scratch, *args)
+
+    monkeypatch.setattr(tm, "Scratch", TrackedScratch)
+    monkeypatch.setattr(tm, "run", checked_run)
+    assert sharded("--max-mutants", 2)[3] == ["M001", "M002"]
 
 
 def test_a_shard_owns_a_disjoint_stable_part_of_the_mutants_that_run(sharded):

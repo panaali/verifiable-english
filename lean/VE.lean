@@ -137,11 +137,15 @@ import VE.Presupposition.Reading
 import VE.Presupposition.Rows
 import VE.Presupposition.Rules
 import VE.Presupposition.Agree
+import VE.Presupposition.Wire
+import VE.Presupposition.Table
 import VE.Presupposition.Examples
 import VE.RightClauses.Tree
 import VE.RightClauses.Plain
 import VE.RightClauses.Relation
 import VE.RightClauses.Examples
+import VE.RightClauses.PlainWellFormed
+import VE.RightClauses.PlainWellFormed.Corollaries
 import VE.SpeechActs.Run
 import VE.SpeechActs.Source.Run
 import VE.SpeechActs.Source.Admission.Run
@@ -200,6 +204,7 @@ import VE.Risk.Wire
 import VE.Risk.Admission
 import VE.Rights.Examples
 import VE.Rights.Run
+import VE.Rights.OpenActExamples
 import VE.Judgments.Decl
 import VE.Judgments.Scan
 import VE.Judgments.Status
@@ -217,6 +222,7 @@ import VE.Question.Spans
 import VE.Commands.Examples
 import VE.Commands.RunExamples
 import VE.Commands.RunSplit
+import VE.Commands.StepsExamples
 import VE.Ask.Basic
 import VE.Ask.Sound
 import VE.Ask.Sources
@@ -260,6 +266,7 @@ import VE.Acts.Sources
 import VE.Acts.Situation
 import VE.Acts.MeaningExamples
 import VE.Acts.ReadingsExamples
+import VE.Acts.RunExamples
 import VE.Acts.RenderExamples
 import VE.Acts.Compat
 import VE.Acts.LexicalExamples
@@ -304,6 +311,8 @@ import VE.Scope.FarTheorems
 import VE.Scope.FarExamples
 import VE.Scope.Reach
 import VE.Scope.ReachExamples
+import VE.Scope.Authoring
+import VE.Scope.AuthoringExamples
 import VE.Service.ScopeAdmission
 import VE.Service.ScopeExamples
 import VE.Service.DocumentChain
