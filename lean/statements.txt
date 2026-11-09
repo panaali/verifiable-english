@@ -45025,10 +45025,11 @@ theorem VE.Rights.Run.licence_spec
 theorem VE.Rights.Run.nodeOpen_eq
   ∀ (openNames : List String) (N : VE.SoftNorms.SoftNode),
     VE.Rights.Run.nodeOpen openNames N =
-      (N.mode == VE.SoftNorms.Mode.default || !N.alterable.isEmpty || (VE.Norms.preds N.guard).any openNames.contains ||
+      (N.mode == VE.SoftNorms.Mode.default || !N.alterable.isEmpty || openNames.contains N.pred ||
+          (VE.Norms.preds N.guard).any openNames.contains ||
         N.carveOuts.any fun f => (VE.Norms.preds f).any openNames.contains)
-  -- uses VE.Formula@VE.Syntax VE.Norms.Node.carveOuts@VE.Norms.Tree VE.Norms.Node.guard@VE.Norms.Tree VE.Norms.preds@VE.Norms.Tree VE.Rights.Run.nodeOpen@VE.Rights.Run VE.SoftNorms.Mode.default@VE.SoftNorms.Tree VE.SoftNorms.Mode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.alterable@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.mode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.instDecidableEqMode@VE.SoftNorms.Tree
-  -- expr 933350
+  -- uses VE.Formula@VE.Syntax VE.Norms.Node.carveOuts@VE.Norms.Tree VE.Norms.Node.guard@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.preds@VE.Norms.Tree VE.Rights.Run.nodeOpen@VE.Rights.Run VE.SoftNorms.Mode.default@VE.SoftNorms.Tree VE.SoftNorms.Mode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.alterable@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.mode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.instDecidableEqMode@VE.SoftNorms.Tree
+  -- expr 916061769
 theorem VE.Rights.Run.rights_wire_acceptance
   ∀ (j answer : Lean.Json),
     VE.Rights.Run.runCase j = Except.ok answer →
