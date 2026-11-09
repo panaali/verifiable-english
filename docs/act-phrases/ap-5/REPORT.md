@@ -203,4 +203,8 @@ The C findings: docstring, equal-length sorts, plain-first duplicate, control bu
 
 ## 9. Selected tests and gate
 
-SELECTED-TESTS
+`MAC_PYTEST_NO_DEFER=1 zsh /home/seyran/code/manage-agents/mac-pytest.sh --select -- --base $(git merge-base HEAD main)
+--run` on committed HEAD d356aa22 (tree clean) ran on ve-mac-1 in 2758 s and exited 0. Besides the Lean build,
+`lean/audit.py`, the Rust build and `tools/test_layer_policy.py`, it ran 475 units with 0 failed, and the log ends
+`failed/error ids=0`. No test failed, so none from main-known-red.txt came up. Only this section changed after that
+run (docs only). The full gate runs in the chain on the final HEAD.
