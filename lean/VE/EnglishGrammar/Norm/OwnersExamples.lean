@@ -1,5 +1,6 @@
 import VE.EnglishGrammar.Norm.Owners
 import VE.EnglishGrammar.LexiconFixtures
+import VE.EnglishGrammar.ReadExamples
 
 /-! EN-2 step 0's fixtures O1-O8 (docs/spec/en-e3-norm.md section 8): each owner piece, both directions of each
 "exactly when", over `LexiconFixtures.envF` with its valid lexicon v1 (`LF`). -/
@@ -31,11 +32,7 @@ def fitting : List (VE.Norms.Role × Polarity) :=
 #guard (Mode.default "company").soft == .default && (Mode.default "company").soft != .strict
 
 -- O4/O5: the source view, V1-V5 with the use case's source spellings (`envF` and its valid lexicon v1).
-def LF : Lexicon :=
-  { nouns := [("person", "person"), ("service", "service")], letters := [("person", "P"), ("service", "S")],
-    wordings := [("deployed", "{0} is deployed"), ("owns", "{0} owns {1}"), ("reviewed", "{0} is reviewed")],
-    negatives := [("owns", "{0} does not own {1}"), ("reviewed", "{0} is not reviewed")],
-    aliases := [], spellings := [("alice", "alice"), ("legacy", "legacy")] }
+def LF : Lexicon := ReadExamples.LF
 def viewFailures (A : List (String × String × Bool)) : List String :=
   let (E, L) := sourceView envF LF A
   failureSet E L

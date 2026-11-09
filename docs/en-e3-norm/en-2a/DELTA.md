@@ -2,7 +2,7 @@
 
 No verdict, diagnostic, fault-order, limit or rendered-text delta on any route: the mode `english.statement` is not
 registered yet (en-e3ab) and nothing calls it; Python's reader decides every W1 block. `ve/english_grammar/codes.json`
-gains the eight EN-2 code rows in `codes` (`Run.codeClasses`, M8), which no current answer carries. The internal mode
+and `ve/question/codes.json` gain the eight EN-2 code rows in `codes` (`Run.codeClasses`, M8), which no current answer carries. The internal mode
 `english.grammar` exports three new members (`statement_statuses`, `statement_fields`, `statement_unsentenced`, M9);
 `tools/english_codes.py` does not copy them yet (en-e3ab), so no Python reader or user sees them.
 

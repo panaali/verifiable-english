@@ -20202,7 +20202,8 @@
         "VE.EnglishGrammar.Norm.RunExamples.str",
         "VE.EnglishGrammar.Norm.RunExamples.tA",
         "VE.EnglishGrammar.Norm.RunExamples.tB",
-        "VE.EnglishGrammar.Norm.RunExamples.whole"
+        "VE.EnglishGrammar.Norm.RunExamples.whole",
+        "VE.EnglishGrammar.Norm.RunExamples.wholeRow"
       ]
     }
   }

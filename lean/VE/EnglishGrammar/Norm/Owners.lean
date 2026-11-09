@@ -97,7 +97,8 @@ def ReadNormAuthoring : Prop := ∀ (E : Env) (O : Overlay) (L : Lexicon) (b : N
     c.mode = .strict ∧ c.residuals = [] ∧ c.args = [] ∧
     ∃ r ∈ regulatedOf E, r.name = c.pred ∧ ∃ s1 rest, r.sorts = s1 :: rest ∧ c.bearer = .every s1
 
-/-- `ReadNormAuthoring` is english-lean-s6.md 4's `readNorm_authoring`, word for word: an edit of either breaks this. -/
+/-- `ReadNormAuthoring` against english-lean-s6.md 4's `readNorm_authoring`, copied here as it reads there: an edit of
+the definition breaks this (the copy is checked against the spec by review, not by a tool). -/
 theorem ReadNormAuthoring_eq : ReadNormAuthoring ↔ ∀ (E : Env) (O : Overlay) (L : Lexicon) (b : Nat) (s : String)
     (rs : List NormStatement),
   readNorm E O L b s = .ok rs →
