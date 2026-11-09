@@ -24170,10 +24170,15 @@ module VE.Senses.Texts db53bdf07c7264bc2f48028a16ef1a313f28f9377c43014c2bd81a969
 43:0-47:72 def VE.Senses.mixedText@VE.Senses.Texts
 49:0-50:110 def VE.Senses.unneededText@VE.Senses.Texts
 52:0-64:109 def VE.Senses.divergeGlosses@VE.Senses.Texts
-module VE.Senses.TextsExamples 203f91b085e56aa480f088b60f49ceee4f84c18f6800babb320d8dbbb749638a
+module VE.Senses.TextsExamples 91f77c78cfc8952e10f0c35d9f3bbe084b995ef3815580c1815af47044bc5441
 37:0-38:103 def VE.Senses.TextsExamples.reading@VE.Senses.TextsExamples
 40:0-47:11 def VE.Senses.TextsExamples.entries@VE.Senses.TextsExamples
-83:0-87:34 def VE.Senses.TextsExamples.reread@VE.Senses.TextsExamples
+83:0-85:74 def VE.Senses.TextsExamples.rereadReq@VE.Senses.TextsExamples
+87:0-89:100 def VE.Senses.TextsExamples.asked@VE.Senses.TextsExamples
+91:0-94:12 def VE.Senses.TextsExamples.rereadOf@VE.Senses.TextsExamples
+96:0-98:58 def VE.Senses.TextsExamples.reread@VE.Senses.TextsExamples
+110:0-110:96 def VE.Senses.TextsExamples.chain@VE.Senses.TextsExamples
+114:0-114:71 def VE.Senses.TextsExamples.errorOf@VE.Senses.TextsExamples
 module VE.Senses.Version 796cf56defedd3e6fef43b9bd5fc9b00f3e5036de2287ca81d6736629eb6bd2f
 3:0-5:33 def VE.Senses.sensesVersion@VE.Senses.Version
 module VE.Service.ActsExamples b082d0817c021ea8257b2ec82f97040e0a4a41c49491368ab5e69838e34600ef
