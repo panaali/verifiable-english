@@ -36,14 +36,13 @@ def declaredOnce (E : VE.Norms.Doc) (n : String) : Option VE.Norms.Regulated :=
 /-- One premise `∀ x̄. p_a x̄ → p_b x̄` per ordered pair of declared simple acts of one permission or obligation role,
     equal sorts, `a ⊑ b`, `a ≠ b`. -/
 def specPremises (E : VE.Norms.Doc) (ρ : Restrictive) (acts : List (String × Atom)) : List VE.Formula :=
-  acts.flatMap fun pa => acts.filterMap fun pb =>
-    match declaredOnce E pa.1, declaredOnce E pb.1 with
-    | some ra, some rb =>
-      if ra.role != .plain && ra.role == rb.role && ra.sorts == rb.sorts && pa.2 != pb.2 &&
-          specialises ρ pa.2 pb.2 then
-        some (VE.Norms.bindAll ra.sorts (.implies (VE.Norms.atom ra.name ra.sorts) (VE.Norms.atom rb.name ra.sorts)))
-      else none
-    | _, _ => none
+  -- each act's predicate is looked up once; a name not declared exactly once gives no premise
+  let ds := acts.filterMap fun p => (declaredOnce E p.1).map (·, p.2)
+  ds.flatMap fun x => ds.filterMap fun y =>
+    if x.1.role != .plain && x.1.role == y.1.role && x.1.sorts == y.1.sorts && x.2 != y.2 &&
+        specialises ρ x.2 y.2 then
+      some (VE.Norms.bindAll x.1.sorts (.implies (VE.Norms.atom x.1.name x.1.sorts) (VE.Norms.atom y.1.name x.1.sorts)))
+    else none
 
 /-! ### The statements of spec 8 -/
 
@@ -87,17 +86,14 @@ theorem mem_specPremises {E : VE.Norms.Doc} {ρ : Restrictive} {acts : List (Str
     (h : φ ∈ specPremises E ρ acts) : ∃ pa pb ra rb, declaredOnce E pa = some ra ∧ declaredOnce E pb = some rb ∧
       ra.role ≠ .plain ∧ ra.role = rb.role ∧ ra.sorts = rb.sorts ∧
       φ = VE.Norms.bindAll ra.sorts (.implies (VE.Norms.atom ra.name ra.sorts) (VE.Norms.atom rb.name ra.sorts)) := by
-  simp only [specPremises, List.mem_flatMap, List.mem_filterMap] at h
-  obtain ⟨pa, -, pb, -, hφ⟩ := h
+  simp only [specPremises, List.mem_flatMap, List.mem_filterMap, Option.map_eq_some_iff] at h
+  obtain ⟨x, ⟨pa, -, ra, hra, rfl⟩, y, ⟨pb, -, rb, hrb, rfl⟩, hφ⟩ := h
   split at hφ
-  · rename_i ra rb hra hrb
-    split at hφ
-    · rename_i hc
-      simp only [Bool.and_eq_true, bne_iff_ne, ne_eq, beq_iff_eq] at hc
-      obtain ⟨⟨⟨⟨hp, hr⟩, hs⟩, -⟩, -⟩ := hc
-      cases hφ
-      exact ⟨pa.1, pb.1, ra, rb, hra, hrb, hp, hr, hs, rfl⟩
-    · cases hφ
+  · rename_i hc
+    simp only [Bool.and_eq_true, bne_iff_ne, ne_eq, beq_iff_eq] at hc
+    obtain ⟨⟨⟨⟨hp, hr⟩, hs⟩, -⟩, -⟩ := hc
+    cases hφ
+    exact ⟨pa.1, pb.1, ra, rb, hra, hrb, hp, hr, hs, rfl⟩
   · cases hφ
 
 theorem specPremises_typed (E : VE.Norms.Doc) (ρ : Restrictive) (acts : List (String × Atom))
