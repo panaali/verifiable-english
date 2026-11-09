@@ -1,0 +1,15 @@
+{
+ "seeds": 200,
+ "documents": 159,
+ "lines": 506,
+ "failures": 180,
+ "causes": {
+  "Expected a complete rule sentence": 109,
+  "InvalidInput: rights incident must have one rule": 71
+ },
+ "failures_by_carve_outs": {
+  "unless=2": 126,
+  "unless=0": 36,
+  "unless=1": 18
+ }
+}

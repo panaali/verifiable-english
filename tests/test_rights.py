@@ -1115,6 +1115,8 @@ def test_rights_incident_header_the_renderer_never_writes_is_refused():
                    " (user may turn off;)", "  (user may turn off)", " (user  may turn off)",
                    " (User may turn off)", " (user may turn it off)", " (operator, user may turn off)",
                    " (user may turn off) ", "(user may turn off)", " [user may turn off]",
+                   " (user may turn off)", "\t(user may turn off)", " (user may turn off)",
+                   " (user may turn off)\r", " （user may turn off）",
                    " (user and operator may turn off)"):  # parties are rendered sorted
         with pytest.raises(VEError):
             parse_line(env, "Claim of right life" + header + ". " + body, name="protect")
