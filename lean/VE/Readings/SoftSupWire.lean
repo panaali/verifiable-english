@@ -12,9 +12,8 @@ each choice. Over a limit the row stays enumerated, as today; it is never an err
 here (sc-11b switches the dispatch); the wire theorems read a superposed case's accepted evidence in each choice's
 own terms through sc-10b's three superposition theorems, which they apply and do not restate.
 
-`maxSdCheckWork` is set from W-13's measured Lean CPU (OPEN-SC11-7, docs/rd-9/sc-11/w13-cpu.md): about 29 µs per
-unit of `sdCheckWork` on W-13's shape, so 32,768 units keep the route check under R4's 1 s; the spec's 4,194,304
-was arithmetic, not a measurement. -/
+`maxSdCheckWork` is measured (14.11, DRI decision 2026-11-09 item 1, docs/rd-9/sc-11/w13-cpu.md): about 29 µs of
+Lean CPU per unit of `sdCheckWork` on W-13's shape, so 32,768 units keep the route check under R4's 1 s. -/
 namespace VE.Readings.Wire
 open VE.Readings
 open VE.Bridge (Entity)
