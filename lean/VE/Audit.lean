@@ -98,17 +98,14 @@ import VE.Cardinality.Wire
 import VE.Cardinality.WireTheorems
 import VE.CertificateWire
 import VE.ClaimGraph
-import VE.Closure.Congruence
 import VE.Closure.Consequence
 import VE.Closure.CoreEquiv
 import VE.Closure.Finite
-import VE.Closure.Induction
 import VE.Closure.Order
-import VE.Closure.PathRules
 import VE.Closure.Paths
 import VE.Closure.RoundTrip
-import VE.Closure.Substitution
 import VE.Closure.Syntax
+import VE.Closure.Tableau
 import VE.Commands.Read
 import VE.Commands.Run
 import VE.Commands.RunSplit
@@ -469,12 +466,6 @@ import VE.Syntax
 import VE.Tableau
 import VE.TableauChecker
 import VE.TableauClosure
-import VE.TableauExtended
-import VE.TableauExtendedChecker
-import VE.TableauExtendedClosure
-import VE.TableauExtendedExtra
-import VE.TableauExtendedInduction
-import VE.TableauExtendedRules
 import VE.Time.Budget
 import VE.Time.Calendar
 import VE.Time.Count
@@ -1830,80 +1821,18 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.withSizes_eq
 #print axioms VE.CertificateWire.ClosureQuery.accepts_sound
 #print axioms VE.CertificateWire.Query.accepts_sound
-#print axioms VE.Closure.CoreEquiv.add_embed
-#print axioms VE.Closure.CoreEquiv.at_embed
-#print axioms VE.Closure.CoreEquiv.atomMatches_embed
 #print axioms VE.Closure.CoreEquiv.checkCertificate_eq_core_replay
 #print axioms VE.Closure.CoreEquiv.checkCertificate_other_version
 #print axioms VE.Closure.CoreEquiv.checkCertificate_v0
 #print axioms VE.Closure.CoreEquiv.checkCertificate_v1
-#print axioms VE.Closure.CoreEquiv.checkChildren_embed
-#print axioms VE.Closure.CoreEquiv.closed_embed
-#print axioms VE.Closure.CoreEquiv.closes_embed
-#print axioms VE.Closure.CoreEquiv.complementary_embed
-#print axioms VE.Closure.CoreEquiv.composeKind_embed
-#print axioms VE.Closure.CoreEquiv.composeStep_embed
 #print axioms VE.Closure.CoreEquiv.decodeTrace_ne_embed
-#print axioms VE.Closure.CoreEquiv.dedup_embed
-#print axioms VE.Closure.CoreEquiv.deriveExtra_embed
-#print axioms VE.Closure.CoreEquiv.edgeCheck_embed
-#print axioms VE.Closure.CoreEquiv.edgeStep_embed
-#print axioms VE.Closure.CoreEquiv.embedBranch_expanded
-#print axioms VE.Closure.CoreEquiv.embedBranch_instantiated
 #print axioms VE.Closure.CoreEquiv.embedClosure_inj
 #print axioms VE.Closure.CoreEquiv.embedEdge_inj
 #print axioms VE.Closure.CoreEquiv.embedKind_inj
-#print axioms VE.Closure.CoreEquiv.embedSigned_bindings
-#print axioms VE.Closure.CoreEquiv.embedToken_inj
-#print axioms VE.Closure.CoreEquiv.endEdge_embed
-#print axioms VE.Closure.CoreEquiv.endStep_embed
-#print axioms VE.Closure.CoreEquiv.equalities_embed
-#print axioms VE.Closure.CoreEquiv.equivalent_embed
 #print axioms VE.Closure.CoreEquiv.extraRule_eq
-#print axioms VE.Closure.CoreEquiv.extra_embed
-#print axioms VE.Closure.CoreEquiv.getElem?_embed
-#print axioms VE.Closure.CoreEquiv.groundMatch_embed
-#print axioms VE.Closure.CoreEquiv.ground_embed
-#print axioms VE.Closure.CoreEquiv.grow_embed
-#print axioms VE.Closure.CoreEquiv.induct_embed
-#print axioms VE.Closure.CoreEquiv.inductionStep_embed
-#print axioms VE.Closure.CoreEquiv.initial_embed
-#print axioms VE.Closure.CoreEquiv.invariantAt_embed
-#print axioms VE.Closure.CoreEquiv.isReach_embed
-#print axioms VE.Closure.CoreEquiv.known_embed
-#print axioms VE.Closure.CoreEquiv.liftMatch_eq
-#print axioms VE.Closure.CoreEquiv.liftSub_eq
-#print axioms VE.Closure.CoreEquiv.liftTerm_eq
-#print axioms VE.Closure.CoreEquiv.literals_embed
-#print axioms VE.Closure.CoreEquiv.map_embedToken_inj
-#print axioms VE.Closure.CoreEquiv.matches_embed
-#print axioms VE.Closure.CoreEquiv.mem_instantiated
-#print axioms VE.Closure.CoreEquiv.mem_map_embedToken
-#print axioms VE.Closure.CoreEquiv.namedStep_embed
-#print axioms VE.Closure.CoreEquiv.next_embed
-#print axioms VE.Closure.CoreEquiv.parse_embed
-#print axioms VE.Closure.CoreEquiv.reachClosed_embed
 #print axioms VE.Closure.CoreEquiv.reach_embed
-#print axioms VE.Closure.CoreEquiv.reachable_embed
-#print axioms VE.Closure.CoreEquiv.replay_certificate_embed
-#print axioms VE.Closure.CoreEquiv.replay_embed
-#print axioms VE.Closure.CoreEquiv.rule_embed
-#print axioms VE.Closure.CoreEquiv.scoped_embed
-#print axioms VE.Closure.CoreEquiv.shift_embed
-#print axioms VE.Closure.CoreEquiv.sortOf_embed
-#print axioms VE.Closure.CoreEquiv.sortsOf_embed
-#print axioms VE.Closure.CoreEquiv.step_embed
 #print axioms VE.Closure.CoreEquiv.stepsList_embed
 #print axioms VE.Closure.CoreEquiv.steps_embed
-#print axioms VE.Closure.CoreEquiv.substTerm_eq
-#print axioms VE.Closure.CoreEquiv.subst_embed
-#print axioms VE.Closure.CoreEquiv.tag_embed
-#print axioms VE.Closure.CoreEquiv.termToken_embed
-#print axioms VE.Closure.CoreEquiv.unfoldAt_embed
-#print axioms VE.Closure.CoreEquiv.unfold_embed
-#print axioms VE.Closure.CoreEquiv.unlift_eq
-#print axioms VE.Closure.Path.first
-#print axioms VE.Closure.Path.last
 #print axioms VE.Closure.Path.least
 #print axioms VE.Closure.Path.trans
 #print axioms VE.Closure.Path.unfold
@@ -1911,87 +1840,32 @@ import VE.WireContract.Engine
 #print axioms VE.Closure.Surface.parseStatements_nonempty
 #print axioms VE.Closure.Surface.parse_print_named
 #print axioms VE.Closure.Surface.print_injective_named
-#print axioms VE.Closure.Tableau.add_holds
-#print axioms VE.Closure.Tableau.bindings_extend
-#print axioms VE.Closure.Tableau.bindings_get
 #print axioms VE.Closure.Tableau.checkCertificate_sound
 #print axioms VE.Closure.Tableau.checkCertificate_sound_v0
-#print axioms VE.Closure.Tableau.checkChildren_member
-#print axioms VE.Closure.Tableau.closed_sound
-#print axioms VE.Closure.Tableau.closes_sound
-#print axioms VE.Closure.Tableau.closure_holds
-#print axioms VE.Closure.Tableau.complementary_sound
-#print axioms VE.Closure.Tableau.composeStep_sound
-#print axioms VE.Closure.Tableau.delta_witness
-#print axioms VE.Closure.Tableau.edgeStep_sound
-#print axioms VE.Closure.Tableau.endStep_sound
-#print axioms VE.Closure.Tableau.equalities_sound
-#print axioms VE.Closure.Tableau.equivalent_sound
-#print axioms VE.Closure.Tableau.extra_sound
-#print axioms VE.Closure.Tableau.gamma_holds
-#print axioms VE.Closure.Tableau.ground_denote
-#print axioms VE.Closure.Tableau.grow_sound
-#print axioms VE.Closure.Tableau.holds_extend
-#print axioms VE.Closure.Tableau.induct_sound
-#print axioms VE.Closure.Tableau.known_bindings
-#print axioms VE.Closure.Tableau.literals_hold
-#print axioms VE.Closure.Tableau.matches_sound
-#print axioms VE.Closure.Tableau.mem_dedup
-#print axioms VE.Closure.Tableau.namedStep_sound
-#print axioms VE.Closure.Tableau.next_sound
-#print axioms VE.Closure.Tableau.one_holds
-#print axioms VE.Closure.Tableau.reachClosed_sound
-#print axioms VE.Closure.Tableau.reachable_sound
-#print axioms VE.Closure.Tableau.replay_sound
-#print axioms VE.Closure.Tableau.rule_closure_formula
-#print axioms VE.Closure.Tableau.step_sound
-#print axioms VE.Closure.Tableau.termToken_denote
-#print axioms VE.Closure.Tableau.token_defined
-#print axioms VE.Closure.Tableau.two_holds
-#print axioms VE.Closure.Tableau.typed_extend
-#print axioms VE.Closure.Tableau.unfoldAt_sound
 #print axioms VE.Closure.above_iff
 #print axioms VE.Closure.atLeast_iff
 #print axioms VE.Closure.atLeast_refl
 #print axioms VE.Closure.atLeast_trans
 #print axioms VE.Closure.check_iff_wellFormed
-#print axioms VE.Closure.closure_induction
 #print axioms VE.Closure.conservativity
 #print axioms VE.Closure.conservativity_without_reach
 #print axioms VE.Closure.countermodelCheck_iff
 #print axioms VE.Closure.countermodel_sound
-#print axioms VE.Closure.edge_at_denote
-#print axioms VE.Closure.edge_inclusion
-#print axioms VE.Closure.edge_shift_denote
-#print axioms VE.Closure.edge_typed
 #print axioms VE.Closure.embed_of_erase
-#print axioms VE.Closure.endEdge_sound
 #print axioms VE.Closure.erase_embed
 #print axioms VE.Closure.eval_false_iff_not_denote
 #print axioms VE.Closure.eval_iff_denote
-#print axioms VE.Closure.formula_matches_sound
-#print axioms VE.Closure.inductionStep_denote
-#print axioms VE.Closure.invariantAt_denote
-#print axioms VE.Closure.liftMatch_sound
-#print axioms VE.Closure.liftSub_denote
-#print axioms VE.Closure.liftTerm_denote
 #print axioms VE.Closure.mem_bodyEdges
 #print axioms VE.Closure.mem_dedup
 #print axioms VE.Closure.mem_namedEdges
 #print axioms VE.Closure.mem_pivot
-#print axioms VE.Closure.named_body_denote
 #print axioms VE.Closure.outranksPlus_eq_above
-#print axioms VE.Closure.pair_values
 #print axioms VE.Closure.path_iff_transGen
 #print axioms VE.Closure.pivot_closed
 #print axioms VE.Closure.pivot_preserves_closed
 #print axioms VE.Closure.reachEval_iff
-#print axioms VE.Closure.reach_compose
-#print axioms VE.Closure.reach_denote
 #print axioms VE.Closure.reachable_congr
-#print axioms VE.Closure.reachable_induction
 #print axioms VE.Closure.reachable_star_iff
-#print axioms VE.Closure.reachable_trans
 #print axioms VE.Closure.risk_closure_eq
 #print axioms VE.Closure.risk_iter_in
 #print axioms VE.Closure.risk_iter_mono
@@ -2004,10 +1878,6 @@ import VE.WireContract.Engine
 #print axioms VE.Closure.risk_step_mono
 #print axioms VE.Closure.risk_warshall_in
 #print axioms VE.Closure.star_least
-#print axioms VE.Closure.substTerm_denote
-#print axioms VE.Closure.subst_denote
-#print axioms VE.Closure.unfold_denote
-#print axioms VE.Closure.unlift_denote
 #print axioms VE.Closure.warshall_closed
 #print axioms VE.Closure.warshall_extends
 #print axioms VE.Closure.warshall_iff_path
