@@ -17223,7 +17223,16 @@
             "VE.Readings.excLabels_nodes"
           ]
         },
-        "VE.Readings.labelImage",
+        {
+          "name": "VE.Readings.labelImage",
+          "tied": [
+            "VE.Readings.labelImage_fst",
+            "VE.Readings.labelImage_snd_mem",
+            "VE.Readings.labelImage_functional",
+            "VE.Readings.supLabel_pull",
+            "VE.Readings.supLabel_other"
+          ]
+        },
         "VE.Readings.sdShown"
       ],
       "P": [
