@@ -80,7 +80,7 @@
    "before": "| [a, b] => some (a, b)",
    "after": "| a :: rest => some (a, sep.intercalate rest)",
    "status": "KILLED",
-   "test": "VE/Scope/AuthoringExamples.lean:97:0"
+   "test": "VE/Scope/AuthoringExamples.lean:103:0"
   },
   {
    "kind": "R16 mutant",
@@ -89,7 +89,7 @@
    "before": "(a.getObjValD \"level\").getNat?.toOption.getD 0",
    "after": "(a.getObjValD \"level\").getNat?.toOption.getD 1",
    "status": "KILLED",
-   "test": "VE/Scope/AuthoringExamples.lean:89:0"
+   "test": "VE/Scope/AuthoringExamples.lean:95:0"
   },
   {
    "kind": "R16 mutant",
@@ -98,7 +98,7 @@
    "before": "if !(1 ≤ k && k ≤ 6 && spaced h)",
    "after": "if !(0 ≤ k && k ≤ 6 && spaced h)",
    "status": "KILLED",
-   "test": "VE/Scope/AuthoringExamples.lean:87:0"
+   "test": "VE/Scope/AuthoringExamples.lean:93:0"
   },
   {
    "kind": "R16 mutant",
@@ -125,7 +125,7 @@
    "before": "| [b] => some b",
    "after": "| b :: _ => some b",
    "status": "KILLED",
-   "test": "VE/Scope/AuthoringExamples.lean:95:0"
+   "test": "VE/Scope/AuthoringExamples.lean:101:0"
   },
   {
    "kind": "seeded bug",
