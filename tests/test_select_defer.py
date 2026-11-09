@@ -239,9 +239,9 @@ def test_a_unit_names_a_changed_module_or_its_directory_never_a_sibling():
 # same way. The first is tests/test_w6a_looprecheck1.py:316 (review F1), copied so this test reads no other test.
 JOINS = {
     'CALENDAR = ROOT / "lean" / "VE" / "Time" / "Calendar.lean"\n': "lean/VE/Time/Calendar.lean",
-    'CALENDAR = os.path.join(ROOT, "lean", "VE", "Time", "Calendar.lean")\n': "lean/VE/Time/Calendar.lean",
+    'def f(root):\n    return os.path.join(root, "lean", "VE", "Time", "Calendar.lean")\n': "lean/VE/Time/Calendar.lean",
     'CALENDAR = Path("lean", "VE", "Time", "Calendar.lean")\n': "lean/VE/Time/Calendar.lean",
-    'CALENDAR = ROOT.joinpath("lean", "VE", "Time", "Calendar.lean")\n': "lean/VE/Time/Calendar.lean",
+    'CALENDAR = (ROOT / "lean").joinpath("VE", "Time", "Calendar.lean")\n': "lean/VE/Time/Calendar.lean",
     'CALENDAR = "lean/VE/" + "Time/Calendar.lean"\n': "lean/VE/Time/Calendar.lean",
     'def f(tmp_path):\n    return tmp_path / "lean" / "VE" / "Time" / "Calendar.lean"\n': "lean/VE/Time/Calendar.lean",
     'TIME = (ROOT / "lean" / "VE" / "Time").glob("*.lean")\n': "lean/VE/Time",
