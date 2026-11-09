@@ -33,7 +33,9 @@ structure Pack where
   consts : List (String × String)
   labelled : List (String × VE.Formula)
   origins : List (String × RequestPath)
-  /-- Each stated sufficient condition and its decision (profile-composition 1.9; no reader yet). -/
+  /-- Each stated sufficient condition and its decision (profile-composition 1.9). Read by `packConditions`
+      (`Defaults/Uniform.lean`), which adds them to the decision premises, and by `providerConditions`, with which the
+      defaults route refuses a document any of whose packs states a condition until EXP-D3 settles. -/
   conditions : List (VE.SoftNorms.DecisionKey × VE.Formula)
 
 /-- 2.2: the one order of `X`. -/
