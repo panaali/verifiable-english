@@ -17841,6 +17841,7 @@
         "VE.RightClauses.checkClauses",
         "VE.RightClauses.checkEntry",
         "VE.RightClauses.checkSpans",
+        "VE.RightClauses.entryError",
         "VE.RightClauses.entryOk",
         "VE.RightClauses.guardOf",
         "VE.RightClauses.holderGuardOf",
@@ -17901,7 +17902,10 @@
         "VE.RightClauses.Examples.twoTotal",
         "VE.RightClauses.Examples.trig",
         "VE.RightClauses.Examples.unl",
-        "VE.RightClauses.Examples.verdict"
+        "VE.RightClauses.Examples.verdict",
+        "VE.RightClauses.Examples.twice",
+        "VE.RightClauses.Examples.twoHolders",
+        "VE.RightClauses.Examples.across"
       ]
     },
     "VE/SoftNorms/ActsFrameExamples.lean": {

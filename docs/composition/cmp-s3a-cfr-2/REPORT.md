@@ -65,7 +65,7 @@ The corrections (task (3)):
 | (3) the REPORT and Plain.lean docstrings say only what is proved | yes | the corrections above |
 | Seeded bug: Lean, the duplicate check removed | yes | S1 below |
 | DELTA: R1 when the text keeps the rule name, path and specificity; else SIGNED by the DRI only at rights' exact text, with a negative test | yes | DELTA.md rows 1 and 2 |
-| Trust under R16 | yes, V +15 under two signed R16 allowances | Trust below |
+| Trust under R16 | yes, S +11 under one signed R16 allowance | Trust below |
 
 The tests live in their own file, because cmp-s3a-cfr-1 (in flight) adds tests/test_right_clauses_lean.py. The Lean
 probe imports `VE.RightClauses.Plain` and `VE.Rights.Examples` only, so a seeded bug shows as a failed assertion and
@@ -102,15 +102,16 @@ With main's Plain.lean, the condition test fails as well (task (2)).
 
 ## Trust (R16)
 
-`uv run python tools/trust_map.py --check` against 6db6ee16ddb1 (the merge base) gives `K +0, S -1, D +0, G +0,
-tied +0, unclassified +15, trusted +14`. Per file: lean/VE/RightClauses/Plain.lean +12 (`entryError`, unclassified)
-and lean/VE/RightClauses/Examples.lean +3 (the fixtures `twice`, `twoHolders` and `across`, unclassified). The check
-prints `PASS: K, S and untied [V] within 6db6ee16ddb1 and the allowances introduced since`.
+`uv run python tools/trust_map.py --check` against 6db6ee16ddb1 (the merge base) gives `K +0, S +11, D +0, G +0,
+tied +0, unclassified +0, trusted +11`. All of it is lean/VE/RightClauses/Plain.lean +11: `entryError`, classed S in
+tools/trust-classes.json beside `checkEntry`. The Examples.lean fixtures `twice`, `twoHolders` and `across` are classed
+T. The check prints `PASS: K, S and untied [V] within 6db6ee16ddb1 and the allowances introduced since`.
 
-Two allowances are recorded in docs/trust-baseline.json, V +14 and V +1, for 15 lines in all. Both are signed "SIGNED
-by standing ruling R16 (DRI-RULINGS.md), cmp-s3a-cfr-2, 2026-10-18". That is within R16: at most 150 lines and no K
-growth. The FOLLOW-UPS.md row "## cmp-s3a-cfr-2" asks for the ties pass and for the classes (S for `entryError`, T
-for the fixtures).
+One allowance is recorded in docs/trust-baseline.json, S +11, signed "SIGNED by standing ruling R16 (DRI-RULINGS.md),
+cmp-s3a-cfr-2, 2026-10-18". That is within R16: at most 150 lines and no K growth. The FOLLOW-UPS.md row
+"## cmp-s3a-cfr-2" asks for the ties pass. The first draft left the new declarations unclassified and allowed them
+as V +15. The selected run failed `test_consolidation_tools.py::test_committed_trust_table_covers_every_declaration`
+(`assert 15 == 0`), so they are now classified and the V allowances are replaced by the S one.
 
 R16's "every new trusted definition exercised by a test that can fail" is met:
 - Hand mutants: [mutants.json](mutants.json), S1-S4, all killed.
