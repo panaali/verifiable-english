@@ -324,6 +324,56 @@
    "status": "KILLED",
    "test": "tests/test_scope_authoring.py::test_review_f7_clause_refuses_exactly_the_documented_closers; tests/test_scope_authoring.py::test_review_f9_no_invisible_character_hides_a_sentence_end",
    "note": "sc-7 recheck F9: U+0483 (Mn), which no #guard names, dropped from the stripped set: lake build passes; the Unicode sweep fails (\"named, not refused\": U+0483; hidden pairs (\".\", U+0483) and the rest). Run with the statement-inventory import stubbed, since the inventory is stale while a mutant is planted"
+  },
+  {
+   "kind": "seeded bug",
+   "definition": "VE.Scope.Pinned.clause",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "status": "KILLED",
+   "before": "\",;-%/&+=#$@\".contains c",
+   "after": "\",;-%/&+=#$@.\".contains c",
+   "test": "VE/Scope/AuthoringExamples.lean:69:0; VE/Scope/AuthoringExamples.lean:113:0; VE/Scope/AuthoringExamples.lean:138:0; VE/Scope/AuthoringExamples.lean:150:0; VE/Scope/AuthoringExamples.lean:216:0",
+   "note": "sc-7 DRI note 2026-11-09 (c) seeded bug (1), on b880471cf: \".\" added to the allow-list; lake build fails at five guards (2.2's refused variants, review F1's sweep, PROBE F7, F7's closer sweep, and the allow-list's refused-neighbour guard)"
+  },
+  {
+   "kind": "seeded bug",
+   "definition": "VE.Scope.Pinned.clause",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "status": "KILLED",
+   "before": "|| \",;-%/&+=#$@\".contains c",
+   "after": "|| \",;-%/&+=#$@\".contains c || c.toNat == 0xFFFC",
+   "test": "VE/Scope/AuthoringExamples.lean:203:0; VE/Scope/AuthoringExamples.lean:206:0",
+   "note": "sc-7 DRI note 2026-11-09 (c) seeded bug (2), on b880471cf: U+FFFC admitted; lake build fails at the recheck's blank-character guards (\"x.\\uFFFC y\" as a condition and a list name, and in every slot)"
+  },
+  {
+   "kind": "seeded bug",
+   "definition": "VE.Scope.Pinned.clause",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "status": "KILLED",
+   "before": "(0xC0 ≤ c.toNat && c.toNat ≤ 0x24F && ![0xD7, 0xF7, 0x1C3].contains c.toNat) || ",
+   "after": "",
+   "test": "VE/Scope/AuthoringExamples.lean:214:0; VE/Scope/AuthoringExamples.lean:220:0; VE/Scope/AuthoringExamples.lean:221:0; VE/Scope/AuthoringExamples.lean:222:0",
+   "note": "sc-7 DRI note 2026-11-09 (c) seeded bug (3), on b880471cf: the Latin letter range dropped; lake build fails at the accepted-direction guards (one word per allow-list class, \"xǀ\" beside \"ǃ\", and the two \"café\" round trips)"
+  },
+  {
+   "kind": "seeded bug",
+   "definition": "VE.Scope.Pinned.clause",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "status": "KILLED",
+   "before": "toList.getLast?).any fun c =>",
+   "after": "toList.getLast?).all fun c =>",
+   "test": "VE/Scope/AuthoringExamples.lean:209:0; VE/Scope/AuthoringExamples.lean:210:0",
+   "note": "sc-7 DRI note 2026-11-09 (c) seeded bug (4), on b880471cf: an empty word let through (Option.all is true on none); lake build fails at the empty-word guards (\")\", \"x )\", \"x ”’\" refused, as a word and in a condition and a list name)"
+  },
+  {
+   "kind": "seeded bug",
+   "definition": "VE.Scope.Pinned.clause",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "status": "KILLED",
+   "before": "|| \",;-%/&+=#$@\".contains c",
+   "after": "|| \",;-%/&+=#$@\".contains c || c.toNat == 0xFFFD",
+   "test": "tests/test_scope_authoring.py::test_clause_accepts_exactly_its_documented_allow_list",
+   "note": "sc-7 DRI note 2026-11-09 (c), on b880471cf: U+FFFD, which no #guard names, admitted: lake build passes; the single-process exactness sweep fails ('bare': accepted, not allowed: U+FFFD). Run after tools/lean_statements.py on the planted tree, then restored and regenerated"
   }
  ]
 }
