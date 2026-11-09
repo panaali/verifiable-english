@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import itertools
 import random
+import re
 from copy import deepcopy
 
 import pytest
@@ -234,24 +235,46 @@ def _outcome(row, case, mutations):
         return "unavailable"
 
 
+LEAN_CHOSEN = ("events:adjacent:", "events:link_weaker:")
+
+
+def _lean_chosen(row, description):
+    """A mutant that only drops or rebinds a row Lean chooses: which named dates are one day apart and which links
+    are weaker are Lean's decisions (`calendarLabelled`, `weakerPairs`), so the relay names them and does not
+    recompute them (R8, D1). Every other fault on those rows (retyped, emptied, duplicated, unnamed) is refused."""
+    match = re.fullmatch(r"(?:drop \('events_premises', (\d+)\)|rebind \('events_premises', (\d+), 'label'\) .*)",
+                         description)
+    index = match and int(match[1] or match[2])
+    return bool(match) and row["events_premises"][index]["label"].startswith(LEAN_CHOSEN)
+
+
 @pytest.mark.parametrize("name", SOURCES)
 def test_every_single_fault_mutant_is_unavailable_or_changes_nothing_shown(genuine, name):
     case, row = genuine[name]
     shown = events.answer(row, case)
     mutants = _mutants(row, case)
     assert len(mutants) > 200
-    bad = [d for d, m in mutants if _outcome(row, case, [(d, m)]) not in ("unavailable", shown)]
+    bad = [d for d, m in mutants if not _lean_chosen(row, d) and _outcome(row, case, [(d, m)]) not in
+           ("unavailable", shown)]
     assert not bad, bad[:10]
 
 
 @pytest.mark.parametrize("name", SOURCES)
 def test_every_two_fault_mutant_is_unavailable_or_changes_nothing_shown(genuine, name):
-    """A deterministic sample of pairs: two faults may not cancel into an answer that shows something else."""
+    """A deterministic sample of 2,000 pairs: two faults may not cancel into an answer that shows something else
+    than one of Lean's choices alone shows."""
     case, row = genuine[name]
     shown = events.answer(row, case)
     pairs = list(itertools.combinations(_mutants(row, case), 2))
     sample = random.Random(20261109).sample(pairs, min(len(pairs), 2000))
-    bad = [(a[0], b[0]) for a, b in sample if _outcome(row, case, [a, b]) not in (None, "unavailable", shown)]
+    bad = []
+    for a, b in sample:
+        chosen = [m for m in (a, b) if _lean_chosen(row, m[0])]
+        if len(chosen) == 2:
+            continue
+        allowed = (None, "unavailable", shown, *(_outcome(row, case, [m]) for m in chosen))
+        if _outcome(row, case, [a, b]) not in allowed:
+            bad.append((a[0], b[0]))
     assert not bad, bad[:10]
 
 
@@ -273,22 +296,40 @@ def test_named_binding_faults_are_unavailable(genuine):
     refused(lambda r: _get(r, constants)["date__2026_10_13"].update(sort="act"), "day sort")
     refused(lambda r: _get(r, constants)["date__2026_10_13"].update(description="2026-10-12"), "day sort")
     i = labels.index("events:date:2026-10-12:2026-10-13")
-    refused(lambda r: r["events_premises"][i].update(label="events:date:2026-10-13:2026-10-12"), "names nothing")
-    refused(lambda r: r["events_premises"][i].update(label="events:date:2026-10-12:2026-10-14"), "names nothing")
-    refused(lambda r: r["events_premises"].pop(i), "is missing")
-    # The fuzzer's two survivors before `_labels` bound them: which dates are adjacent, which links are weaker.
+    j = labels.index("events:one_day:act")
+    refused(lambda r: r["events_premises"][i].update(label="events:date:2026-10-13:2026-10-12"), "do not chain")
+    refused(lambda r: r["events_premises"][i].update(label="events:date:2026-10-12:2026-10-14"), "do not chain")
+    refused(lambda r: r["events_premises"][i].update(label="events:date:2026-10-12:2026-10-15"), "names nothing")
+    refused(lambda r: r["events_premises"].pop(i), "do not chain")
+    # Which dates are one day apart and which links are weaker are Lean's (R8): only their names are bound.
     k = labels.index("events:adjacent:2026-10-12:2026-10-13")
-    refused(lambda r: r["events_premises"].pop(k), "is missing")
     refused(lambda r: r["events_premises"][k].update(label="events:adjacent:2026-10-12:2026-10-14"), "names nothing")
     w = labels.index("events:link_weaker:necessary_for:contributed_to")
-    refused(lambda r: r["events_premises"].pop(w), "is missing")
-    refused(lambda r: r["events_premises"][w].update(label="events:link_weaker:necessary_for:contributed_to_stay"),
+    refused(lambda r: r["events_premises"][w].update(label="events:link_weaker:contributed_to:necessary_for"),
             "names nothing")
+    refused(lambda r: r["events_premises"][w].update(label="events:link_weaker:necessary_for:happens_on"),
+            "names nothing")
+    refused(lambda r: r["events_premises"][j].update(label="events:one_day:act:x"), "names nothing")
     refused(lambda r: r["events_premises"].append(deepcopy(r["events_premises"][i])), "repeated")
-    j = labels.index("events:one_day:act")
+    refused(lambda r: r["events_premises"].pop(j), "is missing")
     refused(lambda r: r["events_premises"][j].update(label="events:one_day:stay"), "names nothing")
     refused(lambda r: r["events_premises"][j].update(label="events:one_end:stay"), "repeated")
     refused(lambda r: _set(r, ("events_premises", j, "ast", 1), "nosuchsort"), "does not declare")
     refused(lambda r: _set(r, ("events_premises", 0, "ast", 2, 1, 2), ["var", 1]), "not bound")
     refused(lambda r: _set(r, ("events_premises", i, "ast", 2), ["const", "date__2026_10_15"]), "not bound")
     refused(lambda r: _set(r, ("events_premises", i, "ast", 1), "after"), "does not declare")
+
+
+def test_a_request_not_of_the_block_s_shape_is_unavailable(genuine):
+    """The request side is bound too: a block without links, dates or its day sort, links not a list, or a link
+    row without its predicate is `CheckerUnavailable`, never a Python error."""
+    case, row = genuine["rich"]
+    block = ("environment", "events")
+    for mutate in (lambda c: _get(c, block).pop("links"), lambda c: _get(c, block).pop("dates"),
+                   lambda c: _get(c, block).pop("day"), lambda c: _set(c, (*block, "links"), 7),
+                   lambda c: _get(c, block)["links"][0].pop("predicate"), lambda c: _set(c, (*block, "anchor"), 7),
+                   lambda c: _get(c, ("environment", "vocabulary")).pop("constants")):
+        mutant = deepcopy(case)
+        mutate(mutant)
+        with pytest.raises(CheckerUnavailable):
+            events.answer(row, mutant)

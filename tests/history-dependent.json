@@ -403,7 +403,27 @@
    ]
   },
   {
+   "test": "tests/test_events_answer.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
    "test": "tests/test_events_route.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_events_wordings.py",
    "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
    "recorded": [
     "source"

@@ -1,3 +1,6 @@
+- `tests/test_relay_lint.py` — `tools/relay_lint.py`: a relayed module raises Lean's diagnostics, never its own.
+- `tests/test_relay_mutation_gate.py` — tools/relay_mutation_gate.py: every relayed Lean answer refuses every mutant of a genuine answer.
+- `tests/test_relay_wire_check.py` — Every checker transport sends only values `json` writes as themselves (lf-9 review, B).
 - `tests/test_replay_conservativity.py` — Replay every pre-closure v0 certificate against its frozen original verdict.
 - `tests/test_repo_map.py` — The builders' entry files name only what exists, and tools/repo_map.py derives its map.
 - `tests/test_report_english.py` — The reports@0 English (attribution.md 2.1 to 2.4): the reviewed wordings, one grammar for typed and rendered text, every derivation enumerated, bound to a mani…
@@ -78,6 +81,3 @@
 - `tests/test_speech_acts_conformance.py` — Shared section-9 speech-act fixtures across Python, Lean, and Rust FOL evaluation.
 - `tests/test_speech_acts_lean.py` — The Lean `ve_speech_acts_route` on hand-written fixtures of speech-acts.md section 9.
 - `tests/test_speech_polar_lean.py` — Speech acts' polar questions and their `Must`/`Can` refusal, read by Lean (question answering Q1.4, Q1.4b).
-- `tests/test_speech_source_lean.py` — The Lean decoded-source wrapper (`speech-source`, docs/spec/speech-acts.md 8.5) against Python's `SpeechSource`.
-- `tests/test_speech_source_relay.py` — The bound Python transport for VE.SpeechActs.Source.report.
-- `tests/test_speech_source_switch.py` — The 11b public projection against the frozen pre-switch W2 checker.
