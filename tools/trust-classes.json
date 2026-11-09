@@ -19291,25 +19291,42 @@
         "VE.Presupposition.Carrier",
         "VE.Presupposition.Carrier.cand",
         "VE.Presupposition.Carrier.root",
+        "VE.Presupposition.RContent",
+        "VE.Presupposition.RReading",
+        "VE.Presupposition.aliasesOf",
         "VE.Presupposition.candidateTable",
         "VE.Presupposition.carrierAllowed",
         "VE.Presupposition.cellOk",
+        "VE.Presupposition.claimReading",
+        "VE.Presupposition.emitted",
         "VE.Presupposition.entersRestriction",
+        "VE.Presupposition.expectedReadings",
+        "VE.Presupposition.premisesBefore",
         "VE.Presupposition.restrictionPaths",
         "VE.Presupposition.rowNames",
         "VE.Presupposition.ruleConditions",
+        "VE.Presupposition.ruleReading",
         "VE.Presupposition.tableOk",
         "VE.Presupposition.unitModes"
       ],
       "D[V]": [
         "VE.Presupposition.Args",
         "VE.Presupposition.Args.tuple",
+        "VE.Presupposition.DocUnit",
         "VE.Presupposition.Obligation",
-        "VE.Presupposition.Position"
+        "VE.Presupposition.PDoc",
+        "VE.Presupposition.Position",
+        "VE.Presupposition.UContent"
       ],
       "G[V]": [
         "VE.Presupposition.Checked",
-        "VE.Presupposition.Report"
+        "VE.Presupposition.Report",
+        "VE.Presupposition.env",
+        "VE.Presupposition.nodeCertificate",
+        "VE.Presupposition.unitAsserted",
+        "VE.Presupposition.unitContent",
+        "VE.Presupposition.unitOf",
+        "VE.Presupposition.unitReadings"
       ]
     },
     "VE/Defaults/ZoneWire.lean": {
