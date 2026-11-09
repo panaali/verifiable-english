@@ -1,3 +1,6 @@
+- `docs/infra/arch-20261105-2/convert.py` — Convert the `ask` fixtures to the format without run-time values, and show the conversion is mechanical.
+- `docs/infra/arch-20261105-2/measure.py` — Measure what raising `actions_version` rewrote in recorded test files (arch-20261105-2, the "why now" figures).
+- `docs/infra/arch-20261105-2/rerun_timeouts.py` — Re-record the pilot documents a recording lost to the 600 s timeout under machine load (A/B evidence aid).
 - `docs/infra/eff-20261020-1/builder_shape.py` — Plan a small non-Lean change at the base of each replayed main commit whose drift holds a Lean change.
 - `docs/infra/eff-20261020-1/replay.py` — Replay `select_tests.py --commit <c> --json` from one checkout over main's last N first-parent commits.
 - `docs/infra/eff-20261021-1/replay.py` — Replay the eff-20261021-1 corpus (review F2): each hand mutant's selection, generation and verdict, measured.
@@ -14,3 +17,5 @@
 - `docs/infra/eff-20261104-1/evidence/replay.py` — eff-20261104-1's replay: what the new `previous` decides on recorded --rescore pairs, and whether each verdict it carries is the one the recorded full run at t…
 - `docs/infra/speed-vocabpar/check.py` — speed-vocabpar's measurement and its stop rule, regenerated from the saved run logs.
 - `docs/infra/speed-vocabpar/rss.py` — The peak memory of a command's whole process tree (Linux /proc), for speed-vocabpar's stop rule (8 GB).
+- `docs/infra/tm-elab-unknown/reclass.py` — Reclassify the UNKNOWN ids of the df-5 and et-4b records under tools/trust_mutants.py's `invalid` (this tree).
+- `docs/infra/tm-inventory-flag/measure.py` — measure.py: for each targeted trust-mutant inventory, the prior record's kills at a check line changed since it.
