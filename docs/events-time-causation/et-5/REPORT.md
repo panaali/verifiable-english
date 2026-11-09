@@ -1,9 +1,8 @@
 # et-5 build report: `events@0`'s source-word rows, their advice, the lint registration, the bound relay
 
 **Status:** first part of batch ET-5, stopped at the size line as the task directs; the rest is **et-5b**. The DRI
-accepted the split (reviews/dri-decisions-20261109-et-5.md item 1). **DRI ruling pending, not reserved in DELTA:** the
-size of this part, 957 added / 6 deleted hand-written lines over the ~600 line (asked with msg.sh,
-inbox/dri/20261109T054435Z-et-5-1990137.md). Every DELTA row cites R16, R3 or a signed DRI decision (row 3).
+accepted the split (reviews/dri-decisions-20261109-et-5.md item 1) and this part's size, 957 added / 6 deleted
+hand-written lines (reviews/dri-decisions-20261109-et-5-size.md item 1). No DRI signature is reserved. Every DELTA row cites R16, R3 or a signed DRI decision (row 3).
 **HEAD:** the branch's last commit (the chain gates it).
 **What changed:** Lean's source-word catalogue gains `events@0`'s rows: the twelve authored refusals, U1's and T11d's
 reading sets and the profile-fixed wordings. Lean's advice reads the refusals. `ve/english.py` leaves the fixed
@@ -95,7 +94,9 @@ No Rust changed.
   was unreachable, so it ran on the VM): TM_RESULT.
 - **Size** (`git diff --numstat $(git merge-base HEAD main)`, without the copied plan and spec and the generated
   files): 957 added, 6 deleted: tests 474, `ve/events.py` 188, Lean 153, docs 116, `ve/english.py` 21, other 6. Over
-  the ~600 line; the rest of ET-5 is et-5b, and the size of this part is asked of the DRI (status line).
+  the ~600 line; ACCEPTED as the first coherent part by reviews/dri-decisions-20261109-et-5-size.md item 1 (the
+  relay's fuzz and binding fixtures are R8 evidence and exempt; its condition, that the binding, fuzz and role-wording
+  tests stay selected, holds: `tools/select_tests.py` selects both files).
 - **Lean:** `lake build` "Build completed successfully (1320 jobs)"; `python3 lean/audit.py` "PASS: 789 source files;
   8708 named theorem declarations audited". `tools/lean_statements.py`: changed 0.
 - **Generated:** `tools/regen_generated.py --write` once, then `--check` passes (the assurance doc from
@@ -111,7 +112,7 @@ No Rust changed.
   reviews/dri-decisions-20261109-et-5.md item 2.
 - reviews/dri-decisions-20261109-et-5.md items 1-3: the split, the "always" tests, row et-5b.
 - reviews/dri-decisions-20261102-jt-3p.md item 3: the `actions_version` raise (DELTA row 3).
-- Asked 2026-11-09 05:44Z: the size of this part (pending).
+- reviews/dri-decisions-20261109-et-5-size.md item 1: this part's size accepted (asked 2026-11-09 05:44Z).
 
 ## Spec re-read
 
@@ -128,7 +129,7 @@ No Rust changed.
 
 ## Self-review against BUILDER-CHECKLIST
 
-SELF-REVIEW: 2 A, 6 B, 6 C; fixed 12 (both A; all six B, five by a fix and the size one by the DRI question; three C:
+SELF-REVIEW: 2 A, 6 B, 6 C; fixed 12 (both A; all six B, five by a fix and the size one by the DRI's ruling; three C:
 predicate arity, the sampled-pairs wording, the policy and R1 notes. Not fixed: the hand-typed alternatives wordings
 in `otherProfileWordings`, whose owner keeps them in a local `let`, and the broad "by"/"while"/"since" advice
 patterns, now stated in DELTA row 2).
