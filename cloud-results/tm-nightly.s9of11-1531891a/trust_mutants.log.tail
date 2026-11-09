@@ -1,0 +1,18 @@
+trust_mutants: 133 definitions, 414 mutants (37 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/Events/Wire.lean:201 VE.Events.finishEvents (D[V], trusted) eq-le: = -> ≤ (lean/VE/Events/Wire.lean:202: Application type mismatch: The argument)
+UNKNOWN lean/VE/Events/Wire.lean:25 VE.Events.EventsDecoded (D[V], trusted) eq-ne: = -> ≠ (lean/VE/Events/Wire.lean:202: Application type mismatch: The argument)
+UNKNOWN lean/VE/Commands/Steps.lean:111 VE.Commands.shapeOutcome (G[V], trusted) le-lt: ≤ -> < (lean/VE/Commands/StepsExamples.lean:151: Expression (it computes through a proof the mutant broke...)
+SURVIVOR lean/VE/Acts/Run.lean:358 VE.Acts.Run.listed (G[V], trusted) bool-flip: false -> true
+UNKNOWN lean/VE/Presupposition/Wire.lean:85 VE.Presupposition.cellOk (S, trusted) list-empty: cs -> [] (lean/VE/Presupposition/Wire.lean:85: Invalid dotted identifier notation: The expected type of `.a...)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:56 VE.Purposes.sameUnit (S, trusted) list-empty: (L.reason ++ L.target) -> [] (lean/VE/Purposes/WellFormed.lean:56: Invalid field notation: Type of)
+SURVIVOR lean/VE/Service/Document.lean:1620 VE.Service.Document.contentOf (D[V], trusted) list-empty: [("generated", Json.bool true)] -> []
+UNKNOWN lean/VE/SpeechActs/Wire.lean:47 VE.SpeechActs.Wire.allowlist (D[V], trusted) list-empty: :: allowlist₀ -> [] (lean/VE/SpeechActs/Wire.lean:47: Function expected at)
+UNKNOWN lean/VE/Presupposition/Wire.lean:29 VE.Presupposition.Candidate (S, trusted) ctor-drop: | assumed | conditioned | asserted | inPlace | unconditional ->  (lean/VE/Presupposition/Wire.lean:38: Unknown constant `VE.Presupposition.Candidate.assumed`)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:166 VE.Purposes.WellFormed (S, trusted) and-or: ∧ -> ∨ (lean/VE/Purposes/Examples.lean:278: Expression (VE.Purposes.Examples.wfDecidable, which it reads,...)
+UNKNOWN lean/VE/Acts/Run.lean:323 VE.Acts.Run.listReadings (G[V], trusted) list-empty: sp -> [] (lean/VE/Acts/Run.lean:323: Invalid match expression: The type of pattern variable 'a' contains me...)
+UNKNOWN lean/VE/Events/Wire.lean:177 VE.Events.decodeThroughLinks (D[V], trusted) list-empty: ["anchor"] -> [] (lean/VE/Events/WireExamples.lean:0: maximum number of errors (100; from option `maxErrors`) reach...)
+trust_mutants: 25 KILLED, 2 SURVIVOR, 10 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 377 OTHER SHARD in 2579 s
+trust_mutants: D[V], trusted: 4 KILLED, 1 SURVIVOR, 4 UNKNOWN, 73 OTHER SHARD
+trust_mutants: G[V], trusted: 6 KILLED, 1 SURVIVOR, 2 UNKNOWN, 142 OTHER SHARD
+trust_mutants: S, trusted: 15 KILLED, 4 UNKNOWN, 162 OTHER SHARD
+trust_mutants: steps: wall plan 15.2 s, scratch 4.9 s, control_build 0.3 s, probe_install 1.6 s, mutants 2553.3 s, cleanup 3.8 s, reads 0.3 s; lake control_build 0.3 s (1), probe_install 1.6 s (1), control_probes 479 s (26), mutant_builds 481.2 s (46), mutant_checks 5476.6 s (44), stage_controls 1026.7 s (17), mutant_probes 831.9 s (30)
