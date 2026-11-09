@@ -1,28 +1,43 @@
-# ps-2aa evidence extract (commands and their last lines). Lean inputs: head d8f3a1b62; later commits add docs/presupposition/ps-2aa/ only unless noted.
+# ps-2aa evidence extract (commands and their last lines). Lean inputs: head 24928091e (merge base ee1fb3efa); later commits add docs/presupposition/ps-2aa/ only.
 
-## statement probe: each declaration of Wire.lean against the PS-S stub's 4.7 section and spec 4.7's definitions block (presupposition.md:940-979), comments stripped, whitespace-normalised token lists
+## statement probe: each declaration of Wire.lean against the PS-S stub's 4.7 section and spec 4.7's definitions block (presupposition.md:940-979), comments stripped, whitespace-normalised token lists (script: /tmp, not committed; per-declaration lines in REPORT.md)
 declarations 22 differing []
 spec types-block names not in Wire.lean: ['RContent', 'RReading', 'UContent', 'DocUnit', 'PDoc']
 
 ## python3 tools/check_lean_imports.py
-Lean layer graph kept (793 modules, 22 reviewed legacy edges)
+Lean layer graph kept (799 modules, 22 reviewed legacy edges)
 
-## lake build (lean/)
-Build completed successfully (1328 jobs).
+## lake build (lean/), after the main merge (92c4f0417)
+Build completed successfully (1338 jobs).
 
-## python3 lean/audit.py
-PASS: 793 source files; 8770 named theorem declarations audited (headline results and helper lemmas); only the declared standard axiom allowlist.
+## python3 lean/audit.py (92c4f0417)
+PASS: 799 source files; 8828 named theorem declarations audited (headline results and helper lemmas); only the declared standard axiom allowlist.
 
 ## uv run python tools/trust_map.py --check (exit 0)
-against b8266ee19562: K +0, S +79, D +26, G +15, tied +0, unclassified +0, trusted +120
+against ee1fb3efaac4: K +0, S +79, D +26, G +15, tied +0, unclassified +0, trusted +120
   VE/Presupposition/Wire.lean: trusted +120
 
-## uv run python tools/regen_generated.py --write --skip route-cases
+## uv run python tools/regen_generated.py --write --skip route-cases (92c4f0417)
 regen_generated: wrote 36 entries
-(route-cases skipped: its generator needs rust/target/release/ve, absent in this worktree; it reads no presupposition input)
+(route-cases skipped: lean/VE/Route/examples/generate.py runs conformance/p0.py's countermodel search through rust/target/release/ve, absent in this worktree; it reads no presupposition file)
+
+## uv run python tools/gate_collection.py --check --prebuilt
+32988 collected, 32988 at ee1fb3efaac4b9c3f2a87d5725e69873d7f77d11; 0 added, 0 removed by a trailer, 0 refused, 0 stale and 0 malformed trailers
 
 ## grep -c '^#guard' lean/VE/Presupposition/Examples.lean (main: 161)
-205
+213
 
-## hand mutants (docs/presupposition/ps-2aa/mutants.json): one lake build VE.Presupposition.Examples each
+## hand mutants (mutants.json): one lake build VE.Presupposition.Examples each, at 8e63b6621
 34 mutants, 34 with a failing location, 0 survivors
+
+## mac-pytest.sh --trustmut -- --max-mutants 1000 --json docs/presupposition/ps-2aa/trust-mutants.json --test lean/VE/Presupposition/Examples.lean --allow docs/presupposition/ps-2aa/trust-mutants-allow.json --rescore docs/presupposition/ps-2aa/trust-mutants.json
+first run (d8f3a1b62, no allow file): 152 KILLED, 27 SURVIVOR, 21 UNKNOWN, exit 1
+after c8571dd8f: 180 KILLED, 2 SURVIVOR (badAt unclassed; entersRestriction p.reverse.take 1), 21 ALLOWED, exit 1
+trust_mutants: 179 KILLED, 0 SURVIVOR, 0 UNKNOWN, 0 INVALID, 21 ALLOWED, 0 NOT RUN in 1680 s; 0 carried from 9
+[cloud2 06:06:14Z] summary: ran on ve-cloud-2, trust_mutants, exit=0, 1692s
+(head 24928091e, base ee1fb3efa)
+
+## mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run (head 64f06135d; 24928091e changes one comment line of Examples.lean and lean/declarations.txt)
+113/554 test units (map 5fc9d8c7f7, 2.64 s)
+recorded 113 units for tree 15356474ce; 4 others left to the static graph until they run; 0 failed
+[cloud2 05:32:33Z] summary: ran on ve-cloud-2, select_tests, exit=0, 4945s
