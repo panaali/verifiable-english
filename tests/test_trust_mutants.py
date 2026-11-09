@@ -1587,8 +1587,17 @@ REFUSALS = [
     ("synthesize", "failed to synthesize\n  LE Bool", False, "UNKNOWN"),
     ("synthesize-budget", "failed to synthesize\n  Small 79\n(deterministic) timeout at `typeclass`, maximum number "
      "of heartbeats (200) has been reached", False, "UNKNOWN"),
-    ("implicit", "don't know how to synthesize implicit argument `α`", False, "UNKNOWN"),
-    ("function-expected", "Function expected at\n  x", False, "UNKNOWN"),  # hunt N5: a coercion's search, out of size
+    # tm-elab-unknown: a term the mutant wrote that Lean cannot elaborate is a refusal (outside it: hunt N5, below)
+    ("implicit", "don't know how to synthesize implicit argument `α`", False, "INVALID"),
+    ("implicit-in-tactic", "don't know how to synthesize implicit argument `α`", True, "UNKNOWN"),
+    ("function-expected", "Function expected at\n  x", False, "INVALID"),
+    ("function-expected-elsewhere", "Function expected at\n  x", True, "UNKNOWN"),  # hunt N5: a coercion's search
+    ("dotted", "Invalid dotted identifier notation: The expected type of `.str` could not be determined", False,
+     "INVALID"),
+    ("dotted-in-tactic", "Invalid dotted identifier notation: The expected type of `.str` could not be determined",
+     True, "UNKNOWN"),
+    ("implicit-budget", "don't know how to synthesize implicit argument `α`\n(deterministic) timeout at `elaborator`, "
+     "maximum number of heartbeats (200000) has been reached", False, "UNKNOWN"),
     ("refusal-quoting-budget", "Invalid field `x`: maximum recursion depth has been reached", False, "UNKNOWN"),
     ("recursion", "maximum recursion depth has been reached", False, "UNKNOWN"),
     ("heartbeats", "(deterministic) timeout at `whnf`, maximum number of heartbeats (200000) has been reached",
@@ -1627,6 +1636,67 @@ def test_invalid_needs_every_error_of_the_mutated_declaration_to_be_a_refusal(er
     assert text[32] == "(" and text[62] == "0"
     edit = (62, 63) if errors[0][3] == 62 and "`x`" in errors[0][2] else (32, 42)  # `(o.take 1)`, or the `0`
     assert trust_mutants.invalid(errors, text, (1, 1), edit)[0] == verdict
+
+
+# tm-elab-unknown: the mutated declarations of df-5's record (reviews/tm-targeted/df-5-df-5-c050431.json,
+# `VE.Defaults.Wire.zoneWordsJson`, ZoneWire.lean:399-404) and et-4b's (et-4b-et-4b-c050416.json, `softCase`), each
+# with the mutant's text in it, and Lean's errors as `lake env lean` reported them on the mutated file (line in the
+# declaration, column). FUNCTION, DOTTED, IMPLICIT: the messages those records hold.
+ZONE = ('def zoneWordsJson : Json := Json.mkObj [\n  ("heads", toJson ({} fun (z, f, r, w) =>\n'
+        '    {})),\n  ("lines", toJson (zoneLineWords.map fun (r, k, s, i) =>\n'
+        '    Json.mkObj [("row", .str r), ("kind", .str k), ("sentence", .str s), ("inline", .str i)])),\n'
+        '  ("joins", Json.mkObj (zoneJoins.map fun (k, w) => (k, .str w)))]\n')
+HEADS = '[("zone", .str z), ("form", .str f), ("row", .str r), ("words", .str w)]'
+SOFT = ('def softCase (id kind : String) (j : Json) : Except String (Option Json) := do\n'
+        '  if kind == "admission" then\n    let environment ← j.getObjVal? "environment"\n'
+        '    let document ← j.getObjVal? "document"\n    return some (← runAdmissionX id environment document)\n'
+        '  if kind == "norm-defaults-certificate" then\n    let r ← Wire.replayLayeredEntailment j\n'
+        '    return some (VE.Route.Wire.ok id [("valid", .bool r.valid),\n      ("premises", toJson [].length)])\n'
+        '  return none\n')
+FUNCTION = ("Function expected at\n  []\nbut this term has type\n  List ?m.6\n\nNote: Expected a function because this "
+            "term is being applied to the argument\n  fun (z, f, r, w) => Json.mkObj [(\"zone\", .str z)]")
+DOTTED = "Invalid dotted identifier notation: The expected type of `.str` could not be determined"
+IMPLICIT = ("don't know how to synthesize implicit argument `α`\n  @List.nil (?m.89 id kind j y✝ r)\ncontext:\n"
+            "id kind : String")
+FIELD = "Invalid field `take`: The environment does not contain `Function.take`"
+MUTANTS = {  # the mutant's id (and those of its class in the record): its declaration, its text and where it starts
+    "M041": (ZONE.format("[]", f"Json.mkObj {HEADS}"), "[]", (2, 20)),  # and M058, M073
+    "M170": (ZONE.format("zoneHeads.map", f"Json.mkObj ({HEADS}.take 1)"), f"({HEADS}.take 1)", (3, 15)),  # +7 more
+    "M034": (SOFT, "[]", (9, 26)),
+    "M158": (ZONE.format("(zoneHeads.map.take 1)", f"Json.mkObj {HEADS}"), "(zoneHeads.map.take 1)", (2, 20)),
+}
+ELABORATION = [
+    ("M041", [(2, 20, FUNCTION)], "INVALID"),
+    ("M041-after-the-edit", [(2, 22, FUNCTION)], "UNKNOWN"),
+    ("M041-next-line", [(3, 4, FUNCTION)], "UNKNOWN"),
+    ("M170", [(3, 26, DOTTED), (3, 44, DOTTED), (3, 61, DOTTED), (3, 80, DOTTED)], "INVALID"),
+    ("M170-before-the-edit", [(3, 14, DOTTED)], "UNKNOWN"),
+    ("M170-next-line", [(4, 2, DOTTED)], "UNKNOWN"),
+    ("M170-one-outside", [(3, 26, DOTTED), (5, 26, DOTTED)], "UNKNOWN"),
+    ("M034", [(9, 26, IMPLICIT), (9, 26, IMPLICIT)], "INVALID"),
+    ("M034-after-the-edit", [(9, 28, IMPLICIT)], "UNKNOWN"),
+    ("M034-next-line", [(10, 2, IMPLICIT)], "UNKNOWN"),
+    ("M034-beside-a-type-mismatch", [(9, 26, IMPLICIT), (9, 26, "Type mismatch\n  []\nhas type")], "UNKNOWN"),
+    ("M158-invalid-field", [(2, 21, FIELD)], "INVALID"),  # the rule these join, unchanged
+    ("M158-invalid-field-next-line", [(3, 4, FIELD)], "UNKNOWN"),
+    ("M041-type-mismatch", [(2, 20, "Type mismatch\n  []\nhas type\n  List ?m.6")], "UNKNOWN"),  # F12 unchanged
+]
+
+
+@pytest.mark.parametrize(("case", "errors", "verdict"), ELABORATION, ids=[c[0] for c in ELABORATION])
+def test_an_elaboration_error_in_the_mutants_own_text_is_invalid(case, errors, verdict):
+    """tm-elab-unknown (reviews/dri-decisions-20261108-df-5-tm.md item 2): df-5's 11 UNKNOWN ids and et-4b's M034
+    failed to elaborate at the mutant's own text ("Function expected", "Invalid dotted identifier notation", "don't
+    know how to synthesize implicit argument"): INVALID, as "Invalid field" already is (M158). The same error just
+    outside the mutant's text, before it, after it or on the next line, stays UNKNOWN, and so does a type mismatch
+    there (review F12)."""
+    import trust_mutants
+    text, after, (line, column) = MUTANTS[case.split("-")[0]]
+    starts = [0, *(i + 1 for i, ch in enumerate(text) if ch == "\n")]
+    edit = (starts[line - 1] + column, starts[line - 1] + column + len(after))
+    assert text[edit[0]:edit[1]] == after
+    found = [("VE/X.lean", n, message, c) for n, c, message in errors]
+    assert trust_mutants.invalid(found, text, (1, text.count("\n")), edit)[0] == verdict
 
 
 def test_named_writes_each_check_as_a_declaration_of_what_it_states():

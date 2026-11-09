@@ -50,8 +50,9 @@ every other case is UNKNOWN (review F11/F12, the DRI's note 2026-10-19c). The mu
   computes through the mutated definition where the statement does not). And the same build without the mutant
   (its control: the same cuts) passes;
 - INVALID only when Lean refused the text the mutant wrote (`invalid`, `refused`): every error in the mutated
-  declaration a parse error or a name, field, pattern or exhaustiveness error (`REFUSED`), inside the mutant's own
-  text and outside every tactic block;
+  declaration a parse error or a name, field, pattern, exhaustiveness or elaboration error (`REFUSED`: a term that
+  is no function, a dotted name or implicit argument Lean cannot resolve), inside the mutant's own text and outside
+  every tactic block;
 - SURVIVOR when every check passes. A failing proof elsewhere is no kill (BUILDER-CHECKLIST 3): it is cut to
   `sorry` (a `#print` blanked) and the build repeated, before any other error is read; and a check that fails in
   the control too reads a cut proof (`#eval` refuses a value that depends on `sorry`), so it is cut the same way.
@@ -214,12 +215,17 @@ REFUTED = re.compile(r"Tactic `decide` proved that the proposition\n.*\nis false
 GUARD_DIFF = "❌️ Docstring on `#guard_msgs` does not match generated message:\n\n"
 # Lean refused the mutated text itself (review F12, the rule inverted): a parse error anywhere in the mutated
 # declaration, or one of these elaboration errors outside every tactic block of it (`in_tactic`), and every error
-# there is one. Any other error there makes the mutant UNKNOWN: a tactic that fails, Lean's budget, a type mismatch
-# (a proof term that is false or whose reduction got stuck gives one too, review F11), an instance or implicit
-# argument Lean could not synthesize, and a term that is no function (instance search, a coercion's included, fails
-# alike on its own budget, size and heartbeats: hunt H2, H3, N5), and anything not classified.
-REFUSED = re.compile(r"[Uu]nknown (?:identifier|constant)|Invalid (?:field|projection|pattern)|Missing cases|"
-                     r"ambiguous, possible interpret")
+# there is one. Since tm-elab-unknown (reviews/dri-decisions-20261108-df-5-tm.md item 2) these include a term that
+# is no function, a dotted name with no expected type and an implicit argument Lean could not synthesize: inside the
+# mutant's own text (`invalid`'s `edit`) the mutant wrote a term Lean cannot elaborate (df-5's `[] fun …` and
+# `([…].take 1)` around `.str`, et-4b's `[].length`); outside it they stay UNKNOWN, so a coercion's search out of
+# its size budget on a term the mutant did not write (hunt N5) is still none. Any other error there makes the mutant
+# UNKNOWN: a tactic that fails, Lean's budget, a type mismatch (a proof term that is false or whose reduction got
+# stuck gives one too, review F11), an instance Lean could not synthesize (instance search fails alike on its own
+# budget, size and heartbeats: hunt H2, H3), and anything not classified.
+REFUSED = re.compile(r"[Uu]nknown (?:identifier|constant)|Invalid (?:field|projection|pattern|dotted identifier "
+                     r"notation)|Missing cases|ambiguous, possible interpret|Function expected|don't know how to "
+                     r"synthesize implicit argument")
 # Lean gave no answer (review F10): it ran out of budget (Lean's runtime exceptions, maxRecDepth and maxHeartbeats,
 # and the kernel's), or `decide`/`native_decide` could not reduce or evaluate the instance. Since F11 no verdict
 # depends on it (an answer is what `REFUTED` names): it marks the detail, and a refusal that quotes it is none.
