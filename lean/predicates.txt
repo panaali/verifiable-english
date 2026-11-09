@@ -117,6 +117,7 @@ module VE.Acts.Readings
 module VE.Acts.ReadingsExamples
 module VE.Acts.RenderExamples
 module VE.Acts.RuleExamples
+module VE.Acts.Run
 module VE.Acts.Situation
 module VE.Acts.Sources
 module VE.Acts.Syntax
@@ -163,7 +164,10 @@ module VE.Ask.Wire
 module VE.Ask.ZeroAnswer
 module VE.Ask.ZeroWire
 module VE.Attitudes.Examples
+module VE.Attitudes.Frame
+module VE.Attitudes.Route
 module VE.Attitudes.Scale
+module VE.Attitudes.Semantics
 module VE.Attitudes.Syntax
 module VE.Attitudes.Theorems
 module VE.Attribution.Admission
@@ -696,6 +700,8 @@ module VE.Senses.Read
 module VE.Senses.Request
 module VE.Senses.Run
 module VE.Senses.RunExamples
+module VE.Senses.Texts
+module VE.Senses.TextsExamples
 module VE.Senses.Version
 module VE.Service.ActsExamples
 module VE.Service.CardinalityExamples
@@ -866,7 +872,14 @@ VE.Ask.SplitU@VE.Ask.Basic
 VE.Ask.UnitBound@VE.Ask.Binding
 VE.Ask.checkedWitness@VE.Ask.Render
 VE.Ask.checkedWitnessRow@VE.Ask.Lines
+VE.Attitudes.AFormula.denote@VE.Attitudes.Semantics
 VE.Attitudes.AWellFormed@VE.Attitudes.Syntax
+VE.Attitudes.AttModel.J@VE.Attitudes.Semantics
+VE.Attitudes.Intended@VE.Attitudes.Semantics
+VE.Attitudes.SettledAsX@VE.Attitudes.Route
+VE.Attitudes.UnsaidFree@VE.Attitudes.Route
+VE.Attitudes.contentAt@VE.Attitudes.Semantics
+VE.Attitudes.seedClosure@VE.Attitudes.Semantics
 VE.Bridge.JsonEntails@VE.Bridge
 VE.Calc.CausesAt@VE.Calc.Decls
 VE.Calc.Check.OutcomeMeans@VE.Calc.Run
