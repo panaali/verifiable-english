@@ -71,8 +71,8 @@ def main() -> int:
     restored = lake("build", "VE.Acts.SpecialiseExamples")
     order = [b[0] for b in BUGS]
     rows.sort(key=lambda r: order.index(r["id"]))
-    out_json.write_text(json.dumps(
-        {"restored_build_returncode": restored.returncode, "mutants": rows}, indent=1, ensure_ascii=False) + "\n")
+    body = ",\n".join("  " + json.dumps(r, ensure_ascii=False) for r in rows)
+    out_json.write_text(f'{{"restored_build_returncode": {restored.returncode}, "mutants": [\n{body}\n]}}\n')
     return 0 if restored.returncode == 0 and all(r["status"] == "KILLED" for r in rows) else 1
 
 
