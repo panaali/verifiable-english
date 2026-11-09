@@ -37,6 +37,7 @@
 - `tests/test_code_map.py` — The committed code map depends only on source paths and first module doc sentences.
 - `tests/test_colab.py` — (no module docstring)
 - `tests/test_commands_ci2_review.py` — Regression checks for the CI-2 review's deferred-route claims.
+- `tests/test_commands_ci3b_review.py` — Regression checks for the CI-3b review: StepsProofs' comments claim no more than its theorems prove.
 - `tests/test_compose_dispatch.py` — S0's exhaustive Python side of the composition dispatch contract (composition.md 10.1).
 - `tests/test_compose_integration.py` — S0 integration evidence for composition.md 10.2 on a real document: L2's slot, L3–L5 and L7.
 - `tests/test_conformance.py` — (no module docstring)
@@ -87,4 +88,3 @@
 - `tests/test_english_e2_boundary.py` — The E2 boundary validates every block its typing view drops (review B2 of English Lean E2; spec D7).
 - `tests/test_english_e2_integer_marks.py` — The spacing of the integer marks: Lean reads exactly the spacing Python reads (spec R1; english-lean-e2.md 13).
 - `tests/test_english_e2_ledger_sites.py` — Every call into Python's own English reader is a site the deletion ledger keeps (spec 2.9; recheck 1 of E2, B).
-- `tests/test_english_e2_overlay.py` — The overlay refusals at the public boundary (spec D16, D17, 2.8; fixtures rl8 to rl10, ev15c, ev17, ovc; review A2 of English Lean E2).
