@@ -2,7 +2,9 @@
 
 Lean answers each source once (`genuine`); every mutant of the answer's events fields, one and two faults at a time
 (each member dropped, emptied, retyped, duplicated, reordered; an index out of range; a bound label, name or date
-rebound to another of the request; the formulas are Lean's, so inside them only names and indices are mutated), is either `CheckerUnavailable` or changes nothing the relay shows (plan ET-5)."""
+rebound to another of the request; a label mangled outside Lean's grammar, in place or as an extra row beside its
+genuine twin; the formulas are Lean's, so inside them only names and indices are mutated), is either
+`CheckerUnavailable` or changes nothing the relay shows (plan ET-5)."""
 from __future__ import annotations
 
 import itertools
@@ -178,6 +180,15 @@ def _rebound(value, case):
                     yield value.replace(name, other, 1)
 
 
+def _mangled(label):
+    """`label` moved outside Lean's grammar (`events:` then the kind and names, joined by `:`): its prefix dropped or
+    respelled, a segment added, emptied or padded. Each is a label no request names, so each is refused."""
+    rest = label.removeprefix("events:")
+    variants = (rest, "Events:" + rest, "events::" + rest, "events " + rest, " " + label, label + " ", label + ":",
+                label + ":x", "x:" + label, label.replace(":", "::", 1), "events:" + rest.replace(":", "", 1))
+    yield from dict.fromkeys(v for v in variants if v != label)
+
+
 def _mutants(row, case):
     """(description, mutate) pairs over `events_premises` and the base environment's constants."""
     fields = (("events_premises",), ("base_environment", "vocabulary", "constants"))
@@ -201,6 +212,11 @@ def _mutants(row, case):
             if type(value) is str and "ast" not in path:  # the formulas are Lean's; only their names are bound
                 for other in _rebound(value, case):
                     out.append((f"rebind {path} {other}", lambda r, p=path, o=other: _set(r, p, o)))
+            if path[1:] and path[-1] == "label":
+                for other in _mangled(value):
+                    out.append((f"mangle {path} {other!r}", lambda r, p=path, o=other: _set(r, p, o)))
+                    out.append((f"twin {path} {other!r}", lambda r, p=path, o=other: r["events_premises"].append(
+                        {**r["events_premises"][p[1]], "label": o})))  # shallow: the mutant is a copy already
             if path and isinstance(path[-1], str) and path[:-1] == fields[1]:
                 for other in _rebound(path[-1], case):
                     out.append((f"rename {path} {other}", lambda r, p=path, o=other: _rename(_get(r, p[:-1]), p[-1], o)))
@@ -227,8 +243,8 @@ def _outcome(row, case, mutations):
     for _, mutate in mutations:
         try:
             mutate(mutant)
-        except (KeyError, IndexError, TypeError, AttributeError):
-            return None  # a second fault on a member the first removed: not a mutant
+        except (KeyError, IndexError, TypeError, AttributeError, StopIteration):
+            return None  # a second fault on a member the first removed or emptied: not a mutant
     try:
         return events.answer(mutant, case)
     except CheckerUnavailable:
@@ -310,6 +326,13 @@ def test_named_binding_faults_are_unavailable(genuine):
     refused(lambda r: r["events_premises"][w].update(label="events:link_weaker:necessary_for:happens_on"),
             "names nothing")
     refused(lambda r: r["events_premises"][j].update(label="events:one_day:act:x"), "names nothing")
+    # F1 (et-5 review): a label without Lean's `events:` prefix, as an extra row beside its genuine twin, of each kind
+    # matched by pair (the date facts, the adjacent days, the weaker links) and of the kinds matched exactly.
+    for genuine_label in ("events:date:2026-10-12:2026-10-13", "events:adjacent:2026-10-12:2026-10-13",
+                          "events:link_weaker:necessary_for:contributed_to", "events:one_day:act", "events:linear"):
+        for twin in _mangled(genuine_label):
+            refused(lambda r, t=twin, g=genuine_label: r["events_premises"].append(
+                {**deepcopy(r["events_premises"][labels.index(g)]), "label": t}), "names nothing")
     refused(lambda r: r["events_premises"].append(deepcopy(r["events_premises"][i])), "repeated")
     refused(lambda r: r["events_premises"].pop(j), "is missing")
     refused(lambda r: r["events_premises"][j].update(label="events:one_day:stay"), "names nothing")
@@ -333,3 +356,25 @@ def test_a_request_not_of_the_block_s_shape_is_unavailable(genuine):
         mutate(mutant)
         with pytest.raises(CheckerUnavailable):
             events.answer(row, mutant)
+
+
+def test_a_label_is_bound_only_as_lean_renders_it():
+    """F1 (et-5 review), on the binder alone, with no Lean answer: the reviewer's probe, a twin without the `events:`
+    prefix of each pair kind beside the genuine labels, is refused; the genuine labels are bound; a pair whose names
+    hold a `:` is read only when exactly one split of it names the request (`_pair`)."""
+    block = {"dates": ["2026-10-12", "2026-10-13"], "day": "day", "events": [], "states": [],
+             "links": [{"predicate": "n", "form": "necessary"}, {"predicate": "c", "form": "contributed"}]}
+    genuine = [*events.ORDER_LABELS, "events:link_forward:n", "events:link_forward:c", "events:link_weaker:n:c",
+               "events:date:2026-10-12:2026-10-13", "events:adjacent:2026-10-12:2026-10-13"]
+    assert events.ORDER_LABELS == tuple(events.label(k) for k in ("irreflexive", "transitive", "linear"))
+    rows = lambda labels: [{"label": text, "ast": ["top"]} for text in labels]  # noqa: E731
+    events._bind_labels(rows(genuine), block, block["dates"])
+    for twin in ("date:2026-10-12:2026-10-13", "adjacent:2026-10-12:2026-10-13", "link_weaker:n:c"):
+        with pytest.raises(CheckerUnavailable, match="names nothing"):
+            events._bind_labels(rows([*genuine, twin]), block, block["dates"])
+    assert events._pair("events:link_weaker:a:b", "link_weaker", {"a"}, {"b"}) == ("a", "b")
+    assert events._pair("events:link_weaker:a:b:c", "link_weaker", {"a:b"}, {"c"}) == ("a:b", "c")
+    assert events._pair("events:link_weaker:a:b:c", "link_weaker", {"a", "a:b"}, {"b:c", "c"}) is None
+    assert events._pair("link_weaker:a:b", "link_weaker", {"a"}, {"b"}) is None
+    assert events._pair("events:link_weaker:a:a", "link_weaker", {"a"}, {"a"}) is None
+    assert events._pair("events:date:a:b", "link_weaker", {"a"}, {"b"}) is None
