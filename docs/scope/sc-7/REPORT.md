@@ -85,6 +85,33 @@ relay and binding fuzz tests (docs/ROUTE-RECIPE.md), well past 600.
   "checked 37 entries".
 - No test of main-known-red.txt failed. Not run: the full gate, which the chain runs.
 
+## Review F1 (fix round, sc-7-review.final.md)
+
+- **Finding.** A slot could end a sentence: `## When should Claude refuse?` and `### If in doubt, ask!` parsed as
+  narrowings, "…where is the act irreversible?." was accepted, "The rules below are called the x. The rules below are
+  called the y." gave one list name, and "section 3?, x." was accepted.
+- **Fix (the class).** `Pinned.clause` is every slot's one check: the condition, the rule, the When/If heading's
+  condition, the frontier, the list name (`listName`) and the section. No word of a slot ends in ".", "?", "!", ":",
+  "…" or a full-width form, before any closing quote or bracket. A title's heading is no slot. The docstrings of
+  `clause` and `readHeading` now say what the code does. Lean only: no Python or Rust reads a wording (sc-7b).
+- **Regression tests.** `AuthoringExamples.lean:110` (the review's probe, verbatim), `:113` (every slot and every
+  sentence end), `:125` and `:127` (a comma, and a bad first character, in the section slot), `:130-:133` (the
+  accepted direction: "## Should Claude refuse?" is a title; "3.2" stays in a slot; "users’"), and
+  `tests/test_scope_authoring.py::test_review_f1_no_slot_ends_a_sentence_is_guarded`. Probe F1 fails on b5c25c551
+  and passes on 6db17810d.
+- **Seeded bugs** (`mutants.json`, the 6 marked "sc-7 review F1"): the old `clause` (fails :110, :113); no closing-
+  quote strip, no full-width ends, `listName` back to `spaced`, the section without `clause` (each fails :113); the
+  section without its comma check (fails :125). Each was planted and then restored.
+- **Trust.** V +2 (`clause`, 4 lines). sc-7 is K +0, S +37, V +106, trusted +143 (R16, at most 150; the allowance was
+  recorded with `trust_map.py --allow`). Trust mutants: the full run on 6db17810d left 1 SURVIVOR (`readings` :179,
+  `s` -> `s.drop 1`) and 1 UNKNOWN (`clause` list-empty, ill-typed). `:127` kills the first. The second is allowed,
+  and the 2 stale `clause` allowances (body-true/false, now KILLED) are dropped. Final run on 971464587: exit 0.
+- **Tests.** `mac-pytest.sh --select -- --base da5303b78 --run` on 2617211d (ve-cloud-2, 3981 s): exit 0, 129 files
+  exit 0, none failed. `(cd lean && lake build)`: "Build completed successfully (1329 jobs)". `python3 lean/audit.py`:
+  PASS, 794 files. `regen_generated.py --check` passes. Not run: the full gate (the merge train runs it).
+- **C findings** are follow-ups, except the bookkeeping this round touched anyway: B5's check location (F4), the
+  FOLLOW-UPS.md sc-7 row's numbers (F4), and a comma fixture for the section slot (F5).
+
 ## Spec re-read
 
 The theorems against docs/spec/scope.md:1569-1573 (test). The nine 2.2 rows against :364-374, each wording and
