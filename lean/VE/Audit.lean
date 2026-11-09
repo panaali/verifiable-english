@@ -200,6 +200,7 @@ import VE.Events.Completion
 import VE.Events.Conservative
 import VE.Events.Premises
 import VE.Events.Wire
+import VE.Events.WireExamples
 import VE.Finite
 import VE.Grammar.Derives
 import VE.Grammar.Extension
@@ -354,6 +355,7 @@ import VE.Readings.SupWireSound
 import VE.Readings.SupWitness
 import VE.Readings.Superpose
 import VE.Readings.Unspecified
+import VE.Readings.UnspecifiedExamples
 import VE.Readings.UnspecifiedWire
 import VE.Readings.UpPremises
 import VE.Readings.UpSlot
@@ -3205,6 +3207,7 @@ import VE.WireContract.Engine
 #print axioms VE.EvaluationCounts.route_decodeFormulas_length
 #print axioms VE.Events.EventsDecoded.labelled_eq
 #print axioms VE.Events.EventsDecoded.typed
+#print axioms VE.Events.WireExamples.eventsPack_conditions
 #print axioms VE.Events.boundRole_mem
 #print axioms VE.Events.calendar_sat
 #print axioms VE.Events.chain_head
@@ -4983,6 +4986,8 @@ import VE.WireContract.Engine
 #print axioms VE.Readings.TwinDocs.strict
 #print axioms VE.Readings.TwinDocs.tablesRel_eq
 #print axioms VE.Readings.TwinDocs.twin
+#print axioms VE.Readings.UnspecifiedExamples.choiceLayeredG_conditions
+#print axioms VE.Readings.UnspecifiedExamples.choiceLayered_conditions
 #print axioms VE.Readings.Wire.Admitted.ones_eq
 #print axioms VE.Readings.Wire.Admitted.side_eq
 #print axioms VE.Readings.Wire.Admitted.wf
