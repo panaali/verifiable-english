@@ -2280,6 +2280,20 @@
    "reason": "ci-3a: lean/VE/Commands/Steps.lean V +136 (G[V] Shape, Form, Alt, StepOutcome, capitalise, hasThen, shapes, lift, readingTuples, shapeOutcome, shapeAlts, combineShapes, readStep, reads; G[R] conditionScope is reject-only; productSize and shapeOutcomeCharged tied to readingTuples_length and shapeOutcome_charged); K +0, S +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ci-3a, 2026-11-09",
    "commit": "d55d24faab755047e2131d11487ff3d9c124d3e8"
+  },
+  {
+   "class": "V",
+   "lines": 57,
+   "reason": "ap-4: VE/Acts/Run.lean +54 (G[V] listReadings, listed, runActReadings; D[V] actJson, readingJson, rowsOf: the act-readings mode, act-phrases 7), VE/Service/Registry.lean +1, VE/Service/Protocol.lean +1, ResponseShape/Schemas.lean +1 (the mode's registration); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-4, 2026-10-18",
+   "commit": "da5303b7876924d4fba67866390ed6f0d0b36cbc"
+  },
+  {
+   "class": "V",
+   "lines": 6,
+   "reason": "ap-4 review fix (F2, F4): VE/Acts/Run.lean +6 (D[V] readingJson, rowsOf: each reading's acts read against its meaning's tagged derivation; G[V] witnessed and D[V] firstsBy are tied by witnessed_readings and firstsBy_map; tagTree, placeOf, Act.toks, Simple.toks, tagged, tagBase are D[I]); ap-4 in all +63 of R16's 150; K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-4, 2026-11-09",
+   "commit": "da5303b7876924d4fba67866390ed6f0d0b36cbc"
   }
  ]
 }
