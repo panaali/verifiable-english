@@ -1,0 +1,11 @@
+trust_mutants: 4 definitions, 153 mutants (19 to run), 4 jobs, base 3e4fe503f4c9
+UNKNOWN lean/VE/Acts/Specialise.lean:40 VE.Acts.specPremises (S, trusted) list-empty: acts.filterMap -> [] (lean/VE/Acts/Specialise.lean:41: Invalid field notation: Type of)
+UNKNOWN lean/VE/Acts/Specialise.lean:40 VE.Acts.specPremises (S, trusted) list-empty: (declaredOnce E p.1).map (·, p.2) -> [] (lean/VE/Acts/Specialise.lean:42: Invalid projection: Type of)
+UNKNOWN lean/VE/Acts/Specialise.lean:40 VE.Acts.specPremises (S, trusted) list-drop-last: acts.filterMap -> (acts.filterMap.dropLast) (lean/VE/Acts/Specialise.lean:41: Invalid field notation: Type of)
+UNKNOWN lean/VE/Acts/Specialise.lean:40 VE.Acts.specPremises (S, trusted) list-drop-last: (declaredOnce E p.1).map (·, p.2) -> (((declaredOnce E p.1).map (·, p.2)).dropLast) (lean/VE/Acts/Specialise.lean:42: Invalid projection: Type of)
+SURVIVOR lean/VE/Acts/Specialise.lean:40 VE.Acts.specPremises (S, trusted) list-last: let ds := acts.filterMap fun p => (declaredOnce E p.1).map (·, p.2) ds.flatMap fun x => ds.filter... -> ((let ds := acts.filterMap fun p => (declaredOnce E p.1).map (·, p.2) ds.flatMap fun x => ds.filt... (the proofs it breaks: lean/VE/Acts/Specialise.lean:84)
+SURVIVOR lean/VE/Acts/Specialise.lean:27 VE.Acts.specialises (S, trusted) list-drop-first: a.args -> (a.args.drop 1) (the proofs it breaks: lean/VE/Acts/Specialise.lean:49, lean/VE/Acts/Specialise.lean:56)
+trust_mutants: 10 KILLED, 2 SURVIVOR, 4 UNKNOWN, 3 INVALID, 0 ALLOWED, 0 NOT RUN, 134 OTHER SHARD in 114 s
+trust_mutants: G[V], trusted: 1 KILLED, 1 INVALID, 12 OTHER SHARD
+trust_mutants: S, trusted: 9 KILLED, 2 SURVIVOR, 4 UNKNOWN, 2 INVALID, 122 OTHER SHARD
+trust_mutants: steps: wall plan 7 s, scratch 3 s, control_build 0.1 s, probe_install 1 s, mutants 97.1 s, cleanup 5.3 s; lake control_build 0.1 s (1), probe_install 1 s (1), control_probes 7.2 s (3), mutant_builds 27.3 s (28), mutant_checks 222.6 s (18), stage_controls 82 s (6), mutant_probes 25.9 s (10)
