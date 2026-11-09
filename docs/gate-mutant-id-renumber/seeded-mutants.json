@@ -64,7 +64,8 @@
    "file": "tools/gate_collection.py",
    "bug": "pair_cases lets a head case with no text (None) be claimed",
    "test": "tests/test_gate_collection_renumber.py::test_a_renumbered_mutant_is_paired_by_its_text_and_a_gone_one_refused[no-text]",
-   "result": "1 failed"
+   "result": "1 failed",
+   "note": "superseded at F5 (e7e5f6fcf): the filter is removed as dead code and the [no-text] row is replaced; a None at a kept ID now returns {} first (S12, S13)"
   },
   {
    "id": "S10",
@@ -79,6 +80,27 @@
    "bug": "pair_cases skips a kept ID whose text is gone instead of pairing nothing",
    "test": "tests/test_gate_collection_renumber.py::test_a_renumbered_mutant_is_paired_by_its_text_and_a_gone_one_refused[kept-id-reused]",
    "result": "1 failed"
+  },
+  {
+   "id": "S12",
+   "file": "tools/gate_collection.py",
+   "bug": "pair_cases has no None check at a kept ID (the review's F5: 'None in (text, head[nodeid]) or' removed)",
+   "test": "tests/test_gate_collection_renumber.py::test_a_renumbered_mutant_is_paired_by_its_text_and_a_gone_one_refused[no-text-at-both] and tests/test_gate_collection_renumber.py::test_a_renumbered_mutant_is_paired_by_its_text_and_a_gone_one_refused[no-text-at-head]",
+   "result": "2 failed"
+  },
+  {
+   "id": "S13",
+   "file": "tools/gate_collection.py",
+   "bug": "pair_cases checks only the base side for None at a kept ID ('text is None')",
+   "test": "tests/test_gate_collection_renumber.py::test_a_renumbered_mutant_is_paired_by_its_text_and_a_gone_one_refused[no-text-at-head]",
+   "result": "1 failed"
+  },
+  {
+   "id": "S14",
+   "file": "tools/gate_collection.py",
+   "bug": "pair_cases checks only the head side for None at a kept ID ('head[nodeid] is None')",
+   "test": "tests/test_gate_collection_renumber.py::test_a_renumbered_mutant_is_paired_by_its_text_and_a_gone_one_refused",
+   "result": "0 failed: equivalent mutant; a base None at a kept ID finds no free head case except at a kept ID whose head is None, which blocks (REPORT F5)"
   }
  ]
 }
