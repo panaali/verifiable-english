@@ -48,5 +48,5 @@ The allowed mutants:
 
 `tools/trust_map.py --check` against d55d24faab75 gives K +0, S +0 and trusted +136 (Steps.lean). The allowance in
 docs/trust-baseline.json is SIGNED by standing ruling R16; FOLLOW-UPS.md "## ci-3a" asks for the ties pass.
-Hand-written lines: 890 (`git diff --numstat` against the merge base, without generated files or tool
-output), accepted by reviews/dri-decisions-20261109-ci-3a-size.md item 1. Pilot bytes moved: 0.
+Hand-written lines: 891 (`git diff --numstat` against the merge base, without generated files or tool
+output; 890 accepted by reviews/dri-decisions-20261109-ci-3a-size.md item 1, plus the assurance manifest line). Pilot bytes moved: 0.
