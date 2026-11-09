@@ -16,7 +16,7 @@ import sys
 import pytest
 
 from subprocesses import HANG_TIMEOUT
-from test_trust_mutants import DECIDE_FALSE, PATH, REFUTE, ROOT, dump, git, scaffold
+from test_trust_mutants import DECIDE_FALSE, PATH, REFUTE, ROOT, dump, git, scaffold, tool
 
 sys.path.insert(0, str(ROOT / "tools"))
 import lake_outputs  # noqa: E402
@@ -149,6 +149,20 @@ def test_lazy_control_incomplete_scope_falls_back_and_timeout_stays_unknown():
 
     timed_out = tm.ControlProbes({"A.lean": None}, lambda f, only: ({}, {(1, 1)}))
     assert tm.refusal(whole(), timed_out.get(("A.lean", (1, 1)), {(1, 1)})) == (
+        "Lean could not elaborate it in the probe")
+
+
+def test_lazy_control_of_a_file_outside_the_targets_is_none_as_in_eager():
+    """eff-20261108-1 F1: `settle` can read a check module no target names (in the mutated module's cone, imported by
+    a target). Eager's `hashes` has no entry for it, so `.get` is None; the lazy cache gives the same None without
+    probing, never a KeyError, and `refusal` reads it as not elaborated (UNKNOWN)."""
+    calls = []
+    cache = tm.ControlProbes({"A.lean": None}, lambda f, only: calls.append(f) or ({}, set()))
+    eager: dict = {}
+    for scope in ({(2, 2)}, set()):
+        assert cache.get(("Far/Mid.lean", (2, 2)), scope) is None is eager.get(("Far/Mid.lean", (2, 2)))
+    assert calls == []
+    assert tm.refusal(whole(), cache.get(("Far/Mid.lean", (2, 2)), {(2, 2)})) == (
         "Lean could not elaborate it in the probe")
 
 
@@ -721,3 +735,27 @@ def test_the_scoped_probe_classifies_the_seeds_as_the_whole_file_probe(seed_pack
     assert s6 and all(v[2] == "KILLED" and "outside/Check.lean" in v[4] for _, v in s6), s6
     rfl = SEED_SECOND.split("\n").index("example : Demo.tag 1 = 2 := rfl") + 1
     assert any(r["file"] == "Second.lean" and any(s <= rfl <= e for s, e in r["only"]) for r in dual)
+
+
+def test_probe_f1_a_check_module_outside_the_targets_gives_lazy_the_eager_verdicts(tmp_path_factory):
+    """eff-20261108-1 F1 (real Lean): `Demo/Far/Mid` sits in `Demo.Defs`' cone and `Demo/Check` (a target) imports
+    it, but no target names it (another directory, no statement names `inc`, no --deep), so it is outside the
+    control `files`. Its failing `#guard` is read by `settle`: eager gives UNKNOWN (no control), and lazy must give
+    the same rows, not a KeyError in a worker that loses every verdict of the run."""
+    root = tmp_path_factory.mktemp("f1") / "p"
+    root.mkdir()
+    scaffold(root, "Far")
+    for name, text in (("Defs", "namespace Demo\n\ndef inc (n : Nat) : Nat := n + 1\n\nend Demo\n"),
+                       ("Far/Mid", "import Demo.Defs\n#guard Demo.inc 1 == 2\n"),
+                       ("Check", "import Demo.Far.Mid\n#guard Demo.inc 0 == 1\n")):
+        (root / f"lean/Demo/{name}.lean").write_text(text)
+    dump(root, tmp_path_factory.mktemp("f1-dump"), [])
+    git(root, "add", ".")
+    git(root, "commit", "-qm", "head")
+    got = {}
+    for mode in ("eager", "lazy"):
+        done, mutants = tool(root, tmp_path_factory.mktemp(f"f1-{mode}"), "--control-probes", mode)
+        assert "Traceback" not in done.stderr, done.stderr[-3000:]
+        got[mode] = [(m["id"], m["status"], m["raw_status"], m["detail"]) for m in mutants]
+    assert got["eager"] and got["lazy"] == got["eager"], got
+    assert all(s == "UNKNOWN" and "Far/Mid.lean" in d and "could not elaborate" in d for _, s, _, d in got["lazy"])

@@ -68,7 +68,9 @@ A mutant's probe (eff-tm-probe-scope) elaborates the check file as the whole-fil
 checks `settle` reads and drops the text after the last of them (`probe`'s `only`, `kept`). Controls default to
 lazy: a dedicated unmutated scratch probes a check only when `reading` needs it, with the same scope and whole-file
 fallback. `--control-probes eager` probes whole files before mutants as before. The mode is recorded beside `jobs`;
-old records read as eager. It is not a verdict input: --rescore, --resume and --merge may cross modes. Each entry
+old records read as eager. It is not a verdict input: --rescore, --resume and --merge may cross modes. A check file
+`settle` reads that is no target's (in a mutated module's cone, imported by a target) has no control in either mode,
+so its check is UNKNOWN in both (eff-20261108-1 F1). Each entry
 it reads is the whole file's, so every verdict is the same but in two
 cases, where the whole file's probe has no entry for the check and the scoped one has its own: then UNKNOWN becomes
 KILLED, on that entry, checked against a control that finished (the verdict the whole file gives when its probe
@@ -731,7 +733,9 @@ class Probes:
 class ControlProbes:
     """Shared lazy controls in an unmutated scratch. One lock per file protects its probe text and cache; a
     later read probes only missing spans. An incomplete scoped entry falls back to the whole file, as `Probes` does.
-    `probing(file, only)` returns entries and the spans `named` can probe."""
+    `probing(file, only)` returns entries and the spans `named` can probe. A file outside `files` (a check module
+    `settle` reads in the mutant's build that no target names, eff-20261108-1 F1) has no control, as in eager mode:
+    None, so the check reads as not elaborated (UNKNOWN), never a crash."""
 
     def __init__(self, files: dict, probing):
         self.probing = probing
@@ -741,6 +745,8 @@ class ControlProbes:
 
     def get(self, key: tuple, scope: set) -> dict | None:
         f, span = key
+        if f not in self.locks:  # eager's `hashes` has no entry of it either
+            return None
         with self.locks[f]:
             missing = scope - self.attempted[f] - self.entries[f].keys()
             if missing:
