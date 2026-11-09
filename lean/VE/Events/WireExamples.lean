@@ -290,7 +290,8 @@ def softP : Pack := ⟨"soft", .constraint, [], [], [("soft:x", .top)], [], []�
   | .error _ => false
 
 /-- pk-1-conditions-b: the `events` pack states no decision condition (`Pack.conditions`, PC-9's
-`packConditions`), so `dfltUniform_legacy` and the other `*_legacy` theorems apply to every list holding it. -/
+`packConditions`), so it never breaks the hypothesis `∀ p ∈ qs, p.conditions = []` of `dfltUniform_legacy` and the
+other `*_legacy` theorems (`Defaults/Uniform.lean`). -/
 theorem eventsPack_conditions : ∀ d, (eventsPack d).conditions = [] := fun _ => rfl
 #guard decoded.any fun d => (eventsPack d).conditions.isEmpty
 

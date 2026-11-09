@@ -396,21 +396,33 @@ never a layered source with no pack; the control without events@0 is a case with
 
 def ndListed : List String := ["norm-defaults@0", "norms@0", "relational-fol@0", "soft-norms@0"]
 
-def layeredCase (listed : List String) : Except String VE.NormDefaults.Wire.LayeredU := do
+/-- The `Env` decoded over `ndListed`, then listing `listed`: the owned case when `listed` holds events@0. -/
+def ownedEnv (listed : List String) : Except String VE.Service.Document.Env := do
   let E ← VE.Service.Document.environmentOf (chainEnv ndListed)
-  VE.Service.DocumentChain.layeredOf
-    { E with json := E.json.setObjVal! "profiles" (toJson listed), profiles := listed } (Json.mkObj []) []
+  pure { E with json := E.json.setObjVal! "profiles" (toJson listed), profiles := listed }
+
+def layeredCase (listed : List String) : Except String VE.NormDefaults.Wire.LayeredU := do
+  VE.Service.DocumentChain.layeredOf (← ownedEnv listed) (Json.mkObj []) []
+
+/-- `requestOf` on the same `Env` as `layeredCase`. -/
+def ownedRequestIsNull (listed : List String) : Bool :=
+  match ownedEnv listed with
+  | .ok E => VE.Service.DocumentChain.requestOf E (Json.mkObj []) [] == .null
+  | .error _ => false
+
+def ownedLists : List (List String) := ["events@0" :: ndListed, ndListed ++ ["events@0"]]
 
 -- Today: refused by name, before the layered route.
 #guard (match VE.Service.Document.environmentOf (chainEnv ("events@0" :: ndListed)) with
   | .ok _ => "ok" | .error e => e) ==
   "CheckerUnavailable: document checks under events@0 need its Lean profile route"
--- Owned: `layeredOf` refuses it, never `.ok`, whatever the list's order; `requestOf` is `null` there.
-#guard [("events@0" :: ndListed), ndListed ++ ["events@0"]].all fun ps => (layeredCase ps).toOption.isNone
-#guard [("events@0" :: ndListed), ndListed ++ ["events@0"]].all requestIsNull
+-- Owned, events@0 first or last: `layeredOf` refuses it, never `.ok`; `requestOf` on that `Env` is `null`.
+#guard ownedLists.all fun ps => (layeredCase ps).toOption.isNone
+#guard ownedLists.all ownedRequestIsNull
 -- Its text is the decoder's on `null`; it does not name events@0 (reported to the DRI, 2026-11-09).
 #guard (match layeredCase ("events@0" :: ndListed) with | .ok _ => "ok" | .error e => e) == "object expected"
 -- The control: without events@0 the same `Env` is a case whose one pack is soft's.
 #guard (match layeredCase ndListed with | .ok L => L.packs.map (·.id) == ["soft"] | .error _ => false)
+#guard !ownedRequestIsNull ndListed
 
 end VE.Events.RouteExamples

@@ -187,7 +187,8 @@ def authorText (U : VE.NormDefaults.UDoc) : Option String :=
 
 Both branches of `choiceLayeredG` (the norms chain's `norms@0` with no pack, the soft chain's `soft-norms@0` with its
 one `softPack`) give packs whose `conditions` are empty, so PC-9's `*_legacy` theorems (`Defaults/Uniform.lean`)
-apply to every layered source the readings route returns. -/
+apply to every layered source the readings route returns. Each branch is closed by `simp` over the list's members,
+not by its length, so a pack appended without a condition still passes and one with a condition fails. -/
 
 theorem choiceLayeredG_conditions (b : Wire.Admitted2) (N : NDoc) (c : Choice)
     (wfc : VE.NormDefaults.WellFormedU (choiceU N c) = true) (hN : N.D = b.D) {L}
@@ -198,22 +199,20 @@ theorem choiceLayeredG_conditions (b : Wire.Admitted2) (N : NDoc) (c : Choice)
   · rw [dif_pos hn] at h
     repeat (obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h)
     cases h
-    intro p hp
-    cases hp
+    simp
   · rw [dif_neg hn] at h
     split at h
     · split at h
       · split at h
         · repeat (obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h)
           cases h
-          intro p hp
-          rw [List.mem_singleton.mp hp]
-          exact VE.NormDefaults.Packs.Fixtures.softPack_conditions _ _
+          simp [VE.NormDefaults.Packs.Fixtures.softPack_conditions]
         · cases h
       · cases h
     · cases h
 
-/-- The same over `choiceLayered`, the source the readings verdict routes read. -/
+/-- The same over `choiceLayered`, the source `replayChoiceAt` (readings-choice) and Ask read; the verdict routes
+read `choiceLayeredG` itself. -/
 theorem choiceLayered_conditions (r : Wire.AdmittedND) (c : Choice)
     (wfc : VE.NormDefaults.WellFormedU (choiceU r.N c) = true) {L} (h : Wire.choiceLayered r c wfc = .ok L) :
     ∀ p ∈ L.1.packs, p.conditions = [] := by
