@@ -2,8 +2,8 @@
 
 **Summary.** Built (1)-(3): `Pinned.parseGovernor`/`renderGovernor` (spec 2.2), `scope_parseRender`/`scope_renderParse`
 (spec 5.8's text), F5a, one round-trip and one paraphrase `#guard` per 2.2 row, and the folded sc-4-f12. (4), the IDE
-wiring, is cut at the size line as the task directs. Trust: K +0, S +37, V +104 (R16). No DRI signature is reserved.
-Tests: the selected run passes after two classification fixes (see "Tests run").
+wiring, is cut at the size line as the task directs. Trust: K +0, S +37, V +106 (R16). No DRI signature is reserved.
+Tests: the selected run passes after two classification fixes (see "Tests run"). Review fix round: see "Review F1".
 
 FOLLOW-UP: sc-7b IDE writes the scope block from the 2.2 wordings
 
@@ -40,7 +40,8 @@ FOLLOW-UP: sc-7b IDE writes the scope block from the 2.2 wordings
 3. **Block.** It holds what the wording fixes. The reach the layout resolves is written `"list"`,
    `{"anchor": {"heading": h, "level": k}}` or `{"anchor": {"section": s}}`. Ids come in sc-7b.
 4. **Headings.** Levels 1-6 are accepted; "If" paraphrases as "applies only if". A "When"/"If" heading that is no
-   clause is refused, not read as a title.
+   clause is refused, not read as a title: "## When should Claude refuse?" and "### If in doubt, ask!" (a word of
+   the slot ends a sentence, `clause`) are refused; "## Should Claude refuse?" is a title.
 5. **Frontier.** The paraphrase takes the fitted candidate (`Context.fits`, SC-5's). With none it asks "Which rule or
    list above does this qualify?", my wording for the spec's "a question".
 6. **sc-4's F12 row (sc-4 REPORT.md:21) dropped the residual.** Spec 1.9 says "with `UnresolvedScope`". It is SC-5's
@@ -55,10 +56,11 @@ relay and binding fuzz tests (docs/ROUTE-RECIPE.md), well past 600.
 
 ## Evidence
 
-- **Trust** (`tools/trust_map.py --check`): K +0, S +37, D +132, trusted +141 against da5303b78769, all in Authoring.lean.
+- **Trust** (`tools/trust_map.py --check`): K +0, S +37, D +134, trusted +143 against da5303b78769, all in Authoring.lean.
 - **Trust mutants**: `mac-pytest.sh --trustmut -- --max-mutants 1000 --test lean/VE/Scope/AuthoringExamples.lean --json
-  docs/scope/sc-7/trust-mutants.json --allow docs/scope/sc-7/trust-mutants-allow.json`, a full run on 0367744f2: 193
-  KILLED, 0 SURVIVOR, 0 UNKNOWN, 60 INVALID, 29 ALLOWED (ill-typed, or one of 3 equivalent), exit 0, tree = HEAD.
+  docs/scope/sc-7/trust-mutants.json --allow docs/scope/sc-7/trust-mutants-allow.json`, a full run on 971464587 (review
+  F1's fix; later commits change no Lean): 196 KILLED, 0 SURVIVOR, 0 UNKNOWN, 58 INVALID, 26 ALLOWED (ill-typed, or one
+  of 3 equivalent), exit 0. The first run on 0367744f2 gave 193 KILLED, 60 INVALID, 29 ALLOWED.
   Earlier runs left 15 survivors; each was closed by a new `#guard` or by giving `attitude` an `Option` degree.
 - **Hand mutants** (`docs/scope/sc-7/mutants.json`): each was planted, `lake build VE.Scope.AuthoringExamples` was run,
   and the code was restored. Every one is KILLED. They cover the 10 definitions the sweep does not kill:

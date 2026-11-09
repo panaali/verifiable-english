@@ -152,8 +152,68 @@
    "before": "(u.getObjValD \"status\").getStr?.toOption.getD \"\"",
    "after": "(u.getObjValD \"support\").getStr?.toOption.getD \"\"",
    "status": "KILLED",
-   "test": "VE/Scope/FarExamples.lean:95:0",
-   "note": "sc-4-f12: the check that the pinned u0047.s06 is UNFORMALISED reads the document mode's status; Document.lean is not changed by this item"
+   "test": "VE/Service/ScopeExamples.lean:205:0",
+   "note": "sc-4-f12: the check that the pinned u0047.s06 is UNFORMALISED reads the document mode's status; Document.lean is not changed by this item (sc-7 review F4: the check moved from FarExamples.lean:95 to ScopeExamples.lean:205; the reviewer replanted it there and both statuses become \"none\"; not replanted in the fix round)"
+  },
+  {
+   "kind": "seeded bug",
+   "definition": "VE.Scope.Pinned.clause",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "def clause (s : String) : Bool := spaced s && (s.splitOn \" \").all fun w =>\n  !\".?!:…‽。？！：．\".contains (w.dropRightWhile (\"”’\\\")]»\".contains ·)).back",
+   "after": "def clause (s : String) : Bool := spaced s && !s.endsWith \".\" && !s.endsWith \":\"",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:110:0",
+   "note": "sc-7 review F1: the code before the fix; also fails :113"
+  },
+  {
+   "kind": "seeded bug",
+   "definition": "VE.Scope.Pinned.clause",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "(w.dropRightWhile (\"”’\\\")]»\".contains ·)).back",
+   "after": "w.back",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:113:0",
+   "note": "sc-7 review F1: a sentence end before a closing quote or bracket"
+  },
+  {
+   "kind": "seeded bug",
+   "definition": "VE.Scope.Pinned.clause",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "\".?!:…‽。？！：．\"",
+   "after": "\".?!:\"",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:113:0",
+   "note": "sc-7 review F1: the ellipsis and full-width sentence ends"
+  },
+  {
+   "kind": "seeded bug",
+   "definition": "VE.Scope.Pinned.listName",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "n.startsWith \"the \" && clause n",
+   "after": "n.startsWith \"the \" && spaced n",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:113:0",
+   "note": "sc-7 review F1: a sentence end in the list name"
+  },
+  {
+   "kind": "seeded bug",
+   "definition": "VE.Scope.Pinned.readings",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "if clause s && s.all (fun ch => ch != ' ' && ch != ',') && clause r then",
+   "after": "if !s.isEmpty && s.all (fun ch => wordChar ch && ch != ',') && clause r then",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:113:0",
+   "note": "sc-7 review F1: a sentence end in the section slot"
+  },
+  {
+   "kind": "seeded bug",
+   "definition": "VE.Scope.Pinned.readings",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "if clause s && s.all (fun ch => ch != ' ' && ch != ',') && clause r then",
+   "after": "if clause s && s.all (fun ch => ch != ' ') && clause r then",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:125:0",
+   "note": "sc-7 review F1: a comma in the section slot (review F5)"
   }
  ]
 }
