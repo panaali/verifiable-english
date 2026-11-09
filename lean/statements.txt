@@ -1016,6 +1016,19 @@ theorem VE.Acts.Lexical.words_intercalate
       VE.Norms.Wire.words (" ".intercalate ws) = ws
   -- uses VE.Norms.Wire.pyWhitespace@VE.Acts.LexicalBase VE.Norms.Wire.words@VE.Acts.LexicalBase
   -- expr 265214043
+theorem VE.Acts.Run.firstsBy_map
+  ∀ {α β : Type} [inst : DecidableEq β] (f : α → β) (xs : List α),
+    List.map f (VE.Acts.Run.firstsBy f xs) = VE.Acts.firsts (List.map f xs)
+  -- uses VE.Acts.Run.firstsBy@VE.Acts.Run VE.Acts.firsts@VE.Acts.Read
+  -- expr 2508743515
+theorem VE.Acts.Run.witnessed_readings
+  ∀ (V : VE.Acts.Vocab) (op : VE.Acts.Op) (N b : Nat) (ts : Array VE.Acts.Lexical.Tok),
+    VE.Acts.phraseReadings V op N b ts =
+      match VE.Acts.Run.witnessed V op N b ts with
+      | Option.none => VE.Acts.Listing.limit
+      | Option.some (fst, Rs) => VE.Acts.Listing.ok (List.map Prod.fst Rs)
+  -- uses VE.Acts.Act@VE.Acts.Tree VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.Listing.limit@VE.Acts.Read VE.Acts.Listing.ok@VE.Acts.Read VE.Acts.Listing@VE.Acts.Read VE.Acts.Op@VE.Acts.Table VE.Acts.Run.witnessed@VE.Acts.Run VE.Acts.Run.witnessed_readings.match_1@VE.Acts.Run VE.Acts.Simple@VE.Acts.Table VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.phraseReadings@VE.Acts.Readings VE.Grammar.Tree@VE.Grammar.Derives
+  -- expr 53604524
 theorem VE.Acts.Wire.checkAct_joined
   ∀ (fx : List String) (V : VE.Acts.Vocab) (name : String) (k : Nat) (raw : Lean.Json) (a : String) (A : VE.Acts.Act),
     VE.Acts.Wire.checkAct fx V name k raw = Except.ok (a, Option.some A) →
@@ -55598,6 +55611,10 @@ theorem VE.Service.results_eq
       Option.some (VE.Service.caseResultWith r.mode i (entries.getD i Option.none) cases[i])
   -- uses VE.Service.Entry@VE.Service.Protocol VE.Service.Request.mode@VE.Service.Protocol VE.Service.Request@VE.Service.Protocol VE.Service.caseResultWith@VE.Service.Protocol VE.Service.results@VE.Service.Protocol
   -- expr 2848766935
+theorem VE.Service.runMode_actReadings
+  ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.actReadings j = VE.Acts.Run.actReadingsReported j
+  -- uses VE.Acts.Run.actReadingsReported@VE.Acts.Run VE.Service.Mode.actReadings@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
+  -- expr 2628422788
 theorem VE.Service.runMode_alternatives
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.alternatives j = VE.Alternatives.Run.runCaseReported j
   -- uses VE.Alternatives.Run.runCaseReported@VE.Alternatives.Run VE.Service.Mode.alternatives@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol

@@ -1,0 +1,59 @@
+{
+  "$id": "act-readings.json",
+  "$comment": "Lean's readings of one act phrase under a modal, with its token spans and each act's token indices.",
+  "row": {
+    "anyOf": [
+      {"$ref": "common.json#/$defs/case_error"},
+      {
+        "additionalProperties": false,
+        "properties": {"error": {"$ref": "common.json#/$defs/text"}, "id": {"x-echo": "/id"}, "status": {"const": "error"}},
+        "required": ["id", "status", "error"],
+        "type": "object"
+      },
+      {"$ref": "#/$defs/result"}
+    ]
+  },
+  "$defs": {
+    "act": {
+      "additionalProperties": false,
+      "properties": {
+        "act": {"type": "string"},
+        "from": {"items": {"$ref": "common.json#/$defs/nat"}, "type": "array"},
+        "text": {"type": "string"}
+      },
+      "required": ["act", "text", "from"],
+      "type": "object"
+    },
+    "reading": {
+      "additionalProperties": false,
+      "properties": {"acts": {"items": {"$ref": "#/$defs/act"}, "type": "array"}, "paraphrase": {"type": "string"}},
+      "required": ["acts", "paraphrase"],
+      "type": "object"
+    },
+    "result": {
+      "$comment": "VE.Acts.Run.runActReadings (runActReadings_fits): LISTED with the phrase's tokens and readings; LIMIT or REFUSED with Lean's diagnostic and both lists empty.",
+      "additionalProperties": false,
+      "else": {"required": ["diagnostic"]},
+      "if": {"properties": {"verdict": {"const": "LISTED"}}},
+      "properties": {
+        "diagnostic": {"type": "string"},
+        "id": {"type": "string", "x-equals": "/id"},
+        "readings": {"items": {"$ref": "#/$defs/reading"}, "maxItems": 64, "type": "array"},
+        "status": {"const": "ok"},
+        "tokens": {
+          "items": {
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [{"$ref": "common.json#/$defs/nat"}, {"$ref": "common.json#/$defs/nat"}],
+            "type": "array"
+          },
+          "type": "array"
+        },
+        "verdict": {"enum": ["LISTED", "LIMIT", "REFUSED"]}
+      },
+      "required": ["id", "status", "verdict", "tokens", "readings"],
+      "then": {"not": {"required": ["diagnostic"]}},
+      "type": "object"
+    }
+  }
+}
