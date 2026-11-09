@@ -17863,6 +17863,7 @@
         "VE.RightClauses.checkClauses",
         "VE.RightClauses.checkEntry",
         "VE.RightClauses.checkSpans",
+        "VE.RightClauses.entryError",
         "VE.RightClauses.entryOk",
         "VE.RightClauses.guardOf",
         "VE.RightClauses.holderGuardOf",
@@ -17923,7 +17924,10 @@
         "VE.RightClauses.Examples.twoTotal",
         "VE.RightClauses.Examples.trig",
         "VE.RightClauses.Examples.unl",
-        "VE.RightClauses.Examples.verdict"
+        "VE.RightClauses.Examples.verdict",
+        "VE.RightClauses.Examples.twice",
+        "VE.RightClauses.Examples.twoHolders",
+        "VE.RightClauses.Examples.across"
       ]
     },
     "VE/SoftNorms/ActsFrameExamples.lean": {
@@ -20113,6 +20117,108 @@
     "VE/Presupposition/Table.lean": {
       "S": [
         "VE.Presupposition.candidateTable"
+      ]
+    },
+    "VE/Rights/OpenActExamples.lean": {
+      "T": [
+        "VE.Rights.OpenActExamples.adult",
+        "VE.Rights.OpenActExamples.twoRights",
+        "VE.Rights.OpenActExamples.unitOf",
+        "VE.Rights.OpenActExamples.opens"
+      ]
+    },
+    "VE/RightClauses/PlainWellFormed/Clauses.lean": {
+      "P": [
+        "VE.RightClauses.PWF.checkRightsK",
+        "VE.RightClauses.PWF.restRights"
+      ]
+    },
+    "VE/RightClauses/PlainWellFormed/Guards.lean": {
+      "P": [
+        "VE.RightClauses.PWF.EnvOK",
+        "VE.RightClauses.PWF.FExt",
+        "VE.RightClauses.PWF.OkOrRL",
+        "VE.RightClauses.PWF.Plus",
+        "VE.RightClauses.PWF.RL"
+      ]
+    },
+    "VE/RightClauses/PlainWellFormed/Hyp.lean": {
+      "P": [
+        "VE.RightClauses.PWF.Facts",
+        "VE.RightClauses.PWF.FromSource",
+        "VE.RightClauses.PWF.γP"
+      ]
+    },
+    "VE/RightClauses/PlainWellFormed/Lines.lean": {
+      "P": [
+        "VE.RightClauses.PWF.hL",
+        "VE.RightClauses.PWF.hR",
+        "VE.RightClauses.PWF.newGuard",
+        "VE.RightClauses.PWF.plainNodes",
+        "VE.RightClauses.PWF.withNodes"
+      ]
+    },
+    "VE/RightClauses/PlainWellFormed/SoftCheck.lean": {
+      "P": [
+        "VE.RightClauses.PWF.OkOrRLV",
+        "VE.RightClauses.PWF.b2",
+        "VE.RightClauses.PWF.b3",
+        "VE.RightClauses.PWF.b4",
+        "VE.RightClauses.PWF.b5",
+        "VE.RightClauses.PWF.b6",
+        "VE.RightClauses.PWF.br1",
+        "VE.RightClauses.PWF.br2",
+        "VE.RightClauses.PWF.br3",
+        "VE.RightClauses.PWF.br4",
+        "VE.RightClauses.PWF.br5",
+        "VE.RightClauses.PWF.br6",
+        "VE.RightClauses.PWF.bt1",
+        "VE.RightClauses.PWF.bt2",
+        "VE.RightClauses.PWF.checkSoftK",
+        "VE.RightClauses.PWF.ck7",
+        "VE.RightClauses.PWF.restT",
+        "VE.RightClauses.PWF.shapeK",
+        "VE.RightClauses.PWF.shapeR",
+        "VE.RightClauses.PWF.shapeT",
+        "VE.RightClauses.PWF.tailK"
+      ]
+    },
+    "VE/RightClauses/PlainWellFormed/SoftExt.lean": {
+      "P": [
+        "VE.RightClauses.PWF.DualCtx",
+        "VE.RightClauses.PWF.mapG",
+        "VE.RightClauses.PWF.setG"
+      ]
+    },
+    "VE/RightClauses/PlainWellFormed/SoftValid.lean": {
+      "P": [
+        "VE.RightClauses.PWF.EnvOKB",
+        "VE.RightClauses.PWF.GHyp",
+        "VE.RightClauses.PWF.QC"
+      ]
+    },
+    "VE/RightClauses/PlainWellFormed/Str.lean": {
+      "P": [
+        "VE.RightClauses.PWF.substrEqLoopName",
+        "VE.RightClauses.PWF.tacticPwf_unfold_substrEq_loop",
+        "VE.RightClauses.PWF.termSz"
+      ]
+    },
+    "VE/RightClauses/PlainWellFormed/W1Check.lean": {
+      "P": [
+        "VE.RightClauses.PWF.NodeOKT",
+        "VE.RightClauses.PWF.TypesAt",
+        "VE.RightClauses.PWF.astRL",
+        "VE.RightClauses.PWF.checkW1Steps",
+        "VE.RightClauses.PWF.tailW1"
+      ]
+    },
+    "VE/RightClauses/PlainWellFormed/W1Ext.lean": {
+      "P": [
+        "VE.RightClauses.PWF.NRel",
+        "VE.RightClauses.PWF.TRel",
+        "VE.RightClauses.PWF.cidx",
+        "VE.RightClauses.PWF.keepOf"
       ]
     }
   }
