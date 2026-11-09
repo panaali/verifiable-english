@@ -60,7 +60,7 @@ def entryError (Dr : RightsDoc) (n : String) : String :=
   let invalid := s!"InvalidInput: invalid clauses of rule {n}"
   match VE.Rights.checkRights Dr with
   | .error e =>
-    if ((Dr.rs.flatMap (·.lines)).filter (fun S => lineName S == some n)).length > 1 &&
+    if (Dr.rs.flatMap (fun R : VE.Rights.Right => R.lines)).countP (fun S : SourceLine => lineName S == some n) > 1 &&
         e.startsWith "DuplicateDeclaration: " then e
     else invalid
   | .ok () => invalid
