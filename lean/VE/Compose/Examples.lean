@@ -237,9 +237,9 @@ On every list of D-all, the table answers as `dispatch` and its base rows as `to
 #guard gateOf baseRows ["norms@0", "relational-fol@0", "ve.discourse@1"] ==
   .error "UnsupportedProfile: Unsupported profile ve.discourse@1"
 #guard gateOf profileTable ["norms@0", "relational-fol@0", "ve.discourse@1"] == .ok .discourse
-#guard environmentProfiles.length == 18 && !environmentProfiles.contains "judgments@0" &&
+#guard environmentProfiles.length == 19 && !environmentProfiles.contains "judgments@0" &&
   !environmentProfiles.contains "cardinality@0" &&
-  environmentProfiles.getLast? == some "readings@1"
+  environmentProfiles.drop 17 == ["right-clauses@0", "readings@1"]
 #guard legacyProfiles.all (fun p => profileTable.any (·.profile == p)) &&
   (profileTable.map (·.profile)).eraseDups.filter (!legacyProfiles.contains ·) ==
     ["events@0", "acts@0", "judgments@0", "cardinality@0", "scope@0"]

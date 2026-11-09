@@ -1,7 +1,6 @@
 import VE.RightClauses.Relation
 import VE.Rights.Wire
 import VE.Compose.Dispatch
-import VE.CertificateWire
 
 /-! The wire of `right-clauses@0` (docs/spec/right-clauses.md 3, 4.1, 7, 8.5) and its `clauses-elaborate` case.
 
@@ -14,13 +13,12 @@ For each line object it runs the frozen rights decoder `decodeLine` on the objec
 `<n>`), then reads `elided`, `clauses` and `relation` with the texts of section 7. Then it runs rights' own `addUnit`
 on the unit without its span and its lines' three keys. `elaborateJson` writes the plained document: the keys and spans
 dropped and each structured line's norm guard replaced by its plain guard (`plainGuard`). A line with no clause and no
-relation keeps its norm as written. No import of `VE.Readings` (spec 0). -/
+relation keeps its norm as written. The case itself is `VE.RightClauses.Run`. No import of `VE.Readings` (spec 0). -/
 namespace VE.RightClauses
 open Lean
 open VE.Rights.Wire (decodeRightsEnvironment decodeLine addUnit Units)
 open VE.SoftNorms.Wire (SoftEnvironment enc)
 
-def clausesProfile : String := "right-clauses@0"
 /-- The three keys a line object gains under the profile (3). -/
 def headKeys : List String := ["elided", "clauses", "relation"]
 
@@ -72,12 +70,9 @@ def NoClauseKeys (document : Json) : Prop :=
     ∀ kv ∈ members l, kv.1 ≠ "clauses" ∧ kv.1 ≠ "relation"
 /-- 8.5: the document has no reading set (the rights decoder reads an array of units, never `reading_sets`). -/
 def NoReadingSets (document : Json) : Prop := (document.getObjVal? "reading_sets").toOption = none
-/-- 8.5: the environment without `right-clauses@0` in its profile list. -/
-def stripProfile (environment : Json) : Json :=
-  match environment.getObjVal? "profiles" with
-  | .ok (.arr ps) => environment.setObjVal! "profiles"
-      (.arr (ps.filter (fun p => match p with | .str s => s != clausesProfile | _ => true)))
-  | _ => environment
+/-- 8.5: the environment without `right-clauses@0` in its profile list (`VE.Compose.withoutClauses`, which the
+    environment mode reads it by too). -/
+def stripProfile (environment : Json) : Json := VE.Compose.withoutClauses environment
 
 /-! ## Decoding (4.1 step 2, 7) -/
 
@@ -212,33 +207,5 @@ def PlainOnWire (D : ClauseDoc) : Prop :=
   ∀ x ∈ D.lines, ∀ N ∈ x.2.2.line.norm.toList,
     let G := plainGuard (lineSorts D.doc.soft x.2.2.line).length N.guard x.2.2
     ∃ c, VE.Norms.Wire.budgetFormula VE.Limits.maxDepth 0 (enc G) = .ok (G, c)
-
-/-! ## The `clauses-elaborate` case (8.1) -/
-
-def labelledJson (L : VE.Compose.Labelled) : Json :=
-  Json.arr (L.map (fun (l, a) => Json.mkObj [("label", .str l), ("ast", enc a)])).toArray
-
-/-- 4.1 in order: `dispatch` (its refusals are final), decoding, the head's checks on fixed lines and candidates,
-    then the rights decoder and its checks on the plained document (step 6), whose texts are the answer. Output: the
-    plained document's canonical bytes and `clauseSlotLabelled`. `elided_bytes` is not computed here (cmp-s3a-cfr-3). -/
-def elaborateCase (j : Json) : Except String Json := do
-  VE.Bridge.exactFields j ["id", "environment", "document"]
-  let id ← VE.Bridge.stringField j "id"
-  let environment ← j.getObjVal? "environment"
-  let document ← j.getObjVal? "document"
-  let route ← VE.Compose.gateOf VE.Compose.profileTable (← VE.Route.Gate.profilesOf environment)
-  unless route == .clauses do throw "UnsupportedProfile: clauses-elaborate requires right-clauses@0"
-  let D ← decodeClauseDoc environment document
-  checkClauses D
-  checkCandidates D
-  let plained := elaborateJson D document
-  let _ ← VE.Rights.Wire.decodeRightsSource (stripProfile environment) plained
-  pure (VE.Route.Wire.ok id [("plained", .str (← VE.CertificateWire.canonical 257 plained)),
-    ("clause_slot", labelledJson (clauseSlotLabelled D))])
-
-def runCaseReported (j : Json) : Json :=
-  match elaborateCase j with
-  | .ok row => row
-  | .error message => Json.mkObj [("id", j.getObjValD "id"), ("status", .str "error"), ("error", .str message)]
 
 end VE.RightClauses

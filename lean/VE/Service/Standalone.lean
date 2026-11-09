@@ -153,6 +153,8 @@ def typingReduced (environment : Json) : Except String Json := do
   let mut env := environment
   -- `riskReduced` erases `risk@0` and keeps the alternatives block for `alternativesReduced`.
   if profiles.contains "risk@0" then env ← riskReduced env
+  -- `right-clauses@0` adds keys to a rights document's lines only (right-clauses 3)
+  if profiles.contains "right-clauses@0" then env := VE.Compose.withoutClauses env
   if profiles.contains "reports@0" then env ← reportsReduced env
   if profiles.contains "alternatives@0" then env ← alternativesReduced env
   if profiles.contains "speech-acts@0" || profiles.contains "rights@0" then
@@ -243,7 +245,7 @@ def validatedEnvironment (environment : Json) : Except String VE.Route.Gate.Enve
 /-- The public environment endpoint follows the composed profile head. Each
 statement layer validates its own declarations; the core decoder handles the
 remaining families. `Compose.profileTable` is the single gate for the full registry: its base rows, and the whole
-table for a list with `Compose.environmentWrapper`. -/
+table for a list with one of `Compose.environmentWrappers`. -/
 def validatedLayerEnvironment (environment : Json) (joined : Bool) :
     Except String VE.Route.Gate.Envelope := do
   let rawProfiles := (VE.Bridge.strings (environment.getObjValD "profiles")).toOption.getD []
@@ -252,8 +254,7 @@ def validatedLayerEnvironment (environment : Json) (joined : Bool) :
     pure ()
   -- `acts@0` is read by the norms decoder only: its row's refusals come before every decoder (act-phrases 4.4)
   if rawProfiles.contains "acts@0" then
-    let _ ← VE.Compose.gateOf (if rawProfiles.contains VE.Compose.environmentWrapper then VE.Compose.profileTable
-      else VE.Compose.baseRows) rawProfiles
+    let _ ← VE.Compose.gateOf (VE.Compose.environmentRows rawProfiles) rawProfiles
   let named :=(VE.Route.Gate.profilesOf environment).toOption.getD []
   let empty := Json.arr #[]
   if named.contains "risk@0" || (environment.getObjVal? "risk").isOk then
@@ -281,7 +282,7 @@ def validatedLayerEnvironment (environment : Json) (joined : Bool) :
   else if named.contains "rights@0" then
     let frame ← if named.contains "norm-defaults@0" then
       VE.NormDefaults.Wire.placeholderJson environment else pure environment
-    let _ ← VE.Rights.Wire.decodeRightsEnvironment frame
+    let _ ← VE.Rights.Wire.decodeRightsEnvironment (VE.Compose.withoutClauses frame)
     pure ()
   else if named.contains "soft-norms@0" then
     let frame ← if named.contains "norm-defaults@0" then
@@ -308,8 +309,7 @@ def validatedLayerEnvironment (environment : Json) (joined : Bool) :
     let _ ← validated environment
     pure ()
   let ps ← VE.Route.Gate.profilesOf environment
-  let _ ← VE.Compose.gateOf
-    (if ps.contains VE.Compose.environmentWrapper then VE.Compose.profileTable else VE.Compose.baseRows) ps
+  let _ ← VE.Compose.gateOf (VE.Compose.environmentRows ps) ps
   let family := if ps.contains "order@0" then VE.Route.Gate.Family.order
     else if ps.contains "nary@0" then .closureNary
     else if ps.contains "closure@0" then .closure else .fol
@@ -323,8 +323,7 @@ def validatedComposedEnvironment (environment : Json) (joined : Bool := false) :
   unless listed.any VE.Compose.documentLayers.contains do return ← validatedLayerEnvironment environment joined
   let e ← validatedLayerEnvironment (VE.Compose.withoutDocumentLayers environment) joined
   let ps ← VE.Route.Gate.profilesOf environment
-  let _ ← VE.Compose.gateOf
-    (if ps.contains VE.Compose.environmentWrapper then VE.Compose.profileTable else VE.Compose.baseRows) ps
+  let _ ← VE.Compose.gateOf (VE.Compose.environmentRows ps) ps
   pure { e with profiles := ps }
 
 /-- A model's tables use the checker vocabulary, including profile words, but
