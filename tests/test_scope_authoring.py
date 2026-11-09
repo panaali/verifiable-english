@@ -143,4 +143,5 @@ def test_review_f7_clause_refuses_exactly_the_documented_closers(swept):
     assert "before any `closers`" in clause
     categories = {chr(n) for n in range(sys.maxunicode + 1) if unicodedata.category(chr(n)) in ("Pe", "Pf", "Pi")}
     refused, named = {chr(n) for n in swept["refused"]}, TERMINATORS | categories | CLOSER_EXTRAS
-    assert refused == named, {"refused, not named": sorted(refused - named), "named, not refused": sorted(named - refused)}
+    assert refused == named, {"refused, not named": sorted(refused - named),
+                              "named, not refused": sorted(named - refused)}
