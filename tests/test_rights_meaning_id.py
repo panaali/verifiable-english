@@ -15,7 +15,7 @@ from tests.test_norms import obligation, permission
 from tests.test_rights import right, rights_document_file, rights_env
 from ve import document as D, readings
 from ve.document import load as D_load
-from ve.errors import VEError
+from ve.errors import CheckerUnavailable, VEError
 from ve.readings import rights_meaning_id
 from ve.rights import RightsEnvironment
 
@@ -220,6 +220,23 @@ def test_a_stored_pre_change_id_is_not_its_new_id(tmp_path):
                     relay()
             else:
                 relay()
+
+
+def test_a_lean_rights_id_away_from_the_normal_form_is_refused(tmp_path):
+    """R8 rebind of the changed field: Lean's answer naming, for a rights unit, the id of its content as written
+    (main's stale id) or another unit's id is `CheckerUnavailable`; its own answer is accepted."""
+    path = rights_document_file(tmp_path, DOCUMENTS["power-defaults"], env=_raw_env())
+    real, stale = D_load._lean_answer, _main()["power-defaults"]["main_meaning_ids"]
+    good = D.load_document(path)
+    assert [unit["meaning_id"] for unit in good["units"]] != stale
+    for index, other in ((1, stale[1]), (1, stale[0]), (0, stale[1])):
+        def answer(*args, index=index, other=other, **kwargs):
+            row = deepcopy(real(*args, **kwargs))
+            row["units"][index]["meaning_id"] = other
+            return row
+        with patch.object(D_load, "_lean_answer", answer), \
+                pytest.raises(CheckerUnavailable, match="is not bound to the document sent"):
+            D.load_document(path)
 
 
 def _stored():
