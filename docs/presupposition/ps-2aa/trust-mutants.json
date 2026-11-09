@@ -1,51 +1,51 @@
 {
  "base": "b8266ee19562e5488d27d8a87fa50dcb8f633ab5",
- "head": "c8571dd8f26cc584e24b37143996a69c6cba8317",
- "tree": "bc931c132eb07788eed623869242253c43ce71ad",
+ "head": "d77575f505b9b5f28d1efae8d2e75947a9b01d2d",
+ "tree": "87fbb4668bcc43daeadc23cd053685b6f064bddc",
  "jobs": 8,
  "max_mutants": 1000,
  "deep": false,
  "tests": [
   "lean/VE/Presupposition/Examples.lean"
  ],
- "seconds": 1757,
+ "seconds": 1550,
  "steps": {
   "wall": {
-   "plan": 16.8,
-   "scratch": 13.9,
-   "control_build": 0.2,
-   "probe_install": 2.0,
+   "plan": 15.0,
+   "scratch": 15.6,
+   "control_build": 0.3,
+   "probe_install": 2.1,
    "control_probes": 21.9,
-   "mutants": 1700.2,
-   "cleanup": 2.4,
-   "reads": 0.0
+   "mutants": 1491.4,
+   "cleanup": 4.3,
+   "reads": 0.1
   },
   "lake": {
    "control_build": 0.2,
-   "probe_install": 1.9,
-   "control_probes": 18.8,
-   "mutant_builds": 914.4,
-   "mutant_checks": 1315.5,
+   "probe_install": 2.0,
+   "control_probes": 19.0,
+   "mutant_builds": 467.5,
+   "mutant_checks": 806.1,
    "outside_checks": 0.0,
-   "stage_controls": 17.2,
-   "mutant_probes": 848.9,
+   "stage_controls": 17.8,
+   "mutant_probes": 707.6,
    "other": 0.0
   },
   "runs": {
    "control_build": 1,
    "probe_install": 1,
    "control_probes": 1,
-   "mutant_builds": 203,
+   "mutant_builds": 200,
    "mutant_checks": 189,
    "outside_checks": 0,
    "stage_controls": 9,
-   "mutant_probes": 180,
+   "mutant_probes": 179,
    "other": 0
   }
  },
  "counts": {
-  "KILLED": 180,
-  "SURVIVOR": 2,
+  "KILLED": 179,
+  "SURVIVOR": 0,
   "UNKNOWN": 0,
   "INVALID": 0,
   "ALLOWED": 21,
@@ -55,22 +55,17 @@
   "trusted"
  ],
  "class_counts": {
-  "?, trusted": {
-   "KILLED": 2,
-   "SURVIVOR": 1
-  },
   "D[V], trusted": {
    "ALLOWED": 3
   },
   "S, trusted": {
-   "KILLED": 178,
-   "SURVIVOR": 1,
+   "KILLED": 179,
    "ALLOWED": 18
   }
  },
  "inputs": {
   "tool": "b07a0acdc9f0adfda8f6bf00cda1d2ade41d0a251438488c5302c6db1c00c268",
-  "lean": "b11077977467c85323a03ca6a44aa94c28edb3b1809dcda7d3840ac70a86e1c6",
+  "lean": "c3b38a29099f2e7cf6b6641f9e3a2e9a0a92fa284c7d68d54f8e574017661657",
   "tests": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
   "base": "b8266ee19562e5488d27d8a87fa50dcb8f633ab5",
   "options": "{\"deep\": false, \"test\": [\"VE/Presupposition/Examples.lean\"], \"classes\": [\"trusted\"]}",
@@ -606,7 +601,7 @@
    "lean/VE/ParserContracts.lean": "2742cb47ff17db3f5655b980b5b94cf049d76f7e7b04720103d3a6252037320b",
    "lean/VE/Paths.lean": "be082586f50400ffcbb8dd69eee23fee94ef0d81edf770d1b0af9bb6bbb69fc0",
    "lean/VE/Presupposition/Agree.lean": "fa4d8e9e8391f53999c9974e28ae8f7eeee478f78866c6a07e0005d1bf926236",
-   "lean/VE/Presupposition/Examples.lean": "2256cef566e85cbd3e8d9351ef6282b7556d535d4cf60b2e9893a351bf644bf8",
+   "lean/VE/Presupposition/Examples.lean": "bfc9d3fd08cc9ac26c7ffd9e5c111f26a6309a66b27fdf14d54d310fc4f44b44",
    "lean/VE/Presupposition/Frame.lean": "f2d8e7e3901b41eb80e64f7e2b14819f50d81c9d4be8bed345795db51f2cf25d",
    "lean/VE/Presupposition/Reading.lean": "6e9b9d7700fb2fae6a1329a7f5367fff36d7a13b97cde129c59e20dfd3ca301f",
    "lean/VE/Presupposition/Rows.lean": "0e751f9071a3f222c7ef7900c00d7b8c61eff8931b9e52a2501f9b30d325c053",
@@ -907,13 +902,13 @@
    "lean/audit.py": "05fb69c5689a8606fefd6d43e220f23ee6dbedc4bea7245b34ae29a4fd13a1cd",
    "lean/axioms.txt": "ceba7bb57df670f43e4c3f57812b7774d23bea6de4f4884e51d865cdcc1c403a",
    "lean/checkers.lock": "644a3d4606229425b8cac85dd27e4a2b53528c36c3ac7c1ad8fd7d1612e1dbbf",
-   "lean/declarations.txt": "f5fa0c966fea7ebcffa2bbde6918fcaae4557fcf68f5b9e6940ba374304c4a08",
+   "lean/declarations.txt": "ce2979fadbff15050e076e915eb13f5155689ead515efe4ba79daaa39535ef76",
    "lean/lake-manifest.json": "8579a8594992ccc571614869d24b997dba98134cffdbd5a0b26220a419e0de8e",
    "lean/lakefile.toml": "ffc47dfd06119c3518785b5059d81216b2f82b140509bfd25cd3273cbe04d4f5",
    "lean/lean-toolchain": "42779d67b81608af8a12aa4328d2ab47ca201925b3b2bd68369587b5340bb434",
    "lean/predicates.txt": "a5e1c33d9623a6049d6934d3baadfc418a713d5c29cf69100484545dc0d5d6fd",
    "lean/statements.txt": "b1253f5399ceb4fcc26cab5b6a62f13269d928fc5fee6191d5fa3a4eaace3173",
-   "tools/trust-classes.json": "6fbb25169b97817283b39dec4b4004d9b186d32518dd518d466fb8c6a0709d55"
+   "tools/trust-classes.json": "ce21b0c010f7613705f038259bd5ed21f0cdb88813d512182895fd5e3f380d5b"
   },
   "tool_files": {
    "lean/audit.py": "05fb69c5689a8606fefd6d43e220f23ee6dbedc4bea7245b34ae29a4fd13a1cd",
@@ -935,11 +930,10 @@
   "mode": "full",
   "changed": [],
   "reused": 0,
-  "rerun": 203,
-  "full_run": "its inputs differ (lean): lean/VE/Presupposition/Examples.lean is a selected declaration's file or in its import closure"
+  "rerun": 200,
+  "full_run": "its mutants are not this tree's"
  },
  "definitions": [
-  "lean/VE/Presupposition/Examples.lean: VE.Presupposition.Examples.badAt",
   "lean/VE/Presupposition/Wire.lean: VE.Presupposition.Candidate",
   "lean/VE/Presupposition/Wire.lean: VE.Presupposition.Candidate.core",
   "lean/VE/Presupposition/Wire.lean: VE.Presupposition.Candidate.root",
@@ -1234,29 +1228,6 @@
   },
   {
    "id": "M013",
-   "file": "VE/Presupposition/Examples.lean",
-   "line": 593,
-   "definition": "VE.Presupposition.Examples.badAt",
-   "operator": "and-or",
-   "lines": [
-    592,
-    593
-   ],
-   "before": "&&",
-   "after": "||",
-   "status": "KILLED",
-   "detail": "lean/VE/Presupposition/Examples.lean:596: Expression",
-   "raw_status": "KILLED",
-   "reads": "99f615590f1144f4c9e3d3f7e015e07407e4a8bfbc880323c7a382276055eaa9",
-   "killed_at": [
-    596,
-    597
-   ],
-   "trust_class": "?",
-   "trusted": true
-  },
-  {
-   "id": "M014",
    "file": "VE/Presupposition/Wire.lean",
    "line": 86,
    "definition": "VE.Presupposition.cellOk",
@@ -1279,7 +1250,7 @@
    "trusted": true
   },
   {
-   "id": "M015",
+   "id": "M014",
    "file": "VE/Presupposition/Wire.lean",
    "line": 120,
    "definition": "VE.Presupposition.carrierAllowed",
@@ -1302,7 +1273,7 @@
    "trusted": true
   },
   {
-   "id": "M016",
+   "id": "M015",
    "file": "VE/Presupposition/Wire.lean",
    "line": 134,
    "definition": "VE.Presupposition.ruleConditions",
@@ -1325,7 +1296,7 @@
    "trusted": true
   },
   {
-   "id": "M017",
+   "id": "M016",
    "file": "VE/Presupposition/Wire.lean",
    "line": 87,
    "definition": "VE.Presupposition.cellOk",
@@ -1348,7 +1319,7 @@
    "trusted": true
   },
   {
-   "id": "M018",
+   "id": "M017",
    "file": "VE/Presupposition/Wire.lean",
    "line": 120,
    "definition": "VE.Presupposition.carrierAllowed",
@@ -1371,25 +1342,7 @@
    "trusted": true
   },
   {
-   "id": "M019",
-   "file": "VE/Presupposition/Examples.lean",
-   "line": 593,
-   "definition": "VE.Presupposition.Examples.badAt",
-   "operator": "eq-ne",
-   "lines": [
-    592,
-    593
-   ],
-   "before": "==",
-   "after": "!=",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
-   "trust_class": "?",
-   "trusted": true
-  },
-  {
-   "id": "M020",
+   "id": "M018",
    "file": "VE/Presupposition/Wire.lean",
    "line": 91,
    "definition": "VE.Presupposition.cellOk",
@@ -1412,7 +1365,7 @@
    "trusted": true
   },
   {
-   "id": "M021",
+   "id": "M019",
    "file": "VE/Presupposition/Wire.lean",
    "line": 116,
    "definition": "VE.Presupposition.unitModes",
@@ -1435,7 +1388,7 @@
    "trusted": true
   },
   {
-   "id": "M022",
+   "id": "M020",
    "file": "VE/Presupposition/Wire.lean",
    "line": 134,
    "definition": "VE.Presupposition.ruleConditions",
@@ -1458,7 +1411,7 @@
    "trusted": true
   },
   {
-   "id": "M023",
+   "id": "M021",
    "file": "VE/Presupposition/Wire.lean",
    "line": 90,
    "definition": "VE.Presupposition.cellOk",
@@ -1481,7 +1434,7 @@
    "trusted": true
   },
   {
-   "id": "M024",
+   "id": "M022",
    "file": "VE/Presupposition/Wire.lean",
    "line": 120,
    "definition": "VE.Presupposition.carrierAllowed",
@@ -1504,7 +1457,7 @@
    "trusted": true
   },
   {
-   "id": "M025",
+   "id": "M023",
    "file": "VE/Presupposition/Wire.lean",
    "line": 88,
    "definition": "VE.Presupposition.cellOk",
@@ -1527,7 +1480,7 @@
    "trusted": true
   },
   {
-   "id": "M026",
+   "id": "M024",
    "file": "VE/Presupposition/Wire.lean",
    "line": 95,
    "definition": "VE.Presupposition.tableOk",
@@ -1550,7 +1503,7 @@
    "trusted": true
   },
   {
-   "id": "M027",
+   "id": "M025",
    "file": "VE/Presupposition/Wire.lean",
    "line": 130,
    "definition": "VE.Presupposition.entersRestriction",
@@ -1573,7 +1526,7 @@
    "trusted": true
   },
   {
-   "id": "M028",
+   "id": "M026",
    "file": "VE/Presupposition/Wire.lean",
    "line": 49,
    "definition": "VE.Presupposition.Candidate.core",
@@ -1596,7 +1549,7 @@
    "trusted": true
   },
   {
-   "id": "M029",
+   "id": "M027",
    "file": "VE/Presupposition/Wire.lean",
    "line": 89,
    "definition": "VE.Presupposition.cellOk",
@@ -1619,7 +1572,7 @@
    "trusted": true
   },
   {
-   "id": "M030",
+   "id": "M028",
    "file": "VE/Presupposition/Wire.lean",
    "line": 124,
    "definition": "VE.Presupposition.restrictionPaths",
@@ -1642,7 +1595,7 @@
    "trusted": true
   },
   {
-   "id": "M031",
+   "id": "M029",
    "file": "VE/Presupposition/Wire.lean",
    "line": 124,
    "definition": "VE.Presupposition.restrictionPaths",
@@ -1665,7 +1618,7 @@
    "trusted": true
   },
   {
-   "id": "M032",
+   "id": "M030",
    "file": "VE/Presupposition/Wire.lean",
    "line": 86,
    "definition": "VE.Presupposition.cellOk",
@@ -1684,7 +1637,7 @@
    "trusted": true
   },
   {
-   "id": "M033",
+   "id": "M031",
    "file": "VE/Presupposition/Wire.lean",
    "line": 95,
    "definition": "VE.Presupposition.tableOk",
@@ -1707,7 +1660,7 @@
    "trusted": true
   },
   {
-   "id": "M034",
+   "id": "M032",
    "file": "VE/Presupposition/Wire.lean",
    "line": 98,
    "definition": "VE.Presupposition.rowNames",
@@ -1730,7 +1683,7 @@
    "trusted": true
   },
   {
-   "id": "M035",
+   "id": "M033",
    "file": "VE/Presupposition/Wire.lean",
    "line": 116,
    "definition": "VE.Presupposition.unitModes",
@@ -1753,7 +1706,7 @@
    "trusted": true
   },
   {
-   "id": "M036",
+   "id": "M034",
    "file": "VE/Presupposition/Wire.lean",
    "line": 120,
    "definition": "VE.Presupposition.carrierAllowed",
@@ -1776,7 +1729,7 @@
    "trusted": true
   },
   {
-   "id": "M037",
+   "id": "M035",
    "file": "VE/Presupposition/Wire.lean",
    "line": 124,
    "definition": "VE.Presupposition.restrictionPaths",
@@ -1799,7 +1752,7 @@
    "trusted": true
   },
   {
-   "id": "M038",
+   "id": "M036",
    "file": "VE/Presupposition/Wire.lean",
    "line": 130,
    "definition": "VE.Presupposition.entersRestriction",
@@ -1822,7 +1775,7 @@
    "trusted": true
   },
   {
-   "id": "M039",
+   "id": "M037",
    "file": "VE/Presupposition/Wire.lean",
    "line": 134,
    "definition": "VE.Presupposition.ruleConditions",
@@ -1845,7 +1798,7 @@
    "trusted": true
   },
   {
-   "id": "M040",
+   "id": "M038",
    "file": "VE/Presupposition/Wire.lean",
    "line": 130,
    "definition": "VE.Presupposition.entersRestriction",
@@ -1868,7 +1821,7 @@
    "trusted": true
   },
   {
-   "id": "M041",
+   "id": "M039",
    "file": "VE/Presupposition/Wire.lean",
    "line": 130,
    "definition": "VE.Presupposition.entersRestriction",
@@ -1891,7 +1844,7 @@
    "trusted": true
   },
   {
-   "id": "M042",
+   "id": "M040",
    "file": "VE/Presupposition/Wire.lean",
    "line": 17,
    "definition": "VE.Presupposition.Carrier",
@@ -1910,7 +1863,7 @@
    "trusted": true
   },
   {
-   "id": "M043",
+   "id": "M041",
    "file": "VE/Presupposition/Wire.lean",
    "line": 27,
    "definition": "VE.Presupposition.Candidate",
@@ -1929,7 +1882,7 @@
    "trusted": true
   },
   {
-   "id": "M044",
+   "id": "M042",
    "file": "VE/Presupposition/Wire.lean",
    "line": 53,
    "definition": "VE.Presupposition.Position",
@@ -1948,7 +1901,7 @@
    "trusted": true
   },
   {
-   "id": "M045",
+   "id": "M043",
    "file": "VE/Presupposition/Wire.lean",
    "line": 32,
    "definition": "VE.Presupposition.Carrier.root",
@@ -1971,7 +1924,7 @@
    "trusted": true
   },
   {
-   "id": "M046",
+   "id": "M044",
    "file": "VE/Presupposition/Wire.lean",
    "line": 45,
    "definition": "VE.Presupposition.Candidate.root",
@@ -1994,7 +1947,7 @@
    "trusted": true
   },
   {
-   "id": "M047",
+   "id": "M045",
    "file": "VE/Presupposition/Wire.lean",
    "line": 125,
    "definition": "VE.Presupposition.restrictionPaths",
@@ -2017,7 +1970,7 @@
    "trusted": true
   },
   {
-   "id": "M048",
+   "id": "M046",
    "file": "VE/Presupposition/Wire.lean",
    "line": 87,
    "definition": "VE.Presupposition.cellOk",
@@ -2040,7 +1993,7 @@
    "trusted": true
   },
   {
-   "id": "M049",
+   "id": "M047",
    "file": "VE/Presupposition/Wire.lean",
    "line": 86,
    "definition": "VE.Presupposition.cellOk",
@@ -2063,7 +2016,7 @@
    "trusted": true
   },
   {
-   "id": "M050",
+   "id": "M048",
    "file": "VE/Presupposition/Wire.lean",
    "line": 91,
    "definition": "VE.Presupposition.cellOk",
@@ -2086,30 +2039,7 @@
    "trusted": true
   },
   {
-   "id": "M051",
-   "file": "VE/Presupposition/Examples.lean",
-   "line": 593,
-   "definition": "VE.Presupposition.Examples.badAt",
-   "operator": "eq-ne",
-   "lines": [
-    592,
-    593
-   ],
-   "before": "==",
-   "after": "!=",
-   "status": "KILLED",
-   "detail": "lean/VE/Presupposition/Examples.lean:596: Expression",
-   "raw_status": "KILLED",
-   "reads": "99f615590f1144f4c9e3d3f7e015e07407e4a8bfbc880323c7a382276055eaa9",
-   "killed_at": [
-    596,
-    597
-   ],
-   "trust_class": "?",
-   "trusted": true
-  },
-  {
-   "id": "M052",
+   "id": "M049",
    "file": "VE/Presupposition/Wire.lean",
    "line": 91,
    "definition": "VE.Presupposition.cellOk",
@@ -2132,7 +2062,7 @@
    "trusted": true
   },
   {
-   "id": "M053",
+   "id": "M050",
    "file": "VE/Presupposition/Wire.lean",
    "line": 134,
    "definition": "VE.Presupposition.ruleConditions",
@@ -2155,7 +2085,7 @@
    "trusted": true
   },
   {
-   "id": "M054",
+   "id": "M051",
    "file": "VE/Presupposition/Wire.lean",
    "line": 96,
    "definition": "VE.Presupposition.tableOk",
@@ -2178,7 +2108,7 @@
    "trusted": true
   },
   {
-   "id": "M055",
+   "id": "M052",
    "file": "VE/Presupposition/Wire.lean",
    "line": 50,
    "definition": "VE.Presupposition.Candidate.core",
@@ -2201,7 +2131,7 @@
    "trusted": true
   },
   {
-   "id": "M056",
+   "id": "M053",
    "file": "VE/Presupposition/Wire.lean",
    "line": 124,
    "definition": "VE.Presupposition.restrictionPaths",
@@ -2224,7 +2154,7 @@
    "trusted": true
   },
   {
-   "id": "M057",
+   "id": "M054",
    "file": "VE/Presupposition/Wire.lean",
    "line": 125,
    "definition": "VE.Presupposition.restrictionPaths",
@@ -2247,7 +2177,7 @@
    "trusted": true
   },
   {
-   "id": "M058",
+   "id": "M055",
    "file": "VE/Presupposition/Wire.lean",
    "line": 86,
    "definition": "VE.Presupposition.cellOk",
@@ -2266,7 +2196,7 @@
    "trusted": true
   },
   {
-   "id": "M059",
+   "id": "M056",
    "file": "VE/Presupposition/Wire.lean",
    "line": 95,
    "definition": "VE.Presupposition.tableOk",
@@ -2285,7 +2215,7 @@
    "trusted": true
   },
   {
-   "id": "M060",
+   "id": "M057",
    "file": "VE/Presupposition/Wire.lean",
    "line": 116,
    "definition": "VE.Presupposition.unitModes",
@@ -2304,7 +2234,7 @@
    "trusted": true
   },
   {
-   "id": "M061",
+   "id": "M058",
    "file": "VE/Presupposition/Wire.lean",
    "line": 124,
    "definition": "VE.Presupposition.restrictionPaths",
@@ -2327,7 +2257,7 @@
    "trusted": true
   },
   {
-   "id": "M062",
+   "id": "M059",
    "file": "VE/Presupposition/Wire.lean",
    "line": 130,
    "definition": "VE.Presupposition.entersRestriction",
@@ -2350,7 +2280,7 @@
    "trusted": true
   },
   {
-   "id": "M063",
+   "id": "M060",
    "file": "VE/Presupposition/Wire.lean",
    "line": 134,
    "definition": "VE.Presupposition.ruleConditions",
@@ -2369,7 +2299,7 @@
    "trusted": true
   },
   {
-   "id": "M064",
+   "id": "M061",
    "file": "VE/Presupposition/Wire.lean",
    "line": 18,
    "definition": "VE.Presupposition.Carrier",
@@ -2388,7 +2318,7 @@
    "trusted": true
   },
   {
-   "id": "M065",
+   "id": "M062",
    "file": "VE/Presupposition/Wire.lean",
    "line": 54,
    "definition": "VE.Presupposition.Position",
@@ -2407,7 +2337,7 @@
    "trusted": true
   },
   {
-   "id": "M066",
+   "id": "M063",
    "file": "VE/Presupposition/Wire.lean",
    "line": 86,
    "definition": "VE.Presupposition.cellOk",
@@ -2430,7 +2360,7 @@
    "trusted": true
   },
   {
-   "id": "M067",
+   "id": "M064",
    "file": "VE/Presupposition/Wire.lean",
    "line": 92,
    "definition": "VE.Presupposition.cellOk",
@@ -2453,7 +2383,7 @@
    "trusted": true
   },
   {
-   "id": "M068",
+   "id": "M065",
    "file": "VE/Presupposition/Wire.lean",
    "line": 124,
    "definition": "VE.Presupposition.restrictionPaths",
@@ -2476,7 +2406,7 @@
    "trusted": true
   },
   {
-   "id": "M069",
+   "id": "M066",
    "file": "VE/Presupposition/Wire.lean",
    "line": 87,
    "definition": "VE.Presupposition.cellOk",
@@ -2495,7 +2425,7 @@
    "trusted": true
   },
   {
-   "id": "M070",
+   "id": "M067",
    "file": "VE/Presupposition/Wire.lean",
    "line": 116,
    "definition": "VE.Presupposition.unitModes",
@@ -2514,7 +2444,7 @@
    "trusted": true
   },
   {
-   "id": "M071",
+   "id": "M068",
    "file": "VE/Presupposition/Wire.lean",
    "line": 125,
    "definition": "VE.Presupposition.restrictionPaths",
@@ -2537,7 +2467,7 @@
    "trusted": true
   },
   {
-   "id": "M072",
+   "id": "M069",
    "file": "VE/Presupposition/Wire.lean",
    "line": 130,
    "definition": "VE.Presupposition.entersRestriction",
@@ -2560,7 +2490,7 @@
    "trusted": true
   },
   {
-   "id": "M073",
+   "id": "M070",
    "file": "VE/Presupposition/Wire.lean",
    "line": 134,
    "definition": "VE.Presupposition.ruleConditions",
@@ -2579,7 +2509,7 @@
    "trusted": true
   },
   {
-   "id": "M074",
+   "id": "M071",
    "file": "VE/Presupposition/Wire.lean",
    "line": 19,
    "definition": "VE.Presupposition.Carrier",
@@ -2598,7 +2528,7 @@
    "trusted": true
   },
   {
-   "id": "M075",
+   "id": "M072",
    "file": "VE/Presupposition/Wire.lean",
    "line": 55,
    "definition": "VE.Presupposition.Position",
@@ -2617,7 +2547,7 @@
    "trusted": true
   },
   {
-   "id": "M076",
+   "id": "M073",
    "file": "VE/Presupposition/Wire.lean",
    "line": 87,
    "definition": "VE.Presupposition.cellOk",
@@ -2640,7 +2570,7 @@
    "trusted": true
   },
   {
-   "id": "M077",
+   "id": "M074",
    "file": "VE/Presupposition/Wire.lean",
    "line": 124,
    "definition": "VE.Presupposition.restrictionPaths",
@@ -2663,7 +2593,7 @@
    "trusted": true
   },
   {
-   "id": "M078",
+   "id": "M075",
    "file": "VE/Presupposition/Wire.lean",
    "line": 87,
    "definition": "VE.Presupposition.cellOk",
@@ -2682,7 +2612,7 @@
    "trusted": true
   },
   {
-   "id": "M079",
+   "id": "M076",
    "file": "VE/Presupposition/Wire.lean",
    "line": 125,
    "definition": "VE.Presupposition.restrictionPaths",
@@ -2705,7 +2635,7 @@
    "trusted": true
   },
   {
-   "id": "M080",
+   "id": "M077",
    "file": "VE/Presupposition/Wire.lean",
    "line": 130,
    "definition": "VE.Presupposition.entersRestriction",
@@ -2728,7 +2658,7 @@
    "trusted": true
   },
   {
-   "id": "M081",
+   "id": "M078",
    "file": "VE/Presupposition/Wire.lean",
    "line": 20,
    "definition": "VE.Presupposition.Carrier",
@@ -2743,6 +2673,67 @@
    "detail": "does not elaborate: every constructor is named by an arm of Carrier.root or Carrier.cand (Wire.lean:30-41), so a dropped one is an unknown constant there, not a check's refutation; the hand mutant L-Carrier (mutants.json) drops inPlace and stops Wire.lean:38, and L-Carrier.root and L-Carrier.cand break Examples.lean:481-486 (lean/VE/Presupposition/Wire.lean:31: Unknown constant `VE.Presupposition.Carrier.asserted`)",
    "raw_status": "UNKNOWN",
    "raw_detail": "lean/VE/Presupposition/Wire.lean:31: Unknown constant `VE.Presupposition.Carrier.asserted`",
+   "trust_class": "S",
+   "trusted": true
+  },
+  {
+   "id": "M079",
+   "file": "VE/Presupposition/Wire.lean",
+   "line": 124,
+   "definition": "VE.Presupposition.restrictionPaths",
+   "operator": "lit-plus",
+   "lines": [
+    122,
+    126
+   ],
+   "before": "0",
+   "after": "1",
+   "status": "KILLED",
+   "detail": "lean/VE/Presupposition/Examples.lean:579: Expression",
+   "raw_status": "KILLED",
+   "reads": "8864e000caef13da4ca262bef2c72060e355df5a030b1d423f71971b34229c2f",
+   "killed_at": [
+    579,
+    579
+   ],
+   "trust_class": "S",
+   "trusted": true
+  },
+  {
+   "id": "M080",
+   "file": "VE/Presupposition/Wire.lean",
+   "line": 88,
+   "definition": "VE.Presupposition.cellOk",
+   "operator": "list-empty",
+   "lines": [
+    84,
+    92
+   ],
+   "before": "cs",
+   "after": "[]",
+   "status": "ALLOWED",
+   "detail": "does not elaborate: a bare `[]` in place of `cs` leaves the element type of `.assumed`, `.asserted`, `.inPlace` or `.conditioned` unknown (Wire.lean:86-89, invalid dotted identifier); the hand mutants M-cellOk-inPlace-alone, L-cellOk-nodup and L-cellOk-assumed-asserted read the same list (Examples.lean:501, :505, :508)",
+   "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Presupposition/Wire.lean:89: Invalid dotted identifier notation: The expected type of `.assumed` could not be determined",
+   "trust_class": "S",
+   "trusted": true
+  },
+  {
+   "id": "M081",
+   "file": "VE/Presupposition/Wire.lean",
+   "line": 21,
+   "definition": "VE.Presupposition.Carrier",
+   "operator": "ctor-drop",
+   "lines": [
+    16,
+    24
+   ],
+   "before": "  | inPlace",
+   "after": "",
+   "status": "ALLOWED",
+   "detail": "does not elaborate: every constructor is named by an arm of Carrier.root or Carrier.cand (Wire.lean:30-41), so a dropped one is an unknown constant there, not a check's refutation; the hand mutant L-Carrier (mutants.json) drops inPlace and stops Wire.lean:38, and L-Carrier.root and L-Carrier.cand break Examples.lean:481-486 (lean/VE/Presupposition/Wire.lean:39: Unknown constant `VE.Presupposition.Carrier.inPlace`)",
+   "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Presupposition/Wire.lean:39: Unknown constant `VE.Presupposition.Carrier.inPlace`",
    "trust_class": "S",
    "trusted": true
   },
@@ -2772,67 +2763,6 @@
   {
    "id": "M083",
    "file": "VE/Presupposition/Wire.lean",
-   "line": 88,
-   "definition": "VE.Presupposition.cellOk",
-   "operator": "list-empty",
-   "lines": [
-    84,
-    92
-   ],
-   "before": "cs",
-   "after": "[]",
-   "status": "ALLOWED",
-   "detail": "does not elaborate: a bare `[]` in place of `cs` leaves the element type of `.assumed`, `.asserted`, `.inPlace` or `.conditioned` unknown (Wire.lean:86-89, invalid dotted identifier); the hand mutants M-cellOk-inPlace-alone, L-cellOk-nodup and L-cellOk-assumed-asserted read the same list (Examples.lean:501, :505, :508)",
-   "raw_status": "UNKNOWN",
-   "raw_detail": "lean/VE/Presupposition/Wire.lean:89: Invalid dotted identifier notation: The expected type of `.assumed` could not be determined",
-   "trust_class": "S",
-   "trusted": true
-  },
-  {
-   "id": "M084",
-   "file": "VE/Presupposition/Wire.lean",
-   "line": 21,
-   "definition": "VE.Presupposition.Carrier",
-   "operator": "ctor-drop",
-   "lines": [
-    16,
-    24
-   ],
-   "before": "  | inPlace",
-   "after": "",
-   "status": "ALLOWED",
-   "detail": "does not elaborate: every constructor is named by an arm of Carrier.root or Carrier.cand (Wire.lean:30-41), so a dropped one is an unknown constant there, not a check's refutation; the hand mutant L-Carrier (mutants.json) drops inPlace and stops Wire.lean:38, and L-Carrier.root and L-Carrier.cand break Examples.lean:481-486 (lean/VE/Presupposition/Wire.lean:39: Unknown constant `VE.Presupposition.Carrier.inPlace`)",
-   "raw_status": "UNKNOWN",
-   "raw_detail": "lean/VE/Presupposition/Wire.lean:39: Unknown constant `VE.Presupposition.Carrier.inPlace`",
-   "trust_class": "S",
-   "trusted": true
-  },
-  {
-   "id": "M085",
-   "file": "VE/Presupposition/Wire.lean",
-   "line": 124,
-   "definition": "VE.Presupposition.restrictionPaths",
-   "operator": "lit-plus",
-   "lines": [
-    122,
-    126
-   ],
-   "before": "0",
-   "after": "1",
-   "status": "KILLED",
-   "detail": "lean/VE/Presupposition/Examples.lean:579: Expression",
-   "raw_status": "KILLED",
-   "reads": "8864e000caef13da4ca262bef2c72060e355df5a030b1d423f71971b34229c2f",
-   "killed_at": [
-    579,
-    579
-   ],
-   "trust_class": "S",
-   "trusted": true
-  },
-  {
-   "id": "M086",
-   "file": "VE/Presupposition/Wire.lean",
    "line": 22,
    "definition": "VE.Presupposition.Carrier",
    "operator": "ctor-drop",
@@ -2850,7 +2780,7 @@
    "trusted": true
   },
   {
-   "id": "M087",
+   "id": "M084",
    "file": "VE/Presupposition/Wire.lean",
    "line": 124,
    "definition": "VE.Presupposition.restrictionPaths",
@@ -2873,7 +2803,7 @@
    "trusted": true
   },
   {
-   "id": "M088",
+   "id": "M085",
    "file": "VE/Presupposition/Wire.lean",
    "line": 23,
    "definition": "VE.Presupposition.Carrier",
@@ -2892,7 +2822,7 @@
    "trusted": true
   },
   {
-   "id": "M089",
+   "id": "M086",
    "file": "VE/Presupposition/Wire.lean",
    "line": 125,
    "definition": "VE.Presupposition.restrictionPaths",
@@ -2915,7 +2845,7 @@
    "trusted": true
   },
   {
-   "id": "M090",
+   "id": "M087",
    "file": "VE/Presupposition/Wire.lean",
    "line": 125,
    "definition": "VE.Presupposition.restrictionPaths",
@@ -2938,7 +2868,7 @@
    "trusted": true
   },
   {
-   "id": "M091",
+   "id": "M088",
    "file": "VE/Presupposition/Wire.lean",
    "line": 125,
    "definition": "VE.Presupposition.restrictionPaths",
@@ -2961,7 +2891,7 @@
    "trusted": true
   },
   {
-   "id": "M092",
+   "id": "M089",
    "file": "VE/Presupposition/Wire.lean",
    "line": 125,
    "definition": "VE.Presupposition.restrictionPaths",
@@ -2984,7 +2914,7 @@
    "trusted": true
   },
   {
-   "id": "M093",
+   "id": "M090",
    "file": "VE/Presupposition/Wire.lean",
    "line": 125,
    "definition": "VE.Presupposition.restrictionPaths",
@@ -3007,7 +2937,7 @@
    "trusted": true
   },
   {
-   "id": "M094",
+   "id": "M091",
    "file": "VE/Presupposition/Wire.lean",
    "line": 86,
    "definition": "VE.Presupposition.cellOk",
@@ -3030,7 +2960,7 @@
    "trusted": true
   },
   {
-   "id": "M095",
+   "id": "M092",
    "file": "VE/Presupposition/Wire.lean",
    "line": 95,
    "definition": "VE.Presupposition.tableOk",
@@ -3053,7 +2983,7 @@
    "trusted": true
   },
   {
-   "id": "M096",
+   "id": "M093",
    "file": "VE/Presupposition/Wire.lean",
    "line": 98,
    "definition": "VE.Presupposition.rowNames",
@@ -3076,7 +3006,7 @@
    "trusted": true
   },
   {
-   "id": "M097",
+   "id": "M094",
    "file": "VE/Presupposition/Wire.lean",
    "line": 116,
    "definition": "VE.Presupposition.unitModes",
@@ -3099,7 +3029,7 @@
    "trusted": true
   },
   {
-   "id": "M098",
+   "id": "M095",
    "file": "VE/Presupposition/Wire.lean",
    "line": 120,
    "definition": "VE.Presupposition.carrierAllowed",
@@ -3122,7 +3052,7 @@
    "trusted": true
   },
   {
-   "id": "M099",
+   "id": "M096",
    "file": "VE/Presupposition/Wire.lean",
    "line": 124,
    "definition": "VE.Presupposition.restrictionPaths",
@@ -3145,7 +3075,7 @@
    "trusted": true
   },
   {
-   "id": "M100",
+   "id": "M097",
    "file": "VE/Presupposition/Wire.lean",
    "line": 130,
    "definition": "VE.Presupposition.entersRestriction",
@@ -3168,7 +3098,7 @@
    "trusted": true
   },
   {
-   "id": "M101",
+   "id": "M098",
    "file": "VE/Presupposition/Wire.lean",
    "line": 134,
    "definition": "VE.Presupposition.ruleConditions",
@@ -3191,7 +3121,7 @@
    "trusted": true
   },
   {
-   "id": "M102",
+   "id": "M099",
    "file": "VE/Presupposition/Wire.lean",
    "line": 86,
    "definition": "VE.Presupposition.cellOk",
@@ -3214,7 +3144,7 @@
    "trusted": true
   },
   {
-   "id": "M103",
+   "id": "M100",
    "file": "VE/Presupposition/Wire.lean",
    "line": 95,
    "definition": "VE.Presupposition.tableOk",
@@ -3237,7 +3167,7 @@
    "trusted": true
   },
   {
-   "id": "M104",
+   "id": "M101",
    "file": "VE/Presupposition/Wire.lean",
    "line": 98,
    "definition": "VE.Presupposition.rowNames",
@@ -3260,7 +3190,7 @@
    "trusted": true
   },
   {
-   "id": "M105",
+   "id": "M102",
    "file": "VE/Presupposition/Wire.lean",
    "line": 116,
    "definition": "VE.Presupposition.unitModes",
@@ -3283,7 +3213,7 @@
    "trusted": true
   },
   {
-   "id": "M106",
+   "id": "M103",
    "file": "VE/Presupposition/Wire.lean",
    "line": 120,
    "definition": "VE.Presupposition.carrierAllowed",
@@ -3306,7 +3236,7 @@
    "trusted": true
   },
   {
-   "id": "M107",
+   "id": "M104",
    "file": "VE/Presupposition/Wire.lean",
    "line": 124,
    "definition": "VE.Presupposition.restrictionPaths",
@@ -3329,7 +3259,7 @@
    "trusted": true
   },
   {
-   "id": "M108",
+   "id": "M105",
    "file": "VE/Presupposition/Wire.lean",
    "line": 130,
    "definition": "VE.Presupposition.entersRestriction",
@@ -3352,7 +3282,7 @@
    "trusted": true
   },
   {
-   "id": "M109",
+   "id": "M106",
    "file": "VE/Presupposition/Wire.lean",
    "line": 134,
    "definition": "VE.Presupposition.ruleConditions",
@@ -3375,7 +3305,7 @@
    "trusted": true
   },
   {
-   "id": "M110",
+   "id": "M107",
    "file": "VE/Presupposition/Wire.lean",
    "line": 86,
    "definition": "VE.Presupposition.cellOk",
@@ -3398,7 +3328,7 @@
    "trusted": true
   },
   {
-   "id": "M111",
+   "id": "M108",
    "file": "VE/Presupposition/Wire.lean",
    "line": 95,
    "definition": "VE.Presupposition.tableOk",
@@ -3421,7 +3351,7 @@
    "trusted": true
   },
   {
-   "id": "M112",
+   "id": "M109",
    "file": "VE/Presupposition/Wire.lean",
    "line": 116,
    "definition": "VE.Presupposition.unitModes",
@@ -3444,7 +3374,7 @@
    "trusted": true
   },
   {
-   "id": "M113",
+   "id": "M110",
    "file": "VE/Presupposition/Wire.lean",
    "line": 124,
    "definition": "VE.Presupposition.restrictionPaths",
@@ -3467,7 +3397,7 @@
    "trusted": true
   },
   {
-   "id": "M114",
+   "id": "M111",
    "file": "VE/Presupposition/Wire.lean",
    "line": 130,
    "definition": "VE.Presupposition.entersRestriction",
@@ -3490,7 +3420,7 @@
    "trusted": true
   },
   {
-   "id": "M115",
+   "id": "M112",
    "file": "VE/Presupposition/Wire.lean",
    "line": 134,
    "definition": "VE.Presupposition.ruleConditions",
@@ -3513,7 +3443,7 @@
    "trusted": true
   },
   {
-   "id": "M116",
+   "id": "M113",
    "file": "VE/Presupposition/Wire.lean",
    "line": 86,
    "definition": "VE.Presupposition.cellOk",
@@ -3536,7 +3466,7 @@
    "trusted": true
   },
   {
-   "id": "M117",
+   "id": "M114",
    "file": "VE/Presupposition/Wire.lean",
    "line": 95,
    "definition": "VE.Presupposition.tableOk",
@@ -3559,7 +3489,7 @@
    "trusted": true
   },
   {
-   "id": "M118",
+   "id": "M115",
    "file": "VE/Presupposition/Wire.lean",
    "line": 116,
    "definition": "VE.Presupposition.unitModes",
@@ -3582,7 +3512,7 @@
    "trusted": true
   },
   {
-   "id": "M119",
+   "id": "M116",
    "file": "VE/Presupposition/Wire.lean",
    "line": 124,
    "definition": "VE.Presupposition.restrictionPaths",
@@ -3605,7 +3535,7 @@
    "trusted": true
   },
   {
-   "id": "M120",
+   "id": "M117",
    "file": "VE/Presupposition/Wire.lean",
    "line": 130,
    "definition": "VE.Presupposition.entersRestriction",
@@ -3628,7 +3558,7 @@
    "trusted": true
   },
   {
-   "id": "M121",
+   "id": "M118",
    "file": "VE/Presupposition/Wire.lean",
    "line": 134,
    "definition": "VE.Presupposition.ruleConditions",
@@ -3651,7 +3581,7 @@
    "trusted": true
   },
   {
-   "id": "M122",
+   "id": "M119",
    "file": "VE/Presupposition/Wire.lean",
    "line": 87,
    "definition": "VE.Presupposition.cellOk",
@@ -3674,7 +3604,7 @@
    "trusted": true
   },
   {
-   "id": "M123",
+   "id": "M120",
    "file": "VE/Presupposition/Wire.lean",
    "line": 116,
    "definition": "VE.Presupposition.unitModes",
@@ -3697,7 +3627,7 @@
    "trusted": true
   },
   {
-   "id": "M124",
+   "id": "M121",
    "file": "VE/Presupposition/Wire.lean",
    "line": 124,
    "definition": "VE.Presupposition.restrictionPaths",
@@ -3720,7 +3650,7 @@
    "trusted": true
   },
   {
-   "id": "M125",
+   "id": "M122",
    "file": "VE/Presupposition/Wire.lean",
    "line": 130,
    "definition": "VE.Presupposition.entersRestriction",
@@ -3734,16 +3664,16 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:601: Expression",
    "raw_status": "KILLED",
-   "reads": "0a1a6faea578b601e0b932e86206e9d712886f36c24652612c836c9050c665b9",
+   "reads": "eefb821fa76e16e38364347465a8b93393eee0223bedcd4a7574849d8332e095",
    "killed_at": [
     601,
-    601
+    602
    ],
    "trust_class": "S",
    "trusted": true
   },
   {
-   "id": "M126",
+   "id": "M123",
    "file": "VE/Presupposition/Wire.lean",
    "line": 134,
    "definition": "VE.Presupposition.ruleConditions",
@@ -3766,7 +3696,7 @@
    "trusted": true
   },
   {
-   "id": "M127",
+   "id": "M124",
    "file": "VE/Presupposition/Wire.lean",
    "line": 87,
    "definition": "VE.Presupposition.cellOk",
@@ -3789,7 +3719,7 @@
    "trusted": true
   },
   {
-   "id": "M128",
+   "id": "M125",
    "file": "VE/Presupposition/Wire.lean",
    "line": 116,
    "definition": "VE.Presupposition.unitModes",
@@ -3812,7 +3742,7 @@
    "trusted": true
   },
   {
-   "id": "M129",
+   "id": "M126",
    "file": "VE/Presupposition/Wire.lean",
    "line": 124,
    "definition": "VE.Presupposition.restrictionPaths",
@@ -3835,7 +3765,7 @@
    "trusted": true
   },
   {
-   "id": "M130",
+   "id": "M127",
    "file": "VE/Presupposition/Wire.lean",
    "line": 130,
    "definition": "VE.Presupposition.entersRestriction",
@@ -3858,7 +3788,7 @@
    "trusted": true
   },
   {
-   "id": "M131",
+   "id": "M128",
    "file": "VE/Presupposition/Wire.lean",
    "line": 134,
    "definition": "VE.Presupposition.ruleConditions",
@@ -3881,7 +3811,7 @@
    "trusted": true
   },
   {
-   "id": "M132",
+   "id": "M129",
    "file": "VE/Presupposition/Wire.lean",
    "line": 87,
    "definition": "VE.Presupposition.cellOk",
@@ -3904,7 +3834,7 @@
    "trusted": true
   },
   {
-   "id": "M133",
+   "id": "M130",
    "file": "VE/Presupposition/Wire.lean",
    "line": 125,
    "definition": "VE.Presupposition.restrictionPaths",
@@ -3927,7 +3857,7 @@
    "trusted": true
   },
   {
-   "id": "M134",
+   "id": "M131",
    "file": "VE/Presupposition/Wire.lean",
    "line": 130,
    "definition": "VE.Presupposition.entersRestriction",
@@ -3950,7 +3880,7 @@
    "trusted": true
   },
   {
-   "id": "M135",
+   "id": "M132",
    "file": "VE/Presupposition/Wire.lean",
    "line": 87,
    "definition": "VE.Presupposition.cellOk",
@@ -3973,7 +3903,7 @@
    "trusted": true
   },
   {
-   "id": "M136",
+   "id": "M133",
    "file": "VE/Presupposition/Wire.lean",
    "line": 125,
    "definition": "VE.Presupposition.restrictionPaths",
@@ -3996,7 +3926,7 @@
    "trusted": true
   },
   {
-   "id": "M137",
+   "id": "M134",
    "file": "VE/Presupposition/Wire.lean",
    "line": 130,
    "definition": "VE.Presupposition.entersRestriction",
@@ -4019,7 +3949,7 @@
    "trusted": true
   },
   {
-   "id": "M138",
+   "id": "M135",
    "file": "VE/Presupposition/Wire.lean",
    "line": 88,
    "definition": "VE.Presupposition.cellOk",
@@ -4042,7 +3972,7 @@
    "trusted": true
   },
   {
-   "id": "M139",
+   "id": "M136",
    "file": "VE/Presupposition/Wire.lean",
    "line": 125,
    "definition": "VE.Presupposition.restrictionPaths",
@@ -4065,7 +3995,7 @@
    "trusted": true
   },
   {
-   "id": "M140",
+   "id": "M137",
    "file": "VE/Presupposition/Wire.lean",
    "line": 88,
    "definition": "VE.Presupposition.cellOk",
@@ -4088,7 +4018,7 @@
    "trusted": true
   },
   {
-   "id": "M141",
+   "id": "M138",
    "file": "VE/Presupposition/Wire.lean",
    "line": 125,
    "definition": "VE.Presupposition.restrictionPaths",
@@ -4111,7 +4041,7 @@
    "trusted": true
   },
   {
-   "id": "M142",
+   "id": "M139",
    "file": "VE/Presupposition/Wire.lean",
    "line": 125,
    "definition": "VE.Presupposition.restrictionPaths",
@@ -4134,7 +4064,7 @@
    "trusted": true
   },
   {
-   "id": "M143",
+   "id": "M140",
    "file": "VE/Presupposition/Wire.lean",
    "line": 125,
    "definition": "VE.Presupposition.restrictionPaths",
@@ -4157,7 +4087,7 @@
    "trusted": true
   },
   {
-   "id": "M144",
+   "id": "M141",
    "file": "VE/Presupposition/Wire.lean",
    "line": 86,
    "definition": "VE.Presupposition.cellOk",
@@ -4180,7 +4110,7 @@
    "trusted": true
   },
   {
-   "id": "M145",
+   "id": "M142",
    "file": "VE/Presupposition/Wire.lean",
    "line": 95,
    "definition": "VE.Presupposition.tableOk",
@@ -4203,7 +4133,7 @@
    "trusted": true
   },
   {
-   "id": "M146",
+   "id": "M143",
    "file": "VE/Presupposition/Wire.lean",
    "line": 98,
    "definition": "VE.Presupposition.rowNames",
@@ -4226,7 +4156,7 @@
    "trusted": true
   },
   {
-   "id": "M147",
+   "id": "M144",
    "file": "VE/Presupposition/Wire.lean",
    "line": 116,
    "definition": "VE.Presupposition.unitModes",
@@ -4249,7 +4179,7 @@
    "trusted": true
   },
   {
-   "id": "M148",
+   "id": "M145",
    "file": "VE/Presupposition/Wire.lean",
    "line": 120,
    "definition": "VE.Presupposition.carrierAllowed",
@@ -4272,7 +4202,7 @@
    "trusted": true
   },
   {
-   "id": "M149",
+   "id": "M146",
    "file": "VE/Presupposition/Wire.lean",
    "line": 124,
    "definition": "VE.Presupposition.restrictionPaths",
@@ -4295,7 +4225,7 @@
    "trusted": true
   },
   {
-   "id": "M150",
+   "id": "M147",
    "file": "VE/Presupposition/Wire.lean",
    "line": 130,
    "definition": "VE.Presupposition.entersRestriction",
@@ -4318,7 +4248,7 @@
    "trusted": true
   },
   {
-   "id": "M151",
+   "id": "M148",
    "file": "VE/Presupposition/Wire.lean",
    "line": 134,
    "definition": "VE.Presupposition.ruleConditions",
@@ -4341,7 +4271,7 @@
    "trusted": true
   },
   {
-   "id": "M152",
+   "id": "M149",
    "file": "VE/Presupposition/Wire.lean",
    "line": 86,
    "definition": "VE.Presupposition.cellOk",
@@ -4364,7 +4294,7 @@
    "trusted": true
   },
   {
-   "id": "M153",
+   "id": "M150",
    "file": "VE/Presupposition/Wire.lean",
    "line": 95,
    "definition": "VE.Presupposition.tableOk",
@@ -4387,7 +4317,7 @@
    "trusted": true
   },
   {
-   "id": "M154",
+   "id": "M151",
    "file": "VE/Presupposition/Wire.lean",
    "line": 98,
    "definition": "VE.Presupposition.rowNames",
@@ -4410,7 +4340,7 @@
    "trusted": true
   },
   {
-   "id": "M155",
+   "id": "M152",
    "file": "VE/Presupposition/Wire.lean",
    "line": 116,
    "definition": "VE.Presupposition.unitModes",
@@ -4433,7 +4363,7 @@
    "trusted": true
   },
   {
-   "id": "M156",
+   "id": "M153",
    "file": "VE/Presupposition/Wire.lean",
    "line": 120,
    "definition": "VE.Presupposition.carrierAllowed",
@@ -4456,7 +4386,7 @@
    "trusted": true
   },
   {
-   "id": "M157",
+   "id": "M154",
    "file": "VE/Presupposition/Wire.lean",
    "line": 124,
    "definition": "VE.Presupposition.restrictionPaths",
@@ -4479,7 +4409,7 @@
    "trusted": true
   },
   {
-   "id": "M158",
+   "id": "M155",
    "file": "VE/Presupposition/Wire.lean",
    "line": 130,
    "definition": "VE.Presupposition.entersRestriction",
@@ -4502,7 +4432,7 @@
    "trusted": true
   },
   {
-   "id": "M159",
+   "id": "M156",
    "file": "VE/Presupposition/Wire.lean",
    "line": 134,
    "definition": "VE.Presupposition.ruleConditions",
@@ -4525,7 +4455,7 @@
    "trusted": true
   },
   {
-   "id": "M160",
+   "id": "M157",
    "file": "VE/Presupposition/Wire.lean",
    "line": 95,
    "definition": "VE.Presupposition.tableOk",
@@ -4548,7 +4478,7 @@
    "trusted": true
   },
   {
-   "id": "M161",
+   "id": "M158",
    "file": "VE/Presupposition/Wire.lean",
    "line": 98,
    "definition": "VE.Presupposition.rowNames",
@@ -4571,7 +4501,7 @@
    "trusted": true
   },
   {
-   "id": "M162",
+   "id": "M159",
    "file": "VE/Presupposition/Wire.lean",
    "line": 124,
    "definition": "VE.Presupposition.restrictionPaths",
@@ -4594,7 +4524,7 @@
    "trusted": true
   },
   {
-   "id": "M163",
+   "id": "M160",
    "file": "VE/Presupposition/Wire.lean",
    "line": 86,
    "definition": "VE.Presupposition.cellOk",
@@ -4617,7 +4547,7 @@
    "trusted": true
   },
   {
-   "id": "M164",
+   "id": "M161",
    "file": "VE/Presupposition/Wire.lean",
    "line": 95,
    "definition": "VE.Presupposition.tableOk",
@@ -4640,7 +4570,7 @@
    "trusted": true
   },
   {
-   "id": "M165",
+   "id": "M162",
    "file": "VE/Presupposition/Wire.lean",
    "line": 116,
    "definition": "VE.Presupposition.unitModes",
@@ -4663,7 +4593,7 @@
    "trusted": true
   },
   {
-   "id": "M166",
+   "id": "M163",
    "file": "VE/Presupposition/Wire.lean",
    "line": 124,
    "definition": "VE.Presupposition.restrictionPaths",
@@ -4686,7 +4616,7 @@
    "trusted": true
   },
   {
-   "id": "M167",
+   "id": "M164",
    "file": "VE/Presupposition/Wire.lean",
    "line": 130,
    "definition": "VE.Presupposition.entersRestriction",
@@ -4709,7 +4639,7 @@
    "trusted": true
   },
   {
-   "id": "M168",
+   "id": "M165",
    "file": "VE/Presupposition/Wire.lean",
    "line": 134,
    "definition": "VE.Presupposition.ruleConditions",
@@ -4732,7 +4662,7 @@
    "trusted": true
   },
   {
-   "id": "M169",
+   "id": "M166",
    "file": "VE/Presupposition/Wire.lean",
    "line": 86,
    "definition": "VE.Presupposition.cellOk",
@@ -4755,7 +4685,7 @@
    "trusted": true
   },
   {
-   "id": "M170",
+   "id": "M167",
    "file": "VE/Presupposition/Wire.lean",
    "line": 95,
    "definition": "VE.Presupposition.tableOk",
@@ -4778,7 +4708,7 @@
    "trusted": true
   },
   {
-   "id": "M171",
+   "id": "M168",
    "file": "VE/Presupposition/Wire.lean",
    "line": 116,
    "definition": "VE.Presupposition.unitModes",
@@ -4801,7 +4731,7 @@
    "trusted": true
   },
   {
-   "id": "M172",
+   "id": "M169",
    "file": "VE/Presupposition/Wire.lean",
    "line": 124,
    "definition": "VE.Presupposition.restrictionPaths",
@@ -4824,7 +4754,7 @@
    "trusted": true
   },
   {
-   "id": "M173",
+   "id": "M170",
    "file": "VE/Presupposition/Wire.lean",
    "line": 130,
    "definition": "VE.Presupposition.entersRestriction",
@@ -4847,7 +4777,7 @@
    "trusted": true
   },
   {
-   "id": "M174",
+   "id": "M171",
    "file": "VE/Presupposition/Wire.lean",
    "line": 134,
    "definition": "VE.Presupposition.ruleConditions",
@@ -4859,18 +4789,18 @@
    "before": "R.checked",
    "after": "(R.checked.drop 1)",
    "status": "KILLED",
-   "detail": "lean/VE/Presupposition/Examples.lean:602: Expression",
+   "detail": "lean/VE/Presupposition/Examples.lean:603: Expression",
    "raw_status": "KILLED",
    "reads": "ff68f538a4b8e122d487029cccc050bd6ee953f1537db0b07495a0526e3693bc",
    "killed_at": [
-    602,
-    603
+    603,
+    604
    ],
    "trust_class": "S",
    "trusted": true
   },
   {
-   "id": "M175",
+   "id": "M172",
    "file": "VE/Presupposition/Wire.lean",
    "line": 95,
    "definition": "VE.Presupposition.tableOk",
@@ -4893,7 +4823,7 @@
    "trusted": true
   },
   {
-   "id": "M176",
+   "id": "M173",
    "file": "VE/Presupposition/Wire.lean",
    "line": 124,
    "definition": "VE.Presupposition.restrictionPaths",
@@ -4916,7 +4846,7 @@
    "trusted": true
   },
   {
-   "id": "M177",
+   "id": "M174",
    "file": "VE/Presupposition/Wire.lean",
    "line": 87,
    "definition": "VE.Presupposition.cellOk",
@@ -4939,7 +4869,7 @@
    "trusted": true
   },
   {
-   "id": "M178",
+   "id": "M175",
    "file": "VE/Presupposition/Wire.lean",
    "line": 116,
    "definition": "VE.Presupposition.unitModes",
@@ -4962,7 +4892,7 @@
    "trusted": true
   },
   {
-   "id": "M179",
+   "id": "M176",
    "file": "VE/Presupposition/Wire.lean",
    "line": 124,
    "definition": "VE.Presupposition.restrictionPaths",
@@ -4985,7 +4915,7 @@
    "trusted": true
   },
   {
-   "id": "M180",
+   "id": "M177",
    "file": "VE/Presupposition/Wire.lean",
    "line": 130,
    "definition": "VE.Presupposition.entersRestriction",
@@ -4996,14 +4926,19 @@
    ],
    "before": "p",
    "after": "(p.reverse.take 1)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Presupposition/Examples.lean:601: Expression",
+   "raw_status": "KILLED",
+   "reads": "eefb821fa76e16e38364347465a8b93393eee0223bedcd4a7574849d8332e095",
+   "killed_at": [
+    601,
+    602
+   ],
    "trust_class": "S",
    "trusted": true
   },
   {
-   "id": "M181",
+   "id": "M178",
    "file": "VE/Presupposition/Wire.lean",
    "line": 134,
    "definition": "VE.Presupposition.ruleConditions",
@@ -5026,7 +4961,7 @@
    "trusted": true
   },
   {
-   "id": "M182",
+   "id": "M179",
    "file": "VE/Presupposition/Wire.lean",
    "line": 87,
    "definition": "VE.Presupposition.cellOk",
@@ -5049,7 +4984,7 @@
    "trusted": true
   },
   {
-   "id": "M183",
+   "id": "M180",
    "file": "VE/Presupposition/Wire.lean",
    "line": 116,
    "definition": "VE.Presupposition.unitModes",
@@ -5072,7 +5007,7 @@
    "trusted": true
   },
   {
-   "id": "M184",
+   "id": "M181",
    "file": "VE/Presupposition/Wire.lean",
    "line": 124,
    "definition": "VE.Presupposition.restrictionPaths",
@@ -5095,7 +5030,7 @@
    "trusted": true
   },
   {
-   "id": "M185",
+   "id": "M182",
    "file": "VE/Presupposition/Wire.lean",
    "line": 130,
    "definition": "VE.Presupposition.entersRestriction",
@@ -5118,7 +5053,7 @@
    "trusted": true
   },
   {
-   "id": "M186",
+   "id": "M183",
    "file": "VE/Presupposition/Wire.lean",
    "line": 134,
    "definition": "VE.Presupposition.ruleConditions",
@@ -5141,7 +5076,7 @@
    "trusted": true
   },
   {
-   "id": "M187",
+   "id": "M184",
    "file": "VE/Presupposition/Wire.lean",
    "line": 95,
    "definition": "VE.Presupposition.tableOk",
@@ -5164,7 +5099,7 @@
    "trusted": true
   },
   {
-   "id": "M188",
+   "id": "M185",
    "file": "VE/Presupposition/Wire.lean",
    "line": 124,
    "definition": "VE.Presupposition.restrictionPaths",
@@ -5187,7 +5122,7 @@
    "trusted": true
   },
   {
-   "id": "M189",
+   "id": "M186",
    "file": "VE/Presupposition/Wire.lean",
    "line": 87,
    "definition": "VE.Presupposition.cellOk",
@@ -5210,7 +5145,7 @@
    "trusted": true
   },
   {
-   "id": "M190",
+   "id": "M187",
    "file": "VE/Presupposition/Wire.lean",
    "line": 125,
    "definition": "VE.Presupposition.restrictionPaths",
@@ -5233,7 +5168,7 @@
    "trusted": true
   },
   {
-   "id": "M191",
+   "id": "M188",
    "file": "VE/Presupposition/Wire.lean",
    "line": 130,
    "definition": "VE.Presupposition.entersRestriction",
@@ -5256,7 +5191,7 @@
    "trusted": true
   },
   {
-   "id": "M192",
+   "id": "M189",
    "file": "VE/Presupposition/Wire.lean",
    "line": 87,
    "definition": "VE.Presupposition.cellOk",
@@ -5279,7 +5214,7 @@
    "trusted": true
   },
   {
-   "id": "M193",
+   "id": "M190",
    "file": "VE/Presupposition/Wire.lean",
    "line": 125,
    "definition": "VE.Presupposition.restrictionPaths",
@@ -5302,7 +5237,7 @@
    "trusted": true
   },
   {
-   "id": "M194",
+   "id": "M191",
    "file": "VE/Presupposition/Wire.lean",
    "line": 130,
    "definition": "VE.Presupposition.entersRestriction",
@@ -5325,7 +5260,7 @@
    "trusted": true
   },
   {
-   "id": "M195",
+   "id": "M192",
    "file": "VE/Presupposition/Wire.lean",
    "line": 95,
    "definition": "VE.Presupposition.tableOk",
@@ -5348,7 +5283,7 @@
    "trusted": true
   },
   {
-   "id": "M196",
+   "id": "M193",
    "file": "VE/Presupposition/Wire.lean",
    "line": 125,
    "definition": "VE.Presupposition.restrictionPaths",
@@ -5371,7 +5306,7 @@
    "trusted": true
   },
   {
-   "id": "M197",
+   "id": "M194",
    "file": "VE/Presupposition/Wire.lean",
    "line": 88,
    "definition": "VE.Presupposition.cellOk",
@@ -5394,7 +5329,7 @@
    "trusted": true
   },
   {
-   "id": "M198",
+   "id": "M195",
    "file": "VE/Presupposition/Wire.lean",
    "line": 125,
    "definition": "VE.Presupposition.restrictionPaths",
@@ -5417,7 +5352,7 @@
    "trusted": true
   },
   {
-   "id": "M199",
+   "id": "M196",
    "file": "VE/Presupposition/Wire.lean",
    "line": 88,
    "definition": "VE.Presupposition.cellOk",
@@ -5440,7 +5375,7 @@
    "trusted": true
   },
   {
-   "id": "M200",
+   "id": "M197",
    "file": "VE/Presupposition/Wire.lean",
    "line": 125,
    "definition": "VE.Presupposition.restrictionPaths",
@@ -5463,7 +5398,7 @@
    "trusted": true
   },
   {
-   "id": "M201",
+   "id": "M198",
    "file": "VE/Presupposition/Wire.lean",
    "line": 95,
    "definition": "VE.Presupposition.tableOk",
@@ -5486,7 +5421,7 @@
    "trusted": true
   },
   {
-   "id": "M202",
+   "id": "M199",
    "file": "VE/Presupposition/Wire.lean",
    "line": 125,
    "definition": "VE.Presupposition.restrictionPaths",
@@ -5509,7 +5444,7 @@
    "trusted": true
   },
   {
-   "id": "M203",
+   "id": "M200",
    "file": "VE/Presupposition/Wire.lean",
    "line": 125,
    "definition": "VE.Presupposition.restrictionPaths",
