@@ -1,7 +1,10 @@
 """`select_tests --defer-heavy`: a builder run leaves the heavy test files that only weak reasons select
-to the chain gate, and never records them as passed.
+to the chain gate, and never records them as passed; with `--defer-broad` also the broad Lean consumers that only
+weak and Lean reasons select.
 
-Synthetic plans and maps; nothing runs a test file and every write goes under tmp_path.
+Synthetic plans and maps, and the recorded plans in tests/data/select_defer/ (each item's tip, `select_tests.py
+--base <base> --json` with that tip's code, trimmed to the selected units, their map seconds, and for the heavy
+ones their reasons and `lean_share` of the base's map); nothing runs a test file and every write goes under tmp_path.
 """
 from __future__ import annotations
 
@@ -45,7 +48,7 @@ def test_a_heavy_file_selected_only_for_weak_reasons_is_deferred():
     seconds = {"tests/test_weak.py": 600.0, "tests/test_strong.py": 600.0, "tests/test_light.py": 30.0}
     deferred = select_tests.defer_heavy(plan, seconds)
     assert deferred["deferred"] == {"tests/test_weak.py": {
-        "seconds": 600.0, "reasons": ["imports ve/a.py (static)", "lists the directory of ve/b.py"]}}
+        "seconds": 600.0, "reasons": ["imports ve/a.py (static)", "lists the directory of ve/b.py"], "class": "weak"}}
     assert deferred["deferred_seconds"] == 600.0
     assert deferred["selected"] == ["tests/test_light.py", "tests/test_strong.py"]
     assert deferred["selected_count"] == 2
@@ -163,6 +166,188 @@ def test_the_option_defers_and_keeps_what_failed_last_time(monkeypatch, capsys):
 @pytest.mark.parametrize("other", [["--full"], ["--impacted"], ["--tier", "light"]])
 def test_the_option_refuses_full_impacted_and_tier_runs(monkeypatch, other):
     monkeypatch.setattr(sys, "argv", ["select_tests.py", "--paths", "ve/a.py", "--defer-heavy", *other])
+    with pytest.raises(SystemExit) as stopped:
+        select_tests.main()
+    assert stopped.value.code == 2
+
+
+# --- --defer-broad -------------------------------------------------------------------------------------------
+
+FIVE = ("tests/test_trust_mutants.py", "tests/test_acts_vocab_mutants.py", "tests/test_english_evidence.py",
+        "tests/test_readings_rd6b_differential.py", "tests/test_speech_polar_lean.py")
+RECORDED = ROOT / "tests/data/select_defer"
+BROAD = select_tests.BROAD_LEAN_SHARE
+
+
+def test_lean_reasons_are_the_lean_trees_files_never_python_or_static():
+    lean = ["reads lean/VE/Scope/Plain.lean", "reads lean/declarations.txt", "reads lean/statements.txt",
+            "runs Lean via lean/VE/Scope/Plain.lean", "runs service mode via lean/VE/Senses/Run.lean"]
+    other = ["reads lean/audit.py", "runs Lean via lean/VE/A.lean (static)", "reads ve/a.py", "changed test",
+             "lean/audit.py:code_only reads a changed name", "runs git, which reads .gitattributes", "smoke"]
+    assert [reason for reason in lean + other if select_tests.lean_reason(reason)] == lean
+
+
+class Graph:
+    """A source graph with two executables: `small` holds A, `big` holds A, B and C."""
+    def __init__(self, root: Path, unreadable=()):
+        self.root, self.lean_unreadable = root, list(unreadable)
+        self.lean_modules = {f"VE.{name}": f"lean/VE/{name}.lean" for name in "ABCD"}
+        self.imports = {"Small": {"VE.A"}, "Big": {"VE.A", "VE.B", "VE.C"}}
+
+    def lean_closure(self, module: str) -> set[str]:
+        return {module, *self.imports.get(module, ())}
+
+
+def test_a_units_lean_reach_is_what_it_reads_and_the_closures_of_what_it_runs(tmp_path):
+    (tmp_path / "lean").mkdir()
+    (tmp_path / "lean/lakefile.toml").write_text(
+        '[[lean_exe]]\nname = "small"\nroot = "Small"\n[[lean_exe]]\nname = "big"\nroot = "Big"\n')
+    data = {"tests": ["tests/test_reads.py", "tests/test_small.py", "tests/test_big.py", "tests/test_lake.py",
+                      "tests/test_none.py"],
+            "reads": {f"lean/VE/{name}.lean": [0] if name == "A" else [] for name in "ABCD"}
+            | {"lean/declarations.txt": [0], "ve/a.py": [4]},
+            "programs": {"lean/.lake/build/bin/small": [1], "lean/.lake/build/bin/big": [2], "lake": [3],
+                         "git": [4]}}
+    assert select_tests.lean_shares(data, Graph(tmp_path)) == {
+        "tests/test_reads.py": 0.25, "tests/test_small.py": 0.25, "tests/test_big.py": 0.75, "tests/test_lake.py": 1.0}
+    assert select_tests.lean_shares(data, Graph(tmp_path, ["lean/VE/D.lean"]))["tests/test_small.py"] == 1.0
+    assert select_tests.lean_shares({"tests": [], "reads": {}, "programs": {}}, Graph(tmp_path)) == {}
+
+
+def test_a_unit_names_a_changed_module_or_its_directory_never_a_sibling():
+    changed = ["lean/VE/Scope/Authoring.lean"]
+    named = ['"lean/VE/Scope/Authoring.lean"', "import VE.Scope.Authoring", 'ROOT / "lean/VE/Scope/"',
+             '"lean/VE/Scope"']
+    not_named = ['"lean/VE/Scope/Govern.lean"', "VE.Scope.AuthoringExamples", "VE.Scope.Govern", "lean/VE/Scope.lean",
+                 "NVE/Scope/Authoring"]
+    assert [text for text in named + not_named if select_tests.names_changed_lean(text, changed)] == named
+    assert select_tests.names_changed_lean("lean/VE/Audit.lean", ["lean/VE/Audit.lean"])
+    assert not select_tests.names_changed_lean('"lean/VE/"', ["lean/VE/Audit.lean"])  # lean/VE is no family
+    assert select_tests.names_changed_lean('"lean/VE.lean"', ["lean/VE.lean"])
+    assert not select_tests.names_changed_lean("VE.Scope", ["lean/VE.lean"])
+    assert select_tests.names_changed_lean(select_tests.unit_text("tests/test_scope_lean.py"),
+                                           ["lean/VE/Scope/Plain.lean"])
+
+
+def broad_plan(**extra) -> tuple[dict, dict, dict]:
+    reasons = {"tests/test_broad.py": ["runs Lean via lean/VE/A/X.lean", "imports ve/a.py (static)"],
+               "tests/test_python.py": ["runs Lean via lean/VE/A/X.lean", "reads ve/a.py"],
+               "tests/test_narrow.py": ["runs Lean via lean/VE/A/X.lean"],
+               "tests/test_own.py": ["reads lean/VE/A/X.lean"],
+               "tests/test_weak.py": ["imports ve/a.py (static)"], **extra}
+    shares = {unit: 0.0 if unit == "tests/test_narrow.py" else 1.0 for unit in reasons}
+    return plan_of(reasons, changed=["lean/VE/A/X.lean"]), dict.fromkeys(reasons, HEAVY), shares
+
+
+def text_of(unit: str) -> str:
+    return 'LEAN = "lean/VE/A/X.lean"' if unit == "tests/test_own.py" else ""
+
+
+def test_with_shares_a_broad_lean_consumer_is_deferred_and_the_rest_stays():
+    plan, seconds, shares = broad_plan()
+    found = select_tests.defer_heavy(plan, seconds, shares=shares, text=text_of)
+    assert found["deferred"] == {
+        "tests/test_broad.py": {"seconds": HEAVY, "reasons": plan["reasons"]["tests/test_broad.py"],
+                                "class": "broad", "lean_share": 1.0},
+        "tests/test_weak.py": {"seconds": HEAVY, "reasons": ["imports ve/a.py (static)"], "class": "weak"}}
+    assert found["selected"] == ["tests/test_narrow.py", "tests/test_own.py", "tests/test_python.py"]
+    assert found["deferred_seconds"] == 2 * HEAVY
+    assert list(select_tests.defer_heavy(plan, seconds, text=text_of)["deferred"]) == ["tests/test_weak.py"]
+
+
+def test_the_share_threshold_is_inclusive():
+    plan, seconds, shares = broad_plan()
+    at = {**shares, "tests/test_broad.py": BROAD}
+    below = {**shares, "tests/test_broad.py": BROAD - 0.001}
+    assert "tests/test_broad.py" in select_tests.defer_heavy(plan, seconds, shares=at, text=text_of)["deferred"]
+    assert "tests/test_broad.py" not in select_tests.defer_heavy(plan, seconds, shares=below, text=text_of)["deferred"]
+
+
+def recorded(item: str) -> tuple[dict, dict, dict]:
+    row = json.loads((RECORDED / f"{item}.json").read_text())
+    reasons = {unit: row["reasons"].get(unit, ["(not recorded: under the threshold)"])
+               for unit in row["selected"]}
+    plan = {**plan_of(reasons, changed=row["changed"], full=row["full"]), "selected": row["selected"]}
+    return plan, row["seconds"], row["lean_share"]
+
+
+# One-family Lean changes: cmp-s3a-cfr-2 (RightClauses) and sc-7 (Scope) run none of the ve_service users
+# rd6b_differential and speech_polar_lean, so the plans recorded at their tips do not select those two; sn-b6d
+# (Senses) selects all five.
+ONE_FAMILY = {"cmp-s3a-cfr-2": FIVE[:3], "sc-7": FIVE[:3], "sn-b6d": FIVE}
+
+
+@pytest.mark.parametrize("item", sorted(ONE_FAMILY))
+def test_the_heavy_lean_wide_files_are_deferred_for_a_one_family_lean_change(item):
+    plan, seconds, shares = recorded(item)
+    assert set(FIVE) & set(plan["selected"]) == set(ONE_FAMILY[item])
+    found = select_tests.defer_heavy(plan, seconds, shares=shares)
+    assert {unit: found["deferred"].get(unit, {}).get("class") for unit in ONE_FAMILY[item]} == dict.fromkeys(
+        ONE_FAMILY[item], "broad")
+    assert not set(ONE_FAMILY[item]) & set(select_tests.defer_heavy(plan, seconds)["deferred"])  # no --defer-broad
+    before = sum(seconds.get(unit, 0.0) for unit in plan["selected"])
+    assert found["deferred_seconds"] > 0.4 * before  # about half the selected map seconds (REPORT)
+
+
+@pytest.mark.parametrize("item", sorted(ONE_FAMILY))
+@pytest.mark.parametrize("why", ["its source changed", "it failed last time"])
+def test_each_heavy_lean_wide_file_stays_when_it_changed_or_failed(item, why):
+    plan, seconds, shares = recorded(item)
+    for unit in ONE_FAMILY[item]:
+        changed = {**plan, "changed": [*plan["changed"], unit]} if why == "its source changed" else plan
+        found = select_tests.defer_heavy(changed, seconds, shares=shares,
+                                         keep={unit} if why == "it failed last time" else set())
+        assert unit not in found["deferred"] and unit in found["selected"], (unit, why)
+
+
+def test_a_familys_own_lean_test_and_a_python_reader_stay_in_the_recorded_sc_7_plan():
+    plan, seconds, shares = recorded("sc-7")
+    found = select_tests.defer_heavy(plan, seconds, shares=shares)
+    own = "tests/test_lean_audit_record.py"  # names lean/VE/Audit.lean, which sc-7 changed
+    assert shares[own] >= BROAD and all(select_tests.weak_reason(reason) or select_tests.lean_reason(reason)
+                                        for reason in plan["reasons"][own])
+    assert own not in found["deferred"]
+    assert "tests/test_consolidation_tools.py" not in found["deferred"]  # reads docs/trust-baseline.json
+
+
+def test_the_recorded_plans_before_and_after():
+    """The REPORT's numbers: map seconds of each recorded plan, selected, under --defer-heavy, and with
+    --defer-broad too. ps-2a changed Python (tools/lean_statements.py, lean/audit.py) and .gitattributes, so
+    most of its heavy units stay for a non-Lean reason."""
+    after = {}
+    for item in ("cmp-s3a-cfr-2", "sc-7", "ps-2a", "sn-b6d"):
+        plan, seconds, shares = recorded(item)
+        before = sum(seconds.get(unit, 0.0) for unit in plan["selected"])
+        heavy = select_tests.defer_heavy(plan, seconds)["deferred_seconds"]
+        broad = select_tests.defer_heavy(plan, seconds, shares=shares)["deferred_seconds"]
+        after[item] = (round(before), round(before - heavy), round(before - broad))
+    assert after == {"cmp-s3a-cfr-2": (19915, 19915, 5835), "sc-7": (24080, 24080, 12641),
+                     "ps-2a": (50868, 50712, 47814), "sn-b6d": (50047, 50047, 22076)}
+
+
+def test_the_option_passes_the_maps_shares_and_marks_broad_files(monkeypatch, capsys):
+    plan, seconds, shares = broad_plan()
+    monkeypatch.setattr(select_tests, "map_lean_shares", lambda found: shares if found is plan else {})
+    monkeypatch.setattr(select_tests, "unit_text", text_of)
+    found = main_plan(monkeypatch, capsys, plan, seconds, {}, "--defer-heavy", "--defer-broad")
+    assert {unit: row["class"] for unit, row in found["deferred"].items()} == {
+        "tests/test_broad.py": "broad", "tests/test_weak.py": "weak"}
+    assert list(main_plan(monkeypatch, capsys, plan, seconds, {}, "--defer-heavy")["deferred"]) == [
+        "tests/test_weak.py"]
+    plan.update(full_count=9, seconds=0.1, full_reasons=[])
+    monkeypatch.setattr(sys, "argv", ["select_tests.py", "--paths", "lean/VE/A/X.lean", "--static",
+                                      "--defer-heavy", "--defer-broad"])
+    assert select_tests.main() == 0
+    printed = capsys.readouterr().out
+    assert "deferred to the chain gate: 2 test files" in printed and "broad Lean consumers (1)" in printed
+    assert "tests/test_broad.py (broad), tests/test_weak.py" in printed
+
+
+
+@pytest.mark.parametrize("other", [[], ["--defer-heavy", "--full"], ["--defer-heavy", "--impacted"],
+                                   ["--defer-heavy", "--tier", "light"]])
+def test_defer_broad_takes_defer_heavy_and_its_exclusions(monkeypatch, other):
+    monkeypatch.setattr(sys, "argv", ["select_tests.py", "--paths", "ve/a.py", "--defer-broad", *other])
     with pytest.raises(SystemExit) as stopped:
         select_tests.main()
     assert stopped.value.code == 2
