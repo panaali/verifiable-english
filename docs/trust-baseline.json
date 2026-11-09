@@ -2266,6 +2266,20 @@
    "reason": "sn-b6-f8-written (DRI reviews/dri-decisions-20261109-sn-b6-f8-written.md item 1, from sn-b6-f8-trust): reclassification only, no Lean definition change; VE/Senses/Run.lean +13 V (Projection.written +8, SensesOutcome.written +5 moved from G[I] to G[V]: they write the request's profile list into the projection environment senses.project and senses.read return, and admittedIds reads it); K +0, S +0; trusted +13. FOLLOW-UP: a ties pass binding these lines.",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sn-b6-f8-written, 2026-11-09",
    "commit": "1ddb87dc12c73f12e05e9cc7d3c8f53bad5fab6a"
+  },
+  {
+   "class": "S",
+   "lines": 12,
+   "reason": "pe-1b: VE/Purposes/WellFormed.lean S +12 (Part.readings +1, Units.packSources +1, targetKind +7, holdsTarget +3, each counted from its docstring to the next declaration); packsInert, shownUnder, unlinkedActive are G[V] tied by packsInert_iff and packsInert_nil, shownUnder_iff, unlinkedActive_iff; K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pe-1b, 2026-11-09",
+   "commit": "0f9fc890970e06cb7c330a3dc84bfaa580144875"
+  },
+  {
+   "class": "V",
+   "lines": 41,
+   "reason": "ci-5: VE/SpeechActs/Wire.lean +31, VE/Acts/Lexical.lean +9, VE/Compose/Dispatch.lean +1 (trusted +41: D +40, G +1; K +0, S +0)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ci-5, 2026-10-18",
+   "commit": "e9a6ec8d5938051a70116918e34fc3cd92aac16e"
   }
  ]
 }
