@@ -175,6 +175,57 @@ def test_concurrent_lazy_control_of_one_file_is_computed_once():
     assert calls == [{(1, 1)}]
 
 
+def test_lazy_controls_of_different_files_can_probe_together():
+    from concurrent.futures import ThreadPoolExecutor
+    from threading import Barrier
+
+    both = Barrier(2)
+
+    def probing(file, only):
+        both.wait(timeout=HANG_TIMEOUT)
+        return {(1, 1): whole()}, {(1, 1)}
+
+    cache = tm.ControlProbes({"A.lean": None, "B.lean": None}, probing)
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        a = pool.submit(cache.get, ("A.lean", (1, 1)), {(1, 1)})
+        b = pool.submit(cache.get, ("B.lean", (1, 1)), {(1, 1)})
+        assert a.result() == b.result() == whole()
+
+
+def test_run_reads_the_unmutated_control_for_a_drifted_constant(tmp_path, monkeypatch):
+    lean = tmp_path / "lean"
+    (lean / "Demo").mkdir(parents=True)
+    (lean / "Demo/Defs.lean").write_text("abc")
+    (lean / "Demo/Check.lean").write_text("import Demo.Defs\n#guard true\n")
+
+    class Scratch:
+        def __init__(self):
+            self.lean = lean
+
+        def lake(self, env, *args, timeout=None):
+            return (1, "FAIL") if "+Demo.Check" in args and (lean / "Demo/Defs.lean").read_text() != "abc" else (0, "")
+
+    key = ("Demo/Check.lean", (2, 2))
+    control = tm.ControlProbes({key[0]: None}, lambda f, only: ({(2, 2): whole(**{"Demo.f": "old"})}, {(2, 2)}))
+    monkeypatch.setattr(tm, "targets", lambda *args: ["Demo.Defs", "Demo.Check"])
+    monkeypatch.setattr(tm, "moved", lambda *args: None)
+    monkeypatch.setattr(tm, "located", lambda output, pattern=tm.ERROR: [(*key[:1], 2, 1, "bad")] if output else [])
+    monkeypatch.setattr(tm, "named", lambda text, roles: (text, {"tmChk_2": (2, 2)}))
+    monkeypatch.setattr(tm, "probe", lambda lake, env, text, roles, path, outside=False, only=None: {
+        (2, 2): whole(**{"Demo.f": "drift"})})
+
+    def settle(found, read, checkout, roles, rebuild, reads, scope):
+        scope({key})
+        return "UNKNOWN", reads(key)
+
+    monkeypatch.setattr(tm, "settle", settle)
+    mutant = tm.Mutant("M001", "Demo/Defs.lean", 1, "Demo.f", "body-true", 0, 1, (1, 1), "a", "X")
+    mutant.edit = (1, "X")
+    tree = tm.Tree({"Demo/Check.lean": [(2, 2, "check", None)]}, {}, {}, {})
+    assert tm.run(mutant, Scratch(), tree, [], [], {}, hashes=control) == (
+        "UNKNOWN", "Demo.f, which it reads, is not what it is without the mutant")
+
+
 # --- `probe(only=...)` and `kept`, without Lean ------------------------------------------------------------------
 
 
