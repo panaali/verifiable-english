@@ -154,11 +154,21 @@ def shapeOutcomeCharged (se : SpeechEnvironment) (sc : Scope) (E : Env) (L : Lex
               then .many (alts.map fun rs => .shape (.seq xs) rs) else .limit
   | sh => shapeOutcome se sc E L b sh
 
+/-- The length fact is proved here again, not cited: a mutant that breaks it breaks this equation too, so a mutant
+sweep's cut removes the `@[csimp]` instead of leaving it on a broken proof. -/
 @[csimp] theorem shapeOutcome_charged : @shapeOutcome = @shapeOutcomeCharged := by
+  have hl : ∀ cs : List (List Reading), (readingTuples cs).length = productSize cs := by
+    intro cs
+    induction cs with
+    | nil => rfl
+    | cons xs rest ih =>
+      have h : ∀ ys : List Reading, (ys.flatMap fun x => (readingTuples rest).map (x :: ·)).length =
+          ys.length * productSize rest := fun ys => by
+        induction ys <;> simp_all [Nat.succ_mul, Nat.add_comm]
+      simp only [readingTuples, h, productSize]
   funext se sc E L b sh
   cases sh with
-  | seq xs =>
-    simp only [shapeOutcome, shapeOutcomeCharged, readingTuples_length]
+  | seq xs => simp only [shapeOutcome, shapeOutcomeCharged, hl]
   | _ => rfl
 
 /-- Each alternative is a complete interpretation of its shape: a sequence alternative has exactly one reading
