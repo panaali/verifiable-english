@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-gate-mutant-id-renumber-a37fa18e-t198523-s2",
+ "head": "fc430fd2c5acec8af6d37c9158abfa07c2b6952c",
+ "argv": [
+  "armsh-cand-gate-mutant-id-renumber-a37fa18e-t198523-s2",
+  "fc430fd2c5acec8af6d37c9158abfa07c2b6952c",
+  "7ae54c6cbe70db0d5912a87b5360e1c667983899",
+  "-",
+  "-",
+  "4",
+  "2/4"
+ ]
+}
