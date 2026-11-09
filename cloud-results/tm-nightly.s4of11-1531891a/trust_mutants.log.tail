@@ -1,0 +1,13 @@
+trust_mutants: 133 definitions, 414 mutants (38 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/Acts/Run.lean:89 VE.Acts.Run.isElaborate (G[V], trusted) eq-ne: == -> != (lean/VE/Readings/ActsExamples.lean:79: Expression (Lean could not elaborate it in the probe))
+UNKNOWN lean/VE/Compose/Dispatch.lean:1025 VE.Compose.eventsFault (G[V], trusted) list-empty: ((packRows.flatMap (rowChecks ps)).find? (·.1)) -> [] (lean/VE/Compose/Dispatch.lean:1025: Type mismatch)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:29 VE.Purposes.Units.find? (S, trusted) list-empty: Units -> [] (lean/VE/Purposes/WellFormed.lean:29: unexpected token '['; expected identifier)
+UNKNOWN lean/VE/Service/Standalone.lean:320 VE.Service.Standalone.validatedComposedEnvironment (G[V], trusted) bool-flip: false -> true (lean/VE/Service/ActsExamples.lean:559: Expression (Lean elaborates it otherwise than without the ...)
+UNKNOWN lean/VE/Commands/Steps.lean:16 VE.Commands.Shape (G[V], trusted) ctor-drop: | core (s : String) ->  (lean/VE/Commands/Steps.lean:32: Unknown constant `VE.Commands.Shape.core`)
+UNKNOWN lean/VE/Purposes/Decl.lean:40 VE.Purposes.Share (S, trusted) ctor-drop: | plain ->  (lean/VE/Purposes/WellFormed.lean:244: the failing proof cannot be cut: Unknown constant `VE.Purpo...)
+UNKNOWN lean/VE/NormDefaults/Layered.lean:126 VE.NormDefaults.Wire.decodeSoftU (D[V], trusted) list-empty: [softPack U src.D] -> [] (lean/VE/Defaults/Examples.lean:203: Expression (Lean could not elaborate it in the probe))
+trust_mutants: 30 KILLED, 0 SURVIVOR, 7 UNKNOWN, 1 INVALID, 0 ALLOWED, 0 NOT RUN, 376 OTHER SHARD in 5152 s
+trust_mutants: D[V], trusted: 7 KILLED, 1 UNKNOWN, 74 OTHER SHARD
+trust_mutants: G[V], trusted: 12 KILLED, 4 UNKNOWN, 1 INVALID, 134 OTHER SHARD
+trust_mutants: S, trusted: 11 KILLED, 2 UNKNOWN, 168 OTHER SHARD
+trust_mutants: steps: wall plan 8.8 s, scratch 5.6 s, control_build 0.3 s, probe_install 1.1 s, mutants 5129.1 s, cleanup 6.8 s, reads 0.2 s; lake control_build 0.2 s (1), probe_install 1 s (1), control_probes 975 s (32), mutant_builds 561.6 s (49), mutant_checks 12574.3 s (49), stage_controls 3953.5 s (17), mutant_probes 1528.6 s (38)
