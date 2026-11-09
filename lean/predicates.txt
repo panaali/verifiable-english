@@ -14,6 +14,7 @@ module ResponseShape.Encoders.Alternatives
 module ResponseShape.Encoders.Ask
 module ResponseShape.Encoders.Calc
 module ResponseShape.Encoders.Cardinality
+module ResponseShape.Encoders.ClausesElaborate
 module ResponseShape.Encoders.Command
 module ResponseShape.Encoders.Common
 module ResponseShape.Encoders.Conformance
@@ -51,6 +52,7 @@ module ResponseShape.Schemas.Calc
 module ResponseShape.Schemas.Cardinality
 module ResponseShape.Schemas.Check
 module ResponseShape.Schemas.CheckCertificate
+module ResponseShape.Schemas.ClausesElaborate
 module ResponseShape.Schemas.Command
 module ResponseShape.Schemas.Common
 module ResponseShape.Schemas.Diagnose
@@ -601,7 +603,12 @@ module VE.Readings.Wire
 module VE.RightClauses.Examples
 module VE.RightClauses.Plain
 module VE.RightClauses.Relation
+module VE.RightClauses.Run
 module VE.RightClauses.Tree
+module VE.RightClauses.Wire
+module VE.RightClauses.WireDecode
+module VE.RightClauses.WireName
+module VE.RightClauses.WireTheorems
 module VE.Rights.Admission
 module VE.Rights.Bar
 module VE.Rights.Correlate
@@ -1316,6 +1323,10 @@ VE.Reports.Source.J@VE.Attribution.Semantics
 VE.Reports.UniformPolarity@VE.Attribution.Content
 VE.Reports.WF@VE.Attribution.Facts
 VE.Reports.beliefsIn@VE.Attribution.Semantics
+VE.RightClauses.Distinct@VE.RightClauses.WireDecode
+VE.RightClauses.NoClauseKeys@VE.RightClauses.Wire
+VE.RightClauses.NoReadingSets@VE.RightClauses.Wire
+VE.RightClauses.PlainOnWire@VE.RightClauses.Wire
 VE.Rights.Admission.CouplingLeaf@VE.Rights.Admission
 VE.Rights.Admission.LayerLeaf@VE.Rights.Admission
 VE.Rights.Admission.NodeAdmitted@VE.Rights.Admission
