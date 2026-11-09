@@ -17866,6 +17866,15 @@
         "VE.RightClauses.lineKey"
       ]
     },
+    "VE/RightClauses/Relation.lean": {
+      "S": [
+        "VE.RightClauses.clauseSlot",
+        "VE.RightClauses.clauseSlotLabelled",
+        "VE.RightClauses.relPremises",
+        "VE.RightClauses.relPremisesLabelled",
+        "VE.RightClauses.totalF"
+      ]
+    },
     "VE/RightClauses/Examples.lean": {
       "T": [
         "VE.RightClauses.Examples.accessLine",
@@ -18990,15 +18999,6 @@
         "VE.Weighing.Examples.μd"
       ]
     },
-    "VE/RightClauses/Relation.lean": {
-      "S": [
-        "VE.RightClauses.clauseSlot",
-        "VE.RightClauses.clauseSlotLabelled",
-        "VE.RightClauses.relPremises",
-        "VE.RightClauses.relPremisesLabelled",
-        "VE.RightClauses.totalF"
-      ]
-    },
     "VE/Attitudes/Examples.lean": {
       "T": [
         "VE.Attitudes.Examples.FM",
@@ -19555,34 +19555,6 @@
         "VE.Attitudes.seedClosure"
       ]
     },
-    "ResponseShape/Schemas/ActReadings.lean": {
-      "G[R]": [
-        "ResponseShape.Schemas.ActReadings.act",
-        "ResponseShape.Schemas.ActReadings.file",
-        "ResponseShape.Schemas.ActReadings.nat",
-        "ResponseShape.Schemas.ActReadings.reading",
-        "ResponseShape.Schemas.ActReadings.result",
-        "ResponseShape.Schemas.ActReadings.row"
-      ]
-    },
-    "VE/Acts/RunExamples.lean": {
-      "T": [
-        "VE.Acts.RunExamples.Vsf",
-        "VE.Acts.RunExamples.acts",
-        "VE.Acts.RunExamples.count",
-        "VE.Acts.RunExamples.diag",
-        "VE.Acts.RunExamples.f300",
-        "VE.Acts.RunExamples.fnsOf",
-        "VE.Acts.RunExamples.frameJ",
-        "VE.Acts.RunExamples.fromsAt",
-        "VE.Acts.RunExamples.lastAdv",
-        "VE.Acts.RunExamples.p400",
-        "VE.Acts.RunExamples.paraphraseAt",
-        "VE.Acts.RunExamples.req",
-        "VE.Acts.RunExamples.row",
-        "VE.Acts.RunExamples.verdict"
-      ]
-    },
     "VE/Events/Chain.lean": {
       "D[V]": [
         "VE.Events.EventsEntailmentReplay",
@@ -19956,6 +19928,34 @@
         "VE.Closure.Tableau.Trace",
         "VE.Closure.Tableau.checkCertificate",
         "VE.Closure.Tableau.extraRule"
+      ]
+    },
+    "ResponseShape/Schemas/ActReadings.lean": {
+      "G[R]": [
+        "ResponseShape.Schemas.ActReadings.act",
+        "ResponseShape.Schemas.ActReadings.file",
+        "ResponseShape.Schemas.ActReadings.nat",
+        "ResponseShape.Schemas.ActReadings.reading",
+        "ResponseShape.Schemas.ActReadings.result",
+        "ResponseShape.Schemas.ActReadings.row"
+      ]
+    },
+    "VE/Acts/RunExamples.lean": {
+      "T": [
+        "VE.Acts.RunExamples.Vsf",
+        "VE.Acts.RunExamples.acts",
+        "VE.Acts.RunExamples.count",
+        "VE.Acts.RunExamples.diag",
+        "VE.Acts.RunExamples.f300",
+        "VE.Acts.RunExamples.fnsOf",
+        "VE.Acts.RunExamples.frameJ",
+        "VE.Acts.RunExamples.fromsAt",
+        "VE.Acts.RunExamples.lastAdv",
+        "VE.Acts.RunExamples.p400",
+        "VE.Acts.RunExamples.paraphraseAt",
+        "VE.Acts.RunExamples.req",
+        "VE.Acts.RunExamples.row",
+        "VE.Acts.RunExamples.verdict"
       ]
     },
     "VE/Presupposition/Wire.lean": {
