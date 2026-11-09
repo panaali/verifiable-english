@@ -19309,7 +19309,6 @@
         "VE.Presupposition.RContent",
         "VE.Presupposition.RReading",
         "VE.Presupposition.aliasesOf",
-        "VE.Presupposition.candidateTable",
         "VE.Presupposition.carrierAllowed",
         "VE.Presupposition.cellOk",
         "VE.Presupposition.claimReading",
@@ -19342,6 +19341,11 @@
         "VE.Presupposition.unitContent",
         "VE.Presupposition.unitOf",
         "VE.Presupposition.unitReadings"
+      ]
+    },
+    "VE/Presupposition/Table.lean": {
+      "S": [
+        "VE.Presupposition.candidateTable"
       ]
     },
     "VE/Defaults/ZoneWire.lean": {

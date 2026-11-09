@@ -2,6 +2,7 @@ import VE.Presupposition.Rows
 import VE.Presupposition.Rules
 import VE.Presupposition.Agree
 import VE.Presupposition.Wire
+import VE.Presupposition.Table
 import VE.Discourse.Descriptions
 import VE.Finite
 
@@ -494,7 +495,7 @@ def fixtureTable : CandidateTable := fun _ pc => match pc with
   | .negated => [.assumed, .conditioned, .inPlace]
   | _ => [.assumed, .conditioned]
 #guard tableOk rowNames fixtureTable
-#guard tableOk rowNames candidateTable
+#guard tableOk rowNames candidateTable && tableOk rowNames (fun _ _ => [])
 #guard !tableOk rowNames (fun _ _ => [.asserted])
 #guard !tableOk rowNames (fun _ pc => if pc == .ruleAct then [.asserted] else [])
 #guard !tableOk rowNames (fun _ _ => [.assumed, .asserted])
@@ -529,7 +530,8 @@ def chk12 : Checked :=
   carrierAllowed fixtureTable chk12 .conditioned && !carrierAllowed fixtureTable chk12 .asserted
 -- the cell is read at the obligation's own class: at the top cell in place is not listed
 #guard !carrierAllowed fixtureTable { chk12 with pos := .top } .inPlace
-#guard carrierAllowed candidateTable chk12 .assumed && !carrierAllowed candidateTable chk12 .conditioned
+#guard carrierAllowed candidateTable chk12 .assumed && !carrierAllowed candidateTable chk12 .conditioned &&
+  !carrierAllowed (fun _ _ => []) chk12 .assumed
 
 -- S25 (R-4): `not (not ·)` is negated but not shallow: a recorded in place is refused, conditioned is not.
 def chk25 : Checked := { chk12 with frame := negNegF, ob := { ob12 with position := .path [0, 0] } }
@@ -684,7 +686,6 @@ def repR2 : Report :=
 #guard (expectedReadings fixtureTable repR2 (chkR "a" "r1" .unresolved pAtom)).map (·.map (·.content)) ==
   some [.rule (conditionNode nodeR q26), .rule (conditionNode (conditionNode nodeR pAtom) q26)]
 
--- R-D6: restriction paths point at `D` in `strong`; the body `P` sits at `[0, 1, 1]` (definite) and `[1, 0, 1]`
 
 -- S17 and the document's accessors: premises are the background, then the asserted claims strictly before the unit.
 def r17 : RReading := { cand := .assumed, aliases := [], content := .claim .top, premise := none }
@@ -702,7 +703,7 @@ def docS17 : PDoc :=
   { E := { sorts := ["entity"], predicates := fun _ => none, constants := fun _ => none }, lits := [],
     norms := emptyTree, defaults := false, unspec := [], background := [.top],
     units := unitsS17, proofs := [("d1", cert17)], block := none }
-#guard premisesBefore docS17 "u2" == [.top, .unary "earlier" (.const "c")]
+#guard premisesBefore docS17 "u2" == [.top, .unary "earlier" (.const "c")] && premisesBefore docS17 "u1" == [.top]
 #guard premisesBefore docS17 "u5" == [.top, .unary "earlier" (.const "c"), rOwner.strong, rOwner.pre]
 #guard unitContent docS17 "u1" == some (.unary "earlier" (.const "c")) && unitContent docS17 "u4" == none &&
   unitContent docS17 "zz" == none
