@@ -819,7 +819,18 @@ def wrapperRows : List ProfileRow := [
   -- scope@0 (SC-1b): a wrapper at step 1b over the chain's routes, which the document mode runs (`gate_scope`)
   ⟨"scope@0", ["norms@0"], refusing "scope@0" (outsideProfiles ++ ["ve.discourse@1"]), "govern", .rewrite 12⟩]
 
-def profileTable : List ProfileRow := baseRows ++ wrapperRows
+/-- What `events@0` refuses (events 1.1), in code point order, so the first refused profile of a sorted list is named. -/
+def eventsRefused : List String :=
+  ["alternatives@0", "closure@0", "data@0", "nary@0", "order@0", "reports@0", "risk@0", "speech-acts@0", "time@0"]
+
+/-- The pack profiles' rows (profile-composition 1.1). They are first: a list with such a profile is refused with the
+row's own text before any other row's (events 4, item 1). The modes that gate by `baseRows` hook no pack, so they keep
+refusing the profile as an unknown one. -/
+def packRows : List ProfileRow := [
+  ⟨"events@0", ["relational-fol@0", "norms@0", "norm-defaults@0"], refusing "events@0" eventsRefused, "pack",
+    .pack "events"⟩]
+
+def profileTable : List ProfileRow := packRows ++ baseRows ++ wrapperRows
 
 /-- The slots each interface may sit on. -/
 def slotAgrees (slot : String) : Interface → Bool
@@ -973,11 +984,11 @@ theorem gateOf_iff (t ps r) : gateOf t ps = .ok r ↔ TableAdmits t ps ∧ r = r
 theorem rowChecks_erase (ps : List String) (hn : ps.Nodup) (hd : "documents@1" ∈ ps) :
     ∀ r ∈ profileTable, rowChecks (ps.erase "judgments@0") r = rowChecks ps r := by
   intro r hr
-  simp only [profileTable, baseRows, wrapperRows, List.cons_append, List.nil_append, List.mem_cons,
+  simp only [profileTable, packRows, baseRows, wrapperRows, List.cons_append, List.nil_append, List.mem_cons,
     List.not_mem_nil, or_false] at hr
   rcases hr with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl |
-    rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
-    simp [rowChecks, refusing, speechOthers, outsideProfiles, actsRefuses, cardinalityOthers, toString,
+    rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
+    simp [rowChecks, refusing, speechOthers, outsideProfiles, actsRefuses, cardinalityOthers, eventsRefused, toString,
       String.reduceAppend, hn.mem_erase_iff, hd]
 
 theorem find_erase (ps : List String) (f : String → Bool) (h : f "judgments@0" = false) :
@@ -1000,12 +1011,75 @@ theorem gate_judgments (ps : List String) (hs : ps.Pairwise (· < ·)) (hd : "do
     simp only [List.flatMap]
     rw [List.map_congr_left (rowChecks_erase ps hn hd)]
   have hr : routeOf profileTable (ps.erase "judgments@0") = routeOf profileTable ps := by
-    simp only [routeOf, heads, profileTable, baseRows, wrapperRows, List.find?_cons, List.find?_nil,
+    simp only [routeOf, heads, profileTable, packRows, baseRows, wrapperRows, List.find?_cons, List.find?_nil,
       List.any_cons, List.any_nil, List.cons_append, List.nil_append, String.reduceBEq, Bool.false_and,
       Bool.true_and, Bool.or_false, Bool.false_or, Bool.or_self]
     simp [hn.mem_erase_iff]
   unfold gateOf
   rw [if_neg (by simpa using hs), if_neg (by simpa using hs'), hk, hc, hr]
+
+/-! ### `gate_events`: what the `events@0` row newly admits (events 6.3, `events_row_composition`; SYNTHESIS 2.2) -/
+
+/-- The `events@0` row's first fault on a list: its `requires` in order, then its `refuses`. -/
+def eventsFault (ps : List String) : Option String := ((packRows.flatMap (rowChecks ps)).find? (·.1)).map (·.2)
+
+theorem find_erase_events (ps : List String) (f : String → Bool) (h : f "events@0" = false) :
+    (ps.erase "events@0").find? f = ps.find? f := by
+  induction ps with
+  | nil => rfl
+  | cons a l ih =>
+    by_cases ha : a = "events@0"
+    · subst ha; simp [h]
+    · simp only [List.erase_cons, beq_iff_eq, ha, if_false, List.find?_cons, ih]
+
+/-- A list of known profiles with `events@0` is refused with the row's text before any other check when the row has a
+fault; otherwise it is admitted, with its route, exactly as the same list without `events@0`, and refused with the same
+text otherwise. The profile's only effect beyond the gate is the pack (`VE.Events.events_row_composition`). -/
+theorem gate_events (ps : List String) (hs : ps.Pairwise (· < ·))
+    (hk : ps.find? (fun p => !profileTable.any (·.profile == p)) = none) :
+    match eventsFault ps with
+    | some t => gateOf profileTable ps = .error (unsupported t)
+    | none => gateOf profileTable ps = gateOf profileTable (ps.erase "events@0") := by
+  have hn : ps.Nodup := hs.imp fun h e => by subst e; exact String.lt_asymm h h
+  have hs' : (ps.erase "events@0").Pairwise (· < ·) := hs.sublist (List.erase_sublist ..)
+  have hfree : ∀ r ∈ baseRows ++ wrapperRows, r.profile ≠ "events@0" ∧ "events@0" ∉ r.requires ∧
+      "events@0" ∉ r.refuses.map (·.1) := by decide
+  have hc : ∀ x, x ≠ "events@0" → (ps.erase "events@0").contains x = ps.contains x := fun x hx => by
+    simp [hn.mem_erase_iff, hx]
+  have hrest : ∀ r ∈ baseRows ++ wrapperRows, rowChecks (ps.erase "events@0") r = rowChecks ps r := fun r hr => by
+    obtain ⟨h1, h2, h3⟩ := hfree r hr
+    unfold rowChecks
+    simp only [hc _ h1]
+    congr 1
+    · exact List.map_congr_left fun q hq => by rw [hc q fun e => h2 (e ▸ hq)]
+    · exact List.map_congr_left fun x hx => by
+        rw [hc x.1 fun e => h3 (List.mem_map.mpr ⟨x, hx, e⟩)]
+  have ht : (baseRows ++ wrapperRows).flatMap (rowChecks (ps.erase "events@0")) =
+      (baseRows ++ wrapperRows).flatMap (rowChecks ps) := by
+    simp only [List.flatMap]
+    rw [List.map_congr_left hrest]
+  have hoff : (packRows.flatMap (rowChecks (ps.erase "events@0"))).find? (·.1) = none := by
+    simp [packRows, rowChecks, refusing, eventsRefused, hn.mem_erase_iff]
+  have hsplit : ∀ l, (profileTable.flatMap (rowChecks l)).find? (·.1) =
+      ((packRows.flatMap (rowChecks l)).find? (·.1)).or (((baseRows ++ wrapperRows).flatMap (rowChecks l)).find? (·.1)) := by
+    intro l
+    simp only [profileTable, List.append_assoc, List.flatMap_append, List.find?_append]
+  have hr : routeOf profileTable (ps.erase "events@0") = routeOf profileTable ps := by
+    simp only [routeOf, heads, profileTable, packRows, baseRows, wrapperRows, List.find?_cons, List.find?_nil,
+      List.any_cons, List.any_nil, List.cons_append, List.nil_append, String.reduceBEq, Bool.false_and,
+      Bool.true_and, Bool.or_false, Bool.false_or, Bool.or_self]
+    simp [hn.mem_erase_iff]
+  unfold eventsFault
+  cases hf : (packRows.flatMap (rowChecks ps)).find? (·.1) with
+  | some c =>
+    simp only [Option.map_some]
+    unfold gateOf
+    rw [if_neg (by simpa using hs), hk, hsplit, hf, Option.some_or]
+  | none =>
+    simp only [Option.map_none]
+    have hk' := find_erase_events ps (fun p => !profileTable.any (·.profile == p)) (by decide)
+    unfold gateOf
+    rw [if_neg (by simpa using hs), if_neg (by simpa using hs'), hk', hsplit, hsplit, hf, hoff, ht, hr]
 
 /-- Review F5 of jt-2c: a list with a document layer that a composing mode decides is one the table admits as
 written, sorted and unique included, and the mode decides over it without the layers. -/
@@ -1169,7 +1243,7 @@ theorem todayHead_base (ps : List String) : todayHead (base ps) = todayHead ps :
 theorem routeOf_table (ps : List String) : routeOf profileTable ps =
     if ps.contains "ve.discourse@1" then .discourse else if ps.contains "right-clauses@0" then .clauses
     else if ps.contains "readings@1" then .readings else todayHead ps := by
-  simp only [routeOf, heads, profileTable, baseRows, wrapperRows, todayHead, List.find?_cons, List.find?_nil,
+  simp only [routeOf, heads, profileTable, packRows, baseRows, wrapperRows, todayHead, List.find?_cons, List.find?_nil,
     List.any_cons, List.any_nil, List.cons_append, List.nil_append, String.reduceBEq, Bool.false_and,
     Bool.true_and, Bool.or_false, Bool.false_or, Bool.or_self]
   cases ps.contains "ve.discourse@1" <;> cases ps.contains "right-clauses@0" <;> cases ps.contains "readings@1" <;>
@@ -1192,7 +1266,10 @@ theorem gate_legacy (ps) (h : ∀ p ∈ ps, p ∈ legacyProfiles) :
   unfold gateOf dispatch today
   rw [if_neg (by simpa using hs), if_neg (by simpa using hs), hk, todayGate_base ps hs h]
   rw [routeOf_table, todayHead_base]
-  simp only [profileTable, List.flatMap_append, List.find?_append]
+  have he : "events@0" ∉ ps := fun hp => by simpa [legacyProfiles, registered, wrapperProfiles] using h _ hp
+  have hq : (packRows.flatMap (rowChecks ps)).find? (·.1) = none := by
+    simp [packRows, rowChecks, refusing, eventsRefused, he]
+  simp only [profileTable, List.flatMap_append, List.find?_append, hq, Option.none_or]
   cases hA : (baseRows.flatMap (rowChecks ps)).find? (·.1) with
   | some c => rfl
   | none =>
