@@ -10,6 +10,8 @@ Review fix F1 (B): a soft list with the profile and no block replays its certifi
 **Open items:** et-4c (below): `embeddable` and the fragment on situations, the 6.3 answer theorems, T3/T3b, the other
 report fields, `origins`. Until then every answer about a situation on an events document is refused by name.
 Size: about 1,490 hand-written lines against the ~600 rule (see Size). Pilot bytes 0.
+**Trust mutants on the Lean as merged (et-4b-tm, 2026-11-09):** 471 mutants, 331 KILLED, 0 SURVIVOR, 0 UNKNOWN,
+74 INVALID, 66 ALLOWED, exit 0 ([trust-mutants.json](trust-mutants.json), section "et-4b-tm" below).
 
 Item: feature item et-4b (rank 132 of the feature feed, acting DRI dri-featurefeed, 2026-10-18). Branch
 `feature/et-4b` from main `fe252f79a`. Plan and spec are on main; nothing was copied.
@@ -83,7 +85,7 @@ The review of `194539566` (`manage-agents/et-4b-review.final.md`) had one B find
 
 ## Seeded bugs and mutants
 
-Every seeded bug is in [mutants.json](mutants.json) (88 records, with `file` and `test`); the tool's mutants of
+Every seeded bug is in [mutants.json](mutants.json) (92 records, with `file` and `test`); the tool's mutants of
 every other new trusted definition are [trust-mutants.json](trust-mutants.json).
 
 - **Lean, `lean/VE/Events/Wire.lean`:** `tests/test_events_wire_mutants.py` elaborates `Wire.lean` with
@@ -102,14 +104,19 @@ every other new trusted definition are [trust-mutants.json](trust-mutants.json).
   swapped, every role list read for its sibling); with the review's 7 and the old equivalents, 98 tests. Mac runner,
   1c24fb3e: 96 passed and 2 failed (one killed by a stack crash, one by a proof). Both got a guard that kills them, and
   the rerun of those ids passed (3 passed). `drop-decodeEvents-15` (et-4's equivalent node limit) is no longer
-  equivalent: the pack's total is reachable (`weaker 60`), so it is killed.
+  equivalent: the pack's total is reachable (`weaker 60`), so it is killed. et-4b-tm adds the `ORDER` table's two
+  (`order-links-before-roles`, `order-dates-before-links`), which replace base `swap-decodeEvents-11`/`-12`; see
+  "et-4b-tm".
 - **Lean, `lean/VE/NormDefaults/Packs.lean`:** `eventsArray-reads-soft` and `eventsArray-key` in
   `tests/test_packs_guard_mutants.py`, each failing a `PacksExamples.lean` guard (46 passed, VM).
 - **Lean, the route's files** (`Layered.lean`, `LayeredAdmission.lean`, `Run.lean`, `Compose/Dispatch.lean`,
   `Events/Chain.lean`, `Packs.lean`, the shapes): `tools/trust_mutants.py` with `--test WireExamples.lean --test
-  RouteExamples.lean` (full Mac run at 28d5911b6, then an allow-only rescore at 01d9048b (385 verdicts reused, identical inputs): 454 mutants over 20 definitions, 316 KILLED, 0 SURVIVOR, 0 UNKNOWN, 54 INVALID, 84 ALLOWED, exit 0. The 84 allowed are in [trust-mutants-allow.json](trust-mutants-allow.json), one line per definition and operator: equivalent ones (a list of at most one element, a list only `isEmpty` reads, the key the next line sets again), texts Lean refuses, and mutants a broken proof or more than 100 failing guards stop. Each line names the same-operator mutants that are killed. The first runs (VM, ac7dfa4a3) left 44 survivors; each one got a fixture in `RouteExamples.lean` (the rights branch, an accepting replay, two decisions, two soft premises, two events and states, the view's profiles and constants)).
-  The run on the final Lean is moved to et-4b-tm by the DRI's fix-round bound (lp0401 Q3); the committed
-  `trust-mutants.json` is the run on 01d9048bc, before review F1's change. A targeted run at 6ece79038 (reviews/tm-targeted/et-4b-et-4b-c050416.json in the orchestration repository, 41 of 464: 24 KILLED, 3 ALLOWED, 1 UNKNOWN, 13 NOT RUN at its deadline) stands in until then: the DRI allowed the UNKNOWN and cut the 13 to et-4b-tm, each covered by an existing kill (reviews/dri-decisions-20261105-et-4b-tm.md).
+  RouteExamples.lean` (full Mac run at 28d5911b6, then an allow-only rescore at 01d9048b (385 verdicts reused, identical inputs): 454 mutants over 20 definitions, 316 KILLED, 0 SURVIVOR, 0 UNKNOWN, 54 INVALID, 84 ALLOWED, exit 0. The 84 allowed were under [trust-mutants-allow.json](trust-mutants-allow.json) (54 lines then, 44 now), one line per definition and operator: equivalent ones (a list of at most one element, a list only `isEmpty` reads, the key the next line sets again), texts Lean refuses, and mutants a broken proof or more than 100 failing guards stop. Each line names the same-operator mutants that are killed. The first runs (VM, ac7dfa4a3) left 44 survivors; each one got a fixture in `RouteExamples.lean` (the rights branch, an accepting replay, two decisions, two soft premises, two events and states, the view's profiles and constants)).
+  That record was the run on 01d9048bc, before review F1's change; the run on the Lean as merged is et-4b-tm's
+  (lp0401 Q3) and replaces it: 471 mutants, 331 KILLED, 0 SURVIVOR, 0 UNKNOWN, 74 INVALID, 66 ALLOWED, exit 0 (see
+  "et-4b-tm"). The targeted run at 6ece79038 (reviews/tm-targeted/et-4b-et-4b-c050416.json in the orchestration
+  repository) stood in until then; its 13 NOT RUN, cut to et-4b-tm (reviews/dri-decisions-20261105-et-4b-tm.md), are
+  all KILLED in it.
 - **Lean, F1:** `f1-unblocked-certificate-refused` (`runCaseE` refuses after the replay) fails the guards at
   `RouteExamples.lean:333` and `:336`. `f1-unblocked-reads-the-raw-environment` (`replayUnblockedEntailment`
   decodes without the hook's view) breaks the proof of `unblocked_wire_acceptance`; with that proof stubbed, it fails
@@ -118,6 +125,71 @@ every other new trusted definition are [trust-mutants.json](trust-mutants.json).
   `python3 tools/check_lean_imports.py` print `new outward Lean import: VE.Events.RouteExamples -> VE.NormDefaults.Run`.
   The check runs in the gate and in `tests/test_precommit_hook.py`. No `ve/` or `rust/` product code changed (only
   generated data).
+
+## et-4b-tm: the trust-mutant record on the Lean as merged (2026-11-09)
+
+Item et-4b-tm (reviews/dri-decisions-20261105-lp0401-apply.md item 1, lp0401 Q3), branch `feature/et-4b-tm` from main
+`268829b1a`. No definition, statement, verdict or Lean file changed; no DELTA row; no trust growth; no signature reserved.
+
+- **Command** (`mac-pytest.sh --trustmut`, ve-mac-1, 6 jobs, 6,375 s, record head `6be3f873f`):
+  `--base 1a39ebef39c0 --only @docs/events-time-causation/et-4b/trust-mutants-only.txt --max-mutants 1000 --test
+  lean/VE/Events/WireExamples.lean --test lean/VE/Events/RouteExamples.lean --allow …/trust-mutants-allow.json
+  --rescore …/trust-mutants.json --json …/trust-mutants.json`. Output: `331 KILLED, 0 SURVIVOR, 0 UNKNOWN, 74 INVALID,
+  66 ALLOWED, 0 NOT RUN in 6375 s`; by class D[V] 158/60/48, G[V] 162/11/16, S 11/3/2 (KILLED/INVALID/ALLOWED); exit 0.
+- **Why `--base` and `--only`:** the task's command has neither. Its default base (the merge base with main) holds
+  none of et-4b's lines on this branch, so it plans nothing. `1a39ebef3` (main just before the et-4b merge `5fc9d8c7f`)
+  plans 1,009 mutants over 55 definitions, 32 of them other items' merged since (Purposes, Route/Inert, Closure, …).
+  `trust-mutants-only.txt` keeps the plan's mutants of et-4b's 23 definitions (the rebased record's,
+  reviews/tm-targeted/et-4b-rebase-20261108.json at a97072e60). Checked before the run: `trust_mutants.py --plan` with
+  the same options printed `definitions 23, mutants 471, to_run 471, not_run 0`; the 471 equal that record's 471 as
+  (definition, operator, before, after) multisets (0 missing, 0 extra). The ids are plan positions over `1a39ebef3`
+  and this tree: after a change to lean/, recompute them before a rerun.
+- **`--rescore`/`--resume`:** the tool printed `a full run, since its inputs differ (tool)`. The committed record
+  (454 mutants over 20 definitions, base fe252f79a) is another plan; no partial record exists to resume.
+- **Against the rebased record** (same 471): 19+1 raw UNKNOWN are now INVALID (the tool now classes those refused
+  texts itself); the 5 `requestOf` SURVIVORs (M039/M143/M164/M308/M329 there) are KILLED (`M121`, `M370`, `M413`,
+  `M687`, `M730` here, at the guards `RouteExamples.lean:383` to `:385` the tmbarrier ruling added); every other raw
+  verdict is the same. The 15 raw SURVIVORs and 51 raw UNKNOWNs left are allowed by lines et-4b's review already
+  read, each a raw SURVIVOR or UNKNOWN there. Deliverables (2) and (3) therefore needed no guard and no allow line.
+- **Allow file:** 54 to 44 lines. The 10 removed match no mutant of this record, each now INVALID or KILLED:
+  `openTermsOf` list-first/-last/-drop-first/-drop-last, `softCase` list-empty (the DRI's M034 line,
+  dri-decisions-20261105-et-4b-tm.md item 1: the tool now gives that text INVALID), `runCaseE` list-empty,
+  `usesNormDefaultsPath` body-true/body-false/list-empty, `decodeRightsU` list-empty. The allow file is no verdict
+  input (`inputs` has none). A probe checked that the statuses equal the raw ones with the pruned file applied
+  (`status consistent with pruned allow: True`).
+- **The 13 ids cut to this item** (c050416 numbering → this record, all KILLED, `killed_at` in RouteExamples.lean):
+  M300 → M669 (:337), M320 → M711 (:337), M302 → M671 (:262), M322 → M713 (:262), M319 → M710 (:262),
+  M344 → M762 (:263), M361 → M796 (:263), M402 → M883 (:263), M411 → M898 (:263), M378 → M834 (:305),
+  M391 → M858 (:305), M419 → M915 (:334), M425 → M926 (:334). No SURVIVOR among them, so the ruling's condition holds.
+- **Order mutants** (reviews/dri-decisions-20261108-et-4b-gate.md item 3), `ORDER` in
+  `tests/test_events_wire_mutants.py`, on `decodeThroughLinks`:
+  - `order-links-before-roles` (checkLinks before checkRoles) fails the item-4 sort-fault guards of
+    `WireExamples.lean` (:128, :129, :132, :152, :153, :169, :176, :178). Each has two faults: the base block's link
+    `contributed_to` reads `act` and `stay`, which a role fault leaves without a role sort.
+  - `order-dates-before-links` (`checkDates` inside `decodeThroughLinks`, before its `checkLinks`, as
+    `hook-dates-before-open` inserts the later step before the earlier one) fails "Item 5 before item 6" (:232) and
+    `LinkNotOpen` on `badDate` (:352).
+  - The two-fault fixtures existed, so no fixture was added. Both test ids pass (4 passed with the unmutated and
+    coverage tests, local).
+- **Required test** (reviews/dri-decisions-20261108-adv1416.md item 4): `RouteExamples.lean:390` to `:426`, added
+  on main by pk-1-conditions-b under the same ruling. It covers events@0 not owned (:416), the owned `Env` built
+  explicitly (`ownedEnv`), `layeredOf` refusing, never `.ok` (:420), `requestOf` null (:421), today's text (:423),
+  and the control (:425, :426). `check` binds `layeredOf` with `←` (`Service/Document.lean:2440`), so the error is the
+  document's refusal and the silent path is not reachable. The text `object expected` does not name events@0. The DRI
+  accepted that (dri-decisions-20261109-pk-1-conditions-b.md item 1), and naming it is the signed follow-up
+  events0-owned-named-refusal. No new finding. It stays selected: `lean/VE.lean` imports it, and `lake build VE` runs
+  in the `lake` fixture of `tests/test_events_wire_mutants.py` and in the gate.
+- **Seeded bugs** (each restored; the first two are in `mutants.json`):
+  1. All 8 guards that kill `order-links-before-roles` commented out:
+     `test_every_mutant_fails_a_fixture[order-links-before-roles]` FAILED, "survives every #guard".
+  2. :232 and :352 commented out: `[order-dates-before-links]` FAILED the same way (both runs:
+     `2 failed, 98 deselected`).
+  3. Lean, `Service/Document.lean` `requestOf`: the events@0 test emptied (`([] : List String).contains`, the silent
+     path; trust mutant M121's text), with DocumentChain's proofs stubbed. `lake build VE.Events.RouteExamples`
+     failed only at `#guard`s :383, :384, :385, :420, :421 and :423.
+- **Merge barrier:** `tm-barrier.py` reads `docs/*/et-4b-tm/` and `reviews/tm-targeted/et-4b-tm-*`. This record is in
+  `docs/events-time-causation/et-4b/` (the task's file list), so the barrier finds no record for et-4b-tm and the review
+  judges this one by hand.
 
 ## Trust, size, tests
 
@@ -174,7 +246,8 @@ Acceptance items: all AGENT; none HUMAN or EXTERNAL.
    Lean's) and no report test. `feature/pc-1` (`Dispatch.lean`, `layersApart`) and `feature/pc-3b`
    (`ContractExamples.lean`, the end of the file) overlap in other hunks.
 3. Tests can fail: PASS. `mutants.json`; `tests/test_events_wire_mutants.py` (HOOK and generated);
-   `tests/test_packs_guard_mutants.py`; `trust-mutants.json` (316 KILLED, 0 SURVIVOR, 0 UNKNOWN, 54 INVALID, 84 ALLOWED, exit 0).
+   `tests/test_packs_guard_mutants.py`; `trust-mutants.json` (et-4b-tm, on the Lean as merged: 331 KILLED, 0 SURVIVOR,
+   0 UNKNOWN, 74 INVALID, 66 ALLOWED, exit 0).
 4. Py/Lean/Rust agree: PASS. No Python or Rust decision changed. A list without `events@0` keeps every answer
    (`gate_legacy`, the block-less guards); the route cases are in the selected run.
 5. R8 binding: N.A. Python reads none of the new fields yet (et-5 binds them). The schema half is item 1.
@@ -212,12 +285,12 @@ Files:
 - lean/VE/NormDefaults/Layered.lean: hookView/hookBlock/hookPacks/hookNames, caseOpenTerms, the hook in decodeSoftU/decodeRightsU/decodeLayered, eventsArray in layeredElaborate
 - lean/VE/NormDefaults/LayeredAdmission.lean: replayLayeredOn(_L), layered_entailment_of_valid; Run.lean: eventsServed, pendingEvents, runCaseE, certificateAnswer (F1)
 - lean/VE/NormDefaults/Packs.lean: eventsArray; ResponseShape: the events selector, events_premises, digests, runCaseE_fits
-- fixtures: lean/VE/Events/{WireExamples,RouteExamples}.lean; tests/test_events_route.py; tests/test_events_wire_mutants.py (HOOK)
+- fixtures: lean/VE/Events/{WireExamples,RouteExamples}.lean; tests/test_events_route.py; tests/test_events_wire_mutants.py (HOOK, ORDER)
 - inventories by hand: tools/trust-classes.json, ve/assurance-manifest.json (decoder pins), tools/layer_policy.py (RouteExamples a runner fixture), tests/test_profile_table.py, tests/test_route_row_schemas.py, lean/VE/Compose/Examples.lean, ContractExamples.lean, Cardinality/Gate.lean
 Regression commands:
 - cd lean && PATH=~/.elan/bin:$PATH lake build VE.Events.RouteExamples VE.Events.WireExamples ResponseShape
 - uv run pytest -q tests/test_events_route.py tests/test_events_wire_mutants.py tests/test_profile_table.py
 - uv run python tools/trust_map.py --check
-- zsh /home/seyran/code/manage-agents/mac-pytest.sh --trustmut -- --max-mutants 1000 --test lean/VE/Events/WireExamples.lean --test lean/VE/Events/RouteExamples.lean --allow docs/events-time-causation/et-4b/trust-mutants-allow.json --json docs/events-time-causation/et-4b/trust-mutants.json
+- zsh /home/seyran/code/manage-agents/mac-pytest.sh --trustmut -- --base 1a39ebef39c00863cf608956b2a12a928f19cd1d --only @docs/events-time-causation/et-4b/trust-mutants-only.txt --max-mutants 1000 --test lean/VE/Events/WireExamples.lean --test lean/VE/Events/RouteExamples.lean --allow docs/events-time-causation/et-4b/trust-mutants-allow.json --json docs/events-time-causation/et-4b/trust-mutants.json
 Generated files: uv run python tools/regen_generated.py --write
 ## END FIXMAP
