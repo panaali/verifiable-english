@@ -6,14 +6,14 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 
 | | count |
 |---|---:|
-| leaves:bound | 289 |
+| leaves:bound | 290 |
 | leaves:closed domain | 309 |
-| leaves:none | 1580 |
+| leaves:none | 1584 |
 | modes | 42 |
 | today:hand | 203 |
 | today:later Lean request | 62 |
-| today:not probed | 1178 |
-| today:shape | 598 |
+| today:not probed | 1182 |
+| today:shape | 599 |
 | today:unbound | 137 |
 | answers | 589 |
 | probes | 10204 |
@@ -1676,6 +1676,9 @@ Delegates: `/` to norms.
 | `/base_environment/profiles/*` | string | none |  |  | 2 | not probed |
 | `/base_environment/spec_revision` | string | bound | x-equals |  | 2 | shape |
 | `/base_environment/vocabulary/constants` | any | bound | x-equals |  | 0 | shape |
+| `/base_environment/vocabulary/constants/@key` | key | none |  |  | 0 | not probed |
+| `/base_environment/vocabulary/constants/{}/description` | string | none |  |  | 0 | not probed |
+| `/base_environment/vocabulary/constants/{}/sort` | string | none |  |  | 0 | not probed |
 | `/base_environment/vocabulary/predicates/@key` | key | none |  |  | 6 | not probed |
 | `/base_environment/vocabulary/predicates/{}/arguments/*` | string | none |  |  | 10 | not probed |
 | `/base_environment/vocabulary/sorts` | any | bound | x-equals |  | 0 | shape |
@@ -1711,6 +1714,7 @@ Delegates: `/` to norms.
 | `/environment_id` | string | none |  |  | 5 | hand: `ve/norm_defaults.py:__init__` |
 | `/environment_id` | string | none |  | pattern | 5 | hand: `ve/norm_defaults.py:__init__` |
 | `/error` | string | none |  | minLength | 2 | not probed |
+| `/events_premises/*/label` | string | none |  | minLength | 0 | not probed |
 | `/fill/*/generator` | string | closed domain | const |  | 1 | shape |
 | `/fill_hash` | string | none |  |  | 3 | hand: `ve/norm_defaults.py:__init__` |
 | `/fill_labels/*` | string | none |  |  | 0 | unbound |
@@ -1803,6 +1807,7 @@ Delegates: `/` to norms.
 | `/coherence_targets/*/2` | generated_formula |  | 0 |
 | `/conflict_targets/*/ast` | generated_formula |  | 200 |
 | `/default_premises/*/1` | generated_formula |  | 0 |
+| `/events_premises/*/ast` | generated_formula |  | 0 |
 | `/fill/*/ast` | generated_formula |  | 53 |
 | `/kinds/*` | kind.anyOf.1 |  | 0 |
 | `/premises/*/ast` | generated_formula |  | 467 |
@@ -1836,6 +1841,7 @@ Delegates: `/` to norms.
 | `/default_premises/*` |  |  |  |  |
 | `/differs` |  |  |  |  |
 | `/differs/*/tuple` |  |  |  |  |
+| `/events_premises` |  |  |  |  |
 | `/fill` |  |  |  | drop: accept/ve/norm_defaults.py:<genexpr>; duplicate: accept/ve/norm_defaults.py:<genexpr> |
 | `/fill_labels` |  |  |  | drop: accept/ve/norm_defaults.py:<genexpr>; duplicate: accept/ve/norm_defaults.py:<genexpr> |
 | `/findings` |  |  |  | drop: accept/accepted; duplicate: accept/accepted |
@@ -3673,6 +3679,7 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/result/projection/environment/alternatives` | any | bound | x-equals |  | 0 | shape |
 | `/result/projection/environment/cardinality` | any | bound | x-equals |  | 0 | shape |
 | `/result/projection/environment/cardinality_schema` | any | bound | x-equals |  | 0 | shape |
+| `/result/projection/environment/events` | any | bound | x-equals |  | 0 | shape |
 | `/result/projection/environment/language` | any | bound | x-equals |  | 1 | shape |
 | `/result/projection/environment/profile` | any | bound | x-equals |  | 1 | shape |
 | `/result/projection/environment/profiles` | any | bound | x-equals |  | 0 | shape |
