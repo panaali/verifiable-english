@@ -1078,6 +1078,79 @@ def rights_env_without_profile():
     return raw
 
 
+def switch_env(parties=("user",)):
+    raw = rights_env()
+    raw["vocabulary"]["soft"] = {"parties": list(parties), "ranks": [], "outranks": [],
+                                 "outranking": {"mode": "strict"}}
+    return RightsEnvironment(raw)
+
+
+def test_rights_incident_roundtrip_with_switch():
+    """rights-cfr-5 (rights.md :228, :436): a line with a switch carries norm_english's
+    header option and survives render_line -> parse_line with its switch."""
+    env = switch_env()
+    for kind, norm in (("claim", claim()["norm"] | {"alterable": ["user"]}),
+                       ("claim", claim()["norm"] | {"alterable": ["user"], "mode": "default", "exception": {
+                           "decided_by": "unstated", "sufficient": [], "necessary": [], "factors": []}})):
+        source = render_line(env, "life", kind, norm)
+        assert source.startswith("Claim of right life (user may turn off). Every state ")
+        assert parse_line(env, source, name="protect") == {"right": "life", "kind": kind, "norm": norm}
+    two = switch_env(("operator", "user"))
+    norm = claim()["norm"] | {"alterable": ["operator", "user"]}
+    source = render_line(two, "1", "claim", norm)
+    assert source.startswith("Claim of right 1 (operator and user may turn off). ")
+    assert parse_line(two, source, name="protect")["norm"] == norm
+
+
+def test_rights_incident_header_the_renderer_never_writes_is_refused():
+    """The negative test of rights-cfr-5's signed widening: only the header forms
+    render_header_options writes for one rule are read; a precedence option (never
+    rendered on a single line), other spellings and spacings stay refused."""
+    env = switch_env(("operator", "user"))
+    body = "Every state must protect each person."
+    assert parse_line(env, "Claim of right life (user may turn off). " + body,
+                      name="protect")["norm"]["alterable"] == ["user"]
+    for header in (" ()", " (exception to rule 1)", " (exception to rules 1)",
+                   " (exception to rule 1; user may turn off)", " (user may turn off; exception to rule 1)",
+                   " (user may turn off;)", "  (user may turn off)", " (user  may turn off)",
+                   " (User may turn off)", " (user may turn it off)", " (operator, user may turn off)",
+                   " (user may turn off) ", "(user may turn off)", " [user may turn off]",
+                   " (user and operator may turn off)"):  # parties are rendered sorted
+        with pytest.raises(VEError):
+            parse_line(env, "Claim of right life" + header + ". " + body, name="protect")
+
+
+def test_generated_rights_lines_round_trip_one_by_one():
+    """rights-cfr-5 deliverable 3: every claim, liberty and immunity line of the
+    rights generator's documents (conformance/rights_differential.py, seeds 0-39)
+    survives render_line -> parse_line, switch-bearing and default lines included.
+    Lines with two or more carve-outs are left out: norm_english's soft parser does
+    not read its own `Except when` sentences back (follow-up rights-cfr-5b)."""
+    from conformance.rights_differential import document
+
+    switched = checked = 0
+    for seed in range(40):
+        raw, units = document(seed)
+        try:
+            rights = correlate(raw, units)
+        except VEError:
+            continue
+        env = RightsEnvironment(raw)
+        for unit in units:
+            block = unit.get("right") or unit.get("right_lines") or {}
+            for line in block.get("lines", ()):
+                norm = line.get("norm")
+                if (line["kind"] == "power" or norm["predicate"] is None or len(norm["unless"]) > 1):
+                    continue
+                name = block.get("name") or block["right"]
+                source = render_line(env, name, line["kind"], norm, rights=rights)
+                assert parse_line(env, source, name=norm["name"], rights=rights) == {
+                    "right": name, "kind": line["kind"], "norm": norm}, (seed, source)
+                checked += 1
+                switched += "alterable" in norm
+    assert checked >= 50 and switched >= 5, (checked, switched)
+
+
 def test_line_on_a_base_predicate_is_unknown_not_a_crash():
     """Review finding B (compose-s1-loop), class: a right's line on a predicate that is not regulated (in S1, one
     whose `regulated` is null, which reads as absent) raised `AttributeError` while the line environment was built,
