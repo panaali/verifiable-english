@@ -702,12 +702,12 @@
       },
       {
         "file": "lean/VE/Commands/Run.lean",
-        "lines": 311,
-        "sha256": "e10c4a393dff28a7f77fa86d676278c2b24faf76c90e013852c789bd83d9f47b",
+        "lines": 758,
+        "sha256": "7dac409606c191e43c4d88750f9d21d4713509801868f7ede807811f8679bfc4",
         "ranges": [
           [
             1,
-            311
+            758
           ]
         ],
         "declarations": [
@@ -715,9 +715,13 @@
           "readingJson",
           "outcomeFields",
           "encode",
-          "caseReported"
+          "caseReported",
+          "stepStarts",
+          "altParts",
+          "altIndexes",
+          "oneShape"
         ],
-        "reason": "commands-imperatives CI-2 (docs/spec/commands-imperatives.md section 6): english.command refuses a tree jsonWF? rejects, decodes the speech environment through the pinned decodeSpeechEnvironmentFull, english.read's case through decodeCase (its overlay and lexicon refusals first) and each query record through the pinned decodeQuery, and writes readInstruction's outcome with the request's id, unit and scope legend; the full file is pinned conservatively"
+        "reason": "commands-imperatives CI-2 (docs/spec/commands-imperatives.md section 6): english.command refuses a tree jsonWF? rejects, decodes the speech environment through the pinned decodeSpeechEnvironmentFull, english.read's case through decodeCase (its overlay and lexicon refusals first) and each query record through the pinned decodeQuery, and writes readInstruction's outcome with the request's id, unit and scope legend; the full file is pinned conservatively; ci-3 (section 7): readInstruction returns StepOutcome through readStep, and the encoder writes steps, many alternatives and after_previous with each step's spans"
       },
       {
         "file": "lean/VE/Core/Bridge.lean",
@@ -2068,12 +2072,12 @@
       },
       {
         "file": "lean/VE/SpeechActs/Source/Run.lean",
-        "lines": 934,
-        "sha256": "95fb8af85dedc9771b9f43c8026214fcdc16e2beeaadd528c395ca03ed451bfe",
+        "lines": 951,
+        "sha256": "388b11c9a683f7b8efec691b01e57cceba34a3cbd9356080d4276c57e55cec5d",
         "ranges": [
           [
             1,
-            934
+            951
           ]
         ],
         "declarations": [
@@ -2086,18 +2090,20 @@
           "answerRecords",
           "externalRecord",
           "complianceRecords",
-          "decodeSpeechSource"
+          "decodeSpeechSource",
+          "stepUnits",
+          "thenFault"
         ],
-        "reason": "speech-act decoded-source wrapper (8.5): ve-document@2 units, reading sets, records and identity; the full file is pinned conservatively"
+        "reason": "speech-act decoded-source wrapper (8.5): ve-document@2 units, reading sets, records and identity; the full file is pinned conservatively; ci-3: an authored Then instruction unit (by its effective kind) is ThenWithoutStep after the core check"
       },
       {
         "file": "lean/VE/SpeechActs/Wire.lean",
-        "lines": 1322,
-        "sha256": "84a51fbbe86cef4069b106eb11d77b94ed2de9db427b72fc4f43a8af9cb88723",
+        "lines": 1326,
+        "sha256": "e568a389eb8fa1a72263edbe10d3136f8cc63a894ac18f8fa11e7fc35c74798e",
         "ranges": [
           [
             1,
-            1322
+            1326
           ]
         ],
         "declarations": [
@@ -2110,7 +2116,7 @@
           "checkActsBlock",
           "decodeEnvironmentWith"
         ],
-        "reason": "speech scope, content, identity and document decoder; the full file is pinned conservatively; ci-5: the profile gate and the decoder over an allowlist (acts@0 joins it), W1's acts@0 hook on, checkActsBlock"
+        "reason": "speech scope, content, identity and document decoder; the full file is pinned conservatively; ci-5: the profile gate and the decoder over an allowlist (acts@0 joins it), W1's acts@0 hook on, checkActsBlock; ci-3: surfaceKind reads If <c>, <verb> and Then <verb> as instructions"
       },
       {
         "file": "lean/VE/Time/Document.lean",

@@ -13,10 +13,12 @@ whose normalised text starts `if ` or `then `, the only texts the new cases can 
 `surfaceKind` is main's). So no signed choice flips: 0 b3 rows, 0 removed conflicts. SA's (ββ) premise "If Alice must
 click Check then Atlas is reviewed." has no comma and stays `asserted` (`RunExamples.lean`, `webKind` guard).
 
-## The reader: 96 fixture wordings over `E_web`
+## The reader: 96 fixture wordings, each over `E_web`
 
 Base: main's entry (`proofTask`, else `readCommand`), lifted with `lift (.core s) false`; head: `readInstruction`.
-85 rows are unchanged (every CI-1, CI-2 and CI-5 row among them); 11 change:
+Every wording is read over `E_web` with no query record (not in its own fixture's environment), so the CI-2 proof
+rows and the CI-5 `acts@0` rows are refused on both sides here; their own environments are checked by their
+unchanged `#guard`s (RunExamples, Examples). 85 rows are unchanged; 11 change:
 
 | # | Wording | Class | Base | Head |
 |---|---|---|---|---|
