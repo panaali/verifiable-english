@@ -74,8 +74,11 @@ pinned in a temporary lock, restore, rebuild. The Python ones needed no build. m
 
 ## Trust (R16)
 
-`tools/trust_map.py`, base 6db6ee16d against this branch: trusted 61459 → 61593, which is +134 (K +0, S +16,
-untied [V] +118). Untied [V] is Wire.lean's clause, relation and elided readers (`decodeSpan`, `decodeRole`,
+`uv run python tools/trust_map.py --check` on the final tree: "against 6db6ee16ddb1: K +0, S +16, ... trusted +137",
+"PASS: K, S and untied [V] within 6db6ee16ddb1 and the allowances introduced since". So S +16 and untied [V] +121,
+recorded with `--allow ... --signed "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s3-cfr-1, 2026-10-18"` in
+docs/trust-baseline.json. Per file: Wire.lean S +16 and V +77, Run.lean +29, Dispatch.lean +11, Skeletons +2,
+Schemas +1, Registry +1, Protocol +1, Standalone -1. Untied [V] is Wire.lean's clause, relation and elided readers (`decodeSpan`, `decodeRole`,
 `hasKeys`, `decodeClause`, `decodeRelation`, `decodeElided`, `decodeClauses`, `decodeRelationOpt`, `unitSpanOf`,
 `rebuild`, `mapDoc`, `unitsOf`), Run.lean (G[V]) and Dispatch's `environmentWrappers`, `withoutClauses` and
 `environmentRows`. S is `NoClauseKeys`, `NoReadingSets` and `PlainOnWire`. Tied D[V]: `decodeClauseDoc`,
@@ -101,6 +104,29 @@ Counted hand-written lines:
 Generated, not counted: statements.txt, predicates.txt, declarations.txt, Audit, the schemas, profile_table.json, the
 binding answers and profile-off.json (the evidence script's output).
 
+## Generated and recorded files
+
+`regen_generated --write` wrote 37 entries; `python3 lean/audit.py` gives "PASS: 797 source files; 8836 named theorem
+declarations audited ... only the declared standard axiom allowlist". `binding_census --answers` re-asked every
+recorded relay-gate case on this build. That also rewrote some rows of other modes in
+tests/data/binding-answers.jsonl.gz (for example the `actions_version` field and document rows, which moved on main
+since that file was recorded). A merge with main should regenerate the file rather than merge it.
+
+## Spec re-read
+
+- `decode_unstructured` against docs/spec/right-clauses.md:528-533: word for word (names qualified as in the file).
+- `elaborate_plain` against :534-541: word for word, plus `(hd : PlainOnWire D)` after `hp` (cmp-s3 Q1 A1).
+- 8.5's notes :543-548: `stripElided` removes `elided` (and the unit `span`, see "The wire"); `stripProfile` removes
+  `right-clauses@0` from the profile list; `NoClauseKeys`, `NoReadingSets` and `elaborateJson` are as the notes
+  describe. `elaborateJson` writes each structured line's guard as `plainGuard`, and candidates are cmp-s3-cfr-1c's.
+- 8.1 :306-315: the mode's input and output, except `elided_bytes` (cmp-s3a-cfr-3, task (2)). The rows of
+  `right-clauses@0` are unchanged; D29, D33, D41 and D52 are checked by tests/test_compose_dispatch.py.
+- Section 7 :275-302: each text is a `#guard` in RunExamples.lean and a fixture in tests/test_right_clauses.py.
+- 9.1 :562-584: K1-K9 and K15 on the service and as `#guard`s. K10 is the rights decoder's text. K11-K14 are
+  cmp-s3-cfr-1b's (K12 cmp-s3-cfr-1c's).
+- 9.3 :596-605: profile off as saved evidence; profile on with `elided: []` as a live comparison, the rights
+  mode's answers (verdicts, statuses) included.
+
 ## Not changed
 
 Rights/*, SoftNorms/*, Norms/*, Route/* and Plain.lean are untouched. No import of `VE.Readings`: the transitive
@@ -116,3 +142,38 @@ off nothing changes. The UDHR figure of spec 9.3 is cmp-s3-cfr-1b's estimate.
 ## Next items
 
 cmp-s3-cfr-1b (relay, differential, fixtures, W1, `clauseSlot_wellFormed`) and cmp-s3a-cfr-3 (`elided_bytes`).
+
+## Self-review against BUILDER-CHECKLIST
+
+1. Typed and contained answers: PASS. `clauses-elaborate.json` types every leaf (plained and labels non-empty text,
+   ast `generated_formula`), and `runCaseReported_fits` proves the runner's rows fit it.
+   `tools/relay_mutation_gate.py --route service:clauses-elaborate`: "528 mutants, 526 refused, 2 allowed,
+   0 failures". The two allowed (empty or repeated slot) are genuine forms, allow-listed as CFR1A/CFR1B for
+   cmp-s3-cfr-1b's binding.
+2. Deliverables: PASS. The table above covers (1)-(5). Reading candidates are cmp-s3-cfr-1c, asked of the DRI
+   (inbox 20261109T170709Z) before any cut. `elided_bytes` is cmp-s3a-cfr-3's by the task.
+3. Tests can fail: PASS. Six seeded bugs, each killed by a named test (table above; mutants.json). Trust mutants per
+   new trusted definition: trust-mutants.json (section "Trust mutants").
+4. Python/Lean agree: N.A. No Python decoder (Lean only); the differential is cmp-s3-cfr-1b's.
+5. R8 binding: N.A. No relay yet (cmp-s3-cfr-1b). The schema is closed and typed, and the relay gate passes.
+6. Gate evidence matches HEAD: PASS. The chain runs the gate on the final HEAD. The 9.3 evidence is saved
+   (profile-off.json), and no test reads live git.
+7. No unsigned item: PASS. The DELTA rows cite the 10-31 DRI signature and R16; the statement change cites cmp-s3 Q1.
+   The size overrun is ruled (proofsize item 1).
+8. DELTA: PASS. Profile off: test_right_clauses_profile_off_evidence. Environment texts: the probe and
+   test_right_clauses_environment_texts_kept (0 of 154 lists differ). Profile on: test_right_clauses_profile_on_regression.
+9. Test selection: PASS. tests/test_right_clauses.py imports the service corpus and the fixtures; the selected run
+   on the final HEAD is recorded by the chain.
+10. Statements: PASS. "Spec re-read" above; `python3 lean/audit.py` PASS.
+11. Budgets fail closed: PASS, as far as this item reaches. Units are checked at most 1,024 before decoding; W1's
+    budget applies to each clause formula and plain guard (RunExamples' depth-65 `#guard` gives `ResourceLimit`).
+    W1's large-document fixture is cmp-s3-cfr-1b's (asked, point 3).
+12. CPU/memory: PASS with a stated cost ("The wire": lines decoded twice plus once; quadratic in named lines). No
+    route calls the mode yet.
+13. Test-removed trailers: N.A. No test removed; `test_right_clauses_profile_off_regression` was renamed before any
+    merge, inside this branch.
+14. Both directions, cited evidence, spec re-read: PASS. Acceptance (K1-K4, roles, profile on) and refusal (each
+    section 7 text) are both tested; outputs are cited in this REPORT; spec re-read above.
+15. Overclaim: PASS. Universal words in REPORT/DELTA name their probe or test. No silent cut: candidates asked.
+    Every new check can fail: seeded bugs and trust mutants. Limits charged before work: units before decoding;
+    clause formulas by W1 as decoded.
