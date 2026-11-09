@@ -1,0 +1,34 @@
+{
+ "allow": [
+  {
+   "definition": "VE.Purposes.WellFormed",
+   "operator": "body-true",
+   "reason": "a Prop: each such mutant breaks check_ok_iff (WellFormed.lean:187, the proof R16 cites for a Prop; all 18 shown by planting each in memory, docs/purpose-explanation/pe-1b/REPORT.md 'Trust') and fails a wf #guard in Examples ('Each part of the check alone'), which the tool reads as UNKNOWN because the Decidable instance the guards use changes with WellFormed"
+  },
+  {
+   "definition": "VE.Purposes.WellFormed",
+   "operator": "body-false",
+   "reason": "a Prop: each such mutant breaks check_ok_iff (WellFormed.lean:187, the proof R16 cites for a Prop; all 18 shown by planting each in memory, docs/purpose-explanation/pe-1b/REPORT.md 'Trust') and fails a wf #guard in Examples ('Each part of the check alone'), which the tool reads as UNKNOWN because the Decidable instance the guards use changes with WellFormed"
+  },
+  {
+   "definition": "VE.Purposes.WellFormed",
+   "operator": "and-or",
+   "reason": "a Prop: each such mutant breaks check_ok_iff (WellFormed.lean:187, the proof R16 cites for a Prop; all 18 shown by planting each in memory, docs/purpose-explanation/pe-1b/REPORT.md 'Trust') and fails a wf #guard in Examples ('Each part of the check alone'), which the tool reads as UNKNOWN because the Decidable instance the guards use changes with WellFormed"
+  },
+  {
+   "definition": "VE.Purposes.WellFormed",
+   "operator": "eq-le",
+   "reason": "a Prop: each such mutant breaks check_ok_iff (WellFormed.lean:187, the proof R16 cites for a Prop; all 18 shown by planting each in memory, docs/purpose-explanation/pe-1b/REPORT.md 'Trust') and fails a wf #guard in Examples ('Each part of the check alone'), which the tool reads as UNKNOWN because the Decidable instance the guards use changes with WellFormed"
+  },
+  {
+   "definition": "VE.Purposes.WellFormed",
+   "operator": "eq-ne",
+   "reason": "a Prop: each such mutant breaks check_ok_iff (WellFormed.lean:187, the proof R16 cites for a Prop; all 18 shown by planting each in memory, docs/purpose-explanation/pe-1b/REPORT.md 'Trust') and fails a wf #guard in Examples ('Each part of the check alone'), which the tool reads as UNKNOWN because the Decidable instance the guards use changes with WellFormed"
+  },
+  {
+   "definition": "VE.Purposes.WellFormed",
+   "operator": "bool-flip",
+   "reason": "a Prop: each such mutant breaks check_ok_iff (WellFormed.lean:187, the proof R16 cites for a Prop; all 18 shown by planting each in memory, docs/purpose-explanation/pe-1b/REPORT.md 'Trust') and fails a wf #guard in Examples ('Each part of the check alone'), which the tool reads as UNKNOWN because the Decidable instance the guards use changes with WellFormed"
+  }
+ ]
+}
