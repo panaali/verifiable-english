@@ -1,5 +1,5 @@
 import VE.Tableau
-import VE.TableauExtended
+import VE.Closure.Tableau
 import VE.Core.TableauExtended
 import VE.Order.Tableau
 import VE.CertificateWire
