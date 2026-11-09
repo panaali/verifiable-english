@@ -262,6 +262,7 @@ import VE.Acts.Sources
 import VE.Acts.Situation
 import VE.Acts.MeaningExamples
 import VE.Acts.ReadingsExamples
+import VE.Acts.RunExamples
 import VE.Acts.RenderExamples
 import VE.Acts.Compat
 import VE.Acts.LexicalExamples

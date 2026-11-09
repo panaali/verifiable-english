@@ -2,6 +2,7 @@
 -- The `#print axioms` audit of every theorem of lean/declarations.txt in a ResponseShape module.
 import ResponseShape.CaseDeciders
 import ResponseShape.Encoders
+import ResponseShape.Encoders.ActReadings
 import ResponseShape.Encoders.Alternatives
 import ResponseShape.Encoders.Ask
 import ResponseShape.Encoders.Calc
@@ -57,6 +58,14 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.CaseCond.path_ok
 #print axioms ResponseShape.CaseCond.path_toBool
 #print axioms ResponseShape.CaseDecider.all_complete
+#print axioms ResponseShape.Encoders.ActReadings.actJson_fits
+#print axioms ResponseShape.Encoders.ActReadings.actReadingsReported_fits
+#print axioms ResponseShape.Encoders.ActReadings.listReadings_fits
+#print axioms ResponseShape.Encoders.ActReadings.listed_fits
+#print axioms ResponseShape.Encoders.ActReadings.readingJson_fits
+#print axioms ResponseShape.Encoders.ActReadings.refusedRow_fits
+#print axioms ResponseShape.Encoders.ActReadings.rowsOf_fits
+#print axioms ResponseShape.Encoders.ActReadings.runActReadings_fits
 #print axioms ResponseShape.Encoders.Alternatives.admission_fits
 #print axioms ResponseShape.Encoders.Alternatives.admitDocument_kinds
 #print axioms ResponseShape.Encoders.Alternatives.chooser_fits
