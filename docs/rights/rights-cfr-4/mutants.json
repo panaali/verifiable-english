@@ -15,8 +15,8 @@
       "tests/test_rights_open_act_is_open.py::test_rights_open_act_reads_each_rights_own_act",
       "tests/test_rights_open_act_is_open.py::test_rights_document_norm_unit_with_open_act_is_open",
       "lean/VE/Rights/OpenActExamples.lean:31",
-      "lean/VE/Rights/OpenActExamples.lean:36",
-      "lean/VE/Rights/OpenActExamples.lean:37",
+      "lean/VE/Rights/OpenActExamples.lean:39",
+      "lean/VE/Rights/OpenActExamples.lean:40",
       "lean/VE/Rights/Run.lean: theorem nodeOpen_eq (unsolved goals)"
     ],
     "killed": true
@@ -34,8 +34,8 @@
     "test": "tests/test_rights_open_act_is_open.py::test_rights_open_act_reads_each_rights_own_act",
     "tests": [
       "tests/test_rights_open_act_is_open.py::test_rights_open_act_reads_each_rights_own_act",
-      "lean/VE/Rights/OpenActExamples.lean:36",
-      "lean/VE/Rights/OpenActExamples.lean:37"
+      "lean/VE/Rights/OpenActExamples.lean:39",
+      "lean/VE/Rights/OpenActExamples.lean:40"
     ],
     "killed": true
   },
@@ -54,8 +54,8 @@
       "tests/test_rights_open_act_is_open.py::test_rights_closed_act_stays_checked",
       "tests/test_rights_open_act_is_open.py::test_rights_open_act_reads_each_rights_own_act",
       "lean/VE/Rights/OpenActExamples.lean:32",
-      "lean/VE/Rights/OpenActExamples.lean:36",
-      "lean/VE/Rights/OpenActExamples.lean:37",
+      "lean/VE/Rights/OpenActExamples.lean:39",
+      "lean/VE/Rights/OpenActExamples.lean:40",
       "lean/VE/Rights/Run.lean: theorem nodeOpen_eq (unsolved goals)"
     ],
     "killed": true

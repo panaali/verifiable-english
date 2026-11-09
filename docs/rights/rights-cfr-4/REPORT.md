@@ -81,9 +81,9 @@ that run. Details are in [mutants.json](mutants.json).
 
 | # | Behaviour | Mutation | Fails |
 |---|---|---|---|
-| m1 | the act scan (the condition) | the act removed from the scan: `(N.guard :: N.carveOuts)` | test_rights_open_act_is_open, test_rights_open_act_reads_each_rights_own_act, test_rights_document_norm_unit_with_open_act_is_open (rerun after that test was added: `3 failed, 1 passed`); `#guard`s OpenActExamples.lean:31, 36, 37; `nodeOpen_eq` (`error: VE/Rights/Run.lean:247:81: unsolved goals`) |
-| m2 | each unit reads its own line's act | `unitOpen` reads the act of the first line of the document: `{ nodeOf D line with pred := ((linesOf D).head?.map (·.2.node.pred)).getD "" }` | test_rights_open_act_reads_each_rights_own_act (the two-rights fixture); `#guard`s OpenActExamples.lean:36, 37 |
-| m3 | no other rule opens (claims no more) | any open name opens: `.unary (openNames.headD N.pred) (.var 0)` | test_rights_closed_act_stays_checked, test_rights_open_act_reads_each_rights_own_act; `#guard`s OpenActExamples.lean:32, 36, 37; `nodeOpen_eq` (`2 failed, 1 passed`, before the norm-unit test) |
+| m1 | the act scan (the condition) | the act removed from the scan: `(N.guard :: N.carveOuts)` | test_rights_open_act_is_open, test_rights_open_act_reads_each_rights_own_act, test_rights_document_norm_unit_with_open_act_is_open (rerun after that test was added: `3 failed, 1 passed`); `#guard`s OpenActExamples.lean:31, 39, 40; `nodeOpen_eq` (`error: VE/Rights/Run.lean:247:81: unsolved goals`) |
+| m2 | each unit reads its own line's act | `unitOpen` reads the act of the first line of the document: `{ nodeOf D line with pred := ((linesOf D).head?.map (·.2.node.pred)).getD "" }` | test_rights_open_act_reads_each_rights_own_act (the two-rights fixture); `#guard`s OpenActExamples.lean:39, 40 |
+| m3 | no other rule opens (claims no more) | any open name opens: `.unary (openNames.headD N.pred) (.var 0)` | test_rights_closed_act_stays_checked, test_rights_open_act_reads_each_rights_own_act; `#guard`s OpenActExamples.lean:32, 39, 40; `nodeOpen_eq` (`2 failed, 1 passed`, before the norm-unit test) |
 | m4 | the negative direction: no act opens by itself | every rule opens: `true \|\| N.mode == .default \|\| ...` | test_rights_closed_act_stays_checked, test_rights_open_act_reads_each_rights_own_act, test_rights_document_norm_unit_with_open_act_is_open (`3 failed, 1 passed`); `nodeOpen_eq` |
 
 ## Trust

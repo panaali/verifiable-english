@@ -6,7 +6,7 @@ import VE.Rights.Examples
 namespace VE.Rights.OpenActExamples
 open Lean (Json)
 open VE.Norms.Checks (perm)
-open VE.Rights.Examples (mkRights strictNode line diag)
+open VE.Rights.Examples (mkRights strictNode defaultNode line diag)
 open VE.Rights.Run (nodeOpen unitOpen)
 
 def adult : VE.Formula := .unary "adult" (.var 0)
@@ -32,6 +32,9 @@ def opens (openNames : List String) : List Bool := ["r1-line", "r2-line"].map (u
 #guard !nodeOpen ["marry_permitted"] (strictNode "n" "speak_permitted" true adult)
 #guard !nodeOpen [] (strictNode "n" "speak_permitted" true adult)
 #guard nodeOpen ["adult"] (strictNode "n" "speak_permitted" true adult)
+-- the default mode alone, and one switch party alone, open a rule (as before rights-cfr-4)
+#guard nodeOpen [] (defaultNode "n" "speak_permitted" true adult)
+#guard nodeOpen [] { strictNode "n" "speak_permitted" true adult with alterable := ["p"] }
 -- each right's unit reads its own line's act
 #guard opens ["speak_permitted"] == [true, false]
 #guard opens ["marry_permitted"] == [false, true]
