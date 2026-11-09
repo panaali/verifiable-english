@@ -1,7 +1,7 @@
 # tm-column-per-copy: each copy of an error is judged at its own column
 
 **Summary.**
-- Status: built, waiting for the chain gate. HEAD: the commit that adds this report on `infra/tm-column-per-copy` (`git log -1`; the code commit is 66933f341).
+- Status: built, waiting for the chain gate. Code commits: 66933f341 (the fix and its test) and c869cec6b (line wraps). The final HEAD is the report commit after them, named in the build report.
 - What changed: `tools/trust_mutants.py` only. `run`'s `build` now returns each located error with its own column, so `invalid` judges each copy of a message on its own position. The `(file, line, message)` dict is gone.
 - DELTA: none. This is a tool-only change with no user-visible effect on the VE product. No DRI signature is reserved, and trust growth is +0.
 - Open: none. The reclass re-check still gives all 12 ids INVALID.
@@ -16,8 +16,8 @@
 - The mutated-declaration branch passes each error's own column to `invalid`.
 - `rebuild` (read by `settle`) and the `settle(found, …)` call drop the column, so they get the same 3-tuples as before.
 - `each(...)` and the controls already ignore anything after the message (`f, n, message, *_`, `[0][0]`, `[0][2]`).
-- Every path now keeps the copies apart, so the task's fallback for an ambiguous key is not needed.
-- Unchanged: the KILLED / SURVIVOR judgement, the barrier, the refusal-table messages, `invalid` and `refused`.
+- `invalid` (`tools/trust_mutants.py:1341`) is the only reader of a column, and it now gets each copy's own. No other path reads a column. So no key is ambiguous, and the task's fallback for one is not needed.
+- Unchanged: the KILLED / SURVIVOR judgement, the barrier, the refusal-table messages, `invalid`, `refused`, `settle` and `judge`. In `git diff 7dbc43ed0...HEAD -- tools/trust_mutants.py`, all four hunks (`@@ -1269`, `-1293`, `-1335`, `-1363`) are inside `run`.
 
 ## Tests (`tests/test_trust_mutants.py`)
 
@@ -35,7 +35,7 @@ The mutated file is the M170 mutant. Its declaration is at lines 399-404, and th
 | invalid-field-outside-then-inside | "Invalid field" at 4, then 16 | UNKNOWN |
 
 Run: `VE_NATIVE_PREBUILT=1 uv run pytest -q tests/test_trust_mutants.py -k "each_copy_of_an_error or elaboration_error_in_the_mutants or needs_every_error or only_when_lean_refuses or read_with_its_whole_message"`.
-- Before the column fix to the test (see below), the output was `6 failed, 53 passed`. After it: `6 passed` for the new test.
+- Before I fixed the test's own column assertion (see below), the output was `6 failed, 53 passed`. After it, the whole selection gives `59 passed, 753 deselected` (rerun by the self-reviewer on this code).
 - The tm-elab-unknown 14-case test (`test_an_elaboration_error_in_the_mutants_own_text_is_invalid`) and the "Invalid field" cases (`test_invalid_only_when_lean_refuses_the_mutated_text`, `test_invalid_needs_every_error_of_the_mutated_declaration_to_be_a_refusal`) pass unchanged in the same run.
 - The 6 early failures came from the test's own column assertion (81 characters, not 80), which I fixed. They were not product failures.
 
@@ -55,14 +55,50 @@ I ran `PATH=~/.elan/bin:$PATH uv run python -I docs/infra/tm-elab-unknown/reclas
 
 - Output: [reclass.txt](reclass.txt), 12 lines. `grep -c "UNKNOWN -> INVALID"` gives 12.
 - Every error is inside its edit span. For example, M170 has edit columns 15-96 and errors at 401:26, 44, 61, 80. M034 has edit columns 46-48 and errors at 131:46 ×2.
-- Compared with `docs/infra/tm-elab-unknown/reclass.txt`, the only difference is M034's line: 131 instead of 127, because `VE/NormDefaults/Run.lean` moved on main since then. Its verdict is the same.
+- Compared with `docs/infra/tm-elab-unknown/reclass.txt`, only M034's line differs:
+  - Earlier run: `Run.lean:127 (record line 131) edit cols 26-28; errors at 127:26, 127:26`.
+  - Now: `Run.lean:131 (record line 131) edit cols 46-48; errors at 131:46, 131:46`.
+  - The cause: `softCase` was rewritten on main since then, so the script now finds the occurrence of `before` nearest the record's line at the record's own line 131.
+  - The verdict is still INVALID, with both copies at the edit's first column.
 - The script calls `invalid` with each error's own column, so this confirms DRI adv0314 item 1's finding on the current tree.
 
 ## Trust and DELTA
 
 - `uv run python tools/trust_map.py --check` exited 0: `against 7dbc43ed02ed: K +0, S +0, D +0, G +0, tied +0, unclassified +0, trusted +0`, `PASS`.
 - DELTA: none. This is a tool-only change to `tools/trust_mutants.py`'s classification of mutants, not to the VE product's verdicts, diagnostics or output. No DELTA rows, and no DRI signature is reserved.
-- No Lean or Rust changed, so I ran no lake build, audit or trust mutants. No generated file has these files as input: `regen_generated.py --owner tools/trust_mutants.py` gives `-`, and the module docstring is unchanged.
+- No Lean or Rust changed, so I ran no lake build, audit or trust mutants.
+- No regen is needed:
+  - `regen_generated.py --owner tools/trust_mutants.py` gives `-`, so the file is not generated.
+  - `regen_generated.py --list | grep -c trust_mutants` gives 0, so no generator lists it.
+  - The code map reads only module docstrings, and neither changed file's module docstring changed.
+
+## Spec re-read
+
+- "carry each located error's own column from `located(output)` to the `invalid(...)` call": checked against the task file, FIX paragraph. `build` returns the column, and the mutated branch passes it to `invalid`.
+- "No change to KILLED / SURVIVOR judgement, to the barrier, to the refusal-table messages, or to any other class": checked against the same paragraph. The diff's hunks are all inside `run` (see Fix).
+- TESTS (1)-(3) and the seeded bug: checked against the task file, TESTS paragraph.
+  - (1) is `F2-outside-then-inside`, through `run`'s build.
+  - (2) is `M170-four-inside` at 401:26, 44, 61, 80 with the edit at columns 15-96.
+  - (3) is the 14-case and "Invalid field" tests, unmodified and passing.
+  - The seeded bug is bug 1 above.
+
+## Self-review against BUILDER-CHECKLIST
+
+1. Lean answers typed and contained: N.A. No relayed route or schema changed.
+2. Deliverables: PASS. The fix is in 66933f341; tests (1)-(3) are in `test_each_copy_of_an_error_is_read_at_its_own_column` plus the unmodified 14-case test; the reclass re-check is in reclass.txt; this is the REPORT. No Python copy of a Lean decision, and no permanent report test.
+3. Tests can fail: PASS. Seeded bugs 1-3 above, each with its failing case ids.
+4. Py/Lean/Rust agree: N.A. This is a tool-only change with no product path.
+5. R8 binding: N.A. No relay field.
+6. Gate evidence: N.A. for the builder. The chain gate runs on the final HEAD, and the branch is level with main (merge base 7dbc43ed0).
+7. Unsigned items: PASS. There are no DELTA rows, and `trust_map.py --check` gives +0 (see Trust and DELTA).
+8. User-visible change: N.A. It is a tool-only change (see Trust and DELTA).
+9. Test selection: PASS. `select_tests.py --base 7dbc43ed0` selects `tests/test_trust_mutants.py` (172/555 units), the file that catches seeded bugs 1-3.
+10. Lean statements: N.A. No Lean changed.
+11. Budgets and deadlines: N.A. No budget path changed. The test uses no sleep and no timeout.
+12. CPU and memory: N.A. Only the tuples change: one more int per error, and one dict less.
+13. Test-removed trailers: N.A. No test was removed or renamed.
+14. Both directions and cited evidence: PASS. Every refusal case in COPIES has its accepting twin: the outside-then-inside, inside-then-outside and after-the-edit cases (UNKNOWN) against four-inside and twice-inside (INVALID). Each claim here names its command.
+15. Overclaim, silent cut, checks that fail, limits: PASS for the first three. "Every"/"only" claims cite the diff hunks and the self-reviewer's consumer check. No deliverable was cut. Each new case is caught by a seeded bug. Limits: N.A.
 
 ## Not run here
 
