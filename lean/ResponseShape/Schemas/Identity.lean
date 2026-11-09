@@ -14,7 +14,7 @@ def «row» : Shape :=
       closed [
         ("id", n [str, .equals "/id"]),
         ("status", constS "ok"),
-        ("kind", n [enumS ["source", "meaning", "model", "claim", "edge"], .equals "/kind"]),
+        ("kind", n [enumS ["source", "meaning", "rights-meaning", "model", "claim", "edge"], .equals "/kind"]),
         ("identity_id", ref "common.json#/$defs/hex64")]]]
 
 def file : File where
@@ -22,5 +22,8 @@ def file : File where
   comment := some "Standalone domain-separated identity recomputation."
   top := [("row", «row»)]
   defs := []
+
+-- Pin the complete request-bound row shape; mutations to any member must break this guard.
+#guard (file.render.toOption.map (hash ·.compress)) == some 11730677212609175414
 
 end ResponseShape.Schemas.Identity

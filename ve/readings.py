@@ -76,37 +76,15 @@ def source_word_text(source: bytes, span, unit_span):
     return word if word in SOURCE_WORDS else None
 
 
-# Soft-norms 3.4's default of each soft field. A `null` soft field is read as absent (the rights wire,
-# `rightsWireJson`), so it is at its default too. Lean's twin is `VE.SoftNorms.Wire.softDefault`.
-_SOFT_DEFAULTS = (("mode", "strict"), ("rank", None), ("alterable", []), ("exception", None), ("hard", False))
-
-
-def _soft_default(key, value):
-    return any(key == k and (value is None or (type(value) is type(d) and value == d)) for k, d in _SOFT_DEFAULTS)
-
-
-def rights_normal_form(content):
-    """Rights 3.5: a `right` or `right_lines` unit with every soft field of its lines' norm objects (`norm`,
-    `liberty`, `recognition`) at its default omitted (Lean's `VE.Service.Document.rightsNormalForm`). Any other
-    content, and any part not of the shape 3.2 gives, is unchanged."""
-    from .rights import RULE_FIELDS
-    if type(content) is not dict or len(content) != 1:
-        return content
-    (kind, body), = content.items()
-    if kind not in ("right", "right_lines") or type(body) is not dict or type(body.get("lines")) is not list:
-        return content
-    lines = [{key: ({k: v for k, v in value.items() if not _soft_default(k, v)}
-                    if key in RULE_FIELDS and type(value) is dict else value)
-              for key, value in line.items()} if type(line) is dict else line
-             for line in body["lines"]]
-    return {kind: {**body, "lines": lines}}
-
-
 def rights_meaning_id(env, content):
-    """Bind one rights candidate to its source environment and its normal form (`rights_normal_form`)."""
-    from .softnorms import soft_digest
-    return soft_digest(f"ve-meaning-{env.identity_version}\n",
-                       {"environment_id": env.environment_id, "ast": rights_normal_form(content)})
+    """Relay Lean's rights 3.5 normal form and domain-separated identity."""
+    import json
+    from .backends.relay import decide
+    from .environment_wire import wire_checked
+    return decide("identity", [{"id": "rights-meaning", "kind": "rights-meaning",
+                                 "environment": env.to_dict(),
+                                 "content_json": json.dumps(wire_checked([content])[0], ensure_ascii=False,
+                                                            separators=(",", ":"), allow_nan=False)}])[0]["identity_id"]
 
 
 def _right_situation(env, content, wire, unit_ids=()):

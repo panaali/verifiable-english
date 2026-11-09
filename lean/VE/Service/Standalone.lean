@@ -709,6 +709,12 @@ def identityCase (j : Json) : Except String Json := do
       let e ← validatedEnvironment environment
       let environmentId ← environmentIdOf e.profiles environment
       VE.Route.Wire.meaningId e.profiles environmentId (← j.getObjVal? "ast")
+    else if kind == "rights-meaning" then do
+      let environment ← j.getObjVal? "environment"
+      let e ← VE.Rights.Wire.decodeRightsEnvironment environment
+      let environmentId ← environmentIdOf e.profiles environment
+      let content ← Json.parse (← VE.Bridge.stringField j "content_json")
+      VE.Rights.Wire.rightsMeaningId e.profiles environmentId content
     else if kind == "model" then do
       let row ← modelCase j
       VE.Bridge.stringField row "model_id"
