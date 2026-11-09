@@ -10,7 +10,11 @@ step 5, passes within its limits (`sdChecked`): at most `maxChoiceChecks` compat
 `maxSdCheckWork` (read before the first `sdChoiceText`, since `&&` reads left to right), and `sdChoiceText` none for
 each choice. Over a limit the row stays enumerated, as today; it is never an error. Nothing dispatches on `routeSD`
 here (sc-11b switches the dispatch); the wire theorems read a superposed case's accepted evidence in each choice's
-own terms through sc-10b's three superposition theorems, which they apply and do not restate. -/
+own terms through sc-10b's three superposition theorems, which they apply and do not restate.
+
+`maxSdCheckWork` is set from W-13's measured Lean CPU (OPEN-SC11-7, docs/rd-9/sc-11/w13-cpu.md): about 29 µs per
+unit of `sdCheckWork` on W-13's shape, so 32,768 units keep the route check under R4's 1 s; the spec's 4,194,304
+was arithmetic, not a measurement. -/
 namespace VE.Readings.Wire
 open VE.Readings
 open VE.Bridge (Entity)
@@ -21,7 +25,7 @@ universe u
 def sdSuperposable (N : NDoc) : Bool := superposable N.D && VE.NormDefaults.WellFormedU (supU N)
 
 /-- 14.11: the compatible choices times the superposed premises and rule nodes each check reads. -/
-def maxSdCheckWork : Nat := 4194304
+def maxSdCheckWork : Nat := 32768
 def sdCheckWork (N : NDoc) : Nat :=
   (checkedChoices N.D).length * ((softXL N (sup N.D).1).length + ((sup N.D).1.soft.T.nodes.map
     (fun M => (M.guard :: M.carveOuts).map VE.Bridge.formulaNodes)).flatten.sum)
