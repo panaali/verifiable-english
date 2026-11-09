@@ -210,8 +210,10 @@ def onPower (L : CLine) : ClauseDoc := ⟨epsilon, [("r16", "may-marry", L)], []
 
 /-! ## Entries
 
-Two lines with one rule name get rights' own `DuplicateDeclaration` text (`entryError`); the other entry faults
-get `InvalidInput: invalid clauses of rule <n>`. -/
+Every entry fault goes through `entryError`, whether or not the entry's right is in the document. A rule on two lines
+of the rights document gets rights' own `DuplicateDeclaration` text when that is rights' first fault on the document
+(`twice`, `across`); otherwise, and for every other entry fault, the text is `InvalidInput: invalid clauses of rule
+<n>` (`twice` with no holders, `twoHolders`, the one-line `r21Doc`). -/
 
 #guard verdict (checkClauses ⟨r21Doc, [("r21", "equal-access", k1), ("r21", "equal-access", k2)], []⟩) ==
   "InvalidInput: invalid clauses of rule equal-access"
@@ -222,6 +224,10 @@ def twice : RightsDoc := { r21Doc with rs := [⟨"r21", "person", .top, [accessL
 #guard check k2 twice == diag twice
 #guard verdict (checkClauses ⟨twice, [("r21", "equal-access", k1), ("r21", "equal-access", k2)], []⟩) == diag twice
 #guard verdict (checkClauses ⟨twice, [("r21", "equal-access", k2)], []⟩) == diag twice
+-- the entry names a right `r9` that is not in the document: still `entryError`, so rights' text (F1)
+#guard verdict (checkClauses ⟨twice, [("r9", "equal-access", k2)], []⟩) == diag twice
+#guard verdict (checkClauses ⟨{ twice with rights.holders := [] }, [("r9", "equal-access", k2)], []⟩) ==
+  "InvalidInput: invalid clauses of rule equal-access"
 #guard diag { twice with rights.holders := [] } == "InvalidInput: invalid rights block"
 #guard check k2 { twice with rights.holders := [] } == "InvalidInput: invalid clauses of rule equal-access"
 -- the rule on a line of each of two rights: still a duplicate, rights' text
@@ -255,6 +261,9 @@ def candDoc (L : CLine) : ClauseDoc :=
 -- a candidate whose own right has two lines named `equal-access`: rights' text on that right
 #guard verdict (checkCandidates ⟨r21Doc, [], [("s", 1, .right ⟨"r21", "person", .top, [accessLine, accessLine]⟩,
     [("r21", "equal-access", k2)])]⟩) == "DuplicateDeclaration: rule equal-access"
+-- the same with the entry naming a right `r9` that is not the candidate's: rights' text on that right (F1)
+#guard verdict (checkCandidates ⟨r21Doc, [], [("s", 1, .right ⟨"r21", "person", .top, [accessLine, accessLine]⟩,
+    [("r9", "equal-access", k2)])]⟩) == "DuplicateDeclaration: rule equal-access"
 -- `.rightLines`: the two lines are the candidate's, not rights' (`D.doc`'s); the head keeps its text, also when
 -- `D.doc` has a fault of its own
 #guard verdict (checkCandidates ⟨r21Doc, [], [("s", 1, .rightLines "r21" [accessLine, accessLine],
