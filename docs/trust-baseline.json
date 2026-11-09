@@ -2238,6 +2238,13 @@
    "reason": "ps-2aa: lean/VE/Presupposition/Wire.lean S +79, D[V] +26, G[V] +15 (trusted +120, K +0)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ps-2aa, 2026-10-18",
    "commit": "b8266ee19562e5488d27d8a87fa50dcb8f633ab5"
+  },
+  {
+   "class": "V",
+   "lines": 14,
+   "reason": "cmp-s3a-cfr-2: lean/VE/RightClauses/Plain.lean trusted +11 (entryError, unclassified), lean/VE/RightClauses/Examples.lean trusted +2 (fixtures twice, twoHolders, unclassified); K +0, S -1",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s3a-cfr-2, 2026-10-18",
+   "commit": "6db6ee16ddb10f843b396b78299a980abc43fefb"
   }
  ]
 }
