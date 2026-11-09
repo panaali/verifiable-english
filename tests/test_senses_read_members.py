@@ -288,7 +288,7 @@ MAIN_DIGESTS = {
 
 @pytest.mark.parametrize("name, place, pack, source, budget", GENUINE, ids=[g[0] for g in GENUINE])
 def test_a_golden_request_without_the_members_keeps_its_answer(name, place, pack, source, budget):
-    """DRI item 3: every golden request without `reread` or `line` keeps main's answer byte for byte."""
+    """DRI item 3: every golden request without `reread` or `line` keeps main's answer (equal canonical JSON)."""
     answer = read_in(S2_WORLD() if place == "s2" else WORLDS[place](), source, pack, budget=budget)
     assert hashlib.sha256(json.dumps(answer, sort_keys=True, separators=(",", ":")).encode()).hexdigest() == \
         MAIN_DIGESTS[name]
