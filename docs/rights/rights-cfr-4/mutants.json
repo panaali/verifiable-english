@@ -29,7 +29,7 @@
     "file": "lean/VE/Rights/Run.lean",
     "mutation": [
       "(nodeOpen openNames (nodeOf D line) ||",
-      "(nodeOpen openNames { nodeOf D line with pred := ((linesOf D).head?.map (·.2.node.pred)).getD \"\" } ||"
+      "(nodeOpen openNames { nodeOf D line with pred := ((linesOf D).head?.map (\u00b7.2.node.pred)).getD \"\" } ||"
     ],
     "test": "tests/test_rights_open_act_is_open.py::test_rights_open_act_reads_each_rights_own_act",
     "tests": [
@@ -76,6 +76,23 @@
       "tests/test_rights_open_act_is_open.py::test_rights_open_act_reads_each_rights_own_act",
       "tests/test_rights_open_act_is_open.py::test_rights_document_norm_unit_with_open_act_is_open",
       "lean/VE/Rights/Run.lean: theorem nodeOpen_eq (unsolved goals)"
+    ],
+    "killed": true
+  },
+  {
+    "id": "m5-fixture-layer-dropped",
+    "behaviour": "VE.Rights.OpenActExamples is a layer-4 runner-boundary fixture, so its import of VE.Rights.Run is not outward",
+    "definition": "tools.layer_policy.lean_layer",
+    "language": "Python",
+    "file": "tools/layer_policy.py",
+    "mutation": [
+      ", \"VE.Rights.OpenActExamples\"}:",
+      "}:"
+    ],
+    "test": "tests/test_rights_open_act_is_open.py::test_rights_open_act_fixtures_sit_at_the_runner_boundary",
+    "tests": [
+      "tests/test_rights_open_act_is_open.py::test_rights_open_act_fixtures_sit_at_the_runner_boundary",
+      "python3 tools/check_lean_imports.py (new outward Lean import: VE.Rights.OpenActExamples -> VE.Rights.Run)"
     ],
     "killed": true
   }
