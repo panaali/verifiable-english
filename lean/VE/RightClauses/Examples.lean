@@ -224,6 +224,10 @@ def twice : RightsDoc := { r21Doc with rs := [⟨"r21", "person", .top, [accessL
 #guard verdict (checkClauses ⟨twice, [("r21", "equal-access", k2)], []⟩) == diag twice
 #guard diag { twice with rights.holders := [] } == "InvalidInput: invalid rights block"
 #guard check k2 { twice with rights.holders := [] } == "InvalidInput: invalid clauses of rule equal-access"
+-- the rule on a line of each of two rights: still a duplicate, rights' text
+def across : RightsDoc := { r21Doc with rs := [r21, ⟨"r22", "person", .top, [accessLine]⟩] }
+#guard diag across == "DuplicateDeclaration: rule equal-access"
+#guard check k2 across == diag across
 -- the rule on one line: rights' first fault, a duplicate holder, is not the entry's; the head keeps its text
 def twoHolders : RightsDoc := { r21Doc with rights.holders := ["person", "person"] }
 #guard diag twoHolders == "DuplicateDeclaration: holder person"
