@@ -149,6 +149,51 @@ def rightsWireJson : Nat → String → Json → Json
   [("guard", .null), ("annotation", .null)])])).getObjValD "right" ==
   Json.mkObj [("annotation", .null)]
 
+/-- Rights 3.5: a `right` or `right_lines` content with every soft field of its lines' norm objects (`norm`,
+`liberty`, `recognition`) at its default omitted, as soft-norms 3.4 does (`SoftNorms.Wire.softDefault`); a `null`
+soft field is absent on the rights wire (`rightsWireJson`), so at its default too. Any other content, and any part
+not of 3.2's shape, is unchanged (Python's `ve.readings.rights_normal_form`). -/
+def rightsNormalForm (content : Json) : Json :=
+  let soft := fun (kv : String × Json) =>
+    VE.SoftNorms.Wire.softDefault kv || (VE.SoftNorms.Wire.softKeys.contains kv.1 && kv.2 == .null)
+  let norm := fun (j : Json) => match j with
+    | .obj kvs => Json.mkObj (kvs.toList.filter (!soft ·))
+    | j => j
+  let line := fun (j : Json) => match j with
+    | .obj kvs => Json.mkObj (kvs.toList.map fun (k, v) =>
+        (k, if ["norm", "liberty", "recognition"].contains k then norm v else v))
+    | j => j
+  match content with
+  | .obj kvs => match kvs.toList with
+    | [(kind, .obj body)] =>
+      if ["right", "right_lines"].contains kind then
+        match body.toList.lookup "lines" with
+        | some (.arr ls) => Json.mkObj [(kind, (Json.obj body).setObjVal! "lines" (.arr (ls.map line)))]
+        | _ => content
+      else content
+    | _ => content
+  | _ => content
+
+#guard
+  let n := fun (soft : List (String × Json)) => Json.mkObj [("right", Json.mkObj [("name", .str "r"),
+    ("lines", Json.arr #[Json.mkObj [("kind", .str "claim"),
+      ("norm", Json.mkObj ([("name", .str "n")] ++ soft))]])])]
+  rightsNormalForm (n [("mode", .str "strict"), ("rank", .null), ("alterable", Json.arr #[]), ("exception", .null),
+      ("hard", .bool false)]) == n [] &&
+    rightsNormalForm (n [("mode", .null), ("hard", .null), ("alterable", .null)]) == n [] &&
+    rightsNormalForm (n [("mode", .str "default")]) == n [("mode", .str "default")] &&
+    rightsNormalForm (n [("hard", .bool true)]) == n [("hard", .bool true)]
+#guard
+  let p := fun (soft : List (String × Json)) => Json.mkObj [("right_lines", Json.mkObj [("right", .str "r"),
+    ("lines", Json.arr #[Json.mkObj [("kind", .str "power"),
+      ("liberty", Json.mkObj ([("name", .str "l")] ++ soft)),
+      ("recognition", Json.mkObj ([("name", .str "c")] ++ soft))]])])]
+  rightsNormalForm (p [("mode", .str "strict"), ("alterable", Json.arr #[])]) == p [] &&
+    rightsNormalForm (p [("rank", .str "high")]) == p [("rank", .str "high")]
+#guard
+  let b := Json.mkObj [("bar", Json.mkObj [("name", .str "b"), ("mode", .str "strict")])]
+  rightsNormalForm b == b
+
 /-- A `meaning_id` over content that may hold authored nulls (the soft route's nullable decider slots: Python's
 `soft_digest`), with the document identity's canonical JSON. -/
 def nullableMeaningId (profiles : List String) (environmentId : String) (content : Json) : Except String String :=
@@ -1504,7 +1549,8 @@ def rightsContentOf (E : Env) (R : RightsDoc) (kind : RowKind) (content : Json) 
   if (RightsKind.ofName? key).isSome then
     -- Under any other kind the content environment is `E″′`, which has no `rights@0`.
     unless kind matches .rights _ do throw "UnsupportedProfile: rights@0 is required"
-    return (.rights content, ← bound content)
+    -- Rights 3.5: the id binds the normal form; the content is answered as written.
+    return (.rights content, ← bound (rightsNormalForm content))
   if key == "ast" || key == "fence" then
     throw (unavailable "formula content in a rights document is typed in its extended environment")
   throw "unit fence must match its id"
