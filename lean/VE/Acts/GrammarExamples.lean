@@ -1,4 +1,4 @@
-import VE.Acts.Read
+import VE.Acts.Grammar
 
 /-! Fixtures of the act grammar (docs/spec/act-phrases.md 11.2, 11.2a, 11.2b; D-31 in 10).
 
@@ -404,5 +404,25 @@ def measured : List Vocab :=
    frames [fr "a social" [] [] ["in"]]]
 
 #guard [V5, V6, V7, V8, V9, V10, V11, V12, V14].all framesOk && ap0.all framesOk && measured.all framesOk
+
+/-! ### ap-parse-index: the steps of a growing vocabulary
+
+L6 (`V5`'s 64 readings) with `n` more frames, up to the 128 of D-31. A row is charged every rule and rule position, so
+the steps grow by the same 1,984 with each frame, and the step budget bounds the time: what a step does beyond its
+charge is at most one look-up per end position (`combineFast`) and one insertion (`cap` plus the sentence length),
+measured at most 0.61 microseconds per step on the VM from 2 to 128 frames (docs/act-phrases/ap-parse-index/REPORT.md).
+The grammar is built once per read, in time near-linear in the frames (`closed_eq_fast`, `build_eq_fast`). -/
+
+def padFrames (n : Nat) : List Frame :=
+  (List.range n).map fun i => fr ("seek" ++ String.mk [Char.ofNat (97 + i / 26), Char.ofNat (97 + i % 26)]) [""] [] []
+def l6 : String := "{0} to seek and to enjoy asylum in the first city in the second city in the third city in the fourth \
+  city in the fifth city in the sixth city"
+def l6Fixed : List String := ["first", "second", "third", "fourth", "fifth", "sixth"].map fun n => s!"the {n} city"
+def l6Steps (n : Nat) : Option Nat :=
+  (grammar ⟨V5.frames ++ padFrames n, []⟩).prepare.steps rawCap stepBudget
+    ((Lexical.lex l6Fixed l6).toOption.getD []).toArray
+
+#guard framesOk ⟨V5.frames ++ padFrames 126, []⟩ && !framesOk ⟨V5.frames ++ padFrames 127, []⟩
+#guard [0, 30, 62, 126].all fun n => l6Steps n == some (23152 + 1984 * n)
 
 end VE.Acts.Examples
