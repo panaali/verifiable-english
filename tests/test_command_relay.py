@@ -154,6 +154,15 @@ def test_every_instruction_fence_is_read_as_a_command(kind, mixed):
                       reading_context=context)
 
 
+@pytest.mark.parametrize("bad", [0, 1, 2])
+def test_every_resolved_fence_is_checked_for_its_role(bad):
+    """Not only the first or the last: one formula among three command fences is refused wherever it stands."""
+    metadata, source, fences, resolved, context = _many_fences(3)
+    resolved[f"c{bad}"] = {"ast": ["top"]}
+    with pytest.raises(VEError, match="^InvalidInput: resolved speech fences$"):
+        decide_source(metadata, source, fences, resolved_fences=resolved, reading_context=context)
+
+
 def test_an_asserted_fence_resolved_as_a_formula_is_its_assertion():
     """An asserted fence's role is a formula: `roleFits` keeps Python's resolution of it."""
     env = base_env()

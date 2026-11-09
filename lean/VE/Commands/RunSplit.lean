@@ -140,6 +140,8 @@ def mixed (p : Json) : Json :=
 #guard result (mixed (payload two [("c1", click), ("c2", share)])) == "ok"
 #guard result (mixed (resolving (payload two []) [("c1", formula), ("c2", Json.mkObj [("command", share)])])) ==
   mismatch
+-- Every resolved fence is checked, not only the first: the formula second.
+#guard result (resolving (payload two []) [("c1", Json.mkObj [("command", click)]), ("c2", formula)]) == mismatch
 #guard result (payload (one attributed "Click Check.\n") [("c1", click)]) == "ok"
 #guard result (payload (one attributed "Click Check.\n") [("c1", share)]) == mismatch
 -- An asserted fence resolved as a formula is its assertion.

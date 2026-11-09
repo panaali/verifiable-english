@@ -7712,7 +7712,7 @@ module VE.Commands.RunExamples b5cf0eec06e0ed1aec9cb31f4b986f686b89f30edc26d91a2
 147:0-148:106 def VE.Commands.RunExamples.targets@VE.Commands.RunExamples
 156:0-156:52 def VE.Commands.RunExamples.youBob@VE.Commands.RunExamples
 167:0-168:128 def VE.Commands.RunExamples.rawEnv@VE.Commands.RunExamples
-module VE.Commands.RunSplit 14e43f40ecd01ab057a1619062529be137c8e5e4308744c9abd34596a6f17dc9
+module VE.Commands.RunSplit 44acb2df51b32b291fdfbe052961a7f3e4989c3bec16d42c62b816666e5983da
 15:0-18:48 theorem VE.Commands.readInstruction_refused_classed@VE.Commands.RunSplit
 20:0-33:96 theorem VE.Commands.readInstruction_typed@VE.Commands.RunSplit
 65:0-65:38 def VE.Commands.SourceExamples.env@VE.Commands.RunSplit
@@ -7729,7 +7729,7 @@ module VE.Commands.RunSplit 14e43f40ecd01ab057a1619062529be137c8e5e4308744c9abd3
 125:0-125:66 def VE.Commands.SourceExamples.hedged@VE.Commands.RunSplit
 126:0-126:106 def VE.Commands.SourceExamples.one@VE.Commands.RunSplit
 127:0-135:78 def VE.Commands.SourceExamples.mixed@VE.Commands.RunSplit
-149:0-150:110 def VE.Commands.SourceExamples.fenced@VE.Commands.RunSplit
+151:0-152:110 def VE.Commands.SourceExamples.fenced@VE.Commands.RunSplit
 module VE.Commands.Texts 216279f9b9ad99e6ea87c0bae9d33e7b3825685c388020af45af365b85f66ec2
 6:0-6:78 def VE.Commands.Texts.nonAscii@VE.Commands.Texts
 7:0-7:65 def VE.Commands.Texts.empty@VE.Commands.Texts
