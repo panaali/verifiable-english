@@ -1,0 +1,164 @@
+shard 2/4: 20 units; commands: []
+info: syncing channel updates for '1.98.1-x86_64-unknown-linux-gnu'
+info: latest update on 2026-09-03, rust version 1.98.1 (48a229cea 2026-09-01)
+info: downloading component 'cargo'
+info: downloading component 'rust-std'
+info: downloading component 'rustc'
+info: installing component 'cargo'
+info: installing component 'rust-std'
+info: installing component 'rustc'
+    Updating crates.io index
+ Downloading crates ...
+  Downloaded block-buffer v0.10.4
+  Downloaded cpufeatures v0.2.17
+  Downloaded cfg-if v1.0.5
+  Downloaded crypto-common v0.1.7
+  Downloaded proc-macro2 v1.0.107
+  Downloaded generic-array v0.14.7
+  Downloaded itoa v1.0.18
+  Downloaded version_check v0.9.5
+  Downloaded digest v0.10.7
+  Downloaded zmij v1.0.23
+  Downloaded autocfg v1.5.1
+  Downloaded num-integer v0.1.47
+  Downloaded sha2 v0.10.9
+  Downloaded unicode-ident v1.0.26
+  Downloaded serde_derive v1.0.229
+  Downloaded quote v1.0.47
+  Downloaded serde_core v1.0.229
+  Downloaded num-traits v0.2.19
+  Downloaded memchr v2.8.3
+  Downloaded serde v1.0.229
+  Downloaded num-bigint v0.4.8
+  Downloaded typenum v1.20.1
+  Downloaded serde_json v1.0.151
+  Downloaded syn v3.0.6
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling quote v1.0.47
+   Compiling typenum v1.20.1
+   Compiling unicode-ident v1.0.26
+   Compiling generic-array v0.14.7
+   Compiling serde_core v1.0.229
+   Compiling autocfg v1.5.1
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling serde_json v1.0.151
+   Compiling syn v3.0.6
+   Compiling serde v1.0.229
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling cfg-if v1.0.5
+   Compiling memchr v2.8.3
+   Compiling itoa v1.0.18
+   Compiling cpufeatures v0.2.17
+   Compiling sha2 v0.10.9
+   Compiling serde_derive v1.0.229
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling ve-kernel v0.1.0 (/tmp/cc-wt/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/tmp/cc-wt/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/tmp/cc-wt/rust/ve-core)
+   Compiling ve v0.1.0 (/tmp/cc-wt/rust/ve)
+    Finished `release` profile [optimized] target(s) in 13.39s
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling quote v1.0.47
+   Compiling typenum v1.20.1
+   Compiling unicode-ident v1.0.26
+   Compiling autocfg v1.5.1
+   Compiling generic-array v0.14.7
+   Compiling serde_core v1.0.229
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling syn v3.0.6
+   Compiling serde v1.0.229
+   Compiling serde_json v1.0.151
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling memchr v2.8.3
+   Compiling cfg-if v1.0.5
+   Compiling cpufeatures v0.2.17
+   Compiling itoa v1.0.18
+   Compiling sha2 v0.10.9
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling serde_derive v1.0.229
+   Compiling ve-kernel v0.1.0 (/tmp/cc-wt/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/tmp/cc-wt/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/tmp/cc-wt/rust/ve-core)
+   Compiling ve v0.1.0 (/tmp/cc-wt/rust/ve)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 7.44s
+order: failed last time []; changed ['tests/test_trust_mutants.py']; then the rest; --maxfail 5
+chunks: ; from the plan: tests/test_trust_mutants.py::chunk(4/4)
+recording 20 units with 4 jobs in /var/tmp/cct/ve-select-run-_ejxcloe
+  tests/test_gate.py: exit 0 in 55.2 s, 3104 functions
+  tests/test_relay_binding_inventory.py: exit 0 in 63.9 s, 817 functions
+  tests/test_frozen_sources.py: exit 0 in 11.5 s, 286 functions
+  tests/test_nested_pytest.py: exit 0 in 27.5 s, 738 functions
+  tests/test_readings_defaults_rd6b_report.py: exit 0 in 9.0 s, 263 functions
+  tests/test_definitions.py: exit 0 in 7.2 s, 737 functions
+  tests/test_readings_verdicts_split.py: exit 0 in 6.2 s, 203 functions
+  tests/test_architecture_docs.py: exit 0 in 1.1 s, 223 functions
+  tests/test_cardinality_exercised.py: exit 0 in 0.9 s, 224 functions
+  tests/test_lean_statements_parts.py: exit 0 in 1.2 s, 203 functions
+  tests/test_norm_defaults_switch.py: exit 0 in 1.7 s, 771 functions
+  tests/test_pc9_statements.py: exit 0 in 1.2 s, 216 functions
+  tests/test_readings_defaults_rd8_report.py: exit 0 in 1.4 s, 221 functions
+  tests/test_scope_rights_reach.py: exit 0 in 1.1 s, 485 functions
+  tests/test_w6a_citations.py: exit 0 in 1.5 s, 597 functions
+  tests/test_run_order.py: exit 0 in 12.2 s, 548 functions, OPAQUE
+  tests/test_wire_contract_lint.py: exit 0 in 2.1 s, 815 functions
+  tools/test_layer_policy.py: exit 0 in 81.6 s, 251 functions
+  tests/test_repo_map.py: exit 0 in 333.1 s, 452 functions
+  tests/test_trust_mutants.py::chunk(4/4): exit 1 in 353.7 s, 630 functions
+chunked tests/test_trust_mutants.py: 1 of 4 chunks, exit 1, 353.7 s in all, longest chunk 353.7 s; 196 passed, 0 skipped, 1 failed; each of its 197 tests ran in exactly one chunk
+FAILED tests/test_trust_mutants.py (exit 1): tests/test_trust_mutants.py::test_a_run_records_where_its_time_goes; log /var/tmp/cct/ve-select-run-_ejxcloe/tests__test_trust_mutants.py::chunk(4__4).log
+default_run = (CompletedProcess(args=['/tmp/cc-wt/.venv/bin/python', '/tmp/cc-wt/tools/trust_mutants.py', '--root', '/var/tmp/cct/py...ns": {},\n "name": "Demo.Defs",\n "isModule": false,\n "importArts": {},\n "dynlibs": []}', 1794195780211680128), ...})
+tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x7f396b4b9e00>, _basetemp=PosixPath('/var/tmp/cct/pytest-of-ccrun/pytest-0'), _retention_count=3, _retention_policy='all')
+
+    def test_a_run_records_where_its_time_goes(default_run, tmp_path_factory):
+        """eff-tm-control: every Lake run of a sweep counts under its step (none under "other"), each step that ran took
+        time, the phases add up to the run's seconds, and the one line prints them."""
+        import trust_mutants as tm
+        done, mutants, _, _ = default_run
+        data = json.loads((tmp_path_factory.getbasetemp() / "default-evidence.json").read_text())
+        steps, built = data["steps"], [m for m in mutants if "moves this line" not in m["detail"]]
+        assert tm.timed(steps) and tm.steps_line(steps) in done.stdout.splitlines()
+        runs, lake = steps["runs"], steps["lake"]
+        assert (runs["control_build"], runs["probe_install"], runs["other"], runs["outside_checks"]) == (1, 1, 0, 0)
+        assert runs["mutant_builds"] >= len(built) and min(runs[k] for k in (
+            "control_probes", "mutant_checks", "stage_controls", "mutant_probes")) >= 1, runs
+        assert all((lake[k] > 0) == (runs[k] > 0) for k in tm.LAKE), steps
+>       assert all(steps["wall"][k] > 0 for k in ("control_build", "probe_install", "control_probes", "mutants")), steps
+E       AssertionError: {'wall': {'plan': 0.1, 'scratch': 0.0, 'control_build': 0.1, 'probe_install': 1.3, ...}, 'lake': {'control_build': 0.1...t_builds': 35.3, ...}, 'runs': {'control_build': 1, 'probe_install': 1, 'control_probes': 6, 'mutant_builds': 43, ...}}
+E       assert False
+E        +  where False = all(<generator object test_a_run_records_where_its_time_goes.<locals>.<genexpr> at 0x7f396b043ae0>)
+
+tests/test_trust_mutants.py:272: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_trust_mutants.py::test_a_run_records_where_its_time_goes - ...
+1 failed, 196 passed, 592 deselected in 353.20s (0:05:53)
+recorded 19 units for tree 3dba6bfca0; 1 others left to the static graph until they run (1 with only some of their chunks here); 1 failed
+UNITLOG tests__test_architecture_docs.py.log: 32 passed in 0.29s
+UNITLOG tests__test_cardinality_exercised.py.log: 5 passed in 0.50s
+UNITLOG tests__test_definitions.py.log: 11 passed in 6.69s
+UNITLOG tests__test_frozen_sources.py.log: 14 passed in 11.09s
+UNITLOG tests__test_gate.py.log: 20 passed in 54.51s
+UNITLOG tests__test_lean_statements_parts.py.log: 5 passed in 0.46s
+UNITLOG tests__test_nested_pytest.py.log: 36 passed in 26.89s
+UNITLOG tests__test_norm_defaults_switch.py.log: 14 passed in 1.05s
+UNITLOG tests__test_pc9_statements.py.log: 2 passed in 0.36s
+UNITLOG tests__test_readings_defaults_rd6b_report.py.log: 7 passed in 8.60s
+UNITLOG tests__test_readings_defaults_rd8_report.py.log: 9 passed in 0.59s
+UNITLOG tests__test_readings_verdicts_split.py.log: 37 passed in 5.74s
+UNITLOG tests__test_relay_binding_inventory.py.log: 39 passed in 63.32s (0:01:03)
+UNITLOG tests__test_repo_map.py.log: 33 passed in 332.09s (0:05:32)
+UNITLOG tests__test_run_order.py.log: 33 passed in 11.44s
+UNITLOG tests__test_scope_rights_reach.py.log: 7 passed in 0.43s
+UNITLOG tests__test_trust_mutants.py::chunk(4__4).log: 1 failed, 196 passed, 592 deselected in 353.20s (0:05:53)
+UNITLOG tests__test_w6a_citations.py.log: 24 passed in 1.08s
+UNITLOG tests__test_wire_contract_lint.py.log: 21 passed in 1.58s
+UNITLOG tools__test_layer_policy.py.log: (no count line)
