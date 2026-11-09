@@ -405,9 +405,9 @@ def layeredCase (listed : List String) : Except String VE.NormDefaults.Wire.Laye
 #guard (match VE.Service.Document.environmentOf (chainEnv ("events@0" :: ndListed)) with
   | .ok _ => "ok" | .error e => e) ==
   "CheckerUnavailable: document checks under events@0 need its Lean profile route"
--- Owned: `requestOf` is `null` and `layeredOf` refuses it; never `.ok`, whatever the list's order.
-#guard [("events@0" :: ndListed), ndListed ++ ["events@0"]].all fun ps =>
-  requestIsNull ps && (layeredCase ps).toOption.isNone
+-- Owned: `layeredOf` refuses it, never `.ok`, whatever the list's order; `requestOf` is `null` there.
+#guard [("events@0" :: ndListed), ndListed ++ ["events@0"]].all fun ps => (layeredCase ps).toOption.isNone
+#guard [("events@0" :: ndListed), ndListed ++ ["events@0"]].all requestIsNull
 -- Its text is the decoder's on `null`; it does not name events@0 (reported to the DRI, 2026-11-09).
 #guard (match layeredCase ("events@0" :: ndListed) with | .ok _ => "ok" | .error e => e) == "object expected"
 -- The control: without events@0 the same `Env` is a case whose one pack is soft's.
