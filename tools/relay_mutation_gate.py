@@ -477,8 +477,13 @@ def _senses(case, executable):
         return senses.read_fences(env, case["fences"], packs, own=case["own"], defaults=case.get("defaults"),
                                   budget=case["budget"], executable=executable, fence_ids=case["fence_ids"],
                                   reading_set_units=case["reading_set_units"])
+    # sn-b6d: the re-read and Lean's line, when the case asks for them
+    line, reread = case.get("line"), case.get("reread")
     return senses.read(env, case["source"], packs, own=case["own"], overlay=case.get("overlay"),
-                       budget=case["budget"], executable=executable)
+                       budget=case["budget"], executable=executable,
+                       line=None if line is None else (line["word"], line["gloss"]),
+                       reread=None if reread is None else (reread["sentence"], reread["candidate"],
+                                                           reread["rendering"]))
 
 
 def _senses_request(case):
@@ -486,7 +491,8 @@ def _senses_request(case):
     env = _environment(case["environment"])
     return senses.request(env, case.get("source"), case["packs"], own=case["own"], overlay=case.get("overlay"),
                           budget=case["budget"], fences=case.get("fences"), defaults=case.get("defaults"),
-                          fence_ids=case.get("fence_ids"), reading_set_units=case.get("reading_set_units"))
+                          fence_ids=case.get("fence_ids"), reading_set_units=case.get("reading_set_units"),
+                          line=case.get("line"), reread=case.get("reread"))
 
 
 def _speech_source(case, executable):
