@@ -9845,7 +9845,8 @@
         "VE.Senses.Run.writtenLines",
         "VE.Senses.Run.flipJson",
         "VE.Senses.Run.byteSpan",
-        "VE.Senses.Run.senseEntryJson"
+        "VE.Senses.Run.senseEntryJson",
+        "VE.Senses.Run.rereadJson"
       ],
       "G[R]": [
         "VE.Senses.Run.fenceLine",
@@ -9855,7 +9856,8 @@
         "VE.Senses.Run.faultJson",
         "VE.Senses.Run.bodyOf",
         "VE.Senses.Run.textsJson",
-        "VE.Senses.Run.warningsJson"
+        "VE.Senses.Run.warningsJson",
+        "VE.Senses.Run.lineJson"
       ],
       "G[I]": [
         "VE.Senses.Run.projectionIds",
@@ -19426,7 +19428,8 @@
     "VE/Senses/TextsExamples.lean": {
       "T": [
         "VE.Senses.TextsExamples.reading",
-        "VE.Senses.TextsExamples.entries"
+        "VE.Senses.TextsExamples.entries",
+        "VE.Senses.TextsExamples.reread"
       ]
     },
     "VE/Attitudes/Frame.lean": {
