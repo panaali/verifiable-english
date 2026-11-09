@@ -1,0 +1,21 @@
+{
+ "job": "ci-3b.s4of4-0bdf509e",
+ "head": "97b23801a7618236a9cf434c622a5a434023b879",
+ "argv": [
+  "ci-3b.s4of4-0bdf509e",
+  "97b23801a7618236a9cf434c622a5a434023b879",
+  "531f4754dea6d66c57d7ab86827f696ca6ca856d",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-632dd440755b.tar.zst",
+  "d6b94950a9d4109b5fb1869ffc50ae02c493d94529a3c064b97e8ca2f70b69f8",
+  "--max-mutants",
+  "1000",
+  "--allow",
+  "docs/commands-imperatives/ci-3b/trust-mutants-allow.json",
+  "--budget",
+  "6300",
+  "--shard",
+  "4/4",
+  "--jobs",
+  "4"
+ ]
+}
