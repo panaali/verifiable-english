@@ -3,7 +3,7 @@
   {
    "definition": "VE.Scope.Pinned.clause",
    "operator": "list-empty",
-   "reason": "ill-typed where it is UNKNOWN: `list-empty` turns `(s.splitOn \" \")` into `[]`, which does not elaborate (Invalid field notation: Type of at lean/VE/Scope/Authoring.lean:34); the definition is killed by body-true at :33; body-false at :33; and-or at :33; all-any at :33; list-first at :33; list-last at :33; list-drop-first at :33; list-drop-last at :33"
+   "reason": "ill-typed where it is UNKNOWN: `list-empty` turns `(s.splitOn \" \")` into `[]`, which does not elaborate (Invalid field notation: Type of at lean/VE/Scope/Authoring.lean:39); the definition is killed by body-true at :38; body-false at :38; and-or at :38; all-any at :38; list-first at :38; list-last at :38; list-drop-first at :38; list-drop-last at :38"
   },
   {
    "definition": "VE.Scope.Pinned.spaced",
