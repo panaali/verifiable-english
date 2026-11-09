@@ -13,6 +13,7 @@ import VE.Acts.Lexical
 import VE.Acts.LexicalProofs
 import VE.Acts.Read
 import VE.Acts.Readings
+import VE.Acts.Run
 import VE.Acts.Sources
 import VE.Acts.Table
 import VE.Acts.Wire
@@ -644,6 +645,8 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.Lexical.words_cover
 #print axioms VE.Acts.Lexical.words_data
 #print axioms VE.Acts.Lexical.words_intercalate
+#print axioms VE.Acts.Run.firstsBy_map
+#print axioms VE.Acts.Run.witnessed_readings
 #print axioms VE.Acts.Wire.checkAct_joined
 #print axioms VE.Acts.Wire.checkAct_lexical
 #print axioms VE.Acts.Wire.checkWith_lex

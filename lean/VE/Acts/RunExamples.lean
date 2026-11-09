@@ -42,7 +42,7 @@ def paraphraseAt (j : Json) (k : Nat) : Option Json :=
 
 /-! ### AR1: Lean's genuine `LISTED` answer for P11, pinned (the relay's fuzz mutates this row) -/
 
-#guard (row (req V11 fx11 g11s)).compress == "{\"id\":\"c\",\"readings\":[{\"acts\":[{\"act\":\"{0} to directly take part in {1}\",\"from\":[0,1,6,2,3,4,5],\"text\":\"{0} has the right to directly take part in {1}\"},{\"act\":\"{0} to take part in {1} through freely chosen representatives\",\"from\":[0,1,2,3,4,5,8,9],\"text\":\"{0} has the right to take part in {1} through freely chosen representatives\"}],\"paraphrase\":\"{0} has the right to directly take part in {1}, and {0} has the right to take part in {1} through freely chosen representatives.\"},{\"acts\":[{\"act\":\"{0} to directly take part in {1} or to take part in {1} through freely chosen representatives\",\"from\":[0,6,7,1,2,3,4,5,8,9],\"text\":\"{0} has the right to directly take part in {1} or to take part in {1} through freely chosen representatives\"}],\"paraphrase\":\"{0} has the right to directly take part in {1} or to take part in {1} through freely chosen representatives, as one act done in any one of these ways (not each way on its own).\"}],\"status\":\"ok\",\"tokens\":[[0,3],[4,6],[7,11],[12,16],[17,19],[20,23],[24,32],[33,35],[36,43],[44,73]],\"verdict\":\"LISTED\"}"
+#guard (row (req V11 fx11 g11s)).compress == "{\"id\":\"c\",\"readings\":[{\"acts\":[{\"act\":\"{0} to directly take part in {1}\",\"from\":[0,1,6,2,3,4,5],\"text\":\"{0} has the right to directly take part in {1}\"},{\"act\":\"{0} to take part in {1} through freely chosen representatives\",\"from\":[0,1,2,3,4,5,8,9],\"text\":\"{0} has the right to take part in {1} through freely chosen representatives\"}],\"paraphrase\":\"{0} has the right to directly take part in {1}, and {0} has the right to take part in {1} through freely chosen representatives.\"},{\"acts\":[{\"act\":\"{0} to directly take part in {1} or to take part in {1} through freely chosen representatives\",\"from\":[0,1,6,2,3,4,5,7,8,9],\"text\":\"{0} has the right to directly take part in {1} or to take part in {1} through freely chosen representatives\"}],\"paraphrase\":\"{0} has the right to directly take part in {1} or to take part in {1} through freely chosen representatives, as one act done in any one of these ways (not each way on its own).\"}],\"status\":\"ok\",\"tokens\":[[0,3],[4,6],[7,11],[12,16],[17,19],[20,23],[24,32],[33,35],[36,43],[44,73]],\"verdict\":\"LISTED\"}"
 
 /-! ### Token spans and indices -/
 
@@ -57,20 +57,63 @@ def paraphraseAt (j : Json) (k : Nat) : Option Json :=
 #guard spans fx5 "{0} to seek in other  \t countries" [.slot 0, .word "to", .word "seek", .word "in", .fixed 0] ==
   some [(0, 3), (4, 6), (7, 11), (12, 14), (15, 33)]
 -- D-32 on this mode: two readings that read the same are refused, naming the first equal pair from 1
-#guard (rowsOf [] .may none true [] [[.atom join], [.atom (form false)], [.atom join]]).toOption.isNone &&
-  match rowsOf [] .may none true [] [[.atom join], [.atom (form false)], [.atom join]] with
+#guard (rowsOf [] V5 .may none true [] [] [([.atom join], 0, 0), ([.atom (form false)], 0, 0), ([.atom join], 0, 0)]
+  ).toOption.isNone &&
+  match rowsOf [] V5 .may none true [] [] [([.atom join], 0, 0), ([.atom (form false)], 0, 0), ([.atom join], 0, 0)] with
   | .error e => e == "InvalidInput: readings 1 and 3 of this act phrase read the same in English; rephrase the act"
   | .ok _ => false
--- `from`: G12's split *join* reads the second *to*, its whole join every token once; G5's *enjoy* reads the shared
--- object after its modifier, in the act's order
+-- `from` is read off each reading's derivation (`witnessed`, `tagTree`): G12's split *join* reads the second *to*, its
+-- whole join every token once, in the act's order; G5's *enjoy* reads the shared object after its modifier
 #guard (acts (req V12 [] g12s) 0).map (·.getObjValD "from") == [toJson [0, 1, 2, 6, 7], toJson [0, 4, 5, 6, 7, 8, 9, 10,
   11, 12, 13]]
-#guard (acts (req V12 [] g12s) 1).map (·.getObjValD "from") == [toJson (List.range 14)]
+#guard (acts (req V12 [] g12s) 1).map (·.getObjValD "from") == [toJson [0, 1, 2, 6, 7, 3, 4, 5, 8, 9, 10, 11, 12, 13]]
 #guard (acts (req V5 fx5 g5) 0).map (·.getObjValD "from") == [toJson [0, 1, 2, 8, 9, 10], toJson [0, 4, 5, 8, 9, 10, 6, 7]]
+-- ap-4 review F4: a word repeated in another item is that item's token, never the rightmost equal one
+def Vsf : Vocab := ⟨[fr "seek" [""] [] [], fr "share" [""] [] []], []⟩
+def fromsAt (j : Json) (k : Nat) : List Json := (acts j k).map (·.getObjValD "from")
+-- readings of G5's second meaning (witness (1, 0) and (1, 1)) read its own derivation
+#guard [2, 3].map (fromsAt (req V5 fx5 g5)) == [[toJson [0, 1, 2, 8, 9, 10, 6, 7], toJson [0, 4, 5, 8, 9, 10, 6, 7]],
+  [toJson [0, 1, 2, 8, 9, 10, 6, 7, 3, 4, 5]]]
+#guard (match Lexical.lex fx5 g5 with
+  | .ok ts => match witnessed V5 .right rawCap stepBudget ts.toArray with
+    | some (_, Ws) => Ws.map (fun (w : List Simple × Nat × Nat) => w.2) == [(0, 0), (0, 1), (1, 0), (1, 1)]
+    | none => false
+  | .error _ => false)
+-- the function tokens are the leaves the meaning writes itself: the subject, *to*, join words, markers
+def fnsOf (V : Vocab) (fx : List String) (s : String) : Option (List (List Nat)) :=
+  match Lexical.lex fx s with
+  | .ok ts => match witnessed V .right rawCap stepBudget ts.toArray with
+    | some (ms, _) => some (ms.map fun (m : Act × VE.Grammar.Tree Lexical.Tok) => (tagged V (tagBase ts) m.2).2)
+    | none => none
+  | .error _ => none
+#guard fnsOf V11 fx11 g11s == some [[0, 1, 4, 7, 8]]
+#guard fromsAt (req Vsf [] "{0} to seek food and to share food") 0 == [toJson [0, 1, 2, 3], toJson [0, 5, 6, 7]]
+#guard fromsAt (req Vsf [] "{0} to seek food and to share food") 1 == [toJson (List.range 8)]
+#guard fromsAt (req Vsf [] "{0} to seek food and to share food" "obligation") 0 == [toJson [0, 2, 3], toJson [0, 6, 7]]
+#guard fnsOf Vsf [] "{0} to seek food and to share food" == some [[0, 1, 4, 5]]
+-- E16: one act written twice; each copy reads its own item's tokens
+#guard fromsAt (req ⟨[fr "seek" [""] [] []], []⟩ [] "{0} to seek asylum and to seek asylum") 0 ==
+  [toJson [0, 1, 2, 3], toJson [0, 5, 6, 7]]
+-- a written token (*to*, a marker, a join word) is the nearest equal function token before the next token new to the
+-- act; a shared *to* is read once in a whole join
+#guard fromsAt (req ⟨[fr "seek" [""] [] [], fr "enjoy" [""] [] []], []⟩ [] "{0} to seek and enjoy asylum") 1 ==
+  [toJson [0, 1, 2, 5, 3, 4]]
+#guard fromsAt (req ⟨[fr "seek" [""] [] ["in"]], []⟩ [] "{0} to seek asylum in France and in Spain") 0 ==
+  [toJson [0, 1, 2, 3, 4, 5], toJson [0, 1, 2, 3, 7, 8]]
 -- a token the rendering adds and the phrase lacks has no index: *to* after *has the right* on a phrase without it
-#guard fromOf [.slot 0, .word "seek", .word "asylum"] [.slot 0, .word "to", .word "seek", .word "asylum"] == [0, 1, 2]
--- an equal word is matched case-insensitively, as the grammar reads it, and never twice in one act
-#guard fromOf [.slot 0, .word "To", .word "a", .word "to"] [.slot 0, .word "to", .word "to"] == [0, 1, 3]
+#guard fromOf [.slot 0, .word "seek", .word "asylum"] [0] 1 [.slot 0, .word "to", .word "#1", .word "#2"] == [0, 1, 2]
+-- a written word is matched case-insensitively, as the grammar reads it, among the function tokens only, and each
+-- place once
+#guard fromOf [.slot 0, .word "To", .word "to", .word "seek"] [0, 1] 1 [.slot 0, .word "to", .word "#3", .word "to"] ==
+  [0, 1, 3]
+-- an act's tokens render as its text (`Simple.toks`, `Simple.text`), so `from` reads the tokens the text is made of
+#guard [Simple.atom (form false), .whole (.all false false [form false, join]), .whole (.any true false [join, join,
+  form true])].all fun x => [some true, some false].all fun inf => tokText [] (Simple.toks inf x) == Simple.text [] inf x
+-- `witnessed` lists `phraseReadings`' readings (`witnessed_readings`), from the same one parse
+#guard (match Lexical.lex fx8 g8 with
+  | .ok ts => (witnessed V8 .right rawCap stepBudget ts.toArray).map (·.2.map Prod.fst) ==
+      (match phraseReadings V8 .right rawCap stepBudget ts.toArray with | .ok Rs => some Rs | .limit => none)
+  | .error _ => false)
 
 /-! ### An adverb inside the last joined item reads over that item only (D4; ap-7 FAIL ruling item 2) -/
 
