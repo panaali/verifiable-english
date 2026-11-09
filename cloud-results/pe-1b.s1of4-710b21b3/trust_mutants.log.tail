@@ -1,0 +1,9 @@
+trust_mutants: 3 definitions, 22 mutants (6 to run), 4 jobs, base 560b24d1508c
+UNKNOWN lean/VE/Purposes/WellFormed.lean:168 VE.Purposes.WellFormed (S, trusted) eq-ne: = -> ≠ (lean/VE/Purposes/Examples.lean:275: Expression (VE.Purposes.Examples.wfDecidable, which it reads,...)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:168 VE.Purposes.WellFormed (S, trusted) eq-ne: = -> ≠ (lean/VE/Purposes/Examples.lean:275: Expression (VE.Purposes.Examples.wfDecidable, which it reads,...)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:168 VE.Purposes.WellFormed (S, trusted) and-or: ∧ -> ∨ (lean/VE/Purposes/Examples.lean:278: Expression (VE.Purposes.Examples.wfDecidable, which it reads,...)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:168 VE.Purposes.WellFormed (S, trusted) eq-ne: = -> ≠ (lean/VE/Purposes/Examples.lean:275: Expression (VE.Purposes.Examples.wfDecidable, which it reads,...)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:168 VE.Purposes.WellFormed (S, trusted) eq-ne: = -> ≠ (lean/VE/Purposes/Examples.lean:275: Expression (VE.Purposes.Examples.wfDecidable, which it reads,...)
+trust_mutants: 1 KILLED, 0 SURVIVOR, 5 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 16 OTHER SHARD in 73 s
+trust_mutants: S, trusted: 1 KILLED, 5 UNKNOWN, 16 OTHER SHARD
+trust_mutants: steps: wall plan 10.5 s, scratch 3.5 s, control_build 0.1 s, probe_install 1.1 s, mutants 51.8 s, cleanup 5.6 s; lake control_build 0.1 s (1), probe_install 1.1 s (1), control_probes 3.2 s (2), mutant_builds 70.1 s (12), mutant_checks 42.7 s (10), stage_controls 32.9 s (4), mutant_probes 10.6 s (6)
