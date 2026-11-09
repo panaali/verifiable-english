@@ -1,0 +1,21 @@
+{
+ "job": "pe-1b.s4of4-710b21b3",
+ "head": "82426ff48f2c172944771e68c67af62dab7ff029",
+ "argv": [
+  "pe-1b.s4of4-710b21b3",
+  "82426ff48f2c172944771e68c67af62dab7ff029",
+  "560b24d1508cbd0f2a2ec7d1287f54b2b210c654",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-fdd0964ffe53.tar.zst",
+  "3d96e798cbbe722b5e41f0f07780754a9806d618eb1ce57ce360dbc9aa8ebca2",
+  "--max-mutants",
+  "1000",
+  "--test",
+  "lean/VE/Purposes/Examples.lean",
+  "--budget",
+  "6300",
+  "--shard",
+  "4/4",
+  "--jobs",
+  "4"
+ ]
+}
