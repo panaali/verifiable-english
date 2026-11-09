@@ -1,7 +1,7 @@
 {
  "base": "6db6ee16ddb10f843b396b78299a980abc43fefb",
- "head": "7d9a17e790271c8684c18b50273096ec24f74201",
- "tree": "1ce852b6a4c3dcf7787da635d56504d6115c5a27",
+ "head": "628c22b0fb50531f3e8aad664292df75211b02b8",
+ "tree": "10b9666d74ec93f44c97a461fa34fd6a37378626",
  "jobs": 8,
  "control_probes": "lazy",
  "max_mutants": 1000,
@@ -9,43 +9,43 @@
  "tests": [
   "lean/VE/RightClauses/Examples.lean"
  ],
- "seconds": 184,
+ "seconds": 341,
  "steps": {
   "wall": {
-   "plan": 14.2,
-   "scratch": 15.1,
-   "control_build": 0.2,
-   "probe_install": 1.9,
+   "plan": 24.1,
+   "scratch": 34.2,
+   "control_build": 0.3,
+   "probe_install": 4.1,
    "control_probes": 0.0,
-   "mutants": 150.0,
-   "cleanup": 2.3,
-   "reads": 0.0
+   "mutants": 273.7,
+   "cleanup": 4.7,
+   "reads": 0.1
   },
   "lake": {
-   "control_build": 0.2,
-   "probe_install": 1.8,
-   "control_probes": 44.2,
-   "mutant_builds": 182.8,
-   "mutant_checks": 60.0,
+   "control_build": 0.3,
+   "probe_install": 4.1,
+   "control_probes": 94.3,
+   "mutant_builds": 195.5,
+   "mutant_checks": 323.4,
    "outside_checks": 0.0,
-   "stage_controls": 7.2,
-   "mutant_probes": 193.5,
+   "stage_controls": 159.5,
+   "mutant_probes": 300.5,
    "other": 0.0
   },
   "runs": {
    "control_build": 1,
    "probe_install": 1,
-   "control_probes": 7,
-   "mutant_builds": 40,
-   "mutant_checks": 16,
+   "control_probes": 5,
+   "mutant_builds": 16,
+   "mutant_checks": 23,
    "outside_checks": 0,
-   "stage_controls": 4,
-   "mutant_probes": 36,
+   "stage_controls": 8,
+   "mutant_probes": 15,
    "other": 0
   }
  },
  "counts": {
-  "KILLED": 36,
+  "KILLED": 15,
   "SURVIVOR": 0,
   "UNKNOWN": 0,
   "INVALID": 0,
@@ -56,16 +56,13 @@
   "trusted"
  ],
  "class_counts": {
-  "?, trusted": {
-   "KILLED": 35
-  },
   "S, trusted": {
-   "KILLED": 1
+   "KILLED": 15
   }
  },
  "inputs": {
   "tool": "57a6dcabfba71bf7bf75966f2295fa6af53cb5f5316629ab2ea23dded202ef9b",
-  "lean": "c4abc1a8bf8f0fce1df07d71ddecffbd1f5fd52a2f29e439b01f20d1327d14eb",
+  "lean": "b658a3295f5c91beadd79bb99f18aa0bff82f1843023b3077d4bf991f19d9fc6",
   "tests": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
   "base": "6db6ee16ddb10f843b396b78299a980abc43fefb",
   "options": "{\"deep\": false, \"test\": [\"VE/RightClauses/Examples.lean\"], \"classes\": [\"trusted\"]}",
@@ -905,7 +902,7 @@
    "lean/lean-toolchain": "42779d67b81608af8a12aa4328d2ab47ca201925b3b2bd68369587b5340bb434",
    "lean/predicates.txt": "f0ee946eb58888ab866d2f63b6a65ed342f3fc20e27869e0c593dd76cdfb6c07",
    "lean/statements.txt": "d5e59537fd6483ed0efdc2f04cf9b8eb46183c7c475cadb4db5190bf4af1c97e",
-   "tools/trust-classes.json": "86c1805885dac232ea42db739cc00e5f868d61d0cb7201177a77f935e1d29972"
+   "tools/trust-classes.json": "6f4f9e17e61e8bcb0ec31a728f7603946814c3e8dae19f5b3fc77b9c2d0808cb"
   },
   "tool_files": {
    "lean/audit.py": "05fb69c5689a8606fefd6d43e220f23ee6dbedc4bea7245b34ae29a4fd13a1cd",
@@ -927,13 +924,10 @@
   "mode": "full",
   "changed": [],
   "reused": 0,
-  "rerun": 36,
-  "full_run": "its inputs differ (lean): lean/VE/RightClauses/Examples.lean is a selected declaration's file or in its import closure"
+  "rerun": 15,
+  "full_run": "its mutants are not this tree's"
  },
  "definitions": [
-  "lean/VE/RightClauses/Examples.lean: VE.RightClauses.Examples.across",
-  "lean/VE/RightClauses/Examples.lean: VE.RightClauses.Examples.twice",
-  "lean/VE/RightClauses/Examples.lean: VE.RightClauses.Examples.twoHolders",
   "lean/VE/RightClauses/Plain.lean: VE.RightClauses.checkEntry",
   "lean/VE/RightClauses/Plain.lean: VE.RightClauses.entryError"
  ],
@@ -981,7 +975,7 @@
     226,
     227
    ],
-   "trust_class": "?",
+   "trust_class": "S",
    "trusted": true
   },
   {
@@ -1004,7 +998,7 @@
     222,
     222
    ],
-   "trust_class": "?",
+   "trust_class": "S",
    "trusted": true
   },
   {
@@ -1027,7 +1021,7 @@
     222,
     222
    ],
-   "trust_class": "?",
+   "trust_class": "S",
    "trusted": true
   },
   {
@@ -1050,80 +1044,11 @@
     234,
     235
    ],
-   "trust_class": "?",
+   "trust_class": "S",
    "trusted": true
   },
   {
    "id": "M006",
-   "file": "VE/RightClauses/Examples.lean",
-   "line": 220,
-   "definition": "VE.RightClauses.Examples.twice",
-   "operator": "list-empty",
-   "lines": [
-    220,
-    220
-   ],
-   "before": "[\u27e8\"r21\", \"person\", .top, [accessLine, accessLine]\u27e9]",
-   "after": "[]",
-   "status": "KILLED",
-   "detail": "lean/VE/RightClauses/Examples.lean:221: Expression",
-   "raw_status": "KILLED",
-   "reads": "ee43a5efd9de476ecd080695ebd365f7fdb933241cedb91657f4cb0cd64255e6",
-   "killed_at": [
-    221,
-    221
-   ],
-   "trust_class": "?",
-   "trusted": true
-  },
-  {
-   "id": "M007",
-   "file": "VE/RightClauses/Examples.lean",
-   "line": 228,
-   "definition": "VE.RightClauses.Examples.across",
-   "operator": "list-empty",
-   "lines": [
-    228,
-    228
-   ],
-   "before": "[r21, \u27e8\"r22\", \"person\", .top, [accessLine]\u27e9]",
-   "after": "[]",
-   "status": "KILLED",
-   "detail": "lean/VE/RightClauses/Examples.lean:229: Expression",
-   "raw_status": "KILLED",
-   "reads": "2d90edf89901b9d6f1f0842f2d7e3e573bb420b95464d1f635c48ffce7259a38",
-   "killed_at": [
-    229,
-    229
-   ],
-   "trust_class": "?",
-   "trusted": true
-  },
-  {
-   "id": "M008",
-   "file": "VE/RightClauses/Examples.lean",
-   "line": 232,
-   "definition": "VE.RightClauses.Examples.twoHolders",
-   "operator": "list-empty",
-   "lines": [
-    232,
-    232
-   ],
-   "before": "[\"person\", \"person\"]",
-   "after": "[]",
-   "status": "KILLED",
-   "detail": "lean/VE/RightClauses/Examples.lean:233: Expression",
-   "raw_status": "KILLED",
-   "reads": "e0d42a112862316ea65b532104abebb18c1eb6ef578b36651be1de94f9189912",
-   "killed_at": [
-    233,
-    233
-   ],
-   "trust_class": "?",
-   "trusted": true
-  },
-  {
-   "id": "M009",
    "file": "VE/RightClauses/Plain.lean",
    "line": 63,
    "definition": "VE.RightClauses.entryError",
@@ -1142,57 +1067,11 @@
     222,
     222
    ],
-   "trust_class": "?",
+   "trust_class": "S",
    "trusted": true
   },
   {
-   "id": "M010",
-   "file": "VE/RightClauses/Examples.lean",
-   "line": 220,
-   "definition": "VE.RightClauses.Examples.twice",
-   "operator": "list-empty",
-   "lines": [
-    220,
-    220
-   ],
-   "before": "[accessLine, accessLine]",
-   "after": "[]",
-   "status": "KILLED",
-   "detail": "lean/VE/RightClauses/Examples.lean:221: Expression",
-   "raw_status": "KILLED",
-   "reads": "ee43a5efd9de476ecd080695ebd365f7fdb933241cedb91657f4cb0cd64255e6",
-   "killed_at": [
-    221,
-    221
-   ],
-   "trust_class": "?",
-   "trusted": true
-  },
-  {
-   "id": "M011",
-   "file": "VE/RightClauses/Examples.lean",
-   "line": 228,
-   "definition": "VE.RightClauses.Examples.across",
-   "operator": "list-empty",
-   "lines": [
-    228,
-    228
-   ],
-   "before": "[accessLine]",
-   "after": "[]",
-   "status": "KILLED",
-   "detail": "lean/VE/RightClauses/Examples.lean:229: Expression",
-   "raw_status": "KILLED",
-   "reads": "2d90edf89901b9d6f1f0842f2d7e3e573bb420b95464d1f635c48ffce7259a38",
-   "killed_at": [
-    229,
-    229
-   ],
-   "trust_class": "?",
-   "trusted": true
-  },
-  {
-   "id": "M012",
+   "id": "M007",
    "file": "VE/RightClauses/Plain.lean",
    "line": 63,
    "definition": "VE.RightClauses.entryError",
@@ -1211,80 +1090,11 @@
     222,
     222
    ],
-   "trust_class": "?",
+   "trust_class": "S",
    "trusted": true
   },
   {
-   "id": "M013",
-   "file": "VE/RightClauses/Examples.lean",
-   "line": 220,
-   "definition": "VE.RightClauses.Examples.twice",
-   "operator": "list-first",
-   "lines": [
-    220,
-    220
-   ],
-   "before": "[accessLine, accessLine]",
-   "after": "([accessLine, accessLine].take 1)",
-   "status": "KILLED",
-   "detail": "lean/VE/RightClauses/Examples.lean:221: Expression",
-   "raw_status": "KILLED",
-   "reads": "ee43a5efd9de476ecd080695ebd365f7fdb933241cedb91657f4cb0cd64255e6",
-   "killed_at": [
-    221,
-    221
-   ],
-   "trust_class": "?",
-   "trusted": true
-  },
-  {
-   "id": "M014",
-   "file": "VE/RightClauses/Examples.lean",
-   "line": 228,
-   "definition": "VE.RightClauses.Examples.across",
-   "operator": "list-first",
-   "lines": [
-    228,
-    228
-   ],
-   "before": "[r21, \u27e8\"r22\", \"person\", .top, [accessLine]\u27e9]",
-   "after": "([r21, \u27e8\"r22\", \"person\", .top, [accessLine]\u27e9].take 1)",
-   "status": "KILLED",
-   "detail": "lean/VE/RightClauses/Examples.lean:229: Expression",
-   "raw_status": "KILLED",
-   "reads": "2d90edf89901b9d6f1f0842f2d7e3e573bb420b95464d1f635c48ffce7259a38",
-   "killed_at": [
-    229,
-    229
-   ],
-   "trust_class": "?",
-   "trusted": true
-  },
-  {
-   "id": "M015",
-   "file": "VE/RightClauses/Examples.lean",
-   "line": 232,
-   "definition": "VE.RightClauses.Examples.twoHolders",
-   "operator": "list-first",
-   "lines": [
-    232,
-    232
-   ],
-   "before": "[\"person\", \"person\"]",
-   "after": "([\"person\", \"person\"].take 1)",
-   "status": "KILLED",
-   "detail": "lean/VE/RightClauses/Examples.lean:233: Expression",
-   "raw_status": "KILLED",
-   "reads": "e0d42a112862316ea65b532104abebb18c1eb6ef578b36651be1de94f9189912",
-   "killed_at": [
-    233,
-    233
-   ],
-   "trust_class": "?",
-   "trusted": true
-  },
-  {
-   "id": "M016",
+   "id": "M008",
    "file": "VE/RightClauses/Plain.lean",
    "line": 63,
    "definition": "VE.RightClauses.entryError",
@@ -1303,80 +1113,11 @@
     230,
     231
    ],
-   "trust_class": "?",
+   "trust_class": "S",
    "trusted": true
   },
   {
-   "id": "M017",
-   "file": "VE/RightClauses/Examples.lean",
-   "line": 220,
-   "definition": "VE.RightClauses.Examples.twice",
-   "operator": "list-drop-last",
-   "lines": [
-    220,
-    220
-   ],
-   "before": "[\u27e8\"r21\", \"person\", .top, [accessLine, accessLine]\u27e9]",
-   "after": "([\u27e8\"r21\", \"person\", .top, [accessLine, accessLine]\u27e9].dropLast)",
-   "status": "KILLED",
-   "detail": "lean/VE/RightClauses/Examples.lean:221: Expression",
-   "raw_status": "KILLED",
-   "reads": "ee43a5efd9de476ecd080695ebd365f7fdb933241cedb91657f4cb0cd64255e6",
-   "killed_at": [
-    221,
-    221
-   ],
-   "trust_class": "?",
-   "trusted": true
-  },
-  {
-   "id": "M018",
-   "file": "VE/RightClauses/Examples.lean",
-   "line": 228,
-   "definition": "VE.RightClauses.Examples.across",
-   "operator": "list-drop-last",
-   "lines": [
-    228,
-    228
-   ],
-   "before": "[r21, \u27e8\"r22\", \"person\", .top, [accessLine]\u27e9]",
-   "after": "([r21, \u27e8\"r22\", \"person\", .top, [accessLine]\u27e9].dropLast)",
-   "status": "KILLED",
-   "detail": "lean/VE/RightClauses/Examples.lean:229: Expression",
-   "raw_status": "KILLED",
-   "reads": "2d90edf89901b9d6f1f0842f2d7e3e573bb420b95464d1f635c48ffce7259a38",
-   "killed_at": [
-    229,
-    229
-   ],
-   "trust_class": "?",
-   "trusted": true
-  },
-  {
-   "id": "M019",
-   "file": "VE/RightClauses/Examples.lean",
-   "line": 232,
-   "definition": "VE.RightClauses.Examples.twoHolders",
-   "operator": "list-drop-last",
-   "lines": [
-    232,
-    232
-   ],
-   "before": "[\"person\", \"person\"]",
-   "after": "([\"person\", \"person\"].dropLast)",
-   "status": "KILLED",
-   "detail": "lean/VE/RightClauses/Examples.lean:233: Expression",
-   "raw_status": "KILLED",
-   "reads": "e0d42a112862316ea65b532104abebb18c1eb6ef578b36651be1de94f9189912",
-   "killed_at": [
-    233,
-    233
-   ],
-   "trust_class": "?",
-   "trusted": true
-  },
-  {
-   "id": "M020",
+   "id": "M009",
    "file": "VE/RightClauses/Plain.lean",
    "line": 63,
    "definition": "VE.RightClauses.entryError",
@@ -1395,11 +1136,11 @@
     222,
     222
    ],
-   "trust_class": "?",
+   "trust_class": "S",
    "trusted": true
   },
   {
-   "id": "M021",
+   "id": "M010",
    "file": "VE/RightClauses/Plain.lean",
    "line": 63,
    "definition": "VE.RightClauses.entryError",
@@ -1418,57 +1159,11 @@
     222,
     222
    ],
-   "trust_class": "?",
+   "trust_class": "S",
    "trusted": true
   },
   {
-   "id": "M022",
-   "file": "VE/RightClauses/Examples.lean",
-   "line": 220,
-   "definition": "VE.RightClauses.Examples.twice",
-   "operator": "list-drop-last",
-   "lines": [
-    220,
-    220
-   ],
-   "before": "[accessLine, accessLine]",
-   "after": "([accessLine, accessLine].dropLast)",
-   "status": "KILLED",
-   "detail": "lean/VE/RightClauses/Examples.lean:221: Expression",
-   "raw_status": "KILLED",
-   "reads": "ee43a5efd9de476ecd080695ebd365f7fdb933241cedb91657f4cb0cd64255e6",
-   "killed_at": [
-    221,
-    221
-   ],
-   "trust_class": "?",
-   "trusted": true
-  },
-  {
-   "id": "M023",
-   "file": "VE/RightClauses/Examples.lean",
-   "line": 228,
-   "definition": "VE.RightClauses.Examples.across",
-   "operator": "list-drop-last",
-   "lines": [
-    228,
-    228
-   ],
-   "before": "[accessLine]",
-   "after": "([accessLine].dropLast)",
-   "status": "KILLED",
-   "detail": "lean/VE/RightClauses/Examples.lean:229: Expression",
-   "raw_status": "KILLED",
-   "reads": "2d90edf89901b9d6f1f0842f2d7e3e573bb420b95464d1f635c48ffce7259a38",
-   "killed_at": [
-    229,
-    229
-   ],
-   "trust_class": "?",
-   "trusted": true
-  },
-  {
-   "id": "M024",
+   "id": "M011",
    "file": "VE/RightClauses/Plain.lean",
    "line": 63,
    "definition": "VE.RightClauses.entryError",
@@ -1487,80 +1182,11 @@
     222,
     222
    ],
-   "trust_class": "?",
+   "trust_class": "S",
    "trusted": true
   },
   {
-   "id": "M025",
-   "file": "VE/RightClauses/Examples.lean",
-   "line": 220,
-   "definition": "VE.RightClauses.Examples.twice",
-   "operator": "list-last",
-   "lines": [
-    220,
-    220
-   ],
-   "before": "[accessLine, accessLine]",
-   "after": "([accessLine, accessLine].reverse.take 1)",
-   "status": "KILLED",
-   "detail": "lean/VE/RightClauses/Examples.lean:221: Expression",
-   "raw_status": "KILLED",
-   "reads": "ee43a5efd9de476ecd080695ebd365f7fdb933241cedb91657f4cb0cd64255e6",
-   "killed_at": [
-    221,
-    221
-   ],
-   "trust_class": "?",
-   "trusted": true
-  },
-  {
-   "id": "M026",
-   "file": "VE/RightClauses/Examples.lean",
-   "line": 228,
-   "definition": "VE.RightClauses.Examples.across",
-   "operator": "list-last",
-   "lines": [
-    228,
-    228
-   ],
-   "before": "[r21, \u27e8\"r22\", \"person\", .top, [accessLine]\u27e9]",
-   "after": "([r21, \u27e8\"r22\", \"person\", .top, [accessLine]\u27e9].reverse.take 1)",
-   "status": "KILLED",
-   "detail": "lean/VE/RightClauses/Examples.lean:229: Expression",
-   "raw_status": "KILLED",
-   "reads": "2d90edf89901b9d6f1f0842f2d7e3e573bb420b95464d1f635c48ffce7259a38",
-   "killed_at": [
-    229,
-    229
-   ],
-   "trust_class": "?",
-   "trusted": true
-  },
-  {
-   "id": "M027",
-   "file": "VE/RightClauses/Examples.lean",
-   "line": 232,
-   "definition": "VE.RightClauses.Examples.twoHolders",
-   "operator": "list-last",
-   "lines": [
-    232,
-    232
-   ],
-   "before": "[\"person\", \"person\"]",
-   "after": "([\"person\", \"person\"].reverse.take 1)",
-   "status": "KILLED",
-   "detail": "lean/VE/RightClauses/Examples.lean:233: Expression",
-   "raw_status": "KILLED",
-   "reads": "e0d42a112862316ea65b532104abebb18c1eb6ef578b36651be1de94f9189912",
-   "killed_at": [
-    233,
-    233
-   ],
-   "trust_class": "?",
-   "trusted": true
-  },
-  {
-   "id": "M028",
+   "id": "M012",
    "file": "VE/RightClauses/Plain.lean",
    "line": 63,
    "definition": "VE.RightClauses.entryError",
@@ -1579,80 +1205,11 @@
     230,
     231
    ],
-   "trust_class": "?",
+   "trust_class": "S",
    "trusted": true
   },
   {
-   "id": "M029",
-   "file": "VE/RightClauses/Examples.lean",
-   "line": 220,
-   "definition": "VE.RightClauses.Examples.twice",
-   "operator": "list-drop-first",
-   "lines": [
-    220,
-    220
-   ],
-   "before": "[\u27e8\"r21\", \"person\", .top, [accessLine, accessLine]\u27e9]",
-   "after": "([\u27e8\"r21\", \"person\", .top, [accessLine, accessLine]\u27e9].drop 1)",
-   "status": "KILLED",
-   "detail": "lean/VE/RightClauses/Examples.lean:221: Expression",
-   "raw_status": "KILLED",
-   "reads": "ee43a5efd9de476ecd080695ebd365f7fdb933241cedb91657f4cb0cd64255e6",
-   "killed_at": [
-    221,
-    221
-   ],
-   "trust_class": "?",
-   "trusted": true
-  },
-  {
-   "id": "M030",
-   "file": "VE/RightClauses/Examples.lean",
-   "line": 228,
-   "definition": "VE.RightClauses.Examples.across",
-   "operator": "list-drop-first",
-   "lines": [
-    228,
-    228
-   ],
-   "before": "[r21, \u27e8\"r22\", \"person\", .top, [accessLine]\u27e9]",
-   "after": "([r21, \u27e8\"r22\", \"person\", .top, [accessLine]\u27e9].drop 1)",
-   "status": "KILLED",
-   "detail": "lean/VE/RightClauses/Examples.lean:229: Expression",
-   "raw_status": "KILLED",
-   "reads": "2d90edf89901b9d6f1f0842f2d7e3e573bb420b95464d1f635c48ffce7259a38",
-   "killed_at": [
-    229,
-    229
-   ],
-   "trust_class": "?",
-   "trusted": true
-  },
-  {
-   "id": "M031",
-   "file": "VE/RightClauses/Examples.lean",
-   "line": 232,
-   "definition": "VE.RightClauses.Examples.twoHolders",
-   "operator": "list-drop-first",
-   "lines": [
-    232,
-    232
-   ],
-   "before": "[\"person\", \"person\"]",
-   "after": "([\"person\", \"person\"].drop 1)",
-   "status": "KILLED",
-   "detail": "lean/VE/RightClauses/Examples.lean:233: Expression",
-   "raw_status": "KILLED",
-   "reads": "e0d42a112862316ea65b532104abebb18c1eb6ef578b36651be1de94f9189912",
-   "killed_at": [
-    233,
-    233
-   ],
-   "trust_class": "?",
-   "trusted": true
-  },
-  {
-   "id": "M032",
+   "id": "M013",
    "file": "VE/RightClauses/Plain.lean",
    "line": 63,
    "definition": "VE.RightClauses.entryError",
@@ -1671,11 +1228,11 @@
     222,
     222
    ],
-   "trust_class": "?",
+   "trust_class": "S",
    "trusted": true
   },
   {
-   "id": "M033",
+   "id": "M014",
    "file": "VE/RightClauses/Plain.lean",
    "line": 63,
    "definition": "VE.RightClauses.entryError",
@@ -1694,57 +1251,11 @@
     222,
     222
    ],
-   "trust_class": "?",
+   "trust_class": "S",
    "trusted": true
   },
   {
-   "id": "M034",
-   "file": "VE/RightClauses/Examples.lean",
-   "line": 220,
-   "definition": "VE.RightClauses.Examples.twice",
-   "operator": "list-drop-first",
-   "lines": [
-    220,
-    220
-   ],
-   "before": "[accessLine, accessLine]",
-   "after": "([accessLine, accessLine].drop 1)",
-   "status": "KILLED",
-   "detail": "lean/VE/RightClauses/Examples.lean:221: Expression",
-   "raw_status": "KILLED",
-   "reads": "ee43a5efd9de476ecd080695ebd365f7fdb933241cedb91657f4cb0cd64255e6",
-   "killed_at": [
-    221,
-    221
-   ],
-   "trust_class": "?",
-   "trusted": true
-  },
-  {
-   "id": "M035",
-   "file": "VE/RightClauses/Examples.lean",
-   "line": 228,
-   "definition": "VE.RightClauses.Examples.across",
-   "operator": "list-drop-first",
-   "lines": [
-    228,
-    228
-   ],
-   "before": "[accessLine]",
-   "after": "([accessLine].drop 1)",
-   "status": "KILLED",
-   "detail": "lean/VE/RightClauses/Examples.lean:229: Expression",
-   "raw_status": "KILLED",
-   "reads": "2d90edf89901b9d6f1f0842f2d7e3e573bb420b95464d1f635c48ffce7259a38",
-   "killed_at": [
-    229,
-    229
-   ],
-   "trust_class": "?",
-   "trusted": true
-  },
-  {
-   "id": "M036",
+   "id": "M015",
    "file": "VE/RightClauses/Plain.lean",
    "line": 63,
    "definition": "VE.RightClauses.entryError",
@@ -1763,7 +1274,7 @@
     222,
     222
    ],
-   "trust_class": "?",
+   "trust_class": "S",
    "trusted": true
   }
  ],
