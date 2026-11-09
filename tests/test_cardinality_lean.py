@@ -150,7 +150,7 @@ def chained(tmp_path, units, **front):
 
 def test_the_chain_list_is_admitted_and_each_content_kind_read_by_its_decoder(tmp_path):
     answer = check_document(chained(tmp_path, [("one", {"cardinality": TOP})]))
-    assert answer["not_certified"] == ["one"] and answer["chain"] is None
+    assert answer["not_certified"] == ["one"] and answer["chain"]["coverage"]["unformalised_reasons"] == {"counting": 1}
     assert cardinality.admission(CHAIN_ENV, [], TOP)["conclusion"]["meaning_id"]
     assert "one are admitted and not certified" in answer["scope"] and answer["coverage"]["coverage_percent"] > 0
     with pytest.raises(VEError, match="Unsupported cardinality format"):
@@ -181,16 +181,20 @@ def test_a_counting_unit_changes_neither_the_chain_s_premises_nor_its_verdict(tm
     assert answer["chain"] == check_document(path)
 
 
+TERM = {"name": "fair", "arguments": ["user"], "decided_by": "court", "necessary": [], "sufficient": [], "factors": [],
+        "precedents": [], "jurisdiction": "here", "version": 1}
+READING = {"id": "r", "kind": "asserted", "meaning_id": "m", "content": None,
+           "admission": {"who": "w", "why": "y", "distinguishing_models": {}}}
+HELD = {"id": "s", "unit": "two", "version": 1, "status": "open", "readings": [READING]}
+NARROWING = {"id": "n", "set": "s", "version": 1, "keeps": ["r"], "by": "w", "reason_spans": ["two"]}
+FENCE = b"```ve v\nthere is\n```\n"
+
+
 def test_the_chain_reads_open_terms_reading_sets_and_narrowings_beside_a_counting_unit(tmp_path):
     """Accepted by the chain under the chain list; refused by the chain's own checks, and refused by name under W6a's lists."""
     units = [("one", {"cardinality": TOP}), ("two", {"ast": ["top"]})]
-    term = {"name": "fair", "arguments": ["user"], "decided_by": "court", "necessary": [], "sufficient": [], "factors": [],
-            "precedents": [], "jurisdiction": "here", "version": 1}
+    term, reading, held, narrowing = TERM, READING, HELD, NARROWING
     assert check_document(chained(tmp_path, units, open_terms=[term]))["chain"]["coverage"]["residual"]["open_terms"] == 1
-    reading = {"id": "r", "kind": "asserted", "meaning_id": "m", "content": None,
-               "admission": {"who": "w", "why": "y", "distinguishing_models": {}}}
-    held = {"id": "s", "unit": "two", "version": 1, "status": "open", "readings": [reading]}
-    narrowing = {"id": "n", "set": "s", "version": 1, "keeps": ["r"], "by": "w", "reason_spans": ["two"]}
     open_set = [units[0], ("two", None)]
     answer = check_document(chained(tmp_path, open_set, reading_sets=[held], narrowings=[narrowing]))["chain"]
     assert answer["coverage"]["residual"]["unresolved_reading_sets"] == 1 and answer["reading_plan"]["choices"] == [{"s": 0}]
@@ -207,6 +211,41 @@ def test_the_chain_reads_open_terms_reading_sets_and_narrowings_beside_a_countin
         check_document(chained(tmp_path, units, senses={}))
 
 
+# qt-a4b review F1: what only the chain checks, in a document whose every unit is a counting unit, and the same fault
+# beside a unit the chain reads. Each is the chain's refusal, with the same text either way.
+CHAIN_ONLY = {
+    "an unbound ve fence": ({}, FENCE),
+    "an open term decided by nobody": ({"open_terms": [{**TERM, "decided_by": ""}]}, b""),
+    "a reading set on an absent unit": ({"reading_sets": [{**HELD, "unit": "absent"}]}, b""),
+    "a narrowing of an absent set": ({"narrowings": [{**NARROWING, "set": "absent"}]}, b""),
+}
+
+
+def _with(tmp_path, units, front, fence):
+    path = chained(tmp_path, units, **front)
+    path.write_bytes(path.read_bytes() + fence)
+    return path
+
+
+@pytest.mark.parametrize("fault", CHAIN_ONLY)
+def test_with_every_unit_a_counting_unit_the_chain_still_refuses_what_only_it_checks(tmp_path, fault):
+    front, fence = CHAIN_ONLY[fault]
+    with pytest.raises(VEError) as beside:
+        check_document(_with(tmp_path, [("one", {"cardinality": TOP}), ("two", {"ast": ["top"]})], front, fence))
+    with pytest.raises(VEError) as alone:
+        check_document(_with(tmp_path, [("one", {"cardinality": TOP})], front, fence))
+    assert (type(alone.value), str(alone.value)) == (type(beside.value), str(beside.value))
+    assert fault != "an unbound ve fence" or "unbound VE fence" in str(alone.value)
+
+
+def test_with_every_unit_a_counting_unit_the_chain_reads_the_document(tmp_path):
+    """The chain's document is there whatever the units are: a valid open term is the chain's, as beside a formula."""
+    answer = check_document(chained(tmp_path, [("one", {"cardinality": TOP})], open_terms=[TERM]))
+    assert answer["chain"]["coverage"]["residual"]["open_terms"] == 1
+    assert answer["chain"]["coverage"]["unformalised_reasons"] == {"counting": 1}
+    assert answer["not_certified"] == ["one"]
+
+
 def test_render_says_what_the_chain_does_not_cover(tmp_path):
     shown = render_document(chained(tmp_path, [("one", {"cardinality": TOP}), ("two", {"ast": ["top"]})]))
     assert shown.startswith("The chain's premises and verdict cover no counting statement: one are admitted")
@@ -216,7 +255,9 @@ def test_render_says_what_the_chain_does_not_cover(tmp_path):
 def test_two_counting_units_that_contradict_are_named_not_certified(tmp_path):
     answer = check_document(chained(tmp_path, [("yes", {"cardinality": TOP}), ("no", {"cardinality": NO})]))
     assert answer["not_certified"] == ["yes", "no"] and "yes, no are admitted and not certified" in answer["scope"]
-    assert answer["chain"] is None and answer["premises"]["status"] != "CONFLICT-FREE"
+    # The counting reading has no status route (UNKNOWN, never conflict-free); the chain reads neither unit.
+    assert answer["premises"]["status"] == "UNKNOWN"
+    assert answer["chain"]["coverage"]["unformalised_reasons"] == {"counting": 2}
 
 
 def test_the_route_cases_answer_as_recorded():
