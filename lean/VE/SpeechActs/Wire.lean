@@ -1320,3 +1320,4 @@ theorem decoded_premises (dec : Decoded) :
   refine ⟨by rw [premises, assertedFormulas, dec.asserted_eq], by rw [policy_nodes, dec.norms_eq, dec.commands_eq]⟩
 
 end VE.SpeechActs.Wire
+-- trainfix-seed hand check (synthetic candidate, never merged)
