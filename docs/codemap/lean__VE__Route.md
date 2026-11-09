@@ -9,6 +9,7 @@
 - `lean/VE/Route/Examples.lean` — A genuine environment-extending layer, as evidence that the frozen `Layer` contract is satisfiable beyond the identity: `copyLayer` adds a new unary predicate …
 - `lean/VE/Route/Flags.lean` — Functional and total tables in one pass, as Python `_valid_flags` and Rust check them.
 - `lean/VE/Route/Gate.lean` — The `ve.core@0.2` envelope and its profile gate (PLAN-EXPAND2 3.3, 3.4).
+- `lean/VE/Route/Inert.lean` — Nonfactivity (purpose-explanation spec 3, plan D8a): the W2 kinds whose content no route reads as a premise or a rule.
 - `lean/VE/Route/Layer.lean` — The route contract of PLAN-EXPAND2 section 3.4: typed, environment-extending layers over an abstract semantics.
 - `lean/VE/Route/Metered.lean` — A document-level meter.
 - `lean/VE/Route/MeteredProofs.lean` — A completed metered document has the value of the total evaluator, hence by each family's `eval_iff_denote` it has its finite-model denotation.

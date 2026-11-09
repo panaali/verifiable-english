@@ -20,6 +20,8 @@
 - `lean/VE/Acts/ReadingsExamples.lean` — Fixtures of `phraseReadings` and the edge rule (docs/spec/act-phrases.md 7, 11.4; plan 2.4, AP-4, G5).
 - `lean/VE/Acts/RenderExamples.lean` — Fixtures of the rendering round trip (docs/spec/act-phrases.md 5.5, 5.6 `read_normal`, 11.2, 11.2a).
 - `lean/VE/Acts/RuleExamples.lean` — Fixtures of the act grammar's rule table (docs/spec/act-phrases.md 5.2, 5.6, 11.2, 11.2a, 11.2b).
+- `lean/VE/Acts/Run.lean` — The `acts-elaborate` case kind of the `norms` and `norm-defaults` modes (act-phrases 6.7, C18): the elaborated document of an `acts@0` case and the map from ea…
+- `lean/VE/Acts/RunExamples.lean` — Fixtures of the `act-readings` mode (docs/spec/act-phrases.md 7, 11.4; plan AP-4 Tests; DRI 2026-11-08 ap-4 item 1): the pilot's phrases through the mode with …
 - `lean/VE/Acts/Situation.lean` — A separating situation built from simple acts (docs/spec/act-phrases.md 7; plan AP-4).
 - `lean/VE/Acts/Sources.lean` — Sources and exact reading sets (docs/spec/act-phrases.md 1.8, 7; plan AP-4, G4).
 - `lean/VE/Acts/Syntax.lean` — The act grammar's tokens, vocabulary and terminals (docs/spec/act-phrases.md 1.1, 1.2, 1.4, 5.1).

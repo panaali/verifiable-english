@@ -1,0 +1,4 @@
+# pc-1g follow-ups
+
+- R16 ties pass: connect the F1 `environmentOf` refusal line and the existing rights reader to the document encoder and rights wire theorems. The F1 gate is exercised by `tests/test_judgments_chain.py::test_a_rights_rule_with_an_exception_condition_keeps_the_layer_apart` and the `rightsWithCondition` Lean guards. The remaining pc-1g ties pass is recorded in the project follow-up ledger.
+- pc-1gtm: the passing trust-mutant record (BUILDER-CHECKLIST 13a, exit 0) on the final pc-1g Lean, with the identical-input rescore `tools/trust_mutants.py` requires, replacing the committed budgeted run on 85660f915 (125 KILLED, 1 SURVIVOR `listed.drop 1`, 51 INVALID, 94 ALLOWED, 60 NOT RUN; exit 1). Moved here from pc-1g review F2 by the DRI's fix-round bound (reviews/dri-decisions-20261105-lp0401.md Q3, applied by reviews/dri-decisions-20261105-lp0401-apply.md item 1; R9).

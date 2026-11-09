@@ -1,0 +1,176 @@
+{
+ "judged-bound": {
+  "coverage": {
+   "accounted_bytes": 14,
+   "bytes_by_kind": {
+    "asserted": 14
+   },
+   "bytes_by_status": {
+    "OPEN": 14
+   },
+   "coverage_percent": 100,
+   "residual": {
+    "assumptions": 1,
+    "bridge_leaves": 0,
+    "open_terms": 1,
+    "unresolved_reading_sets": 0
+   },
+   "residual_total": 2,
+   "source_bytes": 14,
+   "unformalised_reasons": {}
+  },
+  "document_id": "5bc6f684b2196ec67d6c0bb1aa22b0375d0962f11eaa6b7dbaef4ad97cd4bfbb",
+  "id": "document",
+  "judgments": {
+   "unused": [],
+   "used": [
+    {
+     "term": "reasonable_limit",
+     "units": [
+      "a0"
+     ]
+    }
+   ]
+  },
+  "source": "Atlas is odd.\n",
+  "source_id": "610510276adb7c7dca8c647a45e3252ffb94fa64b271d6db56312005d5188b6a",
+  "status": "ok",
+  "undeclared_evaluative": [
+   "reasonable_grounds"
+  ],
+  "units": [
+   {
+    "content": [
+     "unary",
+     "reasonable_limit",
+     [
+      "const",
+      "atlas"
+     ]
+    ],
+    "id": "a0",
+    "kind": "asserted",
+    "meaning": {
+     "open": [
+      "reasonable_limit"
+     ]
+    },
+    "meaning_id": "47e1655237ee72d336c0aa755cf9245437e6a51c4257b049f6a7157e9fc578a9",
+    "span": [
+     0,
+     14
+    ],
+    "status": "OPEN",
+    "support": "assumption"
+   }
+  ]
+ },
+ "judged-bound-through-the-relay": {
+  "error": "InvalidInput: the lexicon names another environment",
+  "status": "error"
+ },
+ "judged-unbound": {
+  "coverage": {
+   "accounted_bytes": 14,
+   "bytes_by_kind": {
+    "asserted": 14
+   },
+   "bytes_by_status": {
+    "CHECKED": 14
+   },
+   "coverage_percent": 100,
+   "residual": {
+    "assumptions": 1,
+    "bridge_leaves": 0,
+    "open_terms": 0,
+    "unresolved_reading_sets": 0
+   },
+   "residual_total": 1,
+   "source_bytes": 14,
+   "unformalised_reasons": {}
+  },
+  "document_id": "de9d8acca017f0ca199c7d8950bbbf1f9fd5e18bef672126f91d953fa6cd8fd0",
+  "id": "document",
+  "judgments": {
+   "unused": [],
+   "used": []
+  },
+  "source": "Atlas is odd.\n",
+  "source_id": "610510276adb7c7dca8c647a45e3252ffb94fa64b271d6db56312005d5188b6a",
+  "status": "ok",
+  "undeclared_evaluative": [
+   "reasonable_grounds",
+   "reasonable_limit"
+  ],
+  "units": [
+   {
+    "content": [
+     "unary",
+     "reasonable_limit",
+     [
+      "const",
+      "atlas"
+     ]
+    ],
+    "id": "a0",
+    "kind": "asserted",
+    "meaning": "specified",
+    "meaning_id": "47e1655237ee72d336c0aa755cf9245437e6a51c4257b049f6a7157e9fc578a9",
+    "span": [
+     0,
+     14
+    ],
+    "status": "CHECKED",
+    "support": "assumption"
+   }
+  ]
+ },
+ "plain": {
+  "coverage": {
+   "accounted_bytes": 14,
+   "bytes_by_kind": {
+    "asserted": 14
+   },
+   "bytes_by_status": {
+    "CHECKED": 14
+   },
+   "coverage_percent": 100,
+   "residual": {
+    "assumptions": 1,
+    "bridge_leaves": 0,
+    "open_terms": 0,
+    "unresolved_reading_sets": 0
+   },
+   "residual_total": 1,
+   "source_bytes": 14,
+   "unformalised_reasons": {}
+  },
+  "document_id": "b56dcb13e56e5301c1a9af76ef4d44d183aaf8060d3a89ba23c1d22d59eaac02",
+  "id": "document",
+  "source": "Atlas is odd.\n",
+  "source_id": "ecc9b31cc3f7c6d401852fc4992a855fdc8384976be47be85c2bb97bd911df64",
+  "status": "ok",
+  "units": [
+   {
+    "content": [
+     "unary",
+     "reasonable_limit",
+     [
+      "const",
+      "atlas"
+     ]
+    ],
+    "id": "a0",
+    "kind": "asserted",
+    "meaning": "specified",
+    "meaning_id": "c43f107a0f4b9379cf239cb2c07d63b4b7deed1171186a08cadfc219819fb795",
+    "span": [
+     0,
+     14
+    ],
+    "status": "CHECKED",
+    "support": "assumption"
+   }
+  ]
+ }
+}

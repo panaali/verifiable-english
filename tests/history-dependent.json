@@ -403,6 +403,16 @@
    ]
   },
   {
+   "test": "tests/test_events_route.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
    "test": "tests/test_evidence_bounds.py",
    "why": "runs pytest on test files the source does not name, in tests/test_evidence_bounds.py",
    "recorded": [
@@ -483,6 +493,19 @@
    "via": [
     "tests/test_gate_collection.py:git: git",
     "tests/test_gate_collection.py:test_a_record_round_trips_and_binds_its_commit_and_tree: git notes",
+    "tools/gate_collection.py:GIT: git",
+    "tools/gate_collection.py:git: git",
+    "tools/nested_pytest.py:command: pytest"
+   ]
+  },
+  {
+   "test": "tests/test_gate_collection_renumber.py",
+   "why": "starts git in tests/test_gate_collection.py, tools/gate_collection.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "tests/test_gate_collection.py:git: git",
     "tools/gate_collection.py:GIT: git",
     "tools/gate_collection.py:git: git",
     "tools/nested_pytest.py:command: pytest"
@@ -1123,6 +1146,16 @@
     "tests/test_precommit_hook.py:fixture_repo: git add, git commit, git init, git ls-files",
     "tools/hooks/precommit.py:Index.__init__: git rev-parse",
     "tools/hooks/precommit.py:git: git"
+   ]
+  },
+  {
+   "test": "tests/test_ps_e1.py",
+   "why": "starts git (git rev-parse, git show) in docs/presupposition/ps-e1/e1_runner.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "docs/presupposition/ps-e1/e1_runner.py:committed: git rev-parse, git show"
    ]
   },
   {
@@ -1843,6 +1876,19 @@
   },
   {
    "test": "tests/test_trust_mutants.py",
+   "why": "starts git (git commit-tree) in tests/test_trust_mutants.py, tools/lean_share.py, tools/trust_mutants.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "tests/test_trust_mutants.py:git: git",
+    "tests/test_trust_mutants.py:same_tree_other_base: git commit-tree",
+    "tools/lean_share.py:_git: git",
+    "tools/trust_mutants.py:git: git"
+   ]
+  },
+  {
+   "test": "tests/test_trust_mutants_probe_scope.py",
    "why": "starts git in tests/test_trust_mutants.py, tools/lean_share.py, tools/trust_mutants.py",
    "recorded": [
     "source"
@@ -1851,16 +1897,6 @@
     "tests/test_trust_mutants.py:git: git",
     "tools/lean_share.py:_git: git",
     "tools/trust_mutants.py:git: git"
-   ]
-  },
-  {
-   "test": "tests/test_trust_mutants_probe_scope.py",
-   "why": "starts git in tests/test_trust_mutants.py",
-   "recorded": [
-    "source"
-   ],
-   "via": [
-    "tests/test_trust_mutants.py:git: git"
    ]
   },
   {

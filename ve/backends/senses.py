@@ -71,6 +71,8 @@ FAULT_DETAILS = {
     "CandidatesDiverge": {"sentence": _nat, "words": _words, "why": _why},
     "QuotedSense": {"sentence": _nat, "word": _word},
 }
+# The codes whose refusal carries Lean's text of spec 3.2 (`VE.Senses.Run.textsJson`).
+TEXTED = {"UnknownGloss", "TooManyCandidates", "CandidatesDiverge"}
 
 
 def _text(raw: bytes) -> str:
@@ -88,7 +90,7 @@ pack_text = _text
 
 
 def _refusal_problem(reading: dict, source: str | None, fence_ids: list[str] | None = None,
-                     reading_set_units: list[str] | None = None) -> str | None:
+                     reading_set_units: list[str] | None = None, texts: bool = True) -> str | None:
     """A refused reading: a sense fault with its arguments, an uncovered fence, or one of S2's outcomes as
     `english.read` writes it (`english_lean.refusal_problem`, the one validator of those fields), over `source`
     (`_refusal_source`), or with no span when there is none."""
@@ -110,7 +112,7 @@ def _refusal_problem(reading: dict, source: str | None, fence_ids: list[str] | N
             return "a dictionary failure is malformed"
         return None
     if code in FAULT_DETAILS:
-        if reading.keys() != {"status", "code", "details"}:
+        if reading.keys() - {"text"} != {"status", "code", "details"}:
             return "a sense fault has missing or unknown fields"
         if reading["status"] != ("budget" if code == "PreambleBudget" else "rejected"):
             return "a sense fault has the wrong status"
@@ -118,11 +120,22 @@ def _refusal_problem(reading: dict, source: str | None, fence_ids: list[str] | N
         if type(details) is not dict or details.keys() != spec.keys() \
                 or not all(check(details[name]) for name, check in spec.items()):
             return "the arguments of a sense fault are malformed"
+        # Lean's 3.2 text (`VE.Senses.Run.textsJson`) on these codes, a CandidatesDiverge's for one word only.
+        texted = texts and code in TEXTED and (code != "CandidatesDiverge" or len(details["words"]) == 1)
+        if ("text" in reading) != texted or texted and not _word(reading["text"]):
+            return "a sense fault's text is missing, unasked or not a string"
         return None
     if reading.get("status") in ("one", "open"):
         return "a refused reading has an admitting status"
     # S2's outcomes: the fields, codes, classes, spans and advice of `english.read`'s refusals (one validator
     # of those fields, reading Lean's table of codes and classes).
+    if "hint" in reading:
+        # NoSenseFits beside S2's `none` (spec 3.2), Lean's text.
+        hint = reading["hint"]
+        if not texts or reading.get("code") != "NoDerivation" or type(hint) is not dict \
+                or hint.keys() != {"code", "text"} or hint["code"] != "NoSenseFits" or not _word(hint["text"]):
+            return "a refused reading's hint is malformed"
+        reading = {key: value for key, value in reading.items() if key != "hint"}
     problem = refusal_problem(reading, source, unlocated=frozenset({"IllTyped"}))
     if problem:
         return "a refused reading is not S2's: " + problem
@@ -248,7 +261,7 @@ def _response_problem(response: object, expected_id: str, request_id: str,
         return "the reading has no known status"
     if reading["status"] in {"one", "open"}:
         admitted = {"status", "units", "sense_map", "mixed", "unused", "environment", "identities", "used",
-                    "flips"} | ({"preamble"} if fences is None else {"fences"})
+                    "flips", "warnings"} | ({"preamble"} if fences is None else {"fences"})
         if reading.keys() != admitted | {"code"} and reading.keys() != admitted:
             return "an admitted reading has missing or unknown fields"
         if (reading.get("code") != "Unresolved" if reading["status"] == "open" else "code" in reading):
@@ -290,8 +303,8 @@ def _response_problem(response: object, expected_id: str, request_id: str,
             resolved = {"formula", "mark"} <= unit.keys()
             if resolved == bool(unit["candidates"]):
                 return "a unit is neither resolved nor open, or both"
-            # Only the document fence route carries Lean's unresolved English. Source-mode JSON is frozen.
-            if ("text" in unit) != (fences is not None and not resolved) \
+            # Every open unit carries Lean's unresolved English (spec 3.2 `Unresolved`), a source's too (sn-b6c).
+            if ("text" in unit) != (not resolved) \
                     or ("text" in unit and not _word(unit["text"])):
                 return "a unit has the wrong English fields"
             if resolved and type(unit["mark"]) is not bool:
@@ -338,10 +351,13 @@ def _response_problem(response: object, expected_id: str, request_id: str,
         units = dict(zip(sentences, reading["units"]))
         if (reading["status"] == "one") != all(not u["candidates"] for u in reading["units"]):
             return "the status disagrees with the units"
+        entry = {"sentence", "token_start", "token_stop", "symbol", "is_default", "gloss"} | (
+            {"byte_start", "byte_stop"} if fences is None else set())
         for occurrence in reading["sense_map"]:
-            if type(occurrence) is not dict or occurrence.keys() not in (
-                    {"sentence", "token_start", "token_stop", "symbol", "is_default"},
-                    {"sentence", "token_start", "token_stop", "symbol", "is_default", "candidate"}) \
+            if type(occurrence) is not dict or occurrence.keys() not in (entry, entry | {"candidate"}) \
+                    or not _word(occurrence["gloss"]) \
+                    or binding is not None and "glosses" in binding \
+                    and not any(occurrence["gloss"] == gloss for _, gloss in binding["glosses"]) \
                     or not all(_nat(occurrence[key]) for key in ("sentence", "token_start", "token_stop")) \
                     or occurrence["token_stop"] <= occurrence["token_start"] \
                     or type(occurrence["symbol"]) is not str \
@@ -360,6 +376,14 @@ def _response_problem(response: object, expected_id: str, request_id: str,
             return "mixed senses are malformed"
         if not all(type(word) is str for word in reading["unused"]):
             return "unused words are malformed"
+        if fences is None:
+            problem = _byte_spans_problem(reading["sense_map"], source if binding is None else binding["source"],
+                                          reading["preamble"])
+            if problem:
+                return problem
+        problem = _warnings_problem(reading["warnings"], reading["mixed"], binding)
+        if problem:
+            return problem
         if fences is not None:
             # One entry per fence sent: "line" for a preamble line (they lead), else the next unit in order.
             mapped = reading["fences"]
@@ -378,6 +402,60 @@ def _response_problem(response: object, expected_id: str, request_id: str,
     else:
         return _refusal_problem(reading, source, fence_ids, reading_set_units)
     return None
+
+
+def _boundary(data: bytes, at: int) -> bool:
+    """`at` starts a character of the UTF-8 bytes `data` (or is their end)."""
+    return at == len(data) or not 0x80 <= data[at] < 0xC0
+
+
+def _byte_spans_problem(entries: list, source: object, preamble: list) -> str | None:
+    """A source answer's sense-map bytes (`VE.Senses.Run.byteSpan`), bound to the request's source: inside its body
+    (after the preamble lines, which are bound already), on character boundaries, not empty, with no white space at
+    either edge and no word cut at either edge; and in the order of the entries' token spans, equal token spans
+    having equal bytes."""
+    if type(source) is not str:
+        return "a sense-map span has no source"
+    data = source.encode()
+    at = 0
+    for line in preamble:
+        at = source.index(line, at) + len(line)
+    floor = len(source[:at].encode())
+    order = []
+    for entry in entries:
+        start, stop = entry["byte_start"], entry["byte_stop"]
+        if not (_nat(start) and _nat(stop) and floor <= start < stop <= len(data)
+                and _boundary(data, start) and _boundary(data, stop)):
+            return "a sense-map span is not inside the request's source body"
+        text = data[start:stop].decode()
+        before = data[:start].decode()[-1:]
+        after = data[stop:stop + 4].decode(errors="ignore")[:1]
+        if text != text.strip() or before.isalnum() and text[0].isalnum() or after.isalnum() and text[-1].isalnum():
+            return "a sense-map span does not start and end at a word of the request's source"
+        order.append(((entry["sentence"], entry["token_start"], entry["token_stop"]), (start, stop)))
+    order.sort()
+    for (tokens, span), (tokens2, span2) in zip(order, order[1:]):
+        if (tokens == tokens2) != (span == span2) or span > span2:
+            return "sense-map spans are not in the order of their tokens"
+    return None
+
+
+def _warnings_problem(warnings: object, mixed: list, binding: dict | None) -> str | None:
+    """An admitted reading's warnings (`VE.Senses.Run.warningsJson`): one `Mixed` per entry of `mixed`, in its order
+    and naming its word, then `Unneeded` for distinct words of the request's dictionary; each with Lean's text."""
+    if type(warnings) is not list or not all(
+            type(w) is dict and w.keys() == {"code", "word", "text"} and w["code"] in ("Mixed", "Unneeded")
+            and _word(w["word"]) and _word(w["text"]) for w in warnings):
+        return "the warnings are malformed"
+    words = [pair[0] for pair in mixed]
+    if [w["word"] for w in warnings[:len(words)] if w["code"] == "Mixed"] != words:
+        return "the Mixed warnings are not one per mixed word"
+    unneeded = warnings[len(words):]
+    if any(w["code"] != "Unneeded" for w in unneeded) or len({w["word"] for w in unneeded}) != len(unneeded) \
+            or binding is not None and not {w["word"] for w in unneeded} <= binding["words"]:
+        return "the Unneeded warnings are not distinct words of the request's dictionary"
+    return None
+
 
 
 def request(env, source: str | None, texts: list[str], *, own: list[dict] = (), overlay: dict | None = None,
@@ -436,6 +514,15 @@ def _dictionary(packs: list[bytes], own: list) -> tuple[str | None, set]:
         return None, set()
 
 
+def _glosses(packs: list[bytes], own: list) -> set:
+    """The (word, gloss) pairs of the request's senses, which a sense-map gloss must name."""
+    try:
+        return {(sense["word"], sense["gloss"]) for sense in
+                [s for pack in packs for s in loads_json(pack)["senses"]] + list(own)}
+    except (VEError, KeyError, TypeError, ValueError, RecursionError, OverflowError):
+        return set()
+
+
 def _projection_problem(row: object, case: dict, env, expected_id: str | None) -> str | None:
     """A `senses.project` row bound to its request: the case's id, the packs' dictionary identity, and a
     projection whose identities are those of the environment and lexicon it returns (Python's own over the
@@ -454,7 +541,7 @@ def _projection_problem(row: object, case: dict, env, expected_id: str | None) -
     if type(projection) is not dict or projection.get("status") != "ok":
         if type(projection) is not dict or projection.get("code") not in {"InvalidDictionary", *FAULT_DETAILS}:
             return "the projection is neither a projection nor a sense fault"
-        return _refusal_problem(projection, None)
+        return _refusal_problem(projection, None, texts=False)
     if projection.keys() != {"status", "environment", "lexicon", "identities"}:
         return "the projection has missing or unknown fields"
     try:
@@ -528,7 +615,8 @@ def _read(env, source, fences, packs, *, own, overlay, defaults, budget, executa
                                 source=_refusal_source(source, fences, defaults),
                                 defaults_count=len(defaults) if type(defaults) is dict else 0,
                                 fence_ids=case.get("fence_ids"), reading_set_units=case.get("reading_set_units"),
-                                binding={"env": env, "source": source, "words": words, "case": case})
+                                binding={"env": env, "source": source, "words": words, "case": case,
+                                         "glosses": _glosses(packs, own)})
     if problem:
         raise CheckerUnavailable("CheckerUnavailable: malformed senses response: " + problem)
     if time.monotonic() > deadline:

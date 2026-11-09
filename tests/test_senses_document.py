@@ -121,10 +121,11 @@ def test_s9_formula_and_meaning_id_are_leans(tmp_path):
 def test_open_fence_refused_with_leans_unresolved_text(tmp_path, texts):
     reading = check(texts)
     assert (reading["status"], reading["code"]) == ("open", "Unresolved")
-    assert "text" not in reading["units"][0]  # the source-mode wire contract is unchanged
     refused = route.read_fences(Environment(environment()), texts, [PACK], fence_ids=["u1"],
                                 reading_set_units=[])["reading"]
     assert refused["status"] == "rejected" and refused["code"] == "Unresolved"
+    # sn-b6c (R3): a source's open unit carries the same Lean text
+    assert reading["units"][0]["text"] == refused["text"]
     assert refused["text"] == ("Sentence 1 uses odd, which has two senses here, and only strange gives a reading "
                                'of this sentence. Add the line "In this document, odd means strange." to say so.')
     with pytest.raises(VEError) as info:
@@ -509,10 +510,11 @@ def test_a_source_answer_carries_no_fence_map():
     env = Environment(environment())
     result = route.read(env, "Riddle is odd.", [PACK])
     assert "fences" not in result["reading"]
-    assert route._response_problem(result, result["dictionary_id"], result["request_id"]) is None
+    assert route._response_problem(result, result["dictionary_id"], result["request_id"],
+                                   source="Riddle is odd.") is None
     bad = deepcopy(result)
     bad["reading"]["fences"] = [0]
-    assert route._response_problem(bad, bad["dictionary_id"], bad["request_id"])
+    assert route._response_problem(bad, bad["dictionary_id"], bad["request_id"], source="Riddle is odd.")
 
 
 def test_a_malformed_fence_answer_is_checker_unavailable(monkeypatch):
