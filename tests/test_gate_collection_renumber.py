@@ -32,40 +32,41 @@ def files(mutants, hook=HOOK):
             "tests/mutants.json": json.dumps(mutants)}
 
 
-def history(tmp_path, before, after, hook=HOOK, trailer=None, worktree=False):
+def history(tmp_path, before, after, hooks=(HOOK, HOOK), trailer=None, worktree=False):
     git(tmp_path, "init", "-q", "-b", "main")
-    base = commit(tmp_path, files(before, hook))
+    base = commit(tmp_path, files(before, hooks[0]))
     if worktree:
         expected = gate_collection.collect(tmp_path)
         (tmp_path / "tests/mutants.json").write_text(json.dumps(after))
         return gate_collection.missing(expected, gate_collection.collect(tmp_path),
                                        gate_collection.changes(base, None, root=tmp_path))
-    head = commit(tmp_path, files(after))
+    head = commit(tmp_path, files(after, hooks[1]))
     if trailer:
         head = commit(tmp_path, {}, f"x\n\n{gate_collection.TRAILER}: {trailer}{gate_collection.SEPARATOR}why")
     return compare(tmp_path, base, head)
 
 
-SHIFTED = "b-1:b-2 c-2:c-3 d-3:d-4"
-# (base mutants, head mutants, the base's hook, a trailer's target, head in the worktree, the pairs, the refused)
+HOOKS = (HOOK, HOOK)
+# (base mutants, head mutants, each side's hook, a trailer's target, head in the worktree, the pairs, the refused)
 CASES = {
-    "inserted": (BASE, INSERTED, HOOK, "", False, SHIFTED, ""),
-    "inserted-worktree": (BASE, INSERTED, HOOK, "", True, SHIFTED, ""),
-    "trailer-first": (BASE, INSERTED, HOOK, "b-1", False, "c-2:c-3 d-3:d-4", ""),
-    # Each head loses a base mutant's text (most also insert one), or the base has no hook: each lost ID is refused.
-    "text-changed": (BASE, [*INSERTED[:3], ["c", "x", "z"], BASE[3]], HOOK, "", False, "", "b-1 c-2 d-3"),
-    "case-deleted": (BASE, [*INSERTED[:3], BASE[3]], HOOK, "", False, "", "b-1 c-2"),
+    "inserted": (BASE, INSERTED, HOOKS, "", False, "b-1:b-2 c-2:c-3 d-3:d-4", ""),
+    "inserted-worktree": (BASE, INSERTED, HOOKS, "", True, "b-1:b-2 c-2:c-3 d-3:d-4", ""),
+    "trailer-first": (BASE, INSERTED, HOOKS, "b-1", False, "c-2:c-3 d-3:d-4", ""),
+    # Each head loses a base mutant's text (most also insert one), or a side has no hook: each lost ID is refused.
+    "text-changed": (BASE, [*INSERTED[:3], ["c", "x", "z"], BASE[3]], HOOKS, "", False, "", "b-1 c-2 d-3"),
+    "case-deleted": (BASE, [*INSERTED[:3], BASE[3]], HOOKS, "", False, "", "b-1 c-2"),
     # `a-0` keeps its ID with another text; the lost `a-2`'s text is at `a-1`, but `a-0`'s first text is gone.
-    "kept-id-reused": (SAME, SAME[1:], HOOK, "", False, "", "a-2"),
-    "no-hook-at-base": (BASE, INSERTED, "", "", False, "", "b-1 c-2 d-3"),
-    "two-cases-one-text": ([BASE[0], BASE[0]], [["new", "x", "y"], BASE[0]], HOOK, "", False, "", "a-0"),
+    "kept-id-reused": (SAME, SAME[1:], HOOKS, "", False, "", "a-2"),
+    "no-hook-at-base": (BASE, INSERTED, ("", HOOK), "", False, "", "b-1 c-2 d-3"),
+    "no-hook": (BASE, INSERTED, ("", ""), "", False, "", "b-1 c-2 d-3"),  # an ordinary parametrised test
+    "two-cases-one-text": ([BASE[0], BASE[0]], [["new", "x", "y"], BASE[0]], HOOKS, "", False, "", "a-0"),
 }
 
 
-@pytest.mark.parametrize("before, after, hook, trailer, worktree, paired, refused", CASES.values(), ids=CASES)
-def test_a_renumbered_mutant_is_paired_by_its_text_and_a_gone_one_refused(tmp_path, before, after, hook, trailer,
+@pytest.mark.parametrize("before, after, hooks, trailer, worktree, paired, refused", CASES.values(), ids=CASES)
+def test_a_renumbered_mutant_is_paired_by_its_text_and_a_gone_one_refused(tmp_path, before, after, hooks, trailer,
                                                                           worktree, paired, refused):
-    verdict = history(tmp_path, before, after, hook, trailer and case(trailer), worktree)
+    verdict = history(tmp_path, before, after, hooks, trailer and case(trailer), worktree)
     assert verdict.paired == {case(b): case(h) for b, h in (pair.split(":") for pair in paired.split())}
     assert set(verdict.refused) == {case(name) for name in refused.split()} and verdict.failed() == bool(refused)
     assert set(verdict.removed) == ({case(trailer)} if trailer else set())
