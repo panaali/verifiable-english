@@ -9846,7 +9846,9 @@
         "VE.Senses.Run.flipJson",
         "VE.Senses.Run.byteSpan",
         "VE.Senses.Run.senseEntryJson",
-        "VE.Senses.Run.rereadJson"
+        "VE.Senses.Run.rereadJson",
+        "VE.Senses.Run.decodeReread",
+        "VE.Senses.Run.lineJson"
       ],
       "G[R]": [
         "VE.Senses.Run.fenceLine",
@@ -9856,8 +9858,7 @@
         "VE.Senses.Run.faultJson",
         "VE.Senses.Run.bodyOf",
         "VE.Senses.Run.textsJson",
-        "VE.Senses.Run.warningsJson",
-        "VE.Senses.Run.lineJson"
+        "VE.Senses.Run.warningsJson"
       ],
       "G[I]": [
         "VE.Senses.Run.projectionIds",
