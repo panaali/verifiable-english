@@ -19812,6 +19812,14 @@
         "VE.Closure.Tableau.checkCertificate",
         "VE.Closure.Tableau.extraRule"
       ]
+    },
+    "VE/Rights/OpenActExamples.lean": {
+      "T": [
+        "VE.Rights.OpenActExamples.adult",
+        "VE.Rights.OpenActExamples.twoRights",
+        "VE.Rights.OpenActExamples.unitOf",
+        "VE.Rights.OpenActExamples.opens"
+      ]
     }
   }
 }

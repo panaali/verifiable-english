@@ -20240,6 +20240,11 @@ module VE.Rights.Examples a468945e6dee91274ec8b7648e47b719501df8f0562b86be777643
 379:0-379:112 def VE.Rights.Examples.rule4@VE.Rights.Examples
 391:0-393:89 def VE.Rights.Examples.securityRegs@VE.Rights.Examples
 395:0-396:123 def VE.Rights.Examples.kappa@VE.Rights.Examples
+module VE.Rights.OpenActExamples 9025e8544d4c77345d9213f6203e6fa9da1534d7eb0b15017d27cb1a756bf827
+12:0-12:49 def VE.Rights.OpenActExamples.adult@VE.Rights.OpenActExamples
+14:0-20:103 def VE.Rights.OpenActExamples.twoRights@VE.Rights.OpenActExamples
+22:0-24:117 def VE.Rights.OpenActExamples.unitOf@VE.Rights.OpenActExamples
+26:0-27:117 def VE.Rights.OpenActExamples.opens@VE.Rights.OpenActExamples
 module VE.Rights.Projections 9deac7f7140eb400e5bcb5aabec65b8e651105c032063d39f79abae28375f971
 19:0-20:46 def VE.Rights.TupleSet@VE.Rights.Projections
 22:0-22:69 instance VE.Rights.instMembershipTupleSet@VE.Rights.Projections
@@ -27974,4 +27979,4 @@ module VE.Words.Situation 04a0781486d2ef00feb590ccf206ff7ba43f98dff6689995a7770e
 149:0-160:13 def VE.Words.bindings@VE.Words.Situation
 162:0-173:50 def VE.Words.pairSentence@VE.Words.Situation
 190:0-192:91 def VE.Words.nounsOnly@VE.Words.Situation
-module VE 5009bfe4c4b255c3e77e86ad35b1461d6114e05970a3c5e6990d8500f210e375
+module VE 7c6f3312865474e0991e6cf1bca2c8678ee0f050984511fc48be32274bfc32db
