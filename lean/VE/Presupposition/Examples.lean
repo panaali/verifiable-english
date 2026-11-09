@@ -584,4 +584,21 @@ def repR : Report :=
 -- a prefix of a restriction path does not enter it (the containment runs one way)
 #guard !entersRestriction "definite" [] [0] && !entersRestriction "plural" [1] [1]
 
+-- Positions inside each list (trust-mutants survivors): the refused candidate not first, not last; the bad cell in
+-- the first and the middle row and in each class; an obligation path of two steps; a conditioned first obligation.
+#guard !cellOk .top [.asserted, .assumed] && !cellOk .negated [.assumed, .inPlace] && !cellOk .negated [.inPlace, .assumed]
+#guard cellOk .negated [.inPlace, .conditioned] && !cellOk .ruleAct [.asserted, .conditioned] &&
+  !cellOk .top [.unconditional, .assumed]
+def badAt (r : String) (c : PositionClass) (cell : List Candidate) : CandidateTable :=
+  fun r' pc => if r' == r && pc == c then cell else []
+#guard [PositionClass.top, .antecedent, .disjunct, .ruleGuard].all (fun c =>
+  ["definite", "plural"].all (fun r => !tableOk rowNames (badAt r c [.unconditional])))
+#guard !tableOk rowNames (badAt "definite" .consequent [.conditioned, .inPlace]) &&
+  tableOk rowNames (badAt "definite" .consequent [.unconditional])
+#guard !entersRestriction "definite" [] [0, 1, 0, 0, 1] && (Frame.locate rOwner.strong [0, 1, 0, 0, 1]).map (·.2) ==
+  some (.eq (.var 0) (.var 1))
+#guard !entersRestriction "plural" [] [0] && entersRestriction "plural" [] [0, 0] && !entersRestriction "plural" [] [1, 0]
+#guard entersRestriction "plural" [1, 1] [1, 1, 0, 0, 2] && !entersRestriction "plural" [1, 0] [1, 0, 0]
+#guard ruleConditions { repR with checked := repR.checked.drop 1 } "r1" == [q26, ready]
+
 end VE.Presupposition.Examples
