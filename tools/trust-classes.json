@@ -19430,7 +19430,12 @@
       "T": [
         "VE.Senses.TextsExamples.reading",
         "VE.Senses.TextsExamples.entries",
-        "VE.Senses.TextsExamples.reread"
+        "VE.Senses.TextsExamples.reread",
+        "VE.Senses.TextsExamples.rereadReq",
+        "VE.Senses.TextsExamples.asked",
+        "VE.Senses.TextsExamples.rereadOf",
+        "VE.Senses.TextsExamples.chain",
+        "VE.Senses.TextsExamples.errorOf"
       ]
     },
     "VE/Attitudes/Frame.lean": {
