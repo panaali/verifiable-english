@@ -1,0 +1,7 @@
+job=armsh-cand-tm-inventory-flag-1a39ebef-t184533-s3 shard=3/4 nproc=4 arch=aarch64 host=runnervmkb2gk date=2026-11-09T00:36:44Z ulimit_s=16384
+Mem:              15           1           9           0           4          14
+/dev/root       145G   42G  104G  29% /
+ 00:36:44 up 8 min,  0 user,  load average: 0.89, 0.33, 0.13
+pilot/codex branches: 98
+ve-cache: lean-build exact key b782dfe18f00 asset lean-build-b782dfe18f00-linux-aarch64.tar.zst sha256 d9b85c3966be ok, seal ok, from download, 11.1 s
+p1-tokenizers: 443909a61d42 fetched
