@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-cmp-s3a-cfr-1-523b9876-t247094-s2",
+ "head": "7e0fbe8c5c3754b476110b8e8944928c0023c7ec",
+ "argv": [
+  "armsh-cand-cmp-s3a-cfr-1-523b9876-t247094-s2",
+  "7e0fbe8c5c3754b476110b8e8944928c0023c7ec",
+  "531f4754dea6d66c57d7ab86827f696ca6ca856d",
+  "-",
+  "-",
+  "4",
+  "2/4"
+ ]
+}
