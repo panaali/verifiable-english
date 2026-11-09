@@ -56,19 +56,19 @@ theorem admitWith_ok {t : CandidateTable} {fx : Fixed} {D : PDoc} {R : Report} (
       R.bases = basesOf P ∧ R.baseTree = baseTreeOf D P ∧
       mapE (fun o => do let c ← regen D obs P (baseTreeOf D P) o; carrierOk t D (baseTreeOf D P) c; pure c) obs =
         .ok R.checked ∧
-      allE (openOk t D R) R.checked = .ok () ∧ unitsOk fx D obs R = .ok () := by
+      allE (openOk t D R) R.checked = .ok () ∧ unitsOk fx D obs R = .ok () ∧ obs.length ≤ maxObligations := by
   unfold admitWith at h
   split at h
   · cases h
   · rename_i obs hb
-    obtain ⟨_, _, h⟩ := bind_ok h
+    obtain ⟨_, hn, h⟩ := bind_ok h
     obtain ⟨_, hi, h⟩ := bind_ok h
     obtain ⟨P, hP, h⟩ := bind_ok h
     obtain ⟨cs, hc, h⟩ := bind_ok h
     obtain ⟨_, ho, h⟩ := bind_ok h
     obtain ⟨_, hu, h⟩ := bind_ok h
     cases h
-    exact ⟨obs, P, hb, hi, hP, rfl, rfl, hc, ho, hu⟩
+    exact ⟨obs, P, hb, hi, hP, rfl, rfl, hc, ho, hu, by simpa using ensure_ok hn⟩
 
 /-- What pass 1's regeneration gives at each kind of position. -/
 theorem regen_ok {D : PDoc} {obs : List Obligation} {P : List (DocUnit × Base)} {T : VE.Norms.Tree}
@@ -84,7 +84,9 @@ theorem regen_ok {D : PDoc} {obs : List Obligation} {P : List (DocUnit × Base)}
       D.norms.regulated.find? (·.name == N.pred) = some r ∧ buildPre o.row r.sorts.length o.args.tuple = .ok pre ∧
       c = ⟨o, .hole, pre, none, ruleGoal r N pre, .ruleAct⟩) ∧
     (o.position = .heading → ∃ B pre, (P.find? (·.1.id == o.unit)).map (·.2) = some (.claim B) ∧
-      buildPre o.row 0 o.args.tuple = .ok pre ∧ c = ⟨o, .hole, pre, none, pre, .top⟩) := by
+      buildPre o.row 0 o.args.tuple = .ok pre ∧ c = ⟨o, .hole, pre, none, pre, .top⟩) ∧
+    VE.Bridge.formulaNodes c.goal ≤ VE.Limits.maxNodes ∧
+    (∀ n, o.position = .ruleAct n → ∃ N₀, (P.find? (·.1.id == o.unit)).map (·.2) = some (.rule N₀) ∧ N₀.name = n) := by
   unfold regen at h
   split at h
   · rename_i p B hpos hB
@@ -93,14 +95,15 @@ theorem regen_ok {D : PDoc} {obs : List Obligation} {P : List (DocUnit × Base)}
       obtain ⟨_, he, h⟩ := bind_ok h
       obtain ⟨r, hr, h⟩ := bind_ok h
       obtain ⟨_, hs, h⟩ := bind_ok h
-      obtain ⟨_, _, h⟩ := bind_ok h
+      obtain ⟨_, hg, h⟩ := bind_ok h
       cases h
-      refine ⟨rfl, fun p' hp' => ?_, fun n hn => by simp_all, fun hn => by simp_all⟩
+      refine ⟨rfl, fun p' hp' => ?_, fun n hn => by simp_all, fun hn => by simp_all, by simpa using ensure_ok hg,
+        fun n hn => by simp_all⟩
       rw [hpos] at hp'; cases hp'
       exact ⟨B, f, s, r, hB, hl, ensure_ok he, mapError_ok hr, by simpa using ensure_ok hs, rfl⟩
     · cases h
   · rename_i n N₀ hpos hN
-    obtain ⟨_, _, h⟩ := bind_ok h
+    obtain ⟨_, hn₀, h⟩ := bind_ok h
     split at h
     · cases h
     · rename_i N hN'
@@ -108,16 +111,20 @@ theorem regen_ok {D : PDoc} {obs : List Obligation} {P : List (DocUnit × Base)}
       · cases h
       · rename_i r hr
         obtain ⟨pre, hp, h⟩ := bind_ok h
-        obtain ⟨_, _, h⟩ := bind_ok h
+        obtain ⟨_, hg, h⟩ := bind_ok h
         cases h
-        refine ⟨rfl, fun p hp' => by simp_all, fun n' hn' => ?_, fun hn => by simp_all⟩
-        rw [hpos] at hn'; cases hn'
-        exact ⟨N, r, pre, hN', hr, mapError_ok hp, rfl⟩
+        refine ⟨rfl, fun p hp' => by simp_all, fun n' hn' => ?_, fun hn => by simp_all, by simpa using ensure_ok hg,
+          fun n' hn' => ?_⟩
+        · rw [hpos] at hn'; cases hn'
+          exact ⟨N, r, pre, hN', hr, mapError_ok hp, rfl⟩
+        · rw [hpos] at hn'; cases hn'
+          exact ⟨N₀, hN, by simpa using ensure_ok hn₀⟩
   · rename_i B hpos hB
     obtain ⟨pre, hp, h⟩ := bind_ok h
-    obtain ⟨_, _, h⟩ := bind_ok h
+    obtain ⟨_, hg, h⟩ := bind_ok h
     cases h
-    exact ⟨rfl, fun p hp' => by simp_all, fun n hn => by simp_all, fun _ => ⟨B, pre, hB, mapError_ok hp, rfl⟩⟩
+    exact ⟨rfl, fun p hp' => by simp_all, fun n hn => by simp_all, fun _ => ⟨B, pre, hB, mapError_ok hp, rfl⟩,
+      by simpa using ensure_ok hg, fun n hn => by simp_all⟩
   · cases h
 
 /-- What pass 1's carrier check gives. -/
@@ -242,12 +249,14 @@ theorem openOk_ok {t : CandidateTable} {D : PDoc} {R : Report} {c : Checked} (h 
     (hu : c.ob.carrier = .unresolved) :
     (∃ rs, expectedReadings t R c = some rs ∧ unitReadings D c.ob.unit = some rs ∧ 2 ≤ rs.length) ∧
     (R.checked.find? (fun d => d.ob.unit == c.ob.unit && d.ob.carrier == .unresolved)).map (·.ob.id) =
-      some c.ob.id := by
+      some c.ob.id ∧
+    ((expectedReadings t R c).getD []).all (readingNodes · ≤ VE.Limits.maxNodes) = true := by
   unfold openOk at h
   simp only [hu, beq_self_eq_true, if_true] at h
+  obtain ⟨_, hb, h⟩ := bind_ok h
   have e := ensure_ok h
   simp only [Bool.and_eq_true, beq_iff_eq] at e
-  refine ⟨?_, e.2⟩
+  refine ⟨?_, e.2, ensure_ok hb⟩
   have e1 := e.1
   split at e1
   · rename_i rs hrs
@@ -255,24 +264,36 @@ theorem openOk_ok {t : CandidateTable} {D : PDoc} {R : Report} {c : Checked} (h 
     exact ⟨rs, hrs, e1⟩
   · cases e1
 
-/-- Step 5's contents and rules. -/
+/-- Step 5: contents and their budget, rules, W1's check, the soft chain and separation. -/
 theorem unitsOk_ok {fx : Fixed} {D : PDoc} {obs : List Obligation} {R : Report} (h : unitsOk fx D obs R = .ok ()) :
     (∀ x ∈ R.bases, R.checked.any (fun c => c.ob.unit == x.1 && c.ob.carrier == .unresolved) = true ∨
       unitContent D x.1 = some (carried (unitModes R x.1) x.2)) ∧
     (∀ N ∈ R.baseTree.nodes, ∀ M ∈ D.norms.nodes, M.name = N.name →
       M = (ruleConditions R N.name).foldl conditionNode N) ∧
-    VE.Norms.WellFormed ⟨D.E, D.lits, D.norms⟩ = true ∧ VE.Norms.WellFormed ⟨D.E, D.lits, R.baseTree⟩ = true := by
+    VE.Norms.WellFormed ⟨D.E, D.lits, D.norms⟩ = true ∧ VE.Norms.WellFormed ⟨D.E, D.lits, R.baseTree⟩ = true ∧
+    (∀ x ∈ R.bases, VE.Bridge.formulaNodes (carried (unitModes R x.1) x.2) ≤ VE.Limits.maxNodes) ∧
+    (∀ x ∈ withObligations D obs, ∀ rs, x.content = .readings rs →
+      softOk fx rs = true ∧ separated fx D x.id rs = none) := by
   unfold unitsOk at h
   obtain ⟨_, h₁, h⟩ := bind_ok h
   obtain ⟨_, h₂, h⟩ := bind_ok h
-  obtain ⟨_, h₃, _⟩ := bind_ok h
+  obtain ⟨_, h₃, h₄⟩ := bind_ok h
   have e₃ := ensure_ok h₃
   simp only [Bool.and_eq_true] at e₃
-  refine ⟨fun x hx => ?_, fun N hN M hM he => ?_, e₃⟩
+  refine ⟨fun x hx => ?_, fun N hN M hM he => ?_, e₃.1, e₃.2, fun x hx => ?_, fun x hx rs hrs => ?_⟩
   · obtain ⟨_, _, h⟩ := bind_ok (allE_ok h₁ x hx)
     simpa [Bool.or_eq_true] using ensure_ok h
   · have := ensure_ok (allE_ok h₂ N hN)
     simp only [List.all_eq_true, Bool.or_eq_true, bne_iff_ne, ne_eq, beq_iff_eq] at this
     exact (this M hM).resolve_left (fun hn => hn he)
+  · obtain ⟨_, h, _⟩ := bind_ok (allE_ok h₁ x hx)
+    simpa using ensure_ok h
+  · have h := allE_ok h₄ x hx
+    simp only [hrs] at h
+    obtain ⟨_, hs, h⟩ := bind_ok h
+    refine ⟨ensure_ok hs, ?_⟩
+    split at h
+    · cases h
+    · assumption
 
 end VE.Presupposition
