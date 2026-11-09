@@ -1,0 +1,7 @@
+trust_mutants: 8 definitions, 75 mutants (10 to run), 4 jobs, base d962e66a76e5
+UNKNOWN lean/VE/Acts/Run.lean:176 VE.Acts.Run.listReadings (G[V], trusted) list-empty: sp -> [] (lean/VE/Acts/Run.lean:176: Invalid match expression: The type of pattern variable 'a' contains me...)
+UNKNOWN lean/ResponseShape/Schemas.lean:51 ResponseShape.Schemas.files (G[V], trusted) list-drop-first: [ Common.file, Envelope.file, Alternatives.file, Bundle.file, Check.file, CheckCertificate.file, ... -> ([ Common.file, Envelope.file, Alternatives.file, Bundle.file, Check.file, CheckCertificate.file,... (lean/ResponseShape/Skeletons.lean:29: evaluate.json#/row: unresolved $ref common.json#/$defs/case...)
+trust_mutants: 7 KILLED, 0 SURVIVOR, 2 UNKNOWN, 1 INVALID, 0 ALLOWED, 0 NOT RUN, 65 OTHER SHARD in 578 s
+trust_mutants: D[V], trusted: 1 KILLED, 25 OTHER SHARD
+trust_mutants: G[V], trusted: 6 KILLED, 2 UNKNOWN, 1 INVALID, 40 OTHER SHARD
+trust_mutants: steps: wall plan 11.3 s, scratch 2.1 s, control_build 0.3 s, probe_install 1.2 s, control_probes 277.3 s, mutants 283.8 s, cleanup 1.8 s, reads 0.1 s; lake control_build 0.3 s (1), probe_install 1.2 s (1), control_probes 562.9 s (9), mutant_builds 32 s (14), mutant_checks 428.3 s (9), stage_controls 155.4 s (5), mutant_probes 192.8 s (9)
