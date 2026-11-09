@@ -27,22 +27,38 @@ def render_line(env, right, kind, raw, *, rights=None):
     document = SoftNormDocument(_soft_env(env) if rights is None else rights.environment,
                                 [{"norm": raw}])
     source, _manifest = render_english(document)
-    if "\n" in source or not source.startswith("Rule 1. "):
+    block = _block(source)
+    if "\n" in source or block is None:
         raise VEError("InvalidInput: rights incident must have one rule")
-    return f"{kind.title()} of right {right}. " + source[len("Rule 1. "):]
+    # the renderer's own header options (rights.md :228), e.g. ` (user may turn off)`
+    return f"{kind.title()} of right {right}" + source[len("Rule 1"):]
+
+
+def _block(source):
+    """A rendered soft rule block numbered 1, split by norm_english's header grammar."""
+    from ..norm_english import _SOFT_HEADER
+    block = _SOFT_HEADER.fullmatch(source)
+    return block if block is not None and block[1] == "1" else None
 
 
 def parse_line(env, source, *, name, rights=None):
     """Parse one incident; the W1/soft parser checks every derivation, including
     the generated wordings of `rights` (a checked rights document) in guards."""
-    match = re.fullmatch(r"(Claim|Liberty|Immunity) of right ([1-9][0-9]*|[a-z][a-z0-9-]*)\. (.+)", source, re.S)
-    if match is None:
+    match = re.fullmatch(r"(Claim|Liberty|Immunity) of right ([1-9][0-9]*|[a-z][a-z0-9-]*)(.*)", source, re.S)
+    block = None if match is None else _block("Rule 1" + match[3])
+    if block is None:
         raise VEError("SyntaxError: expected Claim, Liberty or Immunity of right")
     from ..norm_english import parse_english
     from ..rights import _name
+    from .softnorms import parse_header_options, render_header_options
     _name(name)
+    # Only a header the renderer emits for one rule: its switch option, never a
+    # precedence option, in exactly render_header_options' spelling (rights.md :228).
+    _refs, parties = parse_header_options(block[2] or "")
+    if "Rule 1" + render_header_options((), parties) + ". " != block.string[:block.start(3)]:
+        raise VEError("SyntaxError: rights incident header is not one the renderer writes")
     document = parse_english(_soft_env(env) if rights is None else rights.environment,
-                             "Rule 1. " + match[3])
+                             "Rule 1" + match[3])
     if len(document.rules) != 1:
         raise VEError("SyntaxError: incident needs one rule")
     raw = document.rules[0].to_dict()["norm"]
