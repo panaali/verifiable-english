@@ -86,6 +86,16 @@ theorem fields_mkObj_single (k : String) (v : Json) : VE.Bridge.fields (Json.mkO
 theorem ok_bind {ε α β : Type} {x : Except ε α} {a : α} (h : x = .ok a) (f : α → Except ε β) : (x >>= f) = f a := by
   rw [h]; rfl
 
+theorem bind_congr' {ε α β : Type} (x : Except ε α) {f g : α → Except ε β} (h : ∀ a, f a = g a) :
+    (x >>= f) = (x >>= g) := by
+  rw [show f = g from funext h]
+
+theorem map_bind' {ε α β γ : Type} (Φ : β → γ) (x : Except ε α) {f : α → Except ε γ} {g : α → Except ε β}
+    (h : ∀ a, f a = Φ <$> g a) : (x >>= f) = Φ <$> (x >>= g) := by
+  cases x <;> simp [bind, Except.bind, h, Functor.map, Except.map]
+
+theorem map_pure' {ε β γ : Type} (Φ : β → γ) (b : β) : (pure (Φ b) : Except ε γ) = Φ <$> pure b := rfl
+
 theorem distinct_map {L : List (String × Json)} (hd : Distinct L) (k : String) (f : Json → Json) :
     Distinct (L.map (mapPair k f)) := by
   unfold Distinct at *; rw [List.pairwise_map]; exact hd.imp id
@@ -229,5 +239,82 @@ theorem decodeNorm_guard {F : List (String × Json)} (hd : Distinct F) {g : Json
   rw [ok_bind hl']
   cases h
   simp only [he]; rfl
+
+
+theorem distinct_toList_mkObj (L : List (String × Json)) :
+    Distinct (Std.TreeMap.Raw.ofList L compare).toList :=
+  Std.TreeMap.Raw.distinct_keys_toList Std.TreeMap.Raw.WF.ofList
+
+theorem filter_mapPair (L : List (String × Json)) (k : String) (f : Json → Json) (p : String → Bool) :
+    (L.map (mapPair k f)).filter (fun kv => p kv.1) = (L.filter (fun kv => p kv.1)).map (mapPair k f) := by
+  rw [List.filter_map]; rfl
+
+theorem keysOf_mapMember (k : String) (f : Json → Json) (j : Json) :
+    VE.SoftNorms.Phases.keysOf (mapMember k f j) = VE.SoftNorms.Phases.keysOf j := by
+  unfold VE.SoftNorms.Phases.keysOf
+  rw [fields_mapMember]
+  cases VE.Bridge.fields j <;> simp [Functor.map, Except.map, Except.toOption]
+
+theorem keysOf_norm (r : Json) : VE.SoftNorms.Phases.keysOf (Json.mkObj [("norm", r)]) = some ["norm"] := rfl
+
+set_option maxRecDepth 20000 in
+set_option maxHeartbeats 4000000 in
+/-- The soft decoder of a rule whose (rebuilt) norm has its guard replaced: the same rule with the new guard. -/
+theorem ruleFields_guard (x : Option String) (L : List (String × Json)) {g : Json} {G : VE.Formula} {c : Nat}
+    (hg : VE.Norms.Wire.budgetFormula VE.Limits.maxDepth 0 g = .ok (G, c)) {R : VE.SoftNorms.SoftNode}
+    (h : VE.SoftNorms.Phases.ruleFields x (Json.mkObj [("norm", Json.mkObj L)]) = .ok R) :
+    VE.SoftNorms.Phases.ruleFields x (Json.mkObj [("norm", mapMember "guard" (fun _ => g) (Json.mkObj L))]) =
+      .ok { R with guard := G } := by
+  have ne : ∀ a, a ≠ "guard" → (mapMember "guard" (fun _ => g) (Json.mkObj L)).getObjVal? a = (Json.mkObj L).getObjVal? a :=
+    fun a ha => getObjVal_mapMember_ne _ _ ha
+  have hf : VE.Bridge.fields (Json.mkObj L) = .ok (Std.TreeMap.Raw.ofList L compare).toList := rfl
+  have hn : ∀ r : Json, (Json.mkObj [("norm", r)]).getObjValD "norm" = r := fun r => by
+    simp only [Json.getObjValD, getObjVal_single]; rfl
+  unfold VE.SoftNorms.Phases.ruleFields at h ⊢
+  rw [hn] at h ⊢
+  simp only [letFun] at h ⊢
+  rw [keysOf_norm, keysOf_mapMember, fields_mapMember, hf, ne "mode" (by decide), ne "rank" (by decide),
+    ne "alterable" (by decide), ne "hard" (by decide), ne "exception" (by decide)]
+  rw [keysOf_norm, hf] at h
+  have mf : ∀ l : List (String × Json), (l.map (mapPair "guard" (fun _ => g))).map (fun x => x.fst) =
+      l.map (fun x => x.fst) := fun l => by simp
+  by_cases hc : (Option.any (fun x => VE.SoftNorms.Phases.sameKeys x ["norm"]) (some ["norm"]) &&
+      (VE.SoftNorms.Phases.keysOf (Json.mkObj L)).isSome) = true
+  case neg => rw [if_neg hc] at h; cases h
+  rw [if_pos hc, pure_bind]
+  rw [if_pos hc, pure_bind] at h
+  rw [ok_bind (rfl : VE.SoftNorms.Phases.inherited ((fun l => l.map (mapPair "guard" (fun _ => g))) <$>
+    (Except.ok (Std.TreeMap.Raw.ofList L compare).toList : Except String _)) = .ok _)]
+  rw [ok_bind (rfl : VE.SoftNorms.Phases.inherited (Except.ok (Std.TreeMap.Raw.ofList L compare).toList) = .ok _)] at h
+  rw [mf, filter_mapPair _ "guard" _ VE.SoftNorms.Phases.w1Keys.contains]
+  generalize hT : (Std.TreeMap.Raw.ofList L compare).toList = T at h ⊢
+  by_cases hc2 : (VE.SoftNorms.Phases.w1Keys.all (List.map (fun x => x.fst) T).contains &&
+      (List.map (fun x => x.fst) T).all fun k => VE.SoftNorms.Phases.w1Keys.contains k ||
+        VE.SoftNorms.Phases.softKeys.contains k) = true
+  case neg => rw [if_neg hc2] at h; cases h
+  rw [if_pos hc2, pure_bind]
+  rw [if_pos hc2, pure_bind] at h
+  obtain ⟨N1, hN1, h⟩ := VE.Kit.Except.bind_ok h
+  have hN : VE.Norms.Wire.decodeNorm (Json.mkObj [("norm", Json.mkObj
+      (T.filter (fun kv => VE.SoftNorms.Phases.w1Keys.contains kv.fst)))]) false = .ok N1 := by
+    unfold VE.SoftNorms.Phases.inherited at hN1; split at hN1 <;> cases hN1; assumption
+  have hd : Distinct T := hT ▸ distinct_toList_mkObj L
+  rw [ok_bind (show VE.SoftNorms.Phases.inherited (VE.Norms.Wire.decodeNorm (Json.mkObj [("norm", Json.mkObj
+      ((T.filter (fun kv => VE.SoftNorms.Phases.w1Keys.contains kv.fst)).map (mapPair "guard" (fun _ => g))))]) false) =
+      .ok { N1 with guard := G } from by rw [decodeNorm_guard (hd.filter _) hg hN]; rfl)]
+  clear hN hN1 hd hT hc2 hc mf hf ne hn
+  refine Eq.trans ?_ ((congrArg (fun t : VE.SoftNorms.Phases.Check VE.SoftNorms.SoftNode =>
+    (fun R : VE.SoftNorms.SoftNode => { R with guard := G }) <$> t) h).trans rfl)
+  clear h
+  obtain ⟨nm, pd, sg, G1, co, ov⟩ := N1
+  dsimp only
+  by_cases r1 : Norms.ruleName nm = true
+  case neg => rw [if_neg r1, if_neg r1]; rfl
+  rw [if_pos r1, if_pos r1, pure_bind, pure_bind]
+  by_cases r2 : co.length > 8
+  case pos => rw [if_pos r2, if_pos r2]; rfl
+  rw [if_neg r2, if_neg r2, pure_bind, pure_bind]
+  refine map_bind' _ _ fun _ => ?_
+  repeat (first | rfl | (simp only [pure_bind]) | (refine map_bind' _ _ fun _ => ?_) | split)
 
 end VE.RightClauses
