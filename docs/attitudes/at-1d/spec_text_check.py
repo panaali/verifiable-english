@@ -1,6 +1,7 @@
 """at-1d statement gate (the pattern of docs/attitudes/at-1c/spec_text_check.py): each of the seven 6.1 statements
-at-1d proves appears, with its docstring, after whitespace normalisation, in lean/VE/Attitudes/Theorems.lean. No spec
-line differs and none is added. Run from the repo root."""
+at-1d proves appears, with its docstring, after whitespace normalisation, in lean/VE/Attitudes/Theorems.lean, and is
+followed there by ` :=`, so text appended to a statement (a weakened conclusion) is refused. No spec line differs and
+none is added. Run from the repo root."""
 import re
 import sys
 
@@ -35,7 +36,7 @@ def theorem(p):
 
 statements = [p for p in pieces("### 6.1 AT-1 (`lean/VE/Attitudes/Theorems.lean`)",
                                 "### 6.2 AT-2 (`lean/VE/Attitudes/Route.lean`)") if theorem(p) in SEVEN]
-missing = [theorem(p) for p in statements if norm("\n".join(p)) not in src]
+missing = [theorem(p) for p in statements if norm("\n".join(p)) + " :=" not in src]
 found = {theorem(p) for p in statements}
 print(f"{len(statements)} statements, {len(missing)} missing, {len(found)} of 7 found", *missing, sep="\n")
 sys.exit(1 if missing or found != set(SEVEN) or len(statements) != 7 else 0)
