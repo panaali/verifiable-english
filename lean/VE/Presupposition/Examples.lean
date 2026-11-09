@@ -471,7 +471,7 @@ def row13 (M : VE.FiniteModel String) : Bool × Bool × Bool :=
 #guard row13 (m13 ["arizona", "ohio"] [["alice", "arizona"], ["alice", "ohio"], ["bob", "arizona"]]) == (false, true, false)
 #guard row13 (m13 ["arizona"] [["alice", "arizona"]]) == (true, false, false)
 
-/-! ## 4.7's wire layer (PS-2aa): carriers, the table's shape, the readings of an open set, restriction paths -/
+/-! ## 4.7's wire layer (PS-2aa): carriers, the table's shape, `carrierAllowed`, `unitModes`, `ruleConditions`, restriction paths -/
 
 -- Roots and candidates: only asserted and conditioned have a root of their own; proved and unresolved stand for no
 -- candidate; the core candidates are assumed, conditioned and asserted.
