@@ -1139,4 +1139,86 @@ def docR27 : VE.Readings.Doc :=
   some "UnsupportedProfile: readings@1 content with norm-defaults@0 is not implemented"
 #guard VE.Readings.Wire.abstention (reA .norms) docR27 == none && VE.Readings.Wire.abstention (reA .soft) docR27 == none
 
+/-! ### Positions inside lists (trust-mutants survivors): an element neither first nor last, a second unit, a third
+reading, a second situation -/
+
+-- obligations on two units; an unresolved obligation second in its unit (step 3 reads it, not the first)
+#guard errOf (admit (docA [cu "u0" theOwnerU, cu "u1" theOwner, cu "u2" theOwner]
+  [pA (.assumed "u0"), { pA (.assumed "u0") with id := "p2", unit := "u2" }])) == "admitted"
+#guard errOf (admitWith fixtureTable fx1 (docA [cu "u0" theOwnerU, ⟨"u1", true, .readings [rdAs, rdCo]⟩]
+  [pA (.assumed "u0"), { pA .unresolved with id := "p2" }])) == notSeparatedText
+-- a repeated id after another id, either way
+#guard errOf (admit (docA [cu "u0" theOwnerU, cu "u1" theOwner]
+  [pA (.assumed "u0"), { pA (.assumed "u0") with id := "p2" }, pA (.assumed "u0")])) == "PresuppositionMismatch: p1: id"
+#guard errOf (admit (docA [cu "u0" theOwnerU, cu "u1" theOwner]
+  [pA (.assumed "u0"), { pA (.assumed "u0") with id := "p2" }, { pA (.assumed "u0") with id := "p2" }])) ==
+  "PresuppositionMismatch: p2: id"
+-- two asserted, and two conditioned, obligations on one claim unit
+def mgrArgs16 : Args := { sort := some "entity", restriction := some manager, body := some busy }
+#guard errOf (admitWith t16 fxN (docA [cu "u1" (.and gOwner (.and gManager b16))]
+  [pA .asserted (.path [0]), obA "p2" "u1" "definite" (.path [1]) mgrArgs16 .asserted])) == "admitted"
+#guard errOf (admitWith t16 fxN (docA [cu "u1" (.implies gOwner (.implies gManager b16))]
+  [pA .conditioned (.path [0]), obA "p2" "u1" "definite" (.path [1]) mgrArgs16 .conditioned])) == "admitted"
+-- open sets of three readings: the middle or the last over another base
+def rdBad : RReading := { rdCo with content := .claim (.implies theOwnerU busy) }
+#guard errOf (admitWith fixtureTable fx1 (docA [⟨"u1", true, .readings [rdAs, rdCo, rdBad]⟩] [pA .unresolved])) ==
+  "PresuppositionMismatch: p1: content"
+#guard errOf (admitWith fixtureTable fx1 (docA [⟨"u1", true, .readings [rdAs, rdBad, rdCo]⟩] [pA .unresolved])) ==
+  "PresuppositionMismatch: p1: content"
+-- an open rule whose second reading peels to another rule
+def rd7r9 : RReading := { cand := .conditioned, aliases := [], content := .rule (conditionNode (rule22 "r9") pre22), premise := none }
+#guard errOf (admitWith fixtureTable (fx7 .norms) (doc7u false ["p"] ((rr7.take 1) ++ [rd7r9]))) ==
+  "PresuppositionMismatch: p1: rule"
+-- two obligations on one rule in either order, and two conditions on one rule
+def doc7two (first : Bool) : PDoc :=
+  let a := { p7 (.assumed "u0") with id := "p0" }
+  docA [cu "u0" (ruleGoal (reg7) r7 pre22), ⟨"u7", true, .rule "r1"⟩]
+    (if first then [a, p7 .conditioned] else [p7 .conditioned, a]) (tree7 [conditionNode r7 pre22]) true ["p"]
+#guard errOf (admitWith fixtureTable fxN (doc7two true)) == "admitted"
+#guard errOf (admitWith fixtureTable fxN (doc7two false)) == "admitted"
+#guard errOf (admitWith fixtureTable fxN (docA [⟨"u7", true, .rule "r1"⟩]
+  [p7 .conditioned, { p7 .conditioned { sort := some "entity", restriction := some busy } with id := "p2" }]
+  (tree7 [conditionNode (conditionNode r7 pre22) (.ex "entity" busy)]) true ["p"])) == "admitted"
+-- rule units after a claim unit; two fixed rule units; two open rule units; a fixed rule before another rule
+#guard errOf (admitWith fixtureTable fxN (docA [cu "u0" theOwnerU, cu "u1" theOwner, ⟨"u7", true, .rule "r1"⟩]
+  [pA (.assumed "u0"), { p7 .conditioned with id := "p2" }] (tree7 [conditionNode r7 pre22]) true ["p"])) == "admitted"
+#guard errOf (admitWith fixtureTable (fx7 .norms) (docA [cu "u0" theOwnerU, cu "u1" theOwner, ⟨"u7", true, .readings rr7⟩]
+  [pA (.assumed "u0"), { p7 .unresolved with id := "p2" }] (tree7 []) true ["p"])) == "admitted"
+#guard errOf (admitWith fixtureTable fxN (docA [⟨"u7", true, .rule "r1"⟩, ⟨"u8", true, .rule "r2"⟩]
+  [p7 .conditioned, { p7 .conditioned with id := "p2", unit := "u8", position := .ruleAct "r2" }]
+  (tree7 [conditionNode r7 pre22, conditionNode (rule22 "r2") pre22]) true ["p"])) == "admitted"
+#guard errOf (admitWith fixtureTable fxN (docA [⟨"u7", true, .rule "r1"⟩] [p7 .conditioned]
+  (tree7 [conditionNode r7 pre22, rule22 "r2"]) true ["p"])) == "admitted"
+def rr8 : List RReading :=
+  [{ cand := .assumed, aliases := [], content := .rule (rule22 "r2"), premise := some (ruleGoal (reg7) (rule22 "r2") pre22) },
+   { cand := .conditioned, aliases := [], content := .rule (conditionNode (rule22 "r2") pre22), premise := none }]
+def docOO : PDoc := docA [⟨"u7", true, .readings rr7⟩, ⟨"u8", true, .readings rr8⟩]
+  [p7 .unresolved, { p7 .unresolved with id := "p2", unit := "u8", position := .ruleAct "r2" }] (tree7 []) true ["p"]
+#guard errOf (admitWith fixtureTable ⟨.norms, [("u7", 0, 1, sit7), ("u8", 0, 1, sit7)]⟩ docOO) == "admitted"
+-- a fixed rule unit beside the open set, its rule after another in the tree: it decides `p` under both readings
+def units7r3 : List DocUnit := [⟨"u7", true, .readings rr7⟩, ⟨"u9", true, .rule "r3"⟩]
+def doc7r3 (nodes : List VE.Norms.Node) : PDoc := { doc7u false ["p"] with units := units7r3, norms := tree7 nodes }
+#guard errOf (admitWith fixtureTable (fx7 .norms) (doc7r3 [rule22 "r0", rule22 "r3"])) == notSeparatedText
+#guard errOf (admitWith fixtureTable (fx7 .norms) (doc7r3 [rule22 "r0"])) == "admitted"
+-- two background entries, the meaningful one first or last
+#guard errOf (admitWith fixtureTable fx1 { docA1 with background := [.top, .ex "entity" owner] }) == notSeparatedText
+#guard errOf (admitWith fixtureTable fx1 { docA1 with background := [.ex "entity" owner, .top] }) == notSeparatedText
+-- two situations for one pair, the separating one first or second
+#guard errOf (admitWith fixtureTable ⟨.norms, [("u1", 1, 0, ⟨mOne, [], [], .holds, true⟩), ("u1", 1, 0, sitNo)]⟩ docA1) ==
+  "admitted"
+#guard errOf (admitWith fixtureTable ⟨.norms, [("u1", 1, 0, sitNo), ("u1", 1, 0, ⟨mOne, [], [], .holds, true⟩)]⟩ docA1) ==
+  "admitted"
+-- three readings: every pair needs its situation, the (1, 2) or the (0, 2) pair included
+def t3 (cs : List Candidate) : CandidateTable := fun _ pc => if pc == .top then cs else []
+def rAsr : RReading := { cand := .asserted, aliases := [], content := .claim (.and theOwnerU theOwner), premise := none }
+#guard errOf (admitWith (t3 [.conditioned, .asserted, .assumed]) ⟨.norms, [("u1", 0, 1, sitNo), ("u1", 0, 2, sitNo)]⟩
+  (docA [⟨"u1", true, .readings [rdCo, rAsr, rdAs]⟩] [pA .unresolved])) == needsModelText
+#guard errOf (admitWith (t3 [.asserted, .conditioned, .assumed]) ⟨.norms, [("u1", 1, 0, sitNo), ("u1", 1, 2, sitNo)]⟩
+  (docA [⟨"u1", true, .readings [rAsr, rdCo, rdAs]⟩] [pA .unresolved])) == needsModelText
+-- a cell with conditioned first: the open rule still needs `unspecified` (R-7), and on the soft chain the
+-- conditioned reading is still refused
+def tCA : CandidateTable := fun _ _ => [.conditioned, .assumed]
+#guard errOf (admitWith tCA fxN (doc7u true [] rr7.reverse)) == "PresuppositionDefault: p1: p"
+#guard errOf (admitWith tCA (fx7 .soft) (doc7u false ["p"] rr7.reverse)) == softText
+
 end VE.Presupposition.Examples

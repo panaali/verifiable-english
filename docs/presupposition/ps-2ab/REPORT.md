@@ -188,4 +188,38 @@ guard (table above and `mutants.json`). ps-2aa's and ps-2a's ties-pass rows can 
 
 ## Self-review against BUILDER-CHECKLIST
 
-(filled after the heavy checks)
+SELF-REVIEW: 4 A, 7 B, 8 C; fixed 19 (self-reviewer agent, one call, on 31f7bb1aa). The four A: readings@1's texts in
+place of a new one; the 12-cell bound (unreachable: `cells … = 0` guards); `admitInputs`' vacuity (`admitWith_*`
+twins, and the DRI ruled); unconditional at a heading. The seven B: `firstOb`'s fallback; the rule act's own rule;
+complete read-back lemmas for every tied step; the background in `readingsDoc`; A2/A6/A10/A11/A21/A23 on `admit`;
+A10 and the size to the DRI. Each fix has a guard and a hand mutant (`mutants.json`).
+
+1. Every Lean answer typed and contained: N.A. No relayed answer, schema or route; `admit`'s `Report` is consumed by
+   Lean only, until PS-4 and ps-2b.
+2. Every required deliverable built: PASS. (1)-(3) are built; (4) is cut by the pre-approved seam, and the DRI noted it
+   (reviews/dri-decisions-20261109-ps-2ab.md item 3); `FOLLOW-UP: ps-2ac`.
+3. Tests and gates can fail: PASS. 38 hand mutants, each failing a named guard (`evidence/tests.txt`); the
+   trust-mutants sweep (`trust-mutants.json`, "Final checks").
+4. Python, Lean and Rust agree: N.A. Lean only; no Python or Rust path decides presuppositions.
+5. R8 binding: N.A. No relay. The diagnostics name an obligation of the request (`firstOb` guard), for ps-2b's
+   binding.
+6. Gate evidence matches the final HEAD: PASS. `evidence/tests.txt` is regenerated on the final Lean commit; the
+   trust-mutants input hashes are for the committed HEAD ("Final checks").
+7. No unsigned item: PASS. The three DRI questions are ruled (two decision files); DELTA has no rows.
+8. Every user-visible change in DELTA: PASS. None is user-visible (DELTA.md, with the grep and `git diff
+   --name-only` it cites).
+9. Test selection: PASS. `tools/select_tests.py --base a0102f0e5` selects 484/560 units ("lean cutoff: no record of
+   the base and head build", the conservative path for a Lean change), including `lean/audit.py` and `lake build`,
+   which build every guard of this item.
+10. Statements say what is claimed: PASS. The probe gives 19/19 equal to spec 4.7; M2 breaks `admit_proved_sound`
+    (Statements.lean) as well as A7; no hypothesis was added.
+11. Budgets fail closed: PASS. 257 obligations, a goal over 10,000 nodes, a unit content and an open set's readings
+    over budget each answer `ResourceLimit: presuppositions` (UNKNOWN), with guards (A15 and the step-5/pass-2
+    guards).
+12. No CPU or memory regression: N.A. for pilots (no route calls `admit`). Inside `admit` each obligation is
+    regenerated once; R-D6 reads the block once per obligation (at most 256²); `fillDoc` is built once per open set.
+13. Test-removed trailers: N.A. No test removed.
+14. Both directions, cited evidence, spec re-read: PASS. Each refusal has its accepted twin (A1/A2, A4/A5, A9,
+    A14, A18/A18b, A22/A23, separation, background, `fillHolds`); "Spec re-read" lists the lines.
+15. Overclaim, silent cut, checks that can fail, limits charged first: PASS. The cut is the task's seam; the
+    universal words were checked against the guards cited; budgets are charged before comparison (pass 2, step 5).
