@@ -289,9 +289,11 @@ def _front_of(text: str, body: bytes, meta: dict, own) -> tuple[dict, bytes]:
 
 def bind_composed(meta: dict, body: bytes, row: dict) -> tuple[dict, bytes | None]:
     """A row's `composed` (`Service.Document.composedJson`), there exactly under the chain list: `not_certified` names the
-    request's counting units, each reading's document holds what `_front_of` says, the chain's environment is the request's
-    without `cardinality@0` and fields it does not read, and it is none when every unit is a counting unit. Returns the
-    front matter the row answers and the chain's text: Lean checks the chain on its own request, which is where its verdict comes from."""
+    request's counting units, each reading's document holds what `_front_of` says, and the chain's environment is the
+    request's without `cardinality@0` and fields it does not read. The chain's document is there whatever the units are
+    (qt-a4b review F1). Returns the front matter the row answers and the chain's text: Lean checks the chain on its own
+    request, which names this document (`chain_of`), and refuses a text that is not its chain reading
+    (`Service.Document.chainBound`), which is where its verdict comes from."""
     composed = row.get("composed")
     environment = meta["environment"]
     _require((composed is not None) == is_chain_list(environment["profiles"]), "composed")
@@ -301,9 +303,6 @@ def bind_composed(meta: dict, body: bytes, row: dict) -> tuple[dict, bytes | Non
     _require(counted == composed["not_certified"] and composed["scope"], "not certified")
     front, _ = _front_of(composed["counting_document"], body, meta, _counting)
     _require(_same(front["environment"], environment), "counting environment")
-    if composed["chain_document"] is None:
-        _require(len(counted) == len(meta["units"]), "chain document")
-        return front, None
     lowered, raw = _front_of(composed["chain_document"], body, meta, lambda unit: not _counting(unit))
     chain = lowered["environment"]
     _require(chain["profiles"] == [p for p in environment["profiles"] if p != PROFILE] and

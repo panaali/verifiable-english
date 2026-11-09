@@ -31,14 +31,15 @@ def load_document(path: str | Path):
     return _load(Path(path), admit=False)
 
 
-def _load(path: Path, *, admit: bool, raw: bytes | None = None):
+def _load(path: Path, *, admit: bool, raw: bytes | None = None, chain_of: bytes | None = None):
     """`load_document`; `admit`: also `_report`'s claim-graph checks, which `check_document` asks Lean for; `raw`:
-    the text read in place of the file's, as the document at `path` (its senses packs beside it)."""
+    the text read in place of the file's, as the document at `path` (its senses packs beside it); `chain_of`: the chain
+    list document whose chain reading `raw` is (`ve.document.lean._chain_document`)."""
     raw = path.read_bytes() if raw is None else raw
     from ..discourse import is_discourse_text, lean_admission, rejection, unavailable_report
     if not is_discourse_text(raw):
         prepared = {}
-        row = _lean_answer(raw, admit, path.parent, prepared)
+        row = _lean_answer(raw, admit, path.parent, prepared, chain_of)
         if row is None:
             return _load_document(raw, path, None)
         return _lean_document(raw, path, row, admitted=admit, prepared=prepared)
