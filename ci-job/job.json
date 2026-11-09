@@ -1,0 +1,23 @@
+{
+ "job": "eff-20261108-1.r3-5febd940",
+ "head": "fe28d6df86e9e2293063ff8918526439510b1d33",
+ "argv": [
+  "eff-20261108-1.r3-5febd940",
+  "fe28d6df86e9e2293063ff8918526439510b1d33",
+  "876fbe2c42b7245c427c6e6a4cb7bc7cc189fd3d",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-125b170c2ea9.tar.zst",
+  "4ec2271239e97b914990eef5ba29546f3d887a720892bb57e155f5bf98c4cb6d",
+  "--test",
+  "lean/VE/Judgments/ChainExamples.lean",
+  "--allow",
+  "docs/profile-composition/pc-1g/trust-mutants-allow.json",
+  "--max-mutants",
+  "60",
+  "--jobs",
+  "2",
+  "--shard",
+  "2/32",
+  "--control-probes",
+  "eager"
+ ]
+}
