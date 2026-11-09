@@ -1652,7 +1652,8 @@ SOFT = ('def softCase (id kind : String) (j : Json) : Except String (Option Json
 FUNCTION = ("Function expected at\n  []\nbut this term has type\n  List ?m.6\n\nNote: Expected a function because this "
             "term is being applied to the argument\n  fun (z, f, r, w) => Json.mkObj [(\"zone\", .str z)]")
 DOTTED = "Invalid dotted identifier notation: The expected type of `.str` could not be determined"
-IMPLICIT = "don't know how to synthesize implicit argument `α`\n  @List.nil (?m.89 id kind j y✝ r)\ncontext:\nid kind : String"
+IMPLICIT = ("don't know how to synthesize implicit argument `α`\n  @List.nil (?m.89 id kind j y✝ r)\ncontext:\n"
+            "id kind : String")
 FIELD = "Invalid field `take`: The environment does not contain `Function.take`"
 MUTANTS = {  # the mutant's id (and those of its class in the record): its declaration, its text and where it starts
     "M041": (ZONE.format("[]", f"Json.mkObj {HEADS}"), "[]", (2, 20)),  # and M058, M073
