@@ -123,4 +123,133 @@ theorem decodeLine_name (se : SoftEnvironment) (l : Json)
       obtain ⟨N', hd', rfl⟩ := some_map_ok hll
       rw [getObjValD_of_ok hN, str_name _ _ (member_name se _ (hn _ hN) _ hd)]; rfl
 
+
+theorem rebuild_wf (v : Json) : ∀ t, rebuild v = .obj t → t.WF := by
+  intro t h
+  cases v <;> simp only [rebuild, Json.mkObj] at h <;> try cases h
+  exact Std.TreeMap.Raw.WF.ofList
+
+theorem lineWith_norm (ks : List String) (l : Json) :
+    (lineWith ks l).getObjVal? "norm" = rebuild <$> (dropKeys ks l).getObjVal? "norm" := by
+  unfold lineWith
+  rw [getObjVal_mapMember_ne _ _ (by decide), getObjVal_mapMember, if_pos rfl]
+
+theorem lineWith_liberty (ks : List String) (l : Json) :
+    (lineWith ks l).getObjVal? "liberty" = rebuild <$> (dropKeys ks l).getObjVal? "liberty" := by
+  unfold lineWith
+  rw [getObjVal_mapMember, if_pos rfl, getObjVal_mapMember_ne _ _ (by decide)]
+
+theorem lineWith_wf (ks : List String) (l : Json) (k : String) (hk : k = "norm" ∨ k = "liberty") :
+    ∀ v, (lineWith ks l).getObjVal? k = .ok v → ∀ t, v = .obj t → t.WF := by
+  intro v hv t ht
+  rcases hk with rfl | rfl
+  · rw [lineWith_norm] at hv
+    cases hx : (dropKeys ks l).getObjVal? "norm" <;> rw [hx] at hv <;> cases hv; exact rebuild_wf _ t ht
+  · rw [lineWith_liberty] at hv
+    cases hx : (dropKeys ks l).getObjVal? "liberty" <;> rw [hx] at hv <;> cases hv; exact rebuild_wf _ t ht
+
+theorem decodeLineNorm_obj (se : SoftEnvironment) (v : Json) (fp : Option String) {N : VE.SoftNorms.SoftNode}
+    (h : decodeLineNorm se v fp = .ok N) : ∃ t, v = .obj t := by
+  cases v with
+  | obj t => exact ⟨t, rfl⟩
+  | _ =>
+    exfalso
+    unfold decodeLineNorm at h
+    cases fp <;> simp only [Json.getObjVal?] at h <;> split at h <;> (try cases h) <;>
+      (rename_i heq; obtain ⟨t, ht⟩ := ruleFields_obj _ _ heq; cases ht)
+
+/-- The norm a decoded line carries was decoded from its `norm` member. -/
+theorem decodeLine_norm (se : SoftEnvironment) (l : Json) {S : VE.Rights.SourceLine} (h : decodeLine se l = .ok S)
+    {N : VE.SoftNorms.SoftNode} (hN : S.norm = some N) :
+    ∃ v fp, l.getObjVal? "norm" = .ok v ∧ decodeLineNorm se v fp = .ok N := by
+  unfold decodeLine at h
+  obtain ⟨_, -, h⟩ := VE.Kit.Except.bind_ok h
+  obtain ⟨_, -, h⟩ := VE.Kit.Except.bind_ok h
+  rcases hfo : l.getObjVal? "fan_out" with e1 | v1 <;> cases hhs : l.getObjVal? "holder_slot" <;>
+    simp only [hfo, hhs] at h
+  case' ok.error => obtain ⟨_, -, h⟩ := VE.Kit.Except.bind_ok h
+  case' ok.ok => obtain ⟨_, -, h⟩ := VE.Kit.Except.bind_ok h
+  all_goals
+    obtain ⟨_, -, h⟩ := VE.Kit.Except.bind_ok h
+    obtain ⟨_, -, h⟩ := VE.Kit.Except.bind_ok h
+    obtain ⟨_, -, h⟩ := VE.Kit.Except.bind_ok h
+    obtain ⟨wn, hnn, h⟩ := VE.Kit.Except.bind_ok h
+    obtain ⟨_, -, h⟩ := VE.Kit.Except.bind_ok h
+    obtain ⟨_, -, h⟩ := VE.Kit.Except.bind_ok h
+    cases h
+    simp only at hN
+    subst hN
+    rcases hv : l.getObjVal? "norm" with e | v <;> simp only [hv] at hnn
+    · cases hnn
+    · obtain ⟨N', hd, he⟩ := some_map_ok hnn
+      cases he
+      exact ⟨v, _, rfl, hd⟩
+
+theorem with_norm_eq (S : VE.Rights.SourceLine) {n : Option VE.SoftNorms.SoftNode} (h : S.norm = n) :
+    { S with norm := n } = S := by
+  cases S; simp only at h; simp [h]
+
+/-- One line of right `R` through `plainLineJson` decodes as `plainSource` of its decoded line. -/
+theorem plainLine_decode (se : SoftEnvironment) (D : ClauseDoc) (hw : WellFormedClauses D = true)
+    (hd : PlainOnWire D) (R : String) (l : Json) {S : VE.Rights.SourceLine}
+    (hS : decodeLine se (lineWith headKeys l) = .ok S) (hm : (R, S) ∈ VE.Rights.sourceLines D.doc) :
+    decodeLine se (plainLineJson D R l) = .ok (plainSource D.doc.soft D.lines R S) := by
+  have hname := decodeLine_name se _ (lineWith_wf _ l "norm" (.inl rfl)) (lineWith_wf _ l "liberty" (.inr rfl)) hS
+  have hfind : (lineName S).bind (fun n => D.lines.find? (fun x => x.1 == R && x.2.1 == n)) =
+      D.lines.find? (fun x => x.1 == R && some x.2.1 == lineName S) := by
+    cases lineName S with
+    | none => simp only [Option.bind]; exact (List.find?_eq_none.2 (fun _ _ => by simp)).symm
+    | some n => simp [Option.bind]
+  unfold plainLineJson plainSource
+  dsimp only
+  rw [hname, hfind]
+  cases hx : D.lines.find? (fun x => x.1 == R && some x.2.1 == lineName S) with
+  | none => exact hS
+  | some x =>
+    obtain ⟨R', n, L⟩ := x
+    have hxm := List.mem_of_find?_eq_some hx
+    have hp := List.find?_some hx
+    simp only [Bool.and_eq_true, beq_iff_eq] at hp
+    obtain ⟨rfl, hn⟩ := hp
+    obtain ⟨hsh, -, -, hsrc, -⟩ := entry_facts D hw R' n L hxm
+    have hSL : S = L.line := by
+      have : (R', S) ∈ (VE.Rights.sourceLines D.doc).filter (fun RS => lineName RS.2 == some n) :=
+        List.mem_filter.2 ⟨hm, by simp [← hn]⟩
+      rw [hsrc] at this; simpa using this
+    subst hSL
+    dsimp only
+    cases hN : L.line.norm with
+    | none =>
+      dsimp only
+      rw [hS]; congr 1
+      simp only [hN, Option.map_none]
+      exact (with_norm_eq L.line hN).symm
+    | some N =>
+      dsimp only
+      by_cases he : (L.clauses.isEmpty && L.relation.isNone) = true
+      · rw [if_pos he, hS]
+        simp only [Bool.and_eq_true, List.isEmpty_iff, Option.isNone_iff_eq_none] at he
+        congr 1
+        simp only [plainGuard, he.1, he.2, List.map_nil, Option.toList_none, List.append_nil, List.foldl_nil]
+        exact (with_norm_eq L.line hN).symm
+      · rw [if_neg he]
+        obtain ⟨v, fp, hv, hdv⟩ := decodeLine_norm se _ hS hN
+        obtain ⟨t, rfl⟩ := decodeLineNorm_obj se v fp hdv
+        rw [lineWith_norm] at hv
+        cases hr : (dropKeys headKeys l).getObjVal? "norm" with
+        | error e => rw [hr] at hv; cases hv
+        | ok raw0 =>
+          rw [hr] at hv
+          cases raw0 with
+          | obj kvs =>
+            have hv' : (lineWith headKeys l).getObjVal? "norm" = .ok (Json.mkObj kvs.toList) := by
+              rw [lineWith_norm, hr]; rfl
+            have hf : L.line.fanOut = [] := by
+              simp only [shapeOk, he, Bool.false_or, Bool.and_eq_true, List.isEmpty_iff] at hsh
+              exact hsh.1.2
+            obtain ⟨c, hg⟩ := hd _ hxm N (by simp [hN])
+            rw [decodeLine_guard se _ hv' hg hS hf, hN]
+            rfl
+          | _ => cases hv
+
 end VE.RightClauses
