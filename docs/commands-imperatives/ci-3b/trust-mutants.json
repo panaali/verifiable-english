@@ -1,29 +1,29 @@
 {
  "base": "1531891aaf6b5d6a5a064448e29489245b67e496",
- "head": "b50795278c78d874d6ee50d3205f10836afe9093",
- "tree": "e13480b0a135ffa93b3f847ae79ab96f868f18bf",
+ "head": "ec76949a91fe52fff3db36e0f658e945a7e198b6",
+ "tree": "abdf223531c53bc64dc8e78e638ec7fd60e4fdd8",
  "jobs": 8,
  "control_probes": "lazy",
  "max_mutants": 1000,
  "deep": false,
  "tests": [],
- "seconds": 46,
+ "seconds": 102,
  "steps": {
   "wall": {
-   "plan": 14.7,
-   "scratch": 16.9,
-   "control_build": 0.3,
-   "probe_install": 2.4,
+   "plan": 31.9,
+   "scratch": 44.2,
+   "control_build": 0.4,
+   "probe_install": 4.2,
    "control_probes": 0.0,
-   "mutants": 8.7,
-   "cleanup": 3.0,
+   "mutants": 15.6,
+   "cleanup": 5.9,
    "reads": 0.0
   },
   "lake": {
-   "control_build": 0.3,
-   "probe_install": 2.4,
+   "control_build": 0.4,
+   "probe_install": 4.2,
    "control_probes": 0.0,
-   "mutant_builds": 54.1,
+   "mutant_builds": 96.4,
    "mutant_checks": 0.0,
    "outside_checks": 0.0,
    "stage_controls": 0.0,
@@ -54,7 +54,7 @@
   "trusted"
  ],
  "class_counts": {
-  "?, trusted": {
+  "G[V], trusted": {
    "KILLED": 15,
    "INVALID": 1,
    "ALLOWED": 11
@@ -62,7 +62,7 @@
  },
  "inputs": {
   "tool": "5390cfb404c9850ec21758af00e67a7300d7c0cbf3c409ebc4a1716d3d66c379",
-  "lean": "584e8b66bc32dc01c82e53930f2eaeb476fdc392e1cc1bea7f00d157f164e0d3",
+  "lean": "36748f6e3dea43966b8b064a13c18db4e784445dcee3d0e009c1abdd5cdeefe4",
   "tests": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
   "base": "1531891aaf6b5d6a5a064448e29489245b67e496",
   "options": "{\"deep\": false, \"test\": [], \"classes\": [\"trusted\"]}",
@@ -910,7 +910,7 @@
    "lean/lean-toolchain": "42779d67b81608af8a12aa4328d2ab47ca201925b3b2bd68369587b5340bb434",
    "lean/predicates.txt": "884e5a2ec8730b5afbcfee412bb9a8c8d29a2085205114aa2419ffa94b0b50f4",
    "lean/statements.txt": "755b468d759eec01a8d8f4c5afdb0a7998f661792266dd6e4b429ef00776a23c",
-   "tools/trust-classes.json": "6452a50a742b7dc8233d38eb9c198544533f983622f8ac63175d66c8a3e2f58a"
+   "tools/trust-classes.json": "7d2972ee172656e5f53fa8a073f2071cf3de8b4a5ca5b4bb9130d5b28410dc01"
   },
   "tool_files": {
    "lean/audit.py": "05fb69c5689a8606fefd6d43e220f23ee6dbedc4bea7245b34ae29a4fd13a1cd",
@@ -927,12 +927,17 @@
   }
  },
  "rescore": {
-  "file": "docs/commands-imperatives/ci-3b/trust-mutants-full.json",
+  "file": "docs/commands-imperatives/ci-3b/trust-mutants.json",
   "head": "b50795278c78d874d6ee50d3205f10836afe9093",
-  "mode": "identical",
-  "changed": [],
+  "mode": "checks",
+  "changed": [
+   "tools/trust-classes.json"
+  ],
   "reused": 16,
-  "rerun": 11
+  "rerun": 11,
+  "plan_only": [
+   "tools/trust-classes.json"
+  ]
  },
  "definitions": [
   "lean/VE/Commands/SplitOnLemmas.lean: VE.Commands.SplitOn.splitOnL"
@@ -954,7 +959,7 @@
    "detail": "Lean refuses the text: `h.1` is no projection of a disjunction in decreasing_by (SplitOnLemmas.lean:26), so the definition does not compile",
    "raw_status": "UNKNOWN",
    "raw_detail": "lean/VE/Commands/SplitOnLemmas.lean:26: Invalid projection: Expected a value whose type is a structure",
-   "trust_class": "?",
+   "trust_class": "G[V]",
    "trusted": true
   },
   {
@@ -973,7 +978,7 @@
    "detail": "Lean refuses the text: the operator splits the prefix token `<+:` into `\u2264+:`, which does not parse (SplitOnLemmas.lean:21)",
    "raw_status": "UNKNOWN",
    "raw_detail": "lean/VE/Commands/SplitOnLemmas.lean:21: unexpected token '+'; expected term",
-   "trust_class": "?",
+   "trust_class": "G[V]",
    "trusted": true
   },
   {
@@ -992,7 +997,7 @@
    "detail": "Lean refuses the text: the operator splits the prefix token `<+:` into `=+:`, which does not parse (SplitOnLemmas.lean:21)",
    "raw_status": "UNKNOWN",
    "raw_detail": "lean/VE/Commands/SplitOnLemmas.lean:21: unexpected token '+'; expected term",
-   "trust_class": "?",
+   "trust_class": "G[V]",
    "trusted": true
   },
   {
@@ -1011,7 +1016,7 @@
    "detail": "Lean refuses the text: with `sep = []` the guard `h.1` no longer gives `0 < sep.length` in decreasing_by (SplitOnLemmas.lean:26), so the definition does not compile",
    "raw_status": "UNKNOWN",
    "raw_detail": "lean/VE/Commands/SplitOnLemmas.lean:26: Application type mismatch: The argument",
-   "trust_class": "?",
+   "trust_class": "G[V]",
    "trusted": true
   },
   {
@@ -1030,12 +1035,13 @@
    "detail": "lean/VE/Commands/SplitOnLemmas.lean:303: Expression",
    "raw_status": "KILLED",
    "reused_from": "b50795278c78d874d6ee50d3205f10836afe9093",
+   "carried": "checks",
    "reads": "5ac338693d9c68fde50391d4bd4b4072ed9ea563a27cf3099b6fde17ec5a9b01",
    "killed_at": [
     303,
     303
    ],
-   "trust_class": "?",
+   "trust_class": "G[V]",
    "trusted": true
   },
   {
@@ -1054,12 +1060,13 @@
    "detail": "lean/VE/Commands/SplitOnLemmas.lean:303: Expression",
    "raw_status": "KILLED",
    "reused_from": "b50795278c78d874d6ee50d3205f10836afe9093",
+   "carried": "checks",
    "reads": "5ac338693d9c68fde50391d4bd4b4072ed9ea563a27cf3099b6fde17ec5a9b01",
    "killed_at": [
     303,
     303
    ],
-   "trust_class": "?",
+   "trust_class": "G[V]",
    "trusted": true
   },
   {
@@ -1078,12 +1085,13 @@
    "detail": "lean/VE/Commands/SplitOnLemmas.lean:303: Expression",
    "raw_status": "KILLED",
    "reused_from": "b50795278c78d874d6ee50d3205f10836afe9093",
+   "carried": "checks",
    "reads": "5ac338693d9c68fde50391d4bd4b4072ed9ea563a27cf3099b6fde17ec5a9b01",
    "killed_at": [
     303,
     303
    ],
-   "trust_class": "?",
+   "trust_class": "G[V]",
    "trusted": true
   },
   {
@@ -1102,8 +1110,9 @@
    "detail": "don't know how to synthesize implicit argument `\u03b1`",
    "raw_status": "INVALID",
    "reused_from": "b50795278c78d874d6ee50d3205f10836afe9093",
+   "carried": "checks",
    "reads": "51eda941ba0f4e39d96f161462d377fde560374461a1adbc753cd4fb5be06d6b",
-   "trust_class": "?",
+   "trust_class": "G[V]",
    "trusted": true
   },
   {
@@ -1122,7 +1131,7 @@
    "detail": "Lean refuses the text: the mutated definition fails its own termination proof (decreasing_by at SplitOnLemmas.lean:26 no longer shows the dropped list shorter), so it does not compile",
    "raw_status": "UNKNOWN",
    "raw_detail": "lean/VE/Commands/SplitOnLemmas.lean:26: omega could not prove the goal:",
-   "trust_class": "?",
+   "trust_class": "G[V]",
    "trusted": true
   },
   {
@@ -1141,12 +1150,13 @@
    "detail": "lean/VE/Commands/SplitOnLemmas.lean:303: Expression",
    "raw_status": "KILLED",
    "reused_from": "b50795278c78d874d6ee50d3205f10836afe9093",
+   "carried": "checks",
    "reads": "5ac338693d9c68fde50391d4bd4b4072ed9ea563a27cf3099b6fde17ec5a9b01",
    "killed_at": [
     303,
     303
    ],
-   "trust_class": "?",
+   "trust_class": "G[V]",
    "trusted": true
   },
   {
@@ -1165,12 +1175,13 @@
    "detail": "lean/VE/Commands/SplitOnLemmas.lean:303: Expression",
    "raw_status": "KILLED",
    "reused_from": "b50795278c78d874d6ee50d3205f10836afe9093",
+   "carried": "checks",
    "reads": "5ac338693d9c68fde50391d4bd4b4072ed9ea563a27cf3099b6fde17ec5a9b01",
    "killed_at": [
     303,
     303
    ],
-   "trust_class": "?",
+   "trust_class": "G[V]",
    "trusted": true
   },
   {
@@ -1189,12 +1200,13 @@
    "detail": "lean/VE/Commands/SplitOnLemmas.lean:304: Expression",
    "raw_status": "KILLED",
    "reused_from": "b50795278c78d874d6ee50d3205f10836afe9093",
+   "carried": "checks",
    "reads": "78fe928b2843b4fd8f0b1b14fa74490c00622b86d32d4fa5921c2c0905530c5c",
    "killed_at": [
     304,
     305
    ],
-   "trust_class": "?",
+   "trust_class": "G[V]",
    "trusted": true
   },
   {
@@ -1213,12 +1225,13 @@
    "detail": "lean/VE/Commands/SplitOnLemmas.lean:303: Expression",
    "raw_status": "KILLED",
    "reused_from": "b50795278c78d874d6ee50d3205f10836afe9093",
+   "carried": "checks",
    "reads": "5ac338693d9c68fde50391d4bd4b4072ed9ea563a27cf3099b6fde17ec5a9b01",
    "killed_at": [
     303,
     303
    ],
-   "trust_class": "?",
+   "trust_class": "G[V]",
    "trusted": true
   },
   {
@@ -1237,12 +1250,13 @@
    "detail": "lean/VE/Commands/SplitOnLemmas.lean:303: Expression",
    "raw_status": "KILLED",
    "reused_from": "b50795278c78d874d6ee50d3205f10836afe9093",
+   "carried": "checks",
    "reads": "5ac338693d9c68fde50391d4bd4b4072ed9ea563a27cf3099b6fde17ec5a9b01",
    "killed_at": [
     303,
     303
    ],
-   "trust_class": "?",
+   "trust_class": "G[V]",
    "trusted": true
   },
   {
@@ -1261,12 +1275,13 @@
    "detail": "lean/VE/Commands/SplitOnLemmas.lean:303: Expression",
    "raw_status": "KILLED",
    "reused_from": "b50795278c78d874d6ee50d3205f10836afe9093",
+   "carried": "checks",
    "reads": "5ac338693d9c68fde50391d4bd4b4072ed9ea563a27cf3099b6fde17ec5a9b01",
    "killed_at": [
     303,
     303
    ],
-   "trust_class": "?",
+   "trust_class": "G[V]",
    "trusted": true
   },
   {
@@ -1285,7 +1300,7 @@
    "detail": "Lean refuses the text: the mutated definition fails its own termination proof (decreasing_by at SplitOnLemmas.lean:26 no longer shows the dropped list shorter), so it does not compile",
    "raw_status": "UNKNOWN",
    "raw_detail": "lean/VE/Commands/SplitOnLemmas.lean:26: omega could not prove the goal:",
-   "trust_class": "?",
+   "trust_class": "G[V]",
    "trusted": true
   },
   {
@@ -1304,7 +1319,7 @@
    "detail": "Lean refuses the text: the mutated definition fails its own termination proof (decreasing_by at SplitOnLemmas.lean:26 no longer shows the dropped list shorter), so it does not compile",
    "raw_status": "UNKNOWN",
    "raw_detail": "lean/VE/Commands/SplitOnLemmas.lean:26: omega could not prove the goal:",
-   "trust_class": "?",
+   "trust_class": "G[V]",
    "trusted": true
   },
   {
@@ -1323,7 +1338,7 @@
    "detail": "Lean refuses the text: the mutated definition fails its own termination proof (decreasing_by at SplitOnLemmas.lean:26 no longer shows the dropped list shorter), so it does not compile",
    "raw_status": "UNKNOWN",
    "raw_detail": "lean/VE/Commands/SplitOnLemmas.lean:26: omega could not prove the goal:",
-   "trust_class": "?",
+   "trust_class": "G[V]",
    "trusted": true
   },
   {
@@ -1342,12 +1357,13 @@
    "detail": "lean/VE/Commands/SplitOnLemmas.lean:303: Expression",
    "raw_status": "KILLED",
    "reused_from": "b50795278c78d874d6ee50d3205f10836afe9093",
+   "carried": "checks",
    "reads": "5ac338693d9c68fde50391d4bd4b4072ed9ea563a27cf3099b6fde17ec5a9b01",
    "killed_at": [
     303,
     303
    ],
-   "trust_class": "?",
+   "trust_class": "G[V]",
    "trusted": true
   },
   {
@@ -1366,12 +1382,13 @@
    "detail": "lean/VE/Commands/SplitOnLemmas.lean:303: Expression",
    "raw_status": "KILLED",
    "reused_from": "b50795278c78d874d6ee50d3205f10836afe9093",
+   "carried": "checks",
    "reads": "5ac338693d9c68fde50391d4bd4b4072ed9ea563a27cf3099b6fde17ec5a9b01",
    "killed_at": [
     303,
     303
    ],
-   "trust_class": "?",
+   "trust_class": "G[V]",
    "trusted": true
   },
   {
@@ -1390,12 +1407,13 @@
    "detail": "lean/VE/Commands/SplitOnLemmas.lean:304: Expression",
    "raw_status": "KILLED",
    "reused_from": "b50795278c78d874d6ee50d3205f10836afe9093",
+   "carried": "checks",
    "reads": "78fe928b2843b4fd8f0b1b14fa74490c00622b86d32d4fa5921c2c0905530c5c",
    "killed_at": [
     304,
     305
    ],
-   "trust_class": "?",
+   "trust_class": "G[V]",
    "trusted": true
   },
   {
@@ -1414,12 +1432,13 @@
    "detail": "lean/VE/Commands/SplitOnLemmas.lean:303: Expression",
    "raw_status": "KILLED",
    "reused_from": "b50795278c78d874d6ee50d3205f10836afe9093",
+   "carried": "checks",
    "reads": "5ac338693d9c68fde50391d4bd4b4072ed9ea563a27cf3099b6fde17ec5a9b01",
    "killed_at": [
     303,
     303
    ],
-   "trust_class": "?",
+   "trust_class": "G[V]",
    "trusted": true
   },
   {
@@ -1438,12 +1457,13 @@
    "detail": "lean/VE/Commands/SplitOnLemmas.lean:303: Expression",
    "raw_status": "KILLED",
    "reused_from": "b50795278c78d874d6ee50d3205f10836afe9093",
+   "carried": "checks",
    "reads": "5ac338693d9c68fde50391d4bd4b4072ed9ea563a27cf3099b6fde17ec5a9b01",
    "killed_at": [
     303,
     303
    ],
-   "trust_class": "?",
+   "trust_class": "G[V]",
    "trusted": true
   },
   {
@@ -1462,12 +1482,13 @@
    "detail": "lean/VE/Commands/SplitOnLemmas.lean:303: Expression",
    "raw_status": "KILLED",
    "reused_from": "b50795278c78d874d6ee50d3205f10836afe9093",
+   "carried": "checks",
    "reads": "5ac338693d9c68fde50391d4bd4b4072ed9ea563a27cf3099b6fde17ec5a9b01",
    "killed_at": [
     303,
     303
    ],
-   "trust_class": "?",
+   "trust_class": "G[V]",
    "trusted": true
   },
   {
@@ -1486,7 +1507,7 @@
    "detail": "Lean refuses the text: the mutated definition fails its own termination proof (decreasing_by at SplitOnLemmas.lean:26 no longer shows the dropped list shorter), so it does not compile",
    "raw_status": "UNKNOWN",
    "raw_detail": "lean/VE/Commands/SplitOnLemmas.lean:26: omega could not prove the goal:",
-   "trust_class": "?",
+   "trust_class": "G[V]",
    "trusted": true
   },
   {
@@ -1505,7 +1526,7 @@
    "detail": "Lean refuses the text: the mutated definition fails its own termination proof (decreasing_by at SplitOnLemmas.lean:26 no longer shows the dropped list shorter), so it does not compile",
    "raw_status": "UNKNOWN",
    "raw_detail": "lean/VE/Commands/SplitOnLemmas.lean:26: omega could not prove the goal:",
-   "trust_class": "?",
+   "trust_class": "G[V]",
    "trusted": true
   },
   {
@@ -1524,7 +1545,7 @@
    "detail": "Lean refuses the text: the mutated definition fails its own termination proof (decreasing_by at SplitOnLemmas.lean:26 no longer shows the dropped list shorter), so it does not compile",
    "raw_status": "UNKNOWN",
    "raw_detail": "lean/VE/Commands/SplitOnLemmas.lean:26: omega could not prove the goal:",
-   "trust_class": "?",
+   "trust_class": "G[V]",
    "trusted": true
   }
  ],
