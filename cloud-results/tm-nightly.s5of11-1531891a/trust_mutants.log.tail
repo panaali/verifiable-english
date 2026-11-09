@@ -1,0 +1,18 @@
+trust_mutants: 133 definitions, 414 mutants (38 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/Purposes/WellFormed.lean:90 VE.Purposes.covered (S, trusted) body-false: s.all fun r => match r.partId? >>= U.find? with | some p => p.status == "CHECKED" || p.status == ... -> false (lean/VE/Purposes/Examples.lean:81: Expression (VE.Purposes.nonfactive, which it reads, is not wha...)
+UNKNOWN lean/VE/Commands/Steps.lean:111 VE.Commands.shapeOutcome (G[V], trusted) le-eq: ≤ -> = (lean/VE/Commands/StepsExamples.lean:79: Expression (it computes through a proof the mutant broke ...)
+UNKNOWN lean/VE/Acts/Run.lean:42 VE.Acts.Run.rulesJson (D[V], trusted) list-empty: U'.D.T.nodes -> [] (lean/VE/Acts/Run.lean:42: Invalid field notation: Type of)
+UNKNOWN lean/VE/Acts/Run.lean:88 VE.Acts.Run.isElaborate (G[V], trusted) body-true: match j.getObjValD "kind" with | .str k => k == "acts-elaborate" | _ => false -> true (lean/VE/Readings/ActsExamples.lean:79: Expression (Lean could not elaborate it in the probe))
+UNKNOWN lean/VE/Purposes/WellFormed.lean:30 VE.Purposes.Units.kind? (S, trusted) list-empty: (U.find? i) -> [] (lean/VE/Purposes/WellFormed.lean:30: Type mismatch)
+UNKNOWN lean/VE/Events/Wire.lean:177 VE.Events.decodeThroughLinks (D[V], trusted) list-empty: ["day", "before", "events", "states", "dates", "links"] -> [] (lean/VE/Events/WireExamples.lean:0: maximum number of errors (100; from option `maxErrors`) reach...)
+UNKNOWN lean/VE/Acts/Lexical.lean:149 VE.Acts.Lexical.joinFree (D[V], trusted) bool-flip: true -> false (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/Commands/Steps.lean:49 VE.Commands.Form (G[V], trusted) ctor-drop: | command | supposition | permission | conditionalClaim | remark | heading ->  (lean/VE/Commands/StepsExamples.lean:177: Unknown constant `VE.Commands.Form.command`)
+UNKNOWN lean/VE/Purposes/Decl.lean:48 VE.Purposes.Ref (S, trusted) ctor-drop: | part (id : String) ->  (lean/VE/Purposes/WellFormed.lean:192: the failing proof cannot be cut: Unknown constant `VE.Purpo...)
+UNKNOWN lean/VE/NormDefaults/Layered.lean:126 VE.NormDefaults.Wire.decodeSoftU (D[V], trusted) append-left: ++ hookPacks H ->  (lean/VE/Events/RouteExamples.lean:142: Expression (it computes through a proof the mutant broke (...)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:167 VE.Purposes.WellFormed (S, trusted) eq-ne: = -> ≠ (lean/VE/Purposes/Examples.lean:275: Expression (VE.Purposes.Examples.wfDecidable, which it reads,...)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:167 VE.Purposes.WellFormed (S, trusted) eq-le: = -> ≤ (lean/VE/Purposes/Examples.lean:278: Expression (VE.Purposes.Examples.wfDecidable, which it reads,...)
+trust_mutants: 21 KILLED, 0 SURVIVOR, 12 UNKNOWN, 5 INVALID, 0 ALLOWED, 0 NOT RUN, 376 OTHER SHARD in 4018 s
+trust_mutants: D[V], trusted: 1 KILLED, 4 UNKNOWN, 2 INVALID, 75 OTHER SHARD
+trust_mutants: G[V], trusted: 10 KILLED, 3 UNKNOWN, 2 INVALID, 136 OTHER SHARD
+trust_mutants: S, trusted: 10 KILLED, 5 UNKNOWN, 1 INVALID, 165 OTHER SHARD
+trust_mutants: steps: wall plan 10.2 s, scratch 4 s, control_build 0.3 s, probe_install 1.2 s, mutants 3996.8 s, cleanup 5.7 s, reads 0.2 s; lake control_build 0.2 s (1), probe_install 1.2 s (1), control_probes 645.6 s (24), mutant_builds 898.5 s (49), mutant_checks 9533.5 s (46), stage_controls 2522.4 s (16), mutant_probes 760.3 s (29)
