@@ -10,9 +10,9 @@ open Lean ResponseShape
 def result : Shape :=
   c "VE.RightClauses.Run.elaborateCase: the plained document's canonical bytes and clauseSlotLabelled." [
     obj, .required ["plained", "clause_slot"],
-    closed [("plained", str),
+    closed [("plained", ref "common.json#/$defs/text"),
       ("clause_slot", n [arr, .items (n [obj, .required ["label", "ast"],
-        closed [("label", str), ("ast", ref "common.json#/$defs/generated_formula")]])])]]
+        closed [("label", ref "common.json#/$defs/text"), ("ast", ref "common.json#/$defs/generated_formula")]])])]]
 
 def «row» : Shape :=
   .anyOf [
