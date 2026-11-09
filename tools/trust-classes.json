@@ -17247,6 +17247,7 @@
         "VE.Readings.SoftSupWireExamples.supLabels",
         "VE.Readings.SoftSupWireExamples.NSDd",
         "VE.Readings.SoftSupWireExamples.NSDm",
+        "VE.Readings.SoftSupWireExamples.pairVals",
         "VE.Readings.SoftSupWireExamples.envWith",
         "VE.Readings.SoftSupWireExamples.routeFacts",
         "VE.Readings.SoftSupWireExamples.softSet",
