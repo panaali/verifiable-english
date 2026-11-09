@@ -12196,7 +12196,7 @@ module VE.EnglishGrammar.SourceWords f89315d9473d59e3e0d3f9a31e2a211c7dd90f2a346
 142:0-150:79 def VE.EnglishGrammar.SourceWordKind.toJson@VE.EnglishGrammar.SourceWords
 152:0-155:28 def VE.EnglishGrammar.SourceWordRow.toJson@VE.EnglishGrammar.SourceWords
 157:0-160:63 def VE.EnglishGrammar.sourceWordsJson@VE.EnglishGrammar.SourceWords
-module VE.EnglishGrammar.SourceWordsExamples 840abdef59080266d8eb7a2596de65b486d66a64fdc131a2cfec52005430b8ff
+module VE.EnglishGrammar.SourceWordsExamples 667fb8737da8f4030cad606b1abdba69896d599caed731cd6a06ab125f295c7c
 13:0-13:84 def VE.EnglishGrammar.SourceWordsExamples.reading@VE.EnglishGrammar.SourceWordsExamples
 14:0-14:88 def VE.EnglishGrammar.SourceWordsExamples.a@VE.EnglishGrammar.SourceWordsExamples
 15:0-15:83 def VE.EnglishGrammar.SourceWordsExamples.b@VE.EnglishGrammar.SourceWordsExamples
@@ -12210,9 +12210,9 @@ module VE.EnglishGrammar.SourceWordsExamples 840abdef59080266d8eb7a2596de65b486d
 104:0-106:48 def VE.EnglishGrammar.SourceWordsExamples.twelve@VE.EnglishGrammar.SourceWordsExamples
 112:0-116:20 def VE.EnglishGrammar.SourceWordsExamples.adviceOf@VE.EnglishGrammar.SourceWordsExamples
 117:0-117:36 def VE.EnglishGrammar.SourceWordsExamples.ev@VE.EnglishGrammar.SourceWordsExamples
-130:0-135:11 def VE.EnglishGrammar.SourceWordsExamples.exportedAdvice@VE.EnglishGrammar.SourceWordsExamples
-155:0-159:20 def VE.EnglishGrammar.SourceWordsExamples.eventsWordings@VE.EnglishGrammar.SourceWordsExamples
-160:0-161:86 def VE.EnglishGrammar.SourceWordsExamples.otherProfileWordings@VE.EnglishGrammar.SourceWordsExamples
+132:0-137:11 def VE.EnglishGrammar.SourceWordsExamples.exportedAdvice@VE.EnglishGrammar.SourceWordsExamples
+157:0-161:20 def VE.EnglishGrammar.SourceWordsExamples.eventsWordings@VE.EnglishGrammar.SourceWordsExamples
+162:0-163:86 def VE.EnglishGrammar.SourceWordsExamples.otherProfileWordings@VE.EnglishGrammar.SourceWordsExamples
 module VE.EnglishGrammar.Syntax 1341142dfe73d9ad1bfeefd7ff7de4cfbdfcfd5342f12a24d692de944265bc53
 25:0-33:28 inductive VE.EnglishGrammar.ETerm@VE.EnglishGrammar.Syntax
 33:11-33:22 def VE.EnglishGrammar.instDecidableEqETerm.decEq@VE.EnglishGrammar.Syntax

@@ -85,13 +85,20 @@ No Rust changed.
 
 ## Trust, size, tests
 
-- **Trust** (`uv run python tools/trust_map.py --check`, final tree, against `61a11aa21edc`): K +0, S +0, untied V +95
-  (`SourceWords.lean` +67, `SourceWordsExamples.lean` +19, `Advice.lean` +9), "PASS: K, S and untied [V] within
-  61a11aa21edc and the allowances introduced since". Allowance recorded under R16 in `docs/trust-baseline.json`;
-  FOLLOW-UPS.md "## et-5 (2026-11-09)" asks for the ties pass.
+- **Trust** (`uv run python tools/trust_map.py --check`, final tree, against `61a11aa21edc`): K +0, S +0, untied V +76
+  (`SourceWords.lean` +67, `Advice.lean` +9), unclassified 0, "PASS: K, S and untied [V] within 61a11aa21edc and the
+  allowances introduced since". The new declarations are classified in `tools/trust-classes.json` (the catalogue rows
+  and advice G[V], beside `adviceRows`; the example helpers T), which `test_committed_trust_table_covers_every_declaration`
+  requires (the first selected run failed on it: 95 unclassified lines). Allowance recorded under R16 in
+  `docs/trust-baseline.json`; FOLLOW-UPS.md "## et-5 (2026-11-09)" asks for the ties pass.
 - **Trust mutants** (`mac-pytest.sh --trustmut -- --max-mutants 1000 --test
-  lean/VE/EnglishGrammar/SourceWordsExamples.lean --json docs/events-time-causation/et-5/trust-mutants.json`; the Mac
-  was unreachable, so it ran on the VM): TM_RESULT.
+  lean/VE/EnglishGrammar/SourceWordsExamples.lean --allow docs/events-time-causation/et-5/trust-mutants-allow.json
+  --json docs/events-time-causation/et-5/trust-mutants.json`; the Mac was unreachable, so it ran on the VM): TM_RESULT.
+  A first sweep, stopped when the classes changed its plan, found three survivors: `grammarCase`'s export cut to its
+  first row or without its last (killed now by `SourceWordsExamples`' `exportedAdvice` guards and
+  `test_the_grammar_export_lists_the_twelve_advice_rows_after_the_others`), and `sourceWordAdvice` on
+  `sourceWords.dropLast`, which is equivalent (the last row is fixed, not a refusal) and is in the allow file with
+  the `list-empty` mutants that do not typecheck.
 - **Size** (`git diff --numstat $(git merge-base HEAD main)`, without the copied plan and spec and the generated
   files): 957 added, 6 deleted: tests 474, `ve/events.py` 188, Lean 153, docs 116, `ve/english.py` 21, other 6. Over
   the ~600 line; ACCEPTED as the first coherent part by reviews/dri-decisions-20261109-et-5-size.md item 1 (the

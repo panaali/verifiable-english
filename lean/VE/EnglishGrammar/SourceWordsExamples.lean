@@ -124,6 +124,8 @@ def ev : List String := ["events@0"]
   ("The act resulted in a harm.", "events-resulted-in"), ("The act led to a harm.", "events-led-to"),
   ("The act caused a harm.", "events-caused")].all fun (s, id) => (adviceOf ev s).map (·.1) == some id
 #guard (adviceOf ev "The act caused a harm.").map (·.2) == some eventsLinkAdvice
+-- A row matches through any of its patterns, not only its first ("brings about" is `alternatives-results`' second).
+#guard (adviceOf ["alternatives@0"] "The act brings about a harm.").map (·.1) == some "alternatives-results"
 -- DRI 2026-11-09 (reviews/dri-decisions-20261109-et-5.md item 2): a source "always" gets its refusal and advice
 -- (above), and events@0 has no reading row for it (no A1/A2 candidate; those rows and the 11-03 tests are et-5b's).
 #guard (sourceWords.filter fun r => r.word == "always" && r.profile == "events@0").map (·.frame) == ["authored"]
