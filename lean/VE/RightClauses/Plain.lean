@@ -45,12 +45,21 @@ def holderGuardOf (D : ClauseDoc) (R : String) : VE.Formula :=
 /-! ## The checks (1.1, 1.3, 1.5, 7) -/
 
 /-- An entry `(R, n, L)` of `cl` is the only entry named `n`, its right is in `Dr`, and `L.line` is the one source
-    line of `src` whose rule is `n`, of right `R`. The wire decoder builds entries this way, so the text is never
-    shown for a decoded document. -/
+    line of `src` whose rule is `n`, of right `R`. An entry that fails it is refused with `entryError`. -/
 def entryOk (cl : List (String × String × CLine)) (Dr : RightsDoc) (src : List (String × SourceLine))
     (x : String × String × CLine) : Bool :=
   (VE.Rights.rightOf Dr x.1).isSome && decide (cl.filter (·.2.1 == x.2.1) = [x]) &&
     decide (src.filter (fun RS => lineName RS.2 == some x.2.1) = [(x.1, x.2.2.line)])
+/-- The refusal of an entry of rule `n` that fails `entryOk`. When `n` is the rule of more than one line of `src`
+    and rights' own first fault on `Dr` (`checkRights`, rights 8) is a `DuplicateDeclaration`, that text, unchanged;
+    otherwise `InvalidInput: invalid clauses of rule <n>`. -/
+def entryError (Dr : RightsDoc) (src : List (String × SourceLine)) (n : String) : String :=
+  let invalid := s!"InvalidInput: invalid clauses of rule {n}"
+  if (src.filter (fun RS => lineName RS.2 == some n)).length > 1 then
+    match VE.Rights.checkRights Dr with
+    | .error e => if e.startsWith "DuplicateDeclaration: " then e else invalid
+    | .ok () => invalid
+  else invalid
 /-- 1.1: clauses and a relation only on a claim, liberty or immunity line with a norm and no fan-out. -/
 def shapeOk (L : CLine) : Bool :=
   (L.clauses.isEmpty && L.relation.isNone) ||
@@ -90,7 +99,7 @@ def checkEntry (D : ClauseDoc) (cl : List (String × String × CLine)) (Dr : Rig
     (src : List (String × SourceLine)) (x : String × String × CLine) : Except String Unit :=
   match VE.Rights.rightOf Dr x.1 with
   | some Rt =>
-    if !entryOk cl Dr src x then .error s!"InvalidInput: invalid clauses of rule {x.2.1}"
+    if !entryOk cl Dr src x then .error (entryError Dr src x.2.1)
     else if !shapeOk x.2.2 then .error s!"ClauseLineShape: {x.2.1}"
     else checkBody D Dr Rt x
   | none => .error s!"InvalidInput: invalid clauses of rule {x.2.1}"

@@ -208,14 +208,22 @@ def onPower (L : CLine) : ClauseDoc := ⟨epsilon, [("r16", "may-marry", L)], []
     [("r5", "no-torture", ⟨fanLine [("state", "torture_permitted_state")], [], some (rel (0, 1)), [], (0, 100)⟩)], []⟩) ==
   "ClauseLineShape: no-torture"
 
-/-! ## Entries (never shown for a decoded document) -/
+/-! ## Entries
+
+Two lines with one rule name get rights' own `DuplicateDeclaration` text (`entryError`); the other entry faults
+get `InvalidInput: invalid clauses of rule <n>`. -/
 
 #guard verdict (checkClauses ⟨r21Doc, [("r21", "equal-access", k1), ("r21", "equal-access", k2)], []⟩) ==
   "InvalidInput: invalid clauses of rule equal-access"
 #guard verdict (checkClauses ⟨r21Doc, [("r21", "equal-access", k2), ("r21", "equal-access", k2)], []⟩) ==
   "InvalidInput: invalid clauses of rule equal-access"
-#guard check k2 { r21Doc with rs := [⟨"r21", "person", .top, [accessLine, accessLine]⟩] } ==
-  "InvalidInput: invalid clauses of rule equal-access"
+def twice : RightsDoc := { r21Doc with rs := [⟨"r21", "person", .top, [accessLine, accessLine]⟩] }
+#guard diag twice == "DuplicateDeclaration: rule equal-access"
+#guard check k2 twice == diag twice
+#guard verdict (checkClauses ⟨twice, [("r21", "equal-access", k1), ("r21", "equal-access", k2)], []⟩) == diag twice
+#guard verdict (checkClauses ⟨twice, [("r21", "equal-access", k2)], []⟩) == diag twice
+#guard diag { twice with rights.holders := [] } == "InvalidInput: invalid rights block"
+#guard check k2 { twice with rights.holders := [] } == "InvalidInput: invalid clauses of rule equal-access"
 #guard verdict (checkClauses ⟨r21Doc, [("r9", "equal-access", k1)], []⟩) == "InvalidInput: invalid clauses of rule equal-access"
 #guard verdict (checkClauses ⟨r21Doc, [("r21", "other", k1)], []⟩) == "InvalidInput: invalid clauses of rule other"
 #guard verdict (checkClauses ⟨r21Doc, [("r21", "equal-access", cline [] none [] (charged 0))], []⟩) ==
@@ -235,6 +243,9 @@ def candDoc (L : CLine) : ClauseDoc :=
 
 #guard verdict (checkCandidates (candDoc k3)) == "RelationOnCandidate: s:1: equal-access"
 #guard verdict (checkCandidates (candDoc k2)) == "ok"
+-- a candidate whose own right has two lines named `equal-access`: rights' text on that right
+#guard verdict (checkCandidates ⟨r21Doc, [], [("s", 1, .right ⟨"r21", "person", .top, [accessLine, accessLine]⟩,
+    [("r21", "equal-access", k2)])]⟩) == "DuplicateDeclaration: rule equal-access"
 #guard verdict (checkCandidates (candDoc (cline [trig (charged 0) 90 110] none []))) == "ClauseSpan: equal-access: [90, 110)"
 -- the candidate's own right gives `H_R`: refused before the abstention
 #guard verdict (checkCandidates ⟨r21Doc, [], [("s", 1, .right (r21 (.unary "vulnerable" (.var 0))),
