@@ -2217,6 +2217,13 @@
    "reason": "pe-1 F1: NotChecked in Decl.lean +9 S; shareOf_render ties Wire.lean shareOf -7 untied V; total pe-1 trusted growth +149, K +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pe-1 F1, 2026-11-08",
    "commit": "a6d0d389a07b606e27881aacad9b01be8e8844ca"
+  },
+  {
+   "class": "V",
+   "lines": 41,
+   "reason": "sn-b6d: VE/Senses/Run.lean +41 (G[V] rereadJson and the readCase wiring of the re-read and the line; lineJson is G[R])",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sn-b6d, 2026-11-09",
+   "commit": "9ba8aeaedfc82fa41258a4f52bcca4820f47b663"
   }
  ]
 }
