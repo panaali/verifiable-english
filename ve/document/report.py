@@ -436,6 +436,13 @@ def check_document(path, *, raw=None):
 
 def _check_document(path, *, raw=None):
     doc = _load(Path(path), admit=True, raw=raw)
+    report = _checked_report(doc)
+    lines = doc.get("lean", {}).get("judgment_lines")
+    # Lean's lines of a `judgments@0` document (jt-3's legend and status), verbatim.
+    return report if lines is None else {**report, "judgment_lines": lines}
+
+
+def _checked_report(doc):
     if "discourse" not in doc:
         return _report(doc)
     try:
