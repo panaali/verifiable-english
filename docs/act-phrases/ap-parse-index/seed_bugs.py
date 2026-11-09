@@ -61,8 +61,11 @@ BUGS = [
 def lake(targets):
     env = dict(os.environ, PATH=str(Path.home() / ".elan/bin") + os.pathsep + os.environ["PATH"])
     p = subprocess.run(["lake", "build", *targets], cwd=ROOT / "lean", env=env, capture_output=True, text=True)
-    lines = re.findall(r"^error: (VE/[^:]+\.lean:\d+):", p.stdout + p.stderr, re.M)
-    return p.returncode, sorted(set("lean/" + x for x in lines))
+    out = p.stdout + p.stderr
+    lines = ["lean/" + x for x in re.findall(r"^error: (VE/[^:]+\.lean:\d+):", out, re.M)]
+    if p.returncode and not lines and "Lean exited with code 134" in out:  # the elaborator aborted on a #guard
+        lines = [f"lean/{m.replace('.', '/')}.lean (aborted)" for m in re.findall(r"✖ \[\d+/\d+\] Building (\S+)", out)]
+    return p.returncode, sorted(set(lines))
 
 
 def main():
