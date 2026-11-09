@@ -1363,7 +1363,8 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
                 # whose proof term the mutant breaks, review F8) leaves `sorry` that a check may refuse, a parse
                 # error or a line that is not the checkout's is the tool's own edit (review F9), and a message that
                 # states no refutation refutes nothing (F10, F11), so each decides UNKNOWN.
-                return settle([(f, n, message) for f, n, message, _ in found], read, lambda f: texts[f] if f in texts else read(f), tree.roles,
+                return settle([(f, n, message) for f, n, message, _ in found], read,
+                              lambda f: texts[f] if f in texts else read(f), tree.roles,
                               lambda now: rebuild(stage, now), reading, scope=probes.scope)
             else:
                 return "UNKNOWN", "the proof cuts did not settle"
