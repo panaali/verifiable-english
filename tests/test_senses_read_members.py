@@ -379,6 +379,35 @@ def test_line_rebinding_is_refused(monkeypatch, change):
         line(word, gloss)
 
 
+ONLY_TYPED = {
+    "text-x": (lambda r: r["line"].update(text="x"), ("line", "text"), "x"),
+    "text-other-gloss": (lambda r: r["line"].update(text="In this document, funny means strange."), ("line", "text"),
+                         "In this document, funny means strange."),
+    "text-other-word": (lambda r: r["line"].update(text="In this document, odd means strange."), ("line", "text"),
+                        "In this document, odd means strange."),
+    "outcome-different": (lambda r: r["reading"]["reread"].update(outcome="different"), ("reread", "outcome"),
+                          "different"),
+    "outcome-unknown": (lambda r: r["reading"]["reread"].update(outcome="unknown"), ("reread", "outcome"), "unknown"),
+}
+
+
+@pytest.mark.parametrize("change", ONLY_TYPED, ids=list(ONLY_TYPED))
+def test_leans_text_and_outcome_are_only_typed(monkeypatch, change):
+    """Review sn-b6d F1 (DELTA rows 1-2): the relay binds the line's word and gloss and the re-read's unit and
+    candidate, but Lean's English (the line's `text`) and verdict (the re-read's `outcome`) are only typed (R8): a
+    well-typed changed value reaches the caller as Lean gave it, since Python does not recompute Lean's answer.
+    Their typing is `test_line_rebinding_is_refused[text-empty]`, `test_reread_rebinding_is_refused[outcome]` and
+    `test_senses_route.py::test_genuine_response_field_mutations_are_rejected`."""
+    mutate, (member, field), value = ONLY_TYPED[change]
+    _tampered_result(monkeypatch, mutate)
+    env, overlay = WORLDS["joke"]()
+    result = route.read(env, TWO, [PACK], overlay=overlay, reread=(0, 1, TWO), line=("funny", "amusing"))
+    answer = result["line"] if member == "line" else result["reading"]["reread"]
+    assert answer[field] == value
+    assert (result["line"]["word"], result["line"]["gloss"]) == ("funny", "amusing")
+    assert (result["reading"]["reread"]["sentence"], result["reading"]["reread"]["candidate"]) == (0, 1)
+
+
 @pytest.mark.parametrize("change", ["dropped", "unasked"])
 def test_a_line_is_there_exactly_when_asked(monkeypatch, change):
     if change == "dropped":

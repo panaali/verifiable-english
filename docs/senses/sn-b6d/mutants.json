@@ -73,6 +73,14 @@
       "mutation": "_shape: asked = ()",
       "test": "tests/test_relay_mutation_gate.py::test_the_senses_read_fixtures_ask_for_the_line_and_the_reread",
       "result": "1 failed"
+    },
+    {
+      "id": "P5",
+      "file": "ve/backends/senses.py",
+      "behaviour": "review F1: the relay only types Lean's line text and re-read outcome, never recomputes them (R8)",
+      "mutation": "_line_problem: a text other than f\"In this document, {word} means {gloss}.\" refused; _reread_problem: an outcome other than \"same\" refused",
+      "test": "tests/test_senses_read_members.py::test_leans_text_and_outcome_are_only_typed",
+      "result": "5 failed (all 5 cases)"
     }
   ]
 }
