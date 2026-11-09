@@ -79,10 +79,12 @@ def unitsOf : Json → List Json
 /-- 8.5: removes the mandatory `elided` key from every line object (and each unit's `span`, this wire's reading of
     the unit span). -/
 def stripElided : Json → Json := mapDoc (fun _ => lineWith ["elided"])
-/-- 8.5: no line object has `clauses` or `relation`. -/
+/-- 8.5: no line object has `clauses` or `relation`: no member of a `lines` array of a `right` or `right_lines` body
+    of a unit. -/
 def NoClauseKeys (document : Json) : Prop :=
-  ∀ u ∈ unitsOf document, ∀ b ∈ (unitBody (dropKeys ["span"] u)).toList, ∀ l ∈ bodyLines b.2,
-    ∀ kv ∈ members l, kv.1 ≠ "clauses" ∧ kv.1 ≠ "relation"
+  ∀ u ∈ unitsOf document, ∀ kb ∈ members (dropKeys ["span"] u), (kb.1 = "right" ∨ kb.1 = "right_lines") →
+    ∀ kl ∈ members kb.2, kl.1 = "lines" → ∀ l ∈ (match kl.2 with | .arr ls => ls.toList | _ => []),
+      ∀ kv ∈ members l, kv.1 ≠ "clauses" ∧ kv.1 ≠ "relation"
 /-- 8.5: the document has no reading set (the rights decoder reads an array of units, never `reading_sets`). -/
 def NoReadingSets (document : Json) : Prop := (document.getObjVal? "reading_sets").toOption = none
 /-- 8.5: the environment without `right-clauses@0` in its profile list (`VE.Compose.withoutClauses`, which the

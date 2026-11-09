@@ -680,4 +680,233 @@ theorem elaborate_plain (environment document : Lean.Json) (D : ClauseDoc)
     · exact ⟨_, rfl, rfl⟩
   | _ => simp [throw, throwThe, MonadExceptOf.throw, bind, Except.bind] at h
 
+
+/-! ## `decode_unstructured` -/
+
+theorem impl_map_congr {f g : String → Json → Json} :
+    ∀ t : Std.DTreeMap.Internal.Impl String (fun _ => Json),
+      (∀ p ∈ Std.DTreeMap.Internal.Impl.Const.toList t, f p.1 p.2 = g p.1 p.2) → t.map f = t.map g
+  | .leaf, _ => rfl
+  | .inner sz k v l r, h => by
+    rw [Std.DTreeMap.Internal.Impl.Const.toList_eq_toListModel_map] at h
+    simp only [Std.DTreeMap.Internal.Impl.toListModel, List.map_append, List.map_cons, List.mem_append,
+      List.mem_cons] at h
+    simp only [Std.DTreeMap.Internal.Impl.map]
+    have hl := impl_map_congr l (fun p hp => h p (.inl (by
+      rw [Std.DTreeMap.Internal.Impl.Const.toList_eq_toListModel_map] at hp; exact hp)))
+    have hr := impl_map_congr r (fun p hp => h p (.inr (.inr (by
+      rw [Std.DTreeMap.Internal.Impl.Const.toList_eq_toListModel_map] at hp; exact hp))))
+    rw [hl, hr, h (k, v) (.inr (.inl rfl))]
+
+theorem mapMember_congr (k : String) {F G : Json → Json} (j : Json)
+    (h : ∀ p ∈ members j, p.1 = k → F p.2 = G p.2) : mapMember k F j = mapMember k G j := by
+  cases j with
+  | obj kvs =>
+    simp only [mapMember]
+    congr 1
+    show (⟨⟨kvs.inner.inner.map _⟩⟩ : Std.TreeMap.Raw String Json compare) = ⟨⟨kvs.inner.inner.map _⟩⟩
+    congr 2
+    apply impl_map_congr
+    intro p hp
+    by_cases hk : p.1 = k
+    · simp only [hk, beq_self_eq_true, ↓reduceIte]; exact h p hp hk
+    · simp [hk]
+  | _ => rfl
+
+theorem mapArr_congr {f g : Json → Json} (v : Json) (h : ∀ l ∈ (match v with | .arr ls => ls.toList | _ => []),
+    f l = g l) : mapArr f v = mapArr g v := by
+  cases v with
+  | arr ls => simp only [mapArr]; congr 1; exact Array.map_congr_left (fun l hl => h l (Array.mem_toList_iff.mpr hl))
+  | _ => rfl
+
+theorem lineWith_congr (l : Json) (h : ∀ kv ∈ members l, kv.1 ≠ "clauses" ∧ kv.1 ≠ "relation") :
+    lineWith ["elided"] l = lineWith headKeys l := by
+  unfold lineWith
+  congr 2
+  cases l with
+  | obj kvs =>
+    simp only [dropKeys]
+    congr 1
+    apply List.filter_congr
+    intro kv hkv
+    obtain ⟨h1, h2⟩ := h kv hkv
+    simp [headKeys, h1, h2]
+  | _ => rfl
+
+theorem mapUnit_congr (u : Json) (h : ∀ kb ∈ members (dropKeys ["span"] u), (kb.1 = "right" ∨ kb.1 = "right_lines") →
+    ∀ kl ∈ members kb.2, kl.1 = "lines" → ∀ l ∈ (match kl.2 with | .arr ls => ls.toList | _ => []),
+      ∀ kv ∈ members l, kv.1 ≠ "clauses" ∧ kv.1 ≠ "relation") :
+    mapUnit (fun _ => lineWith ["elided"]) u = mapUnit (fun _ => lineWith headKeys) u := by
+  unfold mapUnit
+  dsimp only
+  cases hb : unitBody (dropKeys ["span"] u) with
+  | none => rfl
+  | some kb =>
+    obtain ⟨k, b⟩ := kb
+    obtain ⟨hk, -⟩ := unitBody_some hb
+    apply mapMember_congr
+    intro p hp hpk
+    apply mapMember_congr
+    intro q hq hqk
+    apply mapArr_congr
+    intro l hl
+    exact lineWith_congr l (h p hp (hpk ▸ hk) q hq hqk l hl)
+
+
+theorem getObjVal_member {j v : Json} {k : String} (h : j.getObjVal? k = .ok v) : (k, v) ∈ members j := by
+  cases j with
+  | obj kvs =>
+    simp only [Json.getObjVal?] at h
+    split at h
+    · rename_i w hw; cases h; exact VE.Order.ProfileGate.impl_get_mem hw
+    · cases h
+  | _ => simp [Json.getObjVal?] at h <;> cases h
+
+theorem filterMapM_loop_mem {α β : Type} (f : α → Except String (Option β)) :
+    ∀ (as : List α) (bs : List β) (r : List β), List.filterMapM.loop f as bs = .ok r →
+      ∀ x ∈ r, x ∈ bs ∨ ∃ a ∈ as, f a = .ok (some x)
+  | [], bs, r, h, x, hx => by
+    simp only [List.filterMapM.loop, pure, Except.pure, Except.ok.injEq] at h; subst h; exact .inl (by simpa using hx)
+  | a :: as, bs, r, h, x, hx => by
+    simp only [List.filterMapM.loop] at h
+    obtain ⟨o, ho, h⟩ := VE.Kit.Except.bind_ok h
+    cases o with
+    | none =>
+      rcases filterMapM_loop_mem f as bs r h x hx with hb | ⟨a', ha', hfa⟩
+      · exact .inl hb
+      · exact .inr ⟨a', by simp [ha'], hfa⟩
+    | some b =>
+      rcases filterMapM_loop_mem f as (b :: bs) r h x hx with hb | ⟨a', ha', hfa⟩
+      · rcases List.mem_cons.mp hb with rfl | hb
+        · exact .inr ⟨a, by simp, ho⟩
+        · exact .inl hb
+      · exact .inr ⟨a', by simp [ha'], hfa⟩
+
+/-- An entry of the head comes from a line object of a unit's body, through `headLine`. -/
+theorem headUnit_mem (se : SoftEnvironment) (u : Json) {ls : List (String × String × CLine)}
+    (h : headUnit se u = .ok ls) : ∀ x ∈ ls, ∃ k b, unitBody (dropKeys ["span"] u) = some (k, b) ∧
+      ∃ l ∈ bodyLines b, ∃ R span, headLine se R span l = .ok (some x) := by
+  intro x hx
+  unfold headUnit at h
+  obtain ⟨span, -, h⟩ := VE.Kit.Except.bind_ok h
+  cases hb : unitBody (dropKeys ["span"] u) with
+  | none => simp only [hb, pure, Except.pure, Except.ok.injEq] at h; subst h; cases hx
+  | some kb =>
+    obtain ⟨k, b⟩ := kb
+    simp only [hb] at h
+    rcases filterMapM_loop_mem _ _ [] ls h x hx with hn | ⟨l, hl, hfl⟩
+    · cases hn
+    · exact ⟨k, b, rfl, l, hl, _, _, hfl⟩
+
+theorem headLine_plainless (se : SoftEnvironment) (R : String) (span : Nat × Nat) (l : Json)
+    {x : String × String × CLine} (h : headLine se R span l = .ok (some x))
+    (hk : ∀ kv ∈ members l, kv.1 ≠ "clauses" ∧ kv.1 ≠ "relation") :
+    x.2.2.clauses = [] ∧ x.2.2.relation = none := by
+  have hc : ∀ v, l.getObjVal? "clauses" ≠ .ok v := fun v hv => (hk _ (getObjVal_member hv)).1 rfl
+  have hr : ∀ v, l.getObjVal? "relation" ≠ .ok v := fun v hv => (hk _ (getObjVal_member hv)).2 rfl
+  unfold headLine at h
+  obtain ⟨S, -, h⟩ := VE.Kit.Except.bind_ok h
+  cases hn : lineName S with
+  | none => simp only [hn, pure, Except.pure] at h; cases h
+  | some n =>
+    simp only [hn] at h
+    obtain ⟨el, -, h⟩ := VE.Kit.Except.bind_ok h
+    obtain ⟨cs, hcs, h⟩ := VE.Kit.Except.bind_ok h
+    obtain ⟨rel, hrel, h⟩ := VE.Kit.Except.bind_ok h
+    simp only [pure, Except.pure, Except.ok.injEq, Option.some.injEq] at h
+    subst h
+    unfold decodeClauses at hcs
+    unfold decodeRelationOpt at hrel
+    cases hx : l.getObjVal? "clauses" with
+    | ok v => exact absurd hx (hc v)
+    | error e =>
+      cases hy : l.getObjVal? "relation" with
+      | ok v => exact absurd hy (hr v)
+      | error e' =>
+        rw [hx] at hcs; rw [hy] at hrel
+        simp only [pure, Except.pure, Except.ok.injEq] at hcs hrel
+        exact ⟨hcs.symm, hrel.symm⟩
+
+theorem fold_snd (se : SoftEnvironment) : ∀ (xs : List Json) (a : List (String × String × CLine) × Units) r,
+    xs.foldlM (headStep se) a = .ok r →
+      (xs.map (mapUnit (fun _ => lineWith headKeys))).foldlM (addUnit se) a.2 = .ok r.2
+  | [], a, r, h => by cases h; rfl
+  | u :: xs, a, r, h => by
+    simp only [List.foldlM_cons, List.map_cons] at h ⊢
+    obtain ⟨a1, h1, h⟩ := VE.Kit.Except.bind_ok h
+    unfold headStep at h1
+    obtain ⟨_, -, h1⟩ := VE.Kit.Except.bind_ok h1
+    obtain ⟨us, hus, h1⟩ := VE.Kit.Except.bind_ok h1
+    cases h1
+    rw [ok_bind hus]
+    exact fold_snd se xs _ r h
+
+theorem fold_lines (se : SoftEnvironment) (P : String × String × CLine → Prop) :
+    ∀ (xs : List Json) (a : List (String × String × CLine) × Units) r,
+      (∀ x ∈ a.1, P x) → (∀ u ∈ xs, ∀ ls, headUnit se u = .ok ls → ∀ x ∈ ls, P x) →
+      xs.foldlM (headStep se) a = .ok r → ∀ x ∈ r.1, P x
+  | [], a, r, ha, _, h => by cases h; exact ha
+  | u :: xs, a, r, ha, hu, h => by
+    simp only [List.foldlM_cons] at h
+    obtain ⟨a1, h1, h⟩ := VE.Kit.Except.bind_ok h
+    unfold headStep at h1
+    obtain ⟨ls, hls, h1⟩ := VE.Kit.Except.bind_ok h1
+    obtain ⟨us, -, h1⟩ := VE.Kit.Except.bind_ok h1
+    cases h1
+    refine fold_lines se P xs _ r (fun x hx => ?_) (fun u' hu' => hu u' (by simp [hu'])) h
+    rcases List.mem_append.mp hx with hx | hx
+    · exact ha x hx
+    · exact hu u (by simp) ls hls x hx
+
+
+theorem bodyLines_mem {b l : Json} (h : l ∈ bodyLines b) :
+    ∃ kl ∈ members b, kl.1 = "lines" ∧ l ∈ (match kl.2 with | .arr ls => ls.toList | _ => []) := by
+  unfold bodyLines at h
+  split at h
+  · rename_i ls hls; exact ⟨("lines", .arr ls), getObjVal_member hls, rfl, h⟩
+  · cases h
+
+/-- 8.5: with the three keys absent from every line, the head decodes what the rights route decodes under the list
+    without right-clauses@0 (`stripProfile`), and every entry is unstructured. -/
+theorem decode_unstructured (environment document : Lean.Json) (D : ClauseDoc)
+    (h : decodeClauseDoc environment document = .ok D) (hk : NoClauseKeys document)
+    (src : VE.Rights.Wire.RightsSource)
+    (hs : VE.Rights.Wire.decodeRightsSource (stripProfile environment) (stripElided document) = .ok src) :
+  src.D = D.doc ∧ ∀ x ∈ D.lines, x.2.2.clauses = [] ∧ x.2.2.relation = none := by
+  unfold decodeClauseDoc at h
+  obtain ⟨re, hre, h⟩ := VE.Kit.Except.bind_ok h
+  unfold VE.Rights.Wire.decodeRightsSource at hs
+  rw [ok_bind hre] at hs
+  simp only [letFun] at h hs
+  by_cases c1 : re.se.ne.rv.definitions = []
+  case neg => simp [c1, throw, throwThe, MonadExceptOf.throw, bind, Except.bind, pure, Except.pure] at h
+  by_cases c2 : re.se.ne.rv.flags = []
+  case neg => simp [c1, c2, throw, throwThe, MonadExceptOf.throw, bind, Except.bind, pure, Except.pure] at h
+  have e1 : re.se.ne.rv.definitions.isEmpty = true := by simp [c1]
+  have e2 : re.se.ne.rv.flags.isEmpty = true := by simp [c2]
+  rw [if_pos e1, if_pos e2] at h hs
+  rw [pure_bind, pure_bind] at h hs
+  cases document with
+  | arr xs =>
+    have hcong : xs.map (mapUnit (fun _ => lineWith ["elided"])) = xs.map (mapUnit (fun _ => lineWith headKeys)) :=
+      Array.map_congr_left fun u hu => mapUnit_congr u (hk u (Array.mem_toList_iff.mpr hu))
+    simp only [stripElided, mapDoc, hcong, pure_bind, Array.toList_map, List.length_map] at h hs
+    by_cases c3 : xs.toList.length > 1024
+    case pos => rw [if_pos c3] at h; cases h
+    rw [if_neg c3] at h hs
+    (try rw [pure_bind] at h); (try rw [pure_bind] at hs)
+    obtain ⟨⟨lines, us⟩, hf, h⟩ := VE.Kit.Except.bind_ok h
+    cases h
+    rw [ok_bind (fold_snd re.se xs.toList ([], {}) (lines, us) hf)] at hs
+    refine ⟨?_, fold_lines re.se _ xs.toList ([], {}) (lines, us) (by simp) (fun u hu ls hls x hx => ?_) hf⟩
+    · split at hs
+      · cases hs
+      · cases hs; rfl
+    · obtain ⟨k, b, hb, l, hl, R, span, hx⟩ := headUnit_mem re.se u hls x hx
+      obtain ⟨hkk, hkb⟩ := unitBody_some hb
+      obtain ⟨kl, hkl, hkl1, hlk⟩ := bodyLines_mem hl
+      exact headLine_plainless re.se R span l hx
+        (hk u hu (k, b) (getObjVal_member hkb) hkk kl hkl hkl1 l hlk)
+  | _ => simp [throw, throwThe, MonadExceptOf.throw, bind, Except.bind] at h
+
 end VE.RightClauses
