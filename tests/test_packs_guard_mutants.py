@@ -226,8 +226,7 @@ IDS = [f"{name}-{i}" for i, (name, _, _) in enumerate(MUTANTS)]
 
 
 def mutant_cases() -> dict[str, str]:
-    """Each mutant's definition and text by its ID: the gate's collection check (tools/gate_collection.py) pairs
-    a renumbered ID by it."""
+    """Each mutant's definition and text by ID: tools/gate_collection.py pairs a renumbered ID by it."""
     return {nodeid: json.dumps(mutant) for nodeid, mutant in zip(IDS, MUTANTS)}
 
 
