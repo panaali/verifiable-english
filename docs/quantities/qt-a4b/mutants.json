@@ -22,7 +22,10 @@
       "file": "lean/VE/Cardinality/Wire.lean",
       "also": "lean/VE/Compose/Dispatch.lean",
       "test": "lean/VE/Compose/Examples.lean:688",
-      "also_fails": ["lean/VE/Compose/Examples.lean:699", "proof lean/VE/Compose/Dispatch.lean:1372"],
+      "also_fails": [
+        "lean/VE/Compose/Examples.lean:700",
+        "proof lean/VE/Compose/Dispatch.lean:1372"
+      ],
       "killed": true,
       "claim": "the task's seeded bug: the gate admits a fifth profile (scope@0) beside the chain list"
     },
@@ -53,6 +56,13 @@
       "test": "theorem VE.Cardinality.listFault_some (lean/VE/Cardinality/Gate.lean:60)",
       "killed": true,
       "claim": "checklist item 10: the new theorem breaks when listFault answers another text"
+    },
+    {
+      "id": "leaf-labels-first-only",
+      "file": "lean/VE/Service/Document.lean",
+      "test": "tests/test_cardinality_lean.py::test_a_deduction_is_no_bridge_and_the_report_id_covers_the_label",
+      "killed": true,
+      "claim": "row 2: leaf_labels names every labelled leaf ((g.leaves.take 1) in cardinalityReport; run against the mutated ve_service build pinned in a temporary lean/checkers.lock; the relay refuses the leaf labels)"
     }
   ],
   "not_planted": {
