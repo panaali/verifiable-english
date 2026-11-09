@@ -30,7 +30,7 @@ def BlockFault.sentence? : BlockFault → Option Nat
 
 namespace Run
 open VE.EnglishGrammar.Run (Case decodeCase status coded spanJson rejectText budgetFields invalidFields
-  invalidOverlayFields lexicalSpan treeJson optionalFields statementUnsentenced)
+  invalidOverlayFields lexicalSpan treeJson optionalFields statementUnsentenced partialStatus)
 
 def placeText : Place → String
   | .act => "act"
@@ -119,7 +119,7 @@ def outcomeFields (c : Case) (tags : Array String) (source : String) : NormOutco
           [("statements", Json.arr ((rs.zip sps).map fun (r, sp) => statementRow rs sp r).toArray)]
       | none => status "rejected" ++ coded "Internal" rowsInternalText
     | .error t => if (spansOf rs).isEmpty then status "rejected" ++ coded (decoderCode t) t
-      else status "partial" ++ coded "UnformalisedSpan" t ++
+      else status partialStatus ++ coded "UnformalisedSpan" t ++
         [("spans", Json.arr ((spansOf rs).map spanRow).toArray)]
   | .invalidGrammar g => invalidFields "english.statement" c g
   | .lexical r => status "rejected" ++ coded r.code (rejectText 0 r) ++
@@ -225,7 +225,7 @@ theorem Run.statementFields_statuses :
 /-- The answer's fields, read as `outcomeFields` writes them. -/
 local macro "answer_simp" : tactic => `(tactic| simp_all [getD_mkObj, lookup_append, List.lookup_cons, lookup_none,
   Run.outcomeFields, Run.stoppedFields, Run.stopNamesSentence, coded, status, budgetFields, invalidFields,
-  invalidOverlayFields, failureJson, BlockFault.sentence?])
+  invalidOverlayFields, failureJson, BlockFault.sentence?, partialStatus])
 
 theorem Run.answer_misplaced : ∀ (id : String) (c : Case) (s : String) (f : BlockFault),
   c.overlayFailure = none → readNorm c.E c.O c.L workBudget s = .misplaced f →
@@ -281,7 +281,7 @@ theorem Run.answer_one_rows : ∀ (id : String) (c : Case) (s : String) (rs : Li
   answer_simp
 
 theorem Run.answer_partial_no_node : ∀ (id : String) (c : Case) (s : String),
-  (Run.resultOf (Run.answer id c s)).getObjValD "status" = .str "partial" →
+  (Run.resultOf (Run.answer id c s)).getObjValD "status" = .str VE.EnglishGrammar.Run.partialStatus →
     (Run.resultOf (Run.answer id c s)).getObjValD "statements" = .null ∧
     ∃ rs, readNorm c.E c.O c.L workBudget s = .ok rs ∧ spansOf rs ≠ [] ∧
       (Run.resultOf (Run.answer id c s)).getObjValD "spans" = Json.arr ((spansOf rs).map Run.spanRow).toArray := by
