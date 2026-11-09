@@ -17,4 +17,5 @@
 - `docs/infra/eff-20261104-1/evidence/replay.py` — eff-20261104-1's replay: what the new `previous` decides on recorded --rescore pairs, and whether each verdict it carries is the one the recorded full run at t…
 - `docs/infra/speed-vocabpar/check.py` — speed-vocabpar's measurement and its stop rule, regenerated from the saved run logs.
 - `docs/infra/speed-vocabpar/rss.py` — The peak memory of a command's whole process tree (Linux /proc), for speed-vocabpar's stop rule (8 GB).
+- `docs/infra/tm-elab-unknown/reclass.py` — Reclassify the UNKNOWN ids of the df-5 and et-4b records under tools/trust_mutants.py's `invalid` (this tree).
 - `docs/infra/tm-inventory-flag/measure.py` — measure.py: for each targeted trust-mutant inventory, the prior record's kills at a check line changed since it.
