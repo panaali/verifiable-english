@@ -63,7 +63,32 @@
   {
    "definition": "ResponseShape.Schemas.NormDefaults.row",
    "operator": "list-drop-first",
-   "reason": "drops an alternative of the mode's row that is not the zone's and that this item does not change: the case-error row (line 367) or the admission selector (line 370); no defaults-zone answer reaches either, and tests/test_route_row_schemas.py checks both against ve_response_decode over the corpus (Python, outside trust_mutants); the zone's own alternative is pinned by digest and by lean/ResponseShape/DefaultsExamples.lean"
+   "reason": "drops the case-error alternative of the mode's row (Schemas/NormDefaults.lean:368), which is not the zone's and which this item does not change; no defaults-zone answer reaches it, and tests/test_route_row_schemas.py checks it against ve_response_decode over the corpus (Python, outside trust_mutants); the selection's drops (line 371) are killed by the kinds guard of lean/ResponseShape/DefaultsExamples.lean (df-5-tm), and the zone's own alternative is pinned by digest and by that file's zone guards"
+  },
+  {
+   "definition": "VE.Defaults.Wire.zoneWordsJson",
+   "operator": "list-empty",
+   "reason": "the UNKNOWN ones do not elaborate: `zoneHeads.map`, `zoneLineWords.map` or `zoneJoins.map` replaced by `[]` leaves `[]` applied to the row's lambda (Function expected at ZoneWire.lean:400, 402, 404, a type error in the mutated declaration); the rest are killed by lean/VE/Defaults/ZoneWireExamples.lean:153-156"
+  },
+  {
+   "definition": "VE.Defaults.Wire.zoneWordsJson",
+   "operator": "list-first",
+   "reason": "the UNKNOWN ones do not elaborate: `.take 1` after a row's member list leaves `.str` with no expected type (Invalid dotted identifier notation at ZoneWire.lean:401 and 403, a type error in the mutated declaration); the rest are killed by lean/VE/Defaults/ZoneWireExamples.lean:153-156 or INVALID"
+  },
+  {
+   "definition": "VE.Defaults.Wire.zoneWordsJson",
+   "operator": "list-last",
+   "reason": "as list-first: the UNKNOWN ones do not elaborate (`.reverse.take 1`, ZoneWire.lean:401 and 403)"
+  },
+  {
+   "definition": "VE.Defaults.Wire.zoneWordsJson",
+   "operator": "list-drop-first",
+   "reason": "as list-first: the UNKNOWN ones do not elaborate (`.drop 1`, ZoneWire.lean:401 and 403)"
+  },
+  {
+   "definition": "VE.Defaults.Wire.zoneWordsJson",
+   "operator": "list-drop-last",
+   "reason": "as list-first: the UNKNOWN ones do not elaborate (`.dropLast`, ZoneWire.lean:401 and 403)"
   }
  ]
 }

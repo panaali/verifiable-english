@@ -497,6 +497,7 @@
         "ResponseShape.Schemas.Document.composedSet",
         "ResponseShape.Schemas.Document.coverage",
         "ResponseShape.Schemas.Document.file",
+        "ResponseShape.Schemas.Document.judgmentLines",
         "ResponseShape.Schemas.Document.judgments",
         "ResponseShape.Schemas.Document.meaning",
         "ResponseShape.Schemas.Document.narrowing",
@@ -1895,13 +1896,6 @@
         "VE.Closure.Checks.model"
       ]
     },
-    "VE/Closure/Congruence.lean": {
-      "C": [
-        "VE.Closure.Formula.matches",
-        "VE.Closure.liftMatch",
-        "VE.Closure.unlift"
-      ]
-    },
     "VE/Closure/Consequence.lean": {
       "K": [
         "VE.Closure.Entails"
@@ -1915,12 +1909,6 @@
         "VE.Closure.Formula.eval",
         "VE.Closure.bodyEdges",
         "VE.Closure.namedEdges"
-      ]
-    },
-    "VE/Closure/Induction.lean": {
-      "C": [
-        "VE.Closure.inductionStep",
-        "VE.Closure.invariantAt"
       ]
     },
     "VE/Closure/Order.lean": {
@@ -1968,12 +1956,6 @@
         "VE.Closure.OrderChecks.riskTrue"
       ]
     },
-    "VE/Closure/PathRules.lean": {
-      "C": [
-        "VE.Closure.composeKind",
-        "VE.Closure.endEdge"
-      ]
-    },
     "VE/Closure/Paths.lean": {
       "K": [
         "VE.Closure.Kind",
@@ -1995,21 +1977,6 @@
       ],
       "P": [
         "VE.Closure.ClosedAt"
-      ]
-    },
-    "VE/Closure/Substitution.lean": {
-      "C": [
-        "VE.Closure.Edge.at",
-        "VE.Closure.Edge.shift",
-        "VE.Closure.Formula.subst",
-        "VE.Closure.liftSub",
-        "VE.Closure.liftTerm",
-        "VE.Closure.substTerm",
-        "VE.Closure.unfold"
-      ],
-      "P": [
-        "VE.Closure.Edge.Typed",
-        "VE.Closure.Edge.denote"
       ]
     },
     "VE/Closure/Surface.lean": {
@@ -9734,6 +9701,7 @@
         "VE.Service.Document.frontJson",
         "VE.Service.Document.frozenEnv",
         "VE.Service.Document.graphLabels",
+        "VE.Service.Document.linesJson",
         "VE.Service.Document.listedProfiles",
         "VE.Service.Document.lowerScope",
         "VE.Service.Document.ownedProfiles",
@@ -9835,6 +9803,7 @@
         "VE.Service.Document.freeNorms",
         "VE.Service.Document.judgedViews",
         "VE.Service.Document.kindName",
+        "VE.Service.Document.legendRows",
         "VE.Service.Document.listedOf",
         "VE.Service.Document.lowerReadings",
         "VE.Service.Document.readingSetHasStrayNull",
@@ -9846,6 +9815,7 @@
         "VE.Service.Document.softLayer",
         "VE.Service.Document.softRules",
         "VE.Service.Document.softSource",
+        "VE.Service.Document.statusRows",
         "VE.Service.Document.unitJson",
         "VE.Service.Document.checkCore",
         {
@@ -11313,90 +11283,6 @@
       "P": [
         "VE.Tableau.Atom.denote",
         "VE.Tableau.Literal.Holds"
-      ]
-    },
-    "VE/TableauExtended.lean": {
-      "C": [
-        "VE.Closure.Tableau.Assignment",
-        "VE.Closure.Tableau.Branch",
-        "VE.Closure.Tableau.Branch.add",
-        "VE.Closure.Tableau.Branch.scoped",
-        "VE.Closure.Tableau.Certificate",
-        "VE.Closure.Tableau.Rule",
-        "VE.Closure.Tableau.Signed",
-        "VE.Closure.Tableau.Signed.rule",
-        "VE.Closure.Tableau.Signed.tag",
-        "VE.Closure.Tableau.Token",
-        "VE.Closure.Tableau.Token.denote",
-        "VE.Closure.Tableau.Token.parse",
-        "VE.Closure.Tableau.Token.scoped",
-        "VE.Closure.Tableau.Token.sortOf",
-        "VE.Closure.Tableau.Trace",
-        "VE.Closure.Tableau.bindingsValue",
-        "VE.Closure.Tableau.extend"
-      ],
-      "P": [
-        "VE.Closure.Tableau.Assignment.Typed",
-        "VE.Closure.Tableau.Branch.Holds",
-        "VE.Closure.Tableau.Signed.Holds"
-      ]
-    },
-    "VE/TableauExtendedChecker.lean": {
-      "C": [
-        "VE.Closure.Tableau.checkCertificate",
-        "VE.Closure.Tableau.checkChildren",
-        "VE.Closure.Tableau.initial",
-        "VE.Closure.Tableau.next",
-        "VE.Closure.Tableau.replay",
-        "VE.Closure.Tableau.step"
-      ]
-    },
-    "VE/TableauExtendedClosure.lean": {
-      "C": [
-        "VE.Closure.Tableau.Atom",
-        "VE.Closure.Tableau.Branch.known",
-        "VE.Closure.Tableau.Literal",
-        "VE.Closure.Tableau.atomMatches",
-        "VE.Closure.Tableau.closed",
-        "VE.Closure.Tableau.closes",
-        "VE.Closure.Tableau.complementary",
-        "VE.Closure.Tableau.dedup",
-        "VE.Closure.Tableau.equalities",
-        "VE.Closure.Tableau.equivalent",
-        "VE.Closure.Tableau.ground",
-        "VE.Closure.Tableau.grow",
-        "VE.Closure.Tableau.literals",
-        "VE.Closure.Tableau.reachable",
-        "VE.Closure.Tableau.termToken"
-      ],
-      "P": [
-        "VE.Closure.Tableau.Atom.denote",
-        "VE.Closure.Tableau.Literal.Holds"
-      ]
-    },
-    "VE/TableauExtendedExtra.lean": {
-      "C": [
-        "VE.Closure.Tableau.composeStep",
-        "VE.Closure.Tableau.deriveExtra",
-        "VE.Closure.Tableau.edgeStep",
-        "VE.Closure.Tableau.endStep",
-        "VE.Closure.Tableau.extra",
-        "VE.Closure.Tableau.extraRule",
-        "VE.Closure.Tableau.namedStep"
-      ]
-    },
-    "VE/TableauExtendedInduction.lean": {
-      "C": [
-        "VE.Closure.Tableau.induct"
-      ]
-    },
-    "VE/TableauExtendedRules.lean": {
-      "C": [
-        "VE.Closure.Tableau.edgeCheck",
-        "VE.Closure.Tableau.groundMatch",
-        "VE.Closure.Tableau.isReach",
-        "VE.Closure.Tableau.reachClosed",
-        "VE.Closure.Tableau.unfoldAt"
       ]
     },
     "VE/Time/Budget.lean": {
@@ -16975,17 +16861,7 @@
     "VE/Scope/EffectLemmas.lean": {},
     "VE/Closure/CoreEquiv.lean": {
       "P": [
-        "VE.Closure.CoreEquiv.embedAtom",
-        "VE.Closure.CoreEquiv.embedBranch",
-        "VE.Closure.CoreEquiv.embedCert",
-        "VE.Closure.CoreEquiv.embedEdge",
-        "VE.Closure.CoreEquiv.embedLiteral",
-        "VE.Closure.CoreEquiv.embedPair",
-        "VE.Closure.CoreEquiv.embedRule",
-        "VE.Closure.CoreEquiv.embedSigned",
-        "VE.Closure.CoreEquiv.embedToken",
-        "VE.Closure.CoreEquiv.embedTrace",
-        "VE.Closure.CoreEquiv.embedTraces"
+        "VE.Closure.CoreEquiv.embedEdge"
       ]
     },
     "VE/Acts/ReadingsExamples.lean": {
@@ -17445,9 +17321,26 @@
     "VE/Service/UndeclaredExamples.lean": {
       "T": [
         "VE.Service.UndeclaredExamples.act",
+        "VE.Service.UndeclaredExamples.answer",
+        "VE.Service.UndeclaredExamples.bound",
+        "VE.Service.UndeclaredExamples.boundLines",
+        "VE.Service.UndeclaredExamples.declared",
+        "VE.Service.UndeclaredExamples.fenceProfiles",
+        "VE.Service.UndeclaredExamples.fenceVocabulary",
+        "VE.Service.UndeclaredExamples.fenced",
         "VE.Service.UndeclaredExamples.judged",
+        "VE.Service.UndeclaredExamples.lexicon",
+        "VE.Service.UndeclaredExamples.lines",
         "VE.Service.UndeclaredExamples.member",
+        "VE.Service.UndeclaredExamples.opened",
+        "VE.Service.UndeclaredExamples.pairs",
+        "VE.Service.UndeclaredExamples.plainProfiles",
+        "VE.Service.UndeclaredExamples.refusal",
+        "VE.Service.UndeclaredExamples.refused",
+        "VE.Service.UndeclaredExamples.said",
+        "VE.Service.UndeclaredExamples.term",
         "VE.Service.UndeclaredExamples.text",
+        "VE.Service.UndeclaredExamples.view",
         "VE.Service.UndeclaredExamples.vocabulary"
       ]
     },
@@ -19946,6 +19839,17 @@
         "VE.Events.RouteExamples.requestCase",
         "VE.Events.RouteExamples.requestIsNull",
         "VE.Events.RouteExamples.requestIsCase"
+      ]
+    },
+    "VE/Closure/Tableau.lean": {
+      "C": [
+        "VE.Closure.CoreEquiv.embedCert",
+        "VE.Closure.CoreEquiv.embedTrace",
+        "VE.Closure.CoreEquiv.embedTraces",
+        "VE.Closure.Tableau.Certificate",
+        "VE.Closure.Tableau.Trace",
+        "VE.Closure.Tableau.checkCertificate",
+        "VE.Closure.Tableau.extraRule"
       ]
     }
   }

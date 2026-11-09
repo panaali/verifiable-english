@@ -187,6 +187,7 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.Document.fold_fits
 #print axioms ResponseShape.Encoders.Document.fold_status_mem
 #print axioms ResponseShape.Encoders.Document.fold_with_readings_fits
+#print axioms ResponseShape.Encoders.Document.lines_fits
 #print axioms ResponseShape.Encoders.Document.locatedRow_fits
 #print axioms ResponseShape.Encoders.Document.meaning_fits
 #print axioms ResponseShape.Encoders.Document.rowKind_fits
