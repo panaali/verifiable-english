@@ -53,6 +53,14 @@ def paraphraseAt (j : Json) (k : Nat) : Option Json :=
 #guard spans fx5 "{0} to seek in other countries, asylum" [.slot 0, .word "to", .word "seek", .word "in", .fixed 0,
   .comma, .word "asylum"] == some [(0, 3), (4, 6), (7, 11), (12, 14), (15, 30), (30, 31), (32, 38)]
 #guard verdict (req V5 [] "{00} to seek asylum") == "REFUSED"
+-- a fixed phrase written with a run of whitespace inside it is one span from its first word to its last
+#guard spans fx5 "{0} to seek in other  \t countries" [.slot 0, .word "to", .word "seek", .word "in", .fixed 0] ==
+  some [(0, 3), (4, 6), (7, 11), (12, 14), (15, 33)]
+-- D-32 on this mode: two readings that read the same are refused, naming the first equal pair from 1
+#guard (rowsOf [] .may none true [] [[.atom join], [.atom (form false)], [.atom join]]).toOption.isNone &&
+  match rowsOf [] .may none true [] [[.atom join], [.atom (form false)], [.atom join]] with
+  | .error e => e == "InvalidInput: readings 1 and 3 of this act phrase read the same in English; rephrase the act"
+  | .ok _ => false
 -- `from`: G12's split *join* reads the second *to*, its whole join every token once; G5's *enjoy* reads the shared
 -- object after its modifier, in the act's order
 #guard (acts (req V12 [] g12s) 0).map (·.getObjValD "from") == [toJson [0, 1, 2, 6, 7], toJson [0, 4, 5, 6, 7, 8, 9, 10,

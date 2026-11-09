@@ -151,6 +151,13 @@ def readingJson (fx : List String) (op : Op) (f : Option Lexical.Form) (plain : 
   let acts ← x.1.mapM (actJson fx op f plain ps)
   pure (Json.mkObj [("acts", Json.arr acts.toArray), ("paraphrase", .str x.2)])
 
+/-- The readings' rows: their paraphrases first, refused with D-32 (`paraphrases`, "this act phrase") when two read
+    the same, then each reading's acts. -/
+def rowsOf (fx : List String) (op : Op) (f : Option Lexical.Form) (plain : Bool) (ps : List Lexical.Tok)
+    (Rs : List (List Simple)) : Except String (List Json) := do
+  let texts ← paraphrases fx op f "this act phrase" Rs
+  (Rs.zip texts).mapM (readingJson fx op f plain ps)
+
 /-- The `LISTED` row: the phrase's token spans, then each reading's acts and paraphrase. The limits come first: the
     act phrase's 400 bytes, the lexing (`decodeFixed`'s limits), the parse limits; then D-32 (`paraphrases`). -/
 def listReadings (id : String) (fx : List String) (V : Vocab) (op : Op) (f : Option Lexical.Form) (plain : Bool)
@@ -164,8 +171,7 @@ def listReadings (id : String) (fx : List String) (V : Vocab) (op : Op) (f : Opt
   | .limit => throw "ResourceLimit: this act phrase has too many readings to list; split the sentence"
   | .ok [] => throw "InvalidInput: this act phrase has no reading under the declared frames and its modal words"
   | .ok Rs =>
-    let texts ← paraphrases fx op f "this act phrase" Rs
-    let rows ← (Rs.zip texts).mapM (readingJson fx op f plain ts)
+    let rows ← rowsOf fx op f plain ts Rs
     pure (VE.Route.Wire.ok id [("verdict", .str "LISTED"),
       ("tokens", Json.arr (sp.map fun (a, b) => Json.arr #[toJson a, toJson b]).toArray),
       ("readings", Json.arr rows.toArray)])

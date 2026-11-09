@@ -175,3 +175,14 @@ def test_an_answer_to_another_case_is_no_answer():
     row = genuine(case)
     assert not bound({**row, "id": "other"}, case)
     assert not bound(row, {**case, "phrase": case["phrase"][:40]})
+
+
+def test_a_listing_needs_readings_and_a_refusal_has_no_tokens():
+    """Past the schema and every other check: readings exactly with `LISTED`, token spans only with them."""
+    case = case_of("A11")
+    row = genuine(case)
+    assert not bound({**row, "readings": []}, case)
+    refusal_case = acts.request("{0} to seek asylum", frames=V5["frames"], sign=False)
+    refusal = genuine(refusal_case)
+    assert bound(refusal, refusal_case)
+    assert not bound({**refusal, "tokens": [[0, 3]]}, refusal_case)

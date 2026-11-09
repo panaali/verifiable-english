@@ -1,0 +1,241 @@
+{
+ "item": "ap-4",
+ "command": "python3 docs/act-phrases/ap-4/seed_bugs.py",
+ "restored_build_returncode": 0,
+ "mutants": [
+  {
+   "id": "e1x-all-dropped",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Grammar.lean",
+   "definition": "VE.Acts.globalRules",
+   "behaviour": "the plan's Lean bug: the pre-modifier's `all` reading is dropped, so rs_u055 (S4) must be refused",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/ReadingsExamples.lean:45, lean/VE/Acts/ReadingsExamples.lean:47, lean/VE/Acts/ReadingsExamples.lean:58, lean/VE/Acts/ReadingsExamples.lean:101, lean/VE/Acts/ReadingsExamples.lean:183, lean/VE/Acts/ReadingsExamples.lean:184, lean/VE/Acts/ReadingsExamples.lean:213, lean/VE/Acts/ReadingsExamples.lean:217, lean/VE/Acts/ReadingsExamples.lean:221, lean/VE/Acts/ReadingsExamples.lean:222, lean/VE/Acts/ReadingsExamples.lean:232, lean/VE/Acts/ReadingsExamples.lean:239, lean/VE/Acts/ReadingsExamples.lean:272"
+  },
+  {
+   "id": "actJson-no-from",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Run.lean",
+   "definition": "VE.Acts.Run.actJson",
+   "behaviour": "an act names no tokens",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/RunExamples.lean:45, lean/VE/Acts/RunExamples.lean:58, lean/VE/Acts/RunExamples.lean:60, lean/VE/Acts/RunExamples.lean:61"
+  },
+  {
+   "id": "actJson-text-is-act",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Run.lean",
+   "definition": "VE.Acts.Run.actJson",
+   "behaviour": "an act's text is not worded under the modal",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/RunExamples.lean:45"
+  },
+  {
+   "id": "actJson-act-not-plain",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Run.lean",
+   "definition": "VE.Acts.Run.actJson",
+   "behaviour": "a plain act is rendered without its *to*",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/RunExamples.lean:45, lean/VE/Acts/RunExamples.lean:58, lean/VE/Acts/RunExamples.lean:60, lean/VE/Acts/RunExamples.lean:61"
+  },
+  {
+   "id": "readingJson-first-act",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Run.lean",
+   "definition": "VE.Acts.Run.readingJson",
+   "behaviour": "a reading lists its first act only",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/RunExamples.lean:45, lean/VE/Acts/RunExamples.lean:58, lean/VE/Acts/RunExamples.lean:61"
+  },
+  {
+   "id": "listReadings-no-byte-limit",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Run.lean",
+   "definition": "VE.Acts.Run.listReadings",
+   "behaviour": "a phrase over 400 bytes is read",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/RunExamples.lean:79"
+  },
+  {
+   "id": "listReadings-no-tokens",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Run.lean",
+   "definition": "VE.Acts.Run.listReadings",
+   "behaviour": "a listing has no token spans",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/RunExamples.lean:45"
+  },
+  {
+   "id": "listReadings-none-listed",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Run.lean",
+   "definition": "VE.Acts.Run.listReadings",
+   "behaviour": "a phrase with no reading is listed with none",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/RunExamples.lean:40"
+  },
+  {
+   "id": "rowsOf-paraphrase-what",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Run.lean",
+   "definition": "VE.Acts.Run.rowsOf",
+   "behaviour": "D-32 names another phrase",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/RunExamples.lean:60"
+  },
+  {
+   "id": "listReadings-bogus-verdict",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Run.lean",
+   "definition": "VE.Acts.Run.listReadings",
+   "behaviour": "the listing's verdict is outside the shape (`runActReadings_fits` must break)",
+   "status": "KILLED",
+   "test": "lean/ResponseShape/Encoders/ActReadings.lean:35"
+  },
+  {
+   "id": "listed-sign-ignored",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Run.lean",
+   "definition": "VE.Acts.Run.listed",
+   "behaviour": "the rule's sign is not read: *must not* is read as *may*",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/RunExamples.lean:32, lean/VE/Acts/RunExamples.lean:35, lean/VE/Acts/RunExamples.lean:38, lean/VE/Acts/RunExamples.lean:93"
+  },
+  {
+   "id": "listed-no-frames",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Run.lean",
+   "definition": "VE.Acts.Run.listed",
+   "behaviour": "the request's adverbs are not read",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/RunExamples.lean:32, lean/VE/Acts/RunExamples.lean:35, lean/VE/Acts/RunExamples.lean:37, lean/VE/Acts/RunExamples.lean:38, lean/VE/Acts/RunExamples.lean:45, lean/VE/Acts/RunExamples.lean:72, lean/VE/Acts/RunExamples.lean:100"
+  },
+  {
+   "id": "runActReadings-refusal-listed",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Run.lean",
+   "definition": "VE.Acts.Run.runActReadings",
+   "behaviour": "a refusal is answered as an empty listing",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/RunExamples.lean:40, lean/VE/Acts/RunExamples.lean:79, lean/VE/Acts/RunExamples.lean:84, lean/VE/Acts/RunExamples.lean:88, lean/VE/Acts/RunExamples.lean:93, lean/VE/Acts/RunExamples.lean:96"
+  },
+  {
+   "id": "verdictOf-no-limit",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Run.lean",
+   "definition": "VE.Acts.Run.verdictOf",
+   "behaviour": "a limit is answered REFUSED",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/RunExamples.lean:79, lean/VE/Acts/RunExamples.lean:84, lean/VE/Acts/RunExamples.lean:88"
+  },
+  {
+   "id": "spans-no-fold",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Run.lean",
+   "definition": "VE.Acts.Run.spans",
+   "behaviour": "U+2019 is not read as an apostrophe",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/RunExamples.lean:50"
+  },
+  {
+   "id": "spans-one-space",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Run.lean",
+   "definition": "VE.Acts.Run.spans",
+   "behaviour": "a run of whitespace is read as one character",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/RunExamples.lean:57"
+  },
+  {
+   "id": "fromOf-leftmost",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Run.lean",
+   "definition": "VE.Acts.Run.fromOf",
+   "behaviour": "the subsequence is placed leftmost, so *join* reads *form*'s *to*",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/RunExamples.lean:58, lean/VE/Acts/RunExamples.lean:60, lean/VE/Acts/RunExamples.lean:61, lean/VE/Acts/RunExamples.lean:65"
+  },
+  {
+   "id": "fromOf-reuse",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Run.lean",
+   "definition": "VE.Acts.Run.fromOf",
+   "behaviour": "a left-over token reuses an index the act already reads",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/RunExamples.lean:45, lean/VE/Acts/RunExamples.lean:60"
+  },
+  {
+   "id": "sameTok-case",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Run.lean",
+   "definition": "VE.Acts.Run.sameTok",
+   "behaviour": "words are compared case-sensitively",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/RunExamples.lean:65"
+  },
+  {
+   "id": "registry-name",
+   "language": "Lean",
+   "file": "lean/VE/Service/Registry.lean",
+   "definition": "VE.Service.Mode.name",
+   "behaviour": "the mode is registered under another name",
+   "status": "KILLED",
+   "test": "lean/VE/Service/RegistryExamples.lean:6"
+  },
+  {
+   "id": "py-range-check-dropped",
+   "language": "Python",
+   "file": "ve/acts.py",
+   "definition": "ve.acts.answer_problem",
+   "behaviour": "the plan's Python bug: the token-index range check is dropped, so AR2's index past the last token is accepted",
+   "status": "KILLED",
+   "test": "tests/test_acts_readings_answer.py::test_ar2_a_token_index_past_the_last_token_is_no_answer, tests/test_acts_readings_answer.py::test_every_mutant_is_no_answer_or_lean_content_binding_cannot_see[A11], tests/test_acts_readings_answer.py::test_every_mutant_is_no_answer_or_lean_content_binding_cannot_see[A12], tests/test_acts_readings_answer.py::test_every_mutant_is_no_answer_or_lean_content_binding_cannot_see[A9]"
+  },
+  {
+   "id": "py-span-bound-dropped",
+   "language": "Python",
+   "file": "ve/acts.py",
+   "definition": "ve.acts.answer_problem",
+   "behaviour": "a span past the phrase is accepted",
+   "status": "KILLED",
+   "test": "tests/test_acts_readings_answer.py::test_ar3_a_span_past_the_phrase_is_no_answer"
+  },
+  {
+   "id": "py-equal-readings",
+   "language": "Python",
+   "file": "ve/acts.py",
+   "definition": "ve.acts.answer_problem",
+   "behaviour": "two equal readings are accepted",
+   "status": "KILLED",
+   "test": "tests/test_acts_readings_answer.py::test_ar4_two_equal_readings_are_no_answer"
+  },
+  {
+   "id": "py-index-twice",
+   "language": "Python",
+   "file": "ve/acts.py",
+   "definition": "ve.acts.answer_problem",
+   "behaviour": "an index twice in one act is accepted",
+   "status": "KILLED",
+   "test": "tests/test_acts_readings_answer.py::test_an_index_twice_in_one_act_and_spans_out_of_order_are_no_answer"
+  },
+  {
+   "id": "py-no-schema",
+   "language": "Python",
+   "file": "ve/acts.py",
+   "definition": "ve.acts.read_answer",
+   "behaviour": "the row's schema is not checked",
+   "status": "KILLED",
+   "test": "tests/test_acts_readings_answer.py::test_every_mutant_is_no_answer_or_lean_content_binding_cannot_see[A11], tests/test_acts_readings_answer.py::test_every_mutant_is_no_answer_or_lean_content_binding_cannot_see[A12], tests/test_acts_readings_answer.py::test_every_mutant_is_no_answer_or_lean_content_binding_cannot_see[A9]"
+  },
+  {
+   "id": "py-verdict-binding",
+   "language": "Python",
+   "file": "ve/acts.py",
+   "definition": "ve.acts.answer_problem",
+   "behaviour": "a refusal with readings is accepted",
+   "status": "KILLED",
+   "test": "tests/test_acts_readings_answer.py::test_a_listing_needs_readings_and_a_refusal_has_no_tokens"
+  }
+ ]
+}
