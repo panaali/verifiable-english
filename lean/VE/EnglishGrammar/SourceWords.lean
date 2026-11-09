@@ -63,10 +63,9 @@ def sourceWordsValid (rows : List SourceWordRow) : Bool :=
 /-! ## The rows of `events@0` (events-time-causation plan 2.7, spec 2.4 and 2.5; owner ET-5)
 
 Frames: `authored` is a sentence written under the profile, refused with its advice and a rewrite (spec 2.5);
-`source`, `source event`, `source date` and `source outside a rule` are a source word met in translation, with its
-reading set (spec 2.4); `before` and `link <form>` are the profile-fixed wordings, which Lean checks exactly (spec 4
-items 3 and 5) and the author lint does not judge (2.7). "always" has no row in a rule: there it is soft norms' force
-word (DRI 2026-11-03, item 3). "during" and "whenever" have one candidate, so no reading set. -/
+`source event` and `source date` are a source word met in translation, with its reading set (spec 2.4); `before`
+and `link <form>` are the profile-fixed wordings, which Lean checks exactly (spec 4 items 3 and 5) and the author
+lint does not judge (2.7). -/
 
 def eventsUntilAdvice : String :=
   "Write the rule for each day with the guard 'if it is not the case that <event> happens no later than that " ++
@@ -124,41 +123,8 @@ def withinDateReadings : SourceWordRow := eventsReadings "within" "source date"
    "<event> happens on or after <date> and before <end>.",
    "<event> happens on or after <start> and no later than <end>."]
 
-def eventsReadingSets : List SourceWordRow := [
-  untilEventReadings,
-  eventsReadings "until" "source date"
-    "<date> itself (exclusive against inclusive) and the day after <date> (silent against ending)."
-    ["<agent> <m> <act> on each day before <date>. This document does not say whether <agent> <m> <act> on " ++
-       "<date> or on a day after <date>.",
-     "<agent> <m> <act> on each day before <date>. <agent> <opposite of m> <act> on <date> and on each day " ++
-       "after <date>.",
-     "<agent> <m> <act> on each day no later than <date>. This document does not say whether <agent> <m> <act> " ++
-       "on a day after <date>.",
-     "<agent> <m> <act> on each day no later than <date>. <agent> <opposite of m> <act> on each day after <date>."],
-  eventsReadings "by" "source" "The act on <date> itself."
-    ["<event> happens before <date>.", "<event> happens no later than <date>."],
-  withinDateReadings,
-  eventsRow "within" "source event" (.refuse "duration"
-    "Within n days of an event has no candidate: the span stays UNFORMALISED with reason duration (ET-T1)."
-    "on or after 5 January 2027 and no later than 15 January 2027"),
-  eventsReadings "while" "source" "A day on which <state> is not in progress."
-    ["On each day on which <state> is in progress, <clause>.", "<clause> and <clause>."],
-  eventsReadings "since" "source event" "The day <event> happens."
-    ["On each day after the day <event> happens, <clause>.",
-     "On each day on or after the day <event> happens, <clause>."],
-  eventsReadings "always" "source outside a rule"
-    ("A day before the date of this document; while the date of this document is open (no ISO anchor), only " ++
-     "the first.")
-    ["On each day, <clause>.", "On each day on or after the date of this document, <clause>."],
-  eventsReadings "eventually" "source"
-    ("Only a day before the date of this document; while the date of this document is open (no ISO anchor), " ++
-     "only the first.")
-    ["There is a day such that <clause> on that day.",
-     "There is a day such that that day is after the date of this document and <clause> on that day."]] ++
-  -- "lead to" and "cause" are source forms only (etc-rev's C point); "causes" and "leads to" stay outside.
-  (["resulted in", "led to", "caused", "lead to", "cause"].map fun word => eventsReadings word "source"
-    "A situation in which the contributed link holds and the necessary link does not."
-    [VE.Events.linkWording .contributed, VE.Events.linkWording .necessary])
+/-- The reading sets ET-5 writes; the rest of spec 2.4 is et-5b's, with the open anchor's no-anchor rows. -/
+def eventsReadingSets : List SourceWordRow := [untilEventReadings, withinDateReadings]
 
 /-- The profile-fixed wordings (2.7), Lean's own (`VE.Events.beforeWording`, `linkWording`). -/
 def eventsFixed : List SourceWordRow := [

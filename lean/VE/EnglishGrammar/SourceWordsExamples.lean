@@ -134,28 +134,19 @@ def ev : List String := ["events@0", "norm-defaults@0", "norms@0", "relational-f
   | some (.readings cs) => cs.length == 3 && cs.all fun c => (c.wording.splitOn "<end>").length == 2 &&
       ((c.wording.splitOn "<date>").length == 2 || (c.wording.splitOn "<start>").length == 2)
   | _ => false
-#guard eventsOf "within" "source event" |>.any fun k => match k with | .refuse code _ _ => code == "duration" | _ => false
--- "always" is soft norms' inside a rule (DRI 2026-11-03 item 3): events reads it only outside one.
-#guard (sourceWords.filter (·.word == "always")).map (·.frame) == ["authored", "source outside a rule"]
--- The causal words, the source forms "lead to" and "cause" among them, read as the two link forms only.
-#guard ["resulted in", "led to", "caused", "lead to", "cause"].all fun w => eventsOf w "source" ==
-  some (.readings [⟨VE.Events.linkWording .contributed, "A situation in which the contributed link holds and the necessary link does not."⟩,
-    ⟨VE.Events.linkWording .necessary, "A situation in which the contributed link holds and the necessary link does not."⟩])
-#guard eventsOf "causes" "source" == none && eventsOf "leads to" "source" == none
-
 -- The profile-fixed wordings are Lean's checker's, in the frames `ve/english.py` reads.
 #guard [("before", "before"), ("contributed to", "link contributed"), ("was necessary for", "link necessary")].map
     (fun (w, f) => eventsOf w f) ==
   [some (.fixed VE.Events.beforeWording), some (.fixed (VE.Events.linkWording .contributed)),
    some (.fixed (VE.Events.linkWording .necessary))]
-/-- D11: the link wordings (fixed and as candidates) are disjoint from `alternatives@0`'s and `risk@0`'s fixed wordings. -/
+/-- D11: the profile wordings (fixed and as candidates) are disjoint from `alternatives@0`'s and `risk@0`'s fixed wordings. -/
 def eventsWordings : List String := sourceWords.flatMap fun r => match r.kind with
   | .fixed w => if r.profile == "events@0" then [w] else []
   | .readings cs => if r.profile == "events@0" then cs.map (·.wording) else []
   | .refuse .. => []
 def otherProfileWordings : List String := VE.Alternatives.Wire.canonicalWording.map (·.2) ++ riskTemplates ++
   ["{0} is avoidable by {1}", "{0} is unavoidable by {1}", "{0} allows {1} to happen"]
-#guard eventsWordings.length == 32
+#guard eventsWordings.length == 8
 #guard eventsWordings.all fun w => !otherProfileWordings.contains w
 
 end VE.EnglishGrammar.SourceWordsExamples
