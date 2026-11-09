@@ -252,4 +252,64 @@ theorem plainLine_decode (se : SoftEnvironment) (D : ClauseDoc) (hw : WellFormed
             rfl
           | _ => cases hv
 
+
+theorem mapM_forward {α β : Type} {g1 g2 : α → Except String β} {φ : β → β} :
+    ∀ (xs : List α) (ys : List β), xs.mapM g1 = .ok ys →
+      (∀ x ∈ xs, ∀ y ∈ ys, g1 x = .ok y → g2 x = .ok (φ y)) → xs.mapM g2 = .ok (ys.map φ)
+  | [], ys, h, _ => by simp only [List.mapM_nil] at h ⊢; cases h; rfl
+  | x :: xs, ys, h, hg => by
+    simp only [List.mapM_cons] at h ⊢
+    obtain ⟨y, hy, h⟩ := VE.Kit.Except.bind_ok h
+    obtain ⟨ys', hys, h⟩ := VE.Kit.Except.bind_ok h
+    cases h
+    rw [ok_bind (hg x (by simp) y (by simp) hy),
+      ok_bind (mapM_forward xs ys' hys fun x' hx y' hy' => hg x' (by simp [hx]) y' (by simp [hy']))]
+    rfl
+
+theorem decodeLines_plain (se : SoftEnvironment) (b : Json) (f1 f2 : Json → Json) (φ : VE.Rights.SourceLine →
+    VE.Rights.SourceLine) {ls : List VE.Rights.SourceLine}
+    (h : VE.Rights.Wire.decodeLines se (mapMember "lines" (mapArr f1) b) = .ok ls)
+    (hl : ∀ l ∈ bodyLines b, ∀ S ∈ ls, decodeLine se (f1 l) = .ok S → decodeLine se (f2 l) = .ok (φ S)) :
+    VE.Rights.Wire.decodeLines se (mapMember "lines" (mapArr f2) b) = .ok (ls.map φ) := by
+  unfold VE.Rights.Wire.decodeLines at h ⊢
+  rw [getObjVal_mapMember, if_pos rfl] at h ⊢
+  unfold bodyLines at hl
+  cases hb : b.getObjVal? "lines" with
+  | error e => rw [hb] at h; cases h
+  | ok v =>
+    rw [hb] at h hl
+    cases v with
+    | arr xs =>
+      simp only [Functor.map, Except.map, mapArr, bind, Except.bind, Json.getArr?, pure, Except.pure,
+        Array.toList_map, List.mapM_map] at h ⊢
+      exact mapM_forward _ _ h fun x hx y hy hxy => hl x hx y hy hxy
+    | _ => simp [Functor.map, Except.map, mapArr, bind, Except.bind, Json.getArr?, throw, throwThe,
+        MonadExceptOf.throw] at h
+
+theorem decodeRight_plain (se : SoftEnvironment) (b : Json) (f1 f2 : Json → Json)
+    (φ : String → VE.Rights.SourceLine → VE.Rights.SourceLine) {R : VE.Rights.Right}
+    (h : VE.Rights.Wire.decodeRight se (mapMember "lines" (mapArr f1) b) = .ok R)
+    (hl : ∀ l ∈ bodyLines b, ∀ S ∈ R.lines, decodeLine se (f1 l) = .ok S → decodeLine se (f2 l) = .ok (φ R.name S)) :
+    VE.Rights.Wire.decodeRight se (mapMember "lines" (mapArr f2) b) =
+      .ok { R with lines := R.lines.map (φ R.name) } := by
+  unfold VE.Rights.Wire.decodeRight at h ⊢
+  rw [displayFields_mapMember] at h ⊢
+  simp only [VE.Bridge.stringField, getObjVal_mapMember_ne _ _ (show "name" ≠ "lines" by decide),
+    getObjVal_mapMember_ne _ _ (show "holder" ≠ "lines" by decide),
+    getObjVal_mapMember_ne _ _ (show "guard" ≠ "lines" by decide)] at h ⊢
+  obtain ⟨_, hd, h⟩ := VE.Kit.Except.bind_ok h
+  rw [ok_bind hd]
+  obtain ⟨nm, hn, h⟩ := VE.Kit.Except.bind_ok h
+  rw [ok_bind hn]
+  obtain ⟨ho, hh, h⟩ := VE.Kit.Except.bind_ok h
+  rw [ok_bind hh]
+  rcases hgd : b.getObjVal? "guard" with e | gj <;> simp only [hgd] at h ⊢
+  all_goals
+    obtain ⟨g, hg, h⟩ := VE.Kit.Except.bind_ok h
+    rw [ok_bind hg]
+    obtain ⟨ls, hls, h⟩ := VE.Kit.Except.bind_ok h
+    cases h
+    rw [ok_bind (decodeLines_plain se b f1 f2 (φ nm) hls hl)]
+    rfl
+
 end VE.RightClauses
