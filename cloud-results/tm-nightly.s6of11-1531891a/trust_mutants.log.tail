@@ -1,0 +1,14 @@
+trust_mutants: 133 definitions, 414 mutants (38 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/Purposes/WellFormed.lean:166 VE.Purposes.WellFormed (S, trusted) and-or: ∧ -> ∨ (lean/VE/Purposes/Examples.lean:278: Expression (VE.Purposes.Examples.wfDecidable, which it reads,...)
+UNKNOWN lean/VE/Commands/Steps.lean:81 VE.Commands.readingTuples (G[V], trusted) list-empty: [[]] -> [] (lean/VE/Commands/StepsExamples.lean:59: Expression (it computes through a proof the mutant broke ...)
+SURVIVOR lean/VE/SpeechActs/Wire.lean:255 VE.SpeechActs.Wire.decodeSpeechEnvironmentFull₀ (D[V], trusted) bool-flip: false -> true (the proofs it breaks: lean/VE/SpeechActs/Wire.lean:530)
+UNKNOWN lean/VE/Commands/Steps.lean:54 VE.Commands.Alt (G[V], trusted) ctor-drop: | shape (sh : Shape) (rs : List Reading) ->  (lean/VE/Commands/Steps.lean:276: the failing proof cannot be cut: Unknown constant `VE.Commands.A...)
+UNKNOWN lean/VE/Purposes/Decl.lean:70 VE.Purposes.NotChecked (S, trusted) ctor-drop: | purpose ->  (lean/VE/Purposes/Examples.lean:17: Unknown constant `VE.Purposes.NotChecked.purpose`)
+UNKNOWN lean/VE/NormDefaults/Layered.lean:126 VE.NormDefaults.Wire.decodeSoftU (D[V], trusted) append-right: [softPack U src.D] ++ ->  (lean/VE/Defaults/Examples.lean:203: Expression (Lean could not elaborate it in the probe))
+UNKNOWN lean/VE/Acts/Run.lean:77 VE.Acts.Run.runElaborate (G[V], trusted) list-empty: (VE.Acts.Decode.sourceOf e) -> [] (lean/VE/Acts/Run.lean:77: Type mismatch)
+UNKNOWN lean/VE/NormDefaults/Layered.lean:183 VE.NormDefaults.Wire.layeredElaborate (D[V], trusted) list-empty: L.U -> [] (lean/VE/NormDefaults/Layered.lean:183: Application type mismatch: The argument)
+trust_mutants: 28 KILLED, 1 SURVIVOR, 7 UNKNOWN, 2 INVALID, 0 ALLOWED, 0 NOT RUN, 376 OTHER SHARD in 4152 s
+trust_mutants: D[V], trusted: 2 KILLED, 1 SURVIVOR, 2 UNKNOWN, 1 INVALID, 76 OTHER SHARD
+trust_mutants: G[V], trusted: 14 KILLED, 3 UNKNOWN, 134 OTHER SHARD
+trust_mutants: S, trusted: 12 KILLED, 2 UNKNOWN, 1 INVALID, 166 OTHER SHARD
+trust_mutants: steps: wall plan 8.2 s, scratch 5 s, control_build 0.3 s, probe_install 1 s, mutants 4131.7 s, cleanup 5.4 s, reads 0.2 s; lake control_build 0.3 s (1), probe_install 1 s (1), control_probes 1104 s (29), mutant_builds 695.8 s (49), mutant_checks 8173.4 s (50), stage_controls 2327.1 s (18), mutant_probes 985.8 s (35)
