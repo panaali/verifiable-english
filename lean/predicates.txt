@@ -507,6 +507,7 @@ module VE.Presupposition.Frame
 module VE.Presupposition.Reading
 module VE.Presupposition.Rows
 module VE.Presupposition.Rules
+module VE.Presupposition.Wire
 module VE.Purposes.Decl
 module VE.Purposes.Examples
 module VE.Purposes.WellFormed
