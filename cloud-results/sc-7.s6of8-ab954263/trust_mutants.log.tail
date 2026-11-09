@@ -1,0 +1,6 @@
+trust_mutants: 20 definitions, 282 mutants (35 to run), 4 jobs, base d962e66a76e5
+SURVIVOR lean/VE/Scope/Authoring.lean:26 VE.Scope.Pinned.wordChar (D[V], trusted) le-lt: ≤ -> <
+trust_mutants: 23 KILLED, 1 SURVIVOR, 0 UNKNOWN, 7 INVALID, 4 ALLOWED, 0 NOT RUN, 247 OTHER SHARD in 48 s
+trust_mutants: D[V], trusted: 18 KILLED, 1 SURVIVOR, 7 INVALID, 4 ALLOWED, 191 OTHER SHARD
+trust_mutants: S, trusted: 5 KILLED, 56 OTHER SHARD
+trust_mutants: steps: wall plan 7 s, scratch 2.4 s, control_build 0.1 s, probe_install 1 s, control_probes 1 s, mutants 32.2 s, cleanup 4.7 s; lake control_build 0.1 s (1), probe_install 1 s (1), control_probes 1 s (1), mutant_builds 63.6 s (36), mutant_checks 23.3 s (28), stage_controls 7.4 s (4), mutant_probes 27.8 s (23)
