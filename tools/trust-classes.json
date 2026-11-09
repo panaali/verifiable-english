@@ -15760,6 +15760,8 @@
         "VE.Service.ScopeExamples.source",
         "VE.Service.ScopeExamples.sp",
         "VE.Service.ScopeExamples.statuses",
+        "VE.Service.ScopeExamples.u0047Rows",
+        "VE.Service.ScopeExamples.u0047Statuses",
         "VE.Service.ScopeExamples.unf",
         "VE.Service.ScopeExamples.unfKind",
         "VE.Service.ScopeExamples.unit",
@@ -17510,8 +17512,6 @@
         "VE.Scope.FarExamples.u0047",
         "VE.Scope.FarExamples.u0047Anchors",
         "VE.Scope.FarExamples.u0047Doc",
-        "VE.Scope.FarExamples.u0047Rows",
-        "VE.Scope.FarExamples.u0047Statuses",
         "VE.Scope.FarExamples.w1Order"
       ]
     },

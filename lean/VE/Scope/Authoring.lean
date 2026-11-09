@@ -1,5 +1,5 @@
 import Lean.Data.Json
-import VE.EnglishGrammar.Lexer
+import VE.Discourse.Access
 
 /-! Scope's authoring wordings (docs/spec/scope.md 2.2, 5.8 and 8.1; SC-7): a writer types one of 2.2's wordings, and
     `Pinned.parseGovernor` gives the part of the scope@0 block (spec 3) the wording fixes; `Pinned.renderGovernor`
@@ -21,9 +21,9 @@ open Lean
 
 namespace Pinned
 
-/-- A character of a word: no space of the English lexer (`VE.EnglishGrammar.isSpace`, its 29 code points), no
-    control character and no DEL. -/
-def wordChar (c : Char) : Bool := !VE.EnglishGrammar.isSpace c && 0x20 ≤ c.toNat && c.toNat != 0x7F
+/-- A character of a word: no space (`VE.Discourse.spaceChar`, Python's `str.isspace`), no control character and no
+    DEL. -/
+def wordChar (c : Char) : Bool := !VE.Discourse.spaceChar c && 0x20 ≤ c.toNat && c.toNat != 0x7F
 
 /-- Words with one space between them, no other space or control character, and at least one word. -/
 def spaced (s : String) : Bool := (s.splitOn " ").all fun w => !w.isEmpty && w.all wordChar
