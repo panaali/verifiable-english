@@ -682,10 +682,9 @@ def repRR : Report :=
 -- another rule first in the tree, and a condition recorded on it, change nothing on `r1`
 def repR2 : Report :=
   { checked := repRR.checked ++ [chkR "d" "r2" .conditioned busy], bases := [],
-    baseTree := { emptyTree with nodes := [{ nodeR with name := "r2" }, nodeR] } }
+    baseTree := { emptyTree with nodes := [{ nodeR with name := "r2" }, nodeR, { nodeR with name := "r3" }] } }
 #guard (expectedReadings fixtureTable repR2 (chkR "a" "r1" .unresolved pAtom)).map (·.map (·.content)) ==
   some [.rule (conditionNode nodeR q26), .rule (conditionNode (conditionNode nodeR pAtom) q26)]
-
 
 -- S17 and the document's accessors: premises are the background, then the asserted claims strictly before the unit.
 def r17 : RReading := { cand := .assumed, aliases := [], content := .claim .top, premise := none }
@@ -711,5 +710,23 @@ def docS17 : PDoc :=
 #guard (unitReadings docS17 "u4").map List.length == some 1 && unitReadings docS17 "u1" == none
 #guard (nodeCertificate docS17 "d1").map (·.conclusion_meaning_id) == some "m1" && (nodeCertificate docS17 "d2").isNone
 #guard (unitOf docS17 "u3").map (·.id) == some "u3" && (env docS17).sorts == ["entity"]
+
+-- Positions inside each list (trust-mutants survivors): the looked-up entry neither first nor last; a recorded
+-- condition last on its rule; an asserted first unit; an alias cell where in place is first and repeated.
+#guard (expectedReadings fixtureTable { rep12 with bases := [("u9", .top)] ++ rep12.bases ++ [("u10", .top)] } chk12).map
+  (·.map contentOf) == some [unitAt negF .bare, unitAt negF .conditioned]
+#guard (expectedReadings fixtureTable { repRR with checked := [chkR "a" "r1" .unresolved pAtom, chkR "b" "r1" .conditioned q26,
+    chkR "e" "r1" .conditioned ready] } (chkR "a" "r1" .unresolved pAtom)).map (·.map (·.content)) ==
+  some [.rule (conditionNode (conditionNode nodeR q26) ready),
+    .rule (conditionNode (conditionNode (conditionNode nodeR pAtom) q26) ready)]
+#guard aliasesOf (fun _ _ => [.inPlace, .conditioned, .inPlace]) chk12 .conditioned == [.inPlace, .inPlace]
+#guard premisesBefore { docS17 with background := [.top, busy, owner], units := unitsS17.drop 1 } "u3" ==
+  [.top, busy, owner, .unary "earlier" (.const "c"), rOwner.strong]
+#guard (nodeCertificate { docS17 with proofs := [("d0", { cert17 with conclusion_meaning_id := "m0" }), ("d1", cert17),
+  ("d2", { cert17 with conclusion_meaning_id := "m2" })] } "d1").map (·.conclusion_meaning_id) == some "m1"
+#guard unitContent docS17 "u0" == some busy
+-- a unit left unformalised has no content and no readings, and may be asserted
+def docUnf : PDoc := { docS17 with units := unitsS17 ++ [{ id := "u6", asserted := true, content := .unformalised }] }
+#guard unitContent docUnf "u6" == none && unitReadings docUnf "u6" == none && unitAsserted docUnf "u6"
 
 end VE.Presupposition.Examples
