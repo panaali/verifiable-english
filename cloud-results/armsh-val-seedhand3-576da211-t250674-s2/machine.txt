@@ -1,0 +1,12 @@
+job=armsh-val-seedhand3-576da211-t250674-s2 shard=2/2 nproc=4 arch=aarch64 host=runnervmkb2gk date=2026-11-09T18:59:06Z ulimit_s=16384
+Mem:              15           1           9           0           5          14
+/dev/root       145G   42G  104G  29% /
+ 18:59:07 up 0 min,  0 user,  load average: 1.44, 0.41, 0.14
+pilot/codex branches: 98
+ve-cache: lean-build seed-base key 79d0dcf55471 asset lean-build-7dd31e84e1f3-linux-aarch64.tar.zst sha256 2e0356b98fb2 ok, seal ok, from download, 19.0 s
+seed: mode=seed-fp match=seed-base asset=lean-build-7dd31e84e1f3-linux-aarch64.tar.zst pruned=0 base=c4b322e13d94
+seed: 1 modules rebuilt over the seed (traces), none stale
+seed: lake 11.7 s (rc 0, match seed-base)
+seed: fingerprint fp.json (lake rc 0, statements rc 0, audit rc 0, 496 s)
+p1-tokenizers: 443909a61d42 fetched
+[gate] failed: /home/runner/work/verifiable-english/verifiable-english/gate-result.json; 0 passed, 0 skipped, 1 failures

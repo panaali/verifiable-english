@@ -1,0 +1,200 @@
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item4-declared]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item5-declared]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item6-string]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item7-noun]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item8-suppose]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item9-fields]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item10-obligation]
+tests/test_words.py::test_lean_refuses_a_lexicon_of_another_environment
+tests/test_words.py::test_lean_refuses_a_lexicon_that_fails_the_vocabulary_policy
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[0]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[1]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[2]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[3]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[4]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[5]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[6]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[7]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[8]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[9]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[10]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[11]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[12]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[13]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[14]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[15]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[16]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[17]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[18]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[19]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[20]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[21]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[22]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[23]
+tests/test_words.py::test_the_unsaid_description_is_leans
+tests/test_words.py::test_the_ab_evidence_has_no_difference
+
+==================================== ERRORS ====================================
+______________ ERROR collecting tests/test_assurance_manifest.py _______________
+tests/test_assurance_manifest.py:374: in <module>
+    inventory_path("lean/axioms.txt").read_text(), re.M))
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tools/lean_statements.py:363: in inventory_path
+    raise StaleInventory(name, changed, " ".join("python3" if part == regen_generated.PY else part
+E   tools.lean_statements.StaleInventory: lean/axioms.txt is stale: 1 modules differ from the sources it was compiled from (VE.SpeechActs.Wire), and no fresh overlay copy describes them; rerun python3 lean/audit.py --write
+_____________ ERROR collecting tests/test_cardinality_exercised.py _____________
+tests/test_cardinality_exercised.py:18: in <module>
+    STATEMENTS = inventory_path("lean/statements.txt")
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tools/lean_statements.py:363: in inventory_path
+    raise StaleInventory(name, changed, " ".join("python3" if part == regen_generated.PY else part
+E   tools.lean_statements.StaleInventory: lean/statements.txt is stale: 1 modules differ from the sources it was compiled from (VE.SpeechActs.Wire), and no fresh overlay copy describes them; rerun python3 tools/lean_statements.py
+________________ ERROR collecting tests/test_english_lean_s2.py ________________
+tests/test_english_lean_s2.py:19: in <module>
+    AXIOMS = inventory_path('lean/axioms.txt')
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tools/lean_statements.py:363: in inventory_path
+    raise StaleInventory(name, changed, " ".join("python3" if part == regen_generated.PY else part
+E   tools.lean_statements.StaleInventory: lean/axioms.txt is stale: 1 modules differ from the sources it was compiled from (VE.SpeechActs.Wire), and no fresh overlay copy describes them; rerun python3 lean/audit.py --write
+______________ ERROR collecting tests/test_judgments_exercised.py ______________
+tests/test_judgments_exercised.py:16: in <module>
+    STATEMENTS = inventory_path("lean/statements.txt")
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tools/lean_statements.py:363: in inventory_path
+    raise StaleInventory(name, changed, " ".join("python3" if part == regen_generated.PY else part
+E   tools.lean_statements.StaleInventory: lean/statements.txt is stale: 1 modules differ from the sources it was compiled from (VE.SpeechActs.Wire), and no fresh overlay copy describes them; rerun python3 tools/lean_statements.py
+______________ ERROR collecting tests/test_premise_packs_stub.py _______________
+tests/test_premise_packs_stub.py:38: in <module>
+    CHECK = _load("check_rd", ROOT / "tools/check_readings_defaults_statements.py")
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_premise_packs_stub.py:34: in _load
+    spec.loader.exec_module(module)
+<frozen importlib._bootstrap_external>:759: in exec_module
+    ???
+<frozen importlib._bootstrap>:491: in _call_with_frames_removed
+    ???
+tools/check_readings_defaults_statements.py:96: in <module>
+    AUDIT = inventory_path("lean/VE/Audit.lean")
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tools/lean_statements.py:363: in inventory_path
+    raise StaleInventory(name, changed, " ".join("python3" if part == regen_generated.PY else part
+E   lean_statements.StaleInventory: lean/VE/Audit.lean is stale: 1 modules differ from the sources it was compiled from (VE.SpeechActs.Wire), and no fresh overlay copy describes them; rerun python3 lean/audit.py --write
+_________ ERROR collecting tests/test_readings_defaults_statements.py __________
+tests/test_readings_defaults_statements.py:55: in <module>
+    @pytest.mark.parametrize("kind, name", _approved_names(), ids=lambda v: str(v))
+                                           ^^^^^^^^^^^^^^^^^
+tests/test_readings_defaults_statements.py:21: in _approved_names
+    return sorted(_checker().approved())
+                  ^^^^^^^^^^
+tests/test_readings_defaults_statements.py:16: in _checker
+    spec.loader.exec_module(module)
+<frozen importlib._bootstrap_external>:759: in exec_module
+    ???
+<frozen importlib._bootstrap>:491: in _call_with_frames_removed
+    ???
+tools/check_readings_defaults_statements.py:96: in <module>
+    AUDIT = inventory_path("lean/VE/Audit.lean")
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tools/lean_statements.py:363: in inventory_path
+    raise StaleInventory(name, changed, " ".join("python3" if part == regen_generated.PY else part
+E   lean_statements.StaleInventory: lean/VE/Audit.lean is stale: 1 modules differ from the sources it was compiled from (VE.SpeechActs.Wire), and no fresh overlay copy describes them; rerun python3 lean/audit.py --write
+_______________ ERROR collecting tests/test_scales_exercised.py ________________
+tests/test_scales_exercised.py:17: in <module>
+    STATEMENTS = inventory_path("lean/statements.txt")
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tools/lean_statements.py:363: in inventory_path
+    raise StaleInventory(name, changed, " ".join("python3" if part == regen_generated.PY else part
+E   tools.lean_statements.StaleInventory: lean/statements.txt is stale: 1 modules differ from the sources it was compiled from (VE.SpeechActs.Wire), and no fresh overlay copy describes them; rerun python3 tools/lean_statements.py
+_____________ ERROR collecting tests/test_scope_5_4_statements.py ______________
+tests/test_scope_5_4_statements.py:15: in <module>
+    from tools.check_readings_defaults_statements import proof_cut
+tools/check_readings_defaults_statements.py:96: in <module>
+    AUDIT = inventory_path("lean/VE/Audit.lean")
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tools/lean_statements.py:363: in inventory_path
+    raise StaleInventory(name, changed, " ".join("python3" if part == regen_generated.PY else part
+E   lean_statements.StaleInventory: lean/VE/Audit.lean is stale: 1 modules differ from the sources it was compiled from (VE.SpeechActs.Wire), and no fresh overlay copy describes them; rerun python3 lean/audit.py --write
+_____________ ERROR collecting tests/test_scope_5_6_statements.py ______________
+tests/test_scope_5_6_statements.py:15: in <module>
+    from tests.test_scope_5_4_statements import statement
+<frozen importlib._bootstrap>:1371: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1342: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:938: in _load_unlocked
+    ???
+.venv/lib/python3.14/site-packages/_pytest/assertion/rewrite.py:188: in exec_module
+    exec(co, module.__dict__)
+tests/test_scope_5_4_statements.py:15: in <module>
+    from tools.check_readings_defaults_statements import proof_cut
+tools/check_readings_defaults_statements.py:96: in <module>
+    AUDIT = inventory_path("lean/VE/Audit.lean")
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tools/lean_statements.py:363: in inventory_path
+    raise StaleInventory(name, changed, " ".join("python3" if part == regen_generated.PY else part
+E   lean_statements.StaleInventory: lean/VE/Audit.lean is stale: 1 modules differ from the sources it was compiled from (VE.SpeechActs.Wire), and no fresh overlay copy describes them; rerun python3 lean/audit.py --write
+__________________ ERROR collecting tests/test_scope_lean.py ___________________
+tests/test_scope_lean.py:18: in <module>
+    STATEMENTS = inventory_path("lean/statements.txt")
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tools/lean_statements.py:363: in inventory_path
+    raise StaleInventory(name, changed, " ".join("python3" if part == regen_generated.PY else part
+E   tools.lean_statements.StaleInventory: lean/statements.txt is stale: 1 modules differ from the sources it was compiled from (VE.SpeechActs.Wire), and no fresh overlay copy describes them; rerun python3 tools/lean_statements.py
+______________ ERROR collecting tests/test_scope_rights_reach.py _______________
+tests/test_scope_rights_reach.py:15: in <module>
+    from tests.test_scope_5_4_statements import statement
+<frozen importlib._bootstrap>:1371: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1342: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:938: in _load_unlocked
+    ???
+.venv/lib/python3.14/site-packages/_pytest/assertion/rewrite.py:188: in exec_module
+    exec(co, module.__dict__)
+tests/test_scope_5_4_statements.py:15: in <module>
+    from tools.check_readings_defaults_statements import proof_cut
+tools/check_readings_defaults_statements.py:96: in <module>
+    AUDIT = inventory_path("lean/VE/Audit.lean")
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tools/lean_statements.py:363: in inventory_path
+    raise StaleInventory(name, changed, " ".join("python3" if part == regen_generated.PY else part
+E   lean_statements.StaleInventory: lean/VE/Audit.lean is stale: 1 modules differ from the sources it was compiled from (VE.SpeechActs.Wire), and no fresh overlay copy describes them; rerun python3 lean/audit.py --write
+__________________ ERROR collecting tests/test_senses_lean.py __________________
+tests/test_senses_lean.py:26: in <module>
+    AXIOMS = inventory_path('lean/axioms.txt')
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tools/lean_statements.py:363: in inventory_path
+    raise StaleInventory(name, changed, " ".join("python3" if part == regen_generated.PY else part
+E   tools.lean_statements.StaleInventory: lean/axioms.txt is stale: 1 modules differ from the sources it was compiled from (VE.SpeechActs.Wire), and no fresh overlay copy describes them; rerun python3 lean/audit.py --write
+=============================== warnings summary ===============================
+ve/english.py:1849
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1849: UnreviewedVocabularyWarning: English overlay 2bd979058edc0265e539a6ce38ca26192555d8aab371e6ee1d892a8ea99606da: unreviewed
+    english = render_english(document, env, **options)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+ERROR tests/test_assurance_manifest.py - tools.lean_statements.StaleInventory...
+ERROR tests/test_cardinality_exercised.py - tools.lean_statements.StaleInvent...
+ERROR tests/test_english_lean_s2.py - tools.lean_statements.StaleInventory: l...
+ERROR tests/test_judgments_exercised.py - tools.lean_statements.StaleInventor...
+ERROR tests/test_premise_packs_stub.py - lean_statements.StaleInventory: lean...
+ERROR tests/test_readings_defaults_statements.py - lean_statements.StaleInven...
+ERROR tests/test_scales_exercised.py - tools.lean_statements.StaleInventory: ...
+ERROR tests/test_scope_5_4_statements.py - lean_statements.StaleInventory: le...
+ERROR tests/test_scope_5_6_statements.py - lean_statements.StaleInventory: le...
+ERROR tests/test_scope_lean.py - tools.lean_statements.StaleInventory: lean/s...
+ERROR tests/test_scope_rights_reach.py - lean_statements.StaleInventory: lean...
+ERROR tests/test_senses_lean.py - tools.lean_statements.StaleInventory: lean/...
+!!!!!!!!!!!!!!!!!!! Interrupted: 12 errors during collection !!!!!!!!!!!!!!!!!!!
+32715/32716 tests collected (1 deselected), 12 errors in 29.43s
+[gate] commit: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false rev-parse HEAD
+19cfeacf7b1dab4a17ef8396c5c72ae2e709e297
+[gate] worktree status: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false status --porcelain --untracked-files=all
+
+[gate] worktree index: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false read-tree 19cfeacf7b1dab4a17ef8396c5c72ae2e709e297
+
+[gate] worktree content: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false status --porcelain --untracked-files=all
+ M lean/checkers.lock
+[gate-wrap] lean/checkers.lock differs from the commit by this runner's pins only (blob 5d8ff728c5822b9b94ab7417e9d06310ffb65a73, taken at the wrapper's start)
+[gate] failed: /home/runner/work/verifiable-english/verifiable-english/gate-result.json; 0 passed, 0 skipped, 1 failures
+[gate] FAILURE: gate:  Python collection: exit 2
