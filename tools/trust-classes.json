@@ -9637,6 +9637,9 @@
         "VE.Senses.Run.flipJson",
         "VE.Senses.Run.byteSpan",
         "VE.Senses.Run.senseEntryJson",
+        "VE.Senses.Run.rereadJson",
+        "VE.Senses.Run.decodeReread",
+        "VE.Senses.Run.lineJson",
         "VE.Senses.Run.projectionIds",
         "VE.Senses.Run.admittedIds",
         "VE.Senses.Run.usedOf"
@@ -19752,7 +19755,13 @@
     "VE/Senses/TextsExamples.lean": {
       "T": [
         "VE.Senses.TextsExamples.reading",
-        "VE.Senses.TextsExamples.entries"
+        "VE.Senses.TextsExamples.entries",
+        "VE.Senses.TextsExamples.reread",
+        "VE.Senses.TextsExamples.rereadReq",
+        "VE.Senses.TextsExamples.asked",
+        "VE.Senses.TextsExamples.rereadOf",
+        "VE.Senses.TextsExamples.chain",
+        "VE.Senses.TextsExamples.errorOf"
       ]
     },
     "VE/Attitudes/Frame.lean": {
