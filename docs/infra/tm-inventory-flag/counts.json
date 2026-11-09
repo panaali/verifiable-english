@@ -1,0 +1,120 @@
+[
+ {
+  "sidecar": "et-4b-et-4b-c081844.json.inventory.json",
+  "record_head": "a97072e60132d983a96f5511b6c9bfa4e84a2675",
+  "item_head": "ee7646c4d3d0a643b81a697810026cdbc5912b85",
+  "inventory": 8,
+  "record_kills": 326,
+  "changed_check_files": [],
+  "killed_at_changed_check": 0,
+  "already_in": 0,
+  "would_join": 0,
+  "rows": []
+ },
+ {
+  "sidecar": "df-5-df-5-c050431.json.inventory.json",
+  "record_head": "66190bd0ce41753bf155a2f887715534e0f3954b",
+  "item_head": "6f09a208799b2a5eb4f4934e203ee8d2d85a9da1",
+  "inventory": 81,
+  "record_kills": 389,
+  "changed_check_files": [],
+  "killed_at_changed_check": 0,
+  "already_in": 0,
+  "would_join": 0,
+  "rows": []
+ },
+ {
+  "sidecar": "et-4b-et-4b-c050416.json.inventory.json",
+  "record_head": "01d9048bc22a52d4421f427e1b749d81c35b057e",
+  "item_head": "6ece790384af34b3bf3fb1b3018d663cc8228cd5",
+  "inventory": 41,
+  "record_kills": 316,
+  "changed_check_files": [
+   "VE/Events/RouteExamples.lean"
+  ],
+  "killed_at_changed_check": 1,
+  "already_in": 0,
+  "would_join": 1,
+  "rows": [
+   {
+    "id": "M424",
+    "definition": "VE.Events.routeView",
+    "operator": "list-drop-first",
+    "status": "KILLED",
+    "check": "VE/Events/RouteExamples.lean:315",
+    "in_inventory": false
+   }
+  ]
+ },
+ {
+  "sidecar": "pc-1g-pc-1g-c050449.json.inventory.json",
+  "record_head": "85660f91556d067dcdfdaad5bc69aa9dc68903ad",
+  "item_head": "a38ebdf5134e5cb53e77343b8de1bff9c4ca7bfc",
+  "inventory": 1,
+  "record_kills": 125,
+  "changed_check_files": [
+   "VE/Judgments/ChainExamples.lean"
+  ],
+  "killed_at_changed_check": 4,
+  "already_in": 0,
+  "would_join": 4,
+  "rows": [
+   {
+    "id": "M041",
+    "definition": "VE.Service.Document.environmentOf",
+    "operator": "list-empty",
+    "status": "KILLED",
+    "check": "VE/Judgments/ChainExamples.lean:203",
+    "in_inventory": false
+   },
+   {
+    "id": "M090",
+    "definition": "VE.Service.Document.environmentOf",
+    "operator": "list-first",
+    "status": "KILLED",
+    "check": "VE/Judgments/ChainExamples.lean:203",
+    "in_inventory": false
+   },
+   {
+    "id": "M128",
+    "definition": "VE.Service.Document.environmentOf",
+    "operator": "list-drop-last",
+    "status": "KILLED",
+    "check": "VE/Judgments/ChainExamples.lean:214",
+    "in_inventory": false
+   },
+   {
+    "id": "M209",
+    "definition": "VE.Service.Document.environmentOf",
+    "operator": "list-last",
+    "status": "KILLED",
+    "check": "VE/Judgments/ChainExamples.lean:203",
+    "in_inventory": false
+   }
+  ]
+ },
+ {
+  "sidecar": "pc-1g-pc-1g-f3.json.inventory.json",
+  "record_head": "a38ebdf5134e5cb53e77343b8de1bff9c4ca7bfc",
+  "item_head": "8ed03154cbef8e4058b792579a9518f1a19e0f26",
+  "inventory": 0,
+  "record_kills": 1,
+  "changed_check_files": [],
+  "killed_at_changed_check": 0,
+  "already_in": 0,
+  "would_join": 0,
+  "rows": []
+ },
+ {
+  "sidecar": "pc-1g-pc-1g-f3b.json.inventory.json",
+  "record_head": "8ed03154cbef8e4058b792579a9518f1a19e0f26",
+  "item_head": "17664656c92e4ebb6b567ee60ea83c41f7763c36",
+  "inventory": 0,
+  "record_kills": 0,
+  "changed_check_files": [],
+  "killed_at_changed_check": 0,
+  "already_in": 0,
+  "would_join": 0,
+  "rows": []
+ }
+]
