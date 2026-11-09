@@ -197,7 +197,8 @@ def fenced (fs ids allowed : List String) (defaults : List (String × Nat) := []
 /-! ## The profile list as written (`Projection.written`, `SensesOutcome.written`)
 
 A request environment with a document layer (`judgments@0`): the reader decides without it
-(`VE.Compose.decidingEnvironment`), and the environment each answer returns lists it as written. -/
+(`VE.Compose.decidingEnvironment`), and the `senses.project` answer and an identified `senses.read` answer
+(`runCaseReported`) return the environment with the list as written. -/
 
 def envL : Json := Json.mkObj [("language", .str "ve.core@0.2"), ("spec_revision", .str "ve-v0.2-expand2-2026-09-25"),
   ("profiles", toJson ["documents@1", "judgments@0", "relational-fol@0"]), ("vocabulary", EJ.source.getObjValD "vocabulary")]
@@ -209,12 +210,11 @@ def layered (extra : List (String × Json)) : Json :=
 def profilesOf (form : String) (j : Json) : Json :=
   (((j.getObjValD "result").getObjValD form).getObjValD "environment").getObjValD "profiles"
 
--- the list the reader decides over differs from the request's
+-- `Projection.written`: `senses.project` returns the request's list, not the one the reader decides over
 #guard ((VE.Compose.decidingEnvironment envL).toOption.map (·.getObjValD "profiles")) ==
-  some (toJson ["documents@1", "relational-fol@0"])
--- `Projection.written`: `senses.project` returns the request's list
-#guard profilesOf "projection" (projectCaseReported (layered [("lines", .str lineFunny2), ("used", toJson ["funny"])])) ==
-  envL.getObjValD "profiles"
+    some (toJson ["documents@1", "relational-fol@0"]) &&
+  profilesOf "projection" (projectCaseReported (layered [("lines", .str lineFunny2), ("used", toJson ["funny"])])) ==
+    envL.getObjValD "profiles"
 -- `SensesOutcome.written`: an identified `senses.read` answer returns the request's list
 #guard profilesOf "reading" (runCaseReported (layered [("source", .str "The riddle is funny.")])) ==
   envL.getObjValD "profiles"
