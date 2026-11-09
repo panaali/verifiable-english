@@ -16130,7 +16130,7 @@ module VE.Presupposition.Agree fa4d8e9e8391f53999c9974e28ae8f7eeee478f78866c6a07
 13:0-17:80 theorem VE.Presupposition.discourse_definite_is_row@VE.Presupposition.Agree
 19:0-30:21 theorem VE.Presupposition.data_attribute_proved@VE.Presupposition.Agree
 32:0-34:5 theorem VE.Presupposition.speech_question_top@VE.Presupposition.Agree
-module VE.Presupposition.Examples 58344cde8b8416eeee18af771ec9316698fbe518359d6e9392cf8ab297609a84
+module VE.Presupposition.Examples 524c703f975646bec5f8b0f41cfc0b59d48ca40efac15e85a927414caae14f60
 22:0-26:69 def VE.Presupposition.Examples.model@VE.Presupposition.Examples
 28:0-28:73 def VE.Presupposition.Examples.ev@VE.Presupposition.Examples
 30:0-30:49 def VE.Presupposition.Examples.owner@VE.Presupposition.Examples
@@ -16355,6 +16355,17 @@ module VE.Presupposition.Examples 58344cde8b8416eeee18af771ec9316698fbe518359d6e
 1125:0-1132:24 def VE.Presupposition.Examples.frame27@VE.Presupposition.Examples
 1133:0-1135:11 def VE.Presupposition.Examples.cand27@VE.Presupposition.Examples
 1136:0-1137:122 def VE.Presupposition.Examples.docR27@VE.Presupposition.Examples
+1157:0-1157:97 def VE.Presupposition.Examples.mgrArgs16@VE.Presupposition.Examples
+1163:0-1163:81 def VE.Presupposition.Examples.rdBad@VE.Presupposition.Examples
+1169:0-1169:134 def VE.Presupposition.Examples.rd7r9@VE.Presupposition.Examples
+1173:0-1176:110 def VE.Presupposition.Examples.doc7two@VE.Presupposition.Examples
+1192:0-1194:114 def VE.Presupposition.Examples.rr8@VE.Presupposition.Examples
+1195:0-1196:117 def VE.Presupposition.Examples.docOO@VE.Presupposition.Examples
+1199:0-1199:86 def VE.Presupposition.Examples.units7r3@VE.Presupposition.Examples
+1200:0-1200:116 def VE.Presupposition.Examples.doc7r3@VE.Presupposition.Examples
+1212:0-1212:90 def VE.Presupposition.Examples.t3@VE.Presupposition.Examples
+1213:0-1213:121 def VE.Presupposition.Examples.rAsr@VE.Presupposition.Examples
+1220:0-1220:63 def VE.Presupposition.Examples.tCA@VE.Presupposition.Examples
 module VE.Presupposition.Frame f2d8e7e3901b41eb80e64f7e2b14819f50d81c9d4be8bed345795db51f2cf25d
 13:0-24:28 inductive VE.Presupposition.Frame@VE.Presupposition.Frame
 24:11-24:22 def VE.Presupposition.instDecidableEqFrame.decEq@VE.Presupposition.Frame

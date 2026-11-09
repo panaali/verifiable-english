@@ -1,0 +1,84 @@
+{
+"allow": [
+{
+"definition": "VE.Presupposition.Base",
+"operator": "ctor-drop",
+"reason": "does not elaborate: `claim` and `rule` are built by baseOf and read by basesOf, baseTreeOf and regen (Admit.lean), an unknown constant rather than a refutation; the hand mutant M-Base-type stops Admit.lean"
+},
+{
+"definition": "VE.Presupposition.baseOf",
+"operator": "list-empty",
+"reason": "does not elaborate: a bare `[]` in place of a reading list, a root list or a node lookup leaves `.map`, `⟨...⟩` or dotted names untyped (type mismatch, no element type); the elaborating list mutants of baseOf are killed by the step-3 guards (A1, A11, the open-set and two-condition fixtures)"
+},
+{
+"definition": "VE.Presupposition.needsUnspec",
+"operator": "list-empty",
+"reason": "does not elaborate: a bare `[]` in place of the cell leaves `.contains .conditioned` untyped; the hand mutants M-needsUnspec and M-needsUnspec-andor fail A5u and the assumed rule-act guard"
+},
+{
+"definition": "VE.Presupposition.peelRule",
+"operator": "arm-default",
+"reason": "does not elaborate: replacing the `match N.guard` arm leaves the alternatives with different pattern counts; the hand mutant M-peelRule fails A4"
+},
+{
+"definition": "VE.Presupposition.peelRule",
+"operator": "lit-minus",
+"reason": "does not elaborate: `k + 0` in the recursive pattern fails structural termination; the hand mutant M-peelRule fails A4"
+},
+{
+"definition": "VE.Presupposition.peelRule",
+"operator": "lit-plus",
+"reason": "does not elaborate: `0 + 1` / `k + 2` patterns leave the match non-exhaustive (missing cases); the hand mutant M-peelRule fails A4"
+},
+{
+"definition": "VE.Presupposition.peelWith",
+"operator": "list-empty",
+"reason": "does not elaborate: a bare `[]` in place of `rs` leaves the dotted `.asserted`/`.conditioned` and the element type unresolved; the elaborating mutants are killed by A11 and the two-asserted/two-conditioned guards"
+},
+{
+"definition": "VE.Presupposition.readingsDoc",
+"operator": "list-empty",
+"reason": "does not elaborate: a bare `[]` in place of the background, the readings or the units leaves the tuple patterns and dotted constructors untyped; the elaborating list mutants are killed by the background, F-ND1 and fixed-rule-unit guards"
+},
+{
+"definition": "VE.Presupposition.readingsDoc",
+"operator": "bool-flip",
+"reason": "equivalent: the flipped literal is `hard := false` of a strict node with no alterables; `hard` is read only together with a default mode or alterables (SoftNorms/Soften.lean:591), so a strict node means the same either way"
+},
+{
+"definition": "VE.Presupposition.readingsDoc",
+"operator": "lit-plus",
+"reason": "equivalent: the literal is the readings@1 set version (`⟨u, u, 1, ...⟩`), which separation does not read (no narrowing or coupling in the readings document)"
+},
+{
+"definition": "VE.Presupposition.readingsDoc",
+"operator": "lit-minus",
+"reason": "equivalent: the literal is the readings@1 set version (`⟨u, u, 1, ...⟩`), which separation does not read (no narrowing or coupling in the readings document)"
+},
+{
+"definition": "VE.Presupposition.rootsWith",
+"operator": "list-empty",
+"reason": "does not elaborate: a bare `[]` in place of `os` or the block leaves the field notation `.carrier`/`.id` untyped; the elaborating mutants are killed by A1 and the second-unresolved guards"
+},
+{
+"definition": "VE.Presupposition.separated",
+"operator": "list-empty",
+"reason": "does not elaborate: a bare `[]` in place of the situations or the pairs leaves the tuple patterns `(v, w, o, σ)`/`(i, j)` untyped; the elaborating mutants are killed by the separation guards"
+},
+{
+"definition": "VE.Presupposition.separated",
+"operator": "list-first",
+"reason": "equivalent where it survives: `(ss.take 1).isEmpty` is `ss.isEmpty`; every other list-first mutant of separated is killed by the two-situation and three-reading guards"
+},
+{
+"definition": "VE.Presupposition.softOk",
+"operator": "list-empty",
+"reason": "does not elaborate: a bare `[]` in place of `rs` leaves the field notation `.cand` untyped; the hand mutants M-soft-chain and M-softOk fail A26 soft"
+},
+{
+"definition": "VE.Presupposition.withObligations",
+"operator": "list-empty",
+"reason": "does not elaborate: a bare `[]` in place of the units or the block leaves the field notation `.unit`/`.id` untyped; the elaborating mutants are killed by the two-unit and unformalised-unit guards"
+}
+]
+}
