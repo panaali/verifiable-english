@@ -29,6 +29,10 @@
       "VE.CertificateWire",
       "VE.Route.Run"
     ],
+    "clauses-elaborate": [
+      "VE.RightClauses.Run",
+      "VE.Route.Run"
+    ],
     "diagnose": [
       "VE.Service.Diagnose",
       "VE.Route.Run"
@@ -174,8 +178,8 @@
     ]
   },
   "sources": {
-    "lean/VE/Service/Protocol.lean": "a1212a66e6a13da319e160f643ac945425ac63195771023bc7d557e69dada09a",
-    "lean/VE/Service/Registry.lean": "e46fcba56c462fede719ca7bacab3b7f98f4fef75148246dcff743301caa89e9",
+    "lean/VE/Service/Protocol.lean": "3b7152695166cd4ecbed05a291f6c23913717a9a64dd04efa0539492af38e365",
+    "lean/VE/Service/Registry.lean": "1697a675540771492c84808d37db66ddd4be06aa288f9b0d3a2132ee9f7b88f7",
     "tools/lean_mode_deps.lean": "50dc1459ef617a9ca489fd9a5068a5b875a48c661f3cf6ac573f6a157950c8e7"
   }
 }
