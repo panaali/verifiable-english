@@ -15,6 +15,9 @@ sort, and the node limit read on the first premise only. This test plants those 
 - `swap`: each two adjacent check steps of a `do` block swapped when the second does not read what the first binds,
   so the fault order (spec 4's items, then each item's checks, as written) is pinned by a fixture with both faults.
 
+By hand beside them: `HOOK`, et-4b's route hook, one per claimed behaviour, and `ORDER`, the two order pins across
+the `decodeThroughLinks`/`finishEvents` split that no swap of one `do` block reaches (DRI 2026-11-08, et-4b-gate 3).
+
 The checks' own conditions get the tool's operators (`--classes all`: docs/events-time-causation/et-4/
 all-mutants.json). Each mutant is elaborated with `lake env lean` as one file, `Wire.lean` then the fixtures; it is
 killed when `Wire.lean` elaborates and every error is a failed `#guard`. The unmutated file must elaborate cleanly, a
@@ -79,8 +82,8 @@ HOOK = {
 
 # Spec 4's item order across the split (reviews/dri-decisions-20261108-et-4b-gate.md item 3): the two swaps the
 # generator made before `decodeEvents` was split into `decodeThroughLinks` and `finishEvents`, each killed by a
-# fixture with both faults in WireExamples.lean: each item-4 sort fault beside the base block's link, whose sorts are
-# then no role sorts (`EventsSort: deed`, :128), and "Item 5 before item 6" (:232; the `LinkNotOpen` one at :352 too).
+# fixture with both faults in WireExamples.lean: each item-4 sort fault (`EventsSort: deed` and the rest) beside the
+# base block's link, whose sorts are then no role sorts; "Item 5 before item 6" (and `LinkNotOpen` on `badDate`).
 ORDER = {
     "order-links-before-roles": ("  checkRoles W V0\n  pure ⟨W, V0, ← checkLinks W V0 raw, dates, anchor⟩",
                                  "  let ls ← checkLinks W V0 raw\n  checkRoles W V0\n  pure ⟨W, V0, ls, dates, anchor⟩"),
