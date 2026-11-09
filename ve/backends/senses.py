@@ -327,7 +327,8 @@ def _response_problem(response: object, expected_id: str, request_id: str,
             for candidate in unit["candidates"]:
                 if type(candidate) is not dict or candidate.keys() != {"choice", "lines", "formula", "mark", "identities"} \
                         or type(candidate["choice"]) is not list or not candidate["choice"] \
-                        or type(candidate["lines"]) is not str or type(candidate["mark"]) is not bool:
+                        or type(candidate["lines"]) is not str or not candidate["lines"] \
+                        or type(candidate["mark"]) is not bool:  # a candidate resolves a word: it has a line
                     return "a candidate is malformed"
                 if not all(type(pair) is list and len(pair) == 2 and type(pair[0]) is str
                            and _nat(pair[1]) and pair[1] > 0 for pair in candidate["choice"]):
