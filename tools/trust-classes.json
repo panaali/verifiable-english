@@ -18676,6 +18676,7 @@
             "VE.EnglishGrammar.Norm.normMeaning_unmarked"
           ]
         },
+        "VE.EnglishGrammar.Norm.normTags",
         {
           "name": "VE.EnglishGrammar.Norm.normTy",
           "tied": [
@@ -18688,9 +18689,6 @@
             "VE.EnglishGrammar.Norm.prefixMap_ok"
           ]
         }
-      ],
-      "G[R]": [
-        "VE.EnglishGrammar.Norm.normTags"
       ]
     },
     "VE/Attribution/Words.lean": {
@@ -20126,36 +20124,44 @@
         "VE.EnglishGrammar.Norm.Run.statementRow"
       ],
       "G[V]": [
+        {
+          "name": "VE.EnglishGrammar.Norm.BlockFault.code",
+          "tied": [
+            "VE.EnglishGrammar.Norm.Run.answer_misplaced"
+          ]
+        },
         "VE.EnglishGrammar.Norm.Run.Reader",
         "VE.EnglishGrammar.Norm.Run.answer",
+        "VE.EnglishGrammar.Norm.Run.decoderCode",
         "VE.EnglishGrammar.Norm.Run.leanReader",
         "VE.EnglishGrammar.Norm.Run.oneSpans",
+        "VE.EnglishGrammar.Norm.Run.opensStatement",
+        "VE.EnglishGrammar.Norm.Run.sentenceBytes",
         "VE.EnglishGrammar.Norm.Run.statementCase",
-        "VE.EnglishGrammar.Norm.Run.statementCaseReported"
+        "VE.EnglishGrammar.Norm.Run.statementCaseReported",
+        "VE.EnglishGrammar.Norm.Run.statementSpans",
+        "VE.EnglishGrammar.Norm.Run.stoppedFields"
       ],
       "G[R]": [
-        "VE.EnglishGrammar.Norm.BlockFault.code",
         "VE.EnglishGrammar.Norm.BlockFault.sentence?",
         "VE.EnglishGrammar.Norm.BlockFault.text",
-        "VE.EnglishGrammar.Norm.Run.decoderCode",
         "VE.EnglishGrammar.Norm.Run.placeText",
         "VE.EnglishGrammar.Norm.Run.rowsInternalText",
         "VE.EnglishGrammar.Norm.Run.spanRow",
-        "VE.EnglishGrammar.Norm.Run.stopNamesSentence",
-        "VE.EnglishGrammar.Norm.Run.stoppedFields"
+        "VE.EnglishGrammar.Norm.Run.stopNamesSentence"
       ],
       "G[I]": [
-        "VE.EnglishGrammar.Norm.Run.opensStatement",
-        "VE.EnglishGrammar.Norm.Run.resultOf",
-        "VE.EnglishGrammar.Norm.Run.sentenceBytes",
-        "VE.EnglishGrammar.Norm.Run.statementSpans"
+        "VE.EnglishGrammar.Norm.Run.resultOf"
       ]
     },
     "VE/EnglishGrammar/Norm/RunExamples.lean": {
       "T": [
         "VE.EnglishGrammar.Norm.RunExamples.big",
+        "VE.EnglishGrammar.Norm.RunExamples.caseD",
         "VE.EnglishGrammar.Norm.RunExamples.caseOf",
         "VE.EnglishGrammar.Norm.RunExamples.caseTwo",
+        "VE.EnglishGrammar.Norm.RunExamples.errorOf",
+        "VE.EnglishGrammar.Norm.RunExamples.f18",
         "VE.EnglishGrammar.Norm.RunExamples.fixed",
         "VE.EnglishGrammar.Norm.RunExamples.get",
         "VE.EnglishGrammar.Norm.RunExamples.internalRow",
@@ -20163,8 +20169,10 @@
         "VE.EnglishGrammar.Norm.RunExamples.notOne",
         "VE.EnglishGrammar.Norm.RunExamples.oE1",
         "VE.EnglishGrammar.Norm.RunExamples.rejectAll",
+        "VE.EnglishGrammar.Norm.RunExamples.request",
         "VE.EnglishGrammar.Norm.RunExamples.result",
         "VE.EnglishGrammar.Norm.RunExamples.sE1",
+        "VE.EnglishGrammar.Norm.RunExamples.sha",
         "VE.EnglishGrammar.Norm.RunExamples.str",
         "VE.EnglishGrammar.Norm.RunExamples.tA",
         "VE.EnglishGrammar.Norm.RunExamples.tB"
