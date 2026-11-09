@@ -499,6 +499,19 @@
    ]
   },
   {
+   "test": "tests/test_gate_collection_renumber.py",
+   "why": "starts git in tests/test_gate_collection.py, tools/gate_collection.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "tests/test_gate_collection.py:git: git",
+    "tools/gate_collection.py:GIT: git",
+    "tools/gate_collection.py:git: git",
+    "tools/nested_pytest.py:command: pytest"
+   ]
+  },
+  {
    "test": "tests/test_gate_durations.py",
    "why": "starts git (git archive, git rev-parse, git show) in conformance/frozen_norm_defaults.py, tests/test_gate_durations.py, tools/gate.py, tools/gate_collection.py, tools/trust_map.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
    "recorded": [
@@ -1876,12 +1889,14 @@
   },
   {
    "test": "tests/test_trust_mutants_probe_scope.py",
-   "why": "starts git in tests/test_trust_mutants.py",
+   "why": "starts git in tests/test_trust_mutants.py, tools/lean_share.py, tools/trust_mutants.py",
    "recorded": [
     "source"
    ],
    "via": [
-    "tests/test_trust_mutants.py:git: git"
+    "tests/test_trust_mutants.py:git: git",
+    "tools/lean_share.py:_git: git",
+    "tools/trust_mutants.py:git: git"
    ]
   },
   {
