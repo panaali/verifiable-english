@@ -1,0 +1,38 @@
+{
+ "audit_rc": 0,
+ "base": "a8511c5266e9a5204c2c90a6cf5731a65b51d51b",
+ "changed_modules": [
+  "VE/Acts/Lexical",
+  "VE/Commands/Examples",
+  "VE/Commands/Read",
+  "VE/Commands/RunExamples",
+  "VE/Compose/Dispatch",
+  "VE/Compose/Examples",
+  "VE/Service/ActsExamples",
+  "VE/SpeechActs/Wire"
+ ],
+ "changed_oleans": {
+  "VE/Acts/Lexical": "31d80f2f1ef8bebe435cb5f9e3ae6ad5019120fde8e73b24f304180f8435b388",
+  "VE/Commands/Examples": "73804503023cd3a4541ee592ca70a9a551c4b51c2ce644cf3331118a3f145a9e",
+  "VE/Commands/Read": "16e015014a569f72753e612b3867c7fe5a76b49ca92346ca22a8a9cd4574f2a6",
+  "VE/Commands/RunExamples": "2cef7c8ffcda9d64066032e87bb272f2628ad9d196258e3109a72e55c245a41b",
+  "VE/Compose/Dispatch": "7c31ce2911dadee28f71f577762362bd4af99f2aba378b1716bac268e665953a",
+  "VE/Compose/Examples": "7c5459c4ff50235411be2f1ec70bbd7f579d4334e20bf6c6965a9869b12d1c1f",
+  "VE/Service/ActsExamples": "afff6aeed2a4cbbde7499e8aaaa8e1cf647b541d2843e0fb0ec1b453b020943c",
+  "VE/SpeechActs/Wire": "f9312c2539d63c288935b0445eae1cb7f5a3d49d82b66d9869178c3ea74ffef9"
+ },
+ "files": {
+  "lean/ResponseShapeAudit.lean": "611e323d590a6890fa1f093586a1b5b653a3c029ddd5d507df12ccec09724b72",
+  "lean/VE/Audit.lean": "172f366a967ab194925bfcdcfd52ddc449cd86ee4205eb20149e52e5d5ba2cdc",
+  "lean/axioms.txt": "029f4c48d9a16f44bae2cc048d502696b86e3aee0a9e18ee127e13aeb5fd4509",
+  "lean/declarations.txt": "919bd56a7ff3ad160750aa0f737694455498536268f4e9b91809b1dd119f051d",
+  "lean/predicates.txt": "790ecbb7422a562e0f726ba8224e1dd30de98d9108522b022707868d912f0711",
+  "lean/statements.txt": "fddd7683e335bd767db238d5eaa5e6743346f943fb45b35b69ead0442569ff44"
+ },
+ "head": "1a4ea6ca456d51028462e036f90b414860c8e299",
+ "lake_rc": 0,
+ "oleans_n": 788,
+ "oleans_sha256": "975d5d14aed45379ee04048d1f138aec4567877201226fe5875deae85e40df90",
+ "seed": "cold-fp",
+ "statements_rc": 0
+}
