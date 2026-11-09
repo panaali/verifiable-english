@@ -15,7 +15,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [docs/eff-tests/](docs__eff-tests.md) — 1 modules — -
 - [docs/english-lean/](docs__english-lean.md) — 2 modules — -
 - [docs/events-time-causation/](docs__events-time-causation.md) — 1 modules — -
-- [docs/infra/](docs__infra.md) — 20 modules — -
+- [docs/infra/](docs__infra.md) — 21 modules — -
 - [docs/judgment-terms/](docs__judgment-terms.md) — 8 modules — -
 - [docs/lean-first/b0/](docs__lean-first__b0.md) — 1 modules — -
 - [docs/lean-first/b1/](docs__lean-first__b1.md) — 2 modules — -
