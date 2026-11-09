@@ -209,6 +209,13 @@ def slotsEnding (e : String) : List String :=
 #guard [")", "x )", "x ”’", "\"", "x *_"].all (!clause ·)
 #guard ["The hard constraints apply only where x ) y.", "The rules below are called the x ” The rules below are called the y."].all
   (parseGovernor · == none)
+-- a C1 control inside a word, where the allow-list does not see it: `wordChar` refuses DEL and U+0080 to U+009F anywhere
+#guard ["x\x7Fy", "x\u0080y", "x\u0090y", "x\u009Ey", "x\u009Fy"].all (!clause ·) && clause "x\u00A1y"
+#guard ["The hard constraints apply only where the act\u0080is irreversible.", "The rules below are called the x\u009Fy."].all
+  (parseGovernor · == none)
+-- every closer is dropped after a word's allowed character, alone or twice, and hides no "." before it
+#guard closers.toList.all fun q => clause s!"x{q}" && clause s!"x{q}{q}" && !clause s!"x.{q}"
+#guard trip "The hard constraints apply only where the act is \"final\"." "{\"reach\": {\"list_name\": \"the hard constraints\"}, \"effect\": {\"reguard\": [\"and\", \"own\", {\"english\": \"the act is \\\"final\\\"\"}]}}"
 -- one accepted word ending in each class of the allow-list: an ASCII letter, a digit, a Latin letter (the range's ends
 -- and "café"), and each allowed ASCII punctuation character; and the characters just beside them are refused
 #guard ["xa", "xz", "xA", "xZ", "x0", "x9", "xÀ", "xÖ", "xØ", "xö", "xø", "xÿ", "xő", "xɏ", "café", "x,", "x;", "x-", "x%", "x/",
