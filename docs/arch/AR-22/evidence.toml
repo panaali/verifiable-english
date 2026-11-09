@@ -1,0 +1,22 @@
+# AR-22, consolidation step 3b: closure certificates replay through Core's tableau; the closure tableau copy is
+# deleted (architecture pass 2026-11-05, plan 4.5). Checked with: uv run python tools/batch_evidence.py --check docs/arch/AR-22
+# The A/B is `python -m tools.evidence ab` over tools/lean_first_diff.py's recordings of all nine corpora (base: the
+# merge base, from its own worktree; head from this checkout), kept out of the tree (over 1 MB) with their SHA-256 in
+# evidence/ab.json. Saved beside it and stated in REPORT.md: the statements diff with each removed theorem's cover
+# (statements.json), the trust measurement before and after (trust.json), the Lean output differential (out.json) and
+# row 3b's named tests (row3b-tests.json).
+batch = "AR-22"
+
+[scope]
+file = "scope.json"
+
+[gate]
+file = "gate.json"
+
+[mutants]
+file = "mutants.json"
+min = 3
+
+[ab]
+file = "ab.json"
+corpora = ["probe", "conformance", "readings", "pilots", "discourse", "rights", "quantity", "norm_defaults", "document"]

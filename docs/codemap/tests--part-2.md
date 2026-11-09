@@ -27,6 +27,7 @@
 - `tests/test_cli.py` — (no module docstring)
 - `tests/test_closure.py` — closure@0 semantics, profile boundaries, views, identities and evidence.
 - `tests/test_closure_certificates.py` — New rules are paired with Lean soundness and independent replay evidence.
+- `tests/test_closure_core_replay.py` — Closure certificates replay through Core behind closure's own gates (consolidation step 3b).
 - `tests/test_closure_induction.py` — Induction replay, hostile certificates, compatibility and cyclic policies.
 - `tests/test_closure_witnesses.py` — Every selected E0 item has two checked, provenance-bound closure witnesses.
 - `tests/test_cmp_s4_evaluate_once.py` — cmp-s4 review F8: the composed path computes each value once, read from the compiled definitions.
