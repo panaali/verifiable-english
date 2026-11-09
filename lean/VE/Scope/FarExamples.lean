@@ -1,5 +1,4 @@
 import VE.Scope.Examples
-import VE.Service.Document
 
 /-! SC-4's fixtures (docs/spec/scope.md 7.6): far precedence (F11, F11-a, F11-y, F11′, F11-u, F11″) through `govern`,
     and the forward declarations (F12, F12-f, F12-f0) through `forwardCheck` and `govern`, each refusal with its exact
@@ -77,22 +76,11 @@ def u0047Doc : Json := Json.mkObj [("units", .arr ((VE.Scope.Examples.layoutOf u
 def u0047Anchors : List VE.Discourse.Anchor := [anc "doc" none "Constitution" (spanOver u0047 "u0047.s05" "u0047.s06")]
 -- no rule is named, so nothing is recorded: the document is returned as written (u0047.s06 keeps no content and is
 -- UNFORMALISED, `meaning: {"unformalised": "norms"}`, with no residual: `UnresolvedScope` is SC-5's, spec 1612, and is
--- not built); a declaration guessed for it is refused, never a guessed edge
+-- not built; `VE.Service.ScopeExamples.u0047Statuses` checks the status); a declaration guessed for it is refused,
+-- never a guessed edge
 #guard same (govW u0047 u0047Anchors u0047Doc []) u0047Doc
 #guard errorOf (govW u0047 u0047Anchors u0047Doc [] [("u0047.s06", "broad-safety", "doc")]) ==
   "ScopeForward: u0047.s06: rule broad-safety has no later exception in doc"
-/-- The pinned rows of u0047.s05-s06 (tests/data/tarch-b8/translation-without-content.ve.txt and nd-op.ve.txt, their
-    spans moved to a part document of exactly their bytes), checked by the document mode (sc-4-f12). -/
-def u0047Rows : List Json := (VE.Scope.Examples.layoutOf u0047).map fun x => j
-  s!"\{\"id\": \"{x.id}\", \"span\": [{x.span.1}, {x.span.2}], \"support\": \"none\", \"kind\": [\"unformalised\", \"norms\"], \"meaning\": \{\"unformalised\": \"norms\"}}"
-def u0047Statuses : List (String × String) :=
-  let env := j "{\"language\": \"ve.core@0.2\", \"profiles\": [\"norms@0\", \"relational-fol@0\"], \"spec_revision\": \"ve-v0.2-expand2-2026-09-25\", \"vocabulary\": {\"sorts\": {}, \"predicates\": {}, \"constants\": {}}}"
-  let front := Json.mkObj [("format", .str "ve-document@1"), ("environment", env), ("units", toJson u0047Rows)]
-  match VE.Service.Document.checkDoc (Json.mkObj [("id", .str "u0047"),
-      ("document", .str ("---\n" ++ front.compress ++ "\n---\n" ++ String.join (u0047.map (·.2))))]) with
-  | .ok a => VE.Service.Document.unitStatuses a
-  | .error e => [("error", e)]
-#guard u0047Statuses == [("u0047.s05", "UNFORMALISED"), ("u0047.s06", "UNFORMALISED")]
 -- the pinned spans [26947, 27042] and [27042, 27251] are 95 and 209 bytes: the same units
 #guard (VE.Scope.Examples.layoutOf u0047).map (fun x => x.span.2 - x.span.1) == [95, 209]
 

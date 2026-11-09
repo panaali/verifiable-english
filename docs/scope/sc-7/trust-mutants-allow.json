@@ -73,7 +73,7 @@
   {
    "definition": "VE.Scope.Pinned.wordChar",
    "operator": "le-lt",
-   "reason": "equivalent where it is a SURVIVOR: `0x20 ≤ c.toNat` and `0x20 < c.toNat` differ only at U+0020, which `!VE.EnglishGrammar.isSpace c` (the conjunct before it, lean/VE/Scope/Authoring.lean:26) already refuses; the other mutants of `wordChar` are KILLED by the slot guards of lean/VE/Scope/AuthoringExamples.lean"
+   "reason": "equivalent where it is a SURVIVOR: `0x20 ≤ c.toNat` and `0x20 < c.toNat` differ only at U+0020, which `!VE.Discourse.spaceChar c` (the conjunct before it, lean/VE/Scope/Authoring.lean:26) already refuses; the other mutants of `wordChar` are KILLED by the slot guards of lean/VE/Scope/AuthoringExamples.lean"
   }
  ]
 }
