@@ -1,0 +1,99 @@
+{
+ "corpus_files": [
+  "tests/test_speech_acts.py",
+  "tests/test_speech_acts_acts0.py",
+  "tests/test_speech_acts_conformance.py",
+  "tests/test_speech_acts_lean.py",
+  "tests/test_speech_polar_lean.py",
+  "tests/test_speech_source_lean.py",
+  "tests/test_speech_source_relay.py",
+  "tests/test_speech_source_switch.py",
+  "tests/frozen_speech/__init__.py",
+  "tests/frozen_speech/speech_acts.py",
+  "tests/frozen_speech/speech_document.py",
+  "docs/question-answering/q1-4/evidence/speech_ab.py"
+ ],
+ "corpus_if_then_literals": 0,
+ "surface_kind_flips": [],
+ "fixture_wordings": 96,
+ "unchanged": 85,
+ "changed": [
+  {
+   "wording": "Click Ask, if draft is approved, then add an exception or precedence.",
+   "class": "b2",
+   "base": "VE.Commands.StepOutcome.refused\n  \"NoDerivation\"\n  \"The condition has no reading with the current vocabulary. Unknown English phrase 'then'. Nearest declared wordings: 'token'; 'text'; '\\\"token1\\\"'.\"",
+   "head": "VE.Commands.StepOutcome.refused\n  \"ConditionScope\"\n  \"a condition with a sequence of steps: write one sentence per step, with the condition on each step or on the first only\"",
+   "shapes": "[VE.Commands.Shape.seq [\"Click Ask, if draft is approved\", \"add an exception or precedence\"]]"
+  },
+  {
+   "wording": "Click Ask, if draft is approved, then click Ask.",
+   "class": "b2",
+   "base": "VE.Commands.StepOutcome.refused\n  \"NoDerivation\"\n  \"The condition has no reading with the current vocabulary. Unknown English phrase 'then'. Nearest declared wordings: 'token'; 'text'; '\\\"token1\\\"'.\"",
+   "head": "VE.Commands.StepOutcome.refused\n  \"ConditionScope\"\n  \"a condition with a sequence of steps: write one sentence per step, with the condition on each step or on the first only\"",
+   "shapes": "[VE.Commands.Shape.seq [\"Click Ask, if draft is approved\", \"click Ask\"]]"
+  },
+  {
+   "wording": "Click Ask, then click Ask, if draft is approved.",
+   "class": "b2",
+   "base": "VE.Commands.StepOutcome.refused \"InvalidInput\" \"no single speech-act reading\"",
+   "head": "VE.Commands.StepOutcome.refused\n  \"ConditionScope\"\n  \"a condition with a sequence of steps: write one sentence per step, with the condition on each step or on the first only\"",
+   "shapes": "[VE.Commands.Shape.seq [\"Click Ask\", \"click Ask, if draft is approved\"]]"
+  },
+  {
+   "wording": "Click Check rule conflict, then click Ask.",
+   "class": "b1",
+   "base": "VE.Commands.StepOutcome.refused \"InvalidInput\" \"no single speech-act reading\"",
+   "head": "VE.Commands.StepOutcome.steps\n  [{ force := VE.SpeechActs.Force.require, act := \"click_check_required\", fills := [], guard := VE.Formula.top },\n   { force := VE.SpeechActs.Force.require, act := \"click_ask_required\", fills := [], guard := VE.Formula.top }]",
+   "shapes": "[VE.Commands.Shape.seq [\"Click Check rule conflict\", \"click Ask\"]]"
+  },
+  {
+   "wording": "If draft is approvable, click Ask.",
+   "class": "b2",
+   "base": "VE.Commands.StepOutcome.refused \"InvalidInput\" \"no single speech-act reading\"",
+   "head": "VE.Commands.StepOutcome.refused\n  \"NoDerivation\"\n  \"The condition has no reading with the current vocabulary. Unknown English phrase 'is approvable'. Nearest declared wordings: 'is approved'; 'assistant'; 'calls'.\"",
+   "shapes": "[VE.Commands.Shape.preposed \"draft is approvable\" \"click Ask\"]"
+  },
+  {
+   "wording": "If draft is approved, click Ask.",
+   "class": "b1",
+   "base": "VE.Commands.StepOutcome.refused \"InvalidInput\" \"no single speech-act reading\"",
+   "head": "VE.Commands.StepOutcome.one\n  { force := VE.SpeechActs.Force.require,\n    act := \"click_ask_required\",\n    fills := [],\n    guard := VE.Formula.unary \"approved\" (VE.Term.const \"draft\") }\n  false",
+   "shapes": "[VE.Commands.Shape.preposed \"draft is approved\" \"click Ask\"]"
+  },
+  {
+   "wording": "If draft is approved, click Check rule conflict, then click Ask.",
+   "class": "b2",
+   "base": "VE.Commands.StepOutcome.refused \"InvalidInput\" \"no single speech-act reading\"",
+   "head": "VE.Commands.StepOutcome.refused\n  \"ConditionScope\"\n  \"a condition with a sequence of steps: write one sentence per step, with the condition on each step or on the first only\"",
+   "shapes": "[VE.Commands.Shape.preposed \"draft is approved\" \"click Check rule conflict, then click Ask\",\n VE.Commands.Shape.preposed \"draft is approved, click Check rule conflict\" \"then click Ask\"]"
+  },
+  {
+   "wording": "Review the meaning, if draft is approved, then click Ask.",
+   "class": "b2",
+   "base": "VE.Commands.StepOutcome.refused \"AmbiguousDerivation\" \"multiple declared acts match\"",
+   "head": "VE.Commands.StepOutcome.refused\n  \"ConditionScope\"\n  \"a condition with a sequence of steps: write one sentence per step, with the condition on each step or on the first only\"",
+   "shapes": "[VE.Commands.Shape.seq [\"Review the meaning, if draft is approved\", \"click Ask\"]]"
+  },
+  {
+   "wording": "Review the meaning, then click Ask.",
+   "class": "b1",
+   "base": "VE.Commands.StepOutcome.refused \"InvalidInput\" \"no single speech-act reading\"",
+   "head": "VE.Commands.StepOutcome.many\n  [VE.Commands.Alt.shape\n     (VE.Commands.Shape.seq [\"Review the meaning\", \"click Ask\"])\n     [{ force := VE.SpeechActs.Force.require, act := \"review_meaning_required\", fills := [], guard := VE.Formula.top },\n      { force := VE.SpeechActs.Force.require, act := \"click_ask_required\", fills := [], guard := VE.Formula.top }],\n   VE.Commands.Alt.shape\n     (VE.Commands.Shape.seq [\"Review the meaning\", \"click Ask\"])\n     [{ force := VE.SpeechActs.Force.require,\n        act := \"review_required\",\n        fills := [{ const := \"meaning1\", words := \"the meaning\" }],\n        guard := VE.Formula.top },\n      { force := VE.SpeechActs.Force.require, act := \"click_ask_required\", fills := [], guard := VE.Formula.top }]]",
+   "shapes": "[VE.Commands.Shape.seq [\"Review the meaning\", \"click Ask\"]]"
+  },
+  {
+   "wording": "Then click Ask.",
+   "class": "b1",
+   "base": "VE.Commands.StepOutcome.refused \"InvalidInput\" \"no single speech-act reading\"",
+   "head": "VE.Commands.StepOutcome.one\n  { force := VE.SpeechActs.Force.require, act := \"click_ask_required\", fills := [], guard := VE.Formula.top }\n  true",
+   "shapes": "[VE.Commands.Shape.after \"click Ask\"]"
+  },
+  {
+   "wording": "Then click Check rule conflict.",
+   "class": "b1",
+   "base": "VE.Commands.StepOutcome.refused \"InvalidInput\" \"no single speech-act reading\"",
+   "head": "VE.Commands.StepOutcome.one\n  { force := VE.SpeechActs.Force.require, act := \"click_check_required\", fills := [], guard := VE.Formula.top }\n  true",
+   "shapes": "[VE.Commands.Shape.after \"click Check rule conflict\"]"
+  }
+ ]
+}
