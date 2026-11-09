@@ -9845,7 +9845,10 @@
         "VE.Senses.Run.writtenLines",
         "VE.Senses.Run.flipJson",
         "VE.Senses.Run.byteSpan",
-        "VE.Senses.Run.senseEntryJson"
+        "VE.Senses.Run.senseEntryJson",
+        "VE.Senses.Run.projectionIds",
+        "VE.Senses.Run.admittedIds",
+        "VE.Senses.Run.usedOf"
       ],
       "G[R]": [
         "VE.Senses.Run.fenceLine",
@@ -9858,9 +9861,6 @@
         "VE.Senses.Run.warningsJson"
       ],
       "G[I]": [
-        "VE.Senses.Run.projectionIds",
-        "VE.Senses.Run.admittedIds",
-        "VE.Senses.Run.usedOf",
         "VE.Senses.Projection.written",
         "VE.Senses.SensesOutcome.written"
       ]
