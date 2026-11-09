@@ -2295,7 +2295,7 @@ universe u
 def sdSuperposable (N : NDoc) : Bool := superposable N.D && VE.NormDefaults.WellFormedU (supU N)
 
 /-- 14.11: the compatible choices times the superposed premises and rule nodes each check reads. -/
-def maxSdCheckWork : Nat := 4194304
+def maxSdCheckWork : Nat := 32768
 def sdCheckWork (N : NDoc) : Nat :=
   (checkedChoices N.D).length * ((softXL N (sup N.D).1).length + ((sup N.D).1.soft.T.nodes.map
     (fun M => (M.guard :: M.carveOuts).map VE.Bridge.formulaNodes)).flatten.sum)
@@ -2417,7 +2417,7 @@ The per-choice route on the same input is the oracle for every *derived* verdict
 | W-10 | a query over `sharedEnvSD`: `∀ agent ∀ user. unsaid__avoid_required agent user → avoid_required agent user` on `NSD1` (DRI item 1's guard); `soft__excepted__must_x` in a query on `NSD4` | decoded and answered; refused by the decoder | `decodeShared` over `sharedEnvSD N` |
 | W-11 | a model with an `unsaid__` table in `relations`; a filling that fails `Fill_T`; a model with `localFree` false (13.5's without-`hl` case) | refused or UNKNOWN, never `model` (F-SD8) | `hl`, F-SD8 |
 | W-12 | 7 sets each as `rs1` (F-SD9) | superposed, `choices_checked: 128`, `choice_count: "over 64"`, decided verdicts (F-ND3's analogue); `decided_units: []` (1.12); budget zero stays UNKNOWN (*derived*) | past 64 |
-| W-13 (large, well formed) | `NSDbig`: 10 sets of 2, each a default with a sufficient condition, one fixed unit (1024 choices at the limit); the same with 11 sets; the 10-set document with enough guard nodes that `sdCheckWork > maxSdCheckWork` | superposed, a conflict answer in one proof, `choices_checked: 1024`; enumerated, "over 64"; enumerated, "over 64" | 14.11 |
+| W-13 (large, well formed) | `NSDbig n`: `n` sets of 2, each a strict reading and a default with a sufficient condition, one fixed unit: 8 sets (256 choices, `sdCheckWork` 24,832, at the work limit); the same with 11 sets; 10 sets (1024 choices, 123,904); 8 sets with one guard wide enough that `sdCheckWork > maxSdCheckWork` | superposed, a conflict answer in one proof, `choices_checked: 256`; enumerated, "over 64"; enumerated by work, "over 64"; enumerated by work, "over 64" (DRI 2026-11-09 item 1) | 14.11 |
 | W-14 (read once) | `readings-verdicts` on `NSD4a` with conflict, certificate and model evidence, under `VE_READINGS_STAGE_TIMES=1` | one `admitSDOf` and one route check per case, however many pieces | 14.11 |
 
 Seeded bugs the build plants (each must fail a fixture): `labelImage` returning the superposed label as its first component
@@ -2457,9 +2457,14 @@ Each value is computed once per case, and its size is charged before it is used.
 | `usedLabels` | per accepted piece, one replay per label of slot, `supX` and `Fill_T` | the labels within `sdCheckWork`; each replay is the piece's own certificate, within `max_steps` |
 | a request's JSON members (evidence, model, certificates) | decoded once; the input bytes charged by the existing admission memo | the existing limits |
 
-`maxSdCheckWork` = 4,194,304 is 1024 choices × 4096 premises and rule nodes. It is this spec's value from that arithmetic,
-not a measurement (OPEN-SC11-7). W-13 is the large well-formed request; the build records its Lean CPU, and R4's absolute
-budgets are the bar. Exceeding the limit is the enumerated row, not an error.
+`maxSdCheckWork` = 32,768 is measured (DRI decision 2026-11-09 item 1, manage-agents/reviews/dri-decisions-20261109-sc-11.md;
+docs/rd-9/sc-11/w13-cpu.md): compiled Lean on the VM (AMD EPYC 7B12, 32 vCPU, 5-minute load 78 to 108), W-13's shape
+costs about 29 µs of Lean CPU per unit of `sdCheckWork`, so `NSDbig 8` (256 choices, 24,832 units) takes 0.71 s and
+`NSDbig 10` (1024 choices, 123,904 units) 3.67 s, over R4's 1 s. It replaces this spec's arithmetic value 4,194,304
+(1024 choices × 4096 premises and rule nodes). Past 64 choices, a document is decided in one proof when `sdCheckWork`
+is within 32,768 (measured: 256 W-13-shaped choices); `maxChoiceChecks` 1024 stays as a second bound. Exceeding either
+limit is the enumerated row, not an error. A wide guard costs more per unit than W-13's shape; row sc-11w makes the
+charge cost-proportional before sc-11b switches the dispatch (item 2 of that decision).
 
 ### 14.12 Existing text and tests that sc-11b changes
 
@@ -2532,7 +2537,7 @@ sc-10b both read `SoftSup.lean`, and only sc-10b writes it, so run sc-10b first.
 - **OPEN-SC11-6 (`decided_units` on the superposed answer).** The plan does not name it, and RD-6b's answer has none. Default: keep it on
   the soft chain (14.3), because dropping it would be a loss of information and would change SC-9's measure. It costs `supOpen`'s
   extra premises scopes while the global conflict status is open.
-- **OPEN-SC11-7 (`maxSdCheckWork`).** 4,194,304 is arithmetic, not a measurement (14.11). Confirm or set it after W-13's CPU figure.
+- **OPEN-SC11-7 (`maxSdCheckWork`).** Closed: 32,768, measured (14.11; DRI decision 2026-11-09 item 1).
 
 ### 14.16 Review checklist (SC-11's statement review)
 
