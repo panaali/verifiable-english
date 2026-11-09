@@ -8,9 +8,16 @@ read it through `ve document check` (Lean's document mode) and through the right
 from __future__ import annotations
 
 import json
+from pathlib import Path
+import sys
 
 from ve.__main__ import main as ve_main
 from ve.document import load_document
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "tools"))
+from check_lean_imports import imports  # noqa: E402
+from layer_policy import lean_layer  # noqa: E402
 
 ACTS = {"speak_permitted": "{0} speak", "marry_permitted": "{0} marry"}
 # Unit texts of different lengths, so `bytes_by_status` tells which unit is OPEN.
@@ -114,3 +121,13 @@ def test_rights_document_norm_unit_with_open_act_is_open(tmp_path, capsys):
         bytes_by[expected] = bytes_by.get(expected, 0) + len(TEXTS[1])
         assert by_status == bytes_by, open_terms
         assert unit_open == [False, False, expected == "OPEN"], open_terms
+
+
+def test_rights_open_act_fixtures_sit_at_the_runner_boundary():
+    """tools/layer_policy.py places VE.Rights.OpenActExamples at layer 4, so it may import Rights.Run (layer 4)."""
+    path = ROOT / "lean/VE/Rights/OpenActExamples.lean"
+    layer = lean_layer("VE.Rights.OpenActExamples")
+    assert layer == 4
+    assert "VE.Rights.Run" in imports(path.read_text())
+    for module in imports(path.read_text()):
+        assert lean_layer(module) is not None and lean_layer(module) <= layer, module

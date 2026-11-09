@@ -73,9 +73,20 @@ can never be an authored act).
   full build.
 - The selected tests (below) found no other status change.
 
-## Seeded bugs (Lean; Python and Rust product code unchanged)
+## Pre-review gate return (e3b07cef)
 
-All are in lean/VE/Rights/Run.lean, and each was restored after its run. Where the mutant breaks `nodeOpen_eq`, the
+The pre-review gate failed one check: "[mutants] Python code changed (tools/layer_policy.py) but no seeded bug names
+a changed Python file". No suite test read the layer of `VE.Rights.OpenActExamples`; only the gate's import lint did.
+Changes made:
+- Added tests/test_rights_open_act_is_open.py::test_rights_open_act_fixtures_sit_at_the_runner_boundary. It checks
+  that `lean_layer` puts the fixture at layer 4, that the fixture imports `VE.Rights.Run`, and that no import is
+  above that layer.
+- Planted seeded bug m5 in tools/layer_policy.py, showed that this test fails, and restored the file (table below,
+  mutants.json).
+
+## Seeded bugs (Lean and Python; Rust unchanged)
+
+m1 to m4 are in lean/VE/Rights/Run.lean and m5 is in tools/layer_policy.py, the one changed Python file. Each was restored after its run. Where the mutant breaks `nodeOpen_eq`, the
 proof was cut to `sorry` so the service could be built. The pytest runs use the rebuilt `ve_service`, pinned only for
 that run. Details are in [mutants.json](mutants.json).
 
@@ -85,6 +96,7 @@ that run. Details are in [mutants.json](mutants.json).
 | m2 | each unit reads its own line's act | `unitOpen` reads the act of the first line of the document: `{ nodeOf D line with pred := ((linesOf D).head?.map (·.2.node.pred)).getD "" }` | test_rights_open_act_reads_each_rights_own_act (the two-rights fixture); `#guard`s OpenActExamples.lean:39, 40 |
 | m3 | no other rule opens (claims no more) | any open name opens: `.unary (openNames.headD N.pred) (.var 0)` | test_rights_closed_act_stays_checked, test_rights_open_act_reads_each_rights_own_act; `#guard`s OpenActExamples.lean:32, 39, 40; `nodeOpen_eq` (`2 failed, 1 passed`, before the norm-unit test) |
 | m4 | the negative direction: no act opens by itself | every rule opens: `true \|\| N.mode == .default \|\| ...` | test_rights_closed_act_stays_checked, test_rights_open_act_reads_each_rights_own_act, test_rights_document_norm_unit_with_open_act_is_open (`3 failed, 1 passed`); `nodeOpen_eq` |
+| m5 | (Python, tools/layer_policy.py) OpenActExamples is a layer-4 runner-boundary fixture | `"VE.Rights.OpenActExamples"` dropped from `lean_layer`'s layer-4 fixture set | test_rights_open_act_fixtures_sit_at_the_runner_boundary (`assert 2 == 4`, `1 failed, 4 deselected`; restored: `1 passed`); `python3 tools/check_lean_imports.py` prints "new outward Lean import: VE.Rights.OpenActExamples -> VE.Rights.Run" |
 
 ## Trust
 
@@ -177,7 +189,7 @@ UNVERIFIED rather than tested.
    passed) keeps its fuzz of the rights answers.
 2. PASS. Deliverables 1-4 are in the table above, with their tests. Grep of the diff: no Python copy of a Lean
    decision, no report test, no file shared with an in-flight branch.
-3. PASS. 4 seeded bugs, all Lean (mutants.json). Trust mutants exit 0 (trust-mutants.json).
+3. PASS. 5 seeded bugs: m1 to m4 in Lean, m5 in the one changed Python file, tools/layer_policy.py (mutants.json). Trust mutants exit 0 (trust-mutants.json).
 4. PASS. Base and HEAD were run on the new fixtures: the main-run output above shows 2 failed on main, and all pass on
    HEAD. The corpus scan found 0 units that can move.
 5. N.A. No new field is read from a Lean answer.
