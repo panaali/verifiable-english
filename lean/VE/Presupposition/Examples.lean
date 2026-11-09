@@ -831,6 +831,9 @@ def doc7 (c : Carrier) (N : VE.Norms.Node) (allow := false) (unspec : List Strin
 def doc7a (unspec : List String) : PDoc :=
   docA [cu "u0" (ruleGoal (reg7) r7 pre22), ⟨"u7", true, .rule "r1"⟩] [p7 (.assumed "u0")] (tree7 [r7]) true unspec
 #guard errOf (admit (doc7a [])) == "admitted" && errOf (admit (doc7a ["p"])) == "admitted"
+-- an assumed rule act needs no `unspecified` predicate even where its cell lists conditioned (R-7 is conditioned or
+-- unresolved only)
+#guard errOf (admitWith fixtureTable fxN (doc7a [])) == "admitted"
 -- the open rule of S7: its readings `r1` (assumed) and `r1` with the condition (conditioned)
 def rr7 : List RReading :=
   [{ cand := .assumed, aliases := [], content := .rule r7, premise := some (ruleGoal (reg7) r7 pre22) },
