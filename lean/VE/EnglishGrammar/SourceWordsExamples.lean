@@ -113,7 +113,7 @@ def adviceOf (profiles : List String) (s : String) : Option (String × String) :
   match lex s with
   | .ok sents => (sents[0]?).bind fun toks => advice profiles toks.toList
   | .error _ => none
-def ev : List String := ["events@0", "norm-defaults@0", "norms@0", "relational-fol@0", "soft-norms@0"]
+def ev : List String := ["events@0"]
 #guard adviceOf ev "Every person may be presumed innocent until a conviction." == some ("events-until", eventsUntilAdvice)
 #guard adviceOf ["norms@0", "relational-fol@0"] "Every person may be presumed innocent until a conviction." == none
 #guard [("Every report must be filed by the deadline.", "events-by"), ("Every act happens within ten days.", "events-within"),
@@ -148,5 +148,7 @@ def otherProfileWordings : List String := VE.Alternatives.Wire.canonicalWording.
   ["{0} is avoidable by {1}", "{0} is unavoidable by {1}", "{0} allows {1} to happen"]
 #guard eventsWordings.length == 8
 #guard eventsWordings.all fun w => !otherProfileWordings.contains w
+#guard ["{0} leads to {1}", "{0} causes {1}", "{0} might lead to {1}", "{0} allows {1} to happen"].all
+  otherProfileWordings.contains
 
 end VE.EnglishGrammar.SourceWordsExamples

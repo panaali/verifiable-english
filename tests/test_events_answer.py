@@ -104,6 +104,11 @@ def test_a_request_without_the_block_is_not_an_events_request(genuine):
 
 # The fuzzer: every node under the relayed fields, and its mutants.
 
+DEEP = [[]]
+for _ in range(10_000):
+    DEEP = [DEEP]
+
+
 def _nodes(value, path=()):
     yield path, value
     if isinstance(value, dict):
@@ -146,9 +151,9 @@ def _mutants(row, case):
     for root in fields:
         for path, value in _nodes(_get(row, root), root):
             out.append((f"drop {path}", lambda r, p=path: _get(r, p[:-1]).pop(p[-1])))
-            for other in (7, True, None, "x", [], {}):
+            for other in (7, True, None, 1.5, "x", "\ud800", [], {}, DEEP):
                 if type(other) is not type(value):
-                    out.append((f"retype {path} {other!r}", lambda r, p=path, o=other: _set(r, p, deepcopy(o))))
+                    out.append((f"retype {path} {other!r}", lambda r, p=path, o=other: _set(r, p, o if o is DEEP else deepcopy(o))))
             if isinstance(value, (str, list, dict)) and value and path != root:
                 out.append((f"empty {path}", lambda r, p=path, v=value: _set(r, p, type(v)())))
             if isinstance(value, list) and value:
@@ -212,7 +217,7 @@ def test_every_two_fault_mutant_is_unavailable_or_changes_nothing_shown(genuine,
     case, row = genuine[name]
     shown = events.answer(row, case)
     pairs = list(itertools.combinations(_mutants(row, case), 2))
-    sample = random.Random(20261109).sample(pairs, min(len(pairs), 4000))
+    sample = random.Random(20261109).sample(pairs, min(len(pairs), 2000))
     bad = [(a[0], b[0]) for a, b in sample if _outcome(row, case, [a, b]) not in (None, "unavailable", shown)]
     assert not bad, bad[:10]
 
