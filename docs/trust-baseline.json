@@ -2301,6 +2301,13 @@
    "reason": "sn-b6d: VE/Senses/Run.lean +58 (G[V] rereadJson, decodeReread, lineJson, and the readCase wiring of the re-read and the line)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sn-b6d, 2026-11-09",
    "commit": "9ba8aeaedfc82fa41258a4f52bcca4820f47b663"
+  },
+  {
+   "class": "V",
+   "lines": 4,
+   "reason": "rights-cfr-4: lean/VE/Rights/Run.lean +4 (G[V]: nodeOpen reads the act)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), rights-cfr-4, 2026-10-18",
+   "commit": "268829b1ac9d3a333c2c422efbd9b0beea80b287"
   }
  ]
 }
