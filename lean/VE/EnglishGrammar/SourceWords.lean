@@ -105,23 +105,25 @@ def eventsRefusals : List SourceWordRow := [
   eventsRefusal "led to" eventsLinkAdvice "that act contributed to that harm",
   eventsRefusal "caused" eventsLinkAdvice "that act was necessary for that harm"]
 
-/-- "m X until E": U1 states its silence (ET-E1's rewording, docs/events-time-causation/et-e1/RESULTS.md), U2 adds
-the opposite modality from E's day (R2). -/
+/-- "m X until E" (spec 2.4), each candidate with the role's verb phrase `<vp>` (spec 2.1): U1 states its silence
+(ET-E1's rewording, docs/events-time-causation/et-e1/RESULTS.md), U2 adds the opposite modality from E's day as
+ET-E1 measured it (`until-U2`, 20/20). -/
 def untilEventReadings : SourceWordRow := eventsReadings "until" "source event"
   ("E's day, the day before it and a later day: with the act unspecified, from E's day U1 does not say and U2 " ++
    "gives the opposite modality.")
-  ["<agent> <m> <act> on each day, if it is not the case that <event> happens no later than that day. This " ++
-     "document does not say whether <agent> <m> <act> on a day on which <event> happens no later than that day.",
-   "<agent> <m> <act> on each day, if it is not the case that <event> happens no later than that day. <agent> " ++
-     "<opposite of m> <act> on each day on which <event> happens no later than that day."]
+  ["<agent> <m> <act> on each day, if it is not the case that <event> <vp> no later than that day. This " ++
+     "document does not say whether <agent> <m> <act> on a day on which <event> <vp> no later than that day.",
+   "<agent> <m> <act> on each day, if it is not the case that <event> <vp> no later than that day. <agent> " ++
+     "<opposite of m> <act> on each day, if <event> <vp> no later than that day."]
 
-/-- "within n days of D" (SR-B4): both end dates are named dates, <start> n days before D and <end> n days after. -/
+/-- "within n days of D" (SR-B4; spec 8.1 T11d): two derived wordings joined by ", and", both end dates named, <start>
+n days before D and <end> n days after it. -/
 def withinDateReadings : SourceWordRow := eventsReadings "within" "source date"
   ("An act on <end> (W1 and W3 against W2) and an act before <date> and on or after <start> (W3 against W1 and " ++
    "W2).")
-  ["<event> happens on or after <date> and no later than <end>.",
-   "<event> happens on or after <date> and before <end>.",
-   "<event> happens on or after <start> and no later than <end>."]
+  ["<event> <vp> on or after <date>, and <event> <vp> no later than <end>.",
+   "<event> <vp> on or after <date>, and <event> <vp> before <end>.",
+   "<event> <vp> on or after <start>, and <event> <vp> no later than <end>."]
 
 /-- The reading sets ET-5 writes; the rest of spec 2.4 is et-5b's, with the open anchor's no-anchor rows. -/
 def eventsReadingSets : List SourceWordRow := [untilEventReadings, withinDateReadings]

@@ -469,10 +469,12 @@ class EnglishVocabulary:
             block = loads_json(env.events)
             for name, frame in ((block['before'], 'before'),
                                 *((link['predicate'], 'link ' + link['form']) for link in block['links'])):
-                decl = env.predicates.get(name)
-                if decl is not None and decl.verbalisation == fixed.get(frame):
+                decl, path = env.predicates.get(name), f'/vocabulary/predicates/{name}/'
+                # A wording two predicates share keeps DUPLICATE_TEMPLATE: that check is one reading, not shape.
+                if (decl is not None and decl.verbalisation == fixed.get(frame) and not any(
+                        i.code == 'DUPLICATE_TEMPLATE' and i.path.startswith(path) for i in issues)):
                     self.predicates[name] = decl.verbalisation
-                    issues = {i for i in issues if not i.path.startswith(f'/vocabulary/predicates/{name}/')}
+                    issues = {i for i in issues if not i.path.startswith(path)}
         # rights@0 fixes one wording per generated limitation, condition and aimed
         # predicate (rights.md 2.1, 13.11), installed on E″ by the correlation; as
         # for alternatives@0, the generic lint's shape rules do not apply to them.
