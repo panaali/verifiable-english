@@ -35,7 +35,7 @@ def noDistinction (D : RightsDoc) : List Finding :=
     if independentReported D p then []
     else (distinctionHits D p).filterMap (fun hit =>
       if hit.2.2 then none
-      else some ⟨"ProtectedInCone", hit.1.node.name, hit.1.right, "",
+      else some ⟨"ProtectedInCone", hit.1.node.name, hit.1.right, lineSpan D hit.1,
         s!"ProtectedInCone: {hit.2.1} in rule {hit.1.node.name} on right {hit.1.right}"⟩))
 
 /-- Well-formedness puts every right-derived predicate among `T″`'s regulated names. -/

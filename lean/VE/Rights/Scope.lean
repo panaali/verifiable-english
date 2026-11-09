@@ -127,13 +127,18 @@ def mechText : Narrowing → String
   | .dominatedBy M => s!"dominatedBy {M}"
   | .bar => "bar"
 
+/-- A line's span (8: findings are report lines with the line's span): the id of the source unit that authored the
+line instance, from the located lines; `""` when the request locates no line. -/
+def lineSpan (D : RightsDoc) (N : Line) : String :=
+  ((D.located.find? (·.1 == N.node.name)).map (·.2)).getD ""
+
 /-- The audit: every unlicensed mechanism of a line in scope of some limitation. -/
 def limitationScope (D : RightsDoc) (certs : List (Option VE.Tableau.Certificate)) : List Finding :=
   (linesOf D).flatMap (fun RN =>
     if D.limits.any (fun L => inScope D L RN.1 RN.2) then
       (narrowings D RN.2).filterMap (fun n =>
         if licensed D certs RN.2 n then none
-        else some ⟨"UnlicensedLimitation", RN.2.node.name, RN.1, "",
+        else some ⟨"UnlicensedLimitation", RN.2.node.name, RN.1, lineSpan D RN.2,
           s!"UnlicensedLimitation: {mechText n} of rule {RN.2.node.name} on right {RN.1}"⟩)
     else [])
 
