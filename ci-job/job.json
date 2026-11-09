@@ -1,0 +1,23 @@
+{
+ "job": "ci-2b.s5of8-37ef893e",
+ "head": "c6f83f6d9aad5b124fd6b12402f7179798c4bbe1",
+ "argv": [
+  "ci-2b.s5of8-37ef893e",
+  "c6f83f6d9aad5b124fd6b12402f7179798c4bbe1",
+  "5e1cc1cbf227678e08c8b6cb1b75cc1af7fb3c0a",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-fdd0964ffe53.tar.zst",
+  "3d96e798cbbe722b5e41f0f07780754a9806d618eb1ce57ce360dbc9aa8ebca2",
+  "--max-mutants",
+  "1000",
+  "--test",
+  "lean/VE/Commands/RunSplit.lean",
+  "--allow",
+  "docs/commands-imperatives/ci-2b/trust-mutants-allow.json",
+  "--budget",
+  "6300",
+  "--shard",
+  "5/8",
+  "--jobs",
+  "4"
+ ]
+}
