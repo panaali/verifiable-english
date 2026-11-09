@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-bs-sel-defer-broad-5b109e82-t260367-s3",
+ "head": "05e97259485de65ed7757de70dcc73a67b5ba4a4",
+ "argv": [
+  "armsh-cand-bs-sel-defer-broad-5b109e82-t260367-s3",
+  "05e97259485de65ed7757de70dcc73a67b5ba4a4",
+  "bb36c72332fc305a4d66a4cae1e2f4b3191e8590",
+  "-",
+  "-",
+  "4",
+  "3/4"
+ ]
+}
