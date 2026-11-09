@@ -371,4 +371,42 @@ theorem softSemanticCheck_mapG {C : SoftDoc} {E0 : VE.Environment} (h : GHyp γ 
     · exact h1.2
     · exact h2.2
 
+theorem validateSoft_ok_iff (D : SoftDoc) :
+    validateSoft D = .ok () ↔ checkSoft D = .ok () ∧ softSemanticCheck D = true := by
+  unfold validateSoft
+  cases checkSoft D with
+  | error e => simp
+  | ok u => cases h : softSemanticCheck D <;> simp
+
+theorem validateW1_ok {D : VE.Norms.Doc} (h : validateW1 D = .ok ()) :
+    checkW1 D = .ok () ∧ VE.Norms.semanticCheck D = true := by
+  unfold validateW1 at h
+  cases hc : checkW1 D with
+  | error e => rw [hc] at h; cases h
+  | ok u => rw [hc] at h; cases hs : VE.Norms.semanticCheck D <;> simp_all
+
+/-- `validateSoft` passes on `mapG γ C`, or reports a resource limit, when it passes on `C`. -/
+theorem validateSoft_mapG {C : SoftDoc} {E0 : VE.Environment} (h : GHyp γ C E0) (hv : validateSoft C = .ok ()) :
+    OkOrRL (validateSoft (mapG γ C)) := by
+  obtain ⟨hc, hss⟩ := (validateSoft_ok_iff C).1 hv
+  have hnd : (C.T.regulated.map (·.name)).Nodup := by
+    simp only [softSemanticCheck, Bool.and_eq_true, and_assoc, decide_eq_true_eq] at hss; exact hss.2.2.1
+  rw [checkSoft_eq, checkSoftK_shape] at hc
+  obtain ⟨hw, hk, hsh⟩ := shapeK_ok hc
+  have hbase := (baseTRel h).checkW1 C.E C.lits C.T.regulated C.T.definitions (typesAt _ _ h.envC) QC_preds hw
+  have hsoft := validateW1_mapG h hnd (tailK_ok C hk)
+  unfold validateSoft
+  rw [checkSoft_eq, checkSoftK_mapG, checkSoftK_shape, hsh, mapG_base]
+  rcases hbase.1 with hb | ⟨e, he, hre⟩
+  · rw [hb]
+    rcases tailK_rl (mapG γ C) hsoft.1 with ht | ⟨e, he, hre⟩
+    · have hv' := tailK_ok _ ht
+      have hss' := softSemanticCheck_mapG h hss (hsoft.2 hv') (validateW1_ok hv').2
+      simp only [bind, Except.bind, ht, hss', if_true]
+      exact Or.inl rfl
+    · simp only [bind, Except.bind, he]
+      exact Or.inr ⟨e, rfl, hre⟩
+  · simp only [bind, Except.bind, he]
+    exact Or.inr ⟨e, rfl, hre⟩
+
 end VE.RightClauses.PWF
