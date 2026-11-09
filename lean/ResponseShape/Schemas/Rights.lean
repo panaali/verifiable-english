@@ -197,7 +197,7 @@ def situation : Shape :=
 
 def elaborate : Shape :=
   c
-    "Rights.Run.regenerated: E'' (primeJsonR), the generated predicates, the lines, the limitation premises, the bar nodes, the rights Background, the narrowings with their grounds, the rule narrowings, the distinction rows and findings, then every SoftNorms.Wire.regeneratedCore field over the correlated document but its environment_prime."
+    "Rights.Run.regenerated: E'' (primeJsonR), the generated predicates, the lines, the limitation premises, the bar nodes, the rights Background, the narrowings with their grounds, the rule narrowings, the distinction rows and findings (each also with its line's span, `located_findings`), then every SoftNorms.Wire.regeneratedCore field over the correlated document but its environment_prime."
     [
       obj,
       .required ["id", "status", "environment_prime", "generated", "wordings", "unit_open", "lines", "limitations", "bars", "rights_background", "narrowings", "rule_narrowings", "distinction", "findings", "located_findings", "decisions", "derived", "order", "background", "premises", "colliding_pairs", "conflict_targets", "conditional_on", "fragment", "warnings"],
@@ -318,7 +318,7 @@ def entries : Shape :=
 
 def scope : Shape :=
   c
-    "Rights.Run.runRightsKind rights-scope: the unlicensed-limitation findings, whether there are none, and the narrowings with certified licences."
+    "Rights.Run.runRightsKind rights-scope: the unlicensed-limitation findings, whether there are none, the findings with their lines' spans (`located_findings`), and the narrowings with certified licences."
     [
       obj,
       .required ["id", "status", "findings", "licensed", "located_findings", "narrowings"],
@@ -376,7 +376,7 @@ def bar : Shape :=
                 ("entailed", .type ["boolean"])]]])])]]
 
 def packages : Shape :=
-  c "Rights.Run.runRightsKind rights-conflict over certificate packages: detail exactly beside UNKNOWN, which names the first failing certificate in its status line and is conditional on nothing; a CONFLICT-FREE status line counts its premises." [
+  c "Rights.Run.conflictAnswer, rights-conflict over certificate packages: detail exactly beside UNKNOWN, which names the first failing certificate in its status line and is conditional on nothing; a CONFLICT-FREE status line is rights.md 7.3's, and beside it are its parts: the weighing points, whether the request's situation was exhibited, the budget and the situation's tables (null when none was)." [
     obj,
     .required ["id", "status", "verdict", "status_text", "targets", "conditional_on"],
     closed [

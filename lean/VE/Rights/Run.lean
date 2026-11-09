@@ -13,7 +13,8 @@ import VE.Judgments.Scan
   `colliding_pairs`, `conflict_targets`, `narrowings` (per line: the limitations in scope, the
   bar's reach, and each mechanism with its licence without certificates and the grounds it rests
   on), `rule_narrowings` (per rule: the mechanisms naming it, and what each of its citations
-  licenses), `distinction` (per right-derived predicate), `fragment`,
+  licenses), `distinction` (per right-derived predicate), `findings` with `located_findings` (each with its line's
+  span when the request's optional `located` names each unit's source unit), `fragment`,
   `warnings`; or the shared diagnostic.
 * `rights-projections`: `model` (a finite base model over `E″′_base` passing
   `Background_base″`) and optionally `holder` / `bearer` → `rights_of`, `duties_of`: the
@@ -21,8 +22,9 @@ import VE.Judgments.Scan
 * `rights-scope`: `certificates` (scope target `<rule>:<mechanism>` ↦ package) → `findings`
   and, per mechanism, its licence and the certification target `∀x̄. cond_n° → limpack_N`
   (`conclusion`) a package must prove (`Wire.rights_wire_scope_sound`).
-* `rights-conflict`: `packages` (target ↦ package over `Background_base″`) → `CONFLICT-FREE`
-  with `conditional_on`, or `UNKNOWN` (`Wire.rights_wire_conflict_sound`); or `witness` →
+* `rights-conflict`: `packages` (target ↦ package over `Background_base″`) and optionally a `situation` (a finite base
+  model, checked) → `CONFLICT-FREE` with `conditional_on` and 7.3's parts (`weighing_points`, `situation_exhibited`,
+  `budget`, `situation`), or `UNKNOWN` (`Wire.rights_wire_conflict_sound`); or `witness` →
   `CONFLICT`, classified (`Wire.rights_wire_conflict_witness_sound`).
 * `rights-bar`: rule reading → per right-derived permission predicate: the barred right
   lines, the blocked default rules (on `m` or `require` on its dual) and the strict rules
@@ -292,18 +294,19 @@ def unitStatuses (D : RightsDoc) (openNames : List String) (document : Json) : J
 
 /-- The located lines of a request (8): its optional `located` field gives, for each unit of `document` after the
 `source_units` entry, the id of the source unit it was copied from, one of `source_units`; every line of a `right` or
-`right_lines` unit is located at that id. -/
-def locate (D : RightsDoc) (j : Json) : Except String RightsDoc := do
-  let .ok value := j.getObjVal? "located" | pure D
-  let ids ← VE.Bridge.strings value
+`right_lines` unit is located at that id. Its length is compared before its items are decoded. -/
+def locate (D : RightsDoc) (j : Json) : Except String (List (String × String)) := do
+  let .ok value := j.getObjVal? "located" | pure []
   let units := match j.getObjValD "document" with
     | .arr us => us.toList.filter (fun (u : Json) => !(u.getObjVal? "source_units").toBool)
     | _ => []
-  unless ids.length == units.length do throw "InvalidInput: located must name one source unit per document unit"
+  unless (value.getArr?.map Array.size).toOption == some units.length do
+    throw "InvalidInput: located must name one source unit per document unit"
+  let ids ← VE.Bridge.strings value
   if let some u := ids.find? (fun u => !D.sourceUnits.contains u) then throw s!"UnknownSymbol: unit {u}"
   let names : List (String × String) := (units.zip ids).flatMap (fun (u, i) => (unitRuleNames u).map (·, i))
-  pure { D with located := (linesOf D).filterMap (fun (_, N) =>
-    (names.find? (·.1 == lineSourceName N)).map (fun (_, i) => (N.node.name, i))) }
+  pure ((linesOf D).filterMap (fun (_, N) =>
+    (names.find? (·.1 == lineSourceName N)).map (fun (_, i) => (N.node.name, i))))
 
 /-- The exhibited situation's tables (5.3 (2)): for each decision predicate of `T″` (the exceptions, switches and
 `outweighs` decisions) and each rights-generated predicate (limitation, condition and, under a bar, aimed), its
@@ -414,7 +417,8 @@ def exhibit (src : RightsSource) (j : Json) : Except String (Option (VE.FiniteMo
     pure (some M)
   | .error _ => pure none
 
-/-- The budget an UNKNOWN on the rights route names (7.3: `UNKNOWN (<budget>)`). -/
+/-- The budget an UNKNOWN on the rights route names (7.3: `UNKNOWN (<budget>)`). No situation is searched for here:
+"situation exhibited: UNKNOWN (budget 10000)" says the request supplied none for Lean to check. -/
 def conflictBudget : Nat := 10000
 
 /-- A rights-conflict answer over certificate packages. CONFLICT-FREE carries 7.3's status line: the premises it is
@@ -423,10 +427,11 @@ evidence is taken here) and whether a situation is exhibited, or UNKNOWN with th
 fields. UNKNOWN names the first failing certificate. -/
 def conflictAnswer (id : String) (res : RightsConflictReplay) (M : Option (VE.FiniteModel VE.Bridge.Entity)) : Json :=
   let verdict := if res.conflictFree then "CONFLICT-FREE" else "UNKNOWN"
-  let conditional := if res.conflictFree then (openLabels res.src.D).filter (conflictUses res) else []
+  let weighing := VE.SoftNorms.Wire.openCoherence (correlate res.src.D)
+  let labels := weighing ++ (limPremisesLabelled res.src.D).map (·.1)
+  let conditional := if res.conflictFree then labels.filter (conflictUses res) else []
   let coherence := conditional.filter (fun l => l.startsWith "soft:")
   let limitation := conditional.filter (fun l => l.startsWith "rights:")
-  let weighing := VE.SoftNorms.Wire.openCoherence (correlate res.src.D)
   let exhibited := if M.isSome then "yes" else s!"UNKNOWN (budget {conflictBudget})"
   let statusText := if res.conflictFree then
     s!"CONFLICT-FREE among rules on the same act, conditional on {coherence.length} coherence premises and {limitation.length} limitation premises ({", ".intercalate conditional}); {weighing.length} weighing points open; situation exhibited: {exhibited}"
@@ -505,14 +510,16 @@ def runRightsKind (id kind : String) (j : Json) : Except String Json := do
     let openNames ← match j.getObjVal? "open_predicates" with
       | .ok value => VE.Bridge.strings value
       | .error _ => pure []
-    let D ← locate src.D j
+    let D := { src.D with located := ← locate src.D j }
     return VE.Route.Wire.ok id (regenerated D environment ++ [("unit_open", unitStatuses D openNames document)])
   if kind == "rights-projections" then
     let src ← decodeRightsSource (← j.getObjVal? "environment") (j.getObjValD "document")
     return VE.Route.Wire.ok id (← projectionsResult src j)
   if kind == "rights-scope" then
     let r ← replayRightsScope j
-    let findings := limitationScope (← locate r.src.D j) r.certs
+    -- The replay's findings with their spans: the same texts, so `licensed` is `r.findings.isEmpty`
+    -- (`limitationScope_texts`) and `rights_wire_scope_sound` speaks of this answer.
+    let findings := limitationScope { r.src.D with located := ← locate r.src.D j } r.certs
     return VE.Route.Wire.ok id [("findings", Json.arr (findings.map (fun f => Json.str f.text)).toArray),
       ("licensed", .bool findings.isEmpty), ("located_findings", Json.arr (findings.map findingJson).toArray),
       ("narrowings", narrowingsJson r.src.D r.certs)]
