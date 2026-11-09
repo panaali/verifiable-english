@@ -2411,7 +2411,8 @@
       "lean/VE/Senses/TextsExamples.lean": "fixtures only: #guard checks of the senses runner's sense-map glosses and byte spans and the texts of spec 3.2 (sn-b6c); no runner path",
       "lean/ResponseShape/Encoders/NormDefaults.lean": "encoder theorems of the norm-defaults mode (runCaseReported_fits, of_elaborate): proofs over the runner's rows; no decoding",
       "lean/VE/Acts/Run.lean": "act-phrases ap-3dc: the acts-elaborate row's encoder (Acts.Run.runElaborate); it reads the request through Norms.Wire.decodeSource and NormDefaults.Wire.decodeSourceU and writes the decoded ElaboratedU (runElaborate_fits)",
-      "lean/VE/Events/RouteExamples.lean": "fixtures only: #guard checks of the hook through decodeLayered and the norm-defaults mode on JSON environments built with Json.parse and Json.mkObj; no runner path"
+      "lean/VE/Events/RouteExamples.lean": "fixtures only: #guard checks of the hook through decodeLayered and the norm-defaults mode on JSON environments built with Json.parse and Json.mkObj; no runner path",
+      "lean/VE/Rights/OpenActExamples.lean": "fixtures only: #guard checks of docs/spec/rights.md 7.2 (rights-cfr-4) read unitOpen on right units built with Json.mkObj; no runner path"
     }
   },
   "plan_operations": {
