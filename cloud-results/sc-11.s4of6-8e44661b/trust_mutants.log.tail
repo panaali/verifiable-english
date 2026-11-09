@@ -1,0 +1,5 @@
+trust_mutants: 1 definitions, 46 mutants (8 to run), 4 jobs, base 3e4fe503f4c9
+SURVIVOR lean/VE/Readings/SoftSupLabels.lean:43 VE.Readings.sdShown (G[V], trusted) list-drop-first: (checkedChoices N.D) -> ((checkedChoices N.D).drop 1) (the proofs it breaks: lean/VE/Readings/SoftSupLabels.lean:698, lean/VE/Readings/SoftSupLabels.lea...)
+trust_mutants: 7 KILLED, 1 SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 38 OTHER SHARD in 295 s
+trust_mutants: G[V], trusted: 7 KILLED, 1 SURVIVOR, 38 OTHER SHARD
+trust_mutants: steps: wall plan 8.3 s, scratch 2.2 s, control_build 0.1 s, probe_install 1 s, mutants 270.1 s, cleanup 12.7 s; lake control_build 0.1 s (1), probe_install 1 s (1), control_probes 2.2 s (2), mutant_builds 131.3 s (16), mutant_checks 678.9 s (12), stage_controls 249.9 s (4), mutant_probes 8.7 s (7)
