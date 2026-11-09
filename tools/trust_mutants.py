@@ -1269,19 +1269,18 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
         for s, e in cuts.get(f, ()):
             cut_proof(path, s, e)
 
-    columns: dict[tuple[str, int, str], int] = {}  # each error's column, which `in_tactic` reads
-
-    def build(stage: list[str], step: str | None = None) -> tuple[int, list[tuple[str, int, str]]]:
+    def build(stage: list[str], step: str | None = None) -> tuple[int, list[tuple[str, int, str, int]]]:
+        """Lake's exit code and its located errors (file, line, message, column): each copy keeps its own column,
+        which `invalid` reads (tm-column-per-copy: one keyed by (file, line, message) took its last copy's)."""
         for attempt in range(3):  # again: Lake can fail with no located error under load
             with STEPS.step(step or ("mutant_builds" if stage == built[:1] else "mutant_checks")):
                 code, output = lake(env, "build", *(f"+{x}" for x in stage))
             if code == TIMED_OUT:
-                return code, [("", 0, output)]
+                return code, [("", 0, output, 0)]
             found = located(output)
-            columns.update(((f, n, message), c) for f, n, c, message in found)
             if code == 0 or found:
-                return code, [(f, n, message) for f, n, _, message in found]
-        return code, [("", 0, "the build failed with no located error: " + output[-300:])]
+                return code, [(f, n, message, c) for f, n, c, message in found]
+        return code, [("", 0, "the build failed with no located error: " + output[-300:], 0)]
 
     def read(f: str) -> str:
         return (scratch.lean / f).read_text()
@@ -1293,7 +1292,7 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
             for f, text in now.items():
                 (scratch.lean / f).write_text(text)
             code, found = build(stage)
-            return None if found[:1] and not found[0][0] else found
+            return None if found[:1] and not found[0][0] else [(f, n, message) for f, n, message, _ in found]
         finally:
             for f, text in before.items():
                 (scratch.lean / f).write_text(text)
@@ -1335,11 +1334,12 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
                     break
                 if not found[0][0]:
                     return "UNKNOWN", found[0][2]
-                roles = [(f, n, message, role(tree, f, n, m)) for f, n, message in found]
+                roles = [(f, n, message, role(tree, f, n, m), c) for f, n, message, c in found]
                 if mutated := [x for x in roles if x[3] == "mutated"]:  # another command's on its last line too
-                    # (hunt N10): `invalid` reads only errors inside the mutant's own text as refusals
-                    return invalid([(f, n, message, columns.get((f, n, message), 0)) for f, n, message, _ in
-                                    mutated], read(m.file), m.lines, (m.start, m.start + len(m.after)))
+                    # (hunt N10): `invalid` reads only errors inside the mutant's own text as refusals, each copy
+                    # of a message at its own column (tm-column-per-copy)
+                    return invalid([(f, n, message, c) for f, n, message, _, c in mutated], read(m.file), m.lines,
+                                   (m.start, m.start + len(m.after)))
                 if proofs := [x for x in roles if x[3] == "proof" and x[0] not in tests]:
                     for f, n, message in each(proofs):  # cut first: a check may fail only because it reads one
                         if why := cut(f, n, f"the failing proof cannot be cut: {brief(message)}"):
@@ -1363,7 +1363,7 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
                 # whose proof term the mutant breaks, review F8) leaves `sorry` that a check may refuse, a parse
                 # error or a line that is not the checkout's is the tool's own edit (review F9), and a message that
                 # states no refutation refutes nothing (F10, F11), so each decides UNKNOWN.
-                return settle(found, read, lambda f: texts[f] if f in texts else read(f), tree.roles,
+                return settle([(f, n, message) for f, n, message, _ in found], read, lambda f: texts[f] if f in texts else read(f), tree.roles,
                               lambda now: rebuild(stage, now), reading, scope=probes.scope)
             else:
                 return "UNKNOWN", "the proof cuts did not settle"
