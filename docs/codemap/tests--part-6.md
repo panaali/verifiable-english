@@ -1,3 +1,5 @@
+- `tests/test_relay_english_scale.py` — lf-10bc recheck: the 60-act reached-default repro renders from Lean's report line.
+- `tests/test_relay_lint.py` — `tools/relay_lint.py`: a relayed module raises Lean's diagnostics, never its own.
 - `tests/test_relay_mutation_gate.py` — tools/relay_mutation_gate.py: every relayed Lean answer refuses every mutant of a genuine answer.
 - `tests/test_relay_wire_check.py` — Every checker transport sends only values `json` writes as themselves (lf-9 review, B).
 - `tests/test_replay_conservativity.py` — Replay every pre-closure v0 certificate against its frozen original verdict.
@@ -79,4 +81,3 @@
 - `tests/test_speech_acts.py` — Deterministic experimental speech-act core fixtures (no trusted route).
 - `tests/test_speech_acts_conformance.py` — Shared section-9 speech-act fixtures across Python, Lean, and Rust FOL evaluation.
 - `tests/test_speech_acts_lean.py` — The Lean `ve_speech_acts_route` on hand-written fixtures of speech-acts.md section 9.
-- `tests/test_speech_polar_lean.py` — Speech acts' polar questions and their `Must`/`Can` refusal, read by Lean (question answering Q1.4, Q1.4b).
