@@ -77,6 +77,17 @@ HOOK = {
     "repeat-last-wins": ("| some r => (some r, acc.2)", "| some _ => (if acc.2.contains n then some n else acc.1, acc.2)"),
 }
 
+# Spec 4's item order across the split (reviews/dri-decisions-20261108-et-4b-gate.md item 3): the two swaps the
+# generator made before `decodeEvents` was split into `decodeThroughLinks` and `finishEvents`, each killed by a
+# fixture with both faults in WireExamples.lean: each item-4 sort fault beside the base block's link, whose sorts are
+# then no role sorts (`EventsSort: deed`, :128), and "Item 5 before item 6" (:232; the `LinkNotOpen` one at :352 too).
+ORDER = {
+    "order-links-before-roles": ("  checkRoles W V0\n  pure ⟨W, V0, ← checkLinks W V0 raw, dates, anchor⟩",
+                                 "  let ls ← checkLinks W V0 raw\n  checkRoles W V0\n  pure ⟨W, V0, ls, dates, anchor⟩"),
+    "order-dates-before-links": ("  pure ⟨W, V0, ← checkLinks W V0 raw, dates, anchor⟩",
+                                 "  let _ ← checkDates W dates anchor\n  pure ⟨W, V0, ← checkLinks W V0 raw, dates, anchor⟩"),
+}
+
 # Lists one check may read for another: each is replaced by each other one of its group.
 SIBLINGS = (("roleSorts V", "eventSorts V", "stateSorts V"),
             ("rolePreds V", "(V.events.map (·.on))", "(V.states.flatMap fun s => [s.begins, s.ends])"),
@@ -187,14 +198,14 @@ def _generated(text: str) -> dict[str, str]:
 
 
 def _review(name: str, text: str) -> str:
-    old, new = REVIEW.get(name) or HOOK[name]
+    old, new = REVIEW.get(name) or HOOK.get(name) or ORDER[name]
     assert text.count(old) == 1, name
     return text.replace(old, new)
 
 
 def _mutants() -> dict[str, str]:
     text = WIRE.read_text()
-    return {**{n: _review(n, text) for n in (*REVIEW, *HOOK)}, **_generated(text)}
+    return {**{n: _review(n, text) for n in (*REVIEW, *HOOK, *ORDER)}, **_generated(text)}
 
 
 MUTANTS = _mutants()
