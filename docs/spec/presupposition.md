@@ -934,11 +934,40 @@ structure Report where
 
 The bodies of `tableOk`, `premisesBefore`, `unitContent`, `unitAsserted`, `unitReadings`, `nodeCertificate`,
 `unitModes`, `claimReading`, `ruleReading` and `ruleConditions` follow, copied verbatim from the PS-S stub (sections
-1.4 to 1.8 as the stub wrote them; ps-s-stub-c), with the two helpers `env` and `unitOf` that they and the
-certificate statement read. `claimReading` and `ruleReading` set `aliases := []`; `expectedReadings` below fills the
-aliases. `tableOk` calls `cellOk`, written below.
+1.4 to 1.8 as the stub wrote them; ps-s-stub-c). With them come the two helpers `env` and `unitOf` that they and
+the certificate statement read, and the bodies of the signatures above that they or the statements call
+(`Carrier.root`, `Carrier.cand`, `Candidate.root`, `Candidate.core`, `Args.tuple`, `rowNames`). `claimReading` and
+`ruleReading` set `aliases := []`; `expectedReadings` below fills the claim readings' aliases, and rule readings
+keep none. `tableOk` calls `cellOk`, written below.
 
 ```lean
+def Carrier.root : Carrier → Root
+  | .asserted => .asserted
+  | .conditioned => .conditioned
+  | _ => .bare
+
+def Carrier.cand : Carrier → Option Candidate
+  | .assumed _ => some .assumed
+  | .conditioned => some .conditioned
+  | .asserted => some .asserted
+  | .inPlace => some .inPlace
+  | .unconditional _ => some .unconditional
+  | .proved _ | .unresolved => none
+
+def Candidate.root : Candidate → Root
+  | .asserted => .asserted
+  | .conditioned => .conditioned
+  | _ => .bare
+
+def Candidate.core : Candidate → Bool
+  | .assumed | .conditioned | .asserted => true
+  | _ => false
+
+def Args.tuple (a : Args) : Option String × Option VE.Formula × Option VE.Formula × Option VE.Formula :=
+  (a.sort, a.restriction, a.body, a.pre)
+
+def rowNames : List String := ["definite", "plural", "generic"]
+
 def tableOk (rows : List String) (t : CandidateTable) : Bool :=
   rows.all (fun row => [PositionClass.top, .negated, .antecedent, .consequent, .disjunct, .ruleAct,
     .ruleGuard].all (fun pc => cellOk pc (t row pc)))
@@ -1075,7 +1104,8 @@ restriction path; a generic row has no restriction.
    On the soft chain an open set that contains a conditioned rule reading is refused first (below). Step 5 learns
    the chain where it calls the separation: PS-2a reads `chain` from the readings environment there, as `abstention`
    reads `re.chain` (`lean/VE/Readings/Wire.lean`), so `PDoc` is unchanged (its `defaults` is true on both the norms
-   and the soft chain and does not tell them apart).
+   and the soft chain and does not tell them apart). Like the separation's other inputs (`fillDoc N`, σ), the
+   readings environment is a fixed parameter of `admit`, not a field of `PDoc`; no statement below changes.
 
 An open set that contains a conditioned rule reading needs an `unspecified` predicate, hence `norm-defaults@0`, and
 is therefore admitted on the norms chain only. On the rights chain `abstention` in `lean/VE/Readings/Wire.lean`
@@ -1284,6 +1314,7 @@ Lean writes the text; Python prints it. `<o>` is an obligation id.
 | `PresuppositionDefault: <o>: <predicate>` | a conditioned rule, or an unresolved rule obligation whose cell lists conditioned (R-7), whose predicate has an allow or deny default |
 | `PresuppositionUnresolved: <o>` | an unresolved obligation on a unit with one content |
 | `PresuppositionCandidates: <o>` | readings not exactly the emitted candidates, or fewer than two (R-D3); a recorded carrier not in the cell; a recorded in place at a frame that is not shallow (R-D1); a heading carrier other than proved and assumed (R-10); a second unresolved obligation in one unit |
+| `UnsupportedProfile: a conditioned rule reading needs the norms chain (presupposition)` | check step 5, on the soft chain: an open set contains a conditioned rule reading (R-8; DRI 2026-11-04, item 2; A26) |
 | `ResourceLimit: presuppositions` | over budget: UNKNOWN, never a rejection |
 
 `PresuppositionRefuted: <o>: <unit>` is a report line, not a diagnostic.
