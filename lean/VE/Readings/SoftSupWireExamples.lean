@@ -62,6 +62,12 @@ def NSDm : NDoc := ⟨docK [.fixed "u0" (.norm needNotX) [], .set ⟨"rs1", "u1"
 -- under a named reading, only the choices taking it (`sdShown_mem`, `sdShown_image`)
 #guard sdShown NSDm [("rs1", 0)] ["soft:coherence:need-not-x,rd-2-x"] == [] &&
   sdShown NSDm [("rs1", 1)] ["soft:coherence:need-not-x,rd-2-x"] == ["soft:coherence:need-not-x,x"]
+-- each used label shown once, in order, from every choice that has it, and only from choices taking all of `A`
+#guard sdShown NSD4 [] (supLabels NSD4) ==
+  ["soft:exception:must-x:sufficient:0", "soft:coherence:must-x,need-not-x"]
+#guard (supLabels NSDm).map (fun s => sdShown NSDm [] [s]) ==
+  [["soft:coherence:need-not-x,x"], ["soft:coherence:need-not-x,x"]]
+#guard sdShown NSDm [("rs1", 0), ("rs1", 1)] (supLabels NSDm) == []
 -- `fillLabels_choice`: one `Fill_T` label, the same in each choice
 #guard VE.NormDefaults.Admission.fillLabels (supU NSDq) != [] && (choices NSDq.D).all fun c =>
   VE.NormDefaults.Admission.fillLabels (choiceU NSDq c) == VE.NormDefaults.Admission.fillLabels (supU NSDq)
@@ -147,6 +153,11 @@ def NSDbig (n : Nat) (g : VE.Formula := .top) (gated : Nat := 1) : NDoc :=
   ⟨docK (.fixed "u0" (.norm needNotX) [] :: (List.range n).map (fun k => softSet k (if k < gated then g else .top)))
     .soft frame4, ["y_permitted"]⟩
 
+-- `sdShown` on two sets: a named reading of either set is found in each choice taking it
+#guard sdShown (NSDbig 2) [("rs1", 1)] ["soft:exception:rd-4-must-x-1:sufficient:0"] ==
+    ["soft:exception:must-x-1:sufficient:0"] &&
+  sdShown (NSDbig 2) [("rs0", 1)] ["soft:exception:rd-2-must-x-0:sufficient:0"] ==
+    ["soft:exception:must-x-0:sufficient:0"]
 #guard routeFacts (NSDbig 8) == "enumerated true 256 24832 superposed"
 #guard routeFacts (NSDbig 11) == "enumerated true 1025 136325 enumerated" && (choices (NSDbig 11).D).length == 65
 #guard routeFacts (NSDbig 8 (wide 5)) == "enumerated true 256 48896 enumerated"
