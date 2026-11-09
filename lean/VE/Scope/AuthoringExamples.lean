@@ -104,4 +104,29 @@ def twoReadings := "The rules below are called the x apply only where y."
 -- the same, a carve-out over the name "the rules below are called the x"
 #guard parseGovernor "The rules below are called the x do not apply when y." == none
 
+/-! ## sc-7 review F1: no slot ends a sentence (`clause`), so a wording is one sentence -/
+
+-- the review's probe: a question or exclamation is no "When"/"If" clause and no condition (refused, never a narrowing)
+#guard ["## When should Claude refuse?", "### If in doubt, ask!", "The hard constraints apply only where is the act irreversible?."].all
+  fun w => ((parseGovernor w).map (·.getObjValD "effect")).all (· == Json.str "title")
+-- every slot, every sentence end, at the slot's end or inside it, before a closing quote, and full-width
+#guard ["## When should Claude refuse?", "### If in doubt, ask!", "## When asked. Then refuse", "## If the user says “stop.”",
+  "## When asked: refuse", "## If so…", "The hard constraints apply only where is the act irreversible?.",
+  "The hard constraints apply only where the act is irreversible!.", "The hard constraints apply only where x. The rules apply only where y.",
+  "The hard constraints do not apply when asked?.", "The hard constraints do not apply when asked (see above.).",
+  "Notwithstanding the rules of section 3, may every operator share?.", "Notwithstanding the rules of section 3, x. y.",
+  "Notwithstanding the rules of section 3?, x.", "Notwithstanding the rules of section 3., x.", "Notwithstanding the rules of section 3:, x.",
+  "This applies only where is the user a minor?.", "This applies only where the user is a minor？.", "This applies only where x！ y.",
+  "This applies only where the user waits… then acts.", "The rules below are called the x. The rules below are called the y.",
+  "The rules below are called the x?.", "The hard constraints. The rules apply only where y.",
+  "The hard constraints! do not apply when y.", "In place of their own condition, the x. the y apply only where " ++ kindWording ++ "."
+  ].all (parseGovernor · == none)
+-- sc-7 review F5: a comma inside the section slot
+#guard parseGovernor "Notwithstanding the rules of section 3,4, every operator may share." == none
+-- the other direction: a question that is no "When"/"If" heading is a title, and a "." inside a word stays in a slot
+#guard trip "## Should Claude refuse?" "{\"reach\": {\"anchor\": {\"heading\": \"Should Claude refuse?\", \"level\": 2}}, \"effect\": \"title\"}"
+#guard trip "The hard constraints apply only where the act is in section 3.2." "{\"reach\": {\"list_name\": \"the hard constraints\"}, \"effect\": {\"reguard\": [\"and\", \"own\", {\"english\": \"the act is in section 3.2\"}]}}"
+#guard trip "Notwithstanding the rules of section 3.2, every operator may share." "{\"reach\": {\"anchor\": {\"section\": \"3.2\"}}, \"effect\": \"precedes\", \"rule\": {\"english\": \"every operator may share\"}}"
+#guard trip "The rules below are called the users’ rules." "{\"list_name\": \"the users’ rules\"}"
+
 end VE.Scope.AuthoringExamples

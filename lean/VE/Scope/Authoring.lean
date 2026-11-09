@@ -14,7 +14,7 @@ import VE.Discourse.Access
     Only 2.2's wordings are accepted, with no spacing or spelling variant (english-lean ruling 1): a wording is read
     by every row, and accepted only when exactly one row's block renders back to the same bytes; two readings are
     refused, never chosen. The list name, the condition, the rule, the section and the heading are the slots; every
-    other word is fixed. -/
+    other word is fixed, and no slot but a title's heading ends a sentence (`clause`). -/
 
 namespace VE.Scope
 open Lean
@@ -28,11 +28,13 @@ def wordChar (c : Char) : Bool := !VE.Discourse.spaceChar c && 0x20 ≤ c.toNat 
 /-- Words with one space between them, no other space or control character, and at least one word. -/
 def spaced (s : String) : Bool := (s.splitOn " ").all fun w => !w.isEmpty && w.all wordChar
 
-/-- A condition or a rule: spaced, and not itself ending a sentence or a lead-in. -/
-def clause (s : String) : Bool := spaced s && !s.endsWith "." && !s.endsWith ":"
+/-- Every slot's text (a condition, a rule, a list name, a section): spaced, and no word ends a sentence or a lead-in
+    (".", "?", "!", ":", "…" or a full-width form, before any closing quote or bracket): a wording is one sentence. -/
+def clause (s : String) : Bool := spaced s && (s.splitOn " ").all fun w =>
+  !".?!:…‽。？！：．".contains (w.dropRightWhile ("”’\")]»".contains ·)).back
 
-/-- A list name: "the" and at least one more word ("the hard constraints"). -/
-def listName (n : String) : Bool := n.startsWith "the " && spaced n
+/-- A list name: "the" and at least one more word ("the hard constraints"), a slot (`clause`). -/
+def listName (n : String) : Bool := n.startsWith "the " && clause n
 
 /-- The list name at the start of a sentence, and back. -/
 def cap (n : String) : String := "The" ++ n.drop 3
@@ -147,8 +149,8 @@ def onList (w verb : String) : Option (String × String) := do
   let c ← (rest.dropSuffix? ".").map (·.toString)
   if listName n && clause c then some (n, c) else none
 
-/-- A heading of level 1 to 6: a full "When"/"If" clause narrows its section; any other heading is a title. A
-    heading whose first word is "When" or "If" and whose rest is no clause is refused, never a title. -/
+/-- A heading of level 1 to 6: a full "When"/"If" clause narrows its section; any other heading is a title. A heading
+    whose first word is "When" or "If" and whose rest is no `clause` ("When should I?", "If so, ask!") is refused. -/
 def readHeading (w : String) : Option Json := do
   let k := (w.takeWhile (· == '#')).length
   let h ← ((w.drop k).dropPrefix? " ").map (·.toString)
@@ -174,7 +176,7 @@ def readings (w : String) : List Json :=
    (between w "Notwithstanding the rules of section " ".").bind fun rest =>
      match rest.splitOn ", " with
      | s :: more => let r := ", ".intercalate more
-       if !s.isEmpty && s.all (fun ch => wordChar ch && ch != ',') && clause r then
+       if clause s && s.all (fun ch => ch != ' ' && ch != ',') && clause r then
          some (Json.mkObj [("reach", Json.mkObj [("anchor", Json.mkObj [("section", .str s)])]),
            ("effect", .str "precedes"), ("rule", english r)])
        else none

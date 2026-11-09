@@ -47,3 +47,21 @@ def test_each_row_of_2_2_has_a_round_trip_and_a_paraphrase_guard():
     for row in ("wFrame", "wNamed", "wNarrow", "wInPlace", "wCarve", "wPrecedes", "wWhen", "wTitle", "wFrontier"):
         assert f"#guard trip {row} " in examples, row
         assert f"#guard para {row} " in examples, row
+
+
+def test_review_f1_no_slot_ends_a_sentence_is_guarded():
+    """sc-7 review F1: the review's probe (a question heading, an exclamation heading, a question condition) is a
+    `#guard` that `lake build` checks, and the sweep guard covers every slot: a "When"/"If" heading, a narrowing, a
+    carve-out, the "Notwithstanding" section and rule, the frontier, the list name and the "In place of" name."""
+    examples = EXAMPLES.read_text()
+    probe = ('#guard ["## When should Claude refuse?", "### If in doubt, ask!", '
+             '"The hard constraints apply only where is the act irreversible?."].all\n'
+             '  fun w => ((parseGovernor w).map (·.getObjValD "effect")).all (· == Json.str "title")')
+    assert probe in examples
+    sweep = examples[examples.index("-- every slot, every sentence end"):]
+    sweep = sweep[:sweep.index("].all (parseGovernor · == none)")]
+    for start in ("## When ", "## If ", "The hard constraints apply only where ", "The hard constraints do not apply when ",
+                  "Notwithstanding the rules of section 3, ", "Notwithstanding the rules of section 3?",
+                  "This applies only where ", "The rules below are called the x.", "The hard constraints. ",
+                  "In place of their own condition, the x."):
+        assert f'"{start}' in sweep, start
