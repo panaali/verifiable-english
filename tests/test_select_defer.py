@@ -235,7 +235,7 @@ def test_a_unit_names_a_changed_module_or_its_directory_never_a_sibling():
                                            ["lean/VE/Scope/Plain.lean"])
 
 
-# Each way a unit's source builds a path from literal parts (history_tests.built_paths), and a sibling built the
+# Each way a unit's source builds a path from literal parts (path_expressions.built_paths), and a sibling built the
 # same way. The first is tests/test_w6a_looprecheck1.py:316 (review F1), copied so this test reads no other test.
 JOINS = {
     'CALENDAR = ROOT / "lean" / "VE" / "Time" / "Calendar.lean"\n': "lean/VE/Time/Calendar.lean",
@@ -253,7 +253,7 @@ HEADER = 'import os\nfrom pathlib import Path\nROOT = Path(__file__).resolve().p
 def test_a_module_or_directory_a_unit_builds_by_a_join_is_named(tmp_path, line):
     (tmp_path / "tests").mkdir()
     (tmp_path / "tests/test_join.py").write_text(HEADER + line)
-    assert select_tests.history_tests.built_paths("tests/test_join.py", tmp_path) == {JOINS[line]}
+    assert select_tests.path_expressions.built_paths(HEADER + line, "tests/test_join.py") == {JOINS[line]}
     text = select_tests.unit_text("tests/test_join.py", tmp_path)
     assert select_tests.names_changed_lean(text, ["lean/VE/Time/Calendar.lean"])
     # only the whole join is a path it names: its parts do not name lean/VE, nor a sibling's directory
