@@ -791,6 +791,13 @@ def fx1 : Fixed := ⟨.norms, [("u1", 1, 0, sitNo)]⟩
 -- A3: unresolved on a unit with one content, on `admit` and under the fixture table.
 #guard errOf (admit (docA [cu "u1" theOwner] [pA .unresolved])) == "PresuppositionUnresolved: p1"
 #guard errOf (admitWith fixtureTable fxN (docA [cu "u1" theOwner] [pA .unresolved])) == "PresuppositionUnresolved: p1"
+-- step 3 on an open set: every reading must peel to one base content; a reading over another base is `content`
+#guard errOf (admitWith fixtureTable fx1 (docA [⟨"u1", true, .readings [rdAs,
+  { rdCo with content := .claim (.implies theOwnerU busy) }]⟩] [pA .unresolved])) == "PresuppositionMismatch: p1: content"
+-- step 3 reads the units with obligations only, the first of each id: an unformalised unit without obligations and a
+-- later unit repeating an id are not read
+#guard errOf (admit (docA [cu "u0" theOwnerU, cu "u1" theOwner, ⟨"u2", true, .unformalised⟩, cu "u1" busy]
+  [pA (.assumed "u0")])) == "admitted"
 -- A21 (R-6): a one-candidate top cell gives one expected reading: refused (fewer than two).
 #guard errOf (admitWith oneCell fxN (docA [⟨"u1", true, .readings [rdCo]⟩] [pA .unresolved])) ==
   "PresuppositionCandidates: p1"
@@ -843,6 +850,17 @@ def fx7 (ch : VE.Readings.Chain) : Fixed := ⟨ch, [("u7", 0, 1, sit7)]⟩
 -- with an instruction both readings decide `p`: not separated
 #guard errOf (admitWith fixtureTable ⟨.norms, [("u7", 0, 1, { sit7 with base := m7 [("g", [["s1"]]),
   ("instruction", [["i1"]])] })]⟩ (doc7u false ["p"])) == "PresuppositionCandidates: p1: readings 0 and 1 are not separated"
+-- with `norm-defaults@0` the separation is the completion's: where `unsaid__p` holds, `F_p` decides `p` under both
+-- readings, so they are not separated there; W1 alone (the document without `norm-defaults@0`) separates them
+def sitU : VE.Readings.Situation String :=
+  ⟨m7 [("g", [["s1"]]), ("unsaid__p", [["s1"]])], [], [], .outcome "p" ["s1"], true⟩
+#guard errOf (admitWith fixtureTable ⟨.norms, [("u7", 0, 1, sitU)]⟩ (doc7u false ["p"])) ==
+  "PresuppositionCandidates: p1: readings 0 and 1 are not separated"
+#guard errOf (admitWith fixtureTable ⟨.norms, [("u7", 0, 1, sitU)]⟩ { doc7u false ["p"] with defaults := false }) ==
+  "admitted"
+-- `admit`'s fixed inputs are the norms chain and no situation: S7's open rule is not refused as on the soft chain,
+-- and is not separated
+#guard errOf (admitWith fixtureTable admitInputs (doc7u false ["p"])) == "PresuppositionCandidates: p1: readings 0 and 1 are not separated"
 -- A26 (R-8): the same set on the soft chain is refused at step 5 before separation; on the rights chain this check
 -- does not refuse it (readings@1's `abstention` does, before `admit` runs: A27 below).
 #guard errOf (admitWith fixtureTable (fx7 .soft) (doc7u false ["p"])) == softText
