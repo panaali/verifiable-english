@@ -4,8 +4,11 @@ import VE.Question.Strings
 import VE.Commands.StepsExamples
 
 /-! Section 7's `preposed_eq` and `readStep_conservative` (docs/spec/commands-imperatives.md; item ci-3b), proved over
-the `String.splitOn` lemmas of `VE.Commands.SplitOnLemmas`. `If <c>, <x>.` takes `<x>` from a split at `, `, so `<x>`
-holds no `, then ` and the condition-scope refusal never fires. A merged wording keeps its reading: `hs` leaves no
+the `String.splitOn` lemmas of `VE.Commands.SplitOnLemmas`. When `If <c>, <x>.` is the wording's only shape
+(`shapes s = [.preposed c x]`, `preposed_eq`'s `h`), `<x>` is one piece of a split at `, `, so it holds no `, then ` and
+the condition-scope refusal never fires on it. With more than one shape `<x>` joins pieces and the refusal can fire
+("If draft is approved, click Check rule conflict, then click Ask.", the guard at the end of this file). A merged
+wording keeps its reading: `hs` leaves no
 sequence (`readStep_core`), and the act linter leaves no `If ` or `Then ` shape (`one_begins`): a read command's act
 begins `{0} <verb>`, its verb is no clause word, and `checkTemplates` keeps a slot from joining it. -/
 
@@ -46,7 +49,8 @@ theorem not_if_then {body : String} (h1 : body.startsWith "If " = true) : body.s
     have := congrArg (fun z : String => z.data.head?) hv
     simp [String.data_append] at this
 
-/-- `If <c>, <x>.` takes `<x>` from the split of the body after `If ` at `, `. -/
+/-- When `If <c>, <x>.` is the wording's only shape (`shapes s = [.preposed c x]`), `<x>` is one piece of the split of
+the body after `If ` at `, `. -/
 theorem shapes_preposed {s c x : String} (h : shapes s = [.preposed c x]) :
     x ∈ (((trimmed s).dropRight 1).drop 3).splitOn ", " := by
   unfold shapes at h
@@ -69,7 +73,8 @@ theorem shapes_preposed {s c x : String} (h : shapes s = [.preposed c x]) :
   · rw [if_neg hi] at h
     split at h <;> split at h <;> simp at h
 
-/-- `<x>` of `If <c>, <x>.` holds no `, then `, so its step never has the condition-scope refusal. -/
+/-- When `If <c>, <x>.` is the wording's only shape (`shapes s = [.preposed c x]`), `<x>` holds no `, then `, so its
+step never has the condition-scope refusal. -/
 theorem hasThen_preposed {s c x : String} (h : shapes s = [.preposed c x]) : hasThen (x ++ ".") = false := by
   have hx := splitOn_free _ ", " (by decide) x (shapes_preposed h)
   unfold hasThen
@@ -667,5 +672,13 @@ theorem readStep_conservative (j : Lean.Json) (r : Reading)
     maxWordingBytes < (trimmed p).utf8ByteSize && StepsExamples.step p == .limit
 #guard Examples.web (capitalise (String.mk (List.replicate 389 ' ') ++ "click Ask") ++ ", if draft is approved.") ==
   .one ⟨.require, "click_ask_required", [], Examples.approvedDraft⟩
+
+-- `h` is needed (one shape): with two `If` shapes the first `<x>` joins two pieces of the split at `, `, holds
+-- `, then `, and the step is `ConditionScope` (review ci-3b F1).
+#guard let p := "If draft is approved, click Check rule conflict, then click Ask."
+  shapes p == [.preposed "draft is approved" "click Check rule conflict, then click Ask",
+      .preposed "draft is approved, click Check rule conflict" "then click Ask"] &&
+    hasThen ("click Check rule conflict, then click Ask" ++ ".") &&
+    StepsExamples.step p == .refused "ConditionScope" StepsExamples.conditionScopeText
 
 end VE.Commands
