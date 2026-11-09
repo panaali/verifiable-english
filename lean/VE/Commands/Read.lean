@@ -2,6 +2,7 @@ import VE.SpeechActs.Wire
 import VE.EnglishGrammar.Run
 import VE.Commands.Texts
 import VE.Scope.Theorems
+import VE.Scope.ReadingsLemmas
 
 /-! The Lean command reader (docs/spec/commands-imperatives.md sections 1 to 4): a wording of the merged forms, read
 against a decoded speech environment, its scope and english-lean's lexicon. It has no caller until `english.command`
@@ -956,6 +957,18 @@ theorem readCommand_typed_of_facts (r : Reading) (D : VE.SpeechActs.SpeechDoc) (
         simp [hE ▸ hyou, hE, (hreg g0 hmem).1, hs, hguard, htyped, VE.SpeechActs.constsTyped, hrole]
         cases p.force <;> simp [roleOf]
 
+/-- Under `acts@0` a read command's act is one simple act of a decoded environment (commands-imperatives 9): AP-1's
+`check` read every act of the environment, so the reader needs no refusal of its own. -/
+theorem command_act_simple (j : Lean.Json) (hd : VE.SpeechActs.Wire.decodeSpeechEnvironmentFull j = .ok se)
+    (h : "acts@0" ∈ se.profiles) (r : Reading) (hr : readCommand se sc E L b s = .one r) :
+    ∃ g a fx, g ∈ se.ne.regulated ∧ g.name = r.act ∧ g.act = some a ∧
+      VE.Norms.Wire.actsFixed se.profiles se.json = .ok fx ∧ VE.Acts.Lexical.joinFree fx a = true := by
+  obtain ⟨_, hc, _⟩ := (readCommand_one_iff se sc E L b s r).mp hr
+  have hm : r ∈ candidates se sc E L b s := (mem_dedup _ _ (Nat.le_refl _) r).mp (by simp [hc])
+  obtain ⟨_, g, a, _, _, _, hg, hn, _, ha, _⟩ := candidate_reads_back se sc E L b s r hm
+  obtain ⟨fx, hf, hj⟩ := VE.SpeechActs.Wire.decoded_act_simple hd h hg ha
+  exact ⟨g, a, fx, hg, hn, ha, hf, hj⟩
+
 end Statements
 
 /-! ## The decoder half of `readCommand_typed` (ci-1b; reviews/dri-decisions-20261102-ci-1.md item 1): a decoded
@@ -1189,16 +1202,62 @@ theorem wf_member {kvs : Std.TreeMap.Raw String Json} (hw : VE.Scope.JsonWF (.ob
     (h : (k, v) ∈ kvs.toList) : (Json.obj kvs).getObjVal? k = .ok v :=
   VE.Scope.members_get kvs (VE.Scope.jsonWF_top _ hw kvs rfl) k v (by rwa [VE.Scope.members_obj])
 
-/-- W1's decoder over a vocabulary whose objects are well formed: each regulated predicate is declared with its
-sorts, and the regulated and constant names are distinct. -/
-theorem norms_facts {env : Json} {ne : VE.Norms.Wire.NormsEnvironment}
-    (h : VE.Norms.Wire.decodeNormsEnvironment env = .ok ne)
-    (hw : ∀ v, env.getObjVal? "vocabulary" = .ok v → VE.Scope.JsonWF v) :
+/-- A list of strings encodes as a well-formed array. -/
+theorem wf_strings (l : List String) : VE.Scope.JsonWF (Lean.toJson l) :=
+  .arr _ fun x hx => by
+    simp only [Lean.toJson, Array.mem_map] at hx
+    obtain ⟨s, _, rfl⟩ := hx
+    exact .str s
+
+/-- `acts@0`'s view of a well-formed environment (`Norms.Wire.actsView`) is well formed. -/
+theorem wf_actsView {env : Json} (hw : VE.Scope.JsonWF env) (ps : List String) :
+    VE.Scope.JsonWF (VE.Norms.Wire.actsView env ps) := by
+  unfold VE.Norms.Wire.actsView
+  by_cases hr : VE.Norms.Wire.readsActs ps = true
+  · simp only [hr, if_true]
+    refine VE.Scope.jsonWF_set _ _ (VE.Scope.jsonWF_set _ _ hw (wf_strings _) _) ?_ _
+    have hv := VE.Scope.jsonWF_getD env hw "vocabulary"
+    split
+    · next kvs hk =>
+      rw [hk] at hv
+      cases hv with
+      | obj _ hkw hall =>
+        refine .obj _ hkw.erase fun kv hkv => hall kv ?_
+        rw [Std.TreeMap.Raw.mem_toList_iff_getElem?_eq_some hkw.erase, Std.TreeMap.Raw.getElem?_erase hkw] at hkv
+        split at hkv
+        · cases hkv
+        · exact (Std.TreeMap.Raw.mem_toList_iff_getElem?_eq_some hkw).mpr hkv
+    · exact hv
+  · simp only [hr, Bool.false_eq_true, if_false]
+    exact hw
+
+/-- What W1's decoder reads past the speech block is well formed when the environment is. -/
+theorem wf_strip {j s : Json} (hw : VE.Scope.JsonWF j) (h : VE.SpeechActs.Wire.stripSpeech j = .ok s) :
+    VE.Scope.JsonWF s := by
+  unfold VE.SpeechActs.Wire.stripSpeech at h
+  obtain ⟨_, _, h⟩ := VE.Kit.Except.bind_ok h
+  obtain ⟨_, _, h⟩ := VE.Kit.Except.bind_ok h
+  obtain ⟨fs, hfs, h⟩ := VE.Kit.Except.bind_ok h
+  cases h
+  obtain ⟨kvs, rfl, rfl⟩ := fields_obj hfs
+  refine VE.Scope.jsonWF_set _ _ (VE.Scope.jsonWF_mkObj _ fun p hp => ?_) (wf_strings _) _
+  exact wf_get hw (wf_member hw (List.mem_filter.mp hp).1)
+
+/-- W1's decoder, `acts@0`'s hook on or off, over a well-formed environment: each regulated predicate is declared
+with its sorts, and the regulated and constant names are distinct. -/
+theorem norms_facts {env : Json} {ne : VE.Norms.Wire.NormsEnvironment} {acts : Bool}
+    (h : VE.Norms.Wire.decodeNormsEnvironment env (acts := acts) = .ok ne)
+    (hwe : VE.Scope.JsonWF env) :
     (∀ g ∈ ne.regulated, ne.rv.environment.predicates g.name = some g.sorts) ∧ (ne.regulated.map (·.name)).Nodup ∧
       (ne.rv.vocabulary.constants.map (·.1)).Nodup := by
   unfold VE.Norms.Wire.decodeNormsEnvironment at h
-  simp only [VE.Norms.Wire.actsProfiles, List.isEmpty_nil, if_true, Bool.false_eq_true, if_false,
-    VE.Norms.Wire.joinedActs, Bool.false_and] at h
+  simp only [VE.Norms.Wire.joinedActs, Bool.false_and, Bool.false_eq_true, if_false] at h
+  generalize hps : VE.Norms.Wire.actsProfiles acts env = ps at h
+  have hw : ∀ v, (if ps.isEmpty then env else VE.Norms.Wire.actsView env ps).getObjVal? "vocabulary" = .ok v →
+      VE.Scope.JsonWF v := fun v hv => by
+    split at hv
+    · exact wf_get hwe hv
+    · exact wf_get (wf_actsView hwe ps) hv
   obtain ⟨e, he, h⟩ := bind_ok h
   split at h <;> try (cases h; done)
   obtain ⟨_, _, h⟩ := bind_ok h
@@ -1292,21 +1351,8 @@ theorem find?_of_nodup {g : VE.Norms.Regulated} : ∀ {l : List VE.Norms.Regulat
 facts. -/
 theorem declared_of_decode {j : Json} {se : VE.SpeechActs.Wire.SpeechEnvironment} (hw : VE.Scope.JsonWF j)
     (hd : VE.SpeechActs.Wire.decodeSpeechEnvironmentFull j = .ok se) : declared se = true := by
-  unfold VE.SpeechActs.Wire.decodeSpeechEnvironmentFull at hd
-  obtain ⟨_, _, hd⟩ := bind_ok hd
-  obtain ⟨_, _, hd⟩ := bind_ok hd
-  obtain ⟨_, _, hd⟩ := bind_ok hd
-  obtain ⟨_, _, hd⟩ := bind_ok hd
-  obtain ⟨_, _, hd⟩ := bind_ok hd
-  obtain ⟨_, _, hd⟩ := bind_ok hd
-  obtain ⟨_, _, hd⟩ := bind_ok hd
-  obtain ⟨st, hst, hd⟩ := bind_ok hd
-  obtain ⟨ne, hne, hd⟩ := bind_ok hd
-  obtain ⟨_, _, hd⟩ := bind_ok hd
-  obtain ⟨_, _, hd⟩ := bind_ok hd
-  obtain ⟨_, _, hd⟩ := bind_ok hd
-  cases hd
-  obtain ⟨hp, hn, hc⟩ := norms_facts hne fun v hv => wf_get hw (strip_vocabulary hw hst hv)
+  obtain ⟨_, _, _, _, hst, hne, _⟩ := VE.SpeechActs.Wire.decode_steps hd
+  obtain ⟨hp, hn, hc⟩ := norms_facts hne (wf_strip hw hst)
   simp only [declared, Bool.and_eq_true, List.all_eq_true, beq_iff_eq]
   exact ⟨fun g hg => ⟨hp g hg, find?_of_nodup hg hn⟩, fun x hx => lookup_of_mem hx hc⟩
 
