@@ -122,7 +122,10 @@ None expected: a structure row (bytes 0). The content stays a named open residua
   0 NOT RUN`, exit 0. No trusted definition is new, so no allow file is needed and at-1c's is not extended. The seeded bugs above
   are what this item's checks are measured by.
 - `grep -rln VE.Attitudes lean/VE/Service lean/VE/Route lean/Main.lean ve/`: no file, so no route reads these modules.
-- Selected tests: (below, after the final run).
+- Selected tests, once, on the committed tree d6d7dec2b (clean): `MAC_PYTEST_NO_DEFER=1 zsh manage-agents/mac-pytest.sh --select -- --base
+  a0102f0e5 --run`: `482/560 test units`; `recorded 482 units for tree 3e5539d4f0; … 0 failed`; `ran on ve-cloud-2 … exit=0; 8232s`.
+  The chunked files passed whole: `tests/test_trust_mutants.py` 814, `tests/test_speech_polar_lean.py` 9536,
+  `tests/test_acts_vocab_mutants.py` 643. Only this report changed after the run.
 - Not run here: the full gate (the chain runs it). No test in main-known-red.txt was touched.
 
 SELF-REVIEW: 0 A, 4 B, 7 C; fixed 10 (the four B: the gate's ` :=` anchor, mutants in the changed Lean files, 7.4's two missing
@@ -142,7 +145,7 @@ SELF-REVIEW: 0 A, 4 B, 7 C; fixed 10 (the four B: the gate's ` :=` anchor, mutan
 6. N.A. here: the chain gates the final HEAD; `trust-mutants.json` names 595f83c46, whose Lean equals HEAD's.
 7. PASS: no DELTA row, no signature reserved, trust +0 (`trust_map.py --check`).
 8. PASS: no user-visible output changes (theorems and fixtures only; the route grep).
-9. PASS: the selected run below (`tools/select_tests.py` through `mac-pytest.sh --select`).
+9. PASS: the selected run in "Runs" (482 of 560 units, 0 failed), through `mac-pytest.sh --select`.
 10. PASS: `spec_text_check.py` checks every statement verbatim and fails on a weakened conclusion or a removed hypothesis
     (`mutants.json`: `statement-*`); the proofs depend on the definitions they claim (each seeded bug breaks a proof).
 11. N.A.: no evaluator, budget or deadline; nothing runs these definitions on a route.
