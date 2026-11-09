@@ -107,6 +107,7 @@ module VE.Acts.Faithful
 module VE.Acts.FaithfulExamples
 module VE.Acts.Grammar
 module VE.Acts.GrammarExamples
+module VE.Acts.Index
 module VE.Acts.Lexical
 module VE.Acts.LexicalBase
 module VE.Acts.LexicalExamples
