@@ -9,7 +9,8 @@ A *route* is one way `ve` reads a Lean answer:
   built service lists in its handshake), read by `LeanService.exchange` (the transport of `relay`) and, for a
   mode whose one caller reads the answer further (`SERVICE_READERS`: `ask`, read by `ve.ask.read_answer`;
   `words`, read by `ve.words.read_answer`; `document`; `metered`, read by `ve.evaluate.read_evaluation` and
-  `ve.search.read_nonvacuity`; `act-readings`, read by `ve.acts.read_answer`), by that caller's reader too, on every fixture whose genuine answer
+  `ve.search.read_nonvacuity`; `english.command`, read by `ve.backends.english_lean.command_answer`;
+  `act-readings`, read by `ve.acts.read_answer`), by that caller's reader too, on every fixture whose genuine answer
   is not a rejection row;
 * each one-shot runner call that a `ve` call site makes: every assurance-manifest binding of a runner other
   than `ve_service` whose operation has Lean call sites, and every call of the one-shot route reader
@@ -417,6 +418,16 @@ def _acts_reader(case):
 SERVICE_READERS = {"ask": _ask_reader, "words": _words_reader, "document": _document_reader,
                    "metered": _metered_reader, "calc": _calc_reader, "scope": _scope_reader,
                    "act-readings": _acts_reader}
+
+
+def _command_reader(case):
+    """How `ve.backends.english_lean.read_command` reads the service's response to `case` (commands-imperatives CI-2):
+    `relay.decided`, then `command_answer`, the answer bound to the request (`command_problem`)."""
+    from ve.backends import english_lean, relay
+    return lambda response: english_lean.command_answer(relay.decided(response["results"])[0], case)
+
+
+SERVICE_READERS["english.command"] = _command_reader
 
 
 def _exchange_outcome(replay: _Replay, mode: str, text: str, read=None) -> tuple[str, str]:
