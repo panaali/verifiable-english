@@ -1,0 +1,7 @@
+trust_mutants: 8 definitions, 75 mutants (10 to run), 4 jobs, base d962e66a76e5
+UNKNOWN lean/VE/Acts/Run.lean:176 VE.Acts.Run.listReadings (G[V], trusted) list-empty: sp.map -> [] (lean/VE/Acts/Run.lean:176: Function expected at)
+UNKNOWN lean/ResponseShape/Schemas.lean:51 ResponseShape.Schemas.files (G[V], trusted) list-drop-first: [ Common.file, Envelope.file, Alternatives.file, Bundle.file, Check.file, CheckCertificate.file, ... -> (([ Common.file, Envelope.file, Alternatives.file, Bundle.file, Check.file, CheckCertificate.file... (lean/ResponseShape/Skeletons.lean:29: evaluate.json#/row: unresolved $ref common.json#/$defs/case...)
+trust_mutants: 7 KILLED, 0 SURVIVOR, 2 UNKNOWN, 1 INVALID, 0 ALLOWED, 0 NOT RUN, 65 OTHER SHARD in 420 s
+trust_mutants: D[V], trusted: 3 KILLED, 23 OTHER SHARD
+trust_mutants: G[V], trusted: 4 KILLED, 2 UNKNOWN, 1 INVALID, 42 OTHER SHARD
+trust_mutants: steps: wall plan 9.3 s, scratch 2.6 s, control_build 0.2 s, probe_install 1.2 s, control_probes 258.6 s, mutants 143.3 s, cleanup 4.6 s, reads 0.1 s; lake control_build 0.2 s (1), probe_install 1.2 s (1), control_probes 530.7 s (9), mutant_builds 20 s (12), mutant_checks 269.7 s (9), stage_controls 34.8 s (4), mutant_probes 21 s (7)
