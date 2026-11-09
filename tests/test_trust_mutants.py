@@ -258,7 +258,8 @@ def test_a_check_wrapped_in_guard_msgs_kills(default_run):
 
 def test_a_run_records_where_its_time_goes(default_run, tmp_path_factory):
     """eff-tm-control: every Lake run of a sweep counts under its step (none under "other"), each step that ran took
-    time, the phases add up to the run's seconds, and the one line prints them."""
+    time, the phases add up to the run's seconds, and the one line prints them. The lazy controls' wall phase is near
+    0: their probes run inside the mutants' phase, counted under the "control_probes" Lake step (eff-20261108-1)."""
     import trust_mutants as tm
     done, mutants, _, _ = default_run
     data = json.loads((tmp_path_factory.getbasetemp() / "default-evidence.json").read_text())
@@ -269,7 +270,10 @@ def test_a_run_records_where_its_time_goes(default_run, tmp_path_factory):
     assert runs["mutant_builds"] >= len(built) and min(runs[k] for k in (
         "control_probes", "mutant_checks", "stage_controls", "mutant_probes")) >= 1, runs
     assert all((lake[k] > 0) == (runs[k] > 0) for k in tm.LAKE), steps
-    assert all(steps["wall"][k] > 0 for k in ("control_build", "probe_install", "control_probes", "mutants")), steps
+    assert all(steps["wall"][k] > 0 for k in ("control_build", "probe_install", "mutants")), steps
+    # lazy controls (the default, eff-20261108-1) run inside the mutants' phase, still under their Lake step
+    assert data["control_probes"] == "lazy" and lake["control_probes"] > 0, steps
+    assert steps["wall"]["control_probes"] < steps["wall"]["mutants"], steps
     # the phases up to the mutants' end are the run's "seconds" (each rounded to 0.1 s, it to 1 s)
     assert abs(sum(steps["wall"][k] for k in tm.WALL[:6]) - data["seconds"]) <= 1.5, (steps, data["seconds"])
 
