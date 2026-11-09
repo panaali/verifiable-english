@@ -24,6 +24,11 @@ the head still collects. A trailer without a target and a reason fails too.
 * none of these: a `conftest.py` that deselects or ignores it, or a parameter list that shrinks while its
   source in the test module is unchanged (a data file, a glob, an imported list).
 
+A parametrised mutant ID that an inserted mutant renumbers (a case named by its definition and its position)
+is paired with its head ID, not refused, when its module names each case by its mutant text (`CASES_HOOK`)
+on both sides and every base case of its function has a head case with that text (`pair_cases`); a function
+one of whose base texts is gone pairs nothing. The gate logs each pair (`pairing_text`).
+
 A module that no longer imports or is skipped at collection is a collection report, which fails on its own
 as well. Every head collection is attached as the record of its commit.
 
