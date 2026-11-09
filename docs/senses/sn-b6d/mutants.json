@@ -1,0 +1,86 @@
+{
+  "item": "sn-b6d",
+  "note": "Each mutant was planted, the Lean route rebuilt for a Lean one (lake build ve_senses_route only; VE_NATIVE_PREBUILT=1), the named test run alone, and the file restored from its saved copy (git status clean).",
+  "mutants": [
+    {
+      "id": "L1",
+      "file": "lean/VE/Senses/Run.lean",
+      "behaviour": "a rendering re-read under the base projection accepted (task seeded bug)",
+      "mutation": "rereadJson: linesProjection D c b cand.lines used -> linesProjection D c b \"\" used",
+      "test": "tests/test_senses_read_members.py::test_a_base_projection_rendering_is_refused",
+      "result": "1 failed (['different', 'different'] != ['same', 'same']); and the #guards at lean/VE/Senses/TextsExamples.lean:91, :92, :95 fail the build"
+    },
+    {
+      "id": "L2",
+      "file": "lean/VE/Senses/Run.lean",
+      "behaviour": "the re-read member changing an existing golden answer (task seeded bug)",
+      "mutation": "readCase: the unasked re-read | _, _ => pure [] -> pure [(\"reread\", Json.null)]",
+      "test": "tests/test_senses_read_members.py::test_a_golden_request_without_the_members_keeps_its_answer",
+      "result": "9 failed (all 9 goldens)"
+    },
+    {
+      "id": "L3",
+      "file": "lean/VE/Senses/Run.lean",
+      "behaviour": "Lean's line with word and gloss swapped (task seeded bug)",
+      "mutation": "lineJson: lineOf w s -> lineOf g { s with gloss := w }",
+      "test": "lean/VE/Senses/TextsExamples.lean:77-79 (#guard per slot); tests/test_senses_read_members.py::test_the_line_is_leans",
+      "result": "the three #guards fail the build; 1 failed"
+    },
+    {
+      "id": "P1",
+      "file": "ve/backends/senses.py",
+      "behaviour": "the relay accepting a re-read of another candidate than the request's",
+      "mutation": "_reread_problem: the equality with the request's sentence and candidate dropped",
+      "test": "tests/test_senses_read_members.py::test_reread_rebinding_is_refused",
+      "result": "1 failed: [candidate-other]"
+    },
+    {
+      "id": "P2",
+      "file": "ve/backends/senses.py",
+      "behaviour": "the relay accepting a line for another word or gloss",
+      "mutation": "_line_problem: the equality with the request's word and gloss dropped",
+      "test": "tests/test_senses_read_members.py::test_line_rebinding_is_refused",
+      "result": "2 failed: [word-swapped, gloss]"
+    },
+    {
+      "id": "P3",
+      "file": "ve/backends/senses.py",
+      "behaviour": "a candidate's emptied lines accepted (found by the relay mutation gate)",
+      "mutation": "_response_problem: `or not candidate[\"lines\"]` dropped",
+      "test": "tests/test_senses_read_members.py::test_a_candidate_with_its_lines_emptied_is_refused",
+      "result": "1 failed"
+    },
+    {
+      "id": "L4",
+      "file": "lean/VE/Senses/Run.lean",
+      "behaviour": "the asked re-read decoded before any reading (self-review B1)",
+      "mutation": "readCase: some <$> decodeReread r -> pure (decodeReread r).toOption (a malformed member ignored)",
+      "test": "tests/test_senses_read_members.py::test_lean_refuses_a_malformed_member_before_reading",
+      "result": "10 failed (the five reread values on an admitted and a refused reading)"
+    },
+    {
+      "id": "P4",
+      "file": "ve/backends/senses.py",
+      "behaviour": "the line's code bound to what the request's dictionary lacks (self-review B2)",
+      "mutation": "_line_problem: the UnknownWord / UnknownGloss choice check dropped",
+      "test": "tests/test_senses_read_members.py::test_line_rebinding_is_refused",
+      "result": "2 failed: [code-word-for-gloss, code-gloss-for-word]"
+    },
+    {
+      "id": "G1",
+      "file": "tools/relay_mutation_gate.py",
+      "behaviour": "the gate keeps and asks the senses.read line and reread cases",
+      "mutation": "_shape: asked = ()",
+      "test": "tests/test_relay_mutation_gate.py::test_the_senses_read_fixtures_ask_for_the_line_and_the_reread",
+      "result": "1 failed"
+    },
+    {
+      "id": "P5",
+      "file": "ve/backends/senses.py",
+      "behaviour": "review F1: the relay only types Lean's line text and re-read outcome, never recomputes them (R8)",
+      "mutation": "_line_problem: a text other than f\"In this document, {word} means {gloss}.\" refused; _reread_problem: an outcome other than \"same\" refused",
+      "test": "tests/test_senses_read_members.py::test_leans_text_and_outcome_are_only_typed",
+      "result": "5 failed (all 5 cases)"
+    }
+  ]
+}
