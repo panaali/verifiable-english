@@ -11482,6 +11482,11 @@ theorem VE.Compose.find_erase
     f "judgments@0" = Bool.false → List.find? f (ps.erase "judgments@0") = List.find? f ps
   -- uses
   -- expr 1743147879
+theorem VE.Compose.find_erase_events
+  ∀ (ps : List String) (f : String → Bool),
+    f "events@0" = Bool.false → List.find? f (ps.erase "events@0") = List.find? f ps
+  -- uses
+  -- expr 1927953193
 theorem VE.Compose.find_first
   ∀ {l : List String} {P : String → Bool} {x : String},
     List.Pairwise (fun x1 x2 => x1 < x2) l →
@@ -11514,6 +11519,16 @@ theorem VE.Compose.gate_acts
             (r = VE.Compose.Route.norms ∨ r = VE.Compose.Route.normDefaults ∨ r = VE.Compose.Route.readings)
   -- uses VE.Compose.Route.normDefaults@VE.Compose.Dispatch VE.Compose.Route.norms@VE.Compose.Dispatch VE.Compose.Route.readings@VE.Compose.Dispatch VE.Compose.Route@VE.Compose.Dispatch VE.Compose.gateOf@VE.Compose.Dispatch VE.Compose.profileTable@VE.Compose.Dispatch
   -- expr 3915517882
+theorem VE.Compose.gate_events
+  ∀ (ps : List String),
+    List.Pairwise (fun x1 x2 => x1 < x2) ps →
+      List.find? (fun p => !VE.Compose.profileTable.any fun x => x.profile == p) ps = Option.none →
+        match VE.Compose.eventsFault ps with
+        | Option.some t => VE.Compose.gateOf VE.Compose.profileTable ps = Except.error (VE.Compose.unsupported t)
+        | Option.none =>
+          VE.Compose.gateOf VE.Compose.profileTable ps = VE.Compose.gateOf VE.Compose.profileTable (ps.erase "events@0")
+  -- uses VE.Compose.ProfileRow.profile@VE.Compose.Dispatch VE.Compose.ProfileRow@VE.Compose.Dispatch VE.Compose.Route@VE.Compose.Dispatch VE.Compose.eventsFault@VE.Compose.Dispatch VE.Compose.gateOf@VE.Compose.Dispatch VE.Compose.profileTable@VE.Compose.Dispatch VE.Compose.todayGate.match_1@VE.Compose.Dispatch VE.Compose.unsupported@VE.Compose.Dispatch
+  -- expr 924704904
 theorem VE.Compose.gate_judgments
   ∀ (ps : List String),
     List.Pairwise (fun x1 x2 => x1 < x2) ps →
@@ -13376,10 +13391,10 @@ theorem VE.Defaults.Wire.decodeLayered_soften
   -- uses VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.Wire.decodeLayered@VE.NormDefaults.Layered VE.Norms.Doc@VE.Norms.Tree VE.SoftNorms.soften@VE.SoftNorms.Soften
   -- expr 3164523497
 theorem VE.Defaults.Wire.decodeRightsU_soften
-  ∀ (environment document : Lean.Json) (L : VE.NormDefaults.Wire.LayeredU),
-    VE.NormDefaults.Wire.decodeRightsU environment document = Except.ok L → L.U.D = VE.SoftNorms.soften L.D
-  -- uses VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.Wire.decodeRightsU@VE.NormDefaults.Layered VE.Norms.Doc@VE.Norms.Tree VE.SoftNorms.soften@VE.SoftNorms.Soften
-  -- expr 574993911
+  ∀ (environment document : Lean.Json) (L : VE.NormDefaults.Wire.LayeredU) {H : Option VE.Events.EventsHook},
+    VE.NormDefaults.Wire.decodeRightsU environment document H = Except.ok L → L.U.D = VE.SoftNorms.soften L.D
+  -- uses VE.Events.EventsHook@VE.Events.Wire VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.Wire.decodeRightsU@VE.NormDefaults.Layered VE.Norms.Doc@VE.Norms.Tree VE.SoftNorms.soften@VE.SoftNorms.Soften
+  -- expr 3945461868
 theorem VE.Defaults.Wire.default_exception
   ∀ {D : VE.SoftNorms.SoftDoc},
     VE.SoftNorms.WellFormedSoft D = Bool.true →
@@ -19600,6 +19615,10 @@ theorem VE.EvaluationCounts.route_decodeFormulas_length
     VE.Route.Wire.decodeFormulas E j data = Except.ok fs → ∃ arr, j.getArr? = Except.ok arr ∧ fs.length = arr.size
   -- uses VE.Environment@VE.Syntax VE.Formula@VE.Syntax VE.Route.Wire.decodeFormulas@VE.Route.Wire
   -- expr 761532944
+theorem VE.Events.EventsDecoded.labelled_eq
+  ∀ (self : VE.Events.EventsDecoded), self.labelled = VE.Events.eventsLabelled self.V
+  -- uses VE.Events.EventsDecoded.V@VE.Events.Wire VE.Events.EventsDecoded.labelled@VE.Events.Wire VE.Events.EventsDecoded@VE.Events.Wire VE.Events.eventsLabelled@VE.Events.Premises VE.Formula@VE.Syntax
+  -- expr 4055009609
 theorem VE.Events.EventsDecoded.typed
   ∀ (self : VE.Events.EventsDecoded), VE.Events.EventsTyped self.E self.V = Bool.true
   -- uses VE.Events.EventsDecoded.E@VE.Events.Wire VE.Events.EventsDecoded.V@VE.Events.Wire VE.Events.EventsDecoded@VE.Events.Wire VE.Events.EventsTyped@VE.Events.Decl
@@ -19758,6 +19777,22 @@ theorem VE.Events.dayExtension_transfer
           (VE.Events.down day ng a = Bool.true → VE.Formula.denote S (List.map ι ρ) a → VE.Formula.denote M ρ a)
   -- uses VE.Events.DayExtension@VE.Events.Completion VE.Events.down@VE.Events.Completion VE.Events.up@VE.Events.Completion VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
   -- expr 3827354477
+theorem VE.Events.decodeEventsWith_ok
+  ∀ {c : List VE.Events.Link → Except String Unit} {environment : Lean.Json} {r : Option VE.Events.EventsDecoded},
+    VE.Events.decodeEventsWith c environment = Except.ok r → VE.Events.decodeEvents environment = Except.ok r
+  -- uses VE.Events.EventsDecoded@VE.Events.Wire VE.Events.Link@VE.Events.Decl VE.Events.decodeEvents@VE.Events.Wire VE.Events.decodeEventsWith@VE.Events.Wire
+  -- expr 3020638441
+theorem VE.Events.decodeRightsU_packs
+  ∀ {environment document : Lean.Json} {H : Option VE.Events.EventsHook} {L : VE.NormDefaults.Wire.LayeredU},
+    VE.NormDefaults.Wire.decodeRightsU environment document H = Except.ok L →
+      ∃ D R,
+        L.X =
+          VE.NormDefaults.Packs.X
+            (VE.NormDefaults.Packs.ordered
+              ([VE.NormDefaults.Wire.softPack L.U D, VE.NormDefaults.Wire.rightsPack R] ++
+                VE.NormDefaults.Wire.hookPacks H))
+  -- uses VE.Events.EventsHook@VE.Events.Wire VE.Formula@VE.Syntax VE.NormDefaults.Packs.Pack@VE.NormDefaults.Packs VE.NormDefaults.Packs.X@VE.NormDefaults.Packs VE.NormDefaults.Packs.ordered@VE.NormDefaults.Packs VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.X@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.Wire.decodeRightsU@VE.NormDefaults.Layered VE.NormDefaults.Wire.hookPacks@VE.NormDefaults.Layered VE.NormDefaults.Wire.rightsPack@VE.NormDefaults.Layered VE.NormDefaults.Wire.softPack@VE.NormDefaults.Layered VE.Rights.RightsDoc@VE.Rights.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree
+  -- expr 2210863115
 theorem VE.Events.embeddable_complete
   ∀ {α : Type} [inst : DecidableEq α] (E : VE.Environment) (V : VE.Events.EventsEnv),
     VE.Events.EventsTyped E V = Bool.true →
@@ -19774,6 +19809,12 @@ theorem VE.Events.embeddable_sound
         M.Valid E → VE.Events.embeddable V M = Bool.true → VE.Events.Embeds V M.asStructure (VE.Events.numbering V M)
   -- uses VE.Environment@VE.Syntax VE.Events.Embeds@VE.Events.Premises VE.Events.EventsEnv@VE.Events.Decl VE.Events.EventsTyped@VE.Events.Decl VE.Events.embeddable@VE.Events.Calendar VE.Events.numbering@VE.Events.Calendar VE.FiniteModel.Valid@VE.Finite VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.Structure.Carrier@VE.Semantics
   -- expr 3364039827
+theorem VE.Events.eventsHook_block
+  ∀ {environment terms : Lean.Json} {H : Option VE.Events.EventsHook} {d : VE.Events.EventsDecoded},
+    VE.Events.eventsHook environment terms = Except.ok H →
+      VE.NormDefaults.Wire.hookBlock H = Option.some d → VE.Events.decodeEvents environment = Except.ok (Option.some d)
+  -- uses VE.Events.EventsDecoded@VE.Events.Wire VE.Events.EventsHook@VE.Events.Wire VE.Events.decodeEvents@VE.Events.Wire VE.Events.eventsHook@VE.Events.Wire VE.NormDefaults.Wire.hookBlock@VE.NormDefaults.Layered
+  -- expr 2347967236
 theorem VE.Events.eventsPremises_satisfiable
   ∀ (E : VE.Environment) (V : VE.Events.EventsEnv),
     VE.Events.WellFormedEvents E V = Bool.true →
@@ -19818,6 +19859,44 @@ theorem VE.Events.events_conservative
               ∀ (S : VE.Structure), S.Admissible (VE.Events.oldEnv E V) → VE.Norms.Sat S Γ → VE.Formula.denote S [] φ)
   -- uses VE.Environment@VE.Syntax VE.Events.EventsEnv@VE.Events.Decl VE.Events.WellFormedEvents@VE.Events.Decl VE.Events.eventsX@VE.Events.Premises VE.Events.oldEnv@VE.Events.Conservative VE.Events.regenEnv@VE.Events.Decl VE.Formula.WellFormed@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Norms.Sat@VE.Norms.Prefix VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
   -- expr 4202943264
+theorem VE.Events.events_row_composition
+  ∀ (environment terms : Lean.Json),
+    List.Pairwise (fun x1 x2 => x1 < x2) (VE.Compose.listedProfiles environment) →
+      "events@0" ∈ VE.Compose.listedProfiles environment →
+        List.find? (fun p => !VE.Compose.profileTable.any fun x => x.profile == p)
+              (VE.Compose.listedProfiles environment) =
+            Option.none →
+          (∀ (t : String),
+              VE.Compose.eventsFault (VE.Compose.listedProfiles environment) = Option.some t →
+                VE.Events.eventsHook environment terms = Except.error (VE.Compose.unsupported t)) ∧
+            (VE.Compose.eventsFault (VE.Compose.listedProfiles environment) = Option.none →
+                VE.Compose.gateOf VE.Compose.profileTable (VE.Compose.listedProfiles environment) =
+                  VE.Compose.gateOf VE.Compose.profileTable ((VE.Compose.listedProfiles environment).erase "events@0")) ∧
+              ∀ (H : Option VE.Events.EventsHook) (d : VE.Events.EventsDecoded),
+                VE.NormDefaults.Wire.hookBlock H = Option.some d →
+                  (∀ (norms : Lean.Json) (L : VE.NormDefaults.Wire.LayeredU),
+                      VE.NormDefaults.Wire.decodeSoftU environment norms H = Except.ok L →
+                        L.X =
+                          List.map (fun x => x.snd) (VE.NormDefaults.Wire.softLabelledU L.U L.D) ++
+                            VE.Events.eventsX d.V) ∧
+                    ∀ (document : Lean.Json) (L : VE.NormDefaults.Wire.LayeredU),
+                      VE.NormDefaults.Wire.decodeRightsU environment document H = Except.ok L →
+                        ∃ D R,
+                          L.X =
+                            VE.NormDefaults.Packs.X
+                                [VE.NormDefaults.Wire.softPack L.U D, VE.NormDefaults.Wire.rightsPack R] ++
+                              VE.Events.eventsX d.V
+  -- uses VE.Compose.ProfileRow.profile@VE.Compose.Dispatch VE.Compose.ProfileRow@VE.Compose.Dispatch VE.Compose.Route@VE.Compose.Dispatch VE.Compose.eventsFault@VE.Compose.Dispatch VE.Compose.gateOf@VE.Compose.Dispatch VE.Compose.listedProfiles@VE.Compose.Dispatch VE.Compose.profileTable@VE.Compose.Dispatch VE.Compose.unsupported@VE.Compose.Dispatch VE.Events.EventsDecoded.V@VE.Events.Wire VE.Events.EventsDecoded@VE.Events.Wire VE.Events.EventsHook@VE.Events.Wire VE.Events.eventsHook@VE.Events.Wire VE.Events.eventsX@VE.Events.Premises VE.Formula@VE.Syntax VE.NormDefaults.Packs.Pack@VE.NormDefaults.Packs VE.NormDefaults.Packs.X@VE.NormDefaults.Packs VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.X@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.Wire.decodeRightsU@VE.NormDefaults.Layered VE.NormDefaults.Wire.decodeSoftU@VE.NormDefaults.Layered VE.NormDefaults.Wire.hookBlock@VE.NormDefaults.Layered VE.NormDefaults.Wire.rightsPack@VE.NormDefaults.Layered VE.NormDefaults.Wire.softLabelledU@VE.NormDefaults.Layered VE.NormDefaults.Wire.softPack@VE.NormDefaults.Layered VE.Rights.RightsDoc@VE.Rights.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree
+  -- expr 591762333
+theorem VE.Events.events_wire_acceptance
+  ∀ (j : Lean.Json) (r : VE.Events.EventsEntailmentReplay),
+    VE.Events.replayEventsEntailment j = Except.ok r →
+      r.valid = Bool.true →
+        Except.map (fun x => Option.map (fun d => (d.V, d.E)) x) (VE.Events.decodeEvents (j.getObjValD "environment")) =
+            Except.ok (Option.some (r.V, r.E)) ∧
+          VE.NormDefaults.EntailsX r.U (r.X ++ VE.Events.eventsX r.V) r.premises r.conclusion
+  -- uses VE.Environment@VE.Syntax VE.Events.EventsDecoded.E@VE.Events.Wire VE.Events.EventsDecoded.V@VE.Events.Wire VE.Events.EventsDecoded@VE.Events.Wire VE.Events.EventsEntailmentReplay.E@VE.Events.Chain VE.Events.EventsEntailmentReplay.U@VE.Events.Chain VE.Events.EventsEntailmentReplay.V@VE.Events.Chain VE.Events.EventsEntailmentReplay.X@VE.Events.Chain VE.Events.EventsEntailmentReplay.conclusion@VE.Events.Chain VE.Events.EventsEntailmentReplay.premises@VE.Events.Chain VE.Events.EventsEntailmentReplay.valid@VE.Events.Chain VE.Events.EventsEntailmentReplay@VE.Events.Chain VE.Events.EventsEnv@VE.Events.Decl VE.Events.decodeEvents@VE.Events.Wire VE.Events.eventsX@VE.Events.Premises VE.Events.replayEventsEntailment@VE.Events.Chain VE.Formula@VE.Syntax VE.NormDefaults.EntailsX@VE.NormDefaults.LayeredEntail
+  -- expr 2748112881
 theorem VE.Events.expansion_typed
   ∀ {E : VE.Environment} {V : VE.Events.EventsEnv} {S : VE.Structure} (ss : List String) (xs : List S.Carrier),
     ¬V.day ∈ ss → VE.TupleTyped S ss xs → VE.TupleTyped (VE.Events.expansion E V S) ss (List.map Sum.inl xs)
@@ -19840,6 +19919,14 @@ theorem VE.Events.hits_vacuous
               (VE.Events.vacuous ng k a = Bool.true → VE.Formula.denote S σ a)
   -- uses VE.Events.DayExtension@VE.Events.Completion VE.Events.hits@VE.Events.Completion VE.Events.vacuous@VE.Events.Completion VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
   -- expr 2014742688
+theorem VE.Events.hooked_X
+  ∀ {environment norms : Lean.Json} {H : Option VE.Events.EventsHook} {L : VE.NormDefaults.Wire.LayeredU}
+    {d : VE.Events.EventsDecoded},
+    VE.NormDefaults.Wire.decodeSoftU environment norms H = Except.ok L →
+      VE.NormDefaults.Wire.hookBlock H = Option.some d →
+        L.X = List.map (fun x => x.snd) (VE.NormDefaults.Wire.softLabelledU L.U L.D) ++ VE.Events.eventsX d.V
+  -- uses VE.Events.EventsDecoded.V@VE.Events.Wire VE.Events.EventsDecoded@VE.Events.Wire VE.Events.EventsHook@VE.Events.Wire VE.Events.eventsX@VE.Events.Premises VE.Formula@VE.Syntax VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.X@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.Wire.decodeSoftU@VE.NormDefaults.Layered VE.NormDefaults.Wire.hookBlock@VE.NormDefaults.Layered VE.NormDefaults.Wire.softLabelledU@VE.NormDefaults.Layered
+  -- expr 809349863
 theorem VE.Events.isConst_eq
   ∀ {t : VE.Term}, VE.Events.isConst t = Bool.true → ∃ c, t = VE.Term.const c
   -- uses VE.Events.isConst@VE.Events.Completion VE.Term.const@VE.Syntax VE.Term@VE.Syntax
@@ -19907,6 +19994,28 @@ theorem VE.Events.tupleTyped_relation
       VE.TupleTyped { Carrier := S.Carrier, domain := S.domain, constant := S.constant, relation := r } ss xs
   -- uses VE.Structure.Carrier@VE.Semantics VE.Structure.constant@VE.Semantics VE.Structure.domain@VE.Semantics VE.Structure.mk@VE.Semantics VE.Structure@VE.Semantics VE.TupleTyped@VE.Semantics
   -- expr 3453759998
+theorem VE.Events.unblocked_wire_acceptance
+  ∀ (j : Lean.Json) (r : VE.NormDefaults.Wire.LayeredEntailment),
+    VE.Events.replayUnblockedEntailment j = Except.ok r →
+      r.valid = Bool.true →
+        r.L.X = List.map (fun x => x.snd) (VE.NormDefaults.Wire.softLabelledU r.L.U r.L.D) ∧
+          VE.NormDefaults.EntailsX r.L.U r.L.X r.premises r.conclusion
+  -- uses VE.Events.replayUnblockedEntailment@VE.Events.Chain VE.Formula@VE.Syntax VE.NormDefaults.EntailsX@VE.NormDefaults.LayeredEntail VE.NormDefaults.Wire.LayeredEntailment.L@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Wire.LayeredEntailment.conclusion@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Wire.LayeredEntailment.premises@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Wire.LayeredEntailment.valid@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Wire.LayeredEntailment@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.X@VE.NormDefaults.Layered VE.NormDefaults.Wire.softLabelledU@VE.NormDefaults.Layered
+  -- expr 1655573967
+theorem VE.Events.unhooked_X
+  ∀ {environment norms : Lean.Json} {H : Option VE.Events.EventsHook} {L : VE.NormDefaults.Wire.LayeredU},
+    VE.NormDefaults.Wire.decodeSoftU environment norms H = Except.ok L →
+      VE.NormDefaults.Wire.hookBlock H = Option.none →
+        L.X = List.map (fun x => x.snd) (VE.NormDefaults.Wire.softLabelledU L.U L.D)
+  -- uses VE.Events.EventsDecoded@VE.Events.Wire VE.Events.EventsHook@VE.Events.Wire VE.Formula@VE.Syntax VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.X@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.Wire.decodeSoftU@VE.NormDefaults.Layered VE.NormDefaults.Wire.hookBlock@VE.NormDefaults.Layered VE.NormDefaults.Wire.softLabelledU@VE.NormDefaults.Layered
+  -- expr 1805792490
+theorem VE.Events.unhooked_X_wellFormed
+  ∀ {environment norms : Lean.Json} {H : Option VE.Events.EventsHook} {L : VE.NormDefaults.Wire.LayeredU},
+    VE.NormDefaults.Wire.decodeSoftU environment norms H = Except.ok L →
+      VE.NormDefaults.Wire.hookBlock H = Option.none →
+        ∀ (a : VE.Formula), a ∈ L.X → VE.Formula.WellFormed (VE.Norms.envAt (VE.NormDefaults.fill L.U) 0) [] a
+  -- uses VE.Events.EventsDecoded@VE.Events.Wire VE.Events.EventsHook@VE.Events.Wire VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.X@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.Wire.decodeSoftU@VE.NormDefaults.Layered VE.NormDefaults.Wire.hookBlock@VE.NormDefaults.Layered VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.envAt@VE.Norms.Tree
+  -- expr 1779775249
 theorem VE.Events.unorderedSame_of_order
   ∀ (V : VE.Events.EventsEnv) (S : VE.Structure),
     VE.Norms.Sat S (VE.Events.orderPremises V) → VE.Formula.denote S [] (VE.Events.unorderedSameF V)
@@ -22703,21 +22812,22 @@ theorem VE.NormDefaults.Wire.decodeSoftU_X_wellFormed
   ∀ (environment norms : Lean.Json) (L : VE.NormDefaults.Wire.LayeredU),
     VE.NormDefaults.Wire.decodeSoftU environment norms = Except.ok L →
       ∀ (a : VE.Formula), a ∈ L.X → VE.Formula.WellFormed (VE.Norms.envAt (VE.NormDefaults.fill L.U) 0) [] a
-  -- uses VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.X@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.Wire.decodeSoftU@VE.NormDefaults.Layered VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.envAt@VE.Norms.Tree
-  -- expr 2295724557
+  -- uses VE.Events.EventsHook@VE.Events.Wire VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.X@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.Wire.decodeSoftU@VE.NormDefaults.Layered VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.envAt@VE.Norms.Tree
+  -- expr 2321756148
 theorem VE.NormDefaults.Wire.decodeSoftU_source
-  ∀ (environment norms : Lean.Json) (L : VE.NormDefaults.Wire.LayeredU),
-    VE.NormDefaults.Wire.decodeSoftU environment norms = Except.ok L →
+  ∀ (environment norms : Lean.Json) (L : VE.NormDefaults.Wire.LayeredU) {H : Option VE.Events.EventsHook},
+    VE.NormDefaults.Wire.decodeSoftU environment norms H = Except.ok L →
       ∃ env' src,
-        VE.NormDefaults.Wire.placeholderJson environment = Except.ok env' ∧
+        VE.NormDefaults.Wire.placeholderJson (VE.NormDefaults.Wire.hookView H environment) = Except.ok env' ∧
           VE.SoftNorms.Wire.decodeSoftSource env' norms = Except.ok src ∧
             L.D = src.D ∧
               L.U =
                   { D := VE.SoftNorms.soften src.D,
                     unspec := VE.NormDefaults.Wire.unspecOf environment (VE.SoftNorms.soften src.D) } ∧
-                L.packs = [VE.NormDefaults.Wire.softPack L.U src.D] ∧ L.route = "soft-norms@0"
-  -- uses VE.NormDefaults.Packs.Pack@VE.NormDefaults.Packs VE.NormDefaults.UDoc.mk@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.packs@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.route@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.Wire.decodeSoftU@VE.NormDefaults.Layered VE.NormDefaults.Wire.placeholderJson@VE.NormDefaults.Wire VE.NormDefaults.Wire.softPack@VE.NormDefaults.Layered VE.NormDefaults.Wire.unspecOf@VE.NormDefaults.Layered VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.Wire.SoftSource.D@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftSource@VE.SoftNorms.Wire VE.SoftNorms.Wire.decodeSoftSource@VE.SoftNorms.Wire VE.SoftNorms.soften@VE.SoftNorms.Soften
-  -- expr 2950983822
+                L.packs = [VE.NormDefaults.Wire.softPack L.U src.D] ++ VE.NormDefaults.Wire.hookPacks H ∧
+                  L.route = "soft-norms@0"
+  -- uses VE.Events.EventsHook@VE.Events.Wire VE.NormDefaults.Packs.Pack@VE.NormDefaults.Packs VE.NormDefaults.UDoc.mk@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.packs@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.route@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.Wire.decodeSoftU@VE.NormDefaults.Layered VE.NormDefaults.Wire.hookPacks@VE.NormDefaults.Layered VE.NormDefaults.Wire.hookView@VE.NormDefaults.Layered VE.NormDefaults.Wire.placeholderJson@VE.NormDefaults.Wire VE.NormDefaults.Wire.softPack@VE.NormDefaults.Layered VE.NormDefaults.Wire.unspecOf@VE.NormDefaults.Layered VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.Wire.SoftSource.D@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftSource@VE.SoftNorms.Wire VE.SoftNorms.Wire.decodeSoftSource@VE.SoftNorms.Wire VE.SoftNorms.soften@VE.SoftNorms.Soften
+  -- expr 2430233262
 theorem VE.NormDefaults.Wire.decodeSourceU_plain
   ∀ {environment norms : Lean.Json} {s : VE.NormDefaults.Wire.SourceU},
     VE.NormDefaults.Wire.decodeSourceU environment norms = Except.ok s →
@@ -22782,6 +22892,11 @@ theorem VE.NormDefaults.Wire.layered_conflict_sound
     VE.NormDefaults.Wire.conflictFreeX L packages = Bool.true → VE.NormDefaults.Wire.ConflictFreeX L.U L.X
   -- uses VE.NormDefaults.Wire.ConflictFreeX@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.X@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.Wire.conflictFreeX@VE.NormDefaults.Layered
   -- expr 3464972856
+theorem VE.NormDefaults.Wire.layered_entailment_of_valid
+  ∀ (r : VE.NormDefaults.Wire.LayeredEntailment),
+    r.valid = Bool.true → VE.NormDefaults.EntailsX r.L.U r.L.X r.premises r.conclusion
+  -- uses VE.NormDefaults.EntailsX@VE.NormDefaults.LayeredEntail VE.NormDefaults.Wire.LayeredEntailment.L@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Wire.LayeredEntailment.conclusion@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Wire.LayeredEntailment.premises@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Wire.LayeredEntailment.valid@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Wire.LayeredEntailment@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.X@VE.NormDefaults.Layered
+  -- expr 3903715657
 theorem VE.NormDefaults.Wire.layered_report_sound
   ∀ (L : VE.NormDefaults.Wire.LayeredU) (packages : Lean.Json)
     (rep : VE.NormDefaults.Wire.ReportG (VE.NormDefaults.Wire.layeredSource L packages)),
@@ -22952,6 +23067,13 @@ theorem VE.NormDefaults.Wire.reachedSome_of_fill
                       VE.NormDefaults.Wire.ReachedSome U X r
   -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.Valid@VE.Finite VE.FiniteModel.withFill@VE.NormDefaults.Evidence VE.FiniteModel@VE.Finite VE.Formula.eval@VE.Finite VE.Formula@VE.Syntax VE.NormDefaults.FiniteFill@VE.NormDefaults.Evidence VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.Wire.ReachedSome@VE.NormDefaults.Report VE.NormDefaults.Wire.extraValid@VE.NormDefaults.Report VE.NormDefaults.allTuples@VE.NormDefaults.Evidence VE.NormDefaults.fillValid@VE.NormDefaults.Evidence VE.NormDefaults.reachedF@VE.NormDefaults.Premises VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated.sorts@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.backgroundValid@VE.Norms.Conflict VE.Norms.envAt@VE.Norms.Tree VE.Norms.tupleVal@VE.Norms.Basic
   -- expr 2020370126
+theorem VE.NormDefaults.Wire.replayLayeredOn_L
+  ∀ {L : VE.NormDefaults.Wire.LayeredU}
+    {hX : ∀ (a : VE.Formula), a ∈ L.X → VE.Formula.WellFormed (VE.Norms.envAt (VE.NormDefaults.fill L.U) 0) [] a}
+    {j : Lean.Json} {r : VE.NormDefaults.Wire.LayeredEntailment},
+    VE.NormDefaults.Wire.replayLayeredOn L hX j = Except.ok r → r.L = L
+  -- uses VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax VE.NormDefaults.Wire.LayeredEntailment.L@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Wire.LayeredEntailment@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.X@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.Wire.replayLayeredOn@VE.NormDefaults.LayeredAdmission VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.envAt@VE.Norms.Tree
+  -- expr 1128574479
 theorem VE.NormDefaults.Wire.report_sound
   ∀ (src : VE.NormDefaults.Wire.ReportSource) (rep : VE.NormDefaults.Wire.ReportG src),
     VE.NormDefaults.Wire.ReportSound src rep
@@ -54575,15 +54697,16 @@ theorem VE.Service.DocumentChain.layeredOf_soft
     (L : VE.NormDefaults.Wire.LayeredU),
     VE.Service.DocumentChain.layeredOf E front units = Except.ok L →
       ∃ environment norms, VE.NormDefaults.Wire.decodeSoftU environment norms = Except.ok L
-  -- uses VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.Wire.decodeSoftU@VE.NormDefaults.Layered VE.Service.Document.Env@VE.Service.Document VE.Service.Document.SourceUnit@VE.Service.Document VE.Service.DocumentChain.layeredOf@VE.Service.Document
-  -- expr 1375785200
+  -- uses VE.Events.EventsHook@VE.Events.Wire VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.Wire.decodeSoftU@VE.NormDefaults.Layered VE.Service.Document.Env@VE.Service.Document VE.Service.Document.SourceUnit@VE.Service.Document VE.Service.DocumentChain.layeredOf@VE.Service.Document
+  -- expr 243642166
 theorem VE.Service.DocumentChain.requestOf_environment
   ∀ (E : VE.Service.Document.Env) (front : Lean.Json) (units : List VE.Service.Document.SourceUnit),
     VE.NormDefaults.Wire.layeredRoute (VE.Service.Document.wireJson 257 E.lower) = Option.some "soft-norms@0" →
-      (VE.Service.DocumentChain.requestOf E front units).getObjVal? "environment" =
-        Except.ok (VE.Service.Document.wireJson 257 E.lower)
-  -- uses VE.NormDefaults.Wire.layeredRoute@VE.NormDefaults.Layered VE.Service.Document.Env.lower@VE.Service.Document VE.Service.Document.Env@VE.Service.Document VE.Service.Document.SourceUnit@VE.Service.Document VE.Service.Document.wireJson@VE.Service.Document VE.Service.DocumentChain.requestOf@VE.Service.Document
-  -- expr 3812763173
+      (VE.Compose.listedProfiles (VE.Service.Document.wireJson 257 E.lower)).contains "events@0" = Bool.false →
+        (VE.Service.DocumentChain.requestOf E front units).getObjVal? "environment" =
+          Except.ok (VE.Service.Document.wireJson 257 E.lower)
+  -- uses VE.Compose.listedProfiles@VE.Compose.Dispatch VE.NormDefaults.Wire.layeredRoute@VE.NormDefaults.Layered VE.Service.Document.Env.lower@VE.Service.Document VE.Service.Document.Env@VE.Service.Document VE.Service.Document.SourceUnit@VE.Service.Document VE.Service.Document.wireJson@VE.Service.Document VE.Service.DocumentChain.requestOf@VE.Service.Document
+  -- expr 3986083351
 theorem VE.Service.Entry.prepared_eq
   ∀ (self : VE.Service.Entry), self.prepared.get = VE.Route.MeteredRun.prepare self.environment
   -- uses VE.Route.MeteredRun.Prepared@VE.Route.MeteredRun VE.Route.MeteredRun.prepare@VE.Route.MeteredRun VE.Service.Entry.environment@VE.Service.Protocol VE.Service.Entry.prepared@VE.Service.Protocol VE.Service.Entry@VE.Service.Protocol
