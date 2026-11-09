@@ -26,16 +26,12 @@ def _checker():
 
 
 def test_rd9_statements_match_the_approved_text_with_nothing_unbuilt(capsys):
-    """PROBE A of rd-9-looprecheck1: no RD-9 statement is reported unbuilt, and every block matches. The one exception
-    is SC-10's 13.3, whose two theorems sc-10b cut to sc-10bb: they are reported not built, and the list can only
-    shrink."""
+    """PROBE A of rd-9-looprecheck1: no RD-9 statement is reported unbuilt, and every block matches."""
     checker = _checker()
     assert checker.main() == 0
     out = capsys.readouterr().out
-    assert "unbuilt" not in out
-    assert re.findall(r"^.* not built yet: .*$", out, re.M) == ["SC-10 not built yet: sd_superpose_all, sd_superpose_countermodel"]
-    assert {section[0]: section[5] for section in checker.SECTIONS if section[5]} == {
-        "SC-10 superposition": {"sd_superpose_all", "sd_superpose_countermodel"}}
+    assert "unbuilt" not in out and "not built yet" not in out
+    assert all(not section[5] for section in checker.SECTIONS)
     assert "softX_wellFormed" in {name for _, name in checker.approved_block("### 6.4", "### 6.5")}
 
 
@@ -73,6 +69,7 @@ def _mutated_sections(checker, tmp_path, section_index, name):
     (6, "normDefaults_wire_admissionX"), (6, "layered_wire_acceptance"),
     (5, "xQueryRow_holds"), (5, "x_rowsHold"), (5, "sdSem_normsShaped"), (5, "readings_wire_sd_verdicts_all"),
     (5, "readings_wire_sd_verdicts_inconsistent"), (7, "sd_superpose_conflict_free"), (7, "supX_pull"),
+    (7, "sd_superpose_all"), (7, "sd_superpose_countermodel"),
 ])
 def test_the_check_fails_on_a_changed_statement(tmp_path, capsys, section_index, name):
     checker = _checker()
@@ -87,6 +84,17 @@ def test_a_stale_not_built_marker_fails(capsys):
     sections[1] = (title, start, stop, sources, expected, {"softX_wellFormed"})
     assert checker.main(sections) == 1
     assert "softX_wellFormed: not-built marker is stale" in capsys.readouterr().out
+
+
+def test_a_later_batch_marker_does_not_say_unbuilt(capsys):
+    """Only SC-1's not-built line says "unbuilt" (its acceptance probe greps for the word); SC-10's says "not built yet"."""
+    checker = _checker()
+    sections = list(checker.SECTIONS)
+    title, start, stop, sources, expected, _ = sections[7]
+    sections[7] = (title, start, stop, sources, expected, {"sd_superpose_all"})
+    assert checker.main(sections) == 1
+    out = capsys.readouterr().out
+    assert "SC-10 not built yet: sd_superpose_all" in out and "unbuilt" not in out
 
 
 # B4 (review F27 (c) of rd-9): `choiceLayeredG` and `ndTextWith` are signed after the bounded statement re-check. Each

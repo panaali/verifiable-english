@@ -38,7 +38,7 @@ SECTIONS = (
      [LEAN / "NormDefaults/LayeredAdmission.lean", LEAN / "NormDefaults/Admission.lean", LEAN / "NormDefaults/Run.lean"],
      {"theorem": 6, "def": 18, "structure": 2}, set()),
     ("SC-10 superposition", "### 13.3", "### 13.4", [LEAN / "Readings/SoftSup.lean"],
-     {"theorem": 7, "def": 4, "structure": 0}, {"sd_superpose_all", "sd_superpose_countermodel"}),
+     {"theorem": 7, "def": 4, "structure": 0}, set()),
 )
 
 
