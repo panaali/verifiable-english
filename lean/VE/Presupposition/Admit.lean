@@ -1,5 +1,5 @@
 import VE.Presupposition.Table
-import VE.Readings.Doc
+import VE.Readings.Unspecified
 
 /-! # `admit`: the presupposition check (docs/spec/presupposition.md 4.7, "The check, in order")
 
@@ -190,9 +190,38 @@ def openOk (t : CandidateTable) (D : PDoc) (R : Report) (c : Checked) : Except S
 /-! ## Step 5: contents, rules, the soft chain and separation, per unit -/
 
 /-- Step 5's fixed inputs (spec 4.7 step 5; DRI ps-2a item 2): the readings environment's chain, read here as
-    `abstention` reads `re.chain` (`lean/VE/Readings/Wire.lean`). -/
+    `abstention` reads `re.chain` (`lean/VE/Readings/Wire.lean`), and the separating situations: per open unit, the
+    witness reading, the other reading and the situation (readings@1 4.5). -/
 structure Fixed where
   chain : VE.Readings.Chain
+  sits  : List (String × Nat × Nat × VE.Readings.Situation String)
+
+/-- Step 5: the readings@1 document of the open unit `u` with readings `rs`: `D`'s vocabulary and regulated
+    predicates; every other unit a fixed content (an asserted claim, a recorded rule); the set `u`. -/
+def readingsDoc (ch : VE.Readings.Chain) (D : PDoc) (u : String) (rs : List RReading) : VE.Readings.Doc :=
+  let node (N : VE.Norms.Node) : VE.SoftNorms.SoftNode :=
+    { toNode := N, mode := .strict, rank := none, alterable := [], exception := none, hard := false }
+  let content (r : RReading) : VE.Compose.Content := match r.content with
+    | .claim a => .assertion a | .rule N => .norm (node N)
+  ⟨ch, { soft := ⟨D.E, D.lits, ⟨[], [], [], [], .strict, none, none, [], []⟩, ⟨D.norms.regulated, D.norms.definitions, []⟩⟩,
+         rights := ⟨[], [], [], []⟩, rs := [], limits := [], bars := [], outsideCites := [], sourceOrder := some [] },
+   D.units.filterMap (fun x => if x.id == u then
+       some (.set ⟨u, u, 1, rs.zipIdx.map (fun (r, i) => ⟨toString i, some (content r), [], []⟩)⟩)
+     else match x.content with
+       | .claim a => if x.asserted then some (.fixed x.id (.assertion a) []) else none
+       | .rule n => (D.norms.nodes.find? (·.name == n)).map (fun N => .fixed x.id (.norm (node N)) [])
+       | _ => none), [], []⟩
+
+/-- R-8: readings@1's `separates`, or with `norm-defaults@0` readings-defaults' `separates (fillDoc N)` with
+    `fillHolds` on the witness, by a recorded situation for each pair of the set's readings. -/
+def separated (fx : Fixed) (D : PDoc) (u : String) (rs : List RReading) : Option (Nat × Nat) :=
+  let X := readingsDoc fx.chain D u rs
+  let N : VE.Readings.NDoc := ⟨X, D.unspec⟩
+  let ok (w o : Nat) (σ : VE.Readings.Situation String) : Bool :=
+    if D.defaults then VE.Readings.separates (VE.Readings.fillDoc N) u w o σ && VE.Readings.fillHolds N u w σ.base
+    else VE.Readings.separates X u w o σ
+  let pairs := (List.range rs.length).flatMap (fun i => ((List.range rs.length).filter (i < ·)).map (i, ·))
+  pairs.find? (fun (i, j) => !fx.sits.any (fun (v, w, o, σ) => v == u && (w, o) ∈ [(i, j), (j, i)] && ok w o σ))
 
 def softText : String := "UnsupportedProfile: a conditioned rule reading needs the norms chain (presupposition)"
 
@@ -211,7 +240,11 @@ def unitsOk (fx : Fixed) (D : PDoc) (obs : List Obligation) (R : Report) : Excep
   ensure (VE.Norms.WellFormed ⟨D.E, D.lits, D.norms⟩ && VE.Norms.WellFormed ⟨D.E, D.lits, R.baseTree⟩)
     s!"PresuppositionMismatch: {firstOb obs (fun o => match o.position with | .ruleAct _ => true | _ => false)}: rule"
   allE (fun x => match x.content with
-    | .readings rs => ensure (softOk fx rs) softText
+    | .readings rs => do
+      ensure (softOk fx rs) softText
+      match separated fx D x.id rs with
+      | some (i, j) => .error s!"PresuppositionCandidates: {firstOb obs (·.unit == x.id)}: readings {i} and {j} are not separated"
+      | none => .ok ()
     | _ => .ok ()) (withObligations D obs)
 
 /-! ## `admit` -/
@@ -230,13 +263,13 @@ def admitWith (t : CandidateTable) (fx : Fixed) (D : PDoc) : Except String Repor
     unitsOk fx D obs R
     pure R
 
-/-- `admit`'s fixed inputs: the norms chain. -/
-def admitInputs : Fixed := ⟨.norms⟩
+/-- `admit`'s fixed inputs: the norms chain and no situation (PS-4 passes the document's through `admitWith`). -/
+def admitInputs : Fixed := ⟨.norms, []⟩
 
 def admit : PDoc → Except String Report := admitWith candidateTable admitInputs
 
 /-- The document mode's `presuppositions` field: absent without the block (PS-4 puts it in the answer). -/
 def admitBase (_ : PDoc) : Option (Except String Report) := none
-def admitWrapped (D : PDoc) : Option (Except String Report) := D.block.map (fun _ => admit D)
+def admitWrapped (D : PDoc) : Option (Except String Report) := if D.block.isSome then some (admit D) else none
 
 end VE.Presupposition
