@@ -1,0 +1,4 @@
+# seeded bug 3 (lean/VE/Service/Document.lean: rightsNormalForm keeps null soft fields); lake build VE.Service.Document
+error: VE/Service/Document.lean:177:0: Expression
+error: Lean exited with code 1
+error: build failed

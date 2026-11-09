@@ -89,13 +89,14 @@ def rights_normal_form(content):
     """Rights 3.5: a `right` or `right_lines` unit with every soft field of its lines' norm objects (`norm`,
     `liberty`, `recognition`) at its default omitted (Lean's `VE.Service.Document.rightsNormalForm`). Any other
     content, and any part not of the shape 3.2 gives, is unchanged."""
+    from .rights import RULE_FIELDS
     if type(content) is not dict or len(content) != 1:
         return content
     (kind, body), = content.items()
     if kind not in ("right", "right_lines") or type(body) is not dict or type(body.get("lines")) is not list:
         return content
     lines = [{key: ({k: v for k, v in value.items() if not _soft_default(k, v)}
-                    if key in ("norm", "liberty", "recognition") and type(value) is dict else value)
+                    if key in RULE_FIELDS and type(value) is dict else value)
               for key, value in line.items()} if type(line) is dict else line
              for line in body["lines"]]
     return {kind: {**body, "lines": lines}}
