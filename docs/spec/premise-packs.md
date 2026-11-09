@@ -5,8 +5,9 @@
 > of `lean/VE/NormDefaults/Layered.lean`.
 >
 > **The exact Lean text is the stub** `docs/spec/premise-packs/SpecStubs_pk1.lean` (cited `stub:<line>`). It
-> imports `main` unchanged and type-checks from `lean/` with
-> `PATH=~/.elan/bin:$PATH lake env lean ../docs/spec/premise-packs/SpecStubs_pk1.lean`. Every definition there is a
+> imports the tree before pk-1 (`49a926ee7`; pk-1 declares these names) unchanged and type-checks from that tree's
+> `lean/` with `PATH=~/.elan/bin:$PATH lake env lean ../docs/spec/premise-packs/SpecStubs_pk1.lean` (the stub's
+> header, :6-9). Every definition there is a
 > real body, every fixture is a `#guard`, and 13 theorems are left `sorry` for the build to prove (section 6).
 > The stub is the only copy of each statement, so this document gives one plain-English sentence for each and does
 > not repeat the Lean. Citations of `main` are at `802b8ff9b`.
