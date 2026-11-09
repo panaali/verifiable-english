@@ -388,7 +388,7 @@ def packages : Shape :=
       ("conditional_on", ref "#/$defs/conditional_labels"),
       ("weighing_points", ref "soft-norms.json#/$defs/coherence_labels"),
       ("situation_exhibited", .type ["boolean"]),
-      ("budget", ref "common.json#/$defs/nat"),
+      ("budget", .const (toJson VE.Rights.Run.conflictBudget)),
       ("situation", .anyOf [ref "#/$defs/situation", .type ["null"]]),
       ("detail", ref "common.json#/$defs/text")],
     .ite (props [("verdict", constS "UNKNOWN")])

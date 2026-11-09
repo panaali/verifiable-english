@@ -435,7 +435,7 @@
       },
       "if": {"properties": {"verdict": {"const": "UNKNOWN"}}},
       "properties": {
-        "budget": {"$ref": "common.json#/$defs/nat"},
+        "budget": {"const": 10000},
         "conditional_on": {"$ref": "#/$defs/conditional_labels"},
         "detail": {"$ref": "common.json#/$defs/text"},
         "id": {"$ref": "common.json#/$defs/id_ok"},
