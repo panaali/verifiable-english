@@ -37,7 +37,8 @@ From `steps.wall.control_probes` vs `seconds` in `manage-agents/cloud-jobs/*/par
   --resume, --merge and the shards' AGREED checks treat it as not changing a verdict. The module docstring and
   the docstrings of `probe`, `Probes`, `ControlProbes` and `run` say so.
 - Time: a lazy control runs under `STEPS.step("control_probes")` (Lake step); the wall phase `control_probes` is
-  near 0 in lazy mode. DEADLINE is unchanged: a lazy control runs inside a mutant's `run` with its timeout, and
+  near 0 in lazy mode. DEADLINE is unchanged: a lazy control runs inside a mutant's `run` (with no
+  `--build-timeout`, only DEADLINE, as eager's control probes), and
   `Abandoned` there makes that mutant NOT RUN. The cache records nothing then, so a later reader tries again.
 
 Tests: `tests/test_trust_mutants_probe_scope.py` and `tests/test_trust_mutants.py`: 8 new tests; none removed,
@@ -58,6 +59,7 @@ phase below the mutants' phase. Its other assertions are unchanged.
 | the control is the unmutated entry (a drifted const is refused) | `test_run_reads_the_unmutated_control_for_a_drifted_constant` |
 | control scratch is never given to a mutant | `test_control_scratch_is_never_given_to_a_mutant` |
 | eager == lazy (id, definition, operator, status, raw_status, detail) on the seeded package (30 mutants, real Lean); `--control-probes eager` makes today's calls: one whole-file control per check file, all before the first mutant | `test_eager_and_lazy_controls_agree_on_seeded_package` |
+| a check module outside the targets' files (in the mutated module's cone, imported by a target) has no control in either mode: lazy gives eager's None and UNKNOWN rows, no KeyError (review F1) | `test_lazy_control_of_a_file_outside_the_targets_is_none_as_in_eager`, `test_probe_f1_a_check_module_outside_the_targets_gives_lazy_the_eager_verdicts` (real Lean) |
 | an old record without the mode is accepted by --resume, --rescore (mode `identical`) and --merge (`mixed`) | `test_control_probe_mode_is_recorded_but_not_a_verdict_input` |
 
 ## Why verdicts cannot change
@@ -69,7 +71,7 @@ same `probe` of the same unmutated build (`first`: no mutant edit and no cut is 
 `Probes.scope` set as the mutant's side and falls back to the whole file under the same `complete` rule.
 eff-tm-probe-scope showed that a check's scoped entry equals its whole-file entry (jt-2c 73e809748, qt-a3d 493da762,
 51 seeded mutants); the merged mutant-side scoping already rests on this. So every lazy control entry equals the eager
-one, except where the eager whole-file probe has no entry because it timed out (design F1/F2). There the scoped probe
+one (including None for a check file `settle` reads that is no target's: review F1, fixed in ad33c7202), except where the eager whole-file probe has no entry because it timed out (design F1/F2). There the scoped probe
 can finish, and UNKNOWN can become KILLED, against a finished control. No such case occurred in the A/B below.
 Checks: the seeded-package agreement test, and the 1,245 rows (18 owned) compared between eager and lazy runs on real Lean (0 differ).
 
@@ -113,6 +115,10 @@ UNKNOWN -> KILLED case occurred.
 4. The per-file lock dropped (`with threading.Lock():` for `with self.locks[f]:`): FAILED
    `tests/test_trust_mutants_probe_scope.py::test_concurrent_lazy_control_of_one_file_is_computed_once`
    (`/tmp/eff-seed-lock.log`; again this session after the test was made deterministic: `calls` had two entries).
+5. Review F1: the `f not in self.locks` guard in `ControlProbes.get` dropped (the code before ad33c7202): FAILED
+   `tests/test_trust_mutants_probe_scope.py::test_lazy_control_of_a_file_outside_the_targets_is_none_as_in_eager`
+   (`KeyError: 'Far/Mid.lean'`) and `::test_probe_f1_a_check_module_outside_the_targets_gives_lazy_the_eager_verdicts`
+   (real Lean, `KeyError: 'Demo/Far/Mid.lean'`): 2 failed; restored: 2 passed.
 
 ## Test runs
 
@@ -122,6 +128,15 @@ UNKNOWN -> KILLED case occurred.
 - Selected tests (`mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`, at `11be24c14`): shards
   1, 3 and 4 passed. Shard 2 had 1 failure, `test_a_run_records_where_its_time_goes`, fixed as described above; the
   failed id then passed alone (`1 passed`). No pre-existing main-known-red test was involved.
+
+- Review fix round (F1, after ad33c7202): the review's PROBE F1 failed before the fix (eager gave 2 UNKNOWN rows,
+  lazy none: the sweep died with `KeyError`) and passes after it. Selected tests (`mac-pytest.sh --select`, HEAD
+  ad33c720 + uncommitted REPORT): every unit passed (`tests/test_trust_mutants_probe_scope.py` exit 0,
+  `tests/test_trust_mutants.py` 789 passed) except `tests/test_history_tests.py` (2 failed). The new real-Lean test
+  runs the tool, so `tests/history-dependent.json` was stale. It was regenerated with `tools/history_tests.py
+  --write`, and then `tests/test_history_tests.py` alone gave 27 passed. `tools/regen_generated.py --check`
+  checked 37 entries. `lake build` (1337 jobs) and `lean/audit.py` (PASS) both succeeded. No main-known-red test
+  was involved.
 
 ## Acceptance
 
@@ -139,7 +154,7 @@ share (A/B: 82-87%).
 2. PASS: deliverables 1-5 built: lazy cache, dedicated scratch, `--control-probes eager`, the mode in the record
    and its compatibility, step accounting, and the docstrings. A/B 2 shards × 2 modes plus a supplementary pair.
    `test_control_probe_mode_is_recorded_but_not_a_verdict_input`; `uv run python tools/regen_generated.py --check`.
-3. PASS: 4 seeded bugs, each failing its named test (above).
+3. PASS: 5 seeded bugs, each failing its named test (above).
 4. PASS: eager and lazy agree: `test_eager_and_lazy_controls_agree_on_seeded_package`; real-Lean rows in `evidence/checks.txt`.
 5. N.A.: no relayed answer or R8 binding.
 6. PASS: A/B evidence records its heads; the chain runs the gate on the final HEAD.
@@ -158,4 +173,4 @@ share (A/B: 82-87%).
     against the item text.
 15. PASS: no overclaim: the universal words ("never recomputed", "0 differ", "none removed") are backed by the
     reuse test, `evidence/checks.txt` and `git diff main...HEAD | grep -E '^[-+]def test_'`. No silent cut. Every new
-    check can fail (seeded bugs 1-4). Limits: DEADLINE/timeouts unchanged (`test_lazy_control_incomplete_scope_falls_back_and_timeout_stays_unknown`).
+    check can fail (seeded bugs 1-5). Limits: DEADLINE/timeouts unchanged (`test_lazy_control_incomplete_scope_falls_back_and_timeout_stays_unknown`).
