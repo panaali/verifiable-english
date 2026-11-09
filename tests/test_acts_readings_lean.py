@@ -1,0 +1,306 @@
+"""ap-4: the `act-readings` mode through the service and `ve acts readings` (act-phrases 7, 11.4; plan AP-4 Tests).
+
+Lean lists a phrase's readings under a rule's modal and paraphrases them, and lexes the phrase: token spans in the
+phrase's UTF-8 bytes and each act's token indices. These are Lean's answers, relayed by `ve.acts`; the Lean fixtures
+are `lean/VE/Acts/RunExamples.lean`. The limits are spec 12's, each on both sides (DRI 2026-11-08 ap-4 item 1).
+"""
+from __future__ import annotations
+
+import json
+
+import pytest
+
+from tests import lean_routes
+from ve import acts
+from ve.__main__ import main
+from ve.errors import VEError
+
+pytestmark = pytest.mark.skipif(not lean_routes.SERVICE.exists(), reason="ve_service is not built")
+
+
+def frame(head, markers=("",), split=(), modifiers=()):
+    return {"head": head, "markers": list(markers), "split": list(split), "modifiers": list(modifiers)}
+
+
+V5 = {"frames": [frame("seek", modifiers=["in"]), frame("enjoy", modifiers=["in"])]}
+V8 = {"frames": [frame("participate", ["in"]), frame("enjoy"), frame("share", ["in"])], "adverbs": ["freely"]}
+V9 = {"frames": [frame("deprived", ["of"]), frame("denied")], "adverbs": ["arbitrarily"]}
+V10 = {"frames": [frame("security", ["in the event of"], ["in the event of"], ["in circumstances"])]}
+V11 = {"frames": [frame("take part", ["in"], modifiers=["through"])], "adverbs": ["directly"]}
+V12 = {"frames": [frame("form", modifiers=["for"]), frame("join", modifiers=["for"])]}
+CITIES = [f"the {n} city" for n in ("first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eighth")]
+
+# The pilot's phrases (A5, A8 to A12) with their fixed phrases, vocabularies, roles and signs
+PILOT = {
+    "A5": ("{0} to seek and to enjoy in other countries asylum from persecution", ["other countries"], V5, "plain", True),
+    "A8": ("{0} freely to participate in the cultural life of the community, to enjoy the arts and to share in "
+           "scientific advancement and its benefits",
+           ["the cultural life of the community", "scientific advancement and its benefits"], V8, "plain", True),
+    "A9": ("{0} be arbitrarily deprived of their nationality nor denied the right to change their nationality",
+           ["the right to change their nationality"], V9, "permission", False),
+    "A10": ("{0} to security in the event of unemployment, sickness, disability, widowhood, old age or other lack of "
+            "livelihood in circumstances beyond their control", ["other lack of livelihood"], V10, "plain", True),
+    "A11": ("{0} to take part in {1} directly or through freely chosen representatives",
+            ["freely chosen representatives"], V11, "plain", True),
+    "A12": ("{0} to form and to join trade unions for the protection of their interests", [], V12, "plain", True),
+}
+
+
+def ask(phrase, fixed=(), block=None, role="plain", sign=True, form=None):
+    block = block or {}
+    return acts.readings(phrase, fixed=fixed, frames=block.get("frames", []), adverbs=block.get("adverbs", []),
+                         role=role, sign=sign, form=form)
+
+
+def pilot(name, **overrides):
+    phrase, fixed, block, role, sign = PILOT[name]
+    return ask(overrides.get("phrase", phrase), fixed, block, overrides.get("role", role), overrides.get("sign", sign))
+
+
+@pytest.mark.parametrize("name, count", [("A9", 2), ("A10", 2), ("A11", 2), ("A5", 4), ("A8", 4), ("A12", 4)])
+def test_the_pilot_phrases_give_the_readings_the_audit_asks_for(name, count):
+    found = pilot(name)
+    assert found["verdict"] == "LISTED" and len(found["readings"]) == count
+    assert "diagnostic" not in found
+
+
+def test_rs_u055s_phrase_lists_deprivation_only_then_both_acts():
+    found = pilot("A9")
+    assert [r["paraphrase"] for r in found["readings"]] == [
+        "{0} must not be arbitrarily deprived of their nationality, and {0} must not be denied the right to change "
+        "their nationality.",
+        "{0} must not be arbitrarily deprived of their nationality, and {0} must not be arbitrarily denied the right "
+        "to change their nationality."]
+    assert [a["act"] for a in found["readings"][1]["acts"]] == [
+        "{0} be arbitrarily deprived of their nationality", "{0} be arbitrarily denied the right to change their nationality"]
+
+
+def test_p11s_answer_has_leans_token_spans_and_indices():
+    """AR1's genuine answer: tokens are UTF-8 spans of the phrase; `from` names the tokens each act reads."""
+    phrase = PILOT["A11"][0]
+    found = pilot("A11")
+    texts = [phrase.encode()[a:b].decode() for a, b in found["tokens"]]
+    assert texts == ["{0}", "to", "take", "part", "in", "{1}", "directly", "or", "through",
+                     "freely chosen representatives"]
+    split, whole = found["readings"]
+    assert [[texts[i] for i in act["from"]] for act in split["acts"]] == [
+        ["{0}", "to", "directly", "take", "part", "in", "{1}"],
+        ["{0}", "to", "take", "part", "in", "{1}", "through", "freely chosen representatives"]]
+    assert whole["paraphrase"].endswith(", as one act done in any one of these ways (not each way on its own).")
+
+
+# ap-4 review F4: `from` is read off each reading's derivation (`witnessed`, `tagTree`), never searched for by a token's
+# text, so a word repeated in another item (*food*, *asylum*, E16's whole second item) is that item's token; a shared
+# token (one *to*, one object) is read by each act that shares it, and once in a whole join, in the act's order.
+SEEK_SHARE = [frame("seek"), frame("share")]
+SEEK_ENJOY = [frame("seek"), frame("enjoy")]
+A5_FROM = [[[0, 1, 2, 8, 9, 10], [0, 4, 5, 8, 9, 10, 6, 7]], [[0, 1, 2, 8, 9, 10, 3, 4, 5, 6, 7]],
+           [[0, 1, 2, 8, 9, 10, 6, 7], [0, 4, 5, 8, 9, 10, 6, 7]], [[0, 1, 2, 8, 9, 10, 6, 7, 3, 4, 5]]]
+# (phrase, fixed, acts block, role, `from` per act per reading)
+FROM = [
+    ("{0} to seek food and to share food", [], {"frames": SEEK_SHARE}, "plain",
+     [[[0, 1, 2, 3], [0, 5, 6, 7]], [list(range(8))]]),
+    ("{0} to seek food and to share food", [], {"frames": SEEK_SHARE}, "obligation", [[[0, 2, 3], [0, 6, 7]]]),
+    ("{0} to seek asylum and to enjoy asylum", [], {"frames": SEEK_ENJOY}, "plain",
+     [[[0, 1, 2, 3], [0, 5, 6, 7]], [list(range(8))]]),
+    ("{0} to seek asylum and to seek asylum", [], {"frames": [frame("seek")]}, "plain",
+     [[[0, 1, 2, 3], [0, 5, 6, 7]], [list(range(8))]]),
+    ("{0} to seek and to enjoy asylum", [], {"frames": SEEK_ENJOY}, "plain",
+     [[[0, 1, 2, 6], [0, 4, 5, 6]], [[0, 1, 2, 6, 3, 4, 5]]]),
+    ("{0} to seek and enjoy asylum", [], {"frames": SEEK_ENJOY}, "plain",
+     [[[0, 1, 2, 5], [0, 1, 4, 5]], [[0, 1, 2, 5, 3, 4]]]),
+    ("{0} to seek asylum in France and in Spain", [], {"frames": [frame("seek", modifiers=["in"])]}, "plain",
+     [[[0, 1, 2, 3, 4, 5], [0, 1, 2, 3, 7, 8]], [list(range(9))]]),
+    ("{0} to seek food and water", [], {"frames": [frame("seek", split=[""])]}, "plain",
+     [[[0, 1, 2, 3], [0, 1, 2, 5]]]),
+    ("{0} to seek, to enjoy and to keep asylum", [], {"frames": SEEK_ENJOY + [frame("keep")]}, "plain",
+     [[[0, 1, 2, 9], [0, 4, 5, 9], [0, 7, 8, 9]], [[0, 1, 2, 9, 3, 4, 5, 6, 7, 8]]]),
+    (*PILOT["A11"][:3], "plain", [[[0, 1, 6, 2, 3, 4, 5], [0, 1, 2, 3, 4, 5, 8, 9]], [[0, 1, 6, 2, 3, 4, 5, 7, 8, 9]]]),
+    # A5's readings 3 and 4 come from its second meaning, each read off that meaning's own derivation
+    (*PILOT["A5"][:3], "plain", A5_FROM),
+]
+
+
+@pytest.mark.parametrize("phrase, fixed, block, role, expected", FROM)
+def test_from_names_the_tokens_each_act_is_made_of(phrase, fixed, block, role, expected):
+    found = ask(phrase, fixed, block, role=role)
+    assert [[act["from"] for act in reading["acts"]] for reading in found["readings"]] == expected
+
+
+def _token_texts(phrase, found):
+    return [phrase.encode()[a:b].decode().lower() for a, b in found["tokens"]]
+
+
+@pytest.mark.parametrize("case", [*PILOT, *range(len(FROM))])
+def test_every_from_token_is_a_token_of_its_acts_text(case):
+    """Each index of `from` names a phrase token that the act's text writes (a fixed phrase as one token), so no act
+    reads a token its text lacks; over the pilot and the F4 phrases."""
+    phrase, fixed, block, role, *_ = PILOT[case] if case in PILOT else FROM[case]
+    found = pilot(case) if case in PILOT else ask(phrase, fixed, block, role=role)
+    texts = _token_texts(phrase, found)
+    for reading in found["readings"]:
+        for act in reading["acts"]:
+            written = act["act"].lower().replace(",", " , ")
+            for i in act["from"]:
+                assert f" {texts[i]} " in f" {written} ", (act, texts[i])
+
+
+def test_each_act_is_read_off_the_parse_not_lexed_again():
+    """ap-4 review F2: with 128 fixed phrases of about 120 bytes, P64's 128 acts are listed within the mode's deadline.
+    Each act's tokens come from the reading's derivation, so `decodeFixed` runs once per request, not once per act
+    (which took about 50 s of CPU here, over the 5 s deadline: `CheckerUnavailable`)."""
+    pad = [" ".join(["a"] * 40 + ["x" + a + b]) for a in "abcde" for b in "abcdefghijklmnopqrstuvwxyz"][:120]
+    phrase = "{0} to seek and to enjoy asylum" + "".join(" in " + c for c in CITIES[:6])
+    found = ask(phrase, CITIES + pad, V5, role="obligation")
+    assert found["verdict"] == "LISTED" and len(found["readings"]) == 64
+    assert sum(len(r["acts"]) for r in found["readings"]) == 128
+
+
+def test_spans_are_bytes_of_the_phrase_as_written():
+    phrase = "{0}  to\tseek  asylum’s"
+    found = ask(phrase, block={"frames": [frame("seek")]})
+    assert found["tokens"] == [[0, 3], [5, 7], [8, 12], [14, 24]]
+
+
+def test_an_adverb_inside_the_last_joined_item_reads_over_that_item_only():
+    phrase = ("{0} to participate in the cultural life of the community, to enjoy the arts and to freely share in "
+              "scientific advancement and its benefits")
+    found = pilot("A8", phrase=phrase)
+    assert len(found["readings"]) == 2
+    assert [a["act"] for a in found["readings"][0]["acts"]] == [
+        "{0} to participate in the cultural life of the community", "{0} to enjoy the arts",
+        "{0} to freely share in scientific advancement and its benefits"]
+
+
+def test_the_act_phrase_limit_is_400_bytes():
+    phrase = "{0} to seek" + " a" * 193 + " ab"
+    assert len(phrase.encode()) == 400
+    assert ask(phrase, block={"frames": [frame("seek")]})["verdict"] == "LISTED"
+    over = ask(phrase + "c", block={"frames": [frame("seek")]})
+    assert over == {"verdict": "LIMIT", "tokens": [], "readings": [],
+                    "diagnostic": "ResourceLimit: this act phrase is over 400 bytes"}
+
+
+def test_a_fixed_phrase_is_at_most_300_bytes():
+    fixed = "ab" + " a" * 149
+    assert len(fixed.encode()) == 300
+    found = ask("{0} to seek " + fixed, [fixed], {"frames": [frame("seek")]})
+    assert found["verdict"] == "LISTED" and found["tokens"][-1] == [12, 312]
+    over = ask("{0} to seek " + fixed + "c", [fixed + "c"], {"frames": [frame("seek")]})
+    assert over["verdict"] == "LIMIT" and over["diagnostic"].startswith("ResourceLimit: fixed phrase ")
+
+
+def test_64_readings_are_listed_and_more_are_a_limit():
+    phrase = "{0} to seek and to enjoy asylum" + "".join(" in " + c for c in CITIES[:6])
+    listed = ask(phrase, CITIES, V5, role="obligation")
+    assert listed["verdict"] == "LISTED" and len(listed["readings"]) == 64
+    over = ask(phrase, CITIES, V5, role="permission", sign=False)
+    assert over["verdict"] == "LIMIT"
+    assert over["diagnostic"] == "ResourceLimit: this act phrase has too many readings to list; split the sentence"
+
+
+def test_a_saturated_raw_cap_is_a_limit():
+    phrase = "{0} to seek and to enjoy asylum" + "".join(" in " + c for c in CITIES)
+    found = ask(phrase, CITIES, V5)
+    assert found["verdict"] == "LIMIT" and found["readings"] == []
+
+
+def test_refusals_are_leans_texts():
+    assert ask("{0} to seek asylum", block=V5, sign=False)["diagnostic"] == (
+        "InvalidInput: this act phrase has no modal word: a plain act with sign false")
+    assert pilot("A9", sign=True)["diagnostic"] == (
+        "InvalidInput: this act phrase has no reading under the declared frames and its modal words")
+    refused = ask("{0} to seek asylum", block={"frames": [frame("seek"), frame("seek")]})
+    assert refused["verdict"] == "REFUSED" and refused["diagnostic"] == "InvalidInput: frame 'seek' is declared twice"
+
+
+def test_the_command_line_prints_leans_answer(tmp_path, capsys):
+    block = tmp_path / "acts.json"
+    block.write_text(json.dumps({"fixed": PILOT["A11"][1], **V11}))
+    assert main(["acts", "readings", PILOT["A11"][0], "--acts", str(block), "--form", "is entitled"]) == 0
+    shown = json.loads(capsys.readouterr().out)
+    assert shown["readings"][0]["paraphrase"].startswith("{0} is entitled to directly take part in {1}, and ")
+    assert main(["acts", "readings", PILOT["A11"][0], "--acts", str(block), "--negated"]) == 2
+    capsys.readouterr()
+
+
+# ap-4 review F3: the `--acts` file is read as `ve calc` reads its files (`_read`, `loads_json`) and sent as written:
+# a member of the wrong type is refused by Lean's decoder (never split into letters or iterated), and a file that is
+# not an acts block is invalid input; no traceback, never exit 1 ("violated").
+SEEK = frame("seek")
+BAD_BLOCKS = {
+    "adverbs a string": ({"frames": [SEEK], "adverbs": "ab"}, "REFUSED", "array expected"),
+    "frames a number": ({"frames": 5}, "REFUSED", "array expected"),
+    "frames an object": ({"frames": SEEK}, "REFUSED", "array expected"),
+    "a frame a number": ({"frames": [5]}, "REFUSED", "object expected"),
+    "fixed a string": ({"frames": [SEEK], "fixed": "abc"}, "InvalidInput", "array expected"),
+    "a list, not a block": ([SEEK], "InvalidInput", "not a JSON object"),
+    "a member not of the block": ({"frames": [SEEK], "frame": []}, "InvalidInput", "other than fixed, frames and "
+                                                                                    "adverbs: frame"),
+}
+
+
+@pytest.mark.parametrize("name", BAD_BLOCKS)
+def test_a_malformed_acts_file_is_invalid_input_never_coerced(tmp_path, capsys, name):
+    body, status, text = BAD_BLOCKS[name]
+    path = tmp_path / "acts.json"
+    path.write_text(json.dumps(body))
+    assert main(["acts", "readings", "{0} to seek asylum", "--acts", str(path)]) == 2
+    shown = json.loads(capsys.readouterr().out)
+    if status == "REFUSED":
+        assert shown["verdict"] == "REFUSED" and shown["diagnostic"] == text
+    else:
+        assert shown["status"] == status and text in shown["error"]["message"]
+
+
+def test_an_unreadable_invalid_or_oversized_acts_file_is_invalid_input_or_a_limit(tmp_path, capsys, monkeypatch):
+    import ve.limits
+    import ve.wire
+    missing = tmp_path / "missing.json"
+    broken = tmp_path / "broken.json"
+    broken.write_text("{")
+    for path in (missing, broken):
+        assert main(["acts", "readings", "{0} to seek asylum", "--acts", str(path)]) == 2
+        assert json.loads(capsys.readouterr().out)["status"] == "InvalidInput"
+    big = tmp_path / "big.json"
+    big.write_text(json.dumps({"frames": [SEEK]}) + " " * 64)
+    for module in (ve.limits, ve.wire):  # the package cap, made small
+        monkeypatch.setattr(module, "MAX_PACKAGE_BYTES", 32)
+    assert main(["acts", "readings", "{0} to seek asylum", "--acts", str(big)]) == 4
+    assert json.loads(capsys.readouterr().out)["status"] == "ResourceLimit"
+
+
+def test_the_request_coerces_no_member():
+    """`acts.request` sends each member as given (a tuple as its list): Lean's decoder types them."""
+    case = acts.request("{0} to seek asylum", fixed="abc", frames=5, adverbs=("freely",))
+    assert (case["fixed"], case["frames"], case["adverbs"]) == ("abc", 5, ["freely"])
+    with pytest.raises(VEError, match="array expected"):
+        acts.readings("{0} to seek asylum", fixed="abc", frames=[SEEK])
+
+
+def test_the_document_caps_on_fixed_phrases_and_frames_are_limits():
+    """128 fixed phrases are read and 129 are `decodeFixed`'s `ResourceLimit`; 129 frames are D-31's, refused before
+    any parse. Frames are read within the mode's deadline at 32 (the parse's cost grows with the frames: REPORT)."""
+    letters = "abcdefghijklmnopqrstuvwxyz"
+    names = [f"{letters[i // 26]}{letters[i % 26]}" for i in range(129)]
+    fixed = [f"the {name} thing" for name in names]
+    frames = [frame(f"seek{name}") for name in names]
+    assert ask("{0} to seekaa the aa thing", fixed[:128], {"frames": frames[:1]})["verdict"] == "LISTED"
+    over = ask("{0} to seekaa the aa thing", fixed, {"frames": frames[:1]})
+    assert over["verdict"] == "LIMIT" and over["diagnostic"] == "ResourceLimit: more than 128 fixed phrases"
+    assert ask("{0} to seekaa asylum", block={"frames": frames[:32]})["verdict"] == "LISTED"
+    over = ask("{0} to seekaa asylum", block={"frames": frames})
+    assert over["verdict"] == "LIMIT" and over["diagnostic"] == "ResourceLimit: more than 128 frames"
+
+
+def test_a_request_over_the_cpu_deadline_is_unavailable_and_the_service_recovers():
+    """DRI 2026-11-09 ap-4 item 1 (c): P64 (L6, 64 readings) with 126 frames more needs minutes of CPU (the parse's
+    cost grows with the frames); the mode's 5 s deadline answers it `CheckerUnavailable` naming the mode, never a
+    verdict, and the next request is answered."""
+    from ve.errors import CheckerUnavailable
+    letters = "abcdefghijklmnopqrstuvwxyz"
+    pad = [frame(f"seek{letters[i // 26]}{letters[i % 26]}") for i in range(126)]
+    phrase = "{0} to seek and to enjoy asylum" + "".join(" in " + c for c in CITIES[:6])
+    with pytest.raises(CheckerUnavailable, match="act-readings"):
+        ask(phrase, CITIES, {"frames": V5["frames"] + pad}, role="obligation")
+    assert len(ask(phrase, CITIES, V5, role="obligation")["readings"]) == 64

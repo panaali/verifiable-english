@@ -1,5 +1,6 @@
 - `ve/__init__.py` — VE v0 experimental language, finite semantics and checked argument API.
 - `ve/__main__.py` — Run ``python -m ve --help`` for the small file-based checking interface.
+- `ve/acts.py` — Lean's readings of one act phrase under a rule's modal words (act-phrases 7, AP-4): the relay of the `act-readings` service mode (`lean/VE/Acts/Run.lean`, `run…
 - `ve/admission.py` — Claim labels, unit kinds and executable document admission on ve.core@0.2 (PLAN-EXPAND2 3.6).
 - `ve/alternatives.py` — Lean-only alternatives route transport.
 - `ve/argument.py` — Committed claim DAGs and experimental, assumption-preserving certification.
