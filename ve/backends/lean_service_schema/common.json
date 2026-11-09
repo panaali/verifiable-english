@@ -394,6 +394,11 @@
         "required": ["environment"],
         "type": "object"
       },
+      "events": {
+        "properties": {"environment": {"required": ["events"], "type": "object"}},
+        "required": ["environment"],
+        "type": "object"
+      },
       "rights": {
         "properties": {
           "environment": {

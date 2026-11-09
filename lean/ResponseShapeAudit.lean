@@ -256,7 +256,9 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.NormDefaults.of_elaborate
 #print axioms ResponseShape.Encoders.NormDefaults.of_norms
 #print axioms ResponseShape.Encoders.NormDefaults.runAdmissionX_fits
+#print axioms ResponseShape.Encoders.NormDefaults.runCaseE_fits
 #print axioms ResponseShape.Encoders.NormDefaults.runCaseReported_fits
+#print axioms ResponseShape.Encoders.NormDefaults.runCaseRouted_fits
 #print axioms ResponseShape.Encoders.NormDefaults.runCase_fits
 #print axioms ResponseShape.Encoders.NormDefaults.runGated_fits
 #print axioms ResponseShape.Encoders.NormDefaults.runLayered_fits
