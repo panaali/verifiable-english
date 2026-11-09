@@ -113,6 +113,12 @@ def zones : List Json := [zμ, zμ', zNot, zNone, zBudget, zreq βEnv βR ξ'Sit
     drop o "labels", set o "value" (.bool true), drop u "reason", set u "forced_all" (toJson ([] : List Json)),
     set b "completions" (toJson [[Json.mkObj [("row", .str "DE12"), ("rule", .str "g1"), ("tuple", toJson ["o1"])]]])].all
     (!accepts zμ ·)
+-- df-5-tm: the kinds `kind` lists are the kinds `row`'s selection names, as rendered (one dropped from either fails)
+#guard match Schemas.NormDefaults.kind, (render "norm-defaults.json" 64 Schemas.NormDefaults.«row»).toOption with
+  | .group _ es, some r =>
+    let named := ((r.compress.splitOn "\"#/$defs/kind/").drop 1).map (·.takeWhile (· != '"'))
+    !named.isEmpty && es.all (named.contains ·.1) && named.all fun k => es.any (·.1 == k)
+  | _, _ => false
 end Zone
 
 end ResponseShape.DefaultsExamples

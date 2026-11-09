@@ -1334,7 +1334,8 @@ theorem nd_lower {m e : Std.TreeMap.Raw String Json compare} {env' : Json} (wf :
     hl]
   rw [ok_bind, ok_bind, strings_toJson, hl]
   simp only [Except.toOption, Option.getD,
-    contains_filter_ne (r := VE.Readings.Wire.readingsProfile) (p := VE.NormDefaults.Wire.profile) (by decide)]
+    contains_filter_ne (r := VE.Readings.Wire.readingsProfile) (p := VE.NormDefaults.Wire.profile) (by decide),
+    contains_filter_ne (r := VE.Readings.Wire.readingsProfile) (p := "events@0") (by decide)]
 
 
 /-- The conditions the lower routes' skeletons put on the case, each read the same of the case and
