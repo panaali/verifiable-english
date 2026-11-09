@@ -125,13 +125,14 @@ docs/act-phrases/ap-5/trust-mutants.json`. It exited 0 on ve-cloud-3 at 23048700
   after the fixtures grew. It also brought `docs/codemap/` up to date with earlier merges on main (rights-cfr-4's
   `scan_open_acts.py` and test files); that is generator output, not a hand edit.
 - **Size:** `git diff --numstat $(git merge-base HEAD main)` without the generated files and the script outputs
-  (mutants.json, trust-mutants.json, trust-baseline.json) is about 600 hand-written lines:
+  (mutants.json, trust-mutants.json, trust-baseline.json) is about 680 hand-written lines:
   - Specialise.lean 134, SpecialiseExamples.lean 122;
   - seed_bugs.py 128 (35 plants), check_statements.py 18, the allow file 9;
-  - docs about 150;
+  - REPORT.md 210 and DELTA.md 15;
   - registries 40.
 
-  This is at the common rule's cap and above the task's 300-500 estimate. The excess is the fixtures and plants that
+  This is about 80 lines over the common rule's ~600, all of it in this report; the product code and fixtures
+  (256 lines) are within the task's 300-500 estimate. The rest is the fixtures and plants that
   the self-review and the trust-mutants survivors asked for.
 - **In-flight overlap**, checked at the start against every `feature/*`, `lean-first/*`, `infra/*` and
   `foundation/*` branch with `git diff --name-only main...<branch>`. No branch touches `lean/VE/Acts/Specialise*`.
