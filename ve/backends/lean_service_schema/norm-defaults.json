@@ -81,7 +81,19 @@
         "vocabulary": {
           "additionalProperties": false,
           "properties": {
-            "constants": {"type": "object", "x-equals": "/environment/vocabulary/constants"},
+            "constants": {
+              "else": {"x-equals": "/environment/vocabulary/constants"},
+              "if": {"x-case": {"$ref": "common.json#/$defs/request_block/events"}},
+              "then": {
+                "additionalProperties": {
+                  "additionalProperties": false,
+                  "properties": {"description": {"type": "string"}, "sort": {"type": "string"}},
+                  "required": ["sort", "description"],
+                  "type": "object"
+                }
+              },
+              "type": "object"
+            },
             "predicates": {
               "additionalProperties": {
                 "properties": {"arguments": {"$ref": "common.json#/$defs/strings"}},
@@ -461,6 +473,7 @@
         "conflict_targets": {"$ref": "common.json#/$defs/conflict_targets"},
         "document_hash": {"type": "string"},
         "environment_id": {"type": "string"},
+        "events_premises": {"$ref": "common.json#/$defs/labelled_list"},
         "fill": {
           "items": {
             "additionalProperties": false,
