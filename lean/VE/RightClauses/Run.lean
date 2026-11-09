@@ -21,6 +21,9 @@ def elaborateCase (j : Json) : Except String Json := do
   let document ← j.getObjVal? "document"
   let route ← VE.Compose.gateOf VE.Compose.profileTable (← VE.Route.Gate.profilesOf environment)
   unless route == .clauses do throw "UnsupportedProfile: clauses-elaborate requires right-clauses@0"
+  -- reading candidates under the profile (4.1 steps 2-4 for candidates, K12) are cmp-s3-cfr-1c's
+  if (← VE.Route.Gate.profilesOf environment).contains "readings@1" then
+    throw "UnsupportedProfile: right-clauses@0 with readings@1 is not implemented"
   let D ← decodeClauseDoc environment document
   checkClauses D
   checkCandidates D

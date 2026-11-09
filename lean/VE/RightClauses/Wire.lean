@@ -108,7 +108,7 @@ def decodeRole : Json → Option Role
 def hasKeys (j : Json) (ks : List String) (os : List String := []) : Bool :=
   let names := (members j).map (·.1)
   (match j with | .obj _ => true | _ => false) && ks.all names.contains &&
-    names.all (fun k => ks.contains k || os.contains k) && names.length == (names.eraseDups).length
+    names.all (fun k => ks.contains k || os.contains k)
 
 def decodeClause (n : String) (ci : Json × Nat) : Except String Clause := do
   let (c, i) := ci

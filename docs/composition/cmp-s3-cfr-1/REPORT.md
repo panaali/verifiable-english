@@ -5,7 +5,8 @@ No DRI signature is reserved. Decisions read: reviews/dri-decisions-20261104-cmp
 dri-decisions-20261109-lp0801.md item 1, dri-decisions-20261109-l1-c-regrade-rights.md item 3,
 dri-decisions-20261109-adv0838.md item 3, dri-decisions-20261109-adv0947.md item 1,
 dri-decisions-20261031-spec-right-clauses.md item 2, and this item's own size rulings
-(dri-decisions-20261109-cmp-s3-cfr-1-size.md item 1, plus the second question in "Size").
+(dri-decisions-20261109-cmp-s3-cfr-1-size.md item 1, dri-decisions-20261109-cmp-s3-cfr-1-proofsize.md item 1).
+HEAD: the branch tip (the chain's gate records the commit it ran on in gate-result.json).
 
 ## Deliverables
 
@@ -15,23 +16,40 @@ dri-decisions-20261031-spec-right-clauses.md item 2, and this item's own size ru
 | (2) the `clauses-elaborate` mode: input the document; output the plained document's canonical bytes and `clauseSlotLabelled` | yes: Registry, `runMode_clausesElaborate`, response shape, encoder theorem `runCaseReported_fits`, schema, deadline, relay-gate fixtures. `elided_bytes` is **not** emitted: no product code computes it yet (row cmp-s3a-cfr-3) | lean/VE/RightClauses/Run.lean; `tools/relay_mutation_gate.py --route service:clauses-elaborate`: 528 mutants, 0 failures |
 | (3) `right-clauses@0` in the registered list, ve/profile_table.json regenerated | yes: `VE.Compose.environmentWrappers`. D29, D33, D41 and D52 keep their values (their rows are unchanged; tests/test_compose_dispatch.py) | ve/profile_table.json (+1 line) |
 | (4) test_right_clauses_k1_service_identity | yes; it fails on main (no mode, no registration) | tests/test_right_clauses.py |
-| (5) the profile-off regression as saved evidence (9.3) | yes | docs/composition/cmp-s3-cfr-1/profile-off.json, written by profile_off_evidence.py at the base commit 6db6ee16d; test_right_clauses_profile_off_regression |
+| (5) the profile-off regression as saved evidence (9.3) | yes. Profile off: the evidence script's digests at the base build and at this item's build are saved side by side and equal. Profile on with `elided: []`: a live test, so it survives a sync with main | docs/composition/cmp-s3-cfr-1/profile-off.json (written by profile_off_evidence.py at 6db6ee16d and at this item's head); test_right_clauses_profile_off_evidence, test_right_clauses_profile_on_regression |
 
-Not delivered here (cmp-s3-cfr-1b): the relay, the Python differential, the remaining 9.1/9.2 fixtures, W1's budget
-fixture and `clauseSlot_wellFormed`.
+Not delivered here:
+- cmp-s3-cfr-1b: the relay, the Python differential, the remaining 9.1/9.2 fixtures, W1's budget fixture and
+  `clauseSlot_wellFormed`.
+- **cmp-s3-cfr-1c (new follow-up, named here):** reading candidates under the profile, that is, 4.1 steps 2-4 for
+  candidates, `decodeClauseDoc` filling `cands`, and K12. Until then the head refuses a list with `readings@1` by
+  name (`UnsupportedProfile: right-clauses@0 with readings@1 is not implemented`); before this item, such a list had
+  no head at all. The DRI is told with the final report.
 
 ## The wire (readings made here; for the reviewer and cmp-s3-cfr-1b)
 
 - **Document.** The rights route's array of units (rights 3.2). Spec 8.5 builds each entry's `unitSpan` "from its
   unit", but the rights wire has no unit span. So a unit under the profile may carry `span: [a, b]`, and
   `stripElided` drops it. A unit without one has `[0, 0)`, so a non-empty clause or elided span on it is refused
-  (`ClauseSpan`). A malformed span is `InvalidInput: invalid unit span`, the one text section 7 does not list.
+  (`ClauseSpan`). A malformed span is `InvalidInput: invalid unit span`, the one text section 7 does not list. The
+  key mirrors a W2 unit's `span` (docs/spec/document.md:21); cmp-s3-cfr-1b's relay must send it.
 - **`total: null`.** The service's restricted JSON has no null; rights' `_wire` writes an optional null by omission.
-  So a relation without `total` reads as `total: null`. An explicit null is read too, if one arrives.
+  So a relation without `total` reads as `total: null`. An explicit null is read too, if one arrives. Spec 7 says
+  a missing key is `invalid relation`, so this is a deviation the wire forces. It is recorded for the DRI, and
+  cmp-s3-cfr-1b's relay must match it.
 - **Order (4.1 step 2, 7).** Units in document order. In each unit, every line object goes through `decodeLine` on
   the object without the three keys (this gives `<n>`), then `elided`, `clauses` (each clause in order) and
-  `relation`; then rights' own `addUnit` runs on the unit without its span and keys. A line is therefore decoded
-  twice, a constant factor.
+  `relation`; then rights' own `addUnit` runs on the unit without its span and keys.
+- **Cost.** A line object is decoded twice by the head (`headLine`, `addUnit`) and once more by the rights decoder on
+  the plained document. `plainLineJson`'s `D.lines.find?` makes elaboration quadratic in the number of named lines.
+  Units are capped at 1,024; lines per unit are not. cmp-s3-cfr-1b's large-document fixture (W1) must cover lines per
+  unit, not only units.
+- **Environments.** No refusal text moves. `right-clauses@0` beside `acts@0` stays refused by the base rows, as before
+  (Standalone keeps that gate's whole-table read for `readings@1` only). The model and typing modes still refuse the
+  profile, and Python's model view drops it. Probe: all 154 lists `relational-fol@0, right-clauses@0` with up to two
+  more environment profiles answer the same text on this build and on the base build (0 differences; script
+  /tmp/cfr1seed/probe_lists.py, run in both worktrees). Before the acts gate was kept on the base rows, 15 `acts@0`
+  lists differed; that was the self-review's B4.
 - **What the proof changed in this item's code.** Members are rewritten with `Std.TreeMap.Raw.map` (`mapMember`)
   rather than `setObjVal!`, which keeps every other member and the tree's shape. `lineWith` rebuilds the `norm` and
   `liberty` objects, which the soft decoder reads through their member lists. A parsed object is its own
