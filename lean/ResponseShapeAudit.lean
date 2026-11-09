@@ -253,6 +253,7 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.NormDefaults.layeredCase_fits
 #print axioms ResponseShape.Encoders.NormDefaults.layeredKindCase_fits
 #print axioms ResponseShape.Encoders.NormDefaults.line_fits
+#print axioms ResponseShape.Encoders.NormDefaults.of_elaborate
 #print axioms ResponseShape.Encoders.NormDefaults.of_norms
 #print axioms ResponseShape.Encoders.NormDefaults.runAdmissionX_fits
 #print axioms ResponseShape.Encoders.NormDefaults.runCaseReported_fits
@@ -266,11 +267,13 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.Norms.admission_fits
 #print axioms ResponseShape.Encoders.Norms.admitDocument_kinds
 #print axioms ResponseShape.Encoders.Norms.certificate_fits
+#print axioms ResponseShape.Encoders.Norms.of_elaborate
 #print axioms ResponseShape.Encoders.Norms.of_plain_route
 #print axioms ResponseShape.Encoders.Norms.of_route
 #print axioms ResponseShape.Encoders.Norms.plain_fits
 #print axioms ResponseShape.Encoders.Norms.runCaseReported_fits
 #print axioms ResponseShape.Encoders.Norms.runCase_fits
+#print axioms ResponseShape.Encoders.Norms.runElaborate_fits
 #print axioms ResponseShape.Encoders.Quantity.kind_read
 #print axioms ResponseShape.Encoders.Quantity.runCaseReported_fits
 #print axioms ResponseShape.Encoders.Quantity.runCase_fits
