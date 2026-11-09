@@ -154,3 +154,18 @@ def test_the_command_line_prints_leans_answer(tmp_path, capsys):
     assert shown["readings"][0]["paraphrase"].startswith("{0} is entitled to directly take part in {1}, and ")
     assert main(["acts", "readings", PILOT["A11"][0], "--acts", str(block), "--negated"]) == 2
     capsys.readouterr()
+
+
+def test_the_document_caps_on_fixed_phrases_and_frames_are_limits():
+    """128 fixed phrases are read and 129 are `decodeFixed`'s `ResourceLimit`; 129 frames are D-31's, refused before
+    any parse. Frames are read within the mode's deadline at 32 (the parse's cost grows with the frames: REPORT)."""
+    letters = "abcdefghijklmnopqrstuvwxyz"
+    names = [f"{letters[i // 26]}{letters[i % 26]}" for i in range(129)]
+    fixed = [f"the {name} thing" for name in names]
+    frames = [frame(f"seek{name}") for name in names]
+    assert ask("{0} to seekaa the aa thing", fixed[:128], {"frames": frames[:1]})["verdict"] == "LISTED"
+    over = ask("{0} to seekaa the aa thing", fixed, {"frames": frames[:1]})
+    assert over["verdict"] == "LIMIT" and over["diagnostic"] == "ResourceLimit: more than 128 fixed phrases"
+    assert ask("{0} to seekaa asylum", block={"frames": frames[:32]})["verdict"] == "LISTED"
+    over = ask("{0} to seekaa asylum", block={"frames": frames})
+    assert over["verdict"] == "LIMIT" and over["diagnostic"] == "ResourceLimit: more than 128 frames"
