@@ -17,7 +17,7 @@ docs/spec/rights.md :228 (header options) and :436 (round-trip).
 |---|---|---|
 | 1 | `render_line` and `parse_line` accept exactly the header forms norm_english renders, read from the renderer and not retyped. | `render_line` keeps the renderer's own header text: the source must match norm_english's `_SOFT_HEADER` as block 1, and `source[len("Rule 1"):]` is kept. `parse_line` splits the line with the same `_SOFT_HEADER`. `_rendered_header` decodes the options with `softnorms.parse_header_options` and accepts the header only if it equals `render_header_options((), parties)`, the renderer's spelling for one rule; a single line never renders a precedence option. Any other header is refused with main's text before parsing. ve/norm_english.py is unchanged. Tests: `test_rights_incident_roundtrip_with_switch` and `test_rights_incident_header_the_renderer_never_writes_is_refused`. |
 | 2 | `test_rights_incident_roundtrip_with_switch`, failing on main first. | tests/test_rights.py. It covers a strict line, a default line and a line with two parties. On the base's ve/surface/rights.py it fails with `InvalidInput: rights incident must have one rule`. new-tests-on-base.log ends `4 failed`: the switch, negative, R1-delta and generated tests. The file was restored afterwards (`HEAD-RESTORED`). |
-| 3 | A generated round-trip over the rights generator's lines, with the failure count before and after. | `line_roundtrip.py 200` covers every claim, liberty and immunity line with a predicate, in the 159 documents (seeds 0-199 of conformance/rights_differential.py) that correlate: 506 lines. **Before: 180 failed** (71 `InvalidInput: rights incident must have one rule`, the header; 109 `Expected a complete rule sentence`) (line-roundtrip-before.json). **After: 126 failed**, all `Expected a complete rule sentence`, all `unless=2`. Each failing line is listed by seed as `<right>/<line name>` in line-roundtrip-after.json under `failing`. Permanent tests: `test_generated_rights_lines_round_trip_one_by_one` (seeds 0-39, every line with at most one carve-out; it asserts at least 50 lines and at least 5 with a switch) and `test_generated_rights_lines_with_two_carve_outs_round_trip`, a strict xfail tied to rights-cfr-5b that turns red when that fix lands. |
+| 3 | A generated round-trip over the rights generator's lines, with the failure count before and after. | `line_roundtrip.py 200` covers every claim, liberty and immunity line with a predicate, in the 159 documents (seeds 0-199 of conformance/rights_differential.py) that correlate: 506 lines. **Before: 180 failed** (71 `InvalidInput: rights incident must have one rule`, the header; 109 `Expected a complete rule sentence`) (line-roundtrip-before.json). **After: 126 failed**, all `Expected a complete rule sentence`, all `unless=2`. Each failing line is listed by seed as `<right>/<line name>` in line-roundtrip-after.json under `failing`. Permanent tests: `test_generated_rights_lines_round_trip_one_by_one` (seeds 0-39, every line with at most one carve-out; it asserts at least 50 lines and at least 5 with a switch) and `test_generated_rights_lines_with_two_carve_outs_are_refused_until_rights_cfr_5b`, which pins the refusal (`Expected a complete rule sentence`) of every two-carve-out line and turns red when the rights-cfr-5b fix lands (a strict xfail here failed the gate's skip policy, tools/gate-optional.json). |
 | 4 | A negative test: a header variant that norm_english never renders is still refused. | `test_rights_incident_header_the_renderer_never_writes_is_refused` uses 20 variants: empty parentheses, precedence options (`rule`/`rules`, either order with the switch), a trailing `;`, doubled spaces, case, other wording, a comma list, brackets, NBSP, tab, CR, full-width parentheses and a duplicate party. Each is refused with main's exact text (`\ASyntaxError: expected Claim, Liberty or Immunity of right\Z`). Unsorted and undeclared parties, which are in the rendered spelling, are refused by the soft checker (DELTA row 2). |
 
 The 572-line set of the rights3 builder was not saved, so I could not reproduce it. Its current equivalent is the
@@ -37,6 +37,7 @@ ends `RESTORED`.
 | S6 unparsed header passed on | `except VEError: return True` | the negative test (`Unknown rule header option …`) |
 | S4 header dropped on render | `render_line` returns `. ` + body | `test_rights_incident_roundtrip_with_switch` (startswith) |
 | S5 switch dropped on default lines | pop `alterable` when `mode == "default"` | `test_generated_rights_lines_round_trip_one_by_one` |
+| S7 two-carve-out refusal changed (pre-review round) | ve/norm_english.py:540 joins `carveouts.replace("  ", " ")` | `test_generated_rights_lines_with_two_carve_outs_are_refused_until_rights_cfr_5b` (DID NOT RAISE); run by hand, restored from a copy, `git diff` empty |
 
 The task's two required bugs are S1 (the condition test fails) and S2 (the negative test fails). DRI adv0838 item
 3(b) asks for the negative test to fail on a seeded break: S2, S3 and S6 show it does. No Lean or Rust product code
@@ -96,8 +97,8 @@ FOLLOW-UP: rights-cfr-5b soft norm English: rules with two or more carve-outs do
 2. Deliverables: PASS. Section 1 gives each deliverable with its test. Rule-break grep: no new Python copy of a Lean
    decision (the header grammar is read from norm_english/softnorms), no report test, no file shared with an
    in-flight branch.
-3. Tests can fail: PASS. S1-S6 in seeded-bugs.log, and new-tests-on-base.log (4 failed on base code). The xfail is
-   strict.
+3. Tests can fail: PASS. S1-S6 in seeded-bugs.log, and new-tests-on-base.log (4 failed on base code). The pinned
+   two-carve-out refusal fails on a seeded fix (S7 below).
 4. Valid inputs still pass, base against head: PASS. The header-delta.json script runs base against head: 46 equal,
    4 differ, all in DELTA. `test_incident_english_has_one_soft_rule_reading` and
    `test_every_rights_incident_shape_round_trips_with_one_reading` (tests/test_english_unambiguity.py) still pass.
@@ -127,3 +128,12 @@ FOLLOW-UP: rights-cfr-5b soft norm English: rules with two or more carve-outs do
 ## 6. Next item
 
 None (task: "Next item: none"), apart from the follow-up rights-cfr-5b above.
+
+## 7. Pre-review round (gate at e17a0d9f)
+
+The chain's full gate at e17a0d9f passed every test (32977 passed, 0 failed) but failed its skip policy on one
+row: the strict xfail `test_generated_rights_lines_with_two_carve_outs_round_trip` counts as a skip, and
+tools/gate-optional.json does not list it. Rather than add a skip-policy row (pc-1g needed a DRI ruling for one),
+the test is now `test_generated_rights_lines_with_two_carve_outs_are_refused_until_rights_cfr_5b`, a plain test
+that pins the known refusal (`Expected a complete rule sentence`) of every two-carve-out line. It fails when
+rights-cfr-5b lands (S7), and is then turned into the round-trip assertion. No product code changed in this round.

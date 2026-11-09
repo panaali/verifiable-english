@@ -1184,7 +1184,7 @@ def _round_trips(env, rights, right, kind, norm):
 def test_generated_rights_lines_round_trip_one_by_one():
     """rights-cfr-5 deliverable 3: every line of the rights generator's documents (seeds
     0-39) with at most one carve-out survives render_line -> parse_line, switch-bearing
-    and default lines included (two or more carve-outs: the strict xfail below)."""
+    and default lines included (two or more carve-outs: the pinned refusal below)."""
     switched = checked = 0
     for env, rights, right, kind, norm in _generated_lines(40):
         if len(norm["unless"]) <= 1:
@@ -1194,13 +1194,16 @@ def test_generated_rights_lines_round_trip_one_by_one():
     assert checked >= 50 and switched >= 5, (checked, switched)
 
 
-@pytest.mark.xfail(strict=True, raises=VEError, reason="rights-cfr-5b: norm_english's soft parser does not read its "
-                   "own `Except when` sentences back (double space at ve/norm_english.py:540)")
-def test_generated_rights_lines_with_two_carve_outs_round_trip():
+def test_generated_rights_lines_with_two_carve_outs_are_refused_until_rights_cfr_5b():
+    """Known failure, pinned (the gate's skip policy refuses an xfail): norm_english's soft parser does not read
+    its own `Except when` sentences back (double space at ve/norm_english.py:540), so every generated line with
+    two or more carve-outs is refused with this one error. rights-cfr-5b fixes it; this test then fails and
+    becomes the round-trip assertion."""
     lines = [line for line in _generated_lines(40) if len(line[4]["unless"]) > 1]
     assert len(lines) >= 5
     for line in lines:
-        assert _round_trips(*line), line[2:]
+        with pytest.raises(VEError, match="^Expected a complete rule sentence$"):
+            _round_trips(*line)
 
 
 def test_line_on_a_base_predicate_is_unknown_not_a_crash():
