@@ -17051,6 +17051,17 @@
         "VE.Closure.CoreEquiv.embedEdge"
       ]
     },
+    "VE/Closure/Tableau.lean": {
+      "C": [
+        "VE.Closure.CoreEquiv.embedCert",
+        "VE.Closure.CoreEquiv.embedTrace",
+        "VE.Closure.CoreEquiv.embedTraces",
+        "VE.Closure.Tableau.Certificate",
+        "VE.Closure.Tableau.Trace",
+        "VE.Closure.Tableau.checkCertificate",
+        "VE.Closure.Tableau.extraRule"
+      ]
+    },
     "VE/Acts/ReadingsExamples.lean": {
       "T": [
         "VE.Acts.ReadingsExamples.S1",
@@ -17854,15 +17865,6 @@
       ],
       "P": [
         "VE.RightClauses.lineKey"
-      ]
-    },
-    "VE/RightClauses/Relation.lean": {
-      "S": [
-        "VE.RightClauses.clauseSlot",
-        "VE.RightClauses.clauseSlotLabelled",
-        "VE.RightClauses.relPremises",
-        "VE.RightClauses.relPremisesLabelled",
-        "VE.RightClauses.totalF"
       ]
     },
     "VE/RightClauses/Examples.lean": {
@@ -18972,6 +18974,15 @@
         "VE.Weighing.Examples.μd"
       ]
     },
+    "VE/RightClauses/Relation.lean": {
+      "S": [
+        "VE.RightClauses.clauseSlot",
+        "VE.RightClauses.clauseSlotLabelled",
+        "VE.RightClauses.relPremises",
+        "VE.RightClauses.relPremisesLabelled",
+        "VE.RightClauses.totalF"
+      ]
+    },
     "VE/Attitudes/Examples.lean": {
       "T": [
         "VE.Attitudes.Examples.FM",
@@ -19827,15 +19838,57 @@
         "VE.Purposes.Examples.f7m"
       ]
     },
-    "VE/Closure/Tableau.lean": {
-      "C": [
-        "VE.Closure.CoreEquiv.embedCert",
-        "VE.Closure.CoreEquiv.embedTrace",
-        "VE.Closure.CoreEquiv.embedTraces",
-        "VE.Closure.Tableau.Certificate",
-        "VE.Closure.Tableau.Trace",
-        "VE.Closure.Tableau.checkCertificate",
-        "VE.Closure.Tableau.extraRule"
+    "VE/Commands/Steps.lean": {
+      "G[R]": [
+        "VE.Commands.conditionScope"
+      ],
+      "G[V]": [
+        "VE.Commands.Alt",
+        "VE.Commands.Form",
+        "VE.Commands.Shape",
+        "VE.Commands.StepOutcome",
+        "VE.Commands.capitalise",
+        "VE.Commands.combineShapes",
+        "VE.Commands.hasThen",
+        "VE.Commands.lift",
+        {
+          "name": "VE.Commands.productSize",
+          "tied": [
+            "VE.Commands.readingTuples_length"
+          ]
+        },
+        "VE.Commands.readStep",
+        "VE.Commands.readingTuples",
+        "VE.Commands.reads",
+        "VE.Commands.shapeAlts",
+        "VE.Commands.shapeOutcome",
+        {
+          "name": "VE.Commands.shapeOutcomeCharged",
+          "tied": [
+            "VE.Commands.shapeOutcome_charged"
+          ]
+        },
+        "VE.Commands.shapes"
+      ]
+    },
+    "VE/Commands/StepsExamples.lean": {
+      "T": [
+        "VE.Commands.StepsExamples.ask",
+        "VE.Commands.StepsExamples.chargeInstalled",
+        "VE.Commands.StepsExamples.check",
+        "VE.Commands.StepsExamples.conditionScopeText",
+        "VE.Commands.StepsExamples.eightReviews",
+        "VE.Commands.StepsExamples.elabChargeInstalled",
+        "VE.Commands.StepsExamples.noStep",
+        "VE.Commands.StepsExamples.readS",
+        "VE.Commands.StepsExamples.readsWeb",
+        "VE.Commands.StepsExamples.reviewIt",
+        "VE.Commands.StepsExamples.reviewMeaning",
+        "VE.Commands.StepsExamples.spelled",
+        "VE.Commands.StepsExamples.spellings",
+        "VE.Commands.StepsExamples.step",
+        "VE.Commands.StepsExamples.twoSteps",
+        "VE.Commands.StepsExamples.wideEnv"
       ]
     },
     "VE/Presupposition/Wire.lean": {

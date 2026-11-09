@@ -258,6 +258,8 @@ module VE.Commands.Read
 module VE.Commands.Run
 module VE.Commands.RunExamples
 module VE.Commands.RunSplit
+module VE.Commands.Steps
+module VE.Commands.StepsExamples
 module VE.Commands.Texts
 module VE.Compose.Adjoin
 module VE.Compose.Content
