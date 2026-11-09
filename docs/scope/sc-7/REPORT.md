@@ -49,7 +49,7 @@ FOLLOW-UP: sc-7b IDE writes the scope block from the 2.2 wordings
 ## Size
 
 `git diff --numstat` against the merge base, without generated files and mutant JSON: Authoring.lean 210, Examples
-107, test_scope_authoring.py 49, trust-classes.json 59, ScopeExamples.lean 17, test_scope_lean.py 11, FarExamples.lean
+107, test_scope_authoring.py 49, trust-classes.json 59, ScopeExamples.lean 17, test_scope_lean.py 14, FarExamples.lean
 8, the manifest 4, VE.lean 2, DELTA 10, and this report, 118. Total 598. (4) needs a mode, a schema, a
 relay and binding fuzz tests (docs/ROUTE-RECIPE.md), well past 600.
 
