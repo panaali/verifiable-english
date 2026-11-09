@@ -1,0 +1,17 @@
+trust_mutants: 14 definitions, 200 mutants (33 to run), 4 jobs, base 66242432df01
+UNKNOWN lean/VE/Presupposition/Wire.lean:86 VE.Presupposition.cellOk (S, trusted) list-empty: cs -> [] (lean/VE/Presupposition/Wire.lean:86: Invalid dotted identifier notation: The expected type of `.a...)
+UNKNOWN lean/VE/Presupposition/Wire.lean:53 VE.Presupposition.Position (D[V], trusted) ctor-drop: | path (p : List Nat) ->  (lean/VE/Presupposition/Examples.lean:489: Unknown constant `VE.Presupposition.Position.path`)
+UNKNOWN lean/VE/Presupposition/Wire.lean:134 VE.Presupposition.ruleConditions (S, trusted) list-empty: R.checked -> [] (lean/VE/Presupposition/Wire.lean:134: Invalid field notation: Type of)
+UNKNOWN lean/VE/Presupposition/Wire.lean:87 VE.Presupposition.cellOk (S, trusted) list-empty: cs -> [] (lean/VE/Presupposition/Wire.lean:87: Invalid dotted identifier notation: The expected type of `.i...)
+UNKNOWN lean/VE/Presupposition/Wire.lean:55 VE.Presupposition.Position (D[V], trusted) ctor-drop: | heading ->  (lean/VE/Presupposition/Examples.lean:489: Unknown constant `VE.Presupposition.Position.heading`)
+UNKNOWN lean/VE/Presupposition/Wire.lean:20 VE.Presupposition.Carrier (S, trusted) ctor-drop: | asserted ->  (lean/VE/Presupposition/Wire.lean:31: Unknown constant `VE.Presupposition.Carrier.asserted`)
+SURVIVOR lean/VE/Presupposition/Wire.lean:124 VE.Presupposition.restrictionPaths (S, trusted) list-drop-last: [0, 1, 0, 0, 0] -> ([0, 1, 0, 0, 0].dropLast)
+SURVIVOR lean/VE/Presupposition/Wire.lean:87 VE.Presupposition.cellOk (S, trusted) list-drop-last: cs -> (cs.dropLast)
+SURVIVOR lean/VE/Presupposition/Wire.lean:125 VE.Presupposition.restrictionPaths (S, trusted) list-drop-last: [0, 0] -> ([0, 0].dropLast)
+SURVIVOR lean/VE/Presupposition/Wire.lean:95 VE.Presupposition.tableOk (S, trusted) list-drop-first: rows -> (rows.drop 1)
+SURVIVOR lean/VE/Presupposition/Wire.lean:87 VE.Presupposition.cellOk (S, trusted) list-last: cs -> (cs.reverse.take 1)
+SURVIVOR lean/VE/Presupposition/Wire.lean:95 VE.Presupposition.tableOk (S, trusted) list-drop-middle: .disjunct, -> 
+trust_mutants: 21 KILLED, 6 SURVIVOR, 6 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 167 OTHER SHARD in 149 s
+trust_mutants: D[V], trusted: 2 UNKNOWN, 1 OTHER SHARD
+trust_mutants: S, trusted: 21 KILLED, 6 SURVIVOR, 4 UNKNOWN, 166 OTHER SHARD
+trust_mutants: steps: wall plan 9.2 s, scratch 2.7 s, control_build 0.1 s, probe_install 1.2 s, control_probes 9.5 s, mutants 121.8 s, cleanup 4.3 s; lake control_build 0.1 s (1), probe_install 1.2 s (1), control_probes 7.6 s (1), mutant_builds 52.1 s (33), mutant_checks 98.9 s (33), stage_controls 7.8 s (5), mutant_probes 50.5 s (21)
