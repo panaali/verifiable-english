@@ -218,6 +218,7 @@ import VE.Question.Spans
 import VE.Commands.Examples
 import VE.Commands.RunExamples
 import VE.Commands.RunSplit
+import VE.Commands.StepsExamples
 import VE.Ask.Basic
 import VE.Ask.Sound
 import VE.Ask.Sources
@@ -261,6 +262,7 @@ import VE.Acts.Sources
 import VE.Acts.Situation
 import VE.Acts.MeaningExamples
 import VE.Acts.ReadingsExamples
+import VE.Acts.RunExamples
 import VE.Acts.RenderExamples
 import VE.Acts.Compat
 import VE.Acts.LexicalExamples

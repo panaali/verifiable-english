@@ -1,0 +1,122 @@
+{
+ "item": "ci-5",
+ "note": "Seeded bugs, one per claimed behaviour; only Lean product code changed (no Python or Rust). Each was planted in the file named, the check named failed, and the file was restored with git checkout (then `lake build VE.Commands.Examples VE.Compose.Examples VE.Service.ActsExamples`: Build completed successfully). S1, S3 and S4 first break a proof; their fixture rows were shown with that one proof replaced by `sorry` in the mutant copy only (never committed). R16's mechanical mutants of every new trusted definition are trust-mutants.json; hand_mutants covers the new trusted definitions with no operator site there.",
+ "seeds": [
+  {
+   "id": "S1",
+   "language": "Lean",
+   "file": "lean/VE/SpeechActs/Wire.lean",
+   "definition": "VE.SpeechActs.Wire.allowlist",
+   "behaviour": "the speech gate admits acts@0 and nothing else new (the plan's seeded bug: the gate admitting acts@0 with soft-norms@0)",
+   "mutation": "\"acts@0\" :: allowlist₀ -> \"acts@0\" :: \"soft-norms@0\" :: allowlist₀",
+   "test": "decode_without_acts (lean/VE/SpeechActs/Wire.lean:533, unsolved goal p = \"soft-norms@0\" → p ∈ allowlist₀); with it stubbed, lean/VE/Commands/Examples.lean:424 (#guard: speech-acts@0 with soft-norms@0, SA's fixture φ)",
+   "result": "KILLED: proof fails; the #guard did not evaluate to true"
+  },
+  {
+   "id": "S2",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Lexical.lean",
+   "definition": "VE.Acts.Lexical.joinWords (read by joinFree and joinCheck)",
+   "behaviour": "joinFree's table includes for: a frame's slot after for is not a simple act",
+   "mutation": "[\"and\", \"or\", \"nor\", \"for\"] -> [\"and\", \"or\", \"nor\"]",
+   "test": "lean/VE/Commands/Examples.lean:377 (#guard: the joinFree table, {0} pay for {1}), :393 and :401 (chooseFor, the for-frame of DRI 20261105 item 1(b)), and :363, :366, :370, :371, :380, :395, :404",
+   "result": "KILLED: 10 #guards did not evaluate to true"
+  },
+  {
+   "id": "S3",
+   "language": "Lean",
+   "file": "lean/VE/Compose/Dispatch.lean",
+   "definition": "VE.Compose.actsRefuses",
+   "behaviour": "actsRefuses drops speech-acts@0 only (the task's seeded bug: dropping a second profile)",
+   "mutation": "[\"soft-norms@0\", \"rights@0\", \"alternatives@0\"] -> [\"soft-norms@0\", \"alternatives@0\"]",
+   "test": "gate_acts (lean/VE/Compose/Dispatch.lean:1268); with it stubbed, lean/VE/Compose/Examples.lean:272 (#guard: actsRefuses.length == 6 and the rights@0 row)",
+   "result": "KILLED: proof fails; the #guard did not evaluate to true"
+  },
+  {
+   "id": "S4",
+   "language": "Lean",
+   "file": "lean/VE/SpeechActs/Wire.lean",
+   "definition": "VE.SpeechActs.Wire.checkActsBlock",
+   "behaviour": "a tree whose vocabulary lookup differs from the rebuilt value is refused (DRI 20261105 item 3(c))",
+   "mutation": "throw \"InvalidInput: environment acts block\" -> pure ()",
+   "test": "decoded_act_simple (lean/VE/SpeechActs/Wire.lean:592); with it stubbed, lean/VE/Commands/Examples.lean:477 (#guard: twoVocabularies refused)",
+   "result": "KILLED: proof fails; the #guard did not evaluate to true"
+  }
+ ],
+ "hand_mutants": [
+  {
+   "id": "H1",
+   "language": "Lean",
+   "file": "lean/VE/SpeechActs/Wire.lean",
+   "definition": "VE.SpeechActs.Wire.allowlist₀",
+   "mutation": "[\"norms@0\", \"relational-fol@0\", \"speech-acts@0\"] -> the same plus \"time@0\"",
+   "test": "profileGate_mono (Wire.lean:498); lean/VE/Commands/Examples.lean:424 (the gate's other refusals: time@0)",
+   "result": "KILLED: the named #guard did not evaluate to true (with the named proofs replaced by sorry in the mutant copy only)"
+  },
+  {
+   "id": "H2",
+   "language": "Lean",
+   "file": "lean/VE/SpeechActs/Wire.lean",
+   "definition": "VE.SpeechActs.Wire.profileGateOf",
+   "mutation": "the `requires norms@0` check removed",
+   "test": "profileGateOf_ok (Wire.lean:487); lean/VE/Commands/Examples.lean:427 (`speech-acts@0 requires norms@0`)",
+   "result": "KILLED: the named #guard did not evaluate to true (with the named proofs replaced by sorry in the mutant copy only)"
+  },
+  {
+   "id": "H3",
+   "language": "Lean",
+   "file": "lean/VE/SpeechActs/Wire.lean",
+   "definition": "VE.SpeechActs.Wire.profileGate₀",
+   "mutation": "profileGateOf allowlist₀ -> profileGateOf allowlist",
+   "test": "profileGate_mono (Wire.lean:498); lean/VE/Commands/Examples.lean:413 (Full₀ refuses E_acts) and :416 (profileGate₀ refuses acts@0)",
+   "result": "KILLED: the named #guard did not evaluate to true (with the named proofs replaced by sorry in the mutant copy only)"
+  },
+  {
+   "id": "H4",
+   "language": "Lean",
+   "file": "lean/VE/SpeechActs/Wire.lean",
+   "definition": "VE.SpeechActs.Wire.decodeEnvironmentWith",
+   "mutation": "(acts := acts) -> (acts := false)",
+   "test": "decode_steps (Wire.lean:521), decode_without_acts (:538); lean/VE/Commands/Examples.lean:363, :366, :370, :371, :385, :387, :393, :401, :404, :406, :408, :435",
+   "result": "KILLED: the named #guard did not evaluate to true (with the named proofs replaced by sorry in the mutant copy only)"
+  },
+  {
+   "id": "H5",
+   "language": "Lean",
+   "file": "lean/VE/SpeechActs/Wire.lean",
+   "definition": "VE.SpeechActs.Wire.decodeSpeechEnvironmentFull₀",
+   "mutation": "decodeEnvironmentWith profileGate₀ false -> decodeEnvironmentWith profileGate false",
+   "test": "lean/VE/Commands/Examples.lean:413 (no proof breaks)",
+   "result": "KILLED: the #guard did not evaluate to true; no proof breaks"
+  },
+  {
+   "id": "H6",
+   "language": "Lean",
+   "file": "lean/VE/SpeechActs/Wire.lean",
+   "definition": "VE.SpeechActs.Wire.profileGate",
+   "mutation": "profileGateOf allowlist -> profileGateOf allowlist₀",
+   "test": "profileGate_mono (Wire.lean:499), today_speech (lean/VE/Compose/Dispatch.lean:499); lean/VE/Commands/Examples.lean:363, :366, :370, :371, :385, :387, :393, :395, :401, :404, :406, :408",
+   "result": "KILLED: the named #guard did not evaluate to true (with the named proofs replaced by sorry in the mutant copy only)"
+  }
+ ],
+ "trust_mutants_cloud": {
+  "run": "zsh mac-pytest.sh --trustmut -- --max-mutants 1000 --json docs/commands-imperatives/ci-5/trust-mutants.json --test lean/VE/Commands/Examples.lean --test lean/VE/Compose/Examples.lean --test lean/VE/Service/ActsExamples.lean, at 10f8be450 (Lean identical to HEAD), 4 GitHub Actions parts (/home/seyran/code/manage-agents/cloud-jobs/ci-5-10f8be45/part-1..4.json)",
+  "counts": {
+   "KILLED": 8,
+   "SURVIVOR": 0,
+   "UNKNOWN": 11,
+   "INVALID": 3,
+   "NOT RUN": 29
+  },
+  "killed": [
+   "checkActsBlock and-or (Examples.lean:363)",
+   "checkActsBlock ne-eq (Examples.lean:363)",
+   "checkActsBlock list-empty (Examples.lean:477)",
+   "decodeSpeechEnvironmentFull bool-flip (Examples.lean:363)",
+   "profilesAllowed list-empty (Examples.lean:413; ActsExamples.lean:204)",
+   "actsRefuses list-empty (Compose/Examples.lean:265)",
+   "joinFree bool-flip (Examples.lean:377)"
+  ],
+  "why_incomplete": "every UNKNOWN is 'lake build did not finish in 1800 s (--build-timeout)' or a mutant Lean refuses; NOT RUN: the parts' deadline. Two VM fallbacks (10:23Z and 14:47Z, load 50-130 with 7-8 other sweeps) gave only build-timeout UNKNOWNs and were stopped; no SURVIVOR in any run."
+ }
+}
