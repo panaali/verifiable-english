@@ -1,0 +1,9 @@
+job=eff-20261108-1-0e417db4-t195485-s2 job_commit=9515d9f7d8939ba43a745b43a55a5bff34ab684a session=cse_012rcAu8k6K1H81QS8BE8tv2 nproc=4
+mem_total_mb=16086 mem_avail_mb=15530
+tmp_free=26G
+Lean (version 4.24.0, x86_64-unknown-linux-gnu, commit 797c613eb9b6d4ec95db23e3e00af9ac6657f24b, Release)
+uv 0.12.19 (x86_64-unknown-linux-gnu)
+root_git_global_keys=commit.gpgsign core.checkstat core.trustctime gpg.format gpg.ssh.program http.proxyauthmethod push.negotiate user.email user.name user.signingkey 
+root_git_system_keys=filter.lfs.clean filter.lfs.process filter.lfs.required filter.lfs.smudge 
+run_as=ccrun uid=30033 home=/home/ccrun umask=0022 root_home=/root rewritten=21
+job_rc=0 job_s=633
