@@ -1,3 +1,10 @@
+- `tests/test_english_e2_profile_matrix.py` — Lean reads what Python reads on every environment of the probe matrix (review A of English Lean E2, recheck 1).
+- `tests/test_english_e2_python.py` — Python producer behavior needed by the E2 overlay relay (spec 2.8, 8.11).
+- `tests/test_english_e2_relay.py` — E2's Lean-authoritative admission and untrusted response boundary.
+- `tests/test_english_e2_report.py` — The integration report's gate and three-way figures come from committed results.
+- `tests/test_english_e2_responses.py` — E2's untrusted `english.read` answers: every status, every node, against the real service (review B1, B3, B4, B5 of English Lean E2; build checklist 4, 5, 13, …
+- `tests/test_english_e2_saved_evidence.py` — The E2.5 records, saved: the readability failure that kept Python authority then (E2.6 replays it in `test_english_e26_evidence.py`), the directed coverage and…
+- `tests/test_english_e2_selection.py` — Python never selects a wording Lean's lexicon validity refuses (recheck 1 of E2, B).
 - `tests/test_english_e2_statements.py` — The twelve E2 statements of spec 5.5 are checked by Lean, not by reading Lean source as text (review, checklist 11).
 - `tests/test_english_evidence.py` — Merge gates for the two English correspondence harnesses.
 - `tests/test_english_grammar_gen.py` — The fixed rules of English in Lean as data (docs/spec/english-lean-s2.md 2.5, 2.9, 4.5; S2 plan S2.0).
@@ -27,6 +34,7 @@
 - `tests/test_et8_completion.py` — ET-8 (events-time-causation plan 5, fixture R2 and the ET-1 component): Asimov's v2 rules and the ET-1 component re-run with `permitted` completed `unspecified…
 - `tests/test_et_e1_probe.py` — ET-E1's pre-registration and scorer (docs/events-time-causation/et-e1): hermetic, no model calls.
 - `tests/test_evaluate_search.py` — (no module docstring)
+- `tests/test_events_route.py` — et-4b: an `events` document through the service's norm-defaults mode, on both layered branches.
 - `tests/test_events_wire_mutants.py` — Mutants of the `events` block's decoder each fail a fixture (et-4 review F1).
 - `tests/test_evidence_bounds.py` — Property-based checks of the probability statements in design/evidence-layer-design.md.
 - `tests/test_evidence_toolkit.py` — The evidence toolkit (tools/evidence, tools/batch_evidence.py --check) fails on evidence that shows nothing.
@@ -39,6 +47,7 @@
 - `tests/test_frozen_sources.py` — AR-2, the narrow freeze (architecture decision D2): `lean/VE/Route/frozen.py` hashes only the files with K declarations and the `ve.core@0.1` decoders, `ve/que…
 - `tests/test_gate.py` — The full gate must reject missing coverage while honoring exact optional cases.
 - `tests/test_gate_collection.py` — The gate's collection is the merge base's, less exactly the tests a `Test-removed:` trailer records, with the diff only labelling each removal (tools/gate_coll…
+- `tests/test_gate_collection_renumber.py` — A renumbered mutant is paired by its text; one whose text is gone stays refused (tools/gate_collection.py).
 - `tests/test_gate_durations.py` — Each gate keeps its suite's per-test seconds in its record, and the next gate on that base orders its suite by them.
 - `tests/test_gate_integrity.py` — Regressions for verification-gate accounting, isolation, and run identity.
 - `tests/test_gate_quarantine.py` — Test speed B5: the gate never stops early, and the tracked quarantine (tools/test-quarantine.json).
@@ -79,11 +88,3 @@
 - `tests/test_lean_decided_share.py` — `tools/lean_decided_share.py` (readings-defaults 1.10 and 10; plan 3.9, RD-5): sums Lean's decided units' span bytes and decides nothing; Lean's list is untrus…
 - `tests/test_lean_default_build.py` — Every Lean source is compiled by the default `lake build` (et-7 review F2).
 - `tests/test_lean_document_wrapper.py` — The Lean `document` mode (lean-first batch 16a) against Python's `load_document` and `check_document` wrapper.
-- `tests/test_lean_dump_cache.py` — The Lean dump cache (`tools/lean_dump_cache.py`): a stored dump is replayed only while every input it is keyed on is unchanged, and any doubt is a miss that ru…
-- `tests/test_lean_first_b10a_report.py` — Lean-first batch 10a: the tables of `docs/lean-first/b10a/DELTA.md` are rendered from the evidence files (build checklist 20), the corpus A/B found no differen…
-- `tests/test_lean_first_b10b_report.py` — Lean-first batch 10b: the fuzzer gate accepts only the retired DF-19 difference (build checklist 13), and the recorded evidence shows no unexplained difference…
-- `tests/test_lean_first_b12_report.py` — Batch 12's reported numbers come from its gate evidence.
-- `tests/test_lean_first_b13a.py` — Batch 13a: Lean parse diagnostics, order text and replay ownership.
-- `tests/test_lean_first_b13b.py` — Lean-first batch 13b: the core operations default to Lean (docs/lean-first/b13b/DELTA.md).
-- `tests/test_lean_first_b14a.py` — Lean-first batch 14a: the `definitions@0` surface sugar is Lean's.
-- `tests/test_lean_first_b3b_report.py` — Lean-first batch 3b: the timing tables of `docs/lean-first/b3b/DELTA.md` are rendered from the evidence files (build checklist 20), and the paired UDHR runs th…

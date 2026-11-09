@@ -33,10 +33,13 @@
 - `tests/secret_decode.py` — Test-only, INDEPENDENT brute-force decoder (deliberately not ve.stream_audit's): does a secret appear in a value under any composition of JSON parsing, unicode…
 - `tests/subprocesses.py` — Wall-clock guard for external tools, never a test acceptance criterion.
 - `tests/test_acts_contract.py` — The `acts@0` wire table in shadow (ap-1bf): the legacy validator still owns the verdict; the engines name the member of 1.1 at and around each limit of `VE.Act…
+- `tests/test_acts_elaborate_relay.py` — ap-3dc: the `acts-elaborate` relay (act-phrases 6.7) and the norms route under `acts@0` on Lean's elaborated document.
 - `tests/test_acts_joined_route.py` — ap-3db: a joined act under `acts@0` on the routes that elaborate it (act-phrases 6.4, DRI 2026-11-02 ap-3db).
 - `tests/test_acts_lexical.py` — act-phrases AP-1, first part (ap-1a): `VE.Acts.Lexical` and the profile-aware regulated decoder.
 - `tests/test_acts_lexical_mutants.py` — Seeded mutants of the act-phrase decoder each fail a fixture (ap-1a review F1).
 - `tests/test_acts_profile.py` — act-phrases AP-1, the profile part (ap-1b): `acts@0` documents loaded, checked and refused by Lean.
+- `tests/test_acts_readings_answer.py` — ap-4: the `act-readings` relay binds Lean's answer to its request and claims no more (act-phrases 7, AR1 to AR5; DRI ruling R8; spec SR5).
+- `tests/test_acts_readings_lean.py` — ap-4: the `act-readings` mode through the service and `ve acts readings` (act-phrases 7, 11.4; plan AP-4 Tests).
 - `tests/test_acts_tree_mutants.py` — Mutants of the act trees' and the table's data types each fail a fixture (ap-3 review F1).
 - `tests/test_acts_vocab_mutants.py` — Seeded mutants of the act grammar's vocabulary check and limits each fail a fixture (ap-2 review F1).
 - `tests/test_admission_evidence.py` — The saved scale admission evidence holds whole-request CPU only; the stage profiler was withdrawn (reviews/dri-decisions-20261029-scale-admission-profile.md it…
@@ -86,8 +89,3 @@
 - `tests/test_b16d_evidence.py` — Check batch 16d's committed measurements without consulting live git state.
 - `tests/test_b16d_norm_roles.py` — Batch 16d review B1 and B2: which norm units make the norm-defaults document.
 - `tests/test_b16e_rights_document.py` — Batch 16e: rights@0 documents (with and without the readings@1 head) are Lean document answers.
-- `tests/test_b16f_document.py` — Batch 16f: the document mode's remaining groups are Lean answers, typed and bound.
-- `tests/test_b16f_senses_document.py` — Batch 16f: a document with `senses` is decided by Lean's `document` mode, which composes the senses route.
-- `tests/test_b17_evidence.py` — Batch 17 report assertions read only saved evidence, never moving Git refs.
-- `tests/test_b17_owner.py` — Batch 17: reported assist and Cedar decisions must cross the Lean boundary.
-- `tests/test_background.py` — (no module docstring)

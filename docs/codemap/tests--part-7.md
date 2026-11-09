@@ -1,3 +1,16 @@
+- `tests/test_speech_acts.py` — Deterministic experimental speech-act core fixtures (no trusted route).
+- `tests/test_speech_acts_acts0.py` — CI-5: `speech-acts@0` with `acts@0`, simple acts only (commands-imperatives 9), through the service and the saved A/B.
+- `tests/test_speech_acts_conformance.py` — Shared section-9 speech-act fixtures across Python, Lean, and Rust FOL evaluation.
+- `tests/test_speech_acts_lean.py` — The Lean `ve_speech_acts_route` on hand-written fixtures of speech-acts.md section 9.
+- `tests/test_speech_polar_lean.py` — Speech acts' polar questions and their `Must`/`Can` refusal, read by Lean (question answering Q1.4, Q1.4b).
+- `tests/test_speech_source_lean.py` — The Lean decoded-source wrapper (`speech-source`, docs/spec/speech-acts.md 8.5) against Python's `SpeechSource`.
+- `tests/test_speech_source_relay.py` — The bound Python transport for VE.SpeechActs.Source.report.
+- `tests/test_speech_source_switch.py` — The 11b public projection against the frozen pre-switch W2 checker.
+- `tests/test_stage0_inventory.py` — Stage 0 inventory policy must survive regeneration on another checkout.
+- `tests/test_stage0_probe_matrix.py` — Regressions for rejected Stage 0 baseline probes.
+- `tests/test_stage2_bundle.py` — Lemma bundles on the Lean authority: Lean's route bundle case decides acceptance.
+- `tests/test_stage2_dispatch.py` — Checker boundaries: one owner per operation (no authority to select since lean-first batch 18), Rust transport limits and diagnostic classes.
+- `tests/test_stage2_evaluation.py` — Backend integration on the public evaluation and Background signatures.
 - `tests/test_stage2_faults.py` — Per-adapter fault injection (Gate 2): every public operation dispatched to a backend fails closed when that backend is missing, is an unlisted build, crashes o…
 - `tests/test_stage2_graph.py` — Argument composition on the Lean authority: Lean's `graph` mode (VE/Service/Graph.lean).
 - `tests/test_stage2_norms.py` — Norms operations on the Lean authority: elaboration, certificates, conflicts, admission.
