@@ -106,4 +106,111 @@ theorem envPrime_mapG (C : SoftDoc) : envPrime (mapG γ C) = envPrime C := by
 theorem decisionNames_mapG (C : SoftDoc) : decisionNames (mapG γ C) = decisionNames C := by
   simp only [decisionNames, decisions_mapG]
 
+/-! ### The hypotheses and the two W1 trees -/
+
+/-- The extensions at predicate `p`: base conjuncts typed in `p`'s declared context. -/
+def QC (C : SoftDoc) (E0 : VE.Environment) (p : String) : VE.Formula → VE.Formula → Prop :=
+  Plus E0 (keepOf C.T.regulated C.T.definitions) (VE.SoftNorms.sortsOf C p).reverse
+
+/-- What `validateSoft_mapG` needs of the new guards. -/
+structure GHyp (C : SoftDoc) (E0 : VE.Environment) : Prop where
+  guards : ∀ N ∈ C.T.nodes, FExt (QC C E0 N.pred) N.guard (γ N.name N.guard)
+  dual : DualCtx (QC C E0) C
+  envC : EnvOK' E0 (keepOf C.T.regulated C.T.definitions) C.E
+  envP : EnvOK' E0 (keepOf C.T.regulated C.T.definitions) (envPrime C)
+
+variable {γ}
+
+theorem QC_preds {C : SoftDoc} {E0 : VE.Environment} :
+    ∀ p a b, QC C E0 p a b → (preds b).filter (keepOf C.T.regulated C.T.definitions) =
+      (preds a).filter (keepOf C.T.regulated C.T.definitions) := fun _ _ _ h => Plus.preds h
+
+theorem baseTRel {C : SoftDoc} {E0 : VE.Environment} (h : GHyp γ C E0) :
+    TRel (QC C E0) C.T.nodes SoftNode.toNode (fun N => (setG γ N).toNode) where
+  name _ := rfl
+  pred _ := rfl
+  over _ := rfl
+  sign _ := rfl
+  rel N hN := ⟨h.guards N hN, N.carveOuts.map (fun c => (c, c)), by simp [Function.comp_def],
+    by simp [Function.comp_def],
+    fun c hc => by obtain ⟨c', -, rfl⟩ := List.mem_map.1 hc; exact .refl _⟩
+
+theorem softenTRel {C : SoftDoc} {E0 : VE.Environment} (h : GHyp γ C E0) :
+    TRel (QC C E0) C.T.nodes (primeNode C) (fun N => primeNode (mapG γ C) (setG γ N)) where
+  name _ := rfl
+  pred _ := rfl
+  over _ := rfl
+  sign _ := rfl
+  rel N hN := by
+    refine ⟨h.guards N hN, N.carveOuts.map (fun c => (c, c)) ++
+      (if N.mode = .strict ∧ N.alterable = [] then [] else [(derived C N, derived (mapG γ C) (setG γ N))]), ?_, ?_, ?_⟩
+    · simp only [primeNode, derivedList, List.map_append, List.map_map, Function.comp_def, List.map_id']
+      split <;> rfl
+    · simp only [primeNode, derivedList, List.map_append, List.map_map, Function.comp_def, List.map_id', setG_mode,
+        setG_alterable, setG_carveOuts]
+      split <;> rfl
+    · intro c hc
+      rcases List.mem_append.1 hc with hc | hc
+      · obtain ⟨c', -, rfl⟩ := List.mem_map.1 hc; exact .refl _
+      · split at hc
+        · cases hc
+        · simp only [List.mem_singleton] at hc; subst hc
+          exact derived_ext C h.guards h.dual N
+
+theorem mapG_base (C : SoftDoc) : (mapG γ C).base =
+    ⟨C.E, C.lits, ⟨C.T.regulated, C.T.definitions, C.T.nodes.map (fun N => (setG γ N).toNode)⟩⟩ := by
+  simp only [SoftDoc.base, mapG_E, mapG_lits, mapG_regulated, mapG_definitions, mapG_nodes, List.map_map]; rfl
+
+theorem soften_mapG (C : SoftDoc) : soften (mapG γ C) =
+    ⟨envPrime C, C.lits, ⟨C.T.regulated, C.T.definitions, C.T.nodes.map (fun N => primeNode (mapG γ C) (setG γ N))⟩⟩ := by
+  simp only [soften, envPrime_mapG, mapG_lits, mapG_regulated, mapG_definitions, mapG_nodes, List.map_map]; rfl
+
+theorem find?_name {l : List VE.Norms.Regulated} (hnd : (l.map (·.name)).Nodup) {r : VE.Norms.Regulated}
+    (hr : r ∈ l) : l.find? (fun y => y.name == r.name) = some r := by
+  induction l with
+  | nil => cases hr
+  | cons a l ih =>
+    simp only [List.map_cons, List.nodup_cons, List.mem_map] at hnd
+    rcases List.mem_cons.1 hr with rfl | hr
+    · simp
+    · have hne : (a.name == r.name) = false := by
+        simp only [beq_eq_false_iff_ne]; intro he; exact hnd.1 ⟨r, hr, he.symm⟩
+      simp [List.find?_cons, hne, ih hnd.2 hr]
+
+theorem sortsOf_find {C : SoftDoc} {p : String} {r0 : VE.Norms.Regulated}
+    (h : C.T.regulated.find? (fun y => y.name == p) = some r0) : VE.SoftNorms.sortsOf C p = r0.sorts := by
+  simp [VE.SoftNorms.sortsOf, sortsIn, h]
+
+theorem typesAt {C : SoftDoc} {E0 E : VE.Environment} {ι : Type} (L : List ι) (f : ι → Node)
+    (hE : EnvOK' E0 (keepOf C.T.regulated C.T.definitions) E) : TypesAt (QC C E0) L f E C.T.regulated := by
+  intro x _ r0 hr a b hab ha
+  have hs := sortsOf_find hr
+  unfold QC at hab; rw [hs] at hab
+  exact Plus.check' hE hab ha
+
+theorem validateW1_mapG {C : SoftDoc} {E0 : VE.Environment} (h : GHyp γ C E0)
+    (hnd : (C.T.regulated.map (·.name)).Nodup) (hv : validateW1 (soften C) = .ok ()) :
+    OkOrRL (validateW1 (soften (mapG γ C))) ∧
+      (validateW1 (soften (mapG γ C)) = .ok () → VE.NormDefaults.RulesOK (soften (mapG γ C))) := by
+  have ht := softenTRel h
+  unfold validateW1 at hv ⊢
+  rw [soften_mapG]
+  split at hv
+  · cases hv
+  rename_i hc
+  split at hv
+  · rename_i hs
+    have hw := ht.checkW1 (envPrime C) C.lits C.T.regulated C.T.definitions (typesAt _ _ h.envP) QC_preds hc
+    rcases hw.1 with hw1 | ⟨e, he, hre⟩
+    · rw [hw1]
+      have hsem := ht.semanticCheck (envPrime C) C.lits C.T.regulated C.T.definitions QC_preds
+        (fun r0 hr0 k a b hab ha => by
+          have hs' := sortsOf_find (find?_name hnd hr0)
+          unfold QC at hab; rw [hs'] at hab
+          exact Plus.check' (h.envP.hide _ (fun n hn => layerNames_keep _ n (List.mem_of_mem_drop hn))) hab ha) hs
+      simp only [hsem, if_true]
+      exact ⟨Or.inl rfl, fun _ => hw.2 hw1⟩
+    · rw [he]; exact ⟨Or.inr ⟨e, rfl, hre⟩, fun h' => by cases h'⟩
+  · cases hv
+
 end VE.RightClauses.PWF
