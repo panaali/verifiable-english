@@ -132,4 +132,23 @@ def twoReadings := "The rules below are called the x apply only where y."
 #guard trip "Notwithstanding the rules of section 3.2, every operator may share." "{\"reach\": {\"anchor\": {\"section\": \"3.2\"}}, \"effect\": \"precedes\", \"rule\": {\"english\": \"every operator may share\"}}"
 #guard trip "The rules below are called the users’ rules." "{\"list_name\": \"the users’ rules\"}"
 
+/-! ## sc-7 review F7: a sentence end before any closer (`closers`) is a sentence end -/
+
+-- the review's PROBE F7, and the DRI note's `x.› y` and `x.） y`
+#guard ["## If the user says 'stop.'", "The rules below are called the x.' The rules below are called the y.",
+  "The hard constraints apply only where x.} y.", "The hard constraints apply only where x。」 y.",
+  "The hard constraints apply only where x.› y.", "The hard constraints apply only where x.） y."].all (parseGovernor · == none)
+-- the class: every closer, alone or after another, after every sentence end, in every slot
+def slotsEnding (e : String) : List String :=
+  [s!"## If the user says stop{e}", s!"## When asked{e} refuse", s!"The hard constraints apply only where x{e} y.",
+   s!"The hard constraints do not apply when x{e} y.", s!"Notwithstanding the rules of section 3, x{e} y.",
+   s!"Notwithstanding the rules of section 3{e}, x.", s!"This applies only where x{e} y.",
+   s!"The rules below are called the x{e} The rules below are called the y.",
+   s!"In place of their own condition, the x{e} the y apply only where {kindWording}."]
+#guard ".?!:…‽。？！：．".toList.all fun t => closers.toList.all fun q =>
+  (slotsEnding (t.toString ++ q.toString) ++ slotsEnding (t.toString ++ q.toString ++ ")”")).all (parseGovernor · == none)
+-- the other direction: a closer after no sentence end stays in its slot
+#guard trip "The rules below are called the users' rules." "{\"list_name\": \"the users' rules\"}"
+#guard trip "The hard constraints apply only where the act (as above) is “final”." "{\"reach\": {\"list_name\": \"the hard constraints\"}, \"effect\": {\"reguard\": [\"and\", \"own\", {\"english\": \"the act (as above) is “final”\"}]}}"
+
 end VE.Scope.AuthoringExamples

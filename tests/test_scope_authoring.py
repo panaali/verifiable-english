@@ -4,15 +4,25 @@ variants are `#guard`s in `lean/VE/Scope/AuthoringExamples.lean`, checked by eve
 wording: the IDE wiring through the relay is sc-7b. These tests tie the Lean text to the spec's."""
 from __future__ import annotations
 
+import json
 import re
 from pathlib import Path
+import subprocess
+import sys
+import unicodedata
 
+import pytest
+
+from tests.lean_build import LEAN, lean_build
+from tests.subprocesses import HANG_TIMEOUT
 from tests.test_scope_5_4_statements import statement
 
 ROOT = Path(__file__).resolve().parents[1]
 AUTHORING = ROOT / "lean/VE/Scope/Authoring.lean"
 EXAMPLES = ROOT / "lean/VE/Scope/AuthoringExamples.lean"
 SPEC = ROOT / "docs/spec/scope.md"
+sys.path.insert(0, str(ROOT / "tools"))
+import lake_outputs  # noqa: E402
 
 
 def spec_5_8() -> str:
@@ -65,3 +75,72 @@ def test_review_f1_no_slot_ends_a_sentence_is_guarded():
                   "This applies only where ", "The rules below are called the x.", "The hard constraints. ",
                   "In place of their own condition, the x."):
         assert f'"{start}' in sweep, start
+
+
+# sc-7 review F7: the review's PROBE F7 and the DRI note's two more wordings, each refused (`parseGovernor` is none)
+F7_WORDINGS = ("## If the user says 'stop.'", "The rules below are called the x.' The rules below are called the y.",
+               "The hard constraints apply only where x.} y.", "The hard constraints apply only where x。」 y.",
+               "The hard constraints apply only where x.› y.", "The hard constraints apply only where x.） y.")
+# What the docstrings of `Pinned.closers` and `Pinned.clause` name besides Unicode's Pe, Pf and Pi.
+TERMINATORS = set(".?!:…‽。？！：．")
+CLOSER_EXTRAS = set("\"'＂＇>*_`~")
+
+# Lean is the oracle: the characters `clause` refuses after a ".", over every Unicode scalar value that is a
+# `wordChar`, the F7 wordings' verdicts, and the two docstrings as the compiled environment has them.
+SWEEP = """import Lean
+import VE.Scope.Authoring
+open Lean VE.Scope.Pinned
+def refused : Array Nat := Id.run do
+  let mut out := #[]
+  for n in [0:0x110000] do
+    if n.isValidChar then
+      let c := Char.ofNat n
+      if wordChar c && !clause ("x." ++ c.toString) then out := out.push n
+  return out
+#eval show CoreM Unit from do
+  let env ← getEnv
+  IO.println (Json.mkObj [("refused", toJson refused), ("closers", toJson (← findDocString? env ``closers)),
+    ("clause", toJson (← findDocString? env ``clause)),
+    ("accepted", toJson ((Json.parse (WORDINGS)).toOption.getD .null |>.getArr?.toOption.getD #[] |>.map
+      fun w => (parseGovernor (w.getStr?.toOption.getD "")).isSome))]).compress
+"""
+
+
+@pytest.fixture(scope="module")
+def swept(tmp_path_factory) -> dict:
+    lean_build("VE")
+    source = tmp_path_factory.mktemp("closers") / "Closers.lean"
+    source.write_text(SWEEP.replace("WORDINGS", json.dumps(json.dumps(F7_WORDINGS, ensure_ascii=False),
+                                                             ensure_ascii=False)))
+    done = subprocess.run([lake_outputs.lean_executable(None, "lake"), "env", "lean", str(source)], cwd=LEAN,
+                          capture_output=True, text=True, timeout=HANG_TIMEOUT)
+    assert done.returncode == 0, done.stdout + done.stderr
+    return json.loads(done.stdout.strip().splitlines()[-1])
+
+
+def test_review_f7_the_probe_wordings_are_refused(swept):
+    """sc-7 review F7: a sentence end before `'`, `}`, `›`, `」` or `）` was read as a narrowing or a list name."""
+    assert swept["accepted"] == [False] * len(F7_WORDINGS)
+    examples = EXAMPLES.read_text()
+    for wording in F7_WORDINGS:
+        assert json.dumps(wording, ensure_ascii=False) in examples, wording
+
+
+def test_review_f7_clause_refuses_exactly_the_documented_closers(swept):
+    """sc-7 review F7 (the class): after a ".", `clause` refuses exactly the sentence ends and the closers its
+    docstrings name: every character of the Unicode version's Pe, Pf and Pi categories that `closers` cites, and its
+    listed quotes, `>` and Markdown marks. A missing closer (the review's `'`) or a refused character the docstrings
+    do not name fails."""
+    closers, clause = swept["closers"], swept["clause"]
+    version = re.search(r"Unicode (\d+\.\d+)'s categories Pe \(closing\s+brackets\), Pf and Pi", closers)
+    assert version is not None, closers
+    assert unicodedata.unidata_version.startswith(version.group(1) + "."), (version.group(1),
+                                                                            unicodedata.unidata_version)
+    for c in CLOSER_EXTRAS:
+        assert (f"`` {c} ``" if c == "`" else f"`{c}`") in closers, c
+    for c in TERMINATORS:
+        assert f'"{c}"' in clause, c
+    assert "before any `closers`" in clause
+    categories = {chr(n) for n in range(sys.maxunicode + 1) if unicodedata.category(chr(n)) in ("Pe", "Pf", "Pi")}
+    refused, named = {chr(n) for n in swept["refused"]}, TERMINATORS | categories | CLOSER_EXTRAS
+    assert refused == named, {"refused, not named": sorted(refused - named), "named, not refused": sorted(named - refused)}
