@@ -45,12 +45,7 @@ theorem noDistinction_texts (D : RightsDoc) (l : List (String × String)) :
   have h2 : ∀ p, independentReported { D with located := l } p = independentReported D p := fun _ => rfl
   have h3 : ∀ p, distinctionHits { D with located := l } p = distinctionHits D p := fun _ => rfl
   simp only [noDistinction, h1, h2, h3, List.map_flatMap]
-  congr 1; funext p
-  split
-  · rfl
-  · simp only [List.map_filterMap]
-    congr 1; funext hit
-    split <;> rfl
+  try (congr 1; funext p; split <;> first | rfl | (simp only [List.map_filterMap]; congr 1; funext hit; split <;> rfl))
 
 /-- Well-formedness puts every right-derived predicate among `T″`'s regulated names. -/
 theorem rightDerived_regulated (D : RightsDoc) (h : WellFormedRights D = true) (p : String)

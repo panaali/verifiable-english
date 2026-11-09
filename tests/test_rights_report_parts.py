@@ -10,7 +10,7 @@ from pathlib import Path
 import pytest
 
 from tests.test_rights_lean import (ARBITRARY, ARREST, BLOCK, DEPRIVE, GAMMA, L29, condition, env, limitation, line,
-                                    norm, packages, right)
+                                    norm, packages, right, run)
 from tests.test_soft_norms_lean import DECIDER, SERVICE
 from ve import rights_route
 from ve.backends.service_schema import Invalid, check_row
@@ -91,12 +91,17 @@ def _spec_line(template, *, k, l, labels, j, exhibited):
 
 def test_rights_conflict_free_report_evidence():
     environment, certified, situation = _weighed()
-    bare = rights_route.run_rights_case(environment, WEIGHED, "rights-conflict", packages=certified)
-    shown = rights_route.run_rights_case(environment, WEIGHED, "rights-conflict", packages=certified,
-                                         situation=situation)
     labels = ["soft:coherence:may-detain,no-arbitrary-arrest",
               "rights:limitation:l29:arrest_permitted:necessary:determined_by_law",
               "rights:limitation:l29:arrest_permitted:sufficient:diplomatic_immunity"]
+    # Lean's own line, before any relay, is the spec's line byte for byte (the DRI-signed row's condition).
+    [raw] = run("ve_rights_route", [{"id": "c", "kind": "rights-conflict", "environment": env(ARREST),
+                                     "document": WEIGHED, "packages": certified}])
+    assert raw["status_text"] == _spec_line(_template(), k=1, l=2, labels=labels, j=1,
+                                            exhibited="UNKNOWN (budget 10000)")
+    bare = rights_route.run_rights_case(environment, WEIGHED, "rights-conflict", packages=certified)
+    shown = rights_route.run_rights_case(environment, WEIGHED, "rights-conflict", packages=certified,
+                                         situation=situation)
     for row in (bare, shown):
         assert row["verdict"] == "CONFLICT-FREE"
         assert row["conditional_on"] == labels

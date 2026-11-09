@@ -150,12 +150,7 @@ theorem limitationScope_texts (D : RightsDoc) (l : List (String × String)) (c :
   have h3 : ∀ N, narrowings { D with located := l } N = narrowings D N := fun _ => rfl
   have h4 : ∀ N n, licensed { D with located := l } c N n = licensed D c N n := fun _ _ => rfl
   simp only [limitationScope, h1, h2, h3, h4, List.map_flatMap]
-  congr 1; funext RN
-  split
-  · simp only [List.map_filterMap]
-    congr 1; funext n
-    split <;> rfl
-  · rfl
+  try (congr 1; funext RN; split <;> first | rfl | (simp only [List.map_filterMap]; congr 1; funext n; split <;> rfl))
 
 theorem licensed_of_scope {D : RightsDoc} {certs : List (Option VE.Tableau.Certificate)}
     (hc : limitationScope D certs = []) {L : Limitation} (hL : L ∈ D.limits) {R : String} {N : Line}
