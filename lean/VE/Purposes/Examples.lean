@@ -2,7 +2,7 @@ import VE.Purposes.Wire
 import VE.Purposes.WellFormed
 
 /-! PE-1's acceptance fixtures (purpose-explanation plan PE-1, spec 9.1–9.4): F1–F8 with F7e, F7f, F8a and F8b,
-each with its mutants, and the decoder's texts (spec 7.1). Every value was computed by `#eval` before it was written
+each with its mutants, the decoder's texts (spec 7.1), and pe-1b's F2c–F2e (PE-R11), F9, F9a and F10 (PE-R8). Every value was computed by `#eval` before it was written
 here. Statuses are UNFORMALISED unless stated: F1's p1 with reason `attitudes-E3`, p3 with
 `judgment-best-response` and p2 with `purposes-side-unformalised` (the honest version: a link checks structure;
 what the linked parts say stays unformalised and is not counted as coverage). -/
@@ -24,9 +24,10 @@ def result : Except String Unit → Option String
   | .ok () => none
   | .error e => some e
 
-def pt (u : String) (n a b : Nat) (k : Kind) (st : String := "UNFORMALISED") (cs : List Kind := []) : Part :=
+def pt (u : String) (n a b : Nat) (k : Kind) (st : String := "UNFORMALISED") (cs : List Kind := [])
+    (rs : List String := []) : Part :=
   { id := s!"{u}.p{n}", span := (a, b), kind := k, status := st, parent := some u, formula := none,
-    candidates := cs }
+    candidates := cs, readings := rs }
 
 def lk (id : String) (r : Relation) (pol : Polarity) (sh : Share) (rs ts : List String) (m : String) : Link :=
   { id := id, relation := r, polarity := pol, share := sh, reason := rs.map .part, target := ts.map .part,
@@ -94,6 +95,15 @@ def F2 : Units := f2u (bc .explanation .norm) .explanation
 #guard result (check (f2u (bc .asserted .norm) .asserted) ⟨[f2l]⟩) == some nonfactiveText
 #guard unstated f2l == [.part "u0019.s01.p3"]
 
+/-! ## F2c, F2d, F2e (PE-R11, D8a): a pack premise sourced to the denied reason, its unit, or the target -/
+
+def packText : String :=
+  "InvalidPurposes: link l1 has a side the text does not state, and a pack takes a premise from it"
+
+#guard result (check { F2 with packSources := ["u0019.s01.p3"] } ⟨[f2l]⟩) == some packText  -- F2c
+#guard result (check { F2 with packSources := ["u0019.s01"] } ⟨[f2l]⟩) == some packText     -- F2d
+#guard result (check { F2 with packSources := ["u0019.s01.p1"] } ⟨[f2l]⟩) == none           -- F2e
+
 /-! ## F3, [176186,176365): not only … but because -/
 
 def F3 : Units :=
@@ -108,6 +118,8 @@ def f3l2 : Link := lk "l2" .because .affirmed .plain ["c176186.p5"] ["c176186.p1
 #guard result (check F3 ⟨[{ f3l1 with share := .sole }, f3l2]⟩) == some soleText
 #guard result (check F3 ⟨[f3l1]⟩) == some unlinkedText
 #guard unstated f3l1 == []
+-- PE-R8: every part of the unit is named by a link.
+#guard unlinkedActive F3 ⟨[f3l1, f3l2]⟩ f3l1 == [] && unlinkedActive F3 ⟨[f3l1, f3l2]⟩ f3l2 == []
 
 /-! ## F4, [125508,125756): not because … but because -/
 
@@ -142,6 +154,10 @@ def f5l : Link := lk "l1" .because .affirmed .plain ["a.p3"] ["a.p1"] "a.p2"
 #guard result (check F5 ⟨(List.range 256).map fun n => { f5l with id := s!"l{n}" }⟩) == none
 -- A mention on the unstated side is refused by `nonfactive` too (9.4).
 #guard !nonfactive F5 { f5l with polarity := .denied, reason := [.mention "a.m1"] }
+-- PE-R11: an affirmed `because` states its reason, so a pack may source it; a mention on the unstated side is
+-- refused by `packsInert` too.
+#guard packsInert { F3 with packSources := ["c176186.p3", "c176186"] } f3l1
+#guard !packsInert F5 { f5l with polarity := .denied, reason := [.mention "a.m1"] }
 
 /-! ## F6, synthetic (A4): "A, partly because B." with one link, every share -/
 
@@ -192,19 +208,61 @@ def F8b : Units :=
 -- The reason's two parts cover "B, C." exactly.
 #guard (F8.source.toUTF8.extract 10 15) == "B, C.".toUTF8
 
+/-! ## F9, u0014.s03's shape (PE-R8, PE-R7): only the readings that hold the target -/
+
+def f9u (cs : List Kind) : Units :=
+  { source := "In order to be safe, we believe every model should be honest.",
+    parts := [pt "f" 1 0 12 (io .norm .explanation), pt "f" 2 12 21 .explanation,
+      pt "f" 3 21 61 .norm (cs := cs) (rs := ["report", "rationale", "limiting", "in-attitude"])] }
+def F9 : Units := f9u [.asserted, .norm, .norm, .asserted]
+def f9l : Link := lk "l1" .inOrderTo .affirmed .plain ["f.p2"] ["f.p3"] "f.p1"
+
+#guard F9.source.utf8ByteSize == 61
+#guard result (check F9 ⟨[f9l]⟩) == none
+#guard shownUnder F9 f9l == [("f.p3", ["rationale", "limiting"])]
+#guard unlinkedActive F9 ⟨[f9l]⟩ f9l == []
+-- F9a: every candidate `asserted`, so none holds the target (PE-2 withholds the lines).
+#guard shownUnder (f9u [.asserted, .asserted, .asserted, .asserted]) f9l == [("f.p3", [])]
+
+/-! ## F10, u0289.s05's shape (PE-R8, PE-R9): a scope the link's quotes leave out -/
+
+def f10u (p1k : Kind) (p2cs : List Kind := []) : Units :=
+  { source := "Sometimes we may choose to keep a promise because we value our word.",
+    parts := [pt "g" 1 0 10 p1k, pt "g" 2 10 41 .exposition (cs := p2cs) (rs := ["a", "b"]),
+      pt "g" 3 41 50 (bc .exposition .exposition),
+      pt "g" 4 50 68 .exposition (cs := [.exposition, .exposition]) (rs := ["reason", "motive"])] }
+def F10 : Units := f10u .asserted
+def f10l : Link := lk "l1" .because .affirmed .plain ["g.p4"] ["g.p2"] "g.p3"
+
+#guard F10.source.utf8ByteSize == 68
+#guard result (check F10 ⟨[f10l]⟩) == none
+#guard shownUnder F10 f10l == []
+#guard unlinkedActive F10 ⟨[f10l]⟩ f10l == ["g.p1"]
+-- F1, F2 and F8: no target part has an active set.
+#guard shownUnder F1 f1l == [] && shownUnder F2 f2l == [] && shownUnder F8 f8l == []
+-- `targetKind` (the target's slot for `because`, the other for `in order to`) and `holdsTarget`.
+#guard targetKind F10 f10l == some .exposition && targetKind F9 f9l == some .norm &&
+  targetKind (f1u .norm .explanation) f1l == none
+#guard holdsTarget F9 f9l .norm && !holdsTarget F9 f9l .explanation
+-- A `because` target with a set: the second slot's kind holds it.
+#guard shownUnder (f10u .asserted [.asserted, .exposition]) f10l == [("g.p2", ["b"])]
+-- An inert part, a part of another unit and a marker with no unit are not listed.
+#guard unlinkedActive (f10u .exposition) ⟨[f10l]⟩ f10l == [] && unlinkedActive F5 ⟨[f5l]⟩ f5l == [] &&
+  unlinkedActive { F10 with parts := F10.parts.map fun p => { p with parent := none } } ⟨[f10l]⟩ f10l == []
+
 /-! ## Each part of the check alone (R16: a fixture for each mutant of a trusted definition) -/
 
 -- `WellFormed` is decidable: it holds on the passing fixtures, and each negative fails exactly one conjunct.
 instance wfDecidable (U : Units) (B : Block) : Decidable (WellFormed U B) := by unfold WellFormed; infer_instance
 def wf (U : Units) (B : Block) : Bool := decide (WellFormed U B)
 def f5r : Link := { f5l with id := "l2", reason := [.part "b.p1"] }
-#guard wf F1 ⟨[f1l]⟩ && wf F2 ⟨[f2l]⟩ && wf F7 ⟨[f7l1 .sole, f7l2 .plain "g.p3"]⟩ &&
+#guard wf F1 ⟨[f1l]⟩ && wf F2 ⟨[f2l]⟩ && wf { F2 with packSources := ["u0019.s01.p1"] } ⟨[f2l]⟩ && wf F7 ⟨[f7l1 .sole, f7l2 .plain "g.p3"]⟩ &&
   wf F5 ⟨(List.range 256).map fun n => { f5l with id := s!"l{n}" }⟩
 #guard !wf F5 ⟨(List.range 257).map fun n => { f5l with id := s!"l{n}" }⟩ && !wf F5 ⟨[f5l, f5l]⟩ &&
   !wf F5 ⟨[f5l, f5r]⟩ && !wf F5 ⟨[f5r, f5l]⟩ && !wf F5 ⟨[{ f5l with reason := [.part "a.p9"] }]⟩ &&
   !wf F8 ⟨[{ f8l with reason := [.part "h.p4", .part "h.p3"] }]⟩ &&
   !wf (f1u (io .explanation .norm) .explanation) ⟨[f1l]⟩ && !wf (f1u (io .norm .asserted) .asserted) ⟨[f1l]⟩ &&
-  !wf F2 ⟨[{ f2l with share := .sole }]⟩ && !wf F7 ⟨[f7l1 .sole, f7l2 .plain "g.p5"]⟩ && !wf F1 ⟨[]⟩ &&
+  !wf F2 ⟨[{ f2l with share := .sole }]⟩ && !wf { F2 with packSources := ["u0019.s01"] } ⟨[f2l]⟩ && !wf F7 ⟨[f7l1 .sole, f7l2 .plain "g.p5"]⟩ && !wf F1 ⟨[]⟩ &&
   !wf (f1u (io .norm .explanation) .explanation "LABELLED") ⟨[f1l]⟩
 -- `Link.partIds`: the marker, then every part of the reason and the target, in order.
 #guard { f8l with target := [.part "h.p1", .mention "m", .part "h.p5"] }.partIds == ["h.p2", "h.p3", "h.p4", "h.p1", "h.p5"]
