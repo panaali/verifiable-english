@@ -22610,7 +22610,7 @@ module VE.Scope.Authoring 43d0e061f2e3efea8b9193acdf1b8d5374f1fb06b145a4f6b48983
 193:0-198:13 def VE.Scope.Pinned.parseGovernor@VE.Scope.Authoring
 202:0-210:11 theorem VE.Scope.scope_parseRender@VE.Scope.Authoring
 212:0-215:9 theorem VE.Scope.scope_renderParse@VE.Scope.Authoring
-module VE.Scope.AuthoringExamples e55cb6e80e792fd86308d4b2dd9bde47497447cf05ff4ec806642533cfdd749a
+module VE.Scope.AuthoringExamples 0212388667aaf784898e228a654329e2a927277d04d3320c8f56317c2455baa3
 11:0-11:63 def VE.Scope.AuthoringExamples.j@VE.Scope.AuthoringExamples
 12:0-14:130 def VE.Scope.AuthoringExamples.trip@VE.Scope.AuthoringExamples
 15:0-16:52 def VE.Scope.AuthoringExamples.para@VE.Scope.AuthoringExamples
@@ -22625,7 +22625,7 @@ module VE.Scope.AuthoringExamples e55cb6e80e792fd86308d4b2dd9bde47497447cf05ff4e
 56:0-56:63 def VE.Scope.AuthoringExamples.wFrontier@VE.Scope.AuthoringExamples
 63:0-63:125 def VE.Scope.AuthoringExamples.u0170s01@VE.Scope.AuthoringExamples
 100:0-100:73 def VE.Scope.AuthoringExamples.twoReadings@VE.Scope.AuthoringExamples
-142:0-147:87 def VE.Scope.AuthoringExamples.slotsEnding@VE.Scope.AuthoringExamples
+144:0-149:87 def VE.Scope.AuthoringExamples.slotsEnding@VE.Scope.AuthoringExamples
 module VE.Scope.EffectLemmas 46db251138e4da2479c66379f461332c927118d154ee90299f64d9649337d0cb
 16:0-23:59 theorem VE.Scope.budgetTerm_ok@VE.Scope.EffectLemmas
 25:0-27:69 theorem VE.Scope.budgetTerm_val@VE.Scope.EffectLemmas
