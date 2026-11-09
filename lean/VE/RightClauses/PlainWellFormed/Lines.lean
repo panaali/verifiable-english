@@ -185,4 +185,69 @@ theorem checkRights_plain (D : ClauseDoc) : VE.Rights.checkRights (plain D) = VE
     | none => rfl
     | some R => simp only [Option.map_some, checkShape_plain, hL_carveOuts, hL_name]
 
+/-! ### `correlate (plain D)` -/
+
+theorem holderConj_hL (D : ClauseDoc) (RN : String × Line) (G : VE.Formula) :
+    VE.Rights.holderConj (plain D) (hL D RN).2 G = VE.Rights.holderConj D.doc RN.2 G := by
+  unfold VE.Rights.holderConj
+  simp only [rightOf_plain', hL_right, sortsOf_hL, holderSlot_hL]
+  cases rightOf D.doc RN.2.right <;> rfl
+
+@[simp] theorem lineAct_hL (D : ClauseDoc) (RN : String × Line) :
+    lineAct (plain D) (hL D RN).2 = lineAct D.doc RN.2 := by simp [lineAct]
+
+theorem limPackList_hL (D : ClauseDoc) (RN : String × Line) :
+    VE.Rights.limPackList (plain D) (hL D RN).2 = VE.Rights.limPackList D.doc RN.2 := by
+  have hs : VE.Rights.scopeLimits (plain D) (hL D RN).2 = VE.Rights.scopeLimits D.doc RN.2 := by
+    simp [VE.Rights.scopeLimits, VE.Rights.inScope]
+  simp only [VE.Rights.limPackList, VE.Rights.limPack, VE.Rights.limF, VE.Rights.limIndex, hs, limKeys_plain,
+    lineAct_hL, sortsOf_hL]
+
+/-- The new guard of a line node. -/
+def newGuard (D : ClauseDoc) (RN : String × Line) : VE.Formula :=
+  VE.Rights.holderConj D.doc RN.2 (hL D RN).2.node.guard
+
+theorem nodeOf_hL (D : ClauseDoc) (RN : String × Line) :
+    VE.Rights.nodeOf (plain D) (hL D RN).2 = { VE.Rights.nodeOf D.doc RN.2 with guard := newGuard D RN } := by
+  unfold VE.Rights.nodeOf VE.Rights.ownGuard newGuard
+  rw [holderConj_hL, limPackList_hL]
+  simp only [hL]
+  split <;> rfl
+
+theorem barPreds_plain (D : ClauseDoc) : VE.Rights.barPreds (plain D) = VE.Rights.barPreds D.doc := by
+  simp [VE.Rights.barPreds, permPreds_plain]
+
+theorem lineNodes_plain (D : ClauseDoc) :
+    VE.Rights.lineNodes (plain D) = (linesOf D.doc).map (fun RN => { VE.Rights.nodeOf D.doc RN.2 with guard := newGuard D RN }) := by
+  simp only [VE.Rights.lineNodes, linesOf_plain, List.map_map, Function.comp_def, nodeOf_hL]
+
+theorem barNodes_plain (D : ClauseDoc) : VE.Rights.barNodes (plain D) = VE.Rights.barNodes D.doc := by
+  have hp : ∀ m, VE.Rights.posLineNames (plain D) m = VE.Rights.posLineNames D.doc m := by
+    intro m
+    unfold VE.Rights.posLineNames
+    rw [lineNodes_plain]
+    simp only [VE.Rights.lineNodes, List.filter_map, List.map_map, Function.comp_def]
+  have hb : ∀ m, VE.Rights.barNode (plain D) m = VE.Rights.barNode D.doc m := by
+    intro m
+    simp only [VE.Rights.barNode, hp, VE.Rights.aimedF, VE.Rights.barIndex, barPreds_plain, plain_soft]
+  have hb' : VE.Rights.barNode (plain D) = VE.Rights.barNode D.doc := funext hb
+  simp only [VE.Rights.barNodes, VE.Rights.ruleReading, barPreds_plain, plain_bars, hb']
+
+theorem envR_plain (D : ClauseDoc) : VE.Rights.envR (plain D) = VE.Rights.envR D.doc := by
+  simp only [VE.Rights.envR, genDecls_plain, plain_soft]
+
+/-- The nodes of `correlate (plain D)`. -/
+def plainNodes (D : ClauseDoc) : List SoftNode :=
+  (linesOf D.doc).map (fun RN => { VE.Rights.nodeOf D.doc RN.2 with guard := newGuard D RN }) ++
+    D.doc.soft.T.nodes ++ VE.Rights.barNodes D.doc
+
+/-- A soft document with other nodes. -/
+def withNodes (C : VE.SoftNorms.SoftDoc) (ns : List SoftNode) : VE.SoftNorms.SoftDoc :=
+  { C with T := { C.T with nodes := ns } }
+
+theorem correlate_plain (D : ClauseDoc) :
+    VE.Rights.correlate (plain D) = withNodes (VE.Rights.correlate D.doc) (plainNodes D) := by
+  simp only [VE.Rights.correlate, withNodes, plainNodes, envR_plain, barNodes_plain, plain_soft, linesOf_plain,
+    List.map_map, Function.comp_def, nodeOf_hL]
+
 end VE.RightClauses.PWF
