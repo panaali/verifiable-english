@@ -20,6 +20,9 @@
    "test": ["lean/VE/Commands/RunExamples.lean:169 (#guard: F-raw is InvalidInput: the request is not a well-formed JSON tree)"]},
   {"id": "S5", "language": "Lean", "file": "lean/VE/Commands/Read.lean", "definition": "VE.Commands.prefixRefusal",
    "bug": "a deleted Python check with no Lean replacement in the ledger: the `You may` refusal removed from prefixRefusal",
-   "test": ["docs/commands-imperatives/ci-2b/evidence/ab.py problems(): 5 forbidden `code` rows (`You may open the desk.`, `You may share the token.`, ...: PermissionNotCommand became InvalidInput)"]}
+   "test": ["docs/commands-imperatives/ci-2b/evidence/ab.py problems(): 5 forbidden `code` rows (`You may open the desk.`, `You may share the token.`, ...: PermissionNotCommand became InvalidInput)"]},
+  {"id": "S6", "language": "Lean", "file": "lean/VE/SpeechActs/Source/Run.lean", "definition": "VE.SpeechActs.Source.commandContext",
+   "bug": "the wrapper's context drops the document's query records",
+   "test": ["tests/test_command_relay.py::test_a_fenced_proof_task_reads_the_documents_records"]}
  ]
 }
