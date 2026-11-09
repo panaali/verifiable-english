@@ -59,6 +59,7 @@
 - `tests/test_senses_pack.py` — Transport and provenance checks for the Python part of senses B2.
 - `tests/test_senses_packs.py` — The starter packs, their pins and the coverage measurement (senses plan B8, 7.2; sn-b8).
 - `tests/test_senses_project.py` — Senses B6: the `senses.project` mode through the service, and the identities a `senses.read` answer gives its projection and each candidate's (docs/spec/senses…
+- `tests/test_senses_read_members.py` — sn-b6c: the members a `senses.read` route answer gains (byte spans and glosses in the sense map, the texts of docs/spec/senses.md 3.2 and plan 2.8), each equal…
 - `tests/test_senses_route.py` — Spec fixture admission through the Python transport and the compiled Lean reader.
 - `tests/test_service_schema_compiler.py` — The response schema compiler (`ve/backends/service_schema.py`): what it reads and when, and that compiling on first use is safe from the service pool's threads.
 - `tests/test_shape_binding_mutants.py` — The generic binding checker on genuine Lean answers: one mutation test per mode (test-architecture rank 10, the first, additive step; ADR 0001).
@@ -80,5 +81,3 @@
 - `tests/test_speech_source_lean.py` — The Lean decoded-source wrapper (`speech-source`, docs/spec/speech-acts.md 8.5) against Python's `SpeechSource`.
 - `tests/test_speech_source_relay.py` — The bound Python transport for VE.SpeechActs.Source.report.
 - `tests/test_speech_source_switch.py` — The 11b public projection against the frozen pre-switch W2 checker.
-- `tests/test_stage0_inventory.py` — Stage 0 inventory policy must survive regeneration on another checkout.
-- `tests/test_stage0_probe_matrix.py` — Regressions for rejected Stage 0 baseline probes.
