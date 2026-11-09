@@ -28,9 +28,9 @@ def _open_term(name):
             "factors": [], "precedents": [], "jurisdiction": "document", "version": 1}
 
 
-def _document(acts, open_terms):
-    """A part document: one specified strict right per act (u1, u2, ...), an exposition unit when there is one right,
-    and `open_terms` declared."""
+def _document(acts, open_terms, norm=None):
+    """A part document: one specified strict right per act (u1, u2, ...), then a strict norm unit on the act `norm`
+    when given, else an exposition unit when there is one right; and `open_terms` declared."""
     predicates = {act: {"arguments": ["person"], "description": "permission",
                         "regulated": {"role": "permission", "default": "allow", "act": ACTS[act]}} for act in ACTS}
     predicates["adult"] = {"arguments": ["person"], "description": "base"}
@@ -47,6 +47,10 @@ def _document(acts, open_terms):
         start += len(text)
         if index < len(acts):
             unit.update(kind="right", content=_right(f"r{index + 1}", acts[index]))
+        elif norm is not None:
+            unit.update(kind="norm", content={"norm": {"name": "n-outside", "predicate": norm, "sign": True,
+                                                       "guard": ["unary", "adult", ["var", 0]], "unless": [],
+                                                       "over": []}})
         else:
             unit["kind"] = "exposition"
         units.append(unit)
@@ -97,3 +101,16 @@ def test_rights_open_act_reads_each_rights_own_act(tmp_path, capsys):
         assert statuses == {"u1": expected[0], "u2": expected[1]}, acts
         assert by_status == {expected[0]: len(TEXTS[0]), expected[1]: len(TEXTS[1])}, acts
         assert unit_open == [False] + [s == "OPEN" for s in expected], acts
+
+
+def test_rights_document_norm_unit_with_open_act_is_open(tmp_path, capsys):
+    """A norm unit outside the rights is read by the same `nodeOpen`: its open act makes it OPEN, and only it."""
+    for open_terms, expected in ((["marry_permitted"], "OPEN"), ([], "CHECKED")):
+        code, by_status, statuses, unit_open = _check(_document(["speak_permitted"], open_terms, "marry_permitted"),
+                                                      tmp_path, capsys)
+        assert code == 0
+        assert statuses == {"u1": "CHECKED", "u2": expected}, open_terms
+        bytes_by = {"CHECKED": len(TEXTS[0])}
+        bytes_by[expected] = bytes_by.get(expected, 0) + len(TEXTS[1])
+        assert by_status == bytes_by, open_terms
+        assert unit_open == [False, False, expected == "OPEN"], open_terms
