@@ -222,8 +222,16 @@ def test_the_unmutated_copy_passes_every_guard(lake, tmp_path):
     assert "VE.NormDefaults.Wire.softPack" not in fixtures_copy()
 
 
-@pytest.mark.parametrize("name,find,replace", MUTANTS,
-                         ids=[f"{name}-{i}" for i, (name, _, _) in enumerate(MUTANTS)])
+IDS = [f"{name}-{i}" for i, (name, _, _) in enumerate(MUTANTS)]
+
+
+def mutant_cases() -> dict[str, str]:
+    """Each mutant's definition and text by its ID: the gate's collection check (tools/gate_collection.py) pairs
+    a renumbered ID by it."""
+    return {nodeid: json.dumps(mutant) for nodeid, mutant in zip(IDS, MUTANTS)}
+
+
+@pytest.mark.parametrize("name,find,replace", MUTANTS, ids=IDS)
 def test_each_mutant_fails_a_guard(lake, tmp_path, name, find, replace):
     done = elaborate(lake, tmp_path, mutated(name, find, replace))
     output = done.stdout + done.stderr
