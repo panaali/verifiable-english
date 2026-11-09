@@ -194,6 +194,9 @@ class _Scanner(ast.NodeVisitor):
         # Code that imports or loads a module the source does not name (`importlib.import_module(name)`): it may
         # load any module or script that a string of this file names (`"ve.norm_defaults_contract"`).
         self.dynamic: set[str] = set()
+        # Every path this file builds by a join (`ROOT / "lean" / "VE" / "Time" / "Calendar.lean"`, `os.path.join`,
+        # `Path("lean", "VE")`, `base.joinpath("x")`, `"lean/VE/" + "A.lean"`), outermost only, as `_path` makes it.
+        self.built: set[str] = set()
         # The values assigned to each name in each code object (by qualified name), for a program or a path held
         # in a variable (`git = shutil.which("git")`, `TOOL = ROOT / "tools/x.py"`).
         self.assigned: dict[tuple[str, str], list[ast.AST]] = {}
@@ -388,6 +391,7 @@ class _Scanner(ast.NodeVisitor):
     visit_Tuple = visit_List
 
     def visit_Call(self, node) -> None:
+        self._built(node)
         callee = _callee(node)
         if node.args and callee in PROCESS_CALLS:
             self._program(node.args[0], node)
@@ -508,16 +512,24 @@ class _Scanner(ast.NodeVisitor):
             if left is None:
                 return right, False
             return os.path.normpath(os.path.join(left, right)), anchored
+        if isinstance(node, ast.BinOp) and isinstance(node.op, ast.Add):  # "lean/VE/" + "A.lean": both known
+            (left, anchored), (right, _) = self._path(node.left, depth + 1), self._path(node.right, depth + 1)
+            return (left + right, anchored) if left is not None and right is not None else (None, False)
         if isinstance(node, ast.Call):
             if _callee(node) in ("Path", "PurePath", "str", "fspath", "resolve", "absolute", "realpath", "abspath") \
                     and len(node.args) <= 1:
                 inner = node.args[0] if node.args else (node.func.value if isinstance(node.func, ast.Attribute)
                                                         else None)
                 return self._path(inner, depth + 1) if inner is not None else (None, False)
-            if _callee(node) == "join" and node.args:
-                parts = [self._path(argument, depth + 1) for argument in node.args]
+            if _callee(node) in ("join", "Path", "PurePath", "joinpath") and node.args:
+                base = [node.func.value] if _callee(node) == "joinpath" and isinstance(node.func, ast.Attribute) \
+                    else []
+                parts = [self._path(argument, depth + 1) for argument in [*base, *node.args]]
                 if all(text is not None for text, _ in parts):
                     return os.path.normpath(os.path.join(*(text for text, _ in parts))), parts[0][1]
+                known = parts[max(index for index, (text, _) in enumerate(parts) if text is None) + 1:]
+                if known:  # as `/`: the literal parts after an unknown base (`os.path.join(root, "lean", "VE")`)
+                    return os.path.normpath(os.path.join(*(text for text, _ in known))), False
             return None, False
         if isinstance(node, ast.Attribute) and node.attr == "parent":
             text, anchored = self._path(node.value, depth + 1)
@@ -531,6 +543,24 @@ class _Scanner(ast.NodeVisitor):
                 text = os.path.dirname(text) or "."
             return text, anchored
         return None, False
+
+    def _builds(self, node) -> bool:
+        """Whether an expression builds a path from parts: a `/` or `+` of two, or a join call."""
+        return isinstance(node, ast.BinOp) and isinstance(node.op, (ast.Div, ast.Add)) \
+            or isinstance(node, ast.Call) and (_callee(node) in ("join", "joinpath")
+                                               or _callee(node) in ("Path", "PurePath") and len(node.args) > 1)
+
+    def visit_BinOp(self, node) -> None:
+        self._built(node)
+        self.generic_visit(node)
+
+    def _built(self, node) -> None:
+        """Record the path an outermost path-building expression makes (`built`); a part of a bigger one is not
+        a path the file names (`ROOT / "lean" / "VE" / "A.lean"` names lean/VE/A.lean, not lean/VE)."""
+        if self._builds(node) and not (self.parents and self._builds(self.parents[-1])):
+            text, _ = self._path(node)
+            if text is not None:
+                self.built.add(text)
 
     def visit_Constant(self, node) -> None:
         if isinstance(node.value, str):
@@ -643,6 +673,13 @@ def _scan(file: str, root: Path) -> _Scanner | None:
         for node in scanner.dynamic:
             scanner.refs.setdefault(node, set()).update(("named", name) for name in names)
     return scanner
+
+
+def built_paths(file: str, root: Path = ROOT) -> frozenset[str]:
+    """Every path one Python file (root-relative) builds by a join of parts its source gives (`_Scanner.built`):
+    `ROOT / "lean" / "VE" / "Time" / "Calendar.lean"` is lean/VE/Time/Calendar.lean. None when it does not parse."""
+    scanner = _scan(file, root)
+    return frozenset(scanner.built) if scanner else frozenset()
 
 
 def sites(file: str, root: Path = ROOT) -> set[Site]:

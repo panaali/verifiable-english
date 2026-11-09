@@ -235,6 +235,46 @@ def test_a_unit_names_a_changed_module_or_its_directory_never_a_sibling():
                                            ["lean/VE/Scope/Plain.lean"])
 
 
+# Each way a unit's source builds a path from literal parts (history_tests.built_paths), and a sibling built the
+# same way. The first is tests/test_w6a_looprecheck1.py:316 (review F1), copied so this test reads no other test.
+JOINS = {
+    'CALENDAR = ROOT / "lean" / "VE" / "Time" / "Calendar.lean"\n': "lean/VE/Time/Calendar.lean",
+    'CALENDAR = os.path.join(ROOT, "lean", "VE", "Time", "Calendar.lean")\n': "lean/VE/Time/Calendar.lean",
+    'CALENDAR = Path("lean", "VE", "Time", "Calendar.lean")\n': "lean/VE/Time/Calendar.lean",
+    'CALENDAR = ROOT.joinpath("lean", "VE", "Time", "Calendar.lean")\n': "lean/VE/Time/Calendar.lean",
+    'CALENDAR = "lean/VE/" + "Time/Calendar.lean"\n': "lean/VE/Time/Calendar.lean",
+    'def f(tmp_path):\n    return tmp_path / "lean" / "VE" / "Time" / "Calendar.lean"\n': "lean/VE/Time/Calendar.lean",
+    'TIME = (ROOT / "lean" / "VE" / "Time").glob("*.lean")\n': "lean/VE/Time",
+}
+HEADER = 'import os\nfrom pathlib import Path\nROOT = Path(__file__).resolve().parents[1]\n'
+
+
+@pytest.mark.parametrize("line", JOINS)
+def test_a_module_or_directory_a_unit_builds_by_a_join_is_named(tmp_path, line):
+    (tmp_path / "tests").mkdir()
+    (tmp_path / "tests/test_join.py").write_text(HEADER + line)
+    assert select_tests.history_tests.built_paths("tests/test_join.py", tmp_path) == {JOINS[line]}
+    text = select_tests.unit_text("tests/test_join.py", tmp_path)
+    assert select_tests.names_changed_lean(text, ["lean/VE/Time/Calendar.lean"])
+    # only the whole join is a path it names: its parts do not name lean/VE, nor a sibling's directory
+    sibling = line.replace("Calendar", "Zone").replace('"Time")', '"Other")')
+    (tmp_path / "tests/test_join.py").write_text(HEADER + sibling)
+    assert not select_tests.names_changed_lean(select_tests.unit_text("tests/test_join.py", tmp_path),
+                                               ["lean/VE/Time/Calendar.lean"])
+
+
+def test_a_heavy_broad_unit_that_builds_the_changed_modules_path_stays(tmp_path):
+    (tmp_path / "tests").mkdir()
+    (tmp_path / "tests/test_looprecheck.py").write_text(HEADER + next(iter(JOINS)))
+    reasons = {"tests/test_looprecheck.py": ["reads lean/VE/Time/Calendar.lean",
+                                             "runs service mode via lean/VE/Time/Calendar.lean"]}
+    plan = plan_of(reasons, changed=["lean/VE/Time/Calendar.lean"])
+    found = select_tests.defer_heavy(plan, {"tests/test_looprecheck.py": HEAVY},
+                                     shares={"tests/test_looprecheck.py": 1.0},
+                                     text=lambda unit: select_tests.unit_text(unit, tmp_path))
+    assert found["deferred"] == {} and found["selected"] == ["tests/test_looprecheck.py"]
+
+
 def broad_plan(**extra) -> tuple[dict, dict, dict]:
     reasons = {"tests/test_broad.py": ["runs Lean via lean/VE/A/X.lean", "imports ve/a.py (static)"],
                "tests/test_python.py": ["runs Lean via lean/VE/A/X.lean", "reads ve/a.py"],
