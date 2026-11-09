@@ -17217,21 +17217,14 @@
     },
     "VE/Readings/SoftSupLabels.lean": {
       "G[V]": [
-        "VE.Readings.nodeExcLabels",
         {
-          "name": "VE.Readings.labelImage",
+          "name": "VE.Readings.nodeExcLabels",
           "tied": [
-            "VE.Readings.labelImage_fst",
-            "VE.Readings.labelImage_snd_mem"
+            "VE.Readings.excLabels_nodes"
           ]
         },
-        {
-          "name": "VE.Readings.sdShown",
-          "tied": [
-            "VE.Readings.sdShown_mem",
-            "VE.Readings.sdShown_image"
-          ]
-        }
+        "VE.Readings.labelImage",
+        "VE.Readings.sdShown"
       ],
       "P": [
         "VE.Readings.excData"
@@ -17259,7 +17252,9 @@
         "VE.Readings.SoftSupWireExamples.NSDlate",
         "VE.Readings.SoftSupWireExamples.wide",
         "VE.Readings.SoftSupWireExamples.NSDbig",
-        "VE.Readings.SoftSupWireExamples.NSDcount"
+        "VE.Readings.SoftSupWireExamples.NSDcount",
+        "VE.Readings.SoftSupWireExamples.guarded",
+        "VE.Readings.SoftSupWireExamples.NSDheavy"
       ]
     },
     "VE/EnglishGrammar/Norm/Examples.lean": {

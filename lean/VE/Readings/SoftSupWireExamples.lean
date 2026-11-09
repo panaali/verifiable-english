@@ -80,8 +80,9 @@ def routeFacts (N : NDoc) (declared : Nat := 0) : String :=
 
 #guard [NSD1, NSD4, NSD4a, NSD4c, NC9, NSD2, NSDq].all fun N => (routeFacts N).endsWith " superposed"
 -- `superposable` false: precedence not uniform under a rule
-#guard !superposable M8 && routeFacts ⟨M8, []⟩ == "enumerated false 2 30 enumerated"
--- `WellFormedU (supU N)` false with `superposable` true
+#guard !superposable M8 && routeFacts ⟨M8, []⟩ == "enumerated false 2 30 enumerated" &&
+  (match decodeEnvironment (envWith 0) with | .ok re => sdChecked re ⟨M8, []⟩ | .error _ => false)
+-- `WellFormedU (supU N)` false with `superposable` true; every choice's text fails too (REPORT: not isolated)
 #guard superposable D4 && !VE.NormDefaults.WellFormedU (supU ⟨D4, ["bogus"]⟩) &&
   routeFacts ⟨D4, ["bogus"]⟩ == "enumerated false 2 28 enumerated"
 
@@ -117,8 +118,8 @@ guard, or 10 sets, are over the work limit, which is read before any choice's te
 def wide : Nat → VE.Formula
   | 0 => .unary "c" (.var 0)
   | k + 1 => .and (wide k) (wide k)
-def NSDbig (n : Nat) (g : VE.Formula := .top) : NDoc :=
-  ⟨docK (.fixed "u0" (.norm needNotX) [] :: (List.range n).map (fun k => softSet k (if k == 0 then g else .top)))
+def NSDbig (n : Nat) (g : VE.Formula := .top) (gated : Nat := 1) : NDoc :=
+  ⟨docK (.fixed "u0" (.norm needNotX) [] :: (List.range n).map (fun k => softSet k (if k < gated then g else .top)))
     .soft frame4, ["y_permitted"]⟩
 
 #guard routeFacts (NSDbig 8) == "enumerated true 256 24832 superposed"
@@ -130,5 +131,10 @@ def NSDcount : NDoc := ⟨docK (.set ⟨"rs0", "u0", 1, [cand "do" (strictNode "
   cand "need-not" (strictNode "need-not-x" "x_required" false)]⟩ :: (List.range 10).map (fun k => binarySet (k + 1)))
   .soft frame4, ["y_permitted"]⟩
 #guard routeFacts NSDcount == "enumerated true 1025 9225 enumerated"
+-- at most 64 choices over the work limit: enumerated, today's row (ten guarded fixed rules, 543 units a choice)
+def guarded (k : Nat) : Item := .fixed s!"g{k}" (.norm (strictNode s!"guarded-{k}"
+  (["x_required", "x_permitted", "y_permitted"][k % 3]!) true (wide 4))) []
+def NSDheavy : NDoc := ⟨{ (NSDbig 6).D with items := (NSDbig 6).D.items ++ (List.range 10).map guarded }, ["y_permitted"]⟩
+#guard routeFacts NSDheavy == "enumerated true 64 34752 enumerated"
 
 end VE.Readings.SoftSupWireExamples
