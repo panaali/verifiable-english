@@ -747,7 +747,10 @@ region table is never read (QT-A3 refuses a forged one).
   `relational-fol@0`. Under the chain list a document is read twice, each reading's identities its own: its `cardinality`
   units by `Wire.decodeStatement`, every other unit by the chain on the environment without `cardinality@0` and the
   cardinality and W6a fields. Counting statements neither enter nor are decided by the chain's premises, reading choices
-  or verdict; Lean's answer names them as not certified against it, and the list has no claim graph.
+  or verdict; Lean's answer names them as not certified against it, and the list has no claim graph. The chain reads
+  every document under the list, one whose units are all counting units too, so its fences, open terms, reading sets
+  and narrowings are always the chain's to check. The chain's reading is asked on its own request, which names the
+  document as written (`chain_of`); Lean refuses a request that is not that document's chain reading (qt-a4b review).
 - **Statement**: `{"format": "ve-cardinality@1", "formula": F}`. `F` is one of:
   - `["quantity", Q]`, `Q` a W6a `ve-quantity@1` formula tree, unchanged;
   - `["count", sort, [[k, body], …], rel, bound]`, `rel` one of `lt`, `le`, `eq`; `k` and `bound` canonical integer
@@ -837,7 +840,9 @@ answer; exhaustion of a search is UNKNOWN.
 
 Changed by qt-a4b (DRI 2026-11-05, `reviews/dri-decisions-20261105-qt-a4b.md`): E2 admits the chain list, and
 `gate_cardinality` and `Wire.profileLists_projected` are restated (`lean/VE/Cardinality/Gate.lean`,
-`WireTheorems.lean`), with `projectW6` listing `Wire.projectedProfiles`. The stub below is the earlier form.
+`WireTheorems.lean`), with `projectW6` listing `Wire.projectedProfiles`. The stub below is the earlier form. The qt-a4b
+review fix (2026-11-09, F1 and F2) makes the chain's document present for every chain list document and binds the
+chain's request to the document it names (4.1); no statement changes.
 
 ```lean
 /-- E4's projection: the W6a environment inside a cardinality environment. It removes `cardinality_schema` and
