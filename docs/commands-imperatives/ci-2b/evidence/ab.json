@@ -709,14 +709,64 @@
    },
    "source": "ci-1 F3",
    "wording": "Click check, if atlas is reviewed and beacon is reviewed or tom is a cat."
+  },
+  {
+   "base": {
+    "class": "VEError",
+    "outcome": "refused",
+    "text": "InvalidInput: query required"
+   },
+   "class": "R1",
+   "env": "a124698a95a56fcd",
+   "head": {
+    "class": "VEError",
+    "outcome": "refused",
+    "text": "QueryMismatch: u"
+   },
+   "source": "spec P2-P3",
+   "wording": "Prove that atlas is reviewed using these premises."
+  },
+  {
+   "base": {
+    "class": "VEError",
+    "outcome": "refused",
+    "text": "InvalidInput: query required"
+   },
+   "class": "R1",
+   "env": "a124698a95a56fcd",
+   "head": {
+    "class": "VEError",
+    "outcome": "refused",
+    "text": "QueryMismatch: u"
+   },
+   "source": "spec P2-P3",
+   "wording": "Prove that atlas is reviewed using these premises."
+  },
+  {
+   "base": {
+    "class": "VEError",
+    "outcome": "refused",
+    "text": "InvalidInput: query required"
+   },
+   "class": "R1",
+   "env": "a124698a95a56fcd",
+   "head": {
+    "class": "VEError",
+    "outcome": "refused",
+    "text": "QueryMismatch: u"
+   },
+   "source": "spec P2-P3",
+   "wording": "Prove that atlas is reviewed using these premises."
   }
  ],
- "corpus_sha256": "f30bbed81de2da3cf4f5373564d516dbcc341d83a6475675d73f9d3eb19bf8dd",
+ "corpus_sha256": "7381f7ee81b3dacd4245dab1ce17b4f1557d97d45549c376615d69ce60f3f1f4",
  "counts": {
-  "R1": 30,
+  "R1": 33,
   "b2": 9,
   "many": 1,
-  "same": 24164
+  "same": 24165
  },
- "rows": 24204
+ "head": "4c0a4e2bd3fea87f11214fdcdd287659d96c70f2",
+ "rows": 24208,
+ "tree_dirty": false
 }
