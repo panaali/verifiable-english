@@ -17930,7 +17930,7 @@ theorem VE.EnglishGrammar.Norm.Run.answer_one_rows
 theorem VE.EnglishGrammar.Norm.Run.answer_partial_no_node
   ∀ (id : String) (c : VE.EnglishGrammar.Run.Case) (s : String),
     (VE.EnglishGrammar.Norm.Run.resultOf (VE.EnglishGrammar.Norm.Run.answer id c s)).getObjValD "status" =
-        Lean.Json.str VE.EnglishGrammar.Run.partialStatus →
+        Lean.Json.str "unformalised" →
       (VE.EnglishGrammar.Norm.Run.resultOf (VE.EnglishGrammar.Norm.Run.answer id c s)).getObjValD "statements" =
           Lean.Json.null ∧
         ∃ rs,
@@ -17939,8 +17939,8 @@ theorem VE.EnglishGrammar.Norm.Run.answer_partial_no_node
             VE.EnglishGrammar.Norm.spansOf rs ≠ [] ∧
               (VE.EnglishGrammar.Norm.Run.resultOf (VE.EnglishGrammar.Norm.Run.answer id c s)).getObjValD "spans" =
                 Lean.Json.arr (List.map VE.EnglishGrammar.Norm.Run.spanRow (VE.EnglishGrammar.Norm.spansOf rs)).toArray
-  -- uses VE.EnglishGrammar.Norm.NormOutcome.ok@VE.EnglishGrammar.Norm.Read VE.EnglishGrammar.Norm.NormOutcome@VE.EnglishGrammar.Norm.Read VE.EnglishGrammar.Norm.NormStatement@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.Run.answer@VE.EnglishGrammar.Norm.Run VE.EnglishGrammar.Norm.Run.resultOf@VE.EnglishGrammar.Norm.Run VE.EnglishGrammar.Norm.Run.spanRow@VE.EnglishGrammar.Norm.Run VE.EnglishGrammar.Norm.UnformalisedSpan@VE.EnglishGrammar.Norm.Owners VE.EnglishGrammar.Norm.readNorm@VE.EnglishGrammar.Norm.Read VE.EnglishGrammar.Norm.spansOf@VE.EnglishGrammar.Norm.Owners VE.EnglishGrammar.Run.Case.E@VE.EnglishGrammar.Run VE.EnglishGrammar.Run.Case.L@VE.EnglishGrammar.Run VE.EnglishGrammar.Run.Case.O@VE.EnglishGrammar.Run VE.EnglishGrammar.Run.Case@VE.EnglishGrammar.Run VE.EnglishGrammar.Run.partialStatus@VE.EnglishGrammar.Run VE.EnglishGrammar.workBudget@VE.EnglishGrammar.Lexicon
-  -- expr 3536738359
+  -- uses VE.EnglishGrammar.Norm.NormOutcome.ok@VE.EnglishGrammar.Norm.Read VE.EnglishGrammar.Norm.NormOutcome@VE.EnglishGrammar.Norm.Read VE.EnglishGrammar.Norm.NormStatement@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.Run.answer@VE.EnglishGrammar.Norm.Run VE.EnglishGrammar.Norm.Run.resultOf@VE.EnglishGrammar.Norm.Run VE.EnglishGrammar.Norm.Run.spanRow@VE.EnglishGrammar.Norm.Run VE.EnglishGrammar.Norm.UnformalisedSpan@VE.EnglishGrammar.Norm.Owners VE.EnglishGrammar.Norm.readNorm@VE.EnglishGrammar.Norm.Read VE.EnglishGrammar.Norm.spansOf@VE.EnglishGrammar.Norm.Owners VE.EnglishGrammar.Run.Case.E@VE.EnglishGrammar.Run VE.EnglishGrammar.Run.Case.L@VE.EnglishGrammar.Run VE.EnglishGrammar.Run.Case.O@VE.EnglishGrammar.Run VE.EnglishGrammar.Run.Case@VE.EnglishGrammar.Run VE.EnglishGrammar.workBudget@VE.EnglishGrammar.Lexicon
+  -- expr 3364267731
 theorem VE.EnglishGrammar.Norm.Run.answer_stopped
   ∀ (id : String) (c : VE.EnglishGrammar.Run.Case) (s : String) (i : Nat)
     (o : VE.Grammar.Outcome VE.EnglishGrammar.Tok VE.EnglishGrammar.Reject VE.EnglishGrammar.Norm.Piece),

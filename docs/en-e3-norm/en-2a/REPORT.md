@@ -3,10 +3,12 @@
 Status: cut at the size measurement the task names after deliverable (2) ("Measure size now ... and record it"; the
 common rules: "measure it before you start the second half of the work, and cut there"). This item delivers EN-2 step 0
 and the mode's Lean runner with every EN-2 section 4 part A statement that needs no registry proved, and its fixtures;
-the route recipe's steps 1-4 and the route fixtures are proposed as the next item, **en-e3ab**, before en-e3b. The cut
-was put to the DRI decider before it was recorded (msg.sh, inbox 20261109T181501Z-en-e3a; BUILDER-CHECKLIST 15); the
-ruling is pending at this commit. A second question (the status word, below) is pending too. No DRI signature is
-reserved. No route answer changes (nothing calls the mode).
+the route recipe's steps 1-4 and the route fixtures are the next item, **en-e3ab**, before en-e3b. The cut was put to
+the DRI decider before it was recorded (BUILDER-CHECKLIST 15) and is SIGNED by the DRI 2026-11-09
+(`reviews/dri-decisions-20261109-en-e3a.md` item 1; backlog row en-e3ab applied there, en-e3b now waits for it). Its
+condition holds: `tests/test_english_statement_blocks.py`, the EN-2 answer `#guard`s and O1-O7 stay selected, and the
+six section 9 seeded bugs are shown failing (below). No DRI signature is reserved. No route answer changes (nothing
+calls the mode).
 
 Spec and plan: `docs/spec/en-e3-norm.md` and `docs/spec/en-e3-norm-PLAN.md`, copied verbatim from `64e75bd53` (blob
 hashes equal; the commit is only on VM1's checkout, so the copies were read there with `git show`). Statement gate:
@@ -54,10 +56,13 @@ both, so it is recorded, not changed (FOLLOW-UP en-e3ab: compute the tags only f
 - **E15** is EN-3's (the render decoder). **E14** keeps the `lean-unknown` rows (the comparator is Python's,
   en-e3b's `tests/test_english_statement_shadow.py`); the stub's `deltaClasses` partition is not restated.
 - `#eval` rows of the stub are `#guard`s here (no output in the build).
-- **The status word is spelled once as `VE.EnglishGrammar.Run.partialStatus`** (`"parti" ++ "al"`, in `Run.lean`'s
-  code hunk): `lean/audit.py` refuses that token anywhere in a Lean source, strings and comments included, so the
-  spec's string literal (2.3's tables and `outcomeFields`, and `answer_partial_no_node`'s `.str "…"`) cannot merge as
-  written. The wire word is unchanged; a `#guard` pins it. Put to the DRI (inbox 20261109T185131Z-en-e3a), pending.
+- **The status of an answer with unformalised spans is `"unformalised"`**, not the spec's keyword-spelled word:
+  `lean/audit.py` refuses that token anywhere in a Lean source, strings and comments included. 2.3's tables,
+  `outcomeFields`, the fixtures and the one statement literal that names it (`Run.answer_partial_no_node`'s
+  `.str "unformalised"`; its name and every other word unchanged) use it. SIGNED by the DRI 2026-11-09,
+  `reviews/dri-decisions-20261109-en-e3a.md` item 2 (its condition: E2's `#guard`, status `unformalised` with no
+  `statements`, and `python3 lean/audit.py` passing on the final HEAD). The spec erratum is the FOLLOW-UPS row under
+  "## en-e3a"; en-e3ab's schema inherits the word from `statementFields`.
 - **`statementStatusCodes` already lists `rendered` and the four render codes** (the spec's text), and so does the
   `english.grammar` export, while `codeClasses` gains `renderCodeRows` only at EN-3: en-e3ab's schema admits the seven
   EN-2 statuses (recipe step 2) and its class checks skip the render codes until EN-3.
