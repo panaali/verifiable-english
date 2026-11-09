@@ -124,7 +124,11 @@ R16's "every new trusted definition exercised by a test that can fail" is met:
     written as `countP` with typed lambdas, so the `list-empty` mutants elaborate and are killed.
   - The second run used `--rescore` on the first run's evidence. The tool made it a full run because Examples.lean
     changed (head 7d9a17e79): `36 KILLED, 0 SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN`, exit 0. Its
-    evidence is [trust-mutants.json](trust-mutants.json). No allow file is needed.
+    evidence was replaced by the third run.
+  - The third run came after the trust-table classing (head 628c22b0f, `--rescore` again; the tool made it a full run
+    on this tree's mutants). With `entryError` classed S and the fixtures T, it planned 2 trusted definitions and
+    15 mutants: `15 KILLED, 0 SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN`, exit 0. That is the committed
+    [trust-mutants.json](trust-mutants.json). No allow file is needed.
 
 Hand bugs S1-S4 were run on the filter-and-length form of the count, before it became `countP`. The final form is
 covered by the second trust-mutants run above.
