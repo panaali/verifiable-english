@@ -3,6 +3,8 @@ import VE.Presupposition.Rules
 import VE.Presupposition.Agree
 import VE.Presupposition.Wire
 import VE.Presupposition.Table
+import VE.Presupposition.Admit
+import VE.Readings.Wire
 import VE.Discourse.Descriptions
 import VE.Finite
 
@@ -728,5 +730,295 @@ def docS17 : PDoc :=
 -- a unit left unformalised has no content and no readings, and may be asserted
 def docUnf : PDoc := { docS17 with units := unitsS17 ++ [{ id := "u6", asserted := true, content := .unformalised }] }
 #guard unitContent docUnf "u6" == none && unitReadings docUnf "u6" == none && unitAsserted docUnf "u6"
+
+/-! ## 7.3's admission fixtures A1-A28 (ps-2ab): `admit`, and `admitWith` where 7.3's fixture table stands in
+
+"The fixture table of the stub stands in for PS-E1's" (7.3): a fixture that needs a cell PS-E1's table does not have
+runs on `admitWith fixtureTable fxN` (`fxN`: `admit`'s own fixed inputs), and beside it on `admit`, which reads
+PS-E1's one-candidate cells. `errOf` gives the diagnostic, or "admitted". -/
+
+def errOf : Except String Report → String
+  | .error e => e
+  | .ok _ => "admitted"
+def envA : VE.Environment where
+  sorts := ["entity", "situation", "agent", "request"]
+  predicates p := ([("owner", ["entity"]), ("ready", ["entity"]), ("manager", ["entity"]), ("busy", ["entity"]),
+    ("manager_of", ["entity", "entity"]), ("open", ["entity"]), ("p", ["situation"]), ("g", ["situation"]),
+    ("instruction", ["entity"]), ("trusts", ["entity", "entity"]), ("core_value_of", ["entity", "entity"]),
+    ("desired", ["entity"]), ("answer_required", ["agent", "situation"]), ("request_in", ["request", "situation"]),
+    ("addressed_to", ["request", "agent"])].find? (·.1 == p)).map Prod.snd
+  constants c := if ["alice", "shop", "claude"].contains c then some "entity" else none
+def fxN : Fixed := admitInputs
+def obA (id u row : String) (pos : Position) (a : Args) (c : Carrier) : Obligation :=
+  { id := id, unit := u, span := (0, 0), row := row, position := pos, args := a, carrier := c }
+def docA (units : List DocUnit) (obs : List Obligation) (norms : VE.Norms.Tree := emptyTree) (defaults := false)
+    (unspec : List String := []) (proofs : List (String × VE.Tableau.Certificate) := []) : PDoc :=
+  { E := envA, lits := [], norms := norms, defaults := defaults, unspec := unspec, background := [],
+    units := units, proofs := proofs, block := some obs }
+def cu (id : String) (a : VE.Formula) (asserted := true) : DocUnit := ⟨id, asserted, .claim a⟩
+def ownerArgs : Args := { sort := some "entity", restriction := some owner, body := some ready }
+def pA (c : Carrier) (pos : Position := .path []) (u := "u1") : Obligation := obA "p1" u "definite" pos ownerArgs c
+
+-- A1: S1 with the open set {assumed, conditioned} in the cell's order: admitted, one unresolved obligation, base `B`.
+-- On `admit`, PS-E1's top cell is `[assumed]`: one expected reading, so the two-reading set is refused.
+def rdAs : RReading := { cand := .assumed, aliases := [], content := .claim theOwner, premise := some theOwnerU }
+def rdCo : RReading :=
+  { cand := .conditioned, aliases := [], content := .claim (.implies theOwnerU theOwner), premise := none }
+def docA1 : PDoc := docA [⟨"u1", true, .readings [rdAs, rdCo]⟩] [pA .unresolved]
+#guard errOf (admitWith fixtureTable fxN docA1) == "admitted"
+#guard (admitWith fixtureTable fxN docA1).toOption.map (fun R => (R.checked.map (·.goal), R.bases)) ==
+  some ([theOwnerU], [("u1", theOwner)])
+#guard errOf (admit docA1) == "PresuppositionCandidates: p1"
+-- A2: the conditioned reading missing; the readings out of the cell's order; a third reading.
+#guard errOf (admitWith fixtureTable fxN (docA [⟨"u1", true, .readings [rdAs]⟩] [pA .unresolved])) ==
+  "PresuppositionCandidates: p1"
+#guard errOf (admitWith fixtureTable fxN (docA [⟨"u1", true, .readings [rdCo, rdAs]⟩] [pA .unresolved])) ==
+  "PresuppositionCandidates: p1"
+#guard errOf (admitWith fixtureTable fxN (docA [⟨"u1", true, .readings [rdAs, rdCo, rdCo]⟩] [pA .unresolved])) ==
+  "PresuppositionCandidates: p1"
+-- A3: unresolved on a unit with one content, on `admit` and under the fixture table.
+#guard errOf (admit (docA [cu "u1" theOwner] [pA .unresolved])) == "PresuppositionUnresolved: p1"
+#guard errOf (admitWith fixtureTable fxN (docA [cu "u1" theOwner] [pA .unresolved])) == "PresuppositionUnresolved: p1"
+-- A21 (R-6): a one-candidate top cell gives one expected reading: refused (fewer than two).
+#guard errOf (admitWith oneCell fxN (docA [⟨"u1", true, .readings [rdCo]⟩] [pA .unresolved])) ==
+  "PresuppositionCandidates: p1"
+-- a second unresolved obligation of one unit is refused on the second
+#guard errOf (admitWith fixtureTable fxN (docA [⟨"u1", true, .readings [rdAs, rdCo]⟩]
+  [pA .unresolved, { pA .unresolved with id := "p2" }])) == "PresuppositionCandidates: p2"
+
+-- S7 (rule act): W1's rule `r1` on `p(situation)`, guard `g`; "the operator's instructions" in its act (`plural`).
+def reg7 (allow : Bool := false) : VE.Norms.Regulated := { reg22 with allowByDefault := allow }
+def r7 : VE.Norms.Node := rule22 "r1"
+def instrArgs : Args := { sort := some "entity", restriction := some (.unary "instruction" (.var 0)) }
+def p7 (c : Carrier) (a : Args := instrArgs) : Obligation := obA "p1" "u7" "plural" (.ruleAct "r1") a c
+def tree7 (nodes : List VE.Norms.Node) (allow := false) : VE.Norms.Tree :=
+  { regulated := [reg7 allow], definitions := [], nodes := nodes }
+def doc7 (c : Carrier) (N : VE.Norms.Node) (allow := false) (unspec : List String := ["p"]) : PDoc :=
+  docA [⟨"u7", true, .rule "r1"⟩] [p7 c] (tree7 [N] allow) true unspec
+-- A4: conditioned, `p` unspecified: admitted; the goal is `ruleGoal`, the base rule is `r1` without the condition.
+-- On `admit` PS-E1's rule-act cell is `[assumed]`, so a recorded conditioned is outside the cell.
+#guard errOf (admitWith fixtureTable fxN (doc7 .conditioned (conditionNode r7 pre22))) == "admitted"
+#guard (admitWith fixtureTable fxN (doc7 .conditioned (conditionNode r7 pre22))).toOption.map
+  (fun R => (R.checked.map (·.goal), R.baseTree.nodes)) == some ([ruleGoal (reg7) r7 pre22], [r7])
+#guard errOf (admit (doc7 .conditioned (conditionNode r7 pre22))) == "PresuppositionCandidates: p1"
+-- A5 (S7d): an allow-by-default predicate, not `unspecified`: refused, naming the predicate; so is deny by default.
+#guard errOf (admitWith fixtureTable fxN (doc7 .conditioned (conditionNode r7 pre22) true [])) ==
+  "PresuppositionDefault: p1: p"
+#guard errOf (admitWith fixtureTable fxN (doc7 .conditioned (conditionNode r7 pre22) false [])) ==
+  "PresuppositionDefault: p1: p"
+-- the assumed carrier on S7: admitted on `admit` with the goal's unit before it, and needs no `unspecified`
+def doc7a (unspec : List String) : PDoc :=
+  docA [cu "u0" (ruleGoal (reg7) r7 pre22), ⟨"u7", true, .rule "r1"⟩] [p7 (.assumed "u0")] (tree7 [r7]) true unspec
+#guard errOf (admit (doc7a [])) == "admitted" && errOf (admit (doc7a ["p"])) == "admitted"
+-- the open rule of S7: its readings `r1` (assumed) and `r1` with the condition (conditioned)
+def rr7 : List RReading :=
+  [{ cand := .assumed, aliases := [], content := .rule r7, premise := some (ruleGoal (reg7) r7 pre22) },
+   { cand := .conditioned, aliases := [], content := .rule (conditionNode r7 pre22), premise := none }]
+def doc7u (allow : Bool) (unspec : List String) (rs : List RReading := rr7) : PDoc :=
+  docA [⟨"u7", true, .readings rs⟩] [p7 .unresolved] (tree7 [] allow) true unspec
+-- A5u-allow, A5u-deny (R-7): unresolved, the cell lists conditioned, the predicate allow or deny by default.
+#guard errOf (admitWith fixtureTable fxN (doc7u true [])) == "PresuppositionDefault: p1: p"
+#guard errOf (admitWith fixtureTable fxN (doc7u false [])) == "PresuppositionDefault: p1: p"
+-- the same open rule with `p` unspecified on the norms chain: admitted (the opposite direction of A5u)
+#guard errOf (admitWith fixtureTable fxN (doc7u false ["p"])) == "admitted"
+#guard (admitWith fixtureTable fxN (doc7u false ["p"])).toOption.map (·.baseTree.nodes) == some [r7]
+-- A26 (R-8): the same set on the soft chain is refused at step 5 before separation; on the rights chain this check
+-- does not refuse it (readings@1's `abstention` does, before `admit` runs: A27 below).
+#guard errOf (admitWith fixtureTable ⟨.soft⟩ (doc7u false ["p"])) == softText
+#guard softText == "UnsupportedProfile: a conditioned rule reading needs the norms chain (presupposition)"
+#guard errOf (admitWith fixtureTable ⟨.rights⟩ (doc7u false ["p"])) == "admitted"
+-- an open set with no conditioned rule reading is not refused on the soft chain
+#guard softOk ⟨.soft⟩ (rr7.take 1) && !softOk ⟨.soft⟩ rr7 && softOk ⟨.norms⟩ rr7 &&
+  softOk ⟨.soft⟩ [{ rdCo with cand := .conditioned }]
+-- A6 (S20): a rule act with `body`; A28 (R-10): a heading with `body`.
+#guard errOf (admitWith fixtureTable fxN (docA [⟨"u7", true, .rule "r1"⟩]
+  [p7 .conditioned { instrArgs with body := some .top }] (tree7 [conditionNode r7 pre22]) true ["p"])) ==
+  "PresuppositionMismatch: p1: body"
+def coreArgs : Args := { sort := some "entity", restriction := some (.binary "core_value_of" (.var 0) (.const "claude")) }
+def coreU : VE.Formula := .ex "entity" (.binary "core_value_of" (.var 0) (.const "claude"))
+def pH (c : Carrier) (a : Args := coreArgs) : Obligation := obA "p2" "u0013.presupposition" "plural" .heading a c
+def docH (content : VE.Formula) (c : Carrier) (a : Args := coreArgs) : PDoc := docA [cu "u0013.presupposition" content] [pH c a]
+#guard errOf (admit (docH coreU (.assumed "u0013.presupposition") { coreArgs with body := some .top })) ==
+  "PresuppositionMismatch: p2: body"
+-- A24 (R-10, DEC 10): a heading assumed on its own unit, whose content is exactly `pre`: admitted, goal `pre`.
+#guard errOf (admit (docH coreU (.assumed "u0013.presupposition"))) == "admitted"
+#guard (admit (docH coreU (.assumed "u0013.presupposition"))).toOption.map (·.checked.map (fun c => (c.goal, c.pos))) ==
+  some [(coreU, .top)]
+-- A25 (R-10): the unit's content `pre` with one more conjunct: refused, naming the unit.
+#guard errOf (admit (docH (.and coreU (.ex "entity" (.and (.binary "core_value_of" (.var 0) (.const "claude"))
+  (.unary "desired" (.var 0))))) (.assumed "u0013.presupposition"))) ==
+  "PresuppositionAssumedUnit: p2: u0013.presupposition"
+-- A19 (R-10): a heading admits only proved and assumed: conditioned, asserted and unresolved are refused.
+-- (the unit records the carried form, so step 3 peels it to `pre`)
+#guard errOf (admit (docH (.implies coreU coreU) .conditioned)) == "PresuppositionCandidates: p2"
+#guard errOf (admit (docH (.and coreU coreU) .asserted)) == "PresuppositionCandidates: p2"
+#guard errOf (admitWith fixtureTable fxN (docH coreU .unresolved)) == "PresuppositionCandidates: p2"
+-- a heading on a rule unit has no position
+#guard errOf (admit (docA [⟨"u0013.presupposition", true, .rule "r1"⟩] [pH (.assumed "u0013.presupposition")]
+  (tree7 [r7]))) == "PresuppositionPosition: p2"
+
+-- A7 (S17): proved, the certificate citing the obligation's own unit, or the later "There is exactly one owner.";
+-- A8 (S10): the same certificate after "Alice has exactly one manager.": proved.
+def certC : VE.Tableau.Certificate :=
+  { checker_version := "ve-tableau-checker@2", environment_id := "e", premise_meaning_ids := [],
+    conclusion_meaning_id := "m", trace := .close }
+def mgrArgs : Args := { sort := some "entity", restriction := some mgrOf, body := some ready }
+def pP (u : String) : Obligation := obA "p1" u "definite" (.path []) mgrArgs (.proved "d1")
+#guard errOf (admit (docA [cu "u1" theMgr] [pP "u1"] (proofs := [("d1", certC)]))) == "PresuppositionCertificate: p1"
+#guard errOf (admit (docA [cu "u1" theMgr, cu "u2" theMgrU] [pP "u1"] (proofs := [("d1", certC)]))) ==
+  "PresuppositionCertificate: p1"
+#guard errOf (admit (docA [cu "u0" theMgrU, cu "u1" theMgr] [pP "u1"] (proofs := [("d1", certC)]))) == "admitted"
+-- no certificate of that name, and an earlier unit that is not asserted, are refused too
+#guard errOf (admit (docA [cu "u0" theMgrU, cu "u1" theMgr] [pP "u1"] (proofs := [("d2", certC)]))) ==
+  "PresuppositionCertificate: p1"
+#guard errOf (admit (docA [cu "u0" theMgrU false, cu "u1" theMgr] [pP "u1"] (proofs := [("d1", certC)]))) ==
+  "PresuppositionCertificate: p1"
+
+-- A9 (S21): assumed whose unit states `U` without the projected hypothesis; with it, admitted.
+def b21 : VE.Formula := .implies isOpen theOwner
+def p21 (c : Carrier) : Obligation := pA c (.path [1])
+#guard errOf (admit (docA [cu "u0" theOwnerU, cu "u1" b21] [p21 (.assumed "u0")])) == "PresuppositionAssumedUnit: p1: u0"
+#guard errOf (admit (docA [cu "u0" (.implies isOpen theOwnerU), cu "u1" b21] [p21 (.assumed "u0")])) == "admitted"
+-- the assumed unit must be asserted and exist
+#guard errOf (admit (docA [cu "u0" (.implies isOpen theOwnerU) false, cu "u1" b21] [p21 (.assumed "u0")])) ==
+  "PresuppositionAssumedUnit: p1: u0"
+#guard errOf (admit (docA [cu "u1" b21] [p21 (.assumed "u9")])) == "PresuppositionAssumedUnit: p1: u9"
+-- A20 (R-D5): a path obligation assumed on its own unit.
+#guard errOf (admit (docA [cu "u1" theOwner] [pA (.assumed "u1")])) == "PresuppositionAssumedUnit: p1: u1"
+-- unconditional (generic's consequent cell on `admit`): the unit states the closed `pre`; another unit, asserted.
+def genArgs : Args := { body := some ready, pre := some owner }
+def pG (c : Carrier) : Obligation := obA "p1" "u1" "generic" (.path [1]) genArgs c
+def bG : VE.Formula := .all "entity" (.implies busy (.and owner ready))
+def pGa (c : Carrier) : Obligation := { pG c with position := .path [0, 1] }
+#guard errOf (admit (docA [cu "u0" (.all "entity" owner), cu "u1" bG] [pGa (.unconditional "u0")])) == "admitted"
+#guard errOf (admit (docA [cu "u0" (.all "entity" (.implies busy owner)), cu "u1" bG] [pGa (.unconditional "u0")])) ==
+  "PresuppositionAssumedUnit: p1: u0"
+#guard errOf (admit (docA [cu "u0" (.all "entity" (.implies busy owner)), cu "u1" bG] [pGa (.assumed "u0")])) ==
+  "admitted"
+#guard errOf (admit (docA [cu "u0" (.all "entity" owner) false, cu "u1" bG] [pGa (.unconditional "u0")])) ==
+  "PresuppositionAssumedUnit: p1: u0"
+
+-- A10: conditioned recorded `B → G` instead of `G → B`. Peeling one antecedent leaves `G`, so step 4 finds `G`, not
+-- `strong`, at the path: `clause` (see the REPORT: 7.3 writes `content`). `G → B` is admitted.
+#guard errOf (admitWith fixtureTable fxN (docA [cu "u1" (.implies theOwner theOwnerU)] [pA .conditioned])) ==
+  "PresuppositionMismatch: p1: clause"
+#guard errOf (admitWith fixtureTable fxN (docA [cu "u1" (.implies theOwnerU theOwner)] [pA .conditioned])) == "admitted"
+-- A11 (S16): the two root goals in the opposite nesting do not peel: `content`; `carried`'s nesting is admitted.
+def t16 : CandidateTable := fun _ _ => [.conditioned, .asserted]
+def obs16 : List Obligation :=
+  [pA .asserted (.path [0]), obA "p2" "u1" "definite" (.path [1])
+    { sort := some "entity", restriction := some manager, body := some busy } .conditioned]
+#guard errOf (admitWith t16 fxN (docA [cu "u1" wrong16] obs16)) == "PresuppositionMismatch: p1: content"
+#guard errOf (admitWith t16 fxN (docA [cu "u1" u16] obs16)) == "admitted"
+-- step 5: a recorded content that peels but differs from the regenerated one
+#guard errOf (admitWith t16 fxN (docA [cu "u1" (.and gManager (.implies gManager b16))] obs16)) ==
+  "PresuppositionMismatch: p1: content"
+-- A12: an unknown row. A13: path `[2]` into an `ex`.
+#guard errOf (admit (docA [cu "u1" theOwner] [{ pA .asserted with row := "title" }])) ==
+  "PresuppositionUnknownRow: p1: title"
+#guard errOf (admit (docA [cu "u1" theOwner] [pA (.assumed "u1") (.path [2])])) == "PresuppositionPosition: p1"
+-- A14: a recorded asserted carrier in a cell without asserted (PS-E1's top cell is `[assumed]`).
+#guard errOf (admit (docA [cu "u1" (.and theOwnerU theOwner)] [pA .asserted])) == "PresuppositionCandidates: p1"
+#guard errOf (admitWith t16 fxN (docA [cu "u1" (.and theOwnerU theOwner)] [pA .asserted])) == "admitted"
+-- step 2: a repeated id, a missing unit
+#guard errOf (admit (docA [cu "u0" theOwnerU, cu "u1" theOwner] [pA (.assumed "u0"), pA (.assumed "u0")])) ==
+  "PresuppositionMismatch: p1: id"
+#guard errOf (admit (docA [cu "u0" theOwnerU] [pA (.assumed "u0")])) == "PresuppositionMismatch: p1: unit"
+-- step 3: an unformalised unit, a rule unit whose rule is not in the tree
+#guard errOf (admit (docA [⟨"u1", true, .unformalised⟩] [pA (.assumed "u1")])) == "PresuppositionMismatch: p1: content"
+#guard errOf (admit (docA [⟨"u7", true, .rule "r9"⟩] [p7 (.assumed "u0")] (tree7 [r7]))) ==
+  "PresuppositionMismatch: p1: rule"
+-- step 4: the rule act names another rule; the arguments do not build
+#guard errOf (admit (docA [cu "u0" (ruleGoal (reg7) r7 pre22), ⟨"u7", true, .rule "r1"⟩]
+  [{ p7 (.assumed "u0") with position := .ruleAct "r2" }] (tree7 [r7]))) == "PresuppositionPosition: p1"
+#guard errOf (admit (docA [cu "u1" theOwner] [{ pA (.assumed "u1") with args := {} }])) ==
+  "PresuppositionMismatch: p1: arguments"
+
+-- A15: 257 obligations are over budget (UNKNOWN); 256 on one unit are within it and admitted; a regenerated goal over
+-- W1's 10,000 nodes is over budget too.
+def many (n : Nat) : List Obligation := (List.range n).map (fun i => { pA (.assumed "u0") with id := s!"p{i}" })
+#guard errOf (admit (docA [cu "u0" theOwnerU, cu "u1" theOwner] (many 257))) == "ResourceLimit: presuppositions"
+#guard errOf (admit (docA [cu "u0" theOwnerU, cu "u1" theOwner] (many 256))) == "admitted"
+def wide : Nat → VE.Formula
+  | 0 => .top
+  | n + 1 => .and (wide n) (wide n)
+def deep : VE.Formula := wide 13
+#guard VE.Bridge.formulaNodes deep == 16383 && VE.Bridge.formulaNodes (wide 12) == 8191
+#guard errOf (admit (docA [cu "u1" (.implies deep theOwner)] [pA (.assumed "u0") (.path [1])])) ==
+  "ResourceLimit: presuppositions"
+-- A16 (S14): conditioned, the recorded guard `⊤ ∧ pre` with `pre` over the wrong variable order: `rule`.
+def d14 : VE.Formula := .and (.binary "request_in" (.var 0) (.var 1)) (.binary "addressed_to" (.var 0) (.var 2))
+def d14w : VE.Formula := .and (.binary "request_in" (.var 0) (.var 2)) (.binary "addressed_to" (.var 0) (.var 1))
+def doc14 (guard : VE.Formula) : PDoc :=
+  docA [⟨"u14", true, .rule "r1"⟩] [obA "p1" "u14" "plural" (.ruleAct "r1") { sort := some "request", restriction := some d14 }
+    .conditioned] (tree14 [rule14 "r1" true (.and .top guard)]) true ["answer_required"]
+#guard errOf (admitWith fixtureTable fxN (doc14 (.ex "request" d14w))) == "PresuppositionMismatch: p1: rule"
+#guard errOf (admitWith fixtureTable fxN (doc14 (.ex "request" d14))) == "admitted"
+#guard (admitWith fixtureTable fxN (doc14 (.ex "request" d14))).toOption.map (·.checked.map (·.pre)) == some [pre14]
+-- step 5: a tree that fails W1's check (an ill-typed guard) is `rule`
+def r7bad : VE.Norms.Node := { r7 with guard := .unary "g" (.var 3) }
+#guard errOf (admit (docA [cu "u0" (ruleGoal (reg7) r7bad pre22), ⟨"u7", true, .rule "r1"⟩] [p7 (.assumed "u0")]
+  (tree7 [r7bad]))) == "PresuppositionMismatch: p1: rule"
+-- A17 (S11): without the block the field is absent, as without PS-2a; with it, `admit`'s answer.
+#guard (admitWrapped { docA1 with block := none }).isNone && (admitBase docA1).isNone
+#guard (admitWrapped docA1).map errOf == some (errOf (admit docA1))
+
+-- A18 (R-D6): "The manager of the owner is ready.": p2 ("the owner") in p1's restriction, at `[0, 0]` and in its
+-- copy at `[0, 1, 0, 0, 0]`: `PresuppositionPosition: p2`. A18b: p2 ("the manager") in p1's body `P`: admitted.
+def rIn18 : Reading := definite 1 "entity" owner (.binary "manager_of" (.var 1) (.var 0))
+def rOut18 : Reading := definite 0 "entity" rIn18.strong ready
+def a18o : Args := { sort := some "entity", restriction := some rIn18.strong, body := some ready }
+def a18i : Args := { sort := some "entity", restriction := some owner, body := some (.binary "manager_of" (.var 1) (.var 0)) }
+def obs18 (q : List Nat) : List Obligation :=
+  [obA "p1" "u1" "definite" (.path []) a18o (.assumed "u0"), obA "p2" "u1" "definite" (.path q) a18i (.assumed "u00")]
+def f18 : Frame := .exF "entity" (.andL .hole (.and (.all "entity" (.implies (VE.Discourse.raise1 0 rIn18.strong)
+  (.eq (.var 0) (.var 1)))) ready))
+def doc18 (q : List Nat) : PDoc :=
+  docA [cu "u0" rOut18.pre, cu "u00" (f18.goal rIn18.pre), cu "u1" rOut18.strong] (obs18 q)
+#guard errOf (admit (doc18 [0, 0])) == "PresuppositionPosition: p2"
+#guard errOf (admit (doc18 [0, 1, 0, 0, 0])) == "PresuppositionPosition: p2"
+def rIn18b : Reading := definite 1 "entity" manager (.binary "trusts" (.var 1) (.var 0))
+def rOut18b : Reading := definite 0 "entity" owner rIn18b.strong
+def f18b : Frame := .exF "entity" (.andR owner (.andR (.all "entity" (.implies owner (.eq (.var 0) (.var 1)))) .hole))
+def a18bo : Args := { ownerArgs with body := some rIn18b.strong }
+def a18bi : Args := { sort := some "entity", restriction := some manager, body := some (.binary "trusts" (.var 1) (.var 0)) }
+def doc18b : PDoc :=
+  docA [cu "u0" rOut18b.pre, cu "u00" (f18b.goal rIn18b.pre), cu "u1" rOut18b.strong]
+    [obA "p1" "u1" "definite" (.path []) a18bo (.assumed "u0"), obA "p2" "u1" "definite" (.path [0, 1, 1]) a18bi (.assumed "u00")]
+#guard errOf (admit doc18b) == "admitted"
+-- A22 (R-D1): S12 with a recorded in place, the negated cell listing it: admitted, the content is `B`.
+-- A23: in place at `not (· and r)`, not shallow: refused.
+#guard errOf (admitWith fixtureTable fxN (docA [cu "u1" (negF.plug theOwner)] [pA .inPlace (.path [0])])) == "admitted"
+#guard (admitWith fixtureTable fxN (docA [cu "u1" (negF.plug theOwner)] [pA .inPlace (.path [0])])).toOption.map
+  (fun R => R.bases.map (fun x => carried (unitModes R x.1) x.2)) == some [negF.plug theOwner]
+#guard errOf (admitWith fixtureTable fxN (docA [cu "u1" (.not (.and theOwner .top))] [pA .inPlace (.path [0, 0])])) ==
+  "PresuppositionCandidates: p1"
+-- in place at the top: not in the top cell
+#guard errOf (admitWith fixtureTable fxN (docA [cu "u1" theOwner] [pA .inPlace])) == "PresuppositionCandidates: p1"
+-- A27 (R-8): A26 on the rights chain: readings@1's `abstention` refuses the content-bearing set beside
+-- `norm-defaults@0` before `admit` runs; on the norms chain it does not.
+def rvEmpty : VE.Route.Wire.RouteVocabulary :=
+  { vocabulary := ⟨[], [], []⟩, sourceVocabulary := ⟨[], [], []⟩, validNames := rfl, literals := [], nodup := .nil,
+    definitions := [], chain := trivial }
+def reA (ch : VE.Readings.Chain) : VE.Readings.Wire.ReadingsEnvironment :=
+  { chain := ch, profiles := ["norm-defaults@0", "norms@0", "readings@1"], lower := ["norm-defaults@0", "norms@0"],
+    se := ⟨⟨rvEmpty, [], [], .null, []⟩, VE.Readings.Wire.emptySoft, [], .null⟩, block := VE.Readings.Wire.emptyRights,
+    json := .null, lowerJson := .null }
+def frame27 : VE.Rights.RightsDoc where
+  soft := ⟨envA, [], VE.Readings.Wire.emptySoft, ⟨[reg7], [], []⟩⟩
+  rights := VE.Readings.Wire.emptyRights
+  rs := []
+  limits := []
+  bars := []
+  outsideCites := []
+  sourceOrder := some []
+def cand27 (id : String) (N : VE.Norms.Node) : VE.Readings.Candidate :=
+  ⟨id, some (.norm { toNode := N, mode := .strict, rank := none, alterable := [], exception := none, hard := false }),
+    [], []⟩
+def docR27 : VE.Readings.Doc :=
+  ⟨.rights, frame27, [.set ⟨"u7", "u7", 1, [cand27 "assumed" r7, cand27 "conditioned" (conditionNode r7 pre22)]⟩], [], []⟩
+#guard VE.Readings.Wire.abstention (reA .rights) docR27 ==
+  some "UnsupportedProfile: readings@1 content with norm-defaults@0 is not implemented"
+#guard VE.Readings.Wire.abstention (reA .norms) docR27 == none && VE.Readings.Wire.abstention (reA .soft) docR27 == none
 
 end VE.Presupposition.Examples
