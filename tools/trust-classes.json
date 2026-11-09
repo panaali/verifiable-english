@@ -11159,6 +11159,7 @@
         "VE.SpeechActs.Source.premiseFields",
         "VE.SpeechActs.Source.premiseText",
         "VE.SpeechActs.Source.queryJson",
+        "VE.SpeechActs.Source.readSource",
         "VE.SpeechActs.Source.readUnit",
         "VE.SpeechActs.Source.readUnits",
         "VE.SpeechActs.Source.readingSets",
@@ -11208,7 +11209,12 @@
         "VE.SpeechActs.Source.statusText"
       ],
       "G[R]": [
+        "VE.SpeechActs.Source.readingContextText",
         "VE.SpeechActs.Source.trivialWarnings"
+      ],
+      "D[R]": [
+        "VE.SpeechActs.Source.commandContext",
+        "VE.SpeechActs.Source.hasCommandFence"
       ]
     },
     "VE/SpeechActs/Tree.lean": {

@@ -1,4 +1,5 @@
 import VE.Commands.RunExamples
+import VE.SpeechActs.Source.Run
 
 /-! The spec's two end-to-end statements of CI-2 (docs/spec/commands-imperatives.md section 6), as written there
 with `hw` beside `hd` (reviews/dri-decisions-20261102-ci-1.md item 1), proved through ci-1b's `refused_classed`,
@@ -37,6 +38,17 @@ theorem readInstruction_typed (j : Lean.Json) (ctx : Context) (r : Reading) (D :
 #guard [Examples.E_web, RunExamples.proofEnv, RunExamples.youBob, RunExamples.goProof].all fun j =>
   VE.Scope.jsonWF? j && match decodeSpeechEnvironmentFull j with
   | .ok se => declared se
+  | .error _ => false
+
+/-! The source wrapper discharges `hw` as the mode does: its reading context goes through `Run.decodeRequest`, whose
+`jsonWF?` refuses a tree no parser builds (F-raw, here as the context's lexicon) before any decoder reads it. -/
+
+#guard match decodeSpeechEnvironmentFull RunExamples.proofEnv with
+  | .ok se => match VE.SpeechActs.Source.commandContext
+      (Lean.Json.mkObj [("reading_context", Lean.Json.mkObj [("lexicon", RunExamples.rawEnv)])]) RunExamples.proofEnv
+      se.scope with
+    | .error e => e == "InvalidInput: the request is not a well-formed JSON tree"
+    | .ok _ => false
   | .error _ => false
 
 end VE.Commands
