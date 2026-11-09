@@ -196,6 +196,7 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.Document.fold_fits
 #print axioms ResponseShape.Encoders.Document.fold_status_mem
 #print axioms ResponseShape.Encoders.Document.fold_with_readings_fits
+#print axioms ResponseShape.Encoders.Document.lines_fits
 #print axioms ResponseShape.Encoders.Document.locatedRow_fits
 #print axioms ResponseShape.Encoders.Document.meaning_fits
 #print axioms ResponseShape.Encoders.Document.rowKind_fits
@@ -265,7 +266,9 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.NormDefaults.of_elaborate
 #print axioms ResponseShape.Encoders.NormDefaults.of_norms
 #print axioms ResponseShape.Encoders.NormDefaults.runAdmissionX_fits
+#print axioms ResponseShape.Encoders.NormDefaults.runCaseE_fits
 #print axioms ResponseShape.Encoders.NormDefaults.runCaseReported_fits
+#print axioms ResponseShape.Encoders.NormDefaults.runCaseRouted_fits
 #print axioms ResponseShape.Encoders.NormDefaults.runCase_fits
 #print axioms ResponseShape.Encoders.NormDefaults.runGated_fits
 #print axioms ResponseShape.Encoders.NormDefaults.runLayered_fits

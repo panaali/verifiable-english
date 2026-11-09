@@ -6,6 +6,52 @@ committed; the recheck follows. HEAD: the last commit of feature/df-5. No DRI si
 field, and one value mutant per tied definition breaks its theorem (S10-S22); the records say only what the theorems
 prove. T1 stays V +140 under R16. **DELTA**: D1 SIGNED by the DRI (reviews/dri-decisions-20261104-df-5.md item 1); T1
 under R16. Bytes 0. Size: SIGNED by the DRI (reviews/dri-decisions-20261104-df-5-size.md item 1).
+**df-5-tm (follow-up, feature/df-5-tm)**: the trust-mutant record on the Lean as merged is `trust-mutants-final.json`
+(head 64fd9c22d, exit 0: 429 killed, 0 survivor, 0 unknown, 20 invalid, 39 allowed); one guard added
+(`DefaultsExamples.lean`), five allow entries added and one reworded; no definition, statement or verdict changed; DELTA
+none; no DRI signature reserved. Details: "Trust" and "df-5-tm" below.
+
+## df-5-tm (follow-up: the trust-mutant record on the Lean as merged)
+
+Task: reviews/dri-decisions-20261105-lp0401-apply.md item 1 (rule lp0401 Q3), from main da5303b78 (df-5 merged at
+b5a80d5e4).
+
+- **Base.** The default base (the merge base) is HEAD itself, and main before df-5 (d068c67f6) selects 56 definitions
+  of seven later items. The base is therefore HEAD da5303b78 with df-5's merged Lean diff (`b5a80d5e4^1..b5a80d5e4`,
+  `lean/*.lean`) reverted. In `Schemas/NormDefaults.lean` it keeps the two `acts-elaborate` lines that ap-3dc added
+  next to df-5's lines. It is the local commit bf0ee153b (tag `df-5-tm-base`, not pushed). It differs from d068c67f6
+  in that file only by ap-3dc's two lines, and it selects df-5's 14 definitions plus the 4 that the review fixes added
+  or counted (18 definitions, 488 mutants; the old records had 426).
+- **Run 1** (full, `trust-mutants.json`, head da5303b78, ve-mac-1, 7963 s, exit 1): 426 killed, 2 survivor,
+  11 unknown, 20 invalid, 29 allowed. `--rescore` could not reuse the old records: their plan (426 mutants) is not
+  this one.
+- **Survivors.** M124 (`kind` list-drop-last) and M162 (`row` list-drop-last at line 371) drop the last entry, which
+  since ap-3dc's merge is `acts-elaborate`. Before, it was df-5's `defaults-zone`, and dropping that was killed. Fixed
+  by a guard in `lean/ResponseShape/DefaultsExamples.lean`: the kinds that `kind` lists are exactly the kinds that
+  `row`'s selection names, as rendered. It also kills M344 (the admission selector dropped), which was allowed before.
+- **Unknowns.** All 11 are in `zoneWordsJson` (lines 400-404) and do not elaborate. Either `[]` is applied to the
+  row's lambda ("Function expected"), or `.take 1`, `.reverse.take 1`, `.drop 1` or `.dropLast` leaves `.str` with no
+  expected type. These are type errors in the mutated text, which the tool does not class as refusals. Allowed with
+  that reason (five entries, one per operator). The `row` list-drop-first entry now cites line 368 (the case-error
+  row) only.
+- **Final** (`trust-mutants-final.json`, `--rescore trust-mutants.json`, mode "checks", head 64fd9c22d, exit 0):
+  446 verdicts carried, 42 rerun; 429 killed, 0 survivor, 0 unknown, 20 invalid, 39 allowed. The first rescore at
+  the same head gave M124 and M162 UNKNOWN ("Lean could not elaborate it in the probe"). The tool's own `probe()`
+  run locally, on the control and on M124 planted, completes for the guard (`done`). The repeat rescore at the
+  unchanged head gave the record above.
+- **Deviation.** Both rescore runs were started with `CLOUD_POOL=0 MAC_PYTEST_NOCLOUD2=1`, against build checklist
+  13a. Reason: the base is a local tag that only ve-mac-1 (tags are pushed there) and this VM can read. The first
+  rescore without them sent 12 Actions parts and two ve-cloud-2 runs, and every one failed with "no base commit
+  'df-5-tm-base'" (exit 2).
+- **Seeded bugs** (Lean, `lean/ResponseShape/Schemas/NormDefaults.lean`, each planted alone, then
+  `lake build ResponseShape.DefaultsExamples`, then restored): T1 `kind` without `acts-elaborate`; T2 `row`'s selection
+  without `acts-elaborate`; T3 `row`'s selection without the admission selector. In each, the build fails at
+  `DefaultsExamples.lean:117` (the new guard) and nowhere else. The unmutated schema builds (the opposite direction).
+  The trust-mutant records show the same kills (M124, M162, M344). No Python or Rust product code changed.
+- **Checks run.** `lake build` (1327 jobs) and `python3 lean/audit.py` (PASS, 792 files) passed.
+  `tools/trust_map.py --check` gave K, S, D, G +0 (no trust growth). `tools/lean_statements.py` changed one line of
+  `lean/declarations.txt`. `tools/regen_generated.py --check` named `route-cases` and `checker-pins`. Each passes
+  alone (`--only`) and leaves no diff, and neither reads this change's inputs.
 
 ## Review loop round (F1, F5)
 
@@ -96,7 +142,7 @@ trust-mutant sweep this round: no trusted or tied definition changed (only theor
 | S20 | Lean, `ZoneWire.lean` `zoneSizes` | review loop F1: the observations' bound one higher | `tests/test_defaults_zone_ties.py::test_review_f1_each_value_mutant_breaks_its_tied_theorem[zoneSizes-bound]`: `zoneSizes_none_iff` or `zoneSizes_observations`'s proof fails, and nothing else |
 | S21 | Lean, `ZoneWire.lean` `ZoneLine.row` | review loop F1: a stated condition's line labelled DE10f | `tests/test_defaults_zone_ties.py::test_review_f1_each_value_mutant_breaks_its_tied_theorem[row-label]`: `zoneLine_rows_distinct`'s proof fails, and nothing else |
 | S22 | Lean, `ZoneWire.lean` `ZoneLine.kind` | review loop F1: a switch's DE13 line given the exception's kind | `tests/test_defaults_zone_ties.py::test_review_f1_each_value_mutant_breaks_its_tied_theorem[kind-label]`: `zoneLine_rows_distinct`'s proof fails, and nothing else |
-| R16 | Lean, every new trusted definition | `tools/trust_mutants.py` | `trust-mutants-final.json`: 389 killed, 0 survivor, 0 unknown (see "Trust") |
+| R16 | Lean, every new trusted definition | `tools/trust_mutants.py` | `trust-mutants-final.json` (df-5-tm, head 64fd9c22d, exit 0): 429 killed, 0 survivor, 0 unknown, 39 allowed (see "Trust") |
 
 ## Trust
 
@@ -112,21 +158,28 @@ for the ties pass of the rest.
 lean/ResponseShape/DefaultsExamples.lean`, `--allow trust-mutants-allow.json`), the trusted definitions the branch
 adds or changes:
 
-- Build round (head 66190bd0c), `trust-mutants-final.json` before this round: 389 killed, 8 invalid, 29 allowed, 0
+- Build round (head 66190bd0c, the record `trust-mutants-final.json` held before df-5-tm): 389 killed, 8 invalid, 29 allowed, 0
   survivor, 0 unknown.
 - Fix round, first run (head c1d557077, kept out of the evidence): 396 killed, 32 survivors and 11 unknown, all in
   the words generator's JSON builder (`ZoneWordsMain.main`) and `zoneJoins`, which only the Python freshness test
   read. Fixed by `zoneWordsJson` and three guards that read it back (commit 9028ce14a).
-- Fix round, final run: the run on the final Lean (d06883292) is moved to follow-up row df-5-tm by the DRI's
-  fix-round bound (lp0401 Q3, R9), and the committed records stay `trust-mutants.json` (head 54a4a2067) and
-  `trust-mutants-final.json` (head 66190bd0c), both from before the review fixes' Lean changes.
+- Fix round, final run: moved to follow-up row df-5-tm by the DRI's fix-round bound (lp0401 Q3, R9).
+- df-5-tm, on the Lean as merged (main da5303b78, base bf0ee153b: HEAD with df-5's merged Lean diff reverted, see
+  "df-5-tm"; 18 definitions, 488 mutants). These records replace the two from before the review fixes (heads 54a4a2067
+  and 66190bd0c):
+  - `trust-mutants.json` (full run, head da5303b78, exit 1): 426 killed, 2 survivor, 11 unknown, 20 invalid,
+    29 allowed;
+  - `trust-mutants-final.json`, **the current record** (`--rescore` of that one, head 64fd9c22d, exit 0): 429 killed,
+    0 survivor, 0 unknown, 20 invalid, 39 allowed. The two survivors are killed by the kinds guard of
+    `DefaultsExamples.lean`, and the eleven unknowns, `zoneWordsJson` type errors, are allowed.
 - Every definition has killed mutants except the inductive `ZoneLine`: its three `ctor-drop` mutants do not elaborate,
   because `zoneLines` and `ZoneLine.json` name the dropped constructor (as df-5a's T8 for `DefaultZone`). Each
   constructor is exercised by guards: `stated` by DF-ξ′ and β2, `forced` by DF-μ and two tuples, `assumed` by DF-μ′,
   DF-ε and DF-δ.
 - The allowed mutants (`trust-mutants-allow.json`, each with its reason) are type errors in the mutated text, two
-  equivalent ones (`value` has at most one element), two drops of `row`'s alternatives that no zone answer reaches
-  (checked in Python by `tests/test_route_row_schemas.py`), and `defaultsRows` emptied (it fails RouteExamples'
+  equivalent ones (`value` has at most one element), the drop of `row`'s case-error alternative, which no zone answer
+  reaches (checked in Python by `tests/test_route_row_schemas.py`; df-5-tm's kinds guard kills the selection's drops),
+  `zoneWordsJson`'s eleven type errors (df-5-tm), and `defaultsRows` emptied (it fails RouteExamples'
   guards, which also reach the fits proof the mutant breaks).
 - The tied definitions are not mutated by `tools/trust_mutants.py` (R16 counts trusted lines). One value mutant of each
   (S10-S22, loop round) breaks its tied theorem's proof, and only that theorem's
