@@ -258,7 +258,8 @@ def test_a_check_wrapped_in_guard_msgs_kills(default_run):
 
 def test_a_run_records_where_its_time_goes(default_run, tmp_path_factory):
     """eff-tm-control: every Lake run of a sweep counts under its step (none under "other"), each step that ran took
-    time, the phases add up to the run's seconds, and the one line prints them."""
+    time, the phases add up to the run's seconds, and the one line prints them. The lazy controls' wall phase is near
+    0: their probes run inside the mutants' phase, counted under the "control_probes" Lake step (eff-20261108-1)."""
     import trust_mutants as tm
     done, mutants, _, _ = default_run
     data = json.loads((tmp_path_factory.getbasetemp() / "default-evidence.json").read_text())
@@ -269,7 +270,10 @@ def test_a_run_records_where_its_time_goes(default_run, tmp_path_factory):
     assert runs["mutant_builds"] >= len(built) and min(runs[k] for k in (
         "control_probes", "mutant_checks", "stage_controls", "mutant_probes")) >= 1, runs
     assert all((lake[k] > 0) == (runs[k] > 0) for k in tm.LAKE), steps
-    assert all(steps["wall"][k] > 0 for k in ("control_build", "probe_install", "control_probes", "mutants")), steps
+    assert all(steps["wall"][k] > 0 for k in ("control_build", "probe_install", "mutants")), steps
+    # lazy controls (the default, eff-20261108-1) run inside the mutants' phase, still under their Lake step
+    assert data["control_probes"] == "lazy" and lake["control_probes"] > 0, steps
+    assert steps["wall"]["control_probes"] < steps["wall"]["mutants"], steps
     # the phases up to the mutants' end are the run's "seconds" (each rounded to 0.1 s, it to 1 s)
     assert abs(sum(steps["wall"][k] for k in tm.WALL[:6]) - data["seconds"]) <= 1.5, (steps, data["seconds"])
 
@@ -1695,6 +1699,57 @@ def test_an_elaboration_error_in_the_mutants_own_text_is_invalid(case, errors, v
     assert trust_mutants.invalid(found, text, (1, text.count("\n")), edit)[0] == verdict
 
 
+# tm-column-per-copy (review tm-elab-unknown-ov F2, DRI adv0314 item 1): the M170 mutant at ZoneWire.lean's lines
+# 399-404, its text at 401, columns 15 to 95 (81 characters), and Lake's errors on the mutated file (column,
+# message), each read through `run`'s own build: the same message twice on one line keeps each copy's column, so
+# one outside the mutant's text is no refusal, whichever copy Lake prints last.
+COPIES = [
+    ("M170-four-inside", [(26, DOTTED), (44, DOTTED), (61, DOTTED), (80, DOTTED)], "INVALID"),
+    ("F2-outside-then-inside", [(4, DOTTED), (26, DOTTED)], "UNKNOWN"),
+    ("F2-inside-then-outside", [(26, DOTTED), (4, DOTTED)], "UNKNOWN"),
+    ("F2-inside-then-after-the-edit", [(26, DOTTED), (96, DOTTED)], "UNKNOWN"),
+    ("invalid-field-twice-inside", [(16, FIELD), (90, FIELD)], "INVALID"),
+    ("invalid-field-outside-then-inside", [(4, FIELD), (16, FIELD)], "UNKNOWN"),
+]
+
+
+@pytest.mark.parametrize(("case", "errors", "verdict"), COPIES, ids=[c[0] for c in COPIES])
+def test_each_copy_of_an_error_is_read_at_its_own_column(tmp_path, monkeypatch, case, errors, verdict):
+    """tm-column-per-copy: `run` read each error's column from a dict keyed by (file, line, message), so every copy
+    of a message on one line took the last copy's column, and a copy outside the mutant's text could be read as
+    inside it: INVALID (never a survivor) where it is UNKNOWN. Now each copy is judged at its own column, through
+    the build path itself (Lake's output, `located`, `build`, `invalid`)."""
+    import trust_mutants as tm
+    before, after = HEADS, f"({HEADS}.take 1)"
+    pad = "".join(f"-- {i}\n" for i in range(1, 399))  # the declaration starts at line 399
+    text = pad + ZONE.format("zoneHeads.map", f"Json.mkObj {before}")
+    start = len(pad) + text[len(pad):].index(before)
+    assert text.count("\n", 0, start) + 1 == 401 and start - text.rindex("\n", 0, start) - 1 == 15
+    assert 15 + len(after) == 96
+    lean = tmp_path / "lean"
+    (lean / "Demo").mkdir(parents=True)
+    (lean / "Demo/X.lean").write_text(text)
+    m = tm.Mutant("M170", "Demo/X.lean", 401, "zoneWordsJson", "x", start, start + len(before), (399, 404), before,
+                  after, edit=(start + len(before), after))
+    output = "".join(f"error: Demo/X.lean:401:{c}: {message}\n" for c, message in errors) + "error: build failed\n"
+    builds = []
+
+    class Scratch:
+        def __init__(self):
+            self.lean = lean
+
+        def lake(self, env, *args, timeout=None):
+            builds.append(args)
+            mutated = (lean / "Demo/X.lean").read_text()
+            assert mutated.split("\n")[400][15:96] == after  # the mutant's text, where the columns say
+            return 1, output
+    monkeypatch.setattr(tm, "targets", lambda tree, m, tests, deep=False: ["Demo.X"])
+    tree = tm.Tree({"Demo/X.lean": [(399, 404, "other", "zoneWordsJson")]}, {}, {"Demo.X": "Demo/X.lean"}, {})
+    status, detail = tm.run(m, Scratch(), tree, [], [], {})
+    assert (status, builds) == (verdict, [("build", "+Demo.X")]), detail
+    assert (lean / "Demo/X.lean").read_text() == text  # restored
+
+
 def test_named_writes_each_check_as_a_declaration_of_what_it_states():
     """Hunt H4, H5, N1, N2, N8: `dependencies` asks Lean, at each check's own position (its section variables
     included), what its statement reads: `named` hands each check that can kill to `READS`'s elaborators, its
@@ -2460,6 +2515,50 @@ def parts(go, n: int, *args) -> list[Path]:
         out.append(go.tmp / f"part-{k}-of-{n}.json")
         assert go("--shard", f"{k}/{n}", "--json", out[-1], *args)[0] in (0, 1, 3)
     return out
+
+
+def test_control_probe_mode_is_recorded_but_not_a_verdict_input(sharded, capsys):
+    first = sharded.tmp / "old.json"
+    sharded("--json", first, "--max-mutants", 6)
+    old = json.loads(first.read_text())
+    assert old["control_probes"] == "lazy"
+    del old["control_probes"]  # records written before this option are eager
+    first.write_text(json.dumps(old))
+    resumed = sharded.tmp / "resumed.json"
+    assert sharded("--json", resumed, "--resume", first, "--control-probes", "eager",
+                   "--max-mutants", 6)[3] == []
+    assert json.loads(resumed.read_text())["resumed"]["kept"] == 6
+    rescored = sharded.tmp / "rescored.json"
+    assert sharded("--json", rescored, "--rescore", first, "--max-mutants", 6)[0] in (0, 1)
+    assert json.loads(rescored.read_text())["rescore"]["mode"] == "identical"
+
+    paths = parts(sharded, 2, "--max-mutants", 6)
+    second = json.loads(paths[1].read_text())
+    del second["control_probes"]
+    paths[1].write_text(json.dumps(second))
+    merged = sharded.tmp / "mixed.json"
+    assert sharded.tm.main(["--merge", str(merged), *map(str, paths)]) in (0, 1)
+    assert json.loads(merged.read_text())["control_probes"] == "mixed"
+
+
+def test_control_scratch_is_never_given_to_a_mutant(sharded, monkeypatch):
+    tm = sharded.tm
+    original_scratch, original_run = tm.Scratch, tm.run
+    control = []
+
+    class TrackedScratch(original_scratch):
+        def __init__(self, lean, parent, source=None):
+            super().__init__(lean, parent, source)
+            if source is None:
+                control.append(self)
+
+    def checked_run(m, scratch, *args):
+        assert control and scratch is not control[0]
+        return original_run(m, scratch, *args)
+
+    monkeypatch.setattr(tm, "Scratch", TrackedScratch)
+    monkeypatch.setattr(tm, "run", checked_run)
+    assert sharded("--max-mutants", 2)[3] == ["M001", "M002"]
 
 
 def test_a_shard_owns_a_disjoint_stable_part_of_the_mutants_that_run(sharded):
