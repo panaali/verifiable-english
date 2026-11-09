@@ -2273,6 +2273,13 @@
    "reason": "ci-5: VE/SpeechActs/Wire.lean +31, VE/Acts/Lexical.lean +9, VE/Compose/Dispatch.lean +1 (trusted +41: D +40, G +1; K +0, S +0)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ci-5, 2026-10-18",
    "commit": "e9a6ec8d5938051a70116918e34fc3cd92aac16e"
+  },
+  {
+   "class": "S",
+   "lines": 12,
+   "reason": "pe-1b: VE/Purposes/WellFormed.lean S +12 (Part.readings +1, Units.packSources +1, targetKind +7, holdsTarget +3, each counted from its docstring to the next declaration); packsInert, shownUnder, unlinkedActive are G[V] tied by packsInert_iff and packsInert_nil, shownUnder_iff, unlinkedActive_iff; K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pe-1b, 2026-11-09",
+   "commit": "0f9fc890970e06cb7c330a3dc84bfaa580144875"
   }
  ]
 }
