@@ -660,12 +660,11 @@ theorem readStep_conservative (j : Lean.Json) (r : Reading)
   | .one r => StepsExamples.step "Click Check rule conflict." == .one r false
   | _ => false
 
-/-- `hb` is needed (the DRI's added hypothesis): `<x>` keeps the spaces after the comma, which `readCommand` trims
-away, so the rewritten wording reads `one` within `maxWordingBytes` while the wording itself is over it and `limit`. -/
-def padded : String := "If draft is approved," ++ String.mk (List.replicate 390 ' ') ++ "click Ask."
-#guard shapes padded == [.preposed "draft is approved" (String.mk (List.replicate 389 ' ') ++ "click Ask")]
-#guard maxWordingBytes < (trimmed padded).utf8ByteSize
-#guard StepsExamples.step padded == .limit
+-- `hb` is needed (the DRI's added hypothesis): `<x>` keeps the spaces after the comma, which `readCommand` trims
+-- away, so the rewritten wording reads `one` within `maxWordingBytes` while the wording itself is over it and `limit`.
+#guard let p := "If draft is approved," ++ String.mk (List.replicate 390 ' ') ++ "click Ask."
+  shapes p == [.preposed "draft is approved" (String.mk (List.replicate 389 ' ') ++ "click Ask")] &&
+    maxWordingBytes < (trimmed p).utf8ByteSize && StepsExamples.step p == .limit
 #guard Examples.web (capitalise (String.mk (List.replicate 389 ' ') ++ "click Ask") ++ ", if draft is approved.") ==
   .one ⟨.require, "click_ask_required", [], Examples.approvedDraft⟩
 

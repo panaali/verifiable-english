@@ -1,9 +1,9 @@
 import VE.Acts.LexicalProofs
 
-/-! `String.splitOn` with a separator of any length (docs/spec/commands-imperatives.md section 7; item ci-3b), which
-core Lean 4.24 has no lemma about. `splitOnL` cuts a character list at the leftmost non-overlapping occurrences of a
-separator, as `String.splitOnAux` does (after a partial match it restarts one character on), and `splitOn_data` proves
-the two equal for every non-empty separator. The lemmas are stated over `List Char`, then over `String`.
+/-! `String.splitOn` with a separator of any length (docs/spec/commands-imperatives.md section 7; item ci-3b): the
+lemmas `preposed_eq` and `readStep_conservative` need (ci-3a's REPORT found none in core Lean 4.24). `splitOnL` cuts a
+character list at the leftmost non-overlapping occurrences of a separator, as `String.splitOnAux` does (after a partial
+match it restarts one character on), and `splitOn_data` proves the two equal for every non-empty separator. The lemmas are stated over `List Char`, then over `String`.
 `VE.Acts.Lexical.splitOn_space` is the one-space case, proved there over `splitL`. -/
 
 namespace VE.Commands.SplitOn
@@ -296,6 +296,8 @@ theorem splitOn_two (s t : String) (ht : t ≠ "") : 2 ≤ (s.splitOn t).length 
 #guard ("Click Check rule conflict, then click Ask".splitOn ", then ").all fun p => !(p.splitOn ", then ").length > 1
 #guard "Click Check rule conflict, then click Ask".splitOn ", then " == ["Click Check rule conflict", "click Ask"]
 #guard "x, then y, then z".splitOn ", then " == "x" :: "y, then z".splitOn ", then "
+#guard 2 ≤ ("a, then b".splitOn ", then ").length && ("a then b".splitOn ", then ").length == 1
+#guard ("Then x, if y, if z".splitOn ", if ").head!.startsWith "Then "
 #guard "draft, is approved, click Ask".splitOn ", " == ["draft", "is approved", "click Ask"]
 #guard (splitOnL ", then ".data "a, the, then b".data).map String.mk == "a, the, then b".splitOn ", then "
 #guard (splitOnL "aab".data "aaab, aa".data).map String.mk == "aaab, aa".splitOn "aab"
