@@ -1,10 +1,9 @@
 # pk-1-conditions-b: the empty-conditions fixtures (REPORT)
 
-Summary: READY FOR REVIEW. Tested HEAD: TESTEDHEAD (the selected tests ran there; any later commit is docs only). Fixtures: `eventsPack_conditions`;
-`choiceLayeredG_conditions` and `choiceLayered_conditions` (both readings branches, universal over the `.ok` result); the
-events@0 owned-case guards (DRI adv1416 item 4). Seeded bugs M1-M7 each fail a named theorem or `#guard`. Trust +0
-(K, S, D, G +0). Pilot bytes expected 0. Open: row 6b (HUMAN, owner DRI). Next: sa-pack-conditions (G1b). No DRI
-signature is reserved, and there is no DELTA (no user-visible change).
+Summary: READY FOR REVIEW; tested HEAD 93721ae78 (selected tests passed; later commits docs only). Fixtures:
+`eventsPack_conditions`, `choiceLayeredG_conditions`/`choiceLayered_conditions` (both readings branches, over `.ok`),
+events@0 owned-case guards (adv1416 item 4). Seeded bugs M1-M7 each fail a named theorem or `#guard`. Trust +0.
+Pilot bytes 0. Open: row 6b (HUMAN, owner DRI). Next: sa-pack-conditions (G1b). No DRI signature reserved; no DELTA.
 
 ## Commits
 
@@ -108,7 +107,10 @@ allowance, no FOLLOW-UPS row and no trust-mutants run (checklist 13a applies to 
 - `python3 lean/audit.py`: `PASS: 798 source files; 8831 named theorem declarations audited …; only the declared
   standard axiom allowlist.`
 - `uv run python tools/trust_map.py --check`: PASS, trusted +0 (above).
-- Selected tests: SELECTED
+- Selected tests, once, on committed 93721ae78 (clean tree): `MAC_PYTEST_NO_DEFER=1 zsh mac-pytest.sh --select -- --base
+  c2ff64751 --run`. It ran on the VM, because ve-mac-1 was unreachable (`Could not resolve hostname`). Result: exit 0 in
+  4331 s, 117 units with 0 non-zero exits (`recorded 108 units for tree ebff9d6f98; … 0 failed`). It included its
+  own `lake build` (`Build completed successfully (1337 jobs)`), so every `#guard` and theorem above was checked.
 - Not run: the full gate (the chain runs it on the final HEAD), and trust_mutants (no trusted growth).
 
 ## Size, pilot bytes, next item
@@ -137,7 +139,7 @@ readers, "first or last", `requestOf` on the same `Env`, exact mutant edits.
 6. PASS: no gate run by me. The commit list is `main..HEAD --no-merges`, and evidence lines cite the commits they ran on.
 7. PASS: trust +0 (trust_map --check PASS). No signature is reserved.
 8. PASS: no user-visible change, so there is no DELTA.md. No definition changed (item 2's empty diff).
-9. PASS: the selection ran on this branch's changes (Checks: SELECTED).
+9. PASS: the selection ran on this branch's changes (Checks: exit 0, 117 units).
 10. PASS: each theorem breaks under its mutant: M1 `eventsPack_conditions`; M2, M2b `choiceLayeredG_conditions`; M7
     `choiceLayered_conditions`. The statements are over the functions' `.ok` results, not over one input.
 11. N.A.: no budget, limit or deadline is touched.
