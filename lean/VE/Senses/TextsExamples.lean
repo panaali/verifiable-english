@@ -79,6 +79,7 @@ def entries (s : String) : List (String × String) :=
 #guard (lineJson F "funny" "amusing").getObjValD "text" == .str "In this document, funny means amusing."
 #guard lineJson F "funny" "purple" == Json.mkObj [("word", "funny"), ("gloss", "purple"), ("code", "UnknownGloss")]
 #guard lineJson F "zany" "amusing" == Json.mkObj [("word", "zany"), ("gloss", "amusing"), ("code", "UnknownWord")]
+#guard lineJson F "tells" "purple" == Json.mkObj [("word", "tells"), ("gloss", "purple"), ("code", "UnknownGloss")]
 
 /-- A source request for `s` asking for the re-read `r`, within budget `b`. -/
 def rereadReq (s : String) (r : Json) (b : Nat := workBudget) : Json :=
@@ -125,6 +126,14 @@ def errorOf (j : Json) : Json := (runCaseReported j).getObjValD "error"
 #guard (runCaseReported (rereadReq "The riddle is funny." (asked 0 0 "The riddle is funny. Odd.") 1)).getObjValD
   "status" == "error"
 #guard rereadOf "The riddle is funny." 0 0 "The riddle is funny." 1 == Json.null
+-- the second of two open units, by its sentence
+#guard reread "The riddle is odd. The riddle is funny." 1 1 "The riddle is funny." == "same"
+#guard reread "The riddle is odd. The riddle is funny." 0 0 "The riddle is odd." == "same"
+-- both members in one request
+#guard match (runCaseReported ((rereadReq "The riddle is funny." (asked 0 0 "The riddle is funny.")).setObjVal! "line"
+    (Json.mkObj [("word", "funny"), ("gloss", "amusing")]))).getObjValD "result" with
+  | r => (r.getObjValD "line").getObjValD "text" == "In this document, funny means amusing." &&
+    ((r.getObjValD "reading").getObjValD "reread").getObjValD "outcome" == "same"
 -- Lean's line on a reading the budget refuses, beside it
 #guard (((runCaseReported ((req [("source", "Alice tells the riddle."), ("line", Json.mkObj [("word", "odd"),
   ("gloss", "strange")])]).setObjVal! "budget" (toJson 1))).getObjValD "result").getObjValD "line") ==
