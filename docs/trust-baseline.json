@@ -2175,6 +2175,13 @@
    "reason": "sn-b6c: VE/Senses/Run.lean +25 (V: byteSpan, senseEntryJson, the texts and entries in outcomeJson and readCase); K +0, S +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sn-b6c, 2026-11-08",
    "commit": "e9a6ec8d5938051a70116918e34fc3cd92aac16e"
+  },
+  {
+   "class": "V",
+   "lines": 57,
+   "reason": "ap-4: VE/Acts/Run.lean +54 (G[V] listReadings, listed, runActReadings; D[V] actJson, readingJson, rowsOf: the act-readings mode, act-phrases 7), VE/Service/Registry.lean +1, VE/Service/Protocol.lean +1, ResponseShape/Schemas.lean +1 (the mode's registration); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-4, 2026-10-18",
+   "commit": "da5303b7876924d4fba67866390ed6f0d0b36cbc"
   }
  ]
 }
