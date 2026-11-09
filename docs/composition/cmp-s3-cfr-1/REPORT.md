@@ -48,8 +48,8 @@ Not delivered here:
   (Standalone keeps that gate's whole-table read for `readings@1` only). With `rights@0`, the environment and model
   modes now accept the list, where the base refused it as an unregistered profile (DELTA row 1); Python's model view
   drops the profile. Probe: all 154 lists `relational-fol@0, right-clauses@0` with up to two
-  more environment profiles answer the same text on this build and on the base build (0 differences; script
-  /tmp/cfr1seed/probe_lists.py, run in both worktrees). Before the acts gate was kept on the base rows, 15 `acts@0`
+  more environment profiles answer the same text on this build and on the base build (0 differences: docs/composition/cmp-s3-cfr-1/environment-texts.json,
+  written by environment_texts_probe.py in both worktrees). Before the acts gate was kept on the base rows, 15 `acts@0`
   lists differed; that was the self-review's B4.
 - **What the proof changed in this item's code.** Members are rewritten with `Std.TreeMap.Raw.map` (`mapMember`)
   rather than `setObjVal!`, which keeps every other member and the tree's shape. `lineWith` rebuilds the `norm` and
