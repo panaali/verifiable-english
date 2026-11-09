@@ -706,7 +706,7 @@ class SpeechDocument:
 
     def _check_wordings(self):
         """Every wording reads as its unit's content (2.1); the gloss lint is only a warning per unit."""
-        from ve.speech_english import parse_speech, _sentence
+        from tests.frozen_speech.speech_english import parse_speech, _sentence
         by_id = {u['id']: u for u in self._effective}
         for command in self.commands:
             source = by_id[command.unit].get('source')
@@ -913,3 +913,17 @@ def combine(first: SpeechDocument, second: SpeechDocument):
     if ids & {u['id'] for u in second.units}:
         raise VEError('DuplicateDeclaration: speech unit')
     return SpeechDocument(first.env, (*first.units, *second.units), (*first.query_records, *second.query_records), reading_sets=(*first.reading_sets, *second.reading_sets))
+
+
+def legend(env):
+    """The pre-switch legend of `ve/speech_english.py` (frozen at ci-2b's base): the scope sentences, then norms'
+    W1 default sentences. Test data: the product shows Lean's scope sentences (`VE.SpeechActs.Run.legend`)."""
+    scope = env.speech_acts
+    result = [f"This document is task {scope['task']}."]
+    if "addressee" in scope:
+        result.append(f"In this task, you are {scope['addressee']['constant']}.")
+    for phrase, constant in sorted(scope.get("definites", {}).items()):
+        result.append(f"In this task, {phrase} is {constant}.")
+    from ve.norm_english import default_sentence
+    result.extend(default_sentence(env, p) for p, d in env.predicates.items() if d.regulated is not None)
+    return "\n".join(result)

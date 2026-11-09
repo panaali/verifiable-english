@@ -1,3 +1,8 @@
+- `tests/test_soft_norms_lean.py` — Lean soft-norms route (docs/spec/soft-norms.md 9.4, item 4) against the item-1 fixtures.
+- `tests/test_soft_request_economy.py` — Batch 6 latency: soft requests that Lean answers once per document (docs/lean-first/b6/DELTA.md, Latency).
+- `tests/test_soft_review_regressions.py` — Regressions for the reviewed soft route and its visible open terms.
+- `tests/test_softnorms_contract.py` — Pilot contract checks: the existing soft validator still owns the verdict.
+- `tests/test_softnorms_public_contract.py` — The public soft-source rejection boundary of wire-contract-s4.md item 1.
 - `tests/test_source_words.py` — The source-word table and every boundary fixture are checked by Lean.
 - `tests/test_speech_acts.py` — Deterministic experimental speech-act core fixtures (no trusted route).
 - `tests/test_speech_acts_acts0.py` — CI-5: `speech-acts@0` with `acts@0`, simple acts only (commands-imperatives 9), through the service and the saved A/B.
