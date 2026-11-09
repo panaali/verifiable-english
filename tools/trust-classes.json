@@ -11214,7 +11214,8 @@
       ],
       "D[R]": [
         "VE.SpeechActs.Source.commandContext",
-        "VE.SpeechActs.Source.hasCommandFence"
+        "VE.SpeechActs.Source.hasCommandFence",
+        "VE.SpeechActs.Source.hasContext"
       ]
     },
     "VE/SpeechActs/Tree.lean": {

@@ -23,6 +23,8 @@
 - `tests/test_cardinality_service.py` — The `cardinality` service mode (quantities QT-A3, qt-a3c): Lean's answers to the mode's route cases in `tests/data/route-cases.jsonl` through `ve_service`, eac…
 - `tests/test_cedar_attributes.py` — (no module docstring)
 - `tests/test_cedar_norms.py` — Runtime-type Cedar conditions from W1 section 10.2.
+- `tests/test_ci2b_ab.py` — ci-2b's saved A/B over the pinned command corpus (docs/commands-imperatives/ci-2b/evidence/ab.json): the evidence R1 and DRI 2026-10-28 item 2(a) ask for, read…
+- `tests/test_ci2b_statements.py` — ci-2b: `readInstruction_refused_classed` and `readInstruction_typed` in lean/VE/Commands/RunSplit.lean are the statements of docs/spec/commands-imperatives.md …
 - `tests/test_ci_workflow.py` — The security properties of the GitHub Actions workflows (.github/workflows/; gha-wf).
 - `tests/test_cli.py` — (no module docstring)
 - `tests/test_closure.py` — closure@0 semantics, profile boundaries, views, identities and evidence.
@@ -33,7 +35,8 @@
 - `tests/test_cmp_s4_evaluate_once.py` — cmp-s4 review F8: the composed path computes each value once, read from the compiled definitions.
 - `tests/test_code_map.py` — The committed code map depends only on source paths and first module doc sentences.
 - `tests/test_colab.py` — (no module docstring)
-- `tests/test_commands_ci2_review.py` — Regression checks for the CI-2 review's deferred-route claims.
+- `tests/test_command_relay.py` — ci-2b (commands-imperatives CI-2 deliverables (4) and (5)): `read_command` relays Lean's `english.command` answer verbatim and binds it to the request; the spe…
+- `tests/test_commands_ci2_review.py` — Regression checks for the CI-2 review's route claims: each comment names only bindings that are delivered (the relay's binding and the source wrapper's call la…
 - `tests/test_compose_dispatch.py` — S0's exhaustive Python side of the composition dispatch contract (composition.md 10.1).
 - `tests/test_compose_integration.py` — S0 integration evidence for composition.md 10.2 on a real document: L2's slot, L3–L5 and L7.
 - `tests/test_conformance.py` — (no module docstring)
@@ -83,9 +86,3 @@
 - `tests/test_english_e26_report.py` — English E2.6's report: every number comes from saved evidence (the readability comparison, the A/B summary, the commit list of `main..HEAD --no-merges`, the se…
 - `tests/test_english_e2_boundary.py` — The E2 boundary validates every block its typing view drops (review B2 of English Lean E2; spec D7).
 - `tests/test_english_e2_integer_marks.py` — The spacing of the integer marks: Lean reads exactly the spacing Python reads (spec R1; english-lean-e2.md 13).
-- `tests/test_english_e2_ledger_sites.py` — Every call into Python's own English reader is a site the deletion ledger keeps (spec 2.9; recheck 1 of E2, B).
-- `tests/test_english_e2_overlay.py` — The overlay refusals at the public boundary (spec D16, D17, 2.8; fixtures rl8 to rl10, ev15c, ev17, ovc; review A2 of English Lean E2).
-- `tests/test_english_e2_profile_matrix.py` — Lean reads what Python reads on every environment of the probe matrix (review A of English Lean E2, recheck 1).
-- `tests/test_english_e2_python.py` — Python producer behavior needed by the E2 overlay relay (spec 2.8, 8.11).
-- `tests/test_english_e2_relay.py` — E2's Lean-authoritative admission and untrusted response boundary.
-- `tests/test_english_e2_report.py` — The integration report's gate and three-way figures come from committed results.
