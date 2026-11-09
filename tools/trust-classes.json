@@ -19786,6 +19786,39 @@
         "VE.Purposes.Examples.f1L",
         "VE.Purposes.Examples.f7m"
       ]
+    },
+    "VE/Commands/Steps.lean": {
+      "G[R]": [
+        "VE.Commands.conditionScope"
+      ],
+      "G[V]": [
+        "VE.Commands.Alt",
+        "VE.Commands.Form",
+        "VE.Commands.Shape",
+        "VE.Commands.StepOutcome",
+        "VE.Commands.capitalise",
+        "VE.Commands.combineShapes",
+        "VE.Commands.hasThen",
+        "VE.Commands.lift",
+        "VE.Commands.readStep",
+        "VE.Commands.readingTuples",
+        "VE.Commands.reads",
+        "VE.Commands.shapeAlts",
+        "VE.Commands.shapeOutcome",
+        "VE.Commands.shapes"
+      ]
+    },
+    "VE/Commands/StepsExamples.lean": {
+      "T": [
+        "VE.Commands.StepsExamples.ask",
+        "VE.Commands.StepsExamples.check",
+        "VE.Commands.StepsExamples.conditionScopeText",
+        "VE.Commands.StepsExamples.readS",
+        "VE.Commands.StepsExamples.readsWeb",
+        "VE.Commands.StepsExamples.reviewIt",
+        "VE.Commands.StepsExamples.reviewMeaning",
+        "VE.Commands.StepsExamples.step"
+      ]
     }
   }
 }
