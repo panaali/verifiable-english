@@ -4361,6 +4361,7 @@
         "VE.EnglishGrammar.Run.runCaseReported",
         "VE.EnglishGrammar.Run.sentenceSpans",
         "VE.EnglishGrammar.Run.spanJson",
+        "VE.EnglishGrammar.Run.statementCodeRows",
         "VE.EnglishGrammar.Run.status",
         "VE.EnglishGrammar.Run.symJson",
         "VE.EnglishGrammar.Run.tables",
@@ -4381,6 +4382,7 @@
         "VE.EnglishGrammar.Run.invalidFields",
         "VE.EnglishGrammar.Run.invalidGrammarText",
         "VE.EnglishGrammar.Run.invalidOverlayFields",
+        "VE.EnglishGrammar.Run.judgmentsField",
         "VE.EnglishGrammar.Run.lexicalSpan",
         "VE.EnglishGrammar.Run.noReadingFields",
         "VE.EnglishGrammar.Run.notDone",
@@ -4389,10 +4391,13 @@
         "VE.EnglishGrammar.Run.rejectCodes",
         "VE.EnglishGrammar.Run.rejectText",
         "VE.EnglishGrammar.Run.rejectionText",
+        "VE.EnglishGrammar.Run.renderCodeRows",
         "VE.EnglishGrammar.Run.riskEveryCannotText",
+        "VE.EnglishGrammar.Run.statementFields",
+        "VE.EnglishGrammar.Run.statementStatusCodes",
+        "VE.EnglishGrammar.Run.statementUnsentenced",
         "VE.EnglishGrammar.Run.statusCodes",
-        "VE.EnglishGrammar.Run.unsentencedCodes",
-        "VE.EnglishGrammar.Run.judgmentsField"
+        "VE.EnglishGrammar.Run.unsentencedCodes"
       ],
       "G[I]": [
         "VE.EnglishGrammar.Run.environmentId",
@@ -17272,8 +17277,7 @@
         "VE.EnglishGrammar.Norm.Examples.stmts",
         "VE.EnglishGrammar.Norm.Examples.two",
         "VE.EnglishGrammar.Norm.Examples.u",
-        "VE.EnglishGrammar.Norm.Examples.universal",
-        "VE.EnglishGrammar.Norm.Polarity.fits"
+        "VE.EnglishGrammar.Norm.Examples.universal"
       ]
     },
     "VE/EnglishGrammar/Norm/Value.lean": {
@@ -18620,6 +18624,7 @@
         "VE.EnglishGrammar.Norm.Arg.read",
         "VE.EnglishGrammar.Norm.NormAct.action",
         "VE.EnglishGrammar.Norm.NormAct.step",
+        "VE.EnglishGrammar.Norm.Polarity.fits",
         "VE.EnglishGrammar.Norm.Polarity.of",
         "VE.EnglishGrammar.Norm.args",
         "VE.EnglishGrammar.Norm.bindings",
@@ -18667,6 +18672,9 @@
             "VE.EnglishGrammar.Norm.prefixMap_ok"
           ]
         }
+      ],
+      "G[R]": [
+        "VE.EnglishGrammar.Norm.normTags"
       ]
     },
     "VE/Attribution/Words.lean": {
@@ -20010,6 +20018,91 @@
         "VE.Commands.StepsExamples.step",
         "VE.Commands.StepsExamples.twoSteps",
         "VE.Commands.StepsExamples.wideEnv"
+      ]
+    },
+    "VE/EnglishGrammar/Norm/Owners.lean": {
+      "S": [
+        "VE.EnglishGrammar.Norm.Clause.toNodeChecked",
+        "VE.EnglishGrammar.Norm.Force.op",
+        "VE.EnglishGrammar.Norm.Mode.soft",
+        "VE.EnglishGrammar.Norm.Polarity.op?",
+        "VE.EnglishGrammar.Norm.ReadNormAuthoring",
+        "VE.EnglishGrammar.Norm.Residual.span",
+        "VE.EnglishGrammar.Norm.UnformalisedSpan",
+        "VE.EnglishGrammar.Norm.sourceView",
+        "VE.EnglishGrammar.Norm.spansOf",
+        "VE.EnglishGrammar.Norm.toNodesChecked"
+      ],
+      "G[R]": [
+        "VE.EnglishGrammar.Norm.unformalisedText"
+      ]
+    },
+    "VE/EnglishGrammar/Norm/OwnersExamples.lean": {
+      "T": [
+        "VE.EnglishGrammar.Norm.OwnersExamples.LF",
+        "VE.EnglishGrammar.Norm.OwnersExamples.cAtom",
+        "VE.EnglishGrammar.Norm.OwnersExamples.cBad",
+        "VE.EnglishGrammar.Norm.OwnersExamples.cPub",
+        "VE.EnglishGrammar.Norm.OwnersExamples.cSpan",
+        "VE.EnglishGrammar.Norm.OwnersExamples.cWide",
+        "VE.EnglishGrammar.Norm.OwnersExamples.deep",
+        "VE.EnglishGrammar.Norm.OwnersExamples.fitting",
+        "VE.EnglishGrammar.Norm.OwnersExamples.instBEqExcept",
+        "VE.EnglishGrammar.Norm.OwnersExamples.nPub",
+        "VE.EnglishGrammar.Norm.OwnersExamples.reg",
+        "VE.EnglishGrammar.Norm.OwnersExamples.viewFailures"
+      ]
+    },
+    "VE/EnglishGrammar/Norm/Run.lean": {
+      "D[V]": [
+        "VE.EnglishGrammar.Norm.Run.answerWith",
+        "VE.EnglishGrammar.Norm.Run.outcomeFields",
+        "VE.EnglishGrammar.Norm.Run.statementRequest",
+        "VE.EnglishGrammar.Norm.Run.statementRow"
+      ],
+      "G[V]": [
+        "VE.EnglishGrammar.Norm.Run.Reader",
+        "VE.EnglishGrammar.Norm.Run.answer",
+        "VE.EnglishGrammar.Norm.Run.leanReader",
+        "VE.EnglishGrammar.Norm.Run.oneSpans",
+        "VE.EnglishGrammar.Norm.Run.statementCase",
+        "VE.EnglishGrammar.Norm.Run.statementCaseReported"
+      ],
+      "G[R]": [
+        "VE.EnglishGrammar.Norm.BlockFault.code",
+        "VE.EnglishGrammar.Norm.BlockFault.sentence?",
+        "VE.EnglishGrammar.Norm.BlockFault.text",
+        "VE.EnglishGrammar.Norm.Run.decoderCode",
+        "VE.EnglishGrammar.Norm.Run.placeText",
+        "VE.EnglishGrammar.Norm.Run.rowsInternalText",
+        "VE.EnglishGrammar.Norm.Run.spanRow",
+        "VE.EnglishGrammar.Norm.Run.stopNamesSentence",
+        "VE.EnglishGrammar.Norm.Run.stoppedFields"
+      ],
+      "G[I]": [
+        "VE.EnglishGrammar.Norm.Run.opensStatement",
+        "VE.EnglishGrammar.Norm.Run.resultOf",
+        "VE.EnglishGrammar.Norm.Run.sentenceBytes",
+        "VE.EnglishGrammar.Norm.Run.statementSpans"
+      ]
+    },
+    "VE/EnglishGrammar/Norm/RunExamples.lean": {
+      "T": [
+        "VE.EnglishGrammar.Norm.RunExamples.big",
+        "VE.EnglishGrammar.Norm.RunExamples.caseOf",
+        "VE.EnglishGrammar.Norm.RunExamples.caseTwo",
+        "VE.EnglishGrammar.Norm.RunExamples.fixed",
+        "VE.EnglishGrammar.Norm.RunExamples.get",
+        "VE.EnglishGrammar.Norm.RunExamples.internalRow",
+        "VE.EnglishGrammar.Norm.RunExamples.leanUnknown",
+        "VE.EnglishGrammar.Norm.RunExamples.notOne",
+        "VE.EnglishGrammar.Norm.RunExamples.oE1",
+        "VE.EnglishGrammar.Norm.RunExamples.rejectAll",
+        "VE.EnglishGrammar.Norm.RunExamples.result",
+        "VE.EnglishGrammar.Norm.RunExamples.sE1",
+        "VE.EnglishGrammar.Norm.RunExamples.str",
+        "VE.EnglishGrammar.Norm.RunExamples.tA",
+        "VE.EnglishGrammar.Norm.RunExamples.tB"
       ]
     }
   }

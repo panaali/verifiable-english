@@ -1,5 +1,6 @@
 import VE.EnglishGrammar.Norm.Run
 import VE.EnglishGrammar.Norm.OwnersExamples
+import VE.EnglishGrammar.Norm.Examples
 
 /-! EN-2's answers, fixtures E1-E14 and E16 (docs/spec/en-e3-norm.md section 8; E15 is EN-3's): `answerWith` on given
 reader outcomes. The source is "Rule 1. X." unless a row names another; it feeds only the rule rows' spans and
@@ -121,5 +122,16 @@ def notOne : List NormOutcome :=
     ((result o).getObjValD "sentence" == Json.null) == VE.EnglishGrammar.Run.statementUnsentenced.contains k
   | .str "rejected", _ => false
   | _, _ => true
+
+-- E17 (the runner's limit, DRI rule 2026-10-27): the real reader on a large well-formed request ends within the lexer's
+-- text limit (`maxTextChars`, 10,000 characters): 300 blocks read as `one` with one row per block; 330 are refused.
+def big (n : Nat) : String := "\n".intercalate ((List.range n).map fun i => s!"Rule {i + 1}. Every act may be done.")
+def caseTwo : VE.EnglishGrammar.Run.Case :=
+  { E := Norm.Examples.two, O := {}, L := Norm.Examples.L2, overlayFailure := none, identities := [] }
+#guard collapsedLength (big 300) ≤ maxTextChars && collapsedLength (big 330) > maxTextChars
+#guard match (Run.resultOf (Run.answer "c" caseTwo (big 300))).getObjValD "statements" with
+  | .arr rows => rows.size == 300 && rows[299]?.map (·.getObjValD "span") == some (Json.arr #[9759, 9791])
+  | _ => false
+#guard (Run.resultOf (Run.answer "c" caseTwo (big 330))).getObjValD "code" == .str "TextTooLong"
 
 end VE.EnglishGrammar.Norm.RunExamples
