@@ -79,12 +79,14 @@ One word over several sorts is one bound term per sort (fixture J-ω): `arbitrar
 - `opensIn_iff`: a name is found exactly when it is in `J` and some formula mentions it.
 - `opensIn_isEmpty`: the scan finds something exactly when some formula mentions some name of `J`.
 
-Rights' `nodeOpen` (is a rule's line open?) now asks the shared scan whether the guard or a carve-out mentions an open
-name, instead of scanning them itself.
+Rights' `nodeOpen` (is a rule's line open?) asks the shared scan whether the act, the guard or a carve-out mentions an
+open name, instead of scanning them itself. The act was added by rights-cfr-4 (rights spec 7.2: an open act makes the
+right OPEN); before it the scan read only the guard and the carve-outs.
 
-- `nodeOpen_eq` (in `Rights/Run.lean`): `nodeOpen` equals the body it had before the switch, so rights' answers and
-  output bytes do not move. Rights' other checks (the default mode, the alterable parties, limitations and bars) are
-  not touched.
+- `nodeOpen_eq` (in `Rights/Run.lean`): `nodeOpen` equals the direct body (the act's name among the open names, or
+  some open name in the guard or a carve-out). The switch to the scan moved no answer or byte; reading the act moves a
+  rule whose act is an open name to open (docs/rights/rights-cfr-4/DELTA.md). Rights' other checks (the default mode,
+  the alterable parties, limitations and bars) are not touched.
 
 ## Dependence, status and the usage map (spec 4)
 
