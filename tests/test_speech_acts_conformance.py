@@ -180,10 +180,14 @@ def test_proof_task_wording_uses_an_act_both_linters_accept(lean):
                            "document": {"units": []}})["error"]
         assert "invalid act phrase" in lean_error
     e = Environment(env)
-    content, kind = parse_speech(e, "Prove that tom is a cat using these premises.", e.speech_acts, query="q1")
+    # ci-2b (F5, spec section 6): the proof task's sentence is english-lean's to read, which selects
+    # `{0} is classified as "cat"` for this gloss, so the wording uses one it reads (P1′).
+    queries = [{"id": "q1", "premises": ["u1"], "target": {"ast": U("reviewed", "atlas")}}]
+    content, kind = parse_speech(e, "Prove that atlas is reviewed using these premises.", e.speech_acts,
+                                 queries=queries)
     assert (kind, content["act"], content["args"]) == ("instruction", "submit_required", ["q1"])
-    document = {"units": [unit("u1", 0, "asserted", {"ast": U("cat", "tom")}), unit("u2", 1, kind, {"command": content})],
-                "queries": [{"id": "q1", "premises": ["u1"], "target": {"ast": U("cat", "tom")}}]}
+    document = {"units": [unit("u1", 0, "asserted", {"ast": U("reviewed", "atlas")}),
+                          unit("u2", 1, kind, {"command": content})], "queries": queries}
     assert len(elaborate(env, document)["commands"]) == 1
     assert len(core(env, document).commands) == 1
 

@@ -71,7 +71,9 @@ import history_tests
 from layer_policy import APP_AREAS, ROOT, lean_default_targets, lean_executables, python_exports
 import lean_mode_deps
 import nested_pytest
+import path_expressions
 import quarantine
+import regen_generated
 import source_graph
 import test_chunks
 import test_map
@@ -1031,7 +1033,8 @@ def light_tier(plan: dict, inventory_path: Path = ROOT / "tests/heavy.json", job
                      "source_run": inventory["run"]}}
 
 
-# --defer-heavy (opt-in; builder feedback runs only: tools/gate.py, --full and the chain's own runs never pass it).
+# --defer-heavy and --defer-broad (opt-in; builder feedback runs only: tools/gate.py, --full and the chain's own runs
+# never pass them).
 DEFER_SECONDS = 120.0
 
 
@@ -1161,27 +1164,161 @@ def weak_reason(reason: str) -> bool:
     return reason.endswith(" (static)") or reason.startswith("lists the directory of ") or reason == "smoke"
 
 
-def map_seconds(plan: dict) -> dict[str, float]:
-    """The seconds per unit of the coverage map a plan used; none without one."""
+def plan_map(plan: dict) -> dict:
+    """The coverage map a plan used; empty without one or when it cannot be read."""
     path = (plan.get("map") or {}).get("path")
     try:
-        status = test_map.load(Path(path)).get("status", {}) if path else {}
+        return test_map.load(Path(path)) if path else {}
     except (OSError, ValueError, EOFError):
         return {}
+
+
+def map_seconds(plan: dict) -> dict[str, float]:
+    """The seconds per unit of the coverage map a plan used; none without one."""
+    status = plan_map(plan).get("status", {})
     return {unit: float(row.get("seconds") or 0.0) for unit, row in status.items() if isinstance(row, dict)}
 
 
+# --defer-broad (with --defer-heavy only). `lean_shares` splits the map's units into those that reach at most 12%
+# of the lean/VE modules (most reach none; ve_conformance's closure is the largest such reach) and those that reach
+# at least 66% (a ve_service user: its closure; a reader of every module or a runner of lake or lean: all), with no
+# unit in between (map 223babd3d0, 559 units: 125 at <= 0.1201, 352 in 0.661-0.99, 82 at >= 0.99). 0.25 sits in
+# that gap.
+BROAD_LEAN_SHARE = 0.25
+LEAN_REASONS = ("reads ", "runs Lean via ", "runs service mode via ")
+# Lean-wide files: the train-only files under lean/ that are not modules (regen_generated.train_only, their one
+# list): the inventories the train writes from the whole Lean tree and the checker pins every rebuilt checker rewrites.
+LEAN_INVENTORIES = frozenset(path for path in regen_generated.train_only()
+                             if path.startswith("lean/") and not path.endswith(".lean"))
+
+
+def lean_reason(reason: str) -> bool:
+    """A reason that a changed Lean file gives: the unit reads it or runs a Lean program or service mode that holds
+    it, where the file is a Lean input (`is_lean_input`: a lean/**/*.lean module or a Lean project file) or one of
+    LEAN_INVENTORIES. Any other file under lean/ (lean/audit.py, a JSON or sha256 fixture, a .md) is Python or
+    data, never a Lean reason; a static reason is weak, never this."""
+    prefix = next((prefix for prefix in LEAN_REASONS if reason.startswith(prefix)), None)
+    path = reason[len(prefix):] if prefix else ""
+    return is_lean_input(path) or path in LEAN_INVENTORIES
+
+
+def lean_shares(data: dict, graph: source_graph.Graph) -> dict[str, float]:
+    """Each mapped unit's Lean reach: the share of the lean/VE modules the map knows (the lean/VE/*.lean files
+    some unit read) that a change selects the unit for by a Lean reason, as `file_impact` gives them. The map
+    records per unit the files it read and the programs it ran, not the modules a program runs, so the reach is
+    the modules it read, plus for each Lean executable it ran the modules in that executable's import closure
+    (all of them when a Lean header is unreadable, as `executables_using`), plus every module when it ran lake or
+    lean (every Lean change selects those runners)."""
+    tests = data.get("tests") or []
+    every = range(len(tests))
+    known = {path for path in data.get("reads", {}) if path.startswith("lean/VE/") and path.endswith(".lean")}
+    if not known:
+        return {}
+    reach: dict[str, set[str]] = {}
+    for path in known:
+        for index in filter(every.__contains__, data["reads"][path]):  # a malformed map reaches nothing
+            reach.setdefault(tests[index], set()).add(path)
+    roots = lean_executables(graph.root)
+    for program, indices in data.get("programs", {}).items():
+        name = program.removeprefix(LEAN_BIN)
+        if program in ("lake", "lean") or (name in roots and graph.lean_unreadable):
+            modules = known
+        elif program.startswith(LEAN_BIN) and name in roots:
+            modules = {graph.lean_modules.get(module) for module in graph.lean_closure(roots[name])} & known
+        else:
+            continue
+        for index in filter(every.__contains__, indices):
+            reach.setdefault(tests[index], set()).update(modules)
+    return {unit: len(modules) / len(known) for unit, modules in reach.items()}
+
+
+def map_lean_shares(plan: dict) -> dict[str, float]:
+    """`lean_shares` of the map a plan used and the tree's graph; none without a map."""
+    data = plan_map(plan)
+    return lean_shares(data, source_graph.load(ROOT)) if data else {}
+
+
+def names_changed_lean(text: str, changed) -> bool:
+    """Whether a unit's source `text` names a changed Lean module or its directory. For lean/VE/Scope/Plain.lean:
+    the module, `VE.Scope.Plain` or `VE/Scope/Plain` (its path); or the directory, `VE/Scope` or `VE/Scope/`
+    not followed by a name (another module of the family, `VE/Scope/Govern.lean`, is not the directory). A
+    directory counts below lean/<root>/ only (every Lean test names lean/VE); a module at the top of lean/
+    (lean/VE.lean) counts by its path."""
+    for path in changed:
+        if not (path.startswith("lean/") and path.endswith(".lean")):
+            continue
+        parts = [re.escape(part) for part in path.removesuffix(".lean").split("/")[1:]]
+        patterns = [rf"(?<![\w.]){'[./]'.join(parts)}(?!\w)" if len(parts) > 1 else re.escape(path)]
+        if len(parts) > 2:
+            patterns.append(rf"(?<![\w.]){'/'.join(parts[:-1])}/?(?![\w./])")
+        if any(re.search(pattern, text) for pattern in patterns):
+            return True
+    return False
+
+
+def family_test(unit: str, changed) -> bool:
+    """Whether `unit` is by its name a test of a changed Lean module's family: the family (lean/VE/Scope.lean and
+    lean/VE/Scope/Plain.lean: Scope; lean/VE/RightClauses/X.lean: RightClauses) in snake case is a run of the
+    words of its file name (tests/test_scope_answer.py, tests/test_right_clauses_plain.py)."""
+    words = f"_{Path(unit).stem}_"
+    for path in changed:
+        parts = path.removesuffix(".lean").split("/")
+        if path.startswith("lean/") and path.endswith(".lean") and len(parts) > 2:
+            if f"_{re.sub(r'(?<=[a-z0-9])(?=[A-Z])', '_', parts[2]).lower()}_" in words:
+                return True
+    return False
+
+
+def unit_text(unit: str, root: Path = ROOT) -> str:
+    """What `names_changed_lean` reads of a unit: its source, then each path its source builds by a join of
+    literal parts (path_expressions.built_paths: `ROOT / "lean" / "VE" / "Time" / "Calendar.lean"`, `os.path.join`,
+    `Path(a, b)`, `.joinpath`, `+`), one per line, so a module named in pieces is named as one path."""
+    try:
+        source = (root / unit).read_text(encoding="utf-8", errors="replace")
+    except OSError:
+        return ""
+    return "\n".join([source, *sorted(path_expressions.built_paths(source, unit))])
+
+
+def deferral(unit: str, reasons: list[str], plan: dict, shares: dict[str, float] | None, text) -> str | None:
+    """Why `unit` may be deferred: "weak" when only weak reasons select it; with `shares` (--defer-broad),
+    "broad" when every reason is weak or a Lean reason, the unit reaches at least BROAD_LEAN_SHARE of the Lean
+    modules (a unit `shares` does not hold reaches none), and neither its own source names a changed Lean module
+    or its directory nor its name makes it a test of that module's family (a family's own Lean test stays).
+    Else None."""
+    if not reasons:
+        return None
+    if all(map(weak_reason, reasons)):
+        return "weak"
+    if shares is not None and shares.get(unit, 0.0) >= BROAD_LEAN_SHARE \
+            and all(weak_reason(reason) or lean_reason(reason) for reason in reasons) \
+            and not family_test(unit, plan["changed"]) and not names_changed_lean(text(unit), plan["changed"]):
+        return "broad"
+    return None
+
+
 def defer_heavy(plan: dict, seconds: dict[str, float], *, keep=frozenset(),
-                threshold: float = DEFER_SECONDS) -> dict:
+                threshold: float = DEFER_SECONDS, shares: dict[str, float] | None = None, text=None) -> dict:
     """The plan without the heavy test files (over `threshold` seconds in `seconds`, the map's whole-process
     times) that only weak reasons select; the chain gate runs them (tools/gate.py runs every unit). A full
     plan defers nothing; a changed test, SMOKE, HISTORY_TEST, a unit in `keep` (failed last time) and a unit
-    with no recorded seconds always stay. `deferred` names each one with its seconds and reasons."""
+    with no recorded seconds always stay. With `shares` (each unit's Lean reach, `lean_shares`; --defer-broad)
+    it also defers the heavy broad Lean consumers that only weak and Lean reasons select (`deferral`); a unit
+    with any other reason (a changed Python module it imports, a changed data file it reads) stays. `deferred`
+    names each one with its seconds, reasons and class ("weak" or "broad", which also gives its "lean_share").
+
+    Only builder feedback runs pass --defer-heavy and --defer-broad: the chain's own selected run
+    (MAC_PYTEST_NO_DEFER=1), the final run the gate reuses (GATE_REUSE_SAME_TREE), tools/gate.py and --full never
+    do, so they and the merge train's full suite still run every deferred unit."""
     stay = {*plan["changed"], *SMOKE, HISTORY_TEST, *keep}
-    deferred = {} if plan["full"] else {
-        unit: {"seconds": seconds[unit], "reasons": plan["reasons"][unit]} for unit in plan["selected"]
-        if unit.startswith("tests/") and unit not in stay and seconds.get(unit, 0.0) > threshold
-        and plan["reasons"].get(unit) and all(map(weak_reason, plan["reasons"][unit]))}
+    text = text or unit_text
+    deferred = {}
+    for unit in [] if plan["full"] else plan["selected"]:
+        if unit.startswith("tests/") and unit not in stay and seconds.get(unit, 0.0) > threshold:
+            kind = deferral(unit, plan["reasons"].get(unit), plan, shares, text)
+            if kind is not None:
+                deferred[unit] = {"seconds": seconds[unit], "reasons": plan["reasons"][unit], "class": kind,
+                                  **({"lean_share": round(shares[unit], 3)} if kind == "broad" else {})}
     commands = []
     for command in plan["commands"]:
         if command[:len(PYTEST)] == PYTEST and deferred:
@@ -1934,6 +2071,12 @@ def main() -> int:
                         help=f"leave out the test files over {DEFER_SECONDS:g} s in the map that only weak reasons "
                              "(static graph, a listed directory, smoke) select; the chain gate runs them. For "
                              "builder runs only, never the gate")
+    parser.add_argument("--defer-broad", action="store_true",
+                        help=f"with --defer-heavy: also leave out the heavy test files that are broad Lean consumers "
+                             f"(each reads or runs at least {BROAD_LEAN_SHARE:g} of the lean/VE modules the map "
+                             "knows), selected only by weak and Lean reasons, unless its source names a changed Lean "
+                             "module or its directory or its name makes it a test of that module's family. For "
+                             "builder runs only, never the gate")
     parser.add_argument("--fast-stage", action="store_true",
                         help=f"with --run: run only the fast-first units (the selected test files the map recorded "
                              f"at <= {FAST_UNIT_SECONDS:g} s each: every one that is or reads the change, then others "
@@ -1956,6 +2099,8 @@ def main() -> int:
         parser.error("--full runs every test; it takes no --tier")
     if args.defer_heavy and (args.full or args.tier or args.impacted):
         parser.error("--defer-heavy narrows a mapped selection; it takes no --full, --tier or --impacted")
+    if args.defer_broad and not args.defer_heavy:
+        parser.error("--defer-broad widens --defer-heavy; it takes --defer-heavy")
     args.maxfail = 0 if args.full else MAXFAIL if args.maxfail is None else args.maxfail
     paths = args.paths if args.paths is not None else changed_paths(args.base, args.commit)
     if args.impacted:
@@ -2010,7 +2155,8 @@ def main() -> int:
     if args.tier == "light":
         plan = light_tier(plan, jobs=args.jobs)
     if args.defer_heavy:
-        plan = defer_heavy(plan, map_seconds(plan), keep=set(run_order.last_failed()))
+        plan = defer_heavy(plan, map_seconds(plan), keep=set(run_order.last_failed()),
+                           shares=map_lean_shares(plan) if args.defer_broad else None)
     if args.chunk_heavy:  # after deferring, which takes whole files and their map seconds
         plan = chunk_plan(plan)
     if args.json:
@@ -2024,8 +2170,11 @@ def main() -> int:
                   f"{plan['tier']['selected_heavy_count']}/{plan['tier']['heavy_count']} heavy selected "
                   f"(measured in {plan['tier']['source_run']})")
         if plan.get("deferred"):
+            broad = [unit for unit, row in plan["deferred"].items() if row["class"] == "broad"]
             print(f"deferred to the chain gate: {len(plan['deferred'])} test files over {DEFER_SECONDS:g} s "
-                  f"selected only for weak reasons ({plan['deferred_seconds']:g} s): {', '.join(plan['deferred'])}")
+                  f"selected only for weak reasons{f' or as broad Lean consumers ({len(broad)})' if broad else ''} "
+                  f"({plan['deferred_seconds']:g} s): "
+                  + ", ".join(f"{unit} (broad)" if unit in broad else unit for unit in plan["deferred"]))
         print("changed:", ", ".join(paths) or "(none; full fallback)")
         if plan["lean_cutoff"]:
             cutoff = plan["lean_cutoff"]
