@@ -861,6 +861,39 @@ def sitU : VE.Readings.Situation String :=
 #guard errOf (admitWith fixtureTable ⟨.norms, [("u7", 0, 1, sitU)]⟩ (doc7u false ["p"])) == notSeparatedText
 #guard errOf (admitWith fixtureTable ⟨.norms, [("u7", 0, 1, sitU)]⟩ { doc7u false ["p"] with defaults := false }) ==
   "admitted"
+-- readings-defaults' F-ND1 as an open rule (`help_required` and its dual `help_permitted` unspecified): the witness
+-- separates where the filling of `help_permitted` holds, and not where it breaks the witness's `Fill_T` (`fillHolds`)
+def regH : VE.Norms.Regulated := ⟨"help_required", ["agent", "user"], false, .obligation, some "{0} help {1}", some "help_permitted"⟩
+def regsH : List VE.Norms.Regulated :=
+  [regH, ⟨"help_permitted", ["agent", "user"], false, .permission, some "{0} help {1}", none⟩]
+def envH : VE.Environment where
+  sorts := ["agent", "user"]
+  predicates p := ([("asks", ["user", "agent"]), ("help_required", ["agent", "user"]),
+    ("help_permitted", ["agent", "user"])].find? (·.1 == p)).map Prod.snd
+  constants _ := none
+def nH : VE.Norms.Node := { name := "must-help", pred := "help_required", sign := true, guard := .top, carveOuts := [], over := [] }
+def preH : VE.Formula := .binary "asks" (.var 0) (.var 1)
+def obH : Obligation := obA "p1" "uH" "generic" (.ruleAct "must-help") { pre := some preH } .unresolved
+def rrH : List RReading :=
+  [{ cand := .assumed, aliases := [], content := .rule nH, premise := some (ruleGoal regH nH preH) },
+   { cand := .conditioned, aliases := [], content := .rule (conditionNode nH preH), premise := none }]
+def docHelp : PDoc where
+  E := envH
+  lits := []
+  norms := { regulated := regsH, definitions := [], nodes := [] }
+  defaults := true
+  unspec := ["help_required", "help_permitted"]
+  background := []
+  units := [⟨"uH", true, .readings rrH⟩]
+  proofs := []
+  block := some [obH]
+def baseH (permitted : List (List String)) : VE.FiniteModel String where
+  domains s := match s with | "agent" => ["a"] | "user" => ["u"] | _ => []
+  constants _ := none
+  relations p := if p == "unsaid__help_permitted" then permitted else []
+def sitH (permitted : List (List String)) : VE.Readings.Situation String := ⟨baseH permitted, [], [], .outcome "help_required" ["a", "u"], true⟩
+#guard errOf (admitWith fixtureTable ⟨.norms, [("uH", 0, 1, sitH [["a", "u"]])]⟩ docHelp) == "admitted"
+#guard errOf (admitWith fixtureTable ⟨.norms, [("uH", 0, 1, sitH [])]⟩ docHelp) == notSeparatedText
 -- `admit`'s fixed inputs are the norms chain and no situation: S7's open rule is not refused as on the soft chain,
 -- and is not separated
 #guard errOf (admitWith fixtureTable admitInputs (doc7u false ["p"])) == needsModelText
@@ -996,7 +1029,7 @@ def deep : VE.Formula := wide 13
 -- open set (pass 2) are over budget too, before any comparison
 #guard errOf (admit (docA [cu "u0" theOwnerU, cu "u1" (.and theOwner deep)] [pA (.assumed "u0") (.path [0])])) ==
   "ResourceLimit: presuppositions"
-#guard errOf (admitWith fixtureTable fx1 (docA [⟨"u1", true, .readings [{ rdAs with content := .claim (.and theOwner deep) },
+#guard errOf (admitWith fixtureTable fx1 (docA [⟨"u1", true, .readings [{ rdAs with content := .claim (.and theOwner deep), premise := none },
   { rdCo with content := .claim (.implies theOwnerU (.and theOwner deep)) }]⟩] [pA .unresolved (.path [0])])) ==
   "ResourceLimit: presuppositions"
 -- A16 (S14): conditioned, the recorded guard `⊤ ∧ pre` with `pre` over the wrong variable order: `rule`.
