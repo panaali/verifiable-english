@@ -127,7 +127,13 @@ No Lean or Rust product code changed, so no seeded bug there.
   +0, trusted +0` and `PASS`. No trust growth.
 - `uv run python tools/regen_generated.py --check` on the tool commit: exit 0, 37 entries; `--write` once after
   this probe script was added (it is a codemap input: docs/codemap/docs__infra.md).
-- Selected tests: see "Selected tests" below.
+- Selected tests: `zsh manage-agents/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on
+  ffedd5fbc (ran on the VM: ve-mac-1 unreachable, cloud pools full): 35 units recorded; 34 reported `exit 0`
+  (tests/test_trust_mutants.py in 4 chunks among them) before the agent harness stopped the job at its
+  background limit; the one unit left, `tests/test_trust_mutants_probe_scope.py`, was then run alone
+  (`mac-pytest.sh -- -q tests/test_trust_mutants_probe_scope.py`): 30 passed. `tests/test_test_chunks.py` was
+  deferred by select_tests to the chain gate ("over 120 s selected only for weak reasons"). No failure, so
+  no main-known-red test was met.
 - Not run: `tools/gate.py` (the chain runs it on the final HEAD); a trust_mutants sweep, `lake build` and
   `lean/audit.py` (no Lean change, nothing trusted grows: build-checklist 13a does not apply).
 
@@ -149,8 +155,11 @@ None: tool-only change in `tools/trust_mutants.py` (the trust-mutant classifier)
 
 ## Commits (main..HEAD --no-merges)
 
-See the list printed by `git log --oneline main..HEAD --no-merges` at the end of this build; recorded in the build
-report.
+`git log --oneline main..HEAD --no-merges` before this report's last commit (which adds only these run results):
+
+- ad9951f14 the rule (`REFUSED`) and the tests
+- c294c677d REPORT, reclass.py, reclass.txt
+- ffedd5fbc regenerate the codemap
 
 ## Self-review against BUILDER-CHECKLIST
 
@@ -165,7 +174,7 @@ report.
 7. No unsigned item: PASS, no DELTA row, trust +0 (`tools/trust_map.py --check`).
 8. Every user-visible change in DELTA: PASS (none: tool only; section DELTA).
 9. Test selection finds the tests: PASS, `tools/repo_map.py file tools/trust_mutants.py` lists the test files;
-   selected run below.
+   selected run (section Runs) included tests/test_trust_mutants.py and its probe-scope sibling.
 10. Lean statements: N.A., no Lean change.
 11. Budgets fail closed: PASS, a refusal that quotes Lean's budget stays UNKNOWN
     (`test_invalid_only_when_lean_refuses_the_mutated_text[implicit-budget]`); N5 stays UNKNOWN
