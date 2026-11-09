@@ -289,6 +289,11 @@ def softP : Pack := ⟨"soft", .constraint, [], [], [("soft:x", .top)], [], []�
       (qs.flatMap (·.labelled.map (·.1))).take 3 == ["soft:x", "events:irreflexive", "events:transitive"]
   | .error _ => false
 
+/-- pk-1-conditions-b: the `events` pack states no decision condition (`Pack.conditions`, PC-9's
+`packConditions`), so `dfltUniform_legacy` and the other `*_legacy` theorems apply to every list holding it. -/
+theorem eventsPack_conditions : ∀ d, (eventsPack d).conditions = [] := fun _ => rfl
+#guard decoded.any fun d => (eventsPack d).conditions.isEmpty
+
 /-! ## et-4b: the route's hook, the row (item 1), `LinkNotOpen` and the charged limits -/
 
 def listed : List String := ["events@0", "norm-defaults@0", "norms@0", "relational-fol@0", "soft-norms@0"]
