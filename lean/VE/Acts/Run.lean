@@ -137,11 +137,13 @@ theorem firstsBy_map {α β : Type} [DecidableEq β] (f : α → β) (xs : List 
     and each reading with the place of the first meaning whose table row lists it and its place in that row. -/
 def witnessed (V : Vocab) (op : Op) (N b : Nat) (ts : Array Lexical.Tok) :
     Option (List (Act × VE.Grammar.Tree Lexical.Tok) × List (List Simple × Nat × Nat)) :=
-  match VE.Grammar.parse (grammar V) N b ts with
+  let rs := closed (schema V)
+  let μ := meaningWith rs.toArray V
+  match VE.Grammar.parse (build rs) N b ts with
   | none => none
   | some trees =>
     if N ≤ trees.length then none else
-    let ms := firstsBy Prod.fst (trees.filterMap fun t => (valueOf (meaning V) t).map (·, t))
+    let ms := firstsBy Prod.fst (trees.filterMap fun t => (valueOf μ t).map (·, t))
     if maxReadings < ms.length then none else
     let Rs := firstsBy Prod.fst (ms.zipIdx.flatMap fun ((A, _), k) => (table op A).zipIdx.map fun (R, j) => (R, k, j))
     if maxReadings < Rs.length then none else some (ms, Rs)
@@ -173,6 +175,8 @@ theorem witnessed_readings (V : Vocab) (op : Op) (N b : Nat) (ts : Array Lexical
     | nil => rfl
     | cons m ms ih => simp [List.zipIdx_cons, List.flatMap_cons, ← ih, List.flatMap_map, List.zipIdx_succ]
   unfold phraseReadings readings readingsIn listing witnessed
+  simp only [show build (closed (schema V)) = grammar V from rfl,
+    show meaningWith (closed (schema V)).toArray V = meaning V from rfl]
   cases VE.Grammar.parse (grammar V) N b ts with
   | none => rfl
   | some trees =>
@@ -275,12 +279,16 @@ def actJson (fx : List String) (op : Op) (f : Option Lexical.Form) (plain : Bool
   Json.mkObj [("act", .str (Simple.text fx (some plain) x)), ("text", .str (sentence fx op f x)),
     ("from", toJson (fromOf ps fn base (Simple.toks (some plain) x')))]
 
-/-- The tagged meaning of a derivation (`piecesOf` on `tagTree`'s tree) and the places of its function tokens. -/
-def tagged (V : Vocab) (base : Nat) (t : VE.Grammar.Tree Lexical.Tok) : Option Act × List Nat :=
-  let rs := (closed (schema V)).toArray
+/-- The tagged meaning of a derivation (`piecesOf` on `tagTree`'s tree) and the places of its function tokens, read
+    against the rule table `rs` (`closed (schema V)`, computed once by the caller). -/
+def taggedWith (rs : Array RuleS) (base : Nat) (t : VE.Grammar.Tree Lexical.Tok) : Option Act × List Nat :=
   let t' := (tagTree rs base false t 0).1
   ((match piecesOf rs t' with | some [.act A'] => some A' | _ => none),
    ((t'.yield.zipIdx).filter fun (x, _) => (placeOf base x).isNone).map (·.2))
+
+/-- `taggedWith` the vocabulary's rule table. -/
+def tagged (V : Vocab) (base : Nat) (t : VE.Grammar.Tree Lexical.Tok) : Option Act × List Nat :=
+  taggedWith (closed (schema V)).toArray base t
 
 /-- One reading `R` (its witness `k`, `j`) and its paraphrase: its acts, each read against the same act of the
     tagged meaning (`tags[k]`'s table row `j`), and the paraphrase. -/
@@ -302,7 +310,8 @@ def rowsOf (fx : List String) (V : Vocab) (op : Op) (f : Option Lexical.Form) (p
     (ms : List (Act × VE.Grammar.Tree Lexical.Tok)) (Ws : List (List Simple × Nat × Nat)) :
     Except String (List Json) := do
   let texts ← paraphrases fx op f "this act phrase" (Ws.map Prod.fst)
-  let tags := ms.map fun (_, t) => tagged V (tagBase ps) t
+  let rs := (closed (schema V)).toArray
+  let tags := ms.map fun (_, t) => taggedWith rs (tagBase ps) t
   pure ((Ws.zip texts).map (readingJson fx op f plain ps tags (tagBase ps)))
 
 /-- The `LISTED` row: the phrase's token spans, then each reading's acts and paraphrase. The limits come first: the
