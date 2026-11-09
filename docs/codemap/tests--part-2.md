@@ -1,3 +1,6 @@
+- `tests/test_b16f_document.py` — Batch 16f: the document mode's remaining groups are Lean answers, typed and bound.
+- `tests/test_b16f_senses_document.py` — Batch 16f: a document with `senses` is decided by Lean's `document` mode, which composes the senses route.
+- `tests/test_b17_evidence.py` — Batch 17 report assertions read only saved evidence, never moving Git refs.
 - `tests/test_b17_owner.py` — Batch 17: reported assist and Cedar decisions must cross the Lean boundary.
 - `tests/test_background.py` — (no module docstring)
 - `tests/test_batch_evidence.py` — A stale or incomplete batch gate cannot be reported as a pass.
@@ -27,6 +30,7 @@
 - `tests/test_cli.py` — (no module docstring)
 - `tests/test_closure.py` — closure@0 semantics, profile boundaries, views, identities and evidence.
 - `tests/test_closure_certificates.py` — New rules are paired with Lean soundness and independent replay evidence.
+- `tests/test_closure_core_replay.py` — Closure certificates replay through Core behind closure's own gates (consolidation step 3b).
 - `tests/test_closure_induction.py` — Induction replay, hostile certificates, compatibility and cyclic policies.
 - `tests/test_closure_witnesses.py` — Every selected E0 item has two checked, provenance-bound closure witnesses.
 - `tests/test_cmp_s4_evaluate_once.py` — cmp-s4 review F8: the composed path computes each value once, read from the compiled definitions.
@@ -84,7 +88,3 @@
 - `tests/test_english_e2_integer_marks.py` — The spacing of the integer marks: Lean reads exactly the spacing Python reads (spec R1; english-lean-e2.md 13).
 - `tests/test_english_e2_ledger_sites.py` — Every call into Python's own English reader is a site the deletion ledger keeps (spec 2.9; recheck 1 of E2, B).
 - `tests/test_english_e2_overlay.py` — The overlay refusals at the public boundary (spec D16, D17, 2.8; fixtures rl8 to rl10, ev15c, ev17, ovc; review A2 of English Lean E2).
-- `tests/test_english_e2_profile_matrix.py` — Lean reads what Python reads on every environment of the probe matrix (review A of English Lean E2, recheck 1).
-- `tests/test_english_e2_python.py` — Python producer behavior needed by the E2 overlay relay (spec 2.8, 8.11).
-- `tests/test_english_e2_relay.py` — E2's Lean-authoritative admission and untrusted response boundary.
-- `tests/test_english_e2_report.py` — The integration report's gate and three-way figures come from committed results.

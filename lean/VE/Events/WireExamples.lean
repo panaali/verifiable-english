@@ -289,4 +289,132 @@ def softP : Pack := ⟨"soft", .constraint, [], [], [("soft:x", .top)], [], []�
       (qs.flatMap (·.labelled.map (·.1))).take 3 == ["soft:x", "events:irreflexive", "events:transitive"]
   | .error _ => false
 
+/-- pk-1-conditions-b: the `events` pack states no decision condition (`Pack.conditions`, PC-9's
+`packConditions`), so it never breaks the hypothesis `∀ p ∈ qs, p.conditions = []` of `dfltUniform_legacy` and the
+other `*_legacy` theorems (`Defaults/Uniform.lean`). -/
+theorem eventsPack_conditions : ∀ d, (eventsPack d).conditions = [] := fun _ => rfl
+#guard decoded.any fun d => (eventsPack d).conditions.isEmpty
+
+/-! ## et-4b: the route's hook, the row (item 1), `LinkNotOpen` and the charged limits -/
+
+def listed : List String := ["events@0", "norm-defaults@0", "norms@0", "relational-fol@0", "soft-norms@0"]
+def profiled (b : Json) (ps : List String := listed) (v : Json := vocab) : Json :=
+  (env b v).setObjVal! "profiles" (toJson ps)
+def sortedWith (p : String) : List String := (listed ++ [p]).toArray.qsort (· < ·) |>.toList
+def terms : Json := parse "[{\"name\":\"contributed_to\",\"decided_by\":\"the drafters\"}]"
+def fault (e : Json) (t : Json := terms) : String := match eventsHook e t with
+  | .ok _ => "ok"
+  | .error m => m
+def badDate : Json := block.setObjVal! "dates" (toJson ["nonsense"])
+def linkJ (p : String) (form : String := "contributed") (by_ : String := "the drafters") : Json :=
+  Json.mkObj [("predicate", .str p), ("form", .str form), ("decided_by", .str by_)]
+def linked (ls : List Json) : Json := block.setObjVal! "links" (toJson ls)
+
+-- The accepting side, and the row's requirements in order, each before the block's own fault.
+#guard fault (profiled block) == "ok"
+#guard fault (profiled badDate ["events@0", "norm-defaults@0", "norms@0"]) == "UnsupportedProfile: events@0 requires relational-fol@0"
+#guard fault (profiled badDate ["events@0", "norm-defaults@0", "relational-fol@0"]) == "UnsupportedProfile: events@0 requires norms@0"
+#guard fault (profiled badDate ["events@0", "norms@0", "relational-fol@0"]) == "UnsupportedProfile: events@0 requires norm-defaults@0"
+#guard fault (profiled badDate) == "InvalidDate(nonsense)"
+-- Every refused profile by name, the first of a sorted list ahead of any other row's text; beside the row, the block's.
+#guard ["alternatives@0", "closure@0", "data@0", "nary@0", "order@0", "reports@0", "risk@0", "speech-acts@0", "time@0"].all
+  fun p => fault (profiled badDate (sortedWith p)) == s!"UnsupportedProfile: events@0 with {p}"
+#guard fault (profiled badDate ["alternatives@0", "events@0", "norm-defaults@0", "norms@0", "relational-fol@0", "risk@0"]) ==
+  "UnsupportedProfile: events@0 with alternatives@0"
+#guard ["documents@1", "rights@0", "readings@1", "definitions@0"].all fun p =>
+  VE.Compose.eventsFault (sortedWith p) == none && fault (profiled badDate (sortedWith p)) == "InvalidDate(nonsense)"
+#guard VE.Compose.eventsFault listed == none
+-- A list without the profile has no hook, whatever its block: its decoders are today's.
+#guard (match eventsHook (profiled badDate (listed.filter (· != "events@0"))) terms with
+  | .ok none => true | _ => false)
+#guard (match eventsHook (profiled badDate []) terms with | .ok none => true | _ => false)
+-- `baseRows`' modes hook no pack: the profile stays unknown to them.
+#guard (match VE.Compose.gateOf VE.Compose.baseRows listed with
+  | .error e => e | .ok _ => "ok") == "UnsupportedProfile: Unsupported profile events@0"
+
+-- `LinkNotOpen`: no term, another decider, another name, a malformed row or list; every link is read.
+#guard fault (profiled block) (parse "[]") == "LinkNotOpen: contributed_to"
+#guard fault (profiled block) (parse "[{\"name\":\"contributed_to\",\"decided_by\":\"the court\"}]") == "LinkNotOpen: contributed_to"
+#guard fault (profiled block) (parse "[{\"name\":\"needed_for\",\"decided_by\":\"the drafters\"}]") == "LinkNotOpen: contributed_to"
+#guard fault (profiled block) (parse "[{\"name\":\"contributed_to\"}]") == "LinkNotOpen: contributed_to"
+#guard fault (profiled block) (parse "[{\"decided_by\":\"the drafters\"}]") == "LinkNotOpen: contributed_to"
+#guard fault (profiled block) (.num 7) == "LinkNotOpen: contributed_to"
+def twoLinks : Json := linked [linkJ "contributed_to", linkJ "needed_for" "necessary"]
+def bothTerms : Json :=
+  parse "[{\"name\":\"contributed_to\",\"decided_by\":\"the drafters\"},{\"name\":\"needed_for\",\"decided_by\":\"the drafters\"}]"
+#guard fault (profiled twoLinks) == "LinkNotOpen: needed_for"
+#guard fault (profiled twoLinks) bothTerms == "ok"
+#guard fault (profiled (linked [linkJ "needed_for" "necessary", linkJ "contributed_to"])) == "LinkNotOpen: needed_for"
+-- After the link's own faults, and before the dates; `unstated` is the decider as written.
+#guard fault (profiled (linked [linkJ "needed_for", linkJ "contributed_to"])) (parse "[]") == "EventsVerbalisation: needed_for"
+#guard fault (profiled (linked [linkJ "contributed_to", linkJ "contributed_to"])) (parse "[]") ==
+  "DuplicateDeclaration: link contributed_to"
+#guard fault (profiled badDate) (parse "[]") == "LinkNotOpen: contributed_to"
+#guard fault (profiled (linked [linkJ "contributed_to" "contributed" "unstated"])) == "LinkNotOpen: contributed_to"
+#guard fault (profiled (linked [linkJ "contributed_to" "contributed" "unstated"]))
+  (parse "[{\"name\":\"contributed_to\",\"decided_by\":\"unstated\"}]") == "ok"
+-- `decodeEvents` reads no open term; a route's check only refuses (`decodeEventsWith_ok`).
+#guard (decodeEvents (profiled block)).toOption.isSome && (decodeEventsWith (checkOpen []) (profiled block)).toOption.isNone
+
+-- A growing chain of days: the premises grow by two a day; past 64 dates the fault is one, at any size.
+def isos (n : Nat) : List String := (List.range n).filterMap fun i => (VE.Time.civilOf (20000 + i)).map (·.iso)
+def chain (n : Nat) : Json := profiled (block.setObjVal! "dates" (toJson (isos n)))
+def labels (e : Json) : List String := match eventsHook e terms with
+  | .ok (some ⟨_, some d⟩) => d.labelled.map (·.1)
+  | _ => []
+#guard [1, 10, 62].all fun n => (labels (chain n)).length == 2 * n + 7
+#guard fault (chain 63) == "ok"
+#guard fault (chain 64) == "ResourceLimit: events dates"
+#guard fault (chain 2000) == "ResourceLimit: events dates"
+-- The largest list still names its repeat (spec 4's order), and ends: the check is one pass.
+#guard fault (profiled (block.setObjVal! "dates" (toJson (isos 20000 ++ ["2024-10-05"])))) == "DuplicateDeclaration: date 2024-10-05"
+#guard repeatOf [] ["a", "b", "a", "b"] == some "a" && repeatOf ["b"] ["a", "b"] == some "b" &&
+  repeatOf ["c"] ["a", "b"] == none && repeatOf [] [] == none
+-- Roles and links are charged before they are read against each other; just inside, the next fault is theirs.
+def manyLinks (n : Nat) : List Json := (List.range n).map fun i => linkJ s!"l{i}"
+#guard fault (profiled (linked (manyLinks 254))) == "ResourceLimit: events premises"
+#guard fault (profiled (linked (manyLinks 253))) == "EventsSort: l0"
+#guard fault (profiled (linked (manyLinks 20000))) == "ResourceLimit: events premises"
+-- The whole pack against `maxNodes`: 60 necessary and 60 contributed links on one pair.
+def linkPred (p w : String) : String × Json := (p, pred "[\"act\", \"stay\"]" w)
+def weaker (n : Nat) : Json :=
+  let cs := (List.range n).map fun i => s!"c{i}"
+  let ns := (List.range n).map fun i => s!"n{i}"
+  let preds := (fields (vocab.getObjValD "predicates")).toOption.getD []
+  let v := vocab.setObjVal! "predicates" (Json.mkObj (preds ++ cs.map (linkPred · "{0} contributed to {1}") ++
+    ns.map (linkPred · "{0} was necessary for {1}")))
+  profiled (linked (cs.map linkJ ++ ns.map (linkJ · "necessary"))) listed v
+def weakerTerms (n : Nat) : Json := toJson ((List.range n).flatMap fun i =>
+  [s!"c{i}", s!"n{i}"].map fun p => Json.mkObj [("name", .str p), ("decided_by", .str "the drafters")])
+#guard fault (weaker 60) (weakerTerms 60) == "ResourceLimit: events premises"
+#guard fault (weaker 30) (weakerTerms 30) == "ok"
+-- Each premise at its limit and one over, then the whole list; the last premise is read too.
+def pack : List (String × VE.Formula) := match eventsHook (profiled block) terms with
+  | .ok (some ⟨_, some d⟩) => d.labelled
+  | _ => []
+def sized (limit : Nat) (ls : List (String × VE.Formula)) : String := match checkPremiseSize limit ls with
+  | .ok _ => "ok"
+  | .error e => e
+def nodes (i : Nat) : Nat := VE.Bridge.formulaNodes (pack.getD i ("", .top)).2
+#guard nodes 0 < nodes 1
+#guard sized (nodes 1) (pack.take 2 |>.drop 1) == "ok"
+#guard sized (nodes 1 - 1) (pack.take 2) == "ResourceLimit: events premise events:transitive"
+#guard sized (nodes 0 + nodes 1) (pack.take 2) == "ok"
+#guard sized (nodes 0 + nodes 1 - 1) (pack.take 2) == "ResourceLimit: events premises"
+
+-- The view: no block, no profile, one constant per named date in the day sort, the anchor's with its fixed wording.
+def view (e : Json) : Json := match eventsHook e terms with
+  | .ok (some h) => h.view
+  | _ => .null
+def viewConstants : Json := ((view (profiled block)).getObjValD "vocabulary").getObjValD "constants"
+#guard !((view (profiled block)).getObjVal? "events").toBool
+#guard VE.Compose.listedProfiles (view (profiled block)) == listed.filter (· != "events@0")
+#guard viewConstants.getObjValD "date__2026_10_12" == parse "{\"sort\":\"day\",\"description\":\"2026-10-12\"}"
+#guard viewConstants.getObjValD "date__2026_10_13" == parse "{\"sort\":\"day\",\"description\":\"the date of this document\"}"
+#guard viewConstants.getObjValD "date__2026_10_14" == parse "{\"sort\":\"day\",\"description\":\"2026-10-14\"}"
+#guard viewConstants.getObjValD "today" != .null && (fields viewConstants).toOption.map (·.length) == some 4
+-- The profile with no block: the view only drops the profile.
+#guard view (drop "events" (profiled block)) ==
+  (drop "events" (profiled block)).setObjVal! "profiles" (toJson (listed.filter (· != "events@0")))
+
 end VE.Events.WireExamples
