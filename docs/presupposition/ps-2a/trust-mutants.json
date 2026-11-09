@@ -1,7 +1,7 @@
 {
  "base": "098dbe6886d6fa3cfa6c96549b4e97f0d8fff684",
- "head": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
- "tree": "33c00c7d0bec825671f98118250085dc4cf5c773",
+ "head": "18dc949ab46c6d42423859343c3974830af3fc7b",
+ "tree": "2c8fa893394baad0fb5f681b482cbe15682c3cbd",
  "jobs": 8,
  "control_probes": "lazy",
  "max_mutants": 1000,
@@ -9,47 +9,47 @@
  "tests": [
   "lean/VE/Presupposition/Examples.lean"
  ],
- "seconds": 2978,
+ "seconds": 921,
  "steps": {
   "wall": {
-   "plan": 18.5,
-   "scratch": 21.4,
+   "plan": 28.2,
+   "scratch": 34.8,
    "control_build": 0.3,
-   "probe_install": 2.6,
+   "probe_install": 3.8,
    "control_probes": 0.0,
-   "mutants": 2932.1,
-   "cleanup": 3.0,
-   "reads": 0.1
+   "mutants": 850.8,
+   "cleanup": 3.2,
+   "reads": 0.0
   },
   "lake": {
    "control_build": 0.2,
-   "probe_install": 2.5,
-   "control_probes": 78.5,
-   "mutant_builds": 1173.1,
-   "mutant_checks": 1637.6,
+   "probe_install": 3.8,
+   "control_probes": 38.1,
+   "mutant_builds": 302.3,
+   "mutant_checks": 445.2,
    "outside_checks": 0.0,
-   "stage_controls": 52.4,
-   "mutant_probes": 1111.7,
+   "stage_controls": 54.6,
+   "mutant_probes": 222.1,
    "other": 0.0
   },
   "runs": {
    "control_build": 1,
    "probe_install": 1,
-   "control_probes": 15,
-   "mutant_builds": 244,
-   "mutant_checks": 197,
+   "control_probes": 8,
+   "mutant_builds": 68,
+   "mutant_checks": 55,
    "outside_checks": 0,
    "stage_controls": 10,
-   "mutant_probes": 171,
+   "mutant_probes": 46,
    "other": 0
   }
  },
  "counts": {
-  "KILLED": 171,
-  "SURVIVOR": 16,
-  "UNKNOWN": 21,
+  "KILLED": 186,
+  "SURVIVOR": 0,
+  "UNKNOWN": 0,
   "INVALID": 36,
-  "ALLOWED": 0,
+  "ALLOWED": 22,
   "NOT RUN": 0
  },
  "classes": [
@@ -57,25 +57,22 @@
  ],
  "class_counts": {
   "D[V], trusted": {
-   "SURVIVOR": 1,
-   "UNKNOWN": 3
+   "ALLOWED": 4
   },
   "G[V], trusted": {
-   "KILLED": 11,
-   "SURVIVOR": 3,
-   "UNKNOWN": 5,
-   "INVALID": 16
+   "KILLED": 14,
+   "INVALID": 16,
+   "ALLOWED": 5
   },
   "S, trusted": {
-   "KILLED": 160,
-   "SURVIVOR": 12,
-   "UNKNOWN": 13,
-   "INVALID": 20
+   "KILLED": 172,
+   "INVALID": 20,
+   "ALLOWED": 13
   }
  },
  "inputs": {
   "tool": "98e12e81c1f4b797c28fe702fcb2f6c0cab9dd84b791758f081422a544e608cf",
-  "lean": "f04fb89472a3508127c416db87a95457728be3f32f65fbca40febac1505ea01d",
+  "lean": "61c89c728b9ee4c760f435b7966c1d1e903768d95e74d3ff1ff7c8b364143902",
   "tests": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
   "base": "098dbe6886d6fa3cfa6c96549b4e97f0d8fff684",
   "options": "{\"deep\": false, \"test\": [\"VE/Presupposition/Examples.lean\"], \"classes\": [\"trusted\"]}",
@@ -609,7 +606,7 @@
    "lean/VE/ParserContracts.lean": "2742cb47ff17db3f5655b980b5b94cf049d76f7e7b04720103d3a6252037320b",
    "lean/VE/Paths.lean": "be082586f50400ffcbb8dd69eee23fee94ef0d81edf770d1b0af9bb6bbb69fc0",
    "lean/VE/Presupposition/Agree.lean": "fa4d8e9e8391f53999c9974e28ae8f7eeee478f78866c6a07e0005d1bf926236",
-   "lean/VE/Presupposition/Examples.lean": "98b155d1cfe17765e7c957d7981078368649b4e4e184236c4ea755e0aea800f5",
+   "lean/VE/Presupposition/Examples.lean": "e9dec2a24099df7db6c8864b2cee18165fd00dd4e7f73707b62a93df5f5ebc97",
    "lean/VE/Presupposition/Frame.lean": "f2d8e7e3901b41eb80e64f7e2b14819f50d81c9d4be8bed345795db51f2cf25d",
    "lean/VE/Presupposition/Reading.lean": "6e9b9d7700fb2fae6a1329a7f5367fff36d7a13b97cde129c59e20dfd3ca301f",
    "lean/VE/Presupposition/Rows.lean": "0e751f9071a3f222c7ef7900c00d7b8c61eff8931b9e52a2501f9b30d325c053",
@@ -910,13 +907,13 @@
    "lean/audit.py": "05fb69c5689a8606fefd6d43e220f23ee6dbedc4bea7245b34ae29a4fd13a1cd",
    "lean/axioms.txt": "990d80c3bf8149b864f4282ba364a8c2f393cf0ac4d9027ab33c4b2805b38e03",
    "lean/checkers.lock": "6e58d4486c318ae07efbd34ca074eb47df2700276610a1d7ef6be660509aba38",
-   "lean/declarations.txt": "e07e4938bde4e419756099310323ec61573b7da7b8e8b5451407ea3284e987b5",
+   "lean/declarations.txt": "42b2050d6e321520974ed64e947ffd53521a758ca1df4c0c5e111298d2cf72b3",
    "lean/lake-manifest.json": "8579a8594992ccc571614869d24b997dba98134cffdbd5a0b26220a419e0de8e",
    "lean/lakefile.toml": "ffc47dfd06119c3518785b5059d81216b2f82b140509bfd25cd3273cbe04d4f5",
    "lean/lean-toolchain": "42779d67b81608af8a12aa4328d2ab47ca201925b3b2bd68369587b5340bb434",
    "lean/predicates.txt": "b2782a3b273e2e7e9c64f4dbb9a3652e92dfcf9793676e8305808e7e5099e155",
    "lean/statements.txt": "d5e59537fd6483ed0efdc2f04cf9b8eb46183c7c475cadb4db5190bf4af1c97e",
-   "tools/trust-classes.json": "05758619f1cf5088db9e4dc2ee1c5a065ac4ad6bdba2b5d572f733cf9224f5ae"
+   "tools/trust-classes.json": "06a7a22b9486b27bc6f90f033aad28771fc6978c726059944932a4ea4446c4db"
   },
   "tool_files": {
    "lean/audit.py": "05fb69c5689a8606fefd6d43e220f23ee6dbedc4bea7245b34ae29a4fd13a1cd",
@@ -931,6 +928,21 @@
    "tools/trust_map.py": "81082574f08249aea02a276fe8323ce76cbacdc09d6ba8851ef55ee2e77830a7",
    "tools/trust_mutants.py": "b264cbd25647d3a5af41a0972e652c92ec3ce02b39102480603801dcbc0333ba"
   }
+ },
+ "rescore": {
+  "file": "docs/presupposition/ps-2a/trust-mutants.json",
+  "head": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+  "mode": "checks",
+  "changed": [
+   "lean/VE/Presupposition/Examples.lean",
+   "lean/declarations.txt",
+   "tools/trust-classes.json"
+  ],
+  "reused": 176,
+  "rerun": 68,
+  "plan_only": [
+   "tools/trust-classes.json"
+  ]
  },
  "definitions": [
   "lean/VE/Presupposition/Table.lean: VE.Presupposition.candidateTable",
@@ -960,12 +972,12 @@
    "before": "((unitOf D u).map (\u00b7.asserted)).getD false",
    "after": "true",
    "status": "KILLED",
-   "detail": "lean/VE/Presupposition/Examples.lean:710: Expression",
+   "detail": "lean/VE/Presupposition/Examples.lean:709: Expression",
    "raw_status": "KILLED",
-   "reads": "3c0190d4c6db213531e40ce87fb067a5b3a0bdf4910eebba71bca670c74a3093",
+   "reads": "ac4ef0d113aa92c3e3485b75190f512f3f70f623b02135070dff93f13ec572f5",
    "killed_at": [
-    710,
-    710
+    709,
+    709
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -983,12 +995,12 @@
    "before": "((unitOf D u).map (\u00b7.asserted)).getD false",
    "after": "false",
    "status": "KILLED",
-   "detail": "lean/VE/Presupposition/Examples.lean:710: Expression",
+   "detail": "lean/VE/Presupposition/Examples.lean:709: Expression",
    "raw_status": "KILLED",
-   "reads": "3c0190d4c6db213531e40ce87fb067a5b3a0bdf4910eebba71bca670c74a3093",
+   "reads": "ac4ef0d113aa92c3e3485b75190f512f3f70f623b02135070dff93f13ec572f5",
    "killed_at": [
-    710,
-    710
+    709,
+    709
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -1008,6 +1020,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:624: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "005fcf52d7b04d69b60de190ae7fa84b61c61ba35107399ea15c74c1ccf783a3",
    "killed_at": [
     624,
@@ -1029,12 +1043,12 @@
    "before": "==",
    "after": "!=",
    "status": "KILLED",
-   "detail": "lean/VE/Presupposition/Examples.lean:708: Expression",
+   "detail": "lean/VE/Presupposition/Examples.lean:707: Expression",
    "raw_status": "KILLED",
-   "reads": "66542dac969767f6c8a2a7d020d01d25a98dce2801b1574ffde93c557f162b49",
+   "reads": "3f21bf2c405f8a4ce9e23849af5f4fa0429b1478d49a1de375c8edc5413a8319",
    "killed_at": [
-    708,
-    709
+    707,
+    708
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -1052,12 +1066,12 @@
    "before": "==",
    "after": "!=",
    "status": "KILLED",
-   "detail": "lean/VE/Presupposition/Examples.lean:712: Expression",
+   "detail": "lean/VE/Presupposition/Examples.lean:711: Expression",
    "raw_status": "KILLED",
-   "reads": "610d21e23d2bb8474a4eab9a9c5f0615b84823629b6bb9361813650a7721f192",
+   "reads": "0289e6cecf4257df5fcef87986049cd4e2fa7fd7f01443d02be9fc6680dbb696",
    "killed_at": [
-    712,
-    712
+    711,
+    711
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -1077,6 +1091,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:626: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "94a9e5a619bee7f3673d2d83af1abc7f860ba5cb3d861de002754c05a4afb16b",
    "killed_at": [
     626,
@@ -1100,6 +1116,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:674: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "e2f0ae7f4d822b71539799ccf34b510f50021d2346dbacf6e5ccb5c770f47b44",
    "killed_at": [
     674,
@@ -1123,6 +1141,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:624: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "005fcf52d7b04d69b60de190ae7fa84b61c61ba35107399ea15c74c1ccf783a3",
    "killed_at": [
     624,
@@ -1146,6 +1166,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:624: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "36d67c265aa8d8873905e1fe2dc71c35c23366f2873ea0702da6be606135244c",
    "killed_at": [
     624,
@@ -1167,12 +1189,12 @@
    "before": "!=",
    "after": "==",
    "status": "KILLED",
-   "detail": "lean/VE/Presupposition/Examples.lean:706: Expression",
+   "detail": "lean/VE/Presupposition/Examples.lean:705: Expression",
    "raw_status": "KILLED",
-   "reads": "7b3d97bfcbf91c740ec29c08b6efdd1024dc440c3b2e3216d2c85efa33ce5f79",
+   "reads": "9d8afd1eb2c7179aa7193f1e3116c759e2862148526e93c2b95e6ec1b1987bc2",
    "killed_at": [
-    706,
-    706
+    705,
+    705
    ],
    "trust_class": "S",
    "trusted": true
@@ -1192,6 +1214,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:624: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "fad77f994d5b1a6149cb7f153ae9677facde7044a220b042b82193f64561e32d",
    "killed_at": [
     624,
@@ -1213,12 +1237,12 @@
    "before": "false",
    "after": "true",
    "status": "KILLED",
-   "detail": "lean/VE/Presupposition/Examples.lean:710: Expression",
+   "detail": "lean/VE/Presupposition/Examples.lean:709: Expression",
    "raw_status": "KILLED",
-   "reads": "3c0190d4c6db213531e40ce87fb067a5b3a0bdf4910eebba71bca670c74a3093",
+   "reads": "ac4ef0d113aa92c3e3485b75190f512f3f70f623b02135070dff93f13ec572f5",
    "killed_at": [
-    710,
-    710
+    709,
+    709
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -1238,6 +1262,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:515: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "1dd37bde1f0d59bf581fcf6168f98d1ad99e413a6f29713c161f8324de583ebd",
    "killed_at": [
     515,
@@ -1259,12 +1285,12 @@
    "before": "D.units",
    "after": "[]",
    "status": "KILLED",
-   "detail": "lean/VE/Presupposition/Examples.lean:708: Expression",
+   "detail": "lean/VE/Presupposition/Examples.lean:707: Expression",
    "raw_status": "KILLED",
-   "reads": "66542dac969767f6c8a2a7d020d01d25a98dce2801b1574ffde93c557f162b49",
+   "reads": "3f21bf2c405f8a4ce9e23849af5f4fa0429b1478d49a1de375c8edc5413a8319",
    "killed_at": [
-    708,
-    709
+    707,
+    708
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -1281,9 +1307,10 @@
    ],
    "before": "(unitOf D u)",
    "after": "[]",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Presupposition/Wire.lean:145: Application type mismatch: The argument",
+   "status": "ALLOWED",
+   "detail": "does not elaborate: `unitOf D u` and its `.map` are Options, so a bare `[]` is a type mismatch (Wire.lean:145); the hand mutant L-unitAsserted fails Examples.lean:709",
    "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Presupposition/Wire.lean:145: Application type mismatch: The argument",
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -1299,9 +1326,10 @@
    ],
    "before": "(D.proofs.find? (fun x => x.1 == n))",
    "after": "[]",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Presupposition/Wire.lean:153: Type mismatch",
+   "status": "ALLOWED",
+   "detail": "does not elaborate: a bare `[]` in place of an Option or of `D.proofs` leaves `.map (\u00b7.2)` untyped (Wire.lean:153, type mismatch or invalid projection); the hand mutant L-nodeCertificate and the guards at Examples.lean:711 and :725 read the same lookup",
    "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Presupposition/Wire.lean:153: Type mismatch",
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -1318,12 +1346,12 @@
    "before": "D.background ++ (D.units.takeWhile (fun x => x.id != u)).filterMap (fun x =>\n    match x.content with\n    | .claim a => if x.asserted then some a else none\n    | _ => none)",
    "after": "[]\n\n\n",
    "status": "KILLED",
-   "detail": "lean/VE/Presupposition/Examples.lean:706: Expression",
+   "detail": "lean/VE/Presupposition/Examples.lean:705: Expression",
    "raw_status": "KILLED",
-   "reads": "7b3d97bfcbf91c740ec29c08b6efdd1024dc440c3b2e3216d2c85efa33ce5f79",
+   "reads": "9d8afd1eb2c7179aa7193f1e3116c759e2862148526e93c2b95e6ec1b1987bc2",
    "killed_at": [
-    706,
-    706
+    705,
+    705
    ],
    "trust_class": "S",
    "trusted": true
@@ -1343,6 +1371,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:626: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "94a9e5a619bee7f3673d2d83af1abc7f860ba5cb3d861de002754c05a4afb16b",
    "killed_at": [
     626,
@@ -1366,6 +1396,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:674: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "e2f0ae7f4d822b71539799ccf34b510f50021d2346dbacf6e5ccb5c770f47b44",
    "killed_at": [
     674,
@@ -1389,6 +1421,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:624: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "fad77f994d5b1a6149cb7f153ae9677facde7044a220b042b82193f64561e32d",
    "killed_at": [
     624,
@@ -1412,6 +1446,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:624: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "005fcf52d7b04d69b60de190ae7fa84b61c61ba35107399ea15c74c1ccf783a3",
    "killed_at": [
     624,
@@ -1432,9 +1468,10 @@
    ],
    "before": "((R.bases.find? (fun x => x.1 == c.ob.unit)).map (\u00b7.2)).map (fun B =>\n      (emitted t c).map (fun k => { claimReading R c B k with aliases := aliasesOf t c k }))",
    "after": "[]\n",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Presupposition/Wire.lean:208: Type mismatch",
+   "status": "ALLOWED",
+   "detail": "does not elaborate: each replaced expression is an Option (the base or rule lookup and its `.map`) or the element type of `R.bases` is lost (Wire.lean:208-210, type mismatch); the hand mutants L-expectedReadings-base, L-expectedReadings-rule and L-expectedReadings-heading fail Examples.lean:662-686",
    "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Presupposition/Wire.lean:208: Type mismatch",
    "trust_class": "S",
    "trusted": true
   },
@@ -1451,12 +1488,12 @@
    "before": " ++ (D.units.takeWhile (fun x => x.id != u)).filterMap (fun x =>\n    match x.content with\n    | .claim a => if x.asserted then some a else none\n    | _ => none)",
    "after": "\n\n\n",
    "status": "KILLED",
-   "detail": "lean/VE/Presupposition/Examples.lean:706: Expression",
+   "detail": "lean/VE/Presupposition/Examples.lean:705: Expression",
    "raw_status": "KILLED",
-   "reads": "7b3d97bfcbf91c740ec29c08b6efdd1024dc440c3b2e3216d2c85efa33ce5f79",
+   "reads": "9d8afd1eb2c7179aa7193f1e3116c759e2862148526e93c2b95e6ec1b1987bc2",
    "killed_at": [
-    706,
-    706
+    705,
+    705
    ],
    "trust_class": "S",
    "trusted": true
@@ -1474,12 +1511,12 @@
    "before": "D.background ++ ",
    "after": "",
    "status": "KILLED",
-   "detail": "lean/VE/Presupposition/Examples.lean:706: Expression",
+   "detail": "lean/VE/Presupposition/Examples.lean:705: Expression",
    "raw_status": "KILLED",
-   "reads": "7b3d97bfcbf91c740ec29c08b6efdd1024dc440c3b2e3216d2c85efa33ce5f79",
+   "reads": "9d8afd1eb2c7179aa7193f1e3116c759e2862148526e93c2b95e6ec1b1987bc2",
    "killed_at": [
-    706,
-    706
+    705,
+    705
    ],
    "trust_class": "S",
    "trusted": true
@@ -1496,9 +1533,10 @@
    ],
    "before": "  | claim (a : VE.Formula)",
    "after": "",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Presupposition/Wire.lean:184: Unknown constant `VE.Presupposition.RContent.claim`",
+   "status": "ALLOWED",
+   "detail": "does not elaborate: `claim` is built by claimReading (Wire.lean:184) and `rule` by ruleReading (Wire.lean:195), an unknown constant rather than a refutation; the hand mutant T-RContent-rule stops Wire.lean:201 (lean/VE/Presupposition/Wire.lean:184: Unknown constant `VE.Presupposition.RContent.claim`)",
    "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Presupposition/Wire.lean:184: Unknown constant `VE.Presupposition.RContent.claim`",
    "trust_class": "S",
    "trusted": true
   },
@@ -1514,9 +1552,10 @@
    ],
    "before": "  | claim (a : VE.Formula)",
    "after": "",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Presupposition/Wire.lean:142: Unknown constant `VE.Presupposition.UContent.claim`",
+   "status": "ALLOWED",
+   "detail": "does not elaborate: `claim`, `rule` and `readings` are named by unitContent, unitReadings, premisesBefore (Wire.lean:142-160) and the S17 fixtures, an unknown constant rather than a refutation; the hand mutant T-UContent-readings (mutants.json) stops Wire.lean:155, and the `unformalised` drop fails Examples.lean:729-730 (lean/VE/Presupposition/Wire.lean:142: Unknown constant `VE.Presupposition.UContent.claim`)",
    "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Presupposition/Wire.lean:142: Unknown constant `VE.Presupposition.UContent.claim`",
    "trust_class": "D[V]",
    "trusted": true
   },
@@ -1535,6 +1574,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:624: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "005fcf52d7b04d69b60de190ae7fa84b61c61ba35107399ea15c74c1ccf783a3",
    "killed_at": [
     624,
@@ -1558,6 +1599,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:626: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "94a9e5a619bee7f3673d2d83af1abc7f860ba5cb3d861de002754c05a4afb16b",
    "killed_at": [
     626,
@@ -1581,6 +1624,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:674: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "e2f0ae7f4d822b71539799ccf34b510f50021d2346dbacf6e5ccb5c770f47b44",
    "killed_at": [
     674,
@@ -1604,6 +1649,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:624: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "005fcf52d7b04d69b60de190ae7fa84b61c61ba35107399ea15c74c1ccf783a3",
    "killed_at": [
     624,
@@ -1627,6 +1674,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:674: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "6626cf2c7c3a27b78530f7e32f647a25594e0c8f58e347ca72813b0e67cb3127",
    "killed_at": [
     674,
@@ -1650,6 +1699,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:515: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "1dd37bde1f0d59bf581fcf6168f98d1ad99e413a6f29713c161f8324de583ebd",
    "killed_at": [
     515,
@@ -1670,9 +1721,10 @@
    ],
    "before": "(unitOf D u).map (\u00b7.asserted)",
    "after": "[]",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Presupposition/Wire.lean:145: Application type mismatch: The argument",
+   "status": "ALLOWED",
+   "detail": "does not elaborate: `unitOf D u` and its `.map` are Options, so a bare `[]` is a type mismatch (Wire.lean:145); the hand mutant L-unitAsserted fails Examples.lean:709",
    "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Presupposition/Wire.lean:145: Application type mismatch: The argument",
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -1688,9 +1740,10 @@
    ],
    "before": "(D.proofs.find? (fun x => x.1 == n)).map (\u00b7.2)",
    "after": "[]",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Presupposition/Wire.lean:153: Type mismatch",
+   "status": "ALLOWED",
+   "detail": "does not elaborate: a bare `[]` in place of an Option or of `D.proofs` leaves `.map (\u00b7.2)` untyped (Wire.lean:153, type mismatch or invalid projection); the hand mutant L-nodeCertificate and the guards at Examples.lean:711 and :725 read the same lookup",
    "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Presupposition/Wire.lean:153: Type mismatch",
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -1707,12 +1760,12 @@
    "before": "D.background",
    "after": "[]",
    "status": "KILLED",
-   "detail": "lean/VE/Presupposition/Examples.lean:706: Expression",
+   "detail": "lean/VE/Presupposition/Examples.lean:705: Expression",
    "raw_status": "KILLED",
-   "reads": "7b3d97bfcbf91c740ec29c08b6efdd1024dc440c3b2e3216d2c85efa33ce5f79",
+   "reads": "9d8afd1eb2c7179aa7193f1e3116c759e2862148526e93c2b95e6ec1b1987bc2",
    "killed_at": [
-    706,
-    706
+    705,
+    705
    ],
    "trust_class": "S",
    "trusted": true
@@ -1729,9 +1782,10 @@
    ],
    "before": "R.checked",
    "after": "[]",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Presupposition/Wire.lean:182: Invalid field notation: Type of",
+   "status": "ALLOWED",
+   "detail": "does not elaborate: a bare `[]` in place of `R.checked` or its filter leaves `d.ob` untyped (Wire.lean:182, invalid field notation); the hand mutants L-claimReading-unit and L-claimReading-other-root read the same list (Examples.lean:639-646)",
    "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Presupposition/Wire.lean:182: Invalid field notation: Type of",
    "trust_class": "S",
    "trusted": true
   },
@@ -1747,9 +1801,10 @@
    ],
    "before": "R.checked",
    "after": "[]",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Presupposition/Wire.lean:192: Invalid field notation: Type of",
+   "status": "ALLOWED",
+   "detail": "does not elaborate: a bare `[]` in place of `R.checked` or its filter leaves `d.ob` untyped (Wire.lean:192, invalid field notation); the hand mutants L-ruleReading-rule, L-ruleReading-other and L-ruleReading-own read the same list (Examples.lean:672, :686, :718)",
    "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Presupposition/Wire.lean:192: Invalid field notation: Type of",
    "trust_class": "S",
    "trusted": true
   },
@@ -1768,6 +1823,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:624: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "fad77f994d5b1a6149cb7f153ae9677facde7044a220b042b82193f64561e32d",
    "killed_at": [
     624,
@@ -1791,6 +1848,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:624: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "005fcf52d7b04d69b60de190ae7fa84b61c61ba35107399ea15c74c1ccf783a3",
    "killed_at": [
     624,
@@ -1811,9 +1870,10 @@
    ],
    "before": "(R.bases.find? (fun x => x.1 == c.ob.unit))",
    "after": "[]",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Presupposition/Wire.lean:208: Type mismatch",
+   "status": "ALLOWED",
+   "detail": "does not elaborate: each replaced expression is an Option (the base or rule lookup and its `.map`) or the element type of `R.bases` is lost (Wire.lean:208-210, type mismatch); the hand mutants L-expectedReadings-base, L-expectedReadings-rule and L-expectedReadings-heading fail Examples.lean:662-686",
    "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Presupposition/Wire.lean:208: Type mismatch",
    "trust_class": "S",
    "trusted": true
   },
@@ -1829,9 +1889,10 @@
    ],
    "before": "  | rule (N : VE.Norms.Node)",
    "after": "",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Presupposition/Wire.lean:195: Unknown constant `VE.Presupposition.RContent.rule`",
+   "status": "ALLOWED",
+   "detail": "does not elaborate: `claim` is built by claimReading (Wire.lean:184) and `rule` by ruleReading (Wire.lean:195), an unknown constant rather than a refutation; the hand mutant T-RContent-rule stops Wire.lean:201 (lean/VE/Presupposition/Wire.lean:195: Unknown constant `VE.Presupposition.RContent.rule`)",
    "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Presupposition/Wire.lean:195: Unknown constant `VE.Presupposition.RContent.rule`",
    "trust_class": "S",
    "trusted": true
   },
@@ -1847,9 +1908,10 @@
    ],
    "before": "  | rule (name : String)",
    "after": "",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Presupposition/Examples.lean:698: Unknown constant `VE.Presupposition.UContent.rule`",
+   "status": "ALLOWED",
+   "detail": "does not elaborate: `claim`, `rule` and `readings` are named by unitContent, unitReadings, premisesBefore (Wire.lean:142-160) and the S17 fixtures, an unknown constant rather than a refutation; the hand mutant T-UContent-readings (mutants.json) stops Wire.lean:155, and the `unformalised` drop fails Examples.lean:729-730 (lean/VE/Presupposition/Examples.lean:697: Unknown constant `VE.Presupposition.UContent.rule`)",
    "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Presupposition/Examples.lean:697: Unknown constant `VE.Presupposition.UContent.rule`",
    "trust_class": "D[V]",
    "trusted": true
   },
@@ -1868,6 +1930,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:674: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "e2f0ae7f4d822b71539799ccf34b510f50021d2346dbacf6e5ccb5c770f47b44",
    "killed_at": [
     674,
@@ -1891,6 +1955,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:515: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "1dd37bde1f0d59bf581fcf6168f98d1ad99e413a6f29713c161f8324de583ebd",
    "killed_at": [
     515,
@@ -1911,9 +1977,10 @@
    ],
    "before": "D.proofs",
    "after": "[]",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Presupposition/Wire.lean:153: Invalid projection: Type of",
+   "status": "ALLOWED",
+   "detail": "does not elaborate: a bare `[]` in place of an Option or of `D.proofs` leaves `.map (\u00b7.2)` untyped (Wire.lean:153, type mismatch or invalid projection); the hand mutant L-nodeCertificate and the guards at Examples.lean:711 and :725 read the same lookup",
    "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Presupposition/Wire.lean:153: Invalid projection: Type of",
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -1929,9 +1996,10 @@
    ],
    "before": "(D.units.takeWhile (fun x => x.id != u))",
    "after": "[]",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Presupposition/Wire.lean:158: Invalid field notation: Type of",
+   "status": "ALLOWED",
+   "detail": "does not elaborate: a bare `[]` in place of the takeWhile leaves `x.content` untyped (Wire.lean:158, invalid field notation); the hand mutants L-premisesBefore-strict and L-premisesBefore-asserted fail Examples.lean:705-706",
    "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Presupposition/Wire.lean:158: Invalid field notation: Type of",
    "trust_class": "S",
    "trusted": true
   },
@@ -1947,9 +2015,10 @@
    ],
    "before": "R.checked.filter (fun d => d.ob.unit == c.ob.unit)",
    "after": "[]",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Presupposition/Wire.lean:183: Invalid field notation: Type of",
+   "status": "ALLOWED",
+   "detail": "does not elaborate: a bare `[]` in place of `R.checked` or its filter leaves `d.ob` untyped (Wire.lean:182, invalid field notation); the hand mutants L-claimReading-unit and L-claimReading-other-root read the same list (Examples.lean:639-646)",
    "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Presupposition/Wire.lean:183: Invalid field notation: Type of",
    "trust_class": "S",
    "trusted": true
   },
@@ -1965,9 +2034,10 @@
    ],
    "before": "R.checked.filter (fun d => d.ob.position == .ruleAct N.name)",
    "after": "[]",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Presupposition/Wire.lean:193: Invalid field notation: Type of",
+   "status": "ALLOWED",
+   "detail": "does not elaborate: a bare `[]` in place of `R.checked` or its filter leaves `d.ob` untyped (Wire.lean:192, invalid field notation); the hand mutants L-ruleReading-rule, L-ruleReading-other and L-ruleReading-own read the same list (Examples.lean:672, :686, :718)",
    "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Presupposition/Wire.lean:193: Invalid field notation: Type of",
    "trust_class": "S",
    "trusted": true
   },
@@ -1983,9 +2053,10 @@
    ],
    "before": "(R.bases.find? (fun x => x.1 == c.ob.unit)).map (\u00b7.2)",
    "after": "[]",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Presupposition/Wire.lean:208: Type mismatch",
+   "status": "ALLOWED",
+   "detail": "does not elaborate: each replaced expression is an Option (the base or rule lookup and its `.map`) or the element type of `R.bases` is lost (Wire.lean:208-210, type mismatch); the hand mutants L-expectedReadings-base, L-expectedReadings-rule and L-expectedReadings-heading fail Examples.lean:662-686",
    "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Presupposition/Wire.lean:208: Type mismatch",
    "trust_class": "S",
    "trusted": true
   },
@@ -2001,9 +2072,10 @@
    ],
    "before": "  | readings (rs : List RReading)",
    "after": "",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Presupposition/Wire.lean:149: Unknown constant `VE.Presupposition.UContent.readings`",
+   "status": "ALLOWED",
+   "detail": "does not elaborate: `claim`, `rule` and `readings` are named by unitContent, unitReadings, premisesBefore (Wire.lean:142-160) and the S17 fixtures, an unknown constant rather than a refutation; the hand mutant T-UContent-readings (mutants.json) stops Wire.lean:155, and the `unformalised` drop fails Examples.lean:729-730 (lean/VE/Presupposition/Wire.lean:149: Unknown constant `VE.Presupposition.UContent.readings`)",
    "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Presupposition/Wire.lean:149: Unknown constant `VE.Presupposition.UContent.readings`",
    "trust_class": "D[V]",
    "trusted": true
   },
@@ -2022,6 +2094,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:674: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "e2f0ae7f4d822b71539799ccf34b510f50021d2346dbacf6e5ccb5c770f47b44",
    "killed_at": [
     674,
@@ -2045,6 +2119,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:515: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "1dd37bde1f0d59bf581fcf6168f98d1ad99e413a6f29713c161f8324de583ebd",
    "killed_at": [
     515,
@@ -2066,12 +2142,12 @@
    "before": "(D.units.takeWhile (fun x => x.id != u)).filterMap (fun x =>\n    match x.content with\n    | .claim a => if x.asserted then some a else none\n    | _ => none)",
    "after": "[]\n\n\n",
    "status": "KILLED",
-   "detail": "lean/VE/Presupposition/Examples.lean:706: Expression",
+   "detail": "lean/VE/Presupposition/Examples.lean:705: Expression",
    "raw_status": "KILLED",
-   "reads": "7b3d97bfcbf91c740ec29c08b6efdd1024dc440c3b2e3216d2c85efa33ce5f79",
+   "reads": "9d8afd1eb2c7179aa7193f1e3116c759e2862148526e93c2b95e6ec1b1987bc2",
    "killed_at": [
-    706,
-    706
+    705,
+    705
    ],
    "trust_class": "S",
    "trusted": true
@@ -2091,6 +2167,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:674: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "e2f0ae7f4d822b71539799ccf34b510f50021d2346dbacf6e5ccb5c770f47b44",
    "killed_at": [
     674,
@@ -2111,9 +2189,10 @@
    ],
    "before": "R.bases",
    "after": "[]",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Presupposition/Wire.lean:208: Invalid projection: Type of",
+   "status": "ALLOWED",
+   "detail": "does not elaborate: each replaced expression is an Option (the base or rule lookup and its `.map`) or the element type of `R.bases` is lost (Wire.lean:208-210, type mismatch); the hand mutants L-expectedReadings-base, L-expectedReadings-rule and L-expectedReadings-heading fail Examples.lean:662-686",
    "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Presupposition/Wire.lean:208: Invalid projection: Type of",
    "trust_class": "S",
    "trusted": true
   },
@@ -2129,9 +2208,10 @@
    ],
    "before": "  | unformalised",
    "after": "",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "ALLOWED",
+   "detail": "does not elaborate: `claim`, `rule` and `readings` are named by unitContent, unitReadings, premisesBefore (Wire.lean:142-160) and the S17 fixtures, an unknown constant rather than a refutation; the hand mutant T-UContent-readings (mutants.json) stops Wire.lean:155, and the `unformalised` drop fails Examples.lean:729-730 (lean/VE/Presupposition/Examples.lean:729: Unknown constant `VE.Presupposition.UContent.unformalised`)",
+   "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Presupposition/Examples.lean:729: Unknown constant `VE.Presupposition.UContent.unformalised`",
    "trust_class": "D[V]",
    "trusted": true
   },
@@ -2150,6 +2230,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:676: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "84f834673becba66ae2ff01834e6d11ff2bd241b9be484ce1157bb8832b1e83b",
    "killed_at": [
     676,
@@ -2173,6 +2255,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:515: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "1dd37bde1f0d59bf581fcf6168f98d1ad99e413a6f29713c161f8324de583ebd",
    "killed_at": [
     515,
@@ -2196,6 +2280,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:624: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "36d67c265aa8d8873905e1fe2dc71c35c23366f2873ea0702da6be606135244c",
    "killed_at": [
     624,
@@ -2219,6 +2305,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:515: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "1dd37bde1f0d59bf581fcf6168f98d1ad99e413a6f29713c161f8324de583ebd",
    "killed_at": [
     515,
@@ -2242,6 +2330,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:624: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "36d67c265aa8d8873905e1fe2dc71c35c23366f2873ea0702da6be606135244c",
    "killed_at": [
     624,
@@ -2265,6 +2355,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:516: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "c6f82b0422ad442d1564d4496c35f93b7306bb5ae93570d754530988de243bb1",
    "killed_at": [
     516,
@@ -2285,9 +2377,10 @@
    ],
    "before": "(R.baseTree.nodes.find? (fun N => N.name == n))",
    "after": "[]",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Presupposition/Wire.lean:210: Type mismatch",
+   "status": "ALLOWED",
+   "detail": "does not elaborate: each replaced expression is an Option (the base or rule lookup and its `.map`) or the element type of `R.bases` is lost (Wire.lean:208-210, type mismatch); the hand mutants L-expectedReadings-base, L-expectedReadings-rule and L-expectedReadings-heading fail Examples.lean:662-686",
    "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Presupposition/Wire.lean:210: Type mismatch",
    "trust_class": "S",
    "trusted": true
   },
@@ -2306,6 +2399,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:516: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "c6f82b0422ad442d1564d4496c35f93b7306bb5ae93570d754530988de243bb1",
    "killed_at": [
     516,
@@ -2326,9 +2421,10 @@
    ],
    "before": "(R.baseTree.nodes.find? (fun N => N.name == n)).map (fun N =>\n      (emitted t c).map (ruleReading R c N))",
    "after": "[]\n",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Presupposition/Wire.lean:210: Type mismatch",
+   "status": "ALLOWED",
+   "detail": "does not elaborate: each replaced expression is an Option (the base or rule lookup and its `.map`) or the element type of `R.bases` is lost (Wire.lean:208-210, type mismatch); the hand mutants L-expectedReadings-base, L-expectedReadings-rule and L-expectedReadings-heading fail Examples.lean:662-686",
    "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Presupposition/Wire.lean:210: Type mismatch",
    "trust_class": "S",
    "trusted": true
   },
@@ -2347,6 +2443,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:516: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "c6f82b0422ad442d1564d4496c35f93b7306bb5ae93570d754530988de243bb1",
    "killed_at": [
     516,
@@ -2370,6 +2468,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:674: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "6626cf2c7c3a27b78530f7e32f647a25594e0c8f58e347ca72813b0e67cb3127",
    "killed_at": [
     674,
@@ -2393,6 +2493,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:516: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "c6f82b0422ad442d1564d4496c35f93b7306bb5ae93570d754530988de243bb1",
    "killed_at": [
     516,
@@ -2416,6 +2518,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:674: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "6626cf2c7c3a27b78530f7e32f647a25594e0c8f58e347ca72813b0e67cb3127",
    "killed_at": [
     674,
@@ -2439,6 +2543,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:516: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "c6f82b0422ad442d1564d4496c35f93b7306bb5ae93570d754530988de243bb1",
    "killed_at": [
     516,
@@ -2462,6 +2568,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:674: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "6626cf2c7c3a27b78530f7e32f647a25594e0c8f58e347ca72813b0e67cb3127",
    "killed_at": [
     674,
@@ -2485,6 +2593,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:516: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "c6f82b0422ad442d1564d4496c35f93b7306bb5ae93570d754530988de243bb1",
    "killed_at": [
     516,
@@ -2508,6 +2618,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:517: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "011935c8b7d1acdf83614ae85082b8030fc4ff4a5d9ac9791e9fcbadc53c7a6f",
    "killed_at": [
     517,
@@ -2531,6 +2643,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:517: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "011935c8b7d1acdf83614ae85082b8030fc4ff4a5d9ac9791e9fcbadc53c7a6f",
    "killed_at": [
     517,
@@ -2554,6 +2668,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:517: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "011935c8b7d1acdf83614ae85082b8030fc4ff4a5d9ac9791e9fcbadc53c7a6f",
    "killed_at": [
     517,
@@ -2577,6 +2693,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:517: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "011935c8b7d1acdf83614ae85082b8030fc4ff4a5d9ac9791e9fcbadc53c7a6f",
    "killed_at": [
     517,
@@ -2600,6 +2718,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:517: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "011935c8b7d1acdf83614ae85082b8030fc4ff4a5d9ac9791e9fcbadc53c7a6f",
    "killed_at": [
     517,
@@ -2623,6 +2743,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:517: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "011935c8b7d1acdf83614ae85082b8030fc4ff4a5d9ac9791e9fcbadc53c7a6f",
    "killed_at": [
     517,
@@ -2646,6 +2768,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:517: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "011935c8b7d1acdf83614ae85082b8030fc4ff4a5d9ac9791e9fcbadc53c7a6f",
    "killed_at": [
     517,
@@ -2667,12 +2791,12 @@
    "before": "D.units",
    "after": "(D.units.take 1)",
    "status": "KILLED",
-   "detail": "lean/VE/Presupposition/Examples.lean:708: Expression",
+   "detail": "lean/VE/Presupposition/Examples.lean:707: Expression",
    "raw_status": "KILLED",
-   "reads": "66542dac969767f6c8a2a7d020d01d25a98dce2801b1574ffde93c557f162b49",
+   "reads": "3f21bf2c405f8a4ce9e23849af5f4fa0429b1478d49a1de375c8edc5413a8319",
    "killed_at": [
-    708,
-    709
+    707,
+    708
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -2692,6 +2816,8 @@
    "status": "INVALID",
    "detail": "Invalid field `take`: The environment does not contain `Option.take`",
    "raw_status": "INVALID",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "d17024cd64d671eeaafdb84a60b25f51bcd5ee19541bc6c7d7e522acf27fee12",
    "trust_class": "G[V]",
    "trusted": true
@@ -2711,6 +2837,8 @@
    "status": "INVALID",
    "detail": "Invalid projection: Type of",
    "raw_status": "INVALID",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "2bc9ffc67185d7715691a62e89a0fe58aa9afadd7aebb2d7d0d307b97aa9b8f7",
    "trust_class": "G[V]",
    "trusted": true
@@ -2728,12 +2856,12 @@
    "before": "D.background ++ (D.units.takeWhile (fun x => x.id != u)).filterMap (fun x =>\n    match x.content with\n    | .claim a => if x.asserted then some a else none\n    | _ => none)",
    "after": "((D.background ++ (D.units.takeWhile (fun x => x.id != u)).filterMap (fun x =>\n    match x.content with\n    | .claim a => if x.asserted then some a else none\n    | _ => none)).take 1)",
    "status": "KILLED",
-   "detail": "lean/VE/Presupposition/Examples.lean:706: Expression",
+   "detail": "lean/VE/Presupposition/Examples.lean:705: Expression",
    "raw_status": "KILLED",
-   "reads": "7b3d97bfcbf91c740ec29c08b6efdd1024dc440c3b2e3216d2c85efa33ce5f79",
+   "reads": "9d8afd1eb2c7179aa7193f1e3116c759e2862148526e93c2b95e6ec1b1987bc2",
    "killed_at": [
-    706,
-    706
+    705,
+    705
    ],
    "trust_class": "S",
    "trusted": true
@@ -2753,6 +2881,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:641: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "c1024c202e1e7670534d09522910312b4efe00340ab054869ba38f8bbef54174",
    "killed_at": [
     641,
@@ -2776,6 +2906,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:674: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "e2f0ae7f4d822b71539799ccf34b510f50021d2346dbacf6e5ccb5c770f47b44",
    "killed_at": [
     674,
@@ -2799,6 +2931,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:624: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "fad77f994d5b1a6149cb7f153ae9677facde7044a220b042b82193f64561e32d",
    "killed_at": [
     624,
@@ -2819,9 +2953,14 @@
    ],
    "before": "(t c.ob.row c.pos).filter (fun a => a == .inPlace && k == .conditioned && decide c.frame.shallow)",
    "after": "(((t c.ob.row c.pos).filter (fun a => a == .inPlace && k == .conditioned && decide c.frame.shallow)).take 1)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Presupposition/Examples.lean:722: Expression",
+   "raw_status": "KILLED",
+   "reads": "3d5c643052621e67befcff7cfe3df732e1e38873670bd7105117edcf27009859",
+   "killed_at": [
+    722,
+    722
+   ],
    "trust_class": "S",
    "trusted": true
   },
@@ -2840,6 +2979,8 @@
    "status": "INVALID",
    "detail": "Invalid field `take`: The environment does not contain `Option.take`",
    "raw_status": "INVALID",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "bd2b9e55bda348f9f5357d269d574aa4b35a3f94d51526b651078c3e655112ca",
    "trust_class": "S",
    "trusted": true
@@ -2859,6 +3000,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:515: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "1dd37bde1f0d59bf581fcf6168f98d1ad99e413a6f29713c161f8324de583ebd",
    "killed_at": [
     515,
@@ -2880,12 +3023,12 @@
    "before": "D.units",
    "after": "(D.units.dropLast)",
    "status": "KILLED",
-   "detail": "lean/VE/Presupposition/Examples.lean:710: Expression",
+   "detail": "lean/VE/Presupposition/Examples.lean:709: Expression",
    "raw_status": "KILLED",
-   "reads": "36a18e1c51526894a5222b18a8e2c3cd5d2376637d05e2a938ede1988a169ecb",
+   "reads": "7e85ee47992995d67cdde1977ae2bca0f3f838de5a2f6cf70271b23938958f98",
    "killed_at": [
-    710,
-    710
+    709,
+    709
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -2905,6 +3048,8 @@
    "status": "INVALID",
    "detail": "Invalid field `dropLast`: The environment does not contain `Option.dropLast`",
    "raw_status": "INVALID",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "d17024cd64d671eeaafdb84a60b25f51bcd5ee19541bc6c7d7e522acf27fee12",
    "trust_class": "G[V]",
    "trusted": true
@@ -2924,6 +3069,8 @@
    "status": "INVALID",
    "detail": "Invalid projection: Type of",
    "raw_status": "INVALID",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "2bc9ffc67185d7715691a62e89a0fe58aa9afadd7aebb2d7d0d307b97aa9b8f7",
    "trust_class": "G[V]",
    "trusted": true
@@ -2941,12 +3088,12 @@
    "before": "D.background ++ (D.units.takeWhile (fun x => x.id != u)).filterMap (fun x =>\n    match x.content with\n    | .claim a => if x.asserted then some a else none\n    | _ => none)",
    "after": "((D.background ++ (D.units.takeWhile (fun x => x.id != u)).filterMap (fun x =>\n    match x.content with\n    | .claim a => if x.asserted then some a else none\n    | _ => none)).dropLast)",
    "status": "KILLED",
-   "detail": "lean/VE/Presupposition/Examples.lean:706: Expression",
+   "detail": "lean/VE/Presupposition/Examples.lean:705: Expression",
    "raw_status": "KILLED",
-   "reads": "7b3d97bfcbf91c740ec29c08b6efdd1024dc440c3b2e3216d2c85efa33ce5f79",
+   "reads": "9d8afd1eb2c7179aa7193f1e3116c759e2862148526e93c2b95e6ec1b1987bc2",
    "killed_at": [
-    706,
-    706
+    705,
+    705
    ],
    "trust_class": "S",
    "trusted": true
@@ -2966,6 +3113,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:626: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "94a9e5a619bee7f3673d2d83af1abc7f860ba5cb3d861de002754c05a4afb16b",
    "killed_at": [
     626,
@@ -2989,6 +3138,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:674: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "e2f0ae7f4d822b71539799ccf34b510f50021d2346dbacf6e5ccb5c770f47b44",
    "killed_at": [
     674,
@@ -3012,6 +3163,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:624: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "fad77f994d5b1a6149cb7f153ae9677facde7044a220b042b82193f64561e32d",
    "killed_at": [
     624,
@@ -3035,6 +3188,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:624: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "005fcf52d7b04d69b60de190ae7fa84b61c61ba35107399ea15c74c1ccf783a3",
    "killed_at": [
     624,
@@ -3058,6 +3213,8 @@
    "status": "INVALID",
    "detail": "Invalid field `dropLast`: The environment does not contain `Option.dropLast`",
    "raw_status": "INVALID",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "bd2b9e55bda348f9f5357d269d574aa4b35a3f94d51526b651078c3e655112ca",
    "trust_class": "S",
    "trusted": true
@@ -3077,6 +3234,8 @@
    "status": "INVALID",
    "detail": "Invalid field notation: Type of",
    "raw_status": "INVALID",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "d17024cd64d671eeaafdb84a60b25f51bcd5ee19541bc6c7d7e522acf27fee12",
    "trust_class": "G[V]",
    "trusted": true
@@ -3096,6 +3255,8 @@
    "status": "INVALID",
    "detail": "Invalid field `take`: The environment does not contain `Option.take`",
    "raw_status": "INVALID",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "2bc9ffc67185d7715691a62e89a0fe58aa9afadd7aebb2d7d0d307b97aa9b8f7",
    "trust_class": "G[V]",
    "trusted": true
@@ -3112,9 +3273,14 @@
    ],
    "before": "D.background",
    "after": "(D.background.take 1)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Presupposition/Examples.lean:723: Expression",
+   "raw_status": "KILLED",
+   "reads": "c12626a62a5d31e4edec6989ead06398a19b430fee9b26aece4515a0ec6aa984",
+   "killed_at": [
+    723,
+    724
+   ],
    "trust_class": "S",
    "trusted": true
   },
@@ -3133,6 +3299,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:641: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "c1024c202e1e7670534d09522910312b4efe00340ab054869ba38f8bbef54174",
    "killed_at": [
     641,
@@ -3156,6 +3324,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:674: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "e2f0ae7f4d822b71539799ccf34b510f50021d2346dbacf6e5ccb5c770f47b44",
    "killed_at": [
     674,
@@ -3179,6 +3349,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:624: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "fad77f994d5b1a6149cb7f153ae9677facde7044a220b042b82193f64561e32d",
    "killed_at": [
     624,
@@ -3202,6 +3374,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:624: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "005fcf52d7b04d69b60de190ae7fa84b61c61ba35107399ea15c74c1ccf783a3",
    "killed_at": [
     624,
@@ -3225,6 +3399,8 @@
    "status": "INVALID",
    "detail": "Invalid projection: Type of",
    "raw_status": "INVALID",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "bd2b9e55bda348f9f5357d269d574aa4b35a3f94d51526b651078c3e655112ca",
    "trust_class": "S",
    "trusted": true
@@ -3244,6 +3420,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:515: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "1dd37bde1f0d59bf581fcf6168f98d1ad99e413a6f29713c161f8324de583ebd",
    "killed_at": [
     515,
@@ -3267,6 +3445,8 @@
    "status": "INVALID",
    "detail": "Invalid field notation: Type of",
    "raw_status": "INVALID",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "d17024cd64d671eeaafdb84a60b25f51bcd5ee19541bc6c7d7e522acf27fee12",
    "trust_class": "G[V]",
    "trusted": true
@@ -3286,6 +3466,8 @@
    "status": "INVALID",
    "detail": "Invalid field `dropLast`: The environment does not contain `Option.dropLast`",
    "raw_status": "INVALID",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "2bc9ffc67185d7715691a62e89a0fe58aa9afadd7aebb2d7d0d307b97aa9b8f7",
    "trust_class": "G[V]",
    "trusted": true
@@ -3303,12 +3485,12 @@
    "before": "D.background",
    "after": "(D.background.dropLast)",
    "status": "KILLED",
-   "detail": "lean/VE/Presupposition/Examples.lean:706: Expression",
+   "detail": "lean/VE/Presupposition/Examples.lean:705: Expression",
    "raw_status": "KILLED",
-   "reads": "7b3d97bfcbf91c740ec29c08b6efdd1024dc440c3b2e3216d2c85efa33ce5f79",
+   "reads": "9d8afd1eb2c7179aa7193f1e3116c759e2862148526e93c2b95e6ec1b1987bc2",
    "killed_at": [
-    706,
-    706
+    705,
+    705
    ],
    "trust_class": "S",
    "trusted": true
@@ -3328,6 +3510,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:626: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "94a9e5a619bee7f3673d2d83af1abc7f860ba5cb3d861de002754c05a4afb16b",
    "killed_at": [
     626,
@@ -3348,9 +3532,14 @@
    ],
    "before": "R.checked",
    "after": "(R.checked.dropLast)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Presupposition/Examples.lean:718: Expression",
+   "raw_status": "KILLED",
+   "reads": "69c9ced2b072defcffed45dbcdb179d8cc38ef2368a9998456912cbebb84db3f",
+   "killed_at": [
+    718,
+    721
+   ],
    "trust_class": "S",
    "trusted": true
   },
@@ -3369,6 +3558,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:662: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "ca304e69d11aec668907ef2670abe9c9ebbd455f8773720604eca8dcd6f33f8b",
    "killed_at": [
     662,
@@ -3392,6 +3583,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:624: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "005fcf52d7b04d69b60de190ae7fa84b61c61ba35107399ea15c74c1ccf783a3",
    "killed_at": [
     624,
@@ -3415,6 +3608,8 @@
    "status": "INVALID",
    "detail": "Invalid projection: Type of",
    "raw_status": "INVALID",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "bd2b9e55bda348f9f5357d269d574aa4b35a3f94d51526b651078c3e655112ca",
    "trust_class": "S",
    "trusted": true
@@ -3431,9 +3626,14 @@
    ],
    "before": "D.proofs",
    "after": "(D.proofs.take 1)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Presupposition/Examples.lean:725: Expression",
+   "raw_status": "KILLED",
+   "reads": "b46e8a3116a53ae83cd330380d154b8dcd6d778dabb0e46ec1dd84284e9c420d",
+   "killed_at": [
+    725,
+    726
+   ],
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -3450,12 +3650,12 @@
    "before": "(D.units.takeWhile (fun x => x.id != u))",
    "after": "((D.units.takeWhile (fun x => x.id != u)).take 1)",
    "status": "KILLED",
-   "detail": "lean/VE/Presupposition/Examples.lean:706: Expression",
+   "detail": "lean/VE/Presupposition/Examples.lean:705: Expression",
    "raw_status": "KILLED",
-   "reads": "7b3d97bfcbf91c740ec29c08b6efdd1024dc440c3b2e3216d2c85efa33ce5f79",
+   "reads": "9d8afd1eb2c7179aa7193f1e3116c759e2862148526e93c2b95e6ec1b1987bc2",
    "killed_at": [
-    706,
-    706
+    705,
+    705
    ],
    "trust_class": "S",
    "trusted": true
@@ -3475,6 +3675,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:641: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "c1024c202e1e7670534d09522910312b4efe00340ab054869ba38f8bbef54174",
    "killed_at": [
     641,
@@ -3498,6 +3700,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:674: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "e2f0ae7f4d822b71539799ccf34b510f50021d2346dbacf6e5ccb5c770f47b44",
    "killed_at": [
     674,
@@ -3521,6 +3725,8 @@
    "status": "INVALID",
    "detail": "Invalid projection: Type of",
    "raw_status": "INVALID",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "bd2b9e55bda348f9f5357d269d574aa4b35a3f94d51526b651078c3e655112ca",
    "trust_class": "S",
    "trusted": true
@@ -3540,6 +3746,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:515: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "1dd37bde1f0d59bf581fcf6168f98d1ad99e413a6f29713c161f8324de583ebd",
    "killed_at": [
     515,
@@ -3561,12 +3769,12 @@
    "before": "D.proofs",
    "after": "(D.proofs.dropLast)",
    "status": "KILLED",
-   "detail": "lean/VE/Presupposition/Examples.lean:712: Expression",
+   "detail": "lean/VE/Presupposition/Examples.lean:711: Expression",
    "raw_status": "KILLED",
-   "reads": "610d21e23d2bb8474a4eab9a9c5f0615b84823629b6bb9361813650a7721f192",
+   "reads": "0289e6cecf4257df5fcef87986049cd4e2fa7fd7f01443d02be9fc6680dbb696",
    "killed_at": [
-    712,
-    712
+    711,
+    711
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -3584,12 +3792,12 @@
    "before": "(D.units.takeWhile (fun x => x.id != u))",
    "after": "((D.units.takeWhile (fun x => x.id != u)).dropLast)",
    "status": "KILLED",
-   "detail": "lean/VE/Presupposition/Examples.lean:706: Expression",
+   "detail": "lean/VE/Presupposition/Examples.lean:705: Expression",
    "raw_status": "KILLED",
-   "reads": "7b3d97bfcbf91c740ec29c08b6efdd1024dc440c3b2e3216d2c85efa33ce5f79",
+   "reads": "9d8afd1eb2c7179aa7193f1e3116c759e2862148526e93c2b95e6ec1b1987bc2",
    "killed_at": [
-    706,
-    706
+    705,
+    705
    ],
    "trust_class": "S",
    "trusted": true
@@ -3609,6 +3817,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:626: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "94a9e5a619bee7f3673d2d83af1abc7f860ba5cb3d861de002754c05a4afb16b",
    "killed_at": [
     626,
@@ -3629,9 +3839,14 @@
    ],
    "before": "R.checked.filter (fun d => d.ob.position == .ruleAct N.name)",
    "after": "((R.checked.filter (fun d => d.ob.position == .ruleAct N.name)).dropLast)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Presupposition/Examples.lean:718: Expression",
+   "raw_status": "KILLED",
+   "reads": "69c9ced2b072defcffed45dbcdb179d8cc38ef2368a9998456912cbebb84db3f",
+   "killed_at": [
+    718,
+    721
+   ],
    "trust_class": "S",
    "trusted": true
   },
@@ -3650,6 +3865,8 @@
    "status": "INVALID",
    "detail": "Invalid projection: Type of",
    "raw_status": "INVALID",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "bd2b9e55bda348f9f5357d269d574aa4b35a3f94d51526b651078c3e655112ca",
    "trust_class": "S",
    "trusted": true
@@ -3667,12 +3884,12 @@
    "before": "(D.units.takeWhile (fun x => x.id != u)).filterMap (fun x =>\n    match x.content with\n    | .claim a => if x.asserted then some a else none\n    | _ => none)",
    "after": "(((D.units.takeWhile (fun x => x.id != u)).filterMap (fun x =>\n    match x.content with\n    | .claim a => if x.asserted then some a else none\n    | _ => none)).take 1)",
    "status": "KILLED",
-   "detail": "lean/VE/Presupposition/Examples.lean:707: Expression",
+   "detail": "lean/VE/Presupposition/Examples.lean:706: Expression",
    "raw_status": "KILLED",
-   "reads": "11032b2e3906fd0138812d57dc536568c7a42308753a7a1356431e461a3ab830",
+   "reads": "e6daed740ca114cb273948a2642fcff61c628a7a39041628635790dd7a1ba8a7",
    "killed_at": [
-    707,
-    707
+    706,
+    706
    ],
    "trust_class": "S",
    "trusted": true
@@ -3692,6 +3909,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:674: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "e2f0ae7f4d822b71539799ccf34b510f50021d2346dbacf6e5ccb5c770f47b44",
    "killed_at": [
     674,
@@ -3712,9 +3931,14 @@
    ],
    "before": "R.bases",
    "after": "(R.bases.take 1)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Presupposition/Examples.lean:716: Expression",
+   "raw_status": "KILLED",
+   "reads": "96fbf162e2c8d864431c7778a91d06c2048b23cb5c5ed8821812b810824850e4",
+   "killed_at": [
+    716,
+    717
+   ],
    "trust_class": "S",
    "trusted": true
   },
@@ -3733,6 +3957,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:515: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "1dd37bde1f0d59bf581fcf6168f98d1ad99e413a6f29713c161f8324de583ebd",
    "killed_at": [
     515,
@@ -3754,12 +3980,12 @@
    "before": "(D.units.takeWhile (fun x => x.id != u)).filterMap (fun x =>\n    match x.content with\n    | .claim a => if x.asserted then some a else none\n    | _ => none)",
    "after": "(((D.units.takeWhile (fun x => x.id != u)).filterMap (fun x =>\n    match x.content with\n    | .claim a => if x.asserted then some a else none\n    | _ => none)).dropLast)",
    "status": "KILLED",
-   "detail": "lean/VE/Presupposition/Examples.lean:706: Expression",
+   "detail": "lean/VE/Presupposition/Examples.lean:705: Expression",
    "raw_status": "KILLED",
-   "reads": "7b3d97bfcbf91c740ec29c08b6efdd1024dc440c3b2e3216d2c85efa33ce5f79",
+   "reads": "9d8afd1eb2c7179aa7193f1e3116c759e2862148526e93c2b95e6ec1b1987bc2",
    "killed_at": [
-    706,
-    706
+    705,
+    705
    ],
    "trust_class": "S",
    "trusted": true
@@ -3779,6 +4005,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:674: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "e2f0ae7f4d822b71539799ccf34b510f50021d2346dbacf6e5ccb5c770f47b44",
    "killed_at": [
     674,
@@ -3802,6 +4030,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:624: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "36d67c265aa8d8873905e1fe2dc71c35c23366f2873ea0702da6be606135244c",
    "killed_at": [
     624,
@@ -3825,6 +4055,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:624: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "36d67c265aa8d8873905e1fe2dc71c35c23366f2873ea0702da6be606135244c",
    "killed_at": [
     624,
@@ -3848,6 +4080,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:515: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "1dd37bde1f0d59bf581fcf6168f98d1ad99e413a6f29713c161f8324de583ebd",
    "killed_at": [
     515,
@@ -3871,6 +4105,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:624: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "36d67c265aa8d8873905e1fe2dc71c35c23366f2873ea0702da6be606135244c",
    "killed_at": [
     624,
@@ -3894,6 +4130,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:624: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "36d67c265aa8d8873905e1fe2dc71c35c23366f2873ea0702da6be606135244c",
    "killed_at": [
     624,
@@ -3917,6 +4155,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:515: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "1dd37bde1f0d59bf581fcf6168f98d1ad99e413a6f29713c161f8324de583ebd",
    "killed_at": [
     515,
@@ -3940,6 +4180,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:624: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "36d67c265aa8d8873905e1fe2dc71c35c23366f2873ea0702da6be606135244c",
    "killed_at": [
     624,
@@ -3963,6 +4205,8 @@
    "status": "INVALID",
    "detail": "Invalid field notation: Type of",
    "raw_status": "INVALID",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "bd2b9e55bda348f9f5357d269d574aa4b35a3f94d51526b651078c3e655112ca",
    "trust_class": "S",
    "trusted": true
@@ -3982,6 +4226,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:516: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "c6f82b0422ad442d1564d4496c35f93b7306bb5ae93570d754530988de243bb1",
    "killed_at": [
     516,
@@ -4005,6 +4251,8 @@
    "status": "INVALID",
    "detail": "Invalid field notation: Type of",
    "raw_status": "INVALID",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "bd2b9e55bda348f9f5357d269d574aa4b35a3f94d51526b651078c3e655112ca",
    "trust_class": "S",
    "trusted": true
@@ -4024,6 +4272,8 @@
    "status": "INVALID",
    "detail": "Invalid field `take`: The environment does not contain `Option.take`",
    "raw_status": "INVALID",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "bd2b9e55bda348f9f5357d269d574aa4b35a3f94d51526b651078c3e655112ca",
    "trust_class": "S",
    "trusted": true
@@ -4043,6 +4293,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:516: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "c6f82b0422ad442d1564d4496c35f93b7306bb5ae93570d754530988de243bb1",
    "killed_at": [
     516,
@@ -4066,6 +4318,8 @@
    "status": "INVALID",
    "detail": "Invalid field `dropLast`: The environment does not contain `Option.dropLast`",
    "raw_status": "INVALID",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "bd2b9e55bda348f9f5357d269d574aa4b35a3f94d51526b651078c3e655112ca",
    "trust_class": "S",
    "trusted": true
@@ -4085,10 +4339,10 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:686: Expression",
    "raw_status": "KILLED",
-   "reads": "2c077a36f8cbb093996a968e514a64d0d14ae56dcade4fef64a7e94966f5f966",
+   "reads": "afc867970f9471d9f0e421927e2a17328b3fe67d78b6772bc5ea4fe74e6725de",
    "killed_at": [
     686,
-    690
+    689
    ],
    "trust_class": "S",
    "trusted": true
@@ -4108,6 +4362,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:516: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "c6f82b0422ad442d1564d4496c35f93b7306bb5ae93570d754530988de243bb1",
    "killed_at": [
     516,
@@ -4131,6 +4387,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:674: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "6626cf2c7c3a27b78530f7e32f647a25594e0c8f58e347ca72813b0e67cb3127",
    "killed_at": [
     674,
@@ -4154,6 +4412,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:674: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "6626cf2c7c3a27b78530f7e32f647a25594e0c8f58e347ca72813b0e67cb3127",
    "killed_at": [
     674,
@@ -4177,6 +4437,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:516: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "c6f82b0422ad442d1564d4496c35f93b7306bb5ae93570d754530988de243bb1",
    "killed_at": [
     516,
@@ -4200,6 +4462,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:674: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "6626cf2c7c3a27b78530f7e32f647a25594e0c8f58e347ca72813b0e67cb3127",
    "killed_at": [
     674,
@@ -4223,6 +4487,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:674: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "6626cf2c7c3a27b78530f7e32f647a25594e0c8f58e347ca72813b0e67cb3127",
    "killed_at": [
     674,
@@ -4246,6 +4512,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:516: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "c6f82b0422ad442d1564d4496c35f93b7306bb5ae93570d754530988de243bb1",
    "killed_at": [
     516,
@@ -4269,6 +4537,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:674: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "6626cf2c7c3a27b78530f7e32f647a25594e0c8f58e347ca72813b0e67cb3127",
    "killed_at": [
     674,
@@ -4292,6 +4562,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:516: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "c6f82b0422ad442d1564d4496c35f93b7306bb5ae93570d754530988de243bb1",
    "killed_at": [
     516,
@@ -4315,6 +4587,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:517: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "011935c8b7d1acdf83614ae85082b8030fc4ff4a5d9ac9791e9fcbadc53c7a6f",
    "killed_at": [
     517,
@@ -4338,6 +4612,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:517: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "011935c8b7d1acdf83614ae85082b8030fc4ff4a5d9ac9791e9fcbadc53c7a6f",
    "killed_at": [
     517,
@@ -4361,6 +4637,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:517: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "011935c8b7d1acdf83614ae85082b8030fc4ff4a5d9ac9791e9fcbadc53c7a6f",
    "killed_at": [
     517,
@@ -4384,6 +4662,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:517: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "011935c8b7d1acdf83614ae85082b8030fc4ff4a5d9ac9791e9fcbadc53c7a6f",
    "killed_at": [
     517,
@@ -4407,6 +4687,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:517: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "011935c8b7d1acdf83614ae85082b8030fc4ff4a5d9ac9791e9fcbadc53c7a6f",
    "killed_at": [
     517,
@@ -4430,6 +4712,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:517: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "011935c8b7d1acdf83614ae85082b8030fc4ff4a5d9ac9791e9fcbadc53c7a6f",
    "killed_at": [
     517,
@@ -4453,6 +4737,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:517: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "011935c8b7d1acdf83614ae85082b8030fc4ff4a5d9ac9791e9fcbadc53c7a6f",
    "killed_at": [
     517,
@@ -4474,12 +4760,12 @@
    "before": "D.units",
    "after": "(D.units.reverse.take 1)",
    "status": "KILLED",
-   "detail": "lean/VE/Presupposition/Examples.lean:708: Expression",
+   "detail": "lean/VE/Presupposition/Examples.lean:707: Expression",
    "raw_status": "KILLED",
-   "reads": "66542dac969767f6c8a2a7d020d01d25a98dce2801b1574ffde93c557f162b49",
+   "reads": "3f21bf2c405f8a4ce9e23849af5f4fa0429b1478d49a1de375c8edc5413a8319",
    "killed_at": [
-    708,
-    709
+    707,
+    708
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -4499,6 +4785,8 @@
    "status": "INVALID",
    "detail": "Invalid field `reverse`: The environment does not contain `Option.reverse`",
    "raw_status": "INVALID",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "d17024cd64d671eeaafdb84a60b25f51bcd5ee19541bc6c7d7e522acf27fee12",
    "trust_class": "G[V]",
    "trusted": true
@@ -4518,6 +4806,8 @@
    "status": "INVALID",
    "detail": "Invalid projection: Type of",
    "raw_status": "INVALID",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "2bc9ffc67185d7715691a62e89a0fe58aa9afadd7aebb2d7d0d307b97aa9b8f7",
    "trust_class": "G[V]",
    "trusted": true
@@ -4535,12 +4825,12 @@
    "before": "D.background ++ (D.units.takeWhile (fun x => x.id != u)).filterMap (fun x =>\n    match x.content with\n    | .claim a => if x.asserted then some a else none\n    | _ => none)",
    "after": "((D.background ++ (D.units.takeWhile (fun x => x.id != u)).filterMap (fun x =>\n    match x.content with\n    | .claim a => if x.asserted then some a else none\n    | _ => none)).reverse.take 1)",
    "status": "KILLED",
-   "detail": "lean/VE/Presupposition/Examples.lean:706: Expression",
+   "detail": "lean/VE/Presupposition/Examples.lean:705: Expression",
    "raw_status": "KILLED",
-   "reads": "7b3d97bfcbf91c740ec29c08b6efdd1024dc440c3b2e3216d2c85efa33ce5f79",
+   "reads": "9d8afd1eb2c7179aa7193f1e3116c759e2862148526e93c2b95e6ec1b1987bc2",
    "killed_at": [
-    706,
-    706
+    705,
+    705
    ],
    "trust_class": "S",
    "trusted": true
@@ -4560,6 +4850,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:642: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "72402d6831c601769c202222ce9f8a3c1df7d33290f6f949999240bf3abbf199",
    "killed_at": [
     642,
@@ -4583,6 +4875,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:674: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "e2f0ae7f4d822b71539799ccf34b510f50021d2346dbacf6e5ccb5c770f47b44",
    "killed_at": [
     674,
@@ -4606,6 +4900,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:624: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "fad77f994d5b1a6149cb7f153ae9677facde7044a220b042b82193f64561e32d",
    "killed_at": [
     624,
@@ -4626,9 +4922,14 @@
    ],
    "before": "(t c.ob.row c.pos).filter (fun a => a == .inPlace && k == .conditioned && decide c.frame.shallow)",
    "after": "(((t c.ob.row c.pos).filter (fun a => a == .inPlace && k == .conditioned && decide c.frame.shallow)).reverse.take 1)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Presupposition/Examples.lean:722: Expression",
+   "raw_status": "KILLED",
+   "reads": "3d5c643052621e67befcff7cfe3df732e1e38873670bd7105117edcf27009859",
+   "killed_at": [
+    722,
+    722
+   ],
    "trust_class": "S",
    "trusted": true
   },
@@ -4647,6 +4948,8 @@
    "status": "INVALID",
    "detail": "Invalid field `reverse`: The environment does not contain `Option.reverse`",
    "raw_status": "INVALID",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "bd2b9e55bda348f9f5357d269d574aa4b35a3f94d51526b651078c3e655112ca",
    "trust_class": "S",
    "trusted": true
@@ -4666,6 +4969,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:515: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "1dd37bde1f0d59bf581fcf6168f98d1ad99e413a6f29713c161f8324de583ebd",
    "killed_at": [
     515,
@@ -4686,9 +4991,14 @@
    ],
    "before": "D.units",
    "after": "(D.units.drop 1)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Presupposition/Examples.lean:727: Expression",
+   "raw_status": "KILLED",
+   "reads": "73e963ea8954f6b39dd34c262244be101f5e615dc47e1a405e76fbb979f023e9",
+   "killed_at": [
+    727,
+    728
+   ],
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -4707,6 +5017,8 @@
    "status": "INVALID",
    "detail": "Invalid field `drop`: The environment does not contain `Option.drop`",
    "raw_status": "INVALID",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "d17024cd64d671eeaafdb84a60b25f51bcd5ee19541bc6c7d7e522acf27fee12",
    "trust_class": "G[V]",
    "trusted": true
@@ -4726,6 +5038,8 @@
    "status": "INVALID",
    "detail": "Invalid projection: Type of",
    "raw_status": "INVALID",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "2bc9ffc67185d7715691a62e89a0fe58aa9afadd7aebb2d7d0d307b97aa9b8f7",
    "trust_class": "G[V]",
    "trusted": true
@@ -4743,12 +5057,12 @@
    "before": "D.background ++ (D.units.takeWhile (fun x => x.id != u)).filterMap (fun x =>\n    match x.content with\n    | .claim a => if x.asserted then some a else none\n    | _ => none)",
    "after": "((D.background ++ (D.units.takeWhile (fun x => x.id != u)).filterMap (fun x =>\n    match x.content with\n    | .claim a => if x.asserted then some a else none\n    | _ => none)).drop 1)",
    "status": "KILLED",
-   "detail": "lean/VE/Presupposition/Examples.lean:706: Expression",
+   "detail": "lean/VE/Presupposition/Examples.lean:705: Expression",
    "raw_status": "KILLED",
-   "reads": "7b3d97bfcbf91c740ec29c08b6efdd1024dc440c3b2e3216d2c85efa33ce5f79",
+   "reads": "9d8afd1eb2c7179aa7193f1e3116c759e2862148526e93c2b95e6ec1b1987bc2",
    "killed_at": [
-    706,
-    706
+    705,
+    705
    ],
    "trust_class": "S",
    "trusted": true
@@ -4768,6 +5082,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:626: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "94a9e5a619bee7f3673d2d83af1abc7f860ba5cb3d861de002754c05a4afb16b",
    "killed_at": [
     626,
@@ -4791,6 +5107,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:674: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "e2f0ae7f4d822b71539799ccf34b510f50021d2346dbacf6e5ccb5c770f47b44",
    "killed_at": [
     674,
@@ -4814,6 +5132,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:624: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "fad77f994d5b1a6149cb7f153ae9677facde7044a220b042b82193f64561e32d",
    "killed_at": [
     624,
@@ -4837,6 +5157,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:624: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "005fcf52d7b04d69b60de190ae7fa84b61c61ba35107399ea15c74c1ccf783a3",
    "killed_at": [
     624,
@@ -4860,6 +5182,8 @@
    "status": "INVALID",
    "detail": "Invalid field `drop`: The environment does not contain `Option.drop`",
    "raw_status": "INVALID",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "bd2b9e55bda348f9f5357d269d574aa4b35a3f94d51526b651078c3e655112ca",
    "trust_class": "S",
    "trusted": true
@@ -4879,6 +5203,8 @@
    "status": "INVALID",
    "detail": "Invalid field notation: Type of",
    "raw_status": "INVALID",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "d17024cd64d671eeaafdb84a60b25f51bcd5ee19541bc6c7d7e522acf27fee12",
    "trust_class": "G[V]",
    "trusted": true
@@ -4898,6 +5224,8 @@
    "status": "INVALID",
    "detail": "Invalid field `reverse`: The environment does not contain `Option.reverse`",
    "raw_status": "INVALID",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "2bc9ffc67185d7715691a62e89a0fe58aa9afadd7aebb2d7d0d307b97aa9b8f7",
    "trust_class": "G[V]",
    "trusted": true
@@ -4914,9 +5242,14 @@
    ],
    "before": "D.background",
    "after": "(D.background.reverse.take 1)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Presupposition/Examples.lean:723: Expression",
+   "raw_status": "KILLED",
+   "reads": "c12626a62a5d31e4edec6989ead06398a19b430fee9b26aece4515a0ec6aa984",
+   "killed_at": [
+    723,
+    724
+   ],
    "trust_class": "S",
    "trusted": true
   },
@@ -4935,6 +5268,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:641: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "c1024c202e1e7670534d09522910312b4efe00340ab054869ba38f8bbef54174",
    "killed_at": [
     641,
@@ -4958,6 +5293,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:674: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "e2f0ae7f4d822b71539799ccf34b510f50021d2346dbacf6e5ccb5c770f47b44",
    "killed_at": [
     674,
@@ -4981,6 +5318,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:624: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "fad77f994d5b1a6149cb7f153ae9677facde7044a220b042b82193f64561e32d",
    "killed_at": [
     624,
@@ -5001,9 +5340,14 @@
    ],
    "before": "(t c.ob.row c.pos)",
    "after": "((t c.ob.row c.pos).reverse.take 1)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Presupposition/Examples.lean:722: Expression",
+   "raw_status": "KILLED",
+   "reads": "3d5c643052621e67befcff7cfe3df732e1e38873670bd7105117edcf27009859",
+   "killed_at": [
+    722,
+    722
+   ],
    "trust_class": "S",
    "trusted": true
   },
@@ -5022,6 +5366,8 @@
    "status": "INVALID",
    "detail": "Invalid projection: Type of",
    "raw_status": "INVALID",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "bd2b9e55bda348f9f5357d269d574aa4b35a3f94d51526b651078c3e655112ca",
    "trust_class": "S",
    "trusted": true
@@ -5041,6 +5387,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:515: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "1dd37bde1f0d59bf581fcf6168f98d1ad99e413a6f29713c161f8324de583ebd",
    "killed_at": [
     515,
@@ -5064,6 +5412,8 @@
    "status": "INVALID",
    "detail": "Invalid field notation: Type of",
    "raw_status": "INVALID",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "d17024cd64d671eeaafdb84a60b25f51bcd5ee19541bc6c7d7e522acf27fee12",
    "trust_class": "G[V]",
    "trusted": true
@@ -5083,6 +5433,8 @@
    "status": "INVALID",
    "detail": "Invalid field `drop`: The environment does not contain `Option.drop`",
    "raw_status": "INVALID",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "2bc9ffc67185d7715691a62e89a0fe58aa9afadd7aebb2d7d0d307b97aa9b8f7",
    "trust_class": "G[V]",
    "trusted": true
@@ -5100,12 +5452,12 @@
    "before": "D.background",
    "after": "(D.background.drop 1)",
    "status": "KILLED",
-   "detail": "lean/VE/Presupposition/Examples.lean:706: Expression",
+   "detail": "lean/VE/Presupposition/Examples.lean:705: Expression",
    "raw_status": "KILLED",
-   "reads": "7b3d97bfcbf91c740ec29c08b6efdd1024dc440c3b2e3216d2c85efa33ce5f79",
+   "reads": "9d8afd1eb2c7179aa7193f1e3116c759e2862148526e93c2b95e6ec1b1987bc2",
    "killed_at": [
-    706,
-    706
+    705,
+    705
    ],
    "trust_class": "S",
    "trusted": true
@@ -5125,6 +5477,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:626: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "94a9e5a619bee7f3673d2d83af1abc7f860ba5cb3d861de002754c05a4afb16b",
    "killed_at": [
     626,
@@ -5148,6 +5502,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:674: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "e2f0ae7f4d822b71539799ccf34b510f50021d2346dbacf6e5ccb5c770f47b44",
    "killed_at": [
     674,
@@ -5171,6 +5527,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:624: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "fad77f994d5b1a6149cb7f153ae9677facde7044a220b042b82193f64561e32d",
    "killed_at": [
     624,
@@ -5191,9 +5549,14 @@
    ],
    "before": "(t c.ob.row c.pos)",
    "after": "((t c.ob.row c.pos).drop 1)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Presupposition/Examples.lean:722: Expression",
+   "raw_status": "KILLED",
+   "reads": "3d5c643052621e67befcff7cfe3df732e1e38873670bd7105117edcf27009859",
+   "killed_at": [
+    722,
+    722
+   ],
    "trust_class": "S",
    "trusted": true
   },
@@ -5212,6 +5575,8 @@
    "status": "INVALID",
    "detail": "Invalid projection: Type of",
    "raw_status": "INVALID",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "bd2b9e55bda348f9f5357d269d574aa4b35a3f94d51526b651078c3e655112ca",
    "trust_class": "S",
    "trusted": true
@@ -5228,9 +5593,14 @@
    ],
    "before": "D.proofs",
    "after": "(D.proofs.reverse.take 1)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Presupposition/Examples.lean:725: Expression",
+   "raw_status": "KILLED",
+   "reads": "b46e8a3116a53ae83cd330380d154b8dcd6d778dabb0e46ec1dd84284e9c420d",
+   "killed_at": [
+    725,
+    726
+   ],
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -5247,12 +5617,12 @@
    "before": "(D.units.takeWhile (fun x => x.id != u))",
    "after": "((D.units.takeWhile (fun x => x.id != u)).reverse.take 1)",
    "status": "KILLED",
-   "detail": "lean/VE/Presupposition/Examples.lean:707: Expression",
+   "detail": "lean/VE/Presupposition/Examples.lean:706: Expression",
    "raw_status": "KILLED",
-   "reads": "11032b2e3906fd0138812d57dc536568c7a42308753a7a1356431e461a3ab830",
+   "reads": "e6daed740ca114cb273948a2642fcff61c628a7a39041628635790dd7a1ba8a7",
    "killed_at": [
-    707,
-    707
+    706,
+    706
    ],
    "trust_class": "S",
    "trusted": true
@@ -5272,6 +5642,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:642: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "72402d6831c601769c202222ce9f8a3c1df7d33290f6f949999240bf3abbf199",
    "killed_at": [
     642,
@@ -5295,6 +5667,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:674: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "e2f0ae7f4d822b71539799ccf34b510f50021d2346dbacf6e5ccb5c770f47b44",
    "killed_at": [
     674,
@@ -5318,6 +5692,8 @@
    "status": "INVALID",
    "detail": "Invalid projection: Type of",
    "raw_status": "INVALID",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "bd2b9e55bda348f9f5357d269d574aa4b35a3f94d51526b651078c3e655112ca",
    "trust_class": "S",
    "trusted": true
@@ -5337,6 +5713,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:515: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "1dd37bde1f0d59bf581fcf6168f98d1ad99e413a6f29713c161f8324de583ebd",
    "killed_at": [
     515,
@@ -5358,12 +5736,12 @@
    "before": "D.proofs",
    "after": "(D.proofs.drop 1)",
    "status": "KILLED",
-   "detail": "lean/VE/Presupposition/Examples.lean:712: Expression",
+   "detail": "lean/VE/Presupposition/Examples.lean:711: Expression",
    "raw_status": "KILLED",
-   "reads": "610d21e23d2bb8474a4eab9a9c5f0615b84823629b6bb9361813650a7721f192",
+   "reads": "0289e6cecf4257df5fcef87986049cd4e2fa7fd7f01443d02be9fc6680dbb696",
    "killed_at": [
-    712,
-    712
+    711,
+    711
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -5380,9 +5758,14 @@
    ],
    "before": "(D.units.takeWhile (fun x => x.id != u))",
    "after": "((D.units.takeWhile (fun x => x.id != u)).drop 1)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Presupposition/Examples.lean:723: Expression",
+   "raw_status": "KILLED",
+   "reads": "c12626a62a5d31e4edec6989ead06398a19b430fee9b26aece4515a0ec6aa984",
+   "killed_at": [
+    723,
+    724
+   ],
    "trust_class": "S",
    "trusted": true
   },
@@ -5401,6 +5784,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:626: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "94a9e5a619bee7f3673d2d83af1abc7f860ba5cb3d861de002754c05a4afb16b",
    "killed_at": [
     626,
@@ -5424,6 +5809,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:674: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "e2f0ae7f4d822b71539799ccf34b510f50021d2346dbacf6e5ccb5c770f47b44",
    "killed_at": [
     674,
@@ -5447,6 +5834,8 @@
    "status": "INVALID",
    "detail": "Invalid projection: Type of",
    "raw_status": "INVALID",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "bd2b9e55bda348f9f5357d269d574aa4b35a3f94d51526b651078c3e655112ca",
    "trust_class": "S",
    "trusted": true
@@ -5464,12 +5853,12 @@
    "before": "(D.units.takeWhile (fun x => x.id != u)).filterMap (fun x =>\n    match x.content with\n    | .claim a => if x.asserted then some a else none\n    | _ => none)",
    "after": "(((D.units.takeWhile (fun x => x.id != u)).filterMap (fun x =>\n    match x.content with\n    | .claim a => if x.asserted then some a else none\n    | _ => none)).reverse.take 1)",
    "status": "KILLED",
-   "detail": "lean/VE/Presupposition/Examples.lean:707: Expression",
+   "detail": "lean/VE/Presupposition/Examples.lean:706: Expression",
    "raw_status": "KILLED",
-   "reads": "11032b2e3906fd0138812d57dc536568c7a42308753a7a1356431e461a3ab830",
+   "reads": "e6daed740ca114cb273948a2642fcff61c628a7a39041628635790dd7a1ba8a7",
    "killed_at": [
-    707,
-    707
+    706,
+    706
    ],
    "trust_class": "S",
    "trusted": true
@@ -5489,6 +5878,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:674: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "e2f0ae7f4d822b71539799ccf34b510f50021d2346dbacf6e5ccb5c770f47b44",
    "killed_at": [
     674,
@@ -5509,9 +5900,14 @@
    ],
    "before": "R.bases",
    "after": "(R.bases.reverse.take 1)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Presupposition/Examples.lean:716: Expression",
+   "raw_status": "KILLED",
+   "reads": "96fbf162e2c8d864431c7778a91d06c2048b23cb5c5ed8821812b810824850e4",
+   "killed_at": [
+    716,
+    717
+   ],
    "trust_class": "S",
    "trusted": true
   },
@@ -5530,6 +5926,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:515: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "1dd37bde1f0d59bf581fcf6168f98d1ad99e413a6f29713c161f8324de583ebd",
    "killed_at": [
     515,
@@ -5551,12 +5949,12 @@
    "before": "(D.units.takeWhile (fun x => x.id != u)).filterMap (fun x =>\n    match x.content with\n    | .claim a => if x.asserted then some a else none\n    | _ => none)",
    "after": "(((D.units.takeWhile (fun x => x.id != u)).filterMap (fun x =>\n    match x.content with\n    | .claim a => if x.asserted then some a else none\n    | _ => none)).drop 1)",
    "status": "KILLED",
-   "detail": "lean/VE/Presupposition/Examples.lean:706: Expression",
+   "detail": "lean/VE/Presupposition/Examples.lean:705: Expression",
    "raw_status": "KILLED",
-   "reads": "7b3d97bfcbf91c740ec29c08b6efdd1024dc440c3b2e3216d2c85efa33ce5f79",
+   "reads": "9d8afd1eb2c7179aa7193f1e3116c759e2862148526e93c2b95e6ec1b1987bc2",
    "killed_at": [
-    706,
-    706
+    705,
+    705
    ],
    "trust_class": "S",
    "trusted": true
@@ -5576,6 +5974,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:674: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "e2f0ae7f4d822b71539799ccf34b510f50021d2346dbacf6e5ccb5c770f47b44",
    "killed_at": [
     674,
@@ -5599,6 +5999,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:624: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "36d67c265aa8d8873905e1fe2dc71c35c23366f2873ea0702da6be606135244c",
    "killed_at": [
     624,
@@ -5622,6 +6024,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:624: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "36d67c265aa8d8873905e1fe2dc71c35c23366f2873ea0702da6be606135244c",
    "killed_at": [
     624,
@@ -5645,6 +6049,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:515: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "1dd37bde1f0d59bf581fcf6168f98d1ad99e413a6f29713c161f8324de583ebd",
    "killed_at": [
     515,
@@ -5668,6 +6074,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:624: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "36d67c265aa8d8873905e1fe2dc71c35c23366f2873ea0702da6be606135244c",
    "killed_at": [
     624,
@@ -5691,6 +6099,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:624: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "36d67c265aa8d8873905e1fe2dc71c35c23366f2873ea0702da6be606135244c",
    "killed_at": [
     624,
@@ -5714,6 +6124,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:515: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "1dd37bde1f0d59bf581fcf6168f98d1ad99e413a6f29713c161f8324de583ebd",
    "killed_at": [
     515,
@@ -5737,6 +6149,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:624: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "36d67c265aa8d8873905e1fe2dc71c35c23366f2873ea0702da6be606135244c",
    "killed_at": [
     624,
@@ -5760,6 +6174,8 @@
    "status": "INVALID",
    "detail": "Invalid field notation: Type of",
    "raw_status": "INVALID",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "bd2b9e55bda348f9f5357d269d574aa4b35a3f94d51526b651078c3e655112ca",
    "trust_class": "S",
    "trusted": true
@@ -5779,6 +6195,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:516: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "c6f82b0422ad442d1564d4496c35f93b7306bb5ae93570d754530988de243bb1",
    "killed_at": [
     516,
@@ -5802,6 +6220,8 @@
    "status": "INVALID",
    "detail": "Invalid field notation: Type of",
    "raw_status": "INVALID",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "bd2b9e55bda348f9f5357d269d574aa4b35a3f94d51526b651078c3e655112ca",
    "trust_class": "S",
    "trusted": true
@@ -5821,6 +6241,8 @@
    "status": "INVALID",
    "detail": "Invalid field `reverse`: The environment does not contain `Option.reverse`",
    "raw_status": "INVALID",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "bd2b9e55bda348f9f5357d269d574aa4b35a3f94d51526b651078c3e655112ca",
    "trust_class": "S",
    "trusted": true
@@ -5840,6 +6262,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:516: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "c6f82b0422ad442d1564d4496c35f93b7306bb5ae93570d754530988de243bb1",
    "killed_at": [
     516,
@@ -5863,6 +6287,8 @@
    "status": "INVALID",
    "detail": "Invalid field `drop`: The environment does not contain `Option.drop`",
    "raw_status": "INVALID",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "bd2b9e55bda348f9f5357d269d574aa4b35a3f94d51526b651078c3e655112ca",
    "trust_class": "S",
    "trusted": true
@@ -5879,9 +6305,14 @@
    ],
    "before": "R.baseTree.nodes",
    "after": "(R.baseTree.nodes.reverse.take 1)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Presupposition/Examples.lean:686: Expression",
+   "raw_status": "KILLED",
+   "reads": "afc867970f9471d9f0e421927e2a17328b3fe67d78b6772bc5ea4fe74e6725de",
+   "killed_at": [
+    686,
+    689
+   ],
    "trust_class": "S",
    "trusted": true
   },
@@ -5900,6 +6331,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:516: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "c6f82b0422ad442d1564d4496c35f93b7306bb5ae93570d754530988de243bb1",
    "killed_at": [
     516,
@@ -5923,6 +6356,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:674: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "6626cf2c7c3a27b78530f7e32f647a25594e0c8f58e347ca72813b0e67cb3127",
    "killed_at": [
     674,
@@ -5946,6 +6381,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:674: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "6626cf2c7c3a27b78530f7e32f647a25594e0c8f58e347ca72813b0e67cb3127",
    "killed_at": [
     674,
@@ -5969,6 +6406,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:516: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "c6f82b0422ad442d1564d4496c35f93b7306bb5ae93570d754530988de243bb1",
    "killed_at": [
     516,
@@ -5992,6 +6431,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:674: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "6626cf2c7c3a27b78530f7e32f647a25594e0c8f58e347ca72813b0e67cb3127",
    "killed_at": [
     674,
@@ -6015,6 +6456,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:674: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "6626cf2c7c3a27b78530f7e32f647a25594e0c8f58e347ca72813b0e67cb3127",
    "killed_at": [
     674,
@@ -6038,6 +6481,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:516: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "c6f82b0422ad442d1564d4496c35f93b7306bb5ae93570d754530988de243bb1",
    "killed_at": [
     516,
@@ -6061,6 +6506,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:674: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "6626cf2c7c3a27b78530f7e32f647a25594e0c8f58e347ca72813b0e67cb3127",
    "killed_at": [
     674,
@@ -6084,6 +6531,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:516: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "c6f82b0422ad442d1564d4496c35f93b7306bb5ae93570d754530988de243bb1",
    "killed_at": [
     516,
@@ -6107,6 +6556,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:517: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "011935c8b7d1acdf83614ae85082b8030fc4ff4a5d9ac9791e9fcbadc53c7a6f",
    "killed_at": [
     517,
@@ -6130,6 +6581,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:517: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "011935c8b7d1acdf83614ae85082b8030fc4ff4a5d9ac9791e9fcbadc53c7a6f",
    "killed_at": [
     517,
@@ -6153,6 +6606,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:517: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "011935c8b7d1acdf83614ae85082b8030fc4ff4a5d9ac9791e9fcbadc53c7a6f",
    "killed_at": [
     517,
@@ -6176,6 +6631,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:517: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "011935c8b7d1acdf83614ae85082b8030fc4ff4a5d9ac9791e9fcbadc53c7a6f",
    "killed_at": [
     517,
@@ -6199,6 +6656,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:517: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "011935c8b7d1acdf83614ae85082b8030fc4ff4a5d9ac9791e9fcbadc53c7a6f",
    "killed_at": [
     517,
@@ -6222,6 +6681,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:517: Expression",
    "raw_status": "KILLED",
+   "reused_from": "bd818c4d85d63f1c12f70ecb2b813758abe6f7f4",
+   "carried": "checks",
    "reads": "011935c8b7d1acdf83614ae85082b8030fc4ff4a5d9ac9791e9fcbadc53c7a6f",
    "killed_at": [
     517,
