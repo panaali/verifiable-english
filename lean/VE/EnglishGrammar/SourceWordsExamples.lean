@@ -124,16 +124,17 @@ def ev : List String := ["events@0"]
   ("The act caused a harm.", "events-caused")].all fun (s, id) => (adviceOf ev s).map (·.1) == some id
 #guard (adviceOf ev "The act caused a harm.").map (·.2) == some eventsLinkAdvice
 
--- U1 states its silence (ET-E1's rewording); U2 gives the opposite modality.
-#guard match eventsOf "until" "source event" with
-  | some (.readings [u1, u2]) => (u1.wording.splitOn "This document does not say whether").length == 2 &&
-      (u2.wording.splitOn "<opposite of m>").length == 2
-  | _ => false
--- T11d's reading set (SR-B4): three candidates, each with both end dates named.
-#guard match eventsOf "within" "source date" with
-  | some (.readings cs) => cs.length == 3 && cs.all fun c => (c.wording.splitOn "<end>").length == 2 &&
-      ((c.wording.splitOn "<date>").length == 2 || (c.wording.splitOn "<start>").length == 2)
-  | _ => false
+-- U1 states its silence (ET-E1's rewording); U2 is ET-E1's measured sentence; T11d's W1-W3 (SR-B4), spec 8.1's
+-- sentences with their dates and verb phrase as placeholders. The literals pin the rows' text.
+#guard eventsOf "until" "source event" == some (.readings ([
+  "<agent> <m> <act> on each day, if it is not the case that <event> <vp> no later than that day. This document does not say whether <agent> <m> <act> on a day on which <event> <vp> no later than that day.",
+  "<agent> <m> <act> on each day, if it is not the case that <event> <vp> no later than that day. <agent> <opposite of m> <act> on each day, if <event> <vp> no later than that day."].map
+  (⟨·, "E's day, the day before it and a later day: with the act unspecified, from E's day U1 does not say and U2 gives the opposite modality."⟩)))
+#guard eventsOf "within" "source date" == some (.readings ([
+  "<event> <vp> on or after <date>, and <event> <vp> no later than <end>.",
+  "<event> <vp> on or after <date>, and <event> <vp> before <end>.",
+  "<event> <vp> on or after <start>, and <event> <vp> no later than <end>."].map
+  (⟨·, "An act on <end> (W1 and W3 against W2) and an act before <date> and on or after <start> (W3 against W1 and W2)."⟩)))
 -- The profile-fixed wordings are Lean's checker's, in the frames `ve/english.py` reads.
 #guard [("before", "before"), ("contributed to", "link contributed"), ("was necessary for", "link necessary")].map
     (fun (w, f) => eventsOf w f) ==

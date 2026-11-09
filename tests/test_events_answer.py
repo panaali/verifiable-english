@@ -73,9 +73,11 @@ def test_genuine_answers_are_relayed_with_every_kind_of_label(genuine):
     for name, (case, row) in genuine.items():
         assert row["status"] == "ok", (name, row)
         shown = events.answer(row, case)
-        assert list(shown.premises) == [p["label"] for p in row["events_premises"]]
-        block = case["environment"]["events"]
-        assert dict(shown.dates) == {events.constant(d): d for d in (*block["dates"], block["anchor"])}
+        assert list(shown.premises) == sorted(p["label"] for p in row["events_premises"])
+        lean = {k: v for k, v in row["base_environment"]["vocabulary"]["constants"].items() if k.startswith("date__")}
+        anchor = case["environment"]["events"]["anchor"]
+        assert dict(shown.dates) == {k: (anchor if v["description"] == "the date of this document" else v["description"])
+                                     for k, v in lean.items()}
     kinds = {label.split(":")[1] for label in events.answer(*reversed(genuine["rich"])).premises}
     assert kinds == {"irreflexive", "transitive", "linear", "date", "adjacent", "one_day", "one_begin", "one_end",
                      "not_before_begin", "link_forward", "link_weaker"}
@@ -84,6 +86,37 @@ def test_genuine_answers_are_relayed_with_every_kind_of_label(genuine):
 def test_the_relay_entry_asks_lean_and_binds(genuine):
     case, row = genuine["rich"]
     assert events.elaborate(case) == events.answer(row, case)
+
+
+def test_a_deep_formula_is_walked_to_its_end(genuine):
+    """A schema-valid formula 5,000 connectives deep is walked without recursion: an index out of range at its bottom
+    is `CheckerUnavailable`, and the same chain with its index in range is bound."""
+    case, row = genuine["plain"]
+    for index, refused in ((1, True), (0, False)):
+        mutant = deepcopy(row)
+        chain = ["binary", "before", ["var", index], ["var", 0]]
+        for _ in range(5_000):
+            chain = ["not", chain]
+        mutant["events_premises"][0]["ast"] = ["forall", "day", chain]
+        if refused:
+            with pytest.raises(CheckerUnavailable, match="not bound"):
+                events.answer(mutant, case)
+        else:
+            assert events.answer(mutant, case).premises["events:irreflexive"] == ["forall", "day", chain]
+
+
+def test_a_request_at_the_date_limit_with_many_links_is_bound(lean_executable):
+    """64 consecutive named dates (Lean's limit) and twenty links over one sort pair: 63 date and 63 adjacency rows,
+    100 weaker pairs; Lean answers within its limits and the binder binds every row."""
+    kind, env, source = _fixture("u2-unspecified-default")
+    days = [f"2026-{m:02d}-{d:02d}" for m, n in ((1, 31), (2, 28), (3, 31)) for d in range(1, n + 1)][:64]
+    links = {f"link_{form}_{i}": (["act", "act"], form, "{0} contributed to {1}" if form == "contributed"
+                                  else "{0} was necessary for {1}") for form in ("contributed", "necessary") for i in range(10)}
+    env = rich_environment(env, days[:-1], links=links)
+    env["events"]["anchor"] = days[-1]
+    case = layered.case(kind, env, source, "norm-defaults-elaborate", open_terms=open_terms(env))
+    shown = events.elaborate(case)
+    assert len(shown.dates) == 64 and len(shown.premises) == 3 + 63 + 63 + 1 + 3 + 20 + 100
 
 
 def test_an_answer_bound_to_another_request_is_unavailable(genuine):

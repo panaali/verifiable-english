@@ -23,11 +23,11 @@ The bindings, a closed list of relations to the request's block (dates with the 
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import date, timedelta
 from types import MappingProxyType
 
 from .backends.service_schema import Invalid, check_row
 from .errors import CheckerUnavailable
+from .units import day_number
 
 PROFILE = "events@0"
 ORDER_LABELS = ("events:irreflexive", "events:transitive", "events:linear")
@@ -80,7 +80,7 @@ def _labels(block: dict, predicates: dict, dates: list) -> set:
     contributed link over the same declared sorts."""
     ordered = sorted(dates)
     consecutive = list(zip(ordered, ordered[1:]))
-    adjacent = [(a, b) for a, b in consecutive if date.fromisoformat(b) - date.fromisoformat(a) == timedelta(days=1)]
+    adjacent = [(a, b) for a, b in consecutive if day_number(b) == day_number(a) + 1]
     links = block["links"]
     weaker = [(n["predicate"], c["predicate"]) for n in links if n["form"] == "necessary" for c in links
               if c["form"] == "contributed" and predicates[c["predicate"]]["arguments"] ==
@@ -104,24 +104,24 @@ def _bind_labels(rows: list, block: dict, predicates: dict, dates: list) -> None
         _unavailable(f"the premise for {sorted(missing)[0]!r} of the request is missing")
 
 
-def _bind_formula(ast: list, depth: int, names: dict) -> None:
+def _bind_formula(ast: list, names: dict) -> None:
     """Every sort, predicate and constant the formula names is the request's (constants: the bound base
-    environment's), and every variable index is under one of its binders."""
-    tag = ast[0]
-    if tag in ("top", "bottom"):
-        return
-    if tag in ("forall", "exists") and ast[1] in names["sorts"]:
-        return _bind_formula(ast[2], depth + 1, names)
-    if tag in ("not", "and", "or", "implies"):
-        for part in ast[1:]:
-            _bind_formula(part, depth, names)
-        return
-    terms = ast[2:] if tag in ("unary", "binary") and ast[1] in names["predicates"] else ast[1:] if tag == "eq" else None
-    if terms is None:
-        _unavailable(f"a premise names {tag} {ast[1] if len(ast) > 1 else ''}, which the request does not declare")
-    for term in terms:
-        if not ((term[0] == "var" and term[1] < depth) or (term[0] == "const" and term[1] in names["constants"])):
-            _unavailable(f"a premise's term {term} is not bound in the request")
+    environment's), and every variable index is under one of its binders. An explicit stack: any depth the schema
+    admits is walked without recursion."""
+    stack = [(ast, 0)]
+    while stack:
+        node, depth = stack.pop()
+        tag = node[0]
+        if tag in ("forall", "exists") and node[1] in names["sorts"]:
+            stack.append((node[2], depth + 1))
+        elif tag in ("not", "and", "or", "implies"):
+            stack.extend((part, depth) for part in node[1:])
+        elif tag in ("unary", "binary", "eq") and (tag == "eq" or node[1] in names["predicates"]):
+            for term in node[1 if tag == "eq" else 2:]:
+                if not ((term[0] == "var" and term[1] < depth) or (term[0] == "const" and term[1] in names["constants"])):
+                    _unavailable(f"a premise's term {term} is not bound in the request")
+        elif tag not in ("top", "bottom"):
+            _unavailable(f"a premise names {tag} {node[1] if len(node) > 1 else ''}, which the request does not declare")
 
 
 def answer(row: object, case: dict) -> EventsAnswer:
@@ -141,9 +141,11 @@ def answer(row: object, case: dict) -> EventsAnswer:
     names = {"sorts": vocabulary["sorts"], "predicates": vocabulary["predicates"],
              "constants": row["base_environment"]["vocabulary"]["constants"]}
     for premise in row["events_premises"]:
-        _bind_formula(premise["ast"], 0, names)
-    return EventsAnswer(MappingProxyType({p["label"]: p["ast"] for p in row["events_premises"]}),
-                        MappingProxyType(named))
+        _bind_formula(premise["ast"], names)
+    # Shown by label: the order of the answer's rows changes nothing shown.
+    return EventsAnswer(MappingProxyType({p["label"]: p["ast"] for p in sorted(row["events_premises"],
+                                                                                 key=lambda p: p["label"])}),
+                        MappingProxyType(dict(sorted(named.items()))))
 
 
 def elaborate(case: dict) -> EventsAnswer:
