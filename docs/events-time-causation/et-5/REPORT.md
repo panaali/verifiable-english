@@ -93,7 +93,11 @@ No Rust changed.
   `docs/trust-baseline.json`; FOLLOW-UPS.md "## et-5 (2026-11-09)" asks for the ties pass.
 - **Trust mutants** (`mac-pytest.sh --trustmut -- --max-mutants 1000 --test
   lean/VE/EnglishGrammar/SourceWordsExamples.lean --allow docs/events-time-causation/et-5/trust-mutants-allow.json
-  --json docs/events-time-causation/et-5/trust-mutants.json`; the Mac was unreachable, so it ran on the VM): TM_RESULT.
+  --json docs/events-time-causation/et-5/trust-mutants.json`; the Mac was unreachable, so it ran on the VM): full run at `a7e9981e5`, "129 KILLED, 1 SURVIVOR, 0 UNKNOWN, 16
+  INVALID, 8 ALLOWED"; the survivor (`advice` reading only each row's first pattern, `Advice.lean:83`) is killed by
+  the guard added in `fadb85749` ("brings about" is `alternatives-results`' second pattern). `--rescore` of that run on
+  `fadb85749` (a check-only change), exit 0: "130 KILLED, 0 SURVIVOR, 0 UNKNOWN, 16 INVALID, 8 ALLOWED, 0 NOT RUN;
+  145 carried". Eleven definitions, 154 mutants; the allowed eight are the four allow-file rows.
   A first sweep, stopped when the classes changed its plan, found three survivors: `grammarCase`'s export cut to its
   first row or without its last (killed now by `SourceWordsExamples`' `exportedAdvice` guards and
   `test_the_grammar_export_lists_the_twelve_advice_rows_after_the_others`), and `sourceWordAdvice` on
@@ -109,8 +113,16 @@ No Rust changed.
 - **Generated:** `tools/regen_generated.py --write` once, then `--check` passes (the assurance doc from
   `tools/assurance_manifest.py --write`; `Run.lean`'s whole-file pin moved to its new hash, range 1-759 unchanged).
   `tools/english_grammar_gen.py --check` passes at `actions_version` 46 (DELTA row 3).
-- **Selected tests:** SELECTED_RESULT.
-- Pre-existing reds (main-known-red.txt): SELECTED_RED.
+- **Selected tests** (`MAC_PYTEST_NO_DEFER=1 mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`, on
+  the committed, clean `a7e9981e5`; the Mac was unreachable, so the VM ran it): "recorded 466 units for tree
+  7b0d524e41 ... 1 failed": `tools/test_layer_policy.py::LayerSelectionTests::test_documented_python_layers_match_policy`
+  (`events` missing from layer 4 of `docs/ARCHITECTURE-LAYERS.md`), fixed in `docs/ARCHITECTURE-LAYERS.md` and rerun
+  alone: "Ran 1 test ... OK". `tests/test_events_answer.py`, `tests/test_events_wordings.py`,
+  `tests/test_consolidation_tools.py`, `tests/test_assurance_manifest.py` and `tests/test_english_grammar_gen.py`
+  exit 0. An earlier run, stopped unfinished, had found `test_committed_trust_table_covers_every_declaration` (95
+  unclassified lines), fixed by the classes above. After that run, only a Lean `#guard` (the advice-pattern
+  survivor), `lean/declarations.txt`, docs and the trust-mutant evidence changed.
+- Pre-existing reds (main-known-red.txt): none was hit.
 
 ## DRI decisions this item read or asked
 
