@@ -62,7 +62,7 @@ theorem layeredCase_fits (L : Wire.LayeredU) (id kind : String) (j : Json)
   all_goals (try (intro a ha; injection ha with ha; subst ha))
   all_goals read_kind
   all_goals (try simp only [VE.Route.Wire.ok, Wire.layeredElaborate, Wire.regeneratedU, VE.Norms.Wire.regenerated,
-    VE.NormDefaults.Packs.elaborateArrays, VE.NormDefaults.Packs.labelledJson, List.append_nil, Wire.ReportG.toJson, Wire.conflictFields, Wire.statusFields, Wire.underJson, Wire.atomsJson])
+    VE.NormDefaults.Packs.elaborateArrays, VE.NormDefaults.Packs.eventsArray, VE.NormDefaults.Packs.labelledJson, List.append_nil, Wire.ReportG.toJson, Wire.conflictFields, Wire.statusFields, Wire.underJson, Wire.atomsJson])
   all_goals fits using line_fits
   all_goals try
     exfalso
@@ -232,7 +232,7 @@ theorem softCase_fits (id kind : String) (j : Json)
     subst hka
     exact runAdmissionX_fits id j _ _ hi hk hp _ ‹_›
   · read_kind
-    simp only [VE.Route.Wire.ok]
+    simp only [Admission.certificateAnswer, VE.Route.Wire.ok]
     fits
 
 theorem runCase_fits (dec : Wire.UDecoder) (j : Json) (hp : usesNormDefaultsPath j = true) :
@@ -267,16 +267,35 @@ theorem of_elaborate {v : Json} (hp : usesNormDefaultsPath req = true) (hk : VE.
   fits_invert h
   all_goals fits_from h
 
+theorem runCaseRouted_fits (j : Json) (hp : usesNormDefaultsPath j = true) :
+    OkFits j Skeletons.normDefaults (runCaseRouted j) := by
+  unfold runCaseRouted
+  split
+  · exact OkP.of (Norms.runElaborate_fits _ j) (fun _ h => of_elaborate hp ‹_› h)
+  · exact runCase_fits _ j hp
+
+theorem runCaseE_fits (j : Json) (hp : usesNormDefaultsPath j = true) :
+    OkFits j Skeletons.normDefaults (runCaseE j) := by
+  unfold runCaseE
+  okfits
+  all_goals first
+    | exact runCaseRouted_fits j hp
+    | skip
+  all_goals read_kind
+  all_goals (try contra)
+  all_goals (try simp only [Admission.certificateAnswer, VE.Route.Wire.ok])
+  all_goals fits
+
 theorem runGated_fits (j : Json) (hp : usesNormDefaultsPath j = true) :
     OkFits j Skeletons.normDefaults (runGated j) := by
-  unfold runGated runCaseRouted
+  unfold runGated
   split
   · exact OkP.error
   · split
     · exact OkP.error
     · split
-      · exact OkP.of (Norms.runElaborate_fits _ j) (fun _ h => of_elaborate hp ‹_› h)
-      · exact runCase_fits _ j hp
+      · exact OkP.error
+      · exact runCaseE_fits j hp
 
 theorem runCaseReported_fits (j : Json) (hj : CaseWF j) : Fits j Skeletons.normDefaults (runCaseReported j) := by
   unfold runCaseReported
