@@ -19,7 +19,7 @@
    "definition": "VE.Acts.Run.actJson",
    "behaviour": "an act names no tokens",
    "status": "KILLED",
-   "test": "lean/VE/Acts/RunExamples.lean:45, lean/VE/Acts/RunExamples.lean:58, lean/VE/Acts/RunExamples.lean:60, lean/VE/Acts/RunExamples.lean:61"
+   "test": "lean/VE/Acts/RunExamples.lean:45, lean/VE/Acts/RunExamples.lean:66, lean/VE/Acts/RunExamples.lean:68, lean/VE/Acts/RunExamples.lean:69"
   },
   {
    "id": "actJson-text-is-act",
@@ -37,7 +37,7 @@
    "definition": "VE.Acts.Run.actJson",
    "behaviour": "a plain act is rendered without its *to*",
    "status": "KILLED",
-   "test": "lean/VE/Acts/RunExamples.lean:45, lean/VE/Acts/RunExamples.lean:58, lean/VE/Acts/RunExamples.lean:60, lean/VE/Acts/RunExamples.lean:61"
+   "test": "lean/VE/Acts/RunExamples.lean:45, lean/VE/Acts/RunExamples.lean:66, lean/VE/Acts/RunExamples.lean:68, lean/VE/Acts/RunExamples.lean:69"
   },
   {
    "id": "readingJson-first-act",
@@ -46,7 +46,7 @@
    "definition": "VE.Acts.Run.readingJson",
    "behaviour": "a reading lists its first act only",
    "status": "KILLED",
-   "test": "lean/VE/Acts/RunExamples.lean:45, lean/VE/Acts/RunExamples.lean:58, lean/VE/Acts/RunExamples.lean:61"
+   "test": "lean/VE/Acts/RunExamples.lean:45, lean/VE/Acts/RunExamples.lean:66, lean/VE/Acts/RunExamples.lean:69"
   },
   {
    "id": "listReadings-no-byte-limit",
@@ -55,7 +55,7 @@
    "definition": "VE.Acts.Run.listReadings",
    "behaviour": "a phrase over 400 bytes is read",
    "status": "KILLED",
-   "test": "lean/VE/Acts/RunExamples.lean:79"
+   "test": "lean/VE/Acts/RunExamples.lean:87"
   },
   {
    "id": "listReadings-no-tokens",
@@ -91,7 +91,7 @@
    "definition": "VE.Acts.Run.listReadings",
    "behaviour": "the listing's verdict is outside the shape (`runActReadings_fits` must break)",
    "status": "KILLED",
-   "test": "lean/ResponseShape/Encoders/ActReadings.lean:35"
+   "test": "lean/ResponseShape/Encoders/ActReadings.lean:43"
   },
   {
    "id": "listed-sign-ignored",
@@ -100,7 +100,7 @@
    "definition": "VE.Acts.Run.listed",
    "behaviour": "the rule's sign is not read: *must not* is read as *may*",
    "status": "KILLED",
-   "test": "lean/VE/Acts/RunExamples.lean:32, lean/VE/Acts/RunExamples.lean:35, lean/VE/Acts/RunExamples.lean:38, lean/VE/Acts/RunExamples.lean:93"
+   "test": "lean/VE/Acts/RunExamples.lean:32, lean/VE/Acts/RunExamples.lean:35, lean/VE/Acts/RunExamples.lean:38, lean/VE/Acts/RunExamples.lean:101"
   },
   {
    "id": "listed-no-frames",
@@ -109,7 +109,7 @@
    "definition": "VE.Acts.Run.listed",
    "behaviour": "the request's adverbs are not read",
    "status": "KILLED",
-   "test": "lean/VE/Acts/RunExamples.lean:32, lean/VE/Acts/RunExamples.lean:35, lean/VE/Acts/RunExamples.lean:37, lean/VE/Acts/RunExamples.lean:38, lean/VE/Acts/RunExamples.lean:45, lean/VE/Acts/RunExamples.lean:72, lean/VE/Acts/RunExamples.lean:100"
+   "test": "lean/VE/Acts/RunExamples.lean:32, lean/VE/Acts/RunExamples.lean:35, lean/VE/Acts/RunExamples.lean:37, lean/VE/Acts/RunExamples.lean:38, lean/VE/Acts/RunExamples.lean:45, lean/VE/Acts/RunExamples.lean:80, lean/VE/Acts/RunExamples.lean:108"
   },
   {
    "id": "runActReadings-refusal-listed",
@@ -118,7 +118,7 @@
    "definition": "VE.Acts.Run.runActReadings",
    "behaviour": "a refusal is answered as an empty listing",
    "status": "KILLED",
-   "test": "lean/VE/Acts/RunExamples.lean:40, lean/VE/Acts/RunExamples.lean:79, lean/VE/Acts/RunExamples.lean:84, lean/VE/Acts/RunExamples.lean:88, lean/VE/Acts/RunExamples.lean:93, lean/VE/Acts/RunExamples.lean:96"
+   "test": "lean/VE/Acts/RunExamples.lean:40, lean/VE/Acts/RunExamples.lean:87, lean/VE/Acts/RunExamples.lean:92, lean/VE/Acts/RunExamples.lean:96, lean/VE/Acts/RunExamples.lean:101, lean/VE/Acts/RunExamples.lean:104"
   },
   {
    "id": "verdictOf-no-limit",
@@ -127,7 +127,7 @@
    "definition": "VE.Acts.Run.verdictOf",
    "behaviour": "a limit is answered REFUSED",
    "status": "KILLED",
-   "test": "lean/VE/Acts/RunExamples.lean:79, lean/VE/Acts/RunExamples.lean:84, lean/VE/Acts/RunExamples.lean:88"
+   "test": "lean/VE/Acts/RunExamples.lean:87, lean/VE/Acts/RunExamples.lean:92, lean/VE/Acts/RunExamples.lean:96"
   },
   {
    "id": "spans-no-fold",
@@ -154,7 +154,7 @@
    "definition": "VE.Acts.Run.fromOf",
    "behaviour": "the subsequence is placed leftmost, so *join* reads *form*'s *to*",
    "status": "KILLED",
-   "test": "lean/VE/Acts/RunExamples.lean:58, lean/VE/Acts/RunExamples.lean:60, lean/VE/Acts/RunExamples.lean:61, lean/VE/Acts/RunExamples.lean:65"
+   "test": "lean/VE/Acts/RunExamples.lean:66, lean/VE/Acts/RunExamples.lean:68, lean/VE/Acts/RunExamples.lean:69, lean/VE/Acts/RunExamples.lean:73"
   },
   {
    "id": "fromOf-reuse",
@@ -163,7 +163,7 @@
    "definition": "VE.Acts.Run.fromOf",
    "behaviour": "a left-over token reuses an index the act already reads",
    "status": "KILLED",
-   "test": "lean/VE/Acts/RunExamples.lean:45, lean/VE/Acts/RunExamples.lean:60"
+   "test": "lean/VE/Acts/RunExamples.lean:45, lean/VE/Acts/RunExamples.lean:68"
   },
   {
    "id": "sameTok-case",
@@ -172,7 +172,7 @@
    "definition": "VE.Acts.Run.sameTok",
    "behaviour": "words are compared case-sensitively",
    "status": "KILLED",
-   "test": "lean/VE/Acts/RunExamples.lean:65"
+   "test": "lean/VE/Acts/RunExamples.lean:73"
   },
   {
    "id": "registry-name",
