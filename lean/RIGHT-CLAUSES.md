@@ -1,6 +1,6 @@
 # `right-clauses@0`: the Lean theorems in plain words
 
-Spec: docs/spec/right-clauses.md (draft 3), section 8. Files: `lean/VE/RightClauses/{Tree,Plain,Relation}.lean`, fixtures
+Spec: docs/spec/right-clauses.md (draft 3), section 8. Files: `lean/VE/RightClauses/{Tree,Plain,Relation,PlainWellFormed}.lean`, fixtures
 in `Examples.lean`. `Wire.lean` (8.5) is cmp-s3b's. Nothing here imports `VE.Readings`.
 
 A structured line is a rights line with clauses (base formulas with their source spans), at most one relation (a
@@ -17,7 +17,14 @@ declared binary base predicate between two of its slots, maybe total on the hold
 - `plain_limPremises`: the limitation premises `Lim_D` are unchanged.
 - `plain_guard`: a structured line's plain guard holds exactly where its own guard, every clause and the relation
   atom hold.
-- `plain_wellFormed` (8.3): not proved yet (cmp-s3ab).
+- `plain_wellFormed` (8.3): if the structured lines check and the rights document is well formed, `plain D` is well
+  formed or its check reports a resource limit (a longer guard can exceed the AST budget). Proved in
+  `PlainWellFormed.lean` (cmp-s3a-cfr-1) over the modules in `PlainWellFormed/`: `checkRights` reads the same
+  document, every soft and W1 check but a size limit reads the same answer, and every formula the rights facts type
+  still types, since the added conjuncts are base formulas typed in the line's context.
+- `PlainWellFormed/Corollaries.lean`: `plain_wellFormedRights`, and `clauseSlot_labelled_of_doc`,
+  `clause_fails_not_selected_of_doc`, `relation_some_bearer_of_doc`: Relation.lean's theorems with
+  `WellFormedRights (plain D)` replaced by `WellFormedRights D.doc` and no resource-limit report.
 
 ## Relation.lean (cmp-s3)
 
