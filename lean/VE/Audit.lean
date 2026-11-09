@@ -4474,13 +4474,17 @@ import VE.WireContract.Engine
 #print axioms VE.Purposes.markerAgrees_kind
 #print axioms VE.Purposes.markerHonest_labelled
 #print axioms VE.Purposes.nonfactive_iff
+#print axioms VE.Purposes.packsInert_iff
+#print axioms VE.Purposes.packsInert_nil
 #print axioms VE.Purposes.require_iff
 #print axioms VE.Purposes.sameUnit_parent
 #print axioms VE.Purposes.shareOf_render
 #print axioms VE.Purposes.shareOk_iff
+#print axioms VE.Purposes.shownUnder_iff
 #print axioms VE.Purposes.sideAdjacent_iff
 #print axioms VE.Purposes.side_kind
 #print axioms VE.Purposes.unit_bind
+#print axioms VE.Purposes.unlinkedActive_iff
 #print axioms VE.Purposes.unstated_eq
 #print axioms VE.Question.Run.oneFields_gated
 #print axioms VE.Question.Run.statusCodes_classed
