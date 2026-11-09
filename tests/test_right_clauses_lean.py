@@ -8,13 +8,12 @@ from __future__ import annotations
 from pathlib import Path
 import re
 
-from tools.lean_statements import inventory_path  # noqa: E402
+from tools.lean_statements import inventory_path
 
 ROOT = Path(__file__).resolve().parents[1]
 SPEC = ROOT / 'docs/spec/right-clauses.md'
 LEAN = ROOT / 'lean/VE/RightClauses/PlainWellFormed.lean'
 PROOF_DIR = ROOT / 'lean/VE/RightClauses/PlainWellFormed'
-AXIOMS = inventory_path('lean/axioms.txt')
 STANDARD = {'propext', 'Classical.choice', 'Quot.sound'}
 COROLLARIES = ('plain_wellFormedRights', 'clauseSlot_labelled_of_doc', 'clause_fails_not_selected_of_doc',
                'relation_some_bearer_of_doc')
@@ -42,7 +41,8 @@ def lean_statement(path: Path = LEAN) -> str | None:
 
 
 def audited_axioms(name: str) -> list[str] | None:
-    match = re.search(rf"^'VE\.RightClauses\.{re.escape(name)}' (.*)$", AXIOMS.read_text(), flags=re.M)
+    record = inventory_path('lean/axioms.txt').read_text()
+    match = re.search(rf"^'VE\.RightClauses\.{re.escape(name)}' (.*)$", record, flags=re.M)
     return re.findall(r'[\w.]+', match[1].partition('[')[2]) if match else None
 
 

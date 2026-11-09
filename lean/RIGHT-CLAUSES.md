@@ -20,11 +20,13 @@ declared binary base predicate between two of its slots, maybe total on the hold
 - `plain_wellFormed` (8.3): if the structured lines check and the rights document is well formed, `plain D` is well
   formed or its check reports a resource limit (a longer guard can exceed the AST budget). Proved in
   `PlainWellFormed.lean` (cmp-s3a-cfr-1) over the modules in `PlainWellFormed/`: `checkRights` reads the same
-  document, every soft and W1 check but a size limit reads the same answer, and every formula the rights facts type
-  still types, since the added conjuncts are base formulas typed in the line's context.
+  document; the soft check of the correlated document, which passes for `D.doc`, passes or reports a resource limit
+  for `plain D`; the identifier check reads the same names; and every formula the rights facts type still types,
+  since the added conjuncts are base formulas typed in the line's context.
 - `PlainWellFormed/Corollaries.lean`: `plain_wellFormedRights`, and `clauseSlot_labelled_of_doc`,
   `clause_fails_not_selected_of_doc`, `relation_some_bearer_of_doc`: Relation.lean's theorems with
-  `WellFormedRights (plain D)` replaced by `WellFormedRights D.doc` and no resource-limit report.
+  `WellFormedRights (plain D)` replaced by `WellFormedRights D.doc` and the hypothesis `hr` that
+  `validateRights (plain D)` does not fail with a `ResourceLimit: ` error, the outcome 8.3 leaves open.
 
 ## Relation.lean (cmp-s3)
 

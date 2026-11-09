@@ -175,7 +175,7 @@ theorem condF_ext {RN : String × Line} (hRN : RN ∈ linesOf D.doc) (n : VE.Rig
   | blockedBy M =>
     obtain ⟨c, hcd, hb, rfl⟩ := mem_narrowings_blocked hn
     simp only [VE.Rights.condF, nodeNamed_plain F, nodeNamed_self F hcd, Option.map_some, correlate_mapG F]
-    have := selects'_ext hg c (direct_sub F hcd)
+    have := selectsP_ext hg c (direct_sub F hcd)
     rw [blocks_ctx hg.dual hb] at this
     exact this
   | dominatedBy M =>
@@ -210,7 +210,7 @@ theorem rightsSemanticCheck_plain : VE.Rights.rightsSemanticCheck (plain D) = tr
         (VE.Norms.size (VE.SoftNorms.soften (VE.Rights.correlate D.doc)))) (VE.Rights.sortsOf D.doc RN.2).reverse = true →
       b.check (VE.Norms.envAt (VE.SoftNorms.soften (VE.Rights.correlate D.doc))
         (VE.Norms.size (VE.SoftNorms.soften (VE.Rights.correlate D.doc)))) (VE.Rights.sortsOf D.doc RN.2).reverse = true :=
-    fun RN a b hab ha => Plus.check' (envOK_envAt hg _) hab ha
+    fun RN a b hab ha => Plus.checkB (envOK_envAt hg _) hab ha
   refine ⟨⟨⟨?_, ?_⟩, ?_⟩, ?_⟩
   · intro X hX B hB
     simp only [mapG_nodes, List.mem_map] at hX
@@ -231,7 +231,7 @@ theorem rightsSemanticCheck_plain : VE.Rights.rightsSemanticCheck (plain D) = tr
     have hXC : VE.Rights.nodeOf D.doc RN.2 ∈ (VE.Rights.correlate D.doc).T.nodes := by
       simp only [VE.Rights.correlate, List.mem_append, List.mem_map]; exact Or.inl (Or.inl ⟨RN, hRN, rfl⟩)
     refine ⟨⟨⟨⟨FExt.check (hP RN) (ownGuard_ext F h hRN) ho, ?_⟩, ?_⟩, ?_⟩, ?_⟩
-    · have := selects'_check hg _ hXC hsel
+    · have := selectsP_check hg _ hXC hsel
       rw [← envAt_mapG hg, ← size_mapG hg]
       simpa only [VE.Rights.selectsR, hY, correlate_mapG F] using this
     · intro n hn'

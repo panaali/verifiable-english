@@ -6017,11 +6017,284 @@
 'VE.Reports.unit_shape' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Reports.unreported_key_free' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Reports.wf_of' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.DualCtx.oblig' does not depend on any axioms
+'VE.RightClauses.PWF.DualCtx.perm' does not depend on any axioms
+'VE.RightClauses.PWF.EnvOKB.hide' depends on axioms: [propext]
+'VE.RightClauses.PWF.FExt.anyF' depends on axioms: [propext]
+'VE.RightClauses.PWF.FExt.check' depends on axioms: [propext]
+'VE.RightClauses.PWF.FExt.foldl_or' depends on axioms: [propext]
+'VE.RightClauses.PWF.FExt.ite' depends on axioms: [propext]
+'VE.RightClauses.PWF.FExt.mono' does not depend on any axioms
+'VE.RightClauses.PWF.FExt.preds' depends on axioms: [propext]
+'VE.RightClauses.PWF.Facts.ident' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.Facts.rights' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.Facts.sem' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.Facts.soft' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.Facts.ss' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.Facts.w1sem' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.GHyp.dual' depends on axioms: [propext]
+'VE.RightClauses.PWF.GHyp.envC' depends on axioms: [propext]
+'VE.RightClauses.PWF.GHyp.envP' depends on axioms: [propext]
+'VE.RightClauses.PWF.GHyp.guards' depends on axioms: [propext]
+'VE.RightClauses.PWF.NRel.applies' depends on axioms: [propext]
+'VE.RightClauses.PWF.NRel.check' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.NRel.preds' depends on axioms: [propext]
+'VE.RightClauses.PWF.Plus.check' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.Plus.checkB' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.Plus.preds' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.QC_preds' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.RL.isPrefixOf' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.TRel.check' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.TRel.checkW1' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.TRel.cidx_eq' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.TRel.dependencyOrder' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.TRel.filter_eq' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.TRel.formulas_check' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.TRel.height' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.TRel.heightExceeds' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.TRel.name' does not depend on any axioms
+'VE.RightClauses.PWF.TRel.nodeOKT' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.TRel.over' does not depend on any axioms
+'VE.RightClauses.PWF.TRel.overBody_eq' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.TRel.precedenceNodes' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.TRel.pred' does not depend on any axioms
+'VE.RightClauses.PWF.TRel.rel' does not depend on any axioms
+'VE.RightClauses.PWF.TRel.semanticCheck' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.TRel.sign' does not depend on any axioms
+'VE.RightClauses.PWF.TRel.stratum_key' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.TRel.syms' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.TRel.tailW1' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.aimedF_plain' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.astLoop_rl' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.authorNodes_name' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.authorNodes_over' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.authorNodes_plain' depends on axioms: [propext]
+'VE.RightClauses.PWF.barNodes_plain' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.barPreds_plain' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.barReach_plain' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.baseEnv_keep' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.baseTRel' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.bindAll_check' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.bind_eq_ok' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.bind_ok' does not depend on any axioms
+'VE.RightClauses.PWF.blockedF_ext' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.blocks_ctx' depends on axioms: [propext]
+'VE.RightClauses.PWF.body_rl' does not depend on any axioms
+'VE.RightClauses.PWF.byteIdx_add_char' does not depend on any axioms
+'VE.RightClauses.PWF.checkRights_eq' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.checkRights_plain' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.checkShape_plain' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.checkSoftEnv_mapG' depends on axioms: [propext]
+'VE.RightClauses.PWF.checkSoftK_mapG' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.checkSoftK_shape' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.checkSoftRule_mapG' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.checkSoft_eq' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.checkSourceLine_plain' depends on axioms: [propext]
+'VE.RightClauses.PWF.checkW1_eq' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.check_envOK' depends on axioms: [propext]
+'VE.RightClauses.PWF.check_preds_mono' depends on axioms: [propext]
+'VE.RightClauses.PWF.childrenIn_setG' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.children_map' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.collidingPairs_mapG' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.condF_ext' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.condKeys_plain' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.coreNode_setG' does not depend on any axioms
+'VE.RightClauses.PWF.correlate_mapG' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.correlate_plain' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.decides_check' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.decisionNames_mapG' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.decisions_mapG' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.depPath_mono' does not depend on any axioms
+'VE.RightClauses.PWF.derived_ext' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.directNodes_plain' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.direct_nodup' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.direct_sub' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.domWith_ext' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.dualCtx' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.dualOblig_mapG' does not depend on any axioms
+'VE.RightClauses.PWF.dualPerm_mapG' does not depend on any axioms
+'VE.RightClauses.PWF.effF_ext' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.eligibleF_ext' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.endPos_append' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.entry_typed' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.envAt_mapG' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.envC' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.envOK_envAt' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.envP' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.envPrime_mapG' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.envR_plain' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.eq_of_key' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.excPremises_mapG' depends on axioms: [propext]
+'VE.RightClauses.PWF.facts' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.filter_flatMap_congr' depends on axioms: [propext]
+'VE.RightClauses.PWF.find?_key' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.find?_name' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.foldl_and_check' depends on axioms: [propext]
+'VE.RightClauses.PWF.foldl_and_preds' depends on axioms: [propext]
+'VE.RightClauses.PWF.forIn_congr_fun' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.forIn_congr_key' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.forIn_map_congr' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.genDecls_fresh' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.genDecls_plain' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.getAux_append' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.getAux_at' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.getAux_lt' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.get_append' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.ghyp' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.hL_alterable' does not depend on any axioms
+'VE.RightClauses.PWF.hL_bearer' does not depend on any axioms
+'VE.RightClauses.PWF.hL_carveOuts' does not depend on any axioms
+'VE.RightClauses.PWF.hL_fst' does not depend on any axioms
+'VE.RightClauses.PWF.hL_holderSlot' depends on axioms: [propext]
+'VE.RightClauses.PWF.hL_ikind' does not depend on any axioms
+'VE.RightClauses.PWF.hL_kind' does not depend on any axioms
+'VE.RightClauses.PWF.hL_liberty' depends on axioms: [propext]
+'VE.RightClauses.PWF.hL_mode' does not depend on any axioms
+'VE.RightClauses.PWF.hL_name' does not depend on any axioms
+'VE.RightClauses.PWF.hL_over' does not depend on any axioms
+'VE.RightClauses.PWF.hL_pred' does not depend on any axioms
+'VE.RightClauses.PWF.hL_right' does not depend on any axioms
+'VE.RightClauses.PWF.hL_sign' does not depend on any axioms
+'VE.RightClauses.PWF.hR_guard' does not depend on any axioms
+'VE.RightClauses.PWF.hR_holder' does not depend on any axioms
+'VE.RightClauses.PWF.hR_lines' does not depend on any axioms
+'VE.RightClauses.PWF.hR_name' does not depend on any axioms
+'VE.RightClauses.PWF.heightLevels_nodes' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.holderConj_ext' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.holderConj_hL' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.holderSlot_hL' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.incompat_ctx' depends on axioms: [propext]
+'VE.RightClauses.PWF.incompatible_mapG' does not depend on any axioms
+'VE.RightClauses.PWF.insertBy_map' depends on axioms: [propext]
+'VE.RightClauses.PWF.instancesOf_from' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.instancesOf_plain' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.isPrefixOf_append' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.layerNames_keep' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.layer_names' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.limKeys_plain' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.limPackList_hL' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.limPack_hL' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.lineAct_hL' depends on axioms: [propext]
+'VE.RightClauses.PWF.lineNodes_plain' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.line_guard_ext' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.linesAux_from' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.linesAux_plain' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.linesOf_plain' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.lines_nodup' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.liveF_ext' depends on axioms: [propext]
+'VE.RightClauses.PWF.liveStrictIn_ext' depends on axioms: [propext]
+'VE.RightClauses.PWF.mapG_E' does not depend on any axioms
+'VE.RightClauses.PWF.mapG_base' depends on axioms: [propext]
+'VE.RightClauses.PWF.mapG_definitions' does not depend on any axioms
+'VE.RightClauses.PWF.mapG_lits' does not depend on any axioms
+'VE.RightClauses.PWF.mapG_nodes' does not depend on any axioms
+'VE.RightClauses.PWF.mapG_regulated' does not depend on any axioms
+'VE.RightClauses.PWF.mapG_soft' does not depend on any axioms
+'VE.RightClauses.PWF.mem_cidx' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.mem_linesOf' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.mem_narrowings_blocked' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.mem_narrowings_dominated' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.mem_narrowings_exception' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.mem_syms_reg' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.narrowings_plain' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.nodeNamed_plain' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.nodeNamed_self' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.nodeNames_stratum' depends on axioms: [propext]
+'VE.RightClauses.PWF.nodeOf_hL' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.nodes_nodup' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.nodup_of_dependencyOrder' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.okOrRLV_forIn' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.okOrRL_bind' does not depend on any axioms
+'VE.RightClauses.PWF.okOrRL_forIn' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.okOrRL_ok' does not depend on any axioms
+'VE.RightClauses.PWF.okOrRL_rl' does not depend on any axioms
+'VE.RightClauses.PWF.opp_ctx' depends on axioms: [propext]
+'VE.RightClauses.PWF.opponents_mapG' depends on axioms: [propext]
+'VE.RightClauses.PWF.option_all_map' does not depend on any axioms
+'VE.RightClauses.PWF.ownGuard_ext' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.pair_sorts' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.permPreds_plain' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.plainNodes_mapG' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.plainSource_cites' depends on axioms: [propext]
+'VE.RightClauses.PWF.plainSource_fields' depends on axioms: [propext]
+'VE.RightClauses.PWF.plain_bars' does not depend on any axioms
+'VE.RightClauses.PWF.plain_limits' does not depend on any axioms
+'VE.RightClauses.PWF.plain_outsideCites' does not depend on any axioms
+'VE.RightClauses.PWF.plain_rights' does not depend on any axioms
+'VE.RightClauses.PWF.plain_rs' does not depend on any axioms
+'VE.RightClauses.PWF.plain_soft' does not depend on any axioms
+'VE.RightClauses.PWF.plain_sourceUnits' does not depend on any axioms
+'VE.RightClauses.PWF.preds_declared' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.regs_nodup' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.relAtom_check' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.restT_rl' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.restT_shape' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.rightOf_plainR' depends on axioms: [propext]
+'VE.RightClauses.PWF.rightsSemanticCheck_plain' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.rl_interp' depends on axioms: [propext]
+'VE.RightClauses.PWF.rl_lit' does not depend on any axioms
+'VE.RightClauses.PWF.ruleLoop_rl' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.rulesOn_map' depends on axioms: [propext]
+'VE.RightClauses.PWF.selectsP_check' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.selectsP_ext' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.selects_ext' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.setG_alterable' does not depend on any axioms
+'VE.RightClauses.PWF.setG_carveOuts' does not depend on any axioms
+'VE.RightClauses.PWF.setG_exception' does not depend on any axioms
+'VE.RightClauses.PWF.setG_guard' does not depend on any axioms
+'VE.RightClauses.PWF.setG_hard' does not depend on any axioms
+'VE.RightClauses.PWF.setG_line' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.setG_mode' does not depend on any axioms
+'VE.RightClauses.PWF.setG_name' does not depend on any axioms
+'VE.RightClauses.PWF.setG_out' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.setG_over' does not depend on any axioms
+'VE.RightClauses.PWF.setG_pred' does not depend on any axioms
+'VE.RightClauses.PWF.setG_rank' does not depend on any axioms
+'VE.RightClauses.PWF.setG_self' does not depend on any axioms
+'VE.RightClauses.PWF.setG_sign' does not depend on any axioms
+'VE.RightClauses.PWF.setG_splitFrom' does not depend on any axioms
+'VE.RightClauses.PWF.shapeK_ok' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.shapeR_rl' depends on axioms: [propext]
+'VE.RightClauses.PWF.shapeT_ok' depends on axioms: [propext]
+'VE.RightClauses.PWF.shapeT_rl' does not depend on any axioms
+'VE.RightClauses.PWF.size_append' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.size_cons' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.size_mapG' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.softSemanticCheck_mapG' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.softenTRel' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.soften_mapG' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.sortBy_map' depends on axioms: [propext]
+'VE.RightClauses.PWF.sortOf_envOK' depends on axioms: [propext]
+'VE.RightClauses.PWF.sortsOf_find' depends on axioms: [propext]
+'VE.RightClauses.PWF.sortsOf_hL' depends on axioms: [propext]
+'VE.RightClauses.PWF.sortsOf_mapG' does not depend on any axioms
+'VE.RightClauses.PWF.stratum_edge_sub' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.strictDecidesF_ext' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.strictDecidesIn_ext' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.strictSelectsIn_ext' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.strictYieldsIn_ext' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.substrEq_prefix' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.tailK_ok' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.tailK_rl' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.tailK_shape' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.tail_loops_rl' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.termSort_ok' depends on axioms: [propext]
+'VE.RightClauses.PWF.typeDiagnostic_ok' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.typesAt' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.validateRights_ok' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.validateSoft_mapG' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.validateSoft_ok_iff' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.validateW1_mapG' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.PWF.validateW1_ok' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.wellFormed_check' depends on axioms: [propext, Quot.sound]
+'VE.RightClauses.PWF.yields_ext' depends on axioms: [propext, Quot.sound]
 'VE.RightClauses.checkEntry_ok' depends on axioms: [propext, Quot.sound]
 'VE.RightClauses.clauseSlot_eq' depends on axioms: [propext]
 'VE.RightClauses.clauseSlot_labelled' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.clauseSlot_labelled_of_doc' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.RightClauses.clauseSlot_no_total' depends on axioms: [propext, Quot.sound]
 'VE.RightClauses.clause_fails_not_selected' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.clause_fails_not_selected_of_doc' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.RightClauses.entry_facts' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.RightClauses.entry_instance' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.RightClauses.eq_of_nodup_map' depends on axioms: [propext, Quot.sound]
@@ -6048,9 +6321,12 @@
 'VE.RightClauses.plain_identity' depends on axioms: [propext, Quot.sound]
 'VE.RightClauses.plain_limPremises' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.RightClauses.plain_shape' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.plain_wellFormed' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.plain_wellFormedRights' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.RightClauses.relLabel_at7' depends on axioms: [propext, Quot.sound]
 'VE.RightClauses.relLabel_inj' depends on axioms: [propext, Quot.sound]
 'VE.RightClauses.relation_some_bearer' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.relation_some_bearer_of_doc' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.RightClauses.rightOf_plain' depends on axioms: [propext]
 'VE.RightClauses.selects_own' depends on axioms: [propext, Quot.sound]
 'VE.RightClauses.sourceLines_plain' depends on axioms: [propext, Quot.sound]

@@ -151,11 +151,11 @@ theorem shapeK_ok {x1 : Except String Unit} {x2 x3 : Except String PUnit} {w : E
 /-! ### The tail: resource limits around `validateW1 (soften ·)` -/
 
 /-- Success with any value, or a resource limit. -/
-def OkOrRL' {α : Type} (x : Except String α) : Prop := (∃ a, x = .ok a) ∨ ∃ e, x = .error e ∧ RL e
+def OkOrRLV {α : Type} (x : Except String α) : Prop := (∃ a, x = .ok a) ∨ ∃ e, x = .error e ∧ RL e
 
-theorem okOrRL'_forIn {α : Type} (l : List α) (f : α → PUnit → Except String (ForInStep PUnit))
+theorem okOrRLV_forIn {α : Type} (l : List α) (f : α → PUnit → Except String (ForInStep PUnit))
     (hf : ∀ a u, f a u = .ok (.yield PUnit.unit) ∨ ∃ e, f a u = .error e ∧ RL e) :
-    OkOrRL' (forIn l PUnit.unit f) := by
+    OkOrRLV (forIn l PUnit.unit f) := by
   induction l with
   | nil => exact Or.inl ⟨_, rfl⟩
   | cons a l ih =>
@@ -245,8 +245,8 @@ theorem restT_shape (D : SoftDoc) :
       (fitsTogether ((VE.Norms.background (soften D)).map (fsize noSubst) ++ (generatedSizes D).soft))
       (fitsTogether ((generatedSizes D).layers.map (·.2) ++ [fsize noSubst .top])) := rfl
 
-theorem shapeR_rl {z1 z2 z3 z4 z5 z6 : Except String PUnit} (c1 c2 : Bool) (h1 : OkOrRL' z1) (h2 : OkOrRL' z2)
-    (h3 : OkOrRL' z3) (h4 : OkOrRL' z4) (h5 : OkOrRL' z5) (h6 : OkOrRL' z6) :
+theorem shapeR_rl {z1 z2 z3 z4 z5 z6 : Except String PUnit} (c1 c2 : Bool) (h1 : OkOrRLV z1) (h2 : OkOrRLV z2)
+    (h3 : OkOrRLV z3) (h4 : OkOrRLV z4) (h5 : OkOrRLV z5) (h6 : OkOrRLV z6) :
     OkOrRL (shapeR z1 z2 z3 z4 z5 z6 c1 c2) := by
   unfold shapeR
   rcases h1 with ⟨_, rfl⟩ | ⟨e, rfl, he⟩ <;> try exact Or.inr ⟨e, rfl, he⟩
@@ -269,7 +269,7 @@ theorem body_rl {f : PUnit → Except String (ForInStep PUnit)} (c : Bool) (e : 
 
 theorem restT_rl (D : SoftDoc) : OkOrRL (restT D) := by
   rw [restT_shape]
-  refine shapeR_rl _ _ ?_ ?_ ?_ ?_ ?_ ?_ <;> refine okOrRL'_forIn _ _ (fun x u => ?_) <;> cases u
+  refine shapeR_rl _ _ ?_ ?_ ?_ ?_ ?_ ?_ <;> refine okOrRLV_forIn _ _ (fun x u => ?_) <;> cases u
   · exact body_rl (fits x) "ResourceLimit: generated soft premise" ⟨"generated soft premise", by decide⟩ (by unfold br1; cases fits x <;> rfl)
   · exact body_rl (withinLimits x) "ResourceLimit: generated soft premise" ⟨"generated soft premise", by decide⟩ (by unfold br2; cases withinLimits x <;> rfl)
   · exact body_rl (fits x.2) _ (rl_interp "ResourceLimit: generated norm layer layer:norms:" "generated norm layer layer:norms:" x.1 (by decide))
@@ -285,9 +285,9 @@ theorem restT_rl (D : SoftDoc) : OkOrRL (restT D) := by
   · exact body_rl (withinLimits (targetConclusion x)) _ (rl_interp "ResourceLimit: generated conflict target " "generated conflict target " x.1 (by decide))
       (by unfold br6; cases withinLimits (targetConclusion x) <;> rfl)
 
-theorem tail_loops_rl (D : SoftDoc) : OkOrRL' (forIn (D.T.nodes.zip (derivedSizes D)) PUnit.unit bt1) ∧
-    OkOrRL' (forIn D.T.nodes PUnit.unit (bt2 D)) := by
-  refine ⟨okOrRL'_forIn _ _ (fun x u => ?_), okOrRL'_forIn _ _ (fun N u => ?_)⟩ <;> cases u
+theorem tail_loops_rl (D : SoftDoc) : OkOrRLV (forIn (D.T.nodes.zip (derivedSizes D)) PUnit.unit bt1) ∧
+    OkOrRLV (forIn D.T.nodes PUnit.unit (bt2 D)) := by
+  refine ⟨okOrRLV_forIn _ _ (fun x u => ?_), okOrRLV_forIn _ _ (fun N u => ?_)⟩ <;> cases u
   · exact body_rl (!(x.1.carveOuts.length + (if hasDerived x.1 then 1 else 0) > 8 || (hasDerived x.1 && !fits x.2))) _
       (rl_interp "ResourceLimit: derived carve-out of rule " "derived carve-out of rule " x.1.name (by decide))
       (by
@@ -303,7 +303,7 @@ theorem shapeT_ok {y1 y2 : Except String PUnit} {v rest : Except String Unit} (h
   unfold shapeT at h
   cases y1 <;> cases y2 <;> cases v <;> simp_all [bind, Except.bind]
 
-theorem shapeT_rl {y1 y2 : Except String PUnit} {v rest : Except String Unit} (h1 : OkOrRL' y1) (h2 : OkOrRL' y2)
+theorem shapeT_rl {y1 y2 : Except String PUnit} {v rest : Except String Unit} (h1 : OkOrRLV y1) (h2 : OkOrRLV y2)
     (hv : OkOrRL v) (hr : OkOrRL rest) : OkOrRL (shapeT y1 y2 v rest) := by
   unfold shapeT
   rcases h1 with ⟨_, rfl⟩ | ⟨e, rfl, he⟩ <;> try exact Or.inr ⟨e, rfl, he⟩

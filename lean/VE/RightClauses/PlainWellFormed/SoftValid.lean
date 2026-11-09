@@ -10,7 +10,7 @@ open VE.Norms (Node envAt size syms layerNames preds)
 /-! ### Environments that show the base conjuncts -/
 
 /-- `E` shows every predicate of `E0` that is not regulated or defined, with its sorts. -/
-def EnvOK' (E0 : VE.Environment) (keep : String → Bool) (E : VE.Environment) : Prop :=
+def EnvOKB (E0 : VE.Environment) (keep : String → Bool) (E : VE.Environment) : Prop :=
   E.sorts = E0.sorts ∧ E.constants = E0.constants ∧
     ∀ p s, E0.predicates p = some s → keep p = false → E.predicates p = some s
 
@@ -42,7 +42,7 @@ theorem check_preds_mono {E0 E : VE.Environment} (hs : E.sorts = E0.sorts) (hc :
     simp only [VE.Formula.check, Bool.and_eq_true, hs] at h ⊢
     exact ⟨h.1, check_preds_mono hs hc a _ hp h.2⟩
 
-theorem Plus.check' {E0 E : VE.Environment} {keep : String → Bool} {Γ : List String} (hE : EnvOK' E0 keep E)
+theorem Plus.checkB {E0 E : VE.Environment} {keep : String → Bool} {Γ : List String} (hE : EnvOKB E0 keep E)
     {a b : VE.Formula} (h : Plus E0 keep Γ a b) (ha : a.check E Γ = true) : b.check E Γ = true := by
   obtain ⟨cs, rfl, hcs⟩ := h
   rw [foldl_and_check]
@@ -50,8 +50,8 @@ theorem Plus.check' {E0 E : VE.Environment} {keep : String → Bool} {Γ : List 
   exact fun c hc => check_preds_mono hE.1 hE.2.1 c Γ
     (fun p hp s hs => hE.2.2 p s hs ((hcs c hc).2 p hp)) (hcs c hc).1
 
-theorem EnvOK'.hide {E0 E : VE.Environment} {keep : String → Bool} (h : EnvOK' E0 keep E) (ns : List String)
-    (hns : ∀ n ∈ ns, keep n = true) : EnvOK' E0 keep (VE.Norms.hide E ns) := by
+theorem EnvOKB.hide {E0 E : VE.Environment} {keep : String → Bool} (h : EnvOKB E0 keep E) (ns : List String)
+    (hns : ∀ n ∈ ns, keep n = true) : EnvOKB E0 keep (VE.Norms.hide E ns) := by
   refine ⟨h.1, h.2.1, fun p s hp hk => ?_⟩
   have : p ∉ ns := fun hm => by rw [hns p hm] at hk; cases hk
   simp [VE.Norms.hide, this, h.2.2 p s hp hk]
@@ -116,8 +116,8 @@ def QC (C : SoftDoc) (E0 : VE.Environment) (p : String) : VE.Formula → VE.Form
 structure GHyp (C : SoftDoc) (E0 : VE.Environment) : Prop where
   guards : ∀ N ∈ C.T.nodes, FExt (QC C E0 N.pred) N.guard (γ N.name N.guard)
   dual : DualCtx (QC C E0) C
-  envC : EnvOK' E0 (keepOf C.T.regulated C.T.definitions) C.E
-  envP : EnvOK' E0 (keepOf C.T.regulated C.T.definitions) (envPrime C)
+  envC : EnvOKB E0 (keepOf C.T.regulated C.T.definitions) C.E
+  envP : EnvOKB E0 (keepOf C.T.regulated C.T.definitions) (envPrime C)
 
 variable {γ}
 
@@ -182,11 +182,11 @@ theorem sortsOf_find {C : SoftDoc} {p : String} {r0 : VE.Norms.Regulated}
   simp [VE.SoftNorms.sortsOf, sortsIn, h]
 
 theorem typesAt {C : SoftDoc} {E0 E : VE.Environment} {ι : Type} (L : List ι) (f : ι → Node)
-    (hE : EnvOK' E0 (keepOf C.T.regulated C.T.definitions) E) : TypesAt (QC C E0) L f E C.T.regulated := by
+    (hE : EnvOKB E0 (keepOf C.T.regulated C.T.definitions) E) : TypesAt (QC C E0) L f E C.T.regulated := by
   intro x _ r0 hr a b hab ha
   have hs := sortsOf_find hr
   unfold QC at hab; rw [hs] at hab
-  exact Plus.check' hE hab ha
+  exact Plus.checkB hE hab ha
 
 theorem validateW1_mapG {C : SoftDoc} {E0 : VE.Environment} (h : GHyp γ C E0)
     (hnd : (C.T.regulated.map (·.name)).Nodup) (hv : validateW1 (soften C) = .ok ()) :
@@ -207,7 +207,7 @@ theorem validateW1_mapG {C : SoftDoc} {E0 : VE.Environment} (h : GHyp γ C E0)
         (fun r0 hr0 k a b hab ha => by
           have hs' := sortsOf_find (find?_name hnd hr0)
           unfold QC at hab; rw [hs'] at hab
-          exact Plus.check' (h.envP.hide _ (fun n hn => layerNames_keep _ n (List.mem_of_mem_drop hn))) hab ha) hs
+          exact Plus.checkB (h.envP.hide _ (fun n hn => layerNames_keep _ n (List.mem_of_mem_drop hn))) hab ha) hs
       simp only [hsem, if_true]
       exact ⟨Or.inl rfl, fun _ => hw.2 hw1⟩
     · rw [he]; exact ⟨Or.inr ⟨e, rfl, hre⟩, fun h' => by cases h'⟩
@@ -246,11 +246,11 @@ theorem size_mapG : size (soften (mapG γ C)) = size (soften C) := by
   have hs := (softenTRel h).syms C.T.regulated C.T.definitions QC_preds
   simp only [size, soften_mapG, hs]; rfl
 
-theorem envOK_envAt (k : Nat) : EnvOK' E0 (keepOf C.T.regulated C.T.definitions) (envAt (soften C) k) :=
+theorem envOK_envAt (k : Nat) : EnvOKB E0 (keepOf C.T.regulated C.T.definitions) (envAt (soften C) k) :=
   h.envP.hide _ (fun n hn => layerNames_keep _ n (List.mem_of_mem_drop hn))
 
 /-- `selects′` of a changed node extends the old one. -/
-theorem selects'_ext (N : SoftNode) (hN : N ∈ C.T.nodes) :
+theorem selectsP_ext (N : SoftNode) (hN : N ∈ C.T.nodes) :
     FExt (QC C E0 N.pred) (selects' C N) (selects' (mapG γ C) (setG γ N)) := by
   have := selects_ext (softenTRel h) C.T.regulated C.T.definitions C.T.nodes.length N hN
   unfold selects'
@@ -259,12 +259,12 @@ theorem selects'_ext (N : SoftNode) (hN : N ∈ C.T.nodes) :
   simp only [VE.Norms.fuel, List.length_map, hl]
   exact this
 
-theorem selects'_check (N : SoftNode) (hN : N ∈ C.T.nodes)
+theorem selectsP_check (N : SoftNode) (hN : N ∈ C.T.nodes)
     (hc : (selects' C N).check (envAt (soften C) (size (soften C))) (sortsOf C N.pred).reverse = true) :
     (selects' (mapG γ C) (setG γ N)).check (envAt (soften (mapG γ C)) (size (soften (mapG γ C))))
       (sortsOf C N.pred).reverse = true := by
   rw [envAt_mapG h, size_mapG h]
-  exact FExt.check (fun a b hab => Plus.check' (envOK_envAt h _) hab) (selects'_ext h N hN) hc
+  exact FExt.check (fun a b hab => Plus.checkB (envOK_envAt h _) hab) (selectsP_ext h N hN) hc
 
 theorem decides_check (p : String) (hp : ∀ r0 ∈ C.T.regulated, r0.name = p → True) (sign : Bool) {Γ : List String}
     (hΓ : (sortsOf C p).reverse = Γ)
@@ -274,14 +274,14 @@ theorem decides_check (p : String) (hp : ∀ r0 ∈ C.T.regulated, r0.name = p �
     (defaultDecidesF (mapG γ C) p sign).check (envAt (soften (mapG γ C)) (size (soften (mapG γ C)))) Γ = true := by
   subst hΓ
   rw [envAt_mapG h, size_mapG h]
-  have hP := fun a b (hab : QC C E0 p a b) => Plus.check' (envOK_envAt h (size (soften C))) hab
+  have hP := fun a b (hab : QC C E0 p a b) => Plus.checkB (envOK_envAt h (size (soften C))) hab
   refine ⟨FExt.check hP (strictDecidesF_ext (QC C E0) C h.guards p sign) hs, ?_⟩
   refine FExt.check hP ?_ hd
   simp only [defaultDecidesF, rulesOn, mapG_nodes, List.filter_map, List.map_map, Function.comp_def, setG_pred,
     setG_mode, setG_sign]
   refine FExt.anyF _ _ _ (fun N hN => ?_)
   simp only [List.mem_filter, beq_iff_eq] at hN
-  have := selects'_ext h N hN.1.1.1
+  have := selectsP_ext h N hN.1.1.1
   rw [hN.1.1.2] at this
   exact this
 
@@ -308,7 +308,7 @@ theorem softSemanticCheck_mapG {C : SoftDoc} {E0 : VE.Environment} (h : GHyp γ 
       (envAt (soften (mapG γ C)) (size (soften (mapG γ C)))) (sortsOf C N.pred).reverse = true := by
     intro N hN
     simp only [List.all_eq_true] at s16
-    exact selects'_check h N hN (s16 N hN)
+    exact selectsP_check h N hN (s16 N hN)
   simp only [softSemanticCheck, Bool.and_eq_true, and_assoc]
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · simp [VE.Norms.WellFormed, VE.Norms.validate, hck, hsem']
@@ -330,7 +330,7 @@ theorem softSemanticCheck_mapG {C : SoftDoc} {E0 : VE.Environment} (h : GHyp γ 
   · simp only [List.all_eq_true, mapG_nodes, List.mem_map] at s14 ⊢
     rintro _ ⟨N, hN, rfl⟩ φ hφ
     rcases List.mem_cons.1 hφ with rfl | hφ
-    · exact FExt.check (fun a b hab => Plus.check' h.envC hab) (h.guards N hN) (s14 N hN _ (by simp))
+    · exact FExt.check (fun a b hab => Plus.checkB h.envC hab) (h.guards N hN) (s14 N hN _ (by simp))
     · exact s14 N hN φ (List.mem_cons_of_mem _ hφ)
   · simp only [softPremises, cohPremises, excPremises_mapG, collidingPairs_mapG, List.all_append, List.map_map,
       Bool.and_eq_true, List.all_eq_true, List.mem_map, Function.comp_def] at s15 ⊢
