@@ -6,11 +6,12 @@ import VE.Presupposition.Rules
 /-! # The wire layer of presupposition admission (docs/spec/presupposition.md 4.7)
 
 The obligation block's types (`Carrier`, `Candidate`, `Position`, `Args`, `Obligation`), the
-candidate table and its shape check (`cellOk`, `tableOk`), PS-2a's view of the decoded W2
+candidate table's type and its shape check (`cellOk`, `tableOk`), PS-2a's view of the decoded W2
 document (`PDoc`), the regenerated obligation (`Checked`), the `Report`, and the readings of an
 open set (`claimReading`, `ruleReading`, `emitted`, `aliasesOf`, `expectedReadings`), with
-`carrierAllowed` and the restriction paths. `admit` and its statements are `Admit.lean`'s.
-Every body is the spec's or the PS-S stub's text. -/
+`carrierAllowed` and the restriction paths. Every body is the spec's or the PS-S stub's text.
+`candidateTable` itself is PS-E1's, generated into `Table.lean`; `admit` and its statements go
+in `Admit.lean` (ps-2ab). -/
 
 namespace VE.Presupposition
 
@@ -78,14 +79,6 @@ structure Obligation where
 
 /-- PS-E1's table: candidates per row and position class, in the row's order; an unmeasured cell is empty. -/
 abbrev CandidateTable := String → PositionClass → List Candidate
-
-/-- PS-E1's table (docs/research/presupposition-E1/candidate-table.json): `[assumed]` in every measured cell of the
-    three rows, `[assumed, unconditional]` in generic's consequent cell; the disjunct cells and other rows are empty. -/
-def candidateTable : CandidateTable := fun row pc => match row, pc with
-  | _, .disjunct => []
-  | "generic", .consequent => [.assumed, .unconditional]
-  | "definite", _ | "plural", _ | "generic", _ => [.assumed]
-  | _, _ => []
 
 /-- R-2: in place only in a negated or antecedent cell, and only beside conditioned. -/
 def cellOk (pc : PositionClass) (cs : List Candidate) : Bool :=
