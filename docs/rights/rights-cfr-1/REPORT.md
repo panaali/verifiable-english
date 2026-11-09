@@ -92,6 +92,17 @@ Files checked against the 7 in-flight branches (`git diff --name-only main...<br
 `infra/*`, `foundation/*`): none edits `ve/readings.py`, `lean/VE/Service/Document.lean` or `lean/VE/SoftNorms/Wire.lean`;
 main has moved 59 commits past the base without touching them (not synced in this branch: the merge train syncs).
 
+## Tests
+
+Selected run (`MAC_PYTEST_NO_DEFER=1 zsh mac-pytest.sh --select -- --base 6db6ee16d --run`, ran on the VM, the Mac
+unreachable) at `35e3b2de1`: 472 units, all run; 1 failed, `tests/test_assurance_manifest.py::test_spec_tables_are_generated_from_the_manifest`
+(the spec tables of `docs/spec/assurance-manifest.md` still showed the old decoder pins). Fixed in `1a9c30807`
+(`python tools/assurance_manifest.py --write`; `regen_generated.py --check` exits 0 over 37 entries), and the failed id
+rerun alone (`mac-pytest.sh -- tests/test_assurance_manifest.py::test_spec_tables_are_generated_from_the_manifest`): 1 passed.
+An earlier run at `7f2de1fa6` stopped at `--maxfail 5` on the trust table (the two new declarations unclassified),
+the decoder pins and the consolidation plan's step 8b figure, all fixed in `35e3b2de1`. None of these is on
+main-known-red. `lean/audit.py`: PASS (790 files, 8746 theorems). `trust_map.py --check`: PASS.
+
 ## Pilot bytes
 
 None expected to move: no stored id changes and no verdict changes; a pilot document that writes a soft default in a
