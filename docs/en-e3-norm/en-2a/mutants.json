@@ -1,6 +1,6 @@
 {
  "item": "en-e3a",
- "note": "Spec en-e3-norm section 9's six Lean seeded bugs, each planted alone, built with `lake build VE.EnglishGrammar.Norm.OwnersExamples VE.EnglishGrammar.Norm.RunExamples`, then restored. `test` is what fails as planted; `test_with_proofs_cut` is what fails when every theorem proof of Owners.lean and Norm/Run.lean is replaced by `sorry` for the run (the #guards behind a failing theorem). Line numbers are those of the committed files. Mechanical mutants per new trusted definition: the trust-mutants sweep. No Rust changed.",
+ "note": "Spec en-e3-norm section 9's six Lean seeded bugs, each planted alone, built with `lake build VE.EnglishGrammar.Norm.OwnersExamples VE.EnglishGrammar.Norm.RunExamples`, then restored. `test` is what fails as planted; `test_with_proofs_cut` is what fails when every theorem proof of Owners.lean and Norm/Run.lean is replaced by `sorry` for the run (the #guards behind a failing theorem; for the gate bug also with O7's two guards off, so that RunExamples builds and E2 is shown). Line numbers are those of the committed files. Mechanical mutants per new trusted definition: the trust-mutants sweep. No Rust changed.",
  "lean": [
   {
    "behaviour": "Force.op .needNot mapped to .mustNot (spec 9; O1)",
@@ -34,9 +34,15 @@
    ],
    "test_with_proofs_cut": [
     "lean/VE/EnglishGrammar/Norm/OwnersExamples.lean:55 O7 (toNodeChecked)",
-    "lean/VE/EnglishGrammar/Norm/OwnersExamples.lean:57 O7 (toNodesChecked); RunExamples (E2) is not built behind it"
+    "lean/VE/EnglishGrammar/Norm/OwnersExamples.lean:57 O7 (toNodesChecked)"
    ],
-   "status": "KILLED"
+   "status": "KILLED",
+   "test_with_proofs_cut_and_O7_off": [
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:35 E2",
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:37 E2 (spans)",
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:121 E8",
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:125 every row's class"
+   ]
   },
   {
    "behaviour": "the runner answers one when readNorm stops (spec 9; E8)",
@@ -47,18 +53,18 @@
     "after": "| .stopped _ _ => status \"one\" ++ [(\"statements\", Json.arr #[])]"
    },
    "test": [
-    "lean/VE/EnglishGrammar/Norm/Run.lean:238 theorem Run.answer_stopped",
-    "lean/VE/EnglishGrammar/Norm/Run.lean:250 theorem Run.answer_one_iff",
-    "lean/VE/EnglishGrammar/Norm/Run.lean:283 theorem Run.answer_partial_no_node"
+    "lean/VE/EnglishGrammar/Norm/Run.lean:247-248 theorem Run.answer_stopped (and answer_one_iff, answer_partial_no_node)"
    ],
    "test_with_proofs_cut": [
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:58 E6",
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:60 E6",
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:67 E10",
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:85 E14",
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:89-94 E16",
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:103 E16 (every Reject)",
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:115 E8"
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:59 E6",
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:61 E6",
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:73 E10",
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:91 E14",
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:95-100 E16",
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:109 E16 (every Reject)",
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:121 E8",
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:125 every row's class",
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:177-178 f18 through the real reader"
    ],
    "status": "KILLED"
   },
@@ -74,13 +80,13 @@
     "lean/VE/EnglishGrammar/Norm/RunExamples.lean:47 E4",
     "lean/VE/EnglishGrammar/Norm/RunExamples.lean:52 E9",
     "lean/VE/EnglishGrammar/Norm/RunExamples.lean:55 E4 (NoConsequence, StrayCarveOut)",
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:119 the sentence rule"
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:140 the sentence rule"
    ],
    "test_with_proofs_cut": [
     "lean/VE/EnglishGrammar/Norm/RunExamples.lean:47 E4",
     "lean/VE/EnglishGrammar/Norm/RunExamples.lean:52 E9",
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:55",
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:119"
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:55 E4 (NoConsequence, StrayCarveOut)",
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:140 the sentence rule"
    ],
    "status": "KILLED"
   },
@@ -95,12 +101,12 @@
    "test": [
     "lean/VE/EnglishGrammar/Norm/RunExamples.lean:40 E3 (depth)",
     "lean/VE/EnglishGrammar/Norm/RunExamples.lean:42 E3 (node budget)",
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:85 E14 (lean-unknown)"
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:91 E14 (lean-unknown)"
    ],
    "test_with_proofs_cut": [
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:40",
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:42",
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:85"
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:40 E3 (depth)",
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:42 E3 (node budget)",
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:91 E14 (lean-unknown)"
    ],
    "status": "KILLED"
   },
@@ -113,13 +119,13 @@
     "after": "[(\"sentence\", toJson i)]"
    },
    "test": [
-    "lean/VE/EnglishGrammar/Norm/Run.lean:238 theorem Run.answer_stopped"
+    "lean/VE/EnglishGrammar/Norm/Run.lean:247 theorem Run.answer_stopped"
    ],
    "test_with_proofs_cut": [
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:89 E16 (Internal)",
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:93 E16 (EmptyDocument)",
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:103 E16 (every Reject)",
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:119 the sentence rule"
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:95 E16 (Internal)",
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:99 E16 (EmptyDocument)",
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:109 E16 (every Reject)",
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:140 the sentence rule"
    ],
    "status": "KILLED"
   }
