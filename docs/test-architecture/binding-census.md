@@ -6,14 +6,14 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 
 | | count |
 |---|---:|
-| leaves:bound | 289 |
-| leaves:closed domain | 309 |
-| leaves:none | 1576 |
-| modes | 42 |
+| leaves:bound | 292 |
+| leaves:closed domain | 311 |
+| leaves:none | 1584 |
+| modes | 43 |
 | today:hand | 203 |
 | today:later Lean request | 62 |
-| today:not probed | 1174 |
-| today:shape | 598 |
+| today:not probed | 1182 |
+| today:shape | 603 |
 | today:unbound | 137 |
 | answers | 589 |
 | probes | 10204 |
@@ -3780,6 +3780,34 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/result/readings/*/command/args` |  |  |  |  |
 | `/result/readings/*/fills` |  |  |  |  |
 | `/result/readings/*/fills/*/span` |  |  |  |  |
+
+## act-readings
+
+0 recorded answers.
+
+| leaf | kind | class | keyword | format | observed | bound today |
+|---|---|---|---|---|---:|---|
+| `/case_index` | integer | bound | x-index |  | 0 | shape |
+| `/diagnostic` | string | none |  |  | 0 | not probed |
+| `/error` | string | none |  | minLength | 0 | not probed |
+| `/id` | any | bound | x-echo |  | 0 | shape |
+| `/id` | string | bound | x-equals |  | 0 | shape |
+| `/readings/*/acts/*/act` | string | none |  |  | 0 | not probed |
+| `/readings/*/acts/*/from/*` | integer | none |  | minimum | 0 | not probed |
+| `/readings/*/acts/*/text` | string | none |  |  | 0 | not probed |
+| `/readings/*/paraphrase` | string | none |  |  | 0 | not probed |
+| `/status` | string | closed domain | const |  | 0 | shape |
+| `/tokens/*/0` | integer | none |  | minimum | 0 | not probed |
+| `/tokens/*/1` | integer | none |  | minimum | 0 | not probed |
+| `/verdict` | string | closed domain | enum |  | 0 | shape |
+
+| array | length bound by | positions bound by | internal agreement | probed (generic/hand) |
+|---|---|---|---|---|
+| `/readings` |  |  |  |  |
+| `/readings/*/acts` |  |  |  |  |
+| `/readings/*/acts/*/from` |  |  |  |  |
+| `/tokens` |  |  |  |  |
+| `/tokens/*` |  |  |  |  |
 
 ## Grammars
 
