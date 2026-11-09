@@ -2294,6 +2294,13 @@
    "reason": "ps-2a: lean/VE/Presupposition/Wire.lean +94 (S +51, D[V] +25, G[V] +18), lean/VE/Presupposition/Table.lean +23 (S, generated candidateTable); K +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ps-2a, 2026-10-18",
    "commit": "098dbe6886d6fa3cfa6c96549b4e97f0d8fff684"
+  },
+  {
+   "class": "V",
+   "lines": 12,
+   "reason": "ci-3b: VE/Commands/SplitOnLemmas.lean V +12 (splitOnL, the List Char spec of String.splitOn; proof-only), K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ci-3b, 2026-11-09; reviews/dri-decisions-20261109-ci-3b.md item 2",
+   "commit": "1531891aaf6b5d6a5a064448e29489245b67e496"
   }
  ]
 }
