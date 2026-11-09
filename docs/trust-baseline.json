@@ -2245,6 +2245,13 @@
    "reason": "cmp-s3a-cfr-2: lean/VE/RightClauses/Plain.lean trusted +11 (entryError, unclassified), lean/VE/RightClauses/Examples.lean trusted +2 (fixtures twice, twoHolders, unclassified); K +0, S -1",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s3a-cfr-2, 2026-10-18",
    "commit": "6db6ee16ddb10f843b396b78299a980abc43fefb"
+  },
+  {
+   "class": "V",
+   "lines": 1,
+   "reason": "cmp-s3a-cfr-2: lean/VE/RightClauses/Examples.lean +1 (fixture across, unclassified; kills the trust-mutant survivors of entryError); item total V +15: Plain.lean +12, Examples.lean +3; K +0, S -1",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s3a-cfr-2, 2026-10-18",
+   "commit": "6db6ee16ddb10f843b396b78299a980abc43fefb"
   }
  ]
 }
