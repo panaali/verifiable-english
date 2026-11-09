@@ -2,9 +2,10 @@ import VE.Acts.LexicalProofs
 
 /-! `String.splitOn` with a separator of any length (docs/spec/commands-imperatives.md section 7; item ci-3b): the
 lemmas `preposed_eq` and `readStep_conservative` need (ci-3a's REPORT found none in core Lean 4.24). `splitOnL` cuts a
-character list at the leftmost non-overlapping occurrences of a separator, as `String.splitOnAux` does (after a partial
-match it restarts one character on), and `splitOn_data` proves the two equal for every non-empty separator. The lemmas are stated over `List Char`, then over `String`.
-`VE.Acts.Lexical.splitOn_space` is the one-space case, proved there over `splitL`. -/
+character list at the leftmost non-overlapping occurrences of a separator, as `String.splitOnAux` does (after an
+unfinished match it restarts one character on), and `splitOn_data` proves the two equal for every non-empty separator.
+The lemmas are stated over `List Char`, then over `String`. `VE.Acts.Lexical.splitOn_space` is the one-space case,
+proved there over `splitL`. -/
 
 namespace VE.Commands.SplitOn
 
@@ -289,7 +290,7 @@ theorem splitOn_first (s t : String) (ht : t ≠ "") (h : t.data <:+: s.data) :
 theorem splitOn_two (s t : String) (ht : t ≠ "") : 2 ≤ (s.splitOn t).length ↔ t.data <:+: s.data := by
   rw [splitOn_data s t ht, List.length_map]; exact splitOnL_two fun h => ht (String.ext h)
 
-/-! ### Fixtures: each lemma on a concrete string, the bridge on overlapping and partial matches -/
+/-! ### Fixtures: each lemma on a concrete string, the bridge on overlapping and unfinished matches -/
 
 #guard "Click Ask".splitOn ", then " == ["Click Ask"]
 #guard ", then ".intercalate ("Click a, then click b, then c".splitOn ", then ") == "Click a, then click b, then c"
