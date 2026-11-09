@@ -258,7 +258,8 @@ def test_a_check_wrapped_in_guard_msgs_kills(default_run):
 
 def test_a_run_records_where_its_time_goes(default_run, tmp_path_factory):
     """eff-tm-control: every Lake run of a sweep counts under its step (none under "other"), each step that ran took
-    time, the phases add up to the run's seconds, and the one line prints them."""
+    time, the phases add up to the run's seconds, and the one line prints them. The lazy controls' wall phase is near
+    0: their probes run inside the mutants' phase, counted under the "control_probes" Lake step (eff-20261108-1)."""
     import trust_mutants as tm
     done, mutants, _, _ = default_run
     data = json.loads((tmp_path_factory.getbasetemp() / "default-evidence.json").read_text())
@@ -269,7 +270,10 @@ def test_a_run_records_where_its_time_goes(default_run, tmp_path_factory):
     assert runs["mutant_builds"] >= len(built) and min(runs[k] for k in (
         "control_probes", "mutant_checks", "stage_controls", "mutant_probes")) >= 1, runs
     assert all((lake[k] > 0) == (runs[k] > 0) for k in tm.LAKE), steps
-    assert all(steps["wall"][k] > 0 for k in ("control_build", "probe_install", "control_probes", "mutants")), steps
+    assert all(steps["wall"][k] > 0 for k in ("control_build", "probe_install", "mutants")), steps
+    # lazy controls (the default, eff-20261108-1) run inside the mutants' phase, still under their Lake step
+    assert data["control_probes"] == "lazy" and lake["control_probes"] > 0, steps
+    assert steps["wall"]["control_probes"] < steps["wall"]["mutants"], steps
     # the phases up to the mutants' end are the run's "seconds" (each rounded to 0.1 s, it to 1 s)
     assert abs(sum(steps["wall"][k] for k in tm.WALL[:6]) - data["seconds"]) <= 1.5, (steps, data["seconds"])
 
@@ -2460,6 +2464,50 @@ def parts(go, n: int, *args) -> list[Path]:
         out.append(go.tmp / f"part-{k}-of-{n}.json")
         assert go("--shard", f"{k}/{n}", "--json", out[-1], *args)[0] in (0, 1, 3)
     return out
+
+
+def test_control_probe_mode_is_recorded_but_not_a_verdict_input(sharded, capsys):
+    first = sharded.tmp / "old.json"
+    sharded("--json", first, "--max-mutants", 6)
+    old = json.loads(first.read_text())
+    assert old["control_probes"] == "lazy"
+    del old["control_probes"]  # records written before this option are eager
+    first.write_text(json.dumps(old))
+    resumed = sharded.tmp / "resumed.json"
+    assert sharded("--json", resumed, "--resume", first, "--control-probes", "eager",
+                   "--max-mutants", 6)[3] == []
+    assert json.loads(resumed.read_text())["resumed"]["kept"] == 6
+    rescored = sharded.tmp / "rescored.json"
+    assert sharded("--json", rescored, "--rescore", first, "--max-mutants", 6)[0] in (0, 1)
+    assert json.loads(rescored.read_text())["rescore"]["mode"] == "identical"
+
+    paths = parts(sharded, 2, "--max-mutants", 6)
+    second = json.loads(paths[1].read_text())
+    del second["control_probes"]
+    paths[1].write_text(json.dumps(second))
+    merged = sharded.tmp / "mixed.json"
+    assert sharded.tm.main(["--merge", str(merged), *map(str, paths)]) in (0, 1)
+    assert json.loads(merged.read_text())["control_probes"] == "mixed"
+
+
+def test_control_scratch_is_never_given_to_a_mutant(sharded, monkeypatch):
+    tm = sharded.tm
+    original_scratch, original_run = tm.Scratch, tm.run
+    control = []
+
+    class TrackedScratch(original_scratch):
+        def __init__(self, lean, parent, source=None):
+            super().__init__(lean, parent, source)
+            if source is None:
+                control.append(self)
+
+    def checked_run(m, scratch, *args):
+        assert control and scratch is not control[0]
+        return original_run(m, scratch, *args)
+
+    monkeypatch.setattr(tm, "Scratch", TrackedScratch)
+    monkeypatch.setattr(tm, "run", checked_run)
+    assert sharded("--max-mutants", 2)[3] == ["M001", "M002"]
 
 
 def test_a_shard_owns_a_disjoint_stable_part_of_the_mutants_that_run(sharded):
