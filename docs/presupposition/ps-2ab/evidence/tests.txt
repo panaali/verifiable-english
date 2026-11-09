@@ -1,0 +1,71 @@
+# ps-2ab evidence (commands run on this branch; HEAD d3abfc412, merge base a0102f0e5)
+
+## python3 docs/presupposition/ps-2ab/evidence/probe.py lean/VE/Presupposition/Admit/Statements.lean docs/spec/presupposition.md
+spec statements 19 proved here 19
+equal 19 differing []
+missing [] helpers (not in the spec) ['admit_pass1', 'buildPre_body', 'admit_ids_nodup']
+
+## #print axioms of the 19 statements (lake env lean on a scratch file importing VE.Presupposition.Admit.Statements)
+'VE.Presupposition.admit_regenerates' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Presupposition.admit_goals_from_base' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Presupposition.admit_rule_goal' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Presupposition.admit_heading_goal' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Presupposition.admit_outside_restrictions' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Presupposition.admit_claim_content' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Presupposition.admit_rule_content' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Presupposition.admit_proved_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Presupposition.admit_assumed_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Presupposition.admit_unconditional_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Presupposition.admit_conditioned_rule_unspecified' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Presupposition.admit_carrier_candidate' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Presupposition.admit_unresolved_readings' depends on axioms: [propext, Quot.sound]
+'VE.Presupposition.admit_empty_table' depends on axioms: [propext, Quot.sound]
+'VE.Presupposition.admit_inPlace_alias' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Presupposition.no_silent_accommodation' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Presupposition.one_open_per_unit' depends on axioms: [propext, Quot.sound]
+'VE.Presupposition.candidates_ruleAct' depends on axioms: [propext, Quot.sound]
+'VE.Presupposition.no_block_unchanged' depends on axioms: [propext, Quot.sound]
+
+## python3 lean/audit.py --write (last line)
+PASS: 799 source files; 8845 named theorem declarations audited (headline results and helper lemmas); only the declared standard axiom allowlist.
+
+## uv run python tools/trust_map.py --check (last lines)
+against a0102f0e5350: K +0, S +0, D +0, G +240, tied +102, unclassified +0, trusted +116
+  VE/Presupposition/Admit.lean: trusted +116
+note: a0102f0e5350 records the budget {'K': 997, 'S': 9958, 'V': 39079}; measured there {'K': 994, 'S': 14520, 'V': 46314} (the merge train's --write has not run since)
+PASS: K, S and untied [V] within a0102f0e5350 and the allowances introduced since
+
+## uv run python tools/check_lean_imports.py
+Lean layer graph kept (799 modules, 18 reviewed legacy edges)
+
+## hand mutants (docs/presupposition/ps-2ab/mutants.json): each applied alone, lake build VE.Presupposition.Examples VE.Presupposition.Admit.Statements, restored; failing file:line
+M2-proved-unchecked KILLED VE/Presupposition/Admit/Statements.lean:104 VE/Presupposition/Examples.lean:906 VE/Presupposition/Examples.lean:907 VE/Presupposition/Examples.lean:913
+M-drop-candidate KILLED VE/Presupposition/Admit/Facts.lean:255 VE/Presupposition/Examples.lean:771 VE/Presupposition/Examples.lean:772 VE/Presupposition/Examples.lean:776 VE/Presupposition/Examples.lean:777 VE/Presupposition/Examples.lean:779
+M-soft-chain KILLED VE/Presupposition/Examples.lean:866
+M-softOk KILLED VE/Presupposition/Examples.lean:866 VE/Presupposition/Examples.lean:870
+M-rootsWith KILLED VE/Presupposition/Examples.lean:771 VE/Presupposition/Examples.lean:772 VE/Presupposition/Examples.lean:776 VE/Presupposition/Examples.lean:777 VE/Presupposition/Examples.lean:779 VE/Presupposition/Examples.lean:781
+M-peelWith KILLED VE/Presupposition/Examples.lean:771 VE/Presupposition/Examples.lean:772 VE/Presupposition/Examples.lean:776 VE/Presupposition/Examples.lean:777 VE/Presupposition/Examples.lean:779 VE/Presupposition/Examples.lean:781
+M-peelRule KILLED VE/Presupposition/Examples.lean:819 VE/Presupposition/Examples.lean:820 VE/Presupposition/Examples.lean:839 VE/Presupposition/Examples.lean:840 VE/Presupposition/Examples.lean:848 VE/Presupposition/Examples.lean:849
+M-allSame KILLED VE/Presupposition/Examples.lean:795
+M-baseOf KILLED VE/Presupposition/Examples.lean:944 VE/Presupposition/Examples.lean:950 VE/Presupposition/Examples.lean:951 VE/Presupposition/Examples.lean:953 VE/Presupposition/Examples.lean:960 VE/Presupposition/Examples.lean:961
+M-withObligations KILLED VE/Presupposition/Admit/Facts.lean:209 VE/Presupposition/Examples.lean:799
+M-withObligations-first KILLED VE/Presupposition/Admit/Facts.lean:209 VE/Presupposition/Examples.lean:799
+M-baseTreeOf KILLED VE/Presupposition/Examples.lean:839 VE/Presupposition/Examples.lean:840 VE/Presupposition/Examples.lean:848 VE/Presupposition/Examples.lean:849 VE/Presupposition/Examples.lean:851 VE/Presupposition/Examples.lean:857
+M-needsUnspec KILLED VE/Presupposition/Admit/Statements.lean:132 VE/Presupposition/Examples.lean:839 VE/Presupposition/Examples.lean:840
+M-checkIds KILLED VE/Presupposition/Admit/Facts.lean:193 VE/Presupposition/Examples.lean:963
+M-admitInputs KILLED VE/Presupposition/Examples.lean:863
+M-readingsDoc KILLED VE/Presupposition/Examples.lean:771 VE/Presupposition/Examples.lean:772
+M-separated KILLED VE/Presupposition/Examples.lean:777 VE/Presupposition/Examples.lean:779 VE/Presupposition/Examples.lean:851 VE/Presupposition/Examples.lean:857
+M-separated-defaults KILLED VE/Presupposition/Examples.lean:857
+M-provedOk-none KILLED VE/Presupposition/Admit/Statements.lean:105 VE/Presupposition/Examples.lean:911
+M-admitWrapped KILLED VE/Presupposition/Examples.lean:1003
+M-admitBase KILLED VE/Presupposition/Admit/Statements.lean:239 VE/Presupposition/Examples.lean:1002
+M-Base-type KILLED VE/Presupposition/Admit.lean:100 VE/Presupposition/Admit.lean:105 VE/Presupposition/Admit.lean:128 VE/Presupposition/Admit.lean:75 VE/Presupposition/Admit.lean:80
+M-Fixed-type KILLED VE/Presupposition/Admit.lean:223 VE/Presupposition/Admit.lean:266
+M-regen-restriction KILLED VE/Presupposition/Admit/Facts.lean:100 VE/Presupposition/Examples.lean:1017 VE/Presupposition/Examples.lean:1018
+M-carrierOk-ownUnit KILLED VE/Presupposition/Admit/Facts.lean:148 VE/Presupposition/Examples.lean:883 VE/Presupposition/Examples.lean:884
+M-carrierOk-heading KILLED VE/Presupposition/Admit/Facts.lean:151 VE/Presupposition/Examples.lean:892 VE/Presupposition/Examples.lean:893 VE/Presupposition/Examples.lean:894
+M-openOk-second KILLED VE/Presupposition/Admit/Facts.lean:245 VE/Presupposition/Admit/Facts.lean:250 VE/Presupposition/Admit/Facts.lean:251 VE/Presupposition/Examples.lean:783 VE/Presupposition/Examples.lean:785 VE/Presupposition/Examples.lean:787
+M-unitsOk-content KILLED VE/Presupposition/Admit/Facts.lean:273 VE/Presupposition/Examples.lean:953
+M-budget-count KILLED VE/Presupposition/Examples.lean:979
+M-budget-nodes KILLED VE/Presupposition/Examples.lean:986
