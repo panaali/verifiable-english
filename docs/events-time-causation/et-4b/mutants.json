@@ -779,6 +779,28 @@
    "definition": "VE.Events.replayUnblockedEntailment",
    "test": "cd lean && lake build VE.Events.RouteExamples",
    "fails": "the proof of VE.Events.unblocked_wire_acceptance; with that proof stubbed, the #guards at lean/VE/Events/RouteExamples.lean:326 (every served kind as on the list without events@0), 332 to 342"
+  },
+  {
+   "id": "order-links-before-roles",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "line": 192,
+   "definition": "VE.Events.decodeThroughLinks",
+   "before": "checkRoles W V0\n  pure ⟨W, V0, ← checkLinks W V0 raw, dates, anchor⟩",
+   "after": "let ls ← checkLinks W V0 raw\n  checkRoles W V0\n  pure ⟨W, V0, ls, dates, anchor⟩",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[order-links-before-roles]",
+   "fails": "the item-4 sort-fault #guards of lean/VE/Events/WireExamples.lean (EventsSort: deed, day, act, tenancy, the duplicate sorts), each beside the base block's link, whose sorts are then no role sorts (et-4b-tm)"
+  },
+  {
+   "id": "order-dates-before-links",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "line": 193,
+   "definition": "VE.Events.decodeThroughLinks",
+   "before": "pure ⟨W, V0, ← checkLinks W V0 raw, dates, anchor⟩",
+   "after": "let _ ← checkDates W dates anchor\n  pure ⟨W, V0, ← checkLinks W V0 raw, dates, anchor⟩",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[order-dates-before-links]",
+   "fails": "the #guards of lean/VE/Events/WireExamples.lean \"Item 5 before item 6\" (EventsSort: missing beside InvalidDate) and LinkNotOpen on badDate (et-4b-tm)"
   }
  ]
 }

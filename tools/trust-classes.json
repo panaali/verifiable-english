@@ -1006,7 +1006,8 @@
         "ResponseShape.Skeletons.words",
         "ResponseShape.Skeletons.cardinality",
         "ResponseShape.Skeletons.scope",
-        "ResponseShape.Skeletons.sensesProject"
+        "ResponseShape.Skeletons.sensesProject",
+        "ResponseShape.Skeletons.actReadings"
       ],
       "G[I]": [
         "ResponseShape.Skeletons.identity"
@@ -9845,7 +9846,10 @@
         "VE.Senses.Run.writtenLines",
         "VE.Senses.Run.flipJson",
         "VE.Senses.Run.byteSpan",
-        "VE.Senses.Run.senseEntryJson"
+        "VE.Senses.Run.senseEntryJson",
+        "VE.Senses.Run.projectionIds",
+        "VE.Senses.Run.admittedIds",
+        "VE.Senses.Run.usedOf"
       ],
       "G[R]": [
         "VE.Senses.Run.fenceLine",
@@ -9858,9 +9862,6 @@
         "VE.Senses.Run.warningsJson"
       ],
       "G[I]": [
-        "VE.Senses.Run.projectionIds",
-        "VE.Senses.Run.admittedIds",
-        "VE.Senses.Run.usedOf",
         "VE.Senses.Projection.written",
         "VE.Senses.SensesOutcome.written"
       ]
@@ -17380,7 +17381,8 @@
         "VE.Readings.supCertificateCheckSD"
       ],
       "P": [
-        "VE.Readings.FillLite"
+        "VE.Readings.FillLite",
+        "VE.Readings.dropUnsaid"
       ]
     },
     "VE/Readings/SoftSupExamples.lean": {
@@ -17401,7 +17403,17 @@
         "VE.Readings.SoftSupExamples.sides",
         "VE.Readings.SoftSupExamples.closeCert",
         "VE.Readings.SoftSupExamples.q4",
-        "VE.Readings.SoftSupExamples.NSDa"
+        "VE.Readings.SoftSupExamples.NSDa",
+        "VE.Readings.SoftSupExamples.conflictAt",
+        "VE.Readings.SoftSupExamples.fY",
+        "VE.Readings.SoftSupExamples.bothSides",
+        "VE.Readings.SoftSupExamples.q5",
+        "VE.Readings.SoftSupExamples.q6",
+        "VE.Readings.SoftSupExamples.toE",
+        "VE.Readings.SoftSupExamples.avoidAll",
+        "VE.Readings.SoftSupExamples.fillOf",
+        "VE.Readings.SoftSupExamples.checkSides",
+        "VE.Readings.SoftSupExamples.named"
       ]
     },
     "VE/SoftNorms/TreeExamples.lean": {
@@ -18609,27 +18621,36 @@
     "VE/Presupposition/Examples.lean": {
       "T": [
         "VE.Presupposition.Examples.all24",
+        "VE.Presupposition.Examples.allCandidates",
+        "VE.Presupposition.Examples.allCarriers",
         "VE.Presupposition.Examples.allClasses",
         "VE.Presupposition.Examples.app14",
         "VE.Presupposition.Examples.at1",
         "VE.Presupposition.Examples.at2",
         "VE.Presupposition.Examples.b16",
         "VE.Presupposition.Examples.b26",
+        "VE.Presupposition.Examples.badAt",
         "VE.Presupposition.Examples.busy",
+        "VE.Presupposition.Examples.chk12",
+        "VE.Presupposition.Examples.chk25",
+        "VE.Presupposition.Examples.chkR",
         "VE.Presupposition.Examples.consF",
         "VE.Presupposition.Examples.coreValueOf",
         "VE.Presupposition.Examples.dec14",
+        "VE.Presupposition.Examples.emptyTree",
         "VE.Presupposition.Examples.ev",
         "VE.Presupposition.Examples.evAt",
         "VE.Presupposition.Examples.f4",
         "VE.Presupposition.Examples.f5a",
         "VE.Presupposition.Examples.f5b",
         "VE.Presupposition.Examples.f5c",
+        "VE.Presupposition.Examples.fixtureTable",
         "VE.Presupposition.Examples.flag8",
         "VE.Presupposition.Examples.gManager",
         "VE.Presupposition.Examples.gOwner",
         "VE.Presupposition.Examples.goal13",
         "VE.Presupposition.Examples.guidelineOf",
+        "VE.Presupposition.Examples.inner26",
         "VE.Presupposition.Examples.isOpen",
         "VE.Presupposition.Examples.kBothFalse",
         "VE.Presupposition.Examples.kNeither",
@@ -18664,11 +18685,14 @@
         "VE.Presupposition.Examples.ms3",
         "VE.Presupposition.Examples.negF",
         "VE.Presupposition.Examples.negNegF",
+        "VE.Presupposition.Examples.nestedFrames",
         "VE.Presupposition.Examples.noAddressee14",
         "VE.Presupposition.Examples.noMgr",
+        "VE.Presupposition.Examples.ob12",
         "VE.Presupposition.Examples.onDuty",
         "VE.Presupposition.Examples.opOf",
         "VE.Presupposition.Examples.openProblem",
+        "VE.Presupposition.Examples.outer26",
         "VE.Presupposition.Examples.owner",
         "VE.Presupposition.Examples.pAtom",
         "VE.Presupposition.Examples.person",
@@ -18688,6 +18712,8 @@
         "VE.Presupposition.Examples.ready",
         "VE.Presupposition.Examples.reg14",
         "VE.Presupposition.Examples.reg22",
+        "VE.Presupposition.Examples.rep26",
+        "VE.Presupposition.Examples.repR",
         "VE.Presupposition.Examples.reqIn",
         "VE.Presupposition.Examples.row13",
         "VE.Presupposition.Examples.row8",
@@ -19252,22 +19278,59 @@
     },
     "VE/Acts/Run.lean": {
       "D[R]": [
+        "VE.Acts.Run.decodeRequest",
         "VE.Acts.Run.emptyFields",
-        "VE.Acts.Run.partsText"
+        "VE.Acts.Run.partsText",
+        "VE.Acts.Run.refusedRow",
+        "VE.Acts.Run.verdictOf"
       ],
       "D[V]": [
+        "VE.Acts.Run.actJson",
         "VE.Acts.Run.completionJson",
         "VE.Acts.Run.elaboratedFields",
+        {
+          "name": "VE.Acts.Run.firstsBy",
+          "tied": [
+            "VE.Acts.Run.firstsBy_map"
+          ]
+        },
         "VE.Acts.Run.optJson",
         "VE.Acts.Run.predicatesJson",
+        "VE.Acts.Run.readingJson",
         "VE.Acts.Run.roleJson",
+        "VE.Acts.Run.rowsOf",
         "VE.Acts.Run.rulesJson",
         "VE.Acts.Run.splitRows"
       ],
       "G[V]": [
         "VE.Acts.Run.isElaborate",
+        "VE.Acts.Run.listReadings",
+        "VE.Acts.Run.listed",
         "VE.Acts.Run.normsSource",
-        "VE.Acts.Run.runElaborate"
+        "VE.Acts.Run.runActReadings",
+        "VE.Acts.Run.runElaborate",
+        {
+          "name": "VE.Acts.Run.witnessed",
+          "tied": [
+            "VE.Acts.Run.witnessed_readings"
+          ]
+        }
+      ],
+      "D[I]": [
+        "VE.Acts.Run.Act.toks",
+        "VE.Acts.Run.Simple.toks",
+        "VE.Acts.Run.fromOf",
+        "VE.Acts.Run.placeOf",
+        "VE.Acts.Run.spans",
+        "VE.Acts.Run.tagBase",
+        "VE.Acts.Run.tagTree",
+        "VE.Acts.Run.tagged"
+      ],
+      "G[I]": [
+        "VE.Acts.Run.sameTok"
+      ],
+      "G[R]": [
+        "VE.Acts.Run.actReadingsReported"
       ]
     },
     "VE/Presupposition/Rules.lean": {
@@ -19543,7 +19606,12 @@
         "VE.Events.RouteExamples.chainEnv",
         "VE.Events.RouteExamples.requestCase",
         "VE.Events.RouteExamples.requestIsNull",
-        "VE.Events.RouteExamples.requestIsCase"
+        "VE.Events.RouteExamples.requestIsCase",
+        "VE.Events.RouteExamples.ndListed",
+        "VE.Events.RouteExamples.ownedEnv",
+        "VE.Events.RouteExamples.layeredCase",
+        "VE.Events.RouteExamples.ownedRequestIsNull",
+        "VE.Events.RouteExamples.ownedLists"
       ]
     },
     "VE/Route/Inert.lean": {
@@ -19834,6 +19902,117 @@
         "VE.Closure.Tableau.Trace",
         "VE.Closure.Tableau.checkCertificate",
         "VE.Closure.Tableau.extraRule"
+      ]
+    },
+    "ResponseShape/Schemas/ActReadings.lean": {
+      "G[R]": [
+        "ResponseShape.Schemas.ActReadings.act",
+        "ResponseShape.Schemas.ActReadings.file",
+        "ResponseShape.Schemas.ActReadings.nat",
+        "ResponseShape.Schemas.ActReadings.reading",
+        "ResponseShape.Schemas.ActReadings.result",
+        "ResponseShape.Schemas.ActReadings.row"
+      ]
+    },
+    "VE/Acts/RunExamples.lean": {
+      "T": [
+        "VE.Acts.RunExamples.Vsf",
+        "VE.Acts.RunExamples.acts",
+        "VE.Acts.RunExamples.count",
+        "VE.Acts.RunExamples.diag",
+        "VE.Acts.RunExamples.f300",
+        "VE.Acts.RunExamples.fnsOf",
+        "VE.Acts.RunExamples.frameJ",
+        "VE.Acts.RunExamples.fromsAt",
+        "VE.Acts.RunExamples.lastAdv",
+        "VE.Acts.RunExamples.p400",
+        "VE.Acts.RunExamples.paraphraseAt",
+        "VE.Acts.RunExamples.req",
+        "VE.Acts.RunExamples.row",
+        "VE.Acts.RunExamples.verdict"
+      ]
+    },
+    "VE/Presupposition/Wire.lean": {
+      "S": [
+        "VE.Presupposition.Candidate",
+        "VE.Presupposition.Candidate.core",
+        "VE.Presupposition.Candidate.root",
+        "VE.Presupposition.CandidateTable",
+        "VE.Presupposition.Carrier",
+        "VE.Presupposition.Carrier.cand",
+        "VE.Presupposition.Carrier.root",
+        "VE.Presupposition.candidateTable",
+        "VE.Presupposition.carrierAllowed",
+        "VE.Presupposition.cellOk",
+        "VE.Presupposition.entersRestriction",
+        "VE.Presupposition.restrictionPaths",
+        "VE.Presupposition.rowNames",
+        "VE.Presupposition.ruleConditions",
+        "VE.Presupposition.tableOk",
+        "VE.Presupposition.unitModes"
+      ],
+      "D[V]": [
+        "VE.Presupposition.Args",
+        "VE.Presupposition.Args.tuple",
+        "VE.Presupposition.Obligation",
+        "VE.Presupposition.Position"
+      ],
+      "G[V]": [
+        "VE.Presupposition.Checked",
+        "VE.Presupposition.Report"
+      ]
+    },
+    "VE/Commands/Steps.lean": {
+      "G[R]": [
+        "VE.Commands.conditionScope"
+      ],
+      "G[V]": [
+        "VE.Commands.Alt",
+        "VE.Commands.Form",
+        "VE.Commands.Shape",
+        "VE.Commands.StepOutcome",
+        "VE.Commands.capitalise",
+        "VE.Commands.combineShapes",
+        "VE.Commands.hasThen",
+        "VE.Commands.lift",
+        {
+          "name": "VE.Commands.productSize",
+          "tied": [
+            "VE.Commands.readingTuples_length"
+          ]
+        },
+        "VE.Commands.readStep",
+        "VE.Commands.readingTuples",
+        "VE.Commands.reads",
+        "VE.Commands.shapeAlts",
+        "VE.Commands.shapeOutcome",
+        {
+          "name": "VE.Commands.shapeOutcomeCharged",
+          "tied": [
+            "VE.Commands.shapeOutcome_charged"
+          ]
+        },
+        "VE.Commands.shapes"
+      ]
+    },
+    "VE/Commands/StepsExamples.lean": {
+      "T": [
+        "VE.Commands.StepsExamples.ask",
+        "VE.Commands.StepsExamples.chargeInstalled",
+        "VE.Commands.StepsExamples.check",
+        "VE.Commands.StepsExamples.conditionScopeText",
+        "VE.Commands.StepsExamples.eightReviews",
+        "VE.Commands.StepsExamples.elabChargeInstalled",
+        "VE.Commands.StepsExamples.noStep",
+        "VE.Commands.StepsExamples.readS",
+        "VE.Commands.StepsExamples.readsWeb",
+        "VE.Commands.StepsExamples.reviewIt",
+        "VE.Commands.StepsExamples.reviewMeaning",
+        "VE.Commands.StepsExamples.spelled",
+        "VE.Commands.StepsExamples.spellings",
+        "VE.Commands.StepsExamples.step",
+        "VE.Commands.StepsExamples.twoSteps",
+        "VE.Commands.StepsExamples.wideEnv"
       ]
     }
   }
