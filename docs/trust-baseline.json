@@ -2291,14 +2291,14 @@
   {
    "class": "S",
    "lines": 46,
-   "reason": "en-e3a: Norm/Run.lean +82, Norm/Owners.lean +36, Norm/Rules.lean +13, EnglishGrammar/Run.lean +12 (K +0, S +46, V +97; trusted +143)",
+   "reason": "en-e3a: Norm/Run.lean +82, Norm/Owners.lean +36, Norm/Rules.lean +13, EnglishGrammar/Run.lean +8 (K +0, S +46, V +93; trusted +139)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), en-e3a, 2026-10-18",
    "commit": "a0102f0e5350727e99ddcae2e0b59ed03f2f4192"
   },
   {
    "class": "V",
-   "lines": 97,
-   "reason": "en-e3a: Norm/Run.lean +82, Norm/Owners.lean +36, Norm/Rules.lean +13, EnglishGrammar/Run.lean +12 (K +0, S +46, V +97; trusted +143)",
+   "lines": 93,
+   "reason": "en-e3a: Norm/Run.lean +82, Norm/Owners.lean +36, Norm/Rules.lean +13, EnglishGrammar/Run.lean +8 (K +0, S +46, V +93; trusted +139)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), en-e3a, 2026-10-18",
    "commit": "a0102f0e5350727e99ddcae2e0b59ed03f2f4192"
   }
