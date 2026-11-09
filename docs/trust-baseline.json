@@ -2252,6 +2252,20 @@
    "reason": "ps-2aa: lean/VE/Presupposition/Wire.lean S +79, D[V] +26, G[V] +15 (trusted +120, K +0)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ps-2aa, 2026-10-18",
    "commit": "b8266ee19562e5488d27d8a87fa50dcb8f633ab5"
+  },
+  {
+   "class": "V",
+   "lines": 57,
+   "reason": "ap-4: VE/Acts/Run.lean +54 (G[V] listReadings, listed, runActReadings; D[V] actJson, readingJson, rowsOf: the act-readings mode, act-phrases 7), VE/Service/Registry.lean +1, VE/Service/Protocol.lean +1, ResponseShape/Schemas.lean +1 (the mode's registration); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-4, 2026-10-18",
+   "commit": "da5303b7876924d4fba67866390ed6f0d0b36cbc"
+  },
+  {
+   "class": "V",
+   "lines": 6,
+   "reason": "ap-4 review fix (F2, F4): VE/Acts/Run.lean +6 (D[V] readingJson, rowsOf: each reading's acts read against its meaning's tagged derivation; G[V] witnessed and D[V] firstsBy are tied by witnessed_readings and firstsBy_map; tagTree, placeOf, Act.toks, Simple.toks, tagged, tagBase are D[I]); ap-4 in all +63 of R16's 150; K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-4, 2026-11-09",
+   "commit": "da5303b7876924d4fba67866390ed6f0d0b36cbc"
   }
  ]
 }
