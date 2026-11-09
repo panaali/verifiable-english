@@ -9,7 +9,7 @@ A *route* is one way `ve` reads a Lean answer:
   built service lists in its handshake), read by `LeanService.exchange` (the transport of `relay`) and, for a
   mode whose one caller reads the answer further (`SERVICE_READERS`: `ask`, read by `ve.ask.read_answer`;
   `words`, read by `ve.words.read_answer`; `document`; `metered`, read by `ve.evaluate.read_evaluation` and
-  `ve.search.read_nonvacuity`), by that caller's reader too, on every fixture whose genuine answer
+  `ve.search.read_nonvacuity`; `act-readings`, read by `ve.acts.read_answer`), by that caller's reader too, on every fixture whose genuine answer
   is not a rejection row;
 * each one-shot runner call that a `ve` call site makes: every assurance-manifest binding of a runner other
   than `ve_service` whose operation has Lean call sites, and every call of the one-shot route reader
@@ -405,8 +405,17 @@ def _scope_reader(case):
     return lambda response: read_answer(response["results"][0]["result"], case)
 
 
+def _acts_reader(case):
+    """How `ve.acts` reads the service's response to `case`: `relay.decided`, then `ve.acts.read_answer` (the row's
+    schema, its spans within the phrase, its indices within the tokens, its readings distinct)."""
+    from ve import acts
+    from ve.backends import relay
+    return lambda response: acts.read_answer(relay.decided(response["results"])[0], case)
+
+
 SERVICE_READERS = {"ask": _ask_reader, "words": _words_reader, "document": _document_reader,
-                   "metered": _metered_reader, "calc": _calc_reader, "scope": _scope_reader}
+                   "metered": _metered_reader, "calc": _calc_reader, "scope": _scope_reader,
+                   "act-readings": _acts_reader}
 
 
 def _exchange_outcome(replay: _Replay, mode: str, text: str, read=None) -> tuple[str, str]:

@@ -39,8 +39,8 @@ structure DefaultsView where
   hR : R.all (decisionFree L.D) = true
   hl : VE.Compose.Labelled.wellLabelled (dfltLabelled L.D) = true
 
-theorem decodeRightsU_soften (environment document : Json) (L : LayeredU)
-    (h : VE.NormDefaults.Wire.decodeRightsU environment document = .ok L) : L.U.D = soften L.D := by
+theorem decodeRightsU_soften (environment document : Json) (L : LayeredU) {H : Option VE.Events.EventsHook}
+    (h : VE.NormDefaults.Wire.decodeRightsU environment document H = .ok L) : L.U.D = soften L.D := by
   unfold VE.NormDefaults.Wire.decodeRightsU at h
   repeat (obtain ⟨_, _, h⟩ := bind_ok h)
   split at h
@@ -54,6 +54,7 @@ theorem decodeRightsU_soften (environment document : Json) (L : LayeredU)
 theorem decodeLayered_soften (j : Json) (L : LayeredU) (h : VE.NormDefaults.Wire.decodeLayered j = .ok L) :
     L.U.D = soften L.D := by
   unfold VE.NormDefaults.Wire.decodeLayered at h
+  obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨_, _, h⟩ := bind_ok h
   split at h
   · exact decodeRightsU_soften _ _ L h

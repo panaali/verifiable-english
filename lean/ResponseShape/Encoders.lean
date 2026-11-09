@@ -17,6 +17,7 @@ import ResponseShape.Encoders.Question
 import ResponseShape.Encoders.SearchBudget
 import ResponseShape.Encoders.Ask
 import ResponseShape.Encoders.Words
+import ResponseShape.Encoders.ActReadings
 import ResponseShape.Encoders.Metered
 import ResponseShape.Encoders.Calc
 import ResponseShape.Encoders.Cardinality
@@ -88,5 +89,6 @@ theorem runMode_fits (m : VE.Service.Mode) (j : Json) (hj : CaseWF j) : Fits j (
   · exact Scope.runCaseReported_fits j
   · exact SensesProject.projectCaseReported_fits j
   · exact Command.caseReported_fits j
+  · exact ActReadings.actReadingsReported_fits j
 
 end ResponseShape.Encoders
