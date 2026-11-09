@@ -1,0 +1,4 @@
+trust_mutants: 2 definitions, 72 mutants (9 to run), 4 jobs, base 5e1cc1cbf227
+trust_mutants: 6 KILLED, 0 SURVIVOR, 0 UNKNOWN, 2 INVALID, 1 ALLOWED, 0 NOT RUN, 63 OTHER SHARD in 177 s
+trust_mutants: D[V], trusted: 6 KILLED, 2 INVALID, 1 ALLOWED, 63 OTHER SHARD
+trust_mutants: steps: wall plan 9.2 s, scratch 2.6 s, control_build 0.1 s, probe_install 1.1 s, control_probes 64.4 s, mutants 94.9 s, cleanup 4.4 s; lake control_build 0.1 s (1), probe_install 1.1 s (1), control_probes 64.3 s (1), mutant_builds 73.3 s (10), mutant_checks 135.3 s (9), stage_controls 34 s (3), mutant_probes 105.1 s (6)
