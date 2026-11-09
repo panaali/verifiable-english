@@ -6,16 +6,16 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 
 | | count |
 |---|---:|
-| leaves:bound | 289 |
-| leaves:closed domain | 309 |
-| leaves:none | 1576 |
-| modes | 42 |
+| leaves:bound | 293 |
+| leaves:closed domain | 311 |
+| leaves:none | 1592 |
+| modes | 43 |
 | today:hand | 203 |
 | today:later Lean request | 62 |
-| today:not probed | 1174 |
-| today:shape | 598 |
+| today:not probed | 1190 |
+| today:shape | 604 |
 | today:unbound | 137 |
-| answers | 589 |
+| answers | 594 |
 | probes | 10204 |
 | hand_binders | 51 |
 
@@ -1676,6 +1676,9 @@ Delegates: `/` to norms.
 | `/base_environment/profiles/*` | string | none |  |  | 2 | not probed |
 | `/base_environment/spec_revision` | string | bound | x-equals |  | 2 | shape |
 | `/base_environment/vocabulary/constants` | any | bound | x-equals |  | 0 | shape |
+| `/base_environment/vocabulary/constants/@key` | key | none |  |  | 0 | not probed |
+| `/base_environment/vocabulary/constants/{}/description` | string | none |  |  | 0 | not probed |
+| `/base_environment/vocabulary/constants/{}/sort` | string | none |  |  | 0 | not probed |
 | `/base_environment/vocabulary/predicates/@key` | key | none |  |  | 6 | not probed |
 | `/base_environment/vocabulary/predicates/{}/arguments/*` | string | none |  |  | 10 | not probed |
 | `/base_environment/vocabulary/sorts` | any | bound | x-equals |  | 0 | shape |
@@ -1711,6 +1714,7 @@ Delegates: `/` to norms.
 | `/environment_id` | string | none |  |  | 5 | hand: `ve/norm_defaults.py:__init__` |
 | `/environment_id` | string | none |  | pattern | 5 | hand: `ve/norm_defaults.py:__init__` |
 | `/error` | string | none |  | minLength | 2 | not probed |
+| `/events_premises/*/label` | string | none |  | minLength | 0 | not probed |
 | `/fill/*/generator` | string | closed domain | const |  | 1 | shape |
 | `/fill_hash` | string | none |  |  | 3 | hand: `ve/norm_defaults.py:__init__` |
 | `/fill_labels/*` | string | none |  |  | 0 | unbound |
@@ -1803,6 +1807,7 @@ Delegates: `/` to norms.
 | `/coherence_targets/*/2` | generated_formula |  | 0 |
 | `/conflict_targets/*/ast` | generated_formula |  | 200 |
 | `/default_premises/*/1` | generated_formula |  | 0 |
+| `/events_premises/*/ast` | generated_formula |  | 0 |
 | `/fill/*/ast` | generated_formula |  | 53 |
 | `/kinds/*` | kind.anyOf.1 |  | 0 |
 | `/premises/*/ast` | generated_formula |  | 467 |
@@ -1836,6 +1841,7 @@ Delegates: `/` to norms.
 | `/default_premises/*` |  |  |  |  |
 | `/differs` |  |  |  |  |
 | `/differs/*/tuple` |  |  |  |  |
+| `/events_premises` |  |  |  |  |
 | `/fill` |  |  |  | drop: accept/ve/norm_defaults.py:<genexpr>; duplicate: accept/ve/norm_defaults.py:<genexpr> |
 | `/fill_labels` |  |  |  | drop: accept/ve/norm_defaults.py:<genexpr>; duplicate: accept/ve/norm_defaults.py:<genexpr> |
 | `/findings` |  |  |  | drop: accept/accepted; duplicate: accept/accepted |
@@ -3097,6 +3103,10 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/error` | string | none |  | minLength | 5 | not probed |
 | `/id` | any | bound | x-echo |  | 7 | shape |
 | `/id` | string | bound | x-equals |  | 7 | shape |
+| `/judgment_lines/legend/*/lines/*` | string | none |  |  | 0 | not probed |
+| `/judgment_lines/legend/*/term` | string | none |  | pattern | 0 | not probed |
+| `/judgment_lines/status/*/line` | string | none |  |  | 0 | not probed |
+| `/judgment_lines/status/*/unit` | string | none |  | pattern | 0 | not probed |
 | `/judgments/unused/*` | string | none |  | pattern | 2 | not probed |
 | `/judgments/used/*/term` | string | none |  | pattern | 3 | not probed |
 | `/judgments/used/*/units/*` | string | none |  | pattern | 4 | not probed |
@@ -3265,6 +3275,9 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/coverage/alternatives/narrowings/*/reason_spans` |  |  |  |  |
 | `/coverage/alternatives/proximate_judgments` |  |  |  | drop: accept/ve/document/lean.py:require; duplicate: accept/ve/document/lean.py:require |
 | `/coverage/alternatives/unmapped_obligations` |  |  |  |  |
+| `/judgment_lines/legend` |  |  |  |  |
+| `/judgment_lines/legend/*/lines` |  |  |  |  |
+| `/judgment_lines/status` |  |  |  |  |
 | `/judgments/unused` |  |  |  |  |
 | `/judgments/used` |  |  |  |  |
 | `/judgments/used/*/units` |  |  |  |  |
@@ -3666,6 +3679,7 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/result/projection/environment/alternatives` | any | bound | x-equals |  | 0 | shape |
 | `/result/projection/environment/cardinality` | any | bound | x-equals |  | 0 | shape |
 | `/result/projection/environment/cardinality_schema` | any | bound | x-equals |  | 0 | shape |
+| `/result/projection/environment/events` | any | bound | x-equals |  | 0 | shape |
 | `/result/projection/environment/language` | any | bound | x-equals |  | 1 | shape |
 | `/result/projection/environment/profile` | any | bound | x-equals |  | 1 | shape |
 | `/result/projection/environment/profiles` | any | bound | x-equals |  | 0 | shape |
@@ -3780,6 +3794,34 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/result/readings/*/command/args` |  |  |  |  |
 | `/result/readings/*/fills` |  |  |  |  |
 | `/result/readings/*/fills/*/span` |  |  |  |  |
+
+## act-readings
+
+5 recorded answers.
+
+| leaf | kind | class | keyword | format | observed | bound today |
+|---|---|---|---|---|---:|---|
+| `/case_index` | integer | bound | x-index |  | 0 | shape |
+| `/diagnostic` | string | none |  |  | 2 | not probed |
+| `/error` | string | none |  | minLength | 0 | not probed |
+| `/id` | any | bound | x-echo |  | 5 | shape |
+| `/id` | string | bound | x-equals |  | 5 | shape |
+| `/readings/*/acts/*/act` | string | none |  |  | 10 | not probed |
+| `/readings/*/acts/*/from/*` | integer | none |  | minimum | 73 | not probed |
+| `/readings/*/acts/*/text` | string | none |  |  | 10 | not probed |
+| `/readings/*/paraphrase` | string | none |  |  | 6 | not probed |
+| `/status` | string | closed domain | const |  | 5 | shape |
+| `/tokens/*/0` | integer | none |  | minimum | 30 | not probed |
+| `/tokens/*/1` | integer | none |  | minimum | 30 | not probed |
+| `/verdict` | string | closed domain | enum |  | 5 | shape |
+
+| array | length bound by | positions bound by | internal agreement | probed (generic/hand) |
+|---|---|---|---|---|
+| `/readings` |  |  |  |  |
+| `/readings/*/acts` |  |  |  |  |
+| `/readings/*/acts/*/from` |  |  |  |  |
+| `/tokens` |  |  |  |  |
+| `/tokens/*` |  |  |  |  |
 
 ## Grammars
 

@@ -297,8 +297,10 @@ R 4.2 has the full table. In short, where the projected goal fails:
   unresolved rule obligation whose cell lists conditioned needs an `unspecified` predicate, like a conditioned one
   (`PresuppositionDefault` otherwise).
 - **Separation and chains.** An open set with a conditioned rule reading needs `norm-defaults@0`, so it is on the
-  norms chain only, and readings-defaults separates its readings under the unspecified completion; on the soft and
-  rights chains readings@1's `abstention` refuses it. Without `norm-defaults@0`, readings@1's own separation applies.
+  norms chain only, and readings-defaults separates its readings under the unspecified completion. On the soft chain
+  PS check step 5 refuses it with its own diagnostic ("UnsupportedProfile: a conditioned rule reading needs the norms
+  chain (presupposition)"); on the rights chain readings@1's `abstention` refuses it (DRI 2026-11-04, item 2).
+  Without `norm-defaults@0`, readings@1's own separation applies.
 - **Coupling is a proved compression, never imposed** (PS-3). Equal goals alone never force one choice. A group of
   obligations shares one choice only when:
   - their goals are equal as formulas, their candidate lists are equal, and they sit in the same reading
@@ -868,8 +870,8 @@ Discourse's generalised builders (PS-1) land before any consumer of them.
   separate relay module.
 - **CLI.** `ve document check` prints Lean's presupposition lines (display only); no new subcommand.
 - **Tests.**
-  - `tests/test_presuppositions_lean.py`: S1–S27 (S7d included), A1–A28 (A5u-allow and A5u-deny included; A26 and
-    A27 on the soft and rights chains), P1–P13 as documents.
+  - `tests/test_presuppositions_lean.py`: S1–S27 (S7d included), A1–A28 (A5u-allow and A5u-deny included; A26 on the
+    soft chain, A27 on the rights chain), P1–P13 as documents.
   - `tests/test_presuppositions_answer.py`: one-fault and two-fault mutants of the field in genuine document answers
     (each member dropped, emptied, retyped, duplicated or reordered; an index pushed out of range); each mutant is
     `CheckerUnavailable` or changes nothing shown.
@@ -1028,7 +1030,7 @@ Discourse's generalised builders (PS-1) land before any consumer of them.
 |---|---|---|---|
 | Lean document mode | lf-16e, lf-16f, lf-16g (`ve-lf-16e`, …) | PS-2a, PS-4, PS-2b | DRI PS-C9: the report is a field of the document mode's answer, no new mode. PS-2a (new files only) after lf-16g; PS-4 (the field and the status rule) in the document-mode queue after ME-10; PS-2b's binding after PS-4 |
 | Coupled reading sets in Lean | lf-14d (`lean-first/b14d`, `ve-lf-14d`) | PS-3 | called, never edited; PS-3 after it merges |
-| Readings under norm-defaults | readings-defaults (merged: `lean/VE/Readings/Unspecified.lean`, `UnspecifiedWire.lean`; `abstention` in `lean/VE/Readings/Wire.lean`) | PS-2a (separation of open sets with a conditioned rule reading), PS-3 (`SatUnder` reads norm-defaults' `IntendedAt3` and `WellFormedU`) | called, never edited: `separates (fillDoc N)` with `fillHolds` for separation under the completion; on the soft and rights chains `abstention` refuses such sets before PS-2a's check |
+| Readings under norm-defaults | readings-defaults (merged: `lean/VE/Readings/Unspecified.lean`, `UnspecifiedWire.lean`; `abstention` in `lean/VE/Readings/Wire.lean`) | PS-2a (separation of open sets with a conditioned rule reading), PS-3 (`SatUnder` reads norm-defaults' `IntendedAt3` and `WellFormedU`) | called, never edited: `separates (fillDoc N)` with `fillHolds` for separation under the completion; on the rights chain `abstention` refuses such sets before PS-2a's check; on the soft chain PS check step 5 refuses them ("UnsupportedProfile: a conditioned rule reading needs the norms chain (presupposition)"; DRI 2026-11-04, item 2) |
 | Protocol and schema registry | in-flight editors lf-16e, qa-q2 (`ve-qa-q2`), lf-14d; then the protocol queue | none (DRI PS-C9) | no dispatch line and no `MODES` entry: this plan adds no mode |
 | Profile-gate table | AR-10 | PS-4 | one row with its composition proof; the table lands first |
 | Generated audit manifests | AR-1 (`arch-20261010-1`) | PS-1 onwards | append by hand before AR-1, regenerate after |
@@ -1074,7 +1076,7 @@ Discourse's generalised builders (PS-1) land before any consumer of them.
 | Attribute flags | W5 `data@0` | proved by declaration |
 | UNDECIDED where no rule decides | norm-defaults `unspecified` (`value3`) | a conditioned rule contributes no decision where `pre` fails; admitted only for `unspecified` predicates |
 | Reading sets, separating situations | readings@1 | unresolved |
-| Separation under the unspecified completion; readings content beside `norm-defaults@0` off the norms chain | readings-defaults (`separates (fillDoc N)`, `fillHolds`, `SeparatedU`); readings@1's `abstention` | open sets with a conditioned rule reading |
+| Separation under the unspecified completion; readings content beside `norm-defaults@0` on the rights chain | readings-defaults (`separates (fillDoc N)`, `fillHolds`, `SeparatedU`); readings@1's `abstention` | open sets with a conditioned rule reading; on the soft chain PS check step 5 refuses them itself (DRI 2026-11-04, item 2) |
 | The unspecified completion's models and checks | norm-defaults (`IntendedAt3`, `WellFormedU`) | coupling's `SatUnder` with a norm-defaults block |
 | Joint choices | lf-14d | coupling |
 | Question presuppositions | speech acts | an empty frame (`speech_question_top`) |
