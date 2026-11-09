@@ -274,6 +274,7 @@ import VE.Events.Completion
 import VE.Events.Examples
 import VE.Events.WireExamples
 import VE.Events.Chain
+import VE.Events.RouteExamples
 import VE.NormDefaults.Packs
 import VE.NormDefaults.PacksLegacy
 import VE.NormDefaults.PacksLabels
