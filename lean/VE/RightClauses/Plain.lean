@@ -7,7 +7,9 @@ import VE.RightClauses.Tree
 every rights theorem applies to `plain D` unchanged; with no clause and no relation it is the identity
 (`plain_identity`). `checkClauses` checks the fixed lines and `checkCandidates` the reading candidates' lines, in
 the order of 4.1 with the texts of section 7. The decoding texts of 7 (`elided missing`, `invalid elided`,
-`invalid clause <i>`, `invalid relation`) are the wire decoder's (Wire.lean): a `CLine` already has every field. -/
+`invalid clause <i>`, `invalid relation`) belong to the wire decoder, which is not built yet (cmp-s3-cfr-1): a
+`CLine` already has every field. An entry whose rule is on two source lines gets rights' own `DuplicateDeclaration`
+text when that is rights' first fault (`entryError`). -/
 namespace VE.RightClauses
 open VE.Rights (RightsDoc SourceLine Line linesOf sourceLines holderSlot sortsOf lineAct limPremisesLabelled
   limPremises WellFormedRights validateRights correlate)
