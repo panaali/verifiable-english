@@ -124,7 +124,10 @@ def base_environment : Shape :=
           .required ["sorts", "predicates", "constants"],
           closed [
             ("sorts", n [obj, .equals "/environment/vocabulary/sorts"]),
-            ("constants", n [obj, .equals "/environment/vocabulary/constants"]),
+            ("constants", n [obj, .ite (.onCase (ref "common.json#/$defs/request_block/events"))
+              -- The request's constants and the block's named dates (events 3); et-5's relay binds them.
+              (.object [] (some (n [obj, .required ["sort", "description"], closed [("sort", str), ("description", str)]])))
+              (.equals "/environment/vocabulary/constants")]),
             ("predicates", n [
               obj,
               .object [] (some (n [obj, .required ["arguments"], props [("arguments", ref "common.json#/$defs/strings")]]))])]])]]
@@ -138,9 +141,16 @@ def layered_elaborate : Shape :=
       closed (elaborateFields ++ [
         ("soft", ref "common.json#/$defs/labelled_list"),
         ("rights", ref "common.json#/$defs/labelled_list"),
+        ("events_premises", ref "common.json#/$defs/labelled_list"),
         ("environment_id", str),
         ("document_hash", str),
         ("base_environment", ref "#/$defs/base_environment")])]
+
+/- et-4b: `base_environment` and `layered_elaborate` as `tools/response_schemas.py` renders them, pinned by their digests
+(the events selector on the constants, the optional `events_premises`). -/
+#guard [base_environment, layered_elaborate].map (fun (s : Shape) =>
+  (render "norm-defaults.json" 64 s).toOption.map fun (j : Json) => hash j.compress) ==
+  ([some 5141493250304792031, some 3476203141762586412] : List (Option UInt64))
 
 def report_line : Shape :=
   c
