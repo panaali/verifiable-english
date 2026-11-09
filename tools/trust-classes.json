@@ -19324,6 +19324,7 @@
         "VE.Acts.Run.predicatesJson",
         "VE.Acts.Run.readingJson",
         "VE.Acts.Run.roleJson",
+        "VE.Acts.Run.rowsOf",
         "VE.Acts.Run.rulesJson",
         "VE.Acts.Run.splitRows"
       ],
