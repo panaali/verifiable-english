@@ -137,6 +137,7 @@ import VE.Presupposition.Reading
 import VE.Presupposition.Rows
 import VE.Presupposition.Rules
 import VE.Presupposition.Agree
+import VE.Presupposition.Wire
 import VE.Presupposition.Examples
 import VE.RightClauses.Tree
 import VE.RightClauses.Plain
@@ -274,6 +275,7 @@ import VE.Events.Completion
 import VE.Events.Examples
 import VE.Events.WireExamples
 import VE.Events.Chain
+import VE.Events.RouteExamples
 import VE.NormDefaults.Packs
 import VE.NormDefaults.PacksLegacy
 import VE.NormDefaults.PacksLabels
@@ -339,6 +341,11 @@ import VE.Weighing.Conditions
 import VE.Weighing.Examples
 import VE.Defaults.Zone
 import VE.Defaults.ZoneExamples
+import VE.Route.Inert
+import VE.Purposes.Decl
+import VE.Purposes.Wire
+import VE.Purposes.WellFormed
+import VE.Purposes.Examples
 import VE.Defaults.ZoneWire
 import VE.Defaults.ZoneWireExamples
 import VE.Attitudes.Examples

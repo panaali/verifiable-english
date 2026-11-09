@@ -40,7 +40,7 @@ or `ve document readings --assume-no-exception` does for the flag. Each answer b
 
 | Probe | Document | VE's answer |
 |---|---|---|
-| JT-a | s134-rra (rule f7-rra, OT1) in D1's own environment (`norms@0`, `readings@1`, `relational-fol@0`, `soft-norms@0`) with `judgments@0` and `documents@1` | refused: `CheckerUnavailable: judgments@0 with soft-norms@0 needs its composed Lean route` |
+| JT-a | s134-rra (rule f7-rra, OT1) in D1's own environment (`norms@0`, `readings@1`, `relational-fol@0`, `soft-norms@0`) with `judgments@0` and `documents@1` | refused: `CheckerUnavailable: soft-norms with readings, alternatives or risk needs its composed Lean route` (since pc-2a, 881c6695d, DELTA row 3 signed in reviews/dri-decisions-20261103-pc-2a.md item 3: the soft refusal no longer names norm-defaults; on 6d0a10526 the text was `CheckerUnavailable: judgments@0 with soft-norms@0 needs its composed Lean route`) |
 | JT-b | the same unit without `soft-norms@0` and `readings@1`; OT1 declared as D1 declares it (`ot1_level_reached`, a name no formula reads) | refused: `JudgmentUnbound: ot1_level_reached` |
 | JT-c | as JT-b, with OT1 declared on the open predicate the rule reads (`reached`) | admitted; s134-rra **OPEN**; usage map `reached: [s134-rra]` |
 | JT-d | all 8 units with a rule of their own and an open term (1,291 B), each listing the open predicates its rule reads | admitted; all 8 **OPEN**; usage map `adherence_undermined`, `approaches`, `frontier`, `internal_risk_unacceptable_without_safeguards`, `reached` (5 units) |
@@ -84,7 +84,7 @@ governing words themselves.
 
 | Probe | Document | VE's answer |
 |---|---|---|
-| SC-a | D1's chain (soft, `readings@1`) + `scope@0`: s135-bullet2-dm (f9-dm) and s135-bullet2-only as a governor re-guarding f9-dm, with RS8's set on the governor's unit | refused: `CheckerUnavailable: soft-norms with norm-defaults, readings, alternatives or risk needs its composed Lean route` |
+| SC-a | D1's chain (soft, `readings@1`) + `scope@0`: s135-bullet2-dm (f9-dm) and s135-bullet2-only as a governor re-guarding f9-dm, with RS8's set on the governor's unit | refused: `CheckerUnavailable: soft-norms with readings, alternatives or risk needs its composed Lean route` (since pc-2a, 881c6695d, DELTA row 3: the soft refusal no longer names norm-defaults) |
 | SC-b | SC-a without the set (and without `readings@1`) | admitted; both units **OPEN** (OT2 in f9-dm; the governor takes its rule's status) |
 | SC-c | SC-a on the plain norms chain (`norms@0`, `readings@1`, `relational-fol@0`, `scope@0`) | refused: `ScopeReadings: s135-bullet2-only` |
 | SC-d | SC-c without the set | admitted; both units **OPEN** |
