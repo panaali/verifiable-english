@@ -1,0 +1,200 @@
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item1-boolean]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item2-fields]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item3-arity]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item4-declared]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item5-declared]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item6-string]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item7-noun]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item8-suppose]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item9-fields]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item10-obligation]
+tests/test_words.py::test_lean_refuses_a_lexicon_of_another_environment
+tests/test_words.py::test_lean_refuses_a_lexicon_that_fails_the_vocabulary_policy
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[0]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[1]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[2]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[3]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[4]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[5]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[6]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[7]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[8]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[9]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[10]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[11]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[12]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[13]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[14]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[15]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[16]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[17]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[18]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[19]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[20]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[21]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[22]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[23]
+tests/test_words.py::test_the_unsaid_description_is_leans
+tests/test_words.py::test_the_ab_evidence_has_no_difference
+
+=============================== warnings summary ===============================
+ve/english.py:1849
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1849: UnreviewedVocabularyWarning: English overlay 2bd979058edc0265e539a6ce38ca26192555d8aab371e6ee1d892a8ea99606da: unreviewed
+    english = render_english(document, env, **options)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+32957/32958 tests collected (1 deselected) in 29.38s
+[gate-wrap] runner-local checker pins for the base worktree /tmp/ve-gate-lj60kmrq/base-worktree: exit 0 (registry copied from /home/runner/work/verifiable-english/verifiable-english/.cargo-home/registry, offline)
+[gate] Python suite: uv run --frozen --no-sync python -m pytest -p hypothesis.extra.pytestplugin -p xdist -n 4 -q -p tools.gate_pytest -o addopts=-ra -m not live tests/test_acts_elaborate_relay.py tests/test_acts_profile.py tests/test_acts_vocab_mutants.py tests/test_agent_policy_unspecified.py tests/test_alternatives_fill.py tests/test_ar6_report.py tests/test_architecture_docs.py tests/test_arith_uncharged_costs.py tests/test_asimov_laws.py tests/test_assurance_manifest.py tests/test_attacks.py tests/test_b16d_document.py tests/test_b16d_norm_roles.py tests/test_b16f_document.py tests/test_background.py tests/test_calc_derive.py tests/test_calc_dimensions.py tests/test_calc_lean.py tests/test_calc_service.py tests/test_cardinality_exercised.py tests/test_cedar_attributes.py tests/test_commands_ci2_review.py tests/test_compose_dispatch.py tests/test_data_adapters.py tests/test_data_surface.py tests/test_defaults_uniform.py tests/test_discourse_answer.py tests/test_e1_core.py tests/test_e1_prompts.py tests/test_english_e26_diagnosis.py tests/test_english_e26_report.py tests/test_english_e2_integer_marks.py tests/test_english_e2_ledger_sites.py tests/test_english_e2_report.py tests/test_english_evidence.py tests/test_english_lean_engine.py tests/test_english_lean_rejections.py tests/test_english_statement_blocks.py tests/test_enum_domains.py tests/test_equivalence.py tests/test_et_e1_probe.py tests/test_fluent.py tests/test_gate_shards.py tests/test_gen_inv_design.py tests/test_grammar_cli.py tests/test_inventory_path.py tests/test_jt3_english.py tests/test_jt_2c_delta.py tests/test_judgments_compose.py tests/test_lean_authority_values.py tests/test_lean_conformance.py tests/test_lean_decided_share.py tests/test_lean_first_b13b.py tests/test_lean_first_b3d_report.py tests/test_lean_first_b6_report.py tests/test_lean_first_rule3_measurement.py tests/test_lean_statements_parts.py tests/test_lexicon.py tests/test_llm.py tests/test_mutants.py tests/test_nested_pytest.py tests/test_norm_defaults.py tests/test_norm_defaults_contract.py tests/test_norm_defaults_report.py tests/test_norm_defaults_soft_kinds.py tests/test_norms.py tests/test_norms_three_way.py tests/test_numeral_conversion.py tests/test_oom_mutation_evidence.py tests/test_order.py tests/test_order_gate.py tests/test_order_grammar.py tests/test_p1_amendment11.py tests/test_p1_amendment13.py tests/test_p1_amendment9.py tests/test_p1_infrastructure.py tests/test_p1_native_counter.py tests/test_packs_guard_mutants.py tests/test_platform_contract.py tests/test_profile_artifacts.py tests/test_profiles.py tests/test_ps_e1.py tests/test_question_fixture_sources.py tests/test_rd9_docroute.py tests/test_rd9_dri_signatures.py tests/test_rd9_followup_bindings.py tests/test_rd9_r14_candidates.py tests/test_readings_components_lean.py tests/test_readings_components_load.py tests/test_readings_defaults_rd4b_report.py tests/test_readings_defaults_rd6a_report.py tests/test_readings_lazy_pairs.py tests/test_readings_nd_document.py tests/test_readings_rd5_udhr.py tests/test_readings_s1_document.py tests/test_readings_s1_integration.py tests/test_readings_s1_lean.py tests/test_readings_s1_pilot_rebuild.py tests/test_readings_s2_python.py tests/test_readings_sd_relay.py tests/test_readings_verdicts_split.py tests/test_repo_map.py tests/test_reports_status.py tests/test_response_schemas.py tests/test_rights_lean.py tests/test_risk_every_diagnostic.py tests/test_risk_fixtures.py tests/test_route_parity.py tests/test_route_row_schemas.py tests/test_runner.py tests/test_rust_memory_budget.py tests/test_rust_reproducible.py tests/test_scope_answer.py tests/test_scope_lean.py tests/test_select_fast_stage.py tests/test_senses_document.py tests/test_senses_packs.py tests/test_senses_route.py tests/test_softnorms_contract.py tests/test_stage2_faults.py tests/test_stage2_readings.py tests/test_statement_block_environment.py tests/test_stats.py tests/test_suite_tail.py tests/test_surface_registry.py tests/test_test_chunks.py tests/test_test_schedule.py tests/test_test_speed_b2.py tests/test_testing_profile_doc.py tests/test_units_lean_gate_w6a.py tests/test_units_lean_w6a.py tests/test_vacuity.py tests/test_views_polish.py tests/test_w6a2_looprecheck1.py tests/test_w6a2_numeral_characters.py tests/test_w6a_limit_generator.py tests/test_w6a_looprecheck1.py
+bringing up nodes...
+bringing up nodes...
+
+........................................................................ [  1%]
+........................................................................ [  2%]
+........................................................................ [  4%]
+........................................................................ [  5%]
+........................................................................ [  7%]
+........................................................................ [  8%]
+........................................................................ [ 10%]
+........................................................................ [ 11%]
+........................................................................ [ 12%]
+........................................................................ [ 14%]
+........................................................................ [ 15%]
+........................................................................ [ 17%]
+........................................................................ [ 18%]
+........................................................................ [ 20%]
+........................................................................ [ 21%]
+........................................................................ [ 23%]
+........................................................................ [ 24%]
+........................................................................ [ 25%]
+........................................................................ [ 27%]
+........................................................................ [ 28%]
+........................................................................ [ 30%]
+........................................................................ [ 31%]
+........................................................................ [ 33%]
+........................................................................ [ 34%]
+........................................................................ [ 35%]
+........................................................................ [ 37%]
+........................................................................ [ 38%]
+........................................................................ [ 40%]
+........................................................................ [ 41%]
+........................................................................ [ 43%]
+........................................................................ [ 44%]
+........................................................................ [ 46%]
+........................................................................ [ 47%]
+........................................................................ [ 48%]
+........................................................................ [ 50%]
+........................................................................ [ 51%]
+........................................................................ [ 53%]
+........................................................................ [ 54%]
+........................................................................ [ 56%]
+........................................................................ [ 57%]
+........................................................................ [ 58%]
+........................................................................ [ 60%]
+........................................................................ [ 61%]
+........................................................................ [ 63%]
+.s...................................................................... [ 64%]
+........................................................................ [ 66%]
+........................................................................ [ 67%]
+........................................................................ [ 69%]
+........................................................................ [ 70%]
+........................................................................ [ 71%]
+........................................................................ [ 73%]
+........................................................................ [ 74%]
+........................................................................ [ 76%]
+........................................................................ [ 77%]
+........................................................................ [ 79%]
+........................................................................ [ 80%]
+........................................................................ [ 81%]
+........................................................................ [ 83%]
+........................................................................ [ 84%]
+........................................................................ [ 86%]
+........................................................................ [ 87%]
+........................................................................ [ 89%]
+........................................................................ [ 90%]
+........................................................................ [ 92%]
+........................................................................ [ 93%]
+........................................................................ [ 94%]
+........................................................................ [ 96%]
+........................................................................ [ 97%]
+........................................................................ [ 99%]
+.......................................                                  [100%]
+ve: English comparator: {"records": 9874, "excluded": 0, "planted": 0, "classes": {"agree": 9874}} (/tmp/ve-gate-lj60kmrq/tmp/ve-english-comparator-bthxgp3a)
+
+=============================== warnings summary ===============================
+ve/english.py:1849
+ve/english.py:1849
+ve/english.py:1849
+ve/english.py:1849
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1849: UnreviewedVocabularyWarning: English overlay 2bd979058edc0265e539a6ce38ca26192555d8aab371e6ee1d892a8ea99606da: unreviewed
+    english = render_english(document, env, **options)
+
+tests/test_p1_amendment9.py::test_attacker_cap_cannot_be_increased_by_caller
+tests/test_p1_infrastructure.py::test_vertex_status_code_classification
+  /home/runner/work/verifiable-english/verifiable-english/.venv/lib/python3.14/site-packages/google/genai/types.py:42: DeprecationWarning: '_UnionGenericAlias' is deprecated and slated for removal in Python 3.17
+    VersionedUnionType = Union[builtin_types.UnionType, _UnionGenericAlias]
+
+tests/test_lexicon.py::test_unknown_warning_is_advisory_and_adoption_still_explicit
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1849: UnreviewedVocabularyWarning: English overlay 99b00148757645434344bb677b40b5382e02a56d56787d18efb16fdf3d4b847e: unreviewed
+    english = render_english(document, env, **options)
+
+tests/test_lexicon.py::test_known_and_declared_tokens_suppress_all_unknown_flag
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1849: UnreviewedVocabularyWarning: English overlay 0f864ab4363826ffcd3d9bcdabca56080a5cf3d786a943a2c096a44e2be00101: unreviewed
+    english = render_english(document, env, **options)
+
+tests/test_lexicon.py::test_known_and_declared_tokens_suppress_all_unknown_flag
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1849: UnreviewedVocabularyWarning: English overlay 136a1e7dd584d59907199d9fef3e4dfc5a35264ad99be1065432adf2cdf77a7a: unreviewed
+    english = render_english(document, env, **options)
+
+tests/test_lexicon.py::test_token_boundaries_are_only_annotations
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1849: UnreviewedVocabularyWarning: English overlay 8f7cf2217f364d4f24cc7b7e1f89291e931b092662306b89b31fef94da8796cb: unreviewed
+    english = render_english(document, env, **options)
+
+tests/test_lexicon.py::test_article_led_opaque_phrase_remains_allowed[a member of the guild]
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1849: UnreviewedVocabularyWarning: English overlay 792f6aa43d1b4c26be8d0bba03b62ff618a16e69a237cf1168992b96a84c6261: unreviewed
+    english = render_english(document, env, **options)
+
+tests/test_lexicon.py::test_article_led_opaque_phrase_remains_allowed[a member OF THE guild]
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1849: UnreviewedVocabularyWarning: English overlay 4d61bb69d64684a8d732465c296c9665e9c5d79dc7d0d487de11150e8b7523f4: unreviewed
+    english = render_english(document, env, **options)
+
+tests/test_lexicon.py::test_lexical_evidence_cannot_be_tampered_with_even_after_redigest
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1849: UnreviewedVocabularyWarning: English overlay 97b120333eac45a5322365c21b320eb1eaa060db5106c0d9c2e114507c17e144: unreviewed
+    english = render_english(document, env, **options)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+SKIPPED [1] tests/test_p1_native_counter.py:60: pinned tokenizer not cached; test never downloads
+5006 passed, 1 skipped, 13 warnings in 1555.39s (0:25:55)
+[gate] slowest:    453.0 s tests/test_lean_conformance.py::test_lean_transitive_axiom_allowlist
+[gate] slowest:    220.8 s tests/test_repo_map.py::test_a_map_from_before_the_relay_changed_gives_the_static_answer
+[gate] slowest:    184.9 s tests/test_scope_answer.py::test_every_binding_check_has_a_mutant_only_it_refuses
+[gate] slowest:    119.5 s tests/test_english_statement_blocks.py::test_lean_reads_each_pinned_block_as_python
+[gate] slowest:     68.5 s tests/test_fluent.py::test_random_inverse_injectivity_and_pairwise_consistency_all_five_views[env1]
+[gate] slowest:     61.0 s tests/test_p1_amendment13.py::test_refresh_dev_is_read_only_and_missing_cache_fails_closed
+[gate] slowest:     58.5 s tests/test_route_row_schemas.py::test_route_answer_mutations_agree_with_lean
+[gate] slowest:     52.9 s tests/test_fluent.py::test_random_inverse_injectivity_and_pairwise_consistency_all_five_views[env0]
+[gate] slowest:     51.3 s tests/test_enum_domains.py::test_every_field_keeps_its_domain[0]
+[gate] slowest:     48.9 s tests/test_english_evidence.py::test_english_mixed_merge_smoke[news-article-reviewed-5]
+[gate] slowest:     47.4 s tests/test_english_evidence.py::test_english_mixed_merge_smoke[news-article-reviewed-0]
+[gate] slowest:     46.5 s tests/test_english_evidence.py::test_english_mixed_merge_smoke[news-article-reviewed-1]
+[gate] slowest:     46.1 s tests/test_english_evidence.py::test_english_mixed_merge_smoke[news-article-reviewed-7]
+[gate] slowest:     46.1 s tests/test_english_evidence.py::test_english_mixed_merge_smoke[news-article-reviewed-3]
+[gate] slowest:     46.0 s tests/test_english_evidence.py::test_english_mixed_merge_smoke[news-article-reviewed-2]
+[gate] slowest:     45.6 s tests/test_english_evidence.py::test_english_mixed_merge_smoke[news-article-reviewed-6]
+[gate] slowest:     45.5 s tests/test_english_evidence.py::test_english_mixed_merge_smoke[news-article-reviewed-4]
+[gate] slowest:     44.8 s tests/test_enum_domains.py::test_every_field_keeps_its_domain[5]
+[gate] slowest:     44.5 s tests/test_enum_domains.py::test_every_field_keeps_its_domain[2]
+[gate] slowest:     43.1 s tests/test_data_surface.py::test_1000_attribute_english_round_trips
+[gate] commit: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false rev-parse HEAD
+8752fad91e03de7042ec51eb5ac922024b298cf1
+[gate] worktree status: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false status --porcelain --untracked-files=all
+
+[gate] worktree index: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false read-tree 8752fad91e03de7042ec51eb5ac922024b298cf1
+
+[gate] worktree content: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false status --porcelain --untracked-files=all
+ M lean/checkers.lock
+[gate-wrap] lean/checkers.lock differs from the commit by this runner's pins only (blob b1a99efb6443fe8a3a299b746b5aa9b40ef722c9, taken at the wrapper's start)
+[gate] shard-passed: /home/runner/work/verifiable-english/verifiable-english/gate-result.json; 5006 passed, 1 skipped, 0 failures
+[gate] skip allowed: tests/test_llm.py::test_live_smoke: excluded live model call
+[gate] skip allowed: tests/test_p1_native_counter.py::test_retained_deepinfra_smoke_native_count[weak-21]: ('/home/runner/work/verifiable-english/verifiable-english/tests/test_p1_native_counter.py', 60, 'Skipped: pinned tokenizer not cached; test never downloads')
