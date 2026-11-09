@@ -162,8 +162,8 @@ def lean_layer(module: str) -> int | None:
                   "VE.Question.Examples", "VE.Question.Fixtures", "VE.Commands.Examples", "VE.Alternatives.FillExamples",
                   "VE.Calc.RunExamples", "VE.Defaults.RouteExamples", "VE.Defaults.ZoneWireExamples", "VE.Readings.ActsExamples",
                   "VE.Cardinality.RunExamples", "VE.Scope.RunExamples", "VE.Senses.RunExamples",
-                  "VE.Commands.RunExamples", "VE.Commands.RunSplit", "VE.EnglishGrammar.JudgmentRunExamples",
-                  "VE.Senses.TextsExamples"}:
+                  "VE.Events.RouteExamples", "VE.Commands.RunExamples", "VE.Commands.RunSplit",
+                  "VE.EnglishGrammar.JudgmentRunExamples", "VE.Senses.TextsExamples"}:
         return 4  # runner-boundary acceptance fixtures import EnglishGrammar.Run, Question.Run, Alternatives.Run, Calc.Run,
         # NormDefaults.Run, Readings.Run, Cardinality.Run, Scope.Run, Senses.Run or Commands.Run
     if module in {"VE.Discourse.Compose", "VE.Discourse.ComposeExamples"}:
@@ -187,8 +187,8 @@ def lean_layer(module: str) -> int | None:
         return 4  # checks Service.Document.checkDocSets on PC-1's fixtures (profile-composition 5.1)
     if module in {"VE.Question.Spans"}:
         return 4  # states theorems on EnglishGrammar.Run.codepointsBefore (question answering Q1.1)
-    if module == "VE.Commands.Read":
-        return 4  # reads a condition through EnglishGrammar.Run.translation (commands-imperatives CI-1)
+    if module in {"VE.Commands.Read", "VE.Commands.Steps", "VE.Commands.StepsExamples"}:
+        return 4  # reads a condition through EnglishGrammar.Run.translation (commands-imperatives CI-1); CI-3's steps over it
     if module.startswith("VE.Ask."):
         return 4  # question answering Q2: binds a request to Service.Document's split and reads EnglishGrammar.Run
     if module in {"VE.Acts.LexicalBase", "VE.Acts.Lexical", "VE.Acts.LexicalProofs", "VE.Acts.Compat",
@@ -216,9 +216,7 @@ def lean_layer(module: str) -> int | None:
         "VE.Bridge", "VE.RoundTrip", "VE.CertificateWire", "VE.ClaimGraph",
         "VE.GraphChecks", "VE.ModelProofs", "VE.EnvironmentProofs",
         "VE.Tableau", "VE.TableauClosure", "VE.TableauChecker",
-        "VE.TableauChecks", "VE.TableauExtended", "VE.TableauExtendedRules",
-        "VE.TableauExtendedClosure", "VE.TableauExtendedExtra",
-        "VE.TableauExtendedInduction", "VE.TableauExtendedChecker",
+        "VE.TableauChecks", "VE.Closure.Tableau",
     }:
         return 1
     if module.startswith("VE."):

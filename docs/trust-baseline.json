@@ -2210,6 +2210,76 @@
    "reason": "sc-7 recheck F8, F9: lean/VE/Scope/Authoring.lean untied V +2 (sc-7 total K +0, S +37, V +113, trusted +150): Pinned.clause refuses every Unicode 16.0 Sentence_Terminal, ':' and their NFKC forms, after dropping trailing closers and Cf, Mn, Me, Default_Ignorable_Code_Point and U+2800; Pinned.wordChar refuses C1 controls and the five fillers drawn as a space",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-7, 2026-11-09",
    "commit": "da5303b7876924d4fba67866390ed6f0d0b36cbc"
+  },
+  {
+   "class": "S",
+   "lines": 124,
+   "reason": "pe-1: S +124 (VE/Purposes/WellFormed.lean +77, VE/Purposes/Decl.lean +42, VE/Route/Inert.lean +5), untied V +23 (VE/Purposes/Wire.lean +23); K +0; trusted +147",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pe-1, 2026-10-18",
+   "commit": "a6d0d389a07b606e27881aacad9b01be8e8844ca"
+  },
+  {
+   "class": "V",
+   "lines": 23,
+   "reason": "pe-1: S +124 (VE/Purposes/WellFormed.lean +77, VE/Purposes/Decl.lean +42, VE/Route/Inert.lean +5), untied V +23 (VE/Purposes/Wire.lean +23); K +0; trusted +147",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pe-1, 2026-10-18",
+   "commit": "a6d0d389a07b606e27881aacad9b01be8e8844ca"
+  },
+  {
+   "class": "S",
+   "lines": 9,
+   "reason": "pe-1 F1: NotChecked in Decl.lean +9 S; shareOf_render ties Wire.lean shareOf -7 untied V; total pe-1 trusted growth +149, K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pe-1 F1, 2026-11-08",
+   "commit": "a6d0d389a07b606e27881aacad9b01be8e8844ca"
+  },
+  {
+   "class": "V",
+   "lines": 123,
+   "reason": "et-4b: K +0, S +0, V +123 (R16, cap 150): VE/Events/Wire.lean +56, VE/NormDefaults/Layered.lean +18, VE/Compose/Dispatch.lean +14, VE/NormDefaults/Run.lean +13, VE/Events/Chain.lean +10, VE/NormDefaults/Packs.lean +7, ResponseShape/Schemas/NormDefaults.lean +4, ResponseShape/Schemas/Common.lean +1",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), et-4b, 2026-10-18",
+   "commit": "fe252f79af28a6c76d6131e23e468d7c134456b5"
+  },
+  {
+   "class": "V",
+   "lines": 6,
+   "reason": "et-4b F1 (review fix): V +6, VE/NormDefaults/Run.lean +6 (runCaseE's no-block branch and certificateAnswer); replayUnblockedEntailment is tied by unblocked_wire_acceptance; et-4b total K +0, S +0, V +129 (R16, cap 150): VE/Events/Wire.lean +56, VE/NormDefaults/Run.lean +19, VE/NormDefaults/Layered.lean +18, VE/Compose/Dispatch.lean +14, VE/Events/Chain.lean +10, VE/NormDefaults/Packs.lean +7, ResponseShape/Schemas/NormDefaults.lean +4, ResponseShape/Schemas/Common.lean +1",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), et-4b, 2026-11-04",
+   "commit": "fe252f79af28a6c76d6131e23e468d7c134456b5"
+  },
+  {
+   "class": "V",
+   "lines": 42,
+   "reason": "jt-3b: VE/Service/Document.lean +30 (contentOf's bound names, legendRows, statusRows, linesJson, check, encode), ResponseShape/Schemas/Document.lean +12 (judgmentLines, row, file)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-3b, 2026-10-18",
+   "commit": "b13cf9e3e6172571628acfeb875ca2549a75fdc8"
+  },
+  {
+   "class": "S",
+   "lines": 79,
+   "reason": "ps-2aa: lean/VE/Presupposition/Wire.lean S +79, D[V] +26, G[V] +15 (trusted +120, K +0)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ps-2aa, 2026-10-18",
+   "commit": "b8266ee19562e5488d27d8a87fa50dcb8f633ab5"
+  },
+  {
+   "class": "V",
+   "lines": 41,
+   "reason": "ps-2aa: lean/VE/Presupposition/Wire.lean S +79, D[V] +26, G[V] +15 (trusted +120, K +0)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ps-2aa, 2026-10-18",
+   "commit": "b8266ee19562e5488d27d8a87fa50dcb8f633ab5"
+  },
+  {
+   "class": "V",
+   "lines": 38,
+   "reason": "sn-b6-f8-trust (DRI reviews/dri-decisions-20261105-cfr2.md, regrade of sn-b6-review-ov F8): reclassification only, no Lean change; VE/Senses/Run.lean +38 V (projectionIds +10, admittedIds +24, usedOf +4 moved from G[I] to G[V]: they build the projection's lexicon, the used words and an admitted reading's identities on the decision path); K +0, S +0; trusted +38. FOLLOW-UP: a ties pass binding these lines.",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sn-b6-f8-trust, 2026-11-09",
+   "commit": "9ba8aeaedfc82fa41258a4f52bcca4820f47b663"
+  },
+  {
+   "class": "V",
+   "lines": 136,
+   "reason": "ci-3a: lean/VE/Commands/Steps.lean V +136 (G[V] Shape, Form, Alt, StepOutcome, capitalise, hasThen, shapes, lift, readingTuples, shapeOutcome, shapeAlts, combineShapes, readStep, reads; G[R] conditionScope is reject-only; productSize and shapeOutcomeCharged tied to readingTuples_length and shapeOutcome_charged); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ci-3a, 2026-11-09",
+   "commit": "d55d24faab755047e2131d11487ff3d9c124d3e8"
   }
  ]
 }

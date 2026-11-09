@@ -98,7 +98,7 @@ repeat (a unit test keeps the two equal).
 | Language | Current outward edges (exact exceptions) |
 |---|---|
 | Python | `ve.assist.cli -> ve_experiments.assist_haiku`, `ve.ast -> ve.surface.nary`, `ve.backends.relay -> ve.ast`, `ve.closure -> ve.surface.registry`, `ve.english -> ve.argument`, `ve.norms -> ve.search`, `ve.rights -> ve.rights_route`, `ve.units -> ve.search`, `ve.wire -> ve.ast` |
-| Lean | `VE.Bridge -> VE.Surface`, `VE.TableauExtendedRules -> VE.Closure.Congruence`, `VE.RoundTrip -> VE.LexicalProofs`, `VE.CertificateWire -> VE.Closure.Bridge`, `VE.TableauExtendedInduction -> VE.Closure.Induction`, `VE.TableauExtended -> VE.Closure.Substitution`, `VE.TableauExtendedExtra -> VE.Closure.PathRules`, `VE.Order.WireGate -> VE.Order.Surface`, `VE.Core.Bridge -> VE.Route.Gate`, `VE.Core.Conservativity -> VE.Closure.Consequence`, `VE.Core.RoundTrip -> VE.Core.Surface`, `VE.Closure.RoundTrip -> VE.Closure.Surface`, `VE.Core.Route -> VE.Route.Checker`, `VE.Core.Route -> VE.Route.Gate`, `VE.Core.Route -> VE.Route.Route`, `VE.Core.Wire -> VE.Route.Wire` |
+| Lean | `VE.Bridge -> VE.Surface`, `VE.RoundTrip -> VE.LexicalProofs`, `VE.CertificateWire -> VE.Closure.Bridge`, `VE.Order.WireGate -> VE.Order.Surface`, `VE.Core.Bridge -> VE.Route.Gate`, `VE.Core.Conservativity -> VE.Closure.Consequence`, `VE.Core.RoundTrip -> VE.Core.Surface`, `VE.Closure.RoundTrip -> VE.Closure.Surface`, `VE.Core.Route -> VE.Route.Checker`, `VE.Core.Route -> VE.Route.Gate`, `VE.Core.Route -> VE.Route.Route`, `VE.Core.Wire -> VE.Route.Wire` |
 | Rust | None at the crate boundary or inside `ve-core` |
 
 Commands: `uv run --group dev python tools/check_python_layers.py`,
