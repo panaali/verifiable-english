@@ -97,8 +97,12 @@ def lake(targets: list[str]) -> tuple[int, list[str]]:
 
 
 def pytest(ids: list[str]) -> tuple[int, list[str]]:
-    p = subprocess.run(["uv", "run", "pytest", "-q", "-p", "no:cacheprovider", *ids], cwd=ROOT, capture_output=True,
-                       text=True)
+    import os
+    sys.path.insert(0, str(ROOT / "tools"))
+    import nested_pytest
+    p = subprocess.run(nested_pytest.command(["-q", "-p", "no:cacheprovider", *ids],
+                                             python=("uv", "run", "python")),
+                       cwd=ROOT, env=nested_pytest.environment(os.environ), capture_output=True, text=True)
     return p.returncode, sorted(set(re.findall(r"^FAILED (\S+)", p.stdout, re.M)))
 
 
