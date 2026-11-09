@@ -1,34 +1,34 @@
 {
  "base": "ee1fb3efaac4b9c3f2a87d5725e69873d7f77d11",
- "head": "92c4f0417b9ee596f611449bd43e75dd87ea9299",
- "tree": "047b16200c578ea4e8f7cdfe7d98b2c9438e2ce8",
+ "head": "24928091e754168669685534d2dfd02a1fcaae96",
+ "tree": "34285a704e2ffb970befb28291ec3fd56eebae78",
  "jobs": 8,
  "max_mutants": 1000,
  "deep": false,
  "tests": [
   "lean/VE/Presupposition/Examples.lean"
  ],
- "seconds": 1867,
+ "seconds": 1680,
  "steps": {
   "wall": {
-   "plan": 16.4,
-   "scratch": 19.7,
+   "plan": 21.0,
+   "scratch": 26.5,
    "control_build": 0.3,
-   "probe_install": 2.8,
-   "control_probes": 27.6,
-   "mutants": 1797.6,
-   "cleanup": 2.8,
-   "reads": 0.1
+   "probe_install": 2.7,
+   "control_probes": 29.1,
+   "mutants": 1597.3,
+   "cleanup": 3.6,
+   "reads": 0.0
   },
   "lake": {
    "control_build": 0.2,
-   "probe_install": 2.7,
-   "control_probes": 23.9,
-   "mutant_builds": 611.6,
-   "mutant_checks": 1183.9,
+   "probe_install": 2.6,
+   "control_probes": 25.5,
+   "mutant_builds": 461.9,
+   "mutant_checks": 850.6,
    "outside_checks": 0.0,
-   "stage_controls": 37.7,
-   "mutant_probes": 977.5,
+   "stage_controls": 24.6,
+   "mutant_probes": 677.4,
    "other": 0.0
   },
   "runs": {
@@ -38,7 +38,7 @@
    "mutant_builds": 200,
    "mutant_checks": 189,
    "outside_checks": 0,
-   "stage_controls": 10,
+   "stage_controls": 9,
    "mutant_probes": 179,
    "other": 0
   }
@@ -65,7 +65,7 @@
  },
  "inputs": {
   "tool": "b99470e08f560850486c2a9ee60cd35b1838c3a42fa0caf14f648b037a8d3354",
-  "lean": "c702c6f19209275f9ba24937199efce21db71effaf436f0c1d08a95f4fbe5a44",
+  "lean": "a22dfed68707f4a875de6dc735cdbf0e48d8fe2dd963dcca515b8bc8775502ba",
   "tests": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
   "base": "ee1fb3efaac4b9c3f2a87d5725e69873d7f77d11",
   "options": "{\"deep\": false, \"test\": [\"VE/Presupposition/Examples.lean\"], \"classes\": [\"trusted\"]}",
@@ -602,7 +602,7 @@
    "lean/VE/ParserContracts.lean": "2742cb47ff17db3f5655b980b5b94cf049d76f7e7b04720103d3a6252037320b",
    "lean/VE/Paths.lean": "be082586f50400ffcbb8dd69eee23fee94ef0d81edf770d1b0af9bb6bbb69fc0",
    "lean/VE/Presupposition/Agree.lean": "fa4d8e9e8391f53999c9974e28ae8f7eeee478f78866c6a07e0005d1bf926236",
-   "lean/VE/Presupposition/Examples.lean": "bfc9d3fd08cc9ac26c7ffd9e5c111f26a6309a66b27fdf14d54d310fc4f44b44",
+   "lean/VE/Presupposition/Examples.lean": "7c483b1b27c17ad91f702fa7594b7c0aa5a3659499c829fefa0c87c05908f499",
    "lean/VE/Presupposition/Frame.lean": "f2d8e7e3901b41eb80e64f7e2b14819f50d81c9d4be8bed345795db51f2cf25d",
    "lean/VE/Presupposition/Reading.lean": "6e9b9d7700fb2fae6a1329a7f5367fff36d7a13b97cde129c59e20dfd3ca301f",
    "lean/VE/Presupposition/Rows.lean": "0e751f9071a3f222c7ef7900c00d7b8c61eff8931b9e52a2501f9b30d325c053",
@@ -908,7 +908,7 @@
    "lean/audit.py": "05fb69c5689a8606fefd6d43e220f23ee6dbedc4bea7245b34ae29a4fd13a1cd",
    "lean/axioms.txt": "1ac86166de25bae0d5c94db15b314ffab59c18c5e8a30aa37299666fd0be6f31",
    "lean/checkers.lock": "e3a68bba8a2b8c9eec7724b6d16cbb7b72974e791deac62b4490da82df583768",
-   "lean/declarations.txt": "b7a24f28caaed3a28de1ee3b9817a073b3f90e0d17a6a9b6ce7dd8bb5482f3b6",
+   "lean/declarations.txt": "017860f84b525507b1cf461b6cfa7d7ddb449749399f23b1686196409a1f17f1",
    "lean/lake-manifest.json": "8579a8594992ccc571614869d24b997dba98134cffdbd5a0b26220a419e0de8e",
    "lean/lakefile.toml": "ffc47dfd06119c3518785b5059d81216b2f82b140509bfd25cd3273cbe04d4f5",
    "lean/lean-toolchain": "42779d67b81608af8a12aa4328d2ab47ca201925b3b2bd68369587b5340bb434",
@@ -932,12 +932,14 @@
  },
  "rescore": {
   "file": "docs/presupposition/ps-2aa/trust-mutants.json",
-  "head": null,
-  "mode": "full",
-  "changed": [],
+  "head": "92c4f0417b9ee596f611449bd43e75dd87ea9299",
+  "mode": "checks",
+  "changed": [
+   "lean/VE/Presupposition/Examples.lean",
+   "lean/declarations.txt"
+  ],
   "reused": 0,
-  "rerun": 200,
-  "full_run": "its inputs differ (tool): tools/trust_mutants.py"
+  "rerun": 200
  },
  "definitions": [
   "lean/VE/Presupposition/Wire.lean: VE.Presupposition.Candidate",
@@ -971,7 +973,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:481: Expression",
    "raw_status": "KILLED",
-   "reads": "51dee92094df44cdbab16d006fb8002e36eeb89eb119bf7a5624d78a37e728d6",
+   "reads": "3c4563928516c7d4a5a89329f83a71c7c13aad0dba212a308fc269d781eab16d",
    "killed_at": [
     481,
     481
@@ -994,7 +996,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:484: Expression",
    "raw_status": "KILLED",
-   "reads": "f9de35db0034df5cb9213f8f2d091cba6563b6af3196cbe2f5042117184951bb",
+   "reads": "67d5a974d55ad010045d0a801a6e2caef59cea4746fd0e059d6420fdf4450322",
    "killed_at": [
     484,
     484
@@ -1017,7 +1019,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:579: Expression",
    "raw_status": "KILLED",
-   "reads": "8864e000caef13da4ca262bef2c72060e355df5a030b1d423f71971b34229c2f",
+   "reads": "d9d701f5e1d59e2ef9ddd781fbbbaf2beb40372678f40bbfa8b26a7381c2a680",
    "killed_at": [
     579,
     579
@@ -1040,7 +1042,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:498: Expression",
    "raw_status": "KILLED",
-   "reads": "e418dc2a65c41c1b295d9acb6b8dbc095646cdb525371d9e6055a5959d52ca26",
+   "reads": "f6d003207809a5032817c14e6ac30f80eb8c699b53b058f73175d2bdad2a9b4d",
    "killed_at": [
     498,
     498
@@ -1063,7 +1065,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:498: Expression",
    "raw_status": "KILLED",
-   "reads": "8fd175f59b175615247f86ece1e5062866eed2542266384cfda74df87e852766",
+   "reads": "88f18671f02df5054bbbc3602c6a14bf87de5d987b9f0956f4e124140b351159",
    "killed_at": [
     498,
     498
@@ -1086,7 +1088,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:520: Expression",
    "raw_status": "KILLED",
-   "reads": "cf5f136de0dab33c7e436ad8215737c5e21000db9cd203bc0f0d27b99c54b4bc",
+   "reads": "0f77e40a64fe2b2cf4e43b0329d68a246c88a2cbe0429957a77649b4202c5f56",
    "killed_at": [
     520,
     522
@@ -1109,7 +1111,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:580: Expression",
    "raw_status": "KILLED",
-   "reads": "541c323c2a76fe13a5bf75d658fd59ac8ab88847d9c1ba44eef9a9411a36c7e2",
+   "reads": "645f000d150023886ab75ff13b05193e021eb69f2f187cdd022752c5ea0a816a",
    "killed_at": [
     580,
     580
@@ -1132,7 +1134,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:496: Expression",
    "raw_status": "KILLED",
-   "reads": "78f77391e68e62319449c225876328581fca9a0c0550d2b1793fb7f23b957bba",
+   "reads": "281b9b1d5036924bb0cebe816def98c510f424e5d24427da3c33a2f3cc0f9af9",
    "killed_at": [
     496,
     496
@@ -1155,7 +1157,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:496: Expression",
    "raw_status": "KILLED",
-   "reads": "8775e81b1653af14c1e024072a2393a7c03326e4ce3059e73ce0fd5f372813bf",
+   "reads": "486339bbbd83140c2425cdfcdfb553546e198652d4e6c7ebc0966a497fba0b88",
    "killed_at": [
     496,
     496
@@ -1178,7 +1180,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:520: Expression",
    "raw_status": "KILLED",
-   "reads": "cf5f136de0dab33c7e436ad8215737c5e21000db9cd203bc0f0d27b99c54b4bc",
+   "reads": "0f77e40a64fe2b2cf4e43b0329d68a246c88a2cbe0429957a77649b4202c5f56",
    "killed_at": [
     520,
     522
@@ -1201,7 +1203,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:579: Expression",
    "raw_status": "KILLED",
-   "reads": "42b36b8a96e2b60a744f7c1bd070c646aa2897c6613901454c373cf5ffea49d0",
+   "reads": "e0fbf9beb9aa16816e4cc9bc4dd711f3047eaaf8e8fb890cb7171dd12b9bf4fe",
    "killed_at": [
     579,
     579
@@ -1224,7 +1226,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:496: Expression",
    "raw_status": "KILLED",
-   "reads": "78f77391e68e62319449c225876328581fca9a0c0550d2b1793fb7f23b957bba",
+   "reads": "281b9b1d5036924bb0cebe816def98c510f424e5d24427da3c33a2f3cc0f9af9",
    "killed_at": [
     496,
     496
@@ -1247,7 +1249,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:498: Expression",
    "raw_status": "KILLED",
-   "reads": "e418dc2a65c41c1b295d9acb6b8dbc095646cdb525371d9e6055a5959d52ca26",
+   "reads": "f6d003207809a5032817c14e6ac30f80eb8c699b53b058f73175d2bdad2a9b4d",
    "killed_at": [
     498,
     498
@@ -1270,7 +1272,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:520: Expression",
    "raw_status": "KILLED",
-   "reads": "cf5f136de0dab33c7e436ad8215737c5e21000db9cd203bc0f0d27b99c54b4bc",
+   "reads": "0f77e40a64fe2b2cf4e43b0329d68a246c88a2cbe0429957a77649b4202c5f56",
    "killed_at": [
     520,
     522
@@ -1293,7 +1295,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:565: Expression",
    "raw_status": "KILLED",
-   "reads": "ec95ae16afca93a672484e94d2af2bcdfd77d1ccc4a2d24243c5c9dead848326",
+   "reads": "fca5e8c54d4694aacbd531c3c07945626a8eb141aee7d6606a40659aa435064e",
    "killed_at": [
     565,
     566
@@ -1316,7 +1318,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:496: Expression",
    "raw_status": "KILLED",
-   "reads": "78f77391e68e62319449c225876328581fca9a0c0550d2b1793fb7f23b957bba",
+   "reads": "281b9b1d5036924bb0cebe816def98c510f424e5d24427da3c33a2f3cc0f9af9",
    "killed_at": [
     496,
     496
@@ -1339,7 +1341,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:520: Expression",
    "raw_status": "KILLED",
-   "reads": "cf5f136de0dab33c7e436ad8215737c5e21000db9cd203bc0f0d27b99c54b4bc",
+   "reads": "0f77e40a64fe2b2cf4e43b0329d68a246c88a2cbe0429957a77649b4202c5f56",
    "killed_at": [
     520,
     522
@@ -1362,7 +1364,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:496: Expression",
    "raw_status": "KILLED",
-   "reads": "78f77391e68e62319449c225876328581fca9a0c0550d2b1793fb7f23b957bba",
+   "reads": "281b9b1d5036924bb0cebe816def98c510f424e5d24427da3c33a2f3cc0f9af9",
    "killed_at": [
     496,
     496
@@ -1385,7 +1387,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:551: Expression",
    "raw_status": "KILLED",
-   "reads": "5867b1c4af4773da278a3c2019d59683e819fddc1128cf32ed5f17d54db84735",
+   "reads": "705f1d4c6a48c651c1eed22d6906f77dce96c4167a779506a4ca21f3466b5c3c",
    "killed_at": [
     551,
     551
@@ -1408,7 +1410,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:565: Expression",
    "raw_status": "KILLED",
-   "reads": "ec95ae16afca93a672484e94d2af2bcdfd77d1ccc4a2d24243c5c9dead848326",
+   "reads": "fca5e8c54d4694aacbd531c3c07945626a8eb141aee7d6606a40659aa435064e",
    "killed_at": [
     565,
     566
@@ -1431,7 +1433,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:499: Expression",
    "raw_status": "KILLED",
-   "reads": "c797daa0fba196079ef69c063e63a1319e2b6a80ec3713e21455d95a38bb93e8",
+   "reads": "0fc7c80e48bdfb23b223eef81eb0dbd9082e0d142157bc98fb6adfce79de0410",
    "killed_at": [
     499,
     499
@@ -1454,7 +1456,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:528: Expression",
    "raw_status": "KILLED",
-   "reads": "dde96adde34bc3921499a5788e7259bb947738997f14995184b1cf13ebc23ab3",
+   "reads": "188e3f97b0fc83e7c9f4cd34ae95a7a76a1375648cd243b06fda8d36ab3fa240",
    "killed_at": [
     528,
     530
@@ -1477,7 +1479,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:497: Expression",
    "raw_status": "KILLED",
-   "reads": "8b8f9b3143b96f5fb4b779562e9536a3c2905e47bc39d59d323b78d25a5a2aae",
+   "reads": "d8741ea05876554224d8adfd79cae0c40e3603a3d16035c711356956461a3bf3",
    "killed_at": [
     497,
     497
@@ -1500,7 +1502,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:509: Expression",
    "raw_status": "KILLED",
-   "reads": "9d658260b6fc75bf28be7ab0dcd239009308d75d451b36c848ce005a469f747e",
+   "reads": "9660ac8a829a3781aa2d3d43508e0999de5d875491cf4bbb9a0818b72dc09efe",
    "killed_at": [
     509,
     509
@@ -1523,7 +1525,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:579: Expression",
    "raw_status": "KILLED",
-   "reads": "42b36b8a96e2b60a744f7c1bd070c646aa2897c6613901454c373cf5ffea49d0",
+   "reads": "e0fbf9beb9aa16816e4cc9bc4dd711f3047eaaf8e8fb890cb7171dd12b9bf4fe",
    "killed_at": [
     579,
     579
@@ -1546,7 +1548,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:485: Expression",
    "raw_status": "KILLED",
-   "reads": "d86d4b524671fab27beea893eea149c18bef400b84d89b005e28143c1c6f4039",
+   "reads": "de7913617409b27b61a30b0ee7586b97794ce7ccb5b99f703391e904fe986261",
    "killed_at": [
     485,
     485
@@ -1569,7 +1571,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:496: Expression",
    "raw_status": "KILLED",
-   "reads": "78f77391e68e62319449c225876328581fca9a0c0550d2b1793fb7f23b957bba",
+   "reads": "281b9b1d5036924bb0cebe816def98c510f424e5d24427da3c33a2f3cc0f9af9",
    "killed_at": [
     496,
     496
@@ -1592,7 +1594,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:579: Expression",
    "raw_status": "KILLED",
-   "reads": "8864e000caef13da4ca262bef2c72060e355df5a030b1d423f71971b34229c2f",
+   "reads": "d9d701f5e1d59e2ef9ddd781fbbbaf2beb40372678f40bbfa8b26a7381c2a680",
    "killed_at": [
     579,
     579
@@ -1615,7 +1617,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:579: Expression",
    "raw_status": "KILLED",
-   "reads": "8864e000caef13da4ca262bef2c72060e355df5a030b1d423f71971b34229c2f",
+   "reads": "d9d701f5e1d59e2ef9ddd781fbbbaf2beb40372678f40bbfa8b26a7381c2a680",
    "killed_at": [
     579,
     579
@@ -1657,7 +1659,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:498: Expression",
    "raw_status": "KILLED",
-   "reads": "8fd175f59b175615247f86ece1e5062866eed2542266384cfda74df87e852766",
+   "reads": "88f18671f02df5054bbbc3602c6a14bf87de5d987b9f0956f4e124140b351159",
    "killed_at": [
     498,
     498
@@ -1680,7 +1682,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:498: Expression",
    "raw_status": "KILLED",
-   "reads": "b321b190f151436cdc26d74b95d5e7303d8cd00d43a175a546e1b9938e76d346",
+   "reads": "f9e633b431bd74cf19772cb482261987612fb5c37ef42a5c0a995f9b17906abf",
    "killed_at": [
     498,
     498
@@ -1703,7 +1705,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:551: Expression",
    "raw_status": "KILLED",
-   "reads": "5867b1c4af4773da278a3c2019d59683e819fddc1128cf32ed5f17d54db84735",
+   "reads": "705f1d4c6a48c651c1eed22d6906f77dce96c4167a779506a4ca21f3466b5c3c",
    "killed_at": [
     551,
     551
@@ -1726,7 +1728,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:520: Expression",
    "raw_status": "KILLED",
-   "reads": "cf5f136de0dab33c7e436ad8215737c5e21000db9cd203bc0f0d27b99c54b4bc",
+   "reads": "0f77e40a64fe2b2cf4e43b0329d68a246c88a2cbe0429957a77649b4202c5f56",
    "killed_at": [
     520,
     522
@@ -1749,7 +1751,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:580: Expression",
    "raw_status": "KILLED",
-   "reads": "0acb9814d299024f60643a0cd13684e6539ef77ddfd3f355aa3185be1ac84527",
+   "reads": "0fad323eb846c5253e1f15bef882d87d15476dac400530ab29b2b25c6d7f9201",
    "killed_at": [
     580,
     580
@@ -1772,7 +1774,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:579: Expression",
    "raw_status": "KILLED",
-   "reads": "42b36b8a96e2b60a744f7c1bd070c646aa2897c6613901454c373cf5ffea49d0",
+   "reads": "e0fbf9beb9aa16816e4cc9bc4dd711f3047eaaf8e8fb890cb7171dd12b9bf4fe",
    "killed_at": [
     579,
     579
@@ -1795,7 +1797,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:565: Expression",
    "raw_status": "KILLED",
-   "reads": "ec95ae16afca93a672484e94d2af2bcdfd77d1ccc4a2d24243c5c9dead848326",
+   "reads": "fca5e8c54d4694aacbd531c3c07945626a8eb141aee7d6606a40659aa435064e",
    "killed_at": [
     565,
     566
@@ -1818,7 +1820,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:580: Expression",
    "raw_status": "KILLED",
-   "reads": "541c323c2a76fe13a5bf75d658fd59ac8ab88847d9c1ba44eef9a9411a36c7e2",
+   "reads": "645f000d150023886ab75ff13b05193e021eb69f2f187cdd022752c5ea0a816a",
    "killed_at": [
     580,
     580
@@ -1841,7 +1843,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:581: Expression",
    "raw_status": "KILLED",
-   "reads": "c9e0c2c3a9a5eeab4c23501343cbc54f1c10ea35ffbdbdf35af72468a025cd5c",
+   "reads": "609d1e806937dff344de5377bf4dcc1027c8a379e9c1c374edf1292e49d940f2",
    "killed_at": [
     581,
     581
@@ -1921,7 +1923,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:481: Expression",
    "raw_status": "KILLED",
-   "reads": "51dee92094df44cdbab16d006fb8002e36eeb89eb119bf7a5624d78a37e728d6",
+   "reads": "3c4563928516c7d4a5a89329f83a71c7c13aad0dba212a308fc269d781eab16d",
    "killed_at": [
     481,
     481
@@ -1944,7 +1946,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:484: Expression",
    "raw_status": "KILLED",
-   "reads": "f9de35db0034df5cb9213f8f2d091cba6563b6af3196cbe2f5042117184951bb",
+   "reads": "67d5a974d55ad010045d0a801a6e2caef59cea4746fd0e059d6420fdf4450322",
    "killed_at": [
     484,
     484
@@ -1967,7 +1969,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:581: Expression",
    "raw_status": "KILLED",
-   "reads": "b632d163a42304ea771ca2e8b3ce65f7bc6dea37a5bc2f43878d924a8b48ed73",
+   "reads": "2d8836e70305396250375aeaa4a4be8ab481d687ae01116ce79d1f790f7fda53",
    "killed_at": [
     581,
     581
@@ -1990,7 +1992,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:497: Expression",
    "raw_status": "KILLED",
-   "reads": "8b8f9b3143b96f5fb4b779562e9536a3c2905e47bc39d59d323b78d25a5a2aae",
+   "reads": "d8741ea05876554224d8adfd79cae0c40e3603a3d16035c711356956461a3bf3",
    "killed_at": [
     497,
     497
@@ -2013,7 +2015,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:496: Expression",
    "raw_status": "KILLED",
-   "reads": "78f77391e68e62319449c225876328581fca9a0c0550d2b1793fb7f23b957bba",
+   "reads": "281b9b1d5036924bb0cebe816def98c510f424e5d24427da3c33a2f3cc0f9af9",
    "killed_at": [
     496,
     496
@@ -2036,7 +2038,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:496: Expression",
    "raw_status": "KILLED",
-   "reads": "78f77391e68e62319449c225876328581fca9a0c0550d2b1793fb7f23b957bba",
+   "reads": "281b9b1d5036924bb0cebe816def98c510f424e5d24427da3c33a2f3cc0f9af9",
    "killed_at": [
     496,
     496
@@ -2059,7 +2061,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:506: Expression",
    "raw_status": "KILLED",
-   "reads": "1d887e76700e015d66b97cbf5d28d3e17e89c626caef97032376fde0f6842fd3",
+   "reads": "d6866466695e7deff5c10419788765bd5bebca8702bbd035e4b04f3a720ad81d",
    "killed_at": [
     506,
     506
@@ -2082,7 +2084,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:565: Expression",
    "raw_status": "KILLED",
-   "reads": "ec95ae16afca93a672484e94d2af2bcdfd77d1ccc4a2d24243c5c9dead848326",
+   "reads": "fca5e8c54d4694aacbd531c3c07945626a8eb141aee7d6606a40659aa435064e",
    "killed_at": [
     565,
     566
@@ -2105,7 +2107,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:498: Expression",
    "raw_status": "KILLED",
-   "reads": "8fd175f59b175615247f86ece1e5062866eed2542266384cfda74df87e852766",
+   "reads": "88f18671f02df5054bbbc3602c6a14bf87de5d987b9f0956f4e124140b351159",
    "killed_at": [
     498,
     498
@@ -2128,7 +2130,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:485: Expression",
    "raw_status": "KILLED",
-   "reads": "d86d4b524671fab27beea893eea149c18bef400b84d89b005e28143c1c6f4039",
+   "reads": "de7913617409b27b61a30b0ee7586b97794ce7ccb5b99f703391e904fe986261",
    "killed_at": [
     485,
     485
@@ -2151,7 +2153,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:579: Expression",
    "raw_status": "KILLED",
-   "reads": "8864e000caef13da4ca262bef2c72060e355df5a030b1d423f71971b34229c2f",
+   "reads": "d9d701f5e1d59e2ef9ddd781fbbbaf2beb40372678f40bbfa8b26a7381c2a680",
    "killed_at": [
     579,
     579
@@ -2174,7 +2176,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:581: Expression",
    "raw_status": "KILLED",
-   "reads": "b632d163a42304ea771ca2e8b3ce65f7bc6dea37a5bc2f43878d924a8b48ed73",
+   "reads": "2d8836e70305396250375aeaa4a4be8ab481d687ae01116ce79d1f790f7fda53",
    "killed_at": [
     581,
     581
@@ -2254,7 +2256,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:580: Expression",
    "raw_status": "KILLED",
-   "reads": "0acb9814d299024f60643a0cd13684e6539ef77ddfd3f355aa3185be1ac84527",
+   "reads": "0fad323eb846c5253e1f15bef882d87d15476dac400530ab29b2b25c6d7f9201",
    "killed_at": [
     580,
     580
@@ -2277,7 +2279,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:580: Expression",
    "raw_status": "KILLED",
-   "reads": "541c323c2a76fe13a5bf75d658fd59ac8ab88847d9c1ba44eef9a9411a36c7e2",
+   "reads": "645f000d150023886ab75ff13b05193e021eb69f2f187cdd022752c5ea0a816a",
    "killed_at": [
     580,
     580
@@ -2357,7 +2359,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:498: Expression",
    "raw_status": "KILLED",
-   "reads": "e418dc2a65c41c1b295d9acb6b8dbc095646cdb525371d9e6055a5959d52ca26",
+   "reads": "f6d003207809a5032817c14e6ac30f80eb8c699b53b058f73175d2bdad2a9b4d",
    "killed_at": [
     498,
     498
@@ -2380,7 +2382,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:507: Expression",
    "raw_status": "KILLED",
-   "reads": "14977386c094a297e483f9ba0b72a55fa95332a45ad32787052c8065685583b2",
+   "reads": "0507f69c726211725efe0146e256109ba659834285482ae304382ed6b2ae57f0",
    "killed_at": [
     507,
     507
@@ -2403,7 +2405,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:579: Expression",
    "raw_status": "KILLED",
-   "reads": "8864e000caef13da4ca262bef2c72060e355df5a030b1d423f71971b34229c2f",
+   "reads": "d9d701f5e1d59e2ef9ddd781fbbbaf2beb40372678f40bbfa8b26a7381c2a680",
    "killed_at": [
     579,
     579
@@ -2464,7 +2466,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:580: Expression",
    "raw_status": "KILLED",
-   "reads": "0acb9814d299024f60643a0cd13684e6539ef77ddfd3f355aa3185be1ac84527",
+   "reads": "0fad323eb846c5253e1f15bef882d87d15476dac400530ab29b2b25c6d7f9201",
    "killed_at": [
     580,
     580
@@ -2487,7 +2489,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:581: Expression",
    "raw_status": "KILLED",
-   "reads": "c9e0c2c3a9a5eeab4c23501343cbc54f1c10ea35ffbdbdf35af72468a025cd5c",
+   "reads": "609d1e806937dff344de5377bf4dcc1027c8a379e9c1c374edf1292e49d940f2",
    "killed_at": [
     581,
     581
@@ -2567,7 +2569,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:498: Expression",
    "raw_status": "KILLED",
-   "reads": "e418dc2a65c41c1b295d9acb6b8dbc095646cdb525371d9e6055a5959d52ca26",
+   "reads": "f6d003207809a5032817c14e6ac30f80eb8c699b53b058f73175d2bdad2a9b4d",
    "killed_at": [
     498,
     498
@@ -2590,7 +2592,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:579: Expression",
    "raw_status": "KILLED",
-   "reads": "8864e000caef13da4ca262bef2c72060e355df5a030b1d423f71971b34229c2f",
+   "reads": "d9d701f5e1d59e2ef9ddd781fbbbaf2beb40372678f40bbfa8b26a7381c2a680",
    "killed_at": [
     579,
     579
@@ -2632,7 +2634,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:580: Expression",
    "raw_status": "KILLED",
-   "reads": "0acb9814d299024f60643a0cd13684e6539ef77ddfd3f355aa3185be1ac84527",
+   "reads": "0fad323eb846c5253e1f15bef882d87d15476dac400530ab29b2b25c6d7f9201",
    "killed_at": [
     580,
     580
@@ -2655,7 +2657,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:580: Expression",
    "raw_status": "KILLED",
-   "reads": "541c323c2a76fe13a5bf75d658fd59ac8ab88847d9c1ba44eef9a9411a36c7e2",
+   "reads": "645f000d150023886ab75ff13b05193e021eb69f2f187cdd022752c5ea0a816a",
    "killed_at": [
     580,
     580
@@ -2697,7 +2699,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:579: Expression",
    "raw_status": "KILLED",
-   "reads": "8864e000caef13da4ca262bef2c72060e355df5a030b1d423f71971b34229c2f",
+   "reads": "d9d701f5e1d59e2ef9ddd781fbbbaf2beb40372678f40bbfa8b26a7381c2a680",
    "killed_at": [
     579,
     579
@@ -2758,7 +2760,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:579: Expression",
    "raw_status": "KILLED",
-   "reads": "8864e000caef13da4ca262bef2c72060e355df5a030b1d423f71971b34229c2f",
+   "reads": "d9d701f5e1d59e2ef9ddd781fbbbaf2beb40372678f40bbfa8b26a7381c2a680",
    "killed_at": [
     579,
     579
@@ -2800,7 +2802,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:579: Expression",
    "raw_status": "KILLED",
-   "reads": "8864e000caef13da4ca262bef2c72060e355df5a030b1d423f71971b34229c2f",
+   "reads": "d9d701f5e1d59e2ef9ddd781fbbbaf2beb40372678f40bbfa8b26a7381c2a680",
    "killed_at": [
     579,
     579
@@ -2842,7 +2844,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:580: Expression",
    "raw_status": "KILLED",
-   "reads": "0acb9814d299024f60643a0cd13684e6539ef77ddfd3f355aa3185be1ac84527",
+   "reads": "0fad323eb846c5253e1f15bef882d87d15476dac400530ab29b2b25c6d7f9201",
    "killed_at": [
     580,
     580
@@ -2865,7 +2867,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:582: Expression",
    "raw_status": "KILLED",
-   "reads": "9eaeb1db28757188ac0fb63a3dcaaa437dd8bd20f12a010996926349a59a7c21",
+   "reads": "0c5daf84904c7904c3ced4d1e5713e88231d8c88634e15a7885189483f504472",
    "killed_at": [
     582,
     582
@@ -2888,7 +2890,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:581: Expression",
    "raw_status": "KILLED",
-   "reads": "b632d163a42304ea771ca2e8b3ce65f7bc6dea37a5bc2f43878d924a8b48ed73",
+   "reads": "2d8836e70305396250375aeaa4a4be8ab481d687ae01116ce79d1f790f7fda53",
    "killed_at": [
     581,
     581
@@ -2911,7 +2913,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:581: Expression",
    "raw_status": "KILLED",
-   "reads": "b632d163a42304ea771ca2e8b3ce65f7bc6dea37a5bc2f43878d924a8b48ed73",
+   "reads": "2d8836e70305396250375aeaa4a4be8ab481d687ae01116ce79d1f790f7fda53",
    "killed_at": [
     581,
     581
@@ -2934,7 +2936,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:580: Expression",
    "raw_status": "KILLED",
-   "reads": "0acb9814d299024f60643a0cd13684e6539ef77ddfd3f355aa3185be1ac84527",
+   "reads": "0fad323eb846c5253e1f15bef882d87d15476dac400530ab29b2b25c6d7f9201",
    "killed_at": [
     580,
     580
@@ -2957,7 +2959,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:589: Expression",
    "raw_status": "KILLED",
-   "reads": "138a1bc604ffc9c79e5bc63fc0f09df895bf5b7f7be45bb8d4c9f9664687f56e",
+   "reads": "9636bc10cb2817ba6d56ca2e896f68e062850601cb8ef77af6dbbf356ac073df",
    "killed_at": [
     589,
     589
@@ -2980,7 +2982,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:509: Expression",
    "raw_status": "KILLED",
-   "reads": "9d658260b6fc75bf28be7ab0dcd239009308d75d451b36c848ce005a469f747e",
+   "reads": "9660ac8a829a3781aa2d3d43508e0999de5d875491cf4bbb9a0818b72dc09efe",
    "killed_at": [
     509,
     509
@@ -3003,7 +3005,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:509: Expression",
    "raw_status": "KILLED",
-   "reads": "10cee4f6ee372e5437303753abd18c4e6ee6eadcac050207de535639ab157762",
+   "reads": "6bd4620ff535e57d24012ef23058eaf41ea93a4e8e4709435fc58b3426f35fe4",
    "killed_at": [
     509,
     509
@@ -3026,7 +3028,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:551: Expression",
    "raw_status": "KILLED",
-   "reads": "5867b1c4af4773da278a3c2019d59683e819fddc1128cf32ed5f17d54db84735",
+   "reads": "705f1d4c6a48c651c1eed22d6906f77dce96c4167a779506a4ca21f3466b5c3c",
    "killed_at": [
     551,
     551
@@ -3049,7 +3051,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:520: Expression",
    "raw_status": "KILLED",
-   "reads": "cf5f136de0dab33c7e436ad8215737c5e21000db9cd203bc0f0d27b99c54b4bc",
+   "reads": "0f77e40a64fe2b2cf4e43b0329d68a246c88a2cbe0429957a77649b4202c5f56",
    "killed_at": [
     520,
     522
@@ -3072,7 +3074,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:579: Expression",
    "raw_status": "KILLED",
-   "reads": "8864e000caef13da4ca262bef2c72060e355df5a030b1d423f71971b34229c2f",
+   "reads": "d9d701f5e1d59e2ef9ddd781fbbbaf2beb40372678f40bbfa8b26a7381c2a680",
    "killed_at": [
     579,
     579
@@ -3095,7 +3097,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:579: Expression",
    "raw_status": "KILLED",
-   "reads": "42b36b8a96e2b60a744f7c1bd070c646aa2897c6613901454c373cf5ffea49d0",
+   "reads": "e0fbf9beb9aa16816e4cc9bc4dd711f3047eaaf8e8fb890cb7171dd12b9bf4fe",
    "killed_at": [
     579,
     579
@@ -3118,7 +3120,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:565: Expression",
    "raw_status": "KILLED",
-   "reads": "ec95ae16afca93a672484e94d2af2bcdfd77d1ccc4a2d24243c5c9dead848326",
+   "reads": "fca5e8c54d4694aacbd531c3c07945626a8eb141aee7d6606a40659aa435064e",
    "killed_at": [
     565,
     566
@@ -3141,7 +3143,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:589: Expression",
    "raw_status": "KILLED",
-   "reads": "138a1bc604ffc9c79e5bc63fc0f09df895bf5b7f7be45bb8d4c9f9664687f56e",
+   "reads": "9636bc10cb2817ba6d56ca2e896f68e062850601cb8ef77af6dbbf356ac073df",
    "killed_at": [
     589,
     589
@@ -3164,7 +3166,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:509: Expression",
    "raw_status": "KILLED",
-   "reads": "9d658260b6fc75bf28be7ab0dcd239009308d75d451b36c848ce005a469f747e",
+   "reads": "9660ac8a829a3781aa2d3d43508e0999de5d875491cf4bbb9a0818b72dc09efe",
    "killed_at": [
     509,
     509
@@ -3187,7 +3189,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:509: Expression",
    "raw_status": "KILLED",
-   "reads": "10cee4f6ee372e5437303753abd18c4e6ee6eadcac050207de535639ab157762",
+   "reads": "6bd4620ff535e57d24012ef23058eaf41ea93a4e8e4709435fc58b3426f35fe4",
    "killed_at": [
     509,
     509
@@ -3210,7 +3212,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:551: Expression",
    "raw_status": "KILLED",
-   "reads": "5867b1c4af4773da278a3c2019d59683e819fddc1128cf32ed5f17d54db84735",
+   "reads": "705f1d4c6a48c651c1eed22d6906f77dce96c4167a779506a4ca21f3466b5c3c",
    "killed_at": [
     551,
     551
@@ -3233,7 +3235,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:520: Expression",
    "raw_status": "KILLED",
-   "reads": "cf5f136de0dab33c7e436ad8215737c5e21000db9cd203bc0f0d27b99c54b4bc",
+   "reads": "0f77e40a64fe2b2cf4e43b0329d68a246c88a2cbe0429957a77649b4202c5f56",
    "killed_at": [
     520,
     522
@@ -3256,7 +3258,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:579: Expression",
    "raw_status": "KILLED",
-   "reads": "8864e000caef13da4ca262bef2c72060e355df5a030b1d423f71971b34229c2f",
+   "reads": "d9d701f5e1d59e2ef9ddd781fbbbaf2beb40372678f40bbfa8b26a7381c2a680",
    "killed_at": [
     579,
     579
@@ -3279,7 +3281,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:579: Expression",
    "raw_status": "KILLED",
-   "reads": "42b36b8a96e2b60a744f7c1bd070c646aa2897c6613901454c373cf5ffea49d0",
+   "reads": "e0fbf9beb9aa16816e4cc9bc4dd711f3047eaaf8e8fb890cb7171dd12b9bf4fe",
    "killed_at": [
     579,
     579
@@ -3302,7 +3304,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:565: Expression",
    "raw_status": "KILLED",
-   "reads": "ec95ae16afca93a672484e94d2af2bcdfd77d1ccc4a2d24243c5c9dead848326",
+   "reads": "fca5e8c54d4694aacbd531c3c07945626a8eb141aee7d6606a40659aa435064e",
    "killed_at": [
     565,
     566
@@ -3325,7 +3327,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:508: Expression",
    "raw_status": "KILLED",
-   "reads": "230b37baa3ab567f4170b7c0cf92f958129b8c9ffaf30ecf25a9d72d029e4448",
+   "reads": "799d6a7341e6871075f05e4bd7ea5531e2fc803156d16fcf0911cfef5119320c",
    "killed_at": [
     508,
     508
@@ -3348,7 +3350,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:498: Expression",
    "raw_status": "KILLED",
-   "reads": "8fd175f59b175615247f86ece1e5062866eed2542266384cfda74df87e852766",
+   "reads": "88f18671f02df5054bbbc3602c6a14bf87de5d987b9f0956f4e124140b351159",
    "killed_at": [
     498,
     498
@@ -3371,7 +3373,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:551: Expression",
    "raw_status": "KILLED",
-   "reads": "5867b1c4af4773da278a3c2019d59683e819fddc1128cf32ed5f17d54db84735",
+   "reads": "705f1d4c6a48c651c1eed22d6906f77dce96c4167a779506a4ca21f3466b5c3c",
    "killed_at": [
     551,
     551
@@ -3394,7 +3396,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:580: Expression",
    "raw_status": "KILLED",
-   "reads": "0acb9814d299024f60643a0cd13684e6539ef77ddfd3f355aa3185be1ac84527",
+   "reads": "0fad323eb846c5253e1f15bef882d87d15476dac400530ab29b2b25c6d7f9201",
    "killed_at": [
     580,
     580
@@ -3417,7 +3419,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:580: Expression",
    "raw_status": "KILLED",
-   "reads": "541c323c2a76fe13a5bf75d658fd59ac8ab88847d9c1ba44eef9a9411a36c7e2",
+   "reads": "645f000d150023886ab75ff13b05193e021eb69f2f187cdd022752c5ea0a816a",
    "killed_at": [
     580,
     580
@@ -3440,7 +3442,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:565: Expression",
    "raw_status": "KILLED",
-   "reads": "ec95ae16afca93a672484e94d2af2bcdfd77d1ccc4a2d24243c5c9dead848326",
+   "reads": "fca5e8c54d4694aacbd531c3c07945626a8eb141aee7d6606a40659aa435064e",
    "killed_at": [
     565,
     566
@@ -3463,7 +3465,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:508: Expression",
    "raw_status": "KILLED",
-   "reads": "230b37baa3ab567f4170b7c0cf92f958129b8c9ffaf30ecf25a9d72d029e4448",
+   "reads": "799d6a7341e6871075f05e4bd7ea5531e2fc803156d16fcf0911cfef5119320c",
    "killed_at": [
     508,
     508
@@ -3486,7 +3488,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:509: Expression",
    "raw_status": "KILLED",
-   "reads": "9d658260b6fc75bf28be7ab0dcd239009308d75d451b36c848ce005a469f747e",
+   "reads": "9660ac8a829a3781aa2d3d43508e0999de5d875491cf4bbb9a0818b72dc09efe",
    "killed_at": [
     509,
     509
@@ -3509,7 +3511,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:551: Expression",
    "raw_status": "KILLED",
-   "reads": "5867b1c4af4773da278a3c2019d59683e819fddc1128cf32ed5f17d54db84735",
+   "reads": "705f1d4c6a48c651c1eed22d6906f77dce96c4167a779506a4ca21f3466b5c3c",
    "killed_at": [
     551,
     551
@@ -3532,7 +3534,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:580: Expression",
    "raw_status": "KILLED",
-   "reads": "0acb9814d299024f60643a0cd13684e6539ef77ddfd3f355aa3185be1ac84527",
+   "reads": "0fad323eb846c5253e1f15bef882d87d15476dac400530ab29b2b25c6d7f9201",
    "killed_at": [
     580,
     580
@@ -3555,7 +3557,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:580: Expression",
    "raw_status": "KILLED",
-   "reads": "541c323c2a76fe13a5bf75d658fd59ac8ab88847d9c1ba44eef9a9411a36c7e2",
+   "reads": "645f000d150023886ab75ff13b05193e021eb69f2f187cdd022752c5ea0a816a",
    "killed_at": [
     580,
     580
@@ -3578,7 +3580,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:565: Expression",
    "raw_status": "KILLED",
-   "reads": "ec95ae16afca93a672484e94d2af2bcdfd77d1ccc4a2d24243c5c9dead848326",
+   "reads": "fca5e8c54d4694aacbd531c3c07945626a8eb141aee7d6606a40659aa435064e",
    "killed_at": [
     565,
     566
@@ -3601,7 +3603,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:589: Expression",
    "raw_status": "KILLED",
-   "reads": "138a1bc604ffc9c79e5bc63fc0f09df895bf5b7f7be45bb8d4c9f9664687f56e",
+   "reads": "9636bc10cb2817ba6d56ca2e896f68e062850601cb8ef77af6dbbf356ac073df",
    "killed_at": [
     589,
     589
@@ -3624,7 +3626,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:551: Expression",
    "raw_status": "KILLED",
-   "reads": "5867b1c4af4773da278a3c2019d59683e819fddc1128cf32ed5f17d54db84735",
+   "reads": "705f1d4c6a48c651c1eed22d6906f77dce96c4167a779506a4ca21f3466b5c3c",
    "killed_at": [
     551,
     551
@@ -3647,7 +3649,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:580: Expression",
    "raw_status": "KILLED",
-   "reads": "0acb9814d299024f60643a0cd13684e6539ef77ddfd3f355aa3185be1ac84527",
+   "reads": "0fad323eb846c5253e1f15bef882d87d15476dac400530ab29b2b25c6d7f9201",
    "killed_at": [
     580,
     580
@@ -3670,7 +3672,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:601: Expression",
    "raw_status": "KILLED",
-   "reads": "eefb821fa76e16e38364347465a8b93393eee0223bedcd4a7574849d8332e095",
+   "reads": "0261b02a171c75ba249f6a05c4ac7fb653a610d6db88a7a757d30e13bc0e3d72",
    "killed_at": [
     601,
     602
@@ -3693,7 +3695,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:565: Expression",
    "raw_status": "KILLED",
-   "reads": "ec95ae16afca93a672484e94d2af2bcdfd77d1ccc4a2d24243c5c9dead848326",
+   "reads": "fca5e8c54d4694aacbd531c3c07945626a8eb141aee7d6606a40659aa435064e",
    "killed_at": [
     565,
     566
@@ -3716,7 +3718,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:501: Expression",
    "raw_status": "KILLED",
-   "reads": "47fe89bbbb926b7f987afd211f6de112d9451f4a27efce185afc2a98ade0cc07",
+   "reads": "6256c909fd0ef07401dd33db2392909c0bfc908bc42d58b3a5d23c0c4bac1183",
    "killed_at": [
     501,
     501
@@ -3739,7 +3741,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:551: Expression",
    "raw_status": "KILLED",
-   "reads": "5867b1c4af4773da278a3c2019d59683e819fddc1128cf32ed5f17d54db84735",
+   "reads": "705f1d4c6a48c651c1eed22d6906f77dce96c4167a779506a4ca21f3466b5c3c",
    "killed_at": [
     551,
     551
@@ -3762,7 +3764,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:598: Expression",
    "raw_status": "KILLED",
-   "reads": "11743467abbca633556cd5b03a73a1f03c5e2e32869e1e67ee5e14cf8b5d4cac",
+   "reads": "75f0c7b6ec524197daee84791f14b67682f83cf8e3d21123aa46879599372e59",
    "killed_at": [
     598,
     599
@@ -3785,7 +3787,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:581: Expression",
    "raw_status": "KILLED",
-   "reads": "c9e0c2c3a9a5eeab4c23501343cbc54f1c10ea35ffbdbdf35af72468a025cd5c",
+   "reads": "609d1e806937dff344de5377bf4dcc1027c8a379e9c1c374edf1292e49d940f2",
    "killed_at": [
     581,
     581
@@ -3808,7 +3810,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:565: Expression",
    "raw_status": "KILLED",
-   "reads": "ec95ae16afca93a672484e94d2af2bcdfd77d1ccc4a2d24243c5c9dead848326",
+   "reads": "fca5e8c54d4694aacbd531c3c07945626a8eb141aee7d6606a40659aa435064e",
    "killed_at": [
     565,
     566
@@ -3831,7 +3833,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:496: Expression",
    "raw_status": "KILLED",
-   "reads": "78f77391e68e62319449c225876328581fca9a0c0550d2b1793fb7f23b957bba",
+   "reads": "281b9b1d5036924bb0cebe816def98c510f424e5d24427da3c33a2f3cc0f9af9",
    "killed_at": [
     496,
     496
@@ -3854,7 +3856,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:581: Expression",
    "raw_status": "KILLED",
-   "reads": "b632d163a42304ea771ca2e8b3ce65f7bc6dea37a5bc2f43878d924a8b48ed73",
+   "reads": "2d8836e70305396250375aeaa4a4be8ab481d687ae01116ce79d1f790f7fda53",
    "killed_at": [
     581,
     581
@@ -3877,7 +3879,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:580: Expression",
    "raw_status": "KILLED",
-   "reads": "541c323c2a76fe13a5bf75d658fd59ac8ab88847d9c1ba44eef9a9411a36c7e2",
+   "reads": "645f000d150023886ab75ff13b05193e021eb69f2f187cdd022752c5ea0a816a",
    "killed_at": [
     580,
     580
@@ -3900,7 +3902,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:590: Expression",
    "raw_status": "KILLED",
-   "reads": "631bd5b21a96a55e5997cb447b223a237cd9e72f828fa82b686096ee287b6fba",
+   "reads": "e54f388a0fc7decb94bbc450bc0574a0dbe44e14b05b8635257a51e835b54221",
    "killed_at": [
     590,
     591
@@ -3923,7 +3925,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:581: Expression",
    "raw_status": "KILLED",
-   "reads": "b632d163a42304ea771ca2e8b3ce65f7bc6dea37a5bc2f43878d924a8b48ed73",
+   "reads": "2d8836e70305396250375aeaa4a4be8ab481d687ae01116ce79d1f790f7fda53",
    "killed_at": [
     581,
     581
@@ -3946,7 +3948,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:580: Expression",
    "raw_status": "KILLED",
-   "reads": "541c323c2a76fe13a5bf75d658fd59ac8ab88847d9c1ba44eef9a9411a36c7e2",
+   "reads": "645f000d150023886ab75ff13b05193e021eb69f2f187cdd022752c5ea0a816a",
    "killed_at": [
     580,
     580
@@ -3969,7 +3971,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:506: Expression",
    "raw_status": "KILLED",
-   "reads": "1d887e76700e015d66b97cbf5d28d3e17e89c626caef97032376fde0f6842fd3",
+   "reads": "d6866466695e7deff5c10419788765bd5bebca8702bbd035e4b04f3a720ad81d",
    "killed_at": [
     506,
     506
@@ -3992,7 +3994,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:600: Expression",
    "raw_status": "KILLED",
-   "reads": "8eefe88dbb299eab2eacb2c962c6239e11a4d5192300628e7292ce7f12db8a34",
+   "reads": "43228e506372c7d43e38623828ee24abe7c5cff0c9eaec42fb18cf3a5f39188e",
    "killed_at": [
     600,
     600
@@ -4015,7 +4017,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:498: Expression",
    "raw_status": "KILLED",
-   "reads": "e418dc2a65c41c1b295d9acb6b8dbc095646cdb525371d9e6055a5959d52ca26",
+   "reads": "f6d003207809a5032817c14e6ac30f80eb8c699b53b058f73175d2bdad2a9b4d",
    "killed_at": [
     498,
     498
@@ -4038,7 +4040,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:600: Expression",
    "raw_status": "KILLED",
-   "reads": "8eefe88dbb299eab2eacb2c962c6239e11a4d5192300628e7292ce7f12db8a34",
+   "reads": "43228e506372c7d43e38623828ee24abe7c5cff0c9eaec42fb18cf3a5f39188e",
    "killed_at": [
     600,
     600
@@ -4061,7 +4063,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:580: Expression",
    "raw_status": "KILLED",
-   "reads": "0acb9814d299024f60643a0cd13684e6539ef77ddfd3f355aa3185be1ac84527",
+   "reads": "0fad323eb846c5253e1f15bef882d87d15476dac400530ab29b2b25c6d7f9201",
    "killed_at": [
     580,
     580
@@ -4084,7 +4086,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:580: Expression",
    "raw_status": "KILLED",
-   "reads": "0acb9814d299024f60643a0cd13684e6539ef77ddfd3f355aa3185be1ac84527",
+   "reads": "0fad323eb846c5253e1f15bef882d87d15476dac400530ab29b2b25c6d7f9201",
    "killed_at": [
     580,
     580
@@ -4107,7 +4109,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:508: Expression",
    "raw_status": "KILLED",
-   "reads": "230b37baa3ab567f4170b7c0cf92f958129b8c9ffaf30ecf25a9d72d029e4448",
+   "reads": "799d6a7341e6871075f05e4bd7ea5531e2fc803156d16fcf0911cfef5119320c",
    "killed_at": [
     508,
     508
@@ -4130,7 +4132,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:594: Expression",
    "raw_status": "KILLED",
-   "reads": "f85fdf3cb1e18313d8b285c219f5b5d1568669f80467552760cbb0da1913d737",
+   "reads": "d9639ef522a27a7e69e415e652be4e7f669ff13435f0d137e111a37e4e885cb4",
    "killed_at": [
     594,
     595
@@ -4153,7 +4155,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:594: Expression",
    "raw_status": "KILLED",
-   "reads": "a6c213f782c4bc8b9455e916b113512c95367897742138fabbf17cae29764d1c",
+   "reads": "2da39af13b3bb904bf8da5c0e9d16e6fcebd99167e180576a3eebbc8ba892fa4",
    "killed_at": [
     594,
     595
@@ -4176,7 +4178,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:551: Expression",
    "raw_status": "KILLED",
-   "reads": "5867b1c4af4773da278a3c2019d59683e819fddc1128cf32ed5f17d54db84735",
+   "reads": "705f1d4c6a48c651c1eed22d6906f77dce96c4167a779506a4ca21f3466b5c3c",
    "killed_at": [
     551,
     551
@@ -4199,7 +4201,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:520: Expression",
    "raw_status": "KILLED",
-   "reads": "cf5f136de0dab33c7e436ad8215737c5e21000db9cd203bc0f0d27b99c54b4bc",
+   "reads": "0f77e40a64fe2b2cf4e43b0329d68a246c88a2cbe0429957a77649b4202c5f56",
    "killed_at": [
     520,
     522
@@ -4222,7 +4224,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:579: Expression",
    "raw_status": "KILLED",
-   "reads": "8864e000caef13da4ca262bef2c72060e355df5a030b1d423f71971b34229c2f",
+   "reads": "d9d701f5e1d59e2ef9ddd781fbbbaf2beb40372678f40bbfa8b26a7381c2a680",
    "killed_at": [
     579,
     579
@@ -4245,7 +4247,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:579: Expression",
    "raw_status": "KILLED",
-   "reads": "42b36b8a96e2b60a744f7c1bd070c646aa2897c6613901454c373cf5ffea49d0",
+   "reads": "e0fbf9beb9aa16816e4cc9bc4dd711f3047eaaf8e8fb890cb7171dd12b9bf4fe",
    "killed_at": [
     579,
     579
@@ -4268,7 +4270,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:565: Expression",
    "raw_status": "KILLED",
-   "reads": "ec95ae16afca93a672484e94d2af2bcdfd77d1ccc4a2d24243c5c9dead848326",
+   "reads": "fca5e8c54d4694aacbd531c3c07945626a8eb141aee7d6606a40659aa435064e",
    "killed_at": [
     565,
     566
@@ -4291,7 +4293,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:508: Expression",
    "raw_status": "KILLED",
-   "reads": "230b37baa3ab567f4170b7c0cf92f958129b8c9ffaf30ecf25a9d72d029e4448",
+   "reads": "799d6a7341e6871075f05e4bd7ea5531e2fc803156d16fcf0911cfef5119320c",
    "killed_at": [
     508,
     508
@@ -4314,7 +4316,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:594: Expression",
    "raw_status": "KILLED",
-   "reads": "f85fdf3cb1e18313d8b285c219f5b5d1568669f80467552760cbb0da1913d737",
+   "reads": "d9639ef522a27a7e69e415e652be4e7f669ff13435f0d137e111a37e4e885cb4",
    "killed_at": [
     594,
     595
@@ -4337,7 +4339,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:594: Expression",
    "raw_status": "KILLED",
-   "reads": "a6c213f782c4bc8b9455e916b113512c95367897742138fabbf17cae29764d1c",
+   "reads": "2da39af13b3bb904bf8da5c0e9d16e6fcebd99167e180576a3eebbc8ba892fa4",
    "killed_at": [
     594,
     595
@@ -4360,7 +4362,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:551: Expression",
    "raw_status": "KILLED",
-   "reads": "5867b1c4af4773da278a3c2019d59683e819fddc1128cf32ed5f17d54db84735",
+   "reads": "705f1d4c6a48c651c1eed22d6906f77dce96c4167a779506a4ca21f3466b5c3c",
    "killed_at": [
     551,
     551
@@ -4383,7 +4385,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:520: Expression",
    "raw_status": "KILLED",
-   "reads": "cf5f136de0dab33c7e436ad8215737c5e21000db9cd203bc0f0d27b99c54b4bc",
+   "reads": "0f77e40a64fe2b2cf4e43b0329d68a246c88a2cbe0429957a77649b4202c5f56",
    "killed_at": [
     520,
     522
@@ -4406,7 +4408,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:579: Expression",
    "raw_status": "KILLED",
-   "reads": "8864e000caef13da4ca262bef2c72060e355df5a030b1d423f71971b34229c2f",
+   "reads": "d9d701f5e1d59e2ef9ddd781fbbbaf2beb40372678f40bbfa8b26a7381c2a680",
    "killed_at": [
     579,
     579
@@ -4429,7 +4431,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:579: Expression",
    "raw_status": "KILLED",
-   "reads": "42b36b8a96e2b60a744f7c1bd070c646aa2897c6613901454c373cf5ffea49d0",
+   "reads": "e0fbf9beb9aa16816e4cc9bc4dd711f3047eaaf8e8fb890cb7171dd12b9bf4fe",
    "killed_at": [
     579,
     579
@@ -4452,7 +4454,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:565: Expression",
    "raw_status": "KILLED",
-   "reads": "ec95ae16afca93a672484e94d2af2bcdfd77d1ccc4a2d24243c5c9dead848326",
+   "reads": "fca5e8c54d4694aacbd531c3c07945626a8eb141aee7d6606a40659aa435064e",
    "killed_at": [
     565,
     566
@@ -4475,7 +4477,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:501: Expression",
    "raw_status": "KILLED",
-   "reads": "29763f74a7966ccef726432de67fce7b33dd05720780095b440394259bb2d1b4",
+   "reads": "ad7d722ce578015571c3a526f740ad53f805fc73eb826e7866984478d01dda22",
    "killed_at": [
     501,
     501
@@ -4498,7 +4500,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:594: Expression",
    "raw_status": "KILLED",
-   "reads": "a6c213f782c4bc8b9455e916b113512c95367897742138fabbf17cae29764d1c",
+   "reads": "2da39af13b3bb904bf8da5c0e9d16e6fcebd99167e180576a3eebbc8ba892fa4",
    "killed_at": [
     594,
     595
@@ -4521,7 +4523,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:579: Expression",
    "raw_status": "KILLED",
-   "reads": "8864e000caef13da4ca262bef2c72060e355df5a030b1d423f71971b34229c2f",
+   "reads": "d9d701f5e1d59e2ef9ddd781fbbbaf2beb40372678f40bbfa8b26a7381c2a680",
    "killed_at": [
     579,
     579
@@ -4544,7 +4546,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:589: Expression",
    "raw_status": "KILLED",
-   "reads": "138a1bc604ffc9c79e5bc63fc0f09df895bf5b7f7be45bb8d4c9f9664687f56e",
+   "reads": "9636bc10cb2817ba6d56ca2e896f68e062850601cb8ef77af6dbbf356ac073df",
    "killed_at": [
     589,
     589
@@ -4567,7 +4569,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:498: Expression",
    "raw_status": "KILLED",
-   "reads": "8fd175f59b175615247f86ece1e5062866eed2542266384cfda74df87e852766",
+   "reads": "88f18671f02df5054bbbc3602c6a14bf87de5d987b9f0956f4e124140b351159",
    "killed_at": [
     498,
     498
@@ -4590,7 +4592,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:551: Expression",
    "raw_status": "KILLED",
-   "reads": "5867b1c4af4773da278a3c2019d59683e819fddc1128cf32ed5f17d54db84735",
+   "reads": "705f1d4c6a48c651c1eed22d6906f77dce96c4167a779506a4ca21f3466b5c3c",
    "killed_at": [
     551,
     551
@@ -4613,7 +4615,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:580: Expression",
    "raw_status": "KILLED",
-   "reads": "0acb9814d299024f60643a0cd13684e6539ef77ddfd3f355aa3185be1ac84527",
+   "reads": "0fad323eb846c5253e1f15bef882d87d15476dac400530ab29b2b25c6d7f9201",
    "killed_at": [
     580,
     580
@@ -4636,7 +4638,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:580: Expression",
    "raw_status": "KILLED",
-   "reads": "541c323c2a76fe13a5bf75d658fd59ac8ab88847d9c1ba44eef9a9411a36c7e2",
+   "reads": "645f000d150023886ab75ff13b05193e021eb69f2f187cdd022752c5ea0a816a",
    "killed_at": [
     580,
     580
@@ -4659,7 +4661,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:565: Expression",
    "raw_status": "KILLED",
-   "reads": "ec95ae16afca93a672484e94d2af2bcdfd77d1ccc4a2d24243c5c9dead848326",
+   "reads": "fca5e8c54d4694aacbd531c3c07945626a8eb141aee7d6606a40659aa435064e",
    "killed_at": [
     565,
     566
@@ -4682,7 +4684,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:589: Expression",
    "raw_status": "KILLED",
-   "reads": "138a1bc604ffc9c79e5bc63fc0f09df895bf5b7f7be45bb8d4c9f9664687f56e",
+   "reads": "9636bc10cb2817ba6d56ca2e896f68e062850601cb8ef77af6dbbf356ac073df",
    "killed_at": [
     589,
     589
@@ -4705,7 +4707,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:594: Expression",
    "raw_status": "KILLED",
-   "reads": "f85fdf3cb1e18313d8b285c219f5b5d1568669f80467552760cbb0da1913d737",
+   "reads": "d9639ef522a27a7e69e415e652be4e7f669ff13435f0d137e111a37e4e885cb4",
    "killed_at": [
     594,
     595
@@ -4728,7 +4730,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:551: Expression",
    "raw_status": "KILLED",
-   "reads": "5867b1c4af4773da278a3c2019d59683e819fddc1128cf32ed5f17d54db84735",
+   "reads": "705f1d4c6a48c651c1eed22d6906f77dce96c4167a779506a4ca21f3466b5c3c",
    "killed_at": [
     551,
     551
@@ -4751,7 +4753,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:580: Expression",
    "raw_status": "KILLED",
-   "reads": "0acb9814d299024f60643a0cd13684e6539ef77ddfd3f355aa3185be1ac84527",
+   "reads": "0fad323eb846c5253e1f15bef882d87d15476dac400530ab29b2b25c6d7f9201",
    "killed_at": [
     580,
     580
@@ -4774,7 +4776,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:580: Expression",
    "raw_status": "KILLED",
-   "reads": "541c323c2a76fe13a5bf75d658fd59ac8ab88847d9c1ba44eef9a9411a36c7e2",
+   "reads": "645f000d150023886ab75ff13b05193e021eb69f2f187cdd022752c5ea0a816a",
    "killed_at": [
     580,
     580
@@ -4797,7 +4799,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:603: Expression",
    "raw_status": "KILLED",
-   "reads": "ff68f538a4b8e122d487029cccc050bd6ee953f1537db0b07495a0526e3693bc",
+   "reads": "460c38fc8abb499dcc5fc7e1407bb2603a19c6210b58ddf3b4366583d8e26680",
    "killed_at": [
     603,
     604
@@ -4820,7 +4822,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:594: Expression",
    "raw_status": "KILLED",
-   "reads": "f85fdf3cb1e18313d8b285c219f5b5d1568669f80467552760cbb0da1913d737",
+   "reads": "d9639ef522a27a7e69e415e652be4e7f669ff13435f0d137e111a37e4e885cb4",
    "killed_at": [
     594,
     595
@@ -4843,7 +4845,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:598: Expression",
    "raw_status": "KILLED",
-   "reads": "11743467abbca633556cd5b03a73a1f03c5e2e32869e1e67ee5e14cf8b5d4cac",
+   "reads": "75f0c7b6ec524197daee84791f14b67682f83cf8e3d21123aa46879599372e59",
    "killed_at": [
     598,
     599
@@ -4866,7 +4868,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:589: Expression",
    "raw_status": "KILLED",
-   "reads": "138a1bc604ffc9c79e5bc63fc0f09df895bf5b7f7be45bb8d4c9f9664687f56e",
+   "reads": "9636bc10cb2817ba6d56ca2e896f68e062850601cb8ef77af6dbbf356ac073df",
    "killed_at": [
     589,
     589
@@ -4889,7 +4891,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:551: Expression",
    "raw_status": "KILLED",
-   "reads": "5867b1c4af4773da278a3c2019d59683e819fddc1128cf32ed5f17d54db84735",
+   "reads": "705f1d4c6a48c651c1eed22d6906f77dce96c4167a779506a4ca21f3466b5c3c",
    "killed_at": [
     551,
     551
@@ -4912,7 +4914,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:580: Expression",
    "raw_status": "KILLED",
-   "reads": "0acb9814d299024f60643a0cd13684e6539ef77ddfd3f355aa3185be1ac84527",
+   "reads": "0fad323eb846c5253e1f15bef882d87d15476dac400530ab29b2b25c6d7f9201",
    "killed_at": [
     580,
     580
@@ -4935,7 +4937,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:601: Expression",
    "raw_status": "KILLED",
-   "reads": "eefb821fa76e16e38364347465a8b93393eee0223bedcd4a7574849d8332e095",
+   "reads": "0261b02a171c75ba249f6a05c4ac7fb653a610d6db88a7a757d30e13bc0e3d72",
    "killed_at": [
     601,
     602
@@ -4958,7 +4960,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:565: Expression",
    "raw_status": "KILLED",
-   "reads": "ec95ae16afca93a672484e94d2af2bcdfd77d1ccc4a2d24243c5c9dead848326",
+   "reads": "fca5e8c54d4694aacbd531c3c07945626a8eb141aee7d6606a40659aa435064e",
    "killed_at": [
     565,
     566
@@ -4981,7 +4983,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:501: Expression",
    "raw_status": "KILLED",
-   "reads": "47fe89bbbb926b7f987afd211f6de112d9451f4a27efce185afc2a98ade0cc07",
+   "reads": "6256c909fd0ef07401dd33db2392909c0bfc908bc42d58b3a5d23c0c4bac1183",
    "killed_at": [
     501,
     501
@@ -5004,7 +5006,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:551: Expression",
    "raw_status": "KILLED",
-   "reads": "5867b1c4af4773da278a3c2019d59683e819fddc1128cf32ed5f17d54db84735",
+   "reads": "705f1d4c6a48c651c1eed22d6906f77dce96c4167a779506a4ca21f3466b5c3c",
    "killed_at": [
     551,
     551
@@ -5027,7 +5029,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:579: Expression",
    "raw_status": "KILLED",
-   "reads": "8864e000caef13da4ca262bef2c72060e355df5a030b1d423f71971b34229c2f",
+   "reads": "d9d701f5e1d59e2ef9ddd781fbbbaf2beb40372678f40bbfa8b26a7381c2a680",
    "killed_at": [
     579,
     579
@@ -5050,7 +5052,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:581: Expression",
    "raw_status": "KILLED",
-   "reads": "c9e0c2c3a9a5eeab4c23501343cbc54f1c10ea35ffbdbdf35af72468a025cd5c",
+   "reads": "609d1e806937dff344de5377bf4dcc1027c8a379e9c1c374edf1292e49d940f2",
    "killed_at": [
     581,
     581
@@ -5073,7 +5075,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:565: Expression",
    "raw_status": "KILLED",
-   "reads": "ec95ae16afca93a672484e94d2af2bcdfd77d1ccc4a2d24243c5c9dead848326",
+   "reads": "fca5e8c54d4694aacbd531c3c07945626a8eb141aee7d6606a40659aa435064e",
    "killed_at": [
     565,
     566
@@ -5096,7 +5098,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:596: Expression",
    "raw_status": "KILLED",
-   "reads": "52244e77c097cc9f2f3ed24c1893f52948c27ee760c711941e1e6499cd49260e",
+   "reads": "8a5078e9521621bb97cfa4149b905383671d89f857d5cc74b875f451e832eefb",
    "killed_at": [
     596,
     597
@@ -5119,7 +5121,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:598: Expression",
    "raw_status": "KILLED",
-   "reads": "11743467abbca633556cd5b03a73a1f03c5e2e32869e1e67ee5e14cf8b5d4cac",
+   "reads": "75f0c7b6ec524197daee84791f14b67682f83cf8e3d21123aa46879599372e59",
    "killed_at": [
     598,
     599
@@ -5142,7 +5144,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:496: Expression",
    "raw_status": "KILLED",
-   "reads": "78f77391e68e62319449c225876328581fca9a0c0550d2b1793fb7f23b957bba",
+   "reads": "281b9b1d5036924bb0cebe816def98c510f424e5d24427da3c33a2f3cc0f9af9",
    "killed_at": [
     496,
     496
@@ -5165,7 +5167,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:582: Expression",
    "raw_status": "KILLED",
-   "reads": "9eaeb1db28757188ac0fb63a3dcaaa437dd8bd20f12a010996926349a59a7c21",
+   "reads": "0c5daf84904c7904c3ced4d1e5713e88231d8c88634e15a7885189483f504472",
    "killed_at": [
     582,
     582
@@ -5188,7 +5190,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:580: Expression",
    "raw_status": "KILLED",
-   "reads": "541c323c2a76fe13a5bf75d658fd59ac8ab88847d9c1ba44eef9a9411a36c7e2",
+   "reads": "645f000d150023886ab75ff13b05193e021eb69f2f187cdd022752c5ea0a816a",
    "killed_at": [
     580,
     580
@@ -5211,7 +5213,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:502: Expression",
    "raw_status": "KILLED",
-   "reads": "26bcb26da30f580a06cf163ea25f7822c5bb770eee32b86dc20619c82641b99d",
+   "reads": "1c6f6050d37c59888cf9f84d9f32bbad7923b2cb4b4311c6493f17e54cc33b02",
    "killed_at": [
     502,
     504
@@ -5234,7 +5236,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:582: Expression",
    "raw_status": "KILLED",
-   "reads": "9eaeb1db28757188ac0fb63a3dcaaa437dd8bd20f12a010996926349a59a7c21",
+   "reads": "0c5daf84904c7904c3ced4d1e5713e88231d8c88634e15a7885189483f504472",
    "killed_at": [
     582,
     582
@@ -5257,7 +5259,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:580: Expression",
    "raw_status": "KILLED",
-   "reads": "541c323c2a76fe13a5bf75d658fd59ac8ab88847d9c1ba44eef9a9411a36c7e2",
+   "reads": "645f000d150023886ab75ff13b05193e021eb69f2f187cdd022752c5ea0a816a",
    "killed_at": [
     580,
     580
@@ -5280,7 +5282,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:594: Expression",
    "raw_status": "KILLED",
-   "reads": "f85fdf3cb1e18313d8b285c219f5b5d1568669f80467552760cbb0da1913d737",
+   "reads": "d9639ef522a27a7e69e415e652be4e7f669ff13435f0d137e111a37e4e885cb4",
    "killed_at": [
     594,
     595
@@ -5303,7 +5305,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:580: Expression",
    "raw_status": "KILLED",
-   "reads": "0acb9814d299024f60643a0cd13684e6539ef77ddfd3f355aa3185be1ac84527",
+   "reads": "0fad323eb846c5253e1f15bef882d87d15476dac400530ab29b2b25c6d7f9201",
    "killed_at": [
     580,
     580
@@ -5326,7 +5328,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:590: Expression",
    "raw_status": "KILLED",
-   "reads": "631bd5b21a96a55e5997cb447b223a237cd9e72f828fa82b686096ee287b6fba",
+   "reads": "e54f388a0fc7decb94bbc450bc0574a0dbe44e14b05b8635257a51e835b54221",
    "killed_at": [
     590,
     591
@@ -5349,7 +5351,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:600: Expression",
    "raw_status": "KILLED",
-   "reads": "8eefe88dbb299eab2eacb2c962c6239e11a4d5192300628e7292ce7f12db8a34",
+   "reads": "43228e506372c7d43e38623828ee24abe7c5cff0c9eaec42fb18cf3a5f39188e",
    "killed_at": [
     600,
     600
@@ -5372,7 +5374,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:498: Expression",
    "raw_status": "KILLED",
-   "reads": "e418dc2a65c41c1b295d9acb6b8dbc095646cdb525371d9e6055a5959d52ca26",
+   "reads": "f6d003207809a5032817c14e6ac30f80eb8c699b53b058f73175d2bdad2a9b4d",
    "killed_at": [
     498,
     498
@@ -5395,7 +5397,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:600: Expression",
    "raw_status": "KILLED",
-   "reads": "8eefe88dbb299eab2eacb2c962c6239e11a4d5192300628e7292ce7f12db8a34",
+   "reads": "43228e506372c7d43e38623828ee24abe7c5cff0c9eaec42fb18cf3a5f39188e",
    "killed_at": [
     600,
     600
@@ -5418,7 +5420,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:498: Expression",
    "raw_status": "KILLED",
-   "reads": "8fd175f59b175615247f86ece1e5062866eed2542266384cfda74df87e852766",
+   "reads": "88f18671f02df5054bbbc3602c6a14bf87de5d987b9f0956f4e124140b351159",
    "killed_at": [
     498,
     498
@@ -5441,7 +5443,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:581: Expression",
    "raw_status": "KILLED",
-   "reads": "b632d163a42304ea771ca2e8b3ce65f7bc6dea37a5bc2f43878d924a8b48ed73",
+   "reads": "2d8836e70305396250375aeaa4a4be8ab481d687ae01116ce79d1f790f7fda53",
    "killed_at": [
     581,
     581
@@ -5464,7 +5466,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Presupposition/Examples.lean:581: Expression",
    "raw_status": "KILLED",
-   "reads": "b632d163a42304ea771ca2e8b3ce65f7bc6dea37a5bc2f43878d924a8b48ed73",
+   "reads": "2d8836e70305396250375aeaa4a4be8ab481d687ae01116ce79d1f790f7fda53",
    "killed_at": [
     581,
     581
