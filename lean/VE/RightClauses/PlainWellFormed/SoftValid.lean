@@ -287,4 +287,88 @@ theorem decides_check (p : String) (hp : ∀ r0 ∈ C.T.regulated, r0.name = p �
 
 end SS
 
+theorem option_all_map {α β : Type} (f : α → β) (p : β → Bool) (o : Option α) : (o.map f).all p = o.all (p ∘ f) := by
+  cases o <;> rfl
+
+theorem excPremises_mapG (C : SoftDoc) : excPremises (mapG γ C) = excPremises C := by
+  simp only [excPremises, mapG_nodes, List.flatMap_map]; rfl
+
+set_option maxHeartbeats 400000 in
+theorem softSemanticCheck_mapG {C : SoftDoc} {E0 : VE.Environment} (h : GHyp γ C E0)
+    (hss : softSemanticCheck C = true) (hR : VE.NormDefaults.RulesOK (soften (mapG γ C)))
+    (hsem' : VE.Norms.semanticCheck (soften (mapG γ C)) = true) : softSemanticCheck (mapG γ C) = true := by
+  simp only [softSemanticCheck, Bool.and_eq_true, and_assoc] at hss
+  obtain ⟨s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13, s14, s15, s16, s17, s18, s19⟩ := hss
+  have hnd : (C.T.regulated.map (·.name)).Nodup := by simpa using s3
+  have hck : VE.Norms.check (soften (mapG γ C)) = .ok () := by
+    rw [soften_mapG]
+    exact (softenTRel h).check _ _ _ _ QC_preds (wellFormed_check s1) (by rw [← soften_mapG]; exact hR)
+  have hval := VE.Norms.valid_of_semanticCheck _ hsem'
+  have hsel : ∀ N ∈ C.T.nodes, (selects' (mapG γ C) (setG γ N)).check
+      (envAt (soften (mapG γ C)) (size (soften (mapG γ C)))) (sortsOf C N.pred).reverse = true := by
+    intro N hN
+    simp only [List.all_eq_true] at s16
+    exact selects'_check h N hN (s16 N hN)
+  simp only [softSemanticCheck, Bool.and_eq_true, and_assoc]
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · simp [VE.Norms.WellFormed, VE.Norms.validate, hck, hsem']
+  · simpa [List.map_map, Function.comp_def] using s2
+  · exact s3
+  · have hp : VE.Norms.pairs (mapG γ C).base.T = VE.Norms.pairs C.base.T := rfl
+    rw [hp]; exact s4
+  · have hp : VE.Norms.pairs (mapG γ C).base.T = VE.Norms.pairs C.base.T := rfl
+    rw [hp]; exact s5
+  · have hp : VE.Norms.pairs (mapG γ C).base.T = VE.Norms.pairs C.base.T := rfl
+    rw [hp]; exact s6
+  · simpa [List.all_map, Function.comp_def] using s7
+  · exact s8
+  · exact s9
+  · exact s10
+  · simpa [List.all_map, Function.comp_def, List.find?_map, option_all_map] using s11
+  · rw [decisionNames_mapG]; exact s12
+  · rw [decisionNames_mapG]; exact s13
+  · simp only [List.all_eq_true, mapG_nodes, List.mem_map] at s14 ⊢
+    rintro _ ⟨N, hN, rfl⟩ φ hφ
+    rcases List.mem_cons.1 hφ with rfl | hφ
+    · exact FExt.check (fun a b hab => Plus.check' h.envC hab) (h.guards N hN) (s14 N hN _ (by simp))
+    · exact s14 N hN φ (List.mem_cons_of_mem _ hφ)
+  · simp only [softPremises, cohPremises, excPremises_mapG, collidingPairs_mapG, List.all_append, List.map_map,
+      Bool.and_eq_true, List.all_eq_true, List.mem_map, Function.comp_def] at s15 ⊢
+    refine ⟨fun φ hφ => by rw [envAt_mapG h]; exact s15.1 φ hφ, ?_⟩
+    rintro _ ⟨⟨M, N⟩, hMN, rfl⟩
+    have hold := s15.2 _ ⟨(M, N), hMN, rfl⟩
+    simp only [List.all_eq_true] at s17
+    have hsN : sortsOf C N.pred = sortsOf C M.pred :=
+      (show sortsOf C M.pred = sortsOf C N.pred by simpa using s17 (M, N) hMN).symm
+    have hM := (mem_collidingPairs.1 hMN).1
+    have hN := (mem_collidingPairs.1 hMN).2.1
+    unfold cohPremise at hold
+    unfold cohPremise
+    rw [bindAll_check] at hold
+    rw [bindAll_check, envAt_mapG h]
+    simp only [actSorts, sortsOf_mapG, setG_pred, List.append_nil] at hold ⊢
+    refine ⟨hold.1, ?_⟩
+    simp only [VE.Formula.check, Bool.and_eq_true]
+    rw [VE.check_iff_wellFormed, VE.check_iff_wellFormed, ← envAt_mapG h 0]
+    refine ⟨VE.Norms.subst_wellFormed hval _ _ _ ((VE.check_iff_wellFormed _ _ _).1 (hsel M hM)),
+      VE.Norms.subst_wellFormed hval _ _ _ ((VE.check_iff_wellFormed _ _ _).1 ?_)⟩
+    rw [← hsN]; exact hsel N hN
+  · simp only [List.all_eq_true, mapG_nodes, List.mem_map] at s16 ⊢
+    rintro _ ⟨N, hN, rfl⟩
+    exact hsel N hN
+  · simpa [collidingPairs_mapG, List.all_map, Function.comp_def] using s17
+  · exact s18
+  · simp only [List.all_eq_true, List.mem_cons, List.not_mem_nil, or_false, mapG_regulated] at s19 ⊢
+    intro r hr
+    have hs : (sortsOf C r.name).reverse = r.sorts.reverse := by rw [sortsOf_find (C := C) (find?_name hnd hr)]
+    have h1 := decides_check h r.name (fun _ _ _ => trivial) true hs (s19 r hr _ (Or.inl rfl))
+      (s19 r hr _ (Or.inr (Or.inr (Or.inl rfl))))
+    have h2 := decides_check h r.name (fun _ _ _ => trivial) false hs (s19 r hr _ (Or.inr (Or.inl rfl)))
+      (s19 r hr _ (Or.inr (Or.inr (Or.inr rfl))))
+    rintro φ (rfl | rfl | rfl | rfl)
+    · exact h1.1
+    · exact h2.1
+    · exact h1.2
+    · exact h2.2
+
 end VE.RightClauses.PWF
