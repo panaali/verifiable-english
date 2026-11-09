@@ -591,6 +591,11 @@ theorem VE.Acts.Lexical.check_iff
     VE.Acts.Lexical.check fx name k raw = Except.ok a ↔ VE.Acts.Lexical.Accepts fx k raw a
   -- uses VE.Acts.Lexical.Accepts@VE.Acts.LexicalProofs VE.Acts.Lexical.check@VE.Acts.Lexical
   -- expr 3282622295
+theorem VE.Acts.Lexical.check_joinFree
+  ∀ {fx : List String} {name : String} {k : Nat} {raw : Lean.Json} {a : String},
+    VE.Acts.Lexical.check fx name k raw = Except.ok a → VE.Acts.Lexical.joinFree fx a = Bool.true
+  -- uses VE.Acts.Lexical.check@VE.Acts.Lexical VE.Acts.Lexical.joinFree@VE.Acts.Lexical
+  -- expr 1860806328
 theorem VE.Acts.Lexical.check_no_clause
   ∀ {fx : List String} {name : String} {k : Nat} {raw : Lean.Json} {a : String},
     VE.Acts.Lexical.check fx name k raw = Except.ok a →
@@ -1016,6 +1021,19 @@ theorem VE.Acts.Lexical.words_intercalate
       VE.Norms.Wire.words (" ".intercalate ws) = ws
   -- uses VE.Norms.Wire.pyWhitespace@VE.Acts.LexicalBase VE.Norms.Wire.words@VE.Acts.LexicalBase
   -- expr 265214043
+theorem VE.Acts.Run.firstsBy_map
+  ∀ {α β : Type} [inst : DecidableEq β] (f : α → β) (xs : List α),
+    List.map f (VE.Acts.Run.firstsBy f xs) = VE.Acts.firsts (List.map f xs)
+  -- uses VE.Acts.Run.firstsBy@VE.Acts.Run VE.Acts.firsts@VE.Acts.Read
+  -- expr 2508743515
+theorem VE.Acts.Run.witnessed_readings
+  ∀ (V : VE.Acts.Vocab) (op : VE.Acts.Op) (N b : Nat) (ts : Array VE.Acts.Lexical.Tok),
+    VE.Acts.phraseReadings V op N b ts =
+      match VE.Acts.Run.witnessed V op N b ts with
+      | Option.none => VE.Acts.Listing.limit
+      | Option.some (fst, Rs) => VE.Acts.Listing.ok (List.map Prod.fst Rs)
+  -- uses VE.Acts.Act@VE.Acts.Tree VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.Listing.limit@VE.Acts.Read VE.Acts.Listing.ok@VE.Acts.Read VE.Acts.Listing@VE.Acts.Read VE.Acts.Op@VE.Acts.Table VE.Acts.Run.witnessed@VE.Acts.Run VE.Acts.Run.witnessed_readings.match_1@VE.Acts.Run VE.Acts.Simple@VE.Acts.Table VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.phraseReadings@VE.Acts.Readings VE.Grammar.Tree@VE.Grammar.Derives
+  -- expr 53604524
 theorem VE.Acts.Wire.checkAct_joined
   ∀ (fx : List String) (V : VE.Acts.Vocab) (name : String) (k : Nat) (raw : Lean.Json) (a : String) (A : VE.Acts.Act),
     VE.Acts.Wire.checkAct fx V name k raw = Except.ok (a, Option.some A) →
@@ -9795,6 +9813,15 @@ theorem VE.Commands.RunSplit.typed_facts_are_ci1s
                 VE.SpeechActs.commandOk D (VE.Commands.Reading.command u r) = Bool.true
   -- uses VE.Commands.Context.E@VE.Commands.Run VE.Commands.Context.L@VE.Commands.Run VE.Commands.Context.b@VE.Commands.Run VE.Commands.Context.sc@VE.Commands.Run VE.Commands.Context.se@VE.Commands.Run VE.Commands.Context@VE.Commands.Run VE.Commands.Outcome.one@VE.Commands.Read VE.Commands.Outcome@VE.Commands.Read VE.Commands.Reading.command@VE.Commands.Read VE.Commands.Reading@VE.Commands.Read VE.Commands.declared@VE.Commands.Read VE.Commands.readCommand@VE.Commands.Read VE.Environment@VE.Syntax VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Wire.NormsEnvironment.regulated@VE.Norms.Wire VE.Norms.Wire.NormsEnvironment.rv@VE.Norms.Wire VE.Route.Wire.RouteVocabulary.environment@VE.Route.Wire VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.SpeechDoc.E@VE.SpeechActs.Tree VE.SpeechActs.SpeechDoc.regulated@VE.SpeechActs.Tree VE.SpeechActs.SpeechDoc.scope@VE.SpeechActs.Tree VE.SpeechActs.SpeechDoc@VE.SpeechActs.Tree VE.SpeechActs.Wire.SpeechEnvironment.ne@VE.SpeechActs.Wire VE.SpeechActs.commandOk@VE.SpeechActs.Tree VE.SpeechActs.scopeOk@VE.SpeechActs.Tree
   -- expr 902153147
+theorem VE.Commands.after_eq
+  ∀ (se : VE.SpeechActs.Wire.SpeechEnvironment) (sc : VE.SpeechActs.Scope) (E : VE.EnglishGrammar.Env)
+    (L : VE.EnglishGrammar.Lexicon) (b : Nat) (s x : String) (r : VE.Commands.Reading),
+    VE.Commands.shapes s = [VE.Commands.Shape.after x] →
+      (VE.Commands.trimmed s).utf8ByteSize ≤ VE.Commands.maxWordingBytes →
+        (VE.Commands.readStep se sc E L b s = VE.Commands.StepOutcome.one r Bool.true ↔
+          VE.Commands.readCommand se sc E L b (VE.Commands.capitalise x ++ ".") = VE.Commands.Outcome.one r)
+  -- uses VE.Commands.Outcome.one@VE.Commands.Read VE.Commands.Outcome@VE.Commands.Read VE.Commands.Reading@VE.Commands.Read VE.Commands.Shape.after@VE.Commands.Steps VE.Commands.Shape@VE.Commands.Steps VE.Commands.StepOutcome.one@VE.Commands.Steps VE.Commands.StepOutcome@VE.Commands.Steps VE.Commands.capitalise@VE.Commands.Steps VE.Commands.maxWordingBytes@VE.Commands.Read VE.Commands.readCommand@VE.Commands.Read VE.Commands.readStep@VE.Commands.Steps VE.Commands.shapes@VE.Commands.Steps VE.Commands.trimmed@VE.Commands.Read VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire
+  -- expr 2676180946
 theorem VE.Commands.bind_condition
   ∀ (s : String) {c : String},
     ((VE.Commands.parts s).bind fun x => x.condition) = Option.some c →
@@ -9854,6 +9881,30 @@ theorem VE.Commands.classOf_run
       (VE.Commands.Texts.classOf c).isSome = Bool.true
   -- uses VE.Commands.Texts.classOf@VE.Commands.Read VE.EnglishGrammar.Run.codeClasses@VE.EnglishGrammar.Run
   -- expr 3856190741
+theorem VE.Commands.combine_alts
+  ∀ (l : List VE.Commands.Shape) (f : VE.Commands.Shape → VE.Commands.StepOutcome),
+    List.flatMap
+        (fun x =>
+          match x with
+          | (sh, o) => VE.Commands.shapeAlts sh o)
+        (List.map (fun sh => (sh, f sh)) l) =
+      (List.map (fun sh => VE.Commands.shapeAlts sh (f sh)) l).flatten
+  -- uses VE.Commands.Alt@VE.Commands.Steps VE.Commands.Shape@VE.Commands.Steps VE.Commands.StepOutcome@VE.Commands.Steps VE.Commands.combineShapes.match_1@VE.Commands.Steps VE.Commands.shapeAlts@VE.Commands.Steps
+  -- expr 883015338
+theorem VE.Commands.command_act_simple
+  ∀ (se : VE.SpeechActs.Wire.SpeechEnvironment) (sc : VE.SpeechActs.Scope) (E : VE.EnglishGrammar.Env)
+    (L : VE.EnglishGrammar.Lexicon) (b : Nat) (s : String) (j : Lean.Json),
+    VE.SpeechActs.Wire.decodeSpeechEnvironmentFull j = Except.ok se →
+      "acts@0" ∈ se.profiles →
+        ∀ (r : VE.Commands.Reading),
+          VE.Commands.readCommand se sc E L b s = VE.Commands.Outcome.one r →
+            ∃ g a fx,
+              g ∈ se.ne.regulated ∧
+                g.name = r.act ∧
+                  g.act = Option.some a ∧
+                    VE.Norms.Wire.actsFixed se.profiles se.json = Except.ok fx ∧ VE.Acts.Lexical.joinFree fx a = Bool.true
+  -- uses VE.Acts.Lexical.joinFree@VE.Acts.Lexical VE.Commands.Outcome.one@VE.Commands.Read VE.Commands.Outcome@VE.Commands.Read VE.Commands.Reading.act@VE.Commands.Read VE.Commands.Reading@VE.Commands.Read VE.Commands.readCommand@VE.Commands.Read VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.Norms.Regulated.act@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Wire.NormsEnvironment.regulated@VE.Norms.Wire VE.Norms.Wire.actsFixed@VE.Norms.Wire VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.Wire.SpeechEnvironment.json@VE.SpeechActs.Wire VE.SpeechActs.Wire.SpeechEnvironment.ne@VE.SpeechActs.Wire VE.SpeechActs.Wire.SpeechEnvironment.profiles@VE.SpeechActs.Wire VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire VE.SpeechActs.Wire.decodeSpeechEnvironmentFull@VE.SpeechActs.Wire
+  -- expr 155004488
 theorem VE.Commands.conditionOf_classed
   ∀ (se : VE.SpeechActs.Wire.SpeechEnvironment) (E : VE.EnglishGrammar.Env) (L : VE.EnglishGrammar.Lexicon) (b : Nat)
     {p : VE.Commands.Parts} {ms : List (String × List VE.Commands.Fill)} {code text : String},
@@ -9889,6 +9940,10 @@ theorem VE.Commands.eraseDups_sublist
   ∀ {α : Type} [inst : BEq α] (n : Nat) (l : List α), l.length ≤ n → l.eraseDups.Sublist l
   -- uses
   -- expr 4256818198
+theorem VE.Commands.exists_mem_zip
+  ∀ {α β : Type} {l : List α} {m : List β}, l.length = m.length → ∀ (x : α), x ∈ l → ∃ y, (x, y) ∈ l.zip m
+  -- uses
+  -- expr 445346051
 theorem VE.Commands.fields_obj
   ∀ {j : Lean.Json} {l : List (String × Lean.Json)},
     VE.Bridge.fields j = Except.ok l → ∃ kvs, j = Lean.Json.obj kvs ∧ l = kvs.toList
@@ -9946,6 +10001,17 @@ theorem VE.Commands.guard_unread
             VE.Commands.readCommand se sc E L b s = VE.Commands.Outcome.refused code text
   -- uses VE.Commands.Fill@VE.Commands.Read VE.Commands.GuardFault.unread@VE.Commands.Read VE.Commands.GuardFault@VE.Commands.Read VE.Commands.Outcome.refused@VE.Commands.Read VE.Commands.Outcome@VE.Commands.Read VE.Commands.Parts.condition@VE.Commands.Read VE.Commands.Parts@VE.Commands.Read VE.Commands.actMatches@VE.Commands.Read VE.Commands.guardOf@VE.Commands.Read VE.Commands.parts@VE.Commands.Read VE.Commands.readCommand@VE.Commands.Read VE.Commands.withinLimits@VE.Commands.Read VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.Formula@VE.Syntax VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire
   -- expr 433543032
+theorem VE.Commands.lift_many
+  ∀ {sh : VE.Commands.Shape} {a : Bool} {o : VE.Commands.Outcome} {alts : List VE.Commands.Alt},
+    VE.Commands.lift sh a o = VE.Commands.StepOutcome.many alts →
+      ∃ rs, o = VE.Commands.Outcome.many rs ∧ alts = List.map (fun r => VE.Commands.Alt.shape sh [r]) rs
+  -- uses VE.Commands.Alt.shape@VE.Commands.Steps VE.Commands.Alt@VE.Commands.Steps VE.Commands.Outcome.many@VE.Commands.Read VE.Commands.Outcome@VE.Commands.Read VE.Commands.Reading@VE.Commands.Read VE.Commands.Shape@VE.Commands.Steps VE.Commands.StepOutcome.many@VE.Commands.Steps VE.Commands.StepOutcome@VE.Commands.Steps VE.Commands.lift@VE.Commands.Steps
+  -- expr 3081699907
+theorem VE.Commands.lift_one
+  ∀ {sh : VE.Commands.Shape} {a a' : Bool} {o : VE.Commands.Outcome} {r : VE.Commands.Reading},
+    VE.Commands.lift sh a o = VE.Commands.StepOutcome.one r a' ↔ o = VE.Commands.Outcome.one r ∧ a = a'
+  -- uses VE.Commands.Outcome.one@VE.Commands.Read VE.Commands.Outcome@VE.Commands.Read VE.Commands.Reading@VE.Commands.Read VE.Commands.Shape@VE.Commands.Steps VE.Commands.StepOutcome.one@VE.Commands.Steps VE.Commands.StepOutcome@VE.Commands.Steps VE.Commands.lift@VE.Commands.Steps
+  -- expr 2691678900
 theorem VE.Commands.lookup_of_mem
   ∀ {β : Type} {k : String} {b : β} {l : List (String × β)},
     (k, b) ∈ l → (List.map (fun x => x.fst) l).Nodup → VE.Bridge.lookup l k = Option.some b
@@ -10029,6 +10095,11 @@ theorem VE.Commands.mem_phraseMatches
             ∃ t, VE.Commands.filled (g.act.getD "") fs = Option.some t ∧ VE.Commands.fold t = VE.Commands.fold body
   -- uses VE.Commands.Fill@VE.Commands.Read VE.Commands.commandable@VE.Commands.Read VE.Commands.filled@VE.Commands.Read VE.Commands.fold@VE.Commands.Read VE.Commands.phraseMatches@VE.Commands.Read VE.Commands.slotFills@VE.Commands.Read VE.Commands.tuples@VE.Commands.Read VE.Norms.Regulated.act@VE.Norms.Tree VE.Norms.Regulated.sorts@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Wire.NormsEnvironment.regulated@VE.Norms.Wire VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.Wire.SpeechEnvironment.ne@VE.SpeechActs.Wire VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire
   -- expr 561684783
+theorem VE.Commands.mem_readingTuples
+  ∀ {cs : List (List VE.Commands.Reading)} {rs : List VE.Commands.Reading},
+    rs ∈ VE.Commands.readingTuples cs → rs.length = cs.length
+  -- uses VE.Commands.Reading@VE.Commands.Read VE.Commands.readingTuples@VE.Commands.Steps
+  -- expr 817560560
 theorem VE.Commands.mem_slotFills
   ∀ {se : VE.SpeechActs.Wire.SpeechEnvironment} {sc : VE.SpeechActs.Scope} {srt : String} {f : VE.Commands.Fill},
     f ∈ VE.Commands.slotFills se sc srt →
@@ -10045,13 +10116,13 @@ theorem VE.Commands.nodup_of_eraseDups
   -- uses
   -- expr 3738076891
 theorem VE.Commands.norms_facts
-  ∀ {env : Lean.Json} {ne : VE.Norms.Wire.NormsEnvironment},
-    VE.Norms.Wire.decodeNormsEnvironment env = Except.ok ne →
-      (∀ (v : Lean.Json), env.getObjVal? "vocabulary" = Except.ok v → VE.Scope.JsonWF v) →
+  ∀ {env : Lean.Json} {ne : VE.Norms.Wire.NormsEnvironment} {acts : Bool},
+    VE.Norms.Wire.decodeNormsEnvironment env Bool.true acts = Except.ok ne →
+      VE.Scope.JsonWF env →
         (∀ (g : VE.Norms.Regulated), g ∈ ne.regulated → ne.rv.environment.predicates g.name = Option.some g.sorts) ∧
           (List.map (fun x => x.name) ne.regulated).Nodup ∧ (List.map (fun x => x.fst) ne.rv.vocabulary.constants).Nodup
   -- uses VE.Bridge.Vocabulary.constants@VE.Bridge VE.Environment.predicates@VE.Syntax VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated.sorts@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Wire.NormsEnvironment.regulated@VE.Norms.Wire VE.Norms.Wire.NormsEnvironment.rv@VE.Norms.Wire VE.Norms.Wire.NormsEnvironment@VE.Norms.Wire VE.Norms.Wire.decodeNormsEnvironment@VE.Norms.Wire VE.Route.Wire.RouteVocabulary.environment@VE.Route.Wire VE.Route.Wire.RouteVocabulary.vocabulary@VE.Route.Wire VE.Scope.JsonWF@VE.Scope.Govern
-  -- expr 885044498
+  -- expr 3072107644
 theorem VE.Commands.outcome_ambiguous
   ∀ (se : VE.SpeechActs.Wire.SpeechEnvironment) (E : VE.EnglishGrammar.Env) (L : VE.EnglishGrammar.Lexicon) {c : String}
     {o : VE.EnglishGrammar.TranslateOutcome} {gs : List VE.Formula},
@@ -10244,6 +10315,40 @@ theorem VE.Commands.readInstruction_typed_of_facts
                   VE.SpeechActs.commandOk D (VE.Commands.Reading.command u r) = Bool.true
   -- uses VE.Bridge.Vocabulary.constants@VE.Bridge VE.Commands.Context.queries@VE.Commands.Run VE.Commands.Context.sc@VE.Commands.Run VE.Commands.Context.se@VE.Commands.Run VE.Commands.Context@VE.Commands.Run VE.Commands.Outcome.one@VE.Commands.Read VE.Commands.Outcome@VE.Commands.Read VE.Commands.QueryRecord.id@VE.Commands.Run VE.Commands.QueryRecord@VE.Commands.Run VE.Commands.Reading.command@VE.Commands.Read VE.Commands.Reading@VE.Commands.Read VE.Commands.declared@VE.Commands.Read VE.Commands.readInstruction@VE.Commands.Run VE.Environment@VE.Syntax VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Wire.NormsEnvironment.regulated@VE.Norms.Wire VE.Norms.Wire.NormsEnvironment.rv@VE.Norms.Wire VE.Route.Wire.RouteVocabulary.environment@VE.Route.Wire VE.Route.Wire.RouteVocabulary.vocabulary@VE.Route.Wire VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.SpeechDoc.E@VE.SpeechActs.Tree VE.SpeechActs.SpeechDoc.regulated@VE.SpeechActs.Tree VE.SpeechActs.SpeechDoc.scope@VE.SpeechActs.Tree VE.SpeechActs.SpeechDoc@VE.SpeechActs.Tree VE.SpeechActs.Wire.SpeechEnvironment.ne@VE.SpeechActs.Wire VE.SpeechActs.commandOk@VE.SpeechActs.Tree VE.SpeechActs.scopeOk@VE.SpeechActs.Tree
   -- expr 1832139632
+theorem VE.Commands.readStep_combine
+  ∀ (se : VE.SpeechActs.Wire.SpeechEnvironment) (sc : VE.SpeechActs.Scope) (E : VE.EnglishGrammar.Env)
+    (L : VE.EnglishGrammar.Lexicon) (b : Nat) (s : String),
+    (VE.Commands.trimmed s).utf8ByteSize ≤ VE.Commands.maxWordingBytes →
+      (∀ (sh : VE.Commands.Shape), VE.Commands.shapes s ≠ [sh]) →
+        VE.Commands.readStep se sc E L b s =
+          VE.Commands.combineShapes
+            (List.map (fun sh => (sh, VE.Commands.shapeOutcome se sc E L b sh)) (VE.Commands.shapes s))
+  -- uses VE.Commands.Shape@VE.Commands.Steps VE.Commands.StepOutcome@VE.Commands.Steps VE.Commands.combineShapes@VE.Commands.Steps VE.Commands.maxWordingBytes@VE.Commands.Read VE.Commands.readStep@VE.Commands.Steps VE.Commands.shapeOutcome@VE.Commands.Steps VE.Commands.shapes@VE.Commands.Steps VE.Commands.trimmed@VE.Commands.Read VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire
+  -- expr 1896645534
+theorem VE.Commands.readStep_one
+  ∀ (se : VE.SpeechActs.Wire.SpeechEnvironment) (sc : VE.SpeechActs.Scope) (E : VE.EnglishGrammar.Env)
+    (L : VE.EnglishGrammar.Lexicon) (b : Nat) (s : String) {sh : VE.Commands.Shape},
+    (VE.Commands.trimmed s).utf8ByteSize ≤ VE.Commands.maxWordingBytes →
+      VE.Commands.shapes s = [sh] → VE.Commands.readStep se sc E L b s = VE.Commands.shapeOutcome se sc E L b sh
+  -- uses VE.Commands.Shape@VE.Commands.Steps VE.Commands.StepOutcome@VE.Commands.Steps VE.Commands.maxWordingBytes@VE.Commands.Read VE.Commands.readStep@VE.Commands.Steps VE.Commands.shapeOutcome@VE.Commands.Steps VE.Commands.shapes@VE.Commands.Steps VE.Commands.trimmed@VE.Commands.Read VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire
+  -- expr 2023064243
+theorem VE.Commands.readStep_over
+  ∀ (se : VE.SpeechActs.Wire.SpeechEnvironment) (sc : VE.SpeechActs.Scope) (E : VE.EnglishGrammar.Env)
+    (L : VE.EnglishGrammar.Lexicon) (b : Nat) (s : String),
+    VE.Commands.maxWordingBytes < (VE.Commands.trimmed s).utf8ByteSize →
+      VE.Commands.readStep se sc E L b s = VE.Commands.StepOutcome.limit
+  -- uses VE.Commands.StepOutcome.limit@VE.Commands.Steps VE.Commands.StepOutcome@VE.Commands.Steps VE.Commands.maxWordingBytes@VE.Commands.Read VE.Commands.readStep@VE.Commands.Steps VE.Commands.trimmed@VE.Commands.Read VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire
+  -- expr 4020187915
+theorem VE.Commands.readingTuples_length
+  ∀ (cs : List (List VE.Commands.Reading)), (VE.Commands.readingTuples cs).length = VE.Commands.productSize cs
+  -- uses VE.Commands.Reading@VE.Commands.Read VE.Commands.productSize@VE.Commands.Steps VE.Commands.readingTuples@VE.Commands.Steps
+  -- expr 1812051384
+theorem VE.Commands.readingTuples_single
+  ∀ {α : Type} (φ : α → List VE.Commands.Reading) (l : List α) (rs : List VE.Commands.Reading),
+    VE.Commands.readingTuples (List.map φ l) = [rs] ↔
+      l.length = rs.length ∧ ∀ (p : α × VE.Commands.Reading), p ∈ l.zip rs → φ p.fst = [p.snd]
+  -- uses VE.Commands.Reading@VE.Commands.Read VE.Commands.readingTuples@VE.Commands.Steps
+  -- expr 3209232159
 theorem VE.Commands.refusalOf_refused
   ∀ (s : String) (p : VE.Commands.Parts) (pm : List (VE.Norms.Regulated × List VE.Commands.Fill))
     (ms : List (String × List VE.Commands.Fill)) (gr : Except VE.Commands.GuardFault VE.Formula),
@@ -10263,6 +10368,102 @@ theorem VE.Commands.regulated_shape
     VE.Norms.Wire.decodeRegulatedIn ps fx p args raw = Except.ok g → g.name = p ∧ g.sorts = args
   -- uses VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated.sorts@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Wire.decodeRegulatedIn@VE.Norms.Wire
   -- expr 3618292377
+theorem VE.Commands.seqFault
+  ∀ {os : List VE.Commands.Outcome} {f : VE.Commands.StepOutcome},
+    List.findSome?
+          (fun o =>
+            match o with
+            | VE.Commands.Outcome.refused code text => Option.some (VE.Commands.StepOutcome.refused code text)
+            | VE.Commands.Outcome.one r =>
+              if (r.guard == VE.Formula.top) = Bool.true then Option.none else Option.some VE.Commands.conditionScope
+            | VE.Commands.Outcome.many rs =>
+              if (rs.any fun x => x.guard != VE.Formula.top) = Bool.true then Option.some VE.Commands.conditionScope
+              else Option.none
+            | VE.Commands.Outcome.limit => Option.none)
+          os =
+        Option.some f →
+      ∃ c t, f = VE.Commands.StepOutcome.refused c t
+  -- uses VE.Commands.Outcome@VE.Commands.Read VE.Commands.Reading.guard@VE.Commands.Read VE.Commands.Reading@VE.Commands.Read VE.Commands.StepOutcome.refused@VE.Commands.Steps VE.Commands.StepOutcome@VE.Commands.Steps VE.Commands.conditionScope@VE.Commands.Steps VE.Commands.shapeOutcome.match_1@VE.Commands.Steps VE.Formula.top@VE.Syntax VE.Formula@VE.Syntax VE.instBEqFormula@VE.Syntax
+  -- expr 3387622091
+theorem VE.Commands.seq_ambiguous
+  ∀ (se : VE.SpeechActs.Wire.SpeechEnvironment) (sc : VE.SpeechActs.Scope) (E : VE.EnglishGrammar.Env)
+    (L : VE.EnglishGrammar.Lexicon) (b : Nat) (s : String) (xs : List String) (alts : List VE.Commands.Alt),
+    VE.Commands.shapes s = [VE.Commands.Shape.seq xs] →
+      VE.Commands.readStep se sc E L b s = VE.Commands.StepOutcome.many alts →
+        ∀ (a : VE.Commands.Alt),
+          a ∈ alts → ∃ rs, a = VE.Commands.Alt.shape (VE.Commands.Shape.seq xs) rs ∧ rs.length = xs.length
+  -- uses VE.Commands.Alt.shape@VE.Commands.Steps VE.Commands.Alt@VE.Commands.Steps VE.Commands.Reading@VE.Commands.Read VE.Commands.Shape.seq@VE.Commands.Steps VE.Commands.Shape@VE.Commands.Steps VE.Commands.StepOutcome.many@VE.Commands.Steps VE.Commands.StepOutcome@VE.Commands.Steps VE.Commands.readStep@VE.Commands.Steps VE.Commands.shapes@VE.Commands.Steps VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire
+  -- expr 4118864694
+theorem VE.Commands.seq_eq
+  ∀ (se : VE.SpeechActs.Wire.SpeechEnvironment) (sc : VE.SpeechActs.Scope) (E : VE.EnglishGrammar.Env)
+    (L : VE.EnglishGrammar.Lexicon) (b : Nat) (s : String) (xs : List String) (rs : List VE.Commands.Reading),
+    VE.Commands.shapes s = [VE.Commands.Shape.seq xs] →
+      (VE.Commands.trimmed s).utf8ByteSize ≤ VE.Commands.maxWordingBytes →
+        (VE.Commands.readStep se sc E L b s = VE.Commands.StepOutcome.steps rs ↔
+          xs.length = rs.length ∧
+            ∀ (p : String × VE.Commands.Reading),
+              p ∈ xs.zip rs →
+                VE.Commands.readCommand se sc E L b (VE.Commands.capitalise p.fst ++ ".") =
+                    VE.Commands.Outcome.one p.snd ∧
+                  p.snd.guard = VE.Formula.top)
+  -- uses VE.Commands.Outcome.one@VE.Commands.Read VE.Commands.Outcome@VE.Commands.Read VE.Commands.Reading.guard@VE.Commands.Read VE.Commands.Reading@VE.Commands.Read VE.Commands.Shape.seq@VE.Commands.Steps VE.Commands.Shape@VE.Commands.Steps VE.Commands.StepOutcome.steps@VE.Commands.Steps VE.Commands.StepOutcome@VE.Commands.Steps VE.Commands.capitalise@VE.Commands.Steps VE.Commands.maxWordingBytes@VE.Commands.Read VE.Commands.readCommand@VE.Commands.Read VE.Commands.readStep@VE.Commands.Steps VE.Commands.shapes@VE.Commands.Steps VE.Commands.trimmed@VE.Commands.Read VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.Formula.top@VE.Syntax VE.Formula@VE.Syntax VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire
+  -- expr 304984932
+theorem VE.Commands.seq_many
+  ∀ (se : VE.SpeechActs.Wire.SpeechEnvironment) (sc : VE.SpeechActs.Scope) (E : VE.EnglishGrammar.Env)
+    (L : VE.EnglishGrammar.Lexicon) (b : Nat) (xs : List String) (alts : List VE.Commands.Alt),
+    VE.Commands.shapeOutcome se sc E L b (VE.Commands.Shape.seq xs) = VE.Commands.StepOutcome.many alts →
+      ∃ all,
+        alts = List.map (fun rs => VE.Commands.Alt.shape (VE.Commands.Shape.seq xs) rs) all ∧
+          2 ≤ all.length ∧ ∀ (rs : List VE.Commands.Reading), rs ∈ all → rs.length = xs.length
+  -- uses VE.Commands.Alt.shape@VE.Commands.Steps VE.Commands.Alt@VE.Commands.Steps VE.Commands.Reading@VE.Commands.Read VE.Commands.Shape.seq@VE.Commands.Steps VE.Commands.StepOutcome.many@VE.Commands.Steps VE.Commands.StepOutcome@VE.Commands.Steps VE.Commands.shapeOutcome@VE.Commands.Steps VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire
+  -- expr 4028142660
+theorem VE.Commands.shapeOutcome_charged
+  VE.Commands.shapeOutcome = VE.Commands.shapeOutcomeCharged
+  -- uses VE.Commands.Shape@VE.Commands.Steps VE.Commands.StepOutcome@VE.Commands.Steps VE.Commands.shapeOutcome@VE.Commands.Steps VE.Commands.shapeOutcomeCharged@VE.Commands.Steps VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire
+  -- expr 2834677778
+theorem VE.Commands.shapeOutcome_many
+  ∀ (se : VE.SpeechActs.Wire.SpeechEnvironment) (sc : VE.SpeechActs.Scope) (E : VE.EnglishGrammar.Env)
+    (L : VE.EnglishGrammar.Lexicon) (b : Nat) {sh : VE.Commands.Shape} {alts : List VE.Commands.Alt},
+    VE.Commands.shapeOutcome se sc E L b sh = VE.Commands.StepOutcome.many alts → 2 ≤ alts.length
+  -- uses VE.Commands.Alt@VE.Commands.Steps VE.Commands.Shape@VE.Commands.Steps VE.Commands.StepOutcome.many@VE.Commands.Steps VE.Commands.StepOutcome@VE.Commands.Steps VE.Commands.shapeOutcome@VE.Commands.Steps VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire
+  -- expr 738910457
+theorem VE.Commands.shapes_ambiguous
+  ∀ (se : VE.SpeechActs.Wire.SpeechEnvironment) (sc : VE.SpeechActs.Scope) (E : VE.EnglishGrammar.Env)
+    (L : VE.EnglishGrammar.Lexicon) (b : Nat) (s : String),
+    2 ≤
+        (List.map (fun sh => VE.Commands.shapeAlts sh (VE.Commands.shapeOutcome se sc E L b sh))
+              (VE.Commands.shapes s)).flatten.length →
+      (List.map (fun sh => VE.Commands.shapeAlts sh (VE.Commands.shapeOutcome se sc E L b sh))
+                (VE.Commands.shapes s)).flatten.length ≤
+          VE.SpeechActs.Wire.readingsBound →
+        (VE.Commands.trimmed s).utf8ByteSize ≤ VE.Commands.maxWordingBytes →
+          ∃ alts, VE.Commands.readStep se sc E L b s = VE.Commands.StepOutcome.many alts ∧ 2 ≤ alts.length
+  -- uses VE.Commands.Alt@VE.Commands.Steps VE.Commands.Shape@VE.Commands.Steps VE.Commands.StepOutcome.many@VE.Commands.Steps VE.Commands.StepOutcome@VE.Commands.Steps VE.Commands.maxWordingBytes@VE.Commands.Read VE.Commands.readStep@VE.Commands.Steps VE.Commands.shapeAlts@VE.Commands.Steps VE.Commands.shapeOutcome@VE.Commands.Steps VE.Commands.shapes@VE.Commands.Steps VE.Commands.trimmed@VE.Commands.Read VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire VE.SpeechActs.Wire.readingsBound@VE.SpeechActs.Wire
+  -- expr 462226546
+theorem VE.Commands.shapes_complete
+  ∀ (se : VE.SpeechActs.Wire.SpeechEnvironment) (sc : VE.SpeechActs.Scope) (E : VE.EnglishGrammar.Env)
+    (L : VE.EnglishGrammar.Lexicon) (b : Nat) (s : String) (alts : List VE.Commands.Alt),
+    (∀ (sh : VE.Commands.Shape),
+        sh ∈ VE.Commands.shapes s → VE.Commands.shapeOutcome se sc E L b sh ≠ VE.Commands.StepOutcome.limit) →
+      (List.map (fun sh => VE.Commands.shapeAlts sh (VE.Commands.shapeOutcome se sc E L b sh))
+                (VE.Commands.shapes s)).flatten.length ≤
+          VE.SpeechActs.Wire.readingsBound →
+        VE.Commands.readStep se sc E L b s = VE.Commands.StepOutcome.many alts →
+          ∀ (sh : VE.Commands.Shape),
+            sh ∈ VE.Commands.shapes s →
+              ∀ (a : VE.Commands.Alt), a ∈ VE.Commands.shapeAlts sh (VE.Commands.shapeOutcome se sc E L b sh) → a ∈ alts
+  -- uses VE.Commands.Alt@VE.Commands.Steps VE.Commands.Shape@VE.Commands.Steps VE.Commands.StepOutcome.limit@VE.Commands.Steps VE.Commands.StepOutcome.many@VE.Commands.Steps VE.Commands.StepOutcome@VE.Commands.Steps VE.Commands.readStep@VE.Commands.Steps VE.Commands.shapeAlts@VE.Commands.Steps VE.Commands.shapeOutcome@VE.Commands.Steps VE.Commands.shapes@VE.Commands.Steps VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire VE.SpeechActs.Wire.readingsBound@VE.SpeechActs.Wire
+  -- expr 2821373611
+theorem VE.Commands.shapes_limit
+  ∀ (se : VE.SpeechActs.Wire.SpeechEnvironment) (sc : VE.SpeechActs.Scope) (E : VE.EnglishGrammar.Env)
+    (L : VE.EnglishGrammar.Lexicon) (b : Nat) (s : String),
+    2 >
+        (List.map (fun sh => VE.Commands.shapeAlts sh (VE.Commands.shapeOutcome se sc E L b sh))
+              (VE.Commands.shapes s)).flatten.length →
+      (∃ sh, sh ∈ VE.Commands.shapes s ∧ VE.Commands.shapeOutcome se sc E L b sh = VE.Commands.StepOutcome.limit) →
+        VE.Commands.readStep se sc E L b s = VE.Commands.StepOutcome.limit
+  -- uses VE.Commands.Alt@VE.Commands.Steps VE.Commands.Shape@VE.Commands.Steps VE.Commands.StepOutcome.limit@VE.Commands.Steps VE.Commands.StepOutcome@VE.Commands.Steps VE.Commands.readStep@VE.Commands.Steps VE.Commands.shapeAlts@VE.Commands.Steps VE.Commands.shapeOutcome@VE.Commands.Steps VE.Commands.shapes@VE.Commands.Steps VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire
+  -- expr 403415965
 theorem VE.Commands.strip_vocabulary
   ∀ {j s v : Lean.Json},
     VE.Scope.JsonWF j →
@@ -10278,6 +10479,10 @@ theorem VE.Commands.tuples_typed
           VE.SpeechActs.constsTyped se.ne.rv.environment (List.map (fun x => x.const) fs) ss = Bool.true
   -- uses VE.Bridge.Vocabulary.constants@VE.Bridge VE.Commands.Fill.const@VE.Commands.Read VE.Commands.Fill@VE.Commands.Read VE.Commands.slotFills@VE.Commands.Read VE.Commands.tuples@VE.Commands.Read VE.Environment.constants@VE.Syntax VE.Norms.Wire.NormsEnvironment.rv@VE.Norms.Wire VE.Route.Wire.RouteVocabulary.environment@VE.Route.Wire VE.Route.Wire.RouteVocabulary.vocabulary@VE.Route.Wire VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.Wire.SpeechEnvironment.ne@VE.SpeechActs.Wire VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire VE.SpeechActs.constsTyped@VE.SpeechActs.Tree
   -- expr 3987018052
+theorem VE.Commands.two_le
+  ∀ {α : Type} (l : List α), (l = [] → False) → (∀ (x : α), l = [x] → False) → 2 ≤ l.length
+  -- uses
+  -- expr 1534957280
 theorem VE.Commands.unreadOf_classed
   ∀ (E : VE.EnglishGrammar.Env) (L : VE.EnglishGrammar.Lexicon) {c code text : String}
     {o : VE.EnglishGrammar.TranslateOutcome},
@@ -10302,6 +10507,10 @@ theorem VE.Commands.vocabulary_facts
                         VE.Bridge.strings a = Except.ok ss ∧ (p, ss) ∈ rv.vocabulary.predicates
   -- uses VE.Bridge.Fields@VE.Bridge VE.Bridge.Vocabulary.constants@VE.Bridge VE.Bridge.Vocabulary.predicates@VE.Bridge VE.Bridge.fields@VE.Bridge VE.Bridge.strings@VE.Bridge VE.Route.Wire.RouteVocabulary.vocabulary@VE.Route.Wire VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.Wire.decodeVocabulary@VE.Route.Wire
   -- expr 2161052879
+theorem VE.Commands.wf_actsView
+  ∀ {env : Lean.Json}, VE.Scope.JsonWF env → ∀ (ps : List String), VE.Scope.JsonWF (VE.Norms.Wire.actsView env ps)
+  -- uses VE.Norms.Wire.actsView@VE.Norms.Wire VE.Scope.JsonWF@VE.Scope.Govern
+  -- expr 3375245357
 theorem VE.Commands.wf_get
   ∀ {j v : Lean.Json} {k : String}, VE.Scope.JsonWF j → j.getObjVal? k = Except.ok v → VE.Scope.JsonWF v
   -- uses VE.Scope.JsonWF@VE.Scope.Govern
@@ -10312,6 +10521,14 @@ theorem VE.Commands.wf_member
       ∀ {k : String} {v : Lean.Json}, (k, v) ∈ kvs.toList → (Lean.Json.obj kvs).getObjVal? k = Except.ok v
   -- uses VE.Scope.JsonWF@VE.Scope.Govern
   -- expr 2585814663
+theorem VE.Commands.wf_strings
+  ∀ (l : List String), VE.Scope.JsonWF (Lean.ToJson.toJson l)
+  -- uses VE.Scope.JsonWF@VE.Scope.Govern
+  -- expr 1295348108
+theorem VE.Commands.wf_strip
+  ∀ {j s : Lean.Json}, VE.Scope.JsonWF j → VE.SpeechActs.Wire.stripSpeech j = Except.ok s → VE.Scope.JsonWF s
+  -- uses VE.Scope.JsonWF@VE.Scope.Govern VE.SpeechActs.Wire.stripSpeech@VE.SpeechActs.Wire
+  -- expr 1351270252
 theorem VE.Compose.Contract.Rewriter.Laws.fresh
   ∀ {σ : Type} {WF : σ → Prop} {names : σ → List String} {r : VE.Compose.Contract.Rewriter σ},
     VE.Compose.Contract.Rewriter.Laws WF names r →
@@ -10663,9 +10880,10 @@ theorem VE.Compose.gate_acts
       ∀ (r : VE.Compose.Route),
         VE.Compose.gateOf VE.Compose.profileTable ps = Except.ok r →
           VE.Compose.gateOf VE.Compose.profileTable (ps.erase "acts@0") = Except.ok r ∧
-            (r = VE.Compose.Route.norms ∨ r = VE.Compose.Route.normDefaults ∨ r = VE.Compose.Route.readings)
-  -- uses VE.Compose.Route.normDefaults@VE.Compose.Dispatch VE.Compose.Route.norms@VE.Compose.Dispatch VE.Compose.Route.readings@VE.Compose.Dispatch VE.Compose.Route@VE.Compose.Dispatch VE.Compose.gateOf@VE.Compose.Dispatch VE.Compose.profileTable@VE.Compose.Dispatch
-  -- expr 3915517882
+            (r = VE.Compose.Route.norms ∨
+              r = VE.Compose.Route.normDefaults ∨ r = VE.Compose.Route.readings ∨ r = VE.Compose.Route.speechActs)
+  -- uses VE.Compose.Route.normDefaults@VE.Compose.Dispatch VE.Compose.Route.norms@VE.Compose.Dispatch VE.Compose.Route.readings@VE.Compose.Dispatch VE.Compose.Route.speechActs@VE.Compose.Dispatch VE.Compose.Route@VE.Compose.Dispatch VE.Compose.gateOf@VE.Compose.Dispatch VE.Compose.profileTable@VE.Compose.Dispatch
+  -- expr 4256927271
 theorem VE.Compose.gate_events
   ∀ (ps : List String),
     List.Pairwise (fun x1 x2 => x1 < x2) ps →
@@ -18770,6 +18988,10 @@ theorem VE.Events.EventsDecoded.typed
   ∀ (self : VE.Events.EventsDecoded), VE.Events.EventsTyped self.E self.V = Bool.true
   -- uses VE.Events.EventsDecoded.E@VE.Events.Wire VE.Events.EventsDecoded.V@VE.Events.Wire VE.Events.EventsDecoded@VE.Events.Wire VE.Events.EventsTyped@VE.Events.Decl
   -- expr 1728719048
+theorem VE.Events.WireExamples.eventsPack_conditions
+  ∀ (d : VE.Events.EventsDecoded), (VE.Events.eventsPack d).conditions = []
+  -- uses VE.Events.EventsDecoded@VE.Events.Wire VE.Events.eventsPack@VE.Events.Wire VE.Formula@VE.Syntax VE.NormDefaults.Packs.Pack.conditions@VE.NormDefaults.Packs VE.SoftNorms.DecisionKey@VE.SoftNorms.Tree
+  -- expr 4073115506
 theorem VE.Events.boundRole_mem
   ∀ {V : VE.Events.EventsEnv} {s bd : String},
     VE.Events.boundRole V s = Option.some bd →
@@ -31814,6 +32036,26 @@ theorem VE.Readings.TwinDocs.twin
               VE.Readings.Twin (VE.Rights.correlate (VE.Readings.one D s i).fst) Nd
   -- uses VE.Compose.Content@VE.Compose.Content VE.Formula@VE.Syntax VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Readings.Candidate.content@VE.Readings.Doc VE.Readings.Candidate@VE.Readings.Doc VE.Readings.Doc@VE.Readings.Doc VE.Readings.Twin@VE.Readings.Force VE.Readings.TwinDocs@VE.Readings.Force VE.Readings.WellFormedDoc@VE.Readings.Doc VE.Readings.candidate@VE.Readings.Doc VE.Readings.one@VE.Readings.Doc VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.act@VE.SoftNorms.Tree
   -- expr 974540504
+theorem VE.Readings.UnspecifiedExamples.choiceLayeredG_conditions
+  ∀ (b : VE.Readings.Wire.Admitted2) (N : VE.Readings.NDoc) (c : VE.Readings.Choice)
+    (wfc : VE.NormDefaults.WellFormedU (VE.Readings.choiceU N c) = Bool.true) (hN : N.D = b.D)
+    {L :
+      { L //
+        L.U = VE.Readings.choiceU N c ∧
+          L.X = VE.Readings.choiceX N c ∧
+            ∀ (a : VE.Formula), a ∈ L.X → VE.Formula.WellFormed (VE.Norms.envAt (VE.NormDefaults.fill L.U) 0) [] a }},
+    VE.Readings.Wire.choiceLayeredG b N c wfc hN = Except.ok L →
+      ∀ (p : VE.NormDefaults.Packs.Pack), p ∈ L.val.packs → p.conditions = []
+  -- uses VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax VE.NormDefaults.Packs.Pack.conditions@VE.NormDefaults.Packs VE.NormDefaults.Packs.Pack@VE.NormDefaults.Packs VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.X@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.packs@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.envAt@VE.Norms.Tree VE.Readings.Choice@VE.Readings.Choice VE.Readings.Doc@VE.Readings.Doc VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.Wire.Admitted2.D@VE.Readings.SupWire VE.Readings.Wire.Admitted2@VE.Readings.SupWire VE.Readings.Wire.choiceLayeredG@VE.Readings.UnspecifiedWire VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.choiceX@VE.Readings.SoftDefaults VE.SoftNorms.DecisionKey@VE.SoftNorms.Tree
+  -- expr 113387539
+theorem VE.Readings.UnspecifiedExamples.choiceLayered_conditions
+  ∀ (r : VE.Readings.Wire.AdmittedND) (c : VE.Readings.Choice)
+    (wfc : VE.NormDefaults.WellFormedU (VE.Readings.choiceU r.N c) = Bool.true)
+    {L : { L // L.U = VE.Readings.choiceU r.N c }},
+    VE.Readings.Wire.choiceLayered r c wfc = Except.ok L →
+      ∀ (p : VE.NormDefaults.Packs.Pack), p ∈ L.val.packs → p.conditions = []
+  -- uses VE.Formula@VE.Syntax VE.NormDefaults.Packs.Pack.conditions@VE.NormDefaults.Packs VE.NormDefaults.Packs.Pack@VE.NormDefaults.Packs VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.packs@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.Readings.Choice@VE.Readings.Choice VE.Readings.Wire.AdmittedND.N@VE.Readings.UnspecifiedWire VE.Readings.Wire.AdmittedND@VE.Readings.UnspecifiedWire VE.Readings.Wire.choiceLayered@VE.Readings.UnspecifiedWire VE.Readings.choiceU@VE.Readings.Unspecified VE.SoftNorms.DecisionKey@VE.SoftNorms.Tree
+  -- expr 1337428221
 theorem VE.Readings.Wire.Admitted.ones_eq
   ∀ (self : VE.Readings.Wire.Admitted), self.ones = VE.Readings.Wire.onesOf (VE.Readings.Wire.docOf self.re self.doc)
   -- uses VE.Formula@VE.Syntax VE.Readings.Wire.Admitted.doc@VE.Readings.Wire VE.Readings.Wire.Admitted.ones@VE.Readings.Wire VE.Readings.Wire.Admitted.re@VE.Readings.Wire VE.Readings.Wire.Admitted@VE.Readings.Wire VE.Readings.Wire.docOf@VE.Readings.Wire VE.Readings.Wire.onesOf@VE.Readings.Wire VE.Rights.RightsDoc@VE.Rights.Tree
@@ -33628,6 +33870,22 @@ theorem VE.Readings.assertions_canon
                     (VE.Readings.choiceDoc D c).snd)
   -- uses VE.Environment.constants@VE.Syntax VE.Formula@VE.Syntax VE.Norms.Doc.E@VE.Norms.Tree VE.Norms.Sat@VE.Norms.Prefix VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Doc@VE.Readings.Doc VE.Readings.Encodes@VE.Readings.Choice VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.pull@VE.Readings.Choice VE.Readings.sup@VE.Readings.Choice VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.SoftNorms.canon@VE.SoftNorms.Coherence VE.SoftNorms.soften@VE.SoftNorms.Soften VE.Structure.Carrier@VE.Semantics VE.Structure.constant@VE.Semantics VE.Structure@VE.Semantics
   -- expr 3029581182
+theorem VE.Readings.assertions_iff
+  ∀ {D : VE.Readings.Doc},
+    VE.Readings.Hyps D →
+      ∀ {c : VE.Readings.Choice},
+        VE.Readings.Compatible D c →
+          ∀ (X Y : VE.Structure),
+            (∀ (φ : VE.Formula),
+                VE.Formula.WellFormed (VE.Readings.sharedEnv D) [] φ →
+                  (VE.Formula.denote X [] φ ↔ VE.Formula.denote Y [] φ)) →
+              (∀ (m : Nat) (hm : m < D.sets.length) (i : Nat),
+                  i < D.sets[m].candidates.length →
+                    (VE.Formula.denote X [] (VE.Readings.pattern (m + 1) (VE.Readings.setSize D m) i) ↔
+                      c.index D.sets[m].id = Option.some i)) →
+                (VE.Norms.Sat X (VE.Readings.sup D).snd ↔ VE.Norms.Sat Y (VE.Readings.choiceDoc D c).snd)
+  -- uses VE.Formula.WellFormed@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Norms.Sat@VE.Norms.Prefix VE.Readings.Candidate@VE.Readings.Doc VE.Readings.Choice.index@VE.Readings.Choice VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Doc.sets@VE.Readings.Doc VE.Readings.Doc@VE.Readings.Doc VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.ReadingSet.candidates@VE.Readings.Doc VE.Readings.ReadingSet.id@VE.Readings.Doc VE.Readings.ReadingSet@VE.Readings.Doc VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.pattern@VE.Readings.Choice VE.Readings.setSize@VE.Readings.Choice VE.Readings.sharedEnv@VE.Readings.Choice VE.Readings.sup@VE.Readings.Choice VE.Rights.RightsDoc@VE.Rights.Tree VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 2696999113
 theorem VE.Readings.assignmentsOn_sideOf
   ∀ {α : Type u} [inst : DecidableEq α] (D : VE.Readings.Doc) (s : String) (j : Nat) (M : VE.FiniteModel α),
     VE.Readings.assignmentsOn D s j (VE.Readings.sideOf D s j) M = VE.Readings.assignments D s j M
@@ -34182,6 +34440,28 @@ theorem VE.Readings.canon_meaning
                     VE.Formula.denote (VE.SoftNorms.canon Dd S) (VE.Norms.tupleVal ws) (VE.Norms.Sym.meaning Dd.T q))
   -- uses VE.Environment.constants@VE.Syntax VE.Formula.denote@VE.Semantics VE.Norms.Doc.E@VE.Norms.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Doc@VE.Norms.Tree VE.Norms.Sym.meaning@VE.Norms.Subst VE.Norms.Sym.name@VE.Norms.Tree VE.Norms.Sym.sorts@VE.Norms.Tree VE.Norms.Sym@VE.Norms.Tree VE.Norms.Valid@VE.Norms.Valid VE.Norms.syms@VE.Norms.Tree VE.Norms.tupleVal@VE.Norms.Basic VE.SoftNorms.canon@VE.SoftNorms.Coherence VE.Structure.Carrier@VE.Semantics VE.Structure.constant@VE.Semantics VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics
   -- expr 317869260
+theorem VE.Readings.canon_pullF_up
+  ∀ {N : VE.Readings.NDoc},
+    VE.Readings.Hyps N.D →
+      ∀ {c : VE.Readings.Choice},
+        VE.Readings.Compatible N.D c →
+          VE.Readings.WellFormedSD N = Bool.true →
+            VE.NormDefaults.WellFormedU (VE.Readings.supU N) = Bool.true →
+              ∀ (B₀ : VE.Structure) (e : B₀.Carrier),
+                B₀.Admissible (VE.Norms.envAt (VE.NormDefaults.fill (VE.Readings.choiceU N c)) 0) →
+                  ∀ (φ : VE.Formula) (Γ : List String),
+                    VE.Formula.WellFormed
+                        (VE.Norms.envAt (VE.NormDefaults.fill (VE.Readings.choiceU N c))
+                          (VE.Norms.size (VE.NormDefaults.fill (VE.Readings.choiceU N c))))
+                        Γ φ →
+                      ∀ (ρ : VE.Valuation B₀),
+                        VE.Formula.denote
+                            (VE.SoftNorms.canon (VE.NormDefaults.fill (VE.Readings.choiceU N c))
+                              (VE.Readings.pullF N c (VE.Readings.upB N.D c B₀ e)))
+                            ρ φ ↔
+                          VE.Formula.denote (VE.SoftNorms.canon (VE.NormDefaults.fill (VE.Readings.choiceU N c)) B₀) ρ φ
+  -- uses VE.Formula.WellFormed@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.envAt@VE.Norms.Tree VE.Norms.size@VE.Norms.Tree VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.WellFormedSD@VE.Readings.SoftDefaults VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.pullF@VE.Readings.SoftSup VE.Readings.supU@VE.Readings.Unspecified VE.Readings.upB@VE.Readings.BaseUp VE.SoftNorms.canon@VE.SoftNorms.Coherence VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 475450544
 theorem VE.Readings.canon_pull_up
   ∀ {D : VE.Readings.Doc},
     VE.Readings.Hyps D →
@@ -34501,6 +34781,19 @@ theorem VE.Readings.choiceX_softX
     VE.Readings.choiceX N c = VE.Defaults.softX (VE.Readings.choiceU N c) (VE.Readings.choiceSoft N c) []
   -- uses VE.Defaults.softX@VE.Defaults.Meaning VE.Formula@VE.Syntax VE.Readings.Choice@VE.Readings.Choice VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.choiceSoft@VE.Readings.DefaultVerdicts VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.choiceX@VE.Readings.SoftDefaults
   -- expr 2839538451
+theorem VE.Readings.choiceX_up
+  ∀ {N : VE.Readings.NDoc},
+    VE.Readings.Hyps N.D →
+      ∀ {c : VE.Readings.Choice},
+        VE.Readings.Compatible N.D c →
+          VE.Readings.WellFormedSD N = Bool.true →
+            VE.NormDefaults.WellFormedU (VE.Readings.supU N) = Bool.true →
+              ∀ (B₀ : VE.Structure) (e : B₀.Carrier),
+                B₀.Admissible (VE.Norms.envAt (VE.NormDefaults.fill (VE.Readings.choiceU N c)) 0) →
+                  (VE.Norms.Sat (VE.Readings.pullF N c (VE.Readings.upB N.D c B₀ e)) (VE.Readings.choiceX N c) ↔
+                    VE.Norms.Sat B₀ (VE.Readings.choiceX N c))
+  -- uses VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.Sat@VE.Norms.Prefix VE.Norms.envAt@VE.Norms.Tree VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.WellFormedSD@VE.Readings.SoftDefaults VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.choiceX@VE.Readings.SoftDefaults VE.Readings.pullF@VE.Readings.SoftSup VE.Readings.supU@VE.Readings.Unspecified VE.Readings.upB@VE.Readings.BaseUp VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 1351659625
 theorem VE.Readings.choice_E
   ∀ {D : VE.Readings.Doc} (c : VE.Readings.Choice), (VE.Readings.choiceDoc D c).fst.soft.E = D.frame.soft.E
   -- uses VE.Environment@VE.Syntax VE.Formula@VE.Syntax VE.Readings.Choice@VE.Readings.Choice VE.Readings.Doc.frame@VE.Readings.Doc VE.Readings.Doc@VE.Readings.Doc VE.Readings.choiceDoc@VE.Readings.Choice VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.SoftNorms.SoftDoc.E@VE.SoftNorms.Tree
@@ -35053,6 +35346,21 @@ theorem VE.Readings.conflictFree_empty
   ∀ {Dd : VE.Norms.Doc}, VE.Norms.Valid Dd → ∀ (B : VE.Structure), ¬Nonempty B.Carrier → VE.Norms.ConflictFree Dd B
   -- uses VE.Norms.ConflictFree@VE.Norms.Conflict VE.Norms.Doc@VE.Norms.Tree VE.Norms.Valid@VE.Norms.Valid VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
   -- expr 371989434
+theorem VE.Readings.conflictFree_pullF
+  ∀ (N : VE.Readings.NDoc),
+    VE.Readings.WellFormedSD N = Bool.true →
+      VE.Readings.superposable N.D = Bool.true →
+        VE.NormDefaults.WellFormedU (VE.Readings.supU N) = Bool.true →
+          ∀ (c : VE.Readings.Choice),
+            VE.Readings.Compatible N.D c →
+              ∀ (B : VE.Structure),
+                VE.Norms.BaseAdmissible (VE.NormDefaults.fill (VE.Readings.supU N)) B →
+                  VE.Norms.Sat B (VE.Readings.slotP N.D) →
+                    VE.Readings.Encodes N.D c B →
+                      (VE.Norms.ConflictFree (VE.NormDefaults.fill (VE.Readings.supU N)) B ↔
+                        VE.Norms.ConflictFree (VE.NormDefaults.fill (VE.Readings.choiceU N c)) (VE.Readings.pullF N c B))
+  -- uses VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.BaseAdmissible@VE.Norms.Prefix VE.Norms.ConflictFree@VE.Norms.Conflict VE.Norms.Sat@VE.Norms.Prefix VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Encodes@VE.Readings.Choice VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.WellFormedSD@VE.Readings.SoftDefaults VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.pullF@VE.Readings.SoftSup VE.Readings.slotP@VE.Readings.Choice VE.Readings.supU@VE.Readings.Unspecified VE.Readings.superposable@VE.Readings.Choice VE.Structure@VE.Semantics
+  -- expr 253015992
 theorem VE.Readings.conflictRowItems_label
   ∀ (ke : Nat × Lean.Json) (x : VE.Readings.PlanItem),
     x ∈ VE.Readings.conflictRowItems ke →
@@ -35089,6 +35397,22 @@ theorem VE.Readings.conflict_canon_valid
                         r.name Bool.false)
   -- uses VE.Formula.denote@VE.Semantics VE.Norms.ConstantsTyped@VE.Norms.Subst VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated.sorts@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Valid@VE.Norms.Valid VE.Norms.conflict@VE.Norms.Conflict VE.Norms.tupleVal@VE.Norms.Basic VE.SoftNorms.DecidesSoftD@VE.SoftNorms.Semantics VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.regulated@VE.SoftNorms.Tree VE.SoftNorms.canon@VE.SoftNorms.Coherence VE.SoftNorms.soften@VE.SoftNorms.Soften VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.TupleTyped@VE.Semantics
   -- expr 3982993821
+theorem VE.Readings.conflict_fill_v
+  ∀ {U : VE.NormDefaults.UDoc},
+    VE.Norms.Valid (VE.NormDefaults.fill U) →
+      ∀ {B : VE.Structure},
+        VE.Norms.ConstantsTyped (VE.NormDefaults.fill U) B →
+          ∀ {r : VE.Norms.Regulated},
+            r ∈ U.D.T.regulated →
+              ∀ (vs : List B.Carrier),
+                VE.TupleTyped B r.sorts vs →
+                  (VE.Formula.denote B (VE.Norms.tupleVal vs) (VE.Norms.conflict (VE.NormDefaults.fill U) r) ↔
+                    VE.Norms.DecidesD (VE.NormDefaults.fill U).T (VE.SoftNorms.canon (VE.NormDefaults.fill U) B)
+                        (VE.Norms.tupleVal vs) r.name Bool.true ∧
+                      VE.Norms.DecidesD (VE.NormDefaults.fill U).T (VE.SoftNorms.canon (VE.NormDefaults.fill U) B)
+                        (VE.Norms.tupleVal vs) r.name Bool.false)
+  -- uses VE.Formula.denote@VE.Semantics VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.ConstantsTyped@VE.Norms.Subst VE.Norms.DecidesD@VE.Norms.Elaborate VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated.sorts@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Tree.regulated@VE.Norms.Tree VE.Norms.Valid@VE.Norms.Valid VE.Norms.conflict@VE.Norms.Conflict VE.Norms.tupleVal@VE.Norms.Basic VE.SoftNorms.canon@VE.SoftNorms.Coherence VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.TupleTyped@VE.Semantics
+  -- expr 3064811812
 theorem VE.Readings.conj_denote
   ∀ (S : VE.Structure) (ρ : VE.Valuation S) (l : List VE.Formula),
     VE.Formula.denote S ρ (VE.Readings.conj l) ↔ ∀ (a : VE.Formula), a ∈ l → VE.Formula.denote S ρ a
@@ -35801,6 +36125,19 @@ theorem VE.Readings.documentExpansion_canon
               (VE.Formula.denote S [] ψ ↔ VE.Formula.denote (VE.SoftNorms.canon D B) [] ψ)
   -- uses VE.Formula.WellFormed@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Norms.Doc@VE.Norms.Tree VE.Norms.DocumentExpansion@VE.Norms.Conflict VE.Norms.Valid@VE.Norms.Valid VE.Norms.envAt@VE.Norms.Tree VE.Norms.size@VE.Norms.Tree VE.SoftNorms.canon@VE.SoftNorms.Coherence VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
   -- expr 2745152529
+theorem VE.Readings.dropUnsaid_admissible
+  ∀ {N : VE.Readings.NDoc},
+    VE.Readings.Hyps N.D →
+      ∀ {c : VE.Readings.Choice},
+        VE.Readings.Compatible N.D c →
+          VE.Readings.WellFormedSD N = Bool.true →
+            VE.NormDefaults.WellFormedU (VE.Readings.supU N) = Bool.true →
+              ∀ (B₀ : VE.Structure),
+                B₀.Admissible (VE.Norms.envAt (VE.NormDefaults.fill (VE.Readings.choiceU N c)) 0) →
+                  (VE.Readings.dropUnsaid N B₀).Admissible
+                    (VE.Norms.envAt (VE.SoftNorms.soften (VE.Readings.choiceDoc N.D c).fst.soft) 0)
+  -- uses VE.Formula@VE.Syntax VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.envAt@VE.Norms.Tree VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.WellFormedSD@VE.Readings.SoftDefaults VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.dropUnsaid@VE.Readings.SoftSup VE.Readings.supU@VE.Readings.Unspecified VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.SoftNorms.soften@VE.SoftNorms.Soften VE.Structure.Admissible@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 3795236272
 theorem VE.Readings.drop_append_ascii
   ∀ (p t : String), VE.Readings.AsciiL p.data → (p ++ t).drop p.length = t
   -- uses VE.Readings.AsciiL@VE.Readings.Strings
@@ -35897,6 +36234,20 @@ theorem VE.Readings.encodes_unique
                       VE.Readings.complete D c' = Bool.true → VE.Readings.Encodes D c' B → c' = c
   -- uses VE.Compose.BaseAdmissibleP@VE.Compose.Slot VE.Formula@VE.Syntax VE.Readings.Chain.rights@VE.Readings.Doc VE.Readings.Chain@VE.Readings.Doc VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Doc.chain@VE.Readings.Doc VE.Readings.Doc@VE.Readings.Doc VE.Readings.Encodes@VE.Readings.Choice VE.Readings.WellFormedDoc@VE.Readings.Doc VE.Readings.complete@VE.Readings.Choice VE.Readings.slotP@VE.Readings.Choice VE.Readings.sup@VE.Readings.Choice VE.Readings.superposable@VE.Readings.Choice VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate VE.Structure@VE.Semantics
   -- expr 1397100105
+theorem VE.Readings.encodes_unique_slot
+  ∀ (D : VE.Readings.Doc),
+    VE.Readings.WellFormedDoc D = Bool.true →
+      D.chain ≠ VE.Readings.Chain.rights →
+        VE.Readings.superposable D = Bool.true →
+          ∀ (B : VE.Structure),
+            VE.Norms.Sat B (VE.Readings.slotP D) →
+              ∃ c,
+                VE.Readings.Compatible D c ∧
+                  VE.Readings.Encodes D c B ∧
+                    ∀ (c' : VE.Readings.Choice),
+                      VE.Readings.complete D c' = Bool.true → VE.Readings.Encodes D c' B → c' = c
+  -- uses VE.Norms.Sat@VE.Norms.Prefix VE.Readings.Chain.rights@VE.Readings.Doc VE.Readings.Chain@VE.Readings.Doc VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Doc.chain@VE.Readings.Doc VE.Readings.Doc@VE.Readings.Doc VE.Readings.Encodes@VE.Readings.Choice VE.Readings.WellFormedDoc@VE.Readings.Doc VE.Readings.complete@VE.Readings.Choice VE.Readings.slotP@VE.Readings.Choice VE.Readings.superposable@VE.Readings.Choice VE.Structure@VE.Semantics
+  -- expr 269348921
 theorem VE.Readings.endPos_data
   ∀ (s : String), s.endPos.byteIdx = String.utf8ByteSize.go s.data
   -- uses
@@ -35942,6 +36293,14 @@ theorem VE.Readings.envAt_fill_mono_lite
           (VE.Norms.envAt (VE.NormDefaults.fill U) k).predicates n = Option.some ss
   -- uses VE.Environment.predicates@VE.Syntax VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.envAt@VE.Norms.Tree VE.Readings.FillLite@VE.Readings.SoftSup
   -- expr 3086908158
+theorem VE.Readings.envAt_fill_off_lite
+  ∀ {U : VE.NormDefaults.UDoc},
+    VE.Readings.FillLite U →
+      ∀ (k : Nat) {p : String},
+        ¬p ∈ VE.NormDefaults.unsaidNames U →
+          (VE.Norms.envAt (VE.NormDefaults.fill U) k).predicates p = (VE.Norms.envAt U.D k).predicates p
+  -- uses VE.Environment.predicates@VE.Syntax VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.NormDefaults.unsaidNames@VE.NormDefaults.Tree VE.Norms.envAt@VE.Norms.Tree VE.Readings.FillLite@VE.Readings.SoftSup
+  -- expr 1625026294
 theorem VE.Readings.envAt_filledAuthor
   ∀ (N : VE.Readings.NDoc) (X : VE.Rights.RightsDoc),
     VE.Readings.KeepsFrame N.D X →
@@ -36167,6 +36526,13 @@ theorem VE.Readings.exists_taking
     VE.Readings.takenBy D A = Bool.true → ∃ c, VE.Readings.Compatible D c ∧ ∀ (x : String × Nat), x ∈ A → x ∈ c
   -- uses VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Doc@VE.Readings.Doc VE.Readings.takenBy@VE.Readings.Choice
   -- expr 1273162392
+theorem VE.Readings.expansion_of_conflictFree
+  ∀ {D : VE.Norms.Doc},
+    VE.Norms.Valid D →
+      ∀ {B : VE.Structure},
+        VE.Norms.BaseAdmissible D B → VE.Norms.ConflictFree D B → ∃ S, VE.Norms.DocumentExpansion D B S
+  -- uses VE.Norms.BaseAdmissible@VE.Norms.Prefix VE.Norms.ConflictFree@VE.Norms.Conflict VE.Norms.Doc@VE.Norms.Tree VE.Norms.DocumentExpansion@VE.Norms.Conflict VE.Norms.Valid@VE.Norms.Valid VE.Structure@VE.Semantics
+  -- expr 3416607556
 theorem VE.Readings.ext_denote
   ∀ {E : VE.Environment},
     ¬"ve__reading" ∈ E.sorts →
@@ -37468,6 +37834,27 @@ theorem VE.Readings.fuel_relax
     VE.SoftNorms.fuel (VE.Readings.relaxDoc C Nd) = VE.SoftNorms.fuel C
   -- uses VE.Readings.relaxDoc@VE.Readings.Force VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.fuel@VE.SoftNorms.Tree
   -- expr 809100429
+theorem VE.Readings.fullF_nameMap
+  ∀ {N : VE.Readings.NDoc},
+    VE.Readings.Hyps N.D →
+      ∀ {c : VE.Readings.Choice} {p : String} {ss : List String},
+        (VE.NormDefaults.fill (VE.Readings.choiceU N c)).E.predicates p = Option.some ss →
+          (VE.NormDefaults.fill (VE.Readings.supU N)).E.predicates (VE.Readings.nameMap N.D c p) = Option.some ss
+  -- uses VE.Environment.predicates@VE.Syntax VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.Doc.E@VE.Norms.Tree VE.Readings.Choice@VE.Readings.Choice VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.nameMap@VE.Readings.Choice VE.Readings.supU@VE.Readings.Unspecified
+  -- expr 3820694374
+theorem VE.Readings.fullY_free
+  ∀ {N : VE.Readings.NDoc},
+    VE.Readings.Hyps N.D →
+      ∀ (c : VE.Readings.Choice),
+        ¬"ve__reading" ∈
+              (VE.Norms.envAt (VE.NormDefaults.fill (VE.Readings.choiceU N c))
+                  (VE.Norms.size (VE.NormDefaults.fill (VE.Readings.choiceU N c)))).sorts ∧
+          (VE.Norms.envAt (VE.NormDefaults.fill (VE.Readings.choiceU N c))
+                  (VE.Norms.size (VE.NormDefaults.fill (VE.Readings.choiceU N c)))).constants
+              "ve__here" =
+            Option.none
+  -- uses VE.Environment.constants@VE.Syntax VE.Environment.sorts@VE.Syntax VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.envAt@VE.Norms.Tree VE.Norms.size@VE.Norms.Tree VE.Readings.Choice@VE.Readings.Choice VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.choiceU@VE.Readings.Unspecified
+  -- expr 1819542889
 theorem VE.Readings.gapF_fill_v
   ∀ {U : VE.NormDefaults.UDoc},
     VE.Norms.Valid (VE.NormDefaults.fill U) →
@@ -37511,6 +37898,21 @@ theorem VE.Readings.gateItems_label
       ∀ (l : String), x.label? = Option.some l → x = VE.Readings.PlanItem.text "status" Option.none [] (Option.some l)
   -- uses VE.Readings.Choice@VE.Readings.Choice VE.Readings.Doc@VE.Readings.Doc VE.Readings.PlanItem.label?@VE.Readings.VerdictsWire VE.Readings.PlanItem.text@VE.Readings.VerdictsWire VE.Readings.PlanItem@VE.Readings.VerdictsWire VE.Readings.gateItems@VE.Readings.VerdictsWire
   -- expr 2613087536
+theorem VE.Readings.gate_canonF
+  ∀ {N : VE.Readings.NDoc},
+    VE.Readings.Hyps N.D →
+      VE.NormDefaults.WellFormedU (VE.Readings.supU N) = Bool.true →
+        ∀ {c : VE.Readings.Choice},
+          VE.Readings.Compatible N.D c →
+            ∀ (B : VE.Structure),
+              VE.Readings.Encodes N.D c B →
+                ∀ (m : Nat) (hm : m < N.D.sets.length) (i : Nat),
+                  i < N.D.sets[m].candidates.length →
+                    (VE.Formula.denote (VE.SoftNorms.canon (VE.NormDefaults.fill (VE.Readings.supU N)) B) []
+                        (VE.Readings.pattern (m + 1) (VE.Readings.setSize N.D m) i) ↔
+                      c.index N.D.sets[m].id = Option.some i)
+  -- uses VE.Formula.denote@VE.Semantics VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Readings.Candidate@VE.Readings.Doc VE.Readings.Choice.index@VE.Readings.Choice VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Doc.sets@VE.Readings.Doc VE.Readings.Encodes@VE.Readings.Choice VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.ReadingSet.candidates@VE.Readings.Doc VE.Readings.ReadingSet.id@VE.Readings.Doc VE.Readings.ReadingSet@VE.Readings.Doc VE.Readings.pattern@VE.Readings.Choice VE.Readings.setSize@VE.Readings.Choice VE.Readings.supU@VE.Readings.Unspecified VE.SoftNorms.canon@VE.SoftNorms.Coherence VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 610209222
 theorem VE.Readings.genDecls_head
   ∀ (Z : VE.Rights.RightsDoc) {d : String × List String}, d ∈ VE.Rights.genDecls Z → d.fst.data.head? = Option.some 'r'
   -- uses VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.genDecls@VE.Rights.Tree
@@ -39149,6 +39551,27 @@ theorem VE.Readings.outcome_canon_valid
                         r.name Bool.true)
   -- uses VE.Formula.denote@VE.Semantics VE.Norms.ConstantsTyped@VE.Norms.Subst VE.Norms.Regulated.allowByDefault@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated.sorts@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Valid@VE.Norms.Valid VE.Norms.outcomeBase@VE.Norms.Conflict VE.Norms.tupleVal@VE.Norms.Basic VE.SoftNorms.DecidesSoftD@VE.SoftNorms.Semantics VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.regulated@VE.SoftNorms.Tree VE.SoftNorms.canon@VE.SoftNorms.Coherence VE.SoftNorms.soften@VE.SoftNorms.Soften VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.TupleTyped@VE.Semantics
   -- expr 1105199388
+theorem VE.Readings.outcome_pullF
+  ∀ (N : VE.Readings.NDoc),
+    VE.Readings.WellFormedSD N = Bool.true →
+      VE.Readings.superposable N.D = Bool.true →
+        VE.NormDefaults.WellFormedU (VE.Readings.supU N) = Bool.true →
+          ∀ (c : VE.Readings.Choice),
+            VE.Readings.Compatible N.D c →
+              ∀ (B : VE.Structure),
+                VE.Norms.BaseAdmissible (VE.NormDefaults.fill (VE.Readings.supU N)) B →
+                  VE.Norms.Sat B (VE.Readings.slotP N.D) →
+                    VE.Readings.Encodes N.D c B →
+                      ∀ {q : VE.Norms.Regulated},
+                        q ∈ (VE.Readings.supU N).D.T.regulated →
+                          ∀ (vs : List B.Carrier),
+                            VE.TupleTyped B q.sorts vs →
+                              (VE.Formula.denote B (VE.Norms.tupleVal vs)
+                                  (VE.Norms.outcomeBase (VE.NormDefaults.fill (VE.Readings.supU N)) q.name) ↔
+                                VE.Formula.denote (VE.Readings.pullF N c B) (VE.Norms.tupleVal vs)
+                                  (VE.Norms.outcomeBase (VE.NormDefaults.fill (VE.Readings.choiceU N c)) q.name))
+  -- uses VE.Formula.denote@VE.Semantics VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.BaseAdmissible@VE.Norms.Prefix VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated.sorts@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Sat@VE.Norms.Prefix VE.Norms.Tree.regulated@VE.Norms.Tree VE.Norms.outcomeBase@VE.Norms.Conflict VE.Norms.tupleVal@VE.Norms.Basic VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Encodes@VE.Readings.Choice VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.WellFormedSD@VE.Readings.SoftDefaults VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.pullF@VE.Readings.SoftSup VE.Readings.slotP@VE.Readings.Choice VE.Readings.supU@VE.Readings.Unspecified VE.Readings.superposable@VE.Readings.Choice VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.TupleTyped@VE.Semantics
+  -- expr 2595938925
 theorem VE.Readings.outweighsName_soft
   ∀ (a L H : String), (VE.SoftNorms.outweighsName a L H).startsWith "soft__" = Bool.true
   -- uses VE.SoftNorms.outweighsName@VE.SoftNorms.Tree
@@ -39695,6 +40118,35 @@ theorem VE.Readings.providedItems_only
     x ∈ VE.Readings.providedItems D ls → ∀ (l : String), x.label? = Option.some l → l ∈ ls
   -- uses VE.Readings.Doc@VE.Readings.Doc VE.Readings.PlanItem.label?@VE.Readings.VerdictsWire VE.Readings.PlanItem@VE.Readings.VerdictsWire VE.Readings.providedItems@VE.Readings.VerdictsWire
   -- expr 1845954944
+theorem VE.Readings.pullF_admissible
+  ∀ {N : VE.Readings.NDoc},
+    VE.Readings.Hyps N.D →
+      ∀ {c : VE.Readings.Choice},
+        VE.Readings.Compatible N.D c →
+          VE.Readings.WellFormedSD N = Bool.true →
+            VE.NormDefaults.WellFormedU (VE.Readings.supU N) = Bool.true →
+              ∀ (B : VE.Structure),
+                B.Admissible (VE.Norms.envAt (VE.NormDefaults.fill (VE.Readings.supU N)) 0) →
+                  (VE.Readings.pullF N c B).Admissible (VE.Norms.envAt (VE.NormDefaults.fill (VE.Readings.choiceU N c)) 0)
+  -- uses VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.envAt@VE.Norms.Tree VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.WellFormedSD@VE.Readings.SoftDefaults VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.pullF@VE.Readings.SoftSup VE.Readings.supU@VE.Readings.Unspecified VE.Structure.Admissible@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 1352052654
+theorem VE.Readings.pullF_baseX
+  ∀ (N : VE.Readings.NDoc),
+    VE.Readings.WellFormedSD N = Bool.true →
+      VE.Readings.superposable N.D = Bool.true →
+        VE.NormDefaults.WellFormedU (VE.Readings.supU N) = Bool.true →
+          ∀ (A : VE.Readings.Choice) (B : VE.Structure),
+            VE.NormDefaults.Wire.BaseAdmissibleX (VE.Readings.supU N) (VE.Readings.slotUnder N.D A ++ VE.Readings.supX N)
+                B →
+              ∃ c,
+                VE.Readings.Compatible N.D c ∧
+                  (∀ (x : String × Nat), x ∈ A → x ∈ c) ∧
+                    VE.Readings.Encodes N.D c B ∧
+                      VE.Norms.Sat B (VE.Readings.slotP N.D) ∧
+                        VE.NormDefaults.Wire.BaseAdmissibleX (VE.Readings.choiceU N c) (VE.Readings.choiceX N c)
+                          (VE.Readings.pullF N c B)
+  -- uses VE.Formula@VE.Syntax VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.Wire.BaseAdmissibleX@VE.NormDefaults.Report VE.Norms.Sat@VE.Norms.Prefix VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Encodes@VE.Readings.Choice VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.WellFormedSD@VE.Readings.SoftDefaults VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.choiceX@VE.Readings.SoftDefaults VE.Readings.pullF@VE.Readings.SoftSup VE.Readings.slotP@VE.Readings.Choice VE.Readings.slotUnder@VE.Readings.Choice VE.Readings.supU@VE.Readings.Unspecified VE.Readings.supX@VE.Readings.SoftSup VE.Readings.superposable@VE.Readings.Choice VE.Structure@VE.Semantics
+  -- expr 883816944
 theorem VE.Readings.pullF_canon
   ∀ {N : VE.Readings.NDoc},
     VE.Readings.Hyps N.D →
@@ -39768,6 +40220,15 @@ theorem VE.Readings.pullF_denote_frame
           ∀ (ρ : VE.Valuation S), VE.Formula.denote S ρ φ ↔ VE.Formula.denote (VE.Readings.pullF N c S) ρ φ
   -- uses VE.Formula.WellFormed@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Readings.Choice@VE.Readings.Choice VE.Readings.Doc.frame@VE.Readings.Doc VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.pullF@VE.Readings.SoftSup VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.SoftNorms.SoftDoc.E@VE.SoftNorms.Tree VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
   -- expr 2899933695
+theorem VE.Readings.pullF_literals
+  ∀ {N : VE.Readings.NDoc},
+    VE.Readings.Hyps N.D →
+      ∀ {c : VE.Readings.Choice} (B : VE.Structure),
+        VE.Norms.Sat B (VE.Norms.backgroundBase (VE.NormDefaults.fill (VE.Readings.supU N))) →
+          VE.Norms.Sat (VE.Readings.pullF N c B)
+            (VE.Norms.backgroundBase (VE.NormDefaults.fill (VE.Readings.choiceU N c)))
+  -- uses VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.Sat@VE.Norms.Prefix VE.Norms.backgroundBase@VE.Norms.Prefix VE.Readings.Choice@VE.Readings.Choice VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.pullF@VE.Readings.SoftSup VE.Readings.supU@VE.Readings.Unspecified VE.Structure@VE.Semantics
+  -- expr 1972009069
 theorem VE.Readings.pullF_pull
   ∀ {N : VE.Readings.NDoc},
     VE.Readings.Hyps N.D →
@@ -39786,6 +40247,38 @@ theorem VE.Readings.pullF_unsaid
               S.relation (VE.NormDefaults.unsaidName p) vs
   -- uses VE.NormDefaults.unsaidName@VE.NormDefaults.Tree VE.Readings.Choice@VE.Readings.Choice VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc.unspec@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.pullF@VE.Readings.SoftSup VE.Structure.Carrier@VE.Semantics VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics
   -- expr 845482146
+theorem VE.Readings.pullF_up
+  ∀ {N : VE.Readings.NDoc},
+    VE.Readings.Hyps N.D →
+      ∀ {c : VE.Readings.Choice},
+        VE.Readings.Compatible N.D c →
+          VE.Readings.WellFormedSD N = Bool.true →
+            VE.NormDefaults.WellFormedU (VE.Readings.supU N) = Bool.true →
+              ∀ (B₀ : VE.Structure) (e : B₀.Carrier),
+                B₀.Admissible (VE.Norms.envAt (VE.NormDefaults.fill (VE.Readings.choiceU N c)) 0) →
+                  ∀ (φ : VE.Formula) (Γ : List String),
+                    VE.Formula.WellFormed
+                        (VE.Norms.envAt (VE.NormDefaults.fill (VE.Readings.choiceU N c))
+                          (VE.Norms.size (VE.NormDefaults.fill (VE.Readings.choiceU N c))))
+                        Γ φ →
+                      ∀ (ρ : VE.Valuation B₀),
+                        VE.Formula.denote (VE.Readings.pullF N c (VE.Readings.upB N.D c B₀ e)) ρ φ ↔
+                          VE.Formula.denote B₀ ρ φ
+  -- uses VE.Formula.WellFormed@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.envAt@VE.Norms.Tree VE.Norms.size@VE.Norms.Tree VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.WellFormedSD@VE.Readings.SoftDefaults VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.pullF@VE.Readings.SoftSup VE.Readings.supU@VE.Readings.Unspecified VE.Readings.upB@VE.Readings.BaseUp VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 2943011261
+theorem VE.Readings.pullF_upB
+  ∀ {N : VE.Readings.NDoc},
+    VE.Readings.Hyps N.D →
+      ∀ {c : VE.Readings.Choice},
+        VE.Readings.Compatible N.D c →
+          VE.Readings.WellFormedSD N = Bool.true →
+            VE.NormDefaults.WellFormedU (VE.Readings.supU N) = Bool.true →
+              ∀ (B₀ : VE.Structure) (e : B₀.Carrier),
+                B₀.Admissible (VE.Norms.envAt (VE.NormDefaults.fill (VE.Readings.choiceU N c)) 0) →
+                  ∀ (p : String) (vs : List B₀.Carrier),
+                    (VE.Readings.pullF N c (VE.Readings.upB N.D c B₀ e)).relation p vs ↔ B₀.relation p vs
+  -- uses VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.envAt@VE.Norms.Tree VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.WellFormedSD@VE.Readings.SoftDefaults VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.pullF@VE.Readings.SoftSup VE.Readings.supU@VE.Readings.Unspecified VE.Readings.upB@VE.Readings.BaseUp VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 3748178223
 theorem VE.Readings.pull_admissible
   ∀ {D : VE.Readings.Doc},
     VE.Readings.Hyps D →
@@ -40293,6 +40786,72 @@ theorem VE.Readings.scanOthers_eq
       (want && Gs.any fun G => valid G && hits G, adm || Gs.any valid)
   -- uses VE.Readings.scanOthers@VE.Readings.Scan
   -- expr 97539792
+theorem VE.Readings.sd_superpose_all
+  ∀ (N : VE.Readings.NDoc),
+    VE.Readings.WellFormedSD N = Bool.true →
+      VE.Readings.superposable N.D = Bool.true →
+        VE.NormDefaults.WellFormedU (VE.Readings.supU N) = Bool.true →
+          ∀ (A : VE.Readings.Choice),
+            (∀ (x : String × Nat), x ∈ A → (VE.Readings.candidate N.D x.fst x.snd).isSome = Bool.true) →
+              VE.NormDefaults.Wire.ConflictFreeX (VE.Readings.supU N)
+                  (VE.Readings.slotUnder N.D A ++ VE.Readings.supX N) →
+                ∀ (Γ : List VE.Formula) (φ : VE.Formula),
+                  (∀ (a : VE.Formula), a ∈ Γ → VE.Formula.WellFormed (VE.Readings.sharedEnvSD N) [] a) →
+                    VE.Formula.WellFormed (VE.Readings.sharedEnvSD N) [] φ →
+                      ∀ (cert : VE.Tableau.Certificate),
+                        VE.Readings.supCertificateCheckSD N A Γ φ cert = Bool.true →
+                          ∀ (c : VE.Readings.Choice),
+                            VE.Readings.Compatible N.D c →
+                              (∀ (x : String × Nat), x ∈ A → x ∈ c) →
+                                VE.NormDefaults.EntailsX (VE.Readings.choiceU N c) (VE.Readings.choiceX N c)
+                                  ((VE.Readings.choiceDoc N.D c).snd ++ Γ) φ
+  -- uses VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax VE.NormDefaults.EntailsX@VE.NormDefaults.LayeredEntail VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.Wire.ConflictFreeX@VE.NormDefaults.Layered VE.Readings.Candidate@VE.Readings.Doc VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.WellFormedSD@VE.Readings.SoftDefaults VE.Readings.candidate@VE.Readings.Doc VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.choiceX@VE.Readings.SoftDefaults VE.Readings.sharedEnvSD@VE.Readings.SoftSup VE.Readings.slotUnder@VE.Readings.Choice VE.Readings.supCertificateCheckSD@VE.Readings.SoftSup VE.Readings.supU@VE.Readings.Unspecified VE.Readings.supX@VE.Readings.SoftSup VE.Readings.superposable@VE.Readings.Choice VE.Rights.RightsDoc@VE.Rights.Tree VE.Tableau.Certificate@VE.Tableau
+  -- expr 3772547354
+theorem VE.Readings.sd_superpose_conflict_free
+  ∀ (N : VE.Readings.NDoc),
+    VE.Readings.WellFormedSD N = Bool.true →
+      VE.Readings.superposable N.D = Bool.true →
+        VE.NormDefaults.WellFormedU (VE.Readings.supU N) = Bool.true →
+          ∀ (A : VE.Readings.Choice),
+            (∀ (x : String × Nat), x ∈ A → (VE.Readings.candidate N.D x.fst x.snd).isSome = Bool.true) →
+              (VE.NormDefaults.Wire.ConflictFreeX (VE.Readings.supU N)
+                  (VE.Readings.slotUnder N.D A ++ VE.Readings.supX N) ↔
+                ∀ (c : VE.Readings.Choice),
+                  VE.Readings.Compatible N.D c →
+                    (∀ (x : String × Nat), x ∈ A → x ∈ c) →
+                      VE.NormDefaults.Wire.ConflictFreeX (VE.Readings.choiceU N c) (VE.Readings.choiceX N c))
+  -- uses VE.Formula@VE.Syntax VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.Wire.ConflictFreeX@VE.NormDefaults.Layered VE.Readings.Candidate@VE.Readings.Doc VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.WellFormedSD@VE.Readings.SoftDefaults VE.Readings.candidate@VE.Readings.Doc VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.choiceX@VE.Readings.SoftDefaults VE.Readings.slotUnder@VE.Readings.Choice VE.Readings.supU@VE.Readings.Unspecified VE.Readings.supX@VE.Readings.SoftSup VE.Readings.superposable@VE.Readings.Choice
+  -- expr 3844361600
+theorem VE.Readings.sd_superpose_countermodel
+  ∀ (N : VE.Readings.NDoc),
+    VE.Readings.WellFormedSD N = Bool.true →
+      VE.Readings.superposable N.D = Bool.true →
+        VE.NormDefaults.WellFormedU (VE.Readings.supU N) = Bool.true →
+          ∀ (A : VE.Readings.Choice) (Γ : List VE.Formula) (φ : VE.Formula),
+            (∀ (a : VE.Formula), a ∈ Γ → VE.Formula.WellFormed (VE.Readings.sharedEnvSD N) [] a) →
+              VE.Formula.WellFormed (VE.Readings.sharedEnvSD N) [] φ →
+                ∀ (M : VE.FiniteModel VE.Bridge.Entity),
+                  M.Valid (VE.Norms.envAt (VE.Readings.supU N).D 0) →
+                    ∀ (F : VE.NormDefaults.FiniteFill (VE.Readings.supU N) VE.Bridge.Entity),
+                      (VE.NormDefaults.modelCheckX (VE.Readings.supU N)
+                              (VE.Readings.slotUnder N.D A ++ VE.Readings.supX N) M F ((VE.Readings.sup N.D).snd ++ Γ)
+                              φ).fst =
+                          Bool.true →
+                        (VE.NormDefaults.modelCheckX (VE.Readings.supU N)
+                                (VE.Readings.slotUnder N.D A ++ VE.Readings.supX N) M F ((VE.Readings.sup N.D).snd ++ Γ)
+                                φ).snd =
+                            Bool.false →
+                          VE.Readings.Wire.localFree (VE.Readings.supU N) M F = Bool.true →
+                            ∃ c,
+                              VE.Readings.Compatible N.D c ∧
+                                (∀ (x : String × Nat), x ∈ A → x ∈ c) ∧
+                                  VE.Readings.Encodes N.D c
+                                      (VE.NormDefaults.withFill (VE.Readings.supU N) M.asStructure
+                                        (VE.NormDefaults.finFill M F)) ∧
+                                    VE.Readings.CounterX (VE.Readings.choiceU N c) (VE.Readings.choiceX N c)
+                                      ((VE.Readings.choiceDoc N.D c).snd ++ Γ) φ
+  -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.Valid@VE.Finite VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax VE.NormDefaults.FiniteFill@VE.NormDefaults.Evidence VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.finFill@VE.NormDefaults.Evidence VE.NormDefaults.modelCheckX@VE.NormDefaults.LayeredEntail VE.NormDefaults.withFill@VE.NormDefaults.Premises VE.Norms.envAt@VE.Norms.Tree VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.CounterX@VE.Readings.Verdicts VE.Readings.Encodes@VE.Readings.Choice VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.WellFormedSD@VE.Readings.SoftDefaults VE.Readings.Wire.localFree@VE.Readings.VerdictsWire VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.choiceX@VE.Readings.SoftDefaults VE.Readings.sharedEnvSD@VE.Readings.SoftSup VE.Readings.slotUnder@VE.Readings.Choice VE.Readings.sup@VE.Readings.Choice VE.Readings.supU@VE.Readings.Unspecified VE.Readings.supX@VE.Readings.SoftSup VE.Readings.superposable@VE.Readings.Choice VE.Rights.RightsDoc@VE.Rights.Tree
+  -- expr 3302809010
 theorem VE.Readings.search_eq
   ∀ (D : VE.Readings.Doc) (L : List VE.Readings.ReadingSet) (pre : VE.Readings.Choice) (b : Nat),
     VE.Readings.search D L pre b = List.take b (VE.Readings.allFrom D L pre)
@@ -40373,6 +40932,19 @@ theorem VE.Readings.selects_fill_fuel_lite
             VE.Norms.SelectsD U.D.T S ρ (VE.Norms.fuel U.D.T) N)
   -- uses VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree VE.Norms.SelectsD@VE.Norms.Elaborate VE.Norms.Tree.nodes@VE.Norms.Tree VE.Norms.fuel@VE.Norms.Elaborate VE.Readings.AuthorLite@VE.Readings.SupFill VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
   -- expr 1570477413
+theorem VE.Readings.selects_fill_wf
+  ∀ {U : VE.NormDefaults.UDoc} {Z : VE.SoftNorms.SoftDoc},
+    U.D = VE.SoftNorms.soften Z →
+      VE.Norms.Valid (VE.NormDefaults.fill U) →
+        ∀ {K : VE.SoftNorms.SoftNode},
+          K ∈ Z.T.nodes →
+            K.pred ∈ List.map (fun x => x.name) Z.T.regulated →
+              VE.Formula.WellFormed (VE.Norms.envAt (VE.NormDefaults.fill U) (VE.Norms.size (VE.NormDefaults.fill U)))
+                (VE.SoftNorms.sortsOf Z K.pred).reverse
+                (VE.Norms.selects (VE.NormDefaults.fill U).T (VE.Norms.fuel (VE.NormDefaults.fill U).T)
+                  (VE.SoftNorms.primeNode Z K))
+  -- uses VE.Formula.WellFormed@VE.Syntax VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Doc@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Valid@VE.Norms.Valid VE.Norms.envAt@VE.Norms.Tree VE.Norms.fuel@VE.Norms.Elaborate VE.Norms.selects@VE.Norms.Elaborate VE.Norms.size@VE.Norms.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.regulated@VE.SoftNorms.Tree VE.SoftNorms.primeNode@VE.SoftNorms.Soften VE.SoftNorms.soften@VE.SoftNorms.Soften VE.SoftNorms.sortsOf@VE.SoftNorms.Tree
+  -- expr 2156766112
 theorem VE.Readings.selects_iff
   ∀ {D : VE.Readings.Doc},
     VE.Readings.Hyps D →
@@ -40655,6 +41227,14 @@ theorem VE.Readings.shaped
   ∀ {D : VE.Readings.Doc}, VE.Readings.normsShaped D = Bool.true → VE.Readings.Shaped D
   -- uses VE.Readings.Doc@VE.Readings.Doc VE.Readings.Shaped@VE.Readings.Unspecified VE.Readings.normsShaped@VE.Readings.Unspecified
   -- expr 537579307
+theorem VE.Readings.sharedEnv_SD
+  ∀ {N : VE.Readings.NDoc},
+    VE.Readings.Hyps N.D →
+      VE.Readings.WellFormedSD N = Bool.true →
+        ∀ {φ : VE.Formula} {Γ : List String},
+          VE.Formula.WellFormed (VE.Readings.sharedEnv N.D) Γ φ → VE.Formula.WellFormed (VE.Readings.sharedEnvSD N) Γ φ
+  -- uses VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.WellFormedSD@VE.Readings.SoftDefaults VE.Readings.sharedEnv@VE.Readings.Choice VE.Readings.sharedEnvSD@VE.Readings.SoftSup
+  -- expr 2547182403
 theorem VE.Readings.sharedEnv_constants
   ∀ (D : VE.Readings.Doc), (VE.Readings.sharedEnv D).constants = D.frame.soft.E.constants
   -- uses VE.Environment.constants@VE.Syntax VE.Readings.Doc.frame@VE.Readings.Doc VE.Readings.Doc@VE.Readings.Doc VE.Readings.sharedEnv@VE.Readings.Choice VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.SoftNorms.SoftDoc.E@VE.SoftNorms.Tree
@@ -40682,6 +41262,45 @@ theorem VE.Readings.sharedEnv_sub
           (VE.SoftNorms.envPrime (VE.Readings.free D).fst.soft).predicates p = Option.some ss
   -- uses VE.Environment.predicates@VE.Syntax VE.Formula@VE.Syntax VE.Readings.Doc@VE.Readings.Doc VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.free@VE.Readings.Doc VE.Readings.sharedEnv@VE.Readings.Choice VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.SoftNorms.envPrime@VE.SoftNorms.Tree
   -- expr 2486127591
+theorem VE.Readings.sharedSD_constants
+  ∀ {N : VE.Readings.NDoc}, (VE.Readings.sharedEnvSD N).constants = N.D.frame.soft.E.constants
+  -- uses VE.Environment.constants@VE.Syntax VE.Readings.Doc.frame@VE.Readings.Doc VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.sharedEnvSD@VE.Readings.SoftSup VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.SoftNorms.SoftDoc.E@VE.SoftNorms.Tree
+  -- expr 2449227335
+theorem VE.Readings.sharedSD_liftX
+  ∀ {N : VE.Readings.NDoc},
+    VE.Readings.Hyps N.D →
+      ∀ {φ : VE.Formula} {Γ : List String},
+        VE.Formula.WellFormed (VE.Readings.sharedEnvSD N) Γ φ →
+          VE.Formula.WellFormed
+            (VE.Norms.envAt (VE.NormDefaults.fill (VE.Readings.supU N))
+              (VE.Norms.size (VE.NormDefaults.fill (VE.Readings.supU N))))
+            Γ φ
+  -- uses VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.envAt@VE.Norms.Tree VE.Norms.size@VE.Norms.Tree VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.sharedEnvSD@VE.Readings.SoftSup VE.Readings.supU@VE.Readings.Unspecified
+  -- expr 3717385741
+theorem VE.Readings.sharedSD_liftY
+  ∀ {N : VE.Readings.NDoc},
+    VE.Readings.Hyps N.D →
+      ∀ (c : VE.Readings.Choice) {φ : VE.Formula} {Γ : List String},
+        VE.Formula.WellFormed (VE.Readings.sharedEnvSD N) Γ φ →
+          VE.Formula.WellFormed
+            (VE.Norms.envAt (VE.NormDefaults.fill (VE.Readings.choiceU N c))
+              (VE.Norms.size (VE.NormDefaults.fill (VE.Readings.choiceU N c))))
+            Γ φ
+  -- uses VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.envAt@VE.Norms.Tree VE.Norms.size@VE.Norms.Tree VE.Readings.Choice@VE.Readings.Choice VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.sharedEnvSD@VE.Readings.SoftSup
+  -- expr 3254888073
+theorem VE.Readings.sharedSD_pred
+  ∀ {N : VE.Readings.NDoc},
+    VE.Readings.Hyps N.D →
+      ∀ (c : VE.Readings.Choice) {p : String} {ss : List String},
+        (VE.Readings.sharedEnvSD N).predicates p = Option.some ss →
+          (VE.NormDefaults.fill (VE.Readings.choiceU N c)).E.predicates p = Option.some ss ∧
+            VE.Readings.nameMap N.D c p = p
+  -- uses VE.Environment.predicates@VE.Syntax VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.Doc.E@VE.Norms.Tree VE.Readings.Choice@VE.Readings.Choice VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.nameMap@VE.Readings.Choice VE.Readings.sharedEnvSD@VE.Readings.SoftSup
+  -- expr 3836006705
+theorem VE.Readings.sharedSD_sorts
+  ∀ {N : VE.Readings.NDoc}, (VE.Readings.sharedEnvSD N).sorts = N.D.frame.soft.E.sorts
+  -- uses VE.Environment.sorts@VE.Syntax VE.Readings.Doc.frame@VE.Readings.Doc VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.sharedEnvSD@VE.Readings.SoftSup VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.SoftNorms.SoftDoc.E@VE.SoftNorms.Tree
+  -- expr 3920402696
 theorem VE.Readings.shared_canon
   ∀ {D : VE.Readings.Doc},
     VE.Readings.Hyps D →
@@ -40701,6 +41320,27 @@ theorem VE.Readings.shared_canon
                         [] φ)
   -- uses VE.Environment.constants@VE.Syntax VE.Formula.WellFormed@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Norms.Doc.E@VE.Norms.Tree VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Doc@VE.Readings.Doc VE.Readings.Encodes@VE.Readings.Choice VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.pull@VE.Readings.Choice VE.Readings.sharedEnv@VE.Readings.Choice VE.Readings.sup@VE.Readings.Choice VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.SoftNorms.canon@VE.SoftNorms.Coherence VE.SoftNorms.soften@VE.SoftNorms.Soften VE.Structure.Carrier@VE.Semantics VE.Structure.constant@VE.Semantics VE.Structure@VE.Semantics
   -- expr 3201091759
+theorem VE.Readings.shared_canonF
+  ∀ {N : VE.Readings.NDoc},
+    VE.Readings.Hyps N.D →
+      ∀ {c : VE.Readings.Choice},
+        VE.Readings.Compatible N.D c →
+          VE.Readings.WellFormedSD N = Bool.true →
+            VE.NormDefaults.WellFormedU (VE.Readings.supU N) = Bool.true →
+              ∀ (B : VE.Structure),
+                (∀ (x s : String),
+                    (VE.NormDefaults.fill (VE.Readings.supU N)).E.constants x = Option.some s →
+                      ∃ v, B.constant x = Option.some v) →
+                  VE.Readings.Encodes N.D c B →
+                    ∀ (φ : VE.Formula),
+                      VE.Formula.WellFormed (VE.Readings.sharedEnvSD N) [] φ →
+                        (VE.Formula.denote (VE.SoftNorms.canon (VE.NormDefaults.fill (VE.Readings.supU N)) B) [] φ ↔
+                          VE.Formula.denote
+                            (VE.SoftNorms.canon (VE.NormDefaults.fill (VE.Readings.choiceU N c))
+                              (VE.Readings.pullF N c B))
+                            [] φ)
+  -- uses VE.Environment.constants@VE.Syntax VE.Formula.WellFormed@VE.Syntax VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.Doc.E@VE.Norms.Tree VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Encodes@VE.Readings.Choice VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.WellFormedSD@VE.Readings.SoftDefaults VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.pullF@VE.Readings.SoftSup VE.Readings.sharedEnvSD@VE.Readings.SoftSup VE.Readings.supU@VE.Readings.Unspecified VE.SoftNorms.canon@VE.SoftNorms.Coherence VE.Structure.Carrier@VE.Semantics VE.Structure.constant@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 2007299773
 theorem VE.Readings.shared_inj
   ∀ {a L H a' L' H' : String},
     VE.Readings.NoSep L.data →
@@ -41171,6 +41811,13 @@ theorem VE.Readings.sortsOf_choice
     VE.SoftNorms.sortsOf (VE.Readings.choiceDoc D c).fst.soft p = VE.SoftNorms.sortsOf (VE.Readings.sup D).fst.soft p
   -- uses VE.Formula@VE.Syntax VE.Readings.Choice@VE.Readings.Choice VE.Readings.Doc@VE.Readings.Doc VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.sup@VE.Readings.Choice VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.SoftNorms.sortsOf@VE.SoftNorms.Tree
   -- expr 792238572
+theorem VE.Readings.sortsOf_choiceU
+  ∀ {N : VE.Readings.NDoc},
+    VE.Readings.Hyps N.D →
+      ∀ {c : VE.Readings.Choice} (p : String),
+        VE.NormDefaults.sortsOf (VE.Readings.choiceU N c).D p = VE.NormDefaults.sortsOf (VE.Readings.supU N).D p
+  -- uses VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.sortsOf@VE.NormDefaults.Tree VE.Readings.Choice@VE.Readings.Choice VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.supU@VE.Readings.Unspecified
+  -- expr 3244860492
 theorem VE.Readings.sortsOf_eq
   ∀ {D : VE.Readings.Doc} (c : VE.Readings.Choice) (p : String),
     VE.SoftNorms.sortsOf (VE.Readings.sup D).fst.soft p = VE.SoftNorms.sortsOf (VE.Readings.choiceDoc D c).fst.soft p
@@ -42344,6 +42991,10 @@ theorem VE.Readings.unsaid_ascii
   VE.Readings.AsciiL "unsaid--".data
   -- uses VE.Readings.AsciiL@VE.Readings.Strings
   -- expr 1854607218
+theorem VE.Readings.unsaid_not_bit
+  ∀ (D : VE.Readings.Doc) (q : String), ¬VE.Readings.IsBit D (VE.NormDefaults.unsaidName q)
+  -- uses VE.NormDefaults.unsaidName@VE.NormDefaults.Tree VE.Readings.Doc@VE.Readings.Doc VE.Readings.IsBit@VE.Readings.BaseUp
+  -- expr 1745946405
 theorem VE.Readings.unsaid_not_decision
   ∀ (X : VE.SoftNorms.SoftDoc) (p : String), ¬VE.NormDefaults.unsaidName p ∈ VE.SoftNorms.decisionNames X
   -- uses VE.NormDefaults.unsaidName@VE.NormDefaults.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.decisionNames@VE.SoftNorms.Tree
@@ -42364,6 +43015,33 @@ theorem VE.Readings.upB_admissible
               (VE.Readings.upB D c B₀ e).Admissible (VE.Norms.envAt (VE.SoftNorms.soften (VE.Readings.sup D).fst.soft) 0)
   -- uses VE.Formula@VE.Syntax VE.Norms.envAt@VE.Norms.Tree VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Doc@VE.Readings.Doc VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.sup@VE.Readings.Choice VE.Readings.upB@VE.Readings.BaseUp VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.SoftNorms.soften@VE.SoftNorms.Soften VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
   -- expr 681371567
+theorem VE.Readings.upB_admissibleF
+  ∀ {N : VE.Readings.NDoc},
+    VE.Readings.Hyps N.D →
+      ∀ {c : VE.Readings.Choice},
+        VE.Readings.Compatible N.D c →
+          VE.Readings.WellFormedSD N = Bool.true →
+            VE.NormDefaults.WellFormedU (VE.Readings.supU N) = Bool.true →
+              ∀ (B₀ : VE.Structure) (e : B₀.Carrier),
+                B₀.Admissible (VE.Norms.envAt (VE.NormDefaults.fill (VE.Readings.choiceU N c)) 0) →
+                  (VE.Readings.upB N.D c B₀ e).Admissible (VE.Norms.envAt (VE.NormDefaults.fill (VE.Readings.supU N)) 0)
+  -- uses VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.envAt@VE.Norms.Tree VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.WellFormedSD@VE.Readings.SoftDefaults VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.supU@VE.Readings.Unspecified VE.Readings.upB@VE.Readings.BaseUp VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 4202825741
+theorem VE.Readings.upB_baseX
+  ∀ (N : VE.Readings.NDoc),
+    VE.Readings.WellFormedSD N = Bool.true →
+      VE.Readings.superposable N.D = Bool.true →
+        VE.NormDefaults.WellFormedU (VE.Readings.supU N) = Bool.true →
+          ∀ {c : VE.Readings.Choice},
+            VE.Readings.Compatible N.D c →
+              ∀ {A : VE.Readings.Choice},
+                (∀ (x : String × Nat), x ∈ A → x ∈ c) →
+                  ∀ (B₀ : VE.Structure) (e : B₀.Carrier),
+                    VE.NormDefaults.Wire.BaseAdmissibleX (VE.Readings.choiceU N c) (VE.Readings.choiceX N c) B₀ →
+                      VE.NormDefaults.Wire.BaseAdmissibleX (VE.Readings.supU N)
+                        (VE.Readings.slotUnder N.D A ++ VE.Readings.supX N) (VE.Readings.upB N.D c B₀ e)
+  -- uses VE.Formula@VE.Syntax VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.Wire.BaseAdmissibleX@VE.NormDefaults.Report VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.WellFormedSD@VE.Readings.SoftDefaults VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.choiceX@VE.Readings.SoftDefaults VE.Readings.slotUnder@VE.Readings.Choice VE.Readings.supU@VE.Readings.Unspecified VE.Readings.supX@VE.Readings.SoftSup VE.Readings.superposable@VE.Readings.Choice VE.Readings.upB@VE.Readings.BaseUp VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 1732791673
 theorem VE.Readings.upB_coh
   ∀ {D : VE.Readings.Doc},
     VE.Readings.Hyps D →
@@ -42658,6 +43336,22 @@ theorem VE.Readings.wf_congr
             (∀ (p : String), p ∈ VE.Norms.preds φ → E'.predicates p = E.predicates p) → VE.Formula.WellFormed E' Γ φ
   -- uses VE.Environment.constants@VE.Syntax VE.Environment.predicates@VE.Syntax VE.Environment.sorts@VE.Syntax VE.Environment@VE.Syntax VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax VE.Norms.preds@VE.Norms.Tree
   -- expr 1130947160
+theorem VE.Readings.wf_fill_at
+  ∀ {U : VE.NormDefaults.UDoc},
+    VE.Readings.FillLite U →
+      ∀ (k : Nat) {a : VE.Formula} {Γ : List String},
+        VE.Formula.WellFormed (VE.Norms.envAt U.D k) Γ a →
+          VE.Formula.WellFormed (VE.Norms.envAt (VE.NormDefaults.fill U) k) Γ a
+  -- uses VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.envAt@VE.Norms.Tree VE.Readings.FillLite@VE.Readings.SoftSup
+  -- expr 3883314238
+theorem VE.Readings.wf_fill_full
+  ∀ {U : VE.NormDefaults.UDoc},
+    VE.Readings.FillLite U →
+      ∀ {a : VE.Formula} {Γ : List String},
+        VE.Formula.WellFormed (VE.Norms.envAt U.D (VE.Norms.size U.D)) Γ a →
+          VE.Formula.WellFormed (VE.Norms.envAt (VE.NormDefaults.fill U) (VE.Norms.size (VE.NormDefaults.fill U))) Γ a
+  -- uses VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.envAt@VE.Norms.Tree VE.Norms.size@VE.Norms.Tree VE.Readings.FillLite@VE.Readings.SoftSup
+  -- expr 2171606228
 theorem VE.Readings.wf_sub
   ∀ {E E' : VE.Environment},
     (∀ (s : String), s ∈ E.sorts → s ∈ E'.sorts) →
@@ -54991,6 +55685,10 @@ theorem VE.Service.results_eq
       Option.some (VE.Service.caseResultWith r.mode i (entries.getD i Option.none) cases[i])
   -- uses VE.Service.Entry@VE.Service.Protocol VE.Service.Request.mode@VE.Service.Protocol VE.Service.Request@VE.Service.Protocol VE.Service.caseResultWith@VE.Service.Protocol VE.Service.results@VE.Service.Protocol
   -- expr 2848766935
+theorem VE.Service.runMode_actReadings
+  ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.actReadings j = VE.Acts.Run.actReadingsReported j
+  -- uses VE.Acts.Run.actReadingsReported@VE.Acts.Run VE.Service.Mode.actReadings@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
+  -- expr 2628422788
 theorem VE.Service.runMode_alternatives
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.alternatives j = VE.Alternatives.Run.runCaseReported j
   -- uses VE.Alternatives.Run.runCaseReported@VE.Alternatives.Run VE.Service.Mode.alternatives@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
@@ -57579,6 +58277,11 @@ theorem VE.SpeechActs.Wire.Decoded.wf
   ∀ (self : VE.SpeechActs.Wire.Decoded), VE.SpeechActs.WellFormedSpeech self.D = Bool.true
   -- uses VE.SpeechActs.WellFormedSpeech@VE.SpeechActs.Tree VE.SpeechActs.Wire.Decoded.D@VE.SpeechActs.Wire VE.SpeechActs.Wire.Decoded@VE.SpeechActs.Wire
   -- expr 4152135690
+theorem VE.SpeechActs.Wire.actsFixed_nonempty
+  ∀ {ps qs : List String},
+    ps.isEmpty = qs.isEmpty → ∀ (e : Lean.Json), VE.Norms.Wire.actsFixed ps e = VE.Norms.Wire.actsFixed qs e
+  -- uses VE.Norms.Wire.actsFixed@VE.Norms.Wire
+  -- expr 2518874559
 theorem VE.SpeechActs.Wire.canonical_scope
   ∀ (environment b : Lean.Json) (sc : VE.SpeechActs.Scope),
     environment.getObjVal? "speech_acts" >>= VE.SpeechActs.Wire.parseScope = Except.ok sc →
@@ -57586,6 +58289,68 @@ theorem VE.SpeechActs.Wire.canonical_scope
         b.getObjVal? "speech_acts" = Except.ok (VE.SpeechActs.Wire.encodeScope sc)
   -- uses VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.Wire.canonicalEnvironmentJson@VE.SpeechActs.Wire VE.SpeechActs.Wire.encodeScope@VE.SpeechActs.Wire VE.SpeechActs.Wire.parseScope@VE.SpeechActs.Wire
   -- expr 1889867333
+theorem VE.SpeechActs.Wire.decodeNorms_acts
+  ∀ {s : Lean.Json} {ne : VE.Norms.Wire.NormsEnvironment},
+    (VE.Norms.Wire.actsProfiles Bool.true s).contains "acts@0" = Bool.true →
+      VE.Norms.Wire.decodeNormsEnvironment s Bool.true Bool.true = Except.ok ne →
+        ∃ fx,
+          VE.Norms.Wire.actsFixed (VE.Norms.Wire.actsProfiles Bool.true s) s = Except.ok fx ∧
+            ∀ (g : VE.Norms.Regulated),
+              g ∈ ne.regulated →
+                ∀ (a : String), g.act = Option.some a → ∃ k raw, VE.Acts.Lexical.check fx g.name k raw = Except.ok a
+  -- uses VE.Acts.Lexical.check@VE.Acts.Lexical VE.Norms.Regulated.act@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Wire.NormsEnvironment.regulated@VE.Norms.Wire VE.Norms.Wire.NormsEnvironment@VE.Norms.Wire VE.Norms.Wire.actsFixed@VE.Norms.Wire VE.Norms.Wire.actsProfiles@VE.Norms.Wire VE.Norms.Wire.decodeNormsEnvironment@VE.Norms.Wire
+  -- expr 565205700
+theorem VE.SpeechActs.Wire.decodeRegulatedIn_act
+  ∀ {ps fx : List String} {p : String} {args : List String} {raw : Lean.Json} {g : VE.Norms.Regulated} {a : String},
+    ps.contains "acts@0" = Bool.true →
+      VE.Norms.Wire.decodeRegulatedIn ps fx p args raw = Except.ok g →
+        g.act = Option.some a → g.name = p ∧ ∃ k raw', VE.Acts.Lexical.check fx p k raw' = Except.ok a
+  -- uses VE.Acts.Lexical.check@VE.Acts.Lexical VE.Norms.Regulated.act@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Wire.decodeRegulatedIn@VE.Norms.Wire
+  -- expr 695477327
+theorem VE.SpeechActs.Wire.decodeRegulatedWith_act
+  ∀ {acts : Bool} {chk : String → Nat → Lean.Json → Except String String} {p : String} {args : List String}
+    {raw : Lean.Json} {g : VE.Norms.Regulated} {a : String},
+    VE.Norms.Wire.decodeRegulatedWith acts chk p args raw = Except.ok g →
+      g.act = Option.some a → g.name = p ∧ ∃ k raw', chk p k raw' = Except.ok a
+  -- uses VE.Norms.Regulated.act@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Wire.decodeRegulatedWith@VE.Norms.Wire
+  -- expr 2831873286
+theorem VE.SpeechActs.Wire.decode_acts_compatible
+  ∀ (j : Lean.Json) (se : VE.SpeechActs.Wire.SpeechEnvironment),
+    VE.SpeechActs.Wire.decodeSpeechEnvironmentFull j = Except.ok se →
+      ∃ j',
+        VE.SpeechActs.Wire.stripSpeech j = Except.ok j' ∧
+          VE.Norms.Wire.decodeNormsEnvironment j' Bool.true Bool.true = Except.ok se.ne
+  -- uses VE.Norms.Wire.NormsEnvironment@VE.Norms.Wire VE.Norms.Wire.decodeNormsEnvironment@VE.Norms.Wire VE.SpeechActs.Wire.SpeechEnvironment.ne@VE.SpeechActs.Wire VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire VE.SpeechActs.Wire.decodeSpeechEnvironmentFull@VE.SpeechActs.Wire VE.SpeechActs.Wire.stripSpeech@VE.SpeechActs.Wire
+  -- expr 1844239535
+theorem VE.SpeechActs.Wire.decode_steps
+  ∀ {j : Lean.Json} {se : VE.SpeechActs.Wire.SpeechEnvironment},
+    VE.SpeechActs.Wire.decodeSpeechEnvironmentFull j = Except.ok se →
+      ∃ s,
+        VE.SpeechActs.Wire.profilesField j = Except.ok se.profiles ∧
+          VE.SpeechActs.Wire.profileGate se.profiles = Except.ok () ∧
+            se.json = j ∧
+              VE.SpeechActs.Wire.stripSpeech j = Except.ok s ∧
+                VE.Norms.Wire.decodeNormsEnvironment s Bool.true Bool.true = Except.ok se.ne ∧
+                  VE.SpeechActs.Wire.checkActsBlock se.profiles j s = Except.ok ()
+  -- uses VE.Norms.Wire.NormsEnvironment@VE.Norms.Wire VE.Norms.Wire.decodeNormsEnvironment@VE.Norms.Wire VE.SpeechActs.Wire.SpeechEnvironment.json@VE.SpeechActs.Wire VE.SpeechActs.Wire.SpeechEnvironment.ne@VE.SpeechActs.Wire VE.SpeechActs.Wire.SpeechEnvironment.profiles@VE.SpeechActs.Wire VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire VE.SpeechActs.Wire.checkActsBlock@VE.SpeechActs.Wire VE.SpeechActs.Wire.decodeSpeechEnvironmentFull@VE.SpeechActs.Wire VE.SpeechActs.Wire.profileGate@VE.SpeechActs.Wire VE.SpeechActs.Wire.profilesField@VE.SpeechActs.Wire VE.SpeechActs.Wire.stripSpeech@VE.SpeechActs.Wire
+  -- expr 4195307390
+theorem VE.SpeechActs.Wire.decode_without_acts
+  ∀ (j : Lean.Json) (ps : List String),
+    VE.SpeechActs.Wire.profilesField j = Except.ok ps →
+      ¬"acts@0" ∈ ps →
+        VE.SpeechActs.Wire.decodeSpeechEnvironmentFull j = VE.SpeechActs.Wire.decodeSpeechEnvironmentFull₀ j
+  -- uses VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire VE.SpeechActs.Wire.decodeSpeechEnvironmentFull@VE.SpeechActs.Wire VE.SpeechActs.Wire.decodeSpeechEnvironmentFull₀@VE.SpeechActs.Wire VE.SpeechActs.Wire.profilesField@VE.SpeechActs.Wire
+  -- expr 1799952316
+theorem VE.SpeechActs.Wire.decoded_act_simple
+  ∀ {j : Lean.Json} {se : VE.SpeechActs.Wire.SpeechEnvironment},
+    VE.SpeechActs.Wire.decodeSpeechEnvironmentFull j = Except.ok se →
+      "acts@0" ∈ se.profiles →
+        ∀ {g : VE.Norms.Regulated} {a : String},
+          g ∈ se.ne.regulated →
+            g.act = Option.some a →
+              ∃ fx, VE.Norms.Wire.actsFixed se.profiles se.json = Except.ok fx ∧ VE.Acts.Lexical.joinFree fx a = Bool.true
+  -- uses VE.Acts.Lexical.joinFree@VE.Acts.Lexical VE.Norms.Regulated.act@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Wire.NormsEnvironment.regulated@VE.Norms.Wire VE.Norms.Wire.actsFixed@VE.Norms.Wire VE.SpeechActs.Wire.SpeechEnvironment.json@VE.SpeechActs.Wire VE.SpeechActs.Wire.SpeechEnvironment.ne@VE.SpeechActs.Wire VE.SpeechActs.Wire.SpeechEnvironment.profiles@VE.SpeechActs.Wire VE.SpeechActs.Wire.SpeechEnvironment@VE.SpeechActs.Wire VE.SpeechActs.Wire.decodeSpeechEnvironmentFull@VE.SpeechActs.Wire
+  -- expr 3962862589
 theorem VE.SpeechActs.Wire.decoded_active_commands
   ∀ (dec : VE.SpeechActs.Wire.Decoded) (c : VE.SpeechActs.Command),
     c ∈ dec.D.commands ↔
@@ -57606,11 +58371,52 @@ theorem VE.SpeechActs.Wire.decoded_premises
           List.map (VE.SpeechActs.demand dec.D) (List.filterMap VE.SpeechActs.Wire.activeCommand dec.units)
   -- uses VE.Formula@VE.Syntax VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree VE.Norms.Tree.nodes@VE.Norms.Tree VE.Norms.background@VE.Norms.Prefix VE.Norms.elaborate@VE.Norms.Elaborate VE.SpeechActs.Command@VE.SpeechActs.Tree VE.SpeechActs.Wire.Decoded.D@VE.SpeechActs.Wire VE.SpeechActs.Wire.Decoded.units@VE.SpeechActs.Wire VE.SpeechActs.Wire.Decoded@VE.SpeechActs.Wire VE.SpeechActs.Wire.SpeechUnitInfo@VE.SpeechActs.Wire VE.SpeechActs.Wire.activeCommand@VE.SpeechActs.Wire VE.SpeechActs.Wire.activeNorm@VE.SpeechActs.Wire VE.SpeechActs.Wire.fixedAssertion@VE.SpeechActs.Wire VE.SpeechActs.demand@VE.SpeechActs.Tree VE.SpeechActs.policy@VE.SpeechActs.Tree VE.SpeechActs.premises@VE.SpeechActs.Tree
   -- expr 1320382852
+theorem VE.SpeechActs.Wire.filterMapM_mem
+  ∀ {α β ε : Type} {f : α → Except ε (Option β)} {xs : List α} {ys : List β},
+    List.filterMapM f xs = Except.ok ys → ∀ (y : β), y ∈ ys → ∃ x, x ∈ xs ∧ f x = Except.ok (Option.some y)
+  -- uses
+  -- expr 4042951021
 theorem VE.SpeechActs.Wire.getObjVal_insert
   ∀ (l : List (String × Lean.Json)) (k : String) (v : Lean.Json),
     (Lean.Json.obj ((Std.TreeMap.Raw.ofList l Ord.compare).insert k v)).getObjVal? k = Except.ok v
   -- uses
   -- expr 1932169020
+theorem VE.SpeechActs.Wire.map_some_ok
+  ∀ {x : Except String String} {a : String}, Option.some <$> x = Except.ok (Option.some a) → x = Except.ok a
+  -- uses
+  -- expr 1829611979
+theorem VE.SpeechActs.Wire.profileGateOf_congr
+  ∀ {a b ps : List String},
+    (∀ (p : String), p ∈ ps → a.contains p = b.contains p) →
+      VE.SpeechActs.Wire.profileGateOf a ps = VE.SpeechActs.Wire.profileGateOf b ps
+  -- uses VE.SpeechActs.Wire.profileGateOf@VE.SpeechActs.Wire
+  -- expr 3336542681
+theorem VE.SpeechActs.Wire.profileGateOf_ok
+  ∀ {a ps : List String},
+    VE.SpeechActs.Wire.profileGateOf a ps = Except.ok () →
+      List.Pairwise (fun x1 x2 => x1 < x2) ps ∧ ∀ (p : String), p ∈ ps → a.contains p = Bool.true
+  -- uses VE.SpeechActs.Wire.profileGateOf@VE.SpeechActs.Wire
+  -- expr 1726472574
+theorem VE.SpeechActs.Wire.profileGate_mono
+  ∀ (ps : List String),
+    VE.SpeechActs.Wire.profileGate₀ ps = Except.ok () → VE.SpeechActs.Wire.profileGate ps = Except.ok ()
+  -- uses VE.SpeechActs.Wire.profileGate@VE.SpeechActs.Wire VE.SpeechActs.Wire.profileGate₀@VE.SpeechActs.Wire
+  -- expr 636196052
+theorem VE.SpeechActs.Wire.profilesAllowed_congr
+  ∀ {a b : List String} (ps : List String),
+    (∀ (p : String), p ∈ ps → a.contains p = b.contains p) →
+      VE.SpeechActs.Wire.profilesAllowed a ps = VE.SpeechActs.Wire.profilesAllowed b ps
+  -- uses VE.SpeechActs.Wire.profilesAllowed@VE.SpeechActs.Wire
+  -- expr 1577867738
+theorem VE.SpeechActs.Wire.profilesAllowed_mem
+  ∀ {a : List String} (ps : List String),
+    VE.SpeechActs.Wire.profilesAllowed a ps = Except.ok () → ∀ (p : String), p ∈ ps → a.contains p = Bool.true
+  -- uses VE.SpeechActs.Wire.profilesAllowed@VE.SpeechActs.Wire
+  -- expr 2686007854
+theorem VE.SpeechActs.Wire.pure_none_ne
+  ∀ {a : String}, Pure.pure Option.none = Except.ok (Option.some a) → False
+  -- uses
+  -- expr 4011024976
 theorem VE.SpeechActs.Wire.scope_in_identity
   ∀ (j : Lean.Json) (E : VE.Environment) (sc : VE.SpeechActs.Scope) (rs : List VE.Norms.Regulated),
     VE.SpeechActs.Wire.decodeSpeechEnvironment j = Except.ok (E, sc, rs) →
@@ -57619,6 +58425,17 @@ theorem VE.SpeechActs.Wire.scope_in_identity
           b.getObjVal? "speech_acts" = Except.ok (VE.SpeechActs.Wire.encodeScope sc)
   -- uses VE.Environment@VE.Syntax VE.Norms.Regulated@VE.Norms.Tree VE.SpeechActs.Scope@VE.SpeechActs.Tree VE.SpeechActs.Wire.canonicalEnvironmentJson@VE.SpeechActs.Wire VE.SpeechActs.Wire.decodeSpeechEnvironment@VE.SpeechActs.Wire VE.SpeechActs.Wire.encodeScope@VE.SpeechActs.Wire
   -- expr 417079726
+theorem VE.SpeechActs.Wire.strings_toJson
+  ∀ (l : List String), VE.Bridge.strings (Lean.ToJson.toJson l) = Except.ok l
+  -- uses VE.Bridge.strings@VE.Bridge
+  -- expr 3494703762
+theorem VE.SpeechActs.Wire.stripSpeech_profiles
+  ∀ {j s : Lean.Json} {ps : List String},
+    VE.SpeechActs.Wire.profilesField j = Except.ok ps →
+      VE.SpeechActs.Wire.stripSpeech j = Except.ok s →
+        VE.Route.Gate.profilesOf s = Except.ok (List.filter (fun x => x != VE.SpeechActs.Wire.speechProfile) ps)
+  -- uses VE.Route.Gate.profilesOf@VE.Route.Gate VE.SpeechActs.Wire.profilesField@VE.SpeechActs.Wire VE.SpeechActs.Wire.speechProfile@VE.SpeechActs.Wire VE.SpeechActs.Wire.stripSpeech@VE.SpeechActs.Wire
+  -- expr 2065729637
 theorem VE.SpeechActs.actSorts_eq
   ∀ {D : VE.SpeechActs.SpeechDoc} {c : VE.SpeechActs.Command} {ss : List String},
     D.E.predicates c.act = Option.some ss → VE.SpeechActs.actSorts D c = ss
