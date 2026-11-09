@@ -29722,6 +29722,223 @@ theorem VE.Presupposition.yieldsD_map
                 N ∈ T.nodes → (VE.Norms.YieldsD T' S ρ f (g N) ↔ VE.Norms.YieldsD T S ρ f N)
   -- uses VE.Norms.AppliesD@VE.Norms.Elaborate VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node.over@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree VE.Norms.Tree.nodes@VE.Norms.Tree VE.Norms.Tree@VE.Norms.Tree VE.Norms.YieldsD@VE.Norms.Elaborate VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
   -- expr 4200840417
+theorem VE.Purposes.Examples.notChecked_cases
+  ∀ (reason : VE.Purposes.NotChecked),
+    reason = VE.Purposes.NotChecked.purpose ∨
+      reason = VE.Purposes.NotChecked.denied ∨
+        reason = VE.Purposes.NotChecked.ruleTarget ∨
+          reason = VE.Purposes.NotChecked.readings ∨ reason = VE.Purposes.NotChecked.noFormula
+  -- uses VE.Purposes.NotChecked.denied@VE.Purposes.Decl VE.Purposes.NotChecked.noFormula@VE.Purposes.Decl VE.Purposes.NotChecked.purpose@VE.Purposes.Decl VE.Purposes.NotChecked.readings@VE.Purposes.Decl VE.Purposes.NotChecked.ruleTarget@VE.Purposes.Decl VE.Purposes.NotChecked@VE.Purposes.Decl
+  -- expr 3777866416
+theorem VE.Purposes.Polarity.ofWire_wire
+  ∀ (p : VE.Purposes.Polarity), VE.Purposes.Polarity.ofWire? p.wire = Option.some p
+  -- uses VE.Purposes.Polarity.ofWire?@VE.Purposes.Wire VE.Purposes.Polarity.wire@VE.Purposes.Wire VE.Purposes.Polarity@VE.Purposes.Decl
+  -- expr 3349051106
+theorem VE.Purposes.Relation.ofWire_wire
+  ∀ (r : VE.Purposes.Relation), VE.Purposes.Relation.ofWire? r.wire = Option.some r
+  -- uses VE.Purposes.Relation.ofWire?@VE.Purposes.Decl VE.Purposes.Relation.wire@VE.Purposes.Decl VE.Purposes.Relation@VE.Purposes.Decl
+  -- expr 1145207309
+theorem VE.Purposes.Relation.wire_mem
+  ∀ (r : VE.Purposes.Relation), r.wire ∈ VE.Route.Admission.relations
+  -- uses VE.Purposes.Relation.wire@VE.Purposes.Decl VE.Purposes.Relation@VE.Purposes.Decl VE.Route.Admission.relations@VE.Route.Admission
+  -- expr 1813827596
+theorem VE.Purposes.Relation.wire_ne_prevents
+  ∀ (r : VE.Purposes.Relation), r.wire ≠ "prevents"
+  -- uses VE.Purposes.Relation.wire@VE.Purposes.Decl VE.Purposes.Relation@VE.Purposes.Decl
+  -- expr 1259186698
+theorem VE.Purposes.Share.ofWire_wire
+  ∀ (s : VE.Purposes.Share), VE.Purposes.Share.ofWire? s.wire = Option.some s
+  -- uses VE.Purposes.Share.ofWire?@VE.Purposes.Wire VE.Purposes.Share.wire@VE.Purposes.Wire VE.Purposes.Share@VE.Purposes.Decl
+  -- expr 1080157224
+theorem VE.Purposes.adjacent_iff
+  ∀ (ps : List VE.Purposes.Part),
+    ((ps.zip ps.tail).all fun x =>
+          match x with
+          | (a, b) => a.span.snd == b.span.fst) =
+        Bool.true ↔
+      ∀ (i : Nat) (h : i + 1 < ps.length), ps[i].span.snd = ps[i + 1].span.fst
+  -- uses VE.Purposes.Part.span@VE.Purposes.WellFormed VE.Purposes.Part@VE.Purposes.WellFormed VE.Purposes.adjacent_iff._proof_1@VE.Purposes.WellFormed VE.Purposes.sideAdjacent.match_1@VE.Purposes.WellFormed
+  -- expr 2529218338
+theorem VE.Purposes.bind_ok
+  ∀ {α β : Type} {x : Except String α} {f : α → Except String β} {b : β},
+    x >>= f = Except.ok b → ∃ a, x = Except.ok a ∧ f a = Except.ok b
+  -- uses
+  -- expr 3172643631
+theorem VE.Purposes.check_ok_iff
+  ∀ (U : VE.Purposes.Units) (B : VE.Purposes.Block), VE.Purposes.check U B = Except.ok () ↔ VE.Purposes.WellFormed U B
+  -- uses VE.Purposes.Block@VE.Purposes.Decl VE.Purposes.Units@VE.Purposes.WellFormed VE.Purposes.WellFormed@VE.Purposes.WellFormed VE.Purposes.check@VE.Purposes.WellFormed
+  -- expr 2868993292
+theorem VE.Purposes.decodeBlock_relations
+  ∀ (j : Lean.Json) (B : VE.Purposes.Block),
+    VE.Purposes.decodeBlock j = Except.ok B →
+      ∀ (L : VE.Purposes.Link),
+        L ∈ B.links → L.relation.wire ∈ VE.Route.Admission.relations ∧ L.relation.wire ≠ "prevents"
+  -- uses VE.Purposes.Block.links@VE.Purposes.Decl VE.Purposes.Block@VE.Purposes.Decl VE.Purposes.Link.relation@VE.Purposes.Decl VE.Purposes.Link@VE.Purposes.Decl VE.Purposes.Relation.wire@VE.Purposes.Decl VE.Purposes.decodeBlock@VE.Purposes.Wire VE.Route.Admission.relations@VE.Route.Admission
+  -- expr 943492445
+theorem VE.Purposes.decodeBlock_render
+  ∀ (j : Lean.Json) (B : VE.Purposes.Block),
+    VE.Purposes.decodeBlock j = Except.ok B → VE.Purposes.decodeBlock (VE.Purposes.renderBlock B) = Except.ok B
+  -- uses VE.Purposes.Block@VE.Purposes.Decl VE.Purposes.decodeBlock@VE.Purposes.Wire VE.Purposes.renderBlock@VE.Purposes.Wire
+  -- expr 1732231295
+theorem VE.Purposes.decodeLink_ok
+  ∀ {n : Nat} {j : Lean.Json} {L : VE.Purposes.Link}, VE.Purposes.decodeLink n j = Except.ok L → L.idsOk
+  -- uses VE.Purposes.Link.idsOk@VE.Purposes.Wire VE.Purposes.Link@VE.Purposes.Decl VE.Purposes.decodeLink@VE.Purposes.Wire
+  -- expr 925117888
+theorem VE.Purposes.decodeLink_render
+  ∀ (n : Nat) (L : VE.Purposes.Link), L.idsOk → VE.Purposes.decodeLink n L.render = Except.ok L
+  -- uses VE.Purposes.Link.idsOk@VE.Purposes.Wire VE.Purposes.Link.render@VE.Purposes.Wire VE.Purposes.Link@VE.Purposes.Decl VE.Purposes.decodeLink@VE.Purposes.Wire
+  -- expr 2677156242
+theorem VE.Purposes.decodeLinks_length
+  ∀ {n : Nat} {js : List Lean.Json} {Ls : List VE.Purposes.Link},
+    VE.Purposes.decodeLinks n js = Except.ok Ls → Ls.length = js.length
+  -- uses VE.Purposes.Link@VE.Purposes.Decl VE.Purposes.decodeLinks@VE.Purposes.Wire
+  -- expr 4220380187
+theorem VE.Purposes.decodeLinks_ok
+  ∀ {n : Nat} {js : List Lean.Json} {Ls : List VE.Purposes.Link},
+    VE.Purposes.decodeLinks n js = Except.ok Ls → ∀ (L : VE.Purposes.Link), L ∈ Ls → L.idsOk
+  -- uses VE.Purposes.Link.idsOk@VE.Purposes.Wire VE.Purposes.Link@VE.Purposes.Decl VE.Purposes.decodeLinks@VE.Purposes.Wire
+  -- expr 2513576394
+theorem VE.Purposes.decodeLinks_render
+  ∀ (n : Nat) (Ls : List VE.Purposes.Link),
+    (∀ (L : VE.Purposes.Link), L ∈ Ls → L.idsOk) →
+      VE.Purposes.decodeLinks n (List.map VE.Purposes.Link.render Ls) = Except.ok Ls
+  -- uses VE.Purposes.Link.idsOk@VE.Purposes.Wire VE.Purposes.Link.render@VE.Purposes.Wire VE.Purposes.Link@VE.Purposes.Decl VE.Purposes.decodeLinks@VE.Purposes.Wire
+  -- expr 2144703508
+theorem VE.Purposes.decodeRef_ok
+  ∀ {lid : String} {j : Lean.Json} {r : VE.Purposes.Ref}, VE.Purposes.decodeRef lid j = Except.ok r → r.idOk = Bool.true
+  -- uses VE.Purposes.Ref.idOk@VE.Purposes.Wire VE.Purposes.Ref@VE.Purposes.Decl VE.Purposes.decodeRef@VE.Purposes.Wire
+  -- expr 1210840983
+theorem VE.Purposes.decodeRef_render
+  ∀ (lid : String) (r : VE.Purposes.Ref), r.idOk = Bool.true → VE.Purposes.decodeRef lid r.render = Except.ok r
+  -- uses VE.Purposes.Ref.idOk@VE.Purposes.Wire VE.Purposes.Ref.render@VE.Purposes.Wire VE.Purposes.Ref@VE.Purposes.Decl VE.Purposes.decodeRef@VE.Purposes.Wire
+  -- expr 2743919792
+theorem VE.Purposes.decodeRefs_ok
+  ∀ {lid : String} {js : List Lean.Json} {rs : List VE.Purposes.Ref},
+    VE.Purposes.decodeRefs lid js = Except.ok rs → ∀ (r : VE.Purposes.Ref), r ∈ rs → r.idOk = Bool.true
+  -- uses VE.Purposes.Ref.idOk@VE.Purposes.Wire VE.Purposes.Ref@VE.Purposes.Decl VE.Purposes.decodeRefs@VE.Purposes.Wire
+  -- expr 1650098309
+theorem VE.Purposes.decodeRefs_render
+  ∀ (lid : String) (rs : List VE.Purposes.Ref),
+    (∀ (r : VE.Purposes.Ref), r ∈ rs → r.idOk = Bool.true) →
+      VE.Purposes.decodeRefs lid (List.map VE.Purposes.Ref.render rs) = Except.ok rs
+  -- uses VE.Purposes.Ref.idOk@VE.Purposes.Wire VE.Purposes.Ref.render@VE.Purposes.Wire VE.Purposes.Ref@VE.Purposes.Decl VE.Purposes.decodeRefs@VE.Purposes.Wire
+  -- expr 3952172926
+theorem VE.Purposes.decodeSide_ok
+  ∀ {lid : String} {j : Lean.Json} {rs : List VE.Purposes.Ref},
+    VE.Purposes.decodeSide lid j = Except.ok rs → ∀ (r : VE.Purposes.Ref), r ∈ rs → r.idOk = Bool.true
+  -- uses VE.Purposes.Ref.idOk@VE.Purposes.Wire VE.Purposes.Ref@VE.Purposes.Decl VE.Purposes.decodeSide@VE.Purposes.Wire
+  -- expr 974804553
+theorem VE.Purposes.decodeSide_render
+  ∀ (lid : String) (rs : List VE.Purposes.Ref),
+    (∀ (r : VE.Purposes.Ref), r ∈ rs → r.idOk = Bool.true) →
+      VE.Purposes.decodeSide lid (Lean.Json.arr (List.map VE.Purposes.Ref.render rs).toArray) = Except.ok rs
+  -- uses VE.Purposes.Ref.idOk@VE.Purposes.Wire VE.Purposes.Ref.render@VE.Purposes.Wire VE.Purposes.Ref@VE.Purposes.Decl VE.Purposes.decodeSide@VE.Purposes.Wire
+  -- expr 3039739198
+theorem VE.Purposes.forM_iff
+  ∀ {α : Type} (f : α → Except String PUnit) (l : List α), l.forM f = Except.ok () ↔ ∀ (a : α), a ∈ l → f a = Except.ok ()
+  -- uses
+  -- expr 4273377252
+theorem VE.Purposes.idOf_ok
+  ∀ {j : Lean.Json} {s : String},
+    VE.Purposes.idOf j = Except.ok s → j = Lean.Json.str s ∧ VE.Route.Admission.token s = Bool.true
+  -- uses VE.Purposes.idOf@VE.Purposes.Wire VE.Route.Admission.token@VE.Route.Admission
+  -- expr 3157067360
+theorem VE.Purposes.idOf_str
+  ∀ {s : String}, VE.Route.Admission.token s = Bool.true → VE.Purposes.idOf (Lean.Json.str s) = Except.ok s
+  -- uses VE.Purposes.idOf@VE.Purposes.Wire VE.Route.Admission.token@VE.Route.Admission
+  -- expr 3056939739
+theorem VE.Purposes.map_ok
+  ∀ {α β : Type} {x : Except String α} {f : α → β} {b : β}, f <$> x = Except.ok b → ∃ a, x = Except.ok a ∧ f a = b
+  -- uses
+  -- expr 3110652630
+theorem VE.Purposes.markerAgrees_kind
+  ∀ (U : VE.Purposes.Units) (L : VE.Purposes.Link),
+    VE.Purposes.markerAgrees U L = Bool.true →
+      ∃ c e,
+        U.kind? L.marker = Option.some (VE.Route.Admission.Kind.causal L.relation.wire c e) ∧
+          (∀ (i : String), i ∈ List.filterMap VE.Purposes.Ref.partId? L.slots.fst → U.kind? i = Option.some c) ∧
+            ∀ (i : String), i ∈ List.filterMap VE.Purposes.Ref.partId? L.slots.snd → U.kind? i = Option.some e
+  -- uses VE.Purposes.Link.marker@VE.Purposes.Decl VE.Purposes.Link.relation@VE.Purposes.Decl VE.Purposes.Link.slots@VE.Purposes.WellFormed VE.Purposes.Link@VE.Purposes.Decl VE.Purposes.Ref.partId?@VE.Purposes.WellFormed VE.Purposes.Ref@VE.Purposes.Decl VE.Purposes.Relation.wire@VE.Purposes.Decl VE.Purposes.Units.kind?@VE.Purposes.WellFormed VE.Purposes.Units@VE.Purposes.WellFormed VE.Purposes.markerAgrees@VE.Purposes.WellFormed VE.Route.Admission.Kind.causal@VE.Route.Admission VE.Route.Admission.Kind@VE.Route.Admission
+  -- expr 410946522
+theorem VE.Purposes.markerHonest_labelled
+  ∀ (U : VE.Purposes.Units) (B : VE.Purposes.Block),
+    VE.Purposes.markerHonest U B = Bool.true →
+      ∀ (p : VE.Purposes.Part),
+        p ∈ U.parts →
+          p.status = "LABELLED" →
+            (∃ L, L ∈ B.links ∧ L.marker = p.id) →
+              ∃ L,
+                L ∈ B.links ∧
+                  L.marker = p.id ∧
+                    VE.Purposes.covered U L.reason = Bool.true ∧ VE.Purposes.covered U L.target = Bool.true
+  -- uses VE.Purposes.Block.links@VE.Purposes.Decl VE.Purposes.Block@VE.Purposes.Decl VE.Purposes.Link.marker@VE.Purposes.Decl VE.Purposes.Link.reason@VE.Purposes.Decl VE.Purposes.Link.target@VE.Purposes.Decl VE.Purposes.Link@VE.Purposes.Decl VE.Purposes.Part.id@VE.Purposes.WellFormed VE.Purposes.Part.status@VE.Purposes.WellFormed VE.Purposes.Part@VE.Purposes.WellFormed VE.Purposes.Units.parts@VE.Purposes.WellFormed VE.Purposes.Units@VE.Purposes.WellFormed VE.Purposes.covered@VE.Purposes.WellFormed VE.Purposes.markerHonest@VE.Purposes.WellFormed
+  -- expr 36273560
+theorem VE.Purposes.nonfactive_iff
+  ∀ (U : VE.Purposes.Units) (L : VE.Purposes.Link),
+    VE.Purposes.nonfactive U L = Bool.true ↔
+      ∀ (r : VE.Purposes.Ref),
+        r ∈ VE.Purposes.unstated L →
+          ∃ i p,
+            r = VE.Purposes.Ref.part i ∧
+              U.find? i = Option.some p ∧
+                p.kind.inert = Bool.true ∧ ∀ (k : VE.Route.Admission.Kind), k ∈ p.candidates → k.inert = Bool.true
+  -- uses VE.Purposes.Link@VE.Purposes.Decl VE.Purposes.Part.candidates@VE.Purposes.WellFormed VE.Purposes.Part.kind@VE.Purposes.WellFormed VE.Purposes.Part@VE.Purposes.WellFormed VE.Purposes.Ref.part@VE.Purposes.Decl VE.Purposes.Ref@VE.Purposes.Decl VE.Purposes.Units.find?@VE.Purposes.WellFormed VE.Purposes.Units@VE.Purposes.WellFormed VE.Purposes.nonfactive@VE.Purposes.WellFormed VE.Purposes.unstated@VE.Purposes.WellFormed VE.Route.Admission.Kind.inert@VE.Route.Inert VE.Route.Admission.Kind@VE.Route.Admission
+  -- expr 374592153
+theorem VE.Purposes.require_iff
+  ∀ {b : Bool} {m : String}, VE.Route.Gate.require b m = Except.ok () ↔ b = Bool.true
+  -- uses VE.Route.Gate.require@VE.Route.Gate
+  -- expr 891071507
+theorem VE.Purposes.sameUnit_parent
+  ∀ (U : VE.Purposes.Units) (L : VE.Purposes.Link),
+    VE.Purposes.sameUnit U L = Bool.true →
+      (∀ (r : VE.Purposes.Ref), r ∈ L.reason ++ L.target → ∃ i, r = VE.Purposes.Ref.part i) ∧
+        L.partIds.Nodup ∧ ∃ p, ∀ (i : String), i ∈ L.partIds → ∃ x, U.find? i = Option.some x ∧ x.parent = Option.some p
+  -- uses VE.Purposes.Link.partIds@VE.Purposes.WellFormed VE.Purposes.Link.reason@VE.Purposes.Decl VE.Purposes.Link.target@VE.Purposes.Decl VE.Purposes.Link@VE.Purposes.Decl VE.Purposes.Part.parent@VE.Purposes.WellFormed VE.Purposes.Part@VE.Purposes.WellFormed VE.Purposes.Ref.part@VE.Purposes.Decl VE.Purposes.Ref@VE.Purposes.Decl VE.Purposes.Units.find?@VE.Purposes.WellFormed VE.Purposes.Units@VE.Purposes.WellFormed VE.Purposes.sameUnit@VE.Purposes.WellFormed
+  -- expr 2599831344
+theorem VE.Purposes.shareOf_render
+  ∀ (id : String) (s : VE.Purposes.Share),
+    VE.Purposes.shareOf id (Lean.Json.mkObj [("share", Lean.Json.str s.wire)]) = Except.ok s
+  -- uses VE.Purposes.Share.wire@VE.Purposes.Wire VE.Purposes.Share@VE.Purposes.Decl VE.Purposes.shareOf@VE.Purposes.Wire
+  -- expr 2383924657
+theorem VE.Purposes.shareOk_iff
+  ∀ (B : VE.Purposes.Block) (L : VE.Purposes.Link),
+    VE.Purposes.shareOk B L = Bool.true ↔
+      L.share = VE.Purposes.Share.sole →
+        ∀ (M : VE.Purposes.Link),
+          M ∈ B.links →
+            M.id ≠ L.id →
+              M.polarity = VE.Purposes.Polarity.affirmed →
+                M.relation = L.relation →
+                  M.target = L.target →
+                    M.reason = L.reason ∧ (M.share = VE.Purposes.Share.plain ∨ M.share = VE.Purposes.Share.sole)
+  -- uses VE.Purposes.Block.links@VE.Purposes.Decl VE.Purposes.Block@VE.Purposes.Decl VE.Purposes.Link.id@VE.Purposes.Decl VE.Purposes.Link.polarity@VE.Purposes.Decl VE.Purposes.Link.reason@VE.Purposes.Decl VE.Purposes.Link.relation@VE.Purposes.Decl VE.Purposes.Link.share@VE.Purposes.Decl VE.Purposes.Link.target@VE.Purposes.Decl VE.Purposes.Link@VE.Purposes.Decl VE.Purposes.Polarity.affirmed@VE.Purposes.Decl VE.Purposes.Polarity@VE.Purposes.Decl VE.Purposes.Ref@VE.Purposes.Decl VE.Purposes.Relation@VE.Purposes.Decl VE.Purposes.Share.plain@VE.Purposes.Decl VE.Purposes.Share.sole@VE.Purposes.Decl VE.Purposes.Share@VE.Purposes.Decl VE.Purposes.shareOk@VE.Purposes.WellFormed
+  -- expr 911699233
+theorem VE.Purposes.sideAdjacent_iff
+  ∀ (U : VE.Purposes.Units) (s : List VE.Purposes.Ref),
+    VE.Purposes.sideAdjacent U s = Bool.true ↔
+      ∃ ps,
+        List.mapM (fun r => r.partId? >>= U.find?) s = Option.some ps ∧
+          (∀ (p : VE.Purposes.Part), p ∈ ps → p.span.fst ≤ p.span.snd) ∧
+            ∀ (i : Nat) (h : i + 1 < ps.length), ps[i].span.snd = ps[i + 1].span.fst
+  -- uses VE.Purposes.Part.span@VE.Purposes.WellFormed VE.Purposes.Part@VE.Purposes.WellFormed VE.Purposes.Ref.partId?@VE.Purposes.WellFormed VE.Purposes.Ref@VE.Purposes.Decl VE.Purposes.Units.find?@VE.Purposes.WellFormed VE.Purposes.Units@VE.Purposes.WellFormed VE.Purposes.adjacent_iff._proof_1@VE.Purposes.WellFormed VE.Purposes.sideAdjacent@VE.Purposes.WellFormed
+  -- expr 3092371015
+theorem VE.Purposes.side_kind
+  ∀ {U : VE.Purposes.Units} {s : List VE.Purposes.Ref} {k : VE.Route.Admission.Kind},
+    VE.Purposes.sideOfKind U s k = Bool.true →
+      ∀ (i : String), i ∈ List.filterMap VE.Purposes.Ref.partId? s → U.kind? i = Option.some k
+  -- uses VE.Purposes.Ref.partId?@VE.Purposes.WellFormed VE.Purposes.Ref@VE.Purposes.Decl VE.Purposes.Units.kind?@VE.Purposes.WellFormed VE.Purposes.Units@VE.Purposes.WellFormed VE.Purposes.sideOfKind@VE.Purposes.WellFormed VE.Route.Admission.Kind@VE.Route.Admission
+  -- expr 2930908731
+theorem VE.Purposes.unit_bind
+  ∀ {α : Type} {x : Except String PUnit} {f : PUnit → Except String α} {y : α},
+    x >>= f = Except.ok y ↔ x = Except.ok () ∧ f () = Except.ok y
+  -- uses
+  -- expr 2137658163
+theorem VE.Purposes.unstated_eq
+  ∀ (L : VE.Purposes.Link),
+    VE.Purposes.unstated L =
+      if L.relation = VE.Purposes.Relation.inOrderTo ∨ L.polarity = VE.Purposes.Polarity.denied then L.reason else []
+  -- uses VE.Purposes.Link.polarity@VE.Purposes.Decl VE.Purposes.Link.reason@VE.Purposes.Decl VE.Purposes.Link.relation@VE.Purposes.Decl VE.Purposes.Link@VE.Purposes.Decl VE.Purposes.Polarity.denied@VE.Purposes.Decl VE.Purposes.Polarity@VE.Purposes.Decl VE.Purposes.Ref@VE.Purposes.Decl VE.Purposes.Relation.inOrderTo@VE.Purposes.Decl VE.Purposes.Relation@VE.Purposes.Decl VE.Purposes.instDecidableEqPolarity@VE.Purposes.Decl VE.Purposes.instDecidableEqRelation@VE.Purposes.Decl VE.Purposes.unstated@VE.Purposes.WellFormed
+  -- expr 373715410
 theorem VE.Question.Run.oneFields_gated
   ∀ (q : String) (E : VE.EnglishGrammar.Env) (L : VE.EnglishGrammar.Lexicon) (c : VE.Question.Candidate)
     (φ : VE.EnglishGrammar.EFormula) (fs : List (String × Lean.Json)),
@@ -48834,12 +49051,32 @@ theorem VE.Risk.witnessE_sound
             VE.Risk.possibleE b c = Bool.true → ∃ v, VE.Risk.witnessE b c = Option.some v ∧ VE.Risk.InBox b v ∧ c.holds v
   -- uses VE.Risk.Box.WF@VE.Risk.Cond VE.Risk.Box@VE.Risk.Cond VE.Risk.Cond.holds@VE.Risk.Cond VE.Risk.Cond@VE.Risk.Cond VE.Risk.InBox@VE.Risk.Cond VE.Risk.Scoped@VE.Risk.Cond VE.Risk.Separable@VE.Risk.Cond VE.Risk.UnitCoefficients@VE.Risk.Cond VE.Risk.Valuation@VE.Risk.Cond VE.Risk.possibleE@VE.Risk.Derive VE.Risk.witnessE@VE.Risk.Derive
   -- expr 688419684
+theorem VE.Route.Admission.Kind.inert_active
+  ∀ (k : VE.Route.Admission.Kind),
+    k.inert = Bool.true →
+      k ≠ VE.Route.Admission.Kind.asserted ∧
+        k ≠ VE.Route.Admission.Kind.norm ∧ k ≠ VE.Route.Admission.Kind.definition ∧ k.quoted = Bool.false
+  -- uses VE.Route.Admission.Kind.asserted@VE.Route.Admission VE.Route.Admission.Kind.definition@VE.Route.Admission VE.Route.Admission.Kind.inert@VE.Route.Inert VE.Route.Admission.Kind.norm@VE.Route.Admission VE.Route.Admission.Kind.quoted@VE.Route.Admission VE.Route.Admission.Kind@VE.Route.Admission
+  -- expr 2707586034
 theorem VE.Route.Admission.admitNodes_ok
   ∀ (D : VE.Route.Admission.Doc) (ws : List VE.Route.Admission.WireNode) (u : Unit),
     VE.Route.Admission.admitNodes D ws = Except.ok u →
       ∀ (w : VE.Route.Admission.WireNode), w ∈ ws → VE.Route.Admission.NodeAdmitted D w
   -- uses VE.Route.Admission.Doc@VE.Route.Admission VE.Route.Admission.NodeAdmitted@VE.Route.Admission VE.Route.Admission.WireNode@VE.Route.Admission VE.Route.Admission.admitNodes@VE.Route.Admission
   -- expr 3139006492
+theorem VE.Route.Admission.admit_inert
+  ∀ (profiles : List String) (environment : Lean.Json) (rv : VE.Route.Wire.RouteVocabulary) (j : Lean.Json)
+    (res : VE.Route.Admission.Admitted),
+    VE.Route.Admission.admitDocument profiles environment rv j = Except.ok res →
+      ∀ (i : String),
+        (∀ (x : VE.Route.Admission.DocUnit), x ∈ res.doc.units → x.id = i → x.kind.inert = Bool.true) →
+          ∀ (w : VE.Route.Admission.WireNode),
+            w ∈ res.wires →
+              w.unit ≠ Option.some i ∧
+                ∀ (a : String),
+                  VE.Route.Admission.parseLabel w.claim.label ≠ Option.some (VE.Route.Admission.Label.bridge a i)
+  -- uses VE.Graph.Claim.label@VE.ClaimGraph VE.Route.Admission.Admitted.doc@VE.Route.Admission VE.Route.Admission.Admitted.wires@VE.Route.Admission VE.Route.Admission.Admitted@VE.Route.Admission VE.Route.Admission.Doc.units@VE.Route.Admission VE.Route.Admission.DocUnit.id@VE.Route.Admission VE.Route.Admission.DocUnit.kind@VE.Route.Admission VE.Route.Admission.DocUnit@VE.Route.Admission VE.Route.Admission.Kind.inert@VE.Route.Inert VE.Route.Admission.Label.bridge@VE.Route.Admission VE.Route.Admission.Label@VE.Route.Admission VE.Route.Admission.WireNode.claim@VE.Route.Admission VE.Route.Admission.WireNode.unit@VE.Route.Admission VE.Route.Admission.WireNode@VE.Route.Admission VE.Route.Admission.admitDocument@VE.Route.Admission VE.Route.Admission.parseLabel@VE.Route.Admission VE.Route.Wire.RouteVocabulary@VE.Route.Wire
+  -- expr 3779657612
 theorem VE.Route.Admission.admit_labels_decoded
   ∀ (profiles : List String) (environment : Lean.Json) (rv : VE.Route.Wire.RouteVocabulary) (j : Lean.Json)
     (res : VE.Route.Admission.Admitted),
@@ -48901,6 +49138,25 @@ theorem VE.Route.Admission.decodeKind_render
     VE.Route.Admission.decodeKind n j = Except.ok k → VE.Route.Admission.renderKind k = j
   -- uses VE.Route.Admission.Kind@VE.Route.Admission VE.Route.Admission.decodeKind@VE.Route.Admission VE.Route.Admission.renderKind@VE.Route.Admission
   -- expr 1332119301
+theorem VE.Route.Admission.inForce_inert
+  ∀ (k : VE.Route.Admission.Kind) (s : String),
+    VE.Route.Admission.renderKind k = Lean.Json.str s →
+      k.inert = Bool.true → ∀ (c : VE.Compose.Content), VE.Readings.Wire.inForce (Option.some s) c = Bool.false
+  -- uses VE.Compose.Content@VE.Compose.Content VE.Readings.Wire.inForce@VE.Readings.Wire VE.Route.Admission.Kind.inert@VE.Route.Inert VE.Route.Admission.Kind@VE.Route.Admission VE.Route.Admission.renderKind@VE.Route.Admission
+  -- expr 3966925041
+theorem VE.Route.Admission.inert_unnamed
+  ∀ (D : VE.Route.Admission.Doc) (w : VE.Route.Admission.WireNode) (i : String),
+    (∀ (x : VE.Route.Admission.DocUnit), x ∈ D.units → x.id = i → x.kind.inert = Bool.true) →
+      VE.Route.Admission.NodeAdmitted D w →
+        w.unit ≠ Option.some i ∧
+          ∀ (a : String), VE.Route.Admission.parseLabel w.claim.label ≠ Option.some (VE.Route.Admission.Label.bridge a i)
+  -- uses VE.Graph.Claim.label@VE.ClaimGraph VE.Route.Admission.Doc.units@VE.Route.Admission VE.Route.Admission.Doc@VE.Route.Admission VE.Route.Admission.DocUnit.id@VE.Route.Admission VE.Route.Admission.DocUnit.kind@VE.Route.Admission VE.Route.Admission.DocUnit@VE.Route.Admission VE.Route.Admission.Kind.inert@VE.Route.Inert VE.Route.Admission.Label.bridge@VE.Route.Admission VE.Route.Admission.Label@VE.Route.Admission VE.Route.Admission.NodeAdmitted@VE.Route.Admission VE.Route.Admission.WireNode.claim@VE.Route.Admission VE.Route.Admission.WireNode.unit@VE.Route.Admission VE.Route.Admission.WireNode@VE.Route.Admission VE.Route.Admission.parseLabel@VE.Route.Admission
+  -- expr 2561554091
+theorem VE.Route.Admission.normRole_inert
+  ∀ (k : VE.Route.Admission.Kind) (c : Lean.Json),
+    k.inert = Bool.true → ∃ m, VE.Norms.Admission.normRole k c = Except.error m
+  -- uses VE.Norms.Admission.NormContent@VE.Norms.Admission VE.Norms.Admission.normRole@VE.Norms.Admission VE.Route.Admission.Kind.inert@VE.Route.Inert VE.Route.Admission.Kind@VE.Route.Admission
+  -- expr 1385552968
 theorem VE.Route.Admission.parseLabel_render
   ∀ (s : String) (l : VE.Route.Admission.Label), VE.Route.Admission.parseLabel s = Option.some l → l.render = s
   -- uses VE.Route.Admission.Label.render@VE.Route.Admission VE.Route.Admission.Label@VE.Route.Admission VE.Route.Admission.parseLabel@VE.Route.Admission
