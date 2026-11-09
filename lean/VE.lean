@@ -204,6 +204,7 @@ import VE.Risk.Wire
 import VE.Risk.Admission
 import VE.Rights.Examples
 import VE.Rights.Run
+import VE.Rights.OpenActExamples
 import VE.Judgments.Decl
 import VE.Judgments.Scan
 import VE.Judgments.Status
