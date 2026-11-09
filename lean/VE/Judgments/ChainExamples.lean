@@ -1,3 +1,4 @@
+import VE.Compose.ContractExamples
 import VE.Service.Document
 
 /-! PC-1's examples (docs/spec/profile-composition.md 5.1): the reader's carve-outs and the clash validation on
@@ -521,5 +522,18 @@ def drawn : Nat → Nat → Json
 
 #guard (List.range 300).all fun n => let v := drawn 4 (n * 2654435761 % 2147483648)
   (Json.parse v.compress).toOption == some v
+
+/-! pc-1tm (trust mutants of `checkDocSetsFast`, the run `checkDocSets_eq_fast` makes the compiler use): with one
+governed set, on `i1` (`VE.Compose.ContractExamples.governedSet`), the run admits the case and hands the chain the
+governed sets (`withSets`); the units alone (`withUnits`) are refused. It reads no `checkDocSets`: a mutant of the run
+breaks that `@[csimp]` lemma, and a check reading it is no kill (trust_mutants' probe). -/
+
+#guard let j := VE.Compose.ContractExamples.governedSet
+  (checkDocSetsFast j).isOk && ((do
+    let D ← VE.Scope.decodeScope j
+    let out ← VE.Scope.governSetsWith VE.Scope.governFast D
+    pure (VE.Scope.governedSetUnits D, (checkCore (withUnits j out)).isOk,
+      (checkDocSetsFast j).toOption == (do pure (VE.Scope.foldGovernors D (← checkCore (withSets j out)))).toOption)) :
+    Except String _).toOption == some (["i1"], false, true)
 
 end VE.Judgments.ChainExamples
