@@ -77,7 +77,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/ResponseShape/](lean__ResponseShape.md) — 8 modules — -
 - [lean/ResponseShape/Encoders/](lean__ResponseShape__Encoders.md) — 31 modules — -
 - [lean/ResponseShape/Schemas/](lean__ResponseShape__Schemas.md) — 42 modules — -
-- [lean/VE/](lean__VE.md) — 33 modules — -
+- [lean/VE/](lean__VE.md) — 27 modules — -
 - [lean/VE/Acts/](lean__VE__Acts.md) — 30 modules — -
 - [lean/VE/Alternatives/](lean__VE__Alternatives.md) — 13 modules — -
 - [lean/VE/Arith/](lean__VE__Arith.md) — 10 modules — -
@@ -86,8 +86,8 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/VE/Attribution/](lean__VE__Attribution.md) — 16 modules — -
 - [lean/VE/Calc/](lean__VE__Calc.md) — 33 modules — -
 - [lean/VE/Cardinality/](lean__VE__Cardinality.md) — 17 modules — -
-- [lean/VE/Closure/](lean__VE__Closure.md) — 15 modules — -
-- [lean/VE/Commands/](lean__VE__Commands.md) — 6 modules — -
+- [lean/VE/Closure/](lean__VE__Closure.md) — 12 modules — -
+- [lean/VE/Commands/](lean__VE__Commands.md) — 8 modules — -
 - [lean/VE/Compose/](lean__VE__Compose.md) — 9 modules — -
 - [lean/VE/Core/](lean__VE__Core.md) — 22 modules — -
 - [lean/VE/Data/](lean__VE__Data.md) — 1 modules — -
@@ -105,7 +105,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/VE/Norms/](lean__VE__Norms.md) — 25 modules — -
 - [lean/VE/Numbers/](lean__VE__Numbers.md) — 6 modules — -
 - [lean/VE/Order/](lean__VE__Order.md) — 16 modules — -
-- [lean/VE/Presupposition/](lean__VE__Presupposition.md) — 7 modules — -
+- [lean/VE/Presupposition/](lean__VE__Presupposition.md) — 6 modules — -
 - [lean/VE/Purposes/](lean__VE__Purposes.md) — 4 modules — -
 - [lean/VE/Question/](lean__VE__Question.md) — 12 modules — -
 - [lean/VE/Readings/ part 1](lean__VE__Readings--part-1.md) — 73 modules — -
@@ -129,7 +129,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [research/](research.md) — 2 modules — -
 - [rust/](rust.md) — 37 modules — -
 - [tests/ part 1](tests--part-1.md) — 92 modules — -
-- [tests/ part 2](tests--part-2.md) — 90 modules — -
+- [tests/ part 2](tests--part-2.md) — 91 modules — -
 - [tests/ part 3](tests--part-3.md) — 88 modules — -
 - [tests/ part 4](tests--part-4.md) — 91 modules — -
 - [tests/ part 5](tests--part-5.md) — 79 modules — -
