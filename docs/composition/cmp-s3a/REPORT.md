@@ -45,7 +45,8 @@ lemma exists in the tree, and the proof would exceed this item's size cap by its
   decoded document never shows this text. It is what `plain_guard` reads (`entryOk`).
   Correction (cmp-s3a-cfr-2): the sentence before is false and withdrawn. No right-clauses wire decoder exists
   (it is cmp-s3-cfr-1). Two lines with one rule name fail `entryOk`. They got this text where rights says
-  `DuplicateDeclaration`. Now, when the lines are in the rights that hold the entry's right and rights' first fault
+  `DuplicateDeclaration`. Now, when the lines are in the rights document the entry is checked against (its right in
+  that document or not) and rights' first fault
   there is a `DuplicateDeclaration`, they get that rights text unchanged (`entryError`). Otherwise they keep this
   text: for example, when the lines are a `.rightLines` candidate's own, or when rights faults first on something
   else. See docs/composition/cmp-s3a-cfr-2/REPORT.md.

@@ -2,6 +2,8 @@
 
 No DRI signature is reserved. DELTA row 1 cites R1. Row 2 is pre-signed by the DRI 2026-11-09
 (reviews/dri-decisions-20261109-lp0801.md item 1), and its condition and negative tests are named in DELTA.md.
+Review fix (F1, B): `checkEntry`'s unknown-right branch now also answers `entryError`, so every `entryOk` failure has
+one refusal path and the docstrings hold. Trust stays S +11; trust mutants 15 KILLED on cc861fb04.
 
 Item: L1-graded follow-up of right-clauses@0 (regrade #9, reviews/l1-c-regrade-rights-20261109.md, an overclaim).
 The plan is docs/spec/right-clauses.md on main, and the diagnostic order is rights' `checkRights`
@@ -19,13 +21,15 @@ builds), fail `entryOk`. They got `InvalidInput: invalid clauses of rule <n>` wh
 
 The fix needs no wire decoder. `checkEntry` is reached from `checkClauses` and `checkCandidates` on a `ClauseDoc`.
 When an entry fails `entryOk`, it now answers with `entryError Dr <n>` (lean/VE/RightClauses/Plain.lean), where `Dr`
-is the rights document that holds the entry's right.
+is the rights document the entry is checked against (the one that holds its right, when its right is known). Since
+review F1 this holds for an entry of an unknown right too: `checkEntry` has no other refusal for an `entryOk`
+failure.
 
 - If `<n>` is the rule of more than one line of `Dr`'s rights (the lines rights' own name check reads), and rights'
   first fault on `Dr` (`VE.Rights.checkRights Dr`) is a `DuplicateDeclaration`, the answer is that text, unchanged.
   It is rights' text in rights' order (8). Lean reads it from rights' function, so it is not a copy.
 - Otherwise the answer is still `InvalidInput: invalid clauses of rule <n>`. That covers an entry of an unknown
-  right, an entry that names no line of its right, two entries for one line, a `.rightLines` candidate whose own
+  right whose rule is on at most one line of `Dr`, an entry that names no line of its right, two entries for one line, a `.rightLines` candidate whose own
   lines repeat a rule (they are not in `Dr`), and a rule on two lines where rights faults first on something else.
 
 Rights' diagnostics are strings, so `entryError` reads the kind from the text's `DuplicateDeclaration: ` prefix
@@ -34,10 +38,10 @@ restated by `rfl` in lean/VE/Readings/Lines.lean (`checkRights_steps`). That cha
 
 The first draft counted the duplicate in the entry's source lines (`src`). The self-review found that for a
 `.rightLines` candidate those lines are not in `Dr`, so an unrelated fault of `D.doc` could come back. The count now
-reads `Dr`'s own lines, and the `#guard`s at Examples.lean:260 and 262 pin that case.
+reads `Dr`'s own lines, and the `#guard`s at Examples.lean:269 and 271 pin that case.
 
 The other step-3 checks of 4.1 keep their order. The entry is refused at the same place as before, and
-`checkEntry`'s `if`/`else` shape is unchanged. So `checkEntry_ok`, `entry_facts` and `plain_guard` compile without
+`checkEntry`'s `match`/`if`/`else` shape is unchanged (review F1 changed only the error its `none` branch carries). So `checkEntry_ok`, `entry_facts` and `plain_guard` compile without
 edits (`lake build VE.RightClauses.Examples`: `Build completed successfully`). cmp-s3a-cfr-1 (in flight) has an
 `entry_typed` that unfolds `checkEntry` the same way:
 `git show feature/cmp-s3a-cfr-1:lean/VE/RightClauses/PlainWellFormed/Clauses.lean`, lines 224-229
@@ -88,6 +92,9 @@ With main's Plain.lean, the condition test fails as well (task (2)).
 | S2 a one-character edit of rights' text (the DRI's negative test) | `then e` → `then e ++ "."` | the same two tests (`2 failed, 2 passed`); `#guard`s Examples.lean:222, 223, 224, 256 |
 | S3 any rights fault relayed | the conjunct `e.startsWith "DuplicateDeclaration: "` removed | `test_clause_entries_keep_invalid_clauses_when_rights_faults_first` (`1 failed, 3 passed`); `#guard` Examples.lean:226 |
 | S4 one line counts as a duplicate | `.length > 1` → `.length > 0` (on the earlier filter-and-length count) | `test_clause_entries_keep_invalid_clauses_when_rights_faults_first` (`1 failed, 3 passed`); `#guard`s Examples.lean:234, 262 |
+| S5 (review F1) the unknown-right branch of `checkEntry` given back its own text | `.error (entryError Dr x.2.1)` → `.error s!"InvalidInput: invalid clauses of rule {x.2.1}"` | `test_clause_entries_with_unknown_right_take_rights_duplicate_text` (`1 failed, 4 passed`, with the two new `#guard`s commented out so the build passes); `#guard`s Examples.lean:228, 265 (`lake build VE.RightClauses.Examples`: `error` at :228:0 and :265:0) |
+
+The line numbers of S1-S4 are those of the tree they ran on (before review F1 added lines above them).
 
 ## Spec re-read
 
@@ -127,19 +134,28 @@ R16's "every new trusted definition exercised by a test that can fail" is met:
     evidence was replaced by the third run.
   - The third run came after the trust-table classing (head 628c22b0f, `--rescore` again; the tool made it a full run
     on this tree's mutants). With `entryError` classed S and the fixtures T, it planned 2 trusted definitions and
-    15 mutants: `15 KILLED, 0 SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN`, exit 0. That is the committed
-    [trust-mutants.json](trust-mutants.json). No allow file is needed.
+    15 mutants: `15 KILLED, 0 SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN`, exit 0. Its evidence was
+    replaced by the fourth run. No allow file is needed.
+  - The fourth run came after review F1 (head cc861fb04, `--rescore` on the third run's evidence; the tool made it a
+    full run because Plain.lean changed). It planned the same 2 trusted definitions and 15 mutants: `15 KILLED, 0
+    SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN`, exit 0 (ve-cloud-2). It replaces the committed
+    [trust-mutants.json](trust-mutants.json). The operators plant no mutant on the changed `none` branch, which holds
+    no literal or operator; S5 covers it by hand.
 
 Hand bugs S1-S4 were run on the filter-and-length form of the count, before it became `countP`. The final form is
-covered by the second trust-mutants run above.
+covered by the third and fourth trust-mutants runs above.
+
+`uv run python tools/trust_map.py --check` on cc861fb04: `K +0, S +11, … trusted +11`, rc 0; the allowance is
+unchanged (the `entryOk` docstring kept its two lines).
 
 ## Final checks (on the final code)
 
 - `cd lean && lake build`: `Build completed successfully (1320 jobs)`.
 - `python3 lean/audit.py`: `PASS: 790 source files; 8746 named theorem declarations audited`.
-- These two ran on the code before the `across` fixture and the `countP` count. That later change was built with
-  `lake build VE.RightClauses.Examples` (`Build completed successfully`), and the trust-mutants run built it again.
-- `uv run python tools/regen_generated.py --write`: rc 0. Only the docs/codemap files changed; they are committed.
+- These two ran again on the Lean of the review-F1 commit cc861fb04 (the same Lean as the final HEAD): `Build
+  completed successfully (1320 jobs)`; audit `PASS: 790 source files; 8746 named theorem declarations audited`.
+- `uv run python tools/regen_generated.py --write`: rc 0. After review F1 only lean/declarations.txt changed; it is
+  committed with the fix.
 - Selected tests: see the last section.
 
 ## Pilot bytes
@@ -161,6 +177,11 @@ None.
   (`assert 15 == 0`: the new declarations were unclassified). It is not in main-known-red.txt; this branch caused it.
   The fix is in 628c22b0f (the Trust section above).
 - Rerun of only that id on the committed tree at 0efe236bd (ve-mac-1): `1 passed`, exit 0.
+- After review F1: `zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on HEAD cc861fb04 plus
+  this round's doc edits (snapshot 8ae905c0, ve-cloud-2): `recorded 116 units for tree 8e0af2d5cc; … 0 failed`, exit
+  0, 125 units run (tests/test_right_clauses_duplicate.py among them, 185 functions). The chunked units were
+  tests/test_acts_vocab_mutants.py (643 passed), tests/test_trust_mutants.py (814 passed) and
+  tests/test_english_evidence.py (77 passed), each 0 failed. The full gate was not run (the merge train runs it).
 
 SELF-REVIEW: 1 A, 3 B, 7 C; fixed 11. The self-reviewer subagent ran once, before the heavy checks.
 - A: the `.rightLines` count.
@@ -177,8 +198,8 @@ SELF-REVIEW: 1 A, 3 B, 7 C; fixed 11. The self-reviewer subagent ran once, befor
    over feature/*, lean-first/*, infra/* and foundation/*. Only cmp-s3a-cfr-1 is near: it adds new PlainWellFormed
    files and tests/test_right_clauses_lean.py. This item uses its own test file, and the `entry_typed` proof shape is
    checked above.
-3. Tests can fail: PASS. Hand bugs: [mutants.json](mutants.json), S1-S4, each failing a named test and `#guard`s.
-   Mechanical bugs: trust-mutants.json, 36 KILLED, 0 SURVIVOR.
+3. Tests can fail: PASS. Hand bugs: [mutants.json](mutants.json), S1-S5, each failing a named test and `#guard`s.
+   Mechanical bugs: trust-mutants.json (the fourth run, cc861fb04), 15 KILLED, 0 SURVIVOR.
 4. Python, Lean and Rust agree; valid inputs still pass: PASS. Lean only. The accepting `#guard`s of Examples.lean
    still hold (`lake build`). The candidate `ok` guards at Examples.lean:249 and 270 are unchanged.
 5. R8 binding: N.A. No Python reads a field of this answer.
@@ -202,8 +223,9 @@ SELF-REVIEW: 1 A, 3 B, 7 C; fixed 11. The self-reviewer subagent ran once, befor
     claim cites its command above. The spec re-read is the section above.
 15. Overclaim, silent cut, every check can fail, limits: PASS.
     - The universal words in REPORT and DELTA ("no verdict changes", "every other `entryOk` failure keeps the base
-      text") rest on `entryError` returning `invalid` in every branch but one, and on `checkEntry`'s unchanged
-      `if`/`else`.
+      text") rest on `entryError` returning `invalid` in every branch but one, and on `checkEntry` refusing every
+      `entryOk` failure with `entryError` (both branches since review F1, which the review found was not so for an
+      unknown right).
     - No deliverable is cut.
     - Every new `#guard` and test has a killing mutant (S1-S4, trust-mutants).
     - Limits are N.A.
