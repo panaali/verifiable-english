@@ -19823,10 +19823,12 @@
     "VE/Commands/StepsExamples.lean": {
       "T": [
         "VE.Commands.StepsExamples.ask",
+        "VE.Commands.StepsExamples.chargeInstalled",
         "VE.Commands.StepsExamples.check",
         "VE.Commands.StepsExamples.conditionScopeText",
+        "VE.Commands.StepsExamples.eightReviews",
+        "VE.Commands.StepsExamples.elabChargeInstalled",
         "VE.Commands.StepsExamples.noStep",
-        "VE.Commands.StepsExamples.padded",
         "VE.Commands.StepsExamples.readS",
         "VE.Commands.StepsExamples.readsWeb",
         "VE.Commands.StepsExamples.reviewIt",
@@ -19834,6 +19836,7 @@
         "VE.Commands.StepsExamples.spelled",
         "VE.Commands.StepsExamples.spellings",
         "VE.Commands.StepsExamples.step",
+        "VE.Commands.StepsExamples.twoSteps",
         "VE.Commands.StepsExamples.wideEnv"
       ]
     }

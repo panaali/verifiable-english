@@ -7,7 +7,7 @@ import VE.Commands.Examples
 namespace VE.Commands.StepsExamples
 
 open Lean (Json)
-open VE.Commands.Examples (E_web envOf obligation read lexOf web approvedDraft noReadingOutcome)
+open VE.Commands.Examples (E_web envOf obligation lexOf web approvedDraft noReadingOutcome)
 open VE.SpeechActs.Wire (decodeSpeechEnvironmentFull readingsBound)
 open VE.EnglishGrammar (workBudget)
 
@@ -98,6 +98,11 @@ def conditionScopeText : String :=
   | .many alts => alts.length == readingsBound
   | _ => false
 #guard combineShapes [(.core "a", .one ask false), (.core "b", .refused "NoDerivation" "x")] == .one ask false
+#guard combineShapes [(.core "a", .refused "NoDerivation" "x"), (.core "b", .one ask false)] == .one ask false
+#guard combineShapes [(.core "a", .limit), (.core "b", .one ask false)] == .limit
+-- Two `preposed` shapes at budget 0: the first refuses, the second stops; together, `limit`.
+#guard (shapes "If draft is approved, draft is approved, click Ask.").length == 2 &&
+  step "If draft is approved, draft is approved, click Ask." 0 == .limit
 -- A `many` first step and a `one` second keep the second reading in every alternative.
 #guard readingTuples [[reviewMeaning, reviewIt], [ask]] == [[reviewMeaning, ask], [reviewIt, ask]]
 #guard readingTuples [[ask], [reviewMeaning, reviewIt]] == [[ask, reviewMeaning], [ask, reviewIt]]
@@ -122,20 +127,26 @@ def spellings (w : String) (n : Nat) : List (String × Json) := (List.range n).m
 def spelled (preds : List (String × Json)) : Json := envOf ["user"] preds [("reader", "user")] "t" (some ("user", "reader")) []
 def wideEnv : Json := spelled (spellings "review" 64)
 
-#guard match read wideEnv "Review." with
+#guard match Examples.read wideEnv "Review." with
   | .many rs => rs.length == readingsBound
   | _ => false
 #guard productSize [[ask, check], [ask], []] == 0 && productSize [[ask, check], [ask, check, ask], [ask, check]] == 12
--- Eight steps of 64 readings: 64^8 products, `limit` without building one. Built eagerly it would not end, so it is
--- read only once the charge is installed and counts (a mutant sweep blanks a broken `@[csimp]`).
-open Lean Elab Command in
-#eval show CommandElabM Unit from do
-  let installed := (Lean.Compiler.CSimp.ext.getState (← getEnv)).map.contains ``shapeOutcome
-  let steps := if installed then 8 else 0
-  unless installed && productSize (List.replicate steps (List.replicate readingsBound ask)) > maxCandidates do
-    throwError "the product is not charged before it is built"
-  unless readS wideEnv (", then ".intercalate (List.replicate steps "Review") ++ ".") == .limit do
-    throwError "eight steps of 64 readings are not `limit`"
+/-- Whether `shapeOutcome` compiles to its charged form (`@[csimp] shapeOutcome_charged` is installed), read when the
+check elaborates. -/
+syntax (name := chargeInstalled) "charge_installed%" : term
+
+open Lean Elab Term in
+@[term_elab chargeInstalled] def elabChargeInstalled : TermElab := fun _ _ =>
+  return toExpr ((Lean.Compiler.CSimp.ext.getState (← getEnv)).map.contains ``shapeOutcome)
+
+def eightReviews (n : Nat) : String := ", then ".intercalate (List.replicate n "Review") ++ "."
+
+#guard charge_installed%
+-- Eight steps of 64 readings: 64^8 products, `limit` without building one. Built eagerly it would not end, so the
+-- eight steps are read only when the charge is installed and counts (a mutant sweep blanks a broken `@[csimp]`);
+-- else the wording is "." (refused), and the check fails.
+#guard readS wideEnv (eightReviews (if charge_installed% &&
+  productSize (List.replicate 8 (List.replicate readingsBound ask)) > maxCandidates then 8 else 0)) == .limit
 -- Two steps of 8 readings: exactly `readingsBound` complete alternatives.
 #guard match readS (spelled (spellings "review" 8 ++ spellings "listen" 8)) "Review, then listen." with
   | .many alts => alts.length == readingsBound
@@ -147,11 +158,11 @@ open Lean Elab Command in
 
 -- About 6 KB with one `, ` every 3 bytes: about 2000 `preposed` shapes, never built.
 #guard step ("If " ++ ", ".intercalate (List.replicate 2000 "a") ++ ", click Ask.") == .limit
--- Two steps that each read alone, 400 bytes and more in all: `limit`, where the uncharged body gives `steps`.
-def padded : String := String.mk (List.replicate 380 ' ') ++ " click Ask"
-#guard shapes ("Click Check rule conflict, then" ++ padded ++ ".") == [.seq ["Click Check rule conflict", padded.drop 1]]
-#guard web (capitalise (padded.drop 1) ++ ".") == .one ask
-#guard step ("Click Check rule conflict, then" ++ padded ++ ".") == .limit
+-- Two steps that each read alone: 400 bytes in all read; 401 are `limit`, where the uncharged body gives `steps`.
+def twoSteps (n : Nat) : String := "Click Check rule conflict, then" ++ String.mk (List.replicate n ' ') ++ " click Ask."
+#guard shapes (twoSteps 359) == [.seq ["Click Check rule conflict", String.mk (List.replicate 359 ' ') ++ "click Ask"]]
+#guard (twoSteps 358).utf8ByteSize == 400 && step (twoSteps 358) == .steps [check, ask]
+#guard (twoSteps 359).utf8ByteSize == 401 && step (twoSteps 359) == .limit
 
 /-! ## `lift`, `shapeAlts` and `reads` -/
 
