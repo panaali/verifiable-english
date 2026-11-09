@@ -1,6 +1,6 @@
 {
  "item": "bs-sel-defer-broad",
- "method": "each mutant applied alone to tools/select_tests.py, the named test run alone (uv run pytest -q tests/test_select_defer.py -k <name>), then the file restored",
+ "method": "each mutant applied alone to the file it names (tools/select_tests.py, or tools/history_tests.py for B16-B21), the named test run alone (uv run pytest -q tests/test_select_defer.py -k <name>), then the file restored",
  "mutants": [
   {
    "id": "B1",
@@ -112,6 +112,62 @@
    "file": "tools/select_tests.py",
    "mutation": "main: broad files not marked in the printed line",
    "test": "tests/test_select_defer.py::test_the_option_passes_the_maps_shares_and_marks_broad_files",
+   "result": "caught (rc 1, the test FAILED)"
+  },
+  {
+   "id": "B15",
+   "language": "python",
+   "file": "tools/select_tests.py",
+   "mutation": "unit_text: drop the paths the source builds (return the source alone)",
+   "test": "tests/test_select_defer.py::test_a_heavy_broad_unit_that_builds_the_changed_modules_path_stays",
+   "result": "caught (rc 1, the test FAILED)"
+  },
+  {
+   "id": "B16",
+   "language": "python",
+   "file": "tools/history_tests.py",
+   "mutation": "_built: record every part of a join, not only the outermost (lean/VE/Time from lean/VE/Time/Zone.lean)",
+   "test": "tests/test_select_defer.py::test_a_module_or_directory_a_unit_builds_by_a_join_is_named",
+   "result": "caught (rc 1, the test FAILED)"
+  },
+  {
+   "id": "B17",
+   "language": "python",
+   "file": "tools/history_tests.py",
+   "mutation": "_path: a + of two known parts makes no path",
+   "test": "tests/test_select_defer.py::test_a_module_or_directory_a_unit_builds_by_a_join_is_named",
+   "result": "caught (rc 1, the test FAILED)"
+  },
+  {
+   "id": "B18",
+   "language": "python",
+   "file": "tools/history_tests.py",
+   "mutation": "_path: joinpath drops its receiver",
+   "test": "tests/test_select_defer.py::test_a_module_or_directory_a_unit_builds_by_a_join_is_named",
+   "result": "caught (rc 1, the test FAILED)"
+  },
+  {
+   "id": "B19",
+   "language": "python",
+   "file": "tools/history_tests.py",
+   "mutation": "_path: a join with an unknown base makes no path (no literal parts after it)",
+   "test": "tests/test_select_defer.py::test_a_module_or_directory_a_unit_builds_by_a_join_is_named",
+   "result": "caught (rc 1, the test FAILED)"
+  },
+  {
+   "id": "B20",
+   "language": "python",
+   "file": "tools/history_tests.py",
+   "mutation": "visit_BinOp: record no / or + join",
+   "test": "tests/test_select_defer.py::test_a_module_or_directory_a_unit_builds_by_a_join_is_named",
+   "result": "caught (rc 1, the test FAILED)"
+  },
+  {
+   "id": "B21",
+   "language": "python",
+   "file": "tools/history_tests.py",
+   "mutation": "_built: a joinpath's receiver counts as a path of its own",
+   "test": "tests/test_select_defer.py::test_a_module_or_directory_a_unit_builds_by_a_join_is_named",
    "result": "caught (rc 1, the test FAILED)"
   }
  ]
