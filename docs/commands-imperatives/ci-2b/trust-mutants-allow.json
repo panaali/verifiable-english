@@ -1,0 +1,22 @@
+{
+ "allow": [
+  {"definition": "VE.SpeechActs.Source.readSource", "operator": "list-first",
+   "reason": "the surviving site is `commands.isEmpty` (Source/Run.lean, the A2 re-read's guard): `take 1` of a list is empty exactly when the list is, so the guard is unchanged; every other list-first site of readSource is KILLED by RunSplit.lean's SourceExamples"},
+  {"definition": "VE.SpeechActs.Source.readSource", "operator": "list-last",
+   "reason": "the surviving site is `commands.isEmpty`: `reverse.take 1` of a list is empty exactly when the list is, so the guard is unchanged; every other list-last site of readSource is KILLED by RunSplit.lean's SourceExamples"},
+  {"definition": "VE.SpeechActs.Source.readSource", "operator": "eq-le",
+   "reason": "UNKNOWN only: the mutated `=` is the `:=` of the definition, which does not elaborate (failed to synthesize)"},
+  {"definition": "VE.SpeechActs.Source.readSource", "operator": "eq-ne",
+   "reason": "UNKNOWN only: the mutated `=` is the `:=` of the definition, which does not elaborate (application type mismatch)"},
+  {"definition": "VE.SpeechActs.Source.decodeSpeechSource", "operator": "eq-le",
+   "reason": "UNKNOWN only: the mutated `=` is the `:=` of the definition, which does not elaborate (failed to synthesize)"},
+  {"definition": "VE.SpeechActs.Source.decodeSpeechSource", "operator": "eq-ne",
+   "reason": "UNKNOWN only: the mutated `=` is the `:=` of the definition, which does not elaborate (application type mismatch)"},
+  {"definition": "VE.SpeechActs.Source.readSource", "operator": "list-empty",
+   "reason": "UNKNOWN only: `needed` and `dec.units(.filterMap)` replaced by `[]` before a field-notation call (`[].map`, `[].filterMap`) do not elaborate (invalid field notation); the elaborating list-empty sites of readSource are KILLED"},
+  {"definition": "VE.SpeechActs.Source.readSource", "operator": "list-drop-last",
+   "reason": "UNKNOWN only: `dec.units.filterMap.dropLast` does not elaborate (invalid field notation); the other list-drop-last sites of readSource are KILLED"},
+  {"definition": "VE.SpeechActs.Source.readSource", "operator": "list-drop-first",
+   "reason": "UNKNOWN only: `dec.units.filterMap.drop 1` does not elaborate (invalid field notation); the other list-drop-first sites of readSource are KILLED"}
+ ]
+}

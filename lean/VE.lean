@@ -313,6 +313,8 @@ import VE.Scope.FarTheorems
 import VE.Scope.FarExamples
 import VE.Scope.Reach
 import VE.Scope.ReachExamples
+import VE.Scope.Authoring
+import VE.Scope.AuthoringExamples
 import VE.Service.ScopeAdmission
 import VE.Service.ScopeExamples
 import VE.Service.DocumentChain
