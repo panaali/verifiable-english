@@ -159,7 +159,7 @@ module ResponseShape.CaseDeciders 1b58f0b0a9c88f49876e8f3ceb5acfe1213edbd0f35ce5
 54:0-65:89 def ResponseShape.CaseDecider.fn@ResponseShape.CaseDeciders
 67:0-67:72 def ResponseShape.CaseDecider.ofName?@ResponseShape.CaseDeciders
 74:0-75:76 def ResponseShape.decidedCase@ResponseShape.CaseDeciders
-module ResponseShape.DefaultsExamples ea0ea61a3a6b075b26c2d9a8878baaa23aea3b75a2d47c67f92b58d292ccfa70
+module ResponseShape.DefaultsExamples f36207374b6963968782100a070a049fccb31b8b6ffdfd14eb802958cf913933
 11:0-12:104 def ResponseShape.DefaultsExamples.accepts@ResponseShape.DefaultsExamples
 13:0-13:69 def ResponseShape.DefaultsExamples.set@ResponseShape.DefaultsExamples
 14:0-15:43 def ResponseShape.DefaultsExamples.drop@ResponseShape.DefaultsExamples
