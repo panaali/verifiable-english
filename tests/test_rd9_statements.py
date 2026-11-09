@@ -39,7 +39,7 @@ def test_every_built_batch_block_is_compared():
     """The sections cover SC-1's three blocks and every later batch's block that is built."""
     titles = [section[0].split()[0] for section in _checker().SECTIONS]
     assert titles[:3] == ["SC-1", "SC-1", "SC-1"]
-    assert titles[3:] == ["SC-2", "SC-4", "SC-5", "SC-6"]
+    assert titles[3:] == ["SC-2", "SC-4", "SC-5", "SC-6", "SC-10"]
 
 
 def _mutated_sections(checker, tmp_path, section_index, name):
@@ -68,7 +68,8 @@ def _mutated_sections(checker, tmp_path, section_index, name):
     (4, "readings_wire_sd_separate_sound"), (4, "readings_wire_sd_choice_entails"),
     (6, "normDefaults_wire_admissionX"), (6, "layered_wire_acceptance"),
     (5, "xQueryRow_holds"), (5, "x_rowsHold"), (5, "sdSem_normsShaped"), (5, "readings_wire_sd_verdicts_all"),
-    (5, "readings_wire_sd_verdicts_inconsistent"),
+    (5, "readings_wire_sd_verdicts_inconsistent"), (7, "sd_superpose_conflict_free"), (7, "supX_pull"),
+    (7, "sd_superpose_all"), (7, "sd_superpose_countermodel"),
 ])
 def test_the_check_fails_on_a_changed_statement(tmp_path, capsys, section_index, name):
     checker = _checker()
@@ -83,6 +84,17 @@ def test_a_stale_not_built_marker_fails(capsys):
     sections[1] = (title, start, stop, sources, expected, {"softX_wellFormed"})
     assert checker.main(sections) == 1
     assert "softX_wellFormed: not-built marker is stale" in capsys.readouterr().out
+
+
+def test_a_later_batch_marker_does_not_say_unbuilt(capsys):
+    """Only SC-1's not-built line says "unbuilt" (its acceptance probe greps for the word); SC-10's says "not built yet"."""
+    checker = _checker()
+    sections = list(checker.SECTIONS)
+    title, start, stop, sources, expected, _ = sections[7]
+    sections[7] = (title, start, stop, sources, expected, {"sd_superpose_all"})
+    assert checker.main(sections) == 1
+    out = capsys.readouterr().out
+    assert "SC-10 not built yet: sd_superpose_all" in out and "unbuilt" not in out
 
 
 # B4 (review F27 (c) of rd-9): `choiceLayeredG` and `ndTextWith` are signed after the bounded statement re-check. Each
