@@ -1,4 +1,5 @@
 import VE.SpeechActs.Run
+import VE.Commands.Run
 import VE.Discourse.Loader
 import VE.Limits
 
@@ -663,6 +664,20 @@ def coreUnit (u : SourceUnit) (chosen : Bool) : Json :=
   Json.mkObj (kept ++ if chosen || u.kind == .str "instruction" || u.kind == .str "question" then
     [("source", .str u.wording)] else [])
 
+/-- The units as the stated order sees them (commands-imperatives section 7, finding (c)): an instruction unit by its
+kind (attributed and hedged instructions included), and an instruction whose wording has the `Then <x>.` shape is an
+`after` unit. No unit field names a source antecedent (OPEN O3; reviews/dri-decisions-20261102-ci-0.md item 5), so
+every authored `Then` unit is in `thenWithoutStep`. -/
+def stepUnits (units : List SourceUnit) : List VE.Commands.StepUnit :=
+  units.map fun u =>
+    let ins := (VE.Route.Admission.decodeKind 16 u.kind).toOption.any (Wire.wraps · .instruction)
+    ⟨u.id, ins, 1, ins && (VE.Commands.shapes u.wording).any (· matches .after _), none⟩
+
+/-- `ThenWithoutStep`, naming the first such unit, when a `Then` unit follows no named earlier instruction unit. -/
+def thenFault (units : List SourceUnit) : Option String :=
+  (VE.Commands.thenWithoutStep (stepUnits units)).head?.map fun u =>
+    s!"{VE.Commands.Texts.thenWithoutStep.1}: {VE.Commands.Texts.thenWithoutStep.2} (unit {u})"
+
 def decodeSpeechSource (payload evidence : Json) : Except String { src : SpeechSource // src.payload = payload } := do
   let fm := payload.getObjValD "metadata"
   let source := Loader.sourceOf payload
@@ -720,6 +735,7 @@ def decodeSpeechSource (payload evidence : Json) : Except String { src : SpeechS
      | .ok r => [("reading_sets", r)]
      | .error _ => []))
   let dec ← Run.checkedDocument environment document
+  if let some e := thenFault units then throw e
   for u in units do
     if let some s := u.explicit then
       unless s == .str (unitStatus u (latestOf sets u.id)) do

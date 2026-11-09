@@ -1,6 +1,7 @@
 import VE.Commands.Run
 import VE.Commands.Examples
 import VE.Senses.Run
+import VE.SpeechActs.Source.Run
 
 /-! The fixtures of docs/spec/commands-imperatives.md section 6 through the `english.command` mode: the proof task's
 rows P1′ to P8, O1's text, O2's readings, O7's budget, O10's byte bound, the request echo, `jsonWF?`'s refusal. -/
@@ -10,7 +11,7 @@ namespace VE.Commands.RunExamples
 open Lean (Json toJson)
 open VE.Commands.Examples
 open VE.EnglishGrammar (workBudget)
-open VE.SpeechActs.Wire (readingsBound)
+open VE.SpeechActs.Wire (readingsBound decodeSpeechEnvironmentFull)
 
 /- A refusal keeps every diagnostic field, and the translation entry point uses that formatter unchanged
 when there is no overlay failure. This catches field loss at either list-producing boundary. -/
@@ -205,5 +206,97 @@ def rawEnv : Json := .obj ⟨⟨Std.DTreeMap.Internal.Impl.inner 2 "a" (.bool tr
     ("args", toJson ([] : List String)), ("guard", VE.Route.Wire.encodeFormula .top)]
 #guard (Run.caseReported (request "Click Check and save." (env := Examples.actsEnv Examples.clickSave (some [])))).getObjValD
   "error" == .str "InvalidInput: act phrase for click_required joins acts with 'and' outside a fixed phrase"
+
+/-! ## CI-3 through the mode (section 7): steps, `Then` steps, conditions written first, the stated order -/
+
+def webGet (s k : String) : Json := get (request s (env := E_web)) k
+def actOf (j : Json) : Json := (j.getObjValD "command").getObjValD "act"
+def spans (j : Json) : List Json := ((j.getObjValD "fills").getArr?.toOption.getD #[]).toList.map (·.getObjValD "span")
+def readingsOf (j : Json) : List Json := ((j.getObjValD "readings").getArr?.toOption.getD #[]).toList
+
+-- `readInstruction` is `readStep` outside the proof task (`readInstruction_step`), and the proof task's `lift`.
+#guard ((ctxOf (request "x" (env := E_web)) []).map fun c =>
+  [readInstruction c "Then click Ask.", readInstruction c "Click Check rule conflict, then click Ask."]) ==
+  some [.one ⟨.require, "click_ask_required", [], .top⟩ true,
+    .steps [⟨.require, "click_check_required", [], .top⟩, ⟨.require, "click_ask_required", [], .top⟩]]
+#guard [webGet "Then click Ask." "outcome", webGet "Then click Ask." "after_previous", actOf (webGet "Then click Ask." "reading"),
+  actOf (webGet "Then click Check rule conflict." "reading"), webGet "Click Ask." "after_previous"] ==
+  [.str "one", .bool true, .str "click_ask_required", .str "click_check_required", .bool false]
+-- The two English lines of section 7: speech-acts' `paraphrase` and `paraphraseSteps`.
+#guard (webGet "If draft is approved, click Ask." "reading").getObjValD "paraphrase" ==
+  .str "In this task, you are required to click Ask, where the stated condition holds."
+#guard webGet "Click Check rule conflict, then click Ask." "paraphrase" == .str ("In this task, you are required to do " ++
+  "these in order: first click Check rule conflict, then click Ask. The order is stated; VE does not reason about it.")
+#guard (readingsOf (result (request "Click Check rule conflict, then click Ask." (env := E_web)))).map actOf ==
+  [.str "click_check_required", .str "click_ask_required"]
+-- Spans point into the whole wording: past `If <c>, `, `Then ` and `, then `, and leading spaces.
+#guard spans (get (request "If atlas is reviewed, click Check.") "reading") == [toJson [28, 33]]
+#guard spans (get (request "Then click Check.") "reading") == [toJson [11, 16]]
+#guard (readingsOf (result (request "  Click Check, then do not share the token."))).map spans == [[toJson [8, 13]], [toJson [33, 42]]]
+#guard get (request "  Click Check, then do not share the token.") "paraphrase" == .str ("In this task, you are " ++
+  "required to do these in order: first click check, then do not share the token. The order is stated; VE does not reason about it.")
+-- `many` over two sequences: every reading, and each alternative's shape and positions.
+#guard webGet "Review the meaning, then click Ask." "alternatives" == toJson [
+  Json.mkObj [("shape", .str "seq"), ("readings", toJson [0, 1])], Json.mkObj [("shape", .str "seq"), ("readings", toJson [2, 3])]]
+#guard (readingsOf (result (request "Review the meaning, then click Ask." (env := E_web)))).map spans == [[], [], [toJson [7, 18]], []]
+#guard webGet "Review the meaning." "alternatives" == toJson [
+  Json.mkObj [("shape", .str "core"), ("readings", toJson [0])], Json.mkObj [("shape", .str "core"), ("readings", toJson [1])]]
+#guard [webGet "If draft is approved, click Check rule conflict, then click Ask." "code",
+  webGet "If draft is approved, click Check rule conflict, then click Ask." "class",
+  webGet "Click Ask, then add an exception or precedence." "code"] == [.str "ConditionScope", .str "VEError", .str "InvalidInput"]
+#guard [request "Then click Ask." (env := E_web), request "Click Check rule conflict, then click Ask." (env := E_web),
+  request "Review the meaning, then click Ask." (env := E_web), request "  Click Check, then do not share the token."].all encodes
+
+/-! The stated order (finding (c)): the seven-unit list, the pilot pattern uweb.tour.552_0, a `Then` unit with no
+earlier instruction unit, and the two-step counterexample. -/
+
+def su (id : String) (ins : Bool := true) (steps : Nat := 1) (after : Bool := false) (a : Option String := none) :
+    StepUnit := ⟨id, ins, steps, after, a⟩
+def seven : List StepUnit := [su "u1", su "u2" (steps := 2), su "u3" (after := true) (a := some "u2"), su "u4" (ins := false),
+  su "u5" (after := true) (a := some "u3"), su "u6" (after := true), su "u7" (after := true) (a := some "u4")]
+#guard stepOrder seven == [("u2.1", "u2.2"), ("u2.2", "u3"), ("u3", "u5")]
+#guard thenWithoutStep seven == ["u6", "u7"]
+#guard stepOrder [su "a", su "b" (after := true) (a := some "x")] == [] &&
+  thenWithoutStep [su "a", su "b" (after := true) (a := some "x")] == ["b"]
+#guard thenWithoutStep [su "t" (after := true)] == ["t"] && stepOrder [su "t" (after := true)] == []
+#guard stepNames [su "a", su "b" (steps := 2) (after := true) (a := some "a")] == ["a", "b.1", "b.2"] &&
+  stepOrder [su "a", su "b" (steps := 2) (after := true) (a := some "a")] == [("a", "b.1"), ("b.1", "b.2")]
+#guard [lastStep (su "b" (steps := 3)), firstStep (su "b" (steps := 3)), lastStep (su "a"), firstStep (su "a")] ==
+  ["b.3", "b.1", "a", "a"]
+#guard (stepCommands "u9" [⟨.require, "a", [], .top⟩, ⟨.forbid, "b", [], .top⟩]).map (fun c => (c.unit, c.act)) ==
+  [("u9.1", "a"), ("u9.2", "b")]
+#guard [Texts.classOf "ConditionScope", Texts.classOf "ThenWithoutStep"] == [some "VEError", some "VEError"]
+
+/-! `surfaceKind`'s CI-3 cases ((iii)): `If <c>, <verb> …` and `Then <verb> …` are instructions; SA's (ββ) premise,
+an `if` sentence with no comma, stays asserted, as do clauses that do not start with an act verb. -/
+
+def webKind (s : String) : String :=
+  match decodeSpeechEnvironmentFull E_web with
+  | .ok se => VE.SpeechActs.Wire.surfaceKind se.ne.regulated s
+  | .error _ => ""
+#guard ["If draft is approved, click Ask.", "Then click Ask.", "  then  CLICK Check rule conflict.", "Click Ask.",
+  "If Alice must click Check then Atlas is reviewed.", "If draft is approved, the meaning is reviewed.",
+  "Then the draft is approved.", "If draft is approved, click Ask?"].map webKind ==
+  ["instruction", "instruction", "instruction", "instruction", "asserted", "asserted", "asserted", "question"]
+#guard match decodeSpeechEnvironmentFull E_web with
+  | .ok se => VE.SpeechActs.Wire.choiceKindConflicts se.ne.regulated (.str "asserted") "Then click Ask." &&
+      !VE.SpeechActs.Wire.choiceKindConflicts se.ne.regulated (.str "instruction") "If draft is approved, click Ask."
+  | .error _ => false
+
+/-! The document check (finding (c), O3): an authored `Then` instruction unit is `ThenWithoutStep`, by its kind,
+attributed instructions included; a `Then` wording of another kind, or an instruction that is no `Then` step, is not. -/
+
+def srcUnit (id : String) (kind : Json) (w : String) : VE.SpeechActs.Source.SourceUnit :=
+  ⟨id, (0, 0), kind, .null, none, w, none, none, .null⟩
+def attributed : Json := toJson [Json.str "attributed", .str "alice", .str "says", .str "instruction"]
+#guard VE.SpeechActs.Source.thenFault [srcUnit "a" (.str "instruction") "Click Ask.",
+    srcUnit "b" (.str "instruction") "Then click Ask."] ==
+  some ("ThenWithoutStep: a Then step follows no earlier instruction step; write the steps in one sentence, joined by " ++
+    "', then ' (unit b)")
+#guard [VE.SpeechActs.Source.thenFault [srcUnit "a" (.str "asserted") "Then the draft is approved."],
+  VE.SpeechActs.Source.thenFault [srcUnit "a" (.str "instruction") "Click Check rule conflict, then click Ask."]] ==
+  [none, none]
+#guard (VE.Route.Admission.decodeKind 16 attributed).isOk &&
+  (VE.SpeechActs.Source.thenFault [srcUnit "q" attributed "Then click Ask."]).isSome
 
 end VE.Commands.RunExamples

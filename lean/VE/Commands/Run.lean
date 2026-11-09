@@ -656,6 +656,102 @@ theorem stepCommands_policy (D : VE.SpeechActs.SpeechDoc) (u : String) (rs : Lis
       D.norms ++ (pre ++ stepCommands u rs ++ post).map (VE.SpeechActs.demand D) := by
   simp [VE.SpeechActs.policy, h]
 
+/-! ### `stepOrder_forward`: each pair names an earlier step, then a later one -/
+
+/-- One unit's step names, as `stepNames` lists them. -/
+def unitNames (u : StepUnit) : List String :=
+  if u.steps ≤ 1 then [u.id] else (List.range u.steps).map fun i => u.id ++ "." ++ toString (i + 1)
+
+theorem flatMap_getElem? {α β : Type} (f : α → List β) : ∀ (xs : List α) (k : Nat) (u : α), xs[k]? = some u →
+    ∀ i, i < (f u).length → (xs.flatMap f)[((xs.take k).flatMap f).length + i]? = (f u)[i]?
+  | [], _, _, h, _, _ => by simp at h
+  | x :: xs, 0, u, h, i, hi => by
+    simp only [List.getElem?_cons_zero, Option.some.injEq] at h
+    subst h
+    simp [List.getElem?_append_left hi]
+  | x :: xs, k + 1, u, h, i, hi => by
+    simp only [List.getElem?_cons_succ] at h
+    simp only [List.take_succ_cons, List.flatMap_cons, List.length_append, Nat.add_assoc]
+    rw [List.getElem?_append_right (Nat.le_add_right _ _), Nat.add_sub_cancel_left]
+    exact flatMap_getElem? f xs k u h i hi
+
+theorem flatMap_take_le {α β : Type} (f : α → List β) (xs : List α) {m k : Nat} {v : α} (hm : m < k)
+    (hv : xs[m]? = some v) : ((xs.take m).flatMap f).length + (f v).length ≤ ((xs.take k).flatMap f).length := by
+  have h1 : xs.take (m + 1) = xs.take m ++ [v] := by rw [List.take_succ, hv]; rfl
+  have h2 : xs.take k = xs.take (m + 1) ++ (xs.take k).drop (m + 1) := by
+    conv => lhs; rw [← List.take_append_drop (m + 1) (xs.take k)]
+    rw [List.take_take, Nat.min_eq_left hm]
+  rw [h2, h1]
+  simp
+
+theorem unitNames_pos (u : StepUnit) : 0 < (unitNames u).length := by
+  unfold unitNames; split <;> simp; omega
+
+theorem firstStep_eq (u : StepUnit) : (unitNames u)[0]? = some (firstStep u) := by
+  unfold unitNames firstStep
+  split
+  · simp
+  · simp only [List.getElem?_map, List.getElem?_range (by omega : 0 < u.steps), Option.map_some]
+    rw [String.append_assoc, (by decide : "." ++ toString (0 + 1) = ".1")]
+
+theorem lastStep_eq (u : StepUnit) : (unitNames u)[(unitNames u).length - 1]? = some (lastStep u) := by
+  unfold unitNames lastStep
+  split
+  · simp
+  · rename_i h
+    simp only [List.length_map, List.length_range, List.getElem?_map, List.getElem?_range (by omega : u.steps - 1 < u.steps),
+      Option.map_some, Option.some.injEq]
+    rw [Nat.sub_add_cancel (by omega)]
+
+theorem stepOrder_forward (us : List StepUnit) (p : String × String) (hn : (stepNames us).Nodup)
+    (h : p ∈ stepOrder us) :
+    ∃ i j : Nat, i < j ∧ (stepNames us)[i]? = some p.1 ∧ (stepNames us)[j]? = some p.2 := by
+  have _ := hn
+  have hs : stepNames us = us.flatMap unitNames := rfl
+  rw [hs]
+  simp only [stepOrder, List.mem_flatMap, List.mem_range] at h
+  obtain ⟨k, _, hk⟩ := h
+  cases hu : us[k]? with
+  | none => simp [hu] at hk
+  | some u =>
+    simp only [hu, List.mem_append] at hk
+    rcases hk with hk | hk
+    · split at hk
+      · split at hk
+        · rename_i v hv
+          simp only [List.mem_singleton] at hk
+          subst hk
+          simp only [antecedentOf, Option.bind_eq_some_iff] at hv
+          obtain ⟨_, _, hv⟩ := hv
+          have hvm := List.mem_of_find?_eq_some hv
+          obtain ⟨m, hm⟩ := List.mem_iff_getElem?.1 (List.mem_filter.1 hvm).1
+          have hmk : m < k := by
+            have := (List.getElem?_eq_some_iff.1 hm).1
+            simp at this; omega
+          have hmv : us[m]? = some v := by rw [← List.getElem?_take_of_lt hmk]; exact hm
+          have hpos := unitNames_pos v
+          refine ⟨((us.take m).flatMap unitNames).length + ((unitNames v).length - 1),
+            ((us.take k).flatMap unitNames).length + 0, ?_, ?_, ?_⟩
+          · have := flatMap_take_le unitNames us hmk hmv; omega
+          · rw [flatMap_getElem? unitNames us m v hmv _ (by omega)]; exact lastStep_eq v
+          · rw [flatMap_getElem? unitNames us k u hu _ (unitNames_pos u)]; exact firstStep_eq u
+        · simp at hk
+      · simp at hk
+    · split at hk
+      · simp at hk
+      · rename_i h1
+        simp only [List.mem_map, List.mem_range] at hk
+        obtain ⟨i, hi, rfl⟩ := hk
+        have hl : (unitNames u).length = u.steps := by simp [unitNames, h1]
+        refine ⟨((us.take k).flatMap unitNames).length + i, ((us.take k).flatMap unitNames).length + (i + 1),
+          by omega, ?_, ?_⟩
+        · rw [flatMap_getElem? unitNames us k u hu _ (by omega)]
+          simp only [unitNames, h1, if_false, List.getElem?_map, List.getElem?_range (by omega : i < u.steps),
+            Option.map_some]
+        · rw [flatMap_getElem? unitNames us k u hu _ (by omega)]
+          simp only [unitNames, h1, if_false, List.getElem?_map, List.getElem?_range (by omega : i + 1 < u.steps),
+            Option.map_some]
+
 end Statements
 
 end VE.Commands
