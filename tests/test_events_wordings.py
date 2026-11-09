@@ -62,15 +62,15 @@ def test_role_wordings_stay_under_the_author_lint():
     the lint (BINARY_AUXILIARY), with the block as without it."""
     assert "happens_on" not in _issues(_environment())
     committed = _environment(happens_on="{0} is committed on {1}")
-    assert "BINARY_AUXILIARY" in _issues(committed)["happens_on"]
-    assert "BINARY_AUXILIARY" in _issues(_without_block(committed))["happens_on"]
+    assert "BINARY_AUXILIARY" in _issues(committed).get("happens_on", set())
+    assert "BINARY_AUXILIARY" in _issues(_without_block(committed)).get("happens_on", set())
 
 
 def test_a_link_with_another_wording_is_still_judged():
     """Only a link's own form's fixed wording is exempt: a contributed link worded as the necessary form, or as
     `alternatives@0`'s "{0} leads to {1}" (D11), is judged like any declared wording."""
     other = _environment(contributed_to="{0} was necessary for {1}")
-    assert "BINARY_AUXILIARY" in _issues(other)["contributed_to"]
+    assert "BINARY_AUXILIARY" in _issues(other).get("contributed_to", set())
     leads = _environment(contributed_to="{0} leads to {1}")
     assert _issues(leads).get("contributed_to") == _issues(_without_block(leads)).get("contributed_to")
 
