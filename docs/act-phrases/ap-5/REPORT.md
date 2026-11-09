@@ -176,7 +176,7 @@ Spec re-read:
 
 1. Typed and contained answers: N.A., since no route, relay or response changes.
 2. Deliverables: PASS. Every plan and task row is in section 3, with "not in this item" as the task lists it;
-   `grep -n "ve/\|rust/" <(git diff --name-only main...HEAD)` is empty.
+   `git diff --name-only main...HEAD | grep -E "^(ve|rust|tests)/"` finds nothing.
 3. Tests can fail: PASS. mutants.json (35 KILLED, with a control build); trust-mutants.json exits 0.
 4. Python, Lean and Rust agree: N.A., since only Lean changed and nothing is called.
 5. R8 binding: N.A., since nothing is relayed.
