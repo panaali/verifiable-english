@@ -54,9 +54,11 @@ CASES = {
     "deleted-with-trailer": (BASE, [BASE[0], *BASE[2:]], HOOKS, "b-1", False, "c-2:c-1 d-3:d-2", ""),
     "trailer-on-a-twin": ([BASE[0]] * 2, [["n", "x", "y"]] * 2 + [BASE[0]], HOOKS, "a-0", False, "a-1:a-2", ""),
     "kept-first": ([SAME[0]] * 2 + BASE[1:2], [BASE[2], *SAME[1::-1], BASE[1]], HOOKS, "", False, "b-2:b-3", "a-0"),
-    # A kept ID's text is gone (`a-0`'s first; `a-2`'s is at `a-1`) or unknown (`k-0`'s, or no hook): none pairs.
-    "no-text": ("kxz mxy bxy".split(), "kxy mxz mxy bxy".split(), PARTIAL, "", False, "", "b-2"),  # a mutant: 3 letters
-    "kept-id-reused": (SAME, SAME[1:], HOOKS, "", False, "", "a-2"),
+    "kept-id-reused": (SAME, SAME[1:], HOOKS, "", False, "", "a-2"),  # kept `a-0`'s text is gone: none pairs
+    # Kept `a-0`/`m-0`/`k-0` has no text (None) at both sides/the head/the base: none pairs. A mutant: 3 letters.
+    "no-text-at-both": ("axz bxy".split(), "awz nxy bxy".split(), PARTIAL, "", False, "", "b-1"),  # PROBE F5
+    "no-text-at-head": ("mxy bxy".split(), "mxz mxy bxy".split(), PARTIAL, "", False, "", "b-1"),
+    "no-text-at-base": ("kxz bxy".split(), "kxy nxz bxy".split(), PARTIAL, "", False, "", "b-1"),  # `n-1` None too
     "no-hook-at-base": (BASE, INSERTED, ("", HOOK), "", False, "", "b-1 c-2 d-3"),
     "no-hook": (BASE, INSERTED, ("", ""), "", False, "", "b-1 c-2 d-3"),  # an ordinary parametrised test
     "two-cases-one-text": ([BASE[0], BASE[0]], [["new", "x", "y"], BASE[0]], HOOKS, "", False, "", "a-0"),

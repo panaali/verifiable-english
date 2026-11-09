@@ -25,7 +25,7 @@ the head still collects. A trailer without a target and a reason fails too.
   source in the test module is unchanged (a data file, a glob, an imported list).
 
 A lost mutant ID no trailer records is paired with a head ID of the same text (logged by `pairing_text`), not refused,
-when its module names each case by its text (`CASES_HOOK`) and no text of a kept ID is gone (`pair_cases`).
+when its module names each case by its text (`CASES_HOOK`) and no text of a kept ID is gone or unknown (`pair_cases`).
 
 A module that no longer imports or is skipped at collection is a collection report, which fails on its own
 as well. Every head collection is attached as the record of its commit.
@@ -488,20 +488,18 @@ class Changes:
         return {nodeid: head for nodeid, head in pairs.items() if nodeid in lost}
 
 
-def pair_cases(base: dict[str, str], head: dict[str, str]) -> dict[str, str]:
+def pair_cases(base: dict[str, str | None], head: dict[str, str | None]) -> dict[str, str]:
     """{base ID the head lacks: a head ID with its text, one each} from one function's {ID: mutant text or None} on
-    each side; a lost ID whose text is gone stays unpaired, and when a kept ID's is, none pairs. None never pairs."""
-    free: dict[str, list[str]] = {}
+    each side. A lost ID whose text is gone or None stays unpaired; a kept ID with None on a side or a gone text: {}."""
+    free, pairs = {}, {}  # {a head text or None: its head IDs}, {base ID: head ID}
     for nodeid, text in head.items():
-        if text is not None and base.get(nodeid) != text:  # a text, not at an ID that keeps it
+        if base.get(nodeid) != text:  # a head case, not at an ID that keeps its text
             free.setdefault(text, []).append(nodeid)
-    pairs = {}
     for nodeid, text in sorted(base.items(), key=lambda item: (item[0] not in head, item[0])):  # kept IDs first
-        if head.get(nodeid) != text:
-            if free.get(text):
-                pairs[nodeid] = free[text].pop(0)
-            elif nodeid in head:  # a kept ID's text is gone, which no lost ID shows: the function pairs nothing
-                return {}
+        if nodeid in head and (None in (text, head[nodeid]) or (head[nodeid] != text and not free.get(text))):
+            return {}  # a kept ID's text is unknown, or gone and shown by no lost ID: the function pairs nothing
+        if head.get(nodeid) != text and free.get(text):  # never None: a lost ID's None equals head.get's
+            pairs[nodeid] = free[text].pop(0)
     return {nodeid: paired for nodeid, paired in pairs.items() if nodeid not in head}
 
 
