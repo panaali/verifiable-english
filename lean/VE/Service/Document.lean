@@ -161,7 +161,7 @@ def rightsNormalForm (content : Json) : Json :=
     | j => j
   let line := fun (j : Json) => match j with
     | .obj kvs => Json.mkObj (kvs.toList.map fun (k, v) =>
-        (k, if ["norm", "liberty", "recognition"].contains k then norm v else v))
+        (k, if rightsChildContext "line" k == "norm" then norm v else v))
     | j => j
   match content with
   | .obj kvs => match kvs.toList with
@@ -182,7 +182,11 @@ def rightsNormalForm (content : Json) : Json :=
       ("hard", .bool false)]) == n [] &&
     rightsNormalForm (n [("mode", .null), ("hard", .null), ("alterable", .null)]) == n [] &&
     rightsNormalForm (n [("mode", .str "default")]) == n [("mode", .str "default")] &&
-    rightsNormalForm (n [("hard", .bool true)]) == n [("hard", .bool true)]
+    rightsNormalForm (n [("hard", .bool true)]) == n [("hard", .bool true)] &&
+    rightsNormalForm (n [("alterable", Json.arr #[.str "court"])]) == n [("alterable", Json.arr #[.str "court"])] &&
+    rightsNormalForm (n [("exception", Json.mkObj [("decided_by", .str "court")])]) ==
+      n [("exception", Json.mkObj [("decided_by", .str "court")])] &&
+    rightsNormalForm (n [("guard", .null)]) == n [("guard", .null)]
 #guard
   let p := fun (soft : List (String × Json)) => Json.mkObj [("right_lines", Json.mkObj [("right", .str "r"),
     ("lines", Json.arr #[Json.mkObj [("kind", .str "power"),
@@ -295,7 +299,8 @@ def hasNull : Nat → Json → Bool
   | _, _ => false
 
 /-- Which unit content's nulls the mode reads as Python's relays read them, absent (`wireJson`), while the identity
-keeps them (`nullableMeaningId`): none (`plain`); under `rights@0` every unit's content; in a soft-norms document
+keeps them (`nullableMeaningId`; a rights block's id binds `rightsNormalForm`, which omits a `null` soft field of a
+line's norm objects): none (`plain`); under `rights@0` every unit's content; in a soft-norms document
 (batch 16f) the norm object of a unit's content, which only the soft route reads. -/
 inductive Nullable | plain | rights | soft
   deriving DecidableEq
@@ -1518,7 +1523,7 @@ def softCanonical (N : VE.SoftNorms.SoftNode) (authored : Json) : Json :=
 
 /-- `_content` in a rights document (`rights=True`), at the unit's place in the unit loop: a soft norm, after its
 single-rule check, in canonical form (with the unit's `cites` on a `norm` unit), then the kind check of `normRole`;
-a rights block as written. Each is bound to its content environment (`content_env`): the document's for a rights
+a rights block answered as written, its id bound to its normal form (`rightsNormalForm`, rights 3.5). Each is bound to its content environment (`content_env`): the document's for a rights
 kind, `E″′` for any other. Formula and fenced content are typed in `E″′`, which the mode does not build. -/
 def rightsContentOf (E : Env) (R : RightsDoc) (kind : RowKind) (content : Json) :
     Except String (UnitContent × String) := do

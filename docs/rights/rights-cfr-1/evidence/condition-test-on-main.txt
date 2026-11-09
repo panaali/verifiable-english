@@ -1,5 +1,5 @@
-# tests/test_rights_meaning_id.py -k omits_soft_defaults at main 6db6ee16d (git worktree, main's ve/ and Lean); grouped by line
-     15 >       assert rights_meaning_id(env, _with(content, slot, **{field: DEFAULTS[field]})) == omitted
+# tests/test_rights_meaning_id.py (this branch's file, with tests/data/rights-cfr-1-verdicts.jsonl) run at main 6db6ee16d (git worktree /tmp/rcfr1-main, main's ve/ and Lean); test_rights_meaning_id_omits_soft_defaults lines, grouped
+     15 >       assert python[1] == python[0] and python[2] == python[0] and python[3] != python[0]
       1 FAILED tests/test_rights_meaning_id.py::test_rights_meaning_id_omits_soft_defaults[rank-right_lines/recognition]
       1 FAILED tests/test_rights_meaning_id.py::test_rights_meaning_id_omits_soft_defaults[rank-right_lines/liberty]
       1 FAILED tests/test_rights_meaning_id.py::test_rights_meaning_id_omits_soft_defaults[rank-right/norm]
@@ -15,4 +15,4 @@
       1 FAILED tests/test_rights_meaning_id.py::test_rights_meaning_id_omits_soft_defaults[alterable-right_lines/recognition]
       1 FAILED tests/test_rights_meaning_id.py::test_rights_meaning_id_omits_soft_defaults[alterable-right_lines/liberty]
       1 FAILED tests/test_rights_meaning_id.py::test_rights_meaning_id_omits_soft_defaults[alterable-right/norm]
-      1 15 failed, 10 deselected in 1.75s
+      1 22 failed, 3 passed in 2.82s
