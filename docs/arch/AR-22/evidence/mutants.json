@@ -111,6 +111,21 @@
    "mutant_exit": 1,
    "seconds": 2144.0,
    "output_tail": "{'status': 'ok', 'valid': True, 'steps': 4}}\nE         {'v2': {'status': 'ok', 'valid': True, 'steps': 4}} != {'v2': {'status': 'ok', 'valid': False, 'steps': 4}}\nE         Use -v to get more diff\n\ntests/test_closure_core_replay.py:116: AssertionError\n___________ test_previous_closure_version_replays_all_original_rules ___________\n\n    def test_previous_closure_version_replays_all_original_rules():\n        cases, _ = old_cases()\n        for case in cases:\n            case['certificate']['checker_version'] = 've-tableau-closure-checker@0'\n>           assert replay_python(case)\nE           AssertionError: assert False\nE            +  where False = replay_python({'id': 'closure_review_transitivity', 'environment': {'language': 've.core@0.1', 'profiles': ['closure@0', 'relational...const', 'b'], ['const', 'c']]], 'conclusion': ['reach', 'plus', ['named', 'rel'], ['const', 'a'], ['const', 'c']], ...})\n\ntests/test_closure_induction.py:34: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_closure_core_replay.py::test_certificates_without_induction_keep_their_verdict_at_both_versions\nFAILED tests/test_closure_core_replay.py::test_route_runner_keeps_closures_version_gate_and_refusal_texts\nFAILED tests/test_closure_induction.py::test_previous_closure_version_replays_all_original_rules\n3 failed in 5.57s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-jp5_pm3k)\n"
+  },
+  {
+   "id": "M8",
+   "file": "tools/layer_policy.py",
+   "claim": "the layer policy places the surviving closure tableau `VE.Closure.Tableau` (which now imports Core's replay) in layer 1 beside `VE.CertificateWire`, its importer; seeded: the row is dropped, so the module falls to layer 2 and the import check reports an outward import",
+   "source_sha256": "ac86f1b830a4fad7ad10f5ca77b09543a68fd017fa5c10d087e3d9e261168aa2",
+   "command": [
+    "python3",
+    "tools/check_lean_imports.py"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 12.8,
+   "output_tail": "new outward Lean import: VE.CertificateWire -> VE.Closure.Tableau\n"
   }
  ]
 }
