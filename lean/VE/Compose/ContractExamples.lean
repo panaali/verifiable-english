@@ -97,14 +97,17 @@ def plannedRows : List ProfileRow :=
    ("attitudes@0", .pack "attitudes"), ("scales@0", .pack "scales"), ("events@0", .pack "events")]
 -- The values of main's rows (1.1's Interface column), one per profile in table order.
 #guard (profileTable.map (fun r => (r.profile, r.interface))).eraseDups ==
-  [("alternatives@0", .outside), ("risk@0", .outside), ("speech-acts@0", .outside), ("relational-fol@0", .checker),
+  [("events@0", .pack "events"), ("alternatives@0", .outside), ("risk@0", .outside), ("speech-acts@0", .outside),
+   ("relational-fol@0", .checker),
    ("reports@0", .outside), ("order@0", .checker), ("nary@0", .checker), ("rights@0", .chain),
    ("soft-norms@0", .chain), ("norm-defaults@0", .chain), ("norms@0", .chain), ("acts@0", .rewrite 11),
    ("closure@0", .checker), ("data@0", .base), ("definitions@0", .base), ("documents@1", .layer), ("time@0", .base),
    ("judgments@0", .layer), ("cardinality@0", .layer), ("ve.discourse@1", .rewrite 10),
    ("right-clauses@0", .rewrite 20), ("readings@1", .rewrite 30), ("scope@0", .rewrite 12)]
--- A planned profile has no row: the gate refuses it, as today.
-#guard plannedRows.all fun r => !profileTable.any (·.profile == r.profile)
+-- A planned profile has no row: the gate refuses it, as today. `events@0` has its row (et-4b), with the planned value.
+#guard (plannedRows.filter fun r => profileTable.any (·.profile == r.profile)).map (·.profile) == ["events@0"]
+#guard (profileTable.filter (·.profile == "events@0")).map (fun r => (r.slot, r.interface)) ==
+  [("pack", .pack "events")]
 #guard (match gateOf profileTable ["norms@0", "presupposition@0", "relational-fol@0"] with
   | .error e => e | .ok _ => "ok") == "UnsupportedProfile: Unsupported profile presupposition@0"
 
