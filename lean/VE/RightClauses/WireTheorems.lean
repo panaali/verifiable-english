@@ -449,4 +449,140 @@ theorem addUnit_plain (se : SoftEnvironment) (E : VE.SoftNorms.SoftDoc) (cl : Li
           first | (cases h; done) | (cases h; rfl))
   rw [if_neg c6] at h; cases h
 
+
+theorem key_get {t : Std.TreeMap.Raw String Json compare} (ht : t.WF) {k : String} (h : k ∈ t.toList.map Prod.fst) :
+    ∃ v, (Json.obj t).getObjVal? k = .ok v := by
+  obtain ⟨⟨k', v⟩, hm, hk⟩ := List.mem_map.mp h
+  simp only at hk; subst hk
+  exact ⟨v, by rw [getObjVal_obj, (Std.TreeMap.Raw.mem_toList_iff_getElem?_eq_some ht).mp hm]⟩
+
+theorem unitBody_none {u : Json} (h : unitBody u = none) (k : String) (hk : k = "right" ∨ k = "right_lines") :
+    ∀ v, u.getObjVal? k ≠ .ok v := by
+  intro v hv
+  unfold unitBody at h
+  rcases hk with rfl | rfl
+  · simp [hv] at h
+  · cases hr : u.getObjVal? "right" <;> simp [hr, hv] at h
+
+set_option maxHeartbeats 400000 in
+/-- A unit with no right body: `addUnit` adds nothing to the rights or the order, so it commutes with `plainUnits`. -/
+theorem addUnit_plain_none (se : SoftEnvironment) (E : VE.SoftNorms.SoftDoc) (cl : List (String × String × CLine))
+    (u0 : Json) (hwf : ∀ t, u0 = .obj t → t.WF) (hb : unitBody u0 = none) {acc acc' : Units}
+    (h : addUnit se acc u0 = .ok acc') : addUnit se (plainUnits E cl acc) u0 = .ok (plainUnits E cl acc') := by
+  cases u0 with
+  | obj t =>
+    have ht := hwf t rfl
+    unfold addUnit at h ⊢
+    simp only [VE.Bridge.fields, Json.getObj?, bind, Except.bind, pure, Except.pure] at h ⊢
+    generalize hK : t.toList.map Prod.fst = K at h ⊢
+    by_cases c1 : (K == ["source_units"]) = true
+    · rw [if_pos c1] at h ⊢
+      have hs : (plainUnits E cl acc).sourceUnits = acc.sourceUnits := rfl
+      rw [hs]
+      split at h <;> (try cases h)
+      rename_i hsu
+      rw [if_neg hsu]
+      split at h <;> (try cases h)
+      rfl
+    rw [if_neg c1] at h ⊢
+    by_cases c2 : (K == ["right"]) = true
+    · exfalso; simp only [beq_iff_eq] at c2; subst c2
+      obtain ⟨v, hv⟩ := key_get ht (k := "right") (by rw [hK]; simp)
+      exact unitBody_none hb "right" (.inl rfl) v hv
+    rw [if_neg c2] at h ⊢
+    by_cases c3 : (K == ["right_lines"]) = true
+    · exfalso; simp only [beq_iff_eq] at c3; subst c3
+      obtain ⟨v, hv⟩ := key_get ht (k := "right_lines") (by rw [hK]; simp)
+      exact unitBody_none hb "right_lines" (.inr rfl) v hv
+    rw [if_neg c3] at h ⊢
+    by_cases c4 : (K == ["limitation"]) = true
+    · rw [if_pos c4] at h ⊢
+      cases hL : VE.Rights.Wire.decodeLimitation ((Json.obj t).getObjValD "limitation") <;> simp only [hL] at h ⊢
+      · cases h
+      · cases h; rfl
+    rw [if_neg c4] at h ⊢
+    by_cases c5 : (K == ["bar"]) = true
+    · rw [if_pos c5] at h ⊢
+      cases hB : VE.Rights.Wire.decodeBar ((Json.obj t).getObjValD "bar") <;> simp only [hB] at h ⊢
+      · cases h
+      · cases h; rfl
+    rw [if_neg c5] at h ⊢
+    by_cases c6 : K.contains "norm" = true
+    · rw [if_pos c6] at h ⊢
+      revert h
+      generalize VE.Bridge.displayFields (Json.obj t) ["norm"] ["cites"] = d
+      generalize decodeLineNorm se ((Json.obj t).getObjValD "norm") none = dn
+      generalize VE.Rights.Wire.optCites (Json.obj t) = dc
+      cases d <;> cases dn <;> cases dc <;> intro h <;> first | (cases h; done) | (cases h; rfl)
+    rw [if_neg c6] at h; cases h
+  | _ => simp [addUnit, VE.Bridge.fields, Json.getObj?, bind, Except.bind, throw, throwThe, MonadExceptOf.throw] at h
+
+
+/-- `addUnit` only appends to the source order. -/
+theorem addUnit_order (se : SoftEnvironment) {acc acc' : Units} (u : Json) (h : addUnit se acc u = .ok acc') :
+    ∃ t, acc'.order = acc.order ++ t := by
+  unfold addUnit at h
+  revert h
+  cases VE.Bridge.fields u <;> simp only [bind, Except.bind, pure, Except.pure] <;> intro h
+  · cases h
+  rename_i fs
+  generalize fs.map (fun x => x.fst) = K at h
+  have nil : acc.order = acc.order ++ [] := (List.append_nil _).symm
+  by_cases c1 : (K == ["source_units"]) = true
+  · rw [if_pos c1] at h
+    revert h; split <;> intro h
+    · cases h
+    · revert h; generalize VE.Bridge.strings _ = r; cases r <;> intro h <;> cases h; exact ⟨[], nil⟩
+  rw [if_neg c1] at h
+  by_cases c2 : (K == ["right"]) = true
+  · rw [if_pos c2] at h
+    revert h; generalize VE.Rights.Wire.decodeRight se _ = r; cases r <;> intro h <;> cases h; exact ⟨_, rfl⟩
+  rw [if_neg c2] at h
+  by_cases c3 : (K == ["right_lines"]) = true
+  · rw [if_pos c3] at h
+    revert h
+    generalize VE.Bridge.displayFields _ _ _ = r1
+    generalize VE.Bridge.stringField _ "right" = r2
+    cases r1 <;> cases r2 <;> intro h
+    · cases h
+    · cases h
+    · cases h
+    rename_i rn
+    simp only at h
+    by_cases ha : (acc.rs.any fun x => x.name == rn) = true
+    · rw [if_pos ha] at h
+      revert h; generalize VE.Rights.Wire.decodeLines se _ = r3; cases r3 <;> intro h <;> cases h; exact ⟨_, rfl⟩
+    · rw [if_neg ha] at h; cases h
+  rw [if_neg c3] at h
+  by_cases c4 : (K == ["limitation"]) = true
+  · rw [if_pos c4] at h
+    revert h; generalize VE.Rights.Wire.decodeLimitation _ = r; cases r <;> intro h <;> cases h; exact ⟨[], nil⟩
+  rw [if_neg c4] at h
+  by_cases c5 : (K == ["bar"]) = true
+  · rw [if_pos c5] at h
+    revert h; generalize VE.Rights.Wire.decodeBar _ = r; cases r <;> intro h <;> cases h; exact ⟨[], nil⟩
+  rw [if_neg c5] at h
+  by_cases c6 : K.contains "norm" = true
+  · rw [if_pos c6] at h
+    revert h
+    generalize VE.Bridge.displayFields _ _ _ = r1
+    generalize decodeLineNorm se _ none = r2
+    generalize VE.Rights.Wire.optCites u = r3
+    cases r1 <;> cases r2 <;> cases r3 <;> intro h <;> cases h; exact ⟨[], nil⟩
+  rw [if_neg c6] at h; cases h
+
+theorem foldl_order (se : SoftEnvironment) : ∀ (xs : List Json) (a : List (String × String × CLine) × Units) r,
+    xs.foldlM (headStep se) a = .ok r → ∃ t, r.2.order = a.2.order ++ t
+  | [], a, r, h => by cases h; exact ⟨[], (List.append_nil _).symm⟩
+  | u :: xs, a, r, h => by
+    simp only [List.foldlM_cons] at h
+    obtain ⟨a1, h1, h⟩ := VE.Kit.Except.bind_ok h
+    obtain ⟨t, ht⟩ := foldl_order se xs a1 r h
+    unfold headStep at h1
+    obtain ⟨_, -, h1⟩ := VE.Kit.Except.bind_ok h1
+    obtain ⟨us, hus, h1⟩ := VE.Kit.Except.bind_ok h1
+    cases h1
+    obtain ⟨t', ht'⟩ := addUnit_order se _ hus
+    exact ⟨t' ++ t, by rw [ht, ht', List.append_assoc]⟩
+
 end VE.RightClauses
