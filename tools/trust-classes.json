@@ -2123,7 +2123,10 @@
         "VE.Compose.slotAgrees",
         "VE.Compose.decidingEnvironment",
         "VE.Compose.layersApart",
-        "VE.Compose.listedProfiles"
+        "VE.Compose.listedProfiles",
+        "VE.Compose.eventsRefused",
+        "VE.Compose.packRows",
+        "VE.Compose.eventsFault"
       ],
       "G[R]": [
         "VE.Compose.pendingWithDefaults",
@@ -4911,7 +4914,12 @@
         "VE.NormDefaults.Wire.sourceField",
         "VE.NormDefaults.Wire.tupleOf",
         "VE.NormDefaults.Wire.unspecOf",
-        "VE.NormDefaults.Wire.withUnsaid"
+        "VE.NormDefaults.Wire.withUnsaid",
+        "VE.NormDefaults.Wire.hookView",
+        "VE.NormDefaults.Wire.hookBlock",
+        "VE.NormDefaults.Wire.hookPacks",
+        "VE.NormDefaults.Wire.hookNames",
+        "VE.NormDefaults.Wire.caseOpenTerms"
       ],
       "G[V]": [
         "VE.NormDefaults.Wire.LayeredU.X",
@@ -5074,6 +5082,11 @@
         "VE.NormDefaults.Run.usesNormDefaultsPath"
       ],
       "G[V]": [
+        "VE.NormDefaults.Run.runAdmission",
+        "VE.NormDefaults.Run.runCase",
+        "VE.NormDefaults.Run.runCaseReported",
+        "VE.NormDefaults.Run.runGated",
+        "VE.NormDefaults.Run.runOtherCase",
         {
           "name": "VE.NormDefaults.Admission.runAdmissionX",
           "tied": [
@@ -5081,25 +5094,24 @@
           ]
         },
         "VE.NormDefaults.Admission.softCase",
+        "VE.NormDefaults.Run.softAdmissionWitness",
+        "VE.NormDefaults.Run.runCaseE",
+        "VE.NormDefaults.Admission.certificateAnswer",
         "VE.NormDefaults.Run.decoderOf",
-        "VE.NormDefaults.Run.runAdmission",
         "VE.NormDefaults.Run.runAdmissionIn",
-        "VE.NormDefaults.Run.runCase",
         {
           "name": "VE.NormDefaults.Run.runCaseIn",
           "tied": [
             "VE.NormDefaults.Run.runCase_eq"
           ]
         },
-        "VE.NormDefaults.Run.runCaseReported",
         "VE.NormDefaults.Run.runCaseRouted",
-        "VE.NormDefaults.Run.runGated",
-        "VE.NormDefaults.Run.runOtherCase",
-        "VE.NormDefaults.Run.runOtherCaseIn",
-        "VE.NormDefaults.Run.softAdmissionWitness"
+        "VE.NormDefaults.Run.runOtherCaseIn"
       ],
       "G[R]": [
-        "VE.NormDefaults.Run.pendingDocumentLayer"
+        "VE.NormDefaults.Run.pendingDocumentLayer",
+        "VE.NormDefaults.Run.eventsServed",
+        "VE.NormDefaults.Run.pendingEvents"
       ]
     },
     "VE/NormDefaults/Semantics.lean": {
@@ -12125,7 +12137,8 @@
         "VE.NormDefaults.Admission.admitNodesX",
         "VE.NormDefaults.Admission.filledJsonX",
         "VE.NormDefaults.Wire.LayeredEntailment",
-        "VE.NormDefaults.Wire.replayLayeredEntailment"
+        "VE.NormDefaults.Wire.replayLayeredEntailment",
+        "VE.NormDefaults.Wire.replayLayeredOn"
       ]
     },
     "VE/Readings/SoftVerdicts.lean": {
@@ -13419,7 +13432,8 @@
             "VE.NormDefaults.Packs.elaborateArrays_legacy",
             "VE.NormDefaults.Packs.elaborateArrays_keys"
           ]
-        }
+        },
+        "VE.NormDefaults.Packs.eventsArray"
       ],
       "G[R]": [
         "VE.NormDefaults.Packs.firstFailing",
@@ -16648,7 +16662,20 @@
         "VE.Events.ownedByEvents",
         "VE.Events.checkDates",
         "VE.Events.decodeEvents",
-        "VE.Events.eventsPack"
+        "VE.Events.eventsPack",
+        "VE.Events.BlockLinks",
+        "VE.Events.decodeThroughLinks",
+        "VE.Events.finishEvents",
+        "VE.Events.decodeEventsWith",
+        "VE.Events.openTermsOf",
+        "VE.Events.EventsHook",
+        "VE.Events.routeView",
+        {
+          "name": "VE.Events.eventsHook",
+          "tied": [
+            "VE.Events.events_row_composition"
+          ]
+        }
       ],
       "D[R]": [
         "VE.Events.invalid",
@@ -16658,7 +16685,8 @@
         "VE.Events.roleSig",
         "VE.Events.checkDay",
         "VE.Events.checkRoles",
-        "VE.Events.checkPremiseSize"
+        "VE.Events.checkPremiseSize",
+        "VE.Events.checkOpen"
       ]
     },
     "VE/Events/WireExamples.lean": {
@@ -16686,7 +16714,29 @@
         "VE.Events.WireExamples.vocabReg",
         "VE.Events.WireExamples.W2",
         "VE.Events.WireExamples.decoded",
-        "VE.Events.WireExamples.softP"
+        "VE.Events.WireExamples.softP",
+        "VE.Events.WireExamples.listed",
+        "VE.Events.WireExamples.profiled",
+        "VE.Events.WireExamples.sortedWith",
+        "VE.Events.WireExamples.terms",
+        "VE.Events.WireExamples.fault",
+        "VE.Events.WireExamples.badDate",
+        "VE.Events.WireExamples.linkJ",
+        "VE.Events.WireExamples.linked",
+        "VE.Events.WireExamples.twoLinks",
+        "VE.Events.WireExamples.bothTerms",
+        "VE.Events.WireExamples.isos",
+        "VE.Events.WireExamples.chain",
+        "VE.Events.WireExamples.labels",
+        "VE.Events.WireExamples.manyLinks",
+        "VE.Events.WireExamples.linkPred",
+        "VE.Events.WireExamples.weaker",
+        "VE.Events.WireExamples.weakerTerms",
+        "VE.Events.WireExamples.pack",
+        "VE.Events.WireExamples.sized",
+        "VE.Events.WireExamples.nodes",
+        "VE.Events.WireExamples.view",
+        "VE.Events.WireExamples.viewConstants"
       ]
     },
     "VE/EnglishGrammar/SourceWords.lean": {
@@ -19772,6 +19822,86 @@
         "VE.Acts.Run.isElaborate",
         "VE.Acts.Run.normsSource",
         "VE.Acts.Run.runElaborate"
+      ]
+    },
+    "VE/Events/Chain.lean": {
+      "D[V]": [
+        "VE.Events.EventsEntailmentReplay",
+        {
+          "name": "VE.Events.replayEventsEntailment",
+          "tied": [
+            "VE.Events.events_wire_acceptance"
+          ]
+        },
+        {
+          "name": "VE.Events.replayUnblockedEntailment",
+          "tied": [
+            "VE.Events.unblocked_wire_acceptance"
+          ]
+        }
+      ]
+    },
+    "VE/Events/RouteExamples.lean": {
+      "T": [
+        "VE.Events.RouteExamples.parse",
+        "VE.Events.RouteExamples.rolePred",
+        "VE.Events.RouteExamples.eventPreds",
+        "VE.Events.RouteExamples.linkJ",
+        "VE.Events.RouteExamples.blockJ",
+        "VE.Events.RouteExamples.withSorts",
+        "VE.Events.RouteExamples.listed",
+        "VE.Events.RouteExamples.envOf",
+        "VE.Events.RouteExamples.norms",
+        "VE.Events.RouteExamples.terms",
+        "VE.Events.RouteExamples.caseOf",
+        "VE.Events.RouteExamples.answer",
+        "VE.Events.RouteExamples.status",
+        "VE.Events.RouteExamples.elaborated",
+        "VE.Events.RouteExamples.hook",
+        "VE.Events.RouteExamples.bad",
+        "VE.Events.RouteExamples.decoded",
+        "VE.Events.RouteExamples.filled",
+        "VE.Events.RouteExamples.refusedKind",
+        "VE.Events.RouteExamples.premiseLabels",
+        "VE.Events.RouteExamples.pathOf",
+        "VE.Events.RouteExamples.plainEnv",
+        "VE.Events.RouteExamples.fieldsOf",
+        "VE.Events.RouteExamples.fieldOf",
+        "VE.Events.RouteExamples.twoRules",
+        "VE.Events.RouteExamples.filled2",
+        "VE.Events.RouteExamples.rightsEnv",
+        "VE.Events.RouteExamples.rightsDoc",
+        "VE.Events.RouteExamples.rightsListed",
+        "VE.Events.RouteExamples.dayBlock",
+        "VE.Events.RouteExamples.rightsCase",
+        "VE.Events.RouteExamples.rightsPacks",
+        "VE.Events.RouteExamples.rightsFilled",
+        "VE.Events.RouteExamples.threeDates",
+        "VE.Events.RouteExamples.before",
+        "VE.Events.RouteExamples.inPack",
+        "VE.Events.RouteExamples.notInPack",
+        "VE.Events.RouteExamples.boundProof",
+        "VE.Events.RouteExamples.replayCase",
+        "VE.Events.RouteExamples.premiseCount",
+        "VE.Events.RouteExamples.counted",
+        "VE.Events.RouteExamples.twoConstants",
+        "VE.Events.RouteExamples.dflt",
+        "VE.Events.RouteExamples.defaultDoc",
+        "VE.Events.RouteExamples.defaultFilled",
+        "VE.Events.RouteExamples.excEnv",
+        "VE.Events.RouteExamples.excNorms",
+        "VE.Events.RouteExamples.excElaborated",
+        "VE.Events.RouteExamples.excCase",
+        "VE.Events.RouteExamples.excCount",
+        "VE.Events.RouteExamples.docListed",
+        "VE.Events.RouteExamples.unlisted",
+        "VE.Events.RouteExamples.onBranch",
+        "VE.Events.RouteExamples.everyKind",
+        "VE.Events.RouteExamples.excBare",
+        "VE.Events.RouteExamples.chainEnv",
+        "VE.Events.RouteExamples.requestCase",
+        "VE.Events.RouteExamples.requestIsNull",
+        "VE.Events.RouteExamples.requestIsCase"
       ]
     }
   }
