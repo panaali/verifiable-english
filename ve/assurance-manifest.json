@@ -66,7 +66,7 @@
     "ve/readings_verdicts/binding.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 43774,
+    "total_lines": 43830,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -702,7 +702,7 @@
       {
         "file": "lean/VE/Commands/Run.lean",
         "lines": 311,
-        "sha256": "e10c4a393dff28a7f77fa86d676278c2b24faf76c90e013852c789bd83d9f47b",
+        "sha256": "2ad2a3ccdb2948198ed4a76c28e05c0a46ef64a1a2e7b7579c41152caa54448d",
         "ranges": [
           [
             1,
@@ -889,7 +889,7 @@
           "admitNodes",
           "admitDocument"
         ],
-        "reason": "norm-defaults@0 W2 admission decoder over E‴; the full file is pinned conservatively"
+        "reason": "norm-defaults@0 W2 admission decoder over E\u2034; the full file is pinned conservatively"
       },
       {
         "file": "lean/VE/NormDefaults/Layered.lean",
@@ -932,7 +932,7 @@
           "filledJsonX",
           "admitDocumentX"
         ],
-        "reason": "rd-9 SC-6: the soft branch under norm-defaults@0, its certificate replay (the source by decodeSoftU, the formulas, bindCertX) and W2 admission on the filled soft tree (the soft source, the quoted norms, the units and graph nodes over E‴, certificates bound to the regenerated soft E‴); the full file is pinned conservatively"
+        "reason": "rd-9 SC-6: the soft branch under norm-defaults@0, its certificate replay (the source by decodeSoftU, the formulas, bindCertX) and W2 admission on the filled soft tree (the soft source, the quoted norms, the units and graph nodes over E\u2034, certificates bound to the regenerated soft E\u2034); the full file is pinned conservatively"
       },
       {
         "file": "lean/VE/NormDefaults/LayeredEntail.lean",
@@ -2064,12 +2064,12 @@
       },
       {
         "file": "lean/VE/SpeechActs/Source/Run.lean",
-        "lines": 934,
-        "sha256": "95fb8af85dedc9771b9f43c8026214fcdc16e2beeaadd528c395ca03ed451bfe",
+        "lines": 990,
+        "sha256": "192dbee921fd106198a1b04a69c0f1e88a1f5ac68c14968ae030c3807a0da7f4",
         "ranges": [
           [
             1,
-            934
+            990
           ]
         ],
         "declarations": [
@@ -2082,9 +2082,11 @@
           "answerRecords",
           "externalRecord",
           "complianceRecords",
+          "commandContext",
+          "readSource",
           "decodeSpeechSource"
         ],
-        "reason": "speech-act decoded-source wrapper (8.5): ve-document@2 units, reading sets, records and identity; the full file is pinned conservatively"
+        "reason": "speech-act decoded-source wrapper (8.5): ve-document@2 units, reading sets, records and identity; every resolved command fence read again by VE.Commands.readInstruction under the payload's reading_context, decoded once through the pinned VE.Commands.Run.decodeRequest, and a payload with a command fence and none refused (A2, commands-imperatives CI-2); the full file is pinned conservatively"
       },
       {
         "file": "lean/VE/SpeechActs/Wire.lean",
@@ -4914,6 +4916,92 @@
         "The relay ve.backends.english_lean:read_question asks the service through ve.backends.relay (not ve.backends.lean.run, so it has no lean_call_sites entry); it validates the answer's fields per status against Lean's exported contract (ve/question/codes.json, tools/question_codes.py) and the request identities, and raises the class Lean names with Lean's text.",
         "Two readers and three evaluators (tests/test_question_differential.py): Lean's reader against an independent Python reader written from the spec over Python's own English reader (tests/question_reference.py; test code, not a product path) on every fixture and its seeded 1- and 2-fault mutants; every formula Lean reads is checked by Rust's kernel and evaluated alike by Python's evaluator, Lean's metered evaluator and Rust on seeded models. Rust has no question reader.",
         "The budget class is the status `budget`, with the code QuestionTooLong (a size limit) or Budget (a candidate's work limit)."
+      ]
+    },
+    {
+      "id": "command.read",
+      "summary": "A command wording read as one instruction of a speech document (docs/spec/commands-imperatives.md, CI-2): Lean decides its reading, the proof task's record, every refusal and its text",
+      "class": "surface",
+      "authority": "lean-only",
+      "target": "lean",
+      "assurance": {
+        "current": "experimental",
+        "at_switch": "experimental",
+        "reason": "Lean decides every outcome (VE.Commands.readInstruction over CI-1's readCommand and the proof task; readInstruction_typed and readInstruction_refused_classed proved through ci-1b's statements); the source wrapper reads every resolved command fence again under the request's reading context (commandFence_needs_context); the relay binds the answer to the request (ve.backends.english_lean.command_problem)"
+      },
+      "python": [],
+      "outcomes": {
+        "verdict": [
+          "one"
+        ],
+        "unknown": [],
+        "rejection": [
+          "InvalidInput",
+          "PermissionNotCommand",
+          "UnboundSlot",
+          "TypeMismatch",
+          "MissingObligationRole",
+          "MissingPermissionRole",
+          "AmbiguousDerivation",
+          "CoordinatedActs",
+          "QueryMismatch",
+          "NoDerivation",
+          "IllTyped",
+          "SyntaxError"
+        ],
+        "budget": [
+          "ResourceLimit"
+        ],
+        "operational": [
+          "CheckerUnavailable"
+        ]
+      },
+      "lean": {
+        "bindings": [
+          {
+            "executable": "ve_service",
+            "mode": "english.command",
+            "kinds": [],
+            "response": {
+              "result": "object"
+            },
+            "dispatch": [
+              "lean/VE/Service/Protocol.lean",
+              "lean/VE/Commands/Run.lean",
+              "lean/VE/Commands/Read.lean"
+            ]
+          }
+        ],
+        "planned_modes": [],
+        "theorems": [
+          "VE.Service.runMode_englishCommand",
+          "VE.Commands.caseReported_eq",
+          "VE.Commands.readInstruction_command",
+          "VE.Commands.proofTask_bound",
+          "VE.Commands.proofTask_addressed",
+          "VE.Commands.readInstruction_refused_classed",
+          "VE.Commands.readInstruction_typed",
+          "VE.SpeechActs.Source.commandFence_needs_context"
+        ],
+        "planned_theorems": [],
+        "decoders": []
+      },
+      "rust": null,
+      "lean_call_sites": [],
+      "tests": [
+        "tests/test_command_relay.py::test_read_command_relays_lean_verbatim",
+        "tests/test_command_relay.py::test_a_fill_the_request_does_not_hold_is_unavailable",
+        "tests/test_relay_binding_inventory.py::test_every_bound_field_mutant_is_unavailable"
+      ],
+      "trusted": [
+        "lean:kernel",
+        "lean:compiler",
+        "lean:runner-glue",
+        "python:wire",
+        "python:backend-adapter"
+      ],
+      "notes": [
+        "The relay ve.backends.english_lean:read_command asks the service through ve.backends.relay (so it has no lean_call_sites entry), binds the answer with command_problem and raises the class Lean names with Lean's code and text; ve/speech_english.py's parse_speech sends every wording of no question form to it, and ve/speech_document.py sends the reading context with the resolved fences."
       ]
     },
     {

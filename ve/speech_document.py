@@ -10,14 +10,19 @@ from pathlib import Path
 
 from .ast import _to_data, formula_from_data
 from .backends.relay import decide_once
+from .english import EnglishVocabulary
+from .english_grammar import export
 from .backends.speech_source import decide_source
 from .document import _body, _parts, MAX_DOCUMENT_BYTES
 from .environment import Environment
 from .errors import CheckerUnavailable, ResourceLimit, VEError
 from .readings import active_reading_sets, plan_choices
 from .speech_acts import wording_text
-from .speech_english import _sentence, parse_speech
-from .speech_english import legend
+from .speech_english import _sentence, legend, parse_speech
+
+# Lean's answers to a first call without the fences' contents: an English fence needs Python's parser (until E3),
+# and a command fence needs the reading context (A2, commands-imperatives CI-2).
+_UNRESOLVED = ("NotImplemented: fenced English content", "InvalidInput: command reading context")
 from .vacuity import search_premise_status_witness
 
 
@@ -34,12 +39,12 @@ class SpeechSource:
         try:
             self.report = decide_source(meta, text, fences)
         except VEError as exc:
-            if exc.message != "NotImplemented: fenced English content":
+            if exc.message not in _UNRESOLVED:
                 raise
-            resolved = _resolve_fences(meta, fences)
-            self.report = decide_source(meta, text, fences, resolved_fences=resolved)
+            resolved, context = _resolve_fences(meta, fences)
+            self.report = decide_source(meta, text, fences, resolved_fences=resolved, reading_context=context)
         else:
-            resolved = None
+            resolved = context = None
         try:
             effective = {**meta["environment"], "speech_acts": self.report["scope"]}
             env = Environment(effective)
@@ -47,7 +52,8 @@ class SpeechSource:
             raise CheckerUnavailable("CheckerUnavailable: Python could not construct Lean's effective speech scope") from exc
         evidence = _premise_evidence(meta, self.report, env)
         if evidence:
-            self.report = decide_source(meta, text, fences, resolved_fences=resolved, premise_status=evidence)
+            self.report = decide_source(meta, text, fences, resolved_fences=resolved, reading_context=context,
+                                        premise_status=evidence)
         self.metadata = meta
         self.source = source
         self.fences = fences
@@ -59,7 +65,7 @@ class SpeechSource:
         self.compliance_lines = [_display_record(row, evidence.get("compliance", {}).get(str(i), {}))
                                  for i, row in enumerate(self.report["compliance"])]
         try:
-            self.legend = legend(env)
+            self.legend = legend(env, self.report["legend"])
             sets = meta.get("reading_sets", [])
             self.reading_plan = plan_choices([s for s in active_reading_sets(sets) if s["status"] == "open"])
         except (VEError, KeyError, TypeError, ValueError, IndexError) as exc:
@@ -135,11 +141,13 @@ def _premise_evidence(meta, report, env):
 
 
 def _resolve_fences(meta, fences):
-    """The current English owner's parse, submitted as input to Lean's speech core.
+    """The fences' contents, submitted as input to Lean's speech core, and the commands' reading context.
 
     Lean has already checked the source wrapper through the deferred-fence point.
     Its second call checks the resolved content against the speech types, meaning
-    identities, source units, records, and coverage. E3 will move this parser to Lean.
+    identities, source units, records, and coverage. Commands are Lean's own reading
+    (`read_command`), and Lean reads each again under the context it is sent (A2);
+    E3 will move the rest of this parser to Lean.
     """
     units = [unit for unit, _ in _parts(meta["units"])]
     bindings = [unit for unit in units if unit.get("kind") == "binding"]
@@ -150,6 +158,7 @@ def _resolve_fences(meta, fences):
         env = Environment({**meta["environment"], "speech_acts": scope})
     except VEError as exc:
         raise CheckerUnavailable("CheckerUnavailable: Python could not construct Lean's effective speech scope") from exc
+    reading_context = {"lexicon": export(EnglishVocabulary(env, _defer_overlay_refusals=True))}
     latest = {}
     for reading_set in meta.get("reading_sets", []):
         uid = reading_set["unit"]
@@ -172,17 +181,16 @@ def _resolve_fences(meta, fences):
                              if t.get("name") == f"intended-reading.{uid}"), None)
                 if term is not None and len(term["arguments"]) == 1:
                     context["reading_set"] = (term["arguments"][0], term["version"])
-            for prefix, suffix in (("Does it follow from these premises that ", "?"),
-                                   ("Prove that ", " using these premises.")):
-                if wording.startswith(prefix) and wording.endswith(suffix):
-                    target = _to_data(_sentence(env, wording[len(prefix):-len(suffix)] + "."))
-                    matches = [q["id"] for q in meta.get("queries", []) if q["target"]["ast"] == target]
-                    if len(matches) == 1:
-                        context["query"] = matches[0]
-            parsed, kind = parse_speech(env, wording, scope, **context)
+            prefix = "Does it follow from these premises that "
+            if wording.startswith(prefix) and wording.endswith("?"):
+                target = _to_data(_sentence(env, wording[len(prefix):-1] + "."))
+                matches = [q["id"] for q in meta.get("queries", []) if q["target"]["ast"] == target]
+                if len(matches) == 1:
+                    context["query"] = matches[0]
+            parsed, kind = parse_speech(env, wording, scope, unit=uid, queries=meta.get("queries", []), **context)
         resolved[uid] = {"ast" if kind == "asserted" else
                          "command" if kind == "instruction" else "question": parsed}
-    return resolved
+    return resolved, reading_context
 
 
 def load_speech_document(path):
