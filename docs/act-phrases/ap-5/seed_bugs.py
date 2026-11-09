@@ -63,6 +63,13 @@ BUGS = [
      "x.1.sorts.length == y.1.sorts.length"),
     ("a-eq-b", "specPremises", "no premise from an act to itself", "x.2 != y.2 &&", "true &&"),
     ("no-specialises", "specPremises", "a premise only when `a ⊑ b`", "\n        specialises ρ x.2 y.2 then", " true then"),
+    ("premises-first-only", "specPremises", "every premise, not only the first (trust_mutants M059)",
+     "  ds.flatMap fun x => ds.filterMap fun y =>", "  List.take 1 <| ds.flatMap fun x => ds.filterMap fun y =>"),
+    ("premises-last-only", "specPremises", "every premise, not only the last (trust_mutants M108)",
+     "  ds.flatMap fun x => ds.filterMap fun y =>",
+     "  List.reverse <| List.take 1 <| List.reverse <| ds.flatMap fun x => ds.filterMap fun y =>"),
+    ("extra-args-drop-first", "specialises", "`a`'s first argument may be extra (trust_mutants M132)",
+     "(a.args.filter (fun x => !b.args.contains x))", "((a.args.drop 1).filter (fun x => !b.args.contains x))"),
     ("binders-reversed", "specPremises", "the binders in declared order", "VE.Norms.bindAll x.1.sorts (",
      "VE.Norms.bindAll x.1.sorts.reverse ("),
 ]
