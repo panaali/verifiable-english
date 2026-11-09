@@ -73,7 +73,12 @@ two-line, `holder`-before / `lines`-last `#guard`s beside `rightsNormalForm` kil
 with `trust_map.py --allow` (docs/trust-baseline.json), "SIGNED by standing ruling R16 (DRI-RULINGS.md), rights-cfr-1,
 2026-11-09"; within R16's 150 lines, no K growth; each new trusted definition is exercised by `#guard`s and tests that
 fail on its mutants (above). FOLLOW-UPS.md "## rights-cfr-1" asks for the ties pass. No Python decision path is
-deleted, so R6 covers nothing here.
+deleted, so R6 covers nothing here. Both definitions are classified untied D[V] in `tools/trust-classes.json` (counted
+as trusted; the ties pass may move them to D[I] beside `canonicalNorm` with a tie), so `trust_map.py --check` reports
+`unclassified +0`. The trust map's other readers follow: the whole-file decoder pins of both files in
+`ve/assurance-manifest.json` (`lines`, `sha256`, ranges, `total_lines` 43774 -> 43839, then
+`regen_generated.py --write --only assurance-manifest`), and the consolidation plan's measured step 8b (untied wire
+decoders, 3719 -> 3725 with `softDefault`; `docs/CONSOLIDATION-PLAN.md`, as `trust_map.py --ledger` prints it).
 
 ## Size
 
@@ -81,7 +86,8 @@ deleted, so R6 covers nothing here.
 64, `lean/VE/SoftNorms/Wire.lean` 17, `ve/readings.py` 30); tests 274 (`tests/test_rights_meaning_id.py` 268, the
 recorded fixture `tests/data/rights-cfr-1-verdicts.jsonl` 6); docs about 150 (REPORT, DELTA, `mutants.json`, the allow
 file): about 535 of the ~600 cap. Saved command output, not hand-written: `evidence/` 87, `trust-mutants.json` 61.
-Generated (excluded): `lean/declarations.txt`, `lean/checkers.lock`, `docs/trust-baseline.json`, `docs/codemap/`.
+Generated (excluded): `lean/declarations.txt`, `lean/checkers.lock`, `docs/trust-baseline.json`, `docs/codemap/`;
+table and pin updates of 23 lines (`tools/trust-classes.json`, `ve/assurance-manifest.json`, `docs/CONSOLIDATION-PLAN.md`).
 Files checked against the 7 in-flight branches (`git diff --name-only main...<branch>` for `lean-first/*`, `feature/*`,
 `infra/*`, `foundation/*`): none edits `ve/readings.py`, `lean/VE/Service/Document.lean` or `lean/VE/SoftNorms/Wire.lean`;
 main has moved 59 commits past the base without touching them (not synced in this branch: the merge train syncs).

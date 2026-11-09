@@ -9940,7 +9940,8 @@
         "VE.Service.DocumentChain.requestOf",
         "VE.Service.DocumentChain.layeredOf",
         "VE.Service.Document.cardinalityEnv",
-        "VE.Service.Document.cardinalityReport"
+        "VE.Service.Document.cardinalityReport",
+        "VE.Service.Document.rightsNormalForm"
       ],
       "D[R]": [
         "VE.Service.Document.Foreign",
@@ -10972,6 +10973,7 @@
         "VE.SoftNorms.Wire.primeJson",
         "VE.SoftNorms.Wire.replaySoftWitness",
         "VE.SoftNorms.Wire.residual",
+        "VE.SoftNorms.Wire.softDefault",
         "VE.SoftNorms.Wire.softProfile",
         "VE.SoftNorms.Wire.stripSoft",
         "VE.SoftNorms.Wire.withDecisions"
