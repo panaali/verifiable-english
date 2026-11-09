@@ -78,6 +78,7 @@ MANIFEST = ROOT / "ve/assurance-manifest.json"
 DEPTH = 7
 ENVELOPE = {"service": 3, "one-shot": 1}
 PER_SHAPE = 2
+ASKED_MEMBERS = ("line", "reread")
 FRESH = "zz-not-in-request"
 # The test files `--record` runs by default: together they relay every route.
 RECORD_TESTS = (
@@ -447,7 +448,10 @@ def _shape(case, row) -> tuple:
     status = row.get("status") if isinstance(row, dict) else None
     choices = tuple(sorted((key, value) for key, value in case.items() if type(value) is bool)) \
         if isinstance(case, dict) else ()
-    return (_case_kind(case), str(status), tuple(sorted(row)) if isinstance(row, dict) else (), choices)
+    # A case's asked members fill parts of its row too: a `senses.read` case's `line` and `reread` (sn-b6d).
+    asked = tuple(key for key in ASKED_MEMBERS if key in case) if isinstance(case, dict) else ()
+    return (_case_kind(case), str(status), tuple(sorted(row)) if isinstance(row, dict) else (), choices) + (
+        (asked,) if asked else ())
 
 
 # One-shot routes: how a call site reads its runner's answer to a recorded case.

@@ -352,3 +352,11 @@ def test_a_line_is_there_exactly_when_asked(monkeypatch, change):
         call = lambda: read_in(WORLDS["joke"](), TWO)  # noqa: E731
     with pytest.raises(CheckerUnavailable, match="request and dictionary identities"):
         call()
+
+
+def test_a_candidate_with_its_lines_emptied_is_refused(monkeypatch):
+    """Found by the relay mutation gate on the asked fixture (sn-b6d): a candidate resolves a word, so Lean always
+    writes it a line."""
+    _tampered_result(monkeypatch, lambda r: r["reading"]["units"][0]["candidates"][0].update(lines=""))
+    with pytest.raises(CheckerUnavailable, match="candidate is malformed"):
+        read_in(WORLDS["joke"](), S16)
