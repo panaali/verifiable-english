@@ -1,0 +1,7 @@
+trust_mutants: 4 definitions, 153 mutants (19 to run), 4 jobs, base 3e4fe503f4c9
+UNKNOWN lean/VE/Acts/Specialise.lean:40 VE.Acts.specPremises (S, trusted) list-first: (declaredOnce E p.1).map (·, p.2) -> (((declaredOnce E p.1).map (·, p.2)).take 1) (lean/VE/Acts/Specialise.lean:42: Invalid projection: Type of)
+UNKNOWN lean/VE/Acts/Specialise.lean:40 VE.Acts.specPremises (S, trusted) list-last: acts.filterMap -> (acts.filterMap.reverse.take 1) (lean/VE/Acts/Specialise.lean:41: Invalid field notation: Type of)
+trust_mutants: 15 KILLED, 0 SURVIVOR, 2 UNKNOWN, 2 INVALID, 0 ALLOWED, 0 NOT RUN, 134 OTHER SHARD in 229 s
+trust_mutants: G[V], trusted: 2 KILLED, 12 OTHER SHARD
+trust_mutants: S, trusted: 13 KILLED, 2 UNKNOWN, 2 INVALID, 122 OTHER SHARD
+trust_mutants: steps: wall plan 13.5 s, scratch 4.6 s, control_build 0.2 s, probe_install 1.4 s, mutants 205.9 s, cleanup 3.7 s; lake control_build 0.2 s (1), probe_install 1.4 s (1), control_probes 19.4 s (7), mutant_builds 42.5 s (30), mutant_checks 527.2 s (23), stage_controls 126.3 s (8), mutant_probes 65.1 s (15)
