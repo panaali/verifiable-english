@@ -109,6 +109,7 @@ import VE.Closure.Tableau
 import VE.Commands.Read
 import VE.Commands.Run
 import VE.Commands.RunSplit
+import VE.Commands.Steps
 import VE.Compose.Adjoin
 import VE.Compose.Content
 import VE.Compose.Contract
@@ -1883,6 +1884,7 @@ import VE.WireContract.Engine
 #print axioms VE.Closure.warshall_sound
 #print axioms VE.Commands.RunSplit.readInstruction_refused_classed_of_ci1b
 #print axioms VE.Commands.RunSplit.typed_facts_are_ci1s
+#print axioms VE.Commands.after_eq
 #print axioms VE.Commands.bind_condition
 #print axioms VE.Commands.candidate_fills
 #print axioms VE.Commands.candidate_guard
@@ -1891,6 +1893,7 @@ import VE.WireContract.Engine
 #print axioms VE.Commands.checked_many
 #print axioms VE.Commands.checked_one
 #print axioms VE.Commands.classOf_run
+#print axioms VE.Commands.combine_alts
 #print axioms VE.Commands.conditionOf_classed
 #print axioms VE.Commands.declared_of_decode
 #print axioms VE.Commands.decodeClosedField_check
@@ -1898,6 +1901,7 @@ import VE.WireContract.Engine
 #print axioms VE.Commands.envelope_vocabulary
 #print axioms VE.Commands.eraseDups_nodup
 #print axioms VE.Commands.eraseDups_sublist
+#print axioms VE.Commands.exists_mem_zip
 #print axioms VE.Commands.fields_obj
 #print axioms VE.Commands.filterMapM_rel
 #print axioms VE.Commands.find?_of_nodup
@@ -1905,6 +1909,8 @@ import VE.WireContract.Engine
 #print axioms VE.Commands.guard_ambiguous
 #print axioms VE.Commands.guard_limit
 #print axioms VE.Commands.guard_unread
+#print axioms VE.Commands.lift_many
+#print axioms VE.Commands.lift_one
 #print axioms VE.Commands.lookup_of_mem
 #print axioms VE.Commands.manyOf_iff
 #print axioms VE.Commands.manyOf_one
@@ -1919,6 +1925,7 @@ import VE.WireContract.Engine
 #print axioms VE.Commands.mem_mapM
 #print axioms VE.Commands.mem_ofForce
 #print axioms VE.Commands.mem_phraseMatches
+#print axioms VE.Commands.mem_readingTuples
 #print axioms VE.Commands.mem_slotFills
 #print axioms VE.Commands.mem_tuples
 #print axioms VE.Commands.nodup_of_eraseDups
@@ -1944,11 +1951,26 @@ import VE.WireContract.Engine
 #print axioms VE.Commands.readInstruction_command
 #print axioms VE.Commands.readInstruction_refused_classed_of
 #print axioms VE.Commands.readInstruction_typed_of_facts
+#print axioms VE.Commands.readStep_combine
+#print axioms VE.Commands.readStep_one
+#print axioms VE.Commands.readStep_over
+#print axioms VE.Commands.readingTuples_length
+#print axioms VE.Commands.readingTuples_single
 #print axioms VE.Commands.refusalOf_refused
 #print axioms VE.Commands.refused_classed
 #print axioms VE.Commands.regulated_shape
+#print axioms VE.Commands.seqFault
+#print axioms VE.Commands.seq_ambiguous
+#print axioms VE.Commands.seq_eq
+#print axioms VE.Commands.seq_many
+#print axioms VE.Commands.shapeOutcome_charged
+#print axioms VE.Commands.shapeOutcome_many
+#print axioms VE.Commands.shapes_ambiguous
+#print axioms VE.Commands.shapes_complete
+#print axioms VE.Commands.shapes_limit
 #print axioms VE.Commands.strip_vocabulary
 #print axioms VE.Commands.tuples_typed
+#print axioms VE.Commands.two_le
 #print axioms VE.Commands.unreadOf_classed
 #print axioms VE.Commands.vocabulary_facts
 #print axioms VE.Commands.wf_get
