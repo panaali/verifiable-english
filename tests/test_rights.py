@@ -1148,21 +1148,20 @@ def test_rights_incident_header_delta_keeps_base_names_r1():
         assert head == row["head"], row["source"]
         if "refused" in head:
             assert all(quoted in head["refused"] for quoted in re.findall(r"'[^']*'|\"[^\"]*\"", base))
+            # more specific than the base: it names the refused party or the sortedness rule
+            assert "party guest" in head["refused"] or "sorted and distinct" in head["refused"]
         else:
             norm = claim()["norm"] | {"alterable": head["accepted"]}
             assert render_line(env, "life", "claim", norm) == row["source"]
 
 
-def test_generated_rights_lines_round_trip_one_by_one():
-    """rights-cfr-5 deliverable 3: every claim, liberty and immunity line of the
-    rights generator's documents (conformance/rights_differential.py, seeds 0-39)
-    survives render_line -> parse_line, switch-bearing and default lines included.
-    Lines with two or more carve-outs are left out: norm_english's soft parser does
-    not read its own `Except when` sentences back (follow-up rights-cfr-5b)."""
+def _generated_lines(seeds):
+    """(env, rights, right, kind, norm) for every claim, liberty and immunity line with a
+    predicate of the rights generator's documents (conformance/rights_differential.py)
+    that correlate."""
     from conformance.rights_differential import document
 
-    switched = checked = 0
-    for seed in range(40):
+    for seed in range(seeds):
         raw, units = document(seed)
         try:
             rights = correlate(raw, units)
@@ -1173,15 +1172,35 @@ def test_generated_rights_lines_round_trip_one_by_one():
             block = unit.get("right") or unit.get("right_lines") or {}
             for line in block.get("lines", ()):
                 norm = line.get("norm")
-                if (line["kind"] == "power" or norm["predicate"] is None or len(norm["unless"]) > 1):
-                    continue
-                name = block.get("name") or block["right"]
-                source = render_line(env, name, line["kind"], norm, rights=rights)
-                assert parse_line(env, source, name=norm["name"], rights=rights) == {
-                    "right": name, "kind": line["kind"], "norm": norm}, (seed, source)
-                checked += 1
-                switched += "alterable" in norm
+                if line["kind"] != "power" and norm["predicate"] is not None:
+                    yield env, rights, block.get("name") or block["right"], line["kind"], norm
+
+
+def _round_trips(env, rights, right, kind, norm):
+    source = render_line(env, right, kind, norm, rights=rights)
+    return parse_line(env, source, name=norm["name"], rights=rights) == {"right": right, "kind": kind, "norm": norm}
+
+
+def test_generated_rights_lines_round_trip_one_by_one():
+    """rights-cfr-5 deliverable 3: every line of the rights generator's documents (seeds
+    0-39) with at most one carve-out survives render_line -> parse_line, switch-bearing
+    and default lines included (two or more carve-outs: the strict xfail below)."""
+    switched = checked = 0
+    for env, rights, right, kind, norm in _generated_lines(40):
+        if len(norm["unless"]) <= 1:
+            assert _round_trips(env, rights, right, kind, norm), (right, norm)
+            checked += 1
+            switched += "alterable" in norm
     assert checked >= 50 and switched >= 5, (checked, switched)
+
+
+@pytest.mark.xfail(strict=True, raises=VEError, reason="rights-cfr-5b: norm_english's soft parser does not read its "
+                   "own `Except when` sentences back (double space at ve/norm_english.py:540)")
+def test_generated_rights_lines_with_two_carve_outs_round_trip():
+    lines = [line for line in _generated_lines(40) if len(line[4]["unless"]) > 1]
+    assert len(lines) >= 5
+    for line in lines:
+        assert _round_trips(*line), line[2:]
 
 
 def test_line_on_a_base_predicate_is_unknown_not_a_crash():
