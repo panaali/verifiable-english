@@ -60,7 +60,8 @@ evidence that each newly counted definition is exercised by a test that can fail
   (`tools/select_tests.py --base 9ba8aeaed`, 97/556 units) includes `tests/test_trust_budget.py`; the gate runs it too.
 - Condition test 2, the senses run examples: `lean/VE/Senses/RunExamples.lean` runs as `lake build VE.Senses.RunExamples`
   (passes on the restored tree) and in the gate's full `lake build`. `lean/VE.lean` imports it. select_tests has no lake step.
-- Selected tests: run once on the committed tree. The result is in the build report.
+- Selected tests: `MAC_PYTEST_NO_DEFER=1 mac-pytest.sh --select -- --base 9ba8aeaed --run` on committed `7ed7dc75b`
+  (clean tree): exit 0; 4 shards, 29 + 28 + 25 + 21 units, all passed (cloud run sn-b6-f8-trust-7ed7dc75-t211900).
 - Not run: `regen_generated.py` (the only generated set that reads `tools/trust-classes.json` is `trust-tables`, and its
   check is `trust_map.py --check`); the full `lake build` and `lean/audit.py` (no Lean file changed); the full gate (the
   chain runs it).
