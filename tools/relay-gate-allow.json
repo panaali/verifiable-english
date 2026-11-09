@@ -2561,6 +2561,26 @@
    "kind": "follow-up",
    "id": "F10",
    "reason": "english.command (ci-2) has no Python relay until ci-2b: ci-2b's `read_command` (ve/backends/english_lean.py) binds the answer to its request, with the english.command rows of tests/test_relay_binding_inventory.py (D9). The legend has one line for the task, one for the addressee and one per definite of the request's scope (VE.SpeechActs.Run.legend); a repeated line is not checked against it."
+  },
+  {
+   "route": "service:clauses-elaborate",
+   "mutation": "empty",
+   "path": [
+    "results/*/result/result/clause_slot"
+   ],
+   "kind": "follow-up",
+   "id": "CFR1A",
+   "reason": "clauses-elaborate (cmp-s3-cfr-1) has no Python relay until cmp-s3-cfr-1b, which binds the answer to its request (the relay and the byte-for-byte differential). The slot is `clauseSlotLabelled` (right-clauses 8.4): empty when the document has no limitation and no total relation (K1, K2), and its labels can repeat on a well-formed rights document (cmp-s3's `cxDoc`, reviews/dri-decisions-20261104-cmp-s3.md Q3), so neither form is a fault the schema can refuse."
+  },
+  {
+   "route": "service:clauses-elaborate",
+   "mutation": "duplicate",
+   "path": [
+    "results/*/result/result/clause_slot"
+   ],
+   "kind": "follow-up",
+   "id": "CFR1B",
+   "reason": "clauses-elaborate (cmp-s3-cfr-1) has no Python relay until cmp-s3-cfr-1b, which binds the answer to its request (the relay and the byte-for-byte differential). The slot is `clauseSlotLabelled` (right-clauses 8.4): empty when the document has no limitation and no total relation (K1, K2), and its labels can repeat on a well-formed rights document (cmp-s3's `cxDoc`, reviews/dri-decisions-20261104-cmp-s3.md Q3), so neither form is a fault the schema can refuse."
   }
  ]
 }

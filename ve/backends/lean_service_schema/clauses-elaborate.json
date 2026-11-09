@@ -30,13 +30,16 @@
         "clause_slot": {
           "items": {
             "additionalProperties": false,
-            "properties": {"ast": {"$ref": "common.json#/$defs/generated_formula"}, "label": {"type": "string"}},
+            "properties": {
+              "ast": {"$ref": "common.json#/$defs/generated_formula"},
+              "label": {"$ref": "common.json#/$defs/text"}
+            },
             "required": ["label", "ast"],
             "type": "object"
           },
           "type": "array"
         },
-        "plained": {"type": "string"}
+        "plained": {"$ref": "common.json#/$defs/text"}
       },
       "required": ["plained", "clause_slot"],
       "type": "object"
