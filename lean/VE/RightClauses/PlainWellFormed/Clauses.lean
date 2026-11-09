@@ -199,4 +199,62 @@ theorem layer_names (C : SoftDoc) (Tb : VE.Norms.Tree) (hr : Tb.regulated = C.T.
         | some d' => exact ⟨d', rfl⟩
       exact ⟨.defn d', ⟨d.name, hn', by rw [hf, hd'']; rfl⟩, by simpa using List.find?_some hd''⟩
 
+/-! ### A checked entry is typed over the base vocabulary -/
+
+theorem relAtom_check {B : VE.Environment} {Rt : VE.Rights.Right} {hs : Option Nat} {ss : List String}
+    {rel : Relation} (h : relationOk B Rt hs ss rel = true) :
+    (relAtom ss.length rel).check B ss.reverse = true := by
+  simp only [relationOk, Bool.and_eq_true, bne_iff_ne, ne_eq, decide_eq_true_eq, beq_iff_eq] at h
+  obtain ⟨⟨⟨⟨⟨-, h1⟩, h2⟩, hp⟩, -⟩, -⟩ := h
+  have g : ∀ j, j < ss.length → (VE.Term.var (ss.length - 1 - j)).sortOf B ss.reverse = some (ss.getD j "") := by
+    intro j hj
+    simp only [VE.Term.sortOf, List.getElem?_reverse (by omega : ss.length - 1 - j < ss.length),
+      show ss.length - 1 - (ss.length - 1 - j) = j by omega, List.getD_eq_getElem?_getD, List.getElem?_eq_getElem hj,
+      Option.getD_some]
+  simp [relAtom, VE.Formula.check, hp, g _ h1, g _ h2]
+
+theorem entry_typed (D : ClauseDoc) (h : WellFormedClauses D = true) (x : String × String × CLine)
+    (hx : x ∈ D.lines) :
+    (∀ c ∈ x.2.2.clauses, c.formula.check (baseEnv D) (lineSorts D.doc.soft x.2.2.line).reverse = true) ∧
+    (∀ rel, x.2.2.relation = some rel →
+      (relAtom (lineSorts D.doc.soft x.2.2.line).length rel).check (baseEnv D)
+        (lineSorts D.doc.soft x.2.2.line).reverse = true) := by
+  have hc : checkClauses D = .ok () := by
+    unfold WellFormedClauses at h; split at h <;> simp_all
+  have he := forM_ok _ _ hc x hx
+  unfold checkEntry at he
+  split at he
+  · rename_i Rt _
+    split at he
+    · cases he
+    split at he
+    · cases he
+    obtain ⟨R, n, L⟩ := x
+    unfold checkBody at he
+    obtain ⟨u1, h1, he⟩ := bind_eq_ok.1 he
+    obtain ⟨u2, -, he⟩ := bind_eq_ok.1 he
+    cases u1
+    have hl1 := (VE.NormDefaults.forIn_unit_ok _ (fun x r hx => by
+      simp only [bind, Except.bind, pure, Except.pure] at hx
+      split at hx <;> cases hx <;> rfl) _).1 h1
+    refine ⟨fun c hc => ?_, fun rel hrel => ?_⟩
+    · obtain ⟨⟨c', i⟩, hci, rfl⟩ : ∃ p ∈ L.clauses.zipIdx, p.1 = c := by
+        have : c ∈ L.clauses.zipIdx.map Prod.fst := by simp; exact hc
+        exact List.mem_map.1 this
+      have := hl1 _ hci
+      revert this
+      split <;> simp_all [bind, Except.bind, pure, Except.pure]
+    · obtain ⟨u3, h3, -⟩ := bind_eq_ok.1 he
+      cases u3
+      have hl2 := (VE.NormDefaults.forIn_unit_ok _ (fun x r hx => by
+        simp only [bind, Except.bind, pure, Except.pure] at hx
+        split at hx
+        · split at hx <;> cases hx <;> rfl
+        · cases hx) _).1 h3 rel (by simp only at hrel; simp [hrel])
+      simp only [bind, Except.bind, pure, Except.pure] at hl2
+      split at hl2
+      · rename_i hro; exact relAtom_check hro
+      · cases hl2
+  · cases he
+
 end VE.RightClauses.PWF
