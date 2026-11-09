@@ -20155,6 +20155,17 @@ module VE.RightClauses.Run 5d82c7729f1fcfb0bdca8124e8423015b1c2c21e4eca9e43fbd49
 11:0-12:89 def VE.RightClauses.Run.labelledJson@VE.RightClauses.Run
 14:0-33:60 def VE.RightClauses.Run.elaborateCase@VE.RightClauses.Run
 35:0-38:111 def VE.RightClauses.Run.runCaseReported@VE.RightClauses.Run
+module VE.RightClauses.RunExamples 46500a0515aed62eccb8ef88de52b2a289ff4b9484766c44b1053a5753147cc2
+8:0-8:67 def VE.RightClauses.RunExamples.parse@VE.RightClauses.RunExamples
+9:0-17:41 def VE.RightClauses.RunExamples.profiles@VE.RightClauses.RunExamples
+18:0-18:103 def VE.RightClauses.RunExamples.on@VE.RightClauses.RunExamples
+19:0-23:23 def VE.RightClauses.RunExamples.doc@VE.RightClauses.RunExamples
+24:0-25:125 def VE.RightClauses.RunExamples.ask@VE.RightClauses.RunExamples
+26:0-30:17 def VE.RightClauses.RunExamples.says@VE.RightClauses.RunExamples
+31:0-35:79 def VE.RightClauses.RunExamples.off@VE.RightClauses.RunExamples
+36:0-36:79 def VE.RightClauses.RunExamples.rel@VE.RightClauses.RunExamples
+37:0-37:113 def VE.RightClauses.RunExamples.charged@VE.RightClauses.RunExamples
+38:0-38:99 def VE.RightClauses.RunExamples.countryOf@VE.RightClauses.RunExamples
 module VE.RightClauses.Tree bd6257aa16d4dec44578a9ab55d090325827fbc5f22d9d9f6372247d14f06e2d
 14:0-15:28 inductive VE.RightClauses.Role@VE.RightClauses.Tree
 15:11-15:22 instance VE.RightClauses.instDecidableEqRole@VE.RightClauses.Tree
@@ -28243,4 +28254,4 @@ module VE.Words.Situation 04a0781486d2ef00feb590ccf206ff7ba43f98dff6689995a7770e
 149:0-160:13 def VE.Words.bindings@VE.Words.Situation
 162:0-173:50 def VE.Words.pairSentence@VE.Words.Situation
 190:0-192:91 def VE.Words.nounsOnly@VE.Words.Situation
-module VE 11caa93b527f44e48d7da412f84722a055656571fca9bc3c6e0afabac20fab8d
+module VE 95f7b9313b62dbe97e47a4b7342928f0b0ec0a81631d859637849227218eb226
