@@ -3,7 +3,7 @@
   {
    "definition": "VE.Scope.Pinned.clause",
    "operator": "list-empty",
-   "reason": "ill-typed where it is UNKNOWN: `list-empty` turns `(s.splitOn \" \")` into `[]`, which does not elaborate (Invalid field notation: Type of at lean/VE/Scope/Authoring.lean:40); the definition is killed by body-true at :40; body-false at :40; and-or at :40; all-any at :40; list-first at :40; list-last at :40; list-drop-first at :40; list-drop-last at :40"
+   "reason": "ill-typed where it is UNKNOWN: `list-empty` turns `(s.splitOn \" \")` into `[]`, which does not elaborate (Invalid field notation: Type of at lean/VE/Scope/Authoring.lean:39); the definition is killed by body-true at :39; body-false at :39; and-or at :39; or-and at :40; all-any at :39; any-all at :39; le-eq at :40; le-lt at :40; list-first at :39; list-last at :39; list-drop-first at :39; list-drop-last at :39"
   },
   {
    "definition": "VE.Scope.Pinned.spaced",
@@ -69,6 +69,11 @@
    "definition": "VE.Scope.Pinned.wordChar",
    "operator": "le-lt",
    "reason": "equivalent where it is a SURVIVOR: `0x20 ≤ c.toNat` and `0x20 < c.toNat` differ only at U+0020, which `!VE.Discourse.spaceChar c` (the conjunct before it, lean/VE/Scope/Authoring.lean:26) already refuses; the other mutants of `wordChar` are KILLED by the slot guards of lean/VE/Scope/AuthoringExamples.lean"
+  },
+  {
+   "definition": "VE.Scope.Pinned.clause",
+   "operator": "list-last",
+   "reason": "equivalent where it is a SURVIVOR: `list-last` turns `(w.dropRightWhile closers.contains).toList` into `((w.dropRightWhile closers.contains).toList).reverse.take 1`, and `(l.reverse.take 1).getLast?` is `l.getLast?` for every list `l` (both are none on [] and the last element otherwise; lean/VE/Scope/Authoring.lean:39); the other list-last mutants of `clause` are KILLED or do not elaborate"
   }
  ]
 }
