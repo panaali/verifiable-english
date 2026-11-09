@@ -5,7 +5,7 @@ reads. Trusted growth is +117 (K +0, S +74, V +43), covered by standing ruling R
 Status: built to the cut the DRI signed: deliverables (1) and (2) (reviews/dri-decisions-20261109-ps-2a.md item 1).
 `admit`, A1-A28, the 19 `admit_*` statements and Run.lean go to ps-2ab (see "Cut").
 Checks: probe 38/39 equal (`candidateTable` is filled by design), audit PASS, trust_map --check PASS, trust_mutants
-exit 0, selected tests: see "Final checks". Size: 767 hand-written lines, over the ~600 line (see "Size").
+exit 0, selected tests: see "Final checks". Size: 767 hand-written lines, over the ~600 line, accepted by the DRI (see "Size").
 Open: the chain runs the full gate on the final HEAD. Next item: ps-2ab.
 
 Feature item ps-2a (PS-2a's second part, after ps-2aa; plan `docs/spec/presupposition-PLAN.md:847-863`, 4.6
@@ -123,6 +123,8 @@ gains two allowances (S 74, V 43), each "SIGNED by standing ruling R16 (DRI-RULI
   which spec 6 requires and which the self-review asked for (one owner for the table). The rest is 9cdd78473's copied
   guards and the sweep's survivor fixtures. There is no product code left to cut. I did not cut the generator,
   because a hand copy of the table is the finding it fixes.
+  The DRI accepted the size as it stands (reviews/dri-decisions-20261109-ps-2a-size.md item 1). The condition:
+  `tests/test_presupposition_table.py` stays selected in the gate.
 - **Pilot bytes.** 0: no route reads Wire.lean or Table.lean yet.
 - **Evaluators.** None added. `expectedReadings` maps over one cell (at most 5 candidates in a `tableOk` table).
   `premisesBefore` walks the unit list once. Neither is a runner or a mode. `admit`'s limits are ps-2ab's (step 1).
