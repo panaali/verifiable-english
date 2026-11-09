@@ -264,6 +264,66 @@
    "status": "KILLED",
    "test": "VE/Scope/AuthoringExamples.lean:150:0",
    "note": "sc-7 review F7: one closer dropped, not all: a sentence end before two closers (`x.)” y`) is accepted; only the class guard fails"
+  },
+  {
+   "kind": "seeded bug",
+   "definition": "VE.Scope.Pinned.clause",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "‼‽⁇",
+   "after": "‽⁇",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:159:0; VE/Scope/AuthoringExamples.lean:163:0; VE/Scope/AuthoringExamples.lean:171:0",
+   "note": "sc-7 recheck F8: one sentence end (‼) dropped from clause's set: PROBE F8 (:159), the one-guard-per-added-sentence-end loop (:163) and the mixed guard (:171) fail"
+  },
+  {
+   "kind": "seeded bug",
+   "definition": "VE.Scope.Pinned.clause",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "(0x200B,0x200F)",
+   "after": "(0x200C,0x200F)",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:163:0; VE/Scope/AuthoringExamples.lean:169:0; VE/Scope/AuthoringExamples.lean:171:0; VE/Scope/AuthoringExamples.lean:177:0",
+   "note": "sc-7 recheck F9: U+200B dropped from the stripped set: PROBE F9 (:169) and the guards that put U+200B after a sentence end fail"
+  },
+  {
+   "kind": "seeded bug",
+   "definition": "VE.Scope.Pinned.clause",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "(0x300,0x36F)",
+   "after": "(0x300,0x300), (0x302,0x36F)",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:169:0; VE/Scope/AuthoringExamples.lean:171:0",
+   "note": "sc-7 recheck F9: U+0301 dropped from the stripped set: PROBE F9 (:169) and the DRI note's \"x.)\\u0301 y\" (:171) fail"
+  },
+  {
+   "kind": "seeded bug",
+   "definition": "VE.Scope.Pinned.clause; VE.Scope.Pinned.wordChar",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "(0x3164,0x3164), | 0x2800, 0x3164, 0xFFA0].contains",
+   "after": " | 0x2800, 0xFFA0].contains",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:183:0; VE/Scope/AuthoringExamples.lean:189:0",
+   "note": "sc-7 recheck F9 (DRI note amendment): U+3164 dropped from the set, both from clause's stripped ranges and from wordChar's fillers: `#guard !clause \"x.\\u3164\"` (:183) and the filler-as-a-space guard (:189) fail"
+  },
+  {
+   "kind": "seeded bug",
+   "definition": "VE.Scope.Pinned.wordChar",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "0x2800, 0x3164, 0xFFA0].contains",
+   "after": "0x2800, 0xFFA0].contains",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:189:0",
+   "note": "sc-7 recheck F9: U+3164 dropped from wordChar only: \"x.\\u3164The rules below are called the y\" (one word, a filler for a space) is accepted; :189 fails"
+  },
+  {
+   "kind": "seeded bug",
+   "definition": "VE.Scope.Pinned.clause",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "(0x483,0x489)",
+   "after": "(0x484,0x489)",
+   "status": "KILLED",
+   "test": "tests/test_scope_authoring.py::test_review_f7_clause_refuses_exactly_the_documented_closers; tests/test_scope_authoring.py::test_review_f9_no_invisible_character_hides_a_sentence_end",
+   "note": "sc-7 recheck F9: U+0483 (Mn), which no #guard names, dropped from the stripped set: lake build passes; the Unicode sweep fails (\"named, not refused\": U+0483; hidden pairs (\".\", U+0483) and the rest). Run with the statement-inventory import stubbed, since the inventory is stale while a mutant is planted"
   }
  ]
 }
