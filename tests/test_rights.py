@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import pytest
 import json
+import re
 from copy import deepcopy
 
 from tests.test_norms import environment, obligation, permission
@@ -1115,11 +1116,41 @@ def test_rights_incident_header_the_renderer_never_writes_is_refused():
                    " (user may turn off;)", "  (user may turn off)", " (user  may turn off)",
                    " (User may turn off)", " (user may turn it off)", " (operator, user may turn off)",
                    " (user may turn off) ", "(user may turn off)", " [user may turn off]",
-                   " (user may turn off)", "\t(user may turn off)", " (user may turn off)",
-                   " (user may turn off)\r", " （user may turn off）",
-                   " (user and operator may turn off)"):  # parties are rendered sorted
-        with pytest.raises(VEError):
+                   "\u00a0(user may turn off)", "\t(user may turn off)", " (user\u00a0may turn off)",
+                   " (user may turn off)\r", " \uff08user may turn off\uff09", " (user and user may turn off)"):
+        # refused before any parse, with main's text (no wording delta)
+        with pytest.raises(VEError, match=r"\ASyntaxError: expected Claim, Liberty or Immunity of right\Z"):
             parse_line(env, "Claim of right life" + header + ". " + body, name="protect")
+    # the rendered spelling, but parties the renderer never writes here (it sorts them;
+    # guest is undeclared): the soft checker refuses them as in a document
+    with pytest.raises(VEError, match="sorted and distinct"):
+        parse_line(env, "Claim of right life (user and operator may turn off). " + body, name="protect")
+    with pytest.raises(VEError, match="party guest"):
+        parse_line(env, "Claim of right life (guest may turn off). " + body, name="protect")
+
+
+def test_rights_incident_header_delta_keeps_base_names_r1():
+    """R1 evidence for rights-cfr-5's saved header delta (docs/rights/rights-cfr-5/
+    header-delta.json): a line whose header is in the rendered spelling but names
+    parties the checker refuses now gets the soft checker's diagnostic in place of the
+    generic one, keeping every name the base quoted; an accepted row is exactly a line
+    render_line writes. Each head answer is recomputed."""
+    from pathlib import Path
+    saved = json.loads((Path(__file__).parents[1] / "docs/rights/rights-cfr-5/header-delta.json").read_text())
+    env = switch_env(tuple(saved["parties"]))
+    assert len(saved["differ"]) == 4 and saved["equal"] == 46
+    for row in saved["differ"]:
+        base = row["base"]["refused"]
+        try:
+            head = {"accepted": parse_line(env, row["source"], name="protect")["norm"].get("alterable", [])}
+        except VEError as error:
+            head = {"refused": f"{type(error).__name__}: {error}"}
+        assert head == row["head"], row["source"]
+        if "refused" in head:
+            assert all(quoted in head["refused"] for quoted in re.findall(r"'[^']*'|\"[^\"]*\"", base))
+        else:
+            norm = claim()["norm"] | {"alterable": head["accepted"]}
+            assert render_line(env, "life", "claim", norm) == row["source"]
 
 
 def test_generated_rights_lines_round_trip_one_by_one():
