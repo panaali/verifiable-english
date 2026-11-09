@@ -2283,11 +2283,11 @@ open VE.Service.Document
 
 /-- The `norm-defaults` mode's case that a document's soft units make: environment `E.lower` and the free norms (each
 unit of kind `norm` with soft content, under no reading set: Python's `_free_norms`, whose attached units PC-2b
-adds), sent as the soft relay sends them (`wireJson`), and the front matter's `completions`. An environment on any
-other route makes no case (`null`): the rights document is PC-2c's. -/
+adds), sent as the soft relay sends them (`wireJson`), and the front matter's `completions`. Another route, or `events@0`
+(refused by `ownedProfiles`), makes no case (`null`): the rights document is PC-2c's. -/
 def requestOf (E : Env) (front : Json) (units : List SourceUnit) : Json :=
   let environment := wireJson 257 E.lower
-  if VE.NormDefaults.Wire.layeredRoute environment != some "soft-norms@0" then .null else
+  if VE.NormDefaults.Wire.layeredRoute environment != some "soft-norms@0" || (VE.Compose.listedProfiles environment).contains "events@0" then .null else
   let sets : List Json := match Loader.optionalList front "reading_sets" with
     | .arr xs => xs.toList
     | _ => []

@@ -382,7 +382,10 @@ def test_a_soft_rejection_with_another_checks_code_breaks_a_lean_invariant(genui
 _SPLIT_CASE = "readings-route.json#/$defs/elaborate_components/properties/components/items/properties/"
 OPEN_ALLOWED = {"common.json#/$defs/environment_predicate",
                 "norm-defaults.json#/$defs/base_environment/properties/vocabulary/properties/predicates/additionalProperties",
-                *(_SPLIT_CASE + name for name in ("environment", "document", "checked"))}
+                *(_SPLIT_CASE + name for name in ("environment", "document", "checked")),
+                # An events case's base constants: closed in `then`, equal to the request's in `else`; et-5's relay
+                # binds the named dates to the block (the selector is `request_block/events`).
+                "norm-defaults.json#/$defs/base_environment/properties/vocabulary/properties/constants"}
 
 
 def open_objects(directory=DIRECTORY):
