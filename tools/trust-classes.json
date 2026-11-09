@@ -9637,12 +9637,14 @@
         "VE.Senses.Run.flipJson",
         "VE.Senses.Run.byteSpan",
         "VE.Senses.Run.senseEntryJson",
-        "VE.Senses.Run.rereadJson",
-        "VE.Senses.Run.decodeReread",
-        "VE.Senses.Run.lineJson",
         "VE.Senses.Run.projectionIds",
         "VE.Senses.Run.admittedIds",
-        "VE.Senses.Run.usedOf"
+        "VE.Senses.Run.usedOf",
+        "VE.Senses.Projection.written",
+        "VE.Senses.SensesOutcome.written",
+        "VE.Senses.Run.rereadJson",
+        "VE.Senses.Run.decodeReread",
+        "VE.Senses.Run.lineJson"
       ],
       "G[R]": [
         "VE.Senses.Run.fenceLine",
@@ -9653,10 +9655,6 @@
         "VE.Senses.Run.bodyOf",
         "VE.Senses.Run.textsJson",
         "VE.Senses.Run.warningsJson"
-      ],
-      "G[I]": [
-        "VE.Senses.Projection.written",
-        "VE.Senses.SensesOutcome.written"
       ]
     },
     "VE/Service/Diagnose.lean": {
@@ -17006,7 +17004,10 @@
         "VE.Senses.RunExamples.wide",
         "VE.Senses.RunExamples.wideBoth",
         "VE.Senses.RunExamples.atTuples",
-        "VE.Senses.RunExamples.namesFive"
+        "VE.Senses.RunExamples.namesFive",
+        "VE.Senses.RunExamples.envL",
+        "VE.Senses.RunExamples.layered",
+        "VE.Senses.RunExamples.profilesOf"
       ]
     },
     "VE/WireContract/Hooks/Acts.lean": {
