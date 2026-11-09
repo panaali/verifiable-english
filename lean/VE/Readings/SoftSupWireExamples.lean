@@ -51,7 +51,7 @@ def NSDm : NDoc := ⟨docK [.fixed "u0" (.norm needNotX) [], .set ⟨"rs1", "u1"
 
 #guard WellFormedSD NSDm && superposable NSDm.D
 #guard supLabels NSDm == ["soft:coherence:need-not-x,rd-1-x", "soft:coherence:need-not-x,rd-2-x"]
--- each superposed label read back through every choice that has it: one label each (`labelImage_functional`), twice
+-- each superposed label read back through every choice that has it: one label each, twice
 #guard (supLabels NSDm).map (fun s => (choices NSDm.D).filterMap fun c => ((labelImage NSDm c).find? (·.2 == s)).map (·.1)) ==
   [["soft:coherence:need-not-x,x"], ["soft:coherence:need-not-x,x"]]
 #guard sdShown NSDm [] (supLabels NSDm) == ["soft:coherence:need-not-x,x"]

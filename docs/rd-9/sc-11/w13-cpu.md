@@ -1,9 +1,10 @@
 # W-13: the route check's Lean CPU, measured (OPEN-SC11-7)
 
 Measured 2026-11-09 on the VM: AMD EPYC 7B12, 32 vCPU, 125 GB, Linux 7.0.0-1014-gcp, 5-minute load 78 to 108 (other
-worktrees' builds). Compiled Lean (`lake build bench` of `w13_bench.lean`, a throwaway package requiring this
-worktree's `lean/` by path), `/usr/bin/time` user CPU of one `routeSD re N` plus `sdCheckWork N`, with
-`maxSdCheckWork` = 4,194,304 (the spec's provisional value), so no case below is cut by work.
+worktrees' builds). Compiled Lean: a throwaway Lake package requiring this
+worktree's `lean/` by path, whose `main` decodes `SoftSupWireExamples.envWith 0`, builds `NSDbig n` (with `wide e` as
+set 0's strict guard for the last three rows) and prints `routeSD re N` and `sdCheckWork N`; `/usr/bin/time` user CPU
+of one run, with `maxSdCheckWork` = 4,194,304 (the spec's provisional value then), so no case below is cut by work.
 
 | Document | Choices | `sdCheckWork` | Route | Lean CPU |
 | --- | --- | --- | --- | --- |

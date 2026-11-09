@@ -17222,8 +17222,7 @@
           "name": "VE.Readings.labelImage",
           "tied": [
             "VE.Readings.labelImage_fst",
-            "VE.Readings.labelImage_snd_mem",
-            "VE.Readings.labelImage_functional"
+            "VE.Readings.labelImage_snd_mem"
           ]
         },
         {
@@ -17243,8 +17242,7 @@
         "VE.Readings.Wire.sdSuperposable",
         "VE.Readings.Wire.sdCheckWork",
         "VE.Readings.Wire.sdChecked",
-        "VE.Readings.Wire.routeSD",
-        "VE.Readings.Wire.SupReplaySD"
+        "VE.Readings.Wire.routeSD"
       ],
       "G[R]": [
         "VE.Readings.Wire.maxSdCheckWork"
