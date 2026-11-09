@@ -457,6 +457,22 @@ class EnglishVocabulary:
                     self.negatives.pop(name, None)
         else:
             self.input_aliases = []
+        # events@0 fixes `before`'s wording and its two link forms (events-time-causation plan 2.7, spec 2): Lean
+        # checks them exactly (spec 4 items 3 and 5) and the source-word catalogue's `fixed` rows give them (frames
+        # `before` and `link <form>`), so, as for alternatives@0 and rights@0, the author lint does not judge them.
+        # Role wordings are the author's verb phrases and stay under the lint.
+        if getattr(env, 'events', None) is not None:
+            from .english_grammar import source_words
+            from .wire import loads_json
+            fixed = {row['frame']: row['kind']['wording'] for row in source_words()['rows']
+                     if row['profile'] == 'events@0' and row['kind']['type'] == 'fixed'}
+            block = loads_json(env.events)
+            for name, frame in ((block['before'], 'before'),
+                                *((link['predicate'], 'link ' + link['form']) for link in block['links'])):
+                decl = env.predicates.get(name)
+                if decl is not None and decl.verbalisation == fixed.get(frame):
+                    self.predicates[name] = decl.verbalisation
+                    issues = {i for i in issues if not i.path.startswith(f'/vocabulary/predicates/{name}/')}
         # rights@0 fixes one wording per generated limitation, condition and aimed
         # predicate (rights.md 2.1, 13.11), installed on E″ by the correlation; as
         # for alternatives@0, the generic lint's shape rules do not apply to them.

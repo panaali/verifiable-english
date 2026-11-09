@@ -1,4 +1,7 @@
 import VE.EnglishGrammar.SourceWords
+import VE.EnglishGrammar.Advice
+import VE.EnglishGrammar.Policy
+import VE.Alternatives.Wire
 
 /-! Boundary fixtures for the Lean-owned source-word catalogue. No fixture row is exported. -/
 namespace VE.EnglishGrammar.SourceWordsExamples
@@ -91,5 +94,68 @@ def rowJson (word kind : Json) : Json := Json.mkObj [
   Json.mkObj [("format", "ve.source-words@1"),
     ("rows", Json.arr #[rowJson "until" kindReadingJson, rowJson "until" kindRefuseJson])]
 #guard sourceWordsJson == sourceWordsJson sourceWords
+
+/-! ## `events@0`'s rows (ET-5; plan 2.7, spec 2.4 and 2.5, T9) -/
+
+def eventsOf (word frame : String) : Option SourceWordKind :=
+  (sourceWords.find? fun r => r.word == word && r.frame == frame && r.profile == "events@0").map (·.kind)
+
+/-- T9: the twelve source words of 2.7, each refused in authored text with its advice and a rewrite. -/
+def twelve : List String := ["until", "by", "within", "during", "while", "since", "always", "eventually",
+  "whenever", "resulted in", "led to", "caused"]
+#guard (sourceWords.filter (·.frame == "authored")).map (·.word) == twelve
+#guard eventsOf "until" "authored" ==
+  some (.refuse "events-until" eventsUntilAdvice "if it is not the case that that closure happens no later than that day")
+#guard eventsOf "caused" "authored" == some (.refuse "events-caused" eventsLinkAdvice "that act was necessary for that harm")
+
+/-- T9 through Lean's advice: a refused authored sentence under the profile gets its row's advice, and none without. -/
+def adviceOf (profiles : List String) (s : String) : Option (String × String) :=
+  match lex s with
+  | .ok sents => (sents[0]?).bind fun toks => advice profiles toks.toList
+  | .error _ => none
+def ev : List String := ["events@0", "norm-defaults@0", "norms@0", "relational-fol@0", "soft-norms@0"]
+#guard adviceOf ev "Every person may be presumed innocent until a conviction." == some ("events-until", eventsUntilAdvice)
+#guard adviceOf ["norms@0", "relational-fol@0"] "Every person may be presumed innocent until a conviction." == none
+#guard [("Every report must be filed by the deadline.", "events-by"), ("Every act happens within ten days.", "events-within"),
+  ("Every person is protected during a stay.", "events-during"), ("Every person is protected while a stay lasts.", "events-while"),
+  ("Every person has been protected since the conviction.", "events-since"), ("Every person is always protected.", "events-always"),
+  ("Every person is eventually protected.", "events-eventually"), ("Every person is protected whenever a stay begins.", "events-whenever"),
+  ("The act resulted in a harm.", "events-resulted-in"), ("The act led to a harm.", "events-led-to"),
+  ("The act caused a harm.", "events-caused")].all fun (s, id) => (adviceOf ev s).map (·.1) == some id
+#guard (adviceOf ev "The act caused a harm.").map (·.2) == some eventsLinkAdvice
+
+-- U1 states its silence (ET-E1's rewording); U2 gives the opposite modality.
+#guard match eventsOf "until" "source event" with
+  | some (.readings [u1, u2]) => (u1.wording.splitOn "This document does not say whether").length == 2 &&
+      (u2.wording.splitOn "<opposite of m>").length == 2
+  | _ => false
+-- T11d's reading set (SR-B4): three candidates, each with both end dates named.
+#guard match eventsOf "within" "source date" with
+  | some (.readings cs) => cs.length == 3 && cs.all fun c => (c.wording.splitOn "<end>").length == 2 &&
+      ((c.wording.splitOn "<date>").length == 2 || (c.wording.splitOn "<start>").length == 2)
+  | _ => false
+#guard eventsOf "within" "source event" |>.any fun k => match k with | .refuse code _ _ => code == "duration" | _ => false
+-- "always" is soft norms' inside a rule (DRI 2026-11-03 item 3): events reads it only outside one.
+#guard (sourceWords.filter (·.word == "always")).map (·.frame) == ["authored", "source outside a rule"]
+-- The causal words, the source forms "lead to" and "cause" among them, read as the two link forms only.
+#guard ["resulted in", "led to", "caused", "lead to", "cause"].all fun w => eventsOf w "source" ==
+  some (.readings [⟨VE.Events.linkWording .contributed, "A situation in which the contributed link holds and the necessary link does not."⟩,
+    ⟨VE.Events.linkWording .necessary, "A situation in which the contributed link holds and the necessary link does not."⟩])
+#guard eventsOf "causes" "source" == none && eventsOf "leads to" "source" == none
+
+-- The profile-fixed wordings are Lean's checker's, in the frames `ve/english.py` reads.
+#guard [("before", "before"), ("contributed to", "link contributed"), ("was necessary for", "link necessary")].map
+    (fun (w, f) => eventsOf w f) ==
+  [some (.fixed VE.Events.beforeWording), some (.fixed (VE.Events.linkWording .contributed)),
+   some (.fixed (VE.Events.linkWording .necessary))]
+/-- D11: the link wordings (fixed and as candidates) are disjoint from `alternatives@0`'s and `risk@0`'s fixed wordings. -/
+def eventsWordings : List String := sourceWords.flatMap fun r => match r.kind with
+  | .fixed w => if r.profile == "events@0" then [w] else []
+  | .readings cs => if r.profile == "events@0" then cs.map (·.wording) else []
+  | .refuse .. => []
+def otherProfileWordings : List String := VE.Alternatives.Wire.canonicalWording.map (·.2) ++ riskTemplates ++
+  ["{0} is avoidable by {1}", "{0} is unavoidable by {1}", "{0} allows {1} to happen"]
+#guard eventsWordings.length == 32
+#guard eventsWordings.all fun w => !otherProfileWordings.contains w
 
 end VE.EnglishGrammar.SourceWordsExamples
