@@ -6,16 +6,19 @@ changes.
 Which inputs change. They are `ClauseDoc`s checked by `checkClauses` or `checkCandidates`
 (lean/VE/RightClauses/Plain.lean, `entryError`) that meet both of these conditions:
 
-- an entry that fails `entryOk` has a rule `<n>` that is the rule of more than one line of the rights document that
-  holds its right. That document is `D.doc` for the fixed lines and for a `.rightLines` candidate. For a `.right`
-  candidate it is `D.doc` with the candidate's own right;
+- an entry that fails `entryOk` has a rule `<n>` that is the rule of more than one line of the rights document it is
+  checked against. That document is `D.doc` for the fixed lines and for a `.rightLines` candidate. For a `.right`
+  candidate it is `D.doc` with the candidate's own right. The entry's right may be in that document or not: since
+  review F1, `checkEntry` refuses every `entryOk` failure with `entryError`, an entry of an unknown right (say `r9`)
+  too (Examples.lean:228 and :265);
 - rights' first fault on that document (`VE.Rights.checkRights`, lean/VE/Rights/Correlate.lean:358-370) is a
   `DuplicateDeclaration`.
 
 The base text on these inputs was `InvalidInput: invalid clauses of rule <n>`.
 
 What does not change. A `.rightLines` candidate whose own lines repeat a rule keeps the base text, because those lines
-are not in the rights document (Examples.lean:260, 262). Every other `entryOk` failure keeps the base text too.
+are not in the rights document (Examples.lean:269, 271). Every other `entryOk` failure keeps the base text too, for
+a known or an unknown right alike (Examples.lean:229, 232, 240 and 242).
 
 Reach. The head is reached only from Lean. There is no right-clauses service mode, relay or wire decoder yet
 (cmp-s3-cfr-1), so no corpus record or golden changes. For that reason, R1's evidence below is the Lean fixtures and
@@ -27,5 +30,5 @@ duplicate rule): at that place, rights' fault is reported in place of the entry'
 
 | # | Delta | Evidence and tests | Ruling |
 |---|---|---|---|
-| 1 | Rights' first fault is the duplicate of `<n>` itself as a rule. The text is `DuplicateDeclaration: rule <n>` (was `InvalidInput: invalid clauses of rule <n>`). (a) It keeps the quoted rule name `<n>`. (b) The base had no path or span. (c) It is more specific: it names the fault, a second line with the rule. | `tests/test_right_clauses_duplicate.py::test_clause_entries_preserve_duplicate_rule_diagnostic` (two structured lines `equal-access`, one entry each: the head's text is `DuplicateDeclaration: rule equal-access`, and the rule name is kept; fails on main). `#guard`s lean/VE/RightClauses/Examples.lean:221-224 and :229-230 (fixed lines) and :256 (a `.right` candidate) | SIGNED by standing ruling R1 (DRI-RULINGS.md) |
-| 2 | Rights' first fault is another `DuplicateDeclaration`: `right <n>` when the rule is named like a right, or `limitation <n>`, `bar`, or `rule <m>` for an earlier duplicate, or `holder <s>`, `bearer <s>` or `alters <a>` from rights' block check. The text is that rights text, unchanged (was `InvalidInput: invalid clauses of rule <n>`). | Condition test: `tests/test_right_clauses_duplicate.py::test_clause_entries_take_rights_first_duplicate_text`. The rule is named `r21`, like its right, and the head's text equals `VE.Rights.checkRights`' text `DuplicateDeclaration: right r21` byte for byte. Negative test: the seeded one-character edit S2 (`e ++ "."`, [mutants.json](mutants.json)) makes that test and `test_clause_entries_preserve_duplicate_rule_diagnostic` fail (`2 failed, 2 passed`). The boundary: `test_clause_entries_keep_invalid_clauses_when_rights_faults_first` and the `#guard`s at Examples.lean:226, 234 and 262 show that the base text is kept when rights' first fault is not a `DuplicateDeclaration` (S3 fails them) and when the rule is on one line only (S4 fails them) | SIGNED by the DRI 2026-11-09 (reviews/dri-decisions-20261109-lp0801.md item 1) |
+| 1 | Rights' first fault is the duplicate of `<n>` itself as a rule. The text is `DuplicateDeclaration: rule <n>` (was `InvalidInput: invalid clauses of rule <n>`). (a) It keeps the quoted rule name `<n>`. (b) The base had no path or span. (c) It is more specific: it names the fault, a second line with the rule. | `tests/test_right_clauses_duplicate.py::test_clause_entries_preserve_duplicate_rule_diagnostic` (two structured lines `equal-access`, one entry each: the head's text is `DuplicateDeclaration: rule equal-access`, and the rule name is kept; fails on main). `#guard`s lean/VE/RightClauses/Examples.lean:223-226 and :235-236 (fixed lines) and :262 (a `.right` candidate). An entry of an unknown right `r9`: `tests/test_right_clauses_duplicate.py::test_clause_entries_with_unknown_right_take_rights_duplicate_text` (rights' text byte for byte) and the `#guard`s at Examples.lean:228 (fixed line) and :265 (a `.right` candidate); the seeded bug S5 (the unknown-right branch given back its own text) fails all three | SIGNED by standing ruling R1 (DRI-RULINGS.md) |
+| 2 | Rights' first fault is another `DuplicateDeclaration`: `right <n>` when the rule is named like a right, or `limitation <n>`, `bar`, or `rule <m>` for an earlier duplicate, or `holder <s>`, `bearer <s>` or `alters <a>` from rights' block check. The text is that rights text, unchanged (was `InvalidInput: invalid clauses of rule <n>`). | Condition test: `tests/test_right_clauses_duplicate.py::test_clause_entries_take_rights_first_duplicate_text`. The rule is named `r21`, like its right, and the head's text equals `VE.Rights.checkRights`' text `DuplicateDeclaration: right r21` byte for byte. Negative test: the seeded one-character edit S2 (`e ++ "."`, [mutants.json](mutants.json)) makes that test and `test_clause_entries_preserve_duplicate_rule_diagnostic` fail (`2 failed, 2 passed`). The boundary: `test_clause_entries_keep_invalid_clauses_when_rights_faults_first` and the `#guard`s at Examples.lean:229, 232, 240 and 271 show that the base text is kept when rights' first fault is not a `DuplicateDeclaration` (S3 fails them) and when the rule is on one line only (S4 fails them) | SIGNED by the DRI 2026-11-09 (reviews/dri-decisions-20261109-lp0801.md item 1) |
