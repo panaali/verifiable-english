@@ -214,6 +214,56 @@
    "status": "KILLED",
    "test": "VE/Scope/AuthoringExamples.lean:125:0",
    "note": "sc-7 review F1: a comma in the section slot (review F5)"
+  },
+  {
+   "kind": "seeded bug",
+   "definition": "VE.Scope.Pinned.closers",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "def closers : String := \"\\\"')*>]_`}~«»༻༽᚜‘’‛“”‟‹›⁆⁾₎⌉⌋〉❩❫❭❯❱❳❵⟆⟧⟩⟫⟭⟯⦄⦆⦈⦊⦌⦎⦐⦒⦔⦖⦘⧙⧛⧽⸂⸃⸄⸅⸉⸊⸌⸍⸜⸝⸠⸡⸣⸥⸧⸩⹖⹘⹚⹜〉》」』】〕〗〙〛〞〟﴾︘︶︸︺︼︾﹀﹂﹄﹈﹚﹜﹞＂＇）］｝｠｣\"",
+   "after": "def closers : String := \"”’\\\")]»\"",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:138:0; VE/Scope/AuthoringExamples.lean:142:0",
+   "note": "sc-7 review F7: the closer set before the fix (` ” ’ \" ) ] » ` only): PROBE F7 and the membership guard fail"
+  },
+  {
+   "kind": "seeded bug",
+   "definition": "VE.Scope.Pinned.closers",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "def closers : String := \"\\\"')*>]_`}~«»༻༽᚜‘’‛“”‟‹›⁆⁾₎⌉⌋〉❩❫❭❯❱❳❵⟆⟧⟩⟫⟭⟯⦄⦆⦈⦊⦌⦎⦐⦒⦔⦖⦘⧙⧛⧽⸂⸃⸄⸅⸉⸊⸌⸍⸜⸝⸠⸡⸣⸥⸧⸩⹖⹘⹚⹜〉》」』】〕〗〙〛〞〟﴾︘︶︸︺︼︾﹀﹂﹄﹈﹚﹜﹞＂＇）］｝｠｣\"",
+   "after": "def closers : String := \"\\\")*>]_`}~«»༻༽᚜‘’‛“”‟‹›⁆⁾₎⌉⌋〉❩❫❭❯❱❳❵⟆⟧⟩⟫⟭⟯⦄⦆⦈⦊⦌⦎⦐⦒⦔⦖⦘⧙⧛⧽⸂⸃⸄⸅⸉⸊⸌⸍⸜⸝⸠⸡⸣⸥⸧⸩⹖⹘⹚⹜〉》」』】〕〗〙〛〞〟﴾︘︶︸︺︼︾﹀﹂﹄﹈﹚﹜﹞＂＇）］｝｠｣\"",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:138:0; VE/Scope/AuthoringExamples.lean:142:0; tests/test_scope_authoring.py::test_review_f7_clause_refuses_exactly_the_documented_closers",
+   "note": "sc-7 review F7: the ASCII `'` dropped from closers (the review's 'stop.' wording); the sweep, run on this mutant's olean, no longer refuses U+0027"
+  },
+  {
+   "kind": "seeded bug",
+   "definition": "VE.Scope.Pinned.closers",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "def closers : String := \"\\\"')*>]_`}~«»༻༽᚜‘’‛“”‟‹›⁆⁾₎⌉⌋〉❩❫❭❯❱❳❵⟆⟧⟩⟫⟭⟯⦄⦆⦈⦊⦌⦎⦐⦒⦔⦖⦘⧙⧛⧽⸂⸃⸄⸅⸉⸊⸌⸍⸜⸝⸠⸡⸣⸥⸧⸩⹖⹘⹚⹜〉》」』】〕〗〙〛〞〟﴾︘︶︸︺︼︾﹀﹂﹄﹈﹚﹜﹞＂＇）］｝｠｣\"",
+   "after": "def closers : String := \"\\\"')*>]_`}~«»༻༽᚜‘’‛“”‟‹›⁆⁾₎⌉⌋〉❩❫❭❯❱❳❵⟆⟧⟩⟫⟭⟯⦄⦆⦈⦊⦌⦎⦐⦒⦔⦖⦘⧙⧛⧽⸂⸃⸄⸅⸉⸊⸌⸍⸜⸝⸠⸡⸣⸥⸧⸩⹖⹘⹚⹜〉》」』】〕〗〙〛〞〟﴾︘︶︸︺︼︾﹀﹂﹄﹈﹚﹜﹞＂＇）］｝｠｣,\"",
+   "status": "KILLED",
+   "test": "tests/test_scope_authoring.py::test_review_f7_clause_refuses_exactly_the_documented_closers",
+   "note": "sc-7 review F7: a character the docstring does not name (`,`) added to closers: refused, not named"
+  },
+  {
+   "kind": "seeded bug",
+   "definition": "VE.Scope.Pinned.closers",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "`＇`, `>`, and Markdown's",
+   "after": "`＇`, and Markdown's",
+   "status": "KILLED",
+   "test": "tests/test_scope_authoring.py::test_review_f7_clause_refuses_exactly_the_documented_closers",
+   "note": "sc-7 review F7: the docstring stops naming `>`, which the code still drops: the docstring no longer says exactly what the code refuses"
+  },
+  {
+   "kind": "seeded bug",
+   "definition": "VE.Scope.Pinned.clause",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "(w.dropRightWhile (closers.contains ·)).back",
+   "after": "(if closers.contains w.back then w.dropRight 1 else w).back",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:150:0",
+   "note": "sc-7 review F7: one closer dropped, not all: a sentence end before two closers (`x.)” y`) is accepted; only the class guard fails"
   }
  ]
 }

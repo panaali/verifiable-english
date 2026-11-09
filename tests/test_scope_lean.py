@@ -52,9 +52,9 @@ READINGS = [f"VE/Scope/Readings.lean: VE.Scope.{name}" for name in (
 # them is met by `lean/VE/Scope/AuthoringExamples.lean`'s #guards, docs/scope/sc-7/trust-mutants.json and
 # docs/scope/sc-7/mutants.json.
 AUTHORING = [f"VE/Scope/Authoring.lean: VE.Scope.Pinned.{name}" for name in (
-    "Row", "Row.wording", "attitude", "between", "cap", "classify", "clause", "english", "englishOf", "frameBlock",
-    "frameWording", "heading", "kindCondition", "kindWording", "listName", "narrowed?", "narrowing", "onList", "onName",
-    "readHeading", "readings", "spaced", "splitOnce", "textOf", "uncap", "wordChar")]
+    "Row", "Row.wording", "attitude", "between", "cap", "classify", "clause", "closers", "english", "englishOf",
+    "frameBlock", "frameWording", "heading", "kindCondition", "kindWording", "listName", "narrowed?", "narrowing", "onList",
+    "onName", "readHeading", "readings", "spaced", "splitOnce", "textOf", "uncap", "wordChar")]
 
 
 def test_every_trusted_scope_definition_is_used_by_a_theorem():
