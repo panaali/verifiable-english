@@ -60,7 +60,6 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [docs/profile-composition/](docs__profile-composition.md) — 5 modules — -
 - [docs/question-answering/](docs__question-answering.md) — 7 modules — -
 - [docs/readings-defaults/](docs__readings-defaults.md) — 7 modules — -
-- [docs/rights/](docs__rights.md) — 2 modules — -
 - [docs/scale-choice-batch/](docs__scale-choice-batch.md) — 1 modules — -
 - [docs/scope/](docs__scope.md) — 9 modules — -
 - [docs/spec/](docs__spec.md) — 9 modules — -
@@ -135,7 +134,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [tests/ part 4](tests--part-4.md) — 91 modules — -
 - [tests/ part 5](tests--part-5.md) — 79 modules — -
 - [tests/ part 6](tests--part-6.md) — 83 modules — -
-- [tests/ part 7](tests--part-7.md) — 66 modules — -
+- [tests/ part 7](tests--part-7.md) — 67 modules — -
 - [tests/frozen_speech/](tests__frozen_speech.md) — 3 modules — Frozen pre-switch speech oracle.
 - [tools/ part 1](tools--part-1.md) — 99 modules — -
 - [tools/ part 2](tools--part-2.md) — 10 modules — -
