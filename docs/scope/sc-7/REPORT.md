@@ -266,7 +266,12 @@ relay and binding fuzz tests (docs/ROUTE-RECIPE.md), well past 600.
     for the equivalent `0x20 ≤`. The third is allowed with its equivalence reason, and `clause`'s list-empty reason now
     cites :39 and :40.
   - On b11beab23: 229 KILLED, 0 SURVIVOR, 0 UNKNOWN, 64 INVALID, 27 ALLOWED, exit 0.
-- **Tests.** TESTS_PLACEHOLDER
+- **Tests.** `mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on 76eda2367 (ve-cloud-3, 4537 s):
+  exit 0, 120 units, 0 failed. `test_scope_authoring.py` (exit 0, 440 s) and `test_scope_lean.py` were among them. The
+  new and changed tests also ran on their own: 28 passed. `(cd lean && lake build)`: "Build completed successfully
+  (1329 jobs)". `python3 lean/audit.py`: PASS, 794 files. `trust_map.py --check`: PASS, trusted +149.
+  `regen_generated.py --check`: "checked 37 entries". No test of main-known-red.txt failed. Not run: the full gate
+  (the merge train runs it).
 
 ## Spec re-read
 
