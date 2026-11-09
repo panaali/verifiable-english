@@ -11039,6 +11039,7 @@
         "VE.SpeechActs.Run.nameOf",
         "VE.SpeechActs.Run.normsSource",
         "VE.SpeechActs.Run.paraphrase",
+        "VE.SpeechActs.Run.paraphraseSteps",
         "VE.SpeechActs.Run.queryIdentity",
         "VE.SpeechActs.Run.questionAst",
         "VE.SpeechActs.Run.replayConflict",
@@ -11212,6 +11213,8 @@
         "VE.SpeechActs.Source.statusText"
       ],
       "G[R]": [
+        "VE.SpeechActs.Source.stepUnits",
+        "VE.SpeechActs.Source.thenFault",
         "VE.SpeechActs.Source.trivialWarnings"
       ]
     },
@@ -18266,6 +18269,7 @@
         "VE.Commands.Texts.permission",
         "VE.Commands.Texts.please",
         "VE.Commands.Texts.queryMismatch",
+        "VE.Commands.Texts.thenWithoutStep",
         "VE.Commands.Texts.unbound"
       ],
       "G[V]": [
@@ -19259,6 +19263,7 @@
     },
     "ResponseShape/Schemas/Command.lean": {
       "G[R]": [
+        "ResponseShape.Schemas.Command.alternative",
         "ResponseShape.Schemas.Command.answer",
         "ResponseShape.Schemas.Command.file",
         "ResponseShape.Schemas.Command.fill",
@@ -19268,10 +19273,15 @@
     },
     "VE/Commands/Run.lean": {
       "D[V]": [
+        "VE.Commands.Run.altIndexes",
+        "VE.Commands.Run.altParts",
         "VE.Commands.Run.decodeRequest",
         "VE.Commands.Run.encode",
+        "VE.Commands.Run.oneShape",
         "VE.Commands.Run.outcomeFields",
-        "VE.Commands.Run.readingJson"
+        "VE.Commands.Run.readingJson",
+        "VE.Commands.Run.shapeName",
+        "VE.Commands.Run.stepStarts"
       ],
       "G[I]": [
         "VE.Commands.Run.holeStart"
@@ -19286,18 +19296,41 @@
         "VE.Commands.Request",
         "VE.Commands.Run.caseReported",
         "VE.Commands.Run.doc",
+        "VE.Commands.StepUnit",
+        "VE.Commands.antecedentOf",
+        "VE.Commands.firstStep",
+        "VE.Commands.lastStep",
         "VE.Commands.matchedRecord",
         "VE.Commands.proofMany",
         "VE.Commands.proofPreds",
         "VE.Commands.proofReading",
         "VE.Commands.proofSentence",
         "VE.Commands.proofTask",
-        "VE.Commands.readInstruction"
+        "VE.Commands.readInstruction",
+        {
+          "name": "VE.Commands.stepCommands",
+          "tied": [
+            "VE.Commands.stepCommands_policy"
+          ]
+        },
+        "VE.Commands.stepNames",
+        {
+          "name": "VE.Commands.stepOrder",
+          "tied": [
+            "VE.Commands.stepOrder_forward"
+          ]
+        },
+        "VE.Commands.thenWithoutStep"
+      ],
+      "P": [
+        "VE.Commands.unitNames"
       ]
     },
     "VE/Commands/RunExamples.lean": {
       "T": [
+        "VE.Commands.RunExamples.actOf",
         "VE.Commands.RunExamples.atlasReviewed",
+        "VE.Commands.RunExamples.attributed",
         "VE.Commands.RunExamples.beaconReviewed",
         "VE.Commands.RunExamples.ctxOf",
         "VE.Commands.RunExamples.encodes",
@@ -19311,11 +19344,18 @@
         "VE.Commands.RunExamples.proveGo",
         "VE.Commands.RunExamples.proveSpaced",
         "VE.Commands.RunExamples.rawEnv",
+        "VE.Commands.RunExamples.readingsOf",
         "VE.Commands.RunExamples.record",
         "VE.Commands.RunExamples.refuses",
         "VE.Commands.RunExamples.request",
         "VE.Commands.RunExamples.result",
+        "VE.Commands.RunExamples.seven",
+        "VE.Commands.RunExamples.spans",
+        "VE.Commands.RunExamples.srcUnit",
+        "VE.Commands.RunExamples.su",
         "VE.Commands.RunExamples.targets",
+        "VE.Commands.RunExamples.webGet",
+        "VE.Commands.RunExamples.webKind",
         "VE.Commands.RunExamples.withDual",
         "VE.Commands.RunExamples.youBob"
       ]
