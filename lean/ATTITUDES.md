@@ -6,7 +6,7 @@ and the plan's block differ (spec section 11). Sources are in `lean/VE/Attitudes
 `open VE.Reports (Act)`, so every definition and theorem has the spec's name. The statement stub
 `docs/spec/attitudes/SpecStubs_attitudes.lean` is read, never imported.
 
-AT-1 is built in four merge-sized parts, in this order, on module seams: at-1a, at-1b, at-1c, at-1.
+AT-1 is built in five merge-sized parts, in this order, on module seams: at-1a, at-1b, at-1c, at-1d, at-1.
 
 | File | Spec | Part | Contents |
 |---|---|---|---|
@@ -19,7 +19,8 @@ AT-1 is built in four merge-sized parts, in this order, on module seams: at-1a, 
 | `Semantics.lean` | 2.8 | at-1c | `AttModel`, `contentAt`, `Intended`, `AFormula.denote`, `interp`, `restrict`, `seedClosure` |
 | `Route.lean` | 2.9 (its first block) | at-1c | `toU`, `SettledAsX`, `UnsaidFree`, `attitudesPack`, `attitudesRow` (defined, registered by AT-3a), and AT-2's stand-in `labelOrigin`; the module spec 6.2 names for AT-2's statements, which import `VE.NormDefaults.Layered`; 2.9's `pointCheck` goes to `Packs.lean` (AT-2) |
 | `Theorems.lean` (appended) | 6.1 `frame_wellFormed`, `frame_universalQF`, `frameLabels_nodup`, `framePairs_modes`, `framePairs_transitive`, `empty_relations_frame` | at-1c | proved from `checkAtt`'s condition and name checks; `table_reviewed` stays at-1a's, in `Scale.lean` |
-| `Theorems.lean` (appended) | the other fifteen statements of 6.1 | at-1 | the semantic statements over 2.8 |
+| `Theorems.lean` (appended) | 6.1 `frame_iff_intended`, `knows_factive`, `seed_intended`, `seed_least`, `forced_iff_reachable`, `mistaken_belief_admissible`, `guard_collapse` | at-1d | the statements about `Intended`, `framePremises` and `seedClosure`; helper lemmas `closeOver_denote`, `atomAt_interp`, `contentAt_interp`, `denote_interp_base` (a formula over `baseEnv` means the same on `interp`) for at-1 to reuse; `Examples.lean` gains 7.4's and 7.5's points for each |
+| `Theorems.lean` (appended) | the other eight statements of 6.1 | at-1 | the model correspondence, elaboration and conservativity statements |
 
 ## Interfaces used, and stand-ins still in force
 
