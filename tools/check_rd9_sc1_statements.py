@@ -39,14 +39,11 @@ SECTIONS = (
      {"theorem": 6, "def": 18, "structure": 2}, set()),
     ("SC-10 superposition", "### 13.3", "### 13.4", [LEAN / "Readings/SoftSup.lean"],
      {"theorem": 7, "def": 4, "structure": 0}, set()),
-    # 14.8's two blocks; the second starts inside its code fence, at its file line. Three label theorems, the
-    # superposed case and its wire theorems are sc-11c's (docs/rd-9/sc-11/REPORT.md, the size rule).
+    # 14.8's two blocks; the second starts inside its code fence, at its file line.
     ("SC-11 labels", "### 14.8", "-- lean/VE/Readings/SoftSupWire.lean", [LEAN / "Readings/SoftSupLabels.lean"],
-     {"theorem": 8, "def": 3, "structure": 0}, {"labelImage_functional", "supLabel_pull", "supLabel_other"}),
+     {"theorem": 8, "def": 3, "structure": 0}, set()),
     ("SC-11 wire", "-- lean/VE/Readings/SoftSupWire.lean", "### 14.9", [LEAN / "Readings/SoftSupWire.lean"],
-     {"theorem": 9, "def": 5, "structure": 1}, {"SupReplaySD", "readings_wire_sd_choices",
-     "readings_wire_sd_conflict_sound", "readings_wire_sd_all_sound", "readings_wire_sd_model_sound",
-     "readings_wire_sd_consistent_sound", "readings_wire_sd_witness_sound"}),
+     {"theorem": 9, "def": 5, "structure": 1}, set()),
 )
 
 

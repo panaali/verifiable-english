@@ -17235,7 +17235,8 @@
         "VE.Readings.Wire.sdSuperposable",
         "VE.Readings.Wire.sdCheckWork",
         "VE.Readings.Wire.sdChecked",
-        "VE.Readings.Wire.routeSD"
+        "VE.Readings.Wire.routeSD",
+        "VE.Readings.Wire.SupReplaySD"
       ],
       "G[R]": [
         "VE.Readings.Wire.maxSdCheckWork"
