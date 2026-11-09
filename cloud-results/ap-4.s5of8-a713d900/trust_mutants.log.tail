@@ -1,0 +1,7 @@
+trust_mutants: 8 definitions, 75 mutants (9 to run), 4 jobs, base d962e66a76e5
+UNKNOWN lean/VE/Service/Registry.lean:17 VE.Service.Mode (G[V], trusted) ctor-drop: | cardinality | scope | sensesProject | englishCommand | actReadings ->  (lean/VE/Service/Registry.lean:59: Unknown constant `VE.Service.Mode.cardinality`)
+SURVIVOR lean/VE/Acts/Run.lean:211 VE.Acts.Run.listed (G[V], trusted) bool-flip: false -> true
+trust_mutants: 7 KILLED, 1 SURVIVOR, 1 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 66 OTHER SHARD in 467 s
+trust_mutants: D[V], trusted: 4 KILLED, 22 OTHER SHARD
+trust_mutants: G[V], trusted: 3 KILLED, 1 SURVIVOR, 1 UNKNOWN, 44 OTHER SHARD
+trust_mutants: steps: wall plan 11.7 s, scratch 3.5 s, control_build 0.3 s, probe_install 1.4 s, control_probes 373.3 s, mutants 73.6 s, cleanup 2.9 s, reads 0.1 s; lake control_build 0.3 s (1), probe_install 1.4 s (1), control_probes 730.7 s (9), mutant_builds 21 s (10), mutant_checks 204.5 s (6), stage_controls 4.1 s (3), mutant_probes 26.2 s (7)
