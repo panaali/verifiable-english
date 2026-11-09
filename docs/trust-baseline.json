@@ -2203,6 +2203,48 @@
    "reason": "sc-7 review F7: lean/VE/Scope/Authoring.lean untied V +5 (sc-7 total K +0, S +37, V +111, trusted +148): Pinned.closers, every closer (Unicode 16.0 Pe, Pf, Pi, the quotes \" ' ＂ ＇, >, Markdown's * _ ` ~) that clause drops before a sentence end",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-7, 2026-11-09",
    "commit": "da5303b7876924d4fba67866390ed6f0d0b36cbc"
+  },
+  {
+   "class": "S",
+   "lines": 124,
+   "reason": "pe-1: S +124 (VE/Purposes/WellFormed.lean +77, VE/Purposes/Decl.lean +42, VE/Route/Inert.lean +5), untied V +23 (VE/Purposes/Wire.lean +23); K +0; trusted +147",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pe-1, 2026-10-18",
+   "commit": "a6d0d389a07b606e27881aacad9b01be8e8844ca"
+  },
+  {
+   "class": "V",
+   "lines": 23,
+   "reason": "pe-1: S +124 (VE/Purposes/WellFormed.lean +77, VE/Purposes/Decl.lean +42, VE/Route/Inert.lean +5), untied V +23 (VE/Purposes/Wire.lean +23); K +0; trusted +147",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pe-1, 2026-10-18",
+   "commit": "a6d0d389a07b606e27881aacad9b01be8e8844ca"
+  },
+  {
+   "class": "S",
+   "lines": 9,
+   "reason": "pe-1 F1: NotChecked in Decl.lean +9 S; shareOf_render ties Wire.lean shareOf -7 untied V; total pe-1 trusted growth +149, K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pe-1 F1, 2026-11-08",
+   "commit": "a6d0d389a07b606e27881aacad9b01be8e8844ca"
+  },
+  {
+   "class": "V",
+   "lines": 123,
+   "reason": "et-4b: K +0, S +0, V +123 (R16, cap 150): VE/Events/Wire.lean +56, VE/NormDefaults/Layered.lean +18, VE/Compose/Dispatch.lean +14, VE/NormDefaults/Run.lean +13, VE/Events/Chain.lean +10, VE/NormDefaults/Packs.lean +7, ResponseShape/Schemas/NormDefaults.lean +4, ResponseShape/Schemas/Common.lean +1",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), et-4b, 2026-10-18",
+   "commit": "fe252f79af28a6c76d6131e23e468d7c134456b5"
+  },
+  {
+   "class": "V",
+   "lines": 6,
+   "reason": "et-4b F1 (review fix): V +6, VE/NormDefaults/Run.lean +6 (runCaseE's no-block branch and certificateAnswer); replayUnblockedEntailment is tied by unblocked_wire_acceptance; et-4b total K +0, S +0, V +129 (R16, cap 150): VE/Events/Wire.lean +56, VE/NormDefaults/Run.lean +19, VE/NormDefaults/Layered.lean +18, VE/Compose/Dispatch.lean +14, VE/Events/Chain.lean +10, VE/NormDefaults/Packs.lean +7, ResponseShape/Schemas/NormDefaults.lean +4, ResponseShape/Schemas/Common.lean +1",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), et-4b, 2026-11-04",
+   "commit": "fe252f79af28a6c76d6131e23e468d7c134456b5"
+  },
+  {
+   "class": "V",
+   "lines": 42,
+   "reason": "jt-3b: VE/Service/Document.lean +30 (contentOf's bound names, legendRows, statusRows, linesJson, check, encode), ResponseShape/Schemas/Document.lean +12 (judgmentLines, row, file)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-3b, 2026-10-18",
+   "commit": "b13cf9e3e6172571628acfeb875ca2549a75fdc8"
   }
  ]
 }

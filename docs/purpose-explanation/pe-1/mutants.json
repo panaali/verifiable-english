@@ -1,0 +1,372 @@
+{
+ "item": "pe-1",
+ "command": "seeded bugs: each planted alone in memory in its module, the module(s) and lean/VE/Purposes/Examples.lean elaborated as one file with `lake env lean` (a control run with no mutation has no error), the errors recorded; nothing in the checkout is written. Per definition: tools/trust_mutants.py --max-mutants 1000 --test lean/VE/Purposes/Examples.lean --allow docs/purpose-explanation/pe-1/trust-mutants-allow.json (trust-mutants.json, exit 0)",
+ "mutants": [
+  {
+   "definition": "rivals (shareOk)",
+   "file": "lean/VE/Purposes/WellFormed.lean",
+   "from": "M.target == L.target && M.reason != L.reason",
+   "to": "M.target == L.target",
+   "killed": true,
+   "test": "F7a: #guard result (check F7 ⟨[f7l1 .sole, f7l2 .plain \"g.p3\"]⟩) == none",
+   "fails_at": "lean/VE/Purposes/Examples.lean:157",
+   "plan_bug": "shareOk counting a duplicate link as a rival (F7); also breaks shareOk_iff"
+  },
+  {
+   "definition": "markerAgrees",
+   "file": "lean/VE/Purposes/WellFormed.lean",
+   "from": "sideOfKind U L.slots.1 c && sideOfKind U L.slots.2 e",
+   "to": "either slot order accepted",
+   "killed": true,
+   "test": "F1 swap: #guard result (check (f1u (io .explanation .norm) .explanation) ⟨[f1l]⟩) == some \"... is not marked ...\"",
+   "fails_at": "lean/VE/Purposes/Examples.lean:53",
+   "plan_bug": "markerAgrees ignoring slot order (F1 swap)"
+  },
+  {
+   "definition": "nonfactive",
+   "file": "lean/VE/Purposes/WellFormed.lean",
+   "from": "p.kind.inert && p.candidates.all Kind.inert",
+   "to": "!(p.kind matches .asserted) && p.candidates.all Kind.inert",
+   "killed": true,
+   "test": "F1 norm purpose: #guard result (check (f1u (io .norm .norm) .norm) ⟨[f1l]⟩) == some nonfactiveText",
+   "fails_at": "lean/VE/Purposes/Examples.lean:56",
+   "plan_bug": "nonfactive checking only asserted; also breaks nonfactive_iff"
+  },
+  {
+   "definition": "nonfactive",
+   "file": "lean/VE/Purposes/WellFormed.lean",
+   "from": "p.kind.inert && p.candidates.all Kind.inert",
+   "to": "p.kind.inert",
+   "killed": true,
+   "test": "F1 candidate: #guard ... (cs := [.explanation, .asserted]) ... == some nonfactiveText",
+   "fails_at": "lean/VE/Purposes/Examples.lean:58",
+   "plan_bug": "nonfactive ignoring reading candidates; also breaks nonfactive_iff"
+  },
+  {
+   "definition": "markerHonest",
+   "file": "lean/VE/Purposes/WellFormed.lean",
+   "from": "U.parts.all fun p => ...",
+   "to": "true",
+   "killed": true,
+   "test": "F1 LABELLED: #guard result (check (f1u ... \"LABELLED\") ⟨[f1l]⟩) == some \"... not formalised\"",
+   "fails_at": "lean/VE/Purposes/Examples.lean:61",
+   "plan_bug": "markerHonest always true; also breaks markerHonest_labelled"
+  },
+  {
+   "definition": "Kind.inert",
+   "file": "lean/VE/Route/Inert.lean",
+   "from": "| .explanation | .exposition | .«example» | .analogy | .«meta» => true",
+   "to": "... | .norm => true",
+   "killed": true,
+   "test": "proof of normRole_inert; F1 norm-purpose #guard",
+   "fails_at": "lean/VE/Route/Inert.lean:72, lean/VE/Purposes/Examples.lean:56",
+   "plan_bug": "Kind.inert admitting norm; also breaks Kind.inert_active, inForce_inert and the 9.1 #guard"
+  },
+  {
+   "definition": "shareOk",
+   "file": "lean/VE/Purposes/WellFormed.lean",
+   "from": "(rivals B L).isEmpty && B.links.all fun M => ...",
+   "to": "(rivals B L).isEmpty",
+   "killed": true,
+   "test": "F7e: #guard result (check F7 ⟨[f7l1 .sole, f7l2 .notSole \"g.p3\"]⟩) == some soleText",
+   "fails_at": "lean/VE/Purposes/Examples.lean:162",
+   "plan_bug": "shareOk ignoring the other link's share (F7e, F7f); also breaks shareOk_iff"
+  },
+  {
+   "definition": "sideAdjacent",
+   "file": "lean/VE/Purposes/WellFormed.lean",
+   "from": "a.span.2 == b.span.1",
+   "to": "a.span.2 == b.span.1 || b.span.2 == a.span.1",
+   "killed": true,
+   "test": "F8a: #guard result (check F8 ⟨[{ f8l with reason := [.part \"h.p4\", .part \"h.p3\"] }]⟩) == some adjacentText",
+   "fails_at": "lean/VE/Purposes/Examples.lean:182",
+   "plan_bug": "sideAdjacent touching-only; also breaks sideAdjacent_iff"
+  },
+  {
+   "definition": "sideAdjacent",
+   "file": "lean/VE/Purposes/WellFormed.lean",
+   "from": "a.span.2 == b.span.1",
+   "to": "decide (a.span.2 ≤ b.span.1)",
+   "killed": true,
+   "test": "F8b: #guard result (check F8b ⟨[{ f8l with reason := [.part \"h.p3\", .part \"h.p5\"] }]⟩) == some adjacentText",
+   "fails_at": "lean/VE/Purposes/Examples.lean:183",
+   "plan_bug": "sideAdjacent order-only; also breaks sideAdjacent_iff"
+  },
+  {
+   "definition": "Link.slots",
+   "file": "lean/VE/Purposes/WellFormed.lean",
+   "from": "| .inOrderTo => (L.target, L.reason)",
+   "to": "| .inOrderTo => (L.reason, L.target)",
+   "killed": true,
+   "test": "F1: #guard result (check F1 ⟨[f1l]⟩) == none",
+   "fails_at": "lean/VE/Purposes/Examples.lean:52",
+   "plan_bug": null,
+   "why": "a trusted definition with no KILLED trust mutant (its operators gave only INVALID or type-error mutants, or none)"
+  },
+  {
+   "definition": "Units.kind?",
+   "file": "lean/VE/Purposes/WellFormed.lean",
+   "from": "(U.find? i).map (·.kind)",
+   "to": "(U.find? i).map (fun _ => Kind.asserted)",
+   "killed": true,
+   "test": "F1: #guard result (check F1 ⟨[f1l]⟩) == none",
+   "fails_at": "lean/VE/Purposes/Examples.lean:52",
+   "plan_bug": null,
+   "why": "a trusted definition with no KILLED trust mutant (its operators gave only INVALID or type-error mutants, or none)"
+  },
+  {
+   "definition": "shareOf",
+   "file": "lean/VE/Purposes/Wire.lean",
+   "from": "| .error _ => pure .plain",
+   "to": "| .error _ => pure .sole",
+   "killed": true,
+   "test": "#guard (decodeBlock (wire (f1Wire.replace \", \\\"share\\\": \\\"plain\\\"\" \"\"))).toOption == some ⟨[f1l]⟩ (an absent share is plain)",
+   "fails_at": "lean/VE/Purposes/Examples.lean:243",
+   "plan_bug": null,
+   "why": "a trusted definition with no KILLED trust mutant (its operators gave only INVALID or type-error mutants, or none)"
+  },
+  {
+   "definition": "wordOf",
+   "file": "lean/VE/Purposes/Wire.lean",
+   "from": "| some x => pure x",
+   "to": "| some _ => throw (text s)",
+   "killed": true,
+   "test": "#guard (decodeBlock (wire f1Wire)).toOption == some ⟨[f1l]⟩; also breaks decodeLink_render",
+   "fails_at": "lean/VE/Purposes/Examples.lean:242",
+   "plan_bug": null,
+   "why": "a trusted definition with no KILLED trust mutant (its operators gave only INVALID or type-error mutants, or none)"
+  },
+  {
+   "definition": "Ref.partId?",
+   "file": "lean/VE/Purposes/WellFormed.lean",
+   "from": "| .mention _ => none",
+   "to": "| .mention i => some i",
+   "killed": true,
+   "test": "F5 mention: #guard result (check F5 ⟨[{ f5l with reason := [.mention \"a.m1\"] }]⟩) == some joinText; also breaks sameUnit_parent and nonfactive_iff",
+   "fails_at": "lean/VE/Purposes/Examples.lean:131",
+   "plan_bug": null,
+   "why": "a trusted definition no trust-mutant operator applies to"
+  }
+ ],
+ "per_definition": [
+  {
+   "definition": "VE.Purposes.sideOfKind",
+   "counts": {
+    "ALLOWED": 6,
+    "KILLED": 11
+   },
+   "example_killed": {
+    "file": "lean/VE/Purposes/WellFormed.lean",
+    "line": 43,
+    "operator": "not-drop",
+    "killed_at": "lean/VE/Purposes/Examples.lean:52: Expression"
+   }
+  },
+  {
+   "definition": "VE.Purposes.markerAgrees",
+   "counts": {
+    "KILLED": 6
+   },
+   "example_killed": {
+    "file": "lean/VE/Purposes/WellFormed.lean",
+    "line": 48,
+    "operator": "body-true",
+    "killed_at": "lean/VE/Purposes/Examples.lean:53: Expression"
+   }
+  },
+  {
+   "definition": "VE.Purposes.sameUnit",
+   "counts": {
+    "KILLED": 28,
+    "ALLOWED": 4,
+    "INVALID": 8
+   },
+   "example_killed": {
+    "file": "lean/VE/Purposes/WellFormed.lean",
+    "line": 54,
+    "operator": "body-true",
+    "killed_at": "lean/VE/Purposes/Examples.lean:126: Expression"
+   }
+  },
+  {
+   "definition": "VE.Purposes.sidesAdjacent",
+   "counts": {
+    "KILLED": 3
+   },
+   "example_killed": {
+    "file": "lean/VE/Purposes/WellFormed.lean",
+    "line": 66,
+    "operator": "body-true",
+    "killed_at": "lean/VE/Purposes/Examples.lean:182: Expression"
+   }
+  },
+  {
+   "definition": "VE.Purposes.markersLinked",
+   "counts": {
+    "KILLED": 16,
+    "ALLOWED": 2
+   },
+   "example_killed": {
+    "file": "lean/VE/Purposes/WellFormed.lean",
+    "line": 83,
+    "operator": "body-true",
+    "killed_at": "lean/VE/Purposes/Examples.lean:63: Expression"
+   }
+  },
+  {
+   "definition": "VE.Purposes.covered",
+   "counts": {
+    "ALLOWED": 8,
+    "KILLED": 9
+   },
+   "example_killed": {
+    "file": "lean/VE/Purposes/WellFormed.lean",
+    "line": 89,
+    "operator": "or-and",
+    "killed_at": "lean/VE/Purposes/Examples.lean:71: Expression"
+   }
+  },
+  {
+   "definition": "VE.Purposes.markerHonest",
+   "counts": {
+    "KILLED": 25,
+    "ALLOWED": 3
+   },
+   "example_killed": {
+    "file": "lean/VE/Purposes/WellFormed.lean",
+    "line": 105,
+    "operator": "body-true",
+    "killed_at": "lean/VE/Purposes/Examples.lean:61: Expression"
+   }
+  },
+  {
+   "definition": "VE.Purposes.WellFormed",
+   "counts": {
+    "ALLOWED": 58,
+    "INVALID": 4
+   },
+   "example_killed": null
+  },
+  {
+   "definition": "VE.Purposes.rivals",
+   "counts": {
+    "KILLED": 17,
+    "ALLOWED": 3,
+    "INVALID": 4
+   },
+   "example_killed": {
+    "file": "lean/VE/Purposes/WellFormed.lean",
+    "line": 70,
+    "operator": "and-or",
+    "killed_at": "lean/VE/Purposes/Examples.lean:157: Expression"
+   }
+  },
+  {
+   "definition": "VE.Purposes.Units.find?",
+   "counts": {
+    "KILLED": 6,
+    "ALLOWED": 5
+   },
+   "example_killed": {
+    "file": "lean/VE/Purposes/WellFormed.lean",
+    "line": 27,
+    "operator": "eq-ne",
+    "killed_at": "lean/VE/Purposes/Examples.lean:52: Expression"
+   }
+  },
+  {
+   "definition": "VE.Route.Admission.Kind.inert",
+   "counts": {
+    "ALLOWED": 1,
+    "KILLED": 1
+   },
+   "example_killed": {
+    "file": "lean/VE/Route/Inert.lean",
+    "line": 14,
+    "operator": "bool-flip",
+    "killed_at": "lean/VE/Purposes/Examples.lean:38: Expression"
+   }
+  },
+  {
+   "definition": "VE.Purposes.maxLinks",
+   "counts": {
+    "KILLED": 2
+   },
+   "example_killed": {
+    "file": "lean/VE/Purposes/Decl.lean",
+    "line": 66,
+    "operator": "lit-plus",
+    "killed_at": "lean/VE/Purposes/Examples.lean:132: Expression"
+   }
+  },
+  {
+   "definition": "VE.Purposes.Units.kind?",
+   "counts": {
+    "ALLOWED": 3,
+    "INVALID": 12
+   },
+   "example_killed": null
+  },
+  {
+   "definition": "VE.Purposes.Link.partIds",
+   "counts": {
+    "KILLED": 27
+   },
+   "example_killed": {
+    "file": "lean/VE/Purposes/WellFormed.lean",
+    "line": 34,
+    "operator": "list-empty",
+    "killed_at": "lean/VE/Purposes/Examples.lean:126: Expression"
+   }
+  },
+  {
+   "definition": "VE.Purposes.Link.slots",
+   "counts": {
+    "ALLOWED": 1,
+    "INVALID": 4
+   },
+   "example_killed": null
+  },
+  {
+   "definition": "VE.Purposes.linksOf",
+   "counts": {
+    "KILLED": 3
+   },
+   "example_killed": {
+    "file": "lean/VE/Purposes/Wire.lean",
+    "line": 92,
+    "operator": "list-empty",
+    "killed_at": "lean/VE/Purposes/Examples.lean:242: Expression"
+   }
+  },
+  {
+   "definition": "VE.Purposes.Relation",
+   "counts": {
+    "ALLOWED": 2
+   },
+   "example_killed": null
+  },
+  {
+   "definition": "VE.Purposes.Polarity",
+   "counts": {
+    "ALLOWED": 2
+   },
+   "example_killed": null
+  },
+  {
+   "definition": "VE.Purposes.Share",
+   "counts": {
+    "ALLOWED": 4
+   },
+   "example_killed": null
+  },
+  {
+   "definition": "VE.Purposes.Ref",
+   "counts": {
+    "ALLOWED": 2
+   },
+   "example_killed": null
+  }
+ ],
+ "survivors": []
+}
