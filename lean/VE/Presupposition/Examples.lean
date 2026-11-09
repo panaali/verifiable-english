@@ -1,6 +1,7 @@
 import VE.Presupposition.Rows
 import VE.Presupposition.Rules
 import VE.Presupposition.Agree
+import VE.Presupposition.Wire
 import VE.Discourse.Descriptions
 import VE.Finite
 
