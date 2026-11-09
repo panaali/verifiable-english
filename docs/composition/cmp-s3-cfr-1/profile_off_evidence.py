@@ -17,4 +17,4 @@ out = {"commit": subprocess.run(["git", "rev-parse", "HEAD"], capture_output=Tru
        "cases": [case_digest(canonical(c)) for c in cases],
        "answers": [hashlib.sha256(canonical({k: v for k, v in r.items() if k != "id"}).encode()).hexdigest() for r in rows],
        "statuses": [r["status"] for r in rows]}
-print(json.dumps(out, indent=1))
+print("{\n" + ",\n".join(f" {json.dumps(k)}: {json.dumps(v, separators=(',', ':'))}" for k, v in out.items()) + "\n}")
