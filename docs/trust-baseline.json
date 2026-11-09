@@ -2220,8 +2220,8 @@
   },
   {
    "class": "V",
-   "lines": 95,
-   "reason": "et-5: V +95 (VE/EnglishGrammar/SourceWords.lean +67, VE/EnglishGrammar/SourceWordsExamples.lean +19, VE/EnglishGrammar/Advice.lean +9)",
+   "lines": 76,
+   "reason": "et-5: V +76 (VE/EnglishGrammar/SourceWords.lean +67, VE/EnglishGrammar/Advice.lean +9; the SourceWordsExamples helpers are T)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), et-5, 2026-10-18",
    "commit": "61a11aa21edcf115843a6b44a9aff9e623a6d6e4"
   }
