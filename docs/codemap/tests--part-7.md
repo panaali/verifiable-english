@@ -1,3 +1,8 @@
+- `tests/test_speech_source_lean.py` — The Lean decoded-source wrapper (`speech-source`, docs/spec/speech-acts.md 8.5) against Python's `SpeechSource`.
+- `tests/test_speech_source_relay.py` — The bound Python transport for VE.SpeechActs.Source.report.
+- `tests/test_speech_source_switch.py` — The 11b public projection against the frozen pre-switch W2 checker.
+- `tests/test_stage0_inventory.py` — Stage 0 inventory policy must survive regeneration on another checkout.
+- `tests/test_stage0_probe_matrix.py` — Regressions for rejected Stage 0 baseline probes.
 - `tests/test_stage2_bundle.py` — Lemma bundles on the Lean authority: Lean's route bundle case decides acceptance.
 - `tests/test_stage2_dispatch.py` — Checker boundaries: one owner per operation (no authority to select since lean-first batch 18), Rust transport limits and diagnostic classes.
 - `tests/test_stage2_evaluation.py` — Backend integration on the public evaluation and Background signatures.
