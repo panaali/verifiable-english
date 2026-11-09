@@ -1,0 +1,14 @@
+trust_mutants: 133 definitions, 414 mutants (37 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/Purposes/WellFormed.lean:166 VE.Purposes.WellFormed (S, trusted) body-true: B.links.length ≤ maxLinks ∧ (B.links.map (·.id)).Nodup ∧ (∀ L ∈ B.links, (∀ i ∈ L.partIds, (U.fin... -> True (lean/VE/Purposes/Examples.lean:278: Expression (VE.Purposes.Examples.wfDecidable, which it reads,...)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:45 VE.Purposes.sideOfKind (S, trusted) body-false: !s.isEmpty && s.all fun r => match r.partId? with | some i => U.kind? i == some k | none => true -> false (lean/VE/Purposes/Examples.lean:62: Expression (VE.Purposes.sameUnit, which it reads, is not what ...)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:166 VE.Purposes.WellFormed (S, trusted) le-lt: ≤ -> < (lean/VE/Purposes/Examples.lean:275: Expression (VE.Purposes.Examples.wfDecidable, which it reads,...)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:167 VE.Purposes.WellFormed (S, trusted) bool-flip: true -> false (lean/VE/Purposes/Examples.lean:275: Expression (VE.Purposes.Examples.wfDecidable, which it reads,...)
+UNKNOWN lean/VE/Acts/Run.lean:304 VE.Acts.Run.rowsOf (D[V], trusted) list-empty: Ws -> [] (lean/VE/Acts/Run.lean:304: don't know how to synthesize implicit argument `β`)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:85 VE.Purposes.markersLinked (S, trusted) list-empty: U.parts -> [] (lean/VE/Purposes/WellFormed.lean:85: Invalid field notation: Type of)
+UNKNOWN lean/VE/Presupposition/Wire.lean:101 VE.Presupposition.RContent (S, trusted) ctor-drop: | claim (a : VE.Formula) ->  (lean/VE/Presupposition/Wire.lean:184: Unknown constant `VE.Presupposition.RContent.claim`)
+UNKNOWN lean/VE/Commands/Steps.lean:100 VE.Commands.shapeOutcome (G[V], trusted) any-all: any -> all (lean/VE/Commands/StepsExamples.lean:113: Expression (it computes through a proof the mutant broke...)
+trust_mutants: 25 KILLED, 0 SURVIVOR, 8 UNKNOWN, 4 INVALID, 0 ALLOWED, 0 NOT RUN, 377 OTHER SHARD in 4478 s
+trust_mutants: D[V], trusted: 4 KILLED, 1 UNKNOWN, 2 INVALID, 75 OTHER SHARD
+trust_mutants: G[V], trusted: 11 KILLED, 1 UNKNOWN, 2 INVALID, 137 OTHER SHARD
+trust_mutants: S, trusted: 10 KILLED, 6 UNKNOWN, 165 OTHER SHARD
+trust_mutants: steps: wall plan 14.7 s, scratch 4.5 s, control_build 0.3 s, probe_install 1.4 s, mutants 4453.5 s, cleanup 3.5 s, reads 0.3 s; lake control_build 0.3 s (1), probe_install 1.4 s (1), control_probes 1163 s (28), mutant_builds 505.7 s (48), mutant_checks 7096.1 s (42), stage_controls 1983.7 s (15), mutant_probes 1945.5 s (33)
