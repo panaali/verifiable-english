@@ -1,0 +1,173 @@
+warning: The `UV_NATIVE_TLS` environment variable is deprecated and will be removed in a future release. Use `UV_SYSTEM_CERTS` instead.
+shard 6/6: 34 units; commands: ['lake build', 'lake build ve_english_lean_bench ve_scope_bench']
++ lake build
+⚠ [110/556] Replayed VE.SoftNorms.Soften
+warning: VE/SoftNorms/Soften.lean:264:19: This simp argument is unused:
+  Option.bind_eq_bind
+
+Hint: Omit it from the simp argument list.
+  simp only [̵O̵p̵t̵i̵o̵n̵.̵b̵i̵n̵d̵_̵e̵q̵_̵b̵i̵n̵d̵,̵ ̵O̵p̵t̵i̵o̵n̵.̵b̵i̵n̵d̵_̵n̵o̵n̵e̵]̵[̲O̲p̲t̲i̲o̲n̲.̲b̲i̲n̲d̲_̲n̲o̲n̲e̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+⚠ [125/556] Replayed VE.Readings.Separate
+warning: VE/Readings/Separate.lean:1490:50: unused variable `h`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: VE/Readings/Separate.lean:1492:5: unused variable `hr`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+⚠ [133/556] Replayed VE.Readings.Superpose
+warning: VE/Readings/Superpose.lean:311:34: unused variable `h`
+
+... (5125 lines cut; full output in shard-full.txt)
+⚠ [561/761] Replayed VE.Defaults.Uniform
+warning: VE/Defaults/Uniform.lean:215:38: unused variable `h`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: VE/Defaults/Uniform.lean:215:79: unused variable `hU`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+⚠ [563/761] Replayed VE.Defaults.Zone
+warning: VE/Defaults/Zone.lean:361:56: This simp argument is unused:
+  hp
+
+Hint: Omit it from the simp argument list.
+  simp only [hp,̵ ̵h̵p̵x, hb, Bool.not_false, Bool.true_and,
+          Bool.false_eq_true, ↓reduceIte, List.length_cons, Nat.add_zero] at ih ⊢
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+⚠ [571/761] Replayed VE.Readings.SupExtra
+warning: VE/Readings/SupExtra.lean:70:47: unused variable `hA`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+⚠ [609/761] Replayed VE.Numbers.Decimal
+warning: VE/Numbers/Decimal.lean:16:4: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+warning: VE/Numbers/Decimal.lean:18:4: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+⚠ [610/761] Replayed VE.Numbers.Round
+warning: VE/Numbers/Round.lean:150:38: This simp argument is unused:
+  ← Rat.intCast_add
+
+Hint: Omit it from the simp argument list.
+  simp [̵←̵ ̵R̵a̵t̵.̵i̵n̵t̵C̵a̵s̵t̵_̵a̵d̵d̵,̵ ̵R̵a̵t̵.̵i̵n̵t̵C̵a̵s̵t̵_̵i̵n̵j̵]̵[̲R̲a̲t̲.̲i̲n̲t̲C̲a̲s̲t̲_̲i̲n̲j̲]̲
+
+Note: Simp arguments with `←` have the additional effect of removing the other direction from the simp set, even if the simp argument itself is unused. If the hint above does not work, try replacing `←` with `-` to only get that effect and silence this warning.
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+⚠ [621/761] Replayed VE.Service.Document
+warning: VE/Service/Document.lean:2193:33: This simp argument is unused:
+  Except.mapError
+
+Hint: Omit it from the simp argument list.
+  simp [UnitContent.judgedIn, h, E̵x̵c̵e̵p̵t̵.̵m̵a̵p̵E̵r̵r̵o̵r̵,̵ ̵bind, Except.bind, pure, Except.pure]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+✔ [756/761] Built EnglishLeanBenchMain (1.0s)
+✔ [758/761] Built ScopeBenchMain (932ms)
+✔ [759/761] Built ScopeBenchMain:c.o (200ms)
+✔ [760/761] Built ve_english_lean_bench:exe (606ms)
+✔ [761/761] Built ve_scope_bench:exe (660ms)
+Build completed successfully (761 jobs).
+info: syncing channel updates for '1.98.1-x86_64-unknown-linux-gnu'
+info: latest update on 2026-09-03, rust version 1.98.1 (48a229cea 2026-09-01)
+info: downloading component 'cargo'
+info: downloading component 'rust-std'
+info: downloading component 'rustc'
+info: installing component 'cargo'
+info: installing component 'rust-std'
+info: installing component 'rustc'
+    Updating crates.io index
+ Downloading crates ...
+  Downloaded crypto-common v0.1.7
+  Downloaded itoa v1.0.18
+  Downloaded autocfg v1.5.1
+  Downloaded digest v0.10.7
+  Downloaded num-traits v0.2.19
+  Downloaded cfg-if v1.0.5
+  Downloaded cpufeatures v0.2.17
+  Downloaded generic-array v0.14.7
+  Downloaded version_check v0.9.5
+  Downloaded sha2 v0.10.9
+  Downloaded zmij v1.0.23
+  Downloaded block-buffer v0.10.4
+  Downloaded num-integer v0.1.47
+  Downloaded quote v1.0.47
+  Downloaded unicode-ident v1.0.26
+  Downloaded proc-macro2 v1.0.107
+  Downloaded serde_core v1.0.229
+  Downloaded serde_derive v1.0.229
+  Downloaded serde v1.0.229
+  Downloaded memchr v2.8.3
+  Downloaded num-bigint v0.4.8
+  Downloaded typenum v1.20.1
+  Downloaded serde_json v1.0.151
+  Downloaded syn v3.0.6
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling typenum v1.20.1
+   Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.26
+   Compiling generic-array v0.14.7
+   Compiling autocfg v1.5.1
+   Compiling serde_core v1.0.229
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling serde_json v1.0.151
+   Compiling syn v3.0.6
+   Compiling serde v1.0.229
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling cpufeatures v0.2.17
+   Compiling itoa v1.0.18
+   Compiling memchr v2.8.3
+   Compiling cfg-if v1.0.5
+   Compiling sha2 v0.10.9
+   Compiling serde_derive v1.0.229
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling ve-kernel v0.1.0 (/tmp/cc-wt/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/tmp/cc-wt/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/tmp/cc-wt/rust/ve-core)
+   Compiling ve v0.1.0 (/tmp/cc-wt/rust/ve)
+    Finished `release` profile [optimized] target(s) in 14.47s
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling unicode-ident v1.0.26
+   Compiling quote v1.0.47
+   Compiling typenum v1.20.1
+   Compiling serde_core v1.0.229
+   Compiling generic-array v0.14.7
+   Compiling autocfg v1.5.1
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling syn v3.0.6
+   Compiling serde_json v1.0.151
+   Compiling serde v1.0.229
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling cpufeatures v0.2.17
+   Compiling memchr v2.8.3
+   Compiling itoa v1.0.18
+   Compiling cfg-if v1.0.5
+   Compiling sha2 v0.10.9
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling serde_derive v1.0.229
+   Compiling ve-kernel v0.1.0 (/tmp/cc-wt/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/tmp/cc-wt/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/tmp/cc-wt/rust/ve-core)
+   Compiling ve v0.1.0 (/tmp/cc-wt/rust/ve)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 8.48s
+order: failed last time []; changed []; then the rest; --maxfail 5
+chunks: ; from the plan: tests/test_english_evidence.py::chunk(1/4), tests/test_trust_mutants.py::chunk(3/4), tests/test_speech_polar_lean.py::chunk(3/4)
+recording 34 units with 4 jobs in /var/tmp/cct/ve-select-run-w0p1efgj
+chunked tests/test_trust_mutants.py: 1 of 4 chunks, exit 0, 376.9 s in all, longest chunk 376.9 s; 191 passed, 0 skipped, 0 failed; each of its 191 tests ran in exactly one chunk
+chunked tests/test_english_evidence.py: 1 of 4 chunks, exit 0, 301.9 s in all, longest chunk 301.9 s; 19 passed, 0 skipped, 0 failed; each of its 19 tests ran in exactly one chunk
+chunked tests/test_speech_polar_lean.py: 1 of 4 chunks, exit 0, 356.5 s in all, longest chunk 356.5 s; 2384 passed, 0 skipped, 0 failed; each of its 2384 tests ran in exactly one chunk
+recorded 31 units for tree be4e4065d9; 3 others left to the static graph until they run (3 with only some of their chunks here); 0 failed
+SHARD 6/6: exit 0 in 1582.8 s; 34 units, 34 passed
