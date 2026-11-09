@@ -1,10 +1,11 @@
-ap-parse-index step (1): VM, compiled bench (lean/ParseIndexBench.lean, temporary exe), main a0102f0e5, microseconds.
+ap-parse-index step (1): VM, compiled bench (lean/ParseIndexBench.lean, exe ve_parse_index_bench at commit b9c4ece84;
+removed from the tree after, to keep the item's size), main a0102f0e5, microseconds. frames = all frames (V5 + n).
 Phrase L6 = "{0} to seek and to enjoy asylum in the first city ... in the sixth city" (CITIES fixed), V5 + n pad frames.
 L6 frames=2   tokens=19 rules=234  terms=15  positions=216  nts=88   steps=23152  | grammar=5919     prepare=204  accepted=31  ntRowGo=6666  sufTerm=0  sufNt=4607  table=7650  readings=183404 (ok 64)
 L6 frames=32  tokens=19 rules=2004 terms=46  positions=1266 nts=898  steps=82672  | grammar=848559   prepare=1881 accepted=114 ntRowGo=6770  sufTerm=0  sufNt=11105 table=14292 readings=19961632 (ok 64)
 L6 frames=64  tokens=19 rules=3892 terms=78  positions=2386 nts=1762 steps=146160 | grammar=2076671  prepare=4900 accepted=152 ntRowGo=7537  sufTerm=32 sufNt=8096  table=13698 readings=75579781 (ok 64)
-L6 frames=128 (V5 + 126) tokens=19 rules=7550 terms=140 positions=4556 nts=3436 steps=269168 | grammar=9455583 prepare=7460 accepted=189 ntRowGo=13611 sufTerm=4 sufNt=11132 table=26646 readings=304684410 (ok 64)
-L6 frames=130 (V5 + 128) rules=7668 steps=273136 | grammar=7976846 prepare=5676 table=23079 readings=479255643 (ok 64)
+L6 frames=126 (V5 + 124) tokens=19 rules=7550 terms=140 positions=4556 nts=3436 steps=269168 | grammar=9455583 prepare=7460 accepted=189 ntRowGo=13611 sufTerm=4 sufNt=11132 table=26646 readings=304684410 (ok 64)
+L6 frames=128 (V5 + 126) rules=7668 steps=273136 | grammar=7976846 prepare=5676 table=23079 readings=479255643 (ok 64)
 long400 frames=1   tokens=197 rules=154  steps=357659   | grammar=2581     prepare=166   accepted=735  ntRowGo=86180    sufNt=100740   table(budget)=236468  readings=240612 (ok 1)
 long400 frames=31  tokens=197 rules=1924 steps=9424949 (unbudgeted; budget: none) | grammar=1026258 prepare=2430 accepted=3638 ntRowGo=4456379 sufNt=4041664 table(budget)=2371537 readings=3183077 (limit)
 long400 frames=127 tokens=197 rules=7588 steps=38440277 (unbudgeted; budget: none) | grammar=17674023 prepare=14075 accepted=7332 ntRowGo=22481255 sufNt=18866451 table(budget)=2437342 readings=21456383 (limit)
@@ -13,8 +14,8 @@ frames=2  schema=112 closed=2648 build=3154 parse=15440 meaningSharedTable=3311 
 frames=32 schema=598 closed=463632 build=732174 parse=30878 meaningSharedTable=2356 meaningV=33058664
 frames=64 schema=1562 closed=1892032 build=2527929 parse=56698 meaningSharedTable=2689 meaningV=131610594
 
-AFTER (ap-parse-index fixes (1) fast closed/build, (2) the rule table once, (3) combineFast), same VM, `lake build
-ve_parse_index_bench && lean/.lake/build/bin/ve_parse_index_bench`, microseconds; parts = accepted/ntRowGo/sufTerm/sufNt
+AFTER (ap-parse-index fixes (1) fast closed/build, (2) the rule table once, (3) combineFast), same VM, at b9c4ece84
+(later commits route `readings` through `reader`, the same computation), `lake build ve_parse_index_bench && lean/.lake/build/bin/ve_parse_index_bench`, microseconds; parts = accepted/ntRowGo/sufTerm/sufNt
 (unbudgeted rows); "frames=128" for L6 is V5 + 126 extra frames.
 L6 frames=2 tokens=19 rules=234 terms=15 positions=216 steps=(some 23152) unbudgetedSteps=23152 | grammar=795 prepare=168 accepted/ntRowGo/sufTerm/sufNt=[21, 2552, 0, 4106] table=7028 readings=12291 (ok 64)
 L6 frames=32 tokens=19 rules=2004 terms=46 positions=1266 steps=(some 82672) unbudgetedSteps=82672 | grammar=17590 prepare=1835 accepted/ntRowGo/sufTerm/sufNt=[112, 4618, 0, 6182] table=15119 readings=40392 (ok 64)
