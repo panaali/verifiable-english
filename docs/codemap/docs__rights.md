@@ -1,0 +1,2 @@
+- `docs/rights/rights-cfr-5/header_delta.py` — rights-cfr-5 evidence: parse_line at the base commit against the worktree, on header variants.
+- `docs/rights/rights-cfr-5/line_roundtrip.py` — rights-cfr-5 evidence: render_line -> parse_line over the rights generator's lines.
