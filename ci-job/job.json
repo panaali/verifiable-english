@@ -1,0 +1,23 @@
+{
+ "job": "sc-7.s3of8-ab954263",
+ "head": "fae59cc548acbbad2cf4ec92749e48de316a2bac",
+ "argv": [
+  "sc-7.s3of8-ab954263",
+  "fae59cc548acbbad2cf4ec92749e48de316a2bac",
+  "d962e66a76e5b250d1a6ef85309f0b6644eb320c",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-b782dfe18f00.tar.zst",
+  "b2ebc5161f94aa7ae7cea635af4596999caf61b9f1cf688a59b719b016c43c65",
+  "--max-mutants",
+  "1000",
+  "--test",
+  "lean/VE/Scope/AuthoringExamples.lean",
+  "--allow",
+  "docs/scope/sc-7/trust-mutants-allow.json",
+  "--budget",
+  "6300",
+  "--shard",
+  "3/8",
+  "--jobs",
+  "4"
+ ]
+}
