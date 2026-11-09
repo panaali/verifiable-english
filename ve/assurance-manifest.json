@@ -66,7 +66,7 @@
     "ve/readings_verdicts/binding.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 43853,
+    "total_lines": 43887,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -2064,12 +2064,12 @@
       },
       {
         "file": "lean/VE/SpeechActs/Source/Run.lean",
-        "lines": 1013,
-        "sha256": "7f25341bedc65f5621d5052c703c4f21d3b74cc7973ef9124506ad768fc5382a",
+        "lines": 1021,
+        "sha256": "523d463ef741d4ba8bcf3053029aa7db6e6a999ec061d1502a198641d6d0f32e",
         "ranges": [
           [
             1,
-            1013
+            1021
           ]
         ],
         "declarations": [
@@ -2087,22 +2087,23 @@
           "readSource",
           "decodeSpeechSource"
         ],
-        "reason": "speech-act decoded-source wrapper (8.5): ve-document@2 units, reading sets, records and identity; every resolved command fence read again by VE.Commands.readInstruction under the payload's reading_context, decoded once through the pinned VE.Commands.Run.decodeRequest, a payload with a command fence and no context object refused (A2, commands-imperatives CI-2), and the unresolved fences charged against VE.Limits.maxCases; the full file is pinned conservatively"
+        "reason": "speech-act decoded-source wrapper (8.5): ve-document@2 units, reading sets, records and identity; every resolved fence required to decode to the role its kind reads (Wire.roleFits: a fence of a kind wrapping instruction is a command) and every resolved command fence read again by VE.Commands.readInstruction under the payload's reading_context, decoded once through the pinned VE.Commands.Run.decodeRequest, a payload with a command fence and no context object refused (A2, commands-imperatives CI-2), and the unresolved fences charged against VE.Limits.maxCases; the full file is pinned conservatively"
       },
       {
         "file": "lean/VE/SpeechActs/Wire.lean",
-        "lines": 1011,
-        "sha256": "6255650542a69f1d2fcb10d343cea19f2bbb284eae16a12c6f77510c59d9477f",
+        "lines": 1037,
+        "sha256": "3ad4c172b32bc33f365718ce23592cdeffa4286d83c4bc65441a1bc051765d2d",
         "ranges": [
           [
             1,
-            1011
+            1037
           ]
         ],
         "declarations": [
           "parseScope",
           "decodeSpeechEnvironment",
           "decodeUnit",
+          "roleFits",
           "decodeDocument"
         ],
         "reason": "speech scope, content, identity and document decoder; the full file is pinned conservatively"
@@ -4929,7 +4930,7 @@
       "assurance": {
         "current": "experimental",
         "at_switch": "experimental",
-        "reason": "Lean decides every outcome (VE.Commands.readInstruction over CI-1's readCommand and the proof task; readInstruction_typed and readInstruction_refused_classed proved through ci-1b's statements); the source wrapper reads every resolved command fence again under the request's reading context (commandFence_needs_context); the relay binds the answer to the request (ve.backends.english_lean.command_problem)"
+        "reason": "Lean decides every outcome (VE.Commands.readInstruction over CI-1's readCommand and the proof task; readInstruction_typed and readInstruction_refused_classed proved through ci-1b's statements); the source wrapper refuses a resolved fence that is not the role its kind reads (Wire.roleFits) and reads every resolved command fence again under the request's reading context (commandFence_needs_context); the relay binds the answer to the request (ve.backends.english_lean.command_problem)"
       },
       "python": [],
       "outcomes": {
