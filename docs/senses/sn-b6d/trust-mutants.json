@@ -1,7 +1,7 @@
 {
  "base": "9ba8aeaedfc82fa41258a4f52bcca4820f47b663",
- "head": "a07e5fada38becb426e92250d04c82b99b4dbceb",
- "tree": "3dfbb2ad0ede6d13e255efbaf7eb1e8e9266705f",
+ "head": "916415d5936ed8e3907838d660e0302ed957af84",
+ "tree": "4723e882e2bdf0af44e71d3cc03db84a585c9ce1",
  "jobs": 8,
  "max_mutants": 1000,
  "deep": false,
@@ -9,47 +9,47 @@
   "lean/VE/Senses/RunExamples.lean",
   "lean/VE/Senses/TextsExamples.lean"
  ],
- "seconds": 2603,
+ "seconds": 732,
  "steps": {
   "wall": {
-   "plan": 13.5,
-   "scratch": 22.7,
+   "plan": 14.4,
+   "scratch": 23.5,
    "control_build": 0.3,
-   "probe_install": 2.6,
-   "control_probes": 475.9,
-   "mutants": 2084.8,
-   "cleanup": 2.7,
-   "reads": 0.1
+   "probe_install": 1.8,
+   "control_probes": 364.2,
+   "mutants": 323.7,
+   "cleanup": 3.7,
+   "reads": 0.0
   },
   "lake": {
    "control_build": 0.3,
-   "probe_install": 2.5,
-   "control_probes": 793.6,
-   "mutant_builds": 748.1,
-   "mutant_checks": 7951.6,
+   "probe_install": 1.8,
+   "control_probes": 661.0,
+   "mutant_builds": 119.6,
+   "mutant_checks": 1645.2,
    "outside_checks": 0.0,
-   "stage_controls": 577.0,
-   "mutant_probes": 6690.3,
+   "stage_controls": 294.6,
+   "mutant_probes": 103.9,
    "other": 0.0
   },
   "runs": {
    "control_build": 1,
    "probe_install": 1,
    "control_probes": 2,
-   "mutant_builds": 100,
-   "mutant_checks": 95,
+   "mutant_builds": 14,
+   "mutant_checks": 16,
    "outside_checks": 0,
-   "stage_controls": 8,
-   "mutant_probes": 75,
+   "stage_controls": 4,
+   "mutant_probes": 6,
    "other": 0
   }
  },
  "counts": {
-  "KILLED": 75,
-  "SURVIVOR": 12,
-  "UNKNOWN": 2,
+  "KILLED": 81,
+  "SURVIVOR": 0,
+  "UNKNOWN": 0,
   "INVALID": 11,
-  "ALLOWED": 0,
+  "ALLOWED": 8,
   "NOT RUN": 0
  },
  "classes": [
@@ -57,15 +57,14 @@
  ],
  "class_counts": {
   "G[V], trusted": {
-   "KILLED": 75,
-   "SURVIVOR": 12,
-   "UNKNOWN": 2,
-   "INVALID": 11
+   "KILLED": 81,
+   "INVALID": 11,
+   "ALLOWED": 8
   }
  },
  "inputs": {
   "tool": "9894e72999231ce76ba9aee6b42e2202a46cb39d238bd968bb066ff9560bfa63",
-  "lean": "ada32c58a153f72d04a4f5bcdbd6c44792ba875c62710724ce40a00e8e038596",
+  "lean": "82faf0d234356c5a566b1449e8f92fdc1d595fb5bac45ee04de43d6b33cccff8",
   "tests": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
   "base": "9ba8aeaedfc82fa41258a4f52bcca4820f47b663",
   "options": "{\"deep\": false, \"test\": [\"VE/Senses/RunExamples.lean\", \"VE/Senses/TextsExamples.lean\"], \"classes\": [\"trusted\"]}",
@@ -803,7 +802,7 @@
    "lean/VE/Senses/Run.lean": "9ab843d3b1df2cbe7b8fd2910a2c190e051f0af13597121986094c43c039460b",
    "lean/VE/Senses/RunExamples.lean": "e4f752b38fbbb14cf3f9011424b66e56681dd94d14a5030be6904e965f1fefe1",
    "lean/VE/Senses/Texts.lean": "db53bdf07c7264bc2f48028a16ef1a313f28f9377c43014c2bd81a96906565fe",
-   "lean/VE/Senses/TextsExamples.lean": "91f77c78cfc8952e10f0c35d9f3bbe084b995ef3815580c1815af47044bc5441",
+   "lean/VE/Senses/TextsExamples.lean": "45ff3a34f7674b2982d76befbcba70410b3f0136b4fa2a0faa8df408f6a38466",
    "lean/VE/Senses/Version.lean": "796cf56defedd3e6fef43b9bd5fc9b00f3e5036de2287ca81d6736629eb6bd2f",
    "lean/VE/Service/ActsExamples.lean": "b082d0817c021ea8257b2ec82f97040e0a4a41c49491368ab5e69838e34600ef",
    "lean/VE/Service/CardinalityExamples.lean": "27b4274abcc38ff3b2eee1b6e6e26fc5900c64c4164ebc642509842bf8714ff5",
@@ -898,7 +897,7 @@
    "lean/audit.py": "05fb69c5689a8606fefd6d43e220f23ee6dbedc4bea7245b34ae29a4fd13a1cd",
    "lean/axioms.txt": "a051fe86c421785bcdbc5aedc2606f422770eacff9b8210962c86c2acb17b3a5",
    "lean/checkers.lock": "17c61587127e9f8feea88dfc533bfc9f7dce444e5bbc17064995e73f01ea9eb5",
-   "lean/declarations.txt": "40f53dab99eba2a57dce879e3f88a30d94a9e8cbc87fb0194ce3ee5f999d5ef9",
+   "lean/declarations.txt": "16dc8ae40a9d653aa46400d5ca55d234b8f00ca0ce9aaf2388be06b125f9a752",
    "lean/lake-manifest.json": "8579a8594992ccc571614869d24b997dba98134cffdbd5a0b26220a419e0de8e",
    "lean/lakefile.toml": "ffc47dfd06119c3518785b5059d81216b2f82b140509bfd25cd3273cbe04d4f5",
    "lean/lean-toolchain": "42779d67b81608af8a12aa4328d2ab47ca201925b3b2bd68369587b5340bb434",
@@ -920,6 +919,17 @@
    "tools/trust_mutants.py": "9e7b72217faa2601a3b61a82f0ba70d932ca1886cdef204dddab05ac551bd8eb"
   }
  },
+ "rescore": {
+  "file": "docs/senses/sn-b6d/trust-mutants-run1.json",
+  "head": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+  "mode": "checks",
+  "changed": [
+   "lean/VE/Senses/TextsExamples.lean",
+   "lean/declarations.txt"
+  ],
+  "reused": 86,
+  "rerun": 14
+ },
  "definitions": [
   "lean/VE/Senses/Run.lean: VE.Senses.Run.decodeReread",
   "lean/VE/Senses/Run.lean: VE.Senses.Run.lineJson",
@@ -940,12 +950,14 @@
    "before": "&&",
    "after": "||",
    "status": "KILLED",
-   "detail": "lean/VE/Senses/TextsExamples.lean:104: Expression",
+   "detail": "lean/VE/Senses/TextsExamples.lean:105: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "b2a2aec2a8f887ae0db244bb18f7869b8f5812cde4ff7ebe67b0aaa35d44f5ab",
    "killed_at": [
-    104,
-    104
+    105,
+    105
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -963,12 +975,14 @@
    "before": "<",
    "after": "\u2264",
    "status": "KILLED",
-   "detail": "lean/VE/Senses/TextsExamples.lean:102: Expression",
+   "detail": "lean/VE/Senses/TextsExamples.lean:103: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "35ce01dff92b5f237af5db152baf9d5b05b64e0639d7f26bf0bd87bce1ac7974",
    "killed_at": [
-    102,
-    102
+    103,
+    103
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -986,12 +1000,14 @@
    "before": "<",
    "after": "=",
    "status": "KILLED",
-   "detail": "lean/VE/Senses/TextsExamples.lean:102: Expression",
+   "detail": "lean/VE/Senses/TextsExamples.lean:103: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "35ce01dff92b5f237af5db152baf9d5b05b64e0639d7f26bf0bd87bce1ac7974",
    "killed_at": [
-    102,
-    102
+    103,
+    103
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -1011,6 +1027,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Senses/TextsExamples.lean:77: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "1dbf36d07f7f9400c96607fd4234fc36a9be3409c5aea44a35bebe084f9103ac",
    "killed_at": [
     77,
@@ -1032,12 +1050,14 @@
    "before": "==",
    "after": "!=",
    "status": "KILLED",
-   "detail": "lean/VE/Senses/TextsExamples.lean:102: Expression",
+   "detail": "lean/VE/Senses/TextsExamples.lean:103: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "35ce01dff92b5f237af5db152baf9d5b05b64e0639d7f26bf0bd87bce1ac7974",
    "killed_at": [
-    102,
-    102
+    103,
+    103
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -1057,6 +1077,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Senses/TextsExamples.lean:80: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "5e9b80f7410195fc53d08ef4a51434757a20cdb26fb46e94294852dc8eca88a5",
    "killed_at": [
     80,
@@ -1078,12 +1100,14 @@
    "before": "[\"sentence\", \"candidate\", \"rendering\"]",
    "after": "[]",
    "status": "KILLED",
-   "detail": "lean/VE/Senses/TextsExamples.lean:102: Expression",
+   "detail": "lean/VE/Senses/TextsExamples.lean:103: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "045b907366a621aa6715f496f42ee909512e59f5e52fcfe58c7f9219465cd9aa",
    "killed_at": [
-    102,
-    102
+    103,
+    103
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -1101,12 +1125,14 @@
    "before": "[(\"sentence\", toJson sentence), (\"candidate\", toJson j), (\"outcome\", .str outcome)]",
    "after": "[]",
    "status": "KILLED",
-   "detail": "lean/VE/Senses/TextsExamples.lean:102: Expression",
+   "detail": "lean/VE/Senses/TextsExamples.lean:103: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "35ce01dff92b5f237af5db152baf9d5b05b64e0639d7f26bf0bd87bce1ac7974",
    "killed_at": [
-    102,
-    102
+    103,
+    103
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -1126,6 +1152,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Senses/RunExamples.lean:130: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "5516dd538c03654227f48f6566a16466e89fbbb95995df626f9990f331ef4832",
    "killed_at": [
     130,
@@ -1147,12 +1175,14 @@
    "before": " ++ reread",
    "after": "",
    "status": "KILLED",
-   "detail": "lean/VE/Senses/TextsExamples.lean:102: Expression",
+   "detail": "lean/VE/Senses/TextsExamples.lean:103: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "d25732c71a56f9ed2acbdec57cda1123a3fc39141bf0db215b35e3ca56571da8",
    "killed_at": [
-    102,
-    102
+    103,
+    103
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -1169,9 +1199,10 @@
    ],
    "before": "out ++ ",
    "after": "",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Senses/Run.lean:460: Application type mismatch: The argument",
+   "status": "ALLOWED",
+   "detail": "does not elaborate (Application type mismatch at the textsJson argument)",
    "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Senses/Run.lean:460: Application type mismatch: The argument",
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -1188,12 +1219,14 @@
    "before": "&&",
    "after": "||",
    "status": "KILLED",
-   "detail": "lean/VE/Senses/TextsExamples.lean:104: Expression",
+   "detail": "lean/VE/Senses/TextsExamples.lean:105: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "b2a2aec2a8f887ae0db244bb18f7869b8f5812cde4ff7ebe67b0aaa35d44f5ab",
    "killed_at": [
-    104,
-    104
+    105,
+    105
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -1211,12 +1244,14 @@
    "before": "==",
    "after": "!=",
    "status": "KILLED",
-   "detail": "lean/VE/Senses/TextsExamples.lean:102: Expression",
+   "detail": "lean/VE/Senses/TextsExamples.lean:103: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "35ce01dff92b5f237af5db152baf9d5b05b64e0639d7f26bf0bd87bce1ac7974",
    "killed_at": [
-    102,
-    102
+    103,
+    103
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -1236,6 +1271,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Senses/TextsExamples.lean:77: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "1dbf36d07f7f9400c96607fd4234fc36a9be3409c5aea44a35bebe084f9103ac",
    "killed_at": [
     77,
@@ -1257,12 +1294,14 @@
    "before": "[\"line\", \"reread\"]",
    "after": "[]",
    "status": "KILLED",
-   "detail": "lean/VE/Senses/TextsExamples.lean:102: Expression",
+   "detail": "lean/VE/Senses/TextsExamples.lean:103: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "d25732c71a56f9ed2acbdec57cda1123a3fc39141bf0db215b35e3ca56571da8",
    "killed_at": [
-    102,
-    102
+    103,
+    103
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -1282,6 +1321,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Senses/TextsExamples.lean:77: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "1dbf36d07f7f9400c96607fd4234fc36a9be3409c5aea44a35bebe084f9103ac",
    "killed_at": [
     77,
@@ -1303,12 +1344,14 @@
    "before": "[\"line\", \"reread\"].filter (has j)",
    "after": "[]",
    "status": "KILLED",
-   "detail": "lean/VE/Senses/TextsExamples.lean:102: Expression",
+   "detail": "lean/VE/Senses/TextsExamples.lean:103: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "d25732c71a56f9ed2acbdec57cda1123a3fc39141bf0db215b35e3ca56571da8",
    "killed_at": [
-    102,
-    102
+    103,
+    103
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -1328,6 +1371,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Senses/TextsExamples.lean:80: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "5e9b80f7410195fc53d08ef4a51434757a20cdb26fb46e94294852dc8eca88a5",
    "killed_at": [
     80,
@@ -1349,12 +1394,14 @@
    "before": "[\"word\", \"gloss\"]",
    "after": "[]",
    "status": "KILLED",
-   "detail": "lean/VE/Senses/TextsExamples.lean:129: Expression",
+   "detail": "lean/VE/Senses/TextsExamples.lean:138: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "89f4d01197ecab1ce271024b650240ffa0b4894f27525f19ee39cd8e71bdded7",
    "killed_at": [
-    129,
-    132
+    138,
+    141
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -1374,6 +1421,8 @@
    "status": "INVALID",
    "detail": "don't know how to synthesize implicit argument `\u03b1`",
    "raw_status": "INVALID",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "a71b6575535a241aeb16757d7cc6ca6fd02d219051667072a9bd1dbda881ad13",
    "trust_class": "G[V]",
    "trusted": true
@@ -1391,12 +1440,14 @@
    "before": "[(\"reread\", \u2190 rereadJson D c budget (count - units.length) (usedOf P) units sentence k w)]",
    "after": "[]",
    "status": "KILLED",
-   "detail": "lean/VE/Senses/TextsExamples.lean:102: Expression",
+   "detail": "lean/VE/Senses/TextsExamples.lean:103: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "d25732c71a56f9ed2acbdec57cda1123a3fc39141bf0db215b35e3ca56571da8",
    "killed_at": [
-    102,
-    102
+    103,
+    103
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -1416,6 +1467,8 @@
    "status": "INVALID",
    "detail": "don't know how to synthesize implicit argument `\u03b1`",
    "raw_status": "INVALID",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "955cd2a1413cb64c288e08ca3daa0318fed34a648a9300cb15f79d2fb432d192",
    "trust_class": "G[V]",
    "trusted": true
@@ -1432,9 +1485,10 @@
    ],
    "before": "out",
    "after": "[]",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Senses/Run.lean:460: Application type mismatch: The argument",
+   "status": "ALLOWED",
+   "detail": "does not elaborate (Application type mismatch at the textsJson argument)",
    "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Senses/Run.lean:460: Application type mismatch: The argument",
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -1451,12 +1505,14 @@
    "before": "reread",
    "after": "[]",
    "status": "KILLED",
-   "detail": "lean/VE/Senses/TextsExamples.lean:102: Expression",
+   "detail": "lean/VE/Senses/TextsExamples.lean:103: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "d25732c71a56f9ed2acbdec57cda1123a3fc39141bf0db215b35e3ca56571da8",
    "killed_at": [
-    102,
-    102
+    103,
+    103
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -1476,6 +1532,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Senses/RunExamples.lean:120: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "5f5d812881359aa65f7283492577bbf248ed05b6420fe88d3df1e791f46b8a5d",
    "killed_at": [
     120,
@@ -1499,6 +1557,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Senses/RunExamples.lean:120: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "5f5d812881359aa65f7283492577bbf248ed05b6420fe88d3df1e791f46b8a5d",
    "killed_at": [
     120,
@@ -1520,12 +1580,14 @@
    "before": "line.toList",
    "after": "[]",
    "status": "KILLED",
-   "detail": "lean/VE/Senses/TextsExamples.lean:129: Expression",
+   "detail": "lean/VE/Senses/TextsExamples.lean:138: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "89f4d01197ecab1ce271024b650240ffa0b4894f27525f19ee39cd8e71bdded7",
    "killed_at": [
-    129,
-    132
+    138,
+    141
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -1545,6 +1607,8 @@
    "status": "INVALID",
    "detail": "Function expected at",
    "raw_status": "INVALID",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "955cd2a1413cb64c288e08ca3daa0318fed34a648a9300cb15f79d2fb432d192",
    "trust_class": "G[V]",
    "trusted": true
@@ -1564,6 +1628,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Senses/TextsExamples.lean:80: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "5e9b80f7410195fc53d08ef4a51434757a20cdb26fb46e94294852dc8eca88a5",
    "killed_at": [
     80,
@@ -1585,12 +1651,14 @@
    "before": "[\"sentence\", \"candidate\", \"rendering\"]",
    "after": "([\"sentence\", \"candidate\", \"rendering\"].take 1)",
    "status": "KILLED",
-   "detail": "lean/VE/Senses/TextsExamples.lean:102: Expression",
+   "detail": "lean/VE/Senses/TextsExamples.lean:103: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "045b907366a621aa6715f496f42ee909512e59f5e52fcfe58c7f9219465cd9aa",
    "killed_at": [
-    102,
-    102
+    103,
+    103
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -1608,12 +1676,14 @@
    "before": "[(\"sentence\", toJson sentence), (\"candidate\", toJson j), (\"outcome\", .str outcome)]",
    "after": "([(\"sentence\", toJson sentence), (\"candidate\", toJson j), (\"outcome\", .str outcome)].take 1)",
    "status": "KILLED",
-   "detail": "lean/VE/Senses/TextsExamples.lean:102: Expression",
+   "detail": "lean/VE/Senses/TextsExamples.lean:103: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "35ce01dff92b5f237af5db152baf9d5b05b64e0639d7f26bf0bd87bce1ac7974",
    "killed_at": [
-    102,
-    102
+    103,
+    103
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -1633,6 +1703,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Senses/RunExamples.lean:130: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "5516dd538c03654227f48f6566a16466e89fbbb95995df626f9990f331ef4832",
    "killed_at": [
     130,
@@ -1656,6 +1728,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Senses/TextsExamples.lean:80: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "5e9b80f7410195fc53d08ef4a51434757a20cdb26fb46e94294852dc8eca88a5",
    "killed_at": [
     80,
@@ -1677,12 +1751,14 @@
    "before": "[\"sentence\", \"candidate\", \"rendering\"]",
    "after": "([\"sentence\", \"candidate\", \"rendering\"].dropLast)",
    "status": "KILLED",
-   "detail": "lean/VE/Senses/TextsExamples.lean:102: Expression",
+   "detail": "lean/VE/Senses/TextsExamples.lean:103: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "045b907366a621aa6715f496f42ee909512e59f5e52fcfe58c7f9219465cd9aa",
    "killed_at": [
-    102,
-    102
+    103,
+    103
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -1700,12 +1776,14 @@
    "before": "[(\"sentence\", toJson sentence), (\"candidate\", toJson j), (\"outcome\", .str outcome)]",
    "after": "([(\"sentence\", toJson sentence), (\"candidate\", toJson j), (\"outcome\", .str outcome)].dropLast)",
    "status": "KILLED",
-   "detail": "lean/VE/Senses/TextsExamples.lean:102: Expression",
+   "detail": "lean/VE/Senses/TextsExamples.lean:103: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "35ce01dff92b5f237af5db152baf9d5b05b64e0639d7f26bf0bd87bce1ac7974",
    "killed_at": [
-    102,
-    102
+    103,
+    103
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -1725,6 +1803,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Senses/RunExamples.lean:130: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "5516dd538c03654227f48f6566a16466e89fbbb95995df626f9990f331ef4832",
    "killed_at": [
     130,
@@ -1748,6 +1828,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Senses/TextsExamples.lean:78: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "d7ca0dc426c30f22e6cceab10a43805fe1d8406637ce296adb63cdd20a032960",
    "killed_at": [
     78,
@@ -1769,12 +1851,14 @@
    "before": "[\"line\", \"reread\"]",
    "after": "([\"line\", \"reread\"].take 1)",
    "status": "KILLED",
-   "detail": "lean/VE/Senses/TextsExamples.lean:102: Expression",
+   "detail": "lean/VE/Senses/TextsExamples.lean:103: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "d25732c71a56f9ed2acbdec57cda1123a3fc39141bf0db215b35e3ca56571da8",
    "killed_at": [
-    102,
-    102
+    103,
+    103
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -1794,6 +1878,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Senses/TextsExamples.lean:78: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "d7ca0dc426c30f22e6cceab10a43805fe1d8406637ce296adb63cdd20a032960",
    "killed_at": [
     78,
@@ -1815,12 +1901,14 @@
    "before": "[\"line\", \"reread\"]",
    "after": "([\"line\", \"reread\"].dropLast)",
    "status": "KILLED",
-   "detail": "lean/VE/Senses/TextsExamples.lean:102: Expression",
+   "detail": "lean/VE/Senses/TextsExamples.lean:103: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "d25732c71a56f9ed2acbdec57cda1123a3fc39141bf0db215b35e3ca56571da8",
    "killed_at": [
-    102,
-    102
+    103,
+    103
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -1837,9 +1925,10 @@
    ],
    "before": "(D.sensesOf w)",
    "after": "((D.sensesOf w).take 1)",
-   "status": "SURVIVOR",
-   "detail": "",
+   "status": "ALLOWED",
+   "detail": "equivalent: (D.sensesOf w).isEmpty is unchanged by take 1 (the find? on line 356 is killed by the gloss guards)",
    "raw_status": "SURVIVOR",
+   "raw_detail": "",
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -1855,9 +1944,14 @@
    ],
    "before": "[\"line\", \"reread\"].filter (has j)",
    "after": "(([\"line\", \"reread\"].filter (has j)).take 1)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Senses/TextsExamples.lean:133: Expression",
+   "raw_status": "KILLED",
+   "reads": "5eb202ff35d0745df9ab8281a6c56aa0bfa8269e3d711a3c9f368993277ddd91",
+   "killed_at": [
+    133,
+    137
+   ],
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -1876,6 +1970,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Senses/TextsExamples.lean:77: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "1dbf36d07f7f9400c96607fd4234fc36a9be3409c5aea44a35bebe084f9103ac",
    "killed_at": [
     77,
@@ -1897,12 +1993,14 @@
    "before": "[\"line\", \"reread\"].filter (has j)",
    "after": "(([\"line\", \"reread\"].filter (has j)).dropLast)",
    "status": "KILLED",
-   "detail": "lean/VE/Senses/TextsExamples.lean:102: Expression",
+   "detail": "lean/VE/Senses/TextsExamples.lean:103: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "d25732c71a56f9ed2acbdec57cda1123a3fc39141bf0db215b35e3ca56571da8",
    "killed_at": [
-    102,
-    102
+    103,
+    103
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -1920,12 +2018,14 @@
    "before": "[\"word\", \"gloss\"]",
    "after": "([\"word\", \"gloss\"].take 1)",
    "status": "KILLED",
-   "detail": "lean/VE/Senses/TextsExamples.lean:129: Expression",
+   "detail": "lean/VE/Senses/TextsExamples.lean:138: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "89f4d01197ecab1ce271024b650240ffa0b4894f27525f19ee39cd8e71bdded7",
    "killed_at": [
-    129,
-    132
+    138,
+    141
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -1945,6 +2045,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Senses/TextsExamples.lean:80: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "5e9b80f7410195fc53d08ef4a51434757a20cdb26fb46e94294852dc8eca88a5",
    "killed_at": [
     80,
@@ -1966,12 +2068,14 @@
    "before": "[\"word\", \"gloss\"]",
    "after": "([\"word\", \"gloss\"].dropLast)",
    "status": "KILLED",
-   "detail": "lean/VE/Senses/TextsExamples.lean:129: Expression",
+   "detail": "lean/VE/Senses/TextsExamples.lean:138: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "89f4d01197ecab1ce271024b650240ffa0b4894f27525f19ee39cd8e71bdded7",
    "killed_at": [
-    129,
-    132
+    138,
+    141
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -1988,9 +2092,14 @@
    ],
    "before": "units",
    "after": "(units.take 1)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Senses/TextsExamples.lean:130: Expression",
+   "raw_status": "KILLED",
+   "reads": "2a99b092390044152368e87510c18221f455fe173fb1ff7ebdcc9584034e521e",
+   "killed_at": [
+    130,
+    130
+   ],
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -2006,9 +2115,14 @@
    ],
    "before": "(D.sensesOf w)",
    "after": "((D.sensesOf w).dropLast)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Senses/TextsExamples.lean:82: Expression",
+   "raw_status": "KILLED",
+   "reads": "b75ec5f64ce9a8694063ac100997943008ecb00623d290d4dc8552f4eb7d33c8",
+   "killed_at": [
+    82,
+    83
+   ],
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -2025,12 +2139,14 @@
    "before": "[(\"reread\", \u2190 rereadJson D c budget (count - units.length) (usedOf P) units sentence k w)]",
    "after": "([(\"reread\", \u2190 rereadJson D c budget (count - units.length) (usedOf P) units sentence k w)].dropLast)",
    "status": "KILLED",
-   "detail": "lean/VE/Senses/TextsExamples.lean:102: Expression",
+   "detail": "lean/VE/Senses/TextsExamples.lean:103: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "d25732c71a56f9ed2acbdec57cda1123a3fc39141bf0db215b35e3ca56571da8",
    "killed_at": [
-    102,
-    102
+    103,
+    103
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -2050,6 +2166,8 @@
    "status": "INVALID",
    "detail": "Invalid field `take`: The environment does not contain `VE.Senses.SensesOutcome.take`",
    "raw_status": "INVALID",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "955cd2a1413cb64c288e08ca3daa0318fed34a648a9300cb15f79d2fb432d192",
    "trust_class": "G[V]",
    "trusted": true
@@ -2067,12 +2185,14 @@
    "before": "units",
    "after": "(units.dropLast)",
    "status": "KILLED",
-   "detail": "lean/VE/Senses/TextsExamples.lean:102: Expression",
+   "detail": "lean/VE/Senses/TextsExamples.lean:103: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "d25732c71a56f9ed2acbdec57cda1123a3fc39141bf0db215b35e3ca56571da8",
    "killed_at": [
-    102,
-    102
+    103,
+    103
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -2089,9 +2209,10 @@
    ],
    "before": "reread",
    "after": "(reread.take 1)",
-   "status": "SURVIVOR",
-   "detail": "",
+   "status": "ALLOWED",
+   "detail": "equivalent on reread and line.toList, lists of at most one entry (an Option arm); its cuts of the member names and of units are killed by the both-members and second-unit guards",
    "raw_status": "SURVIVOR",
+   "raw_detail": "",
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -2110,6 +2231,8 @@
    "status": "INVALID",
    "detail": "Invalid field `dropLast`: The environment does not contain `VE.Senses.SensesOutcome.dropLast`",
    "raw_status": "INVALID",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "955cd2a1413cb64c288e08ca3daa0318fed34a648a9300cb15f79d2fb432d192",
    "trust_class": "G[V]",
    "trusted": true
@@ -2129,6 +2252,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Senses/RunExamples.lean:120: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "5f5d812881359aa65f7283492577bbf248ed05b6420fe88d3df1e791f46b8a5d",
    "killed_at": [
     120,
@@ -2150,12 +2275,14 @@
    "before": "reread",
    "after": "(reread.dropLast)",
    "status": "KILLED",
-   "detail": "lean/VE/Senses/TextsExamples.lean:102: Expression",
+   "detail": "lean/VE/Senses/TextsExamples.lean:103: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "d25732c71a56f9ed2acbdec57cda1123a3fc39141bf0db215b35e3ca56571da8",
    "killed_at": [
-    102,
-    102
+    103,
+    103
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -2172,9 +2299,10 @@
    ],
    "before": "line.toList",
    "after": "(line.toList.take 1)",
-   "status": "SURVIVOR",
-   "detail": "",
+   "status": "ALLOWED",
+   "detail": "equivalent on reread and line.toList, lists of at most one entry (an Option arm); its cuts of the member names and of units are killed by the both-members and second-unit guards",
    "raw_status": "SURVIVOR",
+   "raw_detail": "",
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -2193,6 +2321,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Senses/RunExamples.lean:120: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "5f5d812881359aa65f7283492577bbf248ed05b6420fe88d3df1e791f46b8a5d",
    "killed_at": [
     120,
@@ -2216,6 +2346,8 @@
    "status": "INVALID",
    "detail": "Invalid field `take`: The environment does not contain `Function.take`",
    "raw_status": "INVALID",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "955cd2a1413cb64c288e08ca3daa0318fed34a648a9300cb15f79d2fb432d192",
    "trust_class": "G[V]",
    "trusted": true
@@ -2235,6 +2367,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Senses/RunExamples.lean:120: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "5f5d812881359aa65f7283492577bbf248ed05b6420fe88d3df1e791f46b8a5d",
    "killed_at": [
     120,
@@ -2256,12 +2390,14 @@
    "before": "line.toList",
    "after": "(line.toList.dropLast)",
    "status": "KILLED",
-   "detail": "lean/VE/Senses/TextsExamples.lean:129: Expression",
+   "detail": "lean/VE/Senses/TextsExamples.lean:138: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "89f4d01197ecab1ce271024b650240ffa0b4894f27525f19ee39cd8e71bdded7",
    "killed_at": [
-    129,
-    132
+    138,
+    141
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -2281,6 +2417,8 @@
    "status": "INVALID",
    "detail": "Invalid field `dropLast`: The environment does not contain `Function.dropLast`",
    "raw_status": "INVALID",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "955cd2a1413cb64c288e08ca3daa0318fed34a648a9300cb15f79d2fb432d192",
    "trust_class": "G[V]",
    "trusted": true
@@ -2300,6 +2438,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Senses/TextsExamples.lean:80: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "5e9b80f7410195fc53d08ef4a51434757a20cdb26fb46e94294852dc8eca88a5",
    "killed_at": [
     80,
@@ -2321,12 +2461,14 @@
    "before": "[\"sentence\", \"candidate\", \"rendering\"]",
    "after": "([\"sentence\", \"candidate\", \"rendering\"].reverse.take 1)",
    "status": "KILLED",
-   "detail": "lean/VE/Senses/TextsExamples.lean:102: Expression",
+   "detail": "lean/VE/Senses/TextsExamples.lean:103: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "045b907366a621aa6715f496f42ee909512e59f5e52fcfe58c7f9219465cd9aa",
    "killed_at": [
-    102,
-    102
+    103,
+    103
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -2344,12 +2486,14 @@
    "before": "[(\"sentence\", toJson sentence), (\"candidate\", toJson j), (\"outcome\", .str outcome)]",
    "after": "([(\"sentence\", toJson sentence), (\"candidate\", toJson j), (\"outcome\", .str outcome)].reverse.take 1)",
    "status": "KILLED",
-   "detail": "lean/VE/Senses/TextsExamples.lean:107: Expression",
+   "detail": "lean/VE/Senses/TextsExamples.lean:108: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "101e694432ff355cdd6f2d849e217c3b42e1253417275a61545cb475d673a45b",
    "killed_at": [
-    107,
-    109
+    108,
+    110
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -2369,6 +2513,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Senses/RunExamples.lean:130: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "5516dd538c03654227f48f6566a16466e89fbbb95995df626f9990f331ef4832",
    "killed_at": [
     130,
@@ -2392,6 +2538,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Senses/TextsExamples.lean:80: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "5e9b80f7410195fc53d08ef4a51434757a20cdb26fb46e94294852dc8eca88a5",
    "killed_at": [
     80,
@@ -2413,12 +2561,14 @@
    "before": "[\"sentence\", \"candidate\", \"rendering\"]",
    "after": "([\"sentence\", \"candidate\", \"rendering\"].drop 1)",
    "status": "KILLED",
-   "detail": "lean/VE/Senses/TextsExamples.lean:102: Expression",
+   "detail": "lean/VE/Senses/TextsExamples.lean:103: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "045b907366a621aa6715f496f42ee909512e59f5e52fcfe58c7f9219465cd9aa",
    "killed_at": [
-    102,
-    102
+    103,
+    103
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -2436,12 +2586,14 @@
    "before": "[(\"sentence\", toJson sentence), (\"candidate\", toJson j), (\"outcome\", .str outcome)]",
    "after": "([(\"sentence\", toJson sentence), (\"candidate\", toJson j), (\"outcome\", .str outcome)].drop 1)",
    "status": "KILLED",
-   "detail": "lean/VE/Senses/TextsExamples.lean:107: Expression",
+   "detail": "lean/VE/Senses/TextsExamples.lean:108: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "101e694432ff355cdd6f2d849e217c3b42e1253417275a61545cb475d673a45b",
    "killed_at": [
-    107,
-    109
+    108,
+    110
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -2461,6 +2613,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Senses/RunExamples.lean:130: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "5516dd538c03654227f48f6566a16466e89fbbb95995df626f9990f331ef4832",
    "killed_at": [
     130,
@@ -2482,12 +2636,14 @@
    "before": " \"candidate\",",
    "after": "",
    "status": "KILLED",
-   "detail": "lean/VE/Senses/TextsExamples.lean:102: Expression",
+   "detail": "lean/VE/Senses/TextsExamples.lean:103: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "045b907366a621aa6715f496f42ee909512e59f5e52fcfe58c7f9219465cd9aa",
    "killed_at": [
-    102,
-    102
+    103,
+    103
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -2505,12 +2661,14 @@
    "before": " (\"candidate\", toJson j),",
    "after": "",
    "status": "KILLED",
-   "detail": "lean/VE/Senses/TextsExamples.lean:107: Expression",
+   "detail": "lean/VE/Senses/TextsExamples.lean:108: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "101e694432ff355cdd6f2d849e217c3b42e1253417275a61545cb475d673a45b",
    "killed_at": [
-    107,
-    109
+    108,
+    110
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -2530,6 +2688,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Senses/RunExamples.lean:120: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "5f5d812881359aa65f7283492577bbf248ed05b6420fe88d3df1e791f46b8a5d",
    "killed_at": [
     120,
@@ -2553,6 +2713,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Senses/TextsExamples.lean:77: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "1dbf36d07f7f9400c96607fd4234fc36a9be3409c5aea44a35bebe084f9103ac",
    "killed_at": [
     77,
@@ -2574,12 +2736,14 @@
    "before": "[\"line\", \"reread\"]",
    "after": "([\"line\", \"reread\"].reverse.take 1)",
    "status": "KILLED",
-   "detail": "lean/VE/Senses/TextsExamples.lean:129: Expression",
+   "detail": "lean/VE/Senses/TextsExamples.lean:138: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "89f4d01197ecab1ce271024b650240ffa0b4894f27525f19ee39cd8e71bdded7",
    "killed_at": [
-    129,
-    132
+    138,
+    141
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -2599,6 +2763,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Senses/TextsExamples.lean:77: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "1dbf36d07f7f9400c96607fd4234fc36a9be3409c5aea44a35bebe084f9103ac",
    "killed_at": [
     77,
@@ -2620,12 +2786,14 @@
    "before": "[\"line\", \"reread\"]",
    "after": "([\"line\", \"reread\"].drop 1)",
    "status": "KILLED",
-   "detail": "lean/VE/Senses/TextsExamples.lean:129: Expression",
+   "detail": "lean/VE/Senses/TextsExamples.lean:138: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "89f4d01197ecab1ce271024b650240ffa0b4894f27525f19ee39cd8e71bdded7",
    "killed_at": [
-    129,
-    132
+    138,
+    141
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -2645,6 +2813,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Senses/RunExamples.lean:120: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "5f5d812881359aa65f7283492577bbf248ed05b6420fe88d3df1e791f46b8a5d",
    "killed_at": [
     120,
@@ -2665,9 +2835,10 @@
    ],
    "before": "(D.sensesOf w)",
    "after": "((D.sensesOf w).reverse.take 1)",
-   "status": "SURVIVOR",
-   "detail": "",
+   "status": "ALLOWED",
+   "detail": "equivalent: (D.sensesOf w).isEmpty is unchanged by reverse.take 1 (the find? on line 356 is killed by the gloss guards)",
    "raw_status": "SURVIVOR",
+   "raw_detail": "",
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -2683,9 +2854,14 @@
    ],
    "before": "[\"line\", \"reread\"].filter (has j)",
    "after": "(([\"line\", \"reread\"].filter (has j)).reverse.take 1)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Senses/TextsExamples.lean:133: Expression",
+   "raw_status": "KILLED",
+   "reads": "5eb202ff35d0745df9ab8281a6c56aa0bfa8269e3d711a3c9f368993277ddd91",
+   "killed_at": [
+    133,
+    137
+   ],
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -2704,6 +2880,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Senses/TextsExamples.lean:77: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "1dbf36d07f7f9400c96607fd4234fc36a9be3409c5aea44a35bebe084f9103ac",
    "killed_at": [
     77,
@@ -2725,12 +2903,14 @@
    "before": "[\"line\", \"reread\"].filter (has j)",
    "after": "(([\"line\", \"reread\"].filter (has j)).drop 1)",
    "status": "KILLED",
-   "detail": "lean/VE/Senses/TextsExamples.lean:102: Expression",
+   "detail": "lean/VE/Senses/TextsExamples.lean:103: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "d25732c71a56f9ed2acbdec57cda1123a3fc39141bf0db215b35e3ca56571da8",
    "killed_at": [
-    102,
-    102
+    103,
+    103
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -2748,12 +2928,14 @@
    "before": "[\"word\", \"gloss\"]",
    "after": "([\"word\", \"gloss\"].reverse.take 1)",
    "status": "KILLED",
-   "detail": "lean/VE/Senses/TextsExamples.lean:129: Expression",
+   "detail": "lean/VE/Senses/TextsExamples.lean:138: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "89f4d01197ecab1ce271024b650240ffa0b4894f27525f19ee39cd8e71bdded7",
    "killed_at": [
-    129,
-    132
+    138,
+    141
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -2773,6 +2955,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Senses/TextsExamples.lean:80: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "5e9b80f7410195fc53d08ef4a51434757a20cdb26fb46e94294852dc8eca88a5",
    "killed_at": [
     80,
@@ -2794,12 +2978,14 @@
    "before": "[\"word\", \"gloss\"]",
    "after": "([\"word\", \"gloss\"].drop 1)",
    "status": "KILLED",
-   "detail": "lean/VE/Senses/TextsExamples.lean:129: Expression",
+   "detail": "lean/VE/Senses/TextsExamples.lean:138: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "89f4d01197ecab1ce271024b650240ffa0b4894f27525f19ee39cd8e71bdded7",
    "killed_at": [
-    129,
-    132
+    138,
+    141
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -2816,9 +3002,14 @@
    ],
    "before": "units",
    "after": "(units.reverse.take 1)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Senses/TextsExamples.lean:130: Expression",
+   "raw_status": "KILLED",
+   "reads": "2a99b092390044152368e87510c18221f455fe173fb1ff7ebdcc9584034e521e",
+   "killed_at": [
+    130,
+    130
+   ],
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -2834,9 +3025,14 @@
    ],
    "before": "(D.sensesOf w)",
    "after": "((D.sensesOf w).drop 1)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/Senses/TextsExamples.lean:82: Expression",
+   "raw_status": "KILLED",
+   "reads": "b75ec5f64ce9a8694063ac100997943008ecb00623d290d4dc8552f4eb7d33c8",
+   "killed_at": [
+    82,
+    83
+   ],
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -2853,12 +3049,14 @@
    "before": "[(\"reread\", \u2190 rereadJson D c budget (count - units.length) (usedOf P) units sentence k w)]",
    "after": "([(\"reread\", \u2190 rereadJson D c budget (count - units.length) (usedOf P) units sentence k w)].drop 1)",
    "status": "KILLED",
-   "detail": "lean/VE/Senses/TextsExamples.lean:102: Expression",
+   "detail": "lean/VE/Senses/TextsExamples.lean:103: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "d25732c71a56f9ed2acbdec57cda1123a3fc39141bf0db215b35e3ca56571da8",
    "killed_at": [
-    102,
-    102
+    103,
+    103
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -2878,6 +3076,8 @@
    "status": "INVALID",
    "detail": "Invalid field `reverse`: The environment does not contain `VE.Senses.SensesOutcome.reverse`",
    "raw_status": "INVALID",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "955cd2a1413cb64c288e08ca3daa0318fed34a648a9300cb15f79d2fb432d192",
    "trust_class": "G[V]",
    "trusted": true
@@ -2895,12 +3095,14 @@
    "before": "units",
    "after": "(units.drop 1)",
    "status": "KILLED",
-   "detail": "lean/VE/Senses/TextsExamples.lean:102: Expression",
+   "detail": "lean/VE/Senses/TextsExamples.lean:103: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "d25732c71a56f9ed2acbdec57cda1123a3fc39141bf0db215b35e3ca56571da8",
    "killed_at": [
-    102,
-    102
+    103,
+    103
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -2917,9 +3119,10 @@
    ],
    "before": "reread",
    "after": "(reread.reverse.take 1)",
-   "status": "SURVIVOR",
-   "detail": "",
+   "status": "ALLOWED",
+   "detail": "equivalent on reread and line.toList, lists of at most one entry (an Option arm); its cuts of the member names and of units are killed by the both-members and second-unit guards",
    "raw_status": "SURVIVOR",
+   "raw_detail": "",
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -2938,6 +3141,8 @@
    "status": "INVALID",
    "detail": "Invalid field `drop`: The environment does not contain `VE.Senses.SensesOutcome.drop`",
    "raw_status": "INVALID",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "955cd2a1413cb64c288e08ca3daa0318fed34a648a9300cb15f79d2fb432d192",
    "trust_class": "G[V]",
    "trusted": true
@@ -2957,6 +3162,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Senses/RunExamples.lean:120: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "5f5d812881359aa65f7283492577bbf248ed05b6420fe88d3df1e791f46b8a5d",
    "killed_at": [
     120,
@@ -2978,12 +3185,14 @@
    "before": "reread",
    "after": "(reread.drop 1)",
    "status": "KILLED",
-   "detail": "lean/VE/Senses/TextsExamples.lean:102: Expression",
+   "detail": "lean/VE/Senses/TextsExamples.lean:103: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "d25732c71a56f9ed2acbdec57cda1123a3fc39141bf0db215b35e3ca56571da8",
    "killed_at": [
-    102,
-    102
+    103,
+    103
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -3000,9 +3209,10 @@
    ],
    "before": "line.toList",
    "after": "(line.toList.reverse.take 1)",
-   "status": "SURVIVOR",
-   "detail": "",
+   "status": "ALLOWED",
+   "detail": "equivalent on reread and line.toList, lists of at most one entry (an Option arm); its cuts of the member names and of units are killed by the both-members and second-unit guards",
    "raw_status": "SURVIVOR",
+   "raw_detail": "",
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -3021,6 +3231,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Senses/RunExamples.lean:120: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "5f5d812881359aa65f7283492577bbf248ed05b6420fe88d3df1e791f46b8a5d",
    "killed_at": [
     120,
@@ -3044,6 +3256,8 @@
    "status": "INVALID",
    "detail": "Invalid field `reverse`: The environment does not contain `Function.reverse`",
    "raw_status": "INVALID",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "955cd2a1413cb64c288e08ca3daa0318fed34a648a9300cb15f79d2fb432d192",
    "trust_class": "G[V]",
    "trusted": true
@@ -3063,6 +3277,8 @@
    "status": "KILLED",
    "detail": "lean/VE/Senses/RunExamples.lean:120: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "5f5d812881359aa65f7283492577bbf248ed05b6420fe88d3df1e791f46b8a5d",
    "killed_at": [
     120,
@@ -3084,12 +3300,14 @@
    "before": "line.toList",
    "after": "(line.toList.drop 1)",
    "status": "KILLED",
-   "detail": "lean/VE/Senses/TextsExamples.lean:129: Expression",
+   "detail": "lean/VE/Senses/TextsExamples.lean:138: Expression",
    "raw_status": "KILLED",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "89f4d01197ecab1ce271024b650240ffa0b4894f27525f19ee39cd8e71bdded7",
    "killed_at": [
-    129,
-    132
+    138,
+    141
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -3109,6 +3327,8 @@
    "status": "INVALID",
    "detail": "Invalid field `drop`: The environment does not contain `Function.drop`",
    "raw_status": "INVALID",
+   "reused_from": "a07e5fada38becb426e92250d04c82b99b4dbceb",
+   "carried": "checks",
    "reads": "955cd2a1413cb64c288e08ca3daa0318fed34a648a9300cb15f79d2fb432d192",
    "trust_class": "G[V]",
    "trusted": true
