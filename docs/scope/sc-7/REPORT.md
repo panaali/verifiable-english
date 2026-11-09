@@ -2,8 +2,8 @@
 
 **Summary.** Built (1)-(3): `Pinned.parseGovernor`/`renderGovernor` (spec 2.2), `scope_parseRender`/`scope_renderParse`
 (spec 5.8's text), F5a, one round-trip and one paraphrase `#guard` per 2.2 row, and the folded sc-4-f12. (4), the IDE
-wiring, is cut at the size line as the task directs. Trust: K +0, S +37, V +106 (R16). No DRI signature is reserved.
-Tests: the selected run passes after two classification fixes (see "Tests run"). Review fix round: see "Review F1".
+wiring, is cut at the size line as the task directs. Trust: K +0, S +37, V +111 (R16). No DRI signature is reserved.
+Tests: the selected run passes after two classification fixes (see "Tests run"). Fix rounds: "Review F1", "Review F7".
 
 FOLLOW-UP: sc-7b IDE writes the scope block from the 2.2 wordings
 
@@ -56,14 +56,15 @@ relay and binding fuzz tests (docs/ROUTE-RECIPE.md), well past 600.
 
 ## Evidence
 
-- **Trust** (`tools/trust_map.py --check`): K +0, S +37, D +134, trusted +143 against da5303b78769, all in Authoring.lean.
+- **Trust** (`tools/trust_map.py --check`): K +0, S +37, D +139, trusted +148 against da5303b78769, all in Authoring.lean.
 - **Trust mutants**: `mac-pytest.sh --trustmut -- --max-mutants 1000 --test lean/VE/Scope/AuthoringExamples.lean --json
-  docs/scope/sc-7/trust-mutants.json --allow docs/scope/sc-7/trust-mutants-allow.json`, a full run on 971464587 (review
-  F1's fix; later commits change no Lean): 196 KILLED, 0 SURVIVOR, 0 UNKNOWN, 58 INVALID, 26 ALLOWED (ill-typed, or one
-  of 3 equivalent), exit 0. The first run on 0367744f2 gave 193 KILLED, 60 INVALID, 29 ALLOWED.
+  docs/scope/sc-7/trust-mutants.json --allow docs/scope/sc-7/trust-mutants-allow.json`, a full run on b4fa6691a (review
+  F7's fix; later commits change no Lean), rescored on f87dbbb19's allow file: 199 KILLED, 0 SURVIVOR, 0 UNKNOWN, 60
+  INVALID, 26 ALLOWED (ill-typed, or one of 3 equivalent), exit 0. F1's full run on 971464587 gave 196 KILLED, 58 INVALID. The first run on 0367744f2 gave 193 KILLED, 60 INVALID, 29 ALLOWED.
   Earlier runs left 15 survivors; each was closed by a new `#guard` or by giving `attitude` an `Option` degree.
 - **Hand mutants** (`docs/scope/sc-7/mutants.json`): each was planted, `lake build VE.Scope.AuthoringExamples` was run,
-  and the code was restored. Every one is KILLED. They cover the 10 definitions the sweep does not kill:
+  and the code was restored. Every one is KILLED. They cover the 11 definitions the sweep does not kill (`closers`,
+  a string with no sweep operator: see "Review F7"):
   `Row.wording`:25, `frameWording`:21, `kindWording`:34, `kindCondition`:34, `textOf`/`englishOf`/`narrowed?`:29,
   `renderGovernor`:21, `between`:25, `splitOnce`:103. Lines are in AuthoringExamples.lean.
 - **Seeded bugs, one per claimed behaviour.** Lean is the only product language changed.
@@ -92,7 +93,8 @@ relay and binding fuzz tests (docs/ROUTE-RECIPE.md), well past 600.
   called the y." gave one list name, and "section 3?, x." was accepted.
 - **Fix (the class).** `Pinned.clause` is every slot's one check: the condition, the rule, the When/If heading's
   condition, the frontier, the list name (`listName`) and the section. No word of a slot ends in ".", "?", "!", ":",
-  "…" or a full-width form, before any closing quote or bracket. A title's heading is no slot. The docstrings of
+  "…", "‽" or "。？！：．", before any of ” ’ " ) ] » (this round said "any closing quote or bracket", an overclaim:
+  review F7 widened the set to `Pinned.closers`). A title's heading is no slot. The docstrings of
   `clause` and `readHeading` now say what the code does. Lean only: no Python or Rust reads a wording (sc-7b).
 - **Regression tests.** `AuthoringExamples.lean:110` (the review's probe, verbatim), `:113` (every slot and every
   sentence end), `:125` and `:127` (a comma, and a bad first character, in the section slot), `:130-:133` (the
@@ -111,6 +113,48 @@ relay and binding fuzz tests (docs/ROUTE-RECIPE.md), well past 600.
   PASS, 794 files. `regen_generated.py --check` passes. Not run: the full gate (the merge train runs it).
 - **C findings** are follow-ups, except the bookkeeping this round touched anyway: B5's check location (F4), the
   FOLLOW-UPS.md sc-7 row's numbers (F4), and a comma fixture for the section slot (F5).
+
+## Review F7 (fix round, reviews/sc-7-dri-note-20261109.md, sc-7-looprecheck1.final.md)
+
+- **Finding (A).** `clause` dropped only ” ’ " ) ] » before looking for a sentence end, while its docstring, DELTA and
+  this report said "before any closing quote or bracket". `## If the user says 'stop.'` was read as a narrowing (its
+  curly form was refused), and "the x.' The rules below are called the y", `x.} y`, `x.› y`, `x。」 y` and `x.） y`
+  were accepted.
+- **Fix (the class).** `Pinned.closers` (Authoring.lean:31-34) is every closer: each character of Unicode 16.0's
+  categories Pe, Pf and Pi (Pi too, since German and Danish close with “ and «), the quotes `"`, `'`, `＂` and `＇`, `>`,
+  and Markdown's `*`, `_`, `` ` `` and `~`. Its 108 characters were generated from `unicodedata` in code-point order.
+  `clause` drops every trailing closer, and its docstring names each terminator, ‽ included (F1's docstring left it
+  out). Docstrings, DELTA.md and this report say the same sets. A closer after no sentence end stays in its slot
+  (`users'`, "(as above) is “final”"). Lean only: no Python or Rust reads a wording (sc-7b). F8 (other Unicode
+  sentence terminators) stays sc-7-f8, as the DRI note directs.
+- **Regression tests.** `AuthoringExamples.lean:138` (PROBE F7 verbatim, plus `x.› y` and `x.） y`), `:142` (the DRI
+  note's closers, the ASCII and Markdown ones and the opening-form quotes are in `closers`), `:150` (every closer, alone
+  and before `)”`, after every sentence end, in all 9 slot positions), `:153-:154` (the accepted direction).
+  `tests/test_scope_authoring.py::test_review_f7_the_probe_wordings_are_refused` (Lean's verdict on each wording, and
+  each is in a guard), and `::test_review_f7_clause_refuses_exactly_the_documented_closers`. The second runs `clause`
+  on "x." plus each Unicode scalar that is a `wordChar`, through `lake env lean`. It checks that the refused set is
+  exactly the docstrings' (the terminators, Pe ∪ Pf ∪ Pi from `unicodedata`, and the listed extras), with both
+  docstrings read from the compiled environment (`findDocString?`). PROBE F7 exits 1 on 8bbc4b2b0 and 0 on ecd3e18f5.
+  All 6 wordings are accepted on 8bbc4b2b0. The F1 guards and the 5 earlier tests still pass.
+- **Seeded bugs** (`mutants.json`, the 5 marked "sc-7 review F7", each planted and then restored):
+  - the old closer set: fails :138 and :142;
+  - `'` dropped: fails :138 and :142, and the sweep no longer refuses U+0027;
+  - an unnamed `,` added: fails `test_review_f7_clause_refuses_exactly_the_documented_closers`;
+  - `>` dropped from the docstring: fails the same test;
+  - one closer stripped instead of all: fails only :150.
+  The membership guard :142 was added after the class guard alone missed a dropped closer, because it ranges over
+  `closers` itself (b4fa6691a).
+- **Trust.** V +5 (`closers`, 4 lines and its blank line). sc-7 is K +0, S +37, V +111, trusted +148 (R16, at most 150;
+  `trust_map.py --allow`, signed by standing ruling R16). `test_scope_lean.py`'s AUTHORING list names `closers`. The
+  manage-agents FOLLOW-UPS.md sc-7 ties row now says +111/+148 and names `closers`. Trust mutants: full run on b4fa6691a
+  (ve-mac-1), 199 KILLED, 0 SURVIVOR, 0 UNKNOWN, exit 0. `closers` is a string literal with no sweep operator; the
+  seeded bugs above kill it. `clause`'s allow reason now cites :38/:39 (the line shift from this fix; the other stale
+  references stay F4's follow-up). Rescored on f87dbbb19: exit 0.
+- **Tests.** `mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on 2810cac86 (ve-cloud-3, 4305 s):
+  exit 0, 120 units, 0 failed; `test_scope_authoring.py` and `test_scope_lean.py` among them. `(cd lean && lake
+  build)`: "Build completed successfully (1329 jobs)". `python3 lean/audit.py`: PASS, 794 files. `regen_generated.py
+  --check`: "checked 37 entries". No test of main-known-red.txt failed. Not run: the full gate (the merge train runs
+  it).
 
 ## Spec re-read
 
