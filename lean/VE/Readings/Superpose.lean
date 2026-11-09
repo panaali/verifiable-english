@@ -307,15 +307,14 @@ theorem candidate_at {D : Doc} (hn : (D.sets.map (·.id)).Nodup) {m : Nat} (hm :
     candidate D D.sets[m].id i = D.sets[m].candidates[i]? := by
   simp [candidate, find_of_nodup hn hm]
 
-/-- Every slot-admissible base of `sup D` encodes exactly one compatible choice among the complete ones. -/
-theorem encodes_unique (D : Doc) (h : WellFormedDoc D = true) (hch : D.chain ≠ .rights)
-    (hs : superposable D = true) (B : VE.Structure.{u})
-    (hB : BaseAdmissibleP (correlate (sup D).1) (slotP D) B) :
+/-- A structure satisfying the slot of `sup D` encodes exactly one compatible choice among the complete ones. -/
+theorem encodes_unique_slot (D : Doc) (h : WellFormedDoc D = true) (hch : D.chain ≠ .rights)
+    (hs : superposable D = true) (B : VE.Structure.{u}) (hB : Sat B (slotP D)) :
     ∃ c, Compatible D c ∧ Encodes D c B ∧ ∀ c', complete D c' = true → Encodes D c' B → c' = c := by
   classical
   have hr := superposable_supReady hs
   have hn := supReady_nodup hr
-  obtain ⟨hone, hcp, hnp⟩ := choice_core_sat (slotP_choice hB.2)
+  obtain ⟨hone, hcp, hnp⟩ := choice_core_sat (slotP_choice hB)
   let val : Nat → Nat := fun m => bitsVal (fun j => decide (bitOn B (m + 1) j)) (bitsOf (setSize D m))
   have hpat : ∀ m, (pattern (m + 1) (setSize D m) (val m)).denote B [] := by
     intro m
@@ -469,6 +468,13 @@ theorem encodes_unique (D : Doc) (h : WellFormedDoc D = true) (hch : D.chain ≠
   simp only [c, List.getElem_ofFn]
   rw [← hin]
   exact Prod.ext (by simpa using hfst) rfl
+
+/-- Every slot-admissible base of `sup D` encodes exactly one compatible choice among the complete ones. -/
+theorem encodes_unique (D : Doc) (h : WellFormedDoc D = true) (hch : D.chain ≠ .rights)
+    (hs : superposable D = true) (B : VE.Structure.{u})
+    (hB : BaseAdmissibleP (correlate (sup D).1) (slotP D) B) :
+    ∃ c, Compatible D c ∧ Encodes D c B ∧ ∀ c', complete D c' = true → Encodes D c' B → c' = c :=
+  encodes_unique_slot D h hch hs B hB.2
 
 /-! ## Bit names -/
 

@@ -17168,7 +17168,8 @@
         "VE.Readings.supCertificateCheckSD"
       ],
       "P": [
-        "VE.Readings.FillLite"
+        "VE.Readings.FillLite",
+        "VE.Readings.dropUnsaid"
       ]
     },
     "VE/Readings/SoftSupExamples.lean": {
@@ -17189,7 +17190,17 @@
         "VE.Readings.SoftSupExamples.sides",
         "VE.Readings.SoftSupExamples.closeCert",
         "VE.Readings.SoftSupExamples.q4",
-        "VE.Readings.SoftSupExamples.NSDa"
+        "VE.Readings.SoftSupExamples.NSDa",
+        "VE.Readings.SoftSupExamples.conflictAt",
+        "VE.Readings.SoftSupExamples.fY",
+        "VE.Readings.SoftSupExamples.bothSides",
+        "VE.Readings.SoftSupExamples.q5",
+        "VE.Readings.SoftSupExamples.q6",
+        "VE.Readings.SoftSupExamples.toE",
+        "VE.Readings.SoftSupExamples.avoidAll",
+        "VE.Readings.SoftSupExamples.fillOf",
+        "VE.Readings.SoftSupExamples.checkSides",
+        "VE.Readings.SoftSupExamples.named"
       ]
     },
     "VE/EnglishGrammar/Norm/Examples.lean": {
@@ -19838,7 +19849,12 @@
         "VE.Events.RouteExamples.chainEnv",
         "VE.Events.RouteExamples.requestCase",
         "VE.Events.RouteExamples.requestIsNull",
-        "VE.Events.RouteExamples.requestIsCase"
+        "VE.Events.RouteExamples.requestIsCase",
+        "VE.Events.RouteExamples.ndListed",
+        "VE.Events.RouteExamples.ownedEnv",
+        "VE.Events.RouteExamples.layeredCase",
+        "VE.Events.RouteExamples.ownedRequestIsNull",
+        "VE.Events.RouteExamples.ownedLists"
       ]
     },
     "VE/Closure/Tableau.lean": {
