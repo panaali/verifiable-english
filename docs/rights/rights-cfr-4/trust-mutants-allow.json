@@ -1,0 +1,5 @@
+{"allow": [
+  {"definition": "VE.Rights.Run.nodeOpen", "operator": "lit-plus", "reason": "equivalent: the act atom's term is never read; VE.Norms.preds (.unary p t) = [p] for every t, so .var 0 and .var 1 scan the same name"},
+  {"definition": "VE.Rights.Run.nodeOpen", "operator": "list-first", "reason": "equivalent: nodeOpen reads only isEmpty of N.alterable and of the opensIn result, and (l.take 1).isEmpty = l.isEmpty"},
+  {"definition": "VE.Rights.Run.nodeOpen", "operator": "list-last", "reason": "equivalent: nodeOpen reads only isEmpty of N.alterable and of the opensIn result, and (l.reverse.take 1).isEmpty = l.isEmpty"}
+]}
