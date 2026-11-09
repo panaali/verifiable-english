@@ -1,3 +1,6 @@
+- `tests/test_b16f_document.py` — Batch 16f: the document mode's remaining groups are Lean answers, typed and bound.
+- `tests/test_b16f_senses_document.py` — Batch 16f: a document with `senses` is decided by Lean's `document` mode, which composes the senses route.
+- `tests/test_b17_evidence.py` — Batch 17 report assertions read only saved evidence, never moving Git refs.
 - `tests/test_b17_owner.py` — Batch 17: reported assist and Cedar decisions must cross the Lean boundary.
 - `tests/test_background.py` — (no module docstring)
 - `tests/test_batch_evidence.py` — A stale or incomplete batch gate cannot be reported as a pass.
@@ -84,5 +87,3 @@
 - `tests/test_english_e26_diagnosis.py` — English E2.6: Lean's diagnosis of a sentence without a reading (`VE.EnglishGrammar.diagnose`, spec 4.5) says what the hand parser said, where it said it: the w…
 - `tests/test_english_e26_evidence.py` — English E2.6: Lean's authority over English admission rests on saved evidence, checked from the files alone (no live checkout, no git): the readability replay …
 - `tests/test_english_e26_report.py` — English E2.6's report: every number comes from saved evidence (the readability comparison, the A/B summary, the commit list of `main..HEAD --no-merges`, the se…
-- `tests/test_english_e2_boundary.py` — The E2 boundary validates every block its typing view drops (review B2 of English Lean E2; spec D7).
-- `tests/test_english_e2_integer_marks.py` — The spacing of the integer marks: Lean reads exactly the spacing Python reads (spec R1; english-lean-e2.md 13).

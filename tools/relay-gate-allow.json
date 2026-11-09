@@ -2514,6 +2514,16 @@
    "kind": "follow-up",
    "id": "F4",
    "reason": "Names a request name (a sort, constant or word) that the schema does not check against the request; the relay binds the lexicon by lexicon_id (ve.backends.senses._projection_problem). Bind them with x-references in senses.project.json (sn-b6b)."
+  },
+  {
+   "route": "service:act-readings",
+   "mutation": "duplicate",
+   "path": [
+    "results/*/result/readings/*/acts"
+   ],
+   "kind": "by-design",
+   "id": "AP4-F1",
+   "reason": "Which acts a reading lists, one listed twice included, is Lean's content: spec 7's binding list binds the readings (pairwise distinct as their acts lists) and each act's token indices, not a reading's acts, and spec E16's phrase reads one act written twice (ap-4 review F1; tests/test_acts_readings_answer.py::test_e16_one_act_written_twice_is_bound). A duplicated act stays typed and bound to the request (R8)."
   }
  ]
 }

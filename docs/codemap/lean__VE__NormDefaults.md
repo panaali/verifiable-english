@@ -10,7 +10,7 @@
 - `lean/VE/NormDefaults/LayeredAdmission.lean` — The soft branch's `admission` and `norm-defaults-certificate` under `norm-defaults@0` (docs/spec/rd-9-soft-chain.md 1.13, 4.5 and 6.10; plan SC-6).
 - `lean/VE/NormDefaults/LayeredEntail.lean` — Entailment and finite models for the layered route's extra base premises.
 - `lean/VE/NormDefaults/Packs.lean` — Premise packs (docs/spec/premise-packs.md, PK-1).
-- `lean/VE/NormDefaults/PacksExamples.lean` — The acceptance fixtures of premise packs on `Packs.lean` alone (docs/spec/premise-packs.md 4: A1–A9; 2.10's kind table).
+- `lean/VE/NormDefaults/PacksExamples.lean` — The acceptance fixtures of premise packs (docs/spec/premise-packs.md 4: A1–A9; 2.10's kind table).
 - `lean/VE/NormDefaults/PacksLabels.lean` — The labels of soft's extra base premises are distinct (docs/spec/premise-packs.md 2.6).
 - `lean/VE/NormDefaults/PacksLegacy.lean` — The premise-pack theorems over `Layered.lean`'s legacy packs (docs/spec/premise-packs.md 2.5 (3), 2.6, 2.8 and 2.9, 2.10): `X` typed over `envX`, today's soft …
 - `lean/VE/NormDefaults/PacksLegacyExamples.lean` — The premise-pack fixtures over today's sources (docs/spec/premise-packs.md 4): today's rights documents assemble unchanged, `envX` and `fullEnv` on a real tree…
