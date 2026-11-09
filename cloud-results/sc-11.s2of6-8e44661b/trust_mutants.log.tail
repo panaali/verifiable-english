@@ -1,0 +1,5 @@
+trust_mutants: 1 definitions, 46 mutants (8 to run), 4 jobs, base 3e4fe503f4c9
+UNKNOWN lean/VE/Readings/SoftSupLabels.lean:44 VE.Readings.sdShown (G[V], trusted) list-empty: (labelImage N c) -> [] (lean/VE/Readings/SoftSupLabels.lean:44: Invalid projection: Type of)
+trust_mutants: 7 KILLED, 0 SURVIVOR, 1 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 38 OTHER SHARD in 227 s
+trust_mutants: G[V], trusted: 7 KILLED, 1 UNKNOWN, 38 OTHER SHARD
+trust_mutants: steps: wall plan 6.7 s, scratch 2.9 s, control_build 0.1 s, probe_install 0.9 s, mutants 210.7 s, cleanup 5.4 s; lake control_build 0.1 s (1), probe_install 0.9 s (1), control_probes 3 s (2), mutant_builds 91.6 s (15), mutant_checks 480.5 s (11), stage_controls 200.3 s (4), mutant_probes 9.2 s (7)
