@@ -332,6 +332,8 @@ def interpret_pytest(result: dict, events: dict, policy: dict, expected: list[st
     verdict = gate_collection.missing(expected, collected, diff)
     result.setdefault("collection", {}).update(head_ids=len(collected), added=len(set(collected) - set(expected)),
                                                **verdict.record())
+    for line in gate_collection.pairing_text(verdict).splitlines():
+        print(f"[gate] {line}", flush=True)
     if verdict.failed():
         result["failures"].append({"stage": "coverage",
                                    "reason": gate_collection.difference_text(base, verdict)})
@@ -622,7 +624,7 @@ def base_collection(result: dict, base: str | None, env: dict[str, str], pytest_
         collection.update(base_source="collected", base_seconds=round(time.monotonic() - started, 1))
         collection["base_record"] = record_collection(base, ids, env)
     collection["base_ids"] = len(ids)
-    return ids, gate_collection.changes(base, "HEAD", env=env)
+    return ids, gate_collection.changes(base, "HEAD", env=env, python=str(ROOT / ".venv/bin/python"))
 
 
 def base_durations(result: dict, env: dict[str, str], cwd: Path = ROOT) -> tuple[str, test_schedule.Estimates] | None:
