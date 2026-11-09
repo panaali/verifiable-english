@@ -47,9 +47,12 @@ inductive Base where
   | rule (N : VE.Norms.Node)
   deriving DecidableEq, Repr
 
-/-- The roots of the unit's obligations in block order, an unresolved one read as `k`. -/
+/-- The roots of the unit's obligations in block order, its first unresolved one read as `k` (a second is refused
+    in step 4). -/
 def rootsWith (obs : List Obligation) (u : String) (k : Root) : List Root :=
-  (obs.filter (·.unit == u)).map (fun o => if o.carrier == .unresolved then k else o.carrier.root)
+  let os := obs.filter (·.unit == u)
+  let first := (os.find? (·.carrier == .unresolved)).map (·.id)
+  os.map (fun o => if some o.id == first then k else o.carrier.root)
 
 def peelWith (rs : List Root) (a : VE.Formula) : Option VE.Formula :=
   peel (rs.filter (· == .asserted)).length (rs.filter (· == .conditioned)).length a
@@ -148,29 +151,30 @@ def provedOk (D : PDoc) (c : Checked) (n : String) : Bool :=
 def needsUnspec (t : CandidateTable) (o : Obligation) : Bool :=
   o.carrier == .conditioned || (o.carrier == .unresolved && (t o.row .ruleAct).contains .conditioned)
 
+/-- The unit an assumed or unconditional carrier names, and the predicate of a rule-act obligation's rule. -/
+def Carrier.unitName : Carrier → String
+  | .assumed u | .unconditional u => u
+  | _ => ""
+def rulePred (T : VE.Norms.Tree) (o : Obligation) : String := match o.position with
+  | .ruleAct n => ((T.nodes.find? (·.name == n)).map (·.pred)).getD n
+  | _ => ""
+
 /-- Pass 1's carrier check, in spec 4.7's order. -/
 def carrierOk (t : CandidateTable) (D : PDoc) (T : VE.Norms.Tree) (c : Checked) : Except String Unit := do
-  let o := c.ob
-  match o.carrier with
-  | .proved n => ensure (provedOk D c n) s!"PresuppositionCertificate: {o.id}"
-  | .assumed u =>
-    ensure (unitAsserted D u && unitContent D u == some c.goal && (o.position == .heading || u != o.unit))
-      s!"PresuppositionAssumedUnit: {o.id}: {u}"
-  | .unconditional u =>
-    ensure (unitAsserted D u && unitContent D u == some (c.frame.close c.pre) && u != o.unit)
-      s!"PresuppositionAssumedUnit: {o.id}: {u}"
-  | _ => pure ()
-  ensure (o.position != .heading || match o.carrier with | .proved _ | .assumed _ => true | _ => false)
-    s!"PresuppositionCandidates: {o.id}"
-  match o.position with
-  | .ruleAct n =>
-    ensure (!needsUnspec t o || T.nodes.any (fun N => N.name == n && D.unspec.contains N.pred))
-      s!"PresuppositionDefault: {o.id}: {((T.nodes.find? (·.name == n)).map (·.pred)).getD n}"
-  | _ => pure ()
-  match o.carrier.cand with
-  | some k => ensure (o.position == .heading || carrierAllowed t c k) s!"PresuppositionCandidates: {o.id}"
-  | none => pure ()
-  ensure (o.carrier != .unresolved || (unitReadings D o.unit).isSome) s!"PresuppositionUnresolved: {o.id}"
+  ensure (match c.ob.carrier with | .proved n => provedOk D c n | _ => true)
+    s!"PresuppositionCertificate: {c.ob.id}"
+  ensure (match c.ob.carrier with
+    | .assumed u => unitAsserted D u && unitContent D u == some c.goal && (c.ob.position == .heading || u != c.ob.unit)
+    | .unconditional u => unitAsserted D u && unitContent D u == some (c.frame.close c.pre) && u != c.ob.unit
+    | _ => true) s!"PresuppositionAssumedUnit: {c.ob.id}: {c.ob.carrier.unitName}"
+  ensure (c.ob.position != .heading || match c.ob.carrier with | .proved _ | .assumed _ => true | _ => false)
+    s!"PresuppositionCandidates: {c.ob.id}"
+  ensure (match c.ob.position with
+    | .ruleAct n => !needsUnspec t c.ob || T.nodes.any (fun N => N.name == n && D.unspec.contains N.pred)
+    | _ => true) s!"PresuppositionDefault: {c.ob.id}: {rulePred T c.ob}"
+  ensure (match c.ob.carrier.cand with | some k => c.ob.position == .heading || carrierAllowed t c k | none => true)
+    s!"PresuppositionCandidates: {c.ob.id}"
+  ensure (c.ob.carrier != .unresolved || (unitReadings D c.ob.unit).isSome) s!"PresuppositionUnresolved: {c.ob.id}"
 
 /-- Pass 2: an unresolved obligation's unit carries exactly the expected readings, at least two, and it is the
     unit's first unresolved obligation. -/
