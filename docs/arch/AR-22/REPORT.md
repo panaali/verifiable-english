@@ -208,6 +208,11 @@ statement now. AR-23's semantics change (`Closure.Formula.denote` through Core) 
 
 ## After the gate
 
+**Done for `<G>` = `2154cbab4`**, the commit the chain gated (gate-result.json: `status` passed, `mode` full,
+`dirty` false). The commits after it change only `docs/arch/AR-22/` (seeded bug M8 and this evidence), and
+`batch_evidence.py --check docs/arch/AR-22` gave "batch evidence PASS on 2154cbab4e6231fe9806518b768c174d4a70af5e".
+If the chain's gate of a later HEAD is the one that counts, repeat these steps with that commit.
+
 The scope, the A/B and the gate must name the commit the chain gates (`<G>`). After that gate, make one report commit
 that changes only `docs/arch/AR-22/`:
 
