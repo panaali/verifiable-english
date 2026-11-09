@@ -1,4 +1,4 @@
-"""A mutant renumbered by an inserted one is paired by its text; a gone one stays refused (gate_collection.py)."""
+"""A renumbered mutant is paired by its text; one whose text is gone stays refused (tools/gate_collection.py)."""
 from __future__ import annotations
 
 import json
@@ -20,10 +20,7 @@ HOOK = "def mutant_cases(): return {nodeid: json.dumps(mutant) for nodeid, mutan
 BASE = [["a", "x", "y"], ["b", "x", "y"], ["c", "x", "y"], ["d", "x", "y"]]
 INSERTED = [BASE[0], ["new", "x", "y"], *BASE[1:]]
 SAME = [["a", "x", "1"], ["a", "x", "2"], ["a", "x", "3"]]
-
-
-def case(name):
-    return f"tests/test_m.py::test_mutant[{name}]"
+case = "tests/test_m.py::test_mutant[{}]".format  # a case's ID by its parameter ID
 
 
 def files(mutants, hook=HOOK):
@@ -45,16 +42,20 @@ def history(tmp_path, before, after, hooks=(HOOK, HOOK), trailer=None, worktree=
     return compare(tmp_path, base, head)
 
 
-HOOKS = (HOOK, HOOK)
+HOOKS, PARTIAL = (HOOK, HOOK), (HOOK.replace("MUTANTS)", "MUTANTS) if mutant[2] != 'z'"),) * 2  # `z`: no text
 # (base mutants, head mutants, each side's hook, a trailer's target, head in the worktree, the pairs, the refused)
 CASES = {
     "inserted": (BASE, INSERTED, HOOKS, "", False, "b-1:b-2 c-2:c-3 d-3:d-4", ""),
     "inserted-worktree": (BASE, INSERTED, HOOKS, "", True, "b-1:b-2 c-2:c-3 d-3:d-4", ""),
     "trailer-first": (BASE, INSERTED, HOOKS, "b-1", False, "c-2:c-3 d-3:d-4", ""),
-    # Each head loses a base mutant's text (most also insert one), or a side has no hook: each lost ID is refused.
-    "text-changed": (BASE, [*INSERTED[:3], ["c", "x", "z"], BASE[3]], HOOKS, "", False, "", "b-1 c-2 d-3"),
-    "case-deleted": (BASE, [*INSERTED[:3], BASE[3]], HOOKS, "", False, "", "b-1 c-2"),
-    # `a-0` keeps its ID with another text; the lost `a-2`'s text is at `a-1`, but `a-0`'s first text is gone.
+    # A lost ID whose text is gone stays refused, or recorded by its trailer; its renumbered siblings pair.
+    "text-changed": (BASE, [*INSERTED[:3], ["c", "x", "z"], BASE[3]], HOOKS, "", False, "b-1:b-2 d-3:d-4", "c-2"),
+    "case-deleted": (BASE, [*INSERTED[:3], BASE[3]], HOOKS, "", False, "b-1:b-2", "c-2"),
+    "deleted-with-trailer": (BASE, [BASE[0], *BASE[2:]], HOOKS, "b-1", False, "c-2:c-1 d-3:d-2", ""),
+    "trailer-on-a-twin": ([BASE[0]] * 2, [["n", "x", "y"]] * 2 + [BASE[0]], HOOKS, "a-0", False, "a-1:a-2", ""),
+    "kept-first": ([SAME[0]] * 2 + BASE[1:2], [BASE[2], *SAME[1::-1], BASE[1]], HOOKS, "", False, "b-2:b-3", "a-0"),
+    "no-text": ([["k", "x", "y"], ["l", "x", "z"]], [["k", "x", "z"], ["k", "x", "y"]], PARTIAL, "", False, "", "l-1"),
+    # A kept ID's text is gone (`a-0`'s first; the lost `a-2`'s is at `a-1`), or a side has no hook: none pairs.
     "kept-id-reused": (SAME, SAME[1:], HOOKS, "", False, "", "a-2"),
     "no-hook-at-base": (BASE, INSERTED, ("", HOOK), "", False, "", "b-1 c-2 d-3"),
     "no-hook": (BASE, INSERTED, ("", ""), "", False, "", "b-1 c-2 d-3"),  # an ordinary parametrised test
