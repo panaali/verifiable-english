@@ -38,7 +38,19 @@ def _block(source):
     """A rendered soft rule block numbered 1, split by norm_english's header grammar."""
     from ..norm_english import _SOFT_HEADER
     block = _SOFT_HEADER.fullmatch(source)
-    return block if block is not None and block[1] == "1" else None
+    return block if block is not None and block[1] == "1" and block[3] else None
+
+
+def _rendered_header(block):
+    """Whether a block's header is one the renderer writes for one rule: no option, or
+    its switch option exactly as render_header_options spells it (rights.md :228); a
+    precedence option is never rendered on a single line."""
+    from .softnorms import parse_header_options, render_header_options
+    try:
+        _refs, parties = parse_header_options(block[2] or "")
+    except VEError:
+        return False
+    return "Rule 1" + render_header_options((), parties) + ". " == block.string[:block.start(3)]
 
 
 def parse_line(env, source, *, name, rights=None):
@@ -46,17 +58,11 @@ def parse_line(env, source, *, name, rights=None):
     the generated wordings of `rights` (a checked rights document) in guards."""
     match = re.fullmatch(r"(Claim|Liberty|Immunity) of right ([1-9][0-9]*|[a-z][a-z0-9-]*)(.*)", source, re.S)
     block = None if match is None else _block("Rule 1" + match[3])
-    if block is None:
+    if block is None or not _rendered_header(block):
         raise VEError("SyntaxError: expected Claim, Liberty or Immunity of right")
     from ..norm_english import parse_english
     from ..rights import _name
-    from .softnorms import parse_header_options, render_header_options
     _name(name)
-    # Only a header the renderer emits for one rule: its switch option, never a
-    # precedence option, in exactly render_header_options' spelling (rights.md :228).
-    _refs, parties = parse_header_options(block[2] or "")
-    if "Rule 1" + render_header_options((), parties) + ". " != block.string[:block.start(3)]:
-        raise VEError("SyntaxError: rights incident header is not one the renderer writes")
     document = parse_english(_soft_env(env) if rights is None else rights.environment,
                              "Rule 1" + match[3])
     if len(document.rules) != 1:

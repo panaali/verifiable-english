@@ -1,24 +1,33 @@
 == S1-switch-dropped-on-parse (roundtrip_with_switch)
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ 1 file changed, 15 insertions(+), 9 deletions(-)
 E           AssertionError: assert {'right': 'li...['top'], ...}} == {'right': 'li...['top'], ...}}
 E             
 E             Omitting 2 identical items, use -vv to show
 E             Differing items:
 == S2-non-rendered-header-accepted (never_writes)
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ 1 file changed, 14 insertions(+), 8 deletions(-)
 E           Failed: DID NOT RAISE VEError
-1 failed, 53 deselected in 0.79s
+1 failed, 54 deselected in 1.11s
 == S3-precedence-option-accepted (never_writes)
- 1 file changed, 1 insertion(+), 1 deletion(-)
-1 passed, 53 deselected in 0.74s
+ 1 file changed, 14 insertions(+), 8 deletions(-)
+E           AssertionError: Regex pattern did not match.
+E             Expected regex: '\\ASyntaxError: expected Claim, Liberty or Immunity of right\\Z'
+E             Actual message: 'DependencyCycle: rule-1'
+1 failed, 54 deselected in 1.04s
+== S6-unparsed-header-passed-on (never_writes)
+ 1 file changed, 14 insertions(+), 8 deletions(-)
+E           AssertionError: Regex pattern did not match.
+E             Expected regex: '\\ASyntaxError: expected Claim, Liberty or Immunity of right\\Z'
+E             Actual message: "Unknown rule header option 'user may turn off;'"
+1 failed, 54 deselected in 0.99s
 == S4-header-dropped-on-render (roundtrip_with_switch)
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ 1 file changed, 15 insertions(+), 9 deletions(-)
 E           AssertionError: assert False
-E            +  where False = <built-in method startswith of str object at 0x7355aa596720>('Claim of right life (user may turn off). Every state ')
-E            +    where <built-in method startswith of str object at 0x7355aa596720> = 'Claim of right life. Every state must protect each person.'.startswith
-1 failed, 53 deselected in 0.67s
+E            +  where False = <built-in method startswith of str object at 0x722369f96b80>('Claim of right life (user may turn off). Every state ')
+E            +    where <built-in method startswith of str object at 0x722369f96b80> = 'Claim of right life. Every state must protect each person.'.startswith
+1 failed, 54 deselected in 0.86s
 == S5-generated-switch-dropped (one_by_one)
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ 1 file changed, 15 insertions(+), 9 deletions(-)
 E                   AssertionError: (7, 'Liberty of right r1 (user may turn off). Every first person generally may publish about each second person.')
 E                   assert {'right': 'r1...['top'], ...}} == {'right': 'r1...['top'], ...}}
 E                     
