@@ -142,6 +142,21 @@ def limitationScope (D : RightsDoc) (certs : List (Option VE.Tableau.Certificate
           s!"UnlicensedLimitation: {mechText n} of rule {RN.2.node.name} on right {RN.1}"⟩)
     else [])
 
+/-- Locating lines moves only the findings' spans: their texts, so their emptiness, are the unlocated audit's. -/
+theorem limitationScope_texts (D : RightsDoc) (l : List (String × String)) (c : List (Option VE.Tableau.Certificate)) :
+    (limitationScope { D with located := l } c).map Finding.text = (limitationScope D c).map Finding.text := by
+  have h1 : linesOf { D with located := l } = linesOf D := rfl
+  have h2 : ∀ L R N, inScope { D with located := l } L R N = inScope D L R N := fun _ _ _ => rfl
+  have h3 : ∀ N, narrowings { D with located := l } N = narrowings D N := fun _ => rfl
+  have h4 : ∀ N n, licensed { D with located := l } c N n = licensed D c N n := fun _ _ => rfl
+  simp only [limitationScope, h1, h2, h3, h4, List.map_flatMap]
+  congr 1; funext RN
+  split
+  · simp only [List.map_filterMap]
+    congr 1; funext n
+    split <;> rfl
+  · rfl
+
 theorem licensed_of_scope {D : RightsDoc} {certs : List (Option VE.Tableau.Certificate)}
     (hc : limitationScope D certs = []) {L : Limitation} (hL : L ∈ D.limits) {R : String} {N : Line}
     (hN : (R, N) ∈ linesOf D) (hs : inScope D L R N = true) {n : Narrowing} (hn : n ∈ narrowings D N) :

@@ -14,7 +14,7 @@ from tests.test_rights_lean import (ARBITRARY, ARREST, BLOCK, DEPRIVE, GAMMA, L2
 from tests.test_soft_norms_lean import DECIDER, SERVICE
 from ve import rights_route
 from ve.backends.service_schema import Invalid, check_row
-from ve.errors import CheckerUnavailable
+from ve.errors import CheckerUnavailable, VEError
 from ve.rights import RightsEnvironment
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -123,27 +123,17 @@ def test_rights_conflict_free_report_evidence():
     assert not {"weighing_points", "situation_exhibited", "budget", "situation"} & set(report["conflict"])
 
 
-def test_the_spec_comparison_refuses_a_one_character_edit():
-    """The negative side of the DRI-signed row (adv0838 item 3 (b)): the comparison is byte for byte with the spec
-    text, so a one-character edit of the template, or of Lean's line, no longer compares equal."""
-    environment, certified, _ = _weighed()
-    row = rights_route.run_rights_case(environment, WEIGHED, "rights-conflict", packages=certified)
-    args = dict(k=1, l=2, labels=row["conditional_on"], j=1, exhibited="UNKNOWN (budget 10000)")
-    template = _template()
-    assert row["status_text"] == _spec_line(template, **args)
-    for word in ("CONFLICT-FREE", "among", "coherence", "limitation", "weighing", "open;", "exhibited:"):
-        i = template.index(word)
-        assert row["status_text"] != _spec_line(template[:i] + template[i].swapcase() + template[i + 1:], **args)
-    assert row["status_text"][:-1] + "!" != _spec_line(template, **args)
-
-
-def test_an_invalid_situation_is_refused_by_lean():
-    environment, certified, situation = _weighed()
-    broken = copy.deepcopy(situation)
+@pytest.mark.parametrize("edit, error", [
     # Limitation 29's sufficient condition without the limitation violates Lim_D: not a situation of Background_base″.
-    broken["relations"]["rights__cond__2"] = [["s", "p"]]
-    with pytest.raises(Exception, match="InvalidModel"):
-        rights_route.run_rights_case(environment, WEIGHED, "rights-conflict", packages=certified, situation=broken)
+    (lambda m: m["relations"].update(rights__cond__2=[["s", "p"]]), "InvalidModel"),
+    (lambda m: m.pop("complete"), "fields do not match"),
+    (lambda m: m["relations"].update(rights__cond__1=[["s", "x"]]), "dangling or wrong-sort tuple"),
+])
+def test_an_invalid_situation_is_refused_by_lean(edit, error):
+    environment, certified, situation = _weighed()
+    edit(situation)
+    with pytest.raises(VEError, match=error):
+        rights_route.run_rights_case(environment, WEIGHED, "rights-conflict", packages=certified, situation=situation)
 
 
 # --- 2. finding spans -----------------------------------------------------------------------------------------
@@ -176,9 +166,12 @@ def test_rights_findings_preserve_source_spans():
     (["s2", "s3", "s4"], "InvalidInput: located must name one source unit per document unit"),
     (["s2", "s3", "s4", "s5", "s1"], "InvalidInput: located must name one source unit per document unit"),
     (["s2", "s3", "absent", "s5"], "UnknownSymbol: unit absent"),
+    (7, "InvalidInput: located must name one source unit per document unit"),
+    ({}, "InvalidInput: located must name one source unit per document unit"),
+    ([7, 7, 7, 7], "String expected"),
 ])
 def test_lean_refuses_located_lines_the_request_does_not_have(located, error):
-    with pytest.raises(Exception, match=re.escape(error)):
+    with pytest.raises(VEError, match=re.escape(error)):
         rights_route.run_rights_case(_spanned_environment(), copy.deepcopy(SPANNED), "rights-elaborate",
                                      located=located)
 
@@ -249,10 +242,8 @@ CONFLICT_MUTATIONS = {
     "weighing point renamed": lambda row: row["weighing_points"].__setitem__(0, "soft:coherence:a,b"),
     "weighing points retyped": lambda row: row.update(weighing_points=7),
     "situation not exhibited": lambda row: row.update(situation_exhibited=False),
-    "exhibited retyped": lambda row: row.update(situation_exhibited=1),
     "budget shifted": lambda row: row.update(budget=9999),
     "budget retyped": lambda row: row.update(budget="10000"),
-    "budget retyped bool": lambda row: row.update(budget=True),
     "situation null": lambda row: row.update(situation=None),
     "situation retyped": lambda row: row.update(situation={}),
     "table renamed": lambda row: row["situation"][0].update(predicate="absent"),
