@@ -93,4 +93,4 @@ caught it.
 14. Both directions: PASS, the 13.5 table above, with the spec re-read.
 15. Overclaim, silent cut, checks fail, limits: PASS. No cut; the two read-only edits were asked before they were made; M1-M7 and P1 are recorded. Limits: N.A.
 
-Selected tests: pending (filled in after the run).
+Selected tests on the final code (`37f59ee66`): `zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` ran on ve-cloud-3: "recorded 553 units for tree fc70f63087; ... 0 failed", "summary: ... exit=0; 8332s".
