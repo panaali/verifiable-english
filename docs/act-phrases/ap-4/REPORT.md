@@ -168,11 +168,14 @@ checked exact) need the admission hook, now ap-4c; u076's 125 B also waits for t
 
 ## Size
 
-Hand-written lines against the merge base (`git diff --numstat`): product 394 (Lean 278: `Acts/Run.lean` 135,
-encoder 83, schema 46, registration 14; Python 112: `ve/acts.py` 106, CLI 4, deadline 2; lints 4); tests and guards
-478 (RunExamples 111, the two test files 188 and 171, route cases 5, row-schema list 3); evidence 193
-(`seed_bugs.py` 139, allow file 7, trust classes 47); DELTA and this report about 200. The DRI's item 3 counts product
-code against the ~600 line (tests and guards exempt, the qt-a4 / jt-3b precedent).
+Hand-written lines against the merge base (`git diff --numstat`, added plus removed, generated files and recorded
+evidence JSON excluded): product 409 (Lean 278: `Acts/Run.lean` 135, encoder 83, schema 46, registration 14; Python
+112: `ve/acts.py` 106, CLI 4, deadline 2; tools 19: relay lint 5, layer map 6 and its doc 2, relay-gate reader 13,
+manifest 1, less shared lines); tests and guards 510 (RunExamples 111, RegistryExamples 7, the two test files 188 and
+184, route and relay-gate cases 10, corpus, seed and row-schema lines 10); evidence 199 (`seed_bugs.py` 143, allow
+file 7, trust classes 49); DELTA and this report 235. 1,361 in all. The DRI's item 3 counts product code against the
+~600 line (tests and guards exempt, the qt-a4 / jt-3b precedent); by the common rule's count (everything) the item is
+over it, and the cut taken is the one the DRI named (deliverables 5 and 8 to ap-4c).
 
 ## Next items
 
