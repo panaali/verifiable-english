@@ -2301,6 +2301,20 @@
    "reason": "sn-b6d: VE/Senses/Run.lean +58 (G[V] rereadJson, decodeReread, lineJson, and the readCase wiring of the re-read and the line)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sn-b6d, 2026-11-09",
    "commit": "9ba8aeaedfc82fa41258a4f52bcca4820f47b663"
+  },
+  {
+   "class": "S",
+   "lines": 26,
+   "reason": "ap-5: lean/VE/Acts/Specialise.lean +32 trusted (S +26: Restrictive 4, Modifier.restrictive 3, specialises 8, specPremises 11; untied G[V] +6: declaredOnce 6); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-5, 2026-11-09",
+   "commit": "33fe04615107cfb12e4402877992e6ff7b6e95d8"
+  },
+  {
+   "class": "V",
+   "lines": 6,
+   "reason": "ap-5: lean/VE/Acts/Specialise.lean +32 trusted (S +26: Restrictive 4, Modifier.restrictive 3, specialises 8, specPremises 11; untied G[V] +6: declaredOnce 6); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-5, 2026-11-09",
+   "commit": "33fe04615107cfb12e4402877992e6ff7b6e95d8"
   }
  ]
 }
