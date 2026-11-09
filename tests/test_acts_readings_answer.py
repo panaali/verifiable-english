@@ -144,6 +144,11 @@ def test_ar4_two_equal_readings_are_no_answer():
     row["readings"][1] = copy.deepcopy(row["readings"][0])
     with pytest.raises(CheckerUnavailable, match="two readings have the same acts"):
         acts.read_answer(row, case)
+    # two faults: the copy's acts written with their keys in another order are still the same acts
+    row["readings"][1]["acts"] = [dict(reversed(list(a.items()))) for a in row["readings"][1]["acts"]]
+    row["readings"][1]["paraphrase"] = "another paraphrase."
+    with pytest.raises(CheckerUnavailable, match="two readings have the same acts"):
+        acts.read_answer(row, case)
     row = genuine(case)
     row["readings"][1]["paraphrase"] = row["readings"][0]["paraphrase"]
     with pytest.raises(CheckerUnavailable, match="two readings have the same paraphrase"):
