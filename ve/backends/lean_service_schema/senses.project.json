@@ -129,6 +129,16 @@
         {
           "if": {
             "x-case": {
+              "properties": {"environment": {"required": ["events"], "type": "object"}},
+              "required": ["environment"],
+              "type": "object"
+            }
+          },
+          "then": {"required": ["events"]}
+        },
+        {
+          "if": {
+            "x-case": {
               "properties": {"environment": {"required": ["risk"], "type": "object"}},
               "required": ["environment"],
               "type": "object"
@@ -151,6 +161,7 @@
         "alternatives": {"x-equals": "/environment/alternatives"},
         "cardinality": {"x-equals": "/environment/cardinality"},
         "cardinality_schema": {"x-equals": "/environment/cardinality_schema"},
+        "events": {"x-equals": "/environment/events"},
         "language": {"x-equals": "/environment/language"},
         "profile": {"x-equals": "/environment/profile"},
         "profiles": {"x-equals": "/environment/profiles"},

@@ -162,8 +162,8 @@ def lean_layer(module: str) -> int | None:
                   "VE.Question.Examples", "VE.Question.Fixtures", "VE.Commands.Examples", "VE.Alternatives.FillExamples",
                   "VE.Calc.RunExamples", "VE.Defaults.RouteExamples", "VE.Defaults.ZoneWireExamples", "VE.Readings.ActsExamples",
                   "VE.Cardinality.RunExamples", "VE.Scope.RunExamples", "VE.Senses.RunExamples",
-                  "VE.Commands.RunExamples", "VE.Commands.RunSplit", "VE.EnglishGrammar.JudgmentRunExamples",
-                  "VE.Senses.TextsExamples"}:
+                  "VE.Events.RouteExamples", "VE.Commands.RunExamples", "VE.Commands.RunSplit",
+                  "VE.EnglishGrammar.JudgmentRunExamples", "VE.Senses.TextsExamples"}:
         return 4  # runner-boundary acceptance fixtures import EnglishGrammar.Run, Question.Run, Alternatives.Run, Calc.Run,
         # NormDefaults.Run, Readings.Run, Cardinality.Run, Scope.Run, Senses.Run or Commands.Run
     if module in {"VE.Discourse.Compose", "VE.Discourse.ComposeExamples"}:
@@ -216,9 +216,7 @@ def lean_layer(module: str) -> int | None:
         "VE.Bridge", "VE.RoundTrip", "VE.CertificateWire", "VE.ClaimGraph",
         "VE.GraphChecks", "VE.ModelProofs", "VE.EnvironmentProofs",
         "VE.Tableau", "VE.TableauClosure", "VE.TableauChecker",
-        "VE.TableauChecks", "VE.TableauExtended", "VE.TableauExtendedRules",
-        "VE.TableauExtendedClosure", "VE.TableauExtendedExtra",
-        "VE.TableauExtendedInduction", "VE.TableauExtendedChecker",
+        "VE.TableauChecks", "VE.Closure.Tableau",
     }:
         return 1
     if module.startswith("VE."):

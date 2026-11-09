@@ -254,6 +254,24 @@ def test_fsd4_soft_premises_are_regenerated_on_the_filled_tree(lean):
     assert ["unsaid__y_permitted" in repr(p["ast"]) for p in soft[("rs1", 1)]] == [False, True]
 
 
+
+@pytest.mark.parametrize("strict_need_not", [False, True], ids=["NSD4a", "NSD4c"])
+def test_sd_superpose_conflict_free_derived_rows(lean, strict_need_not):
+    """13.5, `sd_superpose_conflict_free`'s CONFLICT-FREE direction, derived through the per-choice route: NSD4a
+    (`x_permitted` allowed by default) and NSD4c (its `need-not-x` strict) are CONFLICT-FREE under `rs1:1`. The
+    CONFLICT direction is pinned on both sides in `SoftSupExamples.lean`."""
+    raw = env4()
+    raw["vocabulary"]["predicates"]["x_permitted"]["regulated"]["default"] = "allow"
+    document = doc4(raw)
+    if strict_need_not:
+        document["units"][0]["content"] = norm("need-not-x", "x_required", False)
+    sources = (document["units"][0]["content"], document["reading_sets"][0]["readings"][1]["content"])
+    evidence = [{"choice": [["rs1", 1]], "conflict": {"packages": _packages(lean, raw, document, [("rs1", 1)], *sources)}}]
+    answer = _verdicts(lean, raw, document, "conflict", evidence, assumed=[["rs1", 1]])
+    assert answer["status"] == "ok", answer
+    assert (answer["result"]["status"], [(e["choice"], e["conflict"]) for e in answer["per_choice"]]) == (
+        "CONFLICT-FREE", [([["rs1", 1]], "CONFLICT-FREE")]), answer
+
 # F-SD7: the vocabulary limit counts each document's decision predicates.
 
 def test_fsd7_the_vocabulary_limit_counts_the_decisions(lean):

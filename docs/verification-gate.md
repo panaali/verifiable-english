@@ -24,7 +24,8 @@ does not collect fails the gate unless a commit since the base records its remov
 `Test-removed: <test ID, or its deleted function, class or file> — <reason>`, which reviewers read with the
 batch. A trailer naming a test the head still collects fails as stale. `git diff --no-renames base..HEAD`
 only labels each removal: its file or test function deleted, or its parametrisation changed
-(`tools/gate_collection.py`). Every full
+(`tools/gate_collection.py`). A lost mutant ID is paired and logged, not refused, when its module names each case
+by its text (`mutant_cases()`), an unclaimed head case has that text, and no kept ID's text is gone or unknown. Every full
 gate attaches its own collection to its commit. `uv run python tools/gate_collection.py --check` (after
 `(cd lean && lake build)`) runs the same comparison on the worktree. Optional backend
 and fixture skips are listed in `tools/gate-optional.json`. The JSON result is local and ignored by Git;
