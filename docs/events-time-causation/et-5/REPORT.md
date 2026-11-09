@@ -103,11 +103,16 @@ No Rust changed.
   `test_the_grammar_export_lists_the_twelve_advice_rows_after_the_others`), and `sourceWordAdvice` on
   `sourceWords.dropLast`, which is equivalent (the last row is fixed, not a refusal) and is in the allow file with
   the `list-empty` mutants that do not typecheck.
-- **Size** (`git diff --numstat $(git merge-base HEAD main)`, without the copied plan and spec and the generated
-  files): 957 added, 6 deleted: tests 474, `ve/events.py` 188, Lean 153, docs 116, `ve/english.py` 21, other 6. Over
-  the ~600 line; ACCEPTED as the first coherent part by reviews/dri-decisions-20261109-et-5-size.md item 1 (the
-  relay's fuzz and binding fixtures are R8 evidence and exempt; its condition, that the binding, fuzz and role-wording
-  tests stay selected, holds: `tools/select_tests.py` selects both files).
+- **Size** (`git diff --numstat $(git merge-base HEAD main)`, without the copied plan and spec, the generated files
+  and the trust-mutant record), measured twice. When the DRI was asked: 957 added, 6 deleted; ACCEPTED as the first
+  coherent part by reviews/dri-decisions-20261109-et-5-size.md item 1 (the relay's fuzz and binding fixtures,
+  `tests/test_events_answer.py` 335, are R8 evidence and exempt). Its condition, that the binding, fuzz and
+  role-wording tests stay selected, holds: `tools/select_tests.py` selects both files. On the final HEAD: 1,128
+  added, 11 deleted: `tests/test_events_answer.py` 335 (exempt), `tests/test_events_wordings.py` 153, `ve/events.py`
+  188, Lean 164, `ve/english.py` 21, docs 236 (this report 195), `tools/trust-classes.json` 24, other 7. The growth
+  since the ruling is the self-review's and the checks' fixes: the report's required sections, the declaration
+  classes, the export and pattern guards, the export test, the layer doc. Without the exempt file that is about 790
+  lines, against about 620 at the ruling; the DRI was told (msg.sh, 2026-11-09).
 - **Lean:** `lake build` "Build completed successfully (1320 jobs)"; `python3 lean/audit.py` "PASS: 789 source files;
   8708 named theorem declarations audited". `tools/lean_statements.py`: changed 0.
 - **Generated:** `tools/regen_generated.py --write` once, then `--check` passes (the assurance doc from
