@@ -250,6 +250,10 @@ def readingsOf (j : Json) : List Json := ((j.getObjValD "readings").getArr?.toOp
 /-! The stated order (finding (c)): the seven-unit list, the pilot pattern uweb.tour.552_0, a `Then` unit with no
 earlier instruction unit, and the two-step counterexample. -/
 
+-- reviews/dri-decisions-20261109-ci-3.md item 1: `readInstruction_typed_step`'s `hw` holds of every ci-3 fixture
+-- environment (`rawEnv`, the counterexample, fails `jsonWF?` above).
+#guard [E_web, proofEnv, youBob, goProof].all VE.Scope.jsonWF?
+
 def su (id : String) (ins : Bool := true) (steps : Nat := 1) (after : Bool := false) (a : Option String := none) :
     StepUnit := ⟨id, ins, steps, after, a⟩
 def seven : List StepUnit := [su "u1", su "u2" (steps := 2), su "u3" (after := true) (a := some "u2"), su "u4" (ins := false),
