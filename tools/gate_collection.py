@@ -24,8 +24,8 @@ the head still collects. A trailer without a target and a reason fails too.
 * none of these: a `conftest.py` that deselects or ignores it, or a parameter list that shrinks while its
   source in the test module is unchanged (a data file, a glob, an imported list).
 
-A mutant ID renumbered by an inserted mutant is paired with its head ID (logged by `pairing_text`), not refused,
-when its module names each case by its text (`CASES_HOOK`) and no base text of its function is gone (`pair_cases`).
+A lost mutant ID no trailer records is paired with a head ID of the same text (logged by `pairing_text`), not refused,
+when its module names each case by its text (`CASES_HOOK`) and no text of a kept ID is gone (`pair_cases`).
 
 A module that no longer imports or is skipped at collection is a collection report, which fails on its own
 as well. Every head collection is attached as the record of its commit.
@@ -461,7 +461,7 @@ class Changes:
         return UNLABELLED
 
 
-    def renumbered(self, expected: list[str], collected: list[str], lost: list[str]) -> dict[str, str]:
+    def renumbered(self, expected: set[str], collected: list[str], lost: set[str]) -> dict[str, str]:
         """{lost base ID: its head ID} (`pair_cases`) by the `CASES_HOOK` of each side's tree (head None: `root`)."""
         functions = {nodeid.split("[", 1)[0] for nodeid in lost if "[" in nodeid and nodeid.endswith("]")}
         texts: dict[str, list] = {function.partition("::")[0]: [] for function in functions}
@@ -479,8 +479,7 @@ class Changes:
                         run = subprocess.run([self.python, "-c", CASES_SCRIPT, str(tree / path)], cwd=tree,
                                              env=env, text=True, capture_output=True)
                         value = test_schedule.json_value(run.stdout) if run.returncode == 0 else None
-                        cases.append(value if isinstance(value, dict) and all(type(text) is str for text in
-                                                                              value.values()) else {})
+                        cases.append(value if type(value) is dict and set(map(type, value.values())) <= {str} else {})
         pairs = {}
         for function in sorted(functions):
             sides = zip((expected, collected), texts[function.partition("::")[0]])
@@ -491,17 +490,18 @@ class Changes:
 
 def pair_cases(base: dict[str, str], head: dict[str, str]) -> dict[str, str]:
     """{base ID the head lacks: a head ID with its text, one each} from one function's {ID: mutant text or None} on
-    each side, when every base text has a head case; when one is gone, nothing. A case with no text never pairs."""
+    each side; a lost ID whose text is gone stays unpaired, and when a kept ID's is, none pairs. None never pairs."""
     free: dict[str, list[str]] = {}
     for nodeid, text in head.items():
-        if base.get(nodeid) != text:  # not a case that keeps its ID and its text
+        if text is not None and base.get(nodeid) != text:  # a text, not at an ID that keeps it
             free.setdefault(text, []).append(nodeid)
     pairs = {}
-    for nodeid, text in sorted(base.items()):
+    for nodeid, text in sorted(base.items(), key=lambda item: (item[0] not in head, item[0])):  # kept IDs first
         if head.get(nodeid) != text:
-            if not free.get(text):
+            if free.get(text):
+                pairs[nodeid] = free[text].pop(0)
+            elif nodeid in head:  # a kept ID's text is gone, which no lost ID shows: the function pairs nothing
                 return {}
-            pairs[nodeid] = free[text].pop(0)
     return {nodeid: paired for nodeid, paired in pairs.items() if nodeid not in head}
 
 
@@ -547,8 +547,9 @@ def missing(expected: list[str], collected: list[str], diff: Changes | None) -> 
         # list or collection rule on a definition that still exists.
         records[nodeid] = deleted, next((removal for removal in removals if removal.covers(nodeid) and
                                          (removal.target == nodeid or removal.target == deleted)), None)
-    unrecorded = [nodeid for nodeid, (_, removal) in records.items() if removal is None]
-    paired = diff.renumbered(expected, collected, unrecorded) if diff and unrecorded else {}
+    unrecorded = {nodeid for nodeid, (_, removal) in records.items() if removal is None}
+    kept = head.intersection(expected)  # the base cases pairing sees, with the unrecorded: a recorded ID takes none
+    paired = diff.renumbered(kept | unrecorded, collected, unrecorded) if diff and unrecorded else {}
     for nodeid, (deleted, removal) in records.items():
         if nodeid in paired:
             continue
