@@ -15,6 +15,9 @@ OVERCLAIM = re.compile(
     r"decoded route ensures|route identifiers?\b|route's check on predicate|no decoded document reaches"
     r"|applies `VE\.Bridge\.identifier`"
 )
+# The base wording of pk-1c REPORT rows (2b) and (2c): `hk` assumes `VE.Bridge.identifier`, the decoder checks
+# `Surface.identifier`, and no lemma ties them (DRI 2026-11-10, adv0313 item 2; pk-1c-cfr-2).
+REPORT_OVERCLAIM = re.compile(r"route's identifier check|act keys are route identifiers", re.IGNORECASE)
 
 
 def claims_discharge(text: str) -> bool:
@@ -75,6 +78,11 @@ def claim_problems(labels: str, report: str, sources: dict[str, str]) -> list[st
         for n, line in enumerate(report.splitlines(), 1)
         if "route discharge" in line.lower() or (claims_discharge(line) and "decoded route" in line.lower())
     ]
+    problems += [
+        f"pk-1c REPORT:{n} names the route's check instead of `VE.Bridge.identifier`: {line.strip()}"
+        for n, line in enumerate(report.splitlines(), 1)
+        if REPORT_OVERCLAIM.search(line)
+    ]
     return problems
 
 
@@ -104,6 +112,12 @@ def test_decoded_rights_labels_proof_claim_refuses() -> None:
     assert old_labels != labels and old_report != report
     assert any("discharge" in p for p in claim_problems(old_labels, report, sources))
     assert any("route discharge" in p for p in claim_problems(labels, old_report, sources))
+    new_2b = "when every act key passes `VE.Bridge.identifier`, the labels"
+    old_2b = report.replace(new_2b, "when every act key passes the route's identifier check, the labels")
+    old_2c = report.replace("keys pass `VE.Bridge.identifier` and whose", "keys are route identifiers and whose")
+    for old in (old_2b, old_2c):
+        assert old != report
+        assert any("instead of `VE.Bridge.identifier`" in p for p in claim_problems(labels, old, sources))
     old_comment = "-- The route's own repeated-label check refuses it (no decoded document reaches this: predicates are"
     old_examples = {**sources, EXAMPLES: sources[EXAMPLES] + "\n" + old_comment + " identifiers).\n"}
     assert any(EXAMPLES in p for p in claim_problems(labels, report, old_examples))
