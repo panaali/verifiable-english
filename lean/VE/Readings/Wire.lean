@@ -152,7 +152,7 @@ theorem readings_lexical_only {environment : Lean.Json} {re : VE.Readings.Wire.R
 /-- The frame (1.2): the environment and no unit. -/
 def frameOf (re : ReadingsEnvironment) (unitIds : List String) : RightsDoc :=
   ⟨⟨re.se.ne.rv.environment, re.se.ne.rv.literals, re.se.soft, ⟨re.se.ne.regulated, [], []⟩⟩,
-   re.block, [], [], [], [], some [], unitIds⟩
+   re.block, [], [], [], [], some [], unitIds, []⟩
 
 /-- The author's base model vocabulary: the declared predicates without the regulated ones. -/
 def authorVocabulary (re : ReadingsEnvironment) : VE.Bridge.Vocabulary :=
