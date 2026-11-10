@@ -47,10 +47,20 @@ READINGS = [f"VE/Scope/Readings.lean: VE.Scope.{name}" for name in (
     "choiceText", "governedSets", "layoutReach", "setVersion", "shapeOf")]
 
 
+# The authoring wordings' table and readers (sc-7, scope spec 2.2), named one by one: `scope_parseRender` and
+# `scope_renderParse` state `Pinned.parseGovernor` and `Pinned.renderGovernor`; these remain, and R16's condition for
+# them is met by `lean/VE/Scope/AuthoringExamples.lean`'s #guards, docs/scope/sc-7/trust-mutants.json and
+# docs/scope/sc-7/mutants.json.
+AUTHORING = [f"VE/Scope/Authoring.lean: VE.Scope.Pinned.{name}" for name in (
+    "Row", "Row.wording", "attitude", "between", "cap", "classify", "clause", "closers", "english", "englishOf",
+    "frameBlock", "frameWording", "heading", "kindCondition", "kindWording", "listName", "narrowed?", "narrowing", "onList",
+    "onName", "readHeading", "readings", "spaced", "splitOnce", "textOf", "uncap", "wordChar")]
+
+
 def test_every_trusted_scope_definition_is_used_by_a_theorem():
     proved = trust_map.statements(STATEMENTS)
     assert proved, "lean/statements.txt is missing or empty; run tools/lean_statements.py"
-    assert trust_map.unexercised(trust_map.load_table(), proved, scope_modules()) == sorted(WIRE + READINGS)
+    assert trust_map.unexercised(trust_map.load_table(), proved, scope_modules()) == sorted(WIRE + READINGS + AUTHORING)
 
 
 TIES = {
@@ -98,7 +108,7 @@ def unexercised_without(module: str, name: str) -> list[str]:
     proved = trust_map.statements(STATEMENTS)
     without = {theorem: found for theorem, found in proved.items() if not found or (module, name) not in found}
     return [d for d in trust_map.unexercised(trust_map.load_table(), without, scope_modules())
-            if d not in WIRE + READINGS]
+            if d not in WIRE + READINGS + AUTHORING]
 
 
 def test_a_definition_no_theorem_uses_is_reported():

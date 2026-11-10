@@ -176,7 +176,7 @@ class SpeechSource:
                 unit['source'] = wordings[unit['id']]
         fenced = [u for u in self.units if type(u['content']) is dict and 'fence' in u['content']]
         if fenced:
-            from ve.speech_english import parse_speech
+            from tests.frozen_speech.speech_english import parse_speech
             scope = effective_scope(self.env, self.units, sets)
             for unit in fenced:
                 text = wording_text(fences[unit['id']])
