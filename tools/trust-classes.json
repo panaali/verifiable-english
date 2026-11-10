@@ -18473,12 +18473,12 @@
         "VE.Presupposition.Frame.close",
         "VE.Presupposition.Frame.cls",
         "VE.Presupposition.Frame.goal",
+        "VE.Presupposition.Frame.locate",
         "VE.Presupposition.Frame.plug",
         "VE.Presupposition.Frame.shallow",
         "VE.Presupposition.PositionClass"
       ],
       "C": [
-        "VE.Presupposition.Frame.locate",
         "VE.Presupposition.Frame.shallowB",
         "VE.Presupposition.instDecidableShallow"
       ]
@@ -20637,6 +20637,101 @@
         "VE.Readings.SoftSupWireExamples.NSDcount",
         "VE.Readings.SoftSupWireExamples.guarded",
         "VE.Readings.SoftSupWireExamples.NSDheavy"
+      ]
+    },
+    "VE/Presupposition/Events.lean": {
+      "S": [
+        "VE.Presupposition.Events.endedAtBefore",
+        "VE.Presupposition.Events.endedBefore",
+        "VE.Presupposition.Events.inProgress",
+        "VE.Presupposition.Events.inProgressBefore",
+        "VE.Presupposition.Events.occurredBefore"
+      ],
+      "G[V]": [
+        {
+          "name": "VE.Presupposition.Events.again",
+          "tied": [
+            "VE.Presupposition.Events.again_eq"
+          ]
+        },
+        {
+          "name": "VE.Presupposition.Events.continues",
+          "tied": [
+            "VE.Presupposition.Events.continues_eq"
+          ]
+        },
+        {
+          "name": "VE.Presupposition.Events.noLonger",
+          "tied": [
+            "VE.Presupposition.Events.noLonger_eq"
+          ]
+        },
+        {
+          "name": "VE.Presupposition.Events.resumes",
+          "tied": [
+            "VE.Presupposition.Events.resumes_eq"
+          ]
+        },
+        {
+          "name": "VE.Presupposition.Events.returnsTo",
+          "tied": [
+            "VE.Presupposition.Events.returnsTo_eq"
+          ]
+        },
+        {
+          "name": "VE.Presupposition.Events.stops",
+          "tied": [
+            "VE.Presupposition.Events.stops_eq"
+          ]
+        }
+      ]
+    },
+    "VE/Presupposition/Events/Examples.lean": {
+      "T": [
+        "VE.Presupposition.Events.Examples.V",
+        "VE.Presupposition.Events.Examples.againPre",
+        "VE.Presupposition.Events.Examples.arrival",
+        "VE.Presupposition.Events.Examples.audit",
+        "VE.Presupposition.Events.Examples.change",
+        "VE.Presupposition.Events.Examples.changed",
+        "VE.Presupposition.Events.Examples.eachDay",
+        "VE.Presupposition.Events.Examples.endA",
+        "VE.Presupposition.Events.Examples.endC",
+        "VE.Presupposition.Events.Examples.endOnly",
+        "VE.Presupposition.Events.Examples.evs",
+        "VE.Presupposition.Events.Examples.ip",
+        "VE.Presupposition.Events.Examples.ipBefore",
+        "VE.Presupposition.Events.Examples.job",
+        "VE.Presupposition.Events.Examples.leftA",
+        "VE.Presupposition.Events.Examples.leftAndStaying",
+        "VE.Presupposition.Events.Examples.leftOnT",
+        "VE.Presupposition.Events.Examples.neverLeft",
+        "VE.Presupposition.Events.Examples.noEnd",
+        "VE.Presupposition.Events.Examples.none0",
+        "VE.Presupposition.Events.Examples.occupancy",
+        "VE.Presupposition.Events.Examples.onT",
+        "VE.Presupposition.Events.Examples.other",
+        "VE.Presupposition.Events.Examples.p10",
+        "VE.Presupposition.Events.Examples.p10Assumed",
+        "VE.Presupposition.Events.Examples.p9",
+        "VE.Presupposition.Events.Examples.p9F",
+        "VE.Presupposition.Events.Examples.places",
+        "VE.Presupposition.Events.Examples.ret",
+        "VE.Presupposition.Events.Examples.retCases",
+        "VE.Presupposition.Events.Examples.retPre",
+        "VE.Presupposition.Events.Examples.retR",
+        "VE.Presupposition.Events.Examples.retV",
+        "VE.Presupposition.Events.Examples.sit",
+        "VE.Presupposition.Events.Examples.somePlace",
+        "VE.Presupposition.Events.Examples.someStay",
+        "VE.Presupposition.Events.Examples.stateless",
+        "VE.Presupposition.Events.Examples.states",
+        "VE.Presupposition.Events.Examples.stay",
+        "VE.Presupposition.Events.Examples.stayS",
+        "VE.Presupposition.Events.Examples.stayingAtP",
+        "VE.Presupposition.Events.Examples.t",
+        "VE.Presupposition.Events.Examples.visit",
+        "VE.Presupposition.Events.Examples.x"
       ]
     }
   }
