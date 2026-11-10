@@ -1,0 +1,10 @@
+trust_mutants: --rescore ci-job/rescore.json: a full run, since its inputs differ (options)
+trust_mutants: 13 definitions, 451 mutants (50 to run), 4 jobs, base 3e4fe503f4c9
+UNKNOWN lean/VE/Rights/Run.lean:315 VE.Rights.Run.situationTables (D[V], trusted) list-empty: (genEntries D) -> [] (lean/VE/Rights/Run.lean:315: Invalid projection: Type of)
+UNKNOWN lean/VE/Rights/Run.lean:435 VE.Rights.Run.conflictAnswerOf (D[V], trusted) list-empty: conditional.filter (fun l => l.startsWith "soft:") -> [] (lean/VE/Rights/Run.lean:439: don't know how to synthesize implicit argument `α`)
+SURVIVOR lean/VE/Rights/Run.lean:316 VE.Rights.Run.situationTables (D[V], trusted) list-last: (M.relations p) -> ((M.relations p).reverse.take 1)
+SURVIVOR lean/ResponseShape/Schemas/Rights.lean:396 ResponseShape.Schemas.Rights.packages (G[V], trusted) list-drop-first: [ ("status_text", .pattern (Re.prefixes ["UNKNOWN: "])), ("detail", .pattern (Re.prefixes ["missi... -> ([ ("status_text", .pattern (Re.prefixes ["UNKNOWN: "])), ("detail", .pattern (Re.prefixes ["miss...
+trust_mutants: 41 KILLED, 2 SURVIVOR, 2 UNKNOWN, 5 INVALID, 0 ALLOWED, 0 NOT RUN, 401 OTHER SHARD in 1453 s
+trust_mutants: D[V], trusted: 15 KILLED, 1 SURVIVOR, 2 UNKNOWN, 4 INVALID, 163 OTHER SHARD
+trust_mutants: G[V], trusted: 26 KILLED, 1 SURVIVOR, 1 INVALID, 238 OTHER SHARD
+trust_mutants: steps: wall plan 12.4 s, scratch 4.1 s, control_build 0.3 s, probe_install 1.5 s, mutants 1431.9 s, cleanup 3 s, reads 0.1 s; lake control_build 0.3 s (1), probe_install 1.4 s (1), control_probes 61.9 s (8), mutant_builds 1128 s (50), mutant_checks 3709.3 s (47), stage_controls 310.2 s (4), mutant_probes 465.6 s (41)
