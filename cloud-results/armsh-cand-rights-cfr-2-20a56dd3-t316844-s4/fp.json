@@ -1,0 +1,44 @@
+{
+ "audit_rc": 0,
+ "base": "159b9e8909d8136c8dfa942bc13a1cb1049b573f",
+ "changed_modules": [
+  "ResponseShape/Encoders/Rights",
+  "ResponseShape/Schemas/Rights",
+  "ResponseShape/Schemas/RightsChecks",
+  "ResponseShapeAudit",
+  "VE/Audit",
+  "VE/Readings/Wire",
+  "VE/Rights/Distinction",
+  "VE/Rights/Run",
+  "VE/Rights/Scope",
+  "VE/Rights/Tree",
+  "VE/Rights/Wire"
+ ],
+ "changed_oleans": {
+  "ResponseShape/Encoders/Rights": "7f0124990e0b0077f20b708ade371f039d9555abdbf057614eab8662b0ca14ee",
+  "ResponseShape/Schemas/Rights": "452ef36419e8bf83fa9636b8a289866860628cabd0cfc2dfea996b804ea9ca7b",
+  "ResponseShape/Schemas/RightsChecks": "5a9629aebed22ad949af18517aa046760a4ca480c2244def4c3f2efe783cec15",
+  "ResponseShapeAudit": null,
+  "VE/Audit": null,
+  "VE/Readings/Wire": "7dd4ec28eb6c722a6a36363593246d6261444462b4826f1f34331a67fe016fc6",
+  "VE/Rights/Distinction": "28ea97a816c44149f7062cdc6603052b2dee9657723a56b252b05268194b4678",
+  "VE/Rights/Run": "a66f059a811e95cd9ee00e17f9bc6b628cba79919c834d316953c50786b8b9fe",
+  "VE/Rights/Scope": "e8b7521fcde822a7541acf75489aab6bb9f042558a80171d9b7613308358bd5a",
+  "VE/Rights/Tree": "38a67df1f8d62f952d3380ba3df1e68bc45acd4a74f42ceedceddbc8ff01d94c",
+  "VE/Rights/Wire": "1485d468a7bae6f35934ecf9b514d029cb3c20749ffdd85a9898928817b06eee"
+ },
+ "files": {
+  "lean/ResponseShapeAudit.lean": "b73059784529e686bb99b15e39dce3afbfe944c1eca3ebc2e97fb80900eadd8f",
+  "lean/VE/Audit.lean": "a2f28585ae1690a5d1ee63216e791ed45facc57502e91579c238c68c85fc506d",
+  "lean/axioms.txt": "92c29be9eb0d17559731a2d47028b0fcad1c69457c8ab75cca4ea561a5283ff1",
+  "lean/declarations.txt": "977c7505c79d616699cf28dcb9af60a5117574d0e0579dbb1701720024e5bcc3",
+  "lean/predicates.txt": "92a789a8a89b536fba517d0875147f0d5023e9c4d95aeaa3e1729c30de04d0d6",
+  "lean/statements.txt": "f3f05d792b8b1f8424d9b8b64d33c66b26516ed34811614f6fcd4cd0f484a022"
+ },
+ "head": "4792532678f065c2d908964e9e8679781d41e249",
+ "lake_rc": 0,
+ "oleans_n": 818,
+ "oleans_sha256": "3d977b36271f9eaf33cfbed7b18a13ee04ac3f900573f9ed4d4ac22a2c6db997",
+ "seed": "seed-fp",
+ "statements_rc": 0
+}
