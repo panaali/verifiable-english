@@ -297,12 +297,27 @@ with `permitted` unspecified: in k9 (empty rule set) all three alternatives are 
 "running the job with the memory limit" and "asking the user" move from `default_decided` to UNDECIDED. Sequencing
 is Q9.
 
-**Integration gap (2026-10-01).** The merged alternatives and risk Lean routes still consume completed deny/allow
-norms and do not replay `Fill_T` or classify an unspecified permission. Their combination with `norm-defaults@0`
-is rejected at profile validation with `UnsupportedProfile`; neither route may report a two-valued decision for a
-silent permission. The W1 norm-defaults route, soft and rights semantics, and the existing alternatives/risk routes
-remain available separately. Implementing `fill(inlineTree A)` and risk's three-valued decision report, followed by
-the cross-route fixtures u10/u11, is required before these profile pairs can be enabled.
+**Integration status (2026-11-10, replacing the gap note of 2026-10-01).** What is built, by profile list (the gate
+is `todayGate`, `lean/VE/Compose/Dispatch.lean:31-71`, which the runners' `gateOf profileTable` equals by
+`gate_legacy`; `tests/test_norm_defaults_documented_support.py` checks these two sentences against it):
+- `alternatives@0` with `norm-defaults@0` is admitted at profile validation: no check of `todayGate` refuses the
+  pair, and it takes the alternatives route. That route answers the filled source in `runCaseU`
+  (`lean/VE/Alternatives/Run.lean:407`, chosen at `:421`) for the case kinds `alt-elaborate`, `alt-environment`,
+  `alt-validate`, `alt-conflict` and `alt-followable`; any other case kind is refused with `UnsupportedProfile: case
+  kind <k> with norm-defaults@0 is not implemented on the alternatives route`. The readers that do not read the
+  completion refuse such a list by name through `pendingWithDefaults` (`Dispatch.lean:83`), with `UnsupportedProfile:
+  alternatives@0 with norm-defaults@0 is not implemented`: the `document` mode (`lean/VE/Service/Document.lean:1174`),
+  the norm-defaults route (`runGated`, `lean/VE/NormDefaults/Run.lean:446`) and `decodeAltSource`
+  (`lean/VE/Alternatives/Wire.lean:233`).
+- `risk@0` with `norm-defaults@0` is refused at profile validation with `UnsupportedProfile: risk@0 with
+  norm-defaults@0 is not implemented` (`todayGate`, `Dispatch.lean:39`). The risk route still consumes completed
+  deny/allow norms and may not report a two-valued decision for a silent permission; risk's three-valued decision
+  report and the cross-route fixture u11 are required before this pair can be enabled.
+
+**Not built** (2026-11-10): the risk pair above; the diagnostic `ResourceLimit: unsaid atoms` of 8, which no Lean or
+Python code emits (a point whose closed cone has more than `MAX_UNSAID_ATOMS` unsaid atoms is left UNKNOWN by the
+enumeration, `lean/VE/NormDefaults/Evidence.lean:786` and `lean/VE/NormDefaults/Report.lean:178`, and never
+refused); the reader test of 4.3, which has not been run (Q6 stays open).
 
 **Grounded completions stay.** Cedar's `permitted(request)` stays deny: Cedar's documented semantics is deny unless
 a policy permits, a citation the adapter records. Gatekeeper's `admitted` stays allow for the same reason.
@@ -352,6 +367,8 @@ visibly settles gaps. It is render-only: the dual declaration is its source (Q10
   situation answers 'yes'".
 
 ### 4.3 Reader testing (zero-training)
+
+Status (2026-11-10): not built; no reader test has been run (3.3, Q6).
 
 The main risks are "not forbidden, therefore allowed" (the u0165.s07 failure moved into the reader's head) and
 reading "does not say" as a third deontic value ("optional", "indifferent"). The protocol belongs to W8's
@@ -714,8 +731,8 @@ mutations, plus flipping a completion and dropping a `Fill_T` premise, are rejec
 
 **Diagnostics** (shared text): `UnsupportedProfile: unspecified completion requires norm-defaults@0`;
 `InvalidInput: reserved name <n>` (the `unsaid__` and `unsaid--` prefixes); `InvalidModel("norms", "<unsaid__p> is a
-filling; supply it only with norm-defaults@0")`; `ResourceLimit: unsaid atoms`; `ResourceLimit: fill premise`;
-`ResourceLimit: unspecified name length`; and the author-side limits below.
+filling; supply it only with norm-defaults@0")`; `ResourceLimit: unsaid atoms` (not built, 3.3);
+`ResourceLimit: fill premise`; `ResourceLimit: unspecified name length`; and the author-side limits below.
 Report findings, never errors: `UngroundedDefault: <p>`; `LatentConflict: <rules> under <p>(<situation>)` (the
 witness kind of a CONFLICT); `UNSETTLED(<alternatives>)` (a DILEMMA diagnosis).
 
@@ -828,8 +845,8 @@ a status.
    no "FOLLOWABLE IF …" verdict.
 5. **Evidence completeness:** Kleene plus bounded enumeration may leave many points UNKNOWN over large domains (pilot
    measurement needed); a two-copy "fill independence" certificate is a possible upgrade at double the vocabulary.
-6. **Reader tests:** thresholds, sample size, wording A or B (W8). Untested: whether "the text" reads naturally in an
-   authored policy.
+6. **Reader tests:** not run (4.3). Thresholds, sample size, wording A or B (W8). Untested: whether "the text" reads
+   naturally in an authored policy.
 7. **Translation documents:** how is one detected mechanically? Is the grounding block in front matter (recommended)
    or the environment? Are authored environments exempt from `UngroundedDefault` (recommended)?
 8. **Readings over completions:** {deny, unspecified} as readings would need per-reading environments, which are
