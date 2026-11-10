@@ -164,4 +164,9 @@ Next item: pe-2 (the purposes block in the document mode), after sa-checked-view
   (`trust_map.py --check` re-run: K +0, S +0, G +64, trusted +64, PASS). PROBE F2 exits 0.
 - **F-ready1 (B).** Seeded Rust bugs `rust-table-text` and `rust-table-class` (section 4).
 - Seeded Python bugs for F1: 11 `py-binds-*` mutants in [mutants.json](mutants.json), each failing a named test.
+- Tests on 215d94bab6 (the fix round's code and evidence): `mac-pytest.sh --select -- --base 1ee886ca05d2 --run` on
+  ve-mac-1, exit 0, 482 units recorded, 0 failed (3141 s), `tests/test_purposes_contract.py` and
+  `tests/test_wire_contract_rust.py` included; `lake build` (1363 jobs) and `python3 lean/audit.py` PASS (824 files,
+  9276 theorems); `regen_generated.py --check` (39 entries) and `repo_map.py --check` PASS; review-ready's three
+  `[mutants]` lines PASS (its `[gate]` FAIL stands until the full gate runs on the final HEAD). Not run: the full gate.
 - Not done (C): F3 (the 2.1b description), F4 (size; this round adds about 60 lines of code and 120 of tests), F5, F6.
