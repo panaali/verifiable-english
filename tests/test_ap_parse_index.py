@@ -77,3 +77,36 @@ def test_a_norms_document_reads_63_joined_acts_with_one_grammar():
 def test_a_norms_document_with_129_frames_is_a_resource_limit():
     row = norms((FRAME,) + tuple(PAD) + (frame("seekzz"),))
     assert row["error"] == "ResourceLimit: more than 128 frames"
+
+
+# F1 (ap-parse-index review): 128 frames with 64 modifiers each. Building this vocabulary's grammar takes about three
+# times the route's deadline (the review's 32 modifiers cost about the deadline itself), so an act that never needs
+# the grammar must never build it (`Acts.lazyReader`); such an act is answered in a tenth of the deadline.
+MARKS = [f"q{x}{y}{z}" for x in LETTERS for y in LETTERS for z in LETTERS]
+WIDE = tuple(frame(f"seek{LETTERS[i // 26]}{LETTERS[i % 26]}", modifiers=MARKS[64 * i:64 * i + 64]) for i in range(128))
+JOINED_SLOT = "InvalidInput: act phrase for p027 has a slot joined to a word"
+
+
+@pytest.mark.parametrize("act,arity,answer", [
+    ("{0} be held", 1, ["p027"]),  # lexical: accepted by `Lexical.check`, never joined (Acts/Wire.lean checkActBy)
+    ("{0} be held,", 1, "InvalidInput: act phrase for p027 ends with a comma"),  # lexical refusal
+    ("{0} seek {1}s and enjoy asylum", 2, JOINED_SLOT),  # joined, refused before its listing (joinedActBy)
+    ("{0} seek asylum and enjoy x{1}", 2, JOINED_SLOT),
+    # No regulated predicate: under acts@0 a regulated predicate must carry an act, so this is the document whose
+    # declarations have no act. `actsOf` runs on the empty list while the environment is decoded (`joinedActs`),
+    # before the norm is refused.
+    (None, 1, "UnknownSymbol: regulated predicate p027"),
+])
+def test_an_act_that_needs_no_grammar_is_answered_under_a_vocabulary_whose_grammar_is_slow(act, arity, answer):
+    """The decoder builds the vocabulary's reader only when a joined act is listed, and shares it from then on: a
+    lexical act, a lexical refusal, a slot joined to a word and a declaration without an act are answered under the route's CPU deadline, as on main
+    (before the fix `actsOf` built the reader first and the lexical act was `CheckerUnavailable` at 5 s)."""
+    env = environment(NORM_PROFILES, act=act, frames=WIDE)
+    env["vocabulary"]["predicates"]["p027"]["arguments"] = ["person"] * arity
+    if act is None:
+        del env["vocabulary"]["predicates"]["p027"]["regulated"]
+    case = {"id": "c", "kind": "norms-elaborate", "environment": env, "norms": [RULE]}
+    with LeanService(lean_build("ve_service") / "ve_service") as service:
+        _, response = service.exchange("norms", json.dumps([case], separators=(",", ":")), 1)
+    row = response["results"][0]["result"]
+    assert (row.get("error") or [t["target"] for t in row["conflict_targets"]]) == answer
