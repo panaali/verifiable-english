@@ -1,0 +1,173 @@
+warning: The `UV_NATIVE_TLS` environment variable is deprecated and will be removed in a future release. Use `UV_SYSTEM_CERTS` instead.
+shard 2/6: 81 units; commands: ['lake build', 'lake build ve_english_lean_bench ve_scope_bench']
++ lake build
+⚠ [33/723] Replayed VE.Core.TableauExtendedClosure
+warning: VE/Core/TableauExtendedClosure.lean:83:21: `Option.some_bind` has been deprecated: Use `Option.bind_some` instead
+warning: VE/Core/TableauExtendedClosure.lean:87:23: `Option.some_bind` has been deprecated: Use `Option.bind_some` instead
+warning: VE/Core/TableauExtendedClosure.lean:83:21: This simp argument is unused:
+  Option.some_bind
+
+Hint: Omit it from the simp argument list.
+  simp only [hx,̵ ̵O̵p̵t̵i̵o̵n̵.̵s̵o̵m̵e̵_̵b̵i̵n̵d̵] at ht
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: VE/Core/TableauExtendedClosure.lean:87:23: This simp argument is unused:
+  Option.some_bind
+
+Hint: Omit it from the simp argument list.
+  simp only [hy, O̵p̵t̵i̵o̵n̵.̵s̵o̵m̵e̵_̵b̵i̵n̵d̵,̵ ̵Option.pure_def, Option.some.injEq] at ht
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: VE/Core/TableauExtendedClosure.lean:87:58: This simp argument is unused:
+... (5393 lines cut; full output in shard-full.txt)
+
+Hint: Omit it from the simp argument list.
+  simp [̵←̵ ̵R̵a̵t̵.̵i̵n̵t̵C̵a̵s̵t̵_̵a̵d̵d̵,̵ ̵R̵a̵t̵.̵i̵n̵t̵C̵a̵s̵t̵_̵i̵n̵j̵]̵[̲R̲a̲t̲.̲i̲n̲t̲C̲a̲s̲t̲_̲i̲n̲j̲]̲
+
+Note: Simp arguments with `←` have the additional effect of removing the other direction from the simp set, even if the simp argument itself is unused. If the hint above does not work, try replacing `←` with `-` to only get that effect and silence this warning.
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+⚠ [611/757] Replayed VE.Service.Document
+warning: VE/Service/Document.lean:2199:33: This simp argument is unused:
+  Except.mapError
+
+Hint: Omit it from the simp argument list.
+  simp [UnitContent.judgedIn, h, E̵x̵c̵e̵p̵t̵.̵m̵a̵p̵E̵r̵r̵o̵r̵,̵ ̵bind, Except.bind, pure, Except.pure]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+✔ [752/757] Built ScopeBenchMain (1.0s)
+✔ [753/757] Built ScopeBenchMain:c.o (286ms)
+✔ [754/757] Built EnglishLeanBenchMain (1.7s)
+✔ [756/757] Built ve_scope_bench:exe (562ms)
+✔ [757/757] Built ve_english_lean_bench:exe (682ms)
+Build completed successfully (757 jobs).
+info: syncing channel updates for '1.98.1-x86_64-unknown-linux-gnu'
+info: latest update on 2026-09-03, rust version 1.98.1 (48a229cea 2026-09-01)
+info: downloading component 'cargo'
+info: downloading component 'rust-std'
+info: downloading component 'rustc'
+info: installing component 'cargo'
+info: installing component 'rust-std'
+info: installing component 'rustc'
+    Updating crates.io index
+ Downloading crates ...
+  Downloaded autocfg v1.5.1
+  Downloaded generic-array v0.14.7
+  Downloaded block-buffer v0.10.4
+  Downloaded crypto-common v0.1.7
+  Downloaded digest v0.10.7
+  Downloaded itoa v1.0.18
+  Downloaded cpufeatures v0.2.17
+  Downloaded version_check v0.9.5
+  Downloaded cfg-if v1.0.5
+  Downloaded num-bigint v0.4.8
+  Downloaded memchr v2.8.3
+  Downloaded unicode-ident v1.0.26
+  Downloaded serde_derive v1.0.229
+  Downloaded sha2 v0.10.9
+  Downloaded zmij v1.0.23
+  Downloaded num-traits v0.2.19
+  Downloaded quote v1.0.47
+  Downloaded serde_core v1.0.229
+  Downloaded num-integer v0.1.47
+  Downloaded proc-macro2 v1.0.107
+  Downloaded serde v1.0.229
+  Downloaded typenum v1.20.1
+  Downloaded serde_json v1.0.151
+  Downloaded syn v3.0.6
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling unicode-ident v1.0.26
+   Compiling quote v1.0.47
+   Compiling typenum v1.20.1
+   Compiling generic-array v0.14.7
+   Compiling serde_core v1.0.229
+   Compiling autocfg v1.5.1
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling syn v3.0.6
+   Compiling serde v1.0.229
+   Compiling serde_json v1.0.151
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling itoa v1.0.18
+   Compiling cpufeatures v0.2.17
+   Compiling cfg-if v1.0.5
+   Compiling memchr v2.8.3
+   Compiling sha2 v0.10.9
+   Compiling serde_derive v1.0.229
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling ve-kernel v0.1.0 (/tmp/cc-wt/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/tmp/cc-wt/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/tmp/cc-wt/rust/ve-core)
+   Compiling ve v0.1.0 (/tmp/cc-wt/rust/ve)
+    Finished `release` profile [optimized] target(s) in 14.03s
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.26
+   Compiling typenum v1.20.1
+   Compiling serde_core v1.0.229
+   Compiling generic-array v0.14.7
+   Compiling autocfg v1.5.1
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling serde v1.0.229
+   Compiling syn v3.0.6
+   Compiling serde_json v1.0.151
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling cfg-if v1.0.5
+   Compiling itoa v1.0.18
+   Compiling memchr v2.8.3
+   Compiling cpufeatures v0.2.17
+   Compiling sha2 v0.10.9
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling serde_derive v1.0.229
+   Compiling ve-kernel v0.1.0 (/tmp/cc-wt/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/tmp/cc-wt/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/tmp/cc-wt/rust/ve-core)
+   Compiling ve v0.1.0 (/tmp/cc-wt/rust/ve)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 7.80s
+order: failed last time []; changed []; then the rest; --maxfail 5
+chunks: ; from the plan: tests/test_trust_mutants.py::chunk(2/4), tests/test_acts_vocab_mutants.py::chunk(3/4), tests/test_english_evidence.py::chunk(4/4), tests/test_speech_polar_lean.py::chunk(3/4), tests/test_speech_polar_lean.py::chunk(2/4), tests/test_readings_rd6b_differential.py::chunk(3/4)
+recording 81 units with 4 jobs in /var/tmp/cct/ve-select-run-vf5toivd
+  tests/test_acts_vocab_mutants.py::chunk(3/4): exit 1 in 555.1 s, 262 functions
+stopping after 5 failed tests (--maxfail 5)
+chunked tests/test_acts_vocab_mutants.py: 1 of 4 chunks, exit 1, 555.1 s in all, longest chunk 555.1 s; 0 passed, 0 skipped, 5 failed; tests/test_acts_vocab_mutants.py chunk 3/4: did not run 155 of its tests: tests/test_acts_vocab_mutants.py::test_an_equivalent_mutant_elaborates_and_passes_every_fixture[f.markers-as-f.markers-and-f.mods-1], tests/test_acts_vocab_mutants.py::test_an_equivalent_mutant_elaborates_and_passes_every_fixture[f.markers-as-f.markers.filter-ne-4], tests/test_acts_vocab_mutants.py::test_an_equivalent_mutant_elaborates_and_passes_every_fixture[ms-f-as-f.markers-and-f.mods-3], tests/test_acts_vocab_mutants.py::test_an_equivalent_mutant_elaborates_and_passes_every_fixture[ms-f-as-f.markers-and-f.mods-4], tests/test_acts_vocab_mutants.py::test_an_equivalent_mutant_elaborates_and_passes_every_fixture[sweep-prefix-checkVocab-1] and 150 more
+chunked tests/test_trust_mutants.py: 1 of 4 chunks, exit 0, 516.6 s in all, longest chunk 516.6 s; 207 passed, 0 skipped, 0 failed; each of its 207 tests ran in exactly one chunk
+chunked tests/test_readings_rd6b_differential.py: 1 of 4 chunks, exit 0, 292.6 s in all, longest chunk 292.6 s; 4 passed, 0 skipped, 0 failed; each of its 4 tests ran in exactly one chunk
+chunked tests/test_english_evidence.py: 1 of 4 chunks, exit 0, 340.2 s in all, longest chunk 340.2 s; 20 passed, 0 skipped, 0 failed; each of its 20 tests ran in exactly one chunk
+FAILED tests/test_acts_vocab_mutants.py (exit 1): tests/test_acts_vocab_mutants.py, tests/test_acts_vocab_mutants.py::test_every_seeded_mutant_fails_a_fixture[31a-129-accepted], tests/test_acts_vocab_mutants.py::test_every_seeded_mutant_fails_a_fixture[31b-dropped], tests/test_acts_vocab_mutants.py::test_every_seeded_mutant_fails_a_fixture[31c-first-head-word], tests/test_acts_vocab_mutants.py::test_every_seeded_mutant_fails_a_fixture[31d-to-head-accepted], tests/test_acts_vocab_mutants.py::test_every_seeded_mutant_fails_a_fixture[31g-without-direct-object]; log /var/tmp/cct/ve-select-run-vf5toivd/tests__test_acts_vocab_mutants.py::chunk(3__4).log
+E         /var/tmp/cct/pytest-of-ccrun/pytest-2/vocab-pool0/4/ActsMutant.lean:147:4: error: `VE.Acts.framesOk` has already been declared
+E         /var/tmp/cct/pytest-of-ccrun/pytest-2/vocab-pool0/4/ActsMutant.lean:165:4: error: `VE.Acts.rawCap` has already been declared
+E         /var/tmp/cct/pytest-of-ccrun/pytest-2/vocab-pool0/4/ActsMutant.lean:167:4: error: `VE.Acts.stepBudget` has already been declared
+E         /var/tmp/cct/pytest-of-ccrun/pytest-2/vocab-pool0/4/ActsMutant.lean:169:4: error: `VE.Acts.maxReadings` has already been declared
+E         /var/tmp/cct/pytest-of-ccrun/pytest-2/vocab-pool0/4/ActsMutant.lean:172:10: error: `VE.Acts.Listing` has already been declared
+E         /var/tmp/cct/pytest-of-ccrun/pytest-2/vocab-pool0/4/ActsMutant.lean:176:4: error: `VE.Acts.firsts` has already been declared
+E         /var/tmp/cct/pytest-of-ccrun/pytest-2/vocab-pool0/4/ActsMutant.lean:181:4: error: `VE.Acts.listing` has already been declared
+E         /var/tmp/cct/pytest-of-ccrun/pytest-2/vocab-pool0/4/ActsMutant.lean:190:10: error: `VE.Acts.ReadOutcome` has already been declared
+E         /var/tmp/cct/pytest-of-ccrun/pytest-2/vocab-pool0/4/ActsMutant.lean:194:4: error: `VE.Acts.valueOf` has already been declared
+E         /var/tmp/cct/pytest-of-ccrun/pytest-2/vocab-pool0/4/ActsMutant.lean:204:4: error: `VE.Acts.readingsIn` has already been declared
+E         /var/tmp/cct/pytest-of-ccrun/pytest-2/vocab-pool0/4/ActsMutant.lean:208:4: error: `VE.Acts.readIn` has already been declared
+E         /var/tmp/cct/pytest-of-ccrun/pytest-2/vocab-pool0/4/ActsMutant.lean:218:4: error: `VE.Acts.DerivedIn` has already been declared
+E         
+E       assert False
+E        +  where False = _killed('/var/tmp/cct/pytest-of-ccrun/pytest-2/vocab-pool0/4/ActsMutant.lean:36:10: error: `VE.Acts.Lexical.Tok` has already b...t/pytest-of-ccrun/pytest-2/vocab-pool0/4/ActsMutant.lean:218:4: error: `VE.Acts.DerivedIn` has already been declared\n')
+
+tests/test_acts_vocab_mutants.py:808: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_acts_vocab_mutants.py::test_every_seeded_mutant_fails_a_fixture[31a-129-accepted]
+FAILED tests/test_acts_vocab_mutants.py::test_every_seeded_mutant_fails_a_fixture[31b-dropped]
+FAILED tests/test_acts_vocab_mutants.py::test_every_seeded_mutant_fails_a_fixture[31c-first-head-word]
+FAILED tests/test_acts_vocab_mutants.py::test_every_seeded_mutant_fails_a_fixture[31d-to-head-accepted]
+FAILED tests/test_acts_vocab_mutants.py::test_every_seeded_mutant_fails_a_fixture[31g-without-direct-object]
+!!!!!! stopping after 5 failed tests outside the quarantine (--maxfail 5) !!!!!!
+5 failed, 483 deselected in 554.64s (0:09:14)
+recorded 0 units for tree 32f4b48493; 80 others left to the static graph until they run (4 with only some of their chunks here); 1 failed
+STOPPED EARLY (--maxfail 5): 76 selected units did not run: tests/test_speech_polar_lean.py, tests/test_repo_map.py, tests/test_acts_tree_mutants.py, tests/test_acts_lexical_mutants.py, tests/test_safety_framework.py, tests/test_calc_answer.py, tests/test_p1_amendment12.py, tests/test_p1_amendment14.py, tests/test_relay_binding_inventory.py, tests/test_agent_policy_unspecified.py, tests/test_metered_differential.py, tests/test_views.py, tests/test_asimov_laws.py, tests/test_b16d_norm_roles.py, tests/test_speech_source_lean.py, tests/test_p1_preflight.py, tests/test_reports_fault_order.py, tests/test_defaults_zone_ties.py, tests/test_cardinality_answer.py, tests/test_test_chunks.py, tests/test_readings_nd_document.py, tests/test_closure.py, tests/test_readings_components_lean.py, tests/test_readings_s1_pilot_rebuild.py, tests/test_stage2_parse.py, tests/test_ps_e1.py, tests/test_rights_licence_relay.py, tests/test_jt_e1s.py, tests/test_ask_fixtures.py, tests/test_english_lean_s3_compare.py, tests/test_scope_document.py, tests/test_document.py, tests/test_lake_outputs.py, tests/test_single_owner.py, tests/test_english_grammar_gen.py, tests/test_gen_inv_design.py, tests/test_bluedot_grant.py, tests/test_cmp_s4_evaluate_once.py, tests/test_norm_defaults.py, tests/test_definitions_english.py, tests/test_readings_s1_document.py, tests/test_entailment_properties.py, tests/test_p1_amendment11.py, tests/test_bundle.py, tests/test_lean_first_oracle.py, tests/test_scope_lean.py, tests/test_closure_core_replay.py, tests/test_cardinality_lean.py, tests/test_norm_defaults_relay_english.py, tests/test_order_grammar.py, tests/test_english_unambiguity.py, tests/test_norm_defaults_layered.py, tests/test_english_e2_selection.py, tests/test_stage2_bundle.py, tests/test_discourse_three_way.py, tests/test_risk_differential.py, tests/test_readings_route_relay.py, tests/test_search_options.py, tests/test_norm_defaults_switch.py, tests/test_wire_contract_three_way.py, tests/test_judgments_exercised.py, tests/test_nary.py, tests/test_reports_agreement.py, tests/test_acts_joined_route.py, tests/test_count_w6a.py, tests/test_scope_forward.py, tests/test_english_lean_s2.py, tests/test_lean_default_build.py, tests/test_lean_first_triage.py, tests/test_readings_component_names.py, tests/test_nary_folio.py, tests/test_grammar_backends.py, tests/test_rights_render_status.py, tests/test_time_surface_w6a.py, tests/test_units_w6a.py, tests/test_english_e2_boundary.py
+SHARD 2/6: exit 1 in 615.4 s; 81 units, 3 passed
