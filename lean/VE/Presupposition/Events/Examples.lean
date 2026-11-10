@@ -95,6 +95,7 @@ def eachDay (p : VE.Term → VE.Formula) : VE.Formula :=
 #guard (eachDay (inProgressBefore V stay x)).eval noEnd []
 #guard !(eachDay (inProgressBefore V stay x)).eval (stayS [("begins", [["s", "b"]])]) []
 #guard (eachDay (inProgress V stay x)).eval noEnd [] && !(eachDay (inProgress V stay x)).eval endA []
+#guard states.map ((VE.Formula.ex "stay" (inProgress V stay (.var 0) t)).eval · []) == [true, false, true, true, false]
 def someStay (M : VE.FiniteModel String) : Bool :=
   (VE.Formula.ex "stay" (.all "day" (.implies (.binary "before" (.const "a") (.var 0))
     (inProgressBefore V stay (.var 1) (.var 0))))).eval M []
