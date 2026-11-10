@@ -1,11 +1,12 @@
 import ResponseShape
-import VE.EnglishGrammar.Run
+import VE.EnglishGrammar.Norm.Run
 
 /-! The source of `ve/backends/lean_service_schema/english.statement.json` (`file`; `tools/response_schemas.py`
 writes it): the `english.statement` mode's row (`VE.EnglishGrammar.Norm.Run.statementCaseReported`,
 docs/spec/en-e3-norm.md 2.3, recipe step 2), typed to the leaves. The members of each status are
 `Run.statementFields`', and a status's `code` is one of its `Run.statementStatusCodes` list; `rendered` is EN-3's
-(kind `render`) and joins with it. The relay binds numbers, spans and identities to the request (spec 2.4). -/
+(kind `render`) and joins with it. Binding the numbers, spans and identities to the request is the relay's
+(spec 2.4; en-e3bb). -/
 namespace ResponseShape.Schemas.EnglishStatement
 open Lean ResponseShape
 open VE.EnglishGrammar.Run (statementFields statementStatusCodes codeClasses)
@@ -30,7 +31,7 @@ def spanRow : Shape :=
   c "Norm.Run.spanRow: a phrase read and not formalised, its bytes, row, meaning owner and place." [
     obj, .required ["start", "stop", "row", "owner", "place"],
     closed [("start", nat), ("stop", nat), ("row", str), ("owner", str),
-      ("place", enumS ["act", "guard", "carve_out", "bearer"])]]
+      ("place", enumS ([.act, .guard, .carveOut, .bearer].map VE.EnglishGrammar.Norm.Run.placeText))]]
 
 def treeRow : Shape :=
   c "Run.treeRows: one node of a witness tree, its rule tag and token span [start, stop)." [
@@ -52,7 +53,7 @@ def member (status : String) : String → Shape
   | "sentence" => nat
   | "spans" => n [arr, .minItems 1, .items (ref "#/$defs/span_row")]
   | "witnesses" => n [arr, .minItems 2, .maxItems 2, .items (n [arr, .items (ref "#/$defs/tree_row")])]
-  | "fault" => enumS ["lexicon", "notWellFormed", "notTyped"]
+  | "fault" => enumS ([.lexicon, .notWellFormed, .notTyped].map VE.EnglishGrammar.Run.faultName)
   | "failure" => n [arr, .prefixItems [str, str, str], .minItems 3, .maxItems 3]
   | "span" => pair
   | _ => .bool false

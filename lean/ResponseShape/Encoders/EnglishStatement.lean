@@ -167,7 +167,7 @@ theorem request_identities (j : Json) :
 
 /-- Every row the mode writes fits `english.statement.json#/row` (docs/spec/en-e3-norm.md section 4). -/
 theorem statementCaseReported_fits : ∀ j : Json,
-    Fits j Skeletons.englishStatement (Run.statementCaseReported j) := by
+  ResponseShape.Fits j ResponseShape.Skeletons.englishStatement (Run.statementCaseReported j) := by
   intro j
   unfold Run.statementCaseReported
   split

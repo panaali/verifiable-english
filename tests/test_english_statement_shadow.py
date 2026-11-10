@@ -60,8 +60,14 @@ def test_a_lean_reading_is_compared_by_position():
     assert statement_class(renamed, one(NODE, second)) == "agree"
     assert statement_class([NODE, {**second, "over": []}], one(NODE, second)) == "different-node"
     assert statement_class([{**NODE, "sign": False}], one(NODE)) == "different-node"
+    assert statement_class([{**NODE, "sign": 1}], one(NODE)) == "different-node"  # JSON's true is not 1
     assert statement_class([NODE], one(NODE, second)) == "different-node"
     assert statement_class(REFUSED, one(NODE)) == "lean-looser"
+
+
+def test_only_a_checked_answer_or_unavailability_is_classed():
+    with pytest.raises(TypeError):
+        statement_class([NODE], SyntaxError("InvalidInput: the lexicon names another environment"))
 
 
 def test_a_record_holds_both_outcomes_and_one_class():
@@ -76,26 +82,27 @@ def test_a_record_holds_both_outcomes_and_one_class():
 
 def test_the_shadow_needs_both_flags(monkeypatch, tmp_path):
     """P5: with `VE_STATEMENT_COMPARATOR=1` and `VE_SHADOW_LOG` unset, Lean is not called and no file is written in
-    the working directory; the log is the path `VE_SHADOW_LOG` names only when both are set."""
+    the working directory; the log is the path `VE_SHADOW_LOG` names only when both are set. (Lean is asked nothing
+    on this branch in any case: the W1 path's call through the relay is en-e3bb's, and this test then holds it.)"""
     from ve.backends import relay
     from ve.backends.lean_service import LeanService
     monkeypatch.chdir(tmp_path)
     monkeypatch.setenv("VE_STATEMENT_COMPARATOR", "1")
     monkeypatch.delenv("VE_SHADOW_LOG", raising=False)
     modes = []
+    original = LeanService._run_chunk
 
-    def recording(original, at):
-        def call(*args, **kwargs):
-            modes.append(args[at])
-            return original(*args, **kwargs)
-        return call
-    for owner, name, at in ((relay, "decide_once", 0), (relay, "decide", 0), (LeanService, "run", 1)):
-        monkeypatch.setattr(owner, name, recording(getattr(owner, name), at))
+    def run_chunk(self, mode, *args, **kwargs):  # every batch of the service passes here (relay, pools, answer)
+        modes.append(mode)
+        return original(self, mode, *args, **kwargs)
+    monkeypatch.setattr(LeanService, "_run_chunk", run_chunk)
     env = environment({"permitted": permission()})
     assert statement_shadow_log() is None
     document = parse_english(env, "Rule 1. Every act may be done.")
     assert [rule.name for rule in document.rules] == ["rule-1"]
     assert "english.statement" not in modes and list(tmp_path.iterdir()) == []
+    relay.answer("english.statement", {"id": "spy", "kind": "blocks"})  # the spy sees the relay's answer path
+    assert modes[-1] == "english.statement"
     monkeypatch.setenv("VE_SHADOW_LOG", str(tmp_path / "shadow.jsonl"))
     assert statement_shadow_log() == tmp_path / "shadow.jsonl"
     monkeypatch.setenv("VE_STATEMENT_COMPARATOR", "0")

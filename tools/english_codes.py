@@ -4,8 +4,9 @@
     python tools/english_codes.py --check
 
 The table is the `codes` and `statuses` fields of the `english.grammar` export (`VE.EnglishGrammar.Run.codeClasses`
-and `statusCodes`), with `english.statement`'s statuses, fields and unsentenced codes (`statementStatusCodes`,
-`statementFields`, `statementUnsentenced`; docs/spec/en-e3-norm.md M9), read from the built `ve_service`. The relay (`ve/backends/english_lean.py`) and the senses relay
+and `statusCodes`), with `english.statement`'s statuses, fields and unsentenced codes
+(`statementStatusCodes`, `statementFields`, `statementUnsentenced`; docs/spec/en-e3-norm.md M9), read from the
+built `ve_service`. The relay (`ve/backends/english_lean.py`) and the senses relay
 read the file and hold no table of their own (spec 2.6, D9); `--check` fails when the file differs from the service.
 """
 from __future__ import annotations

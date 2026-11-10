@@ -356,8 +356,8 @@ def route_fixtures() -> list[tuple[str, dict, str]]:
 
 
 # Each fixture's answer (spec 8): `one` with Python's nodes, or (status, code, sentence); `stale` is decodeCase's error.
-ROUTE_EXPECTED = {"f3": ("none", "NoDerivation", 1), "f4": ("none", "NoDerivation", 1), "f6": ("none", "NoDerivation", 1),
-                  "f9": ("none", "NoDerivation", 4), "f17": ("none", "NoDerivation", 1),
+ROUTE_EXPECTED = {"f3": ("none", "NoDerivation", 1), "f4": ("none", "NoDerivation", 1),
+                  "f6": ("none", "NoDerivation", 1), "f9": ("none", "NoDerivation", 4), "f17": ("none", "NoDerivation", 1),
                   "f22-should": ("none", "NoDerivation", 1), "f18": ("many", "Ambiguous", 1),
                   "f13": ("rejected", "ExpectedRule", 0), "f14": ("rejected", "UnknownRule", None),
                   "f15": ("rejected", "NoConsequence", 0), "f16": ("rejected", "StrayCarveOut", 1),
