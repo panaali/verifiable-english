@@ -1314,6 +1314,7 @@ Lean writes the text; Python prints it. `<o>` is an obligation id.
 | `PresuppositionDefault: <o>: <predicate>` | a conditioned rule, or an unresolved rule obligation whose cell lists conditioned (R-7), whose predicate has an allow or deny default |
 | `PresuppositionUnresolved: <o>` | an unresolved obligation on a unit with one content |
 | `PresuppositionCandidates: <o>` | readings not exactly the emitted candidates, or fewer than two (R-D3); a recorded carrier not in the cell; a recorded in place at a frame that is not shallow (R-D1); a heading carrier other than proved and assumed (R-10); a second unresolved obligation in one unit |
+| `each other reading needs a distinguishing model id`; `distinguishing model does not separate readings` | check step 5: a pair of an open set's readings has no recorded situation; or none of its recorded situations separates it (readings@1's own texts, `lean/VE/Readings/Run.lean`; DRI reviews/dri-decisions-20261109-ps-2ab-2.md item 1) |
 | `UnsupportedProfile: a conditioned rule reading needs the norms chain (presupposition)` | check step 5, on the soft chain: an open set contains a conditioned rule reading (R-8; DRI 2026-11-04, item 2; A26) |
 | `ResourceLimit: presuppositions` | over budget: UNKNOWN, never a rejection |
 
@@ -1431,7 +1432,7 @@ fixtures: their task files must name them as tests their gates must select (DRI 
 | A7 | S17: proved, the certificate cites its own unit or the later "There is exactly one owner." | `PresuppositionCertificate: p1` |
 | A8 | S10: the same unit after "Alice has exactly one manager." | admitted, proved |
 | A9 | assumed carrier whose unit states `pre` without the projected hypothesis (S21: "There is exactly one owner." where the goal is "If the shop is open, there is exactly one owner") | `PresuppositionAssumedUnit: p1: <unit>` |
-| A10 | conditioned recorded as `B → G` instead of `G → B` | `PresuppositionMismatch: p1: content` |
+| A10 | conditioned recorded as `B → G` instead of `G → B` | `PresuppositionMismatch: p1: clause` (step 4: `B → G` peels to `G`; DRI reviews/dri-decisions-20261109-ps-2ab-2.md item 2) |
 | A11 | S16 with the two root goals recorded in the opposite nesting | `PresuppositionMismatch: p1: content` |
 | A12 | row `"title"` | `PresuppositionUnknownRow: p1: title` |
 | A13 | path `[2]` into an `ex` | `PresuppositionPosition: p1` |
