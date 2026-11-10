@@ -1,0 +1,5 @@
+job=arch-20261109-1-dbae5ebb-t336814-s1 nproc=4 host=runnervm7aw5e date=2026-11-10T18:57:11Z
+Mem:              15           1           9           0           4          14
+/dev/root       145G   63G   83G  44% /
+ 18:57:12 up 1 min,  0 user,  load average: 1.19, 0.33, 0.11
+Lean (version 4.24.0, x86_64-unknown-linux-gnu, commit 797c613eb9b6d4ec95db23e3e00af9ac6657f24b, Release)
