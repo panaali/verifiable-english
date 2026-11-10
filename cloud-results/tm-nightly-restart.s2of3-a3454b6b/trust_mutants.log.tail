@@ -1,0 +1,13 @@
+trust_mutants: 41 definitions, 46 mutants (15 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/Scope/Authoring.lean:198 VE.Scope.Pinned.parseGovernor (D[V], trusted) list-empty: [b] -> [] (lean/VE/Scope/Authoring.lean:198: Unknown identifier `b`)
+UNKNOWN lean/VE/Presupposition/Wire.lean:57 VE.Presupposition.Position (D[V], trusted) ctor-drop: | heading ->  (lean/VE/Presupposition/Wire.lean:212: Unknown constant `VE.Presupposition.Position.heading`)
+UNKNOWN lean/VE/Commands/Steps.lean:56 VE.Commands.Alt (G[V], trusted) ctor-drop: | purpose (r : Reading) (p : String) ->  (lean/VE/Commands/StepsExamples.lean:178: Unknown constant `VE.Commands.Alt.purpose`)
+UNKNOWN lean/VE/Purposes/Decl.lean:72 VE.Purposes.NotChecked (S, trusted) ctor-drop: | ruleTarget ->  (lean/VE/Purposes/Examples.lean:17: Unknown constant `VE.Purposes.NotChecked.ruleTarget`)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:168 VE.Purposes.WellFormed (S, trusted) bool-flip: true -> false (lean/VE/Purposes/Examples.lean:275: Expression (VE.Purposes.Examples.wfDecidable, which it reads,...)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:168 VE.Purposes.WellFormed (S, trusted) eq-ne: = -> ≠ (lean/VE/Purposes/Examples.lean:275: Expression (VE.Purposes.Examples.wfDecidable, which it reads,...)
+SURVIVOR lean/ResponseShape/Schemas/NormDefaults.lean:205 ResponseShape.Schemas.NormDefaults.status (G[V], trusted) list-empty: [ref "common.json#/$defs/strings", .uniqueStrings] -> []
+trust_mutants: 7 KILLED, 1 SURVIVOR, 6 UNKNOWN, 1 INVALID, 0 ALLOWED, 0 NOT RUN, 31 OTHER SHARD in 248 s
+trust_mutants: D[V], trusted: 2 KILLED, 2 UNKNOWN, 1 INVALID, 5 OTHER SHARD
+trust_mutants: G[V], trusted: 2 KILLED, 1 SURVIVOR, 1 UNKNOWN, 14 OTHER SHARD
+trust_mutants: S, trusted: 3 KILLED, 3 UNKNOWN, 12 OTHER SHARD
+trust_mutants: steps: wall plan 8.7 s, scratch 5.8 s, control_build 0.1 s, probe_install 0.9 s, mutants 226 s, cleanup 6 s, reads 0.1 s; lake control_build 0.1 s (1), probe_install 0.9 s (1), control_probes 22 s (8), mutant_builds 69.9 s (18), mutant_checks 309.1 s (15), stage_controls 94.7 s (7), mutant_probes 25.7 s (9)
