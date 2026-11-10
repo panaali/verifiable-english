@@ -1,0 +1,17 @@
+{
+ "job": "rights-cfr-2-budget-1-58113208",
+ "head": "f676fcc1693362ad495f2427d8d2fc7d842bad6f",
+ "argv": [
+  "rights-cfr-2-budget-1-58113208",
+  "f676fcc1693362ad495f2427d8d2fc7d842bad6f",
+  "3a5ee6ae3f04426e59fe8e86f7a5e8130c9d7f49",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-904fd89a41e7.tar.zst",
+  "93c2ab0c6bee445a8554eda1b14c63c161fabe31da70584dde5a7a0fa1af730e",
+  "--test",
+  "lean/ResponseShape/Schemas/RightsChecks.lean",
+  "--test",
+  "lean/VE/SoftNorms/Run.lean",
+  "--jobs",
+  "4"
+ ]
+}
