@@ -140,6 +140,27 @@ def holds (M : VE.FiniteModel String) (as : List VE.Formula) : Bool := as.all (e
 #guard J15.all (fun ch => decide (PickFits fixtureTable R15 ch))
 #guard treeUnder D15 R15 mixed15 == emptyTree
 
+-- `SameModels` and `SameDecides` (spec 4.8): a pick has its own models; the all-conditioned pick does not have the
+-- mixed pick's (no owner: mixed asserts `B1`, all-conditioned holds vacuously).
+def cond15 : Pick := [("o1", .conditioned), ("o2", .conditioned)]
+#guard holds mNone (formulasUnder D15 R15 cond15) && !holds mNone (formulasUnder D15 R15 mixed15)
+example : SameModels.{0} D15 R15 mixed15 mixed15 :=
+  ⟨(fun h => by simp [D15] at h), (fun h => by simp [D15] at h), fun _ _ => Iff.rfl⟩
+example : SameDecides.{0} D15 R15 mixed15 mixed15 := fun _ _ _ _ _ _ _ _ => Iff.rfl
+example : ¬ SameModels.{0} D15 R15 mixed15 cond15 := by
+  intro h
+  have hadm : mNone.asStructure.Admissible D15.E :=
+    ⟨(fun _ _ hc => nomatch hc), fun _ _ hr => by simp [VE.FiniteModel.asStructure, mNone, model] at hr⟩
+  have hc : SatUnder D15 R15 cond15 mNone.asStructure := by
+    unfold SatUnder; rw [if_neg (by decide)]
+    exact fun a ha => (VE.eval_iff_denote _ _ _).mp (List.all_eq_true.mp
+      (by decide : holds mNone (formulasUnder D15 R15 cond15 ++ VE.Norms.elaborate (treeUnder D15 R15 cond15))) a ha)
+  have hm := (h.2.2 _ hadm).mpr hc
+  unfold SatUnder at hm; rw [if_neg (by decide)] at hm
+  have : holds mNone (formulasUnder D15 R15 mixed15 ++ VE.Norms.elaborate (treeUnder D15 R15 mixed15)) = true :=
+    List.all_eq_true.mpr fun a ha => (VE.eval_iff_denote _ _ _).mpr (hm a ha)
+  exact absurd this (by decide)
+
 /-! ## S22 (R-9): two picks on an `unspecified` predicate, a gap where no rule decides and `p` is true -/
 
 def g22 : VE.Formula := .unary "g" (.var 0)
@@ -180,6 +201,10 @@ def m22 : VE.FiniteModel String :=
 -- the raw W1 form, which applies the placeholder `deny` at `s2`, refutes both picks
 #guard [rep22, mixed22].all (fun ch => !holds m22 (VE.Norms.elaborate (treeUnder D22 R22 ch)))
 #guard [rep22, mixed22].all (fun ch => holds m22 (formulasUnder D22 R22 ch))
+-- `PickedWF`: both picks pass norm-defaults' check; an undeclared `unspecified` predicate fails it, only with the block
+#guard [rep22, mixed22].all (fun ch => decide (PickedWF D22 R22 ch))
+#guard !decide (PickedWF { D22 with unspec := ["q"] } R22 rep22)
+#guard decide (PickedWF { D22 with unspec := ["q"], defaults := false } R22 rep22)
 
 /-- `forget [p]` of a finite model is the finite model without `p`. -/
 def dropRel (M : VE.FiniteModel String) (p : String) : VE.FiniteModel String :=
