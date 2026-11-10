@@ -542,12 +542,13 @@ theorem closure_graph_sound (E : VE.Environment)
       GenericGraph.SoundReport (fun S : VE.Structure.{u} => S.Admissible E) (fun S a => a.denote S [])
         (closureWf E) c.graph c.report :=
   GenericGraph.check_sound _ _ _ _
-    (fun cert _ _ h => VE.Closure.Tableau.checkCertificate_sound E _ _ cert h) c.graph c.report c.accepted
+    (fun cert _ _ h => (VE.Closure.entails_iff E _ _).mp
+      (VE.Closure.Tableau.checkCertificate_sound E _ _ cert h)) c.graph c.report c.accepted
 
 theorem closure_graph_entails (E : VE.Environment)
     (c : Checked VE.Closure.Formula VE.Closure.Tableau.Certificate (closureWf E) (closureValid E)) :
     VE.Closure.Entails.{u} E (c.report.assumptions.map Claim.formula) c.report.root.formula :=
-  (closure_graph_sound.{u} E c).2.2.2.2.2.2.1
+  (VE.Closure.entails_iff E _ _).mpr (closure_graph_sound.{u} E c).2.2.2.2.2.2.1
 
 theorem closure_graph_unfolds (E : VE.Environment)
     (c : Checked VE.Closure.Formula VE.Closure.Tableau.Certificate (closureWf E) (closureValid E)) :
@@ -713,16 +714,18 @@ theorem fol_readings_some_sound (names : List String) (E : VE.Environment)
 theorem closure_readings_all_sound (E : VE.Environment) (B fixed : List VE.Closure.Formula)
     (sets : List (List VE.Closure.Formula)) (φ : VE.Closure.Formula) (c : VE.Closure.Tableau.Certificate)
     (h : closureValid E c (B ++ fixed ++ sets.map (disjunction .or .bottom)) φ = true) :
-    ∀ choice, Choice sets choice → VE.Closure.Entails.{u} E (B ++ fixed ++ choice) φ :=
-  GenericReadings.readings_all_sound (VE.Closure.Formula.or) VE.Closure.Formula.bottom (fun S : VE.Structure.{u} => S.Admissible E)
+    ∀ choice, Choice sets choice → VE.Closure.Entails.{u} E (B ++ fixed ++ choice) φ := by
+  simp only [VE.Closure.entails_iff]
+  exact GenericReadings.readings_all_sound (VE.Closure.Formula.or) VE.Closure.Formula.bottom (fun S : VE.Structure.{u} => S.Admissible E)
     (fun (S : VE.Structure.{u}) (a : VE.Closure.Formula) => a.denote S []) (fun _ _ _ => Iff.rfl) (fun _ h => h) B fixed sets φ
-    (VE.Closure.Tableau.checkCertificate_sound E _ φ c h)
+    ((VE.Closure.entails_iff E _ φ).mp (VE.Closure.Tableau.checkCertificate_sound E _ φ c h))
 
 theorem closure_readings_none_sound (names : List String) (E : VE.Environment) (M : ClosureModel E)
     (B fixed : List VE.Closure.Formula) (sets : List (List VE.Closure.Formula)) (φ : VE.Closure.Formula)
     (h : closureRefutes names E M (B ++ fixed ++ sets.flatten) φ = true) :
-    ∀ choice, Choice sets choice → ¬ VE.Closure.Entails.{0} E (B ++ fixed ++ choice) φ :=
-  GenericReadings.readings_none_sound _ _ B fixed sets φ (closureRefutes_sound names E M _ φ h)
+    ∀ choice, Choice sets choice → ¬ VE.Closure.Entails.{0} E (B ++ fixed ++ choice) φ := by
+  simp only [VE.Closure.entails_iff]
+  exact GenericReadings.readings_none_sound _ _ B fixed sets φ (closureRefutes_sound names E M _ φ h)
 
 theorem closure_readings_some_sound (names : List String) (E : VE.Environment)
     (B fixed : List VE.Closure.Formula) (sets : List (List VE.Closure.Formula)) (φ : VE.Closure.Formula)
@@ -730,9 +733,11 @@ theorem closure_readings_some_sound (names : List String) (E : VE.Environment)
     (c : VE.Closure.Tableau.Certificate) (hc : closureValid E c (B ++ fixed ++ proved) φ = true)
     (M : ClosureModel E) (hm : closureRefutes names E M (B ++ fixed ++ refuted) φ = true) :
     (∃ choice, Choice sets choice ∧ VE.Closure.Entails.{0} E (B ++ fixed ++ choice) φ) ∧
-      (∃ choice, Choice sets choice ∧ ¬ VE.Closure.Entails.{0} E (B ++ fixed ++ choice) φ) :=
-  GenericReadings.readings_some_sound _ _ B fixed sets φ proved refuted hp hr
-    (VE.Closure.Tableau.checkCertificate_sound E _ φ c hc) (closureRefutes_sound names E M _ φ hm)
+      (∃ choice, Choice sets choice ∧ ¬ VE.Closure.Entails.{0} E (B ++ fixed ++ choice) φ) := by
+  simp only [VE.Closure.entails_iff]
+  exact GenericReadings.readings_some_sound _ _ B fixed sets φ proved refuted hp hr
+    ((VE.Closure.entails_iff E _ φ).mp (VE.Closure.Tableau.checkCertificate_sound E _ φ c hc))
+    (closureRefutes_sound names E M _ φ hm)
 
 theorem core_readings_all_sound (E : VE.Environment) (B fixed : List VE.Core.Formula)
     (sets : List (List VE.Core.Formula)) (φ : VE.Core.Formula) (c : VE.Core.Tableau.Certificate)
