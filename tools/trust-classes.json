@@ -816,6 +816,7 @@
         "ResponseShape.Schemas.Rights.grounds",
         "ResponseShape.Schemas.Rights.instance",
         "ResponseShape.Schemas.Rights.kind",
+        "ResponseShape.Schemas.Rights.located_findings",
         "ResponseShape.Schemas.Rights.narrowings",
         "ResponseShape.Schemas.Rights.node",
         "ResponseShape.Schemas.Rights.packages",
@@ -824,7 +825,8 @@
         "ResponseShape.Schemas.Rights.rights_unit",
         "ResponseShape.Schemas.Rights.row",
         "ResponseShape.Schemas.Rights.rule_narrowings",
-        "ResponseShape.Schemas.Rights.scope"
+        "ResponseShape.Schemas.Rights.scope",
+        "ResponseShape.Schemas.Rights.situation"
       ]
     },
     "ResponseShape/Schemas/Risk.lean": {
@@ -7711,12 +7713,17 @@
       ],
       "D[V]": [
         "VE.Rights.Run.baseWithout",
+        "VE.Rights.Run.conflictAnswer",
+        "VE.Rights.Run.conflictAnswerOf",
+        "VE.Rights.Run.conflictBudget",
         "VE.Rights.Run.conjugatedAct",
         "VE.Rights.Run.distinctionJson",
         "VE.Rights.Run.elaboratedNarrowingsJson",
         "VE.Rights.Run.encodeAdmitted",
         "VE.Rights.Run.entailmentUses",
         "VE.Rights.Run.entryJson",
+        "VE.Rights.Run.exhibit",
+        "VE.Rights.Run.findingJson",
         "VE.Rights.Run.generatedWordings",
         "VE.Rights.Run.groundJson",
         "VE.Rights.Run.ikindText",
@@ -7734,6 +7741,7 @@
         "VE.Rights.Run.nodeJson",
         "VE.Rights.Run.regenerated",
         "VE.Rights.Run.ruleNarrowingsJson",
+        "VE.Rights.Run.situationTables",
         "VE.Rights.Run.sourceRuleNames",
         "VE.Rights.Run.unitRuleNames"
       ],
@@ -7752,6 +7760,9 @@
         "VE.Rights.Run.unitOpen",
         "VE.Rights.Run.unitStatuses",
         "VE.Rights.Run.usesRightsPath"
+      ],
+      "D[I]": [
+        "VE.Rights.Run.locate"
       ]
     },
     "VE/Rights/Scope.lean": {
@@ -7815,6 +7826,9 @@
             "VE.Rights.bar_mem_narrowings"
           ]
         }
+      ],
+      "G[I]": [
+        "VE.Rights.lineSpan"
       ]
     },
     "VE/Rights/Semantics.lean": {
@@ -20712,6 +20726,28 @@
         "VE.Presupposition.separated",
         "VE.Presupposition.softOk",
         "VE.Presupposition.withObligations"
+      ]
+    },
+    "ResponseShape/Schemas/RightsChecks.lean": {
+      "T": [
+        "ResponseShape.RightsChecks.accepts",
+        "ResponseShape.RightsChecks.answer",
+        "ResponseShape.RightsChecks.case",
+        "ResponseShape.RightsChecks.conflict",
+        "ResponseShape.RightsChecks.creq",
+        "ResponseShape.RightsChecks.elabA",
+        "ResponseShape.RightsChecks.elabCase",
+        "ResponseShape.RightsChecks.env",
+        "ResponseShape.RightsChecks.located",
+        "ResponseShape.RightsChecks.oneCase",
+        "ResponseShape.RightsChecks.parse",
+        "ResponseShape.RightsChecks.refusesAll",
+        "ResponseShape.RightsChecks.scopeA",
+        "ResponseShape.RightsChecks.scopeCase",
+        "ResponseShape.RightsChecks.situation",
+        "ResponseShape.RightsChecks.spanned",
+        "ResponseShape.RightsChecks.texts",
+        "ResponseShape.RightsChecks.weighed"
       ]
     }
   }
