@@ -12,9 +12,15 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 LABELS = "lean/VE/NormDefaults/PacksLabels.lean"
+EXAMPLES = "lean/VE/NormDefaults/PacksLegacyExamples.lean"
 REPORT = "docs/premise-packs/pk-1c/REPORT.md"
 THEOREM = "legacy_labels_nodup_of_identifiers"
 NEGATED = re.compile(r"\b(?:not|never)\s+(?:yet\s+)?discharg\w*", re.IGNORECASE)
+# The base wording of the same claim in PacksLegacyExamples.lean (DRI 2026-11-10, pk-1c-cfr-1 item 1).
+OVERCLAIM = re.compile(
+    r"decoded route ensures|route identifiers?\b|route's check on predicate|no decoded document reaches"
+    r"|applies `VE\.Bridge\.identifier`"
+)
 
 
 def claims_discharge(text: str) -> bool:
@@ -34,14 +40,24 @@ def decode_discharge_theorems(sources: dict[str, str]) -> list[str]:
     ]
 
 
+def comments(source: str) -> list[str]:
+    """The `/-- -/` and `/-! -/` blocks and the runs of `--` lines, each on one line."""
+    blocks = re.findall(r"/-[-!](.*?)-/", source, re.DOTALL)
+    for run in re.findall(r"(?:^--.*\n?)+", source, re.MULTILINE):
+        blocks.append(re.sub(r"^--", "", run, flags=re.MULTILINE))
+    return [" ".join(b.split()) for b in blocks]
+
+
 def claim_problems(labels: str, report: str, sources: dict[str, str]) -> list[str]:
     if decode_discharge_theorems(sources):
         return []
     problems = []
-    for block in re.findall(r"/-[-!](.*?)-/", labels, re.DOTALL):
-        text = " ".join(block.split())
-        if claims_discharge(text) or ("decoded route" in text and "`Surface.identifier`" not in text):
-            problems.append(f"PacksLabels.lean claims a decoded-route discharge: {text}")
+    for path, source in ((LABELS, labels), (EXAMPLES, sources[EXAMPLES])):
+        for text in comments(source):
+            if claims_discharge(text) or OVERCLAIM.search(text) or (
+                "decoded route" in text and "`Surface.identifier`" not in text
+            ):
+                problems.append(f"{path} claims a decoded-route discharge: {text}")
     doc = re.search(r"/--((?:(?!-/).)*)-/\s*theorem\s+" + THEOREM + r"\b", labels, re.DOTALL)
     doc_text = " ".join(doc.group(1).split()) if doc else ""
     if not all(w in doc_text for w in ("hypothesis `hk`", "`VE.Bridge.identifier`", "`Surface.identifier`")) or (
@@ -86,6 +102,9 @@ def test_decoded_rights_labels_proof_claim_refuses() -> None:
     assert old_labels != labels and old_report != report
     assert any("discharge" in p for p in claim_problems(old_labels, report, sources))
     assert any("route discharge" in p for p in claim_problems(labels, old_report, sources))
+    old_comment = "-- The route's own repeated-label check refuses it (no decoded document reaches this: predicates are"
+    old_examples = {**sources, EXAMPLES: sources[EXAMPLES] + "\n" + old_comment + " identifiers).\n"}
+    assert any(EXAMPLES in p for p in claim_problems(labels, report, old_examples))
     theorem = "theorem t (h : decodeRights j = .ok R) :\n  ∀ k ∈ condKeys R, Bridge.identifier k.2.1 := by"
     proved = {**sources, "X.lean": theorem}
     assert claim_problems(old_labels, old_report, proved) == []
