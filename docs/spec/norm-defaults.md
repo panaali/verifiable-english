@@ -298,26 +298,26 @@ with `permitted` unspecified: in k9 (empty rule set) all three alternatives are 
 is Q9.
 
 **Integration status (2026-11-10, replacing the gap note of 2026-10-01).** What is built, by profile list (the gate
-is `todayGate`, `lean/VE/Compose/Dispatch.lean:31-71`, which the runners' `gateOf profileTable` equals by
-`gate_legacy`; `tests/test_norm_defaults_documented_support.py` checks these two sentences against it):
+is `todayGate`, `lean/VE/Compose/Dispatch.lean:31-71`, which `gateOf profileTable` agrees with on legacy-profile
+lists by `gate_legacy`; `tests/test_norm_defaults_documented_support.py` checks these two sentences against it):
 - `alternatives@0` with `norm-defaults@0` is admitted at profile validation: no check of `todayGate` refuses the
   pair, and it takes the alternatives route. That route answers the filled source in `runCaseU`
-  (`lean/VE/Alternatives/Run.lean:407`, chosen at `:421`) for the case kinds `alt-elaborate`, `alt-environment`,
-  `alt-validate`, `alt-conflict` and `alt-followable`; any other case kind is refused with `UnsupportedProfile: case
-  kind <k> with norm-defaults@0 is not implemented on the alternatives route`. The readers that do not read the
+  (`lean/VE/Alternatives/Run.lean:407`, chosen at `:422`) for the case kinds `alt-elaborate`, `alt-environment`,
+  `alt-validate`, `alt-conflict` and `alt-followable`; another kind but `admission` is refused with `UnsupportedProfile:
+  case kind <k> with norm-defaults@0 is not implemented on the alternatives route`. The readers that do not read the
   completion refuse such a list by name through `pendingWithDefaults` (`Dispatch.lean:83`), with `UnsupportedProfile:
-  alternatives@0 with norm-defaults@0 is not implemented`: the `document` mode (`lean/VE/Service/Document.lean:1174`),
-  the norm-defaults route (`runGated`, `lean/VE/NormDefaults/Run.lean:446`) and `decodeAltSource`
-  (`lean/VE/Alternatives/Wire.lean:233`).
+  alternatives@0 with norm-defaults@0 is not implemented`: the `document` mode after the environment's own first
+  fault (`lean/VE/Service/Document.lean:1174`), the norm-defaults route (`runGated`, `NormDefaults/Run.lean:446`)
+  and `decodeAltSource` (`lean/VE/Alternatives/Wire.lean:233`), which the route's `admission` kind calls.
 - `risk@0` with `norm-defaults@0` is refused at profile validation with `UnsupportedProfile: risk@0 with
   norm-defaults@0 is not implemented` (`todayGate`, `Dispatch.lean:39`). The risk route still consumes completed
   deny/allow norms and may not report a two-valued decision for a silent permission; risk's three-valued decision
   report and the cross-route fixture u11 are required before this pair can be enabled.
 
 **Not built** (2026-11-10): the risk pair above; the diagnostic `ResourceLimit: unsaid atoms` of 8, which no Lean or
-Python code emits (a point whose closed cone has more than `MAX_UNSAID_ATOMS` unsaid atoms is left UNKNOWN by the
-enumeration, `lean/VE/NormDefaults/Evidence.lean:786` and `lean/VE/NormDefaults/Report.lean:178`, and never
-refused); the reader test of 4.3, which has not been run (Q6 stays open).
+Python code emits (over `MAX_UNSAID_ATOMS`, `lean/VE/NormDefaults/Evidence.lean:786`, free atoms, the enumeration
+`enumerateSettledX`, `Evidence.lean:1069`, answers `none` and the point stays UNKNOWN, never refused); the reader
+test of 4.3, which has not been run (Q6 stays open).
 
 **Grounded completions stay.** Cedar's `permitted(request)` stays deny: Cedar's documented semantics is deny unless
 a policy permits, a citation the adapter records. Gatekeeper's `admitted` stays allow for the same reason.

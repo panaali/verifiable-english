@@ -4,16 +4,16 @@ READY FOR REVIEW. Docs and test only; DRI 2026-11-10 lp0001 Q2 (regrade #4); bas
 (`uv run python tools/trust_map.py --check`: "K +0, S +0, D +0, G +0, tied +0, unclassified +0, trusted +0"); pilot
 bytes 0; no lean/ or generated file touched; next item: none.
 
-**Delivered.** (1) docs/spec/norm-defaults.md 3.3 "Integration status" replaces the 2026-10-01 gap note: alternatives@0
-with norm-defaults@0 admitted (`todayGate`, Dispatch.lean:31-71; `runCaseU`, Alternatives/Run.lean:407, chosen at :421;
-the readers refusing it via `pendingWithDefaults` named); risk@0 refused (Dispatch.lean:39, its text quoted). "Not
-built": `ResourceLimit: unsaid atoms` (`rg -F 'ResourceLimit: unsaid atoms' lean/VE ve` hits only the spec; over
-`MAX_UNSAID_ATOMS` the point stays UNKNOWN, Report.lean:178) and the reader test (marked at 4.3, 8 and Q6). (2)
-tests/test_norm_defaults_documented_support.py: `test_norm_defaults_documented_support` reads `todayGate` and
-`pendingWithDefaults` from Dispatch.lean; `..._refuses` is the opposite direction. On main's spec (commit 6d8534eb3^'s
-text) it failed: "a profile-validation claim names no composed block: ['Their combination with `norm-defaults@0` is
-rejected at profile validation ...']". `select_tests.py --paths lean/VE/Compose/Dispatch.lean docs/spec/norm-defaults.md
---static --explain` selects it for both files. Size: 120 changed lines + this report (light lane).
+**Delivered** (6d8534eb3, 0241a7047, review fixes after). (1) docs/spec/norm-defaults.md 3.3 "Integration status":
+alternatives@0 with norm-defaults@0 admitted (`todayGate`, Dispatch.lean:31-71; `runCaseU`, Alternatives/Run.lean:407,
+chosen at :422; `admission` and the readers refusing it via `pendingWithDefaults` named); risk@0 refused (Dispatch.lean:39).
+"Not built": `ResourceLimit: unsaid atoms` (`rg -F 'ResourceLimit: unsaid atoms' lean ve rust tools`: no
+hit; over budget `enumerateSettledX`, Evidence.lean:1069, gives UNKNOWN) and the reader test (4.3, 8, Q6). (2) tests/
+test_norm_defaults_documented_support.py reads `todayGate` and `pendingWithDefaults` from Dispatch.lean; `..._refuses`
+is the opposite direction. `disagreements(<git show de7fb9469:docs/spec/norm-defaults.md>, Dispatch.lean)` on main's
+spec: "names no composed block: Their combination with `norm-defaults@0` is rejected at profile validation ...", "spec:
+[] for risk@0 ...; todayGate: refused", "spec: [] for alternatives@0 ...; todayGate: admitted". `select_tests.py --paths
+<Dispatch.lean> <spec> --static --explain` selects it for both. Size: light-lane.py check "LIGHT <n> changed lines".
 
 **Seeded bugs** (each planted, `uv run pytest -q tests/test_norm_defaults_documented_support.py` FAILED, restored):
 S1 docs/spec/norm-defaults.md, old sentence restored: "names no composed block". S2 same file, risk row "admitted":
