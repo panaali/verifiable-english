@@ -1,0 +1,11 @@
+trust_mutants: 41 definitions, 46 mutants (16 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/Commands/Steps.lean:18 VE.Commands.Shape (G[V], trusted) ctor-drop: | after (x : String) ->  (lean/VE/Commands/Steps.lean:360: the failing proof cannot be cut: Unknown constant `VE.Commands.S...)
+UNKNOWN lean/VE/Presupposition/Wire.lean:21 VE.Presupposition.Carrier (S, trusted) ctor-drop: | conditioned ->  (lean/VE/Presupposition/Wire.lean:34: Unknown constant `VE.Presupposition.Carrier.conditioned`)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:167 VE.Purposes.WellFormed (S, trusted) and-or: ∧ -> ∨ (lean/VE/Purposes/Examples.lean:278: Expression (VE.Purposes.Examples.wfDecidable, which it reads,...)
+UNKNOWN lean/VE/Purposes/Decl.lean:42 VE.Purposes.Share (S, trusted) ctor-drop: | partly ->  (lean/VE/Purposes/Wire.lean:13: Unknown constant `VE.Purposes.Share.partly`)
+UNKNOWN lean/VE/Commands/Steps.lean:100 VE.Commands.shapeOutcome (G[V], trusted) bool-flip: true -> false (lean/VE/Commands/StepsExamples.lean:113: Expression (it computes through a proof the mutant broke...)
+trust_mutants: 9 KILLED, 0 SURVIVOR, 5 UNKNOWN, 2 INVALID, 0 ALLOWED, 0 NOT RUN, 30 OTHER SHARD in 221 s
+trust_mutants: D[V], trusted: 1 KILLED, 1 INVALID, 8 OTHER SHARD
+trust_mutants: G[V], trusted: 4 KILLED, 2 UNKNOWN, 1 INVALID, 11 OTHER SHARD
+trust_mutants: S, trusted: 4 KILLED, 3 UNKNOWN, 11 OTHER SHARD
+trust_mutants: steps: wall plan 9.3 s, scratch 5.8 s, control_build 0.2 s, probe_install 1.1 s, mutants 198.2 s, cleanup 6.4 s, reads 0.2 s; lake control_build 0.2 s (1), probe_install 1 s (1), control_probes 47.6 s (11), mutant_builds 93.5 s (21), mutant_checks 367.3 s (19), stage_controls 104.5 s (10), mutant_probes 55.7 s (11)
