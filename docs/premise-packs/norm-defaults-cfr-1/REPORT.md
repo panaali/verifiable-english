@@ -3,8 +3,8 @@
 Summary: READY FOR REVIEW. A forged norm-defaults status row (tuple, repeated or absent rule) or certificate row
 (premise count) is now `CheckerUnavailable`: the tuple and distinct rules in the Lean response schema, the rest in
 `bind_answers` (ve/backends/lean_service.py). The manifest binds all 13 kinds the mode answers (new operation
-`norm-defaults.route`). Open: status rules under `acts@0`/`rights@0` stay type-checked only (DRI 2026-11-10,
-FOLLOW-UP norm-defaults-cfr-1b). Trust +0; one DELTA row (R16); no DRI signature reserved.
+`norm-defaults.route`). Status rules under `acts@0`/`rights@0`, left type-checked only here (DRI 2026-11-10),
+are bound by norm-defaults-cfr-1b. Trust +0; one DELTA row (R16); no DRI signature reserved.
 
 Source: regrade #3 (ND-FC2, grade A) in reviews/l1-c-regrade-norm-defaults-b-20261109.md; DRI 2026-11-10
 reviews/dri-decisions-20261110-lp0001.md Q2 and reviews/dri-decisions-20261110-norm-defaults-cfr-1.md (scope of the
@@ -23,12 +23,9 @@ rule binding). The plan is the code on main; base de7fb9469 (`git merge-base HEA
 - **Tuple** equals the case's `tuple` (`Wire.replayStatusIn` zips the request ids with the predicate's sorts after
   checking their number; `statusFields` returns them). Schema, so Lean's `ve_response_decode` agrees.
 - **Rules** are distinct (schema) and each is the `name` of a `{"norm": ...}` unit of the case's `norms`
-  (`_rule_names`), unless the case's profiles list contains `acts@0` or `rights@0` (`GENERATED_RULE_PROFILES`). There Lean
-  names rules the request does not carry (`<rule>-a<k>`, lean/VE/Acts/Elaborate.lean:35; `rights-fan-<k>`,
-  `rights-bar-<k>`, lean/VE/Rights/Tree.lean:129-130; power lines read from `liberty`/`recognition`), and `Node`
-  keeps no provenance, so binding them needs Lean to echo each rule's request source: norm-defaults-cfr-1b (DRI
-  decision above; ND-FC2 closes, and the family's L1 leaves PROVISIONAL, only when 1b merges). No Python copy of
-  Lean's naming is kept (the first commit's `-a<k>` regex was deleted, self-review B1).
+  (`_rule_names`). Under `acts@0` and `rights@0` Lean names rules the request does not carry; norm-defaults-cfr-1b
+  binds them through the request source Lean echoes for each rule (`sources`; docs/premise-packs/norm-defaults-cfr-1b/).
+  No Python copy of Lean's naming is kept (the first commit's `-a<k>` regex was deleted, self-review B1).
 - **Premise count** is `len(certificate.premise_meaning_ids) - len(premises)`: `Wire.bindingOk`
   (lean/VE/Route/Wire.lean:553) refuses a certificate unless its ids are those of `background ++ fill ++ elaborate ++
   premises`, and the row counts `premisesU U []` (lean/VE/NormDefaults/Run.lean:281; the soft branch `premisesX`,
@@ -104,8 +101,8 @@ native-build lock while the Lean schema was deliberately mutated; the final pyte
 
 ## Follow-ups
 
-- FOLLOW-UP norm-defaults-cfr-1b (filed by the DRI): Lean echoes each status rule's request source; rules bound under
-  `acts@0` and `rights@0`.
+- norm-defaults-cfr-1b (filed by the DRI): Lean echoes each status rule's request source; rules bound under
+  `acts@0` and `rights@0` (delivered there).
 - FOLLOW-UP norm-defaults-cfr-1d: `norm-defaults-conflict` witness rows' `tuple`/`rules` and readings-route
   `norm-defaults-certificate` rows (mode `readings-route`, so `MODE_BINDINGS` does not see them) are not bound
   (self-review C1).

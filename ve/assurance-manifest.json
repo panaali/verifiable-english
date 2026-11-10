@@ -5556,13 +5556,15 @@
               "predicate": "string",
               "tuple": "array<string>",
               "rules": "array<string>",
+              "sources": "array<object>",
               "differs": "array<object>"
             },
             "counts": {
               "tuple": "case.tuple"
             },
             "uncounted": {
-              "rules": "the deciding rules Lean selects: distinct, and rules of the request's norms (ve/backends/lean_service.py bind_answers) except when the profiles list contains acts@0 or rights@0, whose rule names Lean generates (norm-defaults-cfr-1b)",
+              "rules": "the deciding rules Lean selects: distinct, each echoed in sources (ve/backends/lean_service.py bind_answers); a rule other than its source only when the profiles list contains acts@0 or rights@0, whose rule names Lean generates (norm-defaults-cfr-1b)",
+              "sources": "each rule with the request rule Lean echoes as its source (Wire.ruleSources): one per rule, naming it, its source a rule of the request's norms or, under rights@0, of its document (bind_answers)",
               "differs": "the atoms on which two UNDECIDED fillings differ"
             },
             "dispatch": [

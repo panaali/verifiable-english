@@ -1,8 +1,11 @@
-"""norm-defaults-cfr-1 (regrade #3, ND-FC2): the norm-defaults mode's answers are bound to their request.
+"""norm-defaults-cfr-1 (regrade #3, ND-FC2) and norm-defaults-cfr-1b: the norm-defaults mode's answers are bound to
+their request.
 
-A `norm-defaults-status` row's `tuple` is the request's and its `rules` are distinct (response schema, rendered from
-`ResponseShape/Schemas/NormDefaults.lean`) and rules of the request's `norms` (`lean_service.bind_answers`; not yet
-when the profiles list contains `acts@0` or `rights@0`, whose rules Lean names itself: norm-defaults-cfr-1b); a `norm-defaults-certificate`
+A `norm-defaults-status` row's `tuple` is the request's, its `rules` are distinct and it carries one `sources` echo per
+rule (response schema, rendered from `ResponseShape/Schemas/NormDefaults.lean`). Each echo names its rule and the request
+rule it comes from, a rule of the request (`lean_service.bind_answers`); a rule may differ from its source, a name Lean
+generated, only when the profiles list contains `acts@0` (a part) or `rights@0` (a fan-out or bar rule). A forged
+generated name is refused whatever the profile. A `norm-defaults-certificate`
 row's `premises` is the count of the regenerated premises its certificate is bound to (`bind_answers`). Each forged
 row reaches the client from a scripted service and is `CheckerUnavailable`; Lean's own rows still pass. The assurance
 manifest lists every kind the mode answers.
@@ -43,6 +46,13 @@ def _acts_environment():
     return environment(DEFAULT_PROFILES, default="unspecified")
 
 
+def _rights_fan_out(case):
+    """The rights case with its line fanned out to the `state` bearer: Lean names the instance `rights-fan-1`."""
+    fanned = copy.deepcopy(case)
+    fanned["document"][0]["right"]["lines"][0]["fan_out"] = {"state": "arrest_permitted"}
+    return fanned
+
+
 def _certificate_with_a_premise(document):
     """`certificate_case` with the case's own premise `⊤`: the row counts the regenerated premises only."""
     conclusion = _conjunction([f for _, f in document.fill_premises] + [f for _, f in document.filled.premises()])
@@ -56,11 +66,13 @@ def _cases():
     u5a = next(document for name, document, _ in sources() if name == "u5a")
     kind, env, source = next((kind, env, source) for _, kind, env, source, _ in layered.fixtures()
                              if kind == "rights")
+    rights = layered.case(kind, env, source, "norm-defaults-status", model=ARREST_MODEL,
+                          predicate="arrest_permitted", tuple=["s", "p"], method="table3")
     return {
         "status": source_case(csam_doc, "norm-defaults-status", model=CSAM_SITUATION,
                               predicate="csam_generation_permitted", tuple=["claude0"], method="enumerate"),
-        "rights-status": layered.case(kind, env, source, "norm-defaults-status", model=ARREST_MODEL,
-                                      predicate="arrest_permitted", tuple=["s", "p"], method="table3"),
+        "rights-status": rights,
+        "rights-fan-status": _rights_fan_out(rights),
         "acts-status": {"id": "norm-defaults-status", "kind": "norm-defaults-status", "norms": [ACTS_RULE],
                         "environment": _acts_environment(), "predicate": "p027__1", "tuple": ["a"],
                         "method": "table3", "model": {"complete": True, "domains": {"person": ["a"]},
@@ -93,6 +105,11 @@ def test_genuine_answers_pass(genuine, tmp_path):
     assert genuine["status"][1]["rules"] == ["no-csam-generation"]
     assert genuine["rights-status"][1]["rules"] == ["art9"]
     assert genuine["acts-status"][1]["rules"] == ["r027-a1"]  # Lean's part name (`Acts.Elaborate.partRule`)
+    assert genuine["rights-fan-status"][1]["rules"] == ["rights-fan-1"]  # Lean's fan-out name (`Rights.fanName`)
+    # Each rule with the request rule Lean echoes as its source: itself, the split rule, the fanned-out norm.
+    assert [genuine[name][1]["sources"] for name in ("status", "rights-status", "acts-status", "rights-fan-status")] == [
+        [{"rule": "no-csam-generation", "source": "no-csam-generation"}], [{"rule": "art9", "source": "art9"}],
+        [{"rule": "r027-a1", "source": "r027"}], [{"rule": "rights-fan-1", "source": "art9"}]]
     for name, own in (("certificate", 0), ("certificate-premise", 1)):
         case, row = genuine[name]
         assert len(case["premises"]) == own and row["valid"] is True
@@ -126,6 +143,42 @@ def predicate_named(case, row):
 
 def part_without_acts(case, row):
     return [f"{row['rules'][0]}-a1"]
+
+
+def forged_generated(case, row):
+    """Lean's generated name with another index: a part or fan-out instance Lean did not answer."""
+    return [row["rules"][0][:-1] + "7"]
+
+
+def _echo(rule, source):
+    def echo(case, row):
+        return [{"rule": rule(row), "source": source(row)}]
+    echo.__name__ = f"echo_{rule.__name__}_{source.__name__}"
+    return echo
+
+
+def own_rule(row):
+    return row["rules"][0]
+
+
+def own_source(row):
+    return row["sources"][0]["source"]
+
+
+def no_such_rule(row):
+    return "no-such-rule"
+
+
+def generated_name(row):
+    return own_rule(row)[:-1] + "7"
+
+
+def dropped(case, row):
+    return row["sources"][:-1]
+
+
+def doubled(case, row):
+    return row["sources"] * 2
 
 
 def other_entity(case, row):
@@ -169,6 +222,23 @@ FORGERIES = [
     _forge("status", "rules", ghost), _forge("status", "rules", appended), _forge("status", "rules", duplicated),
     _forge("status", "rules", predicate_named),
     _forge("status", "rules", part_without_acts),
+    # A generated rule name Lean did not answer, under acts@0 and under rights@0 (norm-defaults-cfr-1b), or one no
+    # rule of the request.
+    _forge("acts-status", "rules", forged_generated), _forge("rights-fan-status", "rules", forged_generated),
+    _forge("acts-status", "rules", ghost), _forge("rights-fan-status", "rules", ghost),
+    _forge("acts-status", "rules", appended), _forge("rights-fan-status", "rules", appended),
+    # A source echo that names another rule, or a source that is no rule of the request (cfr-1b).
+    _forge("acts-status", "sources", _echo(generated_name, own_source)),
+    _forge("rights-fan-status", "sources", _echo(generated_name, own_source)),
+    _forge("acts-status", "sources", _echo(own_rule, no_such_rule)),
+    _forge("rights-fan-status", "sources", _echo(own_rule, no_such_rule)),
+    _forge("rights-fan-status", "sources", _echo(own_rule, own_rule)),
+    _forge("status", "sources", _echo(own_rule, no_such_rule)),
+    _forge("acts-status", "sources", dropped), _forge("rights-fan-status", "sources", doubled),
+    # The rule and its echo forged together to a generated name, without acts@0 or rights@0.
+    pytest.param("status", lambda case, row: {**row, "rules": [generated_name(row)],
+                                              "sources": [{"rule": generated_name(row), "source": own_rule(row)}]},
+                 id="status-rules-and-sources-generated_name"),
     # An entity reference that is not the request's tuple.
     _forge("status", "tuple", other_entity), _forge("status", "tuple", absent_entity),
     _forge("status", "tuple", longer), _forge("status", "tuple", emptied),
@@ -192,7 +262,9 @@ def test_norm_defaults_response_binding(genuine, tmp_path, name, forge):
 
 # Each bound field deleted or retyped (BUILDER-CHECKLIST 1): the schema or the binding refuses it.
 RETYPED = [7, True, None, [], {}, 1.5, "\ud800", [7], [True], [None], [[]], [{}]]
-FIELDS = [("status", "tuple"), ("status", "rules"), ("acts-status", "rules"), ("certificate", "premises")]
+FIELDS = [("status", "tuple"), ("status", "rules"), ("acts-status", "rules"), ("rights-fan-status", "rules"),
+          ("status", "sources"), ("acts-status", "sources"), ("rights-fan-status", "sources"),
+          ("certificate", "premises")]
 
 
 @pytest.mark.parametrize("name, field", FIELDS)
@@ -214,12 +286,17 @@ def test_a_certificate_case_without_its_certificate_has_no_count(genuine, tmp_pa
             _scripted(tmp_path, {k: v for k, v in case.items() if k != missing}, row)
 
 
-def test_rules_named_by_lean_under_acts_or_rights_are_not_yet_bound(genuine):
-    """`acts@0` parts and `rights@0` fan-out and bar rules have names the request does not carry, and Lean does not
-    yet say which request rule each comes from (norm-defaults-cfr-1b), so their rows' rules are not bound; every other
-    source's are."""
-    assert _rule_names(genuine["acts-status"][0]) is None and _rule_names(genuine["rights-status"][0]) is None
+def test_request_rules_on_each_source_shape(genuine):
+    """The rules an echoed source may name: the `norms` units', and under `rights@0` the rules its `document` holds
+    (a line's norm, a power's liberty and recognition, a bar), at any depth."""
     assert _rule_names(genuine["status"][0]) == {"no-csam-generation"}
+    assert _rule_names(genuine["acts-status"][0]) == {"r027"}
+    assert _rule_names(genuine["rights-fan-status"][0]) == {"art9"}
+    case = {"environment": {"profiles": ["rights@0"]}, "document": {"units": [{"content": {"right": {"lines": [
+        {"kind": "power", "liberty": {"name": "may"}, "recognition": {"name": "rec"}}]}}}, {"content": {"bar": {
+            "name": "b30"}}}, {"content": {"limitation": {"name": "l29"}}}]}}
+    assert _rule_names(case) == {"may", "rec", "b30"}
+    assert _rule_names({**case, "environment": {"profiles": ["soft-norms@0"]}}) == set()
 
 
 @pytest.mark.parametrize("environment", [None, {}, {"profiles": None}, {"profiles": {}},
@@ -229,18 +306,36 @@ def test_status_rule_binding_without_generated_profile(environment):
     case = {"kind": "norm-defaults-status", "norms": [{"norm": {"name": "r1"}}]}
     if environment is not None:
         case["environment"] = environment
-    response = {"status": "ok", "results": [{"index": 0, "result": {"status": "ok", "rules": ["ghost"]}}]}
-    with pytest.raises(Invalid, match="no rule of the request"):
-        bind_answers(MODE, response, {"cases": [case]})
-    response["results"][0]["result"]["rules"] = ["r1"]
-    bind_answers(MODE, response, {"cases": [case]})
+    def answer(rule, source):
+        return {"status": "ok", "results": [{"index": 0, "result": {
+            "status": "ok", "rules": [rule], "sources": [{"rule": rule, "source": source}]}}]}
+    for rule, source in (("ghost", "ghost"), ("ghost", "r1"), ("r1", "ghost")):
+        with pytest.raises(Invalid, match="no rule of the request"):
+            bind_answers(MODE, answer(rule, source), {"cases": [case]})
+    bind_answers(MODE, answer("r1", "r1"), {"cases": [case]})
+
+
+@pytest.mark.parametrize("profile", ["acts@0", "rights@0"])
+def test_a_generated_rule_needs_its_echo(profile):
+    """Under `acts@0` or `rights@0` a rule Lean generated passes with the echo naming it and a request source, and
+    with nothing less: no echo, an echo of another rule, or a source the request does not hold."""
+    case = {"kind": "norm-defaults-status", "environment": {"profiles": [profile]}, "norms": [{"norm": {"name": "r1"}}]}
+
+    def answer(rules, sources):
+        return {"status": "ok", "results": [{"index": 0, "result": {"status": "ok", "rules": rules,
+                                                                     "sources": sources}}]}
+    bind_answers(MODE, answer(["g1"], [{"rule": "g1", "source": "r1"}]), {"cases": [case]})
+    for rules, sources in ((["g1"], []), (["g1"], None), (["g2"], [{"rule": "g1", "source": "r1"}]),
+                           (["g1"], [{"rule": "g1", "source": "g1"}]), (["g1"], ["r1"])):
+        with pytest.raises(Invalid):
+            bind_answers(MODE, answer(rules, sources), {"cases": [case]})
 
 
 def test_status_tuple_schema_binds_request_without_service():
     """The Lean-rendered row shape rejects a different entity even before the client starts a service."""
     case = {"id": "norm-defaults-status", "kind": "norm-defaults-status", "predicate": "p", "tuple": ["a"]}
     row = {"id": "norm-defaults-status", "status": "ok", "point_status": "UNKNOWN", "predicate": "p",
-           "tuple": ["a"], "rules": [], "differs": []}
+           "tuple": ["a"], "rules": [], "sources": [], "differs": []}
     check_row(MODE, row, case, 0)
     with pytest.raises(Invalid):
         check_row(MODE, {**row, "tuple": ["ghost"]}, case, 0)
