@@ -278,13 +278,13 @@ def bind_zone(case, row, source, labels):
         raise _unbound("reason")
     return row
 
-def answer(case, labels=(), targets=(), source=None, row=None):
+def answer(case, labels=(), targets=(), source=None):
     """Lean's bound answer to a `defaults-*` case: `labels` and `targets` are the same source's `defaults-elaborate`
     rows (`default_premises` labels, `coherence_targets`), which a certificate's and a coherence answer bind to (for
     `defaults-zone`, `labels` are X's, the layered `norm-defaults-elaborate` row's); `source` its colliding pairs and
     exception tables (`soft_source`), which an elaboration and a model bind to, or its decisions (`zone_source`), which
-    a zone binds to; `row` Lean's row for the case when it was already asked (`run`)."""
-    row = run(case) if row is None else row
+    a zone binds to."""
+    row = run(case)
     kind = case["kind"]
     try:
         if kind in ("defaults-elaborate", "defaults-model") and source is None:
@@ -466,9 +466,8 @@ def ask_zone(environment, norms, question):
     base = {"environment": environment, "norms": norms}
     case = {"id": "zone", "kind": "defaults-zone", **base, "model": question["situation"],
             "record": question["record"], "observations": question["observations"], "query": question["query"]}
-    row = run(case)  # first, so that Lean's own refusal of the request (spec 5 row 1 for `weighing@0`) is the one shown
     layered = run({"id": "norm-defaults-elaborate", "kind": "norm-defaults-elaborate", **base})
-    row = answer(case, [item["label"] for item in layered["soft"] + layered.get("rights", [])], row=row)
+    row = answer(case, [item["label"] for item in layered["soft"] + layered["rights"]])
     from .defaults_english import sentences
     return {"question": "default", "kind": "defaults-zone", "answer": _shown(row), "english": sentences(case, row)}
 
