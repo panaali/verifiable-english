@@ -8,7 +8,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 SPEC = ROOT / "docs/spec/norm-defaults.md"
 DISPATCH = ROOT / "lean/VE/Compose/Dispatch.lean"
-VERDICT = re.compile(r"\b(admitted|accepted|refused|rejected)\b")
+VERDICT = re.compile(r"\bis (admitted|accepted|refused|rejected)\b")
 
 
 def _definition(source: str, name: str) -> str:
@@ -20,8 +20,8 @@ def _definition(source: str, name: str) -> str:
 def gate_refusals(source: str) -> dict[str, str]:
     """Each profile `todayGate` refuses together with `norm-defaults@0`, with the refusal's text."""
     body = _definition(source, "todayGate")
-    assert 'ps.contains "alternatives@0"' in body  # the parse reads the gate itself
     pair = r'ps\.contains "([^"]+)" && ps\.contains "norm-defaults@0"\s*then\s*\.error \(unsupported "([^"]+)"\)'
+    assert body.count('"norm-defaults@0"') == 1 + len(re.findall(pair, body)) and "pendingWith" not in body  # all read
     return {p: "UnsupportedProfile: " + text for p, text in re.findall(pair, body)}
 
 
