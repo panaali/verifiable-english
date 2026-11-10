@@ -144,6 +144,8 @@ import VE.RightClauses.Tree
 import VE.RightClauses.Plain
 import VE.RightClauses.Relation
 import VE.RightClauses.Examples
+import VE.RightClauses.PlainWellFormed
+import VE.RightClauses.PlainWellFormed.Corollaries
 import VE.SpeechActs.Run
 import VE.SpeechActs.Source.Run
 import VE.SpeechActs.Source.Admission.Run
@@ -202,6 +204,7 @@ import VE.Risk.Wire
 import VE.Risk.Admission
 import VE.Rights.Examples
 import VE.Rights.Run
+import VE.Rights.OpenActExamples
 import VE.Judgments.Decl
 import VE.Judgments.Scan
 import VE.Judgments.Status
@@ -308,6 +311,8 @@ import VE.Scope.FarTheorems
 import VE.Scope.FarExamples
 import VE.Scope.Reach
 import VE.Scope.ReachExamples
+import VE.Scope.Authoring
+import VE.Scope.AuthoringExamples
 import VE.Service.ScopeAdmission
 import VE.Service.ScopeExamples
 import VE.Service.DocumentChain
