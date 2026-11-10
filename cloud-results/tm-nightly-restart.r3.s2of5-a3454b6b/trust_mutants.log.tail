@@ -1,0 +1,10 @@
+trust_mutants: 35 definitions, 41 mutants (8 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/Events/Wire.lean:267 VE.Events.routeView (D[V], trusted) list-empty: (VE.Compose.listedProfiles environment).filter (· != "events@0") -> [] (lean/VE/Events/Wire.lean:269: typeclass instance problem is stuck, it is often due to metavariables)
+UNKNOWN lean/VE/Acts/Run.lean:54 VE.Acts.Run.splitRows (D[V], trusted) list-empty: M.preds.filter (·.2.1 == p) -> [] (lean/VE/Acts/Run.lean:54: Invalid projection: Type of)
+UNKNOWN lean/VE/SpeechActs/Source/Run.lean:777 VE.SpeechActs.Source.readSource (D[V], trusted) list-empty: dec.units -> [] (lean/VE/SpeechActs/Source/Run.lean:777: Invalid field notation: Type of)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:170 VE.Purposes.WellFormed (S, trusted) bool-flip: true -> false (lean/VE/Purposes/Examples.lean:275: Expression (VE.Purposes.Examples.wfDecidable, which it reads,...)
+trust_mutants: 3 KILLED, 0 SURVIVOR, 4 UNKNOWN, 1 INVALID, 0 ALLOWED, 0 NOT RUN, 33 OTHER SHARD in 133 s
+trust_mutants: D[V], trusted: 3 UNKNOWN, 7 OTHER SHARD
+trust_mutants: G[V], trusted: 2 KILLED, 1 INVALID, 18 OTHER SHARD
+trust_mutants: S, trusted: 1 KILLED, 1 UNKNOWN, 8 OTHER SHARD
+trust_mutants: steps: wall plan 15.2 s, scratch 2.9 s, control_build 0.3 s, probe_install 1.2 s, mutants 111.4 s, cleanup 2.3 s, reads 0.1 s; lake control_build 0.3 s (1), probe_install 1.2 s (1), control_probes 10.3 s (4), mutant_builds 40.6 s (10), mutant_checks 137 s (5), stage_controls 16.4 s (3), mutant_probes 13.6 s (4)
