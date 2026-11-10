@@ -207,6 +207,9 @@ def status : Shape :=
       ("sources", n [arr, .items (n [obj, .required ["rule", "source"], closed [("rule", str), ("source", str)]])]),
       ("differs", n [arr, .items (ref "#/$defs/atom")])]]
 
+-- norm-defaults-cfr-1b: the status row as rendered, its `sources` echo one typed `{rule, source}` per rule.
+#guard (ResponseShape.render "norm-defaults.json" 64 status).toOption.map Lean.Json.compress == some r##"{"$comment":"NormDefaults.Run.runOtherCase and Wire.runLayered norm-defaults-status: the requested predicate's point status, then NormDefaults.Wire.statusFields: the tuple's entity ids, the deciding author rules, each with the request rule it comes from (Wire.ruleSources: an acts@0 part's split rule, a rights@0 fan-out's norm or bar rule's bar, else itself), and the atoms where two UNDECIDED fillings differ.","additionalProperties":false,"properties":{"differs":{"items":{"$ref":"#/$defs/atom"},"type":"array"},"id":{"$ref":"common.json#/$defs/id_ok"},"point_status":{"enum":["SETTLED yes","SETTLED no","UNDECIDED","UNKNOWN"]},"predicate":{"type":"string","x-equals":"/predicate"},"rules":{"$ref":"common.json#/$defs/strings","x-unique-strings":true},"sources":{"items":{"additionalProperties":false,"properties":{"rule":{"type":"string"},"source":{"type":"string"}},"required":["rule","source"],"type":"object"},"type":"array"},"status":{"const":"ok"},"tuple":{"$ref":"common.json#/$defs/strings","x-equals":"/tuple"}},"required":["id","status","point_status","predicate","tuple","rules","sources","differs"],"type":"object","x-same-length":["rules","sources"]}"##
+
 def witness_conflict : Shape :=
   c "A conflict witness replay (NormDefaults.Wire.replayWitnessU and Wire.witnessConflictX): the requested target; exactly a CONFLICT also carries NormDefaults.Wire.conflictFields: the tuple's entity ids, the kind, the deciding assignment and the deciding author rules." [
     obj,
