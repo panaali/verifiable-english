@@ -40,7 +40,8 @@ def composed_blocks(source: str) -> list[str]:
 def documented_claims(spec: str, blocks: list[str]) -> list[tuple[str, str | None, str]]:
     """(verdict, block or None, sentence) for each claim about profile validation with `norm-defaults@0`."""
     claims = []
-    for sentence in re.split(r"(?<=[.;])\s+(?=[A-Z`])", " ".join(spec.split())):
+    paragraphs = [" ".join(p.split()) for p in re.split(r"\n\s*\n|\n- ", spec)]
+    for sentence in (s for p in paragraphs for s in re.split(r"(?<=[.;])\s+(?=[A-Z`*])", p)):
         verdict = VERDICT.search(sentence)
         if "`norm-defaults@0`" not in sentence or "profile validation" not in sentence or not verdict:
             continue
@@ -50,15 +51,34 @@ def documented_claims(spec: str, blocks: list[str]) -> list[tuple[str, str | Non
     return claims
 
 
-def test_norm_defaults_documented_support():
-    source = DISPATCH.read_text(encoding="utf-8")
+def disagreements(spec: str, source: str) -> list[str]:
+    """Where the spec's profile-validation claims with `norm-defaults@0` differ from `todayGate` (empty: none)."""
     refused, blocks = gate_refusals(source), composed_blocks(source)
-    claims = documented_claims(SPEC.read_text(encoding="utf-8"), blocks)
-    unnamed = [s for kind, block, s in claims if block is None]
-    assert not unnamed, f"a profile-validation claim names no composed block: {unnamed}"
+    claims = documented_claims(spec, blocks)
+    found = [f"names no composed block: {s}" for _, block, s in claims if block is None]
     for block in blocks:
         stated = {kind for kind, b, _ in claims if b == block}
         expected = "refused" if block in refused else "admitted"
-        assert stated == {expected}, f"spec: {sorted(stated)} for {block} with norm-defaults@0; todayGate: {expected}"
-        if block in refused:
-            assert any(refused[block] in s for _, b, s in claims if b == block), f"spec omits {refused[block]!r}"
+        if stated != {expected}:
+            found.append(f"spec: {sorted(stated)} for {block} with norm-defaults@0; todayGate: {expected}")
+        elif block in refused and not any(refused[block] in s for _, b, s in claims if b == block):
+            found.append(f"spec omits {refused[block]!r}")
+    return found
+
+
+def test_norm_defaults_documented_support():
+    assert disagreements(SPEC.read_text(encoding="utf-8"), DISPATCH.read_text(encoding="utf-8")) == []
+
+
+def test_norm_defaults_documented_support_refuses():
+    """The opposite direction: main's old claim, a flipped row and a dropped row each disagree with the gate."""
+    spec, source = SPEC.read_text(encoding="utf-8"), DISPATCH.read_text(encoding="utf-8")
+    old = ("Their combination with `norm-defaults@0` is rejected at profile validation with `UnsupportedProfile`; "
+           "neither route may report a two-valued decision for a silent permission.")
+    risk = "- `risk@0` with `norm-defaults@0` is refused at profile validation"
+    alternatives = "- `alternatives@0` with `norm-defaults@0` is admitted at profile validation"
+    assert risk in spec and alternatives in spec
+    assert disagreements(spec + "\n\n" + old + "\n", source)
+    assert disagreements(spec.replace(risk, risk.replace("refused", "admitted")), source)
+    assert disagreements(spec.replace(alternatives, alternatives.replace("admitted", "refused")), source)
+    assert disagreements(spec.replace(risk, "- `risk@0` is described elsewhere"), source)
