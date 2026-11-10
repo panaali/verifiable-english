@@ -57745,6 +57745,12 @@ theorem VE.Service.Diagnose.diagnoseCase_registered
         VE.Service.Diagnose.diagnoseCase j = VE.WireContract.Diagnose.diagnoseCase registered j
   -- uses VE.Service.Diagnose.diagnoseCase@VE.Service.Diagnose VE.WireContract.Diagnose.Registered@VE.WireContract.Diagnose VE.WireContract.Diagnose.diagnoseCase@VE.WireContract.Diagnose VE.WireContract.Diagnose.units@VE.WireContract.Diagnose
   -- expr 1136295329
+theorem VE.Service.Document.checkBodyChecked_encode
+  ∀ (j : Lean.Json),
+    Except.map (fun r => VE.Service.Document.encode r.fst r.snd) (VE.Service.Document.checkBodyChecked j) =
+      VE.Service.Document.checkBody j
+  -- uses VE.Service.Document.Checked@VE.Service.Document VE.Service.Document.checkBody@VE.Service.Document VE.Service.Document.checkBodyChecked@VE.Service.DocumentView VE.Service.Document.encode@VE.Service.Document
+  -- expr 488671076
 theorem VE.Service.Document.checkCoreChecked_encode
   ∀ (j : Lean.Json),
     Except.map (fun r => VE.Service.Document.encode r.fst r.snd) (VE.Service.Document.checkCoreChecked j) =
@@ -58017,18 +58023,15 @@ theorem VE.Service.Document.unique_key
     (List.map (fun x => x.fst) l).Nodup → ∀ (p q : String × α), p ∈ l → q ∈ l → p.fst = q.fst → p = q
   -- uses
   -- expr 724459415
-theorem VE.Service.Document.unitJson_setStatus
+theorem VE.Service.Document.unitJson_status
   ∀ (u : VE.Service.Document.RowUnit) (s : VE.Service.Document.UnitStatus),
     (VE.Service.Document.unitJson u).setObjVal! "status" (Lean.Json.str s.name) =
-      VE.Service.Document.unitJson
-        { id := u.id, span := u.span, kind := u.kind, meaning := u.meaning, support := u.support, status := s,
-          parent := u.parent, content := u.content, meaningId := u.meaningId }
-  -- uses VE.Service.Document.RowUnit.content@VE.Service.Document VE.Service.Document.RowUnit.id@VE.Service.Document VE.Service.Document.RowUnit.kind@VE.Service.Document VE.Service.Document.RowUnit.meaning@VE.Service.Document VE.Service.Document.RowUnit.meaningId@VE.Service.Document VE.Service.Document.RowUnit.mk@VE.Service.Document VE.Service.Document.RowUnit.parent@VE.Service.Document VE.Service.Document.RowUnit.span@VE.Service.Document VE.Service.Document.RowUnit.support@VE.Service.Document VE.Service.Document.RowUnit@VE.Service.Document VE.Service.Document.UnitStatus.name@VE.Service.Document VE.Service.Document.UnitStatus@VE.Service.Document VE.Service.Document.unitJson@VE.Service.Document
-  -- expr 3484894266
-theorem VE.Service.Document.unitJson_status
-  ∀ (u : VE.Service.Document.RowUnit), (VE.Service.Document.unitJson u).getObjValD "status" = Lean.Json.str u.status.name
-  -- uses VE.Service.Document.RowUnit.status@VE.Service.Document VE.Service.Document.RowUnit@VE.Service.Document VE.Service.Document.UnitStatus.name@VE.Service.Document VE.Service.Document.unitJson@VE.Service.Document
-  -- expr 2320882750
+        VE.Service.Document.unitJson
+          { id := u.id, span := u.span, kind := u.kind, meaning := u.meaning, support := u.support, status := s,
+            parent := u.parent, content := u.content, meaningId := u.meaningId } ∧
+      (VE.Service.Document.unitJson u).getObjValD "status" = Lean.Json.str u.status.name
+  -- uses VE.Service.Document.RowUnit.content@VE.Service.Document VE.Service.Document.RowUnit.id@VE.Service.Document VE.Service.Document.RowUnit.kind@VE.Service.Document VE.Service.Document.RowUnit.meaning@VE.Service.Document VE.Service.Document.RowUnit.meaningId@VE.Service.Document VE.Service.Document.RowUnit.mk@VE.Service.Document VE.Service.Document.RowUnit.parent@VE.Service.Document VE.Service.Document.RowUnit.span@VE.Service.Document VE.Service.Document.RowUnit.status@VE.Service.Document VE.Service.Document.RowUnit.support@VE.Service.Document VE.Service.Document.RowUnit@VE.Service.Document VE.Service.Document.UnitStatus.name@VE.Service.Document VE.Service.Document.UnitStatus@VE.Service.Document VE.Service.Document.unitJson@VE.Service.Document
+  -- expr 2169254692
 theorem VE.Service.DocumentChain.layeredOf_entails
   ∀ (E : VE.Service.Document.Env) (front : Lean.Json) (units : List VE.Service.Document.SourceUnit)
     (L : VE.NormDefaults.Wire.LayeredU),
