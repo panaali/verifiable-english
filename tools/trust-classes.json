@@ -19198,6 +19198,7 @@
         "VE.Attitudes.Examples.Fyes",
         "VE.Attitudes.Examples.M",
         "VE.Attitudes.Examples.MA",
+        "VE.Attitudes.Examples.Mrev",
         "VE.Attitudes.Examples.RM1",
         "VE.Attitudes.Examples.RM2",
         "VE.Attitudes.Examples.RM3",
@@ -19208,6 +19209,7 @@
         "VE.Attitudes.Examples.St",
         "VE.Attitudes.Examples.U1",
         "VE.Attitudes.Examples.actions",
+        "VE.Attitudes.Examples.allCat",
         "VE.Attitudes.Examples.att2",
         "VE.Attitudes.Examples.awf",
         "VE.Attitudes.Examples.badCond",
@@ -19218,11 +19220,13 @@
         "VE.Attitudes.Examples.c_e_doc",
         "VE.Attitudes.Examples.c_e_guard",
         "VE.Attitudes.Examples.c_e_node",
+        "VE.Attitudes.Examples.c_e_only",
         "VE.Attitudes.Examples.c_e_part",
         "VE.Attitudes.Examples.c_e_three",
         "VE.Attitudes.Examples.ca1",
         "VE.Attitudes.Examples.ca2",
         "VE.Attitudes.Examples.cat0",
+        "VE.Attitudes.Examples.catAt0",
         "VE.Attitudes.Examples.categories",
         "VE.Attitudes.Examples.cb1",
         "VE.Attitudes.Examples.cb2",
@@ -19269,6 +19273,7 @@
         "VE.Attitudes.Examples.genpred",
         "VE.Attitudes.Examples.gensort",
         "VE.Attitudes.Examples.guard1",
+        "VE.Attitudes.Examples.guard1E",
         "VE.Attitudes.Examples.guard1F",
         "VE.Attitudes.Examples.guard2",
         "VE.Attitudes.Examples.guard3",
@@ -19347,7 +19352,8 @@
         "VE.Attitudes.Examples.wordedDoc",
         "VE.Attitudes.Examples.wordsTable",
         "VE.Attitudes.Examples.Γ1",
-        "VE.Attitudes.Examples.Γ3"
+        "VE.Attitudes.Examples.Γ3",
+        "VE.Attitudes.Examples.ρ10"
       ]
     },
     "VE/Attitudes/Scale.lean": {
@@ -19371,7 +19377,6 @@
       "S": [
         "VE.Attitudes.AFormula",
         "VE.Attitudes.AFormula.conds",
-        "VE.Attitudes.AFormula.toFormula",
         "VE.Attitudes.ARule",
         "VE.Attitudes.ARule.toNode",
         "VE.Attitudes.AWellFormed",
@@ -19408,6 +19413,12 @@
         "VE.Attitudes.toNorms"
       ],
       "D[V]": [
+        {
+          "name": "VE.Attitudes.AFormula.toFormula",
+          "tied": [
+            "VE.Attitudes.att_elaboration_faithful"
+          ]
+        },
         {
           "name": "VE.Attitudes.baseEnvAtt",
           "tied": [
@@ -21208,6 +21219,59 @@
         "VE.RightClauses.RunExamples.twoLines",
         "VE.RightClauses.RunExamples.plainOnWire",
         "VE.RightClauses.RunExamples.depth64"
+      ]
+    },
+    "VE/Presupposition/Run.lean": {
+      "G[R]": [
+        "VE.Presupposition.maxLexicon",
+        "VE.Presupposition.maxLineNodes"
+      ],
+      "G[V]": [
+        "VE.Presupposition.Goal",
+        "VE.Presupposition.Inconsistency",
+        "VE.Presupposition.Line",
+        "VE.Presupposition.Outcome",
+        "VE.Presupposition.Row",
+        "VE.Presupposition.Shown",
+        "VE.Presupposition.checkedRow",
+        "VE.Presupposition.docPremise",
+        "VE.Presupposition.englishLine",
+        "VE.Presupposition.lexiconOk",
+        "VE.Presupposition.lineOf",
+        "VE.Presupposition.outcomeOf",
+        "VE.Presupposition.refutedLines",
+        "VE.Presupposition.shown",
+        "VE.Presupposition.shownOf"
+      ],
+      "T": [
+        "VE.Presupposition.RunExamples.certOf",
+        "VE.Presupposition.RunExamples.conj",
+        "VE.Presupposition.RunExamples.docEmpty",
+        "VE.Presupposition.RunExamples.docHd",
+        "VE.Presupposition.RunExamples.docNeg",
+        "VE.Presupposition.RunExamples.g1",
+        "VE.Presupposition.RunExamples.g2",
+        "VE.Presupposition.RunExamples.isShown",
+        "VE.Presupposition.RunExamples.lex3",
+        "VE.Presupposition.RunExamples.lexA",
+        "VE.Presupposition.RunExamples.lexBig",
+        "VE.Presupposition.RunExamples.lexClash",
+        "VE.Presupposition.RunExamples.lexClash2",
+        "VE.Presupposition.RunExamples.lexNoMgr",
+        "VE.Presupposition.RunExamples.lineA",
+        "VE.Presupposition.RunExamples.names",
+        "VE.Presupposition.RunExamples.oc",
+        "VE.Presupposition.RunExamples.pHd",
+        "VE.Presupposition.RunExamples.place3",
+        "VE.Presupposition.RunExamples.premises18b",
+        "VE.Presupposition.RunExamples.rc",
+        "VE.Presupposition.RunExamples.readingsAt",
+        "VE.Presupposition.RunExamples.refusal",
+        "VE.Presupposition.RunExamples.refutedOf",
+        "VE.Presupposition.RunExamples.rowsOf",
+        "VE.Presupposition.RunExamples.selfArgs",
+        "VE.Presupposition.RunExamples.tC",
+        "VE.Presupposition.RunExamples.with18b"
       ]
     }
   }
