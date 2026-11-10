@@ -3,8 +3,8 @@
 No DRI signature is reserved in this item. There are no DELTA rows (DELTA.md): no route reads the report until PS-4.
 Status: built; HEAD in "Final checks". `lean/VE/Presupposition/Run.lean`: `shown`, the `presuppositions` field PS-4 puts
 in the document mode's answer, read off `admit`, with 38 guards. Trust V +109, K +0 (R16); R16 sweep 132 KILLED,
-0 SURVIVOR, 0 UNKNOWN. Selected tests: SELECTED_SUMMARY. DRI rulings: reviews/dri-decisions-20261110-ps-2ac-layer.md
-items 1-2, -ps-2ac-report.md items 1-2. Next: ps-4.
+0 SURVIVOR, 0 UNKNOWN. Selected tests: 117 units, 0 failed (2966efed3). DRI rulings: reviews/dri-decisions-20261110-ps-2ac-layer.md
+items 1-2, -ps-2ac-report.md items 1-2, -ps-2ac-size.md item 1. Next: ps-4.
 
 Task prompts/task-ps-2ac.txt (deliverable (4) of task-ps-2ab.txt); plan `docs/spec/presupposition-PLAN.md` PS-2a
 (:847-864) and 4.6 (:498-501); spec `docs/spec/presupposition.md` 4.7 (:837-839), 2.3 (:345-363), 5 (:1303-1321).
@@ -120,7 +120,7 @@ in the punctuation branch the word is one character, so `w.take 1` is `w`; appli
   Run.lean 305 (product 136, guards and fixtures 169), REPORT 145, `trust-classes.json` 51, `evidence/` 74,
   `mutants.json` 38, `trust-mutants-allow.json` 16, DELTA 10, `trust-baseline.json` 7, `VE.lean` 1: **647**, over the ~600
   guide. The growth past it is guards the R16 sweep required (18 survivors to 0) and the self-review's four A fixes;
-  the deliverable is one file with no coherent cut. Sent to the DRI (msg.sh dri ps-2ac, 2026-11-10T12:34Z).
+  the deliverable is one file with no coherent cut. Accepted: reviews/dri-decisions-20261110-ps-2ac-size.md item 1.
 - **Pilot bytes.** 0: no route reads the report yet.
 - **Evaluators** (rule of 2026-10-27). `shown` reads `admit`'s answer once; `admit` has charged the block (256) and each
   goal (W1's 10,000 nodes); a refused or unknown block is not walked. The lexicon is charged once per report before any
@@ -158,7 +158,10 @@ in the punctuation branch the word is one character, so `w.take 1` is `w`; appli
   0 refused, 0 stale and 0 malformed trailers". No test removed.
 - **Trust.** `tools/trust_map.py --check`: "PASS: K, S and untied [V] within a5088a09b523 and the allowances introduced
   since". R16 sweep: "Trust".
-- **Selected tests**: SELECTED_FINAL
+- **Selected tests** (final, on the committed tree 2966efed3, clean): `MAC_PYTEST_NO_DEFER=1 mac-pytest.sh --select --
+  --base a5088a09b --run`, run on GitHub Actions in 5 shards: "SHARD 1/5 … 27 passed", "2/5 … 25 passed", "3/5 … 24
+  passed", "4/5 … 22 passed", "5/5 … 19 passed"; "summary: … exit=0; 2025s". No failure, so none from
+  main-known-red.txt. Commits after it change only `docs/presupposition/ps-2ac/REPORT.md`.
 - The full release gate is not run here; the chain runs it on the final HEAD.
 
 ## Self-review against BUILDER-CHECKLIST
