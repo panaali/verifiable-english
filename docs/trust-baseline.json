@@ -2504,6 +2504,13 @@
    "reason": "cmp-s3-cfr-1: S +16 lean/VE/RightClauses/Wire.lean (NoClauseKeys, NoReadingSets, PlainOnWire); V +121: Wire.lean +77 (the clause, relation and elided readers), Run.lean +29 (the clauses-elaborate case), Compose/Dispatch.lean +11 (environmentWrappers, withoutClauses, environmentRows), ResponseShape Skeletons +2, Schemas +1, Service Registry +1, Protocol +1, Standalone -1; K +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s3-cfr-1, 2026-10-18",
    "commit": "6db6ee16ddb10f843b396b78299a980abc43fefb"
+  },
+  {
+   "class": "V",
+   "lines": 109,
+   "reason": "ps-2ac: VE/Presupposition/Run.lean V +109 (G[V] untied: the presuppositions report value Outcome, Line, Goal, Row, Shown, Inconsistency, lexiconOk, lineOf, englishLine, outcomeOf, checkedRow, docPremise, refutedLines, shownOf, shown); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ps-2ac, 2026-10-18",
+   "commit": "a5088a09b523154f4024db96fe636c92689a9b97"
   }
  ]
 }
