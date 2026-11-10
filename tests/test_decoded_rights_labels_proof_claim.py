@@ -1,11 +1,5 @@
-"""No record claims the decoded route discharges `legacy_labels_nodup_of_identifiers`' hypothesis `hk` (pk-1c-cfr-1).
-
-The theorem assumes every act key passes `VE.Bridge.identifier`; no lemma ties decoded act keys to it (the decoder
-checks `Surface.identifier`). The claim may return only with a theorem in lean/VE/NormDefaults/ that concludes from a
-successful decode that the act keys (`condKeys`) pass `VE.Bridge.identifier`.
-"""
-
-from __future__ import annotations
+"""No record claims the decoded route discharges the hypothesis `hk` of `legacy_labels_nodup_of_identifiers`,
+unless a theorem in lean/VE/NormDefaults/ concludes from a successful decode that act keys pass `VE.Bridge.identifier`."""
 
 import re
 from pathlib import Path
@@ -69,9 +63,8 @@ def claim_problems(labels: str, report: str, sources: dict[str, str]) -> list[st
                 problems.append(f"{path} claims a decoded-route discharge: {text}")
     doc = re.search(r"/--((?:(?!-/).)*)-/\s*theorem\s+" + THEOREM + r"\b", labels, re.DOTALL)
     doc_text = " ".join(doc.group(1).split()) if doc else ""
-    if not all(w in doc_text for w in ("hypothesis `hk`", "`VE.Bridge.identifier`", "`Surface.identifier`")) or (
-        not NEGATED.search(doc_text)
-    ):
+    needed = ("hypothesis `hk`", "`VE.Bridge.identifier`", "`Surface.identifier`")
+    if not all(w in doc_text for w in needed) or not NEGATED.search(doc_text):
         problems.append(f"the `{THEOREM}` docstring does not state the open hypothesis `hk`: {doc_text!r}")
     rows = [line.strip() for line in report.splitlines() if line.lstrip().startswith(f"- `{THEOREM}`")]
     row = rows[0] if len(rows) == 1 else ""
