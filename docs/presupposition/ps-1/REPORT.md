@@ -47,6 +47,7 @@ DRI dri-featurefeed). Branch `feature/ps-1`, merge base with main c3d9ea938.
 | (6) `lean/VE.lean` one import | bec0a6f67 | `import VE.Presupposition.Examples` |
 | (6) `tools/layer_policy.py` | **no edit needed** | `lean_layer` already puts every `VE.*` module that matches no earlier row at layer 2 (profiles), the same layer as Discourse. Probe: `lean_layer('VE.Presupposition.Frame')` → 2. Repeating that in an explicit row would make two owners of one fact |
 | (6) `tools/trust-classes.json` | bec0a6f67 | S: `Frame`, `plug`, `binders`, `goal`, `close`, `Reach`, `PositionClass`, `cls`, `shallow`. C: `locate`, `shallowB`, `instDecidableShallow` (each tied by a proved theorem). D[V]: the five builders, like `uniqueD`. T: the fixtures. No name matches trust_map's K rule, so K +0 |
+| (6) correction | 2026-11-10 ps-7 | `locate` reclassed S; `locate_plug` does not fix the hole's path |
 | (6) generated inventories | f85448986 (+ 4f940bd4a, 7e9eebc0f: `lean_statements.py` after fixture edits) | `uv run python tools/regen_generated.py --write` ("wrote 35 entries") |
 | (7) seeded bugs M1, `raise1`, one per new trusted definition | `mutants.json`, `trust-mutants.json` | see "Seeded bugs" |
 
