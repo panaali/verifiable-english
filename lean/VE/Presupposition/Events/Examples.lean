@@ -144,7 +144,8 @@ def stateless : VE.FiniteModel String := other [("begins", [["y", "c"]])]
 #guard change.eval changed [] && !change.eval stateless []
 #guard !(stops V stay x t (.not ip)).pre.eval stateless [] && (stops V stay x t (.not ip)).weak.eval stateless []
 
--- every situation above satisfies events' premises (one begin, one end, no end before the begin, the order)
+-- a situation of each family above satisfies events' premises (one begin, one end, no end before the begin,
+-- the order), and an end before the begin is refused
 #guard (states ++ [stayS [("begins", [["s", "b"]])], other [("ends", [["y", "a"]])], other [("job_ends", [["j", "a"]])],
   evs [("visit_on", [["v", "a"]])], evs [("audit_on", [["w", "a"]])], changed, stateless,
   places [("ends", [["y", "a"]]), ("at", [["y", "p"]])]]).all (VE.Events.Examples.firstFailing V · == none)
