@@ -232,7 +232,7 @@ def sdCertificateCore (id : String) (c : SDCase) (j : Json) : SDM (Json × List 
     | .null => pure []
     | .arr xs => pure xs.toList
     | _ => throw "InvalidInput: premises must be an array"
-  let cert ← VE.NormDefaults.Wire.bindCertX c.x.r.b.a.re.lowerJson c.U c.X c.S.2 own (j.getObjValD "conclusion")
+  let cert ← VE.NormDefaults.Wire.bindCertX c.x.r.b.a.re.lowerJson c.U (c.slotX A) c.S.2 own (j.getObjValD "conclusion")
     (← j.getObjVal? "certificate")
   let certs := decodeConflictCertsFor c.ts (j.getObjValD "conflict_certificates")
   sdTick fun k => { k with checks := k.checks + 1 }
