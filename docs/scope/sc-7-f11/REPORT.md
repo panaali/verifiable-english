@@ -113,7 +113,18 @@ sc-7-f11, 2026-11-10". The ties-pass row is in FOLLOW-UPS.md under "## sc-7-f11"
 - `(cd lean && lake build)`: "Build completed successfully (1363 jobs)".
 - `python3 lean/audit.py`: "PASS: 830 source files; 9335 named theorem declarations audited".
 - `regen_generated.py --check`: "checked 38 entries".
-- The selected tests: see the last section.
+- The selected tests, run once on the committed tree 06c3eb181:
+  - Command: `MAC_PYTEST_NO_DEFER=1 mac-pytest.sh --select -- --base f3f40d51d --run`. It ran on the VM: 468 of 581 units,
+    9245 s, exit 1.
+  - It recorded 417 units, then stopped early at `--maxfail 5` with 51 units not run.
+  - The failure was `tests/test_scope_lean.py::test_every_trusted_scope_definition_is_used_by_a_theorem` and the four
+    tests derived from it. That test lists the Authoring definitions no theorem states, and it did not name the three
+    new ones. Commit 4th from the end ("name the new Authoring definitions ...") adds them.
+  - The rerun was `mac-pytest.sh -- tests/test_scope_lean.py` plus the 51 units that did not run: "1789 passed in
+    1246.94s", exit 0.
+  - The selection is wide (468 units) because `tools/trust-classes.json`, `lean/declarations.txt` and the regenerated
+    codemap are read by many units.
+  - No test of `main-known-red.txt` was involved.
 
 ## Size
 
@@ -162,7 +173,8 @@ FOLLOW-UP: sc-7-f12 (inline HTML, filed by the DRI). sc-3b, sc-e1 and sc-e2 foll
 6. PASS: the chain gates the final HEAD; regen, lake build and audit ran on the final Lean.
 7. PASS: the DELTA row cites R16; the trust growth is under R16; no reserved signature.
 8. PASS: DELTA's row lists both refusals and what changed direction.
-9. PASS: the selected run includes `tests/test_scope_authoring.py`.
+9. PASS: the selection includes `tests/test_scope_authoring.py` and `tests/test_scope_lean.py`, and it caught the missing
+   `AUTHORING` names. It is wide because of the shared side tables, not an unlayered path.
 10. N.A.: no theorem statement changes (`scope_parseRender` and `scope_renderParse` still build).
 11. N.A.: no budget or deadline.
 12. PASS: the follower check is one pass over a word's pairs; no Lean call per candidate.
@@ -171,3 +183,5 @@ FOLLOW-UP: sc-7-f12 (inline HTML, filed by the DRI). sc-3b, sc-e1 and sc-e2 foll
 15. PASS: overclaims fixed ("so no character drawn as a space or as nothing follows a sentence end" is proved by :220,
     :225 and the "joined" sweep; Markdown inline HTML is named deferred, sc-7-f12); no cut deliverable; every new
     guard has a mutant; no limit applies.
+
+SELF-REVIEW: 2 A, 5 B, 4 C; fixed 11
