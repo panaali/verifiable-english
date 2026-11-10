@@ -1,9 +1,9 @@
 # ps-2ac: Run.lean, the presuppositions report value (spec 4.7, PS-2a part 4) (build report)
 
 No DRI signature is reserved in this item. There are no DELTA rows (DELTA.md): no route reads the report until PS-4.
-Status: built; HEAD in "Final checks". `lean/VE/Presupposition/Run.lean`: `shown`, the `presuppositions` field PS-4 puts
+Status: built, review F1 fixed (text and 10 guards, "Review fix (F1)"); HEAD in "Final checks". `lean/VE/Presupposition/Run.lean`: `shown`, the `presuppositions` field PS-4 puts
 in the document mode's answer, read off `admit`, with 45 guards. Trust V +109, K +0 (R16); R16 sweep 132 KILLED,
-0 SURVIVOR, 0 UNKNOWN. Selected tests: 117 units, 0 failed (2966efed3). DRI rulings: reviews/dri-decisions-20261110-ps-2ac-layer.md
+0 SURVIVOR, 0 UNKNOWN (rerun on 968b2248f). Selected tests: 75 units, 0 failed (05ccac372). DRI rulings: reviews/dri-decisions-20261110-ps-2ac-layer.md
 items 1-2, -ps-2ac-report.md items 1-2, -ps-2ac-size.md item 1. Next: ps-4.
 
 Task prompts/task-ps-2ac.txt (deliverable (4) of task-ps-2ab.txt); plan `docs/spec/presupposition-PLAN.md` PS-2a
@@ -130,10 +130,10 @@ each step through `RunExamples.refusal` (diagnostic, obligation quoted, unit quo
 `needsModelText` on A1, `softText` on A26), and step 5's tree check (first obligation; none on an empty block).
 `admit` is unchanged (no diagnostic, verdict or DELTA row). The review's probe exits 1 before the fix and 0 after.
 Seeded bugs (`mutants.json`, 3 more, each applied alone and restored): M-F1-firstOb-empty breaks :340,
-M-F1-outcome-names breaks :329 and the rest of :319-340, M-F1-quotes-const breaks :319-326 and :337. Fix size: Run.lean
-+38 -1 (header: 4 comment lines for 1; 34 guards and fixtures), REPORT, `mutants.json` +3 rows, `trust-classes.json` +2. The earlier "Run.lean:N"
-references here and in `mutants.json` were shifted by the header's +3 lines; `evidence/tests.txt` keeps the build's
-output verbatim (its line numbers are the build's).
+M-F1-outcome-names breaks :329 and the rest of :319-340, M-F1-quotes-const breaks :319-326 and :337. Fix size:
+Run.lean +38 -1 (header: 4 comment lines for 1; 34 guards and fixtures), REPORT, `mutants.json` +3 rows,
+`trust-classes.json` +2. The earlier "Run.lean:N" references here and in `mutants.json` were shifted by the
+header's +3 lines; `evidence/tests.txt` keeps the build's output verbatim (its line numbers are the build's).
 
 ## Size, bytes, evaluators
 
@@ -179,7 +179,12 @@ output verbatim (its line numbers are the build's).
   0 refused, 0 stale and 0 malformed trailers". No test removed.
 - **Trust.** `tools/trust_map.py --check`: "PASS: K, S and untied [V] within a5088a09b523 and the allowances introduced
   since". R16 sweep: "Trust".
-- **Selected tests** (final, on the committed tree 2966efed3, clean): `MAC_PYTEST_NO_DEFER=1 mac-pytest.sh --select --
+- **After review F1** (on the committed tree 05ccac372, clean): `lake build` "Build completed successfully (1356
+  jobs)"; `lean/audit.py` "PASS: 823 source files; 9276 named theorem declarations audited"; `trust_map.py --check`
+  PASS; the review's PROBE F1 exits 0; selected tests (`mac-pytest.sh --select -- --base a5088a09b --run`, GitHub
+  Actions, 1 shard): "SHARD 1/1: exit 0 in 2284.0 s; 75 units, 75 passed", "summary: … exit=0; 2467s". No failure, so
+  none from main-known-red.txt. Commits after it change only this REPORT.
+- **Selected tests** (build, on the committed tree 2966efed3, clean): `MAC_PYTEST_NO_DEFER=1 mac-pytest.sh --select --
   --base a5088a09b --run`, run on GitHub Actions in 5 shards: "SHARD 1/5 … 27 passed", "2/5 … 25 passed", "3/5 … 24
   passed", "4/5 … 22 passed", "5/5 … 19 passed"; "summary: … exit=0; 2025s". No failure, so none from
   main-known-red.txt. Commits after it change only `docs/presupposition/ps-2ac/REPORT.md`.
