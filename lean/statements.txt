@@ -45751,6 +45751,10 @@ theorem VE.RightClauses.plainLine_decode
                 Except.ok (VE.RightClauses.plainSource D.doc.soft D.lines R S)
   -- uses VE.RightClauses.ClauseDoc.doc@VE.RightClauses.Tree VE.RightClauses.ClauseDoc.lines@VE.RightClauses.Tree VE.RightClauses.ClauseDoc@VE.RightClauses.Tree VE.RightClauses.PlainOnWire@VE.RightClauses.Wire VE.RightClauses.WellFormedClauses@VE.RightClauses.Plain VE.RightClauses.headKeys@VE.RightClauses.Wire VE.RightClauses.lineWith@VE.RightClauses.Wire VE.RightClauses.plainLineJson@VE.RightClauses.Wire VE.RightClauses.plainSource@VE.RightClauses.Plain VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.SourceLine@VE.Rights.Tree VE.Rights.Wire.decodeLine@VE.Rights.Wire VE.Rights.sourceLines@VE.Rights.Tree VE.SoftNorms.Wire.SoftEnvironment@VE.SoftNorms.Wire
   -- expr 2875218998
+theorem VE.RightClauses.plainOnWire_of_check
+  ∀ {D : VE.RightClauses.ClauseDoc}, VE.RightClauses.plainOnWireB D = Bool.true → VE.RightClauses.PlainOnWire D
+  -- uses VE.RightClauses.ClauseDoc@VE.RightClauses.Tree VE.RightClauses.PlainOnWire@VE.RightClauses.Wire VE.RightClauses.plainOnWireB@VE.RightClauses.WireTheorems
+  -- expr 461448901
 theorem VE.RightClauses.plainSource_eq
   ∀ (E : VE.SoftNorms.SoftDoc) (cl : List (String × String × VE.RightClauses.CLine)) (R : String)
     (S : VE.Rights.SourceLine),

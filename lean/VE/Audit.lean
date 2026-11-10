@@ -6600,6 +6600,7 @@ import VE.WireContract.Engine
 #print axioms VE.RightClauses.plainContent_declared
 #print axioms VE.RightClauses.plainContent_identity
 #print axioms VE.RightClauses.plainLine_decode
+#print axioms VE.RightClauses.plainOnWire_of_check
 #print axioms VE.RightClauses.plainSource_eq
 #print axioms VE.RightClauses.plainSource_nil
 #print axioms VE.RightClauses.plain_guard
