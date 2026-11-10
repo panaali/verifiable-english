@@ -102,7 +102,35 @@ def _bind_line_narrowings(entry, rule, *, limits, direct, line_rules, cites, aim
 BAR_NODE = {'sign': False, 'hard': True, 'mode': 'strict', 'unless': []}
 
 
-def _bind_elaboration(row, units, environment):
+def _located_rules(units, located):
+    """The span `located` gives each authored rule of a `right` or `right_lines` unit: the source unit id named
+    beside the rule's unit (the units after the `source_units` entry, in order); None when the request locates
+    no line (rights.md 8: findings carry their line's span)."""
+    if located is None:
+        return None
+    contents = [unit for unit in units if 'source_units' not in unit]
+    rules = {}
+    for unit, unit_id in zip(contents, located):
+        body = unit.get('right', unit.get('right_lines')) or {}
+        for line in body.get('lines', []):
+            for field in LINE_RULE_FIELDS[line['kind']]:
+                rules[line[field]['name']] = unit_id
+    return rules
+
+
+def _bind_findings(row, expected, lines, located):
+    """`findings` and `located_findings` (Run.lean `findingJson`) are the expected findings, in order: each row
+    has the code, rule, right and text of one finding, and its span is the source unit `located` gives the
+    finding's line (a fan-out instance's through its source line), null when the request locates none."""
+    source = {line['rule']: line.get('source_line', line['rule']) for line in lines}
+    rows = [{"code": code, "rule": rule, "right": right,
+             "span": None if located is None else located.get(source[rule]), "text": text}
+            for code, rule, right, text in expected]
+    if row['findings'] != [text for *_, text in expected] or row['located_findings'] != rows:
+        raise ValueError('unbound finding or finding span')
+
+
+def _bind_elaboration(row, units, environment, located=None):
     """Bind correlated soft rule IDs to the authored rights lines and norm units."""
     try:
         authored = {}
@@ -327,11 +355,12 @@ def _bind_elaboration(row, units, environment):
                         for right, rule, name in hits) or
                     any(hit['cited'] is not ('guard' in cites[hit['rule']]) for hit in entry['hits'])):
                 raise ValueError('unbound distinction hit')
-        expected_findings = [f"ProtectedInCone: {hit['protected']} in rule {hit['rule']} on right {hit['right']}"
-                             for entry in row['distinction'] if not entry['independent']
-                             for hit in entry['hits'] if not hit['cited']]
-        if row['findings'] != expected_findings:
-            raise ValueError('unbound distinction findings')
+        expected_findings = [
+            ("ProtectedInCone", hit['rule'], hit['right'],
+             f"ProtectedInCone: {hit['protected']} in rule {hit['rule']} on right {hit['right']}")
+            for entry in row['distinction'] if not entry['independent']
+            for hit in entry['hits'] if not hit['cited']]
+        _bind_findings(row, expected_findings, row['lines'], located)
         conditional = row['conditional_on']
         pair_labels = {entry['label'] for entry in row['colliding_pairs']}
         open_labels = {entry['label'] for entry in row['colliding_pairs'] if not entry['comparable']}
@@ -341,7 +370,7 @@ def _bind_elaboration(row, units, environment):
         raise CheckerUnavailable(f'CheckerUnavailable: Lean rights elaboration is not bound to the request: {error}') from error
 
 
-def _bind_conflict(row, elaborated, witness=None):
+def _bind_conflict(row, elaborated, witness=None, situation=None):
     """Bind the conflict's displayed identities to the elaborated source."""
     try:
         targets = [entry['target'] for entry in elaborated['conflict_targets']]
@@ -359,10 +388,26 @@ def _bind_conflict(row, elaborated, witness=None):
         if row['verdict'] == 'CONFLICT-FREE':
             coherence = sum(label.startswith('soft:') for label in conditional)
             limitation = sum(label.startswith('rights:') for label in conditional)
+            # 7.3's report parts: the weighing points are the elaborated colliding pairs no ranking resolves, the
+            # situation is the one the request sent (its tables are the request's own rows, Run.lean
+            # `situationTables`), else the line says UNKNOWN with the budget.
+            weighing = [entry['label'] for entry in elaborated['colliding_pairs'] if not entry['comparable']]
+            exhibited = 'yes' if situation is not None else f"UNKNOWN (budget {row['budget']})"
             expected = (f'CONFLICT-FREE among rules on the same act, conditional on {coherence} '
-                        f'coherence premises and {limitation} limitation premises')
-            if row['status_text'] != expected:
-                raise ValueError('unbound conflict status text')
+                        f'coherence premises and {limitation} limitation premises ({", ".join(conditional)}); '
+                        f'{len(weighing)} weighing points open; situation exhibited: {exhibited}')
+            if (row['status_text'] != expected or row['weighing_points'] != weighing or
+                    row['situation_exhibited'] is not (situation is not None)):
+                raise ValueError('unbound conflict status text or report part')
+            if situation is None:
+                if row['situation'] is not None:
+                    raise ValueError('unbound conflict situation')
+            else:
+                tables = ([entry['name'] for entry in elaborated['decisions']] +
+                          [entry['name'] for entry in elaborated['generated']])
+                if row['situation'] != [{"predicate": name, "tuples": situation['relations'][name]}
+                                        for name in tables]:
+                    raise ValueError('unbound conflict situation')
         else:
             # The schema makes an UNKNOWN line name the certificate that failed for a target (Run.lean
             # `firstFailure`); the target is one this request has.
@@ -374,7 +419,7 @@ def _bind_conflict(row, elaborated, witness=None):
             f'CheckerUnavailable: Lean rights conflict is not bound to the request: {error}') from error
 
 
-def _bind_narrowings(row, elaborated, *, empty_certificates=False):
+def _bind_narrowings(row, elaborated, *, empty_certificates=False, located=None):
     """Bind each reported line and mechanism to the checked elaboration."""
     try:
         def identities(rows):
@@ -397,11 +442,11 @@ def _bind_narrowings(row, elaborated, *, empty_certificates=False):
                         bound['licence'] is None and licence == 'certified' and not empty_certificates):
                     raise ValueError('unbound mechanism licence')
                 if actual['in_scope'] and licence is None:
-                    expected_findings.append(
-                        f"UnlicensedLimitation: {text} of rule {actual['rule']} on right {actual['right']}")
+                    expected_findings.append((
+                        "UnlicensedLimitation", actual['rule'], actual['right'],
+                        f"UnlicensedLimitation: {text} of rule {actual['rule']} on right {actual['right']}"))
         # The schema makes `licensed` true exactly when `findings` is empty.
-        if row['findings'] != expected_findings:
-            raise ValueError('unbound scope findings or licence result')
+        _bind_findings(row, expected_findings, elaborated['lines'], located)
     except (KeyError, TypeError, ValueError) as error:
         raise CheckerUnavailable(
             f'CheckerUnavailable: Lean rights narrowings are not bound to the request: {error}') from error
@@ -456,17 +501,21 @@ def _run_rights_case(environment, units, kind, extra, elaborated=None):
     case = {"id": kind, "kind": kind, "environment": _wire(raw),
             "document": _wire(units), **extra}
     row = decide_once("rights", case)
+    try:
+        located = _located_rules(case["document"], case.get("located"))
+    except (AttributeError, KeyError, TypeError) as error:
+        raise CheckerUnavailable(f'CheckerUnavailable: rights located lines are not bound: {error}') from error
     if kind == 'rights-elaborate':
-        _bind_elaboration(row, case["document"], case["environment"])
+        _bind_elaboration(row, case["document"], case["environment"], located)
     elif kind in ('rights-scope', 'rights-bar'):
         elaborated = elaborated or run_rights_case(environment, units, 'rights-elaborate')
         if kind == 'rights-scope':
-            _bind_narrowings(row, elaborated, empty_certificates=not extra.get('certificates'))
+            _bind_narrowings(row, elaborated, empty_certificates=not extra.get('certificates'), located=located)
         else:
             _bind_bar(row, elaborated, case["document"])
     elif kind == 'rights-conflict':
         elaborated = run_rights_case(environment, units, 'rights-elaborate')
-        _bind_conflict(row, elaborated, extra.get('witness'))
+        _bind_conflict(row, elaborated, extra.get('witness'), extra.get('situation'))
     return row
 
 
@@ -479,18 +528,24 @@ def expected_environment_prime(rights):
     return rights.elaborated["environment_prime"]
 
 
-def report_rights(environment, units, rights=None, *, _with_elaboration=False):
-    """Return the five-question rows available without submitted certificates."""
-    elaborated = run_rights_case(environment, units, "rights-elaborate")
-    scope = _run_rights_case(environment, units, "rights-scope", {"certificates": {}}, elaborated)
+def report_rights(environment, units, rights=None, *, located=None, _with_elaboration=False):
+    """Return the five-question rows available without submitted certificates. `located` names, for each unit
+    after the `source_units` entry, the source unit it was copied from; the findings then carry their line's span."""
+    where = {} if located is None else {"located": list(located)}
+    elaborated = run_rights_case(environment, units, "rights-elaborate", **where)
+    scope = _run_rights_case(environment, units, "rights-scope", {"certificates": {}, **where}, elaborated)
     bar = _run_rights_case(environment, units, "rights-bar", {"certificates": {}}, elaborated)
     conflict = run_rights_case(environment, units, "rights-conflict", packages={})
+    parts = ("verdict", "status_text", "targets", "conditional_on", "weighing_points", "situation_exhibited",
+             "budget", "situation")
     report = {
-        "conflict": {key: conflict[key] for key in ("verdict", "status_text", "targets", "conditional_on")},
+        "conflict": {key: conflict[key] for key in parts if key in conflict},
         "narrowings": scope["narrowings"],
         "unlicensed_limitations": scope["findings"],
+        "unlicensed_limitations_located": scope["located_findings"],
         "distinction": elaborated["distinction"],
         "distinction_hits": elaborated["findings"],
+        "distinction_hits_located": elaborated["located_findings"],
         "bar": bar["bars"],
         "limitation_premises_used": conflict["conditional_on"],
         "decider_note": "No claim is made about the deciders of open terms.",

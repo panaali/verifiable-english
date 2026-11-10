@@ -1,0 +1,207 @@
+{
+ "unavailable": [
+  {
+   "authority": "default",
+   "case": "pilot/cc-20261010T1800Z:usecases/claude-constitution-pilot/run-20261010T1800Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The same pre-existing ReadingsConstruction CheckerUnavailable (Python cannot build the English of the document Lean admitted: KeyError) at base and head; identical outputs (listed by lf-18, AR-16a, AR-20, AR-21 and AR-22)."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/cc-20261012T1800Z:usecases/claude-constitution-pilot/run-20261012T1800Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The same pre-existing ReadingsConstruction CheckerUnavailable (Python cannot build the English of the document Lean admitted: KeyError) at base and head; identical outputs (listed by lf-18, AR-16a, AR-20, AR-21 and AR-22)."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/cc-20261013T0600Z:usecases/claude-constitution-pilot/run-20261013T0600Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The same pre-existing ReadingsConstruction CheckerUnavailable (Python cannot build the English of the document Lean admitted: KeyError) at base and head; identical outputs (listed by lf-18, AR-16a, AR-20, AR-21 and AR-22)."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/cc-20261014T1800Z:usecases/claude-constitution-pilot/run-20261014T1800Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The same pre-existing ReadingsConstruction CheckerUnavailable (Python cannot build the English of the document Lean admitted: KeyError) at base and head; identical outputs (listed by lf-18, AR-16a, AR-20, AR-21 and AR-22)."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/cc-20261015T0600Z:usecases/claude-constitution-pilot/run-20261015T0600Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The same pre-existing ReadingsConstruction CheckerUnavailable (Python cannot build the English of the document Lean admitted: KeyError) at base and head; identical outputs (listed by lf-18, AR-16a, AR-20, AR-21 and AR-22)."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/cc-20261016T0600Z:usecases/claude-constitution-pilot/run-20261016T0600Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The same pre-existing ReadingsConstruction CheckerUnavailable (Python cannot build the English of the document Lean admitted: KeyError) at base and head; identical outputs (listed by lf-18, AR-16a, AR-20, AR-21 and AR-22)."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/cc-20261017T0600Z:usecases/claude-constitution-pilot/run-20261017T0600Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The same pre-existing ReadingsConstruction CheckerUnavailable (Python cannot build the English of the document Lean admitted: KeyError) at base and head; identical outputs (listed by lf-18, AR-16a, AR-20, AR-21 and AR-22)."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/cc-20261017T1800Z:usecases/claude-constitution-pilot/run-20261017T1800Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The same pre-existing ReadingsConstruction CheckerUnavailable (Python cannot build the English of the document Lean admitted: KeyError) at base and head; identical outputs (listed by lf-18, AR-16a, AR-20, AR-21 and AR-22)."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/cc-20261018T1800Z:usecases/claude-constitution-pilot/run-20261018T1800Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The same pre-existing ReadingsConstruction CheckerUnavailable (Python cannot build the English of the document Lean admitted: KeyError) at base and head; identical outputs (listed by lf-18, AR-16a, AR-20, AR-21 and AR-22)."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/cc-20261019T0600Z:usecases/claude-constitution-pilot/run-20261019T0600Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The same pre-existing ReadingsConstruction CheckerUnavailable (Python cannot build the English of the document Lean admitted: KeyError) at base and head; identical outputs (listed by lf-18, AR-16a, AR-20, AR-21 and AR-22)."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/cc-20261019T1800Z:usecases/claude-constitution-pilot/run-20261019T1800Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The same pre-existing ReadingsConstruction CheckerUnavailable (Python cannot build the English of the document Lean admitted: KeyError) at base and head; identical outputs (listed by lf-18, AR-16a, AR-20, AR-21 and AR-22)."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/cc-20261021T0600Z:usecases/claude-constitution-pilot/run-20261021T0600Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The same pre-existing ReadingsConstruction CheckerUnavailable (Python cannot build the English of the document Lean admitted: KeyError) at base and head; identical outputs (listed by lf-18, AR-16a, AR-20, AR-21 and AR-22)."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/cc-20261021T1800Z:usecases/claude-constitution-pilot/run-20261021T1800Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The same pre-existing ReadingsConstruction CheckerUnavailable (Python cannot build the English of the document Lean admitted: KeyError) at base and head; identical outputs (listed by lf-18, AR-16a, AR-20, AR-21 and AR-22)."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/cc-20261026T0600Z:usecases/claude-constitution-pilot/run-20261026T0600Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The same pre-existing ReadingsConstruction CheckerUnavailable (Python cannot build the English of the document Lean admitted: KeyError) at base and head; identical outputs (listed by lf-18, AR-16a, AR-20, AR-21 and AR-22)."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/cc-20261028T0600Z:usecases/claude-constitution-pilot/run-20261028T0600Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The same pre-existing ReadingsConstruction CheckerUnavailable (Python cannot build the English of the document Lean admitted: KeyError) at base and head; identical outputs (listed by lf-18, AR-16a, AR-20, AR-21 and AR-22)."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/cc-20261101T0600Z:usecases/claude-constitution-pilot/run-20261101T0600Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The same pre-existing ReadingsConstruction CheckerUnavailable (Python cannot build the English of the document Lean admitted: KeyError) at base and head; identical outputs (listed by lf-18, AR-16a, AR-20, AR-21 and AR-22)."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/cc-20261103T0600Z:usecases/claude-constitution-pilot/run-20261103T0600Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The same pre-existing ReadingsConstruction CheckerUnavailable (Python cannot build the English of the document Lean admitted: KeyError) at base and head; identical outputs (listed by lf-18, AR-16a, AR-20, AR-21 and AR-22)."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/cc-20261108T1800Z:usecases/claude-constitution-pilot/run-20261108T1800Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The same pre-existing ReadingsConstruction CheckerUnavailable (Python cannot build the English of the document Lean admitted: KeyError) at base and head; identical outputs (listed by lf-18, AR-16a, AR-20, AR-21 and AR-22)."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/udhr-20261018T1800Z:usecases/udhr-pilot/run-20261018T1800Z/experiment-whole/translation-whole.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The same 600 s recorder time-out (L75) at base and head: a whole-UDHR translation (core@0, relational-fol@0, norms, readings, documents; no closure formula), recorded concurrently on both sides (both A/B runs of this batch); identical outputs."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/udhr-20261021T1800Z:usecases/udhr-pilot/run-20261021T1800Z/experiment-whole/translation-whole.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The same 600 s recorder time-out (L75) at base and head: a whole-UDHR translation (core@0, relational-fol@0, norms, readings, documents; no closure formula), recorded concurrently on both sides (both A/B runs of this batch); identical outputs."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/udhr-20261026T1800Z:usecases/udhr-pilot/run-20261026T1800Z/experiment-whole/translation-whole.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The same 600 s recorder time-out (L75) at base and head: a whole-UDHR translation (core@0, relational-fol@0, norms, readings, documents; no closure formula), recorded concurrently on both sides (both A/B runs of this batch); identical outputs."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/udhr-20261027T0600Z:usecases/udhr-pilot/run-20261027T0600Z/experiment-whole/translation-whole.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The same 600 s recorder time-out (L75) at base and head: a whole-UDHR translation (core@0, relational-fol@0, norms, readings, documents; no closure formula), recorded concurrently on both sides (both A/B runs of this batch); identical outputs."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/udhr-20261028T0600Z:usecases/udhr-pilot/run-20261028T0600Z/experiment-whole/translation-whole.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The same 600 s recorder time-out (L75) at base and head: a whole-UDHR translation (core@0, relational-fol@0, norms, readings, documents; no closure formula), recorded concurrently on both sides (both A/B runs of this batch); identical outputs."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/udhr-20261028T1800Z:usecases/udhr-pilot/run-20261028T1800Z/experiment-whole/translation-whole.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The same 600 s recorder time-out (L75) at base and head: a whole-UDHR translation (core@0, relational-fol@0, norms, readings, documents; no closure formula), recorded concurrently on both sides (both A/B runs of this batch); identical outputs."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/udhr-20261101T1800Z:usecases/udhr-pilot/run-20261101T1800Z/experiment-whole/translation-whole.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The same 600 s recorder time-out (L75) at base and head: a whole-UDHR translation (core@0, relational-fol@0, norms, readings, documents; no closure formula), recorded concurrently on both sides (both A/B runs of this batch); identical outputs."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/udhr-20261102T1800Z:usecases/udhr-pilot/run-20261102T1800Z/evidence/et0-not-landed/translation-whole.et0.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The same pre-existing CheckerUnavailable (readings-verdicts: more than 64 compatible readings) at base and head; identical outputs (listed by AR-22)."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/udhr-20261102T1800Z:usecases/udhr-pilot/run-20261102T1800Z/experiment-whole/translation-whole.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The same 600 s recorder time-out (L75) at base and head: a whole-UDHR translation (core@0, relational-fol@0, norms, readings, documents; no closure formula), recorded concurrently on both sides (both A/B runs of this batch); identical outputs."
+  },
+  {
+   "authority": "default",
+   "case": "2757af3b2b5456b1",
+   "corpus": "discourse",
+   "op": "document_check",
+   "reason": "The same pre-existing CheckerUnavailable at base and head: the norms route refuses a norm object of this discourse text and keeps its loader's diagnostic (fields do not match); identical outputs (listed by AR-22). Not a closure path."
+  },
+  {
+   "authority": "default",
+   "case": "2757af3b2b5456b1",
+   "corpus": "discourse",
+   "op": "document_render",
+   "reason": "The same pre-existing CheckerUnavailable at base and head: the norms route refuses a norm object of this discourse text and keeps its loader's diagnostic (fields do not match); identical outputs (listed by AR-22). Not a closure path."
+  }
+ ]
+}

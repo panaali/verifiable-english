@@ -8,6 +8,11 @@ Recording stays `lean_first_diff.py record` (one run per checkout). This command
 recording before comparing (the lf-0 class: the A/B tool accepted empty evidence), runs the comparison in a
 child process, and fails unless it compared every required corpus with no unlisted difference. An unavailable
 pair counts only when both results are identical and the delta lists a reason (standing ruling R7).
+
+A recording does not carry its commit, so `--base-commit` and `--head-commit` are typed. Each goes through
+`tools.evidence.commit` before the comparison runs: the record saves the full id Git resolves (an abbreviation
+such as `a3454b6ba`, or `$(git merge-base HEAD main)`, is enough), and an id that names no commit of the
+repository is refused instead of saved (AR-23 review F1: a typed base whose tail was invented).
 """
 from __future__ import annotations
 
@@ -20,7 +25,7 @@ import subprocess
 import sys
 import tempfile
 
-from tools.evidence import ROOT, EvidenceError, base_problems, dump, load
+from tools.evidence import ROOT, EvidenceError, base_problems, commit, dump, load
 
 LEAN_FIRST_DIFF = ROOT / "tools/lean_first_diff.py"
 # The seven corpora tools/batch_evidence.py has always required; a batch's toml may name more.
@@ -36,10 +41,19 @@ def recording_problems(path: Path) -> list[str]:
 
 
 def compare(base: Path, head: Path, base_commit: str, head_commit: str, delta: Path | None = None,
-            corpora: list[str] | None = None) -> tuple[dict | None, list[str]]:
-    """The saved comparison of two recordings and its errors (`problems`); None when it could not run."""
+            corpora: list[str] | None = None, repository: Path = ROOT) -> tuple[dict | None, list[str]]:
+    """The saved comparison of two recordings and its errors (`problems`); None when it could not run. Both
+    commits are resolved in `repository` first (`commit`), and the record saves the resolved ids."""
     errors = recording_problems(base) + recording_problems(head)
-    errors += base_problems({"base_commit": base_commit, "head_commit": head_commit}, "corpus comparison")
+    resolved = {}
+    for side, typed in (("base", base_commit), ("head", head_commit)):
+        try:
+            resolved[side] = commit(typed, repository)
+        except EvidenceError as exc:
+            errors.append(f"corpus comparison {side} commit: {exc}")
+    if len(resolved) == 2:
+        base_commit, head_commit = resolved["base"], resolved["head"]
+        errors += base_problems({"base_commit": base_commit, "head_commit": head_commit}, "corpus comparison")
     if errors:
         return None, errors
     with tempfile.TemporaryDirectory(prefix="ve-evidence-ab-") as scratch:
@@ -106,8 +120,8 @@ def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     parser.add_argument("base", type=Path)
     parser.add_argument("head", type=Path)
-    parser.add_argument("--base-commit", required=True, help="the commit BASE was recorded at")
-    parser.add_argument("--head-commit", required=True, help="the commit HEAD was recorded at")
+    parser.add_argument("--base-commit", required=True, help="the commit BASE was recorded at (resolved by Git)")
+    parser.add_argument("--head-commit", required=True, help="the commit HEAD was recorded at (resolved by Git)")
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--delta", type=Path)
     parser.add_argument("--corpus", nargs="+")

@@ -1,0 +1,64 @@
+{
+  "allow": [
+    {
+      "definition": "VE.Closure.Entails",
+      "operator": "list-empty",
+      "reason": "a Prop no check can evaluate (every structure, not finite); exercised by VE.Closure.entails_iff (Consequence.lean:11), VE.Core.entails_closure (Conservativity.lean:42) and VE.Closure.Tableau.checkCertificate_sound_v0 (Tableau.lean:98), whose proofs this mutant breaks"
+    },
+    {
+      "definition": "VE.Closure.Entails",
+      "operator": "list-first",
+      "reason": "a Prop no check can evaluate (every structure, not finite); exercised by VE.Closure.entails_iff (Consequence.lean:11), VE.Core.entails_closure (Conservativity.lean:42) and VE.Closure.Tableau.checkCertificate_sound_v0 (Tableau.lean:98), whose proofs this mutant breaks"
+    },
+    {
+      "definition": "VE.Closure.Entails",
+      "operator": "list-drop-last",
+      "reason": "a Prop no check can evaluate (every structure, not finite); exercised by VE.Closure.entails_iff (Consequence.lean:11), VE.Core.entails_closure (Conservativity.lean:42) and VE.Closure.Tableau.checkCertificate_sound_v0 (Tableau.lean:98), whose proofs this mutant breaks"
+    },
+    {
+      "definition": "VE.Closure.Entails",
+      "operator": "list-last",
+      "reason": "a Prop no check can evaluate (every structure, not finite); exercised by VE.Closure.entails_iff (Consequence.lean:11), VE.Core.entails_closure (Conservativity.lean:42) and VE.Closure.Tableau.checkCertificate_sound_v0 (Tableau.lean:98), whose proofs this mutant breaks"
+    },
+    {
+      "definition": "VE.Closure.Entails",
+      "operator": "list-drop-first",
+      "reason": "a Prop no check can evaluate (every structure, not finite); exercised by VE.Closure.entails_iff (Consequence.lean:11), VE.Core.entails_closure (Conservativity.lean:42) and VE.Closure.Tableau.checkCertificate_sound_v0 (Tableau.lean:98), whose proofs this mutant breaks"
+    },
+    {
+      "definition": "VE.Closure.Entails",
+      "operator": "body-true",
+      "reason": "a Prop no check can evaluate; the constant body drops the universe parameter u, so every statement written Entails.{u} (VE.Closure.countermodel_sound, Consequence.lean:13) fails to elaborate and the tool cannot cut that proof (UNKNOWN); the same body breaks VE.Closure.entails_iff (Consequence.lean:11)"
+    },
+    {
+      "definition": "VE.Closure.Formula.WellFormed",
+      "operator": "body-true",
+      "reason": "a Prop no check can evaluate (no Decidable instance); exercised by VE.Closure.check_iff_wellFormed (Syntax.lean:65), which ties it to the executable check the #guards of Closure/Checks.lean evaluate, and by Closure/RoundTrip.lean:6, whose proofs this mutant breaks"
+    },
+    {
+      "definition": "VE.Closure.Formula.denote",
+      "operator": "body-true",
+      "reason": "a Prop no check can evaluate; exercised by VE.Closure.conservativity (Syntax.lean:84), VE.Closure.eval_iff_denote and eval_false_iff_not_denote (Finite.lean:32, 38), which tie it to the finite eval the #guards of Closure/Checks.lean evaluate, VE.Closure.entails_iff and VE.Core.embedClosure_denote, whose proofs this mutant breaks"
+    },
+    {
+      "definition": "VE.Closure.Entails",
+      "operator": "body-false",
+      "reason": "a Prop no check can evaluate; the constant body drops the universe parameter u, so every statement written Entails.{u} (VE.Closure.countermodel_sound, Consequence.lean:13) fails to elaborate and the tool cannot cut that proof (UNKNOWN); the same body breaks VE.Closure.entails_iff (Consequence.lean:11)"
+    },
+    {
+      "definition": "VE.Closure.Formula.WellFormed",
+      "operator": "body-false",
+      "reason": "a Prop no check can evaluate (no Decidable instance); exercised by VE.Closure.check_iff_wellFormed (Syntax.lean:65), which ties it to the executable check the #guards of Closure/Checks.lean evaluate, and by Closure/RoundTrip.lean:6, whose proofs this mutant breaks"
+    },
+    {
+      "definition": "VE.Closure.Formula.denote",
+      "operator": "body-false",
+      "reason": "a Prop no check can evaluate; exercised by VE.Closure.conservativity (Syntax.lean:84), VE.Closure.eval_iff_denote and eval_false_iff_not_denote (Finite.lean:32, 38), which tie it to the finite eval the #guards of Closure/Checks.lean evaluate, VE.Closure.entails_iff and VE.Core.embedClosure_denote, whose proofs this mutant breaks"
+    },
+    {
+      "definition": "VE.Closure.Formula.toCore",
+      "operator": "all-any",
+      "reason": "no mutant: the replacement names a constructor that does not exist (VE.Closure.Formula.any, VE.Core.Formula.any), so Lean refuses the mutated text itself; toCore's arms are checked by the #guards of Closure/Checks.lean, one per constructor kind"
+    }
+  ]
+}
