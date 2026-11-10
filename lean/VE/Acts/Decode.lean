@@ -44,7 +44,8 @@ def decodeElaboratedU (environment norms : Json) : Except String ElaboratedU :=
 
 /-- The norms route's source as `decodeSourceU`'s second branch gives it, for a source decoded with its flags. -/
 def plainU (src : VE.Norms.Wire.Source) : VE.NormDefaults.Wire.SourceU :=
-  ⟨src, ⟨src.D, []⟩, rfl, (by rw [fill_eq_self _ rfl]; exact src.wf), false, (fun h => by cases h), fun _ => rfl⟩
+  ⟨src, ⟨src.D, []⟩, rfl, (by rw [fill_eq_self _ rfl]; exact src.wf), false, (fun h => by cases h), fun _ => rfl,
+    []⟩
 
 /-- `decodeElaboratedU` on the norms route, which admits `data@0` flags; `decodeSourceU`'s second branch does not
     and takes no parameter (6.4). -/
@@ -170,7 +171,8 @@ theorem splitEnv_route (e : ElaboratedU) (rv' : VE.Route.Wire.RouteVocabulary)
   cases M_find : e.M.preds.find? (·.1 == q) <;> rfl
 
 /-- The elaborated document as the `SourceU` the routes read: the source's own value when its acts are all lexical;
-    else the parts declared in place of their sources, the names and the definitions chain checked over them. -/
+    else the parts declared in place of their sources, the names and the definitions chain checked over them, and
+    each part rule with the rule it splits (`sources`, `elaborateMap_sources`). -/
 def sourceOf (e : ElaboratedU) : Except String VE.NormDefaults.Wire.SourceU :=
   let src := e.s.src
   let rv := src.ne.rv
@@ -192,7 +194,7 @@ def sourceOf (e : ElaboratedU) : Except String VE.NormDefaults.Wire.SourceU :=
         pure ⟨⟨ne', e.U'.D, wellFormedU_D hu, splitEnv_route e rv' hs rfl rfl, hlits⟩, e.U', rfl,
           VE.NormDefaults.fill_wellFormed _ hu, e.s.profiled, fun _ => hu, fun hp => by
             rw [(elaborateMap_ok e.hE).2.2.1]
-            simp [splitDoc, e.hU, e.s.plain hp]⟩
+            simp [splitDoc, e.hU, e.s.plain hp], e.M.rules.map fun x => (x.1, x.2.1)⟩
       else throw "InvalidInput: the elaborated document is not well formed"
     else throw "InvalidInput: the elaborated document is not well formed"
   else throw "InvalidInput: the elaborated document is not well formed"
@@ -221,6 +223,39 @@ theorem sourceOf_U {e : ElaboratedU} {s : VE.NormDefaults.Wire.SourceU} (h : sou
 /-- `decodeElaboratedU` as the `SourceU` every norm-defaults check reads. -/
 def elaboratedU (environment norms : Json) : Except String VE.NormDefaults.Wire.SourceU :=
   decodeElaboratedU environment norms >>= sourceOf
+
+/-- The generated rules `sourceOf e` names: the decoded source's when no act splits, else each part rule of the map
+with the rule it splits. -/
+theorem sourceOf_sources {e : ElaboratedU} {s : VE.NormDefaults.Wire.SourceU} (h : sourceOf e = .ok s) :
+    s.sources = e.s.sources ∨ s.sources = e.M.rules.map fun x => (x.1, x.2.1) := by
+  unfold sourceOf at h
+  simp only [pure, Except.pure] at h
+  split at h
+  · simp only [Except.ok.injEq] at h; subst h; exact .inl rfl
+  · repeat' split at h
+    all_goals first | (cases h; done) | skip
+    simp only [Except.ok.injEq] at h
+    subst h
+    exact .inr rfl
+
+/-- norm-defaults-cfr-1b: each `(rule, source)` the elaborated source echoes is a part rule of the document the routes
+read, built by `splitNode` from the request rule `source` names (a rule of the decoded source `e.s`). -/
+theorem elaboratedU_sources {environment norms : Json} {s : VE.NormDefaults.Wire.SourceU}
+    (h : elaboratedU environment norms = .ok s) {y : String × String} (hy : y ∈ s.sources) :
+    ∃ e, decodeElaboratedU environment norms = .ok e ∧ s.U = e.U' ∧ ∃ N ∈ e.s.U.D.T.nodes, y.2 = N.name ∧
+      ∃ P ∈ s.U.D.T.nodes, P.name = y.1 ∧ P ∈ splitNode (splitAtoms e.D) N := by
+  obtain ⟨e, he, hs⟩ := VE.Kit.Except.bind_ok h
+  have hU := (sourceOf_U hs).1
+  refine ⟨e, he, hU, ?_⟩
+  rcases sourceOf_sources hs with h0 | h1
+  · obtain ⟨s₀, hd, he'⟩ := VE.Kit.Except.bind_ok he
+    rw [h0, elaborateSource_s he', VE.NormDefaults.Wire.decodeSourceUWith_sources hd] at hy
+    cases hy
+  · rw [h1] at hy
+    obtain ⟨x, hx, rfl⟩ := List.mem_map.mp hy
+    obtain ⟨N, hN, hn, P, hP, hp, hsplit⟩ := elaborateMap_sources e.hE hx
+    rw [e.hU] at hN
+    exact ⟨N, hN, hn, P, hU ▸ hP, hp, hsplit⟩
 
 /-- `decodeElaboratedFlagged` as the `Source` every norms check reads. -/
 def flaggedSource (environment norms : Json) : Except String VE.Norms.Wire.Source :=

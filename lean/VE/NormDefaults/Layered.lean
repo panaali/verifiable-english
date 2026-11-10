@@ -78,6 +78,9 @@ structure LayeredU where
   baseEnv : Json
   envId : String
   docHash : String
+  /-- Each rule of `U` the route generated, with the request rule it comes from (`rightsSources`; `[]` on the soft
+  route, whose rules are the request's): the status row's `sources` (norm-defaults-cfr-1b). -/
+  sources : List (String × String)
 
 def LayeredU.X (L : LayeredU) : List VE.Formula := Packs.X L.packs
 
@@ -126,8 +129,81 @@ def decodeSoftU (environment norms : Json) (H : Option VE.Events.EventsHook := n
       ([softPack U src.D] ++ hookPacks H)
     pure ⟨"soft-norms@0", src.D, U, h, packs,
       VE.SoftNorms.Wire.primeModelVocabulary src.se src.D, VE.SoftNorms.Wire.primeModel_valid src,
-      baseEnv, envId, docHash⟩
+      baseEnv, envId, docHash, []⟩
   else throw "InvalidInput: norm-defaults document is not well formed"
+
+/-- Each rule `correlate` generates, with the request rule it comes from (norm-defaults-cfr-1b): a fan-out instance
+`rights-fan-<k>` its source line's norm (`Line.source`, kept by `instancesOf`), a bar rule `rights-bar-<k>` the bar
+read as a rule. -/
+def rightsSources (D : VE.Rights.RightsDoc) : List (String × String) :=
+  (VE.Rights.linesOf D).filterMap (fun RN => match RN.2.bearer, RN.2.source.norm with
+    | some _, some n => some (RN.2.node.name, n.name)
+    | _, _ => none) ++
+  (VE.Rights.barNodes D).filterMap fun B => (D.bars.find? (·.reading == .rule)).map fun b => (B.name, b.name)
+
+/-- A fan-out instance of a source line is that line's norm, renamed and on its bearer's predicate. -/
+theorem instancesOf_fan {R : String} {S : VE.Rights.SourceLine} {k : Nat} {N : VE.Rights.Line}
+    (hN : N ∈ VE.Rights.instancesOf R S k) (hb : N.bearer.isSome) :
+    N.source = S ∧ ∃ n, S.norm = some n ∧ N.node = { n with name := N.node.name, pred := N.node.pred } := by
+  unfold VE.Rights.instancesOf at hN
+  split at hN
+  · split at hN
+    · simp only [List.mem_cons, List.mem_singleton, List.not_mem_nil, or_false] at hN
+      rcases hN with rfl | rfl <;> simp at hb
+    · cases hN
+  · split at hN
+    · cases hN
+    next n hn =>
+      split at hN
+      · simp only [List.mem_singleton] at hN; subst hN; simp at hb
+      · obtain ⟨i, _, rfl⟩ := List.mem_mapIdx.mp hN
+        exact ⟨rfl, n, hn, rfl⟩
+
+theorem linesAux_mem {R : String} {N : VE.Rights.Line} :
+    ∀ {L : List (String × VE.Rights.SourceLine)} {k : Nat}, (R, N) ∈ VE.Rights.linesAux L k →
+      ∃ S k', (R, S) ∈ L ∧ N ∈ VE.Rights.instancesOf R S k'
+  | [], _, h => by cases h
+  | (R', S) :: L, k, h => by
+    simp only [VE.Rights.linesAux, List.mem_append, List.mem_map, Prod.mk.injEq] at h
+    rcases h with ⟨N', hN', rfl, rfl⟩ | h
+    · exact ⟨S, k, .head _, hN'⟩
+    · obtain ⟨S', k', hS, hN⟩ := linesAux_mem h
+      exact ⟨S', k', .tail _ hS, hN⟩
+
+/-- Each echoed source names what the generated rule was built from: a fan-out instance's source is the norm of a
+source line of the document, the instance being that norm renamed; a bar rule's is the document's bar read as a rule,
+the rule being `barNode` of a barred predicate. -/
+theorem rightsSources_built (D : VE.Rights.RightsDoc) {y : String × String} (hy : y ∈ rightsSources D) :
+    (∃ R N n, (R, N) ∈ VE.Rights.linesOf D ∧ N.source.norm = some n ∧
+        (∃ S k, (R, S) ∈ VE.Rights.sourceLines D ∧ N ∈ VE.Rights.instancesOf R S k ∧ S.norm = some n) ∧
+        N.node = { n with name := N.node.name, pred := N.node.pred } ∧ y = (N.node.name, n.name)) ∨
+     (∃ m b, b ∈ D.bars ∧ b.reading = .rule ∧ m ∈ VE.Rights.barPreds D ∧
+        y = ((VE.Rights.barNode D m).name, b.name)) := by
+  simp only [rightsSources, List.mem_append, List.mem_filterMap] at hy
+  rcases hy with ⟨⟨R, N⟩, hN, hy⟩ | ⟨B, hB, hy⟩
+  · left
+    obtain ⟨S, k, hS, hi⟩ := linesAux_mem hN
+    cases hb : N.bearer with
+    | none => simp [hb] at hy
+    | some b =>
+      cases hn : N.source.norm with
+      | none => simp [hb, hn] at hy
+      | some n =>
+        simp only [hb, hn, Option.some.injEq] at hy
+        subst hy
+        obtain ⟨hs, n', hn', hnode⟩ := instancesOf_fan hi (by simp [hb])
+        have hSn : S.norm = some n := by rw [← hs]; exact hn
+        rw [hSn] at hn'; cases hn'
+        exact ⟨R, N, n, hN, hn, ⟨S, k, hS, hi, hSn⟩, hnode, rfl⟩
+  · right
+    obtain ⟨b, hb, rfl⟩ := Option.map_eq_some_iff.mp hy
+    have hbm := List.mem_of_find?_eq_some hb
+    have hbr := List.find?_some hb
+    unfold VE.Rights.barNodes at hB
+    split at hB
+    · obtain ⟨m, hm, rfl⟩ := List.mem_map.mp hB
+      exact ⟨m, b, hbm, by simpa using hbr, hm, rfl⟩
+    · cases hB
 
 /-- The rights branch: `correlate` and `soften` over the placeholder completions, then `fill`;
 the limitation premises stay in the base. -/
@@ -149,7 +225,7 @@ def decodeRightsU (environment document : Json) (H : Option VE.Events.EventsHook
         ([softPack U D, rightsPack src.D] ++ hookPacks H)
       pure ⟨"rights@0", D, U, h, packs,
         VE.Rights.Wire.primeModelVocabularyR src.re src.D, (fun M h => VE.Rights.Wire.primeModelR_valid src M hg h),
-        baseEnv, envId, docHash⟩
+        baseEnv, envId, docHash, rightsSources src.D⟩
     else throw "InvalidInput: a rights-generated predicate is a layer symbol"
   else throw "InvalidInput: norm-defaults document is not well formed"
 
@@ -459,7 +535,7 @@ def layeredCase (L : LayeredU) (id kind : String) (j : Json) : Except String (Op
           decodeFilling L.U d.S.M (j.getObjValD "no"))
       else pure none
     return some <| VE.Route.Wire.ok id ([("point_status", .str d.status.label), ("predicate", .str d.r.name)] ++
-      statusFields L.U d.S.M d.r.name d.vs (d.status != .undecided && d.status != .unknown) fillings)
+      statusFields L.U d.S.M d.r.name d.vs (d.status != .undecided && d.status != .unknown) fillings L.sources)
   if kind == "norm-defaults-report" then
     let rep ← reportWith (layeredSource L packages) j
     return some <| VE.Route.Wire.ok id rep.toJson

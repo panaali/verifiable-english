@@ -195,11 +195,40 @@ def fillingsDiffer (U : UDoc) (F₁ F₂ : FiniteFill U Entity) : List (String �
 def atomsJson (A : List (String × List Entity)) : Json :=
   Json.arr (A.map (fun a => Json.mkObj [("predicate", .str a.1), ("tuple", toJson (a.2.map (·.2)))])).toArray
 
+/-- Each rule with the request rule it comes from (norm-defaults-cfr-1b): its source in the route's table `gen` of
+generated rules (`SourceU.sources`, `LayeredU.sources`), else the rule itself. -/
+def ruleSources (gen : List (String × String)) (rules : List String) : List (String × String) :=
+  rules.map fun n => (n, (gen.lookup n).getD n)
+
+def sourcesJson (S : List (String × String)) : Json :=
+  Json.arr (S.map (fun x => Json.mkObj [("rule", .str x.1), ("source", .str x.2)])).toArray
+
+/-- The echo names each rule once, in order, with its generated source, or itself when `gen` generated none. -/
+theorem ruleSources_spec (gen : List (String × String)) (rules : List String) :
+    (ruleSources gen rules).map (·.1) = rules ∧
+      ∀ x ∈ ruleSources gen rules, (x.1, x.2) ∈ gen ∨ (gen.lookup x.1 = none ∧ x.2 = x.1) := by
+  refine ⟨by simp only [ruleSources, List.map_map]; exact List.map_id'' (fun _ => rfl) _, fun x hx => ?_⟩
+  obtain ⟨n, -, rfl⟩ := List.mem_map.mp hx
+  cases h : gen.lookup n with
+  | none => exact .inr ⟨rfl, rfl⟩
+  | some s =>
+    refine .inl ?_
+    simp only [Option.getD_some]
+    clear hx
+    induction gen with
+    | nil => cases h
+    | cons y gen ih =>
+      by_cases hy : n = y.1
+      · subst hy; simp only [List.lookup, beq_self_eq_true, Option.some.injEq] at h; subst h; exact .head _
+      · simp only [List.lookup, beq_eq_false_iff_ne.mpr hy] at h; exact .tail _ (ih h)
+
 /-- The deciding rules of a status: on a SETTLED point, the rules on `p` and on its pair
 partners that decide under the canonical filling; on an UNDECIDED point, the rules on `p`
-that decide under either supplied filling, and the atoms where the fillings differ. -/
+that decide under either supplied filling, and the atoms where the fillings differ; each rule's
+request source from `gen` (`ruleSources`). -/
 def statusFields (U : UDoc) (M : VE.FiniteModel Entity) (p : String) (tuple : List Entity)
-    (settled : Bool) (fillings : Option (FiniteFill U Entity × FiniteFill U Entity)) : List (String × Json) :=
+    (settled : Bool) (fillings : Option (FiniteFill U Entity × FiniteFill U Entity))
+    (gen : List (String × String)) : List (String × Json) :=
   let ρ := tupleVal tuple
   let rules := match fillings with
     | some (F₁, F₂) => (selectedRules U (M.withFill F₁) ρ p ++ selectedRules U (M.withFill F₂) ρ p).eraseDups
@@ -208,7 +237,8 @@ def statusFields (U : UDoc) (M : VE.FiniteModel Entity) (p : String) (tuple : Li
   let differs := match fillings with
     | some (F₁, F₂) => fillingsDiffer U F₁ F₂
     | none => []
-  [("tuple", toJson (tuple.map (·.2))), ("rules", toJson rules), ("differs", atomsJson differs)]
+  [("tuple", toJson (tuple.map (·.2))), ("rules", toJson rules), ("sources", sourcesJson (ruleSources gen rules)),
+   ("differs", atomsJson differs)]
 
 /-! ## The completed value of a reached default -/
 

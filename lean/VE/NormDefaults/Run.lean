@@ -255,7 +255,8 @@ def runOtherCaseIn (dec : Wire.UDecoder) (id kind : String) (j : Json) : Except 
           Wire.decodeFilling d.s.U d.M (j.getObjValD "no"))
       else pure none
     return VE.Route.Wire.ok id ([("point_status", .str d.status.label), ("predicate", .str d.r.name)] ++
-      Wire.statusFields d.s.U d.M d.r.name d.tuple (d.status != .undecided && d.status != .unknown) fillings)
+      Wire.statusFields d.s.U d.M d.r.name d.tuple (d.status != .undecided && d.status != .unknown) fillings
+        d.s.sources)
   if kind == "norm-defaults-gaps" && (j.getObjVal? "model").toBool then
     let ⟨_, d⟩ ← Wire.replayReachedIn dec j
     return VE.Route.Wire.ok id [("gaps", .str (if d.reached then "reachable" else "unknown")),

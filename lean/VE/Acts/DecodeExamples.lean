@@ -221,6 +221,10 @@ def viewed (s : VE.NormDefaults.Wire.SourceU) :=
     ["p027__1", "p027__2"], true)
 #guard ((elaboratedU (envOf nd6 block6) norms27).toOption.map viewed) ==
   ((decodeElaboratedU (envOf nd6 block6) norms27 >>= sourceOf).toOption.map viewed)
+-- norm-defaults-cfr-1b: each part rule with the rule it splits (a status row's `sources`); a plain source has none.
+#guard ((elaboratedU (envOf nd6 block6) norms27).toOption.map (·.sources)) ==
+  some [("r027-a1", "r027"), ("r027-a2", "r027")]
+#guard ((VE.NormDefaults.Wire.decodeSourceU (envOf nd6 block6) norms27).toOption.map (·.sources)) == some []
 #guard (((flaggedSource (envOf plain6 block6 (default := "deny")) norms27).toOption.map fun s =>
     (s.D.T.nodes.map (·.name), (s.D.E.predicates "p027__2").isSome, (s.D.E.predicates "p027").isNone))) ==
   some (["r027-a1", "r027-a2"], true, true)
