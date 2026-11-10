@@ -3,9 +3,8 @@
 Summary: READY FOR REVIEW. pk-1's REPORT (section 2, self-review item 4) and DELTA say the 33 route cases' differential
 is INVALID (exit 1) and cite `evidence/ab_full.txt` (exit 0) only for what it covers; the evidence files are unchanged
 and nothing was re-run. `tests/test_pk1_route_case_evidence_validity.py` fails on main, passes here. Docs and test only;
-trust +0; pilot bytes 0; no DELTA row; no DRI signature reserved. Next item: none; two FOLLOW-UPs below.
-
-Source: DRI 2026-11-10 (dri-decisions-20261110-lp0001.md Q2; regrade #6). Plan: the code on main; base de7fb9469.
+trust +0; pilot bytes 0; no DELTA row; no DRI signature reserved. Next item: none; two FOLLOW-UPs below. Source: DRI
+2026-11-10 (dri-decisions-20261110-lp0001.md Q2; regrade #6). Plan: the code on main; base de7fb9469.
 
 **Deliverables (AGENT).** (1) Wording: pk-1 REPORT.md :62-65 and :184-187, DELTA.md :17-19; `git diff de7fb9469 --
 docs/premise-packs/pk-1/evidence` is empty. (2) `test_pk1_route_case_evidence_validity`. A claim is the list item,
