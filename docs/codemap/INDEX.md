@@ -5,7 +5,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 
 - [bench/](bench.md) — 4 modules — -
 - [conformance/](conformance.md) — 67 modules — `evaluation.json` contains **701** valid environment/model/document cases (**4,912 formulas**).
-- [docs/act-phrases/](docs__act-phrases.md) — 40 modules — -
+- [docs/act-phrases/](docs__act-phrases.md) — 42 modules — -
 - [docs/arch/](docs__arch.md) — 28 modules — -
 - [docs/architecture/](docs__architecture.md) — 1 modules — -
 - [docs/attitudes/](docs__attitudes.md) — 4 modules — -
@@ -80,7 +80,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/ResponseShape/Encoders/](lean__ResponseShape__Encoders.md) — 32 modules — -
 - [lean/ResponseShape/Schemas/](lean__ResponseShape__Schemas.md) — 43 modules — -
 - [lean/VE/](lean__VE.md) — 27 modules — -
-- [lean/VE/Acts/](lean__VE__Acts.md) — 31 modules — -
+- [lean/VE/Acts/](lean__VE__Acts.md) — 33 modules — -
 - [lean/VE/Alternatives/](lean__VE__Alternatives.md) — 13 modules — -
 - [lean/VE/Arith/](lean__VE__Arith.md) — 10 modules — -
 - [lean/VE/Ask/](lean__VE__Ask.md) — 15 modules — -
@@ -110,8 +110,8 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/VE/Presupposition/](lean__VE__Presupposition.md) — 8 modules — -
 - [lean/VE/Purposes/](lean__VE__Purposes.md) — 4 modules — -
 - [lean/VE/Question/](lean__VE__Question.md) — 12 modules — -
-- [lean/VE/Readings/ part 1](lean__VE__Readings--part-1.md) — 74 modules — -
-- [lean/VE/Readings/ part 2](lean__VE__Readings--part-2.md) — 5 modules — -
+- [lean/VE/Readings/ part 1](lean__VE__Readings--part-1.md) — 73 modules — -
+- [lean/VE/Readings/ part 2](lean__VE__Readings--part-2.md) — 3 modules — -
 - [lean/VE/RightClauses/](lean__VE__RightClauses.md) — 17 modules — -
 - [lean/VE/Rights/](lean__VE__Rights.md) — 13 modules — -
 - [lean/VE/Risk/](lean__VE__Risk.md) — 14 modules — -

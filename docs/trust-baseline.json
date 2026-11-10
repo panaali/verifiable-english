@@ -2303,10 +2303,17 @@
    "commit": "9ba8aeaedfc82fa41258a4f52bcca4820f47b663"
   },
   {
+   "class": "S",
+   "lines": 26,
+   "reason": "ap-5: lean/VE/Acts/Specialise.lean +32 trusted (S +26: Restrictive 4, Modifier.restrictive 3, specialises 8, specPremises 11; untied G[V] +6: declaredOnce 6); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-5, 2026-11-09",
+   "commit": "33fe04615107cfb12e4402877992e6ff7b6e95d8"
+  },
+  {
    "class": "V",
-   "lines": 5,
-   "reason": "sc-11: VE/Readings/SoftSupLabels.lean V +5 (sdShown, untied G[V]; labelImage tied by labelImage_fst, _snd_mem, _functional, supLabel_pull, supLabel_other; nodeExcLabels tied by excLabels_nodes); K +0, S +0",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-11, 2026-10-18",
+   "lines": 6,
+   "reason": "ap-5: lean/VE/Acts/Specialise.lean +32 trusted (S +26: Restrictive 4, Modifier.restrictive 3, specialises 8, specPremises 11; untied G[V] +6: declaredOnce 6); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-5, 2026-11-09",
    "commit": "33fe04615107cfb12e4402877992e6ff7b6e95d8"
   },
   {
@@ -2374,6 +2381,13 @@
   },
   {
    "class": "V",
+   "lines": 12,
+   "reason": "ci-3b: VE/Commands/SplitOnLemmas.lean V +12 (splitOnL, the List Char spec of String.splitOn; proof-only), K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ci-3b, 2026-11-09; reviews/dri-decisions-20261109-ci-3b.md item 2",
+   "commit": "1531891aaf6b5d6a5a064448e29489245b67e496"
+  },
+  {
+   "class": "V",
    "lines": 76,
    "reason": "et-5: V +76 (VE/EnglishGrammar/SourceWords.lean +67, VE/EnglishGrammar/Advice.lean +9; the SourceWordsExamples helpers are T)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), et-5, 2026-10-18",
@@ -2381,10 +2395,10 @@
   },
   {
    "class": "V",
-   "lines": 12,
-   "reason": "ci-3b: VE/Commands/SplitOnLemmas.lean V +12 (splitOnL, the List Char spec of String.splitOn; proof-only), K +0, S +0",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ci-3b, 2026-11-09; reviews/dri-decisions-20261109-ci-3b.md item 2",
-   "commit": "1531891aaf6b5d6a5a064448e29489245b67e496"
+   "lines": 5,
+   "reason": "sc-11: VE/Readings/SoftSupLabels.lean V +5 (sdShown, untied G[V]; labelImage tied by labelImage_fst, _snd_mem, _functional, supLabel_pull, supLabel_other; nodeExcLabels tied by excLabels_nodes); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-11, 2026-10-18",
+   "commit": "33fe04615107cfb12e4402877992e6ff7b6e95d8"
   }
  ]
 }
