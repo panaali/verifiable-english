@@ -2511,6 +2511,13 @@
    "reason": "ps-3: VE/Presupposition/Couple.lean S +105 (K +0, V +0; tied +26)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ps-3, 2026-11-10",
    "commit": "c94ad399b7b1f6804c12fbc555a5758d5e971ae6"
+  },
+  {
+   "class": "V",
+   "lines": 64,
+   "reason": "sa-wire-purposes0: VE/WireContract/Hooks/Purposes.lean +61, VE/WireContract/Tables/Purposes.lean +2, VE/WireContract/Diagnose.lean +1 (V +64, K +0, S +0)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sa-wire-purposes0, 2026-10-18",
+   "commit": "1ee886ca05d28e36bcefd923208a9d3b6a0f11d0"
   }
  ]
 }
