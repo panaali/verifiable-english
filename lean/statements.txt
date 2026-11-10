@@ -65000,6 +65000,14 @@ theorem VE.Weighing.wf_congr
             VE.Formula.WellFormed E Γ φ → VE.Formula.WellFormed E' Γ φ
   -- uses VE.Environment.constants@VE.Syntax VE.Environment.predicates@VE.Syntax VE.Environment.sorts@VE.Syntax VE.Environment@VE.Syntax VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax VE.Norms.preds@VE.Norms.Tree
   -- expr 1717762978
+theorem VE.WireContract.Hooks.Purposes.classifier_ok_iff
+  ∀ (root : Lean.Json) (items : List VE.WireContract.Pointer),
+    (match VE.WireContract.Hooks.Purposes.classifier "purposes_block" root items with
+      | VE.WireContract.ClassifierResult.ok => Bool.true
+      | VE.WireContract.ClassifierResult.fail member args => Bool.false) =
+      (VE.Purposes.decodeBlock (VE.WireContract.Hooks.Purposes.purposesOf root)).isOk
+  -- uses VE.Purposes.Block@VE.Purposes.Decl VE.Purposes.decodeBlock@VE.Purposes.Wire VE.WireContract.ClassifierResult@VE.WireContract.Engine VE.WireContract.Hooks.Purposes.classifier@VE.WireContract.Hooks.Purposes VE.WireContract.Hooks.Purposes.classifier_ok_iff.match_1@VE.WireContract.Hooks.Purposes VE.WireContract.Hooks.Purposes.purposesOf@VE.WireContract.Hooks.Purposes VE.WireContract.Pointer@VE.WireContract.Table
+  -- expr 3435021720
 theorem VE.WireContract.expandAll_views
   ∀ (h g : VE.WireContract.Hooks),
     h.view = g.view →

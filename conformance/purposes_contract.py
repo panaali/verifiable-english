@@ -26,11 +26,13 @@ def members():
 
 def bound(row):
     """The record of a `diagnose` row for this unit, `None` when clean, refused unless bound to the table."""
-    record = row.get("diagnostic") if row.get("outcome") == "fault" else None
-    if row.get("status") != "ok" or row.get("outcome") not in ("clean", "fault"):
+    outcome, record = row.get("outcome"), row.get("diagnostic")
+    if row.get("status") != "ok" or (outcome, "diagnostic" in row) not in (("clean", False), ("fault", True)):
         raise CheckerUnavailable("diagnose: a purposes@0 row is neither clean nor a fault", operation="diagnose")
-    if record is None:
+    if outcome == "clean":
         return None
+    if type(record) is not dict:
+        raise CheckerUnavailable("diagnose: a purposes@0 fault has no record", operation="diagnose")
     phase, names = members().get(record.get("check"), (None, None))
     args = record.get("args")
     if (phase is None or record.get("phase") != phase or record.get("path") != "/purposes"
@@ -40,8 +42,10 @@ def bound(row):
 
 
 def lean_record(block):
-    """Lean's record for the block, `None` when the contract finds it clean."""
-    return bound(decide("diagnose", [{"id": "purposes", "unit": UNIT, "purposes": block}])[0])
+    """Lean's record for the block (`None`, which the wire does not carry, is an absent member), `None` when the
+    contract finds it clean."""
+    case = {"id": "purposes", "unit": UNIT, **({} if block is None else {"purposes": block})}
+    return bound(decide("diagnose", [case])[0])
 
 
 def legacy_validation(block):
