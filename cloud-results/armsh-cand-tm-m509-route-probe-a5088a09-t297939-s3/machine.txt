@@ -1,0 +1,9 @@
+job=armsh-cand-tm-m509-route-probe-a5088a09-t297939-s3 shard=3/4 nproc=4 arch=aarch64 host=runnervmkb2gk date=2026-11-10T08:06:56Z ulimit_s=16384
+Mem:              15           1           9           0           5          14
+/dev/root       145G   42G  103G  29% /
+ 08:06:56 up 4 min,  0 user,  load average: 1.26, 0.47, 0.19
+pilot/codex branches: 98
+ve-cache: lean-build exact key 4d40ea18ce70 asset lean-build-4d40ea18ce70-linux-aarch64.tar.zst sha256 8361dff20990 ok, seal ok, from download, 19.8 s
+seed: mode=seed match=exact asset=lean-build-4d40ea18ce70-linux-aarch64.tar.zst pruned=0 base=de32a2456413
+seed: lake 0.3 s (rc 0, match exact)
+p1-tokenizers: 443909a61d42 fetched
