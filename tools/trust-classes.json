@@ -20751,8 +20751,7 @@
       "D[V]": [
         "VE.Readings.Run.sdShared",
         "VE.Readings.Run.sdAssumed",
-        "VE.Readings.Run.sdModel",
-        "VE.Readings.Run.SDCase.labels"
+        "VE.Readings.Run.sdModel"
       ],
       "G[R]": [
         "VE.Readings.Run.SDCount",
@@ -20837,6 +20836,24 @@
             "VE.Readings.Run.SDCase.images_shown"
           ]
         },
+        {
+          "name": "VE.Readings.Run.SDCase.labels",
+          "tied": [
+            "VE.Readings.Run.SDCase.labels_eq"
+          ]
+        },
+        {
+          "name": "VE.Readings.Run.SDCase.usedOf",
+          "tied": [
+            "VE.Readings.Run.SDCase.usedOf_replays"
+          ]
+        },
+        {
+          "name": "VE.Readings.Run.SDCase.relabel",
+          "tied": [
+            "VE.Readings.Run.SDCase.relabel_shown"
+          ]
+        },
         "VE.Readings.Run.sdScope"
       ]
     },
@@ -20872,7 +20889,8 @@
         "VE.Readings.SoftSupRunExamples.modelJ",
         "VE.Readings.SoftSupRunExamples.count",
         "VE.Readings.SoftSupRunExamples.text",
-        "VE.Readings.SoftSupRunExamples.big8"
+        "VE.Readings.SoftSupRunExamples.big8",
+        "VE.Readings.SoftSupRunExamples.used3"
       ]
     }
   }

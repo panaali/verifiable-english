@@ -32248,6 +32248,13 @@ theorem VE.Readings.Run.SDCase.images_shown
     VE.Readings.Run.shownWith (c.images A) used = VE.Readings.sdShown c.N A used
   -- uses VE.Readings.Choice@VE.Readings.Choice VE.Readings.Run.SDCase.N@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.images@VE.Readings.SoftSupRun VE.Readings.Run.SDCase@VE.Readings.SoftSupRun VE.Readings.Run.shownWith@VE.Readings.SoftSupRun VE.Readings.sdShown@VE.Readings.SoftSupLabels
   -- expr 4131400312
+theorem VE.Readings.Run.SDCase.labels_eq
+  ∀ (c : VE.Readings.Run.SDCase),
+    c.labels =
+      List.map (fun x => x.fst) (VE.Readings.slotLabelled c.N.D) ++
+        List.map (fun x => x.fst) (VE.NormDefaults.Admission.fillLabelled (VE.Readings.supU c.N))
+  -- uses VE.Formula@VE.Syntax VE.NormDefaults.Admission.fillLabelled@VE.NormDefaults.Admission VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.Run.SDCase.N@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.labels@VE.Readings.SoftSupRun VE.Readings.Run.SDCase@VE.Readings.SoftSupRun VE.Readings.slotLabelled@VE.Readings.Choice VE.Readings.supU@VE.Readings.Unspecified
+  -- expr 4063937651
 theorem VE.Readings.Run.SDCase.local_eq
   ∀ (c : VE.Readings.Run.SDCase) (M : VE.FiniteModel VE.Bridge.Entity)
     (G : VE.NormDefaults.FiniteFill c.U VE.Bridge.Entity), c.localFree M G = VE.Readings.Wire.localFree c.U M G
@@ -32280,6 +32287,15 @@ theorem VE.Readings.Run.SDCase.premises_eq
         ((VE.Readings.sup c.N.D).snd ++ Γ)
   -- uses VE.Formula@VE.Syntax VE.NormDefaults.Wire.premisesX@VE.NormDefaults.LayeredEntail VE.Readings.Choice@VE.Readings.Choice VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.Run.SDCase.N@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.premises@VE.Readings.SoftSupRun VE.Readings.Run.SDCase@VE.Readings.SoftSupRun VE.Readings.slotUnder@VE.Readings.Choice VE.Readings.sup@VE.Readings.Choice VE.Readings.supU@VE.Readings.Unspecified VE.Readings.supX@VE.Readings.SoftSup VE.Rights.RightsDoc@VE.Rights.Tree
   -- expr 2028991519
+theorem VE.Readings.Run.SDCase.relabel_shown
+  ∀ (c : VE.Readings.Run.SDCase) (A : VE.Readings.Choice) (ls : List String),
+    c.relabel (c.images A) ls =
+      List.filter (fun l => !(List.map (fun x => x.fst) c.XL).contains l && !(List.map (fun x => x.fst) c.FL).contains l)
+            ls ++
+          VE.Readings.sdShown c.N A (List.filter (List.map (fun x => x.fst) c.XL).contains ls) ++
+        List.filter (List.map (fun x => x.fst) c.FL).contains ls
+  -- uses VE.Formula@VE.Syntax VE.Readings.Choice@VE.Readings.Choice VE.Readings.Run.SDCase.FL@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.N@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.XL@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.images@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.relabel@VE.Readings.SoftSupRun VE.Readings.Run.SDCase@VE.Readings.SoftSupRun VE.Readings.sdShown@VE.Readings.SoftSupLabels
+  -- expr 3363846372
 theorem VE.Readings.Run.SDCase.replay_conflict
   ∀ (c : VE.Readings.Run.SDCase) (A : VE.Readings.Choice) (certs : List (Option VE.Tableau.Certificate)),
     c.replay A (VE.Readings.Run.sdProofs c certs Option.none) (List.map (fun x => x.snd) c.middle) =
@@ -32307,6 +32323,12 @@ theorem VE.Readings.Run.SDCase.taken_eq
   ∀ (c : VE.Readings.Run.SDCase) (A : VE.Readings.Choice), c.taken A = VE.Readings.takenBy c.N.D A
   -- uses VE.Readings.Choice@VE.Readings.Choice VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.Run.SDCase.N@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.taken@VE.Readings.SoftSupRun VE.Readings.Run.SDCase@VE.Readings.SoftSupRun VE.Readings.takenBy@VE.Readings.Choice
   -- expr 2955110355
+theorem VE.Readings.Run.SDCase.usedOf_replays
+  ∀ (c : VE.Readings.Run.SDCase) (A : VE.Readings.Choice) (ps : List VE.Readings.SupProof),
+    c.replay A ps (List.map (fun x => x.snd) c.middle) = Bool.true →
+      c.replay A ps (VE.Readings.blank c.middle (c.usedOf A ps)) = Bool.true
+  -- uses VE.Formula@VE.Syntax VE.Readings.Choice@VE.Readings.Choice VE.Readings.Run.SDCase.middle@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.replay@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.usedOf@VE.Readings.SoftSupRun VE.Readings.Run.SDCase@VE.Readings.SoftSupRun VE.Readings.SupProof@VE.Readings.SupDependencies VE.Readings.blank@VE.Readings.Verdicts
+  -- expr 3883982704
 theorem VE.Readings.Run.SoftChoiceModel.valid
   ∀ (self : VE.Readings.Run.SoftChoiceModel), self.M.Valid (VE.Norms.envAt (VE.SoftNorms.soften self.src.D) 0)
   -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.Valid@VE.Finite VE.Norms.envAt@VE.Norms.Tree VE.Readings.Run.SoftChoiceModel.M@VE.Readings.SupRun VE.Readings.Run.SoftChoiceModel.src@VE.Readings.SupRun VE.Readings.Run.SoftChoiceModel@VE.Readings.SupRun VE.SoftNorms.Wire.SoftSource.D@VE.SoftNorms.Wire VE.SoftNorms.soften@VE.SoftNorms.Soften
