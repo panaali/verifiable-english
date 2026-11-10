@@ -1,0 +1,15 @@
+trust_mutants: 45 definitions, 45 mutants (22 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/Acts/Specialise.lean:40 VE.Acts.specPremises (S, trusted) list-empty: (declaredOnce E p.1) -> [] (lean/VE/Acts/Specialise.lean:42: Invalid projection: Type of)
+UNKNOWN lean/VE/Commands/Steps.lean:36 VE.Commands.shapes (G[V], trusted) list-empty: body.drop 3 -> [] (lean/VE/Commands/Steps.lean:36: Invalid field `splitOn`: The environment does not contain `List.s...)
+UNKNOWN lean/VE/Commands/Steps.lean:95 VE.Commands.shapeOutcome (G[V], trusted) list-empty: rs -> [] (lean/VE/Commands/Steps.lean:95: Invalid field notation: Type of)
+UNKNOWN lean/VE/EnglishGrammar/Advice.lean:57 VE.EnglishGrammar.sourceWordAdvice (G[V], trusted) list-empty: [aw r.word] -> [] (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/EnglishGrammar/SourceWords.lean:138 VE.EnglishGrammar.sourceWords (S, trusted) list-empty: eventsFixed -> [] (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/Presupposition/Admit.lean:60 VE.Presupposition.peelWith (G[V], trusted) list-empty: rs.filter (· == .conditioned) -> [] (lean/VE/Presupposition/Admit.lean:60: don't know how to synthesize implicit argument `α`)
+UNKNOWN lean/VE/Presupposition/Admit.lean:240 VE.Presupposition.separated (G[V], trusted) list-empty: ((List.range rs.length).filter (i < ·)).map (i, ·) -> [] (lean/VE/Presupposition/Admit.lean:242: Invalid match expression: The type of pattern variable 'w'...)
+UNKNOWN lean/VE/Presupposition/Wire.lean:86 VE.Presupposition.cellOk (S, trusted) list-empty: cs -> [] (lean/VE/Presupposition/Wire.lean:86: Invalid dotted identifier notation: The expected type of `.c...)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:167 VE.Purposes.WellFormed (S, trusted) list-empty: U -> [] (lean/VE/Purposes/WellFormed.lean:167: Application type mismatch: The argument)
+trust_mutants: 10 KILLED, 0 SURVIVOR, 9 UNKNOWN, 3 INVALID, 0 ALLOWED, 0 NOT RUN, 23 OTHER SHARD in 3293 s
+trust_mutants: D[V], trusted: 4 KILLED, 2 INVALID, 7 OTHER SHARD
+trust_mutants: G[V], trusted: 3 KILLED, 5 UNKNOWN, 1 INVALID, 10 OTHER SHARD
+trust_mutants: S, trusted: 3 KILLED, 4 UNKNOWN, 6 OTHER SHARD
+trust_mutants: steps: wall plan 16.2 s, scratch 4.9 s, control_build 0.4 s, probe_install 1.5 s, mutants 3266.5 s, cleanup 4 s, reads 0.2 s; lake control_build 0.4 s (1), probe_install 1.5 s (1), control_probes 130.6 s (10), mutant_builds 159.3 s (22), mutant_checks 10107.6 s (16), stage_controls 1511 s (4), mutant_probes 175.4 s (10)
