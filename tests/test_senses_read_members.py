@@ -272,16 +272,17 @@ def test_the_relay_refuses_a_malformed_line_request(value):
 
 
 # sha256 of each GENUINE answer (`json.dumps(result, sort_keys=True, separators=(",", ":"))`), recorded with main's
-# ve_senses_route at the merge base 9ba8aeaed, before sn-b6d.
+# ve_senses_route at the merge base 9ba8aeaed, before sn-b6d. `open`, `one` and `warnings` carry the English
+# `actions_version`: re-recorded at 46 (en-e3a's lock; with "46" read as "45" each equals main's digest).
 MAIN_DIGESTS = {
-    "open": "d7b986ecb1c554d2d1c36ce969bf0f6d3b7d878c08f646494e149fd947a5713d",
-    "one": "5db5cb38e0c3bf791f13df6f9ed025b8c7521c4a4b339fc238ccabd43de5159b",
+    "open": "0fa10b83504de8bd299963e08e60d816a93219873e829c8bca7c4605cd6c1b8f",
+    "one": "0ac90d631557b829f60d3f2e2eb566ee9c0aa02c4ac98f51dd52365ab3bd0e45",
     "none": "9e3fae925071db320bb2fa4264e73f3dde70c8831e706ca2428fc6aed6d12448",
     "budget": "f5fde6c89931d2e9e7ef481bfeaa4d44d5a13e74f5e69c19ca3c75fbc56ea783",
     "many": "685c74c70564c3fb3c33a7ec41dc8b92a02fc87ad8e4a404fc67784e5938ab79",
     "diverge": "16e81c8a6d010aba52b9e316cce94aa5712107c01b1fce62cda2e6d38a7adee0",
     "dictionary": "fa6aeeb8259e0031f55a03e80b39c97cd40555e8026ce97af1fae5b1db7ef440",
-    "warnings": "6323bc83475d9afa1ab7b029340ff5e3516b8362615f6b481f3403b5d03c28b4",
+    "warnings": "338962fd900ee946d8436c21d8d27fb750c3424008ef287856f7f0a40887dceb",
     "hint": "ac05d1f92a51efd2a5112c85c48c9002d97f1d6007236260bd28e46e096c9593",
 }
 
