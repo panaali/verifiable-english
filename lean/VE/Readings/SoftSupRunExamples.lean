@@ -1,0 +1,150 @@
+import VE.Readings.SoftSupRun
+import VE.Readings.Run
+
+/-! sc-11c's fixtures (docs/spec/rd-9-soft-chain.md 14.9 W-13, W-14; 14.11): the soft runners on admitted cases, each
+value computed here by `#guard`. The documents are the JSON of `NSD4a` and `NSDbig n` (SoftSupExamples.lean,
+SoftSupWireExamples.lean); the conflict certificates of `NSD4a` under `rs1:1` are traces Python's prover found once
+on the premises Lean regenerates (`backgroundBase (fill (supU N)) ++ slotUnder N.D A ++ supX N ++ Fill_T`), checked
+here by Lean. `SDCount` is the measure: admissions and route checks per case (W-14), conflict checks (W-13's one
+proof), label images per scope and label replays per accepted piece (14.11 rows four and five). -/
+namespace VE.Readings.SoftSupRunExamples
+open Lean VE.Readings VE.Readings.Wire VE.Readings.Run
+
+def parse (s : String) : Json := (Json.parse s).toOption.getD .null
+/-- `NSD4a`'s environment (`x_permitted` allowed by default) and document. -/
+def env4a : Json := parse r#"{"language":"ve.core@0.2","profiles":["norm-defaults@0","norms@0","readings@1","relational-fol@0","soft-norms@0"],"spec_revision":"ve-v0.2-expand2-2026-09-25","vocabulary":{"sorts":{"assistant":{"description":"assistant"}},"predicates":{"x_required":{"arguments":["assistant"],"description":"obligation","regulated":{"role":"obligation","default":"deny","act":"{0} do x","permission":"x_permitted"}},"x_permitted":{"arguments":["assistant"],"description":"permission","regulated":{"role":"permission","default":"allow","act":"{0} do x"}},"y_permitted":{"arguments":["assistant"],"description":"permission","regulated":{"role":"permission","default":"unspecified","act":"{0} do y"}},"c":{"arguments":["assistant"],"description":"c"}},"constants":{}}}"#
+def doc4a : Json := parse r#"{"units":[{"id":"u0","kind":"norm","content":{"norm":{"name":"need-not-x","predicate":"x_required","sign":false,"guard":["top"],"unless":[],"over":[],"mode":"default","exception":{"decided_by":"unstated","sufficient":[],"necessary":[],"factors":[]}}}},{"id":"u1"}],"reading_sets":[{"id":"rs1","unit":"u1","version":1,"status":"open","readings":[{"id":"strict","kind":"norm","content":{"norm":{"name":"must-x","predicate":"x_required","sign":true,"guard":["unary","y_permitted",["var",0]],"unless":[],"over":[]}},"meaning_id":"m","admission":{"who":"w","why":"y","distinguishing_models":{}}},{"id":"default","kind":"norm","content":{"norm":{"name":"must-x","predicate":"x_required","sign":true,"guard":["unary","y_permitted",["var",0]],"unless":[],"over":[],"mode":"default","exception":{"decided_by":"unstated","sufficient":[["unary","c",["var",0]]],"necessary":[],"factors":[]}}},"meaning_id":"m","admission":{"who":"w","why":"y","distinguishing_models":{}}}],"situations":{}}]}"#
+/-- `NSDbig n`: one fixed `need-not-x` default and `n` sets of a strict and a default `must-x-k`, on `NSD4`'s frame. -/
+def env4 : Json := parse ((env4a.compress).replace "\"allow\"" "\"deny\"")
+def normJ (name : String) (sign : Bool) (guard : String) (dflt : Option String) : String :=
+  s!"\{\"norm\":\{\"name\":\"{name}\",\"predicate\":\"x_required\",\"sign\":{sign},\"guard\":{guard},\"unless\":[],\"over\":[]" ++
+    (match dflt with
+     | some s => s!",\"mode\":\"default\",\"exception\":\{\"decided_by\":\"unstated\",\"sufficient\":{s},\"necessary\":[],\"factors\":[]}"
+     | none => "") ++ "}}"
+def readingJ (id content : String) : String :=
+  s!"\{\"id\":\"{id}\",\"kind\":\"norm\",\"content\":{content},\"meaning_id\":\"m\",\"admission\":\{\"who\":\"w\",\"why\":\"y\",\"distinguishing_models\":\{}}}"
+def bigJ (n : Nat) : Json := parse (s!"\{\"units\":[\{\"id\":\"u0\",\"kind\":\"norm\",\"content\":{normJ "need-not-x" false "[\"top\"]" (some "[]")}}" ++
+  String.join ((List.range n).map fun k => s!",\{\"id\":\"u{k + 1}\"}") ++ "],\"reading_sets\":[" ++
+  ",".intercalate ((List.range n).map fun k => s!"\{\"id\":\"rs{k}\",\"unit\":\"u{k + 1}\",\"version\":1,\"status\":\"open\",\"situations\":\{},\"readings\":[" ++
+    readingJ "strict" (normJ s!"must-x-{k}" true "[\"top\"]" none) ++ "," ++
+    readingJ "default" (normJ s!"must-x-{k}" true "[\"unary\",\"y_permitted\",[\"var\",0]]" (some "[[\"unary\",\"c\",[\"var\",0]]]")) ++ "]}") ++ "]}")
+
+/-- A case from its admission on: `k` on the routed case, and what it read. -/
+def run {α : Type} (env doc : Json) (k : SDCase → SDM α) : Except String α × SDCount :=
+  match admitS2 env doc with
+  | .ok b => (sdCaseOf sdRefusal b >>= k).run.run {}
+  | .error e => (.error e, {})
+
+/-- The traces of `NSD4a`'s four conflict targets under `rs1:1` (Python's prover, once), as certificates. -/
+def certJ (trace : Json) : Json := Json.mkObj [("checker_version", "ve-tableau-checker@2"), ("environment_id", ""),
+  ("premise_meaning_ids", Json.arr #[]), ("conclusion_meaning_id", ""), ("trace", trace)]
+def traces4a : Json := parse r#"{"x_permitted":{"rule":"expand","at":4,"children":[{"rule":"expand","at":5,"children":[{"rule":"expand","at":6,"children":[{"rule":"close"}]}]}]},"y_permitted":{"rule":"expand","at":4,"children":[{"rule":"expand","at":5,"children":[{"rule":"expand","at":6,"children":[{"rule":"close"}]}]}]},"x_required":{"rule":"expand","at":4,"children":[{"rule":"expand","at":5,"children":[{"rule":"expand","at":6,"children":[{"rule":"expand","at":8,"children":[{"rule":"close"},{"rule":"expand","at":9,"children":[{"rule":"expand","at":10,"children":[{"rule":"expand","at":11,"children":[{"rule":"expand","at":13,"children":[{"rule":"expand","at":15,"children":[{"rule":"expand","at":17,"children":[{"rule":"expand","at":18,"children":[{"rule":"expand","at":7,"children":[{"rule":"expand","at":21,"children":[{"rule":"expand","at":22,"children":[{"rule":"close"},{"rule":"expand","at":23,"children":[{"rule":"expand","at":25,"children":[{"rule":"expand","at":26,"children":[{"rule":"expand","at":28,"children":[{"rule":"expand","at":30,"children":[{"rule":"expand","at":32,"children":[{"rule":"expand","at":34,"children":[{"rule":"expand","at":36,"children":[{"rule":"close"},{"rule":"expand","at":37,"children":[{"rule":"close"}]}]}]}]}]}]}]}]}]}]}]},{"rule":"expand","at":20,"children":[{"rule":"expand","at":21,"children":[{"rule":"expand","at":22,"children":[{"rule":"expand","at":25,"children":[{"rule":"expand","at":27,"children":[{"rule":"expand","at":28,"children":[{"rule":"expand","at":29,"children":[{"rule":"expand","at":31,"children":[{"rule":"expand","at":36,"children":[{"rule":"close"},{"rule":"expand","at":32,"children":[{"rule":"expand","at":34,"children":[{"rule":"expand","at":35,"children":[{"rule":"expand","at":38,"children":[{"rule":"expand","at":39,"children":[{"rule":"expand","at":40,"children":[{"rule":"expand","at":49,"children":[{"rule":"expand","at":50,"children":[{"rule":"expand","at":51,"children":[{"rule":"expand","at":52,"children":[{"rule":"close"},{"rule":"expand","at":44,"children":[{"rule":"expand","at":45,"children":[{"rule":"expand","at":47,"children":[{"rule":"expand","at":53,"children":[{"rule":"expand","at":55,"children":[{"rule":"expand","at":57,"children":[{"rule":"expand","at":61,"children":[{"rule":"expand","at":62,"children":[{"rule":"expand","at":65,"children":[{"rule":"expand","at":67,"children":[{"rule":"expand","at":69,"children":[{"rule":"expand","at":70,"children":[{"rule":"expand","at":71,"children":[{"rule":"expand","at":76,"children":[{"rule":"expand","at":77,"children":[{"rule":"expand","at":78,"children":[{"rule":"expand","at":79,"children":[{"rule":"close"},{"rule":"expand","at":80,"children":[{"rule":"expand","at":0,"children":[{"rule":"expand","at":2,"children":[{"rule":"expand","at":83,"children":[{"rule":"expand","at":84,"children":[{"rule":"expand","at":3,"children":[{"rule":"expand","at":86,"children":[{"rule":"expand","at":87,"children":[{"rule":"close"},{"rule":"close"}]}]}],"parameter":"w:0"},{"rule":"close"}]},{"rule":"close"}]}],"parameter":"w:0"}],"parameter":"w:0"}]}]},{"rule":"close"}]},{"rule":"close"}]},{"rule":"close"}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]},{"rule":"close"}]},{"rule":"close"}]},{"rule":"close"}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]},"x_required->x_permitted":{"rule":"expand","at":4,"children":[{"rule":"expand","at":5,"children":[{"rule":"expand","at":6,"children":[{"rule":"expand","at":8,"children":[{"rule":"expand","at":9,"children":[{"rule":"close"}]}]}]}]}]}}"#
+def certs4a : Json := match traces4a with
+  | .obj kvs => Json.mkObj (kvs.toList.map fun (k, v) => (k, certJ v))
+  | _ => .null
+
+def caseJ (fields : List (String × Json)) : Json := Json.mkObj fields
+def ans {α : Type} [ToString α] (r : Except String α × SDCount) : String × SDCount :=
+  (match r.1 with | .ok a => toString a | .error e => e, r.2)
+/-- A complete model of the case's superposed base vocabulary over one assistant `a`: the tables `on` hold of `h`
+    (bits) or `a`, the others are empty, `extra` added as written. -/
+def model (c : SDCase) (on : List String) (extra : List (String × Json) := []) : Json :=
+  (parse "{\"complete\":true,\"domains\":{\"assistant\":[\"a\"],\"ve__reading\":[\"h\"]},\"constants\":{\"ve__here\":\"h\"}}").setObjVal!
+    "relations" (Json.mkObj (c.v.predicates.map (fun (p, ss) =>
+      (p, if on.contains p then toJson [ss.map (fun s => if s == "ve__reading" then "h" else "a")] else Json.arr #[])) ++ extra))
+def none' : List (String × Nat) := []
+/-- `∀ a. c a`, a query over `sharedEnvSD N`; the certificate of it from itself closes at once. -/
+def φJ : Json := parse "[\"forall\",\"assistant\",[\"unary\",\"c\",[\"var\",0]]]"
+/-- A certificate of `φJ` from `[φJ]`, bound as `bindCertX` binds one: to the source environment and to
+    `premisesX (supU N) X (sup N.D).2` followed by the case's own premise (D14's oracle, the approved definition). -/
+def boundCert (c : SDCase) (X : List VE.Formula) : Except String Json := do
+  let env := c.x.r.b.a.re.lowerJson
+  let ps := VE.NormDefaults.Wire.profilesOf env
+  let e ← VE.Route.Wire.environmentId ps (← VE.NormDefaults.Wire.canonicalEnvironmentJsonU env)
+  let ids ← ((VE.NormDefaults.Wire.premisesX (supU c.N) X (sup c.N.D).2).map VE.Route.Wire.encodeFormula ++ [φJ]).mapM
+    (VE.Route.Wire.meaningId ps e)
+  pure (Json.mkObj [("checker_version", "ve-tableau-checker@2"), ("environment_id", .str e),
+    ("premise_meaning_ids", toJson ids), ("conclusion_meaning_id", .str (← VE.Route.Wire.meaningId ps e φJ)),
+    ("trace", parse "{\"rule\":\"close\"}")])
+def A1 : List (String × Nat) := [("rs1", 1)]
+def certCase (c : SDCase) (X : List VE.Formula) : SDM String := do
+  (·.compress) <$> runSDSup "t" "readings-certificate" c (caseJ [("assumed", toJson A1), ("premises", Json.arr #[φJ]),
+    ("conclusion", φJ), ("conflict_certificates", certs4a), ("certificate", ← boundCert c X)])
+/-- W-14's case: under `rs1:1` conflict, certificate and model evidence, then under `[]` a conflict piece alone; each
+    scope's shown labels and accepted pieces. -/
+def scopes (c : SDCase) : SDM (List (List (String × List String) × List Bool)) := do
+  let e := caseJ [("conflict", caseJ [("conflict_certificates", certs4a)]),
+    ("certificate", caseJ [("certificate", ← boundCert c (slotUnder c.N.D A1 ++ supX c.N))]),
+    ("model", caseJ [("model", model c ["ve__bit__1__0"]), ("filling", Json.mkObj [])])]
+  let s1 ← sdScope c A1 (Json.arr #[φJ]) φJ e
+  let s2 ← sdScope c [] (Json.arr #[φJ]) φJ (caseJ [("conflict", caseJ [("conflict_certificates", certs4a)])])
+  pure ([s1, s2].map fun s => (s.used, s.info.notes.map (·.accepted)))
+
+def conflictJ (c : SDCase) (A : List (String × Nat)) (more : List (String × Json)) : SDM String :=
+  (·.compress) <$> runSDSup "t" "readings-conflict" c (caseJ ([("assumed", toJson A)] ++ more))
+def witnessJ (c : SDCase) (tuple : List String) : SDM String :=
+  conflictJ c none' [("witness", caseJ [("model", model c []), ("filling", Json.mkObj []),
+    ("target", "x_required->x_permitted"), ("tuple", toJson tuple)])]
+def modelJ (c : SDCase) (extra : List (String × Json)) : SDM String :=
+  (·.compress) <$> runSDSup "t" "readings-model" c (caseJ [("assumed", toJson A1),
+    ("model", model c ["ve__bit__1__0"] extra), ("filling", Json.mkObj [])])
+def count (r : Except String α × SDCount) : SDCount := r.2
+def text (r : Except String String × SDCount) : String := match r.1 with | .ok a => a | .error e => e
+
+/-! ## The read-once rule (W-14, 14.11)
+
+One admission and one route check per case however many pieces; one conflict check per conflict or certificate
+piece; a label replay per accepted piece with proofs; one label image per scope with an accepted piece and none for
+the scope without. The soft premises are shown by their choice labels (`shownWith_eq`), never `rd-2-`. -/
+
+#guard count (run env4a doc4a scopes) == { admissions := 1, routes := 1, images := 1, replays := 2, checks := 3 }
+#guard (run env4a doc4a scopes).1.toOption == some [
+  ([("conflict", ["readings:rs1@1:1:quiet", "soft:exception:must-x:sufficient:0", "soft:coherence:must-x,need-not-x"]),
+    ("certificate", ["readings:rs1@1:1:quiet", "soft:exception:must-x:sufficient:0", "soft:coherence:must-x,need-not-x"]),
+    ("model", [])], [true, true, true]),
+  ([("conflict", [])], [false])]
+
+/-! ## `readings-conflict`: one check over the superposed document -/
+
+#guard ans (run env4a doc4a fun c => conflictJ c A1 [("conflict_certificates", certs4a)]) ==
+  ("{\"assumed\":[[\"rs1\",1]],\"id\":\"t\",\"reading_premises\":[\"readings:rs1@1:1:quiet\"],\"status\":\"ok\"," ++
+    "\"targets\":[\"x_permitted\",\"y_permitted\",\"x_required\",\"x_required->x_permitted\"],\"verdict\":\"CONFLICT-FREE\"}",
+    { admissions := 1, routes := 1, checks := 1 })
+-- under `[]` the same certificates leave the strict choice open
+#guard text (run env4a doc4a fun c => conflictJ c none' [("conflict_certificates", certs4a)]) |>.endsWith "\"verdict\":\"UNKNOWN\"}"
+-- refused: an assumed reading that is no candidate, a witness tuple of the wrong length (today's texts)
+#guard text (run env4a doc4a fun c => conflictJ c [("rs1", 5)] []) == "InvalidInput: assumed reading is no candidate"
+#guard text (run env4 (bigJ 8) fun c => witnessJ c ["a", "a"]) == "InvalidInput: witness tuple has the wrong length or sort"
+
+/-! ## W-13: 256 choices, a conflict answer in one proof
+
+`NSDbig 8` is superposed (256 checked choices, work 24,832, within `maxSdCheckWork`): its conflict answer is one
+model check over the superposed document, which names the all-strict choice; `NSDbig 10` is over the work limit and
+refused with today's text, read before any choice's text. -/
+
+#guard ans (run env4 (bigJ 8) fun c => do pure (c.checked.length, ← witnessJ c ["a"])) ==
+  (toString (256, "{\"assumed\":[],\"choice\":[[\"rs0\",0],[\"rs1\",0],[\"rs2\",0],[\"rs3\",0],[\"rs4\",0],[\"rs5\",0]," ++
+    "[\"rs6\",0],[\"rs7\",0]],\"id\":\"t\",\"status\":\"ok\",\"target\":\"x_required->x_permitted\",\"verdict\":\"CONFLICT\"}"),
+    { admissions := 1, routes := 1, checks := 1 })
+#guard match admitS2 env4 (bigJ 10) >>= admitSDOf with
+  | .ok r => (match runSDKind "t" "readings-conflict" r (caseJ []) with | .error e => e | .ok _ => "") ==
+      text (run env4 (bigJ 10) fun _ => pure "")
+  | .error _ => false
+
+/-! ## `readings-certificate`: bound to `premisesX` (D14) -/
+
+#guard ans (run env4a doc4a fun c => certCase c (slotUnder c.N.D A1 ++ supX c.N)) ==
+  ("{\"accepted\":true,\"assumed\":[[\"rs1\",1]],\"conflict_free\":true,\"id\":\"t\"," ++
+    "\"reading_premises\":[\"readings:rs1@1:1:quiet\"],\"status\":\"ok\",\"valid\":true}", { admissions := 1, routes := 1, checks := 1 })
+-- a certificate whose binding leaves `supX` out is refused (F-SD11's form)
+#guard text (run env4a doc4a fun c => certCase c (slotUnder c.N.D A1)) == "certificate is stale or bound to different inputs"
+
+/-! ## `readings-model` -/
+
+#guard text (run env4a doc4a fun c => modelJ c []) == "{\"assumed\":[[\"rs1\",1]],\"choice\":[[\"rs1\",1]]," ++
+  "\"conclusion_value\":false,\"first_failing\":null,\"id\":\"t\",\"local_free\":true,\"status\":\"ok\",\"valid\":true}"
+-- an `unsaid__` table in `relations` is refused by the model decoder (F-SD8)
+#guard text (run env4a doc4a fun c => modelJ c [("unsaid__y_permitted", Json.arr #[])]) |>.startsWith
+  "fields do not match: expected [soft__excepted__need_not_x, soft__excepted__rd_2_must_x, ve__bit__1__0, c], got"
+
+end VE.Readings.SoftSupRunExamples
