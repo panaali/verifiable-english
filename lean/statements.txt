@@ -29284,7 +29284,7 @@ theorem VE.Presupposition.CoupleExamples.denote_of_eq
 theorem VE.Presupposition.CoupleExamples.forget_asStructure
   ∀ (M : VE.FiniteModel String) (p : String),
     VE.Norms.forget [p] M.asStructure = (VE.Presupposition.CoupleExamples.dropRel M p).asStructure
-  -- uses VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.Norms.forget@VE.Norms.Basic VE.Presupposition.CoupleExamples.dropRel@VE.Presupposition.CoupleExamples VE.Structure@VE.Semantics
+  -- uses VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.Norms.forget@VE.Norms.Basic VE.Presupposition.CoupleExamples.dropRel@VE.Presupposition.Couple.Fixtures VE.Structure@VE.Semantics
   -- expr 2012535246
 theorem VE.Presupposition.CoupleExamples.intendedAt3_of_eval
   ∀ (U : VE.NormDefaults.UDoc) (r : VE.Norms.Regulated) (M : VE.FiniteModel String) (s : String),
@@ -29299,14 +29299,14 @@ theorem VE.Presupposition.CoupleExamples.intendedAt3_of_eval
                   !Decidable.decide ([v] ∈ M.relations r.name))) =
             Bool.true →
           VE.NormDefaults.IntendedAt3 U r M.asStructure
-  -- uses VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel.domains@VE.Finite VE.FiniteModel.relations@VE.Finite VE.FiniteModel@VE.Finite VE.Formula.eval@VE.Finite VE.NormDefaults.Completion.unspecified@VE.NormDefaults.Tree VE.NormDefaults.Completion@VE.NormDefaults.Tree VE.NormDefaults.IntendedAt3@VE.NormDefaults.Semantics VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.completionOf@VE.NormDefaults.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated.sorts@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.decides@VE.Norms.Elaborate VE.Presupposition.CoupleExamples.dropRel@VE.Presupposition.CoupleExamples
+  -- uses VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel.domains@VE.Finite VE.FiniteModel.relations@VE.Finite VE.FiniteModel@VE.Finite VE.Formula.eval@VE.Finite VE.NormDefaults.Completion.unspecified@VE.NormDefaults.Tree VE.NormDefaults.Completion@VE.NormDefaults.Tree VE.NormDefaults.IntendedAt3@VE.NormDefaults.Semantics VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.completionOf@VE.NormDefaults.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated.sorts@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.decides@VE.Norms.Elaborate VE.Presupposition.CoupleExamples.dropRel@VE.Presupposition.Couple.Fixtures
   -- expr 17732910
 theorem VE.Presupposition.CoupleExamples.s22_completion
   ∀ (ch : VE.Presupposition.Pick),
     ch = VE.Presupposition.CoupleExamples.rep22 ∨ ch = VE.Presupposition.CoupleExamples.mixed22 →
       VE.Presupposition.SatUnder VE.Presupposition.CoupleExamples.D22 VE.Presupposition.CoupleExamples.R22 ch
         VE.Presupposition.CoupleExamples.m22.asStructure
-  -- uses VE.FiniteModel.asStructure@VE.Finite VE.Presupposition.CoupleExamples.D22@VE.Presupposition.CoupleExamples VE.Presupposition.CoupleExamples.R22@VE.Presupposition.CoupleExamples VE.Presupposition.CoupleExamples.m22@VE.Presupposition.CoupleExamples VE.Presupposition.CoupleExamples.mixed22@VE.Presupposition.CoupleExamples VE.Presupposition.CoupleExamples.rep22@VE.Presupposition.CoupleExamples VE.Presupposition.Pick@VE.Presupposition.Couple VE.Presupposition.SatUnder@VE.Presupposition.Couple
+  -- uses VE.FiniteModel.asStructure@VE.Finite VE.Presupposition.CoupleExamples.D22@VE.Presupposition.Couple.Fixtures VE.Presupposition.CoupleExamples.R22@VE.Presupposition.Couple.Fixtures VE.Presupposition.CoupleExamples.m22@VE.Presupposition.Couple.Fixtures VE.Presupposition.CoupleExamples.mixed22@VE.Presupposition.Couple.Fixtures VE.Presupposition.CoupleExamples.rep22@VE.Presupposition.Couple.Fixtures VE.Presupposition.Pick@VE.Presupposition.Couple VE.Presupposition.SatUnder@VE.Presupposition.Couple
   -- expr 3480148909
 theorem VE.Presupposition.CoupleExamples.satUnder_of_eval
   ∀ (D : VE.Presupposition.PDoc) (R : VE.Presupposition.Report) (ch : VE.Presupposition.Pick) (M : VE.FiniteModel String),
@@ -29315,7 +29315,7 @@ theorem VE.Presupposition.CoupleExamples.satUnder_of_eval
         (∀ (r : VE.Norms.Regulated),
             r ∈ D.norms.regulated → VE.NormDefaults.IntendedAt3 (VE.Presupposition.pickedU D R ch) r M.asStructure) →
           VE.Presupposition.SatUnder D R ch M.asStructure
-  -- uses VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.NormDefaults.IntendedAt3@VE.NormDefaults.Semantics VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Tree.regulated@VE.Norms.Tree VE.Presupposition.CoupleExamples.holds@VE.Presupposition.CoupleExamples VE.Presupposition.PDoc.defaults@VE.Presupposition.Wire VE.Presupposition.PDoc.norms@VE.Presupposition.Wire VE.Presupposition.PDoc@VE.Presupposition.Wire VE.Presupposition.Pick@VE.Presupposition.Couple VE.Presupposition.Report@VE.Presupposition.Wire VE.Presupposition.SatUnder@VE.Presupposition.Couple VE.Presupposition.formulasUnder@VE.Presupposition.Couple VE.Presupposition.pickedU@VE.Presupposition.Couple
+  -- uses VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.NormDefaults.IntendedAt3@VE.NormDefaults.Semantics VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Tree.regulated@VE.Norms.Tree VE.Presupposition.CoupleExamples.holds@VE.Presupposition.Couple.Fixtures VE.Presupposition.PDoc.defaults@VE.Presupposition.Wire VE.Presupposition.PDoc.norms@VE.Presupposition.Wire VE.Presupposition.PDoc@VE.Presupposition.Wire VE.Presupposition.Pick@VE.Presupposition.Couple VE.Presupposition.Report@VE.Presupposition.Wire VE.Presupposition.SatUnder@VE.Presupposition.Couple VE.Presupposition.formulasUnder@VE.Presupposition.Couple VE.Presupposition.pickedU@VE.Presupposition.Couple
   -- expr 3800041205
 theorem VE.Presupposition.Events.again_defined
   ∀ (V : VE.Events.EventsEnv) (E : VE.Events.EventSort) (t : VE.Term) (body : VE.Formula) (M : VE.Structure)

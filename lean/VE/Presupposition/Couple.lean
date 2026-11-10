@@ -48,6 +48,9 @@ def rep (g : Group) (ch : Pick) : Pick :=
 
 def Uniform (g : Group) (ch : Pick) : Prop := ∀ o ∈ g.members, ∀ o' ∈ g.members, pickOf ch o = pickOf ch o'
 
+instance (g : Group) (ch : Pick) : Decidable (Uniform g ch) := by
+  unfold Uniform; infer_instance
+
 def uniformB (g : Group) (ch : Pick) : Bool :=
   g.members.all (fun o => g.members.all (fun o' => pickOf ch o == pickOf ch o'))
 
