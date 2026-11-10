@@ -61,7 +61,7 @@ match the stub's statements token for token, after whitespace normalisation. The
     `InvalidModel(soft)` cases.
   - The 33 `norm-defaults` cases of `tests/data/route-cases.jsonl`, one session each: the differential is
     INVALID and exited 1 (`evidence/ab_route_cases.txt`: none of its invocations ran the rebuilt
-    `ve_speech_acts_route`), so it checks nothing and these cases have no valid differential (corrected by
+    `ve_speech_acts_route`), so it is not valid evidence and these cases have no valid differential (corrected by
     pk-1-cfr-1).
 - **A1–A9, A9′, F1, F1′**: `#guard`s in `PacksExamples.lean`, which imports `Packs.lean` alone, and in
   `PacksLegacyExamples.lean`, which covers today's rights documents in both list orders, `envX`/`fullEnv` on a real

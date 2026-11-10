@@ -16,7 +16,7 @@ diagnostic is today's:
   (`evidence/ab_full.txt`, `evidence/ab_recorded_kinds.txt`);
 - the 33 `norm-defaults` cases of `tests/data/route-cases.jsonl` have no valid differential: their run is INVALID
   and exited 1 (`evidence/ab_route_cases.txt`: none of its invocations ran the rebuilt `ve_speech_acts_route`), so
-  it checks nothing (corrected by pk-1-cfr-1).
+  it is not valid evidence (corrected by pk-1-cfr-1).
 
 The checks `assemble` adds (unknown or repeated pack, repeated label, generated names, vocabulary limit) cannot fail
 on a decoded soft or rights source: today's packs generate no names, `checkAuthorN` already bounds the vocabulary,
