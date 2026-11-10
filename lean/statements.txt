@@ -29283,6 +29283,72 @@ theorem VE.Paths.warshall_sound
     (∀ (a b : α), (a, b) ∈ es → VE.Paths.Path R a b) → ∀ (a b : α), (a, b) ∈ VE.Paths.warshall vs es → VE.Paths.Path R a b
   -- uses VE.Paths.Path@VE.Paths VE.Paths.warshall@VE.Paths
   -- expr 2609517366
+theorem VE.Presupposition.Events.again_defined
+  ∀ (V : VE.Events.EventsEnv) (E : VE.Events.EventSort) (t : VE.Term) (body : VE.Formula) (M : VE.Structure)
+    (τ : VE.Valuation M), (VE.Presupposition.Events.again V E t body).DefinedAt M τ
+  -- uses VE.Events.EventSort@VE.Events.Decl VE.Events.EventsEnv@VE.Events.Decl VE.Formula@VE.Syntax VE.Presupposition.Events.again@VE.Presupposition.Events VE.Presupposition.Reading.DefinedAt@VE.Presupposition.Reading VE.Structure@VE.Semantics VE.Term@VE.Syntax VE.Valuation@VE.Semantics
+  -- expr 1505747878
+theorem VE.Presupposition.Events.again_eq
+  ∀ (V : VE.Events.EventsEnv) (E : VE.Events.EventSort) (t : VE.Term) (body : VE.Formula),
+    VE.Presupposition.Events.again V E t body =
+      VE.Presupposition.generic (VE.Presupposition.Events.occurredBefore V E t) body
+  -- uses VE.Events.EventSort@VE.Events.Decl VE.Events.EventsEnv@VE.Events.Decl VE.Formula@VE.Syntax VE.Presupposition.Events.again@VE.Presupposition.Events VE.Presupposition.Events.occurredBefore@VE.Presupposition.Events VE.Presupposition.Reading@VE.Presupposition.Reading VE.Presupposition.generic@VE.Presupposition.Rows VE.Term@VE.Syntax
+  -- expr 465649421
+theorem VE.Presupposition.Events.continues_defined
+  ∀ (V : VE.Events.EventsEnv) (S : VE.Events.StateSort) (x t : VE.Term) (body : VE.Formula) (M : VE.Structure)
+    (τ : VE.Valuation M), (VE.Presupposition.Events.continues V S x t body).DefinedAt M τ
+  -- uses VE.Events.EventsEnv@VE.Events.Decl VE.Events.StateSort@VE.Events.Decl VE.Formula@VE.Syntax VE.Presupposition.Events.continues@VE.Presupposition.Events VE.Presupposition.Reading.DefinedAt@VE.Presupposition.Reading VE.Structure@VE.Semantics VE.Term@VE.Syntax VE.Valuation@VE.Semantics
+  -- expr 846412208
+theorem VE.Presupposition.Events.continues_eq
+  ∀ (V : VE.Events.EventsEnv) (S : VE.Events.StateSort) (x t : VE.Term) (body : VE.Formula),
+    VE.Presupposition.Events.continues V S x t body =
+      VE.Presupposition.generic (VE.Presupposition.Events.inProgressBefore V S x t) body
+  -- uses VE.Events.EventsEnv@VE.Events.Decl VE.Events.StateSort@VE.Events.Decl VE.Formula@VE.Syntax VE.Presupposition.Events.continues@VE.Presupposition.Events VE.Presupposition.Events.inProgressBefore@VE.Presupposition.Events VE.Presupposition.Reading@VE.Presupposition.Reading VE.Presupposition.generic@VE.Presupposition.Rows VE.Term@VE.Syntax
+  -- expr 76862619
+theorem VE.Presupposition.Events.noLonger_defined
+  ∀ (V : VE.Events.EventsEnv) (S : VE.Events.StateSort) (x t : VE.Term) (body : VE.Formula) (M : VE.Structure)
+    (τ : VE.Valuation M), (VE.Presupposition.Events.noLonger V S x t body).DefinedAt M τ
+  -- uses VE.Events.EventsEnv@VE.Events.Decl VE.Events.StateSort@VE.Events.Decl VE.Formula@VE.Syntax VE.Presupposition.Events.noLonger@VE.Presupposition.Events VE.Presupposition.Reading.DefinedAt@VE.Presupposition.Reading VE.Structure@VE.Semantics VE.Term@VE.Syntax VE.Valuation@VE.Semantics
+  -- expr 571600237
+theorem VE.Presupposition.Events.noLonger_eq
+  ∀ (V : VE.Events.EventsEnv) (S : VE.Events.StateSort) (x t : VE.Term) (body : VE.Formula),
+    VE.Presupposition.Events.noLonger V S x t body =
+      VE.Presupposition.generic (VE.Presupposition.Events.inProgressBefore V S x t) body
+  -- uses VE.Events.EventsEnv@VE.Events.Decl VE.Events.StateSort@VE.Events.Decl VE.Formula@VE.Syntax VE.Presupposition.Events.inProgressBefore@VE.Presupposition.Events VE.Presupposition.Events.noLonger@VE.Presupposition.Events VE.Presupposition.Reading@VE.Presupposition.Reading VE.Presupposition.generic@VE.Presupposition.Rows VE.Term@VE.Syntax
+  -- expr 1640806567
+theorem VE.Presupposition.Events.resumes_defined
+  ∀ (V : VE.Events.EventsEnv) (S : VE.Events.StateSort) (t : VE.Term) (body : VE.Formula) (M : VE.Structure)
+    (τ : VE.Valuation M), (VE.Presupposition.Events.resumes V S t body).DefinedAt M τ
+  -- uses VE.Events.EventsEnv@VE.Events.Decl VE.Events.StateSort@VE.Events.Decl VE.Formula@VE.Syntax VE.Presupposition.Events.resumes@VE.Presupposition.Events VE.Presupposition.Reading.DefinedAt@VE.Presupposition.Reading VE.Structure@VE.Semantics VE.Term@VE.Syntax VE.Valuation@VE.Semantics
+  -- expr 2535173174
+theorem VE.Presupposition.Events.resumes_eq
+  ∀ (V : VE.Events.EventsEnv) (S : VE.Events.StateSort) (t : VE.Term) (body : VE.Formula),
+    VE.Presupposition.Events.resumes V S t body =
+      VE.Presupposition.generic (VE.Presupposition.Events.endedBefore V S t) body
+  -- uses VE.Events.EventsEnv@VE.Events.Decl VE.Events.StateSort@VE.Events.Decl VE.Formula@VE.Syntax VE.Presupposition.Events.endedBefore@VE.Presupposition.Events VE.Presupposition.Events.resumes@VE.Presupposition.Events VE.Presupposition.Reading@VE.Presupposition.Reading VE.Presupposition.generic@VE.Presupposition.Rows VE.Term@VE.Syntax
+  -- expr 63045153
+theorem VE.Presupposition.Events.returnsTo_defined
+  ∀ (V : VE.Events.EventsEnv) (S : VE.Events.StateSort) (atP : String) (p t : VE.Term) (body : VE.Formula)
+    (M : VE.Structure) (τ : VE.Valuation M), (VE.Presupposition.Events.returnsTo V S atP p t body).DefinedAt M τ
+  -- uses VE.Events.EventsEnv@VE.Events.Decl VE.Events.StateSort@VE.Events.Decl VE.Formula@VE.Syntax VE.Presupposition.Events.returnsTo@VE.Presupposition.Events VE.Presupposition.Reading.DefinedAt@VE.Presupposition.Reading VE.Structure@VE.Semantics VE.Term@VE.Syntax VE.Valuation@VE.Semantics
+  -- expr 2679328616
+theorem VE.Presupposition.Events.returnsTo_eq
+  ∀ (V : VE.Events.EventsEnv) (S : VE.Events.StateSort) (atP : String) (p t : VE.Term) (body : VE.Formula),
+    VE.Presupposition.Events.returnsTo V S atP p t body =
+      VE.Presupposition.generic (VE.Presupposition.Events.endedAtBefore V S atP p t) body
+  -- uses VE.Events.EventsEnv@VE.Events.Decl VE.Events.StateSort@VE.Events.Decl VE.Formula@VE.Syntax VE.Presupposition.Events.endedAtBefore@VE.Presupposition.Events VE.Presupposition.Events.returnsTo@VE.Presupposition.Events VE.Presupposition.Reading@VE.Presupposition.Reading VE.Presupposition.generic@VE.Presupposition.Rows VE.Term@VE.Syntax
+  -- expr 3304659862
+theorem VE.Presupposition.Events.stops_defined
+  ∀ (V : VE.Events.EventsEnv) (S : VE.Events.StateSort) (x t : VE.Term) (body : VE.Formula) (M : VE.Structure)
+    (τ : VE.Valuation M), (VE.Presupposition.Events.stops V S x t body).DefinedAt M τ
+  -- uses VE.Events.EventsEnv@VE.Events.Decl VE.Events.StateSort@VE.Events.Decl VE.Formula@VE.Syntax VE.Presupposition.Events.stops@VE.Presupposition.Events VE.Presupposition.Reading.DefinedAt@VE.Presupposition.Reading VE.Structure@VE.Semantics VE.Term@VE.Syntax VE.Valuation@VE.Semantics
+  -- expr 2601290187
+theorem VE.Presupposition.Events.stops_eq
+  ∀ (V : VE.Events.EventsEnv) (S : VE.Events.StateSort) (x t : VE.Term) (body : VE.Formula),
+    VE.Presupposition.Events.stops V S x t body =
+      VE.Presupposition.generic (VE.Presupposition.Events.inProgressBefore V S x t) body
+  -- uses VE.Events.EventsEnv@VE.Events.Decl VE.Events.StateSort@VE.Events.Decl VE.Formula@VE.Syntax VE.Presupposition.Events.inProgressBefore@VE.Presupposition.Events VE.Presupposition.Events.stops@VE.Presupposition.Events VE.Presupposition.Reading@VE.Presupposition.Reading VE.Presupposition.generic@VE.Presupposition.Rows VE.Term@VE.Syntax
+  -- expr 2497251932
 theorem VE.Presupposition.Examples.s22_neg_s2
   VE.Presupposition.Examples.evAt VE.Presupposition.Examples.m22p ["s2"]
       (VE.Norms.neg VE.Presupposition.Examples.mixed22 "p") =
@@ -39614,10 +39680,10 @@ theorem VE.Readings.grows_bar
   ∀ (X : VE.Rights.RightsDoc) (b : VE.Rights.Bar),
     VE.Readings.Grows X
       { soft := X.soft, rights := X.rights, rs := X.rs, limits := X.limits, bars := X.bars ++ [b],
-        outsideCites := X.outsideCites, sourceOrder := X.sourceOrder, sourceUnits := X.sourceUnits }
+        outsideCites := X.outsideCites, sourceOrder := X.sourceOrder, sourceUnits := X.sourceUnits, located := X.located }
       [] 1
-  -- uses VE.Readings.Grows@VE.Readings.Shape VE.Rights.Bar@VE.Rights.Tree VE.Rights.RightsDoc.bars@VE.Rights.Tree VE.Rights.RightsDoc.limits@VE.Rights.Tree VE.Rights.RightsDoc.mk@VE.Rights.Tree VE.Rights.RightsDoc.outsideCites@VE.Rights.Tree VE.Rights.RightsDoc.rights@VE.Rights.Tree VE.Rights.RightsDoc.rs@VE.Rights.Tree VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.RightsDoc.sourceOrder@VE.Rights.Tree VE.Rights.RightsDoc.sourceUnits@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
-  -- expr 1426053719
+  -- uses VE.Readings.Grows@VE.Readings.Shape VE.Rights.Bar@VE.Rights.Tree VE.Rights.RightsDoc.bars@VE.Rights.Tree VE.Rights.RightsDoc.limits@VE.Rights.Tree VE.Rights.RightsDoc.located@VE.Rights.Tree VE.Rights.RightsDoc.mk@VE.Rights.Tree VE.Rights.RightsDoc.outsideCites@VE.Rights.Tree VE.Rights.RightsDoc.rights@VE.Rights.Tree VE.Rights.RightsDoc.rs@VE.Rights.Tree VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.RightsDoc.sourceOrder@VE.Rights.Tree VE.Rights.RightsDoc.sourceUnits@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
+  -- expr 577578169
 theorem VE.Readings.grows_place
   ∀ (X : VE.Rights.RightsDoc) (c : VE.Compose.Content) (cs : List (String × List String)),
     VE.Readings.Grows X (VE.Readings.place X c cs) (VE.Readings.normsOf c) (VE.Readings.contrib c)
@@ -49997,6 +50063,16 @@ theorem VE.Rights.limPack_mem_narrowings
     VE.Rights.Narrowing.limPack ∈ VE.Rights.narrowings D N ↔ VE.Rights.scopeLimits D N ≠ []
   -- uses VE.Rights.Limitation@VE.Rights.Tree VE.Rights.Line@VE.Rights.Tree VE.Rights.Narrowing.limPack@VE.Rights.Correlate VE.Rights.Narrowing@VE.Rights.Correlate VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.narrowings@VE.Rights.Correlate VE.Rights.scopeLimits@VE.Rights.Correlate
   -- expr 611274591
+theorem VE.Rights.limitationScope_texts
+  ∀ (D : VE.Rights.RightsDoc) (l : List (String × String)) (c : List (Option VE.Tableau.Certificate)),
+    List.map VE.Rights.Finding.text
+        (VE.Rights.limitationScope
+          { soft := D.soft, rights := D.rights, rs := D.rs, limits := D.limits, bars := D.bars,
+            outsideCites := D.outsideCites, sourceOrder := D.sourceOrder, sourceUnits := D.sourceUnits, located := l }
+          c) =
+      List.map VE.Rights.Finding.text (VE.Rights.limitationScope D c)
+  -- uses VE.Rights.Finding.text@VE.Rights.Scope VE.Rights.Finding@VE.Rights.Scope VE.Rights.RightsDoc.bars@VE.Rights.Tree VE.Rights.RightsDoc.limits@VE.Rights.Tree VE.Rights.RightsDoc.mk@VE.Rights.Tree VE.Rights.RightsDoc.outsideCites@VE.Rights.Tree VE.Rights.RightsDoc.rights@VE.Rights.Tree VE.Rights.RightsDoc.rs@VE.Rights.Tree VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.RightsDoc.sourceOrder@VE.Rights.Tree VE.Rights.RightsDoc.sourceUnits@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.limitationScope@VE.Rights.Scope VE.Tableau.Certificate@VE.Tableau
+  -- expr 3155610192
 theorem VE.Rights.limitation_scope_sound
   ∀ (D : VE.Rights.RightsDoc),
     VE.Rights.WellFormedRights D = Bool.true →
@@ -50184,6 +50260,15 @@ theorem VE.Rights.noDistinction_sound
             ∀ (q : String), q ∈ VE.SoftNorms.cone (VE.Rights.correlate D) p → ¬q ∈ D.rights.protected
   -- uses VE.Rights.RightsDoc.rights@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.RightsEnv.protected@VE.Rights.Tree VE.Rights.WellFormedRights@VE.Rights.Correlate VE.Rights.correlate@VE.Rights.Correlate VE.Rights.independentReported@VE.Rights.Distinction VE.Rights.rightDerived@VE.Rights.Tree VE.SoftNorms.cone@VE.SoftNorms.Semantics
   -- expr 3153249130
+theorem VE.Rights.noDistinction_texts
+  ∀ (D : VE.Rights.RightsDoc) (l : List (String × String)),
+    List.map VE.Rights.Finding.text
+        (VE.Rights.noDistinction
+          { soft := D.soft, rights := D.rights, rs := D.rs, limits := D.limits, bars := D.bars,
+            outsideCites := D.outsideCites, sourceOrder := D.sourceOrder, sourceUnits := D.sourceUnits, located := l }) =
+      List.map VE.Rights.Finding.text (VE.Rights.noDistinction D)
+  -- uses VE.Rights.Finding.text@VE.Rights.Scope VE.Rights.Finding@VE.Rights.Scope VE.Rights.RightsDoc.bars@VE.Rights.Tree VE.Rights.RightsDoc.limits@VE.Rights.Tree VE.Rights.RightsDoc.mk@VE.Rights.Tree VE.Rights.RightsDoc.outsideCites@VE.Rights.Tree VE.Rights.RightsDoc.rights@VE.Rights.Tree VE.Rights.RightsDoc.rs@VE.Rights.Tree VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.RightsDoc.sourceOrder@VE.Rights.Tree VE.Rights.RightsDoc.sourceUnits@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.noDistinction@VE.Rights.Distinction
+  -- expr 2177693301
 theorem VE.Rights.no_distinction_sound
   ∀ (D : VE.Rights.RightsDoc),
     VE.Rights.WellFormedRights D = Bool.true →
