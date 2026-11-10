@@ -20370,6 +20370,11 @@
         "VE.Commands.SourceExamples.share",
         "VE.Commands.SourceExamples.two"
       ]
+    },
+    "VE/Commands/SplitOnLemmas.lean": {
+      "G[V]": [
+        "VE.Commands.SplitOn.splitOnL"
+      ]
     }
   }
 }
