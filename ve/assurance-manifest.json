@@ -66,7 +66,7 @@
     "ve/readings_verdicts/binding.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 44496,
+    "total_lines": 44609,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -703,7 +703,7 @@
       {
         "file": "lean/VE/Commands/Run.lean",
         "lines": 311,
-        "sha256": "e10c4a393dff28a7f77fa86d676278c2b24faf76c90e013852c789bd83d9f47b",
+        "sha256": "2ad2a3ccdb2948198ed4a76c28e05c0a46ef64a1a2e7b7579c41152caa54448d",
         "ranges": [
           [
             1,
@@ -835,7 +835,7 @@
       {
         "file": "lean/VE/EnglishGrammar/Run.lean",
         "lines": 800,
-        "sha256": "42e3a9f8712806f768a02b2742b66609fe2d927aa1cfe79b8cfdae7b87a3ffd8",
+        "sha256": "bcc1f80385cff70400435cc4e7ff18732341ecd27c380c1a338a5741c1f6da70",
         "ranges": [
           [
             1,
@@ -2089,12 +2089,12 @@
       },
       {
         "file": "lean/VE/SpeechActs/Source/Run.lean",
-        "lines": 934,
-        "sha256": "95fb8af85dedc9771b9f43c8026214fcdc16e2beeaadd528c395ca03ed451bfe",
+        "lines": 1021,
+        "sha256": "523d463ef741d4ba8bcf3053029aa7db6e6a999ec061d1502a198641d6d0f32e",
         "ranges": [
           [
             1,
-            934
+            1021
           ]
         ],
         "declarations": [
@@ -2107,31 +2107,35 @@
           "answerRecords",
           "externalRecord",
           "complianceRecords",
+          "hasContext",
+          "commandContext",
+          "readSource",
           "decodeSpeechSource"
         ],
-        "reason": "speech-act decoded-source wrapper (8.5): ve-document@2 units, reading sets, records and identity; the full file is pinned conservatively"
+        "reason": "speech-act decoded-source wrapper (8.5): ve-document@2 units, reading sets, records and identity; every resolved fence required to decode to the role its kind reads (Wire.roleFits: a fence of a kind wrapping instruction is a command) and every resolved command fence read again by VE.Commands.readInstruction under the payload's reading_context, decoded once through the pinned VE.Commands.Run.decodeRequest, a payload with a command fence and no context object refused (A2, commands-imperatives CI-2), and the unresolved fences charged against VE.Limits.maxCases; the full file is pinned conservatively"
       },
       {
         "file": "lean/VE/SpeechActs/Wire.lean",
-        "lines": 1322,
-        "sha256": "84a51fbbe86cef4069b106eb11d77b94ed2de9db427b72fc4f43a8af9cb88723",
+        "lines": 1348,
+        "sha256": "cfd11f80f5d48685e0c041f3549d9a130601072a65c0b1a45c8db3e46450a8c5",
         "ranges": [
           [
             1,
-            1322
+            1348
           ]
         ],
         "declarations": [
           "parseScope",
           "decodeSpeechEnvironment",
           "decodeUnit",
+          "roleFits",
           "decodeDocument",
           "profilesAllowed",
           "profileGateOf",
           "checkActsBlock",
           "decodeEnvironmentWith"
         ],
-        "reason": "speech scope, content, identity and document decoder; the full file is pinned conservatively; ci-5: the profile gate and the decoder over an allowlist (acts@0 joins it), W1's acts@0 hook on, checkActsBlock"
+        "reason": "speech scope, content, identity and document decoder; the full file is pinned conservatively; ci-5: the profile gate and the decoder over an allowlist (acts@0 joins it), W1's acts@0 hook on, checkActsBlock; ci-2b: roleFits checks resolved command fence roles"
       },
       {
         "file": "lean/VE/Time/Document.lean",
@@ -2446,7 +2450,10 @@
       "lean/VE/Events/RouteExamples.lean": "fixtures only: #guard checks of the hook through decodeLayered and the norm-defaults mode on JSON environments built with Json.parse and Json.mkObj; no runner path",
       "lean/VE/Commands/StepsExamples.lean": "test fixtures only: ci-3a's `#guard`s build their environments as JSON and read them with the pinned decoder (`decodeSpeechEnvironmentFull`)",
       "lean/VE/Acts/RunExamples.lean": "fixtures only: `#guard`s that build act-readings requests as JSON and read the rows `actReadingsReported` writes (act-phrases ap-4, spec 7 and 11.4: the pilot counts, AR1 pinned, the limits); no admission path or record reads them",
-      "lean/VE/Rights/OpenActExamples.lean": "fixtures only: #guard checks of docs/spec/rights.md 7.2 (rights-cfr-4) read unitOpen on right units built with Json.mkObj; no runner path"
+      "lean/VE/Rights/OpenActExamples.lean": "fixtures only: #guard checks of docs/spec/rights.md 7.2 (rights-cfr-4) read unitOpen on right units built with Json.mkObj; no runner path",
+      "lean/VE/Readings/SoftSupWireExamples.lean": "fixtures: #guards that decode a small soft-chain environment JSON (`decodeEnvironment`) to evaluate `routeSD`; no runner, service mode or record reads it (rd-9 sc-11)",
+      "lean/VE/Commands/RunSplit.lean": "test fixtures only: ci-2b's `#guard`s build speech-source payloads and english.command reading contexts as JSON and read the pinned `VE.SpeechActs.Source.decodeSpeechSource` and `commandContext`; no runner path",
+      "lean/VE/Commands/StepsProofs.lean": "proofs only: `readStep_conservative` names its decoded environment as section 7 states it (`Lean.Json`, `decodeSpeechEnvironmentFull`) and its lemmas trace that decoder; the module decodes nothing at run time"
     }
   },
   "plan_operations": {
@@ -4952,6 +4959,92 @@
       ]
     },
     {
+      "id": "command.read",
+      "summary": "A command wording read as one instruction of a speech document (docs/spec/commands-imperatives.md, CI-2): Lean decides its reading, the proof task's record, every refusal and its text",
+      "class": "surface",
+      "authority": "lean-only",
+      "target": "lean",
+      "assurance": {
+        "current": "experimental",
+        "at_switch": "experimental",
+        "reason": "Lean decides every outcome (VE.Commands.readInstruction over CI-1's readCommand and the proof task; readInstruction_typed and readInstruction_refused_classed proved through ci-1b's statements); the source wrapper refuses a resolved fence that is not the role its kind reads (Wire.roleFits) and reads every resolved command fence again under the request's reading context (commandFence_needs_context); the relay binds the answer to the request (ve.backends.english_lean.command_problem)"
+      },
+      "python": [],
+      "outcomes": {
+        "verdict": [
+          "one"
+        ],
+        "unknown": [],
+        "rejection": [
+          "InvalidInput",
+          "PermissionNotCommand",
+          "UnboundSlot",
+          "TypeMismatch",
+          "MissingObligationRole",
+          "MissingPermissionRole",
+          "AmbiguousDerivation",
+          "CoordinatedActs",
+          "QueryMismatch",
+          "NoDerivation",
+          "IllTyped",
+          "SyntaxError"
+        ],
+        "budget": [
+          "ResourceLimit"
+        ],
+        "operational": [
+          "CheckerUnavailable"
+        ]
+      },
+      "lean": {
+        "bindings": [
+          {
+            "executable": "ve_service",
+            "mode": "english.command",
+            "kinds": [],
+            "response": {
+              "result": "object"
+            },
+            "dispatch": [
+              "lean/VE/Service/Protocol.lean",
+              "lean/VE/Commands/Run.lean",
+              "lean/VE/Commands/Read.lean"
+            ]
+          }
+        ],
+        "planned_modes": [],
+        "theorems": [
+          "VE.Service.runMode_englishCommand",
+          "VE.Commands.caseReported_eq",
+          "VE.Commands.readInstruction_command",
+          "VE.Commands.proofTask_bound",
+          "VE.Commands.proofTask_addressed",
+          "VE.Commands.readInstruction_refused_classed",
+          "VE.Commands.readInstruction_typed",
+          "VE.SpeechActs.Source.commandFence_needs_context"
+        ],
+        "planned_theorems": [],
+        "decoders": []
+      },
+      "rust": null,
+      "lean_call_sites": [],
+      "tests": [
+        "tests/test_command_relay.py::test_read_command_relays_lean_verbatim",
+        "tests/test_command_relay.py::test_a_fill_the_request_does_not_hold_is_unavailable",
+        "tests/test_relay_binding_inventory.py::test_every_bound_field_mutant_is_unavailable"
+      ],
+      "trusted": [
+        "lean:kernel",
+        "lean:compiler",
+        "lean:runner-glue",
+        "python:wire",
+        "python:backend-adapter"
+      ],
+      "notes": [
+        "The relay ve.backends.english_lean:read_command asks the service through ve.backends.relay (so it has no lean_call_sites entry), binds the answer with command_problem and raises the class Lean names with Lean's code and text; ve/speech_english.py's parse_speech sends every wording of no question form to it, and ve/speech_document.py sends the reading context with the resolved fences."
+      ]
+    },
+    {
       "id": "question.answer",
       "summary": "The answer to a yes-or-no question about a document, with its reasons (docs/spec/question-answering.md, Q2): Lean reads the question, binds the case to the document, checks every piece of evidence, decides each reading's lead and renders every line",
       "class": "surface",
@@ -5391,6 +5484,287 @@
         "python:display"
       ],
       "notes": []
+    },
+    {
+      "id": "norm-defaults.route",
+      "summary": "the norm-defaults route's answers other than admission: fill U's elaboration, conflict, point status, gaps, report and certificate, the defeasible defaults kinds and the acts elaboration",
+      "class": "leaf",
+      "authority": "lean-only",
+      "target": "lean",
+      "assurance": {
+        "current": "experimental",
+        "at_switch": "experimental",
+        "reason": "Lean decides every kind; Python relays the rows, bound to the request by the response schemas and ve/backends/lean_service.py bind_answers"
+      },
+      "python": [],
+      "outcomes": {
+        "verdict": [
+          "CONFLICT",
+          "CONFLICT-FREE",
+          "SETTLED yes",
+          "SETTLED no",
+          "UNDECIDED",
+          "reachable",
+          "none",
+          "FOLLOWS",
+          "DOES-NOT-FOLLOW",
+          "COHERENT",
+          "COLLISION"
+        ],
+        "unknown": [
+          "UNKNOWN",
+          "unknown"
+        ],
+        "rejection": [
+          "InvalidInput",
+          "InvalidModel",
+          "UnsupportedProfile",
+          "UnknownSymbol"
+        ],
+        "budget": [
+          "ResourceLimit"
+        ],
+        "operational": [
+          "CheckerUnavailable"
+        ]
+      },
+      "lean": {
+        "bindings": [
+          {
+            "executable": "ve_service",
+            "mode": "norm-defaults",
+            "kinds": [
+              "norm-defaults-elaborate"
+            ],
+            "response": {
+              "environment_id": "string",
+              "document_hash": "string",
+              "premises": "array<object>",
+              "conflict_targets": "array<object>"
+            },
+            "uncounted": {
+              "premises": "the premises Lean regenerates for fill U",
+              "conflict_targets": "the conflict targets Lean derives from fill U"
+            },
+            "dispatch": [
+              "lean/VE/NormDefaults/Run.lean"
+            ]
+          },
+          {
+            "executable": "ve_service",
+            "mode": "norm-defaults",
+            "kinds": [
+              "norm-defaults-conflict"
+            ],
+            "response": {
+              "verdict": "string",
+              "targets": "array<string>"
+            },
+            "uncounted": {
+              "targets": "the conflict targets Lean derives from fill U"
+            },
+            "dispatch": [
+              "lean/VE/NormDefaults/Run.lean"
+            ]
+          },
+          {
+            "executable": "ve_service",
+            "mode": "norm-defaults",
+            "kinds": [
+              "norm-defaults-status"
+            ],
+            "response": {
+              "point_status": "string",
+              "predicate": "string",
+              "tuple": "array<string>",
+              "rules": "array<string>",
+              "differs": "array<object>"
+            },
+            "counts": {
+              "tuple": "case.tuple"
+            },
+            "uncounted": {
+              "rules": "the deciding rules Lean selects: distinct, and rules of the request's norms (ve/backends/lean_service.py bind_answers) except when the profiles list contains acts@0 or rights@0, whose rule names Lean generates (norm-defaults-cfr-1b)",
+              "differs": "the atoms on which two UNDECIDED fillings differ"
+            },
+            "dispatch": [
+              "lean/VE/NormDefaults/Run.lean",
+              "lean/VE/NormDefaults/Layered.lean"
+            ]
+          },
+          {
+            "executable": "ve_service",
+            "mode": "norm-defaults",
+            "kinds": [
+              "norm-defaults-gaps"
+            ],
+            "response": {
+              "gaps": "string",
+              "predicate": "string"
+            },
+            "dispatch": [
+              "lean/VE/NormDefaults/Run.lean"
+            ]
+          },
+          {
+            "executable": "ve_service",
+            "mode": "norm-defaults",
+            "kinds": [
+              "norm-defaults-report"
+            ],
+            "response": {
+              "report": "array<object>",
+              "residual": "object",
+              "findings": "array<json>"
+            },
+            "uncounted": {
+              "report": "one line per regulated predicate Lean reports on",
+              "findings": "the findings Lean derives from the report"
+            },
+            "dispatch": [
+              "lean/VE/NormDefaults/Run.lean",
+              "lean/VE/NormDefaults/Layered.lean"
+            ]
+          },
+          {
+            "executable": "ve_service",
+            "mode": "norm-defaults",
+            "kinds": [
+              "norm-defaults-certificate"
+            ],
+            "response": {
+              "valid": "bool",
+              "premises": "nat"
+            },
+            "uncounted": {
+              "premises": "the regenerated premises the certificate is bound to: its premise_meaning_ids less the case's premises (ve/backends/lean_service.py bind_answers)"
+            },
+            "dispatch": [
+              "lean/VE/NormDefaults/Run.lean"
+            ]
+          },
+          {
+            "executable": "ve_service",
+            "mode": "norm-defaults",
+            "kinds": [
+              "defaults-elaborate"
+            ],
+            "response": {
+              "deciders": "array<json>",
+              "default_premises": "array<json>",
+              "coherence_targets": "array<json>"
+            },
+            "uncounted": {
+              "deciders": "the deciders Lean reads from the soft pack",
+              "default_premises": "Dflt_T's premises, Lean's to generate",
+              "coherence_targets": "the colliding pairs Lean finds"
+            },
+            "dispatch": [
+              "lean/VE/NormDefaults/Run.lean",
+              "lean/VE/Defaults/Route.lean"
+            ]
+          },
+          {
+            "executable": "ve_service",
+            "mode": "norm-defaults",
+            "kinds": [
+              "defaults-coherence"
+            ],
+            "response": {
+              "verdict": "string",
+              "pairs": "array<object>"
+            },
+            "uncounted": {
+              "pairs": "the colliding pairs Lean finds"
+            },
+            "dispatch": [
+              "lean/VE/NormDefaults/Run.lean",
+              "lean/VE/Defaults/Route.lean"
+            ]
+          },
+          {
+            "executable": "ve_service",
+            "mode": "norm-defaults",
+            "kinds": [
+              "defaults-certificate"
+            ],
+            "response": {
+              "verdict": "string"
+            },
+            "dispatch": [
+              "lean/VE/NormDefaults/Run.lean",
+              "lean/VE/Defaults/Route.lean"
+            ]
+          },
+          {
+            "executable": "ve_service",
+            "mode": "norm-defaults",
+            "kinds": [
+              "defaults-model"
+            ],
+            "response": {
+              "verdict": "string"
+            },
+            "dispatch": [
+              "lean/VE/NormDefaults/Run.lean",
+              "lean/VE/Defaults/Route.lean"
+            ]
+          },
+          {
+            "executable": "ve_service",
+            "mode": "norm-defaults",
+            "kinds": [
+              "defaults-zone"
+            ],
+            "response": {
+              "zone": "string"
+            },
+            "dispatch": [
+              "lean/VE/NormDefaults/Run.lean",
+              "lean/VE/Defaults/Route.lean"
+            ]
+          },
+          {
+            "executable": "ve_service",
+            "mode": "norm-defaults",
+            "kinds": [
+              "acts-elaborate"
+            ],
+            "response": {
+              "environment_id": "string",
+              "verdict": "string",
+              "predicates": "array<object>"
+            },
+            "uncounted": {
+              "predicates": "the parts Lean splits each joined act into"
+            },
+            "dispatch": [
+              "lean/VE/NormDefaults/Run.lean",
+              "lean/VE/Acts/Run.lean"
+            ]
+          }
+        ],
+        "planned_modes": [],
+        "theorems": [],
+        "planned_theorems": [],
+        "decoders": []
+      },
+      "rust": null,
+      "lean_call_sites": [],
+      "tests": [
+        "tests/test_norm_defaults_response_binding.py::test_norm_defaults_response_binding",
+        "tests/test_norm_defaults_response_binding.py::test_genuine_answers_pass",
+        "tests/test_norm_defaults_response_binding.py::test_the_manifest_lists_every_kind_the_mode_answers"
+      ],
+      "trusted": [
+        "lean:kernel",
+        "lean:compiler",
+        "lean:decoders",
+        "lean:runner-glue"
+      ],
+      "notes": [
+        "The mode's admission kind is the admission operation's binding. A case off the norm-defaults path (no profile, no unspecified default, no norm-defaults kind) is delegated to the norms runner and bound by the norms mode's schema."
+      ]
     }
   ]
 }

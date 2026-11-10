@@ -3,7 +3,8 @@
 import-linter (`lint-imports` on the generated `.importlinter`) finds every outward import, direct or through
 other modules and at any depth in a function, and fails on a ledger edge that no longer exists (an unmatched
 `ignore_imports`). This script checks what it does not:
-- every module has a layer (`layer_policy.python_layer`): there is no default layer;
+- every module has a layer (`layer_policy.python_layer`: a row of the table, or a module's or package's own
+  first-line declaration, `# ve-layer: <1-5> (<reason>)`): there is no default layer; a refused declaration fails;
 - no directory under a root package lacks `__init__.py` (import-linter would not see its modules);
 - every ledger edge still points outward under the table, or it is stale;
 - no module below the facade's highest layer imports the `ve` facade itself: its names resolve lazily
@@ -15,6 +16,7 @@ other modules and at any depth in a function, and fails on a ledger edge that no
 from __future__ import annotations
 
 import argparse
+import functools
 import json
 from pathlib import Path
 import subprocess
@@ -22,16 +24,17 @@ import sys
 
 import grimp
 
-from layer_policy import PYTHON, PYTHON_MODULES, ROOT, python_exports, python_layer
+from layer_policy import (PYTHON, PYTHON_COMMENT, ROOT, declaration_form, python_declarations, python_exports,
+                          python_layer, python_rows)
 
 LEDGER = "tools/layer-exceptions.json"
 CONTRACT = ".importlinter"
 PACKAGES = ("ve", "ve_experiments")
 
 
-def split_packages() -> list[str]:
+def split_packages(rows: dict[str, int]) -> list[str]:
     """Rows holding a longer row: packages whose modules are not all in one layer."""
-    return sorted(row for row in PYTHON_MODULES if any(other.startswith(row + ".") for other in PYTHON_MODULES))
+    return sorted(row for row in rows if any(other.startswith(row + ".") for other in rows))
 
 
 def children(package: str, root: Path) -> list[str]:
@@ -40,48 +43,61 @@ def children(package: str, root: Path) -> list[str]:
                   if (path.suffix == ".py" and path.name != "__init__.py") or (path / "__init__.py").exists())
 
 
-def layer_modules(row: str, root: Path) -> list[str]:
-    """The contract's modules for a row: the row, or a split package's children that no longer row places."""
-    if row not in split_packages():
+def layer_modules(row: str, root: Path, rows: dict[str, int]) -> list[str]:
+    """The contract's modules for a row of `rows` (`layer_policy.python_rows`): the row, or a split package's
+    children that no longer row places."""
+    if row not in split_packages(rows):
         return [row]
-    return [module for child in children(row, root) if child not in PYTHON_MODULES
-            for module in layer_modules(child, root)]
+    return [module for child in children(row, root) if child not in rows
+            for module in layer_modules(child, root, rows)]
 
 
 def problems(root: Path) -> list[str]:
     """What import-linter does not check, as messages; empty when the tree passes. `root`'s packages must be the
     ones `import ve` finds (`main` puts `root` first on the path)."""
-    errors = []
+    _, errors = python_declarations(root)
+    errors = [f"Python layer declaration refused: {message}" for message in errors]
+    if errors:
+        return errors  # every layer below reads the declarations
+    rows = python_rows(root)
+    layer = functools.partial(python_layer, root=root)
     graph = grimp.build_graph(*PACKAGES, include_external_packages=False)
-    errors += [f"unmapped Python module {module} (add it to tools/layer_policy.py)"
-               for module in sorted(graph.modules) if python_layer(module) is None and module not in PACKAGES]
+    errors += [f"unmapped Python module {module} ({declaration_form(PYTHON_COMMENT)}, or add it to "
+               "tools/layer_policy.py)"
+               for module in sorted(graph.modules) if layer(module) is None and module not in PACKAGES]
     for package in PACKAGES:
         errors += [f"{folder.relative_to(root)} has Python modules and no __init__.py"
                    for folder in sorted({path.parent for path in (root / package).rglob("*.py")})
                    if "__pycache__" not in folder.parts and not (folder / "__init__.py").exists()]
     for edge in sorted(json.loads((root / LEDGER).read_text())):
         importer, imported = edge.split(" -> ")
-        if not (python_layer(importer) or 0) < (python_layer(imported) or 0):
+        if not (layer(importer) or 0) < (layer(imported) or 0):
             errors.append(f"stale exception (remove it): {edge} is not outward")
-    for package in split_packages():
-        errors += [f"new outward import {package} -> {imported} (its __init__ is in no import-linter layer)"
+    for package in split_packages(rows):
+        errors += [f"new outward import {package} -> {imported} (its __init__ is in no import-linter layer); import "
+                   f"inward, or if {package} belongs in a higher layer, {declaration_form(PYTHON_COMMENT)}"
                    for imported in sorted(graph.find_modules_directly_imported_by(package))
-                   if (python_layer(imported) or 0) > python_layer(package)]
-    facade = max(python_layer(module) for module in python_exports(root).values())
+                   if (layer(imported) or 0) > layer(package)]
+    facade = max(layer(module) for module in python_exports(root).values())
     errors += [f"{importer} imports the ve facade below layer {facade}; import the defining module"
                for importer in sorted(graph.find_modules_that_directly_import("ve"))
-               if (python_layer(importer) or 0) < facade]
+               if (layer(importer) or 0) < facade]
     return errors
 
 
 def contract_text(exceptions: dict[str, str], root: Path) -> str:
+    """The `.importlinter` contract: each layer's table rows, then its declared rows, outermost layer first."""
+    rows = python_rows(root)
+    declared = python_declarations(root)[0]
     lines = ["# Generated by tools/check_python_layers.py --write; review the ledger first.",
              "[importlinter]", "root_packages =", *(f"    {package}" for package in PACKAGES), "",
              "[importlinter:contract:layers]",
              "name = VE inward-only imports (reviewed legacy edges)", "type = layers",
              "unmatched_ignore_imports_alerting = error", "layers ="]
     for layer in range(5, 0, -1):
-        modules = [module for name in PYTHON[layer] for module in layer_modules(f"ve.{name}", root)]
+        modules = [module for row in [*(f"ve.{name}" for name in PYTHON[layer]),
+                                      *sorted(row for row, (at, _, _) in declared.items() if at == layer)]
+                   for module in layer_modules(row, root, rows)]
         if layer == 5:
             modules.append("ve_experiments")
         lines.append("    " + ":".join(modules))
@@ -100,6 +116,8 @@ def main(argv: list[str] | None = None) -> int:
     found = problems(root)
     for message in found:
         print(message, file=sys.stderr)
+    if any(message.startswith("Python layer declaration refused: ") for message in found):
+        return 1  # no contract can be generated from a refused declaration
     generated = contract_text(exceptions, root)
     if args.write:
         (root / CONTRACT).write_text(generated)
@@ -111,6 +129,9 @@ def main(argv: list[str] | None = None) -> int:
                             capture_output=True, text=True)
     print(result.stdout, end="")
     print(result.stderr, end="", file=sys.stderr)
+    if "BROKEN" in result.stdout:
+        print(f"a broken layer contract: import inward, or if the importer belongs in a higher layer, "
+              f"{declaration_form(PYTHON_COMMENT)} (docs/ARCHITECTURE-LAYERS.md)", file=sys.stderr)
     return 1 if found else result.returncode
 
 

@@ -16,6 +16,9 @@ import VE.Readings.SoftSeparate
 import VE.Readings.SoftSeparateExamples
 import VE.Readings.SoftSup
 import VE.Readings.SoftSupExamples
+import VE.Readings.SoftSupLabels
+import VE.Readings.SoftSupWire
+import VE.Readings.SoftSupWireExamples
 import VE.Closure.OrderChecks
 import VE.Grammar.TableProofs
 import VE.Grammar.Meaning
@@ -139,7 +142,12 @@ import VE.Presupposition.Rules
 import VE.Presupposition.Agree
 import VE.Presupposition.Wire
 import VE.Presupposition.Table
+import VE.Presupposition.Admit
+import VE.Presupposition.Admit.Facts
+import VE.Presupposition.Admit.Statements
 import VE.Presupposition.Examples
+import VE.Presupposition.Events
+import VE.Presupposition.Events.Examples
 import VE.RightClauses.Tree
 import VE.RightClauses.Plain
 import VE.RightClauses.Relation
@@ -223,6 +231,7 @@ import VE.Commands.Examples
 import VE.Commands.RunExamples
 import VE.Commands.RunSplit
 import VE.Commands.StepsExamples
+import VE.Commands.StepsProofs
 import VE.Ask.Basic
 import VE.Ask.Sound
 import VE.Ask.Sources
@@ -262,6 +271,8 @@ import VE.Acts.Grammar
 import VE.Acts.RuleExamples
 import VE.Acts.Meaning
 import VE.Acts.Readings
+import VE.Acts.Specialise
+import VE.Acts.SpecialiseExamples
 import VE.Acts.Sources
 import VE.Acts.Situation
 import VE.Acts.MeaningExamples

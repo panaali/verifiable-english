@@ -1,0 +1,173 @@
+# bs-sel-defer-broad: `select_tests.py --defer-broad` (build bottleneck fix F1)
+
+- **Status:** built. HEAD is the branch tip; the commits are listed under "Task lines". No DRI signature is needed. DELTA: none (DELTA.md).
+- **What changed:** `tools/select_tests.py` has a new opt-in option, `--defer-broad`, used only with `--defer-heavy`. With it, a builder run defers the heavy broad Lean consumers that only weak and Lean reasons select.
+- **Effect:** on the recorded plans, the map seconds drop by 71% (cmp-s3a-cfr-2), 44% (sc-7), 56% (sn-b6d) and 6% (ps-2a, which changed Python).
+- **Open (HUMAN/EXTERNAL):** the manage-agents hook row bs-sel-defer-broad-hook, owned by its delegate, is not this item. The full gate is run by the chain.
+
+Ruling: acting DRI dri-build-speed 2026-11-09, reviews/build-speed-20261109.md section "Ruling", fix F1 (guarded
+trial to 2026-11-16T16:00Z). There is no Lean change and no trust change.
+
+## What changed
+
+- **The option.** `--defer-broad` is valid only with `--defer-heavy`. It refuses `--full`, `--tier` and `--impacted`, the same as `--defer-heavy`. Without `--defer-heavy` it exits 2 with the message `--defer-broad widens --defer-heavy; it takes --defer-heavy`.
+- **What it defers.** `defer_heavy(..., shares=)` (`deferral`) also defers a heavy unit (map seconds > `DEFER_SECONDS` = 120) when all of these hold:
+  - every reason that selects it is weak or a Lean reason;
+  - its reach (`lean_shares`) is at least `BROAD_LEAN_SHARE` = 0.25;
+  - its own source names no changed Lean module and no directory of one (`names_changed_lean`);
+  - its file name does not make it a test of a changed module's family (`family_test`, e.g. `test_scope_*.py` for lean/VE/Scope).
+
+  These still stay, as before: a changed test, SMOKE, HISTORY_TEST, `run_order.last_failed`, a unit with no recorded seconds, and a unit that `shares` does not hold.
+- **Lean reasons** (`lean_reason`). A reason is a Lean reason when it says `reads`, `runs Lean via` or `runs service mode via`, and the file it names is either:
+  - a Lean input (`is_lean_input`: a `.lean` module or a Lean project file), or
+  - one of `LEAN_INVENTORIES`: `lean/declarations.txt`, `statements.txt`, `predicates.txt`, `axioms.txt`, `checkers.lock`.
+
+  `checkers.lock` is in the list because it is the checker-pins generated file, which every rebuilt checker rewrites.
+
+  Any other file under lean/ is Python or data, and a unit selected by it stays: `lean/audit.py`, `route-cases.json`, `frozen-sources.sha256`, `*.md`.
+- **Lean reach** (`lean_shares`). The map records, per unit, the files it read and the programs it ran. It does not record which Lean modules a program runs. So a unit's reach is counted against the lean/VE `.lean` files that the map records some unit reading, and is the union of:
+  - the modules the unit read;
+  - the import closure (from the source graph) of each Lean executable it ran, or every module when a header is unreadable;
+  - every module, when it ran `lake` or `lean`.
+
+  This is the set of modules whose change selects the unit through `file_impact`'s Lean reasons.
+- **The threshold.** On map 223babd3d0 (559 units), `lean_shares` gives 125 units at <= 0.1201, 352 units at 0.661-0.99 and 82 units at >= 0.99. No unit falls in between, so 0.25 sits in that gap. The command and its output:
+  `uv run python -c "import sys,collections; sys.path.insert(0,'tools'); import select_tests as st, test_map, source_graph; from pathlib import Path; d=test_map.load(Path.home()/'.cache/ve-testmap/223babd3d047fbd14cf5ddd01fdd5dd2ba9ba9a6.json.gz'); s=st.lean_shares(d, source_graph.load(st.ROOT)); v=[s.get(t,0.0) for t in d['tests']]; print(max(x for x in v if x<0.25), min(x for x in v if x>=0.25)); print(collections.Counter('<0.25' if x<0.25 else ('>=0.99' if x>=0.99 else '0.25-0.99') for x in v))"`
+  gives `0.1201 0.661` and `Counter({'0.25-0.99': 352, '<0.25': 125, '>=0.99': 82})`.
+- **The plan.** Each `deferred` row is `{"seconds", "reasons", "class"}`. `class` is `"weak"` or `"broad"`, and a broad row also has `"lean_share"`. `deferred_seconds` is the same as before. The printed line now reads:
+  `deferred to the chain gate: N test files over 120 s selected only for weak reasons or as broad Lean consumers (K) (S s): a (broad), b, ...`
+- **Runs that never pass the option.** Only builder feedback runs pass `--defer-heavy` and `--defer-broad`. These runs never pass them, so they still run every deferred unit:
+  - the chain's own selected run (`MAC_PYTEST_NO_DEFER=1`);
+  - the GATE_REUSE_SAME_TREE final run;
+  - `tools/gate.py`;
+  - `--full`.
+
+  The merge train's full suite also still runs every unit. This is stated in `defer_heavy`'s docstring and in docs/TESTING.md.
+
+## For the hook row bs-sel-defer-broad-hook (manage-agents, not this item)
+
+- **The option** is `--defer-broad`, passed after `--defer-heavy`. To detect whether a worktree's selector has it, use `grep -qF -- '"--defer-broad"' $w/tools/select_tests.py`. This mirrors the existing `"--defer-heavy"` check in defer-heavy.zsh.
+- **What the ledger (`tools-local/buildfix-sel.py`) should read** from `select_tests.py ... --json`:
+  - `deferred` (unit -> `{seconds, reasons, class, lean_share?}`). Summing `seconds` where `class == "broad"` gives F1's share; where `class == "weak"`, it gives what `--defer-heavy` already deferred.
+  - `deferred_seconds`;
+  - `selected` and `selected_count` (after deferral);
+  - `map.commit`.
+
+  In a text run, the broad units are marked ` (broad)` on the `deferred to the chain gate:` line.
+- **The guard's "broad-deferred unit":** the `deferred` keys whose `class == "broad"`.
+
+## Before and after (recorded plans, map seconds)
+
+Each plan was recorded at the item's tip, using that tip's own `tools/select_tests.py --base <base> --json`, in a temporary worktree. The trimmed plans are in `tests/data/select_defer/<item>.json`. `tests/test_select_defer.py::test_each_recorded_plan_keeps_these_map_seconds` asserts these numbers:
+
+| item | base | selected units | selected s | after --defer-heavy | after + --defer-broad | change |
+|---|---|---|---|---|---|---|
+| cmp-s3a-cfr-2 | 6db6ee16dd | 116 | 19915 | 19915 | 5835 (30 broad) | -71% |
+| sc-7 | da5303b787 | 120 | 24080 | 24080 | 13407 (19 broad) | -44% |
+| ps-2a | 223babd3d0 | 486 | 50868 | 50712 | 47814 (6 broad, 1 weak) | -6% |
+| sn-b6d | 223babd3d0 | 454 | 50047 | 50047 | 22076 (60 broad) | -56% |
+
+- **Mostly-Lean changes** (cfr-2: RightClauses; sc-7: Scope and VE/Audit; sn-b6d: Senses, plus `ve/backends/senses.py` and a relay test) lose about half or more of their selected seconds.
+- **ps-2a.** It also changed Python (`tools/lean_statements.py`, `lean/audit.py`) and `.gitattributes`. Its heavy units carry those non-Lean reasons, so they correctly stay.
+- **The 450-486 units in the review** match ps-2a (486) and sn-b6d (454).
+- **Why cfr-2 and sc-7 select only 116 and 120 units at their tips.** Their changed Lean modules are in no Lean executable's import closure: `executables_using` returns nothing for `VE.RightClauses.Plain`, `VE.Scope.Authoring`, `VE.Audit` and `VE.Service.ScopeExamples` at those tips. So no executable runner is selected through them, including the ve_service users `test_readings_rd6b_differential.py` and `test_speech_polar_lean.py`. The tests therefore check the three heavy files those plans select, and all five on sn-b6d.
+- **What sc-7 keeps:**
+  - the units whose source names `lean/VE/Audit.lean`, e.g. `test_question_reading.py`;
+  - the family tests by name: `test_scope_answer.py` (`test_lean_audit_record.py` is kept by both rules);
+  - units with non-Lean reasons.
+
+## Task lines
+
+| task line | commit | test | tag |
+|---|---|---|---|
+| 1. `--defer-broad`, only with `--defer-heavy`; weak or broad; broad = Lean reason + share >= 0.25 from the map | 4a904f190, 1baa360f3 | `test_with_shares_a_broad_lean_consumer_is_deferred_and_the_rest_stays`, `test_the_share_threshold_is_inclusive`, `test_lean_reasons_are_the_lean_trees_files_never_python_or_static`, `test_a_units_lean_reach_is_what_it_reads_and_the_closures_of_what_it_runs`, `test_defer_broad_takes_defer_heavy_and_its_exclusions` | AGENT |
+| 2. never deferred: changed test, SMOKE, HISTORY_TEST, last failed, non-Lean strong reason, own source names a changed module or its directory | 4a904f190, 1baa360f3 | `test_each_heavy_lean_wide_file_stays_when_it_changed_or_failed`, `test_a_familys_own_lean_test_and_a_python_reader_stay_in_the_recorded_sc_7_plan`, `test_a_unit_names_a_changed_module_or_its_directory_never_a_sibling`, `test_a_test_of_a_changed_modules_family_is_named_for_it`, `test_these_heavy_weak_units_always_stay` | AGENT |
+| 3. deferred rows give the class; printed line marks broad | 4a904f190 | `test_the_option_passes_the_maps_shares_and_marks_broad_files`, `test_a_heavy_file_selected_only_for_weak_reasons_is_deferred` | AGENT |
+| 4. the chain's runs, gate and `--full` never pass it (docstring) | 4a904f190 | `defer_heavy` docstring and docs/TESTING.md; `test_the_option_refuses_full_impacted_and_tier_runs` | AGENT |
+| Tests: five files deferred on cfr-2/sc-7-like plans, stay when changed, failed, or without the option; family test stays | 4a904f190, 1baa360f3 | `test_the_heavy_lean_wide_files_are_deferred_for_a_one_family_lean_change[cmp-s3a-cfr-2,sc-7,sn-b6d]` | AGENT |
+| Before/after seconds for cfr-2, sc-7, ps-2a, sn-b6d | 1baa360f3 | `test_each_recorded_plan_keeps_these_map_seconds` | AGENT |
+| Hook in manage-agents (defer-heavy.zsh, ledger) | n/a | n/a | EXTERNAL (row bs-sel-defer-broad-hook) |
+
+## Spec re-read
+
+- "valid only with --defer-heavy (same exclusions)" against the task's FIX 1: the option exits 2 alone, and with `--full`, `--impacted` or `--tier`.
+- "EVERY reason that selected it is weak OR broad" against FIX 1: `all(weak_reason or lean_reason)`.
+- "a Lean reason ('reads lean/...', 'runs Lean via lean/...', or the declarations/statements inventories)" against FIX 1. It is narrowed to Lean inputs and the named inventories, because FIX 2 says "a changed data file it reads" stays.
+- "reads or runs at least BROAD_LEAN_SHARE ... of the lean/VE modules the map knows" against FIX 1: see `lean_shares`.
+- The never-deferred list against FIX 2:
+  - changed test: `stay`;
+  - SMOKE and HISTORY_TEST: `stay`;
+  - last failed: `keep`;
+  - non-Lean strong reason: `deferral`;
+  - own source: `names_changed_lean`, with `family_test` added.
+- "deferred rows say which reason class" against FIX 3: `class`.
+- "the printed line marks broad ones" against FIX 3: `(broad)`.
+- The statement about who never passes the option against FIX 4: the `defer_heavy` docstring.
+
+## Seeded bugs (Python; docs/infra/bs-sel-defer-broad/seeded-bugs.json)
+
+21 seeded bugs, each planted alone in `tools/select_tests.py` (B15 to B21, the F1 fix: also `tools/path_expressions.py`). The named test was run alone each time. All 21 were caught (rc 1), then the file was restored. B15 to B21 are listed under Review fixes. The others:
+
+- B1: share `>=` changed to `>`.
+- B2: `all(weak or Lean)` changed to `any`.
+- B3 and B14: the own-source rule dropped (synthetic plan and recorded sc-7).
+- B4: every executable reaches every module.
+- B5: the directory pattern matches a sibling.
+- B6: the inventories are not Lean.
+- B7: `keep` ignored.
+- B8: `--defer-broad` accepted alone.
+- B9: the `(broad)` mark dropped.
+- B10: a missing share counts as 1.0.
+- B11: the family-name rule dropped.
+- B12: any file under lean/ is Lean.
+- B13: the family name matches inside a word.
+
+## Review fixes (bs-sel-defer-broad-review.final.md)
+
+- **F1 (B): a module named by a join was missed.** `names_changed_lean` saw only unbroken spellings, so `tests/test_w6a_looprecheck1.py:316` (`ROOT / "lean" / "VE" / "Time" / "Calendar.lean"`) was deferred as broad for a change to lean/VE/Time/Calendar.lean. The class is every path a unit's source builds from literal parts. The graph's `mentions` do not resolve such a join: its `lean/VE/Time/Calendar.lean` came from the bare `"Calendar.lean"` piece, a file-name guess, so it was not used. The fix moves the one path evaluator the tools had, `history_tests._Scanner._path`, into its own module, tools/path_expressions.py (`path_of`, with `assignments` and `callee`). history_tests now calls it there and lists the module in its `INPUTS`. select_tests reaches history_tests only in `history_inventory`, and tests/test_history_tests.py checks that.
+  - `path_of` now also evaluates `Path(a, b, ...)`, `.joinpath` and `+` of two known parts. It gives a join with an unknown base (`os.path.join(root, "lean", ...)`) the literal parts after that base, as `/` already did.
+  - `path_expressions.built_paths(source, file)` gives the path of each outermost path-building expression: `/`, `os.path.join`, `Path(a, b)`, `.joinpath`, `+`. A part of a bigger join is not one of those paths (`lean/VE/Time` inside `.../Zone.lean`, a `joinpath` receiver).
+  - `unit_text` appends those paths to the source, so `names_changed_lean` reads them with the rules it already has.
+  - `tools/regen_generated.py --check` reports tests/history-dependent.json unchanged.
+  - PROBE F1 on map 223babd3d0: it failed before (`AssertionError: broad`) and passes after.
+  - Regression tests: `tests/test_select_defer.py::test_a_module_or_directory_a_unit_builds_by_a_join_is_named` (7 spellings, each with a sibling that must not count) and `::test_a_heavy_broad_unit_that_builds_the_changed_modules_path_stays` (the looprecheck line, copied into tmp_path).
+  - Seeded bugs B15 to B21 were all caught.
+- F2, F3 and F4 are C (follow-up) and are not addressed here.
+- **Checks for the review fix:**
+  - The first selected run, on e2c0667dc (ve-cloud-2), failed 1 of 27 files: `tests/test_history_tests.py::test_the_selector_reads_the_list_only_to_run_its_lint`. select_tests called history_tests outside `history_inventory`. The evaluator's move to tools/path_expressions.py (959eb3302) fixes it.
+  - The final selected run, `mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on 64a89890e (ve-mac-1, clean), exited 0 with 0 failed ids. Its plan included tests/test_history_tests.py, tests/test_select_tests.py, tests/test_select_defer.py and tests/test_w6a_looprecheck1.py.
+  - `lake build` succeeded (1328 jobs), and `python3 lean/audit.py` PASSED. There is no Lean change.
+
+## Checks run
+
+- `uv run pytest -q tests/test_select_defer.py` -> `39 passed`. The same 39 also passed inside the ve-mac-1 rerun below.
+- `uv run python tools/regen_generated.py --write` (run once) rewrote docs/codemap. Besides this branch's docstring, it also fixed entries that were already stale on main: a removed `runmut.py` and a missing `test_speech_acts_acts0.py`.
+- **The final selected run.** Command: `MAC_PYTEST_NO_DEFER=1 zsh mac-pytest.sh --select -- --base a0102f0e5 --run`, on committed 82dc869b9, on ve-cloud-2 (5827 s). It ran 237 of 560 units; 2 failed, and both failures came from this branch:
+  - `tests/test_inventory_path.py::test_no_train_only_path_is_read_outside_the_accessor`
+  - `tests/test_gen_inv_design.py::test_gi2b_names_every_pin_reader`
+
+  The cause: the first version of `LEAN_INVENTORIES` spelled out train-only paths. 8eb1e173b fixes it by taking them from `regen_generated.train_only()`. I reran those ids plus tests/test_select_defer.py with `mac-pytest.sh -- <ids>` on ve-mac-1 (HEAD 8eb1e173, clean): `41 passed`, exit 0. Neither failure is in main-known-red.
+- There was no Lean change, so no lake build, `lean/audit.py` or trust_mutants (checklist 13a covers trusted Lean growth only). The full gate is run by the chain.
+
+## Self-review against BUILDER-CHECKLIST
+
+SELF-REVIEW: 1 A, 4 B, 6 C; fixed 11.
+- The A: Lean reasons were narrowed to Lean inputs and the named inventories.
+- The 4 Bs: a missing share and empty shares now stay; the family-name rule was added; the recorded-plan tests are now hermetic; the report sections were added.
+- The 6 Cs: all fixed.
+
+1. Lean answers typed and contained: N.A. No relayed Lean answer or schema changed.
+2. Every deliverable built, no rule broken: PASS. See the task lines table; `tests/test_inventory_path.py` and `tests/test_gen_inv_design.py` pass after 8eb1e173b.
+3. Tests and gates can fail: PASS. All 14 seeded bugs were caught (seeded-bugs.json), e.g. by `test_with_shares_a_broad_lean_consumer_is_deferred_and_the_rest_stays`.
+4. Python, Lean and Rust agree: N.A. Python tooling only.
+5. R8 binding: N.A. No relay.
+6. Gate evidence matches the final HEAD: PASS. The chain runs the gate on the final HEAD; the selected run and reruns are above.
+7. No unsigned item: PASS. DELTA.md says none and has no Ruling table rows.
+8. Every user-visible change in DELTA: PASS. DELTA.md records the `class` field on `--defer-heavy` rows (`test_a_heavy_file_selected_only_for_weak_reasons_is_deferred`).
+9. Test selection still finds the tests: PASS. The selected run picked tests/test_select_defer.py (changed) and the inventory lints, which caught the inventory-literal regression above. `--defer-broad` is opt-in, and gate.py, `--full` and the chain's runs never use it (`test_the_option_refuses_full_impacted_and_tier_runs`, `test_defer_broad_takes_defer_heavy_and_its_exclusions`).
+10. Lean statements and proofs: N.A. No Lean change.
+11. Budgets fail closed: PASS for the analogue here: a missing share or an unreadable map defers nothing broad (`test_with_shares_a_broad_lean_consumer_is_deferred_and_the_rest_stays`, seeded bug B10). The tests use no sleeps and no deadlines.
+12. No CPU or memory regression: PASS. `--defer-broad` adds one map load and the source graph. A whole `select_tests.py --paths lean/VE/RightClauses/Plain.lean --defer-heavy --defer-broad` run took 13.4 s. Without the option nothing changes.
+13. Test-removed trailers: N.A. No test was removed or renamed; tests were only added.
+14. Both directions, cited evidence, spec re-read: PASS. Accept and refuse cases are in `test_lean_reasons_are_the_lean_trees_files_never_python_or_static`, `test_a_unit_names_a_changed_module_or_its_directory_never_a_sibling` and `test_a_test_of_a_changed_modules_family_is_named_for_it`. The spec re-read section is above.
+15. No overclaim, no silent cut, checks can fail, limits charged: PASS. Every number above cites its test or command. No deliverable was cut; the task itself makes the hook a separate row. Seeded bugs B1-B14 cover the checks. Limits: N.A.
