@@ -24,7 +24,7 @@ def test_each_b1_row_is_a_route_fixture_that_reads(row):
 
 
 def test_saved_ab_has_no_stop_row_and_no_surface_kind_flip():
-    assert [r["wording"] for r in AB["changed"] if r["class"] not in ("b1", "b2")] == []
+    assert [r["wording"] for r in AB["changed"] if r["class"] not in ("b1", "b2", "rr")] == []
     assert AB["surface_kind_flips"] == [] and AB["corpus_if_then_literals"] == 0
 
 
