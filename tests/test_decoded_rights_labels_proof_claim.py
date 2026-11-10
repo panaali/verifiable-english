@@ -114,6 +114,8 @@ def test_decoded_rights_labels_proof_claim_refuses() -> None:
     old_comment = "-- The route's own repeated-label check refuses it (no decoded document reaches this: predicates are"
     old_examples = {**sources, EXAMPLES: sources[EXAMPLES] + "\n" + old_comment + " identifiers).\n"}
     assert any(EXAMPLES in p for p in claim_problems(labels, report, old_examples))
+    assert asserts_decoded("Labels are distinct. On the decoded route the act keys pass `VE.Bridge.identifier`.")
+    assert not asserts_decoded("That a decoded act key passes it is not proved: no lemma ties decoded act keys to it.")
     theorem = "theorem t (h : decodeRights j = .ok R) :\n  ∀ k ∈ condKeys R, Bridge.identifier k.2.1 := by"
     proved = {**sources, "X.lean": theorem}
     assert claim_problems(old_labels, old_report, proved) == []
