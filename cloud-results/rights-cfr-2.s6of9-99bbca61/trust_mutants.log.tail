@@ -1,0 +1,13 @@
+trust_mutants: --rescore ci-job/rescore.json: a full run, since its inputs differ (options)
+trust_mutants: 13 definitions, 451 mutants (50 to run), 4 jobs, base 3e4fe503f4c9
+UNKNOWN lean/VE/Rights/Run.lean:519 VE.Rights.Run.runRightsKind (G[V], trusted) list-empty: environment -> [] (lean/VE/Rights/Run.lean:519: Application type mismatch: The argument)
+UNKNOWN lean/VE/Rights/Run.lean:442 VE.Rights.Run.conflictAnswerOf (D[V], trusted) list-empty: (targets (soften (correlate D))).map (·.1) -> [] (lean/VE/Rights/Run.lean:442: typeclass instance problem is stuck, it is often due to metavariables)
+SURVIVOR lean/VE/Rights/Run.lean:528 VE.Rights.Run.runRightsKind (G[V], trusted) list-first: findings.map (fun f => Json.str f.text) -> ((findings.map (fun f => Json.str f.text)).take 1)
+SURVIVOR lean/ResponseShape/Schemas/Rights.lean:196 ResponseShape.Schemas.Rights.situation (G[V], trusted) list-first: [arr, .items (ref "common.json#/$defs/strings")] -> ([arr, .items (ref "common.json#/$defs/strings")].take 1)
+SURVIVOR lean/ResponseShape/Schemas/Rights.lean:187 ResponseShape.Schemas.Rights.located_findings (G[V], trusted) list-drop-last: ["null"] -> (["null"].dropLast)
+SURVIVOR lean/VE/Rights/Run.lean:529 VE.Rights.Run.runRightsKind (G[V], trusted) list-first: findings.map findingJson -> ((findings.map findingJson).take 1)
+SURVIVOR lean/VE/Rights/Run.lean:529 VE.Rights.Run.runRightsKind (G[V], trusted) list-last: findings -> (findings.reverse.take 1)
+trust_mutants: 37 KILLED, 5 SURVIVOR, 2 UNKNOWN, 6 INVALID, 0 ALLOWED, 0 NOT RUN, 401 OTHER SHARD in 1204 s
+trust_mutants: D[V], trusted: 12 KILLED, 1 UNKNOWN, 3 INVALID, 169 OTHER SHARD
+trust_mutants: G[V], trusted: 25 KILLED, 5 SURVIVOR, 1 UNKNOWN, 3 INVALID, 232 OTHER SHARD
+trust_mutants: steps: wall plan 9.6 s, scratch 3.3 s, control_build 0.3 s, probe_install 1.1 s, mutants 1183.3 s, cleanup 6 s, reads 0.1 s; lake control_build 0.2 s (1), probe_install 1.1 s (1), control_probes 38.9 s (8), mutant_builds 892.5 s (50), mutant_checks 3000.2 s (49), stage_controls 414.1 s (7), mutant_probes 289.5 s (37)
