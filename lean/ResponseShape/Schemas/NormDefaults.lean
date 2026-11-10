@@ -193,9 +193,10 @@ def atom : Shape :=
     closed [("predicate", str), ("tuple", ref "common.json#/$defs/strings")]]
 
 def status : Shape :=
-  c "NormDefaults.Run.runOtherCase and Wire.runLayered norm-defaults-status: the requested predicate's point status, then NormDefaults.Wire.statusFields: the tuple's entity ids, the deciding author rules and the atoms where two UNDECIDED fillings differ." [
+  c "NormDefaults.Run.runOtherCase and Wire.runLayered norm-defaults-status: the requested predicate's point status, then NormDefaults.Wire.statusFields: the tuple's entity ids, the deciding author rules, each with the request rule it comes from (Wire.ruleSources: an acts@0 part's split rule, a rights@0 fan-out's norm or bar rule's bar, else itself), and the atoms where two UNDECIDED fillings differ." [
     obj,
-    .required ["id", "status", "point_status", "predicate", "tuple", "rules", "differs"],
+    .required ["id", "status", "point_status", "predicate", "tuple", "rules", "sources", "differs"],
+    .sameLength ["rules", "sources"],
     closed [
       ("id", ref "common.json#/$defs/id_ok"),
       ("status", constS "ok"),
@@ -203,6 +204,7 @@ def status : Shape :=
       ("predicate", n [str, .equals "/predicate"]),
       ("tuple", n [ref "common.json#/$defs/strings", .equals "/tuple"]),
       ("rules", n [ref "common.json#/$defs/strings", .uniqueStrings]),
+      ("sources", n [arr, .items (n [obj, .required ["rule", "source"], closed [("rule", str), ("source", str)]])]),
       ("differs", n [arr, .items (ref "#/$defs/atom")])]]
 
 def witness_conflict : Shape :=

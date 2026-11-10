@@ -74,6 +74,21 @@ def gen (n : String) : Pack := ⟨"soft", .vocabulary, [(n, [])], [], [], [], []
   decide (((VE.NormDefaults.Wire.softLabelledU (legacyU R) (VE.Rights.correlate R)).map (·.1)).Nodup)
 #guard (rightsDocs.map VE.Rights.WellFormedRights) == [true, true, true, true, true, true, false, false]
 
+-- norm-defaults-cfr-1b: the request rule each generated rule comes from (a status row's `sources`). A fan-out instance
+-- names its line's norm, a bar rule the bar read as a rule; a query bar and a plain line generate none.
+open VE.Rights.Examples (alpha beta fanMap eta) in
+#guard VE.NormDefaults.Wire.rightsSources (beta fanMap) ==
+  [("rights-fan-1", "no-torture"), ("rights-fan-2", "no-torture")]
+open VE.Rights.Examples (eta) in
+#guard VE.NormDefaults.Wire.rightsSources (eta) == [("rights-bar-1", "b30")]
+open VE.Rights.Examples (eta) in
+#guard VE.NormDefaults.Wire.rightsSources { (eta) with bars := [⟨"b30", .query, some "unstated"⟩] } == []
+#guard VE.NormDefaults.Wire.rightsSources VE.Rights.Examples.alpha == []
+#guard VE.NormDefaults.Wire.ruleSources [("rights-fan-1", "no-torture")] ["rights-fan-1", "art9"] ==
+  [("rights-fan-1", "no-torture"), ("art9", "art9")]
+#guard VE.NormDefaults.Wire.sourcesJson [("r-a1", "r")] ==
+  Lean.Json.arr #[Lean.Json.mkObj [("rule", "r-a1"), ("source", "r")]]
+
 /-! ## 2.10: the kind table's legacy rows
 
 On a source decoded by the real `decodeSoftU` (DF-1a's fixture γ: two colliding default rules), the route's dispatch
