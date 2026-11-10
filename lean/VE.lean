@@ -147,6 +147,8 @@ import VE.Presupposition.Admit.Facts
 import VE.Presupposition.Admit.Statements
 import VE.Presupposition.Examples
 import VE.Presupposition.Run
+import VE.Presupposition.Events
+import VE.Presupposition.Events.Examples
 import VE.RightClauses.Tree
 import VE.RightClauses.Plain
 import VE.RightClauses.Relation
