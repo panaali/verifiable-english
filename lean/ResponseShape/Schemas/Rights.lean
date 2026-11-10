@@ -174,12 +174,33 @@ def rule_narrowings : Shape :=
 def findings : Shape :=
   n [arr, .items (ref "common.json#/$defs/text")]
 
+def located_findings : Shape :=
+  c "Rights.Run.findingJson: each finding beside its text, with its code, rule and right and its line's span (the id of the source unit the request's `located` names for the line; null when the request locates none)." [
+    arr,
+    .items (n [
+      obj,
+      .required ["code", "rule", "right", "span", "text"],
+      closed [
+        ("code", str),
+        ("rule", str),
+        ("right", str),
+        ("span", .anyOf [ref "common.json#/$defs/text", .type ["null"]]),
+        ("text", ref "common.json#/$defs/text")]])]
+
+def situation : Shape :=
+  c "Rights.Run.situationTables: the checked finite base model's decision and rights-generated tables, each predicate with its tuples of entity ids." [
+    arr,
+    .items (n [
+      obj,
+      .required ["predicate", "tuples"],
+      closed [("predicate", str), ("tuples", n [arr, .items (ref "common.json#/$defs/strings")])]])]
+
 def elaborate : Shape :=
   c
-    "Rights.Run.regenerated: E'' (primeJsonR), the generated predicates, the lines, the limitation premises, the bar nodes, the rights Background, the narrowings with their grounds, the rule narrowings, the distinction rows and findings, then every SoftNorms.Wire.regeneratedCore field over the correlated document but its environment_prime."
+    "Rights.Run.regenerated: E'' (primeJsonR), the generated predicates, the lines, the limitation premises, the bar nodes, the rights Background, the narrowings with their grounds, the rule narrowings, the distinction rows and findings (each also with its line's span, `located_findings`), then every SoftNorms.Wire.regeneratedCore field over the correlated document but its environment_prime."
     [
       obj,
-      .required ["id", "status", "environment_prime", "generated", "wordings", "unit_open", "lines", "limitations", "bars", "rights_background", "narrowings", "rule_narrowings", "distinction", "findings", "decisions", "derived", "order", "background", "premises", "colliding_pairs", "conflict_targets", "conditional_on", "fragment", "warnings"],
+      .required ["id", "status", "environment_prime", "generated", "wordings", "unit_open", "lines", "limitations", "bars", "rights_background", "narrowings", "rule_narrowings", "distinction", "findings", "located_findings", "decisions", "derived", "order", "background", "premises", "colliding_pairs", "conflict_targets", "conditional_on", "fragment", "warnings"],
       closed [
         ("id", ref "common.json#/$defs/id_ok"),
         ("status", constS "ok"),
@@ -261,6 +282,7 @@ def elaborate : Shape :=
                       .required ["rule", "right", "protected", "cited"],
                       closed [("rule", str), ("right", str), ("protected", str), ("cited", .type ["boolean"])]])])]])]),
         ("findings", ref "#/$defs/findings"),
+        ("located_findings", ref "#/$defs/located_findings"),
         ("decisions", ref "soft-norms.json#/$defs/elaborated/decisions"),
         ("derived", ref "soft-norms.json#/$defs/elaborated/derived"),
         ("order", ref "common.json#/$defs/strings"),
@@ -296,15 +318,16 @@ def entries : Shape :=
 
 def scope : Shape :=
   c
-    "Rights.Run.runRightsKind rights-scope: the unlicensed-limitation findings, whether there are none, and the narrowings with certified licences."
+    "Rights.Run.runRightsKind rights-scope: the unlicensed-limitation findings, whether there are none, the findings with their lines' spans (`located_findings`), and the narrowings with certified licences."
     [
       obj,
-      .required ["id", "status", "findings", "licensed", "narrowings"],
+      .required ["id", "status", "findings", "licensed", "located_findings", "narrowings"],
       closed [
         ("id", ref "common.json#/$defs/id_ok"),
         ("status", constS "ok"),
         ("findings", ref "#/$defs/findings"),
         ("licensed", .type ["boolean"]),
+        ("located_findings", ref "#/$defs/located_findings"),
         ("narrowings", ref "#/$defs/narrowings")],
       .ite (props [("findings", .maxItems 0)]) (props [("licensed", .const (.bool true))]) (props [
           ("licensed", .const (.bool false))])]
@@ -353,7 +376,7 @@ def bar : Shape :=
                 ("entailed", .type ["boolean"])]]])])]]
 
 def packages : Shape :=
-  c "Rights.Run.runRightsKind rights-conflict over certificate packages: detail exactly beside UNKNOWN, which names the first failing certificate in its status line and is conditional on nothing; a CONFLICT-FREE status line counts its premises." [
+  c "Rights.Run.conflictAnswer, rights-conflict over certificate packages: detail exactly beside UNKNOWN, which names the first failing certificate in its status line and is conditional on nothing; a CONFLICT-FREE status line is rights.md 7.3's, and beside it are its parts: the weighing points, whether the request's situation was exhibited, the budget and the situation's tables (null when none was)." [
     obj,
     .required ["id", "status", "verdict", "status_text", "targets", "conditional_on"],
     closed [
@@ -363,13 +386,21 @@ def packages : Shape :=
       ("status_text", ref "common.json#/$defs/text"),
       ("targets", ref "common.json#/$defs/strings"),
       ("conditional_on", ref "#/$defs/conditional_labels"),
+      ("weighing_points", ref "soft-norms.json#/$defs/coherence_labels"),
+      ("situation_exhibited", .type ["boolean"]),
+      ("budget", .const (toJson VE.Rights.Run.conflictBudget)),
+      ("situation", .anyOf [ref "#/$defs/situation", .type ["null"]]),
       ("detail", ref "common.json#/$defs/text")],
     .ite (props [("verdict", constS "UNKNOWN")])
-      (n [.required ["detail"], props [
+      (n [.required ["detail"], .not (.anyOf [.required ["weighing_points"], .required ["situation_exhibited"],
+        .required ["budget"], .required ["situation"]]), props [
         ("status_text", .pattern (Re.prefixes ["UNKNOWN: "])),
         ("detail", .pattern (Re.prefixes ["missing certificate for ", "invalid certificate for "])),
         ("conditional_on", .maxItems 0)]])
-      (n [.not (.required ["detail"]), props [
+      (n [.not (.required ["detail"]), .required ["weighing_points", "situation_exhibited", "budget", "situation"],
+        .ite (props [("situation_exhibited", .const (.bool true))]) (props [("situation", ref "#/$defs/situation")])
+          (props [("situation", .type ["null"])]),
+        props [
         ("status_text", .pattern (Re.prefixes ["CONFLICT-FREE among rules on the same act, conditional on "]))]])]
 
 def «row» : Shape :=
@@ -405,12 +436,14 @@ def file : File where
     ("elaborated_narrowings", .schema elaborated_narrowings),
     ("rule_narrowings", .schema rule_narrowings),
     ("findings", .schema findings),
+    ("located_findings", .schema located_findings),
     ("elaborate", .schema elaborate),
     ("projections", .schema projections),
     ("entries", .schema entries),
     ("scope", .schema scope),
     ("certificate", .schema certificate),
     ("bar", .schema bar),
+    ("situation", .schema situation),
     ("packages", .schema packages)]
 
 end ResponseShape.Schemas.Rights
