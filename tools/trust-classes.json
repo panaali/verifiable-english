@@ -19198,6 +19198,7 @@
         "VE.Attitudes.Examples.St",
         "VE.Attitudes.Examples.U1",
         "VE.Attitudes.Examples.actions",
+        "VE.Attitudes.Examples.allCat",
         "VE.Attitudes.Examples.att2",
         "VE.Attitudes.Examples.awf",
         "VE.Attitudes.Examples.badCond",
@@ -19259,6 +19260,7 @@
         "VE.Attitudes.Examples.genpred",
         "VE.Attitudes.Examples.gensort",
         "VE.Attitudes.Examples.guard1",
+        "VE.Attitudes.Examples.guard1E",
         "VE.Attitudes.Examples.guard1F",
         "VE.Attitudes.Examples.guard2",
         "VE.Attitudes.Examples.guard3",
@@ -19337,7 +19339,8 @@
         "VE.Attitudes.Examples.wordedDoc",
         "VE.Attitudes.Examples.wordsTable",
         "VE.Attitudes.Examples.Γ1",
-        "VE.Attitudes.Examples.Γ3"
+        "VE.Attitudes.Examples.Γ3",
+        "VE.Attitudes.Examples.ρ10"
       ]
     },
     "VE/Attitudes/Scale.lean": {
@@ -19361,7 +19364,6 @@
       "S": [
         "VE.Attitudes.AFormula",
         "VE.Attitudes.AFormula.conds",
-        "VE.Attitudes.AFormula.toFormula",
         "VE.Attitudes.ARule",
         "VE.Attitudes.ARule.toNode",
         "VE.Attitudes.AWellFormed",
@@ -19398,6 +19400,12 @@
         "VE.Attitudes.toNorms"
       ],
       "D[V]": [
+        {
+          "name": "VE.Attitudes.AFormula.toFormula",
+          "tied": [
+            "VE.Attitudes.att_elaboration_faithful"
+          ]
+        },
         {
           "name": "VE.Attitudes.baseEnvAtt",
           "tied": [
