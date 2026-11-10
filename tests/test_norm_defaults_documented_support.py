@@ -1,10 +1,6 @@
-"""The norm-defaults spec states, for each composed block, what the profile gate does with `norm-defaults@0`.
+"""The norm-defaults spec's profile-validation claims with `norm-defaults@0` agree with Lean's `todayGate`.
 
-The gate is Lean's `todayGate` (lean/VE/Compose/Dispatch.lean), read from its source; the composed blocks are the ones
-`pendingWithDefaults` names there. A spec sentence that mentions `norm-defaults@0` and says a combination is admitted,
-refused or rejected at profile validation must name each block it speaks of, and say what the gate does with it
-(norm-defaults-cfr-2, finding #4 of reviews/l1-c-regrade-norm-defaults-b-20261109.md).
-"""
+Read from lean/VE/Compose/Dispatch.lean; the blocks are those `pendingWithDefaults` names (norm-defaults-cfr-2)."""
 
 import re
 from pathlib import Path
