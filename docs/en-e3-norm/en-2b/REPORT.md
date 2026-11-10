@@ -76,7 +76,9 @@ against :569-594 (both flags; the record's fields; `lean-unavailable` first; the
 Counted lines: 724 changed outside generated files, minus 185 exempt encoder-proof lines = 539. With the 32
 route-fixture lines and this report, about 615, against the DRI's ~600. Regen `--write` (38 entries), the full
 `lake build` and `python3 lean/audit.py` ("PASS: 832 source files; 9352 named theorem declarations") ran once.
-Self-review: 2 A, 2 B, 8 C; fixed 9 (A, B, and five C). The other C's are recorded above (fixture statuses,
+Selected tests (`mac-pytest.sh --select`, GitHub Actions run en-e3b-0576495b-t344266, 595 units): 2 failed, both
+registrations the new files needed (`route_fixtures.py` in `NOT_REGENERATED`; `Encoders/EnglishStatement.lean`
+under the assurance manifest's `other_json`), fixed and rerun by id. Self-review: 2 A, 2 B, 8 C; fixed 9 (A, B, and five C). The other C's are recorded above (fixture statuses,
 no `one` gate fixture) or left: R-stale is compared with `english.read`'s text by literal. Pilot bytes: 0 (nothing
 reads the mode).
 
