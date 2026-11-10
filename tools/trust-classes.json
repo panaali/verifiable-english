@@ -18466,13 +18466,15 @@
           "name": "VE.Presupposition.choiceOf",
           "tied": [
             "VE.Presupposition.couplings_spec",
+            "VE.Presupposition.couplings_spec_admit",
             "VE.Presupposition.mem_choiceOf"
           ]
         },
         {
           "name": "VE.Presupposition.couplingConstraints",
           "tied": [
-            "VE.Presupposition.couplings_spec"
+            "VE.Presupposition.couplings_spec",
+            "VE.Presupposition.couplings_spec_admit"
           ]
         },
         {
@@ -18485,7 +18487,8 @@
           "name": "VE.Presupposition.sourceChoices",
           "tied": [
             "VE.Presupposition.sourceChoice_closed",
-            "VE.Presupposition.sourceChoice_entails"
+            "VE.Presupposition.sourceChoice_entails",
+            "VE.Presupposition.sourceChoice_members"
           ]
         }
       ],
@@ -18517,7 +18520,9 @@
     "VE/Presupposition/CoupleExamples.lean": {
       "T": [
         "VE.Presupposition.CoupleExamples.D15",
+        "VE.Presupposition.CoupleExamples.D15x",
         "VE.Presupposition.CoupleExamples.D22",
+        "VE.Presupposition.CoupleExamples.D22n",
         "VE.Presupposition.CoupleExamples.E19",
         "VE.Presupposition.CoupleExamples.E22",
         "VE.Presupposition.CoupleExamples.J15",
@@ -18525,16 +18530,21 @@
         "VE.Presupposition.CoupleExamples.J19",
         "VE.Presupposition.CoupleExamples.K19",
         "VE.Presupposition.CoupleExamples.R15",
+        "VE.Presupposition.CoupleExamples.R15x",
         "VE.Presupposition.CoupleExamples.R22",
         "VE.Presupposition.CoupleExamples.allPicks",
+        "VE.Presupposition.CoupleExamples.bgF",
+        "VE.Presupposition.CoupleExamples.c0",
         "VE.Presupposition.CoupleExamples.chk",
         "VE.Presupposition.CoupleExamples.chk15",
         "VE.Presupposition.CoupleExamples.chk22",
         "VE.Presupposition.CoupleExamples.chkNeg",
         "VE.Presupposition.CoupleExamples.cond15",
+        "VE.Presupposition.CoupleExamples.cond22",
         "VE.Presupposition.CoupleExamples.diff19",
         "VE.Presupposition.CoupleExamples.dropRel",
         "VE.Presupposition.CoupleExamples.emptyTree",
+        "VE.Presupposition.CoupleExamples.fixedNode",
         "VE.Presupposition.CoupleExamples.g18",
         "VE.Presupposition.CoupleExamples.g22",
         "VE.Presupposition.CoupleExamples.g3",
@@ -18542,21 +18552,26 @@
         "VE.Presupposition.CoupleExamples.ids5",
         "VE.Presupposition.CoupleExamples.instr",
         "VE.Presupposition.CoupleExamples.m22",
+        "VE.Presupposition.CoupleExamples.mDec",
         "VE.Presupposition.CoupleExamples.mOneReadyBusy",
         "VE.Presupposition.CoupleExamples.mixed15",
         "VE.Presupposition.CoupleExamples.mixed22",
         "VE.Presupposition.CoupleExamples.models15",
+        "VE.Presupposition.CoupleExamples.neg2",
         "VE.Presupposition.CoupleExamples.node22",
         "VE.Presupposition.CoupleExamples.preUser",
         "VE.Presupposition.CoupleExamples.reg22",
         "VE.Presupposition.CoupleExamples.rep22",
         "VE.Presupposition.CoupleExamples.repNeg",
         "VE.Presupposition.CoupleExamples.report19",
+        "VE.Presupposition.CoupleExamples.saidF",
         "VE.Presupposition.CoupleExamples.same19",
+        "VE.Presupposition.CoupleExamples.sets5",
         "VE.Presupposition.CoupleExamples.sets7",
         "VE.Presupposition.CoupleExamples.theOwnerBusy",
         "VE.Presupposition.CoupleExamples.unit15",
         "VE.Presupposition.CoupleExamples.unit22",
+        "VE.Presupposition.CoupleExamples.unitsX",
         "VE.Presupposition.CoupleExamples.ver0"
       ]
     },
