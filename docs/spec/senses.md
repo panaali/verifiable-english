@@ -458,26 +458,43 @@ warning. R3, if accepted, changes a locked S2 file, so S2's `actions_version` mo
 ### 2.7.1 The display's JSON contract (web app)
 
 The web app (its own branch, Z4) reads the object `ve render --view ve_english --senses PACK … FILE` prints. As
-built (sn-b7; reviews/dri-decisions-20261101-sn-b7b8.md and its `-reread` follow-up), it has these members:
+built (sn-b7, sn-b7b; reviews/dri-decisions-20261101-sn-b7b8.md and its `-reread` follow-up,
+reviews/dri-decisions-20261110-sn-b7b.md), it has these members:
 
 | Member | Meaning |
 |---|---|
 | `operation`, `assurance`, `intent`, `proof`, `conclusions` | as `ve senses check`: `senses.read`, its manifest assurance, `unconfirmed`, `not_checked`, `not_checked` |
-| `dictionary_id`, `request_id`, `senses_version`, `reading` | Lean's `senses.read` answer as `ve/backends/senses.py` relays it, typed and bound to the request there: the status, the units with their candidates (`choice`, `formula`, `mark`, `lines`, `identities`), the sense map (`sentence`, `symbol`, `is_default`, `token_start`, `token_stop`, and `candidate` for a candidate's occurrence), `mixed`, `unused`, `used`, the projected environment and its identities; or Lean's refusal |
-| `renderings` | one row per candidate of each open unit, in unit order, then candidate order: `sentence` (the unit's, from 0, preamble lines included), `candidate` (its position in the unit), `lines` (its resolving lines, Lean's text verbatim) and `text`. Empty when no unit is open |
+| `dictionary_id`, `request_id`, `senses_version`, `reading` | Lean's `senses.read` answer as `ve/backends/senses.py` relays it, typed and bound to the request there: the status, the units with their candidates (`choice`, `formula`, `mark`, `lines`, `identities`) and an open unit's `text` (3.2's `Unresolved`), the `preamble` lines as written, the sense map (`sentence`, `symbol`, `is_default`, `gloss`, `token_start`, `token_stop`, `byte_start`, `byte_stop`, and `candidate` for a candidate's occurrence), `mixed`, `unused`, `used`, `warnings` (`Mixed`, `Unneeded`, each with Lean's `text`), the flip models (`flips`), the projected environment and its identities; or Lean's refusal, with its `text` (or `hint`) where 3.2 has one |
+| `text`, `body_status` | the checked text: for status `one`, Lean's `preamble` lines, then Python's rendering of the units' formulas under `reading.environment`, one sentence per line; given only after Lean's senses reader reads that text to one reading of the same formulas and marks under a projection with the same identities. `body_status` is a machine code: `rendered`; `not-one-reading` (`text` null: another status); `switched-occurrence-not-rendered` (`text` null: the sense map has an occurrence with `is_default` false, which Python's renderer cannot word yet, sn-b7d) |
+| `renderings` | one row per candidate of each open unit, in unit order, then candidate order: `sentence` (the unit's, from 0, preamble lines included), `candidate` (its position in the unit), `lines` (its resolving lines, Lean's text verbatim), `lacking` (those of the `lines`, split at line breaks, that are not among the reading's `preamble` lines) and `text`. Empty when no unit is open |
+| `glossary` (with `--glossary`) | `senses`: one row per sense the resolved occurrences of the sense map use, in its order: `symbol`, `written` (the source bytes at the first occurrence's `byte_start`..`byte_stop`), `gloss` and `is_default` (the sense map's), `description` (`reading.environment`'s, for the symbol), `sentences` (where it occurs); `unused`: Lean's unused defaults. Rows, not sentences: neither the CLI nor the web app writes an English frame around them (no `(the default)`); the glossary line as a Lean text is sn-b6f's |
+| `hover` (with `--json`) | one row per sense-map entry, in its order: `byte_start`, `byte_stop`, `sentence`, `symbol`, `gloss`, `description` (as above), `is_default`, and `candidate` for a candidate's occurrence |
 
 A row's `text` is Python's rendering of the candidate's formula in the environment `senses.project` returns for
-its `lines`. It is printed only after Lean's senses reader has read the `lines`, a newline and the `text` to one
-reading of exactly the candidate's formula and mark, under a projection with the identities the reading lists for
-the candidate. Exit codes: 0 for a reading with status `one`, 3 for any other reading, 2 for invalid input, 4 when
-the reading has more than 64 candidates, and 5 (`CheckerUnavailable`) when a rendering does not read back, a
-projection is not the candidate's, or the document's other sentences use words this sentence does not (the
-projections then differ).
+its `lines`, whose identities must be the ones the reading lists for the candidate. It is printed only after Lean
+re-reads it: `senses.read` on the same source with the member `reread` (the unit's sentence, the candidate, the
+text) reads it under the candidate's own projection from the state before the unit, and its `outcome` must be
+`same` (`different` and `unknown` are not shown). Exit codes: 0 for a reading with status `one`, 3 for any other
+reading, 2 for invalid input, 4 when the reading has more than 64 candidates, and 5 (`CheckerUnavailable`) when a
+rendering does not read back or a projection is not the candidate's.
 
-Still to come (sn-b7b, after sn-b6b and sn-b6c), and not specified ahead of Lean: the preamble lines of the
-answer; byte spans in the sense map, cut at `lexSpans` boundaries, for hover; the texts of 3.2 on a source
-request; the flip models; the gloss of each used sense; Lean's line for a requested word and gloss. These carry
-the rendered body, `--glossary`, the hover data, `ve senses resolve` and `ve senses propose-readings`.
+`ve senses resolve --env ENV --pack PACK [--english-vocabulary V] --word W --gloss G FILE` prints the honesty members
+above, `line` (Lean's `{word, gloss, text}`, or `{word, gloss, code}` with `UnknownWord` or `UnknownGloss`),
+`written`, and Lean's answer on the file with that line put first. The file is rewritten only when Lean gives the
+line and admits the new text (status `one` or `open`). Exit 0 for status `one`, else 3.
+
+`ve senses propose-readings --env ENV --pack PACK [--english-vocabulary V] [--output OUT] FILE` prints the honesty
+members, Lean's answer on the file, and:
+
+| Member | Meaning |
+|---|---|
+| `reading_sets` | one set per open unit with two or more candidates whose every pair Lean's `flips` distinguish: `id` `senses-<sentence>`, `unit` the sentence as a string, `version` 1, `status` `open`, `readings` (one per candidate: `id` `candidate-<i>`, `kind` `asserted`, `meaning_id`, `content` the candidate's formula, `admission` with `who` `senses`, `why` the unit's Lean `text`, `distinguishing_models` the pair's model by id), `models` (each flip model by its model id). Validated by the readings validation (`ve.readings.validate_reading_sets`) over `reading.environment`; written to `OUT` as `{"reading_sets": [...]}` when there is one |
+| `texts` | per reading of a set: `set`, `reading`, the candidate's `lines` and its checked rendering `text` (as in `renderings`) |
+| `resolving` | per open unit with one candidate (no set: a set needs two readings): `sentence`, `lacking` (as in `renderings`) and the unit's Lean `text` |
+| `undistinguished` | per open unit with a pair Lean does not distinguish (no set): `sentence` and `flips`, `[first, second, status]` per pair |
+
+Exit 0 for an admitted reading (status `one` or `open`), else 3; 5 when a rendering does not read back or the
+readings validation refuses a set.
 
 ### 2.8 What is trusted, proved and tested
 

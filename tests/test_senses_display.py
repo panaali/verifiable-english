@@ -178,9 +178,11 @@ def test_the_body_is_leans_preamble_then_the_rendering_reread(place, calls):
     answer = reading(place, RESOLVED)
     assert answer["preamble"] == [AMUSING] and [o["is_default"] for o in answer["sense_map"]] == [True, True]
     calls["read"].clear()
-    assert display.body(env, [PACK], RESOLVED, answer, overlay=overlay) == RESOLVED
+    assert display.body(env, [PACK], RESOLVED, answer, overlay=overlay) == {"text": RESOLVED,
+                                                                           "body_status": "rendered"}
     assert calls["read"] == [RESOLVED] and calls["project"] == []
-    assert display.body(env, [PACK], TWO, reading(place, TWO), overlay=overlay) is None
+    assert display.body(env, [PACK], TWO, reading(place, TWO), overlay=overlay) == {
+        "text": None, "body_status": "not-one-reading"}
 
 
 def test_a_body_with_a_switched_occurrence_is_not_rendered(place, calls):
@@ -189,7 +191,8 @@ def test_a_body_with_a_switched_occurrence_is_not_rendered(place, calls):
     env, overlay = place
     source = AMUSING + "\nThe riddle is funny (meaning strange)."
     calls["read"].clear()
-    assert display.body(env, [PACK], source, reading(place, source), overlay=overlay) is None
+    assert display.body(env, [PACK], source, reading(place, source), overlay=overlay) == {
+        "text": None, "body_status": "switched-occurrence-not-rendered"}
     assert calls["read"] == [source]
 
 
@@ -313,7 +316,7 @@ def test_render_senses_cli_shows_leans_reading_and_the_checked_candidates(tmp_pa
     assert out["operation"] == "senses.read" and out["reading"]["status"] == "open"
     assert [(r["lines"], r["lacking"], r["text"]) for r in out["renderings"]] == [
         (AMUSING, [AMUSING], TWO), (STRANGE, [STRANGE], TWO)]
-    assert out["text"] is None and "glossary" not in out and "hover" not in out
+    assert out["text"] is None and out["body_status"] == "not-one-reading" and "glossary" not in out and "hover" not in out
     assert main(_cli(tmp_path, place, RESOLVED, "--glossary", "--json")) == 0
     out = json.loads(capsys.readouterr().out)
     assert out["reading"]["status"] == "one" and out["renderings"] == [] and out["text"] == RESOLVED
