@@ -184,6 +184,25 @@ SELF-REVIEW: 0 A, 5 B, 4 C; fixed 9. The five B: the `hT`-failing refusal for `r
 both sides of `old_formula_invariant` and `interp_restrict`; the RM1/RM2 note; `restrict_admissible`'s refusal (`catAt0`); and the
 line numbers regenerated after the fixes, with the method stated above and the gate script's limit noted in "Spec re-read".
 
+## Review fixes
+
+The final review of 36a5944147 (one A, five C):
+- F1 (A): the trust shortfalls took the at-1a-tie's 15 lines off at-1b's row a second time. Fixed in section "Trust" (at-1b 170,
+  20 over; at-1a 199, 49 over; 69 in all). The class is a report figure typed by hand: `tests/test_attitudes_at1_report.py` now
+  recomputes the shortfalls (`test_the_trust_shortfalls_are_the_measured_ones`) and every sized row and the total of section "Size"
+  (`test_the_sizes_are_the_measured_ones`) from pinned trees. The reviewed text stays refused
+  (`test_the_reviewed_report_text_with_the_tie_subtracted_twice_is_refused`, `test_the_reviewed_report_total_of_about_610_is_refused`).
+  The review's probe: rc 1 before, rc 0 after. No verdict, binding, trusted code or signature changes: item 3 of the -trust decision
+  signs the remainder with no further cut, so there is still no DELTA row.
+- F4 and F5 (C), same class and file: the total is the measured 667 (section "Size"), and the opening summary is 4 lines.
+- F2, F3 and F6 (C): unchanged. F3 is for the ties pass; F6 is the order deviation already stated in "Size".
+
+Seeded bugs: no Lean, Python or Rust product code changed. Text mutants of the fixed report (an "over" figure, at-1b's total, the sum,
+a size row, the total, an unpinned commit) each make the test fail; the reviewed head's text fails it too.
+Runs on 532697c845: selected tests `100/581 test units`, 2 shards on GitHub Actions (run at-1-532697c8-t336114), 55 and 45 passed,
+exit 0; `lake build`: `Build completed successfully (1358 jobs)`; `python3 lean/audit.py`: PASS. Not run: the full gate (the chain
+runs it), and trust mutants (no Lean changed). No test in main-known-red.txt was touched.
+
 ## Self-review against BUILDER-CHECKLIST
 
 1. N.A.: no Lean answer is relayed, and no service mode, schema or relay changed (the grep in "Trust").
