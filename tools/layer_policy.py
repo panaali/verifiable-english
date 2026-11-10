@@ -163,9 +163,10 @@ def lean_layer(module: str) -> int | None:
                   "VE.Calc.RunExamples", "VE.Defaults.RouteExamples", "VE.Defaults.ZoneWireExamples", "VE.Readings.ActsExamples",
                   "VE.Cardinality.RunExamples", "VE.Scope.RunExamples", "VE.Senses.RunExamples",
                   "VE.Events.RouteExamples", "VE.Commands.RunExamples", "VE.Commands.RunSplit",
-                  "VE.EnglishGrammar.JudgmentRunExamples", "VE.Senses.TextsExamples", "VE.Acts.RunExamples"}:
+                  "VE.EnglishGrammar.JudgmentRunExamples", "VE.Senses.TextsExamples", "VE.Acts.RunExamples",
+                  "VE.Rights.OpenActExamples"}:
         return 4  # runner-boundary acceptance fixtures import EnglishGrammar.Run, Question.Run, Alternatives.Run, Calc.Run,
-        # NormDefaults.Run, Readings.Run, Cardinality.Run, Scope.Run, Senses.Run, Commands.Run or Acts.Run
+        # NormDefaults.Run, Readings.Run, Cardinality.Run, Scope.Run, Senses.Run, Commands.Run, Acts.Run or Rights.Run
     if module in {"VE.EnglishGrammar.Norm.RunExamples"}:
         return 4  # en-e3-norm EN-2's answer fixtures: a runner-boundary fixture that imports EnglishGrammar.Norm.Run
     if module in {"VE.Discourse.Compose", "VE.Discourse.ComposeExamples"}:

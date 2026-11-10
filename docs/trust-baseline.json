@@ -2301,6 +2301,62 @@
    "reason": "en-e3a: Norm/Run.lean +110, Norm/Owners.lean +36, Norm/Rules.lean +13, EnglishGrammar/Run.lean +8 (K +0, S +46, V +121; trusted +167; statementSpans, sentenceBytes, opensStatement classed G[V])",
    "signature": "SIGNED by the DRI 2026-11-09 (reviews/dri-decisions-20261109-en-e3a-2.md item 1)",
    "commit": "a0102f0e5350727e99ddcae2e0b59ed03f2f4192"
+  },
+  {
+   "class": "S",
+   "lines": 37,
+   "reason": "sc-7: lean/VE/Scope/Authoring.lean K +0, S +37, untied V +104 (trusted +141): scope's authoring wordings (spec 2.2), Pinned.parseGovernor/renderGovernor and their readers",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-7, 2026-11-08",
+   "commit": "da5303b7876924d4fba67866390ed6f0d0b36cbc"
+  },
+  {
+   "class": "V",
+   "lines": 104,
+   "reason": "sc-7: lean/VE/Scope/Authoring.lean K +0, S +37, untied V +104 (trusted +141): scope's authoring wordings (spec 2.2), Pinned.parseGovernor/renderGovernor and their readers",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-7, 2026-11-08",
+   "commit": "da5303b7876924d4fba67866390ed6f0d0b36cbc"
+  },
+  {
+   "class": "V",
+   "lines": 2,
+   "reason": "sc-7 review F1: lean/VE/Scope/Authoring.lean untied V +2 (sc-7 total K +0, S +37, V +106, trusted +143): Pinned.clause refuses a sentence end in every slot",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-7, 2026-11-09",
+   "commit": "da5303b7876924d4fba67866390ed6f0d0b36cbc"
+  },
+  {
+   "class": "V",
+   "lines": 5,
+   "reason": "sc-7 review F7: lean/VE/Scope/Authoring.lean untied V +5 (sc-7 total K +0, S +37, V +111, trusted +148): Pinned.closers, every closer (Unicode 16.0 Pe, Pf, Pi, the quotes \" ' ＂ ＇, >, Markdown's * _ ` ~) that clause drops before a sentence end",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-7, 2026-11-09",
+   "commit": "da5303b7876924d4fba67866390ed6f0d0b36cbc"
+  },
+  {
+   "class": "V",
+   "lines": 2,
+   "reason": "sc-7 recheck F8, F9: lean/VE/Scope/Authoring.lean untied V +2 (sc-7 total K +0, S +37, V +113, trusted +150): Pinned.clause refuses every Unicode 16.0 Sentence_Terminal, ':' and their NFKC forms, after dropping trailing closers and Cf, Mn, Me, Default_Ignorable_Code_Point and U+2800; Pinned.wordChar refuses C1 controls and the five fillers drawn as a space",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-7, 2026-11-09",
+   "commit": "da5303b7876924d4fba67866390ed6f0d0b36cbc"
+  },
+  {
+   "class": "V",
+   "lines": 4,
+   "reason": "rights-cfr-4: lean/VE/Rights/Run.lean +4 (G[V]: nodeOpen reads the act)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), rights-cfr-4, 2026-10-18",
+   "commit": "268829b1ac9d3a333c2c422efbd9b0beea80b287"
+  },
+  {
+   "class": "V",
+   "lines": 58,
+   "reason": "sn-b6d: VE/Senses/Run.lean +58 (G[V] rereadJson, decodeReread, lineJson, and the readCase wiring of the re-read and the line)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sn-b6d, 2026-11-09",
+   "commit": "9ba8aeaedfc82fa41258a4f52bcca4820f47b663"
+  },
+  {
+   "class": "S",
+   "lines": 11,
+   "reason": "cmp-s3a-cfr-2: lean/VE/RightClauses/Plain.lean S +11 (entryError, classed S beside checkEntry); Examples.lean fixtures twice, twoHolders, across classed T; K +0, V +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s3a-cfr-2, 2026-10-18",
+   "commit": "6db6ee16ddb10f843b396b78299a980abc43fefb"
   }
  ]
 }
