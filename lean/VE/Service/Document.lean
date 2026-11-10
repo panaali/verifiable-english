@@ -1151,15 +1151,16 @@ def exceptionConditioned (units : Json) : Bool :=
 
 /-- An `events@0` document's environment (et-5b; events 2.9 items 1 to 7): the composition gate's row, then the block,
 decoded once (`Events.decodeEvents`), and the environment the rest of the mode reads, the layered route's view of it
-(`Events.routeView`: no block, no `events@0`, one constant of the day sort per named date). Only the soft chain under
-`norm-defaults@0` reads the block on this mode; another list with `events@0` stays unavailable. -/
+(`Events.routeView`: no block, no `events@0`, one constant of the day sort per named date). Only a list with
+`soft-norms@0` and without `rights@0` reaches the gate and the block; another list with `events@0` keeps its refusal. -/
 def eventsView (environment : Json) (senses : Bool) :
     Except String (Json × Option (Json × Option VE.Events.EventsDecoded)) := do
   let listed := listedProfiles environment
   unless listed.contains "events@0" do return (environment, none)
-  let _ ← VE.Compose.gateOf VE.Compose.profileTable listed
+  -- Off the soft chain the base's refusal stands, word for word (the DRI's signature covers the soft chain only).
   if senses || !listed.contains "soft-norms@0" || listed.contains "rights@0" then
-    throw (unavailable "events@0 outside the soft chain under norm-defaults@0 needs its composed Lean route")
+    throw (undecided environment "document checks under events@0 need its Lean profile route")
+  let _ ← VE.Compose.gateOf VE.Compose.profileTable listed
   let d ← VE.Events.decodeEvents environment
   pure (← VE.Events.routeView environment d, some (environment, d))
 

@@ -96,9 +96,9 @@ def packs (e : Json) : Option (List String) := (layered e).toOption.map (·.pack
   | .error _ => false)
 #guard (layered (envOf (some (blockD)))).toOption.map (·.envId) ==
   ((VE.Service.Document.environmentOf (envOf (some (blockD)))).toOption.map (·.envId))
--- Another list with `events@0` is still unavailable on this mode; `layeredOf` stays the soft branch alone.
+-- Another list with `events@0` keeps the base's refusal, word for word.
 #guard outcome (envOf none ["events@0", "norm-defaults@0", "norms@0", "relational-fol@0"]) ==
-  "CheckerUnavailable: events@0 outside the soft chain under norm-defaults@0 needs its composed Lean route"
+  "CheckerUnavailable: document checks under events@0 need its Lean profile route"
 
 /-! ## Spec 2.9, one document per item, each with its diagnostic on the document route -/
 

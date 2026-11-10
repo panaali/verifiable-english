@@ -70,13 +70,13 @@ def test_an_events_document_is_checked_where_it_was_unavailable():
 
 
 def test_a_list_off_the_soft_chain_stays_unavailable():
-    """The other direction: the signature covers the soft chain's document only; another list stays unavailable."""
+    """The other direction: the signature covers the soft chain's document only; another list keeps the base's refusal,
+    word for word."""
     def plain(e):
         e["profiles"] = ["events@0", "norm-defaults@0", "norms@0", "relational-fol@0"]
     _, error = checked(edited(plain))
     assert isinstance(error, CheckerUnavailable)
-    assert str(error) == ("CheckerUnavailable: events@0 outside the soft chain under norm-defaults@0 needs its "
-                          "composed Lean route")
+    assert str(error) == "CheckerUnavailable: document checks under events@0 need its Lean profile route"
 
 
 def _set(path, value):
