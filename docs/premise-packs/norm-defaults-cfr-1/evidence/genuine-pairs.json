@@ -1,9 +1,12 @@
 {
  "pairs": 21344,
  "by_kind_source": {
-  "norm-defaults-certificate norms -": 55,
-  "norm-defaults-status document -": 7,
-  "norm-defaults-status norms -": 21282
+  "norm-defaults-certificate norms plain": 19,
+  "norm-defaults-certificate norms soft-norms@0": 32,
+  "norm-defaults-certificate norms soft-norms@0+events@0": 4,
+  "norm-defaults-status document soft-norms@0+rights@0": 7,
+  "norm-defaults-status norms plain": 21248,
+  "norm-defaults-status norms soft-norms@0": 34
  },
  "refused": 0,
  "first_refusals": []

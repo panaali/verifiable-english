@@ -1,10 +1,11 @@
 """norm-defaults-cfr-1 (regrade #3, ND-FC2): the norm-defaults mode's answers are bound to their request.
 
-A `norm-defaults-status` row names the request's tuple and only rules of the request's source (Lean's part
-`<rule>-a<k>` of one under `acts@0`); a `norm-defaults-certificate` row's `premises` is the count of the
-regenerated premises its certificate is bound to. Each forged row reaches the client from a scripted service
-and is `CheckerUnavailable` (`lean_service.bind_answers`); Lean's own rows still pass, on every source shape
-(author norms, a rights document, a split act). The assurance manifest lists every kind the mode answers.
+A `norm-defaults-status` row's `tuple` is the request's and its `rules` are distinct (response schema, rendered from
+`ResponseShape/Schemas/NormDefaults.lean`) and rules of the request's `norms` (`lean_service.bind_answers`; not yet
+under `acts@0` or `rights@0`, whose rules Lean names itself: norm-defaults-cfr-1b); a `norm-defaults-certificate`
+row's `premises` is the count of the regenerated premises its certificate is bound to (`bind_answers`). Each forged
+row reaches the client from a scripted service and is `CheckerUnavailable`; Lean's own rows still pass. The assurance
+manifest lists every kind the mode answers.
 """
 from __future__ import annotations
 
@@ -16,15 +17,16 @@ import pytest
 
 from conformance import norm_defaults_layered as layered
 from conformance.norm_defaults import sources
-from conformance.norm_defaults_three_way import certificate_case
+from conformance.norm_defaults_three_way import _conjunction, certificate_case
 from tests.lean_build import lean_build
 from tests.subprocesses import HANG_TIMEOUT
 from tests.test_lean_service import fake
 from tests.test_norm_defaults import CSAM_RULE, CSAM_SITUATION, csam
 from ve import norm_defaults as nd
-from ve.backends.lean_service import LeanService
+from ve.ast import Top, formula_to_data
+from ve.backends.lean_service import LeanService, _rule_names
 from ve.errors import CheckerUnavailable
-from ve.norm_defaults_route import source_case
+from ve.norm_defaults_route import prove_filled_entailment, source_case
 
 ROOT = Path(__file__).resolve().parents[1]
 MODE = "norm-defaults"
@@ -38,6 +40,14 @@ def _acts_environment():
     """A joined act `acts@0` splits into two parts (tests/test_acts_joined_route.py, ap-3db)."""
     from tests.test_acts_joined_route import DEFAULT_PROFILES, environment
     return environment(DEFAULT_PROFILES, default="unspecified")
+
+
+def _certificate_with_a_premise(document):
+    """`certificate_case` with the case's own premise `⊤`: the row counts the regenerated premises only."""
+    conclusion = _conjunction([f for _, f in document.fill_premises] + [f for _, f in document.filled.premises()])
+    return source_case(document, "norm-defaults-certificate", premises=[formula_to_data(document.filled.env, Top())],
+                       conclusion=formula_to_data(document.filled.env, conclusion),
+                       certificate=prove_filled_entailment(document, (Top(),), conclusion))
 
 
 def _cases():
@@ -55,6 +65,7 @@ def _cases():
                         "method": "table3", "model": {"complete": True, "domains": {"person": ["a"]},
                                                       "constants": {}, "relations": {}}},
         "certificate": certificate_case(u5a),
+        "certificate-premise": _certificate_with_a_premise(u5a),
     }
 
 
@@ -81,8 +92,10 @@ def test_genuine_answers_pass(genuine, tmp_path):
     assert genuine["status"][1]["rules"] == ["no-csam-generation"]
     assert genuine["rights-status"][1]["rules"] == ["art9"]
     assert genuine["acts-status"][1]["rules"] == ["r027-a1"]  # Lean's part name (`Acts.Elaborate.partRule`)
-    case, row = genuine["certificate"]
-    assert row["status"] == "ok" and row["premises"] == len(case["certificate"]["premise_meaning_ids"]) > 0
+    for name, own in (("certificate", 0), ("certificate-premise", 1)):
+        case, row = genuine[name]
+        assert len(case["premises"]) == own and row["valid"] is True
+        assert row["premises"] == len(case["certificate"]["premise_meaning_ids"]) - own > 0
     for name, (case, row) in genuine.items():
         assert row["status"] == "ok", (name, row)
         assert _scripted(tmp_path, case, row) == [row], name
@@ -108,10 +121,6 @@ def duplicated(case, row):
 
 def predicate_named(case, row):
     return [case["predicate"]]
-
-
-def part_of_ghost(case, row):
-    return ["ghost-a1"]
 
 
 def part_without_acts(case, row):
@@ -150,19 +159,23 @@ def zero(case, row):
     return 0
 
 
+def every_id(case, row):
+    return len(case["certificate"]["premise_meaning_ids"])
+
+
 FORGERIES = [
     # A rule reference absent from the request.
     _forge("status", "rules", ghost), _forge("status", "rules", appended), _forge("status", "rules", duplicated),
     _forge("status", "rules", predicate_named),
-    _forge("status", "rules", part_without_acts), _forge("rights-status", "rules", ghost),
-    _forge("acts-status", "rules", part_of_ghost), _forge("acts-status", "rules", ghost),
+    _forge("status", "rules", part_without_acts),
     # An entity reference that is not the request's tuple.
     _forge("status", "tuple", other_entity), _forge("status", "tuple", absent_entity),
     _forge("status", "tuple", longer), _forge("status", "tuple", emptied),
-    _forge("rights-status", "tuple", reversed_tuple),
+    _forge("rights-status", "tuple", reversed_tuple), _forge("acts-status", "tuple", absent_entity),
     # A premise count that is not the count the certificate carries.
     _forge("certificate", "premises", one_more), _forge("certificate", "premises", one_fewer),
-    _forge("certificate", "premises", zero),
+    _forge("certificate", "premises", zero), _forge("certificate-premise", "premises", every_id),
+    _forge("certificate-premise", "premises", one_more),
 ]
 
 
@@ -198,6 +211,14 @@ def test_a_certificate_case_without_its_certificate_has_no_count(genuine, tmp_pa
     for missing in ("certificate", "premises"):
         with pytest.raises(CheckerUnavailable, match="malformed response"):
             _scripted(tmp_path, {k: v for k, v in case.items() if k != missing}, row)
+
+
+def test_rules_named_by_lean_under_acts_or_rights_are_not_yet_bound(genuine):
+    """`acts@0` parts and `rights@0` fan-out and bar rules have names the request does not carry, and Lean does not
+    yet say which request rule each comes from (norm-defaults-cfr-1b), so their rows' rules are not bound; every other
+    source's are."""
+    assert _rule_names(genuine["acts-status"][0]) is None and _rule_names(genuine["rights-status"][0]) is None
+    assert _rule_names(genuine["status"][0]) == {"no-csam-generation"}
 
 
 def test_the_manifest_lists_every_kind_the_mode_answers():
