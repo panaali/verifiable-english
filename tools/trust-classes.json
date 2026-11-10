@@ -816,6 +816,7 @@
         "ResponseShape.Schemas.Rights.grounds",
         "ResponseShape.Schemas.Rights.instance",
         "ResponseShape.Schemas.Rights.kind",
+        "ResponseShape.Schemas.Rights.located_findings",
         "ResponseShape.Schemas.Rights.narrowings",
         "ResponseShape.Schemas.Rights.node",
         "ResponseShape.Schemas.Rights.packages",
@@ -824,7 +825,8 @@
         "ResponseShape.Schemas.Rights.rights_unit",
         "ResponseShape.Schemas.Rights.row",
         "ResponseShape.Schemas.Rights.rule_narrowings",
-        "ResponseShape.Schemas.Rights.scope"
+        "ResponseShape.Schemas.Rights.scope",
+        "ResponseShape.Schemas.Rights.situation"
       ]
     },
     "ResponseShape/Schemas/Risk.lean": {
@@ -4581,6 +4583,7 @@
         "VE.EnglishGrammar.Run.runCaseReported",
         "VE.EnglishGrammar.Run.sentenceSpans",
         "VE.EnglishGrammar.Run.spanJson",
+        "VE.EnglishGrammar.Run.statementCodeRows",
         "VE.EnglishGrammar.Run.status",
         "VE.EnglishGrammar.Run.symJson",
         "VE.EnglishGrammar.Run.tables",
@@ -4601,6 +4604,7 @@
         "VE.EnglishGrammar.Run.invalidFields",
         "VE.EnglishGrammar.Run.invalidGrammarText",
         "VE.EnglishGrammar.Run.invalidOverlayFields",
+        "VE.EnglishGrammar.Run.judgmentsField",
         "VE.EnglishGrammar.Run.lexicalSpan",
         "VE.EnglishGrammar.Run.noReadingFields",
         "VE.EnglishGrammar.Run.notDone",
@@ -4609,10 +4613,13 @@
         "VE.EnglishGrammar.Run.rejectCodes",
         "VE.EnglishGrammar.Run.rejectText",
         "VE.EnglishGrammar.Run.rejectionText",
+        "VE.EnglishGrammar.Run.renderCodeRows",
         "VE.EnglishGrammar.Run.riskEveryCannotText",
+        "VE.EnglishGrammar.Run.statementFields",
+        "VE.EnglishGrammar.Run.statementStatusCodes",
+        "VE.EnglishGrammar.Run.statementUnsentenced",
         "VE.EnglishGrammar.Run.statusCodes",
-        "VE.EnglishGrammar.Run.unsentencedCodes",
-        "VE.EnglishGrammar.Run.judgmentsField"
+        "VE.EnglishGrammar.Run.unsentencedCodes"
       ],
       "G[I]": [
         "VE.EnglishGrammar.Run.environmentId",
@@ -7921,12 +7928,17 @@
       ],
       "D[V]": [
         "VE.Rights.Run.baseWithout",
+        "VE.Rights.Run.conflictAnswer",
+        "VE.Rights.Run.conflictAnswerOf",
+        "VE.Rights.Run.conflictBudget",
         "VE.Rights.Run.conjugatedAct",
         "VE.Rights.Run.distinctionJson",
         "VE.Rights.Run.elaboratedNarrowingsJson",
         "VE.Rights.Run.encodeAdmitted",
         "VE.Rights.Run.entailmentUses",
         "VE.Rights.Run.entryJson",
+        "VE.Rights.Run.exhibit",
+        "VE.Rights.Run.findingJson",
         "VE.Rights.Run.generatedWordings",
         "VE.Rights.Run.groundJson",
         "VE.Rights.Run.ikindText",
@@ -7944,6 +7956,7 @@
         "VE.Rights.Run.nodeJson",
         "VE.Rights.Run.regenerated",
         "VE.Rights.Run.ruleNarrowingsJson",
+        "VE.Rights.Run.situationTables",
         "VE.Rights.Run.sourceRuleNames",
         "VE.Rights.Run.unitRuleNames"
       ],
@@ -7962,6 +7975,9 @@
         "VE.Rights.Run.unitOpen",
         "VE.Rights.Run.unitStatuses",
         "VE.Rights.Run.usesRightsPath"
+      ],
+      "D[I]": [
+        "VE.Rights.Run.locate"
       ]
     },
     "VE/Rights/Scope.lean": {
@@ -8025,6 +8041,9 @@
             "VE.Rights.bar_mem_narrowings"
           ]
         }
+      ],
+      "G[I]": [
+        "VE.Rights.lineSpan"
       ]
     },
     "VE/Rights/Semantics.lean": {
@@ -17662,8 +17681,7 @@
         "VE.EnglishGrammar.Norm.Examples.stmts",
         "VE.EnglishGrammar.Norm.Examples.two",
         "VE.EnglishGrammar.Norm.Examples.u",
-        "VE.EnglishGrammar.Norm.Examples.universal",
-        "VE.EnglishGrammar.Norm.Polarity.fits"
+        "VE.EnglishGrammar.Norm.Examples.universal"
       ]
     },
     "VE/EnglishGrammar/Norm/Value.lean": {
@@ -18373,6 +18391,7 @@
         "VE.EnglishGrammar.Norm.Arg.read",
         "VE.EnglishGrammar.Norm.NormAct.action",
         "VE.EnglishGrammar.Norm.NormAct.step",
+        "VE.EnglishGrammar.Norm.Polarity.fits",
         "VE.EnglishGrammar.Norm.Polarity.of",
         "VE.EnglishGrammar.Norm.args",
         "VE.EnglishGrammar.Norm.bindings",
@@ -18408,6 +18427,7 @@
             "VE.EnglishGrammar.Norm.normMeaning_unmarked"
           ]
         },
+        "VE.EnglishGrammar.Norm.normTags",
         {
           "name": "VE.EnglishGrammar.Norm.normTy",
           "tied": [
@@ -20699,6 +20719,154 @@
         "VE.Presupposition.separated",
         "VE.Presupposition.softOk",
         "VE.Presupposition.withObligations"
+      ]
+    },
+    "VE/EnglishGrammar/Norm/Owners.lean": {
+      "S": [
+        "VE.EnglishGrammar.Norm.Force.op",
+        "VE.EnglishGrammar.Norm.ReadNormAuthoring",
+        "VE.EnglishGrammar.Norm.Residual.span",
+        "VE.EnglishGrammar.Norm.UnformalisedSpan",
+        "VE.EnglishGrammar.Norm.sourceView",
+        "VE.EnglishGrammar.Norm.spansOf"
+      ],
+      "G[R]": [
+        "VE.EnglishGrammar.Norm.unformalisedText"
+      ],
+      "G[V]": [
+        {
+          "name": "VE.EnglishGrammar.Norm.Clause.toNodeChecked",
+          "tied": [
+            "VE.EnglishGrammar.Norm.toNodeChecked_ok"
+          ]
+        },
+        {
+          "name": "VE.EnglishGrammar.Norm.Mode.soft",
+          "tied": [
+            "VE.EnglishGrammar.Norm.soft_strict_iff"
+          ]
+        },
+        {
+          "name": "VE.EnglishGrammar.Norm.Polarity.op?",
+          "tied": [
+            "VE.EnglishGrammar.Norm.opOf_agrees"
+          ]
+        },
+        {
+          "name": "VE.EnglishGrammar.Norm.toNodesChecked",
+          "tied": [
+            "VE.EnglishGrammar.Norm.toNodesChecked_ok"
+          ]
+        }
+      ]
+    },
+    "VE/EnglishGrammar/Norm/OwnersExamples.lean": {
+      "T": [
+        "VE.EnglishGrammar.Norm.OwnersExamples.LF",
+        "VE.EnglishGrammar.Norm.OwnersExamples.cAtom",
+        "VE.EnglishGrammar.Norm.OwnersExamples.cBad",
+        "VE.EnglishGrammar.Norm.OwnersExamples.cPub",
+        "VE.EnglishGrammar.Norm.OwnersExamples.cSpan",
+        "VE.EnglishGrammar.Norm.OwnersExamples.cWide",
+        "VE.EnglishGrammar.Norm.OwnersExamples.deep",
+        "VE.EnglishGrammar.Norm.OwnersExamples.fitting",
+        "VE.EnglishGrammar.Norm.OwnersExamples.instBEqExcept_vE",
+        "VE.EnglishGrammar.Norm.OwnersExamples.nPub",
+        "VE.EnglishGrammar.Norm.OwnersExamples.reg",
+        "VE.EnglishGrammar.Norm.OwnersExamples.viewFailures"
+      ]
+    },
+    "VE/EnglishGrammar/Norm/Run.lean": {
+      "D[V]": [
+        "VE.EnglishGrammar.Norm.Run.answerWith",
+        "VE.EnglishGrammar.Norm.Run.outcomeFields",
+        "VE.EnglishGrammar.Norm.Run.statementRequest",
+        "VE.EnglishGrammar.Norm.Run.statementRow"
+      ],
+      "G[V]": [
+        {
+          "name": "VE.EnglishGrammar.Norm.BlockFault.code",
+          "tied": [
+            "VE.EnglishGrammar.Norm.Run.answer_misplaced"
+          ]
+        },
+        "VE.EnglishGrammar.Norm.Run.Reader",
+        "VE.EnglishGrammar.Norm.Run.answer",
+        "VE.EnglishGrammar.Norm.Run.decoderCode",
+        "VE.EnglishGrammar.Norm.Run.leanReader",
+        "VE.EnglishGrammar.Norm.Run.oneSpans",
+        "VE.EnglishGrammar.Norm.Run.opensStatement",
+        "VE.EnglishGrammar.Norm.Run.sentenceBytes",
+        "VE.EnglishGrammar.Norm.Run.statementCase",
+        "VE.EnglishGrammar.Norm.Run.statementCaseReported",
+        "VE.EnglishGrammar.Norm.Run.statementSpans",
+        "VE.EnglishGrammar.Norm.Run.stoppedFields"
+      ],
+      "G[R]": [
+        "VE.EnglishGrammar.Norm.BlockFault.sentence?",
+        "VE.EnglishGrammar.Norm.BlockFault.text",
+        "VE.EnglishGrammar.Norm.Run.placeText",
+        "VE.EnglishGrammar.Norm.Run.rowsInternalText",
+        "VE.EnglishGrammar.Norm.Run.spanRow",
+        "VE.EnglishGrammar.Norm.Run.stopNamesSentence"
+      ],
+      "G[I]": [
+        "VE.EnglishGrammar.Norm.Run.resultOf"
+      ],
+      "P": [
+        "VE.EnglishGrammar.Norm.tacticAnswer_simp"
+      ]
+    },
+    "VE/EnglishGrammar/Norm/RunExamples.lean": {
+      "T": [
+        "VE.EnglishGrammar.Norm.RunExamples.big",
+        "VE.EnglishGrammar.Norm.RunExamples.cTwo",
+        "VE.EnglishGrammar.Norm.RunExamples.caseD",
+        "VE.EnglishGrammar.Norm.RunExamples.caseOf",
+        "VE.EnglishGrammar.Norm.RunExamples.caseTwo",
+        "VE.EnglishGrammar.Norm.RunExamples.errorOf",
+        "VE.EnglishGrammar.Norm.RunExamples.f18",
+        "VE.EnglishGrammar.Norm.RunExamples.fixed",
+        "VE.EnglishGrammar.Norm.RunExamples.get",
+        "VE.EnglishGrammar.Norm.RunExamples.grammarExport",
+        "VE.EnglishGrammar.Norm.RunExamples.internalRow",
+        "VE.EnglishGrammar.Norm.RunExamples.leanUnknown",
+        "VE.EnglishGrammar.Norm.RunExamples.notOne",
+        "VE.EnglishGrammar.Norm.RunExamples.oE1",
+        "VE.EnglishGrammar.Norm.RunExamples.rejectAll",
+        "VE.EnglishGrammar.Norm.RunExamples.request",
+        "VE.EnglishGrammar.Norm.RunExamples.result",
+        "VE.EnglishGrammar.Norm.RunExamples.s3",
+        "VE.EnglishGrammar.Norm.RunExamples.sE1",
+        "VE.EnglishGrammar.Norm.RunExamples.sha",
+        "VE.EnglishGrammar.Norm.RunExamples.spanRowOf",
+        "VE.EnglishGrammar.Norm.RunExamples.str",
+        "VE.EnglishGrammar.Norm.RunExamples.tA",
+        "VE.EnglishGrammar.Norm.RunExamples.tB",
+        "VE.EnglishGrammar.Norm.RunExamples.whole",
+        "VE.EnglishGrammar.Norm.RunExamples.wholeRow"
+      ]
+    },
+    "ResponseShape/Schemas/RightsChecks.lean": {
+      "T": [
+        "ResponseShape.RightsChecks.accepts",
+        "ResponseShape.RightsChecks.answer",
+        "ResponseShape.RightsChecks.case",
+        "ResponseShape.RightsChecks.conflict",
+        "ResponseShape.RightsChecks.creq",
+        "ResponseShape.RightsChecks.elabA",
+        "ResponseShape.RightsChecks.elabCase",
+        "ResponseShape.RightsChecks.env",
+        "ResponseShape.RightsChecks.located",
+        "ResponseShape.RightsChecks.oneCase",
+        "ResponseShape.RightsChecks.parse",
+        "ResponseShape.RightsChecks.refusesAll",
+        "ResponseShape.RightsChecks.scopeA",
+        "ResponseShape.RightsChecks.scopeCase",
+        "ResponseShape.RightsChecks.situation",
+        "ResponseShape.RightsChecks.spanned",
+        "ResponseShape.RightsChecks.texts",
+        "ResponseShape.RightsChecks.weighed"
       ]
     }
   }
