@@ -246,6 +246,83 @@ def test_with_every_unit_a_counting_unit_the_chain_reads_the_document(tmp_path):
     assert answer["not_certified"] == ["one"]
 
 
+# qt-a4b re-check F3: a reading set holding a pending reading (content None) and a content-bearing one. Under
+# `readings@1` and `norm-defaults@0` Python's own coverage path decides such a document; the chain list and its chain
+# reading have no Python path, so Lean judges them.
+def _plain_environment():
+    """The chain reading's environment: the chain list without `cardinality@0`."""
+    return {k: CHAIN_ENV[k] for k in ("language", "spec_revision", "vocabulary")} | {"profiles": CHAIN[1:]}
+
+
+def _reading_set(contents, unit="two", name="s"):
+    """A reading set on `unit` with one reading per entry of `contents` (None: pending), each distinguished from the
+    next by one complete model the set supplies."""
+    import copy
+    from ve.ast import Top
+    from ve.environment import Environment
+    from ve.identity import meaning_id
+    from ve.model import FiniteModel
+    environment = Environment(copy.deepcopy(_plain_environment()))
+    model = {"complete": True, "domains": {"fomc_policymaker": ["p0"], "user": ["u0"]}, "constants": {},
+             "relations": {k: [] for k in CHAIN_ENV["vocabulary"]["predicates"]}}
+    model_id = FiniteModel.from_dict(environment, model).model_id
+    ids = [f"{name}{i}" for i in range(len(contents))]
+    readings = [{"id": rid, "kind": "asserted", "content": content,
+                 "meaning_id": meaning_id(environment, Top()) if content is not None else "p" + rid,
+                 "admission": {"who": "w", "why": "y",
+                               "distinguishing_models": {other: model_id for other in ids if other != rid}}}
+                for rid, content in zip(ids, contents)]
+    return {"id": name, "unit": unit, "version": 1, "status": "open", "readings": readings, "models": {model_id: model}}
+
+
+MIXED = [_reading_set([None, ["top"]])]
+
+
+def test_a_mixed_pending_and_content_reading_set_on_the_chain_list_is_judged_by_lean(tmp_path, monkeypatch):
+    """PROBE F3: the chain list with reading set `s` (one pending reading, one with content `["top"]`) is admitted
+    through Lean, never refused by Python's own path; its chain reading is Lean's too, with no "no Python path", and
+    is the answer Python's own path gives the same text without the counting unit."""
+    import ve.document.load as load
+    from ve.document.lean import _document_case, _lean_answer
+    units = [("one", {"cardinality": TOP}), ("two", None)]
+    path = chained(tmp_path, units, reading_sets=MIXED)
+    python_path = load._load_document
+    monkeypatch.setattr(load, "_load_document", lambda *a, **k: pytest.fail("Python's own path read the chain list"))
+    answer = check_document(path)
+    assert answer["not_certified"] == ["one"] and answer["chain"]["coverage"]["unformalised_reasons"] == {"counting": 1}
+    assert answer["chain"]["reading_plan"]["choices"] == [{"s": 0}, {"s": 1}]
+    raw = path.read_bytes()
+    chain = _lean_answer(raw, True, tmp_path, {})["composed"]["chain_document"].encode()
+    assert _document_case(chain, True, chain_of=raw)["chain_of"] == raw.decode()
+    monkeypatch.setattr(load, "_load_document", python_path)
+    meta = json.loads(raw.split(b"---\n")[1])
+    meta["environment"] = _plain_environment()
+    meta["units"][0] = {"id": "one", "span": meta["units"][0]["span"], "kind": ["unformalised", "counting"],
+                        "meaning": {"unformalised": "counting"}, "support": "testimony"}
+    plain = tmp_path / "plain.ve.md"
+    plain.write_bytes(b"---\n" + json.dumps(meta).encode() + b"\n---\n" + raw.split(b"\n---\n", 1)[1])
+    assert _document_case(plain.read_bytes(), True) is None  # Python's own path, as on main.
+    assert answer["chain"] == check_document(plain)
+
+
+@pytest.mark.parametrize("sets", [
+    [[None, ["top"]]], [[["top"], None]], [[None], [["top"]]], [[None, None, ["top"]]], [[None, ["top"]], [None]],
+], ids=str)
+def test_no_reading_set_hands_a_chain_list_or_its_chain_reading_to_python(sets):
+    """The class of F3: every mix of pending and content-bearing readings, in one set or across sets, keeps a chain
+    list and a chain reading on Lean's request, and keeps the same text without `cardinality@0` on Python's path."""
+    from ve.document.lean import _document_case
+    reading_sets = [_reading_set(contents, name=f"s{i}") for i, contents in enumerate(sets)]
+    raw = chain_text([("one", {"cardinality": TOP}), ("two", None)], reading_sets=reading_sets)
+    assert _document_case(raw, True) is not None
+    assert _document_case(raw, True, chain_of=raw) is not None
+    meta = json.loads(raw.split(b"---\n")[1])
+    meta["environment"] = _plain_environment()
+    plain = b"---\n" + json.dumps(meta).encode() + b"\n---\n" + raw.split(b"\n---\n", 1)[1]
+    assert _document_case(plain, True) is None
+    assert _document_case(plain, True, chain_of=raw) is not None
+
+
 def test_render_says_what_the_chain_does_not_cover(tmp_path):
     shown = render_document(chained(tmp_path, [("one", {"cardinality": TOP}), ("two", {"ast": ["top"]})]))
     assert shown.startswith("The chain's premises and verdict cover no counting statement: one are admitted")
