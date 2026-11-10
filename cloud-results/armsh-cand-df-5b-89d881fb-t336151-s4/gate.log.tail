@@ -1,0 +1,200 @@
+case = 'mutant/810'
+
+    @pytest.mark.xfail(strict=True, reason="path pending lf-12: located Lean decoders will restore these paths")
+    @pytest.mark.parametrize("case", _delta_cases("verdict"))
+    def test_pending_lf12_document_paths(tmp_path, case):
+        """Each signed path gap becomes an XPASS failure as soon as lf-12 fixes that case."""
+        path = write(tmp_path, _saved_document_cases()[case])
+        with pytest.raises(VEError) as lean:
+            D.check_document(path)
+        with pytest.raises(VEError) as python:
+            python_path(path)()
+        assert python.value.path, case
+        assert lean.value.code == python.value.code
+>       assert lean.value.path == python.value.path
+E       AssertionError: assert '' == '/vocabulary/constants/alice'
+E         
+E         - /vocabulary/constants/alice
+
+tests/test_document_lean_switch.py:302: AssertionError
+[gate] skip allowed: tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/824]: tmp_path = PosixPath('/tmp/ve-gate-csr6epqo/tmp/pytest-of-runner/pytest-0/popen-gw2/test_pending_lf12_document_pat13')
+case = 'mutant/824'
+
+    @pytest.mark.xfail(strict=True, reason="path pending lf-12: located Lean decoders will restore these paths")
+    @pytest.mark.parametrize("case", _delta_cases("verdict"))
+    def test_pending_lf12_document_paths(tmp_path, case):
+        """Each signed path gap becomes an XPASS failure as soon as lf-12 fixes that case."""
+        path = write(tmp_path, _saved_document_cases()[case])
+        with pytest.raises(VEError) as lean:
+            D.check_document(path)
+        with pytest.raises(VEError) as python:
+            python_path(path)()
+        assert python.value.path, case
+        assert lean.value.code == python.value.code
+>       assert lean.value.path == python.value.path
+E       AssertionError: assert '' == '/vocabulary/constants/alice'
+E         
+E         - /vocabulary/constants/alice
+
+tests/test_document_lean_switch.py:302: AssertionError
+[gate] skip allowed: tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/844]: tmp_path = PosixPath('/tmp/ve-gate-csr6epqo/tmp/pytest-of-runner/pytest-0/popen-gw2/test_pending_lf12_document_pat14')
+case = 'mutant/844'
+
+    @pytest.mark.xfail(strict=True, reason="path pending lf-12: located Lean decoders will restore these paths")
+    @pytest.mark.parametrize("case", _delta_cases("verdict"))
+    def test_pending_lf12_document_paths(tmp_path, case):
+        """Each signed path gap becomes an XPASS failure as soon as lf-12 fixes that case."""
+        path = write(tmp_path, _saved_document_cases()[case])
+        with pytest.raises(VEError) as lean:
+            D.check_document(path)
+        with pytest.raises(VEError) as python:
+            python_path(path)()
+        assert python.value.path, case
+        assert lean.value.code == python.value.code
+>       assert lean.value.path == python.value.path
+E       AssertionError: assert '' == '/vocabulary'
+E         
+E         - /vocabulary
+
+tests/test_document_lean_switch.py:302: AssertionError
+[gate] skip allowed: tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/906]: tmp_path = PosixPath('/tmp/ve-gate-csr6epqo/tmp/pytest-of-runner/pytest-0/popen-gw2/test_pending_lf12_document_pat15')
+case = 'mutant/906'
+
+    @pytest.mark.xfail(strict=True, reason="path pending lf-12: located Lean decoders will restore these paths")
+    @pytest.mark.parametrize("case", _delta_cases("verdict"))
+    def test_pending_lf12_document_paths(tmp_path, case):
+        """Each signed path gap becomes an XPASS failure as soon as lf-12 fixes that case."""
+        path = write(tmp_path, _saved_document_cases()[case])
+        with pytest.raises(VEError) as lean:
+            D.check_document(path)
+        with pytest.raises(VEError) as python:
+            python_path(path)()
+        assert python.value.path, case
+        assert lean.value.code == python.value.code
+>       assert lean.value.path == python.value.path
+E       AssertionError: assert '' == '/vocabulary/...es/in_finance'
+E         
+E         - /vocabulary/predicates/in_finance
+
+tests/test_document_lean_switch.py:302: AssertionError
+[gate] skip allowed: tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/908]: tmp_path = PosixPath('/tmp/ve-gate-csr6epqo/tmp/pytest-of-runner/pytest-0/popen-gw2/test_pending_lf12_document_pat16')
+case = 'mutant/908'
+
+    @pytest.mark.xfail(strict=True, reason="path pending lf-12: located Lean decoders will restore these paths")
+    @pytest.mark.parametrize("case", _delta_cases("verdict"))
+    def test_pending_lf12_document_paths(tmp_path, case):
+        """Each signed path gap becomes an XPASS failure as soon as lf-12 fixes that case."""
+        path = write(tmp_path, _saved_document_cases()[case])
+        with pytest.raises(VEError) as lean:
+            D.check_document(path)
+        with pytest.raises(VEError) as python:
+            python_path(path)()
+        assert python.value.path, case
+        assert lean.value.code == python.value.code
+>       assert lean.value.path == python.value.path
+E       AssertionError: assert '' == '/vocabulary/...tants/finance'
+E         
+E         - /vocabulary/constants/finance
+
+tests/test_document_lean_switch.py:302: AssertionError
+[gate] skip allowed: tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/922]: tmp_path = PosixPath('/tmp/ve-gate-csr6epqo/tmp/pytest-of-runner/pytest-0/popen-gw2/test_pending_lf12_document_pat17')
+case = 'mutant/922'
+
+    @pytest.mark.xfail(strict=True, reason="path pending lf-12: located Lean decoders will restore these paths")
+    @pytest.mark.parametrize("case", _delta_cases("verdict"))
+    def test_pending_lf12_document_paths(tmp_path, case):
+        """Each signed path gap becomes an XPASS failure as soon as lf-12 fixes that case."""
+        path = write(tmp_path, _saved_document_cases()[case])
+        with pytest.raises(VEError) as lean:
+            D.check_document(path)
+        with pytest.raises(VEError) as python:
+            python_path(path)()
+        assert python.value.path, case
+        assert lean.value.code == python.value.code
+>       assert lean.value.path == python.value.path
+E       AssertionError: assert '' == '/vocabulary/...tants/finance'
+E         
+E         - /vocabulary/constants/finance
+
+tests/test_document_lean_switch.py:302: AssertionError
+[gate] skip allowed: tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/930]: tmp_path = PosixPath('/tmp/ve-gate-csr6epqo/tmp/pytest-of-runner/pytest-0/popen-gw2/test_pending_lf12_document_pat18')
+case = 'mutant/930'
+
+    @pytest.mark.xfail(strict=True, reason="path pending lf-12: located Lean decoders will restore these paths")
+    @pytest.mark.parametrize("case", _delta_cases("verdict"))
+    def test_pending_lf12_document_paths(tmp_path, case):
+        """Each signed path gap becomes an XPASS failure as soon as lf-12 fixes that case."""
+        path = write(tmp_path, _saved_document_cases()[case])
+        with pytest.raises(VEError) as lean:
+            D.check_document(path)
+        with pytest.raises(VEError) as python:
+            python_path(path)()
+        assert python.value.path, case
+        assert lean.value.code == python.value.code
+>       assert lean.value.path == python.value.path
+E       AssertionError: assert '' == '/vocabulary'
+E         
+E         - /vocabulary
+
+tests/test_document_lean_switch.py:302: AssertionError
+[gate] skip allowed: tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/950]: tmp_path = PosixPath('/tmp/ve-gate-csr6epqo/tmp/pytest-of-runner/pytest-0/popen-gw2/test_pending_lf12_document_pat19')
+case = 'mutant/950'
+
+    @pytest.mark.xfail(strict=True, reason="path pending lf-12: located Lean decoders will restore these paths")
+    @pytest.mark.parametrize("case", _delta_cases("verdict"))
+    def test_pending_lf12_document_paths(tmp_path, case):
+        """Each signed path gap becomes an XPASS failure as soon as lf-12 fixes that case."""
+        path = write(tmp_path, _saved_document_cases()[case])
+        with pytest.raises(VEError) as lean:
+            D.check_document(path)
+        with pytest.raises(VEError) as python:
+            python_path(path)()
+        assert python.value.path, case
+        assert lean.value.code == python.value.code
+>       assert lean.value.path == python.value.path
+E       AssertionError: assert '' == '/vocabulary/...icates/senior'
+E         
+E         - /vocabulary/predicates/senior
+
+tests/test_document_lean_switch.py:302: AssertionError
+[gate] skip allowed: tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/970]: tmp_path = PosixPath('/tmp/ve-gate-csr6epqo/tmp/pytest-of-runner/pytest-0/popen-gw2/test_pending_lf12_document_pat20')
+case = 'mutant/970'
+
+    @pytest.mark.xfail(strict=True, reason="path pending lf-12: located Lean decoders will restore these paths")
+    @pytest.mark.parametrize("case", _delta_cases("verdict"))
+    def test_pending_lf12_document_paths(tmp_path, case):
+        """Each signed path gap becomes an XPASS failure as soon as lf-12 fixes that case."""
+        path = write(tmp_path, _saved_document_cases()[case])
+        with pytest.raises(VEError) as lean:
+            D.check_document(path)
+        with pytest.raises(VEError) as python:
+            python_path(path)()
+        assert python.value.path, case
+        assert lean.value.code == python.value.code
+>       assert lean.value.path == python.value.path
+E       AssertionError: assert '' == '/vocabulary'
+E         
+E         - /vocabulary
+
+tests/test_document_lean_switch.py:302: AssertionError
+[gate] skip allowed: tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/978]: tmp_path = PosixPath('/tmp/ve-gate-csr6epqo/tmp/pytest-of-runner/pytest-0/popen-gw2/test_pending_lf12_document_pat21')
+case = 'mutant/978'
+
+    @pytest.mark.xfail(strict=True, reason="path pending lf-12: located Lean decoders will restore these paths")
+    @pytest.mark.parametrize("case", _delta_cases("verdict"))
+    def test_pending_lf12_document_paths(tmp_path, case):
+        """Each signed path gap becomes an XPASS failure as soon as lf-12 fixes that case."""
+        path = write(tmp_path, _saved_document_cases()[case])
+        with pytest.raises(VEError) as lean:
+            D.check_document(path)
+        with pytest.raises(VEError) as python:
+            python_path(path)()
+        assert python.value.path, case
+        assert lean.value.code == python.value.code
+>       assert lean.value.path == python.value.path
+E       AssertionError: assert '' == '/vocabulary/sorts/person'
+E         
+E         - /vocabulary/sorts/person
+
+tests/test_document_lean_switch.py:302: AssertionError
+[gate] skip allowed: tests/test_nary_folio.py::test_full_nary_folio_accounting_when_corpus_is_available: ('/home/runner/work/verifiable-english/verifiable-english/tests/test_nary_folio.py', 18, 'Skipped: optional pinned FOLIO v2 corpus is not downloaded')
