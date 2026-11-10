@@ -2358,6 +2358,7 @@
       "lean/VE/Calc/UnitsExamples.lean": "fixtures only: generated #guard checks of the ve-units@2 fixture table (tools/calc_units_fixtures.py) decode each environment and read its identity; no runner path",
       "lean/VE/Question/Fixtures.lean": "fixtures only: generated #guard checks of the Q1 fixture table (tools/question_fixtures.py) parse each frame's case JSON and compare english.question's result; no runner path",
       "lean/ResponseShape/Encoders/Ask.lean": "theorems that the ask mode's rows fit their response shapes; JSON access only in statements and proofs (not on any runner path)",
+      "lean/ResponseShape/Encoders/EnglishStatement.lean": "theorems that the english.statement mode's rows fit their response shape (statementCaseReported_fits); JSON access only in statements and proofs (not on any runner path)",
       "lean/ResponseShape/Schemas/Metered.lean": "the metered mode's response shape (metered.json) and the JSON constants of its three results; test tooling beside lean/ResponseShape.lean, not on any runner path",
       "lean/VE/Words/Situation.lean": "question answering Q2.3 and Q2.4: wording only; reads the environment JSON's constant verbalisations and regulated declarations (constantName, regulatedOf) to word a line, and decides nothing",
       "lean/VE/LimitTies.lean": "build-time checks only: its #guards build JSON inputs to check the frozen decoders' limits against VE.Limits at the limit and one past it (lf-18 review F2); no executable, service mode or record reads it",
