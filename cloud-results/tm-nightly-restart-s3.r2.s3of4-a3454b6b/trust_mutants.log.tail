@@ -1,0 +1,10 @@
+trust_mutants: 83 definitions, 110 mutants (28 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/Events/Wire.lean:201 VE.Events.finishEvents (D[V], trusted) bool-flip: true -> false (lean/VE/Events/Wire.lean:202: Application type mismatch: The argument)
+SURVIVOR lean/VE/Presupposition/Admit.lean:213 VE.Presupposition.readingsDoc (G[V], trusted) bool-flip: false -> true
+SURVIVOR lean/VE/Presupposition/Admit.lean:220 VE.Presupposition.readingsDoc (G[V], trusted) lit-plus: 1 -> 2
+UNKNOWN lean/VE/Acts/Run.lean:42 VE.Acts.Run.rulesJson (D[V], trusted) list-empty: U'.D.T.nodes -> [] (lean/VE/Acts/Run.lean:42: Invalid field notation: Type of)
+trust_mutants: 24 KILLED, 2 SURVIVOR, 2 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 82 OTHER SHARD in 1502 s
+trust_mutants: D[V], trusted: 4 KILLED, 2 UNKNOWN, 20 OTHER SHARD
+trust_mutants: G[V], trusted: 13 KILLED, 2 SURVIVOR, 41 OTHER SHARD
+trust_mutants: S, trusted: 7 KILLED, 21 OTHER SHARD
+trust_mutants: steps: wall plan 9.4 s, scratch 5.9 s, control_build 0.3 s, probe_install 1 s, mutants 1479.2 s, cleanup 6.4 s, reads 0.2 s; lake control_build 0.2 s (1), probe_install 1 s (1), control_probes 92.9 s (22), mutant_builds 147.2 s (34), mutant_checks 2282.9 s (29), stage_controls 836.2 s (11), mutant_probes 123.5 s (24)
