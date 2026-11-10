@@ -1444,7 +1444,7 @@
       {
         "file": "lean/VE/Readings/Wire.lean",
         "lines": 1059,
-        "sha256": "a1f8444b70c79084e87c170c92d04eac013894f723db734cdd73251d2b5e4acb",
+        "sha256": "59f17b191a3b5940e787fa31e06254075b8ac7b7f82ddce1e9e4ad61552e87c1",
         "ranges": [
           [
             1,
@@ -1493,7 +1493,7 @@
       {
         "file": "lean/VE/Rights/Wire.lean",
         "lines": 697,
-        "sha256": "5be42b913732dd33878d081227c8bb25c6927558f6718457a77f7ec475501fad",
+        "sha256": "fab8db83fb146eecc0a1dd6ad96eb1e4bed367de966816bd0d5c2bf73096d0be",
         "ranges": [
           [
             1,
@@ -2453,7 +2453,8 @@
       "lean/VE/Rights/OpenActExamples.lean": "fixtures only: #guard checks of docs/spec/rights.md 7.2 (rights-cfr-4) read unitOpen on right units built with Json.mkObj; no runner path",
       "lean/VE/Readings/SoftSupWireExamples.lean": "fixtures: #guards that decode a small soft-chain environment JSON (`decodeEnvironment`) to evaluate `routeSD`; no runner, service mode or record reads it (rd-9 sc-11)",
       "lean/VE/Commands/RunSplit.lean": "test fixtures only: ci-2b's `#guard`s build speech-source payloads and english.command reading contexts as JSON and read the pinned `VE.SpeechActs.Source.decodeSpeechSource` and `commandContext`; no runner path",
-      "lean/VE/Commands/StepsProofs.lean": "proofs only: `readStep_conservative` names its decoded environment as section 7 states it (`Lean.Json`, `decodeSpeechEnvironmentFull`) and its lemmas trace that decoder; the module decodes nothing at run time"
+      "lean/VE/Commands/StepsProofs.lean": "proofs only: `readStep_conservative` names its decoded environment as section 7 states it (`Lean.Json`, `decodeSpeechEnvironmentFull`) and its lemmas trace that decoder; the module decodes nothing at run time",
+      "lean/ResponseShape/Schemas/RightsChecks.lean": "fixtures only: #guard checks of rights.json's elaborate, scope and packages rows on the mode's answers and their variants build JSON; no runner path"
     }
   },
   "plan_operations": {
