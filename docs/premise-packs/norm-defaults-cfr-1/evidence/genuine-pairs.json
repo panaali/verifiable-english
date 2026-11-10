@@ -1,0 +1,10 @@
+{
+ "pairs": 21344,
+ "by_kind_source": {
+  "norm-defaults-certificate norms -": 55,
+  "norm-defaults-status document -": 7,
+  "norm-defaults-status norms -": 21282
+ },
+ "refused": 0,
+ "first_refusals": []
+}
