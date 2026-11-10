@@ -129,4 +129,45 @@ Next items: sc-11wc, sc-11c (the soft runners), then sc-11b.
 
 ## Tests
 
-TESTS-PENDING
+- Selected tests on 0754a04015 (`mac-pytest.sh --select`, log /tmp/sc11w-select2.log; ran on ve-cloud-2 after
+  Actions shard 2 gave no result): 115 units recorded, 1 failed. That was `tests/test_lean_dump_cache.py`, three
+  tests, because the `run_meta` order check made the tree run code while it elaborates. It was fixed in b9b9fdabe4
+  (the `rfl` pin). The three ids rerun on a1d2e27dd6 (`mac-pytest.sh -- <ids>`, VM): 3 passed. Locally,
+  `tests/test_rd9_statements.py`, `tests/test_rd9_sc11_charge_wording.py` and `tests/test_trust_budget.py`: 65 passed.
+  No failure is in main-known-red.txt.
+- `lake build` (1358 jobs) and `python3 lean/audit.py` ("PASS: 825 source files") on a1d2e27dd6, after
+  `regen_generated.py --write` (rc 0).
+- `tools/check_rd9_sc1_statements.py`: "SC-11 wire PASS: 15 exact", with sdSuperposable signed.
+- `tools/gate_collection.py --check --prebuilt`: the two removed ids carry `Test-removed:` trailers in the final
+  trailer block of the REPORT commit. The first trailers, in 4559df88d0's body, were not parsed as trailers.
+
+SELF-REVIEW: 2 A, 5 B, 4 C; fixed 11 (A1 the charge counts every unit; A2 14.11 and cpu.md restated with set- and
+candidate-heavy shapes; B1 asked the DRI, row sc-11wc; B2 mutant M5b; B3 trailers; B4 re-measured on the final Lean;
+B5 FOLLOW-UPS row and REPORT sections; C1-C4).
+
+## Self-review against BUILDER-CHECKLIST
+
+1. Typed and contained answers: N.A. (no relayed answer and no wire change; `routeSD` is not dispatched).
+2. Deliverables: PASS (rows 1-6 above; `#guard`s in SoftSupWireExamples.lean; cpu.md; 14.11).
+3. Tests can fail: PASS (mutants.json M1-M8, each with the failing `#guard` or proof).
+4. Python, Lean and Rust agree: N.A. (Lean only; no Python or Rust product code).
+5. R8 binding: N.A. (no relay).
+6. Gate evidence on the final HEAD: PASS (selected run, the failed ids rerun, audit and build on a1d2e27dd6). The gate
+   itself is the chain's.
+7. No unsigned item: PASS (the 14.8 edit is signed in dri-decisions-20261110-sc-11w.md item 1, via the checker's
+   `SC11W` entry).
+8. DELTA: N.A. (refusal direction only; sc-11-3 item 1 and sc-11w item 1: no DELTA row).
+9. Test selection: PASS (the selection picked `tests/test_rd9_statements.py`, `tests/test_rd9_sc11_charge_wording.py`
+   and `tests/test_lean_dump_cache.py`; log /tmp/sc11w-select2.log).
+10. Lean statements: PASS (`check_rd9_sc1_statements.py`; `sdCheckWork_eq_fast` proved; audit standard axioms only).
+11. Limits fail closed: PASS (over the charge, enumerated: `overCharge`, `NSDsets`, `NSDcands`, `wideGuard767` and
+    `wideGuard3071` `#guard`s).
+12. CPU: PASS (cpu.md: every case at most 0.60 s; the csimp takes `sdCheckWork` from 87-97 s to 0.07 s; the examples
+    module builds in about 1m45 interpreted).
+13. Test-removed trailers: PASS (`gate_collection.py --check --prebuilt` after the trailer commit).
+14. Both directions: PASS (`atCharge` accepts and `overCharge` refuses; the wide-guard documents on each side;
+    spec re-read: 14.8 `def sdSuperposable` against docs/spec/rd-9-soft-chain.md:2297 and its signed edit, 14.11's row
+    and closing paragraph against dri-decisions-20261110-sc-11w.md item 1).
+15. Four classes: PASS. No overclaim: 14.11's "at most 0.60 s" is for the measured shapes, and heavyIn is listed as
+    open. No silent cut: per-choice work is ruled sc-11wc. Every check can fail: mutants.json. Limits charged before
+    work: the `rfl` order pin.
