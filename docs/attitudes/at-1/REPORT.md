@@ -1,14 +1,13 @@
 # at-1 report: the attitudes Lean core, last part (spec 6.1's eight remaining statements and row at-1b-tie)
 
-Status: done at HEAD (the commit carrying this report). Deliverables (1)-(3) are built. All eight statements are proved,
-and none of their text changed. No signature is reserved, and there is no DELTA row.
-Changed: `Theorems.lean` gains the eight proofs and their helper lemmas, and at-1d's `denote_interp_base` and
-`tupleTyped_interp` are now instances of general lemmas. `Examples.lean` gains 7.4's and 7.5's points for each statement.
-`tools/trust-classes.json` records the tie move and the new fixtures. `ATTITUDES.md` gains at-1's row and lists all 27
-statements of 6.1 in plain words.
-Trust: `AFormula.toFormula` moved from S to D[V], tied to `att_elaboration_faithful` (row at-1b-tie): K +0, S -10, D +10,
-tied +10, trusted -10. No new trusted line, so no R16 growth and no FOLLOW-UPS row.
-Next item: at-2 (the attitudes pack on the route) and at-3a (the layered kind), then pc-11. No at-1e: (3) stayed here (section "Size").
+Status: done at HEAD (the commit carrying this report), review fixes included (section "Review fixes"). No signature is reserved; no DELTA row.
+Changed: the eight remaining 6.1 statements are proved, their text unchanged (`Theorems.lean`); 7.4's and 7.5's points (`Examples.lean`); ATTITUDES.md lists all 27.
+Trust: `AFormula.toFormula` S to D[V], tied (row at-1b-tie): K +0, S -10, tied +10, trusted -10. Shortfalls: at-1b 20, at-1a 49, 69 in all (signed, -trust item 3).
+Open: review C items F2, F3 (the ties pass), F6, unchanged. Next: at-2 and at-3a, then pc-11; no at-1e ((3) stayed here, section "Size").
+
+Details. `Theorems.lean` also gains the helper lemmas, and at-1d's `denote_interp_base` and `tupleTyped_interp` are now instances of
+general lemmas. `tools/trust-classes.json` records the tie move and the new fixtures. The tie move is D +10, with no new trusted line, so
+no R16 growth and no FOLLOW-UPS row.
 
 Plan: docs/spec/attitudes-PLAN.md "AT-1. Lean core" (from line 792). Spec: docs/spec/attitudes.md 6.1 (the eight statements at
 1275-1279 and 1284-1311, the proof notes at 1345-1352), 2.5, 2.8, 7.2, 7.4, 7.5, section 11. Statement gate: AT-0 is done
@@ -100,11 +99,19 @@ definition `AFormula.toFormula` has its mutant (the holder/slot swap), which bre
 **Row at-1b-tie, measured.** `AFormula.toFormula` (10 lines) moved from S to D[V], tied to `att_elaboration_faithful`
 (reviews/dri-decisions-20261105-at-1b-trust.md item 3): `S -10, D +10, tied +10`.
 
-The measured shortfalls, as that decision's item 3 asks each row to report:
-- at-1b's own trusted lines are now +165 - 10 = +155, against 150: 5 over.
+The measured shortfalls, as that decision's item 3 asks each row to report. at-1b's baseline row (+165) already nets the at-1a-tie's
+first half (`gross +180`, `-15`), and item 2 counts those 15 lines as at-1a's cut-back, not at-1b's, so they come off at-1a's row
+only:
+- at-1b's own trusted lines are +180 - 10 = +170, against 150: 20 over.
 - at-1a's are +221 - 15 (at-1b's ties) - 7 (at-1c's `baseEnvAtt`) = +199, against 150: 49 over.
-- In all, 54 lines stay above the two caps, against the decision's estimate of about 44. The decision signs that remainder as the
-  spec's own check text, so no new signature is needed.
+- In all, 69 lines stay above the two caps, against the decision's estimate of about 44; the difference is the about 25 lines of
+  at-1a ties the estimate expected from at-1, not made (below). The decision signs that remainder as the spec's own check text and
+  requires no further cut before merge, so no new signature is needed.
+
+`tests/test_attitudes_at1_report.py::test_the_trust_shortfalls_are_the_measured_ones` recomputes these figures from the baseline rows
+at 223ba4c085 and the tie move measured there by `trust_map.measure_rev` against a3454b6ba5. The first version of this report took the
+15 lines off at-1b's row a second time (review F1), which put at-1b 15 lines too low and the total at 54;
+`test_the_reviewed_report_text_with_the_tie_subtracted_twice_is_refused` keeps that text refused.
 
 The ties the estimate expected from at-1 were not made:
 - `Cond.key`, `AFormula.conds`, `condsOf` and `partsOf`, the FOLLOW-UPS at-1a row's "about 25". No 6.1 statement states their
@@ -134,7 +141,10 @@ tool-written `trust-mutants.json`:
 | 2d577d5fc4 (final code) | 459, 15 | the self-review's fixes: the `hT`-failing refusals, direct reads, the plain-words list (+41) |
 
 Per file at the final code: `Theorems.lean` +186 -10; `Examples.lean` +164; `ATTITUDES.md` +44 -3; `spec_text_check.py` 42;
-`mutants.json` 10; `trust-classes.json` +13 -2. With this report, the total is about 610, under the expected 700-1,000. The proofs and
+`mutants.json` 10; `trust-classes.json` +13 -2. With this report, at 36a5944147, the total is 667 added and 15 changed, under the
+expected 700-1,000 (the first version said "about 610", review F4). The review fixes add `tests/test_attitudes_at1_report.py`, which
+recomputes every sized row and that total from `git diff --numstat` of the pinned commits, without the files a generator writes
+(`tools/regen_generated.py`, merge kind `regenerate`) and `trust-mutants.json`; `trust-classes.json` (merge kind `json`) counts. The proofs and
 helper lemmas came to about 180, under the 400-600 estimate, because at-1d's helpers carried the load. The examples and guards came to
 about 165.
 
@@ -178,7 +188,8 @@ line numbers regenerated after the fixes, with the method stated above and the g
 
 1. N.A.: no Lean answer is relayed, and no service mode, schema or relay changed (the grep in "Trust").
 2. PASS: "Deliverables" gives each task line with its commit and check. `git diff --stat a3454b6ba5 -- tests ve 'tools/*.py'` is
-   empty, so there is no Python copy of a Lean decision and no report test. No in-flight branch touches these files.
+   empty at the reviewed head, so there is no Python copy of a Lean decision. The review fixes add one report test,
+   `tests/test_attitudes_at1_report.py`, which reads only pinned commits. No in-flight branch touches these files.
 3. PASS: `docs/attitudes/at-1/mutants.json` has 8 mutants, each failing a named guard, example, proof or the statement gate.
    `trust-mutants.json` has 0 mutants, because no trusted declaration's text changed.
 4. N.A.: Lean only, read by no route; no Python or Rust product code changed.
