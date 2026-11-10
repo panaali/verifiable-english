@@ -45,7 +45,7 @@ def cases : List (String × NDoc) :=
    ("atCharge", withRules 2 9 fun i => sized (if i < 3 then 113 else 112)),
    ("overCharge", withRules 2 22 fun i => sized (if i < 2 then 26 else 25)),
    ("at32x512", withRules 2 25 fun i => sized (if i < 24 then 20 else 19)),
-   ("at64x256", withRules 2 57 fun i => sized (if i < 15 then 5 else 4)), ("sets31", withSets 1 31),
+   ("at64x256", withRules 2 57 fun i => sized (if i < 15 then 5 else 4)), ("sets40", withSets 1 40),
    ("cands121", withCandidates 1 121),
    ("sets300", withSets 1 300), ("cands5000", withCandidates 1 5000)] ++
   ((List.range 9).map fun e => (s!"rules{e}", withRules 2 (2 ^ e) fun _ => sized 1)) ++
