@@ -2005,6 +2005,7 @@
         "VE.Closure.Formula.WellFormed",
         "VE.Closure.Formula.denote",
         "VE.Closure.Formula.reach",
+        "VE.Closure.Formula.toCore",
         "VE.Closure.embed",
         "VE.Closure.erase"
       ],

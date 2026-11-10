@@ -61,7 +61,8 @@ theorem fol_entails_iff (E : VE.Environment) (ps : List VE.Formula) (c : VE.Form
     fol.{u}.Entails E ps c ↔ VE.Entails.{u} E ps c := Iff.rfl
 
 theorem closure_entails_iff (E : VE.Environment) (ps : List VE.Closure.Formula)
-    (c : VE.Closure.Formula) : closure.{u}.Entails E ps c ↔ VE.Closure.Entails.{u} E ps c := Iff.rfl
+    (c : VE.Closure.Formula) : closure.{u}.Entails E ps c ↔ VE.Closure.Entails.{u} E ps c :=
+  (VE.Closure.entails_iff E ps c).symm
 
 theorem order_entails_iff (E : VE.Order.Environment) (ps : List VE.Order.Formula)
     (c : VE.Order.Formula) : order.{u}.Entails E ps c ↔ VE.Order.Entails.{u} E ps c := Iff.rfl
@@ -99,7 +100,7 @@ def closureValid (E : VE.Environment) (c : VE.Closure.Tableau.Certificate)
 theorem closureValid_certificateSound (E : VE.Environment) :
     CertificateSound closure.{u} id E (closureValid E) := by
   intro c ps r h
-  simpa using VE.Closure.Tableau.checkCertificate_sound E ps r c h
+  simpa using (closure_entails_iff E ps r).mpr (VE.Closure.Tableau.checkCertificate_sound E ps r c h)
 
 /-- The order checker's certificate predicate. -/
 def orderValid (E : VE.Order.Environment) (c : VE.Order.Tableau.Certificate)
