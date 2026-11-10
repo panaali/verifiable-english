@@ -27,5 +27,22 @@
   },
   "base_and_head_jsonl_byte_identical": true
  },
- "closure_probe": "evidence/closure-probe.json: @0, @1, @2 and Core's version, atom invariant and conclusion, stale, unknown rule, induction under @0; certificate and route runners; base and head rows equal byte for byte"
+ "closure_probe": "evidence/closure-probe.json: @0, @1, @2 and Core's version, atom invariant and conclusion, stale, unknown rule, induction under @0; certificate and route runners; base and head rows equal byte for byte",
+ "cpu": {
+  "command": "python3 <scratch>/timing.py: ve_conformance over conformance/closure.json (46 cases: evaluation, typing, countermodels), base and head binaries alternated, 5 runs each, CPU of the child (user+sys)",
+  "base": {
+   "min_s": 0.206,
+   "median_s": 0.219
+  },
+  "head": {
+   "min_s": 0.219,
+   "median_s": 0.221
+  },
+  "stdout_bytes": {
+   "base": 66452,
+   "head": 66452
+  },
+  "note": "within noise at a machine load of about 68 on 32 cores; closure's check and eval now walk the embedding (linear) before Core's"
+ },
+ "gate_collection": "uv run python tools/gate_collection.py --check --prebuilt: 33356 collected, 33356 at de7fb9469; 0 added, 0 removed by a trailer, 0 refused, 0 stale and 0 malformed trailers"
 }
