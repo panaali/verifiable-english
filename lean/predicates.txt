@@ -79,6 +79,7 @@ module ResponseShape.Schemas.ReadingsChoices
 module ResponseShape.Schemas.ReadingsRoute
 module ResponseShape.Schemas.Reports
 module ResponseShape.Schemas.Rights
+module ResponseShape.Schemas.RightsChecks
 module ResponseShape.Schemas.Risk
 module ResponseShape.Schemas.RiskEval
 module ResponseShape.Schemas.Route
@@ -380,8 +381,12 @@ module VE.EnglishGrammar.Lexicon
 module VE.EnglishGrammar.LexiconFixtures
 module VE.EnglishGrammar.Norm.Elab
 module VE.EnglishGrammar.Norm.Examples
+module VE.EnglishGrammar.Norm.Owners
+module VE.EnglishGrammar.Norm.OwnersExamples
 module VE.EnglishGrammar.Norm.Read
 module VE.EnglishGrammar.Norm.Rules
+module VE.EnglishGrammar.Norm.Run
+module VE.EnglishGrammar.Norm.RunExamples
 module VE.EnglishGrammar.Norm.Value
 module VE.EnglishGrammar.Policy
 module VE.EnglishGrammar.PolicyReference
@@ -744,6 +749,7 @@ module VE.Service.Document
 module VE.Service.DocumentChain
 module VE.Service.DocumentChainChecks
 module VE.Service.DocumentChainExamples
+module VE.Service.DocumentView
 module VE.Service.EnglishRun
 module VE.Service.Family
 module VE.Service.FamilyBundle
@@ -1096,6 +1102,7 @@ VE.EnglishGrammar.InDom@VE.EnglishGrammar.Extends
 VE.EnglishGrammar.LexRow.NtsIn@VE.EnglishGrammar.Extends
 VE.EnglishGrammar.LexRow.Small@VE.EnglishGrammar.Extends
 VE.EnglishGrammar.Norm.NormOneReading@VE.EnglishGrammar.Norm.Read
+VE.EnglishGrammar.Norm.ReadNormAuthoring@VE.EnglishGrammar.Norm.Owners
 VE.EnglishGrammar.envSub@VE.EnglishGrammar.Extends
 VE.EnglishGrammar.lexiconSub@VE.EnglishGrammar.Extends
 VE.Entails@VE.Semantics
