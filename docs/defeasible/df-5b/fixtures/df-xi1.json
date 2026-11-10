@@ -1,0 +1,1 @@
+{"situation": {"complete": true, "domains": {"assistant": ["a"]}, "constants": {}, "relations": {"soft__excepted__r1": [], "urgent": [["a"]]}}, "record": [], "observations": [], "query": {"outcome": "x_permitted", "tuple": ["a"]}}
