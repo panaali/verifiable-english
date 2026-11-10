@@ -1,4 +1,5 @@
 import VE.RightClauses.Relation
+import VE.RightClauses.ElidedBytes
 import VE.Rights.Examples
 
 /-! The section 9.1 fixtures this part decides (docs/spec/right-clauses.md 9.1), as `#guard`s: the build fails if
@@ -88,7 +89,10 @@ def k4 : CLine := cline [trig (charged 0) 10 20] none [(30, 40)]
 
 #guard check k4 == "ok"
 #guard guardAfter k4 == .and .top (charged 0)
-#guard (k4.elided.map (fun s => s.2 - s.1)).sum == 10
+-- `elided_bytes = 10`, by the product code the route emits it with (ElidedBytes.lean): [30, 40) is 10 bytes
+#guard elidedTotal (entryElided (cdoc k4)) == 10
+#guard elidedTotal (entryElided (cdoc (cline [trig (charged 0) 10 20] none [(30, 40), (40, 41), (60, 100)]))) == 51
+#guard elidedTotal (entryElided (cdoc (cline [] none []))) == 0
 -- the line's own guard is kept and comes first; clauses in wire order, then the relation atom
 #guard guardAfter (cline [trig (charged 0) 10 20, trig (.binary "country_of" (.var 1) (.var 0)) 20 30]
     (some (rel (0, 1))) [] (charged 0)) (r21Doc (lineGuard := charged 0)) ==

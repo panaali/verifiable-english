@@ -18,6 +18,7 @@ from ve.backends.service_schema import check_response
 
 ROOT = Path(__file__).resolve().parents[1]
 EVIDENCE = ROOT / "docs/composition/cmp-s3-cfr-1/profile-off.json"
+BASE_ANSWERS = ROOT / "docs/composition/cmp-s3a-cfr-3/base-answers.json"
 ENVIRONMENT = ROOT / "tests/data/right-clauses-environment.json"
 OFF = ["norms@0", "relational-fol@0", "rights@0", "soft-norms@0"]
 ON = ["norms@0", "relational-fol@0", "right-clauses@0", "rights@0", "soft-norms@0"]
@@ -100,7 +101,7 @@ def test_right_clauses_k1_service_identity(service):
     [k1] = elaborate(service, document())
     assert k1["status"] == "ok", k1
     off = without_head_keys(document())
-    assert k1["result"] == {"plained": canonical(off), "clause_slot": []}
+    assert k1["result"] == {"plained": canonical(off), "clause_slot": [], "elided_bytes": 0, "unit_elided_bytes": [0]}
     plained, written = (exchange(service, "rights", [{"id": "k1", "kind": "rights-elaborate", "environment":
                                                       environment(OFF), "document": d}])[0]
                         for d in (json.loads(k1["result"]["plained"]), off))
@@ -153,6 +154,62 @@ def test_right_clauses_k_fixtures_service(service):
             assert guard(result) == fixture[1] and result["result"]["clause_slot"] == fixture[2], name
             [unit] = json.loads(result["result"]["plained"])
             assert set(unit) == {"right"} and [set(line) for line in unit["right"]["lines"]] == [{"kind", "norm"}], name
+
+
+ELIDED = ("elided_bytes", "unit_elided_bytes")
+
+
+def test_right_clauses_k4_product_elided_bytes(service):
+    """`elided_bytes` (spec 4.1 step 5, 6, 9.1 K4) through the product route: K4 (one elided span [30, 40)) reports 10,
+    its one unit 10. Each unit counts its own lines' spans, in document order, and the total is the document's. Two
+    overlapping elisions of one line are refused (1.1, 7), so no byte is counted twice."""
+    line = document()[0]["right"]["lines"][0]
+    two = document(elided=[[30, 40]]) + [{"right": {"name": "r22", "holder": "person", "lines": [
+        {**line, "norm": {**line["norm"], "name": "access-2"}, "elided": [[150, 175], [180, 181]]}]},
+        "span": [100, 200]}]
+    k4, none, units, overlap = elaborate(service, K_FIXTURES["K4"][0], document(), two,
+                                         document(elided=[[30, 40], [35, 45]]))
+    assert k4["status"] == "ok" and {k: k4["result"][k] for k in ELIDED} == {
+        "elided_bytes": 10, "unit_elided_bytes": [10]}, k4
+    assert {k: none["result"][k] for k in ELIDED} == {"elided_bytes": 0, "unit_elided_bytes": [0]}, none
+    assert {k: units["result"][k] for k in ELIDED} == {"elided_bytes": 36, "unit_elided_bytes": [10, 26]}, units
+    assert overlap == {"id": overlap["id"], "status": "error", "error": "ClauseSpan: equal-access: [35, 45)"}
+
+
+def test_right_clauses_existing_answers_unchanged(service):
+    """The DELTA row's negative test: on K1 and every K fixture, the answer without the two added fields is the base
+    build's byte for byte (saved: base-answers.json, run before this item), an error is unchanged and gains nothing,
+    and the added fields carry spec 6's value: K4's 10 (9.1), 0 for every other fixture (`elided: []`)."""
+    base = json.loads(BASE_ANSWERS.read_text())["answers"]
+    names = ["K1", *K_FIXTURES]
+    results = elaborate(service, document(), *(fixture[0] for fixture in K_FIXTURES.values()))
+    assert len(base) == len(names) and sorted(base) == sorted(names)
+    for name, result in zip(names, results):
+        old = {**base[name], "id": result["id"]}
+        if result["status"] != "ok":
+            assert canonical(result) == canonical(old), name
+            continue
+        assert canonical({**result, "result": {k: v for k, v in result["result"].items() if k not in ELIDED}}) == \
+            canonical(old), name
+        total = 10 if name == "K4" else 0
+        assert {k: result["result"][k] for k in ELIDED} == {"elided_bytes": total, "unit_elided_bytes": [total]}, name
+
+
+def test_right_clauses_elided_bytes_large_request(service):
+    """The evaluator rule (reviews/dri-decisions-20261027-me-12-n1.md): a large well-formed request ends within the
+    deadline. Named lines are bounded by the rights limits (256 rules, the size of a generated norm layer); elided
+    spans only by the request's size. So: right r21, then 31 `right_lines` units of it, each with one line that elides
+    500 one-byte spans (16,000 spans). Every span is counted once: each unit reports 500, and the total is 16,000."""
+    line = document()[0]["right"]["lines"][0]
+
+    def body(i):
+        return {"lines": [{**line, "norm": {**line["norm"], "name": f"access-{i}"},
+                           "elided": [[2 * j, 2 * j + 1] for j in range(500)]}]}
+    doc = [{"right": {"name": "r21", "holder": "person", **body(0)}, "span": [0, 1000]},
+           *({"right_lines": {"right": "r21", **body(i)}, "span": [0, 1000]} for i in range(1, 32))]
+    [result] = elaborate(service, doc)
+    assert result["status"] == "ok", result
+    assert result["result"]["elided_bytes"] == 16000 and result["result"]["unit_elided_bytes"] == [500] * 32
 
 
 def test_right_clauses_k10_profile_off(service):
