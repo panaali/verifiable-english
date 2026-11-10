@@ -71,6 +71,8 @@ open VE.Presupposition VE.Presupposition.Examples
   [{ members := ["o1", "o2", "o5"], goal := gA, cands := [.assumed, .conditioned] },
    { members := ["o3", "o4"], goal := gB, cands := [.assumed, .conditioned] }]
 #guard (coupledSet J19 (groups fixtureTable rep2)).length == 4
+-- a third group: a new group is appended after both earlier ones
+#guard (groups fixtureTable rep3).map (·.members) == [["o1", "o2", "o5"], ["o3", "o4"], ["o6", "o7"]]
 -- a cell with in place first or last: no group on it
 #guard groups tIn (neg2 .negated) == [] && groups fixtureTable (neg2 .negated) == []
 
