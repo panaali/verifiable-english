@@ -1,3 +1,12 @@
+- `tests/test_readings_s1_python.py` — Python entry points opened by the S1 wrapper profile.
+- `tests/test_readings_s2_answer.py` — S2's row (`readings-elaborate`) is relayed as Lean's answer bound to the request it asked about (R8; AR-17).
+- `tests/test_readings_s2_document.py` — S2a through the document path (docs/spec/composition-s2.md 1.1, 4, 6, 9): the route, the refusals before any verdict, the verdicts across readings and the repo…
+- `tests/test_readings_s2_lean.py` — Lean readings route, S2a case kinds (docs/spec/composition-s2.md 3, 8.5) on the fixtures of 9.2.
+- `tests/test_readings_s2_python.py` — S2a's choice algebra and closed English, independent of proof search.
+- `tests/test_readings_sd_ce4.py` — `CE4`, the constitution's four sets, under the soft completion (docs/spec/rd-9-soft-chain-PLAN.md 5.2: C1 to C8; plan SC-4, SC-5 and SC-8; rd-9-looprecheck2 A2…
+- `tests/test_readings_sd_differential.py` — The soft completion's differential (docs/spec/rd-9-soft-chain.md 3.11 and 8.3; plan SC-8; build checklist 2).
+- `tests/test_readings_sd_document.py` — Readings under the soft completion through `ve document` (docs/spec/rd-9-soft-chain.md 3.8 and 8.3; plan SC-8).
+- `tests/test_readings_sd_lean.py` — Readings under the soft completion through the Lean service (docs/spec/rd-9-soft-chain.md 8.3; plan SC-4).
 - `tests/test_readings_sd_relay.py` — The relay of Lean's soft-completion rows (rd-9-soft-chain.md 3; plan SC-4, SC-8): Python checks the row's schema and its binding to the request (DRI ruling R8)…
 - `tests/test_readings_stage_trace.py` — The readings admission stage timer of `ve_service` (lean/VE/Readings/Stage.lean, lean/VE/Service/StageTimes.lean).
 - `tests/test_readings_sup_verdicts.py` — RD-7: the superposed service owns verdicts, dependency replay and the complete English plan.
@@ -71,11 +80,3 @@
 - `tests/test_select_tests.py` — The test selector: AST change units, map lookups, drift, the recorder, whole plans, and the map-free `--impacted` fast path.
 - `tests/test_senses_display.py` — The senses display (senses plan 2.8, B7; sn-b7 as cut by reviews/dri-decisions-20261101-sn-b7b8.md item 1): each candidate of an open unit is rendered under th…
 - `tests/test_senses_document.py` — RD-8 (readings-defaults plan, section 6): senses in `ve document`.
-- `tests/test_senses_lean.py` — Source checks of the senses layer in Lean (docs/spec/senses.md 5.2 and 5.3).
-- `tests/test_senses_pack.py` — Transport and provenance checks for the Python part of senses B2.
-- `tests/test_senses_packs.py` — The starter packs, their pins and the coverage measurement (senses plan B8, 7.2; sn-b8).
-- `tests/test_senses_project.py` — Senses B6: the `senses.project` mode through the service, and the identities a `senses.read` answer gives its projection and each candidate's (docs/spec/senses…
-- `tests/test_senses_read_members.py` — sn-b6c: the members a `senses.read` route answer gains (byte spans and glosses in the sense map, the texts of docs/spec/senses.md 3.2 and plan 2.8), each equal…
-- `tests/test_senses_route.py` — Spec fixture admission through the Python transport and the compiled Lean reader.
-- `tests/test_service_schema_compiler.py` — The response schema compiler (`ve/backends/service_schema.py`): what it reads and when, and that compiling on first use is safe from the service pool's threads.
-- `tests/test_shape_binding_mutants.py` — The generic binding checker on genuine Lean answers: one mutation test per mode (test-architecture rank 10, the first, additive step; ADR 0001).

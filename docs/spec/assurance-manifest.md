@@ -172,7 +172,7 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Defaults/Wire.lean` | 802 | 802 | 1–802 | `406cb2628cd2…` |
 | `lean/VE/Definitions/Bundle.lean` | 471 | 471 | 1–471 | `fc86d51a7f84…` |
 | `lean/VE/EnglishGrammar/Encode.lean` | 764 | 764 | 1–764 | `c68b8627d4e6…` |
-| `lean/VE/EnglishGrammar/Run.lean` | 759 | 759 | 1–759 | `de124dace4c6…` |
+| `lean/VE/EnglishGrammar/Run.lean` | 759 | 759 | 1–759 | `14bb7dd1c0b9…` |
 | `lean/VE/Json.lean` | 141 | 141 | 1–141 | `10dcb30ca301…` |
 | `lean/VE/NormDefaults/Admission.lean` | 368 | 368 | 1–368 | `ed661fb45dc3…` |
 | `lean/VE/NormDefaults/Layered.lean` | 484 | 484 | 1–484 | `0a96a2de151e…` |
