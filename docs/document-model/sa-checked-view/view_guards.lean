@@ -10,11 +10,27 @@ open Lean VE.Service.Document VE.Service.ScopeExamples VE.Discourse
 
 def agrees (j : Json) : Bool := match checkDocSetsView j, checkDocSets j with
   | .ok (a, V), .ok b => a == b && a.getObjValD "units" == toJson (V.rows.map unitJson) &&
-      a.getObjValD "source" == .str V.source && V.packSources.isEmpty && V.candidates.isEmpty
+      a.getObjValD "source" == .str V.source && V.packSources.isEmpty
   | .error e, .error f => e == f
   | _, _ => false
 
-#guard [full, doc, full.setObjVal! "admit" (.str "x"), full.setObjVal! "document" (.num 1)].all agrees
+def reading (id kind : String) : Json := Json.mkObj [("id", .str id), ("kind", .str kind), ("meaning_id", .str "m"),
+  ("content", .null), ("admission", Json.mkObj [("who", .str "t"), ("why", .str "w"),
+    ("distinguishing_models", Json.mkObj [])])]
+def setJ (id u : String) (r : Json) : Json := Json.mkObj [("id", .str id), ("unit", .str u), ("version", toJson 1),
+  ("status", .str "open"), ("readings", toJson [r])]
+def plainFront : Json := front (units none none) ["norms@0", "relational-fol@0"] none
+/-- Two reading sets, on `i1` and `i2`, each with one pending reading; and a claim graph the admission refuses. -/
+def twoSets : Json :=
+  case (plainFront.setObjVal! "reading_sets"
+    (toJson [setJ "s" "i1" (reading "p" "asserted"), setJ "t" "i2" (reading "q" "norm")]))
+def badGraph : Json := case (plainFront.setObjVal! "graph" (.str "bad"))
+
+#guard [full, doc, twoSets, badGraph, full.setObjVal! "admit" (.str "x"),
+  full.setObjVal! "document" (.num 1)].all agrees
+#guard [full, doc].all fun j => (checkDocSetsView j).toOption.map (·.2.candidates.isEmpty) == some true
+#guard (activeKinds twoSets).toOption == some [("i1", [.asserted]), ("i2", [.norm])]
+#guard (checkDocSetsView twoSets).toOption.map (·.2.readings) == some [("i1", ["p"]), ("i2", ["q"])]
 -- Scope's fold: the lead-in is LABELLED before it and takes its items' status after it.
 #guard (checkDocSetsView doc).toOption.map (·.2.rows.map (·.status.name)) ==
   some ["CHECKED", "CHECKED", "CHECKED", "UNFORMALISED"]
@@ -37,11 +53,19 @@ def s2 : FrontSet := ⟨"s", "a", 2, "open", [("notp", .top), ("p", .top)]⟩
 def t1 : FrontSet := ⟨"t", "b", 1, "open", [("q", .top)]⟩
 def checked : Checked :=
   { documentId := "", sourceId := "", source := "S", units := [], rows := [], front := setsFront, block := none,
-    active := [(s2, []), (t1, []), (⟨"s", "a", 1, "open", [("p", .top)]⟩, [])] }
+    active := [(s2, []), (⟨"s", "a", 1, "open", [("p", .top)]⟩, []), (t1, [])] }
 
 #guard candidatesOf setsFront s2 == [("notp", .exposition), ("p", .asserted)]
 #guard candidatesOf setsFront ⟨"s", "a", 1, "open", [("p", .top)]⟩ == [("p", .asserted)]
 #guard firstPerUnit [("a", 1), ("b", 2), ("a", 3)] == [("a", 1), ("b", 2)]
+#guard firstPerUnit [("a", 1), ("b", 2), ("b", 3), ("c", 4)] == [("a", 1), ("b", 2), ("c", 4)]
+/-- A kind `n` hedges deep: `decodeKind 16` reads 15, not 16. -/
+def nest : Nat → Json
+  | 0 => .str "asserted"
+  | n + 1 => toJson [.str "hedged", .str "likely", nest n]
+#guard (candidatesOf (Json.mkObj [("reading_sets", toJson [Json.mkObj [("id", .str "d"), ("version", toJson 1),
+    ("readings", toJson [Json.mkObj [("id", .str "ok"), ("kind", nest 15)], Json.mkObj [("id", .str "deep"),
+    ("kind", nest 16)]])]])]) ⟨"d", "a", 1, "open", [("ok", .top), ("deep", .top)]⟩).map (·.1) == ["ok"]
 #guard unitSets checked == [("a", [("notp", .exposition), ("p", .asserted)]), ("b", [("q", .norm)])]
 #guard let V := viewOf checked [r]
   V.candidates == [("a", [.exposition, .asserted]), ("b", [.norm])] &&
