@@ -30,4 +30,29 @@ def model : FiniteModel Nat := ⟨fun _ => [0, 1, 2], fun _ => some 0,
 #guard Surface.parse env "rtc[node a, b | (a edge b)](@start, @start).\n" ==
   some [.reachBody .star "node" (.binary "edge" (.var 1) (.var 0)) (.const "start") (.const "start")]
 
+/-! The embedding that defines closure's meaning (`Formula.toCore`), and Core's finite evaluation
+and edge lists under the closure names (`Closure/Finite`). -/
+#guard (Formula.and .top .bottom).toCore == .and .top .bottom
+#guard (Formula.or .top .bottom).toCore == .or .top .bottom
+#guard (Formula.implies .bottom .top).toCore == .implies .bottom .top
+#guard (Formula.not (.ex "node" .top)).toCore == .not (.ex "node" .top)
+#guard (Formula.all "node" (.unary "p" (.var 0))).toCore == .all "node" (.unary "p" (.var 0))
+#guard (Formula.binary "edge" (.var 0) (.const "start")).toCore ==
+  .binary "edge" (.var 0) (.const "start")
+#guard (Formula.eq (.var 0) (.var 1)).toCore == .eq (.var 0) (.var 1)
+#guard (Formula.reachNamed .star "edge" (.var 0) (.var 1)).toCore ==
+  .reachNamed .star "edge" (.var 0) (.var 1)
+#guard (Formula.reachBody .plus "node" .bottom (.var 0) (.var 1)).toCore ==
+  .reachBody .plus "node" .bottom (.var 0) (.var 1)
+#guard !(Formula.and .top .bottom).eval model ([] : List Nat)
+#guard (Formula.or .bottom .top).eval model ([] : List Nat)
+#guard (Formula.implies .bottom .bottom).eval model ([] : List Nat)
+#guard !(Formula.not .top).eval model ([] : List Nat)
+#guard (Formula.ex "node" (.binary "edge" (.var 0) (.const "start"))).eval model ([] : List Nat)
+#guard !(Formula.all "node" (.binary "edge" (.var 0) (.const "start"))).eval model ([] : List Nat)
+#guard (Formula.unary "edge" (.const "start")).check env [] == false
+#guard (Formula.binary "edge" (.const "start") (.const "start")).check env []
+#guard namedEdges [[0, 1], [2], [1, 2], [0, 1, 2]] == [(0, 1), (1, 2)]
+#guard bodyEdges [0, 1] (fun x y => x != y) == [(0, 1), (1, 0)]
+
 end VE.Closure.Checks
