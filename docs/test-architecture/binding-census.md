@@ -3750,24 +3750,24 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 |---|---|---|---|---|---:|---|
 | `/case_index` | integer | bound | x-index |  | 1 | shape |
 | `/error` | string | none |  | minLength | 4 | not probed |
-| `/id` | any | bound | x-echo |  | 1 | shape |
-| `/id` | string | bound | x-equals |  | 1 | shape |
+| `/id` | any | bound | x-echo |  | 2 | shape |
+| `/id` | string | bound | x-equals |  | 2 | shape |
 | `/result/alternatives/*/readings/*` | integer | none |  | minimum | 0 | not probed |
 | `/result/alternatives/*/shape` | string | closed domain | enum |  | 0 | shape |
 | `/result/class` | string | none |  | minLength | 1 | not probed |
 | `/result/code` | string | none |  | minLength | 1 | not probed |
-| `/result/legend/*` | string | none |  | minLength | 3 | not probed |
-| `/result/outcome` | string | closed domain | const |  | 1 | shape |
+| `/result/legend/*` | string | none |  | minLength | 6 | not probed |
+| `/result/outcome` | string | closed domain | const |  | 2 | shape |
 | `/result/paraphrase` | string | none |  | minLength | 0 | not probed |
 | `/result/purpose` | string | none |  | minLength | 0 | not probed |
-| `/result/reading/command/act` | string | none |  | minLength | 0 | not probed |
-| `/result/reading/command/args/*` | string | none |  | minLength | 0 | not probed |
-| `/result/reading/command/force` | string | closed domain | enum |  | 0 | shape |
-| `/result/reading/fills/*/constant` | string | none |  | minLength | 0 | not probed |
-| `/result/reading/fills/*/span/0` | integer | none |  | minimum | 0 | not probed |
-| `/result/reading/fills/*/span/1` | integer | none |  | minimum | 0 | not probed |
-| `/result/reading/fills/*/words` | string | none |  | minLength | 0 | not probed |
-| `/result/reading/paraphrase` | string | none |  | minLength | 0 | not probed |
+| `/result/reading/command/act` | string | none |  | minLength | 1 | not probed |
+| `/result/reading/command/args/*` | string | none |  | minLength | 1 | not probed |
+| `/result/reading/command/force` | string | closed domain | enum |  | 1 | shape |
+| `/result/reading/fills/*/constant` | string | none |  | minLength | 1 | not probed |
+| `/result/reading/fills/*/span/0` | integer | none |  | minimum | 1 | not probed |
+| `/result/reading/fills/*/span/1` | integer | none |  | minimum | 1 | not probed |
+| `/result/reading/fills/*/words` | string | none |  | minLength | 1 | not probed |
+| `/result/reading/paraphrase` | string | none |  | minLength | 1 | not probed |
 | `/result/reading/query` | string | none |  | minLength | 0 | not probed |
 | `/result/readings/*/command/act` | string | none |  | minLength | 0 | not probed |
 | `/result/readings/*/command/args/*` | string | none |  | minLength | 0 | not probed |
@@ -3779,13 +3779,13 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/result/readings/*/paraphrase` | string | none |  | minLength | 0 | not probed |
 | `/result/readings/*/query` | string | none |  | minLength | 0 | not probed |
 | `/result/text` | string | none |  | minLength | 1 | not probed |
-| `/result/unit` | string | bound | x-equals |  | 1 | shape |
-| `/result/wording` | string | bound | x-equals |  | 1 | shape |
-| `/status` | string | closed domain | const |  | 5 | shape |
+| `/result/unit` | string | bound | x-equals |  | 2 | shape |
+| `/result/wording` | string | bound | x-equals |  | 2 | shape |
+| `/status` | string | closed domain | const |  | 6 | shape |
 
 | grammar at | grammar | bound whole by | observed |
 |---|---|---|---:|
-| `/result/reading/command/guard` | generated_formula |  | 0 |
+| `/result/reading/command/guard` | generated_formula |  | 1 |
 | `/result/readings/*/command/guard` | generated_formula |  | 0 |
 
 | array | length bound by | positions bound by | internal agreement | probed (generic/hand) |
