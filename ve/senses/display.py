@@ -61,14 +61,21 @@ def reread(env, packs: list[bytes], source: str, sentence: int, index: int, text
     return answer.get("reread", {}).get("outcome") == "same"
 
 
-def body(env, packs: list[bytes], source: str, reading: dict, *, own=None, overlay=None) -> str | None:
-    """The checked text of a reading with status `one` (plan 2.8): Lean's preamble lines, then Python's rendering of
-    the body's formulas under the reading's projected environment, returned only when Lean reads that document back
-    to one reading of the same formulas and marks under a projection with the same identities. None for any other
-    status, and for a body whose sense map has a switched occurrence: the renderer has no wording for a sense with
-    its gloss (sn-b7c), so it renders none rather than one Lean refuses."""
-    if reading.get("status") != "one" or not all(o["is_default"] for o in reading["sense_map"]):
-        return None
+# `body_status` codes (reviews/dri-decisions-20261110-sn-b7b.md item 2): machine codes, not English.
+RENDERED, NOT_ONE, SWITCHED = "rendered", "not-one-reading", "switched-occurrence-not-rendered"
+
+
+def body(env, packs: list[bytes], source: str, reading: dict, *, own=None, overlay=None) -> dict:
+    """The checked text of a reading with status `one` (plan 2.8), as `{"text", "body_status"}`: Lean's preamble
+    lines, then Python's rendering of the body's formulas under the reading's projected environment, given only when
+    Lean reads that document back to one reading of the same formulas and marks under a projection with the same
+    identities. `text` is None for any other status (`not-one-reading`), and for a body whose sense map has a
+    switched occurrence (`switched-occurrence-not-rendered`): the renderer has no wording for a sense with its gloss
+    (sn-b7d), so it renders none rather than a text that is not the document."""
+    if reading.get("status") != "one":
+        return {"text": None, "body_status": NOT_ONE}
+    if not all(o["is_default"] for o in reading["sense_map"]):
+        return {"text": None, "body_status": SWITCHED}
     units = reading["units"]
     text = "\n".join([*reading["preamble"], _render(reading["environment"], [u["formula"] for u in units],
                                                     [u["mark"] for u in units], overlay)])
@@ -78,7 +85,7 @@ def body(env, packs: list[bytes], source: str, reading: dict, *, own=None, overl
                        for a, u in zip(again["units"], units))
             or any(again["identities"][key] != reading["identities"][key] for key in route.PROJECTION_IDS)):
         raise CheckerUnavailable("CheckerUnavailable: the rendered text does not re-read to the reading")
-    return text
+    return {"text": text, "body_status": RENDERED}
 
 
 def candidates(env, packs: list[bytes], source: str, reading: dict, *, own: list[dict] | None = None,

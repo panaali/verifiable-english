@@ -52,7 +52,7 @@ def _render_senses(args, env):
     source = _read(args.source, MAX_SOURCE_BYTES).decode("utf-8")
     result = read(env, source, packs, overlay=overlay)
     reading = result["reading"]
-    shown = {"text": display.body(env, packs, source, reading, overlay=overlay),
+    shown = {**display.body(env, packs, source, reading, overlay=overlay),
              "renderings": display.candidates(env, packs, source, reading, overlay=overlay)}
     if args.glossary:
         shown["glossary"] = display.glossary(source, reading)
