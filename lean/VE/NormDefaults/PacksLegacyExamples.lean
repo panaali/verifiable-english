@@ -4,6 +4,7 @@ import VE.NormDefaults.PacksLabels
 import VE.Rights.Examples
 import VE.Readings.UnspecifiedWire
 import VE.Defaults.Examples
+import VE.NormDefaults.Examples
 
 /-! The premise-pack fixtures over today's sources (docs/spec/premise-packs.md 4): today's rights documents assemble
 unchanged, `envX` and `fullEnv` on a real tree, F1, and F1′, the counterexample to the approved
@@ -86,8 +87,14 @@ open VE.Rights.Examples (eta) in
 #guard VE.NormDefaults.Wire.rightsSources VE.Rights.Examples.alpha == []
 #guard VE.NormDefaults.Wire.ruleSources [("rights-fan-1", "no-torture")] ["rights-fan-1", "art9"] ==
   [("rights-fan-1", "no-torture"), ("art9", "art9")]
-#guard VE.NormDefaults.Wire.sourcesJson [("r-a1", "r")] ==
-  Lean.Json.arr #[Lean.Json.mkObj [("rule", "r-a1"), ("source", "r")]]
+#guard VE.NormDefaults.Wire.sourcesJson [("r-a1", "r"), ("r-a2", "r")] ==
+  Lean.Json.arr #[Lean.Json.mkObj [("rule", "r-a1"), ("source", "r")], Lean.Json.mkObj [("rule", "r-a2"), ("source", "r")]]
+-- A status row's fields (`statusFields`): the settled point's deciding rule with its source from the route's table.
+#guard (VE.NormDefaults.Wire.statusFields VE.NormDefaults.Examples.u5b
+    ⟨fun s => if s == "act" then [("act", "a")] else [], fun _ => none, fun _ => []⟩ "x_required" [("act", "a")] true none
+    [("every-act", "src")]).map (fun x => (x.1, x.2.compress)) ==
+  [("tuple", "[\"a\"]"), ("rules", "[\"every-act\"]"), ("sources", "[{\"rule\":\"every-act\",\"source\":\"src\"}]"),
+   ("differs", "[]")]
 
 /-! ## 2.10: the kind table's legacy rows
 
