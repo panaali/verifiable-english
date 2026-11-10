@@ -40,6 +40,15 @@ def decode_discharge_theorems(sources: dict[str, str]) -> list[str]:
     ]
 
 
+def asserts_decoded(text: str) -> bool:
+    """A clause about the decoded route, act keys or documents that does not say the link is unproved."""
+    return any(
+        re.search(r"decoded (?:route|act key|document)", clause)
+        and not re.search(r"\b(?:no lemma|not proved|not yet|does not)\b", clause, re.IGNORECASE)
+        for clause in re.split(r"[.;:]\s+", text)
+    )
+
+
 def comments(source: str) -> list[str]:
     """The `/-- -/` and `/-! -/` blocks and the runs of `--` lines, each on one line."""
     blocks = re.findall(r"/-[-!](.*?)-/", source, re.DOTALL)
@@ -54,9 +63,7 @@ def claim_problems(labels: str, report: str, sources: dict[str, str]) -> list[st
     problems = []
     for path, source in ((LABELS, labels), (EXAMPLES, sources[EXAMPLES])):
         for text in comments(source):
-            decoded = re.search(r"decoded (?:route|act key|document)", text)
-            unproved = re.search(r"\b(?:no lemma|not proved|not yet|does not)\b", text, re.IGNORECASE)
-            if claims_discharge(text) or OVERCLAIM.search(text) or (decoded and not unproved) or (
+            if claims_discharge(text) or OVERCLAIM.search(text) or asserts_decoded(text) or (
                 "decoded route" in text and "`Surface.identifier`" not in text
             ):
                 problems.append(f"{path} claims a decoded-route discharge: {text}")
