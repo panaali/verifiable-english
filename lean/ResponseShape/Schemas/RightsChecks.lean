@@ -43,6 +43,10 @@ def texts (a : Json) : Json := Json.arr ((a.getObjValD "located_findings").getAr
 #guard accepts elabCase elabA && accepts scopeCase scopeA && refusesAll scopeCase scopeA 3 && refusesAll elabCase elabA 1
 #guard let plain := case "rights-elaborate" spanned []; accepts plain (answer plain)
 #guard !accepts scopeCase (scopeA.setObjVal! "licensed" (.bool true))
+-- One finding only (no rule-8): still not licensed.
+def oneCase : Json := case "rights-scope" (Json.arr ((spanned.getArr?.toOption.getD #[]).extract 0 5))
+  [("located", toJson ["s2", "t", "s4", "s5"])]
+#guard (answer oneCase).getObjValD "licensed" == .bool false
 -- A scope answer with no finding (no limitation in the document): `licensed`, and every variant refused.
 #guard let none := case "rights-scope" (Json.arr ((spanned.getArr?.toOption.getD #[]).extract 0 3)) [];
   (answer none).getObjValD "licensed" == .bool true && refusesAll none (answer none) 2
@@ -52,6 +56,8 @@ def texts (a : Json) : Json := Json.arr ((a.getObjValD "located_findings").getAr
 #guard conflict true false == some (parse "{\"budget\":10000,\"conditional_on\":[\"soft:coherence:may-detain,no-arbitrary-arrest\",\"soft:coherence:may-hold,no-arbitrary-arrest\",\"rights:limitation:l29:arrest_permitted:necessary:determined_by_law\",\"rights:limitation:l29:arrest_permitted:sufficient:diplomatic_immunity\"],\"id\":\"c\",\"situation\":null,\"situation_exhibited\":false,\"status\":\"ok\",\"status_text\":\"CONFLICT-FREE among rules on the same act, conditional on 2 coherence premises and 2 limitation premises (soft:coherence:may-detain,no-arbitrary-arrest, soft:coherence:may-hold,no-arbitrary-arrest, rights:limitation:l29:arrest_permitted:necessary:determined_by_law, rights:limitation:l29:arrest_permitted:sufficient:diplomatic_immunity); 2 weighing points open; situation exhibited: UNKNOWN (budget 10000)\",\"targets\":[\"arrest_permitted\",\"deprive_permitted\",\"deprive_required\",\"deprive_required->deprive_permitted\"],\"verdict\":\"CONFLICT-FREE\",\"weighing_points\":[\"soft:coherence:may-detain,no-arbitrary-arrest\",\"soft:coherence:may-hold,no-arbitrary-arrest\"]}")
 #guard conflict false true == some (parse "{\"conditional_on\":[],\"detail\":\"missing certificate for arrest_permitted\",\"id\":\"c\",\"status\":\"ok\",\"status_text\":\"UNKNOWN: missing certificate for arrest_permitted, budget 10000\",\"targets\":[\"arrest_permitted\",\"deprive_permitted\",\"deprive_required\",\"deprive_required->deprive_permitted\"],\"verdict\":\"UNKNOWN\"}")
 #guard (conflict true false (·.startsWith "rights:")).map (·.getObjValD "status_text") == some (.str "CONFLICT-FREE among rules on the same act, conditional on 0 coherence premises and 2 limitation premises (rights:limitation:l29:arrest_permitted:necessary:determined_by_law, rights:limitation:l29:arrest_permitted:sufficient:diplomatic_immunity); 2 weighing points open; situation exhibited: UNKNOWN (budget 10000)")
+#guard ((conflict true false (·.startsWith "soft:")).map (·.getObjValD "status_text")).any
+  (·.getStr?.toOption.any (·.startsWith "CONFLICT-FREE among rules on the same act, conditional on 2 coherence premises and 0"))
 #guard [conflict true true, conflict true false, conflict false true].all
   fun a => a.any fun a => accepts creq a && refusesAll creq a 6
 #guard match conflict true true, conflict true false, conflict false true with

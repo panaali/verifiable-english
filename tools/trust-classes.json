@@ -840,6 +840,7 @@
         "ResponseShape.RightsChecks.elabCase",
         "ResponseShape.RightsChecks.env",
         "ResponseShape.RightsChecks.located",
+        "ResponseShape.RightsChecks.oneCase",
         "ResponseShape.RightsChecks.parse",
         "ResponseShape.RightsChecks.refusesAll",
         "ResponseShape.RightsChecks.scopeA",
