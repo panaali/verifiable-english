@@ -1,7 +1,7 @@
 {
  "base": "a7659c5f12aebb2945cfb2106ed29a20663ab836",
- "head": "a4dc50f80b0e9ee38420241ac84849c8a470464c",
- "tree": "318cb01c6a0f15969e02ea0f1fea5efc04bfa46a",
+ "head": "1c5f4fef207a5fbf14de1e628244df27eb83092c",
+ "tree": "bcfab8eb9721320ac9aa37e4552cdbd709df37df",
  "jobs": 8,
  "control_probes": "lazy",
  "max_mutants": 1000,
@@ -9,45 +9,45 @@
  "tests": [
   "docs/document-model/sa-checked-view/view_guards.lean"
  ],
- "seconds": 1543,
+ "seconds": 2965,
  "steps": {
   "wall": {
-   "plan": 20.0,
-   "scratch": 29.7,
-   "control_build": 11.1,
-   "probe_install": 2.5,
+   "plan": 21.3,
+   "scratch": 34.4,
+   "control_build": 3.9,
+   "probe_install": 3.2,
    "control_probes": 0.0,
-   "mutants": 1476.7,
-   "cleanup": 3.3,
-   "reads": 0.1
+   "mutants": 2896.7,
+   "cleanup": 5.5,
+   "reads": 0.2
   },
   "lake": {
-   "control_build": 11.0,
-   "probe_install": 2.4,
-   "control_probes": 0.0,
-   "mutant_builds": 10418.9,
-   "mutant_checks": 81.2,
-   "outside_checks": 823.7,
-   "stage_controls": 385.1,
-   "mutant_probes": 0.0,
+   "control_build": 3.8,
+   "probe_install": 3.1,
+   "control_probes": 193.6,
+   "mutant_builds": 13086.8,
+   "mutant_checks": 144.3,
+   "outside_checks": 624.0,
+   "stage_controls": 503.9,
+   "mutant_probes": 7385.6,
    "other": 0.0
   },
   "runs": {
    "control_build": 2,
    "probe_install": 1,
-   "control_probes": 0,
-   "mutant_builds": 273,
-   "mutant_checks": 117,
+   "control_probes": 3,
+   "mutant_builds": 364,
+   "mutant_checks": 208,
    "outside_checks": 117,
-   "stage_controls": 30,
-   "mutant_probes": 0,
+   "stage_controls": 27,
+   "mutant_probes": 91,
    "other": 0
   }
  },
  "counts": {
-  "KILLED": 0,
-  "SURVIVOR": 51,
-  "UNKNOWN": 97,
+  "KILLED": 91,
+  "SURVIVOR": 26,
+  "UNKNOWN": 31,
   "INVALID": 31,
   "ALLOWED": 0,
   "NOT RUN": 0
@@ -57,15 +57,16 @@
  ],
  "class_counts": {
   "?, trusted": {
-   "SURVIVOR": 51,
-   "UNKNOWN": 97,
+   "KILLED": 91,
+   "SURVIVOR": 26,
+   "UNKNOWN": 31,
    "INVALID": 31
   }
  },
  "inputs": {
   "tool": "9834af87ed09993f65def3f2ee78f9d45fc4106003a4866acab412115d73b172",
-  "lean": "17adf85f0aa538fc59246569129e2e792a4fa7a891974bc231a4c10bb2357975",
-  "tests": "ce862296cd79fd7ea2ac31ad371ca3cc2f0f7421f2679d9020e7541bd632e5d7",
+  "lean": "b1ce0e88a7187269bdc9209cb956a6a6e1db79c58a49a1e09854e74d91a66c14",
+  "tests": "41f5dc8a138952685ddaf65b6c61869dfaad7d495531e026d80fc16699ef42e6",
   "base": "a7659c5f12aebb2945cfb2106ed29a20663ab836",
   "options": "{\"deep\": false, \"test\": [\"docs/document-model/sa-checked-view/view_guards.lean\"], \"classes\": [\"trusted\"]}",
   "files": {
@@ -842,7 +843,7 @@
    "lean/VE/Service/DocumentChain.lean": "af044936152f314802101ff86a2f6b11c128f1e7a0c6c056046ab65d83d602b0",
    "lean/VE/Service/DocumentChainChecks.lean": "24dcff13afb33a325bc68dce69a1d4b6aba0885b7aab22a1433c4d31f55bbda3",
    "lean/VE/Service/DocumentChainExamples.lean": "06efc4752a500cdc79d6d83df245d027f4e31872b330a1d44fca9f831ebd71eb",
-   "lean/VE/Service/DocumentView.lean": "2268bc5addc887a960075f12e6fbe950aaef18b0542145c18181d3b1957a1237",
+   "lean/VE/Service/DocumentView.lean": "133f6c0d23e53dfb6da05316c4edcf482a986aec930469b193a0722937aece33",
    "lean/VE/Service/EnglishRun.lean": "1efd757cde5097f4c5da3714b5d697d247bddef724f89337afc095696da66852",
    "lean/VE/Service/Family.lean": "6c3ab030f93404cb391a9fea68397f1bfec48c2c64b9c8e4ff5c79694b0a9c0a",
    "lean/VE/Service/FamilyBundle.lean": "75698a329690b03fb5843bfa3deb4fa91ab92ab94f6055830ba6be48b6ab908a",
@@ -928,14 +929,14 @@
    "lean/audit.py": "05fb69c5689a8606fefd6d43e220f23ee6dbedc4bea7245b34ae29a4fd13a1cd",
    "lean/axioms.txt": "99200a958feb8b8f7dbf17d9bff28f6545cc60430ace506bc46e3e0ecac21cda",
    "lean/checkers.lock": "6bba2859c5a3c1af762195da711352c37f70428086e964eeae4aceff972fec6f",
-   "lean/declarations.txt": "ac295a11000c086cee28bd524fdba07516ee8886638fc57d100ebe157478fbe9",
+   "lean/declarations.txt": "525da00f3514565dafbd69c696b24e8f0c67bc39baefa35e35dc5d5d83f457e1",
    "lean/lake-manifest.json": "8579a8594992ccc571614869d24b997dba98134cffdbd5a0b26220a419e0de8e",
    "lean/lakefile.toml": "ffc47dfd06119c3518785b5059d81216b2f82b140509bfd25cd3273cbe04d4f5",
    "lean/lean-toolchain": "42779d67b81608af8a12aa4328d2ab47ca201925b3b2bd68369587b5340bb434",
    "lean/predicates.txt": "7b7d0fb4d797523cae22906af606b2af590550e065a7cc1ceb0658b3645b1aac",
    "lean/statements.txt": "ae2bcbf2a8634edec12a50e8a5eff1081da69aa5e4f01a341998803736327a47",
    "tools/trust-classes.json": "3d0165f6d26cbeef062c099cd4f35d3af9d52efb274bfc19bd53f42612bca227",
-   "docs/document-model/sa-checked-view/view_guards.lean": "dceea24eeedc95230b2284ffecdc90caceb4b59089f307ebd5dba4a6ba6d5bfa"
+   "docs/document-model/sa-checked-view/view_guards.lean": "263d2ba16539d1fac7b08bedeca60882ec18e707f17a2c600544ab5df8ca5bea"
   },
   "tool_files": {
    "lean/audit.py": "05fb69c5689a8606fefd6d43e220f23ee6dbedc4bea7245b34ae29a4fd13a1cd",
@@ -950,6 +951,15 @@
    "tools/trust_map.py": "81082574f08249aea02a276fe8323ce76cbacdc09d6ba8851ef55ee2e77830a7",
    "tools/trust_mutants.py": "fab8f57849faad3ad7e6753071870c116823fe34672760c3fa8d3c3cc5dea63b"
   }
+ },
+ "rescore": {
+  "file": "docs/document-model/sa-checked-view/trust-mutants.json",
+  "head": null,
+  "mode": "full",
+  "changed": [],
+  "reused": 0,
+  "rerun": 179,
+  "full_run": "its inputs differ (lean, tests): lean/VE/Service/DocumentView.lean is a selected declaration's file or in its import closure"
  },
  "definitions": [
   "lean/VE/Service/DocumentView.lean: VE.Service.Document.activeKinds",
@@ -974,9 +984,14 @@
    ],
    "before": "&&",
    "after": "||",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:42: Expression",
+   "raw_status": "KILLED",
+   "reads": "aa77cd2ea4e6295b78449be2c017cf6751893f6b4b331a1fa7637a8710a65c0a",
+   "killed_at": [
+    42,
+    42
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -992,9 +1007,14 @@
    ],
    "before": "==",
    "after": "!=",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:26: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:42: Expression",
+   "raw_status": "KILLED",
+   "reads": "aa77cd2ea4e6295b78449be2c017cf6751893f6b4b331a1fa7637a8710a65c0a",
+   "killed_at": [
+    42,
+    42
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -1010,9 +1030,14 @@
    ],
    "before": "==",
    "after": "!=",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:313, lean/VE/Service/DocumentView.lean:369",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:44: Expression",
+   "raw_status": "KILLED",
+   "reads": "3bee00d7987df855e8e940ff0635bdaf1936cb5bbbc5e04d455af66607b98d7c",
+   "killed_at": [
+    44,
+    44
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -1028,9 +1053,14 @@
    ],
    "before": "any",
    "after": "all",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:26: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:44: Expression",
+   "raw_status": "KILLED",
+   "reads": "3bee00d7987df855e8e940ff0635bdaf1936cb5bbbc5e04d455af66607b98d7c",
+   "killed_at": [
+    44,
+    44
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -1119,9 +1149,14 @@
    ],
    "before": "match a.getObjValD \"units\" with\n  | .arr xs => (rows.zip xs.toList).map fun (u, x) => readStatus u x\n  | _ => rows",
    "after": "[]\n\n",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:25: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:17: Expression",
+   "raw_status": "KILLED",
+   "reads": "16f34d0c9eaf15e1e9fafe5e5462e166eaf196c4a05b416d2af02139916b7308",
+   "killed_at": [
+    17,
+    18
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -1137,9 +1172,14 @@
    ],
    "before": "let item := ((Loader.optionalList front \"reading_sets\").getArr?.toOption.getD #[]).toList.find? fun x =>\n    x.getObjValD \"id\" == .str s.id && (x.getObjValD \"version\").getNat?.toOption == some s.version\n  let written := ((item.map (\u00b7.getObjValD \"readings\")).bind (\u00b7.getArr?.toOption)).map (\u00b7.toList) |>.getD []\n  s.readings.filterMap fun (rid, _) => do\n    let r \u2190 written.find? (\u00b7.getObjValD \"id\" == .str rid)\n    let k \u2190 (VE.Route.Admission.decodeKind 16 (r.getObjValD \"kind\")).toOption\n    pure (rid, k)",
    "after": "[]\n\n\n\n\n\n",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:26: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:42: Expression",
+   "raw_status": "KILLED",
+   "reads": "aa77cd2ea4e6295b78449be2c017cf6751893f6b4b331a1fa7637a8710a65c0a",
+   "killed_at": [
+    42,
+    42
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -1155,9 +1195,14 @@
    ],
    "before": "xs.foldl (fun acc x => if acc.any (\u00b7.1 == x.1) then acc else acc ++ [x]) []",
    "after": "[]",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:26: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:44: Expression",
+   "raw_status": "KILLED",
+   "reads": "3bee00d7987df855e8e940ff0635bdaf1936cb5bbbc5e04d455af66607b98d7c",
+   "killed_at": [
+    44,
+    44
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -1173,9 +1218,14 @@
    ],
    "before": "firstPerUnit (c.active.map fun (s, _) => (s.unit, candidatesOf c.front s))",
    "after": "[]",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:26: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:45: Expression",
+   "raw_status": "KILLED",
+   "reads": "0cbe4cdaf64823884ba47e8d72f73ca67c6f9d8a66bf29acecefb08391fecc32",
+   "killed_at": [
+    45,
+    45
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -1227,9 +1277,14 @@
    ],
    "before": " ++ [x]",
    "after": "",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:26: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:44: Expression",
+   "raw_status": "KILLED",
+   "reads": "3bee00d7987df855e8e940ff0635bdaf1936cb5bbbc5e04d455af66607b98d7c",
+   "killed_at": [
+    44,
+    44
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -1245,9 +1300,14 @@
    ],
    "before": "acc ++ ",
    "after": "",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:313, lean/VE/Service/DocumentView.lean:369",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:44: Expression",
+   "raw_status": "KILLED",
+   "reads": "3bee00d7987df855e8e940ff0635bdaf1936cb5bbbc5e04d455af66607b98d7c",
+   "killed_at": [
+    44,
+    44
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -1263,9 +1323,14 @@
    ],
    "before": "==",
    "after": "!=",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:26: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:42: Expression",
+   "raw_status": "KILLED",
+   "reads": "aa77cd2ea4e6295b78449be2c017cf6751893f6b4b331a1fa7637a8710a65c0a",
+   "killed_at": [
+    42,
+    42
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -1318,9 +1383,14 @@
    ],
    "before": "xs",
    "after": "[]",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:26: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:44: Expression",
+   "raw_status": "KILLED",
+   "reads": "3bee00d7987df855e8e940ff0635bdaf1936cb5bbbc5e04d455af66607b98d7c",
+   "killed_at": [
+    44,
+    44
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -1392,9 +1462,14 @@
    ],
    "before": "==",
    "after": "!=",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:26: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:42: Expression",
+   "raw_status": "KILLED",
+   "reads": "aa77cd2ea4e6295b78449be2c017cf6751893f6b4b331a1fa7637a8710a65c0a",
+   "killed_at": [
+    42,
+    42
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -1410,9 +1485,14 @@
    ],
    "before": "rows",
    "after": "[]",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:25: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:17: Expression",
+   "raw_status": "KILLED",
+   "reads": "16f34d0c9eaf15e1e9fafe5e5462e166eaf196c4a05b416d2af02139916b7308",
+   "killed_at": [
+    17,
+    18
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -1519,9 +1599,14 @@
    ],
    "before": "rows.zip xs.toList",
    "after": "[]",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:25: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:17: Expression",
+   "raw_status": "KILLED",
+   "reads": "16f34d0c9eaf15e1e9fafe5e5462e166eaf196c4a05b416d2af02139916b7308",
+   "killed_at": [
+    17,
+    18
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -1555,9 +1640,14 @@
    ],
    "before": "acc",
    "after": "[]",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:313, lean/VE/Service/DocumentView.lean:369",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:44: Expression",
+   "raw_status": "KILLED",
+   "reads": "3bee00d7987df855e8e940ff0635bdaf1936cb5bbbc5e04d455af66607b98d7c",
+   "killed_at": [
+    44,
+    44
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -1573,9 +1663,14 @@
    ],
    "before": "cs.map (\u00b7.2)",
    "after": "[]",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:27: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:46: Expression",
+   "raw_status": "KILLED",
+   "reads": "2ad9de0c8a80793b6e5071f2a841c88e7a3984126b87e76142f6d2b1c6f20ed5",
+   "killed_at": [
+    46,
+    49
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -1591,9 +1686,9 @@
    ],
    "before": "(candidatesOf c.front s).map (\u00b7.2)",
    "after": "[]",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:28: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "SURVIVOR",
+   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:363",
+   "raw_status": "SURVIVOR",
    "trust_class": "?",
    "trusted": true
   },
@@ -1627,9 +1722,14 @@
    ],
    "before": "[x]",
    "after": "[]",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:26: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:44: Expression",
+   "raw_status": "KILLED",
+   "reads": "3bee00d7987df855e8e940ff0635bdaf1936cb5bbbc5e04d455af66607b98d7c",
+   "killed_at": [
+    44,
+    44
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -1755,9 +1855,14 @@
    ],
    "before": "cs.map (\u00b7.1)",
    "after": "[]",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:26: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:46: Expression",
+   "raw_status": "KILLED",
+   "reads": "2ad9de0c8a80793b6e5071f2a841c88e7a3984126b87e76142f6d2b1c6f20ed5",
+   "killed_at": [
+    46,
+    49
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -1809,9 +1914,14 @@
    ],
    "before": "match a.getObjValD \"units\" with\n  | .arr xs => (rows.zip xs.toList).map fun (u, x) => readStatus u x\n  | _ => rows",
    "after": "((match a.getObjValD \"units\" with\n  | .arr xs => (rows.zip xs.toList).map fun (u, x) => readStatus u x\n  | _ => rows).take 1)",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:25: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:17: Expression",
+   "raw_status": "KILLED",
+   "reads": "16f34d0c9eaf15e1e9fafe5e5462e166eaf196c4a05b416d2af02139916b7308",
+   "killed_at": [
+    17,
+    18
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -1827,9 +1937,14 @@
    ],
    "before": "let item := ((Loader.optionalList front \"reading_sets\").getArr?.toOption.getD #[]).toList.find? fun x =>\n    x.getObjValD \"id\" == .str s.id && (x.getObjValD \"version\").getNat?.toOption == some s.version\n  let written := ((item.map (\u00b7.getObjValD \"readings\")).bind (\u00b7.getArr?.toOption)).map (\u00b7.toList) |>.getD []\n  s.readings.filterMap fun (rid, _) => do\n    let r \u2190 written.find? (\u00b7.getObjValD \"id\" == .str rid)\n    let k \u2190 (VE.Route.Admission.decodeKind 16 (r.getObjValD \"kind\")).toOption\n    pure (rid, k)",
    "after": "((let item := ((Loader.optionalList front \"reading_sets\").getArr?.toOption.getD #[]).toList.find? fun x =>\n    x.getObjValD \"id\" == .str s.id && (x.getObjValD \"version\").getNat?.toOption == some s.version\n  let written := ((item.map (\u00b7.getObjValD \"readings\")).bind (\u00b7.getArr?.toOption)).map (\u00b7.toList) |>.getD []\n  s.readings.filterMap fun (rid, _) => do\n    let r \u2190 written.find? (\u00b7.getObjValD \"id\" == .str rid)\n    let k \u2190 (VE.Route.Admission.decodeKind 16 (r.getObjValD \"kind\")).toOption\n    pure (rid, k)).take 1)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:42: Expression",
+   "raw_status": "KILLED",
+   "reads": "aa77cd2ea4e6295b78449be2c017cf6751893f6b4b331a1fa7637a8710a65c0a",
+   "killed_at": [
+    42,
+    42
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -1845,9 +1960,14 @@
    ],
    "before": "xs.foldl (fun acc x => if acc.any (\u00b7.1 == x.1) then acc else acc ++ [x]) []",
    "after": "((xs.foldl (fun acc x => if acc.any (\u00b7.1 == x.1) then acc else acc ++ [x]) []).take 1)",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:313, lean/VE/Service/DocumentView.lean:369",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:44: Expression",
+   "raw_status": "KILLED",
+   "reads": "3bee00d7987df855e8e940ff0635bdaf1936cb5bbbc5e04d455af66607b98d7c",
+   "killed_at": [
+    44,
+    44
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -1863,9 +1983,14 @@
    ],
    "before": "firstPerUnit (c.active.map fun (s, _) => (s.unit, candidatesOf c.front s))",
    "after": "((firstPerUnit (c.active.map fun (s, _) => (s.unit, candidatesOf c.front s))).take 1)",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:362, lean/VE/Service/DocumentView.lean:369",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:45: Expression",
+   "raw_status": "KILLED",
+   "reads": "0cbe4cdaf64823884ba47e8d72f73ca67c6f9d8a66bf29acecefb08391fecc32",
+   "killed_at": [
+    45,
+    45
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -1881,9 +2006,14 @@
    ],
    "before": "us",
    "after": "(us.take 1)",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:362, lean/VE/Service/DocumentView.lean:369",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:46: Expression",
+   "raw_status": "KILLED",
+   "reads": "2ad9de0c8a80793b6e5071f2a841c88e7a3984126b87e76142f6d2b1c6f20ed5",
+   "killed_at": [
+    46,
+    49
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -1900,7 +2030,7 @@
    "before": "c.active",
    "after": "(c.active.take 1)",
    "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:362",
+   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:363",
    "raw_status": "SURVIVOR",
    "trust_class": "?",
    "trusted": true
@@ -1917,9 +2047,9 @@
    ],
    "before": "(VE.Scope.governedSetUnits D)",
    "after": "((VE.Scope.governedSetUnits D).dropLast)",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:21: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "SURVIVOR",
+   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:134",
+   "raw_status": "SURVIVOR",
    "trust_class": "?",
    "trusted": true
   },
@@ -1935,9 +2065,14 @@
    ],
    "before": "match a.getObjValD \"units\" with\n  | .arr xs => (rows.zip xs.toList).map fun (u, x) => readStatus u x\n  | _ => rows",
    "after": "((match a.getObjValD \"units\" with\n  | .arr xs => (rows.zip xs.toList).map fun (u, x) => readStatus u x\n  | _ => rows).dropLast)",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:25: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:17: Expression",
+   "raw_status": "KILLED",
+   "reads": "16f34d0c9eaf15e1e9fafe5e5462e166eaf196c4a05b416d2af02139916b7308",
+   "killed_at": [
+    17,
+    18
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -1953,9 +2088,14 @@
    ],
    "before": "let item := ((Loader.optionalList front \"reading_sets\").getArr?.toOption.getD #[]).toList.find? fun x =>\n    x.getObjValD \"id\" == .str s.id && (x.getObjValD \"version\").getNat?.toOption == some s.version\n  let written := ((item.map (\u00b7.getObjValD \"readings\")).bind (\u00b7.getArr?.toOption)).map (\u00b7.toList) |>.getD []\n  s.readings.filterMap fun (rid, _) => do\n    let r \u2190 written.find? (\u00b7.getObjValD \"id\" == .str rid)\n    let k \u2190 (VE.Route.Admission.decodeKind 16 (r.getObjValD \"kind\")).toOption\n    pure (rid, k)",
    "after": "((let item := ((Loader.optionalList front \"reading_sets\").getArr?.toOption.getD #[]).toList.find? fun x =>\n    x.getObjValD \"id\" == .str s.id && (x.getObjValD \"version\").getNat?.toOption == some s.version\n  let written := ((item.map (\u00b7.getObjValD \"readings\")).bind (\u00b7.getArr?.toOption)).map (\u00b7.toList) |>.getD []\n  s.readings.filterMap fun (rid, _) => do\n    let r \u2190 written.find? (\u00b7.getObjValD \"id\" == .str rid)\n    let k \u2190 (VE.Route.Admission.decodeKind 16 (r.getObjValD \"kind\")).toOption\n    pure (rid, k)).dropLast)",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:26: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:42: Expression",
+   "raw_status": "KILLED",
+   "reads": "aa77cd2ea4e6295b78449be2c017cf6751893f6b4b331a1fa7637a8710a65c0a",
+   "killed_at": [
+    42,
+    42
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -1971,9 +2111,14 @@
    ],
    "before": "xs.foldl (fun acc x => if acc.any (\u00b7.1 == x.1) then acc else acc ++ [x]) []",
    "after": "((xs.foldl (fun acc x => if acc.any (\u00b7.1 == x.1) then acc else acc ++ [x]) []).dropLast)",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:26: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:44: Expression",
+   "raw_status": "KILLED",
+   "reads": "3bee00d7987df855e8e940ff0635bdaf1936cb5bbbc5e04d455af66607b98d7c",
+   "killed_at": [
+    44,
+    44
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -1989,9 +2134,14 @@
    ],
    "before": "firstPerUnit (c.active.map fun (s, _) => (s.unit, candidatesOf c.front s))",
    "after": "((firstPerUnit (c.active.map fun (s, _) => (s.unit, candidatesOf c.front s))).dropLast)",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:26: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:45: Expression",
+   "raw_status": "KILLED",
+   "reads": "0cbe4cdaf64823884ba47e8d72f73ca67c6f9d8a66bf29acecefb08391fecc32",
+   "killed_at": [
+    45,
+    45
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -2007,9 +2157,14 @@
    ],
    "before": "us",
    "after": "(us.dropLast)",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:27: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:46: Expression",
+   "raw_status": "KILLED",
+   "reads": "2ad9de0c8a80793b6e5071f2a841c88e7a3984126b87e76142f6d2b1c6f20ed5",
+   "killed_at": [
+    46,
+    49
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -2025,9 +2180,9 @@
    ],
    "before": "c.active",
    "after": "(c.active.dropLast)",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:28: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "SURVIVOR",
+   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:363",
+   "raw_status": "SURVIVOR",
    "trust_class": "?",
    "trusted": true
   },
@@ -2062,9 +2217,14 @@
    ],
    "before": "((Loader.optionalList front \"reading_sets\").getArr?.toOption.getD #[]).toList",
    "after": "((((Loader.optionalList front \"reading_sets\").getArr?.toOption.getD #[]).toList).take 1)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:42: Expression",
+   "raw_status": "KILLED",
+   "reads": "aa77cd2ea4e6295b78449be2c017cf6751893f6b4b331a1fa7637a8710a65c0a",
+   "killed_at": [
+    42,
+    42
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -2080,9 +2240,14 @@
    ],
    "before": "xs",
    "after": "(xs.take 1)",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:313",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:44: Expression",
+   "raw_status": "KILLED",
+   "reads": "3bee00d7987df855e8e940ff0635bdaf1936cb5bbbc5e04d455af66607b98d7c",
+   "killed_at": [
+    44,
+    44
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -2098,9 +2263,14 @@
    ],
    "before": "c.active",
    "after": "(c.active.take 1)",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:362",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:45: Expression",
+   "raw_status": "KILLED",
+   "reads": "0cbe4cdaf64823884ba47e8d72f73ca67c6f9d8a66bf29acecefb08391fecc32",
+   "killed_at": [
+    45,
+    45
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -2173,9 +2343,14 @@
    ],
    "before": "((Loader.optionalList front \"reading_sets\").getArr?.toOption.getD #[]).toList",
    "after": "((((Loader.optionalList front \"reading_sets\").getArr?.toOption.getD #[]).toList).dropLast)",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:26: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:45: Expression",
+   "raw_status": "KILLED",
+   "reads": "7b8dbbfd430567da6a5039dc147a94a6a24a0cbef8f33e67469cd0686404e06f",
+   "killed_at": [
+    45,
+    45
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -2191,9 +2366,9 @@
    ],
    "before": "xs",
    "after": "(xs.dropLast)",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:26: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "SURVIVOR",
+   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:314",
+   "raw_status": "SURVIVOR",
    "trust_class": "?",
    "trusted": true
   },
@@ -2209,9 +2384,9 @@
    ],
    "before": "c.active",
    "after": "(c.active.dropLast)",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:26: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "SURVIVOR",
+   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:363",
+   "raw_status": "SURVIVOR",
    "trust_class": "?",
    "trusted": true
   },
@@ -2265,9 +2440,14 @@
    ],
    "before": "rows",
    "after": "(rows.take 1)",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:25: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:17: Expression",
+   "raw_status": "KILLED",
+   "reads": "16f34d0c9eaf15e1e9fafe5e5462e166eaf196c4a05b416d2af02139916b7308",
+   "killed_at": [
+    17,
+    18
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -2302,7 +2482,7 @@
    "before": "acc",
    "after": "(acc.take 1)",
    "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:313, lean/VE/Service/DocumentView.lean:369",
+   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:314, lean/VE/Service/DocumentView.lean:370",
    "raw_status": "SURVIVOR",
    "trust_class": "?",
    "trusted": true
@@ -2338,9 +2518,14 @@
    ],
    "before": "cs",
    "after": "(cs.take 1)",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:362, lean/VE/Service/DocumentView.lean:369",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:46: Expression",
+   "raw_status": "KILLED",
+   "reads": "2ad9de0c8a80793b6e5071f2a841c88e7a3984126b87e76142f6d2b1c6f20ed5",
+   "killed_at": [
+    46,
+    49
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -2357,7 +2542,7 @@
    "before": "(candidatesOf c.front s)",
    "after": "((candidatesOf c.front s).take 1)",
    "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:362",
+   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:363",
    "raw_status": "SURVIVOR",
    "trust_class": "?",
    "trusted": true
@@ -2374,9 +2559,14 @@
    ],
    "before": "rows",
    "after": "(rows.dropLast)",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:25: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:17: Expression",
+   "raw_status": "KILLED",
+   "reads": "16f34d0c9eaf15e1e9fafe5e5462e166eaf196c4a05b416d2af02139916b7308",
+   "killed_at": [
+    17,
+    18
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -2411,7 +2601,7 @@
    "before": "acc",
    "after": "(acc.dropLast)",
    "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:313, lean/VE/Service/DocumentView.lean:369",
+   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:314, lean/VE/Service/DocumentView.lean:370",
    "raw_status": "SURVIVOR",
    "trust_class": "?",
    "trusted": true
@@ -2447,9 +2637,14 @@
    ],
    "before": "cs",
    "after": "(cs.dropLast)",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:27: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:46: Expression",
+   "raw_status": "KILLED",
+   "reads": "2ad9de0c8a80793b6e5071f2a841c88e7a3984126b87e76142f6d2b1c6f20ed5",
+   "killed_at": [
+    46,
+    49
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -2465,9 +2660,9 @@
    ],
    "before": "(candidatesOf c.front s)",
    "after": "((candidatesOf c.front s).dropLast)",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:28: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "SURVIVOR",
+   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:363",
+   "raw_status": "SURVIVOR",
    "trust_class": "?",
    "trusted": true
   },
@@ -2483,9 +2678,14 @@
    ],
    "before": "rows.zip xs.toList",
    "after": "((rows.zip xs.toList).take 1)",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:25: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:17: Expression",
+   "raw_status": "KILLED",
+   "reads": "16f34d0c9eaf15e1e9fafe5e5462e166eaf196c4a05b416d2af02139916b7308",
+   "killed_at": [
+    17,
+    18
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -2520,7 +2720,7 @@
    "before": "acc",
    "after": "(acc.take 1)",
    "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:313, lean/VE/Service/DocumentView.lean:369",
+   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:314, lean/VE/Service/DocumentView.lean:370",
    "raw_status": "SURVIVOR",
    "trust_class": "?",
    "trusted": true
@@ -2537,9 +2737,14 @@
    ],
    "before": "cs.map (\u00b7.2)",
    "after": "((cs.map (\u00b7.2)).take 1)",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:362, lean/VE/Service/DocumentView.lean:369",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:46: Expression",
+   "raw_status": "KILLED",
+   "reads": "2ad9de0c8a80793b6e5071f2a841c88e7a3984126b87e76142f6d2b1c6f20ed5",
+   "killed_at": [
+    46,
+    49
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -2556,7 +2761,7 @@
    "before": "(candidatesOf c.front s).map (\u00b7.2)",
    "after": "(((candidatesOf c.front s).map (\u00b7.2)).take 1)",
    "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:362",
+   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:363",
    "raw_status": "SURVIVOR",
    "trust_class": "?",
    "trusted": true
@@ -2573,9 +2778,14 @@
    ],
    "before": "rows.zip xs.toList",
    "after": "((rows.zip xs.toList).dropLast)",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:25: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:17: Expression",
+   "raw_status": "KILLED",
+   "reads": "16f34d0c9eaf15e1e9fafe5e5462e166eaf196c4a05b416d2af02139916b7308",
+   "killed_at": [
+    17,
+    18
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -2609,9 +2819,14 @@
    ],
    "before": "acc",
    "after": "(acc.dropLast)",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:313, lean/VE/Service/DocumentView.lean:369",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:44: Expression",
+   "raw_status": "KILLED",
+   "reads": "3bee00d7987df855e8e940ff0635bdaf1936cb5bbbc5e04d455af66607b98d7c",
+   "killed_at": [
+    44,
+    44
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -2627,9 +2842,14 @@
    ],
    "before": "cs.map (\u00b7.2)",
    "after": "((cs.map (\u00b7.2)).dropLast)",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:27: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:46: Expression",
+   "raw_status": "KILLED",
+   "reads": "2ad9de0c8a80793b6e5071f2a841c88e7a3984126b87e76142f6d2b1c6f20ed5",
+   "killed_at": [
+    46,
+    49
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -2645,9 +2865,9 @@
    ],
    "before": "(candidatesOf c.front s).map (\u00b7.2)",
    "after": "(((candidatesOf c.front s).map (\u00b7.2)).dropLast)",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:28: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "SURVIVOR",
+   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:363",
+   "raw_status": "SURVIVOR",
    "trust_class": "?",
    "trusted": true
   },
@@ -2681,9 +2901,14 @@
    ],
    "before": "us",
    "after": "(us.take 1)",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:369",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:46: Expression",
+   "raw_status": "KILLED",
+   "reads": "2ad9de0c8a80793b6e5071f2a841c88e7a3984126b87e76142f6d2b1c6f20ed5",
+   "killed_at": [
+    46,
+    49
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -2717,9 +2942,14 @@
    ],
    "before": "[x]",
    "after": "([x].dropLast)",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:26: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:44: Expression",
+   "raw_status": "KILLED",
+   "reads": "3bee00d7987df855e8e940ff0635bdaf1936cb5bbbc5e04d455af66607b98d7c",
+   "killed_at": [
+    44,
+    44
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -2735,9 +2965,14 @@
    ],
    "before": "us",
    "after": "(us.dropLast)",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:26: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:46: Expression",
+   "raw_status": "KILLED",
+   "reads": "2ad9de0c8a80793b6e5071f2a841c88e7a3984126b87e76142f6d2b1c6f20ed5",
+   "killed_at": [
+    46,
+    49
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -2827,9 +3062,14 @@
    ],
    "before": "s.readings",
    "after": "(s.readings.take 1)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:42: Expression",
+   "raw_status": "KILLED",
+   "reads": "aa77cd2ea4e6295b78449be2c017cf6751893f6b4b331a1fa7637a8710a65c0a",
+   "killed_at": [
+    42,
+    42
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -2845,9 +3085,14 @@
    ],
    "before": "cs",
    "after": "(cs.take 1)",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:369",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:46: Expression",
+   "raw_status": "KILLED",
+   "reads": "2ad9de0c8a80793b6e5071f2a841c88e7a3984126b87e76142f6d2b1c6f20ed5",
+   "killed_at": [
+    46,
+    49
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -2863,9 +3108,14 @@
    ],
    "before": "s.readings",
    "after": "(s.readings.dropLast)",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:26: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:42: Expression",
+   "raw_status": "KILLED",
+   "reads": "aa77cd2ea4e6295b78449be2c017cf6751893f6b4b331a1fa7637a8710a65c0a",
+   "killed_at": [
+    42,
+    42
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -2881,9 +3131,14 @@
    ],
    "before": "cs",
    "after": "(cs.dropLast)",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:26: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:46: Expression",
+   "raw_status": "KILLED",
+   "reads": "2ad9de0c8a80793b6e5071f2a841c88e7a3984126b87e76142f6d2b1c6f20ed5",
+   "killed_at": [
+    46,
+    49
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -2918,9 +3173,14 @@
    ],
    "before": "cs.map (\u00b7.1)",
    "after": "((cs.map (\u00b7.1)).take 1)",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:369",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:46: Expression",
+   "raw_status": "KILLED",
+   "reads": "2ad9de0c8a80793b6e5071f2a841c88e7a3984126b87e76142f6d2b1c6f20ed5",
+   "killed_at": [
+    46,
+    49
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -2955,9 +3215,14 @@
    ],
    "before": "cs.map (\u00b7.1)",
    "after": "((cs.map (\u00b7.1)).dropLast)",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:26: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:46: Expression",
+   "raw_status": "KILLED",
+   "reads": "2ad9de0c8a80793b6e5071f2a841c88e7a3984126b87e76142f6d2b1c6f20ed5",
+   "killed_at": [
+    46,
+    49
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -2973,9 +3238,14 @@
    ],
    "before": "written",
    "after": "(written.take 1)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:42: Expression",
+   "raw_status": "KILLED",
+   "reads": "aa77cd2ea4e6295b78449be2c017cf6751893f6b4b331a1fa7637a8710a65c0a",
+   "killed_at": [
+    42,
+    42
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -2991,9 +3261,14 @@
    ],
    "before": "written",
    "after": "(written.dropLast)",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:26: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:42: Expression",
+   "raw_status": "KILLED",
+   "reads": "aa77cd2ea4e6295b78449be2c017cf6751893f6b4b331a1fa7637a8710a65c0a",
+   "killed_at": [
+    42,
+    42
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -3027,9 +3302,14 @@
    ],
    "before": "match a.getObjValD \"units\" with\n  | .arr xs => (rows.zip xs.toList).map fun (u, x) => readStatus u x\n  | _ => rows",
    "after": "((match a.getObjValD \"units\" with\n  | .arr xs => (rows.zip xs.toList).map fun (u, x) => readStatus u x\n  | _ => rows).reverse.take 1)",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:25: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:17: Expression",
+   "raw_status": "KILLED",
+   "reads": "16f34d0c9eaf15e1e9fafe5e5462e166eaf196c4a05b416d2af02139916b7308",
+   "killed_at": [
+    17,
+    18
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -3045,9 +3325,14 @@
    ],
    "before": "let item := ((Loader.optionalList front \"reading_sets\").getArr?.toOption.getD #[]).toList.find? fun x =>\n    x.getObjValD \"id\" == .str s.id && (x.getObjValD \"version\").getNat?.toOption == some s.version\n  let written := ((item.map (\u00b7.getObjValD \"readings\")).bind (\u00b7.getArr?.toOption)).map (\u00b7.toList) |>.getD []\n  s.readings.filterMap fun (rid, _) => do\n    let r \u2190 written.find? (\u00b7.getObjValD \"id\" == .str rid)\n    let k \u2190 (VE.Route.Admission.decodeKind 16 (r.getObjValD \"kind\")).toOption\n    pure (rid, k)",
    "after": "((let item := ((Loader.optionalList front \"reading_sets\").getArr?.toOption.getD #[]).toList.find? fun x =>\n    x.getObjValD \"id\" == .str s.id && (x.getObjValD \"version\").getNat?.toOption == some s.version\n  let written := ((item.map (\u00b7.getObjValD \"readings\")).bind (\u00b7.getArr?.toOption)).map (\u00b7.toList) |>.getD []\n  s.readings.filterMap fun (rid, _) => do\n    let r \u2190 written.find? (\u00b7.getObjValD \"id\" == .str rid)\n    let k \u2190 (VE.Route.Admission.decodeKind 16 (r.getObjValD \"kind\")).toOption\n    pure (rid, k)).reverse.take 1)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:42: Expression",
+   "raw_status": "KILLED",
+   "reads": "aa77cd2ea4e6295b78449be2c017cf6751893f6b4b331a1fa7637a8710a65c0a",
+   "killed_at": [
+    42,
+    42
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -3063,9 +3348,14 @@
    ],
    "before": "xs.foldl (fun acc x => if acc.any (\u00b7.1 == x.1) then acc else acc ++ [x]) []",
    "after": "((xs.foldl (fun acc x => if acc.any (\u00b7.1 == x.1) then acc else acc ++ [x]) []).reverse.take 1)",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:313, lean/VE/Service/DocumentView.lean:369",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:44: Expression",
+   "raw_status": "KILLED",
+   "reads": "3bee00d7987df855e8e940ff0635bdaf1936cb5bbbc5e04d455af66607b98d7c",
+   "killed_at": [
+    44,
+    44
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -3081,9 +3371,14 @@
    ],
    "before": "firstPerUnit (c.active.map fun (s, _) => (s.unit, candidatesOf c.front s))",
    "after": "((firstPerUnit (c.active.map fun (s, _) => (s.unit, candidatesOf c.front s))).reverse.take 1)",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:362, lean/VE/Service/DocumentView.lean:369",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:45: Expression",
+   "raw_status": "KILLED",
+   "reads": "0cbe4cdaf64823884ba47e8d72f73ca67c6f9d8a66bf29acecefb08391fecc32",
+   "killed_at": [
+    45,
+    45
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -3099,9 +3394,14 @@
    ],
    "before": "us",
    "after": "(us.reverse.take 1)",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:362, lean/VE/Service/DocumentView.lean:369",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:46: Expression",
+   "raw_status": "KILLED",
+   "reads": "2ad9de0c8a80793b6e5071f2a841c88e7a3984126b87e76142f6d2b1c6f20ed5",
+   "killed_at": [
+    46,
+    49
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -3118,7 +3418,7 @@
    "before": "c.active",
    "after": "(c.active.reverse.take 1)",
    "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:362",
+   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:363",
    "raw_status": "SURVIVOR",
    "trust_class": "?",
    "trusted": true
@@ -3135,9 +3435,9 @@
    ],
    "before": "(VE.Scope.governedSetUnits D)",
    "after": "((VE.Scope.governedSetUnits D).drop 1)",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:21: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "SURVIVOR",
+   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:134",
+   "raw_status": "SURVIVOR",
    "trust_class": "?",
    "trusted": true
   },
@@ -3153,9 +3453,14 @@
    ],
    "before": "match a.getObjValD \"units\" with\n  | .arr xs => (rows.zip xs.toList).map fun (u, x) => readStatus u x\n  | _ => rows",
    "after": "((match a.getObjValD \"units\" with\n  | .arr xs => (rows.zip xs.toList).map fun (u, x) => readStatus u x\n  | _ => rows).drop 1)",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:25: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:17: Expression",
+   "raw_status": "KILLED",
+   "reads": "16f34d0c9eaf15e1e9fafe5e5462e166eaf196c4a05b416d2af02139916b7308",
+   "killed_at": [
+    17,
+    18
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -3171,9 +3476,14 @@
    ],
    "before": "let item := ((Loader.optionalList front \"reading_sets\").getArr?.toOption.getD #[]).toList.find? fun x =>\n    x.getObjValD \"id\" == .str s.id && (x.getObjValD \"version\").getNat?.toOption == some s.version\n  let written := ((item.map (\u00b7.getObjValD \"readings\")).bind (\u00b7.getArr?.toOption)).map (\u00b7.toList) |>.getD []\n  s.readings.filterMap fun (rid, _) => do\n    let r \u2190 written.find? (\u00b7.getObjValD \"id\" == .str rid)\n    let k \u2190 (VE.Route.Admission.decodeKind 16 (r.getObjValD \"kind\")).toOption\n    pure (rid, k)",
    "after": "((let item := ((Loader.optionalList front \"reading_sets\").getArr?.toOption.getD #[]).toList.find? fun x =>\n    x.getObjValD \"id\" == .str s.id && (x.getObjValD \"version\").getNat?.toOption == some s.version\n  let written := ((item.map (\u00b7.getObjValD \"readings\")).bind (\u00b7.getArr?.toOption)).map (\u00b7.toList) |>.getD []\n  s.readings.filterMap fun (rid, _) => do\n    let r \u2190 written.find? (\u00b7.getObjValD \"id\" == .str rid)\n    let k \u2190 (VE.Route.Admission.decodeKind 16 (r.getObjValD \"kind\")).toOption\n    pure (rid, k)).drop 1)",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:26: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:42: Expression",
+   "raw_status": "KILLED",
+   "reads": "aa77cd2ea4e6295b78449be2c017cf6751893f6b4b331a1fa7637a8710a65c0a",
+   "killed_at": [
+    42,
+    42
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -3189,9 +3499,14 @@
    ],
    "before": "xs.foldl (fun acc x => if acc.any (\u00b7.1 == x.1) then acc else acc ++ [x]) []",
    "after": "((xs.foldl (fun acc x => if acc.any (\u00b7.1 == x.1) then acc else acc ++ [x]) []).drop 1)",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:26: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:44: Expression",
+   "raw_status": "KILLED",
+   "reads": "3bee00d7987df855e8e940ff0635bdaf1936cb5bbbc5e04d455af66607b98d7c",
+   "killed_at": [
+    44,
+    44
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -3207,9 +3522,14 @@
    ],
    "before": "firstPerUnit (c.active.map fun (s, _) => (s.unit, candidatesOf c.front s))",
    "after": "((firstPerUnit (c.active.map fun (s, _) => (s.unit, candidatesOf c.front s))).drop 1)",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:26: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:45: Expression",
+   "raw_status": "KILLED",
+   "reads": "0cbe4cdaf64823884ba47e8d72f73ca67c6f9d8a66bf29acecefb08391fecc32",
+   "killed_at": [
+    45,
+    45
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -3225,9 +3545,14 @@
    ],
    "before": "us",
    "after": "(us.drop 1)",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:27: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:46: Expression",
+   "raw_status": "KILLED",
+   "reads": "2ad9de0c8a80793b6e5071f2a841c88e7a3984126b87e76142f6d2b1c6f20ed5",
+   "killed_at": [
+    46,
+    49
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -3243,9 +3568,9 @@
    ],
    "before": "c.active",
    "after": "(c.active.drop 1)",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:28: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "SURVIVOR",
+   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:363",
+   "raw_status": "SURVIVOR",
    "trust_class": "?",
    "trusted": true
   },
@@ -3280,9 +3605,14 @@
    ],
    "before": "((Loader.optionalList front \"reading_sets\").getArr?.toOption.getD #[]).toList",
    "after": "((((Loader.optionalList front \"reading_sets\").getArr?.toOption.getD #[]).toList).reverse.take 1)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:42: Expression",
+   "raw_status": "KILLED",
+   "reads": "aa77cd2ea4e6295b78449be2c017cf6751893f6b4b331a1fa7637a8710a65c0a",
+   "killed_at": [
+    42,
+    42
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -3298,9 +3628,14 @@
    ],
    "before": "xs",
    "after": "(xs.reverse.take 1)",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:313",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:44: Expression",
+   "raw_status": "KILLED",
+   "reads": "3bee00d7987df855e8e940ff0635bdaf1936cb5bbbc5e04d455af66607b98d7c",
+   "killed_at": [
+    44,
+    44
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -3316,9 +3651,14 @@
    ],
    "before": "c.active",
    "after": "(c.active.reverse.take 1)",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:362",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:45: Expression",
+   "raw_status": "KILLED",
+   "reads": "0cbe4cdaf64823884ba47e8d72f73ca67c6f9d8a66bf29acecefb08391fecc32",
+   "killed_at": [
+    45,
+    45
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -3391,9 +3731,14 @@
    ],
    "before": "((Loader.optionalList front \"reading_sets\").getArr?.toOption.getD #[]).toList",
    "after": "((((Loader.optionalList front \"reading_sets\").getArr?.toOption.getD #[]).toList).drop 1)",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:26: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:43: Expression",
+   "raw_status": "KILLED",
+   "reads": "9953fe9718dae0d9ce4b4ee850d29a4a42e06f2f59b02b287b0ca7bbc99b8995",
+   "killed_at": [
+    43,
+    43
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -3409,9 +3754,14 @@
    ],
    "before": "xs",
    "after": "(xs.drop 1)",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:26: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:44: Expression",
+   "raw_status": "KILLED",
+   "reads": "3bee00d7987df855e8e940ff0635bdaf1936cb5bbbc5e04d455af66607b98d7c",
+   "killed_at": [
+    44,
+    44
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -3427,9 +3777,14 @@
    ],
    "before": "c.active",
    "after": "(c.active.drop 1)",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:26: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:45: Expression",
+   "raw_status": "KILLED",
+   "reads": "0cbe4cdaf64823884ba47e8d72f73ca67c6f9d8a66bf29acecefb08391fecc32",
+   "killed_at": [
+    45,
+    45
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -3483,9 +3838,14 @@
    ],
    "before": "rows",
    "after": "(rows.reverse.take 1)",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:25: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:17: Expression",
+   "raw_status": "KILLED",
+   "reads": "16f34d0c9eaf15e1e9fafe5e5462e166eaf196c4a05b416d2af02139916b7308",
+   "killed_at": [
+    17,
+    18
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -3519,9 +3879,14 @@
    ],
    "before": "acc",
    "after": "(acc.reverse.take 1)",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:313, lean/VE/Service/DocumentView.lean:369",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:44: Expression",
+   "raw_status": "KILLED",
+   "reads": "3bee00d7987df855e8e940ff0635bdaf1936cb5bbbc5e04d455af66607b98d7c",
+   "killed_at": [
+    44,
+    44
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -3556,9 +3921,14 @@
    ],
    "before": "cs",
    "after": "(cs.reverse.take 1)",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:362, lean/VE/Service/DocumentView.lean:369",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:46: Expression",
+   "raw_status": "KILLED",
+   "reads": "2ad9de0c8a80793b6e5071f2a841c88e7a3984126b87e76142f6d2b1c6f20ed5",
+   "killed_at": [
+    46,
+    49
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -3575,7 +3945,7 @@
    "before": "(candidatesOf c.front s)",
    "after": "((candidatesOf c.front s).reverse.take 1)",
    "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:362",
+   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:363",
    "raw_status": "SURVIVOR",
    "trust_class": "?",
    "trusted": true
@@ -3592,9 +3962,14 @@
    ],
    "before": "rows",
    "after": "(rows.drop 1)",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:25: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:17: Expression",
+   "raw_status": "KILLED",
+   "reads": "16f34d0c9eaf15e1e9fafe5e5462e166eaf196c4a05b416d2af02139916b7308",
+   "killed_at": [
+    17,
+    18
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -3628,9 +4003,14 @@
    ],
    "before": "acc",
    "after": "(acc.drop 1)",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:313, lean/VE/Service/DocumentView.lean:369",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:44: Expression",
+   "raw_status": "KILLED",
+   "reads": "3bee00d7987df855e8e940ff0635bdaf1936cb5bbbc5e04d455af66607b98d7c",
+   "killed_at": [
+    44,
+    44
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -3665,9 +4045,14 @@
    ],
    "before": "cs",
    "after": "(cs.drop 1)",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:27: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:46: Expression",
+   "raw_status": "KILLED",
+   "reads": "2ad9de0c8a80793b6e5071f2a841c88e7a3984126b87e76142f6d2b1c6f20ed5",
+   "killed_at": [
+    46,
+    49
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -3683,9 +4068,9 @@
    ],
    "before": "(candidatesOf c.front s)",
    "after": "((candidatesOf c.front s).drop 1)",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:28: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "SURVIVOR",
+   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:363",
+   "raw_status": "SURVIVOR",
    "trust_class": "?",
    "trusted": true
   },
@@ -3701,9 +4086,14 @@
    ],
    "before": "rows.zip xs.toList",
    "after": "((rows.zip xs.toList).reverse.take 1)",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:25: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:17: Expression",
+   "raw_status": "KILLED",
+   "reads": "16f34d0c9eaf15e1e9fafe5e5462e166eaf196c4a05b416d2af02139916b7308",
+   "killed_at": [
+    17,
+    18
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -3738,7 +4128,7 @@
    "before": "acc",
    "after": "(acc.reverse.take 1)",
    "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:313, lean/VE/Service/DocumentView.lean:369",
+   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:314, lean/VE/Service/DocumentView.lean:370",
    "raw_status": "SURVIVOR",
    "trust_class": "?",
    "trusted": true
@@ -3755,9 +4145,14 @@
    ],
    "before": "cs.map (\u00b7.2)",
    "after": "((cs.map (\u00b7.2)).reverse.take 1)",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:362, lean/VE/Service/DocumentView.lean:369",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:46: Expression",
+   "raw_status": "KILLED",
+   "reads": "2ad9de0c8a80793b6e5071f2a841c88e7a3984126b87e76142f6d2b1c6f20ed5",
+   "killed_at": [
+    46,
+    49
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -3774,7 +4169,7 @@
    "before": "(candidatesOf c.front s).map (\u00b7.2)",
    "after": "(((candidatesOf c.front s).map (\u00b7.2)).reverse.take 1)",
    "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:362",
+   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:363",
    "raw_status": "SURVIVOR",
    "trust_class": "?",
    "trusted": true
@@ -3791,9 +4186,14 @@
    ],
    "before": "rows.zip xs.toList",
    "after": "((rows.zip xs.toList).drop 1)",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:25: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:17: Expression",
+   "raw_status": "KILLED",
+   "reads": "16f34d0c9eaf15e1e9fafe5e5462e166eaf196c4a05b416d2af02139916b7308",
+   "killed_at": [
+    17,
+    18
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -3827,9 +4227,14 @@
    ],
    "before": "acc",
    "after": "(acc.drop 1)",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:313, lean/VE/Service/DocumentView.lean:369",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:44: Expression",
+   "raw_status": "KILLED",
+   "reads": "3bee00d7987df855e8e940ff0635bdaf1936cb5bbbc5e04d455af66607b98d7c",
+   "killed_at": [
+    44,
+    44
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -3845,9 +4250,14 @@
    ],
    "before": "cs.map (\u00b7.2)",
    "after": "((cs.map (\u00b7.2)).drop 1)",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:27: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:46: Expression",
+   "raw_status": "KILLED",
+   "reads": "2ad9de0c8a80793b6e5071f2a841c88e7a3984126b87e76142f6d2b1c6f20ed5",
+   "killed_at": [
+    46,
+    49
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -3863,9 +4273,9 @@
    ],
    "before": "(candidatesOf c.front s).map (\u00b7.2)",
    "after": "(((candidatesOf c.front s).map (\u00b7.2)).drop 1)",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:28: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "SURVIVOR",
+   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:363",
+   "raw_status": "SURVIVOR",
    "trust_class": "?",
    "trusted": true
   },
@@ -3899,9 +4309,14 @@
    ],
    "before": "us",
    "after": "(us.reverse.take 1)",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:369",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:46: Expression",
+   "raw_status": "KILLED",
+   "reads": "2ad9de0c8a80793b6e5071f2a841c88e7a3984126b87e76142f6d2b1c6f20ed5",
+   "killed_at": [
+    46,
+    49
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -3935,9 +4350,14 @@
    ],
    "before": "[x]",
    "after": "([x].drop 1)",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:26: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:44: Expression",
+   "raw_status": "KILLED",
+   "reads": "3bee00d7987df855e8e940ff0635bdaf1936cb5bbbc5e04d455af66607b98d7c",
+   "killed_at": [
+    44,
+    44
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -3953,9 +4373,14 @@
    ],
    "before": "us",
    "after": "(us.drop 1)",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:26: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:46: Expression",
+   "raw_status": "KILLED",
+   "reads": "2ad9de0c8a80793b6e5071f2a841c88e7a3984126b87e76142f6d2b1c6f20ed5",
+   "killed_at": [
+    46,
+    49
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -4045,9 +4470,14 @@
    ],
    "before": "s.readings",
    "after": "(s.readings.reverse.take 1)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:42: Expression",
+   "raw_status": "KILLED",
+   "reads": "aa77cd2ea4e6295b78449be2c017cf6751893f6b4b331a1fa7637a8710a65c0a",
+   "killed_at": [
+    42,
+    42
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -4063,9 +4493,14 @@
    ],
    "before": "cs",
    "after": "(cs.reverse.take 1)",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:369",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:46: Expression",
+   "raw_status": "KILLED",
+   "reads": "2ad9de0c8a80793b6e5071f2a841c88e7a3984126b87e76142f6d2b1c6f20ed5",
+   "killed_at": [
+    46,
+    49
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -4081,9 +4516,14 @@
    ],
    "before": "s.readings",
    "after": "(s.readings.drop 1)",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:26: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:42: Expression",
+   "raw_status": "KILLED",
+   "reads": "aa77cd2ea4e6295b78449be2c017cf6751893f6b4b331a1fa7637a8710a65c0a",
+   "killed_at": [
+    42,
+    42
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -4099,9 +4539,14 @@
    ],
    "before": "cs",
    "after": "(cs.drop 1)",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:26: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:46: Expression",
+   "raw_status": "KILLED",
+   "reads": "2ad9de0c8a80793b6e5071f2a841c88e7a3984126b87e76142f6d2b1c6f20ed5",
+   "killed_at": [
+    46,
+    49
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -4136,9 +4581,14 @@
    ],
    "before": "cs.map (\u00b7.1)",
    "after": "((cs.map (\u00b7.1)).reverse.take 1)",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:369",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:46: Expression",
+   "raw_status": "KILLED",
+   "reads": "2ad9de0c8a80793b6e5071f2a841c88e7a3984126b87e76142f6d2b1c6f20ed5",
+   "killed_at": [
+    46,
+    49
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -4173,9 +4623,14 @@
    ],
    "before": "cs.map (\u00b7.1)",
    "after": "((cs.map (\u00b7.1)).drop 1)",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:26: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:46: Expression",
+   "raw_status": "KILLED",
+   "reads": "2ad9de0c8a80793b6e5071f2a841c88e7a3984126b87e76142f6d2b1c6f20ed5",
+   "killed_at": [
+    46,
+    49
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -4191,9 +4646,14 @@
    ],
    "before": "written",
    "after": "(written.reverse.take 1)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:42: Expression",
+   "raw_status": "KILLED",
+   "reads": "aa77cd2ea4e6295b78449be2c017cf6751893f6b4b331a1fa7637a8710a65c0a",
+   "killed_at": [
+    42,
+    42
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -4209,9 +4669,14 @@
    ],
    "before": "written",
    "after": "(written.drop 1)",
-   "status": "UNKNOWN",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:26: Expression",
-   "raw_status": "UNKNOWN",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:42: Expression",
+   "raw_status": "KILLED",
+   "reads": "aa77cd2ea4e6295b78449be2c017cf6751893f6b4b331a1fa7637a8710a65c0a",
+   "killed_at": [
+    42,
+    42
+   ],
    "trust_class": "?",
    "trusted": true
   }
