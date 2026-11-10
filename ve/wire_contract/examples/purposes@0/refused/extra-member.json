@@ -1,0 +1,1 @@
+{"check": "1.1b", "args": {}, "text": "InvalidPurposes: purposes must be an object whose only member is links", "purposes": {"links": [{"id": "l1", "relation": "in order to", "polarity": "affirmed", "share": "plain", "reason": [{"part": "u0146.s01.p3"}], "target": [{"part": "u0146.s01.p1"}], "marker": "u0146.s01.p2"}], "notes": []}}
