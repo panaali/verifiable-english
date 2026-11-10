@@ -29,6 +29,14 @@ new lines.
 - The class: every StepsProofs doc comment that claims `<x>` is one piece of the split, holds no `, then `, or
   escapes ConditionScope must name the hypothesis. The test scans all of them, not only line 7.
 - No DELTA row: the change is comments, a `#guard` and evidence. Nothing calls `readStep`.
+- Tests on 54cf5f054:
+  - Selected tests (`mac-pytest.sh --select -- --base <merge-base> --run`): 129 units in 5 shards, all passed, exit 0.
+    They include tests/test_commands_ci3b_review.py.
+  - `lake build`: PASS (1330 jobs).
+  - `python3 lean/audit.py`: PASS (798 source files, 8859 theorem declarations).
+  - `tools/regen_generated.py --check`: 38 entries.
+  - `tools/gate_collection.py --check --prebuilt`: 2 added, 0 removed.
+  - Not run: the full suite and the gate, which the merge train runs.
 
 ## Plan rows delivered (spec 9a12df17a section 7; plan CI-3; task deliverables)
 
