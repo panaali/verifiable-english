@@ -1,0 +1,59 @@
+{
+ "allow": [
+  {
+   "definition": "VE.NormDefaults.Run.runOtherCaseIn",
+   "operator": "ne-eq",
+   "reason": "killed past Lean: the settled flag `!= -> ==` makes a SETTLED row name no rule; tests/test_norm_defaults_response_binding.py::test_genuine_answers_pass fails (csam rules [], mutants.json M1); this sweep reads Lean checks only"
+  },
+  {
+   "definition": "VE.NormDefaults.Run.runOtherCaseIn",
+   "operator": "and-or",
+   "reason": "killed past Lean: the settled flag `&& -> ||` makes an UNKNOWN row name rules; tests/test_norm_defaults_response_binding.py::test_genuine_answers_pass fails (unknown-status u12 names ['r'], mutants.json M3)"
+  },
+  {
+   "definition": "VE.NormDefaults.Wire.layeredCase",
+   "operator": "ne-eq",
+   "reason": "killed past Lean: the settled flag `!= -> ==` makes a SETTLED rights row name no rule; tests/test_norm_defaults_response_binding.py::test_genuine_answers_pass fails (mutants.json M2)"
+  },
+  {
+   "definition": "VE.NormDefaults.Wire.layeredCase",
+   "operator": "and-or",
+   "reason": "killed past Lean: the settled flag `&& -> ||` makes an UNKNOWN rights row name ['art9']; tests/test_norm_defaults_response_binding.py::test_genuine_answers_pass fails (rights-unknown-status, mutants.json M4)"
+  },
+  {
+   "definition": "VE.Acts.Decode.plainU",
+   "operator": "bool-flip",
+   "reason": "does not elaborate: `profiled := true` leaves the field proofs `fun h => by cases h` unsolved"
+  },
+  {
+   "definition": "VE.Acts.Decode.plainU",
+   "operator": "list-empty",
+   "reason": "does not elaborate: an emptied rewrite or field list is a type mismatch"
+  },
+  {
+   "definition": "VE.Acts.Decode.plainU",
+   "operator": "list-drop-last",
+   "reason": "does not elaborate: `[fill_eq_self _ rfl].dropLast` is no rewrite rule list"
+  },
+  {
+   "definition": "VE.NormDefaults.Wire.decodeSourceUWith",
+   "operator": "bool-flip",
+   "reason": "does not elaborate: `profiled := false` leaves the field proofs unsolved"
+  },
+  {
+   "definition": "VE.NormDefaults.Wire.sourcesJson",
+   "operator": "list-empty",
+   "reason": "does not elaborate: `[]` has no projection `.toArray` element type (Invalid projection)"
+  },
+  {
+   "definition": "VE.NormDefaults.Wire.rightsSources",
+   "operator": "list-empty",
+   "reason": "does not elaborate: an emptied list has no field notation type (Invalid field notation)"
+  },
+  {
+   "definition": "VE.NormDefaults.Wire.statusFields",
+   "operator": "list-empty",
+   "reason": "does not elaborate where it survives this sweep: `tuple -> []` and `tuple.map (·.2) -> []` leave a projection or instance stuck; the emptied field list and body are killed by the PacksLegacyExamples statusFields #guard"
+  }
+ ]
+}

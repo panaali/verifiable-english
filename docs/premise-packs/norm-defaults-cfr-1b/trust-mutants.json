@@ -1,7 +1,7 @@
 {
  "base": "c94ad399b7b1f6804c12fbc555a5758d5e971ae6",
- "head": "54b60155a07354f6ce0793b1f41588a0f35738a9",
- "tree": "3ffe9e36f477930a9769af6c0ba29b95cf246413",
+ "head": "2b8b0d01e297664ea71b82969fbe4dd9ae29dbd4",
+ "tree": "aa4128fc82860f0b61beefb8077dce5b04f5ec64",
  "jobs": 8,
  "control_probes": "lazy",
  "max_mutants": 60,
@@ -10,44 +10,44 @@
   "lean/VE/NormDefaults/PacksLegacyExamples.lean",
   "lean/VE/Acts/DecodeExamples.lean"
  ],
- "seconds": 2809,
+ "seconds": 2383,
  "steps": {
   "wall": {
-   "plan": 18.4,
-   "scratch": 20.4,
-   "control_build": 0.5,
-   "probe_install": 2.5,
+   "plan": 16.7,
+   "scratch": 21.4,
+   "control_build": 0.4,
+   "probe_install": 2.1,
    "control_probes": 0.0,
-   "mutants": 2763.3,
-   "cleanup": 3.4,
-   "reads": 0.1
+   "mutants": 2337.3,
+   "cleanup": 4.9,
+   "reads": 0.2
   },
   "lake": {
    "control_build": 0.4,
-   "probe_install": 2.4,
-   "control_probes": 19.3,
-   "mutant_builds": 3361.2,
-   "mutant_checks": 14987.0,
+   "probe_install": 2.0,
+   "control_probes": 27.4,
+   "mutant_builds": 3317.7,
+   "mutant_checks": 11790.1,
    "outside_checks": 0.0,
-   "stage_controls": 2896.5,
-   "mutant_probes": 91.5,
+   "stage_controls": 2767.2,
+   "mutant_probes": 206.1,
    "other": 0.0
   },
   "runs": {
    "control_build": 1,
    "probe_install": 1,
-   "control_probes": 4,
+   "control_probes": 5,
    "mutant_builds": 75,
-   "mutant_checks": 51,
+   "mutant_checks": 39,
    "outside_checks": 0,
-   "stage_controls": 6,
-   "mutant_probes": 18,
+   "stage_controls": 8,
+   "mutant_probes": 39,
    "other": 0
   }
  },
  "counts": {
-  "KILLED": 18,
-  "SURVIVOR": 27,
+  "KILLED": 39,
+  "SURVIVOR": 6,
   "UNKNOWN": 11,
   "INVALID": 4,
   "ALLOWED": 0,
@@ -58,14 +58,13 @@
  ],
  "class_counts": {
   "D[V], trusted": {
-   "KILLED": 4,
-   "SURVIVOR": 8,
+   "KILLED": 12,
    "UNKNOWN": 7,
    "NOT RUN": 23
   },
   "G[V], trusted": {
-   "KILLED": 14,
-   "SURVIVOR": 19,
+   "KILLED": 27,
+   "SURVIVOR": 6,
    "UNKNOWN": 4,
    "INVALID": 4,
    "NOT RUN": 76
@@ -73,7 +72,7 @@
  },
  "inputs": {
   "tool": "25319108f6e54aaa58a3fe964864cbe4578b04fc06b90a283e54f8789804d14b",
-  "lean": "a4ffecf570ff9ece1fa46854fdb6550cb40a2a4d1dc0ad034e50a5f5e27a6b22",
+  "lean": "57040a9ec7bc67710c8a0863971b282c02a0005419c58a5419fcd913e7875895",
   "tests": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
   "base": "c94ad399b7b1f6804c12fbc555a5758d5e971ae6",
   "options": "{\"deep\": false, \"test\": [\"VE/Acts/DecodeExamples.lean\", \"VE/NormDefaults/PacksLegacyExamples.lean\"], \"classes\": [\"trusted\"]}",
@@ -170,7 +169,7 @@
    "lean/ResponseShape/Schemas/Identity.lean": "5fdfa9b4d20290cf6c3bbfe639f6bd13d8705ff4491361998e4b93c70eb63e00",
    "lean/ResponseShape/Schemas/Metered.lean": "e42a5e7615060aa455d1a0ea20653e132f1f5bd90fe71bcc021d535471681c3e",
    "lean/ResponseShape/Schemas/Model.lean": "f7243d7cf2e9c2c8650379e980cbaa2859f9b179496ccf2fd978e9734d73ba5b",
-   "lean/ResponseShape/Schemas/NormDefaults.lean": "6770e12f1d41b9793e7f7c7a3a2b69ef9bf38dc28aad6603754f4cdc6f1c384b",
+   "lean/ResponseShape/Schemas/NormDefaults.lean": "aebbc72367caa2c22b0bce488dfa5321974badad7032e6d1de53e25409d9c2ca",
    "lean/ResponseShape/Schemas/Norms.lean": "0bc58c17a58440e792beffe42a6374791fa0e800813aabc83e45f345febd8842",
    "lean/ResponseShape/Schemas/Order.lean": "04b7a07a363b251d4dce918707ddfcf848659a7eb800bd4acd0c418df661f954",
    "lean/ResponseShape/Schemas/Parse.lean": "5a33bde7f47fe7b4c6649ecf33cbc8f2cfe8a5b3af80b3599dbfac91299e7252",
@@ -556,7 +555,7 @@
    "lean/VE/NormDefaults/PacksExamples.lean": "f02567f5aab795b53ef0a0d53e2ad42be8e80be4ad57602dcd58de856cafc654",
    "lean/VE/NormDefaults/PacksLabels.lean": "43cd69633d27d398ed4abd49a90807b91f8278f72afd76a07cc6ab025c904908",
    "lean/VE/NormDefaults/PacksLegacy.lean": "b900667f6d8c24a34cbeabfbc843e02bd0266baca11d14622bb79290ad0f2f75",
-   "lean/VE/NormDefaults/PacksLegacyExamples.lean": "fb9dc71eba549a7f9309000aba2b6441a5a4346616415122f2c2f9630ea301c0",
+   "lean/VE/NormDefaults/PacksLegacyExamples.lean": "0f8600b39d7cee1751bafdeb323b3e2e8fd8e54e6196574bb29913dcdb44e9d6",
    "lean/VE/NormDefaults/Premises.lean": "999dde3407e772c5df215824b88ede8fca8ee71a2567e27424d3bced543862c9",
    "lean/VE/NormDefaults/Replay.lean": "d0d434a9801c3064c0617328ef9eb543327aa0e72548c723bdb90d7b58bbdfc5",
    "lean/VE/NormDefaults/Report.lean": "20cab0ceb2cfc1cf5a4bd120dc63c2b72503918c881631905ee9133d24bc40e0",
@@ -941,7 +940,7 @@
    "lean/audit.py": "05fb69c5689a8606fefd6d43e220f23ee6dbedc4bea7245b34ae29a4fd13a1cd",
    "lean/axioms.txt": "234a4367133eebfe8a933cdaddcf99a94999650aa4b40c3506b98772d5834efd",
    "lean/checkers.lock": "04f8aa1f0302f963b4facde8ce10a893115b2f2a8c171136f4906f0f852ef5d6",
-   "lean/declarations.txt": "5ffd1c4c61671003ee5296b4fa7bb3b7e7a4ff66bbcf7c03def33766083c3e73",
+   "lean/declarations.txt": "714ce60162a94105a1452137bc95ed05a0c407d193edd28dbc9102dc8c518544",
    "lean/lake-manifest.json": "8579a8594992ccc571614869d24b997dba98134cffdbd5a0b26220a419e0de8e",
    "lean/lakefile.toml": "ffc47dfd06119c3518785b5059d81216b2f82b140509bfd25cd3273cbe04d4f5",
    "lean/lean-toolchain": "42779d67b81608af8a12aa4328d2ab47ca201925b3b2bd68369587b5340bb434",
@@ -962,6 +961,15 @@
    "tools/trust_map.py": "81082574f08249aea02a276fe8323ce76cbacdc09d6ba8851ef55ee2e77830a7",
    "tools/trust_mutants.py": "4517658c0fd91ead7e0253b2d2466354c9c6cda276d974098460f1068afd6862"
   }
+ },
+ "rescore": {
+  "file": "docs/premise-packs/norm-defaults-cfr-1b/trust-mutants.json",
+  "head": null,
+  "mode": "full",
+  "changed": [],
+  "reused": 0,
+  "rerun": 60,
+  "full_run": "its inputs differ (lean): lean/ResponseShape/Schemas/NormDefaults.lean is a selected declaration's file or in its import closure"
  },
  "definitions": [
   "lean/ResponseShape/Schemas/NormDefaults.lean: ResponseShape.Schemas.NormDefaults.status",
@@ -1024,12 +1032,12 @@
    "before": "==",
    "after": "!=",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:83: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:84: Expression",
    "raw_status": "KILLED",
-   "reads": "3be6b09927e46243e4a595df9953b71216f0024957dcea33279fe72cfe97f38b",
+   "reads": "f02a4efc09cc89a3aba5184cd2fd642c555ad384f4b16e8a7975b0cedd6da7ee",
    "killed_at": [
-    82,
-    83
+    83,
+    84
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -1118,9 +1126,14 @@
    ],
    "before": "[\n    obj,\n    .required [\"id\", \"status\", \"point_status\", \"predicate\", \"tuple\", \"rules\", \"sources\", \"differs\"],\n    .sameLength [\"rules\", \"sources\"],\n    closed [\n      (\"id\", ref \"common.json#/$defs/id_ok\"),\n      (\"status\", constS \"ok\"),\n      (\"point_status\", enumS [\"SETTLED yes\", \"SETTLED no\", \"UNDECIDED\", \"UNKNOWN\"]),\n      (\"predicate\", n [str, .equals \"/predicate\"]),\n      (\"tuple\", n [ref \"common.json#/$defs/strings\", .equals \"/tuple\"]),\n      (\"rules\", n [ref \"common.json#/$defs/strings\", .uniqueStrings]),\n      (\"sources\", n [arr, .items (n [obj, .required [\"rule\", \"source\"], closed [(\"rule\", str), (\"source\", str)]])]),\n      (\"differs\", n [arr, .items (ref \"#/$defs/atom\")])]]",
    "after": "[]\n\n\n\n\n\n\n\n\n\n\n\n",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
+   "raw_status": "KILLED",
+   "reads": "b165cb6f4f41441a133af239ddfbdd51b0a55197499cf35ee436b88e0a2b9090",
+   "killed_at": [
+    211,
+    212
+   ],
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -1155,12 +1168,12 @@
    "before": "rules.map fun n => (n, (gen.lookup n).getD n)",
    "after": "[]",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:87: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:88: Expression",
    "raw_status": "KILLED",
-   "reads": "2403384b12f2b8029c09467a3f9537a7ade2e0ce23c2a9f1a3eba79c9451d3b8",
+   "reads": "c5148c5fd7498bd2d35188eb5a5c9de8e073d7f7a88b262d35acdc0cf0049446",
    "killed_at": [
-    87,
-    88
+    88,
+    89
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -1195,9 +1208,14 @@
    ],
    "before": "let \u03c1 := tupleVal tuple\n  let rules := match fillings with\n    | some (F\u2081, F\u2082) => (selectedRules U (M.withFill F\u2081) \u03c1 p ++ selectedRules U (M.withFill F\u2082) \u03c1 p).eraseDups\n    | none => if settled then (p :: pairPartners U p).flatMap (selectedRules U (M.withFill (canonicalFinite U M)) \u03c1)\n      else []\n  let differs := match fillings with\n    | some (F\u2081, F\u2082) => fillingsDiffer U F\u2081 F\u2082\n    | none => []\n  [(\"tuple\", toJson (tuple.map (\u00b7.2))), (\"rules\", toJson rules), (\"sources\", sourcesJson (ruleSources gen rules)),\n   (\"differs\", atomsJson differs)]",
    "after": "[]\n\n\n\n\n\n\n\n\n",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:93: Expression",
+   "raw_status": "KILLED",
+   "reads": "ad46dc19e314c90ee10a126334339d4db4db6623bc0e4abd56170d83513d04f9",
+   "killed_at": [
+    93,
+    98
+   ],
    "trust_class": "D[V]",
    "trusted": true
   },
@@ -1214,12 +1232,12 @@
    "before": "(VE.Rights.linesOf D).filterMap (fun RN => match RN.2.bearer, RN.2.source.norm with\n    | some _, some n => some (RN.2.node.name, n.name)\n    | _, _ => none) ++\n  (VE.Rights.barNodes D).filterMap fun B => (D.bars.find? (\u00b7.reading == .rule)).map fun b => (B.name, b.name)",
    "after": "[]\n\n\n",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:80: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:81: Expression",
    "raw_status": "KILLED",
-   "reads": "b9fef6f17eeafec6767d4ed05385829e4e45295da8f7658738982040d3c7d72c",
+   "reads": "cbab2f4e619b9e681bc6b76d7273d5d3d09517f9ddea353661e2b8cb086bcdad",
    "killed_at": [
-    79,
-    81
+    80,
+    82
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -1272,9 +1290,14 @@
    ],
    "before": "[\"id\", \"status\", \"point_status\", \"predicate\", \"tuple\", \"rules\", \"sources\", \"differs\"]",
    "after": "[]",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
+   "raw_status": "KILLED",
+   "reads": "b165cb6f4f41441a133af239ddfbdd51b0a55197499cf35ee436b88e0a2b9090",
+   "killed_at": [
+    211,
+    212
+   ],
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -1291,12 +1314,12 @@
    "before": "rules",
    "after": "[]",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:87: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:88: Expression",
    "raw_status": "KILLED",
-   "reads": "2403384b12f2b8029c09467a3f9537a7ade2e0ce23c2a9f1a3eba79c9451d3b8",
+   "reads": "c5148c5fd7498bd2d35188eb5a5c9de8e073d7f7a88b262d35acdc0cf0049446",
    "killed_at": [
-    87,
-    88
+    88,
+    89
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -1314,12 +1337,12 @@
    "before": "S.map (fun x => Json.mkObj [(\"rule\", .str x.1), (\"source\", .str x.2)])",
    "after": "[]",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:89: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:90: Expression",
    "raw_status": "KILLED",
-   "reads": "bb8dced6a37eddd8bd46799c997a6406b3bf97a7292b961264cfae1f4e96c37c",
+   "reads": "0366d1b564add23146070fc9232da49f4a89687e4a19d856f333671493516a54",
    "killed_at": [
-    89,
-    91
+    90,
+    92
    ],
    "trust_class": "D[V]",
    "trusted": true
@@ -1336,9 +1359,14 @@
    ],
    "before": "[(\"tuple\", toJson (tuple.map (\u00b7.2))), (\"rules\", toJson rules), (\"sources\", sourcesJson (ruleSources gen rules)),\n   (\"differs\", atomsJson differs)]",
    "after": "[]\n",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:93: Expression",
+   "raw_status": "KILLED",
+   "reads": "ad46dc19e314c90ee10a126334339d4db4db6623bc0e4abd56170d83513d04f9",
+   "killed_at": [
+    93,
+    98
+   ],
    "trust_class": "D[V]",
    "trusted": true
   },
@@ -1372,9 +1400,14 @@
    ],
    "before": "[\"rules\", \"sources\"]",
    "after": "[]",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
+   "raw_status": "KILLED",
+   "reads": "b165cb6f4f41441a133af239ddfbdd51b0a55197499cf35ee436b88e0a2b9090",
+   "killed_at": [
+    211,
+    212
+   ],
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -1410,12 +1443,12 @@
    "before": "[(\"rule\", .str x.1), (\"source\", .str x.2)]",
    "after": "[]",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:89: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:90: Expression",
    "raw_status": "KILLED",
-   "reads": "bb8dced6a37eddd8bd46799c997a6406b3bf97a7292b961264cfae1f4e96c37c",
+   "reads": "0366d1b564add23146070fc9232da49f4a89687e4a19d856f333671493516a54",
    "killed_at": [
-    89,
-    91
+    90,
+    92
    ],
    "trust_class": "D[V]",
    "trusted": true
@@ -1451,12 +1484,12 @@
    "before": "(VE.Rights.linesOf D).filterMap (fun RN => match RN.2.bearer, RN.2.source.norm with\n    | some _, some n => some (RN.2.node.name, n.name)\n    | _, _ => none)",
    "after": "[]\n\n",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:80: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:81: Expression",
    "raw_status": "KILLED",
-   "reads": "b9fef6f17eeafec6767d4ed05385829e4e45295da8f7658738982040d3c7d72c",
+   "reads": "cbab2f4e619b9e681bc6b76d7273d5d3d09517f9ddea353661e2b8cb086bcdad",
    "killed_at": [
-    79,
-    81
+    80,
+    82
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -1473,9 +1506,14 @@
    ],
    "before": "[\n      (\"id\", ref \"common.json#/$defs/id_ok\"),\n      (\"status\", constS \"ok\"),\n      (\"point_status\", enumS [\"SETTLED yes\", \"SETTLED no\", \"UNDECIDED\", \"UNKNOWN\"]),\n      (\"predicate\", n [str, .equals \"/predicate\"]),\n      (\"tuple\", n [ref \"common.json#/$defs/strings\", .equals \"/tuple\"]),\n      (\"rules\", n [ref \"common.json#/$defs/strings\", .uniqueStrings]),\n      (\"sources\", n [arr, .items (n [obj, .required [\"rule\", \"source\"], closed [(\"rule\", str), (\"source\", str)]])]),\n      (\"differs\", n [arr, .items (ref \"#/$defs/atom\")])]",
    "after": "[]\n\n\n\n\n\n\n\n",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
+   "raw_status": "KILLED",
+   "reads": "b165cb6f4f41441a133af239ddfbdd51b0a55197499cf35ee436b88e0a2b9090",
+   "killed_at": [
+    211,
+    212
+   ],
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -1492,12 +1530,12 @@
    "before": "gen",
    "after": "[]",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:87: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:88: Expression",
    "raw_status": "KILLED",
-   "reads": "2403384b12f2b8029c09467a3f9537a7ade2e0ce23c2a9f1a3eba79c9451d3b8",
+   "reads": "c5148c5fd7498bd2d35188eb5a5c9de8e073d7f7a88b262d35acdc0cf0049446",
    "killed_at": [
-    87,
-    88
+    88,
+    89
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -1550,9 +1588,14 @@
    ],
    "before": "[arr, .items (n [obj, .required [\"rule\", \"source\"], closed [(\"rule\", str), (\"source\", str)]])]",
    "after": "[]",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
+   "raw_status": "KILLED",
+   "reads": "b165cb6f4f41441a133af239ddfbdd51b0a55197499cf35ee436b88e0a2b9090",
+   "killed_at": [
+    211,
+    212
+   ],
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -1587,9 +1630,14 @@
    ],
    "before": "[obj, .required [\"rule\", \"source\"], closed [(\"rule\", str), (\"source\", str)]]",
    "after": "[]",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
+   "raw_status": "KILLED",
+   "reads": "b165cb6f4f41441a133af239ddfbdd51b0a55197499cf35ee436b88e0a2b9090",
+   "killed_at": [
+    211,
+    212
+   ],
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -1623,9 +1671,14 @@
    ],
    "before": "[\"rule\", \"source\"]",
    "after": "[]",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
+   "raw_status": "KILLED",
+   "reads": "b165cb6f4f41441a133af239ddfbdd51b0a55197499cf35ee436b88e0a2b9090",
+   "killed_at": [
+    211,
+    212
+   ],
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -1660,9 +1713,14 @@
    ],
    "before": "[(\"rule\", str), (\"source\", str)]",
    "after": "[]",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
+   "raw_status": "KILLED",
+   "reads": "b165cb6f4f41441a133af239ddfbdd51b0a55197499cf35ee436b88e0a2b9090",
+   "killed_at": [
+    211,
+    212
+   ],
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -1696,9 +1754,14 @@
    ],
    "before": "[\n    obj,\n    .required [\"id\", \"status\", \"point_status\", \"predicate\", \"tuple\", \"rules\", \"sources\", \"differs\"],\n    .sameLength [\"rules\", \"sources\"],\n    closed [\n      (\"id\", ref \"common.json#/$defs/id_ok\"),\n      (\"status\", constS \"ok\"),\n      (\"point_status\", enumS [\"SETTLED yes\", \"SETTLED no\", \"UNDECIDED\", \"UNKNOWN\"]),\n      (\"predicate\", n [str, .equals \"/predicate\"]),\n      (\"tuple\", n [ref \"common.json#/$defs/strings\", .equals \"/tuple\"]),\n      (\"rules\", n [ref \"common.json#/$defs/strings\", .uniqueStrings]),\n      (\"sources\", n [arr, .items (n [obj, .required [\"rule\", \"source\"], closed [(\"rule\", str), (\"source\", str)]])]),\n      (\"differs\", n [arr, .items (ref \"#/$defs/atom\")])]]",
    "after": "([\n    obj,\n    .required [\"id\", \"status\", \"point_status\", \"predicate\", \"tuple\", \"rules\", \"sources\", \"differs\"],\n    .sameLength [\"rules\", \"sources\"],\n    closed [\n      (\"id\", ref \"common.json#/$defs/id_ok\"),\n      (\"status\", constS \"ok\"),\n      (\"point_status\", enumS [\"SETTLED yes\", \"SETTLED no\", \"UNDECIDED\", \"UNKNOWN\"]),\n      (\"predicate\", n [str, .equals \"/predicate\"]),\n      (\"tuple\", n [ref \"common.json#/$defs/strings\", .equals \"/tuple\"]),\n      (\"rules\", n [ref \"common.json#/$defs/strings\", .uniqueStrings]),\n      (\"sources\", n [arr, .items (n [obj, .required [\"rule\", \"source\"], closed [(\"rule\", str), (\"source\", str)]])]),\n      (\"differs\", n [arr, .items (ref \"#/$defs/atom\")])]].take 1)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
+   "raw_status": "KILLED",
+   "reads": "b165cb6f4f41441a133af239ddfbdd51b0a55197499cf35ee436b88e0a2b9090",
+   "killed_at": [
+    211,
+    212
+   ],
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -1715,12 +1778,12 @@
    "before": "rules.map fun n => (n, (gen.lookup n).getD n)",
    "after": "((rules.map fun n => (n, (gen.lookup n).getD n)).take 1)",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:87: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:88: Expression",
    "raw_status": "KILLED",
-   "reads": "2403384b12f2b8029c09467a3f9537a7ade2e0ce23c2a9f1a3eba79c9451d3b8",
+   "reads": "c5148c5fd7498bd2d35188eb5a5c9de8e073d7f7a88b262d35acdc0cf0049446",
    "killed_at": [
-    87,
-    88
+    88,
+    89
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -1737,9 +1800,14 @@
    ],
    "before": "S",
    "after": "(S.take 1)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:90: Expression",
+   "raw_status": "KILLED",
+   "reads": "0366d1b564add23146070fc9232da49f4a89687e4a19d856f333671493516a54",
+   "killed_at": [
+    90,
+    92
+   ],
    "trust_class": "D[V]",
    "trusted": true
   },
@@ -1755,9 +1823,14 @@
    ],
    "before": "let \u03c1 := tupleVal tuple\n  let rules := match fillings with\n    | some (F\u2081, F\u2082) => (selectedRules U (M.withFill F\u2081) \u03c1 p ++ selectedRules U (M.withFill F\u2082) \u03c1 p).eraseDups\n    | none => if settled then (p :: pairPartners U p).flatMap (selectedRules U (M.withFill (canonicalFinite U M)) \u03c1)\n      else []\n  let differs := match fillings with\n    | some (F\u2081, F\u2082) => fillingsDiffer U F\u2081 F\u2082\n    | none => []\n  [(\"tuple\", toJson (tuple.map (\u00b7.2))), (\"rules\", toJson rules), (\"sources\", sourcesJson (ruleSources gen rules)),\n   (\"differs\", atomsJson differs)]",
    "after": "((let \u03c1 := tupleVal tuple\n  let rules := match fillings with\n    | some (F\u2081, F\u2082) => (selectedRules U (M.withFill F\u2081) \u03c1 p ++ selectedRules U (M.withFill F\u2082) \u03c1 p).eraseDups\n    | none => if settled then (p :: pairPartners U p).flatMap (selectedRules U (M.withFill (canonicalFinite U M)) \u03c1)\n      else []\n  let differs := match fillings with\n    | some (F\u2081, F\u2082) => fillingsDiffer U F\u2081 F\u2082\n    | none => []\n  [(\"tuple\", toJson (tuple.map (\u00b7.2))), (\"rules\", toJson rules), (\"sources\", sourcesJson (ruleSources gen rules)),\n   (\"differs\", atomsJson differs)]).take 1)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:93: Expression",
+   "raw_status": "KILLED",
+   "reads": "ad46dc19e314c90ee10a126334339d4db4db6623bc0e4abd56170d83513d04f9",
+   "killed_at": [
+    93,
+    98
+   ],
    "trust_class": "D[V]",
    "trusted": true
   },
@@ -1774,12 +1847,12 @@
    "before": "(VE.Rights.linesOf D).filterMap (fun RN => match RN.2.bearer, RN.2.source.norm with\n    | some _, some n => some (RN.2.node.name, n.name)\n    | _, _ => none) ++\n  (VE.Rights.barNodes D).filterMap fun B => (D.bars.find? (\u00b7.reading == .rule)).map fun b => (B.name, b.name)",
    "after": "(((VE.Rights.linesOf D).filterMap (fun RN => match RN.2.bearer, RN.2.source.norm with\n    | some _, some n => some (RN.2.node.name, n.name)\n    | _, _ => none) ++\n  (VE.Rights.barNodes D).filterMap fun B => (D.bars.find? (\u00b7.reading == .rule)).map fun b => (B.name, b.name)).take 1)",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:80: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:81: Expression",
    "raw_status": "KILLED",
-   "reads": "b9fef6f17eeafec6767d4ed05385829e4e45295da8f7658738982040d3c7d72c",
+   "reads": "cbab2f4e619b9e681bc6b76d7273d5d3d09517f9ddea353661e2b8cb086bcdad",
    "killed_at": [
-    79,
-    81
+    80,
+    82
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -1796,9 +1869,14 @@
    ],
    "before": "[\n    obj,\n    .required [\"id\", \"status\", \"point_status\", \"predicate\", \"tuple\", \"rules\", \"sources\", \"differs\"],\n    .sameLength [\"rules\", \"sources\"],\n    closed [\n      (\"id\", ref \"common.json#/$defs/id_ok\"),\n      (\"status\", constS \"ok\"),\n      (\"point_status\", enumS [\"SETTLED yes\", \"SETTLED no\", \"UNDECIDED\", \"UNKNOWN\"]),\n      (\"predicate\", n [str, .equals \"/predicate\"]),\n      (\"tuple\", n [ref \"common.json#/$defs/strings\", .equals \"/tuple\"]),\n      (\"rules\", n [ref \"common.json#/$defs/strings\", .uniqueStrings]),\n      (\"sources\", n [arr, .items (n [obj, .required [\"rule\", \"source\"], closed [(\"rule\", str), (\"source\", str)]])]),\n      (\"differs\", n [arr, .items (ref \"#/$defs/atom\")])]]",
    "after": "([\n    obj,\n    .required [\"id\", \"status\", \"point_status\", \"predicate\", \"tuple\", \"rules\", \"sources\", \"differs\"],\n    .sameLength [\"rules\", \"sources\"],\n    closed [\n      (\"id\", ref \"common.json#/$defs/id_ok\"),\n      (\"status\", constS \"ok\"),\n      (\"point_status\", enumS [\"SETTLED yes\", \"SETTLED no\", \"UNDECIDED\", \"UNKNOWN\"]),\n      (\"predicate\", n [str, .equals \"/predicate\"]),\n      (\"tuple\", n [ref \"common.json#/$defs/strings\", .equals \"/tuple\"]),\n      (\"rules\", n [ref \"common.json#/$defs/strings\", .uniqueStrings]),\n      (\"sources\", n [arr, .items (n [obj, .required [\"rule\", \"source\"], closed [(\"rule\", str), (\"source\", str)]])]),\n      (\"differs\", n [arr, .items (ref \"#/$defs/atom\")])]].dropLast)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
+   "raw_status": "KILLED",
+   "reads": "b165cb6f4f41441a133af239ddfbdd51b0a55197499cf35ee436b88e0a2b9090",
+   "killed_at": [
+    211,
+    212
+   ],
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -1833,12 +1911,12 @@
    "before": "rules.map fun n => (n, (gen.lookup n).getD n)",
    "after": "((rules.map fun n => (n, (gen.lookup n).getD n)).dropLast)",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:87: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:88: Expression",
    "raw_status": "KILLED",
-   "reads": "2403384b12f2b8029c09467a3f9537a7ade2e0ce23c2a9f1a3eba79c9451d3b8",
+   "reads": "c5148c5fd7498bd2d35188eb5a5c9de8e073d7f7a88b262d35acdc0cf0049446",
    "killed_at": [
-    87,
-    88
+    88,
+    89
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -1856,12 +1934,12 @@
    "before": "S",
    "after": "(S.dropLast)",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:89: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:90: Expression",
    "raw_status": "KILLED",
-   "reads": "bb8dced6a37eddd8bd46799c997a6406b3bf97a7292b961264cfae1f4e96c37c",
+   "reads": "0366d1b564add23146070fc9232da49f4a89687e4a19d856f333671493516a54",
    "killed_at": [
-    89,
-    91
+    90,
+    92
    ],
    "trust_class": "D[V]",
    "trusted": true
@@ -1878,9 +1956,14 @@
    ],
    "before": "let \u03c1 := tupleVal tuple\n  let rules := match fillings with\n    | some (F\u2081, F\u2082) => (selectedRules U (M.withFill F\u2081) \u03c1 p ++ selectedRules U (M.withFill F\u2082) \u03c1 p).eraseDups\n    | none => if settled then (p :: pairPartners U p).flatMap (selectedRules U (M.withFill (canonicalFinite U M)) \u03c1)\n      else []\n  let differs := match fillings with\n    | some (F\u2081, F\u2082) => fillingsDiffer U F\u2081 F\u2082\n    | none => []\n  [(\"tuple\", toJson (tuple.map (\u00b7.2))), (\"rules\", toJson rules), (\"sources\", sourcesJson (ruleSources gen rules)),\n   (\"differs\", atomsJson differs)]",
    "after": "((let \u03c1 := tupleVal tuple\n  let rules := match fillings with\n    | some (F\u2081, F\u2082) => (selectedRules U (M.withFill F\u2081) \u03c1 p ++ selectedRules U (M.withFill F\u2082) \u03c1 p).eraseDups\n    | none => if settled then (p :: pairPartners U p).flatMap (selectedRules U (M.withFill (canonicalFinite U M)) \u03c1)\n      else []\n  let differs := match fillings with\n    | some (F\u2081, F\u2082) => fillingsDiffer U F\u2081 F\u2082\n    | none => []\n  [(\"tuple\", toJson (tuple.map (\u00b7.2))), (\"rules\", toJson rules), (\"sources\", sourcesJson (ruleSources gen rules)),\n   (\"differs\", atomsJson differs)]).dropLast)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:93: Expression",
+   "raw_status": "KILLED",
+   "reads": "ad46dc19e314c90ee10a126334339d4db4db6623bc0e4abd56170d83513d04f9",
+   "killed_at": [
+    93,
+    98
+   ],
    "trust_class": "D[V]",
    "trusted": true
   },
@@ -1897,12 +1980,12 @@
    "before": "(VE.Rights.linesOf D).filterMap (fun RN => match RN.2.bearer, RN.2.source.norm with\n    | some _, some n => some (RN.2.node.name, n.name)\n    | _, _ => none) ++\n  (VE.Rights.barNodes D).filterMap fun B => (D.bars.find? (\u00b7.reading == .rule)).map fun b => (B.name, b.name)",
    "after": "(((VE.Rights.linesOf D).filterMap (fun RN => match RN.2.bearer, RN.2.source.norm with\n    | some _, some n => some (RN.2.node.name, n.name)\n    | _, _ => none) ++\n  (VE.Rights.barNodes D).filterMap fun B => (D.bars.find? (\u00b7.reading == .rule)).map fun b => (B.name, b.name)).dropLast)",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:80: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:81: Expression",
    "raw_status": "KILLED",
-   "reads": "b9fef6f17eeafec6767d4ed05385829e4e45295da8f7658738982040d3c7d72c",
+   "reads": "cbab2f4e619b9e681bc6b76d7273d5d3d09517f9ddea353661e2b8cb086bcdad",
    "killed_at": [
-    79,
-    81
+    80,
+    82
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -1919,9 +2002,14 @@
    ],
    "before": "[\"id\", \"status\", \"point_status\", \"predicate\", \"tuple\", \"rules\", \"sources\", \"differs\"]",
    "after": "([\"id\", \"status\", \"point_status\", \"predicate\", \"tuple\", \"rules\", \"sources\", \"differs\"].take 1)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
+   "raw_status": "KILLED",
+   "reads": "b165cb6f4f41441a133af239ddfbdd51b0a55197499cf35ee436b88e0a2b9090",
+   "killed_at": [
+    211,
+    212
+   ],
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -1938,12 +2026,12 @@
    "before": "rules",
    "after": "(rules.take 1)",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:87: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:88: Expression",
    "raw_status": "KILLED",
-   "reads": "2403384b12f2b8029c09467a3f9537a7ade2e0ce23c2a9f1a3eba79c9451d3b8",
+   "reads": "c5148c5fd7498bd2d35188eb5a5c9de8e073d7f7a88b262d35acdc0cf0049446",
    "killed_at": [
-    87,
-    88
+    88,
+    89
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -1960,9 +2048,14 @@
    ],
    "before": "S.map (fun x => Json.mkObj [(\"rule\", .str x.1), (\"source\", .str x.2)])",
    "after": "((S.map (fun x => Json.mkObj [(\"rule\", .str x.1), (\"source\", .str x.2)])).take 1)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:90: Expression",
+   "raw_status": "KILLED",
+   "reads": "0366d1b564add23146070fc9232da49f4a89687e4a19d856f333671493516a54",
+   "killed_at": [
+    90,
+    92
+   ],
    "trust_class": "D[V]",
    "trusted": true
   },
@@ -1978,9 +2071,14 @@
    ],
    "before": "[(\"tuple\", toJson (tuple.map (\u00b7.2))), (\"rules\", toJson rules), (\"sources\", sourcesJson (ruleSources gen rules)),\n   (\"differs\", atomsJson differs)]",
    "after": "([(\"tuple\", toJson (tuple.map (\u00b7.2))), (\"rules\", toJson rules), (\"sources\", sourcesJson (ruleSources gen rules)),\n   (\"differs\", atomsJson differs)].take 1)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:93: Expression",
+   "raw_status": "KILLED",
+   "reads": "ad46dc19e314c90ee10a126334339d4db4db6623bc0e4abd56170d83513d04f9",
+   "killed_at": [
+    93,
+    98
+   ],
    "trust_class": "D[V]",
    "trusted": true
   },
@@ -1997,12 +2095,12 @@
    "before": "(VE.Rights.linesOf D)",
    "after": "((VE.Rights.linesOf D).take 1)",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:80: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:81: Expression",
    "raw_status": "KILLED",
-   "reads": "b9fef6f17eeafec6767d4ed05385829e4e45295da8f7658738982040d3c7d72c",
+   "reads": "cbab2f4e619b9e681bc6b76d7273d5d3d09517f9ddea353661e2b8cb086bcdad",
    "killed_at": [
-    79,
-    81
+    80,
+    82
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -2019,9 +2117,14 @@
    ],
    "before": "[\"id\", \"status\", \"point_status\", \"predicate\", \"tuple\", \"rules\", \"sources\", \"differs\"]",
    "after": "([\"id\", \"status\", \"point_status\", \"predicate\", \"tuple\", \"rules\", \"sources\", \"differs\"].dropLast)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
+   "raw_status": "KILLED",
+   "reads": "b165cb6f4f41441a133af239ddfbdd51b0a55197499cf35ee436b88e0a2b9090",
+   "killed_at": [
+    211,
+    212
+   ],
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -2038,12 +2141,12 @@
    "before": "rules",
    "after": "(rules.dropLast)",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:87: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:88: Expression",
    "raw_status": "KILLED",
-   "reads": "2403384b12f2b8029c09467a3f9537a7ade2e0ce23c2a9f1a3eba79c9451d3b8",
+   "reads": "c5148c5fd7498bd2d35188eb5a5c9de8e073d7f7a88b262d35acdc0cf0049446",
    "killed_at": [
-    87,
-    88
+    88,
+    89
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -2061,12 +2164,12 @@
    "before": "S.map (fun x => Json.mkObj [(\"rule\", .str x.1), (\"source\", .str x.2)])",
    "after": "((S.map (fun x => Json.mkObj [(\"rule\", .str x.1), (\"source\", .str x.2)])).dropLast)",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:89: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:90: Expression",
    "raw_status": "KILLED",
-   "reads": "bb8dced6a37eddd8bd46799c997a6406b3bf97a7292b961264cfae1f4e96c37c",
+   "reads": "0366d1b564add23146070fc9232da49f4a89687e4a19d856f333671493516a54",
    "killed_at": [
-    89,
-    91
+    90,
+    92
    ],
    "trust_class": "D[V]",
    "trusted": true
@@ -2083,9 +2186,14 @@
    ],
    "before": "[(\"tuple\", toJson (tuple.map (\u00b7.2))), (\"rules\", toJson rules), (\"sources\", sourcesJson (ruleSources gen rules)),\n   (\"differs\", atomsJson differs)]",
    "after": "([(\"tuple\", toJson (tuple.map (\u00b7.2))), (\"rules\", toJson rules), (\"sources\", sourcesJson (ruleSources gen rules)),\n   (\"differs\", atomsJson differs)].dropLast)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:93: Expression",
+   "raw_status": "KILLED",
+   "reads": "ad46dc19e314c90ee10a126334339d4db4db6623bc0e4abd56170d83513d04f9",
+   "killed_at": [
+    93,
+    98
+   ],
    "trust_class": "D[V]",
    "trusted": true
   },
@@ -2102,12 +2210,12 @@
    "before": "(VE.Rights.linesOf D)",
    "after": "((VE.Rights.linesOf D).dropLast)",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:80: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:81: Expression",
    "raw_status": "KILLED",
-   "reads": "b9fef6f17eeafec6767d4ed05385829e4e45295da8f7658738982040d3c7d72c",
+   "reads": "cbab2f4e619b9e681bc6b76d7273d5d3d09517f9ddea353661e2b8cb086bcdad",
    "killed_at": [
-    79,
-    81
+    80,
+    82
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -2124,9 +2232,14 @@
    ],
    "before": "[\"rules\", \"sources\"]",
    "after": "([\"rules\", \"sources\"].take 1)",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
+   "raw_status": "KILLED",
+   "reads": "b165cb6f4f41441a133af239ddfbdd51b0a55197499cf35ee436b88e0a2b9090",
+   "killed_at": [
+    211,
+    212
+   ],
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -3932,5 +4045,5 @@
    "trusted": true
   }
  ],
- "where": "ve-cloud-3"
+ "where": "ve-cloud-2"
 }
