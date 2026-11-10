@@ -501,7 +501,6 @@ import VE.Typing
 import VE.Weighing.Conditions
 import VE.Weighing.ZoneExamples
 import VE.WireContract.Engine
-import VE.WireContract.Hooks.Purposes
 
 #print axioms Iceberg.Process.final_contents
 #print axioms Iceberg.Process.final_geometry
@@ -9159,10 +9158,6 @@ import VE.WireContract.Hooks.Purposes
 #print axioms VE.Weighing.wellFormedWeigh_empty
 #print axioms VE.Weighing.wfSoft
 #print axioms VE.Weighing.wf_congr
-#print axioms VE.WireContract.Hooks.Purposes.classifier_ok_iff
-#print axioms VE.WireContract.Hooks.Purposes.decodeBlock_length
-#print axioms VE.WireContract.Hooks.Purposes.decodeLinks_length
-#print axioms VE.WireContract.Hooks.Purposes.purposes_ids_reads_check
 #print axioms VE.WireContract.expandAll_views
 #print axioms VE.WireContract.expand_views
 #print axioms VE.WireContract.findSome_congr_reached
