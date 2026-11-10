@@ -1396,6 +1396,7 @@
 'VE.Closure.countermodelCheck_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Closure.countermodel_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Closure.embed_of_erase' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Closure.entails_iff' depends on axioms: [propext, Quot.sound]
 'VE.Closure.erase_embed' depends on axioms: [propext, Quot.sound]
 'VE.Closure.eval_false_iff_not_denote' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Closure.eval_iff_denote' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -1733,11 +1734,11 @@
 'VE.Core.edge_inclusion' does not depend on any axioms
 'VE.Core.edge_shift_denote' depends on axioms: [propext, Quot.sound]
 'VE.Core.edge_typed' does not depend on any axioms
-'VE.Core.embedClosure_check' depends on axioms: [propext]
-'VE.Core.embedClosure_denote' depends on axioms: [propext, Quot.sound]
+'VE.Core.embedClosure_check' does not depend on any axioms
+'VE.Core.embedClosure_denote' does not depend on any axioms
 'VE.Core.embed_of_erase' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Core.endEdge_sound' depends on axioms: [propext, Quot.sound]
-'VE.Core.entails_closure' depends on axioms: [propext, Quot.sound]
+'VE.Core.entails_closure' does not depend on any axioms
 'VE.Core.entails_v0' depends on axioms: [propext, Quot.sound]
 'VE.Core.erase_embed' depends on axioms: [propext, Quot.sound]
 'VE.Core.eval_false_iff_not_denote' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -1761,7 +1762,7 @@
 'VE.Core.reach_compose' depends on axioms: [propext]
 'VE.Core.reach_denote' does not depend on any axioms
 'VE.Core.reachable_congr' depends on axioms: [propext, Quot.sound]
-'VE.Core.reachable_iff' depends on axioms: [propext]
+'VE.Core.reachable_iff' does not depend on any axioms
 'VE.Core.reachable_induction' does not depend on any axioms
 'VE.Core.reachable_trans' does not depend on any axioms
 'VE.Core.star_least' does not depend on any axioms
@@ -7097,7 +7098,7 @@
 'VE.Route.WireSound.values_field' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Route.WireSound.wellFormed_sorts' depends on axioms: [propext, Quot.sound]
 'VE.Route.closureValid_certificateSound' depends on axioms: [propext, Classical.choice, Quot.sound]
-'VE.Route.closure_entails_iff' does not depend on any axioms
+'VE.Route.closure_entails_iff' depends on axioms: [propext, Quot.sound]
 'VE.Route.coreValid_certificateSound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Route.core_entails_iff' does not depend on any axioms
 'VE.Route.core_family_gate' does not depend on any axioms
