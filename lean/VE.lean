@@ -329,6 +329,7 @@ import VE.Service.ScopeExamples
 import VE.Service.DocumentChain
 import VE.Service.DocumentChainExamples
 import VE.Service.DocumentChainChecks
+import VE.Service.DocumentView
 import VE.Service.SoftSourceExamples
 import VE.Service.UndeclaredExamples
 import VE.Service.CardinalityExamples
