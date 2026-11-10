@@ -13,7 +13,7 @@ import tempfile
 import time
 import tomllib
 
-from layer_policy import ROOT, lean_layer
+from layer_policy import LEAN_COMMENT, ROOT, declaration_form, lean_layer
 
 LEDGER = ROOT / "tools/lean-layer-exceptions.json"
 PLAIN_LAYOUT = ("write the header in the plain layout: one `import A.B.C` per line at column 0, "
@@ -269,7 +269,16 @@ def lean_disagreements(lean: list[str], files: dict[str, tuple[Path, list[str]]]
 def main() -> int:
     paths = {".".join(path.relative_to(ROOT / "lean").with_suffix("").parts): path
              for path in (ROOT / "lean").rglob("*.lean") if ".lake" not in path.parts}
-    unmapped = sorted(module for module in paths if lean_layer(module) is None)
+    # Each module's layer, read once: its own first-line declaration, else tools/layer_policy.py's rules.
+    layers = {}
+    declarations = {}  # module -> why its declaration is refused
+    for module in paths:
+        try:
+            layers[module] = lean_layer(module, ROOT)
+        except ValueError as error:
+            layers[module] = None
+            declarations[module] = str(error)
+    unmapped = sorted(module for module in paths if layers[module] is None and module not in declarations)
     edges = set()
     unknown = set()
     headers = []
@@ -294,8 +303,8 @@ def main() -> int:
                 if imported.startswith("VE.") or imported in {"VE", "Iceberg"}:
                     unknown.add(f"{importer} -> {imported}")
                 continue  # Lean and Std library imports
-            importer_layer = lean_layer(importer)
-            imported_layer = lean_layer(imported)
+            importer_layer = layers[importer]
+            imported_layer = layers[imported]
             if importer_layer is not None and imported_layer is not None and importer_layer < imported_layer:
                 edges.add(f"{importer} -> {imported}")
     expected = json.loads(LEDGER.read_text())
@@ -305,7 +314,10 @@ def main() -> int:
     unbuilt = unbuilt_modules(set(paths), read, tomllib.loads(lakefile.read_text())) if lakefile.is_file() else []
     for message in unbuilt:
         print(message, file=sys.stderr)
-    for message in (f"unmapped Lean module: {x}" for x in unmapped):
+    for message in sorted(declarations.values()):
+        print(f"Lean layer declaration refused: {message}", file=sys.stderr)
+    for message in (f"unmapped Lean module: {x} ({declaration_form(LEAN_COMMENT)}, "
+                    "or name it in tools/layer_policy.py)" for x in unmapped):
         print(message, file=sys.stderr)
     for message in (f"Lean header not in the plain layout: {x}" for x in sorted(headers)):
         print(message, file=sys.stderr)
@@ -314,10 +326,13 @@ def main() -> int:
     for message in diagnostic:
         print(f"diagnostic-only Lean import: {message}", file=sys.stderr)
     for edge in sorted(edges - expected.keys()):
-        print(f"new outward Lean import: {edge}", file=sys.stderr)
+        importer, imported = edge.split(" -> ")
+        print(f"new outward Lean import: {edge} (layer {layers[importer]} -> {layers[imported]}); import inward, "
+              f"or if {importer} belongs in layer {layers[imported]} or higher, {declaration_form(LEAN_COMMENT)}",
+              file=sys.stderr)
     for edge in sorted(expected.keys() - edges):
         print(f"stale Lean exception: {edge}", file=sys.stderr)
-    if unmapped or headers or unknown or diagnostic or unbuilt or edges != expected.keys():
+    if unmapped or declarations or headers or unknown or diagnostic or unbuilt or edges != expected.keys():
         return 1
     print(f"Lean layer graph kept ({len(paths)} modules, {len(edges)} reviewed legacy edges)")
     return 0

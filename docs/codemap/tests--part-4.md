@@ -1,3 +1,16 @@
+- `tests/test_judgments_undeclared.py` — The `document` mode's `undeclared_evaluative` field (judgment-terms-PLAN.md JT-3, part jt-3a; docs/spec/ judgment-terms.md 7, 8.4 and 11.7): Lean's list of the…
+- `tests/test_lake_outputs.py` — tools/lake_outputs.py: an executable whose Lake trace does not record the file beside it is stale (rd-6b review B2: an older `ve_conformance` under a trace cop…
+- `tests/test_lean_audit_record.py` — The committed axiom audit record `lean/axioms.txt` names every theorem, and the audit refuses a stale one.
+- `tests/test_lean_authority_values.py` — No reported evaluation value or count is Rust's (lean-first batch 15b, review B3; batch 18: Lean is the one authority).
+- `tests/test_lean_budget_types.py` — Present replay budgets must never silently become the default.
+- `tests/test_lean_build.py` — `tests/lean_build.py`: a fixture naming a Lean target the lakefile lacks fails, prebuilt or not.
+- `tests/test_lean_certificates.py` — The Python prover searches; the independently proved Lean checker decides.
+- `tests/test_lean_conformance.py` — Portable JSON differential tests.
+- `tests/test_lean_decided_share.py` — `tools/lean_decided_share.py` (readings-defaults 1.10 and 10; plan 3.9, RD-5): sums Lean's decided units' span bytes and decides nothing; Lean's list is untrus…
+- `tests/test_lean_default_build.py` — Every Lean source is compiled by the default `lake build` (et-7 review F2).
+- `tests/test_lean_document_wrapper.py` — The Lean `document` mode (lean-first batch 16a) against Python's `load_document` and `check_document` wrapper.
+- `tests/test_lean_dump_cache.py` — The Lean dump cache (`tools/lean_dump_cache.py`): a stored dump is replayed only while every input it is keyed on is unchanged, and any doubt is a miss that ru…
+- `tests/test_lean_first_b10a_report.py` — Lean-first batch 10a: the tables of `docs/lean-first/b10a/DELTA.md` are rendered from the evidence files (build checklist 20), the corpus A/B found no differen…
 - `tests/test_lean_first_b10b_report.py` — Lean-first batch 10b: the fuzzer gate accepts only the retired DF-19 difference (build checklist 13), and the recorded evidence shows no unexplained difference…
 - `tests/test_lean_first_b12_report.py` — Batch 12's reported numbers come from its gate evidence.
 - `tests/test_lean_first_b13a.py` — Batch 13a: Lean parse diagnostics, order text and replay ownership.
@@ -49,9 +62,11 @@
 - `tests/test_norm_defaults.py` — norm-defaults@0 fixtures (docs/spec/norm-defaults.md section 9), Python side.
 - `tests/test_norm_defaults_contract.py` — The `norm-defaults@0` wire table in shadow (wire-contract-s5.md 2.4, 8.2): `UnspecifiedDocument` still owns the verdict; the Python engine names the first chec…
 - `tests/test_norm_defaults_differential.py` — norm-defaults@0 evidence against brute force (docs/spec/norm-defaults.md 2.5, 3.1, 8).
+- `tests/test_norm_defaults_documented_support.py` — The norm-defaults spec's profile-validation claims with `norm-defaults@0` agree with Lean's `todayGate`.
 - `tests/test_norm_defaults_layered.py` — norm-defaults@0 on the soft and rights routes, in Lean (lean-first batch 10a; docs/spec/norm-defaults.md 2.3 and 3.3; lean/VE/NormDefaults/Layered.lean).
 - `tests/test_norm_defaults_relay_english.py` — The English display formats the Lean accepted norm-defaults rows and nothing else.
 - `tests/test_norm_defaults_report.py` — norm-defaults@0 report in Lean (lean-first batch 10a; docs/spec/norm-defaults.md 3.2 and 5).
+- `tests/test_norm_defaults_response_binding.py` — norm-defaults-cfr-1 (regrade #3, ND-FC2): the norm-defaults mode's answers are bound to their request.
 - `tests/test_norm_defaults_soft_kinds.py` — RD-9 SC-6: the soft branch's `admission` and `norm-defaults-certificate` under norm-defaults@0 (docs/spec/rd-9-soft-chain.md 1.13, 4.5, 6.10 and 8.3's SC-6 row…
 - `tests/test_norm_defaults_switch.py` — Batch 10b: Lean answers that the Python document and admission paths consume.
 - `tests/test_norm_defaults_three_way.py` — norm-defaults@0: Python, Lean and Rust agree on the spec fixtures (docs/spec/norm-defaults.md 8, 9).
@@ -69,23 +84,3 @@
 - `tests/test_p0_three_way.py` — Three-way P0 conformance: Python, Rust and the Lean `route` subcommand give identical verdicts on every shipped case of the P0 families (PLAN-EXPAND2 3.10(2)).
 - `tests/test_p1.py` — (no module docstring)
 - `tests/test_p1_amendment11.py` — Budget choice and two-turn execution/analysis, without provider calls.
-- `tests/test_p1_amendment12.py` — Ceiling-driven judge substitution: budgets, routing, reuse and disclosure.
-- `tests/test_p1_amendment13.py` — Audited abstentions, gate scope, zero-generation reuse and strict bounds.
-- `tests/test_p1_amendment14.py` — Attacker accounting recovery, exact scored reuse, and partial initial analysis.
-- `tests/test_p1_amendment15.py` — Amendment 15 recovery, bounded visible text, and append-only paid resume (offline).
-- `tests/test_p1_amendment7.py` — Amendment 7: entirely offline dispatch, restart and partial-panel evidence.
-- `tests/test_p1_amendment8.py` — Amendment 8 contract, pricing, recovery, fallback and budget regressions; $0.
-- `tests/test_p1_amendment9.py` — Computed joint bounds and attacker truncation isolation; no provider calls.
-- `tests/test_p1_history.py` — Historical request provenance stays separate from current checker identity.
-- `tests/test_p1_infrastructure.py` — Amendment 5: offline transport failures, no paid/network calls.
-- `tests/test_p1_native_counter.py` — Offline native-counter tests: pinned templates, no downloads or providers.
-- `tests/test_p1_preflight.py` — (no module docstring)
-- `tests/test_p1_reconcile.py` — Append-only budget reconciliation and request reuse across schedule changes.
-- `tests/test_package_facade.py` — `ve/__init__.py` resolves its public names lazily: `import ve` loads no submodule, each name is its module's.
-- `tests/test_packs_guard_mutants.py` — The premise-pack fixtures can fail (pk-1 review F1, B; standing ruling R16 in DRI-RULINGS.md).
-- `tests/test_parser_renderer.py` — (no module docstring)
-- `tests/test_pc1g_trust_mutants.py` — The saved pc-1g trust mutation record has a verdict for every planned mutant.
-- `tests/test_pc3_statements.py` — PC-3's Lean declarations against the approved blocks of docs/spec/profile-composition.md 1.2 to 1.6 (build checklist 17), and the check's ability to fail.
-- `tests/test_pc9_statements.py` — PC-9's Lean declarations against the approved blocks of docs/spec/profile-composition.md 1.8 and 1.9 (build checklist 17), and the check's ability to fail.
-- `tests/test_platform_contract.py` — `tools/platform_contract.py`: the x86 platform contract suite (test-architecture plan rank 2, section 3.3).
-- `tests/test_precommit_hook.py` — tools/hooks/pre-commit: each check rejects a planted example and passes clean commits.

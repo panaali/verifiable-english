@@ -1,3 +1,7 @@
+- `tools/stage2_parity.py` — Gate 2 parity: rerun the Stage 0 probe matrix under a backend authority and diff it.
+- `tools/test_chunks.py` — Which tests of one test file a chunk runs: the one rule that splits a file's collected tests into k parts.
+- `tools/test_layer_policy.py` — Boundary checks for the selector's non-import dependencies and fallback.
+- `tools/test_map.py` — Record and load the per-test coverage map used by tools/select_tests.py.
 - `tools/test_map_recorder.py` — Record what one process of a test-map run executes, reads and starts.
 - `tools/test_profile_report.py` — Summarise the JSON-lines files `tools/pytest_profile.py` writes.
 - `tools/test_schedule.py` — The order an xdist run starts its tests in: the slowest first, so no long test starts last.

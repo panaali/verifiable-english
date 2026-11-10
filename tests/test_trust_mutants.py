@@ -3845,7 +3845,9 @@ def test_the_plan_only_argument_still_holds():
     # `imports` and what it reaches of its module: none of layer_policy's names or of what the module derives from them
     tree = tool["tools/check_lean_imports.py"]
     defs = {n.name: n for n in tree.body if isinstance(n, (ast.FunctionDef, ast.ClassDef))}
-    derived = {"ROOT", "lean_layer"}
+    derived = {alias.asname or alias.name for n in tree.body if isinstance(n, ast.ImportFrom)
+               and n.module in {"layer_policy", "tools.layer_policy"} for alias in n.names}
+    assert {"ROOT", "lean_layer"} <= derived, derived  # every name the module takes from layer_policy
     derived |= {t.id for n in tree.body if isinstance(n, ast.Assign) and {
         x.id for x in ast.walk(n.value) if isinstance(x, ast.Name)} & derived for t in n.targets
         if isinstance(t, ast.Name)}

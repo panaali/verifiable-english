@@ -1,0 +1,44 @@
+{
+"allow": [
+{
+"definition": "VE.Presupposition.UContent",
+"operator": "ctor-drop",
+"reason": "does not elaborate: `claim`, `rule` and `readings` are named by unitContent, unitReadings, premisesBefore (Wire.lean:142-160) and the S17 fixtures, an unknown constant rather than a refutation; the hand mutant T-UContent-readings (mutants.json) stops Wire.lean:155, and the `unformalised` drop fails Examples.lean:729-730"
+},
+{
+"definition": "VE.Presupposition.RContent",
+"operator": "ctor-drop",
+"reason": "does not elaborate: `claim` is built by claimReading (Wire.lean:184) and `rule` by ruleReading (Wire.lean:195), an unknown constant rather than a refutation; the hand mutant T-RContent-rule stops Wire.lean:201"
+},
+{
+"definition": "VE.Presupposition.nodeCertificate",
+"operator": "list-empty",
+"reason": "does not elaborate: a bare `[]` in place of an Option or of `D.proofs` leaves `.map (·.2)` untyped (Wire.lean:153, type mismatch or invalid projection); the hand mutant L-nodeCertificate and the guards at Examples.lean:711 and :725 read the same lookup"
+},
+{
+"definition": "VE.Presupposition.unitAsserted",
+"operator": "list-empty",
+"reason": "does not elaborate: `unitOf D u` and its `.map` are Options, so a bare `[]` is a type mismatch (Wire.lean:145); the hand mutant L-unitAsserted fails Examples.lean:709"
+},
+{
+"definition": "VE.Presupposition.expectedReadings",
+"operator": "list-empty",
+"reason": "does not elaborate: each replaced expression is an Option (the base or rule lookup and its `.map`) or the element type of `R.bases` is lost (Wire.lean:208-210, type mismatch); the hand mutants L-expectedReadings-base, L-expectedReadings-rule and L-expectedReadings-heading fail Examples.lean:662-686"
+},
+{
+"definition": "VE.Presupposition.claimReading",
+"operator": "list-empty",
+"reason": "does not elaborate: a bare `[]` in place of `R.checked` or its filter leaves `d.ob` untyped (Wire.lean:182, invalid field notation); the hand mutants L-claimReading-unit and L-claimReading-other-root read the same list (Examples.lean:639-646)"
+},
+{
+"definition": "VE.Presupposition.ruleReading",
+"operator": "list-empty",
+"reason": "does not elaborate: a bare `[]` in place of `R.checked` or its filter leaves `d.ob` untyped (Wire.lean:192, invalid field notation); the hand mutants L-ruleReading-rule, L-ruleReading-other and L-ruleReading-own read the same list (Examples.lean:672, :686, :718)"
+},
+{
+"definition": "VE.Presupposition.premisesBefore",
+"operator": "list-empty",
+"reason": "does not elaborate: a bare `[]` in place of the takeWhile leaves `x.content` untyped (Wire.lean:158, invalid field notation); the hand mutants L-premisesBefore-strict and L-premisesBefore-asserted fail Examples.lean:705-706"
+}
+]
+}

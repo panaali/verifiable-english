@@ -1,0 +1,27 @@
+{
+  "comment": "sc-11 seeded bugs. Lean: each planted alone in the final file, the proofs it breaks stubbed with sorry for that run only (so the examples elaborate and the #guards it breaks are listed; the first six failing #guards of each run are recorded), `lake build VE.Readings.SoftSupWireExamples` run, the file restored by git checkout. Python: planted in tools/check_rd9_sc1_statements.py and `uv run pytest -q tests/test_rd9_statements.py` run. Line numbers are of the files at the commit that adds this file. The trust-mutants sweep of the new trusted definition (sdShown) is docs/rd-9/sc-11/trust-mutants.json.",
+  "mutants": [
+    {"id": "M1", "definition": "VE.Readings.labelImage", "file": "lean/VE/Readings/SoftSupLabels.lean",
+     "change": "an exception pair's first component is the superposed label (the image's labels zipped with themselves): 14.9's seeded bug 1", "stubbed": ["every theorem of the file but zip_map_same and zip_flatMap_of_length"],
+     "test": "lean/VE/Readings/SoftSupWireExamples.lean:21 (W-2), :25, :28 (W-2' NC9), :30 (W-2' NSD2), :86 and :88 (W-5)", "result": "KILLED"},
+    {"id": "M2", "definition": "VE.Readings.Wire.routeSD", "file": "lean/VE/Readings/SoftSupWire.lean",
+     "change": "routeSD without sdChecked: 14.9's seeded bug 3", "stubbed": ["routeSD_superposed_iff"],
+     "test": "lean/VE/Readings/SoftSupWireExamples.lean:135 (W-6', a choice past 64 fails sdChoiceText), :162 to :164 (W-13's enumerated rows), :169, :174", "result": "KILLED"},
+    {"id": "M3", "definition": "VE.Readings.sdShown", "file": "lean/VE/Readings/SoftSupLabels.lean",
+     "change": "a used label with no image shown as an empty string: 14.9's seeded bug 6 (null shown as \"\")", "stubbed": ["sdShown_mem", "sdShown_image"],
+     "test": "lean/VE/Readings/SoftSupWireExamples.lean:43 (W-3)", "result": "KILLED"},
+    {"id": "M4", "definition": "VE.Readings.Wire.sdChecked", "file": "lean/VE/Readings/SoftSupWire.lean",
+     "change": "sdCheckWork not charged before the first sdChoiceText (the conjunct dropped): the task's seeded bug 4", "stubbed": ["sdChecked_spec", "sdCheck_of_admitted"],
+     "test": "lean/VE/Readings/SoftSupWireExamples.lean:163 (W-13's work case), :164, :174 (at most 64 choices over the work limit, DRI 2026-11-09 sc-11-2 item 2)", "result": "KILLED"},
+    {"id": "M4b", "definition": "VE.Readings.Wire.sdChecked", "file": "lean/VE/Readings/SoftSupWire.lean",
+     "change": "the work conjunct read after the per-choice texts (the same value, a different order)",
+     "test": "tests/test_rd9_statements.py::test_sc11_the_work_charge_read_after_the_choices_fails (sdChecked: def differs)", "result": "KILLED"},
+    {"id": "M5", "definition": "VE.Readings.nodeExcLabels", "file": "lean/VE/Readings/SoftSupLabels.lean",
+     "change": "a necessary condition's label spelled sufficient (R16: one mutant per new definition that counted as trusted before its tie)", "stubbed": ["every theorem of the file but zip_map_same and zip_flatMap_of_length"],
+     "test": "lean/VE/Readings/SoftSupWireExamples.lean:25, :30 (W-2' NSD2)", "result": "KILLED"},
+    {"id": "P1", "definition": "approved_block", "file": "tools/check_rd9_sc1_statements.py",
+     "change": "a block whose start marker lies inside its fence read as empty (14.8's second block not compared)",
+     "test": "tests/test_rd9_statements.py::test_rd9_statements_match_the_approved_text_with_nothing_unbuilt (main() returns an error)", "result": "KILLED"}
+  ],
+  "not_run": "14.9's other seeded bugs need sc-11b's wire fixtures: sdShown over all choices (W-7 under --under; the A filter is also pinned here at SoftSupWireExamples.lean:63 and :70), the nd behaviour off (W-7), Fill_T dropped from the premise list (W-9)."
+}
