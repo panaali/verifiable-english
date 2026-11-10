@@ -1155,4 +1155,53 @@ def points6 : List FM := [true, false].flatMap fun c => (List.range 8).map fun i
 #guard (framePairs fat6).contains (keyK, keyQ) && (points6.filter (frameHolds fat6)).length == 7 &&
   points6.all fun M => !frameHolds fat6 M || evalAt fat6 Γ1 [1, 0] M g6 == evalAt fat6 Γ1 [1, 0] M qlA
 
+/-! ## 7.4 and 7.5 for at-1's eight statements, on F-AT1's points (`WellFormedAtt fat1 = true` a hypothesis, as above:
+the `#guard` after at-1d's heading evaluates it) -/
+
+-- `old_formula_invariant` (7.4, φ = every situation is the category): with the category true it holds on M3's base
+-- structure and on `interp`; with it false, on neither (M2, whose `knows` and `thinks` tuples `interp` adds)
+def allCat : VE.Formula := .all sortS (contentOf cat0)
+theorem allCat_at : allCat.denote (St (routeModel true [])) [] ∧ ¬ allCat.denote (St (routeModel false [])) [] := by
+  refine ⟨fun v hv => ?_, fun h => ?_⟩
+  · have : v = 1 := by simpa [routeModel, sortC, sortS] using hv
+    subst this; exact ⟨1, rfl, by decide⟩
+  · obtain ⟨_, hv, hr⟩ := h 1 (by decide); cases hv; exact absurd hr (by decide)
+example (h : WellFormedAtt fat1 = true) :
+    (allCat.denote (interp fat1 (M true [keyK])) [] ∧ allCat.denote (M true [keyK]).S []) ∧
+    (¬ allCat.denote (interp fat1 (M false [keyK, keyQ])) [] ∧ ¬ allCat.denote (M false [keyK, keyQ]).S []) :=
+  have i := fun c ks => old_formula_invariant fat1 h (M c ks) [] [] allCat ⟨by decide, sortS, by decide, rfl⟩
+  ⟨⟨(i _ _).2 allCat_at.1, allCat_at.1⟩, ⟨fun hc => allCat_at.2 ((i _ _).1 hc), allCat_at.2⟩⟩
+
+-- `att_elaboration_faithful` (7.4: M1 true both ways, M4 false both ways; 7.5: F-AT1, M1-M4). The elaborated guard
+-- (holder variable 1, slot variable 0) read on `interp` directly: an atom holds exactly when its key holds in `J`
+def ρ10 : List Nat := [1, 0]
+/-- F-AT1's elaborated guard, by key (`guard1F` names the keys' names). -/
+def guard1E : VE.Formula := .or (.and (atom fat1 keyK (.var 1) (some (.var 0))) (atom fat1 keyI (.var 1) (some (.var 0))))
+  (atom fat1 keyQ (.var 1) (some (.var 0)))
+theorem guard1_elab : guard1.toFormula fat1 Γ1 = some guard1E := rfl
+theorem atom_interp_M (h : WellFormedAtt fat1 = true) (c : Bool) (ks : List Key) {k : Key} (hk : k ∈ keys fat1) :
+    (atom fat1 k (.var 1) (some (.var 0))).denote (interp fat1 (M c ks)) ρ10 ↔ k ∈ ks := by
+  show (∃ v w, _ = some v ∧ _ = some w ∧
+    (match keyOf fat1 (name fat1 k) with | some k => (M c ks).J k [v, w] | none => _)) ↔ _
+  rw [keyOf_name fat1 h k hk]
+  exact ⟨fun ⟨_, _, h0, h1, hJ, _⟩ => by cases h0; cases h1; exact hJ, fun hk => ⟨(0 : Nat), (1 : Nat), rfl, rfl, hk, rfl⟩⟩
+example (h : WellFormedAtt fat1 = true) : ∃ φ, guard1.toFormula fat1 Γ1 = some φ ∧
+    (φ.denote (interp fat1 (M false [keyQ])) ρ10 ∧ AFormula.denote fat1 (M false [keyQ]) Γ1 ρ10 guard1) ∧
+    (φ.denote (interp fat1 (M false [keyK, keyQ])) ρ10 ∧
+      AFormula.denote fat1 (M false [keyK, keyQ]) Γ1 ρ10 guard1) ∧
+    (¬ φ.denote (interp fat1 (M true [keyK])) ρ10 ∧ ¬ AFormula.denote fat1 (M true [keyK]) Γ1 ρ10 guard1) ∧
+    (¬ φ.denote (interp fat1 (M true [])) ρ10 ∧ ¬ AFormula.denote fat1 (M true []) Γ1 ρ10 guard1) := by
+  have mem : keyK ∈ keys fat1 ∧ keyI ∈ keys fat1 ∧ keyQ ∈ keys fat1 := by rw [keys_fat1]; decide
+  have hG := fun c ks => or_congr (and_congr (atom_interp_M h c ks mem.1) (atom_interp_M h c ks mem.2.1))
+    (atom_interp_M h c ks mem.2.2)
+  have hF := fun c ks => att_elaboration_faithful fat1 h (M c ks) Γ1 ρ10 guard1
+    ((awf_iff fat1 Γ1 guard1).1 (by decide)) _ guard1_elab
+  have yes : ∀ c ks, (keyK ∈ ks ∧ keyI ∈ ks) ∨ keyQ ∈ ks → guard1E.denote (interp fat1 (M c ks)) ρ10 ∧
+      AFormula.denote fat1 (M c ks) Γ1 ρ10 guard1 := fun c ks hv =>
+    have g := (hG c ks).2 hv; ⟨g, (hF c ks).1 g⟩
+  have no : ∀ c ks, ¬ ((keyK ∈ ks ∧ keyI ∈ ks) ∨ keyQ ∈ ks) → ¬ guard1E.denote (interp fat1 (M c ks)) ρ10 ∧
+      ¬ AFormula.denote fat1 (M c ks) Γ1 ρ10 guard1 := fun c ks hv =>
+    have g := fun x => hv ((hG c ks).1 x); ⟨g, fun a => g ((hF c ks).2 a)⟩
+  exact ⟨_, guard1_elab, yes false _ (by decide), yes false _ (by decide), no true _ (by decide), no true _ (by decide)⟩
+
 end VE.Attitudes.Examples
