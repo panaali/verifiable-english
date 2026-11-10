@@ -42,6 +42,7 @@
 - `tests/test_et_e1_probe.py` — ET-E1's pre-registration and scorer (docs/events-time-causation/et-e1): hermetic, no model calls.
 - `tests/test_evaluate_search.py` — (no module docstring)
 - `tests/test_events_answer.py` — et-5: the `events@0` relay (`ve/events.py`) on genuine Lean answers, and fuzz tests of its binding.
+- `tests/test_events_document.py` — et-5b: an `events@0` document through Lean's `document` mode (docs/spec/events-time-causation.md 1.3, 2.9, 4; DRI 2026-11-10 item 1).
 - `tests/test_events_route.py` — et-4b: an `events` document through the service's norm-defaults mode, on both layered branches.
 - `tests/test_events_wire_mutants.py` — Mutants of the `events` block's decoder each fail a fixture (et-4 review F1).
 - `tests/test_events_wordings.py` — et-5, T9: who judges which `events@0` wording (events-time-causation plan 2.7, spec 2).
@@ -85,4 +86,3 @@
 - `tests/test_judgments_chain.py` — PC-1: `judgments@0` beside the soft chain in Lean's document mode, and row 16, the clash validation (docs/spec/profile-composition.md 1.7, 3.1 and 5.1; the G3 …
 - `tests/test_judgments_compose.py` — jt-2c: the modes that compose with `judgments@0` decide over the environment without the document layers (`VE.Compose.decidingEnvironment`) and name the list a…
 - `tests/test_judgments_document.py` — `judgments@0` in Lean's `document` mode (judgment-terms-PLAN.md JT-2; docs/spec/judgment-terms.md 8): the fixtures of spec 11.2 and 11.3 replayed through the s…
-- `tests/test_judgments_exercised.py` — Every trusted definition of the judgment-terms files is stated about by a theorem (standing ruling R16).
