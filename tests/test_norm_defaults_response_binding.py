@@ -25,6 +25,7 @@ from tests.test_norm_defaults import CSAM_RULE, CSAM_SITUATION, csam
 from ve import norm_defaults as nd
 from ve.ast import Top, formula_to_data
 from ve.backends.lean_service import Invalid, LeanService, _rule_names, bind_answers
+from ve.backends.service_schema import check_row
 from ve.errors import CheckerUnavailable
 from ve.norm_defaults_route import prove_filled_entailment, source_case
 
@@ -233,6 +234,16 @@ def test_status_rule_binding_without_generated_profile(environment):
         bind_answers(MODE, response, {"cases": [case]})
     response["results"][0]["result"]["rules"] = ["r1"]
     bind_answers(MODE, response, {"cases": [case]})
+
+
+def test_status_tuple_schema_binds_request_without_service():
+    """The Lean-rendered row shape rejects a different entity even before the client starts a service."""
+    case = {"id": "norm-defaults-status", "kind": "norm-defaults-status", "predicate": "p", "tuple": ["a"]}
+    row = {"id": "norm-defaults-status", "status": "ok", "point_status": "UNKNOWN", "predicate": "p",
+           "tuple": ["a"], "rules": [], "differs": []}
+    check_row(MODE, row, case, 0)
+    with pytest.raises(Invalid):
+        check_row(MODE, {**row, "tuple": ["ghost"]}, case, 0)
 
 
 def test_the_manifest_lists_every_kind_the_mode_answers():
