@@ -20845,7 +20845,8 @@
         "VE.Readings.SoftSupRunExamples.witnessJ",
         "VE.Readings.SoftSupRunExamples.modelJ",
         "VE.Readings.SoftSupRunExamples.count",
-        "VE.Readings.SoftSupRunExamples.text"
+        "VE.Readings.SoftSupRunExamples.text",
+        "VE.Readings.SoftSupRunExamples.big8"
       ]
     }
   }
