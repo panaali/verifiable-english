@@ -79,6 +79,61 @@
 "definition": "VE.Presupposition.withObligations",
 "operator": "list-empty",
 "reason": "does not elaborate: a bare `[]` in place of the units or the block leaves the field notation `.unit`/`.id` untyped; the elaborating mutants are killed by the two-unit and unformalised-unit guards"
+},
+{
+"definition": "VE.Presupposition.checkIds",
+"operator": "not-drop",
+"reason": "killed in effect: with `!` dropped every first obligation is refused `id`, so more than 100 guards of Examples.lean fail and Lean stops at `maxErrors`, which the tool reads as no verdict; the hand mutant M-checkIds and the repeated-id guards cover the check"
+},
+{
+"definition": "VE.Presupposition.withObligations",
+"operator": "eq-ne",
+"reason": "killed in effect: with `!=` step 3 reads the wrong units, so more than 100 guards of Examples.lean fail and Lean stops at `maxErrors`, which the tool reads as no verdict; the hand mutants M-withObligations and M-withObligations-first cover the definition"
+},
+{
+"definition": "VE.Presupposition.checkIds",
+"operator": "list-empty",
+"reason": "killed in effect: with `rowNames` empty every obligation is refused as an unknown row, so more than 100 guards of Examples.lean fail and Lean stops at `maxErrors`, which the tool reads as no verdict; A12 (`PresuppositionUnknownRow: p1: title`) and every admitted guard cover the check"
+},
+{
+"definition": "VE.Presupposition.separated",
+"operator": "list-drop-last",
+"reason": "equivalent where it survives: `dropLast` on the outer index range removes only the last index, which has no later index to pair with; on the inner range it drops pairs and is killed by the three-reading guards"
+},
+{
+"definition": "VE.Presupposition.withObligations",
+"operator": "list-drop-last",
+"reason": "killed in effect: with the block's last obligation dropped, a one-obligation document has no unit with obligations, so more than 100 guards of Examples.lean fail and Lean stops at `maxErrors`, which the tool reads as no verdict; the two-unit guard and M-withObligations cover the definition"
+},
+{
+"definition": "VE.Presupposition.baseOf",
+"operator": "list-first",
+"reason": "equivalent where it survives: `(rs.take 1).head?` is `rs.head?` (Admit.lean:79, the open set's kind); the list-first mutants of the readings lists `allSame` reads are killed by the open-set guards (a second or third reading over another base or rule)"
+},
+{
+"definition": "VE.Presupposition.withObligations",
+"operator": "list-drop-first",
+"reason": "killed in effect: dropping the first unit with obligations leaves a one-unit document with none, so more than 100 guards of Examples.lean fail and Lean stops at `maxErrors`, which the tool reads as no verdict; the two-unit guard and M-withObligations cover the definition"
+},
+{
+"definition": "VE.Presupposition.checkIds",
+"operator": "list-last",
+"reason": "killed in effect where it is no verdict: `rowNames` cut to its last row refuses every `definite` obligation as an unknown row, so more than 100 guards of Examples.lean fail and Lean stops at `maxErrors`; the `seen` list-last mutant is killed by the repeated-id guards"
+},
+{
+"definition": "VE.Presupposition.separated",
+"operator": "list-drop-first",
+"reason": "equivalent where it survives: `(rs.drop 1).length` in the outer index range drops only the last index, which has no later index to pair with, and `.drop 1` on the inner range drops only index 0, which is never a later index; the outer `.drop 1` and the inner `(rs.drop 1).length` drop pairs and are killed by the three-reading guards"
+},
+{
+"definition": "VE.Presupposition.separated",
+"operator": "list-last",
+"reason": "equivalent where it survives: `(ss.reverse.take 1).isEmpty` is `ss.isEmpty`; the list-last mutants of the pairs and of `ss.any` are killed by the three-reading and two-situation guards"
+},
+{
+"definition": "VE.Presupposition.baseOf",
+"operator": "list-last",
+"reason": "equivalent: `(rs.reverse.take 1).head?` picks the open set's kind from its last reading instead of its first; a set whose readings are all of one kind takes the same branch, and a mixed set fails `allSame` in either branch with the same `content` text (`isRuleUnit` reads the first reading)"
 }
 ]
 }

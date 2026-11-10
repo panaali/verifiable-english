@@ -1220,5 +1220,12 @@ def rAsr : RReading := { cand := .asserted, aliases := [], content := .claim (.a
 def tCA : CandidateTable := fun _ _ => [.conditioned, .assumed]
 #guard errOf (admitWith tCA fxN (doc7u true [] rr7.reverse)) == "PresuppositionDefault: p1: p"
 #guard errOf (admitWith tCA (fx7 .soft) (doc7u false ["p"] rr7.reverse)) == softText
+-- three readings with the (0, 1) pair not separated; an unresolved obligation first in its unit, another after it
+#guard errOf (admitWith (t3 [.asserted, .assumed, .conditioned]) ⟨.norms, [("u1", 2, 0, sitNo), ("u1", 2, 1, sitNo)]⟩
+  (docA [⟨"u1", true, .readings [rAsr, rdAs, rdCo]⟩] [pA .unresolved])) == needsModelText
+#guard errOf (admitWith fixtureTable fx1 (docA [cu "u0" theOwnerU, ⟨"u1", true, .readings [rdAs, rdCo]⟩]
+  [pA .unresolved, { pA (.assumed "u0") with id := "p2" }])) == notSeparatedText
+-- the fixed rule unit's rule first in the tree, before another
+#guard errOf (admitWith fixtureTable (fx7 .norms) (doc7r3 [rule22 "r3", rule22 "r4"])) == notSeparatedText
 
 end VE.Presupposition.Examples
