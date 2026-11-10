@@ -38,6 +38,20 @@
       "test": "tests/test_cardinality_lean.py::test_with_every_unit_a_counting_unit_the_chain_still_refuses_what_only_it_checks",
       "killed": true,
       "claim": "review F1: bind_composed returns no chain text when every unit is a counting unit (the base's branch restored); all 4 cases fail (Lean refuses the parent read in the chain reading's place as unbound)"
+    },
+    {
+      "id": "mixed-readings-chain-reading-to-python",
+      "file": "ve/document/lean.py",
+      "test": "tests/test_cardinality_lean.py::test_a_mixed_pending_and_content_reading_set_on_the_chain_list_is_judged_by_lean",
+      "killed": true,
+      "claim": "re-check F3: _python_decides_mixed_readings without its chain_of guard, so a chain reading with a mixed pending/content reading set is handed to Python (no Python path); the test and all 5 cases of test_no_reading_set_hands_a_chain_list_or_its_chain_reading_to_python fail"
+    },
+    {
+      "id": "mixed-readings-no-python-path",
+      "file": "ve/document/lean.py",
+      "test": "tests/test_cardinality_lean.py::test_a_mixed_pending_and_content_reading_set_on_the_chain_list_is_judged_by_lean",
+      "killed": true,
+      "claim": "re-check F3, the other direction: the hand-off dropped, so a document without cardinality@0 with a mixed reading set leaves Python's coverage path (main's behaviour); the test and all 5 cases of test_no_reading_set_hands_a_chain_list_or_its_chain_reading_to_python fail"
     }
   ],
   "lean": [

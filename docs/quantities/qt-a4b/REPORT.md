@@ -1,9 +1,9 @@
 # qt-a4b REPORT
 
-- Status: rows 1-3 delivered; rows 4-6 cut to qt-a4c at the size line (DRI 2026-11-08, reviews/dri-decisions-20261108-qt-a4b-bridge.md item 2). Review fix round 1 (2026-11-09) done: the chain reads every chain list document, counting units only too (F1 A), and Lean binds the chain's request to the document it names, with no Python path (F2 B). No DRI signature is outstanding.
+- Status: rows 1-3 delivered; rows 4-6 cut to qt-a4c at the size line (DRI 2026-11-08, reviews/dri-decisions-20261108-qt-a4b-bridge.md item 2). Review fix round 1 (2026-11-09) done: the chain reads every chain list document, counting units only too (F1 A), and Lean binds the chain's request to the document it names, with no Python path (F2 B).. Fix round 2 (2026-11-10, re-check F3 A): a chain list or chain reading whose reading set mixes a pending and a content-bearing reading is judged by Lean, not Python; the Lean route was taken, not the fallback. No DRI signature is outstanding.
 - HEAD: the commit that adds this file, on feature/qt-a4b; base e9a6ec8d5 (the merge base with main).
 - What changed: `ve document check` admits E2's chain list `[cardinality@0, norm-defaults@0, norms@0, readings@1, relational-fol@0]`, read as two projections with the counting units named as not certified; bridge leaves on a cardinality claim graph; open terms, reading sets and narrowings beside a counting unit.
-- Open: qt-a4c (rows 4-6); qt-a4-pilot-list (`documents@1` beside the chain list, DRI 2026-11-05 item 5); et-4b's `events@0` (DRI 2026-11-05 item 6) lands with whichever of the two branches rebases second.
+- Open: qt-a4b-f3-scope (the same hand-off on a `scope@0` document, on main; a DRI decision, FOLLOW-UPS.md); qt-a4c (rows 4-6); qt-a4-pilot-list (`documents@1` beside the chain list, DRI 2026-11-05 item 5); et-4b's `events@0` (DRI 2026-11-05 item 6) lands with whichever of the two branches rebases second.
 - Signatures: every DELTA row is signed (DRI 2026-11-05 items 1-4, DRI 2026-11-08 item 1, R2, R3, R16).
 
 ## Review fix round 1 (2026-11-09)
@@ -43,6 +43,16 @@ Next item: qt-a4c (rows 4-6 and `senses`), then qt-a5 (row 2's bridge labels are
 - Item 6 (`events@0`): not applicable on this branch. feature/et-4b is not on main (`git merge-base --is-ancestor feature/et-4b main` fails), so whichever branch rebases second adds it.
 - 2026-11-08 item 1: the three named tests and the guards at `CardinalityExamples.lean` 80-110 are in the selection; the `bridgeAdmitted` mutants that drop the `quoted` test (L3) and the meaning-id test (L4) each fail a named guard.
 
+## Review fix round 2 (2026-11-10, qt-a4b-looprecheck1.final.md; DRI note reviews/qt-a4b-dri-note-20261110.md)
+
+| Finding | Class removed | Fix | Regression tests | Commits |
+|---|---|---|---|---|
+| F3 (A): a valid chain-list document whose reading set holds a pending reading and a content-bearing one was refused by Python (`fields do not match ...`, `ve/units.py:70`), while Lean's `document` mode answers `ok`. Its chain reading would have raised "no Python path". | Python's own path taking a document it has no path for. `_document_case` sent every mixed pending/content reading set under `readings@1` and `norm-defaults@0` to Python, whatever else the list held. | One predicate, `_python_decides_mixed_readings` (`ve/document/lean.py`), owns the hand-off. It never takes a `cardinality@0` list or a chain reading (`chain_of`), and a list without `cardinality@0` keeps Python's path, as on main. No Lean change: Lean already judged the text. | `tests/test_cardinality_lean.py::test_a_mixed_pending_and_content_reading_set_on_the_chain_list_is_judged_by_lean` (PROBE F3: admitted with Python's path stubbed to fail; the chain reading's case names the document; the chain answer equals Python's for the same text without the counting unit), `::test_no_reading_set_hands_a_chain_list_or_its_chain_reading_to_python` (5 mixes, in one set or across sets; both directions) | bf6302598 |
+
+PROBE F3 raised `VEError: fields do not match: expected [language, profiles, spec_revision, vocabulary, unit_schema, units], got [cardinality, ...]` on 4b9b30ecef. After the fix it exits 0 without an exception: the document is admitted. Both new tests fail on 4b9b30ecef (6 of 6). This round takes the DRI note's required route (Lean judges the document), not its fallback. DELTA row 1 now names the case and its tests, and its claim of "admitted" holds for it.
+
+One more member of the class is outside this item. A `scope@0` document under `readings@1` and `norm-defaults@0` with the same mixed set is refused by Python (`UnsupportedProfile: Unsupported profile scope@0`), and has been on main too. Lean answers it as it answers the text without `scope@0`; this was checked by hand on 2026-11-10. Admitting it would change a verdict on main, which no standing ruling covers, so this round keeps main's refusal and files the case for the DRI as FOLLOW-UPS.md `qt-a4b-f3-scope`, with the one-line change it would take. The C items (C1 text, the allow file's stale line references, C3 `events@0`) stay on their rows qt-a4b-text-1 and qt-a4b-c3: this round did not merge main, and C1 is a trusted Lean text change that would need a new trust-mutant run.
+
 ## Seeded bugs (each planted alone, shown failing, restored)
 
 | Id | Language | File | Bug | Fails |
@@ -58,6 +68,8 @@ Next item: qt-a4c (rows 4-6 and `senses`), then qt-a5 (row 2's bridge labels are
 | P3 | Python | ve/document/lean.py (`_lean_answer`) | review F2: Lean's refusal of a chain reading falls back on Python's path | `tests/test_cardinality_answer.py::test_the_chain_s_request_is_its_parent_s_chain_reading_and_nothing_else` (both cases, DID NOT RAISE CheckerUnavailable) |
 | P4 | Python | ve/document/lean.py (`_document_case`) | review F2: the chain's case does not name the document (`chain_of` dropped) | the same test (both cases) and `::test_the_chain_s_request_names_the_document_and_has_no_python_path` |
 | P5 | Python | ve/cardinality.py (`bind_composed`) | review F1: no chain text when every unit is a counting unit (the base's branch) | `tests/test_cardinality_lean.py::test_with_every_unit_a_counting_unit_the_chain_still_refuses_what_only_it_checks` (4 cases) |
+| P6 | Python | ve/document/lean.py (`_python_decides_mixed_readings`) | re-check F3: the `chain_of` guard dropped, so a chain reading with a mixed set goes to Python ("no Python path") | `tests/test_cardinality_lean.py::test_a_mixed_pending_and_content_reading_set_on_the_chain_list_is_judged_by_lean` and `::test_no_reading_set_hands_a_chain_list_or_its_chain_reading_to_python` (5 cases) |
+| P7 | Python | ve/document/lean.py (`_python_decides_mixed_readings`) | re-check F3, the other direction: the hand-off dropped, so a list without `cardinality@0` leaves Python's coverage path | `tests/test_cardinality_lean.py::test_a_mixed_pending_and_content_reading_set_on_the_chain_list_is_judged_by_lean` and `::test_no_reading_set_hands_a_chain_list_or_its_chain_reading_to_python` (5 cases) |
 
 Not planted: the task's "`premises` written by Python" belongs to row 4, which is cut (qt-a4c). No Rust code was changed.
 
