@@ -274,8 +274,10 @@ FORGERIES = [
     _forge("rights-fan-status", "sources", _echo(own_rule, own_rule)),
     _forge("rights-bar-status", "sources", _echo(own_rule, no_such_rule)),
     _forge("rights-bar-status", "sources", _echo(generated_name, own_source)),
-    # A rule that is a request rule, echoed from another request rule.
-    _forge("rights-bar-status", "sources", _echo(lambda row: "may-arrest", own_source)),
+    # A rule that is a request rule, echoed (rule and echo forged together) from another request rule.
+    pytest.param("rights-bar-status", lambda case, row: {**row, "rules": ["may-arrest"],
+                                                         "sources": [{"rule": "may-arrest", "source": "b30"}]},
+                 id="rights-bar-status-rules-and-sources-request_rule_from_another"),
     _forge("status", "sources", _echo(own_rule, no_such_rule)),
     _forge("acts-status", "sources", dropped), _forge("rights-fan-status", "sources", doubled),
     # The rule and its echo forged together to a generated name, without acts@0 or rights@0.
@@ -382,8 +384,8 @@ def test_status_rule_binding_without_generated_profile(environment):
 def test_a_generated_rule_needs_its_echo(profile):
     """Under `acts@0` or `rights@0` a rule Lean generated passes with the echo naming it and a request source, and
     with nothing less: no echo, an echo of another rule, or a source the request does not hold."""
-    case = {"kind": "norm-defaults-status", "environment": {"profiles": [profile]}, "norms": [{"norm": {"name": "r1"}}],
-            "document": [{"norm": {"name": "r1"}}]}
+    rules = [{"norm": {"name": "r1"}}, {"norm": {"name": "r2"}}]
+    case = {"kind": "norm-defaults-status", "environment": {"profiles": [profile]}, "norms": rules, "document": rules}
 
     def answer(rules, sources):
         return {"status": "ok", "results": [{"index": 0, "result": {"status": "ok", "rules": rules,
@@ -391,7 +393,7 @@ def test_a_generated_rule_needs_its_echo(profile):
     bind_answers(MODE, answer(["g1"], [{"rule": "g1", "source": "r1"}]), {"cases": [case]})
     for rules, sources in ((["g1"], []), (["g1"], None), (["g2"], [{"rule": "g1", "source": "r1"}]),
                            (["g1"], [{"rule": "g1", "source": "g1"}]), (["g1"], ["r1"]),
-                           (["r1"], [{"rule": "r1", "source": "g1"}])):
+                           (["r1"], [{"rule": "r1", "source": "g1"}]), (["r1"], [{"rule": "r1", "source": "r2"}])):
         with pytest.raises(Invalid):
             bind_answers(MODE, answer(rules, sources), {"cases": [case]})
 
