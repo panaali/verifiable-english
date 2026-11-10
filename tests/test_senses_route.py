@@ -72,9 +72,9 @@ def world(sorts=("joke", "person"), constants=(("alice", "person"), ("riddle", "
     return env, overlay
 
 
-def read_in(place, source, pack=PACK, *, budget=route.WORK_BUDGET):
+def read_in(place, source, pack=PACK, *, budget=route.WORK_BUDGET, **asked):
     env, overlay = place
-    return route.read(env, source, [pack], overlay=overlay, budget=budget)
+    return route.read(env, source, [pack], overlay=overlay, budget=budget, **asked)
 
 
 NEAR = [sense("near", 1, "beside bob", ["person"], "{0} is near bob"),
@@ -478,13 +478,24 @@ GENUINE = [("open", "joke", PACK, "The riddle is odd.", W),
            ("hint", "joke", PACK, "Alice is funny.", W)]
 
 
-@pytest.mark.parametrize("name, place, pack, source, budget", GENUINE, ids=[g[0] for g in GENUINE])
+# sn-b6d: the re-read and Lean's line, asked (the request's members, and their wire form)
+# (one candidate: no flip model, whose fields `test_flip_rebinding_is_refused` mutates)
+ASKED = {"reread": ({"reread": (0, 0, "The riddle is odd.")},
+                    {"reread": {"sentence": 0, "candidate": 0, "rendering": "The riddle is odd."}}),
+         "line": ({"line": ("funny", "strange")}, {"line": {"word": "funny", "gloss": "strange"}})}
+
+
+@pytest.mark.parametrize("name, place, pack, source, budget", GENUINE + [
+    ("reread", "joke", PACK, "The riddle is odd.", W), ("line", "joke", PACK, "The riddle is odd.", W)],
+    ids=[g[0] for g in GENUINE] + ["reread", "line"])
 def test_genuine_response_field_mutations_are_rejected(name, place, pack, source, budget):
     """Checklist 4: every field of a genuine answer, dropped, nulled or given another type, is refused;
     and so is a duplicated candidate or a referent the projection does not declare."""
-    genuine = read_in(S2_WORLD() if place == "s2" else WORLDS[place](), source, pack, budget=budget)
+    asked, wire = ASKED.get(name, ({}, {}))
+    genuine = read_in(S2_WORLD() if place == "s2" else WORLDS[place](), source, pack, budget=budget, **asked)
     def problem(mutant):
-        return route._response_problem(mutant, genuine["dictionary_id"], genuine["request_id"], source=source)
+        return route._response_problem(mutant, genuine["dictionary_id"], genuine["request_id"], source=source,
+                                       **wire)
     assert problem(genuine) is None
     paths = list(_paths(genuine))
     assert len(paths) > 4, name

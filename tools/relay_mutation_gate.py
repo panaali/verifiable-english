@@ -9,7 +9,8 @@ A *route* is one way `ve` reads a Lean answer:
   built service lists in its handshake), read by `LeanService.exchange` (the transport of `relay`) and, for a
   mode whose one caller reads the answer further (`SERVICE_READERS`: `ask`, read by `ve.ask.read_answer`;
   `words`, read by `ve.words.read_answer`; `document`; `metered`, read by `ve.evaluate.read_evaluation` and
-  `ve.search.read_nonvacuity`; `act-readings`, read by `ve.acts.read_answer`), by that caller's reader too, on every fixture whose genuine answer
+  `ve.search.read_nonvacuity`; `english.command`, read by `ve.backends.english_lean.command_answer`;
+  `act-readings`, read by `ve.acts.read_answer`), by that caller's reader too, on every fixture whose genuine answer
   is not a rejection row;
 * each one-shot runner call that a `ve` call site makes: every assurance-manifest binding of a runner other
   than `ve_service` whose operation has Lean call sites, and every call of the one-shot route reader
@@ -78,6 +79,7 @@ MANIFEST = ROOT / "ve/assurance-manifest.json"
 DEPTH = 7
 ENVELOPE = {"service": 3, "one-shot": 1}
 PER_SHAPE = 2
+ASKED_MEMBERS = ("line", "reread")
 FRESH = "zz-not-in-request"
 # The test files `--record` runs by default: together they relay every route.
 RECORD_TESTS = (
@@ -418,6 +420,16 @@ SERVICE_READERS = {"ask": _ask_reader, "words": _words_reader, "document": _docu
                    "act-readings": _acts_reader}
 
 
+def _command_reader(case):
+    """How `ve.backends.english_lean.read_command` reads the service's response to `case` (commands-imperatives CI-2):
+    `relay.decided`, then `command_answer`, the answer bound to the request (`command_problem`)."""
+    from ve.backends import english_lean, relay
+    return lambda response: english_lean.command_answer(relay.decided(response["results"])[0], case)
+
+
+SERVICE_READERS["english.command"] = _command_reader
+
+
 def _exchange_outcome(replay: _Replay, mode: str, text: str, read=None) -> tuple[str, str]:
     try:
         _, response = replay.exchange(mode, text, 1)
@@ -456,7 +468,10 @@ def _shape(case, row) -> tuple:
     status = row.get("status") if isinstance(row, dict) else None
     choices = tuple(sorted((key, value) for key, value in case.items() if type(value) is bool)) \
         if isinstance(case, dict) else ()
-    return (_case_kind(case), str(status), tuple(sorted(row)) if isinstance(row, dict) else (), choices)
+    # A case's asked members fill parts of its row too: a `senses.read` case's `line` and `reread` (sn-b6d).
+    asked = tuple(key for key in ASKED_MEMBERS if key in case) if isinstance(case, dict) else ()
+    return (_case_kind(case), str(status), tuple(sorted(row)) if isinstance(row, dict) else (), choices) + (
+        (asked,) if asked else ())
 
 
 # One-shot routes: how a call site reads its runner's answer to a recorded case.
@@ -486,8 +501,13 @@ def _senses(case, executable):
         return senses.read_fences(env, case["fences"], packs, own=case["own"], defaults=case.get("defaults"),
                                   budget=case["budget"], executable=executable, fence_ids=case["fence_ids"],
                                   reading_set_units=case["reading_set_units"])
+    # sn-b6d: the re-read and Lean's line, when the case asks for them
+    line, reread = case.get("line"), case.get("reread")
     return senses.read(env, case["source"], packs, own=case["own"], overlay=case.get("overlay"),
-                       budget=case["budget"], executable=executable)
+                       budget=case["budget"], executable=executable,
+                       line=None if line is None else (line["word"], line["gloss"]),
+                       reread=None if reread is None else (reread["sentence"], reread["candidate"],
+                                                           reread["rendering"]))
 
 
 def _senses_request(case):
@@ -495,7 +515,8 @@ def _senses_request(case):
     env = _environment(case["environment"])
     return senses.request(env, case.get("source"), case["packs"], own=case["own"], overlay=case.get("overlay"),
                           budget=case["budget"], fences=case.get("fences"), defaults=case.get("defaults"),
-                          fence_ids=case.get("fence_ids"), reading_set_units=case.get("reading_set_units"))
+                          fence_ids=case.get("fence_ids"), reading_set_units=case.get("reading_set_units"),
+                          line=case.get("line"), reread=case.get("reread"))
 
 
 def _speech_source(case, executable):
