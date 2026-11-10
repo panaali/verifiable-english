@@ -104,7 +104,15 @@ Rust: only the generated `rust/ve-kernel/src/contract_tables.rs` changed; no Rus
 
 ## 6. Tests
 
-(the selected run's result follows)
+- Selected run on 3c5d947be (`mac-pytest.sh --select -- --base 1ee886ca0 --run`, MAC_PYTEST_NO_DEFER=1): 502 units in 6
+  Actions shards. Shards 1-5: 434 units, 433 passed, 1 failed:
+  `tests/test_regen_generated.py::test_every_entry_whose_commands_import_the_service_client_is_marked` (the new
+  `purposes-fault-catalogue` entry lacked `service="write"`; fixed in b94f57564). Shard 6 (68 units) gave Actions no
+  result by the deadline. The runner's VM fallback re-ran the whole selection at load 70-80 (36 units in 2 h, its
+  3-hour cap would have stopped it), so I stopped it. **Shard 6's units were not run on this branch**; the chain's
+  gate on the final HEAD runs them.
+- The failed id, rerun after the fix with `tests/test_purposes_contract.py` (`mac-pytest.sh -- <ids>`, VM): 8 passed.
+- Not run: the full gate (the chain runs it on the final HEAD).
 
 ## 7. Self-review against BUILDER-CHECKLIST
 
@@ -117,7 +125,7 @@ Rust: only the generated `rust/ve-kernel/src/contract_tables.rs` changed; no Rus
    Python engine and the legacy validator, record by record), and `test_the_examples_are_accepted_and_clean_in_both_engines`.
 5. R8 binding: PASS, `test_the_relay_refuses_a_retyped_or_rebound_record` (`absent`, a shifted check, another
    unit's check, extra and missing arguments, an extra field). Row count and ids are bound by `run_bound` in the relay.
-6. Gate evidence: PASS. The chain runs the gate on the final HEAD. The evidence above was measured on this branch's commits.
+6. Gate evidence: PASS. The chain runs the gate on the final HEAD; section 6 says what the selected run did not cover (shard 6).
 7. No unsigned item: PASS. The only growth is R16, signed in `docs/trust-baseline.json`, and there is no DELTA row.
 8. DELTA: N.A. No user-visible output changes: `test_the_contract_is_off_the_verdict_and_identity_paths`
    (the answers' bytes equal main's).
