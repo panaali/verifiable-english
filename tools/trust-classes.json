@@ -17070,7 +17070,7 @@
         "VE.WireContract.Hooks.Purposes.purposesOf",
         "VE.WireContract.Hooks.Purposes.registered",
         "VE.WireContract.Hooks.Purposes.shown",
-        "VE.WireContract.Hooks.Purposes.sideId"
+        "VE.WireContract.Hooks.Purposes.sideMember"
       ],
       "T": [
         "VE.WireContract.Hooks.Purposes.block",

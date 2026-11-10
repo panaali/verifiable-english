@@ -27,6 +27,9 @@ SPEC = ROOT / "docs/spec/purpose-explanation.md"
 # Main's document-mode answers, recorded with the merge base's `ve_service` (`record`).
 MAIN = ROOT / "docs/wire-contract/sa-wire-purposes0/shadow-main.json"
 DOCUMENT = ROOT / "usecases/bluedot-grant/causal.ve.md"
+# The other document-mode fixtures under 8 KB (the larger ones are part documents of whole-document runs).
+FIXTURES = tuple(ROOT / p for p in ("tests/data/rd9-docroute.ve.md", "usecases/question-answering/group.ve.md",
+                                    "tests/data/premise-scale/qt0p-companion.ve.md"))
 pytestmark = pytest.mark.skipif(not lean_routes.SERVICE.exists(), reason="ve_service is not built")
 
 
@@ -111,7 +114,11 @@ def test_the_relay_refuses_a_retyped_or_rebound_record():
                         (d + ("check",), "1.1"), (d + ("check",), "2.1b"), (d + ("check",), "1.1f"), (d + ("check",), KeyError),
                         (d + ("phase",), "check"), (d + ("path",), "/purposes/links"), (d + ("args",), {}),
                         (d + ("args",), {"link": "l1", "polarity": "doubted", "id": "l1"}), (d + ("args",), None),
-                        (d + ("args", "link"), 7), (d + ("args", "polarity"), KeyError), (d, None), (d, KeyError)]:
+                        (d + ("args", "link"), 7), (d + ("args", "polarity"), KeyError), (d, None), (d, KeyError),
+                        (d + ("code",), "NOPE"), (d + ("code",), "PURPOSES_INVALID_BLOCK"), (d + ("class",), None),
+                        (d + ("class",), "ResourceLimit"), (d + ("text",), 7), (d + ("text",), "InvalidPurposes: x"),
+                        (d + ("text",), KeyError), (d + ("revision",), 2), (d + ("revision",), True),
+                        (d + ("revision",), "1"), (d + ("contract",), "acts@0"), (d + ("extra",), 1)]:
         with pytest.raises(CheckerUnavailable):
             bound(mutated(path, value))
 
@@ -123,19 +130,26 @@ def test_the_adapters_read_the_case_block():
     assert purposes_block({"id": "b", "purposes": 3}) == {"purposes": 3}
 
 
+def name(path):
+    return path.name.removesuffix(".ve.md")
+
+
 def documents():
     """`DOCUMENT` as written, then with `purposes@0` listed and each example's block in its front matter, then the block
-    without the profile, then the profile without a block."""
-    _, front, body = DOCUMENT.read_text().split("---\n", 2)
-    def with_(block, listed=True):
+    without the profile, then the profile without a block; each of `FIXTURES` as written and with the base block listed."""
+    def with_(path, block, listed=True):
+        _, front, body = path.read_text().split("---\n", 2)
         f = json.loads(front)
         f["environment"]["profiles"] = sorted(f["environment"]["profiles"] + ["purposes@0"] * listed)
         if block is not KeyError:
             f["purposes"] = block
         return "---\n" + json.dumps(f, indent=2) + "\n---\n" + body
     blocks = {"base": accepted()[0], "limit": accepted()[1], **{n: v["purposes"] for n, v in refused().items()}}
-    return {"plain": DOCUMENT.read_text(), **{f"listed-{n}": with_(b) for n, b in blocks.items()},
-            "unlisted-base": with_(blocks["base"], listed=False), "listed-without-block": with_(KeyError)}
+    return {"plain": DOCUMENT.read_text(), **{f"listed-{n}": with_(DOCUMENT, b) for n, b in blocks.items()},
+            "unlisted-base": with_(DOCUMENT, blocks["base"], listed=False),
+            "listed-without-block": with_(DOCUMENT, KeyError),
+            **{f"plain-{name(p)}": p.read_text() for p in FIXTURES},
+            **{f"listed-base-{name(p)}": with_(p, blocks["base"]) for p in FIXTURES}}
 
 
 def answers(executable=None):
@@ -164,6 +178,7 @@ def test_the_contract_is_off_the_verdict_and_identity_paths():
     block clean or names a row: the contract decides nothing and `purposes@0` is not admitted."""
     got, main = answers(), json.loads(MAIN.read_text())
     assert got == main
-    assert main["plain"]["status"] == "ok" and main["plain"]["document_id"] and main["plain"]["source_id"]
+    for plain in ("plain", "plain-qt0p-companion"):  # the others need a composed route, and are refused alike
+        assert main[plain]["status"] == "ok" and main[plain]["document_id"] and main[plain]["source_id"], plain
     listed = {main[name]["sha256"] for name in main if name.startswith("listed-") and name != "listed-without-block"}
-    assert len(listed) == 1 and len(main) == len(refused()) + 5
+    assert len(listed) == 1 and len(main) == len(refused()) + 5 + 2 * len(FIXTURES)

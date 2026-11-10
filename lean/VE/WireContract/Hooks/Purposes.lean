@@ -15,20 +15,25 @@ renders to the decoder's (the round-trip guards below). `purposes_ids` names 7.2
 namespace VE.WireContract.Hooks.Purposes
 open Lean
 open VE.WireContract
-open VE.Purposes (decodeBlock decodeRef idOf linkFieldsOk linksOf maxLinks shareOf wordOf)
+open VE.Purposes (decodeBlock decodeRef decodeSide idOf linkFieldsOk linksOf maxLinks shareOf wordOf)
 
 /-- A value as the decoder's texts quote it (`idOf`, `wordOf`): a string as it is, anything else compressed. -/
 def shown : Json → String
   | .str s => s
   | j => j.compress
 
-/-- The first id of a side that `decodeRef` refuses as not a token, when the side's refusal is one. -/
-def sideId (lid : String) (side : Json) : Option String :=
-  match side with
-  | .arr rs => rs.toList.findSome? fun r => match decodeRef lid r, VE.Bridge.fields r with
-    | .error _, .ok [(_, v)] => if (idOf v).isOk then none else some (shown v)
-    | _, _ => none
-  | _ => none
+/-- 7.1's row for a side `decodeSide` refuses, at its first ref `decodeRef` refuses: 1.1e for a part or mention whose
+string is not a token, 1.1i for anything else; `none` for a side the decoder accepts. -/
+def sideMember (lid : String) (side : Json) : Option (String × List (String × Json)) :=
+  let other := some ("1.1i", [("link", .str lid)])
+  match decodeSide lid side, side with
+  | .ok _, _ => none
+  | .error _, .arr rs => match rs.toList.find? (fun r => !(decodeRef lid r).isOk) with
+    | some r => match VE.Bridge.fields r with
+      | .ok [(k, .str i)] => if k == "part" || k == "mention" then some ("1.1e", [("id", .str i)]) else other
+      | _ => other
+    | none => other
+  | .error _, _ => other
 
 /-- 7.1's row for link `n`'s refusal, with its arguments, in `decodeLink`'s order. -/
 def linkMember (n : Nat) (j : Json) : String × List (String × Json) :=
@@ -43,9 +48,7 @@ def linkMember (n : Nat) (j : Json) : String × List (String × Json) :=
     else if !word VE.Purposes.Polarity.ofWire? "polarity" then
       ("1.1g", [("link", .str lid), ("polarity", .str (shown (v "polarity")))])
     else if !(shareOf lid j).isOk then ("1.1h", [("link", .str lid), ("share", .str (shown (v "share")))])
-    else match sideId lid (v "reason") <|> sideId lid (v "target") with
-      | some i => ("1.1e", [("id", .str i)])
-      | none => ("1.1i", [("link", .str lid)])
+    else (sideMember lid (v "reason") <|> sideMember lid (v "target")).getD ("1.1i", [("link", .str lid)])
 
 /-- 7.1's row of a block the decoder refuses: the block's shape, its count, then the first link the decoder refuses. -/
 def member (j : Json) : String × List (String × Json) :=
@@ -78,6 +81,48 @@ theorem classifier_ok_iff (root : Json) (items : List Pointer) :
     (match classifier "purposes_block" root items with | .ok => true | .fail _ _ => false) =
       (decodeBlock (purposesOf root)).isOk := by
   cases h : decodeBlock (purposesOf root) <;> simp [classifier, h, Except.isOk, Except.toBool]
+
+theorem decodeLinks_length {n : Nat} {js : List Json} {ls : List VE.Purposes.Link}
+    (h : VE.Purposes.decodeLinks n js = .ok ls) : ls.length = js.length := by
+  induction js generalizing n ls with
+  | nil => simp [VE.Purposes.decodeLinks, pure, Except.pure] at h; subst h; rfl
+  | cons j js ih =>
+    simp only [VE.Purposes.decodeLinks] at h
+    cases h1 : VE.Purposes.decodeLink n j with
+    | error e => simp [h1, bind, Except.bind] at h
+    | ok L =>
+      cases h2 : VE.Purposes.decodeLinks (n + 1) js with
+      | error e => simp [h1, h2, bind, Except.bind] at h
+      | ok ls' => simp [h1, h2, bind, Except.bind, pure, Except.pure] at h; subst h; simp [ih h2]
+
+theorem decodeBlock_length {j : Json} {B : VE.Purposes.Block} (h : decodeBlock j = .ok B) :
+    B.links.length ≤ maxLinks := by
+  unfold decodeBlock at h
+  cases h1 : linksOf j with
+  | error e => simp [h1, bind, Except.bind] at h
+  | ok ls =>
+    simp only [h1, bind, Except.bind] at h
+    split at h
+    · obtain ⟨ls', h2, h3⟩ := VE.Purposes.map_ok h
+      subst h3
+      simp [decodeLinks_length h2]
+      omega
+    · cases h
+
+/-- 2.1b reads `VE.Purposes.check`: when `purposes_ids` names it, the block decodes and `check` refuses it with 7.2's
+row 2 text, whatever the checked view. -/
+theorem purposes_ids_reads_check (root : Json) (items : List Pointer) (U : VE.Purposes.Units)
+    (h : classifier "purposes_ids" root items = .fail "2.1b" []) :
+    ∃ B, decodeBlock (purposesOf root) = .ok B ∧
+      VE.Purposes.check U B = .error "InvalidPurposes: two links have the same id" := by
+  cases hB : decodeBlock (purposesOf root) with
+  | error e => simp [classifier, hB] at h
+  | ok B =>
+    refine ⟨B, rfl, ?_⟩
+    have hn : ¬ (B.links.map (·.id)).Nodup := by
+      intro hn; simp [classifier, hB, hn] at h
+    have hl := decodeBlock_length hB
+    simp [VE.Purposes.check, VE.Route.Gate.require, hl, hn, bind, Except.bind]
 
 def registered : List String := ["purposes_block", "purposes_ids"]
 
@@ -114,6 +159,11 @@ def links (n : Nat) : List Json := (List.range n).map (link s!"l{·}")
     (block [link "l1" [("relation", "prevents")]], "1.1f"), (block [link "l1" [("relation", Json.arr #[])]], "1.1f"),
     (block [link "l1" [("polarity", "maybe")]], "1.1g"), (block [link "l1" [("share", "most")]], "1.1h"),
     (block [link "l1" [("target", "p2")]], "1.1i"), (block [link "l1" [("reason", Json.arr #[Json.mkObj [("unit", "p1")]])]], "1.1i"),
+    (block [link "l1" [("reason", Json.arr #[Json.mkObj [("unit", "p 1")]])]], "1.1i"),
+    (block [link "l1" [("reason", Json.arr #[Json.mkObj [("part", 7)]])]], "1.1i"),
+    (block [link "l1" [("reason", "x"), ("target", Json.arr #[Json.mkObj [("part", "a b")]])]], "1.1i"),
+    (block [link "l1" [("reason", Json.arr #[Json.mkObj [("unit", "p1")], Json.mkObj [("part", "x y")]])]], "1.1i"),
+    (block [link "l1" [("target", Json.arr #[Json.mkObj [("mention", "m 2")]])]], "1.1e"),
     (block [link "l1", link "l1"], "2.1b")].all fun (j, row) => roundTrips j row
 -- the fault order: within a link, 7.1's rows in turn; an earlier link before a later one; decoding before 2.1b
 #guard [(block [link "l1" [("relation", "x"), ("polarity", "x"), ("share", "x"), ("target", 1)]], "1.1f"),

@@ -1,0 +1,1 @@
+{"check": "1.1e", "args": {"id": "m 2"}, "text": "InvalidPurposes: invalid id m 2", "purposes": {"links": [{"id": "l1", "relation": "in order to", "polarity": "affirmed", "share": "plain", "reason": [{"part": "u0146.s01.p3"}], "target": [{"mention": "m 2"}], "marker": "u0146.s01.p2"}]}}

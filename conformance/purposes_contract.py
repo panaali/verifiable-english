@@ -19,13 +19,23 @@ UNIT = "purposes@0"
 
 @cache
 def members():
-    """Each member of the table: its phase and the names its template reads."""
-    return {member["id"]: (phase["name"], frozenset(p[1] for p in pieces(member["text"]) if p[0] == "arg"))
-            for phase in load(UNIT)["phases"] for check in phase["checks"] for member in check["emits"]}
+    """Each member of the table: the record fields it fixes, and its text's pieces."""
+    contract = load(UNIT)
+    return {member["id"]: ({"contract": UNIT, "revision": contract["revision"], "check": member["id"],
+                            "phase": phase["name"], "code": member["code"],
+                            "class": contract["codes"][member["code"]]["class"], "path": "/purposes"},
+                           pieces(member["text"]))
+            for phase in contract["phases"] for check in phase["checks"] for member in check["emits"]}
+
+
+def text(template, args):
+    """The member's text with `args` in its placeholders (each a string, written as it is)."""
+    return "".join(p[1] if p[0] == "lit" else args[p[1]] for p in template)
 
 
 def bound(row):
-    """The record of a `diagnose` row for this unit, `None` when clean, refused unless bound to the table."""
+    """The record of a `diagnose` row for this unit, `None` when clean, refused unless bound to the table: every
+    field the member fixes, exactly its template's arguments (each a string), and the text they render."""
     outcome, record = row.get("outcome"), row.get("diagnostic")
     if row.get("status") != "ok" or (outcome, "diagnostic" in row) not in (("clean", False), ("fault", True)):
         raise CheckerUnavailable("diagnose: a purposes@0 row is neither clean nor a fault", operation="diagnose")
@@ -33,10 +43,11 @@ def bound(row):
         return None
     if type(record) is not dict:
         raise CheckerUnavailable("diagnose: a purposes@0 fault has no record", operation="diagnose")
-    phase, names = members().get(record.get("check"), (None, None))
+    fixed, template = members().get(record.get("check"), (None, None))
     args = record.get("args")
-    if (phase is None or record.get("phase") != phase or record.get("path") != "/purposes"
-            or type(args) is not dict or set(args) != names or any(type(v) is not str for v in args.values())):
+    if (fixed is None or set(record) != {*fixed, "text", "args"} or any(type(record[k]) is not type(v) or record[k] != v for k, v in fixed.items())
+            or type(args) is not dict or set(args) != {p[1] for p in template if p[0] == "arg"}
+            or any(type(v) is not str for v in args.values()) or record["text"] != text(template, args)):
         raise CheckerUnavailable("diagnose: a purposes@0 record is not bound to the table", operation="diagnose")
     return record
 

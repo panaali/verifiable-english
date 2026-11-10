@@ -1,11 +1,15 @@
 {
 "listed-base": {"error": "unknown document metadata", "sha256": "319b99350d129762375b8ce5c4cd8b81925cb37168db6895449fbbe34fb8c86e", "status": "error"},
+"listed-base-group": {"error": "unknown document metadata", "sha256": "319b99350d129762375b8ce5c4cd8b81925cb37168db6895449fbbe34fb8c86e", "status": "error"},
+"listed-base-qt0p-companion": {"error": "unknown document metadata", "sha256": "319b99350d129762375b8ce5c4cd8b81925cb37168db6895449fbbe34fb8c86e", "status": "error"},
+"listed-base-rd9-docroute": {"error": "unknown document metadata", "sha256": "319b99350d129762375b8ce5c4cd8b81925cb37168db6895449fbbe34fb8c86e", "status": "error"},
 "listed-duplicate-id": {"error": "unknown document metadata", "sha256": "319b99350d129762375b8ce5c4cd8b81925cb37168db6895449fbbe34fb8c86e", "status": "error"},
 "listed-extra-member": {"error": "unknown document metadata", "sha256": "319b99350d129762375b8ce5c4cd8b81925cb37168db6895449fbbe34fb8c86e", "status": "error"},
 "listed-id-not-token": {"error": "unknown document metadata", "sha256": "319b99350d129762375b8ce5c4cd8b81925cb37168db6895449fbbe34fb8c86e", "status": "error"},
 "listed-limit": {"error": "unknown document metadata", "sha256": "319b99350d129762375b8ce5c4cd8b81925cb37168db6895449fbbe34fb8c86e", "status": "error"},
 "listed-link-fields": {"error": "unknown document metadata", "sha256": "319b99350d129762375b8ce5c4cd8b81925cb37168db6895449fbbe34fb8c86e", "status": "error"},
 "listed-links-over": {"error": "unknown document metadata", "sha256": "319b99350d129762375b8ce5c4cd8b81925cb37168db6895449fbbe34fb8c86e", "status": "error"},
+"listed-mention-not-token": {"error": "unknown document metadata", "sha256": "319b99350d129762375b8ce5c4cd8b81925cb37168db6895449fbbe34fb8c86e", "status": "error"},
 "listed-not-an-object": {"error": "unknown document metadata", "sha256": "319b99350d129762375b8ce5c4cd8b81925cb37168db6895449fbbe34fb8c86e", "status": "error"},
 "listed-part-not-token": {"error": "unknown document metadata", "sha256": "319b99350d129762375b8ce5c4cd8b81925cb37168db6895449fbbe34fb8c86e", "status": "error"},
 "listed-polarity": {"error": "unknown document metadata", "sha256": "319b99350d129762375b8ce5c4cd8b81925cb37168db6895449fbbe34fb8c86e", "status": "error"},
@@ -13,7 +17,12 @@
 "listed-relation-prevents": {"error": "unknown document metadata", "sha256": "319b99350d129762375b8ce5c4cd8b81925cb37168db6895449fbbe34fb8c86e", "status": "error"},
 "listed-share": {"error": "unknown document metadata", "sha256": "319b99350d129762375b8ce5c4cd8b81925cb37168db6895449fbbe34fb8c86e", "status": "error"},
 "listed-side": {"error": "unknown document metadata", "sha256": "319b99350d129762375b8ce5c4cd8b81925cb37168db6895449fbbe34fb8c86e", "status": "error"},
+"listed-side-reason-first": {"error": "unknown document metadata", "sha256": "319b99350d129762375b8ce5c4cd8b81925cb37168db6895449fbbe34fb8c86e", "status": "error"},
+"listed-side-ref-not-string": {"error": "unknown document metadata", "sha256": "319b99350d129762375b8ce5c4cd8b81925cb37168db6895449fbbe34fb8c86e", "status": "error"},
 "listed-without-block": {"error": "UnsupportedProfile: Unsupported profile purposes@0", "sha256": "c78ff285a525ef1b8f81773536ecde24de010915d2a5d70ed234b7eea30c4017", "status": "error"},
 "plain": {"document_id": "295ec9d51e5de2034e650617b7fbdef38047053ed56bf51831b5ddfbf4b1d8b1", "sha256": "20a1373343d6ada8086043ad94423e349c2ed3293cb94191faea04423f39863d", "source_id": "fd1d01d7b4bb94e242078e72690721261b16df04cec0433eee6abac2601d161a", "status": "ok"},
+"plain-group": {"error": "CheckerUnavailable: fenced English or strict content needs the Lean surface parser", "sha256": "e2ac13460b91523101cfe4da1ab5b4b80c128ed06b8796793f92b62b32b49972", "status": "error"},
+"plain-qt0p-companion": {"document_id": "f66720df2e3870bef9156c3b6569b6cbdbf2a1fdcb0fbf3470f9f52ef1a85eb9", "sha256": "45bcd61bc83c0cb09b97d0dc746263494696ee5be162566b111e6528cffbb66b", "source_id": "dccdda5f703ec9688d77cc96ddee8d7039e3987b24772fc924ab290302f08c53", "status": "ok"},
+"plain-rd9-docroute": {"error": "CheckerUnavailable: soft-norms with readings, alternatives or risk needs its composed Lean route", "sha256": "ab0e259eda37540df10ff2c52d5a87fca333f694c27517cdad05569b2c9194ad", "status": "error"},
 "unlisted-base": {"error": "unknown document metadata", "sha256": "319b99350d129762375b8ce5c4cd8b81925cb37168db6895449fbbe34fb8c86e", "status": "error"}
 }
