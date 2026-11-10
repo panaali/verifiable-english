@@ -206,11 +206,19 @@ def test_right_clauses_profile_on_regression(service):
 
 
 def test_right_clauses_environment_texts_kept():
-    """Registration changes no refusal of an environment that lists `right-clauses@0`: beside `acts@0` (gated by the
-    base rows before any decoder) or without `rights@0` (its layer decoder refuses the name first) the text is the
-    base's `Unsupported profile right-clauses@0`; with `rights@0` the environment is accepted (the signed row)."""
+    """Registration changes an environment answer only where the profile is listed with every rights profile, and
+    there the answer is the same list's without `right-clauses@0`. Saved (environment-texts.json, the probe at the base
+    build and at this item's): no text of the 154 lists without rights@0 moves, and the 37 rights lists that move each
+    answer as without the profile. Live: beside `acts@0` or without `rights@0` the text is the base's; every rights
+    list with up to two more profiles answers as without the profile, or refuses the profile by name as the base did."""
+    from itertools import combinations
     from ve import Environment
     from ve.errors import UnsupportedProfile
+    saved = json.loads((EVIDENCE.parent / "environment-texts.json").read_text())
+    assert saved["differ"] == [] and len(saved["texts"]) == 154 and len(saved["rights"]) == 106
+    moved = sorted(k for k, v in saved["rights"].items() if v["base"] != v["head"])
+    assert moved == saved["rights_differ"] and len(moved) == 37
+    assert all(saved["rights"][k]["head"] == saved["rights"][k]["off"] for k in moved)
     acts = environment(["acts@0", "norms@0", "relational-fol@0", "right-clauses@0"])
     acts["vocabulary"]["acts"] = {"fixed": []}
     del acts["vocabulary"]["rights"]
@@ -220,6 +228,25 @@ def test_right_clauses_environment_texts_kept():
         with pytest.raises(UnsupportedProfile, match="^UnsupportedProfile: Unsupported profile right-clauses@0$"):
             Environment(env)
     assert Environment(environment()).to_dict()["profiles"] == ON
+
+    def text(profiles):
+        env = environment(profiles)
+        if "acts@0" in profiles:
+            env["vocabulary"]["acts"] = {"fixed": []}
+        try:
+            return Environment(env) and "ok"
+        except UnsupportedProfile as refusal:
+            return str(refusal)
+    by_name = {"UnsupportedProfile: Unsupported profile right-clauses@0",
+               "UnsupportedProfile: speech-acts@0 with right-clauses@0",
+               "UnsupportedProfile: readings@1 is not the head of this profile list"}
+    others = sorted({p for k in saved["texts"] for p in k.split(",")} - set(ON))
+    for k in (0, 1, 2):
+        for extra in combinations(others, k):
+            on = sorted({*ON, *extra})
+            answer, off = text(on), text([p for p in on if p != "right-clauses@0"])
+            assert answer == off or answer in by_name, (on, answer, off)
+            assert answer == saved["rights"][",".join(on)]["head"] or answer == off, on
 
 
 def test_right_clauses_environment_and_model_answer_as_without_the_profile(service):
@@ -239,3 +266,10 @@ def test_right_clauses_environment_and_model_answer_as_without_the_profile(servi
                for ps in (ON, OFF))
     assert on == {"id": "m", "status": "error", "error": "UnsupportedProfile: Unsupported profile right-clauses@0"}
     assert off["status"] == "ok" and off["valid"] is True
+    # the path a model request takes: Python's model view of the environment, then Lean's model mode
+    from ve.profiles import model_environment
+    viewed = [model_environment(environment(ps)) for ps in (ON, OFF)]
+    assert viewed[0] == viewed[1] and "right-clauses@0" not in viewed[0]["profiles"]
+    on = exchange(service, "model", [{"id": "m", "environment": viewed[0], "model": model}])[0]
+    assert on == exchange(service, "model", [{"id": "m", "environment": viewed[1], "model": model}])[0]
+    assert on["status"] == "ok" and on["valid"] is True

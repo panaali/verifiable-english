@@ -134,4 +134,10 @@ def depth64 : String := (List.range 63).foldl (fun f _ => "[\"not\"," ++ f ++ "]
 #guard says (doc (",\"elided\":[],\"clauses\":[{\"role\":\"trigger\",\"span\":[10,20],\"formula\":" ++ depth64 ++ "}]")) ==
   "ResourceLimit: formula depth exceeds 64"
 
+-- the head's line checks run before rights' unit checks (4.1 step 2): a `right_lines` unit of an unknown right with a
+-- line without `elided` gets the head's text
+#guard says (parse ("[{\"right_lines\":{\"right\":\"r99\",\"lines\":[{\"kind\":\"claim\",\"norm\":{\"name\":" ++
+  "\"equal-access\",\"predicate\":\"public_service_access_required\",\"sign\":true,\"guard\":[\"top\"],\"unless\":[]," ++
+  "\"over\":[]}}]}}]")) == "InvalidInput: elided missing on rule equal-access"
+
 end VE.RightClauses.RunExamples

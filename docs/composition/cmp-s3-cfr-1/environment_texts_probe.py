@@ -1,6 +1,8 @@
 """Environment refusal texts of every list relational-fol@0, right-clauses@0 and up to two more environment profiles,
 as the build of the tree it runs in answers them (run in a worktree at the base commit and at this item's head):
-`python environment_texts_probe.py <lock file>`, run from the worktree root."""
+`python environment_texts_probe.py <lock file> <tests/data/right-clauses-environment.json>`, run from the worktree root.
+`rights`: every list norms@0, relational-fol@0, right-clauses@0, rights@0, soft-norms@0 and up to two more, on 9.1's
+environment (with its rights block), each with the text of the same list without right-clauses@0."""
 import sys, json, itertools
 sys.path.insert(0, '.')
 import ve.backends.lean_service as ls
@@ -21,4 +23,17 @@ for k in (0, 1, 2):
         env = {"language": "ve.core@0.2", "profiles": ps, "spec_revision": "ve-v0.2-expand2-2026-09-25", "vocabulary": v}
         try: Environment(env); out[",".join(ps)] = "ok"
         except Exception as x: out[",".join(ps)] = str(x)
-print(json.dumps(out))
+def text(env):
+    try: Environment(env); return "ok"
+    except Exception as x: return str(x)
+nine = json.loads(Path(sys.argv[2]).read_text())
+RIGHTS = ["norms@0", "relational-fol@0", "right-clauses@0", "rights@0", "soft-norms@0"]
+rights = {}
+for k in (0, 1, 2):
+    for extra in itertools.combinations([o for o in OTHERS if o not in RIGHTS], k):
+        ps = sorted({*RIGHTS, *extra})
+        v = json.loads(json.dumps(nine["vocabulary"]))
+        if "acts@0" in ps: v["acts"] = {"fixed": []}
+        rights[",".join(ps)] = [text({**nine, "profiles": p, "vocabulary": v})
+                                for p in (ps, [q for q in ps if q != "right-clauses@0"])]
+print(json.dumps({"texts": out, "rights": rights}))

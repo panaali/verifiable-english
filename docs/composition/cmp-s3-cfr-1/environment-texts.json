@@ -1,7 +1,46 @@
 {
  "base_commit": "6db6ee16ddb10f843b396b78299a980abc43fefb",
- "head_commit": "c215648ca6",
+ "head_commit": "2e3c202db (product as at c215648ca)",
  "differ": [],
+ "rights_differ": [
+  "closure@0,data@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0",
+  "closure@0,definitions@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0",
+  "closure@0,documents@1,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0",
+  "closure@0,nary@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0",
+  "closure@0,norm-defaults@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0",
+  "closure@0,norms@0,order@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0",
+  "closure@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0",
+  "closure@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0,time@0",
+  "data@0,definitions@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0",
+  "data@0,documents@1,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0",
+  "data@0,nary@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0",
+  "data@0,norm-defaults@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0",
+  "data@0,norms@0,order@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0",
+  "data@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0",
+  "data@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0,time@0",
+  "definitions@0,documents@1,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0",
+  "definitions@0,nary@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0",
+  "definitions@0,norm-defaults@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0",
+  "definitions@0,norms@0,order@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0",
+  "definitions@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0",
+  "definitions@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0,time@0",
+  "documents@1,nary@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0",
+  "documents@1,norm-defaults@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0",
+  "documents@1,norms@0,order@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0",
+  "documents@1,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0",
+  "documents@1,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0,time@0",
+  "nary@0,norm-defaults@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0",
+  "nary@0,norms@0,order@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0",
+  "nary@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0",
+  "nary@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0,time@0",
+  "norm-defaults@0,norms@0,order@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0",
+  "norm-defaults@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0",
+  "norm-defaults@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0,time@0",
+  "norms@0,order@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0",
+  "norms@0,order@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0,time@0",
+  "norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0",
+  "norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0,time@0"
+ ],
  "texts": {
   "relational-fol@0,right-clauses@0": "UnsupportedProfile: Unsupported profile right-clauses@0",
   "acts@0,relational-fol@0,right-clauses@0": "UnsupportedProfile: Unsupported profile right-clauses@0",
@@ -157,5 +196,537 @@
   "relational-fol@0,right-clauses@0,soft-norms@0,speech-acts@0": "UnsupportedProfile: speech-acts@0 requires norms@0",
   "relational-fol@0,right-clauses@0,soft-norms@0,time@0": "UnsupportedProfile: Unsupported profile right-clauses@0",
   "relational-fol@0,right-clauses@0,speech-acts@0,time@0": "UnsupportedProfile: speech-acts@0 requires norms@0"
+ },
+ "rights": {
+  "norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "head": "ok",
+   "off": "ok"
+  },
+  "acts@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "head": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "off": "UnsupportedProfile: acts@0 with soft-norms@0 is not implemented"
+  },
+  "alternatives@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: alternatives@0 with soft-norms@0",
+   "head": "UnsupportedProfile: alternatives@0 with soft-norms@0",
+   "off": "UnsupportedProfile: alternatives@0 with soft-norms@0"
+  },
+  "closure@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "head": "UnsupportedProfile: the norms route admits FOL documents only",
+   "off": "UnsupportedProfile: the norms route admits FOL documents only"
+  },
+  "data@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "head": "ok",
+   "off": "ok"
+  },
+  "definitions@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "head": "ok",
+   "off": "ok"
+  },
+  "documents@1,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "head": "ok",
+   "off": "ok"
+  },
+  "nary@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "head": "UnsupportedProfile: the norms route admits FOL documents only",
+   "off": "UnsupportedProfile: the norms route admits FOL documents only"
+  },
+  "norm-defaults@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "head": "ok",
+   "off": "ok"
+  },
+  "norms@0,order@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "head": "UnsupportedProfile: the norms route admits FOL documents only",
+   "off": "UnsupportedProfile: the norms route admits FOL documents only"
+  },
+  "norms@0,readings@1,relational-fol@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: readings@1 is not the head of this profile list",
+   "head": "UnsupportedProfile: readings@1 is not the head of this profile list",
+   "off": "ok"
+  },
+  "norms@0,relational-fol@0,reports@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "head": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "off": "UnsupportedProfile: Unsupported profile rights@0"
+  },
+  "norms@0,relational-fol@0,right-clauses@0,rights@0,risk@0,soft-norms@0": {
+   "base": "UnsupportedProfile: risk@0 requires alternatives@0",
+   "head": "UnsupportedProfile: risk@0 requires alternatives@0",
+   "off": "UnsupportedProfile: risk@0 requires alternatives@0"
+  },
+  "norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0,speech-acts@0": {
+   "base": "UnsupportedProfile: speech-acts@0 with right-clauses@0",
+   "head": "UnsupportedProfile: speech-acts@0 with right-clauses@0",
+   "off": "UnsupportedProfile: speech-acts@0 with rights@0"
+  },
+  "norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0,time@0": {
+   "base": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "head": "ok",
+   "off": "ok"
+  },
+  "acts@0,alternatives@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "head": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "off": "UnsupportedProfile: alternatives@0 with soft-norms@0"
+  },
+  "acts@0,closure@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "head": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "off": "UnsupportedProfile: acts@0 with soft-norms@0 is not implemented"
+  },
+  "acts@0,data@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "head": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "off": "UnsupportedProfile: acts@0 with soft-norms@0 is not implemented"
+  },
+  "acts@0,definitions@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "head": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "off": "UnsupportedProfile: acts@0 with soft-norms@0 is not implemented"
+  },
+  "acts@0,documents@1,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "head": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "off": "UnsupportedProfile: acts@0 with soft-norms@0 is not implemented"
+  },
+  "acts@0,nary@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "head": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "off": "UnsupportedProfile: Unsupported profile nary@0 without closure@0"
+  },
+  "acts@0,norm-defaults@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "head": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "off": "UnsupportedProfile: acts@0 with soft-norms@0 is not implemented"
+  },
+  "acts@0,norms@0,order@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "head": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "off": "UnsupportedProfile: acts@0 with soft-norms@0 is not implemented"
+  },
+  "acts@0,norms@0,readings@1,relational-fol@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: acts@0 with soft-norms@0 is not implemented",
+   "head": "UnsupportedProfile: acts@0 with soft-norms@0 is not implemented",
+   "off": "UnsupportedProfile: acts@0 with soft-norms@0 is not implemented"
+  },
+  "acts@0,norms@0,relational-fol@0,reports@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "head": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "off": "UnsupportedProfile: reports@0 with norms@0 layers"
+  },
+  "acts@0,norms@0,relational-fol@0,right-clauses@0,rights@0,risk@0,soft-norms@0": {
+   "base": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "head": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "off": "UnsupportedProfile: risk@0 requires alternatives@0"
+  },
+  "acts@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0,speech-acts@0": {
+   "base": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "head": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "off": "UnsupportedProfile: speech-acts@0 with rights@0"
+  },
+  "acts@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0,time@0": {
+   "base": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "head": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "off": "UnsupportedProfile: acts@0 with soft-norms@0 is not implemented"
+  },
+  "alternatives@0,closure@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: alternatives@0 with soft-norms@0",
+   "head": "UnsupportedProfile: alternatives@0 with soft-norms@0",
+   "off": "UnsupportedProfile: alternatives@0 with soft-norms@0"
+  },
+  "alternatives@0,data@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: alternatives@0 with soft-norms@0",
+   "head": "UnsupportedProfile: alternatives@0 with soft-norms@0",
+   "off": "UnsupportedProfile: alternatives@0 with soft-norms@0"
+  },
+  "alternatives@0,definitions@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: alternatives@0 with soft-norms@0",
+   "head": "UnsupportedProfile: alternatives@0 with soft-norms@0",
+   "off": "UnsupportedProfile: alternatives@0 with soft-norms@0"
+  },
+  "alternatives@0,documents@1,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: alternatives@0 with soft-norms@0",
+   "head": "UnsupportedProfile: alternatives@0 with soft-norms@0",
+   "off": "UnsupportedProfile: alternatives@0 with soft-norms@0"
+  },
+  "alternatives@0,nary@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: alternatives@0 with soft-norms@0",
+   "head": "UnsupportedProfile: alternatives@0 with soft-norms@0",
+   "off": "UnsupportedProfile: alternatives@0 with soft-norms@0"
+  },
+  "alternatives@0,norm-defaults@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: alternatives@0 with soft-norms@0",
+   "head": "UnsupportedProfile: alternatives@0 with soft-norms@0",
+   "off": "UnsupportedProfile: alternatives@0 with soft-norms@0"
+  },
+  "alternatives@0,norms@0,order@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: alternatives@0 with soft-norms@0",
+   "head": "UnsupportedProfile: alternatives@0 with soft-norms@0",
+   "off": "UnsupportedProfile: alternatives@0 with soft-norms@0"
+  },
+  "alternatives@0,norms@0,readings@1,relational-fol@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: alternatives@0 with soft-norms@0",
+   "head": "UnsupportedProfile: alternatives@0 with soft-norms@0",
+   "off": "UnsupportedProfile: alternatives@0 with soft-norms@0"
+  },
+  "alternatives@0,norms@0,relational-fol@0,reports@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: alternatives@0 with soft-norms@0",
+   "head": "UnsupportedProfile: alternatives@0 with soft-norms@0",
+   "off": "UnsupportedProfile: alternatives@0 with soft-norms@0"
+  },
+  "alternatives@0,norms@0,relational-fol@0,right-clauses@0,rights@0,risk@0,soft-norms@0": {
+   "base": "UnsupportedProfile: alternatives@0 with soft-norms@0",
+   "head": "UnsupportedProfile: alternatives@0 with soft-norms@0",
+   "off": "UnsupportedProfile: alternatives@0 with soft-norms@0"
+  },
+  "alternatives@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0,speech-acts@0": {
+   "base": "UnsupportedProfile: alternatives@0 with soft-norms@0",
+   "head": "UnsupportedProfile: alternatives@0 with soft-norms@0",
+   "off": "UnsupportedProfile: alternatives@0 with soft-norms@0"
+  },
+  "alternatives@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0,time@0": {
+   "base": "UnsupportedProfile: alternatives@0 with soft-norms@0",
+   "head": "UnsupportedProfile: alternatives@0 with soft-norms@0",
+   "off": "UnsupportedProfile: alternatives@0 with soft-norms@0"
+  },
+  "closure@0,data@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "head": "UnsupportedProfile: the norms route admits FOL documents only",
+   "off": "UnsupportedProfile: the norms route admits FOL documents only"
+  },
+  "closure@0,definitions@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "head": "UnsupportedProfile: the norms route admits FOL documents only",
+   "off": "UnsupportedProfile: the norms route admits FOL documents only"
+  },
+  "closure@0,documents@1,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "head": "UnsupportedProfile: the norms route admits FOL documents only",
+   "off": "UnsupportedProfile: the norms route admits FOL documents only"
+  },
+  "closure@0,nary@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "head": "UnsupportedProfile: the norms route admits FOL documents only",
+   "off": "UnsupportedProfile: the norms route admits FOL documents only"
+  },
+  "closure@0,norm-defaults@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "head": "UnsupportedProfile: the norms route admits FOL documents only",
+   "off": "UnsupportedProfile: the norms route admits FOL documents only"
+  },
+  "closure@0,norms@0,order@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "head": "UnsupportedProfile: the norms route admits FOL documents only",
+   "off": "UnsupportedProfile: the norms route admits FOL documents only"
+  },
+  "closure@0,norms@0,readings@1,relational-fol@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: readings@1 is not the head of this profile list",
+   "head": "UnsupportedProfile: readings@1 is not the head of this profile list",
+   "off": "UnsupportedProfile: the norms route admits FOL documents only"
+  },
+  "closure@0,norms@0,relational-fol@0,reports@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "head": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "off": "UnsupportedProfile: Unsupported profile rights@0"
+  },
+  "closure@0,norms@0,relational-fol@0,right-clauses@0,rights@0,risk@0,soft-norms@0": {
+   "base": "UnsupportedProfile: risk@0 requires alternatives@0",
+   "head": "UnsupportedProfile: risk@0 requires alternatives@0",
+   "off": "UnsupportedProfile: risk@0 requires alternatives@0"
+  },
+  "closure@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0,speech-acts@0": {
+   "base": "UnsupportedProfile: speech-acts@0 with closure@0",
+   "head": "UnsupportedProfile: speech-acts@0 with closure@0",
+   "off": "UnsupportedProfile: speech-acts@0 with closure@0"
+  },
+  "closure@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0,time@0": {
+   "base": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "head": "UnsupportedProfile: the norms route admits FOL documents only",
+   "off": "UnsupportedProfile: the norms route admits FOL documents only"
+  },
+  "data@0,definitions@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "head": "ok",
+   "off": "ok"
+  },
+  "data@0,documents@1,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "head": "ok",
+   "off": "ok"
+  },
+  "data@0,nary@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "head": "UnsupportedProfile: the norms route admits FOL documents only",
+   "off": "UnsupportedProfile: the norms route admits FOL documents only"
+  },
+  "data@0,norm-defaults@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "head": "ok",
+   "off": "ok"
+  },
+  "data@0,norms@0,order@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "head": "UnsupportedProfile: the norms route admits FOL documents only",
+   "off": "UnsupportedProfile: the norms route admits FOL documents only"
+  },
+  "data@0,norms@0,readings@1,relational-fol@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: readings@1 is not the head of this profile list",
+   "head": "UnsupportedProfile: readings@1 is not the head of this profile list",
+   "off": "ok"
+  },
+  "data@0,norms@0,relational-fol@0,reports@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "head": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "off": "UnsupportedProfile: Unsupported profile rights@0"
+  },
+  "data@0,norms@0,relational-fol@0,right-clauses@0,rights@0,risk@0,soft-norms@0": {
+   "base": "UnsupportedProfile: risk@0 requires alternatives@0",
+   "head": "UnsupportedProfile: risk@0 requires alternatives@0",
+   "off": "UnsupportedProfile: risk@0 requires alternatives@0"
+  },
+  "data@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0,speech-acts@0": {
+   "base": "UnsupportedProfile: speech-acts@0 with data@0",
+   "head": "UnsupportedProfile: speech-acts@0 with data@0",
+   "off": "UnsupportedProfile: speech-acts@0 with data@0"
+  },
+  "data@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0,time@0": {
+   "base": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "head": "ok",
+   "off": "ok"
+  },
+  "definitions@0,documents@1,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "head": "ok",
+   "off": "ok"
+  },
+  "definitions@0,nary@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "head": "UnsupportedProfile: the norms route admits FOL documents only",
+   "off": "UnsupportedProfile: the norms route admits FOL documents only"
+  },
+  "definitions@0,norm-defaults@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "head": "ok",
+   "off": "ok"
+  },
+  "definitions@0,norms@0,order@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "head": "UnsupportedProfile: the norms route admits FOL documents only",
+   "off": "UnsupportedProfile: the norms route admits FOL documents only"
+  },
+  "definitions@0,norms@0,readings@1,relational-fol@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: readings@1 is not the head of this profile list",
+   "head": "UnsupportedProfile: readings@1 is not the head of this profile list",
+   "off": "ok"
+  },
+  "definitions@0,norms@0,relational-fol@0,reports@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "head": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "off": "UnsupportedProfile: Unsupported profile rights@0"
+  },
+  "definitions@0,norms@0,relational-fol@0,right-clauses@0,rights@0,risk@0,soft-norms@0": {
+   "base": "UnsupportedProfile: risk@0 requires alternatives@0",
+   "head": "UnsupportedProfile: risk@0 requires alternatives@0",
+   "off": "UnsupportedProfile: risk@0 requires alternatives@0"
+  },
+  "definitions@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0,speech-acts@0": {
+   "base": "UnsupportedProfile: speech-acts@0 with definitions@0",
+   "head": "UnsupportedProfile: speech-acts@0 with definitions@0",
+   "off": "UnsupportedProfile: speech-acts@0 with definitions@0"
+  },
+  "definitions@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0,time@0": {
+   "base": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "head": "ok",
+   "off": "ok"
+  },
+  "documents@1,nary@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "head": "UnsupportedProfile: the norms route admits FOL documents only",
+   "off": "UnsupportedProfile: the norms route admits FOL documents only"
+  },
+  "documents@1,norm-defaults@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "head": "ok",
+   "off": "ok"
+  },
+  "documents@1,norms@0,order@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "head": "UnsupportedProfile: the norms route admits FOL documents only",
+   "off": "UnsupportedProfile: the norms route admits FOL documents only"
+  },
+  "documents@1,norms@0,readings@1,relational-fol@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: readings@1 is not the head of this profile list",
+   "head": "UnsupportedProfile: readings@1 is not the head of this profile list",
+   "off": "ok"
+  },
+  "documents@1,norms@0,relational-fol@0,reports@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "head": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "off": "UnsupportedProfile: Unsupported profile rights@0"
+  },
+  "documents@1,norms@0,relational-fol@0,right-clauses@0,rights@0,risk@0,soft-norms@0": {
+   "base": "UnsupportedProfile: risk@0 requires alternatives@0",
+   "head": "UnsupportedProfile: risk@0 requires alternatives@0",
+   "off": "UnsupportedProfile: risk@0 requires alternatives@0"
+  },
+  "documents@1,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0,speech-acts@0": {
+   "base": "UnsupportedProfile: speech-acts@0 with documents@1",
+   "head": "UnsupportedProfile: speech-acts@0 with documents@1",
+   "off": "UnsupportedProfile: speech-acts@0 with documents@1"
+  },
+  "documents@1,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0,time@0": {
+   "base": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "head": "ok",
+   "off": "ok"
+  },
+  "nary@0,norm-defaults@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "head": "UnsupportedProfile: the norms route admits FOL documents only",
+   "off": "UnsupportedProfile: the norms route admits FOL documents only"
+  },
+  "nary@0,norms@0,order@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "head": "UnsupportedProfile: the norms route admits FOL documents only",
+   "off": "UnsupportedProfile: the norms route admits FOL documents only"
+  },
+  "nary@0,norms@0,readings@1,relational-fol@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: Unsupported profile nary@0 without closure@0",
+   "head": "UnsupportedProfile: Unsupported profile nary@0 without closure@0",
+   "off": "UnsupportedProfile: Unsupported profile nary@0 without closure@0"
+  },
+  "nary@0,norms@0,relational-fol@0,reports@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "head": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "off": "UnsupportedProfile: Unsupported profile rights@0"
+  },
+  "nary@0,norms@0,relational-fol@0,right-clauses@0,rights@0,risk@0,soft-norms@0": {
+   "base": "UnsupportedProfile: risk@0 requires alternatives@0",
+   "head": "UnsupportedProfile: risk@0 requires alternatives@0",
+   "off": "UnsupportedProfile: risk@0 requires alternatives@0"
+  },
+  "nary@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0,speech-acts@0": {
+   "base": "UnsupportedProfile: speech-acts@0 with nary@0",
+   "head": "UnsupportedProfile: speech-acts@0 with nary@0",
+   "off": "UnsupportedProfile: speech-acts@0 with nary@0"
+  },
+  "nary@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0,time@0": {
+   "base": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "head": "UnsupportedProfile: the norms route admits FOL documents only",
+   "off": "UnsupportedProfile: the norms route admits FOL documents only"
+  },
+  "norm-defaults@0,norms@0,order@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "head": "UnsupportedProfile: the norms route admits FOL documents only",
+   "off": "UnsupportedProfile: the norms route admits FOL documents only"
+  },
+  "norm-defaults@0,norms@0,readings@1,relational-fol@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: readings@1 is not the head of this profile list",
+   "head": "UnsupportedProfile: readings@1 is not the head of this profile list",
+   "off": "ok"
+  },
+  "norm-defaults@0,norms@0,relational-fol@0,reports@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: Unsupported profile norm-defaults@0",
+   "head": "UnsupportedProfile: Unsupported profile norm-defaults@0",
+   "off": "UnsupportedProfile: Unsupported profile norm-defaults@0"
+  },
+  "norm-defaults@0,norms@0,relational-fol@0,right-clauses@0,rights@0,risk@0,soft-norms@0": {
+   "base": "UnsupportedProfile: risk@0 requires alternatives@0",
+   "head": "UnsupportedProfile: risk@0 requires alternatives@0",
+   "off": "UnsupportedProfile: risk@0 requires alternatives@0"
+  },
+  "norm-defaults@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0,speech-acts@0": {
+   "base": "UnsupportedProfile: speech-acts@0 with norm-defaults@0",
+   "head": "UnsupportedProfile: speech-acts@0 with norm-defaults@0",
+   "off": "UnsupportedProfile: speech-acts@0 with norm-defaults@0"
+  },
+  "norm-defaults@0,norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0,time@0": {
+   "base": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "head": "ok",
+   "off": "ok"
+  },
+  "norms@0,order@0,readings@1,relational-fol@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: readings@1 is not the head of this profile list",
+   "head": "UnsupportedProfile: readings@1 is not the head of this profile list",
+   "off": "UnsupportedProfile: the norms route admits FOL documents only"
+  },
+  "norms@0,order@0,relational-fol@0,reports@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "head": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "off": "UnsupportedProfile: Unsupported profile rights@0"
+  },
+  "norms@0,order@0,relational-fol@0,right-clauses@0,rights@0,risk@0,soft-norms@0": {
+   "base": "UnsupportedProfile: risk@0 requires alternatives@0",
+   "head": "UnsupportedProfile: risk@0 requires alternatives@0",
+   "off": "UnsupportedProfile: risk@0 requires alternatives@0"
+  },
+  "norms@0,order@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0,speech-acts@0": {
+   "base": "UnsupportedProfile: speech-acts@0 with order@0",
+   "head": "UnsupportedProfile: speech-acts@0 with order@0",
+   "off": "UnsupportedProfile: speech-acts@0 with order@0"
+  },
+  "norms@0,order@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0,time@0": {
+   "base": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "head": "UnsupportedProfile: the norms route admits FOL documents only",
+   "off": "UnsupportedProfile: the norms route admits FOL documents only"
+  },
+  "norms@0,readings@1,relational-fol@0,reports@0,right-clauses@0,rights@0,soft-norms@0": {
+   "base": "UnsupportedProfile: Unsupported profile readings@1",
+   "head": "UnsupportedProfile: Unsupported profile readings@1",
+   "off": "UnsupportedProfile: Unsupported profile readings@1"
+  },
+  "norms@0,readings@1,relational-fol@0,right-clauses@0,rights@0,risk@0,soft-norms@0": {
+   "base": "UnsupportedProfile: risk@0 requires alternatives@0",
+   "head": "UnsupportedProfile: risk@0 requires alternatives@0",
+   "off": "UnsupportedProfile: risk@0 requires alternatives@0"
+  },
+  "norms@0,readings@1,relational-fol@0,right-clauses@0,rights@0,soft-norms@0,speech-acts@0": {
+   "base": "UnsupportedProfile: speech-acts@0 with readings@1",
+   "head": "UnsupportedProfile: speech-acts@0 with readings@1",
+   "off": "UnsupportedProfile: speech-acts@0 with readings@1"
+  },
+  "norms@0,readings@1,relational-fol@0,right-clauses@0,rights@0,soft-norms@0,time@0": {
+   "base": "UnsupportedProfile: readings@1 is not the head of this profile list",
+   "head": "UnsupportedProfile: readings@1 is not the head of this profile list",
+   "off": "ok"
+  },
+  "norms@0,relational-fol@0,reports@0,right-clauses@0,rights@0,risk@0,soft-norms@0": {
+   "base": "UnsupportedProfile: risk@0 requires alternatives@0",
+   "head": "UnsupportedProfile: risk@0 requires alternatives@0",
+   "off": "UnsupportedProfile: risk@0 requires alternatives@0"
+  },
+  "norms@0,relational-fol@0,reports@0,right-clauses@0,rights@0,soft-norms@0,speech-acts@0": {
+   "base": "UnsupportedProfile: speech-acts@0 with reports@0",
+   "head": "UnsupportedProfile: speech-acts@0 with reports@0",
+   "off": "UnsupportedProfile: speech-acts@0 with reports@0"
+  },
+  "norms@0,relational-fol@0,reports@0,right-clauses@0,rights@0,soft-norms@0,time@0": {
+   "base": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "head": "UnsupportedProfile: Unsupported profile right-clauses@0",
+   "off": "UnsupportedProfile: Unsupported profile rights@0"
+  },
+  "norms@0,relational-fol@0,right-clauses@0,rights@0,risk@0,soft-norms@0,speech-acts@0": {
+   "base": "UnsupportedProfile: risk@0 requires alternatives@0",
+   "head": "UnsupportedProfile: risk@0 requires alternatives@0",
+   "off": "UnsupportedProfile: risk@0 requires alternatives@0"
+  },
+  "norms@0,relational-fol@0,right-clauses@0,rights@0,risk@0,soft-norms@0,time@0": {
+   "base": "UnsupportedProfile: risk@0 requires alternatives@0",
+   "head": "UnsupportedProfile: risk@0 requires alternatives@0",
+   "off": "UnsupportedProfile: risk@0 requires alternatives@0"
+  },
+  "norms@0,relational-fol@0,right-clauses@0,rights@0,soft-norms@0,speech-acts@0,time@0": {
+   "base": "UnsupportedProfile: speech-acts@0 with right-clauses@0",
+   "head": "UnsupportedProfile: speech-acts@0 with right-clauses@0",
+   "off": "UnsupportedProfile: speech-acts@0 with rights@0"
+  }
  }
 }
