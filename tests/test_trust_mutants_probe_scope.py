@@ -312,6 +312,27 @@ def test_probe_keeps_an_entry_whose_walk_did_not_finish_without_done(tmp_path):
     assert tm.complete(got[(2, 2)]) and not tm.complete(got[(4, 5)])
 
 
+def test_a_probe_past_the_build_timeout_says_so_and_stays_unknown(tmp_path):
+    """tm-m509-reads-linear (2): a probe run killed at --build-timeout (`TIMED_OUT`, the scoped one and the whole
+    file's) leaves each check it was to walk unknown with that reason, not "Lean could not elaborate it"; a run Lean
+    failed keeps the old reason."""
+    path, calls = tmp_path / "A.lean", []
+
+    def lake(env, *args):
+        calls.append(env.get("TM_TRUST_ONLY"))
+        return tm.TIMED_OUT, f"lake {args[0]} did not finish in 500 s (--build-timeout)"
+    probes = tm.Probes(lambda f, only: (tm.probe(lake, {}, PROBED, PROBED_ROLES, path, only=only),
+                                        {(2, 2), (4, 5), (6, 6), (7, 7)}))
+    probes.scope({("A.lean", (2, 2))})
+    got = tm.settle([("A.lean", 2, REFUTE)], lambda f: PROBED, lambda f: PROBED, {"A.lean": PROBED_ROLES}, None,
+                    lambda key: tm.refusal(probes(key), whole()))
+    assert calls == ["tmChk_2", None]  # the scoped probe, then the whole file's (`Probes`)
+    assert got[0] == "UNKNOWN" and got[1].endswith("(the probe did not finish in 500 s (--build-timeout))"), got
+    failed = tm.probe(lambda env, *args: (1, "error"), {}, PROBED, PROBED_ROLES, path)
+    assert failed == {} and tm.refusal(failed.get((2, 2)), whole()) == "Lean could not elaborate it in the probe"
+    assert tm.refusal(whole(), probes(("A.lean", (2, 2)))) == "the probe did not finish in 500 s (--build-timeout)"
+
+
 # F3's shapes (review 5): a `mutual … end` holding a `decide` theorem, `where` and `termination_by` tails, a docstring
 # before the next command, `set_option … in`, an attribute on its own line and a multi-line `#guard`.
 F3 = """import Demo.Defs
@@ -490,6 +511,78 @@ def test_the_walk_reads_and_prints_only(edit, fault):
         assert faults == []
     else:
         assert edit(tm.READS) != tm.READS and any(fault in x for x in faults), faults
+
+
+# tm-m509-reads-linear (1): the List worklist `READS` had (`++` copied it per constant), rebuilt from today's text
+LIST_WORKLIST = [
+    ("  let mut todo : Array Name := roots.foldl (fun a e => a ++ e.getUsedConstants) #[]\n  let mut head := 0\n",
+     "  let mut todo : List Name := roots.foldl (fun a e => a ++ e.getUsedConstants.toList) []\n"),
+    ("  while head < todo.size do\n    let c := todo[head]!\n    head := head + 1\n",
+     "  while !todo.isEmpty do\n    let c := todo.head!\n    todo := todo.tail!\n"),
+    ("todo ++ info.type.getUsedConstants ++ value.getUsedConstants\n",
+     "todo ++ info.type.getUsedConstants.toList ++ value.getUsedConstants.toList\n")]
+ORDER_DEFS = """namespace Demo
+
+def helper (n : Nat) : Nat := n + 1
+def shared (n : Nat) : Nat := helper n + helper (n + 1)
+def other (n : Nat) : Nat := helper (2 * n)
+def twice (n : Nat) : Nat := shared n + other n
+
+mutual
+def isEven : Nat → Bool
+  | 0 => true
+  | n + 1 => isOdd n
+def isOdd : Nat → Bool
+  | 0 => false
+  | n + 1 => isEven n
+end
+
+end Demo
+"""
+ORDER = "import Demo.Defs\nopen Demo\n\n#guard twice 2 == 12\n\nexample : isEven 4 = true := by decide\n"
+
+
+@pytest.fixture(scope="module")
+def order_package(tmp_path_factory) -> Path:
+    root = tmp_path_factory.mktemp("order")
+    scaffold(root, ".")
+    (root / "lean/Demo/Defs.lean").write_text(ORDER_DEFS)
+    (root / "lean/Demo/Order.lean").write_text(ORDER)
+    assert lake_in(root / "lean")({**os.environ, **PATH}, "build", "Demo.Order")[0] == 0
+    return root
+
+
+def walk_lines(root: Path, reads: str, monkeypatch) -> list[str]:
+    """Every line `reads`, installed, prints for `ORDER`'s checks, in order, without the call's nonce."""
+    lean, env, said = root / "lean", {**os.environ, **PATH}, []
+    with monkeypatch.context() as patch:
+        patch.setattr(tm, "READS", reads)
+        assert tm.install(lambda *a: lake_in(lean)(env, *a), lean)
+
+    def lake(env_: dict, *args: str) -> tuple[int, str]:
+        said.append((env_["TM_TRUST_NONCE"], got := lake_in(lean)(env_, *args)))
+        return got
+    tm.probe(lake, env, ORDER, [(4, 4, "check", None), (6, 6, "check", None)], lean / "Demo/Order.lean")
+    (nonce, (code, out)), = said
+    return [rest for mark, _, rest in (x.partition(" ") for x in out.splitlines()) if mark == nonce]
+
+
+def test_the_linear_worklist_walks_in_the_list_order(order_package, monkeypatch):
+    """tm-m509-reads-linear (1): `READS`'s Array queue prints exactly the lines the List worklist printed, in the
+    same order (`hash`, each `const`, `done`), for a check over a shared closure (`helper` under `shared` and
+    `other`) and one over a cycle (`isEven`/`isOdd`'s `_unsafe_rec`s)."""
+    lines = walk_lines(order_package, tm.READS, monkeypatch)
+    assert [x.split()[2] for x in lines if x.startswith("tmChk_4 const")] == [
+        "Demo.twice", "Demo.shared", "Demo.other", "Demo.helper"]  # the List's order: breadth first
+    assert any(" const Demo.isOdd._unsafe_rec " in x for x in lines)
+    for k in ("tmChk_4", "tmChk_6"):
+        mine = [x for x in lines if x.startswith(k + " ")]
+        assert mine[-1] == f"{k} done" and sum(" const " in x for x in mine) >= 3, mine
+    old = tm.READS
+    for new, before in LIST_WORKLIST:
+        assert old.count(new) == 1, new
+        old = old.replace(new, before)
+    assert lines == walk_lines(order_package, old, monkeypatch)
 
 
 # --- the seeds, in real Lean, in five modes ----------------------------------------------------------------------
