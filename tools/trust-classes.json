@@ -20759,6 +20759,16 @@
         "ResponseShape.RightsChecks.weighed"
       ]
     },
+    "ResponseShape/Schemas/SoftPairsChecks.lean": {
+      "T": [
+        "ResponseShape.SoftPairsChecks.all",
+        "ResponseShape.SoftPairsChecks.env",
+        "ResponseShape.SoftPairsChecks.norms",
+        "ResponseShape.SoftPairsChecks.openWith",
+        "ResponseShape.SoftPairsChecks.pairs",
+        "ResponseShape.SoftPairsChecks.parse"
+      ]
+    },
     "VE/EnglishGrammar/Norm/Owners.lean": {
       "S": [
         "VE.EnglishGrammar.Norm.Force.op",
