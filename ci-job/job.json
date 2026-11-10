@@ -1,0 +1,12 @@
+{
+ "job": "testmap-c94ad399-t316889-s1",
+ "head": "159b9e8909d8136c8dfa942bc13a1cb1049b573f",
+ "argv": [
+  "testmap-c94ad399-t316889-s1",
+  "159b9e8909d8136c8dfa942bc13a1cb1049b573f",
+  "159b9e8909d8136c8dfa942bc13a1cb1049b573f",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-8f2bd163a9ee.tar.zst",
+  "654d9b7a3a68258ae84820462e1e1b0c1f06c91220f599b41460f58b5b31962f",
+  "shard=ulimit -s 8192; tc=$(cat lean/lean-toolchain); tc=${tc//\\//--}; mkdir -p ~/.elan/toolchains; ln -sfn /opt/lean ~/.elan/toolchains/${tc//:/---}; mkdir -p ~/.elan/bin; for t in lean lake; do [ -e ~/.elan/bin/$t ] || ln -sfn /opt/lean/bin/$t ~/.elan/bin/$t; done; uv run --frozen python tools/test_map.py record --no-merge --jobs 4 --output \"$RUNNER_TEMP/out/map-s1.json.gz\" tests/test_trust_mutants.py tests/test_difffuzz.py tests/test_events_wire_mutants.py tests/test_lean_share.py tests/test_readings_defaults_statements.py tests/test_test_chunks.py tests/test_gen_inv_design.py tests/test_right_clauses_duplicate.py tests/test_scales_exercised.py tests/test_scope_5_6_statements.py 2>&1 | tee \"$RUNNER_TEMP/out/shard-full.txt\"; exit ${PIPESTATUS[0]}"
+ ]
+}
