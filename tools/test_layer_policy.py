@@ -329,6 +329,7 @@ class LayerSelectionTests(unittest.TestCase):
             code, output = python_check(root)
             self.assertEqual(code, 1, output)
             self.assertIn("new outward import ve.backends -> ve.backends.senses", output)
+            self.assertIn("if ve.backends belongs in a higher layer, declare it on the file's first line", output)
             (root / "ve/backends/__init__.py").write_text("from ve.backends import relay\n")
             code, output = python_check(root)
         self.assertEqual(code, 0, output)
@@ -346,6 +347,7 @@ class LayerSelectionTests(unittest.TestCase):
             code, output = python_check(root)
             self.assertEqual(code, 1, output)
             self.assertIn("No matches for ignored import ve.errors -> ve.ast", output)
+            self.assertNotIn("a broken layer contract", output)  # a stale ledger edge is no outward import
             (root / "ve/errors.py").write_text("from ve import ast\n")
             code, output = python_check(root)
         self.assertEqual(code, 0, output)
@@ -825,6 +827,12 @@ class LayerDeclarationTests(unittest.TestCase):
             with self.subTest(source=source):
                 self.assertIsNone(self.READ(source, "x", "--"))
         self.assertIsNone(self.READ('"""Doc."""\nX = "# ve-layer: 4 (in a string)"\n', "x", "#"))
+        # Code that merely starts with the word is no declaration (only a comment or doc line is read as one).
+        for source in ("ve_layers = 3\nVE_LAYER = 4\n", "import A\nve_layer_of x := 4\n"):
+            with self.subTest(source=source):
+                self.assertIsNone(self.READ(source, "x", "#"))
+                self.assertIsNone(self.READ(source, "x", "--"))
+        self.assertEqual(self.READ("-- ve-layer: 4 (reads (the) runner)\n", "x", "--"), (4, "reads (the) runner"))
 
     def test_a_declaration_without_a_reason_is_refused(self):
         for comment in ("--", "#"):
@@ -840,13 +848,14 @@ class LayerDeclarationTests(unittest.TestCase):
         for source in ("--ve-layer: 4 (x)", "-- ve-layer 4 (x)", "-- VE-LAYER: 4 (x)", "-- ve_layer: 4 (x)",
                        "-- ve-layer: four (x)", "-- ve-layer: 4 x", "-- ve-layer: 4 (x) trailing", "-- ve-layer:  4 (x)",
                        "-- ve-layer: \u0664 (x)", "-- ve-layer: 4 (x)\r", "-- ve-layer: 4\t(x)", "  -- ve-layer: 4 (x)",
-                       "/-! ve-layer: 4 (x) -/", "# ve-layer: 4 (x)", "\ufeff-- ve-layer: 4 (x)"):
+                       "/-! ve-layer: 4 (x) -/", "# ve-layer: 4 (x)", "\ufeff-- ve-layer: 4 (x)",
+                       "-- ve-layer: 4 (a) (b)", "-- ve-layer: 4 ((a)", "-- ve-layer: 4 (a))", "ve-layer: 4 (x)"):
             self.refused(source + "\nimport A\n", "--", "malformed layer declaration")
         self.refused("-- ve-layer: 4 (x)\n", "#", "malformed layer declaration")
 
     def test_a_declaration_off_the_first_line_is_refused(self):
         for source in ("import A\n-- ve-layer: 4 (x)\n", "/-! A module.\nve-layer: 4 (x)\n-/\n",
-                       "-- ve-layer: 4 (x)\n-- ve-layer: 4 (twice)\n"):
+                       "-- ve-layer: 4 (x)\n-- ve-layer: 4 (twice)\n", "import A\n  -- VE_Layer: 4 (x)\n"):
             self.refused(source, "--", "must be the file's first line")
         self.refused('"""Doc."""\n# ve-layer: 4 (x)\n', "#", "lean/VE/Planted.lean:2:", "must be the file's first line")
 
@@ -899,6 +908,35 @@ class LayerDeclarationTests(unittest.TestCase):
             (root / "ve_experiments/planted.py").write_text("")
             self.assertEqual([layer_policy.python_layer(m, root) for m in ("ve_experiments.planted", "ve.errors")],
                              [5, 1])
+
+    def test_a_lean_module_named_by_the_policy_cannot_also_declare(self):
+        # One owner: a module a set or `==` rule of lean_name_layer names keeps its layer there.
+        self.assertTrue({"VE.Norms.FlaggedSpec", "VE.Judgments.ChainExamples", "VE.Calc.Ties"} <= layer_policy.lean_named())
+        self.assertNotIn("VE.Norms.Planted", layer_policy.lean_named())
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            for module, layer in (("VE.Norms.FlaggedSpec", 4), ("VE.Judgments.ChainExamples", 4), ("VE.Calc.Ties", 4)):
+                for declared in (2, layer):
+                    write(root, {layer_policy.lean_path(module): f"-- ve-layer: {declared} (a second owner)\n"})
+                    with self.subTest(module=module, declared=declared), self.assertRaises(ValueError) as caught:
+                        layer_policy.lean_layer(module, root)
+                    self.assertIn(f"{module} is also named in tools/layer_policy.py's lean_name_layer at layer {layer}",
+                                  str(caught.exception))
+            write(root, {"lean/VE/Norms/Planted.lean": "-- ve-layer: 4 (a fixture)\n"})
+            self.assertEqual(layer_policy.lean_layer("VE.Norms.Planted", root), 4)
+
+    def test_python_check_refuses_each_bad_declaration_by_file(self):
+        with TemporaryDirectory() as directory:
+            root = write(Path(directory), {"ve/__init__.py": "", "ve/planted.py": ""})
+            for source, words in (("# ve-layer: 4\n", "gives no reason"), ("# ve-layer: 6 (x)\n", "unknown layer 6"),
+                                  ("#ve-layer: 4 (x)\n", "malformed layer declaration"),
+                                  ('"""Doc."""\n# ve-layer: 4 (x)\n', "ve/planted.py:2: a layer declaration must be")):
+                (root / "ve/planted.py").write_text(source)
+                with self.subTest(source=source):
+                    found = check_python_layers.problems(root)
+                    self.assertEqual(len(found), 1, found)
+                    self.assertTrue(found[0].startswith("Python layer declaration refused: ve/planted.py:"), found)
+                    self.assertIn(words, found[0])
 
     def test_a_python_declaration_places_its_module_or_package(self):
         with TemporaryDirectory() as directory:
@@ -977,7 +1015,8 @@ class LayerDeclarationTests(unittest.TestCase):
             code, output = python_check(root)
             self.assertEqual(code, 1, output)
             self.assertIn("ve.planted -> ve.parser", output)
-            self.assertIn("if the importer belongs in a higher layer, declare it on the file's first line", output)
+            self.assertIn("a broken layer contract: import inward, or if the importer belongs in a higher layer, "
+                          "declare it on the file's first line", output)
             (root / "ve/planted.py").write_text("# ve-layer: 4 (a route module)\nfrom ve import parser\n")
             code, output = python_check(root)
             self.assertEqual(code, 0, output)

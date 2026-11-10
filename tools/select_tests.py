@@ -353,7 +353,7 @@ def python_change(sel: Selection, change: Change, old: Summary | None, new: Summ
     d = delta(old, new) if change.known else None
     mapped(sel, change, (old, new, d), called)
     sel.static(mentions_path(path), f"names {path}")
-    if path.startswith(("ve/", "ve_experiments/", "experiments/")) and (
+    if path.startswith(("ve/", *(f"{area}/" for area in sorted(APP_AREAS)))) and (
             declared_layer(change.old, path) != declared_layer(change.new, path)):
         sel.checks.add(CHECK_PYTHON)  # the module's own layer declaration, a comment, changed
     if (path.startswith("tests/test_") or path in EXTRA_UNITS) and change.new is not None:

@@ -611,7 +611,7 @@ def test_staged_python_layer_declaration_classifies_the_module(staging):
     stderr = rejects(staging, "ve/planted_module.py: new outward import ve.planted_module -> ve.parser (layer 2 -> 3)")
     assert "`# ve-layer: <1-5> (<reason>)`" in stderr, stderr
     staging.stage("ve/planted_module.py", "# ve-layer: 4\nfrom ve import parser\n")
-    stderr = rejects(staging, "ve/planted_module.py: Python layer declaration refused: ve/planted_module.py:1: "
+    stderr = rejects(staging, "Python layer declaration refused: ve/planted_module.py:1: "
                               "layer declaration '# ve-layer: 4' gives no reason")
     assert "unmapped" not in stderr, stderr
     staging.stage("ve/planted_module.py", "import ve.ast\n")
@@ -631,4 +631,4 @@ def test_staged_lean_layer_declaration_classifies_the_module(staging):
     assert "`-- ve-layer: <1-5> (<reason>)`" in stderr, stderr
     staging.stage(path, "-- ve-layer: 9 (no such layer)\n" + body)
     staging.rehash(path)
-    rejects(staging, f"{path}: Lean layer declaration refused: {path}:1: unknown layer 9")
+    rejects(staging, f"Lean layer declaration refused: {path}:1: unknown layer 9")

@@ -275,7 +275,10 @@ def staged_reader(index: Index, paths: list[str]):
     def read(path: str) -> str | None:
         if path not in blobs:
             blobs.update(index.read([path]))
-        return None if blobs[path] is None else blobs[path].decode("utf-8", "replace")
+        try:
+            return None if blobs[path] is None else blobs[path].decode("utf-8")
+        except UnicodeDecodeError as error:
+            raise ValueError(f"{path}: not UTF-8 ({error.reason})") from None  # as tools/layer_policy.py's read_file
     return read
 
 
@@ -319,9 +322,10 @@ def check_layers(index: Index) -> list[str]:
         try:
             return find()
         except ValueError as error:
-            if path not in refused:
-                refused.add(path)
-                errors.append(f"{path}: {kind} layer declaration refused: {error}")
+            refused.add(path)
+            message = f"{kind} layer declaration refused: {error}"  # the error names the file
+            if message not in errors:
+                errors.append(message)
             return None
 
     def mappable(path: str, module: str, layer: int | None, kind: str) -> bool:

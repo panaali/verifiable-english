@@ -74,7 +74,8 @@ def problems(root: Path) -> list[str]:
         if not (layer(importer) or 0) < (layer(imported) or 0):
             errors.append(f"stale exception (remove it): {edge} is not outward")
     for package in split_packages(rows):
-        errors += [f"new outward import {package} -> {imported} (its __init__ is in no import-linter layer)"
+        errors += [f"new outward import {package} -> {imported} (its __init__ is in no import-linter layer); import "
+                   f"inward, or if {package} belongs in a higher layer, {declaration_form(PYTHON_COMMENT)}"
                    for imported in sorted(graph.find_modules_directly_imported_by(package))
                    if (layer(imported) or 0) > layer(package)]
     facade = max(layer(module) for module in python_exports(root).values())
@@ -128,8 +129,8 @@ def main(argv: list[str] | None = None) -> int:
                             capture_output=True, text=True)
     print(result.stdout, end="")
     print(result.stderr, end="", file=sys.stderr)
-    if result.returncode:
-        print(f"an outward import: import inward, or if the importer belongs in a higher layer, "
+    if "BROKEN" in result.stdout:
+        print(f"a broken layer contract: import inward, or if the importer belongs in a higher layer, "
               f"{declaration_form(PYTHON_COMMENT)} (docs/ARCHITECTURE-LAYERS.md)", file=sys.stderr)
     return 1 if found else result.returncode
 

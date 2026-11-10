@@ -71,13 +71,18 @@ module's own diff and a family branch edits only its own files:
 
 `tools/layer_policy.py` reads the declaration before its name rules (`lean_layer`, `python_layer`), as text: no Lean
 build and no service. A declaration is as strict as a table entry. It is refused, with a message naming the file and
-line, when it is malformed, gives no reason, names a layer other than 1 to 5, stands anywhere but the first line,
-or contradicts a role rule: Lean's aggregation and audit targets (layer 5), entry points, `*.Run` runners,
-`VE.Service.*` and `ResponseShape*` (layer 4), Python's app areas (layer 5) and root packages (no layer). A Python
-row may not be both declared and in the `PYTHON` table. The Lean and Python layer checks, the pre-commit hook (on
-the staged files) and test selection read the declarations; the outward-import and unmapped-module messages name
-the declaration as the way to classify a module. `uv run python tools/layer_declarations.py` lists every
-declaration with its layer and reason, the reviewers' view; it exits 1 on a refused one.
+line, when it is malformed (the reason is one pair of parentheses ending the line), gives no reason, names a layer
+other than 1 to 5, or stands anywhere but the first line (a comment or doc line starting with `ve-layer`, or a
+comment starting with `ve_layer`, is read as an attempt; a module with a shebang or encoding line cannot declare).
+It is refused too when a role rule fixes the module's layer, even at the same layer: Lean's aggregation and audit
+targets (layer 5); entry points, `VE.*.Run` runners, `VE.Route.MeteredRun`, `VE.Service.*`, `ResponseShape` and
+`ResponseShape.*` (layer 4); Python's app areas (layer 5) and root packages (no layer). One owner: a module that
+`tools/layer_policy.py` names one by one (a Lean set entry or `==` rule, a Python `PYTHON` row) may not also declare.
+A Lean reason is comment text that `python3 lean/audit.py` scans, so it avoids the words that script forbids
+(`partial`, `opaque`, `axiom`, ...). The Lean and Python layer checks, the pre-commit hook (on the staged files)
+and test selection read the declarations; the outward-import and unmapped-module messages name the declaration as
+the way to classify a module. `uv run python tools/layer_declarations.py` lists every declaration with its layer
+and reason, the reviewers' view; it exits 1 on a refused one.
 
 ## Tests and non-import dependencies
 
