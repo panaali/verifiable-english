@@ -5463,6 +5463,287 @@
         "python:display"
       ],
       "notes": []
+    },
+    {
+      "id": "norm-defaults.route",
+      "summary": "the norm-defaults route's answers other than admission: fill U's elaboration, conflict, point status, gaps, report and certificate, the defeasible defaults kinds and the acts elaboration",
+      "class": "leaf",
+      "authority": "lean-only",
+      "target": "lean",
+      "assurance": {
+        "current": "experimental",
+        "at_switch": "experimental",
+        "reason": "Lean decides every kind; Python relays the rows, bound to the request by the response schemas and ve/backends/lean_service.py bind_answers"
+      },
+      "python": [],
+      "outcomes": {
+        "verdict": [
+          "CONFLICT",
+          "CONFLICT-FREE",
+          "SETTLED yes",
+          "SETTLED no",
+          "UNDECIDED",
+          "reachable",
+          "none",
+          "FOLLOWS",
+          "DOES-NOT-FOLLOW",
+          "COHERENT",
+          "COLLISION"
+        ],
+        "unknown": [
+          "UNKNOWN",
+          "unknown"
+        ],
+        "rejection": [
+          "InvalidInput",
+          "InvalidModel",
+          "UnsupportedProfile",
+          "UnknownSymbol"
+        ],
+        "budget": [
+          "ResourceLimit"
+        ],
+        "operational": [
+          "CheckerUnavailable"
+        ]
+      },
+      "lean": {
+        "bindings": [
+          {
+            "executable": "ve_service",
+            "mode": "norm-defaults",
+            "kinds": [
+              "norm-defaults-elaborate"
+            ],
+            "response": {
+              "environment_id": "string",
+              "document_hash": "string",
+              "premises": "array<object>",
+              "conflict_targets": "array<object>"
+            },
+            "uncounted": {
+              "premises": "the premises Lean regenerates for fill U",
+              "conflict_targets": "the conflict targets Lean derives from fill U"
+            },
+            "dispatch": [
+              "lean/VE/NormDefaults/Run.lean"
+            ]
+          },
+          {
+            "executable": "ve_service",
+            "mode": "norm-defaults",
+            "kinds": [
+              "norm-defaults-conflict"
+            ],
+            "response": {
+              "verdict": "string",
+              "targets": "array<string>"
+            },
+            "uncounted": {
+              "targets": "the conflict targets Lean derives from fill U"
+            },
+            "dispatch": [
+              "lean/VE/NormDefaults/Run.lean"
+            ]
+          },
+          {
+            "executable": "ve_service",
+            "mode": "norm-defaults",
+            "kinds": [
+              "norm-defaults-status"
+            ],
+            "response": {
+              "point_status": "string",
+              "predicate": "string",
+              "tuple": "array<string>",
+              "rules": "array<string>",
+              "differs": "array<object>"
+            },
+            "counts": {
+              "tuple": "case.tuple"
+            },
+            "uncounted": {
+              "rules": "the deciding rules Lean selects: distinct, and rules of the request's norms (ve/backends/lean_service.py bind_answers) except when the profiles list contains acts@0 or rights@0, whose rule names Lean generates (norm-defaults-cfr-1b)",
+              "differs": "the atoms on which two UNDECIDED fillings differ"
+            },
+            "dispatch": [
+              "lean/VE/NormDefaults/Run.lean",
+              "lean/VE/NormDefaults/Layered.lean"
+            ]
+          },
+          {
+            "executable": "ve_service",
+            "mode": "norm-defaults",
+            "kinds": [
+              "norm-defaults-gaps"
+            ],
+            "response": {
+              "gaps": "string",
+              "predicate": "string"
+            },
+            "dispatch": [
+              "lean/VE/NormDefaults/Run.lean"
+            ]
+          },
+          {
+            "executable": "ve_service",
+            "mode": "norm-defaults",
+            "kinds": [
+              "norm-defaults-report"
+            ],
+            "response": {
+              "report": "array<object>",
+              "residual": "object",
+              "findings": "array<json>"
+            },
+            "uncounted": {
+              "report": "one line per regulated predicate Lean reports on",
+              "findings": "the findings Lean derives from the report"
+            },
+            "dispatch": [
+              "lean/VE/NormDefaults/Run.lean",
+              "lean/VE/NormDefaults/Layered.lean"
+            ]
+          },
+          {
+            "executable": "ve_service",
+            "mode": "norm-defaults",
+            "kinds": [
+              "norm-defaults-certificate"
+            ],
+            "response": {
+              "valid": "bool",
+              "premises": "nat"
+            },
+            "uncounted": {
+              "premises": "the regenerated premises the certificate is bound to: its premise_meaning_ids less the case's premises (ve/backends/lean_service.py bind_answers)"
+            },
+            "dispatch": [
+              "lean/VE/NormDefaults/Run.lean"
+            ]
+          },
+          {
+            "executable": "ve_service",
+            "mode": "norm-defaults",
+            "kinds": [
+              "defaults-elaborate"
+            ],
+            "response": {
+              "deciders": "array<json>",
+              "default_premises": "array<json>",
+              "coherence_targets": "array<json>"
+            },
+            "uncounted": {
+              "deciders": "the deciders Lean reads from the soft pack",
+              "default_premises": "Dflt_T's premises, Lean's to generate",
+              "coherence_targets": "the colliding pairs Lean finds"
+            },
+            "dispatch": [
+              "lean/VE/NormDefaults/Run.lean",
+              "lean/VE/Defaults/Route.lean"
+            ]
+          },
+          {
+            "executable": "ve_service",
+            "mode": "norm-defaults",
+            "kinds": [
+              "defaults-coherence"
+            ],
+            "response": {
+              "verdict": "string",
+              "pairs": "array<object>"
+            },
+            "uncounted": {
+              "pairs": "the colliding pairs Lean finds"
+            },
+            "dispatch": [
+              "lean/VE/NormDefaults/Run.lean",
+              "lean/VE/Defaults/Route.lean"
+            ]
+          },
+          {
+            "executable": "ve_service",
+            "mode": "norm-defaults",
+            "kinds": [
+              "defaults-certificate"
+            ],
+            "response": {
+              "verdict": "string"
+            },
+            "dispatch": [
+              "lean/VE/NormDefaults/Run.lean",
+              "lean/VE/Defaults/Route.lean"
+            ]
+          },
+          {
+            "executable": "ve_service",
+            "mode": "norm-defaults",
+            "kinds": [
+              "defaults-model"
+            ],
+            "response": {
+              "verdict": "string"
+            },
+            "dispatch": [
+              "lean/VE/NormDefaults/Run.lean",
+              "lean/VE/Defaults/Route.lean"
+            ]
+          },
+          {
+            "executable": "ve_service",
+            "mode": "norm-defaults",
+            "kinds": [
+              "defaults-zone"
+            ],
+            "response": {
+              "zone": "string"
+            },
+            "dispatch": [
+              "lean/VE/NormDefaults/Run.lean",
+              "lean/VE/Defaults/Route.lean"
+            ]
+          },
+          {
+            "executable": "ve_service",
+            "mode": "norm-defaults",
+            "kinds": [
+              "acts-elaborate"
+            ],
+            "response": {
+              "environment_id": "string",
+              "verdict": "string",
+              "predicates": "array<object>"
+            },
+            "uncounted": {
+              "predicates": "the parts Lean splits each joined act into"
+            },
+            "dispatch": [
+              "lean/VE/NormDefaults/Run.lean",
+              "lean/VE/Acts/Run.lean"
+            ]
+          }
+        ],
+        "planned_modes": [],
+        "theorems": [],
+        "planned_theorems": [],
+        "decoders": []
+      },
+      "rust": null,
+      "lean_call_sites": [],
+      "tests": [
+        "tests/test_norm_defaults_response_binding.py::test_norm_defaults_response_binding",
+        "tests/test_norm_defaults_response_binding.py::test_genuine_answers_pass",
+        "tests/test_norm_defaults_response_binding.py::test_the_manifest_lists_every_kind_the_mode_answers"
+      ],
+      "trusted": [
+        "lean:kernel",
+        "lean:compiler",
+        "lean:decoders",
+        "lean:runner-glue"
+      ],
+      "notes": [
+        "The mode's admission kind is the admission operation's binding. A case off the norm-defaults path (no profile, no unspecified default, no norm-defaults kind) is delegated to the norms runner and bound by the norms mode's schema."
+      ]
     }
   ]
 }
