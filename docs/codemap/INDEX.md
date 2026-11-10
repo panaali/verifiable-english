@@ -4,9 +4,9 @@ Service-mode routes: `tools/repo_map.py`. Regenerate with `python tools/code_map
 Regenerated on every merge to main; on a branch it may lag that branch's own changes.
 
 - [bench/](bench.md) — 4 modules — -
-- [conformance/](conformance.md) — 67 modules — `evaluation.json` contains **701** valid environment/model/document cases (**4,912 formulas**).
+- [conformance/](conformance.md) — 69 modules — `evaluation.json` contains **701** valid environment/model/document cases (**4,912 formulas**).
 - [docs/act-phrases/](docs__act-phrases.md) — 42 modules — -
-- [docs/arch/](docs__arch.md) — 29 modules — -
+- [docs/arch/](docs__arch.md) — 28 modules — -
 - [docs/architecture/](docs__architecture.md) — 1 modules — -
 - [docs/attitudes/](docs__attitudes.md) — 5 modules — -
 - [docs/commands-imperatives/](docs__commands-imperatives.md) — 3 modules — -
@@ -79,7 +79,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/](lean.md) — 15 modules — This project uses Lean **4.24.0**, core Lean and `Std`, with no Mathlib or external Lake dependencies.
 - [lean/ResponseShape/](lean__ResponseShape.md) — 8 modules — -
 - [lean/ResponseShape/Encoders/](lean__ResponseShape__Encoders.md) — 32 modules — -
-- [lean/ResponseShape/Schemas/](lean__ResponseShape__Schemas.md) — 44 modules — -
+- [lean/ResponseShape/Schemas/](lean__ResponseShape__Schemas.md) — 43 modules — -
 - [lean/VE/](lean__VE.md) — 27 modules — -
 - [lean/VE/Acts/](lean__VE__Acts.md) — 33 modules — -
 - [lean/VE/Alternatives/](lean__VE__Alternatives.md) — 13 modules — -
@@ -108,7 +108,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/VE/Norms/](lean__VE__Norms.md) — 25 modules — -
 - [lean/VE/Numbers/](lean__VE__Numbers.md) — 6 modules — -
 - [lean/VE/Order/](lean__VE__Order.md) — 16 modules — -
-- [lean/VE/Presupposition/](lean__VE__Presupposition.md) — 13 modules — -
+- [lean/VE/Presupposition/](lean__VE__Presupposition.md) — 11 modules — -
 - [lean/VE/Purposes/](lean__VE__Purposes.md) — 4 modules — -
 - [lean/VE/Question/](lean__VE__Question.md) — 12 modules — -
 - [lean/VE/Readings/ part 1](lean__VE__Readings--part-1.md) — 74 modules — -
@@ -126,7 +126,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/VE/SpeechActs/](lean__VE__SpeechActs.md) — 8 modules — -
 - [lean/VE/Time/](lean__VE__Time.md) — 8 modules — -
 - [lean/VE/Weighing/](lean__VE__Weighing.md) — 5 modules — -
-- [lean/VE/WireContract/](lean__VE__WireContract.md) — 15 modules — -
+- [lean/VE/WireContract/](lean__VE__WireContract.md) — 17 modules — -
 - [lean/VE/Words/](lean__VE__Words.md) — 2 modules — -
 - [paper/](paper.md) — 10 modules — Drafted by GPT-6 Astra on `paper/v1`, after merging `ve-integration`.
 - [research/](research.md) — 2 modules — -
@@ -138,7 +138,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [tests/ part 5](tests--part-5.md) — 82 modules — -
 - [tests/ part 6](tests--part-6.md) — 82 modules — -
 - [tests/ part 7](tests--part-7.md) — 88 modules — -
-- [tests/ part 8](tests--part-8.md) — 8 modules — -
+- [tests/ part 8](tests--part-8.md) — 7 modules — -
 - [tests/frozen_speech/](tests__frozen_speech.md) — 4 modules — Frozen pre-switch speech oracle.
 - [tools/ part 1](tools--part-1.md) — 98 modules — -
 - [tools/ part 2](tools--part-2.md) — 14 modules — -
