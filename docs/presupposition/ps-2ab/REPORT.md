@@ -203,7 +203,10 @@ guard (table above and `mutants.json`). ps-2aa's and ps-2a's ties-pass rows can 
   elaborate, or fail more than 100 guards (Lean's `maxErrors`). The survivors left are equivalent: the outer index range
   of the pairs, `isEmpty` or `head?` of a cut list, `hard` on a strict node, and the set's version number. Each of those
   is allowed with its reason. The rescore at 439f196bd (288 verdicts carried, 68 rerun, 731 s): **240 KILLED, 0 SURVIVOR, 0 UNKNOWN, 56 INVALID, 60 ALLOWED, exit 0** (`trust-mutants.json`, `trust-mutants-allow.json`).
-- **Selected tests.** SELECTED_PLACEHOLDER
+- **Selected tests** (final, on the committed tree f25ee6364, clean): `MAC_PYTEST_NO_DEFER=1 mac-pytest.sh --select --
+  --base a0102f0e5 --run`, on the VM (ve-mac-1 unreachable): "recorded 106 units for tree 83742a7929; … 0 failed",
+  115 units, exit 0 in 8,004 s. `tools/select_tests.py` selects 484/560 units without a recorded Lean build; the runner
+  ran the 115 its map records for this tree. No test of main-known-red.txt was among the failures (there were none).
 - Two sweeps were stopped by the harness's 2-hour limit before they wrote a result. The full run above is the one
   recorded.
 
