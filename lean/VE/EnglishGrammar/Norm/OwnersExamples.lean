@@ -40,7 +40,7 @@ def viewFailures (A : List (String × String × Bool)) : List String :=
 #guard viewFailures [("deployed", "{0} is rolled out", false)] == []
 #guard viewFailures [("deployed", "{0} is reviewed", false)] == ["V4 predicate deployed", "V4 predicate reviewed"]
 -- the source spellings follow the aliases the environment and the lexicon already have, in both
-#guard let a := [("owns", "{0} holds {1}", false)]
+#guard let a := [("owns", "{0} holds {1}", false), ("reviewed", "{0} is checked", false)]
   let b := [("deployed", "{0} is rolled out", false)]
   let (E, L) := sourceView { envF with forms := { envF.forms with aliases := a } } { LF with aliases := a } b
   E.forms.aliases == a ++ b && L.aliases == a ++ b && E.forms.wordings == envF.forms.wordings && L.nouns == LF.nouns
@@ -58,6 +58,10 @@ def nPub : VE.Norms.Node := ⟨"rule-1", "in_scope", true, .unary "publicly_depl
 #guard toNodesChecked [.rule ⟨1, []⟩ cPub, .precedence 1 1] == .ok [{ nPub with over := ["rule-1"] }]
 #guard toNodesChecked [.rule ⟨1, []⟩ cSpan] == .error (unformalisedText 1)
 #guard spansOf [.rule ⟨1, []⟩ cSpan, .precedence 1 1] == [⟨30, 46, "every|norm.modifier|norms@0", "ET-T1", .act⟩]
+-- every span of every clause, in text order
+#guard spansOf [.rule ⟨1, []⟩ cSpan, .rule ⟨2, []⟩ { cSpan with residuals := [⟨50, 55, "r", "o", .guard⟩] }] ==
+  [⟨30, 46, "every|norm.modifier|norms@0", "ET-T1", .act⟩, ⟨50, 55, "r", "o", .guard⟩] &&
+  toNodesChecked [.rule ⟨1, []⟩ cPub, .rule ⟨2, []⟩ cSpan] == .error (unformalisedText 1)
 #guard unformalisedText 1 == "The text has 1 phrase(s) that the reader parsed and did not formalise. No rule is made " ++
   "from a sentence with such a phrase."
 

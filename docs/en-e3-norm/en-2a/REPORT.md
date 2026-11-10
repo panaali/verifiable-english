@@ -1,5 +1,11 @@
 # en-e3a build report: EN-2's owner pieces and the Lean mode `english.statement` (kind `blocks`), first part
 
+**Open DRI question (the item stops on it only; inbox `20261109T213857Z-en-e3a`, sent 21:38Z, unanswered at this
+commit):** (1) the trust class of the rule rows' span code (`statementSpans`, `sentenceBytes`, `opensStatement`):
+G[I] here gives R16 +139, main's precedent (`Run.sentenceSpans` is G[V]) gives +167, over 150; (2) evaluate-once:
+`answerWith` computes `normTags` (a second `normGrammar`) on every answer and `statementSpans` lexes the source a
+second time, both the spec's text; a fix is a spec edit. No DELTA cell reserves a signature.
+
 Status: cut at the size measurement the task names after deliverable (2) ("Measure size now ... and record it"; the
 common rules: "measure it before you start the second half of the work, and cut there"). This item delivers EN-2 step 0
 and the mode's Lean runner with every EN-2 section 4 part A statement that needs no registry proved, and its fixtures;
@@ -21,7 +27,7 @@ en-e3-norm-p3ver4 PASS; DRI 2026-11-02 items 1-3.
 | (1) `Norm/Owners.lean`: `Force.op`, `Polarity.op?`, `opOf_agrees`, `Mode.soft`, `soft_strict_iff`, `sourceView`, `sourceView_nil`, `UnformalisedSpan`, `Clause.toNodeChecked`, `toNodesChecked` | yes, the spec's text; with `toNodeChecked_ok`, `toNodesChecked_ok` and `toNodesChecked_authoring` (premise `ReadNormAuthoring`, the stub's statement of en-s6b's `readNorm_authoring`, which main decides by `#guard`s). All proved. | `Norm/OwnersExamples.lean` O1-O8 |
 | (1) no merged statement changes | none changed | `lean_statements --check` |
 | (2) `Norm/Run.lean`: request (`statementRequest`), `answerWith`, `answer`, `statementCase` (kind `blocks` alone), `statementCaseReported`, rule rows' byte spans from `lexSpans` (M10) | yes, the spec's text (2.3). The plan's `runStatement`/`runStatement_ok_reads` are bound in the spec as `statementCase`, `answer_one_iff` and `answer_one_rows` (plan line 598): those are delivered. | `Norm/RunExamples.lean` E1-E14, E16, E17 |
-| (2) section 4 part A for EN-2 | all proved: `statementStatusCodes_classed`, `statementFields_statuses` (`decide`), `answer_one_iff`, `answer_one_rows`, `answer_partial_no_node`, `answer_stopped`, `answer_misplaced`, with four helper theorems in `Norm/Run.lean` (`findSome_lookup`, `getD_mkObj`: a lookup in `Json.mkObj l` is the key's last binding in `l`, `lookup_append`, `lookup_none`) and a local `answer_simp` macro. `ReadNormAuthoring_eq` pins `ReadNormAuthoring` to english-lean-s6.md 4's `readNorm_authoring` word for word (`Iff.rfl`). `statementCaseReported_fits` and `runMode_englishStatement` need the shape and the registry: en-e3ab. | `lake build`; `lean/audit.py` |
+| (2) section 4 part A for EN-2 | all proved: `statementStatusCodes_classed`, `statementFields_statuses` (`decide`), `answer_one_iff`, `answer_one_rows`, `answer_partial_no_node`, `answer_stopped`, `answer_misplaced`, with four helper theorems in `Norm/Run.lean` (`findSome_lookup`, `getD_mkObj`: a lookup in `Json.mkObj l` is the key's last binding in `l`, `lookup_append`, `lookup_none`) and a local `answer_simp` macro. `ReadNormAuthoring_eq` (`Iff.rfl`) guards `ReadNormAuthoring` against edits: it restates english-lean-s6.md 4's `readNorm_authoring` as copied (the copy is checked against the spec by review: "spec re-read" below, not by a tool). `statementCaseReported_fits` and `runMode_englishStatement` need the shape and the registry: en-e3ab. | `lake build`; `lean/audit.py` |
 | (2) `Run.lean`'s code hunk (M8, M9) | `statementCodeRows` (appended to `codeClasses`, the one table), `renderCodeRows` (EN-3 appends it), `statementStatusCodes`, `statementFields`, `statementUnsentenced`; the `english.grammar` export writes the last three as `statement_statuses`, `statement_fields`, `statement_unsentenced` | E1-E16 (every coded row carries its class) |
 | (2) OPEN-2 | `Norm/Rules.lean` exposed no tags: `normTags` added there, one hunk, `(normGrammar E L).rules.map (·.tag)` | E10 (the tags reach the witnesses); en-e3ab's R-f18 |
 | (2) size measured | 683 changed lines (+671 -12) outside the verbatim spec and plan after (2), at `62fe76254`: over the ~600 cap, so the item is cut there. The final count and what grew after the cut: section "Size" | `git diff --numstat 9f5dd46ab 62fe76254` |
@@ -40,14 +46,16 @@ names another environment"}` (asserted exactly). The test passed in 414.5 s on v
 Cost (UNVERIFIED as a benchmark: one run each on a loaded host, `lake env lean` over generated files that print ten
 answers on the RSP environment): decoding the case alone 4.99 s, ten `readNorm` reads 36.61 s, ten `answer`s 40.57 s;
 so `normTags`, which rebuilds `normGrammar` beside `readNorm`, adds about 12% per answer. The spec's `answer` reads
-both, so it is recorded, not changed (FOLLOW-UP en-e3ab: compute the tags only for `many`, a spec edit).
+both; the fix (the tags computed only for `many`, a spec edit) and the second lex are the open DRI question above,
+not deferred on this item's own authority.
 
 ## Deviations and corrections (recorded here, never in the copied spec)
 
 - **`Polarity.fits` moved to `Norm/Rules.lean`** (in the OPEN-2 hunk). On main it is a fixture oracle in
   `Norm/Examples.lean` (DRI 20261102-en-s6b item 4: "beside the fixture until a theorem states it"); `opOf_agrees`
   states it now, and `Owners.lean` cannot import a fixture file. Same name and body; classified S. en-s6c's row
-  (which carries it back with `readNorm_regulated`) finds it already there.
+  (which carries it back with `readNorm_regulated`) finds it already there. Item 4's own condition for the move
+  ("until a theorem states it") is met by `opOf_agrees`; that is why it is no new ruling.
 - **`Owners.lean` imports `Norm/Read.lean`** besides the spec's four imports: `ReadNormAuthoring` names `readNorm`.
 - **M9's tables live in `VE.EnglishGrammar.Run`**: the section 4 statements name them `Run.statementStatusCodes` etc.
   from namespace `VE.EnglishGrammar.Norm`, which resolves to them unchanged; `Norm/Run.lean` opens

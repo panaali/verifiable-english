@@ -13,6 +13,7 @@ from functools import cache
 import importlib.util
 from itertools import permutations
 import json
+import os
 from pathlib import Path
 import re
 import shutil
@@ -254,3 +255,34 @@ def test_each_pinned_block_through_the_mode(lake, tmp_path):
         assert statement["span"] == [0, len(texts[ident].encode())], ident
     statuses = [row["result"]["status"] for row in out.values()]
     assert (len(out), statuses.count("one"), statuses.count("none")) == (121, 104, 17)
+
+
+TAG_CASES = {"one": "(.ok [.rule ⟨1, []⟩ cPub])", "none": "(.stopped 1 .noDerivation)", "rejected": "(.ok [.source []])",
+             "unformalised": "(.ok [.rule ⟨1, []⟩ cSpan])", "many": "(.stopped 1 (.ambiguous tA tB))"}
+
+
+def forcing(lake: str, tmp_path: Path, status: str) -> subprocess.CompletedProcess:
+    """The answer to `TAG_CASES[status]` from a reader whose rule tags panic, under `LEAN_ABORT_ON_PANIC=1`."""
+    source = tmp_path / f"Tags_{status}.lean"
+    source.write_text("\n".join([
+        "import VE.EnglishGrammar.Norm.RunExamples",
+        "open Lean VE.EnglishGrammar VE.EnglishGrammar.Norm VE.EnglishGrammar.Norm.RunExamples",
+        "open VE.EnglishGrammar.Norm.OwnersExamples",
+        f"def o : NormOutcome := {TAG_CASES[status]}",
+        "def panicking : Run.Reader := ⟨fun _ _ _ _ _ => o, fun _ _ => panic! \"the rule tags were forced\"⟩",
+        "#eval IO.println ((Run.resultOf (Run.answerWith panicking \"c\" caseOf \"Rule 1. X.\")).getObjValD "
+        "\"status\").compress"]) + "\n")
+    return subprocess.run([lake, "env", "lean", str(source)], cwd=ROOT / "lean", capture_output=True, text=True,
+                          timeout=HANG_TIMEOUT, env={**os.environ, "LEAN_ABORT_ON_PANIC": "1"})
+
+
+def test_the_rule_tags_are_forced_only_for_many(lake, tmp_path):
+    """DRI 2026-11-09 (reviews/dri-decisions-20261109-en-e3a-2.md item 2): `answerWith` hands `outcomeFields` the
+    reader's rule tags unforced, and only a `many` answer (its witnesses) forces them; every other answer is written
+    with a reader whose tags panic, and `many` aborts on that panic."""
+    for status in ("one", "none", "rejected", "unformalised"):
+        run = forcing(lake, tmp_path, status)
+        assert run.returncode == 0, status + run.stdout[-2000:] + run.stderr[-2000:]
+        assert run.stdout.split() == [json.dumps(status)], status
+    run = forcing(lake, tmp_path, "many")
+    assert run.returncode != 0 and "the rule tags were forced" in run.stderr + run.stdout
