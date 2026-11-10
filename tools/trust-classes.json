@@ -3570,10 +3570,12 @@
         "VE.EnglishGrammar.advWords",
         "VE.EnglishGrammar.advice",
         "VE.EnglishGrammar.adviceRows",
+        "VE.EnglishGrammar.adviceTable",
         "VE.EnglishGrammar.aw",
         "VE.EnglishGrammar.negExistText",
         "VE.EnglishGrammar.pluralText",
-        "VE.EnglishGrammar.riskConditionText"
+        "VE.EnglishGrammar.riskConditionText",
+        "VE.EnglishGrammar.sourceWordAdvice"
       ]
     },
     "VE/EnglishGrammar/Catalogue.lean": {
@@ -16663,20 +16665,39 @@
       "G[V]": [
         "VE.EnglishGrammar.SourceWordKind.toJson",
         "VE.EnglishGrammar.SourceWordRow.toJson",
-        "VE.EnglishGrammar.sourceWordsJson"
+        "VE.EnglishGrammar.eventsDaysAdvice",
+        "VE.EnglishGrammar.eventsFixed",
+        "VE.EnglishGrammar.eventsLinkAdvice",
+        "VE.EnglishGrammar.eventsReadingSets",
+        "VE.EnglishGrammar.eventsReadings",
+        "VE.EnglishGrammar.eventsRefusal",
+        "VE.EnglishGrammar.eventsRefusals",
+        "VE.EnglishGrammar.eventsRow",
+        "VE.EnglishGrammar.eventsStateAdvice",
+        "VE.EnglishGrammar.eventsUntilAdvice",
+        "VE.EnglishGrammar.sourceWordsJson",
+        "VE.EnglishGrammar.untilEventReadings",
+        "VE.EnglishGrammar.withinDateReadings"
       ]
     },
     "VE/EnglishGrammar/SourceWordsExamples.lean": {
       "T": [
         "VE.EnglishGrammar.SourceWordsExamples.a",
+        "VE.EnglishGrammar.SourceWordsExamples.adviceOf",
         "VE.EnglishGrammar.SourceWordsExamples.b",
         "VE.EnglishGrammar.SourceWordsExamples.base",
+        "VE.EnglishGrammar.SourceWordsExamples.ev",
+        "VE.EnglishGrammar.SourceWordsExamples.eventsOf",
+        "VE.EnglishGrammar.SourceWordsExamples.eventsWordings",
+        "VE.EnglishGrammar.SourceWordsExamples.exportedAdvice",
         "VE.EnglishGrammar.SourceWordsExamples.kindFixedJson",
         "VE.EnglishGrammar.SourceWordsExamples.kindReadingJson",
         "VE.EnglishGrammar.SourceWordsExamples.kindRefuseJson",
+        "VE.EnglishGrammar.SourceWordsExamples.otherProfileWordings",
         "VE.EnglishGrammar.SourceWordsExamples.reading",
         "VE.EnglishGrammar.SourceWordsExamples.refusal",
-        "VE.EnglishGrammar.SourceWordsExamples.rowJson"
+        "VE.EnglishGrammar.SourceWordsExamples.rowJson",
+        "VE.EnglishGrammar.SourceWordsExamples.twelve"
       ]
     },
     "VE/Service/SoftSourceExamples.lean": {
@@ -20296,6 +20317,99 @@
         "VE.Commands.SourceExamples.result",
         "VE.Commands.SourceExamples.share",
         "VE.Commands.SourceExamples.two"
+      ]
+    },
+    "VE/Acts/Specialise.lean": {
+      "S": [
+        "VE.Acts.Modifier.restrictive",
+        "VE.Acts.Restrictive",
+        "VE.Acts.specPremises",
+        "VE.Acts.specialises"
+      ],
+      "G[V]": [
+        "VE.Acts.declaredOnce"
+      ]
+    },
+    "VE/Acts/SpecialiseExamples.lean": {
+      "T": [
+        "VE.Acts.SpecialiseExamples.Vsp",
+        "VE.Acts.SpecialiseExamples.a",
+        "VE.Acts.SpecialiseExamples.act",
+        "VE.Acts.SpecialiseExamples.b",
+        "VE.Acts.SpecialiseExamples.doc",
+        "VE.Acts.SpecialiseExamples.env",
+        "VE.Acts.SpecialiseExamples.fromAgainst",
+        "VE.Acts.SpecialiseExamples.fromOnly",
+        "VE.Acts.SpecialiseExamples.fromP",
+        "VE.Acts.SpecialiseExamples.inNear",
+        "VE.Acts.SpecialiseExamples.nearIn",
+        "VE.Acts.SpecialiseExamples.nearInFor",
+        "VE.Acts.SpecialiseExamples.nearly",
+        "VE.Acts.SpecialiseExamples.noTo",
+        "VE.Acts.SpecialiseExamples.prem",
+        "VE.Acts.SpecialiseExamples.refugeFrom",
+        "VE.Acts.SpecialiseExamples.reg",
+        "VE.Acts.SpecialiseExamples.request",
+        "VE.Acts.SpecialiseExamples.sp",
+        "VE.Acts.SpecialiseExamples.ρ"
+      ]
+    },
+    "VE/Commands/SplitOnLemmas.lean": {
+      "G[V]": [
+        "VE.Commands.SplitOn.splitOnL"
+      ]
+    },
+    "VE/Readings/SoftSupLabels.lean": {
+      "G[V]": [
+        {
+          "name": "VE.Readings.nodeExcLabels",
+          "tied": [
+            "VE.Readings.excLabels_nodes"
+          ]
+        },
+        {
+          "name": "VE.Readings.labelImage",
+          "tied": [
+            "VE.Readings.labelImage_fst",
+            "VE.Readings.labelImage_snd_mem",
+            "VE.Readings.labelImage_functional",
+            "VE.Readings.supLabel_pull",
+            "VE.Readings.supLabel_other"
+          ]
+        },
+        "VE.Readings.sdShown"
+      ],
+      "P": [
+        "VE.Readings.excData"
+      ]
+    },
+    "VE/Readings/SoftSupWire.lean": {
+      "C": [
+        "VE.Readings.Wire.sdSuperposable",
+        "VE.Readings.Wire.sdCheckWork",
+        "VE.Readings.Wire.sdChecked",
+        "VE.Readings.Wire.routeSD",
+        "VE.Readings.Wire.SupReplaySD"
+      ],
+      "G[R]": [
+        "VE.Readings.Wire.maxSdCheckWork"
+      ]
+    },
+    "VE/Readings/SoftSupWireExamples.lean": {
+      "T": [
+        "VE.Readings.SoftSupWireExamples.supLabels",
+        "VE.Readings.SoftSupWireExamples.NSDd",
+        "VE.Readings.SoftSupWireExamples.NSDm",
+        "VE.Readings.SoftSupWireExamples.pairVals",
+        "VE.Readings.SoftSupWireExamples.envWith",
+        "VE.Readings.SoftSupWireExamples.routeFacts",
+        "VE.Readings.SoftSupWireExamples.softSet",
+        "VE.Readings.SoftSupWireExamples.NSDlate",
+        "VE.Readings.SoftSupWireExamples.wide",
+        "VE.Readings.SoftSupWireExamples.NSDbig",
+        "VE.Readings.SoftSupWireExamples.NSDcount",
+        "VE.Readings.SoftSupWireExamples.guarded",
+        "VE.Readings.SoftSupWireExamples.NSDheavy"
       ]
     }
   }

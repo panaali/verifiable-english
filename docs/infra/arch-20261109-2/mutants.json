@@ -1,0 +1,127 @@
+{
+ "mutants": [
+  {
+   "id": "Sa1",
+   "file": "tools/layer_policy.py",
+   "claim": "seeded bug (a): lean_layer ignores the module's declaration and returns its name rules' layer",
+   "find": "    return declared[0] if declared is not None else lean_name_layer(module)\n",
+   "replace": "    return lean_name_layer(module)\n",
+   "tests": [
+    "tools/test_layer_policy.py::LayerDeclarationTests::test_a_lean_declaration_places_the_module_both_ways",
+    "tools/test_layer_policy.py::LayerDeclarationTests::test_a_new_lean_module_with_an_upward_import_passes_once_it_declares_its_layer"
+   ]
+  },
+  {
+   "id": "Sa2",
+   "file": "tools/layer_policy.py",
+   "claim": "seeded bug (a): python_layer ignores the declared rows and reads the PYTHON table alone",
+   "find": "for prefix, layer in {**PYTHON_MODULES, **declared}.items()",
+   "replace": "for prefix, layer in {**PYTHON_MODULES}.items()",
+   "tests": [
+    "tools/test_layer_policy.py::LayerDeclarationTests::test_a_python_declaration_places_its_module_or_package"
+   ]
+  },
+  {
+   "id": "Sb",
+   "file": "tools/layer_policy.py",
+   "claim": "seeded bug (b): a declaration with no reason is accepted (empty reason)",
+   "find": "        raise ValueError(f\"{path}:1: layer declaration {first!r} gives no reason; {form}\")\n",
+   "replace": "        return int(number), rest[1:-1]\n",
+   "tests": [
+    "tools/test_layer_policy.py::LayerDeclarationTests::test_a_declaration_without_a_reason_is_refused",
+    "tools/test_layer_policy.py::LayerDeclarationTests::test_python_check_refuses_each_bad_declaration_by_file"
+   ]
+  },
+  {
+   "id": "Sc1",
+   "file": "tools/layer_policy.py",
+   "claim": "seeded bug (c): a Lean declaration overrides a role rule (aggregation target, entry point, runner, service, response shape)",
+   "find": "    fixed = lean_fixed(module)\n",
+   "replace": "    fixed = None\n",
+   "tests": [
+    "tools/test_layer_policy.py::LayerDeclarationTests::test_a_declaration_cannot_override_a_role_rule"
+   ]
+  },
+  {
+   "id": "Sc2",
+   "file": "tools/layer_policy.py",
+   "claim": "seeded bug (c): a Python declaration in an app area (layer 5 by rule) is ignored instead of refused",
+   "find": "    if row.split(\".\")[0] in APP_AREAS:\n        raise",
+   "replace": "    if False:\n        raise",
+   "tests": [
+    "tools/test_layer_policy.py::LayerDeclarationTests::test_a_declaration_cannot_override_a_role_rule"
+   ]
+  },
+  {
+   "id": "Sd",
+   "file": "tools/layer_policy.py",
+   "claim": "one owner: a Lean module named by a set or == rule of lean_name_layer may also declare",
+   "find": "    if found is not None and module in lean_named():\n",
+   "replace": "    if False:\n",
+   "tests": [
+    "tools/test_layer_policy.py::LayerDeclarationTests::test_a_lean_module_named_by_the_policy_cannot_also_declare"
+   ]
+  },
+  {
+   "id": "Se",
+   "file": "tools/layer_policy.py",
+   "claim": "a declaration off the first line is ignored instead of refused",
+   "find": "    for number, line in enumerate(lines[1:], 2):\n",
+   "replace": "    for number, line in enumerate(lines[1:1], 2):\n",
+   "tests": [
+    "tools/test_layer_policy.py::LayerDeclarationTests::test_a_declaration_off_the_first_line_is_refused"
+   ]
+  },
+  {
+   "id": "Sf",
+   "file": "tools/layer_policy.py",
+   "claim": "code that starts with ve_layer (not a comment) is read as an attempted declaration",
+   "find": "return word.startswith(DECLARATION_LOOKALIKE if rest != text else DECLARATION_LOOKALIKE[:1])",
+   "replace": "return word.startswith(DECLARATION_LOOKALIKE)",
+   "tests": [
+    "tools/test_layer_policy.py::LayerDeclarationTests::test_valid_declarations_are_read"
+   ]
+  },
+  {
+   "id": "Sg",
+   "file": "tools/check_lean_imports.py",
+   "claim": "the Lean check reads declarations from this checkout, not the tree it checks",
+   "find": "            layers[module] = lean_layer(module, ROOT)\n",
+   "replace": "            layers[module] = lean_layer(module)\n",
+   "tests": [
+    "tools/test_layer_policy.py::LayerDeclarationTests::test_a_new_lean_module_with_an_upward_import_passes_once_it_declares_its_layer",
+    "tools/test_layer_policy.py::LayerDeclarationTests::test_an_unmapped_lean_module_names_the_declaration"
+   ]
+  },
+  {
+   "id": "Sh",
+   "file": "tools/check_python_layers.py",
+   "claim": "the generated import-linter contract leaves the declared rows out of their layers",
+   "find": "                                      *sorted(row for row, (at, _, _) in declared.items() if at == layer)]",
+   "replace": "                                      ]",
+   "tests": [
+    "tools/test_layer_policy.py::LayerDeclarationTests::test_a_new_python_module_with_an_upward_import_passes_once_it_declares_its_layer"
+   ]
+  },
+  {
+   "id": "Si",
+   "file": "tools/hooks/precommit.py",
+   "claim": "the pre-commit hook ignores a staged module's own declaration",
+   "find": "    return policy.layer_policy.python_layer(module, read=read)\n",
+   "replace": "    return policy.layer_policy.python_layer(module)\n",
+   "tests": [
+    "tests/test_precommit_hook.py::test_staged_python_layer_declaration_classifies_the_module"
+   ]
+  },
+  {
+   "id": "Sj",
+   "file": "tools/select_tests.py",
+   "claim": "test selection skips the Python layer check when only a declaration line changes",
+   "find": "        sel.checks.add(CHECK_PYTHON)  # the module's own layer declaration, a comment, changed\n",
+   "replace": "        pass  # the module's own layer declaration, a comment, changed\n",
+   "tests": [
+    "tools/test_layer_policy.py::LayerDeclarationTests::test_a_declaration_change_runs_the_python_layer_check"
+   ]
+  }
+ ]
+}
