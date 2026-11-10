@@ -1,0 +1,9 @@
+trust_mutants: 59 definitions, 92 mutants (46 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/Purposes/WellFormed.lean:166 VE.Purposes.WellFormed (S, trusted) and-or: ∧ -> ∨ (lean/VE/Purposes/Examples.lean:278: Expression (VE.Purposes.Examples.wfDecidable, which it reads,...)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:167 VE.Purposes.WellFormed (S, trusted) eq-ne: = -> ≠ (lean/VE/Purposes/Examples.lean:275: Expression (VE.Purposes.Examples.wfDecidable, which it reads,...)
+SURVIVOR lean/ResponseShape/Schemas/NormDefaults.lean:199 ResponseShape.Schemas.NormDefaults.status (G[V], trusted) list-empty: [ ("id", ref "common.json#/$defs/id_ok"), ("status", constS "ok"), ("point_status", enumS ["SETTL... -> []
+trust_mutants: 43 KILLED, 1 SURVIVOR, 2 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 46 OTHER SHARD in 2169 s
+trust_mutants: D[V], trusted: 15 KILLED, 5 OTHER SHARD
+trust_mutants: G[V], trusted: 11 KILLED, 1 SURVIVOR, 20 OTHER SHARD
+trust_mutants: S, trusted: 17 KILLED, 2 UNKNOWN, 21 OTHER SHARD
+trust_mutants: steps: wall plan 9.1 s, scratch 2.9 s, control_build 0.3 s, probe_install 0.9 s, mutants 2149.6 s, cleanup 6.5 s, reads 0.2 s; lake control_build 0.2 s (1), probe_install 0.9 s (1), control_probes 228.4 s (40), mutant_builds 203.8 s (58), mutant_checks 2271.7 s (53), stage_controls 654.6 s (13), mutant_probes 371.1 s (47)
