@@ -421,29 +421,34 @@ def exhibit (src : RightsSource) (j : Json) : Except String (Option (VE.FiniteMo
 "situation exhibited: UNKNOWN (budget 10000)" says the request supplied none for Lean to check. -/
 def conflictBudget : Nat := 10000
 
-/-- A rights-conflict answer over certificate packages. CONFLICT-FREE carries 7.3's status line: the premises it is
-conditional on with their labels, the weighing points open (the colliding default pairs no ranking resolves; no pair
-evidence is taken here) and whether a situation is exhibited, or UNKNOWN with the budget; beside it the same parts as
-fields. UNKNOWN names the first failing certificate. -/
-def conflictAnswer (id : String) (res : RightsConflictReplay) (M : Option (VE.FiniteModel VE.Bridge.Entity)) : Json :=
-  let verdict := if res.conflictFree then "CONFLICT-FREE" else "UNKNOWN"
-  let weighing := VE.SoftNorms.Wire.openCoherence (correlate res.src.D)
-  let labels := weighing ++ (limPremisesLabelled res.src.D).map (·.1)
-  let conditional := if res.conflictFree then labels.filter (conflictUses res) else []
+/-- A rights-conflict answer over certificate packages, from the replay's verdict `free`, its first failing certificate
+and the premises its certificates use. CONFLICT-FREE carries 7.3's status line: the premises it is conditional on with
+their labels, the weighing points open (the colliding default pairs no ranking resolves; no pair evidence is taken
+here) and whether a situation is exhibited, or UNKNOWN with the budget; beside it the same parts as fields. UNKNOWN
+names the first failing certificate. -/
+def conflictAnswerOf (id : String) (D : RightsDoc) (free : Bool) (failure : Option String) (uses : String → Bool)
+    (M : Option (VE.FiniteModel VE.Bridge.Entity)) : Json :=
+  let verdict := if free then "CONFLICT-FREE" else "UNKNOWN"
+  let weighing := VE.SoftNorms.Wire.openCoherence (correlate D)
+  let labels := weighing ++ (limPremisesLabelled D).map (·.1)
+  let conditional := if free then labels.filter uses else []
   let coherence := conditional.filter (fun l => l.startsWith "soft:")
   let limitation := conditional.filter (fun l => l.startsWith "rights:")
   let exhibited := if M.isSome then "yes" else s!"UNKNOWN (budget {conflictBudget})"
-  let statusText := if res.conflictFree then
+  let statusText := if free then
     s!"CONFLICT-FREE among rules on the same act, conditional on {coherence.length} coherence premises and {limitation.length} limitation premises ({", ".intercalate conditional}); {weighing.length} weighing points open; situation exhibited: {exhibited}"
-    else s!"UNKNOWN: {(firstFailure res).getD "target unspecified"}, budget 10000"
+    else s!"UNKNOWN: {failure.getD "target unspecified"}, budget 10000"
   VE.Route.Wire.ok id ([("verdict", .str verdict), ("status_text", .str statusText),
-    ("targets", toJson ((targets (soften (correlate res.src.D))).map (·.1))),
+    ("targets", toJson ((targets (soften (correlate D))).map (·.1))),
     ("conditional_on", toJson conditional)] ++
-    (if res.conflictFree then [("weighing_points", toJson weighing), ("situation_exhibited", .bool M.isSome),
-      ("budget", toJson conflictBudget), ("situation", (M.map (situationTables res.src.D)).getD .null)] else []) ++
-    match firstFailure res with
-    | some d => if res.conflictFree then [] else [("detail", .str d)]
+    (if free then [("weighing_points", toJson weighing), ("situation_exhibited", .bool M.isSome),
+      ("budget", toJson conflictBudget), ("situation", (M.map (situationTables D)).getD .null)] else []) ++
+    match failure with
+    | some d => if free then [] else [("detail", .str d)]
     | none => [])
+
+def conflictAnswer (id : String) (res : RightsConflictReplay) (M : Option (VE.FiniteModel VE.Bridge.Entity)) : Json :=
+  conflictAnswerOf id res.src.D res.conflictFree (firstFailure res) (conflictUses res) M
 
 /-! ## Dispatch -/
 
