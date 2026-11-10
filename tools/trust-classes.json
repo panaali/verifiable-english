@@ -20332,35 +20332,49 @@
     },
     "VE/Presupposition/Run.lean": {
       "G[R]": [
-        "VE.Presupposition.maxLineTokens"
+        "VE.Presupposition.maxLexicon",
+        "VE.Presupposition.maxLineNodes"
       ],
       "G[V]": [
         "VE.Presupposition.Goal",
         "VE.Presupposition.Inconsistency",
+        "VE.Presupposition.Line",
         "VE.Presupposition.Outcome",
         "VE.Presupposition.Row",
         "VE.Presupposition.Shown",
         "VE.Presupposition.checkedRow",
+        "VE.Presupposition.docPremise",
         "VE.Presupposition.englishLine",
+        "VE.Presupposition.lexiconOk",
         "VE.Presupposition.lineOf",
         "VE.Presupposition.outcomeOf",
-        "VE.Presupposition.refusedRow",
         "VE.Presupposition.refutedLines",
         "VE.Presupposition.shown",
         "VE.Presupposition.shownOf"
       ],
       "T": [
-        "VE.Presupposition.RunExamples.certI",
+        "VE.Presupposition.RunExamples.certOf",
         "VE.Presupposition.RunExamples.conj",
-        "VE.Presupposition.RunExamples.docC",
+        "VE.Presupposition.RunExamples.docHd",
+        "VE.Presupposition.RunExamples.docNeg",
         "VE.Presupposition.RunExamples.g1",
         "VE.Presupposition.RunExamples.g2",
+        "VE.Presupposition.RunExamples.isShown",
+        "VE.Presupposition.RunExamples.lex3",
         "VE.Presupposition.RunExamples.lexA",
+        "VE.Presupposition.RunExamples.lexBig",
+        "VE.Presupposition.RunExamples.lexClash",
+        "VE.Presupposition.RunExamples.lexClash2",
         "VE.Presupposition.RunExamples.lexNoMgr",
+        "VE.Presupposition.RunExamples.lineA",
+        "VE.Presupposition.RunExamples.pHd",
+        "VE.Presupposition.RunExamples.premises18b",
+        "VE.Presupposition.RunExamples.readingsAt",
         "VE.Presupposition.RunExamples.refutedOf",
         "VE.Presupposition.RunExamples.rowsOf",
-        "VE.Presupposition.RunExamples.rsC",
-        "VE.Presupposition.RunExamples.tC"
+        "VE.Presupposition.RunExamples.selfArgs",
+        "VE.Presupposition.RunExamples.tC",
+        "VE.Presupposition.RunExamples.with18b"
       ]
     },
     "VE/Acts/Specialise.lean": {
