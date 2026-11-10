@@ -1,11 +1,6 @@
-"""Each "0 differences" claim of a premise-pack REPORT.md or DELTA.md cites a valid, passing differential record.
-
-pk-1-cfr-1: a claim is a list item, paragraph or table row holding "0 differences". Each evidence file it cites
-exists and has no "INVALID" on its first line, each cited differential record (a file mentioning "differences") ends
-"exit 0", and at least one such passing record is cited.
-"""
-
-from __future__ import annotations
+"""pk-1-cfr-1: each "0 differences" claim (list item, paragraph or table row) of a premise-pack REPORT.md or DELTA.md
+cites existing evidence with no "INVALID" first line, each cited differential record (a file mentioning
+"differences") ends "exit 0", and at least one such passing record is cited."""
 
 import re
 from pathlib import Path
