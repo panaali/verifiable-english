@@ -2479,8 +2479,8 @@ def encode (id : String) (c : Checked) : Json :=
     | none, none => [])
 
 /-- A case `{"id", "document"}`, with `"admit": false` for `load_document` alone: the entry without scope's branch
-(scope 8.1). `checkBodyChecked` is its run, typed: the case id and the checked document `encode` writes. -/
-def checkBodyChecked (j : Json) : Except String (String × Checked) := do
+(scope 8.1). -/
+def checkBody (j : Json) : Except String Json := do
   let id ← stringField j "id"
   let text ← stringField j "document"
   let withGraph ← match j.getObjVal? "admit" with
@@ -2488,10 +2488,8 @@ def checkBodyChecked (j : Json) : Except String (String × Checked) := do
     | .ok _ => throw "InvalidInput: admit must be a boolean"
     | .error _ => pure true
   let lexicon := (j.getObjVal? "lexicon").toOption
-  pure (id, ← check text withGraph lexicon (j.getObjVal? "packs").toOption (j.getObjVal? "units").toOption
-    (j.getObjVal? "reading_sets").toOption)
-
-def checkBody (j : Json) : Except String Json := (fun (id, c) => encode id c) <$> checkBodyChecked j
+  pure (encode id (← check text withGraph lexicon (j.getObjVal? "packs").toOption (j.getObjVal? "units").toOption
+    (j.getObjVal? "reading_sets").toOption))
 
 /-- `checkBody` after row 16 (PC-1), the check before every other: so `checkDoc` and `checkDocSets` begin with it on
 every request. A `scope@0` request's row 16 runs at the top of their scope branch, before the gate, which then calls

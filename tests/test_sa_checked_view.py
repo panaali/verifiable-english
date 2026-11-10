@@ -1,10 +1,11 @@
 """sa-checked-view (docs/spec/purpose-explanation.md 5.1): the typed checked view changes no answer.
 
-On the document-mode fixtures (a plain document, `scope@0` with a reading set governed per choice, a refused request),
-`docs/document-model/sa-checked-view/view_bytes.lean` runs `checkDocSets` and `checkDocSetsView` on each request with
-`lake env lean`; the view's first component is `checkDocSets`'s answer byte for byte, and both are the answer the
-service gives the same request. Lean computes every value; Python only compares them. The statement gate
-(`spec_text_check.py`) keeps the eight 5.1 declarations equal to the spec's text.
+On the document-mode fixtures (a plain document, `scope@0` with a reading set governed per choice, a plain one with
+two versions of a set, a request refused by scope and one refused by the check),
+`docs/document-model/sa-checked-view/view_bytes.lean` runs `checkDocSets` and `checkDocSetsView` with `lake env lean`:
+the view's first component is `checkDocSets`'s answer byte for byte. The service's answer to the same request is that
+answer as a JSON object (beside a governed set's `composed_readings`), or its refusal. Lean computes every value; Python
+only compares. The statement gate (`spec_text_check.py`) keeps the eight 5.1 declarations equal to the spec's text.
 """
 from __future__ import annotations
 
@@ -18,21 +19,34 @@ import pytest
 
 from subprocesses import HANG_TIMEOUT
 from tests.lean_build import LEAN, ROOT, lean_build
+from tests.test_document import VOCAB, Environment, envelope, reading, separate_readings, unit
 from tests.test_scope_document import F1, _split, _text, _written_in_full
 from tests.test_scope_readings_document import _doc, _on_lead
 from ve.backends.relay import answer
 
 EVIDENCE = ROOT / "docs/document-model/sa-checked-view"
-NORM = "VE.Route.Admission.Kind.norm"
+KIND = "VE.Route.Admission.Kind."
+REFUSED = {"refused": "ScopeReadings: u0164.s02", "no-units": "document needs units"}
+
+
+def _versions(units=True) -> str:
+    """test_document's two versions of set `s` on unit `a`: the active one, v2, holds two readings of two kinds."""
+    env_json = envelope(VOCAB)
+    env, p = Environment(env_json), ["unary", "senior", ["const", "alice"]]
+    older = {"id": "s", "unit": "a", "version": 1, "status": "open", "readings": [reading(env, "p", p)]}
+    current = {"id": "s", "unit": "a", "version": 2, "status": "open",
+               "readings": [reading(env, "notp", ["not", p], "exposition"), reading(env, "p", p)]}
+    separate_readings(env, current)
+    front = {"format": "ve-document@1", "environment": env_json, "units": [unit("a", 0, 7, "meta")] if units else [],
+             "reading_sets": [older, current]}
+    return _text(front, "Claim.\n")
 
 
 def _cases() -> dict[str, dict]:
     meta, body = _split(F1.read_text())
     return {name: {"id": "d", "document": text, "admit": True} for name, text in {
-        "plain": _text(_written_in_full(meta), body),
-        "governed": _doc(),
-        "refused": _doc(_on_lead),
-    }.items()}
+        "plain": _text(_written_in_full(meta), body), "governed": _doc(), "versions": _versions(),
+        "refused": _doc(_on_lead), "no-units": _versions(units=False)}.items()}
 
 
 @pytest.fixture(scope="module")
@@ -52,14 +66,14 @@ def lean_lines(tmp_path_factory):
     return dict(zip(cases, lines)), cases
 
 
-@pytest.mark.parametrize("name", ["plain", "governed", "refused"])
+@pytest.mark.parametrize("name", ["plain", "governed", "versions", "refused", "no-units"])
 def test_the_view_first_component_is_check_doc_sets_byte_for_byte_and_the_services(lean_lines, name):
     lines, cases = lean_lines
     line = lines[name]
     assert line["view"] == line["answer"]
     row, error = answer("document", cases[name])
-    if name == "refused":
-        assert line["answer"] == {"error": "ScopeReadings: u0164.s02"} and "rows_render" not in line
+    if name in REFUSED:
+        assert line["answer"] == {"error": REFUSED[name]} and "rows_render" not in line
         assert row == {"id": "d", "status": "error", "error": line["answer"]["error"]}
         assert str(error) == line["answer"]["error"]
         return
@@ -85,10 +99,14 @@ def test_the_governed_rows_are_after_scope_fold(lean_lines):
 
 def test_candidates_and_readings_name_the_active_set_in_order(lean_lines):
     lines, _ = lean_lines
-    governed = lines["governed"]
+    governed, versions = lines["governed"], lines["versions"]
     assert governed["readings"] == [["u0165.s03", ["wide", "narrow"]]]
-    assert governed["candidates"] == [["u0165.s03", [NORM, NORM]]]
-    assert governed["active_kinds"] == governed["candidates"]
+    assert governed["candidates"] == [["u0165.s03", [KIND + "norm", KIND + "norm"]]]
+    # Only the active version, v2, in its order: `Loader.activeOf`, the set the status fold read.
+    assert versions["readings"] == [["a", ["notp", "p"]]]
+    assert versions["candidates"] == [["a", [KIND + "exposition", KIND + "asserted"]]]
+    for line in (governed, versions):
+        assert line["active_kinds"] == line["candidates"]
     assert lines["plain"]["candidates"] == lines["plain"]["readings"] == lines["plain"]["active_kinds"] == []
 
 
@@ -102,7 +120,8 @@ def test_the_eight_statements_equal_the_spec_and_a_changed_one_fails(tmp_path):
     text = (LEAN / "VE/Service/DocumentView.lean").read_text()
     for old, new in [("ns.length = ks.length", "ns.length ≤ ks.length"),
                      ("V.packSources = [] :=", "V.packSources = [] ∨ True :="),
-                     ("activeKinds j = .ok V.candidates", "(activeKinds j).isOk")]:
+                     ("activeKinds j = .ok V.candidates", "(activeKinds j).isOk"),
+                     ("packSources : List String := []", "packSources : List String := []\n  extra : Nat := 0")]:
         assert old in text
         path = tmp_path / f"{len(new)}.lean"
         path.write_text(text.replace(old, new))
