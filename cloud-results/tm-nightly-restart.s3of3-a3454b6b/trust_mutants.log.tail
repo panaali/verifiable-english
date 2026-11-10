@@ -1,0 +1,10 @@
+trust_mutants: 41 definitions, 46 mutants (15 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/Scope/Authoring.lean:162 VE.Scope.Pinned.readHeading (D[V], trusted) list-empty: ((w.drop k).dropPrefix? " ").map (·.toString) -> [] (lean/VE/Scope/Authoring.lean:162: Type mismatch)
+UNKNOWN lean/VE/Presupposition/Wire.lean:115 VE.Presupposition.UContent (D[V], trusted) ctor-drop: | readings (rs : List RReading) ->  (lean/VE/Presupposition/Wire.lean:149: Unknown constant `VE.Presupposition.UContent.readings`)
+UNKNOWN lean/VE/Commands/Steps.lean:62 VE.Commands.StepOutcome (G[V], trusted) ctor-drop: | many (alts : List Alt) ->  (lean/VE/Commands/Steps.lean:275: the failing proof cannot be cut: Unknown constant `VE.Commands.S...)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:168 VE.Purposes.WellFormed (S, trusted) eq-le: = -> ≤ (lean/VE/Purposes/Examples.lean:278: Expression (VE.Purposes.Examples.wfDecidable, which it reads,...)
+trust_mutants: 9 KILLED, 0 SURVIVOR, 4 UNKNOWN, 2 INVALID, 0 ALLOWED, 0 NOT RUN, 31 OTHER SHARD in 215 s
+trust_mutants: D[V], trusted: 2 UNKNOWN, 1 INVALID, 7 OTHER SHARD
+trust_mutants: G[V], trusted: 5 KILLED, 1 UNKNOWN, 1 INVALID, 11 OTHER SHARD
+trust_mutants: S, trusted: 4 KILLED, 1 UNKNOWN, 13 OTHER SHARD
+trust_mutants: steps: wall plan 12.7 s, scratch 3.5 s, control_build 0.2 s, probe_install 1.2 s, mutants 191.5 s, cleanup 5.7 s, reads 0.2 s; lake control_build 0.2 s (1), probe_install 1.2 s (1), control_probes 34.2 s (10), mutant_builds 114.9 s (22), mutant_checks 372.3 s (13), stage_controls 76.2 s (8), mutant_probes 41 s (10)
