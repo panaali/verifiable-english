@@ -270,13 +270,12 @@ def _lean_document(raw: bytes, path: Path, row: dict, *, admitted: bool, prepare
                 content_env = _content_environment(env, formula_env, unit["kind"])
                 if rights_document is not None and unit["kind"] in _RIGHTS_KINDS:
                     expected_id = rights_meaning_id(content_env, unit["content"])
-                elif soft_document is not None:
-                    expected_id = soft_digest(f"ve-meaning-{content_env.identity_version}\n",
-                                              {"environment_id": content_env.environment_id,
-                                               "ast": unit["content"]})
                 else:
-                    expected_id = digest(f"ve-meaning-{formula_env.identity_version}\n",
-                                         {"environment_id": formula_env.environment_id, "ast": unit["content"]})
+                    id_env = content_env if soft_document is not None else formula_env
+                    digest_fn = soft_digest if soft_document is not None else digest
+                    expected_id = digest_fn(f"ve-meaning-{id_env.identity_version}\n",
+                                            {"environment_id": id_env.environment_id,
+                                             "ast": unit["content"]})
                 if unit["meaning_id"] != expected_id:
                     raise unavailable("is not bound to the document sent")
         # A rights block the binding found equal to the authored one is built as the authored object itself: the
