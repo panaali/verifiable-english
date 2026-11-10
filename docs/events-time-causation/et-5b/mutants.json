@@ -1,0 +1,159 @@
+{
+ "item": "et-5b",
+ "note": "each planted alone in the source tree, its module rebuilt, the fixture files run with `lake env lean`, then restored (/tmp runner, et-5b build); the Python mutant is P1",
+ "mutants": [
+  {
+   "id": "L1",
+   "language": "Lean",
+   "file": "lean/VE/Service/Document.lean",
+   "definition": "VE.Service.Document.ownedProfiles",
+   "mutant": "\"documents@1\", \"events@0\", \"judgments@0\", -> \"documents@1\", \"judgments@0\",",
+   "test": "lean/VE/Service/EventsDocumentExamples.lean:89",
+   "killed": true
+  },
+  {
+   "id": "L2",
+   "language": "Lean",
+   "file": "lean/VE/Service/Document.lean",
+   "definition": "VE.Service.Document.eventsView",
+   "mutant": "pure (← VE.Events.routeView environment d, some (environment, d)) -> pure (← VE.Events.routeView environment d, some (environment, none))",
+   "test": "lean/VE/Service/EventsDocumentExamples.lean:89",
+   "killed": true
+  },
+  {
+   "id": "L3",
+   "language": "Lean",
+   "file": "lean/VE/Service/Document.lean",
+   "definition": "VE.Service.Document.environmentOf (the written identity)",
+   "mutant": "pure { E with profiles := ps, envId := ← Standalone.environmentIdOf ps written, events :=  -> pure { E with profiles := ps, events := some (written, d) }",
+   "test": "lean/VE/Service/EventsDocumentExamples.lean:92",
+   "killed": true
+  },
+  {
+   "id": "L4",
+   "language": "Lean",
+   "file": "lean/VE/Service/Document.lean",
+   "definition": "VE.Service.DocumentChain.eventsLayeredOf",
+   "mutant": "VE.Events.checkOpen (VE.Events.openTermsOf (Loader.optionalList front \"open_terms\")) d.V.l -> VE.Events.checkOpen (VE.Events.openTermsOf (Loader.optionalList front \"open_terms\")) []",
+   "test": "lean/VE/Service/EventsDocumentExamples.lean:115",
+   "killed": true
+  },
+  {
+   "id": "L5",
+   "language": "Lean",
+   "file": "lean/VE/Service/Document.lean",
+   "definition": "VE.Service.DocumentChain.eventsAnchorChecks",
+   "mutant": "if VE.EnglishGrammar.anchorCandidates.contains c then throw s!\"AnchorOpen: {c}\" -> if VE.EnglishGrammar.anchorCandidates.contains c && false then throw s!\"AnchorOpen: {c}\"",
+   "test": "lean/VE/Service/EventsDocumentExamples.lean:129",
+   "killed": true
+  },
+  {
+   "id": "L6",
+   "language": "Lean",
+   "file": "lean/VE/Events/Anchor.lean",
+   "definition": "VE.Events.openAnchor",
+   "mutant": "c.getObjValD \"description\" == .str anchorWording && V.anchor.isNone then -> c.getObjValD \"description\" == .str anchorWording then",
+   "test": "lean/VE/Service/EventsDocumentExamples.lean:127",
+   "killed": true
+  },
+  {
+   "id": "L7",
+   "language": "Lean",
+   "file": "lean/VE/Events/Anchor.lean",
+   "definition": "VE.Events.legend",
+   "mutant": "(if isOpen then [s! -> (if !isOpen then [s!",
+   "test": "lean/VE/Service/EventsDocumentExamples.lean:156",
+   "killed": true
+  },
+  {
+   "id": "L8",
+   "language": "Lean",
+   "file": "lean/VE/EnglishGrammar/SourceReader.lean",
+   "definition": "VE.EnglishGrammar.sourceReadings",
+   "mutant": "| some _, .unknown => .error s!\"{word}-owner\" -> (deleted)",
+   "test": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:158",
+   "killed": true
+  },
+  {
+   "id": "L9",
+   "language": "Lean",
+   "file": "lean/VE/EnglishGrammar/SourceReader.lean",
+   "definition": "VE.EnglishGrammar.ruleContext",
+   "mutant": "if leadIn == some true || sentence.any -> if sentence.any",
+   "test": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:148",
+   "killed": true
+  },
+  {
+   "id": "L10",
+   "language": "Lean",
+   "file": "lean/VE/EnglishGrammar/SourceReader.lean",
+   "definition": "VE.EnglishGrammar.ruleVerbs",
+   "mutant": "def ruleVerbs : List String := [\"must\", \"may\", \"need\", \"should\"] -> def ruleVerbs : List String := [\"must\", \"may\", \"need\"]",
+   "test": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:148",
+   "killed": true
+  },
+  {
+   "id": "L11",
+   "language": "Lean",
+   "file": "lean/VE/EnglishGrammar/SourceReader.lean",
+   "definition": "VE.EnglishGrammar.rowOf",
+   "mutant": "r.word == word && r.profile == profile && r.frame == frame -> r.word == word && r.profile == profile",
+   "test": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:154",
+   "killed": true
+  },
+  {
+   "id": "L12",
+   "language": "Lean",
+   "file": "lean/VE/EnglishGrammar/SourceReader.lean",
+   "definition": "VE.EnglishGrammar.anchorCandidates",
+   "mutant": "if r.frame == \"source no anchor\" then some code else none -> if r.frame == \"source\" then some code else none",
+   "test": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:165",
+   "killed": true
+  },
+  {
+   "id": "L13",
+   "language": "Lean",
+   "file": "lean/VE/EnglishGrammar/SourceWords.lean",
+   "definition": "VE.EnglishGrammar.alwaysReadings",
+   "mutant": "\"<clause> on each day, if that day is on or after the date of this document.\"] -> \"<clause> on each day, if that day is after the date of this document.\"]",
+   "test": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:156",
+   "killed": true
+  },
+  {
+   "id": "L14",
+   "language": "Lean",
+   "file": "lean/VE/EnglishGrammar/SourceWords.lean",
+   "definition": "VE.EnglishGrammar.eventuallyReadings",
+   "mutant": "\"There is a day such that that day is after the date of this document and <clause> on that -> \"There is a day such that that day is on or after the date of this document and <clause> o",
+   "test": "lean/VE/Service/EventsDocumentExamples.lean:211",
+   "killed": true
+  },
+  {
+   "id": "L15",
+   "language": "Lean",
+   "file": "lean/VE/EnglishGrammar/SourceWords.lean",
+   "definition": "VE.EnglishGrammar.alwaysNoAnchorReadings",
+   "mutant": "(.refuse \"A2\" -> (.refuse \"A3\"",
+   "test": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:165",
+   "killed": true
+  },
+  {
+   "id": "L16",
+   "language": "Lean",
+   "file": "lean/VE/EnglishGrammar/SourceWords.lean",
+   "definition": "VE.EnglishGrammar.eventuallyNoAnchorReadings",
+   "mutant": "\"There is a day such that <clause> on that day.\") -> \"There is a day after the date of this document such that <clause> on that day.\")",
+   "test": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:160",
+   "killed": true
+  },
+  {
+   "id": "L17",
+   "language": "Lean",
+   "file": "lean/VE/EnglishGrammar/SourceWords.lean",
+   "definition": "VE.EnglishGrammar.softAlwaysReadings",
+   "mutant": "\"<agent> must <act>.\", \"<agent> should <act>.\"].map -> \"<agent> must <act>.\", \"<agent> should <act> by default.\"].map",
+   "test": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:148",
+   "killed": true
+  }
+ ]
+}
