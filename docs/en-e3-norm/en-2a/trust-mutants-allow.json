@@ -39,6 +39,71 @@
    "definition": "VE.EnglishGrammar.Norm.ReadNormAuthoring",
    "operator": "list-first",
    "reason": "a Prop no check can evaluate (a premise of toNodesChecked_authoring, never computed by the mode): exercised by ReadNormAuthoring_eq (Owners.lean:100), which pins it word for word to english-lean-s6.md 4's readNorm_authoring, and toNodesChecked_authoring; the mutant breaks them (R16: a Prop is exercised only by its proofs)"
+  },
+  {
+   "definition": "VE.EnglishGrammar.Norm.ReadNormAuthoring",
+   "operator": "list-drop-first",
+   "reason": "a Prop no check can evaluate (a premise of toNodesChecked_authoring, never computed by the mode): exercised by ReadNormAuthoring_eq (Owners.lean:100), which pins it word for word to english-lean-s6.md 4's readNorm_authoring, and toNodesChecked_authoring; the mutant breaks them (R16: a Prop is exercised only by its proofs)"
+  },
+  {
+   "definition": "VE.EnglishGrammar.Norm.ReadNormAuthoring",
+   "operator": "list-drop-last",
+   "reason": "a Prop no check can evaluate (a premise of toNodesChecked_authoring, never computed by the mode): exercised by ReadNormAuthoring_eq (Owners.lean:100), which pins it word for word to english-lean-s6.md 4's readNorm_authoring, and toNodesChecked_authoring; the mutant breaks them (R16: a Prop is exercised only by its proofs)"
+  },
+  {
+   "definition": "VE.EnglishGrammar.Norm.ReadNormAuthoring",
+   "operator": "list-last",
+   "reason": "a Prop no check can evaluate (a premise of toNodesChecked_authoring, never computed by the mode): exercised by ReadNormAuthoring_eq (Owners.lean:100), which pins it word for word to english-lean-s6.md 4's readNorm_authoring, and toNodesChecked_authoring; the mutant breaks them (R16: a Prop is exercised only by its proofs)"
+  },
+  {
+   "definition": "VE.EnglishGrammar.Norm.Run.outcomeFields",
+   "operator": "list-first",
+   "reason": "equivalent where it survives: line 121's `(spansOf rs).isEmpty` is the same on a cut list, and lines 126 and 128 cut an Option's `toList` (at most one element); line 123's span rows are killed by RunExamples' two-span guard (`cTwo`)"
+  },
+  {
+   "definition": "VE.EnglishGrammar.Norm.Run.outcomeFields",
+   "operator": "list-last",
+   "reason": "equivalent where it survives: line 121's `(spansOf rs).isEmpty` is the same on a cut list, and lines 126 and 128 cut an Option's `toList` (at most one element); line 123's span rows are killed by RunExamples' two-span guard (`cTwo`)"
+  },
+  {
+   "definition": "VE.EnglishGrammar.Norm.Run.statementSpans",
+   "operator": "list-last",
+   "reason": "equivalent: `(acc.reverse.take 1).getLast? = acc.getLast?`, the only read of `acc` on line 69"
+  },
+  {
+   "definition": "VE.EnglishGrammar.Norm.Run.stoppedFields",
+   "operator": "list-drop-last",
+   "reason": "equivalent: the dropped code, `InvalidInput`, is no `Reject`'s code (RunExamples' `rejectAll` guard lists every constructor's code as `Run.rejectCodes`, none of them InvalidInput), so no stop's rejection carries it"
+  },
+  {
+   "definition": "VE.EnglishGrammar.Norm.normTags",
+   "operator": "list-empty",
+   "reason": "UNKNOWN only because Lean refuses the mutated text (an elaboration error in the mutated declaration: Type mismatch, the empty list has no rule type), so no program has this behaviour"
+  },
+  {
+   "definition": "VE.EnglishGrammar.Norm.Run.oneSpans",
+   "operator": "list-empty",
+   "reason": "UNKNOWN only because Lean refuses the mutated text (an elaboration error in the mutated declaration: the expected type of `.source` could not be determined), so no program has this behaviour"
+  },
+  {
+   "definition": "VE.EnglishGrammar.Norm.Run.outcomeFields",
+   "operator": "append-right",
+   "reason": "UNKNOWN only because Lean refuses the mutated text (an elaboration error in the mutated declaration: application type mismatch), so no program has this behaviour"
+  },
+  {
+   "definition": "VE.EnglishGrammar.Norm.Run.outcomeFields",
+   "operator": "list-empty",
+   "reason": "UNKNOWN only because Lean refuses the mutated text (an elaboration error in the mutated declaration: application type mismatch, or a stuck instance for an untyped `[]`; the meaningful form, a block fault with no sentence, is spec 9's seeded bug, killed by E4), so no program has this behaviour"
+  },
+  {
+   "definition": "VE.EnglishGrammar.Norm.spansOf",
+   "operator": "list-empty",
+   "reason": "UNKNOWN only because Lean refuses the mutated text (an elaboration error in the mutated declaration: invalid field notation on an untyped `[]`), so no program has this behaviour"
+  },
+  {
+   "definition": "VE.EnglishGrammar.Norm.Run.statementSpans",
+   "operator": "list-empty",
+   "reason": "UNKNOWN only because Lean refuses the mutated text (an elaboration error in the mutated declaration: invalid match expression, metavariables in a pattern), so no program has this behaviour"
   }
  ]
 }

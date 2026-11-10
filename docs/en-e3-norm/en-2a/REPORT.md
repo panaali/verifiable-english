@@ -1,10 +1,10 @@
 # en-e3a build report: EN-2's owner pieces and the Lean mode `english.statement` (kind `blocks`), first part
 
-**Open DRI question (the item stops on it only; inbox `20261109T213857Z-en-e3a`, sent 21:38Z, unanswered at this
-commit):** (1) the trust class of the rule rows' span code (`statementSpans`, `sentenceBytes`, `opensStatement`):
-G[I] here gives R16 +139, main's precedent (`Run.sentenceSpans` is G[V]) gives +167, over 150; (2) evaluate-once:
-`answerWith` computes `normTags` (a second `normGrammar`) on every answer and `statementSpans` lexes the source a
-second time, both the spec's text; a fix is a spec edit. No DELTA cell reserves a signature.
+**DRI rulings on this item (no signature reserved, nothing open):** `reviews/dri-decisions-20261109-en-e3a.md` items 1
+(the cut after deliverable (2), next item en-e3ab) and 2 (the status word `unformalised`);
+`reviews/dri-decisions-20261109-en-e3a-2.md` items 1 (the span code classed G[V]; trusted +167 SIGNED by the DRI),
+2 (the rule tags a thunk forced only for `many`, a signed spec edit, built here) and 3 (the second lex moves to row
+en-e3a-cutback).
 
 Status: cut at the size measurement the task names after deliverable (2) ("Measure size now ... and record it"; the
 common rules: "measure it before you start the second half of the work, and cut there"). This item delivers EN-2 step 0
@@ -31,11 +31,11 @@ en-e3-norm-p3ver4 PASS; DRI 2026-11-02 items 1-3.
 | (2) `Run.lean`'s code hunk (M8, M9) | `statementCodeRows` (appended to `codeClasses`, the one table), `renderCodeRows` (EN-3 appends it), `statementStatusCodes`, `statementFields`, `statementUnsentenced`; the `english.grammar` export writes the last three as `statement_statuses`, `statement_fields`, `statement_unsentenced` | E1-E16 (every coded row carries its class) |
 | (2) OPEN-2 | `Norm/Rules.lean` exposed no tags: `normTags` added there, one hunk, `(normGrammar E L).rules.map (·.tag)` | E10 (the tags reach the witnesses); en-e3ab's R-f18 |
 | (2) size measured | 683 changed lines (+671 -12) outside the verbatim spec and plan after (2), at `62fe76254`: over the ~600 cap, so the item is cut there. The final count and what grew after the cut: section "Size" | `git diff --numstat 9f5dd46ab 62fe76254` |
-| Evaluators rule (DRI 2026-10-27) | `readNorm` is charged against `workBudget`; the other passes are at most quadratic in the statement count (`statementSpans`' fold appends to its list, `statementRow` calls `overOf` per row; the spec's text, kept) over a source the lexer bounds (`maxTextChars`, 10,000 characters). E17: 300 blocks (9,791 characters) through the real reader answer `one` with 300 rows and the last span `[9759, 9791]`; 330 are `TextTooLong`. | E17 (`RunExamples.lean:147-156`) |
+| Evaluators rule (DRI 2026-10-27) | `readNorm` is charged against `workBudget`; the other passes are at most quadratic in the statement count (`statementSpans`' fold appends to its list, `statementRow` calls `overOf` per row; the spec's text, kept) over a source the lexer bounds (`maxTextChars`, 10,000 characters). E17: 300 blocks (9,791 characters) through the real reader answer `one` with 300 rows and the last span `[9759, 9791]`; 330 are `TextTooLong`. | E17 (`RunExamples.lean:163-172`); the thunk test above |
 | (3) route recipe steps 1-4: registry and protocol, `RegistryExamples`, the shape and `Skeletons`, the encoder theorem, `Audit`/`ResponseShapeAudit` lines for them, `tools/english_codes.py` and its reader, `DEADLINES`, `_SCHEMA_SEEDS` | **not delivered: en-e3ab** | — |
 | (3) layer rows, `lean/VE.lean` | `Norm.RunExamples` among the runner-boundary fixtures (`Owners` and `Run` need no row: `VE.EnglishGrammar.*` is layer 3, `*.Run` layer 4); four imports | `tools/check_lean_imports.py` |
 | (4) route fixtures in `tests/data/route-cases.jsonl` | **not delivered: en-e3ab** (R-f1..R-f24 need the registered mode) | — |
-| (4) the 120 pinned blocks through the mode, R-stale, and one ambiguous condition with both trees | measured here, through the mode's Lean entry (below); the ambiguous condition is f18 through the real reader (`Run.answer`, `leanReader`): `many`, sentence 1, both trees with `normGrammar`'s tags | `tests/test_english_statement_blocks.py::test_each_pinned_block_through_the_mode`; `RunExamples.lean:171-182` |
+| (4) the 120 pinned blocks through the mode, R-stale, and one ambiguous condition with both trees | measured here, through the mode's Lean entry (below); the ambiguous condition is f18 through the real reader (`Run.answer`, `leanReader`): `many`, sentence 1, both trees with `normGrammar`'s tags | `tests/test_english_statement_blocks.py::test_each_pinned_block_through_the_mode`; `RunExamples.lean:209-224` |
 
 **The 120 pinned blocks through the mode** (`Norm.Run.answer`, the case decoded once per 20 blocks; three requests
 through `statementCaseReported` give the same rows): 121 records (76 RSP, 44 FSF, f21). 104 answer `one` (103 W1
@@ -46,8 +46,11 @@ names another environment"}` (asserted exactly). The test passed in 414.5 s on v
 Cost (UNVERIFIED as a benchmark: one run each on a loaded host, `lake env lean` over generated files that print ten
 answers on the RSP environment): decoding the case alone 4.99 s, ten `readNorm` reads 36.61 s, ten `answer`s 40.57 s;
 so `normTags`, which rebuilds `normGrammar` beside `readNorm`, adds about 12% per answer. The spec's `answer` reads
-both; the fix (the tags computed only for `many`, a spec edit) and the second lex are the open DRI question above,
-not deferred on this item's own authority.
+both. Since DRI 2026-11-09 (`dri-decisions-20261109-en-e3a-2.md` item 2) `answerWith` hands `outcomeFields` the tags
+as a thunk that only a `many` answer forces (`tests/test_english_statement_blocks.py::test_the_rule_tags_are_forced_only_for_many`:
+a reader whose tags panic answers `one`, `none`, `rejected` and `unformalised` under `LEAN_ABORT_ON_PANIC=1`, and
+`many` aborts). The second lex in `statementSpans` and the `many` branch's grammar rebuild are moved to row
+en-e3a-cutback by item 3 of that ruling.
 
 ## Deviations and corrections (recorded here, never in the copied spec)
 
@@ -81,33 +84,50 @@ not deferred on this item's own authority.
 
 ## Seeded bugs (each planted alone, shown failing, restored; `mutants.json`)
 
-| Bug (spec 9) | File | Fails as planted | Fails with the proofs cut |
+| Bug | File | Fails as planted | Fails with the proofs cut |
 |---|---|---|---|
-| `Force.op .needNot` -> `.mustNot` | Owners.lean | `opOf_agrees` | O1 (:21, :22), O2 (:26) |
-| the gate passes a clause with a span | Owners.lean | `toNodeChecked_ok`, `toNodesChecked_ok` | O7 (:55, :57) |
-| the runner answers `one` when `readNorm` stops | Norm/Run.lean | `answer_stopped`, `answer_one_iff`, `answer_partial_no_node` | E6, E8, E10, E14, E16 |
-| a block fault without `sentence` | Norm/Run.lean | E4, E9 (:47, :52, :55), the sentence rule (:119) | same |
-| every decoder refusal `NodeRefused` | Norm/Run.lean | E3 (:40, :42), E14 (:85) | same |
-| a stop's rejection always names its sentence | Norm/Run.lean | `answer_stopped` | E16 (:89, :93, :103), :119 |
-| (Python) `Norm/Run.lean` dropped from the lock's trusted files | tools/english_grammar_gen.py | `test_english_grammar_gen.py::test_the_repository_is_in_sync` | — |
-| (Python) the `Norm.RunExamples` layer row removed | tools/layer_policy.py | `tools/check_lean_imports.py` (new outward import) | — |
+| Force.op .needNot mapped to .mustNot (spec 9; O1) | Norm/Owners.lean | Norm/Owners.lean:29 theorem opOf_agrees | Norm/OwnersExamples.lean:22 O1; Norm/OwnersExamples.lean:23 O1; Norm/OwnersExamples.lean:27 O2 |
+| the gate passes a clause with a span (toNodeChecked := toNode; spec 9; O7 and E2) | Norm/Owners.lean | Norm/Owners.lean:79 theorem toNodeChecked_ok; Norm/Owners.lean:85 theorem toNodesChecked_ok | Norm/OwnersExamples.lean:57 O7 (toNodeChecked); Norm/OwnersExamples.lean:59 O7 (toNodesChecked) |
+| the runner answers one when readNorm stops (spec 9; E8) | Norm/Run.lean | Norm/Run.lean:247-248 theorem Run.answer_stopped (and answer_one_iff, answer_partial_no_node) | Norm/RunExamples.lean:60 E6; Norm/RunExamples.lean:62 E6; Norm/RunExamples.lean:76 E10; Norm/RunExamples.lean:107 E14; Norm/RunExamples.lean:111-116 E16; Norm/RunExamples.lean:125 E16 (every Reject); Norm/RunExamples.lean:137 E8; Norm/RunExamples.lean:141 every row's class; Norm/RunExamples.lean:215-216 f18 through the real reader |
+| a block fault without `sentence` (spec 9; E4) | Norm/Run.lean | Norm/RunExamples.lean:48 E4; Norm/RunExamples.lean:53 E9; Norm/RunExamples.lean:56 E4 (NoConsequence, StrayCarveOut); Norm/RunExamples.lean:156 the sentence rule | Norm/RunExamples.lean:48 E4; Norm/RunExamples.lean:53 E9; Norm/RunExamples.lean:56 E4 (NoConsequence, StrayCarveOut); Norm/RunExamples.lean:156 the sentence rule |
+| every decoder refusal coded NodeRefused (spec 9; E3 and E14) | Norm/Run.lean | Norm/RunExamples.lean:41 E3 (depth); Norm/RunExamples.lean:43 E3 (node budget); Norm/RunExamples.lean:107 E14 (lean-unknown) | Norm/RunExamples.lean:41 E3 (depth); Norm/RunExamples.lean:43 E3 (node budget); Norm/RunExamples.lean:107 E14 (lean-unknown) |
+| a stop's rejection always names its sentence (spec 9; E16) | Norm/Run.lean | Norm/Run.lean:247 theorem Run.answer_stopped | Norm/RunExamples.lean:111 E16 (Internal); Norm/RunExamples.lean:115 E16 (EmptyDocument); Norm/RunExamples.lean:125 E16 (every Reject); Norm/RunExamples.lean:156 the sentence rule |
+| fewer blocks than statements is Internal, never a one answer that zip shortens (self-review B) | Norm/Run.lean | Norm/RunExamples.lean:88 fewer blocks than statements | same |
+| a rule row's span is in bytes, not code points (M10; self-review B) | Norm/Run.lean | Norm/RunExamples.lean:90 non-ASCII byte spans through answerWith | same |
+| a retyped source is refused (self-review B) | Norm/Run.lean | Norm/RunExamples.lean:199 a retyped id, kind or source is an error row | same |
+| the rule tags are forced only for many (DRI 2026-11-09 en-e3a-2 item 2) | Norm/Run.lean | tests/test_english_statement_blocks.py::test_the_rule_tags_are_forced_only_for_many (the `one` case aborts: exit 134) | same |
+| (Python) Norm/Run.lean dropped from the English lock's trusted files | tools/english_grammar_gen.py | tests/test_english_grammar_gen.py::test_the_repository_is_in_sync | — |
+| (Python) Norm.RunExamples left at layer 3 (its runner-boundary row removed) | tools/layer_policy.py | tools/check_lean_imports.py (gate step): new outward Lean import: VE.EnglishGrammar.Norm.RunExamples -> VE.EnglishGrammar.Norm.Run | — |
 
 Mechanical mutants per new trusted definition: the trust-mutants sweep (below).
 
 ## Size
 
-`git diff --numstat 9f5dd46ab <final HEAD>`, outside the verbatim spec and plan and the generated files: see the
-final line of this section (filled in on the final HEAD). Growth after the cut point: E17 and the self-review's guards
-(`RunExamples.lean`), `ReadNormAuthoring_eq`, the pinned-block test (`tests/test_english_statement_blocks.py`), the
-trust classes (`tools/trust-classes.json`, a side table), and this item's evidence (REPORT, DELTA, `mutants.json`).
+`git diff --numstat $(git merge-base HEAD main)` (base `a0102f0e5`), hand-written files only (the verbatim spec and
+plan and every file `tools/regen_generated.py --owner` names a generator for are excluded), on the final code:
+**+1,277 -12 = 1,289 lines**. Lean product 491 (`Norm/Run.lean` 303, `Norm/Owners.lean` 121, `Run.lean` +42 -1,
+`Norm/Rules.lean` 13, `Norm/Examples.lean` -11); Lean fixtures 308 (`RunExamples.lean` 225, `OwnersExamples.lean` 83);
+tests 84 (`tests/test_english_statement_blocks.py`); tools 7; evidence 399 (`mutants.json` 213, REPORT 130,
+`trust-mutants-allow.json` 44, DELTA 12). At the cut point (`62fe76254`) it was 683; the DRI's cut
+(`dri-decisions-20261109-en-e3a.md` item 1) stops the item after deliverable (2) and moves (3) and (4) to en-e3ab. The
+growth after the cut is no new deliverable: guards the self-review and the trust-mutants sweep asked for (E17, the
+request decoder, f18 through the real reader, byte spans, survivors), the pinned-block and thunk tests, and evidence.
 
-## Trust (R16)
+## Trust (R16 and the DRI's signature)
 
-Measured on the final HEAD with `tools/trust_map.py --check`: see DELTA row 2 (filled in after the regenerated
-declarations). Every new trusted definition is exercised: the owner pieces by O1-O8, the gate by O6-O7 and E2, the
-runner's encoder by E1-E16, `answer`/`leanReader`/the real reader by E17 and the pinned-block test, the request
-decoder and `statementCaseReported` by the pinned-block test's three whole-mode requests. FOLLOW-UPS row "## en-e3a"
-asks for the ties pass.
+`uv run python tools/trust_map.py --check` on the final code: PASS; against `a0102f0e5`: K +0, S +46, D +42, G +176,
+tied +26, trusted **+167** (`Norm/Run.lean` +110, `Norm/Owners.lean` +36, `Norm/Rules.lean` +13, `Run.lean` +8).
+17 over R16's 150: SIGNED by the DRI 2026-11-09 (`dri-decisions-20261109-en-e3a-2.md` item 1, below its +170 stop),
+recorded with `tools/trust_map.py --allow` in `docs/trust-baseline.json`; DELTA row 2 itemises it; the cut-back is row
+en-e3a-cutback. Every new trusted definition is exercised: the owner pieces by O1-O8, the gate by O6-O7 and E2, the
+runner's encoder by E1-E16, the spans by E1, E13, E17 and the non-ASCII guard, `answer`/`leanReader`/the real reader by
+E17, f18 and the pinned-block test, the request decoder and `statementCaseReported` by the whole-mode guards and the
+pinned-block test's three whole-mode requests; mechanically by the sweep below. FOLLOW-UPS row "## en-e3a" asks for the
+ties pass.
+
+## Trust-mutants sweep
+
+SWEEP_PLACEHOLDER
 
 ## Pilot bytes
 
@@ -121,3 +141,37 @@ asks for the ties pass.
   `wrong-row-type` list) and spec 8's route fixtures R-f1..R-f24 and R-stale in `tests/data/route-cases.jsonl`
   (R-f18, the ambiguous condition with both trees, is already a `#guard` here through `Run.answer`).
 - then en-e3b (the shadow relay and the delta report), then en-e3 (EN-3).
+
+## Spec re-read (BUILDER-CHECKLIST 14)
+
+Each new section 4 statement compared with the spec after whitespace normalisation (a script over
+`docs/spec/en-e3-norm.md` and the two Lean files; `Run.` prefixes dropped): equal unless stated.
+
+- spec re-read: `opOf_agrees` against docs/spec/en-e3-norm.md:1066 (Norm/Owners.lean:28): equal.
+- spec re-read: `soft_strict_iff` against :1069 (Norm/Owners.lean:40): equal.
+- spec re-read: `sourceView_nil` against :1071 (Norm/Owners.lean:49): equal.
+- spec re-read: `toNodeChecked_ok`, `toNodesChecked_ok` against :1073, :1076: equal.
+- spec re-read: `Run.statementStatusCodes_classed`, `Run.statementFields_statuses` against :1084, :1088 (Norm/Run.lean:217, :221): equal.
+- spec re-read: `Run.answer_one_iff`, `Run.answer_one_rows`, `Run.answer_stopped`, `Run.answer_misplaced` against :1091, :1096, :1112, :1119: equal.
+- spec re-read: `Run.answer_partial_no_node` against :1106: one word differs, `.str "partial"` is `.str "unformalised"`: SIGNED by the DRI 2026-11-09, reviews/dri-decisions-20261109-en-e3a.md item 2.
+- spec re-read: the definitions `Force.op` (:213), `Polarity.op?` (:221), `Mode.soft` (:227), `sourceView` (:233), `UnformalisedSpan` (:237), `Clause.toNodeChecked` (:252), `toNodesChecked` (:258), `statementCodeRows` (:337), `statementStatusCodes` (:349), `statementFields` (:359), `statementUnsentenced` (:370), `statementSpans` (:399), `outcomeFields` (:451), `statementRequest` (:466), `answerWith` (:518): the spec's text, except the status word (item 2 above) and `outcomeFields`/`stoppedFields`/`answerWith`'s tags thunk (SIGNED by the DRI 2026-11-09, reviews/dri-decisions-20261109-en-e3a-2.md item 2; FOLLOW-UPS erratum row).
+- spec re-read: `ReadNormAuthoring` against english-lean-s6.md 4's `readNorm_authoring`: equal (read by hand; `ReadNormAuthoring_eq` only guards the copy).
+- DELTA rows against base spec 2.12 (the version raise) and R16/the DRI's item 1 (trust): re-read.
+
+## Self-review against BUILDER-CHECKLIST
+
+1. Typed and contained: PASS for the Lean side: a retyped `id`, `kind` or `source` is an error row (`RunExamples.lean:199`), E15's other kind and extra member; the relay schema and its fuzz tests are N.A. here (the mode is not registered: en-e3ab/en-e3b).
+2. Deliverables: PASS: "Rows delivered, and not" lists each task line with its commit area and test; (3) and (4) moved by the DRI's item 1.
+3. Tests can fail: PASS: `mutants.json` (13 seeded bugs, each failing a named guard, theorem or test), `trust-mutants.json` (the sweep), the thunk test's both directions.
+4. Python, Lean agree: PASS: `tests/test_english_statement_blocks.py::test_each_pinned_block_through_the_mode` (121 records; 104 `one` with Python's node, 17 `none`).
+5. R8 binding: N.A.: no relay reads the mode in this item (en-e3b).
+6. Gate evidence: PASS: main merged before the final checks (section "Final checks"); the chain runs the gate on the final HEAD.
+7. No unsigned item: PASS: DELTA row 1 cites the DRI's 2026-11-02 jt-3p item 3, row 2 the DRI's 2026-11-09 en-e3a-2 item 1; `review-ready.py`'s [delta] form.
+8. Every user-visible change in DELTA: PASS: no route answer changes (the mode is unregistered); the version raise and the code-table rows are DELTA's rows and prose.
+9. Test selection: PASS: `tools/select_tests.py --base $(git merge-base HEAD main)` selects 466 units, not every unit, and includes `tests/test_english_statement_blocks.py` (its run log: "changed ['tests/test_english_statement_blocks.py']").
+10. Statements say what is claimed: PASS: the spec re-read above; `answer_*` are about `Run.answer`'s returned row; the seeded runner bugs break `answer_stopped`/`answer_one_iff` (`mutants.json`).
+11. Budgets fail closed: PASS: `readNorm` at `workBudget`, its `.budget` outcome is `budget` (E14's `lean-unknown` rows); E17 at the text limit (330 blocks `TextTooLong`).
+12. No CPU or memory regression: PASS: no existing route changes; the tags thunk removes `normTags` from every non-`many` answer (`test_the_rule_tags_are_forced_only_for_many`); the second lex is row en-e3a-cutback.
+13. Test-removed trailers: PASS: `tools/gate_collection.py --check --prebuilt`: "1 added, 0 removed by a trailer, 0 refused, 0 stale and 0 malformed".
+14. Both directions, cited evidence, spec re-read: PASS: each new guard has its opposite (`wholeRow` answers `ok` beside the retyped rows; `oneSpans` refuses fewer and more blocks; the thunk test answers four statuses and aborts on `many`); claims cite commands above.
+15. No overclaim, no silent cut, checks can fail, limits charged: PASS: the `ReadNormAuthoring_eq` wording fixed; the cut and both deferrals are DRI rulings; every new guard shown failing on a mutant (`mutants.json`); E17.

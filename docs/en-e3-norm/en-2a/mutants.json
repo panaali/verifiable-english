@@ -59,12 +59,12 @@
     "lean/VE/EnglishGrammar/Norm/RunExamples.lean:60 E6",
     "lean/VE/EnglishGrammar/Norm/RunExamples.lean:62 E6",
     "lean/VE/EnglishGrammar/Norm/RunExamples.lean:76 E10",
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:103 E14",
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:107-112 E16",
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:121 E16 (every Reject)",
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:133 E8",
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:137 every row's class",
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:211-212 f18 through the real reader"
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:107 E14",
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:111-116 E16",
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:125 E16 (every Reject)",
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:137 E8",
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:141 every row's class",
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:215-216 f18 through the real reader"
    ],
    "status": "KILLED"
   },
@@ -80,13 +80,13 @@
     "lean/VE/EnglishGrammar/Norm/RunExamples.lean:48 E4",
     "lean/VE/EnglishGrammar/Norm/RunExamples.lean:53 E9",
     "lean/VE/EnglishGrammar/Norm/RunExamples.lean:56 E4 (NoConsequence, StrayCarveOut)",
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:152 the sentence rule"
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:156 the sentence rule"
    ],
    "test_with_proofs_cut": [
     "lean/VE/EnglishGrammar/Norm/RunExamples.lean:48 E4",
     "lean/VE/EnglishGrammar/Norm/RunExamples.lean:53 E9",
     "lean/VE/EnglishGrammar/Norm/RunExamples.lean:56 E4 (NoConsequence, StrayCarveOut)",
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:152 the sentence rule"
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:156 the sentence rule"
    ],
    "status": "KILLED"
   },
@@ -101,12 +101,12 @@
    "test": [
     "lean/VE/EnglishGrammar/Norm/RunExamples.lean:41 E3 (depth)",
     "lean/VE/EnglishGrammar/Norm/RunExamples.lean:43 E3 (node budget)",
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:103 E14 (lean-unknown)"
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:107 E14 (lean-unknown)"
    ],
    "test_with_proofs_cut": [
     "lean/VE/EnglishGrammar/Norm/RunExamples.lean:41 E3 (depth)",
     "lean/VE/EnglishGrammar/Norm/RunExamples.lean:43 E3 (node budget)",
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:103 E14 (lean-unknown)"
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:107 E14 (lean-unknown)"
    ],
    "status": "KILLED"
   },
@@ -122,10 +122,10 @@
     "lean/VE/EnglishGrammar/Norm/Run.lean:247 theorem Run.answer_stopped"
    ],
    "test_with_proofs_cut": [
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:107 E16 (Internal)",
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:111 E16 (EmptyDocument)",
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:121 E16 (every Reject)",
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:152 the sentence rule"
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:111 E16 (Internal)",
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:115 E16 (EmptyDocument)",
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:125 E16 (every Reject)",
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:156 the sentence rule"
    ],
    "status": "KILLED"
   },
@@ -138,7 +138,7 @@
     "after": "|| sps.length > rs.length then none"
    },
    "test": [
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:87 fewer blocks than statements"
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:88 fewer blocks than statements"
    ],
    "status": "KILLED"
   },
@@ -151,7 +151,7 @@
     "after": "let sps := (statementSpans source).map (byte offsets converted to code-point counts)"
    },
    "test": [
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:89 non-ASCII byte spans through answerWith"
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:90 non-ASCII byte spans through answerWith"
    ],
    "status": "KILLED"
   },
@@ -164,7 +164,20 @@
     "after": "let source := ((j.getObjValD \"source\").getStr?.toOption.getD \"\")"
    },
    "test": [
-    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:195 a retyped id, kind or source is an error row"
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:199 a retyped id, kind or source is an error row"
+   ],
+   "status": "KILLED"
+  },
+  {
+   "behaviour": "the rule tags are forced only for many (DRI 2026-11-09 en-e3a-2 item 2)",
+   "file": "lean/VE/EnglishGrammar/Norm/Run.lean",
+   "plant": {
+    "file": "lean/VE/EnglishGrammar/Norm/Run.lean",
+    "before": "| none => outcomeFields c (Thunk.mk fun _ => R.tags c.E c.L) source ...",
+    "after": "| none => let t := R.tags c.E c.L; outcomeFields c (Thunk.pure t) source ..."
+   },
+   "test": [
+    "tests/test_english_statement_blocks.py::test_the_rule_tags_are_forced_only_for_many (the `one` case aborts: exit 134)"
    ],
    "status": "KILLED"
   }
