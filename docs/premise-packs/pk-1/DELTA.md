@@ -14,8 +14,9 @@ diagnostic is today's:
   `-status`, 2,705 `-report`, 55 `-certificate` cases and about 900 readings cases), including the
   `InvalidModel(soft)` and `InvalidModel(rights)` cases of `tests/test_norm_defaults_layered.py`
   (`evidence/ab_full.txt`, `evidence/ab_recorded_kinds.txt`);
-- the 33 `norm-defaults` cases of `tests/data/route-cases.jsonl`, one session each: 0 differences
-  (`evidence/ab_route_cases.txt`).
+- the 33 `norm-defaults` cases of `tests/data/route-cases.jsonl` have no valid differential: their run is INVALID
+  and exited 1 (`evidence/ab_route_cases.txt`: none of its invocations ran the rebuilt `ve_speech_acts_route`), so
+  it checks nothing (corrected by pk-1-cfr-1).
 
 The checks `assemble` adds (unknown or repeated pack, repeated label, generated names, vocabulary limit) cannot fail
 on a decoded soft or rights source: today's packs generate no names, `checkAuthorN` already bounds the vocabulary,
