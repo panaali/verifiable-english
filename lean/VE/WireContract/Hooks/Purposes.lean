@@ -168,6 +168,8 @@ def links (n : Nat) : List Json := (List.range n).map (link s!"l{·}")
     (block [link "l1" [("reason", "x"), ("target", Json.arr #[Json.mkObj [("part", "a b")]])]], "1.1i"),
     (block [link "l1" [("reason", Json.arr #[Json.mkObj [("unit", "p1")], Json.mkObj [("part", "x y")]])]], "1.1i"),
     (block [link "l1" [("target", Json.arr #[Json.mkObj [("mention", "m 2")]])]], "1.1e"),
+    (block [link "l1" [("reason", Json.arr #[Json.mkObj [("part", "p1")], Json.mkObj [("part", "x y")]])]], "1.1e"),
+    (block (links (maxLinks - 1) ++ [link "x" [("polarity", "maybe")]]), "1.1g"),
     (block [link "l1", link "l1"], "2.1b")].all fun (j, row) => roundTrips j row
 -- the fault order: within a link, 7.1's rows in turn; an earlier link before a later one; decoding before 2.1b
 #guard [(block [link "l1" [("relation", "x"), ("polarity", "x"), ("share", "x"), ("target", 1)]], "1.1f"),

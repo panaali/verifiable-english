@@ -29112,7 +29112,7 @@ module VE.WireContract.Hooks.Norms 11971676d08975a2a887a6bf72701cfc773aebda3f864
 450:0-454:17 def VE.WireContract.Hooks.Norms.sameAsBudget@VE.WireContract.Hooks.Norms
 456:0-456:36 def VE.WireContract.Hooks.Norms.num@VE.WireContract.Hooks.Norms
 458:0-473:105 def VE.WireContract.Hooks.Norms.l8Samples@VE.WireContract.Hooks.Norms
-module VE.WireContract.Hooks.Purposes fb55d8396a0ff2310c4ec286ddceabfc8d82feb2655888d962bbf713e313d6db
+module VE.WireContract.Hooks.Purposes a6e2db1ecfa42457f53123a22153b60d96e05549577d45cd793b52a08736c9f0
 20:0-23:19 def VE.WireContract.Hooks.Purposes.shown@VE.WireContract.Hooks.Purposes
 25:0-36:24 def VE.WireContract.Hooks.Purposes.sideMember@VE.WireContract.Hooks.Purposes
 38:0-51:106 def VE.WireContract.Hooks.Purposes.linkMember@VE.WireContract.Hooks.Purposes
