@@ -172,6 +172,9 @@ model check over the superposed document, which names the all-strict choice (ano
 #guard text (run env4a doc4a fun c => (·.compress) <$> runSDSup "t" "readings-model" c (caseJ [("assumed", toJson A1),
   ("model", model c ["ve__bit__1__0", "c"]), ("filling", Json.mkObj [])])) |>.endsWith
     "\"first_failing\":\"soft:exception:must-x:sufficient:0\",\"id\":\"t\",\"status\":\"ok\",\"valid\":false}"
+-- a model with a conflict at a tuple (`localFree` false, W-11) is no reported model: the all-strict choice of `NSDbig 8`
+#guard text (run env4 (bigJ 8) fun c => (·.compress) <$> runSDSup "t" "readings-model" c (caseJ [("assumed", toJson none'),
+  ("model", model c []), ("filling", Json.mkObj [])])) |>.endsWith "\"first_failing\":null,\"id\":\"t\",\"status\":\"ok\",\"valid\":false}"
 -- an `unsaid__` table in `relations` is refused by the model decoder (F-SD8); another kind is refused as today
 #guard text (run env4a doc4a fun c => modelJ c [("unsaid__y_permitted", Json.arr #[])]) ==
   "fields do not match: expected [soft__excepted__need_not_x, soft__excepted__rd_2_must_x, ve__bit__1__0, c], " ++
