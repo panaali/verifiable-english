@@ -1,0 +1,14 @@
+{
+ "allow": [
+  {
+   "definition": "VE.Service.Mode",
+   "operator": "ctor-drop",
+   "reason": "the mutant drops the whole constructor line (cardinality ... englishStatement), so the module itself does not compile (Registry.lean:59 Unknown constant VE.Service.Mode.cardinality): a build failure no test is needed to see. englishStatement alone is exercised by RegistryExamples' #guard (ofName? and the count 44), ResponseShape.Encoders.runMode_fits and the route fixtures through ve_service"
+  },
+  {
+   "definition": "ResponseShape.Schemas.files",
+   "operator": "list-drop-first",
+   "reason": "the mutant drops Common.file, the first file of the list (not this item's line), so every row shape's $ref into common.json is unresolved and ResponseShape.Skeletons fails to elaborate: a build failure. EnglishStatement.file is exercised by the Skeletons #guard (every mode's row), the Schemas #guard (every registered mode has its row), statementCaseReported_fits and test_response_schemas"
+  }
+ ]
+}
