@@ -4929,6 +4929,7 @@ import VE.WireContract.Engine
 #print axioms VE.Readings.Run.ProductReplay.soundBut
 #print axioms VE.Readings.Run.RightsChoiceModel.valid
 #print axioms VE.Readings.Run.SDCase.bind_eq
+#print axioms VE.Readings.Run.SDCase.fill_formulas
 #print axioms VE.Readings.Run.SDCase.free_eq
 #print axioms VE.Readings.Run.SDCase.free_sound
 #print axioms VE.Readings.Run.SDCase.hF
@@ -4947,10 +4948,14 @@ import VE.WireContract.Engine
 #print axioms VE.Readings.Run.SDCase.hslot
 #print axioms VE.Readings.Run.SDCase.hts
 #print axioms VE.Readings.Run.SDCase.hv
+#print axioms VE.Readings.Run.SDCase.images_shown
 #print axioms VE.Readings.Run.SDCase.local_eq
+#print axioms VE.Readings.Run.SDCase.middle_full
 #print axioms VE.Readings.Run.SDCase.model_eq
 #print axioms VE.Readings.Run.SDCase.premises_check
 #print axioms VE.Readings.Run.SDCase.premises_eq
+#print axioms VE.Readings.Run.SDCase.replay_conflict
+#print axioms VE.Readings.Run.SDCase.replay_query
 #print axioms VE.Readings.Run.SDCase.slotX_eq
 #print axioms VE.Readings.Run.SDCase.taken_eq
 #print axioms VE.Readings.Run.SoftChoiceModel.valid

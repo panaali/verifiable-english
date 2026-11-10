@@ -194,11 +194,9 @@ end SDCase
 
 def sdTick (f : SDCount → SDCount) : SDM Unit := modify f
 
-/-- The queries' premises and conclusion over `sharedEnvSD N` (DRI item 1), as `decodeShared` types them. -/
-def sdShared (E : VE.Environment) (j : Json) : Except String (List VE.Formula × VE.Formula) := do
-  let (Γ, φ) ← choiceFormulas E (if j.getObjValD "premises" == .null then j.setObjVal! "premises" (.arr #[]) else j)
-  unless Γ.all (fun a => a.check E []) && φ.check E [] do throw "ill-typed or unbound formula"
-  pure (Γ, φ)
+/-- The queries' premises and conclusion over `sharedEnvSD N` (DRI item 1), typed by the decoders (`choiceFormulas`). -/
+def sdShared (E : VE.Environment) (j : Json) : Except String (List VE.Formula × VE.Formula) :=
+  choiceFormulas E (if j.getObjValD "premises" == .null then j.setObjVal! "premises" (.arr #[]) else j)
 
 /-- The assumed readings: candidates, and taken by a checked choice. -/
 def sdAssumed (c : SDCase) (j : Json) : Except String Choice := do
@@ -304,6 +302,53 @@ theorem shownWith_eq (N : NDoc) (A : Choice) (used : List String) :
       sdShown N A used := by
   simp [shownWith, sdShown, List.flatMap_map]
 
+namespace SDCase
+variable (c : SDCase)
+
+/-- The label images of the checked choices taking `A`, read once by a scope (`images_shown`: `sdShown`). -/
+def images (A : Choice) : List (List (String × String)) :=
+  (c.checked.filter (fun ch => A.all (ch.contains ·))).map (labelImage c.N)
+
+theorem images_shown (A : Choice) (used : List String) : shownWith (c.images A) used = sdShown c.N A used := by
+  cases c; subst_vars; exact shownWith_eq _ _ _
+
+/-- The labelled premises a piece's labels are read over (14.11): the slot, `supX` and `Fill_T`. -/
+def middle : VE.Compose.Labelled := c.slot ++ c.XL ++ c.FL
+
+/-- A replay of `ps` with `m` for the labelled premises, `A`'s atoms after the slot. -/
+def replay (A : Choice) (ps : List SupProof) (m : List VE.Formula) : Bool :=
+  ps.all (fun q => q.check (m.take c.slot.length ++ atoms c.N.D A ++ m.drop c.slot.length))
+
+theorem fill_formulas : c.FL.map (·.2) = c.fp := by
+  cases c; subst_vars
+  exact List.map_snd_zip (by simp [VE.NormDefaults.Admission.fillLabels, VE.NormDefaults.fillPremises])
+
+theorem middle_full (A : Choice) : ((c.middle.map (·.2)).take c.slot.length ++ atoms c.N.D A ++
+    (c.middle.map (·.2)).drop c.slot.length) = c.slotX A ++ c.fp := by
+  have hf := c.fill_formulas
+  have hx := c.hX
+  simp only [middle, slotX, List.map_append, VE.Compose.Labelled.formulas, List.append_assoc]
+  rw [List.take_append_of_le_length (by simp), List.drop_append_of_le_length (by simp)]
+  simp [hf, hx, List.take_of_length_le, List.drop_of_length_le]
+
+/-- With nothing blanked, a query piece's replay is its own check (`premises`, 14.11's last row but one). -/
+theorem replay_query (A : Choice) (Γ : List VE.Formula) (φ : VE.Formula) (cert : VE.Tableau.Certificate) :
+    c.replay A (sdProofs c [] (some (Γ, φ, cert))) (c.middle.map (·.2)) =
+      VE.Tableau.checkCertificate (envAt c.F (size c.F)) (c.premises A Γ) φ cert := by
+  simp only [replay, c.middle_full A]
+  simp [sdProofs, SupProof.check, premises, List.append_assoc]
+
+/-- With nothing blanked, a conflict piece's replay is its accepted certificates' checks (`free`). -/
+theorem replay_conflict (A : Choice) (certs : List (Option VE.Tableau.Certificate)) :
+    c.replay A (sdProofs c certs none) (c.middle.map (·.2)) = (c.ts.zip certs).all (fun x => match x.2 with
+      | some k => VE.Tableau.checkCertificate (envAt c.F 0) (c.bgb ++ c.slotX A ++ c.fp) (VE.Norms.targetConclusion x.1) k
+      | none => true) := by
+  simp only [replay, c.middle_full A]
+  simp [sdProofs, SupProof.check, List.append_assoc]
+  congr; funext x; rcases x with ⟨t, _ | k⟩ <;> simp
+
+end SDCase
+
 /-- One scope under `A`: each piece of `e` on the case's values, the conflict certificates decoded and checked once
     for all of them (`sdFree`); `usedLabels` per accepted piece, over the slot,
     `supX` and `Fill_T`; then, only when a piece was accepted, `labelImage` once for the scope, so each soft premise
@@ -315,7 +360,7 @@ def sdScope (c : SDCase) (A : Choice) (Γ φ e : Json) : SDM SupScope := do
   let mut encoded : List (String × Choice) := []
   let mut st : List (String × Bool) := []
   let mut cf : Free := none
-  let L := c.slot ++ c.XL ++ c.FL
+  let L := c.middle
   for name in ["conflict", "witness", "certificate", "countermodel", "unsat", "model"] do
     if let some p := pieceOf e name then
       let query := name == "certificate" || name == "unsat"
@@ -338,8 +383,7 @@ def sdScope (c : SDCase) (A : Choice) (Γ φ e : Json) : SDM SupScope := do
         let mut used := []
         if ok && !proofs.isEmpty then
           sdTick fun k => { k with replays := k.replays + 1 }
-          used := usedLabels (fun m => proofs.all (fun q => q.check (m.take c.slot.length ++ atoms c.N.D A ++
-            m.drop c.slot.length))) [] L []
+          used := usedLabels (c.replay A proofs) [] L []
         raw := raw ++ [(name, used)]
         let shown := if ok && (name == "witness" || name == "countermodel" || name == "model") then
           some (if name == "witness" then (p.getObjValD "witness").getObjValD "model" else p.getObjValD "model")
@@ -349,7 +393,7 @@ def sdScope (c : SDCase) (A : Choice) (Γ φ e : Json) : SDM SupScope := do
   let mut images := []
   if st.any (·.2) then
     sdTick fun k => { k with images := k.images + 1 }
-    images := (c.checked.filter (fun ch => A.all (ch.contains ·))).map (labelImage c.N)
+    images := c.images A
   let soft := c.XL.map (·.1)
   let used := raw.map (fun (n, ls) => (n, ls.filter (fun l => !soft.contains l && !(c.FL.map (·.1)).contains l) ++
     shownWith images (ls.filter soft.contains) ++ ls.filter (c.FL.map (·.1)).contains))
