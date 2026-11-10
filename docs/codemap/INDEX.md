@@ -9,7 +9,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [docs/arch/](docs__arch.md) — 28 modules — -
 - [docs/architecture/](docs__architecture.md) — 1 modules — -
 - [docs/attitudes/](docs__attitudes.md) — 4 modules — -
-- [docs/composition/](docs__composition.md) — 2 modules — -
+- [docs/composition/](docs__composition.md) — 3 modules — -
 - [docs/defeasible/](docs__defeasible.md) — 12 modules — -
 - [docs/devtime/](docs__devtime.md) — 1 modules — -
 - [docs/eff-tests/](docs__eff-tests.md) — 1 modules — -
@@ -110,7 +110,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/VE/Question/](lean__VE__Question.md) — 12 modules — -
 - [lean/VE/Readings/ part 1](lean__VE__Readings--part-1.md) — 73 modules — -
 - [lean/VE/Readings/ part 2](lean__VE__Readings--part-2.md) — 3 modules — -
-- [lean/VE/RightClauses/](lean__VE__RightClauses.md) — 9 modules — -
+- [lean/VE/RightClauses/](lean__VE__RightClauses.md) — 10 modules — -
 - [lean/VE/Rights/](lean__VE__Rights.md) — 12 modules — -
 - [lean/VE/Risk/](lean__VE__Risk.md) — 14 modules — -
 - [lean/VE/Route/](lean__VE__Route.md) — 30 modules — -

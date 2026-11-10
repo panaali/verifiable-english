@@ -6120,6 +6120,7 @@
 'VE.RightClauses.plainContent_declared' depends on axioms: [propext, Quot.sound]
 'VE.RightClauses.plainContent_identity' depends on axioms: [propext, Quot.sound]
 'VE.RightClauses.plainLine_decode' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.plainOnWire_of_check' depends on axioms: [propext, Quot.sound]
 'VE.RightClauses.plainSource_eq' does not depend on any axioms
 'VE.RightClauses.plainSource_nil' depends on axioms: [propext, Quot.sound]
 'VE.RightClauses.plain_guard' depends on axioms: [propext, Classical.choice, Quot.sound]
