@@ -178,6 +178,9 @@ def isShown : Line → Bool
   "owner, then the second entity is the same as the first entity")
 #guard lineOf [.word "if", .label "E" 1, .word "is", .word "an", .word "owner", .word ",", .word "then", .word "."] ==
   "if E1 is an owner, then." && lineOf [.label "E" 2, .word "is", .word "ready"] == "E2 is ready"
+-- one-letter words and labels first, a multi-letter label, a word that only starts with punctuation
+#guard lineOf [.word "a", .word "b", .label "AB" 12, .word "c", .word ".net"] == "a b AB12 c .net" &&
+  lineOf [.word "a", .label "E" 3] == "a E3"
 -- not shown: a predicate without a wording (A18b's p2 without "manager"); a lexicon that words "ready" as "owner", or
 -- "owner" as "ready", is not admissible, so no line is shown (the second would read "… is ready" for an owner)
 def lexNoMgr : VE.English.Lexicon := { lexA with predicates := lexA.predicates.erase "manager" }
@@ -195,11 +198,29 @@ def conj : Nat → VE.Formula
   | n + 1 => .and theOwnerU (conj n)
 #guard VE.Bridge.formulaNodes (conj 15) ≤ maxLineNodes && isShown (lineA (conj 15))
 #guard VE.Bridge.formulaNodes (conj 16) > maxLineNodes && lineA (conj 16) == .unknown
+-- exactly at the limit (200 nodes) and one over
+def oc : VE.Formula := .unary "owner" (.const "claude")
+def rc : VE.Formula := .unary "ready" (.const "claude")
+#guard VE.Bridge.formulaNodes (.and (conj 15) (.and (.and oc rc) oc)) == maxLineNodes &&
+  isShown (lineA (.and (conj 15) (.and (.and oc rc) oc))) &&
+  VE.Bridge.formulaNodes (.and (conj 15) (.and oc (.and rc (.not oc)))) == maxLineNodes + 1 &&
+  lineA (.and (conj 15) (.and oc (.and rc (.not oc)))) == .unknown
 def lexBig : VE.English.Lexicon := { lexA with constants := (List.range 507).map toString }
 def lex3 : VE.English.Lexicon :=
   { lexA with template := fun p => if p == "trusts" then some [.hole 0, .hole 1, .hole 2] else lexA.template p }
 #guard lexiconOk { lexA with constants := (List.range 506).map toString } != none && lexiconOk lexBig == none &&
   lexiconOk lex3 == none && englishLine envA lexBig (lexiconOk lexBig) theOwnerU == .unknown
+-- each list counts: 513 entries made of sorts, or of predicates; a three-place template first or last
+def names (n : Nat) : List String := (List.range n).map (s!"n{·}")
+#guard lexiconOk { lexA with sorts := lexA.sorts ++ names 505 } != none &&
+  lexiconOk { lexA with sorts := lexA.sorts ++ names 506 } == none &&
+  lexiconOk { lexA with predicates := lexA.predicates ++ names 505 } != none &&
+  lexiconOk { lexA with predicates := lexA.predicates ++ names 506 } == none
+def place3 (q : String) : VE.English.Lexicon :=
+  { lexA with template := fun p => if p == q then some [.hole 0, .hole 1, .hole 2] else lexA.template p }
+#guard lexiconOk (place3 "owner") == none && lexiconOk (place3 "core_value_of") == none
+-- a predicate without a template is no limit: the lexicon is not admissible
+#guard lexiconOk { lexA with template := fun p => if p == "ready" then none else lexA.template p } == some false
 -- a refused block: its outcome is `admit`'s diagnostic and it has no rows (A20: assumed on its own unit; A18: p2 in
 -- p1's restriction)
 #guard shown lexA none (docA [cu "u1" theOwner] [pA (.assumed "u1")]) ==
@@ -266,7 +287,13 @@ def refutedOf (D : PDoc) (ps : List VE.Formula) (t : VE.Tableau.Trace) : List St
 -- trace that does not close
 #guard refutedOf (with18b [isOpen, .not isOpen]) (premises18b [isOpen, .not isOpen]) (.expand 4 none [.close]) == []
 #guard refutedOf (with18b []) (premises18b [.not g1]) (.expand 3 none [.close]) == [] &&
-  refutedOf (with18b [.not g1] false) (premises18b [.not g1]) (.expand 3 none [.close]) == []
+  refutedOf (with18b [.not g1] false) (premises18b [.not g1]) (.expand 3 none [.close]) == [] &&
+  refutedOf (with18b []) (.not g1 :: premises18b []) (.expand 0 none [.close]) == []
+-- any order of the document's premises: the goal last; the background premise between two others
+#guard refutedOf { doc18b with background := [.not g1] } [.not g1, g2, g1] (.expand 0 none [.close]) ==
+  ["PresuppositionRefuted: p1: u0"] &&
+  refutedOf { doc18b with background := [.top, .not g1, .top] } (.top :: .not g1 :: .top :: premises18b [])
+    (.expand 1 none [.close]) == ["PresuppositionRefuted: p1: u0"]
 #guard refutedOf (with18b [.not g1]) (premises18b [.not g1]) .close == [] &&
   (shown lexA none doc18b).map (·.refuted) == some []
 -- a proved carrier (A8) and a refused block (A18) give none
