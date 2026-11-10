@@ -13,6 +13,7 @@
 - `lean/ResponseShape/Schemas/Document.lean` — The checked projection of the W2 wrapper.
 - `lean/ResponseShape/Schemas/English.lean` — The source of `ve/backends/lean_service_schema/english.json` (`file`; `tools/response_schemas.py` writes it).
 - `lean/ResponseShape/Schemas/EnglishLean.lean` — The three formula-level English service rows.
+- `lean/ResponseShape/Schemas/EnglishStatement.lean` — The source of `ve/backends/lean_service_schema/english.statement.json` (`file`; `tools/response_schemas.py` writes it): the `english.statement` mode's row (`VE…
 - `lean/ResponseShape/Schemas/Envelope.lean` — The source of `ve/backends/lean_service_schema/envelope.json` (`file`; `tools/response_schemas.py` writes it).
 - `lean/ResponseShape/Schemas/Environment.lean` — The source of `ve/backends/lean_service_schema/environment.json` (`file`; `tools/response_schemas.py` writes it).
 - `lean/ResponseShape/Schemas/Evaluate.lean` — The source of `ve/backends/lean_service_schema/evaluate.json` (`file`; `tools/response_schemas.py` writes it).
