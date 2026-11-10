@@ -32,7 +32,7 @@ fails on the base (seeded bugs S1, S2, S6 restore base text). HEAD: `2 passed`.
 **No lemma (probe).** `grep -rn condKeys lean/VE` finds no decode lemma. The nearest is `decodeVocabulary_valid`
 (`Route/Wire.lean:216`, `Surface.declarationName` for predicate names), which says nothing about act keys.
 
-**Size.** 132 hand-written lines outside this directory (test 115, Lean 13, pk-1c REPORT 2) plus 68 in this
+**Size.** 132 hand-written lines outside this directory (test 115, Lean 13, pk-1c REPORT 2) plus 73 in this
 directory. That is over "tiny": the DRI ruling added a file and its checks, and three surviving seeded bugs (S5, S9,
 S10) each needed a check.
 
@@ -67,4 +67,4 @@ The only product code changed is Lean docstrings and comments. No Python or Rust
 - light-lane: NOT, only because PacksLabels.lean is unclassified. `trust_mutants.py --plan`: 0 definitions and 0
   mutants, so no sweep was run.
 - `tools/gate_collection.py --check`: 2 added, 0 removed. `tests/test_premise_packs_stub.py`: 35 passed.
-- Selection: `select_tests.py --static --explain` names the test for PacksLabels.lean and the pk-1c REPORT.
+- Selection: `select_tests.py --static --explain` names the test for PacksLabels.lean, PacksLegacyExamples.lean and the pk-1c REPORT.
