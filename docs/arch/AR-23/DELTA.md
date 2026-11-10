@@ -1,19 +1,27 @@
 # AR-23: deltas
 
 None. No verdict, refusal text, step count, wire field or fault order changed. The corpus A/B over the nine corpora
-of the lean-first gate, at the merge base `a5088a09b` against the head `eb334fbd1`, gave "ab PASS"
+of the lean-first gate, at the merge base `a3454b6ba` against the head `ee43c72ce`, gave "ab PASS"
 (`uv run python -m tools.evidence ab ... --delta docs/arch/AR-23/evidence/ab-delta.json`). Over 100,560 records,
-100,538 are the same, 22 are unavailable on both sides with identical outputs (R7, below) and 0 are unlisted. The
-base and head recordings are byte-identical (SHA-256 `8de0da3e…` for both, `evidence/ab.json`).
+100,531 are the same, 29 are unavailable on both sides with identical outputs (R7, below) and 0 are unlisted
+(`evidence/ab.json`).
 
-The two earlier A/B runs, against the earlier merge bases, gave the same result:
-- `de7fb9469` against `547dc3aa2`: recordings byte-identical (`e2dbb554…`), 100,529 the same, 31 unavailable on both
-  sides.
-- `95ed0e49b` against `14e7dbe2e`: recordings byte-identical (`4d806d67…`), 100,530 the same, 30 unavailable on both
-  sides.
+In the raw concurrent recording, 4 pilot `document_check` records differed. Each side's Rust accelerator subprocess
+timed out (`CheckerUnavailable: Rust checker failed: … timed out after 14–20 seconds`) on records that the other side
+answered: 1 timed out on the head side and 3 on the base side.
+- All 4 were re-run on both sides with the recorder's own `pilot_check`, via `docs/arch/AR-20/pilot_rerun.py`
+  (unchanged).
+- Each answered, the same on both sides.
+- Each re-run answer equals the answer the recording holds for the side that answered: 1 of 1 on base, 3 of 3 on
+  head (`evidence/pilot-rerun.json`).
+- The re-run outcomes replace those 4 records in both recordings. The two recordings are then byte-identical (SHA-256
+  `c62acba7…`), and `ab.json` names them.
 
-Their extra unavailable records were whole-UDHR time-outs on both sides that answered, on both sides, in a later
-recording.
+The three earlier A/B runs, against the earlier merge bases, gave the same result, with byte-identical raw
+recordings:
+- `de7fb9469` against `547dc3aa2`: `e2dbb554…`, 31 unavailable on both sides.
+- `95ed0e49b` against `14e7dbe2e`: `4d806d67…`, 30 unavailable on both sides.
+- `a5088a09b` against `eb334fbd1`: `8de0da3e…`, 22 unavailable on both sides.
 
 Closure's version gate and atom-free gate are the same row for row on both runners
 (`evidence/closure-probe.json`: 134 certificate-runner rows and 6 route rows, base and head equal byte for byte).
@@ -28,7 +36,7 @@ byte-identical before writing it.
 | # | Records | What both sides return | Ruling | Test |
 |---|---|---|---|---|
 | 1 | 18 `pilots/default` `document_check` records, one `translation-companions-with_source_word.ve.md` per constitution pilot run | The same pre-existing `CheckerUnavailable` (`ReadingsConstruction: ... KeyError`), byte for byte | R7 | `uv run python -m tools.evidence ab ... --delta docs/arch/AR-23/evidence/ab-delta.json` (PASS, 0 unlisted) |
-| 2 | 1 `pilots/default` `document_check` record of a whole-UDHR translation, `udhr-20261018T1800Z` `translation-whole.ve.md` | The same 600 s recorder time-out (L75), byte for byte; recorded on both sides at once. No closure formula appears in it (nor in the nine other whole-UDHR translations that timed out in the earlier runs) | R7 | `uv run python -m tools.evidence ab ... --delta docs/arch/AR-23/evidence/ab-delta.json` (PASS, 0 unlisted) |
+| 2 | 8 `pilots/default` `document_check` records of whole-UDHR translations (`translation-whole.ve.md` of the runs `udhr-20261018T1800Z`, `20261021T1800Z`, `20261026T1800Z`, `20261027T0600Z`, `20261028T0600Z`, `20261028T1800Z`, `20261101T1800Z` and `20261102T1800Z`) | The same 600 s recorder time-out (L75), byte for byte; recorded on both sides at once. No closure formula appears in these documents | R7 | `uv run python -m tools.evidence ab ... --delta docs/arch/AR-23/evidence/ab-delta.json` (PASS, 0 unlisted) |
 | 3 | 1 `pilots/default` `document_check` record, `udhr-20261102T1800Z` `translation-whole.et0.ve.md` | The same pre-existing `CheckerUnavailable` (`readings-verdicts: more than 64 compatible readings`), byte for byte | R7 | `uv run python -m tools.evidence ab ... --delta docs/arch/AR-23/evidence/ab-delta.json` (PASS, 0 unlisted) |
 | 4 | 2 `discourse/default` records of text `2757af3b2b5456b1` (`document_check`, `document_render`) | The same pre-existing `CheckerUnavailable` (the norms route refuses a norm object: fields do not match), byte for byte | R7 | `uv run python -m tools.evidence ab ... --delta docs/arch/AR-23/evidence/ab-delta.json` (PASS, 0 unlisted) |
 

@@ -1,14 +1,19 @@
 {
- "base": "a5088a09b523154f4024db96fe636c92689a9b97",
+ "base": "a3454b6ba5982d7cb5e216d10432a94f6177652a",
  "changes": [
   {
-   "added": 56,
-   "deleted": 5,
+   "added": 4,
+   "deleted": 2,
+   "path": "docs/CONSOLIDATION-PLAN.md"
+  },
+  {
+   "added": 71,
+   "deleted": 12,
    "path": "docs/arch/AR-23/DELTA.md"
   },
   {
-   "added": 285,
-   "deleted": 0,
+   "added": 303,
+   "deleted": 12,
    "path": "docs/arch/AR-23/REPORT.md"
   },
   {
@@ -23,12 +28,12 @@
   },
   {
    "added": 230,
-   "deleted": 16,
+   "deleted": 72,
    "path": "docs/arch/AR-23/evidence/ab-delta.json"
   },
   {
-   "added": 801,
-   "deleted": 21,
+   "added": 808,
+   "deleted": 140,
    "path": "docs/arch/AR-23/evidence/ab.json"
   },
   {
@@ -52,8 +57,8 @@
    "path": "docs/arch/AR-23/evidence/out.json"
   },
   {
-   "added": 336,
-   "deleted": 25,
+   "added": 379,
+   "deleted": 55,
    "path": "docs/arch/AR-23/evidence/scope.json"
   },
   {
@@ -77,13 +82,13 @@
    "path": "docs/arch/AR-23/trust-mutants-allow.json"
   },
   {
-   "added": 1407,
-   "deleted": 99,
+   "added": 1455,
+   "deleted": 127,
    "path": "docs/arch/AR-23/trust-mutants.json"
   },
   {
-   "added": 35,
-   "deleted": 33,
+   "added": 41,
+   "deleted": 38,
    "path": "docs/codemap/INDEX.md"
   },
   {
@@ -94,12 +99,22 @@
   {
    "added": 1,
    "deleted": 0,
+   "path": "docs/codemap/docs__presupposition.md"
+  },
+  {
+   "added": 1,
+   "deleted": 0,
    "path": "docs/codemap/docs__rights.md"
   },
   {
    "added": 2,
    "deleted": 2,
    "path": "docs/codemap/lean__VE__Closure.md"
+  },
+  {
+   "added": 3,
+   "deleted": 0,
+   "path": "docs/codemap/lean__VE__Presupposition.md"
   },
   {
    "added": 1,
@@ -117,37 +132,37 @@
    "path": "docs/codemap/tests--part-3.md"
   },
   {
-   "added": 12,
-   "deleted": 15,
+   "added": 13,
+   "deleted": 17,
    "path": "docs/codemap/tests--part-4.md"
   },
   {
-   "added": 19,
-   "deleted": 16,
+   "added": 22,
+   "deleted": 19,
    "path": "docs/codemap/tests--part-5.md"
   },
   {
-   "added": 20,
-   "deleted": 20,
+   "added": 24,
+   "deleted": 24,
    "path": "docs/codemap/tests--part-6.md"
   },
   {
-   "added": 20,
-   "deleted": 3,
+   "added": 24,
+   "deleted": 8,
    "path": "docs/codemap/tests--part-7.md"
   },
   {
-   "added": 3,
+   "added": 8,
    "deleted": 0,
    "path": "docs/codemap/tests--part-8.md"
   },
   {
-   "added": 4,
-   "deleted": 4,
+   "added": 7,
+   "deleted": 6,
    "path": "docs/spec/assurance-manifest.md"
   },
   {
-   "added": 178,
+   "added": 193,
    "deleted": 0,
    "path": "lean/VE/Audit.lean"
   },
@@ -232,23 +247,23 @@
    "path": "lean/VE/Service/FamilyBundle.lean"
   },
   {
-   "added": 176,
+   "added": 191,
    "deleted": 5,
    "path": "lean/axioms.txt"
   },
   {
-   "added": 2,
+   "added": 3,
    "deleted": 0,
    "path": "lean/checkers.lock"
   },
   {
-   "added": 777,
-   "deleted": 384,
+   "added": 1043,
+   "deleted": 548,
    "path": "lean/declarations.txt"
   },
   {
-   "added": 1665,
-   "deleted": 0,
+   "added": 1753,
+   "deleted": 3,
    "path": "lean/statements.txt"
   },
   {
@@ -263,6 +278,18 @@
   }
  ],
  "commits": [
+  {
+   "hash": "ee43c72ce0cef8f4dd0befab2f4f1de5040e3a44",
+   "subject": "Regenerate the Lean inventories, audit manifests and code map after the merge of main (R12)"
+  },
+  {
+   "hash": "68f6e9d80c6ea16f3ec0484d1be9fbefd43f065a",
+   "subject": "AR-23: the consolidation plan quotes step 3's remeasured ledger row (14 removed lines, down from 30)"
+  },
+  {
+   "hash": "9b5e061eaad2af052ba596e73f28c7901f1bf68a",
+   "subject": "AR-23: evidence after the second merge of main: A/B at a5088a09b (0 unlisted, byte-identical), trust mutants rescored, scope"
+  },
   {
    "hash": "eb334fbd1842723b5f9a790a2eccf6ec972fe352",
    "subject": "Regenerate the Lean inventories, audit manifests and code map after the merge of main (R12)"
@@ -320,5 +347,5 @@
    "subject": "AR-23: closure's typing, checker, meaning and consequence through Core; Closure/Finite aliases Core's"
   }
  ],
- "head": "eb334fbd1842723b5f9a790a2eccf6ec972fe352"
+ "head": "ee43c72ce0cef8f4dd0befab2f4f1de5040e3a44"
 }
