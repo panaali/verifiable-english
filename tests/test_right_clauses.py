@@ -262,6 +262,11 @@ def test_right_clauses_environment_and_model_answer_as_without_the_profile(servi
     assert on["environment_id"] != off["environment_id"] and on["profiles"] == ON and off["profiles"] == OFF
     bound = ("environment_id", "profiles")
     assert {k: v for k, v in on.items() if k not in bound} == {k: v for k, v in off.items() if k not in bound}
+    # one of the 37 moved lists that the norms route refuses (dri-decisions-20261110-cmp-s3-cfr-1-env item 1)
+    refused = [exchange(service, "environment", [{"id": "e", "environment": environment(sorted({*ps, "closure@0"}))}])[0]
+               for ps in (ON, OFF)]
+    assert refused[0] == refused[1] == {"id": "e", "status": "error",
+                                        "error": "UnsupportedProfile: the norms route admits FOL documents only"}
     model = {"complete": True, "domains": {"state": ["texas"], "person": ["ann", "bob"]},
              "constants": {"texas": "texas", "ann": "ann", "bob": "bob"},
              "relations": {"charged": [["ann"]], "country_of": [["texas", "ann"]], "public_service_access_required": []}}
