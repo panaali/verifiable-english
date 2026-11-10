@@ -140,4 +140,26 @@ def depth64 : String := (List.range 63).foldl (fun f _ => "[\"not\"," ++ f ++ "]
   "\"equal-access\",\"predicate\":\"public_service_access_required\",\"sign\":true,\"guard\":[\"top\"],\"unless\":[]," ++
   "\"over\":[]}}]}}]")) == "InvalidInput: elided missing on rule equal-access"
 
+/-! ## cmp-s3-cfr-1b: W1's rule limit, charged before the head decodes -/
+
+/-- Units of `right` (`right_lines` when `rl`) bodies holding `ks[i]` copies of the 9.1 line without `elided`. -/
+def bodies (ks : List Nat) (rl : Bool := false) : Json := parse <| "[" ++ ",".intercalate (ks.map fun k =>
+  (if rl then "{\"right_lines\":{\"right\":\"r21\",\"lines\":[" else "{\"right\":{\"name\":\"r21\",\"holder\":\"person\",\"lines\":[") ++
+  ",".intercalate (List.replicate k ("{\"kind\":\"claim\",\"norm\":{\"name\":\"equal-access\",\"predicate\":" ++
+    "\"public_service_access_required\",\"sign\":true,\"guard\":[\"top\"],\"unless\":[],\"over\":[]}}")) ++ "]}}") ++ "]"
+-- 256 line objects are read (the first line's text); 257, in one unit or across units of either body, are refused
+-- before any is decoded
+#guard lineObjects (bodies [3, 4] true) == 7 && lineObjects (parse "{}") == 0
+#guard says (bodies [256]) == "InvalidInput: elided missing on rule equal-access" &&
+  says (bodies [128, 128] true) == "InvalidInput: elided missing on rule equal-access"
+-- 64 conjuncts (clauses, then the relation) are refused before `plain` nests them; 63 reach the rights decoder
+def scopes (k : Nat) : String := ",\"elided\":[],\"clauses\":[" ++ ",".intercalate ((List.range k).map fun i =>
+  "{\"role\":\"scope\",\"formula\":[\"unary\",\"charged\",[\"var\",0]],\"span\":[" ++ toString i ++ "," ++
+    toString (i + 1) ++ "]}") ++ "]"
+#guard says (doc (scopes 64)) == "ResourceLimit: formula depth exceeds 64" &&
+  says (doc (scopes 63 ++ ",\"relation\":{" ++ rel ++ "}")) == "ResourceLimit: formula depth exceeds 64" &&
+  says (doc (scopes 63)) != "ResourceLimit: formula depth exceeds 64"
+#guard says (bodies [257]) == "ResourceLimit: rules" && says (bodies [200, 57]) == "ResourceLimit: rules" &&
+  says (bodies [1, 256] true) == "ResourceLimit: rules"
+
 end VE.RightClauses.RunExamples
