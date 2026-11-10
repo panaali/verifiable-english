@@ -1,139 +1,29 @@
-{
-"allow": [
-{
-"definition": "VE.Presupposition.Base",
-"operator": "ctor-drop",
-"reason": "does not elaborate: `claim` and `rule` are built by baseOf and read by basesOf, baseTreeOf and regen (Admit.lean), an unknown constant rather than a refutation; the hand mutant M-Base-type stops Admit.lean"
-},
-{
-"definition": "VE.Presupposition.baseOf",
-"operator": "list-empty",
-"reason": "does not elaborate: a bare `[]` in place of a reading list, a root list or a node lookup leaves `.map`, `⟨...⟩` or dotted names untyped (type mismatch, no element type); the elaborating list mutants of baseOf are killed by the step-3 guards (A1, A11, the open-set and two-condition fixtures)"
-},
-{
-"definition": "VE.Presupposition.needsUnspec",
-"operator": "list-empty",
-"reason": "does not elaborate: a bare `[]` in place of the cell leaves `.contains .conditioned` untyped; the hand mutants M-needsUnspec and M-needsUnspec-andor fail A5u and the assumed rule-act guard"
-},
-{
-"definition": "VE.Presupposition.peelRule",
-"operator": "arm-default",
-"reason": "does not elaborate: replacing the `match N.guard` arm leaves the alternatives with different pattern counts; the hand mutant M-peelRule fails A4"
-},
-{
-"definition": "VE.Presupposition.peelRule",
-"operator": "lit-minus",
-"reason": "does not elaborate: `k + 0` in the recursive pattern fails structural termination; the hand mutant M-peelRule fails A4"
-},
-{
-"definition": "VE.Presupposition.peelRule",
-"operator": "lit-plus",
-"reason": "does not elaborate: `0 + 1` / `k + 2` patterns leave the match non-exhaustive (missing cases); the hand mutant M-peelRule fails A4"
-},
-{
-"definition": "VE.Presupposition.peelWith",
-"operator": "list-empty",
-"reason": "does not elaborate: a bare `[]` in place of `rs` leaves the dotted `.asserted`/`.conditioned` and the element type unresolved; the elaborating mutants are killed by A11 and the two-asserted/two-conditioned guards"
-},
-{
-"definition": "VE.Presupposition.readingsDoc",
-"operator": "list-empty",
-"reason": "does not elaborate: a bare `[]` in place of the background, the readings or the units leaves the tuple patterns and dotted constructors untyped; the elaborating list mutants are killed by the background, F-ND1 and fixed-rule-unit guards"
-},
-{
-"definition": "VE.Presupposition.readingsDoc",
-"operator": "bool-flip",
-"reason": "equivalent: the flipped literal is `hard := false` of a strict node with no alterables; `hard` is read only together with a default mode or alterables (SoftNorms/Soften.lean:591), so a strict node means the same either way"
-},
-{
-"definition": "VE.Presupposition.readingsDoc",
-"operator": "lit-plus",
-"reason": "equivalent: the literal is the readings@1 set version (`⟨u, u, 1, ...⟩`), which separation does not read (no narrowing or coupling in the readings document)"
-},
-{
-"definition": "VE.Presupposition.readingsDoc",
-"operator": "lit-minus",
-"reason": "equivalent: the literal is the readings@1 set version (`⟨u, u, 1, ...⟩`), which separation does not read (no narrowing or coupling in the readings document)"
-},
-{
-"definition": "VE.Presupposition.rootsWith",
-"operator": "list-empty",
-"reason": "does not elaborate: a bare `[]` in place of `os` or the block leaves the field notation `.carrier`/`.id` untyped; the elaborating mutants are killed by A1 and the second-unresolved guards"
-},
-{
-"definition": "VE.Presupposition.separated",
-"operator": "list-empty",
-"reason": "does not elaborate: a bare `[]` in place of the situations or the pairs leaves the tuple patterns `(v, w, o, σ)`/`(i, j)` untyped; the elaborating mutants are killed by the separation guards"
-},
-{
-"definition": "VE.Presupposition.separated",
-"operator": "list-first",
-"reason": "equivalent where it survives: `(ss.take 1).isEmpty` is `ss.isEmpty`; every other list-first mutant of separated is killed by the two-situation and three-reading guards"
-},
-{
-"definition": "VE.Presupposition.softOk",
-"operator": "list-empty",
-"reason": "does not elaborate: a bare `[]` in place of `rs` leaves the field notation `.cand` untyped; the hand mutants M-soft-chain and M-softOk fail A26 soft"
-},
-{
-"definition": "VE.Presupposition.withObligations",
-"operator": "list-empty",
-"reason": "does not elaborate: a bare `[]` in place of the units or the block leaves the field notation `.unit`/`.id` untyped; the elaborating mutants are killed by the two-unit and unformalised-unit guards"
-},
-{
-"definition": "VE.Presupposition.checkIds",
-"operator": "not-drop",
-"reason": "killed in effect: with `!` dropped every first obligation is refused `id`, so more than 100 guards of Examples.lean fail and Lean stops at `maxErrors`, which the tool reads as no verdict; the hand mutant M-checkIds and the repeated-id guards cover the check"
-},
-{
-"definition": "VE.Presupposition.withObligations",
-"operator": "eq-ne",
-"reason": "killed in effect: with `!=` step 3 reads the wrong units, so more than 100 guards of Examples.lean fail and Lean stops at `maxErrors`, which the tool reads as no verdict; the hand mutants M-withObligations and M-withObligations-first cover the definition"
-},
-{
-"definition": "VE.Presupposition.checkIds",
-"operator": "list-empty",
-"reason": "killed in effect: with `rowNames` empty every obligation is refused as an unknown row, so more than 100 guards of Examples.lean fail and Lean stops at `maxErrors`, which the tool reads as no verdict; A12 (`PresuppositionUnknownRow: p1: title`) and every admitted guard cover the check"
-},
-{
-"definition": "VE.Presupposition.separated",
-"operator": "list-drop-last",
-"reason": "equivalent where it survives: `dropLast` on the outer index range removes only the last index, which has no later index to pair with; on the inner range it drops pairs and is killed by the three-reading guards"
-},
-{
-"definition": "VE.Presupposition.withObligations",
-"operator": "list-drop-last",
-"reason": "killed in effect: with the block's last obligation dropped, a one-obligation document has no unit with obligations, so more than 100 guards of Examples.lean fail and Lean stops at `maxErrors`, which the tool reads as no verdict; the two-unit guard and M-withObligations cover the definition"
-},
-{
-"definition": "VE.Presupposition.baseOf",
-"operator": "list-first",
-"reason": "equivalent where it survives: `(rs.take 1).head?` is `rs.head?` (Admit.lean:79, the open set's kind); the list-first mutants of the readings lists `allSame` reads are killed by the open-set guards (a second or third reading over another base or rule)"
-},
-{
-"definition": "VE.Presupposition.withObligations",
-"operator": "list-drop-first",
-"reason": "killed in effect: dropping the first unit with obligations leaves a one-unit document with none, so more than 100 guards of Examples.lean fail and Lean stops at `maxErrors`, which the tool reads as no verdict; the two-unit guard and M-withObligations cover the definition"
-},
-{
-"definition": "VE.Presupposition.checkIds",
-"operator": "list-last",
-"reason": "killed in effect where it is no verdict: `rowNames` cut to its last row refuses every `definite` obligation as an unknown row, so more than 100 guards of Examples.lean fail and Lean stops at `maxErrors`; the `seen` list-last mutant is killed by the repeated-id guards"
-},
-{
-"definition": "VE.Presupposition.separated",
-"operator": "list-drop-first",
-"reason": "equivalent where it survives: `(rs.drop 1).length` in the outer index range drops only the last index, which has no later index to pair with, and `.drop 1` on the inner range drops only index 0, which is never a later index; the outer `.drop 1` and the inner `(rs.drop 1).length` drop pairs and are killed by the three-reading guards"
-},
-{
-"definition": "VE.Presupposition.separated",
-"operator": "list-last",
-"reason": "equivalent where it survives: `(ss.reverse.take 1).isEmpty` is `ss.isEmpty`; the list-last mutants of the pairs and of `ss.any` are killed by the three-reading and two-situation guards"
-},
-{
-"definition": "VE.Presupposition.baseOf",
-"operator": "list-last",
-"reason": "equivalent: `(rs.reverse.take 1).head?` picks the open set's kind from its last reading instead of its first; a set whose readings are all of one kind takes the same branch, and a mixed set fails `allSame` in either branch with the same `content` text (`isRuleUnit` reads the first reading)"
-}
-]
-}
+{"allow": [
+{"definition": "VE.Presupposition.Base", "operator": "ctor-drop", "reason": "does not elaborate: `claim` and `rule` are built by baseOf and read by basesOf, baseTreeOf and regen (Admit.lean), an unknown constant rather than a refutation; the hand mutant M-Base-type stops Admit.lean"},
+{"definition": "VE.Presupposition.baseOf", "operator": "list-empty", "reason": "does not elaborate: a bare `[]` in place of a reading list, a root list or a node lookup leaves `.map`, `⟨...⟩` or dotted names untyped (type mismatch, no element type); the elaborating list mutants of baseOf are killed by the step-3 guards (A1, A11, the open-set and two-condition fixtures)"},
+{"definition": "VE.Presupposition.needsUnspec", "operator": "list-empty", "reason": "does not elaborate: a bare `[]` in place of the cell leaves `.contains .conditioned` untyped; the hand mutants M-needsUnspec and M-needsUnspec-andor fail A5u and the assumed rule-act guard"},
+{"definition": "VE.Presupposition.peelRule", "operator": "arm-default", "reason": "does not elaborate: replacing the `match N.guard` arm leaves the alternatives with different pattern counts; the hand mutant M-peelRule fails A4"},
+{"definition": "VE.Presupposition.peelRule", "operator": "lit-minus", "reason": "does not elaborate: `k + 0` in the recursive pattern fails structural termination; the hand mutant M-peelRule fails A4"},
+{"definition": "VE.Presupposition.peelRule", "operator": "lit-plus", "reason": "does not elaborate: `0 + 1` / `k + 2` patterns leave the match non-exhaustive (missing cases); the hand mutant M-peelRule fails A4"},
+{"definition": "VE.Presupposition.peelWith", "operator": "list-empty", "reason": "does not elaborate: a bare `[]` in place of `rs` leaves the dotted `.asserted`/`.conditioned` and the element type unresolved; the elaborating mutants are killed by A11 and the two-asserted/two-conditioned guards"},
+{"definition": "VE.Presupposition.readingsDoc", "operator": "list-empty", "reason": "does not elaborate: a bare `[]` in place of the background, the readings or the units leaves the tuple patterns and dotted constructors untyped; the elaborating list mutants are killed by the background, F-ND1 and fixed-rule-unit guards"},
+{"definition": "VE.Presupposition.readingsDoc", "operator": "bool-flip", "reason": "equivalent: the flipped literal is `hard := false` of a strict node with no alterables; `hard` is read only together with a default mode or alterables (SoftNorms/Soften.lean:591), so a strict node means the same either way"},
+{"definition": "VE.Presupposition.readingsDoc", "operator": "lit-plus", "reason": "equivalent: the literal is the readings@1 set version (`⟨u, u, 1, ...⟩`), which separation does not read (no narrowing or coupling in the readings document)"},
+{"definition": "VE.Presupposition.readingsDoc", "operator": "lit-minus", "reason": "equivalent: the literal is the readings@1 set version (`⟨u, u, 1, ...⟩`), which separation does not read (no narrowing or coupling in the readings document)"},
+{"definition": "VE.Presupposition.rootsWith", "operator": "list-empty", "reason": "does not elaborate: a bare `[]` in place of `os` or the block leaves the field notation `.carrier`/`.id` untyped; the elaborating mutants are killed by A1 and the second-unresolved guards"},
+{"definition": "VE.Presupposition.separated", "operator": "list-empty", "reason": "does not elaborate: a bare `[]` in place of the situations or the pairs leaves the tuple patterns `(v, w, o, σ)`/`(i, j)` untyped; the elaborating mutants are killed by the separation guards"},
+{"definition": "VE.Presupposition.separated", "operator": "list-first", "reason": "equivalent where it survives: `(ss.take 1).isEmpty` is `ss.isEmpty`; every other list-first mutant of separated is killed by the two-situation and three-reading guards"},
+{"definition": "VE.Presupposition.softOk", "operator": "list-empty", "reason": "does not elaborate: a bare `[]` in place of `rs` leaves the field notation `.cand` untyped; the hand mutants M-soft-chain and M-softOk fail A26 soft"},
+{"definition": "VE.Presupposition.withObligations", "operator": "list-empty", "reason": "does not elaborate: a bare `[]` in place of the units or the block leaves the field notation `.unit`/`.id` untyped; the elaborating mutants are killed by the two-unit and unformalised-unit guards"},
+{"definition": "VE.Presupposition.checkIds", "operator": "not-drop", "reason": "killed in effect: with `!` dropped every first obligation is refused `id`, so more than 100 guards of Examples.lean fail and Lean stops at `maxErrors`, which the tool reads as no verdict; the hand mutant M-checkIds and the repeated-id guards cover the check"},
+{"definition": "VE.Presupposition.withObligations", "operator": "eq-ne", "reason": "killed in effect: with `!=` step 3 reads the wrong units, so more than 100 guards of Examples.lean fail and Lean stops at `maxErrors`, which the tool reads as no verdict; the hand mutants M-withObligations and M-withObligations-first cover the definition"},
+{"definition": "VE.Presupposition.checkIds", "operator": "list-empty", "reason": "killed in effect: with `rowNames` empty every obligation is refused as an unknown row, so more than 100 guards of Examples.lean fail and Lean stops at `maxErrors`, which the tool reads as no verdict; A12 (`PresuppositionUnknownRow: p1: title`) and every admitted guard cover the check"},
+{"definition": "VE.Presupposition.separated", "operator": "list-drop-last", "reason": "equivalent where it survives: `dropLast` on the outer index range removes only the last index, which has no later index to pair with; on the inner range it drops pairs and is killed by the three-reading guards"},
+{"definition": "VE.Presupposition.withObligations", "operator": "list-drop-last", "reason": "killed in effect: with the block's last obligation dropped, a one-obligation document has no unit with obligations, so more than 100 guards of Examples.lean fail and Lean stops at `maxErrors`, which the tool reads as no verdict; the two-unit guard and M-withObligations cover the definition"},
+{"definition": "VE.Presupposition.baseOf", "operator": "list-first", "reason": "equivalent where it survives: `(rs.take 1).head?` is `rs.head?` (Admit.lean:79, the open set's kind); the list-first mutants of the readings lists `allSame` reads are killed by the open-set guards (a second or third reading over another base or rule)"},
+{"definition": "VE.Presupposition.withObligations", "operator": "list-drop-first", "reason": "killed in effect: dropping the first unit with obligations leaves a one-unit document with none, so more than 100 guards of Examples.lean fail and Lean stops at `maxErrors`, which the tool reads as no verdict; the two-unit guard and M-withObligations cover the definition"},
+{"definition": "VE.Presupposition.checkIds", "operator": "list-last", "reason": "killed in effect where it is no verdict: `rowNames` cut to its last row refuses every `definite` obligation as an unknown row, so more than 100 guards of Examples.lean fail and Lean stops at `maxErrors`; the `seen` list-last mutant is killed by the repeated-id guards"},
+{"definition": "VE.Presupposition.separated", "operator": "list-drop-first", "reason": "equivalent where it survives: `(rs.drop 1).length` in the outer index range drops only the last index, which has no later index to pair with, and `.drop 1` on the inner range drops only index 0, which is never a later index; the outer `.drop 1` and the inner `(rs.drop 1).length` drop pairs and are killed by the three-reading guards"},
+{"definition": "VE.Presupposition.separated", "operator": "list-last", "reason": "equivalent where it survives: `(ss.reverse.take 1).isEmpty` is `ss.isEmpty`; the list-last mutants of the pairs and of `ss.any` are killed by the three-reading and two-situation guards"},
+{"definition": "VE.Presupposition.baseOf", "operator": "list-last", "reason": "equivalent: `(rs.reverse.take 1).head?` picks the open set's kind from its last reading instead of its first; a set whose readings are all of one kind takes the same branch, and a mixed set fails `allSame` in either branch with the same `content` text (`isRuleUnit` reads the first reading)"}
+]}

@@ -111,20 +111,20 @@ FOLLOW-UP: ps-2ac Run.lean report value (PS-2a part 4)
 
 ## Seeded bugs (Lean only; this item changes no Python or Rust product code)
 
-`mutants.json` lists 37 hand mutants with `file`, `find`, `replace` and `test`: at least one per new trusted
+`mutants.json` lists 38 hand mutants with `file`, `find`, `replace` and `test`: at least one per new trusted
 definition, and more on the tied ones. I applied each alone, ran `lake build VE.Presupposition.Examples
-VE.Presupposition.Admit.Statements` and restored the file. All 37 fail (`evidence/tests.txt` lists each failing
-file:line). Two type mutants (`Base`, `Fixed`) fail Admit.lean's own build. Survivors along the way each got a
+VE.Presupposition.Admit.Statements` and restored the file. All 38 fail on the final Lean (`evidence/tests.txt` lists
+each failing file:line). Two type mutants (`Base`, `Fixed`) fail Admit.lean's own build. Survivors along the way each got a
 fixture: W1's `separates` in place of the completion's (where `unsaid__p` holds, `F_p` decides `p` under both
 readings); `fillHolds` dropped (F-ND1 as an open rule: no filling of `help_permitted` breaks the witness's
-`Fill_T`); pass 2's budget (readings that differ from the expected ones over a base past W1's budget). The claimed
-behaviours:
+`Fill_T`); pass 2's budget (readings that differ from the expected ones over a base past W1's budget); an assumed
+rule act in a cell that lists conditioned (`needsUnspec`). The claimed behaviours:
 
 | Id | Behaviour | Mutant | Fails |
 |---|---|---|---|
-| M2-proved-unchecked | M2 (7.5): proved needs a certificate that checks against `premisesBefore` | `provedOk` accepts any named certificate | A7, Examples.lean:906-907; `admit_proved_sound` (Statements.lean:104) |
-| M-drop-candidate | R-D3: the unit carries exactly the emitted readings | `openOk` compares with one candidate dropped | A2 (:785), A1 (:771) |
-| M-soft-chain | A26: the soft chain refuses a conditioned rule reading before separation | the refusal removed | A26 soft (:866) |
+| M2-proved-unchecked | M2 (7.5): proved needs a certificate that checks against `premisesBefore` | `provedOk` accepts any named certificate | A7, Examples.lean:949-950; `admit_proved_sound`'s proof (Statements.lean:154) |
+| M-drop-candidate | R-D3: the unit carries exactly the emitted readings | `openOk` compares with one candidate dropped | A2 (:787), A1 (:771), and 35 more guards |
+| M-soft-chain | A26: the soft chain refuses a conditioned rule reading before separation | the refusal removed | A26 soft (:905), the cell with conditioned first (:1222) |
 
 **R16 mechanical mutants.** `tools/trust_mutants.py` through `mac-pytest.sh --trustmut`: see "Final checks".
 
@@ -152,12 +152,14 @@ guard (table above and `mutants.json`). ps-2aa's and ps-2a's ties-pass rows can 
 
 ## Size, bytes, evaluators
 
-- **Size** (`git diff --numstat a0102f0e5`, without the generated inventories and code map). Counted: Admit.lean
-  295, VE.lean 3, the non-A guards in Examples.lean 105, `trust-classes.json` 179, `mutants.json` 39, `evidence/`
-  (probe.py 23, tests.txt ~75), DELTA.md 11, `trust-baseline.json` 14 and this REPORT (~200). That is about 940, over
-  the ~600 line, so the seam cut Run.lean and the DRI was asked to accept the rest. Exempt (DRI ps-2a item 1; size
-  rule adv1207 item 3): the proofs, 657 lines (Facts.lean 299, Statements.lean 358), and A1-A28 with their fixture
-  definitions, 280 lines of Examples.lean.
+- **Size** (`git diff --numstat a0102f0e5`, without the generated inventories and code map, and without the sweep's
+  output `trust-mutants.json`). Counted: Admit.lean 295, VE.lean 3, Examples.lean's guards beyond A1-A28 193 (step 2-5
+  and separation guards, and the trust-mutants survivor fixtures), `trust-classes.json` 192, `mutants.json` 40,
+  `trust-mutants-allow.json` 29, `evidence/` (probe.py 23, tests.txt 83), DELTA.md 11, `trust-baseline.json` 14, the
+  spec's two edited rows 3, and this REPORT (~245). That is about 1,130. The DRI accepted ~830 (ps-2ab-2 item 3); the
+  growth since is the survivor fixtures and the sweep's allow file, which the R16 sweep required. Exempt (DRI ps-2a
+  item 1; size rule adv1207 item 3): the proofs, 657 lines (Facts.lean 299, Statements.lean 358), and A1-A28 with their
+  fixture definitions, 290 lines of Examples.lean.
 - **Pilot bytes.** 0: no route reads `admit` yet.
 - **Evaluators** (the DRI's rule of 2026-10-27). `admit` charges the block's size first: 257 obligations is
   `ResourceLimit: presuppositions` (A15, :979), and 256 on one unit are admitted (:980). It charges each regenerated
