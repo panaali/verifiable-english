@@ -14,6 +14,7 @@ import re
 import subprocess
 import sys
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
@@ -168,23 +169,82 @@ def test_schedstat_reads_or_reports_unavailable(tmp_path):
 
 # ---------------------------------------------------------------- corpus A/B
 
-def test_lf0_empty_ab_files_fail(tmp_path):
+def test_lf0_empty_ab_files_fail(tmp_path, history):
     """The shared A/B tool accepted empty evidence (lf-0)."""
+    repo, m0, _, tool, _ = history
     base, head = tmp_path / "base.jsonl", tmp_path / "head.jsonl"
     for text in ("", "\n\n  \n"):
         base.write_text(text), head.write_text(text)
-        comparison, errors = ab.compare(base, head, BASE, HEAD)
+        comparison, errors = ab.compare(base, head, m0, tool, repository=repo)
         assert comparison is None and errors == [f"{base}: the recording is empty", f"{head}: the recording is empty"]
-    comparison, errors = ab.compare(tmp_path / "none.jsonl", head, BASE, HEAD)
+    comparison, errors = ab.compare(tmp_path / "none.jsonl", head, m0, tool, repository=repo)
     assert comparison is None and errors[0].endswith("no recording")
 
 
-def test_ab_runs_lean_first_diff_and_reports_what_it_refuses(tmp_path):
+def test_ab_runs_lean_first_diff_and_reports_what_it_refuses(tmp_path, history):
+    repo, m0, _, tool, _ = history
     base, head = tmp_path / "base.jsonl", tmp_path / "head.jsonl"
     base.write_text('{"x": 1}\n'), head.write_text('{"x": 1}\n')
-    comparison, errors = ab.compare(base, head, BASE, HEAD, corpora=["conformance"])
+    comparison, errors = ab.compare(base, head, m0, tool, corpora=["conformance"], repository=repo)
     assert comparison is None
     assert errors[0].startswith("lean_first_diff compare could not compare (exit 2)") and "no record" in errors[0]
+
+
+# AR-23 review F1: `ab` saved `--base-commit a3454b6ba598c95e5a4cad1d1bbea07dfa0b58f5`, typed by hand: its first twelve
+# characters are the merge base's (a3454b6ba5982d7c…, abbreviated a3454b6ba598 by trust_map), the rest invented, so
+# the record named a commit the repository lacks. Every commit `ab` saves is now the one Git resolves; each kind of id that names no commit is refused.
+def _not_a_commit(repo, m0, kind):
+    if kind == "invented tail":
+        return m0[:12] + ("0" if m0[12] != "0" else "1") + m0[13:]
+    if kind == "blob":
+        return _git(repo, "rev-parse", f"{m0}:a.txt")
+    if kind == "tree":
+        return _git(repo, "rev-parse", f"{m0}^{{tree}}")
+    return {"empty": "", "option": "--all", "zeros": "0" * 40}[kind]
+
+
+@pytest.mark.parametrize("side", ["base", "head"])
+@pytest.mark.parametrize("kind", ["invented tail", "blob", "tree", "empty", "option", "zeros"])
+def test_ar23_f1_ab_refuses_a_typed_commit_that_names_no_commit(tmp_path, history, monkeypatch, side, kind):
+    repo, m0, _, tool, _ = history
+    base, head = tmp_path / "base.jsonl", tmp_path / "head.jsonl"
+    base.write_text('{"x": 1}\n'), head.write_text('{"x": 1}\n')
+    wrong = _not_a_commit(repo, m0, kind)
+    commits = {"base": m0, "head": tool, side: wrong}
+    refuse = SimpleNamespace(run=lambda *a, **k: pytest.fail("compared with a commit Git lacks"))
+    monkeypatch.setattr(ab, "subprocess", refuse)
+    comparison, errors = ab.compare(base, head, commits["base"], commits["head"], repository=repo)
+    assert comparison is None and len(errors) == 1 and errors[0].startswith(f"corpus comparison {side} commit: ")
+
+
+def test_ar23_f1_ab_cli_refuses_the_reviewed_base_and_writes_nothing(tmp_path, capsys):
+    """The exact command of the AR-23 recipe, against this repository: refused, and no ab.json is written."""
+    base, head, out = tmp_path / "base.jsonl", tmp_path / "head.jsonl", tmp_path / "ab.json"
+    base.write_text('{"x": 1}\n'), head.write_text('{"x": 1}\n')
+    assert ab.main([str(base), str(head), "--base-commit", "a3454b6ba598c95e5a4cad1d1bbea07dfa0b58f5",
+                    "--head-commit", "HEAD", "--out", str(out)]) == 1
+    assert not out.exists()
+    assert "a3454b6ba598c95e5a4cad1d1bbea07dfa0b58f5 names no commit" in capsys.readouterr().out
+
+
+def test_ar23_f1_ab_saves_the_commits_git_resolves(tmp_path, history, monkeypatch):
+    """An abbreviation and a name are saved as the full ids they resolve to, so a batch's merge-base check can
+    match them; the comparison itself is the one lean_first_diff writes."""
+    repo, m0, _, tool, _ = history
+    base, head = tmp_path / "base.jsonl", tmp_path / "head.jsonl"
+    base.write_text('{"x": 1}\n'), head.write_text('{"x": 1}\n')
+
+    def lean_first_diff(command, **_):
+        Path(command[command.index("--json") + 1]).write_text(json.dumps({k: v for k, v in AB.items()
+                                                                          if "commit" not in k}))
+        return subprocess.CompletedProcess(command, 0, "", "")
+
+    monkeypatch.setattr(ab, "subprocess", SimpleNamespace(run=lean_first_diff))
+    _git(repo, "tag", "base-tag", m0)
+    for typed_base, typed_head in ((m0[:9], tool[:12]), ("base-tag", "HEAD"), (m0, tool)):
+        comparison, errors = ab.compare(base, head, typed_base, typed_head, repository=repo)
+        assert (comparison["base_commit"], comparison["head_commit"]) == (m0, tool), (typed_base, typed_head)
+        assert errors == [] and ab.problems(comparison, tool, base=m0) == []
 
 
 AB = {"base_commit": BASE, "head_commit": HEAD, "unlisted": 0, "unavailable_both": {},
@@ -519,8 +579,42 @@ def test_named_latency_and_fuzz_ab_are_checked(batch):
         '{"head_commit": "%s", "pass": true, "samples": {"docs/a/s1.ve.md": {"base_cpu_ms": 1, "head_cpu_ms": 9}, '
         '"docs/a/s1.ve.md": {"base_cpu_ms": 1, "head_cpu_ms": 1}, "docs/b/s1.ve.md": {"base_cpu_ms": 1, '
         '"head_cpu_ms": 1}}}' % HEAD)
-    with pytest.raises(EvidenceError, match="occurs twice"):
+    assert any("occurs twice" in error for error in batch_evidence.check(batch)[1])
+    assert batch_evidence.main(["--check", str(batch)]) == 1
+
+
+# AR-23 review F1: before the gate, `--check` stopped at the missing gate.json, so the wrong A/B base was never
+# reported and the build report said the check passed "except for gate.json". A file that cannot be read is now
+# one error of its own section; every other section is still checked, and the check still fails.
+UNREADABLE = {"missing": None, "empty": "", "not JSON": "{", "a key twice": '{"a": 1, "a": 2}'}
+
+
+@pytest.mark.parametrize("kind", sorted(UNREADABLE))
+@pytest.mark.parametrize("unread, planted", [("gate", "ab"), ("mutants", "ab"), ("ab", "gate")])
+def test_ar23_f1_an_unreadable_section_hides_no_other_section(batch, capsys, unread, planted, kind):
+    (batch / "evidence.toml").write_text(TOML + '[ab]\nfile = "ab.json"\n')
+    _write(batch, "ab", {**AB, "base_commit": "c" * 40})
+    if planted == "gate":
+        _write(batch, "ab", AB), _write(batch, "gate", {**GATE, "failures": [{"test": "t"}]})
+    target = batch / "evidence" / f"{unread}.json"
+    target.unlink()
+    if UNREADABLE[kind] is not None:
+        target.write_text(UNREADABLE[kind])
+    errors = batch_evidence.check(batch)[1]
+    assert any(str(target) in error for error in errors), errors
+    expected = "not on the batch's merge base" if planted == "ab" else "lists failures"
+    assert any(expected in error for error in errors), errors
+    assert batch_evidence.main(["--check", str(batch)]) == 1
+    out = capsys.readouterr().out
+    assert str(target) in out and expected in out
+
+
+def test_ar23_f1_an_unreadable_scope_still_stops_the_check(batch, capsys):
+    (batch / "evidence" / "scope.json").unlink()
+    with pytest.raises(EvidenceError, match="no such evidence file"):
         batch_evidence.check(batch)
+    assert batch_evidence.main(["--check", str(batch)]) == 1
+    assert "scope.json: no such evidence file" in capsys.readouterr().out
 
 
 def test_tally_claims_check_a_ledger_against_its_table(batch):
@@ -754,8 +848,8 @@ def test_f2_ab_measurements_take_both_commits_from_two_clean_checkouts(history, 
     assert not (tmp_path / "l.json").exists()
     recording = tmp_path / "r.jsonl"
     recording.write_text('{"x": 1}\n')
-    assert ab.compare(recording, recording, tool, tool) == (None, [f"corpus comparison compared the head {tool} "
-                                                                   "with itself"])
+    assert ab.compare(recording, recording, tool, tool, repository=repo) == (
+        None, [f"corpus comparison compared the head {tool} with itself"])
 
 
 def test_f2_a_mutant_counts_only_for_its_file_at_the_head(history):
