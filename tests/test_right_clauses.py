@@ -14,7 +14,7 @@ from tests.lean_build import lean_build
 from tests.lean_service_corpus import recorded
 from tests.subprocesses import HANG_TIMEOUT
 from ve.backends.lean_service import LeanService, case_digest, case_texts
-from ve.backends.service_schema import check_response
+from ve.backends.service_schema import Invalid, check_response
 
 ROOT = Path(__file__).resolve().parents[1]
 EVIDENCE = ROOT / "docs/composition/cmp-s3-cfr-1/profile-off.json"
@@ -346,3 +346,180 @@ def test_right_clauses_model_mode_faulty_models_answer_as_without_the_profile(se
     # the sweep reaches both sides: faulty models of several kinds, and models that hold without the profile
     assert len(faulty) >= 40 and len(mutants) - len(faulty) >= 1
     assert len({off[i]["error"] for i in faulty}) >= 4 and any("path" in off[i] for i in faulty)
+
+
+# cmp-s3-cfr-1b: the relay (ve/right_clauses.py) against Lean's mode on 9.1 and 9.2's documents (9.3's differential)
+def _env(sorts=(), predicates=None, profiles=ON):
+    env = environment(profiles)
+    env["vocabulary"]["sorts"].update({s: {"description": s} for s in sorts})
+    env["vocabulary"]["predicates"].update(predicates or {})
+    return env
+
+
+def _spanned(doc, a, b):
+    doc[0]["span"] = [a, b]
+    return doc
+
+
+def _base(*names, sorts=("person",)):
+    return {n: {"arguments": list(sorts), "description": "base"} for n in names}
+
+
+NORM = document()[0]["right"]["lines"][0]["norm"]
+POWER = {"kind": "power", "liberty": {**NORM, "name": "may-access"}, "recognition": {**NORM, "name": "recognise-access"},
+         "elided": [], "relation": RELATION}
+L29 = {"limitation": {"name": "l29", "scope": "all", "kinds": "all", "decided_by": "unstated", "factors": [],
+                      "conditions": [{"name": "determined_by_law", "role": "necessary", "verbalisation": "by law"}]}}
+F11_TRIGGER = {"role": "trigger", "span": [3541, 3635], "formula": ["exists", "act", ["and", ["binary",
+               "violates_right_of", ["var", 0], ["var", 1]], ["unary", "right_granted_by_law", ["var", 0]]]]}
+VULNERABLE = {"vulnerable": {"arguments": ["person"], "description": "plain", "regulated": {"role": "plain", "default": "deny"}}}
+DIFFERENTIAL = {
+    "K1": (environment(), document()),
+    **{name: (environment(), fixture[0]) for name, fixture in K_FIXTURES.items()},
+    "K10": (environment(OFF), document(relation=RELATION)),
+    "K11": (environment(), [{"right": {"name": "r21", "holder": "person", "lines": [POWER]}, "span": [0, 100]}]),
+    "K12": (environment(sorted([*ON, "readings@1"])), document(relation=TOTAL)),
+    "K13": (environment(), document(relation=TOTAL) + [L29]),
+    "K14": (_env(predicates=VULNERABLE), [{**document(relation=TOTAL)[0], "right": {
+        **document(relation=TOTAL)[0]["right"], "guard": ["unary", "vulnerable", ["var", 0]]}}]),
+    "F11": (_env(["act"], {**_base("right_granted_by_law", sorts=["act"]), **_base("violates_right_of", sorts=["act", "person"]),
+                           **_base("has_tribunals_competent_for", sorts=["state", "person"])}),
+            _spanned(document(clauses=[F11_TRIGGER], relation={**TOTAL, "predicate": "has_tribunals_competent_for",
+                                                                "cites": ["u035"]}), 3469, 3637) + [{"source_units": ["u035"]}]),
+    "F12": (_env(predicates=_base("rights_and_charges_determined", "full_equality")), _spanned(document(clauses=[
+        {"role": "scope", "span": [3838, 3934], "formula": ["unary", "rights_and_charges_determined", ["var", 0]]},
+        {"role": "scope", "span": [3755, 3771], "formula": ["unary", "full_equality", ["var", 0]]}]), 3734, 3935)),
+    "F14": (environment(), _spanned(document(relation=RELATION), 6861, 6938)),
+}
+PINNED = {"K10": "UnsupportedProfile: clauses-elaborate requires right-clauses@0", "K11": "ClauseLineShape: may-access",
+          "K12": "UnsupportedProfile: right-clauses@0 with readings@1 is not implemented",
+          "K14": "RelationShape: equal-access"}
+
+
+def test_right_clauses_differential(service):
+    """9.3: the relay's answer is Lean's, byte for byte, on K1 to K15, F11, F12 and F14: the plained bytes and the slot
+    when Lean reads the document, Lean's text (raised as its class) when it refuses it. K13's slot lists `Lim_D`'s
+    premise before `Rel_D`'s; F11's totality premise names its rule."""
+    from ve import right_clauses
+    from ve.errors import VEError
+    lean = exchange(service, "clauses-elaborate", [{"id": k, "environment": e, "document": d}
+                                                   for k, (e, d) in DIFFERENTIAL.items()])
+    for (name, (env, doc)), row in zip(DIFFERENTIAL.items(), lean):
+        if row["status"] == "error":
+            with pytest.raises(VEError) as refusal:
+                right_clauses.elaborate(env, doc)
+            assert str(refusal.value) == row["error"] == PINNED.get(name, row["error"]), name
+            continue
+        relayed = right_clauses.elaborate(env, doc)
+        assert relayed.plained == row["result"]["plained"] and name not in PINNED, name
+        assert [{"label": label, "ast": ast} for label, ast in relayed.clause_slot] == row["result"]["clause_slot"], name
+    labels = {row["id"]: [r["label"] for r in row["result"]["clause_slot"]] for row in lean if row["status"] == "ok"}
+    assert labels["K13"] == ["rights:limitation:l29:public_service_access_required:necessary:determined_by_law",
+                             "rights:relation:equal-access:total"]
+    assert labels["F11"] == ["rights:relation:equal-access:total"] and labels["F12"] == labels["F14"] == []
+
+
+def _bound(result, doc):
+    from ve.backends.lean_service import CheckerUnavailable
+    from ve.right_clauses import bind
+    try:
+        return bind(result, doc)
+    except CheckerUnavailable:
+        return None
+
+
+def test_right_clauses_relay_binds_every_field(service):
+    """R8: every unit, line and label of the answer is the request's. Each field of a genuine answer retyped fails the
+    schema; each rebound (a unit, line or premise dropped, added or renamed) is `CheckerUnavailable`."""
+    names = ["K3", "K13", "F11"]
+    rows = exchange(service, "clauses-elaborate", [{"id": k, "environment": DIFFERENTIAL[k][0], "document":
+                                                   DIFFERENTIAL[k][1]} for k in names])
+    for name, row in zip(names, rows):
+        doc, result = DIFFERENTIAL[name][1], row["result"]
+        assert _bound(result, doc) is not None, name
+        units = json.loads(result["plained"])
+        renamed = deepcopy(units)
+        renamed[0]["right"]["lines"][0]["norm"]["name"] = "other"
+        plained = [units[:-1], units + [units[0]], renamed, [{"bar": units[0]}] + units[1:], units[0]]
+        slots = [result["clause_slot"][:-1], result["clause_slot"] + result["clause_slot"][-1:],
+                 [{**r, "label": r["label"].replace("equal-access", "other")} for r in result["clause_slot"]],
+                 [{**r, "label": r["label"].replace("determined_by_law", "other")} for r in result["clause_slot"]],
+                 [{**r, "label": r["label"].replace("l29", "l30")} for r in result["clause_slot"]]]
+        for mutant in [{**result, "plained": canonical(p)} for p in plained] + [{**result, "plained": "["}] + [
+                {**result, "clause_slot": s} for s in slots if s != result["clause_slot"]]:
+            assert _bound(mutant, doc) is None, (name, mutant)
+        case = [{"id": "0", "environment": DIFFERENTIAL[name][0], "document": doc}]
+        text = json.dumps(case, ensure_ascii=False)
+        _, response = service.exchange("clauses-elaborate", text, 1, timeout=HANG_TIMEOUT)
+        request = {"id": response["id"], "mode": "clauses-elaborate", "cases": case,
+                   "digests": [case_digest(t) for t in case_texts(text)], "bytes": len(text.encode())}
+        check_response("clauses-elaborate", response, request)
+        for path, value in [(("plained",), 1), (("plained",), None), (("clause_slot",), {}),
+                            (("clause_slot", 0, "label"), 7), (("clause_slot", 0, "ast"), "top"), (("clause_slot", 0), [])]:
+            bad = deepcopy(response)
+            target = bad["results"][0]["result"]["result"]
+            for key in path[:-1]:
+                target = target[key]
+            target[path[-1]] = value
+            with pytest.raises(Invalid):
+                check_response("clauses-elaborate", bad, request)
+
+
+def _tree(n):
+    return ["unary", "charged", ["var", 0]] if n == 1 else ["and", _tree(n // 2), _tree(n - n // 2)]
+
+
+def _sized(sizes):
+    """One line per entry of `sizes`, each on its own obligation, with one clause of that many atoms."""
+    env = environment()
+    regulated = env["vocabulary"]["predicates"]["public_service_access_required"]
+    acts = ["food", "water", "housing", "schooling", "care", "work"]
+    lines = []
+    for i, n in enumerate(sizes):
+        env["vocabulary"]["predicates"][f"p{i}_required"] = {**regulated, "regulated": {
+            **regulated["regulated"], "act": "{0} give {1} access to " + acts[i]}}
+        lines.append({**document()[0]["right"]["lines"][0], "norm": {**NORM, "name": f"a{i}", "predicate": f"p{i}_required"},
+                      "clauses": [{"role": "scope", "formula": _tree(n), "span": [1, 2]}]})
+    return {"environment": env, "document": [{"right": {"name": "r21", "holder": "person", "lines": lines}, "span": [0, 100]}]}
+
+
+def test_right_clauses_w1_budget(service):
+    """W1's 10,000-node budget on `plain D` (spec 10) and the evaluator rule of 2026-10-27: a large well-formed
+    document (four lines, 400-atom clauses) is read; four 833-atom clauses pass the node budget (the generated layers'
+    budget then refuses them) and one atom more does not. The head charges what it reads before the quadratic or deep
+    work: 257 line objects, a line of 64 conjuncts, and long span and cite lists end within the deadline."""
+    spans = document(elided=[[2 * i, 2 * i + 1] for i in range(30000)])
+    spans[0]["span"] = [0, 60002]
+    ids = [f"u{i}" for i in range(20000)]
+    deep = document(clauses=[{**CHARGED, "role": "scope", "span": [i, i + 1]} for i in range(64)])
+    many = [{"right": {**document()[0]["right"], "lines": [document()[0]["right"]["lines"][0]] * 257}}]
+    cases = [_sized([400] * 4), _sized([833] * 4), _sized([833] * 3 + [834]),
+             {"environment": environment(), "document": many}, {"environment": environment(), "document": deep},
+             {"environment": environment(), "document": spans},
+             {"environment": environment(), "document": document(relation={**RELATION, "cites": ids[::-1]}) +
+              [{"source_units": ids}]}]
+    rows = exchange(service, "clauses-elaborate", [{"id": str(i), **c} for i, c in enumerate(cases)])
+    assert [r.get("error") for r in rows] == [
+        None, "ResourceLimit: generated norm layers", "ResourceLimit: AST exceeds 10,000 nodes", "ResourceLimit: rules",
+        "ResourceLimit: formula depth exceeds 64", None, None]
+    assert len(json.loads(rows[0]["result"]["plained"])[0]["right"]["lines"]) == 4
+
+
+def test_right_clauses_rights_environment_reads_the_profile():
+    """Python's rights environment reads `right-clauses@0` (its soft frame drops it, as Lean's `withoutClauses`): the
+    environment is the one without the profile but for the list it binds (DELTA row 1), and a faulty one is refused
+    with the same text. Without rights@0 the profile is still refused by name."""
+    from ve.errors import VEError
+    from ve.profiles import model_environment
+    from ve.rights import RightsEnvironment
+    on, off = RightsEnvironment(environment()), RightsEnvironment(environment(OFF))
+    assert on.to_dict() == {**off.to_dict(), "profiles": ON} and on.environment_id != off.environment_id
+    assert model_environment(environment()) == model_environment(environment(OFF))
+    for profiles in (ON, OFF):
+        bad = environment(profiles)
+        bad["vocabulary"]["rights"]["holders"] = ["citizen"]
+        with pytest.raises(VEError) as refusal:
+            RightsEnvironment(bad)
+        assert str(refusal.value) == "UnknownSymbol: sort citizen"
+    with pytest.raises(VEError, match="^UnsupportedProfile: rights@0 is required$"):
+        RightsEnvironment(environment([p for p in ON if p != "rights@0"]))
