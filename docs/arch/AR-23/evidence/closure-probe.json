@@ -1,0 +1,594 @@
+{
+ "tool": "docs/arch/AR-23/closure_probe.py",
+ "runners": {
+  "certificate": {
+   "rows": 134,
+   "equal": true,
+   "differences": [],
+   "answers": {
+    "v1": {
+     "status": "ok",
+     "valid": true
+    },
+    "v0": {
+     "status": "ok",
+     "valid": false
+    },
+    "v2": {
+     "status": "ok",
+     "valid": false
+    },
+    "core-version": {
+     "status": "ok",
+     "valid": false
+    },
+    "atom-invariant": {
+     "status": "error",
+     "valid": false,
+     "error": "invalid indexed formula"
+    },
+    "atom-conclusion": {
+     "status": "error",
+     "valid": false,
+     "error": "invalid indexed formula"
+    },
+    "stale": {
+     "status": "error",
+     "valid": false,
+     "error": "certificate is stale or bound to different inputs"
+    },
+    "rule": {
+     "status": "error",
+     "valid": false,
+     "error": "unknown tableau rule"
+    },
+    "closure_review_transitivity@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_review_transitivity@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_review_named_body@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_review_named_body@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_review_body_named@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_review_body_named@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_review_last_edge@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_review_last_edge@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_review_first_edge@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_review_first_edge@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_three_paths@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_three_paths@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_edge_star@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_edge_star@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_two_edges@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_two_edges@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_unfold_0_plus_False@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_unfold_0_plus_False@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_unfold_0_plus_True@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_unfold_0_plus_True@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_compose_0_plus_plus@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_compose_0_plus_plus@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_compose_0_plus_star@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_compose_0_plus_star@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_unfold_0_star_False@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_unfold_0_star_False@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_unfold_0_star_True@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_unfold_0_star_True@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_compose_0_star_plus@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_compose_0_star_plus@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_compose_0_star_star@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_compose_0_star_star@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_end_0_False@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_end_0_False@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_end_0_True@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_end_0_True@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_unfold_1_plus_False@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_unfold_1_plus_False@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_unfold_1_plus_True@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_unfold_1_plus_True@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_compose_1_plus_plus@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_compose_1_plus_plus@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_compose_1_plus_star@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_compose_1_plus_star@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_unfold_1_star_False@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_unfold_1_star_False@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_unfold_1_star_True@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_unfold_1_star_True@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_compose_1_star_plus@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_compose_1_star_plus@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_compose_1_star_star@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_compose_1_star_star@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_end_1_False@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_end_1_False@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_end_1_True@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_end_1_True@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_unfold_2_plus_False@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_unfold_2_plus_False@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_unfold_2_plus_True@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_unfold_2_plus_True@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_compose_2_plus_plus@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_compose_2_plus_plus@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_compose_2_plus_star@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_compose_2_plus_star@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_unfold_2_star_False@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_unfold_2_star_False@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_unfold_2_star_True@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_unfold_2_star_True@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_compose_2_star_plus@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_compose_2_star_plus@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_compose_2_star_star@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_compose_2_star_star@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_end_2_False@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_end_2_False@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_end_2_True@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_end_2_True@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_unfold_3_plus_False@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_unfold_3_plus_False@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_unfold_3_plus_True@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_unfold_3_plus_True@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_compose_3_plus_plus@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_compose_3_plus_plus@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_compose_3_plus_star@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_compose_3_plus_star@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_unfold_3_star_False@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_unfold_3_star_False@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_unfold_3_star_True@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_unfold_3_star_True@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_compose_3_star_plus@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_compose_3_star_plus@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_compose_3_star_star@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_compose_3_star_star@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_end_3_False@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_end_3_False@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_end_3_True@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_end_3_True@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_captured_plus_False_False@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_captured_plus_False_False@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_captured_plus_False_True@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_captured_plus_False_True@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_captured_plus_True_False@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_captured_plus_True_False@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_captured_plus_True_True@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_captured_plus_True_True@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_captured_star_False_False@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_captured_star_False_False@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_captured_star_False_True@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_captured_star_False_True@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_captured_star_True_False@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_captured_star_True_False@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_captured_star_True_True@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_captured_star_True_True@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_congruence_plus@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_congruence_plus@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_congruence_star@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_congruence_star@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_bound_congruence_plus_False@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_bound_congruence_plus_False@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_bound_congruence_plus_True@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_bound_congruence_plus_True@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_bound_congruence_star_False@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_bound_congruence_star_False@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_bound_congruence_star_True@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_bound_congruence_star_True@1": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_empty_sort_universal@0": {
+     "status": "ok",
+     "valid": true
+    },
+    "closure_empty_sort_universal@1": {
+     "status": "ok",
+     "valid": true
+    }
+   }
+  },
+  "route": {
+   "rows": 6,
+   "equal": true,
+   "differences": [],
+   "answers": {
+    "v1": {
+     "status": "ok",
+     "valid": true,
+     "steps": 4
+    },
+    "v0": {
+     "status": "ok",
+     "valid": true,
+     "steps": 4
+    },
+    "v2": {
+     "status": "ok",
+     "valid": false,
+     "steps": 4
+    },
+    "atom-invariant": {
+     "status": "error",
+     "valid": false,
+     "error": "invalid indexed formula"
+    },
+    "induct-v0": {
+     "status": "ok",
+     "valid": false,
+     "steps": 1
+    },
+    "rule": {
+     "status": "error",
+     "valid": false,
+     "error": "unknown tableau rule"
+    }
+   }
+  }
+ },
+ "sha256": {
+  "base": "4733c82d529a50a0b4d2541d67de1325f41c08f7d44223955d6226e2896e2e08",
+  "head": "4733c82d529a50a0b4d2541d67de1325f41c08f7d44223955d6226e2896e2e08"
+ },
+ "equal": true
+}

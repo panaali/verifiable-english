@@ -6,9 +6,9 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [bench/](bench.md) — 4 modules — -
 - [conformance/](conformance.md) — 67 modules — `evaluation.json` contains **701** valid environment/model/document cases (**4,912 formulas**).
 - [docs/act-phrases/](docs__act-phrases.md) — 42 modules — -
-- [docs/arch/](docs__arch.md) — 28 modules — -
+- [docs/arch/](docs__arch.md) — 29 modules — -
 - [docs/architecture/](docs__architecture.md) — 1 modules — -
-- [docs/attitudes/](docs__attitudes.md) — 6 modules — -
+- [docs/attitudes/](docs__attitudes.md) — 5 modules — -
 - [docs/commands-imperatives/](docs__commands-imperatives.md) — 3 modules — -
 - [docs/composition/](docs__composition.md) — 1 modules — -
 - [docs/defeasible/](docs__defeasible.md) — 12 modules — -
@@ -132,7 +132,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [research/](research.md) — 2 modules — -
 - [rust/](rust.md) — 37 modules — -
 - [tests/ part 1](tests--part-1.md) — 91 modules — -
-- [tests/ part 2](tests--part-2.md) — 90 modules — -
+- [tests/ part 2](tests--part-2.md) — 89 modules — -
 - [tests/ part 3](tests--part-3.md) — 88 modules — -
 - [tests/ part 4](tests--part-4.md) — 86 modules — -
 - [tests/ part 5](tests--part-5.md) — 82 modules — -

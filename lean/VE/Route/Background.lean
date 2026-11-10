@@ -185,7 +185,8 @@ theorem closure_route_acceptance (E : VE.Environment) (lits : List String) (hn :
     (accepted : VE.Closure.Tableau.checkCertificate E ((literals lits).map VE.Closure.embed ++ Γ) φ c = true) :
     ∀ S : VE.Structure.{u}, StringAdmissible E lits S → (∀ a ∈ Γ, a.denote S []) → φ.denote S [] := by
   intro S hS hΓ
-  apply VE.Closure.Tableau.checkCertificate_sound E _ φ c accepted S hS.1
+  apply (VE.Closure.entails_iff E _ φ).mp
+    (VE.Closure.Tableau.checkCertificate_sound E _ φ c accepted) S hS.1
   intro a ha
   rcases List.mem_append.mp ha with ha | ha
   · obtain ⟨b, hb, rfl⟩ := List.mem_map.mp ha
