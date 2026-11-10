@@ -115,6 +115,9 @@ def SatUnder (D : PDoc) (R : Report) (ch : Pick) (S : VE.Structure.{u}) : Prop :
 def PickedWF (D : PDoc) (R : Report) (ch : Pick) : Prop :=
   D.defaults = true → VE.NormDefaults.WellFormedU (pickedU D R ch) = true
 
+instance (D : PDoc) (R : Report) (ch : Pick) : Decidable (PickedWF D R ch) := by
+  unfold PickedWF; infer_instance
+
 def SameModels (D : PDoc) (R : Report) (ch ch' : Pick) : Prop :=
   PickedWF D R ch ∧ PickedWF D R ch' ∧
   ∀ S : VE.Structure.{u}, S.Admissible D.E → (SatUnder D R ch S ↔ SatUnder D R ch' S)

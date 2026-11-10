@@ -18449,7 +18449,8 @@
     },
     "VE/Presupposition/Couple.lean": {
       "C": [
-        "VE.Presupposition.instDecidablePickFits"
+        "VE.Presupposition.instDecidablePickFits",
+        "VE.Presupposition.instDecidablePickedWF"
       ],
       "G[R]": [
         "VE.Presupposition.sourceLabel"
@@ -18530,6 +18531,7 @@
         "VE.Presupposition.CoupleExamples.chk15",
         "VE.Presupposition.CoupleExamples.chk22",
         "VE.Presupposition.CoupleExamples.chkNeg",
+        "VE.Presupposition.CoupleExamples.cond15",
         "VE.Presupposition.CoupleExamples.diff19",
         "VE.Presupposition.CoupleExamples.dropRel",
         "VE.Presupposition.CoupleExamples.emptyTree",
