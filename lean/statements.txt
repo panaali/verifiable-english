@@ -235,6 +235,20 @@ theorem VE.Acts.Decode.elaboratedU_elaborated
     VE.Acts.Decode.elaboratedU environment norms = Except.ok s → VE.Acts.Decode.ElaboratedDoc environment norms s
   -- uses VE.Acts.Decode.ElaboratedDoc@VE.Acts.DecodeTwins VE.Acts.Decode.elaboratedU@VE.Acts.Decode VE.NormDefaults.Wire.SourceU@VE.NormDefaults.Wire
   -- expr 1395965822
+theorem VE.Acts.Decode.elaboratedU_sources
+  ∀ {environment norms : Lean.Json} {s : VE.NormDefaults.Wire.SourceU},
+    VE.Acts.Decode.elaboratedU environment norms = Except.ok s →
+      ∀ {y : String × String},
+        y ∈ s.sources →
+          ∃ e,
+            VE.Acts.Decode.decodeElaboratedU environment norms = Except.ok e ∧
+              s.U = e.U' ∧
+                ∃ N,
+                  N ∈ e.s.U.D.T.nodes ∧
+                    y.snd = N.name ∧
+                      ∃ P, P ∈ s.U.D.T.nodes ∧ P.name = y.fst ∧ P ∈ VE.Acts.splitNode (VE.Acts.splitAtoms e.D) N
+  -- uses VE.Acts.Decode.ElaboratedU.D@VE.Acts.Decode VE.Acts.Decode.ElaboratedU.U'@VE.Acts.Decode VE.Acts.Decode.ElaboratedU.s@VE.Acts.Decode VE.Acts.Decode.ElaboratedU@VE.Acts.Decode VE.Acts.Decode.decodeElaboratedU@VE.Acts.Decode VE.Acts.Decode.elaboratedU@VE.Acts.Decode VE.Acts.splitAtoms@VE.Acts.Elaborate VE.Acts.splitNode@VE.Acts.Elaborate VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.SourceU.U@VE.NormDefaults.Wire VE.NormDefaults.Wire.SourceU.sources@VE.NormDefaults.Wire VE.NormDefaults.Wire.SourceU@VE.NormDefaults.Wire VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree VE.Norms.Tree.nodes@VE.Norms.Tree
+  -- expr 1959371454
 theorem VE.Acts.Decode.elaborated_definitions
   ∀ (e : VE.Acts.Decode.ElaboratedU), e.U'.D.T.definitions = e.s.src.D.T.definitions
   -- uses VE.Acts.Decode.ElaboratedU.U'@VE.Acts.Decode VE.Acts.Decode.ElaboratedU.s@VE.Acts.Decode VE.Acts.Decode.ElaboratedU@VE.Acts.Decode VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.Wire.SourceU.src@VE.NormDefaults.Wire VE.Norms.Definition@VE.Norms.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Tree.definitions@VE.Norms.Tree VE.Norms.Wire.Source.D@VE.Norms.Wire
@@ -490,6 +504,12 @@ theorem VE.Acts.Decode.sourceOf_lexical
   ∀ (e : VE.Acts.Decode.ElaboratedU), e.D.acts = [] → VE.Acts.Decode.sourceOf e = Except.ok e.s
   -- uses VE.Acts.Act@VE.Acts.Tree VE.Acts.ActsDoc.acts@VE.Acts.Elaborate VE.Acts.Decode.ElaboratedU.D@VE.Acts.Decode VE.Acts.Decode.ElaboratedU.s@VE.Acts.Decode VE.Acts.Decode.ElaboratedU@VE.Acts.Decode VE.Acts.Decode.sourceOf@VE.Acts.Decode VE.NormDefaults.Wire.SourceU@VE.NormDefaults.Wire
   -- expr 309509524
+theorem VE.Acts.Decode.sourceOf_sources
+  ∀ {e : VE.Acts.Decode.ElaboratedU} {s : VE.NormDefaults.Wire.SourceU},
+    VE.Acts.Decode.sourceOf e = Except.ok s →
+      s.sources = e.s.sources ∨ s.sources = List.map (fun x => (x.fst, x.snd.fst)) e.M.rules
+  -- uses VE.Acts.Decode.ElaboratedU.M@VE.Acts.Decode VE.Acts.Decode.ElaboratedU.s@VE.Acts.Decode VE.Acts.Decode.ElaboratedU@VE.Acts.Decode VE.Acts.Decode.sourceOf@VE.Acts.Decode VE.Acts.SplitMap.rules@VE.Acts.Elaborate VE.NormDefaults.Wire.SourceU.sources@VE.NormDefaults.Wire VE.NormDefaults.Wire.SourceU@VE.NormDefaults.Wire
+  -- expr 1468612621
 theorem VE.Acts.Decode.splitEnv_route
   ∀ (e : VE.Acts.Decode.ElaboratedU) (rv' : VE.Route.Wire.RouteVocabulary),
     (e.M.preds.all fun x => (VE.Bridge.lookup e.s.src.ne.rv.vocabulary.predicates x.snd.fst).isSome) = Bool.true →
@@ -1160,6 +1180,16 @@ theorem VE.Acts.elaborateMap_refsOk
     VE.Acts.elaborateMap D = Except.ok (U', M) → VE.Acts.refsOk D (VE.Acts.splitAtoms D) = Except.ok ()
   -- uses VE.Acts.ActsDoc@VE.Acts.Elaborate VE.Acts.SplitMap@VE.Acts.Elaborate VE.Acts.elaborateMap@VE.Acts.Elaborate VE.Acts.refsOk@VE.Acts.Elaborate VE.Acts.splitAtoms@VE.Acts.Elaborate VE.NormDefaults.UDoc@VE.NormDefaults.Tree
   -- expr 4099550193
+theorem VE.Acts.elaborateMap_sources
+  ∀ {D : VE.Acts.ActsDoc} {U' : VE.NormDefaults.UDoc} {M : VE.Acts.SplitMap},
+    VE.Acts.elaborateMap D = Except.ok (U', M) →
+      ∀ {x : String × String × Nat},
+        x ∈ M.rules →
+          ∃ N,
+            N ∈ D.U.D.T.nodes ∧
+              x.snd.fst = N.name ∧ ∃ P, P ∈ U'.D.T.nodes ∧ P.name = x.fst ∧ P ∈ VE.Acts.splitNode (VE.Acts.splitAtoms D) N
+  -- uses VE.Acts.ActsDoc.U@VE.Acts.Elaborate VE.Acts.ActsDoc@VE.Acts.Elaborate VE.Acts.SplitMap.rules@VE.Acts.Elaborate VE.Acts.SplitMap@VE.Acts.Elaborate VE.Acts.elaborateMap@VE.Acts.Elaborate VE.Acts.splitAtoms@VE.Acts.Elaborate VE.Acts.splitNode@VE.Acts.Elaborate VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree VE.Norms.Tree.nodes@VE.Norms.Tree
+  -- expr 141243226
 theorem VE.Acts.elaborate_faithful
   ∀ (D : VE.Acts.ActsDoc) {U' : VE.NormDefaults.UDoc},
     VE.Norms.WellFormed D.U.D = Bool.true →
@@ -1630,6 +1660,12 @@ theorem VE.Acts.splitDoc_none
   ∀ (D : VE.Acts.ActsDoc), VE.Acts.splitDoc D (fun x => Option.none) (VE.Acts.splitMap D fun x => Option.none) = D.U
   -- uses VE.Acts.ActsDoc.U@VE.Acts.Elaborate VE.Acts.ActsDoc@VE.Acts.Elaborate VE.Acts.Atom@VE.Acts.Tree VE.Acts.splitDoc@VE.Acts.Elaborate VE.Acts.splitMap@VE.Acts.Elaborate VE.NormDefaults.UDoc@VE.NormDefaults.Tree
   -- expr 3012397504
+theorem VE.Acts.splitMap_rules_built
+  ∀ (D : VE.Acts.ActsDoc) (sa : String → Option (List VE.Acts.Atom)) {x : String × String × Nat},
+    x ∈ (VE.Acts.splitMap D sa).rules →
+      ∃ N, N ∈ D.U.D.T.nodes ∧ x.snd.fst = N.name ∧ ∃ P, P ∈ VE.Acts.splitNode sa N ∧ P.name = x.fst
+  -- uses VE.Acts.ActsDoc.U@VE.Acts.Elaborate VE.Acts.ActsDoc@VE.Acts.Elaborate VE.Acts.Atom@VE.Acts.Tree VE.Acts.SplitMap.rules@VE.Acts.Elaborate VE.Acts.splitMap@VE.Acts.Elaborate VE.Acts.splitNode@VE.Acts.Elaborate VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree VE.Norms.Tree.nodes@VE.Norms.Tree
+  -- expr 97216312
 theorem VE.Acts.splits_eq
   ∀ {D : VE.Acts.ActsDoc} {Rs : List (List VE.Acts.Simple)},
     List.mapM (fun x => VE.Acts.readingOf D x.fst x.snd) D.acts = Except.ok Rs →
@@ -22711,6 +22747,26 @@ theorem VE.NormDefaults.Wire.conflictFreeCheckX_sound
         VE.NormDefaults.Wire.conflictFreeCheckX U X certs = Bool.true → VE.NormDefaults.Wire.ConflictFreeX U X
   -- uses VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.ConflictFreeX@VE.NormDefaults.Layered VE.NormDefaults.Wire.conflictFreeCheckX@VE.NormDefaults.LayeredEntail VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.WellFormed@VE.Norms.Tree VE.Tableau.Certificate@VE.Tableau
   -- expr 575553048
+theorem VE.NormDefaults.Wire.decodeRightsU_echo
+  ∀ {environment document : Lean.Json} {H : Option VE.Events.EventsHook} {L : VE.NormDefaults.Wire.LayeredU},
+    VE.NormDefaults.Wire.decodeRightsU environment document H = Except.ok L →
+      ∀ (rules : List String),
+        ∃ env' src,
+          VE.Rights.Wire.decodeRightsSource env' document = Except.ok src ∧
+            L.D = VE.Rights.correlate src.D ∧
+              ∀ (x : String × String),
+                x ∈ VE.NormDefaults.Wire.ruleSources L.sources rules →
+                  x.snd = x.fst ∨ x ∈ VE.NormDefaults.Wire.rightsSources src.D
+  -- uses VE.Events.EventsHook@VE.Events.Wire VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.sources@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.Wire.decodeRightsU@VE.NormDefaults.Layered VE.NormDefaults.Wire.rightsSources@VE.NormDefaults.Layered VE.NormDefaults.Wire.ruleSources@VE.NormDefaults.Explain VE.Rights.Wire.RightsSource.D@VE.Rights.Wire VE.Rights.Wire.RightsSource@VE.Rights.Wire VE.Rights.Wire.decodeRightsSource@VE.Rights.Wire VE.Rights.correlate@VE.Rights.Correlate VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree
+  -- expr 1692044769
+theorem VE.NormDefaults.Wire.decodeRightsU_sources
+  ∀ {environment document : Lean.Json} {H : Option VE.Events.EventsHook} {L : VE.NormDefaults.Wire.LayeredU},
+    VE.NormDefaults.Wire.decodeRightsU environment document H = Except.ok L →
+      ∃ env' src,
+        VE.Rights.Wire.decodeRightsSource env' document = Except.ok src ∧
+          L.D = VE.Rights.correlate src.D ∧ L.sources = VE.NormDefaults.Wire.rightsSources src.D
+  -- uses VE.Events.EventsHook@VE.Events.Wire VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.sources@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.Wire.decodeRightsU@VE.NormDefaults.Layered VE.NormDefaults.Wire.rightsSources@VE.NormDefaults.Layered VE.Rights.Wire.RightsSource.D@VE.Rights.Wire VE.Rights.Wire.RightsSource@VE.Rights.Wire VE.Rights.Wire.decodeRightsSource@VE.Rights.Wire VE.Rights.correlate@VE.Rights.Correlate VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree
+  -- expr 3181879213
 theorem VE.NormDefaults.Wire.decodeSoftU_X_wellFormed
   ∀ (environment norms : Lean.Json) (L : VE.NormDefaults.Wire.LayeredU),
     VE.NormDefaults.Wire.decodeSoftU environment norms = Except.ok L →
@@ -22731,6 +22787,16 @@ theorem VE.NormDefaults.Wire.decodeSoftU_source
                   L.route = "soft-norms@0"
   -- uses VE.Events.EventsHook@VE.Events.Wire VE.NormDefaults.Packs.Pack@VE.NormDefaults.Packs VE.NormDefaults.UDoc.mk@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.packs@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.route@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.Wire.decodeSoftU@VE.NormDefaults.Layered VE.NormDefaults.Wire.hookPacks@VE.NormDefaults.Layered VE.NormDefaults.Wire.hookView@VE.NormDefaults.Layered VE.NormDefaults.Wire.placeholderJson@VE.NormDefaults.Wire VE.NormDefaults.Wire.softPack@VE.NormDefaults.Layered VE.NormDefaults.Wire.unspecOf@VE.NormDefaults.Layered VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.Wire.SoftSource.D@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftSource@VE.SoftNorms.Wire VE.SoftNorms.Wire.decodeSoftSource@VE.SoftNorms.Wire VE.SoftNorms.soften@VE.SoftNorms.Soften
   -- expr 2430233262
+theorem VE.NormDefaults.Wire.decodeSoftU_sources
+  ∀ {environment norms : Lean.Json} {H : Option VE.Events.EventsHook} {L : VE.NormDefaults.Wire.LayeredU},
+    VE.NormDefaults.Wire.decodeSoftU environment norms H = Except.ok L → L.sources = []
+  -- uses VE.Events.EventsHook@VE.Events.Wire VE.NormDefaults.Wire.LayeredU.sources@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.Wire.decodeSoftU@VE.NormDefaults.Layered
+  -- expr 1533956624
+theorem VE.NormDefaults.Wire.decodeSourceUWith_sources
+  ∀ {joined : Bool} {environment norms : Lean.Json} {s : VE.NormDefaults.Wire.SourceU},
+    VE.NormDefaults.Wire.decodeSourceUWith joined environment norms = Except.ok s → s.sources = []
+  -- uses VE.NormDefaults.Wire.SourceU.sources@VE.NormDefaults.Wire VE.NormDefaults.Wire.SourceU@VE.NormDefaults.Wire VE.NormDefaults.Wire.decodeSourceUWith@VE.NormDefaults.Wire
+  -- expr 3246212754
 theorem VE.NormDefaults.Wire.decodeSourceU_plain
   ∀ {environment norms : Lean.Json} {s : VE.NormDefaults.Wire.SourceU},
     VE.NormDefaults.Wire.decodeSourceU environment norms = Except.ok s →
@@ -22762,6 +22828,19 @@ theorem VE.NormDefaults.Wire.grounding_ungrounded_iff
         VE.Bridge.lookup cited r.name = Option.none ∧ translation = Bool.true ∧ reachable = Bool.true
   -- uses VE.Bridge.lookup@VE.Bridge VE.NormDefaults.Completion.unspecified@VE.NormDefaults.Tree VE.NormDefaults.Completion@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.Grounding.ungrounded@VE.NormDefaults.Report VE.NormDefaults.Wire.Grounding@VE.NormDefaults.Report VE.NormDefaults.Wire.groundingOf@VE.NormDefaults.Report VE.NormDefaults.completionOf@VE.NormDefaults.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree
   -- expr 951398524
+theorem VE.NormDefaults.Wire.instancesOf_fan
+  ∀ {R : String} {S : VE.Rights.SourceLine} {k : Nat} {N : VE.Rights.Line},
+    N ∈ VE.Rights.instancesOf R S k →
+      N.bearer.isSome = Bool.true →
+        N.source = S ∧
+          ∃ n,
+            S.norm = Option.some n ∧
+              N.node =
+                { name := N.node.name, pred := N.node.pred, sign := n.sign, guard := n.guard, carveOuts := n.carveOuts,
+                  over := n.over, mode := n.mode, rank := n.rank, alterable := n.alterable, exception := n.exception,
+                  hard := n.hard, splitFrom := n.splitFrom }
+  -- uses VE.Norms.Node.carveOuts@VE.Norms.Tree VE.Norms.Node.guard@VE.Norms.Tree VE.Norms.Node.mk@VE.Norms.Tree VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node.over@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.Node.sign@VE.Norms.Tree VE.Rights.Line.bearer@VE.Rights.Tree VE.Rights.Line.node@VE.Rights.Tree VE.Rights.Line.source@VE.Rights.Tree VE.Rights.Line@VE.Rights.Tree VE.Rights.SourceLine.norm@VE.Rights.Tree VE.Rights.SourceLine@VE.Rights.Tree VE.Rights.instancesOf@VE.Rights.Tree VE.SoftNorms.SoftNode.alterable@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.exception@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.hard@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.mk@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.mode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.rank@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.splitFrom@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
+  -- expr 2029475867
 theorem VE.NormDefaults.Wire.kept_sound
   ∀ (U : VE.NormDefaults.UDoc) (M : VE.FiniteModel VE.Bridge.Entity) (K : List (String × List VE.Bridge.Entity))
     (R : String → List VE.Bridge.Entity → Prop),
@@ -22812,6 +22891,11 @@ theorem VE.NormDefaults.Wire.layered_wire_acceptance
       r.valid = Bool.true → VE.NormDefaults.EntailsX r.L.U r.L.X r.premises r.conclusion
   -- uses VE.NormDefaults.EntailsX@VE.NormDefaults.LayeredEntail VE.NormDefaults.Wire.LayeredEntailment.L@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Wire.LayeredEntailment.conclusion@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Wire.LayeredEntailment.premises@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Wire.LayeredEntailment.valid@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Wire.LayeredEntailment@VE.NormDefaults.LayeredAdmission VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.X@VE.NormDefaults.Layered VE.NormDefaults.Wire.replayLayeredEntailment@VE.NormDefaults.LayeredAdmission
   -- expr 2696466955
+theorem VE.NormDefaults.Wire.linesAux_mem
+  ∀ {R : String} {N : VE.Rights.Line} {L : List (String × VE.Rights.SourceLine)} {k : Nat},
+    (R, N) ∈ VE.Rights.linesAux L k → ∃ S k', (R, S) ∈ L ∧ N ∈ VE.Rights.instancesOf R S k'
+  -- uses VE.Rights.Line@VE.Rights.Tree VE.Rights.SourceLine@VE.Rights.Tree VE.Rights.instancesOf@VE.Rights.Tree VE.Rights.linesAux@VE.Rights.Tree
+  -- expr 3856390957
 theorem VE.NormDefaults.Wire.lookup_append
   ∀ {α : Type} (l₁ l₂ : List (String × α)) (k : String),
     VE.Bridge.lookup (l₁ ++ l₂) k =
@@ -22982,6 +23066,31 @@ theorem VE.NormDefaults.Wire.report_sound
     VE.NormDefaults.Wire.ReportSound src rep
   -- uses VE.NormDefaults.Wire.ReportG@VE.NormDefaults.Report VE.NormDefaults.Wire.ReportSound@VE.NormDefaults.Report VE.NormDefaults.Wire.ReportSource@VE.NormDefaults.Report
   -- expr 2486045729
+theorem VE.NormDefaults.Wire.rightsSources_built
+  ∀ (D : VE.Rights.RightsDoc) {y : String × String},
+    y ∈ VE.NormDefaults.Wire.rightsSources D →
+      (∃ R N n,
+          (R, N) ∈ VE.Rights.linesOf D ∧
+            N.source.norm = Option.some n ∧
+              (∃ S k, (R, S) ∈ VE.Rights.sourceLines D ∧ N ∈ VE.Rights.instancesOf R S k ∧ S.norm = Option.some n) ∧
+                N.node =
+                    { name := N.node.name, pred := N.node.pred, sign := n.sign, guard := n.guard,
+                      carveOuts := n.carveOuts, over := n.over, mode := n.mode, rank := n.rank, alterable := n.alterable,
+                      exception := n.exception, hard := n.hard, splitFrom := n.splitFrom } ∧
+                  y = (N.node.name, n.name)) ∨
+        ∃ m b,
+          b ∈ D.bars ∧
+            b.reading = VE.Rights.Reading.rule ∧ m ∈ VE.Rights.barPreds D ∧ y = ((VE.Rights.barNode D m).name, b.name)
+  -- uses VE.NormDefaults.Wire.rightsSources@VE.NormDefaults.Layered VE.Norms.Node.carveOuts@VE.Norms.Tree VE.Norms.Node.guard@VE.Norms.Tree VE.Norms.Node.mk@VE.Norms.Tree VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node.over@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.Node.sign@VE.Norms.Tree VE.Rights.Bar.name@VE.Rights.Tree VE.Rights.Bar.reading@VE.Rights.Tree VE.Rights.Bar@VE.Rights.Tree VE.Rights.Line.node@VE.Rights.Tree VE.Rights.Line.source@VE.Rights.Tree VE.Rights.Line@VE.Rights.Tree VE.Rights.Reading.rule@VE.Rights.Tree VE.Rights.Reading@VE.Rights.Tree VE.Rights.RightsDoc.bars@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.SourceLine.norm@VE.Rights.Tree VE.Rights.SourceLine@VE.Rights.Tree VE.Rights.barNode@VE.Rights.Correlate VE.Rights.barPreds@VE.Rights.Tree VE.Rights.instancesOf@VE.Rights.Tree VE.Rights.linesOf@VE.Rights.Tree VE.Rights.sourceLines@VE.Rights.Tree VE.SoftNorms.SoftNode.alterable@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.exception@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.hard@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.mk@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.mode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.rank@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.splitFrom@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
+  -- expr 3456494215
+theorem VE.NormDefaults.Wire.ruleSources_spec
+  ∀ (gen : List (String × String)) (rules : List String),
+    List.map (fun x => x.fst) (VE.NormDefaults.Wire.ruleSources gen rules) = rules ∧
+      ∀ (x : String × String),
+        x ∈ VE.NormDefaults.Wire.ruleSources gen rules →
+          (x.fst, x.snd) ∈ gen ∨ List.lookup x.fst gen = Option.none ∧ x.snd = x.fst
+  -- uses VE.NormDefaults.Wire.ruleSources@VE.NormDefaults.Explain
+  -- expr 3962981843
 theorem VE.NormDefaults.Wire.selectedRules_sound
   ∀ (U : VE.NormDefaults.UDoc) (M : VE.FiniteModel VE.Bridge.Entity) (ρ : List VE.Bridge.Entity) (p n : String),
     n ∈ VE.NormDefaults.Wire.selectedRules U M ρ p →

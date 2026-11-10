@@ -548,6 +548,7 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.Decode.decodeElaboratedU_wellFormed
 #print axioms VE.Acts.Decode.elaborateSource_s
 #print axioms VE.Acts.Decode.elaboratedU_elaborated
+#print axioms VE.Acts.Decode.elaboratedU_sources
 #print axioms VE.Acts.Decode.elaborated_definitions
 #print axioms VE.Acts.Decode.elaborated_lexical
 #print axioms VE.Acts.Decode.flaggedSource_elaborated
@@ -575,6 +576,7 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.Decode.norms_wire_conflict_refuted_elaborated
 #print axioms VE.Acts.Decode.sourceOf_U
 #print axioms VE.Acts.Decode.sourceOf_lexical
+#print axioms VE.Acts.Decode.sourceOf_sources
 #print axioms VE.Acts.Decode.splitEnv_route
 #print axioms VE.Acts.Decode.wellFormedU_D
 #print axioms VE.Acts.Examples.acceptsTable_terms
@@ -688,6 +690,7 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.elaborateMap_fst
 #print axioms VE.Acts.elaborateMap_ok
 #print axioms VE.Acts.elaborateMap_refsOk
+#print axioms VE.Acts.elaborateMap_sources
 #print axioms VE.Acts.elaborate_faithful
 #print axioms VE.Acts.elaborate_identity
 #print axioms VE.Acts.elaborate_ok
@@ -754,6 +757,7 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.specialises_refl
 #print axioms VE.Acts.specialises_trans
 #print axioms VE.Acts.splitDoc_none
+#print axioms VE.Acts.splitMap_rules_built
 #print axioms VE.Acts.splits_eq
 #print axioms VE.Acts.table_free_all_own
 #print axioms VE.Acts.table_free_all_own_split
@@ -3675,12 +3679,17 @@ import VE.WireContract.Engine
 #print axioms VE.NormDefaults.Wire.conflictFreeCheckU_sound
 #print axioms VE.NormDefaults.Wire.conflictFreeCheckX_nil
 #print axioms VE.NormDefaults.Wire.conflictFreeCheckX_sound
+#print axioms VE.NormDefaults.Wire.decodeRightsU_echo
+#print axioms VE.NormDefaults.Wire.decodeRightsU_sources
 #print axioms VE.NormDefaults.Wire.decodeSoftU_X_wellFormed
 #print axioms VE.NormDefaults.Wire.decodeSoftU_source
+#print axioms VE.NormDefaults.Wire.decodeSoftU_sources
+#print axioms VE.NormDefaults.Wire.decodeSourceUWith_sources
 #print axioms VE.NormDefaults.Wire.decodeSourceU_plain
 #print axioms VE.NormDefaults.Wire.decode_conservative
 #print axioms VE.NormDefaults.Wire.fillPremises_wellFormed
 #print axioms VE.NormDefaults.Wire.grounding_ungrounded_iff
+#print axioms VE.NormDefaults.Wire.instancesOf_fan
 #print axioms VE.NormDefaults.Wire.kept_sound
 #print axioms VE.NormDefaults.Wire.layeredKindCase_other
 #print axioms VE.NormDefaults.Wire.layered_cert_sound
@@ -3688,6 +3697,7 @@ import VE.WireContract.Engine
 #print axioms VE.NormDefaults.Wire.layered_entailment_of_valid
 #print axioms VE.NormDefaults.Wire.layered_report_sound
 #print axioms VE.NormDefaults.Wire.layered_wire_acceptance
+#print axioms VE.NormDefaults.Wire.linesAux_mem
 #print axioms VE.NormDefaults.Wire.lookup_append
 #print axioms VE.NormDefaults.Wire.normDefaults_wire_acceptance
 #print axioms VE.NormDefaults.Wire.normDefaults_wire_acceptanceIn
@@ -3707,6 +3717,8 @@ import VE.WireContract.Engine
 #print axioms VE.NormDefaults.Wire.reachedSome_of_fill
 #print axioms VE.NormDefaults.Wire.replayLayeredOn_L
 #print axioms VE.NormDefaults.Wire.report_sound
+#print axioms VE.NormDefaults.Wire.rightsSources_built
+#print axioms VE.NormDefaults.Wire.ruleSources_spec
 #print axioms VE.NormDefaults.Wire.selectedRules_sound
 #print axioms VE.NormDefaults.Wire.settled_every_filling
 #print axioms VE.NormDefaults.Wire.softLabelledU_wellFormed
