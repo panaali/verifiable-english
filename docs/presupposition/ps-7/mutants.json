@@ -1,0 +1,355 @@
+{
+ "replay": "apply one find/replace to `file`, then: cd lean && lake build VE.Presupposition.Events.Examples; restore. `test` lists the error locations of that build (a failing #guard in Events/Examples.lean, or, for a reading-row mutant, its `_eq` rfl statement and the `_defined` proof after it in Events.lean). Every mutant is KILLED (25/25).",
+ "mutants": [
+  {
+   "id": "M-stops-no-before",
+   "definition": "VE.Presupposition.Events.inProgressBefore",
+   "file": "lean/VE/Presupposition/Events.lean",
+   "mutant": "pre without before(u, t) (task seeded bug 1)",
+   "find": ".ex V.day (.and (.binary V.before (.var 0) (Term.shift t)) (inProgress V S (Term.shift x) (.var 0)))",
+   "replace": ".ex V.day (inProgress V S (Term.shift x) (.var 0))",
+   "test": [
+    "Events/Examples.lean:100",
+    "Events/Examples.lean:106",
+    "Events/Examples.lean:124",
+    "Events/Examples.lean:128",
+    "Events/Examples.lean:135",
+    "Events/Examples.lean:49",
+    "Events/Examples.lean:51",
+    "Events/Examples.lean:54"
+   ],
+   "language": "Lean"
+  },
+  {
+   "id": "M-ipb-lift-t",
+   "definition": "VE.Presupposition.Events.inProgressBefore",
+   "file": "lean/VE/Presupposition/Events.lean",
+   "mutant": "t not lifted past u (task seeded bug 5)",
+   "find": "(.binary V.before (.var 0) (Term.shift t)) (inProgress",
+   "replace": "(.binary V.before (.var 0) t) (inProgress",
+   "test": [
+    "Events/Examples.lean:106",
+    "Events/Examples.lean:114",
+    "Events/Examples.lean:99"
+   ],
+   "language": "Lean"
+  },
+  {
+   "id": "M-ipb-lift-x",
+   "definition": "VE.Presupposition.Events.inProgressBefore",
+   "file": "lean/VE/Presupposition/Events.lean",
+   "mutant": "x not lifted past u",
+   "find": "(inProgress V S (Term.shift x) (.var 0))",
+   "replace": "(inProgress V S x (.var 0))",
+   "test": [
+    "Events/Examples.lean:106"
+   ],
+   "language": "Lean"
+  },
+  {
+   "id": "M-ip-no-ends",
+   "definition": "VE.Presupposition.Events.inProgress",
+   "file": "lean/VE/Presupposition/Events.lean",
+   "mutant": "IP without the ends clause (task seeded bug 2)",
+   "find": "(.binary S.ends (Term.shift (Term.shift x)) (.var 0))\n      (.binary V.before (.var 0) (Term.shift (Term.shift t)))",
+   "replace": ".bottom .bottom",
+   "test": [
+    "Events/Examples.lean:101",
+    "Events/Examples.lean:102",
+    "Events/Examples.lean:124",
+    "Events/Examples.lean:144",
+    "Events/Examples.lean:43",
+    "Events/Examples.lean:44",
+    "Events/Examples.lean:50",
+    "Events/Examples.lean:51",
+    "Events/Examples.lean:54",
+    "Events/Examples.lean:58"
+   ],
+   "language": "Lean"
+  },
+  {
+   "id": "M-ip-no-begin-bound",
+   "definition": "VE.Presupposition.Events.inProgress",
+   "file": "lean/VE/Presupposition/Events.lean",
+   "mutant": "begin day after t allowed",
+   "find": "(.not (.binary V.before (Term.shift t) (.var 0)))",
+   "replace": ".top",
+   "test": [
+    "Events/Examples.lean:100",
+    "Events/Examples.lean:106",
+    "Events/Examples.lean:124",
+    "Events/Examples.lean:128",
+    "Events/Examples.lean:135",
+    "Events/Examples.lean:49",
+    "Events/Examples.lean:51",
+    "Events/Examples.lean:54"
+   ],
+   "language": "Lean"
+  },
+  {
+   "id": "M-ip-lift-t",
+   "definition": "VE.Presupposition.Events.inProgress",
+   "file": "lean/VE/Presupposition/Events.lean",
+   "mutant": "t not lifted past b",
+   "find": "(.not (.binary V.before (Term.shift t) (.var 0)))",
+   "replace": "(.not (.binary V.before t (.var 0)))",
+   "test": [
+    "Events/Examples.lean:100",
+    "Events/Examples.lean:106",
+    "Events/Examples.lean:124",
+    "Events/Examples.lean:128",
+    "Events/Examples.lean:135",
+    "Events/Examples.lean:49",
+    "Events/Examples.lean:51",
+    "Events/Examples.lean:54"
+   ],
+   "language": "Lean"
+  },
+  {
+   "id": "M-ip-lift-x-inner",
+   "definition": "VE.Presupposition.Events.inProgress",
+   "file": "lean/VE/Presupposition/Events.lean",
+   "mutant": "x lifted once past b and e",
+   "find": "(.binary S.ends (Term.shift (Term.shift x)) (.var 0))",
+   "replace": "(.binary S.ends (Term.shift x) (.var 0))",
+   "test": [
+    "Events/Examples.lean:102"
+   ],
+   "language": "Lean"
+  },
+  {
+   "id": "M-resumes-reversed",
+   "definition": "VE.Presupposition.Events.endedBefore",
+   "file": "lean/VE/Presupposition/Events.lean",
+   "mutant": "before(t, u) reversed (task seeded bug 3)",
+   "find": "(.binary S.ends (.var 1) (.var 0))\n    (.binary V.before (.var 0) (Term.shift (Term.shift t)))",
+   "replace": "(.binary S.ends (.var 1) (.var 0))\n    (.binary V.before (Term.shift (Term.shift t)) (.var 0))",
+   "test": [
+    "Events/Examples.lean:107",
+    "Events/Examples.lean:64",
+    "Events/Examples.lean:65",
+    "Events/Examples.lean:67"
+   ],
+   "language": "Lean"
+  },
+  {
+   "id": "M-resumes-lift",
+   "definition": "VE.Presupposition.Events.endedBefore",
+   "file": "lean/VE/Presupposition/Events.lean",
+   "mutant": "t lifted once past y and u",
+   "find": "(.binary S.ends (.var 1) (.var 0))\n    (.binary V.before (.var 0) (Term.shift (Term.shift t)))",
+   "replace": "(.binary S.ends (.var 1) (.var 0))\n    (.binary V.before (.var 0) (Term.shift t))",
+   "test": [
+    "Events/Examples.lean:107"
+   ],
+   "language": "Lean"
+  },
+  {
+   "id": "M-resumes-sort",
+   "definition": "VE.Presupposition.Events.endedBefore",
+   "file": "lean/VE/Presupposition/Events.lean",
+   "mutant": "another state sort's end",
+   "find": "(.binary S.ends (.var 1) (.var 0))\n",
+   "replace": "(.binary (V.states.getLastD S).ends (.var 1) (.var 0))\n",
+   "test": [
+    "Events/Examples.lean:107",
+    "Events/Examples.lean:64",
+    "Events/Examples.lean:65"
+   ],
+   "language": "Lean"
+  },
+  {
+   "id": "M-again-sort",
+   "definition": "VE.Presupposition.Events.occurredBefore",
+   "file": "lean/VE/Presupposition/Events.lean",
+   "mutant": "a different event sort (task seeded bug 4)",
+   "find": "(.binary E.on (.var 1) (.var 0))",
+   "replace": "(.binary (V.events.headD E).on (.var 1) (.var 0))",
+   "test": [
+    "Events/Examples.lean:110",
+    "Events/Examples.lean:75"
+   ],
+   "language": "Lean"
+  },
+  {
+   "id": "M-again-reversed",
+   "definition": "VE.Presupposition.Events.occurredBefore",
+   "file": "lean/VE/Presupposition/Events.lean",
+   "mutant": "before(t, u) reversed",
+   "find": "(.binary E.on (.var 1) (.var 0))\n    (.binary V.before (.var 0) (Term.shift (Term.shift t)))",
+   "replace": "(.binary E.on (.var 1) (.var 0))\n    (.binary V.before (Term.shift (Term.shift t)) (.var 0))",
+   "test": [
+    "Events/Examples.lean:110",
+    "Events/Examples.lean:75",
+    "Events/Examples.lean:77"
+   ],
+   "language": "Lean"
+  },
+  {
+   "id": "M-again-lift",
+   "definition": "VE.Presupposition.Events.occurredBefore",
+   "file": "lean/VE/Presupposition/Events.lean",
+   "mutant": "t lifted once past y and u",
+   "find": "(.binary E.on (.var 1) (.var 0))\n    (.binary V.before (.var 0) (Term.shift (Term.shift t)))",
+   "replace": "(.binary E.on (.var 1) (.var 0))\n    (.binary V.before (.var 0) (Term.shift t))",
+   "test": [
+    "Events/Examples.lean:110"
+   ],
+   "language": "Lean"
+  },
+  {
+   "id": "M-ret-no-at",
+   "definition": "VE.Presupposition.Events.endedAtBefore",
+   "file": "lean/VE/Presupposition/Events.lean",
+   "mutant": "drop at(y, p) (DRI ruling)",
+   "find": "(.binary atP (.var 1) (Term.shift (Term.shift p)))",
+   "replace": ".top",
+   "test": [
+    "Events/Examples.lean:86"
+   ],
+   "language": "Lean"
+  },
+  {
+   "id": "M-ret-reversed",
+   "definition": "VE.Presupposition.Events.endedAtBefore",
+   "file": "lean/VE/Presupposition/Events.lean",
+   "mutant": "before(t, u) reversed (DRI ruling)",
+   "find": "(.binary V.before (.var 0) (Term.shift (Term.shift t))) (.binary atP",
+   "replace": "(.binary V.before (Term.shift (Term.shift t)) (.var 0)) (.binary atP",
+   "test": [
+    "Events/Examples.lean:85",
+    "Events/Examples.lean:88",
+    "Events/Examples.lean:93"
+   ],
+   "language": "Lean"
+  },
+  {
+   "id": "M-ret-lift-p",
+   "definition": "VE.Presupposition.Events.endedAtBefore",
+   "file": "lean/VE/Presupposition/Events.lean",
+   "mutant": "p lifted once past y and u (DRI ruling)",
+   "find": "(.binary atP (.var 1) (Term.shift (Term.shift p)))",
+   "replace": "(.binary atP (.var 1) (Term.shift p))",
+   "test": [
+    "Events/Examples.lean:93"
+   ],
+   "language": "Lean"
+  },
+  {
+   "id": "M-ret-ends-begins",
+   "definition": "VE.Presupposition.Events.endedAtBefore",
+   "file": "lean/VE/Presupposition/Events.lean",
+   "mutant": "begins in place of ends (the unruled alternative)",
+   "find": "(.binary S.ends (.var 1) (.var 0)) (.and",
+   "replace": "(.binary S.begins (.var 1) (.var 0)) (.and",
+   "test": [
+    "Events/Examples.lean:85",
+    "Events/Examples.lean:89",
+    "Events/Examples.lean:93"
+   ],
+   "language": "Lean"
+  },
+  {
+   "id": "M-stops-row",
+   "definition": "VE.Presupposition.Events.stops",
+   "file": "lean/VE/Presupposition/Events.lean",
+   "mutant": "another pre",
+   "find": "Reading :=\n  generic (inProgressBefore V S x t) body\n/-- \"continues\"",
+   "replace": "Reading :=\n  generic (endedBefore V S t) body\n/-- \"continues\"",
+   "test": [
+    "Events.lean:64",
+    "Events.lean:65"
+   ],
+   "language": "Lean"
+  },
+  {
+   "id": "M-continues-row",
+   "definition": "VE.Presupposition.Events.continues",
+   "file": "lean/VE/Presupposition/Events.lean",
+   "mutant": "pre and body swapped",
+   "find": "Reading :=\n  generic (inProgressBefore V S x t) body\n/-- \"no longer\"",
+   "replace": "Reading :=\n  generic body (inProgressBefore V S x t)\n/-- \"no longer\"",
+   "test": [
+    "Events.lean:66",
+    "Events.lean:67"
+   ],
+   "language": "Lean"
+  },
+  {
+   "id": "M-noLonger-row",
+   "definition": "VE.Presupposition.Events.noLonger",
+   "file": "lean/VE/Presupposition/Events.lean",
+   "mutant": "pre and body swapped",
+   "find": "Reading :=\n  generic (inProgressBefore V S x t) body\n/-- \"resumes\"",
+   "replace": "Reading :=\n  generic body (inProgressBefore V S x t)\n/-- \"resumes\"",
+   "test": [
+    "Events.lean:68",
+    "Events.lean:69"
+   ],
+   "language": "Lean"
+  },
+  {
+   "id": "M-resumes-row",
+   "definition": "VE.Presupposition.Events.resumes",
+   "file": "lean/VE/Presupposition/Events.lean",
+   "mutant": "pre and body swapped",
+   "find": "Reading :=\n  generic (endedBefore V S t) body",
+   "replace": "Reading :=\n  generic body (endedBefore V S t)",
+   "test": [
+    "Events.lean:70",
+    "Events.lean:71"
+   ],
+   "language": "Lean"
+  },
+  {
+   "id": "M-again-row",
+   "definition": "VE.Presupposition.Events.again",
+   "file": "lean/VE/Presupposition/Events.lean",
+   "mutant": "pre and body swapped",
+   "find": "Reading :=\n  generic (occurredBefore V E t) body",
+   "replace": "Reading :=\n  generic body (occurredBefore V E t)",
+   "test": [
+    "Events.lean:72",
+    "Events.lean:73"
+   ],
+   "language": "Lean"
+  },
+  {
+   "id": "M-returnsTo-row",
+   "definition": "VE.Presupposition.Events.returnsTo",
+   "file": "lean/VE/Presupposition/Events.lean",
+   "mutant": "pre and body swapped",
+   "find": "Reading :=\n  generic (endedAtBefore V S atP p t) body",
+   "replace": "Reading :=\n  generic body (endedAtBefore V S atP p t)",
+   "test": [
+    "Events.lean:74",
+    "Events.lean:75"
+   ],
+   "language": "Lean"
+  },
+  {
+   "id": "M-locate-path",
+   "definition": "VE.Presupposition.Frame.locate",
+   "file": "lean/VE/Presupposition/Frame.lean",
+   "mutant": "ignores the path at a conjunction (review ps-1-review-ov F3; locate_plug still holds)",
+   "find": "| .and l a, 1 :: p => (Frame.locate a p).map (fun x => (Frame.andR l x.1, x.2))",
+   "replace": "| .and a r, 1 :: p => (Frame.locate a p).map (fun x => (Frame.andL x.1 r, x.2))",
+   "test": [
+    "Events/Examples.lean:155"
+   ],
+   "language": "Lean"
+  },
+  {
+   "id": "M-locate-orL-none",
+   "definition": "VE.Presupposition.Frame.locate",
+   "file": "lean/VE/Presupposition/Frame.lean",
+   "mutant": "the orL arm returns none (self-review C; locate_plug is vacuous on none)",
+   "find": "| .or a r, 0 :: p => (Frame.locate a p).map (fun x => (Frame.orL x.1 r, x.2))",
+   "replace": "| .or a r, 0 :: p => none",
+   "test": [
+    "Events/Examples.lean:154"
+   ],
+   "language": "Lean"
+  }
+ ]
+}
