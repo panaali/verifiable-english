@@ -63,7 +63,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [docs/profile-composition/](docs__profile-composition.md) — 5 modules — -
 - [docs/question-answering/](docs__question-answering.md) — 7 modules — -
 - [docs/readings-defaults/](docs__readings-defaults.md) — 7 modules — -
-- [docs/rights/](docs__rights.md) — 5 modules — -
+- [docs/rights/](docs__rights.md) — 6 modules — -
 - [docs/scale-choice-batch/](docs__scale-choice-batch.md) — 1 modules — -
 - [docs/scope/](docs__scope.md) — 9 modules — -
 - [docs/spec/](docs__spec.md) — 9 modules — -
@@ -80,7 +80,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/](lean.md) — 15 modules — This project uses Lean **4.24.0**, core Lean and `Std`, with no Mathlib or external Lake dependencies.
 - [lean/ResponseShape/](lean__ResponseShape.md) — 8 modules — -
 - [lean/ResponseShape/Encoders/](lean__ResponseShape__Encoders.md) — 32 modules — -
-- [lean/ResponseShape/Schemas/](lean__ResponseShape__Schemas.md) — 44 modules — -
+- [lean/ResponseShape/Schemas/](lean__ResponseShape__Schemas.md) — 45 modules — -
 - [lean/VE/](lean__VE.md) — 27 modules — -
 - [lean/VE/Acts/](lean__VE__Acts.md) — 33 modules — -
 - [lean/VE/Alternatives/](lean__VE__Alternatives.md) — 13 modules — -
