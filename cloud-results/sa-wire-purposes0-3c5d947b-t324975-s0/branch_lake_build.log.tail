@@ -1,0 +1,200 @@
+ve-stage enter main
+ve-stage begin admitS2
+ve-stage end ok admitS2
+ve-stage begin admitS2
+ve-stage end ok admitS2
+ve-stage begin admitNDFull
+ve-stage end ok admitNDFull
+ve-stage leave ok main
+ve-stage enter rs_a
+ve-stage begin admitS2
+ve-stage end ok admitS2
+ve-stage begin admitNDFull
+ve-stage end ok admitNDFull
+ve-stage leave ok rs_a
+ve-stage enter rs_b
+ve-stage begin admitS2
+ve-stage end ok admitS2
+ve-stage begin admitNDFull
+ve-stage end ok admitNDFull
+ve-stage leave ok rs_b
+ve-stage enter main
+ve-stage begin admitS2
+ve-stage end ok admitS2
+ve-stage begin admitS2
+ve-stage end ok admitS2
+ve-stage begin admitNDFull
+ve-stage end ok admitNDFull
+ve-stage leave ok main
+ve-stage enter rs_a
+ve-stage begin admitS2
+ve-stage end ok admitS2
+ve-stage begin admitNDFull
+ve-stage end ok admitNDFull
+ve-stage leave ok rs_a
+ve-stage enter rs_b
+ve-stage begin admitS2
+ve-stage end ok admitS2
+ve-stage begin admitNDFull
+ve-stage end ok admitNDFull
+ve-stage leave ok rs_b
+ve-stage enter main
+ve-stage leave ok main
+info: VE/Service/MemoExamples.lean:154:0: ve-stage enter main
+ve-stage begin admitS2
+ve-stage end ok admitS2
+ve-stage begin admitS2
+ve-stage end ok admitS2
+ve-stage begin admitNDFull
+ve-stage end ok admitNDFull
+ve-stage leave ok main
+ve-stage enter rs_a
+ve-stage begin admitS2
+ve-stage end ok admitS2
+ve-stage begin admitNDFull
+ve-stage end ok admitNDFull
+ve-stage leave ok rs_a
+ve-stage enter rs_b
+ve-stage begin admitS2
+ve-stage end ok admitS2
+ve-stage begin admitNDFull
+ve-stage end ok admitNDFull
+ve-stage leave ok rs_b
+ve-stage enter main
+ve-stage begin admitS2
+ve-stage end ok admitS2
+ve-stage begin admitS2
+ve-stage end ok admitS2
+ve-stage begin admitNDFull
+ve-stage end ok admitNDFull
+ve-stage leave ok main
+ve-stage enter rs_a
+ve-stage begin admitS2
+ve-stage end ok admitS2
+ve-stage begin admitNDFull
+ve-stage end ok admitNDFull
+ve-stage leave ok rs_a
+ve-stage enter rs_b
+ve-stage begin admitS2
+ve-stage end ok admitS2
+ve-stage begin admitNDFull
+ve-stage end ok admitNDFull
+ve-stage leave ok rs_b
+✔ [1327/1363] Built VE (941ms)
+✔ [1329/1363] Built ResponseShape.FitsTactic (11s)
+✔ [1330/1363] Built ResponseShape.Encoders.Common (2.2s)
+✔ [1331/1363] Built ResponseShape.Encoders.ActReadings (5.6s)
+✔ [1332/1363] Built ResponseShape.Encoders.Envelope (9.0s)
+✔ [1333/1363] Built ResponseShape.Encoders.Metered (13s)
+✔ [1334/1363] Built ResponseShape.Encoders.English (9.4s)
+✔ [1335/1363] Built ResponseShape.Encoders.Ask (34s)
+✔ [1336/1363] Built ResponseShape.Encoders.Words (3.0s)
+✔ [1337/1363] Built ResponseShape.Encoders.Question (4.4s)
+✔ [1338/1363] Built ResponseShape.Encoders.Calc (48s)
+✔ [1339/1363] Built ResponseShape.Encoders.Quantity (36s)
+✔ [1340/1363] Built ResponseShape.Encoders.SensesProject (43s)
+✔ [1341/1363] Built ResponseShape.Encoders.RiskEval (5.0s)
+✔ [1342/1363] Built ResponseShape.Encoders.Scope (9.6s)
+✔ [1343/1363] Built ResponseShape.Encoders.EnglishLean (7.7s)
+✔ [1344/1363] Built ResponseShape.Encoders.Standalone (20s)
+✔ [1345/1363] Built ResponseShape.Encoders.Command (8.8s)
+✔ [1346/1363] Built ResponseShape.Encoders.SearchBudget (4.0s)
+✔ [1347/1363] Built ResponseShape.Encoders.Document (52s)
+✔ [1348/1363] Built ResponseShape.Encoders.Conformance (17s)
+✔ [1349/1363] Built ResponseShape.Encoders.Route (22s)
+✔ [1350/1363] Built ResponseShape.Encoders.Family (72s)
+✔ [1351/1363] Built ResponseShape.Encoders.Cardinality (34s)
+✔ [1352/1363] Built ResponseShape.Encoders.Reports (29s)
+⚠ [1353/1363] Built ResponseShape.Encoders.Discourse (39s)
+warning: ResponseShape/Encoders/Discourse.lean:195:58: This simp argument is unused:
+  List.append_nil
+
+Hint: Omit it from the simp argument list.
+  simp only [List.cons_append, List.nil_append, L̵i̵s̵t̵.̵a̵p̵p̵e̵n̵d̵_̵n̵i̵l̵,̵ ̵choicesJson, jointJson]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+✔ [1354/1363] Built ResponseShape.Encoders.Norms (20s)
+✔ [1355/1363] Built ResponseShape.Encoders.SpeechActs (23s)
+✔ [1356/1363] Built ResponseShape.Encoders.SoftNorms (65s)
+⚠ [1357/1363] Built ResponseShape.Encoders.Alternatives (102s)
+warning: ResponseShape/Encoders/Alternatives.lean:40:83: This simp argument is unused:
+  Bool.false_eq_true
+
+Hint: Omit it from the simp argument list.
+  simp only [List.filterMap_cons, List.filterMap_nil, String.reduceEq, ↓reduceIte,̵ ̵B̵o̵o̵l̵.̵f̵a̵l̵s̵e̵_̵e̵q̵_̵t̵r̵u̵e̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ResponseShape/Encoders/Alternatives.lean:52:83: This simp argument is unused:
+  Bool.false_eq_true
+
+Hint: Omit it from the simp argument list.
+  simp only [List.filterMap_cons, List.filterMap_nil, String.reduceEq, ↓reduceIte,̵ ̵B̵o̵o̵l̵.̵f̵a̵l̵s̵e̵_̵e̵q̵_̵t̵r̵u̵e̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ResponseShape/Encoders/Alternatives.lean:87:83: This simp argument is unused:
+  Bool.false_eq_true
+
+Hint: Omit it from the simp argument list.
+  simp only [List.filterMap_cons, List.filterMap_nil, String.reduceEq, ↓reduceIte,̵ ̵B̵o̵o̵l̵.̵f̵a̵l̵s̵e̵_̵e̵q̵_̵t̵r̵u̵e̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ResponseShape/Encoders/Alternatives.lean:97:83: This simp argument is unused:
+  Bool.false_eq_true
+
+Hint: Omit it from the simp argument list.
+  simp only [List.filterMap_cons, List.filterMap_nil, String.reduceEq, ↓reduceIte,̵ ̵B̵o̵o̵l̵.̵f̵a̵l̵s̵e̵_̵e̵q̵_̵t̵r̵u̵e̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+⚠ [1358/1363] Built ResponseShape.Encoders.Rights (39s)
+warning: ResponseShape/Encoders/Rights.lean:98:31: This simp argument is unused:
+  entryJson
+
+Hint: Omit it from the simp argument list.
+  simp only [VE.Route.Wire.ok,̵ ̵e̵n̵t̵r̵y̵J̵s̵o̵n̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+⚠ [1359/1363] Built ResponseShape.Encoders.Risk (31s)
+warning: ResponseShape/Encoders/Risk.lean:17:59: unused variable `hobj`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: ResponseShape/Encoders/Risk.lean:41:56: unused variable `hobj`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: ResponseShape/Encoders/Risk.lean:49:62: unused variable `hobj`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+✔ [1360/1363] Built ResponseShape.Encoders.NormDefaults (134s)
+⚠ [1361/1363] Built ResponseShape.Encoders.ReadingsRoute (145s)
+warning: ResponseShape/Encoders/ReadingsRoute.lean:829:28: This simp argument is unused:
+  String.reduceEq
+
+Hint: Omit it from the simp argument list.
+  simp only [S̵t̵r̵i̵n̵g̵.̵r̵e̵d̵u̵c̵e̵E̵q̵,̵ ̵Bool.false_eq_true, String.reduceBEq] at *
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ResponseShape/Encoders/ReadingsRoute.lean:1243:27: This simp argument is unused:
+  List.toList_toArray
+
+Hint: Omit it from the simp argument list.
+  simp only [Json.getArr?,̵ ̵L̵i̵s̵t̵.̵t̵o̵L̵i̵s̵t̵_̵t̵o̵A̵r̵r̵a̵y̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ResponseShape/Encoders/ReadingsRoute.lean:1309:4: This simp argument is unused:
+  List.toList_toArray
+
+Hint: Omit it from the simp argument list.
+  simp only [getObjValD_set_eq wfe, getObjValD_of_ok hP, hPa, toJson_strings, Array.any_toList.symm,̵
+  ̵ ̵ ̵ ̵ ̵L̵i̵s̵t̵.̵t̵o̵L̵i̵s̵t̵_̵t̵o̵A̵r̵r̵a̵y̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ResponseShape/Encoders/ReadingsRoute.lean:1334:4: This simp argument is unused:
+  hl
+
+Hint: Omit it from the simp argument list.
+  simp only [getObjValD_set_eq wf, getObjValD_set_ne wf (show "environment" ≠ "kind" by decide), he,
+      getObjVal_set_ne wfe (show "profiles" ≠ "vocabulary" by decide), getObjVal_set_eq wfe, hP,̵
+  ̵ ̵ ̵ ̵ ̵h̵l̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+✔ [1362/1363] Built ResponseShape.Encoders (972ms)
+Build completed successfully (1363 jobs).
