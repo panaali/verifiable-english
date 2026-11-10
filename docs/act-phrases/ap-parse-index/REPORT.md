@@ -128,8 +128,8 @@ two literal mutants, refuted by the direct `#guard` on `idxGo` but read by the t
 
 ## Size
 
-`git diff --numstat a0102f0e5`, generated files out: about 670 lines added, over the ~600 guide (product Lean 270,
-fixtures and tests 175, evidence and these docs 225). The self-review's A finding (one reader per norms document)
+`git diff --numstat a0102f0e5`, generated files out: 708 lines added, over the ~600 guide (product Lean 232,
+fixtures and tests 132, evidence and these docs 343, tools 1). The self-review's A finding (one reader per norms document)
 and the DRI's fixture conditions came after the first measure; the bench (68 lines) was cut, nothing else is left out.
 
 ## Self-review against BUILDER-CHECKLIST
