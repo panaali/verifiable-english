@@ -16,6 +16,7 @@ from conformance.wire_contract_faults import catalogue, expected_record, rendere
 from conformance.wire_contract_faults_purposes import EXAMPLES, limit, link, refused
 from tests import lean_routes
 from ve.backends.lean_service import LeanService
+from ve.backends.relay import answer
 from ve.errors import CheckerUnavailable, VEError
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -138,16 +139,24 @@ def documents():
 
 
 def answers(executable=None):
-    """Each document's answer: the SHA-256 of its bytes (sorted keys, compact), its status, error and identities."""
-    with LeanService(executable) as service:
-        rows = service.run("document", [{"id": name, "document": text, "admit": False} for name, text in documents().items()])
-    return {row["id"]: {"sha256": hashlib.sha256(json.dumps({**row, "id": None}, sort_keys=True, separators=(",", ":")).encode()).hexdigest(), "status": row["status"],
+    """Each document's answer through the production relay (`executable`'s service when given): the SHA-256 of its
+    bytes (sorted keys, compact, without the case id), its status, error and identities."""
+    cases = [{"id": name, "document": text, "admit": False} for name, text in documents().items()]
+    if executable is None:
+        rows = [answer("document", case)[0] for case in cases]
+    else:
+        with LeanService(executable) as service:
+            rows = service.run("document", cases)
+    def digest(row):
+        return hashlib.sha256(json.dumps({**row, "id": None}, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+    return {row["id"]: {"sha256": digest(row), "status": row["status"],
                         **{k: row[k] for k in ("error", "document_id", "source_id") if k in row}} for row in rows}
 
 
 def record(executable):
     """Write `MAIN` from the merge base's `ve_service` (run once, by hand, before the contract existed)."""
-    MAIN.write_text(json.dumps(answers(executable), indent=1, sort_keys=True) + "\n")
+    rows = sorted(answers(executable).items())
+    MAIN.write_text("{\n" + ",\n".join(f"{json.dumps(k)}: {json.dumps(v, sort_keys=True)}" for k, v in rows) + "\n}\n")
 
 
 def test_the_contract_is_off_the_verdict_and_identity_paths():
