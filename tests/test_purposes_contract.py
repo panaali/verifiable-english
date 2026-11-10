@@ -121,6 +121,14 @@ def test_the_relay_refuses_a_retyped_or_rebound_record():
                         (d + ("revision",), "1"), (d + ("contract",), "acts@0"), (d + ("extra",), 1)]:
         with pytest.raises(CheckerUnavailable):
             bound(mutated(path, value))
+    deep = []
+    for _ in range(10_000):
+        deep = [deep]
+    fields = [(k,) for k in ("status", "outcome", "diagnostic")] + [d + (k,) for k in genuine["diagnostic"]]
+    for path in fields + [d + ("args", k) for k in genuine["diagnostic"]["args"]]:
+        for value in (KeyError, 7, True, None, [], {}, 1.5, "\ud800", deep):
+            with pytest.raises(CheckerUnavailable):
+                bound(mutated(path, value))
 
 
 def test_the_adapters_read_the_case_block():

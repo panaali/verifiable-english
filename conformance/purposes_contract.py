@@ -43,7 +43,8 @@ def bound(row):
         return None
     if type(record) is not dict:
         raise CheckerUnavailable("diagnose: a purposes@0 fault has no record", operation="diagnose")
-    fixed, template = members().get(record.get("check"), (None, None))
+    check = record.get("check")
+    fixed, template = members().get(check, (None, None)) if type(check) is str else (None, None)
     args = record.get("args")
     if (fixed is None or set(record) != {*fixed, "text", "args"} or any(type(record[k]) is not type(v) or record[k] != v for k, v in fixed.items())
             or type(args) is not dict or set(args) != {p[1] for p in template if p[0] == "arg"}
