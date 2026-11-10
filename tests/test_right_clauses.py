@@ -255,9 +255,11 @@ def test_right_clauses_environment_texts_kept():
 def test_right_clauses_environment_and_model_answer_as_without_the_profile(service):
     """DRI condition (dri-decisions-20261109-cmp-s3-cfr-1 item 4): the profile carries nothing into the environment and
     model modes. The environment mode answers an environment listing `right-clauses@0` as the same environment without
-    it, but for the profile list it echoes and the identity, which binds that list (spec 3). The model mode decides no model under the profile:
-    it refuses the name as on main, and the same model without it is valid. Python's model view drops the profile
-    (`MODEL_REDUCTIONS`), so no relay asks it."""
+    it, but for the profile list it echoes and the identity, which binds that list (spec 3). The model mode decides no model under the profile.
+    Lean checks the environment, then the model's tables, then the profile list: a well-formed model is refused by the
+    name, as on main, and the same model without it is valid; a faulty model gets the answer it gets without the profile
+    (cmp-s3-cfr-1 review F2: main refused it by the name). Python's model view drops the profile (`MODEL_REDUCTIONS`),
+    so no relay asks it."""
     on, off = (exchange(service, "environment", [{"id": "e", "environment": environment(ps)}])[0] for ps in (ON, OFF))
     assert on["environment_id"] != off["environment_id"] and on["profiles"] == ON and off["profiles"] == OFF
     bound = ("environment_id", "profiles")
@@ -274,6 +276,16 @@ def test_right_clauses_environment_and_model_answer_as_without_the_profile(servi
                for ps in (ON, OFF))
     assert on == {"id": "m", "status": "error", "error": "UnsupportedProfile: Unsupported profile right-clauses@0"}
     assert off["status"] == "ok" and off["valid"] is True
+    # review F2's two faulty models: the same InvalidModel answer, text and path, with and without the profile
+    for faulty, error, path in ((_replaced(model, ("relations", "charged", 0, 0), "zed"),
+                                 "InvalidModel: relation tuple contains a dangling or wrong-sort entity",
+                                 "/relations/charged/0/0"),
+                                (_replaced(model, ("relations", "charged"), 5),
+                                 "InvalidModel: relation must be an array", None)):
+        on, off = (exchange(service, "model", [{"id": "m", "environment": environment(ps), "model": faulty}])[0]
+                   for ps in (ON, OFF))
+        assert on == off and off["status"] == "error" and off["error"] == error
+        assert path is None or off["path"] == path
     # the path a model request takes: Python's model view of the environment, then Lean's model mode
     from ve.profiles import model_environment
     viewed = [model_environment(environment(ps)) for ps in (ON, OFF)]
@@ -281,3 +293,56 @@ def test_right_clauses_environment_and_model_answer_as_without_the_profile(servi
     on = exchange(service, "model", [{"id": "m", "environment": viewed[0], "model": model}])[0]
     assert on == exchange(service, "model", [{"id": "m", "environment": viewed[1], "model": model}])[0]
     assert on["status"] == "ok" and on["valid"] is True
+
+
+def _replaced(value, path, new):
+    """`value` with the node at `path` replaced by `new` (a copy)."""
+    if not path:
+        return new
+    out = deepcopy(value)
+    node = out
+    for key in path[:-1]:
+        node = node[key]
+    node[path[-1]] = new
+    return out
+
+
+def _node_paths(value, path=()):
+    yield path
+    items = value.items() if isinstance(value, dict) else enumerate(value) if isinstance(value, list) else ()
+    for key, child in items:
+        yield from _node_paths(child, (*path, key))
+
+
+def test_right_clauses_model_mode_faulty_models_answer_as_without_the_profile(service):
+    """Review F2 as a class: every one-node mutation of a valid 9.1 model (each node replaced by 7, true, null, [], {}
+    or a dangling entity, and each object key dropped) gets, with `right-clauses@0` listed, exactly the answer it gets
+    without the profile when that answer is a fault; a model that holds without the profile is refused by the name.
+    So the model mode decides no model under the profile, and adds no answer of its own (DELTA row 1)."""
+    model = {"complete": True, "domains": {"state": ["texas"], "person": ["ann", "bob"]},
+             "constants": {"texas": "texas", "ann": "ann", "bob": "bob"},
+             "relations": {"charged": [["ann"]], "country_of": [["texas", "ann"]], "public_service_access_required": []}}
+    mutants = []
+    for path in _node_paths(model):
+        mutants += [_replaced(model, path, new) for new in (7, True, None, [], {}, "zed")]
+        if path:
+            parent = model
+            for key in path[:-1]:
+                parent = parent[key]
+            if isinstance(parent, dict):
+                dropped = deepcopy(model)
+                node = dropped
+                for key in path[:-1]:
+                    node = node[key]
+                del node[path[-1]]
+                mutants.append(dropped)
+    on, off = ([{"id": f"m{i}", "environment": environment(ps), "model": m} for i, m in enumerate(mutants)]
+               for ps in (ON, OFF))
+    on, off = exchange(service, "model", on), exchange(service, "model", off)
+    refused = {"status": "error", "error": "UnsupportedProfile: Unsupported profile right-clauses@0"}
+    faulty = [i for i, answer in enumerate(off) if answer["status"] == "error"]
+    for a, b in zip(on, off):
+        assert a == (b if b["status"] == "error" else {"id": b["id"], **refused}), (a, b)
+    # the sweep reaches both sides: faulty models of several kinds, and models that hold without the profile
+    assert len(faulty) >= 40 and len(mutants) - len(faulty) >= 1
+    assert len({off[i]["error"] for i in faulty}) >= 4 and any("path" in off[i] for i in faulty)
