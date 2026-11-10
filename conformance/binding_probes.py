@@ -217,6 +217,9 @@ BUILDERS = {
     ("english.admission", S, "english.check", None): lambda: _english_case("english.check"),
     ("question.read", S, "english.question", None): lambda: _english_case("english.question"),
     ("question.answer", S, "ask", None): _ask,
+    # commands-imperatives CI-2: the service corpus's first command request ("Click Check.", one reading).
+    ("command.read", S, "english.command", None): lambda: __import__(
+        "tests.lean_service_corpus", fromlist=["command_cases"]).command_cases()[0],
     ("wire.diagnose", S, "diagnose", "soft-elaborate"):
         lambda: {"id": "wire-soft", "kind": "soft-elaborate", "unit": "soft-norms@0",
                  "environment": _soft_wire_root()["environment"], "norms": []},
