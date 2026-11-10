@@ -2462,6 +2462,13 @@
    "reason": "en-e3a: Norm/Run.lean +110, Norm/Owners.lean +36, Norm/Rules.lean +13, EnglishGrammar/Run.lean +8 (K +0, S +46, V +121; trusted +167; statementSpans, sentenceBytes, opensStatement classed G[V])",
    "signature": "SIGNED by the DRI 2026-11-09 (reviews/dri-decisions-20261109-en-e3a-2.md item 1)",
    "commit": "a0102f0e5350727e99ddcae2e0b59ed03f2f4192"
+  },
+  {
+   "class": "V",
+   "lines": 14,
+   "reason": "rights-cfr-2-budget-1: VE/Rights/Run.lean +9 V (exhibitedText, weighingGloss, conflictBudget/conflictAnswerOf docstrings), VE/SoftNorms/Run.lean +5 V (conflictFreeText, openAfterClassification on Wire.openCoherence); K +0, S +0; each new definition exercised by a #guard that fails on its seeded bug (RightsChecks.lean :61, :62, :66; SoftNorms/Run.lean :127)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), rights-cfr-2-budget-1, 2026-11-10",
+   "commit": "f3f40d51dc6dfffeb57834ee5652ff7b514eaeed"
   }
  ]
 }

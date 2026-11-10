@@ -417,7 +417,8 @@ def exhibit (src : RightsSource) (j : Json) : Except String (Option (VE.FiniteMo
     pure (some M)
   | .error _ => pure none
 
-/-- The budget the rights route quotes (7.3: `UNKNOWN (<budget>)`). No situation is searched for here. -/
+/-- The budget the rights route quotes: beside UNKNOWN, and as unused beside a CONFLICT-FREE answer with no
+situation supplied (`exhibitedText`). No situation is searched for here. -/
 def conflictBudget : Nat := 10000
 
 /-- 7.3's situation part on this route: `yes` for the request's checked situation; with none supplied, no search ran,
@@ -425,8 +426,8 @@ so the line says so and that the budget went unused (rights-cfr-2-budget-1), nev
 def exhibitedText (supplied : Bool) : String :=
   if supplied then "yes" else s!"none supplied (not searched; budget {conflictBudget} unused)"
 
-/-- What this route's `<j>` counts (7.3), named after it: WP(T) with no pair evidence (`openCoherence`); the soft
-route's `<j>` is its `conditional_on` instead (docs/rights/rights-cfr-2-budget-1/REPORT.md). -/
+/-- What `<j>` counts (7.3), named after it: WP(T) with no pair evidence (`openCoherence`), the soft route's
+`openAfterClassification` with none discharged (docs/rights/rights-cfr-2-budget-1/REPORT.md). -/
 def weighingGloss : String := "colliding default pairs no ranking resolves"
 
 /-- A rights-conflict answer over certificate packages, from the replay's verdict `free`, its first failing certificate

@@ -1,0 +1,14 @@
+# Would the soft line's printed <j> move if it counted WP(T) (openLabels) instead of repeating <k> (conditional)?
+# A temporary probe build of lean/VE/SoftNorms/Run.lean (soft-conflict branch, before the status text; not committed):
+#     if res.conflictFree && openLabels.length != conditional.length then
+#       throw s!"BUDGET1-PROBE: j {conditional.length} -> {openLabels.length}"
+# ve_service built from it, pinned in a scratch lock entry (restored after), then:
+VE_NATIVE_PREBUILT=1 uv run pytest -q -n 8 tests/test_soft_norms_lean.py tests/test_readings_s2_document.py \
+  tests/test_readings_nd_lean.py tests/test_relay_binding_inventory.py tests/test_norm_defaults_soft_kinds.py \
+  tests/test_rd9_soft_split.py tests/test_soft_candidate_economy.py tests/test_soft_decision_keys.py \
+  tests/test_soft_norms_conformance.py tests/test_soft_request_economy.py tests/test_soft_review_regressions.py \
+  tests/test_softnorms_contract.py tests/test_softnorms_public_contract.py tests/test_wire_contract_soft_lean.py \
+  tests/test_route_row_schemas.py tests/test_lean_handles.py tests/test_rights_report_parts.py tests/test_rights_lean.py
+# -> rc=0, 893 passed in 564.18s; "BUDGET1-PROBE" occurrences in the log: 0.
+# The same probe build on soft_count_edge_cases.py (one default guarded by bottom, two pairs one guarded by bottom,
+# a contradictory guard): every case CONFLICT-FREE with <k> = <j> (1/1, 2/2, 1/1); the probe did not fire.
