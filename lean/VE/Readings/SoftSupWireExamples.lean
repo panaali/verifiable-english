@@ -246,6 +246,6 @@ run_meta do
   let some (.defnInfo d) := (← getEnv).find? ``sdSuperposable | throwError "sdSuperposable is not a definition"
   let first ← Meta.lambdaTelescope d.value fun _ b => pure (firstConjunct b)
   unless first.isAppOf ``decide && (first.find? (·.isConstOf ``sdSizeCharge)).isSome do
-    throwError "sdSuperposable reads {first} first, not the size charge"
+    throwError "sdSuperposable reads {first.getAppFn.constName?} first, not the size charge"
 
 end VE.Readings.SoftSupWireExamples
