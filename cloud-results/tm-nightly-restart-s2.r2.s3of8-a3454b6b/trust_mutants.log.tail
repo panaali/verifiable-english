@@ -1,0 +1,8 @@
+trust_mutants: 19 definitions, 71 mutants (9 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/Purposes/WellFormed.lean:170 VE.Purposes.WellFormed (S, trusted) eq-ne: = -> ≠ (lean/VE/Purposes/Examples.lean:275: Expression (VE.Purposes.Examples.wfDecidable, which it reads,...)
+UNKNOWN lean/VE/Commands/Steps.lean:112 VE.Commands.shapeOutcome (G[V], trusted) list-empty: alts -> [] (lean/VE/Commands/StepsExamples.lean:79: Expression (it computes through a proof the mutant broke ...)
+trust_mutants: 6 KILLED, 0 SURVIVOR, 2 UNKNOWN, 1 INVALID, 0 ALLOWED, 0 NOT RUN, 62 OTHER SHARD in 219 s
+trust_mutants: D[V], trusted: 16 OTHER SHARD
+trust_mutants: G[V], trusted: 4 KILLED, 1 UNKNOWN, 1 INVALID, 33 OTHER SHARD
+trust_mutants: S, trusted: 2 KILLED, 1 UNKNOWN, 13 OTHER SHARD
+trust_mutants: steps: wall plan 9.4 s, scratch 6.4 s, control_build 0.5 s, probe_install 1 s, mutants 195.6 s, cleanup 6 s, reads 0.1 s; lake control_build 0.4 s (1), probe_install 1 s (1), control_probes 29.1 s (8), mutant_builds 79.1 s (13), mutant_checks 263.3 s (10), stage_controls 66.2 s (6), mutant_probes 36.9 s (8)
