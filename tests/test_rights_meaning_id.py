@@ -59,6 +59,32 @@ def test_rights_meaning_id_binds_environment():
     assert rights_meaning_id(_env(), content) != rights_meaning_id(RightsEnvironment(_soft_raw_env()), content)
 
 
+def test_rights_meaning_id_accepts_readings_rights_environment():
+    from tests.test_readings_s1_lean import env_rights
+    env = D._environment(env_rights())
+    content = right()
+    assert rights_meaning_id(env, content) == rights_meaning_id(env, _with(content, "norm", mode="strict"))
+
+
+def test_rights_identity_keeps_nonrights_content_in_soft_environment():
+    from ve.softnorms import soft_digest
+    raw = _soft_raw_env()
+    raw["profiles"] = [profile for profile in raw["profiles"] if profile != "rights@0"]
+    raw["vocabulary"].pop("rights")
+    env = D._environment(raw)
+    content = {"norm": right()["right"]["lines"][0]["norm"], "cites": {"r": ["l"]}}
+    assert rights_meaning_id(env, content) == soft_digest(
+        f"ve-meaning-{env.identity_version}\n", {"environment_id": env.environment_id, "ast": content})
+
+
+def test_rights_identity_does_not_admit_generated_soft_frame(tmp_path):
+    from tests.test_b16e_rights_document import _both, _text
+    path = tmp_path / "generated.ve.md"
+    path.write_text(_text(4))
+    decided, lean, retained = _both(path)
+    assert decided and lean == retained
+
+
 def _with(content, slot, **soft):
     content = deepcopy(content)
     body = next(iter(content.values()))
