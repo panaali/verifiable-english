@@ -1,0 +1,9 @@
+trust_mutants: 64 definitions, 81 mutants (27 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/Presupposition/Admit.lean:89 VE.Presupposition.withObligations (G[V], trusted) eq-ne: == -> != (lean/VE/Presupposition/Examples.lean:0: maximum number of errors (100; from option `maxErrors`) r...)
+UNKNOWN lean/VE/SpeechActs/Source/Run.lean:804 VE.SpeechActs.Source.decodeSpeechSource (D[V], trusted) eq-ne: = -> ≠ (lean/VE/SpeechActs/Source/Run.lean:807: Application type mismatch: The argument)
+UNKNOWN lean/VE/Commands/Steps.lean:95 VE.Commands.shapeOutcome (G[V], trusted) ne-eq: != -> == (lean/VE/Commands/StepsExamples.lean:73: Expression (it computes through a proof the mutant broke ...)
+trust_mutants: 24 KILLED, 0 SURVIVOR, 3 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 54 OTHER SHARD in 1810 s
+trust_mutants: D[V], trusted: 4 KILLED, 1 UNKNOWN, 12 OTHER SHARD
+trust_mutants: G[V], trusted: 7 KILLED, 2 UNKNOWN, 19 OTHER SHARD
+trust_mutants: S, trusted: 13 KILLED, 23 OTHER SHARD
+trust_mutants: steps: wall plan 9.4 s, scratch 6 s, control_build 0.3 s, probe_install 1 s, mutants 1787.2 s, cleanup 6.2 s, reads 0.1 s; lake control_build 0.3 s (1), probe_install 1 s (1), control_probes 171.5 s (25), mutant_builds 152.6 s (35), mutant_checks 3689.2 s (37), stage_controls 1069.7 s (11), mutant_probes 256.9 s (26)
