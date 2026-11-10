@@ -2,7 +2,7 @@
 
 No DRI signature is reserved in this item. There are no DELTA rows (DELTA.md): no route reads the report until PS-4.
 Status: built; HEAD in "Final checks". `lean/VE/Presupposition/Run.lean`: `shown`, the `presuppositions` field PS-4 puts
-in the document mode's answer, read off `admit`, with 38 guards. Trust V +109, K +0 (R16); R16 sweep 132 KILLED,
+in the document mode's answer, read off `admit`, with 45 guards. Trust V +109, K +0 (R16); R16 sweep 132 KILLED,
 0 SURVIVOR, 0 UNKNOWN. Selected tests: 117 units, 0 failed (2966efed3). DRI rulings: reviews/dri-decisions-20261110-ps-2ac-layer.md
 items 1-2, -ps-2ac-report.md items 1-2, -ps-2ac-size.md item 1. Next: ps-4.
 
@@ -14,7 +14,7 @@ Branch `feature/ps-2ac`, merge base a5088a09b (main, ps-2ab merged). Command out
 
 - **ps-2ab merged.** `admit`, `admitWith`, `admitWrapped` and A1-A28 are on main; no type Run.lean needs was missing.
 - **Statement gate.** PASSED, as the task states. `evidence/probe.py` (output in `evidence/tests.txt`): none of Run.lean's
-  43 declarations is named in the spec's Lean blocks or the PS-S stub, so none can differ; ps-2ab's probe rerun: the
+  45 declarations (43 at the build; F1 added `refusal`, `docEmpty`) is named in the spec's Lean blocks or the PS-S stub, so none can differ; ps-2ab's probe rerun: the
   19 statements are 19/19 equal to spec 4.7. This item adds no theorem.
 - **Read-only files** (Admit, Wire, Frame, Reading, Rows, Rules, Agree, `Protocol.lean`, `service_schema.py`):
   unchanged (changed-file list in "Final checks").
@@ -106,7 +106,7 @@ one that breaks a guard; `Row` has one too (fields `id` and `unit` swapped, :173
 
 `tools/trust_map.py --check` PASS against a5088a09b523: trusted +109 (all untied G[V] in Run.lean: `Outcome`, `Line`,
 `Goal`, `Row`, `Shown`, `Inconsistency`, `lexiconOk`, `lineOf`, `englishLine`, `outcomeOf`, `checkedRow`, `docPremise`,
-`refutedLines`, `shownOf`, `shown`), K +0, S +0, unclassified +0; G[R] `maxLexicon`, `maxLineNodes`; T 26 guard
+`refutedLines`, `shownOf`, `shown`), K +0, S +0, unclassified +0; G[R] `maxLexicon`, `maxLineNodes`; T 28 guard
 fixtures. `docs/trust-baseline.json`: allowance V +109, "SIGNED by standing ruling R16 (DRI-RULINGS.md), ps-2ac,
 2026-10-18" (within 150, no K growth, every new trusted definition broken by a guard: the sweep below). FOLLOW-UPS.md
 "## ps-2ac" has the ties-pass row.
@@ -116,8 +116,24 @@ lean/VE/Presupposition/Run.lean`, on the VM: no Mac slot). Run 1 (fb4406aaf, 772
 30 UNKNOWN, 28 INVALID. The survivors were list positions and boundaries the guards did not move; each now has a guard
 (:185, :207, :218-226, :292-296). The UNKNOWNs do not elaborate. Run 2 (0763bcc70, full: Run.lean changed, 784 s) and
 the rescore after an allow-only edit (111 s): **132 KILLED, 0 SURVIVOR, 0 UNKNOWN, 28 INVALID, 33 ALLOWED, exit 0**.
+Run 3 after review F1 (968b2248f, full: the guards changed, on ve-cloud-3, 639 s): the same counts, exit 0.
 `trust-mutants-allow.json`: 30 do not elaborate; 3 equivalent `lineOf` mutants (`(s.take 1).isEmpty` is `s.isEmpty`;
 in the punctuation branch the word is one character, so `w.take 1` is `w`; applied by hand, the build passes).
+
+## Review fix (F1)
+
+The review (ps-2ac-review.final.md, F1, A, text only) found that this REPORT and Run.lean's header said every refusal's
+diagnostic names its obligation. Three of step 5's refusals name none, and an empty block's tree refusal quotes an
+empty id. Fixed as a class: both records now say which step names what ("What the value is"), and guards :309-340 pin
+each step through `RunExamples.refusal` (diagnostic, obligation quoted, unit quoted): step 2 (the second `p2`), step 3
+(A11, the unit's first), step 4 (A20, A18), step 5 readings (`notSeparatedText` on the review's `docNeg`,
+`needsModelText` on A1, `softText` on A26), and step 5's tree check (first obligation; none on an empty block).
+`admit` is unchanged (no diagnostic, verdict or DELTA row). The review's probe exits 1 before the fix and 0 after.
+Seeded bugs (`mutants.json`, 3 more, each applied alone and restored): M-F1-firstOb-empty breaks :340,
+M-F1-outcome-names breaks :329 and the rest of :319-340, M-F1-quotes-const breaks :319-326 and :337. Fix size: Run.lean
++38 -1 (header: 4 comment lines for 1; 34 guards and fixtures), REPORT, `mutants.json` +3 rows, `trust-classes.json` +2. The earlier "Run.lean:N"
+references here and in `mutants.json` were shifted by the header's +3 lines; `evidence/tests.txt` keeps the build's
+output verbatim (its line numbers are the build's).
 
 ## Size, bytes, evaluators
 
