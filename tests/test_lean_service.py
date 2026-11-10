@@ -1399,7 +1399,9 @@ _SCHEMA_SEEDS = {
     "senses.project": ({"id": "c", "lines": "", "used": []},
                        {"id": "c", "status": "ok", "result": {"dictionary_id": "a" * 64, "senses_version": "1",
                         "projection": {"status": "rejected", "code": "MalformedPreamble", "details": {"line": 0}}}}),
-    "norm-defaults": ({"id": "c", "kind": "norm-defaults-certificate"},
+    # Bound (`bind_answers`): a certificate bound to no premise beyond the case's (none) counts 0.
+    "norm-defaults": ({"id": "c", "kind": "norm-defaults-certificate", "premises": [],
+                       "certificate": {"premise_meaning_ids": []}},
                       {"id": "c", "status": "ok", "valid": True, "premises": 0}),
     "discourse": ({"id": "c", "kind": "discourse-validity"}, {"id": "c", "status": "ok", "validity": {}}),
     "readings-route": ({"id": "c", "kind": "readings-validate"},
