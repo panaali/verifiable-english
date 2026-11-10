@@ -1,0 +1,10 @@
+trust_mutants: 35 definitions, 41 mutants (8 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/Commands/Steps.lean:196 VE.Commands.combineShapes (G[V], trusted) list-empty: os -> [] (lean/VE/Commands/Steps.lean:197: Invalid dotted identifier notation: The expected type of `.refus...)
+UNKNOWN lean/VE/Readings/SoftSupLabels.lean:44 VE.Readings.sdShown (G[V], trusted) list-empty: (labelImage N c) -> [] (lean/VE/Readings/SoftSupLabels.lean:44: Invalid projection: Type of)
+UNKNOWN lean/VE/Senses/Run.lean:460 VE.Senses.Run.readCase (G[V], trusted) list-empty: out -> [] (lean/VE/Senses/Run.lean:460: Application type mismatch: The argument)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:168 VE.Purposes.WellFormed (S, trusted) and-or: ∧ -> ∨ (lean/VE/Purposes/Examples.lean:278: Expression (VE.Purposes.Examples.wfDecidable, which it reads,...)
+trust_mutants: 3 KILLED, 0 SURVIVOR, 4 UNKNOWN, 1 INVALID, 0 ALLOWED, 0 NOT RUN, 33 OTHER SHARD in 408 s
+trust_mutants: D[V], trusted: 1 KILLED, 9 OTHER SHARD
+trust_mutants: G[V], trusted: 1 KILLED, 3 UNKNOWN, 1 INVALID, 16 OTHER SHARD
+trust_mutants: S, trusted: 1 KILLED, 1 UNKNOWN, 8 OTHER SHARD
+trust_mutants: steps: wall plan 16.2 s, scratch 4.8 s, control_build 0.3 s, probe_install 1.5 s, mutants 381.9 s, cleanup 3.5 s, reads 0.1 s; lake control_build 0.3 s (1), probe_install 1.5 s (1), control_probes 20.2 s (4), mutant_builds 82.2 s (10), mutant_checks 331.6 s (6), stage_controls 124.9 s (4), mutant_probes 24.4 s (4)
