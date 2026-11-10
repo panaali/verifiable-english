@@ -379,7 +379,7 @@ def _rule_names(case: dict) -> set:
 
 def _bind_norm_defaults(row: dict, case: dict) -> None:
     """A `norm-defaults-status` row names the case's tuple and only rules of its source (a part of one under
-    `acts@0`); a `norm-defaults-certificate` row counts the regenerated premises its certificate is bound to:
+    `acts@0`), each once (Lean's rule names are unique and each selected once); a `norm-defaults-certificate` row counts the regenerated premises its certificate is bound to:
     the certificate's premise meaning ids less the case's own premises (`Wire.bindingOk` binds the ids)."""
     kind = case.get("kind")
     if kind == "norm-defaults-status":
@@ -389,7 +389,10 @@ def _bind_norm_defaults(row: dict, case: dict) -> None:
         environment = case.get("environment")
         profiles = environment.get("profiles") if isinstance(environment, dict) else None
         acts = isinstance(profiles, list) and "acts@0" in profiles
-        for rule in row.get("rules") or ():
+        rules = row.get("rules") or ()
+        if len(set(rules)) != len(rules):
+            raise Invalid("norm-defaults-status rules name a rule twice")
+        for rule in rules:
             part = _ACT_PART.fullmatch(rule) if acts else None
             if rule not in names and (part is None or part.group(1) not in names):
                 raise Invalid(f"norm-defaults-status rules name {rule!r}, no rule of the request")

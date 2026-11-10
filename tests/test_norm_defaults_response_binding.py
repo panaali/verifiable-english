@@ -102,6 +102,10 @@ def appended(case, row):
     return [*row["rules"], "no-such-rule"]
 
 
+def duplicated(case, row):
+    return row["rules"] * 2
+
+
 def predicate_named(case, row):
     return [case["predicate"]]
 
@@ -148,7 +152,8 @@ def zero(case, row):
 
 FORGERIES = [
     # A rule reference absent from the request.
-    _forge("status", "rules", ghost), _forge("status", "rules", appended), _forge("status", "rules", predicate_named),
+    _forge("status", "rules", ghost), _forge("status", "rules", appended), _forge("status", "rules", duplicated),
+    _forge("status", "rules", predicate_named),
     _forge("status", "rules", part_without_acts), _forge("rights-status", "rules", ghost),
     _forge("acts-status", "rules", part_of_ghost), _forge("acts-status", "rules", ghost),
     # An entity reference that is not the request's tuple.
@@ -169,6 +174,22 @@ def test_norm_defaults_response_binding(genuine, tmp_path, name, forge):
     assert forged != row
     with pytest.raises(CheckerUnavailable, match="malformed response"):
         _scripted(tmp_path, case, forged)
+
+
+# Each bound field deleted or retyped (BUILDER-CHECKLIST 1): the schema or the binding refuses it.
+RETYPED = [7, True, None, [], {}, 1.5, "\ud800", [7], [True], [None], [[]], [{}]]
+FIELDS = [("status", "tuple"), ("status", "rules"), ("acts-status", "rules"), ("certificate", "premises")]
+
+
+@pytest.mark.parametrize("name, field", FIELDS)
+def test_each_bound_field_deleted_or_retyped_is_no_answer(genuine, tmp_path, name, field):
+    case, row = genuine[name]
+    mutants = [{k: v for k, v in row.items() if k != field}]
+    # No rule deciding is an answer Lean gives (UNKNOWN, or a point its default settles): `rules: []` is no forgery.
+    mutants += [{**row, field: value} for value in RETYPED if not (field == "rules" and value == [])]
+    for mutant in mutants:
+        with pytest.raises(CheckerUnavailable, match="malformed response"):
+            _scripted(tmp_path, case, mutant)
 
 
 def test_a_certificate_case_without_its_certificate_has_no_count(genuine, tmp_path):
