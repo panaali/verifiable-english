@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-tm-m509-reads-linear-1ee886ca-t304196-s2",
+ "head": "fe06a0aadc6ff600c5a7b91658fbc7f98b7b792b",
+ "argv": [
+  "armsh-cand-tm-m509-reads-linear-1ee886ca-t304196-s2",
+  "fe06a0aadc6ff600c5a7b91658fbc7f98b7b792b",
+  "0b16bb0627e64c0706965a5673f6ae6b77945101",
+  "-",
+  "-",
+  "4",
+  "2/4"
+ ]
+}
