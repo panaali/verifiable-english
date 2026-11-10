@@ -828,10 +828,8 @@ class LayerDeclarationTests(unittest.TestCase):
                 self.assertIsNone(self.READ(source, "x", "--"))
         self.assertIsNone(self.READ('"""Doc."""\nX = "# ve-layer: 4 (in a string)"\n', "x", "#"))
         # Code that merely starts with the word is no declaration (only a comment or doc line is read as one).
-        for source in ("ve_layers = 3\nVE_LAYER = 4\n", "import A\nve_layer_of x := 4\n"):
-            with self.subTest(source=source):
-                self.assertIsNone(self.READ(source, "x", "#"))
-                self.assertIsNone(self.READ(source, "x", "--"))
+        for source in ("ve_layers = 3\nVE_LAYER = 4\n", "import A\nve_layer_of x := 4\n"):  # no subTest: a kill
+            self.assertEqual([self.READ(source, "x", "#"), self.READ(source, "x", "--")], [None, None], source)
         self.assertEqual(self.READ("-- ve-layer: 4 (reads (the) runner)\n", "x", "--"), (4, "reads (the) runner"))
 
     def test_a_declaration_without_a_reason_is_refused(self):
