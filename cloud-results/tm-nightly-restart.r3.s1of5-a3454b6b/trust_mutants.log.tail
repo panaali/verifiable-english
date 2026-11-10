@@ -1,0 +1,8 @@
+trust_mutants: 35 definitions, 41 mutants (8 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/Rights/Run.lean:435 VE.Rights.Run.conflictAnswerOf (D[V], trusted) list-empty: conditional.filter (fun l => l.startsWith "soft:") -> [] (lean/VE/Rights/Run.lean:439: don't know how to synthesize implicit argument `α`)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:169 VE.Purposes.WellFormed (S, trusted) eq-ne: = -> ≠ (lean/VE/Purposes/Examples.lean:275: Expression (VE.Purposes.Examples.wfDecidable, which it reads,...)
+trust_mutants: 3 KILLED, 0 SURVIVOR, 2 UNKNOWN, 3 INVALID, 0 ALLOWED, 0 NOT RUN, 33 OTHER SHARD in 633 s
+trust_mutants: D[V], trusted: 2 KILLED, 1 UNKNOWN, 1 INVALID, 6 OTHER SHARD
+trust_mutants: G[V], trusted: 1 KILLED, 1 INVALID, 19 OTHER SHARD
+trust_mutants: S, trusted: 1 UNKNOWN, 1 INVALID, 8 OTHER SHARD
+trust_mutants: steps: wall plan 15.9 s, scratch 4.7 s, control_build 0.3 s, probe_install 1.4 s, mutants 606.4 s, cleanup 3.9 s, reads 0.2 s; lake control_build 0.2 s (1), probe_install 1.4 s (1), control_probes 27.1 s (4), mutant_builds 80.6 s (10), mutant_checks 757.8 s (6), stage_controls 391.8 s (4), mutant_probes 35.7 s (4)
