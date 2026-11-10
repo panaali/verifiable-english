@@ -2455,6 +2455,27 @@
    "reason": "ps-7: lean/VE/Presupposition/Events.lean +28 (S: inProgress, inProgressBefore, endedBefore, occurredBefore, endedAtBefore; the six readings G[V] tied by their _eq rfl statements), lean/VE/Presupposition/Frame.lean +13 (Frame.locate C -> S, ps-1-locate-path); K +0, trusted +41",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ps-7, 2026-11-10",
    "commit": "a7659c5f12aebb2945cfb2106ed29a20663ab836"
+  },
+  {
+   "class": "V",
+   "lines": 100,
+   "reason": "sa-checked-view: V +100 (lean/VE/Service/DocumentView.lean +97, lean/VE/Service/Document.lean +3); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sa-checked-view, 2026-10-18",
+   "commit": "a7659c5f12aebb2945cfb2106ed29a20663ab836"
+  },
+  {
+   "class": "S",
+   "lines": 46,
+   "reason": "en-e3a: Norm/Run.lean +110, Norm/Owners.lean +36, Norm/Rules.lean +13, EnglishGrammar/Run.lean +8 (K +0, S +46, V +121; trusted +167; statementSpans, sentenceBytes, opensStatement classed G[V])",
+   "signature": "SIGNED by the DRI 2026-11-09 (reviews/dri-decisions-20261109-en-e3a-2.md item 1)",
+   "commit": "a0102f0e5350727e99ddcae2e0b59ed03f2f4192"
+  },
+  {
+   "class": "V",
+   "lines": 121,
+   "reason": "en-e3a: Norm/Run.lean +110, Norm/Owners.lean +36, Norm/Rules.lean +13, EnglishGrammar/Run.lean +8 (K +0, S +46, V +121; trusted +167; statementSpans, sentenceBytes, opensStatement classed G[V])",
+   "signature": "SIGNED by the DRI 2026-11-09 (reviews/dri-decisions-20261109-en-e3a-2.md item 1)",
+   "commit": "a0102f0e5350727e99ddcae2e0b59ed03f2f4192"
   }
  ]
 }
