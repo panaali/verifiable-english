@@ -382,6 +382,8 @@ def lean_name_layer(module: str) -> int | None:
                   "VE.Rights.OpenActExamples", "VE.EnglishGrammar.SourceWordsExamples"}:
         return 4  # runner-boundary acceptance fixtures import EnglishGrammar.Run, Question.Run, Alternatives.Run, Calc.Run,
         # NormDefaults.Run, Readings.Run, Cardinality.Run, Scope.Run, Senses.Run, Commands.Run, Acts.Run or Rights.Run
+    if module in {"VE.EnglishGrammar.Norm.RunExamples"}:
+        return 4  # en-e3-norm EN-2's answer fixtures: a runner-boundary fixture that imports EnglishGrammar.Norm.Run
     if module in {"VE.Discourse.Compose", "VE.Discourse.ComposeExamples"}:
         return 4  # the composed admission runs the chain routes and states theorems on Service.Document.profilesOf
         # (discourse 14.4 to 14.6, cmp-s4); its fixtures read Discourse.Run

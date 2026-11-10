@@ -186,8 +186,10 @@ import VE.EnglishGrammar.Extends
 import VE.EnglishGrammar.FoldAgree
 import VE.EnglishGrammar.JudgmentLines
 import VE.EnglishGrammar.Norm.Elab
+import VE.EnglishGrammar.Norm.Owners
 import VE.EnglishGrammar.Norm.Read
 import VE.EnglishGrammar.Norm.Rules
+import VE.EnglishGrammar.Norm.Run
 import VE.EnglishGrammar.Norm.Value
 import VE.EnglishGrammar.Policy
 import VE.EnglishGrammar.Read
@@ -287,6 +289,9 @@ import VE.Paths
 import VE.Presupposition.Admit.Facts
 import VE.Presupposition.Admit.Statements
 import VE.Presupposition.Agree
+import VE.Presupposition.Couple.Fixtures
+import VE.Presupposition.Couple.Statements
+import VE.Presupposition.Events
 import VE.Presupposition.Examples
 import VE.Presupposition.Frame
 import VE.Presupposition.Reading
@@ -455,6 +460,7 @@ import VE.Senses.Request
 import VE.Service.Diagnose
 import VE.Service.Document
 import VE.Service.DocumentChain
+import VE.Service.DocumentView
 import VE.Service.Family
 import VE.Service.FamilyBundle
 import VE.Service.FamilyNorms
@@ -3058,6 +3064,18 @@ import VE.WireContract.Engine
 #print axioms VE.EnglishGrammar.LexRow.Small.dom
 #print axioms VE.EnglishGrammar.LexRow.Small.rename_eq
 #print axioms VE.EnglishGrammar.LexRow.rename_inj
+#print axioms VE.EnglishGrammar.Norm.ReadNormAuthoring_eq
+#print axioms VE.EnglishGrammar.Norm.Run.answer_misplaced
+#print axioms VE.EnglishGrammar.Norm.Run.answer_one_iff
+#print axioms VE.EnglishGrammar.Norm.Run.answer_one_rows
+#print axioms VE.EnglishGrammar.Norm.Run.answer_partial_no_node
+#print axioms VE.EnglishGrammar.Norm.Run.answer_stopped
+#print axioms VE.EnglishGrammar.Norm.Run.findSome_lookup
+#print axioms VE.EnglishGrammar.Norm.Run.getD_mkObj
+#print axioms VE.EnglishGrammar.Norm.Run.lookup_append
+#print axioms VE.EnglishGrammar.Norm.Run.lookup_none
+#print axioms VE.EnglishGrammar.Norm.Run.statementFields_statuses
+#print axioms VE.EnglishGrammar.Norm.Run.statementStatusCodes_classed
 #print axioms VE.EnglishGrammar.Norm.action_mark
 #print axioms VE.EnglishGrammar.Norm.acts_ne
 #print axioms VE.EnglishGrammar.Norm.assembleFrom_numbered
@@ -3076,6 +3094,7 @@ import VE.WireContract.Engine
 #print axioms VE.EnglishGrammar.Norm.normActs_mark
 #print axioms VE.EnglishGrammar.Norm.normMeaning_unmarked
 #print axioms VE.EnglishGrammar.Norm.ntTy_ne
+#print axioms VE.EnglishGrammar.Norm.opOf_agrees
 #print axioms VE.EnglishGrammar.Norm.prefixMap_ok
 #print axioms VE.EnglishGrammar.Norm.readNorm_checks
 #print axioms VE.EnglishGrammar.Norm.readNorm_complete
@@ -3085,9 +3104,14 @@ import VE.WireContract.Engine
 #print axioms VE.EnglishGrammar.Norm.readNorm_unique
 #print axioms VE.EnglishGrammar.Norm.semAll_start
 #print axioms VE.EnglishGrammar.Norm.sem_start
+#print axioms VE.EnglishGrammar.Norm.soft_strict_iff
+#print axioms VE.EnglishGrammar.Norm.sourceView_nil
 #print axioms VE.EnglishGrammar.Norm.start_norm
 #print axioms VE.EnglishGrammar.Norm.strings_map
+#print axioms VE.EnglishGrammar.Norm.toNodeChecked_ok
 #print axioms VE.EnglishGrammar.Norm.toNode_fields
+#print axioms VE.EnglishGrammar.Norm.toNodesChecked_authoring
+#print axioms VE.EnglishGrammar.Norm.toNodesChecked_ok
 #print axioms VE.EnglishGrammar.Norm.tree_id
 #print axioms VE.EnglishGrammar.Norm.trees_id
 #print axioms VE.EnglishGrammar.Norm.ty_ne
@@ -4537,6 +4561,23 @@ import VE.WireContract.Engine
 #print axioms VE.Paths.warshall_iff_path
 #print axioms VE.Paths.warshall_preserves_closed
 #print axioms VE.Paths.warshall_sound
+#print axioms VE.Presupposition.CoupleExamples.denote_of_eq
+#print axioms VE.Presupposition.CoupleExamples.forget_asStructure
+#print axioms VE.Presupposition.CoupleExamples.intendedAt3_of_eval
+#print axioms VE.Presupposition.CoupleExamples.s22_completion
+#print axioms VE.Presupposition.CoupleExamples.satUnder_of_eval
+#print axioms VE.Presupposition.Events.again_defined
+#print axioms VE.Presupposition.Events.again_eq
+#print axioms VE.Presupposition.Events.continues_defined
+#print axioms VE.Presupposition.Events.continues_eq
+#print axioms VE.Presupposition.Events.noLonger_defined
+#print axioms VE.Presupposition.Events.noLonger_eq
+#print axioms VE.Presupposition.Events.resumes_defined
+#print axioms VE.Presupposition.Events.resumes_eq
+#print axioms VE.Presupposition.Events.returnsTo_defined
+#print axioms VE.Presupposition.Events.returnsTo_eq
+#print axioms VE.Presupposition.Events.stops_defined
+#print axioms VE.Presupposition.Events.stops_eq
 #print axioms VE.Presupposition.Examples.s22_neg_s2
 #print axioms VE.Presupposition.Examples.s22_pos_s1
 #print axioms VE.Presupposition.Examples.s22_pos_s2
@@ -4582,6 +4623,7 @@ import VE.WireContract.Engine
 #print axioms VE.Presupposition.bases_unique
 #print axioms VE.Presupposition.bind_ok
 #print axioms VE.Presupposition.buildPre_body
+#print axioms VE.Presupposition.candidateTable_core
 #print axioms VE.Presupposition.candidates_ruleAct
 #print axioms VE.Presupposition.carried_asserted
 #print axioms VE.Presupposition.carried_conditioned_off
@@ -4599,24 +4641,39 @@ import VE.WireContract.Engine
 #print axioms VE.Presupposition.condition_applies
 #print axioms VE.Presupposition.conditioned_contributes_nothing
 #print axioms VE.Presupposition.conditioned_vacuous_off_goal
+#print axioms VE.Presupposition.coupled_subset
+#print axioms VE.Presupposition.coupled_uniform
+#print axioms VE.Presupposition.coupling_complete
+#print axioms VE.Presupposition.couplings_spec
+#print axioms VE.Presupposition.couplings_spec_admit
 #print axioms VE.Presupposition.data_attribute_proved
 #print axioms VE.Presupposition.decidesD_map
 #print axioms VE.Presupposition.definite_defined
 #print axioms VE.Presupposition.discourse_definite_is_row
+#print axioms VE.Presupposition.emitted_group
 #print axioms VE.Presupposition.ensure_ok
+#print axioms VE.Presupposition.eq_of_nodup_map
 #print axioms VE.Presupposition.exists_child_map
+#print axioms VE.Presupposition.expectedReadings_length
 #print axioms VE.Presupposition.find_base
+#print axioms VE.Presupposition.find_id
+#print axioms VE.Presupposition.foldl_groups
 #print axioms VE.Presupposition.foldr_and_denote
 #print axioms VE.Presupposition.foldr_implies_denote
 #print axioms VE.Presupposition.generic_defined
 #print axioms VE.Presupposition.goal_denote
 #print axioms VE.Presupposition.goal_wellFormed
+#print axioms VE.Presupposition.groupConstraints_iff
+#print axioms VE.Presupposition.groups_admit_nil
+#print axioms VE.Presupposition.idxOf_inj
 #print axioms VE.Presupposition.inPlace_iff_conditioned_shallow
 #print axioms VE.Presupposition.locate_plug
 #print axioms VE.Presupposition.mapE_map
 #print axioms VE.Presupposition.mapE_mem
 #print axioms VE.Presupposition.mapError_ok
 #print axioms VE.Presupposition.mem_basesOf
+#print axioms VE.Presupposition.mem_choiceOf
+#print axioms VE.Presupposition.mem_groups
 #print axioms VE.Presupposition.no_block_unchanged
 #print axioms VE.Presupposition.no_silent_accommodation
 #print axioms VE.Presupposition.one_open_per_unit
@@ -4626,6 +4683,7 @@ import VE.WireContract.Engine
 #print axioms VE.Presupposition.peel_ands
 #print axioms VE.Presupposition.peel_carried
 #print axioms VE.Presupposition.peel_implies
+#print axioms VE.Presupposition.pickOf_iff
 #print axioms VE.Presupposition.plug_congr
 #print axioms VE.Presupposition.plug_wellFormed
 #print axioms VE.Presupposition.plural_defined
@@ -4635,8 +4693,12 @@ import VE.WireContract.Engine
 #print axioms VE.Presupposition.rule_collapse_certified
 #print axioms VE.Presupposition.rule_collapse_decides
 #print axioms VE.Presupposition.rule_collapse_typed
+#print axioms VE.Presupposition.sourceChoice_closed
+#print axioms VE.Presupposition.sourceChoice_entails
+#print axioms VE.Presupposition.sourceChoice_members
 #print axioms VE.Presupposition.source_identity_entails
 #print axioms VE.Presupposition.speech_question_top
+#print axioms VE.Presupposition.uniformB_iff
 #print axioms VE.Presupposition.unitsOk_ok
 #print axioms VE.Presupposition.unsaid_iff
 #print axioms VE.Presupposition.yieldsD_map
@@ -7143,6 +7205,7 @@ import VE.WireContract.Engine
 #print axioms VE.Rights.limKeys_nil
 #print axioms VE.Rights.limPackList_denote
 #print axioms VE.Rights.limPack_mem_narrowings
+#print axioms VE.Rights.limitationScope_texts
 #print axioms VE.Rights.limitation_scope_sound
 #print axioms VE.Rights.lineNode_correlate
 #print axioms VE.Rights.lineNode_direct
@@ -7168,6 +7231,7 @@ import VE.WireContract.Engine
 #print axioms VE.Rights.narrowings_complete
 #print axioms VE.Rights.narrowings_complete_of_valid
 #print axioms VE.Rights.noDistinction_sound
+#print axioms VE.Rights.noDistinction_texts
 #print axioms VE.Rights.no_distinction_sound
 #print axioms VE.Rights.nodeNamed_mem
 #print axioms VE.Rights.nodeNamed_self
@@ -8235,22 +8299,48 @@ import VE.WireContract.Engine
 #print axioms VE.Senses.tryChoice_some
 #print axioms VE.Senses.wf_iff_no_failure
 #print axioms VE.Service.Diagnose.diagnoseCase_registered
+#print axioms VE.Service.Document.checkBodyChecked_encode
+#print axioms VE.Service.Document.checkCoreChecked_encode
 #print axioms VE.Service.Document.checkCore_eq_fast
+#print axioms VE.Service.Document.checkDocSetsView_answer
+#print axioms VE.Service.Document.checkDocSetsView_candidates
+#print axioms VE.Service.Document.checkDocSetsView_ok
+#print axioms VE.Service.Document.checkDocSetsView_packs
+#print axioms VE.Service.Document.checkDocSetsView_readings
+#print axioms VE.Service.Document.checkDocSetsView_rows
 #print axioms VE.Service.Document.checkDocSets_clashFirst
 #print axioms VE.Service.Document.checkDocSets_eq_fast
 #print axioms VE.Service.Document.clashRefusal_eq_fast
 #print axioms VE.Service.Document.clashRefusal_some
 #print axioms VE.Service.Document.decodeRowKind_json
+#print axioms VE.Service.Document.encode_units
 #print axioms VE.Service.Document.exchangeIn_pairIndex
+#print axioms VE.Service.Document.firstPerUnit_foldl
+#print axioms VE.Service.Document.firstPerUnit_map
+#print axioms VE.Service.Document.firstPerUnit_nodup
+#print axioms VE.Service.Document.foldGovernors_rows
+#print axioms VE.Service.Document.foldStatus_known
+#print axioms VE.Service.Document.foldedRows_zip
+#print axioms VE.Service.Document.governorStatus_known
 #print axioms VE.Service.Document.injStep_none
 #print axioms VE.Service.Document.injectiveH_eq
 #print axioms VE.Service.Document.injectiveH_foldl
 #print axioms VE.Service.Document.judgedIn_legacy
 #print axioms VE.Service.Document.judgedIn_soft
+#print axioms VE.Service.Document.mapM_known
+#print axioms VE.Service.Document.mkObj_answer
 #print axioms VE.Service.Document.pairIndex_get
+#print axioms VE.Service.Document.readStatus_fold
+#print axioms VE.Service.Document.readStatus_unitJson
+#print axioms VE.Service.Document.render_name
+#print axioms VE.Service.Document.rows_of_fold
+#print axioms VE.Service.Document.statusOf_known
 #print axioms VE.Service.Document.swapInjectiveH_eq
 #print axioms VE.Service.Document.swapInjective_eq_fast
 #print axioms VE.Service.Document.swapInjective_frontOf
+#print axioms VE.Service.Document.toJson_jsons
+#print axioms VE.Service.Document.unique_key
+#print axioms VE.Service.Document.unitJson_status
 #print axioms VE.Service.DocumentChain.layeredOf_entails
 #print axioms VE.Service.DocumentChain.layeredOf_ids
 #print axioms VE.Service.DocumentChain.layeredOf_soft
