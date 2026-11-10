@@ -445,7 +445,8 @@ def corpus():
             "cardinality": [*cardinality_cases(), *ADVERSARIAL],
             "scope": [*recorded("scope"), *ADVERSARIAL],
             "act-readings": [*recorded("act-readings"), *ADVERSARIAL],
-            "english.command": [*command_cases(), *ADVERSARIAL]}
+            "english.command": [*command_cases(), *ADVERSARIAL],
+            "clauses-elaborate": [*clauses_elaborate_cases(), *ADVERSARIAL]}
 
 
 def command_cases():
@@ -489,6 +490,15 @@ def command_cases():
             {**base, "id": "permission", "wording": "Do not share the token.", "queries": []},
             {**base, "id": "may", "wording": "You may share the token.", "queries": []},
             {**base, "id": "long", "wording": prove.replace("atlas ", "atlas" + " " * 352), "queries": [record]}]
+
+
+def clauses_elaborate_cases():
+    """The `clauses-elaborate` mode (right-clauses 8.1, cmp-s3-cfr-1): spec 9.1's K1 (unstructured), K2 (a relation,
+    no premise) and K3 (a total relation, one premise), and a refusal (K9, `elided` missing)."""
+    from tests.test_right_clauses import RELATION, document, environment
+    return [{"id": name, "environment": environment(), "document": doc} for name, doc in (
+        ("k1", document()), ("k2", document(relation=RELATION)), ("k3", document(relation={**RELATION, "total": 1})),
+        ("k9", document(elided=None)))]
 
 
 def recorded(mode):

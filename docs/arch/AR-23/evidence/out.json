@@ -1,0 +1,27 @@
+{
+ "base": "de7fb94690644f6eb7f0d422ce33d050e27c8bd4",
+ "head": "547dc3aa2969ca791b40cf6841f2fa6953e1e3ba",
+ "tool": "base worktree: lake build of every lean_exe, then uv run python tools/lean_output_diff.py --save-baseline --baseline ~/.cache/ve-ar23/out-baseline; head: lake build of every lean_exe, then uv run python tools/lean_output_diff.py --baseline ~/.cache/ve-ar23/out-baseline --all --jobs 8",
+ "summary": [
+  "baseline de7fb9469064; executables rebuilt with a different digest: ve_conformance, ve_english_lean_bench, ve_english_route, ve_metered, ve_response_decode, ve_scope_bench, ve_senses_route, ve_service, ve_speech_acts_route",
+  "ve_conformance 68, ve_english_lean_bench 1, ve_english_route 2, ve_english_run 6, ve_metered 1, ve_response_decode 2, ve_scope_bench 1, ve_senses_route 1, ve_service 342, ve_speech_acts_route 17",
+  "441 invocations, 441 run on both builds, 0 skipped as their executable is byte-identical to the baseline; 1 differences, 0 timed out"
+ ],
+ "differences": [
+  "ve_service corpus session: stderr differ"
+ ],
+ "analysis": {
+  "invocation": "ve_service corpus session",
+  "exit_code_same": true,
+  "stdout_same": true,
+  "stderr_same": false,
+  "stderr_without_backtrace_frames_same": true,
+  "stderr_lines_without_frames": 4,
+  "panic_lines_both_sides": 2,
+  "baseline_against_itself_stderr_same": false,
+  "baseline_against_itself_without_frames_same": true,
+  "panic_text": "PANIC at Lean.Json.setObjVal! Lean.Data.Json.Basic:281:21: Json.setObjVal!: not an object: {j}",
+  "reason": "the session reaches two pre-existing PANIC messages (Json.setObjVal!: not an object), identical on both builds; only the backtrace frames after them differ: they carry the executable path and ASLR addresses, and two runs of the baseline binary differ the same way (as in AR-22). Not an output change.",
+  "tool": "a scratch script outside the tree: lean_output_diff.harness_invocations and run on both binaries and twice on the baseline; stderr compared whole and with every line holding a 0x address removed"
+ }
+}
