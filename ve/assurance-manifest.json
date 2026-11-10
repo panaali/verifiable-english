@@ -66,7 +66,7 @@
     "ve/readings_verdicts/binding.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 44268,
+    "total_lines": 44612,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -834,12 +834,12 @@
       },
       {
         "file": "lean/VE/EnglishGrammar/Run.lean",
-        "lines": 759,
-        "sha256": "14bb7dd1c0b9f3ee4e59d527556753b7f4348346678774ccdd79c526e04e8cd4",
+        "lines": 800,
+        "sha256": "bcc1f80385cff70400435cc4e7ff18732341ecd27c380c1a338a5741c1f6da70",
         "ranges": [
           [
             1,
-            759
+            800
           ]
         ],
         "declarations": [
@@ -855,7 +855,7 @@
           "grammarCase",
           "judgmentsField"
         ],
-        "reason": "english-lean S2.4 (docs/spec/english-lean-s2.md 2.10, 4.3, 4.4): ve_english_route decodes the case (environment through Env.decode, overlay, the ve.english-lexicon@1 lexicon, which must name the environment), computes the six identities and writes the english.read and english.grammar answers; shadow only while english.admission keeps authority python; S3 validates alternatives and risk profile environments at the reader boundary (docs/spec/english-lean-s3.md 2.3); the full file is pinned conservatively; jt-2c: `decodeCase` and `environmentId` read the environment through `VE.Compose.decidingEnvironment` (without the document layers), the identities as written"
+        "reason": "english-lean S2.4 (docs/spec/english-lean-s2.md 2.10, 4.3, 4.4): ve_english_route decodes the case (environment through Env.decode, overlay, the ve.english-lexicon@1 lexicon, which must name the environment), computes the six identities and writes the english.read and english.grammar answers; shadow only while english.admission keeps authority python; S3 validates alternatives and risk profile environments at the reader boundary (docs/spec/english-lean-s3.md 2.3); the full file is pinned conservatively; jt-2c: `decodeCase` and `environmentId` read the environment through `VE.Compose.decidingEnvironment` (without the document layers), the identities as written; en-e3a (en-e3-norm 2.3, M8/M9): english.statement's code hunk (statementCodeRows appended to codeClasses, statementStatusCodes, statementFields, statementUnsentenced) and the three members the english.grammar export writes for them; no decoder changes, the file stays pinned whole"
       },
       {
         "file": "lean/VE/Json.lean",
@@ -2232,6 +2232,27 @@
           "replayUnblockedEntailment"
         ],
         "reason": "et-4b: the full file: the norm-defaults-certificate replay on an events document (spec 6.3), with the block and without one; it decodes by eventsHook, decodeSoftU and replayLayeredOn"
+      },
+      {
+        "file": "lean/VE/EnglishGrammar/Norm/Run.lean",
+        "lines": 303,
+        "sha256": "3ccffd316421b414d5b1f6f9bfd768da5e78a1c64b9f4e76a4e21c18eeb6ad3b",
+        "ranges": [
+          [
+            1,
+            303
+          ]
+        ],
+        "declarations": [
+          "statementRequest",
+          "statementCase",
+          "statementCaseReported",
+          "answerWith",
+          "outcomeFields",
+          "stoppedFields",
+          "statementRow"
+        ],
+        "reason": "en-e3a (docs/spec/en-e3-norm.md 2.3, EN-2): english.statement kind blocks: `statementRequest` decodes the request (english.read's case through `decodeCase`, `kind`, `source`), `answerWith` writes the answer from readNorm's outcome through the span gate and the one decoder; not registered until en-e3ab and nothing relays to it yet; the full file is pinned conservatively"
       }
     ],
     "other_json": {
@@ -2433,7 +2454,8 @@
       "lean/VE/Scope/Authoring.lean": "scope's authoring wordings (SC-7, spec 2.2): `Pinned.parseGovernor` builds the part of a scope@0 block a wording fixes (Json.mkObj, Json.arr) and `classify`/`renderGovernor`/`paraphrase` read it back with getObjValD/getStr?/getNat?; no route or relay decodes a request with them yet (the IDE wiring is sc-7b)",
       "lean/VE/Scope/AuthoringExamples.lean": "fixtures only: SC-7's #guard checks (scope spec 2.2, 7.8 F5a) write each row's expected block as a JSON literal (Json.parse) and compare it with `parseGovernor`'s; no runtime JSON handling",
       "lean/VE/Commands/StepsProofs.lean": "proofs only: `readStep_conservative` names its decoded environment as section 7 states it (`Lean.Json`, `decodeSpeechEnvironmentFull`) and its lemmas trace that decoder; the module decodes nothing at run time",
-      "lean/ResponseShape/Schemas/RightsChecks.lean": "fixtures only: #guard checks of rights.json's elaborate, scope and packages rows on the mode's answers and their variants build JSON; no runner path"
+      "lean/ResponseShape/Schemas/RightsChecks.lean": "fixtures only: #guard checks of rights.json's elaborate, scope and packages rows on the mode's answers and their variants build JSON; no runner path",
+      "lean/VE/EnglishGrammar/Norm/RunExamples.lean": "fixtures only: #guard checks of english.statement's answers (docs/spec/en-e3-norm.md section 8, EN-2: E1-E17, f18, the whole-mode requests); no runner path"
     }
   },
   "plan_operations": {
