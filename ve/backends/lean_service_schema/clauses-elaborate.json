@@ -24,7 +24,7 @@
   },
   "$defs": {
     "result": {
-      "$comment": "VE.RightClauses.Run.elaborateCase: the plained document's canonical bytes and clauseSlotLabelled.",
+      "$comment": "VE.RightClauses.Run.elaborateCase: the plained document's canonical bytes, clauseSlotLabelled and the elided bytes.",
       "additionalProperties": false,
       "properties": {
         "clause_slot": {
@@ -39,9 +39,11 @@
           },
           "type": "array"
         },
-        "plained": {"$ref": "common.json#/$defs/text"}
+        "elided_bytes": {"$ref": "common.json#/$defs/nat"},
+        "plained": {"$ref": "common.json#/$defs/text"},
+        "unit_elided_bytes": {"items": {"$ref": "common.json#/$defs/nat"}, "type": "array", "x-length": "/document"}
       },
-      "required": ["plained", "clause_slot"],
+      "required": ["plained", "clause_slot", "elided_bytes", "unit_elided_bytes"],
       "type": "object"
     }
   }
