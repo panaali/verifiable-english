@@ -13,6 +13,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [docs/composition/](docs__composition.md) — 1 modules — -
 - [docs/defeasible/](docs__defeasible.md) — 12 modules — -
 - [docs/devtime/](docs__devtime.md) — 1 modules — -
+- [docs/document-model/](docs__document-model.md) — 3 modules — -
 - [docs/eff-tests/](docs__eff-tests.md) — 1 modules — -
 - [docs/english-lean/](docs__english-lean.md) — 2 modules — -
 - [docs/events-time-causation/](docs__events-time-causation.md) — 1 modules — -
@@ -58,7 +59,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [docs/perf/](docs__perf.md) — 2 modules — -
 - [docs/premise-packs/](docs__premise-packs.md) — 1 modules — -
 - [docs/premise-scale/](docs__premise-scale.md) — 4 modules — -
-- [docs/presupposition/](docs__presupposition.md) — 6 modules — -
+- [docs/presupposition/](docs__presupposition.md) — 7 modules — -
 - [docs/profile-composition/](docs__profile-composition.md) — 5 modules — -
 - [docs/question-answering/](docs__question-answering.md) — 7 modules — -
 - [docs/readings-defaults/](docs__readings-defaults.md) — 7 modules — -
@@ -108,7 +109,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/VE/Norms/](lean__VE__Norms.md) — 25 modules — -
 - [lean/VE/Numbers/](lean__VE__Numbers.md) — 6 modules — -
 - [lean/VE/Order/](lean__VE__Order.md) — 16 modules — -
-- [lean/VE/Presupposition/](lean__VE__Presupposition.md) — 13 modules — -
+- [lean/VE/Presupposition/](lean__VE__Presupposition.md) — 17 modules — -
 - [lean/VE/Purposes/](lean__VE__Purposes.md) — 4 modules — -
 - [lean/VE/Question/](lean__VE__Question.md) — 12 modules — -
 - [lean/VE/Readings/ part 1](lean__VE__Readings--part-1.md) — 74 modules — -
@@ -121,7 +122,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/VE/Scope/](lean__VE__Scope.md) — 20 modules — -
 - [lean/VE/SearchBudget/](lean__VE__SearchBudget.md) — 4 modules — -
 - [lean/VE/Senses/](lean__VE__Senses.md) — 17 modules — -
-- [lean/VE/Service/](lean__VE__Service.md) — 30 modules — -
+- [lean/VE/Service/](lean__VE__Service.md) — 31 modules — -
 - [lean/VE/SoftNorms/](lean__VE__SoftNorms.md) — 13 modules — -
 - [lean/VE/SpeechActs/](lean__VE__SpeechActs.md) — 8 modules — -
 - [lean/VE/Time/](lean__VE__Time.md) — 8 modules — -
@@ -138,7 +139,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [tests/ part 5](tests--part-5.md) — 82 modules — -
 - [tests/ part 6](tests--part-6.md) — 82 modules — -
 - [tests/ part 7](tests--part-7.md) — 88 modules — -
-- [tests/ part 8](tests--part-8.md) — 9 modules — -
+- [tests/ part 8](tests--part-8.md) — 10 modules — -
 - [tests/frozen_speech/](tests__frozen_speech.md) — 4 modules — Frozen pre-switch speech oracle.
 - [tools/ part 1](tools--part-1.md) — 98 modules — -
 - [tools/ part 2](tools--part-2.md) — 14 modules — -
