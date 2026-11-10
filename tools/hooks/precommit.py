@@ -313,17 +313,21 @@ def check_layers(index: Index) -> list[str]:
     read_staged = staged_reader(index, [p for p in listing if p.startswith("ve/") and p.endswith(".py")] + lean)
     comments = {"Python": layers.PYTHON_COMMENT, "Lean": layers.LEAN_COMMENT}
 
+    refused = set()  # paths whose declaration is refused: reported once, never also as unmapped
+
     def layer_of(path: str, kind: str, find):
         try:
             return find()
         except ValueError as error:
-            errors.append(f"{path}: {kind} layer declaration refused: {error}")
+            if path not in refused:
+                refused.add(path)
+                errors.append(f"{path}: {kind} layer declaration refused: {error}")
             return None
 
     def mappable(path: str, module: str, layer: int | None, kind: str) -> bool:
         # Modules already unmapped at HEAD are the full checker's (and the gate's)
         # business; the hook only rejects a commit that ADDS an unmapped module.
-        if layer is None and index.changed[path].status == "A" and module != "ve":
+        if layer is None and index.changed[path].status == "A" and module != "ve" and path not in refused:
             errors.append(f"{path}: unmapped {kind} module {module} ({layers.declaration_form(comments[kind])}, "
                           "or add it to tools/layer_policy.py)")
         return layer is not None
