@@ -3,9 +3,10 @@ DF-1b and DF-5, spec 8.6): a question file that names a `situation`, with its `r
 sends df-5's `defaults-zone` request through `ve.defaults` and prints Lean's bound answer with the DE10, DE10f, DE11
 and DE13 English Lean chose, each sentence through W7's all-derivations gate (`ve.defaults_english.Gate`).
 
-The fixtures (tests/data/defaults_zone_cli/) are spec 8.6's cases as documents and question files, each one df-5's
-own request (tests/test_defaults_zone.py `CASES`); the CLI's answer is the service mode's for that request. Every
-other `--assume-no-exception` call prints what it printed before (`unchanged.json`, recorded with main's Python).
+The fixtures (docs/defeasible/df-5b/fixtures/) are spec 8.6's cases as documents and question files, each one
+df-5's own request (tests/test_defaults_zone.py `CASES`); the CLI's answer is the service mode's for the request it
+sent, and its English is the text spec 8.6 and 4 give. Every other `--assume-no-exception` call prints what it printed
+before (`unchanged.json`, recorded with main's Python).
 """
 from __future__ import annotations
 
@@ -20,19 +21,35 @@ from pathlib import Path
 import pytest
 
 from tests import test_defaults_zone
-from tests.test_defaults_zone import genuine
+from tests.test_defaults_zone import _lam, genuine, zcase
 from ve import defaults, defaults_english
 from ve.backends import relay
 from ve.document import cli
 from ve.document.load import load_document
 from ve.errors import UnsupportedProfile, VEError
+from ve.readings_s2_english import derivations
 
 ROOT = Path(__file__).resolve().parents[1]
-DATA = ROOT / "tests/data/defaults_zone_cli"
-# fixture: df-5's case (spec 8.6: DF-μ, DF-μ′, DF-μ″, DF-δz, DF-ξ, DF-ξ′, DF-π′; then a record and X's labels)
-FIXTURES = {"df-mu": "mu", "df-mu1": "mu1", "df-mu2": "mu2", "df-delta-z": "delta_z", "df-xi": "xi",
-            "df-xi1": "xi1", "df-pi1": "pi1", "record-off": "epsilon_off", "no-completion-labels": "beta_none"}
-P1 = "docs/research/evidence/defeasible/baseline/p1-force-u0036-s05.ve.md"
+DATA = ROOT / "docs/defeasible/df-5b/fixtures"
+HEAD = "With no {} here that could be dropped, alone or together, "
+LEFT = (HEAD.format("exceptions") + "the answer depends on which rule gives way: the exception to rule r2 applies to "
+        "a, or the exception to rule r1 applies to a.")
+# fixture: df-5's request and the English shown (spec 8.6: DF-μ, DF-μ′, DF-μ″, DF-δz, DF-ξ, DF-ξ′, DF-π′; then a
+# record, X's labels, the budget's `unknown` and the largest situation within it)
+FIXTURES = {
+    "df-mu": ("mu", [HEAD.format("exceptions") + "o2 is instructs.",
+                     "The facts here force the exception to rule g1 for o1."]),
+    "df-mu1": ("mu1", [LEFT]), "df-mu2": ("mu2", [LEFT]),
+    "df-delta-z": ("delta_z", [HEAD.format("assumptions") + "a must do x."]),
+    "df-xi": ("xi", [HEAD.format("exceptions") + "a must do x."]),
+    "df-xi1": ("xi1", [HEAD.format("exceptions") + "a may do x.",
+                       "The text's own exception to rule r1 applies here: a is urgent."]),
+    "df-pi1": ("pi1", [HEAD.format("exceptions") + "a must do x."]),
+    "record-off": ("epsilon_off", [HEAD.format("exceptions") + "a may do x.",
+                                   "This assumes that the user has turned rule r1 off for a."]),
+    "no-completion-labels": ("beta_none", []), "budget": ("budget", []),
+    "largest": (lambda: zcase(_lam(), "instructs", ["o0"], tuple(f"o{i}" for i in range(6)), "operator"),
+                [HEAD.format("exceptions") + "o0 is instructs."])}
 CE4 = "docs/research/evidence/defeasible/baseline/p2-ce4.ve.md"
 
 
@@ -48,7 +65,7 @@ def _cli(monkeypatch, path, question):
     monkeypatch.setattr(cli, "load_document", lambda p: _loaded(str(p)))
     sent, decide = [], relay.decide
     monkeypatch.setattr(relay, "decide", lambda mode, cases, *a, **k: (
-        sent.extend(c for c in cases if c.get("kind") == "defaults-zone") or decide(mode, cases, *a, **k)))
+        sent.extend(copy.deepcopy(c) for c in cases if c.get("kind") == "defaults-zone") or decide(mode, cases, *a, **k)))
     out = io.StringIO()
     with contextlib.redirect_stdout(out):
         assert cli.main(["readings", str(path), "--conclusion", str(question), "--assume-no-exception"]) == 0
@@ -62,10 +79,14 @@ def _documents(case):
             "environment": {**environment, "profiles": sorted({*environment["profiles"], "documents@1"})}}
 
 
+def CASES_OF(key):
+    return key() if callable(key) else test_defaults_zone.CASES[key][0]()
+
+
 def test_each_fixture_is_df_5s_request():
     """Each fixture's document carries df-5's environment and norms, and its question df-5's situation, record,
     observations and query, unchanged."""
-    for name, key in FIXTURES.items():
+    for name, (key, _) in FIXTURES.items():
         case = CASES_OF(key)
         front = json.loads((DATA / f"{name}.ve.md").read_text().split("---\n")[1])
         assert front["environment"] == _documents(case)["environment"]
@@ -75,23 +96,18 @@ def test_each_fixture_is_df_5s_request():
             "query": case["query"]}
 
 
-def CASES_OF(key):
-    return test_defaults_zone.CASES[key][0]()
-
-
 def test_every_cli_fixture_answers_as_the_service_mode(monkeypatch):
-    """Condition (ii): each spec 8.6 fixture through the command line sends df-5's request (the observations and the
-    record included) and prints the service mode's answer to it, with the English of the rows Lean chose."""
-    for name, key in FIXTURES.items():
-        case, row, *_ = genuine(key)
+    """Condition (ii): each fixture through the command line sends df-5's request (the observations and the record
+    included) and prints the service mode's answer to the request it sent (`relay.decide`, the row without `id` and
+    `status`; df-5's recorded answer where it has one), with the English spec 8.6 gives for the rows Lean chose."""
+    for name, (key, english) in FIXTURES.items():
         out, sent = _cli(monkeypatch, DATA / f"{name}.ve.md", DATA / f"{name}.json")
-        assert sent == [_documents(case)], name
-        assert out == {"question": "default", "kind": "defaults-zone",
-                       "answer": {k: v for k, v in row.items() if k not in ("id", "status")},
-                       "english": defaults_english.sentences(case, row)}, name
-        expected, english = test_defaults_zone.CASES[key][1:]
+        assert sent == [_documents(CASES_OF(key))], name
+        [service] = relay.decide("norm-defaults", copy.deepcopy(sent))
+        assert out == {"question": "default", "kind": "defaults-zone", "english": english,
+                       "answer": {k: v for k, v in service.items() if k not in ("id", "status")}}, name
+        expected = None if callable(key) else test_defaults_zone.CASES[key][1]
         assert expected is None or out["answer"] == expected, name
-        assert english is None or len(out["english"]) == len(english), name
 
 
 def test_situated_routing_and_refusals(monkeypatch):
@@ -103,7 +119,7 @@ def test_situated_routing_and_refusals(monkeypatch):
     monkeypatch.setattr(defaults, "ask", lambda *arguments: asked.append(arguments[3]) or {"asked": "strict"})
     monkeypatch.setattr(defaults, "ask_zone", lambda *arguments: {"asked": "zone"})
     monkeypatch.setattr(cli, "_readings_without_exception", lambda *arguments: {"asked": "readings"})
-    doc = load_document(ROOT / "tests/data/defaults_zone_cli/df-xi.ve.md")
+    doc = load_document(DATA / "df-xi.ve.md")
     args = argparse.Namespace(under=None, sentence=None, narrowing=None)
     question = json.loads((DATA / "df-xi.json").read_text())
     for conclusion in (["unary", "situation", ["var", 0]], 5, "situation", {"record": []}, [question]):
@@ -117,6 +133,11 @@ def test_situated_routing_and_refusals(monkeypatch):
     fact = {"kind": "asserted", "content": ["exists", "assistant", ["unary", "x_required", ["var", 0]]]}
     with pytest.raises(VEError, match="takes its facts from the situation; the document asserts some"):
         cli._assume_no_exception({**doc, "units": [*doc["units"], fact]}, question, args)
+    empty = {"kind": "asserted", "content": None}  # an assertion with no content asserts nothing
+    assert cli._assume_no_exception({**doc, "units": [*doc["units"], empty]}, question, args) == {"asked": "zone"}
+    with pytest.raises(VEError, match="applies to a soft-norms@0 document without open reading sets"):
+        cli._assume_no_exception({**doc, "meta": {**doc["meta"], "reading_sets": [
+            {"id": "s", "unit": "u", "version": 1}]}}, question, args)
     for flags in ({"under": ["s:0"]}, {"sentence": "u0"}, {"narrowing": "n"}):
         with pytest.raises(VEError, match="takes no --under, --sentence or --narrowing"):
             cli._assume_no_exception(doc, question, argparse.Namespace(**{**vars(args), **flags}))
@@ -186,7 +207,7 @@ def test_w7_every_zone_sentence_has_one_derivation_its_own(monkeypatch):
     assert any(name.endswith(":inline") for name, _ in built)
     for gate in checked:
         for name, text in gate.built:
-            assert gate.derivations(text) == [name], text
+            assert [n for n, _ in derivations(text, gate, defaults_english.templates())] == [name], text
 
 
 def _ambiguous(monkeypatch, row, kind, words):
@@ -199,14 +220,21 @@ def _ambiguous(monkeypatch, row, kind, words):
 
 def test_w7_refuses_a_sentence_two_wordings_read(monkeypatch):
     """A shown sentence two wordings derive is refused, never shown: DE13's words made DE10f's (DF-μ's DE10f line),
-    and inside DE10″, DE13's inline words made DE10f's (DF-μ′'s two completions)."""
+    inside DE10″ DE13's inline words made DE10f's (DF-μ′'s two completions), and DE13's words made DE11's (P-3)."""
     force = [w for w in defaults_english._words()["lines"] if w["row"] == "DE10f"][0]
     _ambiguous(monkeypatch, "DE13", "excepted", {"sentence": force["sentence"]})
     case, row, *_ = genuine("mu")
-    with pytest.raises(VEError, match="^InvalidInput: zone wording DE10f: has 2 derivations: The facts here force"):
+    with pytest.raises(VEError, match="^InvalidInput: S2 wording DE10f: has 2 derivations: The facts here force"):
         defaults_english.sentences(case, row)
     monkeypatch.undo()
     _ambiguous(monkeypatch, "DE13", "excepted", {"inline": force["inline"]})
     case, row, *_ = genuine("mu1")
-    with pytest.raises(VEError, match="^InvalidInput: zone wording DE13:excepted:inline has 2 derivations"):
+    with pytest.raises(VEError, match="^InvalidInput: S2 wording DE13:excepted:inline has 2 derivations"):
         defaults_english.sentences(case, row)
+    # DE11 after DE6′ (DF-1b's P-3, a stated condition holding): DE13's words made DE11's
+    monkeypatch.undo()
+    monkeypatch.chdir(ROOT)
+    de11 = [w for w in defaults_english._words()["lines"] if w["row"] == "DE11"][0]
+    _ambiguous(monkeypatch, "DE13", "excepted", {"sentence": de11["sentence"]})
+    with pytest.raises(VEError, match="^InvalidInput: S2 wording DE11: has 2 derivations: The text's own exception"):
+        cli.main(json.loads((DATA / "unchanged.json").read_text())[4]["argv"])
