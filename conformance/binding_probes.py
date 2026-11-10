@@ -140,6 +140,47 @@ def _norm_defaults_admission():
             "document": admission_document(document)}
 
 
+@cache
+def _norm_defaults_cases() -> dict:
+    """One accepted case per kind of the norm-defaults route (`norm-defaults.route`): the three-way fixture u5a's
+    route kinds, defeasible's kinds as `ve.defaults.ask` sends them on DF-γ and DF-β (tests/test_defaults_lean.py),
+    a zone question and a joined act's elaboration."""
+    import copy
+    from conformance import norm_defaults_three_way as three_way
+    from conformance.norm_defaults import sources
+    from conformance.norm_defaults_report import report_case
+    from tests.test_acts_joined_route import DEFAULT_PROFILES, RULE, environment
+    from tests.test_defaults_lean import DOCS, X_ALL
+    from tests.test_defaults_zone import zcase
+    from ve import defaults
+    from ve.backends import relay
+    document, raw = next((d, s[0]) for name, d, s in sources() if name == "u5a")
+    cases = {"norm-defaults-elaborate": three_way.route.source_case(document, "norm-defaults-elaborate"),
+             "norm-defaults-conflict": three_way.conflict_case(document, raw)[1],
+             "norm-defaults-status": three_way.status_cases(document, document.situation(raw))[0][0],
+             "norm-defaults-gaps": three_way.gap_cases(document, raw)[0][0],
+             "norm-defaults-report": report_case(document, model=raw),
+             "norm-defaults-certificate": three_way.certificate_case(document),
+             "defaults-zone": zcase(DOCS["alpha"], "x_required", ["a"]),
+             "acts-elaborate": {"id": "acts-elaborate", "kind": "acts-elaborate", "norms": [RULE],
+                                "environment": environment(DEFAULT_PROFILES, default="unspecified")}}
+    sent, decide = [], relay.decide
+
+    def record(mode, batch, **options):
+        rows = decide(mode, batch, **options)
+        sent.extend((case, row) for case, row in zip(copy.deepcopy(batch), rows) if row.get("status") == "ok")
+        return rows
+    relay.decide = record
+    try:
+        for name in ("gamma", "beta"):
+            defaults.ask(*DOCS[name], [], X_ALL)
+    finally:
+        relay.decide = decide
+    for kind in ("defaults-elaborate", "defaults-coherence", "defaults-certificate", "defaults-model"):
+        cases[kind] = next(case for case, _ in sent if case.get("kind") == kind)
+    return cases
+
+
 def _quantity_admission():
     from tests.test_w6a_documents import base_document, doc_env
     raw = doc_env()
@@ -259,6 +300,10 @@ BUILDERS = {
     ("admission", S, "norms", "admission"): _norms_admission,
     ("admission", S, "norm-defaults", "admission"): _norm_defaults_admission,
     ("admission", S, "quantity", "document"): _quantity_admission,
+    **{("norm-defaults.route", S, "norm-defaults", kind): (lambda kind=kind: _norm_defaults_cases()[kind])
+       for kind in ("norm-defaults-elaborate", "norm-defaults-conflict", "norm-defaults-status", "norm-defaults-gaps",
+                    "norm-defaults-report", "norm-defaults-certificate", "defaults-elaborate", "defaults-coherence",
+                    "defaults-certificate", "defaults-model", "defaults-zone", "acts-elaborate")},
     ("label", C, "route", "label"): lambda: _route_fixture("labels", "label"),
     ("graph.compose", C, "route", "certificate"): lambda: _certificate_case(_route(), "edge", "certificate"),
     ("graph.compose", C, "check-certificate", None): lambda: _certificate_case(_legacy(), "edge"),
