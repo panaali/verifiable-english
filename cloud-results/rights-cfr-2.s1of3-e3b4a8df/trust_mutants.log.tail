@@ -1,0 +1,15 @@
+trust_mutants: 13 definitions, 451 mutants (146 to run), 4 jobs, base 3e4fe503f4c9
+UNKNOWN lean/VE/Rights/Run.lean:315 VE.Rights.Run.situationTables (D[V], trusted) append-right: (correlate D) ++ ->  (lean/VE/Rights/Run.lean:315: Application type mismatch: The argument)
+UNKNOWN lean/VE/Rights/Run.lean:225 VE.Rights.Run.regenerated (D[V], trusted) list-empty: [("environment_prime", (primeJsonR D environment).toOption.getD .null), ("generated", Json.arr (g... -> [] (lean/ResponseShape/Schemas/RightsChecks.lean:40: Expression (VE.Rights.Run.entailmentUses, which ...)
+UNKNOWN lean/VE/Rights/Run.lean:237 VE.Rights.Run.regenerated (D[V], trusted) list-empty: findings -> [] (lean/VE/Rights/Run.lean:237: Invalid field notation: Type of)
+UNKNOWN lean/VE/Rights/Run.lean:315 VE.Rights.Run.situationTables (D[V], trusted) list-empty: (genEntries D).map (·.1) -> [] (lean/VE/Rights/Run.lean:316: Invalid field notation: Type of)
+UNKNOWN lean/VE/Rights/Run.lean:436 VE.Rights.Run.conflictAnswerOf (D[V], trusted) list-empty: conditional -> [] (lean/VE/Rights/Run.lean:436: Invalid field notation: Type of)
+UNKNOWN lean/VE/Rights/Run.lean:316 VE.Rights.Run.situationTables (D[V], trusted) list-empty: (· -> (fun x_tm => [] (lean/VE/Rights/Run.lean:316: Invalid projection: Type of)
+UNKNOWN lean/VE/Rights/Run.lean:316 VE.Rights.Run.situationTables (D[V], trusted) list-empty: (·.map (·.2) -> (fun x_tm => [] (lean/VE/Rights/Run.lean:316: typeclass instance problem is stuck, it is often due to metavariables)
+UNKNOWN lean/VE/Rights/Run.lean:442 VE.Rights.Run.conflictAnswerOf (D[V], trusted) list-empty: (targets (soften (correlate D))) -> [] (lean/VE/Rights/Run.lean:442: Invalid projection: Type of)
+UNKNOWN lean/VE/Rights/Run.lean:445 VE.Rights.Run.conflictAnswerOf (D[V], trusted) list-empty: M -> [] (lean/VE/Rights/Run.lean:445: Unknown constant `Nat.null`)
+SURVIVOR lean/VE/Rights/Run.lean:435 VE.Rights.Run.conflictAnswerOf (D[V], trusted) list-drop-last: conditional -> (conditional.dropLast)
+trust_mutants: 136 KILLED, 1 SURVIVOR, 9 UNKNOWN, 5 INVALID, 0 ALLOWED, 0 NOT RUN, 300 OTHER SHARD in 3296 s; 5 carried from 99bbca61d416 (check-only change: lean/ResponseShape/Schemas/RightsChecks.lean, lean/declarations.txt; plan-only: tools/trust-classes.json)
+trust_mutants: D[V], trusted: 49 KILLED, 1 SURVIVOR, 9 UNKNOWN, 5 INVALID, 121 OTHER SHARD
+trust_mutants: G[V], trusted: 87 KILLED, 179 OTHER SHARD
+trust_mutants: steps: wall plan 10.9 s, scratch 3.3 s, control_build 0.3 s, probe_install 1.2 s, mutants 3274.7 s, cleanup 5.5 s; lake control_build 0.2 s (1), probe_install 1.1 s (1), control_probes 65.5 s (7), mutant_builds 2713.2 s (146), mutant_checks 8483.2 s (143), stage_controls 255 s (5), mutant_probes 1392.2 s (137)
