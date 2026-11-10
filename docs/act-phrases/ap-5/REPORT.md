@@ -51,7 +51,7 @@ and docstring. It finds each item, whitespace-normalised, in `Specialise.lean` a
 | 11.5: two permission predicates give exactly one premise `∀ x. pa x → pb x`; two plain none; two obligation one | lines 93-94, 100, 95 |
 | Task extras: undeclared "nearly" false; a different head false; `a = b` no premise; different sorts no premise | lines 55, 57, 104, 106-107 |
 | Shared files: none | only the registries the task names: `lean/VE.lean`, `tools/layer_policy.py`, `tools/trust-classes.json`, plus generated files |
-| Moves: nothing until AP-5b | no route, request, answer, pack, profile, Python or Rust change (`git diff --stat` of the merge base: `ve/`, `rust/`, `tests/` untouched) |
+| Moves: nothing until AP-5b | no route, request, answer, pack, profile or Rust change, and no `ve/` change (`git diff --stat` of the merge base: `ve/` and `rust/` untouched). Python: only the `tools/layer_policy.py` row and its test `tests/test_acts_specialise_layer.py` |
 
 **Not in this item** (each waits for AP-5b):
 - the wire key `restrictive` and `VE.Acts.Wire.decodeRestrictive` (spec 1.9, and the wire table's row "AP-5 (used
@@ -59,7 +59,7 @@ and docstring. It finds each item, whitespace-normalised, in `Specialise.lean` a
 - the IDE question;
 - any Background hook, pack or profile.
 
-So no route, request or answer changes, and no Python changes. AP-5b's tests (the conflict fixture, "may a person
+So no route, request or answer changes, and no Python product change beyond the `tools/layer_policy.py` row. AP-5b's tests (the conflict fixture, "may a person
 seek asylum?") and its seeded bug are AP-5b's in the plan itself.
 
 ## 4. Seeded bugs and mutants
@@ -67,8 +67,17 @@ seek asylum?") and its seeded bug are AP-5b's in the plan itself.
 `python3 docs/act-phrases/ap-5/seed_bugs.py` works on `Specialise.lean` with its theorems cut, so a fixture must catch
 each plant, not a proof. It first builds that cut text with no plant, as a control, then plants each bug in turn,
 builds `VE.Acts.SpecialiseExamples`, records the failing `#guard` lines and restores the file. Its output is
-[mutants.json](mutants.json): control build exit 0; 35 plants, 35 KILLED; restored build exit 0. Lean is the only
-language changed.
+[mutants.json](mutants.json): control build exit 0; 35 plants, 35 KILLED; restored build exit 0.
+
+Python (pre-review gate, after the chain gate): `tools/layer_policy.py` is the one changed Python file (the
+`VE.Acts.Specialise` row). Removing that row left `tools/check_lean_imports.py` passing (the module falls to its
+package's default, layer 3), so `tests/test_acts_specialise_layer.py` now pins the placement. Its two plants are
+recorded in [python-seeded-bugs.json](python-seeded-bugs.json). Each was run with that test and then restored:
+
+| Seeded bug (Python, `tools/layer_policy.py`) | Test that fails |
+|---|---|
+| `VE.Acts.Specialise` dropped from the `VE.Acts.Readings` layer set | `tests/test_acts_specialise_layer.py::test_specialise_sits_in_the_layer_of_readings_and_imports_nothing_above_it` (`assert 3 == 2`) |
+| `VE.Acts.Specialise` placed one layer up (an early `return 3`) | the same test (`assert 3 == 2`) |
 
 | Seeded bug (task) | Guard that fails |
 |---|---|
@@ -177,9 +186,12 @@ Spec re-read:
 
 1. Typed and contained answers: N.A., since no route, relay or response changes.
 2. Deliverables: PASS. Every plan and task row is in section 3, with "not in this item" as the task lists it;
-   `git diff --name-only main...HEAD | grep -E "^(ve|rust|tests)/"` finds nothing.
-3. Tests can fail: PASS. mutants.json (35 KILLED, with a control build); trust-mutants.json exits 0.
-4. Python, Lean and Rust agree: N.A., since only Lean changed and nothing is called.
+   `git diff --name-only main...HEAD | grep -E "^(ve|rust)/"` finds nothing; `tests/` gains only
+   `tests/test_acts_specialise_layer.py`.
+3. Tests can fail: PASS. mutants.json (35 KILLED, with a control build); trust-mutants.json exits 0;
+   python-seeded-bugs.json (2 KILLED by `tests/test_acts_specialise_layer.py`).
+4. Python, Lean and Rust agree: N.A., since only Lean meaning changed and nothing is called (the Python change is a
+   layer row).
 5. R8 binding: N.A., since nothing is relayed.
 6. Gate evidence on the final HEAD: PASS. The chain runs the gate; the selected run is on committed code (section 9).
 7. No unsigned item: PASS. DELTA has no rows; the trust growth cites R16 with its conditions met (section 5).
@@ -209,3 +221,7 @@ The C findings: docstring, equal-length sorts, plain-first duplicate, control bu
 `lean/audit.py`, the Rust build and `tools/test_layer_policy.py`, it ran 475 units with 0 failed, and the log ends
 `failed/error ids=0`. No test failed, so none from main-known-red.txt came up. Only this section changed after that
 run (docs only). The full gate runs in the chain on the final HEAD.
+
+After the chain gate passed at ae16178c, the pre-review gate asked for a Python seeded bug. That added
+`tests/test_acts_specialise_layer.py` and its evidence (section 4). The new test passes on HEAD; the chain gates the
+new HEAD again.
