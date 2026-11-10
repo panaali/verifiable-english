@@ -4,8 +4,9 @@
 `shadow`) names spec 7.1's row (1.1b-1.1i) and 7.2's row 2 (2.1b) of a block `VE.Purposes.Wire`'s decoder refuses, with
 spec 7's text, in Lean and Python. It decides nothing: the decoder still decides, `purposes@0` is not admitted, and
 the document answers on the fixtures equal main's. No DELTA row (no user-visible output changes). Trust: R16, V +64,
-K +0, S +0. Open: 7.2's rows 3-10 wait for PE-2 (section 2). Size: about 790 hand-written lines, over the ~600 line
-(section 3).
+K +0, S +0. Open: 7.2's rows 3-10 wait for PE-2 (section 2). Size: about 790 hand-written lines before the fix round,
+over the ~600 line (section 3). Fix round 1 (section 8): every record argument is now bound to the request block (F1),
+the R16 ties-pass row is in FOLLOW-UPS.md (F2), and the generated Rust table has seeded bugs (F-ready1).
 
 Scope: [purpose-explanation-PLAN.md](../../spec/purpose-explanation-PLAN.md):1058 ("The C6 wire-contract item");
 [wire-contract-PLAN.md](../../spec/wire-contract-PLAN.md):471 (S10, "contract first"); spec
@@ -65,7 +66,7 @@ fixture's answer, re-record it the same way from the new merge base.
 
 ## 4. Seeded bugs
 
-[mutants.json](mutants.json): **22, all killed** (Lean 15, Python 5, contract table 2), plus 2 equivalent ones
+[mutants.json](mutants.json): **35, all killed** (Lean 15, Python 16, contract table 2, Rust 2), plus 2 equivalent ones
 (`hooks`' predicate and view, which the table never calls; guard :84 pins this, and mutant `lean-table-hook-kind`
 shows that guard failing). Each was planted, run and restored. The file records the test and the first failure.
 These are the task's four:
@@ -77,14 +78,16 @@ These are the task's four:
 | the contract on the verdict path | `py-verdict-path` (`ve/backends/relay.py` `answer`) | `test_the_contract_is_off_the_verdict_and_identity_paths` |
 | a fault out of 7.1's order | `table-order`, `lean-order-polarity-first` | `test_the_contract_registers_spec_7s_texts_verbatim_and_in_fault_order`, `Hooks/Purposes.lean:127` |
 
-Rust: only the generated `rust/ve-kernel/src/contract_tables.rs` changed; no Rust was written by hand.
+Rust: only the generated `rust/ve-kernel/src/contract_tables.rs` changed; no Rust was written by hand. Its two seeded
+bugs (`rust-table-text`, 1.1g's text; `rust-table-class`, 1.1c's class) each fail
+`tests/test_wire_contract_rust.py::test_rust_table_rows_equal_the_contract_rows` (fix round 1).
 
 ## 5. Trust and evidence
 
 - Trust (`uv run python tools/trust_map.py --check`, against 1ee886ca05d2): K +0, S +0, G +64 (`Hooks/Purposes.lean`
   +61, `Tables/Purposes.lean` +2, `Diagnose.lean` +1). The allowance is recorded in `docs/trust-baseline.json` with
   "SIGNED by standing ruling R16 (DRI-RULINGS.md), sa-wire-purposes0, 2026-10-18". The FOLLOW-UPS.md row under
-  "## sa-wire-purposes0" asks for the ties pass.
+  "## sa-wire-purposes0" asks for the ties pass (added in fix round 1: the build round claimed it but had not written it).
 - Trust mutants (13a, `--test` the hook and Diagnose modules, `--allow` [trust-allow.json](trust-allow.json)):
   [trust-mutants.json](trust-mutants.json): 173 KILLED, 0 SURVIVOR, 0 UNKNOWN, 25 ALLOWED, 2 INVALID, exit 0
   (rescored after an allow-only wording edit; the full run before it had the same counts). Of the 25 allowed, 11 are
@@ -123,8 +126,12 @@ Rust: only the generated `rust/ve-kernel/src/contract_tables.rs` changed; no Rus
 3. Tests can fail: PASS, [mutants.json](mutants.json) (22 killed) and [trust-mutants.json](trust-mutants.json) (exit 0).
 4. Engines agree: PASS, `test_every_refused_example_round_trips_through_the_contract_in_both_engines` (Lean, the
    Python engine and the legacy validator, record by record), and `test_the_examples_are_accepted_and_clean_in_both_engines`.
-5. R8 binding: PASS, `test_the_relay_refuses_a_retyped_or_rebound_record` (`absent`, a shifted check, another
-   unit's check, extra and missing arguments, an extra field). Row count and ids are bound by `run_bound` in the relay.
+5. R8 binding: PASS since fix round 1 (the build round's PASS overstated it: no argument was bound to the request
+   block, review F1). The record is bound to the table by `test_the_relay_refuses_a_retyped_or_rebound_record` (`absent`,
+   a shifted check, another unit's check, extra and missing arguments, an extra field), and each argument to the request
+   block by `BINDS` (`conformance/purposes_contract.py`): `test_a_record_naming_what_the_request_does_not_carry_is_refused`,
+   `test_every_argument_rebound_away_from_the_request_is_refused`, `test_binds_ties_every_member_of_the_table_and_no_other`
+   and `test_leans_genuine_records_on_any_json_value_bind`. Row count and ids are bound by `run_bound` in the relay.
 6. Gate evidence: PASS. The chain runs the gate on the final HEAD; section 6 says what the selected run did not cover (shard 6).
 7. No unsigned item: PASS. The only growth is R16, signed in `docs/trust-baseline.json`, and there is no DELTA row.
 8. DELTA: N.A. No user-visible output changes: `test_the_contract_is_off_the_verdict_and_identity_paths`
@@ -144,3 +151,17 @@ Rust: only the generated `rust/ve-kernel/src/contract_tables.rs` changed; no Rus
     charged before walking (deviation 5).
 
 Next item: pe-2 (the purposes block in the document mode), after sa-checked-view.
+
+## 8. Fix round 1 (review sa-wire-purposes0-review.final.md)
+
+- **F1 (B), R8 (b).** `bound(row, block)` now ties every argument to the request block through one table, `BINDS`,
+  one relation per member, enumerated from the contract (a member without one is refused): 1.1c's `limit` is a count the
+  block's links exceed; 1.1d's `link` is a position 1..n; 1.1e's `id` is a link id, marker or side ref id of the block;
+  1.1f-1.1i's `link` is a link id of the block, and 1.1f/g/h's quoted value is that link's field. A string is compared as
+  it is; any other value is compared, type for type, with the JSON value Lean's spelling parses to, so no Lean spelling
+  is copied. PROBE F1 exits 0 (it printed `accepted` before the fix). Python only; Lean and Rust unchanged.
+- **F2 (B), R16.** The `## sa-wire-purposes0` row is in `/home/seyran/code/manage-agents/FOLLOW-UPS.md`
+  (`trust_map.py --check` re-run: K +0, S +0, G +64, trusted +64, PASS). PROBE F2 exits 0.
+- **F-ready1 (B).** Seeded Rust bugs `rust-table-text` and `rust-table-class` (section 4).
+- Seeded Python bugs for F1: 11 `py-binds-*` mutants in [mutants.json](mutants.json), each failing a named test.
+- Not done (C): F3 (the 2.1b description), F4 (size; this round adds about 60 lines of code and 120 of tests), F5, F6.
