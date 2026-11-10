@@ -1,0 +1,11 @@
+trust_mutants: 83 definitions, 110 mutants (28 to run), 4 jobs, base a998c06909c3
+SURVIVOR lean/VE/Commands/Steps.lean:95 VE.Commands.shapeOutcome (G[V], trusted) any-all: any -> all (the proofs it breaks: lean/VE/Commands/Steps.lean:157, lean/VE/Commands/Steps.lean:301, lean/VE/C...)
+SURVIVOR lean/VE/Acts/Run.lean:358 VE.Acts.Run.listed (G[V], trusted) bool-flip: false -> true
+UNKNOWN lean/VE/Acts/Lexical.lean:149 VE.Acts.Lexical.joinFree (D[V], trusted) bool-flip: true -> false (lake build did not finish in 1800 s (--build-timeout))
+SURVIVOR lean/VE/Rights/Run.lean:248 VE.Rights.Run.nodeOpen (G[V], trusted) lit-plus: 0 -> 1
+UNKNOWN lean/VE/NormDefaults/Wire.lean:72 VE.NormDefaults.Wire.decodeEnvironmentU (G[V], trusted) bool-flip: false -> true (lake build did not finish in 1800 s (--build-timeout))
+trust_mutants: 22 KILLED, 3 SURVIVOR, 2 UNKNOWN, 1 INVALID, 0 ALLOWED, 0 NOT RUN, 82 OTHER SHARD in 3077 s
+trust_mutants: D[V], trusted: 5 KILLED, 1 UNKNOWN, 1 INVALID, 19 OTHER SHARD
+trust_mutants: G[V], trusted: 9 KILLED, 3 SURVIVOR, 1 UNKNOWN, 43 OTHER SHARD
+trust_mutants: S, trusted: 8 KILLED, 20 OTHER SHARD
+trust_mutants: steps: wall plan 12.5 s, scratch 3.8 s, control_build 0.3 s, probe_install 1.1 s, mutants 3053.4 s, cleanup 6 s, reads 0.3 s; lake control_build 0.2 s (1), probe_install 1.1 s (1), control_probes 184.9 s (21), mutant_builds 487.6 s (35), mutant_checks 9045.2 s (26), stage_controls 401.4 s (7), mutant_probes 195.1 s (24)
