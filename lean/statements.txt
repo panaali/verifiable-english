@@ -39830,10 +39830,10 @@ theorem VE.Readings.grows_bar
   ∀ (X : VE.Rights.RightsDoc) (b : VE.Rights.Bar),
     VE.Readings.Grows X
       { soft := X.soft, rights := X.rights, rs := X.rs, limits := X.limits, bars := X.bars ++ [b],
-        outsideCites := X.outsideCites, sourceOrder := X.sourceOrder, sourceUnits := X.sourceUnits }
+        outsideCites := X.outsideCites, sourceOrder := X.sourceOrder, sourceUnits := X.sourceUnits, located := X.located }
       [] 1
-  -- uses VE.Readings.Grows@VE.Readings.Shape VE.Rights.Bar@VE.Rights.Tree VE.Rights.RightsDoc.bars@VE.Rights.Tree VE.Rights.RightsDoc.limits@VE.Rights.Tree VE.Rights.RightsDoc.mk@VE.Rights.Tree VE.Rights.RightsDoc.outsideCites@VE.Rights.Tree VE.Rights.RightsDoc.rights@VE.Rights.Tree VE.Rights.RightsDoc.rs@VE.Rights.Tree VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.RightsDoc.sourceOrder@VE.Rights.Tree VE.Rights.RightsDoc.sourceUnits@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
-  -- expr 1426053719
+  -- uses VE.Readings.Grows@VE.Readings.Shape VE.Rights.Bar@VE.Rights.Tree VE.Rights.RightsDoc.bars@VE.Rights.Tree VE.Rights.RightsDoc.limits@VE.Rights.Tree VE.Rights.RightsDoc.located@VE.Rights.Tree VE.Rights.RightsDoc.mk@VE.Rights.Tree VE.Rights.RightsDoc.outsideCites@VE.Rights.Tree VE.Rights.RightsDoc.rights@VE.Rights.Tree VE.Rights.RightsDoc.rs@VE.Rights.Tree VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.RightsDoc.sourceOrder@VE.Rights.Tree VE.Rights.RightsDoc.sourceUnits@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
+  -- expr 577578169
 theorem VE.Readings.grows_place
   ∀ (X : VE.Rights.RightsDoc) (c : VE.Compose.Content) (cs : List (String × List String)),
     VE.Readings.Grows X (VE.Readings.place X c cs) (VE.Readings.normsOf c) (VE.Readings.contrib c)
@@ -50213,6 +50213,16 @@ theorem VE.Rights.limPack_mem_narrowings
     VE.Rights.Narrowing.limPack ∈ VE.Rights.narrowings D N ↔ VE.Rights.scopeLimits D N ≠ []
   -- uses VE.Rights.Limitation@VE.Rights.Tree VE.Rights.Line@VE.Rights.Tree VE.Rights.Narrowing.limPack@VE.Rights.Correlate VE.Rights.Narrowing@VE.Rights.Correlate VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.narrowings@VE.Rights.Correlate VE.Rights.scopeLimits@VE.Rights.Correlate
   -- expr 611274591
+theorem VE.Rights.limitationScope_texts
+  ∀ (D : VE.Rights.RightsDoc) (l : List (String × String)) (c : List (Option VE.Tableau.Certificate)),
+    List.map VE.Rights.Finding.text
+        (VE.Rights.limitationScope
+          { soft := D.soft, rights := D.rights, rs := D.rs, limits := D.limits, bars := D.bars,
+            outsideCites := D.outsideCites, sourceOrder := D.sourceOrder, sourceUnits := D.sourceUnits, located := l }
+          c) =
+      List.map VE.Rights.Finding.text (VE.Rights.limitationScope D c)
+  -- uses VE.Rights.Finding.text@VE.Rights.Scope VE.Rights.Finding@VE.Rights.Scope VE.Rights.RightsDoc.bars@VE.Rights.Tree VE.Rights.RightsDoc.limits@VE.Rights.Tree VE.Rights.RightsDoc.mk@VE.Rights.Tree VE.Rights.RightsDoc.outsideCites@VE.Rights.Tree VE.Rights.RightsDoc.rights@VE.Rights.Tree VE.Rights.RightsDoc.rs@VE.Rights.Tree VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.RightsDoc.sourceOrder@VE.Rights.Tree VE.Rights.RightsDoc.sourceUnits@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.limitationScope@VE.Rights.Scope VE.Tableau.Certificate@VE.Tableau
+  -- expr 3155610192
 theorem VE.Rights.limitation_scope_sound
   ∀ (D : VE.Rights.RightsDoc),
     VE.Rights.WellFormedRights D = Bool.true →
@@ -50400,6 +50410,15 @@ theorem VE.Rights.noDistinction_sound
             ∀ (q : String), q ∈ VE.SoftNorms.cone (VE.Rights.correlate D) p → ¬q ∈ D.rights.protected
   -- uses VE.Rights.RightsDoc.rights@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.RightsEnv.protected@VE.Rights.Tree VE.Rights.WellFormedRights@VE.Rights.Correlate VE.Rights.correlate@VE.Rights.Correlate VE.Rights.independentReported@VE.Rights.Distinction VE.Rights.rightDerived@VE.Rights.Tree VE.SoftNorms.cone@VE.SoftNorms.Semantics
   -- expr 3153249130
+theorem VE.Rights.noDistinction_texts
+  ∀ (D : VE.Rights.RightsDoc) (l : List (String × String)),
+    List.map VE.Rights.Finding.text
+        (VE.Rights.noDistinction
+          { soft := D.soft, rights := D.rights, rs := D.rs, limits := D.limits, bars := D.bars,
+            outsideCites := D.outsideCites, sourceOrder := D.sourceOrder, sourceUnits := D.sourceUnits, located := l }) =
+      List.map VE.Rights.Finding.text (VE.Rights.noDistinction D)
+  -- uses VE.Rights.Finding.text@VE.Rights.Scope VE.Rights.Finding@VE.Rights.Scope VE.Rights.RightsDoc.bars@VE.Rights.Tree VE.Rights.RightsDoc.limits@VE.Rights.Tree VE.Rights.RightsDoc.mk@VE.Rights.Tree VE.Rights.RightsDoc.outsideCites@VE.Rights.Tree VE.Rights.RightsDoc.rights@VE.Rights.Tree VE.Rights.RightsDoc.rs@VE.Rights.Tree VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.RightsDoc.sourceOrder@VE.Rights.Tree VE.Rights.RightsDoc.sourceUnits@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.noDistinction@VE.Rights.Distinction
+  -- expr 2177693301
 theorem VE.Rights.no_distinction_sound
   ∀ (D : VE.Rights.RightsDoc),
     VE.Rights.WellFormedRights D = Bool.true →
