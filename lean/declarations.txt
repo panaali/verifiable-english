@@ -1374,7 +1374,7 @@ module ResponseShape.Schemas.Rights 0e28715cb624a8295b2bbcc82aede33b007f8a27bfe7
 378:0-404:114 def ResponseShape.Schemas.Rights.packages@ResponseShape.Schemas.Rights
 406:0-420:47 def ResponseShape.Schemas.Rights.row@ResponseShape.Schemas.Rights
 422:0-447:35 def ResponseShape.Schemas.Rights.file@ResponseShape.Schemas.Rights
-module ResponseShape.Schemas.RightsChecks c3702d8b9eceeccd077519bb0965b55104e7c12bdf93f7a925ec85491deca69b
+module ResponseShape.Schemas.RightsChecks 9ca5b88fae43f4ba533faf1ae01f2803d9ee94054811448fd09affc895524070
 10:0-10:67 def ResponseShape.RightsChecks.parse@ResponseShape.Schemas.RightsChecks
 11:0-11:1183 def ResponseShape.RightsChecks.env@ResponseShape.Schemas.RightsChecks
 12:0-13:1344 def ResponseShape.RightsChecks.spanned@ResponseShape.Schemas.RightsChecks
@@ -1392,6 +1392,7 @@ module ResponseShape.Schemas.RightsChecks c3702d8b9eceeccd077519bb0965b55104e7c1
 35:0-35:35 def ResponseShape.RightsChecks.elabA@ResponseShape.Schemas.RightsChecks
 36:0-36:37 def ResponseShape.RightsChecks.scopeA@ResponseShape.Schemas.RightsChecks
 37:0-37:130 def ResponseShape.RightsChecks.texts@ResponseShape.Schemas.RightsChecks
+47:0-48:47 def ResponseShape.RightsChecks.oneCase@ResponseShape.Schemas.RightsChecks
 module ResponseShape.Schemas.Risk 0230b8935aa681bc3a6b601524e5f8708c05e086558cb6a403fc6a2a579ad1fc
 9:0-22:91 def ResponseShape.Schemas.Risk.risk_path@ResponseShape.Schemas.Risk
 24:0-32:52 def ResponseShape.Schemas.Risk.kind@ResponseShape.Schemas.Risk

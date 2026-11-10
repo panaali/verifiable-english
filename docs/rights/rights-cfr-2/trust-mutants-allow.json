@@ -1,0 +1,12 @@
+{"allow": [
+  {"definition": "VE.Rights.Run.findingJson", "operator": "list-first", "reason": "equivalent: the only survivor is f.span in `f.span.isEmpty`, and (s.take 1).isEmpty = s.isEmpty"},
+  {"definition": "VE.Rights.Run.runRightsKind", "operator": "list-first", "reason": "equivalent: the only survivor is findings in `.bool findings.isEmpty` (licensed), and (l.take 1).isEmpty = l.isEmpty"},
+  {"definition": "VE.Rights.Run.runRightsKind", "operator": "list-last", "reason": "equivalent: the only survivor is findings in `.bool findings.isEmpty` (licensed), and (l.reverse.take 1).isEmpty = l.isEmpty"},
+  {"definition": "ResponseShape.Schemas.Rights.packages", "operator": "list-drop-first", "reason": "equivalent: dropping `obj` changes nothing, as every non-object takes the UNKNOWN branch, whose `.not (.anyOf [.required ...])` fails on it (`required` holds vacuously on a non-object, ResponseShape.check)"},
+  {"definition": "VE.Rights.Run.runRightsKind", "operator": "list-empty", "reason": "refused by Lean: each remaining mutant does not type-check (`environment -> []`: application type mismatch; `findings -> []`: invalid field notation)"},
+  {"definition": "VE.Rights.Run.runRightsKind", "operator": "append-right", "reason": "refused by Lean: `environment ++` does not type-check (application type mismatch)"},
+  {"definition": "VE.Rights.Run.situationTables", "operator": "list-empty", "reason": "refused by Lean: each remaining mutant does not type-check (an empty list where a RightsDoc, a SoftDoc or a function is expected)"},
+  {"definition": "VE.Rights.Run.situationTables", "operator": "append-right", "reason": "refused by Lean: `(correlate D) ++` does not type-check (application type mismatch)"},
+  {"definition": "VE.Rights.Run.conflictAnswerOf", "operator": "list-empty", "reason": "refused by Lean: each remaining mutant does not type-check (invalid projection or field notation, an implicit argument it cannot synthesize, or `Nat.null`)"},
+  {"definition": "VE.Rights.Run.regenerated", "operator": "list-empty", "reason": "not a survivor: `findings -> []` does not type-check, and the two whole-list mutants (lines 223, 225) are refuted by RightsChecks.lean:40 but are UNKNOWN because they also break ResponseShape.Encoders.Rights.elaborate_fits"}
+]}
