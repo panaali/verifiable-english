@@ -12,6 +12,7 @@ a pack its content and `packSources_complete` are the pack owner's (5.1). PE-2's
 namespace VE.Service.Document
 open Lean
 open VE.Discourse
+open VE.Bridge (stringField)
 
 /-- The typed checked document after the status fold (scope's governor fold included): the answer's rows, its source,
     and each unit under an active reading set with its candidates' kinds. NEW under W2. -/
@@ -23,6 +24,18 @@ structure CheckedView where
   readings : List (String × List String) := []
   /-- † PE-R11: the unit and part ids that the premises the list's packs put in `X` name as their source. -/
   packSources : List String := []
+
+/-- `checkBody`'s run, typed: the case id and the checked document `encode` writes (`checkBodyChecked_encode`). -/
+def checkBodyChecked (j : Json) : Except String (String × Checked) := do
+  let id ← stringField j "id"
+  let text ← stringField j "document"
+  let withGraph ← match j.getObjVal? "admit" with
+    | .ok (.bool b) => pure b
+    | .ok _ => throw "InvalidInput: admit must be a boolean"
+    | .error _ => pure true
+  let lexicon := (j.getObjVal? "lexicon").toOption
+  pure (id, ← check text withGraph lexicon (j.getObjVal? "packs").toOption (j.getObjVal? "units").toOption
+    (j.getObjVal? "reading_sets").toOption)
 
 /-- `checkCore`'s run, typed: the case id and the checked document (`checkCoreChecked_encode`). -/
 def checkCoreChecked (j : Json) : Except String (String × Checked) :=
@@ -80,9 +93,9 @@ def unitSets (c : Checked) : List (String × List (String × VE.Route.Admission.
 
 /-- The view of a checked document whose answer's rows are `rows`. -/
 def viewOf (c : Checked) (rows : List RowUnit) : CheckedView :=
-  { source := c.source, rows,
-    candidates := (unitSets c).map fun (u, cs) => (u, cs.map (·.2)),
-    readings := (unitSets c).map fun (u, cs) => (u, cs.map (·.1)) }
+  let us := unitSets c
+  { source := c.source, rows, candidates := us.map fun (u, cs) => (u, cs.map (·.2)),
+    readings := us.map fun (u, cs) => (u, cs.map (·.1)) }
 
 /-- One run of the document mode, two outputs: the answer and its view. -/
 def checkDocSetsView (j : Json) : Except String (Json × CheckedView) := do
@@ -100,12 +113,23 @@ def activeKinds (j : Json) : Except String (List (String × List VE.Route.Admiss
 
 /-! ## The run is `checkDocSets`'s -/
 
+theorem checkBodyChecked_encode (j : Json) :
+    (checkBodyChecked j).map (fun r => encode r.1 r.2) = checkBody j := by
+  unfold checkBodyChecked checkBody
+  cases stringField j "id" <;> cases stringField j "document" <;> try rfl
+  all_goals (rcases j.getObjVal? "admit" with _ | (_ | _ | _ | _ | _ | _))
+  all_goals (dsimp only [bind, Except.bind, pure, Except.pure, throw, throwThe, MonadExceptOf.throw])
+  all_goals (try rfl)
+  all_goals (split <;> simp_all [Except.map])
+
 theorem checkCoreChecked_encode (j : Json) :
     (checkCoreChecked j).map (fun r => encode r.1 r.2) = checkCore j := by
-  unfold checkCoreChecked checkCore checkBody
+  unfold checkCoreChecked checkCore
   split
-  · rfl
-  · cases clashRefusal j <;> rfl
+  · exact checkBodyChecked_encode j
+  · cases clashRefusal j
+    · exact checkBodyChecked_encode j
+    · rfl
 
 /-- The refactor changes no answer. -/
 theorem checkDocSetsView_answer (j : Json) : (checkDocSetsView j).map (·.1) = checkDocSets j := by

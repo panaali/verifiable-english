@@ -105,10 +105,8 @@ theorem composedSetRow_fits (j out authored : Json) :
     have hrows := OkP.mapM (fun r _ => composedReadingRow_fits j r) readings hreadings
     fits using composedList_fits j _ readings hrows
 
-/-- An encoded row fits, whatever document it encodes. -/
-theorem encode_fits (j : Json) (i : String) (c : VE.Service.Document.Checked) :
-    OkFits j Skeletons.document (.ok (VE.Service.Document.encode i c)) := by
-  unfold VE.Service.Document.encode
+theorem body_fits (j : Json) : OkFits j Skeletons.document (VE.Service.Document.checkBody j) := by
+  unfold VE.Service.Document.checkBody VE.Service.Document.encode
   okfits
   all_goals split
   all_goals (try simp only [VE.Route.Wire.ok, List.cons_append, List.nil_append, List.append_nil])
@@ -120,15 +118,6 @@ theorem encode_fits (j : Json) (i : String) (c : VE.Service.Document.Checked) :
       List.mem_toArray, List.mem_map] at hx
     obtain ⟨u, _, rfl⟩ := hx
     exact unit_fits j u
-
-theorem body_fits (j : Json) : OkFits j Skeletons.document (VE.Service.Document.checkBody j) := by
-  unfold VE.Service.Document.checkBody
-  intro a h
-  cases hb : VE.Service.Document.checkBodyChecked j with
-  | error e => simp [hb, Functor.map, Except.map] at h
-  | ok r =>
-    simp only [hb, Functor.map, Except.map, Except.ok.injEq] at h
-    exact encode_fits j r.1 r.2 a (by rw [h])
 
 /-- Row 16 (PC-1) answers no row, and the body's rows fit. -/
 theorem document_fits (j : Json) : OkFits j Skeletons.document (VE.Service.Document.checkCore j) := by
@@ -253,11 +242,11 @@ theorem checkCore_encode {j a : Json} (h : VE.Service.Document.checkCore j = .ok
     · cases h
     · exact h
   unfold VE.Service.Document.checkBody at h
-  cases hb : VE.Service.Document.checkBodyChecked j with
-  | error e => simp [hb, Functor.map, Except.map] at h
-  | ok r =>
-    simp only [hb, Functor.map, Except.map, Except.ok.injEq] at h
-    exact ⟨r.1, r.2, h.symm⟩
+  obtain ⟨id, _, h⟩ := VE.Scope.bind_ok h
+  obtain ⟨_, _, h⟩ := VE.Scope.bind_ok h
+  dsimp only at h
+  split at h <;> obtain ⟨_, _, h⟩ := VE.Scope.bind_ok h <;> try cases ‹_ = Except.ok _›
+  all_goals obtain ⟨c, _, h⟩ := VE.Scope.bind_ok h; exact ⟨id, c, (Except.ok.inj h).symm⟩
 
 theorem checkDoc_fits (j : Json) : OkFits j Skeletons.document (VE.Service.Document.checkDoc j) := by
   unfold VE.Service.Document.checkDoc

@@ -1,9 +1,9 @@
 """sa-checked-view statement gate (the pattern of docs/attitudes/at-1d/spec_text_check.py): each declaration of
 docs/spec/purpose-explanation.md 5.1's Lean block (the structure `CheckedView`, the definitions `checkDocSetsView` and
 `activeKinds`, and the five theorems) appears, with its docstring, after whitespace normalisation, in
-lean/VE/Service/DocumentView.lean. Each definition and theorem is followed there by ` :=`, so text appended to a
-statement (a weakened conclusion) is refused. No spec line differs and none is added. Run from the repo root; a
-source path may be given as the one argument."""
+lean/VE/Service/DocumentView.lean. Each definition and theorem is followed there by ` :=` and the structure by the
+next docstring, so text appended to a statement (a weakened conclusion, a field) is refused. No spec line differs
+and none is added. Run from the repo root; a source path may be given as the one argument."""
 import re
 import sys
 
@@ -41,7 +41,7 @@ def main(source="lean/VE/Service/DocumentView.lean"):
     statements = [p for p in pieces("### 5.1 The checked view (owner: the document model, `VE.Service.Document`; DRI 2(d))",
                                     "### 5.2 Front-matter keys (owner: W2's loader, `VE.Discourse.Loader`)")
                   if name(p) in EIGHT]
-    tail = lambda p: "" if name(p) == "CheckedView" else " :="
+    tail = lambda p: " /--" if name(p) == "CheckedView" else " :="
     missing = [name(p) for p in statements if norm("\n".join(p)) + tail(p) not in src]
     found = {name(p) for p in statements}
     print(f"{len(statements)} statements, {len(missing)} missing, {len(found)} of 8 found", *missing, sep="\n")
