@@ -2347,6 +2347,8 @@ structure Checked where
   undeclared : List String := []
   /-- Under `cardinality@0`, the admitted claim graph's report (`cardinalityReport`). -/
   cardinality : Option Json := none
+  /-- The active reading sets, the value the status fold read (`Loader.activeOf`); the checked view's candidates. -/
+  active : List (FrontSet × List Bool) := []
 
 /-- `withGraph := false` is `load_document` alone: everything but `_report`'s claim-graph part (its reading checks, W2
 admission and the narrowing choices), which `check_document` adds (batch 16b). -/
@@ -2463,7 +2465,8 @@ def check (text : String) (withGraph : Bool := true) (lexicon : Option Json := n
     doc.source, units, ← units.mapM rowOf, front, block,
     if judged then some (VE.Judgments.usageMap E.rv.definitions J views) else none,
     (let js := records.map (·.1); (js, if judged then statusRows E.rv.definitions js views else [])),
-    if judged then VE.Judgments.undeclaredEvaluative VE.EnglishGrammar.evaluativeRows E.basePredicates J else [], report⟩
+    if judged then VE.Judgments.undeclaredEvaluative VE.EnglishGrammar.evaluativeRows E.basePredicates J else [], report,
+    active⟩
 
 def encode (id : String) (c : Checked) : Json :=
   VE.Route.Wire.ok id ([("document_id", .str c.documentId), ("source_id", .str c.sourceId),
