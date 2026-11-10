@@ -1,0 +1,183 @@
+{
+ "comment": "cmp-s3-cfr-1 seeded bugs, each planted alone, the build rebuilt (Lean) and the named test run, then restored. Trust mutants of the new trusted definitions: trust-mutants.json.",
+ "mutants": [
+  {
+   "name": "decodeRelation-two-relations",
+   "file": "lean/VE/RightClauses/Wire.lean",
+   "definition": "decodeRelation",
+   "change": {
+    "from": "  let bad := s!\"InvalidInput: invalid relation of rule {n}\"",
+    "to": "  let v := match v with | .arr xs => xs.toList.headD v | _ => v\n  let bad := ..."
+   },
+   "verdict": "KILLED",
+   "test": "tests/test_right_clauses.py::test_right_clauses_k_fixtures_service"
+  },
+  {
+   "name": "registration-dropped",
+   "file": "lean/VE/Compose/Dispatch.lean",
+   "definition": "environmentWrappers",
+   "change": {
+    "from": "[\"right-clauses@0\", \"readings@1\"]",
+    "to": "[\"readings@1\"]"
+   },
+   "verdict": "KILLED",
+   "test": "tests/test_right_clauses.py::test_right_clauses_k1_service_identity",
+   "tests": [
+    "tests/test_right_clauses.py::test_right_clauses_k1_service_identity",
+    "lean/VE/Compose/Examples.lean environmentProfiles #guard"
+   ]
+  },
+  {
+   "name": "plainLineJson-keeps-elided",
+   "file": "lean/VE/RightClauses/Wire.lean",
+   "definition": "plainLineJson",
+   "change": {
+    "from": "let l := lineWith headKeys l",
+    "to": "let l := lineWith [\"clauses\", \"relation\"] l"
+   },
+   "verdict": "KILLED",
+   "test": "tests/test_right_clauses.py::test_right_clauses_k1_service_identity"
+  },
+  {
+   "name": "model-reduction-dropped",
+   "file": "ve/profiles.py",
+   "definition": "MODEL_REDUCTIONS",
+   "change": {
+    "from": "\"right-clauses@0\": ModelReduction(),",
+    "to": ""
+   },
+   "verdict": "KILLED",
+   "test": "tests/test_model_environment.py::test_every_registered_profile_has_one_model_reduction"
+  },
+  {
+   "name": "deadline-dropped",
+   "file": "ve/backends/lean_service.py",
+   "definition": "DEADLINES",
+   "change": {
+    "from": "\"clauses-elaborate\": (120.0, 120.0),",
+    "to": ""
+   },
+   "verdict": "KILLED",
+   "test": "tests/test_lean_service.py::test_the_deadline_keys_are_the_handshakes_modes"
+  },
+  {
+   "name": "delta-profile-off-record-changed",
+   "file": "lean/VE/Rights/Run.lean",
+   "definition": "runCaseReported",
+   "change": {
+    "from": "(\"error\", .str message)]",
+    "to": "(\"error\", .str (message ++ \"!\"))]"
+   },
+   "verdict": "KILLED",
+   "test": "tests/test_right_clauses.py::test_right_clauses_profile_off_evidence",
+   "how": "planted, ve_service built, profile_off_evidence.py rerun into profile-off.json as head_answers (6 of 28 answers move), test run, file and source restored"
+  },
+  {
+   "name": "delta-environment-without-clauses-dropped",
+   "file": "lean/VE/Service/Standalone.lean",
+   "definition": "validatedLayerEnvironment",
+   "change": {
+    "from": "decodeRightsEnvironment (VE.Compose.withoutClauses frame)",
+    "to": "decodeRightsEnvironment frame"
+   },
+   "verdict": "KILLED",
+   "test": "tests/test_right_clauses.py::test_right_clauses_environment_texts_kept"
+  },
+  {
+   "name": "composed-environment-base-rows",
+   "file": "lean/VE/Service/Standalone.lean",
+   "definition": "validatedComposedEnvironment",
+   "change": {
+    "from": "gateOf (VE.Compose.environmentRows ps) ps",
+    "to": "gateOf VE.Compose.baseRows ps"
+   },
+   "verdict": "KILLED",
+   "test": "tests/test_right_clauses.py::test_right_clauses_environment_texts_kept",
+   "how": "survived the probe lists; killed after the documents@1, judgments@0 fixture was added"
+  },
+  {
+   "name": "relation-never-read",
+   "file": "lean/VE/RightClauses/Wire.lean",
+   "definition": "decodeRelationOpt",
+   "change": {
+    "from": "| .ok v => some <$> decodeRelation n v",
+    "to": "| .ok _ => pure none"
+   },
+   "verdict": "KILLED",
+   "test": "lean/VE/RightClauses/RunExamples.lean #guard K2 (line 45)",
+   "how": "lake build of the named module fails"
+  },
+  {
+   "name": "rebuild-to-null",
+   "file": "lean/VE/RightClauses/Wire.lean",
+   "definition": "rebuild",
+   "change": {
+    "from": "| .obj kvs => Json.mkObj kvs.toList",
+    "to": "| .obj _ => .null"
+   },
+   "verdict": "KILLED",
+   "test": "tests/test_right_clauses.py::test_right_clauses_k_fixtures_service",
+   "how": "also lean/VE/RightClauses/WireTheorems.lean fails to build"
+  },
+  {
+   "name": "mode-name",
+   "file": "lean/VE/Service/Registry.lean",
+   "definition": "VE.Service.Mode.name",
+   "change": {
+    "from": "\"clauses-elaborate\"",
+    "to": "\"clauses-elaborat\""
+   },
+   "verdict": "KILLED",
+   "test": "lean/VE/Service/RegistryExamples.lean #guard (line 6)",
+   "how": "lake build of the named module fails"
+  },
+  {
+   "name": "skeleton-file",
+   "file": "lean/ResponseShape/Skeletons.lean",
+   "definition": "ResponseShape.Skeletons.clausesElaborate",
+   "change": {
+    "from": "skel% \"clauses-elaborate.json#/row\"",
+    "to": "skel% \"scope.json#/row\""
+   },
+   "verdict": "KILLED",
+   "test": "lean/ResponseShape/Skeletons.lean #guard (line 118)",
+   "how": "lake build of the named module fails"
+  },
+  {
+   "name": "runmode-case",
+   "file": "lean/VE/Service/Protocol.lean",
+   "definition": "VE.Service.runMode",
+   "change": {
+    "from": "runCaseReported j",
+    "to": "runCaseReported (j.setObjVal! \"document\" .null)"
+   },
+   "verdict": "KILLED",
+   "test": "lean/VE/Service/Protocol.lean theorem runMode_clausesElaborate (rfl)",
+   "how": "lake build of the named module fails"
+  },
+  {
+   "name": "model-fault-skipped",
+   "file": "lean/VE/Service/Standalone.lean",
+   "definition": "VE.Service.Standalone.reportedModel",
+   "change": {
+    "from": "| .error fault => reportedFault j fault",
+    "to": "| .error _ => reported modelCase j"
+   },
+   "verdict": "KILLED",
+   "test": "tests/test_right_clauses.py::test_right_clauses_model_mode_faulty_models_answer_as_without_the_profile; tests/test_right_clauses.py::test_right_clauses_environment_and_model_answer_as_without_the_profile",
+   "how": "review F2: planted, lake build ve_service, the build pinned in a temporary copy of lean/checkers.lock, both tests fail (a faulty model under the profile is refused by the name, as on main); source and lock restored, rebuilt"
+  },
+  {
+   "name": "relay-gate-no-build",
+   "file": "tools/relay_mutation_gate.py",
+   "definition": "main",
+   "change": {
+    "from": "failure = build_executables()",
+    "to": "failure = None"
+   },
+   "verdict": "KILLED",
+   "test": "tests/test_relay_mutation_gate.py::test_the_gate_builds_every_executable_it_asks_before_asking",
+   "how": "review F-ready1: planted, the test fails (the gate asks without building), restored"
+  }
+ ]
+}
