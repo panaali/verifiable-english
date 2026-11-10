@@ -113,7 +113,7 @@ theorem admission_fits (id reportId : String) (res : Admission.Admitted) :
 theorem conflictAnswer_fits (id : String) (j : Json) (res : RightsConflictReplay)
     (h : replayRightsConflict j = .ok res) (M : Option (VE.FiniteModel VE.Bridge.Entity)) :
     Fits req (skel% "rights.json#/$defs/packages") (conflictAnswer id res M) := by
-  unfold conflictAnswer situationTables VE.Route.Wire.ok
+  unfold conflictAnswer conflictAnswerOf situationTables VE.Route.Wire.ok
   cases M <;> simp only [Option.isSome_none, Option.isSome_some, Option.map_none, Option.map_some,
     Option.getD_none, Option.getD_some] <;> fits
   -- Not conflict-free with no failing target: impossible (`firstFailure_of_not_free`).
@@ -201,7 +201,7 @@ theorem runRightsKind_packages (id : String) (j answer : Json)
     | ok M =>
     simp only [hx, Except.ok.injEq] at h
     subst h
-    unfold conflictAnswer
+    unfold conflictAnswer conflictAnswerOf
     refine ⟨toJson (List.map (fun x => x.fst) (VE.Norms.targets (VE.SoftNorms.soften (correlate res.src.D)))), ?_⟩
     cases hf : res.conflictFree
     · have hs := firstFailure_of_not_free j res hr hf

@@ -829,6 +829,26 @@
         "ResponseShape.Schemas.Rights.situation"
       ]
     },
+    "ResponseShape/Schemas/RightsChecks.lean": {
+      "T": [
+        "ResponseShape.RightsChecks.accepts",
+        "ResponseShape.RightsChecks.answer",
+        "ResponseShape.RightsChecks.case",
+        "ResponseShape.RightsChecks.conflict",
+        "ResponseShape.RightsChecks.creq",
+        "ResponseShape.RightsChecks.elabA",
+        "ResponseShape.RightsChecks.elabCase",
+        "ResponseShape.RightsChecks.env",
+        "ResponseShape.RightsChecks.located",
+        "ResponseShape.RightsChecks.parse",
+        "ResponseShape.RightsChecks.refusesAll",
+        "ResponseShape.RightsChecks.scopeA",
+        "ResponseShape.RightsChecks.scopeCase",
+        "ResponseShape.RightsChecks.situation",
+        "ResponseShape.RightsChecks.spanned",
+        "ResponseShape.RightsChecks.weighed"
+      ]
+    },
     "ResponseShape/Schemas/Risk.lean": {
       "G[V]": [
         "ResponseShape.Schemas.Risk.admission",
@@ -7712,6 +7732,7 @@
       "D[V]": [
         "VE.Rights.Run.baseWithout",
         "VE.Rights.Run.conflictAnswer",
+        "VE.Rights.Run.conflictAnswerOf",
         "VE.Rights.Run.conflictBudget",
         "VE.Rights.Run.conjugatedAct",
         "VE.Rights.Run.distinctionJson",

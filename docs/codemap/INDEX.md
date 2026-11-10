@@ -78,7 +78,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/](lean.md) — 15 modules — This project uses Lean **4.24.0**, core Lean and `Std`, with no Mathlib or external Lake dependencies.
 - [lean/ResponseShape/](lean__ResponseShape.md) — 8 modules — -
 - [lean/ResponseShape/Encoders/](lean__ResponseShape__Encoders.md) — 32 modules — -
-- [lean/ResponseShape/Schemas/](lean__ResponseShape__Schemas.md) — 43 modules — -
+- [lean/ResponseShape/Schemas/](lean__ResponseShape__Schemas.md) — 44 modules — -
 - [lean/VE/](lean__VE.md) — 27 modules — -
 - [lean/VE/Acts/](lean__VE__Acts.md) — 31 modules — -
 - [lean/VE/Alternatives/](lean__VE__Alternatives.md) — 13 modules — -
