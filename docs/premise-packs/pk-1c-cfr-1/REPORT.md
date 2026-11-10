@@ -68,3 +68,32 @@ The only product code changed is Lean docstrings and comments. No Python or Rust
   mutants, so no sweep was run.
 - `tools/gate_collection.py --check`: 2 added, 0 removed. `tests/test_premise_packs_stub.py`: 35 passed.
 - Selection: `select_tests.py --static --explain` names the test for PacksLabels.lean, PacksLegacyExamples.lean and the pk-1c REPORT.
+- Final selected run on committed 18ada1f12 (`MAC_PYTEST_NO_DEFER=1 mac-pytest.sh --select`): exit 0, 6 shards
+  (run pk-1c-cfr-1-18ada1f1-t278514). No main-known-red test was touched.
+
+## Follow-up
+
+FOLLOW-UP: pk-1c-route-discharge prove decoded act keys pass VE.Bridge.identifier (closes legacy_labels_nodup_of_identifiers' hk)
+
+(pk-1c-r17-reword, for pk-1c REPORT :17, was filed by the DRI's scope ruling.)
+
+## Self-review against BUILDER-CHECKLIST
+
+SELF-REVIEW: 2 A, 4 B, 3 C; fixed 9 (the A on PacksLegacyExamples.lean through the DRI scope ruling; the B on :17
+and mutants.json are recorded as left, as that ruling decides).
+
+1. Typed and bound relayed answers: N.A. (no relay).
+2. Deliverables built: PASS (`test_decoded_rights_labels_proof_claim`).
+3. Tests can fail: PASS (S1-S10, `test_decoded_rights_labels_proof_claim{,_refuses}`).
+4. Python/Lean/Rust agree: N.A. (no behaviour change).
+5. R8 binding: N.A.
+6. Gate evidence matches HEAD: PASS (the selected run is on 18ada1f12; only this REPORT changed after it).
+7. Nothing unsigned: PASS (DELTA has no row; no signature is reserved).
+8. DELTA: PASS (no user-visible delta).
+9. Selection: PASS (static selection names the test for all three files).
+10. Lean says what is claimed: PASS (the point of the item; `test_decoded_rights_labels_proof_claim`).
+11. Budgets fail closed: N.A.
+12. No CPU or memory regression: N.A. (comments only).
+13. No test removed: PASS (`gate_collection --check`: 0 removed).
+14. Both directions: PASS (`_refuses` checks the refusal and the escape).
+15. The four FIX classes: PASS (the probe for "no lemma" is cited; the test is selected; seeded bugs cover each claim).
