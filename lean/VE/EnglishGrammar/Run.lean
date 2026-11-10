@@ -706,7 +706,7 @@ def grammarCase (j : Json) : Except String Json := do
     | .w w => .str w
     | .any => .str "*"
     | .anyBut w => Json.mkObj [("anyBut", .str w)]
-  let advice := adviceRows.map fun r => Json.mkObj
+  let advice := adviceTable.map fun r => Json.mkObj
     [("id", .str r.id), ("profile", .str r.profile),
      ("patterns", toJson (r.patterns.map fun pat => pat.map awJson)), ("text", .str r.text)]
   pure (VE.Route.Wire.ok id [("result", Json.mkObj [("identities", Json.mkObj c.identities),

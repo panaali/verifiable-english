@@ -259,12 +259,16 @@ def _records(row: dict, metadata: dict) -> None:
 
 
 def decide_source(metadata: dict, source: str, fences: dict | None = None, *,
-                  resolved_fences: dict | None = None, premise_status: dict | None = None,
-                  executable=EXECUTABLE) -> dict:
-    """Return Lean's W2 source report, or raise its coded diagnostic verbatim."""
+                  resolved_fences: dict | None = None, reading_context: dict | None = None,
+                  premise_status: dict | None = None, executable=EXECUTABLE) -> dict:
+    """Return Lean's W2 source report, or raise its coded diagnostic verbatim. `reading_context` is the command
+    fences' (A2, commands-imperatives CI-2): Lean refuses a resolved fence that is not the role its kind reads (a
+    fence of a kind wrapping `instruction` is a command), and reads every resolved command fence again under it."""
     payload = {"metadata": metadata, "source": source, "fences": fences or {}}
     if resolved_fences is not None:
         payload["resolved_fences"] = resolved_fences
+    if reading_context is not None:
+        payload["reading_context"] = reading_context
     case = {"id": "speech-source", "kind": "speech-source", "document": payload}
     if premise_status is not None:
         case["premise_status"] = premise_status
@@ -284,6 +288,12 @@ def decide_source(metadata: dict, source: str, fences: dict | None = None, *,
         check_row("speech-acts", elaboration, {"id": case["id"], "kind": "speech-elaborate"}, 0)
     except Invalid as exc:
         raise CheckerUnavailable(f"CheckerUnavailable: speech-source route returned an invalid elaboration ({exc})") from exc
+    # The legend `ve speech-acts` shows (ci-2b): one line for the task, one for an addressee and one per definite of
+    # the row's scope, none repeated; the lines are Lean's (`VE.SpeechActs.Run.legend`).
+    scope, legend = row["scope"], row["legend"]
+    if len(legend) != 1 + ("addressee" in scope) + len(scope.get("definites", {})) or len(set(legend)) != len(legend):
+        raise CheckerUnavailable("CheckerUnavailable: speech-source route returned a legend that is not one line per "
+                                 "scope sentence")
     for field in ("document_id", "source_id", "environment_id"):
         value = row[field]
         if len(value) != 64 or any(c not in "0123456789abcdef" for c in value):
