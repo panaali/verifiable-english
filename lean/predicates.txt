@@ -391,12 +391,14 @@ module VE.EnglishGrammar.ReadExamples
 module VE.EnglishGrammar.Rules
 module VE.EnglishGrammar.Run
 module VE.EnglishGrammar.SensesRequest
+module VE.EnglishGrammar.SourceReader
 module VE.EnglishGrammar.SourceWords
 module VE.EnglishGrammar.SourceWordsExamples
 module VE.EnglishGrammar.Syntax
 module VE.EnglishGrammar.Token
 module VE.EnvironmentProofs
 module VE.EvaluationCounts
+module VE.Events.Anchor
 module VE.Events.Calendar
 module VE.Events.Chain
 module VE.Events.Completion
@@ -745,6 +747,7 @@ module VE.Service.DocumentChain
 module VE.Service.DocumentChainChecks
 module VE.Service.DocumentChainExamples
 module VE.Service.EnglishRun
+module VE.Service.EventsDocumentExamples
 module VE.Service.Family
 module VE.Service.FamilyBundle
 module VE.Service.FamilyNorms
