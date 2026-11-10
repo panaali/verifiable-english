@@ -54,8 +54,12 @@ Not delivered here:
 - **Environments.** `right-clauses@0` beside `acts@0` stays refused by the base rows, as before (Standalone keeps that
   gate's whole-table read for `readings@1` only). With `rights@0`, the environment mode answers as for the same list
   without the profile, but for the echoed list and the identity. The base refused every such list as an unregistered
-  profile. The model mode still refuses the name; Python's model view drops the profile, and the model path answers
-  the same with and without it (DELTA row 1; test_right_clauses_environment_and_model_answer_as_without_the_profile).
+  profile. The model mode decides no model under the profile: Lean checks the environment, then the model's tables,
+  then the profile list, so a well-formed model is refused by the name, as in the base, and a faulty model gets the
+  answer it gets without the profile, where the base refused it by the name (review F2;
+  test_right_clauses_model_mode_faulty_models_answer_as_without_the_profile). Python's model view drops the profile,
+  and the model path answers the same with and without it (DELTA row 1;
+  test_right_clauses_environment_and_model_answer_as_without_the_profile).
   Probe (environment_texts_probe.py, run at the base build and at this item's; docs/composition/cmp-s3-cfr-1/environment-texts.json):
   - All 154 lists `relational-fol@0, right-clauses@0` with up to two more environment profiles: 0 texts move.
   - All 106 lists norms, relational-fol, right-clauses, rights and soft-norms with up to two more profiles, on 9.1's
