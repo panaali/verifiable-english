@@ -169,10 +169,17 @@ exit 0, run on GitHub Actions in 5 shards (ps-7-d91f4062-t296721): 24 + 26 + 25 
 failed. The Lean condition guards (Events/Examples.lean and the existing Presupposition and Events Examples) are
 checked by the full `lake build` (exit 0). After that run, only this report changed.
 
+Fix round 1, on the committed tree 54f9b3aef (`mac-pytest.sh --select -- --base a7659c5f1 --run`): exit 0, run on
+GitHub Actions in 2 shards (ps-7-54f9b3ae-t302641): 40 + 40 = 80 units, all passed, 0 failed. The selector deferred 27
+broad test files to the chain gate (not run by me). The regression tests for F1 are the #guards (f)-(l) and the ps-7c
+record in Events/Examples.lean (:117-142), checked by the full `lake build` (local, exit 0, 1354 jobs; also in shard
+1 and 2). `lean/audit.py` PASS; `regen_generated.py --check` exit 0; `trust_map --check` PASS. The review's PROBE F1
+exits 1 on e4d94ada8 and 0 from c7cdcd3ee on. After this run, only this report changed.
+
 ## Spec re-read
 
 - `inProgress` against `docs/spec/events-time-causation-PLAN.md:352` and `lean/VE/Events/Examples.lean:109`: same
-  formula, with the constants replaced by lifted terms. :114 checks that a variable-0 day agrees with the constant.
+  formula, with the constants replaced by lifted terms. :162 checks that a variable-0 day agrees with the constant.
 - The readings against `docs/spec/presupposition.md:100`: `generic pre body` = (pre, pre ∧ body, pre → body).
   `Rows.lean:22` gives the same, by `rfl`.
 - The rows against `docs/spec/presupposition-PLAN.md:993-1003`. "continues" = "before and on" is checked at :54-55.
@@ -205,3 +212,4 @@ checked by the full `lake build` (exit 0). After that run, only this report chan
     pin :46), and every guard family has a killing mutant.
 
 SELF-REVIEW: 0 A, 2 B, 6 C; fixed 7
+FIX ROUND 1: review F1 (B) fixed (guards (f)-(l), ps-7c record, contract text); F2 and F3 are C (FOLLOW-UP), not done here.
