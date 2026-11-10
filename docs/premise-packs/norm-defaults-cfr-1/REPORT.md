@@ -23,7 +23,7 @@ rule binding). The plan is the code on main; base de7fb9469 (`git merge-base HEA
 - **Tuple** equals the case's `tuple` (`Wire.replayStatusIn` zips the request ids with the predicate's sorts after
   checking their number; `statusFields` returns them). Schema, so Lean's `ve_response_decode` agrees.
 - **Rules** are distinct (schema) and each is the `name` of a `{"norm": ...}` unit of the case's `norms`
-  (`_rule_names`), unless the case's profiles include `acts@0` or `rights@0` (`GENERATED_RULE_PROFILES`). There Lean
+  (`_rule_names`), unless the case's profiles list contains `acts@0` or `rights@0` (`GENERATED_RULE_PROFILES`). There Lean
   names rules the request does not carry (`<rule>-a<k>`, lean/VE/Acts/Elaborate.lean:35; `rights-fan-<k>`,
   `rights-bar-<k>`, lean/VE/Rights/Tree.lean:129-130; power lines read from `liberty`/`recognition`), and `Node`
   keeps no provenance, so binding them needs Lean to echo each rule's request source: norm-defaults-cfr-1b (DRI
@@ -90,7 +90,7 @@ Each planted, run, seen to fail, and restored (`git checkout`; Lean ones then re
   ve/assurance-manifest.json (+281) is a
   generated-class file (.gitattributes `merge=ve-generated`; the task calls it generated) whose values are
   hand-reviewed; counted, the item is ~845. Over the task's ~200 estimate because the manifest needs a probe per
-  binding and the fuzz covers each bound field (BUILDER-CHECKLIST 1, 5); the DRI decision above took the size as is.
+  binding and the fuzz covers each bound field (BUILDER-CHECKLIST 1, 5); the DRI decision above used size as a reason not to grow the item.
 - Trust: `uv run python tools/trust_map.py --check`: `K +0, S +0, D +0, G +0, tied +0, unclassified +0, trusted +0`,
   PASS. No trusted Lean growth, so no trust-mutant sweep (build checklist 13a) and no FOLLOW-UPS row.
 - Pilot bytes: 0 expected (a binding of relayed rows; no verdict, wording or coverage changes).
