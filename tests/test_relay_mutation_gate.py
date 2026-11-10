@@ -161,6 +161,39 @@ def test_every_route_has_fixtures():
     assert one_shot == set(G.ONE_SHOT)
 
 
+def test_the_gate_builds_every_executable_it_asks_before_asking(monkeypatch):
+    """cmp-s3-cfr-1 review F-ready1: a `ve_service` older than the tree failed the handshake, and so the gate, for
+    every route. `main` builds the service and every one-shot runner (lakefile executables) before it asks any, and
+    a failed build fails the gate without asking."""
+    from tests.lean_build import lean_targets
+    targets = G.gate_executables()
+    assert {"ve_service", *(spec[0] for spec in G.ONE_SHOT.values())} == set(targets)
+    assert all(lean_targets().get(name) == "lean_exe" for name in targets)
+    monkeypatch.delenv("VE_LEAN_PREBUILT", raising=False)
+    monkeypatch.setattr(G.shutil, "which", lambda name: "/fake/lake" if name == "lake" else None)
+    calls, order = [], []
+
+    class Done:
+        def __init__(self, code):
+            self.returncode, self.stdout, self.stderr = code, "", "error: boom" if code else ""
+
+    def fake_run(args, **kwargs):
+        calls.append((args, kwargs.get("cwd")))
+        order.append("build")
+        return Done(0)
+    monkeypatch.setattr(G.subprocess, "run", fake_run)
+    monkeypatch.setattr(G, "run_gate", lambda routes: order.append("gate") or {"routes": {}, "failures": [],
+                                                                              "totals": {}})
+    assert G.main([]) == 0 and order == ["build", "gate"]
+    assert calls == [(["/fake/lake", "build", *targets], G.ROOT / "lean")]
+    order.clear()
+    monkeypatch.setattr(G.subprocess, "run", lambda args, **kwargs: order.append("build") or Done(1))
+    assert G.main([]) == 1 and order == ["build"]
+    assert "boom" in G.build_executables(lambda args, **kwargs: Done(1))
+    monkeypatch.setenv("VE_LEAN_PREBUILT", "1")
+    assert G.build_executables(lambda args, **kwargs: pytest.fail("built under VE_LEAN_PREBUILT")) is None
+
+
 @pytest.fixture(scope="module")
 def built():
     lean_build("ve_service", "ve_speech_acts_route", "ve_metered")
