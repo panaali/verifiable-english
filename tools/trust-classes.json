@@ -20331,6 +20331,9 @@
       ]
     },
     "VE/Presupposition/Run.lean": {
+      "G[R]": [
+        "VE.Presupposition.maxLineTokens"
+      ],
       "G[V]": [
         "VE.Presupposition.Goal",
         "VE.Presupposition.Inconsistency",
@@ -20348,10 +20351,12 @@
       ],
       "T": [
         "VE.Presupposition.RunExamples.certI",
+        "VE.Presupposition.RunExamples.conj",
         "VE.Presupposition.RunExamples.docC",
         "VE.Presupposition.RunExamples.g1",
         "VE.Presupposition.RunExamples.g2",
         "VE.Presupposition.RunExamples.lexA",
+        "VE.Presupposition.RunExamples.lexNoMgr",
         "VE.Presupposition.RunExamples.refutedOf",
         "VE.Presupposition.RunExamples.rowsOf",
         "VE.Presupposition.RunExamples.rsC",
