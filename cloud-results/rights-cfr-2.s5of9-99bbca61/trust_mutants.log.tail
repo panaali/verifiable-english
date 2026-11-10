@@ -1,0 +1,14 @@
+trust_mutants: --rescore ci-job/rescore.json: a full run, since its inputs differ (options)
+trust_mutants: 13 definitions, 451 mutants (50 to run), 4 jobs, base 3e4fe503f4c9
+UNKNOWN lean/VE/Rights/Run.lean:435 VE.Rights.Run.conflictAnswerOf (D[V], trusted) list-empty: conditional -> [] (lean/VE/Rights/Run.lean:435: Invalid field notation: Type of)
+SURVIVOR lean/VE/Rights/Run.lean:237 VE.Rights.Run.regenerated (D[V], trusted) list-first: findings -> (findings.take 1)
+SURVIVOR lean/VE/Rights/Run.lean:237 VE.Rights.Run.regenerated (D[V], trusted) list-drop-last: findings -> (findings.dropLast)
+SURVIVOR lean/ResponseShape/Schemas/Rights.lean:187 ResponseShape.Schemas.Rights.located_findings (G[V], trusted) list-first: [ref "common.json#/$defs/text", .type ["null"]] -> ([ref "common.json#/$defs/text", .type ["null"]].take 1)
+SURVIVOR lean/VE/Rights/Run.lean:529 VE.Rights.Run.runRightsKind (G[V], trusted) list-first: findings -> (findings.take 1)
+SURVIVOR lean/VE/Rights/Run.lean:435 VE.Rights.Run.conflictAnswerOf (D[V], trusted) list-first: conditional.filter (fun l => l.startsWith "soft:") -> ((conditional.filter (fun l => l.startsWith "soft:")).take 1)
+SURVIVOR lean/VE/Rights/Run.lean:433 VE.Rights.Run.conflictAnswerOf (D[V], trusted) list-last: weighing -> (weighing.reverse.take 1)
+SURVIVOR lean/ResponseShape/Schemas/Rights.lean:324 ResponseShape.Schemas.Rights.scope (G[V], trusted) list-drop-middle: "findings", -> 
+trust_mutants: 41 KILLED, 7 SURVIVOR, 1 UNKNOWN, 1 INVALID, 0 ALLOWED, 0 NOT RUN, 401 OTHER SHARD in 1099 s
+trust_mutants: D[V], trusted: 15 KILLED, 4 SURVIVOR, 1 UNKNOWN, 1 INVALID, 164 OTHER SHARD
+trust_mutants: G[V], trusted: 26 KILLED, 3 SURVIVOR, 237 OTHER SHARD
+trust_mutants: steps: wall plan 9.6 s, scratch 3.3 s, control_build 0.3 s, probe_install 1.1 s, mutants 1078.9 s, cleanup 5.6 s, reads 0.1 s; lake control_build 0.2 s (1), probe_install 1.1 s (1), control_probes 34.2 s (7), mutant_builds 695.2 s (50), mutant_checks 3024.7 s (52), stage_controls 154.3 s (4), mutant_probes 312.8 s (41)
