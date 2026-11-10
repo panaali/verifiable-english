@@ -131,11 +131,13 @@ So the before run had less competition and still timed out.
 - No Lean product file changed, so no lake build and no `lean/audit.py` run.
 - No trust_mutants sweep was run. The task asks for none, and no trusted Lean changed. The M1952 run above is the
   run the task requires.
-- Final selected tests: see the next section.
+- Final selected tests: the next section.
 
 ## Final selected run
 
-See the end of this file (added after the run on the committed code).
+`MAC_PYTEST_NO_DEFER=1 zsh …/mac-pytest.sh --select -- --base a7659c5f12 --run` on committed 3b1ee8fdff (clean
+tree), GitHub Actions run tm-m509-reads-linear-3b1ee8fd-t301380: exit 0 in 885 s; shards 1-4 passed 10, 10, 9, 6
+units, `tests/test_trust_mutants.py` 4 of 4 chunks, 0 failed. Later commits touch only this REPORT.md.
 
 ## Seeded bugs (each restored; file, then the failing test)
 
