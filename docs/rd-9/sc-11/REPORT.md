@@ -3,6 +3,8 @@
 **No DRI signature is reserved.** Every 14.8 statement is built and proved; the soft runners moved to **sc-11c** under
 the DRI's pre-approved cut (reviews/dri-decisions-20261109-sc-11-2.md item 1). The dispatch is unchanged: no answer
 changes, no DELTA row, pilot bytes 0 (14.13). Spec section 14 came in by cherry-picking 33bc5f48f and ea5b0e420.
+Review fix (sc-11-review F1, A): the limits wording follows DRI sc-11-3 item 2 in the code comment, 14.11 and this
+report (`tests/test_rd9_sc11_charge_wording.py`); no statement, answer or trust change.
 
 ## Plan rows and directives
 
@@ -39,7 +41,7 @@ images). The wire theorems apply sc-10b's three theorems and restate none.
   `WellFormedU (supU N)`) is read before the work limit and not charged: 10.98 s and 94-100 s measured on the 767- and
   3,071-node guard documents (w13-cpu.md); row sc-11w bounds it before sc-11b (DRI 2026-11-09 sc-11-3 item 2). The
   per-choice texts take 0.63 s and 0.09 s there; it bears on sc-11w and sc-admit-cpu, not on the constant.
-- **14.2** (sc-11-2 item 2, SIGNED, commit ef6699583): the work limit applies at any choice count; `NSDheavy` (64
+- **14.2** (sc-11-2 item 2, SIGNED, commit f5ec9e36f): the work limit applies at any choice count; `NSDheavy` (64
   choices, `sdSuperposable` true, work 34,752) is enumerated (SoftSupWireExamples.lean:174).
 - **W-6′'s `WellFormedU (supU N)` row is not isolated**: `⟨D4, ["bogus"]⟩` fails it and every choice's text too. The
   checks `WellFormedU` adds to `superposable` on the superposed document are the rule count with the unspecified names
@@ -75,6 +77,11 @@ sc-11-dcffde03-t267393): 473 of 474 units passed; the one failure,
 `tests/test_assurance_manifest.py::test_every_json_handling_lean_file_is_classified`, was this branch's (the new examples
 file builds JSON); fixed in `ve/assurance-manifest.json` and rerun alone on ve-mac-1 at 6968c23d: 1 passed. No
 pre-existing failure was met. `tests/test_rd9_statements.py`: 43 passed.
+
+Review fix F1 (commit 3005a8c64): selected tests (`mac-pytest.sh --select -- --base 33fe04615 --run`, cloud run
+sc-11-3005a8c6-t274165, 6 shards): 478 of 478 units passed, `tests/test_rd9_sc11_charge_wording.py` among them;
+`lake build` and `lean/audit.py` PASS. Seeded: each of the three texts set back to 1264c26df's fails
+`test_probe_f1_each_limits_text_says_sd_superposable_is_read_before_the_work_limit[<file>]`. Not run: the full gate.
 
 ## Spec re-read
 
