@@ -26,42 +26,47 @@ Branch `feature/ps-2ac`, merge base a5088a09b (main, ps-2ab merged). Command out
 
 | Row (plan PS-2a :854-858; task "Deliver") | Run.lean | Guards (Run.lean lines) |
 |---|---|---|
-| one row per obligation, block order | `shownOf` | :163, reversed :165 |
-| `id`, `unit`, `carrier` | `checkedRow` | :163, :170 |
-| `goal`: P0 formula and the English line rendered by Lean | `Goal`, `Line`, `englishLine`, `lineOf`, `lexiconOk` | :170-223 |
-| `outcome` (checked, or the diagnostic) | `Outcome`, `outcomeOf`, on `Shown` (DRI ruling) | :167, :226-230 |
-| unresolved: emitted readings with aliases | `checkedRow` | :238, :245, alias :261 |
-| `PresuppositionRefuted` lines from the existing inconsistency report | `Inconsistency`, `docPremise`, `refutedLines` | :277-302 |
+| one row per obligation, block order | `shownOf` | :166, reversed :168 |
+| `id`, `unit`, `carrier` | `checkedRow` | :166, :173 |
+| `goal`: P0 formula and the English line rendered by Lean | `Goal`, `Line`, `englishLine`, `lineOf`, `lexiconOk` | :173-226 |
+| `outcome` (checked, or the diagnostic) | `Outcome`, `outcomeOf`, on `Shown` (DRI ruling) | :170, :229-233 |
+| unresolved: emitted readings with aliases | `checkedRow` | :241, :248, alias :264 |
+| `PresuppositionRefuted` lines from the existing inconsistency report | `Inconsistency`, `docPremise`, `refutedLines` | :280-305 |
 | no runMode, MODES entry, schema or Python relay (PS-C9) | — | changed-file list |
 | trust-classes rows, `lean/VE.lean` import, generated inventories | side table, `regen_generated.py` | "Trust", "Final checks" |
 
 ## What the value is
 
-`shown L inc D := shownOf L inc D (admit D)`, absent without the block (as `admitWrapped`; :235). PS-4 passes the
+`shown L inc D := shownOf L inc D (admit D)`, absent without the block (as `admitWrapped`; :238). PS-4 passes the
 request's lexicon `L` (`VE.English.Run.decodeLexicon`) and the document's inconsistency report; for the document's
 situations it calls `shownOf` on `admitWith`.
 
 - **Outcome on the field (deviation from the plan text, DRI ps-2ac-report item 1, ACCEPTED).** `admit` is all or
-  nothing, so `Shown.outcome` is `checked`, `refused <admit's diagnostic>` (it names its obligation) or
-  `unknown "ResourceLimit: presuppositions"` (UNKNOWN, never a refusal). Rows exist only under `checked`; a refused or
-  unknown block has none and is not walked (:226-230). Run.lean writes no diagnostic text of its own.
+  nothing, so `Shown.outcome` is `checked`, `refused <admit's diagnostic>` or
+  `unknown "ResourceLimit: presuppositions"` (UNKNOWN, never a refusal). Not every refusal names the obligation
+  at fault (review F1): steps 2 and 4 name it; steps 3 and 5 name the unit's or rule's first obligation; step 5's
+  tree check names the block's first rule act, else its first obligation, so on an empty block it reads
+  `PresuppositionMismatch: : rule` and names none; step 5's readings refusals (`needsModelText`, `notSeparatedText`,
+  `softText`) name no obligation and no unit.
+  Guards :309-340 pin each case (text, obligation quoted, unit quoted). Rows exist only under `checked`; a refused or
+  unknown block has none and is not walked (:229-233). Run.lean writes no diagnostic text of its own.
 - **Goal.** The formula stays typed; PS-4's encoder writes P0's wire form. The English line is `shown <text>`,
   `notShown` or `unknown`. The text is the core renderer's clause without the full stop (2.3's lines quote it). It is
   shown only when the lexicon passes `lexiconOk` and the sentence parses back, in the document's environment, to
   exactly the goal (checklist 9). `lexiconOk`, once per report: at most `maxLexicon` (512) entries and no template of
   more than two places (else UNKNOWN), then `VE.English.admissible`, the hypothesis of `checked_parse_render`
-  (lean/VE/English/Proofs.lean:179). Guards: uncovered predicate :189; "ready" worded as "owner" and the reverse
-  :193-194 (the second would read "… is ready" for an owner); 200 and 201 nodes :204; 512 and 513 entries :211-215;
-  three places :211, :221; a predicate without a template :223.
+  (lean/VE/English/Proofs.lean:179). Guards: uncovered predicate :192; "ready" worded as "owner" and the reverse
+  :196-197 (the second would read "… is ready" for an owner); 200 and 201 nodes :207; 512 and 513 entries :214-218;
+  three places :214, :224; a predicate without a template :226.
 - **Refuted.** The existing inconsistency report is P0's: premises and a certificate of `⊥` (`PremiseStatus.inconsistent`,
   lean/VE/SpeechActs/Run.lean:242-246). When every premise is the document's (background or asserted claim) and the
   certificate checks, an admitted assumed obligation gets `PresuppositionRefuted: <o>: <unit>` if the refutation uses
   its goal: the certificate no longer checks with that premise replaced by `⊤`. The other premises then refute it.
-  Lines (:277-293): both goals used, one, a background premise, any order. No line (:288-302): a contradiction that
+  Lines (:280-296): both goals used, one, a background premise, any order. No line (:291-305): a contradiction that
   uses neither goal, a premise not the document's or only in an unasserted unit, a certificate that does not close, no
   report, a proved carrier, a refused block. No line claims nothing.
 - **Readings.** An admitted unresolved obligation's row lists its unit's readings (`RReading` with aliases), which
-  `admit` checked are exactly `expectedReadings`; any other row lists none (:245).
+  `admit` checked are exactly `expectedReadings`; any other row lists none (:248).
 
 ## DRI rulings
 
@@ -69,33 +74,33 @@ situations it calls `shownOf` on `admitWith`.
   signed a layer-3 declaration; `tools/check_lean_imports.py` refused it ("role fixes its layer at 4",
   `tools/layer_policy.py:357`); item 2: no declaration, layer 4 by role, an inward import. No `layer_policy` edit, no
   ledger exception, no layer-2 importer (DELTA.md's grep); the check passes; renderer and lexicon mutants
-  (M-englishLine, M-lexicon) break :170.
-- **Outcome (-ps-2ac-report item 1).** Conditions: refused A-fixture with its diagnostic and no rows (:226, :228); A15
-  `unknown`, no rows (:230); admitted, `checked`, rows in block order (:163, :167); M-rows-under-refusal and
+  (M-englishLine, M-lexicon) break :173.
+- **Outcome (-ps-2ac-report item 1).** Conditions: refused A-fixture with its diagnostic and no rows (:229, :231); A15
+  `unknown`, no rows (:233); admitted, `checked`, rows in block order (:166, :170); M-rows-under-refusal and
   M-shownOf-error break them. FOLLOW-UPS row: align the plan text.
 - **Shallow frame (-ps-2ac-report item 2).** At a negated or antecedent frame `¬U` entails `B`, so the assumed `B` and
   the conditioned `U → B` are equivalent and step 5 never separates them: the fixture table's negated cell
-  `[assumed, conditioned, inPlace]` gives an open set never admitted (:255, both witness orders, `notSeparatedText`).
-  The alias guard uses `[conditioned, asserted, inPlace]` (:260-261). Design row ps-shallow-sep.
+  `[assumed, conditioned, inPlace]` gives an open set never admitted (:258, both witness orders, `notSeparatedText`).
+  The alias guard uses `[conditioned, asserted, inPlace]` (:263-264). Design row ps-shallow-sep.
 
 ## Seeded bugs (Lean only; no Python or Rust product code changed)
 
 36 hand mutants (`mutants.json`), each applied alone with `lake build VE.Presupposition.Run`, then restored
 (`evidence/tests.txt`): **31 break a named guard, 5 are INVALID** (data types `Outcome`, `Line`, `Goal`, `Shown`,
 `Inconsistency` with a constructor or field dropped: they do not elaborate, which BUILDER-CHECKLIST item 3 does not
-count; those types are read by the guards at :167, :189-204, :170, :226-230, :277-302). Every other new definition has
-one that breaks a guard; `Row` has one too (fields `id` and `unit` swapped, :170).
+count; those types are read by the guards at :170, :192-207, :173, :229-233, :280-305). Every other new definition has
+one that breaks a guard; `Row` has one too (fields `id` and `unit` swapped, :173).
 
 | Id | Behaviour | Definition | Breaks |
 |---|---|---|---|
-| S1-drop-row (task) | one row per obligation, block order | `shownOf` | :163 |
-| S2-unit-carrier (task) | unit and carrier are the obligation's (a literal swap does not elaborate: unit read off the carrier) | `checkedRow` | :163 |
-| S3-no-refuted (task) | the PresuppositionRefuted line | `refutedLines` | :277 |
-| M-rows-under-refusal | no rows when refused | `shownOf` | :226 |
-| M-refuted-unused | only a goal the refutation uses | `refutedLines` | :281 |
-| M-englishLine-parse | shown only if it parses back | `englishLine` | :189 |
-| M-lexiconOk-admissible | the lexicon is admissible | `lexiconOk` | :193 |
-| M-englishLine-nodes | a goal is charged before rendering | `englishLine` | :200 |
+| S1-drop-row (task) | one row per obligation, block order | `shownOf` | :166 |
+| S2-unit-carrier (task) | unit and carrier are the obligation's (a literal swap does not elaborate: unit read off the carrier) | `checkedRow` | :166 |
+| S3-no-refuted (task) | the PresuppositionRefuted line | `refutedLines` | :280 |
+| M-rows-under-refusal | no rows when refused | `shownOf` | :229 |
+| M-refuted-unused | only a goal the refutation uses | `refutedLines` | :284 |
+| M-englishLine-parse | shown only if it parses back | `englishLine` | :192 |
+| M-lexiconOk-admissible | the lexicon is admissible | `lexiconOk` | :196 |
+| M-englishLine-nodes | a goal is charged before rendering | `englishLine` | :203 |
 
 ## Trust
 
@@ -109,7 +114,7 @@ fixtures. `docs/trust-baseline.json`: allowance V +109, "SIGNED by standing ruli
 **R16 sweep** (`mac-pytest.sh --trustmut -- --max-mutants 1000 --json trust-mutants.json --test
 lean/VE/Presupposition/Run.lean`, on the VM: no Mac slot). Run 1 (fb4406aaf, 772 s): 117 KILLED, 18 SURVIVOR,
 30 UNKNOWN, 28 INVALID. The survivors were list positions and boundaries the guards did not move; each now has a guard
-(:182, :204, :215-223, :289-293). The UNKNOWNs do not elaborate. Run 2 (0763bcc70, full: Run.lean changed, 784 s) and
+(:185, :207, :218-226, :292-296). The UNKNOWNs do not elaborate. Run 2 (0763bcc70, full: Run.lean changed, 784 s) and
 the rescore after an allow-only edit (111 s): **132 KILLED, 0 SURVIVOR, 0 UNKNOWN, 28 INVALID, 33 ALLOWED, exit 0**.
 `trust-mutants-allow.json`: 30 do not elaborate; 3 equivalent `lineOf` mutants (`(s.take 1).isEmpty` is `s.isEmpty`;
 in the punctuation branch the word is one character, so `w.take 1` is `w`; applied by hand, the build passes).
@@ -127,7 +132,7 @@ in the punctuation branch the word is one character, so `w.take 1` is `w`; appli
   line, and each goal against `maxLineNodes` (200) before it is rendered: rendering and the parse back grow faster than
   the goal (interpreted probe, not a benchmark: parsing back a 9,611-node goal took 3.5 s, a 611-node one 55 ms; the
   self-reviewer measured 10.5 s to render 8,003 nodes). The parser tries `pool ^ arity` tuples per template, so a
-  template of more than two places is refused first. Fixtures: 256 obligations, 256 lines (:232); 257, no rows (:230).
+  template of more than two places is refused first. Fixtures: 256 obligations, 256 lines (:235); 257, no rows (:233).
   The certificate is checked once, plus once per assumed obligation whose goal is a premise (at most 256).
 
 ## Spec re-read
@@ -136,8 +141,8 @@ in the punctuation branch the word is one character, so `w.take 1` is `w`; appli
   outcome (on the field, ruled); unresolved readings with aliases; the Refuted lines.
 - `PresuppositionRefuted: <o>: <unit>` (`presupposition.md:361-362`, `:1321`): obligation id, then the assumed unit;
   "the premises refute an assumed goal"; a report line, not a diagnostic (in `refuted`, not in `outcome`).
-- `:837-839`: no mode, runner or schema; absent without the block (Admit.lean:293, :235). Spec 5 `:1320`: ResourceLimit
-  is UNKNOWN (:230). 2.3 `:345-363`: no symbols or ids in the line; ids are row fields for the provenance view.
+- `:837-839`: no mode, runner or schema; absent without the block (Admit.lean:293, :238). Spec 5 `:1320`: ResourceLimit
+  is UNKNOWN (:233). 2.3 `:345-363`: no symbols or ids in the line; ids are row fields for the provenance view.
 
 ## Final checks
 
@@ -184,12 +189,12 @@ HEAD. C not fixed: a RunExamples split (a FOLLOW-UPS row; it needs a layer decla
 8. User-visible changes in DELTA: PASS. None (DELTA.md: the grep and the changed-file list).
 9. Test selection: PASS. The selected run includes `lake build` and `lean/audit.py`, which build every Run.lean guard.
 10. Statements: PASS. No theorem added; the probe shows 19/19 statements unchanged.
-11. Budgets fail closed: PASS. 257 obligations `unknown` (:230); a goal over 200 nodes and a lexicon over 512 entries or
-    with three places give `Line.unknown` (:200, :204, :211-221), never a shown line.
+11. Budgets fail closed: PASS. 257 obligations `unknown` (:233); a goal over 200 nodes and a lexicon over 512 entries or
+    with three places give `Line.unknown` (:203, :207, :214-224), never a shown line.
 12. No CPU or memory regression: N.A. for pilots (no route reads it). In Run.lean each limit is charged before rendering
     or parsing ("Evaluators").
 13. Test-removed trailers: N.A. No test removed (`gate_collection.py --check`).
-14. Both directions, cited evidence, spec re-read: PASS. Each check has its accepted twin (:189/:190, :193/:176,
-    :204 200/201, :215 512/513, :277/:288); "Spec re-read".
+14. Both directions, cited evidence, spec re-read: PASS. Each check has its accepted twin (:192/:193, :196/:179,
+    :207 200/201, :218 512/513, :280/:291); "Spec re-read".
 15. Overclaim, silent cut, checks that can fail, limits first: PASS. Universal words checked against the cited guards;
     no cut; every new check has a mutant; limits charged before work.

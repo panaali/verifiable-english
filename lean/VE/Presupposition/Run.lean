@@ -9,7 +9,10 @@ import VE.Presupposition.Examples
 The value the Lean document mode's answer carries as its `presuppositions` field (plan PS-4; DRI PS-C9: no service
 mode, no runner and no schema of its own). It is read off `admit`'s answer, never recomputed. `admit` decides the
 block as a whole and answers its first failing step, so the outcome is the block's: checked, refused with the
-diagnostic (which names its obligation), or `ResourceLimit: presuppositions`, UNKNOWN and never a refusal (spec 5).
+diagnostic, or `ResourceLimit: presuppositions`, UNKNOWN and never a refusal (spec 5). Not every refusal names the
+obligation at fault: steps 2 and 4 do; steps 3 and 5 name the unit's or rule's first obligation, the tree check the
+block's first rule act, else its first obligation, else none (an empty block: `PresuppositionMismatch: : rule`); step
+5's readings refusals (`needsModelText`, `notSeparatedText`, `softText`) name no obligation and no unit (guards below).
 An admitted block gives one row per obligation in the block's order: id, unit, carrier, the regenerated goal with its
 English line, and for an unresolved obligation the readings its unit carries with their aliases. Then the
 `PresuppositionRefuted` lines (2.3) the existing inconsistency report gives.
@@ -301,5 +304,39 @@ def refutedOf (D : PDoc) (ps : List VE.Formula) (t : VE.Tableau.Trace) : List St
   [theMgrU, theMgr, .not theMgrU] (.expand 2 none [.close]) == []
 #guard refutedOf { doc18 [0, 0] with units := (doc18 [0, 0]).units ++ [cu "x0" (.not g1)] }
   [rOut18.pre, .not rOut18.pre] (.expand 1 none [.close]) == []
+
+
+-- What a refusal names (review F1). `refusal D a` is the refused field's diagnostic, whether it quotes an obligation id
+-- of `D`'s block, and whether it quotes a unit id of `D` (each as `: <id>`); none unless refused with no rows.
+def refusal (D : PDoc) (a : Except String Report) : Option (String × Bool × Bool) :=
+  let quotes (e i : String) := (e.splitOn (": " ++ i)).length > 1
+  (shownOf lexA none D a).bind (fun s => match s.outcome, s.rows, s.refuted with
+    | .refused e, [], [] => some (e, (D.block.getD []).any (quotes e ·.id), D.units.any (quotes e ·.id))
+    | _, _, _ => none)
+def docEmpty : PDoc := docA [cu "u0" theOwnerU, cu "u1" theOwner] [] (tree7 [r7bad])
+-- steps 2 and 4 name the obligation at fault (step 2: the second `p2`, not the block's first; A20 also its unit);
+-- step 3 names the unit's first obligation (A11: p1 and p2 on u1)
+#guard (fun D => refusal D (admit D) == some ("PresuppositionMismatch: p2: id", true, false)) (docA
+  [cu "u0" theOwnerU, cu "u1" theOwner]
+  [pA (.assumed "u0"), { pA (.assumed "u0") with id := "p2" }, { pA (.assumed "u0") with id := "p2" }])
+#guard (fun D => refusal D (admitWith t16 fxN D) == some ("PresuppositionMismatch: p1: content", true, false))
+  (docA [cu "u1" wrong16] obs16)
+#guard refusal (docA [cu "u1" theOwner] [pA (.assumed "u1")]) (admit (docA [cu "u1" theOwner] [pA (.assumed "u1")])) ==
+  some ("PresuppositionAssumedUnit: p1: u1", true, true)
+#guard refusal (doc18 [0, 0]) (admit (doc18 [0, 0])) == some ("PresuppositionPosition: p2", true, false)
+-- step 5's readings refusals name no obligation and no unit, though each block holds one: not separated (the review's
+-- probe, `docNeg` holds p1), no distinguishing model (A1), and the soft chain's conditioned rule reading (A26)
+#guard (docNeg fixtureTable).block.map (·.map (·.id)) == some ["p1"] &&
+  refusal (docNeg fixtureTable) (admitWith fixtureTable ⟨.norms, [("u1", 0, 1, sitNo)]⟩ (docNeg fixtureTable)) ==
+    some (notSeparatedText, false, false)
+#guard docA1.block.map (·.map (·.id)) == some ["p1"] &&
+  refusal docA1 (admitWith fixtureTable fxN docA1) == some (needsModelText, false, false)
+#guard ((doc7u false ["p"]).block.map List.length).getD 0 > 0 &&
+  refusal (doc7u false ["p"]) (admitWith fixtureTable (fx7 .soft) (doc7u false ["p"])) == some (softText, false, false)
+-- step 5's tree check names the block's first obligation when no rule act exists, and none on an empty block
+#guard refusal (docA [cu "u0" theOwnerU, cu "u1" theOwner] [pA (.assumed "u0")] (tree7 [r7bad]))
+  (admit (docA [cu "u0" theOwnerU, cu "u1" theOwner] [pA (.assumed "u0")] (tree7 [r7bad]))) ==
+  some ("PresuppositionMismatch: p1: rule", true, false)
+#guard refusal docEmpty (admit docEmpty) == some ("PresuppositionMismatch: : rule", false, false)
 
 end VE.Presupposition.RunExamples
