@@ -93,6 +93,54 @@ def somePlace (M : VE.FiniteModel String) : Bool :=
 #guard somePlace (places [("ends", [["y", "a"]]), ("at", [["y", "p"]])])
 #guard !somePlace (places [("ends", [["y", "c"]]), ("at", [["y", "p"]])])
 
+-- "returns to" p, the amended ruling (reviews/dri-decisions-20261110-ps-7-returns.md, guards (f)-(l) of
+-- reviews/ps-7-dri-note-20261110-next.md). The body is an arrival at p on t, `arrives(p, t)` (the subject's own
+-- arrival, the subject left implicit: VE has no ternary atom); y and z are the subject's own stays. Each structure
+-- is built without (F) and with (T) the arrival, and each guard that involves the body checks both values.
+def ret (rels : List (String × List (List String))) (arrives : Bool) : VE.FiniteModel String :=
+  chain ["a", "b", "c", "d"] [("t", "c"), ("p", "p")] [("stay", ["y", "z"]), ("place", ["p", "q"])]
+    (rels ++ if arrives then [("arrives", [["p", "c"]])] else [])
+def arrival : VE.Formula := .binary "arrives" (.const "p") t
+def retR (body : VE.Formula) : Reading := returnsTo V stay "at" (.const "p") t body
+/-- (pre, strong, weak) of "returns to p on t" with the arrival body. -/
+def retV (M : VE.FiniteModel String) : Bool × Bool × Bool :=
+  ((retR arrival).pre.eval M [], (retR arrival).strong.eval M [], (retR arrival).weak.eval M [])
+def neverLeft : List (String × List (List String)) := [("begins", [["y", "a"]]), ("at", [["y", "p"]])]
+def leftA : List (String × List (List String)) := [("begins", [["y", "a"]]), ("ends", [["y", "a"]]), ("at", [["y", "p"]])]
+def leftOnT : List (String × List (List String)) := [("begins", [["y", "a"]]), ("ends", [["y", "c"]]), ("at", [["y", "p"]])]
+def endOnly : List (String × List (List String)) := [("ends", [["y", "a"]]), ("at", [["y", "p"]])]
+def leftAndStaying : List (String × List (List String)) :=
+  [("begins", [["y", "a"], ["z", "b"]]), ("ends", [["y", "a"]]), ("at", [["y", "p"], ["z", "p"]])]
+def retCases : List (List (String × List (List String))) := [neverLeft, leftA, leftOnT, endOnly, leftAndStaying]
+-- (f) never left (an ongoing stay at p begun on a, no end day): pre F, strong F, weak T (silent: the intended weak
+-- reading), with the arrival too
+#guard retV (ret neverLeft false) == (false, false, true) && retV (ret neverLeft true) == (false, false, true)
+-- (g) left: the stay at p ended on a, before t: pre T, strong and weak follow the arrival
+#guard retV (ret leftA true) == (true, true, true) && retV (ret leftA false) == (true, false, false)
+-- (h) the stay ends on t itself: pre F, strong F, weak T (the day-level limit)
+#guard retV (ret leftOnT false) == (false, false, true) && retV (ret leftOnT true) == (false, false, true)
+-- (i) an end on a with no begin day: pre T (ENDS reads the end only; ENDS and BEGINS are not ordered)
+#guard retV (ret endOnly true) == (true, true, true) && retV (ret endOnly false) == (true, false, false)
+-- (j) a conditioned carrier `G → (pre → body)` over the never-left structure, G "the subject is at p" (true there):
+-- true for both arrival values (silent), as the reviewed conditioned carrier at `impR G hole`
+def stayingAtP : VE.Formula := .ex "stay" (.binary "at" (.var 0) (.const "p"))
+#guard [false, true].all fun b => stayingAtP.eval (ret neverLeft b) [] &&
+  ((Frame.impR stayingAtP .hole).plug (retR arrival).weak).eval (ret neverLeft b) [] &&
+  (conditionedAt (.impR stayingAtP .hole) (retR arrival)).eval (ret neverLeft b) []
+-- (k) left on a, then a current stay z at p from b with no end, no arrival on t: pre T, the arrival body gives strong F
+-- and weak F; an occupancy body ("at p on t", true here) would give strong T: the body must be an arrival
+#guard retV (ret leftAndStaying false) == (true, false, false)
+def occupancy : VE.Formula := .ex "stay" (.and (.binary "at" (.var 0) (.const "p")) (inProgress V stay (.var 0) t))
+#guard occupancy.eval (ret leftAndStaying false) [] && (retR occupancy).strong.eval (ret leftAndStaying false) []
+-- (l) "X did not return to p" of an X who never left: asserted `pre ∧ ¬body` F, conditioned `pre → ¬body` T
+#guard [false, true].all fun b => !(assertedAt .hole (retR (.not arrival))).eval (ret neverLeft b) [] &&
+  !(retR (.not arrival)).strong.eval (ret neverLeft b) [] && (retR (.not arrival)).weak.eval (ret neverLeft b) [] &&
+  (conditionedAt .hole (retR (.not arrival))).eval (ret neverLeft b) []
+-- latest-stay limit, row ps-7c: today pre is T in structure (k) (an earlier stay ended, though X is at p since b), so
+-- weak follows the body; a "latest stay ended" pre flips this guard. "resumes" shares the limit (its pre is T there).
+#guard [false, true].all fun b => retV (ret leftAndStaying b) == (true, b, b) &&
+  (resumes V stay t ip).pre.eval (ret leftAndStaying b) []
+
 -- a variable day under "on each day after a", and a variable stay under "some stay": the lifts
 def eachDay (p : VE.Term → VE.Formula) : VE.Formula :=
   .all "day" (.implies (.binary "before" (.const "a") (.var 0)) (p (.var 0)))
@@ -148,7 +196,8 @@ def stateless : VE.FiniteModel String := other [("begins", [["y", "c"]])]
 -- the order), and an end before the begin is refused
 #guard (states ++ [stayS [("begins", [["s", "b"]])], other [("ends", [["y", "a"]])], other [("job_ends", [["j", "a"]])],
   evs [("visit_on", [["v", "a"]])], evs [("audit_on", [["w", "a"]])], changed, stateless,
-  places [("ends", [["y", "a"]]), ("at", [["y", "p"]])]]).all (VE.Events.Examples.firstFailing V · == none)
+  places [("ends", [["y", "a"]]), ("at", [["y", "p"]])]] ++
+  retCases.flatMap fun r => [ret r false, ret r true]).all (VE.Events.Examples.firstFailing V · == none)
 #guard VE.Events.Examples.firstFailing V (stayS [("begins", [["s", "b"]]), ("ends", [["s", "a"]])]) != none
 
 -- ps-1-locate-path: `locate` follows the path (a `locate` that ignores it gives one answer for both)

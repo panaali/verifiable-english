@@ -25,7 +25,8 @@ def inProgress (V : EventsEnv) (S : StateSort) (x t : VE.Term) : VE.Formula :=
 def inProgressBefore (V : EventsEnv) (S : StateSort) (x t : VE.Term) : VE.Formula :=
   .ex V.day (.and (.binary V.before (.var 0) (Term.shift t)) (inProgress V S (Term.shift x) (.var 0)))
 
-/-- "An earlier state that ended", the `pre` of "resumes": `∃y:S. ∃u. ends_S(y, u) ∧ before(u, t)`. -/
+/-- "An earlier state that ended", the `pre` of "resumes": `∃y:S. ∃u. ends_S(y, u) ∧ before(u, t)`. Latest-stay limit
+    (shared with "returns to", row ps-7c): it asks for some earlier state that ended, not that the latest one did. -/
 def endedBefore (V : EventsEnv) (S : StateSort) (t : VE.Term) : VE.Formula :=
   .ex S.sort (.ex V.day (.and (.binary S.ends (.var 1) (.var 0))
     (.binary V.before (.var 0) (Term.shift (Term.shift t)))))
@@ -57,7 +58,13 @@ def resumes (V : EventsEnv) (S : StateSort) (t : VE.Term) (body : VE.Formula) : 
 def again (V : EventsEnv) (E : EventSort) (t : VE.Term) (body : VE.Formula) : Reading :=
   generic (occurredBefore V E t) body
 
-/-- "returns to" the place `p`. -/
+/-- "returns to" the place `p` (reviews/dri-decisions-20261110-ps-7-returns.md item 1). Contract: "X returns to P on t"
+    takes for granted an earlier stay of X at P that ended before t, and asserts a new arrival at P on t. The caller
+    supplies an arrival body; an occupancy body ("X is at P on t") is not a return (guard (k) in Events/Examples.lean).
+    The instances of `S` are the subject's own stays. Stays that end on t itself are a limit of the day-level model
+    (guard (h)). The pre asks for some earlier stay that ended, not that the latest one did: the latest-stay limit,
+    shared with "resumes", goes to row ps-7c. The reason for ENDS is that departure projects: "X did not return to P"
+    of an X who never left is not true (guards (f), (l)). -/
 def returnsTo (V : EventsEnv) (S : StateSort) (atP : String) (p t : VE.Term) (body : VE.Formula) : Reading :=
   generic (endedAtBefore V S atP p t) body
 
