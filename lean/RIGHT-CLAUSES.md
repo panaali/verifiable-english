@@ -1,7 +1,9 @@
 # `right-clauses@0`: the Lean theorems in plain words
 
-Spec: docs/spec/right-clauses.md (draft 3), section 8. Files: `lean/VE/RightClauses/{Tree,Plain,Relation,PlainWellFormed}.lean`, fixtures
-in `Examples.lean`. `Wire.lean` (8.5) is cmp-s3b's. Nothing here imports `VE.Readings`.
+Spec: docs/spec/right-clauses.md (draft 3), section 8. Files:
+`lean/VE/RightClauses/{Tree,Plain,Relation,PlainWellFormed,Wire}.lean`, fixtures in `Examples.lean`; the
+`clauses-elaborate` mode in `Run.lean`; 8.5's proofs in `WireDecode.lean`, `WireName.lean` and `WireTheorems.lean`.
+Nothing here imports `VE.Readings`.
 
 A structured line is a rights line with clauses (base formulas with their source spans), at most one relation (a
 declared binary base predicate between two of its slots, maybe total on the holder slot) and its elided spans.
@@ -43,3 +45,21 @@ declared binary base predicate between two of its slots, maybe total on the hold
 - `relation_some_bearer`: under a total relation from the bearer slot to the holder slot, every holder in the
   holder sort who satisfies the right's holder guard has a related bearer. That bearer owes the act wherever the
   line's own guard holds and no narrowing mechanism is active.
+
+## Wire.lean (cmp-s3-cfr-1)
+
+The document is the rights route's array of units. A line object has three more keys: `elided` (mandatory),
+`clauses` and `relation`. A unit may carry its source `span`. The head decodes each line object with rights' own
+`decodeLine` on the object without those keys, then reads the keys with section 7's texts. The plained document
+(`elaborateJson`) drops the keys and unit spans and replaces each structured line's norm guard by its plain guard.
+
+- `decode_unstructured`: if no line object has `clauses` or `relation`, the head's rights document is the one the
+  rights decoder reads from the document without `elided` (and the profile), and no entry has a clause or a relation.
+- `elaborate_plain`: the plained document decodes under the rights route (the list without `right-clauses@0`) to
+  `plain D`. It needs the DRI's added hypothesis `PlainOnWire D` (reviews/dri-decisions-20261104-cmp-s3.md Q1 A1):
+  W1 reads every plain guard back within its depth and node limits. A plain guard nests one level deeper than its
+  line's guard (`notChain`, Examples.lean).
+
+The `clauses-elaborate` mode (Run.lean) runs 4.1 in order: the dispatcher's gate, the head's decoding and checks,
+then the rights decoder and its checks on the plained document, whose texts are the answer. It answers the plained
+document's canonical bytes and `clauseSlotLabelled`. `elided_bytes` is cmp-s3a-cfr-3's.
