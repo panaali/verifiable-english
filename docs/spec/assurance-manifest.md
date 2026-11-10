@@ -173,6 +173,7 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Definitions/Bundle.lean` | 471 | 471 | 1–471 | `fc86d51a7f84…` |
 | `lean/VE/EnglishGrammar/Encode.lean` | 764 | 764 | 1–764 | `c68b8627d4e6…` |
 | `lean/VE/EnglishGrammar/Run.lean` | 800 | 800 | 1–800 | `42e3a9f87128…` |
+| `lean/VE/EnglishGrammar/Norm/Run.lean` | 303 | 303 | 1–303 | `3ccffd316421…` |
 | `lean/VE/Json.lean` | 141 | 141 | 1–141 | `10dcb30ca301…` |
 | `lean/VE/NormDefaults/Admission.lean` | 368 | 368 | 1–368 | `ed661fb45dc3…` |
 | `lean/VE/NormDefaults/Layered.lean` | 484 | 484 | 1–484 | `0a96a2de151e…` |
@@ -233,7 +234,7 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Defaults/ZoneWire.lean` | 463 | 463 | 1–463 | `1b2585cf4016…` |
 | `lean/VE/Events/Wire.lean` | 281 | 281 | 1–281 | `29d30fe8c593…` |
 | `lean/VE/Events/Chain.lean` | 204 | 204 | 1–204 | `80d03aefca6e…` |
-| **total** | | **44,193** | | |
+| **total** | | **44,496** | | |
 <!-- END GENERATED -->
 
 Outside the decoder count: `lean/VE/Order/Surface.lean` (order text parser, `lean:order-surface-parser`), the runner

@@ -181,7 +181,12 @@ lean/VE/EnglishGrammar/Norm/RunExamples.lean` (the VM; the Mac and the cloud poo
 - `tools/gate_collection.py --check --prebuilt` (before the merge): "1 added, 0 removed by a trailer, 0 refused, 0 stale
   and 0 malformed".
 - Trust-mutants rescore: exit 0 (above).
-- Selected tests: SELECTED_PLACEHOLDER
+- Selected tests (`MAC_PYTEST_NO_DEFER=1 zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`, on
+  the committed merge; it ran on the VM): 466 units, 2 files failed, both this item's: `tests/test_assurance_manifest.py::test_every_json_handling_lean_file_is_classified`
+  (`Norm/Run.lean` now pinned as a decoder in `ve/assurance-manifest.json`, `Norm/RunExamples.lean` under `other_json`)
+  and `tests/test_senses_read_members.py::test_a_golden_request_without_the_members_keeps_its_answer[open|one|warnings]`
+  (the answers carry the English `actions_version`; re-recorded at 46 after a probe showed that with "46" read as
+  "45" each digest equals main's). The failed ids were then rerun alone on the fixed commit (below).
 
 ## Spec re-read (BUILDER-CHECKLIST 14)
 
