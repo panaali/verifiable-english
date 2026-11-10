@@ -20157,8 +20157,11 @@
         "VE.EnglishGrammar.Norm.Run.decoderCode",
         "VE.EnglishGrammar.Norm.Run.leanReader",
         "VE.EnglishGrammar.Norm.Run.oneSpans",
+        "VE.EnglishGrammar.Norm.Run.opensStatement",
+        "VE.EnglishGrammar.Norm.Run.sentenceBytes",
         "VE.EnglishGrammar.Norm.Run.statementCase",
         "VE.EnglishGrammar.Norm.Run.statementCaseReported",
+        "VE.EnglishGrammar.Norm.Run.statementSpans",
         "VE.EnglishGrammar.Norm.Run.stoppedFields"
       ],
       "G[R]": [
@@ -20170,10 +20173,7 @@
         "VE.EnglishGrammar.Norm.Run.stopNamesSentence"
       ],
       "G[I]": [
-        "VE.EnglishGrammar.Norm.Run.opensStatement",
-        "VE.EnglishGrammar.Norm.Run.resultOf",
-        "VE.EnglishGrammar.Norm.Run.sentenceBytes",
-        "VE.EnglishGrammar.Norm.Run.statementSpans"
+        "VE.EnglishGrammar.Norm.Run.resultOf"
       ],
       "P": [
         "VE.EnglishGrammar.Norm.tacticAnswer_simp"

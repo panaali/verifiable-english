@@ -82,7 +82,8 @@ def internalRow : List Json :=
 #guard get (.ok [.source []]) ["status", "code", "class", "text", "sentence"] == internalRow
 #guard get (.ok [.rule ⟨1, []⟩ cPub]) ["status", "code", "class", "text", "sentence"] "Rule 1. X.\nRule 2. Y." == internalRow
 -- only a translation-mode statement is refused: no statements over no blocks are rows, none of them one
-#guard Run.oneSpans "" [] == some [] && Run.oneSpans "" [.source []] == none
+#guard Run.oneSpans "" [] == some [] && Run.oneSpans "" [.source []] == none &&
+  Run.oneSpans "Rule 1. X.\nRule 2. Y." [.rule ⟨1, []⟩ cPub, .source []] == none
 -- fewer blocks than statements is `Internal` too (E12 has more): `zip` must never drop a statement
 #guard get (.ok [.rule ⟨1, []⟩ cPub, .rule ⟨2, []⟩ cPub]) ["status", "code", "class", "text", "sentence"] == internalRow
 -- M10's spans are bytes, not code points: "ë" is two bytes, so the second block starts at byte 14 (character 13)
@@ -91,6 +92,9 @@ def internalRow : List Json :=
   | .arr rows => rows.toList.map (·.getObjValD "span") == [Json.arr #[0, 13], Json.arr #[14, 24]]
   | _ => false
 -- E13: a block over two lines is one span, from the lexer's positions: header to period.
+-- a sentence that opens with no word (a quotation, a numeral) continues its block; only "Rule" opens one
+#guard Run.statementSpans "Rule 1. X.\n\"Rule\" 2 is quoted." == [(0, 30)] &&
+  Run.statementSpans "Rule 1. X.\n2 rules hold." == [(0, 24)]
 #guard Run.statementSpans "Rule 1.\nX." == [(0, 10)] &&
   get (.ok [.rule ⟨1, []⟩ cPub]) ["status"] "Rule 1.\nX." == str ["one"] &&
   (result (.ok [.rule ⟨1, []⟩ cPub]) "Rule 1.\nX.").getObjValD "statements" == Json.arr #[Json.mkObj [

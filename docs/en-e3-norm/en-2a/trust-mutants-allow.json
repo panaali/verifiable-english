@@ -34,6 +34,11 @@
    "definition": "VE.EnglishGrammar.Norm.ReadNormAuthoring",
    "operator": "list-empty",
    "reason": "a Prop no check can evaluate (a premise of toNodesChecked_authoring, never computed by the mode): exercised by ReadNormAuthoring_eq (Owners.lean:100), which pins it word for word to english-lean-s6.md 4's readNorm_authoring, and toNodesChecked_authoring; the mutant breaks them (R16: a Prop is exercised only by its proofs)"
+  },
+  {
+   "definition": "VE.EnglishGrammar.Norm.ReadNormAuthoring",
+   "operator": "list-first",
+   "reason": "a Prop no check can evaluate (a premise of toNodesChecked_authoring, never computed by the mode): exercised by ReadNormAuthoring_eq (Owners.lean:100), which pins it word for word to english-lean-s6.md 4's readNorm_authoring, and toNodesChecked_authoring; the mutant breaks them (R16: a Prop is exercised only by its proofs)"
   }
  ]
 }

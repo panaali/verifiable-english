@@ -99,20 +99,20 @@ def stopNamesSentence : VE.Grammar.Outcome Tok Reject Piece → Bool
   | .rejected r => !statementUnsentenced.contains r.code
   | _ => true
 
-def stoppedFields (tags : Array String) (i : Nat) : VE.Grammar.Outcome Tok Reject Piece → List (String × Json)
+def stoppedFields (tags : Thunk (Array String)) (i : Nat) : VE.Grammar.Outcome Tok Reject Piece → List (String × Json)
   | .ok _ _ => status "rejected" ++ coded "Internal" (rejectText i .internal)
   | .noDerivation => status "none" ++
       coded "NoDerivation" s!"Sentence {i + 1} has no reading as a rule block sentence with the current vocabulary." ++
       [("sentence", toJson i)]
   | .ambiguous t u => status "many" ++
       coded "Ambiguous" s!"Sentence {i + 1} can be read in more than one way. Two of the ways are shown." ++
-      [("sentence", toJson i), ("witnesses", Json.arr #[treeJson tags t, treeJson tags u])]
+      [("sentence", toJson i), ("witnesses", Json.arr #[treeJson tags.get t, treeJson tags.get u])]
   | .rejected r => status "rejected" ++ coded r.code (rejectText i r) ++
       (if statementUnsentenced.contains r.code then [] else [("sentence", toJson i)])
   | .budget => budgetFields i
 
-/-- The result fields of one reader outcome. -/
-def outcomeFields (c : Case) (tags : Array String) (source : String) : NormOutcome → List (String × Json)
+/-- The result fields of one reader outcome; `tags` is forced only for `many` (DRI 2026-11-09, item 2). -/
+def outcomeFields (c : Case) (tags : Thunk (Array String)) (source : String) : NormOutcome → List (String × Json)
   | .ok rs => match toNodesChecked rs with
     | .ok _ => match oneSpans source rs with
       | some sps => status "one" ++
@@ -145,7 +145,7 @@ def answerWith (R : Reader) (id : String) (c : Case) (source : String) : Json :=
   let identities := Json.mkObj ([("source_sha256", .str (VE.CertificateWire.sha256 source.toUTF8))] ++ c.identities)
   let fields := match c.overlayFailure with
     | some f => invalidOverlayFields "english.statement" f
-    | none => outcomeFields c (R.tags c.E c.L) source (R.read c.E c.O c.L workBudget source)
+    | none => outcomeFields c (Thunk.mk fun _ => R.tags c.E c.L) source (R.read c.E c.O c.L workBudget source)
   VE.Route.Wire.ok id [("result", Json.mkObj (fields ++ [("identities", identities)]))]
 
 def leanReader : Reader := ⟨readNorm, normTags⟩
