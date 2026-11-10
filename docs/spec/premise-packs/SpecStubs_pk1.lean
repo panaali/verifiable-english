@@ -9,8 +9,8 @@ product code: it lives under docs/, imports the tree before pk-1 (`49a926ee7`; p
 and some proofs are `sorry` (the build item pk-1 proves them in the files of spec section 5). Check it from that tree's
 `lean/` with `PATH=~/.elan/bin:$PATH lake env lean ../docs/spec/premise-packs/SpecStubs_pk1.lean`.
 
-Section numbers in comments are the spec's. `planFiles` (section 5, at the end) gives the pk-1 file of every
-declaration, and a check there fails when a declaration uses a module or declaration its file cannot import. -/
+Section numbers in comments are the spec's. `planFiles` (section 5, at the end) gives a file to each declaration
+`stubDecls` lists (not section 4's fixtures); a check there fails when one uses what its file cannot import. -/
 
 namespace VE.NormDefaults.Packs
 open Lean
@@ -515,10 +515,14 @@ end VE.NormDefaults.Packs.Fixtures
 
 /-! ## 5 The build's files, checked
 
-`planFiles` is spec section 5's file list: each pk-1 file in import order, the modules it imports, the modules that
-will import it, and the stub declarations it holds. The check below fails when a declaration uses a module outside
-its file's imports or a declaration of a later file, when a file's importer is already among its imports (an import
-cycle), or when a stub declaration has no file. -/
+`planFiles` is spec section 5's file list without its fixture file: `Packs.lean`, the hunks of `Layered.lean`,
+`PacksLegacy.lean`, `SupPacks.lean` and the first provider, in import order, with the modules each imports, the
+modules that will import it, and the stub declarations it holds. `PacksExamples.lean` is not in the checked plan: it
+holds none of the declarations `stubDecls` checks (section 4's fixtures, in `Packs.Fixtures`, are not checked), and
+as built it imports `VE.NormDefaults.Packs`, `VE.Rights.Examples` and `VE.Defaults.Examples`; A9′, which reads
+`ResponseShape`, is in `lean/ResponseShape/Encoders/NormDefaults.lean`. The check below fails when a declaration
+uses a module outside its file's imports or a declaration of a later file, when a file's importer is already among
+its imports (an import cycle), or when a declaration `stubDecls` lists has no file. -/
 
 namespace VE.NormDefaults.Packs.Plan
 open Lean Meta
