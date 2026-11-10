@@ -4035,6 +4035,18 @@
 'VE.Paths.warshall_iff_path' depends on axioms: [propext, Quot.sound]
 'VE.Paths.warshall_preserves_closed' depends on axioms: [propext, Quot.sound]
 'VE.Paths.warshall_sound' depends on axioms: [propext, Quot.sound]
+'VE.Presupposition.Events.again_defined' does not depend on any axioms
+'VE.Presupposition.Events.again_eq' does not depend on any axioms
+'VE.Presupposition.Events.continues_defined' does not depend on any axioms
+'VE.Presupposition.Events.continues_eq' does not depend on any axioms
+'VE.Presupposition.Events.noLonger_defined' does not depend on any axioms
+'VE.Presupposition.Events.noLonger_eq' does not depend on any axioms
+'VE.Presupposition.Events.resumes_defined' does not depend on any axioms
+'VE.Presupposition.Events.resumes_eq' does not depend on any axioms
+'VE.Presupposition.Events.returnsTo_defined' does not depend on any axioms
+'VE.Presupposition.Events.returnsTo_eq' does not depend on any axioms
+'VE.Presupposition.Events.stops_defined' does not depend on any axioms
+'VE.Presupposition.Events.stops_eq' does not depend on any axioms
 'VE.Presupposition.Examples.s22_neg_s2' depends on axioms: [propext]
 'VE.Presupposition.Examples.s22_pos_s1' depends on axioms: [propext]
 'VE.Presupposition.Examples.s22_pos_s2' depends on axioms: [propext]
@@ -6641,6 +6653,7 @@
 'VE.Rights.limKeys_nil' depends on axioms: [propext]
 'VE.Rights.limPackList_denote' depends on axioms: [propext, Quot.sound]
 'VE.Rights.limPack_mem_narrowings' depends on axioms: [propext, Quot.sound]
+'VE.Rights.limitationScope_texts' depends on axioms: [propext, Quot.sound]
 'VE.Rights.limitation_scope_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Rights.lineNode_correlate' depends on axioms: [propext, Quot.sound]
 'VE.Rights.lineNode_direct' depends on axioms: [propext, Quot.sound]
@@ -6666,6 +6679,7 @@
 'VE.Rights.narrowings_complete' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Rights.narrowings_complete_of_valid' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Rights.noDistinction_sound' depends on axioms: [propext, Quot.sound]
+'VE.Rights.noDistinction_texts' depends on axioms: [propext, Quot.sound]
 'VE.Rights.no_distinction_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Rights.nodeNamed_mem' depends on axioms: [propext]
 'VE.Rights.nodeNamed_self' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -9110,6 +9124,7 @@
 'ResponseShape.Encoders.Reports.wants_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.Rights.admission_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.Rights.bar_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.Rights.conflictAnswer_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.Rights.elaborate_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.Rights.firstFailure_of_not_free' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.Rights.firstFailure_text' depends on axioms: [propext, Quot.sound]

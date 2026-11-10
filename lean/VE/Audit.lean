@@ -287,6 +287,7 @@ import VE.Paths
 import VE.Presupposition.Admit.Facts
 import VE.Presupposition.Admit.Statements
 import VE.Presupposition.Agree
+import VE.Presupposition.Events
 import VE.Presupposition.Examples
 import VE.Presupposition.Frame
 import VE.Presupposition.Reading
@@ -4537,6 +4538,18 @@ import VE.WireContract.Engine
 #print axioms VE.Paths.warshall_iff_path
 #print axioms VE.Paths.warshall_preserves_closed
 #print axioms VE.Paths.warshall_sound
+#print axioms VE.Presupposition.Events.again_defined
+#print axioms VE.Presupposition.Events.again_eq
+#print axioms VE.Presupposition.Events.continues_defined
+#print axioms VE.Presupposition.Events.continues_eq
+#print axioms VE.Presupposition.Events.noLonger_defined
+#print axioms VE.Presupposition.Events.noLonger_eq
+#print axioms VE.Presupposition.Events.resumes_defined
+#print axioms VE.Presupposition.Events.resumes_eq
+#print axioms VE.Presupposition.Events.returnsTo_defined
+#print axioms VE.Presupposition.Events.returnsTo_eq
+#print axioms VE.Presupposition.Events.stops_defined
+#print axioms VE.Presupposition.Events.stops_eq
 #print axioms VE.Presupposition.Examples.s22_neg_s2
 #print axioms VE.Presupposition.Examples.s22_pos_s1
 #print axioms VE.Presupposition.Examples.s22_pos_s2
@@ -7143,6 +7156,7 @@ import VE.WireContract.Engine
 #print axioms VE.Rights.limKeys_nil
 #print axioms VE.Rights.limPackList_denote
 #print axioms VE.Rights.limPack_mem_narrowings
+#print axioms VE.Rights.limitationScope_texts
 #print axioms VE.Rights.limitation_scope_sound
 #print axioms VE.Rights.lineNode_correlate
 #print axioms VE.Rights.lineNode_direct
@@ -7168,6 +7182,7 @@ import VE.WireContract.Engine
 #print axioms VE.Rights.narrowings_complete
 #print axioms VE.Rights.narrowings_complete_of_valid
 #print axioms VE.Rights.noDistinction_sound
+#print axioms VE.Rights.noDistinction_texts
 #print axioms VE.Rights.no_distinction_sound
 #print axioms VE.Rights.nodeNamed_mem
 #print axioms VE.Rights.nodeNamed_self
