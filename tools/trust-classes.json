@@ -17074,6 +17074,7 @@
       ],
       "T": [
         "VE.WireContract.Hooks.Purposes.block",
+        "VE.WireContract.Hooks.Purposes.idsAgree",
         "VE.WireContract.Hooks.Purposes.link",
         "VE.WireContract.Hooks.Purposes.links",
         "VE.WireContract.Hooks.Purposes.recordOf",
