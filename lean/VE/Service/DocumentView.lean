@@ -2,15 +2,12 @@ import VE.Service.Document
 
 /-! # The checked view (docs/spec/purpose-explanation.md 5.1; sa-checked-view, DRI 2(d))
 
-One run of the document mode with two outputs: the answer `checkDocSets` gives (`checkDocSetsView_answer`) and its
-typed view, `CheckedView`. The view is the answer after the status fold, scope's governor fold included: its rows
-render to the answer's `units` (`checkDocSetsView_rows`). Under `scope@0` the fold (`VE.Scope.foldGovernors`) writes
-the answer's JSON, so each row's status is read back from the unit the fold wrote (`foldedRows`), and the fold stays
-its one owner. Its candidates are the kinds of the readings of the active reading sets the status fold read
-(`Checked.active`, `Loader.activeOf`), each set's readings as written in the front matter the check read
-(`candidatesOf`), with their names in the same order (`readings`). `packSources` is empty: a list with no pack has
-none (`checkDocSetsView_packs`), and for a list with a pack its content and its obligation `packSources_complete` are
-the pack owner's (5.1's paragraph on pack sources). PE-2's `eligible` reads this view. -/
+One run of the document mode, two outputs: `checkDocSets`'s answer (`checkDocSetsView_answer`) and its typed view.
+The view's rows render to the answer's `units` (`checkDocSetsView_rows`): under `scope@0` each row's status is read
+back from the unit `VE.Scope.foldGovernors` wrote (`foldedRows`), so the fold keeps one owner. Its candidates are the
+kinds of the readings of the active sets the status fold read (`Checked.active`), as written in the front matter the
+check read (`candidatesOf`), with their names in the same order (`readings`). `packSources` is empty: for a list with
+a pack its content and `packSources_complete` are the pack owner's (5.1). PE-2's `eligible` reads this view. -/
 
 namespace VE.Service.Document
 open Lean
@@ -138,19 +135,16 @@ theorem checkDocSetsView_answer (j : Json) : (checkDocSetsView j).map (·.1) = c
 
 /-! ## The view is the answer -/
 
-theorem unitJson_setStatus (u : RowUnit) (s : UnitStatus) :
-    (unitJson u).setObjVal! "status" (.str s.name) = unitJson { u with status := s } := by
+theorem unitJson_status (u : RowUnit) (s : UnitStatus) :
+    (unitJson u).setObjVal! "status" (.str s.name) = unitJson { u with status := s } ∧
+      (unitJson u).getObjValD "status" = .str u.status.name := by
   obtain ⟨id, span, kind, meaning, support, status, parent, content, mid⟩ := u
-  cases parent <;> cases content <;> cases mid <;> rfl
-
-theorem unitJson_status (u : RowUnit) : (unitJson u).getObjValD "status" = .str u.status.name := by
-  obtain ⟨id, span, kind, meaning, support, status, parent, content, mid⟩ := u
-  cases parent <;> cases content <;> cases mid <;> rfl
+  cases parent <;> cases content <;> cases mid <;> exact ⟨rfl, rfl⟩
 
 theorem readStatus_unitJson (u : RowUnit) (s : UnitStatus) :
     readStatus u (unitJson { u with status := s }) = { u with status := s } := by
   unfold readStatus
-  rw [unitJson_status]
+  rw [(unitJson_status _ s).2]
   cases s <;> rfl
 
 /-- The fold writes one of the four statuses or none: the meet of statuses it read as one of the four. -/
@@ -159,14 +153,12 @@ theorem foldStatus_known (xs : List VE.Reports.Status) (h : ∀ x ∈ xs, x ≠ 
   unfold VE.Reports.foldStatus
   suffices ∀ a, a ≠ .unknown → xs.foldl VE.Reports.Status.meet a ≠ .unknown from this _ (by decide)
   induction xs with
-  | nil => intro a ha; exact ha
+  | nil => exact fun _ ha => ha
   | cons x xs ih =>
     intro a ha
     apply ih (fun y hy => h y (List.mem_cons_of_mem _ hy))
     unfold VE.Reports.Status.meet
-    split
-    · exact ha
-    · exact h x (List.mem_cons_self ..)
+    split <;> first | exact ha | exact h x (List.mem_cons_self ..)
 
 theorem mapM_known (st : String → Option VE.Reports.Status) (hs : ∀ x s, st x = some s → s ≠ .unknown) :
     ∀ (us : List String) (xs : List VE.Reports.Status), us.mapM st = some xs → ∀ x ∈ xs, x ≠ .unknown := by
@@ -176,14 +168,9 @@ theorem mapM_known (st : String → Option VE.Reports.Status) (hs : ∀ x s, st 
   | cons u us ih =>
     intro xs h
     simp only [List.mapM_cons, Option.bind_eq_bind] at h
-    cases hu : st u <;> simp [hu] at h
-    rename_i s
-    cases hm : us.mapM st <;> simp [hm] at h
+    cases hu : st u <;> cases hm : us.mapM st <;> simp [hu, hm] at h
     subst h
-    intro x hx
-    cases hx with
-    | head => exact hs u s hu
-    | tail _ hx => exact ih _ hm x hx
+    exact fun x hx => (List.mem_cons.mp hx).elim (· ▸ hs u _ hu) (ih _ hm x)
 
 theorem statusOf_known (x : String) (s : VE.Reports.Status) (h : VE.Scope.statusOf x = some s) : s ≠ .unknown := by
   unfold VE.Scope.statusOf at h
@@ -199,12 +186,8 @@ theorem governorStatus_known (st : String → Option VE.Reports.Status) (hs : �
     | some xs => exact foldStatus_known xs (mapM_known st hs us xs h)
 
 theorem render_name (S : VE.Reports.Status) (h : S ≠ .unknown) : ∃ s : UnitStatus, s.name = S.render := by
-  cases S
-  · exact ⟨.unformalised, rfl⟩
-  · exact ⟨.opened, rfl⟩
-  · exact absurd rfl h
-  · exact ⟨.labelled, rfl⟩
-  · exact ⟨.checked, rfl⟩
+  cases S <;> first | exact absurd rfl h | exact ⟨.unformalised, rfl⟩ | exact ⟨.opened, rfl⟩ |
+    exact ⟨.labelled, rfl⟩ | exact ⟨.checked, rfl⟩
 
 /-- A unit the fold leaves or gives a known status is the rendering of its row read back. -/
 theorem readStatus_fold (u : RowUnit) (y : Json)
@@ -213,7 +196,7 @@ theorem readStatus_fold (u : RowUnit) (y : Json)
   rcases h with h | ⟨S, hS, h⟩
   · subst h; exact congrArg unitJson (readStatus_unitJson u u.status)
   · obtain ⟨s, hs⟩ := render_name S hS
-    rw [← hs, unitJson_setStatus] at h
+    rw [← hs, (unitJson_status u s).1] at h
     subst h
     exact congrArg unitJson (readStatus_unitJson u s)
 
@@ -281,15 +264,9 @@ theorem checkDocSetsView_rows (j a : Json) (V : CheckedView) (h : checkDocSetsVi
     obtain ⟨D, id, c⟩ := r
     simp only [hr, bind, Except.bind, pure, Except.pure] at h
     obtain ⟨he, hu⟩ := encode_units id c
-    cases D with
-    | none =>
-      simp only [Except.ok.injEq, Prod.mk.injEq] at h
-      obtain ⟨rfl, rfl⟩ := h
-      exact ⟨he, hu⟩
-    | some D =>
-      simp only [Except.ok.injEq, Prod.mk.injEq] at h
-      obtain ⟨rfl, rfl⟩ := h
-      obtain ⟨h1, h2⟩ := foldGovernors_rows D (encode id c) c.rows he
+    cases D <;> simp only [Except.ok.injEq, Prod.mk.injEq] at h <;> obtain ⟨rfl, rfl⟩ := h
+    · exact ⟨he, hu⟩
+    · obtain ⟨h1, h2⟩ := foldGovernors_rows _ (encode id c) c.rows he
       exact ⟨h1, h2.trans hu⟩
 
 /-! ## Candidates, readings and pack sources -/

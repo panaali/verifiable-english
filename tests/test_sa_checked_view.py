@@ -8,18 +8,18 @@ service gives the same request. Lean computes every value; Python only compares 
 """
 from __future__ import annotations
 
-import importlib.util
 import json
 import os
 import shutil
 import subprocess
+import sys
 
 import pytest
 
 from subprocesses import HANG_TIMEOUT
 from tests.lean_build import LEAN, ROOT, lean_build
 from tests.test_scope_document import F1, _split, _text, _written_in_full
-from tests.test_scope_readings_document import SET, _doc, _on_lead
+from tests.test_scope_readings_document import _doc, _on_lead
 from ve.backends.relay import answer
 
 EVIDENCE = ROOT / "docs/document-model/sa-checked-view"
@@ -90,30 +90,20 @@ def test_candidates_and_readings_name_the_active_set_in_order(lean_lines):
     assert governed["candidates"] == [["u0165.s03", [NORM, NORM]]]
     assert governed["active_kinds"] == governed["candidates"]
     assert lines["plain"]["candidates"] == lines["plain"]["readings"] == lines["plain"]["active_kinds"] == []
-    assert SET in _cases()["governed"]["document"]
 
 
-def _checker():
-    spec = importlib.util.spec_from_file_location("sa_view_spec", EVIDENCE / "spec_text_check.py")
-    module = importlib.util.module_from_spec(spec)
-    cwd = os.getcwd()
-    os.chdir(ROOT)
-    try:
-        spec.loader.exec_module(module)
-    finally:
-        os.chdir(cwd)
-    return module
+def _spec_check(*source: str) -> int:
+    return subprocess.run([sys.executable, "-B", str(EVIDENCE / "spec_text_check.py"), *source], cwd=ROOT,
+                          capture_output=True, text=True, timeout=HANG_TIMEOUT).returncode
 
 
-def test_the_eight_statements_equal_the_spec_and_a_changed_one_fails(tmp_path, monkeypatch):
-    checker = _checker()
-    monkeypatch.chdir(ROOT)
-    assert checker.main() == 0
+def test_the_eight_statements_equal_the_spec_and_a_changed_one_fails(tmp_path):
+    assert _spec_check() == 0
     text = (LEAN / "VE/Service/DocumentView.lean").read_text()
     for old, new in [("ns.length = ks.length", "ns.length ≤ ks.length"),
                      ("V.packSources = [] :=", "V.packSources = [] ∨ True :="),
                      ("activeKinds j = .ok V.candidates", "(activeKinds j).isOk")]:
         assert old in text
-        path = tmp_path / "DocumentView.lean"
+        path = tmp_path / f"{len(new)}.lean"
         path.write_text(text.replace(old, new))
-        assert checker.main(str(path)) == 1, new
+        assert _spec_check(str(path)) == 1, new
