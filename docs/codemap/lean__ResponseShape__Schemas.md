@@ -32,6 +32,7 @@
 - `lean/ResponseShape/Schemas/ReadingsRoute.lean` — The source of `ve/backends/lean_service_schema/readings-route.json` (`file`; `tools/response_schemas.py` writes it).
 - `lean/ResponseShape/Schemas/Reports.lean` — The source of `ve/backends/lean_service_schema/reports.json` (`file`; `tools/response_schemas.py` writes it).
 - `lean/ResponseShape/Schemas/Rights.lean` — The source of `ve/backends/lean_service_schema/rights.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/RightsChecks.lean` — rights-cfr-2/3 (docs/rights/rights-cfr-2/REPORT.md): the `rights` mode's answers that carry the new report parts (`Run.findingJson`, `Run.conflictAnswerOf`, `R…
 - `lean/ResponseShape/Schemas/Risk.lean` — The source of `ve/backends/lean_service_schema/risk.json` (`file`; `tools/response_schemas.py` writes it).
 - `lean/ResponseShape/Schemas/RiskEval.lean` — The source of `ve/backends/lean_service_schema/risk-eval.json` (`file`; `tools/response_schemas.py` writes it).
 - `lean/ResponseShape/Schemas/Route.lean` — The source of `ve/backends/lean_service_schema/route.json` (`file`; `tools/response_schemas.py` writes it).
