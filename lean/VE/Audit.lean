@@ -1939,6 +1939,7 @@ import VE.WireContract.Engine
 #print axioms VE.Closure.countermodelCheck_iff
 #print axioms VE.Closure.countermodel_sound
 #print axioms VE.Closure.embed_of_erase
+#print axioms VE.Closure.entails_iff
 #print axioms VE.Closure.erase_embed
 #print axioms VE.Closure.eval_false_iff_not_denote
 #print axioms VE.Closure.eval_iff_denote

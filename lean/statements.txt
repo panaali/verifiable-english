@@ -9995,6 +9995,15 @@ theorem VE.Closure.embed_of_erase
   ∀ (a : VE.Closure.Formula) (b : VE.Formula), VE.Closure.erase a = Option.some b → VE.Closure.embed b = a
   -- uses VE.Closure.Formula@VE.Closure.Syntax VE.Closure.embed@VE.Closure.Syntax VE.Closure.erase@VE.Closure.Syntax VE.Formula@VE.Syntax
   -- expr 2820060842
+theorem VE.Closure.entails_iff
+  ∀ (E : VE.Environment) (premises : List VE.Closure.Formula) (conclusion : VE.Closure.Formula),
+    VE.Closure.Entails E premises conclusion ↔
+      ∀ (S : VE.Structure),
+        S.Admissible E →
+          (∀ (a : VE.Closure.Formula), a ∈ premises → VE.Closure.Formula.denote S [] a) →
+            VE.Closure.Formula.denote S [] conclusion
+  -- uses VE.Closure.Entails@VE.Closure.Consequence VE.Closure.Formula.denote@VE.Closure.Syntax VE.Closure.Formula@VE.Closure.Syntax VE.Environment@VE.Syntax VE.Structure.Admissible@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 74020784
 theorem VE.Closure.erase_embed
   ∀ (a : VE.Formula), VE.Closure.erase (VE.Closure.embed a) = Option.some a
   -- uses VE.Closure.embed@VE.Closure.Syntax VE.Closure.erase@VE.Closure.Syntax VE.Formula@VE.Syntax
