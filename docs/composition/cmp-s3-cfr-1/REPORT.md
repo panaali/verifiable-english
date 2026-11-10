@@ -189,8 +189,14 @@ cmp-s3-cfr-1b (relay, differential, fixtures, W1, `clauseSlot_wellFormed`) and c
    The size overrun is ruled (proofsize item 1).
 8. DELTA: PASS. Profile off: test_right_clauses_profile_off_evidence. Environment texts: the probe and
    test_right_clauses_environment_texts_kept (0 of 154 lists differ). Profile on: test_right_clauses_profile_on_regression.
-9. Test selection: PASS. tests/test_right_clauses.py imports the service corpus and the fixtures; the selected run
-   on the final HEAD is recorded by the chain.
+9. Test selection: PASS. tests/test_right_clauses.py imports the service corpus and the fixtures. The selected run
+   (`mac-pytest.sh --select`, on the VM since ve-mac-1 was unreachable) on committed 2d2b08d8c (tree 18ecc4d4b1) recorded 557 units
+   with 2 failing: `test_assurance_manifest::test_every_json_handling_lean_file_is_classified` (fixed: Wire.lean is
+   pinned whole as a decoder, and Run, RunExamples and the three proof modules are under `other_json`) and
+   `test_lean_service::test_random_malformed_responses_never_escape_schema` (fixed: a `clauses-elaborate` seed).
+   A rerun of tests/test_assurance_manifest.py and that id on committed 1c4ce1ab0 passed: 140 passed. An earlier
+   `test_answer_cutoff` failure came from a stale local overlay of the checker pins (lean/.lake/ve-inventory), not
+   from the branch: with the overlay removed, the test passes, and so did the run above.
 10. Statements: PASS. "Spec re-read" above; `python3 lean/audit.py` PASS.
 11. Budgets fail closed: PASS, as far as this item reaches. Units are checked at most 1,024 before decoding; W1's
     budget applies to each clause formula and plain guard (RunExamples' depth-65 `#guard` gives `ResourceLimit`).
