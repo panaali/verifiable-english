@@ -58967,10 +58967,61 @@ theorem VE.Service.Diagnose.diagnoseCase_registered
         VE.Service.Diagnose.diagnoseCase j = VE.WireContract.Diagnose.diagnoseCase registered j
   -- uses VE.Service.Diagnose.diagnoseCase@VE.Service.Diagnose VE.WireContract.Diagnose.Registered@VE.WireContract.Diagnose VE.WireContract.Diagnose.diagnoseCase@VE.WireContract.Diagnose VE.WireContract.Diagnose.units@VE.WireContract.Diagnose
   -- expr 1136295329
+theorem VE.Service.Document.checkBodyChecked_encode
+  ∀ (j : Lean.Json),
+    Except.map (fun r => VE.Service.Document.encode r.fst r.snd) (VE.Service.Document.checkBodyChecked j) =
+      VE.Service.Document.checkBody j
+  -- uses VE.Service.Document.Checked@VE.Service.Document VE.Service.Document.checkBody@VE.Service.Document VE.Service.Document.checkBodyChecked@VE.Service.DocumentView VE.Service.Document.encode@VE.Service.Document
+  -- expr 488671076
+theorem VE.Service.Document.checkCoreChecked_encode
+  ∀ (j : Lean.Json),
+    Except.map (fun r => VE.Service.Document.encode r.fst r.snd) (VE.Service.Document.checkCoreChecked j) =
+      VE.Service.Document.checkCore j
+  -- uses VE.Service.Document.Checked@VE.Service.Document VE.Service.Document.checkCore@VE.Service.Document VE.Service.Document.checkCoreChecked@VE.Service.DocumentView VE.Service.Document.encode@VE.Service.Document
+  -- expr 1580207257
 theorem VE.Service.Document.checkCore_eq_fast
   VE.Service.Document.checkCore = VE.Service.Document.checkCoreFast
   -- uses VE.Service.Document.checkCore@VE.Service.Document VE.Service.Document.checkCoreFast@VE.Service.Document
   -- expr 595332831
+theorem VE.Service.Document.checkDocSetsView_answer
+  ∀ (j : Lean.Json),
+    Except.map (fun x => x.fst) (VE.Service.Document.checkDocSetsView j) = VE.Service.Document.checkDocSets j
+  -- uses VE.Service.Document.CheckedView@VE.Service.DocumentView VE.Service.Document.checkDocSets@VE.Service.Document VE.Service.Document.checkDocSetsView@VE.Service.DocumentView
+  -- expr 3571466146
+theorem VE.Service.Document.checkDocSetsView_candidates
+  ∀ (j a : Lean.Json) (V : VE.Service.Document.CheckedView),
+    VE.Service.Document.checkDocSetsView j = Except.ok (a, V) → VE.Service.Document.activeKinds j = Except.ok V.candidates
+  -- uses VE.Route.Admission.Kind@VE.Route.Admission VE.Service.Document.CheckedView.candidates@VE.Service.DocumentView VE.Service.Document.CheckedView@VE.Service.DocumentView VE.Service.Document.activeKinds@VE.Service.DocumentView VE.Service.Document.checkDocSetsView@VE.Service.DocumentView
+  -- expr 56340966
+theorem VE.Service.Document.checkDocSetsView_ok
+  ∀ (j a : Lean.Json) (V : VE.Service.Document.CheckedView),
+    VE.Service.Document.checkDocSetsView j = Except.ok (a, V) →
+      ∃ D id c, VE.Service.Document.checkedRun j = Except.ok (D, id, c) ∧ ∃ rows, V = VE.Service.Document.viewOf c rows
+  -- uses VE.Scope.SDoc@VE.Scope.Govern VE.Service.Document.Checked@VE.Service.Document VE.Service.Document.CheckedView@VE.Service.DocumentView VE.Service.Document.RowUnit@VE.Service.Document VE.Service.Document.checkDocSetsView@VE.Service.DocumentView VE.Service.Document.checkedRun@VE.Service.DocumentView VE.Service.Document.viewOf@VE.Service.DocumentView
+  -- expr 2083677
+theorem VE.Service.Document.checkDocSetsView_packs
+  ∀ (j a : Lean.Json) (V : VE.Service.Document.CheckedView),
+    VE.Service.Document.checkDocSetsView j = Except.ok (a, V) →
+      (∀ (p : String),
+          p ∈ ["weighing@0", "attitudes@0", "scales@0", "events@0"] → ¬p ∈ VE.Service.Document.profilesOf j) →
+        V.packSources = []
+  -- uses VE.Service.Document.CheckedView.packSources@VE.Service.DocumentView VE.Service.Document.CheckedView@VE.Service.DocumentView VE.Service.Document.checkDocSetsView@VE.Service.DocumentView VE.Service.Document.profilesOf@VE.Service.Document
+  -- expr 2431620442
+theorem VE.Service.Document.checkDocSetsView_readings
+  ∀ (j a : Lean.Json) (V : VE.Service.Document.CheckedView),
+    VE.Service.Document.checkDocSetsView j = Except.ok (a, V) →
+      List.map (fun x => x.fst) V.readings = List.map (fun x => x.fst) V.candidates ∧
+        ∀ (i : String) (ns : List String) (ks : List VE.Route.Admission.Kind),
+          (i, ns) ∈ V.readings → (i, ks) ∈ V.candidates → ns.length = ks.length
+  -- uses VE.Route.Admission.Kind@VE.Route.Admission VE.Service.Document.CheckedView.candidates@VE.Service.DocumentView VE.Service.Document.CheckedView.readings@VE.Service.DocumentView VE.Service.Document.CheckedView@VE.Service.DocumentView VE.Service.Document.checkDocSetsView@VE.Service.DocumentView
+  -- expr 2126910938
+theorem VE.Service.Document.checkDocSetsView_rows
+  ∀ (j a : Lean.Json) (V : VE.Service.Document.CheckedView),
+    VE.Service.Document.checkDocSetsView j = Except.ok (a, V) →
+      a.getObjValD "units" = Lean.ToJson.toJson (List.map VE.Service.Document.unitJson V.rows) ∧
+        a.getObjValD "source" = Lean.Json.str V.source
+  -- uses VE.Service.Document.CheckedView.rows@VE.Service.DocumentView VE.Service.Document.CheckedView.source@VE.Service.DocumentView VE.Service.Document.CheckedView@VE.Service.DocumentView VE.Service.Document.RowUnit@VE.Service.Document VE.Service.Document.checkDocSetsView@VE.Service.DocumentView VE.Service.Document.unitJson@VE.Service.Document
+  -- expr 3514805805
 theorem VE.Service.Document.checkDocSets_clashFirst
   ∀ (j : Lean.Json),
     VE.Service.Document.swapInjective j = Bool.false ∨
@@ -59001,11 +59052,73 @@ theorem VE.Service.Document.decodeRowKind_json
     VE.Service.Document.decodeRowKind rights j = Except.ok k → k.json = j
   -- uses VE.Service.Document.RowKind.json@VE.Service.Document VE.Service.Document.RowKind@VE.Service.Document VE.Service.Document.decodeRowKind@VE.Service.Document
   -- expr 2427365272
+theorem VE.Service.Document.encode_units
+  ∀ (id : String) (c : VE.Service.Document.Checked),
+    (VE.Service.Document.encode id c).getObjValD "units" =
+        Lean.ToJson.toJson (List.map VE.Service.Document.unitJson c.rows) ∧
+      (VE.Service.Document.encode id c).getObjValD "source" = Lean.Json.str c.source
+  -- uses VE.Service.Document.Checked.rows@VE.Service.Document VE.Service.Document.Checked.source@VE.Service.Document VE.Service.Document.Checked@VE.Service.Document VE.Service.Document.RowUnit@VE.Service.Document VE.Service.Document.encode@VE.Service.Document VE.Service.Document.unitJson@VE.Service.Document
+  -- expr 917321846
 theorem VE.Service.Document.exchangeIn_pairIndex
   ∀ (pairs : List (String × String × String)) (x : String),
     VE.Service.Document.exchangeIn (VE.Service.Document.pairIndex pairs) x = VE.Service.Document.exchangeOf pairs x
   -- uses VE.Service.Document.exchangeIn@VE.Service.Document VE.Service.Document.exchangeOf@VE.Service.Document VE.Service.Document.pairIndex@VE.Service.Document
   -- expr 369824410
+theorem VE.Service.Document.firstPerUnit_foldl
+  ∀ {α β : Type} (g : α → β) (xs acc : List (String × α)),
+    List.map (fun p => (p.fst, g p.snd))
+        (List.foldl (fun acc x => if (acc.any fun x_1 => x_1.fst == x.fst) = Bool.true then acc else acc ++ [x]) acc xs) =
+      List.foldl (fun acc x => if (acc.any fun x_1 => x_1.fst == x.fst) = Bool.true then acc else acc ++ [x])
+        (List.map (fun p => (p.fst, g p.snd)) acc) (List.map (fun p => (p.fst, g p.snd)) xs)
+  -- uses
+  -- expr 871863634
+theorem VE.Service.Document.firstPerUnit_map
+  ∀ {α β : Type} (g : α → β) (xs : List (String × α)),
+    List.map (fun p => (p.fst, g p.snd)) (VE.Service.Document.firstPerUnit xs) =
+      VE.Service.Document.firstPerUnit (List.map (fun p => (p.fst, g p.snd)) xs)
+  -- uses VE.Service.Document.firstPerUnit@VE.Service.DocumentView
+  -- expr 1501726093
+theorem VE.Service.Document.firstPerUnit_nodup
+  ∀ {α : Type} (xs acc : List (String × α)),
+    (List.map (fun x => x.fst) acc).Nodup →
+      (List.map (fun x => x.fst)
+          (List.foldl (fun acc x => if (acc.any fun x_1 => x_1.fst == x.fst) = Bool.true then acc else acc ++ [x]) acc
+            xs)).Nodup
+  -- uses
+  -- expr 149651690
+theorem VE.Service.Document.foldGovernors_rows
+  ∀ (D : VE.Scope.SDoc) (a : Lean.Json) (rows : List VE.Service.Document.RowUnit),
+    a.getObjValD "units" = Lean.ToJson.toJson (List.map VE.Service.Document.unitJson rows) →
+      (VE.Scope.foldGovernors D a).getObjValD "units" =
+          Lean.ToJson.toJson
+            (List.map VE.Service.Document.unitJson (VE.Service.Document.foldedRows rows (VE.Scope.foldGovernors D a))) ∧
+        (VE.Scope.foldGovernors D a).getObjValD "source" = a.getObjValD "source"
+  -- uses VE.Scope.SDoc@VE.Scope.Govern VE.Scope.foldGovernors@VE.Scope.Wire VE.Service.Document.RowUnit@VE.Service.Document VE.Service.Document.foldedRows@VE.Service.DocumentView VE.Service.Document.unitJson@VE.Service.Document
+  -- expr 190038559
+theorem VE.Service.Document.foldStatus_known
+  ∀ (xs : List VE.Reports.Status),
+    (∀ (x : VE.Reports.Status), x ∈ xs → x ≠ VE.Reports.Status.unknown) →
+      VE.Reports.foldStatus xs ≠ VE.Reports.Status.unknown
+  -- uses VE.Reports.Status.unknown@VE.Attribution.Status VE.Reports.Status@VE.Attribution.Status VE.Reports.foldStatus@VE.Attribution.Status
+  -- expr 4165639248
+theorem VE.Service.Document.foldedRows_zip
+  ∀ (f : Lean.Json → Lean.Json),
+    (∀ (u : VE.Service.Document.RowUnit),
+        VE.Service.Document.unitJson (VE.Service.Document.readStatus u (f (VE.Service.Document.unitJson u))) =
+          f (VE.Service.Document.unitJson u)) →
+      ∀ (rows : List VE.Service.Document.RowUnit),
+        List.map (fun p => VE.Service.Document.unitJson (VE.Service.Document.readStatus p.fst p.snd))
+            (rows.zip (List.map (f ∘ VE.Service.Document.unitJson) rows)) =
+          List.map (f ∘ VE.Service.Document.unitJson) rows
+  -- uses VE.Service.Document.RowUnit@VE.Service.Document VE.Service.Document.readStatus@VE.Service.DocumentView VE.Service.Document.unitJson@VE.Service.Document
+  -- expr 3990515569
+theorem VE.Service.Document.governorStatus_known
+  ∀ (st : String → Option VE.Reports.Status),
+    (∀ (x : String) (s : VE.Reports.Status), st x = Option.some s → s ≠ VE.Reports.Status.unknown) →
+      ∀ (us : List String),
+        (VE.Scope.governorStatus st us).getD VE.Reports.Status.unformalised ≠ VE.Reports.Status.unknown
+  -- uses VE.Reports.Status.unformalised@VE.Attribution.Status VE.Reports.Status.unknown@VE.Attribution.Status VE.Reports.Status@VE.Attribution.Status VE.Scope.governorStatus@VE.Scope.Wire
+  -- expr 3784106779
 theorem VE.Service.Document.injStep_none
   ∀ (ex : String → String) (xs : List String), List.foldl (VE.Service.Document.injStep ex) Option.none xs = Option.none
   -- uses VE.Service.Document.injStep@VE.Service.Document
@@ -59038,11 +59151,75 @@ theorem VE.Service.Document.judgedIn_soft
         Except.ok (Option.some (VE.Judgments.softContent N))
   -- uses VE.Judgments.Content@VE.Judgments.Status VE.Judgments.softContent@VE.Judgments.Chain VE.Service.Document.RightsDoc@VE.Service.Document VE.Service.Document.UnitContent.judgedIn@VE.Service.Document VE.Service.Document.UnitContent.soft@VE.Service.Document VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.Wire.SoftEnvironment@VE.SoftNorms.Wire VE.SoftNorms.Wire.decodeSoftNorm@VE.SoftNorms.Wire
   -- expr 2880642263
+theorem VE.Service.Document.mapM_known
+  ∀ (st : String → Option VE.Reports.Status),
+    (∀ (x : String) (s : VE.Reports.Status), st x = Option.some s → s ≠ VE.Reports.Status.unknown) →
+      ∀ (us : List String) (xs : List VE.Reports.Status),
+        List.mapM st us = Option.some xs → ∀ (x : VE.Reports.Status), x ∈ xs → x ≠ VE.Reports.Status.unknown
+  -- uses VE.Reports.Status.unknown@VE.Attribution.Status VE.Reports.Status@VE.Attribution.Status
+  -- expr 1782256228
+theorem VE.Service.Document.mkObj_answer
+  ∀ (i st did sid src us cov : Lean.Json),
+    (Lean.Json.mkObj
+              [("id", i), ("status", st), ("document_id", did), ("source_id", sid), ("source", src), ("units", us),
+                ("coverage", cov)]).getObjValD
+          "units" =
+        us ∧
+      (Lean.Json.mkObj
+              [("id", i), ("status", st), ("document_id", did), ("source_id", sid), ("source", src), ("units", us),
+                ("coverage", cov)]).getObjValD
+          "source" =
+        src
+  -- uses
+  -- expr 1675162196
 theorem VE.Service.Document.pairIndex_get
   ∀ (pairs : List (String × String × String)) (x : String),
     (VE.Service.Document.pairIndex pairs)[x]? = Option.map (fun x => x.snd) (List.find? (fun x_1 => x_1.fst == x) pairs)
   -- uses VE.Service.Document.pairIndex@VE.Service.Document
   -- expr 2896768923
+theorem VE.Service.Document.readStatus_fold
+  ∀ (u : VE.Service.Document.RowUnit) (y : Lean.Json),
+    (y = VE.Service.Document.unitJson u ∨
+        ∃ S,
+          S ≠ VE.Reports.Status.unknown ∧
+            y = (VE.Service.Document.unitJson u).setObjVal! "status" (Lean.Json.str S.render)) →
+      VE.Service.Document.unitJson (VE.Service.Document.readStatus u y) = y
+  -- uses VE.Reports.Status.render@VE.Attribution.Status VE.Reports.Status.unknown@VE.Attribution.Status VE.Reports.Status@VE.Attribution.Status VE.Service.Document.RowUnit@VE.Service.Document VE.Service.Document.readStatus@VE.Service.DocumentView VE.Service.Document.unitJson@VE.Service.Document
+  -- expr 3948759842
+theorem VE.Service.Document.readStatus_unitJson
+  ∀ (u : VE.Service.Document.RowUnit) (s : VE.Service.Document.UnitStatus),
+    VE.Service.Document.readStatus u
+        (VE.Service.Document.unitJson
+          { id := u.id, span := u.span, kind := u.kind, meaning := u.meaning, support := u.support, status := s,
+            parent := u.parent, content := u.content, meaningId := u.meaningId }) =
+      { id := u.id, span := u.span, kind := u.kind, meaning := u.meaning, support := u.support, status := s,
+        parent := u.parent, content := u.content, meaningId := u.meaningId }
+  -- uses VE.Service.Document.RowUnit.content@VE.Service.Document VE.Service.Document.RowUnit.id@VE.Service.Document VE.Service.Document.RowUnit.kind@VE.Service.Document VE.Service.Document.RowUnit.meaning@VE.Service.Document VE.Service.Document.RowUnit.meaningId@VE.Service.Document VE.Service.Document.RowUnit.mk@VE.Service.Document VE.Service.Document.RowUnit.parent@VE.Service.Document VE.Service.Document.RowUnit.span@VE.Service.Document VE.Service.Document.RowUnit.support@VE.Service.Document VE.Service.Document.RowUnit@VE.Service.Document VE.Service.Document.UnitStatus@VE.Service.Document VE.Service.Document.readStatus@VE.Service.DocumentView VE.Service.Document.unitJson@VE.Service.Document
+  -- expr 1680943838
+theorem VE.Service.Document.render_name
+  ∀ (S : VE.Reports.Status), S ≠ VE.Reports.Status.unknown → ∃ s, s.name = S.render
+  -- uses VE.Reports.Status.render@VE.Attribution.Status VE.Reports.Status.unknown@VE.Attribution.Status VE.Reports.Status@VE.Attribution.Status VE.Service.Document.UnitStatus.name@VE.Service.Document VE.Service.Document.UnitStatus@VE.Service.Document
+  -- expr 2982827324
+theorem VE.Service.Document.rows_of_fold
+  ∀ (F : Lean.Json → Lean.Json),
+    (∀ (u : VE.Service.Document.RowUnit),
+        F (VE.Service.Document.unitJson u) = VE.Service.Document.unitJson u ∨
+          ∃ S,
+            S ≠ VE.Reports.Status.unknown ∧
+              F (VE.Service.Document.unitJson u) =
+                (VE.Service.Document.unitJson u).setObjVal! "status" (Lean.Json.str S.render)) →
+      ∀ (rows : List VE.Service.Document.RowUnit),
+        Lean.Json.arr (List.map F (List.map VE.Service.Document.unitJson rows)).toArray =
+          Lean.Json.arr
+            (List.map VE.Service.Document.unitJson
+                (List.map (fun p => VE.Service.Document.readStatus p.fst p.snd)
+                  (rows.zip (List.map F (List.map VE.Service.Document.unitJson rows))))).toArray
+  -- uses VE.Reports.Status.render@VE.Attribution.Status VE.Reports.Status.unknown@VE.Attribution.Status VE.Reports.Status@VE.Attribution.Status VE.Service.Document.RowUnit@VE.Service.Document VE.Service.Document.readStatus@VE.Service.DocumentView VE.Service.Document.unitJson@VE.Service.Document
+  -- expr 1168268112
+theorem VE.Service.Document.statusOf_known
+  ∀ (x : String) (s : VE.Reports.Status), VE.Scope.statusOf x = Option.some s → s ≠ VE.Reports.Status.unknown
+  -- uses VE.Reports.Status.unknown@VE.Attribution.Status VE.Reports.Status@VE.Attribution.Status VE.Scope.statusOf@VE.Scope.Wire
+  -- expr 522526942
 theorem VE.Service.Document.swapInjectiveH_eq
   ∀ (ids : List String) (pairs : List (String × String × String)),
     VE.Service.Document.swapInjectiveH ids pairs =
@@ -59059,6 +59236,24 @@ theorem VE.Service.Document.swapInjective_frontOf
       VE.Service.Document.swapInjectiveH (VE.Service.Document.statedIds j) (VE.Service.Document.statedPairs j)
   -- uses VE.Service.Document.statedIds@VE.Service.Document VE.Service.Document.statedPairs@VE.Service.Document VE.Service.Document.swapInjective@VE.Service.Document VE.Service.Document.swapInjectiveH@VE.Service.Document
   -- expr 168316616
+theorem VE.Service.Document.toJson_jsons
+  ∀ (l : List Lean.Json), Lean.ToJson.toJson l = Lean.Json.arr l.toArray
+  -- uses
+  -- expr 3020432635
+theorem VE.Service.Document.unique_key
+  ∀ {α : Type} (l : List (String × α)),
+    (List.map (fun x => x.fst) l).Nodup → ∀ (p q : String × α), p ∈ l → q ∈ l → p.fst = q.fst → p = q
+  -- uses
+  -- expr 724459415
+theorem VE.Service.Document.unitJson_status
+  ∀ (u : VE.Service.Document.RowUnit) (s : VE.Service.Document.UnitStatus),
+    (VE.Service.Document.unitJson u).setObjVal! "status" (Lean.Json.str s.name) =
+        VE.Service.Document.unitJson
+          { id := u.id, span := u.span, kind := u.kind, meaning := u.meaning, support := u.support, status := s,
+            parent := u.parent, content := u.content, meaningId := u.meaningId } ∧
+      (VE.Service.Document.unitJson u).getObjValD "status" = Lean.Json.str u.status.name
+  -- uses VE.Service.Document.RowUnit.content@VE.Service.Document VE.Service.Document.RowUnit.id@VE.Service.Document VE.Service.Document.RowUnit.kind@VE.Service.Document VE.Service.Document.RowUnit.meaning@VE.Service.Document VE.Service.Document.RowUnit.meaningId@VE.Service.Document VE.Service.Document.RowUnit.mk@VE.Service.Document VE.Service.Document.RowUnit.parent@VE.Service.Document VE.Service.Document.RowUnit.span@VE.Service.Document VE.Service.Document.RowUnit.status@VE.Service.Document VE.Service.Document.RowUnit.support@VE.Service.Document VE.Service.Document.RowUnit@VE.Service.Document VE.Service.Document.UnitStatus.name@VE.Service.Document VE.Service.Document.UnitStatus@VE.Service.Document VE.Service.Document.unitJson@VE.Service.Document
+  -- expr 2169254692
 theorem VE.Service.DocumentChain.layeredOf_entails
   ∀ (E : VE.Service.Document.Env) (front : Lean.Json) (units : List VE.Service.Document.SourceUnit)
     (L : VE.NormDefaults.Wire.LayeredU),
