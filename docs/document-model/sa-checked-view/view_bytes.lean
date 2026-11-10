@@ -1,10 +1,7 @@
 import VE.Service.DocumentView
 
-/-! sa-checked-view's fixture run (tests/test_sa_checked_view.py): for each document-mode request, one JSON line per
-line of the file `VE_VIEW_CASES` names, `checkDocSets`'s answer and the view's first component as compressed bytes,
-and what the view says of that answer: its rows rendered against the answer's `units` and source, whether scope's
-fold changed a row of the checked document, its candidates (each kind's `repr`), readings and pack sources, and
-`activeKinds`. Lean computes every value here; the test compares them with the service's answer. -/
+/-! sa-checked-view's fixture run (tests/test_sa_checked_view.py): one JSON line per request in the file
+`VE_VIEW_CASES` names: `checkDocSets`'s answer, the view's first component, and what the view says of the answer. -/
 
 open Lean VE.Service.Document
 
