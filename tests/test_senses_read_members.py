@@ -12,6 +12,7 @@ import pytest
 
 from ve.backends import lean as lean_backend
 from ve.backends import senses as route
+from ve.english_grammar import actions_version
 from ve.errors import CheckerUnavailable, VEError
 from test_senses_route import GENUINE, PACK, S2_WORLD, WORLDS, read_in
 
@@ -284,12 +285,21 @@ MAIN_DIGESTS = {
     "warnings": "6323bc83475d9afa1ab7b029340ff5e3516b8362615f6b481f3403b5d03c28b4",
     "hint": "ac05d1f92a51efd2a5112c85c48c9002d97f1d6007236260bd28e46e096c9593",
 }
+# The grammar's `actions_version` in a reading's identities when those digests were recorded. It moves with the grammar
+# on purpose (et-5 made it 46), so an answer's version is checked against the lock's, its owner, and the rest
+# against main's bytes with the recorded version in its place.
+MAIN_ACTIONS_VERSION = "45"
 
 
 @pytest.mark.parametrize("name, place, pack, source, budget", GENUINE, ids=[g[0] for g in GENUINE])
 def test_a_golden_request_without_the_members_keeps_its_answer(name, place, pack, source, budget):
-    """DRI item 3: every golden request without `reread` or `line` keeps main's answer (equal canonical JSON)."""
+    """DRI item 3: every golden request without `reread` or `line` keeps main's answer (equal canonical JSON), but
+    for the grammar's actions version, which must be the lock's."""
     answer = read_in(S2_WORLD() if place == "s2" else WORLDS[place](), source, pack, budget=budget)
+    identities = answer.get("reading", {}).get("identities")
+    if identities is not None:
+        assert identities["actions_version"] == actions_version()
+        identities["actions_version"] = MAIN_ACTIONS_VERSION
     assert hashlib.sha256(json.dumps(answer, sort_keys=True, separators=(",", ":")).encode()).hexdigest() == \
         MAIN_DIGESTS[name]
 

@@ -15,9 +15,11 @@
 - `tests/test_reports_status.py` — Directive 2 property: Lean statuses and details for nested content reach unit and document status and the residual through the Python relay.
 - `tests/test_reports_wants.py` — The `wants` test's one owner (docs/spec/attitudes.md section 10 item 6, RC-4; AT-1w): Lean's `reports-wants` kind (`VE.Reports.wantsPhrase?`, `lean/VE/Attribut…
 - `tests/test_response_schemas.py` — The client's response schemas are generated from their one Lean source (lf-1 recheck B).
+- `tests/test_right_clauses_lean.py` — Source checks of `plain_wellFormed` (docs/spec/right-clauses.md 8.3; cmp-s3a-cfr-1).
 - `tests/test_rights.py` — Rights holder-side elaboration regressions.
 - `tests/test_rights_lean.py` — Lean rights route (docs/spec/rights.md 9.4, item 4) on inputs in the shapes of the item-1 fixtures.
 - `tests/test_rights_licence_relay.py` — rights-licence-relay: Lean returns each narrowing mechanism's licence with the grounds it rests on, and the relay binds them to the request instead of deriving…
+- `tests/test_rights_open_act_is_open.py` — rights-cfr-4: a right whose act is a declared open term is OPEN (docs/spec/rights.md 7.2).
 - `tests/test_rights_render_status.py` — Rights rendering must describe the checked unit status accurately.
 - `tests/test_rights_three_way.py` — The relayed rights source, its soft embedding, and document loading agree on fixtures and 1,000 generated documents (docs/spec/rights.md 10).
 - `tests/test_risk_diagnostics.py` — Python's environment check and the Lean risk route give one diagnostic (risk.md 4.1, 6).
@@ -78,5 +80,3 @@
 - `tests/test_soft_norms_lean.py` — Lean soft-norms route (docs/spec/soft-norms.md 9.4, item 4) against the item-1 fixtures.
 - `tests/test_soft_request_economy.py` — Batch 6 latency: soft requests that Lean answers once per document (docs/lean-first/b6/DELTA.md, Latency).
 - `tests/test_soft_review_regressions.py` — Regressions for the reviewed soft route and its visible open terms.
-- `tests/test_softnorms_contract.py` — Pilot contract checks: the existing soft validator still owns the verdict.
-- `tests/test_softnorms_public_contract.py` — The public soft-source rejection boundary of wire-contract-s4.md item 1.
