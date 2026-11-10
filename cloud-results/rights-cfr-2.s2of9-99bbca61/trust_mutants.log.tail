@@ -1,0 +1,17 @@
+trust_mutants: --rescore ci-job/rescore.json: a full run, since its inputs differ (options)
+trust_mutants: 13 definitions, 451 mutants (50 to run), 4 jobs, base 3e4fe503f4c9
+UNKNOWN lean/VE/Rights/Run.lean:315 VE.Rights.Run.situationTables (D[V], trusted) list-empty: (correlate D) -> [] (lean/VE/Rights/Run.lean:315: Application type mismatch: The argument)
+UNKNOWN lean/VE/Rights/Run.lean:528 VE.Rights.Run.runRightsKind (G[V], trusted) list-empty: findings -> [] (lean/VE/Rights/Run.lean:528: Invalid field notation: Type of)
+UNKNOWN lean/VE/Rights/Run.lean:223 VE.Rights.Run.regenerated (D[V], trusted) list-empty: let soft := VE.SoftNorms.Wire.regeneratedCore (correlate D) environment let findings := noDistinc... -> [] (lean/ResponseShape/Schemas/RightsChecks.lean:39: Expression (VE.Rights.Run.entailmentUses, which ...)
+SURVIVOR lean/VE/Rights/Run.lean:433 VE.Rights.Run.conflictAnswerOf (D[V], trusted) list-first: weighing -> (weighing.take 1)
+SURVIVOR lean/VE/Rights/Run.lean:529 VE.Rights.Run.runRightsKind (G[V], trusted) list-first: findings -> (findings.take 1)
+SURVIVOR lean/ResponseShape/Schemas/Rights.lean:400 ResponseShape.Schemas.Rights.packages (G[V], trusted) list-drop-last: [.not (.required ["detail"]), .required ["weighing_points", "situation_exhibited", "budget", "sit... -> ([.not (.required ["detail"]), .required ["weighing_points", "situation_exhibited", "budget", "si...
+SURVIVOR lean/ResponseShape/Schemas/Rights.lean:379 ResponseShape.Schemas.Rights.packages (G[V], trusted) list-drop-first: [ obj, .required ["id", "status", "verdict", "status_text", "targets", "conditional_on"], closed ... -> ([ obj, .required ["id", "status", "verdict", "status_text", "targets", "conditional_on"], closed...
+SURVIVOR lean/VE/Rights/Run.lean:528 VE.Rights.Run.runRightsKind (G[V], trusted) list-last: findings -> (findings.reverse.take 1)
+SURVIVOR lean/VE/Rights/Run.lean:237 VE.Rights.Run.regenerated (D[V], trusted) list-drop-first: findings.map (fun f => Json.str f.text) -> ((findings.map (fun f => Json.str f.text)).drop 1)
+SURVIVOR lean/ResponseShape/Schemas/Rights.lean:396 ResponseShape.Schemas.Rights.packages (G[V], trusted) list-last: [ ("status_text", .pattern (Re.prefixes ["UNKNOWN: "])), ("detail", .pattern (Re.prefixes ["missi... -> ([ ("status_text", .pattern (Re.prefixes ["UNKNOWN: "])), ("detail", .pattern (Re.prefixes ["miss...
+SURVIVOR lean/VE/Rights/Run.lean:529 VE.Rights.Run.runRightsKind (G[V], trusted) list-last: findings.map findingJson -> ((findings.map findingJson).reverse.take 1)
+trust_mutants: 39 KILLED, 8 SURVIVOR, 3 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 401 OTHER SHARD in 1960 s
+trust_mutants: D[V], trusted: 11 KILLED, 2 SURVIVOR, 2 UNKNOWN, 170 OTHER SHARD
+trust_mutants: G[V], trusted: 28 KILLED, 6 SURVIVOR, 1 UNKNOWN, 231 OTHER SHARD
+trust_mutants: steps: wall plan 12.4 s, scratch 4.8 s, control_build 0.3 s, probe_install 1.5 s, mutants 1936.7 s, cleanup 4.1 s, reads 0.1 s; lake control_build 0.3 s (1), probe_install 1.4 s (1), control_probes 54 s (6), mutant_builds 1570 s (50), mutant_checks 4794.8 s (54), stage_controls 679.8 s (6), mutant_probes 554.1 s (40)
