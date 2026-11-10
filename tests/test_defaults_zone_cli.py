@@ -147,7 +147,8 @@ def test_weighing_documents_are_refused_by_lean_on_the_cli_path(monkeypatch):
     text the service mode gives df-5's request for it (Lean's own, unchanged). On main that text is the layered
     decoder's, which refuses the profile before diagnostic 1 (df-5's DF-θ guards in
     `lean/VE/Defaults/ZoneWireExamples.lean`); spec 5 row 1's text is `weighingText`, which Lean's `viewRest` gives
-    on a decoded document (df-5's guard, condition (iv)). The DRI was asked to confirm this reading (df-5b REPORT)."""
+    on a decoded document (df-5's guard, condition (iv)). Condition (iii) as the DRI restated it:
+    reviews/dri-decisions-20261110-df-5b.md item 3."""
     monkeypatch.chdir(ROOT)
     front = json.loads((DATA / "weighing.ve.md").read_text().split("---\n")[1])
     norms, question = [unit["content"] for unit in front["units"]], json.loads((DATA / "df-xi.json").read_text())
