@@ -33,7 +33,15 @@
   ["IllTyped", "TypeMismatch"],
   ["NotOneSentence", "SyntaxError"],
   ["InvalidOverlay", "VEError"],
-  ["UndeclaredEvaluative", "SyntaxError"]
+  ["UndeclaredEvaluative", "SyntaxError"],
+  ["ExpectedRule", "SyntaxError"],
+  ["NoConsequence", "SyntaxError"],
+  ["StrayConsequence", "SyntaxError"],
+  ["StrayCarveOut", "SyntaxError"],
+  ["UnknownRule", "VEError"],
+  ["UnformalisedSpan", "VEError"],
+  ["NodeRefused", "VEError"],
+  ["NodeLimit", "ResourceLimit"]
  ],
  "statuses": [
   ["none", ["NoDerivation"]],
