@@ -1,0 +1,11 @@
+trust_mutants: 59 definitions, 92 mutants (46 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/Purposes/WellFormed.lean:167 VE.Purposes.WellFormed (S, trusted) eq-le: = -> ≤ (lean/VE/Purposes/Examples.lean:278: Expression (VE.Purposes.Examples.wfDecidable, which it reads,...)
+UNKNOWN lean/VE/Presupposition/Admit.lean:89 VE.Presupposition.withObligations (G[V], trusted) eq-ne: == -> != (lean/VE/Presupposition/Examples.lean:0: maximum number of errors (100; from option `maxErrors`) r...)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:167 VE.Purposes.WellFormed (S, trusted) bool-flip: true -> false (lean/VE/Purposes/Examples.lean:275: Expression (VE.Purposes.Examples.wfDecidable, which it reads,...)
+UNKNOWN lean/VE/Commands/Steps.lean:100 VE.Commands.shapeOutcome (G[V], trusted) any-all: any -> all (lean/VE/Commands/StepsExamples.lean:113: Expression (it computes through a proof the mutant broke...)
+UNKNOWN lean/VE/Presupposition/Admit.lean:65 VE.Presupposition.peelRule (G[V], trusted) lit-plus: 1 -> 2 (lean/VE/Presupposition/Admit.lean:64: Missing cases:)
+trust_mutants: 41 KILLED, 0 SURVIVOR, 5 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 46 OTHER SHARD in 3560 s
+trust_mutants: D[V], trusted: 5 KILLED, 15 OTHER SHARD
+trust_mutants: G[V], trusted: 17 KILLED, 3 UNKNOWN, 12 OTHER SHARD
+trust_mutants: S, trusted: 19 KILLED, 2 UNKNOWN, 19 OTHER SHARD
+trust_mutants: steps: wall plan 16.1 s, scratch 4.7 s, control_build 0.3 s, probe_install 1.5 s, mutants 3533.1 s, cleanup 4 s, reads 0.3 s; lake control_build 0.3 s (1), probe_install 1.4 s (1), control_probes 364.3 s (39), mutant_builds 412 s (62), mutant_checks 4438.5 s (56), stage_controls 1301.5 s (19), mutant_probes 530.5 s (45)
