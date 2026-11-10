@@ -448,6 +448,7 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.Reports.wants_fits
 #print axioms ResponseShape.Encoders.Rights.admission_fits
 #print axioms ResponseShape.Encoders.Rights.bar_fits
+#print axioms ResponseShape.Encoders.Rights.conflictAnswer_fits
 #print axioms ResponseShape.Encoders.Rights.elaborate_fits
 #print axioms ResponseShape.Encoders.Rights.firstFailure_of_not_free
 #print axioms ResponseShape.Encoders.Rights.firstFailure_text
