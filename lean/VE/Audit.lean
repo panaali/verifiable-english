@@ -186,8 +186,10 @@ import VE.EnglishGrammar.Extends
 import VE.EnglishGrammar.FoldAgree
 import VE.EnglishGrammar.JudgmentLines
 import VE.EnglishGrammar.Norm.Elab
+import VE.EnglishGrammar.Norm.Owners
 import VE.EnglishGrammar.Norm.Read
 import VE.EnglishGrammar.Norm.Rules
+import VE.EnglishGrammar.Norm.Run
 import VE.EnglishGrammar.Norm.Value
 import VE.EnglishGrammar.Policy
 import VE.EnglishGrammar.Read
@@ -456,6 +458,7 @@ import VE.Senses.Request
 import VE.Service.Diagnose
 import VE.Service.Document
 import VE.Service.DocumentChain
+import VE.Service.DocumentView
 import VE.Service.Family
 import VE.Service.FamilyBundle
 import VE.Service.FamilyNorms
@@ -3059,6 +3062,18 @@ import VE.WireContract.Engine
 #print axioms VE.EnglishGrammar.LexRow.Small.dom
 #print axioms VE.EnglishGrammar.LexRow.Small.rename_eq
 #print axioms VE.EnglishGrammar.LexRow.rename_inj
+#print axioms VE.EnglishGrammar.Norm.ReadNormAuthoring_eq
+#print axioms VE.EnglishGrammar.Norm.Run.answer_misplaced
+#print axioms VE.EnglishGrammar.Norm.Run.answer_one_iff
+#print axioms VE.EnglishGrammar.Norm.Run.answer_one_rows
+#print axioms VE.EnglishGrammar.Norm.Run.answer_partial_no_node
+#print axioms VE.EnglishGrammar.Norm.Run.answer_stopped
+#print axioms VE.EnglishGrammar.Norm.Run.findSome_lookup
+#print axioms VE.EnglishGrammar.Norm.Run.getD_mkObj
+#print axioms VE.EnglishGrammar.Norm.Run.lookup_append
+#print axioms VE.EnglishGrammar.Norm.Run.lookup_none
+#print axioms VE.EnglishGrammar.Norm.Run.statementFields_statuses
+#print axioms VE.EnglishGrammar.Norm.Run.statementStatusCodes_classed
 #print axioms VE.EnglishGrammar.Norm.action_mark
 #print axioms VE.EnglishGrammar.Norm.acts_ne
 #print axioms VE.EnglishGrammar.Norm.assembleFrom_numbered
@@ -3077,6 +3092,7 @@ import VE.WireContract.Engine
 #print axioms VE.EnglishGrammar.Norm.normActs_mark
 #print axioms VE.EnglishGrammar.Norm.normMeaning_unmarked
 #print axioms VE.EnglishGrammar.Norm.ntTy_ne
+#print axioms VE.EnglishGrammar.Norm.opOf_agrees
 #print axioms VE.EnglishGrammar.Norm.prefixMap_ok
 #print axioms VE.EnglishGrammar.Norm.readNorm_checks
 #print axioms VE.EnglishGrammar.Norm.readNorm_complete
@@ -3086,9 +3102,14 @@ import VE.WireContract.Engine
 #print axioms VE.EnglishGrammar.Norm.readNorm_unique
 #print axioms VE.EnglishGrammar.Norm.semAll_start
 #print axioms VE.EnglishGrammar.Norm.sem_start
+#print axioms VE.EnglishGrammar.Norm.soft_strict_iff
+#print axioms VE.EnglishGrammar.Norm.sourceView_nil
 #print axioms VE.EnglishGrammar.Norm.start_norm
 #print axioms VE.EnglishGrammar.Norm.strings_map
+#print axioms VE.EnglishGrammar.Norm.toNodeChecked_ok
 #print axioms VE.EnglishGrammar.Norm.toNode_fields
+#print axioms VE.EnglishGrammar.Norm.toNodesChecked_authoring
+#print axioms VE.EnglishGrammar.Norm.toNodesChecked_ok
 #print axioms VE.EnglishGrammar.Norm.tree_id
 #print axioms VE.EnglishGrammar.Norm.trees_id
 #print axioms VE.EnglishGrammar.Norm.ty_ne
@@ -8250,22 +8271,48 @@ import VE.WireContract.Engine
 #print axioms VE.Senses.tryChoice_some
 #print axioms VE.Senses.wf_iff_no_failure
 #print axioms VE.Service.Diagnose.diagnoseCase_registered
+#print axioms VE.Service.Document.checkBodyChecked_encode
+#print axioms VE.Service.Document.checkCoreChecked_encode
 #print axioms VE.Service.Document.checkCore_eq_fast
+#print axioms VE.Service.Document.checkDocSetsView_answer
+#print axioms VE.Service.Document.checkDocSetsView_candidates
+#print axioms VE.Service.Document.checkDocSetsView_ok
+#print axioms VE.Service.Document.checkDocSetsView_packs
+#print axioms VE.Service.Document.checkDocSetsView_readings
+#print axioms VE.Service.Document.checkDocSetsView_rows
 #print axioms VE.Service.Document.checkDocSets_clashFirst
 #print axioms VE.Service.Document.checkDocSets_eq_fast
 #print axioms VE.Service.Document.clashRefusal_eq_fast
 #print axioms VE.Service.Document.clashRefusal_some
 #print axioms VE.Service.Document.decodeRowKind_json
+#print axioms VE.Service.Document.encode_units
 #print axioms VE.Service.Document.exchangeIn_pairIndex
+#print axioms VE.Service.Document.firstPerUnit_foldl
+#print axioms VE.Service.Document.firstPerUnit_map
+#print axioms VE.Service.Document.firstPerUnit_nodup
+#print axioms VE.Service.Document.foldGovernors_rows
+#print axioms VE.Service.Document.foldStatus_known
+#print axioms VE.Service.Document.foldedRows_zip
+#print axioms VE.Service.Document.governorStatus_known
 #print axioms VE.Service.Document.injStep_none
 #print axioms VE.Service.Document.injectiveH_eq
 #print axioms VE.Service.Document.injectiveH_foldl
 #print axioms VE.Service.Document.judgedIn_legacy
 #print axioms VE.Service.Document.judgedIn_soft
+#print axioms VE.Service.Document.mapM_known
+#print axioms VE.Service.Document.mkObj_answer
 #print axioms VE.Service.Document.pairIndex_get
+#print axioms VE.Service.Document.readStatus_fold
+#print axioms VE.Service.Document.readStatus_unitJson
+#print axioms VE.Service.Document.render_name
+#print axioms VE.Service.Document.rows_of_fold
+#print axioms VE.Service.Document.statusOf_known
 #print axioms VE.Service.Document.swapInjectiveH_eq
 #print axioms VE.Service.Document.swapInjective_eq_fast
 #print axioms VE.Service.Document.swapInjective_frontOf
+#print axioms VE.Service.Document.toJson_jsons
+#print axioms VE.Service.Document.unique_key
+#print axioms VE.Service.Document.unitJson_status
 #print axioms VE.Service.DocumentChain.layeredOf_entails
 #print axioms VE.Service.DocumentChain.layeredOf_ids
 #print axioms VE.Service.DocumentChain.layeredOf_soft
