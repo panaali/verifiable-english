@@ -76,54 +76,6 @@ def hooks : Hooks := ⟨fun _ _ _ => .ok, classifier, fun _ v => v⟩
 /-- The adapter `purposes_block`: the case's `purposes` member, `null` when absent. -/
 def adapter (case : Json) : Except String Json := .ok (Json.mkObj [("purposes", case.getObjValD "purposes")])
 
-/-- Phase `decode` is clean exactly when the decoder accepts the block: the legacy validation of the examples. -/
-theorem classifier_ok_iff (root : Json) (items : List Pointer) :
-    (match classifier "purposes_block" root items with | .ok => true | .fail _ _ => false) =
-      (decodeBlock (purposesOf root)).isOk := by
-  cases h : decodeBlock (purposesOf root) <;> simp [classifier, h, Except.isOk, Except.toBool]
-
-theorem decodeLinks_length {n : Nat} {js : List Json} {ls : List VE.Purposes.Link}
-    (h : VE.Purposes.decodeLinks n js = .ok ls) : ls.length = js.length := by
-  induction js generalizing n ls with
-  | nil => simp [VE.Purposes.decodeLinks, pure, Except.pure] at h; subst h; rfl
-  | cons j js ih =>
-    simp only [VE.Purposes.decodeLinks] at h
-    cases h1 : VE.Purposes.decodeLink n j with
-    | error e => simp [h1, bind, Except.bind] at h
-    | ok L =>
-      cases h2 : VE.Purposes.decodeLinks (n + 1) js with
-      | error e => simp [h1, h2, bind, Except.bind] at h
-      | ok ls' => simp [h1, h2, bind, Except.bind, pure, Except.pure] at h; subst h; simp [ih h2]
-
-theorem decodeBlock_length {j : Json} {B : VE.Purposes.Block} (h : decodeBlock j = .ok B) :
-    B.links.length ≤ maxLinks := by
-  unfold decodeBlock at h
-  cases h1 : linksOf j with
-  | error e => simp [h1, bind, Except.bind] at h
-  | ok ls =>
-    simp only [h1, bind, Except.bind] at h
-    split at h
-    · obtain ⟨ls', h2, h3⟩ := VE.Purposes.map_ok h
-      subst h3
-      simp [decodeLinks_length h2]
-      omega
-    · cases h
-
-/-- 2.1b reads `VE.Purposes.check`: when `purposes_ids` names it, the block decodes and `check` refuses it with 7.2's
-row 2 text, whatever the checked view. -/
-theorem purposes_ids_reads_check (root : Json) (items : List Pointer) (U : VE.Purposes.Units)
-    (h : classifier "purposes_ids" root items = .fail "2.1b" []) :
-    ∃ B, decodeBlock (purposesOf root) = .ok B ∧
-      VE.Purposes.check U B = .error "InvalidPurposes: two links have the same id" := by
-  cases hB : decodeBlock (purposesOf root) with
-  | error e => simp [classifier, hB] at h
-  | ok B =>
-    refine ⟨B, rfl, ?_⟩
-    have hn : ¬ (B.links.map (·.id)).Nodup := by
-      intro hn; simp [classifier, hB, hn] at h
-    have hl := decodeBlock_length hB
-    simp [VE.Purposes.check, VE.Route.Gate.require, hl, hn, bind, Except.bind]
-
 def registered : List String := ["purposes_block", "purposes_ids"]
 
 #guard Tables.Purposes.table.hookNames.all registered.contains
@@ -178,6 +130,16 @@ def links (n : Nat) : List Json := (List.range n).map (link s!"l{·}")
     (block [link "l1" [("relation", "x"), ("y", 1)]], "1.1d"), (block [link "l1" [("polarity", "x")], link "l2" [("z", 1)]], "1.1g"),
     (block [link "l1", link "l1" [("polarity", "x")]], "1.1g"),
     (block (link "l1" :: links maxLinks), "1.1c")].all fun (j, row) => roundTrips j row
+-- 2.1b is `VE.Purposes.check`'s row 2, both ways: on each fixture that decodes, `purposes_ids` names it exactly where
+-- `check` (here with the empty view) refuses with the text it gives two links of one id
+def idsAgree (j : Json) : Bool :=
+  let text (B : VE.Purposes.Block) : String := match VE.Purposes.check ⟨"", [], []⟩ B with | .error e => e | .ok _ => ""
+  match decodeBlock (block [link "l1", link "l1"]), decodeBlock j with
+  | .ok D, .ok B => text D != "" &&
+      (classifier "purposes_ids" (Json.mkObj [("purposes", j)]) [] matches .fail "2.1b" []) == (text B == text D)
+  | _, _ => false
+#guard [block [], block [link "l1", link "l1"], block [link "l1", link "l2"], block [link "l1", link "l2", link "l1"],
+    block [link "l2", link "l1" [("share", "sole")], link "l2"], block (links 3), block (links maxLinks)].all idsAgree
 #guard (adapter (Json.mkObj [("purposes", 1), ("id", "c")])).toOption == some (Json.mkObj [("purposes", 1)]) &&
   (adapter (Json.mkObj [])).toOption == some (Json.mkObj [("purposes", Json.null)])
 

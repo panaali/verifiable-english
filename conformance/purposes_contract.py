@@ -61,8 +61,8 @@ def lean_record(block):
 
 
 def legacy_validation(block):
-    """The decoder's own refusal (phase `decode`, whose clean outcome is `decodeBlock` accepting, `classifier_ok_iff`
-    in `Hooks/Purposes.lean`), raised with Lean's text; main has no route that decodes the block until PE-2."""
+    """The decoder's own refusal (phase `decode`, whose clean outcome is `decodeBlock` accepting: the round-trip
+    guards of `Hooks/Purposes.lean`), raised with Lean's text; main has no route that decodes the block until PE-2."""
     record = lean_record(block)
     if record is not None and record["phase"] == "decode":
         raise (ResourceLimit if record["class"] == "ResourceLimit" else VEError)(record["text"])
