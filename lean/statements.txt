@@ -29317,6 +29317,72 @@ theorem VE.Presupposition.CoupleExamples.satUnder_of_eval
           VE.Presupposition.SatUnder D R ch M.asStructure
   -- uses VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.NormDefaults.IntendedAt3@VE.NormDefaults.Semantics VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Tree.regulated@VE.Norms.Tree VE.Presupposition.CoupleExamples.holds@VE.Presupposition.CoupleExamples VE.Presupposition.PDoc.defaults@VE.Presupposition.Wire VE.Presupposition.PDoc.norms@VE.Presupposition.Wire VE.Presupposition.PDoc@VE.Presupposition.Wire VE.Presupposition.Pick@VE.Presupposition.Couple VE.Presupposition.Report@VE.Presupposition.Wire VE.Presupposition.SatUnder@VE.Presupposition.Couple VE.Presupposition.formulasUnder@VE.Presupposition.Couple VE.Presupposition.pickedU@VE.Presupposition.Couple
   -- expr 3800041205
+theorem VE.Presupposition.Events.again_defined
+  ∀ (V : VE.Events.EventsEnv) (E : VE.Events.EventSort) (t : VE.Term) (body : VE.Formula) (M : VE.Structure)
+    (τ : VE.Valuation M), (VE.Presupposition.Events.again V E t body).DefinedAt M τ
+  -- uses VE.Events.EventSort@VE.Events.Decl VE.Events.EventsEnv@VE.Events.Decl VE.Formula@VE.Syntax VE.Presupposition.Events.again@VE.Presupposition.Events VE.Presupposition.Reading.DefinedAt@VE.Presupposition.Reading VE.Structure@VE.Semantics VE.Term@VE.Syntax VE.Valuation@VE.Semantics
+  -- expr 1505747878
+theorem VE.Presupposition.Events.again_eq
+  ∀ (V : VE.Events.EventsEnv) (E : VE.Events.EventSort) (t : VE.Term) (body : VE.Formula),
+    VE.Presupposition.Events.again V E t body =
+      VE.Presupposition.generic (VE.Presupposition.Events.occurredBefore V E t) body
+  -- uses VE.Events.EventSort@VE.Events.Decl VE.Events.EventsEnv@VE.Events.Decl VE.Formula@VE.Syntax VE.Presupposition.Events.again@VE.Presupposition.Events VE.Presupposition.Events.occurredBefore@VE.Presupposition.Events VE.Presupposition.Reading@VE.Presupposition.Reading VE.Presupposition.generic@VE.Presupposition.Rows VE.Term@VE.Syntax
+  -- expr 465649421
+theorem VE.Presupposition.Events.continues_defined
+  ∀ (V : VE.Events.EventsEnv) (S : VE.Events.StateSort) (x t : VE.Term) (body : VE.Formula) (M : VE.Structure)
+    (τ : VE.Valuation M), (VE.Presupposition.Events.continues V S x t body).DefinedAt M τ
+  -- uses VE.Events.EventsEnv@VE.Events.Decl VE.Events.StateSort@VE.Events.Decl VE.Formula@VE.Syntax VE.Presupposition.Events.continues@VE.Presupposition.Events VE.Presupposition.Reading.DefinedAt@VE.Presupposition.Reading VE.Structure@VE.Semantics VE.Term@VE.Syntax VE.Valuation@VE.Semantics
+  -- expr 846412208
+theorem VE.Presupposition.Events.continues_eq
+  ∀ (V : VE.Events.EventsEnv) (S : VE.Events.StateSort) (x t : VE.Term) (body : VE.Formula),
+    VE.Presupposition.Events.continues V S x t body =
+      VE.Presupposition.generic (VE.Presupposition.Events.inProgressBefore V S x t) body
+  -- uses VE.Events.EventsEnv@VE.Events.Decl VE.Events.StateSort@VE.Events.Decl VE.Formula@VE.Syntax VE.Presupposition.Events.continues@VE.Presupposition.Events VE.Presupposition.Events.inProgressBefore@VE.Presupposition.Events VE.Presupposition.Reading@VE.Presupposition.Reading VE.Presupposition.generic@VE.Presupposition.Rows VE.Term@VE.Syntax
+  -- expr 76862619
+theorem VE.Presupposition.Events.noLonger_defined
+  ∀ (V : VE.Events.EventsEnv) (S : VE.Events.StateSort) (x t : VE.Term) (body : VE.Formula) (M : VE.Structure)
+    (τ : VE.Valuation M), (VE.Presupposition.Events.noLonger V S x t body).DefinedAt M τ
+  -- uses VE.Events.EventsEnv@VE.Events.Decl VE.Events.StateSort@VE.Events.Decl VE.Formula@VE.Syntax VE.Presupposition.Events.noLonger@VE.Presupposition.Events VE.Presupposition.Reading.DefinedAt@VE.Presupposition.Reading VE.Structure@VE.Semantics VE.Term@VE.Syntax VE.Valuation@VE.Semantics
+  -- expr 571600237
+theorem VE.Presupposition.Events.noLonger_eq
+  ∀ (V : VE.Events.EventsEnv) (S : VE.Events.StateSort) (x t : VE.Term) (body : VE.Formula),
+    VE.Presupposition.Events.noLonger V S x t body =
+      VE.Presupposition.generic (VE.Presupposition.Events.inProgressBefore V S x t) body
+  -- uses VE.Events.EventsEnv@VE.Events.Decl VE.Events.StateSort@VE.Events.Decl VE.Formula@VE.Syntax VE.Presupposition.Events.inProgressBefore@VE.Presupposition.Events VE.Presupposition.Events.noLonger@VE.Presupposition.Events VE.Presupposition.Reading@VE.Presupposition.Reading VE.Presupposition.generic@VE.Presupposition.Rows VE.Term@VE.Syntax
+  -- expr 1640806567
+theorem VE.Presupposition.Events.resumes_defined
+  ∀ (V : VE.Events.EventsEnv) (S : VE.Events.StateSort) (t : VE.Term) (body : VE.Formula) (M : VE.Structure)
+    (τ : VE.Valuation M), (VE.Presupposition.Events.resumes V S t body).DefinedAt M τ
+  -- uses VE.Events.EventsEnv@VE.Events.Decl VE.Events.StateSort@VE.Events.Decl VE.Formula@VE.Syntax VE.Presupposition.Events.resumes@VE.Presupposition.Events VE.Presupposition.Reading.DefinedAt@VE.Presupposition.Reading VE.Structure@VE.Semantics VE.Term@VE.Syntax VE.Valuation@VE.Semantics
+  -- expr 2535173174
+theorem VE.Presupposition.Events.resumes_eq
+  ∀ (V : VE.Events.EventsEnv) (S : VE.Events.StateSort) (t : VE.Term) (body : VE.Formula),
+    VE.Presupposition.Events.resumes V S t body =
+      VE.Presupposition.generic (VE.Presupposition.Events.endedBefore V S t) body
+  -- uses VE.Events.EventsEnv@VE.Events.Decl VE.Events.StateSort@VE.Events.Decl VE.Formula@VE.Syntax VE.Presupposition.Events.endedBefore@VE.Presupposition.Events VE.Presupposition.Events.resumes@VE.Presupposition.Events VE.Presupposition.Reading@VE.Presupposition.Reading VE.Presupposition.generic@VE.Presupposition.Rows VE.Term@VE.Syntax
+  -- expr 63045153
+theorem VE.Presupposition.Events.returnsTo_defined
+  ∀ (V : VE.Events.EventsEnv) (S : VE.Events.StateSort) (atP : String) (p t : VE.Term) (body : VE.Formula)
+    (M : VE.Structure) (τ : VE.Valuation M), (VE.Presupposition.Events.returnsTo V S atP p t body).DefinedAt M τ
+  -- uses VE.Events.EventsEnv@VE.Events.Decl VE.Events.StateSort@VE.Events.Decl VE.Formula@VE.Syntax VE.Presupposition.Events.returnsTo@VE.Presupposition.Events VE.Presupposition.Reading.DefinedAt@VE.Presupposition.Reading VE.Structure@VE.Semantics VE.Term@VE.Syntax VE.Valuation@VE.Semantics
+  -- expr 2679328616
+theorem VE.Presupposition.Events.returnsTo_eq
+  ∀ (V : VE.Events.EventsEnv) (S : VE.Events.StateSort) (atP : String) (p t : VE.Term) (body : VE.Formula),
+    VE.Presupposition.Events.returnsTo V S atP p t body =
+      VE.Presupposition.generic (VE.Presupposition.Events.endedAtBefore V S atP p t) body
+  -- uses VE.Events.EventsEnv@VE.Events.Decl VE.Events.StateSort@VE.Events.Decl VE.Formula@VE.Syntax VE.Presupposition.Events.endedAtBefore@VE.Presupposition.Events VE.Presupposition.Events.returnsTo@VE.Presupposition.Events VE.Presupposition.Reading@VE.Presupposition.Reading VE.Presupposition.generic@VE.Presupposition.Rows VE.Term@VE.Syntax
+  -- expr 3304659862
+theorem VE.Presupposition.Events.stops_defined
+  ∀ (V : VE.Events.EventsEnv) (S : VE.Events.StateSort) (x t : VE.Term) (body : VE.Formula) (M : VE.Structure)
+    (τ : VE.Valuation M), (VE.Presupposition.Events.stops V S x t body).DefinedAt M τ
+  -- uses VE.Events.EventsEnv@VE.Events.Decl VE.Events.StateSort@VE.Events.Decl VE.Formula@VE.Syntax VE.Presupposition.Events.stops@VE.Presupposition.Events VE.Presupposition.Reading.DefinedAt@VE.Presupposition.Reading VE.Structure@VE.Semantics VE.Term@VE.Syntax VE.Valuation@VE.Semantics
+  -- expr 2601290187
+theorem VE.Presupposition.Events.stops_eq
+  ∀ (V : VE.Events.EventsEnv) (S : VE.Events.StateSort) (x t : VE.Term) (body : VE.Formula),
+    VE.Presupposition.Events.stops V S x t body =
+      VE.Presupposition.generic (VE.Presupposition.Events.inProgressBefore V S x t) body
+  -- uses VE.Events.EventsEnv@VE.Events.Decl VE.Events.StateSort@VE.Events.Decl VE.Formula@VE.Syntax VE.Presupposition.Events.inProgressBefore@VE.Presupposition.Events VE.Presupposition.Events.stops@VE.Presupposition.Events VE.Presupposition.Reading@VE.Presupposition.Reading VE.Presupposition.generic@VE.Presupposition.Rows VE.Term@VE.Syntax
+  -- expr 2497251932
 theorem VE.Presupposition.Examples.s22_neg_s2
   VE.Presupposition.Examples.evAt VE.Presupposition.Examples.m22p ["s2"]
       (VE.Norms.neg VE.Presupposition.Examples.mixed22 "p") =
@@ -30041,19 +30107,44 @@ theorem VE.Presupposition.couplings_spec
     (List.map (fun x => x.ob.id) R.checked).Nodup →
       ∀ (K : VE.Discourse.Manifest) (ver : String → Nat) (J : List VE.Presupposition.Pick),
         (∀ (ch : VE.Presupposition.Pick), ch ∈ J → VE.Presupposition.PickFits t R ch) →
-          List.filter
-              (fun ch =>
-                VE.Discourse.satisfiesAll
-                  { definitionsVersion := K.definitionsVersion, documentSort := K.documentSort, anchors := K.anchors,
-                    names := K.names, contentNames := K.contentNames, mentions := K.mentions, documents := K.documents,
-                    imports := K.imports, groups := K.groups,
-                    constraints := VE.Presupposition.couplingConstraints ver J (VE.Presupposition.groups t R),
-                    validity := K.validity, selfTruth := K.selfTruth, choices := K.choices }
-                  (VE.Presupposition.choiceOf t R ver ch))
-              J =
-            VE.Presupposition.coupledSet J (List.filter (VE.Presupposition.couplable J) (VE.Presupposition.groups t R))
-  -- uses VE.Discourse.Manifest.anchors@VE.Discourse.Manifest VE.Discourse.Manifest.choices@VE.Discourse.Manifest VE.Discourse.Manifest.contentNames@VE.Discourse.Manifest VE.Discourse.Manifest.definitionsVersion@VE.Discourse.Manifest VE.Discourse.Manifest.documentSort@VE.Discourse.Manifest VE.Discourse.Manifest.documents@VE.Discourse.Manifest VE.Discourse.Manifest.groups@VE.Discourse.Manifest VE.Discourse.Manifest.imports@VE.Discourse.Manifest VE.Discourse.Manifest.mentions@VE.Discourse.Manifest VE.Discourse.Manifest.mk@VE.Discourse.Manifest VE.Discourse.Manifest.names@VE.Discourse.Manifest VE.Discourse.Manifest.selfTruth@VE.Discourse.Manifest VE.Discourse.Manifest.validity@VE.Discourse.Manifest VE.Discourse.Manifest@VE.Discourse.Manifest VE.Discourse.satisfiesAll@VE.Discourse.Joint VE.Presupposition.CandidateTable@VE.Presupposition.Wire VE.Presupposition.Checked.ob@VE.Presupposition.Wire VE.Presupposition.Checked@VE.Presupposition.Wire VE.Presupposition.Group@VE.Presupposition.Couple VE.Presupposition.Obligation.id@VE.Presupposition.Wire VE.Presupposition.Pick@VE.Presupposition.Couple VE.Presupposition.PickFits@VE.Presupposition.Couple VE.Presupposition.Report.checked@VE.Presupposition.Wire VE.Presupposition.Report@VE.Presupposition.Wire VE.Presupposition.choiceOf@VE.Presupposition.Couple VE.Presupposition.couplable@VE.Presupposition.Couple VE.Presupposition.coupledSet@VE.Presupposition.Couple VE.Presupposition.couplingConstraints@VE.Presupposition.Couple VE.Presupposition.groups@VE.Presupposition.Couple
-  -- expr 2367140764
+          (∀ (ch : VE.Presupposition.Pick),
+              ch ∈ J → VE.Discourse.satisfiesAll K (VE.Presupposition.choiceOf t R ver ch) = Bool.true) →
+            List.filter
+                (fun ch =>
+                  VE.Discourse.satisfiesAll
+                    { definitionsVersion := K.definitionsVersion, documentSort := K.documentSort, anchors := K.anchors,
+                      names := K.names, contentNames := K.contentNames, mentions := K.mentions, documents := K.documents,
+                      imports := K.imports, groups := K.groups,
+                      constraints :=
+                        K.constraints ++ VE.Presupposition.couplingConstraints ver J (VE.Presupposition.groups t R),
+                      validity := K.validity, selfTruth := K.selfTruth, choices := K.choices }
+                    (VE.Presupposition.choiceOf t R ver ch))
+                J =
+              VE.Presupposition.coupledSet J (List.filter (VE.Presupposition.couplable J) (VE.Presupposition.groups t R))
+  -- uses VE.Discourse.Constraint@VE.Discourse.Manifest VE.Discourse.Manifest.anchors@VE.Discourse.Manifest VE.Discourse.Manifest.choices@VE.Discourse.Manifest VE.Discourse.Manifest.constraints@VE.Discourse.Manifest VE.Discourse.Manifest.contentNames@VE.Discourse.Manifest VE.Discourse.Manifest.definitionsVersion@VE.Discourse.Manifest VE.Discourse.Manifest.documentSort@VE.Discourse.Manifest VE.Discourse.Manifest.documents@VE.Discourse.Manifest VE.Discourse.Manifest.groups@VE.Discourse.Manifest VE.Discourse.Manifest.imports@VE.Discourse.Manifest VE.Discourse.Manifest.mentions@VE.Discourse.Manifest VE.Discourse.Manifest.mk@VE.Discourse.Manifest VE.Discourse.Manifest.names@VE.Discourse.Manifest VE.Discourse.Manifest.selfTruth@VE.Discourse.Manifest VE.Discourse.Manifest.validity@VE.Discourse.Manifest VE.Discourse.Manifest@VE.Discourse.Manifest VE.Discourse.satisfiesAll@VE.Discourse.Joint VE.Presupposition.CandidateTable@VE.Presupposition.Wire VE.Presupposition.Checked.ob@VE.Presupposition.Wire VE.Presupposition.Checked@VE.Presupposition.Wire VE.Presupposition.Group@VE.Presupposition.Couple VE.Presupposition.Obligation.id@VE.Presupposition.Wire VE.Presupposition.Pick@VE.Presupposition.Couple VE.Presupposition.PickFits@VE.Presupposition.Couple VE.Presupposition.Report.checked@VE.Presupposition.Wire VE.Presupposition.Report@VE.Presupposition.Wire VE.Presupposition.choiceOf@VE.Presupposition.Couple VE.Presupposition.couplable@VE.Presupposition.Couple VE.Presupposition.coupledSet@VE.Presupposition.Couple VE.Presupposition.couplingConstraints@VE.Presupposition.Couple VE.Presupposition.groups@VE.Presupposition.Couple
+  -- expr 1940541314
+theorem VE.Presupposition.couplings_spec_admit
+  ∀ {t : VE.Presupposition.CandidateTable} {fx : VE.Presupposition.Fixed} {D : VE.Presupposition.PDoc}
+    {R : VE.Presupposition.Report},
+    VE.Presupposition.admitWith t fx D = Except.ok R →
+      ∀ (K : VE.Discourse.Manifest) (ver : String → Nat) (J : List VE.Presupposition.Pick),
+        (∀ (ch : VE.Presupposition.Pick), ch ∈ J → VE.Presupposition.PickFits t R ch) →
+          (∀ (ch : VE.Presupposition.Pick),
+              ch ∈ J → VE.Discourse.satisfiesAll K (VE.Presupposition.choiceOf t R ver ch) = Bool.true) →
+            List.filter
+                (fun ch =>
+                  VE.Discourse.satisfiesAll
+                    { definitionsVersion := K.definitionsVersion, documentSort := K.documentSort, anchors := K.anchors,
+                      names := K.names, contentNames := K.contentNames, mentions := K.mentions, documents := K.documents,
+                      imports := K.imports, groups := K.groups,
+                      constraints :=
+                        K.constraints ++ VE.Presupposition.couplingConstraints ver J (VE.Presupposition.groups t R),
+                      validity := K.validity, selfTruth := K.selfTruth, choices := K.choices }
+                    (VE.Presupposition.choiceOf t R ver ch))
+                J =
+              VE.Presupposition.coupledSet J (List.filter (VE.Presupposition.couplable J) (VE.Presupposition.groups t R))
+  -- uses VE.Discourse.Constraint@VE.Discourse.Manifest VE.Discourse.Manifest.anchors@VE.Discourse.Manifest VE.Discourse.Manifest.choices@VE.Discourse.Manifest VE.Discourse.Manifest.constraints@VE.Discourse.Manifest VE.Discourse.Manifest.contentNames@VE.Discourse.Manifest VE.Discourse.Manifest.definitionsVersion@VE.Discourse.Manifest VE.Discourse.Manifest.documentSort@VE.Discourse.Manifest VE.Discourse.Manifest.documents@VE.Discourse.Manifest VE.Discourse.Manifest.groups@VE.Discourse.Manifest VE.Discourse.Manifest.imports@VE.Discourse.Manifest VE.Discourse.Manifest.mentions@VE.Discourse.Manifest VE.Discourse.Manifest.mk@VE.Discourse.Manifest VE.Discourse.Manifest.names@VE.Discourse.Manifest VE.Discourse.Manifest.selfTruth@VE.Discourse.Manifest VE.Discourse.Manifest.validity@VE.Discourse.Manifest VE.Discourse.Manifest@VE.Discourse.Manifest VE.Discourse.satisfiesAll@VE.Discourse.Joint VE.Presupposition.CandidateTable@VE.Presupposition.Wire VE.Presupposition.Fixed@VE.Presupposition.Admit VE.Presupposition.Group@VE.Presupposition.Couple VE.Presupposition.PDoc@VE.Presupposition.Wire VE.Presupposition.Pick@VE.Presupposition.Couple VE.Presupposition.PickFits@VE.Presupposition.Couple VE.Presupposition.Report@VE.Presupposition.Wire VE.Presupposition.admitWith@VE.Presupposition.Admit VE.Presupposition.choiceOf@VE.Presupposition.Couple VE.Presupposition.couplable@VE.Presupposition.Couple VE.Presupposition.coupledSet@VE.Presupposition.Couple VE.Presupposition.couplingConstraints@VE.Presupposition.Couple VE.Presupposition.groups@VE.Presupposition.Couple
+  -- expr 3284143610
 theorem VE.Presupposition.data_attribute_proved
   ∀ (E : VE.Environment) (f : VE.Data.Background.Flag) (c : String) (S : VE.Structure),
     S.Admissible E →
@@ -30502,6 +30593,18 @@ theorem VE.Presupposition.sourceChoice_entails
           ∀ (r : VE.Norms.Regulated) (N : VE.Norms.Node), VE.Formula.denote S [] (VE.Presupposition.ruleGoal r N s.pre)
   -- uses VE.Environment@VE.Syntax VE.Formula.denote@VE.Semantics VE.Norms.Node@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Presupposition.Report@VE.Presupposition.Wire VE.Presupposition.SourceChoice.pre@VE.Presupposition.Couple VE.Presupposition.SourceChoice@VE.Presupposition.Couple VE.Presupposition.ruleGoal@VE.Presupposition.Rules VE.Presupposition.sourceChoices@VE.Presupposition.Couple VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
   -- expr 1744232712
+theorem VE.Presupposition.sourceChoice_members
+  ∀ {E : VE.Environment} {R : VE.Presupposition.Report} {s : VE.Presupposition.SourceChoice},
+    s ∈ VE.Presupposition.sourceChoices E R →
+      ∀ (o : String),
+        o ∈ s.members →
+          ∃ c,
+            c ∈ R.checked ∧
+              c.ob.id = o ∧
+                c.ob.carrier = VE.Presupposition.Carrier.unresolved ∧
+                  c.pos = VE.Presupposition.PositionClass.ruleAct ∧ c.pre = s.pre
+  -- uses VE.Environment@VE.Syntax VE.Formula@VE.Syntax VE.Presupposition.Carrier.unresolved@VE.Presupposition.Wire VE.Presupposition.Carrier@VE.Presupposition.Wire VE.Presupposition.Checked.ob@VE.Presupposition.Wire VE.Presupposition.Checked.pos@VE.Presupposition.Wire VE.Presupposition.Checked.pre@VE.Presupposition.Wire VE.Presupposition.Checked@VE.Presupposition.Wire VE.Presupposition.Obligation.carrier@VE.Presupposition.Wire VE.Presupposition.Obligation.id@VE.Presupposition.Wire VE.Presupposition.PositionClass.ruleAct@VE.Presupposition.Frame VE.Presupposition.PositionClass@VE.Presupposition.Frame VE.Presupposition.Report.checked@VE.Presupposition.Wire VE.Presupposition.Report@VE.Presupposition.Wire VE.Presupposition.SourceChoice.members@VE.Presupposition.Couple VE.Presupposition.SourceChoice.pre@VE.Presupposition.Couple VE.Presupposition.SourceChoice@VE.Presupposition.Couple VE.Presupposition.sourceChoices@VE.Presupposition.Couple
+  -- expr 2941477928
 theorem VE.Presupposition.source_identity_entails
   ∀ (E : VE.Environment) (pre : VE.Formula),
     VE.Formula.WellFormed E [] pre →
