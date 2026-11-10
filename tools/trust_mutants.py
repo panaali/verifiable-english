@@ -565,11 +565,13 @@ def tmTrustWalk (k : Name) (roots : List Expr) : MetaM Unit := do
   let io := [``unsafeBaseIO, ``unsafeEIO, ``unsafeIO, ``IO, ``EIO, ``BaseIO, ``IO.RealWorld]
   say s!"hash {roots.foldl (fun h e => mixHash h e.hash) 7}"
   let mut seen : NameSet := {}
-  let mut todo : List Name := roots.foldl (fun a e => a ++ e.getUsedConstants.toList) []
+  -- a queue: pushed at the end, read at `head` (a List's `++` copied it per constant: tm-m509-reads-linear)
+  let mut todo : Array Name := roots.foldl (fun a e => a ++ e.getUsedConstants) #[]
+  let mut head := 0
   let mut found := false
-  while !todo.isEmpty do
-    let c := todo.head!
-    todo := todo.tail!
+  while head < todo.size do
+    let c := todo[head]!
+    head := head + 1
     if seen.contains c then continue
     seen := seen.insert c
     if c == ``sorryAx && !found then
@@ -585,7 +587,7 @@ def tmTrustWalk (k : Name) (roots : List Expr) : MetaM Unit := do
     if info matches .axiomInfo _ then say "axiom"
     let value := (info.value? (allowOpaque := true)).getD (mkConst ``True)
     if !(info matches .thmInfo _) && !(← inside c) then say s!"const {c} {mixHash info.type.hash value.hash}"
-    todo := todo ++ info.type.getUsedConstants.toList ++ value.getUsedConstants.toList
+    todo := todo ++ info.type.getUsedConstants ++ value.getUsedConstants
   say "done"
 
 open Lean Elab Tactic Meta in
@@ -682,7 +684,7 @@ def probe(lake, env: dict, text: str, roles: list[tuple], path: Path, outside: b
     before = path.read_text() if path.is_file() else None
     path.write_text("\n".join(lines))
     try:
-        said = lake({**env, "TM_TRUST_NONCE": nonce}, *(("env", "lean") if outside else ("lean",)), str(path))[1]
+        code, said = lake({**env, "TM_TRUST_NONCE": nonce}, *(("env", "lean") if outside else ("lean",)), str(path))
     finally:
         path.write_text(before) if before is not None else path.unlink()
     out: dict = {}
@@ -696,6 +698,10 @@ def probe(lake, env: dict, text: str, roles: list[tuple], path: Path, outside: b
                 entry["consts"][constant] = value
             else:
                 entry["flags"].add(rest)
+    if code == TIMED_OUT:  # each walk it cut short says so (`refusal`), not that Lean could not elaborate it
+        for span in spans.values():
+            if only is None or span in only:
+                out.setdefault(span, {"flags": set(), "consts": {}})["late"] = said.partition(" did not ")[2]
     return out
 
 
@@ -766,8 +772,11 @@ class ControlProbes:
 
 def refusal(entry: dict | None, control: dict | None) -> str | None:
     """Why the check whose `probe` entries in the mutant's build and in the control's are these cannot refute the
-    mutated definition, or None. An entry that is not whole (`complete`) is absent."""
+    mutated definition, or None. An entry that is not whole (`complete`) is absent; one of a probe run past
+    --build-timeout (`late`) says so."""
     if not complete(entry) or not complete(control):
+        if late := next((x["late"] for x in (entry, control) if x and not complete(x) and "late" in x), None):
+            return f"the probe did not {late}"  # TIMED_OUT: `probe`'s run past --build-timeout
         return "Lean could not elaborate it in the probe"
     if "hyps" in entry["flags"]:
         return "its goal has a hypothesis"
