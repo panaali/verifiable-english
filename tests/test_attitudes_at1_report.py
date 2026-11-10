@@ -15,19 +15,22 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 REPORT = "docs/attitudes/at-1/REPORT.md"
 # Trees, not commits: the test runners hold an export of the history whose commits have other ids but the same trees.
-# The commit each tree is from is the one the report names.
+# Each tree is that of the commit the report names (the key of `TREES`).
+BASE = "69441147486fcf8b994d76b207a2e1c526a78ad3"  # a3454b6ba5, at-1's merge base with main
+# 223ba4c085: the final Lean with its regenerated inventories (2d577d5fc4's Lean and side table; its declarations.txt
+# was stale).
+FINAL_LEAN = "ebb497326c8fdb38aab70669206b56fedc429115"
+REVIEWED = "b7baba91b31a93568b9e2e7bb2971cedfead7998"  # 36a5944147, the head of the final review, report included
 TREES = {
-    "a3454b6ba5": "69441147486fcf8b994d76b207a2e1c526a78ad3",  # at-1's merge base with main
+    "a3454b6ba5": BASE,
     "0de99986bf": "95cc3cdcbd123d707759c7634974297135dcf9c9",
     "fc9c1eb496": "a4c7f488bced893dd4e6ee0e2907b624beb2c5a1",
     "693048ded9": "9dc7d832ab431d2ccadf8c4c49c2e9f11718c7e0",
     "8294a8da2e": "9d975d3fec743426323e358302588689f9248419",
     "2d577d5fc4": "4165ae8a36e6e3a967707973cdc53d74f47f61c7",  # the final code
-    # The final Lean with its regenerated inventories (2d577d5fc4's Lean and side table; its declarations.txt was stale).
-    "223ba4c085": "ebb497326c8fdb38aab70669206b56fedc429115",
-    "36a5944147": "b7baba91b31a93568b9e2e7bb2971cedfead7998",  # the head of the final review, report included
+    "223ba4c085": FINAL_LEAN,
+    "36a5944147": REVIEWED,
 }
-BASE, FINAL_LEAN, REVIEWED = (TREES[c] for c in ("a3454b6ba5", "223ba4c085", "36a5944147"))
 CAP = 150  # R16 (DRI-RULINGS.md): trusted lines per item
 SYNTAX = "VE/Attitudes/Syntax.lean"
 TOOL_WRITTEN = {"docs/attitudes/at-1/trust-mutants.json"}  # tools/trust_mutants.py's evidence
