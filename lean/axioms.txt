@@ -667,9 +667,16 @@
 'VE.Ask.zeroSplitModels_base' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Ask.zeroSplit_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Ask.zero_ask_wire_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Attitudes.Examples.allCat_at' depends on axioms: [propext, Quot.sound]
+'VE.Attitudes.Examples.allCat_wf' depends on axioms: [propext]
+'VE.Attitudes.Examples.atom_interp_M' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Attitudes.Examples.awf_iff' depends on axioms: [propext, Quot.sound]
+'VE.Attitudes.Examples.base_adm' depends on axioms: [propext, Quot.sound]
+'VE.Attitudes.Examples.cat_interp' depends on axioms: [propext, Quot.sound]
+'VE.Attitudes.Examples.guard1_elab' depends on axioms: [propext]
 'VE.Attitudes.Examples.inFat1' depends on axioms: [propext]
 'VE.Attitudes.Examples.intended_M1_M4' depends on axioms: [propext, Quot.sound]
+'VE.Attitudes.Examples.keyQ_mem' depends on axioms: [propext]
 'VE.Attitudes.Examples.keys_fat1' depends on axioms: [propext]
 'VE.Attitudes.Examples.not_intended_M2_M3' depends on axioms: [propext, Quot.sound]
 'VE.Attitudes.Examples.pair_breaks' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -680,6 +687,9 @@
 'VE.Attitudes.atomAt_interp' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Attitudes.atomAt_qfree' depends on axioms: [propext]
 'VE.Attitudes.atomAt_wellFormed' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Attitudes.att_conservative_doc' depends on axioms: [propext, Quot.sound]
+'VE.Attitudes.att_elaboration_faithful' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Attitudes.att_old_language_conservative' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Attitudes.baseEnvAtt_extends' depends on axioms: [propext, Quot.sound]
 'VE.Attitudes.checkAtt_conds' depends on axioms: [propext, Quot.sound]
 'VE.Attitudes.checkAtt_tail' depends on axioms: [propext, Quot.sound]
@@ -694,9 +704,12 @@
 'VE.Attitudes.colon_split' depends on axioms: [propext]
 'VE.Attitudes.contentAt_interp' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Attitudes.denote_interp_base' depends on axioms: [propext, Quot.sound]
+'VE.Attitudes.denote_interp_of' depends on axioms: [propext]
+'VE.Attitudes.denote_withRelation' does not depend on any axioms
 'VE.Attitudes.empty_relations_frame' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Attitudes.envAtt_extends' depends on axioms: [propext, Quot.sound]
 'VE.Attitudes.envAtt_keeps' depends on axioms: [propext, Quot.sound]
+'VE.Attitudes.envAtt_name' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Attitudes.forIn_throwIf' depends on axioms: [propext, Quot.sound]
 'VE.Attitudes.forced_iff_reachable' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Attitudes.frameLabels_nodup' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -708,8 +721,12 @@
 'VE.Attitudes.frame_wellFormed' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Attitudes.guard_collapse' depends on axioms: [propext]
 'VE.Attitudes.inj_of_nodup_map' depends on axioms: [propext, Quot.sound]
+'VE.Attitudes.interp_admissible' depends on axioms: [propext, Quot.sound]
+'VE.Attitudes.interp_name' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Attitudes.interp_restrict' depends on axioms: [propext, Quot.sound]
 'VE.Attitudes.keyOf_base' depends on axioms: [propext, Quot.sound]
 'VE.Attitudes.keyOf_name' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Attitudes.keyOf_old' depends on axioms: [propext, Quot.sound]
 'VE.Attitudes.key_checked' depends on axioms: [propext, Quot.sound]
 'VE.Attitudes.keys_nodup' depends on axioms: [propext, Quot.sound]
 'VE.Attitudes.knows_factive' depends on axioms: [propext]
@@ -720,14 +737,19 @@
 'VE.Attitudes.nodup_map_on' depends on axioms: [propext, Quot.sound]
 'VE.Attitudes.not_of_throwIf' does not depend on any axioms
 'VE.Attitudes.ok_of_bind' does not depend on any axioms
+'VE.Attitudes.old_formula_invariant' depends on axioms: [propext, Quot.sound]
 'VE.Attitudes.path_pairs' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Attitudes.restrict_admissible' depends on axioms: [propext, Quot.sound]
+'VE.Attitudes.restrict_intended' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Attitudes.sameSubject_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Attitudes.seed_intended' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Attitudes.seed_least' depends on axioms: [propext]
 'VE.Attitudes.sorts_of_pair' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Attitudes.table_reviewed' depends on axioms: [propext]
+'VE.Attitudes.term_interp' depends on axioms: [propext]
 'VE.Attitudes.toNorms_wellFormed' depends on axioms: [propext, Quot.sound]
 'VE.Attitudes.tupleTyped_interp' depends on axioms: [propext]
+'VE.Attitudes.tupleTyped_withRelation' does not depend on any axioms
 'VE.Attitudes.wellFormed_append' depends on axioms: [propext]
 'VE.Bridge.CountermodelQuery.conclusion_typed' does not depend on any axioms
 'VE.Bridge.CountermodelQuery.premises_typed' does not depend on any axioms
@@ -1405,6 +1427,7 @@
 'VE.Closure.countermodelCheck_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Closure.countermodel_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Closure.embed_of_erase' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Closure.entails_iff' depends on axioms: [propext, Quot.sound]
 'VE.Closure.erase_embed' depends on axioms: [propext, Quot.sound]
 'VE.Closure.eval_false_iff_not_denote' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Closure.eval_iff_denote' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -1799,11 +1822,11 @@
 'VE.Core.edge_inclusion' does not depend on any axioms
 'VE.Core.edge_shift_denote' depends on axioms: [propext, Quot.sound]
 'VE.Core.edge_typed' does not depend on any axioms
-'VE.Core.embedClosure_check' depends on axioms: [propext]
-'VE.Core.embedClosure_denote' depends on axioms: [propext, Quot.sound]
+'VE.Core.embedClosure_check' does not depend on any axioms
+'VE.Core.embedClosure_denote' does not depend on any axioms
 'VE.Core.embed_of_erase' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Core.endEdge_sound' depends on axioms: [propext, Quot.sound]
-'VE.Core.entails_closure' depends on axioms: [propext, Quot.sound]
+'VE.Core.entails_closure' does not depend on any axioms
 'VE.Core.entails_v0' depends on axioms: [propext, Quot.sound]
 'VE.Core.erase_embed' depends on axioms: [propext, Quot.sound]
 'VE.Core.eval_false_iff_not_denote' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -1827,7 +1850,7 @@
 'VE.Core.reach_compose' depends on axioms: [propext]
 'VE.Core.reach_denote' does not depend on any axioms
 'VE.Core.reachable_congr' depends on axioms: [propext, Quot.sound]
-'VE.Core.reachable_iff' depends on axioms: [propext]
+'VE.Core.reachable_iff' does not depend on any axioms
 'VE.Core.reachable_induction' does not depend on any axioms
 'VE.Core.reachable_trans' does not depend on any axioms
 'VE.Core.star_least' does not depend on any axioms
@@ -7417,7 +7440,7 @@
 'VE.Route.WireSound.values_field' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Route.WireSound.wellFormed_sorts' depends on axioms: [propext, Quot.sound]
 'VE.Route.closureValid_certificateSound' depends on axioms: [propext, Classical.choice, Quot.sound]
-'VE.Route.closure_entails_iff' does not depend on any axioms
+'VE.Route.closure_entails_iff' depends on axioms: [propext, Quot.sound]
 'VE.Route.coreValid_certificateSound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Route.core_entails_iff' does not depend on any axioms
 'VE.Route.core_family_gate' does not depend on any axioms
