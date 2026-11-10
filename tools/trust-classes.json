@@ -20045,7 +20045,8 @@
         "VE.RightClauses.RunExamples.off",
         "VE.RightClauses.RunExamples.rel",
         "VE.RightClauses.RunExamples.charged",
-        "VE.RightClauses.RunExamples.countryOf"
+        "VE.RightClauses.RunExamples.countryOf",
+        "VE.RightClauses.RunExamples.twoLines"
       ]
     }
   }
