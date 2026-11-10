@@ -1,0 +1,17 @@
+trust_mutants: --rescore ci-job/rescore.json: a full run, since its inputs differ (options)
+trust_mutants: 13 definitions, 451 mutants (51 to run), 4 jobs, base 3e4fe503f4c9
+UNKNOWN lean/VE/Rights/Run.lean:315 VE.Rights.Run.situationTables (D[V], trusted) append-right: (correlate D) ++ ->  (lean/VE/Rights/Run.lean:315: Application type mismatch: The argument)
+UNKNOWN lean/VE/Rights/Run.lean:237 VE.Rights.Run.regenerated (D[V], trusted) list-empty: findings -> [] (lean/VE/Rights/Run.lean:237: Invalid field notation: Type of)
+SURVIVOR lean/ResponseShape/Schemas/Rights.lean:187 ResponseShape.Schemas.Rights.located_findings (G[V], trusted) list-empty: ["null"] -> []
+UNKNOWN lean/VE/Rights/Run.lean:316 VE.Rights.Run.situationTables (D[V], trusted) list-empty: (·.map (·.2) -> (fun x_tm => [] (lean/VE/Rights/Run.lean:316: typeclass instance problem is stuck, it is often due to metavariables)
+UNKNOWN lean/VE/Rights/Run.lean:445 VE.Rights.Run.conflictAnswerOf (D[V], trusted) list-empty: M -> [] (lean/VE/Rights/Run.lean:445: Unknown constant `Nat.null`)
+UNKNOWN lean/VE/Rights/Run.lean:225 VE.Rights.Run.regenerated (D[V], trusted) list-empty: [("environment_prime", (primeJsonR D environment).toOption.getD .null), ("generated", Json.arr (g... -> [] (lean/ResponseShape/Schemas/RightsChecks.lean:39: Expression (VE.Rights.Run.entailmentUses, which ...)
+SURVIVOR lean/ResponseShape/Schemas/Rights.lean:403 ResponseShape.Schemas.Rights.packages (G[V], trusted) list-empty: [ ("status_text", .pattern (Re.prefixes ["CONFLICT-FREE among rules on the same act, conditional ... -> []
+SURVIVOR lean/VE/Rights/Run.lean:237 VE.Rights.Run.regenerated (D[V], trusted) list-drop-last: findings.map (fun f => Json.str f.text) -> ((findings.map (fun f => Json.str f.text)).dropLast)
+SURVIVOR lean/ResponseShape/Schemas/Rights.lean:396 ResponseShape.Schemas.Rights.packages (G[V], trusted) list-first: [ ("status_text", .pattern (Re.prefixes ["UNKNOWN: "])), ("detail", .pattern (Re.prefixes ["missi... -> ([ ("status_text", .pattern (Re.prefixes ["UNKNOWN: "])), ("detail", .pattern (Re.prefixes ["miss...
+SURVIVOR lean/VE/Rights/Run.lean:435 VE.Rights.Run.conflictAnswerOf (D[V], trusted) list-drop-last: conditional -> (conditional.dropLast)
+SURVIVOR lean/VE/Rights/Run.lean:435 VE.Rights.Run.conflictAnswerOf (D[V], trusted) list-last: conditional.filter (fun l => l.startsWith "soft:") -> ((conditional.filter (fun l => l.startsWith "soft:")).reverse.take 1)
+trust_mutants: 39 KILLED, 6 SURVIVOR, 5 UNKNOWN, 1 INVALID, 0 ALLOWED, 0 NOT RUN, 400 OTHER SHARD in 1337 s
+trust_mutants: D[V], trusted: 16 KILLED, 3 SURVIVOR, 5 UNKNOWN, 1 INVALID, 160 OTHER SHARD
+trust_mutants: G[V], trusted: 23 KILLED, 3 SURVIVOR, 240 OTHER SHARD
+trust_mutants: steps: wall plan 9.7 s, scratch 3.3 s, control_build 0.3 s, probe_install 1.2 s, mutants 1316.3 s, cleanup 6 s, reads 0.1 s; lake control_build 0.2 s (1), probe_install 1.2 s (1), control_probes 38.3 s (5), mutant_builds 1046.2 s (51), mutant_checks 3461.1 s (50), stage_controls 365.4 s (4), mutant_probes 325.5 s (40)
