@@ -37,8 +37,10 @@ document asks a zone question).
 
 ## Runs
 
-Selected tests: see the last section. `tests/test_defaults_checks.py` alone passed locally before the self-review
-fixes except the survivor above. `regen_generated.py --check`: 38 entries up to date.
+Final selected run on the committed tree b47367d448 (`MAC_PYTEST_NO_DEFER=1 zsh .../mac-pytest.sh --select -- --base
+<base> --run`, run df-5b-d6fae4e8-t329294): exit 0, 4 shards, 111 units, 111 passed, 0 failed (36 + 25 + 26 + 24),
+`tests/test_defaults_checks.py` and `tests/test_defaults_zone_cli.py` among them. `regen_generated.py --check`: 38
+entries up to date. No test of main-known-red.txt was touched.
 
 ## Self-review against BUILDER-CHECKLIST
 
@@ -51,7 +53,7 @@ size, the extra refusal cases; C1 stated as fault order in DELTA; C3 kept: the m
 4. PASS: `test_every_other_call_prints_what_it_printed_before`; `tests/test_document_chain.py` 168 passed with the
    judgments and binding-inventory sweeps.
 5. PASS: `bind_zone` (df-5's tests) binds every name; the CLI fixtures compare the whole sent request.
-6. PASS: final selected run on the committed HEAD (below); the chain runs the gate.
+6. PASS: final selected run on the committed tree b47367d448 (Runs, above); the chain runs the gate.
 7. PASS: DELTA D1 SIGNED by the DRI decision; no other row.
 8. PASS: DELTA D1 lists the base outputs (both main refusals) and every new refusal.
 9. PASS: `tools/select_tests.py` selects `tests/test_defaults_zone_cli.py` and `tests/test_defaults_checks.py`.
