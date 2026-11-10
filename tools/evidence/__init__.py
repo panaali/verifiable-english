@@ -20,7 +20,7 @@ Every A/B record names both commits it compared, taken from the two checkouts (`
 class) and, in a batch, a base other than the scope's merge base (review F2). Where only recordings remain
 (`ab`, whose recordings do not carry their commit), each commit given on the command line goes through
 `commit`, which saves the full id Git resolves and refuses one that names no commit of the repository (the
-AR-23 review F1 class: a hand-typed id whose first nine characters were the merge base's and the rest invented).
+AR-23 review F1 class: a hand-typed id whose first twelve characters were the merge base's and the rest invented).
 """
 from __future__ import annotations
 
