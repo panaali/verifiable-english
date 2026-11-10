@@ -1458,11 +1458,12 @@ INVENTORIES = {"lean/declarations.txt", "lean/statements.txt", "lean/predicates.
 # how one is built, run or judged, so a change to one leaves a verdict standing when PREV's mutants are this plan's
 # (`previous`). A module goes here only after every use of it on the path from `plan` to a verdict has been read:
 # - tools/layer_policy.py: the tool loads it only because tools/check_lean_imports.py does (`from layer_policy import
-#   ROOT, lean_layer`). The tool reads one name of that module, `imports`, which reads a Lean header's text and neither
-#   name, so the import closure (`Reads.imported`, `plan`'s importers) is computed from the current tree alone;
-#   `lean_layer` is read only by that module's own layer check, which the tool never calls, and ROOT by its module-level
-#   LEDGER and sys.path line and that check. No other module the tool loads imports it. Its module level imports and
-#   assigns only: test_the_plan_only_argument_still_holds keeps all of this true.
+#   LEAN_COMMENT, ROOT, declaration_form, lean_layer`). The tool reads one name of that module, `imports`, which reads
+#   a Lean header's text and none of those names, so the import closure (`Reads.imported`, `plan`'s importers) is
+#   computed from the current tree alone; `lean_layer`, `LEAN_COMMENT` and `declaration_form` are read only by that
+#   module's own layer check, which the tool never calls, and ROOT by its module-level LEDGER and sys.path line and that
+#   check. No other module the tool loads imports it. Its module level imports and assigns only:
+#   test_the_plan_only_argument_still_holds keeps all of this true.
 PLAN_ONLY_TOOL = frozenset({"tools/layer_policy.py"})
 CLASS_TABLE = "tools/trust-classes.json"  # read by `plan`, unless a Lean check also names it outside a comment
 PLAN_INPUTS = PLAN_ONLY_TOOL | {CLASS_TABLE}
