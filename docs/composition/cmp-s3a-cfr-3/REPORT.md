@@ -34,7 +34,11 @@ not in Wire.lean. So Run.lean calls ElidedBytes.lean, and Wire.lean is unchanged
 - **Overlap.** Spec 1.1 (:55) makes the spans of one line pairwise disjoint, and `checkSpans` refuses an overlap
   (`ClauseSpan`, K6) before `elided_bytes` is computed. So the overlap fixture is a refusal fixture: two overlapping
   elisions of one line are answered `ClauseSpan: equal-access: [35, 45)`. Spans of different lines of one unit are
-  not constrained. Spec 6 sums "over its lines' elided spans", and so does `unitElided`.
+  not constrained. Spec 6 sums "over its lines' elided spans", and so does `unitElided`: two lines of one unit that
+  each elide `[30, 40)` report 20 for the unit, with no union across lines. The DRI signed this reading
+  (reviews/dri-decisions-20261110-cmp-s3a-cfr-3.md item 1). Its condition tests are the route test's cross-line case
+  in `test_right_clauses_k4_product_elided_bytes`, the `#guard elided sameUnit` in RunExamples.lean, the within-line
+  `ClauseSpan` refusal fixture, and seeded bug S5 below.
 - **Candidates.** This route refuses `readings@1`, so reading candidates are not counted. When cmp-s3-cfr-1c admits
   them, `entryElided` must read the candidates' lines too.
 
@@ -49,12 +53,14 @@ rights' rule and layer limits. Fixture: `test_right_clauses_elided_bytes_large_r
 `right_lines` units of it), each with one line eliding 500 one-byte spans, which is 16,000 spans. It answers 16,000,
 with 500 for each unit, in 0.13 s locally, within `HANG_TIMEOUT`. With more lines on one predicate, rights refuses
 `ResourceLimit: generated norm layer`. A probe before this fixture hit that refusal at 200 lines, and `ResourceLimit:
-rights` at 1,024 rights.
+rights` at 1,024 rights. The fixture also grows the same request to 200 lines, past that limit, and checks that it is
+answered `ResourceLimit: ...`, not with a count.
 
 ## Seeded bugs
 
 Each bug was planted, built, pinned (`checker-pins`) and run against the named tests, then restored, and the lock was
-reset. All of them are in Lean. The item changes no Python or Rust product code: its Python changes are tests and
+reset. All of them are in Lean. mutants.json lists them with one mutant per new trusted definition (S1 `lineElided`, S5
+`entryElided`, M6 `elidedTotal`, S3 `unitElided`); M6 was checked against the `#guard`s only. The item changes no Python or Rust product code: its Python changes are tests and
 the manifest's classification.
 
 | # | File | Bug | Fails |
@@ -63,6 +69,8 @@ the manifest's classification.
 | S2 | lean/VE/RightClauses/Plain.lean (`checkSpans`) | the disjointness test is dropped, so overlapping elided spans are counted twice | Examples.lean:121-123 and 127 (K6 `#guard`s); `test_right_clauses_k4_product_elided_bytes`: `[[30, 40], [35, 45]]` is answered `elided_bytes` 20 instead of refused |
 | S3 | lean/VE/RightClauses/ElidedBytes.lean (`unitElided`) | each line adds the document total, not its own entry | RunExamples.lean:124-125 (two units; the last lines of the build log); `test_right_clauses_k4_product_elided_bytes` (two units: 36 for each) |
 | S4 | lean/VE/RightClauses/Run.lean (`elaborateCase`) | `plained` carries the request document's bytes, which changes an existing field | `test_right_clauses_existing_answers_unchanged`, the DELTA row's negative test |
+| S5 | lean/VE/RightClauses/ElidedBytes.lean (`entryElided`) | removes duplicates across lines: a line whose spans equal an earlier line's of the same right counts 0 | RunExamples.lean:132 (`#guard elided sameUnit`, the only `#guard` that fails); `test_right_clauses_k4_product_elided_bytes` (the cross-line case gives 10 and `[10]`, not 20 and `[20]`) |
+| M6 | lean/VE/RightClauses/ElidedBytes.lean (`elidedTotal`) | `max n e.2` instead of `n + e.2`: the total is the largest line's count | RunExamples.lean:123 and 132 |
 
 ## Trust
 
