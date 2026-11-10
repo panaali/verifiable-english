@@ -846,6 +846,7 @@
         "ResponseShape.RightsChecks.scopeCase",
         "ResponseShape.RightsChecks.situation",
         "ResponseShape.RightsChecks.spanned",
+        "ResponseShape.RightsChecks.texts",
         "ResponseShape.RightsChecks.weighed"
       ]
     },
