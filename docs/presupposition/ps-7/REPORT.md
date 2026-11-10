@@ -22,6 +22,7 @@ b018bb556, a70be645e, 7431d107c, c8a84cace, and the docs and comment commits aft
   `lean/VE/Presupposition/Events*`, `Frame.lean` or `docs/presupposition/ps-1/REPORT.md` (`git diff --name-only main...<b>`).
   Shared files: `lean/VE.lean` (union-merged import list), `tools/trust-classes.json` and `docs/trust-baseline.json`
   (added entries), and the generated inventories.
+- **Not run by me:** the full release gate. The chain runs it on the final HEAD.
 - **ps-2ab** (`admit`) is not on main (`lean/VE/Presupposition/Admit.lean` absent at a7659c5f1), so P9 and P10 are at
   formula level only.
 
@@ -131,8 +132,10 @@ with the per-file counts in its reason. The ties-pass row is in /home/seyran/cod
 
 ## Tests
 
-Selected tests: the final run is on the committed tree (`MAC_PYTEST_NO_DEFER=1 mac-pytest.sh --select`); its result is
-recorded below.
+Selected tests on the committed tree d91f40626 (`MAC_PYTEST_NO_DEFER=1 mac-pytest.sh --select -- --base a7659c5f1 --run`):
+exit 0, run on GitHub Actions in 5 shards (ps-7-d91f4062-t296721): 24 + 26 + 25 + 25 + 16 = 116 units, all passed, 0
+failed. The Lean condition guards (Events/Examples.lean and the existing Presupposition and Events Examples) are
+checked by the full `lake build` (exit 0). After that run, only this report changed.
 
 ## Spec re-read
 
