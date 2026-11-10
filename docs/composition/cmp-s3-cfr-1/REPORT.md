@@ -1,12 +1,10 @@
 # cmp-s3-cfr-1: the right-clauses wire, the `clauses-elaborate` mode and the registration (cmp-s3b part 1)
 
-Status: deliverables (1) to (5) built. 8.5's `decode_unstructured` and `elaborate_plain` are proved, with no `sorry`.
-No DRI signature is reserved. Decisions read: reviews/dri-decisions-20261104-cmp-s3.md (Q1 A1, Q2),
-dri-decisions-20261109-lp0801.md item 1, dri-decisions-20261109-l1-c-regrade-rights.md item 3,
-dri-decisions-20261109-adv0838.md item 3, dri-decisions-20261109-adv0947.md item 1,
-dri-decisions-20261031-spec-right-clauses.md item 2, and this item's own size rulings
-(dri-decisions-20261109-cmp-s3-cfr-1-size.md item 1, dri-decisions-20261109-cmp-s3-cfr-1-proofsize.md item 1).
-HEAD: the branch tip (the chain's gate records the commit it ran on in gate-result.json).
+Status: deliverables (1)-(5) built; 8.5's `decode_unstructured` and `elaborate_plain` proved, no `sorry`. No signature reserved.
+HEAD: last code commit is the one before this REPORT's final edit (the chain's gate-result.json records the HEAD it ran on).
+Open: DRI confirmation asked (inbox 20261110T061426Z) that 37 rights-list environment answers moving to their no-profile answer are
+covered by DELTA row 1, and of `PlainOnWire`'s form. Size: about 1,660 counted lines plus 1,409 exempt proof lines (section "Size").
+Signatures used: cmp-s3 Q1 A1 (`hd`), 10-31 item 2 with 11-09 cmp-s3-cfr-1 items 2 and 4 (DELTA row 1), R16 (trust).
 
 ## Deliverables
 
@@ -44,19 +42,30 @@ Not delivered here:
   relay must match both.
 - **Order (4.1 step 2, 7).** Units in document order. In each unit, every line object goes through `decodeLine` on
   the object without the three keys (this gives `<n>`), then `elided`, `clauses` (each clause in order) and
-  `relation`; then rights' own `addUnit` runs on the unit without its span and keys.
+  `relation`; then rights' own `addUnit` runs on the unit without its span and keys. So the head's line texts come
+  before rights' unit texts: a `right_lines` unit of an unknown right whose line has no `elided` gets
+  `InvalidInput: elided missing on rule equal-access`, not `UnknownRight` (a RunExamples `#guard` pins this).
 - **Cost.** A line object is decoded twice by the head (`headLine`, `addUnit`) and once more by the rights decoder on
   the plained document. `plainLineJson`'s `D.lines.find?` makes elaboration quadratic in the number of named lines.
   Units are capped at 1,024; lines per unit are not. cmp-s3-cfr-1b's large-document fixture (W1) must cover lines per
-  unit, not only units.
-- **Environments.** No refusal text moves. `right-clauses@0` beside `acts@0` stays refused by the base rows, as before
-  (Standalone keeps that gate's whole-table read for `readings@1` only). With `rights@0`, the environment mode now
-  accepts the list, where the base refused it as an unregistered profile, and answers as without the profile but for
-  the echoed list and the identity. The model mode still refuses the name (DELTA row 1;
-  test_right_clauses_environment_and_model_answer_as_without_the_profile). Python's model view drops the profile. Probe: all 154 lists `relational-fol@0, right-clauses@0` with up to two
-  more environment profiles answer the same text on this build and on the base build (0 differences: docs/composition/cmp-s3-cfr-1/environment-texts.json,
-  written by environment_texts_probe.py in both worktrees). Before the acts gate was kept on the base rows, 15 `acts@0`
-  lists differed; that was the self-review's B4.
+  unit, not only units. Run.lean also decodes the environment twice (`decodeClauseDoc`, then `decodeRightsSource` on
+  the plained document) and reads `profilesOf` twice. Each is bounded by the environment's size; cmp-s3-cfr-1b's W1
+  fixture measures it.
+- **Environments.** `right-clauses@0` beside `acts@0` stays refused by the base rows, as before (Standalone keeps that
+  gate's whole-table read for `readings@1` only). With `rights@0`, the environment mode answers as for the same list
+  without the profile, but for the echoed list and the identity. The base refused every such list as an unregistered
+  profile. The model mode still refuses the name; Python's model view drops the profile, and the model path answers
+  the same with and without it (DELTA row 1; test_right_clauses_environment_and_model_answer_as_without_the_profile).
+  Probe (environment_texts_probe.py, run at the base build and at this item's; docs/composition/cmp-s3-cfr-1/environment-texts.json):
+  - All 154 lists `relational-fol@0, right-clauses@0` with up to two more environment profiles: 0 texts move.
+  - All 106 lists norms, relational-fol, right-clauses, rights and soft-norms with up to two more profiles, on 9.1's
+    environment: 37 move. 16 become `ok`. 21 become `UnsupportedProfile: the norms route admits FOL documents only`
+    (with closure@0, nary@0 or order@0). Each of the 37 equals the same list's answer without `right-clauses@0`.
+    The other 69 keep the base text, which refuses the profile by name.
+  The first self-review's probe held only the 154 lists. This item's second self-review found the 21 moved refusals
+  (its A). They are DELTA row 1's condition ("answers exactly as the same request without it"). The DRI was asked to
+  confirm this (inbox 20261110T061426Z). Before the acts gate was kept on the base rows, 15 `acts@0` lists differed
+  (the first self-review's B4).
 - **What the proof changed in this item's code.** Members are rewritten with `Std.TreeMap.Raw.map` (`mapMember`)
   rather than `setObjVal!`, which keeps every other member and the tree's shape. `lineWith` rebuilds the `norm` and
   `liberty` objects, which the soft decoder reads through their member lists. A parsed object is its own
@@ -74,7 +83,9 @@ Not delivered here:
 | Plained bytes changed for an unstructured document (`elided` kept in the plained line) | Lean, lean/VE/RightClauses/Wire.lean `plainLineJson` | tests/test_right_clauses.py::test_right_clauses_k1_service_identity (the bytes assertion, line 111) |
 | No model reduction for `right-clauses@0` | Python, ve/profiles.py `MODEL_REDUCTIONS` | tests/test_model_environment.py::test_every_registered_profile_has_one_model_reduction |
 | No deadline for `clauses-elaborate` | Python, ve/backends/lean_service.py `DEADLINES` | tests/test_lean_service.py::test_the_deadline_keys_are_the_handshakes_modes |
-| DELTA's negative test: a profile-off rights record changes (a rights refusal text edited) | Lean, lean/VE/Rights/Run.lean (frozen; planted for this run only and restored) | tests/test_right_clauses.py::test_right_clauses_profile_off_regression (the saved-digest assertion, line 184) |
+| DELTA's negative test, profile off: a rights record changes (`runCaseReported` appends `!` to every refusal) | Lean, lean/VE/Rights/Run.lean (frozen; planted for this run only and restored) | tests/test_right_clauses.py::test_right_clauses_profile_off_evidence. Planted; ve_service built; profile_off_evidence.py rerun into profile-off.json as `head_answers` (6 of 28 answers move); the test fails ("At index 0 diff"); file and source restored |
+| DELTA's negative test, environments: the rights decoder reads the frame with the profile (`withoutClauses` dropped) | Lean, lean/VE/Service/Standalone.lean `validatedLayerEnvironment` | tests/test_right_clauses.py::test_right_clauses_environment_texts_kept |
+| The composed gate (document layers) reads the base rows | Lean, lean/VE/Service/Standalone.lean `validatedComposedEnvironment` | tests/test_right_clauses.py::test_right_clauses_environment_texts_kept (after the `documents@1, judgments@0` fixture; the probe lists alone missed it) |
 
 Each was planted alone by /tmp's seed script: plant, `lake build ve_service`, run the named test with the build
 pinned in a temporary lock, restore, rebuild. The Python ones needed no build. mutants.json lists them. One mutant per new trusted definition: trust mutants, below.
@@ -86,8 +97,17 @@ docs/composition/cmp-s3-cfr-1/trust-mutants-allow.json --rescore <the previous J
 docs/composition/cmp-s3-cfr-1/trust-mutants.json` exits 0: "206 KILLED, 0 SURVIVOR, 0 UNKNOWN, 10 INVALID, 57
 ALLOWED, 0 NOT RUN" over 24 definitions and 273 mutants. It ran on the VM, because ve-mac-1 was unreachable.
 
-- Every D[V] and G[V] definition has a killed mutant, except two. `unitsOf` is read only inside the S predicate
-  `NoClauseKeys`. `VE.Service.Mode`'s only mutant is a constructor drop, which does not elaborate.
+- The sweep did not reach every new or changed trusted definition. It made no killed mutant for `rebuild`,
+  `decodeRelationOpt`, `ResponseShape.Skeletons.clausesElaborate`, `VE.Service.Mode.name`, `VE.Service.runMode` or
+  `validatedComposedEnvironment`. `unitsOf` is read only inside the S predicate `NoClauseKeys`.
+  `VE.Service.Mode`'s only mutant is a constructor drop, which does not elaborate.
+- Each of those six has a hand mutant, killed (mutants.json):
+  - `decodeRelationOpt`: the K2 `#guard` (RunExamples.lean:45).
+  - `rebuild`: test_right_clauses_k_fixtures_service.
+  - `Mode.name`: the RegistryExamples.lean `#guard`.
+  - The skeleton: Skeletons.lean's own `#guard`.
+  - `runMode`: `runMode_clausesElaborate`, by `rfl`.
+  - `validatedComposedEnvironment`: test_right_clauses_environment_texts_kept.
 - The killing checks are the `#guard`s of lean/VE/RightClauses/RunExamples.lean (9.1's documents and section 7's
   texts), Compose/Examples.lean and RegistryExamples.lean.
 - The first two sweeps' survivors that a check could kill now have fixtures in RunExamples.lean: a clause without
@@ -121,12 +141,17 @@ Exempt proof lines, measured with `git diff --numstat` against the merge base: W
 dri-decisions-20261109-cmp-s3-cfr-1-size.md item 1. The DRI accepted them as delivered: exempt, with no cut and no
 compaction (reviews/dri-decisions-20261109-cmp-s3-cfr-1-proofsize.md item 1).
 
-Counted hand-written lines:
-- Product, about 410: Wire.lean 230, Run.lean 37, the response shape and encoder 50, Dispatch 21, Standalone 15,
-  Registry/Protocol/RegistryExamples 17, Compose/Examples 4, VE.lean 5, Python 5.
-- Tests, evidence and side tables: tests/test_right_clauses.py 202, other test and corpus edits 28, relay-gate rows
-  and allow-list 23, the evidence script 20, tools/trust-classes.json 168.
-- Docs: RIGHT-CLAUSES.md 23, this REPORT and DELTA.md.
+Counted hand-written lines, from `git diff --numstat` against the merge base (2026-11-10), about 1,660 in all:
+- Product, 418: Wire.lean 230, Run.lean 40, response shape and encoder 50, assurance manifest 26, RIGHT-CLAUSES.md 21,
+  Dispatch 16, Standalone 6, VE.lean 6, Registry/Protocol/Schemas 11, Python 5.
+- Tests, 530: tests/test_right_clauses.py 278, RunExamples.lean 143, tests/data/right-clauses-environment.json 71,
+  other test and corpus edits 38.
+- Side tables, 209: tools/trust-classes.json 182, relay-gate allow 20, lean-mode deps 6, layer policy 1.
+- Docs and evidence, 500: this REPORT 212, mutants.json 159, trust-mutants-allow.json 46, the two evidence scripts 59,
+  DELTA.md 20, other docs 4.
+This is far past the ~600 line. The earlier figure, about 410, counted product lines only. The proof exemption covers
+the three proof modules alone. Most of the overrun is fixtures, mutants and evidence that the reviews and R16 asked
+for. The DRI was told the full figure.
 
 Generated, not counted: statements.txt, predicates.txt, declarations.txt, Audit, the schemas, profile_table.json, the
 binding answers and profile-off.json (the evidence script's output).
@@ -143,6 +168,11 @@ since that file was recorded). A merge with main should regenerate the file rath
 
 - `decode_unstructured` against docs/spec/right-clauses.md:528-533: word for word (names qualified as in the file).
 - `elaborate_plain` against :534-541: word for word, plus `(hd : PlainOnWire D)` after `hp` (cmp-s3 Q1 A1).
+  `PlainOnWire` states Q1 A1's "within maxDepth / maxNodes as the wire counts them" as "W1's `budgetFormula` reads
+  the plain guard's encoding back". That is stronger than a bound on depth and nodes alone, because it also asks
+  the decoder to return the same formula. No lemma derives it from the bounds. To show it is not vacuous,
+  `plainOnWireB` (sound by `plainOnWire_of_check`, WireTheorems.lean) holds on K2 and K4 and fails on the depth-64
+  counterexample (RunExamples.lean `#guard`s). The DRI was asked to confirm this form (inbox 20261110T061426Z).
 - 8.5's notes :543-548: `stripElided` removes `elided` (and the unit `span`, see "The wire"); `stripProfile` removes
   `right-clauses@0` from the profile list; `NoClauseKeys`, `NoReadingSets` and `elaborateJson` are as the notes
   describe. `elaborateJson` writes each structured line's guard as `plainGuard`, and candidates are cmp-s3-cfr-1c's.
@@ -161,10 +191,25 @@ imports of Run.lean and the proof modules hold no `VE.Readings.*` or `VE.Scope.*
 rows for the mode: it holds the case-kind route modes (`ROUTE_MODES`), and `clauses-elaborate` has no kinds, like
 `words` and `english.command`. Its fixtures are tests/test_right_clauses.py and the relay-gate rows.
 
+## 9.3's fixture set
+
+Spec 9.3 names "rights' seventeen fixture shapes". The profile-off evidence uses the 28 rights rows of
+tests/data/route-cases.jsonl. The profile-on test uses the 21 of those whose document is an array under `rights@0`.
+These rows are not mapped one to one onto rights.md 10's seventeen shapes, so this item claims only the recorded
+rows. The mapping is left to cmp-s3-cfr-1b, whose task holds the remaining 9.x fixtures.
+
 ## Pilot bytes
 
 None are expected from this item: no relay sends a document to the mode yet (cmp-s3-cfr-1b), and with the profile
 off nothing changes. The UDHR figure of spec 9.3 is cmp-s3-cfr-1b's estimate.
+
+## Decisions read
+
+reviews/dri-decisions-20261104-cmp-s3.md (Q1 A1, Q2), dri-decisions-20261109-lp0801.md item 1,
+dri-decisions-20261109-l1-c-regrade-rights.md item 3, dri-decisions-20261109-adv0838.md item 3,
+dri-decisions-20261109-adv0947.md item 1, dri-decisions-20261031-spec-right-clauses.md item 2,
+dri-decisions-20261109-cmp-s3-cfr-1.md items 1-4, and the size rulings dri-decisions-20261109-cmp-s3-cfr-1-size.md and
+-proofsize.md item 1.
 
 ## Next items
 
@@ -179,16 +224,20 @@ cmp-s3-cfr-1b (relay, differential, fixtures, W1, `clauseSlot_wellFormed`) and c
    cmp-s3-cfr-1b's binding.
 2. Deliverables: PASS. The table above covers (1)-(5). Reading candidates are cmp-s3-cfr-1c, asked of the DRI
    (inbox 20261109T170709Z) before any cut. `elided_bytes` is cmp-s3a-cfr-3's by the task.
-3. Tests can fail: PASS. Six seeded bugs, each killed by a named test (table above; mutants.json). Trust mutants:
-   206 killed, 0 survivors, exit 0 (trust-mutants.json, trust-mutants-allow.json; section "Trust mutants").
+3. Tests can fail: PASS. Eight seeded bugs in the table and six hand mutants, each killed by a named test or `#guard`
+   (mutants.json). Trust mutants: 206 killed, 0 survivors, exit 0 (trust-mutants.json, trust-mutants-allow.json;
+   section "Trust mutants").
 4. Python/Lean agree: N.A. No Python decoder (Lean only); the differential is cmp-s3-cfr-1b's.
 5. R8 binding: N.A. No relay yet (cmp-s3-cfr-1b). The schema is closed and typed, and the relay gate passes.
 6. Gate evidence matches HEAD: PASS. The chain runs the gate on the final HEAD. The 9.3 evidence is saved
    (profile-off.json), and no test reads live git.
-7. No unsigned item: PASS. The DELTA rows cite the 10-31 DRI signature and R16; the statement change cites cmp-s3 Q1.
-   The size overrun is ruled (proofsize item 1).
+7. No unsigned item: PASS with two confirmations asked. The DELTA row cites the 10-31 DRI signature with 11-09 item 4.
+   Trust cites R16. The statement change cites cmp-s3 Q1. The DRI was asked to confirm the 21 moved refusals and
+   `PlainOnWire`'s form. The proof overrun is ruled (proofsize item 1). The counted-line overrun (about 1,660) is
+   reported to the DRI, not ruled.
 8. DELTA: PASS. Profile off: test_right_clauses_profile_off_evidence. Environment texts: the probe and
-   test_right_clauses_environment_texts_kept (0 of 154 lists differ). Profile on: test_right_clauses_profile_on_regression.
+   test_right_clauses_environment_texts_kept (0 of 154 lists move; 37 of 106 rights lists move, each to its answer
+   without the profile). Profile on: test_right_clauses_profile_on_regression.
 9. Test selection: PASS. tests/test_right_clauses.py imports the service corpus and the fixtures. The selected run
    (`mac-pytest.sh --select`, on the VM since ve-mac-1 was unreachable) on committed 2d2b08d8c (tree 18ecc4d4b1) recorded 557 units
    with 2 failing: `test_assurance_manifest::test_every_json_handling_lean_file_is_classified` (fixed: Wire.lean is
@@ -210,3 +259,7 @@ cmp-s3-cfr-1b (relay, differential, fixtures, W1, `clauseSlot_wellFormed`) and c
 15. Overclaim: PASS. Universal words in REPORT/DELTA name their probe or test. No silent cut: candidates asked.
     Every new check can fail: seeded bugs and trust mutants. Limits charged before work: units before decoding;
     clause formulas by W1 as decoded.
+
+SELF-REVIEW: 1 A, 5 B, 8 C; fixed 12. The A and all five B are fixed (A: evidence over the rights lists, DELTA
+corrected, DRI asked). Two C are left: the corpus importing test_right_clauses (a cycle that works today), and
+binding-answers.jsonl.gz's rows of other modes, which a merge regenerates.
