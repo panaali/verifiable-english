@@ -11,6 +11,8 @@ import json, os, re, signal, subprocess, sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
+sys.path.insert(0, str(ROOT / "tools"))
+import nested_pytest  # noqa: E402  (the one pytest command builder)
 IX, GR, ME, RD, RUN, TB, WI, NW = (f"lean/VE/{m}.lean" for m in (
     "Acts/Index", "Acts/Grammar", "Acts/Meaning", "Acts/Readings", "Acts/Run", "Grammar/Table", "Acts/Wire", "Norms/Wire"))
 DEC = ["VE.Acts.DecodeExamples", "VE.Service.ActsExamples"]
@@ -76,8 +78,8 @@ PYTHON = [
 ]
 
 
-def run(cmd):
-    p = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True)
+def run(cmd, env=None):
+    p = subprocess.run(cmd, cwd=ROOT, env=env, capture_output=True, text=True)
     return p.returncode, p.stdout + p.stderr
 
 
@@ -91,7 +93,8 @@ def service():
     saved = lock.read_text()
     try:
         run(["uv", "run", "python", "tools/regen_generated.py", "--write", "--only", "checker-pins"])
-        rc, out = run(["uv", "run", "python", "-m", "pytest", "-q", "-p", "no:cacheprovider", F1])
+        rc, out = run(nested_pytest.command(["-q", "-p", "no:cacheprovider", F1], python=("uv", "run", "python")),
+                      env=nested_pytest.environment(os.environ))
     finally:
         lock.write_text(saved)
     failed = sorted(set(re.findall(r"^FAILED (.+?)(?: - .*)?$", out, re.M)))
