@@ -1,0 +1,59 @@
+{
+ "recorded_answers_equal_to_rerun": {
+  "base": {
+   "answered_in_recording": 1,
+   "equal_to_rerun": 1
+  },
+  "head": {
+   "answered_in_recording": 3,
+   "equal_to_rerun": 3
+  }
+ },
+ "rows": [
+  {
+   "case": "pilot/cc-20261103T0600Z:usecases/claude-constitution-pilot/run-20261103T0600Z/readings/nd-all.ve.md",
+   "source_sha256": "2112e080b2a5debd8a16bf15af121edaf772aa1a",
+   "timeout": 600,
+   "answered": true,
+   "same": true,
+   "base_seconds": 87,
+   "head_seconds": 86,
+   "base_outcome_sha256": "d262eaafeebd8bd5d735ca873204a9265faf8518e698baaef350797e8edc0fe2",
+   "head_outcome_sha256": "d262eaafeebd8bd5d735ca873204a9265faf8518e698baaef350797e8edc0fe2"
+  },
+  {
+   "case": "pilot/cc-20261103T1800Z:usecases/claude-constitution-pilot/run-20261103T1800Z/scratch/acts-probe-ql9kkj9_/nd-all-plain.ve.md",
+   "source_sha256": "15fa3c5668857ba3da0c41b23385941d1d321b9f",
+   "timeout": 600,
+   "answered": true,
+   "same": true,
+   "base_seconds": 82,
+   "head_seconds": 80,
+   "base_outcome_sha256": "eaadb6fd2da69ca86755313d38aa39b93e7b428deb3eeb2199f5050e8f668e2b",
+   "head_outcome_sha256": "eaadb6fd2da69ca86755313d38aa39b93e7b428deb3eeb2199f5050e8f668e2b"
+  },
+  {
+   "case": "pilot/cc-20261103T1800Z:usecases/claude-constitution-pilot/run-20261103T1800Z/scratch/acts-probe-va_0d685/nd-all-plain.ve.md",
+   "source_sha256": "833ff97fd0e2b932c52754e8fb964a6b2f19441c",
+   "timeout": 600,
+   "answered": true,
+   "same": true,
+   "base_seconds": 81,
+   "head_seconds": 85,
+   "base_outcome_sha256": "8e7a8fd36560c3865a3089042901c9dc5272a5c355467176bf3f60b3a64ef625",
+   "head_outcome_sha256": "8e7a8fd36560c3865a3089042901c9dc5272a5c355467176bf3f60b3a64ef625"
+  },
+  {
+   "case": "pilot/udhr-20261012T1800Z:usecases/udhr-pilot/run-20261012T1800Z/experiment-whole/translation-whole.ve.md",
+   "source_sha256": "7fd6d251519d2ad3ccff1d7c4ff094eefbd72650",
+   "timeout": 600,
+   "answered": true,
+   "same": true,
+   "base_seconds": 199,
+   "head_seconds": 200,
+   "base_outcome_sha256": "3d676f75962517b375d3aca3673e5d4f99474de7b4369518596bd6ec06827280",
+   "head_outcome_sha256": "3d676f75962517b375d3aca3673e5d4f99474de7b4369518596bd6ec06827280"
+  }
+ ],
+ "tool": "uv run python docs/arch/AR-20/pilot_rerun.py --base-root <base worktree at a3454b6ba> --head-root <this checkout> --case <the 4 records whose outcomes differed in the concurrent recording: a one-sided Rust accelerator time-out, 1 on the head side and 3 on the base side> --out <file>; the full outcomes stay outside the tree, each side's outcome here as the SHA-256 of its compact sorted JSON. They replace these records in both recordings before `python -m tools.evidence ab` (ab.json names the resulting recordings)."
+}

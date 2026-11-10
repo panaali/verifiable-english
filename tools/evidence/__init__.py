@@ -17,7 +17,10 @@ inside the repository and committed (arch-20261010-2 review F3).
 
 Every A/B record names both commits it compared, taken from the two checkouts (`checkouts`), never typed:
 `base_problems` refuses a record without its base, a head compared with itself (the lf-0 "compares nothing"
-class) and, in a batch, a base other than the scope's merge base (review F2).
+class) and, in a batch, a base other than the scope's merge base (review F2). Where only recordings remain
+(`ab`, whose recordings do not carry their commit), each commit given on the command line goes through
+`commit`, which saves the full id Git resolves and refuses one that names no commit of the repository (the
+AR-23 review F1 class: a hand-typed id whose first twelve characters were the merge base's and the rest invented).
 """
 from __future__ import annotations
 
@@ -119,6 +122,19 @@ def checkout_commit(root: Path) -> str:
         return git("rev-parse", "HEAD", cwd=root).strip()
     except (OSError, subprocess.CalledProcessError) as exc:
         raise EvidenceError(f"{root} is not a Git checkout: {exc}") from None
+
+
+def commit(revision: str, cwd: Path = ROOT) -> str:
+    """The full id of the commit `revision` names in the repository at `cwd` (a full id, an abbreviation Git
+    resolves to one commit, or a name such as `HEAD`); a revision that names no commit there, or names a blob or
+    a tree, is an error, so no record saves a commit id the repository lacks."""
+    if not isinstance(revision, str) or not revision.strip() or revision.startswith("-"):
+        raise EvidenceError(f"{revision!r} is not a commit")
+    try:
+        return git("rev-parse", "--verify", "--quiet", "--end-of-options", f"{revision}^{{commit}}",
+                   cwd=cwd).strip()
+    except (OSError, subprocess.CalledProcessError):
+        raise EvidenceError(f"{revision} names no commit in the repository at {cwd}") from None
 
 
 def checkouts(base_root: Path, head_root: Path) -> tuple[str, str]:

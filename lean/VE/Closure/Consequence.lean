@@ -1,11 +1,18 @@
 import VE.Closure.Finite
+import VE.Core.Consequence
 
 namespace VE.Closure
 universe u
 
+/-- Closure consequence is Core's consequence on the embedding. -/
 def Entails (E : Environment) (premises : List Formula) (conclusion : Formula) : Prop :=
-  ∀ S : Structure.{u}, S.Admissible E →
-    (∀ a ∈ premises, a.denote S []) → conclusion.denote S []
+  VE.Core.Entails.{u} E (premises.map Formula.toCore) conclusion.toCore
+
+/-- Closure consequence read in closure's own syntax. -/
+theorem entails_iff (E : Environment) (premises : List Formula) (conclusion : Formula) :
+    Entails.{u} E premises conclusion ↔ ∀ S : Structure.{u}, S.Admissible E →
+      (∀ a ∈ premises, a.denote S []) → conclusion.denote S [] := by
+  simp [Entails, VE.Core.Entails, Formula.denote]
 
 def countermodelCheck {α : Type u} [DecidableEq α] (M : FiniteModel α)
     (premises : List Formula) (conclusion : Formula) : Bool :=
@@ -23,6 +30,6 @@ theorem countermodel_sound {α : Type u} [DecidableEq α] (M : FiniteModel α)
     ¬ Entails.{u} E premises conclusion := by
   obtain ⟨hp, hc⟩ := (countermodelCheck_iff M premises conclusion).mp h
   intro he
-  exact hc (he M.asStructure hm hp)
+  exact hc ((entails_iff E premises conclusion).mp he M.asStructure hm hp)
 
 end VE.Closure
