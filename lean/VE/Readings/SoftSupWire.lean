@@ -14,9 +14,10 @@ own terms through sc-10b's three superposition theorems, which they apply and do
 
 `maxSdCheckWork` is measured (14.11, DRI decision 2026-11-09 item 1, docs/rd-9/sc-11/w13-cpu.md): about 29 µs of
 Lean CPU per unit of `sdCheckWork` on W-13's shape, so 32,768 units keep the route check under R4's 1 s on that
-shape. `sdSuperposable` (`superposable`, `WellFormedU (supU N)`) is read before the work limit and not charged:
-10.98 s and 94-100 s measured on the 767- and 3,071-node guard documents; row sc-11w bounds it before sc-11b (DRI
-2026-11-09 sc-11-3 item 2). -/
+shape. `sdSuperposable` reads the size charge first (`sdSizeCharge N ≤ maxSdSizeCharge`, 14.11, DRI 2026-11-10
+sc-11w item 1), so `superposable N.D` and `WellFormedU (supU N)` are charged before they are built; `sdCheckWork` is
+evaluated without building the premises it counts (`sdCheckWork_eq_fast`). The 10.98 s and 94-100 s of the 767- and
+3,071-node guard documents were `sdCheckWork`'s premise build (docs/rd-9/sc-11w/cpu.md). -/
 namespace VE.Readings.Wire
 open VE.Readings
 open VE.Bridge (Entity)
@@ -24,7 +25,37 @@ open VE.Norms (targets)
 open VE.NormDefaults (fill)
 universe u
 
-def sdSuperposable (N : NDoc) : Bool := superposable N.D && VE.NormDefaults.WellFormedU (supU N)
+/-- One rule's AST nodes: its guard, carve-outs and exception conditions. -/
+def sdRuleCharge (M : VE.SoftNorms.SoftNode) : Nat :=
+  (((M.guard :: M.carveOuts) ++ (M.exception.map fun e => e.sufficient ++ e.necessary).getD []).map
+    VE.Bridge.formulaNodes).sum
+/-- A content's rules and AST nodes: a norm one rule, a right's or a line set's rules (and the right's guard), an
+assertion its formula, a limitation one rule of one node per condition and one more. -/
+def sdContentCharge : VE.Compose.Content → Nat × Nat
+  | .assertion φ => (0, VE.Bridge.formulaNodes φ)
+  | .norm M => (1, sdRuleCharge M)
+  | .right R => let (r, n) := lines R.lines; (r, n + VE.Bridge.formulaNodes R.guard)
+  | .rightLines _ ls => lines ls
+  | .limitation L => (1, L.conditions.length + 1)
+where lines (ls : List VE.Rights.SourceLine) : Nat × Nat :=
+  let ns := ls.flatMap fun S => [S.norm, S.liberty, S.recognition].filterMap id
+  (ns.length, (ns.map sdRuleCharge).sum)
+
+/-- 14.11 (sc-11w): the source document's rules times its AST nodes (the frame's rules, rights and limitations, every
+fixed content and every candidate's), read from `N.D` before `superposable` builds `sup N.D` and before `supU N`.
+Measured: within `maxSdSizeCharge`, `routeSD`'s reads before the work limit end within R4 (docs/rd-9/sc-11w/cpu.md). -/
+def sdSizeCharge (N : NDoc) : Nat :=
+  let F := N.D.frame
+  let cs := (F.soft.T.nodes.map (sdContentCharge ∘ .norm)) ++ (F.rs.map (sdContentCharge ∘ .right)) ++
+    (F.limits.map (sdContentCharge ∘ .limitation)) ++ N.D.items.flatMap fun it => match it with
+      | .fixed _ c _ => [sdContentCharge c]
+      | .bar _ _ => [(1, 1)]
+      | .set R => R.candidates.filterMap (·.content.map sdContentCharge)
+  (cs.map (·.1)).sum * (cs.map (·.2)).sum
+def maxSdSizeCharge : Nat := 16384
+
+def sdSuperposable (N : NDoc) : Bool :=
+  decide (sdSizeCharge N ≤ maxSdSizeCharge) && superposable N.D && VE.NormDefaults.WellFormedU (supU N)
 
 /-- 14.11: the compatible choices times the superposed premises and rule nodes each check reads. -/
 def maxSdCheckWork : Nat := 32768
@@ -124,7 +155,7 @@ theorem SupReplaySD.parts (x : SupReplaySD) :
       sdChecked x.r.b.a.re x.r.N = true := by
   obtain ⟨-, hsp, hck⟩ := (routeSD_superposed_iff _ _).mp x.route
   simp only [sdSuperposable, Bool.and_eq_true] at hsp
-  exact ⟨hsp.1, hsp.2, hck⟩
+  exact ⟨hsp.1.2, hsp.2, hck⟩
 
 theorem readings_wire_sd_choices (x : SupReplaySD) :
     (∃ c, Compatible x.r.N.D c) ∧ ∀ c, Compatible x.r.N.D c →

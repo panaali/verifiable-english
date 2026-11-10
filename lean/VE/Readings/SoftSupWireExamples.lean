@@ -12,7 +12,7 @@ open Lean VE.Readings VE.Readings.Wire
 open VE.Readings.SoftSeparateExamples (NSD1 NSD2 NSD4 NSDq NC9 frame4 mustX needNotX D4)
 open VE.Readings.SoftSupExamples (NSD4a NSD4c pullFM satAll m4 m1)
 open VE.Readings.Examples (docK cand binarySet M8)
-open VE.Rights.Examples (strictNode defaultNode)
+open VE.Rights.Examples (strictNode defaultNode arrestClaim l29 barRule)
 
 def supLabels (N : NDoc) : List String := (softXL N (sup N.D).1).map (·.1)
 
@@ -172,5 +172,80 @@ def guarded (k : Nat) : Item := .fixed s!"g{k}" (.norm (strictNode s!"guarded-{k
   (["x_required", "x_permitted", "y_permitted"][k % 3]!) true (wide 4))) []
 def NSDheavy : NDoc := ⟨{ (NSDbig 6).D with items := (NSDbig 6).D.items ++ (List.range 10).map guarded }, ["y_permitted"]⟩
 #guard routeFacts NSDheavy == "enumerated true 64 34752 enumerated"
+
+/-! ## sc-11w (14.11): the size charge, read first
+
+`sdSuperposable` reads `sdSizeCharge N ≤ maxSdSizeCharge` before `superposable` (DRI 2026-11-10 sc-11w item 1). The
+wide-guard documents of docs/rd-9/sc-11/w13-cpu.md, each `routeSD` within 1 s Lean CPU (docs/rd-9/sc-11w/cpu.md). -/
+
+def wideGuard191 : NDoc := NSDbig 8 (wide 6)
+def wideGuard767 : NDoc := NSDbig 8 (wide 8)
+def wideGuard3071 : NDoc := NSDbig 6 (wide 10)
+
+/-- `routeFacts` with the charge and the two reads it guards: `superposable N.D`, `WellFormedU (supU N)`. -/
+def chargeFacts (N : NDoc) : String :=
+  s!"{sdSizeCharge N} {superposable N.D} {VE.NormDefaults.WellFormedU (supU N)} {routeFacts N}"
+
+-- the 191-node guard: within the charge, enumerated by work; the 767-node one: within, `superposable` false
+#guard VE.Bridge.formulaNodes (wide 6) == 191 && chargeFacts wideGuard191 ==
+  "3927 true true enumerated true 256 73472 enumerated"
+#guard VE.Bridge.formulaNodes (wide 8) == 767 && chargeFacts wideGuard767 ==
+  "13719 false true enumerated false 256 220928 enumerated"
+-- the 3,071-node guard: over the charge, so neither `superposable` nor `supU N` is read
+#guard VE.Bridge.formulaNodes (wide 10) == 3071 && sdSizeCharge wideGuard3071 == 40313 &&
+  routeFacts wideGuard3071 == "enumerated false 64 201152 enumerated"
+
+/-- A formula of exactly `n ≥ 1` AST nodes, balanced (depth logarithmic in `n`). -/
+def sized : Nat → VE.Formula
+  | 0 | 1 => .top
+  | 2 => .unary "c" (.var 0)
+  | n + 3 => .and (sized ((n + 2) / 2)) (sized (n + 2 - (n + 2) / 2))
+decreasing_by all_goals omega
+/-- `NSDbig 2` and `m` guarded fixed rules of `n` nodes, the first `r` of `n + 1`: `(5 + m) * (11 + m * n + r)`. -/
+def NSDsized (m n r : Nat) : NDoc := ⟨{ (NSDbig 2).D with items := (NSDbig 2).D.items ++ (List.range m).map (fun k =>
+  .fixed s!"g{k}" (.norm (strictNode s!"guarded-{k}" (["x_required", "x_permitted", "y_permitted"][k % 3]!) true
+    (sized (if k < r then n + 1 else n)))) []) }, ["y_permitted"]⟩
+def atCharge : NDoc := NSDsized 11 92 1
+def overCharge : NDoc := NSDsized 24 23 2
+
+-- at the limit (16 rules, 1024 nodes) superposed; one over (29 rules, 565 nodes) enumerated, though its `superposable`
+-- and `WellFormedU (supU N)` hold: the charge is what refuses
+#guard chargeFacts atCharge == "16384 true true enumerated true 4 4152 superposed"
+#guard chargeFacts overCharge == "16385 true true enumerated false 4 2316 enumerated"
+
+/-- Today's enumerated soft row as the dispatch writes it (`routeOf true`, the completion's finding, `choicesJson`). -/
+def todayRow (N : NDoc) : String :=
+  s!"{(routeOf true N.D).text} {completionFinding N.D} {(Json.mkObj (choicesJson N.D)).compress}"
+
+-- over the charge the route is today's row, byte for byte
+#guard match decodeEnvironment (envWith 0) with
+  | .ok re => (routeSD re overCharge).text ++ " " ++ todayRow overCharge == "enumerated " ++
+      "enumerated (rs0, rs1, the unspecified completion) {\"choice_count\":4,\"choices\":[[[\"rs0\",0],[\"rs1\",0]]," ++
+      "[[\"rs0\",0],[\"rs1\",1]],[[\"rs0\",1],[\"rs1\",0]],[[\"rs0\",1],[\"rs1\",1]]]}" &&
+    (routeSD re wideGuard3071).text == (routeOf true wideGuard3071.D).text
+  | .error _ => false
+
+-- each content kind's rules and nodes: an assertion, a norm with a carve-out and an exception condition, a right and
+-- its guard, two lines, a limitation of two conditions
+#guard [.assertion (wide 1), .norm { mustX with carveOuts := [wide 0] }, .right ⟨"r9", "person", wide 0, [arrestClaim]⟩,
+  .rightLines "r9" [arrestClaim, arrestClaim], .limitation l29].map sdContentCharge ==
+  [(0, 5), (1, 6), (1, 5), (2, 6), (1, 3)]
+/-- `NSDbig 1` with a frame rule, right and limitation, and a bar: the frame's rules count. -/
+def framedFrame : VE.Rights.RightsDoc :=
+  { frame4 with soft := { frame4.soft with T := { frame4.soft.T with nodes := [needNotX] } },
+                rs := [⟨"r9", "person", .top, [arrestClaim]⟩], limits := [l29] }
+def framed : NDoc := ⟨{ (NSDbig 1).D with frame := framedFrame, items := (NSDbig 1).D.items ++ [.bar "ub" barRule] }, []⟩
+#guard (sdSizeCharge (NSDbig 1), sdSizeCharge framed) == (18, 105)
+
+/-- The first operand of a `&&` chain: the value compiled code reads first. -/
+def firstConjunct : Expr → Expr
+  | .app (.app (.const ``and []) a) _ => firstConjunct a
+  | e => e
+-- `sdSuperposable` reads the charge before `superposable` and `supU N` (`&&`'s value is the same in either order)
+run_meta do
+  let some (.defnInfo d) := (← getEnv).find? ``sdSuperposable | throwError "sdSuperposable is not a definition"
+  let first ← Meta.lambdaTelescope d.value fun _ b => pure (firstConjunct b)
+  unless first.isAppOf ``decide && (first.find? (·.isConstOf ``sdSizeCharge)).isSome do
+    throwError "sdSuperposable reads {first} first, not the size charge"
 
 end VE.Readings.SoftSupWireExamples
