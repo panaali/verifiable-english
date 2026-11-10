@@ -289,6 +289,8 @@ import VE.Paths
 import VE.Presupposition.Admit.Facts
 import VE.Presupposition.Admit.Statements
 import VE.Presupposition.Agree
+import VE.Presupposition.Couple.Fixtures
+import VE.Presupposition.Couple.Statements
 import VE.Presupposition.Events
 import VE.Presupposition.Examples
 import VE.Presupposition.Frame
@@ -4559,6 +4561,11 @@ import VE.WireContract.Engine
 #print axioms VE.Paths.warshall_iff_path
 #print axioms VE.Paths.warshall_preserves_closed
 #print axioms VE.Paths.warshall_sound
+#print axioms VE.Presupposition.CoupleExamples.denote_of_eq
+#print axioms VE.Presupposition.CoupleExamples.forget_asStructure
+#print axioms VE.Presupposition.CoupleExamples.intendedAt3_of_eval
+#print axioms VE.Presupposition.CoupleExamples.s22_completion
+#print axioms VE.Presupposition.CoupleExamples.satUnder_of_eval
 #print axioms VE.Presupposition.Events.again_defined
 #print axioms VE.Presupposition.Events.again_eq
 #print axioms VE.Presupposition.Events.continues_defined
@@ -4616,6 +4623,7 @@ import VE.WireContract.Engine
 #print axioms VE.Presupposition.bases_unique
 #print axioms VE.Presupposition.bind_ok
 #print axioms VE.Presupposition.buildPre_body
+#print axioms VE.Presupposition.candidateTable_core
 #print axioms VE.Presupposition.candidates_ruleAct
 #print axioms VE.Presupposition.carried_asserted
 #print axioms VE.Presupposition.carried_conditioned_off
@@ -4633,24 +4641,39 @@ import VE.WireContract.Engine
 #print axioms VE.Presupposition.condition_applies
 #print axioms VE.Presupposition.conditioned_contributes_nothing
 #print axioms VE.Presupposition.conditioned_vacuous_off_goal
+#print axioms VE.Presupposition.coupled_subset
+#print axioms VE.Presupposition.coupled_uniform
+#print axioms VE.Presupposition.coupling_complete
+#print axioms VE.Presupposition.couplings_spec
+#print axioms VE.Presupposition.couplings_spec_admit
 #print axioms VE.Presupposition.data_attribute_proved
 #print axioms VE.Presupposition.decidesD_map
 #print axioms VE.Presupposition.definite_defined
 #print axioms VE.Presupposition.discourse_definite_is_row
+#print axioms VE.Presupposition.emitted_group
 #print axioms VE.Presupposition.ensure_ok
+#print axioms VE.Presupposition.eq_of_nodup_map
 #print axioms VE.Presupposition.exists_child_map
+#print axioms VE.Presupposition.expectedReadings_length
 #print axioms VE.Presupposition.find_base
+#print axioms VE.Presupposition.find_id
+#print axioms VE.Presupposition.foldl_groups
 #print axioms VE.Presupposition.foldr_and_denote
 #print axioms VE.Presupposition.foldr_implies_denote
 #print axioms VE.Presupposition.generic_defined
 #print axioms VE.Presupposition.goal_denote
 #print axioms VE.Presupposition.goal_wellFormed
+#print axioms VE.Presupposition.groupConstraints_iff
+#print axioms VE.Presupposition.groups_admit_nil
+#print axioms VE.Presupposition.idxOf_inj
 #print axioms VE.Presupposition.inPlace_iff_conditioned_shallow
 #print axioms VE.Presupposition.locate_plug
 #print axioms VE.Presupposition.mapE_map
 #print axioms VE.Presupposition.mapE_mem
 #print axioms VE.Presupposition.mapError_ok
 #print axioms VE.Presupposition.mem_basesOf
+#print axioms VE.Presupposition.mem_choiceOf
+#print axioms VE.Presupposition.mem_groups
 #print axioms VE.Presupposition.no_block_unchanged
 #print axioms VE.Presupposition.no_silent_accommodation
 #print axioms VE.Presupposition.one_open_per_unit
@@ -4660,6 +4683,7 @@ import VE.WireContract.Engine
 #print axioms VE.Presupposition.peel_ands
 #print axioms VE.Presupposition.peel_carried
 #print axioms VE.Presupposition.peel_implies
+#print axioms VE.Presupposition.pickOf_iff
 #print axioms VE.Presupposition.plug_congr
 #print axioms VE.Presupposition.plug_wellFormed
 #print axioms VE.Presupposition.plural_defined
@@ -4669,8 +4693,12 @@ import VE.WireContract.Engine
 #print axioms VE.Presupposition.rule_collapse_certified
 #print axioms VE.Presupposition.rule_collapse_decides
 #print axioms VE.Presupposition.rule_collapse_typed
+#print axioms VE.Presupposition.sourceChoice_closed
+#print axioms VE.Presupposition.sourceChoice_entails
+#print axioms VE.Presupposition.sourceChoice_members
 #print axioms VE.Presupposition.source_identity_entails
 #print axioms VE.Presupposition.speech_question_top
+#print axioms VE.Presupposition.uniformB_iff
 #print axioms VE.Presupposition.unitsOk_ok
 #print axioms VE.Presupposition.unsaid_iff
 #print axioms VE.Presupposition.yieldsD_map
