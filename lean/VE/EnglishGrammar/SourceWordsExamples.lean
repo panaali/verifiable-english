@@ -1,4 +1,5 @@
 import VE.EnglishGrammar.SourceWords
+import VE.EnglishGrammar.SourceReader
 import VE.EnglishGrammar.Advice
 import VE.EnglishGrammar.Policy
 import VE.Alternatives.Wire
@@ -126,9 +127,42 @@ def ev : List String := ["events@0"]
 #guard (adviceOf ev "The act caused a harm.").map (·.2) == some eventsLinkAdvice
 -- A row matches through any of its patterns, not only its first ("brings about" is `alternatives-results`' second).
 #guard (adviceOf ["alternatives@0"] "The act brings about a harm.").map (·.1) == some "alternatives-results"
--- DRI 2026-11-09 (reviews/dri-decisions-20261109-et-5.md item 2): a source "always" gets its refusal and advice
--- (above), and events@0 has no reading row for it (no A1/A2 candidate; those rows and the 11-03 tests are et-5b's).
-#guard (sourceWords.filter fun r => r.word == "always" && r.profile == "events@0").map (·.frame) == ["authored"]
+-- DRI 2026-11-09 (reviews/dri-decisions-20261109-et-5.md item 2): an authored "always" gets its refusal and advice
+-- (above), never a reading: its reading rows (et-5b) are the source frames, which `advice` does not read.
+#guard (sourceWords.filter fun r => r.word == "always" && r.profile == "events@0").map (·.frame) ==
+  ["authored", "source", "source no anchor"]
+#guard (adviceOf ev "Every person is always protected.") == some ("events-always", eventsDaysAdvice)
+
+/-! ## "always" and "eventually" (et-5b; spec 1.3, 2.4; DRI 2026-11-03 item 3, 2026-11-09 item 2) -/
+
+/-- The reader on a source sentence: its words, the translator's lead-in, the document's anchor. -/
+def readOf (word sentence : String) (leadIn : Option Bool) (a : AnchorState) : String × List String :=
+  match sourceReadings word (ruleContext ((sentence.splitOn " ").filter (· != "")) leadIn) a with
+  | .ok xs => ("ok", xs)
+  | .error e => (e, [])
+def a1 : String := "<clause> on each day."
+def a2 : String := "<clause> on each day, if that day is on or after the date of this document."
+def strictDefault : List String := ["<agent> must <act>.", "<agent> should <act>."]
+-- The first 11-03 condition: "Claude should always <act>" gives soft-norms' {strict, default} READINGS and no events
+-- A-candidate, whatever the anchor; so does a rule lead-in.
+#guard [AnchorState.iso, .openTerm, .none].all fun a =>
+  readOf "always" "Claude should always help" (some false) a == ("ok", strictDefault) &&
+  readOf "always" "Claude always helps" (some true) a == ("ok", strictDefault)
+#guard [AnchorState.iso, .openTerm, .none].all fun a =>
+  !((readOf "always" "Claude should always help" none a).2.any fun w => w == a1 || w == a2)
+-- The second: a descriptive "<x> always <verb>" with no ISO anchor gives A1 only; with one, A1 and A2.
+#guard readOf "always" "The river always floods" (some false) .none == ("ok", [a1])
+#guard readOf "always" "The river always floods" (some false) .openTerm == ("ok", [a1])
+#guard readOf "always" "The river always floods" (some false) .iso == ("ok", [a1, a2])
+-- Where it cannot be told which, the span stays UNFORMALISED `always-owner`, never both.
+#guard readOf "always" "The river always floods" none .iso == ("always-owner", [])
+-- "eventually" is no force word: E1 with no ISO anchor, E1 and E2 with one, inside a rule too.
+#guard readOf "eventually" "Claude should eventually help" none .openTerm == ("ok", ["There is a day such that <clause> on that day."])
+#guard (readOf "eventually" "The river eventually floods" (some false) .iso).2.length == 2
+-- A deontic verb in any case is a rule; no deontic verb and no lead-in is not known.
+#guard ruleContext ["Claude", "MUST", "always", "help"] none == .rule && ruleContext ["Claude", "always", "helps"] none == .unknown
+-- The candidates a document with the open anchor term may not hold are the no-anchor rows' refused ones.
+#guard anchorCandidates == ["A2", "E2"]
 /-- The `english.grammar` export's advice ids, through `grammarCase` on JudgmentRunExamples' request (DELTA row 2). -/
 def exportedAdvice : List String :=
   match (VE.EnglishGrammar.JudgmentRunExamples.shared []).head? with
@@ -161,7 +195,7 @@ def eventsWordings : List String := sourceWords.flatMap fun r => match r.kind wi
   | .refuse .. => []
 def otherProfileWordings : List String := VE.Alternatives.Wire.canonicalWording.map (·.2) ++ riskTemplates ++
   ["{0} is avoidable by {1}", "{0} is unavoidable by {1}", "{0} allows {1} to happen"]
-#guard eventsWordings.length == 8
+#guard eventsWordings.length == 12
 #guard eventsWordings.all fun w => !otherProfileWordings.contains w
 #guard ["{0} leads to {1}", "{0} causes {1}", "{0} might lead to {1}", "{0} allows {1} to happen"].all
   otherProfileWordings.contains

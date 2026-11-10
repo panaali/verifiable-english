@@ -358,8 +358,8 @@ def chainEnv (profiles : List String) : Json :=
     ("vocabulary", Json.mkObj [("constants", Json.mkObj []), ("predicates", Json.mkObj []),
       ("sorts", Json.mkObj [("claude_instance", Json.mkObj [("description", .str "Claude")])])])]
 
-/-- The soft-norms@0 environment that `environmentOf` decodes, with `listed` as its profiles. `environmentOf` already
-refuses an events@0 list by `ownedProfiles` (below), so the list goes on the decoded `Env`. That leaves `requestOf`'s
+/-- The soft-norms@0 environment that `environmentOf` decodes, with `listed` as its profiles. `environmentOf` reads an
+events@0 list through the route's view (below), so the list goes on the decoded `Env`. That leaves `requestOf`'s
 own test of events@0 as the only thing that can refuse it (`DocumentChainExamples.plainCase`'s style, no `check`). -/
 def requestCase (listed : List String) : Except String Json := do
   let E ← VE.Service.Document.environmentOf (chainEnv ["norms@0", "relational-fol@0", "soft-norms@0"])
@@ -376,7 +376,7 @@ def requestIsCase (listed : List String) : Bool :=
   | .ok j => j != .null && j.getObjValD "norms" == Json.arr #[]
   | .error _ => false
 
--- The decoder refuses events@0 by itself, and accepts the list without it.
+-- The decoder refuses events@0 without its requirements (the row's text), and accepts the list without it.
 #guard (VE.Service.Document.environmentOf (chainEnv ["events@0", "norms@0", "soft-norms@0"])).toOption.isNone
 #guard (VE.Service.Document.environmentOf (chainEnv ["norms@0", "relational-fol@0", "soft-norms@0"])).toOption.isSome
 -- (a) events@0 the only profile beside soft-norms@0, (b) first of three, (c) last of three: no case.
@@ -387,12 +387,12 @@ def requestIsCase (listed : List String) : Bool :=
 #guard requestIsCase ["soft-norms@0"]
 #guard requestIsCase ["norms@0", "soft-norms@0"]
 
-/-! ## events@0 owned: a refusal, never a silent empty result (pk-1-conditions-b, DRI 2026-11-08, adv1416 item 4)
+/-! ## events@0 owned: never a silent empty result (pk-1-conditions-b, DRI 2026-11-08, adv1416 item 4; et-5b)
 
-`events@0` is not in `ownedProfiles`, so today `check` refuses a soft document listing it by name, before
-`requestOf`. The owned case is built the way `requestCase` builds it: the `Env` decoded without events@0, then
-listing it, so `check`'s soft branch reaches `layeredOf` through `requestOf`'s `null`. That case must be refused,
-never a layered source with no pack; the control without events@0 is a case with the soft pack. -/
+`events@0` is in `ownedProfiles` (et-5b, DRI 2026-11-10 item 1): `environmentOf` decodes its block once and `check` reads
+the document through `eventsLayeredOf`, whose answer carries the block's pack. An `Env` whose environment lists
+events@0, built the way `requestCase` builds it, still reaches `layeredOf` only through `requestOf`'s `null`, and is
+refused, never a layered source with no pack; the control without events@0 is a case with the soft pack. -/
 
 def ndListed : List String := ["norm-defaults@0", "norms@0", "relational-fol@0", "soft-norms@0"]
 
@@ -412,15 +412,22 @@ def ownedRequestIsNull (listed : List String) : Bool :=
 
 def ownedLists : List (List String) := ["events@0" :: ndListed, ndListed ++ ["events@0"]]
 
--- Today: refused by name, before the layered route.
+-- Owned: the list is decoded, its environment read through the route's view (no block here, so no decoded block).
 #guard (match VE.Service.Document.environmentOf (chainEnv ("events@0" :: ndListed)) with
-  | .ok _ => "ok" | .error e => e) ==
-  "CheckerUnavailable: document checks under events@0 need its Lean profile route"
+  | .ok E => E.events.map (·.2.isNone) == some true && E.profiles == "events@0" :: ndListed &&
+      !(VE.Compose.listedProfiles E.json).contains "events@0"
+  | .error _ => false)
 -- Owned, events@0 first or last: `layeredOf` refuses it, never `.ok`; `requestOf` on that `Env` is `null`.
 #guard ownedLists.all fun ps => (layeredCase ps).toOption.isNone
 #guard ownedLists.all ownedRequestIsNull
--- Its text is the decoder's on `null`; it does not name events@0 (reported to the DRI, 2026-11-09).
-#guard (match layeredCase ("events@0" :: ndListed) with | .ok _ => "ok" | .error e => e) == "object expected"
+-- The document route's answer on that list: `eventsLayeredOf` on the decoded `Env`, the soft pack (no block, no pack:
+-- `eventsX_absent`); with a block it is the soft and events packs (EventsDocumentExamples).
+#guard (match VE.Service.Document.environmentOf (chainEnv ("events@0" :: ndListed)) with
+  | .ok E => match E.events with
+    | some (w, d) => (VE.Service.DocumentChain.eventsLayeredOf E (Json.mkObj []) [] w d).toOption.map
+        (·.packs.map (·.id)) == some ["soft"]
+    | none => false
+  | .error _ => false)
 -- The control: without events@0 the same `Env` is a case whose one pack is soft's.
 #guard (match layeredCase ndListed with | .ok L => L.packs.map (·.id) == ["soft"] | .error _ => false)
 #guard !ownedRequestIsNull ndListed

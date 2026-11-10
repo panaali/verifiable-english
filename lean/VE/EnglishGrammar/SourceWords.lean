@@ -125,8 +125,39 @@ def withinDateReadings : SourceWordRow := eventsReadings "within" "source date"
    "<event> <vp> on or after <date>, and <event> <vp> before <end>.",
    "<event> <vp> on or after <start>, and <event> <vp> no later than <end>."]
 
-/-- The reading sets ET-5 writes; the rest of spec 2.4 is et-5b's, with the open anchor's no-anchor rows. -/
-def eventsReadingSets : List SourceWordRow := [untilEventReadings, withinDateReadings]
+/-- "always" outside a rule (spec 2.4; DRI 2026-11-03 item 3), with an ISO anchor: A1 and A2, `<clause>` the source's
+clause without the word. -/
+def alwaysReadings : SourceWordRow := eventsReadings "always" "source"
+  "A day before the date of this document: A1 covers it and A2 does not."
+  ["<clause> on each day.", "<clause> on each day, if that day is on or after the date of this document."]
+
+/-- "eventually" (spec 2.4), with an ISO anchor: E1 and E2. -/
+def eventuallyReadings : SourceWordRow := eventsReadings "eventually" "source"
+  "Only a day before the date of this document: E1 holds there and E2 does not."
+  ["There is a day such that <clause> on that day.",
+   "There is a day such that that day is after the date of this document and <clause> on that day."]
+
+/-- The no-anchor row (spec 1.3 and 2.4): with no ISO anchor "always" has A1 only, the rewrite; A2, the refused
+candidate, turns on where the undated document falls (`AnchorOpen: A2` while the term is open). -/
+def alwaysNoAnchorReadings : SourceWordRow := eventsRow "always" "source no anchor" (.refuse "A2"
+  "This document states no date of its own, so a day on or after its date is not known: the reading is A1."
+  "<clause> on each day.")
+
+/-- The no-anchor row of "eventually": E1 only; E2 refused (`AnchorOpen: E2` while the term is open). -/
+def eventuallyNoAnchorReadings : SourceWordRow := eventsRow "eventually" "source no anchor" (.refuse "E2"
+  "This document states no date of its own, so a day after its date is not known: the reading is E1."
+  "There is a day such that <clause> on that day.")
+
+/-- The reading sets ET-5 writes, and et-5b's "always" and "eventually" with their no-anchor rows; the rest of spec 2.4
+is et-5c's. -/
+def eventsReadingSets : List SourceWordRow := [untilEventReadings, withinDateReadings, alwaysReadings,
+  eventuallyReadings, alwaysNoAnchorReadings, eventuallyNoAnchorReadings]
+
+/-- "always" inside a rule (DRI 2026-11-03 item 3): soft-norms' force word only, the READINGS unit {strict, default}
+(docs/spec/soft-norms.md 2.2, "any force word ... is a READINGS unit"). Events adds no candidate there. -/
+def softAlwaysReadings : SourceWordRow := ⟨"always", "rule", "soft-norms@0", "soft-norms 2.2", .readings ([
+  "<agent> must <act>.", "<agent> should <act>."].map (⟨·,
+  "A situation in which an exception to the rule applies: the default rule gives way there and the strict one does not."⟩))⟩
 
 /-- The profile-fixed wordings (2.7), Lean's own (`VE.Events.beforeWording`, `linkWording`). -/
 def eventsFixed : List SourceWordRow := [
@@ -135,7 +166,7 @@ def eventsFixed : List SourceWordRow := [
   eventsRow "was necessary for" "link necessary" (.fixed (VE.Events.linkWording .necessary))]
 
 /-- The catalogue's rows, in owner order. -/
-def sourceWords : List SourceWordRow := eventsRefusals ++ eventsReadingSets ++ eventsFixed
+def sourceWords : List SourceWordRow := eventsRefusals ++ eventsReadingSets ++ eventsFixed ++ [softAlwaysReadings]
 
 #guard sourceWordsValid sourceWords
 
