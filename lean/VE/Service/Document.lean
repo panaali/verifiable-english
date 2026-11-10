@@ -2347,6 +2347,8 @@ structure Checked where
   undeclared : List String := []
   /-- Under `cardinality@0`, the admitted claim graph's report (`cardinalityReport`). -/
   cardinality : Option Json := none
+  /-- The active reading sets, the value the status fold read (`Loader.activeOf`); the checked view's candidates. -/
+  active : List (FrontSet × List Bool) := []
 
 /-- `withGraph := false` is `load_document` alone: everything but `_report`'s claim-graph part (its reading checks, W2
 admission and the narrowing choices), which `check_document` adds (batch 16b). -/
@@ -2463,7 +2465,8 @@ def check (text : String) (withGraph : Bool := true) (lexicon : Option Json := n
     doc.source, units, ← units.mapM rowOf, front, block,
     if judged then some (VE.Judgments.usageMap E.rv.definitions J views) else none,
     (let js := records.map (·.1); (js, if judged then statusRows E.rv.definitions js views else [])),
-    if judged then VE.Judgments.undeclaredEvaluative VE.EnglishGrammar.evaluativeRows E.basePredicates J else [], report⟩
+    if judged then VE.Judgments.undeclaredEvaluative VE.EnglishGrammar.evaluativeRows E.basePredicates J else [], report,
+    active⟩
 
 def encode (id : String) (c : Checked) : Json :=
   VE.Route.Wire.ok id ([("document_id", .str c.documentId), ("source_id", .str c.sourceId),
@@ -2476,8 +2479,8 @@ def encode (id : String) (c : Checked) : Json :=
     | none, none => [])
 
 /-- A case `{"id", "document"}`, with `"admit": false` for `load_document` alone: the entry without scope's branch
-(scope 8.1). -/
-def checkBody (j : Json) : Except String Json := do
+(scope 8.1). `checkBodyChecked` is its run, typed: the case id and the checked document `encode` writes. -/
+def checkBodyChecked (j : Json) : Except String (String × Checked) := do
   let id ← stringField j "id"
   let text ← stringField j "document"
   let withGraph ← match j.getObjVal? "admit" with
@@ -2485,8 +2488,10 @@ def checkBody (j : Json) : Except String Json := do
     | .ok _ => throw "InvalidInput: admit must be a boolean"
     | .error _ => pure true
   let lexicon := (j.getObjVal? "lexicon").toOption
-  pure (encode id (← check text withGraph lexicon (j.getObjVal? "packs").toOption (j.getObjVal? "units").toOption
-    (j.getObjVal? "reading_sets").toOption))
+  pure (id, ← check text withGraph lexicon (j.getObjVal? "packs").toOption (j.getObjVal? "units").toOption
+    (j.getObjVal? "reading_sets").toOption)
+
+def checkBody (j : Json) : Except String Json := (fun (id, c) => encode id c) <$> checkBodyChecked j
 
 /-- `checkBody` after row 16 (PC-1), the check before every other: so `checkDoc` and `checkDocSets` begin with it on
 every request. A `scope@0` request's row 16 runs at the top of their scope branch, before the gate, which then calls
