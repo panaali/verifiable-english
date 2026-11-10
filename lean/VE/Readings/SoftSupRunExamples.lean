@@ -1,3 +1,4 @@
+-- ve-layer: 4 (runner-boundary fixtures: the soft runners compared with Readings.Run's runSDKind)
 import VE.Readings.SoftSupRun
 import VE.Readings.Run
 
@@ -131,7 +132,6 @@ soft premises are shown by their choice labels (`shownWith_eq`), never `rd-2-`. 
 #guard text (run env4a doc4a fun c => conflictJ c none' [("conflict_certificates", certs4a)]) |>.endsWith "\"verdict\":\"UNKNOWN\"}"
 -- refused with today's texts: no candidate, a witness tuple of the wrong length, a model off the slot under `rs1:1`
 #guard text (run env4a doc4a fun c => conflictJ c [("rs1", 5)] []) == "InvalidInput: assumed reading is no candidate"
-#guard text (run env4 (bigJ 8) fun c => witnessJ c ["a", "a"]) == "InvalidInput: witness tuple has the wrong length or sort"
 #guard text (run env4a doc4a fun c => conflictJ c A1 [("witness", caseJ [("model", model c []), ("filling", Json.mkObj []),
   ("target", "x_required"), ("tuple", toJson ["a"])])]) == "InvalidModel(readings background): the model violates a background premise"
 
@@ -141,12 +141,23 @@ soft premises are shown by their choice labels (`shownWith_eq`), never `rd-2-`. 
 model check over the superposed document, which names the all-strict choice (another target there: UNKNOWN);
 `NSDbig 10` is over the work limit and refused with `runSDKind`'s text, read before any choice's text. -/
 
-#guard ans (run env4 (bigJ 8) fun c => do pure (c.checked.length, ← witnessJ c ["a"])) ==
-  (toString (256, "{\"assumed\":[],\"choice\":[[\"rs0\",0],[\"rs1\",0],[\"rs2\",0],[\"rs3\",0],[\"rs4\",0],[\"rs5\",0]," ++
-    "[\"rs6\",0],[\"rs7\",0]],\"id\":\"t\",\"status\":\"ok\",\"target\":\"x_required->x_permitted\",\"verdict\":\"CONFLICT\"}"),
-    { admissions := 1, routes := 1, checks := 1 })
-#guard text (run env4 (bigJ 8) fun c => conflictJ c none' [("witness", caseJ [("model", model c []),
-  ("filling", Json.mkObj []), ("target", "x_permitted"), ("tuple", toJson ["a"])])]) |>.endsWith "\"verdict\":\"UNKNOWN\"}"
+/-- `NSDbig 8` admitted and routed once: the conflict answer, another target's, a witness tuple of the wrong length
+    (today's text), and a premise model whose choice conflicts at a tuple (`localFree` false, W-11: no reported model). -/
+def big8 (c : SDCase) : SDM (Nat × List String) := do
+  let a ← witnessJ c ["a"]
+  let b ← conflictJ c none' [("witness", caseJ [("model", model c []), ("filling", Json.mkObj []),
+    ("target", "x_permitted"), ("tuple", toJson ["a"])])]
+  let r ← attempt (witnessJ c ["a", "a"])
+  let m ← (·.compress) <$> runSDSup "t" "readings-model" c (caseJ [("assumed", toJson none'), ("model", model c []),
+    ("filling", Json.mkObj [])])
+  pure (c.checked.length, [a, b, match r with | .ok x => x | .error e => e, m])
+#guard match run env4 (bigJ 8) big8 with
+  | (.ok (n, [a, b, r, m]), k) => n == 256 && k == { admissions := 1, routes := 1, checks := 2 } &&
+    a == "{\"assumed\":[],\"choice\":[[\"rs0\",0],[\"rs1\",0],[\"rs2\",0],[\"rs3\",0],[\"rs4\",0],[\"rs5\",0],[\"rs6\",0],[\"rs7\",0]]," ++
+      "\"id\":\"t\",\"status\":\"ok\",\"target\":\"x_required->x_permitted\",\"verdict\":\"CONFLICT\"}" &&
+    b.endsWith "\"verdict\":\"UNKNOWN\"}" && r == "InvalidInput: witness tuple has the wrong length or sort" &&
+    m.endsWith "\"first_failing\":null,\"id\":\"t\",\"status\":\"ok\",\"valid\":false}"
+  | _ => false
 #guard match admitS2 env4 (bigJ 10) >>= admitSDOf with
   | .ok r => (match runSDKind "t" "readings-conflict" r (caseJ []) with | .error e => e | .ok _ => "") ==
       text (run env4 (bigJ 10) fun _ => pure "")
@@ -172,9 +183,6 @@ model check over the superposed document, which names the all-strict choice (ano
 #guard text (run env4a doc4a fun c => (·.compress) <$> runSDSup "t" "readings-model" c (caseJ [("assumed", toJson A1),
   ("model", model c ["ve__bit__1__0", "c"]), ("filling", Json.mkObj [])])) |>.endsWith
     "\"first_failing\":\"soft:exception:must-x:sufficient:0\",\"id\":\"t\",\"status\":\"ok\",\"valid\":false}"
--- a model with a conflict at a tuple (`localFree` false, W-11) is no reported model: the all-strict choice of `NSDbig 8`
-#guard text (run env4 (bigJ 8) fun c => (·.compress) <$> runSDSup "t" "readings-model" c (caseJ [("assumed", toJson none'),
-  ("model", model c []), ("filling", Json.mkObj [])])) |>.endsWith "\"first_failing\":null,\"id\":\"t\",\"status\":\"ok\",\"valid\":false}"
 -- an `unsaid__` table in `relations` is refused by the model decoder (F-SD8); another kind is refused as today
 #guard text (run env4a doc4a fun c => modelJ c [("unsaid__y_permitted", Json.arr #[])]) ==
   "fields do not match: expected [soft__excepted__need_not_x, soft__excepted__rd_2_must_x, ve__bit__1__0, c], " ++
