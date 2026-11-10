@@ -10,7 +10,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [docs/architecture/](docs__architecture.md) — 1 modules — -
 - [docs/attitudes/](docs__attitudes.md) — 5 modules — -
 - [docs/commands-imperatives/](docs__commands-imperatives.md) — 3 modules — -
-- [docs/composition/](docs__composition.md) — 3 modules — -
+- [docs/composition/](docs__composition.md) — 1 modules — -
 - [docs/defeasible/](docs__defeasible.md) — 12 modules — -
 - [docs/devtime/](docs__devtime.md) — 1 modules — -
 - [docs/eff-tests/](docs__eff-tests.md) — 1 modules — -
@@ -78,8 +78,8 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [experiments/](experiments.md) — 79 modules — -
 - [lean/](lean.md) — 15 modules — This project uses Lean **4.24.0**, core Lean and `Std`, with no Mathlib or external Lake dependencies.
 - [lean/ResponseShape/](lean__ResponseShape.md) — 8 modules — -
-- [lean/ResponseShape/Encoders/](lean__ResponseShape__Encoders.md) — 33 modules — -
-- [lean/ResponseShape/Schemas/](lean__ResponseShape__Schemas.md) — 45 modules — -
+- [lean/ResponseShape/Encoders/](lean__ResponseShape__Encoders.md) — 32 modules — -
+- [lean/ResponseShape/Schemas/](lean__ResponseShape__Schemas.md) — 43 modules — -
 - [lean/VE/](lean__VE.md) — 27 modules — -
 - [lean/VE/Acts/](lean__VE__Acts.md) — 33 modules — -
 - [lean/VE/Alternatives/](lean__VE__Alternatives.md) — 13 modules — -
@@ -113,7 +113,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/VE/Question/](lean__VE__Question.md) — 12 modules — -
 - [lean/VE/Readings/ part 1](lean__VE__Readings--part-1.md) — 74 modules — -
 - [lean/VE/Readings/ part 2](lean__VE__Readings--part-2.md) — 5 modules — -
-- [lean/VE/RightClauses/](lean__VE__RightClauses.md) — 23 modules — -
+- [lean/VE/RightClauses/](lean__VE__RightClauses.md) — 17 modules — -
 - [lean/VE/Rights/](lean__VE__Rights.md) — 13 modules — -
 - [lean/VE/Risk/](lean__VE__Risk.md) — 14 modules — -
 - [lean/VE/Route/](lean__VE__Route.md) — 30 modules — -
@@ -136,9 +136,9 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [tests/ part 3](tests--part-3.md) — 88 modules — -
 - [tests/ part 4](tests--part-4.md) — 86 modules — -
 - [tests/ part 5](tests--part-5.md) — 82 modules — -
-- [tests/ part 6](tests--part-6.md) — 81 modules — -
+- [tests/ part 6](tests--part-6.md) — 82 modules — -
 - [tests/ part 7](tests--part-7.md) — 88 modules — -
-- [tests/ part 8](tests--part-8.md) — 10 modules — -
+- [tests/ part 8](tests--part-8.md) — 7 modules — -
 - [tests/frozen_speech/](tests__frozen_speech.md) — 4 modules — Frozen pre-switch speech oracle.
 - [tools/ part 1](tools--part-1.md) — 98 modules — -
 - [tools/ part 2](tools--part-2.md) — 14 modules — -
