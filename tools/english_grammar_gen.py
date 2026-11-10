@@ -94,6 +94,7 @@ TRUSTED = (
     "lean/VE/EnglishGrammar/Evaluative.lean",
     "lean/VE/EnglishGrammar/JudgmentLines.lean",
     SOURCE_WORDS_SOURCE,
+    "lean/VE/EnglishGrammar/SourceReader.lean",
     "lean/VE/EnglishGrammar/Rules.lean",
     "lean/VE/EnglishGrammar/Actions.lean",
     "lean/VE/EnglishGrammar/Encode.lean",
