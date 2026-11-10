@@ -40,6 +40,7 @@
 - `tools/inventory_lint.py` — Gate 2 inventory lint: no retained code imports a class-A body.
 - `tools/lake_output_hash.lean` — (no module docstring)
 - `tools/lake_outputs.py` — Lake's executables as they are on disk, not as their traces say (finding class 13: a stale binary).
+- `tools/layer_declarations.py` — List every in-module layer declaration, Lean and Python, with its layer and reason; refuse a malformed one.
 - `tools/layer_policy.py` — Single source of truth for the five repository layers.
 - `tools/lean_decided_share.py` — The Lean-decided share of a document (docs/spec/readings-defaults.md 1.10 and 10; plan 3.9 and RD-5): display only.
 - `tools/lean_dump_cache.py` — A content-keyed cache of the two Lean dumps of `tools/regen_generated.py`: `cached`.
@@ -95,4 +96,3 @@
 - `tools/since_pass.py` — Select against the branch's last passing tree, not against main (test-speed plan, batch B3).
 - `tools/source_graph.py` — Static dependency graph of the repository's Python files, Lean modules and tests.
 - `tools/source_words_export.lean` — (no module docstring)
-- `tools/stage2_parity.py` — Gate 2 parity: rerun the Stage 0 probe matrix under a backend authority and diff it.
