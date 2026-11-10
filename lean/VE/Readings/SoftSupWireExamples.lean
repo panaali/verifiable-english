@@ -186,13 +186,13 @@ def wideGuard3071 : NDoc := NSDbig 6 (wide 10)
 def chargeFacts (N : NDoc) : String :=
   s!"{sdSizeCharge N} {superposable N.D} {VE.NormDefaults.WellFormedU (supU N)} {routeFacts N}"
 
--- the 191-node guard: within the charge, enumerated by work; the 767-node one: within, `superposable` false
+-- the 191-node guard: within the charge, enumerated by work; the 767- and 3,071-node guards: over the charge, so
+-- neither `superposable` nor `supU N` is read
 #guard VE.Bridge.formulaNodes (wide 6) == 191 && chargeFacts wideGuard191 ==
-  "3927 true true enumerated true 256 73472 enumerated"
+  "5975 true true enumerated true 256 73472 enumerated"
 #guard VE.Bridge.formulaNodes (wide 8) == 767 && chargeFacts wideGuard767 ==
-  "13719 false true enumerated false 256 220928 enumerated"
--- the 3,071-node guard: over the charge, so neither `superposable` nor `supU N` is read
-#guard VE.Bridge.formulaNodes (wide 10) == 3071 && sdSizeCharge wideGuard3071 == 40313 &&
+  "20375 false true enumerated false 256 220928 enumerated"
+#guard VE.Bridge.formulaNodes (wide 10) == 3071 && sdSizeCharge wideGuard3071 == 59033 &&
   routeFacts wideGuard3071 == "enumerated false 64 201152 enumerated"
 
 /-- A formula of exactly `n ≥ 1` AST nodes, balanced (depth logarithmic in `n`). -/
@@ -201,17 +201,26 @@ def sized : Nat → VE.Formula
   | 2 => .unary "c" (.var 0)
   | n + 3 => .and (sized ((n + 2) / 2)) (sized (n + 2 - (n + 2) / 2))
 decreasing_by all_goals omega
-/-- `NSDbig 2` and `m` guarded fixed rules of `n` nodes, the first `r` of `n + 1`: `(5 + m) * (11 + m * n + r)`. -/
+/-- `NSDbig 2` and `m` guarded fixed rules of `n` nodes, the first `r` of `n + 1`: `(7 + m) * (13 + m * n + r)`. -/
 def NSDsized (m n r : Nat) : NDoc := ⟨{ (NSDbig 2).D with items := (NSDbig 2).D.items ++ (List.range m).map (fun k =>
   .fixed s!"g{k}" (.norm (strictNode s!"guarded-{k}" (["x_required", "x_permitted", "y_permitted"][k % 3]!) true
     (sized (if k < r then n + 1 else n)))) []) }, ["y_permitted"]⟩
-def atCharge : NDoc := NSDsized 11 92 1
-def overCharge : NDoc := NSDsized 24 23 2
+def atCharge : NDoc := NSDsized 9 112 3
+def overCharge : NDoc := NSDsized 22 25 2
 
--- at the limit (16 rules, 1024 nodes) superposed; one over (29 rules, 565 nodes) enumerated, though its `superposable`
--- and `WellFormedU (supU N)` hold: the charge is what refuses
-#guard chargeFacts atCharge == "16384 true true enumerated true 4 4152 superposed"
-#guard chargeFacts overCharge == "16385 true true enumerated false 4 2316 enumerated"
+-- at the limit (16 units, 1,024 nodes) superposed; one over (29 units, 565 nodes) enumerated, though its
+-- `superposable` and `WellFormedU (supU N)` hold: the charge is what refuses
+#guard chargeFacts atCharge == "16384 true true enumerated true 4 4144 superposed"
+#guard chargeFacts overCharge == "16385 true true enumerated false 4 2308 enumerated"
+-- many sets (300 of two assertions), or one set of 5,000 candidates: over the charge, refused before any read
+def NSDsets : NDoc := ⟨{ (NSDbig 1).D with items := (NSDbig 1).D.items ++ (List.range 300).map (binarySet ∘ (· + 1)) },
+  ["y_permitted"]⟩
+def NSDcands : NDoc := ⟨{ (NSDbig 1).D with items := (NSDbig 1).D.items ++ [.set ⟨"wc", "uwc", 1,
+  (List.range 5000).map fun i => ⟨s!"c{i}", some (.assertion .top), [], []⟩⟩] }, ["y_permitted"]⟩
+#guard match decodeEnvironment (envWith 0) with
+  | .ok re => [NSDsets, NSDcands].map (fun N => (sdSizeCharge N, sdSuperposable N, (routeSD re N).text)) ==
+    [(819928, false, "enumerated"), (25065040, false, "enumerated")]
+  | .error _ => false
 
 /-- Today's enumerated soft row as the dispatch writes it (`routeOf true`, the completion's finding, `choicesJson`). -/
 def todayRow (N : NDoc) : String :=
@@ -225,17 +234,21 @@ def todayRow (N : NDoc) : String :=
     (routeSD re wideGuard3071).text == (routeOf true wideGuard3071.D).text
   | .error _ => false
 
--- each content kind's rules and nodes: an assertion, a norm with a carve-out and an exception condition, a right and
--- its guard, two lines, a limitation of two conditions
-#guard [.assertion (wide 1), .norm { mustX with carveOuts := [wide 0] }, .right ⟨"r9", "person", wide 0, [arrestClaim]⟩,
-  .rightLines "r9" [arrestClaim, arrestClaim], .limitation l29].map sdContentCharge ==
-  [(0, 5), (1, 6), (1, 5), (2, 6), (1, 3)]
-/-- `NSDbig 1` with a frame rule, right and limitation, and a bar: the frame's rules count. -/
+-- each content kind's units and nodes: an assertion, a norm with a carve-out, an exception condition and an `over`
+-- name, a right and its guard, two lines, a limitation of two conditions
+#guard [.assertion (wide 1), .norm { mustX with carveOuts := [wide 0], over := ["need-not-x"] },
+  .right ⟨"r9", "person", wide 0, [arrestClaim]⟩, .rightLines "r9" [arrestClaim, arrestClaim], .limitation l29].map
+  sdContentCharge == [(1, 5), (1, 7), (2, 5), (3, 7), (1, 3)]
+/-- `NSDbig 1` with a frame rule, right, limitation and definition, a bar, a cited and labelled candidate, a coupling
+and a narrowing: each counts. -/
+def framedT := { frame4.soft.T with nodes := [needNotX], definitions := [⟨"d", ["agent"], wide 1⟩] }
 def framedFrame : VE.Rights.RightsDoc :=
-  { frame4 with soft := { frame4.soft with T := { frame4.soft.T with nodes := [needNotX] } },
-                rs := [⟨"r9", "person", .top, [arrestClaim]⟩], limits := [l29] }
-def framed : NDoc := ⟨{ (NSDbig 1).D with frame := framedFrame, items := (NSDbig 1).D.items ++ [.bar "ub" barRule] }, []⟩
-#guard (sdSizeCharge (NSDbig 1), sdSizeCharge framed) == (18, 105)
+  { frame4 with soft := { frame4.soft with T := framedT }, rs := [⟨"r9", "person", .top, [arrestClaim]⟩], limits := [l29] }
+def framedItems : List Item := (NSDbig 1).D.items ++ [.bar "ub" barRule,
+  .set ⟨"rsx", "ux", 1, [⟨"c", some (.assertion .top), [("r", ["s"])], [("l", "m")]⟩]⟩]
+def framed : NDoc := ⟨⟨.soft, framedFrame, framedItems, [⟨"k1", "axis", [("rs0", 0), ("rsx", 0)]⟩],
+  [⟨"n1", "rs0", 1, ["strict"]⟩]⟩, []⟩
+#guard (sdSizeCharge (NSDbig 1), sdSizeCharge framed) == (28, 420)
 
 /-- The first operand of a `&&` chain: the value compiled code reads first. -/
 def firstConjunct : Expr → Expr
