@@ -1,70 +1,131 @@
 # sa-wire-purposes0 build report: the `purposes@0` wire contract, in shadow
 
 **Status: built; no DRI signature is reserved; nothing stops the item.** The `purposes@0` contract (revision 1,
-`shadow`) names, for a block `VE.Purposes.Wire`'s decoder refuses, spec 7.1's row (1.1b-1.1i) with spec 7's text,
-and 7.2's row 2 (2.1b, duplicate link ids). It decides nothing: the decoder still decides, `purposes@0` is not
-admitted, and every document-mode answer equals main's. No DELTA row (no user-visible output changes). Trust: R16.
+`shadow`) names spec 7.1's row (1.1b-1.1i) and 7.2's row 2 (2.1b) of a block `VE.Purposes.Wire`'s decoder refuses, with
+spec 7's text, in Lean and Python. It decides nothing: the decoder still decides, `purposes@0` is not admitted, and
+the document answers on the fixtures equal main's. No DELTA row (no user-visible output changes). Trust: R16, V +64,
+K +0, S +0. Open: 7.2's rows 3-10 wait for PE-2 (section 2). Size: 749 hand-written lines, over the ~600 line (section 3).
 
-Scope: [purpose-explanation-PLAN.md](../../spec/purpose-explanation-PLAN.md) "The C6 wire-contract item";
-[wire-contract-PLAN.md](../../spec/wire-contract-PLAN.md) S10 ("contract first"); spec
-[purpose-explanation.md](../../spec/purpose-explanation.md) 1.2, 5.4 (last bullet) and 7.1-7.2. Precedent: ap-1bf.
+Scope: [purpose-explanation-PLAN.md](../../spec/purpose-explanation-PLAN.md):1058 ("The C6 wire-contract item");
+[wire-contract-PLAN.md](../../spec/wire-contract-PLAN.md):471 (S10, "contract first"); spec
+[purpose-explanation.md](../../spec/purpose-explanation.md) 1.2, 5.4 (last bullet), 7.1-7.2 (:1448, :1465) and rule 8
+(:1887). Precedent: ap-1bf.
 
 ## 1. Rows delivered
 
-| Task part | Status | Where |
+| Task part | Status | Where (test) |
 |---|---|---|
-| (1) `purposes@0.json`, hook, `Diagnose.lean` row, `UNITS` row, lock | done: 9 members in fault order; texts registered verbatim (spec 7, rule 8); the limit is `VE.Purposes.maxLinks`, read | `ve/wire_contract/purposes@0.json`, `lean/VE/WireContract/Hooks/Purposes.lean`, `tools/wire_contract.py` |
-| (1) 7.2 rows computed without the checked view | 2.1b only (see 2) | `Hooks/Purposes.lean` `classifier "purposes_ids"` |
-| (2) examples: one accepted, one at the limit, one refused per 7.1 row class | done: `base.json`, `limit.json` (256 links, accepted: WC10 requires examples clean), 12 refused (`links-over` is 257 links) | `ve/wire_contract/examples/purposes@0/` |
-| (3) fault catalogue, generated | done: regen entry `purposes-fault-catalogue` | `conformance/wire_contract_faults_purposes.py`, `conformance/wire-contract/purposes@0-catalogue.json` |
-| (4) shadow test | done: every document answer (sha256 of its bytes, status, error, `document_id`, `source_id`) equals main's, recorded with the merge base's `ve_service`, on `causal.ve.md` as written, with `purposes@0` listed and each example's block, the block without the profile, and the profile without a block | `tests/test_purposes_contract.py::test_the_contract_is_off_the_verdict_and_identity_paths`, `shadow-main.json` |
+| (1) `purposes@0.json`, its Lean hook, the `Diagnose.lean` row, the `UNITS` row, the lock | done: 9 members in fault order, texts registered verbatim (rule 8); 1.1c's limit is `VE.Purposes.maxLinks`, read | `ve/wire_contract/purposes@0.json`, `lean/VE/WireContract/Hooks/Purposes.lean` (`test_the_contract_registers_spec_7s_texts_verbatim_and_in_fault_order`, `test_the_limit_is_leans_and_never_copied`, the `#guard`s at :157-181) |
+| (1) 7.2 rows computed without the checked view | 2.1b only, tied to `VE.Purposes.check` by `purposes_ids_reads_check` | `Hooks/Purposes.lean:114` |
+| (2) examples: one accepted, one at the limit, one refused per 7.1 row class | done: `base.json`, `limit.json` (256 links, accepted: WC10 requires examples clean), 15 refused (`links-over` is 257 links; 1.1e and 1.1i each have a side case) | `ve/wire_contract/examples/purposes@0/` (`test_the_examples_are_accepted_and_clean_in_both_engines`, `test_every_refused_example_round_trips_through_the_contract_in_both_engines`) |
+| (3) fault catalogue, generated | done: regen entry `purposes-fault-catalogue` | `conformance/wire-contract/purposes@0-catalogue.json` |
+| (4) shadow test | done: each answer (sha256 of its bytes, status, error, `document_id`, `source_id`) equals main's for `causal.ve.md` as written, with `purposes@0` and each example's block, with the block and no profile, and with the profile and no block; and for `rd9-docroute`, `group` and `qt0p-companion` (the document-mode fixtures under 8 KB), each as written and with the base block | `test_the_contract_is_off_the_verdict_and_identity_paths`, [shadow-main.json](shadow-main.json) |
 
-The relay (`conformance/purposes_contract.py` `bound`) types and binds each `diagnose` row to the table (member of
-the check's phase, path `/purposes`, exactly the template's arguments, each a string); the fuzz test retypes and
-rebinds each field (`test_the_relay_refuses_a_retyped_or_rebound_record`).
+The relay (`conformance/purposes_contract.py` `bound`) binds every field of a `diagnose` row to the table: the
+member's contract, revision, check, phase, code, class and path, exactly its template's arguments (each a string),
+and the text they render. `test_the_relay_refuses_a_retyped_or_rebound_record` deletes or retypes each field and
+argument (7, true, null, [], {}, 1.5, a lone surrogate, a 10,000-deep list) and rebinds them.
 
-## 2. Not delivered: rows that wait for PE-2
+`shadow-main.json` was recorded with `record()` (tests/test_purposes_contract.py) from a `ve_service` built at the
+merge base 1ee886ca0 (sha256 6eb0cab36db5e46b56f677f80073320f177c482f9a3de2064d8248152ef99af2). If main changes a
+fixture's answer, re-record it the same way from the new merge base.
 
-- 7.1 row 1 (`purposes@0` listed, no block): the document mode's, PE-2 (no block to diagnose here).
-- 7.2 row 1 (more than 256 links): unreachable after decoding (7.1's 1.1c refuses first).
-- 7.2 rows 3-10 (unknown unit, distinct parts, adjacency, marker kind, inertness, 6a, denied with a share, sole,
-  unmarked unit, LABELLED coverage): `check` tests them per link after row 3, which reads the checked view, so the
-  first of them to fire cannot be named without it (row 7 needs no view but follows rows 3-6 of its link). PE-2.
+## 2. Not delivered: the rows that wait for PE-2
+
+- 7.1 row 1 (`purposes@0` listed, no block) belongs to the document mode (PE-2). Until then, a case with no block
+  reads as `null` here and is reported as 1.1b (`test_the_adapters_read_the_case_block`).
+- 7.2 row 1 (more than 256 links) cannot be reached after decoding, because 7.1's 1.1c refuses first.
+- 7.2 rows 3-10: `check` tests them per link, and the first test (row 3) reads the checked view, so the first of
+  them to fire cannot be named without the view. Row 7 needs no view, but it follows rows 3-6 of its link.
 
 ## 3. Deviations
 
-1. The legacy call in `_check_unit` reads a contract's own `input` members (one line), so a unit whose input is not
-   `environment, norms` can run its legacy validator; the existing units' inputs are unchanged.
-2. Size: ~620 hand-written lines (548 before this report and mutants.json), over the ~600 line by the evidence;
-   nothing was cut, since the remaining rows are PE-2's, not a next item of this one.
+1. **Region.** `tools/wire_contract.py` `_check_unit` (outside `UNITS`, one line): the legacy call reads the
+   contract's own `input` members. Every existing unit's input is `["environment", "norms"]` (probe: `load(u)["input"]`
+   for each `UNITS` key), so their call is unchanged. Mutant `py-legacy-input`.
+2. **names.json and limits.json are not changed.** The limit is `VE.Purposes.maxLinks`, quoted from the decoder's
+   record. A `MAX_LINKS` in limits.json would be a second owner of 256, and no name class applies.
+3. **`adapter` stays.** The contract names an adapter (`purposes_block`). `Diagnose.caseRoot` serves contracts
+   without one.
+4. **Size.** 749 hand-written lines against the ~600 line (`git diff --numstat 1ee886ca0`, without generated files,
+   locks, inventories, the trust baseline and the trust-mutant JSON). By file: test 192, hook 184 (theorems and guards
+   included), relay 84, this report 70, table 52, faults 41, shadow record 28, trust classes 25, allow
+   file 19, examples 17, other 37. Nothing was cut: the self-review's A finding and R16's mutant fixtures account
+   for the growth past 548, and the remaining rows belong to PE-2, not to a next item of this one.
+5. **Every value read once.** The two classifiers each run `decodeBlock`, and `member` decodes again up to the
+   refused link: at most 3 decodes per block. Each one counts the links against `maxLinks` before it walks them
+   (`decodeBlock`, `member`). `links-over` (257 links) and `limit()`'s 4,096-link probe both end in 1.1c.
 
 ## 4. Seeded bugs
 
-[mutants.json](mutants.json): **7, all killed** (Lean 3, Python 2, contract table 2). Planted, run, restored.
+[mutants.json](mutants.json): **22, all killed** (Lean 15, Python 5, contract table 2), plus 2 equivalent ones
+(`hooks`' predicate and view, which the table never calls; guard :132 pins this, and mutant `lean-table-hook-kind`
+shows that guard failing). Each was planted, run and restored. The file records the test and the first failure.
+These are the task's four:
 
-| Id | File (definition) | Bug | Killed by |
-|---|---|---|---|
-| `lean-limit-copied` | `Hooks/Purposes.lean` (`member`) | limit copied as 255 | `Hooks/Purposes.lean:119` `#guard` |
-| `lean-ids-never` | `Hooks/Purposes.lean` (`classifier`) | 2.1b never named | `Hooks/Purposes.lean:109` `#guard` |
-| `lean-order-polarity-first` | `Hooks/Purposes.lean` (`linkMember`) | 1.1g before 1.1f | `Hooks/Purposes.lean:119` `#guard` |
-| `table-text-differs` | `purposes@0.json` (1.1g) | text differs from Lean's | `test_every_refused_example_round_trips_through_the_contract_in_both_engines` |
-| `table-order` | `purposes@0.json` (1.1f/1.1g) | fault out of 7.1's order | `test_the_contract_registers_spec_7s_texts_verbatim_and_in_fault_order` |
-| `py-verdict-path` | `ve/backends/relay.py` (`answer`) | contract on the verdict path | `test_the_contract_is_off_the_verdict_and_identity_paths` |
-| `py-bound-path` | `conformance/purposes_contract.py` (`bound`) | path unbound | `test_the_relay_refuses_a_retyped_or_rebound_record` |
+| Task's seeded bug | Mutant | Killed by |
+|---|---|---|
+| a 7.1 text differing from Lean's | `table-text-differs` | `test_every_refused_example_round_trips_through_the_contract_in_both_engines` |
+| the link limit copied as 255 | `lean-limit-copied` | `Hooks/Purposes.lean:158` `#guard` (the 257-link round trip) |
+| the contract on the verdict path | `py-verdict-path` (`ve/backends/relay.py` `answer`) | `test_the_contract_is_off_the_verdict_and_identity_paths` |
+| a fault out of 7.1's order | `table-order`, `lean-order-polarity-first` | `test_the_contract_registers_spec_7s_texts_verbatim_and_in_fault_order`, `Hooks/Purposes.lean:175` |
 
-Rust: only the generated `rust/ve-kernel/src/contract_tables.rs` changed; no hand-written Rust.
+Rust: only the generated `rust/ve-kernel/src/contract_tables.rs` changed; no Rust was written by hand.
 
-## 5. Trust, evidence and tests
+## 5. Trust and evidence
 
-- Trust: new Lean-owned diagnostic behaviour, R16 (standing ruling): `Hooks/Purposes.lean` and `Tables/Purposes.lean`
-  classed `G[V]` as `Hooks/Acts.lean`; numbers and allowance in section 6. FOLLOW-UPS.md row under
-  "## sa-wire-purposes0" (the ties pass).
-- Pilot bytes: 0 (shadow; no route reads the contract).
-- Overlap: only generated inventories and shared side tables (`tools/trust-classes.json`,
-  `ve/assurance-manifest.json`) with en-e3a, cmp-s3-cfr-1, ps-2ac, ps-3, sa-checked-view.
+- Trust (`uv run python tools/trust_map.py --check`, against 1ee886ca05d2): K +0, S +0, G +64 (`Hooks/Purposes.lean`
+  +61, `Tables/Purposes.lean` +2, `Diagnose.lean` +1). The allowance is recorded in `docs/trust-baseline.json` with
+  "SIGNED by standing ruling R16 (DRI-RULINGS.md), sa-wire-purposes0, 2026-10-18". The FOLLOW-UPS.md row under
+  "## sa-wire-purposes0" asks for the ties pass.
+- Trust mutants (13a, `--test` the hook and Diagnose modules, `--allow` [trust-allow.json](trust-allow.json)):
+  [trust-mutants.json](trust-mutants.json): 164 KILLED, 0 SURVIVOR, 0 UNKNOWN, 34 ALLOWED, 2 INVALID, exit 0. Of
+  the 34 allowed, 11 are the table's unread `inherited` flags, 3 are an unreachable `getD` default, 2 are the
+  link-number literal inside `find?`, 10 break a proof in the same module (`classifier_ok_iff`,
+  `purposes_ids_reads_check`) that a round-trip guard also refutes, and 8 do not elaborate. The first sweep
+  had 2 real survivors: a 256-link block refused for a link, and a later bad ref in a side. Both now have guards.
+- Lean: `lake build` (1363 jobs) and `python3 lean/audit.py` PASS (824 files, only the allowed axioms);
+  `regen_generated.py --write` ran once (39 entries), and `tools/lean_statements.py` was rerun after the last Lean edit.
+- Pilot bytes: 0 (shadow: no route reads the contract; `grep -rn purposes_contract ve/` finds nothing).
+- Overlap with in-flight branches: only generated inventories and shared side tables (`tools/trust-classes.json`,
+  `ve/assurance-manifest.json`), shared with en-e3a, cmp-s3-cfr-1, ps-2ac, ps-3 and sa-checked-view.
+- SELF-REVIEW: 1 A, 6 B, 8 C; fixed 13 (A: side rows follow `decodeSide`; B: per-definition mutants, 2.1b tied to
+  `check` by a theorem, every record field bound, more document fixtures, this section, deviation 2; C: deviation 1,
+  shadow record provenance, mutant lines re-cited, the size measured, a missing block noted, the read-once bound).
+  Not done: C `adapter` → `caseRoot` (deviation 3), and C unreachable fallback (it is now an allowed equivalent).
 
-## 6. Final checks
+## 6. Tests
 
-(filled in after the heavy checks)
+(the selected run's result follows)
+
+## 7. Self-review against BUILDER-CHECKLIST
+
+1. Typed and contained: PASS, `test_the_relay_refuses_a_retyped_or_rebound_record` (every field and argument
+   deleted or retyped with each value class, including a 10,000-deep list; it found and fixed a `TypeError` on a list `check`).
+2. Deliverables: PASS, section 1 (one row per task part, each with its test). Section 2 lists what waits for PE-2
+   (the task names that cut). No Python copy of a decision (the relay reads Lean's record) and no report test.
+3. Tests can fail: PASS, [mutants.json](mutants.json) (22 killed) and [trust-mutants.json](trust-mutants.json) (exit 0).
+4. Engines agree: PASS, `test_every_refused_example_round_trips_through_the_contract_in_both_engines` (Lean, the
+   Python engine and the legacy validator, record by record), and `test_the_examples_are_accepted_and_clean_in_both_engines`.
+5. R8 binding: PASS, `test_the_relay_refuses_a_retyped_or_rebound_record` (`absent`, a shifted check, another
+   unit's check, extra and missing arguments, an extra field). Row count and ids are bound by `run_bound` in the relay.
+6. Gate evidence: PASS. The chain runs the gate on the final HEAD. The evidence above was measured on this branch's commits.
+7. No unsigned item: PASS. The only growth is R16, signed in `docs/trust-baseline.json`, and there is no DELTA row.
+8. DELTA: N.A. No user-visible output changes: `test_the_contract_is_off_the_verdict_and_identity_paths`
+   (the answers' bytes equal main's).
+9. Selection: PASS. `tools/select_tests.py --base 1ee886ca0` selects 473 of 578 files (the Lean change reaches
+   `ve_service`), including `tests/test_purposes_contract.py` and `tests/test_wire_contract_lint.py`.
+10. Statements: PASS. Mutant `lean-ids-wrong-test` breaks `purposes_ids_reads_check` (unsolved goals at :122).
+    The theorem is about `classifier`'s returned value.
+11. Limits fail closed: PASS, `test_the_limit_is_leans_and_never_copied` (257 links → 1.1c `ResourceLimit`) and
+    guard :158 (a 256-link block refused for a link stays 1.1g). No clocks or sleeps.
+12. CPU: N.A. No route runs the contract; the diagnose unit is new and only diagnostics read it.
+13. Test-removed: N.A. No test removed or renamed.
+14. Both directions: PASS. Each check has accepted cases (guard :157, `base`, `limit`) and refused ones (:158). Spec
+    re-read: the 9 texts against purpose-explanation.md:1448-1480 (also read by the test above), and the fault order
+    against `decodeLink` (Wire.lean:71-83) and `check` (WellFormed.lean:142-145).
+15. Overclaim, silent cut, every check can fail, limits charged first: PASS. "Every" claims cite their tests above.
+    The cut is the task's own (7.2 rows that need the view). Each new guard has a mutant (mutants.json). Limits are
+    charged before walking (deviation 5).
 
 Next item: pe-2 (the purposes block in the document mode), after sa-checked-view.
