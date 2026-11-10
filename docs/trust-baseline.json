@@ -2392,6 +2392,13 @@
    "reason": "et-5: V +76 (VE/EnglishGrammar/SourceWords.lean +67, VE/EnglishGrammar/Advice.lean +9; the SourceWordsExamples helpers are T)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), et-5, 2026-10-18",
    "commit": "61a11aa21edcf115843a6b44a9aff9e623a6d6e4"
+  },
+  {
+   "class": "V",
+   "lines": 5,
+   "reason": "sc-11: VE/Readings/SoftSupLabels.lean V +5 (sdShown, untied G[V]; labelImage tied by labelImage_fst, _snd_mem, _functional, supLabel_pull, supLabel_other; nodeExcLabels tied by excLabels_nodes); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-11, 2026-10-18",
+   "commit": "33fe04615107cfb12e4402877992e6ff7b6e95d8"
   }
  ]
 }

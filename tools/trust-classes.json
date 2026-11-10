@@ -20357,6 +20357,59 @@
       "G[V]": [
         "VE.Commands.SplitOn.splitOnL"
       ]
+    },
+    "VE/Readings/SoftSupLabels.lean": {
+      "G[V]": [
+        {
+          "name": "VE.Readings.nodeExcLabels",
+          "tied": [
+            "VE.Readings.excLabels_nodes"
+          ]
+        },
+        {
+          "name": "VE.Readings.labelImage",
+          "tied": [
+            "VE.Readings.labelImage_fst",
+            "VE.Readings.labelImage_snd_mem",
+            "VE.Readings.labelImage_functional",
+            "VE.Readings.supLabel_pull",
+            "VE.Readings.supLabel_other"
+          ]
+        },
+        "VE.Readings.sdShown"
+      ],
+      "P": [
+        "VE.Readings.excData"
+      ]
+    },
+    "VE/Readings/SoftSupWire.lean": {
+      "C": [
+        "VE.Readings.Wire.sdSuperposable",
+        "VE.Readings.Wire.sdCheckWork",
+        "VE.Readings.Wire.sdChecked",
+        "VE.Readings.Wire.routeSD",
+        "VE.Readings.Wire.SupReplaySD"
+      ],
+      "G[R]": [
+        "VE.Readings.Wire.maxSdCheckWork"
+      ]
+    },
+    "VE/Readings/SoftSupWireExamples.lean": {
+      "T": [
+        "VE.Readings.SoftSupWireExamples.supLabels",
+        "VE.Readings.SoftSupWireExamples.NSDd",
+        "VE.Readings.SoftSupWireExamples.NSDm",
+        "VE.Readings.SoftSupWireExamples.pairVals",
+        "VE.Readings.SoftSupWireExamples.envWith",
+        "VE.Readings.SoftSupWireExamples.routeFacts",
+        "VE.Readings.SoftSupWireExamples.softSet",
+        "VE.Readings.SoftSupWireExamples.NSDlate",
+        "VE.Readings.SoftSupWireExamples.wide",
+        "VE.Readings.SoftSupWireExamples.NSDbig",
+        "VE.Readings.SoftSupWireExamples.NSDcount",
+        "VE.Readings.SoftSupWireExamples.guarded",
+        "VE.Readings.SoftSupWireExamples.NSDheavy"
+      ]
     }
   }
 }
