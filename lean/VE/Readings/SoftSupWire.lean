@@ -32,6 +32,19 @@ def sdCheckWork (N : NDoc) : Nat :=
   (checkedChoices N.D).length * ((softXL N (sup N.D).1).length + ((sup N.D).1.soft.T.nodes.map
     (fun M => (M.guard :: M.carveOuts).map VE.Bridge.formulaNodes)).flatten.sum)
 
+/-- `sdCheckWork` as evaluated (`@[csimp]`): `softXL`'s length is its exception labels' and colliding pairs', so no
+premise is built (its `cohPremiseU` expansions cost 89.7 s on the 3,071-node guard document, docs/rd-9/sc-11w/cpu.md). -/
+def sdCheckWorkFast (N : NDoc) : Nat :=
+  let S := (sup N.D).1
+  let X := VE.Rights.correlate S
+  (checkedChoices N.D).length * (min (VE.SoftNorms.Wire.excLabels X).length (VE.SoftNorms.excPremises X).length +
+    (VE.SoftNorms.collidingPairs X).length + (S.soft.T.nodes.map
+      (fun M => (M.guard :: M.carveOuts).map VE.Bridge.formulaNodes)).flatten.sum)
+
+@[csimp] theorem sdCheckWork_eq_fast : @sdCheckWork = @sdCheckWorkFast := by
+  funext N
+  simp [sdCheckWork, sdCheckWorkFast, softXL, VE.NormDefaults.Wire.softLabelledU]
+
 /-- DRI ruling 5 extended by 3.3 step 5, within its limits. -/
 def sdChecked (re : ReadingsEnvironment) (N : NDoc) : Bool :=
   decide ((checkedChoices N.D).length ≤ maxChoiceChecks) && decide (sdCheckWork N ≤ maxSdCheckWork) &&
