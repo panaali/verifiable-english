@@ -241,6 +241,9 @@ def test_right_clauses_environment_texts_kept():
                "UnsupportedProfile: speech-acts@0 with right-clauses@0",
                "UnsupportedProfile: readings@1 is not the head of this profile list"}
     others = sorted({p for k in saved["texts"] for p in k.split(",")} - set(ON))
+    # a document layer: the composed gate after the layer's own (`validatedComposedEnvironment`)
+    layered = sorted({*ON, "documents@1", "judgments@0"})
+    assert text(layered) == text([p for p in layered if p != "right-clauses@0"]) == "ok"
     for k in (0, 1, 2):
         for extra in combinations(others, k):
             on = sorted({*ON, *extra})
