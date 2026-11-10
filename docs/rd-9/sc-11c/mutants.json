@@ -1,0 +1,26 @@
+{
+  "comment": "sc-11c seeded bugs, all Lean (no Python or Rust product code changed). Each planted alone in lean/VE/Readings/SoftSupRun.lean as committed, then `lake build VE.Readings.SoftSupRun` and `lake env lean VE/Readings/SoftSupRunExamples.lean` run and the failing #guards recorded (line numbers of SoftSupRunExamples.lean at the commit that adds this file); the file restored after each run. The trust-mutants sweep of the new trusted definitions is docs/rd-9/sc-11c/trust-mutants.json.",
+  "mutants": [
+    {"id": "M1", "definition": "VE.Readings.Run.sdScope", "file": "lean/VE/Readings/SoftSupRun.lean",
+     "change": "the scope admits and routes the case again before each piece (`sdCaseOf` per piece): the task's seeded bug 1, a runner that re-admits per piece",
+     "test": "lean/VE/Readings/SoftSupRunExamples.lean:106 (W-14: one admission and one route check per case)", "result": "KILLED"},
+    {"id": "M2", "definition": "VE.Readings.Run.sdScope", "file": "lean/VE/Readings/SoftSupRun.lean",
+     "change": "`labelImage` computed for every scope (`if true`), also the scope with no accepted piece: the task's seeded bug 2",
+     "test": "lean/VE/Readings/SoftSupRunExamples.lean:106 (W-14: one label image, for the scope with an accepted piece)", "result": "KILLED"},
+    {"id": "M3", "definition": "VE.Readings.Run.sdCertificateCore", "file": "lean/VE/Readings/SoftSupRun.lean",
+     "change": "the certificate is bound to `premisesX (supU N) (supX N) (sup N.D).2`, without the slot and the atoms: premises other than `premisesX (supU N) (slotUnder N.D A ++ supX N)`, the task's seeded bug 3 (D14)",
+     "test": "lean/VE/Readings/SoftSupRunExamples.lean:142 (D14: the certificate bound to premisesX is accepted), also :106 and :107 (W-14)", "result": "KILLED"},
+    {"id": "M4", "definition": "VE.Readings.Run.sdWitness", "file": "lean/VE/Readings/SoftSupRun.lean",
+     "change": "the conflict answer is checked once per compatible choice taking A, not once on the superposed document: the task's seeded bug 4, a conflict answer in more than one proof",
+     "test": "lean/VE/Readings/SoftSupRunExamples.lean:131 (W-13: NSDbig 8, 256 choices, one check)", "result": "KILLED"},
+    {"id": "M5", "definition": "VE.Readings.Run.sdProofs", "file": "lean/VE/Readings/SoftSupRun.lean",
+     "change": "`Fill_T` replayed twice: in the labelled middle and again as the conflict proof's tail",
+     "test": "lean/VE/Readings/SoftSupRunExamples.lean:158 (NSDq's conflict answer rests on its Fill_T premise)", "result": "KILLED"},
+    {"id": "M6", "definition": "VE.Readings.Run.shownWith", "file": "lean/VE/Readings/SoftSupRun.lean",
+     "change": "a used soft premise shown by its superposed label (p.2), not its choice label",
+     "test": "theorem VE.Readings.Run.shownWith_eq (SoftSupRun.lean:270) fails to prove", "result": "KILLED"},
+    {"id": "M6b", "definition": "VE.Readings.Run.sdScope", "file": "lean/VE/Readings/SoftSupRun.lean",
+     "change": "the scope shows the used supX labels as they are, not through the scope's label images",
+     "test": "lean/VE/Readings/SoftSupRunExamples.lean:107 (W-14: the soft premises shown by their choice labels, never rd-2-)", "result": "KILLED"}
+  ]
+}
