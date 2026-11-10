@@ -27,7 +27,7 @@ def _document_case(raw: bytes, admit: bool, directory: Path | None = None, prepa
                    chain_of: bytes | None = None):
     """The `document` mode's case for a text, or None when Python's own path decides it: the text is not UTF-8, which
     the mode cannot be sent, or pending content-bearing readings under norm defaults still need the original Python
-    coverage path. A text with English fences carries the lexicon proposal; a senses document's pack files are read
+    coverage path (`_python_decides_mixed_readings`, never for a chain list or a chain reading). A text with English fences carries the lexicon proposal; a senses document's pack files are read
     beside it (`directory`) and sent as texts, with the proposal its senses route reads (batch 16f). A soft document
     built for the proposal is kept in `prepared` for the document built from the answer (`_lean_document`). `chain_of`:
     the chain list document as written whose chain reading `raw` is, which the case names so that Lean checks the text
@@ -40,16 +40,8 @@ def _document_case(raw: bytes, admit: bool, directory: Path | None = None, prepa
         meta, _, fences = _split(raw)
     except (KeyError, TypeError, VEError):
         meta = fences = None  # Let Lean decide malformed front matter and preserve its diagnostic.
-    try:
-        profiles = listed_profiles(meta.get("environment"))
-        sets = meta.get("reading_sets", [])
-        if {"readings@1", "norm-defaults@0"} <= set(profiles) and type(sets) is list:
-            contents = [r.get("content") for s in sets if type(s) is dict
-                        for r in s.get("readings", []) if type(r) is dict]
-            if any(c is None for c in contents) and any(c is not None for c in contents):
-                return None
-    except (AttributeError, KeyError, TypeError, VEError):
-        pass  # Let Lean decide malformed front matter and preserve its diagnostic.
+    if _python_decides_mixed_readings(raw, meta, chain_of):
+        return None
     case = {"id": "document", "document": text, "admit": admit,
             **({} if chain_of is None else {"chain_of": chain_of.decode("utf-8")})}
     if meta is not None and "senses" in meta and directory is not None:
@@ -80,6 +72,25 @@ def _document_case(raw: bytes, admit: bool, directory: Path | None = None, prepa
     except (AttributeError, KeyError, TypeError, VEError, CheckerUnavailable):
         pass  # Lean checks the document before a fence needs the proposal.
     return case
+
+
+def _python_decides_mixed_readings(raw: bytes, meta, chain_of: bytes | None) -> bool:
+    """Whether Python's own coverage path decides the text: pending and content-bearing readings in the reading sets
+    of a document under `readings@1` and `norm-defaults@0`. Never for a `cardinality@0` chain list or its chain reading
+    (`chain_of`), which have no Python path: Lean judges them whatever their reading sets hold (qt-a4b re-check F3).
+    A `scope@0` wrapper still goes to Python, as on main (FOLLOW-UPS.md, qt-a4b-f3-scope: a DRI decision)."""
+    if chain_of is not None:
+        return False
+    try:
+        profiles = listed_profiles(meta.get("environment"))
+        sets = meta.get("reading_sets", [])
+        if not ({"readings@1", "norm-defaults@0"} <= set(profiles) and type(sets) is list):
+            return False
+        contents = [r.get("content") for s in sets if type(s) is dict
+                    for r in s.get("readings", []) if type(r) is dict]
+    except (AttributeError, KeyError, TypeError, VEError):
+        return False  # Let Lean decide malformed front matter and preserve its diagnostic.
+    return any(c is None for c in contents) and any(c is not None for c in contents) and not _lists_cardinality(raw)
 
 
 def _lean_answer(raw: bytes, admit: bool, directory: Path | None = None, prepared: dict | None = None,
