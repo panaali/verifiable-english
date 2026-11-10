@@ -150,8 +150,9 @@ refused with today's text, read before any choice's text. -/
 #guard text (run env4a doc4a fun c => modelJ c []) == "{\"assumed\":[[\"rs1\",1]],\"choice\":[[\"rs1\",1]]," ++
   "\"conclusion_value\":false,\"first_failing\":null,\"id\":\"t\",\"local_free\":true,\"status\":\"ok\",\"valid\":true}"
 -- an `unsaid__` table in `relations` is refused by the model decoder (F-SD8)
-#guard text (run env4a doc4a fun c => modelJ c [("unsaid__y_permitted", Json.arr #[])]) |>.startsWith
-  "fields do not match: expected [soft__excepted__need_not_x, soft__excepted__rd_2_must_x, ve__bit__1__0, c], got"
+#guard text (run env4a doc4a fun c => modelJ c [("unsaid__y_permitted", Json.arr #[])]) ==
+  "fields do not match: expected [soft__excepted__need_not_x, soft__excepted__rd_2_must_x, ve__bit__1__0, c], " ++
+    "got [c, soft__excepted__need_not_x, soft__excepted__rd_2_must_x, unsaid__y_permitted, ve__bit__1__0]"
 
 -- `NSDq`'s conflict answer under `[]` rests on its `Fill_T` premise alone, replayed in the middle with the slot
 #guard (run envq docq fun c => (·.used) <$> sdScope c [] (Json.arr #[]) .null
