@@ -2399,6 +2399,13 @@
    "reason": "sc-11: VE/Readings/SoftSupLabels.lean V +5 (sdShown, untied G[V]; labelImage tied by labelImage_fst, _snd_mem, _functional, supLabel_pull, supLabel_other; nodeExcLabels tied by excLabels_nodes); K +0, S +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-11, 2026-10-18",
    "commit": "33fe04615107cfb12e4402877992e6ff7b6e95d8"
+  },
+  {
+   "class": "V",
+   "lines": 100,
+   "reason": "sa-checked-view: V +100 (lean/VE/Service/DocumentView.lean +97, lean/VE/Service/Document.lean +3); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sa-checked-view, 2026-10-18",
+   "commit": "a7659c5f12aebb2945cfb2106ed29a20663ab836"
   }
  ]
 }
