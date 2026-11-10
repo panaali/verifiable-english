@@ -7157,6 +7157,7 @@ import VE.WireContract.Engine
 #print axioms VE.Rights.limKeys_nil
 #print axioms VE.Rights.limPackList_denote
 #print axioms VE.Rights.limPack_mem_narrowings
+#print axioms VE.Rights.limitationScope_texts
 #print axioms VE.Rights.limitation_scope_sound
 #print axioms VE.Rights.lineNode_correlate
 #print axioms VE.Rights.lineNode_direct
@@ -7182,6 +7183,7 @@ import VE.WireContract.Engine
 #print axioms VE.Rights.narrowings_complete
 #print axioms VE.Rights.narrowings_complete_of_valid
 #print axioms VE.Rights.noDistinction_sound
+#print axioms VE.Rights.noDistinction_texts
 #print axioms VE.Rights.no_distinction_sound
 #print axioms VE.Rights.nodeNamed_mem
 #print axioms VE.Rights.nodeNamed_self
