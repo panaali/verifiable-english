@@ -52,6 +52,8 @@ def gA : VE.Formula := .unary "a_exists" (.const "c")
 def gB : VE.Formula := .unary "b_exists" (.const "c")
 def rep2 : Report :=
   { checked := [chk "o1" gA, chk "o3" gB, chk "o2" gA, chk "o4" gB, chk "o5" gA], bases := [], baseTree := emptyTree }
+def gC : VE.Formula := .unary "c_exists" (.const "c")
+def rep3 : Report := { rep2 with checked := rep2.checked ++ [chk "o6" gC, chk "o7" gC] }
 def tIn : CandidateTable := fun _ pc => if pc == .negated then [.inPlace, .assumed] else [.assumed, .conditioned]
 
 /-! ## R-3: a pick names emitted readings only -/
