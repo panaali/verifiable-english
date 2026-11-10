@@ -1,7 +1,7 @@
 {
   "item": "sc-11w",
   "decision": "manage-agents/reviews/dri-decisions-20261110-sc-11w.md item 1 (b)",
-  "method": "each mutant applied to the file at commit 195119a8e0, `lake build VE.Readings.SoftSupWireExamples` run, every error line recorded, the file restored by `git checkout` (2026-11-10). Where a proof rejects the mutant first (M1, M2, M7, M8), a second run (the `g` variant) also patches only that proof, which shows the named #guard fails too. Line numbers are those of 195119a8e0.",
+  "method": "each mutant applied to the file at commit 195119a8e0, `lake build VE.Readings.SoftSupWireExamples` run, every error line recorded, the file restored by `git checkout` (2026-11-10). Where a proof rejects the mutant first (M1, M2, M7, M8), a second run (the `g` variant) also patches only that proof, which shows the named #guard fails too. Line numbers are those of 195119a8e0; M1g and M2g were rerun after the run_meta order check became the rfl pin (`run_meta` makes the tree run code while it elaborates, which tests/test_lean_dump_cache.py refuses).",
   "guards": {
     "SoftSupWireExamples.lean:117": "#guard routeFacts ⟨M8, []⟩ == \"enumerated false 2 30 enumerated\" (sc-11, prints sdCheckWork)",
     "SoftSupWireExamples.lean:191": "#guard chargeFacts wideGuard191 == \"5975 true true enumerated true 256 73472 enumerated\"",
@@ -13,17 +13,17 @@
     "SoftSupWireExamples.lean:230": "#guard todayRow byte identity: routeSD over the charge is today's enumerated row",
     "SoftSupWireExamples.lean:239": "#guard each content kind's sdContentCharge == [(1, 5), (1, 7), (2, 5), (3, 7), (1, 3)]",
     "SoftSupWireExamples.lean:251": "#guard (sdSizeCharge (NSDbig 1), sdSizeCharge framed) == (28, 420)",
-    "SoftSupWireExamples.lean:258": "run_meta: sdSuperposable's first && operand is decide (sdSizeCharge ..)"
+    "SoftSupWireExamples.lean:258": "example: sdSuperposable N = (decide (sdSizeCharge N ≤ maxSdSizeCharge) && superposable N.D && WellFormedU (supU N)) := rfl (the charge is the left operand `&&` reduces on)"
   },
   "mutants": [
     {"id": "M1", "definition": "sdSuperposable", "behaviour": "the charge is read", "file": "lean/VE/Readings/SoftSupWire.lean",
      "mutation": "`decide (sdSizeCharge N ≤ maxSdSizeCharge) && superposable N.D` becomes `superposable N.D`",
      "test": "SoftSupWireExamples.lean:214 (overCharge #guard)",
-     "result": "killed: SupReplaySD.parts's proof fails (SoftSupWire.lean:164); run M1g (that proof made order-free, `⟨by simp_all, by simp_all, hck⟩`) fails the #guards at :214, :220, :230 and the run_meta at :258", "restored": true},
+     "result": "killed: SupReplaySD.parts's proof fails (SoftSupWire.lean:164); run M1g (that proof made order-free, `⟨by simp_all, by simp_all, hck⟩`) fails the #guards at :214, :220, :230 and the rfl order pin at :258", "restored": true},
     {"id": "M2", "definition": "sdSuperposable", "behaviour": "the size charge is read before `superposable` and `supU N` (task seeded bug 1)", "file": "lean/VE/Readings/SoftSupWire.lean",
      "mutation": "the charge moved after `superposable N.D && WellFormedU (supU N)`",
-     "test": "SoftSupWireExamples.lean:258 (run_meta first-operand check); tools/check_rd9_sc1_statements.py (the signed text)",
-     "result": "killed: SupReplaySD.parts's proof fails (SoftSupWire.lean:164); run M2g (that proof made order-free) fails the run_meta at :258: \"sdSuperposable reads some (VE.Readings.superposable) first, not the size charge\"", "restored": true},
+     "test": "SoftSupWireExamples.lean:258 (the rfl order pin); tools/check_rd9_sc1_statements.py (the signed text)",
+     "result": "killed: SupReplaySD.parts's proof fails (SoftSupWire.lean:164); run M2g (that proof made order-free) fails the rfl order pin at :258 (type mismatch)", "restored": true},
     {"id": "M3a", "definition": "maxSdSizeCharge", "behaviour": "the limit, off by one below (task seeded bug 2)", "file": "lean/VE/Readings/SoftSupWire.lean",
      "mutation": "`maxSdSizeCharge := 16384` becomes `16383`", "test": "SoftSupWireExamples.lean:213 (atCharge #guard)",
      "result": "killed: :213 fails (the document at the limit flips to enumerated)", "restored": true},

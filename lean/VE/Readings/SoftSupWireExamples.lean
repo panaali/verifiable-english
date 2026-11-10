@@ -250,15 +250,11 @@ def framed : NDoc := ⟨⟨.soft, framedFrame, framedItems, [⟨"k1", "axis", [(
   [⟨"n1", "rs0", 1, ["strict"]⟩]⟩, []⟩
 #guard (sdSizeCharge (NSDbig 1), sdSizeCharge framed) == (28, 420)
 
-/-- The first operand of a `&&` chain: the value compiled code reads first. -/
-def firstConjunct : Expr → Expr
-  | .app (.app (.const ``and []) a) _ => firstConjunct a
-  | e => e
--- `sdSuperposable` reads the charge before `superposable` and `supU N` (`&&`'s value is the same in either order)
-run_meta do
-  let some (.defnInfo d) := (← getEnv).find? ``sdSuperposable | throwError "sdSuperposable is not a definition"
-  let first ← Meta.lambdaTelescope d.value fun _ b => pure (firstConjunct b)
-  unless first.isAppOf ``decide && (first.find? (·.isConstOf ``sdSizeCharge)).isSome do
-    throwError "sdSuperposable reads {first.getAppFn.constName?} first, not the size charge"
+-- `sdSuperposable` reads the charge before `superposable` and `supU N`. `&&`'s value is the same in either order, so
+-- the order is pinned as the definition's own term: `&&` reduces on its left operand, the one compiled code reads first,
+-- and a reordered or dropped charge is not this term by `rfl`. (A `run_meta` check would make the tree run code while
+-- it elaborates, which the Lean dump cache refuses: tests/test_lean_dump_cache.py.)
+example (N : NDoc) : sdSuperposable N =
+    (decide (sdSizeCharge N ≤ maxSdSizeCharge) && superposable N.D && VE.NormDefaults.WellFormedU (supU N)) := rfl
 
 end VE.Readings.SoftSupWireExamples

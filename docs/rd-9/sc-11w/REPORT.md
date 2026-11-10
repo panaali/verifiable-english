@@ -47,8 +47,9 @@ takes 0.95-1.44 s on the 191-node document and 1.32 s on NSDheavy, because there
    - `NSDsets` (300 sets) and `NSDcands` (one set of 5,000 candidates) are refused by the charge. These are the
      self-review's shapes, which took 11 s and 23 s.
    - Two `#guard`s pin the charge: one per content kind, and one on a document with every counted kind (`framed`).
-   - A `run_meta` check fails unless the first operand of `sdSuperposable`'s compiled `&&` chain is the charge. That
-     is the order, which no value `#guard` can see.
+   - An `example … := rfl` pins `sdSuperposable`'s term with the charge as the left operand, which `&&` reduces on and
+     compiled code reads first. That is the order, which no value `#guard` can see. A `run_meta` check was used first,
+     but it makes the tree run code while it elaborates, which tests/test_lean_dump_cache.py refuses.
 5. **14.11 restated as measured** (docs/spec/rd-9-soft-chain.md 14.11 only), citing sc-11-3 item 1 and sc-11w item 1.
    - The `sup N.D`/`supU N` row gains the charge.
    - The closing paragraph gives the charge's definition, 16,384, the machine and load, the signed edit, and the
@@ -66,8 +67,7 @@ Outside the task's file list, each needed by the above:
 - tools/trust-classes.json: the new declarations' classes.
 - Inside SoftSupWire.lean, beyond the named regions: `SupReplaySD.parts`'s proof (one projection, after the signed
   edit) and `sdCheckWorkFast` with its csimp theorem.
-- The fixtures' helpers in SoftSupWireExamples.lean: `chargeFacts`, `sized`, `NSDsized`, `todayRow`, `framed*` and
-  `firstConjunct`.
+- The fixtures' helpers in SoftSupWireExamples.lean: `chargeFacts`, `sized`, `NSDsized`, `todayRow` and `framed*`.
 
 `sdCheckWork` was not made stricter (allowed, not required).
 
@@ -79,8 +79,8 @@ the named `#guard` failing.
 
 | Id | Bug | Fails |
 | --- | --- | --- |
-| M1 | charge dropped from `sdSuperposable` | `overCharge`, `NSDsets`/`NSDcands`, `todayRow` `#guard`s, `run_meta` |
-| M2 | charge read after `sdSuperposable` (task bug 1) | `run_meta` first-operand check |
+| M1 | charge dropped from `sdSuperposable` | `overCharge`, `NSDsets`/`NSDcands`, `todayRow` `#guard`s, the `rfl` order pin |
+| M2 | charge read after `sdSuperposable` (task bug 1) | the `rfl` order pin |
 | M3a / M3b | `maxSdSizeCharge` 16383 / 16385 (task bug 2) | `atCharge` / `overCharge` and `todayRow` |
 | M4 / M4b | `sdRuleCharge` drops exception conditions / `over` names | `wideGuard191` and others / content-kind |
 | M5 / M5b / M5c | `sdContentCharge` drops a limitation's conditions / counts one line rule / no assertion unit | content-kind, `framed`, `NSDsets` |
