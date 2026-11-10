@@ -512,6 +512,7 @@ module VE.Presupposition.Admit.Facts
 module VE.Presupposition.Admit.Statements
 module VE.Presupposition.Admit
 module VE.Presupposition.Agree
+module VE.Presupposition.Couple.Fixtures
 module VE.Presupposition.Couple.Statements
 module VE.Presupposition.Couple
 module VE.Presupposition.CoupleExamples

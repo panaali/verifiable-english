@@ -18450,7 +18450,8 @@
     "VE/Presupposition/Couple.lean": {
       "C": [
         "VE.Presupposition.instDecidablePickFits",
-        "VE.Presupposition.instDecidablePickedWF"
+        "VE.Presupposition.instDecidablePickedWF",
+        "VE.Presupposition.instDecidableUniform"
       ],
       "G[R]": [
         "VE.Presupposition.sourceLabel"
@@ -18517,7 +18518,7 @@
         "VE.Presupposition.unitRule"
       ]
     },
-    "VE/Presupposition/CoupleExamples.lean": {
+    "VE/Presupposition/Couple/Fixtures.lean": {
       "T": [
         "VE.Presupposition.CoupleExamples.D15",
         "VE.Presupposition.CoupleExamples.D15x",
@@ -18549,6 +18550,8 @@
         "VE.Presupposition.CoupleExamples.g18",
         "VE.Presupposition.CoupleExamples.g22",
         "VE.Presupposition.CoupleExamples.g3",
+        "VE.Presupposition.CoupleExamples.gA",
+        "VE.Presupposition.CoupleExamples.gB",
         "VE.Presupposition.CoupleExamples.holds",
         "VE.Presupposition.CoupleExamples.ids5",
         "VE.Presupposition.CoupleExamples.instr",
@@ -18569,6 +18572,7 @@
         "VE.Presupposition.CoupleExamples.preUser",
         "VE.Presupposition.CoupleExamples.reg22",
         "VE.Presupposition.CoupleExamples.regOf",
+        "VE.Presupposition.CoupleExamples.rep2",
         "VE.Presupposition.CoupleExamples.rep22",
         "VE.Presupposition.CoupleExamples.repNeg",
         "VE.Presupposition.CoupleExamples.report19",
@@ -18576,6 +18580,7 @@
         "VE.Presupposition.CoupleExamples.same19",
         "VE.Presupposition.CoupleExamples.sets5",
         "VE.Presupposition.CoupleExamples.sets7",
+        "VE.Presupposition.CoupleExamples.tIn",
         "VE.Presupposition.CoupleExamples.theOwnerBusy",
         "VE.Presupposition.CoupleExamples.unit15",
         "VE.Presupposition.CoupleExamples.unit22",
