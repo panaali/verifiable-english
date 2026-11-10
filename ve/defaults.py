@@ -457,6 +457,21 @@ def ask(environment, norms, premises, conclusion):
     return out
 
 
+def ask_zone(environment, norms, question):
+    """The default question at one situation (plan DF-5 through DF-1b's flag): df-5's `defaults-zone` request with
+    the question's `situation` (the request's `model`), `record`, `observations` and `query` as given, and Lean's
+    bound row (without `id` and `status`) with the English of the rows Lean chose (`ve.defaults_english.zone`):
+    `{"question": "default", "kind": "defaults-zone", "answer", "english"}`. The labels a `noCompletion` answer binds
+    to are X's, the layered `norm-defaults-elaborate` row's packs."""
+    base = {"environment": environment, "norms": norms}
+    case = {"id": "zone", "kind": "defaults-zone", **base, "model": question["situation"],
+            "record": question["record"], "observations": question["observations"], "query": question["query"]}
+    layered = run({"id": "norm-defaults-elaborate", "kind": "norm-defaults-elaborate", **base})
+    row = answer(case, [item["label"] for item in layered["soft"] + layered["rights"]])
+    from .defaults_english import sentences
+    return {"question": "default", "kind": "defaults-zone", "answer": _shown(row), "english": sentences(case, row)}
+
+
 def _shown(row):
     """What the relay shows of a bound row: all of it but `id`, `status` and the situation, which is the request's
     own model and filling (`situationJson` shows the unsaid tables of the situation the request sent)."""

@@ -15,6 +15,7 @@ module ResponseShape.Encoders.Alternatives
 module ResponseShape.Encoders.Ask
 module ResponseShape.Encoders.Calc
 module ResponseShape.Encoders.Cardinality
+module ResponseShape.Encoders.ClausesElaborate
 module ResponseShape.Encoders.Command
 module ResponseShape.Encoders.Common
 module ResponseShape.Encoders.Conformance
@@ -53,6 +54,7 @@ module ResponseShape.Schemas.Calc
 module ResponseShape.Schemas.Cardinality
 module ResponseShape.Schemas.Check
 module ResponseShape.Schemas.CheckCertificate
+module ResponseShape.Schemas.ClausesElaborate
 module ResponseShape.Schemas.Command
 module ResponseShape.Schemas.Common
 module ResponseShape.Schemas.Diagnose
@@ -641,7 +643,13 @@ module VE.RightClauses.PlainWellFormed.W1Check
 module VE.RightClauses.PlainWellFormed.W1Ext
 module VE.RightClauses.PlainWellFormed
 module VE.RightClauses.Relation
+module VE.RightClauses.Run
+module VE.RightClauses.RunExamples
 module VE.RightClauses.Tree
+module VE.RightClauses.Wire
+module VE.RightClauses.WireDecode
+module VE.RightClauses.WireName
+module VE.RightClauses.WireTheorems
 module VE.Rights.Admission
 module VE.Rights.Bar
 module VE.Rights.Correlate
@@ -1368,6 +1376,9 @@ VE.Reports.Source.J@VE.Attribution.Semantics
 VE.Reports.UniformPolarity@VE.Attribution.Content
 VE.Reports.WF@VE.Attribution.Facts
 VE.Reports.beliefsIn@VE.Attribution.Semantics
+VE.RightClauses.Distinct@VE.RightClauses.WireDecode
+VE.RightClauses.NoClauseKeys@VE.RightClauses.Wire
+VE.RightClauses.NoReadingSets@VE.RightClauses.Wire
 VE.RightClauses.PWF.DualCtx@VE.RightClauses.PlainWellFormed.SoftExt
 VE.RightClauses.PWF.EnvOK@VE.RightClauses.PlainWellFormed.Guards
 VE.RightClauses.PWF.EnvOKB@VE.RightClauses.PlainWellFormed.SoftValid
@@ -1385,6 +1396,7 @@ VE.RightClauses.PWF.QC@VE.RightClauses.PlainWellFormed.SoftValid
 VE.RightClauses.PWF.RL@VE.RightClauses.PlainWellFormed.Guards
 VE.RightClauses.PWF.TRel@VE.RightClauses.PlainWellFormed.W1Ext
 VE.RightClauses.PWF.TypesAt@VE.RightClauses.PlainWellFormed.W1Check
+VE.RightClauses.PlainOnWire@VE.RightClauses.Wire
 VE.Rights.Admission.CouplingLeaf@VE.Rights.Admission
 VE.Rights.Admission.LayerLeaf@VE.Rights.Admission
 VE.Rights.Admission.NodeAdmitted@VE.Rights.Admission
