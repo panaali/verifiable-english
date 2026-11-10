@@ -149,6 +149,8 @@ import VE.Presupposition.Examples
 import VE.Presupposition.Couple
 import VE.Presupposition.Couple.Statements
 import VE.Presupposition.CoupleExamples
+import VE.Presupposition.Events
+import VE.Presupposition.Events.Examples
 import VE.RightClauses.Tree
 import VE.RightClauses.Plain
 import VE.RightClauses.Relation
