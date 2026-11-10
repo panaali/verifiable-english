@@ -1,0 +1,9 @@
+trust_mutants: 35 definitions, 41 mutants (8 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/Presupposition/Admit.lean:223 VE.Presupposition.readingsDoc (G[V], trusted) list-empty: (D.norms.nodes.find? (·.name == n)) -> [] (lean/VE/Presupposition/Admit.lean:223: Invalid dotted identifier notation: The expected type of `...)
+UNKNOWN lean/VE/Rights/Run.lean:316 VE.Rights.Run.situationTables (D[V], trusted) list-empty: (M.relations p) -> [] (lean/VE/Rights/Run.lean:316: Invalid field notation: Type of)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:169 VE.Purposes.WellFormed (S, trusted) eq-le: = -> ≤ (lean/VE/Purposes/WellFormed.lean:169: failed to synthesize)
+trust_mutants: 5 KILLED, 0 SURVIVOR, 3 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 33 OTHER SHARD in 1179 s
+trust_mutants: D[V], trusted: 1 UNKNOWN, 9 OTHER SHARD
+trust_mutants: G[V], trusted: 4 KILLED, 1 UNKNOWN, 16 OTHER SHARD
+trust_mutants: S, trusted: 1 KILLED, 1 UNKNOWN, 8 OTHER SHARD
+trust_mutants: steps: wall plan 14.1 s, scratch 3.9 s, control_build 0.3 s, probe_install 1.4 s, mutants 1153.2 s, cleanup 6 s, reads 0.2 s; lake control_build 0.3 s (1), probe_install 1.4 s (1), control_probes 34 s (6), mutant_builds 54.9 s (9), mutant_checks 1423 s (10), stage_controls 376.3 s (5), mutant_probes 36.5 s (6)
