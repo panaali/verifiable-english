@@ -1,13 +1,21 @@
 # AR-23: deltas
 
 None. No verdict, refusal text, step count, wire field or fault order changed. The corpus A/B over the nine corpora
-of the lean-first gate, at the merge base `95ed0e49b` against the head `14e7dbe2e`, gave "ab PASS"
+of the lean-first gate, at the merge base `a5088a09b` against the head `eb334fbd1`, gave "ab PASS"
 (`uv run python -m tools.evidence ab ... --delta docs/arch/AR-23/evidence/ab-delta.json`). Over 100,560 records,
-100,530 are the same, 30 are unavailable on both sides with identical outputs (R7, below) and 0 are unlisted. The
-base and head recordings are byte-identical (SHA-256 `4d806d67…` for both, `evidence/ab.json`). The first A/B, at the
-earlier merge base `de7fb9469` against `547dc3aa2`, gave the same result: byte-identical recordings (`e2dbb554…`),
-100,529 the same and 31 unavailable on both sides. The 31st was one more whole-UDHR time-out on both sides, which
-answered on both sides in the second recording. Closure's version gate and atom-free gate are the same row for row on both runners
+100,538 are the same, 22 are unavailable on both sides with identical outputs (R7, below) and 0 are unlisted. The
+base and head recordings are byte-identical (SHA-256 `8de0da3e…` for both, `evidence/ab.json`).
+
+The two earlier A/B runs, against the earlier merge bases, gave the same result:
+- `de7fb9469` against `547dc3aa2`: recordings byte-identical (`e2dbb554…`), 100,529 the same, 31 unavailable on both
+  sides.
+- `95ed0e49b` against `14e7dbe2e`: recordings byte-identical (`4d806d67…`), 100,530 the same, 30 unavailable on both
+  sides.
+
+Their extra unavailable records were whole-UDHR time-outs on both sides that answered, on both sides, in a later
+recording.
+
+Closure's version gate and atom-free gate are the same row for row on both runners
 (`evidence/closure-probe.json`: 134 certificate-runner rows and 6 route rows, base and head equal byte for byte).
 The Lean output differential (OUT) over 441 invocations of every `lean_exe` found no output change: its one listed
 difference is the backtrace frames after two pre-existing PANIC lines, which differ the same way between two runs of
@@ -20,7 +28,7 @@ byte-identical before writing it.
 | # | Records | What both sides return | Ruling | Test |
 |---|---|---|---|---|
 | 1 | 18 `pilots/default` `document_check` records, one `translation-companions-with_source_word.ve.md` per constitution pilot run | The same pre-existing `CheckerUnavailable` (`ReadingsConstruction: ... KeyError`), byte for byte | R7 | `uv run python -m tools.evidence ab ... --delta docs/arch/AR-23/evidence/ab-delta.json` (PASS, 0 unlisted) |
-| 2 | 9 `pilots/default` `document_check` records of whole-UDHR translations (`translation-whole.ve.md`, runs of 2026-10-14 to 2026-11-02 but 2026-10-21T0600Z) | The same 600 s recorder time-out (L75), byte for byte. They were recorded on both sides at once. No closure formula appears in these documents | R7 | `uv run python -m tools.evidence ab ... --delta docs/arch/AR-23/evidence/ab-delta.json` (PASS, 0 unlisted) |
+| 2 | 1 `pilots/default` `document_check` record of a whole-UDHR translation, `udhr-20261018T1800Z` `translation-whole.ve.md` | The same 600 s recorder time-out (L75), byte for byte; recorded on both sides at once. No closure formula appears in it (nor in the nine other whole-UDHR translations that timed out in the earlier runs) | R7 | `uv run python -m tools.evidence ab ... --delta docs/arch/AR-23/evidence/ab-delta.json` (PASS, 0 unlisted) |
 | 3 | 1 `pilots/default` `document_check` record, `udhr-20261102T1800Z` `translation-whole.et0.ve.md` | The same pre-existing `CheckerUnavailable` (`readings-verdicts: more than 64 compatible readings`), byte for byte | R7 | `uv run python -m tools.evidence ab ... --delta docs/arch/AR-23/evidence/ab-delta.json` (PASS, 0 unlisted) |
 | 4 | 2 `discourse/default` records of text `2757af3b2b5456b1` (`document_check`, `document_render`) | The same pre-existing `CheckerUnavailable` (the norms route refuses a norm object: fields do not match), byte for byte | R7 | `uv run python -m tools.evidence ab ... --delta docs/arch/AR-23/evidence/ab-delta.json` (PASS, 0 unlisted) |
 

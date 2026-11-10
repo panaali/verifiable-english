@@ -1,5 +1,5 @@
 {
- "base_commit": "95ed0e49b4960967d82f622019eed056cccf2816",
+ "base_commit": "a5088a09b523154f4024db96fe636c92689a9b97",
  "corpora": [
   "conformance",
   "discourse",
@@ -597,105 +597,7 @@
    "base": {
     "timeout": 600
    },
-   "case": "pilot/udhr-20261014T1800Z:usecases/udhr-pilot/run-20261014T1800Z/experiment-whole/translation-whole.ve.md",
-   "class": "unavailable",
-   "corpus": "pilots",
-   "head": {
-    "timeout": 600
-   },
-   "listed": true,
-   "op": "document_check"
-  },
-  {
-   "authority": "default",
-   "base": {
-    "timeout": 600
-   },
    "case": "pilot/udhr-20261018T1800Z:usecases/udhr-pilot/run-20261018T1800Z/experiment-whole/translation-whole.ve.md",
-   "class": "unavailable",
-   "corpus": "pilots",
-   "head": {
-    "timeout": 600
-   },
-   "listed": true,
-   "op": "document_check"
-  },
-  {
-   "authority": "default",
-   "base": {
-    "timeout": 600
-   },
-   "case": "pilot/udhr-20261021T1800Z:usecases/udhr-pilot/run-20261021T1800Z/experiment-whole/translation-whole.ve.md",
-   "class": "unavailable",
-   "corpus": "pilots",
-   "head": {
-    "timeout": 600
-   },
-   "listed": true,
-   "op": "document_check"
-  },
-  {
-   "authority": "default",
-   "base": {
-    "timeout": 600
-   },
-   "case": "pilot/udhr-20261026T1800Z:usecases/udhr-pilot/run-20261026T1800Z/experiment-whole/translation-whole.ve.md",
-   "class": "unavailable",
-   "corpus": "pilots",
-   "head": {
-    "timeout": 600
-   },
-   "listed": true,
-   "op": "document_check"
-  },
-  {
-   "authority": "default",
-   "base": {
-    "timeout": 600
-   },
-   "case": "pilot/udhr-20261027T0600Z:usecases/udhr-pilot/run-20261027T0600Z/experiment-whole/translation-whole.ve.md",
-   "class": "unavailable",
-   "corpus": "pilots",
-   "head": {
-    "timeout": 600
-   },
-   "listed": true,
-   "op": "document_check"
-  },
-  {
-   "authority": "default",
-   "base": {
-    "timeout": 600
-   },
-   "case": "pilot/udhr-20261028T0600Z:usecases/udhr-pilot/run-20261028T0600Z/experiment-whole/translation-whole.ve.md",
-   "class": "unavailable",
-   "corpus": "pilots",
-   "head": {
-    "timeout": 600
-   },
-   "listed": true,
-   "op": "document_check"
-  },
-  {
-   "authority": "default",
-   "base": {
-    "timeout": 600
-   },
-   "case": "pilot/udhr-20261028T1800Z:usecases/udhr-pilot/run-20261028T1800Z/experiment-whole/translation-whole.ve.md",
-   "class": "unavailable",
-   "corpus": "pilots",
-   "head": {
-    "timeout": 600
-   },
-   "listed": true,
-   "op": "document_check"
-  },
-  {
-   "authority": "default",
-   "base": {
-    "timeout": 600
-   },
-   "case": "pilot/udhr-20261101T1800Z:usecases/udhr-pilot/run-20261101T1800Z/experiment-whole/translation-whole.ve.md",
    "class": "unavailable",
    "corpus": "pilots",
    "head": {
@@ -733,26 +635,12 @@
    },
    "listed": true,
    "op": "document_check"
-  },
-  {
-   "authority": "default",
-   "base": {
-    "timeout": 600
-   },
-   "case": "pilot/udhr-20261102T1800Z:usecases/udhr-pilot/run-20261102T1800Z/experiment-whole/translation-whole.ve.md",
-   "class": "unavailable",
-   "corpus": "pilots",
-   "head": {
-    "timeout": 600
-   },
-   "listed": true,
-   "op": "document_check"
   }
  ],
- "head_commit": "14e7dbe2ea6ed6caef5bb188372be4c207631e77",
+ "head_commit": "eb334fbd1842723b5f9a790a2eccf6ec972fe352",
  "recordings": {
-  "base": "4d806d67e8991e828dd7f8f7c789da9c545e66def82ec2b3f2aaabe33cdbd0b5",
-  "head": "4d806d67e8991e828dd7f8f7c789da9c545e66def82ec2b3f2aaabe33cdbd0b5"
+  "base": "8de0da3e82ce3cba8a4ad199f541e778b39e76e6184302d6ed56b4d544da1200",
+  "head": "8de0da3e82ce3cba8a4ad199f541e778b39e76e6184302d6ed56b4d544da1200"
  },
  "records": {
   "conformance/lean": 19806,
@@ -769,12 +657,12 @@
   "rights/default": 2500
  },
  "totals": {
-  "same": 100530,
-  "unavailable": 30
+  "same": 100538,
+  "unavailable": 22
  },
  "unavailable_both": {
   "discourse/default": 2,
-  "pilots/default": 28
+  "pilots/default": 20
  },
  "unlisted": 0
 }
