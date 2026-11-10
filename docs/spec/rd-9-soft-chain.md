@@ -2475,9 +2475,10 @@ units times its AST nodes, read from `N.D` without building `sup N.D` or `supU N
 right, limitation and definition, and each fixed content, bar, reading set, candidate, coupling and narrowing. The
 nodes are each unit's formulas, at least one per unit, plus one per cite, label, `over` name, coupled set and kept
 candidate. `maxSdSizeCharge` = 16,384 is measured (docs/rd-9/sc-11w/cpu.md):
-compiled Lean on the VM (AMD EPYC 7B12, 32 vCPU, 5-minute load 44 to 80), `routeSD` takes at most 0.69 s Lean CPU on
-the 191-, 767- and 3,071-node guard documents, on NSDheavy, on W-13's `NSDbig 8` and on documents at 16,384 whose
-`superposable` and `WellFormedU (supU N)` hold. Over the charge, `routeSD` gives the enumerated row with today's cause.
+compiled Lean on the VM (AMD EPYC 7B12, 32 vCPU, 5-minute load 36 to 37), `routeSD` takes at most 0.60 s Lean CPU on
+the 191-, 767- and 3,071-node guard documents, on NSDheavy, on W-13's `NSDbig 8`, and on documents at or just under
+16,384 whose `superposable` and `WellFormedU (supU N)` hold. Those documents are of three shapes: many fixed rules,
+many reading sets, and many candidates. Over the charge, `routeSD` gives the enumerated row with today's cause.
 `sdCheckWork` is evaluated without building the premises it counts (`sdCheckWork_eq_fast`). The 10.98 s and 94-100 s
 measured on the 767- and 3,071-node guard documents were that premise build, not `sdSuperposable`'s.
 
