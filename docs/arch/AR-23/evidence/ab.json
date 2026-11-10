@@ -1,5 +1,5 @@
 {
- "base_commit": "de7fb94690644f6eb7f0d422ce33d050e27c8bd4",
+ "base_commit": "95ed0e49b4960967d82f622019eed056cccf2816",
  "corpora": [
   "conformance",
   "discourse",
@@ -625,20 +625,6 @@
    "base": {
     "timeout": 600
    },
-   "case": "pilot/udhr-20261021T0600Z:usecases/udhr-pilot/run-20261021T0600Z/experiment-whole/translation-whole.ve.md",
-   "class": "unavailable",
-   "corpus": "pilots",
-   "head": {
-    "timeout": 600
-   },
-   "listed": true,
-   "op": "document_check"
-  },
-  {
-   "authority": "default",
-   "base": {
-    "timeout": 600
-   },
    "case": "pilot/udhr-20261021T1800Z:usecases/udhr-pilot/run-20261021T1800Z/experiment-whole/translation-whole.ve.md",
    "class": "unavailable",
    "corpus": "pilots",
@@ -763,10 +749,10 @@
    "op": "document_check"
   }
  ],
- "head_commit": "547dc3aa2969ca791b40cf6841f2fa6953e1e3ba",
+ "head_commit": "14e7dbe2ea6ed6caef5bb188372be4c207631e77",
  "recordings": {
-  "base": "e2dbb554676a2d2c575c8f758342a87e8e222518596ac5c18b11e2bc1f8e4c07",
-  "head": "e2dbb554676a2d2c575c8f758342a87e8e222518596ac5c18b11e2bc1f8e4c07"
+  "base": "4d806d67e8991e828dd7f8f7c789da9c545e66def82ec2b3f2aaabe33cdbd0b5",
+  "head": "4d806d67e8991e828dd7f8f7c789da9c545e66def82ec2b3f2aaabe33cdbd0b5"
  },
  "records": {
   "conformance/lean": 19806,
@@ -783,12 +769,12 @@
   "rights/default": 2500
  },
  "totals": {
-  "same": 100529,
-  "unavailable": 31
+  "same": 100530,
+  "unavailable": 30
  },
  "unavailable_both": {
   "discourse/default": 2,
-  "pilots/default": 29
+  "pilots/default": 28
  },
  "unlisted": 0
 }
