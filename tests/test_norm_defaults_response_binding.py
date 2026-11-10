@@ -2,7 +2,7 @@
 
 A `norm-defaults-status` row's `tuple` is the request's and its `rules` are distinct (response schema, rendered from
 `ResponseShape/Schemas/NormDefaults.lean`) and rules of the request's `norms` (`lean_service.bind_answers`; not yet
-under `acts@0` or `rights@0`, whose rules Lean names itself: norm-defaults-cfr-1b); a `norm-defaults-certificate`
+when the profiles list contains `acts@0` or `rights@0`, whose rules Lean names itself: norm-defaults-cfr-1b); a `norm-defaults-certificate`
 row's `premises` is the count of the regenerated premises its certificate is bound to (`bind_answers`). Each forged
 row reaches the client from a scripted service and is `CheckerUnavailable`; Lean's own rows still pass. The assurance
 manifest lists every kind the mode answers.
@@ -24,7 +24,7 @@ from tests.test_lean_service import fake
 from tests.test_norm_defaults import CSAM_RULE, CSAM_SITUATION, csam
 from ve import norm_defaults as nd
 from ve.ast import Top, formula_to_data
-from ve.backends.lean_service import LeanService, _rule_names
+from ve.backends.lean_service import Invalid, LeanService, _rule_names, bind_answers
 from ve.errors import CheckerUnavailable
 from ve.norm_defaults_route import prove_filled_entailment, source_case
 
@@ -219,6 +219,20 @@ def test_rules_named_by_lean_under_acts_or_rights_are_not_yet_bound(genuine):
     source's are."""
     assert _rule_names(genuine["acts-status"][0]) is None and _rule_names(genuine["rights-status"][0]) is None
     assert _rule_names(genuine["status"][0]) == {"no-csam-generation"}
+
+
+@pytest.mark.parametrize("environment", [None, {}, {"profiles": None}, {"profiles": {}},
+                                              {"profiles": []}, {"profiles": ["norms@0"]}])
+def test_status_rule_binding_without_generated_profile(environment):
+    """A missing or malformed profile list does not waive binding of an `ok` status row's rule names."""
+    case = {"kind": "norm-defaults-status", "norms": [{"norm": {"name": "r1"}}]}
+    if environment is not None:
+        case["environment"] = environment
+    response = {"status": "ok", "results": [{"index": 0, "result": {"status": "ok", "rules": ["ghost"]}}]}
+    with pytest.raises(Invalid, match="no rule of the request"):
+        bind_answers(MODE, response, {"cases": [case]})
+    response["results"][0]["result"]["rules"] = ["r1"]
+    bind_answers(MODE, response, {"cases": [case]})
 
 
 def test_the_manifest_lists_every_kind_the_mode_answers():

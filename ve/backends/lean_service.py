@@ -367,7 +367,7 @@ def _rule_names(case: dict) -> set | None:
     `GENERATED_RULE_PROFILES` lets Lean name rules the request does not."""
     environment = case.get("environment")
     profiles = environment.get("profiles") if isinstance(environment, dict) else None
-    if not isinstance(profiles, list) or any(profile in profiles for profile in GENERATED_RULE_PROFILES):
+    if isinstance(profiles, list) and any(profile in profiles for profile in GENERATED_RULE_PROFILES):
         return None
     units = case.get("norms")
     return {unit["norm"]["name"] for unit in units if isinstance(unit, dict) and isinstance(unit.get("norm"), dict)
