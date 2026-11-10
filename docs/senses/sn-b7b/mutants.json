@@ -1,14 +1,15 @@
 {
  "item": "sn-b7b",
- "note": "each planted alone, its test run alone with uv run pytest -q, then restored",
+ "commit": "2799c7657",
+ "note": "each planted alone in the file named, its test run alone with uv run pytest -q, then restored",
  "mutants": [
   {
    "id": "S1",
    "language": "Python",
    "file": "ve/senses/display.py",
-   "bug": "a gloss on a default occurrence: the body rendered under the base projection (every sense of funny with its gloss)",
+   "bug": "a gloss printed on a default occurrence (the body's `is funny.` written `is funny (meaning amusing).`, which Lean re-reads to the same formula, spec s8; the body's exact text catches it)",
    "test": "tests/test_senses_display.py::test_the_body_is_leans_preamble_then_the_rendering_reread",
-   "result": "1 failed in 0.89s"
+   "result": "1 failed in 8.55s"
   },
   {
    "id": "S2",
@@ -16,7 +17,7 @@
    "file": "ve/senses/display.py",
    "bug": "the glossary built from the source text (its words by token index) instead of the sense map's span",
    "test": "tests/test_senses_display.py::test_g2_the_glossary_is_the_sense_maps",
-   "result": "1 failed in 0.67s"
+   "result": "1 failed in 0.88s"
   },
   {
    "id": "S3",
@@ -24,7 +25,7 @@
    "file": "ve/senses/display.py",
    "bug": "propose-readings writes a set for a one-candidate unit",
    "test": "tests/test_senses_display_cli.py::test_g9_one_candidate_through_the_cli",
-   "result": "1 failed in 1.17s"
+   "result": "1 failed in 2.04s"
   },
   {
    "id": "S4",
@@ -32,7 +33,7 @@
    "file": "ve/senses/display.py",
    "bug": "a hover byte span cut inside a token (byte_stop - 1)",
    "test": "tests/test_senses_display.py::test_g3_hover_spans_cut_the_source_at_token_boundaries",
-   "result": "1 failed in 0.70s"
+   "result": "1 failed in 1.85s"
   },
   {
    "id": "S5",
@@ -40,15 +41,15 @@
    "file": "ve/__main__.py",
    "bug": "the Mixed warning printed from a Python string",
    "test": "tests/test_senses_display_cli.py::test_g8_the_mixed_warning_is_leans_printed_once",
-   "result": "1 failed in 0.84s"
+   "result": "1 failed in 15.18s"
   },
   {
    "id": "S6",
    "language": "Python",
    "file": "ve/senses/display.py",
-   "bug": "every resolving line shown as lacking (the preamble ignored)",
+   "bug": "the lacking lines taken from the head of Lean's lines (the preamble's) instead of the choice's tail",
    "test": "tests/test_senses_display.py::test_the_lines_a_candidate_lacks_are_those_not_in_leans_preamble",
-   "result": "1 failed in 1.06s"
+   "result": "1 failed in 7.29s"
   },
   {
    "id": "S7",
@@ -56,15 +57,15 @@
    "file": "ve/senses/display.py",
    "bug": "the body re-read's mark compared by == (0 accepted for False)",
    "test": "tests/test_senses_display.py::test_a_reread_bound_to_another_formula_or_projection_is_refused[mark-0]",
-   "result": "1 failed in 0.83s"
+   "result": "1 failed in 2.90s"
   },
   {
    "id": "S8",
    "language": "Python",
    "file": "ve/senses/display.py",
-   "bug": "a candidate shown when Lean's re-read is unknown",
+   "bug": "a candidate whose Lean re-read is unknown shown as refused (CheckerUnavailable) instead of a ResourceLimit",
    "test": "tests/test_senses_display.py::test_a_candidate_is_shown_only_when_leans_reread_is_same",
-   "result": "2 failed, 1 passed in 1.84s"
+   "result": "1 failed, 2 passed in 2.67s"
   },
   {
    "id": "S9",
@@ -72,7 +73,23 @@
    "file": "ve/__main__.py",
    "bug": "resolve writes the file when Lean refuses the new text",
    "test": "tests/test_senses_display_cli.py::test_resolve_writes_nothing_lean_does_not_give_or_admit",
-   "result": "1 failed in 0.88s"
+   "result": "1 failed in 3.37s"
+  },
+  {
+   "id": "S10",
+   "language": "Python",
+   "file": "ve/senses/display.py",
+   "bug": "the re-read byte limit charged one byte late",
+   "test": "tests/test_senses_display.py::test_each_lines_is_projected_once_within_the_limit",
+   "result": "1 failed in 55.24s"
+  },
+  {
+   "id": "S11",
+   "language": "Python",
+   "file": "ve/senses/display.py",
+   "bug": "the body re-read compared on its first unit only",
+   "test": "tests/test_senses_display.py::test_a_reread_bound_to_another_formula_or_projection_is_refused",
+   "result": "2 failed, 9 passed in 55.06s"
   }
  ]
 }
