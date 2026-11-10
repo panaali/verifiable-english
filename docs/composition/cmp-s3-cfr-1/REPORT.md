@@ -2,8 +2,8 @@
 
 Status: deliverables (1)-(5) built; 8.5's `decode_unstructured` and `elaborate_plain` proved, no `sorry`. No signature reserved.
 HEAD: last code commit is the one before this REPORT's final edit (the chain's gate-result.json records the HEAD it ran on).
-Open: DRI confirmation asked (inbox 20261110T061426Z) that 37 rights-list environment answers moving to their no-profile answer are
-covered by DELTA row 1, and of `PlainOnWire`'s form. Size: about 1,660 counted lines plus 1,409 exempt proof lines (section "Size").
+Ruled 11-10: the 37 moved rights-list environment answers are DELTA row 1's, and `PlainOnWire`'s form is confirmed
+(dri-decisions-20261110-cmp-s3-cfr-1-env.md items 1-2). Size: ~1,660 counted plus 1,409 exempt proof lines, accepted (-count.md item 1).
 Signatures used: cmp-s3 Q1 A1 (`hd`), 10-31 item 2 with 11-09 cmp-s3-cfr-1 items 2 and 4 (DELTA row 1), R16 (trust).
 
 ## Deliverables
@@ -63,8 +63,8 @@ Not delivered here:
     (with closure@0, nary@0 or order@0). Each of the 37 equals the same list's answer without `right-clauses@0`.
     The other 69 keep the base text, which refuses the profile by name.
   The first self-review's probe held only the 154 lists. This item's second self-review found the 21 moved refusals
-  (its A). They are DELTA row 1's condition ("answers exactly as the same request without it"). The DRI was asked to
-  confirm this (inbox 20261110T061426Z). Before the acts gate was kept on the base rows, 15 `acts@0` lists differed
+  (its A). They are DELTA row 1's condition ("answers exactly as the same request without it"). The DRI confirmed
+  this (dri-decisions-20261110-cmp-s3-cfr-1-env.md item 1). Before the acts gate was kept on the base rows, 15 `acts@0` lists differed
   (the first self-review's B4).
 - **What the proof changed in this item's code.** Members are rewritten with `Std.TreeMap.Raw.map` (`mapMember`)
   rather than `setObjVal!`, which keeps every other member and the tree's shape. `lineWith` rebuilds the `norm` and
@@ -151,7 +151,7 @@ Counted hand-written lines, from `git diff --numstat` against the merge base (20
   DELTA.md 20, other docs 4.
 This is far past the ~600 line. The earlier figure, about 410, counted product lines only. The proof exemption covers
 the three proof modules alone. Most of the overrun is fixtures, mutants and evidence that the reviews and R16 asked
-for. The DRI was told the full figure.
+for. The DRI accepted it as delivered, with no cut (dri-decisions-20261110-cmp-s3-cfr-1-count.md item 1).
 
 Generated, not counted: statements.txt, predicates.txt, declarations.txt, Audit, the schemas, profile_table.json, the
 binding answers and profile-off.json (the evidence script's output).
@@ -172,7 +172,7 @@ since that file was recorded). A merge with main should regenerate the file rath
   the plain guard's encoding back". That is stronger than a bound on depth and nodes alone, because it also asks
   the decoder to return the same formula. No lemma derives it from the bounds. To show it is not vacuous,
   `plainOnWireB` (sound by `plainOnWire_of_check`, WireTheorems.lean) holds on K2 and K4 and fails on the depth-64
-  counterexample (RunExamples.lean `#guard`s). The DRI was asked to confirm this form (inbox 20261110T061426Z).
+  counterexample (RunExamples.lean `#guard`s). The DRI confirmed this form (dri-decisions-20261110-cmp-s3-cfr-1-env.md item 2).
 - 8.5's notes :543-548: `stripElided` removes `elided` (and the unit `span`, see "The wire"); `stripProfile` removes
   `right-clauses@0` from the profile list; `NoClauseKeys`, `NoReadingSets` and `elaborateJson` are as the notes
   describe. `elaborateJson` writes each structured line's guard as `plainGuard`, and candidates are cmp-s3-cfr-1c's.
@@ -208,8 +208,8 @@ off nothing changes. The UDHR figure of spec 9.3 is cmp-s3-cfr-1b's estimate.
 reviews/dri-decisions-20261104-cmp-s3.md (Q1 A1, Q2), dri-decisions-20261109-lp0801.md item 1,
 dri-decisions-20261109-l1-c-regrade-rights.md item 3, dri-decisions-20261109-adv0838.md item 3,
 dri-decisions-20261109-adv0947.md item 1, dri-decisions-20261031-spec-right-clauses.md item 2,
-dri-decisions-20261109-cmp-s3-cfr-1.md items 1-4, and the size rulings dri-decisions-20261109-cmp-s3-cfr-1-size.md and
--proofsize.md item 1.
+dri-decisions-20261109-cmp-s3-cfr-1.md items 1-4, the size rulings dri-decisions-20261109-cmp-s3-cfr-1-size.md and
+-proofsize.md item 1, and dri-decisions-20261110-cmp-s3-cfr-1-env.md items 1-2 and -count.md item 1.
 
 ## Next items
 
@@ -231,21 +231,19 @@ cmp-s3-cfr-1b (relay, differential, fixtures, W1, `clauseSlot_wellFormed`) and c
 5. R8 binding: N.A. No relay yet (cmp-s3-cfr-1b). The schema is closed and typed, and the relay gate passes.
 6. Gate evidence matches HEAD: PASS. The chain runs the gate on the final HEAD. The 9.3 evidence is saved
    (profile-off.json), and no test reads live git.
-7. No unsigned item: PASS with two confirmations asked. The DELTA row cites the 10-31 DRI signature with 11-09 item 4.
-   Trust cites R16. The statement change cites cmp-s3 Q1. The DRI was asked to confirm the 21 moved refusals and
-   `PlainOnWire`'s form. The proof overrun is ruled (proofsize item 1). The counted-line overrun (about 1,660) is
-   reported to the DRI, not ruled.
+7. No unsigned item: PASS. The DELTA row cites the 10-31 DRI signature with 11-09 item 4. 11-10 -env item 1 confirms
+   the 37 moved answers. Trust cites R16. The statement change cites cmp-s3 Q1, and -env item 2 confirms its form. Both
+   overruns are ruled: the proof lines by proofsize item 1, the counted lines by 11-10 -count item 1.
 8. DELTA: PASS. Profile off: test_right_clauses_profile_off_evidence. Environment texts: the probe and
    test_right_clauses_environment_texts_kept (0 of 154 lists move; 37 of 106 rights lists move, each to its answer
    without the profile). Profile on: test_right_clauses_profile_on_regression.
-9. Test selection: PASS. tests/test_right_clauses.py imports the service corpus and the fixtures. The selected run
-   (`mac-pytest.sh --select`, on the VM since ve-mac-1 was unreachable) on committed 2d2b08d8c (tree 18ecc4d4b1) recorded 557 units
-   with 2 failing: `test_assurance_manifest::test_every_json_handling_lean_file_is_classified` (fixed: Wire.lean is
-   pinned whole as a decoder, and Run, RunExamples and the three proof modules are under `other_json`) and
-   `test_lean_service::test_random_malformed_responses_never_escape_schema` (fixed: a `clauses-elaborate` seed).
-   A rerun of tests/test_assurance_manifest.py and that id on committed 1c4ce1ab0 passed: 140 passed. An earlier
-   `test_answer_cutoff` failure came from a stale local overlay of the checker pins (lean/.lake/ve-inventory), not
-   from the branch: with the overlay removed, the test passes, and so did the run above.
+9. Test selection: PASS. tests/test_right_clauses.py imports the service corpus and the fixtures. The final selected
+   run (`MAC_PYTEST_NO_DEFER=1 mac-pytest.sh --select`, on the VM, as `MAC_LAST` chose) on committed b2f4dbf7f
+   (tree 2a40536e8b) recorded 557 units, 0 failed, exit 0. After it, one test file changed:
+   test_right_clauses_environment_and_model_answer_as_without_the_profile now pins one refused list, the condition of
+   11-10 -env item 1. tests/test_right_clauses.py then gave 7 passed. The chain's gate reruns the selection.
+   The earlier run's two failures, on committed 2d2b08d8c, were fixed then: test_assurance_manifest's
+   classification and a `clauses-elaborate` seed.
 10. Statements: PASS. "Spec re-read" above; `python3 lean/audit.py` PASS.
 11. Budgets fail closed: PASS, as far as this item reaches. Units are checked at most 1,024 before decoding; W1's
     budget applies to each clause formula and plain guard (RunExamples' depth-65 `#guard` gives `ResourceLimit`).
