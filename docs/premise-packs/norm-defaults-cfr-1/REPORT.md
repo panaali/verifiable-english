@@ -77,12 +77,16 @@ Each planted, run, seen to fail, and restored (`git checkout`; Lean ones then re
 - `uv run python tools/regen_generated.py --write`: rc 0, 38 entries; `lake build`: `Build completed successfully
   (1344 jobs)`; `python3 lean/audit.py`: PASS (812 files, 9106 theorems); `tools/gate_collection.py --check
   --prebuilt`: 36 added, 0 refused, 0 stale, 0 malformed.
-- Final selected run (committed code): see below.
+- Final selected run, on committed code (clean tree at 4de39e8fb):
+  `MAC_PYTEST_NO_DEFER=1 zsh /home/seyran/code/manage-agents/mac-pytest.sh --select -- --base de7fb9469 --run`
+  ran on the Claude cloud in 4 shards: `exit=0; 2463s`; shards 1-4 `127, 127, 128, 97 units passed`, 0 failed; the
+  selection included T, tests/test_assurance_manifest.py and tests/test_lean_service.py. Nothing but this REPORT
+  changed after it.
 
 ## Size, trust, pilot bytes
 
-- Hand-written lines outside generated files: 563 added, 6 removed at the REPORT's commit (`git diff --numstat`
-  against the base: product code 65, probes 45, tests 236, docs and evidence 215, Lean 2).
+- Hand-written lines outside generated files: 564 added, 6 removed at the REPORT's commit (`git diff --numstat`
+  against the base: product code 65, probes 45, tests 236, docs and evidence 216, Lean 2).
   ve/assurance-manifest.json (+281) is a
   generated-class file (.gitattributes `merge=ve-generated`; the task calls it generated) whose values are
   hand-reviewed; counted, the item is ~845. Over the task's ~200 estimate because the manifest needs a probe per
