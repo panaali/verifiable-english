@@ -137,6 +137,11 @@ are untouched.
   - `uv run python -m tools.evidence ab … --base-commit a3454b6ba… --head-commit ee43c72ce… --delta
     evidence/ab-delta.json` gave "ab PASS" over 100,560 records: 100,531 the same, 29 unavailable on both sides with
     identical outputs (R7, DELTA rows 1–4), and 0 unlisted (`evidence/ab.json`).
+  - Review F1: the first `ab.json` named the base `a3454b6ba598c95e…`, typed by hand, which is no commit; the merge
+    base is `a3454b6ba5982d7c…`. `tools.evidence ab` now resolves every typed commit through Git and refuses one the
+    repository lacks (`tools/evidence/__init__.py` `commit`; tests `test_ar23_f1_*` in
+    `tests/test_evidence_toolkit.py`). `ab.json` was rebuilt from the same recordings (`c62acba7…` on both sides)
+    with the base from Git: "ab PASS", and only `base_commit` differs from the first record.
   - After `ee43c72ce`, only `docs/` and `tools/trust-classes.json` change. The table gets back main's module order (the
     auto-merges had reordered it; its content, one added row, is unchanged), and only `tools/trust_map.py` reads it.
 - **The four runs agree.** Whole-UDHR pilot records timed out on both sides in each run: 10, 9, 1, then 8. The
@@ -230,13 +235,16 @@ module order restored). No recorder reads any of them. Then make one report comm
     cp gate-result.json docs/arch/AR-23/evidence/gate.json
     uv run python -m tools.evidence scope --base main --head <G> --out docs/arch/AR-23/evidence/scope.json
     uv run python -m tools.evidence ab ~/.cache/ve-ar23d/base2.jsonl ~/.cache/ve-ar23d/head2.jsonl \
-        --base-commit a3454b6ba598c95e5a4cad1d1bbea07dfa0b58f5 --head-commit <G> \
+        --base-commit a3454b6ba --head-commit <G> \
         --out docs/arch/AR-23/evidence/ab.json --delta docs/arch/AR-23/evidence/ab-delta.json \
         --corpus probe conformance readings pilots discourse rights quantity norm_defaults document
     uv run python tools/batch_evidence.py --check docs/arch/AR-23 --report-commit HEAD
 
-If main is merged again before the train merges this branch, record the A/B again against the new merge base, as
-above (`~/.cache/ve-ar23d/` holds the recordings of `a3454b6ba`). Main had already moved to `f3f40d51d` when this
+`ab` resolves `a3454b6ba` through Git and saves the full id (`a3454b6ba5982d7cb5e216d10432a94f6177652a`, the
+scope's `base`); it refuses an id that names no commit. Name the commit the recordings were made at, not
+`$(git merge-base …)`: after another merge of main the check then refuses the old recordings instead of relabelling
+them. If main is merged again before the train merges this branch, record the A/B again against the new merge base,
+as above (`~/.cache/ve-ar23d/` holds the recordings of `a3454b6ba`). Main had already moved to `f3f40d51d` when this
 report was written.
 
 ## Selected tests

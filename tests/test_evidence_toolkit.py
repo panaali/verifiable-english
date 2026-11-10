@@ -190,12 +190,12 @@ def test_ab_runs_lean_first_diff_and_reports_what_it_refuses(tmp_path, history):
     assert errors[0].startswith("lean_first_diff compare could not compare (exit 2)") and "no record" in errors[0]
 
 
-# AR-23 review F1: `ab` saved `--base-commit a3454b6ba598c95e5a4cad1d1bbea07dfa0b58f5`, typed by hand: its first nine
-# characters are the merge base's (a3454b6ba5982d7c…), the rest invented, so the record named a commit the repository
-# lacks. Every commit `ab` saves is now the one Git resolves; each kind of id that names no commit is refused.
+# AR-23 review F1: `ab` saved `--base-commit a3454b6ba598c95e5a4cad1d1bbea07dfa0b58f5`, typed by hand: its first twelve
+# characters are the merge base's (a3454b6ba5982d7c…, abbreviated a3454b6ba598 by trust_map), the rest invented, so
+# the record named a commit the repository lacks. Every commit `ab` saves is now the one Git resolves; each kind of id that names no commit is refused.
 def _not_a_commit(repo, m0, kind):
     if kind == "invented tail":
-        return m0[:9] + ("0" if m0[9] != "0" else "1") + m0[10:]
+        return m0[:12] + ("0" if m0[12] != "0" else "1") + m0[13:]
     if kind == "blob":
         return _git(repo, "rev-parse", f"{m0}:a.txt")
     if kind == "tree":
