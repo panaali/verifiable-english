@@ -1,4 +1,5 @@
 import VE.RightClauses.Run
+import VE.RightClauses.WireTheorems
 
 /-! `clauses-elaborate` on spec 9.1's documents as `#guard`s (the service tests' fixtures, tests/test_right_clauses.py):
 9.1's environment, right `r21` with the claim line `equal-access`, unit span [0, 100). -/
@@ -121,5 +122,16 @@ def twoLines : Json := parse <|
   "InvalidInput: invalid relation of rule equal-access"
 #guard says (doc ",\"elided\":[],\"clauses\":[{\"role\":\"trigger\",\"formula\":[\"top\"],\"span\":[10,20],\"zzz\":1}]") ==
   "InvalidInput: invalid clause 0 of rule equal-access"
+
+-- `elaborate_plain`'s hypothesis `PlainOnWire` (by `plainOnWire_of_check`) holds on K2 and K4, and fails on the DRI's
+-- counterexample: a depth-64 clause under guard `top` (cmp-s3 Q1 A1), which the mode refuses
+def plainOnWire (d : Json) : Option Bool := (plainOnWireB <$> decodeClauseDoc (parse (profiles on)) d).toOption
+def depth64 : String := (List.range 63).foldl (fun f _ => "[\"not\"," ++ f ++ "]") "[\"top\"]"
+#guard plainOnWire (doc (",\"elided\":[],\"relation\":{" ++ rel ++ "}")) == some true
+#guard plainOnWire (doc (",\"elided\":[[30,40]],\"clauses\":[" ++ charged ++ "]")) == some true
+#guard plainOnWire (doc (",\"elided\":[],\"clauses\":[{\"role\":\"trigger\",\"span\":[10,20],\"formula\":" ++ depth64 ++
+  "}]")) == some false
+#guard says (doc (",\"elided\":[],\"clauses\":[{\"role\":\"trigger\",\"span\":[10,20],\"formula\":" ++ depth64 ++ "}]")) ==
+  "ResourceLimit: formula depth exceeds 64"
 
 end VE.RightClauses.RunExamples
