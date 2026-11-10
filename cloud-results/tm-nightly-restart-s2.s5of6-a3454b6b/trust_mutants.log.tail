@@ -1,0 +1,10 @@
+trust_mutants: 84 definitions, 90 mutants (15 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/EnglishGrammar/Advice.lean:83 VE.EnglishGrammar.advice (G[V], trusted) list-empty: adviceTable -> [] (lean/VE/EnglishGrammar/Advice.lean:83: Invalid field notation: Type of)
+UNKNOWN lean/VE/Presupposition/Admit.lean:55 VE.Presupposition.rootsWith (G[V], trusted) list-empty: obs.filter (·.unit == u) -> [] (lean/VE/Presupposition/Admit.lean:56: Invalid field notation: Type of)
+UNKNOWN lean/VE/Presupposition/Wire.lean:182 VE.Presupposition.claimReading (S, trusted) list-empty: R.checked.filter (fun d => d.ob.unit == c.ob.unit) -> [] (lean/VE/Presupposition/Wire.lean:183: Invalid field notation: Type of)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:30 VE.Purposes.Units.kind? (S, trusted) list-empty: U -> [] (lean/VE/Purposes/WellFormed.lean:30: Application type mismatch: The argument)
+trust_mutants: 8 KILLED, 0 SURVIVOR, 4 UNKNOWN, 3 INVALID, 0 ALLOWED, 0 NOT RUN, 75 OTHER SHARD in 454 s
+trust_mutants: D[V], trusted: 2 KILLED, 1 INVALID, 17 OTHER SHARD
+trust_mutants: G[V], trusted: 5 KILLED, 2 UNKNOWN, 2 INVALID, 35 OTHER SHARD
+trust_mutants: S, trusted: 1 KILLED, 2 UNKNOWN, 23 OTHER SHARD
+trust_mutants: steps: wall plan 16.1 s, scratch 4.7 s, control_build 0.3 s, probe_install 1.4 s, mutants 427.9 s, cleanup 3.8 s, reads 0.2 s; lake control_build 0.3 s (1), probe_install 1.4 s (1), control_probes 39.7 s (8), mutant_builds 115.6 s (20), mutant_checks 533.3 s (8), stage_controls 221 s (6), mutant_probes 42 s (8)
