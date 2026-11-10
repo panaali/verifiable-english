@@ -8,7 +8,7 @@ Branch feature/ps-3. Lean only; no route changes (DELTA.md: no rows).
 | Row | Delivered | Where |
 |---|---|---|
 | (1) Couple.lean definitions, spec 4.8 text | yes: `Pick`, `pickOf`, `Group`, `groups`, `repCandidate`, `rep`, `Uniform`, `uniformB`, `couplable`, `coupledSet`, `readingFor`, `unitFormulas`, `formulasUnder`, `unitRule`, `treeUnder`, `assumptionsUnder`, `PickFits`, `pickedU`, `SatUnder`, `PickedWF`, `SameModels`, `SameDecides` | `lean/VE/Presupposition/Couple.lean` |
-| (1) S15, S18, S19, S22 fixtures; >64 joint choices | yes | `lean/VE/Presupposition/CoupleExamples.lean` |
+| (1) S15, S18, S19, S22 fixtures; >64 joint choices | yes | `#guard`s in `lean/VE/Presupposition/CoupleExamples.lean`; fixture data and the proofs about it (S15's `SameModels`, S22's completion) in `lean/VE/Presupposition/Couple/Fixtures.lean` |
 | (2) `coupled_subset`, `coupled_uniform` | proved | `Couple/Statements.lean` |
 | (3) `coupling_complete` | proved, VACUOUS over today's `candidateTable` (no admitted group; `groups_admit_nil`); the semantic proof (spec 4.8 'Why it holds') is not done: row ps-3-semantic | `Couple/Statements.lean` |
 | (4) generated `requires` constraints, `couplings_spec` | yes: `choiceOf`, `groupConstraints`, `couplingConstraints`; `couplings_spec` proved | `Couple.lean`, `Couple/Statements.lean` |
@@ -71,29 +71,71 @@ content: S15, S18 and S19 over `fixtureTable`, and S22 as a proved `SatUnder` fo
 
 ## Seeded bugs
 
-The four the task names, and one per new trusted definition, in `mutants.json` (28 Lean mutants, all KILLED; each
-applied to `Couple.lean`, built with `lake build VE.Presupposition.Couple.Statements VE.Presupposition.CoupleExamples`,
-restored). Only Lean product code changed, so Lean is the only language.
+Only Lean product code changed, so Lean is the only language. **Hand mutants:** 35 in `mutants.json` (the four the task
+names, and at least one per new trusted definition), all KILLED. Each is a find/replace in its file, built with `lake build
+VE.Presupposition.Couple.Statements VE.Presupposition.Couple.Fixtures VE.Presupposition.CoupleExamples`, then
+restored. They were replayed on 57bd8d153's layout; the failing lines are in `evidence/mutants-run.txt`.
 
 | Mutant | Definition | Fails |
 |---|---|---|
-| `couplable` without `J.all (… J.contains (rep g ch))` | `couplable` | `CoupleExamples.lean:76` `#guard !couplable J18 g18` (S18) |
-| `rep` replaces picks outside `g.members` | `rep` | `:43` S19 guard: a pick outside the group is unchanged |
-| `SatUnder` with the placeholder `deny` (W1's elaboration) | `SatUnder` | `:256` the S22 proof (`satUnder_of_eval`) |
-| `PickFits` admits in place (`t c.ob.row c.pos` for `emitted t c`) | `PickFits` | `:91` `#guard !decide (PickFits … [("o1", .inPlace)])` (R-3) |
+| `couplable` without `J.all (… J.contains (rep g ch))` | `couplable` | `CoupleExamples.lean:49` `#guard !couplable J18 g18` |
+| `rep` replaces picks outside `g.members` | `rep` | `CoupleExamples.lean:21` `#guard (groups fixtureTable same19).all (fun g =>` |
+| `SatUnder` with the placeholder `deny` (W1's elaboration) | `SatUnder` | `Couple/Fixtures.lean:216` `exact ⟨fun a ha => (VE.eval_iff_denote M [] a).mp (List.all_eq_true.mp` |
+| `PickFits` admits in place (`t c.ob.row c.pos` for `emitted t c`) | `PickFits` | `CoupleExamples.lean:81` `#guard !decide (PickFits fixtureTable repNeg [("o1", .inPlace)])` |
 
-The other 24 (one or more per definition: `pickOf`, `groups` (3), `repCandidate`, `Uniform`, `uniformB`,
-`coupledSet`, `readingFor`, `unitFormulas`, `formulasUnder`, `unitRule`, `treeUnder`, `assumptionsUnder`, `pickedU`,
-`PickedWF`, `SameModels`, `SameDecides`, `choiceOf`, `groupConstraints`, `couplingConstraints`, `sourceChoices` (3))
-are in `mutants.json` with the guard or proof each breaks.
+The other 31: `M-pickOf-ne`, `M-groups-min`, `M-groups-core`, `M-groups-goal`, `M-repCandidate-order`, `M-Uniform-self`, `M-uniformB-self`, `M-coupledSet-any`, `M-readingFor-head`, `M-unitFormulas-premise`, `M-formulasUnder-take`, `M-unitRule-none`, `M-treeUnder-fixed`, `M-assumptions-none`, `M-pickedU-unspec`, `M-PickedWF-sign`, `M-SameModels-imp`, `M-SameDecides-imp`, `M-choiceOf-index`, `M-groupConstraints-excludes`, `M-couplingConstraints-all`, `M-sourceChoices-open`, `M-sourceChoices-one`, `M-SourceChoice-label`, `M-formulasUnder-background`, `M-treeUnder-open-only`, `M-pickedU-lits`, `M-unitFormulas-asserted`, `M-readingFor-resolved`, `M-SameDecides-same`, `M-SameModels-noWF`.
+
+**R16 sweep** (`trust-mutants.json`, `trust-mutants-allow.json`; `mac-pytest.sh --trustmut -- --max-mutants 1000 --test
+lean/VE/Presupposition/CoupleExamples.lean --allow docs/presupposition/ps-3/trust-mutants-allow.json --rescore <run 3>`,
+on the VM): 18 definitions, 314 mutants: **236 KILLED, 0 SURVIVOR, 0 UNKNOWN, 9 INVALID, 69 ALLOWED, exit 0**, at
+872a11aa1. History, all at 4 jobs or more on the VM:
+- **Run 1** passed `Couple/Statements.lean` as a second `--test` and got 204 UNKNOWN: the tool never cuts a proof in a
+  `--test` file (`tools/trust_mutants.py:1384`).
+- **Run 2** used `CoupleExamples.lean` alone. Its proof `example`s still made every mutant that broke one UNKNOWN, so the
+  fixture data and the proofs moved to `Couple/Fixtures.lean`, which `CoupleExamples.lean` (now `#guard`s only) imports.
+- **Survivors** were list positions the guards did not move. Each now has a guard: `couplable`'s `J` and `cands` (the
+  deciding pick or candidate first, middle or last), `repCandidate`'s later member, two and three groups in `groups`,
+  `coupledSet` over two groups, two background formulas, two fixed rules over two regulated predicates (`¬ SatUnder` by
+  each premise), `Uniform` (made decidable, as `PickFits` and `PickedWF` are), `uniformB` on no members, and `PickFits` with
+  an unknown id beside a known one.
+- **The 69 ALLOWED,** each with its reason in the allow file:
+  - `PickFits`, `PickedWF` and `Uniform` mutants refuted by a `#guard` that reads the definition through its `Decidable`
+    instance, which the tool does not credit;
+  - `SatUnder`, `SameModels` and `SameDecides`, Props no check evaluates, each exercised by the proofs it breaks (named);
+  - the equivalent `uniformB` cuts (one of its two member lists cut while the other stays whole);
+  - `list-empty` mutants that do not elaborate.
 
 ## Trust
 
-TRUST-NUMBERS
+`uv run python tools/trust_map.py --check` on the final tree: "PASS: K, S and untied [V] within c94ad399b7b1 and the
+allowances introduced since"; against c94ad399b7b1: K +0, S +105, D +0, G +29, tied +26, unclassified +0, **trusted +105**
+(`VE/Presupposition/Couple.lean: trusted +105`). Allowance recorded with `trust_map.py --allow`, "SIGNED by standing ruling
+R16 (DRI-RULINGS.md), ps-3, 2026-11-10" (`docs/trust-baseline.json`). R16's conditions:
+- at most 150 untied lines: +105;
+- no K growth: K +0;
+- every new trusted definition exercised by a check that can fail: the sweep above and `mutants.json`.
+
+The tied G[V] are `SourceChoice`, `choiceOf`, `groupConstraints`, `couplingConstraints` and `sourceChoices`. The ties
+pass is a FOLLOW-UPS row under "## ps-3". Fixtures are T (`Couple/Fixtures.lean`), and the three `Decidable` instances are C.
 
 ## Size
 
-SIZE-NUMBERS
+`git diff --numstat c94ad399b` (the merge base). Exempt: statement proof lines and the S-fixtures (size rule,
+reviews/dri-decisions-20261108-adv1207.md item 3), and generated files.
+
+| File | Added | Counted |
+|---|---|---|
+| `Couple.lean` (definitions, constraint generation, source identity, 3 instances) | 171 | 171 |
+| `Couple/Statements.lean` | 303 | 132 (68 statement lines, 64 header/comments/blank; 172 proof lines exempt) |
+| `Couple/Fixtures.lean` | 246 | about 56 (header, R-3, budget, the survivor fixtures; S15/S18/S19/S22 data and 88 proof lines exempt) |
+| `CoupleExamples.lean` | 138 | about 50 (header, R-3, budget, the survivor guards; S-guards exempt) |
+| docs and evidence (REPORT, DELTA, `probe.py`, `mutants.json`, `mutants-run.txt`, allow file) | about 300 | about 300 |
+| `tools/trust-classes.json` (new entries; the file's key moves are the generator's) | 143 net | 143 |
+
+Product, statements and non-S guards: about 410. With docs, evidence and trust classes the total is about 850, over the
+~600 rule. The overshoot is mostly R16 sweep evidence and survivor fixtures added after deliverable (5). Cutting (5)
+would save about 20 counted lines, not enough to fit. The DRI decider was asked (msg.sh dri ps-3, 2026-11-10T15:32Z);
+no cut was made on my own.
 
 ## Evaluators, budgets, bytes
 
@@ -105,7 +147,50 @@ SIZE-NUMBERS
 
 ## Final checks
 
-FINAL-CHECKS
+All on the final Lean, after `uv run python tools/regen_generated.py --write` (exit 0; its lake-build step "Build completed
+successfully (1361 jobs)"):
+- **Audit.** `python3 lean/audit.py`: "PASS: 828 source files; 9314 named theorem declarations audited …; only the declared
+  standard axiom allowlist". `lean/axioms.txt` lists `coupled_subset` [propext], `coupled_uniform` [propext, Quot.sound],
+  and `coupling_complete`, `couplings_spec`, `couplings_spec_admit` and `sourceChoice_entails` [propext, Classical.choice,
+  Quot.sound].
+- **Layers.** `python3 tools/check_lean_imports.py`: "Lean layer graph kept (828 modules, 18 reviewed legacy edges)".
+- **Gate collection.** `uv run python tools/gate_collection.py --check --prebuilt`: "0 added, 0 removed by a trailer, 0
+  refused, 0 stale and 0 malformed trailers".
+- **Statement probe.** `python3 -I docs/presupposition/ps-3/evidence/probe.py <stub>`: 43 `equal` (spec 21, stub 22),
+  `differing []`.
+- **Selected tests:** SELECTED-TESTS
+
+## Self-review against BUILDER-CHECKLIST
+
+SELF-REVIEW: grades not recorded. The session that ran the self-reviewer agent (one call, on 51ce0636f) was restarted
+before it wrote the A/B/C counts. Its fixes are commit b094fe134:
+- `couplings_spec` is over K's constraints plus the coupling ones, with its `admit` corollary;
+- `sourceChoice_members`;
+- lf-14d enumeration guards;
+- fixtures for background, fixed rules, claim units and resolved obligations;
+- `¬ SameDecides`;
+- `groups` on an in-place cell.
+
+1. N.A.: no relayed answer; nothing on a route calls the coupling (DELTA.md).
+2. PASS: the plan rows table above, one row per deliverable with its file; no Python copy, no report test (`git diff --stat c94ad399b` has no `ve/` or `tests/` file).
+3. PASS: 35 hand mutants KILLED (`mutants.json`, `evidence/mutants-run.txt`); the trust_mutants sweep exits 0 (`trust-mutants.json`); the allow file names definition and operator, no wildcard.
+4. N.A.: Lean only; no Python or Rust path changed.
+5. N.A.: no relayed field.
+6. PASS: synced with main (merge base c94ad399b = main); `trust_map --check`, audit and regen run on the final Lean; the gate runs on the committed HEAD.
+7. PASS: DELTA has no rows; the trust growth is SIGNED by standing ruling R16 (`trust_map --check` PASS).
+8. PASS: no route answer changed; no file under `ve/`, `rust/` or `lean/VE/Service/` changed (`git diff --stat`).
+9. PASS: the selected tests (below) include the Lean build of the new modules (`tools/select_tests.py --base c94ad399b`).
+10. PASS: statement probe `differing []`; `#guard`s and proofs fail under the planted mutants (`mutants.json`); no hypothesis added.
+11. PASS: over 64 joint choices is `ResourceLimit: joint choices` (UNKNOWN): `#guard`s in `CoupleExamples.lean` "lf-14d's budget" (7 binary sets; 6 give 64).
+12. N.A.: no evaluator on a route; `couplable` is O(|J|²) over lf-14d's J of at most 64 (stated above).
+13. PASS: `gate_collection.py --check --prebuilt`: 0 refused, 0 stale, 0 malformed; no test removed.
+14. PASS, both directions: `couplable` true and false, `PickFits` accepts and refuses, `SatUnder` holds (S22) and fails (D2n, the raw W1 form), `groups` forms and refuses.
+    - Spec re-read: `groups`, `rep`, `Uniform`, `couplable`, `coupledSet`, `PickFits`, `SatUnder`, `SameModels`, `SameDecides`, `coupling_complete`, `coupled_uniform` and `coupled_subset` against docs/spec/presupposition.md:1234-1290; `couplings_spec` against :1293; source identity against :227 and :802.
+15. PASS:
+    - no overclaim: `coupling_complete` is written as vacuous over today's table;
+    - no silent cut: all five deliverables are built, and the size question went to the DRI;
+    - every new check can fail: the sweep and the hand mutants;
+    - limits are charged before work: lf-14d's `compatibleChoices` limit (`#guard`).
 
 ## Next item
 
