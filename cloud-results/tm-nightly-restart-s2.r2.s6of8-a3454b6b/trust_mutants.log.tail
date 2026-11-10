@@ -1,0 +1,7 @@
+trust_mutants: 19 definitions, 71 mutants (9 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/Commands/Steps.lean:40 VE.Commands.shapes (G[V], trusted) list-empty: body -> [] (lean/VE/Commands/Steps.lean:40: Application type mismatch: The argument)
+trust_mutants: 7 KILLED, 0 SURVIVOR, 1 UNKNOWN, 1 INVALID, 0 ALLOWED, 0 NOT RUN, 62 OTHER SHARD in 97 s
+trust_mutants: D[V], trusted: 1 KILLED, 15 OTHER SHARD
+trust_mutants: G[V], trusted: 4 KILLED, 1 UNKNOWN, 1 INVALID, 33 OTHER SHARD
+trust_mutants: S, trusted: 2 KILLED, 14 OTHER SHARD
+trust_mutants: steps: wall plan 11.1 s, scratch 5.1 s, control_build 0.3 s, probe_install 1.1 s, mutants 74.3 s, cleanup 5.4 s, reads 0.2 s; lake control_build 0.3 s (1), probe_install 1 s (1), control_probes 11 s (7), mutant_builds 23.4 s (12), mutant_checks 41.4 s (5), stage_controls 3.2 s (4), mutant_probes 11.7 s (7)
