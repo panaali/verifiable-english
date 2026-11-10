@@ -192,6 +192,11 @@ lean/VE/EnglishGrammar/Norm/RunExamples.lean` (the VM; the Mac and the cloud poo
   code, only "CheckerUnavailable: missing Lean service executable lean/.lake/build/bin/ve_service" (the worktree had
   no built service binary). After `lake build` ("Build completed successfully (1348 jobs)", no source change),
   `uv run python tools/relay_mutation_gate.py` exits 0: "48 routes, 153322 mutants, 0 failures". No code changed.
+- Relay mutation gate, second pre-review run (at `96ff8c73c`): the same "missing Lean service executable" failure;
+  the binary built above was gone from `lean/.lake/build/bin/` again (no repo tool deletes it; the build directory
+  changed outside this session). `lean-prep.sh` then `lake build ve_service` ("Build completed successfully (942
+  jobs)", no source change); `uv run python tools/relay_mutation_gate.py` exits 0 again: "48 routes, 153322
+  mutants, 0 failures". No code changed.
 
 ## Spec re-read (BUILDER-CHECKLIST 14)
 
