@@ -184,13 +184,14 @@ def sdModel (c : SDCase) (j : Json) :
   unless data.valid c.v do throw "model is not semantically admissible"
   pure (data.toModel, ← VE.NormDefaults.Wire.decodeFilling c.U data.toModel (j.getObjValD "filling"))
 
-/-- The superposed proofs a piece's answer replays: one per conflict certificate, then the query's. -/
+/-- The superposed proofs a piece's answer replays: one per conflict certificate, then the query's. The labelled
+    middle each replays is the slot, `supX` and `Fill_T` (`A`'s atoms after the slot), so `Fill_T` is no tail. -/
 def sdProofs (c : SDCase) (certs : List (Option VE.Tableau.Certificate))
     (query : Option (List VE.Formula × VE.Formula × VE.Tableau.Certificate)) : List SupProof :=
   (c.ts.zip certs).filterMap (fun (t, k) => k.map (fun cert =>
-    ⟨envAt c.F 0, VE.Norms.backgroundBase c.F, c.fp, VE.Norms.targetConclusion t, cert⟩)) ++
+    ⟨envAt c.F 0, VE.Norms.backgroundBase c.F, [], VE.Norms.targetConclusion t, cert⟩)) ++
   query.toList.map (fun (Γ, φ, cert) =>
-    ⟨envAt c.F (size c.F), VE.Norms.background c.F, c.fp ++ VE.Norms.elaborate c.F.T ++ (c.S.2 ++ Γ), φ, cert⟩)
+    ⟨envAt c.F (size c.F), VE.Norms.background c.F, VE.Norms.elaborate c.F.T ++ (c.S.2 ++ Γ), φ, cert⟩)
 
 /-! ## `readings-conflict` -/
 
