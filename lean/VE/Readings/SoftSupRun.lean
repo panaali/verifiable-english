@@ -377,13 +377,14 @@ theorem relabel_shown (A : Choice) (ls : List String) : c.relabel (c.images A) l
 end SDCase
 
 /-- One scope under `A`: each piece of `e` on the case's values, the conflict certificates decoded and checked once
-    for all of them (`sdFree`); `usedLabels` per accepted piece, over the slot,
-    `supX` and `Fill_T`; then, only when a piece was accepted, `labelImage` once for the scope, so each soft premise
-    is shown by its choice labels (`shownWith_eq`). A refused piece is noted, never a negative verdict. -/
+    for all of them (`sdFree`); `labelImage` once for the scope, at its first accepted piece (none if no piece is);
+    each accepted piece's labels (`usedOf`) shown by choice labels (`relabel_shown`: `sdShown`). A refused piece is
+    noted, never a negative verdict. -/
 def sdScope (c : SDCase) (A : Choice) (Γ φ e : Json) : SDM SupScope := do
   let packages := (pieceOf e "conflict").getD (Json.mkObj [])
   let mut notes : List PieceNote := []
-  let mut raw : List (String × List String) := []
+  let mut used : List (String × List String) := []
+  let mut images : Option (List (List (String × String))) := none
   let mut encoded : List (String × Choice) := []
   let mut st : List (String × Bool) := []
   let mut cf : Free := none
@@ -406,23 +407,21 @@ def sdScope (c : SDCase) (A : Choice) (Γ φ e : Json) : SDM SupScope := do
           else if query then answer.getObjValD "accepted" == .bool true
           else answer.getObjValD "valid" == .bool true && answer.getObjValD "conclusion_value" == .bool false
         st := st ++ [(name, ok)]
+        if ok && images.isNone then
+          sdTick fun k => { k with images := k.images + 1 }
+          images := some (c.images A)
         if ok && (name == "conflict" || query) then sdTick fun k => { k with replays := k.replays + 1 }
-        raw := raw ++ [(name, if ok then c.usedOf A proofs else [])]
+        let labels := if ok then c.relabel (images.getD []) (c.usedOf A proofs) else []
+        used := used ++ [(name, labels)]
         let shown := if ok && (name == "witness" || name == "countermodel" || name == "model") then
           some (if name == "witness" then (p.getObjValD "witness").getObjValD "model" else p.getObjValD "model")
           else none
-        notes := notes ++ [{ name := name, accepted := ok, shown := shown }]
+        notes := notes ++ [{ name := name, accepted := ok, shown := shown, conditionalOn := labels }]
         if shown.isSome then encoded := encoded ++ [(name, jchoice (answer.getObjValD "choice"))]
-  let mut images := []
-  if st.any (·.2) then
-    sdTick fun k => { k with images := k.images + 1 }
-    images := c.images A
-  let used := raw.map (fun (n, ls) => (n, c.relabel images ls))
-  let noted := notes.map (fun n => { n with conditionalOn := ((used.find? (·.1 == n.name)).map (·.2)).getD [] })
-  let on (n : String) := (st.find? (·.1 == n)).map (·.2) |>.getD false
+  let on (n : String) : Bool := st.any (fun (x : String × Bool) => x.1 == n && x.2)
   let cs : ChoiceResult := if on "conflict" then .free else if on "witness" then .conflict else .unknown
   let qs : ChoiceResult := if on "certificate" then .proved else if on "countermodel" then .refuted else .unknown
   let ps : ChoiceResult := if on "unsat" then .inconsistent else if on "model" then .model else .unknown
-  return { info := ⟨A, cs, qs, ps, noted⟩, encoded := encoded, used := used }
+  return { info := ⟨A, cs, qs, ps, notes⟩, encoded := encoded, used := used }
 
 end VE.Readings.Run
