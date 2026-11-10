@@ -10,7 +10,8 @@ import re
 
 import pytest
 
-from conformance.purposes_contract import REGISTRY, bound, lean_record, legacy_validation, purposes_block
+import conformance.purposes_contract as purposes_contract
+from conformance.purposes_contract import BINDS, REGISTRY, bound, lean_record, legacy_validation, purposes_block
 from conformance.wire_contract_engine import CLEAN, Fault, load, run
 from conformance.wire_contract_faults import catalogue, expected_record, rendered
 from conformance.wire_contract_faults_purposes import EXAMPLES, limit, link, refused
@@ -95,9 +96,10 @@ def test_every_refused_example_round_trips_through_the_contract_in_both_engines(
 
 
 def test_the_relay_refuses_a_retyped_or_rebound_record():
-    genuine = lean_routes.diagnose("purposes@0", [{"id": "c", "purposes": refused()["polarity"]["purposes"]}])[0]
-    assert bound(deepcopy(genuine))["check"] == "1.1g"
-    assert bound({"id": "c", "status": "ok", "outcome": "clean"}) is None
+    block = refused()["polarity"]["purposes"]
+    genuine = lean_routes.diagnose("purposes@0", [{"id": "c", "purposes": block}])[0]
+    assert bound(deepcopy(genuine), block)["check"] == "1.1g"
+    assert bound({"id": "c", "status": "ok", "outcome": "clean"}, block) is None
     def mutated(path, value):
         row = deepcopy(genuine)
         *head, last = path
@@ -120,7 +122,7 @@ def test_the_relay_refuses_a_retyped_or_rebound_record():
                         (d + ("text",), KeyError), (d + ("revision",), 2), (d + ("revision",), True),
                         (d + ("revision",), "1"), (d + ("contract",), "acts@0"), (d + ("extra",), 1)]:
         with pytest.raises(CheckerUnavailable):
-            bound(mutated(path, value))
+            bound(mutated(path, value), block)
     deep = []
     for _ in range(10_000):
         deep = [deep]
@@ -128,7 +130,110 @@ def test_the_relay_refuses_a_retyped_or_rebound_record():
     for path in fields + [d + ("args", k) for k in genuine["diagnostic"]["args"]]:
         for value in (KeyError, 7, True, None, [], {}, 1.5, "\ud800", deep):
             with pytest.raises(CheckerUnavailable):
-                bound(mutated(path, value))
+                bound(mutated(path, value), block)
+
+
+def rebound(row, **args):
+    """`row` with `args` in its record and the text they render: consistent with the table, so only the binding to the
+    request can refuse it."""
+    row = deepcopy(row)
+    record = row["diagnostic"]
+    record["args"] = {**record["args"], **args}
+    record["text"] = purposes_contract.text(purposes_contract.members()[record["check"]][1], record["args"])
+    return row
+
+
+def genuine_rows():
+    """Lean's row for each refused example, with the example's block."""
+    names = sorted(refused())
+    rows = lean_routes.diagnose("purposes@0", [{"id": n, "purposes": refused()[n]["purposes"]} for n in names])
+    return {n: (row, refused()[n]["purposes"]) for n, row in zip(names, rows)}
+
+
+def test_binds_ties_every_member_of_the_table_and_no_other():
+    """The binding table is enumerated from the contract: one relation per member, and a member without one is
+    refused, never let through."""
+    assert set(BINDS) == set(purposes_contract.members()) == {m["id"] for m in members()}
+    row, block = genuine_rows()["polarity"]
+    assert bound(deepcopy(row), block)["check"] == "1.1g"
+    saved = BINDS.pop("1.1g")
+    try:
+        with pytest.raises(CheckerUnavailable, match="does not carry"):
+            bound(deepcopy(row), block)
+    finally:
+        BINDS["1.1g"] = saved
+
+
+def test_a_record_naming_what_the_request_does_not_carry_is_refused(monkeypatch):
+    """Review F1 (R8 (b)): a record consistent with the table but naming a link, count, id or value the request block
+    lacks is `CheckerUnavailable`, through `lean_record` as through `bound`."""
+    rows = genuine_rows()
+    two = refused()["link-fields"]["purposes"]
+    one = refused()["polarity"]["purposes"]
+    assert len(two["links"]) == 2 and len(one["links"]) == 1
+    cases = [
+        (rebound(rows["polarity"][0], link="l9", polarity="maybe"), one),   # the probe: link l9 on an l1 block
+        (rebound(rows["link-fields"][0], link="99"), two),                  # 1.1d link 99 on a 2-link block
+        (rows["links-over"][0], one),                                       # 1.1c on a 1-link block
+        (rebound(rows["id-not-token"][0], id="zz"), refused()["id-not-token"]["purposes"]),  # 1.1e id not in the block
+        (rebound(rows["relation-prevents"][0], relation="because"), refused()["relation-prevents"]["purposes"]),
+        (rebound(rows["link-fields"][0], link="0"), two),                   # links count from 1
+        (rebound(rows["links-over"][0], limit=str(len(_links(refused()["links-over"]["purposes"])))),
+         refused()["links-over"]["purposes"]),                              # the count must exceed the limit
+    ]
+    truth = {"links": [{**one["links"][0], "id": True}]}
+    lean = lean_routes.diagnose("purposes@0", [{"id": "t", "purposes": truth}])[0]
+    assert lean["diagnostic"]["args"] == {"id": "true"} and bound(deepcopy(lean), truth)
+    cases.append((rebound(lean, id="1"), truth))                            # `true` is not `1`
+    assert refused()["relation-prevents"]["args"]["relation"] == "prevents"
+    for row, block in cases:
+        with pytest.raises(CheckerUnavailable, match="does not carry"):
+            bound(row, block)
+        monkeypatch.setattr(purposes_contract, "decide", lambda mode, cases, row=row: [deepcopy(row)])
+        with pytest.raises(CheckerUnavailable, match="does not carry"):
+            lean_record(block)
+
+
+def test_every_argument_rebound_away_from_the_request_is_refused():
+    """The class of F1: for every refused example and each of its arguments, Lean's row binds, and the same row with
+    that argument (and its text) replaced by a value the block does not carry in that place is refused; so is every
+    row bound against another example's block where its arguments name nothing of that block."""
+    rows = genuine_rows()
+    assert {row["diagnostic"]["check"] for row, _ in rows.values()} == set(BINDS)
+    for name, (row, block) in rows.items():
+        assert bound(deepcopy(row), block) == row["diagnostic"], name
+        for arg, value in row["diagnostic"]["args"].items():
+            others = {"l9", "zz", "9999", "01", "", " " + value, value + " ", "٢", str(len(_links(block)) + 1),
+                      "because" if value != "because" else "in order to", "affirmed", "plain", "u0146.s01.p9"}
+            for other in others - {value}:
+                with pytest.raises(CheckerUnavailable, match="does not carry"):
+                    bound(rebound(row, **{arg: other}), block)
+    empty = {"links": []}
+    for name, (row, block) in rows.items():
+        if row["diagnostic"]["args"]:
+            with pytest.raises(CheckerUnavailable, match="does not carry"):
+                bound(deepcopy(row), empty)
+
+
+def _links(block):
+    return block["links"] if type(block) is dict and type(block.get("links")) is list else []
+
+
+def test_leans_genuine_records_on_any_json_value_bind():
+    """No genuine answer is refused: Lean quotes a non-string value in its own JSON spelling (`Json.compress`: sorted
+    keys, its own number form), and the binding compares the value that spelling parses to."""
+    base = accepted()[0]["links"][0]
+    def with_(**fields):
+        return {"links": [{**base, **fields}]}
+    # The service's restricted JSON carries no null, negative or fractional number (`lean_service`'s reader).
+    values = [7, 2 ** 40, True, False, [], {}, [[{}], 0], {"b": [1, "x"], "a": {"c": True}}, "a b", "\u00fc\u0001\"\\",
+              "\U0001f600", "\u212a", ""]
+    blocks = [with_(**{field: value}) for field in ("id", "marker", "relation", "polarity", "share") for value in values]
+    blocks += [with_(reason=[{"part": "bad part"}]), with_(target=[{"mention": "m 1"}]), with_(reason=[{"part": 3}]),
+               {"links": [base, {**base, "id": "l2", "polarity": 0}]}]
+    rows = lean_routes.diagnose("purposes@0", [{"id": str(i), "purposes": b} for i, b in enumerate(blocks)])
+    for block, row in zip(blocks, rows, strict=True):
+        assert bound(deepcopy(row), block)["phase"] == "decode", block   # each block has one bad value, and it binds
 
 
 def test_the_adapters_read_the_case_block():
