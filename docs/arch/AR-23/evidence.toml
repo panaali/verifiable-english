@@ -1,0 +1,25 @@
+# AR-23, consolidation step 3c: closure's typing, meaning and consequence are Core's on one embedding
+# (Closure.Formula.toCore); Closure/Finite is Core's under the closure names (architecture pass 2026-11-09, plan 4.5).
+# Checked with: uv run python tools/batch_evidence.py --check docs/arch/AR-23
+# The A/B is `python -m tools.evidence ab` over tools/lean_first_diff.py's recordings of all nine corpora (base: the
+# merge base, from its own worktree; head from this checkout), kept out of the tree (over 1 MB) with their SHA-256 in
+# evidence/ab.json. Saved beside it and stated in REPORT.md: the statements diff (statements.json), the trust
+# measurement before and after (trust.json), the Lean output differential (out.json), closure's version and atom-free
+# gates row for row on both runners (closure-probe.json, from closure_probe.py), and the closure tests, fuzz and CPU
+# (closure-tests.json), and the re-run of the 4 records one side timed out on (pilot-rerun.json). The trust-mutants record and its allow file are ../trust-mutants.json and
+# ../trust-mutants-allow.json.
+batch = "AR-23"
+
+[scope]
+file = "scope.json"
+
+[gate]
+file = "gate.json"
+
+[mutants]
+file = "mutants.json"
+min = 3
+
+[ab]
+file = "ab.json"
+corpora = ["probe", "conformance", "readings", "pilots", "discourse", "rights", "quantity", "norm_defaults", "document"]
