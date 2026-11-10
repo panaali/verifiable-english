@@ -974,6 +974,7 @@
         "ResponseShape.Skeletons.english",
         "ResponseShape.Skeletons.englishCheck",
         "ResponseShape.Skeletons.englishCommand",
+        "ResponseShape.Skeletons.clausesElaborate",
         "ResponseShape.Skeletons.englishGrammar",
         "ResponseShape.Skeletons.englishQuestion",
         "ResponseShape.Skeletons.englishRead",
@@ -2058,7 +2059,9 @@
         "VE.Compose.dispatch",
         "VE.Compose.documentLayers",
         "VE.Compose.environmentProfiles",
-        "VE.Compose.environmentWrapper",
+        "VE.Compose.environmentRows",
+        "VE.Compose.environmentWrappers",
+        "VE.Compose.withoutClauses",
         {
           "name": "VE.Compose.gateOf",
           "tied": [
@@ -21049,6 +21052,187 @@
         "VE.Service.Document.viewOf",
         "VE.Service.Document.checkDocSetsView",
         "VE.Service.Document.activeKinds"
+      ]
+    },
+    "VE/RightClauses/Wire.lean": {
+      "S": [
+        "VE.RightClauses.NoClauseKeys",
+        "VE.RightClauses.NoReadingSets",
+        "VE.RightClauses.PlainOnWire"
+      ],
+      "D[V]": [
+        {
+          "name": "VE.RightClauses.decodeClauseDoc",
+          "tied": [
+            "VE.RightClauses.decode_unstructured",
+            "VE.RightClauses.elaborate_plain"
+          ]
+        },
+        {
+          "name": "VE.RightClauses.elaborateJson",
+          "tied": [
+            "VE.RightClauses.elaborate_plain"
+          ]
+        },
+        {
+          "name": "VE.RightClauses.stripElided",
+          "tied": [
+            "VE.RightClauses.decode_unstructured"
+          ]
+        },
+        {
+          "name": "VE.RightClauses.stripProfile",
+          "tied": [
+            "VE.RightClauses.decode_unstructured",
+            "VE.RightClauses.elaborate_plain"
+          ]
+        },
+        {
+          "name": "VE.RightClauses.plainLineJson",
+          "tied": [
+            "VE.RightClauses.plainLine_decode"
+          ]
+        },
+        {
+          "name": "VE.RightClauses.lineWith",
+          "tied": [
+            "VE.RightClauses.plainLine_decode"
+          ]
+        },
+        {
+          "name": "VE.RightClauses.headKeys",
+          "tied": [
+            "VE.RightClauses.plainLine_decode"
+          ]
+        },
+        {
+          "name": "VE.RightClauses.mapUnit",
+          "tied": [
+            "VE.RightClauses.fold_plain"
+          ]
+        },
+        {
+          "name": "VE.RightClauses.headStep",
+          "tied": [
+            "VE.RightClauses.fold_plain"
+          ]
+        },
+        {
+          "name": "VE.RightClauses.headUnit",
+          "tied": [
+            "VE.RightClauses.headUnit_mem"
+          ]
+        },
+        {
+          "name": "VE.RightClauses.headLine",
+          "tied": [
+            "VE.RightClauses.headUnit_mem",
+            "VE.RightClauses.headLine_plainless"
+          ]
+        },
+        {
+          "name": "VE.RightClauses.unitBody",
+          "tied": [
+            "VE.RightClauses.headUnit_mem"
+          ]
+        },
+        {
+          "name": "VE.RightClauses.dropKeys",
+          "tied": [
+            "VE.RightClauses.headUnit_mem"
+          ]
+        },
+        {
+          "name": "VE.RightClauses.bodyLines",
+          "tied": [
+            "VE.RightClauses.headUnit_mem"
+          ]
+        },
+        {
+          "name": "VE.RightClauses.mapMember",
+          "tied": [
+            "VE.RightClauses.decodeLine_guard"
+          ]
+        },
+        {
+          "name": "VE.RightClauses.mapArr",
+          "tied": [
+            "VE.RightClauses.decodeLines_plain"
+          ]
+        },
+        {
+          "name": "VE.RightClauses.members",
+          "tied": [
+            "VE.RightClauses.headLine_plainless"
+          ]
+        },
+        {
+          "name": "VE.RightClauses.bodyRight",
+          "tied": [
+            "VE.RightClauses.addUnit_plain"
+          ]
+        },
+        {
+          "name": "VE.RightClauses.jsonLineName",
+          "tied": [
+            "VE.RightClauses.decodeLine_name"
+          ]
+        },
+        "VE.RightClauses.rebuild",
+        "VE.RightClauses.mapDoc",
+        "VE.RightClauses.unitsOf",
+        "VE.RightClauses.decodeSpan",
+        "VE.RightClauses.decodeRole",
+        "VE.RightClauses.hasKeys",
+        "VE.RightClauses.decodeClause",
+        "VE.RightClauses.decodeRelation",
+        "VE.RightClauses.decodeElided",
+        "VE.RightClauses.decodeClauses",
+        "VE.RightClauses.decodeRelationOpt",
+        "VE.RightClauses.unitSpanOf"
+      ]
+    },
+    "VE/RightClauses/Run.lean": {
+      "G[V]": [
+        "VE.RightClauses.Run.labelledJson",
+        "VE.RightClauses.Run.elaborateCase",
+        "VE.RightClauses.Run.runCaseReported"
+      ]
+    },
+    "VE/RightClauses/WireDecode.lean": {
+      "P": [
+        "VE.RightClauses.mapPair",
+        "VE.RightClauses.Distinct"
+      ]
+    },
+    "VE/RightClauses/WireTheorems.lean": {
+      "P": [
+        "VE.RightClauses.plainUnits",
+        "VE.RightClauses.plainOnWireB"
+      ]
+    },
+    "ResponseShape/Schemas/ClausesElaborate.lean": {
+      "G[R]": [
+        "ResponseShape.Schemas.ClausesElaborate.file",
+        "ResponseShape.Schemas.ClausesElaborate.result",
+        "ResponseShape.Schemas.ClausesElaborate.row"
+      ]
+    },
+    "VE/RightClauses/RunExamples.lean": {
+      "T": [
+        "VE.RightClauses.RunExamples.parse",
+        "VE.RightClauses.RunExamples.profiles",
+        "VE.RightClauses.RunExamples.on",
+        "VE.RightClauses.RunExamples.doc",
+        "VE.RightClauses.RunExamples.ask",
+        "VE.RightClauses.RunExamples.says",
+        "VE.RightClauses.RunExamples.off",
+        "VE.RightClauses.RunExamples.rel",
+        "VE.RightClauses.RunExamples.charged",
+        "VE.RightClauses.RunExamples.countryOf",
+        "VE.RightClauses.RunExamples.twoLines",
+        "VE.RightClauses.RunExamples.plainOnWire",
+        "VE.RightClauses.RunExamples.depth64"
       ]
     }
   }
