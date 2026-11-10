@@ -186,7 +186,8 @@ lean/VE/EnglishGrammar/Norm/RunExamples.lean` (the VM; the Mac and the cloud poo
   (`Norm/Run.lean` now pinned as a decoder in `ve/assurance-manifest.json`, `Norm/RunExamples.lean` under `other_json`)
   and `tests/test_senses_read_members.py::test_a_golden_request_without_the_members_keeps_its_answer[open|one|warnings]`
   (the answers carry the English `actions_version`; re-recorded at 46 after a probe showed that with "46" read as
-  "45" each digest equals main's). The failed ids were then rerun alone on the fixed commit (below).
+  "45" each digest equals main's). The failed ids rerun alone on the fixed commit `987c3edf3` (`zsh mac-pytest.sh --
+  <ids>`): "10 passed"; both whole files locally: "233 passed".
 
 ## Spec re-read (BUILDER-CHECKLIST 14)
 
