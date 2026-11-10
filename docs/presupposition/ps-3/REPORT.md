@@ -132,10 +132,24 @@ reviews/dri-decisions-20261108-adv1207.md item 3), and generated files.
 | docs and evidence (REPORT, DELTA, `probe.py`, `mutants.json`, `mutants-run.txt`, allow file) | about 300 | about 300 |
 | `tools/trust-classes.json` (new entries; the file's key moves are the generator's) | 143 net | 143 |
 
-Product, statements and non-S guards: about 410. With docs, evidence and trust classes the total is about 850, over the
-~600 rule. The overshoot is mostly R16 sweep evidence and survivor fixtures added after deliverable (5). Cutting (5)
-would save about 20 counted lines, not enough to fit. The DRI decider was asked (msg.sh dri ps-3, 2026-11-10T15:32Z);
-no cut was made on my own.
+**Product (counted): about 420.** That is `Couple.lean` 171, `Statements.lean` 132 non-proof lines, and about 105 non-S
+guards and fixtures (the two fixture rows above, header, R-3 and budget parts). It is under the ~600 rule.
+
+**Exempt, each with its ruling** (reviews/dri-decisions-20261110-ps-3-size.md item 1: "Size ACCEPTED as is. No cut, and
+source identity (5) stays in ps-3"; the size rule is adv1207 item 3):
+- the 172 statement proof lines, the S15/S18/S19/S22 fixtures and their 88 proof lines (task file);
+- the R16 survivor fixtures and `trust-mutants-allow.json` (the R16 sweep);
+- `mutants.json` and `mutants-run.txt` (the seeded-bug condition);
+- `probe.py` (the statement probe);
+- REPORT and DELTA (docs);
+- the `tools/trust-classes.json` entries (the R16 record).
+
+Limit from here (same ruling): review fixes may add product lines only up to ~600 product; past that, source identity
+(5) moves to ps-3b.
+
+Trust is measured apart from size: untied +105 (<= 150), K +0. No definition is tied only through the vacuous
+`coupling_complete`. The ties are `sourceChoice_closed`, `couplings_spec`, `couplings_spec_admit`, `mem_choiceOf`,
+`groupConstraints_iff`, `sourceChoice_entails` and `sourceChoice_members` (`tools/trust-classes.json`).
 
 ## Evaluators, budgets, bytes
 
@@ -151,14 +165,16 @@ All on the final Lean, after `uv run python tools/regen_generated.py --write` (e
 successfully (1361 jobs)"):
 - **Audit.** `python3 lean/audit.py`: "PASS: 828 source files; 9314 named theorem declarations audited …; only the declared
   standard axiom allowlist". `lean/axioms.txt` lists `coupled_subset` [propext], `coupled_uniform` [propext, Quot.sound],
-  and `coupling_complete`, `couplings_spec`, `couplings_spec_admit` and `sourceChoice_entails` [propext, Classical.choice,
+  and `coupling_complete`, `groups_admit_nil`, `couplings_spec`, `couplings_spec_admit` and `sourceChoice_entails` [propext, Classical.choice,
   Quot.sound].
 - **Layers.** `python3 tools/check_lean_imports.py`: "Lean layer graph kept (828 modules, 18 reviewed legacy edges)".
 - **Gate collection.** `uv run python tools/gate_collection.py --check --prebuilt`: "0 added, 0 removed by a trailer, 0
   refused, 0 stale and 0 malformed trailers".
 - **Statement probe.** `python3 -I docs/presupposition/ps-3/evidence/probe.py <stub>`: 43 `equal` (spec 21, stub 22),
   `differing []`.
-- **Selected tests:** SELECTED-TESTS
+- **Selected tests** (final, on the committed clean tree 3686c68e2): `MAC_PYTEST_NO_DEFER=1 mac-pytest.sh --select -- --base
+  c94ad399b --run`, on GitHub Actions (run ps-3-3686c68e-t324801). 115 units in 5 shards (27, 25, 22, 22, 19), each "exit 0",
+  all passed, 0 failed; summary "exit=0; 2511s". No test of main-known-red.txt failed.
 
 ## Self-review against BUILDER-CHECKLIST
 
