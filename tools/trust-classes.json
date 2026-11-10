@@ -20619,7 +20619,6 @@
         "VE.Readings.Wire.SupReplaySD",
         "VE.Readings.Wire.sdRuleCharge",
         "VE.Readings.Wire.sdContentCharge",
-        "VE.Readings.Wire.sdContentCharge.lines",
         "VE.Readings.Wire.sdSizeCharge",
         "VE.Readings.Wire.sdCheckWorkFast"
       ],
@@ -20654,6 +20653,10 @@
         "VE.Readings.SoftSupWireExamples.todayRow",
         "VE.Readings.SoftSupWireExamples.framedFrame",
         "VE.Readings.SoftSupWireExamples.framed",
+        "VE.Readings.SoftSupWireExamples.framedT",
+        "VE.Readings.SoftSupWireExamples.framedItems",
+        "VE.Readings.SoftSupWireExamples.NSDsets",
+        "VE.Readings.SoftSupWireExamples.NSDcands",
         "VE.Readings.SoftSupWireExamples.firstConjunct"
       ]
     },
