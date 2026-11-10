@@ -96,6 +96,9 @@ pinned in a temporary lock, restore, rebuild. The Python ones needed no build. m
 docs/composition/cmp-s3-cfr-1/trust-mutants-allow.json --rescore <the previous JSON> --json
 docs/composition/cmp-s3-cfr-1/trust-mutants.json` exits 0: "206 KILLED, 0 SURVIVOR, 0 UNKNOWN, 10 INVALID, 57
 ALLOWED, 0 NOT RUN" over 24 definitions and 273 mutants. It ran on the VM, because ve-mac-1 was unreachable.
+The sweep was not rerun after the second self-review's Lean edits. Those edits added only a P definition and its
+lemma (`plainOnWireB`, `plainOnWire_of_check`), T fixtures and `#guard`s. No trusted definition changed, and a new
+`#guard` can only kill more mutants. `trust_map.py --check` still gives trusted +137.
 
 - The sweep did not reach every new or changed trusted definition. It made no killed mutant for `rebuild`,
   `decodeRelationOpt`, `ResponseShape.Skeletons.clausesElaborate`, `VE.Service.Mode.name`, `VE.Service.runMode` or
