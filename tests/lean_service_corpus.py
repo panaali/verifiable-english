@@ -445,7 +445,8 @@ def corpus():
             "cardinality": [*cardinality_cases(), *ADVERSARIAL],
             "scope": [*recorded("scope"), *ADVERSARIAL],
             "act-readings": [*recorded("act-readings"), *ADVERSARIAL],
-            "english.command": [*command_cases(), *ADVERSARIAL]}
+            "english.command": [*command_cases(), *ADVERSARIAL],
+            "english.statement": [*recorded("english.statement"), *ADVERSARIAL]}
 
 
 def command_cases():
