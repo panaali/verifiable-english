@@ -1,18 +1,15 @@
 import VE.Readings.SoftSupWire
 
 /-! sc-11c: the soft runners on a superposed soft document (docs/spec/rd-9-soft-chain.md 14.3, 14.11): `readings-conflict`,
-`-certificate`, `-model` and the scope of a `readings-verdicts` case. Nothing dispatches here yet (sc-11b switches
-`runSDKind`); `SoftSupRunExamples.lean` runs them.
+`-certificate`, `-model` and the scopes of a `readings-verdicts` case, reached only from `SoftSupRunExamples.lean`
+(sc-11b switches `runSDKind`; sc-11cb builds the soft row on `SDCase`).
 
-A case is admitted once (`admitSDOf`) and routed once (`sdCaseOf`). The route check reads the values 14.11's third
-row names, each computed there once: `sup N.D`, `supU N`, the checked choices, `softXL N (sup N.D).1`; on a
-superposed case `fill (supU N)`, `Fill_T`, the targets and the environments follow, and every piece reads them from
-the case (`SDCase`). No piece admits or routes again: the norms chain's `x.run`, which replays per piece, is not copied.
-At most 64 choices the per-choice texts are admission's result (`sdCheck_of_admitted`); past 64 they run once, after
-the count and the work limit. Each answer's check equals the one its `readings_wire_sd_*_sound` theorem reads
-(`SDCase.free_eq`, `SDCase.premises_eq`, `SDCase.model_eq`, `SDCase.local_eq`), so the theorem applies to the case's
-`SupReplaySD`. A query certificate is bound to `premisesX` by `bindCertX` (D14). `SDCount` is W-13's and W-14's
-measure: admissions, route checks, label images, label replays and conflict checks. -/
+`sdCaseOf` admits a case once (`admitSDOf`) and routes it once, and stores what its pieces read (`SDCase`): `sup N.D`,
+`supU N`, `fill (supU N)`, the slot, `softXL`, `supX`, `Fill_T`, the targets, the backgrounds, the checked choices and
+the environments, each computed there; no piece admits or routes again (the norms chain's per-piece `x.run` is not
+copied). The approved bodies `fillPremises` and `supVocabulary` read `fill U` and `sup D` themselves, once per case.
+Each check an answer reports is the approved definition its `readings_wire_sd_*_sound` theorem reads, on the case's
+values (`SDCase.*_eq`). `SDCount` counts what W-13 and W-14 measure; admissions are counted by `sdCaseOf`. -/
 namespace VE.Readings.Run
 open Lean VE.Readings VE.Readings.Wire
 open VE.Norms (envAt size targets)
@@ -44,9 +41,13 @@ structure SDCase where
   fp : List VE.Formula
   FL : List (String × VE.Formula)
   ts : List (String × List String × VE.Formula)
+  bgb : List VE.Formula
+  bg : List VE.Formula
+  el : List VE.Formula
   checked : List Choice
   envQ : VE.Environment
   v : VE.Bridge.Vocabulary
+  canon : Except String Json
   hS : S = sup x.r.N.D
   hU : U = supU x.r.N
   hF : F = fill U
@@ -56,12 +57,21 @@ structure SDCase where
   hfp : fp = VE.NormDefaults.fillPremises U
   hFL : FL = (VE.NormDefaults.Admission.fillLabels U).zip fp
   hts : ts = targets F
+  hbgb : bgb = VE.Norms.backgroundBase F
+  hbg : bg = VE.Norms.background F
+  hel : el = VE.Norms.elaborate F.T
   hc : checked = checkedChoices x.r.N.D
   hQ : envQ = sharedEnvSD x.r.N
   hv : v = supVocabulary x.r.b.a.re x.r.b.D
+  hcanon : canon = VE.NormDefaults.Wire.canonicalEnvironmentJsonU x.r.b.a.re.lowerJson
 
-/-- The route of an admitted case, read once (`routeSD_superposed_iff`): the work limit before any choice's text,
-    and at most 64 choices no text at all (`sdCheck_of_admitted`). Off the superposed row it is `refusal`. -/
+theorem choices_isEmpty (D : Doc) : (choices D).isEmpty = (checkedChoices D).isEmpty := by
+  simp only [checkedChoices, choices, search_eq, maxChoices, maxChoiceChecks]
+  cases allFrom D D.sets [] <;> rfl
+
+/-- The route of an admitted case, read once (`routeSD_superposed_iff`) in 14.11's order: `routeOf`, `superposable`
+    and `WellFormedU (supU N)` (`sdSuperposable`, not charged: sc-11w), the count, then the work, then past 64
+    choices each choice's text (at most 64: admission's, `sdCheck_of_admitted`). Off the superposed row: `refusal`. -/
 def sdCaseOf (refusal : NDoc → String) (b : Admitted2) : SDM SDCase := do
   modify fun k => { k with admissions := k.admissions + 1 }
   match hadm : admitSDOf b with
@@ -72,27 +82,30 @@ def sdCaseOf (refusal : NDoc → String) (b : Admitted2) : SDM SDCase := do
     let S := sup N.D
     let U := asU N S.1
     let checked := checkedChoices N.D
-    let XL := softXL N S.1
-    let work := checked.length * (XL.length +
-      (S.1.soft.T.nodes.map (fun M => (M.guard :: M.carveOuts).map VE.Bridge.formulaNodes)).flatten.sum)
     if h : routeOf true N.D = .enumerated ∧ superposable N.D = true ∧ VE.NormDefaults.WellFormedU U = true ∧
-        checked.length ≤ maxChoiceChecks ∧ work ≤ maxSdCheckWork ∧
-        (checked.length ≤ maxChoices ∨ checked.all (fun c => (sdChoiceText r.b.a.re N c).isNone) = true) then
-      if hs : (choices N.D).isEmpty = false then
-        have hck : sdChecked r.b.a.re N = true := by
-          rcases h.2.2.2.2.2 with hle | hall
-          · exact sdCheck_of_admitted b r hadm (superposable_supReady h.2.1) hle h.2.2.2.2.1
-          · simp only [sdChecked, Bool.and_eq_true, decide_eq_true_eq]
-            exact ⟨⟨h.2.2.2.1, h.2.2.2.2.1⟩, hall⟩
-        have hr : routeSD r.b.a.re N = .superposed :=
-          (routeSD_superposed_iff _ _).mpr ⟨h.1, by simp [sdSuperposable, h.2.1, h.2.2.1, supU, U, S], hck⟩
-        let F := fill U
-        let fp := VE.NormDefaults.fillPremises U
-        let X := XL.map (·.2)
-        pure ⟨⟨r, hr, hs⟩, S, U, F, slotLabelled N.D, XL, X, fp, (VE.NormDefaults.Admission.fillLabels U).zip fp,
-          targets F, checked, sharedEnvSD N, supVocabulary r.b.a.re r.b.D,
-          rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
-      else throw (unsatText N.D)
+        checked.length ≤ maxChoiceChecks then
+      let XL := softXL N S.1
+      if hw : checked.length * (XL.length + (S.1.soft.T.nodes.map
+            (fun M => (M.guard :: M.carveOuts).map VE.Bridge.formulaNodes)).flatten.sum) ≤ maxSdCheckWork ∧
+          (checked.length ≤ maxChoices ∨ checked.all (fun c => (sdChoiceText r.b.a.re N c).isNone) = true) then
+        if hs : checked.isEmpty = false then
+          have hck : sdChecked r.b.a.re N = true := by
+            rcases hw.2 with hle | hall
+            · exact sdCheck_of_admitted b r hadm (superposable_supReady h.2.1) hle hw.1
+            · simp only [sdChecked, Bool.and_eq_true, decide_eq_true_eq]
+              exact ⟨⟨h.2.2.2, hw.1⟩, hall⟩
+          have hr : routeSD r.b.a.re N = .superposed :=
+            (routeSD_superposed_iff _ _).mpr ⟨h.1, by simp [sdSuperposable, h.2.1, h.2.2.1, supU, U, S], hck⟩
+          let F := fill U
+          let fp := VE.NormDefaults.fillPremises U
+          pure ⟨⟨r, hr, by rw [choices_isEmpty]; exact hs⟩, S, U, F,
+            VE.Rights.limPremisesLabelled S.1 ++ choiceLabelled N.D ++ gatedRel N.D, XL, XL.map (·.2), fp,
+            (VE.NormDefaults.Admission.fillLabels U).zip fp, targets F, VE.Norms.backgroundBase F,
+            VE.Norms.background F, VE.Norms.elaborate F.T, checked, sharedEnvSD N, supVocabulary r.b.a.re r.b.D,
+            VE.NormDefaults.Wire.canonicalEnvironmentJsonU r.b.a.re.lowerJson,
+            rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+        else throw (unsatText N.D)
+      else throw (refusal N)
     else throw (refusal N)
 
 namespace SDCase
@@ -102,18 +115,17 @@ def N : NDoc := c.x.r.N
 def slotX (A : Choice) : List VE.Formula := c.slot.formulas ++ atoms c.N.D A ++ c.X
 def taken (A : Choice) : Bool := c.checked.any (fun ch => A.all (ch.contains ·))
 def labels : List String := c.slot.map (·.1) ++ c.FL.map (·.1)
-def sp : superposable c.x.r.b.D = true := c.x.r.hN ▸ c.x.parts.1
 
 /-- `conflictFreeCheckX (supU N) (slotUnder N.D A ++ supX N)` on the case's values. -/
 def free (A : Choice) (certs : List (Option VE.Tableau.Certificate)) : Bool :=
   c.ts.length == certs.length && (c.ts.zip certs).all (fun (t, k) => match k with
-    | some k => VE.Tableau.checkCertificate (envAt c.F 0) (VE.Norms.backgroundBase c.F ++ c.slotX A ++ c.fp)
+    | some k => VE.Tableau.checkCertificate (envAt c.F 0) (c.bgb ++ c.slotX A ++ c.fp)
         (VE.Norms.targetConclusion t) k
     | none => false)
 
 /-- `premisesX (supU N) (slotUnder N.D A ++ supX N) ((sup N.D).2 ++ Γ)`, D14's premises, on the case's values. -/
 def premises (A : Choice) (Γ : List VE.Formula) : List VE.Formula :=
-  VE.Norms.background c.F ++ c.slotX A ++ c.fp ++ VE.Norms.elaborate c.F.T ++ (c.S.2 ++ Γ)
+  c.bg ++ c.slotX A ++ c.fp ++ c.el ++ (c.S.2 ++ Γ)
 
 def model (A : Choice) (M : VE.FiniteModel Entity) (G : VE.NormDefaults.FiniteFill c.U Entity)
     (Γ : List VE.Formula) (φ : VE.Formula) : Bool × Bool :=
@@ -147,6 +159,23 @@ theorem local_eq (M : VE.FiniteModel Entity) (G : VE.NormDefaults.FiniteFill c.U
 
 theorem taken_eq (A : Choice) : c.taken A = takenBy c.N.D A := by
   cases c; subst_vars; rfl
+
+/-- `bindCertX` on the case's values: the certificate bound to the source environment and to `premisesX (supU N)
+    (slotUnder N.D A ++ supX N) (sup N.D).2` followed by the request's own premises (D14, `bind_eq`). -/
+def bind (A : Choice) (own : List Json) (conclusion j : Json) : Except String VE.Tableau.Certificate := do
+  let cert ← VE.CertificateWire.decodeCertificate j
+  VE.Route.Wire.bindingOk (VE.NormDefaults.Wire.profilesOf c.x.r.b.a.re.lowerJson) (← c.canon)
+    ((c.premises A []).map VE.NormDefaults.Wire.enc ++ own) conclusion cert.environment_id cert.premise_meaning_ids
+    cert.conclusion_meaning_id
+  pure cert
+
+theorem bind_eq (A : Choice) (own : List Json) (conclusion j : Json) :
+    c.bind A own conclusion j = VE.NormDefaults.Wire.bindCertX c.x.r.b.a.re.lowerJson (supU c.N)
+      (slotUnder c.N.D A ++ supX c.N) (sup c.N.D).2 own conclusion j := by
+  have h := c.premises_eq A []
+  simp only [List.append_nil] at h
+  unfold bind VE.NormDefaults.Wire.bindCertX
+  rw [h]; cases c; subst_vars; rfl
 
 /-- An accepted conflict answer is `readings_wire_sd_conflict_sound`'s hypothesis on the case's replay. -/
 theorem free_sound (A : Choice) (hA : ∀ z ∈ A, (candidate c.N.D z.1 z.2).isSome)
@@ -188,10 +217,16 @@ def sdModel (c : SDCase) (j : Json) :
     middle each replays is the slot, `supX` and `Fill_T` (`A`'s atoms after the slot), so `Fill_T` is no tail. -/
 def sdProofs (c : SDCase) (certs : List (Option VE.Tableau.Certificate))
     (query : Option (List VE.Formula × VE.Formula × VE.Tableau.Certificate)) : List SupProof :=
-  (c.ts.zip certs).filterMap (fun (t, k) => k.map (fun cert =>
-    ⟨envAt c.F 0, VE.Norms.backgroundBase c.F, [], VE.Norms.targetConclusion t, cert⟩)) ++
-  query.toList.map (fun (Γ, φ, cert) =>
-    ⟨envAt c.F (size c.F), VE.Norms.background c.F, VE.Norms.elaborate c.F.T ++ (c.S.2 ++ Γ), φ, cert⟩)
+  (c.ts.zip certs).filterMap (fun (t, k) => k.map (fun cert => ⟨envAt c.F 0, c.bgb, [], VE.Norms.targetConclusion t, cert⟩)) ++
+  query.toList.map (fun (Γ, φ, cert) => ⟨envAt c.F (size c.F), c.bg, c.el ++ (c.S.2 ++ Γ), φ, cert⟩)
+
+/-- The conflict certificates of a request and their one check under `A` (a scope reads it once for all its pieces). -/
+def sdFree (c : SDCase) (A : Choice) (j : Json) : SDM (List (Option VE.Tableau.Certificate) × Bool) := do
+  let certs := decodeConflictCertsFor c.ts (j.getObjValD "conflict_certificates")
+  sdTick fun k => { k with checks := k.checks + 1 }
+  pure (certs, c.free A certs)
+
+abbrev Free := Option (List (Option VE.Tableau.Certificate) × Bool)
 
 /-! ## `readings-conflict` -/
 
@@ -212,52 +247,51 @@ def sdWitness (id : String) (c : SDCase) (A : Choice) (w : Json) : SDM Json := d
     ("assumed", choiceJson A), ("choice", choiceJson (encodedChoice c.N.D M))])
 
 /-- The conflict answer and the proofs it rests on: one check of the targets' certificates over the case's values. -/
-def sdConflictCore (id : String) (c : SDCase) (j : Json) : SDM (Json × List SupProof) := do
+def sdConflictCore (id : String) (c : SDCase) (j : Json) (pre : Free := none) : SDM (Json × List SupProof) := do
   let A ← sdAssumed c j
   if (j.getObjVal? "witness").toBool then return (← sdWitness id c A (j.getObjValD "witness"), [])
-  let certs := decodeConflictCertsFor c.ts (j.getObjValD "conflict_certificates")
-  sdTick fun k => { k with checks := k.checks + 1 }
-  let free := c.free A certs
+  let (certs, free) ← match pre with | some p => pure p | none => sdFree c A j
   pure (okWith id [("verdict", .str (if free then "CONFLICT-FREE" else "UNKNOWN")), ("assumed", choiceJson A),
     ("targets", toJson (c.ts.map (·.1))), ("reading_premises", toJson c.labels)], sdProofs c certs none)
 
 /-! ## `readings-certificate` and `readings-model` -/
 
-/-- `accepted` is the conflict status under `assumed` and the certificate, bound by `bindCertX` to the case's
-    regenerated premises `premisesX (supU N) (slotUnder N.D A ++ supX N) (sup N.D).2` and the request's own, checked
-    on `c.premises A Γ` (D14, `SDCase.premises_check`). -/
-def sdCertificateCore (id : String) (c : SDCase) (j : Json) : SDM (Json × List SupProof) := do
+/-- `accepted` is the conflict status under `assumed` and the certificate, bound to `premisesX (supU N)
+    (slotUnder N.D A ++ supX N) (sup N.D).2` and the request's own premises (`SDCase.bind_eq`: `bindCertX`) and
+    checked on the same list with the request's premises after it (`SDCase.premises_check`: D14). -/
+def sdCertificateCore (id : String) (c : SDCase) (j : Json) (pre : Free := none) : SDM (Json × List SupProof) := do
   let A ← sdAssumed c j
   let (Γ, φ) ← sdShared c.envQ j
-  let own ← match j.getObjValD "premises" with
-    | .null => pure []
-    | .arr xs => pure xs.toList
-    | _ => throw "InvalidInput: premises must be an array"
-  let cert ← VE.NormDefaults.Wire.bindCertX c.x.r.b.a.re.lowerJson c.U (c.slotX A) c.S.2 own (j.getObjValD "conclusion")
-    (← j.getObjVal? "certificate")
-  let certs := decodeConflictCertsFor c.ts (j.getObjValD "conflict_certificates")
-  sdTick fun k => { k with checks := k.checks + 1 }
-  let free := c.free A certs
+  let own := match j.getObjValD "premises" with | .arr xs => xs.toList | _ => []
+  let cert ← c.bind A own (j.getObjValD "conclusion") (← j.getObjVal? "certificate")
+  let (certs, free) ← match pre with | some p => pure p | none => sdFree c A j
   let valid := VE.Tableau.checkCertificate (envAt c.F (size c.F)) (c.premises A Γ) φ cert
   pure (okWith id [("accepted", .bool (free && valid)), ("conflict_free", .bool free), ("valid", .bool valid),
     ("assumed", choiceJson A), ("reading_premises", toJson c.labels)], sdProofs c certs (some (Γ, φ, cert)))
 
+/-- `valid` is the model check with `localFree` (14.3: a reported model has no conflict at any tuple); the first
+    failing premise is named by its label, a soft premise by the choice label it is the image of under the choice
+    the model encodes (`labelImage`; `null` for none), never by its superposed label. -/
 def sdModelRun (id : String) (c : SDCase) (j : Json) : SDM Json := do
   let A ← sdAssumed c j
   let (Γ, φ) ← sdShared c.envQ j
   let (M, G) ← sdModel c j
   let res := c.model A M G (c.S.2 ++ Γ) φ
+  let ch := encodedChoice c.N.D M
   let failing := (c.slot ++ A.map (fun x => (s!"readings:{x.1}:{x.2}", choiceAtom c.N.D x.1 x.2)) ++ c.XL ++ c.FL).find?
     (fun x => !x.2.eval (M.withFill G) [])
-  pure (okWith id [("valid", .bool res.1), ("conclusion_value", .bool res.2),
-    ("local_free", .bool (c.localFree M G)), ("first_failing", match failing with | some l => .str l.1 | none => .null),
-    ("assumed", choiceJson A), ("choice", choiceJson (encodedChoice c.N.D M))])
+  let shown := failing.bind fun l =>
+    if c.XL.any (·.1 == l.1) then ((labelImage c.N ch).find? (·.2 == l.1)).map (·.1) else some l.1
+  pure (okWith id [("valid", .bool (res.1 && c.localFree M G)), ("conclusion_value", .bool res.2),
+    ("first_failing", match shown with | some l => .str l | none => .null),
+    ("assumed", choiceJson A), ("choice", choiceJson ch)])
 
-/-- The three kinds on one routed case. -/
+/-- The three kinds on one routed case; any other kind is refused as `runSDKind` refuses it. -/
 def runSDSup (id kind : String) (c : SDCase) (j : Json) : SDM Json :=
   if kind == "readings-conflict" then (·.1) <$> sdConflictCore id c j
   else if kind == "readings-certificate" then (·.1) <$> sdCertificateCore id c j
-  else sdModelRun id c j
+  else if kind == "readings-model" then sdModelRun id c j
+  else throw s!"UnsupportedProfile: case kind {kind} is not available on the readings route"
 
 /-! ## The verdict scopes (14.11 rows four and five) -/
 
@@ -270,7 +304,8 @@ theorem shownWith_eq (N : NDoc) (A : Choice) (used : List String) :
       sdShown N A used := by
   simp [shownWith, sdShown, List.flatMap_map]
 
-/-- One scope under `A`: each piece of `e` on the case's values; `usedLabels` per accepted piece, over the slot,
+/-- One scope under `A`: each piece of `e` on the case's values, the conflict certificates decoded and checked once
+    for all of them (`sdFree`); `usedLabels` per accepted piece, over the slot,
     `supX` and `Fill_T`; then, only when a piece was accepted, `labelImage` once for the scope, so each soft premise
     is shown by its choice labels (`shownWith_eq`). A refused piece is noted, never a negative verdict. -/
 def sdScope (c : SDCase) (A : Choice) (Γ φ e : Json) : SDM SupScope := do
@@ -279,6 +314,7 @@ def sdScope (c : SDCase) (A : Choice) (Γ φ e : Json) : SDM SupScope := do
   let mut raw : List (String × List String) := []
   let mut encoded : List (String × Choice) := []
   let mut st : List (String × Bool) := []
+  let mut cf : Free := none
   let L := c.slot ++ c.XL ++ c.FL
   for name in ["conflict", "witness", "certificate", "countermodel", "unsat", "model"] do
     if let some p := pieceOf e name then
@@ -287,8 +323,9 @@ def sdScope (c : SDCase) (A : Choice) (Γ φ e : Json) : SDM SupScope := do
         else p
       let plain := name == "model" || name == "unsat"
       let body := supPieceCase A (if plain then .arr #[] else Γ) (if plain then .null else φ) body
-      let res ← attempt (if name == "conflict" || name == "witness" then sdConflictCore "readings-verdicts" c body
-        else if query then sdCertificateCore "readings-verdicts" c body
+      if cf.isNone && (name == "conflict" || query) then cf := some (← sdFree c A packages)
+      let res ← attempt (if name == "conflict" || name == "witness" then sdConflictCore "readings-verdicts" c body cf
+        else if query then sdCertificateCore "readings-verdicts" c body cf
         else (·, []) <$> sdModelRun "readings-verdicts" c body)
       match res with
       | .error err => notes := notes ++ [{ name := name, accepted := false, error := some err }]
@@ -296,8 +333,7 @@ def sdScope (c : SDCase) (A : Choice) (Γ φ e : Json) : SDM SupScope := do
         let ok := if name == "conflict" then answer.getObjValD "verdict" == .str "CONFLICT-FREE"
           else if name == "witness" then answer.getObjValD "verdict" == .str "CONFLICT"
           else if query then answer.getObjValD "accepted" == .bool true
-          else answer.getObjValD "valid" == .bool true && answer.getObjValD "conclusion_value" == .bool false &&
-            answer.getObjValD "local_free" == .bool true
+          else answer.getObjValD "valid" == .bool true && answer.getObjValD "conclusion_value" == .bool false
         st := st ++ [(name, ok)]
         let mut used := []
         if ok && !proofs.isEmpty then
