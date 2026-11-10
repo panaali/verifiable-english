@@ -54,6 +54,41 @@
    "definition": "VE.NormDefaults.Wire.statusFields",
    "operator": "list-empty",
    "reason": "does not elaborate where it survives this sweep: `tuple -> []` and `tuple.map (·.2) -> []` leave a projection or instance stuck; the emptied field list and body are killed by the PacksLegacyExamples statusFields #guard"
+  },
+  {
+   "definition": "VE.NormDefaults.Wire.ruleSources",
+   "operator": "list-first",
+   "reason": "breaks the proof of ruleSources_spec (lean/VE/NormDefaults/Explain.lean:206): a source looked up past gen's first entry is no longer in gen; the guards' tables have one entry"
+  },
+  {
+   "definition": "VE.NormDefaults.Wire.ruleSources",
+   "operator": "list-last",
+   "reason": "breaks the proof of ruleSources_spec (lean/VE/NormDefaults/Explain.lean:206): a source looked up before gen's last entry is no longer in gen"
+  },
+  {
+   "definition": "VE.NormDefaults.Wire.rightsSources",
+   "operator": "list-first",
+   "reason": "breaks the proof of rightsSources_built (lean/VE/NormDefaults/Layered.lean:173); `D.bars` has at most one entry on a well-formed document (DuplicateDeclaration: bar)"
+  },
+  {
+   "definition": "VE.NormDefaults.Wire.rightsSources",
+   "operator": "list-last",
+   "reason": "breaks the proof of rightsSources_built (lean/VE/NormDefaults/Layered.lean:173); `D.bars` has at most one entry on a well-formed document (DuplicateDeclaration: bar)"
+  },
+  {
+   "definition": "VE.NormDefaults.Wire.statusFields",
+   "operator": "list-first",
+   "reason": "killed past Lean: it truncates the tuple of a two-entity point, which the response schema's x-equals /tuple refuses (tests/test_norm_defaults_response_binding.py::test_status_tuple_schema_binds_request_without_service), so the rights rows of ::test_genuine_answers_pass (tuple [s, p]) are refused"
+  },
+  {
+   "definition": "VE.NormDefaults.Wire.statusFields",
+   "operator": "list-last",
+   "reason": "killed past Lean: as list-first, the tuple [s, p] of the rights rows of ::test_genuine_answers_pass becomes [p], which x-equals /tuple refuses"
+  },
+  {
+   "definition": "VE.Acts.Decode.plainU",
+   "operator": "list-drop-first",
+   "reason": "does not elaborate: `[fill_eq_self _ rfl].drop 1` is no rewrite rule list"
   }
  ]
 }
