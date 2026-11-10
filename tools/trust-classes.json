@@ -9923,6 +9923,22 @@
         "VE.Service.Document.withoutStatuses"
       ]
     },
+    "VE/Service/DocumentView.lean": {
+      "G[V]": [
+        "VE.Service.Document.CheckedView",
+        "VE.Service.Document.checkBodyChecked",
+        "VE.Service.Document.checkCoreChecked",
+        "VE.Service.Document.checkedRun",
+        "VE.Service.Document.readStatus",
+        "VE.Service.Document.foldedRows",
+        "VE.Service.Document.candidatesOf",
+        "VE.Service.Document.firstPerUnit",
+        "VE.Service.Document.unitSets",
+        "VE.Service.Document.viewOf",
+        "VE.Service.Document.checkDocSetsView",
+        "VE.Service.Document.activeKinds"
+      ]
+    },
     "VE/Service/EnglishRun.lean": {
       "C": [
         "VE.English.ServiceRun.covers"
