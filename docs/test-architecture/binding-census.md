@@ -6,14 +6,14 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 
 | | count |
 |---|---:|
-| leaves:bound | 293 |
+| leaves:bound | 295 |
 | leaves:closed domain | 311 |
 | leaves:none | 1592 |
 | modes | 43 |
 | today:hand | 203 |
 | today:later Lean request | 62 |
 | today:not probed | 1190 |
-| today:shape | 604 |
+| today:shape | 606 |
 | today:unbound | 137 |
 | answers | 594 |
 | probes | 10204 |
@@ -1789,6 +1789,8 @@ Delegates: `/` to norms.
 | `/status` | string | closed domain | const |  | 31 | shape |
 | `/target` | string | bound | x-equals |  | 5 | shape |
 | `/targets/*` | string | none |  |  | 33 | unbound |
+| `/tuple` | any | bound | x-equals |  | 0 | shape |
+| `/tuple/*` | string | bound | x-equals |  | 6 | shape |
 | `/tuple/*` | string | none |  |  | 6 | unbound |
 | `/under/*/predicate` | string | none |  |  | 2 | unbound |
 | `/under/*/tuple/*` | string | none |  |  | 2 | unbound |
@@ -1869,7 +1871,7 @@ Delegates: `/` to norms.
 | `/report/assumptions` |  |  |  | drop: accept/accepted; duplicate: accept/accepted |
 | `/residual/gaps` |  |  |  | drop: accept/accepted; duplicate: accept/accepted; replace: accept/accepted; reverse: accept/accepted |
 | `/rights` |  |  |  |  |
-| `/rules` |  |  |  | drop: accept/accepted; duplicate: accept/accepted; replace: accept/accepted; reverse: accept/accepted |
+| `/rules` |  |  | x-unique-strings | drop: accept/accepted; duplicate: accept/accepted; replace: accept/accepted; reverse: accept/accepted |
 | `/rules/*/over` |  |  |  |  |
 | `/rules/*/unless` |  |  |  |  |
 | `/situation/filling/{}` |  |  |  |  |
@@ -1878,7 +1880,7 @@ Delegates: `/` to norms.
 | `/split` |  |  |  |  |
 | `/split/*/parts` |  |  |  |  |
 | `/targets` |  |  |  | drop: accept/accepted; duplicate: accept/accepted; replace: accept/accepted; reverse: accept/accepted |
-| `/tuple` |  |  |  | drop: accept/accepted; duplicate: accept/accepted |
+| `/tuple` | x-equals | x-equals |  | drop: accept/accepted; duplicate: accept/accepted |
 | `/under` |  |  |  | drop: accept/accepted, accept/ve/norm_defaults_english.py:_latent; duplicate: accept/accepted |
 | `/under/*/tuple` |  |  |  | drop: accept/accepted; duplicate: accept/accepted |
 | `/unsaid` |  |  |  | drop: accept/ve/ast.py:formula; duplicate: accept/accepted, accept/ve/norm_defaults.py:__init__; replace: accept/ve/ast.py:formula; reverse: accept/accepted |
