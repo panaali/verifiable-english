@@ -6,6 +6,7 @@
 - `docs/defeasible/df-1bb/evidence/select_route_cases.py` — Append the flag's genuine `norm-defaults` cases to tests/data/route-cases.jsonl (df-1bb, append-only).
 - `docs/defeasible/df-1bb/probe_defaults.py` — The pilot's defaults probe (defeasible plan DF-1b "Pilot", 4.2's P-1 and P-3; df-1bb).
 - `docs/defeasible/df-3/evidence/run_mutants.py` — Seeded bugs for df-3: each applied alone, built (Lean), its named check run, then restored.
+- `docs/defeasible/df-5/evidence/conservativity.py` — Spec 8.8 for df-5: every `norm-defaults` route case of the merge base answers byte for byte as main's service does.
 - `docs/defeasible/df-5ab/evidence/check_statements.py` — df-5ab's four declarations in lean/VE/Defaults/Zone.lean against spec 7.5 (docs/spec/defeasible.md), word for word after whitespace normalisation (`forcedAll_s…
 - `docs/defeasible/df-e1/prepare.py` — Build DF-E1 reader items from checked Lean answers; make no model calls.
 - `docs/defeasible/df-e1/runner.py` — DF-E1 blind reader: one subscription Sonnet call for each preregistered item and form.

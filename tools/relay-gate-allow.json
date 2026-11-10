@@ -29,7 +29,6 @@
    "route": "call:ve.backends.speech_source:decide_source",
    "mutation": "duplicate",
    "path": [
-    "*/legend",
     "*/policy/background",
     "*/policy/conflict_targets",
     "*/policy/order",
@@ -45,7 +44,6 @@
    "route": "call:ve.backends.speech_source:decide_source",
    "mutation": "empty",
    "path": [
-    "*/legend",
     "*/policy/background",
     "*/policy/conflict_targets",
     "*/policy/order",
@@ -2518,49 +2516,34 @@
    "reason": "Names a request name (a sort, constant or word) that the schema does not check against the request; the relay binds the lexicon by lexicon_id (ve.backends.senses._projection_problem). Bind them with x-references in senses.project.json (sn-b6b)."
   },
   {
-   "route": "service:english.command",
-   "mutation": "rebind",
-   "path": [
-    "*/result/result/reading/command/act",
-    "*/result/result/reading/command/args/*",
-    "*/result/result/reading/fills/*/constant",
-    "*/result/result/reading/fills/*/words"
-   ],
-   "kind": "follow-up",
-   "id": "F4",
-   "reason": "english.command (ci-2) has no Python relay until ci-2b: ci-2b's `read_command` (ve/backends/english_lean.py) binds the answer to its request, with the english.command rows of tests/test_relay_binding_inventory.py (D9). The act names a regulated predicate of the request's environment, each argument and fill constant one of its constants, and a fill's words the wording at its span; the schema does not check them against the request."
-  },
-  {
-   "route": "service:english.command",
-   "mutation": "retype",
-   "path": [
-    "*/result/result/reading/fills/*/span",
-    "*/result/result/reading/query"
-   ],
-   "kind": "follow-up",
-   "id": "F4",
-   "reason": "english.command (ci-2) has no Python relay until ci-2b: ci-2b's `read_command` (ve/backends/english_lean.py) binds the answer to its request, with the english.command rows of tests/test_relay_binding_inventory.py (D9). A span is null and the query set exactly for a proof task (`Prove that ... using these premises.`), whose query is one of the request's records; the schema allows either form."
-  },
-  {
-   "route": "service:english.command",
-   "mutation": "empty",
-   "path": [
-    "*/result/result/reading/command/args",
-    "*/result/result/reading/fills"
-   ],
-   "kind": "follow-up",
-   "id": "F10",
-   "reason": "english.command (ci-2) has no Python relay until ci-2b: ci-2b's `read_command` (ve/backends/english_lean.py) binds the answer to its request, with the english.command rows of tests/test_relay_binding_inventory.py (D9). The act's arity in the request's environment fixes the number of arguments and fills (0 or 1); an emptied list is not checked against it."
-  },
-  {
-   "route": "service:english.command",
+   "route": "service:act-readings",
    "mutation": "duplicate",
    "path": [
-    "*/result/result/legend"
+    "results/*/result/readings/*/acts"
+   ],
+   "kind": "by-design",
+   "id": "AP4-F1",
+   "reason": "Which acts a reading lists, one listed twice included, is Lean's content: spec 7's binding list binds the readings (pairwise distinct as their acts lists) and each act's token indices, not a reading's acts, and spec E16's phrase reads one act written twice (ap-4 review F1; tests/test_acts_readings_answer.py::test_e16_one_act_written_twice_is_bound). A duplicated act stays typed and bound to the request (R8)."
+  },
+  {
+   "route": "service:clauses-elaborate",
+   "mutation": "empty",
+   "path": [
+    "results/*/result/result/clause_slot"
    ],
    "kind": "follow-up",
-   "id": "F10",
-   "reason": "english.command (ci-2) has no Python relay until ci-2b: ci-2b's `read_command` (ve/backends/english_lean.py) binds the answer to its request, with the english.command rows of tests/test_relay_binding_inventory.py (D9). The legend has one line for the task, one for the addressee and one per definite of the request's scope (VE.SpeechActs.Run.legend); a repeated line is not checked against it."
+   "id": "CFR1A",
+   "reason": "clauses-elaborate (cmp-s3-cfr-1) has no Python relay until cmp-s3-cfr-1b, which binds the answer to its request (the relay and the byte-for-byte differential). The slot is `clauseSlotLabelled` (right-clauses 8.4): empty when the document has no limitation and no total relation (K1, K2), and its labels can repeat on a well-formed rights document (cmp-s3's `cxDoc`, reviews/dri-decisions-20261104-cmp-s3.md Q3), so neither form is a fault the schema can refuse."
+  },
+  {
+   "route": "service:clauses-elaborate",
+   "mutation": "duplicate",
+   "path": [
+    "results/*/result/result/clause_slot"
+   ],
+   "kind": "follow-up",
+   "id": "CFR1B",
+   "reason": "clauses-elaborate (cmp-s3-cfr-1) has no Python relay until cmp-s3-cfr-1b, which binds the answer to its request (the relay and the byte-for-byte differential). The slot is `clauseSlotLabelled` (right-clauses 8.4): empty when the document has no limitation and no total relation (K1, K2), and its labels can repeat on a well-formed rights document (cmp-s3's `cxDoc`, reviews/dri-decisions-20261104-cmp-s3.md Q3), so neither form is a fault the schema can refuse."
   }
  ]
 }

@@ -1,7 +1,9 @@
 # `right-clauses@0`: the Lean theorems in plain words
 
-Spec: docs/spec/right-clauses.md (draft 3), section 8. Files: `lean/VE/RightClauses/{Tree,Plain,Relation}.lean`, fixtures
-in `Examples.lean`. `Wire.lean` (8.5) is cmp-s3b's. Nothing here imports `VE.Readings`.
+Spec: docs/spec/right-clauses.md (draft 3), section 8. Files:
+`lean/VE/RightClauses/{Tree,Plain,Relation,PlainWellFormed,Wire}.lean`, fixtures in `Examples.lean`; the
+`clauses-elaborate` mode in `Run.lean`; 8.5's proofs in `WireDecode.lean`, `WireName.lean` and `WireTheorems.lean`.
+Nothing here imports `VE.Readings`.
 
 A structured line is a rights line with clauses (base formulas with their source spans), at most one relation (a
 declared binary base predicate between two of its slots, maybe total on the holder slot) and its elided spans.
@@ -17,7 +19,16 @@ declared binary base predicate between two of its slots, maybe total on the hold
 - `plain_limPremises`: the limitation premises `Lim_D` are unchanged.
 - `plain_guard`: a structured line's plain guard holds exactly where its own guard, every clause and the relation
   atom hold.
-- `plain_wellFormed` (8.3): not proved yet (cmp-s3ab).
+- `plain_wellFormed` (8.3): if the structured lines check and the rights document is well formed, `plain D` is well
+  formed or its check reports a resource limit (a longer guard can exceed the AST budget). Proved in
+  `PlainWellFormed.lean` (cmp-s3a-cfr-1) over the modules in `PlainWellFormed/`: `checkRights` reads the same
+  document; the soft check of the correlated document, which passes for `D.doc`, passes or reports a resource limit
+  for `plain D`; the identifier check reads the same names; and every formula the rights facts type still types,
+  since the added conjuncts are base formulas typed in the line's context.
+- `PlainWellFormed/Corollaries.lean`: `plain_wellFormedRights`, and `clauseSlot_labelled_of_doc`,
+  `clause_fails_not_selected_of_doc`, `relation_some_bearer_of_doc`: Relation.lean's theorems with
+  `WellFormedRights (plain D)` replaced by `WellFormedRights D.doc` and the hypothesis `hr` that
+  `validateRights (plain D)` does not fail with a `ResourceLimit: ` error, the outcome 8.3 leaves open.
 
 ## Relation.lean (cmp-s3)
 
@@ -34,3 +45,21 @@ declared binary base predicate between two of its slots, maybe total on the hold
 - `relation_some_bearer`: under a total relation from the bearer slot to the holder slot, every holder in the
   holder sort who satisfies the right's holder guard has a related bearer. That bearer owes the act wherever the
   line's own guard holds and no narrowing mechanism is active.
+
+## Wire.lean (cmp-s3-cfr-1)
+
+The document is the rights route's array of units. A line object has three more keys: `elided` (mandatory),
+`clauses` and `relation`. A unit may carry its source `span`. The head decodes each line object with rights' own
+`decodeLine` on the object without those keys, then reads the keys with section 7's texts. The plained document
+(`elaborateJson`) drops the keys and unit spans and replaces each structured line's norm guard by its plain guard.
+
+- `decode_unstructured`: if no line object has `clauses` or `relation`, the head's rights document is the one the
+  rights decoder reads from the document without `elided` (and the profile), and no entry has a clause or a relation.
+- `elaborate_plain`: the plained document decodes under the rights route (the list without `right-clauses@0`) to
+  `plain D`. It needs the DRI's added hypothesis `PlainOnWire D` (reviews/dri-decisions-20261104-cmp-s3.md Q1 A1):
+  W1 reads every plain guard back within its depth and node limits. A plain guard nests one level deeper than its
+  line's guard (`notChain`, Examples.lean).
+
+The `clauses-elaborate` mode (Run.lean) runs 4.1 in order: the dispatcher's gate, the head's decoding and checks,
+then the rights decoder and its checks on the plained document, whose texts are the answer. It answers the plained
+document's canonical bytes and `clauseSlotLabelled`. `elided_bytes` is cmp-s3a-cfr-3's.

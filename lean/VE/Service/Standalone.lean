@@ -243,15 +243,17 @@ def validatedEnvironment (environment : Json) : Except String VE.Route.Gate.Enve
 /-- The public environment endpoint follows the composed profile head. Each
 statement layer validates its own declarations; the core decoder handles the
 remaining families. `Compose.profileTable` is the single gate for the full registry: its base rows, and the whole
-table for a list with `Compose.environmentWrapper`. -/
-def validatedLayerEnvironment (environment : Json) : Except String VE.Route.Gate.Envelope := do
+table for a list with one of `Compose.environmentWrappers`. -/
+def validatedLayerEnvironment (environment : Json) (joined : Bool) :
+    Except String VE.Route.Gate.Envelope := do
   let rawProfiles := (VE.Bridge.strings (environment.getObjValD "profiles")).toOption.getD []
   if rawProfiles.contains "norm-defaults@0" && !rawProfiles.contains "norms@0" then
     let _ ← VE.Compose.gateOf VE.Compose.baseRows rawProfiles
     pure ()
   -- `acts@0` is read by the norms decoder only: its row's refusals come before every decoder (act-phrases 4.4)
   if rawProfiles.contains "acts@0" then
-    let _ ← VE.Compose.gateOf (if rawProfiles.contains VE.Compose.environmentWrapper then VE.Compose.profileTable
+    -- with `readings@1` only: `right-clauses@0` beside `acts@0` keeps the base rows' refusal (cmp-s3-cfr-1)
+    let _ ← VE.Compose.gateOf (if rawProfiles.contains "readings@1" then VE.Compose.profileTable
       else VE.Compose.baseRows) rawProfiles
   let named :=(VE.Route.Gate.profilesOf environment).toOption.getD []
   let empty := Json.arr #[]
@@ -280,7 +282,7 @@ def validatedLayerEnvironment (environment : Json) : Except String VE.Route.Gate
   else if named.contains "rights@0" then
     let frame ← if named.contains "norm-defaults@0" then
       VE.NormDefaults.Wire.placeholderJson environment else pure environment
-    let _ ← VE.Rights.Wire.decodeRightsEnvironment frame
+    let _ ← VE.Rights.Wire.decodeRightsEnvironment (VE.Compose.withoutClauses frame)
     pure ()
   else if named.contains "soft-norms@0" then
     let frame ← if named.contains "norm-defaults@0" then
@@ -301,14 +303,13 @@ def validatedLayerEnvironment (environment : Json) : Except String VE.Route.Gate
         predicates.any (fun (_, entry) => (entry.getObjVal? "regulated").isOk) &&
         (VE.NormDefaults.Wire.unspecifiedNames environment).isEmpty then
       checkRegulated environment predicates
-    let _ ← VE.NormDefaults.Wire.decodeEnvironmentU environment
+    let _ ← VE.NormDefaults.Wire.decodeEnvironmentU environment (joined := joined)
     pure ()
   else
     let _ ← validated environment
     pure ()
   let ps ← VE.Route.Gate.profilesOf environment
-  let _ ← VE.Compose.gateOf
-    (if ps.contains VE.Compose.environmentWrapper then VE.Compose.profileTable else VE.Compose.baseRows) ps
+  let _ ← VE.Compose.gateOf (VE.Compose.environmentRows ps) ps
   let family := if ps.contains "order@0" then VE.Route.Gate.Family.order
     else if ps.contains "nary@0" then .closureNary
     else if ps.contains "closure@0" then .closure else .fol
@@ -316,13 +317,13 @@ def validatedLayerEnvironment (environment : Json) : Except String VE.Route.Gate
 
 /-- `validatedLayerEnvironment` over the environment without `Compose.documentLayers`, then the table's gate over
 the list as written, which `Compose.gate_judgments` shows adds only the layer's own requirement. -/
-def validatedComposedEnvironment (environment : Json) : Except String VE.Route.Gate.Envelope := do
+def validatedComposedEnvironment (environment : Json) (joined : Bool := false) :
+    Except String VE.Route.Gate.Envelope := do
   let listed := (VE.Bridge.strings (environment.getObjValD "profiles")).toOption.getD []
-  unless listed.any VE.Compose.documentLayers.contains do return ← validatedLayerEnvironment environment
-  let e ← validatedLayerEnvironment (VE.Compose.withoutDocumentLayers environment)
+  unless listed.any VE.Compose.documentLayers.contains do return ← validatedLayerEnvironment environment joined
+  let e ← validatedLayerEnvironment (VE.Compose.withoutDocumentLayers environment) joined
   let ps ← VE.Route.Gate.profilesOf environment
-  let _ ← VE.Compose.gateOf
-    (if ps.contains VE.Compose.environmentWrapper then VE.Compose.profileTable else VE.Compose.baseRows) ps
+  let _ ← VE.Compose.gateOf (VE.Compose.environmentRows ps) ps
   pure { e with profiles := ps }
 
 /-- A model's tables use the checker vocabulary, including profile words, but
@@ -479,7 +480,8 @@ def environmentCase (j : Json) : Except String Json := do
        -- a frozen envelope regulates nothing: no act
        | _ => [("profiles", environment.getObjValD "profiles")]) ++ [("family", .str l.family)] ++
       (match l with | .v0 _ => [] | _ => [("acts", Json.mkObj []), ("model_acts", Json.mkObj [])]))
-  let e ← validatedComposedEnvironment environment
+  -- the environment row admits a joined act, read by the act check (ap-3dc); every other path here keeps D-4 and D-5
+  let e ← validatedComposedEnvironment environment (joined := true)
   -- `environmentIdOf` of the identity environment, with the canonical acts it hashes, which Python stores
   let canonical ← VE.Norms.Wire.canonicalEnvironmentJson (← identityEnvironment environment e.profiles)
   let environmentId ← VE.Route.Wire.environmentId e.profiles canonical

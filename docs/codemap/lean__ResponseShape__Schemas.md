@@ -1,3 +1,4 @@
+- `lean/ResponseShape/Schemas/ActReadings.lean` — The `act-readings` row (act-phrases 7, AP-4): a phrase's readings under a rule's modal words, each as its simple acts and its paraphrase, with Lean's lexing of…
 - `lean/ResponseShape/Schemas/Alternatives.lean` — The source of `ve/backends/lean_service_schema/alternatives.json` (`file`; `tools/response_schemas.py` writes it).
 - `lean/ResponseShape/Schemas/Ask.lean` — The `ask` row (docs/spec/question-answering.md 4.2, 8; plan 4.8), every field typed.
 - `lean/ResponseShape/Schemas/Bundle.lean` — The source of `ve/backends/lean_service_schema/bundle.json` (`file`; `tools/response_schemas.py` writes it).
@@ -5,6 +6,7 @@
 - `lean/ResponseShape/Schemas/Cardinality.lean` — The source of `ve/backends/lean_service_schema/cardinality.json` (`file`; `tools/response_schemas.py` writes it): the `cardinality` mode's row (`VE.Cardinality…
 - `lean/ResponseShape/Schemas/Check.lean` — The source of `ve/backends/lean_service_schema/check.json` (`file`; `tools/response_schemas.py` writes it).
 - `lean/ResponseShape/Schemas/CheckCertificate.lean` — The source of `ve/backends/lean_service_schema/check-certificate.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/ClausesElaborate.lean` — The source of `ve/backends/lean_service_schema/clauses-elaborate.json` (`file`; `tools/response_schemas.py` writes it): the `clauses-elaborate` mode's row (`VE…
 - `lean/ResponseShape/Schemas/Command.lean` — The source of `ve/backends/lean_service_schema/english.command.json` (`file`; `tools/response_schemas.py` writes it): the `english.command` mode's row (`VE.Com…
 - `lean/ResponseShape/Schemas/Common.lean` — `common.json`: the value domains every mode shares.
 - `lean/ResponseShape/Schemas/Diagnose.lean` — The source of `ve/backends/lean_service_schema/diagnose.json` (`file`; `tools/response_schemas.py` writes it).
@@ -31,6 +33,7 @@
 - `lean/ResponseShape/Schemas/ReadingsRoute.lean` — The source of `ve/backends/lean_service_schema/readings-route.json` (`file`; `tools/response_schemas.py` writes it).
 - `lean/ResponseShape/Schemas/Reports.lean` — The source of `ve/backends/lean_service_schema/reports.json` (`file`; `tools/response_schemas.py` writes it).
 - `lean/ResponseShape/Schemas/Rights.lean` — The source of `ve/backends/lean_service_schema/rights.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/RightsChecks.lean` — rights-cfr-2/3 (docs/rights/rights-cfr-2/REPORT.md): the `rights` mode's answers that carry the new report parts (`Run.findingJson`, `Run.conflictAnswerOf`, `R…
 - `lean/ResponseShape/Schemas/Risk.lean` — The source of `ve/backends/lean_service_schema/risk.json` (`file`; `tools/response_schemas.py` writes it).
 - `lean/ResponseShape/Schemas/RiskEval.lean` — The source of `ve/backends/lean_service_schema/risk-eval.json` (`file`; `tools/response_schemas.py` writes it).
 - `lean/ResponseShape/Schemas/Route.lean` — The source of `ve/backends/lean_service_schema/route.json` (`file`; `tools/response_schemas.py` writes it).

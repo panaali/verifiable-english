@@ -72,9 +72,9 @@ def world(sorts=("joke", "person"), constants=(("alice", "person"), ("riddle", "
     return env, overlay
 
 
-def read_in(place, source, pack=PACK, *, budget=route.WORK_BUDGET):
+def read_in(place, source, pack=PACK, *, budget=route.WORK_BUDGET, **asked):
     env, overlay = place
-    return route.read(env, source, [pack], overlay=overlay, budget=budget)
+    return route.read(env, source, [pack], overlay=overlay, budget=budget, **asked)
 
 
 NEAR = [sense("near", 1, "beside bob", ["person"], "{0} is near bob"),
@@ -139,7 +139,9 @@ REFUSALS = [
     ("unknown-word", "joke", PACK, "In this document, zany means amusing. Alice tells the riddle.", None,
      {"status": "rejected", "code": "UnknownWord", "details": {"line": 0, "word": "zany"}}),
     ("s4", "joke", PACK, "In this document, funny means purple. The riddle is funny.", None,
-     {"status": "rejected", "code": "UnknownGloss", "details": {"line": 0, "word": "funny", "gloss": "purple"}}),
+     {"status": "rejected", "code": "UnknownGloss", "details": {"line": 0, "word": "funny", "gloss": "purple"},
+      # sn-b6c: spec 3.2's text, Lean's (R3)
+      "text": "Line 1 says funny means purple. The senses of funny here are: amusing; strange. Use one of them."}),
     ("dotted-i", "joke", PACK, "İn this document, funny means amusing.\nThe riddle is funny (meaning strange).", None,
      {"status": "rejected", "code": "MalformedPreamble", "details": {"line": 0}}),
     ("preamble-budget", "joke", PACK, LINE + "\nAlice tells the riddle.", 1,
@@ -157,10 +159,16 @@ REFUSALS = [
      pack_with([sense(w, i, g, ["joke"], "{0} is " + w) for w in MANY_WORDS
                 for i, g in ((1, "plain kind"), (2, "usual kind"))]),
      "The riddle is " + ", ".join(MANY_WORDS) + ".", None,
-     {"status": "rejected", "code": "TooManyCandidates", "details": {"sentence": 0, "words": MANY_WORDS}}),
+     {"status": "rejected", "code": "TooManyCandidates", "details": {"sentence": 0, "words": MANY_WORDS},
+      "text": "Sentence 1 uses 30 words with no chosen sense: " + ", ".join(MANY_WORDS[:-1]) + " and "
+              + MANY_WORDS[-1] + ". Choose a sense for at least one of them first."}),
     ("s17", "near", pack_with(NEAR), "Alice is near bob.", None,
      {"status": "rejected", "code": "CandidatesDiverge",
-      "details": {"sentence": 0, "words": ["near"], "why": {"referent": "bob"}}}),
+      "details": {"sentence": 0, "words": ["near"], "why": {"referent": "bob"}},
+      "text": "Sentence 1 uses near with no chosen sense, and its senses do not agree on what the sentence is about: "
+              "read as beside it mentions bob, read as beside bob it does not. Later sentences depend on that, so "
+              "choose: add the line \"In this document, near means beside.\" (or beside bob), or write near "
+              "(meaning beside)."}),
     ("s23", "near", pack_with(NEAR),
      "In this document, near means beside.\nAlice is near bob.\n"
      "Starting from alice, bob is reachable by one or more \"sense__near_2\" steps.", None,
@@ -463,16 +471,31 @@ GENUINE = [("open", "joke", PACK, "The riddle is odd.", W),
            ("budget", "joke", PACK, "Alice tells the riddle.", 1),
            ("many", "s2", MINI, "Every deployed service is reviewed.", W),
            ("diverge", "near", pack_with(NEAR), "Alice is near bob.", W),
-           ("dictionary", "joke", REFUSALS[0][2], "Alice tells the riddle.", W)]
+           ("dictionary", "joke", REFUSALS[0][2], "Alice tells the riddle.", W),
+           # sn-b6c: Mixed and Unneeded warnings, and a NoSenseFits hint
+           ("warnings", "joke", PACK, LINE + " In this document, tells means says aloud. The riddle is funny "
+                                      "(meaning strange). Alice tells the riddle. The riddle is funny.", W),
+           ("hint", "joke", PACK, "Alice is funny.", W)]
 
 
-@pytest.mark.parametrize("name, place, pack, source, budget", GENUINE, ids=[g[0] for g in GENUINE])
+# sn-b6d: the re-read and Lean's line, asked (the request's members, and their wire form)
+# (one candidate: no flip model, whose fields `test_flip_rebinding_is_refused` mutates)
+ASKED = {"reread": ({"reread": (0, 0, "The riddle is odd.")},
+                    {"reread": {"sentence": 0, "candidate": 0, "rendering": "The riddle is odd."}}),
+         "line": ({"line": ("funny", "strange")}, {"line": {"word": "funny", "gloss": "strange"}})}
+
+
+@pytest.mark.parametrize("name, place, pack, source, budget", GENUINE + [
+    ("reread", "joke", PACK, "The riddle is odd.", W), ("line", "joke", PACK, "The riddle is odd.", W)],
+    ids=[g[0] for g in GENUINE] + ["reread", "line"])
 def test_genuine_response_field_mutations_are_rejected(name, place, pack, source, budget):
     """Checklist 4: every field of a genuine answer, dropped, nulled or given another type, is refused;
     and so is a duplicated candidate or a referent the projection does not declare."""
-    genuine = read_in(S2_WORLD() if place == "s2" else WORLDS[place](), source, pack, budget=budget)
+    asked, wire = ASKED.get(name, ({}, {}))
+    genuine = read_in(S2_WORLD() if place == "s2" else WORLDS[place](), source, pack, budget=budget, **asked)
     def problem(mutant):
-        return route._response_problem(mutant, genuine["dictionary_id"], genuine["request_id"], source=source)
+        return route._response_problem(mutant, genuine["dictionary_id"], genuine["request_id"], source=source,
+                                       **wire)
     assert problem(genuine) is None
     paths = list(_paths(genuine))
     assert len(paths) > 4, name
@@ -486,7 +509,8 @@ def test_genuine_response_field_mutations_are_rejected(name, place, pack, source
             for part in path[:-1]:
                 parent = parent[part]
             if mutate == "delete":
-                if type(parent) is not dict:
+                # NoSenseFits is Lean's to give (one unresolved word, spec 3.2); without it the answer is S2's `none`
+                if type(parent) is not dict or path == ("reading", "hint"):
                     continue
                 del parent[path[-1]]
             else:

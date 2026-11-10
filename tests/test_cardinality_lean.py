@@ -115,6 +115,8 @@ E2 = ("UnsupportedProfile: cardinality@0 requires order@0, relational-fol@0 and 
     (["cardinality@0", "documents@1", *CHAIN[1:]], E2),
     ([*CHAIN, "soft-norms@0"], "cardinality@0 with soft-norms@0"),
     ([*CHAIN, "scope@0"], "cardinality@0 with scope@0"),
+    # The chain list holds every profile events@0 requires; the events pack does not compose with it yet.
+    (sorted([*CHAIN, "events@0"]), "cardinality@0 with events@0"),
     (["cardinality@0", "data@0", "order@0", "relational-fol@0", "time@0"], "cardinality@0 with data@0")])
 def test_the_gate_refuses_a_list_cardinality_does_not_compose_with(tmp_path, profiles, message):
     with pytest.raises(UnsupportedProfile, match=re.escape(message)):
@@ -339,7 +341,7 @@ def test_two_counting_units_that_contradict_are_named_not_certified(tmp_path):
 
 def test_the_route_cases_answer_as_recorded():
     from ve.backends.relay import rows
-    cases = recorded("document")
+    cases = [case for case in recorded("document") if case["id"].startswith("cardinality")]
     answers = rows("document", cases)
     assert [case["id"] for case in cases] == ["cardinality-part", "cardinality-four-profiles", "cardinality-chain-list"]
     assert answers[0]["status"] == "ok" and answers[0]["cardinality"]["report"]["root"]["name"] == "root"

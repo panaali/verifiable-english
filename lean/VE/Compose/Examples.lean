@@ -237,12 +237,12 @@ On every list of D-all, the table answers as `dispatch` and its base rows as `to
 #guard gateOf baseRows ["norms@0", "relational-fol@0", "ve.discourse@1"] ==
   .error "UnsupportedProfile: Unsupported profile ve.discourse@1"
 #guard gateOf profileTable ["norms@0", "relational-fol@0", "ve.discourse@1"] == .ok .discourse
-#guard environmentProfiles.length == 18 && !environmentProfiles.contains "judgments@0" &&
+#guard environmentProfiles.length == 19 && !environmentProfiles.contains "judgments@0" &&
   !environmentProfiles.contains "cardinality@0" &&
-  environmentProfiles.getLast? == some "readings@1"
+  environmentProfiles.drop 17 == ["right-clauses@0", "readings@1"]
 #guard legacyProfiles.all (fun p => profileTable.any (·.profile == p)) &&
   (profileTable.map (·.profile)).eraseDups.filter (!legacyProfiles.contains ·) ==
-    ["acts@0", "judgments@0", "cardinality@0", "scope@0"]
+    ["events@0", "acts@0", "judgments@0", "cardinality@0", "scope@0"]
 
 /-! JT-2's row (judgment-terms-PLAN.md JT-2): `judgments@0` requires `documents@1`, refuses nothing and keeps the
 route of the list without it (`gate_judgments`). -/
@@ -264,7 +264,6 @@ refuses every route whose norm decoder it does not hook, each with its own text 
 #guard gateOf baseRows ["acts@0", "data@0", "norms@0", "relational-fol@0", "time@0"] == .ok .norms
 #guard [(["acts@0", "norms@0", "relational-fol@0", "soft-norms@0"], "acts@0 with soft-norms@0"),
     (["acts@0", "alternatives@0", "norms@0", "relational-fol@0"], "acts@0 with alternatives@0"),
-    (["acts@0", "norms@0", "relational-fol@0", "speech-acts@0"], "acts@0 with speech-acts@0"),
     (["acts@0", "closure@0", "norms@0", "relational-fol@0"], "acts@0 on the closure family"),
     (["acts@0", "norms@0", "order@0", "relational-fol@0"], "acts@0 on the order family"),
     (["acts@0", "norms@0", "relational-fol@0", "ve.discourse@1"], "acts@0 with ve.discourse@1")].all fun (ps, t) =>
@@ -272,7 +271,16 @@ refuses every route whose norm decoder it does not hook, each with its own text 
 -- `rights@0` requires `soft-norms@0`, which `acts@0` refuses first; its own refusal is the row's data.
 #guard gateOf profileTable ["acts@0", "norms@0", "relational-fol@0", "rights@0", "soft-norms@0"] ==
     .error "UnsupportedProfile: acts@0 with soft-norms@0 is not implemented" &&
-  actsRefuses.lookup "rights@0" == some "acts@0 with rights@0 is not implemented" && actsRefuses.length == 7
+  actsRefuses.lookup "rights@0" == some "acts@0 with rights@0 is not implemented" && actsRefuses.length == 6
+-- commands-imperatives 9: the speech route is one `acts@0` may join; `speech-acts@0`'s own row still refuses the rest
+#guard gateOf profileTable ["acts@0", "norms@0", "relational-fol@0", "speech-acts@0"] == .ok .speechActs &&
+  gateOf profileTable ["norms@0", "relational-fol@0", "speech-acts@0"] == .ok .speechActs &&
+  actsRefuses.lookup "speech-acts@0" == none
+#guard gateOf profileTable ["acts@0", "speech-acts@0"] == .error "UnsupportedProfile: speech-acts@0 requires norms@0"
+#guard gateOf profileTable ["acts@0", "norms@0", "relational-fol@0", "soft-norms@0", "speech-acts@0"] ==
+  .error "UnsupportedProfile: speech-acts@0 with soft-norms@0"
+#guard gateOf profileTable ["acts@0", "alternatives@0", "norms@0", "relational-fol@0", "speech-acts@0"] ==
+  .error "UnsupportedProfile: speech-acts@0 with alternatives@0"
 
 /-- `TableAdmits` reads the refusals: soft-norms@0 is refused with alternatives@0, and admitted with norms@0. -/
 example : ¬ TableAdmits profileTable ["alternatives@0", "norms@0", "relational-fol@0", "soft-norms@0"] := by
@@ -690,6 +698,8 @@ def chainList : List String := ["cardinality@0", "norm-defaults@0", "norms@0", "
   (["cardinality@0", "norm-defaults@0", "norms@0", "readings@1", "relational-fol@0", "scope@0"], "cardinality@0 with scope@0"),
   (["cardinality@0", "norm-defaults@0", "norms@0", "readings@1", "relational-fol@0", "soft-norms@0"], "cardinality@0 with soft-norms@0"),
   (["cardinality@0", "data@0", "order@0", "relational-fol@0"], "cardinality@0 with data@0"),
+  (["cardinality@0", "events@0", "norm-defaults@0", "norms@0", "readings@1", "relational-fol@0"],
+    "cardinality@0 with events@0"),
   (["cardinality@0", "order@0", "readings@1", "relational-fol@0", "time@0"], "readings@1 requires norms@0"),
   (["cardinality@0", "judgments@0", "order@0", "relational-fol@0", "time@0"], "judgments@0 requires documents@1")].all
   fun (ps, e) => gateOf profileTable ps == .error s!"UnsupportedProfile: {e}"
@@ -697,6 +707,8 @@ def chainList : List String := ["cardinality@0", "norm-defaults@0", "norms@0", "
   listFault ["acts@0", "cardinality@0", "order@0", "relational-fol@0", "time@0"] == some VE.Cardinality.Wire.e2 &&
   listFault chainList == none && listFault ("judgments@0" :: chainList) == none
 -- The row refuses by name every other profile of the table, in code point order: a new row decides how it composes.
+-- Under the chain list `events@0`'s requirements all hold, so the row names it (no E2 list holds it); the events pack
+-- does not compose with the chain list yet (gap recorded at the merge of ve-integration 3395d65592, `gate_events`).
 #guard cardinalityOthers == ((profileTable.map (·.profile)).eraseDups.filter fun q =>
   !(["documents@1", "judgments@0", "order@0", "time@0"] ++ chainList).contains q).mergeSort
   fun a b => a < b || a == b

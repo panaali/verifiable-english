@@ -27,8 +27,10 @@ result `i` must carry position `i`, the SHA-256 of the text
 of case `i` as sent (`case_digests`) and the identity fields the runners echo from the
 case, so an omitted, reordered, duplicated or substituted result is rejected by binding.
 Every field must also be well formed (`lean_service_schema/`, compiled by
-`service_schema.py`). Content that preserves binding, such as the targets inside one
-norms result, is the service's responsibility and is not checked here.
+`service_schema.py`). A binding no schema keyword can state is its mode's `MODE_BINDINGS` entry
+(`bind_answers`; norm-defaults: a status row's rules and a certificate row's premise count).
+Content that preserves binding, such as the targets inside one norms result, is the service's
+responsibility and is not checked here.
 
 Supervision: an address-space limit on the process, a deadline per request, recycling
 after a number of requests or above an RSS threshold, and a small pool.
@@ -160,6 +162,11 @@ DEADLINES: dict[str, tuple[float, float]] = {
     "english.command": _CORE,
     # The `scope` mode (scope SC-1c): the document mode's GOVERN step, without the chain after it.
     "scope": (120.0, 120.0),
+    # The `act-readings` mode (act-phrases AP-4): one phrase's readings, within the parse limits of one act check.
+    "act-readings": _CORE,
+    # The `clauses-elaborate` mode (right-clauses 8.1): the head's decoding and checks, then the rights decoder and
+    # its checks on the plained document, as the `rights` mode runs them.
+    "clauses-elaborate": (120.0, 120.0),
 }
 WALL_FACTOR = 10.0
 _MIB = 1 << 20
@@ -350,6 +357,61 @@ def request_context(nonce: str, mode: str, cases_text: str, count: int,
         cases = None
     return {"id": nonce, "mode": mode, "cases": cases, "digests": digests,
             "bytes": len(cases_text.strip().encode())}
+
+
+# The profiles under which Lean answers rules by names it generates, absent from the request: `acts@0` splits a joined
+# act into parts (`VE.Acts.Elaborate.partRule`), `rights@0` names fan-out and bar rules (`VE.Rights.Tree.fanName`,
+# `barRuleName`). Their rows are not bound here (norm-defaults-cfr-1b: Lean echoes each rule's request source).
+GENERATED_RULE_PROFILES = ("acts@0", "rights@0")
+
+
+def _rule_names(case: dict) -> set | None:
+    """The names of the rules of the case's `norms` (`{"norm": {"name", ...}}` units), or None when a profile of
+    `GENERATED_RULE_PROFILES` lets Lean name rules the request does not."""
+    environment = case.get("environment")
+    profiles = environment.get("profiles") if isinstance(environment, dict) else None
+    if isinstance(profiles, list) and any(profile in profiles for profile in GENERATED_RULE_PROFILES):
+        return None
+    units = case.get("norms")
+    return {unit["norm"]["name"] for unit in units if isinstance(unit, dict) and isinstance(unit.get("norm"), dict)
+            and type(unit["norm"].get("name")) is str} if isinstance(units, list) else set()
+
+
+def _bind_norm_defaults(row: dict, case: dict) -> None:
+    """The bindings of the norm-defaults mode's rows that no schema keyword states (the schema binds a status row's
+    `tuple` and distinct `rules`): each status rule is a rule of the request (`_rule_names`), and a certificate row
+    counts the regenerated premises its certificate is bound to, its premise meaning ids less the case's own
+    premises (`Wire.bindingOk` binds the ids)."""
+    kind = case.get("kind")
+    if kind == "norm-defaults-status":
+        names = _rule_names(case)
+        for rule in (row.get("rules") or ()) if names is not None else ():
+            if rule not in names:
+                raise Invalid(f"norm-defaults-status rules name {rule!r}, no rule of the request")
+    elif kind == "norm-defaults-certificate":
+        certificate, premises = case.get("certificate"), case.get("premises")
+        ids = certificate.get("premise_meaning_ids") if isinstance(certificate, dict) else None
+        count = row.get("premises")
+        if not (isinstance(ids, list) and isinstance(premises, list) and type(count) is int
+                and count == len(ids) - len(premises)):
+            raise Invalid("norm-defaults-certificate premises is not the count its certificate is bound to")
+
+
+# The bindings of a mode's `ok` rows that its response schema does not state, by mode.
+MODE_BINDINGS = {"norm-defaults": _bind_norm_defaults}
+
+
+def bind_answers(mode: str, response: object, request: dict) -> None:
+    """Raise `Invalid` unless every `ok` result of a schema-checked `response` is bound to its case by its
+    mode's `MODE_BINDINGS` entry (none: nothing to add)."""
+    bind = MODE_BINDINGS.get(mode)
+    if bind is None or not isinstance(response, dict) or response.get("status") != "ok":
+        return
+    cases = request.get("cases") or []
+    for result in response.get("results") or ():
+        row, index = result.get("result"), result.get("index")
+        if isinstance(row, dict) and row.get("status") == "ok":
+            bind(row, cases[index])
 
 
 _hashes: dict[tuple, str] = {}
@@ -742,7 +804,9 @@ class LeanService:
                 raise _Failure(f"service could not read the request: {response.get('error')}")
             raise _Failure(f"response id does not match the request nonce: {raw[:200]!r}")
         try:
-            check_response(mode, response, request_context(nonce, mode, cases_text, count, texts, expanded))
+            context = request_context(nonce, mode, cases_text, count, texts, expanded)
+            check_response(mode, response, context)
+            bind_answers(mode, response, context)
         except Invalid as exc:
             raise _Failure(f"malformed response ({exc}): {raw[:200]!r}") from None
         return raw, response
