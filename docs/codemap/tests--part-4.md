@@ -1,6 +1,3 @@
-- `tests/test_lean_authority_values.py` — No reported evaluation value or count is Rust's (lean-first batch 15b, review B3; batch 18: Lean is the one authority).
-- `tests/test_lean_budget_types.py` — Present replay budgets must never silently become the default.
-- `tests/test_lean_build.py` — `tests/lean_build.py`: a fixture naming a Lean target the lakefile lacks fails, prebuilt or not.
 - `tests/test_lean_certificates.py` — The Python prover searches; the independently proved Lean checker decides.
 - `tests/test_lean_conformance.py` — Portable JSON differential tests.
 - `tests/test_lean_decided_share.py` — `tools/lean_decided_share.py` (readings-defaults 1.10 and 10; plan 3.9, RD-5): sums Lean's decided units' span bytes and decides nothing; Lean's list is untrus…
@@ -87,3 +84,7 @@
 - `tests/test_p1_amendment8.py` — Amendment 8 contract, pricing, recovery, fallback and budget regressions; $0.
 - `tests/test_p1_amendment9.py` — Computed joint bounds and attacker truncation isolation; no provider calls.
 - `tests/test_p1_history.py` — Historical request provenance stays separate from current checker identity.
+- `tests/test_p1_infrastructure.py` — Amendment 5: offline transport failures, no paid/network calls.
+- `tests/test_p1_native_counter.py` — Offline native-counter tests: pinned templates, no downloads or providers.
+- `tests/test_p1_preflight.py` — (no module docstring)
+- `tests/test_p1_reconcile.py` — Append-only budget reconciliation and request reuse across schedule changes.
