@@ -329,6 +329,7 @@ import VE.Service.ScopeExamples
 import VE.Service.DocumentChain
 import VE.Service.DocumentChainExamples
 import VE.Service.DocumentChainChecks
+import VE.Service.DocumentView
 import VE.Service.SoftSourceExamples
 import VE.Service.UndeclaredExamples
 import VE.Service.CardinalityExamples
@@ -351,6 +352,10 @@ import VE.EnglishGrammar.Norm.Rules
 import VE.EnglishGrammar.Norm.Read
 import VE.EnglishGrammar.Norm.Elab
 import VE.EnglishGrammar.Norm.Examples
+import VE.EnglishGrammar.Norm.Owners
+import VE.EnglishGrammar.Norm.OwnersExamples
+import VE.EnglishGrammar.Norm.Run
+import VE.EnglishGrammar.Norm.RunExamples
 import VE.Weighing.Zone
 import VE.Weighing.ZoneExamples
 import VE.Weighing.Tree
