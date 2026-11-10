@@ -76,9 +76,12 @@ def claim_problems(labels: str, report: str, sources: dict[str, str]) -> list[st
     problems += [
         f"pk-1c REPORT:{n} claims a route discharge: {line.strip()}"
         for n, line in enumerate(report.splitlines(), 1)
-        if "route discharge" in line.lower()
-        or REPORT_OVERCLAIM.search(line)
-        or (claims_discharge(line) and "decoded route" in line.lower())
+        if "route discharge" in line.lower() or (claims_discharge(line) and "decoded route" in line.lower())
+    ]
+    problems += [
+        f"pk-1c REPORT:{n} names the route's check instead of `VE.Bridge.identifier`: {line.strip()}"
+        for n, line in enumerate(report.splitlines(), 1)
+        if REPORT_OVERCLAIM.search(line)
     ]
     return problems
 
@@ -111,7 +114,10 @@ def test_decoded_rights_labels_proof_claim_refuses() -> None:
     assert any("route discharge" in p for p in claim_problems(labels, old_report, sources))
     new_2b = "when every act key passes `VE.Bridge.identifier`, the labels"
     old_2b = report.replace(new_2b, "when every act key passes the route's identifier check, the labels")
-    assert old_2b != report and any("route's identifier check" in p for p in claim_problems(labels, old_2b, sources))
+    old_2c = report.replace("keys pass `VE.Bridge.identifier` and whose", "keys are route identifiers and whose")
+    for old in (old_2b, old_2c):
+        assert old != report
+        assert any("instead of `VE.Bridge.identifier`" in p for p in claim_problems(labels, old, sources))
     old_comment = "-- The route's own repeated-label check refuses it (no decoded document reaches this: predicates are"
     old_examples = {**sources, EXAMPLES: sources[EXAMPLES] + "\n" + old_comment + " identifiers).\n"}
     assert any(EXAMPLES in p for p in claim_problems(labels, report, old_examples))
