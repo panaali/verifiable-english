@@ -68,7 +68,8 @@ import time
 
 from change_units import Summary, delta
 import history_tests
-from layer_policy import APP_AREAS, ROOT, lean_default_targets, lean_executables, python_exports
+from layer_policy import (APP_AREAS, PYTHON_COMMENT, ROOT, layer_declaration, lean_default_targets,
+                          lean_executables, python_exports)
 import lean_mode_deps
 import nested_pytest
 import path_expressions
@@ -338,12 +339,23 @@ def parse(change: Change) -> tuple[Summary | None, Summary | None]:
         return None, None
 
 
+def declared_layer(text: str | None, path: str) -> tuple[int, str] | str | None:
+    """A Python file's own layer declaration (tools/layer_policy.py), or the reason it is refused."""
+    try:
+        return layer_declaration(text, path, PYTHON_COMMENT)
+    except ValueError as error:
+        return str(error)
+
+
 def python_change(sel: Selection, change: Change, old: Summary | None, new: Summary | None,
                   called: dict[tuple[str, str], frozenset[str]]) -> None:
     path = change.path
     d = delta(old, new) if change.known else None
     mapped(sel, change, (old, new, d), called)
     sel.static(mentions_path(path), f"names {path}")
+    if path.startswith(("ve/", "ve_experiments/", "experiments/")) and (
+            declared_layer(change.old, path) != declared_layer(change.new, path)):
+        sel.checks.add(CHECK_PYTHON)  # the module's own layer declaration, a comment, changed
     if (path.startswith("tests/test_") or path in EXTRA_UNITS) and change.new is not None:
         sel.add([path], "changed test")
     if d is not None and d.empty and not change.presence_changed:

@@ -259,11 +259,24 @@ def lean_module(path: str) -> str:
     return ".".join(PurePosixPath(path).with_suffix("").parts[1:])
 
 
-def module_layer(policy: SimpleNamespace, module: str) -> int | None:
-    # Same mapping as tools/check_python_layers.py (which needs grimp for its full graph).
+def module_layer(policy: SimpleNamespace, module: str, read=None) -> int | None:
+    # Same mapping as tools/check_python_layers.py (which needs grimp for its full graph); `read` gives the staged
+    # text of a path, for the modules' own layer declarations.
     if module == "ve_experiments" or module.startswith("ve_experiments."):
         return 5
-    return policy.layer_policy.python_layer(module)
+    return policy.layer_policy.python_layer(module, read=read)
+
+
+def staged_reader(index: Index, paths: list[str]):
+    """`read(path)` for tools/layer_policy.py's declaration readers: a path's staged text, or None when the index
+    has no such path; `paths` are read in one batch first."""
+    blobs = index.read(sorted(set(paths)))
+
+    def read(path: str) -> str | None:
+        if path not in blobs:
+            blobs.update(index.read([path]))
+        return None if blobs[path] is None else blobs[path].decode("utf-8", "replace")
+    return read
 
 
 def python_targets(resolve, exports: dict[str, str], root: Path,
@@ -295,18 +308,31 @@ def check_layers(index: Index) -> list[str]:
         return []
     policy = index.policy()
     layers = policy.layer_policy
+    # The modules' own layer declarations are read from the index, as the commit will hold them.
+    listing = index.listing()
+    read_staged = staged_reader(index, [p for p in listing if p.startswith("ve/") and p.endswith(".py")] + lean)
+    comments = {"Python": layers.PYTHON_COMMENT, "Lean": layers.LEAN_COMMENT}
+
+    def layer_of(path: str, kind: str, find):
+        try:
+            return find()
+        except ValueError as error:
+            errors.append(f"{path}: {kind} layer declaration refused: {error}")
+            return None
 
     def mappable(path: str, module: str, layer: int | None, kind: str) -> bool:
         # Modules already unmapped at HEAD are the full checker's (and the gate's)
         # business; the hook only rejects a commit that ADDS an unmapped module.
         if layer is None and index.changed[path].status == "A" and module != "ve":
-            errors.append(f"{path}: unmapped {kind} module {module} (add it to tools/layer_policy.py)")
+            errors.append(f"{path}: unmapped {kind} module {module} ({layers.declaration_form(comments[kind])}, "
+                          "or add it to tools/layer_policy.py)")
         return layer is not None
 
-    python = [p for p in python if mappable(p, python_module(p)[0],
-                                            module_layer(policy, python_module(p)[0]), "Python")]
+    python = [p for p in python if mappable(p, python_module(p)[0], layer_of(
+        p, "Python", lambda: module_layer(policy, python_module(p)[0], read_staged)), "Python")]
     headers = lean  # every staged header must be plain, mapped module or not
-    lean = {p for p in lean if mappable(p, lean_module(p), layers.lean_layer(lean_module(p)), "Lean")}
+    lean = {p for p in lean if mappable(p, lean_module(p), layer_of(
+        p, "Lean", lambda: layers.lean_layer(lean_module(p), read=read_staged)), "Lean")}
     if python:
         blobs = index.read([PYTHON_LEDGER, *python])
         ledger = json.loads(blobs[PYTHON_LEDGER] or b"{}")
@@ -315,15 +341,17 @@ def check_layers(index: Index) -> list[str]:
         found = mapped(targets, [(path, blobs[path]) for path in python])
         for path, targets in zip(python, found):
             module = python_module(path)[0]
-            importer = module_layer(policy, module)
+            importer = module_layer(policy, module, read_staged)
             if isinstance(targets, SyntaxError):
                 errors.append(f"{path}:{targets.lineno}: cannot parse imports: {targets.msg}")
                 continue
             for target in sorted(targets):
                 edge = f"{module} -> {target}"
-                layer = module_layer(policy, target)
+                layer = layer_of(target, "Python", lambda: module_layer(policy, target, read_staged))
                 if layer is not None and importer < layer and edge not in ledger:
-                    errors.append(f"{path}: new outward import {edge} (layer {importer} -> {layer})")
+                    errors.append(f"{path}: new outward import {edge} (layer {importer} -> {layer}); import inward, "
+                                  f"or if {module} belongs in layer {layer} or higher, "
+                                  f"{layers.declaration_form(layers.PYTHON_COMMENT)}")
     if headers:
         reader = policy.check_lean_imports
         blobs = index.read([LEAN_LEDGER, LEAN_TOOLCHAIN, *headers])
@@ -352,20 +380,24 @@ def check_layers(index: Index) -> list[str]:
             for path, message in sorted(wrong.items()):
                 errors.append(f"{path}: Lean header: {message}; {reader.PLAIN_LAYOUT}")
                 del read[path]
+        read_targets = staged_reader(index, [*read, *(layers.lean_path(target) for found in read.values()
+                                                      for target in found if target in local)])
         for path, targets in read.items():
             if path not in lean:
                 continue
             module = lean_module(path)
-            importer = layers.lean_layer(module)
+            importer = layers.lean_layer(module, read=read_targets)
             for target in targets:
                 if target not in local:
                     if target.startswith("VE.") or target in {"VE", "Iceberg"}:
                         errors.append(f"{path}: missing local Lean import {target}")
                     continue
                 edge = f"{module} -> {target}"
-                layer = layers.lean_layer(target)
+                layer = layer_of(layers.lean_path(target), "Lean", lambda: layers.lean_layer(target, read=read_targets))
                 if layer is not None and importer < layer and edge not in ledger:
-                    errors.append(f"{path}: new outward Lean import {edge} (layer {importer} -> {layer})")
+                    errors.append(f"{path}: new outward Lean import {edge} (layer {importer} -> {layer}); import "
+                                  f"inward, or if {module} belongs in layer {layer} or higher, "
+                                  f"{layers.declaration_form(layers.LEAN_COMMENT)}")
     if rust:
         # The snapshot holds the staged rust/ workspace that `cargo metadata` reads.
         stderr = io.StringIO()
