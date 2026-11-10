@@ -99,7 +99,12 @@ def envOfDoc (e : Json) : Except String VE.Service.Document.Env :=
   | .error _ => false)
 #guard (layered (envOf (some (blockD)))).toOption.map (·.envId) ==
   ((envOfDoc (envOf (some (blockD)))).toOption.map (·.envId))
--- Another list with `events@0` keeps the base's refusal, word for word.
+-- Another list with `events@0` keeps the base's refusal, word for word; `events@0` is named where it stands first among
+-- the profiles this mode does not read (`order@0` after it).
+#guard outcome (envOf none ["events@0", "norm-defaults@0", "norms@0", "order@0", "relational-fol@0", "rights@0",
+  "soft-norms@0"]) == "CheckerUnavailable: document checks under events@0 need its Lean profile route"
+#guard outcome (envOf none ["events@0", "norm-defaults@0", "norms@0", "relational-fol@0", "rights@0", "soft-norms@0"]) ==
+  "CheckerUnavailable: document checks under events@0 need its Lean profile route"
 #guard outcome (envOf none ["events@0", "norm-defaults@0", "norms@0", "relational-fol@0"]) ==
   "CheckerUnavailable: document checks under events@0 need its Lean profile route"
 
