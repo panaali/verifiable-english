@@ -2490,6 +2490,20 @@
    "reason": "sa-checked-view: V +100 (lean/VE/Service/DocumentView.lean +97, lean/VE/Service/Document.lean +3); K +0, S +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sa-checked-view, 2026-10-18",
    "commit": "a7659c5f12aebb2945cfb2106ed29a20663ab836"
+  },
+  {
+   "class": "S",
+   "lines": 16,
+   "reason": "cmp-s3-cfr-1: S +16 lean/VE/RightClauses/Wire.lean (NoClauseKeys, NoReadingSets, PlainOnWire); V +121: Wire.lean +77 (the clause, relation and elided readers), Run.lean +29 (the clauses-elaborate case), Compose/Dispatch.lean +11 (environmentWrappers, withoutClauses, environmentRows), ResponseShape Skeletons +2, Schemas +1, Service Registry +1, Protocol +1, Standalone -1; K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s3-cfr-1, 2026-10-18",
+   "commit": "6db6ee16ddb10f843b396b78299a980abc43fefb"
+  },
+  {
+   "class": "V",
+   "lines": 121,
+   "reason": "cmp-s3-cfr-1: S +16 lean/VE/RightClauses/Wire.lean (NoClauseKeys, NoReadingSets, PlainOnWire); V +121: Wire.lean +77 (the clause, relation and elided readers), Run.lean +29 (the clauses-elaborate case), Compose/Dispatch.lean +11 (environmentWrappers, withoutClauses, environmentRows), ResponseShape Skeletons +2, Schemas +1, Service Registry +1, Protocol +1, Standalone -1; K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s3-cfr-1, 2026-10-18",
+   "commit": "6db6ee16ddb10f843b396b78299a980abc43fefb"
   }
  ]
 }
