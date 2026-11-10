@@ -6,7 +6,7 @@ responsibility until it is split; exact legacy edges are tracked separately.
 
 A module may instead declare its layer on its own first line, `-- ve-layer: <1-5> (<reason>)` in a Lean file and
 `# ve-layer: <1-5> (<reason>)` in a Python module or package `__init__.py` (`layer_declaration`). This module
-reads the declaration; the name rules below are the fallback, and a role rule (`lean_fixed_layer`, the app areas)
+reads the declaration; the name rules below are the fallback, and a role rule (`lean_fixed`, the app areas)
 outranks both.
 """
 from __future__ import annotations
@@ -63,9 +63,10 @@ PYTHON_MODULES = {f"ve.{name}": layer for layer, names in PYTHON.items() for nam
 DECLARATION_KEY = "ve-layer"
 LEAN_COMMENT = "--"
 PYTHON_COMMENT = "#"
-# A line is read as an attempted declaration when, past these leading characters, it starts with one of these.
+# A line is read as an attempted declaration when, past blanks, it starts with `ve-layer`, or with a comment or doc
+# marker and then one of these, in any case; code such as `VE_LAYER = 4` is not one.
 DECLARATION_LOOKALIKE = ("ve-layer", "ve_layer")
-DECLARATION_LEAD = " \t#-/!*﻿"
+DECLARATION_MARKS = "#-/!*"
 # The Python packages whose modules may declare their layer (an app area's modules are layer 5 by rule).
 PYTHON_PACKAGES = ("ve",)
 
@@ -86,7 +87,10 @@ def layer_declaration(source: str | None, path: str, comment: str) -> tuple[int,
     form = declaration_form(comment)
 
     def lookalike(line: str) -> bool:
-        return line.lstrip(DECLARATION_LEAD).lower().startswith(DECLARATION_LOOKALIKE)
+        text = line.lstrip(" \t\ufeff")
+        rest = text.lstrip(DECLARATION_MARKS)
+        word = rest.lstrip(" \t").lower()
+        return word.startswith(DECLARATION_LOOKALIKE if rest != text else DECLARATION_LOOKALIKE[:1])
 
     for number, line in enumerate(lines[1:], 2):
         if lookalike(line):
@@ -105,9 +109,10 @@ def layer_declaration(source: str | None, path: str, comment: str) -> tuple[int,
                          + ", ".join(f"{layer} {name}" for layer, name in NAMES.items()))
     if not rest.strip() or (rest.startswith("(") and rest.endswith(")") and not rest[1:-1].strip()):
         raise ValueError(f"{path}:1: layer declaration {first!r} gives no reason; {form}")
-    if not (rest.startswith("(") and rest.endswith(")")):
-        raise ValueError(f"{path}:1: malformed layer declaration {first!r}: the reason goes in parentheses and "
-                         f"ends the line; {form}")
+    depths = [rest[:end].count("(") - rest[:end].count(")") for end in range(1, len(rest) + 1)]
+    if not (rest.startswith("(") and rest.endswith(")")) or min(depths[:-1], default=1) < 1 or depths[-1] != 0:
+        raise ValueError(f"{path}:1: malformed layer declaration {first!r}: the reason goes in one pair of "
+                         f"parentheses that ends the line; {form}")
     return int(number), rest[1:-1]
 
 
@@ -129,14 +134,35 @@ def lean_path(module: str) -> str:
 
 def lean_declared(module: str, root: Path = ROOT, read=None) -> tuple[int, str] | None:
     """A Lean module's own declaration (`layer_declaration`), read through `read(path)` (default: the file under
-    `root`). A declaration on a module whose role fixes its layer (`lean_fixed_layer`) raises ValueError."""
+    `root`). A declaration on a module whose role fixes its layer (`lean_fixed`), or that a set of `lean_name_layer`
+    names (one owner), raises ValueError."""
     path = lean_path(module)
     found = layer_declaration((read or (lambda p: read_file(root, p)))(path), path, LEAN_COMMENT)
     fixed = lean_fixed(module)
     if found is not None and fixed is not None:
         raise ValueError(f"{path}:1: {module}'s role fixes its layer at {fixed[0]} ({fixed[1]}); "
                          "remove the layer declaration")
+    if found is not None and module in lean_named():
+        raise ValueError(f"{path}:1: {module} is also named in tools/layer_policy.py's lean_name_layer at layer "
+                         f"{lean_name_layer(module)}; keep one of the two")
     return found
+
+
+@cache
+def lean_named() -> frozenset[str]:
+    """The Lean modules `lean_name_layer` names one by one (in a set, or compared with `==`), read from this file's
+    own source: a declaration on one of them would be a second owner of its layer."""
+    tree = ast.parse(Path(__file__).read_text(encoding="utf-8"))
+    function = next(node for node in tree.body if isinstance(node, ast.FunctionDef) and node.name == "lean_name_layer")
+    named = set()
+    for node in ast.walk(function):
+        if isinstance(node, ast.Compare) and isinstance(node.left, ast.Name) and node.left.id == "module":
+            for op, right in zip(node.ops, node.comparators):
+                if isinstance(op, ast.In) and isinstance(right, ast.Set):
+                    named.update(item.value for item in right.elts if isinstance(item, ast.Constant))
+                elif isinstance(op, ast.Eq) and isinstance(right, ast.Constant):
+                    named.add(right.value)
+    return frozenset(named)
 
 
 def python_row_declared(row: str, path: str, read) -> tuple[int, str] | None:
