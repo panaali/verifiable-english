@@ -79,6 +79,7 @@ module ResponseShape.Schemas.ReadingsChoices
 module ResponseShape.Schemas.ReadingsRoute
 module ResponseShape.Schemas.Reports
 module ResponseShape.Schemas.Rights
+module ResponseShape.Schemas.RightsChecks
 module ResponseShape.Schemas.Risk
 module ResponseShape.Schemas.RiskEval
 module ResponseShape.Schemas.Route
