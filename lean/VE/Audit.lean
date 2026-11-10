@@ -287,8 +287,8 @@ import VE.Paths
 import VE.Presupposition.Admit.Facts
 import VE.Presupposition.Admit.Statements
 import VE.Presupposition.Agree
+import VE.Presupposition.Couple.Fixtures
 import VE.Presupposition.Couple.Statements
-import VE.Presupposition.CoupleExamples
 import VE.Presupposition.Events
 import VE.Presupposition.Examples
 import VE.Presupposition.Frame
