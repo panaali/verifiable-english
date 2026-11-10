@@ -1,0 +1,21 @@
+{
+ "job": "rights-cfr-1-1332357b",
+ "head": "00bac0e08fbe2d938c37019579fc0e822fbe4450",
+ "argv": [
+  "rights-cfr-1-1332357b",
+  "00bac0e08fbe2d938c37019579fc0e822fbe4450",
+  "9adfd76eb17b4ef7ebb19b1e0cea0ee8588a50c3",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-d631854de2ee.tar.zst",
+  "2f49e4eee39e3f27f314e45bd3d0a4c8207f468bff5bfa867eb204360b6bcd45",
+  "--jobs",
+  "4",
+  "--max-mutants",
+  "1000",
+  "--test",
+  "lean/VE/Rights/Wire.lean",
+  "--test",
+  "lean/VE/SoftNorms/Wire.lean",
+  "--allow",
+  "docs/rights/rights-cfr-1/trust-mutants-allow.json"
+ ]
+}
