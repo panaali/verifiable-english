@@ -16,6 +16,7 @@
 - `lean/VE/Acts/Linearize.lean` — The normal form and the text of a simple act (docs/spec/act-phrases.md 5.5).
 - `lean/VE/Acts/Meaning.lean` — The meaning of a derivation of an act phrase: its act tree (docs/spec/act-phrases.md 1.5, 5.3; plan D9 (i)).
 - `lean/VE/Acts/MeaningExamples.lean` — Fixtures of the meaning, `readings`, `read` and `analyse` (docs/spec/act-phrases.md 5.3, 5.4, 11.2, 11.2b).
+- `lean/VE/Acts/ParseIndexExamples.lean` — ap-parse-index's fixtures: the steps of a growing vocabulary, the hashed indexes, and the compiled forms. L6 (`V5`'s 64 readings) with `n` more frames, up to t…
 - `lean/VE/Acts/Read.lean` — Readings and reading of an act phrase, with the limits of D2 (docs/spec/act-phrases.md 1.6, 5.4, 5.6).
 - `lean/VE/Acts/Readings.lean` — The readings of an act phrase, `read` and `analyse` (docs/spec/act-phrases.md 1.6, 5.4), and spec 5.6's theorems about them.
 - `lean/VE/Acts/ReadingsExamples.lean` — Fixtures of `phraseReadings` and the edge rule (docs/spec/act-phrases.md 7, 11.4; plan 2.4, AP-4, G5).

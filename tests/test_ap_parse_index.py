@@ -5,7 +5,7 @@ The act grammar is built in near-linear time and its rule table read once per re
 is answered, or refused by the step budget as a deterministic `LIMIT`, never `CheckerUnavailable`. Each request below
 runs under its mode's own CPU deadline (`DEADLINES`, `_CORE`: 5 s), so an answer means it ended within it; before this
 item L6 with 126 frames more needed 479 s of CPU (docs/act-phrases/ap-parse-index/REPORT.md). The steps, which grow by
-1,984 per frame, are `#guard`s in `lean/VE/Acts/GrammarExamples.lean`.
+1,984 per frame, are `#guard`s in `lean/VE/Acts/ParseIndexExamples.lean`.
 """
 from __future__ import annotations
 

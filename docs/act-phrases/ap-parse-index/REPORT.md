@@ -70,7 +70,7 @@ passed; section 7):
 | Condition | Fixture | Result |
 |---|---|---|
 | L6 with 126 frames more, never `CheckerUnavailable` | `test_acts_readings_lean.py::test_p64_with_126_frames_more_is_listed_within_the_cpu_deadline`; `test_ap_parse_index.py::test_l6_reads_the_same_64_readings_with_up_to_128_frames[126]` | `LISTED`, V5's 64 readings |
-| growing input 2, 32, 64, 126, 128 frames | `test_l6_reads_the_same_64_readings_with_up_to_128_frames[0-126]`; `GrammarExamples` `l6Steps` (23,152 + 1,984 n) | `LISTED` 64 |
+| growing input 2, 32, 64, 126, 128 frames | `test_l6_reads_the_same_64_readings_with_up_to_128_frames[0-126]`; `ParseIndexExamples` `l6Steps` (23,152 + 1,984 n) | `LISTED` 64 |
 | a norms document, 128 frames, a joined act | `test_a_norms_document_with_128_frames_reads_its_joined_act`; 63 joined acts: `test_a_norms_document_reads_63_joined_acts_with_one_grammar` | parts `p027__1`, `p027__2` |
 | long400 with 128 frames, deterministic `LIMIT` (-2.md) | `test_the_400_byte_phrase_is_listed_with_two_frames_and_a_step_limit_with_32_or_128[127]` | `LIMIT` |
 | (a) 32 frames; 64 readings with V5; 400 bytes with at most 2 frames | `test_acts_readings_lean.py::test_the_document_caps_on_fixed_phrases_and_frames_are_limits`, `::test_64_readings_are_listed_and_more_are_a_limit`, `::test_the_act_phrase_limit_is_400_bytes`; `RunExamples`' `p400` guard | unchanged |
@@ -81,7 +81,7 @@ passed; section 7):
 
 R4: no document check is slower (L6 with V5, `readings` 183 → 12 ms). `EngineExamples`: `/usr/bin/time lake env lean
 VE/EnglishGrammar/EngineExamples.lean`, 5.66/5.65/6.09 s user on main's `Table.lean`, 5.71/5.36/5.41 s here.
-`GrammarExamples`: 5.17/5.11 s with main's fixtures, 10.60/10.77 s with the new 128-frame guards (fixture time).
+`GrammarExamples` 5.17/5.11 s before the new 128-frame guards and 10.60/10.77 s with them (now in `ParseIndexExamples`; fixture time).
 
 ## 5. Trust (R16)
 
@@ -97,8 +97,7 @@ R16"; FOLLOW-UPS.md "## ap-parse-index". Tied by equality theorems: `firstsGo`, 
 per new definition and claimed behaviour (Lean only: no Python or Rust product code changed). Equality proofs kill
 `firstsGo`, `idxGo`, `closedFast`, `buildFast`, `combineFast`, `reader`, `readingsBy`, `readingsOnce`, `readOnce`,
 `witnessed`, `checkActBy`; `#guard`s kill `meaningWith`, `tagged`, `taggedWith`, `rowsOf`, `joinedActBy`, `actsOf`,
-a row charged a constant (`l6Steps`), a dropped `@[csimp]` (`once_installed%`; `GrammarExamples` aborts without
-`closed`'s). Service plant, by hand: both `@[csimp]` of `closed`/`build` dropped, `ve_service` built and pinned with
+a row charged a constant (`l6Steps`), a dropped `@[csimp]` (`once_installed%`). Service plant, by hand: both `@[csimp]` of `closed`/`build` dropped, `ve_service` built and pinned with
 it: 5 deadline tests fail with `CheckerUnavailable` (named in the JSON). The task's two index seeds are N.A. (no index,
 item 1). "prepare rebuilt per step" cannot be planted as written (`Prepared.table` takes `P` once); rebuilt per row
 it adds about 10 ms per row at 128 frames, under the deadline.

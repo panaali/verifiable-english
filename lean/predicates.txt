@@ -115,6 +115,7 @@ module VE.Acts.LexicalProofs
 module VE.Acts.Linearize
 module VE.Acts.Meaning
 module VE.Acts.MeaningExamples
+module VE.Acts.ParseIndexExamples
 module VE.Acts.Read
 module VE.Acts.Readings
 module VE.Acts.ReadingsExamples
