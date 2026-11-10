@@ -1,3 +1,5 @@
+- `tests/test_senses_display.py` — The senses display (senses plan 2.8, B7; sn-b7 as cut by reviews/dri-decisions-20261101-sn-b7b8.md item 1): each candidate of an open unit is rendered under th…
+- `tests/test_senses_document.py` — RD-8 (readings-defaults plan, section 6): senses in `ve document`.
 - `tests/test_senses_lean.py` — Source checks of the senses layer in Lean (docs/spec/senses.md 5.2 and 5.3).
 - `tests/test_senses_pack.py` — Transport and provenance checks for the Python part of senses B2.
 - `tests/test_senses_packs.py` — The starter packs, their pins and the coverage measurement (senses plan B8, 7.2; sn-b8).
@@ -85,5 +87,3 @@
 - `tests/test_wire_contract_s5_lean.py` — Stage S5 item 1, the Lean side (docs/spec/wire-contract-s5.md 2.5, 5.2 and the fixtures of 8.1, 8.2, 8.6).
 - `tests/test_wire_contract_soft_lean.py` — The pilot contract soft-norms@0 in the Lean engine (`ve_diagnose soft-norms@0`), docs/spec/wire-contract.md section 6 and 8.3, against the hand-derived records…
 - `tests/test_wire_contract_three_way.py` — One submission compared with the spec record, Python and Lean engines.
-- `tests/test_wire_gate_corpus.py` — The soft-norms gate's corpus condition (wire loop final, wire2 loop): the gate replays every `soft-norms@0` input that the contract and soft tests submit, ever…
-- `tests/test_words.py` — F2 (qa-q2 review): one owner of situation and point wording (plan Q2.4).
