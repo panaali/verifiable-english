@@ -455,6 +455,11 @@ def twoStates : VE.FiniteModel String :=
   !selectsAt (plain (f13)) "nationality" twoStates ["S2", "P"] &&
   selectsAt (plain (f13 none)) "nationality" twoStates ["S2", "P"]
 
+-- `clauseSlot_wellFormed` at K3, K13 and F11: every premise of the slot checks at layer 0 of `correlate (plain D)`
+def slotChecks (D : ClauseDoc) : Bool :=
+  (clauseSlot D).all (·.check (VE.Norms.envAt (VE.SoftNorms.soften (VE.Rights.correlate (plain D))) 0) [])
+#guard slotChecks (cdoc k3) && slotChecks k13 && slotChecks f11 && (clauseSlot f11).length == 1
+
 -- F14 (UDHR u077 [6861, 6938), Art. 21(2)): the candidate with `country_of` (total null) plains through
 -- `plainContent`, the one without it is unchanged; a state that is not the person's country separates them
 #guard plainContent r21Doc.soft [("r21", "equal-access", k2)] (.right r21) ==
