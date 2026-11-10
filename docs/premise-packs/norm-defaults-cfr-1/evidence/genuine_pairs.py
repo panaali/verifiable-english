@@ -1,8 +1,9 @@
-"""norm-defaults-cfr-1 evidence: Lean's own norm-defaults status and certificate rows all pass `bind_answers`.
+"""norm-defaults-cfr-1 evidence: Lean's own status and certificate rows pass the row schema and the binding.
 
 Log: `PYTHONPATH=docs/premise-packs/norm-defaults-cfr-1/evidence NDLOG=<file> uv run pytest -p genuine_pairs ...`
 records every ok (case, row) the service returns for those kinds (after the schema check). Check:
-`uv run python docs/premise-packs/norm-defaults-cfr-1/evidence/genuine_pairs.py <file>` runs the binding on each.
+`uv run python docs/premise-packs/norm-defaults-cfr-1/evidence/genuine_pairs.py <file>` runs the row schema
+(`check_row`) and the binding (`_bind_norm_defaults`) of this tree on each.
 """
 import collections
 import json
@@ -28,13 +29,16 @@ if __name__ != "__main__":  # the pytest plugin
     service.check_response = _logged
 else:
     from ve.backends.lean_service import Invalid, _bind_norm_defaults
+    from ve.backends.service_schema import check_row
     counts, refused = collections.Counter(), []
     for line in open(sys.argv[1]):
         pair = json.loads(line)
         shape = "document" if "document" in pair["case"] else "norms"
-        acts = "acts@0" in pair["case"]["environment"].get("profiles", [])
-        counts[(pair["case"]["kind"], shape, "acts" if acts else "-")] += 1
+        profiles = pair["case"]["environment"].get("profiles", [])
+        layers = [p for p in ("soft-norms@0", "events@0", "rights@0", "acts@0") if p in profiles] or ["plain"]
+        counts[(pair["case"]["kind"], shape, "+".join(layers))] += 1
         try:
+            check_row("norm-defaults", pair["row"], pair["case"], 0)
             _bind_norm_defaults(pair["row"], pair["case"])
         except Invalid as exc:
             refused.append(str(exc))

@@ -5488,7 +5488,8 @@
           "COLLISION"
         ],
         "unknown": [
-          "UNKNOWN"
+          "UNKNOWN",
+          "unknown"
         ],
         "rejection": [
           "InvalidInput",
@@ -5559,7 +5560,7 @@
               "tuple": "case.tuple"
             },
             "uncounted": {
-              "rules": "the deciding author rules Lean selects; each names a rule of the request (ve/backends/lean_service.py bind_answers)",
+              "rules": "the deciding rules Lean selects: distinct, and rules of the request's norms (ve/backends/lean_service.py bind_answers) except under acts@0 or rights@0, whose rule names Lean generates (norm-defaults-cfr-1b)",
               "differs": "the atoms on which two UNDECIDED fillings differ"
             },
             "dispatch": [
