@@ -56,6 +56,7 @@ fixture or test) is therefore not met.
 | (1) Situation text, fix (A): with no situation supplied the line ends `situation exhibited: none supplied (not searched; budget 10000 unused)`. A supplied one still says `yes`, and the JSON fields are unchanged. | `Run.lean` `exhibitedText`, used by `conflictAnswerOf`; relay binding `ve/rights_route.py` `_bind_conflict`; docs/spec/rights.md 7.3 names the form and when it applies | `test_rights_conflict_free_without_a_situation_names_no_search` (condition test; it fails on main, whose line contains `UNKNOWN (budget`), RightsChecks.lean :61-:62 |
 | (2a) Count named (R3): `<j> weighing points open (colliding default pairs no ranking resolves)` | `Run.lean` `weighingGloss`; the relay binding; rights.md 7.3 | `test_rights_weighing_points_name_what_they_count` (condition test: count 1 and wording pinned on step 1's fixture), RightsChecks.lean :58 (0 coherence premises, 2 weighing points), :66 |
 | (2b) One owner of the count: WP(T) is `Wire.openCoherence`. The soft route's `openAfterClassification` is rebuilt on it (minus the pairs its evidence discharges as DISJOINT), and the soft line's `<j>` is that list's length; the duplicate `conditional.length` is gone. | `SoftNorms/Run.lean` `openAfterClassification`, `conflictFreeText` | `test_rights_and_soft_routes_count_the_same_weighing_points` (step 1's `plain` pair on both routes, from Lean's raw answers), SoftNorms/Run.lean :127 (`#guard`, `<k>` 1 and `<j>` 2) |
+| (2b) WP(T) under pair evidence, checked in Lean | lean/ResponseShape/Schemas/SoftPairsChecks.lean: four default rules, (a,b) and (c,d) disjoint with a DISJOINT certificate each (fixture written by `evidence/soft_pairs_fixture.py`) | `#guard`s :22-:26: with no evidence all four pairs are open (= `openCoherence`), with both certificates (a,d) and (b,c) are, with one certificate three are |
 | (3) The R1 delta test over saved evidence | `delta.json` (base and head lines, both forms) | `test_rights_no_search_delta_keeps_every_quoted_value` |
 | (3) Binding fuzz for the new words | the relay refuses the old line restored, the gloss dropped and the budget shifted | `test_a_mutated_no_search_line_is_refused` (3 cases) |
 | (4) Correction of rights-cfr-2's REPORT | docs/rights/rights-cfr-2/REPORT.md, its "Readings of 7.3" bullets on `<j>` and the budget, citing this item; its DELTA row 1 is annotated as amended | n/a |
@@ -77,6 +78,7 @@ compares Lean's raw `ve_service` line and the relayed line with it byte for byte
 | S4 | Python | ve/rights_route.py | the binder expects the old `UNKNOWN (budget …)` text | `test_rights_conflict_free_without_a_situation_names_no_search`: 1 failed |
 | S5 | Python | ve/rights_route.py | the binder drops the gloss | `test_rights_weighing_points_name_what_they_count`: 1 failed |
 | S6 | Lean | lean/VE/SoftNorms/Run.lean | the soft line's `<j>` back to `conditional.length` (the old duplicate) | SoftNorms/Run.lean :127 (`#guard`): `lake build VE.SoftNorms.Run` failed |
+| S7 | Lean | lean/VE/SoftNorms/Run.lean | `openAfterClassification` without the DISJOINT subtraction (`openCoherence` alone) | SoftPairsChecks.lean :24, :26: `lake build ResponseShape.Schemas.SoftPairsChecks` failed |
 
 Each one was restored after its run.
 
@@ -88,7 +90,13 @@ Each one was restored after its run.
 tools/trust-classes.json. The growth is recorded with `--allow` as "SIGNED by standing ruling R16 (DRI-RULINGS.md),
 rights-cfr-2-budget-1, 2026-11-10" (docs/trust-baseline.json). Each new definition is exercised by a `#guard` that its
 seeded bug fails: `exhibitedText` RightsChecks :61-:62 (S1), `weighingGloss` :62 and :66 (S2), `conflictFreeText`
-SoftNorms/Run.lean :127 (S6). The FOLLOW-UPS row asking for the ties pass is in `evidence/follow-ups-row.md`, and it
+SoftNorms/Run.lean :127 (S6), and `openAfterClassification` SoftPairsChecks :22-:26 (S7). The SoftPairsChecks
+definitions are T. The trust_mutants sweep is in `trust-mutants.json` (`mac-pytest.sh --trustmut -- --test
+lean/ResponseShape/Schemas/RightsChecks.lean --test lean/VE/SoftNorms/Run.lean --test
+lean/ResponseShape/Schemas/SoftPairsChecks.lean --rescore <first run>`, at 1b923e7651, cloud pool, exit 0). It ran 2
+definitions and 24 mutants: 24 KILLED, 0 SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED. The first sweep, without
+SoftPairsChecks, left all 17 list mutants of `openAfterClassification` alive, and that is why the check was added.
+The FOLLOW-UPS row asking for the ties pass is in `evidence/follow-ups-row.md`, and it
 is appended to FOLLOW-UPS.md.
 
 ## Notes
@@ -103,7 +111,7 @@ is appended to FOLLOW-UPS.md.
 - **No k ≠ j fixture from real certificates:** the RightsChecks guard at :58 uses a synthetic `uses` to get
   0 coherence premises with 2 weighing points. No real certificate that leaves an open pair unused was found (step 1).
 - **Size:** about 45 product lines (Run.lean +14/-7, SoftNorms/Run.lean +12/-5, rights_route.py +6/-3), 11 lines of
-  Lean checks, 3 lines of trust classes, about 100 lines of tests and 6 lines of spec. The rest is docs and evidence.
+  Lean checks, 13 lines of trust classes, about 100 lines of tests, a 27-line Lean check module (SoftPairsChecks) and 6 lines of spec. The rest is docs and evidence.
 
 ## Spec re-read
 
@@ -113,4 +121,27 @@ is appended to FOLLOW-UPS.md.
 
 ## Self-review against BUILDER-CHECKLIST
 
-(filled in after the checks; see the end of this file)
+SELF-REVIEW: 1 A, 5 B, 5 C; fixed 9. The A (the soft count was wrong, not different by design) and all five B findings
+(R16 record, spec and test wording, soft-route defect sent to the DRI, saved step-1 evidence, this section) are fixed,
+as are C4 (delta test pins the removed phrase) and C5 (`conflictBudget` docstring). C1 (no real k ≠ j fixture) is
+documented under Notes. C2 (`yes` direction) is covered by `test_rights_conflict_free_without_a_situation_names_no_search`
+and RightsChecks :55. C3 (F1 copy) is cited in DELTA row 1. The UNKNOWN-line interpolation half of C5 was reverted,
+because the encoder theorem states the literal.
+
+1. PASS. No new fields, and the schema is unchanged. The relay binds the whole line, and the fuzz
+   `test_a_mutated_no_search_line_is_refused` (3) plus the existing `test_a_mutated_conflict_report_part_is_refused` (17)
+   refuse each edit.
+2. PASS. Deliverables (1)-(4) are in the REPORT table; condition tests `test_rights_conflict_free_without_a_situation_names_no_search` and `test_rights_weighing_points_name_what_they_count`.
+3. PASS. Seeded bugs S1-S7, each failing its named check; trust_mutants 24 KILLED, 0 SURVIVOR.
+4. PASS. The Python binder reproduces Lean's line (`test_rights_conflict_free_report_evidence` compares the raw and the relayed line). Rust: N.A., not touched.
+5. PASS. No new names; `_bind_conflict` still binds labels and parts (`test_a_mutated_conflict_report_part_is_refused`).
+6. PASS. trust-mutants.json is at head 1b923e7651, and no Lean file changed after it. The gate runs on the final HEAD in the chain.
+7. PASS. Every DELTA row cites R1 or R3, and the trust growth is recorded under R16. No signature is reserved.
+8. PASS. DELTA rows 1-2; the soft `<j>` change and the spec amendment are in its preamble with the probe that shows no output moves.
+9. PASS. `select_tests.py --base f3f40d51dc` selects 463/581 units, including tests/test_rights_report_parts.py and the soft tests.
+10. PASS. No theorem is added or changed. `ResponseShape/Encoders/Rights.lean` still builds (the UNKNOWN literal was kept for it), and lean/audit.py passes.
+11. N.A. No limit or deadline changed; `budget` stays 10000 and three-valued verdicts are unchanged.
+12. N.A. `openAfterClassification` still classifies each colliding pair once; the only addition is a list filter.
+13. PASS. No test was removed or renamed.
+14. PASS. Both directions are tested (no situation → `none supplied`; a supplied one → `yes`), the evidence is saved under `evidence/`, and the spec re-read is above.
+15. PASS. Overclaim: "every JSON field unchanged" → `test_rights_conflict_free_without_a_situation_names_no_search` and `test_rights_conflict_free_report_evidence`; "no printed count changes" → `evidence/soft-count-probe.txt`. No deliverable was cut. Every new check can fail (S1-S7). Limits: N.A.
