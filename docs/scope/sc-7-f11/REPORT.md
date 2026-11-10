@@ -1,6 +1,6 @@
 # sc-7-f11: no sentence end hides inside a word (sc-7 recheck FOLLOW-UP F11)
 
-**Status: done; awaiting the chain gate. Code HEAD bbf0b6d67, then docs only.** Inside a word, a character outside
+**Status: done; awaiting the chain gate. Lean HEAD bbf0b6d67; test fix 617edc979; then docs only.** Inside a word, a character outside
 `clause`'s allow-list may now be followed only by a `follower`, so "the x.<U+1D159>The …" (also U+FFFC, U+E000) is
 refused. The DRI's decision 2026-11-10 adds: a Markdown character reference is refused too. Trust: V +22, R16. No DRI
 signature is reserved.
@@ -119,7 +119,7 @@ sc-7-f11, 2026-11-10". The ties-pass row is in FOLLOW-UPS.md under "## sc-7-f11"
   - It recorded 417 units, then stopped early at `--maxfail 5` with 51 units not run.
   - The failure was `tests/test_scope_lean.py::test_every_trusted_scope_definition_is_used_by_a_theorem` and the four
     tests derived from it. That test lists the Authoring definitions no theorem states, and it did not name the three
-    new ones. Commit 4th from the end ("name the new Authoring definitions ...") adds them.
+    new ones. Commit 617edc979 adds them.
   - The rerun was `mac-pytest.sh -- tests/test_scope_lean.py` plus the 51 units that did not run: "1789 passed in
     1246.94s", exit 0.
   - The selection is wide (468 units) because `tools/trust-classes.json`, `lean/declarations.txt` and the regenerated
