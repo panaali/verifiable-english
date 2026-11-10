@@ -20656,8 +20656,7 @@
         "VE.Readings.SoftSupWireExamples.framedT",
         "VE.Readings.SoftSupWireExamples.framedItems",
         "VE.Readings.SoftSupWireExamples.NSDsets",
-        "VE.Readings.SoftSupWireExamples.NSDcands",
-        "VE.Readings.SoftSupWireExamples.firstConjunct"
+        "VE.Readings.SoftSupWireExamples.NSDcands"
       ]
     },
     "VE/Presupposition/Events.lean": {
