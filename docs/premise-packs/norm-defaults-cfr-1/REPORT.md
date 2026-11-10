@@ -36,12 +36,13 @@ rule binding). The plan is the code on main; base de7fb9469 (`git merge-base HEA
 - **Not bound** (Lean's to choose): which request rules decide (an empty `rules` is a genuine answer: UNKNOWN, or a
   point its default settles), `differs`, and a request rule of another predicate (it exists in the request).
 
-## Fails on main, passes on HEAD
+## First-commit comparison with main
 
 At the first commit ad53a4859, with `git show main:ve/backends/lean_service.py` in place of the branch's client:
 `uv run pytest -q -p no:cacheprovider tests/test_norm_defaults_response_binding.py` gave
 `17 failed, 1 passed` (evidence/on-main.txt: every forged row and the manifest test; the pass is the genuine-answer
-test). The manifest test fails on main's manifest alone (kinds `["admission"]`). On HEAD: "Test runs".
+test). The manifest test fails on main's manifest alone (kinds `["admission"]`). The final test added forgeries
+after that run, so this evidence does not claim that every final test was run against main. On HEAD: "Test runs".
 
 ## Genuine answers
 
@@ -69,6 +70,12 @@ Each planted, run, seen to fail, and restored (`git checkout`; Lean ones then re
 | S6 | lean/ResponseShape/Schemas/NormDefaults.lean | `.equals "/tuple"` removed | T::test_norm_defaults_response_binding[status-tuple-other_entity] (FAILED: DID NOT RAISE) |
 | S7 | lean/ResponseShape/Schemas/NormDefaults.lean | `.uniqueStrings` removed | T::test_norm_defaults_response_binding[status-rules-duplicated] (FAILED) |
 | S8 | ve/assurance-manifest.json | the `norm-defaults-gaps` binding removed | T::test_the_manifest_lists_every_kind_the_mode_answers (FAILED) |
+| S9 | ve/backends/lean_service.py | missing or malformed `profiles` exempts rule names | T::test_status_rule_binding_without_generated_profile (4 FAILED before fix, 6 passed after) |
+| S10 | lean/ResponseShape/Schemas/NormDefaults.lean | `.equals "/tuple"` removed and schema regenerated | T::test_status_tuple_schema_binds_request_without_service (FAILED: DID NOT RAISE; passed after restore) |
+| S11 | conformance/binding_probes.py | `norm-defaults-gaps` probe removed | tests/test_assurance_manifest.py::test_every_lean_binding_has_a_probe (FAILED: missing key; passed after restore) |
+
+S9–S11 are also recorded in `seeded-mutants.json`. S10 was run by invoking the test function directly to avoid a
+native-build lock while the Lean schema was deliberately mutated; the final pytest run covers the restored source.
 
 ## Test runs
 
