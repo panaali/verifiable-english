@@ -80,7 +80,7 @@ def proofTask (ctx : Context) (s : String) : Option Outcome :=
           | _ => .refused Texts.missingObligation Texts.proofAct
         | none => .ofText Texts.queryMismatch
 
-/-- The public entry for `english.command` (A3). Source-wrapper integration is deferred to ci-2b. -/
+/-- The one public entry (A3): the `english.command` mode and the source wrapper both call it. -/
 def readInstruction (ctx : Context) (s : String) : Outcome :=
   (proofTask ctx s).getD (readCommand ctx.se ctx.sc ctx.E ctx.L ctx.b s)
 

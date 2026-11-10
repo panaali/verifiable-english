@@ -669,7 +669,7 @@ theorem elaborate_plain (environment document : Lean.Json) (D : ClauseDoc)
     rw [ok_bind hfold']
     have hv : VE.Rights.validateRightsOnce (plain ⟨⟨⟨re.se.ne.rv.environment, re.se.ne.rv.literals, re.se.soft,
         ⟨re.se.ne.regulated, [], us.outside⟩⟩, re.block, us.rs, us.limits, us.bars, us.cites, some us.order,
-        us.sourceUnits.getD []⟩, lines, []⟩) = .ok () := by
+        us.sourceUnits.getD [], []⟩, lines, []⟩) = .ok () := by
       rw [VE.Rights.validateRightsOnce_eq]
       unfold VE.Rights.WellFormedRights at hp
       split at hp

@@ -1,5 +1,9 @@
 {
   "modes": {
+    "act-readings": [
+      "VE.Acts.Run",
+      "VE.Route.Run"
+    ],
     "alternatives": [
       "VE.Alternatives.Run",
       "VE.Route.Run"
@@ -178,8 +182,8 @@
     ]
   },
   "sources": {
-    "lean/VE/Service/Protocol.lean": "3b7152695166cd4ecbed05a291f6c23913717a9a64dd04efa0539492af38e365",
-    "lean/VE/Service/Registry.lean": "1697a675540771492c84808d37db66ddd4be06aa288f9b0d3a2132ee9f7b88f7",
+    "lean/VE/Service/Protocol.lean": "bf6e10c4f5856a2457fe91fae0818a876d727142aae7cf832709a26b212e0f0f",
+    "lean/VE/Service/Registry.lean": "1db75b98ae13a06d5f6ce8614aa2f6d8b2b7698fcc5f187f4800285f9bfd863e",
     "tools/lean_mode_deps.lean": "50dc1459ef617a9ca489fd9a5068a5b875a48c661f3cf6ac573f6a157950c8e7"
   }
 }

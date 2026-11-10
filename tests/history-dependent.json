@@ -257,6 +257,16 @@
    ]
   },
   {
+   "test": "tests/test_ci2b_ab.py",
+   "why": "starts git in docs/commands-imperatives/ci-2b/evidence/ab.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "docs/commands-imperatives/ci-2b/evidence/ab.py:run.<locals>.<lambda>: git"
+   ]
+  },
+  {
    "test": "tests/test_ci_workflow.py",
    "why": "starts git in tests/test_ci_workflow.py",
    "recorded": [
@@ -403,7 +413,27 @@
    ]
   },
   {
+   "test": "tests/test_events_answer.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
    "test": "tests/test_events_route.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_events_wordings.py",
    "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
    "recorded": [
     "source"
@@ -1043,6 +1073,16 @@
    "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
    "recorded": [
     "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_norm_defaults_response_binding.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
     "source"
    ],
    "via": [

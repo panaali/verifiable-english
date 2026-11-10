@@ -14,8 +14,8 @@ Branch `feature/pk-1c`, base `main` 2d84b832c. Spec: `docs/spec/premise-packs.md
 | --- | --- | --- |
 | (1) the repaired theorem, proved, with the DRI's text exactly | yes. The proof is pk-1's candidate (e415f9c32), ported onto `main` without changes. The keys of `condKeys` are distinct (`checkRights` refuses repeated limitation and condition names, and `limActs` is deduplicated). A label is read from the right: condition names are identifiers, the kind word has no `:`, and by `hk` the act key has none, so the rest is the limitation name. Soft labels begin with `s`, rights labels with `r` | `lean/VE/NormDefaults/PacksLabels.lean:342` |
 | (2a) F1′'s guards stay, including the refusal `InvalidInput: premise label … is used twice` | yes, unchanged | `PacksLegacyExamples.lean:121–129` |
-| (2b) a lemma that `VE.Bridge.identifier` refuses a name containing `:` | `bridge_identifier_sep`. `legacy_labels_nodup_of_identifiers` discharges `hk` from it: when every act key passes the route's identifier check, the labels are distinct | `PacksLabels.lean:280`, `:392` |
-| (2c) kernel fixtures on both sides of the new checks | `hk` fails on `cx`, and holds on the six well-formed sources (whose act keys are route identifiers and whose labels are distinct). One source has non-empty `condKeys`. `VE.Bridge.identifier` accepts `p`, `q`, `p9`, `p_q`, `publish_about_permitted` and a 64-byte name. It refuses `:` at the start, middle and end, `x:p`, `p;` (`;` is the character just after `:`), the empty name, `P`, `9p` and a 65-byte name | `PacksLegacyExamples.lean:131–141` |
+| (2b) a lemma that `VE.Bridge.identifier` refuses a name containing `:` | `bridge_identifier_sep`. `legacy_labels_nodup_of_identifiers` discharges `hk` from it: when every act key passes `VE.Bridge.identifier`, the labels are distinct | `PacksLabels.lean:280`, `:392` |
+| (2c) #guard fixtures (compiled evaluator) on both sides of the new checks | `hk` fails on `cx`, and holds on the six well-formed sources (whose act keys pass `VE.Bridge.identifier` and whose labels are distinct). One source has non-empty `condKeys`. `VE.Bridge.identifier` accepts `p`, `q`, `p9`, `p_q`, `publish_about_permitted` and a 64-byte name. It refuses `:` at the start, middle and end, `x:p`, `p;` (`;` is the character just after `:`), the empty name, `P`, `9p` and a 65-byte name | `PacksLegacyExamples.lean:131–141` |
 | (3) seeded bugs | section 2 | `docs/premise-packs/pk-1c/mutants.json` |
 
 `legacy_labels_nodup` is neither stated nor built in `lean/`. No other statement changes. The spec stub and
@@ -79,7 +79,7 @@ and Rust product code are unchanged.
   - `pk_rights_inj` :298 (reading a rights label from the right)
   - `pk_keyPremise` :311
   - `legacy_labels_nodup_of_actKeys` :342 (the DRI's statement)
-  - `legacy_labels_nodup_of_identifiers` :392 (the route discharge)
+  - `legacy_labels_nodup_of_identifiers` :392 (labels distinct under the hypothesis `hk` that every act key passes `VE.Bridge.identifier`; the decoded route does not yet discharge `hk`: its decoder checks `Surface.identifier`)
 - `lean/VE/NormDefaults/PacksLegacyExamples.lean`: F1′ (`cx`) :102–129, the `hk` fixtures :131–136 and the `VE.Bridge.identifier` fixtures :137–141.
 - `docs/premise-packs/pk-1c/{DELTA.md,mutants.json,REPORT.md}`: the evidence.
 - Regression: `cd lean && PATH=~/.elan/bin:$PATH lake build VE.NormDefaults.PacksLegacyExamples`; `uv run pytest -q tests/test_packs_guard_mutants.py`; `python3 lean/audit.py`.

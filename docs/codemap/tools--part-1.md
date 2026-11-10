@@ -40,6 +40,7 @@
 - `tools/inventory_lint.py` — Gate 2 inventory lint: no retained code imports a class-A body.
 - `tools/lake_output_hash.lean` — (no module docstring)
 - `tools/lake_outputs.py` — Lake's executables as they are on disk, not as their traces say (finding class 13: a stale binary).
+- `tools/layer_declarations.py` — List every in-module layer declaration, Lean and Python, with its layer and reason; refuse a malformed one.
 - `tools/layer_policy.py` — Single source of truth for the five repository layers.
 - `tools/lean_decided_share.py` — The Lean-decided share of a document (docs/spec/readings-defaults.md 1.10 and 10; plan 3.9 and RD-5): display only.
 - `tools/lean_dump_cache.py` — A content-keyed cache of the two Lean dumps of `tools/regen_generated.py`: `cached`.
@@ -61,7 +62,9 @@
 - `tools/mutation_check.py` — Prove excluded tests stay green for one detectable fault per layer.
 - `tools/nested_pytest.py` — The one builder of a pytest command that another process runs: a test, the gate, or a tool.
 - `tools/numbers_phrases.py` — Write the shared comparison phrase table from its Lean owner.
+- `tools/path_expressions.py` — The path a Python expression builds, as far as its own file says: the one evaluator of path expressions.
 - `tools/platform_contract.py` — The x86 platform contract suite (test-architecture plan, rank 2, section 3.3).
+- `tools/presupposition_table.py` — Write or check `lean/VE/Presupposition/Table.lean`, PS-E1's candidate table as Lean's `candidateTable`.
 - `tools/profile_table.py` — Write `ve/profile_table.json` from its Lean owner, `VE.Compose.profileTable` (AR-10).
 - `tools/pytest_profile.py` — Pytest plugin: where a test run's time goes (docs/testing-profile.md).
 - `tools/quarantine.py` — The tracked quarantine of tests that fail under machine load: tools/test-quarantine.json.
@@ -93,7 +96,3 @@
 - `tools/since_pass.py` — Select against the branch's last passing tree, not against main (test-speed plan, batch B3).
 - `tools/source_graph.py` — Static dependency graph of the repository's Python files, Lean modules and tests.
 - `tools/source_words_export.lean` — (no module docstring)
-- `tools/stage2_parity.py` — Gate 2 parity: rerun the Stage 0 probe matrix under a backend authority and diff it.
-- `tools/test_chunks.py` — Which tests of one test file a chunk runs: the one rule that splits a file's collected tests into k parts.
-- `tools/test_layer_policy.py` — Boundary checks for the selector's non-import dependencies and fallback.
-- `tools/test_map.py` — Record and load the per-test coverage map used by tools/select_tests.py.

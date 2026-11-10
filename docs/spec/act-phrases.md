@@ -584,19 +584,23 @@ Stated against AR-10's interface as the synthesis writes it (SYNTHESIS 2.2: `Pro
               ("ve.discourse@1", "UnsupportedProfile: acts@0 with ve.discourse@1 is not implemented")],
   slot := "decoder" }    -- a decoding extension of norms@0, like data@0 and definitions@0
 
--- its composition theorem: acts@0 changes no route
+-- its composition theorem: acts@0 changes no route, and the speech route is one it may join
 theorem gate_acts (ps : List String) (h : "acts@0" ∈ ps) (r : VE.Compose.Route)
     (hg : VE.Compose.gateOf VE.Compose.profileTable ps = .ok r) :
     VE.Compose.gateOf VE.Compose.profileTable (ps.erase "acts@0") = .ok r ∧
-      (r = .norms ∨ r = .normDefaults ∨ r = .readings)
+      (r = .norms ∨ r = .normDefaults ∨ r = .readings ∨ r = .speechActs)
 ```
 
 `gate_acts` keeps `.readings`, but from AP-3 on the readings route admits only the acts AP-1 accepts: its frame decoder
 refuses a joined act (D-33, `readings_lexical_only`, 6.4), because nothing elaborates the candidates of a reading set
 (SR8). The refusals cover every decoder `acts@0` does not hook (finding F2): the soft and rights chains and the
 alternatives route decode norms with their own extensions, and the closure and order families use
-`Plain.decodeRegulatedAll` on the family route. `speech-acts@0` and `reports@0` already exclude `acts@0` (the speech-acts allowlist; reports refuse
-`norms@0`). Python reads the generated table; no `ve/profiles.py` row is written by hand.
+`Plain.decodeRegulatedAll` on the family route. `reports@0` excludes `acts@0` (reports refuse `norms@0`). The speech route
+decodes its regulated declarations with the norms decoder, `acts@0`'s hook on, on the environment without the speech
+block (`decode_acts_compatible`, commands-imperatives 9), so `gate_acts` keeps `.speechActs`, for simple acts only: every
+act of a decoded speech environment passed AP-1's `check` and is `Lexical.joinFree` (`command_act_simple`), and a joined act
+is refused at its declaration. Admitting joined acts there is a later statement review (DRI 2026-10-28, commands-imperatives
+item 3(b)). Python reads the generated table; no `ve/profiles.py` row is written by hand.
 
 ## 5. AP-2: Lean statements (the act grammar)
 

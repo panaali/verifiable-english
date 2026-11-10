@@ -197,7 +197,7 @@ def decodeClauseDoc (environment document : Json) : Except String ClauseDoc := d
   if units.length > 1024 then throw "ResourceLimit: units"
   let (lines, us) ← units.foldlM (headStep re.se) ([], {})
   pure ⟨⟨⟨re.se.ne.rv.environment, re.se.ne.rv.literals, re.se.soft, ⟨re.se.ne.regulated, [], us.outside⟩⟩,
-    re.block, us.rs, us.limits, us.bars, us.cites, some us.order, us.sourceUnits.getD []⟩, lines, []⟩
+    re.block, us.rs, us.limits, us.bars, us.cites, some us.order, us.sourceUnits.getD [], []⟩, lines, []⟩
 
 /-! ## The plained document (8.5) -/
 
