@@ -110,6 +110,17 @@ def test_candidates_and_readings_name_the_active_set_in_order(lean_lines):
     assert lines["plain"]["candidates"] == lines["plain"]["readings"] == lines["plain"]["active_kinds"] == []
 
 
+def test_the_view_guards_hold_on_the_lean_scope_fixtures():
+    """`view_guards.lean`'s `#guard`s (the trust-mutant sweep's `--test` file) hold."""
+    lake = shutil.which("lake")
+    if lake is None:
+        pytest.skip("lake is not available")
+    lean_build("VE")
+    done = subprocess.run([lake, "env", "lean", str(EVIDENCE / "view_guards.lean")], cwd=LEAN, capture_output=True,
+                          text=True, timeout=HANG_TIMEOUT)
+    assert done.returncode == 0, done.stdout
+
+
 def _spec_check(*source: str) -> int:
     return subprocess.run([sys.executable, "-B", str(EVIDENCE / "spec_text_check.py"), *source], cwd=ROOT,
                           capture_output=True, text=True, timeout=HANG_TIMEOUT).returncode
