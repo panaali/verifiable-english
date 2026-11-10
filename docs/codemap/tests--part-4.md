@@ -1,3 +1,7 @@
+- `tests/test_judgments_undeclared.py` — The `document` mode's `undeclared_evaluative` field (judgment-terms-PLAN.md JT-3, part jt-3a; docs/spec/ judgment-terms.md 7, 8.4 and 11.7): Lean's list of the…
+- `tests/test_lake_outputs.py` — tools/lake_outputs.py: an executable whose Lake trace does not record the file beside it is stale (rd-6b review B2: an older `ve_conformance` under a trace cop…
+- `tests/test_lean_audit_record.py` — The committed axiom audit record `lean/axioms.txt` names every theorem, and the audit refuses a stale one.
+- `tests/test_lean_authority_values.py` — No reported evaluation value or count is Rust's (lean-first batch 15b, review B3; batch 18: Lean is the one authority).
 - `tests/test_lean_budget_types.py` — Present replay budgets must never silently become the default.
 - `tests/test_lean_build.py` — `tests/lean_build.py`: a fixture naming a Lean target the lakefile lacks fails, prebuilt or not.
 - `tests/test_lean_certificates.py` — The Python prover searches; the independently proved Lean checker decides.
@@ -58,6 +62,7 @@
 - `tests/test_norm_defaults.py` — norm-defaults@0 fixtures (docs/spec/norm-defaults.md section 9), Python side.
 - `tests/test_norm_defaults_contract.py` — The `norm-defaults@0` wire table in shadow (wire-contract-s5.md 2.4, 8.2): `UnspecifiedDocument` still owns the verdict; the Python engine names the first chec…
 - `tests/test_norm_defaults_differential.py` — norm-defaults@0 evidence against brute force (docs/spec/norm-defaults.md 2.5, 3.1, 8).
+- `tests/test_norm_defaults_documented_support.py` — The norm-defaults spec's profile-validation claims with `norm-defaults@0` agree with Lean's `todayGate`.
 - `tests/test_norm_defaults_layered.py` — norm-defaults@0 on the soft and rights routes, in Lean (lean-first batch 10a; docs/spec/norm-defaults.md 2.3 and 3.3; lean/VE/NormDefaults/Layered.lean).
 - `tests/test_norm_defaults_relay_english.py` — The English display formats the Lean accepted norm-defaults rows and nothing else.
 - `tests/test_norm_defaults_report.py` — norm-defaults@0 report in Lean (lean-first batch 10a; docs/spec/norm-defaults.md 3.2 and 5).
@@ -80,11 +85,3 @@
 - `tests/test_p1_amendment11.py` — Budget choice and two-turn execution/analysis, without provider calls.
 - `tests/test_p1_amendment12.py` — Ceiling-driven judge substitution: budgets, routing, reuse and disclosure.
 - `tests/test_p1_amendment13.py` — Audited abstentions, gate scope, zero-generation reuse and strict bounds.
-- `tests/test_p1_amendment14.py` — Attacker accounting recovery, exact scored reuse, and partial initial analysis.
-- `tests/test_p1_amendment15.py` — Amendment 15 recovery, bounded visible text, and append-only paid resume (offline).
-- `tests/test_p1_amendment7.py` — Amendment 7: entirely offline dispatch, restart and partial-panel evidence.
-- `tests/test_p1_amendment8.py` — Amendment 8 contract, pricing, recovery, fallback and budget regressions; $0.
-- `tests/test_p1_amendment9.py` — Computed joint bounds and attacker truncation isolation; no provider calls.
-- `tests/test_p1_history.py` — Historical request provenance stays separate from current checker identity.
-- `tests/test_p1_infrastructure.py` — Amendment 5: offline transport failures, no paid/network calls.
-- `tests/test_p1_native_counter.py` — Offline native-counter tests: pinned templates, no downloads or providers.

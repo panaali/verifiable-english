@@ -509,6 +509,8 @@ module VE.Order.WireGate
 module VE.ParserContracts
 module VE.Paths
 module VE.Presupposition.Agree
+module VE.Presupposition.Events.Examples
+module VE.Presupposition.Events
 module VE.Presupposition.Examples
 module VE.Presupposition.Frame
 module VE.Presupposition.Reading
