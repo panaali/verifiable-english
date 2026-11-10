@@ -3569,10 +3569,12 @@
         "VE.EnglishGrammar.advWords",
         "VE.EnglishGrammar.advice",
         "VE.EnglishGrammar.adviceRows",
+        "VE.EnglishGrammar.adviceTable",
         "VE.EnglishGrammar.aw",
         "VE.EnglishGrammar.negExistText",
         "VE.EnglishGrammar.pluralText",
-        "VE.EnglishGrammar.riskConditionText"
+        "VE.EnglishGrammar.riskConditionText",
+        "VE.EnglishGrammar.sourceWordAdvice"
       ]
     },
     "VE/EnglishGrammar/Catalogue.lean": {
@@ -16662,20 +16664,39 @@
       "G[V]": [
         "VE.EnglishGrammar.SourceWordKind.toJson",
         "VE.EnglishGrammar.SourceWordRow.toJson",
-        "VE.EnglishGrammar.sourceWordsJson"
+        "VE.EnglishGrammar.eventsDaysAdvice",
+        "VE.EnglishGrammar.eventsFixed",
+        "VE.EnglishGrammar.eventsLinkAdvice",
+        "VE.EnglishGrammar.eventsReadingSets",
+        "VE.EnglishGrammar.eventsReadings",
+        "VE.EnglishGrammar.eventsRefusal",
+        "VE.EnglishGrammar.eventsRefusals",
+        "VE.EnglishGrammar.eventsRow",
+        "VE.EnglishGrammar.eventsStateAdvice",
+        "VE.EnglishGrammar.eventsUntilAdvice",
+        "VE.EnglishGrammar.sourceWordsJson",
+        "VE.EnglishGrammar.untilEventReadings",
+        "VE.EnglishGrammar.withinDateReadings"
       ]
     },
     "VE/EnglishGrammar/SourceWordsExamples.lean": {
       "T": [
         "VE.EnglishGrammar.SourceWordsExamples.a",
+        "VE.EnglishGrammar.SourceWordsExamples.adviceOf",
         "VE.EnglishGrammar.SourceWordsExamples.b",
         "VE.EnglishGrammar.SourceWordsExamples.base",
+        "VE.EnglishGrammar.SourceWordsExamples.ev",
+        "VE.EnglishGrammar.SourceWordsExamples.eventsOf",
+        "VE.EnglishGrammar.SourceWordsExamples.eventsWordings",
+        "VE.EnglishGrammar.SourceWordsExamples.exportedAdvice",
         "VE.EnglishGrammar.SourceWordsExamples.kindFixedJson",
         "VE.EnglishGrammar.SourceWordsExamples.kindReadingJson",
         "VE.EnglishGrammar.SourceWordsExamples.kindRefuseJson",
+        "VE.EnglishGrammar.SourceWordsExamples.otherProfileWordings",
         "VE.EnglishGrammar.SourceWordsExamples.reading",
         "VE.EnglishGrammar.SourceWordsExamples.refusal",
-        "VE.EnglishGrammar.SourceWordsExamples.rowJson"
+        "VE.EnglishGrammar.SourceWordsExamples.rowJson",
+        "VE.EnglishGrammar.SourceWordsExamples.twelve"
       ]
     },
     "VE/Service/SoftSourceExamples.lean": {
