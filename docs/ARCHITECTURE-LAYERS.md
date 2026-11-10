@@ -23,7 +23,8 @@ The exact assignments, including exceptions to these patterns, live in
 [`tools/layer_policy.py`](../tools/layer_policy.py). A Python package's row places every module in it, so a new
 module in `ve/backends/`, `ve/document/` or `ve/assist/` needs no row; a longer row overrides it (the
 `ve.backends` modules that encode containers, read English or are routes). A new top-level Python module and a
-new Lean module must be classified there; `tools/check_python_layers.py` (which generates `.importlinter` and
+new Lean module must be classified: by a declaration on its own first line (below), which a new module should use,
+or there; `tools/check_python_layers.py` (which generates `.importlinter` and
 runs `import-linter`) and `tools/test_layer_policy.py` fail on any unclassified module in `ve/` or `lean/`. A new route or service executable needs no entry:
 its `lakefile.toml` root, or a top-level `*Main` module, is tool layer by rule. Rust's two crate boundaries are in
 [`tools/check_rust_deps.py`](../tools/check_rust_deps.py). The desired future
@@ -57,6 +58,26 @@ modules. This cross-language mismatch is recorded, not resolved
 ([plan 2](ARCHITECTURE-LAYERS-PLAN2.md), open question 9).
 The Lean service is a tool-layer Lean module; its Python client (`ve.backends.lean_service`) and the relay
 are Python's layer 1.
+
+### A module's own layer declaration
+
+A module whose layer its name rules do not give declares it on its own first line, so the exception shows in the
+module's own diff and a family branch edits only its own files:
+
+- Lean: `-- ve-layer: <1-5> (<reason>)`, a full-line comment, so the header keeps the plain layout
+  (`tools/check_lean_imports.py`, PLAIN_LAYOUT).
+- Python: `# ve-layer: <1-5> (<reason>)` on the first line of a module, or of a package's `__init__.py` (it places
+  every module of the package, as a table row does; a longer row or declaration overrides it).
+
+`tools/layer_policy.py` reads the declaration before its name rules (`lean_layer`, `python_layer`), as text: no Lean
+build and no service. A declaration is as strict as a table entry. It is refused, with a message naming the file and
+line, when it is malformed, gives no reason, names a layer other than 1 to 5, stands anywhere but the first line,
+or contradicts a role rule: Lean's aggregation and audit targets (layer 5), entry points, `*.Run` runners,
+`VE.Service.*` and `ResponseShape*` (layer 4), Python's app areas (layer 5) and root packages (no layer). A Python
+row may not be both declared and in the `PYTHON` table. The Lean and Python layer checks, the pre-commit hook (on
+the staged files) and test selection read the declarations; the outward-import and unmapped-module messages name
+the declaration as the way to classify a module. `uv run python tools/layer_declarations.py` lists every
+declaration with its layer and reason, the reviewers' view; it exits 1 on a refused one.
 
 ## Tests and non-import dependencies
 
