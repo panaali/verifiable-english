@@ -143,6 +143,8 @@ import VE.Presupposition.Agree
 import VE.Presupposition.Wire
 import VE.Presupposition.Table
 import VE.Presupposition.Examples
+import VE.Presupposition.Events
+import VE.Presupposition.Events.Examples
 import VE.RightClauses.Tree
 import VE.RightClauses.Plain
 import VE.RightClauses.Relation
