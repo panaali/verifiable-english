@@ -35,7 +35,7 @@ whose `actions_version` main had left at 45 (now 47).
 
 ## Seeded bugs (each planted alone, shown failing, restored)
 
-Python (`/tmp/e3b_seed.py` runs each with its test):
+Python (`/tmp/e3b_seed.py` runs each with its test; recorded in `seeded-bugs.json`, re-run at `d15500d98`, all caught):
 1. `ve/norm_english.py` `statement_class`: a Lean refusal of a Python-admitted text classed `both-refuse` (spec 9):
    `test_a_lean_refusal_is_classed_by_python_outcome` fails (8 cases).
 2. `ve/norm_english.py`: the `lean-unavailable` test placed after the other rows, where no answer reaches it (spec 9):
