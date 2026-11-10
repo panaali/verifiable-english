@@ -18,5 +18,19 @@
  {"id": 5, "language": "lean", "file": "lean/VE/SoftNorms/Wire.lean", "definition": "softDefault",
   "mutant": "hard: true read as the default in place of hard: false",
   "test": "#guard lean/VE/Service/Document.lean:177", "result": "killed (build fails)",
-  "evidence": "docs/rights/rights-cfr-1/evidence/seeded-5.txt"}
+  "evidence": "docs/rights/rights-cfr-1/evidence/seeded-5.txt"},
+ {"id": 6, "language": "python", "file": "ve/readings.py", "definition": "rights_meaning_id",
+  "mutant": "read the request id instead of Lean's identity_id from the relayed row",
+  "test": "tests/test_rights_meaning_id.py::test_rights_identity_is_relayed_from_lean", "result": "killed (KeyError)",
+  "evidence": "docs/rights/rights-cfr-1/evidence/review-seeded-python.txt"},
+ {"id": 7, "language": "lean", "file": "lean/VE/Rights/Wire.lean", "definition": "rightsMeaningId",
+  "mutant": "list-drop-first removes environment_id from the digest input",
+  "test": "#guard in lean/VE/Rights/Wire.lean; tests/test_rights_meaning_id.py::test_rights_meaning_id_binds_environment",
+  "result": "killed by trust_mutants sweep",
+  "evidence": "docs/rights/rights-cfr-1/trust-mutants.json"},
+ {"id": 8, "language": "lean", "file": "lean/ResponseShape/Schemas/Identity.lean", "definition": "row",
+  "mutant": "list-drop-middle removes rights-meaning from the identity kind enum",
+  "test": "#guard in lean/ResponseShape/Schemas/Identity.lean; tests/test_rights_meaning_id.py::test_rights_identity_row_is_typed_and_bound",
+  "result": "killed by trust_mutants sweep",
+  "evidence": "docs/rights/rights-cfr-1/trust-mutants.json"}
 ]
