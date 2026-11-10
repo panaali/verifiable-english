@@ -110,7 +110,7 @@ GENERATED = (
     Generated("purposes-fault-catalogue", ("conformance/wire-contract/purposes@0-catalogue.json",),
               ((PY, "-m", "conformance.wire_contract_faults", "--unit", "purposes@0"),),
               ((PY, "-m", "conformance.wire_contract_faults", "--check", "--unit", "purposes@0"),),
-              note="the index of the refused examples of ve/wire_contract/examples/purposes@0"),
+              note="the index of the refused examples of ve/wire_contract/examples/purposes@0", service="write"),
     Generated("wire-contract",
               ("lean/VE/WireContract/Limits.lean", "lean/VE/WireContract/Names.lean",
                "lean/VE/WireContract/Tables/*.lean", "ve/wire_contract/contracts.lock",
