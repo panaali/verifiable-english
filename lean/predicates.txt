@@ -124,6 +124,8 @@ module VE.Acts.Run
 module VE.Acts.RunExamples
 module VE.Acts.Situation
 module VE.Acts.Sources
+module VE.Acts.Specialise
+module VE.Acts.SpecialiseExamples
 module VE.Acts.Syntax
 module VE.Acts.Table
 module VE.Acts.TableExamples
@@ -262,8 +264,10 @@ module VE.Commands.Read
 module VE.Commands.Run
 module VE.Commands.RunExamples
 module VE.Commands.RunSplit
+module VE.Commands.SplitOnLemmas
 module VE.Commands.Steps
 module VE.Commands.StepsExamples
+module VE.Commands.StepsProofs
 module VE.Commands.Texts
 module VE.Compose.Adjoin
 module VE.Compose.Content
@@ -505,6 +509,9 @@ module VE.Order.Wire
 module VE.Order.WireGate
 module VE.ParserContracts
 module VE.Paths
+module VE.Presupposition.Admit.Facts
+module VE.Presupposition.Admit.Statements
+module VE.Presupposition.Admit
 module VE.Presupposition.Agree
 module VE.Presupposition.Examples
 module VE.Presupposition.Frame
@@ -573,6 +580,9 @@ module VE.Readings.SoftSeparate
 module VE.Readings.SoftSeparateExamples
 module VE.Readings.SoftSup
 module VE.Readings.SoftSupExamples
+module VE.Readings.SoftSupLabels
+module VE.Readings.SoftSupWire
+module VE.Readings.SoftSupWireExamples
 module VE.Readings.SoftVerdicts
 module VE.Readings.SoftWire
 module VE.Readings.Stage
@@ -683,6 +693,8 @@ module VE.Scales.Intended
 module VE.Scales.Premises
 module VE.Scales.Syntax
 module VE.Scales.Theorems
+module VE.Scope.Authoring
+module VE.Scope.AuthoringExamples
 module VE.Scope.EffectLemmas
 module VE.Scope.Effects
 module VE.Scope.English
@@ -889,6 +901,7 @@ VE.Ask.checkedWitnessRow@VE.Ask.Lines
 VE.Attitudes.AFormula.denote@VE.Attitudes.Semantics
 VE.Attitudes.AWellFormed@VE.Attitudes.Syntax
 VE.Attitudes.AttModel.J@VE.Attitudes.Semantics
+VE.Attitudes.Examples.Forced@VE.Attitudes.Examples
 VE.Attitudes.Intended@VE.Attitudes.Semantics
 VE.Attitudes.SettledAsX@VE.Attitudes.Route
 VE.Attitudes.UnsaidFree@VE.Attitudes.Route
