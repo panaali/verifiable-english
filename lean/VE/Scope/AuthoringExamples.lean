@@ -227,9 +227,9 @@ def slotsJoined (e : String) : List String :=
 -- the other direction: a "." inside a word before an allow-listed character or a closer stays in its slot
 #guard [".", ".)", "”"].all fun e => (slotsJoined e).all fun w => (parseGovernor w).isSome
 #guard trip "The hard constraints apply only where the dose is over 3.5 mg, e.g in a trial." "{\"reach\": {\"list_name\": \"the hard constraints\"}, \"effect\": {\"reguard\": [\"and\", \"own\", {\"english\": \"the dose is over 3.5 mg, e.g in a trial\"}]}}"
-#guard ["e.g", "3.5", "x.y", "x.)y", "x.”’y", "Claude’s", "(x)", "“x”", "x—y", "x​y", "cafés"].all clause
+#guard ["e.g", "3.5", "x.y", "x.)y", "x.”’y", "Claude’s", "(x)", "“x”", "x—y", "x\u200By", "cafe\u0301s"].all clause
 -- what this rule refuses that was accepted: two characters outside the allow-list, the second no closer, inside a word
-#guard ["x.́y", "x..y", "x——y", "x​​y", "xαβy", "x”́y"].all (!clause ·)
+#guard ["x.\u0301y", "x..y", "x——y", "x\u200B\u200By", "xαβy", "x”\u0301y"].all (!clause ·)
 -- a word that is empty once its closers are dropped is refused
 #guard [")", "x )", "x ”’", "\"", "x *_"].all (!clause ·)
 #guard ["The hard constraints apply only where x ) y.", "The rules below are called the x ” The rules below are called the y."].all

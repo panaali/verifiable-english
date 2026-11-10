@@ -1,0 +1,131 @@
+{
+ "item": "sc-7-f11",
+ "note": "Each mutant was planted in lean/VE/Scope/Authoring.lean, `lake build VE.Scope.AuthoringExamples` was run, and the file was restored; `failing` lists every #guard that failed.",
+ "mutants": [
+  {
+   "kind": "R16 mutant",
+   "definition": "VE.Scope.Pinned.clause",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "(w.toList.zip w.toList.tail).all fun (a, b) => allowed a || allowed b || closers.contains b",
+   "after": "true",
+   "name": "drop the new condition",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:220:0",
+   "failing": [
+    "VE/Scope/AuthoringExamples.lean:220:0",
+    "VE/Scope/AuthoringExamples.lean:225:0",
+    "VE/Scope/AuthoringExamples.lean:232:0"
+   ]
+  },
+  {
+   "kind": "R16 mutant",
+   "definition": "VE.Scope.Pinned.clause",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "(w.toList.zip w.toList.tail).all fun (a, b) => allowed a || allowed b || closers.contains b",
+   "after": "(w.toList.zip w.toList.tail).all fun (a, b) => allowed a || a == '!' || allowed b || closers.contains b",
+   "name": "allow \"!\" inside a word",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:225:0",
+   "failing": [
+    "VE/Scope/AuthoringExamples.lean:225:0"
+   ]
+  },
+  {
+   "kind": "R16 mutant",
+   "definition": "VE.Scope.Pinned.clause",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "(w.toList.zip w.toList.tail).all fun (a, b) => allowed a || allowed b || closers.contains b",
+   "after": "(w.toList.zip w.toList.tail).all fun (a, b) => allowed a || a == '.' || allowed b || closers.contains b",
+   "name": "allow \".\" inside a word",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:220:0",
+   "failing": [
+    "VE/Scope/AuthoringExamples.lean:220:0",
+    "VE/Scope/AuthoringExamples.lean:225:0",
+    "VE/Scope/AuthoringExamples.lean:232:0"
+   ]
+  },
+  {
+   "kind": "R16 mutant",
+   "definition": "VE.Scope.Pinned.clause",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "(w.toList.zip w.toList.tail).all fun (a, b) => allowed a || allowed b || closers.contains b",
+   "after": "(w.toList.zip w.toList.tail).all fun (a, b) => allowed a || allowed b",
+   "name": "no closer after a sentence end inside a word",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:228:0",
+   "failing": [
+    "VE/Scope/AuthoringExamples.lean:228:0",
+    "VE/Scope/AuthoringExamples.lean:230:0",
+    "VE/Scope/AuthoringExamples.lean:242:0",
+    "VE/Scope/AuthoringExamples.lean:246:0"
+   ]
+  },
+  {
+   "kind": "R16 mutant",
+   "definition": "VE.Scope.Pinned.clause",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "(w.toList.zip w.toList.tail).all fun (a, b) => allowed a || allowed b || closers.contains b",
+   "after": "(w.toList.zip w.toList.tail).all fun (a, b) => allowed a || closers.contains b",
+   "name": "no allow-listed character after a sentence end inside a word",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:89:0",
+   "failing": [
+    "VE/Scope/AuthoringExamples.lean:131:0",
+    "VE/Scope/AuthoringExamples.lean:132:0",
+    "VE/Scope/AuthoringExamples.lean:154:0",
+    "VE/Scope/AuthoringExamples.lean:228:0",
+    "VE/Scope/AuthoringExamples.lean:229:0",
+    "VE/Scope/AuthoringExamples.lean:230:0",
+    "VE/Scope/AuthoringExamples.lean:238:0",
+    "VE/Scope/AuthoringExamples.lean:243:0",
+    "VE/Scope/AuthoringExamples.lean:254:0",
+    "VE/Scope/AuthoringExamples.lean:89:0"
+   ]
+  },
+  {
+   "kind": "R16 mutant",
+   "definition": "VE.Scope.Pinned.clause",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "(w.toList.zip w.toList.tail).all fun (a, b) => allowed a || allowed b || closers.contains b",
+   "after": "(w.toList.zip w.toList.tail).all fun (a, b) => allowed a || wordChar b",
+   "name": "the follower may be any word character",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:220:0",
+   "failing": [
+    "VE/Scope/AuthoringExamples.lean:220:0",
+    "VE/Scope/AuthoringExamples.lean:225:0",
+    "VE/Scope/AuthoringExamples.lean:232:0"
+   ]
+  },
+  {
+   "kind": "R16 mutant",
+   "definition": "VE.Scope.Pinned.allowed",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "|| \",;-%/&+=#$@\".contains c",
+   "after": "",
+   "name": "allowed: no ASCII punctuation",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:229:0",
+   "failing": [
+    "VE/Scope/AuthoringExamples.lean:229:0",
+    "VE/Scope/AuthoringExamples.lean:246:0",
+    "VE/Scope/AuthoringExamples.lean:255:0"
+   ]
+  },
+  {
+   "kind": "R16 mutant",
+   "definition": "VE.Scope.Pinned.allowed",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "[0xD7, 0xF7, 0x1C3]",
+   "after": "[0xD7, 0xF7]",
+   "name": "allowed: U+01C3 allowed",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:250:0",
+   "failing": [
+    "VE/Scope/AuthoringExamples.lean:250:0",
+    "VE/Scope/AuthoringExamples.lean:252:0"
+   ]
+  }
+ ]
+}

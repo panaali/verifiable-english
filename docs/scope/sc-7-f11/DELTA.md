@@ -1,0 +1,8 @@
+# User-visible deltas (sc-7-f11)
+
+No route reads `VE.Scope.Pinned.parseGovernor` yet (the IDE wiring is sc-7b), so no service answer changes. No file
+under `lean/VE/EnglishGrammar/` or `ve/english_grammar/` changes.
+
+| Item | Change | Ruling |
+|---|---|---|
+| Scope's authoring slots (`VE.Scope.Pinned.clause`, `Pinned.allowed`, `lean/VE/Scope/Authoring.lean`; spec 2.2) | An authored slot with a sentence end hidden by a non-space character inside a word was accepted and is refused: inside a word, a character outside `clause`'s allow-list is followed only by an allow-listed character or a closer ("The rules below are called the x.<U+1D159>The rules below are called the y.", also with U+FFFC and U+E000, is refused; "3.5", "e.g", "x.)y" and "Claude’s" stay accepted). Refuse direction only. Tests: `AuthoringExamples.lean:220` (the three probes joined, as a list name, as a condition and in every slot), `:225` (each of F7's sentence ends joined by eight blank-looking, invisible or mark characters), `:228-:230` (the accepted direction), `:232` (what turned from accepted to refused); `tests/test_scope_authoring.py::test_clause_accepts_exactly_its_documented_allow_list` ("x." c "y" over every Unicode scalar value) and `::test_review_f8_f9_f10_the_probe_wordings_are_refused_and_guarded`. Trust: K +0, S +0, untied V +8 against f3f40d51dc6d, all in Authoring.lean (`Pinned.allowed` +4, `Pinned.clause` +4), re-measured on the final HEAD with `uv run python tools/trust_map.py --check`, recorded with `--allow` in `docs/trust-baseline.json`; every new or changed trusted definition has a killed mutant (`docs/scope/sc-7-f11/mutants.json`); ties-pass row: `manage-agents/FOLLOW-UPS.md` "## sc-7-f11". | R16 |
