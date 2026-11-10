@@ -67,6 +67,18 @@ def _rights_bar(case):
     return barred
 
 
+def _rights_unknown(case):
+    """art9 guarded by `tried ∨ ¬tried` on an unspecified permission: `table3` cannot settle the point (UNKNOWN), though
+    art9 decides under every filling (as u12 on the norms route)."""
+    unknown = copy.deepcopy(case)
+    unknown["environment"]["vocabulary"]["predicates"]["tried_permitted"] = {
+        "arguments": ["state", "person"], "description": "trial permission",
+        "regulated": {"role": "permission", "default": "unspecified", "act": "{0} try {1}"}}
+    tried = ["binary", "tried_permitted", ["var", 1], ["var", 0]]
+    unknown["document"][0]["right"]["lines"][0]["norm"]["guard"] = ["or", tried, ["not", tried]]
+    return unknown
+
+
 def _certificate_with_a_premise(document):
     """`certificate_case` with the case's own premise `⊤`: the row counts the regenerated premises only."""
     conclusion = _conjunction([f for _, f in document.fill_premises] + [f for _, f in document.filled.premises()])
@@ -78,6 +90,7 @@ def _certificate_with_a_premise(document):
 def _cases():
     csam_doc = nd.UnspecifiedDocument(csam("unspecified"), [CSAM_RULE])
     u5a = next(document for name, document, _ in sources() if name == "u5a")
+    u12, (u12_situation, *_) = next((document, situations) for name, document, situations in sources() if name == "u12")
     kind, env, source = next((kind, env, source) for _, kind, env, source, _ in layered.fixtures()
                              if kind == "rights")
     rights = layered.case(kind, env, source, "norm-defaults-status", model=ARREST_MODEL,
@@ -88,6 +101,9 @@ def _cases():
         "rights-status": rights,
         "rights-fan-status": _rights_fan_out(rights),
         "rights-bar-status": _rights_bar(rights),
+        "unknown-status": source_case(u12, "norm-defaults-status", model=u12.situation(u12_situation).to_dict(),
+                                      predicate="x_permitted", tuple=["a"], method="table3"),
+        "rights-unknown-status": _rights_unknown(rights),
         "acts-status": {"id": "norm-defaults-status", "kind": "norm-defaults-status", "norms": [ACTS_RULE],
                         "environment": _acts_environment(), "predicate": "p027__1", "tuple": ["a"],
                         "method": "table3", "model": {"complete": True, "domains": {"person": ["a"]},
@@ -128,6 +144,10 @@ def test_genuine_answers_pass(genuine, tmp_path):
         [{"rule": "no-csam-generation", "source": "no-csam-generation"}], [{"rule": "art9", "source": "art9"}],
         [{"rule": "r027-a1", "source": "r027"}], [{"rule": "rights-fan-1", "source": "art9"}],
         [{"rule": "rights-bar-1", "source": "b30"}]]
+    # An UNKNOWN point names no deciding rule, on the norms route and on the layered one (`statusFields`' settled
+    # flag, `Run.runOtherCaseIn` and `Wire.layeredCase`; norm-defaults-cfr-1b trust_mutants survivors).
+    assert [(genuine[name][1]["point_status"], genuine[name][1]["rules"], genuine[name][1]["sources"])
+            for name in ("unknown-status", "rights-unknown-status")] == [("UNKNOWN", [], [])] * 2
     for name, own in (("certificate", 0), ("certificate-premise", 1)):
         case, row = genuine[name]
         assert len(case["premises"]) == own and row["valid"] is True
