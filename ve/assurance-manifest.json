@@ -66,7 +66,7 @@
     "ve/readings_verdicts/binding.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 44687,
+    "total_lines": 44690,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -1803,12 +1803,12 @@
       },
       {
         "file": "lean/VE/Service/Document.lean",
-        "lines": 2889,
-        "sha256": "378f39d332c76789b4692d47017f07ea20996ebb59631aa5517f38fbf24b5934",
+        "lines": 2892,
+        "sha256": "30189463afcec3219a5091c790db12b7b5613c11852765289b92ec133c5d5096",
         "ranges": [
           [
             1,
-            2889
+            2892
           ]
         ],
         "declarations": [
@@ -2258,6 +2258,7 @@
       }
     ],
     "other_json": {
+      "lean/VE/Service/DocumentView.lean": "sa-checked-view (spec 5.1): the checked view's typed mirrors read the request fields `checkBody` reads (`id`, `document`, `admit`, `lexicon`, `packs`, `units`, `reading_sets`) and are tied to it by checkBodyChecked_encode, checkCoreChecked_encode and checkDocSetsView_answer (the answer is checkDocSets's, byte for byte); no service mode dispatches it, and it builds no answer JSON of its own",
       "lean/EnglishLeanBenchMain.lean": "measurement only: the ve_english_lean_bench executable of the english-lean G1a measurement and the lexer differential reads grammars, sentences and sources from a JSON file and prints JSON rows; no admission path, service mode or record reads it",
       "lean/Main.lean": "lean:runner-glue: argument dispatch and result arrays of ve_conformance",
       "lean/ResponseDecode.lean": "test-only service response oracle; no executable production path or theorem imports it",

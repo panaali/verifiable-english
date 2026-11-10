@@ -146,6 +146,9 @@ import VE.Presupposition.Admit
 import VE.Presupposition.Admit.Facts
 import VE.Presupposition.Admit.Statements
 import VE.Presupposition.Examples
+import VE.Presupposition.Couple
+import VE.Presupposition.Couple.Statements
+import VE.Presupposition.CoupleExamples
 import VE.Presupposition.Events
 import VE.Presupposition.Events.Examples
 import VE.RightClauses.Tree
@@ -329,6 +332,7 @@ import VE.Service.ScopeExamples
 import VE.Service.DocumentChain
 import VE.Service.DocumentChainExamples
 import VE.Service.DocumentChainChecks
+import VE.Service.DocumentView
 import VE.Service.SoftSourceExamples
 import VE.Service.UndeclaredExamples
 import VE.Service.CardinalityExamples
