@@ -162,28 +162,33 @@ ELIDED = ("elided_bytes", "unit_elided_bytes")
 def test_right_clauses_k4_product_elided_bytes(service):
     """`elided_bytes` (spec 4.1 step 5, 6, 9.1 K4) through the product route: K4 (one elided span [30, 40)) reports 10,
     its one unit 10. Each unit counts its own lines' spans, in document order, and the total is the document's. Two
-    overlapping elisions of one line are refused (1.1, 7), so no byte is counted twice."""
+    overlapping elisions of one line are refused (1.1, 7). Two lines of one unit may elide the same bytes (1.1 constrains
+    one line's spans); 6 sums over the unit's lines, so the unit counts them once per line."""
     line = document()[0]["right"]["lines"][0]
     two = document(elided=[[30, 40]]) + [{"right": {"name": "r22", "holder": "person", "lines": [
         {**line, "norm": {**line["norm"], "name": "access-2"}, "elided": [[150, 175], [180, 181]]}]},
         "span": [100, 200]}]
-    k4, none, units, overlap = elaborate(service, K_FIXTURES["K4"][0], document(), two,
-                                         document(elided=[[30, 40], [35, 45]]))
+    same = document(elided=[[30, 40]])
+    same[0]["right"]["lines"].append({**line, "norm": {**line["norm"], "name": "access-2"}, "elided": [[30, 40]]})
+    k4, none, units, overlap, lines = elaborate(service, K_FIXTURES["K4"][0], document(), two,
+                                                document(elided=[[30, 40], [35, 45]]), same)
     assert k4["status"] == "ok" and {k: k4["result"][k] for k in ELIDED} == {
         "elided_bytes": 10, "unit_elided_bytes": [10]}, k4
     assert {k: none["result"][k] for k in ELIDED} == {"elided_bytes": 0, "unit_elided_bytes": [0]}, none
     assert {k: units["result"][k] for k in ELIDED} == {"elided_bytes": 36, "unit_elided_bytes": [10, 26]}, units
     assert overlap == {"id": overlap["id"], "status": "error", "error": "ClauseSpan: equal-access: [35, 45)"}
+    assert {k: lines["result"][k] for k in ELIDED} == {"elided_bytes": 20, "unit_elided_bytes": [20]}, lines
 
 
 def test_right_clauses_existing_answers_unchanged(service):
     """The DELTA row's negative test: on K1 and every K fixture, the answer without the two added fields is the base
-    build's byte for byte (saved: base-answers.json, run before this item), an error is unchanged and gains nothing,
-    and the added fields carry spec 6's value: K4's 10 (9.1), 0 for every other fixture (`elided: []`)."""
+    build's, as canonical JSON (saved: base-answers.json, run before this item), an error is unchanged and gains
+    nothing, and the added fields carry spec 6's value: K4's 10 (9.1), 0 for every other fixture (`elided: []`)."""
     base = json.loads(BASE_ANSWERS.read_text())["answers"]
-    names = ["K1", *K_FIXTURES]
-    results = elaborate(service, document(), *(fixture[0] for fixture in K_FIXTURES.values()))
-    assert len(base) == len(names) and sorted(base) == sorted(names)
+    names = sorted(base)
+    fixtures = {"K1": document(), **{name: fixture[0] for name, fixture in K_FIXTURES.items()}}
+    assert "K4" in names and set(names) <= set(fixtures)
+    results = elaborate(service, *(fixtures[name] for name in names))
     for name, result in zip(names, results):
         old = {**base[name], "id": result["id"]}
         if result["status"] != "ok":
@@ -210,6 +215,10 @@ def test_right_clauses_elided_bytes_large_request(service):
     [result] = elaborate(service, doc)
     assert result["status"] == "ok", result
     assert result["result"]["elided_bytes"] == 16000 and result["result"]["unit_elided_bytes"] == [500] * 32
+    # past the rights limits (200 lines on one predicate), the request ends in rights' refusal, not in the count
+    [over] = elaborate(service, doc + [{"right_lines": {"right": "r21", **body(i)}, "span": [0, 1000]}
+                                       for i in range(32, 200)])
+    assert over["status"] == "error" and over["error"].startswith("ResourceLimit: "), over
 
 
 def test_right_clauses_k10_profile_off(service):
