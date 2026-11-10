@@ -816,6 +816,7 @@
         "ResponseShape.Schemas.Rights.grounds",
         "ResponseShape.Schemas.Rights.instance",
         "ResponseShape.Schemas.Rights.kind",
+        "ResponseShape.Schemas.Rights.located_findings",
         "ResponseShape.Schemas.Rights.narrowings",
         "ResponseShape.Schemas.Rights.node",
         "ResponseShape.Schemas.Rights.packages",
@@ -824,7 +825,8 @@
         "ResponseShape.Schemas.Rights.rights_unit",
         "ResponseShape.Schemas.Rights.row",
         "ResponseShape.Schemas.Rights.rule_narrowings",
-        "ResponseShape.Schemas.Rights.scope"
+        "ResponseShape.Schemas.Rights.scope",
+        "ResponseShape.Schemas.Rights.situation"
       ]
     },
     "ResponseShape/Schemas/Risk.lean": {
@@ -7712,12 +7714,17 @@
       ],
       "D[V]": [
         "VE.Rights.Run.baseWithout",
+        "VE.Rights.Run.conflictAnswer",
+        "VE.Rights.Run.conflictAnswerOf",
+        "VE.Rights.Run.conflictBudget",
         "VE.Rights.Run.conjugatedAct",
         "VE.Rights.Run.distinctionJson",
         "VE.Rights.Run.elaboratedNarrowingsJson",
         "VE.Rights.Run.encodeAdmitted",
         "VE.Rights.Run.entailmentUses",
         "VE.Rights.Run.entryJson",
+        "VE.Rights.Run.exhibit",
+        "VE.Rights.Run.findingJson",
         "VE.Rights.Run.generatedWordings",
         "VE.Rights.Run.groundJson",
         "VE.Rights.Run.ikindText",
@@ -7735,6 +7742,7 @@
         "VE.Rights.Run.nodeJson",
         "VE.Rights.Run.regenerated",
         "VE.Rights.Run.ruleNarrowingsJson",
+        "VE.Rights.Run.situationTables",
         "VE.Rights.Run.sourceRuleNames",
         "VE.Rights.Run.unitRuleNames"
       ],
@@ -7753,6 +7761,9 @@
         "VE.Rights.Run.unitOpen",
         "VE.Rights.Run.unitStatuses",
         "VE.Rights.Run.usesRightsPath"
+      ],
+      "D[I]": [
+        "VE.Rights.Run.locate"
       ]
     },
     "VE/Rights/Scope.lean": {
@@ -7816,6 +7827,9 @@
             "VE.Rights.bar_mem_narrowings"
           ]
         }
+      ],
+      "G[I]": [
+        "VE.Rights.lineSpan"
       ]
     },
     "VE/Rights/Semantics.lean": {
@@ -18438,12 +18452,12 @@
         "VE.Presupposition.Frame.close",
         "VE.Presupposition.Frame.cls",
         "VE.Presupposition.Frame.goal",
+        "VE.Presupposition.Frame.locate",
         "VE.Presupposition.Frame.plug",
         "VE.Presupposition.Frame.shallow",
         "VE.Presupposition.PositionClass"
       ],
       "C": [
-        "VE.Presupposition.Frame.locate",
         "VE.Presupposition.Frame.shallowB",
         "VE.Presupposition.instDecidableShallow"
       ]
@@ -20602,6 +20616,123 @@
         "VE.Presupposition.separated",
         "VE.Presupposition.softOk",
         "VE.Presupposition.withObligations"
+      ]
+    },
+    "ResponseShape/Schemas/RightsChecks.lean": {
+      "T": [
+        "ResponseShape.RightsChecks.accepts",
+        "ResponseShape.RightsChecks.answer",
+        "ResponseShape.RightsChecks.case",
+        "ResponseShape.RightsChecks.conflict",
+        "ResponseShape.RightsChecks.creq",
+        "ResponseShape.RightsChecks.elabA",
+        "ResponseShape.RightsChecks.elabCase",
+        "ResponseShape.RightsChecks.env",
+        "ResponseShape.RightsChecks.located",
+        "ResponseShape.RightsChecks.oneCase",
+        "ResponseShape.RightsChecks.parse",
+        "ResponseShape.RightsChecks.refusesAll",
+        "ResponseShape.RightsChecks.scopeA",
+        "ResponseShape.RightsChecks.scopeCase",
+        "ResponseShape.RightsChecks.situation",
+        "ResponseShape.RightsChecks.spanned",
+        "ResponseShape.RightsChecks.texts",
+        "ResponseShape.RightsChecks.weighed"
+      ]
+    },
+    "VE/Presupposition/Events.lean": {
+      "S": [
+        "VE.Presupposition.Events.endedAtBefore",
+        "VE.Presupposition.Events.endedBefore",
+        "VE.Presupposition.Events.inProgress",
+        "VE.Presupposition.Events.inProgressBefore",
+        "VE.Presupposition.Events.occurredBefore"
+      ],
+      "G[V]": [
+        {
+          "name": "VE.Presupposition.Events.again",
+          "tied": [
+            "VE.Presupposition.Events.again_eq"
+          ]
+        },
+        {
+          "name": "VE.Presupposition.Events.continues",
+          "tied": [
+            "VE.Presupposition.Events.continues_eq"
+          ]
+        },
+        {
+          "name": "VE.Presupposition.Events.noLonger",
+          "tied": [
+            "VE.Presupposition.Events.noLonger_eq"
+          ]
+        },
+        {
+          "name": "VE.Presupposition.Events.resumes",
+          "tied": [
+            "VE.Presupposition.Events.resumes_eq"
+          ]
+        },
+        {
+          "name": "VE.Presupposition.Events.returnsTo",
+          "tied": [
+            "VE.Presupposition.Events.returnsTo_eq"
+          ]
+        },
+        {
+          "name": "VE.Presupposition.Events.stops",
+          "tied": [
+            "VE.Presupposition.Events.stops_eq"
+          ]
+        }
+      ]
+    },
+    "VE/Presupposition/Events/Examples.lean": {
+      "T": [
+        "VE.Presupposition.Events.Examples.V",
+        "VE.Presupposition.Events.Examples.againPre",
+        "VE.Presupposition.Events.Examples.arrival",
+        "VE.Presupposition.Events.Examples.audit",
+        "VE.Presupposition.Events.Examples.change",
+        "VE.Presupposition.Events.Examples.changed",
+        "VE.Presupposition.Events.Examples.eachDay",
+        "VE.Presupposition.Events.Examples.endA",
+        "VE.Presupposition.Events.Examples.endC",
+        "VE.Presupposition.Events.Examples.endOnly",
+        "VE.Presupposition.Events.Examples.evs",
+        "VE.Presupposition.Events.Examples.ip",
+        "VE.Presupposition.Events.Examples.ipBefore",
+        "VE.Presupposition.Events.Examples.job",
+        "VE.Presupposition.Events.Examples.leftA",
+        "VE.Presupposition.Events.Examples.leftAndStaying",
+        "VE.Presupposition.Events.Examples.leftOnT",
+        "VE.Presupposition.Events.Examples.neverLeft",
+        "VE.Presupposition.Events.Examples.noEnd",
+        "VE.Presupposition.Events.Examples.none0",
+        "VE.Presupposition.Events.Examples.occupancy",
+        "VE.Presupposition.Events.Examples.onT",
+        "VE.Presupposition.Events.Examples.other",
+        "VE.Presupposition.Events.Examples.p10",
+        "VE.Presupposition.Events.Examples.p10Assumed",
+        "VE.Presupposition.Events.Examples.p9",
+        "VE.Presupposition.Events.Examples.p9F",
+        "VE.Presupposition.Events.Examples.places",
+        "VE.Presupposition.Events.Examples.ret",
+        "VE.Presupposition.Events.Examples.retCases",
+        "VE.Presupposition.Events.Examples.retPre",
+        "VE.Presupposition.Events.Examples.retR",
+        "VE.Presupposition.Events.Examples.retV",
+        "VE.Presupposition.Events.Examples.sit",
+        "VE.Presupposition.Events.Examples.somePlace",
+        "VE.Presupposition.Events.Examples.someStay",
+        "VE.Presupposition.Events.Examples.stateless",
+        "VE.Presupposition.Events.Examples.states",
+        "VE.Presupposition.Events.Examples.stay",
+        "VE.Presupposition.Events.Examples.stayS",
+        "VE.Presupposition.Events.Examples.stayingAtP",
+        "VE.Presupposition.Events.Examples.t",
+        "VE.Presupposition.Events.Examples.visit",
+        "VE.Presupposition.Events.Examples.x"
       ]
     }
   }
