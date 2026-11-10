@@ -340,6 +340,7 @@ the manifest `notes`, not changed:
 | `document.check` | combination | python → lean | experimental / experimental | `ve.document.report:check_document` | none | none | none | `python:implementation`<br>`python:surface`<br>`python:record-identity` |
 | `wire.diagnose` | leaf | lean-only → lean | experimental / experimental | none | `ve_service diagnose soft-elaborate,admission,norms-elaborate,norms-conflict,norms-certificate,norm-defaults-elaborate,norm-defaults-conflict,norm-defaults-certificate` | none | none | `lean:kernel`<br>`lean:compiler`<br>`lean:runner-glue` |
 | `check` | combination | python → lean | experimental / experimental | `ve.check:check` | none | none | none | `python:implementation`<br>`python:display` |
+| `norm-defaults.route` | leaf | lean-only → lean | experimental / experimental | none | `ve_service norm-defaults norm-defaults-elaborate`<br>`ve_service norm-defaults norm-defaults-conflict`<br>`ve_service norm-defaults norm-defaults-status`<br>`ve_service norm-defaults norm-defaults-gaps`<br>`ve_service norm-defaults norm-defaults-report`<br>`ve_service norm-defaults norm-defaults-certificate`<br>`ve_service norm-defaults defaults-elaborate`<br>`ve_service norm-defaults defaults-coherence`<br>`ve_service norm-defaults defaults-certificate`<br>`ve_service norm-defaults defaults-model`<br>`ve_service norm-defaults defaults-zone`<br>`ve_service norm-defaults acts-elaborate` | none | none | `lean:kernel`<br>`lean:compiler`<br>`lean:decoders`<br>`lean:runner-glue` |
 <!-- END GENERATED -->
 
 ## 8. Not in this change
