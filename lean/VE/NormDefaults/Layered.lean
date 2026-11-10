@@ -229,6 +229,48 @@ def decodeRightsU (environment document : Json) (H : Option VE.Events.EventsHook
     else throw "InvalidInput: a rights-generated predicate is a layer symbol"
   else throw "InvalidInput: norm-defaults document is not well formed"
 
+/-- The rights branch echoes `rightsSources` of the document it decoded and correlated (norm-defaults-cfr-1b). -/
+theorem decodeRightsU_sources {environment document : Json} {H : Option VE.Events.EventsHook} {L : LayeredU}
+    (h : decodeRightsU environment document H = .ok L) :
+    ∃ env' src, VE.Rights.Wire.decodeRightsSource env' document = .ok src ∧ L.D = VE.Rights.correlate src.D ∧
+      L.sources = rightsSources src.D := by
+  unfold decodeRightsU at h
+  obtain ⟨env', _, h⟩ := VE.Kit.Except.bind_ok h
+  obtain ⟨src, hs, h⟩ := VE.Kit.Except.bind_ok h
+  obtain ⟨_, _, h⟩ := VE.Kit.Except.bind_ok h
+  split at h
+  · split at h
+    · repeat (obtain ⟨_, _, h⟩ := VE.Kit.Except.bind_ok h)
+      cases h
+      exact ⟨env', src, hs, rfl, rfl⟩
+    · cases h
+  · cases h
+
+/-- Each `(rule, source)` a rights status row echoes (`statusFields` over `L.sources`): the rule itself, or a rule
+`correlate` generated from the document, with the source it was built from (`rightsSources_built`). -/
+theorem decodeRightsU_echo {environment document : Json} {H : Option VE.Events.EventsHook} {L : LayeredU}
+    (h : decodeRightsU environment document H = .ok L) (rules : List String) :
+    ∃ env' src, VE.Rights.Wire.decodeRightsSource env' document = .ok src ∧ L.D = VE.Rights.correlate src.D ∧
+      ∀ x ∈ ruleSources L.sources rules, x.2 = x.1 ∨ x ∈ rightsSources src.D := by
+  obtain ⟨env', src, hs, hD, hL⟩ := decodeRightsU_sources h
+  refine ⟨env', src, hs, hD, fun x hx => ?_⟩
+  rcases (ruleSources_spec L.sources rules).2 x hx with hm | ⟨_, he⟩
+  · exact .inr (hL ▸ hm)
+  · exact .inl he
+
+/-- The soft branch generates no rule: its rules are the request's. -/
+theorem decodeSoftU_sources {environment norms : Json} {H : Option VE.Events.EventsHook} {L : LayeredU}
+    (h : decodeSoftU environment norms H = .ok L) : L.sources = [] := by
+  unfold decodeSoftU at h
+  obtain ⟨_, _, h⟩ := VE.Kit.Except.bind_ok h
+  obtain ⟨_, _, h⟩ := VE.Kit.Except.bind_ok h
+  obtain ⟨_, _, h⟩ := VE.Kit.Except.bind_ok h
+  split at h
+  · repeat (obtain ⟨_, _, h⟩ := VE.Kit.Except.bind_ok h)
+    cases h
+    rfl
+  · cases h
+
 /-- The branch an environment under the profile takes, if it is soft or rights. -/
 def layeredRoute (environment : Json) : Option String :=
   let ps := profilesOf environment

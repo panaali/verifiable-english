@@ -92,6 +92,7 @@ import time
 
 from ..errors import CheckerUnavailable, ResourceLimit, VEError
 from ..limits import MAX_CASES, MAX_LINE_BYTES  # the service's handshake limits (VE.Limits)
+from ..profiles import RULE_FIELDS
 from ..environment_wire import EncodedEnvironment
 from .service_schema import MODES, Invalid, check_handshake, check_response
 
@@ -360,9 +361,9 @@ def request_context(nonce: str, mode: str, cases_text: str, count: int,
 # act into parts (`VE.Acts.Elaborate.partRule`), `rights@0` names fan-out and bar rules (`VE.Rights.Tree.fanName`,
 # `barRuleName`). Only under them may a status rule differ from the request source Lean echoes for it.
 GENERATED_RULE_PROFILES = ("acts@0", "rights@0")
-# The request objects that are rules, by the key that holds them: a `{"norm": ...}` unit or line norm, a `rights@0`
-# power line's `liberty` and `recognition`, and its `bar` (the source of a bar rule).
-_RULE_KEYS = ("norm", "liberty", "recognition", "bar")
+# The request objects that are rules, by the key that holds them: a `rights@0` line's rule fields (`RULE_FIELDS`), a
+# `{"norm": ...}` unit, and a `{"bar": ...}` unit (the source of a bar rule).
+_RULE_KEYS = frozenset((*RULE_FIELDS, "norm", "bar"))
 
 
 def _profiles(case: dict) -> list:
@@ -372,12 +373,14 @@ def _profiles(case: dict) -> list:
 
 
 def _rule_names(case: dict) -> set:
-    """The names of the case's request rules: its `norms` units' (`{"norm": {"name", ...}}`), and under `rights@0`,
-    whose route reads the `document`, every rule the document holds (`_RULE_KEYS`, at any depth)."""
-    units = case.get("norms")
-    names = {unit["norm"]["name"] for unit in units if isinstance(unit, dict) and isinstance(unit.get("norm"), dict)
-             and type(unit["norm"].get("name")) is str} if isinstance(units, list) else set()
-    stack = [case.get("document")] if "rights@0" in _profiles(case) else []
+    """The names of the case's request rules: its `norms` units' (`{"norm": {"name", ...}}`); under `rights@0`, whose
+    route reads the `document` (`Wire.decodeLayered`), the rules the document holds instead (`_RULE_KEYS`, at any
+    depth; a bar's name whatever its reading)."""
+    if "rights@0" not in _profiles(case):
+        units = case.get("norms")
+        return {unit["norm"]["name"] for unit in units if isinstance(unit, dict) and isinstance(unit.get("norm"), dict)
+                and type(unit["norm"].get("name")) is str} if isinstance(units, list) else set()
+    names, stack = set(), [case.get("document")]
     while stack:
         node = stack.pop()
         if isinstance(node, list):
@@ -393,7 +396,9 @@ def _rule_names(case: dict) -> set:
 def _bind_status_rules(row: dict, case: dict) -> None:
     """Each status rule against the request source Lean echoes for it (`sources`, `Wire.ruleSources`; the schema types
     it and states its length): the echo names the rule, in order; its source is a rule of the request
-    (`_rule_names`); and a rule other than its source, one Lean generated, only under `GENERATED_RULE_PROFILES`."""
+    (`_rule_names`); and a rule other than its source, one Lean generated, only under `GENERATED_RULE_PROFILES` and
+    named by no request rule. A generated name forged together with its echo to a request source is not caught: only
+    Lean's naming tells it, and Python keeps no copy of it (R8)."""
     rules, sources = row.get("rules"), row.get("sources")
     if not (isinstance(rules, list) and isinstance(sources, list) and len(rules) == len(sources)):
         raise Invalid("norm-defaults-status sources is not one echo per rule")
@@ -406,6 +411,8 @@ def _bind_status_rules(row: dict, case: dict) -> None:
             raise Invalid(f"norm-defaults-status rule {rule!r} has source {source!r}, no rule of the request")
         if rule != source and not generated:
             raise Invalid(f"norm-defaults-status rules name {rule!r}, no rule of the request")
+        if rule != source and rule in names:
+            raise Invalid(f"norm-defaults-status rule {rule!r} is a request rule echoed from {source!r}")
 
 
 def _bind_norm_defaults(row: dict, case: dict) -> None:
