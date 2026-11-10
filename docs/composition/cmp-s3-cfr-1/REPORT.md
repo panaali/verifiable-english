@@ -20,7 +20,11 @@ HEAD: the branch tip (the chain's gate records the commit it ran on in gate-resu
 
 Not delivered here:
 - cmp-s3-cfr-1b: the relay, the Python differential, the remaining 9.1/9.2 fixtures, W1's budget fixture and
-  `clauseSlot_wellFormed`.
+  `clauseSlot_wellFormed`. Once its relay's `RightsEnvironment` reads the profile, it also records the b15b model
+  oracle's `right-clauses@0` environments (`python -I tests/b15b_model_cases.py record ... --profile
+  right-clauses@0`). It then drops the exclusion this item put in
+  tests/test_model_environment.py::test_the_oracle_reaches_every_profile_and_display_field, whose fixture
+  tests/data/right-clauses-environment.json the oracle already finds.
 - **cmp-s3-cfr-1c (filed by the DRI, reviews/dri-decisions-20261109-cmp-s3-cfr-1.md item 1):** reading candidates under the profile, that is, 4.1 steps 2-4 for
   candidates, `decodeClauseDoc` filling `cands`, and K12. Until then the head refuses a list with `readings@1` by
   name (`UnsupportedProfile: right-clauses@0 with readings@1 is not implemented`); before this item, such a list had
@@ -68,7 +72,7 @@ Not delivered here:
 | The decoder accepts a structured line with two relations (an array, first taken) | Lean, lean/VE/RightClauses/Wire.lean `decodeRelation` | tests/test_right_clauses.py::test_right_clauses_k_fixtures_service (`two-relations`) |
 | Registration dropped (`environmentWrappers := ["readings@1"]`) | Lean, lean/VE/Compose/Dispatch.lean | tests/test_right_clauses.py::test_right_clauses_k1_service_identity (the environment is refused: `UnsupportedProfile`); also the `environmentProfiles` #guard of lean/VE/Compose/Examples.lean at build |
 | Plained bytes changed for an unstructured document (`elided` kept in the plained line) | Lean, lean/VE/RightClauses/Wire.lean `plainLineJson` | tests/test_right_clauses.py::test_right_clauses_k1_service_identity (the bytes assertion, line 111) |
-| No model reduction for `right-clauses@0` | Python, ve/profiles.py `MODEL_REDUCTIONS` | tests/test_model_environment.py::test_every_registered_profile_has_one_model_reduction (and ::test_the_oracle_reaches_every_profile_and_display_field) |
+| No model reduction for `right-clauses@0` | Python, ve/profiles.py `MODEL_REDUCTIONS` | tests/test_model_environment.py::test_every_registered_profile_has_one_model_reduction |
 | No deadline for `clauses-elaborate` | Python, ve/backends/lean_service.py `DEADLINES` | tests/test_lean_service.py::test_the_deadline_keys_are_the_handshakes_modes |
 | DELTA's negative test: a profile-off rights record changes (a rights refusal text edited) | Lean, lean/VE/Rights/Run.lean (frozen; planted for this run only and restored) | tests/test_right_clauses.py::test_right_clauses_profile_off_regression (the saved-digest assertion, line 184) |
 
