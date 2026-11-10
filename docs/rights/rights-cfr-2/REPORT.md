@@ -42,7 +42,7 @@ Each mutant ran against a ve_service built from it and pinned in a scratch lock 
 
 `uv run python tools/trust_map.py --check` against 33fe04615107 passes: K +0, S +3 (`Tree.lean` `RightsDoc.located`), V +83 (`Run.lean` +50, `Schemas/Rights.lean` +33), trusted +86, all under 150. Recorded with `--allow` as "SIGNED by standing ruling R16 (DRI-RULINGS.md), rights-cfr-2, 2026-11-09" (two records, +78 then +5, in docs/trust-baseline.json). The FOLLOW-UPS row asks for the ties pass. `lineSpan` is G[I] and `locate` is D[I] (span provenance). The checks in `ResponseShape/Schemas/RightsChecks.lean` are T.
 
-The trust_mutants sweep is in docs/rights/rights-cfr-2/trust-mutants.json (`mac-pytest.sh --trustmut -- --max-mutants 1000 --test lean/ResponseShape/Schemas/RightsChecks.lean --rescore ...`), with its allow file trust-mutants-allow.json. Result: TRUST_MUTANTS_RESULT. The kills come from RightsChecks.lean: the located findings, three conflict answers and a premise-use variant, each pinned exactly; each genuine answer is accepted by rights.json, and every variant with a member added, dropped or retyped (`DefaultsExamples.variants`) is refused, along with each branch's negatives.
+The trust_mutants sweep is in docs/rights/rights-cfr-2/trust-mutants.json (`mac-pytest.sh --trustmut -- --max-mutants 1000 --test lean/ResponseShape/Schemas/RightsChecks.lean --rescore ...`), with its allow file trust-mutants-allow.json. Result: exit 0 on ve-cloud-3. It ran 451 mutants over 13 definitions: 404 KILLED, 20 INVALID, 27 ALLOWED, 0 SURVIVOR and 0 UNKNOWN. The 10 allow lines cover 4 (definition, operator) pairs whose survivors are equivalent and 6 whose mutants do not type-check (two `regenerated` mutants that a check refutes are UNKNOWN only because they also break `elaborate_fits`). mutants.json lists the seeded bugs and one killed mutant per definition, with the check that kills it. The kills come from RightsChecks.lean: the located findings, three conflict answers and a premise-use variant, each pinned exactly; each genuine answer is accepted by rights.json, and every variant with a member added, dropped or retyped (`DefaultsExamples.variants`) is refused, along with each branch's negatives.
 
 ## Notes
 
@@ -50,7 +50,7 @@ The trust_mutants sweep is in docs/rights/rights-cfr-2/trust-mutants.json (`mac-
 - `lean/VE/Readings/Wire.lean` gets `, []` for the new field in its anonymous `RightsDoc` constructor (nothing else changes).
 - In-flight overlap: feature/qt-a4b also edits ve/document/report.py, in other hunks (:199, :451; mine are :116-176 and :349).
 - The status-line binding in Python keeps the wording, as it did before this item. The relay binding inventory classifies `status_text` BOUND, which needs this.
-- Size, from `git diff --numstat` without generated files: 676 hand-written lines added and 74 deleted before this REPORT and DELTA (tests 310, Lean product 172, Lean checks 70, Python 82, side table 35).
+- Size, from `git diff --numstat` without generated files and evidence JSON: 709 hand-written lines added and 74 deleted before this REPORT (89 lines) and DELTA (12 lines), so about 810 in all, within the DRI's ~850. Lean checks are 76 lines, within the ruling's 150, and product code (Lean outside the checks, plus ve/) is about 255, within its ~350.
 - Pilot bytes expected to move: 0 (report content only; no unit status or verdict changes). This is an estimate.
 - Next item: none on these files.
 
