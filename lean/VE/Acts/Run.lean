@@ -138,11 +138,11 @@ theorem firstsBy_map {α β : Type} [DecidableEq β] (f : α → β) (xs : List 
 def witnessed (V : Vocab) (op : Op) (N b : Nat) (ts : Array Lexical.Tok) :
     Option (List (Act × VE.Grammar.Tree Lexical.Tok) × List (List Simple × Nat × Nat)) :=
   let rs := closed (schema V)
-  let μ := meaningWith rs.toArray V
   match VE.Grammar.parse (build rs) N b ts with
   | none => none
   | some trees =>
     if N ≤ trees.length then none else
+    let μ := meaningWith rs.toArray V
     let ms := firstsBy Prod.fst (trees.filterMap fun t => (valueOf μ t).map (·, t))
     if maxReadings < ms.length then none else
     let Rs := firstsBy Prod.fst (ms.zipIdx.flatMap fun ((A, _), k) => (table op A).zipIdx.map fun (R, j) => (R, k, j))

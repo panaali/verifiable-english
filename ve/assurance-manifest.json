@@ -117,7 +117,7 @@
       {
         "file": "lean/VE/Acts/Wire.lean",
         "lines": 130,
-        "sha256": "d094a61ced44a2e7d9d9a7f009f8ce16f2a23779f21411e65bab63f60a007339",
+        "sha256": "d4854cd536aec8e3b81e57a0542ad0cb6f7a707082f6f2f61ab23704c315bd6f",
         "ranges": [
           [
             1,
@@ -133,7 +133,7 @@
           "decodeVocab",
           "fixedOf"
         ],
-        "reason": "act-phrases ap-3d: the act check under acts@0 from AP-3 on (reads the raw act JSON through Lexical.checkWith); no route calls it until ap-3db; the file is pinned whole; ap-parse-index: joinedActBy and checkActBy, the same check through a reader built once (joinedAct and checkAct are them at reader V)"
+        "reason": "act-phrases ap-3d: the act check under acts@0 from AP-3 on (reads the raw act JSON through Lexical.checkWith); no route calls it until ap-3db; the file is pinned whole; ap-parse-index: joinedActBy and checkActBy, the same check through a reader built once (joinedAct and checkAct are them at reader V); review F1: the reader is a Thunk (Acts.lazyReader), forced only by a joined act's listing after the slot check, so a lexical act never builds it"
       },
       {
         "file": "lean/VE/Alternatives/Admission.lean",
@@ -1098,7 +1098,7 @@
       {
         "file": "lean/VE/Norms/Wire.lean",
         "lines": 463,
-        "sha256": "0c803006c8d05c139b760eb71577d2688595f4a20f98a8a64ac1a408b7160ff3",
+        "sha256": "513d722778ece5c27d1c5e722055a96b59d3252fb648b648a34fae8deafd6144",
         "ranges": [
           [
             29,

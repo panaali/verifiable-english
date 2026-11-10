@@ -207,6 +207,7 @@
 'VE.Acts.inj_of_nodup_map' depends on axioms: [propext, Quot.sound]
 'VE.Acts.intended_tracks' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Acts.kwSyms_ok' does not depend on any axioms
+'VE.Acts.lazyReader_get' depends on axioms: [propext, Quot.sound]
 'VE.Acts.listing_limit' depends on axioms: [propext, Quot.sound]
 'VE.Acts.listing_nodup' depends on axioms: [propext, Quot.sound]
 'VE.Acts.listing_ok' depends on axioms: [propext, Quot.sound]

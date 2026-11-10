@@ -16300,6 +16300,12 @@
         },
         "VE.Acts.analyse",
         {
+          "name": "VE.Acts.lazyReader",
+          "tied": [
+            "VE.Acts.lazyReader_get"
+          ]
+        },
+        {
           "name": "VE.Acts.phraseReadings",
           "tied": [
             "VE.Acts.phraseReadings_exact"

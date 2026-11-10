@@ -1312,6 +1312,10 @@ theorem VE.Acts.kwSyms_ok
     ws ≠ [] → { lhs := X, rhs := VE.Acts.kwSyms ws, kind := k }.ok = Bool.true
   -- uses VE.Acts.Kind@VE.Acts.Grammar VE.Acts.NT@VE.Acts.Grammar VE.Acts.RuleS.mk@VE.Acts.Grammar VE.Acts.RuleS.ok@VE.Acts.Grammar VE.Acts.kwSyms@VE.Acts.Grammar
   -- expr 2777211161
+theorem VE.Acts.lazyReader_get
+  ∀ (V : VE.Acts.Vocab), (VE.Acts.lazyReader V).get = VE.Acts.reader V
+  -- uses VE.Acts.RuleS@VE.Acts.Grammar VE.Acts.Term@VE.Acts.Syntax VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.lazyReader@VE.Acts.Readings VE.Acts.reader@VE.Acts.Readings VE.Grammar.Prepared@VE.Grammar.Table
+  -- expr 301734049
 theorem VE.Acts.listing_limit
   ∀ {α : Type} [inst : DecidableEq α] (N L : Nat) (parsed : Option (List (VE.Grammar.Tree VE.Acts.Lexical.Tok)))
     (μ : VE.Grammar.Tree VE.Acts.Lexical.Tok → Option α),

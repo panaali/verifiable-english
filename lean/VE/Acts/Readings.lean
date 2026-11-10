@@ -26,6 +26,11 @@ and the grammar numbered from it, prepared. A reader of several phrases under on
 def reader (V : Vocab) : Array RuleS × VE.Grammar.Prepared Term :=
   let rs := closed (schema V)
   (rs.toArray, (build rs).prepare)
+/-- `reader V`, built only when first forced and shared from then on (a `Thunk` caches its value): a caller that may
+read no joined phrase (a lexical act, a declaration without an act, a slot joined to a word) never builds it, and the
+acts of one document that do read it build it once (`lazyReader_get`). -/
+def lazyReader (V : Vocab) : Thunk (Array RuleS × VE.Grammar.Prepared Term) := .mk fun _ => reader V
+theorem lazyReader_get (V : Vocab) : (lazyReader V).get = reader V := rfl
 /-- `readings` through a reader (`readingsBy_reader`). -/
 def readingsBy (V : Vocab) (R : Array RuleS × VE.Grammar.Prepared Term) (N b : Nat) (ts : Array Tok) : Listing Act :=
   listing N maxReadings (R.2.parse N b ts) (valueOf (meaningWith R.1 V))
