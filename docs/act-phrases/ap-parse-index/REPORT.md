@@ -37,9 +37,10 @@ frame count), and the steps grow by 1,984 per frame. The square was (a) the gram
    `@[csimp]` makes compiled code run them (the `VE/Norms/Once.lean` pattern). Definitions and statements unchanged.
 2. **The rule table read once.** `meaningWith rs V` (`meaning V` is it at `closed (schema V)`); `reader V` (the table
    and the prepared grammar) and `readingsBy`, with `readings`/`read` compiled through them (`@[csimp]`, `rfl`).
-   `Norms.Wire.actsOf` builds one reader for all a document's acts (`checkActBy`, `joinedActBy`; `checkAct` and
-   `joinedAct` are them at `reader V`), found by the self-review: one grammar per act took 4.85 s for 16 acts at 128
-   frames. `witnessed` and `rowsOf` (`Run.lean`) share one table. `sourceCheck` reads `readings`; no route calls it yet.
+   `Norms.Wire.actsOf` shares one reader among all a document's acts (`checkActBy`, `joinedActBy`; `checkAct` and
+   `joinedAct` are them at `lazyReader V`), found by the self-review: one grammar per act took 4.85 s for 16 acts at 128
+   frames. The reader is a `Thunk` (`lazyReader`, `lazyReader_get`), forced only by a joined act's listing (review
+   F1), so a lexical act, a refusal before the listing and a document with no act never build it. `witnessed` and `rowsOf` (`Run.lean`) share one table. `sourceCheck` reads `readings`; no route calls it yet.
 3. **The uncharged per-step loop.** `combine` read every tree of the first symbol's entry even at an end position
    whose suffix is empty. `combineFast` (`@[csimp]`, proved equal) skips such a position in one look-up.
 4. **Not built:** the first-terminal index (item 1: the scan it saves is charged already), and a charge on the walked
@@ -93,8 +94,11 @@ R16"; FOLLOW-UPS.md "## ap-parse-index". Tied by equality theorems: `firstsGo`, 
 
 ## 6. Seeded bugs
 
-[mutants.json](mutants.json) (`python3 docs/act-phrases/ap-parse-index/seed_bugs.py`): 21 plants, **21 KILLED**, one
-per new definition and claimed behaviour (Lean only: no Python or Rust product code changed). Equality proofs kill
+[mutants.json](mutants.json) (`python3 docs/act-phrases/ap-parse-index/seed_bugs.py`): 24 plants, **24 KILLED**, one
+per new definition and claimed behaviour, in each changed language: Lean, and Python (`tools/layer_policy.py`, the
+layer of `VE.Acts.Index`: `lean-layer-index-dropped`, caught by `tools/check_lean_imports.py`; review F-ready1). No
+Rust changed. The review fix's two service plants (`actsOf-eager-reader`, `joinedActBy-reader-before-slot`) are built
+into `ve_service`, pinned for the run only, and fail the F1 tests at the CPU deadline. Equality proofs kill
 `firstsGo`, `idxGo`, `closedFast`, `buildFast`, `combineFast`, `reader`, `readingsBy`, `readingsOnce`, `readOnce`,
 `witnessed`, `checkActBy`; `#guard`s kill `meaningWith`, `tagged`, `taggedWith`, `rowsOf`, `joinedActBy`, `actsOf`,
 a row charged a constant (`l6Steps`), a dropped `@[csimp]` (`once_installed%`). Service plant, by hand: both `@[csimp]` of `closed`/`build` dropped, `ve_service` built and pinned with
@@ -137,8 +141,8 @@ and the DRI's fixture conditions came after the first measure; the bench (68 lin
 1. Typed and contained: N.A. (no new relayed field, schema or relay; the routes' answers unchanged, section 7).
 2. Deliverables: PASS (1)-(4) in sections 1-4; the index and the charge left out by DRI -1.md and -2.md; the
    per-document budget is `ap-parse-indexb` (-3.md).
-3. Tests can fail: PASS (`mutants.json` 21 KILLED; trust mutants exit 0, section 6).
-4. Python, Lean, Rust agree: N.A. (Lean only; answers unchanged: every `#guard` of the full build, section 7).
+3. Tests can fail: PASS (`mutants.json` 24 KILLED; trust mutants exit 0, section 6).
+4. Python, Lean, Rust agree: N.A. (Lean product code only, and the layer table in `tools/layer_policy.py`; answers unchanged: every `#guard` of the full build, section 7).
 5. R8 binding: N.A. (no relayed field read).
 6. Gate evidence: PASS (the chain gates the final HEAD; base `git merge-base`; main moved to `e9829cb05` with no
    hand-written product file in common, so not synced here).
@@ -157,3 +161,17 @@ and the DRI's fixture conditions came after the first measure; the bench (68 lin
     the `idxGo` guard: refutes both literal mutants); limits before work PASS (129 frames; one reader per document).
 
 SELF-REVIEW: 1 A, 10 B, 5 C; fixed 15 (the size B in part, above; C `closed` twice per `act-readings` request left).
+
+## Review fix round (ap-parse-index-review.final.md)
+
+- **F1 (B)**, the eagerly built reader: `Acts.lazyReader` (a `Thunk`, `lazyReader_get : (lazyReader V).get = reader V`)
+  replaces `reader V` in `Norms.Wire.actsOf`, `Acts.Wire.checkAct` and `joinedAct`; `joinedActBy` forces it after the
+  slot check; `Run.witnessed` builds its meaning table after the parse. The class: every caller of the act check
+  (`actsOf`, `checkAct`, `joinedAct`; no other module reads `reader`). The review's probe: 0.9 s, passed (it timed out
+  at HEAD). Regression test:
+  `tests/test_ap_parse_index.py::test_an_act_that_needs_no_grammar_is_answered_under_a_vocabulary_whose_grammar_is_slow`
+  (lexical act, lexical refusal, two joined-slot refusals, no act; 64 modifiers per frame, so the grammar alone is about
+  three deadlines). Plants `actsOf-eager-reader` and `joinedActBy-reader-before-slot` KILLED (section 6). Trust: unchanged
+  at +27 (`lazyReader` tied by `lazyReader_get`; the docstrings keep their line counts).
+- **F-ready1 (B)**, no seeded bug in the changed Python file: `lean-layer-index-dropped` in `tools/layer_policy.py`,
+  KILLED by `tools/check_lean_imports.py` (section 6).
