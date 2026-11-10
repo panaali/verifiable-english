@@ -1423,7 +1423,7 @@
       {
         "file": "lean/VE/Readings/Wire.lean",
         "lines": 1059,
-        "sha256": "a1f8444b70c79084e87c170c92d04eac013894f723db734cdd73251d2b5e4acb",
+        "sha256": "59f17b191a3b5940e787fa31e06254075b8ac7b7f82ddce1e9e4ad61552e87c1",
         "ranges": [
           [
             1,
@@ -1472,7 +1472,7 @@
       {
         "file": "lean/VE/Rights/Wire.lean",
         "lines": 697,
-        "sha256": "5be42b913732dd33878d081227c8bb25c6927558f6718457a77f7ec475501fad",
+        "sha256": "fab8db83fb146eecc0a1dd6ad96eb1e4bed367de966816bd0d5c2bf73096d0be",
         "ranges": [
           [
             1,
@@ -2357,6 +2357,7 @@
       "lean/VE/Service/ScopeExamples.lean": "fixtures only: SC-1b's #guard checks build small scope@0 part documents as request JSON and run the document mode (`checkDoc`) on them; no service mode reads this file",
       "lean/VE/Defaults/RouteExamples.lean": "fixtures only: #guard checks of the defaults-* kinds through the norm-defaults mode (docs/spec/defeasible.md 8.1) build request JSON; no runner path",
       "lean/ResponseShape/DefaultsExamples.lean": "fixtures only: #guard checks of the defaults-* rows of norm-defaults.json on the mode's answers and their variants build JSON; no runner path",
+      "lean/ResponseShape/Schemas/RightsChecks.lean": "fixtures only: #guard checks of rights.json's elaborate, scope and packages rows on the mode's answers and their variants build JSON; no runner path",
       "lean/VE/Cardinality/RunExamples.lean": "fixtures only: #guard checks of docs/spec/quantities.md 4.1, 4.2 and 9.1 run the cardinality case runner on cases built with Json.parse and Json.mkObj; no runner path",
       "lean/VE/Cardinality/RunTheorems.lean": "statements about the cardinality certificate decoder and runner (decodeCertificate_sound over Json.getObjVal?, the regionsJson and erasedJson answer fields, the runCaseReported rows); no runtime JSON handling",
       "lean/ScopeBenchMain.lean": "measurement only: the ve_scope_bench executable of scope benchmark B1 (tools/bench/test_perf.py::test_scope_b1) reads a document case from a JSON file, runs decodeScope and governFast, and prints the layout rows, the list run and the run path's answer as JSON; no admission path, service mode or record reads it",
