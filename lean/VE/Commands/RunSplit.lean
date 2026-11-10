@@ -144,6 +144,23 @@ def mixed (p : Json) : Json :=
 -- An asserted fence resolved as a formula is its assertion.
 #guard result (resolving (payload (one "asserted" "Atlas is reviewed.\n") [] (ctx := false)) [("c1", formula)]) ==
   "ok"
+-- ci-3: the `ThenWithoutStep` check reads each unit's own effective kind: an instruction `Then` unit after an asserted
+-- one is refused, and so is an asserted `Then` unit with a signed `instruction` choice after an instruction.
+def cmd : Json := Json.mkObj [("command", click)]
+def signed (u : String) : Json := Json.mkObj [("id", .str "rs"), ("unit", .str u), ("version", toJson 1),
+  ("status", .str "authored"), ("signature", .str "author"), ("readings", toJson [Json.mkObj [("id", .str "r"),
+    ("kind", .str "instruction"), ("meaning_id", .str "candidate"), ("content", cmd), ("admission",
+      Json.mkObj [("who", .str "author"), ("why", .str "reproducer"), ("distinguishing_models", Json.mkObj [])])]])]
+def thenText : String := "ThenWithoutStep: a Then step names no earlier instruction step as its antecedent; " ++
+  "write the steps in one sentence, joined by ', then ' (unit t)"
+#guard result (payload [("a", "asserted", "Atlas is reviewed.\n", some formula),
+  ("t", "instruction", "Then click Check.\n", some cmd)] [] (ctx := false)) == thenText
+#guard [result (payload [("c1", "instruction", "Click Check.\n", some cmd), ("t", "asserted", "Then click Check.\n",
+    some formula)] [] (ctx := false) (extra := [("reading_sets", toJson [signed "t"])])),
+  result (payload [("t", "asserted", "Then click Check.\n", some formula), ("c1", "instruction", "Click Check.\n",
+    some cmd)] [] (ctx := false) (extra := [("reading_sets", toJson [signed "t"])])),
+  result (payload [("c1", "instruction", "Click Check.\n", some cmd), ("t", "asserted", "Then click Check.\n",
+    some formula)] [] (ctx := false))] == [thenText, thenText, "ok"]
 -- The fences Python resolves, charged against `maxCases` before any is read (asserted fences, none resolved).
 def fenced (n : Nat) : Json :=
   payload ((List.range n).map fun i => (s!"a{i}", "asserted", "Atlas is reviewed.\n", none)) [] (ctx := false)

@@ -323,4 +323,37 @@ def attributed : Json := toJson [Json.str "attributed", .str "alice", .str "says
 #guard (VE.SpeechActs.Source.thenFault (fun _ => .str "instruction") [srcUnit "c" (.str "asserted") "Then click Ask."]).isSome &&
   (VE.SpeechActs.Source.thenFault (fun _ => .str "asserted") [srcUnit "c" (.str "instruction") "Then click Ask."]).isNone
 
+
+/-! R16 fixtures for the trust-mutant survivors of ci-3's sweep (docs/commands-imperatives/ci-3/trust-mutants.json):
+more than one space after a cut, a third step, a wording with two shapes, the outcomes no reader writes yet
+(`mixed`, a `purpose` alternative), a unit of no step and an antecedent named at the end of the list. -/
+
+#guard [spans (get (request "Then   click Check.") "reading"),
+  spans (get (request "If atlas is reviewed,   click Check.") "reading")] == [[toJson [13, 18]], [toJson [30, 35]]]
+#guard (readingsOf (result (request "Click Check, then   click Check, then do not share the token."))).map spans ==
+  [[toJson [6, 11]], [toJson [26, 31]], [toJson [51, 60]]]
+-- Two shapes: two preposed cuts give no single shape; a `Then` step's shape is its `after` cut, never the `seq` one.
+#guard Run.oneShape "If atlas is reviewed, click Check, then click Check." false == none &&
+  Run.oneShape "Then click Check, then click Check." true == some (.after "click Check, then click Check")
+def ck : Reading := ⟨.require, "click_required", [⟨"check", "check"⟩], .top⟩
+/-- `outcomeFields` of `o` for the request of `s`, also for an outcome `readInstruction` does not give for `s`. -/
+def fieldsOf (s : String) (o : StepOutcome) : Json :=
+  match Run.decodeRequest (request s) with
+  | .ok q => Json.mkObj (Run.outcomeFields q o)
+  | .error _ => .null
+#guard spans ((fieldsOf "Then click Check, then click Check." (.one ck true)).getObjValD "reading") == [toJson [11, 16]]
+#guard (readingsOf (fieldsOf "Then click Check, then click Check." (.steps [ck, ck]))).all (spans · != [Json.null])
+#guard [(fieldsOf "Click Check." (.mixed ck "to pass")).getObjValD "outcome",
+  (fieldsOf "Click Check." (.mixed ck "to pass")).getObjValD "purpose",
+  actOf ((fieldsOf "Click Check." (.mixed ck "to pass")).getObjValD "reading")] ==
+  [.str "mixed", .str "to pass", .str "click_required"]
+#guard (Run.altParts (.purpose ck "to pass")).2.length == 1
+#guard stepNames [su "z" (steps := 0)] == ["z"] && lastStep (su "z" (steps := 0)) == "z" &&
+  firstStep (su "z" (steps := 0)) == "z"
+#guard antecedentOf [su "a"] 1 (su "b" (after := true) (a := some "a")) == some (su "a")
+-- The named antecedent, not the nearest earlier instruction unit.
+#guard stepOrder [su "a", su "b", su "t" (after := true) (a := some "a")] == [("a", "t")]
+-- `If <c>, <verb> …` reads the clause after the first comma only.
+#guard webKind "If draft is approved, the meaning is reviewed, click Ask." == "asserted"
+
 end VE.Commands.RunExamples

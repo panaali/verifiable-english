@@ -1,0 +1,20 @@
+{
+ "allow": [
+  {"definition": "VE.Commands.Run.outcomeFields", "operator": "list-first",
+   "reason": "the surviving site is `(stepStarts sh).head?` of `.one`: `head?` of `take 1` is `head?`; the other list-first sites (the steps outcome's `shapes q.s`, the mixed fields) are KILLED by RunExamples.lean's R16 fixtures"},
+  {"definition": "VE.Commands.Run.outcomeFields", "operator": "list-last",
+   "reason": "equivalent at its surviving sites: `oneShape` never gives a `seq` shape and every other shape's `stepStarts` has one element, so `(stepStarts sh).reverse.take 1` has the same head; `shapes` puts its one `seq` cut last (Steps.lean), so `(shapes q.s).reverse.take 1` finds the same `seq`; the mixed fields' list-last is KILLED"},
+  {"definition": "VE.Commands.Run.outcomeFields", "operator": "list-empty",
+   "reason": "UNKNOWN only: `rs.zipIdx` and `ps` replaced by `[]` do not elaborate (invalid match pattern, invalid projection); the mixed fields' list-empty is KILLED"},
+  {"definition": "VE.SpeechActs.Wire.surfaceKind", "operator": "list-first",
+   "reason": "equivalent: `(text.splitOn \", \").tail.take 1 |>.head?` is `(text.splitOn \", \").tail.head?`; list-last (the last comma's clause) is KILLED by RunExamples.lean's two-comma webKind guard"},
+  {"definition": "VE.SpeechActs.Wire.surfaceKind", "operator": "list-empty",
+   "reason": "UNKNOWN only: `text`, `text.drop 5`, the clause list and `.tail.head?` replaced by `[]` do not elaborate (application type mismatch, invalid field notation)"},
+  {"definition": "VE.SpeechActs.Source.readSource", "operator": "list-empty",
+   "reason": "UNKNOWN only: `dec.units`, its `find?` and the kind map replaced by `[]` do not elaborate (invalid field notation, application type mismatch)"},
+  {"definition": "VE.Commands.stepNames", "operator": "list-empty",
+   "reason": "UNKNOWN only: `us` replaced by `[]` does not elaborate (invalid field notation)"},
+  {"definition": "VE.Commands.Run.oneShape", "operator": "list-empty",
+   "reason": "UNKNOWN only: the pattern `[sh]` replaced by `[]` does not elaborate (unknown identifier `sh`)"}
+ ]
+}
