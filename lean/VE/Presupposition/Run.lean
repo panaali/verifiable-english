@@ -1,59 +1,81 @@
 import VE.Presupposition.Admit
 import VE.English.Render
 import VE.English.Parse
+import VE.English.Check
 import VE.Presupposition.Examples
 
 /-! # The presupposition report (docs/spec/presupposition.md 4.7 "Where the report goes", 2.3, 5; plan PS-2a)
 
 The value the Lean document mode's answer carries as its `presuppositions` field (plan PS-4; DRI PS-C9: no service
-mode, no runner and no schema of its own). It is read off `admit`'s answer, never recomputed: one row per obligation
-in the block's order with its id, unit and carrier; the regenerated goal with its English line, rendered here by the
-core renderer and shown only when it parses back to exactly the goal; the outcome; and, for an admitted unresolved obligation, the readings its unit carries with their
-aliases. Then the `PresuppositionRefuted` lines (2.3) the existing inconsistency report gives.
+mode, no runner and no schema of its own). It is read off `admit`'s answer, never recomputed. `admit` decides the
+block as a whole and answers its first failing step, so the outcome is the block's: checked, refused with the
+diagnostic (which names its obligation), or `ResourceLimit: presuppositions`, UNKNOWN and never a refusal (spec 5).
+An admitted block gives one row per obligation in the block's order: id, unit, carrier, the regenerated goal with its
+English line, and for an unresolved obligation the readings its unit carries with their aliases. Then the
+`PresuppositionRefuted` lines (2.3) the existing inconsistency report gives.
 
-`admit` decides the block as a whole and answers its first failing step, so every row carries the block's outcome:
-checked, the refusal's diagnostic, or `ResourceLimit: presuppositions`, which is UNKNOWN and never a refusal (spec 5).
-A refused block has no regenerated goal, so its rows carry none. Each row's goal is charged in `admit` against W1's
-node budget and the block against `maxObligations`; a rendered line over `maxLineTokens` tokens is not parsed and
-not shown; the inconsistency certificate is checked once per report. -/
+Limits, charged before the work: the block (`maxObligations`) and each goal (W1's nodes) in `admit`; a refused block
+is not walked. The lexicon once per report (`lexiconOk`: `maxLexicon` entries, templates of at most two places,
+then `VE.English.admissible`); each goal against `maxLineNodes` before it is rendered and parsed back. -/
 
 namespace VE.Presupposition
 
-/-- A row's outcome: the block admitted, refused with `admit`'s diagnostic, or over a limit (UNKNOWN). -/
+/-- The block's outcome: admitted, refused with `admit`'s diagnostic, or over a limit (UNKNOWN). -/
 inductive Outcome where
   | checked
   | refused (diagnostic : String)
   | unknown (diagnostic : String)
   deriving DecidableEq, Repr
 
-/-- A regenerated goal: the formula (PS-4 encodes it in P0's wire form) and its English line, none when the line
-    does not parse back to exactly the formula or is over the limit. -/
-structure Goal where
-  formula : VE.Formula
-  english : Option String
+/-- A goal's English line: shown; not shown, because the lexicon is not admissible or the sentence does not parse back
+    to exactly the goal; or UNKNOWN, because the goal or the lexicon is over its limit. -/
+inductive Line where
+  | shown (text : String)
+  | notShown
+  | unknown
   deriving DecidableEq, Repr
 
-/-- One obligation's row. `goal` is none on a refused block; `readings` is the unit's open set for an admitted
-    unresolved obligation, in the unit's order, each with its aliases (R-1), and empty otherwise. -/
+/-- A regenerated goal: the formula (PS-4 encodes it in P0's wire form) and its English line. -/
+structure Goal where
+  formula : VE.Formula
+  english : Line
+  deriving DecidableEq, Repr
+
+/-- One admitted obligation's row. `readings` is the unit's open set for an unresolved obligation, in the unit's
+    order, each with its aliases (R-1), and empty otherwise. -/
 structure Row where
   id : String
   unit : String
   carrier : Carrier
-  goal : Option Goal
-  outcome : Outcome
+  goal : Goal
   readings : List RReading
   deriving DecidableEq, Repr
 
-/-- The `presuppositions` field: the rows in block order, then the `PresuppositionRefuted` lines. -/
+/-- The `presuppositions` field: the outcome, the rows of an admitted block in block order (none when refused), and
+    the `PresuppositionRefuted` lines. -/
 structure Shown where
+  outcome : Outcome
   rows : List Row
   refuted : List String
   deriving DecidableEq, Repr
 
-/-- The existing inconsistency report (P0): the checked premise list and an inconsistency certificate on it. -/
+/-- The existing inconsistency report (P0's `INCONSISTENT`): the checked premise list and a certificate of `⊥` on it. -/
 structure Inconsistency where
   premises : List VE.Formula
   cert : VE.Tableau.Certificate
+
+/-- The lexicon's limits: entries, and the parser's work, which enumerates `pool ^ arity` tuples per template. -/
+def maxLexicon : Nat := 512
+def maxLineNodes : Nat := 200
+
+/-- Checked once per report: none (UNKNOWN) over `maxLexicon` entries or with a template of more than two places
+    (a formula's atoms have one or two); else whether the lexicon is admissible, the hypothesis of the core
+    renderer's round trip and unique reading (`checked_parse_render`, lean/VE/English/Proofs.lean). -/
+def lexiconOk (L : VE.English.Lexicon) : Option Bool :=
+  if L.sorts.length + L.predicates.length + L.constants.length ≤ maxLexicon &&
+      L.predicates.all (fun p => ((L.template p).map (fun T => decide (T.arity ≤ 2))).getD true) then
+    some (VE.English.admissible L)
+  else none
 
 /-- A clause's tokens as one line: separated by spaces, punctuation attached to the word before it. -/
 def lineOf (ts : List VE.English.Tok) : String :=
@@ -61,43 +83,51 @@ def lineOf (ts : List VE.English.Tok) : String :=
     | .word w => if s.isEmpty then w else if [",", ";", ":", "."].contains w then s ++ w else s ++ " " ++ w
     | .label l i => (if s.isEmpty then "" else s ++ " ") ++ l ++ toString i) ""
 
-/-- The limit on a rendered line: the core parser's work grows faster than the line, so a longer line is not parsed. -/
-def maxLineTokens : Nat := 400
-
-/-- The goal's English line: the core renderer's clause for it under the lexicon `L`, without the full stop, so
-    that 2.3's lines can quote it ("Assumed (from ‘…’): <goal>."). It is shown only when the sentence parses back,
-    in the document's environment `E`, to exactly the goal (one reading), and is within `maxLineTokens`. -/
-def englishLine (E : VE.Environment) (L : VE.English.Lexicon) (A : VE.Formula) : Option String :=
-  let ts := (VE.English.renderStatement L A).yield L 0
-  if ts.length ≤ maxLineTokens && VE.English.parse E L (ts ++ [.word "."]) == some [A] then some (lineOf ts) else none
+/-- The goal's English line under the lexicon `L` (`ok` is `lexiconOk L`): the core renderer's clause, without the
+    full stop so that 2.3's lines can quote it ("Assumed (from ‘…’): <goal>."), shown only when the sentence parses
+    back, in the document's environment `E`, to exactly the goal. The goal is charged against `maxLineNodes` first. -/
+def englishLine (E : VE.Environment) (L : VE.English.Lexicon) (ok : Option Bool) (A : VE.Formula) : Line :=
+  match ok with
+  | none => .unknown
+  | some false => .notShown
+  | some true =>
+    if VE.Bridge.formulaNodes A ≤ maxLineNodes then
+      let ts := (VE.English.renderStatement L A).yield L 0
+      if VE.English.parse E L (ts ++ [.word "."]) == some [A] then .shown (lineOf ts) else .notShown
+    else .unknown
 
 def outcomeOf (e : String) : Outcome := if e == budget then .unknown e else .refused e
 
-def checkedRow (L : VE.English.Lexicon) (D : PDoc) (c : Checked) : Row :=
-  { id := c.ob.id, unit := c.ob.unit, carrier := c.ob.carrier, goal := some ⟨c.goal, englishLine (env D) L c.goal⟩,
-    outcome := .checked,
+def checkedRow (L : VE.English.Lexicon) (ok : Option Bool) (D : PDoc) (c : Checked) : Row :=
+  { id := c.ob.id, unit := c.ob.unit, carrier := c.ob.carrier, goal := ⟨c.goal, englishLine (env D) L ok c.goal⟩,
     readings := if c.ob.carrier == .unresolved then (unitReadings D c.ob.unit).getD [] else [] }
 
-def refusedRow (e : String) (o : Obligation) : Row :=
-  { id := o.id, unit := o.unit, carrier := o.carrier, goal := none, outcome := outcomeOf e, readings := [] }
+/-- A premise of `D`: a declared background formula or the content of an asserted claim unit. -/
+def docPremise (D : PDoc) (a : VE.Formula) : Bool :=
+  D.background.contains a || D.units.any (fun x => x.asserted && x.content == .claim a)
 
-/-- 2.3: `PresuppositionRefuted: <o>: <unit>` for each assumed obligation whose goal is one of the premises an
-    accepted inconsistency certificate refutes (the other premises then refute the goal), in block order. -/
+/-- 2.3: when the report's premises are `D`'s and its certificate checks, `PresuppositionRefuted: <o>: <unit>` for
+    each assumed obligation whose goal the refutation uses: a premise equal to the goal, and the certificate no
+    longer checks with those premises replaced by `⊤`. The other premises then refute the goal. Block order. -/
 def refutedLines (D : PDoc) (R : Report) : Option Inconsistency → List String
   | none => []
   | some i =>
-    if VE.Tableau.checkCertificate (env D) i.premises .bottom i.cert then
+    let refutes (ps : List VE.Formula) := VE.Tableau.checkCertificate (env D) ps .bottom i.cert
+    if i.premises.all (docPremise D) && refutes i.premises then
       R.checked.filterMap (fun c => match c.ob.carrier with
-        | .assumed u => if i.premises.contains c.goal then some s!"PresuppositionRefuted: {c.ob.id}: {u}" else none
+        | .assumed u =>
+          if i.premises.contains c.goal && !refutes (i.premises.map (fun p => if p == c.goal then .top else p)) then
+            some s!"PresuppositionRefuted: {c.ob.id}: {u}"
+          else none
         | _ => none)
     else []
 
 /-- The field from `admit`'s answer `a` on `D`: absent without the block (as `admitWrapped`). -/
 def shownOf (L : VE.English.Lexicon) (inc : Option Inconsistency) (D : PDoc) (a : Except String Report) :
     Option Shown :=
-  D.block.map (fun obs => match a with
-    | .ok R => ⟨R.checked.map (checkedRow L D), refutedLines D R inc⟩
-    | .error e => ⟨obs.map (refusedRow e), []⟩)
+  D.block.map (fun _ => match a with
+    | .ok R => let ok := lexiconOk L; ⟨.checked, R.checked.map (checkedRow L ok D), refutedLines D R inc⟩
+    | .error e => ⟨outcomeOf e, [], []⟩)
 
 /-- The field PS-4 puts in the document mode's answer, on `admit`. -/
 def shown (L : VE.English.Lexicon) (inc : Option Inconsistency) (D : PDoc) : Option Shown :=
@@ -110,7 +140,7 @@ end VE.Presupposition
 namespace VE.Presupposition.RunExamples
 open VE.Presupposition VE.Presupposition.Examples
 
-/-- A fixture lexicon over `envA`'s words. -/
+/-- A fixture lexicon over `envA`'s words: admissible. -/
 def lexA : VE.English.Lexicon :=
   { sorts := ["entity"], noun := fun _ => ["entity"], letter := fun _ => "E",
     predicates := ["owner", "ready", "manager", "trusts", "core_value_of"],
@@ -123,82 +153,126 @@ def lexA : VE.English.Lexicon :=
       | _ => none,
     constants := ["claude"], spelling := fun c => if c == "claude" then ["Claude"] else [] }
 def rowsOf (s : Option Shown) : List Row := (s.map (·.rows)).getD []
+def lineA (A : VE.Formula) : Line := englishLine envA lexA (lexiconOk lexA) A
+def isShown : Line → Bool
+  | .shown _ => true
+  | _ => false
 
 -- Rows in block order (A18b: two assumed obligations on one unit, admitted on `admit`); the reversed block gives the
 -- reversed rows. Id, unit and carrier are the obligation's.
 #guard (rowsOf (shown lexA none doc18b)).map (fun r => (r.id, r.unit, r.carrier)) ==
   [("p1", "u1", .assumed "u0"), ("p2", "u1", .assumed "u00")]
 #guard (rowsOf (shown lexA none { doc18b with block := doc18b.block.map List.reverse })).map (·.id) == ["p2", "p1"]
--- outcome: checked on an admitted block; readings only for an unresolved obligation
-#guard (rowsOf (shown lexA none doc18b)).map (fun r => (r.outcome, r.readings)) == [(.checked, []), (.checked, [])]
+-- outcome checked; readings only for an unresolved obligation
+#guard (shown lexA none doc18b).map (·.outcome) == some .checked &&
+  (rowsOf (shown lexA none doc18b)).map (·.readings) == [[], []]
 -- goal: `admit`'s regenerated goal and its English line (A24: a heading assumed on its own unit, goal `pre`)
 #guard rowsOf (shown lexA none (docH coreU (.assumed "u0013.presupposition"))) ==
   [⟨"p2", "u0013.presupposition", .assumed "u0013.presupposition",
-    some ⟨coreU, some "there is an entity such that that entity is a core value of Claude"⟩, .checked, []⟩]
-#guard (rowsOf (shown lexA none doc18b)).map (·.goal.map (·.formula)) ==
-  ((admit doc18b).toOption.map (·.checked.map (some ·.goal))).getD []
+    ⟨coreU, .shown "there is an entity such that that entity is a core value of Claude"⟩, []⟩]
+#guard (rowsOf (shown lexA none doc18b)).map (·.goal.formula) ==
+  ((admit doc18b).toOption.map (·.checked.map (·.goal))).getD []
 -- the English line: punctuation attached, list labels and numbered entity labels kept (A1's goal, the owner exists)
-#guard englishLine envA lexA theOwnerU == some ("there is a first entity such that both of the following hold: (a) the first " ++
-  "entity is an owner; (b) for every second entity, if the second entity is an owner, then the second entity is " ++
-  "the same as the first entity")
--- a line that does not parse back to exactly the goal is not shown: a predicate without a wording (A18b's p2 under a
--- lexicon without "manager"), a wording that reads as another predicate's; and a line over `maxLineTokens`
+#guard lexiconOk lexA == some true && lineA theOwnerU == .shown ("there is a first entity such that both of the " ++
+  "following hold: (a) the first entity is an owner; (b) for every second entity, if the second entity is an " ++
+  "owner, then the second entity is the same as the first entity")
+#guard lineOf [.word "if", .label "E" 1, .word "is", .word "an", .word "owner", .word ",", .word "then", .word "."] ==
+  "if E1 is an owner, then." && lineOf [.label "E" 2, .word "is", .word "ready"] == "E2 is ready"
+-- not shown: a predicate without a wording (A18b's p2 without "manager"); a lexicon that words "ready" as "owner", or
+-- "owner" as "ready", is not admissible, so no line is shown (the second would read "… is ready" for an owner)
 def lexNoMgr : VE.English.Lexicon := { lexA with predicates := lexA.predicates.erase "manager" }
-#guard (rowsOf (shown lexNoMgr none doc18b)).map (·.goal.map (·.english.isSome)) == [some true, some false]
-#guard (rowsOf (shown lexA none doc18b)).map (·.goal.map (·.english.isSome)) == [some true, some true]
-#guard englishLine envA { lexA with template := fun p => lexA.template (if p == "ready" then "owner" else p) } theOwner == none
-#guard (englishLine envA lexA theOwner).isSome
+def lexClash : VE.English.Lexicon :=
+  { lexA with template := fun p => lexA.template (if p == "ready" then "owner" else p) }
+#guard (rowsOf (shown lexNoMgr none doc18b)).map (isShown ·.goal.english) == [true, false]
+#guard (rowsOf (shown lexA none doc18b)).map (isShown ·.goal.english) == [true, true]
+def lexClash2 : VE.English.Lexicon :=
+  { lexA with template := fun p => lexA.template (if p == "owner" then "ready" else p) }
+#guard lexiconOk lexClash == some false && englishLine envA lexClash (lexiconOk lexClash) theOwnerU == .notShown
+#guard lexiconOk lexClash2 == some false && englishLine envA lexClash2 (lexiconOk lexClash2) theOwnerU == .notShown
+-- UNKNOWN: a goal over `maxLineNodes` (191 and 203 nodes); a lexicon over `maxLexicon` or with a three-place template
 def conj : Nat → VE.Formula
   | 0 => theOwnerU
   | n + 1 => .and theOwnerU (conj n)
-#guard ((VE.English.renderStatement lexA (conj 6)).yield lexA 0).length ≤ maxLineTokens &&
-  (englishLine envA lexA (conj 6)).isSome
-#guard ((VE.English.renderStatement lexA (conj 7)).yield lexA 0).length > maxLineTokens && englishLine envA lexA (conj 7) == none
-#guard lineOf [.word "if", .label "E" 1, .word "is", .word "an", .word "owner", .word ",", .word "then", .word "."] ==
-  "if E1 is an owner, then."
--- a refused block: every row carries `admit`'s diagnostic and no goal (A20: assumed on its own unit; A18: p2 in p1's
--- restriction, both rows)
-#guard rowsOf (shown lexA none (docA [cu "u1" theOwner] [pA (.assumed "u1")])) ==
-  [⟨"p1", "u1", .assumed "u1", none, .refused "PresuppositionAssumedUnit: p1: u1", []⟩]
-#guard (rowsOf (shown lexA none (doc18 [0, 0]))).map (fun r => (r.id, r.goal, r.outcome)) ==
-  [("p1", none, .refused "PresuppositionPosition: p2"), ("p2", none, .refused "PresuppositionPosition: p2")]
--- A15: 257 obligations are UNKNOWN, never refused; 256 on one unit are checked, 256 rows with their lines
-#guard (rowsOf (shown lexA none (docA [cu "u0" theOwnerU, cu "u1" theOwner] (many 257)))).all
-  (·.outcome == .unknown "ResourceLimit: presuppositions")
-#guard (rowsOf (shown lexA none (docA [cu "u0" theOwnerU, cu "u1" theOwner] (many 257)))).length == 257
-#guard (rowsOf (shown lexA none (docA [cu "u0" theOwnerU, cu "u1" theOwner] (many 256)))).map
-  (fun r => (r.outcome, r.goal.map (·.english))) == List.replicate 256 (.checked, some (englishLine envA lexA theOwnerU))
+#guard VE.Bridge.formulaNodes (conj 15) ≤ maxLineNodes && isShown (lineA (conj 15))
+#guard VE.Bridge.formulaNodes (conj 16) > maxLineNodes && lineA (conj 16) == .unknown
+def lexBig : VE.English.Lexicon := { lexA with constants := (List.range 507).map toString }
+def lex3 : VE.English.Lexicon :=
+  { lexA with template := fun p => if p == "trusts" then some [.hole 0, .hole 1, .hole 2] else lexA.template p }
+#guard lexiconOk { lexA with constants := (List.range 506).map toString } != none && lexiconOk lexBig == none &&
+  lexiconOk lex3 == none && englishLine envA lexBig (lexiconOk lexBig) theOwnerU == .unknown
+-- a refused block: its outcome is `admit`'s diagnostic and it has no rows (A20: assumed on its own unit; A18: p2 in
+-- p1's restriction)
+#guard shown lexA none (docA [cu "u1" theOwner] [pA (.assumed "u1")]) ==
+  some ⟨.refused "PresuppositionAssumedUnit: p1: u1", [], []⟩
+#guard shown lexA none (doc18 [0, 0]) == some ⟨.refused "PresuppositionPosition: p2", [], []⟩
+-- A15: 257 obligations are UNKNOWN, never refused, and not walked; 256 on one unit give 256 rows with their lines
+#guard shown lexA none (docA [cu "u0" theOwnerU, cu "u1" theOwner] (many 257)) ==
+  some ⟨.unknown "ResourceLimit: presuppositions", [], []⟩
+#guard (rowsOf (shown lexA none (docA [cu "u0" theOwnerU, cu "u1" theOwner] (many 256)))).map (·.goal.english) ==
+  List.replicate 256 (lineA theOwnerU)
 -- A17: without the block the field is absent
 #guard (shown lexA none { docA1 with block := none }).isNone
 
 -- Unresolved obligations: the unit's readings, each with its aliases. A1 (the fixture table): assumed, conditioned.
 #guard (rowsOf (shownOf lexA none docA1 (admitWith fixtureTable fx1 docA1))).map (fun r => (r.carrier, r.readings)) ==
   [(.unresolved, [rdAs, rdCo])]
--- R-1: at a negated frame whose cell lists conditioned, asserted and in place, the conditioned reading carries in place
--- as its alias. (Assumed and conditioned are equivalent there, so step 5 never separates that pair.)
-def tC : CandidateTable := fun _ pc => if pc == .negated then [.conditioned, .asserted, .inPlace] else [.assumed, .conditioned]
-def rsC : List RReading :=
-  ((admitWith tC fxN (docA [cu "u1" (negF.plug theOwner)] [pA .inPlace (.path [0])])).toOption.bind
-    (fun R => R.checked.head?.bind (expectedReadings tC R))).getD []
-def docC : PDoc := docA [⟨"u1", true, .readings rsC⟩] [pA .unresolved (.path [0])]
-#guard tableOk rowNames tC && errOf (admitWith tC ⟨.norms, [("u1", 0, 1, sitNo)]⟩ docC) == "admitted"
-#guard (rowsOf (shownOf lexA none docC (admitWith tC ⟨.norms, [("u1", 0, 1, sitNo)]⟩ docC))).map
+-- a proved heading obligation on A1's open unit carries no readings
+def selfArgs : Args := { sort := some "entity", restriction := some (.eq (.var 0) (.var 0)) }
+def pHd : Obligation := obA "p2" "u1" "plural" .heading selfArgs (.proved "d1")
+def docHd : PDoc := { docA [⟨"u1", true, .readings [rdAs, rdCo]⟩] [pA .unresolved, pHd] (proofs := [("d1", certC)]) with
+  background := [.ex "entity" (.eq (.var 0) (.var 0))] }
+#guard (rowsOf (shownOf lexA none docHd (admitWith fixtureTable fx1 docHd))).map (fun r => (r.id, r.readings)) ==
+  [("p1", [rdAs, rdCo]), ("p2", [])]
+-- R-1: in place is an alias of the conditioned reading at a shallow frame. The fixture table's negated cell
+-- [assumed, conditioned, in place] gives an open set that step 5 never admits: there `¬U` entails `B`, so the assumed
+-- `B` and the conditioned `U → B` are equivalent and no situation separates them. A cell [conditioned, asserted, in
+-- place] gives one it admits.
+def readingsAt (t : CandidateTable) : List RReading :=
+  ((admitWith t fxN (docA [cu "u1" (negF.plug theOwner)] [pA .inPlace (.path [0])])).toOption.bind
+    (fun R => R.checked.head?.bind (expectedReadings t R))).getD []
+def docNeg (t : CandidateTable) : PDoc := docA [⟨"u1", true, .readings (readingsAt t)⟩] [pA .unresolved (.path [0])]
+#guard (readingsAt fixtureTable).map (fun r => (r.cand, r.aliases)) == [(.assumed, []), (.conditioned, [.inPlace])] &&
+  [(0, 1), (1, 0)].all (fun (w, o) => errOf (admitWith fixtureTable ⟨.norms, [("u1", w, o, sitNo)]⟩
+    (docNeg fixtureTable)) == notSeparatedText)
+def tC : CandidateTable := fun _ pc =>
+  if pc == .negated then [.conditioned, .asserted, .inPlace] else [.assumed, .conditioned]
+#guard tableOk rowNames tC && errOf (admitWith tC ⟨.norms, [("u1", 0, 1, sitNo)]⟩ (docNeg tC)) == "admitted"
+#guard (rowsOf (shownOf lexA none (docNeg tC) (admitWith tC ⟨.norms, [("u1", 0, 1, sitNo)]⟩ (docNeg tC)))).map
   (·.readings.map (fun r => (r.cand, r.aliases))) == [[(.conditioned, [.inPlace]), (.asserted, [])]]
 
--- PresuppositionRefuted (2.3): an accepted inconsistency certificate over premises that contain assumed goals names
--- each such obligation and its assumed unit, in block order; a certificate that does not check, no report, a goal
--- not among the premises, a carrier other than assumed and a refused block give none.
-def certI (k : Nat) : VE.Tableau.Certificate := { certC with trace := .expand k none [.close] }
+-- PresuppositionRefuted (2.3). A18b with one more asserted unit: the inconsistency certificate on the document's
+-- premises names each assumed obligation whose goal the refutation uses, in block order. None when the refutation does
+-- not use the goal, a premise is not the document's, the certificate does not check, there is no report, the carrier
+-- is not assumed, or the block is refused.
+def certOf (t : VE.Tableau.Trace) : VE.Tableau.Certificate := { certC with trace := t }
 def g1 : VE.Formula := rOut18b.pre
 def g2 : VE.Formula := f18b.goal rIn18b.pre
-def refutedOf (D : PDoc) (ps : List VE.Formula) (c : VE.Tableau.Certificate) : List String :=
-  ((shown lexA (some ⟨ps, c⟩) D).map (·.refuted)).getD []
-#guard refutedOf doc18b [g1, g2, .not g1] (certI 2) == ["PresuppositionRefuted: p1: u0", "PresuppositionRefuted: p2: u00"]
-#guard refutedOf doc18b [g1, .not g1] (certI 1) == ["PresuppositionRefuted: p1: u0"]
-#guard refutedOf doc18b [g1, .not g1] certC == [] && (shown lexA none doc18b).map (·.refuted) == some []
-#guard refutedOf doc18b [isOpen, .not isOpen] (certI 1) == []
-#guard refutedOf (docA [cu "u0" theMgrU, cu "u1" theMgr] [pP "u1"] (proofs := [("d1", certC)])) [theMgrU, .not theMgrU]
-  (certI 1) == []
-#guard refutedOf (doc18 [0, 0]) [g1, .not g1] (certI 1) == []
+def with18b (extra : List VE.Formula) (asserted := true) : PDoc :=
+  { doc18b with units := doc18b.units ++ extra.zipIdx.map (fun (a, i) => cu s!"x{i}" a asserted) }
+def premises18b (extra : List VE.Formula) : List VE.Formula := [g1, g2, rOut18b.strong] ++ extra
+def refutedOf (D : PDoc) (ps : List VE.Formula) (t : VE.Tableau.Trace) : List String :=
+  ((shown lexA (some ⟨ps, certOf t⟩) D).map (·.refuted)).getD []
+-- ¬(g1 ∧ g2): both goals used
+#guard refutedOf (with18b [.not (.and g1 g2)]) (premises18b [.not (.and g1 g2)])
+  (.expand 3 none [.expand 5 none [.close, .close]]) ==
+  ["PresuppositionRefuted: p1: u0", "PresuppositionRefuted: p2: u00"]
+-- ¬g1: only p1's
+#guard refutedOf (with18b [.not g1]) (premises18b [.not g1]) (.expand 3 none [.close]) ==
+  ["PresuppositionRefuted: p1: u0"]
+-- the premise from the declared background
+#guard refutedOf { doc18b with background := [.not g1] } (.not g1 :: premises18b []) (.expand 0 none [.close]) ==
+  ["PresuppositionRefuted: p1: u0"]
+-- a contradiction that uses neither goal; a premise not in the document, or only in a unit that is not asserted; a
+-- trace that does not close
+#guard refutedOf (with18b [isOpen, .not isOpen]) (premises18b [isOpen, .not isOpen]) (.expand 4 none [.close]) == []
+#guard refutedOf (with18b []) (premises18b [.not g1]) (.expand 3 none [.close]) == [] &&
+  refutedOf (with18b [.not g1] false) (premises18b [.not g1]) (.expand 3 none [.close]) == []
+#guard refutedOf (with18b [.not g1]) (premises18b [.not g1]) .close == [] &&
+  (shown lexA none doc18b).map (·.refuted) == some []
+-- a proved carrier (A8) and a refused block (A18) give none
+#guard refutedOf (docA [cu "u0" theMgrU, cu "u1" theMgr, cu "x0" (.not theMgrU)] [pP "u1"] (proofs := [("d1", certC)]))
+  [theMgrU, theMgr, .not theMgrU] (.expand 2 none [.close]) == []
+#guard refutedOf { doc18 [0, 0] with units := (doc18 [0, 0]).units ++ [cu "x0" (.not g1)] }
+  [rOut18.pre, .not rOut18.pre] (.expand 1 none [.close]) == []
 
 end VE.Presupposition.RunExamples
