@@ -1,0 +1,13 @@
+trust_mutants: 84 definitions, 90 mutants (15 to run), 4 jobs, base a998c06909c3
+SURVIVOR lean/ResponseShape/Schemas/NormDefaults.lean:204 ResponseShape.Schemas.NormDefaults.status (G[V], trusted) list-empty: [ref "common.json#/$defs/strings", .equals "/tuple"] -> []
+UNKNOWN lean/VE/Acts/Run.lean:60 VE.Acts.Run.elaboratedFields (D[V], trusted) list-empty: e.D.acts -> [] (lean/VE/Acts/Run.lean:60: Invalid projection: Type of)
+UNKNOWN lean/VE/Acts/Specialise.lean:33 VE.Acts.declaredOnce (G[V], trusted) list-empty: [r] -> [] (lean/VE/Acts/Specialise.lean:33: Unknown identifier `r`)
+UNKNOWN lean/VE/Commands/Steps.lean:92 VE.Commands.shapeOutcome (G[V], trusted) list-empty: os -> [] (lean/VE/Commands/Steps.lean:93: Invalid dotted identifier notation: The expected type of `.refuse...)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:168 VE.Purposes.WellFormed (S, trusted) bool-flip: true -> false (lean/VE/Purposes/Examples.lean:275: Expression (VE.Purposes.Examples.wfDecidable, which it reads,...)
+UNKNOWN lean/VE/Presupposition/Wire.lean:157 VE.Presupposition.premisesBefore (S, trusted) list-empty: (D.units.takeWhile (fun x => x.id != u)) -> [] (lean/VE/Presupposition/Wire.lean:158: Invalid field notation: Type of)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:108 VE.Purposes.markerHonest (S, trusted) list-empty: B.links -> [] (lean/VE/Purposes/WellFormed.lean:108: Invalid field notation: Type of)
+trust_mutants: 7 KILLED, 1 SURVIVOR, 6 UNKNOWN, 1 INVALID, 0 ALLOWED, 0 NOT RUN, 75 OTHER SHARD in 900 s
+trust_mutants: D[V], trusted: 2 KILLED, 1 UNKNOWN, 17 OTHER SHARD
+trust_mutants: G[V], trusted: 3 KILLED, 1 SURVIVOR, 2 UNKNOWN, 1 INVALID, 37 OTHER SHARD
+trust_mutants: S, trusted: 2 KILLED, 3 UNKNOWN, 21 OTHER SHARD
+trust_mutants: steps: wall plan 12.6 s, scratch 3.4 s, control_build 0.2 s, probe_install 1.1 s, mutants 877.6 s, cleanup 5.5 s, reads 0.1 s; lake control_build 0.2 s (1), probe_install 1.1 s (1), control_probes 112.2 s (10), mutant_builds 60.8 s (16), mutant_checks 1376.7 s (12), stage_controls 215.8 s (3), mutant_probes 148 s (10)
