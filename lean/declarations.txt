@@ -1473,6 +1473,13 @@ module ResponseShape.Schemas.SoftNorms 1882947340320ee3de58b2f7bd50d444c626e39c0
 313:0-329:104 def ResponseShape.Schemas.SoftNorms.packages@ResponseShape.Schemas.SoftNorms
 331:0-345:42 def ResponseShape.Schemas.SoftNorms.row@ResponseShape.Schemas.SoftNorms
 347:0-375:35 def ResponseShape.Schemas.SoftNorms.file@ResponseShape.Schemas.SoftNorms
+module ResponseShape.Schemas.SoftPairsChecks a723eca503aac920ccac6ecf26ed9f7facad354131fc1fefd945464ae12f4637
+11:0-11:67 def ResponseShape.SoftPairsChecks.parse@ResponseShape.Schemas.SoftPairsChecks
+12:0-12:788 def ResponseShape.SoftPairsChecks.env@ResponseShape.Schemas.SoftPairsChecks
+13:0-13:1063 def ResponseShape.SoftPairsChecks.norms@ResponseShape.Schemas.SoftPairsChecks
+14:0-14:1843 def ResponseShape.SoftPairsChecks.pairs@ResponseShape.Schemas.SoftPairsChecks
+15:0-17:59 def ResponseShape.SoftPairsChecks.openWith@ResponseShape.Schemas.SoftPairsChecks
+19:0-19:113 def ResponseShape.SoftPairsChecks.all@ResponseShape.Schemas.SoftPairsChecks
 module ResponseShape.Schemas.SpeechActs 3bb9c2f9444dc1d26c665526ccb58606de3f4918411e867c3bbd763dfbb2fb7f
 9:0-39:115 def ResponseShape.Schemas.SpeechActs.speech_path@ResponseShape.Schemas.SpeechActs
 41:0-46:50 def ResponseShape.Schemas.SpeechActs.kind@ResponseShape.Schemas.SpeechActs
