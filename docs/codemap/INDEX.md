@@ -6,9 +6,9 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [bench/](bench.md) — 4 modules — -
 - [conformance/](conformance.md) — 67 modules — `evaluation.json` contains **701** valid environment/model/document cases (**4,912 formulas**).
 - [docs/act-phrases/](docs__act-phrases.md) — 42 modules — -
-- [docs/arch/](docs__arch.md) — 28 modules — -
+- [docs/arch/](docs__arch.md) — 29 modules — -
 - [docs/architecture/](docs__architecture.md) — 1 modules — -
-- [docs/attitudes/](docs__attitudes.md) — 5 modules — -
+- [docs/attitudes/](docs__attitudes.md) — 6 modules — -
 - [docs/commands-imperatives/](docs__commands-imperatives.md) — 3 modules — -
 - [docs/composition/](docs__composition.md) — 3 modules — -
 - [docs/defeasible/](docs__defeasible.md) — 12 modules — -
@@ -59,7 +59,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [docs/perf/](docs__perf.md) — 2 modules — -
 - [docs/premise-packs/](docs__premise-packs.md) — 1 modules — -
 - [docs/premise-scale/](docs__premise-scale.md) — 4 modules — -
-- [docs/presupposition/](docs__presupposition.md) — 7 modules — -
+- [docs/presupposition/](docs__presupposition.md) — 8 modules — -
 - [docs/profile-composition/](docs__profile-composition.md) — 5 modules — -
 - [docs/question-answering/](docs__question-answering.md) — 7 modules — -
 - [docs/readings-defaults/](docs__readings-defaults.md) — 7 modules — -
@@ -109,7 +109,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/VE/Norms/](lean__VE__Norms.md) — 25 modules — -
 - [lean/VE/Numbers/](lean__VE__Numbers.md) — 6 modules — -
 - [lean/VE/Order/](lean__VE__Order.md) — 16 modules — -
-- [lean/VE/Presupposition/](lean__VE__Presupposition.md) — 17 modules — -
+- [lean/VE/Presupposition/](lean__VE__Presupposition.md) — 18 modules — -
 - [lean/VE/Purposes/](lean__VE__Purposes.md) — 4 modules — -
 - [lean/VE/Question/](lean__VE__Question.md) — 12 modules — -
 - [lean/VE/Readings/ part 1](lean__VE__Readings--part-1.md) — 74 modules — -
@@ -133,13 +133,13 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [research/](research.md) — 2 modules — -
 - [rust/](rust.md) — 37 modules — -
 - [tests/ part 1](tests--part-1.md) — 91 modules — -
-- [tests/ part 2](tests--part-2.md) — 89 modules — -
+- [tests/ part 2](tests--part-2.md) — 90 modules — -
 - [tests/ part 3](tests--part-3.md) — 88 modules — -
 - [tests/ part 4](tests--part-4.md) — 86 modules — -
 - [tests/ part 5](tests--part-5.md) — 83 modules — -
 - [tests/ part 6](tests--part-6.md) — 81 modules — -
-- [tests/ part 7](tests--part-7.md) — 89 modules — -
-- [tests/ part 8](tests--part-8.md) — 11 modules — -
+- [tests/ part 7](tests--part-7.md) — 88 modules — -
+- [tests/ part 8](tests--part-8.md) — 14 modules — -
 - [tests/frozen_speech/](tests__frozen_speech.md) — 4 modules — Frozen pre-switch speech oracle.
 - [tools/ part 1](tools--part-1.md) — 98 modules — -
 - [tools/ part 2](tools--part-2.md) — 14 modules — -

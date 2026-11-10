@@ -1,3 +1,6 @@
+- `tests/test_wire_contract_faults.py` — The fault catalogue and the oracle of the soft-norms gate (wire-contract.md 8.3), checked without Lean.
+- `tests/test_wire_contract_generator.py` — Selection and oracle rules are independent of any profile catalogue.
+- `tests/test_wire_contract_lean.py` — The Lean wire contract engine (service mode `diagnose`) on the engine corpus of docs/spec/wire-contract.md 8.1.
 - `tests/test_wire_contract_lint.py` — The tooling fixtures of docs/spec/wire-contract.md 8.2 (L1 to L13 and L15; L14 is in tests/test_wire_contract_lean.py), and the lint rules the wire review foun…
 - `tests/test_wire_contract_precondition.py` — Ground the S3-pre inherited-profile discrepancy with a reachable case.
 - `tests/test_wire_contract_rust.py` — The generated Rust contract tables and the Rust engine (docs/spec/wire-contract-s4-2.md 9).
