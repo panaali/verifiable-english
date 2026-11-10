@@ -63,5 +63,18 @@
   ],
   "test": "tests/test_rights_report_parts.py::test_rights_weighing_points_name_what_they_count",
   "result": "1 failed"
+ },
+ {
+  "id": "S6-soft-count-duplicate",
+  "behaviour": "the soft line's <j> is WP(T) (openLabels, from Wire.openCoherence), not a repeat of <k>",
+  "definition": "VE.SoftNorms.Run.conflictFreeText",
+  "language": "Lean",
+  "file": "lean/VE/SoftNorms/Run.lean",
+  "mutation": [
+   "coherence premises; {openLabels.length} weighing points open",
+   "coherence premises; {conditional.length} weighing points open"
+  ],
+  "test": "lean/VE/SoftNorms/Run.lean:127 (#guard: <k> 1, <j> 2)",
+  "result": "lake build VE.SoftNorms.Run: error at :127; build failed"
  }
 ]
