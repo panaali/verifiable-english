@@ -5,14 +5,14 @@ outputs. No approved theorem statement changed and no hypothesis was added, so n
 
 Batch AR-23 of the architecture plan (`ARCHITECTURE-REVIEW-2026-10.md` 4.5, Phase C), named by the DRI for the
 2026-11-09 pass (`reviews/dri-decisions-20261105-arch-pass.md` item 2). Branch `infra/arch-20261109-1`. Merge base at
-the time of writing: `95ed0e49b` (main was merged once, at `a8572afb0`, with the generated files regenerated under R12
-at `8c9b52855`).
+the time of writing: `a5088a09b`. Main was merged twice: at `a8572afb0` (generated files regenerated under R12 at
+`8c9b52855`) and at `b58755067` (regenerated at `eb334fbd1`).
 
 ## Measured outcome
 
 | Measure | Before (base) | After (head) | Command and output |
 |---|---|---|---|
-| Trusted lines, whole tree | 62,095 (K 994, S 14,568) at `de7fb9469` | 62,085 (K 984, S 14,568) | `uv run python tools/trust_map.py --check` at head: "against 95ed0e49b496: K -10, S +0, D +0, G +0, tied +0, unclassified +0, trusted -10 … PASS" |
+| Trusted lines, whole tree | 62,095 (K 994, S 14,568) at `de7fb9469` | 62,085 (K 984, S 14,568) | `uv run python tools/trust_map.py --check` at head: "against a5088a09b523: K -10, S +0, D +0, G +0, tied +0, unclassified +0, trusted -10 … PASS" |
 | K in `VE/Closure/` | 102 (`Syntax` 92, `Paths` 6, `Consequence` 4) | 92 (`Syntax` 82, `Paths` 6, `Consequence` 4) | `trust_map.py --files <outside the tree>` at base and head (`evidence/trust.json`, `closure_files`) |
 | Untied [V] | 46,533 | 46,533 | the same `--check` run: D +0, G +0, tied +0 |
 | Untrusted lines | C 12,817, P 112,752 | C 12,761, P 112,648 | `evidence/trust.json` `totals.delta`: C −56, P −104, T +24, all lines −138 |
@@ -112,12 +112,18 @@ are untouched.
   The two recordings are byte-identical (SHA-256 `e2dbb554…` for both). Compared with `uv run python -m tools.evidence
   ab … --delta evidence/ab-delta.json`: "ab PASS", with 100,529 the same, 31 unavailable on both sides with identical
   outputs (R7, DELTA), and 0 unlisted.
-- **Corpus A/B, merge base `95ed0e49b` (after the merge of main).** Recorded again the same way: the base worktree
-  at `95ed0e49b` and the head at `14e7dbe2e`, at the same time. The recordings are byte-identical (SHA-256
-  `4d806d67…` for both). `uv run python -m tools.evidence ab … --base-commit 95ed0e49b… --head-commit 14e7dbe2e…
-  --delta evidence/ab-delta.json` gave "ab PASS" over 100,560 records: 100,530 the same, 30 unavailable on both sides
-  with identical outputs (R7, DELTA rows 1–4), and 0 unlisted (`evidence/ab.json`). After `14e7dbe2e`, only
+- **Corpus A/B, merge base `95ed0e49b` (after the first merge of main).** Recorded again the same way: the base
+  worktree at `95ed0e49b` and the head at `14e7dbe2e`. The recordings are byte-identical (`4d806d67…`): 100,530 the
+  same, 30 unavailable on both sides, 0 unlisted.
+- **Corpus A/B, merge base `a5088a09b` (after the second merge of main; the saved one).** The base worktree at
+  `a5088a09b` and the head at `eb334fbd1`, recorded at the same time. The recordings are byte-identical (SHA-256
+  `8de0da3e…` for both). `uv run python -m tools.evidence ab … --base-commit a5088a09b… --head-commit eb334fbd1…
+  --delta evidence/ab-delta.json` gave "ab PASS" over 100,560 records: 100,538 the same, 22 unavailable on both sides
+  with identical outputs (R7, DELTA rows 1–4), and 0 unlisted (`evidence/ab.json`). After `eb334fbd1`, only
   `docs/arch/AR-23/` changes.
+- **The three runs agree.** Whole-UDHR pilot records timed out on both sides in each run: 10, then 9, then 1. All but
+  one answered, the same on both sides, in a later run. The exception, `udhr-20261018T1800Z` `translation-whole.ve.md`,
+  timed out on both sides in all three runs (DELTA row 2).
 - **Lean output differential (OUT).** Every `lean_exe` was built in both checkouts. The baseline was saved at
   `de7fb9469` with `tools/lean_output_diff.py --save-baseline`, and the head was compared with `--all --jobs 8`:
   "441 invocations, 441 run on both builds …; 1 differences, 0 timed out". The one difference is the `ve_service`
@@ -162,7 +168,7 @@ docs/arch/AR-23/trust-mutants-allow.json …` selected 18 mutants of the 4 chang
 `denote`, `Entails`).
 - The first run gave 0 KILLED, 14 SURVIVOR and 4 UNKNOWN.
 - Rerun with the allow file (`--rescore`): "0 KILLED, 0 SURVIVOR, 0 UNKNOWN, 0 INVALID, 18 ALLOWED, 0 NOT RUN", exit 0.
-- Rescored again after the merge of main: the same result, exit 0 (`docs/arch/AR-23/trust-mutants.json`).
+- Rescored again after each merge of main (bases `95ed0e49b` and `a5088a09b`): the same result, exit 0 (`docs/arch/AR-23/trust-mutants.json`).
 
 The 16 allowed mutants of `denote`, `WellFormed` and `Entails` are Props that no check can evaluate. Each allow reason
 names the proofs that mutant breaks, as R16 asks. The 2 `all-any` mutants of `toCore` name a constructor that does not
@@ -171,7 +177,7 @@ exist. `toCore` itself is checked per constructor kind by the new `#guard`s, and
 ## Trust (D3)
 
 `uv run python tools/trust_map.py --check` on the final head: K 984, S 14,568, trusted 62,085. Against the merge base,
-K −10, S +0, untied [V] +0, with no new allowance. "PASS: K, S and untied [V] within 95ed0e49b496 and the allowances
+K −10, S +0, untied [V] +0, with no new allowance. "PASS: K, S and untied [V] within a5088a09b523 and the allowances
 introduced since". Phase C asks for a reduction (plan 4.1 item 3), and K fell. See "Measured outcome" for why it fell
 less than the plan estimated.
 
@@ -204,8 +210,8 @@ commit the A/B recorded, only `docs/arch/AR-23/` changes up to `<G>`. Then make 
 
     cp gate-result.json docs/arch/AR-23/evidence/gate.json
     uv run python -m tools.evidence scope --base main --head <G> --out docs/arch/AR-23/evidence/scope.json
-    uv run python -m tools.evidence ab ~/.cache/ve-ar23b/base.jsonl ~/.cache/ve-ar23b/head.jsonl \
-        --base-commit 95ed0e49b4960967d82f622019eed056cccf2816 --head-commit <G> \
+    uv run python -m tools.evidence ab ~/.cache/ve-ar23c/base.jsonl ~/.cache/ve-ar23c/head.jsonl \
+        --base-commit a5088a09b523154f4024db96fe636c92689a9b97 --head-commit <G> \
         --out docs/arch/AR-23/evidence/ab.json --delta docs/arch/AR-23/evidence/ab-delta.json \
         --corpus probe conformance readings pilots discourse rights quantity norm_defaults document
     uv run python tools/batch_evidence.py --check docs/arch/AR-23 --report-commit HEAD

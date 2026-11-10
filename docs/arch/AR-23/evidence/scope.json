@@ -1,10 +1,15 @@
 {
- "base": "95ed0e49b4960967d82f622019eed056cccf2816",
+ "base": "a5088a09b523154f4024db96fe636c92689a9b97",
  "changes": [
   {
-   "added": 48,
-   "deleted": 0,
+   "added": 56,
+   "deleted": 5,
    "path": "docs/arch/AR-23/DELTA.md"
+  },
+  {
+   "added": 285,
+   "deleted": 0,
+   "path": "docs/arch/AR-23/REPORT.md"
   },
   {
    "added": 106,
@@ -17,13 +22,13 @@
    "path": "docs/arch/AR-23/evidence.toml"
   },
   {
-   "added": 221,
-   "deleted": 0,
+   "added": 230,
+   "deleted": 16,
    "path": "docs/arch/AR-23/evidence/ab-delta.json"
   },
   {
-   "added": 794,
-   "deleted": 0,
+   "added": 801,
+   "deleted": 21,
    "path": "docs/arch/AR-23/evidence/ab.json"
   },
   {
@@ -47,8 +52,8 @@
    "path": "docs/arch/AR-23/evidence/out.json"
   },
   {
-   "added": 269,
-   "deleted": 0,
+   "added": 336,
+   "deleted": 25,
    "path": "docs/arch/AR-23/evidence/scope.json"
   },
   {
@@ -77,8 +82,8 @@
    "path": "docs/arch/AR-23/trust-mutants.json"
   },
   {
-   "added": 31,
-   "deleted": 29,
+   "added": 35,
+   "deleted": 33,
    "path": "docs/codemap/INDEX.md"
   },
   {
@@ -102,37 +107,37 @@
    "path": "docs/codemap/tests--part-1.md"
   },
   {
-   "added": 1,
-   "deleted": 1,
+   "added": 2,
+   "deleted": 2,
    "path": "docs/codemap/tests--part-2.md"
   },
   {
-   "added": 8,
-   "deleted": 10,
+   "added": 9,
+   "deleted": 11,
    "path": "docs/codemap/tests--part-3.md"
   },
   {
-   "added": 11,
-   "deleted": 13,
+   "added": 12,
+   "deleted": 15,
    "path": "docs/codemap/tests--part-4.md"
   },
   {
-   "added": 17,
-   "deleted": 14,
+   "added": 19,
+   "deleted": 16,
    "path": "docs/codemap/tests--part-5.md"
   },
   {
-   "added": 18,
-   "deleted": 18,
+   "added": 20,
+   "deleted": 20,
    "path": "docs/codemap/tests--part-6.md"
   },
   {
-   "added": 18,
-   "deleted": 1,
+   "added": 20,
+   "deleted": 3,
    "path": "docs/codemap/tests--part-7.md"
   },
   {
-   "added": 1,
+   "added": 3,
    "deleted": 0,
    "path": "docs/codemap/tests--part-8.md"
   },
@@ -142,7 +147,7 @@
    "path": "docs/spec/assurance-manifest.md"
   },
   {
-   "added": 119,
+   "added": 178,
    "deleted": 0,
    "path": "lean/VE/Audit.lean"
   },
@@ -227,7 +232,7 @@
    "path": "lean/VE/Service/FamilyBundle.lean"
   },
   {
-   "added": 119,
+   "added": 176,
    "deleted": 5,
    "path": "lean/axioms.txt"
   },
@@ -237,12 +242,12 @@
    "path": "lean/checkers.lock"
   },
   {
-   "added": 432,
-   "deleted": 233,
+   "added": 777,
+   "deleted": 384,
    "path": "lean/declarations.txt"
   },
   {
-   "added": 936,
+   "added": 1665,
    "deleted": 0,
    "path": "lean/statements.txt"
   },
@@ -258,6 +263,14 @@
   }
  ],
  "commits": [
+  {
+   "hash": "eb334fbd1842723b5f9a790a2eccf6ec972fe352",
+   "subject": "Regenerate the Lean inventories, audit manifests and code map after the merge of main (R12)"
+  },
+  {
+   "hash": "0ad8a39d64d17c9a854fcfa43db1216f0e7f934d",
+   "subject": "AR-23: evidence after the merge of main: A/B at 95ed0e49b (0 unlisted, byte-identical), scope; DELTA and REPORT"
+  },
   {
    "hash": "14e7dbe2ea6ed6caef5bb188372be4c207631e77",
    "subject": "AR-23: trust-mutants record rescored after the merge of main (18 allowed, exit 0)"
@@ -307,5 +320,5 @@
    "subject": "AR-23: closure's typing, checker, meaning and consequence through Core; Closure/Finite aliases Core's"
   }
  ],
- "head": "14e7dbe2ea6ed6caef5bb188372be4c207631e77"
+ "head": "eb334fbd1842723b5f9a790a2eccf6ec972fe352"
 }
