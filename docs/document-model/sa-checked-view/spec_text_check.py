@@ -36,8 +36,9 @@ def name(p):
 
 def main(source="lean/VE/Service/DocumentView.lean"):
     src = norm(open(source).read())
-    statements = [p for p in pieces("### 5.1 The checked view (owner: the document model, `VE.Service.Document`; DRI 2(d))",
-                                    "### 5.2 Front-matter keys (owner: W2's loader, `VE.Discourse.Loader`)")
+    statements = [p for p in pieces(
+        "### 5.1 The checked view (owner: the document model, `VE.Service.Document`; DRI 2(d))",
+        "### 5.2 Front-matter keys (owner: W2's loader, `VE.Discourse.Loader`)")
                   if name(p) in EIGHT]
     tail = lambda p: " /--" if name(p) == "CheckedView" else " :="
     missing = [name(p) for p in statements if norm("\n".join(p)) + tail(p) not in src]

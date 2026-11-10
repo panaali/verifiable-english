@@ -45,4 +45,5 @@ def checked : Checked :=
 #guard unitSets checked == [("a", [("notp", .exposition), ("p", .asserted)]), ("b", [("q", .norm)])]
 #guard let V := viewOf checked [r]
   V.candidates == [("a", [.exposition, .asserted]), ("b", [.norm])] &&
-    V.readings == [("a", ["notp", "p"]), ("b", ["q"])] && V.packSources.isEmpty && V.source == "S" && V.rows.map unitJson == [unitJson r]
+    V.readings == [("a", ["notp", "p"]), ("b", ["q"])] && V.packSources.isEmpty && V.source == "S" &&
+    V.rows.map unitJson == [unitJson r]

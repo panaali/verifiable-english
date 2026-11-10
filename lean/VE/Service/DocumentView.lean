@@ -215,7 +215,8 @@ theorem render_name (S : VE.Reports.Status) (h : S ≠ .unknown) : ∃ s : UnitS
 
 /-- A unit the fold leaves or gives a known status is the rendering of its row read back. -/
 theorem readStatus_fold (u : RowUnit) (y : Json)
-    (h : y = unitJson u ∨ ∃ S : VE.Reports.Status, S ≠ .unknown ∧ y = (unitJson u).setObjVal! "status" (.str S.render)) :
+    (h : y = unitJson u ∨
+      ∃ S : VE.Reports.Status, S ≠ .unknown ∧ y = (unitJson u).setObjVal! "status" (.str S.render)) :
     unitJson (readStatus u y) = y := by
   rcases h with h | ⟨S, hS, h⟩
   · subst h; exact congrArg unitJson (readStatus_unitJson u u.status)
