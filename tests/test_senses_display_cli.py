@@ -14,6 +14,7 @@ from ve.__main__ import main
 from ve.backends import senses as route
 from ve.environment import Environment
 from ve.errors import CheckerUnavailable
+from ve.limits import MAX_SOURCE_BYTES
 from ve.readings import validate_reading_sets
 from ve.senses import display
 
@@ -76,7 +77,8 @@ def test_g9_one_candidate_through_the_cli(tmp_path, capsys, place):
     assert code == 3 and unit["text"].endswith('Add the line "' + line + '" to say so.')
     assert out["renderings"] == [{"sentence": 0, "candidate": 0, "lines": line, "lacking": [line], "text": S16}]
     code, out = run(tmp_path, capsys, place, "propose-readings", S16, "--output", str(tmp_path / "sets.json"))
-    assert code == 0 and out["reading_sets"] == [] and not (tmp_path / "sets.json").exists()
+    assert code == 0 and out["reading_sets"] == [] and not out["output_written"]
+    assert not (tmp_path / "sets.json").exists()
     assert out["resolving"] == [{"sentence": 0, "lacking": [line], "text": unit["text"]}]
     code, out = run(tmp_path, capsys, place, "resolve", S16, "--word", "odd", "--gloss", "strange")
     assert code == 0 and out["line"] == {"word": "odd", "gloss": "strange", "text": line} and out["written"]
@@ -120,7 +122,8 @@ def test_propose_readings_writes_a_set_the_readings_validation_accepts(tmp_path,
     [unit] = out["reading"]["units"]
     [flip] = out["reading"]["flips"]
     [reading_set] = json.loads((tmp_path / "sets.json").read_text())["reading_sets"]
-    assert code == 0 and reading_set == out["reading_sets"][0]
+    assert code == 0 and reading_set == out["reading_sets"][0] and out["output_written"]
+    assert out["review_status"] == {"fixtures@1": "unreviewed"}
     assert (reading_set["id"], reading_set["unit"], reading_set["status"]) == ("senses-0", "0", "open")
     assert [r["content"] for r in reading_set["readings"]] == [c["formula"] for c in unit["candidates"]]
     assert all(r["admission"]["who"] == "senses" and r["admission"]["why"] == unit["text"]
@@ -142,17 +145,43 @@ def _tampered(place, mutate):
     return display.propose_readings(env, [PACK], TWO, answer, overlay=overlay)
 
 
-def test_a_flip_model_that_does_not_separate_is_refused(place):
+@pytest.mark.parametrize("status", ["undistinguished", "unknown"])
+def test_a_flip_model_that_does_not_separate_is_refused(place, status):
     """A distinguishing model with the true sense emptied separates nothing: the readings validation refuses the
-    set, CheckerUnavailable; a pair Lean does not distinguish gets no set, with Lean's status."""
+    set, CheckerUnavailable; a pair Lean does not distinguish, or whose budget ended, gets no set, with Lean's
+    status."""
     with pytest.raises(CheckerUnavailable, match="readings validation refused"):
         _tampered(place, lambda a: a["flips"][0]["model"]["relations"].update(sense__funny_1=[]))
-    out = _tampered(place, lambda a: a["flips"][0].update(status="undistinguished"))
-    assert out["reading_sets"] == [] and out["undistinguished"] == [
-        {"sentence": 0, "flips": [[0, 1, "undistinguished"]]}]
+    out = _tampered(place, lambda a: a["flips"][0].update(status=status))
+    assert out["reading_sets"] == [] and out["unproposed"] == [{"sentence": 0, "flips": [[0, 1, status]]}]
     assert len(_tampered(place, lambda a: None)["reading_sets"]) == 1
 
 
 def test_propose_readings_has_no_set_for_a_resolved_reading(tmp_path, capsys, place):
     code, out = run(tmp_path, capsys, place, "propose-readings", "Alice tells the riddle.")
     assert code == 0 and out["reading_sets"] == [] and out["resolving"] == [] and out["texts"] == []
+
+
+@pytest.mark.parametrize("command, extra", [("resolve", ("--word", "odd", "--gloss", "strange")),
+                                            ("propose-readings", ("--output", "sets.json"))])
+def test_the_error_exits_write_nothing(tmp_path, capsys, place, monkeypatch, command, extra):
+    """Invalid input is exit 2 (a malformed environment, standard input), a text over the source limit exit 4, an
+    unavailable checker exit 5; none writes a file."""
+    extra = tuple(str(tmp_path / x) if x == "sets.json" else x for x in extra)
+    big = "The riddle is odd. " * (MAX_SOURCE_BYTES // 19 + 1)
+
+    def unavailable(*a, **k):
+        raise CheckerUnavailable("CheckerUnavailable: the Lean senses route did not answer")
+
+    for source, change, code, status in [
+            (S16, lambda argv: (tmp_path / "env.json").write_text("{"), 2, "InvalidInput"),
+            (S16, lambda argv: argv.__setitem__(-1, "-"), 2, "InvalidInput"),
+            (big, lambda argv: None, 4, "ResourceLimit"),
+            (S16, lambda argv: monkeypatch.setattr(route, "read", unavailable), 5, "CheckerUnavailable")]:
+        _files(tmp_path, place, source, PACK)
+        argv = ["senses", command, "--env", str(tmp_path / "env.json"), "--pack", str(tmp_path / "pack.json"), *extra,
+                str(tmp_path / "text.txt")]
+        change(argv)
+        assert main(argv) == code
+        assert json.loads(capsys.readouterr().out)["status"] == status
+        assert (tmp_path / "text.txt").read_text() == source and not (tmp_path / "sets.json").exists()

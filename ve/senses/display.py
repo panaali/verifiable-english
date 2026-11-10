@@ -24,9 +24,11 @@ from ..model import FiniteModel
 from ..printer import render
 from ..readings import validate_reading_sets
 
-# The display's limit on the candidates one call renders and re-reads (one `senses.read` each); each distinct set of
-# resolving lines is projected once. Lean caps each unit at `route.CANDIDATE_CAP` candidates.
+# The display's limits, charged before any service call: the candidates one call renders and re-reads (one
+# `senses.read` of the whole source each, Lean's `reread` member), and the source bytes those re-reads send together.
+# Each distinct set of resolving lines is projected once. Lean caps each unit at `route.CANDIDATE_CAP` candidates.
 MAX_CANDIDATES = 64
+MAX_REREAD_BYTES = 262_144
 
 
 def _display_overlay(overlay: dict | None, env: Environment) -> dict | None:
@@ -56,9 +58,13 @@ def reread(env, packs: list[bytes], source: str, sentence: int, index: int, text
            overlay=None) -> bool:
     """Whether Lean's senses reader reads `text` under the projection of candidate `index` of the unit at
     `sentence` of `source`, from the state before that unit, to exactly that candidate's formula and mark (Lean's
-    `reread` outcome `same`). `unknown` (the budget ended) and `different` are not."""
+    `reread` outcome `same`); `different`, or no re-read, is not. Lean's `unknown` (the budget ended) is a
+    ResourceLimit: the rendering is neither confirmed nor refused."""
     answer = route.read(env, source, packs, own=own, overlay=overlay, reread=(sentence, index, text))["reading"]
-    return answer.get("reread", {}).get("outcome") == "same"
+    outcome = answer.get("reread", {}).get("outcome")
+    if outcome == "unknown":
+        raise ResourceLimit("ResourceLimit: Lean's re-read of a candidate's rendering ran out of its work budget")
+    return outcome == "same"
 
 
 # `body_status` codes (reviews/dri-decisions-20261110-sn-b7b.md item 2): machine codes, not English.
@@ -80,6 +86,8 @@ def body(env, packs: list[bytes], source: str, reading: dict, *, own=None, overl
     text = "\n".join([*reading["preamble"], _render(reading["environment"], [u["formula"] for u in units],
                                                     [u["mark"] for u in units], overlay)])
     again = route.read(env, text, packs, own=own, overlay=overlay)["reading"]
+    if again["status"] == "budget":
+        raise ResourceLimit("ResourceLimit: Lean's re-read of the rendered text ran out of its work budget")
     if (again["status"] != "one" or len(again["units"]) != len(units)
             or not all(a.get("formula") == u["formula"] and a.get("mark") is u["mark"]
                        for a, u in zip(again["units"], units))
@@ -91,13 +99,18 @@ def body(env, packs: list[bytes], source: str, reading: dict, *, own=None, overl
 def candidates(env, packs: list[bytes], source: str, reading: dict, *, own: list[dict] | None = None,
                overlay: dict | None = None) -> list[dict]:
     """Each candidate of each open unit of a relayed `senses.read` reading of `source`: its sentence, its position,
-    Lean's resolving lines, those of them the document's preamble lacks, and its English, rendered under the
+    Lean's resolving lines, the ones of its choice (which the document lacks), and its English, rendered under the
     projection of its lines and re-read by Lean under the same projection. A projection whose identities are not
     the ones the reading lists for the candidate (i7), or a rendering Lean does not read back, is
-    `CheckerUnavailable`."""
+    `CheckerUnavailable`. The lines of its choice are the last of its `lines`, one per chosen word: Lean writes
+    `Assignment.lines D (A.extend choice)` (`senses_candidate_sound`), the preamble's assignment with the choice
+    appended."""
     units = reading.get("units", ())
-    if sum(len(unit["candidates"]) for unit in units) > MAX_CANDIDATES:
+    count = sum(len(unit["candidates"]) for unit in units)
+    if count > MAX_CANDIDATES:
         raise ResourceLimit(f"The senses display renders at most {MAX_CANDIDATES} candidates")
+    if count * len(source.encode("utf-8")) > MAX_REREAD_BYTES:
+        raise ResourceLimit(f"The senses display re-reads at most {MAX_REREAD_BYTES} source bytes in all")
     projections: dict[str, dict] = {}
     rows = []
     for unit in units:
@@ -111,12 +124,15 @@ def candidates(env, packs: list[bytes], source: str, reading: dict, *, own: list
                                                     route.PROJECTION_IDS} != candidate["identities"]:
                 raise CheckerUnavailable("CheckerUnavailable: a candidate's projection is not the one its reading "
                                          "lists")
+            split = lines.split("\n")
+            if len(split) < len(candidate["choice"]):
+                raise CheckerUnavailable("CheckerUnavailable: a candidate has fewer lines than chosen words")
             text = _rendered(projection, candidate, overlay)
             if not reread(env, packs, source, unit["sentence"], index, text, own=own, overlay=overlay):
                 raise CheckerUnavailable("CheckerUnavailable: a candidate's rendering does not re-read under its "
                                          "projection")
             rows.append({"sentence": unit["sentence"], "candidate": index, "lines": lines,
-                         "lacking": [line for line in lines.split("\n") if line not in reading["preamble"]],
+                         "lacking": split[len(split) - len(candidate["choice"]):],
                          "text": text})
     return rows
 
@@ -168,14 +184,15 @@ def propose_readings(env, packs: list[bytes], source: str, reading: dict, *, own
     `admission.who` `senses`, `why` the unit's Lean text, the flip models by id), validated by the existing readings
     validation over the reading's projected environment; each reading's text is its candidate's checked rendering.
     A one-candidate unit gets no set: its row gives the lines it lacks and Lean's text. A unit with a pair Lean
-    does not distinguish gets no set either (`undistinguished`, with Lean's flip statuses)."""
+    does not distinguish (`undistinguished`, or `unknown` when its budget ended) gets no set either (`unproposed`,
+    with Lean's flip statuses)."""
     if reading.get("status") != "open":
-        return {"reading_sets": [], "texts": [], "resolving": [], "undistinguished": []}
+        return {"reading_sets": [], "texts": [], "resolving": [], "unproposed": []}
     shown = {(row["sentence"], row["candidate"]): row for row in candidates(env, packs, source, reading, own=own,
                                                                             overlay=overlay)}
     projected = Environment(reading["environment"])
     flips = {(f["sentence"], f["first"], f["second"]): f for f in reading["flips"]}
-    sets, texts, resolving, undistinguished = [], [], [], []
+    sets, texts, resolving, unproposed = [], [], [], []
     for unit in reading["units"]:
         sentence, count = unit["sentence"], len(unit["candidates"])
         if count == 0:
@@ -186,7 +203,7 @@ def propose_readings(env, packs: list[bytes], source: str, reading: dict, *, own
             continue
         pairs = {(i, j): flips.get((sentence, i, j)) for i in range(count) for j in range(i + 1, count)}
         if not all(f is not None and f["status"] == "distinguished" for f in pairs.values()):
-            undistinguished.append({"sentence": sentence, "flips": [
+            unproposed.append({"sentence": sentence, "flips": [
                 [i, j, None if f is None else f["status"]] for (i, j), f in pairs.items()]})
             continue
         try:
@@ -210,4 +227,4 @@ def propose_readings(env, packs: list[bytes], source: str, reading: dict, *, own
         validate_reading_sets(projected, sets, {str(unit["sentence"]) for unit in reading["units"]})
     except VEError as exc:
         raise CheckerUnavailable(f"CheckerUnavailable: the readings validation refused a proposed set: {exc}") from exc
-    return {"reading_sets": sets, "texts": texts, "resolving": resolving, "undistinguished": undistinguished}
+    return {"reading_sets": sets, "texts": texts, "resolving": resolving, "unproposed": unproposed}
