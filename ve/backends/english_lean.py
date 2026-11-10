@@ -530,6 +530,116 @@ def read_question(env, question: str, words, options: dict, *, caller: str | Non
     raise error
 
 
+COMMAND_MODE = "english.command"
+
+
+def command_request(env, wording: str, words, options: dict, *, unit: str, queries: list) -> dict:
+    """The `english.command` request (commands-imperatives CI-2), with the unit as its id: the `english.read`
+    request's environment, overlay and lexicon producer, the command unit, the wording and the document's query
+    records that name a declared constant of sort `query` (the records a proof task can name, as the source
+    wrapper's `commandContext` keeps them). No proof-task selection is sent: Lean matches the records' targets (N7)."""
+    named = [record for record in queries if type(record) is dict and type(record.get("id")) is str
+             and (constant := env.constants.get(record["id"])) is not None and constant.sort == "query"]
+    case = {"id": unit, "environment": env.to_dict(), "lexicon": export(words), "unit": unit,
+            "wording": wording, "queries": named}
+    if options.get("vocabulary") is not None:
+        case["overlay"] = options["vocabulary"]
+    return _frame(env, case)
+
+
+def _reading_problem(reading: dict, case: dict) -> str | None:
+    """R8 for one reading: its act, arguments, fills, spans and query name what the request holds. The act is a
+    regulated predicate of the request's environment with the force's role; one fill per slot after the
+    addressee's, each a constant of the slot's sort named by itself or by one of the scope's definites, with its
+    arguments; a fill has a span of the wording at its words (case folded, as Lean matches), or none and the
+    reading names that constant as one of the request's query records."""
+    environment = case["environment"]
+    vocabulary = environment.get("vocabulary", {})
+    command, fills = reading["command"], reading["fills"]
+    decl = vocabulary.get("predicates", {}).get(command["act"])
+    regulated = decl.get("regulated") if type(decl) is dict else None
+    role = "permission" if command["force"] == "forbid" else "obligation"
+    if type(regulated) is not dict or regulated.get("role") != role:
+        return "the act is not a regulated predicate of the request with the force's role"
+    sorts = decl.get("arguments", [])[1:]
+    if command["args"] != [fill["constant"] for fill in fills] or len(fills) != len(sorts):
+        return "the arguments are not one fill per slot"
+    definites = environment.get("speech_acts", {}).get("definites", {})
+    constants = vocabulary.get("constants", {})
+    queries = [record["id"] for record in case["queries"]]
+    for fill, sort in zip(fills, sorts):
+        name, words, span = fill["constant"], fill["words"], fill["span"]
+        if (constants.get(name) or {}).get("sort") != sort or not (words == name or definites.get(words) == name):
+            return "a fill is not a constant of its slot's sort named by its words"
+        if span is None:
+            if reading["query"] != name or name not in queries:
+                return "a fill without a span is not the reading's query record"
+        elif reading["query"] is not None or not span[0] <= span[1] <= len(case["wording"]) or \
+                case["wording"][span[0]:span[1]].casefold() != words.casefold():
+            return "a fill's span is not its words in the wording"
+    if reading["query"] is not None and not any(fill["span"] is None for fill in fills):
+        return "the query names no fill"
+    return None
+
+
+def command_problem(row: dict, case: dict) -> str | None:
+    """Why `row`, a schema-checked `english.command` row, is not the answer to `case` (R8): the echoed id, unit and
+    wording; one legend line for the task, one for an addressee and one per definite of the request's scope, none
+    repeated; each reading bound (`_reading_problem`), 2 to 64 distinct ones for `many`; a refusal's class one
+    Python raises. The legend's lines, the guard, the paraphrase and a refusal's code and text are Lean's."""
+    result = row["result"]
+    if row["id"] != case["id"] or result["unit"] != case["unit"] or result["wording"] != case["wording"]:
+        return "the answer does not echo the request's id, unit and wording"
+    scope = case["environment"].get("speech_acts", {})
+    legend = result["legend"]
+    if len(legend) != 1 + ("addressee" in scope) + len(scope.get("definites", {})) or len(set(legend)) != len(legend):
+        return "the legend is not one line per scope sentence"
+    outcome = result["outcome"]
+    readings = [result["reading"]] if outcome == "one" else result["readings"] if outcome == "many" else []
+    if outcome == "many" and (not 2 <= len(readings) <= 64 or
+                              len({json.dumps(r, sort_keys=True) for r in readings}) != len(readings)):
+        return "many has a repeated reading, or fewer than two or more than 64"
+    if outcome == "refused" and result["class"] not in ERROR_CLASSES:
+        return "the refusal names an unknown class"
+    for reading in readings:
+        if (problem := _reading_problem(reading, case)) is not None:
+            return problem
+    return None
+
+
+def command_answer(row: dict, case: dict) -> dict:
+    """The result of `row`, Lean's `english.command` row for `case`, once `command_problem` finds it bound to the
+    request; `CheckerUnavailable` otherwise. Every reader of the mode's answer reads it here."""
+    try:
+        problem = command_problem(row, case)
+    except (KeyError, TypeError, AttributeError, IndexError) as exc:
+        problem = f"it does not have the generated shape ({type(exc).__name__})"
+    if problem:
+        raise CheckerUnavailable(f"CheckerUnavailable: the Lean command reader's answer is malformed: {problem}")
+    return row["result"]
+
+
+def read_command(env, wording: str, words, options: dict, *, unit: str, queries: list) -> dict:
+    """Relay one command wording to Lean's `english.command` (`VE.Commands.readInstruction`, the one owner of
+    command English) and return its checked `one` answer. A refusal is raised as the class Lean names with Lean's
+    `code: text` verbatim; `many` as `AmbiguousDerivation` with each reading's act and Lean's paraphrase, one line per
+    reading; `limit` as `ResourceLimit` with Lean's text. An answer not bound to the request is `CheckerUnavailable`."""
+    if type(wording) is not str:
+        raise TypeError("wording must be str")
+    result = command_answer(relay.decide_once(COMMAND_MODE, case := command_request(
+        env, wording, words, options, unit=unit, queries=queries)), case)
+    if result["outcome"] == "one":
+        return result
+    if result["outcome"] == "many":
+        # Each reading as Lean gives it, its act and paraphrase, one per line.
+        lines = "\n".join(f'{reading["command"]["act"]}: {reading["paraphrase"]}' for reading in result["readings"])
+        raise AmbiguousDerivation(lines)
+    if result["outcome"] == "limit":
+        raise ResourceLimit(result["text"])
+    cls = ERROR_CLASSES[result["class"]]
+    raise cls(f"{result['code']}: {result['text']}")
+
+
 def _refusal(response: dict, text: str, source: str, operation: str) -> Exception:
     """A checked answer other than `one` as the exception of the class Lean names, with `text` (Lean's, as the
     caller shows it) verbatim and Lean's span over `source`. A code-worded class writes `Code: text` for Python's
