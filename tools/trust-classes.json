@@ -4406,19 +4406,6 @@
         "VE.EnglishGrammar.sensesRequest"
       ]
     },
-    "VE/EnglishGrammar/SourceReader.lean": {
-      "D[R]": [
-        "VE.EnglishGrammar.anchorCandidates"
-      ],
-      "G[V]": [
-        "VE.EnglishGrammar.AnchorState",
-        "VE.EnglishGrammar.RuleContext",
-        "VE.EnglishGrammar.rowOf",
-        "VE.EnglishGrammar.ruleContext",
-        "VE.EnglishGrammar.ruleVerbs",
-        "VE.EnglishGrammar.sourceReadings"
-      ]
-    },
     "VE/EnglishGrammar/Syntax.lean": {
       "G[V]": [
         "VE.EnglishGrammar.DState",
@@ -9984,6 +9971,7 @@
         "VE.Service.EventsDocumentExamples.dated",
         "VE.Service.EventsDocumentExamples.decodedOf",
         "VE.Service.EventsDocumentExamples.doc",
+        "VE.Service.EventsDocumentExamples.envOfDoc",
         "VE.Service.EventsDocumentExamples.ex",
         "VE.Service.EventsDocumentExamples.isoEnv",
         "VE.Service.EventsDocumentExamples.judged",
@@ -10007,6 +9995,7 @@
         "VE.Service.EventsDocumentExamples.t16Opens",
         "VE.Service.EventsDocumentExamples.term",
         "VE.Service.EventsDocumentExamples.v",
+        "VE.Service.EventsDocumentExamples.weaker",
         "VE.Service.EventsDocumentExamples.withAnchor",
         "VE.Service.EventsDocumentExamples.withBlock"
       ]
@@ -16787,6 +16776,8 @@
     },
     "VE/EnglishGrammar/SourceWordsExamples.lean": {
       "T": [
+        "VE.EnglishGrammar.SourceWordsExamples.AnchorState",
+        "VE.EnglishGrammar.SourceWordsExamples.RuleContext",
         "VE.EnglishGrammar.SourceWordsExamples.a",
         "VE.EnglishGrammar.SourceWordsExamples.a1",
         "VE.EnglishGrammar.SourceWordsExamples.a2",
@@ -16805,6 +16796,9 @@
         "VE.EnglishGrammar.SourceWordsExamples.reading",
         "VE.EnglishGrammar.SourceWordsExamples.refusal",
         "VE.EnglishGrammar.SourceWordsExamples.rowJson",
+        "VE.EnglishGrammar.SourceWordsExamples.rowOf",
+        "VE.EnglishGrammar.SourceWordsExamples.ruleContext",
+        "VE.EnglishGrammar.SourceWordsExamples.sourceReadings",
         "VE.EnglishGrammar.SourceWordsExamples.strictDefault",
         "VE.EnglishGrammar.SourceWordsExamples.twelve"
       ]
@@ -20128,6 +20122,7 @@
     },
     "VE/Events/RouteExamples.lean": {
       "T": [
+        "VE.Events.RouteExamples.docTerms",
         "VE.Events.RouteExamples.parse",
         "VE.Events.RouteExamples.rolePred",
         "VE.Events.RouteExamples.eventPreds",

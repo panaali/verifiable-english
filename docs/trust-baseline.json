@@ -2423,8 +2423,8 @@
   },
   {
    "class": "V",
-   "lines": 104,
-   "reason": "et-5b: V +104 (lean/VE/Service/Document.lean +40, lean/VE/EnglishGrammar/SourceReader.lean +33, lean/VE/EnglishGrammar/SourceWords.lean +31); K +0, S +0",
+   "lines": 76,
+   "reason": "et-5b: V +76 (lean/VE/Service/Document.lean +45, lean/VE/EnglishGrammar/SourceWords.lean +31); K +0, S +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), et-5b, 2026-11-10",
    "commit": "c94ad399b7b1f6804c12fbc555a5758d5e971ae6"
   }

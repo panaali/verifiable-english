@@ -84,6 +84,14 @@ def test_a_list_off_the_soft_chain_stays_unavailable():
     _, error = checked(edited(bare))
     assert str(error) == "UnsupportedProfile: Unsupported profile events@0"
 
+    # With rights@0 (DRI 2026-11-10 et-5b item 1), with its block and without.
+    def rights(e):
+        e["profiles"] = ["events@0", "norm-defaults@0", "norms@0", "relational-fol@0", "rights@0", "soft-norms@0"]
+    for change in (rights, lambda e: (rights(e), e.pop("events"))):
+        _, error = checked(edited(change))
+        assert isinstance(error, CheckerUnavailable)
+        assert str(error) == "CheckerUnavailable: document checks under events@0 need its Lean profile route"
+
 
 def _set(path, value):
     def change(e):
