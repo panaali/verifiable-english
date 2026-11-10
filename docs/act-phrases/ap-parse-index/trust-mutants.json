@@ -1,7 +1,7 @@
 {
  "base": "a0102f0e5350727e99ddcae2e0b59ed03f2f4192",
- "head": "e8fa966192078ecd5b228f1cf49c5bfe6bc48190",
- "tree": "bfa16226cebd42e399fbbd2fe06983b1ecec8b21",
+ "head": "8ef64a64a1642e3a265ca107fc8316ea5a9e9658",
+ "tree": "dc48ddbd50796209fd5b82cf7ec948c478b68118",
  "jobs": 8,
  "control_probes": "lazy",
  "max_mutants": 1000,
@@ -13,27 +13,27 @@
   "lean/VE/Acts/RunExamples.lean",
   "lean/VE/Acts/MeaningExamples.lean"
  ],
- "seconds": 1747,
+ "seconds": 1566,
  "steps": {
   "wall": {
-   "plan": 29.9,
-   "scratch": 21.5,
-   "control_build": 0.3,
-   "probe_install": 4.0,
+   "plan": 25.7,
+   "scratch": 23.3,
+   "control_build": 0.4,
+   "probe_install": 3.2,
    "control_probes": 0.0,
-   "mutants": 1687.6,
-   "cleanup": 3.4,
-   "reads": 0.0
+   "mutants": 1510.6,
+   "cleanup": 3.0,
+   "reads": 0.1
   },
   "lake": {
-   "control_build": 0.3,
-   "probe_install": 3.9,
-   "control_probes": 6.2,
-   "mutant_builds": 11.7,
-   "mutant_checks": 2311.5,
+   "control_build": 0.4,
+   "probe_install": 3.2,
+   "control_probes": 4.2,
+   "mutant_builds": 11.0,
+   "mutant_checks": 1834.1,
    "outside_checks": 0.0,
-   "stage_controls": 1019.5,
-   "mutant_probes": 13.2,
+   "stage_controls": 1146.6,
+   "mutant_probes": 8.4,
    "other": 0.0
   },
   "runs": {
@@ -51,9 +51,9 @@
  "counts": {
   "KILLED": 8,
   "SURVIVOR": 0,
-  "UNKNOWN": 2,
+  "UNKNOWN": 0,
   "INVALID": 15,
-  "ALLOWED": 2,
+  "ALLOWED": 4,
   "NOT RUN": 0
  },
  "classes": [
@@ -66,7 +66,7 @@
    "ALLOWED": 2
   },
   "G[V], trusted": {
-   "UNKNOWN": 2
+   "ALLOWED": 2
   }
  },
  "inputs": {
@@ -936,12 +936,9 @@
  },
  "rescore": {
   "file": "docs/act-phrases/ap-parse-index/trust-mutants.json",
-  "head": "94f3efe0c9a1f8afdae1676351dfff05a0876afa",
-  "mode": "checks",
-  "changed": [
-   "lean/VE/Acts/GrammarExamples.lean",
-   "lean/declarations.txt"
-  ],
+  "head": "e8fa966192078ecd5b228f1cf49c5bfe6bc48190",
+  "mode": "identical",
+  "changed": [],
   "reused": 23,
   "rerun": 4
  },
@@ -964,9 +961,10 @@
    ],
    "before": "1",
    "after": "2",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Acts/GrammarExamples.lean:428: Expression (it computes through a proof the mutant broke (an instance or `@[csimp]` lemma resting on it))",
+   "status": "ALLOWED",
+   "detail": "killed, but not classable by the tool: `idxGo xs (i + 2)` breaks idxGo_get? and the direct #guard on idxGo in GrammarExamples (first places [0, 1, 3, 4]) is refuted (it gives J 2); every act fixture of lean/VE/Acts also fails, through build_eq_fast's @[csimp], which rests on the broken proof, so the tool reads the mutant as UNKNOWN",
    "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Acts/GrammarExamples.lean:428: Expression (it computes through a proof the mutant broke (an instance or `@[csimp]` lemma resting on it))",
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -982,9 +980,10 @@
    ],
    "before": "1",
    "after": "0",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Acts/GrammarExamples.lean:428: Expression (it computes through a proof the mutant broke (an instance or `@[csimp]` lemma resting on it))",
+   "status": "ALLOWED",
+   "detail": "killed, but not classable by the tool: `idxGo xs (i + 0)` numbers every element 0; the direct #guard on idxGo in GrammarExamples is refuted (J 0, FW 0) and idxGo_get? breaks; the act fixtures fail through build_eq_fast's @[csimp], so the tool reads the mutant as UNKNOWN",
    "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Acts/GrammarExamples.lean:428: Expression (it computes through a proof the mutant broke (an instance or `@[csimp]` lemma resting on it))",
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -1041,8 +1040,7 @@
    "status": "INVALID",
    "detail": "don't know how to synthesize implicit argument `\u03b1`",
    "raw_status": "INVALID",
-   "reused_from": "94f3efe0c9a1f8afdae1676351dfff05a0876afa",
-   "carried": "checks",
+   "reused_from": "e8fa966192078ecd5b228f1cf49c5bfe6bc48190",
    "reads": "48458a3e99055fd2e6c908f68f05549834f009c64880249b90b191cb82aa8165",
    "trust_class": "D[V]",
    "trusted": true
@@ -1062,8 +1060,7 @@
    "status": "INVALID",
    "detail": "Function expected at",
    "raw_status": "INVALID",
-   "reused_from": "94f3efe0c9a1f8afdae1676351dfff05a0876afa",
-   "carried": "checks",
+   "reused_from": "e8fa966192078ecd5b228f1cf49c5bfe6bc48190",
    "reads": "e07e56a035bb922acfd730e53fe25468c32d19e7505809be7c2c42b4f3abb5fc",
    "trust_class": "D[V]",
    "trusted": true
@@ -1083,8 +1080,7 @@
    "status": "INVALID",
    "detail": "Function expected at",
    "raw_status": "INVALID",
-   "reused_from": "94f3efe0c9a1f8afdae1676351dfff05a0876afa",
-   "carried": "checks",
+   "reused_from": "e8fa966192078ecd5b228f1cf49c5bfe6bc48190",
    "reads": "4fd7be57bd65f1601cd972c7573496d24bac941582dace593b59c7a0820c6f96",
    "trust_class": "D[V]",
    "trusted": true
@@ -1104,8 +1100,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Acts/RunExamples.lean:75: Expression",
    "raw_status": "KILLED",
-   "reused_from": "94f3efe0c9a1f8afdae1676351dfff05a0876afa",
-   "carried": "checks",
+   "reused_from": "e8fa966192078ecd5b228f1cf49c5bfe6bc48190",
    "reads": "64fadf98d428c7240ad1eb849192dff9cf522554712ce5dee5994cc28ebf2fba",
    "killed_at": [
     75,
@@ -1129,8 +1124,7 @@
    "status": "INVALID",
    "detail": "Invalid field `take`: The environment does not contain `Except.take`",
    "raw_status": "INVALID",
-   "reused_from": "94f3efe0c9a1f8afdae1676351dfff05a0876afa",
-   "carried": "checks",
+   "reused_from": "e8fa966192078ecd5b228f1cf49c5bfe6bc48190",
    "reads": "4fd7be57bd65f1601cd972c7573496d24bac941582dace593b59c7a0820c6f96",
    "trust_class": "D[V]",
    "trusted": true
@@ -1150,8 +1144,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Acts/DecodeExamples.lean:79: Expression",
    "raw_status": "KILLED",
-   "reused_from": "94f3efe0c9a1f8afdae1676351dfff05a0876afa",
-   "carried": "checks",
+   "reused_from": "e8fa966192078ecd5b228f1cf49c5bfe6bc48190",
    "reads": "be73cd1e7950926af1a18a886b17006cb9d5fb5f264071fce00631975de4c045",
    "killed_at": [
     79,
@@ -1175,8 +1168,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Acts/RunExamples.lean:45: Expression",
    "raw_status": "KILLED",
-   "reused_from": "94f3efe0c9a1f8afdae1676351dfff05a0876afa",
-   "carried": "checks",
+   "reused_from": "e8fa966192078ecd5b228f1cf49c5bfe6bc48190",
    "reads": "8b6d2257cb4c8ef57e85e99b40a867b77aaf46242bec6790415299a80cc235dc",
    "killed_at": [
     45,
@@ -1200,8 +1192,7 @@
    "status": "INVALID",
    "detail": "Invalid field `dropLast`: The environment does not contain `Except.dropLast`",
    "raw_status": "INVALID",
-   "reused_from": "94f3efe0c9a1f8afdae1676351dfff05a0876afa",
-   "carried": "checks",
+   "reused_from": "e8fa966192078ecd5b228f1cf49c5bfe6bc48190",
    "reads": "4fd7be57bd65f1601cd972c7573496d24bac941582dace593b59c7a0820c6f96",
    "trust_class": "D[V]",
    "trusted": true
@@ -1221,8 +1212,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Acts/DecodeExamples.lean:64: Expression",
    "raw_status": "KILLED",
-   "reused_from": "94f3efe0c9a1f8afdae1676351dfff05a0876afa",
-   "carried": "checks",
+   "reused_from": "e8fa966192078ecd5b228f1cf49c5bfe6bc48190",
    "reads": "0064d639219839b3b02acef9e96426e937cf25775a2304fab3642b4fef46197e",
    "killed_at": [
     64,
@@ -1246,8 +1236,7 @@
    "status": "INVALID",
    "detail": "Invalid field `take`: The environment does not contain `Function.take`",
    "raw_status": "INVALID",
-   "reused_from": "94f3efe0c9a1f8afdae1676351dfff05a0876afa",
-   "carried": "checks",
+   "reused_from": "e8fa966192078ecd5b228f1cf49c5bfe6bc48190",
    "reads": "e07e56a035bb922acfd730e53fe25468c32d19e7505809be7c2c42b4f3abb5fc",
    "trust_class": "D[V]",
    "trusted": true
@@ -1267,8 +1256,7 @@
    "status": "INVALID",
    "detail": "Invalid field `take`: The environment does not contain `Function.take`",
    "raw_status": "INVALID",
-   "reused_from": "94f3efe0c9a1f8afdae1676351dfff05a0876afa",
-   "carried": "checks",
+   "reused_from": "e8fa966192078ecd5b228f1cf49c5bfe6bc48190",
    "reads": "4fd7be57bd65f1601cd972c7573496d24bac941582dace593b59c7a0820c6f96",
    "trust_class": "D[V]",
    "trusted": true
@@ -1288,8 +1276,7 @@
    "status": "INVALID",
    "detail": "Invalid field `dropLast`: The environment does not contain `Function.dropLast`",
    "raw_status": "INVALID",
-   "reused_from": "94f3efe0c9a1f8afdae1676351dfff05a0876afa",
-   "carried": "checks",
+   "reused_from": "e8fa966192078ecd5b228f1cf49c5bfe6bc48190",
    "reads": "e07e56a035bb922acfd730e53fe25468c32d19e7505809be7c2c42b4f3abb5fc",
    "trust_class": "D[V]",
    "trusted": true
@@ -1309,8 +1296,7 @@
    "status": "INVALID",
    "detail": "Invalid field `dropLast`: The environment does not contain `Function.dropLast`",
    "raw_status": "INVALID",
-   "reused_from": "94f3efe0c9a1f8afdae1676351dfff05a0876afa",
-   "carried": "checks",
+   "reused_from": "e8fa966192078ecd5b228f1cf49c5bfe6bc48190",
    "reads": "4fd7be57bd65f1601cd972c7573496d24bac941582dace593b59c7a0820c6f96",
    "trust_class": "D[V]",
    "trusted": true
@@ -1330,8 +1316,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Acts/RunExamples.lean:67: Expression",
    "raw_status": "KILLED",
-   "reused_from": "94f3efe0c9a1f8afdae1676351dfff05a0876afa",
-   "carried": "checks",
+   "reused_from": "e8fa966192078ecd5b228f1cf49c5bfe6bc48190",
    "reads": "d1dbd12e132742b61f06c26d47d21889d5dfb5f066b7eb0622f8145b1c3e7a87",
    "killed_at": [
     67,
@@ -1355,8 +1340,7 @@
    "status": "INVALID",
    "detail": "Invalid field `reverse`: The environment does not contain `Except.reverse`",
    "raw_status": "INVALID",
-   "reused_from": "94f3efe0c9a1f8afdae1676351dfff05a0876afa",
-   "carried": "checks",
+   "reused_from": "e8fa966192078ecd5b228f1cf49c5bfe6bc48190",
    "reads": "4fd7be57bd65f1601cd972c7573496d24bac941582dace593b59c7a0820c6f96",
    "trust_class": "D[V]",
    "trusted": true
@@ -1376,8 +1360,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Acts/DecodeExamples.lean:79: Expression",
    "raw_status": "KILLED",
-   "reused_from": "94f3efe0c9a1f8afdae1676351dfff05a0876afa",
-   "carried": "checks",
+   "reused_from": "e8fa966192078ecd5b228f1cf49c5bfe6bc48190",
    "reads": "be73cd1e7950926af1a18a886b17006cb9d5fb5f264071fce00631975de4c045",
    "killed_at": [
     79,
@@ -1401,8 +1384,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Acts/RunExamples.lean:45: Expression",
    "raw_status": "KILLED",
-   "reused_from": "94f3efe0c9a1f8afdae1676351dfff05a0876afa",
-   "carried": "checks",
+   "reused_from": "e8fa966192078ecd5b228f1cf49c5bfe6bc48190",
    "reads": "8b6d2257cb4c8ef57e85e99b40a867b77aaf46242bec6790415299a80cc235dc",
    "killed_at": [
     45,
@@ -1426,8 +1408,7 @@
    "status": "INVALID",
    "detail": "Invalid field `drop`: The environment does not contain `Except.drop`",
    "raw_status": "INVALID",
-   "reused_from": "94f3efe0c9a1f8afdae1676351dfff05a0876afa",
-   "carried": "checks",
+   "reused_from": "e8fa966192078ecd5b228f1cf49c5bfe6bc48190",
    "reads": "4fd7be57bd65f1601cd972c7573496d24bac941582dace593b59c7a0820c6f96",
    "trust_class": "D[V]",
    "trusted": true
@@ -1447,8 +1428,7 @@
    "status": "KILLED",
    "detail": "lean/VE/Acts/DecodeExamples.lean:64: Expression",
    "raw_status": "KILLED",
-   "reused_from": "94f3efe0c9a1f8afdae1676351dfff05a0876afa",
-   "carried": "checks",
+   "reused_from": "e8fa966192078ecd5b228f1cf49c5bfe6bc48190",
    "reads": "0064d639219839b3b02acef9e96426e937cf25775a2304fab3642b4fef46197e",
    "killed_at": [
     64,
@@ -1472,8 +1452,7 @@
    "status": "INVALID",
    "detail": "Invalid field `reverse`: The environment does not contain `Function.reverse`",
    "raw_status": "INVALID",
-   "reused_from": "94f3efe0c9a1f8afdae1676351dfff05a0876afa",
-   "carried": "checks",
+   "reused_from": "e8fa966192078ecd5b228f1cf49c5bfe6bc48190",
    "reads": "e07e56a035bb922acfd730e53fe25468c32d19e7505809be7c2c42b4f3abb5fc",
    "trust_class": "D[V]",
    "trusted": true
@@ -1493,8 +1472,7 @@
    "status": "INVALID",
    "detail": "Invalid field `reverse`: The environment does not contain `Function.reverse`",
    "raw_status": "INVALID",
-   "reused_from": "94f3efe0c9a1f8afdae1676351dfff05a0876afa",
-   "carried": "checks",
+   "reused_from": "e8fa966192078ecd5b228f1cf49c5bfe6bc48190",
    "reads": "4fd7be57bd65f1601cd972c7573496d24bac941582dace593b59c7a0820c6f96",
    "trust_class": "D[V]",
    "trusted": true
@@ -1514,8 +1492,7 @@
    "status": "INVALID",
    "detail": "Invalid field `drop`: The environment does not contain `Function.drop`",
    "raw_status": "INVALID",
-   "reused_from": "94f3efe0c9a1f8afdae1676351dfff05a0876afa",
-   "carried": "checks",
+   "reused_from": "e8fa966192078ecd5b228f1cf49c5bfe6bc48190",
    "reads": "e07e56a035bb922acfd730e53fe25468c32d19e7505809be7c2c42b4f3abb5fc",
    "trust_class": "D[V]",
    "trusted": true
@@ -1535,8 +1512,7 @@
    "status": "INVALID",
    "detail": "Invalid field `drop`: The environment does not contain `Function.drop`",
    "raw_status": "INVALID",
-   "reused_from": "94f3efe0c9a1f8afdae1676351dfff05a0876afa",
-   "carried": "checks",
+   "reused_from": "e8fa966192078ecd5b228f1cf49c5bfe6bc48190",
    "reads": "4fd7be57bd65f1601cd972c7573496d24bac941582dace593b59c7a0820c6f96",
    "trust_class": "D[V]",
    "trusted": true
