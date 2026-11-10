@@ -511,4 +511,271 @@ theorem empty_relations_frame (A : AttDoc) (S : VE.Structure.{u}) :
   · obtain ⟨⟨k, k2⟩, hp, rfl⟩ := List.mem_map.1 ha
     exact hclose k (mem_framePairs.1 hp).1 _
 
+/-! ## Intended models and the seed closure (spec 2.8): at-1d's seven statements of 6.1 -/
+
+/-- Frame pairs relate keys with the same sorts. -/
+theorem sorts_of_pair {A : AttDoc} {k k2 : Key} (hp : (k, k2) ∈ framePairs A) : k.sorts = k2.sorts := by
+  obtain ⟨e1, e2, _⟩ := sameSubject_eq (mem_framePairs.1 hp).2.2.1
+  simp only [Key.sorts, e1, e2]
+
+/-- A path of frame pairs ends at a key of the document, by a last pair, with its start's sorts. -/
+theorem path_pairs {A : AttDoc} {k k2 : Key}
+    (hp : VE.Closure.Path (fun a b => (a, b) ∈ framePairs A) k k2) :
+    k2 ∈ keys A ∧ k.sorts = k2.sorts ∧ ∃ k1, (k1, k2) ∈ framePairs A := by
+  induction hp with
+  | edge h => exact ⟨(mem_framePairs.1 h).2.1, sorts_of_pair h, _, h⟩
+  | cons h _ ih => exact ⟨ih.1, (sorts_of_pair h).trans ih.2.1, ih.2.2⟩
+
+/-- Frame premise 1 as a fact of every intended model. -/
+theorem knows_factive (A : AttDoc) (m : AttModel.{u} A) (hI : Intended A m) (k : Key) (hk : k ∈ keys A)
+    (hm : k.mode = .knows) (vs : List m.S.Carrier) (hJ : m.J k vs) : contentAt m.S k vs :=
+  hI.2.1 k hk hm vs hJ
+
+/-- The frame closure of a typed seed whose knowing members have true contents is intended. -/
+theorem seed_intended (A : AttDoc) (S : VE.Structure.{u}) (seed : List (Key × List S.Carrier))
+    (hseed : ∀ p ∈ seed, p.1 ∈ keys A ∧ VE.TupleTyped S p.1.sorts p.2)
+    (hfact : ∀ p ∈ seed, p.1.mode = .knows → contentAt S p.1 p.2) : Intended A ⟨S, seedClosure A seed⟩ := by
+  refine ⟨?_, ?_, ?_⟩
+  · rintro k2 vs ⟨k, hm, rfl | hp⟩
+    · exact hseed _ hm
+    · obtain ⟨hk2, e, _⟩ := path_pairs hp
+      exact ⟨hk2, e ▸ (hseed _ hm).2⟩
+  · rintro k2 _ hkn vs ⟨k, hm, rfl | hp⟩
+    · exact hfact _ hm hkn
+    · obtain ⟨_, _, k1, h1⟩ := path_pairs hp
+      exact absurd hkn ((framePairs_modes A _ h1).2)
+  · rintro ⟨k1, k2⟩ hp vs ⟨k, hm, hr⟩
+    refine ⟨k, hm, .inr ?_⟩
+    rcases hr with rfl | hr
+    · exact .edge hp
+    · exact VE.Closure.Path.trans hr (.edge hp)
+
+/-- Every intended model holding the seed holds its frame closure. -/
+theorem seed_least (A : AttDoc) (m : AttModel.{u} A) (hI : Intended A m) (seed : List (Key × List m.S.Carrier))
+    (hs : ∀ p ∈ seed, m.J p.1 p.2) : ∀ k vs, seedClosure A seed k vs → m.J k vs := by
+  rintro k2 vs ⟨k, hm, rfl | hp⟩
+  · exact hs _ hm
+  · have hJ := hs _ hm
+    clear hm
+    induction hp with
+    | edge h => exact hI.2.2 _ h vs hJ
+    | cons h _ ih => exact ih (hI.2.2 _ h vs hJ)
+
+/-- Nothing beyond the frame (F3, edit 2): a seed forces an attitude exactly when frame pairs reach it from a seed
+    member at the same tuple. No closure under consequence or conjunction, nothing across holders, contents or
+    tuples. -/
+theorem forced_iff_reachable (A : AttDoc) (S : VE.Structure.{u}) (seed : List (Key × List S.Carrier))
+    (hseed : ∀ p ∈ seed, p.1 ∈ keys A ∧ VE.TupleTyped S p.1.sorts p.2)
+    (hfact : ∀ p ∈ seed, p.1.mode = .knows → contentAt S p.1 p.2) (k : Key) (vs : List S.Carrier) :
+    (∀ J : Key → List S.Carrier → Prop, Intended A ⟨S, J⟩ → (∀ p ∈ seed, J p.1 p.2) → J k vs) ↔
+      seedClosure A seed k vs :=
+  ⟨fun hf => hf _ (seed_intended A S seed hseed hfact) (fun p hp => ⟨p.1, hp, .inl rfl⟩),
+    fun hr J hI hs => seed_least A ⟨S, J⟩ hI seed hs k vs hr⟩
+
+/-- The audit's requirement (R 2.2): any attitude other than knowing may be held of a false content; an instance
+    of `seed_intended` with the seed `[(k, vs)]`. No hypothesis about the content appears. -/
+theorem mistaken_belief_admissible (A : AttDoc) (S : VE.Structure.{u}) (k : Key) (hk : k ∈ keys A)
+    (hm : k.mode ≠ .knows) (vs : List S.Carrier) (hvs : VE.TupleTyped S k.sorts vs) :
+    ∃ J : Key → List S.Carrier → Prop, Intended A ⟨S, J⟩ ∧ J k vs := by
+  refine ⟨seedClosure A [(k, vs)], seed_intended A S [(k, vs)] ?_ ?_, k, List.mem_singleton_self _, .inl rfl⟩
+  · intro p hp; rw [List.mem_singleton.1 hp]; exact ⟨hk, hvs⟩
+  · intro p hp hkn; rw [List.mem_singleton.1 hp] at hkn; exact absurd hkn hm
+
+/-- A name `baseEnv` declares is no generated name (`names_fresh`). -/
+theorem keyOf_base {A : AttDoc} (h : WellFormedAtt A = true) {p : String} {sig : List String}
+    (hp : (baseEnv A).predicates p = some sig) : keyOf A p = none := by
+  cases hk : keyOf A p with
+  | none => rfl
+  | some k =>
+    have hn : name A k = p := by simpa using List.find?_some hk
+    have := (names_fresh A h k (List.mem_of_find?_eq_some hk)).1
+    rw [hn] at this
+    simp [baseEnv, VE.Norms.hide, this] at hp
+
+/-- A formula over `baseEnv` means on `interp` what it means on the base structure, at valuations that agree on its
+    context: it names no generated name. -/
+theorem denote_interp_base {A : AttDoc} (h : WellFormedAtt A = true) (m : AttModel.{u} A) :
+    ∀ {Γ : List String} {φ : VE.Formula} {ρ ρ' : List m.S.Carrier}, φ.WellFormed (baseEnv A) Γ →
+      (∀ i < Γ.length, ρ[i]? = ρ'[i]?) → (φ.denote (interp A m) ρ ↔ φ.denote m.S ρ') := by
+  have ht : ∀ {Γ : List String} {t : VE.Term} {s : String} {ρ ρ' : List m.S.Carrier},
+      t.sortOf (baseEnv A) Γ = some s → (∀ i < Γ.length, ρ[i]? = ρ'[i]?) →
+      t.denote (interp A m) ρ = t.denote m.S ρ' := by
+    intro Γ t s ρ ρ' hs hρ
+    cases t with
+    | var i =>
+      simp only [VE.Term.sortOf] at hs
+      exact hρ i (List.getElem?_eq_some_iff.1 hs).1
+    | const c => rfl
+  have hr : ∀ {p : String} {sig : List String} (vs : List m.S.Carrier), (baseEnv A).predicates p = some sig →
+      ((interp A m).relation p vs ↔ m.S.relation p vs) := by
+    intro p sig vs hp
+    show (match keyOf A p with | some k => m.J k vs | none => m.S.relation p vs) ↔ _
+    rw [keyOf_base h hp]
+  have hcons : ∀ {Γ : List String} {ρ ρ' : List m.S.Carrier} (s : String) (v : m.S.Carrier),
+      (∀ i < Γ.length, ρ[i]? = ρ'[i]?) → ∀ i < (s :: Γ).length, (v :: ρ)[i]? = (v :: ρ')[i]? := by
+    intro Γ ρ ρ' s v hρ i hi
+    cases i with
+    | zero => rfl
+    | succ i => exact hρ i (Nat.lt_of_succ_lt_succ hi)
+  intro Γ φ
+  induction φ generalizing Γ with
+  | top | bottom => intros; exact Iff.rfl
+  | unary p t =>
+    intro ρ ρ' hφ hρ
+    obtain ⟨s, hp, h1⟩ := hφ
+    show (∃ v, _ ∧ _) ↔ (∃ v, _ ∧ _)
+    rw [ht h1 hρ]
+    exact exists_congr fun v => and_congr_right fun _ => hr _ hp
+  | binary p t u =>
+    intro ρ ρ' hφ hρ
+    obtain ⟨s, r, hp, h1, h2⟩ := hφ
+    show (∃ v w, _ ∧ _ ∧ _) ↔ (∃ v w, _ ∧ _ ∧ _)
+    rw [ht h1 hρ, ht h2 hρ]
+    exact exists_congr fun v => exists_congr fun w => and_congr_right fun _ => and_congr_right fun _ => hr _ hp
+  | eq t u =>
+    intro ρ ρ' hφ hρ
+    obtain ⟨s, h1, h2⟩ := hφ
+    show (∃ v, _ ∧ _) ↔ (∃ v, _ ∧ _)
+    rw [ht h1 hρ, ht h2 hρ]
+    exact Iff.rfl
+  | not a ih => intro ρ ρ' hφ hρ; exact not_congr (ih hφ hρ)
+  | and a b iha ihb => intro ρ ρ' hφ hρ; exact and_congr (iha hφ.1 hρ) (ihb hφ.2 hρ)
+  | or a b iha ihb => intro ρ ρ' hφ hρ; exact or_congr (iha hφ.1 hρ) (ihb hφ.2 hρ)
+  | implies a b iha ihb => intro ρ ρ' hφ hρ; exact imp_congr (iha hφ.1 hρ) (ihb hφ.2 hρ)
+  | all s a ih =>
+    intro ρ ρ' hφ hρ
+    exact forall_congr' fun v => imp_congr_right fun _ => ih hφ.2 (hcons s v hρ)
+  | ex s a ih =>
+    intro ρ ρ' hφ hρ
+    exact exists_congr fun v => and_congr_right fun _ => ih hφ.2 (hcons s v hρ)
+
+/-- `interp` keeps the domains, so a tuple is typed on it exactly when it is typed on the base structure. -/
+theorem tupleTyped_interp (A : AttDoc) (m : AttModel.{u} A) : ∀ (ss : List String) (vs : List m.S.Carrier),
+    VE.TupleTyped (interp A m) ss vs ↔ VE.TupleTyped m.S ss vs
+  | [], [] | [], _ :: _ | _ :: _, [] => Iff.rfl
+  | _ :: ss, _ :: vs => and_congr Iff.rfl (tupleTyped_interp A m ss vs)
+
+/-- `closeOver k body` holds exactly when `body` holds at every typed tuple of `k`, read with the slot as variable 0. -/
+theorem closeOver_denote (S : VE.Structure.{u}) (k : Key) (body : VE.Formula) :
+    (closeOver k body).denote S [] ↔ ∀ vs, VE.TupleTyped S k.sorts vs → body.denote S vs.reverse := by
+  unfold closeOver Key.sorts
+  cases k.slotSort with
+  | none =>
+    refine ⟨fun hb vs hT => ?_, fun hb v hv => hb [v] ⟨hv, trivial⟩⟩
+    rcases vs with _ | ⟨v, _ | ⟨_, _⟩⟩ <;> simp only [VE.TupleTyped, Option.toList, and_false] at hT
+    exact hb v hT.1
+  | some s =>
+    refine ⟨fun hb vs hT => ?_, fun hb v hv w hw => hb [v, w] ⟨hv, hw, trivial⟩⟩
+    rcases vs with _ | ⟨v, _ | ⟨w, _ | ⟨_, _⟩⟩⟩ <;> simp only [VE.TupleTyped, Option.toList, and_false] at hT
+    exact hb v hT.1 w hT.2.1
+
+/-- A key's atom, read at a typed tuple reversed, is its relation in `J`. -/
+theorem atomAt_interp {A : AttDoc} (h : WellFormedAtt A = true) (m : AttModel.{u} A) {k : Key} (hk : k ∈ keys A)
+    {vs : List m.S.Carrier} (hT : VE.TupleTyped m.S k.sorts vs) :
+    (atomAt A k).denote (interp A m) vs.reverse ↔ m.J k vs := by
+  have hr : ∀ ws, (interp A m).relation (name A k) ws ↔ m.J k ws := fun ws => by
+    show (match keyOf A (name A k) with | some k => m.J k ws | none => _) ↔ _
+    rw [keyOf_name A h k hk]
+  unfold atomAt
+  unfold Key.sorts at hT
+  cases hs : k.slotSort with
+  | none =>
+    rw [hs] at hT
+    rcases vs with _ | ⟨v, _ | ⟨_, _⟩⟩ <;> simp only [VE.TupleTyped, Option.toList, and_false] at hT
+    exact ⟨fun ⟨_, hx, hrel⟩ => by cases hx; exact (hr _).1 hrel, fun hJ => ⟨v, rfl, (hr _).2 hJ⟩⟩
+  | some s =>
+    rw [hs] at hT
+    rcases vs with _ | ⟨v, _ | ⟨w, _ | ⟨_, _⟩⟩⟩ <;> simp only [VE.TupleTyped, Option.toList, and_false] at hT
+    exact ⟨fun ⟨_, _, h1, h2, hrel⟩ => by cases h1; cases h2; exact (hr _).1 hrel,
+      fun hJ => ⟨v, w, rfl, rfl, (hr _).2 hJ⟩⟩
+
+/-- A key's content at a typed tuple is its content on `interp` at the tuple reversed (the holder's extra binder
+    changes nothing: closed contents are typed in `[]`, slot contents in `[s]`). -/
+theorem contentAt_interp {A : AttDoc} (h : WellFormedAtt A = true) (m : AttModel.{u} A) {k : Key} (hk : k ∈ keys A)
+    {vs : List m.S.Carrier} (hT : VE.TupleTyped m.S k.sorts vs) :
+    contentAt m.S k vs ↔ k.content.denote (interp A m) vs.reverse := by
+  have hc := (VE.check_iff_wellFormed _ _ _).1 (key_checked h k hk).2.2.2
+  unfold Key.sorts at hT
+  cases hs : k.slotSort with
+  | none =>
+    rw [hs] at hT hc
+    rcases vs with _ | ⟨v, _ | ⟨_, _⟩⟩ <;> simp only [VE.TupleTyped, Option.toList, and_false] at hT
+    simp only [contentAt, hs, true_and, List.reverse_cons, List.reverse_nil, List.nil_append]
+    exact (denote_interp_base h m hc (fun i hi => absurd hi (Nat.not_lt_zero i))).symm
+  | some s =>
+    rw [hs] at hT hc
+    rcases vs with _ | ⟨v, _ | ⟨w, _ | ⟨_, _⟩⟩⟩ <;> simp only [VE.TupleTyped, Option.toList, and_false] at hT
+    simp only [contentAt, hs, Option.isSome_some, true_and, List.reverse_cons, List.reverse_nil, List.nil_append,
+      List.cons_append]
+    refine (denote_interp_base h m hc (fun i hi => ?_)).symm
+    cases i with
+    | zero => rfl
+    | succ i => exact absurd hi (by simp)
+
+/-- Faithfulness, the frame: the frame premises hold exactly when the relations mean what `Intended` says. -/
+theorem frame_iff_intended (A : AttDoc) (h : WellFormedAtt A = true) (m : AttModel.{u} A)
+    (hJ : ∀ k vs, m.J k vs → k ∈ keys A ∧ VE.TupleTyped m.S k.sorts vs) :
+    VE.Norms.Sat (interp A m) (framePremises A) ↔ Intended A m := by
+  have hfac : ∀ k ∈ knowsKeys A,
+      ((factive A k).denote (interp A m) [] ↔ ∀ vs, m.J k vs → contentAt m.S k vs) := by
+    intro k hk
+    have hk := (List.mem_filter.1 hk).1
+    rw [factive, closeOver_denote]
+    constructor
+    · intro hb vs hJk
+      have hT := (hJ k vs hJk).2
+      exact (contentAt_interp h m hk hT).2 (hb vs ((tupleTyped_interp A m _ _).2 hT) ((atomAt_interp h m hk hT).2 hJk))
+    · intro hc vs hT ha
+      have hT := (tupleTyped_interp A m _ _).1 hT
+      exact (contentAt_interp h m hk hT).1 (hc vs ((atomAt_interp h m hk hT).1 ha))
+  have hent : ∀ p ∈ framePairs A, ((entails A p).denote (interp A m) [] ↔ ∀ vs, m.J p.1 vs → m.J p.2 vs) := by
+    rintro ⟨k, k2⟩ hp
+    obtain ⟨hk, hk2, _⟩ := mem_framePairs.1 hp
+    have e := sorts_of_pair hp
+    show (closeOver k (.implies (atomAt A k) (atomAt A k2))).denote _ [] ↔ _
+    rw [closeOver_denote]
+    constructor
+    · intro hb vs hJk
+      have hT := (hJ k vs hJk).2
+      exact (atomAt_interp h m hk2 (e ▸ hT)).1 (hb vs ((tupleTyped_interp A m _ _).2 hT) ((atomAt_interp h m hk hT).2 hJk))
+    · intro hc vs hT ha
+      have hT := (tupleTyped_interp A m _ _).1 hT
+      exact (atomAt_interp h m hk2 (e ▸ hT)).2 (hc vs ((atomAt_interp h m hk hT).1 ha))
+  unfold VE.Norms.Sat framePremises
+  constructor
+  · intro hS
+    refine ⟨hJ, fun k hk hm => ?_, fun p hp => ?_⟩
+    · have hkk : k ∈ knowsKeys A := List.mem_filter.2 ⟨hk, by simp [hm]⟩
+      exact (hfac k hkk).1 (hS _ (List.mem_append_left _ (List.mem_map_of_mem hkk)))
+    · exact (hent p hp).1 (hS _ (List.mem_append_right _ (List.mem_map_of_mem hp)))
+  · intro hI a ha
+    rcases List.mem_append.1 ha with ha | ha
+    · obtain ⟨k, hk, rfl⟩ := List.mem_map.1 ha
+      exact (hfac k hk).2 (hI.2.1 k (List.mem_filter.1 hk).1 (by simpa using (List.mem_filter.1 hk).2))
+    · obtain ⟨p, hp, rfl⟩ := List.mem_map.1 ha
+      exact (hent p hp).2 (hI.2.2 p hp)
+
+/-- R 5's collapse (repaired, A3): when a frame pair links the two keys, `(ck ∧ a) ∨ ct` is `ct`. -/
+theorem guard_collapse (A : AttDoc) (m : AttModel.{u} A) (hI : Intended A m) (Γ : List String)
+    (ρ : VE.Valuation m.S) (ck ct : Cond) (a : AFormula) (k kt : Key) (hk : ck.key A Γ = some k)
+    (hkt : ct.key A Γ = some kt) (hp : (k, kt) ∈ framePairs A) (hh : ck.holder = ct.holder)
+    (hsl : ck.slot.map (·.2) = ct.slot.map (·.2)) :
+    AFormula.denote A m Γ ρ (.or (.and (.att ck) a) (.att ct)) ↔ AFormula.denote A m Γ ρ (.att ct) := by
+  refine ⟨?_, .inr⟩
+  rintro (⟨⟨k', hk', vh, hvh, hs⟩, _⟩ | hc)
+  · rw [hk] at hk'
+    cases hk'
+    refine ⟨kt, hkt, vh, hh ▸ hvh, ?_⟩
+    have hJ := hI.2.2 _ hp
+    revert hsl
+    revert hs
+    rcases ck.slot with _ | ⟨_, t1⟩ <;> rcases ct.slot with _ | ⟨_, t2⟩ <;> intro hs hsl
+    · exact hJ _ hs
+    · simp at hsl
+    · simp at hsl
+    · obtain rfl : t1 = t2 := by simpa using hsl
+      obtain ⟨vx, hvx, hJx⟩ := hs
+      exact ⟨vx, hvx, hJ _ hJx⟩
+  · exact hc
+
 end VE.Attitudes
