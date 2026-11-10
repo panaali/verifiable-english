@@ -53,12 +53,21 @@ def g3 : Group := { members := ["o1", "o2"], goal := .top, cands := [.assumed, .
 -- `couplings_spec` on S19: lf-14d's `satisfiesAll` with the generated constraints keeps exactly the coupled set.
 def ver0 : String → Nat := fun _ => 0
 def K19 (R : Report) : VE.Discourse.Manifest :=
-  { VE.Discourse.emptyManifest with constraints := couplingConstraints ver0 J19 (groups fixtureTable R) }
+  { VE.Discourse.emptyManifest with
+    constraints := VE.Discourse.emptyManifest.constraints ++ couplingConstraints ver0 J19 (groups fixtureTable R) }
 #guard J19.filter (fun ch => VE.Discourse.satisfiesAll (K19 same19) (choiceOf fixtureTable same19 ver0 ch)) ==
   coupledSet J19 ((groups fixtureTable same19).filter (couplable J19))
 #guard (K19 diff19).constraints.isEmpty
 #guard (K19 same19).constraints.length == 50
 #guard choiceOf fixtureTable same19 ver0 [("o1", .conditioned), ("o2", .assumed)] == [("o1", 0, 1), ("o2", 0, 0)]
+-- through lf-14d's enumeration: one reading set per obligation, named by it (PS-4 must name the sets so)
+def sets5 : List VE.Route.Admission.ReadingSet := ids5.map (fun o => ⟨o, 0, [.top, .bottom]⟩)
+#guard (match VE.Discourse.compatibleChoices (K19 same19) sets5 VE.Scope.choiceLimit with
+  | .ok cs => cs == (coupledSet J19 ((groups fixtureTable same19).filter (couplable J19))).map
+      (choiceOf fixtureTable same19 ver0) && cs.length == 2
+  | .error _ => false)
+#guard (match VE.Discourse.compatibleChoices (K19 diff19) sets5 VE.Scope.choiceLimit with
+  | .ok cs => cs == J19.map (choiceOf fixtureTable diff19 ver0) | .error _ => false)
 
 -- The source-identity choice: offered once for the shared closed `pre`, with the different guards too; never imposed
 -- (the joint set, the groups and the coupled set above are computed without it).
@@ -80,8 +89,12 @@ def J18 : List Pick := [[("o1", .assumed), ("o2", .conditioned)], [("o1", .condi
 #guard (coupledSet J18 ([g18].filter (couplable J18))).length == 2
 -- with both uniform picks present it is couplable
 #guard couplable (J18 ++ [[("o1", .assumed), ("o2", .assumed)], [("o1", .conditioned), ("o2", .conditioned)]]) g18
--- an in-place or unconditional cell never forms a group
+-- a cell that is not all root carriers is never couplable, and `groups` never forms a group on one: the negated
+-- cell lists in place (R-3); the same two obligations at the top cell form one group
 #guard !couplable J18 { g18 with cands := [.assumed, .unconditional] }
+def neg2 (pc : PositionClass) : Report :=
+  { checked := ["o1", "o2"].map (fun i => { chk i .top with pos := pc }), bases := [], baseTree := emptyTree }
+#guard groups fixtureTable (neg2 .negated) == [] && (groups fixtureTable (neg2 .top)).length == 1
 
 /-! ## R-3: a pick names emitted readings only -/
 
@@ -98,6 +111,8 @@ def repNeg : Report := { checked := [chkNeg], bases := [], baseTree := emptyTree
 def sets7 : List VE.Route.Admission.ReadingSet :=
   (List.range 7).map (fun i => ⟨"o" ++ toString i, 0, [.top, .bottom]⟩)
 #guard (match VE.Discourse.compatibleChoices VE.Discourse.emptyManifest sets7 VE.Scope.choiceLimit with
+  | .error e => e == "ResourceLimit: joint choices" | .ok _ => false)
+#guard (match VE.Discourse.compatibleChoices (K19 same19) sets7 VE.Scope.choiceLimit with
   | .error e => e == "ResourceLimit: joint choices" | .ok _ => false)
 #guard (match VE.Discourse.compatibleChoices VE.Discourse.emptyManifest (sets7.take 6) VE.Scope.choiceLimit with
   | .ok cs => cs.length == 64 | .error _ => false)
@@ -139,6 +154,24 @@ def holds (M : VE.FiniteModel String) (as : List VE.Formula) : Bool := as.all (e
 #guard (groups fixtureTable R15).all (fun g => assumptionsUnder D15 R15 (rep g mixed15) == [theOwnerU, theOwnerU])
 #guard J15.all (fun ch => decide (PickFits fixtureTable R15 ch))
 #guard treeUnder D15 R15 mixed15 == emptyTree
+-- the same units with a background formula, a literal, a fixed rule, an asserted and an unasserted claim unit, and a
+-- resolved obligation listed first in the readings unit
+def bgF : VE.Formula := .unary "bg" (.const "c")
+def saidF : VE.Formula := .unary "said" (.const "c")
+def fixedNode : VE.Norms.Node := { name := "r-fixed", pred := "x", sign := true, guard := .top, carveOuts := [], over := [] }
+def c0 : Checked := { chk15 "o1" with ob := { (chk15 "o1").ob with id := "o0", carrier := .asserted } }
+def R15x : Report := { R15 with checked := c0 :: R15.checked }
+def unitsX : List DocUnit :=
+  [{ id := "u-a", asserted := true, content := .claim saidF },
+   { id := "u-n", asserted := false, content := .claim (.unary "unsaid" (.const "c")) }]
+def D15x : PDoc :=
+  { E := E19, lits := ["lit"], norms := { regulated := [], definitions := [], nodes := [fixedNode] },
+    defaults := false, unspec := [], background := [bgF], units := unitsX ++ D15.units, proofs := [], block := none }
+#guard formulasUnder D15x R15x mixed15 == [bgF, saidF] ++ formulasUnder D15 R15 mixed15
+#guard (treeUnder D15x R15x mixed15).nodes == D15x.norms.nodes && D15x.norms.nodes.length == 1
+#guard assumptionsUnder D15x R15x mixed15 == [theOwnerU]
+#guard (pickedU D15x R15x mixed15).D.lits == ["lit"] && (pickedU D15x R15x mixed15).unspec == []
+#guard (groups fixtureTable R15x).length == 1 && decide (PickFits fixtureTable R15x mixed15)
 
 -- `SameModels` and `SameDecides` (spec 4.8): a pick has its own models; the all-conditioned pick does not have the
 -- mixed pick's (no owner: mixed asserts `B1`, all-conditioned holds vacuously).
@@ -195,6 +228,7 @@ def mixed22 : Pick := [("o1", .assumed), ("o2", .conditioned)]
 def m22 : VE.FiniteModel String :=
   model [("situation", ["s1", "s2"]), ("entity", ["i"])]
     [("g", [["s1"]]), ("instruction", [["i"]]), ("p", [["s1"], ["s2"]]), ("unsaid__p", [["s2"]])] []
+#guard (groups fixtureTable R22).length == 1
 #guard (groups fixtureTable R22).all (fun g => rep g mixed22 == rep22)
 #guard (treeUnder D22 R22 mixed22).nodes == [node22 "r-o1", conditionNode (node22 "r-o2") instr]
 #guard formulasUnder D22 R22 mixed22 == [(chk22 "o1").goal]
@@ -254,6 +288,33 @@ theorem satUnder_of_eval (D : PDoc) (R : Report) (ch : Pick) (M : VE.FiniteModel
     SatUnder D R ch M.asStructure := by
   unfold SatUnder; rw [if_pos hd]
   exact ⟨fun a ha => (VE.eval_iff_denote M [] a).mp (List.all_eq_true.mp hf a ha), hi⟩
+
+-- `SameDecides` both ways: without the block, all-conditioned and all-assumed decide `p` differently at `s1` (`g`
+-- holds, no instruction); a pick decides as itself (above).
+def D22n : PDoc := { D22 with defaults := false }
+def cond22 : Pick := [("o1", .conditioned), ("o2", .conditioned)]
+def mDec : VE.FiniteModel String := model [("situation", ["s1"]), ("entity", ["i"])] [("g", [["s1"]])] []
+#guard holds mDec (formulasUnder D22n R22 cond22 ++ VE.Norms.elaborate (treeUnder D22n R22 cond22))
+#guard (VE.Norms.decides (treeUnder D22n R22 rep22) "p" true).eval mDec ["s1"] &&
+  !(VE.Norms.decides (treeUnder D22n R22 cond22) "p" true).eval mDec ["s1"]
+example : ¬ SameDecides.{0} D22n R22 cond22 rep22 := by
+  intro h
+  have hadm : mDec.asStructure.Admissible D22n.E := by
+    refine ⟨(fun _ _ hc => nomatch hc), fun p vs hr => ?_⟩
+    by_cases hp : p = "g"
+    · subst hp
+      have : vs = ["s1"] := by simpa [VE.FiniteModel.asStructure, mDec, model] using hr
+      subst this
+      exact ⟨["situation"], rfl, by simp [VE.TupleTyped, VE.FiniteModel.asStructure, mDec, model]⟩
+    · simp [VE.FiniteModel.asStructure, mDec, model, Ne.symm hp] at hr
+  have hs : SatUnder D22n R22 cond22 mDec.asStructure := by
+    unfold SatUnder; rw [if_neg (by decide)]
+    exact fun a ha => (VE.eval_iff_denote _ _ _).mp (List.all_eq_true.mp
+      (by decide : holds mDec (formulasUnder D22n R22 cond22 ++ VE.Norms.elaborate (treeUnder D22n R22 cond22))) a ha)
+  have hd := h _ hadm hs reg22 (by simp [D22n, D22]) ["s1"]
+    (by simp [VE.TupleTyped, VE.FiniteModel.asStructure, mDec, model, reg22]) true
+  rw [← VE.eval_iff_denote, ← VE.eval_iff_denote] at hd
+  exact absurd (hd.mpr (by decide)) (by decide)
 
 theorem s22_completion (ch : Pick) (hch : ch = rep22 ∨ ch = mixed22) : SatUnder D22 R22 ch m22.asStructure := by
   rcases hch with rfl | rfl <;>

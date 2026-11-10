@@ -4,8 +4,9 @@ import VE.Presupposition.Admit.Statements
 /-! # PS-3's statements (docs/spec/presupposition.md 4.8)
 
 `coupled_subset`, `coupled_uniform` and `coupling_complete` word for word; `couplings_spec`: lf-14d's `satisfiesAll`
-with the generated `requires` constraints keeps exactly `coupledSet J (couplable groups)`; `sourceChoice_entails`:
-the source-identity choice entails every rule goal on its `pre` (`source_identity_entails`).
+with the generated `requires` constraints appended to the manifest's keeps exactly `coupledSet J (couplable groups)`;
+`sourceChoice_members` and `sourceChoice_entails`: the source-identity choice lists unresolved rule acts on its `pre`,
+and assuming `pre` once entails the rule goal of each (`source_identity_entails`).
 
 `coupling_complete` is stated over `admit`, whose table is PS-E1's `candidateTable`: there every cell with two
 emitted candidates lists `unconditional`, which is not a root carrier, so no group forms (`groups_admit_nil`) and the
@@ -184,7 +185,7 @@ theorem mem_choiceOf {t : CandidateTable} {R : Report} (hid : (R.checked.map (·
   constructor
   · rintro ⟨x, hx, he⟩
     obtain ⟨d, hd, he⟩ := Option.map_eq_some_iff.mp he
-    simp only [Function.comp, Prod.mk.injEq] at he
+    simp only [Prod.mk.injEq] at he
     obtain ⟨h1, -, h3⟩ := he
     rw [h1, find_id hid hc] at hd
     obtain rfl := Option.some.inj hd
@@ -230,22 +231,36 @@ theorem groupConstraints_iff {t : CandidateTable} {R : Report} (hid : (R.checked
     have hk' := (pickOf_iff hn _ _).mp ((hu _ ho _ ho').symm.trans ((pickOf_iff hn _ _).mpr hk))
     exact (mem_choiceOf hid ver ch hc' _).mpr ⟨k, hk', by rw [he, he']⟩
 
-/-- PS-3's constraints, added to lf-14d's manifest, keep exactly the picks of `J` uniform on every couplable
-    group: `coupledSet J (couplable groups)`. -/
+/-- PS-3's constraints, appended to the constraints of lf-14d's manifest `K` whose joint set is `J`, keep exactly the
+    picks of `J` uniform on every couplable group: `coupledSet J (couplable groups)`. -/
 theorem couplings_spec (t : CandidateTable) (R : Report) (hid : (R.checked.map (·.ob.id)).Nodup)
-    (K : VE.Discourse.Manifest) (ver : String → Nat) (J : List Pick) (hJ : ∀ ch ∈ J, PickFits t R ch) :
-    J.filter (fun ch => VE.Discourse.satisfiesAll { K with constraints := couplingConstraints ver J (groups t R) }
-      (choiceOf t R ver ch)) = coupledSet J ((groups t R).filter (couplable J)) := by
+    (K : VE.Discourse.Manifest) (ver : String → Nat) (J : List Pick) (hJ : ∀ ch ∈ J, PickFits t R ch)
+    (hK : ∀ ch ∈ J, VE.Discourse.satisfiesAll K (choiceOf t R ver ch) = true) :
+    J.filter (fun ch => VE.Discourse.satisfiesAll
+      { K with constraints := K.constraints ++ couplingConstraints ver J (groups t R) } (choiceOf t R ver ch)) =
+      coupledSet J ((groups t R).filter (couplable J)) := by
   unfold coupledSet
   apply List.filter_congr
   intro ch hch
-  unfold VE.Discourse.satisfiesAll couplingConstraints
+  have hk := hK ch hch
+  unfold VE.Discourse.satisfiesAll at hk ⊢
+  rw [List.all_append, hk, Bool.true_and]
+  unfold couplingConstraints
   rw [List.all_flatMap]
   apply Bool.eq_iff_iff.mpr
   rw [List.all_eq_true, List.all_eq_true]
   apply forall₂_congr
   intro g hg
   rw [groupConstraints_iff hid ver (List.mem_filter.mp hg).1 (hJ ch hch), uniformB_iff]
+
+/-- `couplings_spec` on an admitted report: its obligation ids are distinct (`admit_ids_nodup`). -/
+theorem couplings_spec_admit {t : CandidateTable} {fx : Fixed} {D : PDoc} {R : Report} (h : admitWith t fx D = .ok R)
+    (K : VE.Discourse.Manifest) (ver : String → Nat) (J : List Pick) (hJ : ∀ ch ∈ J, PickFits t R ch)
+    (hK : ∀ ch ∈ J, VE.Discourse.satisfiesAll K (choiceOf t R ver ch) = true) :
+    J.filter (fun ch => VE.Discourse.satisfiesAll
+      { K with constraints := K.constraints ++ couplingConstraints ver J (groups t R) } (choiceOf t R ver ch)) =
+      coupledSet J ((groups t R).filter (couplable J)) :=
+  couplings_spec t R (admit_ids_nodup h) K ver J hJ hK
 
 /-! ## The source-identity choice -/
 
@@ -265,6 +280,19 @@ theorem sourceChoice_closed {E : VE.Environment} {R : Report} {s : SourceChoice}
   obtain ⟨-, hk⟩ := List.mem_filter.mp hc
   simp only [Bool.and_eq_true, beq_iff_eq] at hk hp
   exact ⟨hp ▸ (VE.check_iff_wellFormed E [] _).mp hk.2, rfl, hl⟩
+
+/-- Every member of a source-identity choice is an unresolved rule act that takes the choice's `pre` for granted. -/
+theorem sourceChoice_members {E : VE.Environment} {R : Report} {s : SourceChoice} (hs : s ∈ sourceChoices E R)
+    (o : String) (ho : o ∈ s.members) : ∃ c ∈ R.checked, c.ob.id = o ∧ c.ob.carrier = .unresolved ∧
+      c.pos = .ruleAct ∧ c.pre = s.pre := by
+  unfold sourceChoices at hs
+  obtain ⟨hs, -⟩ := List.mem_filter.mp hs
+  obtain ⟨p, -, rfl⟩ := List.mem_map.mp hs
+  obtain ⟨c, hc, rfl⟩ := List.mem_map.mp ho
+  obtain ⟨hc, hp⟩ := List.mem_filter.mp hc
+  obtain ⟨hc, hk⟩ := List.mem_filter.mp hc
+  simp only [Bool.and_eq_true, beq_iff_eq] at hk hp
+  exact ⟨c, hc, rfl, hk.1.1, hk.1.2, hp⟩
 
 /-- Assuming the source-identity choice's `pre` once entails the rule goal of every rule on it. -/
 theorem sourceChoice_entails (E : VE.Environment) (R : Report) (s : SourceChoice) (hs : s ∈ sourceChoices E R)
