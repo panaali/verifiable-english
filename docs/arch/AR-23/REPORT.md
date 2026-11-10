@@ -137,7 +137,8 @@ are untouched.
   - `uv run python -m tools.evidence ab … --base-commit a3454b6ba… --head-commit ee43c72ce… --delta
     evidence/ab-delta.json` gave "ab PASS" over 100,560 records: 100,531 the same, 29 unavailable on both sides with
     identical outputs (R7, DELTA rows 1–4), and 0 unlisted (`evidence/ab.json`).
-  - After `ee43c72ce`, only `docs/` changes.
+  - After `ee43c72ce`, only `docs/` and `tools/trust-classes.json` change. The table gets back main's module order (the
+    auto-merges had reordered it; its content, one added row, is unchanged), and only `tools/trust_map.py` reads it.
 - **The four runs agree.** Whole-UDHR pilot records timed out on both sides in each run: 10, 9, 1, then 8. The
   machine load differed between runs. `udhr-20261018T1800Z` `translation-whole.ve.md` timed out in all four. Every
   other one answered in at least one run, the same on both sides.
@@ -221,8 +222,9 @@ less than the plan estimated.
 
 ## After the gate
 
-The chain gates the final commit `<G>`. From `ee43c72ce` (the commit the A/B recorded) to `<G>`, only `docs/` changes:
-`docs/arch/AR-23/`, and `docs/CONSOLIDATION-PLAN.md` (the quoted step 3 ledger row, which no recorder reads). Then make one report commit that changes only
+The chain gates the final commit `<G>`. From `ee43c72ce` (the commit the A/B recorded) to `<G>`, only these change:
+`docs/arch/AR-23/`, `docs/CONSOLIDATION-PLAN.md` (the quoted step 3 ledger row) and `tools/trust-classes.json` (main's
+module order restored). No recorder reads any of them. Then make one report commit that changes only
 `docs/arch/AR-23/`:
 
     cp gate-result.json docs/arch/AR-23/evidence/gate.json
