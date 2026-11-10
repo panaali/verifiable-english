@@ -376,7 +376,7 @@ def requestIsCase (listed : List String) : Bool :=
   | .ok j => j != .null && j.getObjValD "norms" == Json.arr #[]
   | .error _ => false
 
--- The decoder refuses events@0 without its requirements (the row's text), and accepts the list without it.
+-- The decoder refuses events@0 where no document's open terms are read (the base's text), and accepts the list without it.
 #guard (VE.Service.Document.environmentOf (chainEnv ["events@0", "norms@0", "soft-norms@0"])).toOption.isNone
 #guard (VE.Service.Document.environmentOf (chainEnv ["norms@0", "relational-fol@0", "soft-norms@0"])).toOption.isSome
 -- (a) events@0 the only profile beside soft-norms@0, (b) first of three, (c) last of three: no case.
@@ -413,18 +413,22 @@ def ownedRequestIsNull (listed : List String) : Bool :=
 def ownedLists : List (List String) := ["events@0" :: ndListed, ndListed ++ ["events@0"]]
 
 -- Owned: the list is decoded, its environment read through the route's view (no block here, so no decoded block).
-#guard (match VE.Service.Document.environmentOf (chainEnv ("events@0" :: ndListed)) with
-  | .ok E => E.events.map (·.2.isNone) == some true && E.profiles == "events@0" :: ndListed &&
+def docTerms : Option Json := some (Json.arr #[])
+#guard (match VE.Service.Document.environmentOf (chainEnv ("events@0" :: ndListed)) (terms := docTerms) with
+  | .ok E => E.events.map (·.2.decoded.isNone) == some true && E.profiles == "events@0" :: ndListed &&
       !(VE.Compose.listedProfiles E.json).contains "events@0"
   | .error _ => false)
 -- Owned, events@0 first or last: `layeredOf` refuses it, never `.ok`; `requestOf` on that `Env` is `null`.
 #guard ownedLists.all fun ps => (layeredCase ps).toOption.isNone
 #guard ownedLists.all ownedRequestIsNull
+-- Without a document's open terms (the scope block's path) the base's refusal stands, word for word.
+#guard (match VE.Service.Document.environmentOf (chainEnv ("events@0" :: ndListed)) with
+  | .ok _ => "ok" | .error e => e) == "CheckerUnavailable: document checks under events@0 need its Lean profile route"
 -- The document route's answer on that list: `eventsLayeredOf` on the decoded `Env`, the soft pack (no block, no pack:
 -- `eventsX_absent`); with a block it is the soft and events packs (EventsDocumentExamples).
-#guard (match VE.Service.Document.environmentOf (chainEnv ("events@0" :: ndListed)) with
+#guard (match VE.Service.Document.environmentOf (chainEnv ("events@0" :: ndListed)) (terms := docTerms) with
   | .ok E => match E.events with
-    | some (w, d) => (VE.Service.DocumentChain.eventsLayeredOf E (Json.mkObj []) [] w d).toOption.map
+    | some (w, H) => (VE.Service.DocumentChain.eventsLayeredOf E (Json.mkObj []) [] w H).toOption.map
         (·.packs.map (·.id)) == some ["soft"]
     | none => false
   | .error _ => false)

@@ -57,8 +57,8 @@ def edited(change):
 
 
 def test_an_events_document_is_checked_where_it_was_unavailable():
-    """DELTA row 1: the open-anchor document is CHECKED, as is a dated one; before et-5b both were
-    `CheckerUnavailable: document checks under events@0 need its Lean profile route`."""
+    """DELTA row 1: the open-anchor document is CHECKED, as is a dated one; before et-5b both were refused before
+    decoding (`undecided`: here the environment's own fault, `fields do not match: ... got [events, ...]`)."""
     row, error = checked(front())
     assert error is None and [(u["id"], u["status"]) for u in row["units"]] == [("u1", "CHECKED")]
 
@@ -70,13 +70,19 @@ def test_an_events_document_is_checked_where_it_was_unavailable():
 
 
 def test_a_list_off_the_soft_chain_stays_unavailable():
-    """The other direction: the signature covers the soft chain's document only; another list keeps the base's refusal,
-    word for word."""
+    """The other direction: off the soft chain the base's refusal stands, by the base's own expression (`undecided`:
+    the environment's own fault, Python's `Environment`'s, before `document checks under events@0 need ...`)."""
     def plain(e):
         e["profiles"] = ["events@0", "norm-defaults@0", "norms@0", "relational-fol@0"]
     _, error = checked(edited(plain))
-    assert isinstance(error, CheckerUnavailable)
-    assert str(error) == "CheckerUnavailable: document checks under events@0 need its Lean profile route"
+    assert str(error) == ("fields do not match: expected [language, profiles, spec_revision, vocabulary], got [events, "
+                          "language, profiles, spec_revision, vocabulary]")
+
+    def bare(e):
+        plain(e)
+        del e["events"]
+    _, error = checked(edited(bare))
+    assert str(error) == "UnsupportedProfile: Unsupported profile events@0"
 
 
 def _set(path, value):
@@ -143,8 +149,13 @@ def test_only_a_ve_error_escapes_a_malformed_block_member(key, value):
     """A null or a non-natural number is outside the document mode's JSON reader in any front matter (unavailable, as
     before et-5b); every other value is Lean's diagnostic, or an answer."""
     _, error = checked(edited(_set(("events", key), value)))
-    if isinstance(error, CheckerUnavailable):
-        assert value is None or type(value) is float
+    if value == "\ud800":
+        assert isinstance(error, VEError) and str(error) == "JSON strings must not contain lone UTF-16 surrogates"
+    elif value is None or type(value) is float:
+        assert isinstance(error, CheckerUnavailable)
         assert str(error).startswith("CheckerUnavailable: front matter outside the document mode's JSON reader")
+    elif value == [] and key in ("events", "states", "dates", "links"):
+        assert error is None  # an empty list is the block's own, legitimately empty value
     else:
-        assert error is None or isinstance(error, VEError)
+        assert isinstance(error, VEError) and not isinstance(error, CheckerUnavailable), error
+        assert str(error).startswith(("InvalidInput: events", "EventsSort: ", "DateRange(", "InvalidDate(")), error
