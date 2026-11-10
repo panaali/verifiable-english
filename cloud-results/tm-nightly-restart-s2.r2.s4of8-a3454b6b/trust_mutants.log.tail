@@ -1,0 +1,9 @@
+trust_mutants: 19 definitions, 71 mutants (9 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/Rights/Run.lean:316 VE.Rights.Run.situationTables (D[V], trusted) list-empty: (·.map (·.2) -> (fun x_tm => [] (lean/VE/Rights/Run.lean:316: typeclass instance problem is stuck, it is often due to metavariables)
+UNKNOWN lean/VE/Presupposition/Admit.lean:82 VE.Presupposition.baseOf (G[V], trusted) list-empty: (allSame (fun r => match r.content with | .rule M => peelRule (nc r.cand.root) M | .claim _ => no... -> [] (lean/VE/Presupposition/Admit.lean:82: Type mismatch)
+UNKNOWN lean/VE/Rights/Run.lean:445 VE.Rights.Run.conflictAnswerOf (D[V], trusted) list-empty: M.map (situationTables D) -> [] (lean/VE/Rights/Run.lean:445: Unknown constant `Nat.null`)
+trust_mutants: 6 KILLED, 0 SURVIVOR, 3 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 62 OTHER SHARD in 452 s
+trust_mutants: D[V], trusted: 2 KILLED, 2 UNKNOWN, 12 OTHER SHARD
+trust_mutants: G[V], trusted: 3 KILLED, 1 UNKNOWN, 35 OTHER SHARD
+trust_mutants: S, trusted: 1 KILLED, 15 OTHER SHARD
+trust_mutants: steps: wall plan 16.2 s, scratch 4.6 s, control_build 0.3 s, probe_install 1.4 s, mutants 425.6 s, cleanup 3.7 s, reads 0.2 s; lake control_build 0.2 s (1), probe_install 1.4 s (1), control_probes 93.9 s (7), mutant_builds 62.9 s (10), mutant_checks 602.4 s (7), stage_controls 27 s (3), mutant_probes 130.9 s (7)
