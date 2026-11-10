@@ -1,0 +1,3 @@
+curl: (22) The requested URL returned error: 404
+ve-cache: pinned asset lean-build-aa5087ea0e07.tar.zst is gone (no longer served at https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-aa5087ea0e07.tar.zst): taking the manifest's pick instead
+ve-cache: lean-build seed-newest key a6c7e4152ad4 asset lean-build-190a267bcc9d.tar.zst sha256 a38767f73220 ok, seal ok, from download, 35.9 s (pinned lean-build-aa5087ea0e07.tar.zst was gone: manifest pick)
