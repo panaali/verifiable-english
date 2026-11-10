@@ -1,0 +1,10 @@
+trust_mutants: 84 definitions, 90 mutants (15 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/Acts/Specialise.lean:40 VE.Acts.specPremises (S, trusted) list-empty: acts.filterMap -> [] (lean/VE/Acts/Specialise.lean:41: Invalid field notation: Type of)
+UNKNOWN lean/VE/Presupposition/Wire.lean:178 VE.Presupposition.unitModes (S, trusted) list-empty: R.checked.filter (fun c => c.ob.unit == u) -> [] (lean/VE/Presupposition/Wire.lean:178: Invalid field notation: Type of)
+UNKNOWN lean/VE/Presupposition/Wire.lean:230 VE.Presupposition.ruleConditions (S, trusted) list-empty: R.checked.filter (fun d => d.ob.position == .ruleAct n && d.ob.carrier == .conditioned) -> [] (lean/VE/Presupposition/Wire.lean:230: Invalid field notation: Type of)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:166 VE.Purposes.WellFormed (S, trusted) list-empty: B.links.map (·.id) -> [] (lean/VE/Purposes/WellFormed.lean:166: don't know how to synthesize implicit argument `α`)
+trust_mutants: 9 KILLED, 0 SURVIVOR, 4 UNKNOWN, 2 INVALID, 0 ALLOWED, 0 NOT RUN, 75 OTHER SHARD in 1833 s
+trust_mutants: D[V], trusted: 1 KILLED, 1 INVALID, 18 OTHER SHARD
+trust_mutants: G[V], trusted: 8 KILLED, 1 INVALID, 35 OTHER SHARD
+trust_mutants: S, trusted: 4 UNKNOWN, 22 OTHER SHARD
+trust_mutants: steps: wall plan 16.1 s, scratch 4.8 s, control_build 0.3 s, probe_install 1.4 s, mutants 1806.4 s, cleanup 3.8 s, reads 0.3 s; lake control_build 0.3 s (1), probe_install 1.4 s (1), control_probes 112.4 s (10), mutant_builds 83.5 s (15), mutant_checks 1735.8 s (14), stage_controls 575.9 s (5), mutant_probes 149.2 s (10)
