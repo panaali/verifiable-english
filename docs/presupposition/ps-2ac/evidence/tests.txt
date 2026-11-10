@@ -1,0 +1,37 @@
+# ps-2ac evidence (commands run on the branch; outputs verbatim)
+
+## Declaration probe (evidence/probe.py) and ps-2ab's statement probe, rerun
+$ python3 docs/presupposition/ps-2ac/evidence/probe.py lean/VE/Presupposition/Run.lean docs/spec/presupposition.md <manage-agents>/reviews/ps-s-stub/SpecStubs_presupposition.lean
+$ python3 docs/presupposition/ps-2ab/evidence/probe.py lean/VE/Presupposition/Admit/Statements.lean docs/spec/presupposition.md
+Run.lean declarations 22 named in the spec 0 named in the stub 0
+differing []
+same name elsewhere []
+spec statements 19 proved here 19
+equal 19 differing []
+missing [] helpers (not in the spec) ['admit_pass1', 'admitWith_regenerates', 'admitWith_goals_from_base', 'buildPre_body', 'admitWith_rule_goal', 'admitWith_heading_goal', 'admitWith_outside_restrictions', 'admitWith_claim_content', 'admitWith_rule_content', 'admitWith_proved_sound', 'admitWith_assumed_sound', 'admitWith_unconditional_sound', 'admitWith_conditioned_rule_unspecified', 'admitWith_carrier_candidate', 'admitWith_unresolved_readings', 'admitWith_empty_table', 'admit_ids_nodup', 'admitWith_inPlace_alias', 'admitWith_no_silent_accommodation', 'admitWith_one_open_per_unit']
+
+## Mutants (mutants.json): each applied alone, then lake build VE.Presupposition.Run; first error; restored
+S1-drop-row exit 1 first error: Run.lean:121 Expression
+S2-unit-carrier exit 1 first error: Run.lean:121 Expression
+S3-no-refuted exit 1 first error: Run.lean:175 Expression
+M-refuted-unchecked exit 1 first error: Run.lean:177 Expression
+M-refuted-any-goal exit 1 first error: Run.lean:176 Expression
+M-refuted-any-carrier exit 1 first error: Run.lean:179 Expression
+M-outcomeOf exit 1 first error: Run.lean:145 Expression
+M-checkedRow-outcome exit 1 first error: Run.lean:125 Expression
+M-checkedRow-goal exit 1 first error: Run.lean:127 Expression
+M-checkedRow-readings exit 1 first error: Run.lean:154 Expression
+M-refusedRow exit 1 first error: Run.lean:140 Expression
+M-refusedRow-unit exit 1 first error: Run.lean:140 Expression
+M-shownOf-error exit 1 first error: Run.lean:140 Expression
+M-shownOf-block exit 1 first error: Run.lean:151 Expression
+M-shown exit 1 first error: Run.lean:175 Expression
+M-lineOf-punct exit 1 first error: Run.lean:133 Expression
+M-lineOf-label exit 1 first error: Run.lean:136 Expression
+M-englishLine exit 1 first error: Run.lean:127 Expression
+M-lexicon exit 1 first error: Run.lean:127 Expression
+M-Row-order exit 1 first error: Run.lean:127 Expression
+M-Outcome exit 1 first error: Run.lean:65 Unknown constant `VE.Presupposition.Outcome.unknown`
+M-Goal exit 1 first error: Run.lean:68 Invalid `⟨...⟩` notation: The expected type `Formula` has more than one constructor
+M-Shown exit 1 first error: Run.lean:90 Invalid `⟨...⟩` notation: The expected type `List Row` has more than one constructor
+M-Inconsistency exit 1 first error: Run.lean:80 Invalid field `cert`: The environment does not contain `VE.Presupposition.Inconsistency.cert`
