@@ -1423,7 +1423,7 @@
       {
         "file": "lean/VE/Readings/Wire.lean",
         "lines": 1059,
-        "sha256": "a1f8444b70c79084e87c170c92d04eac013894f723db734cdd73251d2b5e4acb",
+        "sha256": "59f17b191a3b5940e787fa31e06254075b8ac7b7f82ddce1e9e4ad61552e87c1",
         "ranges": [
           [
             1,
@@ -1472,7 +1472,7 @@
       {
         "file": "lean/VE/Rights/Wire.lean",
         "lines": 697,
-        "sha256": "5be42b913732dd33878d081227c8bb25c6927558f6718457a77f7ec475501fad",
+        "sha256": "fab8db83fb146eecc0a1dd6ad96eb1e4bed367de966816bd0d5c2bf73096d0be",
         "ranges": [
           [
             1,
@@ -2328,7 +2328,6 @@
       "lean/VE/EnglishGrammar/Norm/Elab.lean": "builds a read rule's W1 norm wire object only to pass it to VE.Norms.Wire.decodeNorm, the pinned decoder (docs/spec/english-lean-s6.md 2.7); authoring mode, no runner path",
       "lean/VE/EnglishGrammar/Norm/Examples.lean": "fixtures only: #guard checks of docs/spec/english-lean-s6.md section 6 build environment JSON for Env.decode and decode Python's recorded nodes; no runner path",
       "lean/VE/Service/ParseDiagnostic.lean": "diagnostic only after a rejected checked parse: builds the first source fault and span; cannot accept",
-      "lean/VE/Readings/SoftSupWireExamples.lean": "fixtures: #guards that decode a small soft-chain environment JSON (`decodeEnvironment`) to evaluate `routeSD`; no runner, service mode or record reads it (rd-9 sc-11)",
       "lean/VE/Readings/UnspecifiedExamples.lean": "fixtures: an empty environment JSON for `checkAuthorN` in `#guard` (readings-defaults 8.3); on no runner path",
       "lean/VE/Readings/CompanionsExamples.lean": "readings-defaults RD-4a: #guard fixtures that build JSON documents and environments for the merge and the split; no decoder",
       "lean/ResponseShape/Encoders/Document.lean": "Document response-shape encoder proves the JSON wrapper shape; the document admission decoder is pinned in lean/VE/Service/Document.lean.",
@@ -2362,6 +2361,7 @@
       "lean/VE/Service/ScopeExamples.lean": "fixtures only: SC-1b's #guard checks build small scope@0 part documents as request JSON and run the document mode (`checkDoc`) on them; no service mode reads this file",
       "lean/VE/Defaults/RouteExamples.lean": "fixtures only: #guard checks of the defaults-* kinds through the norm-defaults mode (docs/spec/defeasible.md 8.1) build request JSON; no runner path",
       "lean/ResponseShape/DefaultsExamples.lean": "fixtures only: #guard checks of the defaults-* rows of norm-defaults.json on the mode's answers and their variants build JSON; no runner path",
+      "lean/ResponseShape/Schemas/RightsChecks.lean": "fixtures only: #guard checks of rights.json's elaborate, scope and packages rows on the mode's answers and their variants build JSON; no runner path",
       "lean/VE/Cardinality/RunExamples.lean": "fixtures only: #guard checks of docs/spec/quantities.md 4.1, 4.2 and 9.1 run the cardinality case runner on cases built with Json.parse and Json.mkObj; no runner path",
       "lean/VE/Cardinality/RunTheorems.lean": "statements about the cardinality certificate decoder and runner (decodeCertificate_sound over Json.getObjVal?, the regionsJson and erasedJson answer fields, the runCaseReported rows); no runtime JSON handling",
       "lean/ScopeBenchMain.lean": "measurement only: the ve_scope_bench executable of scope benchmark B1 (tools/bench/test_perf.py::test_scope_b1) reads a document case from a JSON file, runs decodeScope and governFast, and prints the layout rows, the list run and the run path's answer as JSON; no admission path, service mode or record reads it",
@@ -2428,6 +2428,7 @@
       "lean/VE/Rights/OpenActExamples.lean": "fixtures only: #guard checks of docs/spec/rights.md 7.2 (rights-cfr-4) read unitOpen on right units built with Json.mkObj; no runner path",
       "lean/VE/Acts/RunExamples.lean": "fixtures only: `#guard`s that build act-readings requests as JSON and read the rows `actReadingsReported` writes (act-phrases ap-4, spec 7 and 11.4: the pilot counts, AR1 pinned, the limits); no admission path or record reads them",
       "lean/VE/Commands/StepsExamples.lean": "test fixtures only: ci-3a's `#guard`s build their environments as JSON and read them with the pinned decoder (`decodeSpeechEnvironmentFull`)",
+      "lean/VE/Readings/SoftSupWireExamples.lean": "fixtures: #guards that decode a small soft-chain environment JSON (`decodeEnvironment`) to evaluate `routeSD`; no runner, service mode or record reads it (rd-9 sc-11)",
       "lean/VE/Commands/RunSplit.lean": "test fixtures only: ci-2b's `#guard`s build speech-source payloads and english.command reading contexts as JSON and read the pinned `VE.SpeechActs.Source.decodeSpeechSource` and `commandContext`; no runner path",
       "lean/VE/Scope/Authoring.lean": "scope's authoring wordings (SC-7, spec 2.2): `Pinned.parseGovernor` builds the part of a scope@0 block a wording fixes (Json.mkObj, Json.arr) and `classify`/`renderGovernor`/`paraphrase` read it back with getObjValD/getStr?/getNat?; no route or relay decodes a request with them yet (the IDE wiring is sc-7b)",
       "lean/VE/Scope/AuthoringExamples.lean": "fixtures only: SC-7's #guard checks (scope spec 2.2, 7.8 F5a) write each row's expected block as a JSON literal (Json.parse) and compare it with `parseGovernor`'s; no runtime JSON handling",
