@@ -1,3 +1,5 @@
+- `tests/test_p1_amendment12.py` — Ceiling-driven judge substitution: budgets, routing, reuse and disclosure.
+- `tests/test_p1_amendment13.py` — Audited abstentions, gate scope, zero-generation reuse and strict bounds.
 - `tests/test_p1_amendment14.py` — Attacker accounting recovery, exact scored reuse, and partial initial analysis.
 - `tests/test_p1_amendment15.py` — Amendment 15 recovery, bounded visible text, and append-only paid resume (offline).
 - `tests/test_p1_amendment7.py` — Amendment 7: entirely offline dispatch, restart and partial-panel evidence.
@@ -17,6 +19,7 @@
 - `tests/test_pc3_statements.py` — PC-3's Lean declarations against the approved blocks of docs/spec/profile-composition.md 1.2 to 1.6 (build checklist 17), and the check's ability to fail.
 - `tests/test_pc9_statements.py` — PC-9's Lean declarations against the approved blocks of docs/spec/profile-composition.md 1.8 and 1.9 (build checklist 17), and the check's ability to fail.
 - `tests/test_pk1_route_case_evidence_validity.py` — pk-1-cfr-1: each "0 differences" claim (list item, paragraph or table row) of a premise-pack REPORT.md or DELTA.md cites existing evidence with no "INVALID" fi…
+- `tests/test_pk1c_fixture_assurance_claim.py` — No docs/premise-packs/pk-1c/ record calls a `#guard` or `#eval` check a kernel check: those run in the compiled evaluator, not the kernel (pk-1c-cfr-2).
 - `tests/test_platform_contract.py` — `tools/platform_contract.py`: the x86 platform contract suite (test-architecture plan rank 2, section 3.3).
 - `tests/test_precommit_hook.py` — tools/hooks/pre-commit: each check rejects a planted example and passes clean commits.
 - `tests/test_premise_packs_stub.py` — Premise-packs spec 2.6 and its stub state what `PacksLabels.lean` proves (pk-1d, one owner of the statement).
@@ -77,6 +80,3 @@
 - `tests/test_readings_rd6b_differential.py` — RD-6b: 200 generated norms-chain documents under the completion, the superposed route against the retained enumerated oracle (plan RD-6b, fixtures; review B5 o…
 - `tests/test_readings_route_fuzz.py` — Lean's readings answers fuzzed against the route's check (lf-3 review B1 and B2, build checklist 4 and 5).
 - `tests/test_readings_route_relay.py` — The readings route relays Lean (docs/LEAN-FIRST-PLAN.md rule 2, lean-first batch 3).
-- `tests/test_readings_s1_differential.py` — The differential of docs/spec/composition-s1.md 9.3, seeded, since lean-first batch 3.
-- `tests/test_readings_s1_document.py` — S1 through the document path (docs/spec/composition-s1.md 2, 4.8, 6, 9.4): content-bearing sets admitted by Lean with Python's and Rust's agreement, situations…
-- `tests/test_readings_s1_integration.py` — S1 content admission through the ordinary document entry point.

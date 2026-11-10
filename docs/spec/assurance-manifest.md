@@ -197,9 +197,9 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Readings/SupWire.lean` | 408 | 408 | 1–408 | `e78a7ee7db7d…` |
 | `lean/VE/Readings/UnspecifiedWire.lean` | 798 | 798 | 1–798 | `52b99f25af05…` |
 | `lean/VE/Readings/VerdictsWire.lean` | 1847 | 1847 | 1–1847 | `fedf217a0f31…` |
-| `lean/VE/Readings/Wire.lean` | 1059 | 1059 | 1–1059 | `a1f8444b70c7…` |
+| `lean/VE/Readings/Wire.lean` | 1059 | 1059 | 1–1059 | `59f17b191a3b…` |
 | `lean/VE/Rights/Admission.lean` | 471 | 471 | 1–471 | `1b43543b7e66…` |
-| `lean/VE/Rights/Wire.lean` | 697 | 697 | 1–697 | `5be42b913732…` |
+| `lean/VE/Rights/Wire.lean` | 697 | 697 | 1–697 | `fab8db83fb14…` |
 | `lean/VE/Risk/Admission.lean` | 128 | 128 | 1–128 | `f3927135556b…` |
 | `lean/VE/Risk/Audit.lean` | 190 | 190 | 1–190 | `62c518fee5d3…` |
 | `lean/VE/Risk/Record.lean` | 1267 | 1267 | 1–1267 | `c11e28299c40…` |
@@ -340,6 +340,7 @@ the manifest `notes`, not changed:
 | `document.check` | combination | python → lean | experimental / experimental | `ve.document.report:check_document` | none | none | none | `python:implementation`<br>`python:surface`<br>`python:record-identity` |
 | `wire.diagnose` | leaf | lean-only → lean | experimental / experimental | none | `ve_service diagnose soft-elaborate,admission,norms-elaborate,norms-conflict,norms-certificate,norm-defaults-elaborate,norm-defaults-conflict,norm-defaults-certificate` | none | none | `lean:kernel`<br>`lean:compiler`<br>`lean:runner-glue` |
 | `check` | combination | python → lean | experimental / experimental | `ve.check:check` | none | none | none | `python:implementation`<br>`python:display` |
+| `norm-defaults.route` | leaf | lean-only → lean | experimental / experimental | none | `ve_service norm-defaults norm-defaults-elaborate`<br>`ve_service norm-defaults norm-defaults-conflict`<br>`ve_service norm-defaults norm-defaults-status`<br>`ve_service norm-defaults norm-defaults-gaps`<br>`ve_service norm-defaults norm-defaults-report`<br>`ve_service norm-defaults norm-defaults-certificate`<br>`ve_service norm-defaults defaults-elaborate`<br>`ve_service norm-defaults defaults-coherence`<br>`ve_service norm-defaults defaults-certificate`<br>`ve_service norm-defaults defaults-model`<br>`ve_service norm-defaults defaults-zone`<br>`ve_service norm-defaults acts-elaborate` | none | none | `lean:kernel`<br>`lean:compiler`<br>`lean:decoders`<br>`lean:runner-glue` |
 <!-- END GENERATED -->
 
 ## 8. Not in this change
