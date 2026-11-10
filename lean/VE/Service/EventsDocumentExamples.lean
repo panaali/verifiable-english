@@ -108,6 +108,27 @@ def envOfDoc (e : Json) : Except String VE.Service.Document.Env :=
 #guard outcome (envOf none ["events@0", "norm-defaults@0", "norms@0", "relational-fol@0"]) ==
   "CheckerUnavailable: document checks under events@0 need its Lean profile route"
 
+/-! ## The mode's profile check, whose lines et-5b rewrote: the first unowned profile is named; every owned one is read -/
+
+def named (ps : List String) : String := match VE.Service.Document.environmentOf (VE.Events.RouteExamples.chainEnv ps) with
+  | .ok _ => "ok" | .error e => e
+def byName (p : String) : String := s!"CheckerUnavailable: document checks under {p} need its Lean profile route"
+-- First and in the middle (no unowned profile the check reaches stands last: each one that sorts after
+-- `relational-fol@0` has an environment fault, reported first).
+#guard named ["closure@0", "norms@0", "relational-fol@0"] == byName "closure@0"
+#guard named ["norms@0", "order@0", "relational-fol@0"] == byName "order@0"
+-- Each profile the mode owns, `events@0` aside (read only with a document's open terms), is never refused by name.
+#guard ["alternatives@0", "data@0", "definitions@0", "documents@1", "judgments@0", "norm-defaults@0", "norms@0",
+  "readings@1", "relational-fol@0", "rights@0", "risk@0", "soft-norms@0", "time@0"].all fun p =>
+  !(named ((["norms@0", "relational-fol@0", p].eraseDups.toArray.qsort (· < ·)).toList)).startsWith
+    "CheckerUnavailable: document checks under"
+-- `events@0` beside a profile its row refuses, on the soft chain: the row's text (2.9 item 1), not a refusal by name.
+#guard outcome (envOf (some (blockD)) ["alternatives@0", "events@0", "norm-defaults@0", "norms@0", "relational-fol@0",
+  "soft-norms@0"]) == "UnsupportedProfile: events@0 with alternatives@0"
+-- `readings@1` on the soft chain keeps the base's refusal.
+#guard outcome (envOf none ["events@0", "norm-defaults@0", "norms@0", "readings@1", "relational-fol@0", "soft-norms@0"]) ==
+  byName "events@0"
+
 /-! ## Spec 2.9, one document per item, each with its diagnostic on the document route -/
 
 def withBlock (f : String → String) : Json := envOf (some (parse (f (blockD).compress)))
