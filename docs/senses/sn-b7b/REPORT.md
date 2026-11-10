@@ -1,15 +1,10 @@
 # sn-b7b REPORT: the rest of B7, the senses display (Python only)
 
-Status: all four deliverables are built and tested. The selected tests exit 0 on the committed code at `5de455d23`.
-No DRI signature is reserved.
-HEAD: the commit that adds this report. The code ends at `5de455d23`, and only REPORT.md and DELTA.md come after it.
-What changed:
-- `ve render --senses` now prints the checked body, the lines each candidate lacks, `--glossary` and `--json`.
-- New commands `ve senses resolve` and `ve senses propose-readings`.
-- The web-app contract in docs/spec/senses.md 2.7.1.
-Open: sn-b7c (g1, g4-g7 and g2's printed line, behind R3, sn-b6e and sn-b6f) and sn-b7d (the renderer for glossed senses).
-DRI decisions: reviews/dri-decisions-20261110-sn-b7b.md and reviews/dri-decisions-20261110-sn-b7b-delta.md (both in
-/home/seyran/code/manage-agents).
+Status: all four deliverables built and tested; review F1 and F2 (contract text) fixed; selected tests exit 0 at `7ef343182`. No DRI signature is reserved.
+HEAD: the commit that adds this text. Product code ends at `5de455d23`; after it: docs/spec/senses.md 2.7.1, tests/test_senses_contract_doc.py, REPORT.md, DELTA.md.
+What changed: `ve render --senses` prints the checked body, the lacking lines, `--glossary` and `--json`; new `ve senses resolve` and `ve senses propose-readings`; the web-app contract (docs/spec/senses.md 2.7.1).
+Open: sn-b7c (g1, g4-g7, g2's printed line; behind R3, sn-b6e, sn-b6f), sn-b7d (renderer for glossed senses), review C1, C2, C4.
+DRI decisions: reviews/dri-decisions-20261110-sn-b7b.md and reviews/dri-decisions-20261110-sn-b7b-delta.md (in /home/seyran/code/manage-agents).
 
 ## Deliverables (task order; plan B7 :837, :884-891; 2.8 :396; 6.8 :1065)
 
@@ -100,6 +95,34 @@ restored. The run was at `2799c7657`, by the script whose results the JSON recor
   c94ad399b --run`. It ran on GitHub Actions, 4 shards (25, 33, 24 and 22 units). Result: "exit=0; 1017s", "recorded … units
   for tree 96360f1a7f; … 0 failed". No test of main-known-red.txt failed or was touched.
 - Not run: the full gate (the chain runs it), lake build and `lean/audit.py` (no Lean changed).
+
+## Review fixes (sn-b7b-review.final.md, item sn-b7b-text-1)
+
+Both findings were contract text only. No product code changed, so no printed output changed and DELTA gains no row.
+The fix is in `7ef343182`.
+
+| Finding | Fix (docs/spec/senses.md 2.7.1) | Regression test (tests/test_senses_contract_doc.py) |
+|---|---|---|
+| F1: `undistinguished` documented, `unproposed` printed; `output_written` and `review_status` printed but not documented | `unproposed` row (Lean's flip status named in it); `output_written` and `review_status` rows; `resolve` and `propose-readings` each get a full member table | `::test_each_commands_table_names_exactly_the_members_it_prints`: parses the three tables and requires each one's members to equal what its command prints, both ways, over fixtures with every member (`::test_the_tables_name_every_row_kind_the_fixtures_give`), and every row field at any depth to be named in its member's row |
+| F2: `lacking` defined as the `lines` "not among the reading's `preamble` lines" | defined as the last len(`choice`) of the `lines` (`senses_candidate_sound`), not a comparison with `preamble`; `resolving.lacking` refers to it | `::test_lacking_is_defined_as_the_last_lines_of_the_choice`: on `In this document,  odd means strange.` + TWO, `lacking` is the choice's line alone, the old rule gives a different list, and the spec states the new rule |
+
+Both PROBE lines failed before the fix (exit 1; F1 printed `['unproposed']`) and pass after it (exit 0).
+Seeded bugs (docs and one in the CLI), each planted on the fixed tree, the test run, then restored:
+
+| Planted | Caught by |
+|---|---|
+| table names `undistinguished` for `unproposed` | `::test_each_commands_table_names_exactly_the_members_it_prints` |
+| the `output_written` row deleted | same |
+| `resolve`'s `review_status` row misnamed | same |
+| `hover`'s `is_default` not named in its row | same |
+| `resolving`'s `lacking` not named in its row | same, and `::test_lacking_is_defined_as_the_last_lines_of_the_choice` |
+| the old `lacking` definition restored | `::test_lacking_is_defined_as_the_last_lines_of_the_choice` |
+| `ve/__main__.py` prints an extra member `output_path` | `::test_each_commands_table_names_exactly_the_members_it_prints` |
+
+Tests: `zsh mac-pytest.sh --select -- --base c94ad399b --run` on `7ef343182`: "selected tests ran on GitHub Actions (5 shards);
+exit=0", 105 units, 0 failed, tests/test_senses_contract_doc.py included. `lake build`: "Build completed successfully (1357
+jobs)". `python3 lean/audit.py`: PASS. No test of main-known-red.txt failed or was touched. Not run: the full gate (the
+chain runs it).
 
 ## Spec re-read
 
