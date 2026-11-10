@@ -131,13 +131,10 @@ A presupposition reading set is named by its obligation (spec 1.9: a unit's only
 at version `ver o`; reading `i` is the `i`-th emitted candidate of the obligation's cell. A couplable group
 contributes, for every ordered pair of members and every reading index of the shared cell, `requires (o, i) (o', i)`. -/
 
-/-- The reading index of candidate `k` in obligation `o`'s reading set. -/
-def pickIndex (t : CandidateTable) (R : Report) (o : String) (k : Candidate) : Option Nat :=
-  (R.checked.find? (fun c => c.ob.id == o)).map (fun c => (emitted t c).idxOf k)
-
-/-- A pick as lf-14d's choice vector. -/
+/-- A pick as lf-14d's choice vector: reading `i` of obligation `o`'s set is the `i`-th emitted candidate. -/
 def choiceOf (t : CandidateTable) (R : Report) (ver : String → Nat) (ch : Pick) : VE.Discourse.Choice :=
-  ch.filterMap (fun x => (pickIndex t R x.1 x.2).map (fun i => (x.1, ver x.1, i)))
+  ch.filterMap (fun x => (R.checked.find? (fun c => c.ob.id == x.1)).map (fun c =>
+    (x.1, ver x.1, (emitted t c).idxOf x.2)))
 
 def groupConstraints (ver : String → Nat) (g : Group) : List VE.Discourse.Constraint :=
   g.members.flatMap (fun o => g.members.flatMap (fun o' => (List.range g.cands.length).map (fun i =>

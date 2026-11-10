@@ -29274,6 +29274,49 @@ theorem VE.Paths.warshall_sound
     (∀ (a b : α), (a, b) ∈ es → VE.Paths.Path R a b) → ∀ (a b : α), (a, b) ∈ VE.Paths.warshall vs es → VE.Paths.Path R a b
   -- uses VE.Paths.Path@VE.Paths VE.Paths.warshall@VE.Paths
   -- expr 2609517366
+theorem VE.Presupposition.CoupleExamples.denote_of_eq
+  ∀ {S T : VE.Structure},
+    S = T →
+      ∀ (a : VE.Formula) (ρ : List S.Carrier) (ρ' : List T.Carrier),
+        ρ ≍ ρ' → (VE.Formula.denote S ρ a ↔ VE.Formula.denote T ρ' a)
+  -- uses VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 2236397803
+theorem VE.Presupposition.CoupleExamples.forget_asStructure
+  ∀ (M : VE.FiniteModel String) (p : String),
+    VE.Norms.forget [p] M.asStructure = (VE.Presupposition.CoupleExamples.dropRel M p).asStructure
+  -- uses VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.Norms.forget@VE.Norms.Basic VE.Presupposition.CoupleExamples.dropRel@VE.Presupposition.CoupleExamples VE.Structure@VE.Semantics
+  -- expr 2012535246
+theorem VE.Presupposition.CoupleExamples.intendedAt3_of_eval
+  ∀ (U : VE.NormDefaults.UDoc) (r : VE.Norms.Regulated) (M : VE.FiniteModel String) (s : String),
+    r.sorts = [s] →
+      VE.NormDefaults.completionOf U r = VE.NormDefaults.Completion.unspecified →
+        ((M.domains s).all fun v =>
+              (!VE.Formula.eval (VE.Presupposition.CoupleExamples.dropRel M r.name) [v]
+                      (VE.Norms.decides U.D.T r.name Bool.true) ||
+                  Decidable.decide ([v] ∈ M.relations r.name)) &&
+                (!VE.Formula.eval (VE.Presupposition.CoupleExamples.dropRel M r.name) [v]
+                      (VE.Norms.decides U.D.T r.name Bool.false) ||
+                  !Decidable.decide ([v] ∈ M.relations r.name))) =
+            Bool.true →
+          VE.NormDefaults.IntendedAt3 U r M.asStructure
+  -- uses VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel.domains@VE.Finite VE.FiniteModel.relations@VE.Finite VE.FiniteModel@VE.Finite VE.Formula.eval@VE.Finite VE.NormDefaults.Completion.unspecified@VE.NormDefaults.Tree VE.NormDefaults.Completion@VE.NormDefaults.Tree VE.NormDefaults.IntendedAt3@VE.NormDefaults.Semantics VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.completionOf@VE.NormDefaults.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated.sorts@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.decides@VE.Norms.Elaborate VE.Presupposition.CoupleExamples.dropRel@VE.Presupposition.CoupleExamples
+  -- expr 17732910
+theorem VE.Presupposition.CoupleExamples.s22_completion
+  ∀ (ch : VE.Presupposition.Pick),
+    ch = VE.Presupposition.CoupleExamples.rep22 ∨ ch = VE.Presupposition.CoupleExamples.mixed22 →
+      VE.Presupposition.SatUnder VE.Presupposition.CoupleExamples.D22 VE.Presupposition.CoupleExamples.R22 ch
+        VE.Presupposition.CoupleExamples.m22.asStructure
+  -- uses VE.FiniteModel.asStructure@VE.Finite VE.Presupposition.CoupleExamples.D22@VE.Presupposition.CoupleExamples VE.Presupposition.CoupleExamples.R22@VE.Presupposition.CoupleExamples VE.Presupposition.CoupleExamples.m22@VE.Presupposition.CoupleExamples VE.Presupposition.CoupleExamples.mixed22@VE.Presupposition.CoupleExamples VE.Presupposition.CoupleExamples.rep22@VE.Presupposition.CoupleExamples VE.Presupposition.Pick@VE.Presupposition.Couple VE.Presupposition.SatUnder@VE.Presupposition.Couple
+  -- expr 3480148909
+theorem VE.Presupposition.CoupleExamples.satUnder_of_eval
+  ∀ (D : VE.Presupposition.PDoc) (R : VE.Presupposition.Report) (ch : VE.Presupposition.Pick) (M : VE.FiniteModel String),
+    D.defaults = Bool.true →
+      VE.Presupposition.CoupleExamples.holds M (VE.Presupposition.formulasUnder D R ch) = Bool.true →
+        (∀ (r : VE.Norms.Regulated),
+            r ∈ D.norms.regulated → VE.NormDefaults.IntendedAt3 (VE.Presupposition.pickedU D R ch) r M.asStructure) →
+          VE.Presupposition.SatUnder D R ch M.asStructure
+  -- uses VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.NormDefaults.IntendedAt3@VE.NormDefaults.Semantics VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Tree.regulated@VE.Norms.Tree VE.Presupposition.CoupleExamples.holds@VE.Presupposition.CoupleExamples VE.Presupposition.PDoc.defaults@VE.Presupposition.Wire VE.Presupposition.PDoc.norms@VE.Presupposition.Wire VE.Presupposition.PDoc@VE.Presupposition.Wire VE.Presupposition.Pick@VE.Presupposition.Couple VE.Presupposition.Report@VE.Presupposition.Wire VE.Presupposition.SatUnder@VE.Presupposition.Couple VE.Presupposition.formulasUnder@VE.Presupposition.Couple VE.Presupposition.pickedU@VE.Presupposition.Couple
+  -- expr 3800041205
 theorem VE.Presupposition.Examples.s22_neg_s2
   VE.Presupposition.Examples.evAt VE.Presupposition.Examples.m22p ["s2"]
       (VE.Norms.neg VE.Presupposition.Examples.mixed22 "p") =
@@ -29804,6 +29847,12 @@ theorem VE.Presupposition.buildPre_body
     {p : VE.Formula}, VE.Presupposition.buildPre row n a = Except.ok p → a.snd.snd.fst = Option.none
   -- uses VE.Formula@VE.Syntax VE.Presupposition.buildPre@VE.Presupposition.Rows
   -- expr 742422121
+theorem VE.Presupposition.candidateTable_core
+  ∀ (row : String) (pc : VE.Presupposition.PositionClass),
+    (VE.Presupposition.candidateTable row pc).all VE.Presupposition.Candidate.core = Bool.true →
+      (VE.Presupposition.candidateTable row pc).length ≤ 1
+  -- uses VE.Presupposition.Candidate.core@VE.Presupposition.Wire VE.Presupposition.Candidate@VE.Presupposition.Wire VE.Presupposition.PositionClass@VE.Presupposition.Frame VE.Presupposition.candidateTable@VE.Presupposition.Table
+  -- expr 2145698474
 theorem VE.Presupposition.candidates_ruleAct
   ∀ (t : VE.Presupposition.CandidateTable),
     VE.Presupposition.tableOk VE.Presupposition.rowNames t = Bool.true →
@@ -29959,6 +30008,52 @@ theorem VE.Presupposition.conditioned_vacuous_off_goal
     ¬VE.Formula.denote S ρ (f.goal r.pre) → VE.Formula.denote S ρ (VE.Presupposition.conditionedAt f r)
   -- uses VE.Formula.denote@VE.Semantics VE.Presupposition.Frame.goal@VE.Presupposition.Frame VE.Presupposition.Frame@VE.Presupposition.Frame VE.Presupposition.Reading.pre@VE.Presupposition.Reading VE.Presupposition.Reading@VE.Presupposition.Reading VE.Presupposition.conditionedAt@VE.Presupposition.Reading VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
   -- expr 1749067775
+theorem VE.Presupposition.coupled_subset
+  ∀ (J : List VE.Presupposition.Pick) (gs : List VE.Presupposition.Group) (ch : VE.Presupposition.Pick),
+    ch ∈ VE.Presupposition.coupledSet J gs → ch ∈ J
+  -- uses VE.Presupposition.Group@VE.Presupposition.Couple VE.Presupposition.Pick@VE.Presupposition.Couple VE.Presupposition.coupledSet@VE.Presupposition.Couple
+  -- expr 2082428466
+theorem VE.Presupposition.coupled_uniform
+  ∀ (J : List VE.Presupposition.Pick) (gs : List VE.Presupposition.Group) (g : VE.Presupposition.Group),
+    g ∈ gs → ∀ (ch : VE.Presupposition.Pick), ch ∈ VE.Presupposition.coupledSet J gs → VE.Presupposition.Uniform g ch
+  -- uses VE.Presupposition.Group@VE.Presupposition.Couple VE.Presupposition.Pick@VE.Presupposition.Couple VE.Presupposition.Uniform@VE.Presupposition.Couple VE.Presupposition.coupledSet@VE.Presupposition.Couple
+  -- expr 2188887139
+theorem VE.Presupposition.coupling_complete
+  ∀ (D : VE.Presupposition.PDoc) (R : VE.Presupposition.Report),
+    VE.Presupposition.admit D = Except.ok R →
+      ∀ (J : List VE.Presupposition.Pick) (g : VE.Presupposition.Group),
+        g ∈ VE.Presupposition.groups VE.Presupposition.candidateTable R →
+          VE.Presupposition.couplable J g = Bool.true →
+            ∀ (ch : VE.Presupposition.Pick),
+              ch ∈ J →
+                VE.Presupposition.PickFits VE.Presupposition.candidateTable R ch →
+                  VE.Presupposition.rep g ch ∈ J ∧
+                    VE.Presupposition.Uniform g (VE.Presupposition.rep g ch) ∧
+                      VE.Presupposition.SameModels D R ch (VE.Presupposition.rep g ch) ∧
+                        VE.Presupposition.SameDecides D R ch (VE.Presupposition.rep g ch) ∧
+                          ∀ (φ : VE.Formula),
+                            φ ∈ VE.Presupposition.assumptionsUnder D R ch ↔
+                              φ ∈ VE.Presupposition.assumptionsUnder D R (VE.Presupposition.rep g ch)
+  -- uses VE.Formula@VE.Syntax VE.Presupposition.Group@VE.Presupposition.Couple VE.Presupposition.PDoc@VE.Presupposition.Wire VE.Presupposition.Pick@VE.Presupposition.Couple VE.Presupposition.PickFits@VE.Presupposition.Couple VE.Presupposition.Report@VE.Presupposition.Wire VE.Presupposition.SameDecides@VE.Presupposition.Couple VE.Presupposition.SameModels@VE.Presupposition.Couple VE.Presupposition.Uniform@VE.Presupposition.Couple VE.Presupposition.admit@VE.Presupposition.Admit VE.Presupposition.assumptionsUnder@VE.Presupposition.Couple VE.Presupposition.candidateTable@VE.Presupposition.Table VE.Presupposition.couplable@VE.Presupposition.Couple VE.Presupposition.groups@VE.Presupposition.Couple VE.Presupposition.rep@VE.Presupposition.Couple
+  -- expr 2483966737
+theorem VE.Presupposition.couplings_spec
+  ∀ (t : VE.Presupposition.CandidateTable) (R : VE.Presupposition.Report),
+    (List.map (fun x => x.ob.id) R.checked).Nodup →
+      ∀ (K : VE.Discourse.Manifest) (ver : String → Nat) (J : List VE.Presupposition.Pick),
+        (∀ (ch : VE.Presupposition.Pick), ch ∈ J → VE.Presupposition.PickFits t R ch) →
+          List.filter
+              (fun ch =>
+                VE.Discourse.satisfiesAll
+                  { definitionsVersion := K.definitionsVersion, documentSort := K.documentSort, anchors := K.anchors,
+                    names := K.names, contentNames := K.contentNames, mentions := K.mentions, documents := K.documents,
+                    imports := K.imports, groups := K.groups,
+                    constraints := VE.Presupposition.couplingConstraints ver J (VE.Presupposition.groups t R),
+                    validity := K.validity, selfTruth := K.selfTruth, choices := K.choices }
+                  (VE.Presupposition.choiceOf t R ver ch))
+              J =
+            VE.Presupposition.coupledSet J (List.filter (VE.Presupposition.couplable J) (VE.Presupposition.groups t R))
+  -- uses VE.Discourse.Manifest.anchors@VE.Discourse.Manifest VE.Discourse.Manifest.choices@VE.Discourse.Manifest VE.Discourse.Manifest.contentNames@VE.Discourse.Manifest VE.Discourse.Manifest.definitionsVersion@VE.Discourse.Manifest VE.Discourse.Manifest.documentSort@VE.Discourse.Manifest VE.Discourse.Manifest.documents@VE.Discourse.Manifest VE.Discourse.Manifest.groups@VE.Discourse.Manifest VE.Discourse.Manifest.imports@VE.Discourse.Manifest VE.Discourse.Manifest.mentions@VE.Discourse.Manifest VE.Discourse.Manifest.mk@VE.Discourse.Manifest VE.Discourse.Manifest.names@VE.Discourse.Manifest VE.Discourse.Manifest.selfTruth@VE.Discourse.Manifest VE.Discourse.Manifest.validity@VE.Discourse.Manifest VE.Discourse.Manifest@VE.Discourse.Manifest VE.Discourse.satisfiesAll@VE.Discourse.Joint VE.Presupposition.CandidateTable@VE.Presupposition.Wire VE.Presupposition.Checked.ob@VE.Presupposition.Wire VE.Presupposition.Checked@VE.Presupposition.Wire VE.Presupposition.Group@VE.Presupposition.Couple VE.Presupposition.Obligation.id@VE.Presupposition.Wire VE.Presupposition.Pick@VE.Presupposition.Couple VE.Presupposition.PickFits@VE.Presupposition.Couple VE.Presupposition.Report.checked@VE.Presupposition.Wire VE.Presupposition.Report@VE.Presupposition.Wire VE.Presupposition.choiceOf@VE.Presupposition.Couple VE.Presupposition.couplable@VE.Presupposition.Couple VE.Presupposition.coupledSet@VE.Presupposition.Couple VE.Presupposition.couplingConstraints@VE.Presupposition.Couple VE.Presupposition.groups@VE.Presupposition.Couple
+  -- expr 2367140764
 theorem VE.Presupposition.data_attribute_proved
   ∀ (E : VE.Environment) (f : VE.Data.Background.Flag) (c : String) (S : VE.Structure),
     S.Admissible E →
@@ -30000,10 +30095,20 @@ theorem VE.Presupposition.discourse_definite_is_row
         (VE.Presupposition.definite 0 σ D P).weak = VE.Discourse.presupposed σ D P
   -- uses VE.Discourse.assertive@VE.Discourse.Descriptions VE.Discourse.presupposed@VE.Discourse.Descriptions VE.Discourse.uniqueD@VE.Discourse.Descriptions VE.Formula@VE.Syntax VE.Presupposition.Reading.pre@VE.Presupposition.Reading VE.Presupposition.Reading.strong@VE.Presupposition.Reading VE.Presupposition.Reading.weak@VE.Presupposition.Reading VE.Presupposition.definite@VE.Presupposition.Rows
   -- expr 1672572448
+theorem VE.Presupposition.emitted_group
+  ∀ {t : VE.Presupposition.CandidateTable} {c : VE.Presupposition.Checked} {g : VE.Presupposition.Group},
+    g.cands.all VE.Presupposition.Candidate.core = Bool.true →
+      t c.ob.row c.pos = g.cands → VE.Presupposition.emitted t c = g.cands
+  -- uses VE.Presupposition.Candidate.core@VE.Presupposition.Wire VE.Presupposition.Candidate@VE.Presupposition.Wire VE.Presupposition.CandidateTable@VE.Presupposition.Wire VE.Presupposition.Checked.ob@VE.Presupposition.Wire VE.Presupposition.Checked.pos@VE.Presupposition.Wire VE.Presupposition.Checked@VE.Presupposition.Wire VE.Presupposition.Group.cands@VE.Presupposition.Couple VE.Presupposition.Group@VE.Presupposition.Couple VE.Presupposition.Obligation.row@VE.Presupposition.Wire VE.Presupposition.emitted@VE.Presupposition.Wire
+  -- expr 1519528011
 theorem VE.Presupposition.ensure_ok
   ∀ {b : Bool} {e : String} {u : Unit}, VE.Presupposition.ensure b e = Except.ok u → b = Bool.true
   -- uses VE.Presupposition.ensure@VE.Presupposition.Admit
   -- expr 3849975238
+theorem VE.Presupposition.eq_of_nodup_map
+  ∀ {α β : Type} {f : α → β} {l : List α}, (List.map f l).Nodup → ∀ {x y : α}, x ∈ l → y ∈ l → f x = f y → x = y
+  -- uses
+  -- expr 2912099309
 theorem VE.Presupposition.exists_child_map
   ∀ {T T' : VE.Norms.Tree} {g : VE.Norms.Node → VE.Norms.Node} {S : VE.Structure} {ρ : VE.Valuation S},
     T'.nodes = List.map g T.nodes →
@@ -30016,12 +30121,48 @@ theorem VE.Presupposition.exists_child_map
                   ∃ C, C ∈ VE.Norms.children T N ∧ VE.Norms.YieldsD T S ρ f C)
   -- uses VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node.over@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree VE.Norms.Tree.nodes@VE.Norms.Tree VE.Norms.Tree@VE.Norms.Tree VE.Norms.YieldsD@VE.Norms.Elaborate VE.Norms.children@VE.Norms.Tree VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
   -- expr 2940510403
+theorem VE.Presupposition.expectedReadings_length
+  ∀ {t : VE.Presupposition.CandidateTable} {R : VE.Presupposition.Report} {c : VE.Presupposition.Checked}
+    {rs : List VE.Presupposition.RReading},
+    VE.Presupposition.expectedReadings t R c = Option.some rs → rs.length = (VE.Presupposition.emitted t c).length
+  -- uses VE.Presupposition.Candidate@VE.Presupposition.Wire VE.Presupposition.CandidateTable@VE.Presupposition.Wire VE.Presupposition.Checked@VE.Presupposition.Wire VE.Presupposition.RReading@VE.Presupposition.Wire VE.Presupposition.Report@VE.Presupposition.Wire VE.Presupposition.emitted@VE.Presupposition.Wire VE.Presupposition.expectedReadings@VE.Presupposition.Wire
+  -- expr 3054304824
 theorem VE.Presupposition.find_base
   ∀ {P : List (VE.Presupposition.DocUnit × VE.Presupposition.Base)} {u : String} {B : VE.Formula},
     Option.map (fun x => x.snd) (List.find? (fun x => x.fst.id == u) P) = Option.some (VE.Presupposition.Base.claim B) →
       (u, B) ∈ VE.Presupposition.basesOf P
   -- uses VE.Formula@VE.Syntax VE.Presupposition.Base.claim@VE.Presupposition.Admit VE.Presupposition.Base@VE.Presupposition.Admit VE.Presupposition.DocUnit.id@VE.Presupposition.Wire VE.Presupposition.DocUnit@VE.Presupposition.Wire VE.Presupposition.basesOf@VE.Presupposition.Admit
   -- expr 2535963769
+theorem VE.Presupposition.find_id
+  ∀ {R : VE.Presupposition.Report},
+    (List.map (fun x => x.ob.id) R.checked).Nodup →
+      ∀ {c : VE.Presupposition.Checked},
+        c ∈ R.checked → List.find? (fun d => d.ob.id == c.ob.id) R.checked = Option.some c
+  -- uses VE.Presupposition.Checked.ob@VE.Presupposition.Wire VE.Presupposition.Checked@VE.Presupposition.Wire VE.Presupposition.Obligation.id@VE.Presupposition.Wire VE.Presupposition.Report.checked@VE.Presupposition.Wire VE.Presupposition.Report@VE.Presupposition.Wire
+  -- expr 969022148
+theorem VE.Presupposition.foldl_groups
+  ∀ (t : VE.Presupposition.CandidateTable) (P : VE.Presupposition.Checked → Prop) (l : List VE.Presupposition.Checked)
+    (acc : List VE.Presupposition.Group),
+    (∀ (c : VE.Presupposition.Checked), c ∈ l → P c) →
+      (∀ (g : VE.Presupposition.Group),
+          g ∈ acc →
+            ∀ (o : String), o ∈ g.members → ∃ c, P c ∧ c.ob.id = o ∧ t c.ob.row c.pos = g.cands ∧ c.goal = g.goal) →
+        ∀ (g : VE.Presupposition.Group),
+          g ∈
+              List.foldl
+                (fun gs c =>
+                  if (gs.any fun g => g.goal == c.goal && g.cands == t c.ob.row c.pos) = Bool.true then
+                    List.map
+                      (fun g =>
+                        if (g.goal == c.goal && g.cands == t c.ob.row c.pos) = Bool.true then
+                          { members := g.members ++ [c.ob.id], goal := g.goal, cands := g.cands }
+                        else g)
+                      gs
+                  else gs ++ [{ members := [c.ob.id], goal := c.goal, cands := t c.ob.row c.pos }])
+                acc l →
+            ∀ (o : String), o ∈ g.members → ∃ c, P c ∧ c.ob.id = o ∧ t c.ob.row c.pos = g.cands ∧ c.goal = g.goal
+  -- uses VE.Formula@VE.Syntax VE.Presupposition.Candidate@VE.Presupposition.Wire VE.Presupposition.CandidateTable@VE.Presupposition.Wire VE.Presupposition.Checked.goal@VE.Presupposition.Wire VE.Presupposition.Checked.ob@VE.Presupposition.Wire VE.Presupposition.Checked.pos@VE.Presupposition.Wire VE.Presupposition.Checked@VE.Presupposition.Wire VE.Presupposition.Group.cands@VE.Presupposition.Couple VE.Presupposition.Group.goal@VE.Presupposition.Couple VE.Presupposition.Group.members@VE.Presupposition.Couple VE.Presupposition.Group.mk@VE.Presupposition.Couple VE.Presupposition.Group@VE.Presupposition.Couple VE.Presupposition.Obligation.id@VE.Presupposition.Wire VE.Presupposition.Obligation.row@VE.Presupposition.Wire VE.Presupposition.instDecidableEqCandidate@VE.Presupposition.Wire VE.instBEqFormula@VE.Syntax
+  -- expr 2261717061
 theorem VE.Presupposition.foldr_and_denote
   ∀ (l : List (VE.Presupposition.Root × VE.Formula)) (X : VE.Formula) (S : VE.Structure) (ρ : VE.Valuation S),
     VE.Formula.denote S ρ (List.foldr (fun m a => m.snd.and a) X l) ↔
@@ -30050,6 +30191,29 @@ theorem VE.Presupposition.goal_wellFormed
       VE.Formula.WellFormed E (f.binders ++ Γ) p → VE.Formula.WellFormed E Γ (f.goal p)
   -- uses VE.Environment@VE.Syntax VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax VE.Presupposition.Frame.binders@VE.Presupposition.Frame VE.Presupposition.Frame.goal@VE.Presupposition.Frame VE.Presupposition.Frame.plug@VE.Presupposition.Frame VE.Presupposition.Frame@VE.Presupposition.Frame
   -- expr 3126596479
+theorem VE.Presupposition.groupConstraints_iff
+  ∀ {t : VE.Presupposition.CandidateTable} {R : VE.Presupposition.Report},
+    (List.map (fun x => x.ob.id) R.checked).Nodup →
+      ∀ (ver : String → Nat) {g : VE.Presupposition.Group},
+        g ∈ VE.Presupposition.groups t R →
+          ∀ {ch : VE.Presupposition.Pick},
+            VE.Presupposition.PickFits t R ch →
+              (((VE.Presupposition.groupConstraints ver g).all fun k =>
+                    Decidable.decide (VE.Discourse.Satisfies (VE.Presupposition.choiceOf t R ver ch) k)) =
+                  Bool.true ↔
+                VE.Presupposition.Uniform g ch)
+  -- uses VE.Discourse.Constraint@VE.Discourse.Manifest VE.Discourse.Satisfies@VE.Discourse.Joint VE.Discourse.instDecidableSatisfies@VE.Discourse.Joint VE.Presupposition.CandidateTable@VE.Presupposition.Wire VE.Presupposition.Checked.ob@VE.Presupposition.Wire VE.Presupposition.Checked@VE.Presupposition.Wire VE.Presupposition.Group@VE.Presupposition.Couple VE.Presupposition.Obligation.id@VE.Presupposition.Wire VE.Presupposition.Pick@VE.Presupposition.Couple VE.Presupposition.PickFits@VE.Presupposition.Couple VE.Presupposition.Report.checked@VE.Presupposition.Wire VE.Presupposition.Report@VE.Presupposition.Wire VE.Presupposition.Uniform@VE.Presupposition.Couple VE.Presupposition.choiceOf@VE.Presupposition.Couple VE.Presupposition.groupConstraints@VE.Presupposition.Couple VE.Presupposition.groups@VE.Presupposition.Couple
+  -- expr 2650842654
+theorem VE.Presupposition.groups_admit_nil
+  ∀ (D : VE.Presupposition.PDoc) (R : VE.Presupposition.Report),
+    VE.Presupposition.admit D = Except.ok R → VE.Presupposition.groups VE.Presupposition.candidateTable R = []
+  -- uses VE.Presupposition.Group@VE.Presupposition.Couple VE.Presupposition.PDoc@VE.Presupposition.Wire VE.Presupposition.Report@VE.Presupposition.Wire VE.Presupposition.admit@VE.Presupposition.Admit VE.Presupposition.candidateTable@VE.Presupposition.Table VE.Presupposition.groups@VE.Presupposition.Couple
+  -- expr 1817870182
+theorem VE.Presupposition.idxOf_inj
+  ∀ {l : List VE.Presupposition.Candidate} {a b : VE.Presupposition.Candidate},
+    a ∈ l → b ∈ l → List.idxOf a l = List.idxOf b l → a = b
+  -- uses VE.Presupposition.Candidate@VE.Presupposition.Wire VE.Presupposition.instDecidableEqCandidate@VE.Presupposition.Wire
+  -- expr 999074320
 theorem VE.Presupposition.inPlace_iff_conditioned_shallow
   ∀ (f : VE.Presupposition.Frame),
     f.shallow →
@@ -30089,6 +30253,29 @@ theorem VE.Presupposition.mem_basesOf
     (u, B) ∈ VE.Presupposition.basesOf P ↔ ∃ x, x ∈ P ∧ x.fst.id = u ∧ x.snd = VE.Presupposition.Base.claim B
   -- uses VE.Formula@VE.Syntax VE.Presupposition.Base.claim@VE.Presupposition.Admit VE.Presupposition.Base@VE.Presupposition.Admit VE.Presupposition.DocUnit.id@VE.Presupposition.Wire VE.Presupposition.DocUnit@VE.Presupposition.Wire VE.Presupposition.basesOf@VE.Presupposition.Admit
   -- expr 4184483307
+theorem VE.Presupposition.mem_choiceOf
+  ∀ {t : VE.Presupposition.CandidateTable} {R : VE.Presupposition.Report},
+    (List.map (fun x => x.ob.id) R.checked).Nodup →
+      ∀ (ver : String → Nat) (ch : VE.Presupposition.Pick) {c : VE.Presupposition.Checked},
+        c ∈ R.checked →
+          ∀ (i : Nat),
+            (c.ob.id, ver c.ob.id, i) ∈ VE.Presupposition.choiceOf t R ver ch ↔
+              ∃ k, (c.ob.id, k) ∈ ch ∧ List.idxOf k (VE.Presupposition.emitted t c) = i
+  -- uses VE.Discourse.Choice@VE.Discourse.Joint VE.Presupposition.Candidate@VE.Presupposition.Wire VE.Presupposition.CandidateTable@VE.Presupposition.Wire VE.Presupposition.Checked.ob@VE.Presupposition.Wire VE.Presupposition.Checked@VE.Presupposition.Wire VE.Presupposition.Obligation.id@VE.Presupposition.Wire VE.Presupposition.Pick@VE.Presupposition.Couple VE.Presupposition.Report.checked@VE.Presupposition.Wire VE.Presupposition.Report@VE.Presupposition.Wire VE.Presupposition.choiceOf@VE.Presupposition.Couple VE.Presupposition.emitted@VE.Presupposition.Wire VE.Presupposition.instDecidableEqCandidate@VE.Presupposition.Wire
+  -- expr 3882483333
+theorem VE.Presupposition.mem_groups
+  ∀ {t : VE.Presupposition.CandidateTable} {R : VE.Presupposition.Report} {g : VE.Presupposition.Group},
+    g ∈ VE.Presupposition.groups t R →
+      2 ≤ g.members.length ∧
+        g.cands.all VE.Presupposition.Candidate.core = Bool.true ∧
+          ∀ (o : String),
+            o ∈ g.members →
+              ∃ c,
+                c ∈ R.checked ∧
+                  c.ob.carrier = VE.Presupposition.Carrier.unresolved ∧
+                    c.ob.id = o ∧ t c.ob.row c.pos = g.cands ∧ c.goal = g.goal
+  -- uses VE.Formula@VE.Syntax VE.Presupposition.Candidate.core@VE.Presupposition.Wire VE.Presupposition.Candidate@VE.Presupposition.Wire VE.Presupposition.CandidateTable@VE.Presupposition.Wire VE.Presupposition.Carrier.unresolved@VE.Presupposition.Wire VE.Presupposition.Carrier@VE.Presupposition.Wire VE.Presupposition.Checked.goal@VE.Presupposition.Wire VE.Presupposition.Checked.ob@VE.Presupposition.Wire VE.Presupposition.Checked.pos@VE.Presupposition.Wire VE.Presupposition.Checked@VE.Presupposition.Wire VE.Presupposition.Group.cands@VE.Presupposition.Couple VE.Presupposition.Group.goal@VE.Presupposition.Couple VE.Presupposition.Group.members@VE.Presupposition.Couple VE.Presupposition.Group@VE.Presupposition.Couple VE.Presupposition.Obligation.carrier@VE.Presupposition.Wire VE.Presupposition.Obligation.id@VE.Presupposition.Wire VE.Presupposition.Obligation.row@VE.Presupposition.Wire VE.Presupposition.Report.checked@VE.Presupposition.Wire VE.Presupposition.Report@VE.Presupposition.Wire VE.Presupposition.groups@VE.Presupposition.Couple
+  -- expr 1619912808
 theorem VE.Presupposition.no_block_unchanged
   ∀ (D : VE.Presupposition.PDoc), D.block = Option.none → VE.Presupposition.admitWrapped D = VE.Presupposition.admitBase D
   -- uses VE.Presupposition.Obligation@VE.Presupposition.Wire VE.Presupposition.PDoc.block@VE.Presupposition.Wire VE.Presupposition.PDoc@VE.Presupposition.Wire VE.Presupposition.Report@VE.Presupposition.Wire VE.Presupposition.admitBase@VE.Presupposition.Admit VE.Presupposition.admitWrapped@VE.Presupposition.Admit
@@ -30177,6 +30364,12 @@ theorem VE.Presupposition.peel_implies
     VE.Presupposition.peel 0 l.length (List.foldr (fun m a => m.snd.implies a) B l) = Option.some B
   -- uses VE.Formula.implies@VE.Syntax VE.Formula@VE.Syntax VE.Presupposition.Root@VE.Presupposition.Reading VE.Presupposition.peel@VE.Presupposition.Reading
   -- expr 1279656837
+theorem VE.Presupposition.pickOf_iff
+  ∀ {ch : VE.Presupposition.Pick},
+    (List.map (fun x => x.fst) ch).Nodup →
+      ∀ (o : String) (k : VE.Presupposition.Candidate), VE.Presupposition.pickOf ch o = Option.some k ↔ (o, k) ∈ ch
+  -- uses VE.Presupposition.Candidate@VE.Presupposition.Wire VE.Presupposition.Pick@VE.Presupposition.Couple VE.Presupposition.pickOf@VE.Presupposition.Couple
+  -- expr 239958925
 theorem VE.Presupposition.plug_congr
   ∀ (f : VE.Presupposition.Frame) (a b : VE.Formula) (S : VE.Structure) (ρ : VE.Valuation S),
     (∀ (τ : VE.Valuation S),
@@ -30295,6 +30488,20 @@ theorem VE.Presupposition.rule_collapse_typed
                 VE.Formula.denote S (VE.Norms.tupleVal vs) (VE.Norms.decides T p sign)
   -- uses VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree VE.Norms.Regulated.sorts@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Tree.nodes@VE.Norms.Tree VE.Norms.Tree@VE.Norms.Tree VE.Norms.decides@VE.Norms.Elaborate VE.Norms.tupleVal@VE.Norms.Basic VE.Presupposition.conditionRule@VE.Presupposition.Rules VE.Presupposition.ruleGoal@VE.Presupposition.Rules VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.TupleTyped@VE.Semantics
   -- expr 3837323577
+theorem VE.Presupposition.sourceChoice_closed
+  ∀ {E : VE.Environment} {R : VE.Presupposition.Report} {s : VE.Presupposition.SourceChoice},
+    s ∈ VE.Presupposition.sourceChoices E R →
+      VE.Formula.WellFormed E [] s.pre ∧ s.label = VE.Presupposition.sourceLabel ∧ 2 ≤ s.members.length
+  -- uses VE.Environment@VE.Syntax VE.Formula.WellFormed@VE.Syntax VE.Presupposition.Report@VE.Presupposition.Wire VE.Presupposition.SourceChoice.label@VE.Presupposition.Couple VE.Presupposition.SourceChoice.members@VE.Presupposition.Couple VE.Presupposition.SourceChoice.pre@VE.Presupposition.Couple VE.Presupposition.SourceChoice@VE.Presupposition.Couple VE.Presupposition.sourceChoices@VE.Presupposition.Couple VE.Presupposition.sourceLabel@VE.Presupposition.Couple
+  -- expr 51365612
+theorem VE.Presupposition.sourceChoice_entails
+  ∀ (E : VE.Environment) (R : VE.Presupposition.Report) (s : VE.Presupposition.SourceChoice),
+    s ∈ VE.Presupposition.sourceChoices E R →
+      ∀ (S : VE.Structure),
+        VE.Formula.denote S [] s.pre →
+          ∀ (r : VE.Norms.Regulated) (N : VE.Norms.Node), VE.Formula.denote S [] (VE.Presupposition.ruleGoal r N s.pre)
+  -- uses VE.Environment@VE.Syntax VE.Formula.denote@VE.Semantics VE.Norms.Node@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Presupposition.Report@VE.Presupposition.Wire VE.Presupposition.SourceChoice.pre@VE.Presupposition.Couple VE.Presupposition.SourceChoice@VE.Presupposition.Couple VE.Presupposition.ruleGoal@VE.Presupposition.Rules VE.Presupposition.sourceChoices@VE.Presupposition.Couple VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 1744232712
 theorem VE.Presupposition.source_identity_entails
   ∀ (E : VE.Environment) (pre : VE.Formula),
     VE.Formula.WellFormed E [] pre →
@@ -30308,6 +30515,11 @@ theorem VE.Presupposition.speech_question_top
     VE.Presupposition.Frame.hole.goal (VE.SpeechActs.presupposition D q) = VE.SpeechActs.presupposition D q
   -- uses VE.Formula@VE.Syntax VE.Presupposition.Frame.goal@VE.Presupposition.Frame VE.Presupposition.Frame.hole@VE.Presupposition.Frame VE.SpeechActs.Question@VE.SpeechActs.Tree VE.SpeechActs.SpeechDoc@VE.SpeechActs.Tree VE.SpeechActs.presupposition@VE.SpeechActs.Answer
   -- expr 32724827
+theorem VE.Presupposition.uniformB_iff
+  ∀ (g : VE.Presupposition.Group) (ch : VE.Presupposition.Pick),
+    VE.Presupposition.uniformB g ch = Bool.true ↔ VE.Presupposition.Uniform g ch
+  -- uses VE.Presupposition.Group@VE.Presupposition.Couple VE.Presupposition.Pick@VE.Presupposition.Couple VE.Presupposition.Uniform@VE.Presupposition.Couple VE.Presupposition.uniformB@VE.Presupposition.Couple
+  -- expr 3212750437
 theorem VE.Presupposition.unitsOk_ok
   ∀ {fx : VE.Presupposition.Fixed} {D : VE.Presupposition.PDoc} {obs : List VE.Presupposition.Obligation}
     {R : VE.Presupposition.Report},
