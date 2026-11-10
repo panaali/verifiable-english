@@ -205,6 +205,31 @@ def slotsEnding (e : String) : List String :=
   (parseGovernor · == none)
 #guard [0x1D159, 0xE000, 0xFFFC].all fun n => [s!".{Char.ofNat n}", s!"{Char.ofNat n}", s!".{Char.ofNat n}”"].all fun e =>
   (slotsEnding e).all (parseGovernor · == none)
+
+/-! ## sc-7-f11: a sentence end inside a word, with a blank-looking character in place of the space (`clause`) -/
+
+/-- Each slot with `e` inside a word, joined to the next word with no space. -/
+def slotsJoined (e : String) : List String :=
+  [s!"## If the user says x{e}The rest", s!"## When asked{e}The refuse", s!"The hard constraints apply only where x{e}The y.",
+   s!"The hard constraints do not apply when x{e}The y.", s!"Notwithstanding the rules of section 3, x{e}The y.",
+   s!"Notwithstanding the rules of section 3{e}The, x.", s!"This applies only where x{e}The y.",
+   s!"The rules below are called the x{e}The rules below are called the y.",
+   s!"In place of their own condition, the x{e}The y apply only where {kindWording}."]
+-- the recheck's FOLLOW-UP F11: U+1D159, U+FFFC and U+E000 joined, as a list name and as a condition, and in every slot,
+-- alone, after a closer and before one
+#guard [0x1D159, 0xFFFC, 0xE000].all fun n => let c := Char.ofNat n
+  [s!"The rules below are called the x.{c}The rules below are called the y.",
+   s!"The hard constraints apply only where the x.{c}The rules below are called the y."].all (parseGovernor · == none) &&
+  [s!".{c}", s!".”{c}", s!".{c}”"].all fun e => (slotsJoined e).all (parseGovernor · == none)
+-- the class: each of F7's sentence ends, joined by a blank-looking, invisible or mark character, in every slot
+#guard ".?!:…‽。？！：．".toList.all fun t => [0x1D159, 0xFFFC, 0xE000, 0x200B, 0x2060, 0x3164, 0x2800, 0x0301].all fun n =>
+  (slotsJoined s!"{t}{Char.ofNat n}").all (parseGovernor · == none)
+-- the other direction: a "." inside a word before an allow-listed character or a closer stays in its slot
+#guard [".", ".)", "”"].all fun e => (slotsJoined e).all fun w => (parseGovernor w).isSome
+#guard trip "The hard constraints apply only where the dose is over 3.5 mg, e.g in a trial." "{\"reach\": {\"list_name\": \"the hard constraints\"}, \"effect\": {\"reguard\": [\"and\", \"own\", {\"english\": \"the dose is over 3.5 mg, e.g in a trial\"}]}}"
+#guard ["e.g", "3.5", "x.y", "x.)y", "x.”’y", "Claude’s", "(x)", "“x”", "x—y", "x​y", "cafés"].all clause
+-- what this rule refuses that was accepted: two characters outside the allow-list, the second no closer, inside a word
+#guard ["x.́y", "x..y", "x——y", "x​​y", "xαβy", "x”́y"].all (!clause ·)
 -- a word that is empty once its closers are dropped is refused
 #guard [")", "x )", "x ”’", "\"", "x *_"].all (!clause ·)
 #guard ["The hard constraints apply only where x ) y.", "The rules below are called the x ” The rules below are called the y."].all

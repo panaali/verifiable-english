@@ -33,11 +33,19 @@ def spaced (s : String) : Bool := (s.splitOn " ").all fun w => !w.isEmpty && w.a
     `＇`, `>`, and Markdown's `*`, `_`, `` ` `` and `~`. -/
 def closers : String := "\"')*>]_`}~«»༻༽᚜‘’‛“”‟‹›⁆⁾₎⌉⌋〉❩❫❭❯❱❳❵⟆⟧⟩⟫⟭⟯⦄⦆⦈⦊⦌⦎⦐⦒⦔⦖⦘⧙⧛⧽⸂⸃⸄⸅⸉⸊⸌⸍⸜⸝⸠⸡⸣⸥⸧⸩⹖⹘⹚⹜〉》」』】〕〗〙〛〞〟﴾︘︶︸︺︼︾﹀﹂﹄﹈﹚﹜﹞＂＇）］｝｠｣"
 
+/-- A character of `clause`'s allow-list. -/
+def allowed (c : Char) : Bool :=
+  c.isAlphanum || (0xC0 ≤ c.toNat && c.toNat ≤ 0x24F && ![0xD7, 0xF7, 0x1C3].contains c.toNat) || ",;-%/&+=#$@".contains c
+
 /-- A slot's text (a condition, a rule, a list name, a section): spaced, and no word ends a sentence or a lead-in: once
     its trailing `closers` are dropped, a word is not empty and ends in an allow-listed character, and no other: an ASCII
-    letter or digit, a Latin letter of U+00C0 to U+024F but U+00D7, U+00F7 and U+01C3 ("ǃ"), or one of `,;-%/&+=#$@`. -/
-def clause (s : String) : Bool := spaced s && (s.splitOn " ").all fun w => ((w.dropRightWhile closers.contains).toList.getLast?).any fun c =>
-  c.isAlphanum || (0xC0 ≤ c.toNat && c.toNat ≤ 0x24F && ![0xD7, 0xF7, 0x1C3].contains c.toNat) || ",;-%/&+=#$@".contains c
+    letter or digit, a Latin letter of U+00C0 to U+024F but U+00D7, U+00F7 and U+01C3 ("ǃ"), or one of `,;-%/&+=#$@`.
+    Inside a word, a character outside the allow-list (a sentence end, a mark, a blank-looking character) is followed by
+    an allow-listed character or a closer, and no other, so no sentence end hides in a word behind a character drawn as
+    a space ("x.<U+1D159>The" is refused; "3.5", "e.g" and "Claude’s" stay; sc-7-f11). -/
+def clause (s : String) : Bool := spaced s && (s.splitOn " ").all fun w =>
+  ((w.dropRightWhile closers.contains).toList.getLast?).any allowed &&
+  (w.toList.zip w.toList.tail).all fun (a, b) => allowed a || allowed b || closers.contains b
 
 /-- A list name: "the" and at least one more word ("the hard constraints"), a slot (`clause`). -/
 def listName (n : String) : Bool := n.startsWith "the " && clause n

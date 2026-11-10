@@ -93,7 +93,10 @@ F10_WORDINGS = ("The hard constraints apply only where x⳹ y.", "The hard const
 # the recheck's deferred blank-looking characters after a ".": U+1D159, U+E000 and U+FFFC, as a condition and a list name
 BLANK_WORDINGS = tuple(w for c in ("\U0001D159", "", "￼")
                        for w in (f"The hard constraints apply only where x.{c} y.",
-                                 f"The rules below are called the x.{c} The rules below are called the y."))
+                                 f"The rules below are called the x.{c} The rules below are called the y.",
+                                 # sc-7-f11: joined, the character in place of the space
+                                 f"The rules below are called the x.{c}The rules below are called the y.",
+                                 f"The hard constraints apply only where the x.{c}The rules below are called the y."))
 CLOSER_EXTRAS = set("\"'＂＇>*_`~")
 # `clause`'s allow-list as the DRI note 2026-11-09 (c) states it, written here apart from the Lean code: ASCII letters and
 # digits, the Latin letters of U+00C0..U+024F but U+00D7 and U+00F7, and eleven ASCII punctuation characters; less
@@ -111,14 +114,14 @@ NOT_WORD = ({c for c in SCALARS if c.isspace() or ord(c) < 0x20 or 0x7F <= ord(c
             | {chr(n) for n in (0x115F, 0x1160, 0x2800, 0x3164, 0xFFA0)})
 
 # Lean is the oracle, in one process: one `#eval` over every Unicode scalar value c gives the characters that are no
-# `wordChar` and those for which `clause` accepts "x" c, "x" c ")" and "x." c; the probe wordings' verdicts; and the
+# `wordChar` and those for which `clause` accepts "x" c, "x" c ")", "x." c and "x." c "y"; the probe wordings' verdicts; and the
 # three docstrings as the compiled environment has them (about a minute: the interpreter takes about 18 microseconds
 # a `clause`).
 SWEEP = """import Lean
 import VE.Scope.Authoring
 open Lean VE.Scope.Pinned
-def sweep : Array Nat × Array Nat × Array Nat × Array Nat := Id.run do
-  let mut nonWord := #[]; let mut bare := #[]; let mut closed := #[]; let mut dotted := #[]
+def sweep : Array Nat × Array Nat × Array Nat × Array Nat × Array Nat := Id.run do
+  let mut nonWord := #[]; let mut bare := #[]; let mut closed := #[]; let mut dotted := #[]; let mut joined := #[]
   for n in [0:0x110000] do
     if n.isValidChar then
       let c := Char.ofNat n
@@ -126,14 +129,15 @@ def sweep : Array Nat × Array Nat × Array Nat × Array Nat := Id.run do
       if clause ("x" ++ c.toString) then bare := bare.push n
       if clause ("x" ++ c.toString ++ ")") then closed := closed.push n
       if clause ("x." ++ c.toString) then dotted := dotted.push n
-  return (nonWord, bare, closed, dotted)
+      if clause ("x." ++ c.toString ++ "y") then joined := joined.push n
+  return (nonWord, bare, closed, dotted, joined)
 def verdicts (ws : String) : Array Bool := (Json.parse ws).toOption.getD .null |>.getArr?.toOption.getD #[] |>.map
   fun w => (parseGovernor (w.getStr?.toOption.getD "")).isSome
 #eval show CoreM Unit from do
   let env ← getEnv
-  let (nonWord, bare, closed, dotted) := sweep
+  let (nonWord, bare, closed, dotted, joined) := sweep
   IO.println (Json.mkObj [("non_word", toJson nonWord), ("bare", toJson bare), ("closed", toJson closed),
-    ("dotted", toJson dotted), ("closers", toJson (← findDocString? env ``closers)),
+    ("dotted", toJson dotted), ("joined", toJson joined), ("closers", toJson (← findDocString? env ``closers)),
     ("clause", toJson (← findDocString? env ``clause)), ("word_char", toJson (← findDocString? env ``wordChar)),
     ("accepted", toJson ((WORDINGS).map verdicts))]).compress
 """
@@ -177,8 +181,9 @@ def test_the_docstrings_name_unicode_16_0_the_version_of_this_python():
 def test_clause_accepts_exactly_its_documented_allow_list(swept):
     """sc-7 recheck F10 and the DRI note 2026-11-09 (c), the class of F7, F8, F9 and F10 (a character at a word's end
     that hides a sentence end): for every Unicode scalar value c, `clause` accepts "x" c and "x" c ")" exactly when c
-    is a word character in the allow-list or a closer (dropped, leaving "x"), and "x." c exactly when c is in the
-    allow-list. The docstring states the allow-list as `ALLOW` does and names no enumerated Unicode set; `closers` is
+    is a word character in the allow-list or a closer (dropped, leaving "x"), "x." c exactly when c is in the
+    allow-list, and "x." c "y" exactly when c is a word character in the allow-list or a closer (sc-7-f11: a "." inside
+    a word is followed by no other character, so none stands in for a space after it). The docstring states the allow-list as `ALLOW` does and names no enumerated Unicode set; `closers` is
     Unicode 16.0's Pe, Pf and Pi with its listed extras."""
     clause, closers = " ".join(swept["clause"].split()), swept["closers"]
     assert ALLOW_DOC in clause, clause
@@ -191,7 +196,8 @@ def test_clause_accepts_exactly_its_documented_allow_list(swept):
     for c in CLOSER_EXTRAS:
         assert (f"`` {c} ``" if c == "`" else f"`{c}`") in closers, c
     assert len(ALLOW) == 26 * 2 + 10 + (0x250 - 0xC0 - 3) + 11 == 470 and not ALLOW & (CLOSERS | NOT_WORD)
-    for key, want in (("bare", (ALLOW | CLOSERS) - NOT_WORD), ("closed", (ALLOW | CLOSERS) - NOT_WORD), ("dotted", ALLOW)):
+    for key, want in (("bare", (ALLOW | CLOSERS) - NOT_WORD), ("closed", (ALLOW | CLOSERS) - NOT_WORD), ("dotted", ALLOW),
+                      ("joined", (ALLOW | CLOSERS) - NOT_WORD)):
         got = chars(swept[key])
         assert got == want, {key: {"accepted, not allowed": sorted(got - want), "allowed, not accepted": sorted(want - got)}}
 
@@ -206,7 +212,7 @@ def test_word_char_refuses_exactly_its_documented_characters(swept):
 
 def test_review_f8_f9_f10_the_probe_wordings_are_refused_and_guarded(swept):
     """sc-7 recheck F8, F9 and F10: each probe wording (and the recheck's deferred U+1D159, U+E000 and U+FFFC after a
-    ".") is refused, and the PROBE F8, F9 and F10 guards of AuthoringExamples.lean stay, verbatim."""
+    ".", spaced and joined: sc-7-f11) is refused, and the PROBE F8, F9 and F10 guards of AuthoringExamples.lean stay, verbatim."""
     assert swept["accepted"][1:] == [[False] * len(ws) for ws in PROBES[1:]]
     examples = EXAMPLES.read_text()
     def lean_escaped(wording: str) -> str:  # json's \uxxxx escapes, with Lean's upper-case hex digits as the probes write them
@@ -216,5 +222,7 @@ def test_review_f8_f9_f10_the_probe_wordings_are_refused_and_guarded(swept):
         probe = "#guard [" + ", ".join(map(render, wordings))
         assert probe + "].all (VE.Scope.Pinned.parseGovernor · == none)" in examples, wordings
     for guard in ('"The hard constraints apply only where x.\\uFFFC y."', '"The hard constraints apply only where x.\\uE000 y."',
-                  '#guard [0x1D159, 0xE000, 0xFFFC].all', '#guard !clause "x.\\u3164"', '#guard !clause "x.\\u2800"'):
+                  '#guard [0x1D159, 0xE000, 0xFFFC].all', '#guard !clause "x.\\u3164"', '#guard !clause "x.\\u2800"',
+                  '#guard [0x1D159, 0xFFFC, 0xE000].all fun n => let c := Char.ofNat n',
+                  '(slotsJoined s!"{t}{Char.ofNat n}").all (parseGovernor · == none)'):
         assert guard in examples, guard
