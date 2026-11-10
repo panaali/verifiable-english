@@ -31,11 +31,11 @@ en-e3-norm-p3ver4 PASS; DRI 2026-11-02 items 1-3.
 | (2) `Run.lean`'s code hunk (M8, M9) | `statementCodeRows` (appended to `codeClasses`, the one table), `renderCodeRows` (EN-3 appends it), `statementStatusCodes`, `statementFields`, `statementUnsentenced`; the `english.grammar` export writes the last three as `statement_statuses`, `statement_fields`, `statement_unsentenced` | E1-E16 (every coded row carries its class) |
 | (2) OPEN-2 | `Norm/Rules.lean` exposed no tags: `normTags` added there, one hunk, `(normGrammar E L).rules.map (·.tag)` | E10 (the tags reach the witnesses); en-e3ab's R-f18 |
 | (2) size measured | 683 changed lines (+671 -12) outside the verbatim spec and plan after (2), at `62fe76254`: over the ~600 cap, so the item is cut there. The final count and what grew after the cut: section "Size" | `git diff --numstat 9f5dd46ab 62fe76254` |
-| Evaluators rule (DRI 2026-10-27) | `readNorm` is charged against `workBudget`; the other passes are at most quadratic in the statement count (`statementSpans`' fold appends to its list, `statementRow` calls `overOf` per row; the spec's text, kept) over a source the lexer bounds (`maxTextChars`, 10,000 characters). E17: 300 blocks (9,791 characters) through the real reader answer `one` with 300 rows and the last span `[9759, 9791]`; 330 are `TextTooLong`. | E17 (`RunExamples.lean:163-172`); the thunk test above |
+| Evaluators rule (DRI 2026-10-27) | `readNorm` is charged against `workBudget`; the other passes are at most quadratic in the statement count (`statementSpans`' fold appends to its list, `statementRow` calls `overOf` per row; the spec's text, kept) over a source the lexer bounds (`maxTextChars`, 10,000 characters). E17: 300 blocks (9,791 characters) through the real reader answer `one` with 300 rows and the last span `[9759, 9791]`; 330 are `TextTooLong`. | E17 (`RunExamples.lean:178-187`); the thunk test above |
 | (3) route recipe steps 1-4: registry and protocol, `RegistryExamples`, the shape and `Skeletons`, the encoder theorem, `Audit`/`ResponseShapeAudit` lines for them, `tools/english_codes.py` and its reader, `DEADLINES`, `_SCHEMA_SEEDS` | **not delivered: en-e3ab** | — |
 | (3) layer rows, `lean/VE.lean` | `Norm.RunExamples` among the runner-boundary fixtures (`Owners` and `Run` need no row: `VE.EnglishGrammar.*` is layer 3, `*.Run` layer 4); four imports | `tools/check_lean_imports.py` |
 | (4) route fixtures in `tests/data/route-cases.jsonl` | **not delivered: en-e3ab** (R-f1..R-f24 need the registered mode) | — |
-| (4) the 120 pinned blocks through the mode, R-stale, and one ambiguous condition with both trees | measured here, through the mode's Lean entry (below); the ambiguous condition is f18 through the real reader (`Run.answer`, `leanReader`): `many`, sentence 1, both trees with `normGrammar`'s tags | `tests/test_english_statement_blocks.py::test_each_pinned_block_through_the_mode`; `RunExamples.lean:209-224` |
+| (4) the 120 pinned blocks through the mode, R-stale, and one ambiguous condition with both trees | measured here, through the mode's Lean entry (below); the ambiguous condition is f18 through the real reader (`Run.answer`, `leanReader`): `many`, sentence 1, both trees with `normGrammar`'s tags | `tests/test_english_statement_blocks.py::test_each_pinned_block_through_the_mode`; `RunExamples.lean:229-243` |
 
 **The 120 pinned blocks through the mode** (`Norm.Run.answer`, the case decoded once per 20 blocks; three requests
 through `statementCaseReported` give the same rows): 121 records (76 RSP, 44 FSF, f21). 104 answer `one` (103 W1
@@ -81,6 +81,14 @@ en-e3a-cutback by item 3 of that ruling.
   `decodeCase`); its render rows are EN-3's.
 - English `actions_version` 45 -> 46: `Run.lean` and `Norm/Rules.lean` are hashed, and `Norm/Owners.lean` and
   `Norm/Run.lean` join the lock (DELTA row 1).
+- **`outcomeFields` and `stoppedFields` take the rule tags as `Thunk (Array String)`**, forced only for `many`, and
+  `answerWith` passes `Thunk.mk fun _ => R.tags c.E c.L`: SIGNED by the DRI 2026-11-09,
+  `reviews/dri-decisions-20261109-en-e3a-2.md` item 2 (spec erratum: the FOLLOW-UPS row under "## en-e3a"). No
+  answer changes; `test_the_rule_tags_are_forced_only_for_many` is the condition's test.
+- **`statementSpans`, `sentenceBytes`, `opensStatement` are G[V]** (they were G[I]): `dri-decisions-20261109-en-e3a-2.md`
+  item 1.
+- **The main merge re-pins `lean/VE/EnglishGrammar/Run.lean` in `ve/assurance-manifest.json`** (whole file, 800
+  lines): this item's code hunk had left main's 759-line pin stale, which `tests/test_assurance_manifest.py` refuses.
 
 ## Seeded bugs (each planted alone, shown failing, restored; `mutants.json`)
 
@@ -88,30 +96,32 @@ en-e3a-cutback by item 3 of that ruling.
 |---|---|---|---|
 | Force.op .needNot mapped to .mustNot (spec 9; O1) | Norm/Owners.lean | Norm/Owners.lean:29 theorem opOf_agrees | Norm/OwnersExamples.lean:22 O1; Norm/OwnersExamples.lean:23 O1; Norm/OwnersExamples.lean:27 O2 |
 | the gate passes a clause with a span (toNodeChecked := toNode; spec 9; O7 and E2) | Norm/Owners.lean | Norm/Owners.lean:79 theorem toNodeChecked_ok; Norm/Owners.lean:85 theorem toNodesChecked_ok | Norm/OwnersExamples.lean:57 O7 (toNodeChecked); Norm/OwnersExamples.lean:59 O7 (toNodesChecked) |
-| the runner answers one when readNorm stops (spec 9; E8) | Norm/Run.lean | Norm/Run.lean:247-248 theorem Run.answer_stopped (and answer_one_iff, answer_partial_no_node) | Norm/RunExamples.lean:60 E6; Norm/RunExamples.lean:62 E6; Norm/RunExamples.lean:76 E10; Norm/RunExamples.lean:107 E14; Norm/RunExamples.lean:111-116 E16; Norm/RunExamples.lean:125 E16 (every Reject); Norm/RunExamples.lean:137 E8; Norm/RunExamples.lean:141 every row's class; Norm/RunExamples.lean:215-216 f18 through the real reader |
-| a block fault without `sentence` (spec 9; E4) | Norm/Run.lean | Norm/RunExamples.lean:48 E4; Norm/RunExamples.lean:53 E9; Norm/RunExamples.lean:56 E4 (NoConsequence, StrayCarveOut); Norm/RunExamples.lean:156 the sentence rule | Norm/RunExamples.lean:48 E4; Norm/RunExamples.lean:53 E9; Norm/RunExamples.lean:56 E4 (NoConsequence, StrayCarveOut); Norm/RunExamples.lean:156 the sentence rule |
-| every decoder refusal coded NodeRefused (spec 9; E3 and E14) | Norm/Run.lean | Norm/RunExamples.lean:41 E3 (depth); Norm/RunExamples.lean:43 E3 (node budget); Norm/RunExamples.lean:107 E14 (lean-unknown) | Norm/RunExamples.lean:41 E3 (depth); Norm/RunExamples.lean:43 E3 (node budget); Norm/RunExamples.lean:107 E14 (lean-unknown) |
-| a stop's rejection always names its sentence (spec 9; E16) | Norm/Run.lean | Norm/Run.lean:247 theorem Run.answer_stopped | Norm/RunExamples.lean:111 E16 (Internal); Norm/RunExamples.lean:115 E16 (EmptyDocument); Norm/RunExamples.lean:125 E16 (every Reject); Norm/RunExamples.lean:156 the sentence rule |
-| fewer blocks than statements is Internal, never a one answer that zip shortens (self-review B) | Norm/Run.lean | Norm/RunExamples.lean:88 fewer blocks than statements | same |
-| a rule row's span is in bytes, not code points (M10; self-review B) | Norm/Run.lean | Norm/RunExamples.lean:90 non-ASCII byte spans through answerWith | same |
-| a retyped source is refused (self-review B) | Norm/Run.lean | Norm/RunExamples.lean:199 a retyped id, kind or source is an error row | same |
+| the runner answers one when readNorm stops (spec 9; E8) | Norm/Run.lean | Norm/Run.lean:247-248 theorem Run.answer_stopped (and answer_one_iff, answer_partial_no_node) | Norm/RunExamples.lean:60 E6; Norm/RunExamples.lean:62 E6; Norm/RunExamples.lean:76 E10; Norm/RunExamples.lean:122 E14; Norm/RunExamples.lean:126-131 E16; Norm/RunExamples.lean:140 E16 (every Reject); Norm/RunExamples.lean:152 E8; Norm/RunExamples.lean:156 every row's class; Norm/RunExamples.lean:235-236 f18 through the real reader |
+| a block fault without `sentence` (spec 9; E4) | Norm/Run.lean | Norm/RunExamples.lean:48 E4; Norm/RunExamples.lean:53 E9; Norm/RunExamples.lean:56 E4 (NoConsequence, StrayCarveOut); Norm/RunExamples.lean:171 the sentence rule | Norm/RunExamples.lean:48 E4; Norm/RunExamples.lean:53 E9; Norm/RunExamples.lean:56 E4 (NoConsequence, StrayCarveOut); Norm/RunExamples.lean:171 the sentence rule |
+| every decoder refusal coded NodeRefused (spec 9; E3 and E14) | Norm/Run.lean | Norm/RunExamples.lean:41 E3 (depth); Norm/RunExamples.lean:43 E3 (node budget); Norm/RunExamples.lean:122 E14 (lean-unknown) | Norm/RunExamples.lean:41 E3 (depth); Norm/RunExamples.lean:43 E3 (node budget); Norm/RunExamples.lean:122 E14 (lean-unknown) |
+| a stop's rejection always names its sentence (spec 9; E16) | Norm/Run.lean | Norm/Run.lean:247 theorem Run.answer_stopped | Norm/RunExamples.lean:126 E16 (Internal); Norm/RunExamples.lean:130 E16 (EmptyDocument); Norm/RunExamples.lean:140 E16 (every Reject); Norm/RunExamples.lean:171 the sentence rule |
+| fewer blocks than statements is Internal, never a one answer that zip shortens (self-review B) | Norm/Run.lean | Norm/RunExamples.lean:103 fewer blocks than statements | same |
+| a rule row's span is in bytes, not code points (M10; self-review B) | Norm/Run.lean | Norm/RunExamples.lean:105 non-ASCII byte spans through answerWith | same |
+| a retyped source is refused (self-review B) | Norm/Run.lean | Norm/RunExamples.lean:217 a retyped id, kind or source is an error row | same |
 | the rule tags are forced only for many (DRI 2026-11-09 en-e3a-2 item 2) | Norm/Run.lean | tests/test_english_statement_blocks.py::test_the_rule_tags_are_forced_only_for_many (the `one` case aborts: exit 134) | same |
 | (Python) Norm/Run.lean dropped from the English lock's trusted files | tools/english_grammar_gen.py | tests/test_english_grammar_gen.py::test_the_repository_is_in_sync | — |
 | (Python) Norm.RunExamples left at layer 3 (its runner-boundary row removed) | tools/layer_policy.py | tools/check_lean_imports.py (gate step): new outward Lean import: VE.EnglishGrammar.Norm.RunExamples -> VE.EnglishGrammar.Norm.Run | — |
 
-Mechanical mutants per new trusted definition: the trust-mutants sweep (below).
+Mechanical mutants per new trusted definition: the trust-mutants sweep (section "Trust-mutants sweep").
 
 ## Size
 
-`git diff --numstat $(git merge-base HEAD main)` (base `a0102f0e5`), hand-written files only (the verbatim spec and
-plan and every file `tools/regen_generated.py --owner` names a generator for are excluded), on the final code:
-**+1,277 -12 = 1,289 lines**. Lean product 491 (`Norm/Run.lean` 303, `Norm/Owners.lean` 121, `Run.lean` +42 -1,
-`Norm/Rules.lean` 13, `Norm/Examples.lean` -11); Lean fixtures 308 (`RunExamples.lean` 225, `OwnersExamples.lean` 83);
-tests 84 (`tests/test_english_statement_blocks.py`); tools 7; evidence 399 (`mutants.json` 213, REPORT 130,
-`trust-mutants-allow.json` 44, DELTA 12). At the cut point (`62fe76254`) it was 683; the DRI's cut
-(`dri-decisions-20261109-en-e3a.md` item 1) stops the item after deliverable (2) and moves (3) and (4) to en-e3ab. The
-growth after the cut is no new deliverable: guards the self-review and the trust-mutants sweep asked for (E17, the
-request decoder, f18 through the real reader, byte spans, survivors), the pinned-block and thunk tests, and evidence.
+`git diff --numstat $(git merge-base HEAD main)` (base `2d1f04743` after the main merge), hand-written files only (the
+verbatim spec and plan, every file `tools/regen_generated.py --owner` names a generator for, and the tool-written sweep
+record `trust-mutants.json` are excluded), on the final code: **+1,424 -12 = 1,436 lines**. Lean product 491
+(`Norm/Run.lean` 303, `Norm/Owners.lean` 121, `Run.lean` +42 -1, `Norm/Rules.lean` 13, `Norm/Examples.lean` -11); Lean
+fixtures 328 (`RunExamples.lean` 245, `OwnersExamples.lean` 83); tests 84 (`tests/test_english_statement_blocks.py`);
+tools 7; evidence 526 (`mutants.json` 213, REPORT 192, `trust-mutants-allow.json` 109, DELTA 12). Besides, the
+hand-reviewed pin of `EnglishGrammar/Run.lean` in the generated `ve/assurance-manifest.json` (5 lines, merge commit).
+At the cut point (`62fe76254`) it was 683; the DRI's cut (`dri-decisions-20261109-en-e3a.md` item 1) stops the item
+after deliverable (2) and moves (3) and (4) to en-e3ab. The growth after the cut is no new deliverable: guards the
+self-review and the trust-mutants sweep asked for (E17, the request decoder, f18 through the real reader, byte spans,
+the sweep's survivors), the pinned-block and thunk tests, and evidence.
 
 ## Trust (R16 and the DRI's signature)
 
@@ -127,7 +137,22 @@ ties pass.
 
 ## Trust-mutants sweep
 
-SWEEP_PLACEHOLDER
+`zsh mac-pytest.sh --trustmut -- --max-mutants 1000 --allow docs/en-e3-norm/en-2a/trust-mutants-allow.json --json
+docs/en-e3-norm/en-2a/trust-mutants.json --test lean/VE/EnglishGrammar/Norm/OwnersExamples.lean --test
+lean/VE/EnglishGrammar/Norm/RunExamples.lean` (the VM; the Mac and the cloud pools were unreachable): 18 definitions,
+366 mutants, the three span definitions selected (G[V]).
+
+- Full run at `a9d5d29ed` (16,575 s): 263 KILLED, 39 SURVIVOR, 10 UNKNOWN, 27 INVALID, 27 ALLOWED. Each survivor got a
+  guard (`e171fe8c2`: two `over` entries, two span rows, both optional request members, the error row's `id`, the
+  export's `identities`/`advice`/`policy`, a translation statement first or last, a quote- or numeral-led sentence),
+  or an allow reason when it is equivalent (`isEmpty` of a cut list; an `Option.toList` cut; `getLast?` of a
+  one-element reverse; `InvalidInput`, which is no `Reject`'s code) or `ReadNormAuthoring`, a Prop no check can
+  evaluate (exercised by `ReadNormAuthoring_eq` and `toNodesChecked_authoring`). Eight UNKNOWNs were Lean refusing the
+  mutated text (type errors), allowed with that reason; two were build timeouts under load.
+- Rescore on the final code (`--rescore` of that record, `--build-timeout 3600`, at the merge `9b74a4d2d`; mode
+  "checks": 231 verdicts carried, 135 run, 3,760 s): **288 KILLED, 0 SURVIVOR, 0 UNKNOWN, 27 INVALID, 51 ALLOWED,
+  0 NOT RUN; exit 0**. Every ALLOWED row is one of the reasons in `trust-mutants-allow.json`; every `outcomeFields`
+  mutant of line 123 (the span rows) is KILLED. The record is `trust-mutants.json`.
 
 ## Pilot bytes
 
@@ -140,7 +165,23 @@ SWEEP_PLACEHOLDER
   `english_codes.py`'s `from_lean`/`render` and the reader beside `codes()`, `DEADLINES`, `_SCHEMA_SEEDS` and the
   `wrong-row-type` list) and spec 8's route fixtures R-f1..R-f24 and R-stale in `tests/data/route-cases.jsonl`
   (R-f18, the ambiguous condition with both trees, is already a `#guard` here through `Run.answer`).
+- **en-e3a-cutback** (DRI `dri-decisions-20261109-en-e3a-2.md` item 3, row applied there): `readNorm` (or a wrapper)
+  returns the sentence byte positions and its built grammar, so `statementSpans` stops lexing a second time and the
+  `many` branch stops rebuilding `normGrammar`; at least 17 trusted lines back. It merges before en-e3 (EN-3).
 - then en-e3b (the shadow relay and the delta report), then en-e3 (EN-3).
+
+## Final checks (on the merge `9b74a4d2d` with main `2d1f04743`)
+
+- `cd lean && lake build`: "Build completed successfully (1348 jobs)".
+- `python3 lean/audit.py`: "PASS: 816 source files; 9101 named theorem declarations audited".
+- `uv run python tools/regen_generated.py --check`: "checked 38 entries" (exit 0); `--resolve` for the merge's
+  generated conflicts.
+- `uv run python tools/trust_map.py --check`: PASS (above); `uv run python tools/english_grammar_gen.py --check
+  --base <merge base>`: exit 0 (lock at 46).
+- `tools/gate_collection.py --check --prebuilt` (before the merge): "1 added, 0 removed by a trailer, 0 refused, 0 stale
+  and 0 malformed".
+- Trust-mutants rescore: exit 0 (above).
+- Selected tests: SELECTED_PLACEHOLDER
 
 ## Spec re-read (BUILDER-CHECKLIST 14)
 
@@ -160,7 +201,7 @@ Each new section 4 statement compared with the spec after whitespace normalisati
 
 ## Self-review against BUILDER-CHECKLIST
 
-1. Typed and contained: PASS for the Lean side: a retyped `id`, `kind` or `source` is an error row (`RunExamples.lean:199`), E15's other kind and extra member; the relay schema and its fuzz tests are N.A. here (the mode is not registered: en-e3ab/en-e3b).
+1. Typed and contained: PASS for the Lean side: a retyped `id`, `kind` or `source` is an error row (`RunExamples.lean:217`), E15's other kind and extra member; the relay schema and its fuzz tests are N.A. here (the mode is not registered: en-e3ab/en-e3b).
 2. Deliverables: PASS: "Rows delivered, and not" lists each task line with its commit area and test; (3) and (4) moved by the DRI's item 1.
 3. Tests can fail: PASS: `mutants.json` (13 seeded bugs, each failing a named guard, theorem or test), `trust-mutants.json` (the sweep), the thunk test's both directions.
 4. Python, Lean agree: PASS: `tests/test_english_statement_blocks.py::test_each_pinned_block_through_the_mode` (121 records; 104 `one` with Python's node, 17 `none`).
@@ -175,3 +216,14 @@ Each new section 4 statement compared with the spec after whitespace normalisati
 13. Test-removed trailers: PASS: `tools/gate_collection.py --check --prebuilt`: "1 added, 0 removed by a trailer, 0 refused, 0 stale and 0 malformed".
 14. Both directions, cited evidence, spec re-read: PASS: each new guard has its opposite (`wholeRow` answers `ok` beside the retyped rows; `oneSpans` refuses fewer and more blocks; the thunk test answers four statuses and aborts on `many`); claims cite commands above.
 15. No overclaim, no silent cut, checks can fail, limits charged: PASS: the `ReadNormAuthoring_eq` wording fixed; the cut and both deferrals are DRI rulings; every new guard shown failing on a mutant (`mutants.json`); E17.
+
+SELF-REVIEW: 1 A, 8 B, 6 C; fixed 15 (it listed seven C rows; A: the span code reclassed G[V] under the DRI's item 1; B: trust numbers
+re-measured, the tags thunk built under the DRI's item 2, the size line, the self-review and spec re-read sections, the
+sweep run to exit 0, the non-ASCII byte-span, retyped-member and fewer-blocks guards; C: line references refreshed,
+`Polarity.fits`'s ruling cited, `ReadExamples.LF` reused, both codes.json files named, `ReadNormAuthoring_eq`'s
+wording, the span-unit note for en-e3b in FOLLOW-UPS; not fixed: `BlockFault.code`'s tie, kept as recorded in DELTA
+row 2). The first self-review's line was lost with the expired session; this is the second call's (its fixes did not
+rewrite a third of the diff).
+
+FOLLOW-UP: en-e3ab english.statement's route recipe steps 1-4 (registry, shape, encoder theorem, codes reader, DEADLINES, schema seeds) and spec 8's route fixtures
+FOLLOW-UP: en-e3a-cutback readNorm returns sentence positions and its grammar; statementSpans and the many branch stop re-lexing and rebuilding (trusted lines back under 150)
