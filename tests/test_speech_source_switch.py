@@ -12,7 +12,7 @@ from test_speech_source_lean import base_env, templates
 from test_speech_acts_lean import U, unit
 from tests.frozen_speech.speech_document import SpeechSource as FrozenSource
 from ve.speech_document import SpeechSource
-from ve.speech_english import legend
+from tests.frozen_speech.speech_acts import legend
 
 
 @pytest.mark.parametrize("name,metadata,source", templates(), ids=lambda case: case if isinstance(case, str) else None)
