@@ -188,6 +188,10 @@ lean/VE/EnglishGrammar/Norm/RunExamples.lean` (the VM; the Mac and the cloud poo
   (the answers carry the English `actions_version`; re-recorded at 46 after a probe showed that with "46" read as
   "45" each digest equals main's). The failed ids rerun alone on the fixed commit `987c3edf3` (`zsh mac-pytest.sh --
   <ids>`): "10 passed"; both whole files locally: "233 passed".
+- Relay mutation gate (pre-review [relay], at `012f92813`): the first pre-review run failed with no answer from the
+  code, only "CheckerUnavailable: missing Lean service executable lean/.lake/build/bin/ve_service" (the worktree had
+  no built service binary). After `lake build` ("Build completed successfully (1348 jobs)", no source change),
+  `uv run python tools/relay_mutation_gate.py` exits 0: "48 routes, 153322 mutants, 0 failures". No code changed.
 
 ## Spec re-read (BUILDER-CHECKLIST 14)
 
