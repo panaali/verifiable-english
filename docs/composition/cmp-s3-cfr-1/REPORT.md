@@ -75,6 +75,26 @@ Not delivered here:
 Each was planted alone by /tmp's seed script: plant, `lake build ve_service`, run the named test with the build
 pinned in a temporary lock, restore, rebuild. The Python ones needed no build. mutants.json lists them. One mutant per new trusted definition: trust mutants, below.
 
+## Trust mutants (R16: a mutant per new trusted definition)
+
+`zsh mac-pytest.sh --trustmut -- --max-mutants 1000 --test lean/VE/RightClauses/RunExamples.lean --allow
+docs/composition/cmp-s3-cfr-1/trust-mutants-allow.json --rescore <the previous JSON> --json
+docs/composition/cmp-s3-cfr-1/trust-mutants.json` exits 0: "206 KILLED, 0 SURVIVOR, 0 UNKNOWN, 10 INVALID, 57
+ALLOWED, 0 NOT RUN" over 24 definitions and 273 mutants. It ran on the VM, because ve-mac-1 was unreachable.
+
+- Every D[V] and G[V] definition has a killed mutant, except two. `unitsOf` is read only inside the S predicate
+  `NoClauseKeys`. `VE.Service.Mode`'s only mutant is a constructor drop, which does not elaborate.
+- The killing checks are the `#guard`s of lean/VE/RightClauses/RunExamples.lean (9.1's documents and section 7's
+  texts), Compose/Examples.lean and RegistryExamples.lean.
+- The first two sweeps' survivors that a check could kill now have fixtures in RunExamples.lean: a clause without
+  `formula`, an extra member sorting first or last, two units with two premises, overlapping elided spans, the error
+  row, and a wrapper in the middle of a list.
+- The allow file gives each remaining survivor a one-line reason:
+  - equivalent mutants: one-element lists, the canonical writer's fuel, a sorted list's first or last profile, and
+    a check later refusing with the same text;
+  - S predicates that only the 8.5 proofs read;
+  - mutants that do not elaborate.
+
 ## Trust (R16)
 
 `uv run python tools/trust_map.py --check` on the final tree: "against 6db6ee16ddb1: K +0, S +16, ... trusted +137",
@@ -155,8 +175,8 @@ cmp-s3-cfr-1b (relay, differential, fixtures, W1, `clauseSlot_wellFormed`) and c
    cmp-s3-cfr-1b's binding.
 2. Deliverables: PASS. The table above covers (1)-(5). Reading candidates are cmp-s3-cfr-1c, asked of the DRI
    (inbox 20261109T170709Z) before any cut. `elided_bytes` is cmp-s3a-cfr-3's by the task.
-3. Tests can fail: PASS. Six seeded bugs, each killed by a named test (table above; mutants.json). Trust mutants per
-   new trusted definition: trust-mutants.json (section "Trust mutants").
+3. Tests can fail: PASS. Six seeded bugs, each killed by a named test (table above; mutants.json). Trust mutants:
+   206 killed, 0 survivors, exit 0 (trust-mutants.json, trust-mutants-allow.json; section "Trust mutants").
 4. Python/Lean agree: N.A. No Python decoder (Lean only); the differential is cmp-s3-cfr-1b's.
 5. R8 binding: N.A. No relay yet (cmp-s3-cfr-1b). The schema is closed and typed, and the relay gate passes.
 6. Gate evidence matches HEAD: PASS. The chain runs the gate on the final HEAD. The 9.3 evidence is saved
