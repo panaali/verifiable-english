@@ -20330,6 +20330,34 @@
         "VE.Presupposition.withObligations"
       ]
     },
+    "VE/Presupposition/Run.lean": {
+      "G[V]": [
+        "VE.Presupposition.Goal",
+        "VE.Presupposition.Inconsistency",
+        "VE.Presupposition.Outcome",
+        "VE.Presupposition.Row",
+        "VE.Presupposition.Shown",
+        "VE.Presupposition.checkedRow",
+        "VE.Presupposition.englishLine",
+        "VE.Presupposition.lineOf",
+        "VE.Presupposition.outcomeOf",
+        "VE.Presupposition.refusedRow",
+        "VE.Presupposition.refutedLines",
+        "VE.Presupposition.shown",
+        "VE.Presupposition.shownOf"
+      ],
+      "T": [
+        "VE.Presupposition.RunExamples.certI",
+        "VE.Presupposition.RunExamples.docC",
+        "VE.Presupposition.RunExamples.g1",
+        "VE.Presupposition.RunExamples.g2",
+        "VE.Presupposition.RunExamples.lexA",
+        "VE.Presupposition.RunExamples.refutedOf",
+        "VE.Presupposition.RunExamples.rowsOf",
+        "VE.Presupposition.RunExamples.rsC",
+        "VE.Presupposition.RunExamples.tC"
+      ]
+    },
     "VE/Acts/Specialise.lean": {
       "S": [
         "VE.Acts.Modifier.restrictive",
