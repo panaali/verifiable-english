@@ -1,0 +1,18 @@
+FAILED tests/test_norm_defaults_response_binding.py::test_norm_defaults_response_binding[status-rules-ghost]
+FAILED tests/test_norm_defaults_response_binding.py::test_norm_defaults_response_binding[status-rules-appended]
+FAILED tests/test_norm_defaults_response_binding.py::test_norm_defaults_response_binding[status-rules-predicate_named]
+FAILED tests/test_norm_defaults_response_binding.py::test_norm_defaults_response_binding[status-rules-part_without_acts]
+FAILED tests/test_norm_defaults_response_binding.py::test_norm_defaults_response_binding[rights-status-rules-ghost]
+FAILED tests/test_norm_defaults_response_binding.py::test_norm_defaults_response_binding[acts-status-rules-part_of_ghost]
+FAILED tests/test_norm_defaults_response_binding.py::test_norm_defaults_response_binding[acts-status-rules-ghost]
+FAILED tests/test_norm_defaults_response_binding.py::test_norm_defaults_response_binding[status-tuple-other_entity]
+FAILED tests/test_norm_defaults_response_binding.py::test_norm_defaults_response_binding[status-tuple-absent_entity]
+FAILED tests/test_norm_defaults_response_binding.py::test_norm_defaults_response_binding[status-tuple-longer]
+FAILED tests/test_norm_defaults_response_binding.py::test_norm_defaults_response_binding[status-tuple-emptied]
+FAILED tests/test_norm_defaults_response_binding.py::test_norm_defaults_response_binding[rights-status-tuple-reversed_tuple]
+FAILED tests/test_norm_defaults_response_binding.py::test_norm_defaults_response_binding[certificate-premises-one_more]
+FAILED tests/test_norm_defaults_response_binding.py::test_norm_defaults_response_binding[certificate-premises-one_fewer]
+FAILED tests/test_norm_defaults_response_binding.py::test_norm_defaults_response_binding[certificate-premises-zero]
+FAILED tests/test_norm_defaults_response_binding.py::test_a_certificate_case_without_its_certificate_has_no_count
+FAILED tests/test_norm_defaults_response_binding.py::test_the_manifest_lists_every_kind_the_mode_answers
+17 failed, 1 passed in 2.55s
