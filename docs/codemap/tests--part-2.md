@@ -40,7 +40,6 @@
 - `tests/test_colab.py` — (no module docstring)
 - `tests/test_command_relay.py` — ci-2b (commands-imperatives CI-2 deliverables (4) and (5)): `read_command` relays Lean's `english.command` answer verbatim and binds it to the request; the spe…
 - `tests/test_commands_ci2_review.py` — Regression checks for the CI-2 review's route claims: each comment names only bindings that are delivered (the relay's binding and the source wrapper's call la…
-- `tests/test_commands_ci3b_review.py` — Regression checks for the CI-3b review: StepsProofs' comments claim no more than its theorems prove.
 - `tests/test_compose_dispatch.py` — S0's exhaustive Python side of the composition dispatch contract (composition.md 10.1).
 - `tests/test_compose_integration.py` — S0 integration evidence for composition.md 10.2 on a real document: L2's slot, L3–L5 and L7.
 - `tests/test_conformance.py` — (no module docstring)
@@ -53,6 +52,7 @@
 - `tests/test_data_flags.py` — (no module docstring)
 - `tests/test_data_surface.py` — (no module docstring)
 - `tests/test_data_three_way.py` — Generated data declarations and finite tables across Python and Lean.
+- `tests/test_decoded_rights_labels_proof_claim.py` — No record claims the decoded route discharges the hypothesis `hk` of `legacy_labels_nodup_of_identifiers`, unless a lean/VE/NormDefaults/ theorem concludes fro…
 - `tests/test_defaults_answer.py` — The relay never takes a Lean `defaults-*` row that is not an answer to the request it sent (R8; defeasible plan DF-1b).
 - `tests/test_defaults_checks.py` — Every check of the defaults relay and of `--assume-no-exception` is needed by a test (review df-1b F1 and F9, PROBE F1 and PROBE F9).
 - `tests/test_defaults_english.py` — The English of answers that hold unless an exception applies (defeasible plan 2.8, spec 4; batch DF-1b, df-1bb).

@@ -79,7 +79,7 @@ and Rust product code are unchanged.
   - `pk_rights_inj` :298 (reading a rights label from the right)
   - `pk_keyPremise` :311
   - `legacy_labels_nodup_of_actKeys` :342 (the DRI's statement)
-  - `legacy_labels_nodup_of_identifiers` :392 (the route discharge)
+  - `legacy_labels_nodup_of_identifiers` :392 (labels distinct under the hypothesis `hk` that every act key passes `VE.Bridge.identifier`; the decoded route does not yet discharge `hk`: its decoder checks `Surface.identifier`)
 - `lean/VE/NormDefaults/PacksLegacyExamples.lean`: F1′ (`cx`) :102–129, the `hk` fixtures :131–136 and the `VE.Bridge.identifier` fixtures :137–141.
 - `docs/premise-packs/pk-1c/{DELTA.md,mutants.json,REPORT.md}`: the evidence.
 - Regression: `cd lean && PATH=~/.elan/bin:$PATH lake build VE.NormDefaults.PacksLegacyExamples`; `uv run pytest -q tests/test_packs_guard_mutants.py`; `python3 lean/audit.py`.
