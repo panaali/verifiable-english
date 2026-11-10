@@ -146,6 +146,7 @@ import VE.Presupposition.Admit
 import VE.Presupposition.Admit.Facts
 import VE.Presupposition.Admit.Statements
 import VE.Presupposition.Examples
+import VE.Presupposition.Run
 import VE.Presupposition.Couple
 import VE.Presupposition.Couple.Statements
 import VE.Presupposition.CoupleExamples

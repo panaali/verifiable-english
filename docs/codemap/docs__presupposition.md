@@ -1,5 +1,6 @@
 - `docs/presupposition/ps-2a/evidence/probe.py` — (no module docstring)
 - `docs/presupposition/ps-2ab/evidence/probe.py` — ps-2aa's probe form for ps-2ab: each theorem of Statements.lean (its text up to `:=`) against spec 4.7's statements block, comments stripped and whitespace nor…
+- `docs/presupposition/ps-2ac/evidence/probe.py` — ps-2aa's probe form for ps-2ac: each declaration of Run.lean (its text, comments stripped and whitespace normalised) against every same-named declaration in th…
 - `docs/presupposition/ps-e1/e1_items.py` — PS-E1 frozen items: built from scenarios.json with the option wording of spec 2.5 and audited against the plan.
 - `docs/presupposition/ps-e1/e1_runner.py` — PS-E1 reader runner: one fresh, blinded Sonnet 5.5 call per trial, at most four at once, resumable, capped.
 - `docs/presupposition/ps-e1/e1_score.py` — PS-E1 scorer: bars, candidate table and results, read from the prereg file and the saved raw answers.
