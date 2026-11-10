@@ -1,5 +1,4 @@
 import VE.EnglishGrammar.SourceWords
-import VE.EnglishGrammar.SourceReader
 import VE.EnglishGrammar.Advice
 import VE.EnglishGrammar.Policy
 import VE.Alternatives.Wire
@@ -133,7 +132,39 @@ def ev : List String := ["events@0"]
   ["authored", "source", "source no anchor"]
 #guard (adviceOf ev "Every person is always protected.") == some ("events-always", eventsDaysAdvice)
 
-/-! ## "always" and "eventually" (et-5b; spec 1.3, 2.4; DRI 2026-11-03 item 3, 2026-11-09 item 2) -/
+/-! ## "always" and "eventually" (et-5b; spec 1.3, 2.4; DRI 2026-11-03 item 3, 2026-11-09 item 2)
+
+No product route turns a source word into a reading set yet (DRI 2026-11-09 et-5 item 2); the translation route that
+will is et-5c's. The owner rule of 2026-11-03 item 3 is stated here once, over the catalogue's rows: inside a rule
+(`must`, `should`, `need not`, or a rule lead-in) soft-norms' row only; outside one the events row, both candidates with
+an ISO anchor and the no-anchor row's one reading otherwise; where it cannot be told (no lead-in known, or `may`, which
+reads as permission or as possibility) `always-owner`, never both. -/
+
+inductive RuleContext | rule | outside | unknown
+  deriving DecidableEq, Repr
+
+def ruleContext (sentence : List String) (leadIn : Option Bool) : RuleContext :=
+  let ws := sentence.map fold
+  if leadIn == some true || ws.any (["must", "should"].contains ·) || (ws.zip ws.tail).contains ("need", "not") then .rule
+  else if ws.contains "may" || leadIn != some false then .unknown else .outside
+
+/-- The document's anchor (spec 1.3): an ISO anchor, the open term `date_of_this_document`, or neither. -/
+inductive AnchorState | iso | openTerm | none
+  deriving DecidableEq, Repr
+
+def rowOf (word profile frame : String) : Option SourceWordKind :=
+  (sourceWords.find? fun r => r.word == word && r.profile == profile && r.frame == frame).map (·.kind)
+
+/-- The candidate wordings of `word` under the rule, or the reason it stays UNFORMALISED. -/
+def sourceReadings (word : String) (ctx : RuleContext) (anchor : AnchorState) : Except String (List String) :=
+  let wordings : Option SourceWordKind → Except String (List String)
+    | some (.readings cs) => .ok (cs.map (·.wording))
+    | some (.refuse _ _ rewrite) => .ok [rewrite]
+    | _ => .error s!"no reading row: {word}"
+  match rowOf word "soft-norms@0" "rule", ctx with
+  | some k, .rule => wordings (some k)
+  | some _, .unknown => .error s!"{word}-owner"
+  | _, _ => wordings (rowOf word "events@0" (if anchor == .iso then "source" else "source no anchor"))
 
 /-- The reader on a source sentence: its words, the translator's lead-in, the document's anchor. -/
 def readOf (word sentence : String) (leadIn : Option Bool) (a : AnchorState) : String × List String :=
@@ -159,10 +190,15 @@ def strictDefault : List String := ["<agent> must <act>.", "<agent> should <act>
 -- "eventually" is no force word: E1 with no ISO anchor, E1 and E2 with one, inside a rule too.
 #guard readOf "eventually" "Claude should eventually help" none .openTerm == ("ok", ["There is a day such that <clause> on that day."])
 #guard (readOf "eventually" "The river eventually floods" (some false) .iso).2.length == 2
--- A deontic verb in any case is a rule; no deontic verb and no lead-in is not known.
+-- A deontic verb in any case is a rule; no deontic verb and no lead-in is not known; "need" and "may" alone are no rule.
 #guard ruleContext ["Claude", "MUST", "always", "help"] none == .rule && ruleContext ["Claude", "always", "helps"] none == .unknown
--- The candidates a document with the open anchor term may not hold are the no-anchor rows' refused ones.
-#guard anchorCandidates == ["A2", "E2"]
+#guard readOf "always" "People always need water" (some false) .none == ("ok", [a1])
+#guard readOf "always" "Claude need not always help" (some false) .none == ("ok", strictDefault)
+#guard readOf "always" "It may always rain" (some false) .none == ("always-owner", [])
+-- The candidates a document with the open anchor term may not hold: the no-anchor rows' refused ones.
+#guard (sourceWords.filterMap fun r => match r.kind with
+  | .refuse c _ _ => if r.frame == "source no anchor" then some c else none
+  | _ => none) == ["A2", "E2"]
 /-- The `english.grammar` export's advice ids, through `grammarCase` on JudgmentRunExamples' request (DELTA row 2). -/
 def exportedAdvice : List String :=
   match (VE.EnglishGrammar.JudgmentRunExamples.shared []).head? with

@@ -15,7 +15,6 @@ import VE.EnglishGrammar.Evaluative
 import VE.Scope.Wire
 import VE.Scope.Readings
 import VE.Cardinality.Run
-import VE.EnglishGrammar.SourceReader
 
 /-! # The `document` service mode: the `ve-document@1` wrapper (docs/LEAN-FIRST-PLAN.md, row 16a)
 
@@ -806,9 +805,9 @@ structure Env where
   cardinality : Option VE.Cardinality.CardEnv := none
   /-- Under `judgments@0`, the bound names each authored fence is read with (spec 9.5), encoded once. -/
   boundNames : Option Json := none
-  /-- An `events@0` document's environment as written and its block, decoded once (`eventsView`, et-5b); `json` is
-  then the layered route's view of it, and `profiles` and `envId` are the written environment's. -/
-  events : Option (Json × Option VE.Events.EventsDecoded) := none
+  /-- An `events@0` document's environment as written and its hook, its block decoded once (`eventsView`, et-5b);
+  `json` is then the hook's view, and `profiles` and `envId` are the written environment's. -/
+  events : Option (Json × VE.Events.EventsHook) := none
 
 /-- Python's `Environment.identity_version`: a frozen envelope's, else its profiles'. -/
 def Env.version (E : Env) : String := (E.legacy.map (·.version)).getD (VE.Route.Wire.identityVersion E.profiles)
@@ -1149,26 +1148,29 @@ def exceptionConditioned (units : Json) : Bool :=
     | .arr ps => ps.toList
     | _ => []).any fun u => (unitRules u).any ruleExceptionConditioned
 
-/-- An `events@0` document's environment (et-5b; events 2.9 items 1 to 7): the composition gate's row, then the block,
-decoded once (`Events.decodeEvents`), and the environment the rest of the mode reads, the layered route's view of it
-(`Events.routeView`: no block, no `events@0`, one constant of the day sort per named date). Only a list with
-`soft-norms@0` and without `rights@0` reaches the gate and the block; another list with `events@0` keeps its refusal. -/
-def eventsView (environment : Json) (senses : Bool) :
-    Except String (Json × Option (Json × Option VE.Events.EventsDecoded)) := do
+/-- An `events@0` document's environment (et-5b; events 2.9 items 1 to 7): `Events.eventsHook` over the document's
+open terms, the layered decoders' own reading (the composition gate's row, the block in spec 4's order with
+`LinkNotOpen`, decoded once), and the environment the rest of the mode reads, its view (`Events.routeView`: no block,
+no `events@0`, one constant of the day sort per named date). `terms` is `none` on a path that reads no document's open
+terms (the scope block's): there, as off the soft chain (no `soft-norms@0`, or `rights@0`, `readings@1` or senses),
+the base's refusal stands, word for word. -/
+def eventsView (environment : Json) (senses : Bool) (terms : Option Json) :
+    Except String (Json × Option (Json × VE.Events.EventsHook)) := do
   let listed := listedProfiles environment
   unless listed.contains "events@0" do return (environment, none)
-  -- Off the soft chain the base's refusal stands, word for word (the DRI's signature covers the soft chain only).
-  if senses || !listed.contains "soft-norms@0" || listed.contains "rights@0" then
-    throw (undecided environment "document checks under events@0 need its Lean profile route")
-  let _ ← VE.Compose.gateOf VE.Compose.profileTable listed
-  let d ← VE.Events.decodeEvents environment
-  pure (← VE.Events.routeView environment d, some (environment, d))
+  let refusal := undecided environment "document checks under events@0 need its Lean profile route"
+  let some terms := terms | throw refusal
+  if senses || !listed.contains "soft-norms@0" || listed.any (["rights@0", "readings@1"].contains ·) then throw refusal
+  match ← VE.Events.eventsHook environment terms with
+  | some H => pure (H.view, some (environment, H))
+  | none => throw refusal
 
 /-- `base_environment`, the profile gate (before any decoding, so an unowned profile is never rejected by a
 decoder that does not read it), then the envelope decoder. A `soft-norms@0` document's soft source (`units`, the
 front matter's) is checked first (`softSource`), as Python's loader checks it before its environment. A frozen
 envelope is read only under `senses` (`frozenEnv`, batch 16f). -/
-def environmentOf (environment : Json) (units : Json := .null) (senses : Bool := false) : Except String Env := do
+def environmentOf (environment : Json) (units : Json := .null) (senses : Bool := false) (terms : Option Json := none) :
+    Except String Env := do
   match environment.getObjValD "profiles" with
   | .arr ps => if ps.contains (.str VE.Discourse.discourseProfile) then
       throw "UnsupportedProfile: ve.discourse@1 requires ve-document@2"
@@ -1181,9 +1183,11 @@ def environmentOf (environment : Json) (units : Json := .null) (senses : Bool :=
       throw (unavailable "a document over a ve.core@0 or ve.core@0.1 environment needs its legacy route")
     return ← frozenEnv environment
   let listed := listedProfiles environment
-  if let some p := listed.find? fun p => !ownedProfiles.contains p then
-    throw (undecided environment s!"document checks under {p} need its Lean profile route")
-  let (environment, events) ← eventsView environment senses
+  -- `events@0` is named first where it stands first, as when no list with it was owned (et-5b).
+  if listed.any (!ownedProfiles.contains ·) then
+    if let some p := listed.find? fun p => p == "events@0" || !ownedProfiles.contains p then
+      throw (undecided environment s!"document checks under {p} need its Lean profile route")
+  let (environment, events) ← eventsView environment senses terms
   let listed := listedProfiles environment
   if listed.contains "judgments@0" then
     -- Refused by name, by this mode's list; the layer's requirement is the gate's over the list, below.
@@ -1216,9 +1220,9 @@ def environmentOf (environment : Json) (units : Json := .null) (senses : Bool :=
   match decodedEnvironment environment block with
   | .ok E => match events with
     | none => pure E
-    | some (written, d) => do
+    | some (written, H) => do
       let ps := listedProfiles written
-      pure { E with profiles := ps, envId := ← Standalone.environmentIdOf ps written, events := some (written, d) }
+      pure { E with profiles := ps, envId := ← Standalone.environmentIdOf ps written, events := some (written, H) }
   | .error m => throw (if m.startsWith "CheckerUnavailable" then m else (vocabularyFault environment).getD m)
 
 /-- The `check` mode's typed decoder of one formula (`Standalone.decodeTyped`: `Route.Typed.check` on the first-order
@@ -2330,29 +2334,31 @@ def layeredOf (E : Env) (front : Json) (units : List SourceUnit) :
     Except String VE.NormDefaults.Wire.LayeredU :=
   VE.NormDefaults.Wire.decodeLayered (requestOf E front units)
 
-/-- Events 2.9 item 8 on the document route (spec 4): a declared `date_of_this_document` is open
-(`AnchorNotOpen: date_of_this_document`), and then no reading of a reading set is a candidate that turns on it
-(`AnchorOpen: <candidate>`, the catalogue's `anchorCandidates`), in the front matter's order. -/
+/-- Events 2.9 item 8 on the document route (spec 4), after the block's checks: a declared `date_of_this_document` is
+open (`AnchorNotOpen: date_of_this_document`), and then no reading of a reading set names a candidate that turns on it
+(`AnchorOpen: <candidate>`): the refused candidate of a no-anchor row of the catalogue, read by the reading's `id`, in
+the front matter's order. -/
 def eventsAnchorChecks (environment : Json) (d : Option VE.Events.EventsDecoded) (front : Json) :
     Except String Unit := do
   if (← VE.Events.openAnchor environment (d.map (·.V))).isNone then return
+  let candidates := VE.EnglishGrammar.sourceWords.filterMap fun r => match r.kind with
+    | .refuse c _ _ => if r.frame == "source no anchor" then some c else none
+    | _ => none
   for set in (Loader.optionalList front "reading_sets").getArr?.toOption.getD #[] do
     for r in (set.getObjValD "readings").getArr?.toOption.getD #[] do
       if let .str c := r.getObjValD "id" then
-        if VE.EnglishGrammar.anchorCandidates.contains c then throw s!"AnchorOpen: {c}"
+        if candidates.contains c then throw s!"AnchorOpen: {c}"
 
-/-- An `events@0` document's layered document (et-5b): the soft branch of `decodeLayered` on `requestOf`'s norms and the
-environment as written, with the block `environmentOf` decoded (never a second decoding), after the document route's
-checks beside it (events 4): `LinkNotOpen` against the front matter's open terms, then `eventsAnchorChecks`.
-`layeredOf` stays the soft branch alone, the route its theorems (`DocumentChain.layeredOf_soft`) describe. -/
-def eventsLayeredOf (E : Env) (front : Json) (units : List SourceUnit) (written : Json)
-    (d : Option VE.Events.EventsDecoded) : Except String VE.NormDefaults.Wire.LayeredU := do
-  let environment := wireJson 257 (VE.Compose.withoutDocumentLayers written)
-  if let some d := d then
-    VE.Events.checkOpen (VE.Events.openTermsOf (Loader.optionalList front "open_terms")) d.V.links
-  eventsAnchorChecks environment d front
+/-- An `events@0` document's layered document (et-5b): `eventsAnchorChecks`, then the soft branch of `decodeLayered`
+(`decodeSoftU`) on `requestOf`'s norms and the environment as `requestOf` sends it, read through the hook `environmentOf`
+built (`H`: the block decoded once, `LinkNotOpen` included), never a second decoding. `layeredOf` stays the soft
+branch alone, the route its theorems (`DocumentChain.layeredOf_soft`) describe. -/
+def eventsLayeredOf (E : Env) (front : Json) (units : List SourceUnit) (written : Json) (H : VE.Events.EventsHook) :
+    Except String VE.NormDefaults.Wire.LayeredU := do
+  let environment := wireJson 257 { E with json := written }.lower
+  eventsAnchorChecks environment H.decoded front
   VE.NormDefaults.Wire.decodeSoftU environment ((requestOf E front units).getObjValD "norms")
-    (some ⟨← VE.Events.routeView environment d, d⟩)
+    (some ⟨← VE.Events.routeView environment H.decoded, H.decoded⟩)
 
 end VE.Service.DocumentChain
 
@@ -2423,6 +2429,7 @@ def check (text : String) (withGraph : Bool := true) (lexicon : Option Json := n
   unless environment matches .obj _ do throw "document needs an embedded environment"
   let senses := (front.getObjVal? "senses").isOk
   let E ← environmentOf environment (front.getObjValD "units") senses
+    (if front == doc.front then some (Loader.optionalList front "open_terms") else none)
   -- Open terms, reading sets and narrowings read the first-order chain, which cardinality content is not (qt-a4b).
   if E.cardinality.isSome then
     if let some k := ["open_terms", "reading_sets", "narrowings"].find? (front.getObjVal? · |>.isOk) then
@@ -2489,7 +2496,7 @@ def check (text : String) (withGraph : Bool := true) (lexicon : Option Json := n
   if E.soft && E.profiles.contains "norm-defaults@0" then
     -- The soft branch (spec 3.2): the layered route's own decoding, then its `completions` check on `L.U`.
     let L ← match E.events with
-      | some (written, d) => VE.Service.DocumentChain.eventsLayeredOf E front units written d
+      | some (written, H) => VE.Service.DocumentChain.eventsLayeredOf E front units written H
       | none => VE.Service.DocumentChain.layeredOf E front units
     let block := (front.getObjVal? "completions").toOption.getD (Json.mkObj [])
     let _ ← VE.NormDefaults.Wire.validateCompletions L.U block unitIds

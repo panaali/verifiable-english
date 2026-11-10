@@ -1,5 +1,6 @@
 import VE.Events.RouteExamples
 import VE.Service.DocumentChainExamples
+import VE.EnglishGrammar.SourceWordsExamples
 
 /-! et-5b's document-route fixtures (docs/spec/events-time-causation.md 1.3, 2.3, 2.9, 4 and 8.1 T15-T17; DRI
 2026-11-10 item 1): an `events@0` document read by `Document.check`, one document per item of 2.9 with its diagnostic,
@@ -70,15 +71,15 @@ def assertedDoc (e : Json) (claims : List Json) (members : List (String × Json)
 def statuses (text : String) : Option (List String) :=
   (VE.Service.Document.check text).toOption.map (·.units.map (·.status))
 /-- The block `environmentOf` decoded once, and the layered document `check` reads (`eventsLayeredOf`). -/
-def decodedOf (e : Json) : Option VE.Events.EventsDecoded :=
-  match VE.Service.Document.environmentOf e with
-  | .ok E => E.events.bind (·.2)
+def decodedOf (e : Json) (terms : Json := Json.arr #[term "led_to"]) : Option VE.Events.EventsDecoded :=
+  match VE.Service.Document.environmentOf e (terms := some terms) with
+  | .ok E => E.events.bind (·.2.decoded)
   | .error _ => none
-def labels (e : Json) : List String := ((decodedOf e).map fun d => d.labelled.map (·.1)).getD []
+def labels (e : Json) (terms : Json := Json.arr #[term "led_to"]) : List String := ((decodedOf e terms).map fun d => d.labelled.map (·.1)).getD []
 def layered (e : Json) : Except String VE.NormDefaults.Wire.LayeredU := do
   let front := doc e
   let c ← VE.Service.Document.check (textOf front)
-  let E ← VE.Service.Document.environmentOf e (c.front.getObjValD "units")
+  let E ← VE.Service.Document.environmentOf e (c.front.getObjValD "units") (terms := some (c.front.getObjValD "open_terms"))
   match E.events with
   | some (w, d) => VE.Service.DocumentChain.eventsLayeredOf E c.front c.units w d
   | none => throw "no events"
@@ -89,13 +90,15 @@ def packs (e : Json) : Option (List String) := (layered e).toOption.map (·.pack
 #guard outcome (envOf (some (blockD))) == "ok" && packs (envOf (some (blockD))) == some ["soft", "events"]
 #guard outcome (envOf none) == "ok" && packs (envOf none) == some ["soft"]
 -- Identities read the environment as written: its profiles and bytes, the block included.
-#guard (match VE.Service.Document.environmentOf (envOf (some (blockD))) with
+def envOfDoc (e : Json) : Except String VE.Service.Document.Env :=
+  VE.Service.Document.environmentOf e (terms := some (Json.arr #[term "led_to"]))
+#guard (match envOfDoc (envOf (some (blockD))) with
   | .ok E => E.profiles == VE.Events.RouteExamples.listed &&
       some E.envId == (VE.Service.Standalone.environmentIdOf E.profiles (envOf (some (blockD)))).toOption &&
-      E.envId != ((VE.Service.Document.environmentOf (envOf (some (blockD "[\"2026-10-15\"]")))).toOption.map (·.envId)).getD ""
+      E.envId != ((envOfDoc (envOf (some (blockD "[\"2026-10-15\"]")))).toOption.map (·.envId)).getD ""
   | .error _ => false)
 #guard (layered (envOf (some (blockD)))).toOption.map (·.envId) ==
-  ((VE.Service.Document.environmentOf (envOf (some (blockD)))).toOption.map (·.envId))
+  ((envOfDoc (envOf (some (blockD)))).toOption.map (·.envId))
 -- Another list with `events@0` keeps the base's refusal, word for word.
 #guard outcome (envOf none ["events@0", "norm-defaults@0", "norms@0", "relational-fol@0"]) ==
   "CheckerUnavailable: document checks under events@0 need its Lean profile route"
@@ -114,12 +117,27 @@ def withBlock (f : String → String) : Json := envOf (some (parse (f (blockD).c
   "DuplicateDeclaration: event sort act"
 #guard outcome (envOf (some (blockD))) [] == "LinkNotOpen: led_to"
 #guard outcome (envOf (some (blockD "[\"nonsense\"]"))) == "InvalidDate(nonsense)"
+-- Spec 4's order, as the norm-defaults mode's hook gives it: item 5's `LinkNotOpen` before item 6.
+#guard outcome (envOf (some (blockD "[\"nonsense\"]"))) [] == "LinkNotOpen: led_to" &&
+  (match VE.Events.eventsHook (envOf (some (blockD "[\"nonsense\"]"))) (Json.arr #[]) with
+    | .error e => e | .ok _ => "ok") == "LinkNotOpen: led_to"
 -- 7: the pack's charge.
 def counted (links : Nat) : String :=
   let rows := fun (n : Nat) (f : Nat → String) => ",".intercalate ((List.range n).map f)
   outcome (envOf (some (parse ("{\"day\":\"day\",\"before\":\"before\",\"events\":[],\"states\":[],\"dates\":[],\"links\":[" ++
     rows links (fun i => linkJ s!"l{i}" "contributed" "drafters") ++ "]}"))))
 #guard counted 256 == "EventsSort: l0" && counted 257 == "ResourceLimit: events premises"
+-- 7, the whole pack against `maxNodes` (`checkPremiseSize`): n necessary and n contributed links on one pair; 30 of each
+-- fit, 60 do not.
+def weaker (n : Nat) : Json × List (String × Json) :=
+  let ps := (List.range n).flatMap fun i => [(s!"c{i}", "contributed"), (s!"n{i}", "necessary")]
+  let wording := fun (f : String) => if f == "contributed" then "{0} contributed to {1}" else "{0} was necessary for {1}"
+  let b := parse ("{\"day\":\"day\",\"before\":\"before\",\"events\":[{\"sort\":\"act\",\"on\":\"committed_on\"}]," ++
+    "\"states\":[],\"dates\":[],\"links\":[" ++ ",".intercalate (ps.map fun (p, f) => linkJ p f "drafters") ++ "]}")
+  (envOf (some b) VE.Events.RouteExamples.listed (ps.map fun (p, f) => rolePred p "[\"act\",\"act\"]" (wording f)),
+    [("open_terms", Json.arr (ps.map fun (p, _) => term p).toArray)])
+#guard outcome (weaker 60).1 (weaker 60).2 == "ResourceLimit: events premises"
+#guard outcome (weaker 30).1 (weaker 30).2 == "ok"
 -- 8: the open anchor term: its sort, its wording, no `anchor` beside it; then no A2 or E2 reading.
 #guard outcome openEnv == "ok"
 #guard outcome (withAnchor (envOf (some (blockD "[]"))) (anchorConst "act")) == "AnchorNotOpen: date_of_this_document"
@@ -182,12 +200,12 @@ this document. -/
 def t16Claim : Json := ex "day" (ex "situation" (Json.arr #[.str "and", bin "before" anchorJ (v 1),
   bin "situation_begins" (v 0) (v 1)]))
 #guard statuses (assertedDoc t16Env [t16Claim] t16Opens) == some ["CHECKED", "CHECKED"]
-#guard (labels t16Env).contains "events:link_weaker:value_necessary:value_contributed"
+#guard (labels t16Env (Json.arr #[term "value_contributed", term "value_necessary"])).contains "events:link_weaker:value_necessary:value_contributed"
 #guard outcome t16Env t16Opens == "ok" && outcome t16Env == "LinkNotOpen: value_contributed"
 
 /-! ## T17: A2 and E2 against the document's anchor -/
 
-open VE.EnglishGrammar (sourceReadings RuleContext AnchorState)
+open VE.EnglishGrammar.SourceWordsExamples (sourceReadings RuleContext AnchorState)
 
 /-- `sourceReadings` as its candidates, or its reason with none. -/
 def rd (word : String) (ctx : RuleContext) (a : AnchorState) : String × List String :=
