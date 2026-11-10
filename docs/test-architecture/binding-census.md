@@ -6,16 +6,16 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 
 | | count |
 |---|---:|
-| leaves:bound | 293 |
-| leaves:closed domain | 310 |
-| leaves:none | 1587 |
-| modes | 43 |
+| leaves:bound | 298 |
+| leaves:closed domain | 313 |
+| leaves:none | 1603 |
+| modes | 44 |
 | today:hand | 203 |
 | today:later Lean request | 62 |
-| today:not probed | 1185 |
-| today:shape | 603 |
+| today:not probed | 1201 |
+| today:shape | 611 |
 | today:unbound | 137 |
-| answers | 594 |
+| answers | 599 |
 | probes | 10204 |
 | hand_binders | 51 |
 
@@ -781,6 +781,7 @@ Delegates: `/` to soft-norms.
 | `/bars/*/over/*` | string | none |  |  | 0 | unbound |
 | `/bars/*/predicate` | string | none |  |  | 1 | unbound |
 | `/bars/*/reading` | string | closed domain | const |  | 1 | shape |
+| `/budget` | integer | closed domain | const |  | 1 | shape |
 | `/case_index` | integer | bound | x-index |  | 0 | shape |
 | `/colliding_pairs/*/act` | string | none |  |  | 0 | not probed |
 | `/colliding_pairs/*/label` | string | none |  | pattern | 0 | not probed |
@@ -847,6 +848,11 @@ Delegates: `/` to soft-norms.
 | `/lines/*/right` | string | none |  |  | 3 | hand: `ve/rights.py:__init__` |
 | `/lines/*/rule` | string | none |  |  | 3 | hand: `ve/rights.py:__init__` |
 | `/lines/*/source_line` | string | none |  |  | 0 | unbound |
+| `/located_findings/*/code` | string | none |  |  | 0 | not probed |
+| `/located_findings/*/right` | string | none |  |  | 0 | not probed |
+| `/located_findings/*/rule` | string | none |  |  | 0 | not probed |
+| `/located_findings/*/span` | string | none |  | minLength | 0 | not probed |
+| `/located_findings/*/text` | string | none |  | minLength | 0 | not probed |
 | `/narrowings/*/bar` | string | none |  |  | 0 | not probed |
 | `/narrowings/*/limitations/*` | string | none |  |  | 1 | not probed |
 | `/narrowings/*/mechanisms/*/grounds/citation/key` | string | none |  |  | 0 | not probed |
@@ -875,6 +881,8 @@ Delegates: `/` to soft-norms.
 | `/rule_narrowings/*/citations/*/licenses/*` | string | none |  |  | 0 | not probed |
 | `/rule_narrowings/*/narrows/*` | string | none |  |  | 0 | not probed |
 | `/rule_narrowings/*/rule` | string | none |  |  | 3 | not probed |
+| `/situation/*/predicate` | string | none |  |  | 0 | not probed |
+| `/situation/*/tuples/*/*` | string | none |  |  | 0 | not probed |
 | `/status` | string | closed domain | const |  | 23 | shape |
 | `/status_text` | string | none |  | minLength | 3 | later Lean request |
 | `/status_text` | string | none |  | pattern | 3 | later Lean request |
@@ -883,6 +891,7 @@ Delegates: `/` to soft-norms.
 | `/targets/*` | string | none |  |  | 9 | later Lean request |
 | `/verdict` | string | closed domain | enum |  | 3 | shape |
 | `/warnings/*` | string | none |  | minLength | 0 | not probed |
+| `/weighing_points/*` | string | none |  | pattern | 0 | not probed |
 | `/witness_kind` | string | none |  | pattern | 0 | not probed |
 | `/wordings/@key` | key | none |  |  | 2 | hand: `ve/rights.py:__init__` |
 | `/wordings/{}` | string | none |  |  | 2 | later Lean request |
@@ -935,6 +944,7 @@ Delegates: `/` to soft-norms.
 | `/lines` |  |  |  | drop: accept/accepted, accept/ve/rights.py:__init__; duplicate: accept/accepted, accept/ve/rights.py:__init__; replace: accept/accepted, accept/ve/rights.py:__init__; reverse: accept/accepted, accept/ve/rights.py:__init__ |
 | `/lines/*/node/over` |  |  |  |  |
 | `/lines/*/node/unless` |  |  |  | drop: accept/accepted, accept/transport; duplicate: accept/accepted, accept/transport |
+| `/located_findings` |  |  |  |  |
 | `/narrowings` |  |  |  | drop: accept/accepted, accept/transport; duplicate: accept/accepted, accept/transport; replace: accept/accepted, accept/transport; reverse: accept/accepted, accept/transport |
 | `/narrowings/*/limitations` |  |  |  |  |
 | `/narrowings/*/mechanisms` |  |  |  | drop: accept/accepted, accept/transport; duplicate: accept/accepted, accept/transport; replace: accept/accepted; reverse: accept/accepted |
@@ -948,9 +958,13 @@ Delegates: `/` to soft-norms.
 | `/rule_narrowings/*/citations` |  |  |  |  |
 | `/rule_narrowings/*/citations/*/licenses` |  |  |  |  |
 | `/rule_narrowings/*/narrows` |  |  |  |  |
+| `/situation` |  |  |  |  |
+| `/situation/*/tuples` |  |  |  |  |
+| `/situation/*/tuples/*` |  |  |  |  |
 | `/targets` |  |  |  | drop: accept/transport; duplicate: accept/transport; replace: accept/transport; reverse: accept/transport |
 | `/unit_open` | x-length |  |  |  |
 | `/warnings` |  |  |  |  |
+| `/weighing_points` |  |  |  |  |
 
 ## speech-acts
 
@@ -1789,6 +1803,8 @@ Delegates: `/` to norms.
 | `/status` | string | closed domain | const |  | 31 | shape |
 | `/target` | string | bound | x-equals |  | 5 | shape |
 | `/targets/*` | string | none |  |  | 33 | unbound |
+| `/tuple` | any | bound | x-equals |  | 0 | shape |
+| `/tuple/*` | string | bound | x-equals |  | 6 | shape |
 | `/tuple/*` | string | none |  |  | 6 | unbound |
 | `/under/*/predicate` | string | none |  |  | 2 | unbound |
 | `/under/*/tuple/*` | string | none |  |  | 2 | unbound |
@@ -1869,7 +1885,7 @@ Delegates: `/` to norms.
 | `/report/assumptions` |  |  |  | drop: accept/accepted; duplicate: accept/accepted |
 | `/residual/gaps` |  |  |  | drop: accept/accepted; duplicate: accept/accepted; replace: accept/accepted; reverse: accept/accepted |
 | `/rights` |  |  |  |  |
-| `/rules` |  |  |  | drop: accept/accepted; duplicate: accept/accepted; replace: accept/accepted; reverse: accept/accepted |
+| `/rules` |  |  | x-unique-strings | drop: accept/accepted; duplicate: accept/accepted; replace: accept/accepted; reverse: accept/accepted |
 | `/rules/*/over` |  |  |  |  |
 | `/rules/*/unless` |  |  |  |  |
 | `/situation/filling/{}` |  |  |  |  |
@@ -1878,7 +1894,7 @@ Delegates: `/` to norms.
 | `/split` |  |  |  |  |
 | `/split/*/parts` |  |  |  |  |
 | `/targets` |  |  |  | drop: accept/accepted; duplicate: accept/accepted; replace: accept/accepted; reverse: accept/accepted |
-| `/tuple` |  |  |  | drop: accept/accepted; duplicate: accept/accepted |
+| `/tuple` | x-equals | x-equals |  | drop: accept/accepted; duplicate: accept/accepted |
 | `/under` |  |  |  | drop: accept/accepted, accept/ve/norm_defaults_english.py:_latent; duplicate: accept/accepted |
 | `/under/*/tuple` |  |  |  | drop: accept/accepted; duplicate: accept/accepted |
 | `/unsaid` |  |  |  | drop: accept/ve/ast.py:formula; duplicate: accept/accepted, accept/ve/norm_defaults.py:__init__; replace: accept/ve/ast.py:formula; reverse: accept/accepted |
@@ -3794,6 +3810,34 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/result/readings/*/command/args` |  |  |  |  |
 | `/result/readings/*/fills` |  |  |  |  |
 | `/result/readings/*/fills/*/span` |  |  |  |  |
+
+## act-readings
+
+5 recorded answers.
+
+| leaf | kind | class | keyword | format | observed | bound today |
+|---|---|---|---|---|---:|---|
+| `/case_index` | integer | bound | x-index |  | 0 | shape |
+| `/diagnostic` | string | none |  |  | 2 | not probed |
+| `/error` | string | none |  | minLength | 0 | not probed |
+| `/id` | any | bound | x-echo |  | 5 | shape |
+| `/id` | string | bound | x-equals |  | 5 | shape |
+| `/readings/*/acts/*/act` | string | none |  |  | 10 | not probed |
+| `/readings/*/acts/*/from/*` | integer | none |  | minimum | 73 | not probed |
+| `/readings/*/acts/*/text` | string | none |  |  | 10 | not probed |
+| `/readings/*/paraphrase` | string | none |  |  | 6 | not probed |
+| `/status` | string | closed domain | const |  | 5 | shape |
+| `/tokens/*/0` | integer | none |  | minimum | 30 | not probed |
+| `/tokens/*/1` | integer | none |  | minimum | 30 | not probed |
+| `/verdict` | string | closed domain | enum |  | 5 | shape |
+
+| array | length bound by | positions bound by | internal agreement | probed (generic/hand) |
+|---|---|---|---|---|
+| `/readings` |  |  |  |  |
+| `/readings/*/acts` |  |  |  |  |
+| `/readings/*/acts/*/from` |  |  |  |  |
+| `/tokens` |  |  |  |  |
+| `/tokens/*` |  |  |  |  |
 
 ## clauses-elaborate
 

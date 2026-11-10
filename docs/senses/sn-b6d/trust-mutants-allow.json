@@ -1,0 +1,16 @@
+{
+ "allow": [
+  {"definition": "VE.Senses.Run.lineJson", "operator": "list-first",
+   "reason": "equivalent: (D.sensesOf w).isEmpty is unchanged by take 1 (the find? on line 356 is killed by the gloss guards)"},
+  {"definition": "VE.Senses.Run.lineJson", "operator": "list-last",
+   "reason": "equivalent: (D.sensesOf w).isEmpty is unchanged by reverse.take 1 (the find? on line 356 is killed by the gloss guards)"},
+  {"definition": "VE.Senses.Run.readCase", "operator": "list-first",
+   "reason": "equivalent on reread and line.toList, lists of at most one entry (an Option arm); its cuts of the member names and of units are killed by the both-members and second-unit guards"},
+  {"definition": "VE.Senses.Run.readCase", "operator": "list-last",
+   "reason": "equivalent on reread and line.toList, lists of at most one entry (an Option arm); its cuts of the member names and of units are killed by the both-members and second-unit guards"},
+  {"definition": "VE.Senses.Run.readCase", "operator": "append-right",
+   "reason": "does not elaborate (Application type mismatch at the textsJson argument)"},
+  {"definition": "VE.Senses.Run.readCase", "operator": "list-empty",
+   "reason": "does not elaborate (Application type mismatch at the textsJson argument)"}
+ ]
+}

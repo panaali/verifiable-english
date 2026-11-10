@@ -14,7 +14,7 @@ inductive Mode where
   | parse | graph | readings | readingsChoices | bundle | familyNorms
   | softNorms | rights | speechActs | reports | alternatives | risk | riskEval | quantity | normDefaults
   | discourse | readingsRoute | diagnose | document | englishQuestion | searchBudget | ask | words | metered | calc
-  | cardinality | scope | sensesProject | englishCommand | clausesElaborate
+  | cardinality | scope | sensesProject | englishCommand | actReadings | clausesElaborate
   deriving DecidableEq, Repr
 
 def Mode.name : Mode → String
@@ -60,6 +60,7 @@ def Mode.name : Mode → String
   | .scope => "scope"
   | .sensesProject => "senses.project"
   | .englishCommand => "english.command"
+  | .actReadings => "act-readings"
   | .clausesElaborate => "clauses-elaborate"
 
 def modes : List Mode := [.evaluate, .checkCertificate, .order, .route, .norms, .english,
@@ -67,7 +68,7 @@ def modes : List Mode := [.evaluate, .checkCertificate, .order, .route, .norms, 
   .environment, .model, .check, .identity, .parse, .graph, .readings, .readingsChoices, .bundle, .familyNorms,
   .softNorms, .rights, .speechActs, .reports, .alternatives, .risk, .riskEval, .quantity, .normDefaults,
   .discourse, .readingsRoute, .diagnose, .document, .englishQuestion, .searchBudget, .ask, .words, .metered,
-  .calc, .cardinality, .scope, .sensesProject, .englishCommand, .clausesElaborate]
+  .calc, .cardinality, .scope, .sensesProject, .englishCommand, .actReadings, .clausesElaborate]
 
 def Mode.ofName? (name : String) : Option Mode := modes.find? (·.name == name)
 

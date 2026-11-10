@@ -138,6 +138,7 @@ def runMode : Mode → Json → Json
   | .scope, j => VE.Scope.Run.runCaseReported j
   | .sensesProject, j => VE.Senses.Run.projectCaseReported j
   | .englishCommand, j => VE.Commands.Run.caseReported j
+  | .actReadings, j => VE.Acts.Run.actReadingsReported j
   | .clausesElaborate, j => VE.RightClauses.Run.runCaseReported j
 
 /-- A case the batch decoder rejected on its own (JSON depth): the one-shot record. -/
@@ -952,6 +953,7 @@ theorem runMode_sensesProject (j : Json) :
     runMode .sensesProject j = VE.Senses.Run.projectCaseReported j := rfl
 
 theorem runMode_englishCommand (j : Json) : runMode .englishCommand j = VE.Commands.Run.caseReported j := rfl
+theorem runMode_actReadings (j : Json) : runMode .actReadings j = VE.Acts.Run.actReadingsReported j := rfl
 
 theorem runMode_clausesElaborate (j : Json) :
     runMode .clausesElaborate j = VE.RightClauses.Run.runCaseReported j := rfl

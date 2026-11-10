@@ -505,3 +505,17 @@ def test_a_metered_reader_without_its_trace_binding_fails_the_gate(built, withou
     for field in ("sort", "local_id"):
         assert re.search(rf"^accepted service:metered rebind results/\*/result/evaluation/explanation/\*/bindings/\*/"
                          rf"{field}\b", failures, re.M), failures
+
+
+def test_the_senses_read_fixtures_ask_for_the_line_and_the_reread():
+    """sn-b6d: an asked member is part of a case's shape, so the recorder keeps a `line` and a `reread` case of
+    `senses.read`, and the gate's relay call asks for them: their genuine answers carry the members it mutates."""
+    lean_build("ve_senses_route")
+    cases = [json.loads(line)[3] for line in G.CASES.read_text().splitlines()
+             if json.loads(line)[:2] == ["one-shot", "ve_senses_route"]]
+    for member in ("line", "reread"):
+        [case] = [case for case in cases if member in case]
+        answer = G._senses(case, G.BIN / "ve_senses_route")
+        assert member in (answer if member == "line" else answer["reading"])
+        plain = {key: value for key, value in case.items() if key != member}
+        assert G._shape(case, {"status": "ok"}) != G._shape(plain, {"status": "ok"})

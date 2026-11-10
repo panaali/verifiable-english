@@ -88,7 +88,6 @@
    [["soft-norms@0", "acts@0 with soft-norms@0 is not implemented"],
     ["rights@0", "acts@0 with rights@0 is not implemented"],
     ["alternatives@0", "acts@0 with alternatives@0 is not implemented"],
-    ["speech-acts@0", "acts@0 with speech-acts@0 is not implemented"],
     ["closure@0", "acts@0 on the closure family is not implemented"],
     ["order@0", "acts@0 on the order family is not implemented"],
     ["ve.discourse@1", "acts@0 with ve.discourse@1 is not implemented"]],

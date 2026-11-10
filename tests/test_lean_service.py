@@ -1399,7 +1399,9 @@ _SCHEMA_SEEDS = {
     "senses.project": ({"id": "c", "lines": "", "used": []},
                        {"id": "c", "status": "ok", "result": {"dictionary_id": "a" * 64, "senses_version": "1",
                         "projection": {"status": "rejected", "code": "MalformedPreamble", "details": {"line": 0}}}}),
-    "norm-defaults": ({"id": "c", "kind": "norm-defaults-certificate"},
+    # Bound (`bind_answers`): a certificate bound to no premise beyond the case's (none) counts 0.
+    "norm-defaults": ({"id": "c", "kind": "norm-defaults-certificate", "premises": [],
+                       "certificate": {"premise_meaning_ids": []}},
                       {"id": "c", "status": "ok", "valid": True, "premises": 0}),
     "discourse": ({"id": "c", "kind": "discourse-validity"}, {"id": "c", "status": "ok", "validity": {}}),
     "clauses-elaborate": ({"id": "c", "environment": {}, "document": []},
@@ -1425,6 +1427,12 @@ _SCHEMA_SEEDS = {
              {"status": "ok", "meaning_id": "a" * 64,
               "rows": [{"status": "ok", "claim": "c1", "claim_id": "b" * 64, "kind": "claim", "outcome": "holds",
                         "reason": None, "reproduction": None}]}),
+    "act-readings": ({"id": "c", "phrase": "{0} to seek asylum", "fixed": [], "frames": [], "adverbs": [],
+                      "role": "plain", "sign": True},
+                     {"id": "c", "status": "ok", "verdict": "LISTED", "tokens": [[0, 3], [4, 6], [7, 11], [12, 18]],
+                      "readings": [{"acts": [{"act": "{0} to seek asylum", "text": "{0} has the right to seek asylum",
+                                              "from": [0, 1, 2, 3]}],
+                                    "paraphrase": "{0} has the right to seek asylum."}]}),
 }
 
 
