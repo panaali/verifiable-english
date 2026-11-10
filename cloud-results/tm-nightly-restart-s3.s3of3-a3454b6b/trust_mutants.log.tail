@@ -1,0 +1,11 @@
+trust_mutants: 64 definitions, 81 mutants (27 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/Events/Wire.lean:25 VE.Events.EventsDecoded (D[V], trusted) eq-ne: = -> ≠ (lean/VE/Events/Wire.lean:202: Application type mismatch: The argument)
+UNKNOWN lean/VE/Commands/Steps.lean:94 VE.Commands.shapeOutcome (G[V], trusted) eq-ne: == -> != (lean/VE/Commands/StepsExamples.lean:59: Expression (it computes through a proof the mutant broke ...)
+UNKNOWN lean/VE/Presupposition/Wire.lean:138 VE.Presupposition.unitOf (G[V], trusted) eq-ne: == -> != (lean/VE/Presupposition/Examples.lean:0: maximum number of errors (100; from option `maxErrors`) r...)
+UNKNOWN lean/VE/Acts/Run.lean:89 VE.Acts.Run.isElaborate (G[V], trusted) eq-ne: == -> != (lean/VE/Readings/ActsExamples.lean:79: Expression (Lean could not elaborate it in the probe))
+UNKNOWN lean/VE/Purposes/WellFormed.lean:167 VE.Purposes.WellFormed (S, trusted) eq-ne: = -> ≠ (lean/VE/Purposes/Examples.lean:275: Expression (VE.Purposes.Examples.wfDecidable, which it reads,...)
+trust_mutants: 22 KILLED, 0 SURVIVOR, 5 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 54 OTHER SHARD in 1136 s
+trust_mutants: D[V], trusted: 6 KILLED, 1 UNKNOWN, 10 OTHER SHARD
+trust_mutants: G[V], trusted: 5 KILLED, 3 UNKNOWN, 20 OTHER SHARD
+trust_mutants: S, trusted: 11 KILLED, 1 UNKNOWN, 24 OTHER SHARD
+trust_mutants: steps: wall plan 9.4 s, scratch 3 s, control_build 0.3 s, probe_install 1 s, mutants 1116.3 s, cleanup 5.9 s, reads 0.1 s; lake control_build 0.2 s (1), probe_install 1 s (1), control_probes 244.3 s (24), mutant_builds 200.4 s (37), mutant_checks 1949.9 s (40), stage_controls 611.7 s (14), mutant_probes 453.5 s (28)
