@@ -21083,6 +21083,16 @@
         "VE.RightClauses.Run.runCaseReported"
       ]
     },
+    "VE/RightClauses/ElidedBytes.lean": {
+      "S": [
+        "VE.RightClauses.lineElided",
+        "VE.RightClauses.entryElided",
+        "VE.RightClauses.elidedTotal"
+      ],
+      "D[V]": [
+        "VE.RightClauses.unitElided"
+      ]
+    },
     "VE/RightClauses/WireDecode.lean": {
       "P": [
         "VE.RightClauses.mapPair",
