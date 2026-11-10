@@ -1,0 +1,14 @@
+trust_mutants: --rescore ci-job/rescore.json: a full run, since its inputs differ (options)
+trust_mutants: 13 definitions, 451 mutants (50 to run), 4 jobs, base 3e4fe503f4c9
+UNKNOWN lean/VE/Rights/Run.lean:315 VE.Rights.Run.situationTables (D[V], trusted) list-empty: (genEntries D).map (·.1) -> [] (lean/VE/Rights/Run.lean:316: Invalid field notation: Type of)
+UNKNOWN lean/VE/Rights/Run.lean:316 VE.Rights.Run.situationTables (D[V], trusted) list-empty: (· -> (fun x_tm => [] (lean/VE/Rights/Run.lean:316: Invalid projection: Type of)
+SURVIVOR lean/ResponseShape/Schemas/Rights.lean:396 ResponseShape.Schemas.Rights.packages (G[V], trusted) list-empty: [ ("status_text", .pattern (Re.prefixes ["UNKNOWN: "])), ("detail", .pattern (Re.prefixes ["missi... -> []
+SURVIVOR lean/ResponseShape/Schemas/Rights.lean:322 ResponseShape.Schemas.Rights.scope (G[V], trusted) list-drop-last: [ obj, .required ["id", "status", "findings", "licensed", "located_findings", "narrowings"], clos... -> ([ obj, .required ["id", "status", "findings", "licensed", "located_findings", "narrowings"], clo...
+SURVIVOR lean/ResponseShape/Schemas/Rights.lean:395 ResponseShape.Schemas.Rights.packages (G[V], trusted) list-drop-last: [.required ["detail"], .not (.anyOf [.required ["weighing_points"], .required ["situation_exhibit... -> ([.required ["detail"], .not (.anyOf [.required ["weighing_points"], .required ["situation_exhibi...
+SURVIVOR lean/ResponseShape/Schemas/Rights.lean:187 ResponseShape.Schemas.Rights.located_findings (G[V], trusted) list-drop-first: ["null"] -> (["null"].drop 1)
+SURVIVOR lean/VE/Rights/Run.lean:528 VE.Rights.Run.runRightsKind (G[V], trusted) list-last: findings.map (fun f => Json.str f.text) -> ((findings.map (fun f => Json.str f.text)).reverse.take 1)
+SURVIVOR lean/VE/Rights/Run.lean:436 VE.Rights.Run.conflictAnswerOf (D[V], trusted) list-drop-first: conditional -> (conditional.drop 1)
+trust_mutants: 40 KILLED, 6 SURVIVOR, 2 UNKNOWN, 2 INVALID, 0 ALLOWED, 0 NOT RUN, 401 OTHER SHARD in 728 s
+trust_mutants: D[V], trusted: 11 KILLED, 1 SURVIVOR, 2 UNKNOWN, 2 INVALID, 169 OTHER SHARD
+trust_mutants: G[V], trusted: 29 KILLED, 5 SURVIVOR, 232 OTHER SHARD
+trust_mutants: steps: wall plan 7.2 s, scratch 2.9 s, control_build 0.2 s, probe_install 1 s, mutants 711.5 s, cleanup 5.7 s, reads 0.1 s; lake control_build 0.1 s (1), probe_install 1 s (1), control_probes 25.3 s (7), mutant_builds 534.2 s (50), mutant_checks 1822.6 s (50), stage_controls 122.2 s (4), mutant_probes 216.8 s (40)
