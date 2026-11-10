@@ -16263,6 +16263,41 @@
         "VE.Acts.listOf"
       ]
     },
+    "VE/Acts/Specialise.lean": {
+      "S": [
+        "VE.Acts.Modifier.restrictive",
+        "VE.Acts.Restrictive",
+        "VE.Acts.specPremises",
+        "VE.Acts.specialises"
+      ],
+      "G[V]": [
+        "VE.Acts.declaredOnce"
+      ]
+    },
+    "VE/Acts/SpecialiseExamples.lean": {
+      "T": [
+        "VE.Acts.SpecialiseExamples.Vsp",
+        "VE.Acts.SpecialiseExamples.a",
+        "VE.Acts.SpecialiseExamples.act",
+        "VE.Acts.SpecialiseExamples.b",
+        "VE.Acts.SpecialiseExamples.doc",
+        "VE.Acts.SpecialiseExamples.env",
+        "VE.Acts.SpecialiseExamples.fromAgainst",
+        "VE.Acts.SpecialiseExamples.fromOnly",
+        "VE.Acts.SpecialiseExamples.fromP",
+        "VE.Acts.SpecialiseExamples.inNear",
+        "VE.Acts.SpecialiseExamples.nearIn",
+        "VE.Acts.SpecialiseExamples.nearInFor",
+        "VE.Acts.SpecialiseExamples.nearly",
+        "VE.Acts.SpecialiseExamples.noTo",
+        "VE.Acts.SpecialiseExamples.prem",
+        "VE.Acts.SpecialiseExamples.refugeFrom",
+        "VE.Acts.SpecialiseExamples.reg",
+        "VE.Acts.SpecialiseExamples.request",
+        "VE.Acts.SpecialiseExamples.sp",
+        "VE.Acts.SpecialiseExamples.ρ"
+      ]
+    },
     "VE/Acts/Readings.lean": {
       "G[V]": [
         {
@@ -18437,12 +18472,12 @@
         "VE.Presupposition.Frame.close",
         "VE.Presupposition.Frame.cls",
         "VE.Presupposition.Frame.goal",
+        "VE.Presupposition.Frame.locate",
         "VE.Presupposition.Frame.plug",
         "VE.Presupposition.Frame.shallow",
         "VE.Presupposition.PositionClass"
       ],
       "C": [
-        "VE.Presupposition.Frame.locate",
         "VE.Presupposition.Frame.shallowB",
         "VE.Presupposition.instDecidableShallow"
       ]
@@ -19468,57 +19503,6 @@
         "VE.Presupposition.ruleGoal"
       ]
     },
-    "VE/Presupposition/Wire.lean": {
-      "S": [
-        "VE.Presupposition.Candidate",
-        "VE.Presupposition.Candidate.core",
-        "VE.Presupposition.Candidate.root",
-        "VE.Presupposition.CandidateTable",
-        "VE.Presupposition.Carrier",
-        "VE.Presupposition.Carrier.cand",
-        "VE.Presupposition.Carrier.root",
-        "VE.Presupposition.RContent",
-        "VE.Presupposition.RReading",
-        "VE.Presupposition.aliasesOf",
-        "VE.Presupposition.carrierAllowed",
-        "VE.Presupposition.cellOk",
-        "VE.Presupposition.claimReading",
-        "VE.Presupposition.emitted",
-        "VE.Presupposition.entersRestriction",
-        "VE.Presupposition.expectedReadings",
-        "VE.Presupposition.premisesBefore",
-        "VE.Presupposition.restrictionPaths",
-        "VE.Presupposition.rowNames",
-        "VE.Presupposition.ruleConditions",
-        "VE.Presupposition.ruleReading",
-        "VE.Presupposition.tableOk",
-        "VE.Presupposition.unitModes"
-      ],
-      "D[V]": [
-        "VE.Presupposition.Args",
-        "VE.Presupposition.Args.tuple",
-        "VE.Presupposition.DocUnit",
-        "VE.Presupposition.Obligation",
-        "VE.Presupposition.PDoc",
-        "VE.Presupposition.Position",
-        "VE.Presupposition.UContent"
-      ],
-      "G[V]": [
-        "VE.Presupposition.Checked",
-        "VE.Presupposition.Report",
-        "VE.Presupposition.env",
-        "VE.Presupposition.nodeCertificate",
-        "VE.Presupposition.unitAsserted",
-        "VE.Presupposition.unitContent",
-        "VE.Presupposition.unitOf",
-        "VE.Presupposition.unitReadings"
-      ]
-    },
-    "VE/Presupposition/Table.lean": {
-      "S": [
-        "VE.Presupposition.candidateTable"
-      ]
-    },
     "VE/Defaults/ZoneWire.lean": {
       "D[V]": [
         "VE.Defaults.Wire.ZoneLine.json",
@@ -20146,6 +20130,14 @@
         "VE.Closure.Tableau.extraRule"
       ]
     },
+    "VE/Rights/OpenActExamples.lean": {
+      "T": [
+        "VE.Rights.OpenActExamples.adult",
+        "VE.Rights.OpenActExamples.twoRights",
+        "VE.Rights.OpenActExamples.unitOf",
+        "VE.Rights.OpenActExamples.opens"
+      ]
+    },
     "ResponseShape/Schemas/ActReadings.lean": {
       "G[R]": [
         "ResponseShape.Schemas.ActReadings.act",
@@ -20172,6 +20164,52 @@
         "VE.Acts.RunExamples.req",
         "VE.Acts.RunExamples.row",
         "VE.Acts.RunExamples.verdict"
+      ]
+    },
+    "VE/Presupposition/Wire.lean": {
+      "S": [
+        "VE.Presupposition.Candidate",
+        "VE.Presupposition.Candidate.core",
+        "VE.Presupposition.Candidate.root",
+        "VE.Presupposition.CandidateTable",
+        "VE.Presupposition.Carrier",
+        "VE.Presupposition.Carrier.cand",
+        "VE.Presupposition.Carrier.root",
+        "VE.Presupposition.RContent",
+        "VE.Presupposition.RReading",
+        "VE.Presupposition.aliasesOf",
+        "VE.Presupposition.carrierAllowed",
+        "VE.Presupposition.cellOk",
+        "VE.Presupposition.claimReading",
+        "VE.Presupposition.emitted",
+        "VE.Presupposition.entersRestriction",
+        "VE.Presupposition.expectedReadings",
+        "VE.Presupposition.premisesBefore",
+        "VE.Presupposition.restrictionPaths",
+        "VE.Presupposition.rowNames",
+        "VE.Presupposition.ruleConditions",
+        "VE.Presupposition.ruleReading",
+        "VE.Presupposition.tableOk",
+        "VE.Presupposition.unitModes"
+      ],
+      "D[V]": [
+        "VE.Presupposition.Args",
+        "VE.Presupposition.Args.tuple",
+        "VE.Presupposition.DocUnit",
+        "VE.Presupposition.Obligation",
+        "VE.Presupposition.PDoc",
+        "VE.Presupposition.Position",
+        "VE.Presupposition.UContent"
+      ],
+      "G[V]": [
+        "VE.Presupposition.Checked",
+        "VE.Presupposition.Report",
+        "VE.Presupposition.env",
+        "VE.Presupposition.nodeCertificate",
+        "VE.Presupposition.unitAsserted",
+        "VE.Presupposition.unitContent",
+        "VE.Presupposition.unitOf",
+        "VE.Presupposition.unitReadings"
       ]
     },
     "VE/Commands/Steps.lean": {
@@ -20227,150 +20265,9 @@
         "VE.Commands.StepsExamples.wideEnv"
       ]
     },
-    "VE/Presupposition/Admit.lean": {
-      "C": [
-        "VE.Presupposition.allE",
-        "VE.Presupposition.ensure",
-        "VE.Presupposition.mapE"
-      ],
-      "G[R]": [
-        "VE.Presupposition.Carrier.unitName",
-        "VE.Presupposition.budget",
-        "VE.Presupposition.firstOb",
-        "VE.Presupposition.isRuleUnit",
-        "VE.Presupposition.maxObligations",
-        "VE.Presupposition.needsModelText",
-        "VE.Presupposition.notSeparatedText",
-        "VE.Presupposition.readingNodes",
-        "VE.Presupposition.rulePred",
-        "VE.Presupposition.softText"
-      ],
-      "G[V]": [
-        {
-          "name": "VE.Presupposition.admit",
-          "tied": [
-            "VE.Presupposition.admit_regenerates",
-            "VE.Presupposition.admit_goals_from_base",
-            "VE.Presupposition.admit_rule_goal",
-            "VE.Presupposition.admit_heading_goal",
-            "VE.Presupposition.admit_outside_restrictions",
-            "VE.Presupposition.admit_claim_content",
-            "VE.Presupposition.admit_rule_content",
-            "VE.Presupposition.admit_proved_sound",
-            "VE.Presupposition.admit_assumed_sound",
-            "VE.Presupposition.admit_unconditional_sound",
-            "VE.Presupposition.admit_conditioned_rule_unspecified",
-            "VE.Presupposition.admit_carrier_candidate",
-            "VE.Presupposition.admit_unresolved_readings",
-            "VE.Presupposition.admit_empty_table",
-            "VE.Presupposition.admit_inPlace_alias",
-            "VE.Presupposition.no_silent_accommodation",
-            "VE.Presupposition.one_open_per_unit"
-          ]
-        },
-        {
-          "name": "VE.Presupposition.admitWith",
-          "tied": [
-            "VE.Presupposition.admitWith_ok"
-          ]
-        },
-        {
-          "name": "VE.Presupposition.bases3",
-          "tied": [
-            "VE.Presupposition.bases3_mem"
-          ]
-        },
-        {
-          "name": "VE.Presupposition.basesOf",
-          "tied": [
-            "VE.Presupposition.mem_basesOf"
-          ]
-        },
-        {
-          "name": "VE.Presupposition.carrierOk",
-          "tied": [
-            "VE.Presupposition.carrierOk_ok"
-          ]
-        },
-        {
-          "name": "VE.Presupposition.openOk",
-          "tied": [
-            "VE.Presupposition.openOk_ok"
-          ]
-        },
-        {
-          "name": "VE.Presupposition.regen",
-          "tied": [
-            "VE.Presupposition.regen_ok"
-          ]
-        },
-        {
-          "name": "VE.Presupposition.unitsOk",
-          "tied": [
-            "VE.Presupposition.unitsOk_ok"
-          ]
-        },
-        "VE.Presupposition.Base",
-        "VE.Presupposition.Fixed",
-        "VE.Presupposition.admitBase",
-        "VE.Presupposition.admitInputs",
-        "VE.Presupposition.admitWrapped",
-        "VE.Presupposition.allSame",
-        "VE.Presupposition.baseOf",
-        "VE.Presupposition.baseTreeOf",
-        "VE.Presupposition.checkIds",
-        "VE.Presupposition.needsUnspec",
-        "VE.Presupposition.peelRule",
-        "VE.Presupposition.peelWith",
-        "VE.Presupposition.provedOk",
-        "VE.Presupposition.readingsDoc",
-        "VE.Presupposition.rootsWith",
-        "VE.Presupposition.separated",
-        "VE.Presupposition.softOk",
-        "VE.Presupposition.withObligations"
-      ]
-    },
-    "VE/Acts/Specialise.lean": {
+    "VE/Presupposition/Table.lean": {
       "S": [
-        "VE.Acts.Modifier.restrictive",
-        "VE.Acts.Restrictive",
-        "VE.Acts.specPremises",
-        "VE.Acts.specialises"
-      ],
-      "G[V]": [
-        "VE.Acts.declaredOnce"
-      ]
-    },
-    "VE/Acts/SpecialiseExamples.lean": {
-      "T": [
-        "VE.Acts.SpecialiseExamples.Vsp",
-        "VE.Acts.SpecialiseExamples.a",
-        "VE.Acts.SpecialiseExamples.act",
-        "VE.Acts.SpecialiseExamples.b",
-        "VE.Acts.SpecialiseExamples.doc",
-        "VE.Acts.SpecialiseExamples.env",
-        "VE.Acts.SpecialiseExamples.fromAgainst",
-        "VE.Acts.SpecialiseExamples.fromOnly",
-        "VE.Acts.SpecialiseExamples.fromP",
-        "VE.Acts.SpecialiseExamples.inNear",
-        "VE.Acts.SpecialiseExamples.nearIn",
-        "VE.Acts.SpecialiseExamples.nearInFor",
-        "VE.Acts.SpecialiseExamples.nearly",
-        "VE.Acts.SpecialiseExamples.noTo",
-        "VE.Acts.SpecialiseExamples.prem",
-        "VE.Acts.SpecialiseExamples.refugeFrom",
-        "VE.Acts.SpecialiseExamples.reg",
-        "VE.Acts.SpecialiseExamples.request",
-        "VE.Acts.SpecialiseExamples.sp",
-        "VE.Acts.SpecialiseExamples.ρ"
-      ]
-    },
-    "VE/Rights/OpenActExamples.lean": {
-      "T": [
-        "VE.Rights.OpenActExamples.adult",
-        "VE.Rights.OpenActExamples.twoRights",
-        "VE.Rights.OpenActExamples.unitOf",
-        "VE.Rights.OpenActExamples.opens"
+        "VE.Presupposition.candidateTable"
       ]
     },
     "VE/RightClauses/PlainWellFormed/Clauses.lean": {
@@ -20601,6 +20498,204 @@
         "VE.Readings.SoftSupWireExamples.NSDcount",
         "VE.Readings.SoftSupWireExamples.guarded",
         "VE.Readings.SoftSupWireExamples.NSDheavy"
+      ]
+    },
+    "VE/Presupposition/Events.lean": {
+      "S": [
+        "VE.Presupposition.Events.endedAtBefore",
+        "VE.Presupposition.Events.endedBefore",
+        "VE.Presupposition.Events.inProgress",
+        "VE.Presupposition.Events.inProgressBefore",
+        "VE.Presupposition.Events.occurredBefore"
+      ],
+      "G[V]": [
+        {
+          "name": "VE.Presupposition.Events.again",
+          "tied": [
+            "VE.Presupposition.Events.again_eq"
+          ]
+        },
+        {
+          "name": "VE.Presupposition.Events.continues",
+          "tied": [
+            "VE.Presupposition.Events.continues_eq"
+          ]
+        },
+        {
+          "name": "VE.Presupposition.Events.noLonger",
+          "tied": [
+            "VE.Presupposition.Events.noLonger_eq"
+          ]
+        },
+        {
+          "name": "VE.Presupposition.Events.resumes",
+          "tied": [
+            "VE.Presupposition.Events.resumes_eq"
+          ]
+        },
+        {
+          "name": "VE.Presupposition.Events.returnsTo",
+          "tied": [
+            "VE.Presupposition.Events.returnsTo_eq"
+          ]
+        },
+        {
+          "name": "VE.Presupposition.Events.stops",
+          "tied": [
+            "VE.Presupposition.Events.stops_eq"
+          ]
+        }
+      ]
+    },
+    "VE/Presupposition/Events/Examples.lean": {
+      "T": [
+        "VE.Presupposition.Events.Examples.V",
+        "VE.Presupposition.Events.Examples.againPre",
+        "VE.Presupposition.Events.Examples.arrival",
+        "VE.Presupposition.Events.Examples.audit",
+        "VE.Presupposition.Events.Examples.change",
+        "VE.Presupposition.Events.Examples.changed",
+        "VE.Presupposition.Events.Examples.eachDay",
+        "VE.Presupposition.Events.Examples.endA",
+        "VE.Presupposition.Events.Examples.endC",
+        "VE.Presupposition.Events.Examples.endOnly",
+        "VE.Presupposition.Events.Examples.evs",
+        "VE.Presupposition.Events.Examples.ip",
+        "VE.Presupposition.Events.Examples.ipBefore",
+        "VE.Presupposition.Events.Examples.job",
+        "VE.Presupposition.Events.Examples.leftA",
+        "VE.Presupposition.Events.Examples.leftAndStaying",
+        "VE.Presupposition.Events.Examples.leftOnT",
+        "VE.Presupposition.Events.Examples.neverLeft",
+        "VE.Presupposition.Events.Examples.noEnd",
+        "VE.Presupposition.Events.Examples.none0",
+        "VE.Presupposition.Events.Examples.occupancy",
+        "VE.Presupposition.Events.Examples.onT",
+        "VE.Presupposition.Events.Examples.other",
+        "VE.Presupposition.Events.Examples.p10",
+        "VE.Presupposition.Events.Examples.p10Assumed",
+        "VE.Presupposition.Events.Examples.p9",
+        "VE.Presupposition.Events.Examples.p9F",
+        "VE.Presupposition.Events.Examples.places",
+        "VE.Presupposition.Events.Examples.ret",
+        "VE.Presupposition.Events.Examples.retCases",
+        "VE.Presupposition.Events.Examples.retPre",
+        "VE.Presupposition.Events.Examples.retR",
+        "VE.Presupposition.Events.Examples.retV",
+        "VE.Presupposition.Events.Examples.sit",
+        "VE.Presupposition.Events.Examples.somePlace",
+        "VE.Presupposition.Events.Examples.someStay",
+        "VE.Presupposition.Events.Examples.stateless",
+        "VE.Presupposition.Events.Examples.states",
+        "VE.Presupposition.Events.Examples.stay",
+        "VE.Presupposition.Events.Examples.stayS",
+        "VE.Presupposition.Events.Examples.stayingAtP",
+        "VE.Presupposition.Events.Examples.t",
+        "VE.Presupposition.Events.Examples.visit",
+        "VE.Presupposition.Events.Examples.x"
+      ]
+    },
+    "VE/Presupposition/Admit.lean": {
+      "C": [
+        "VE.Presupposition.allE",
+        "VE.Presupposition.ensure",
+        "VE.Presupposition.mapE"
+      ],
+      "G[R]": [
+        "VE.Presupposition.Carrier.unitName",
+        "VE.Presupposition.budget",
+        "VE.Presupposition.firstOb",
+        "VE.Presupposition.isRuleUnit",
+        "VE.Presupposition.maxObligations",
+        "VE.Presupposition.needsModelText",
+        "VE.Presupposition.notSeparatedText",
+        "VE.Presupposition.readingNodes",
+        "VE.Presupposition.rulePred",
+        "VE.Presupposition.softText"
+      ],
+      "G[V]": [
+        {
+          "name": "VE.Presupposition.admit",
+          "tied": [
+            "VE.Presupposition.admit_regenerates",
+            "VE.Presupposition.admit_goals_from_base",
+            "VE.Presupposition.admit_rule_goal",
+            "VE.Presupposition.admit_heading_goal",
+            "VE.Presupposition.admit_outside_restrictions",
+            "VE.Presupposition.admit_claim_content",
+            "VE.Presupposition.admit_rule_content",
+            "VE.Presupposition.admit_proved_sound",
+            "VE.Presupposition.admit_assumed_sound",
+            "VE.Presupposition.admit_unconditional_sound",
+            "VE.Presupposition.admit_conditioned_rule_unspecified",
+            "VE.Presupposition.admit_carrier_candidate",
+            "VE.Presupposition.admit_unresolved_readings",
+            "VE.Presupposition.admit_empty_table",
+            "VE.Presupposition.admit_inPlace_alias",
+            "VE.Presupposition.no_silent_accommodation",
+            "VE.Presupposition.one_open_per_unit"
+          ]
+        },
+        {
+          "name": "VE.Presupposition.admitWith",
+          "tied": [
+            "VE.Presupposition.admitWith_ok"
+          ]
+        },
+        {
+          "name": "VE.Presupposition.bases3",
+          "tied": [
+            "VE.Presupposition.bases3_mem"
+          ]
+        },
+        {
+          "name": "VE.Presupposition.basesOf",
+          "tied": [
+            "VE.Presupposition.mem_basesOf"
+          ]
+        },
+        {
+          "name": "VE.Presupposition.carrierOk",
+          "tied": [
+            "VE.Presupposition.carrierOk_ok"
+          ]
+        },
+        {
+          "name": "VE.Presupposition.openOk",
+          "tied": [
+            "VE.Presupposition.openOk_ok"
+          ]
+        },
+        {
+          "name": "VE.Presupposition.regen",
+          "tied": [
+            "VE.Presupposition.regen_ok"
+          ]
+        },
+        {
+          "name": "VE.Presupposition.unitsOk",
+          "tied": [
+            "VE.Presupposition.unitsOk_ok"
+          ]
+        },
+        "VE.Presupposition.Base",
+        "VE.Presupposition.Fixed",
+        "VE.Presupposition.admitBase",
+        "VE.Presupposition.admitInputs",
+        "VE.Presupposition.admitWrapped",
+        "VE.Presupposition.allSame",
+        "VE.Presupposition.baseOf",
+        "VE.Presupposition.baseTreeOf",
+        "VE.Presupposition.checkIds",
+        "VE.Presupposition.needsUnspec",
+        "VE.Presupposition.peelRule",
+        "VE.Presupposition.peelWith",
+        "VE.Presupposition.provedOk",
+        "VE.Presupposition.readingsDoc",
+        "VE.Presupposition.rootsWith",
+        "VE.Presupposition.separated",
+        "VE.Presupposition.softOk",
+        "VE.Presupposition.withObligations"
       ]
     }
   }
