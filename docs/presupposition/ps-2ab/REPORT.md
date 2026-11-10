@@ -184,7 +184,26 @@ guard (table above and `mutants.json`). ps-2aa's and ps-2a's ties-pass rows can 
 
 ## Final checks
 
-(filled after the heavy checks)
+- **Regenerated files.** `uv run python tools/regen_generated.py --write --skip route-cases`: rc 0, 37 entries
+  (793f033fe). `route-cases` needs the Rust release binary, which this worktree does not have, and it reads no
+  presupposition file; ps-2a and ps-2aa skipped it the same way. The chain's gate checks it.
+- **Lean.** `lake build` (all default targets): "Build completed successfully (1331 jobs)". `python3 lean/audit.py`:
+  "PASS: 799 source files; 8862 named theorem declarations audited …; only the declared standard axiom allowlist"
+  (rerun after each later Lean edit, same result).
+- **Layers.** `tools/check_lean_imports.py`: "Lean layer graph kept (799 modules, 18 reviewed legacy edges)".
+- **Trust.** `tools/trust_map.py --check`: "PASS: K, S and untied [V] within a0102f0e5350 and the allowances introduced
+  since" (trusted +123, K +0).
+- **R16 trust mutants** (`mac-pytest.sh --trustmut`, on the VM because ve-mac-1 was unreachable; `--test
+  lean/VE/Presupposition/Examples.lean`, `--allow trust-mutants-allow.json`). The full run at dc1277393 took 11,712 s:
+  234 KILLED, 13 SURVIVOR, 10 UNKNOWN, 56 INVALID, 43 ALLOWED. Its survivors were positions inside lists my guards
+  did not move: a second unit, a third reading, a second situation, a fixed rule first or last in the tree, a cell with
+  conditioned first. Each now has a guard ("Positions inside lists" in Examples.lean). The UNKNOWNs either do not
+  elaborate, or fail more than 100 guards (Lean's `maxErrors`). The survivors left are equivalent: the outer index range
+  of the pairs, `isEmpty` or `head?` of a cut list, `hard` on a strict node, and the set's version number. Each of those
+  is allowed with its reason. The rescore at 439f196bd (288 verdicts carried, 68 rerun, 731 s): **240 KILLED, 0 SURVIVOR, 0 UNKNOWN, 56 INVALID, 60 ALLOWED, exit 0** (`trust-mutants.json`, `trust-mutants-allow.json`).
+- **Selected tests.** SELECTED_PLACEHOLDER
+- Two sweeps were stopped by the harness's 2-hour limit before they wrote a result. The full run above is the one
+  recorded.
 
 ## Self-review against BUILDER-CHECKLIST
 
