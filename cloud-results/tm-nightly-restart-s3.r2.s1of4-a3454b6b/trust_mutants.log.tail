@@ -1,0 +1,11 @@
+trust_mutants: 83 definitions, 110 mutants (27 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/Purposes/WellFormed.lean:167 VE.Purposes.WellFormed (S, trusted) bool-flip: true -> false (lean/VE/Purposes/Examples.lean:275: Expression (VE.Purposes.Examples.wfDecidable, which it reads,...)
+SURVIVOR lean/VE/Service/Document.lean:1620 VE.Service.Document.contentOf (D[V], trusted) bool-flip: true -> false
+UNKNOWN lean/VE/Presupposition/Admit.lean:65 VE.Presupposition.peelRule (G[V], trusted) lit-minus: 1 -> 0 (lean/VE/Presupposition/Admit.lean:63: fail to show termination for)
+SURVIVOR lean/ResponseShape/Schemas/NormDefaults.lean:196 ResponseShape.Schemas.NormDefaults.status (G[V], trusted) list-empty: [ obj, .required ["id", "status", "point_status", "predicate", "tuple", "rules", "differs"], clos... -> []
+SURVIVOR lean/VE/SpeechActs/Wire.lean:255 VE.SpeechActs.Wire.decodeSpeechEnvironmentFull₀ (D[V], trusted) bool-flip: false -> true (the proofs it breaks: lean/VE/SpeechActs/Wire.lean:530)
+trust_mutants: 22 KILLED, 3 SURVIVOR, 2 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 83 OTHER SHARD in 1934 s
+trust_mutants: D[V], trusted: 6 KILLED, 2 SURVIVOR, 18 OTHER SHARD
+trust_mutants: G[V], trusted: 11 KILLED, 1 SURVIVOR, 1 UNKNOWN, 43 OTHER SHARD
+trust_mutants: S, trusted: 5 KILLED, 1 UNKNOWN, 22 OTHER SHARD
+trust_mutants: steps: wall plan 12.6 s, scratch 3.4 s, control_build 0.3 s, probe_install 1.1 s, mutants 1911.3 s, cleanup 5.8 s, reads 0.3 s; lake control_build 0.2 s (1), probe_install 1.1 s (1), control_probes 170.1 s (22), mutant_builds 401.8 s (34), mutant_checks 4733.9 s (31), stage_controls 832.7 s (11), mutant_probes 257 s (23)
