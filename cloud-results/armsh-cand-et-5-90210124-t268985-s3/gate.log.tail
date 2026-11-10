@@ -1,0 +1,200 @@
+E         
+E         - /vocabulary
+
+tests/test_document_lean_switch.py:302: AssertionError
+[gate] skip allowed: tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/906]: tmp_path = PosixPath('/tmp/ve-gate-vbxdo6fr/tmp/pytest-of-runner/pytest-0/popen-gw2/test_pending_lf12_document_pat76')
+case = 'mutant/906'
+
+    @pytest.mark.xfail(strict=True, reason="path pending lf-12: located Lean decoders will restore these paths")
+    @pytest.mark.parametrize("case", _delta_cases("verdict"))
+    def test_pending_lf12_document_paths(tmp_path, case):
+        """Each signed path gap becomes an XPASS failure as soon as lf-12 fixes that case."""
+        path = write(tmp_path, _saved_document_cases()[case])
+        with pytest.raises(VEError) as lean:
+            D.check_document(path)
+        with pytest.raises(VEError) as python:
+            python_path(path)()
+        assert python.value.path, case
+        assert lean.value.code == python.value.code
+>       assert lean.value.path == python.value.path
+E       AssertionError: assert '' == '/vocabulary/...es/in_finance'
+E         
+E         - /vocabulary/predicates/in_finance
+
+tests/test_document_lean_switch.py:302: AssertionError
+[gate] skip allowed: tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/908]: tmp_path = PosixPath('/tmp/ve-gate-vbxdo6fr/tmp/pytest-of-runner/pytest-0/popen-gw2/test_pending_lf12_document_pat77')
+case = 'mutant/908'
+
+    @pytest.mark.xfail(strict=True, reason="path pending lf-12: located Lean decoders will restore these paths")
+    @pytest.mark.parametrize("case", _delta_cases("verdict"))
+    def test_pending_lf12_document_paths(tmp_path, case):
+        """Each signed path gap becomes an XPASS failure as soon as lf-12 fixes that case."""
+        path = write(tmp_path, _saved_document_cases()[case])
+        with pytest.raises(VEError) as lean:
+            D.check_document(path)
+        with pytest.raises(VEError) as python:
+            python_path(path)()
+        assert python.value.path, case
+        assert lean.value.code == python.value.code
+>       assert lean.value.path == python.value.path
+E       AssertionError: assert '' == '/vocabulary/...tants/finance'
+E         
+E         - /vocabulary/constants/finance
+
+tests/test_document_lean_switch.py:302: AssertionError
+[gate] skip allowed: tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/922]: tmp_path = PosixPath('/tmp/ve-gate-vbxdo6fr/tmp/pytest-of-runner/pytest-0/popen-gw2/test_pending_lf12_document_pat78')
+case = 'mutant/922'
+
+    @pytest.mark.xfail(strict=True, reason="path pending lf-12: located Lean decoders will restore these paths")
+    @pytest.mark.parametrize("case", _delta_cases("verdict"))
+    def test_pending_lf12_document_paths(tmp_path, case):
+        """Each signed path gap becomes an XPASS failure as soon as lf-12 fixes that case."""
+        path = write(tmp_path, _saved_document_cases()[case])
+        with pytest.raises(VEError) as lean:
+            D.check_document(path)
+        with pytest.raises(VEError) as python:
+            python_path(path)()
+        assert python.value.path, case
+        assert lean.value.code == python.value.code
+>       assert lean.value.path == python.value.path
+E       AssertionError: assert '' == '/vocabulary/...tants/finance'
+E         
+E         - /vocabulary/constants/finance
+
+tests/test_document_lean_switch.py:302: AssertionError
+[gate] skip allowed: tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/930]: tmp_path = PosixPath('/tmp/ve-gate-vbxdo6fr/tmp/pytest-of-runner/pytest-0/popen-gw2/test_pending_lf12_document_pat79')
+case = 'mutant/930'
+
+    @pytest.mark.xfail(strict=True, reason="path pending lf-12: located Lean decoders will restore these paths")
+    @pytest.mark.parametrize("case", _delta_cases("verdict"))
+    def test_pending_lf12_document_paths(tmp_path, case):
+        """Each signed path gap becomes an XPASS failure as soon as lf-12 fixes that case."""
+        path = write(tmp_path, _saved_document_cases()[case])
+        with pytest.raises(VEError) as lean:
+            D.check_document(path)
+        with pytest.raises(VEError) as python:
+            python_path(path)()
+        assert python.value.path, case
+        assert lean.value.code == python.value.code
+>       assert lean.value.path == python.value.path
+E       AssertionError: assert '' == '/vocabulary'
+E         
+E         - /vocabulary
+
+tests/test_document_lean_switch.py:302: AssertionError
+[gate] skip allowed: tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/950]: tmp_path = PosixPath('/tmp/ve-gate-vbxdo6fr/tmp/pytest-of-runner/pytest-0/popen-gw2/test_pending_lf12_document_pat80')
+case = 'mutant/950'
+
+    @pytest.mark.xfail(strict=True, reason="path pending lf-12: located Lean decoders will restore these paths")
+    @pytest.mark.parametrize("case", _delta_cases("verdict"))
+    def test_pending_lf12_document_paths(tmp_path, case):
+        """Each signed path gap becomes an XPASS failure as soon as lf-12 fixes that case."""
+        path = write(tmp_path, _saved_document_cases()[case])
+        with pytest.raises(VEError) as lean:
+            D.check_document(path)
+        with pytest.raises(VEError) as python:
+            python_path(path)()
+        assert python.value.path, case
+        assert lean.value.code == python.value.code
+>       assert lean.value.path == python.value.path
+E       AssertionError: assert '' == '/vocabulary/...icates/senior'
+E         
+E         - /vocabulary/predicates/senior
+
+tests/test_document_lean_switch.py:302: AssertionError
+[gate] skip allowed: tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/970]: tmp_path = PosixPath('/tmp/ve-gate-vbxdo6fr/tmp/pytest-of-runner/pytest-0/popen-gw1/test_pending_lf12_document_pat0')
+case = 'mutant/970'
+
+    @pytest.mark.xfail(strict=True, reason="path pending lf-12: located Lean decoders will restore these paths")
+    @pytest.mark.parametrize("case", _delta_cases("verdict"))
+    def test_pending_lf12_document_paths(tmp_path, case):
+        """Each signed path gap becomes an XPASS failure as soon as lf-12 fixes that case."""
+        path = write(tmp_path, _saved_document_cases()[case])
+        with pytest.raises(VEError) as lean:
+            D.check_document(path)
+        with pytest.raises(VEError) as python:
+            python_path(path)()
+        assert python.value.path, case
+        assert lean.value.code == python.value.code
+>       assert lean.value.path == python.value.path
+E       AssertionError: assert '' == '/vocabulary'
+E         
+E         - /vocabulary
+
+tests/test_document_lean_switch.py:302: AssertionError
+[gate] skip allowed: tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/978]: tmp_path = PosixPath('/tmp/ve-gate-vbxdo6fr/tmp/pytest-of-runner/pytest-0/popen-gw1/test_pending_lf12_document_pat1')
+case = 'mutant/978'
+
+    @pytest.mark.xfail(strict=True, reason="path pending lf-12: located Lean decoders will restore these paths")
+    @pytest.mark.parametrize("case", _delta_cases("verdict"))
+    def test_pending_lf12_document_paths(tmp_path, case):
+        """Each signed path gap becomes an XPASS failure as soon as lf-12 fixes that case."""
+        path = write(tmp_path, _saved_document_cases()[case])
+        with pytest.raises(VEError) as lean:
+            D.check_document(path)
+        with pytest.raises(VEError) as python:
+            python_path(path)()
+        assert python.value.path, case
+        assert lean.value.code == python.value.code
+>       assert lean.value.path == python.value.path
+E       AssertionError: assert '' == '/vocabulary/sorts/person'
+E         
+E         - /vocabulary/sorts/person
+
+tests/test_document_lean_switch.py:302: AssertionError
+[gate] skip allowed: tests/test_grammar_backends.py::test_llguidance_compiles_lark_and_gbnf_exports: ('/home/runner/work/verifiable-english/verifiable-english/tests/test_grammar_backends.py', 22, "Skipped: could not import 'llguidance': No module named 'llguidance'")
+[gate] skip allowed: tests/test_grammar_backends.py::test_xgrammar_compiles_and_matches_ebnf_exports: ('/home/runner/work/verifiable-english/verifiable-english/tests/test_grammar_backends.py', 51, "Skipped: could not import 'xgrammar': No module named 'xgrammar'")
+[gate] skip allowed: tests/test_p0_three_way.py::test_rust_matches_expected[admission]: ('/home/runner/work/verifiable-english/verifiable-english/tests/test_p0_three_way.py', 93, 'Skipped: admission is outside Rust scope')
+[gate] skip allowed: tests/test_p0_three_way.py::test_rust_matches_expected[dependency-order]: ('/home/runner/work/verifiable-english/verifiable-english/tests/test_p0_three_way.py', 93, 'Skipped: dependency-order is outside Rust scope')
+[gate] skip allowed: tests/test_p0_three_way.py::test_rust_matches_expected[labels]: ('/home/runner/work/verifiable-english/verifiable-english/tests/test_p0_three_way.py', 93, 'Skipped: labels is outside Rust scope')
+[gate] FAILURE: pytest command:  Python suite: exit 1
+[gate] FAILURE: pytest: tests/test_senses_read_members.py::test_a_golden_request_without_the_members_keeps_its_answer[one] name = 'one', place = 'joke'
+pack = b'{\n  "format": "ve.sense-pack@1",\n  "name": "fixtures@1",\n  "sorts": [\n    {"name": "joke", "noun": "joke", "plur..., "kinds": ["principal", "resource"], "wording": "{0} may access {1}", "negative": "{0} may not access {1}"}\n  ]\n}\n'
+source = 'In this document, funny means amusing. In this document, odd means strange. Every funny joke is odd.'
+budget = 2100000
+
+    @pytest.mark.parametrize("name, place, pack, source, budget", GENUINE, ids=[g[0] for g in GENUINE])
+    def test_a_golden_request_without_the_members_keeps_its_answer(name, place, pack, source, budget):
+        """DRI item 3: every golden request without `reread` or `line` keeps main's answer (equal canonical JSON)."""
+        answer = read_in(S2_WORLD() if place == "s2" else WORLDS[place](), source, pack, budget=budget)
+>       assert hashlib.sha256(json.dumps(answer, sort_keys=True, separators=(",", ":")).encode()).hexdigest() == \
+            MAIN_DIGESTS[name]
+E       AssertionError: assert '0ac90d631557...2365ab3bd0e45' == '5db5cb38e0c3...cabd43de5159b'
+E         
+E         - 5db5cb38e0c3bf791f13df6f9ed025b8c7521c4a4b339fc238ccabd43de5159b
+E         + 0ac90d631557b829f60d3f2e2eb566ee9c0aa02c4ac98f51dd52365ab3bd0e45
+
+tests/test_senses_read_members.py:293: AssertionError
+[gate] FAILURE: pytest: tests/test_senses_read_members.py::test_a_golden_request_without_the_members_keeps_its_answer[open] name = 'open', place = 'joke'
+pack = b'{\n  "format": "ve.sense-pack@1",\n  "name": "fixtures@1",\n  "sorts": [\n    {"name": "joke", "noun": "joke", "plur..., "kinds": ["principal", "resource"], "wording": "{0} may access {1}", "negative": "{0} may not access {1}"}\n  ]\n}\n'
+source = 'The riddle is odd.', budget = 2100000
+
+    @pytest.mark.parametrize("name, place, pack, source, budget", GENUINE, ids=[g[0] for g in GENUINE])
+    def test_a_golden_request_without_the_members_keeps_its_answer(name, place, pack, source, budget):
+        """DRI item 3: every golden request without `reread` or `line` keeps main's answer (equal canonical JSON)."""
+        answer = read_in(S2_WORLD() if place == "s2" else WORLDS[place](), source, pack, budget=budget)
+>       assert hashlib.sha256(json.dumps(answer, sort_keys=True, separators=(",", ":")).encode()).hexdigest() == \
+            MAIN_DIGESTS[name]
+E       AssertionError: assert '0fa10b83504d...c4605cd6c1b8f' == 'd7b986ecb1c5...49fd947a5713d'
+E         
+E         - d7b986ecb1c554d2d1c36ce969bf0f6d3b7d878c08f646494e149fd947a5713d
+E         + 0fa10b83504de8bd299963e08e60d816a93219873e829c8bca7c4605cd6c1b8f
+
+tests/test_senses_read_members.py:293: AssertionError
+[gate] FAILURE: pytest: tests/test_senses_read_members.py::test_a_golden_request_without_the_members_keeps_its_answer[warnings] name = 'warnings', place = 'joke'
+pack = b'{\n  "format": "ve.sense-pack@1",\n  "name": "fixtures@1",\n  "sorts": [\n    {"name": "joke", "noun": "joke", "plur..., "kinds": ["principal", "resource"], "wording": "{0} may access {1}", "negative": "{0} may not access {1}"}\n  ]\n}\n'
+source = 'In this document, funny means amusing. In this document, tells means says aloud. The riddle is funny (meaning strange). Alice tells the riddle. The riddle is funny.'
+budget = 2100000
+
+    @pytest.mark.parametrize("name, place, pack, source, budget", GENUINE, ids=[g[0] for g in GENUINE])
+    def test_a_golden_request_without_the_members_keeps_its_answer(name, place, pack, source, budget):
+        """DRI item 3: every golden request without `reread` or `line` keeps main's answer (equal canonical JSON)."""
+        answer = read_in(S2_WORLD() if place == "s2" else WORLDS[place](), source, pack, budget=budget)
+>       assert hashlib.sha256(json.dumps(answer, sort_keys=True, separators=(",", ":")).encode()).hexdigest() == \
+            MAIN_DIGESTS[name]
+E       AssertionError: assert '338962fd900e...7f0a40887dceb' == '6323bc83475d...403b5d03c28b4'
+E         
+E         - 6323bc83475d9afa1ab7b029340ff5e3516b8362615f6b481f3403b5d03c28b4
+E         + 338962fd900ee946d8436c21d8d27fb750c3424008ef287856f7f0a40887dceb
+
+tests/test_senses_read_members.py:293: AssertionError
