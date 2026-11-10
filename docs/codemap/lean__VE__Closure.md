@@ -2,7 +2,7 @@
 - `lean/VE/Closure/Checks.lean` — (no module docstring)
 - `lean/VE/Closure/Consequence.lean` — (no module docstring)
 - `lean/VE/Closure/CoreEquiv.lean` — Closure's tableau checker is Core's on the embedding (consolidation steps 3a and 3b).
-- `lean/VE/Closure/Finite.lean` — (no module docstring)
+- `lean/VE/Closure/Finite.lean` — `VE.Core.Finite` under the names the Closure proofs and statements use: every declaration keeps its Closure name, as an abbreviation, a definition through the …
 - `lean/VE/Closure/Order.lean` — (no module docstring)
 - `lean/VE/Closure/OrderChecks.lean` — (no module docstring)
 - `lean/VE/Closure/Paths.lean` — `VE.Paths` under the names the Closure proofs and statements use: every declaration of the shared module keeps its Closure name, as an abbreviation or a coroll…
