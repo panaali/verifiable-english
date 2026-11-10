@@ -1,0 +1,28 @@
+{
+ "audit_rc": 0,
+ "base": "48e898fc54e750435c37304e9452bc53a610c789",
+ "changed_modules": [
+  "VE/Attitudes/Examples",
+  "VE/Attitudes/Theorems",
+  "VE/Audit"
+ ],
+ "changed_oleans": {
+  "VE/Attitudes/Examples": "82c00210fb3da18e1f2e581067cc5e4a4522592a1c379d7eb2ea45d7f33c0741",
+  "VE/Attitudes/Theorems": "75542bc20cc3648148049fed5ebb277c846b59a685de233b7523c095a70b5eb2",
+  "VE/Audit": null
+ },
+ "files": {
+  "lean/ResponseShapeAudit.lean": "41b29c1184ed92f020a25d169ce5f91a4c7b6baaef03775c77c6bcd8ae083efd",
+  "lean/VE/Audit.lean": "302d66b0705a0d473ba34b6427eebc541af92e9249c4ddfb39f8b714168b7ee3",
+  "lean/axioms.txt": "ccbdf40bbbe4b92275e64de16f00d54668699fb235fa981ed9f4d923908f6d10",
+  "lean/declarations.txt": "e57c1745c00ccfb28e2d2aab6acbae632dc5076f78bf87e0124f2ade8305a2a9",
+  "lean/predicates.txt": "e35e158025cc693976db836819984008a8dbd8429a0dec2d732973c8295f9556",
+  "lean/statements.txt": "297f36825b327a3d8e7ea5a22f0b0ebefda5a08129b675122dc08f0438da4fd1"
+ },
+ "head": "0d3c5691f36202ffe44d27c3a3ba02f6f415d505",
+ "lake_rc": 0,
+ "oleans_n": 836,
+ "oleans_sha256": "6999d1a65297e715dbbf8f2de2430403c87f851f8ccb814bbf163e0e23849044",
+ "seed": "cold-fp",
+ "statements_rc": 0
+}
