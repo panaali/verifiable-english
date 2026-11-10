@@ -1,0 +1,10 @@
+trust_mutants: 84 definitions, 90 mutants (15 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/Acts/Run.lean:53 VE.Acts.Run.splitRows (D[V], trusted) list-empty: M.preds -> [] (lean/VE/Acts/Run.lean:53: Invalid projection: Type of)
+UNKNOWN lean/VE/Compose/Dispatch.lean:1025 VE.Compose.eventsFault (G[V], trusted) list-empty: packRows -> [] (lean/VE/Compose/Dispatch.lean:1041: the failing proof cannot be cut: unexpected token ':='; expec...)
+UNKNOWN lean/VE/Presupposition/Admit.lean:89 VE.Presupposition.withObligations (G[V], trusted) list-empty: obs -> [] (lean/VE/Presupposition/Admit.lean:89: Invalid field notation: Type of)
+UNKNOWN lean/VE/Presupposition/Wire.lean:153 VE.Presupposition.nodeCertificate (G[V], trusted) list-empty: D.proofs -> [] (lean/VE/Presupposition/Wire.lean:153: Invalid projection: Type of)
+trust_mutants: 8 KILLED, 0 SURVIVOR, 4 UNKNOWN, 3 INVALID, 0 ALLOWED, 0 NOT RUN, 75 OTHER SHARD in 834 s
+trust_mutants: D[V], trusted: 2 KILLED, 1 UNKNOWN, 1 INVALID, 16 OTHER SHARD
+trust_mutants: G[V], trusted: 3 KILLED, 3 UNKNOWN, 1 INVALID, 37 OTHER SHARD
+trust_mutants: S, trusted: 3 KILLED, 1 INVALID, 22 OTHER SHARD
+trust_mutants: steps: wall plan 13.4 s, scratch 3.4 s, control_build 0.3 s, probe_install 1.2 s, mutants 809.3 s, cleanup 6.7 s, reads 0.2 s; lake control_build 0.3 s (1), probe_install 1.2 s (1), control_probes 37.9 s (8), mutant_builds 140 s (18), mutant_checks 911.3 s (11), stage_controls 276.5 s (5), mutant_probes 37.9 s (8)
