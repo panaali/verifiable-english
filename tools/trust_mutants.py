@@ -665,9 +665,9 @@ def probe(lake, env: dict, text: str, roles: list[tuple], path: Path, outside: b
     and run by `lake("lean", path)` with that module's options (a package's or library's `leanOptions` decide which
     instance Lean picks: hunt R5, S8); an `outside` --test file, which the tool only reads, is written to `path`
     beside it and run by `lake env lean`, as `run` checks one. Only lines that start with this call's nonce are read
-    (a check's own `#eval` can print anything: hunt S7). A check Lean could not read is absent (no kill).
-    `only` (eff-tm-probe-scope, on mutant and lazy control sides): the spans of the checks whose entries are read,
-    of every check when None. The same
+    (a check's own `#eval` can print anything: hunt S7). A check Lean could not read is absent (no kill), or has `late`
+    (its run passed --build-timeout). `only` (eff-tm-probe-scope, on mutant and lazy control sides): the spans of the
+    checks whose entries are read, of every check when None. The same
     text is elaborated, every check rewritten (`named`), but only those are walked (`TM_TRUST_ONLY`, `READS`) and the
     text after the last of them is dropped (`kept`); the other checks are absent."""
     text, spans = named(text, roles)
