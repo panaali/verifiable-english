@@ -12902,22 +12902,16 @@
         "VE.Acts.Examples.ap0",
         "VE.Acts.Examples.count",
         "VE.Acts.Examples.d31",
-        "VE.Acts.Examples.elabOnceInstalled",
         "VE.Acts.Examples.errOf",
         "VE.Acts.Examples.fr",
         "VE.Acts.Examples.frames",
         "VE.Acts.Examples.headReserved",
         "VE.Acts.Examples.heads",
         "VE.Acts.Examples.inOrder",
-        "VE.Acts.Examples.l6",
-        "VE.Acts.Examples.l6Fixed",
-        "VE.Acts.Examples.l6Steps",
         "VE.Acts.Examples.markerReserved",
         "VE.Acts.Examples.measured",
         "VE.Acts.Examples.near",
-        "VE.Acts.Examples.onceInstalled",
         "VE.Acts.Examples.own",
-        "VE.Acts.Examples.padFrames",
         "VE.Acts.Examples.phrase",
         "VE.Acts.Examples.raw",
         "VE.Acts.Examples.rulesOf",
@@ -12931,6 +12925,16 @@
         "VE.Acts.Examples.μ1",
         "VE.Acts.Examples.μd",
         "VE.Acts.Examples.μlast"
+      ]
+    },
+    "VE/Acts/ParseIndexExamples.lean": {
+      "T": [
+        "VE.Acts.ParseIndexExamples.elabOnceInstalled",
+        "VE.Acts.ParseIndexExamples.l6",
+        "VE.Acts.ParseIndexExamples.l6Fixed",
+        "VE.Acts.ParseIndexExamples.l6Steps",
+        "VE.Acts.ParseIndexExamples.onceInstalled",
+        "VE.Acts.ParseIndexExamples.padFrames"
       ]
     },
     "VE/Alternatives/FillExamples.lean": {

@@ -79,7 +79,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/ResponseShape/Encoders/](lean__ResponseShape__Encoders.md) — 32 modules — -
 - [lean/ResponseShape/Schemas/](lean__ResponseShape__Schemas.md) — 43 modules — -
 - [lean/VE/](lean__VE.md) — 27 modules — -
-- [lean/VE/Acts/](lean__VE__Acts.md) — 32 modules — -
+- [lean/VE/Acts/](lean__VE__Acts.md) — 33 modules — -
 - [lean/VE/Alternatives/](lean__VE__Alternatives.md) — 13 modules — -
 - [lean/VE/Arith/](lean__VE__Arith.md) — 10 modules — -
 - [lean/VE/Ask/](lean__VE__Ask.md) — 15 modules — -

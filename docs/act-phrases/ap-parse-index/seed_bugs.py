@@ -11,7 +11,7 @@ ROOT = Path(__file__).resolve().parents[3]
 IX, GR, ME, RD, RUN, TB, WI, NW = (f"lean/VE/{m}.lean" for m in (
     "Acts/Index", "Acts/Grammar", "Acts/Meaning", "Acts/Readings", "Acts/Run", "Grammar/Table", "Acts/Wire", "Norms/Wire"))
 DEC = ["VE.Acts.DecodeExamples", "VE.Service.ActsExamples"]
-GEX = "VE.Acts.GrammarExamples"
+GEX = "VE.Acts.ParseIndexExamples"
 # (file, id, definition, behaviour, before, after, lake targets)
 BUGS = [
     (IX, "firstsGo-no-insert", "VE.Acts.firstsGo", "a repeated element is listed again",
