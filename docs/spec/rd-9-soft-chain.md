@@ -2465,8 +2465,9 @@ costs about 29 µs of Lean CPU per unit of `sdCheckWork`, so `NSDbig 8` (256 cho
 `NSDbig 10` (1024 choices, 123,904 units) 3.67 s, over R4's 1 s. It replaces this spec's arithmetic value 4,194,304
 (1024 choices × 4096 premises and rule nodes). Past 64 choices, a document is decided in one proof when `sdCheckWork`
 is within 32,768 (measured: 256 W-13-shaped choices); `maxChoiceChecks` 1024 stays as a second bound. Exceeding either
-limit is the enumerated row, not an error. A wide guard costs more per unit than W-13's shape; row sc-11w makes the
-charge cost-proportional before sc-11b switches the dispatch (item 2 of that decision).
+limit is the enumerated row, not an error. `sdSuperposable` (`superposable`, `WellFormedU (supU N)`) is read
+before the work limit and not charged, unlike this section's first sentence: 10.98 s and 94-100 s measured on the
+767- and 3,071-node guard documents; row sc-11w bounds it before sc-11b (DRI 2026-11-09 sc-11-3 item 2).
 
 ### 14.12 Existing text and tests that sc-11b changes
 

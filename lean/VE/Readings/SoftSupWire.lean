@@ -14,7 +14,9 @@ own terms through sc-10b's three superposition theorems, which they apply and do
 
 `maxSdCheckWork` is measured (14.11, DRI decision 2026-11-09 item 1, docs/rd-9/sc-11/w13-cpu.md): about 29 µs of
 Lean CPU per unit of `sdCheckWork` on W-13's shape, so 32,768 units keep the route check under R4's 1 s on that
-shape; a wide guard costs more per unit, and row sc-11w makes the charge cost-proportional before sc-11b. -/
+shape. `sdSuperposable` (`superposable`, `WellFormedU (supU N)`) is read before the work limit and not charged:
+10.98 s and 94-100 s measured on the 767- and 3,071-node guard documents; row sc-11w bounds it before sc-11b (DRI
+2026-11-09 sc-11-3 item 2). -/
 namespace VE.Readings.Wire
 open VE.Readings
 open VE.Bridge (Entity)

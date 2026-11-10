@@ -35,9 +35,10 @@ images). The wire theorems apply sc-10b's three theorems and restate none.
   (`docs/rd-9/sc-11/w13-cpu.md`, compiled Lean on the VM, AMD EPYC 7B12, load 78 to 108: ~29 µs per unit on W-13's shape,
   NSDbig 8 0.71 s, NSDbig 10 3.67 s). Past 64 choices a document is decided in one proof when `sdCheckWork` is within
   32,768 (256 W-13-shaped choices); `maxChoiceChecks` 1024 stays a second bound and can bind first (`NSDcount`: the cut
-  list stops at 1025 choices, 9 units each, work 9,225, enumerated by the count). Correction sent to the DRI: the two
-  wide-guard rows' cost is `sdSuperposable`'s, not the per-choice texts' (w13-cpu.md); it bears on sc-11w and
-  sc-admit-cpu, not on the constant.
+  list stops at 1025 choices, 9 units each, work 9,225, enumerated by the count). `sdSuperposable` (`superposable`,
+  `WellFormedU (supU N)`) is read before the work limit and not charged: 10.98 s and 94-100 s measured on the 767- and
+  3,071-node guard documents (w13-cpu.md); row sc-11w bounds it before sc-11b (DRI 2026-11-09 sc-11-3 item 2). The
+  per-choice texts take 0.63 s and 0.09 s there; it bears on sc-11w and sc-admit-cpu, not on the constant.
 - **14.2** (sc-11-2 item 2, SIGNED, commit ef6699583): the work limit applies at any choice count; `NSDheavy` (64
   choices, `sdSuperposable` true, work 34,752) is enumerated (SoftSupWireExamples.lean:174).
 - **W-6′'s `WellFormedU (supU N)` row is not isolated**: `⟨D4, ["bogus"]⟩` fails it and every choice's text too. The
@@ -78,7 +79,8 @@ pre-existing failure was met. `tests/test_rd9_statements.py`: 43 passed.
 ## Spec re-read
 
 Each 14.8 declaration against the code (the compare above); 14.9 W-2 to W-6′, W-13 (as signed) against each `#guard`;
-14.11's "charged before use" against `sdChecked`'s order (M4, M4b); 14.2 as amended; 14.13's sc-11 bullet.
+14.11's "charged before use" against `sdChecked`'s order (M4, M4b), except `sdSuperposable`, read before the work limit
+and not charged (14.11's closing paragraph; sc-11w); 14.2 as amended; 14.13's sc-11 bullet.
 
 ## Self-review against BUILDER-CHECKLIST
 
@@ -96,6 +98,6 @@ Each 14.8 declaration against the code (the compare above); 14.9 W-2 to W-6′, 
 12. PASS: no live path changed; W-13's CPU measured (w13-cpu.md).
 13. PASS: `tools/gate_collection.py --check --prebuilt`: 0 refused, 0 stale, 0 malformed.
 14. PASS: each iff has a fixture per direction (W-5, W-5′, W-6/W-6′); claims cite commands.
-15. PASS: overclaim (W-6′ row stated as not isolated); cut by ruling; every new check has a mutant; limits read before work (M4, M4b).
+15. PASS: overclaim (W-6′ row stated as not isolated); cut by ruling; every new check has a mutant; `sdChecked`'s limits read before its work (M4, M4b); `sdSuperposable` is read before the work limit and not charged (sc-11w, DRI sc-11-3 item 2).
 
 SELF-REVIEW: 2 A, 8 B, 6 C; fixed 15 (B1 documented, not isolated)
