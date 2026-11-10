@@ -4691,6 +4691,14 @@ theorem VE.Attitudes.Examples.base_adm
   (VE.Attitudes.Examples.St (VE.Attitudes.Examples.routeModel Bool.false [])).Admissible VE.Attitudes.Examples.fat1.E
   -- uses VE.Attitudes.AttDoc.E@VE.Attitudes.Syntax VE.Attitudes.Examples.St@VE.Attitudes.Examples VE.Attitudes.Examples.fat1@VE.Attitudes.Examples VE.Attitudes.Examples.routeModel@VE.Attitudes.Examples VE.Structure.Admissible@VE.Semantics
   -- expr 535239961
+theorem VE.Attitudes.Examples.cat_interp
+  VE.Attitudes.WellFormedAtt VE.Attitudes.Examples.fat1 = Bool.true →
+    ∀ (c : Bool) (ks : List VE.Attitudes.Key),
+      (VE.Attitudes.interp VE.Attitudes.Examples.fat1 (VE.Attitudes.Examples.M c ks)).relation VE.Attitudes.Examples.cat0
+          [1] ↔
+        [1] ∈ (VE.Attitudes.Examples.routeModel c []).relations VE.Attitudes.Examples.cat0
+  -- uses VE.Attitudes.Examples.M@VE.Attitudes.Examples VE.Attitudes.Examples.cat0@VE.Attitudes.Examples VE.Attitudes.Examples.fat1@VE.Attitudes.Examples VE.Attitudes.Examples.routeModel@VE.Attitudes.Examples VE.Attitudes.Key@VE.Attitudes.Syntax VE.Attitudes.WellFormedAtt@VE.Attitudes.Syntax VE.Attitudes.interp@VE.Attitudes.Semantics VE.FiniteModel.relations@VE.Finite VE.Structure.relation@VE.Semantics
+  -- expr 3054366655
 theorem VE.Attitudes.Examples.guard1_elab
   VE.Attitudes.AFormula.toFormula VE.Attitudes.Examples.fat1 VE.Attitudes.Examples.Γ1 VE.Attitudes.Examples.guard1 =
     Option.some VE.Attitudes.Examples.guard1E
