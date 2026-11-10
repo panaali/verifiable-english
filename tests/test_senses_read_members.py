@@ -286,8 +286,8 @@ MAIN_DIGESTS = {
     "hint": "ac05d1f92a51efd2a5112c85c48c9002d97f1d6007236260bd28e46e096c9593",
 }
 # The grammar's `actions_version` in a reading's identities when those digests were recorded. It moves with the grammar
-# on purpose (et-5 made it 46), so an answer's version is checked against the lock's, its owner, and the rest
-# against main's bytes with the recorded version in its place.
+# on purpose (et-5 and en-e3a each made it 46; their merge made it 47), so an answer's version is checked against the
+# lock's, its owner, and the rest against main's bytes with the recorded version in its place.
 MAIN_ACTIONS_VERSION = "45"
 
 
