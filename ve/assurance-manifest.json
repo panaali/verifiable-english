@@ -66,7 +66,7 @@
     "ve/readings_verdicts/binding.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 44094,
+    "total_lines": 44107,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -116,22 +116,24 @@
       },
       {
         "file": "lean/VE/Acts/Wire.lean",
-        "lines": 119,
-        "sha256": "5258c889cf60d62474f87996d06a87fe3fb759504627791e3d0dc5ce1db97d77",
+        "lines": 130,
+        "sha256": "d094a61ced44a2e7d9d9a7f009f8ce16f2a23779f21411e65bab63f60a007339",
         "ranges": [
           [
             1,
-            119
+            130
           ]
         ],
         "declarations": [
+          "joinedActBy",
           "joinedAct",
+          "checkActBy",
           "checkAct",
           "decodeFrame",
           "decodeVocab",
           "fixedOf"
         ],
-        "reason": "act-phrases ap-3d: the act check under acts@0 from AP-3 on (reads the raw act JSON through Lexical.checkWith); no route calls it until ap-3db; the file is pinned whole"
+        "reason": "act-phrases ap-3d: the act check under acts@0 from AP-3 on (reads the raw act JSON through Lexical.checkWith); no route calls it until ap-3db; the file is pinned whole; ap-parse-index: joinedActBy and checkActBy, the same check through a reader built once (joinedAct and checkAct are them at reader V)"
       },
       {
         "file": "lean/VE/Alternatives/Admission.lean",
@@ -1095,12 +1097,12 @@
       },
       {
         "file": "lean/VE/Norms/Wire.lean",
-        "lines": 461,
-        "sha256": "92497f88974002490a12d78080de9c65a2db6cafdfeca08114878e79c3384d8c",
+        "lines": 463,
+        "sha256": "0c803006c8d05c139b760eb71577d2688595f4a20f98a8a64ac1a408b7160ff3",
         "ranges": [
           [
             29,
-            459
+            461
           ]
         ],
         "declarations": [
