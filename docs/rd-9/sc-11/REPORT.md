@@ -17,7 +17,7 @@ changes, no DELTA row, pilot bytes 0 (14.13). Spec section 14 came in by cherry-
 | `tools/layer_policy.py` rows | None needed: the `VE.` default puts all three modules at layer 2 (`tools/check_lean_imports.py`: "Lean layer graph kept") |
 
 **Size** (`git diff --numstat` against 33fe04615, generated files excluded): exempt 1,537 lines (the spec copy and its
-two signed edits; statement-gate proofs; ruling-condition fixtures), the rest about 410 (definitions, docs, tests,
+two signed edits; statement-gate proofs; ruling-condition fixtures), the rest about 415 (definitions, docs, tests,
 tools, trust classes, this report). RD-6b's analogues of the runners are 636 lines (55 replay, 91 runner, 490
 verdict wire), so with them the rest passes ~600, and the pre-approved cut applies.
 
@@ -69,7 +69,11 @@ the route pieces C, `maxSdCheckWork` G[R]). Allowance recorded: "SIGNED by stand
 
 ## Tests
 
-TESTS: pending the final selected run.
+Selected tests (`mac-pytest.sh --select -- --base 33fe04615 --run`, committed tree dfe1dfd08e, 6 cloud shards, run
+sc-11-dcffde03-t267393): 473 of 474 units passed; the one failure,
+`tests/test_assurance_manifest.py::test_every_json_handling_lean_file_is_classified`, was this branch's (the new examples
+file builds JSON); fixed in `ve/assurance-manifest.json` and rerun alone on ve-mac-1 at 6968c23d: 1 passed. No
+pre-existing failure was met. `tests/test_rd9_statements.py`: 43 passed.
 
 ## Spec re-read
 
