@@ -2413,6 +2413,13 @@
    "reason": "sc-11: VE/Readings/SoftSupLabels.lean V +5 (sdShown, untied G[V]; labelImage tied by labelImage_fst, _snd_mem, _functional, supLabel_pull, supLabel_other; nodeExcLabels tied by excLabels_nodes); K +0, S +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-11, 2026-10-18",
    "commit": "33fe04615107cfb12e4402877992e6ff7b6e95d8"
+  },
+  {
+   "class": "V",
+   "lines": 64,
+   "reason": "sa-wire-purposes0: VE/WireContract/Hooks/Purposes.lean +61, VE/WireContract/Tables/Purposes.lean +2, VE/WireContract/Diagnose.lean +1 (V +64, K +0, S +0)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sa-wire-purposes0, 2026-10-18",
+   "commit": "1ee886ca05d28e36bcefd923208a9d3b6a0f11d0"
   }
  ]
 }

@@ -65008,6 +65008,25 @@ theorem VE.WireContract.Hooks.Purposes.classifier_ok_iff
       (VE.Purposes.decodeBlock (VE.WireContract.Hooks.Purposes.purposesOf root)).isOk
   -- uses VE.Purposes.Block@VE.Purposes.Decl VE.Purposes.decodeBlock@VE.Purposes.Wire VE.WireContract.ClassifierResult@VE.WireContract.Engine VE.WireContract.Hooks.Purposes.classifier@VE.WireContract.Hooks.Purposes VE.WireContract.Hooks.Purposes.classifier_ok_iff.match_1@VE.WireContract.Hooks.Purposes VE.WireContract.Hooks.Purposes.purposesOf@VE.WireContract.Hooks.Purposes VE.WireContract.Pointer@VE.WireContract.Table
   -- expr 3435021720
+theorem VE.WireContract.Hooks.Purposes.decodeBlock_length
+  ∀ {j : Lean.Json} {B : VE.Purposes.Block},
+    VE.Purposes.decodeBlock j = Except.ok B → B.links.length ≤ VE.Purposes.maxLinks
+  -- uses VE.Purposes.Block.links@VE.Purposes.Decl VE.Purposes.Block@VE.Purposes.Decl VE.Purposes.Link@VE.Purposes.Decl VE.Purposes.decodeBlock@VE.Purposes.Wire VE.Purposes.maxLinks@VE.Purposes.Decl
+  -- expr 874707378
+theorem VE.WireContract.Hooks.Purposes.decodeLinks_length
+  ∀ {n : Nat} {js : List Lean.Json} {ls : List VE.Purposes.Link},
+    VE.Purposes.decodeLinks n js = Except.ok ls → ls.length = js.length
+  -- uses VE.Purposes.Link@VE.Purposes.Decl VE.Purposes.decodeLinks@VE.Purposes.Wire
+  -- expr 4220380187
+theorem VE.WireContract.Hooks.Purposes.purposes_ids_reads_check
+  ∀ (root : Lean.Json) (items : List VE.WireContract.Pointer) (U : VE.Purposes.Units),
+    VE.WireContract.Hooks.Purposes.classifier "purposes_ids" root items =
+        VE.WireContract.ClassifierResult.fail "2.1b" [] →
+      ∃ B,
+        VE.Purposes.decodeBlock (VE.WireContract.Hooks.Purposes.purposesOf root) = Except.ok B ∧
+          VE.Purposes.check U B = Except.error "InvalidPurposes: two links have the same id"
+  -- uses VE.Purposes.Block@VE.Purposes.Decl VE.Purposes.Units@VE.Purposes.WellFormed VE.Purposes.check@VE.Purposes.WellFormed VE.Purposes.decodeBlock@VE.Purposes.Wire VE.WireContract.ClassifierResult.fail@VE.WireContract.Engine VE.WireContract.ClassifierResult@VE.WireContract.Engine VE.WireContract.Hooks.Purposes.classifier@VE.WireContract.Hooks.Purposes VE.WireContract.Hooks.Purposes.purposesOf@VE.WireContract.Hooks.Purposes VE.WireContract.Pointer@VE.WireContract.Table
+  -- expr 3419978600
 theorem VE.WireContract.expandAll_views
   ∀ (h g : VE.WireContract.Hooks),
     h.view = g.view →
