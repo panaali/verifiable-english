@@ -1,0 +1,34 @@
+{
+ "audit_rc": 0,
+ "base": "df6fe4d033e1bc4fc2afc604a1dcff7560db6637",
+ "changed_modules": [
+  "VE",
+  "VE/Audit",
+  "VE/Presupposition/Admit",
+  "VE/Presupposition/Admit/Facts",
+  "VE/Presupposition/Admit/Statements",
+  "VE/Presupposition/Examples"
+ ],
+ "changed_oleans": {
+  "VE": "c4c6da257dac214f547638778324baa5b4facee4665e05651be0d10ef40e5d94",
+  "VE/Audit": null,
+  "VE/Presupposition/Admit": "5e6fbe9276d99ee26688264d5ef5ce8851a592cc1d8ee30d6e08000e434d688f",
+  "VE/Presupposition/Admit/Facts": "35088570e73a442395c49da996886ef280f4481af235e7b30c90e9f7b03d5d8d",
+  "VE/Presupposition/Admit/Statements": "d61a89563723e65e1e02075eb1de27b429d23b856b40d08c970a1c46fc5d0c94",
+  "VE/Presupposition/Examples": "6490c3dba87c9881ffbd1ec70cfebafaa822a84063c4ab9ee51a9c49c4314526"
+ },
+ "files": {
+  "lean/ResponseShapeAudit.lean": "611e323d590a6890fa1f093586a1b5b653a3c029ddd5d507df12ccec09724b72",
+  "lean/VE/Audit.lean": "45f26d7b57cf9596c4e32b6e41736d6bd34e7932ff391d440122ed0d5acbb84d",
+  "lean/axioms.txt": "357fefdd9e1015906ba2eb7605f6401d55963e9f033ba2994cf552d3fd473d78",
+  "lean/declarations.txt": "f2a1cc266fe6214235b55bb2cfbe7b558ad5f59a004845211d145be5665ed97b",
+  "lean/predicates.txt": "08924413ef54bf410717c0f1771104108f46577addb6518e34182cc962f81d85",
+  "lean/statements.txt": "634812024345cbab52279bab3fa97484b3bd244bc221d4220023078c0a24fb81"
+ },
+ "head": "de32a2456413179a46f4d22da20774dbabe61585",
+ "lake_rc": 0,
+ "oleans_n": 815,
+ "oleans_sha256": "c59b11a28864a18833311afafa5791117431dc1b20a54c28a9da542ab72854ea",
+ "seed": "cold-fp",
+ "statements_rc": 0
+}
