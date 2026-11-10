@@ -18396,6 +18396,132 @@ theorem VE.EnglishGrammar.LexRow.rename_inj
               r1 = r2
   -- uses VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.InDom@VE.EnglishGrammar.Extends VE.EnglishGrammar.LexRow.NtsIn@VE.EnglishGrammar.Extends VE.EnglishGrammar.LexRow.rename@VE.EnglishGrammar.Extends VE.EnglishGrammar.LexRow@VE.EnglishGrammar.Rules VE.EnglishGrammar.envSub@VE.EnglishGrammar.Extends VE.EnglishGrammar.propRename@VE.EnglishGrammar.Extends
   -- expr 1764199857
+theorem VE.EnglishGrammar.Norm.ReadNormAuthoring_eq
+  VE.EnglishGrammar.Norm.ReadNormAuthoring ↔
+    ∀ (E : VE.EnglishGrammar.Env) (O : VE.EnglishGrammar.Overlay) (L : VE.EnglishGrammar.Lexicon) (b : Nat) (s : String)
+      (rs : List VE.EnglishGrammar.Norm.NormStatement),
+      VE.EnglishGrammar.Norm.readNorm E O L b s = VE.EnglishGrammar.Norm.NormOutcome.ok rs →
+        (∀ (r : VE.EnglishGrammar.Norm.NormStatement),
+            r ∈ rs → ∀ (cs : List VE.EnglishGrammar.Norm.Clause), r ≠ VE.EnglishGrammar.Norm.NormStatement.source cs) ∧
+          ∀ (c : VE.EnglishGrammar.Norm.Clause),
+            c ∈ List.flatMap VE.EnglishGrammar.Norm.NormStatement.clauses rs →
+              c.mode = VE.EnglishGrammar.Norm.Mode.strict ∧
+                c.residuals = [] ∧
+                  c.args = [] ∧
+                    ∃ r,
+                      r ∈ VE.EnglishGrammar.Norm.regulatedOf E ∧
+                        r.name = c.pred ∧
+                          ∃ s1 rest, r.sorts = s1 :: rest ∧ c.bearer = VE.EnglishGrammar.Norm.Bearer.every s1
+  -- uses VE.EnglishGrammar.ETerm@VE.EnglishGrammar.Syntax VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Norm.Bearer.every@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.Bearer@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.Clause.args@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.Clause.bearer@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.Clause.mode@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.Clause.pred@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.Clause.residuals@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.Clause@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.Mode.strict@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.Mode@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.NormOutcome.ok@VE.EnglishGrammar.Norm.Read VE.EnglishGrammar.Norm.NormOutcome@VE.EnglishGrammar.Norm.Read VE.EnglishGrammar.Norm.NormStatement.clauses@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.NormStatement.source@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.NormStatement@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.ReadNormAuthoring@VE.EnglishGrammar.Norm.Owners VE.EnglishGrammar.Norm.Residual@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.readNorm@VE.EnglishGrammar.Norm.Read VE.EnglishGrammar.Norm.regulatedOf@VE.EnglishGrammar.Norm.Rules VE.EnglishGrammar.Overlay@VE.EnglishGrammar.Lexicon VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated.sorts@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree
+  -- expr 2351360761
+theorem VE.EnglishGrammar.Norm.Run.answer_misplaced
+  ∀ (id : String) (c : VE.EnglishGrammar.Run.Case) (s : String) (f : VE.EnglishGrammar.Norm.BlockFault),
+    c.overlayFailure = Option.none →
+      VE.EnglishGrammar.Norm.readNorm c.E c.O c.L VE.EnglishGrammar.workBudget s =
+          VE.EnglishGrammar.Norm.NormOutcome.misplaced f →
+        (VE.EnglishGrammar.Norm.Run.resultOf (VE.EnglishGrammar.Norm.Run.answer id c s)).getObjValD "code" =
+            Lean.Json.str f.code ∧
+          (VE.EnglishGrammar.Norm.Run.resultOf (VE.EnglishGrammar.Norm.Run.answer id c s)).getObjValD "status" =
+            Lean.Json.str "rejected"
+  -- uses VE.EnglishGrammar.Failure@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Norm.BlockFault.code@VE.EnglishGrammar.Norm.Run VE.EnglishGrammar.Norm.BlockFault@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.NormOutcome.misplaced@VE.EnglishGrammar.Norm.Read VE.EnglishGrammar.Norm.NormOutcome@VE.EnglishGrammar.Norm.Read VE.EnglishGrammar.Norm.Run.answer@VE.EnglishGrammar.Norm.Run VE.EnglishGrammar.Norm.Run.resultOf@VE.EnglishGrammar.Norm.Run VE.EnglishGrammar.Norm.readNorm@VE.EnglishGrammar.Norm.Read VE.EnglishGrammar.Run.Case.E@VE.EnglishGrammar.Run VE.EnglishGrammar.Run.Case.L@VE.EnglishGrammar.Run VE.EnglishGrammar.Run.Case.O@VE.EnglishGrammar.Run VE.EnglishGrammar.Run.Case.overlayFailure@VE.EnglishGrammar.Run VE.EnglishGrammar.Run.Case@VE.EnglishGrammar.Run VE.EnglishGrammar.workBudget@VE.EnglishGrammar.Lexicon
+  -- expr 1233768179
+theorem VE.EnglishGrammar.Norm.Run.answer_one_iff
+  ∀ (id : String) (c : VE.EnglishGrammar.Run.Case) (s : String),
+    (VE.EnglishGrammar.Norm.Run.resultOf (VE.EnglishGrammar.Norm.Run.answer id c s)).getObjValD "status" =
+        Lean.Json.str "one" ↔
+      c.overlayFailure = Option.none ∧
+        ∃ rs nds sps,
+          VE.EnglishGrammar.Norm.readNorm c.E c.O c.L VE.EnglishGrammar.workBudget s =
+              VE.EnglishGrammar.Norm.NormOutcome.ok rs ∧
+            VE.EnglishGrammar.Norm.toNodesChecked rs = Except.ok nds ∧
+              VE.EnglishGrammar.Norm.Run.oneSpans s rs = Option.some sps
+  -- uses VE.EnglishGrammar.Failure@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Norm.NormOutcome.ok@VE.EnglishGrammar.Norm.Read VE.EnglishGrammar.Norm.NormOutcome@VE.EnglishGrammar.Norm.Read VE.EnglishGrammar.Norm.NormStatement@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.Run.answer@VE.EnglishGrammar.Norm.Run VE.EnglishGrammar.Norm.Run.oneSpans@VE.EnglishGrammar.Norm.Run VE.EnglishGrammar.Norm.Run.resultOf@VE.EnglishGrammar.Norm.Run VE.EnglishGrammar.Norm.readNorm@VE.EnglishGrammar.Norm.Read VE.EnglishGrammar.Norm.toNodesChecked@VE.EnglishGrammar.Norm.Owners VE.EnglishGrammar.Run.Case.E@VE.EnglishGrammar.Run VE.EnglishGrammar.Run.Case.L@VE.EnglishGrammar.Run VE.EnglishGrammar.Run.Case.O@VE.EnglishGrammar.Run VE.EnglishGrammar.Run.Case.overlayFailure@VE.EnglishGrammar.Run VE.EnglishGrammar.Run.Case@VE.EnglishGrammar.Run VE.EnglishGrammar.workBudget@VE.EnglishGrammar.Lexicon VE.Norms.Node@VE.Norms.Tree
+  -- expr 1018009745
+theorem VE.EnglishGrammar.Norm.Run.answer_one_rows
+  ∀ (id : String) (c : VE.EnglishGrammar.Run.Case) (s : String) (rs : List VE.EnglishGrammar.Norm.NormStatement)
+    (nds : List VE.Norms.Node) (sps : List (Nat × Nat)),
+    c.overlayFailure = Option.none →
+      VE.EnglishGrammar.Norm.readNorm c.E c.O c.L VE.EnglishGrammar.workBudget s =
+          VE.EnglishGrammar.Norm.NormOutcome.ok rs →
+        VE.EnglishGrammar.Norm.toNodesChecked rs = Except.ok nds →
+          VE.EnglishGrammar.Norm.Run.oneSpans s rs = Option.some sps →
+            (VE.EnglishGrammar.Norm.Run.resultOf (VE.EnglishGrammar.Norm.Run.answer id c s)).getObjValD "statements" =
+                Lean.Json.arr
+                  (List.map
+                      (fun x =>
+                        match x with
+                        | (r, sp) => VE.EnglishGrammar.Norm.Run.statementRow rs sp r)
+                      (rs.zip sps)).toArray ∧
+              ∀ (h : VE.EnglishGrammar.Norm.Header) (cl : VE.EnglishGrammar.Norm.Clause),
+                VE.EnglishGrammar.Norm.NormStatement.rule h cl ∈ rs →
+                  VE.Norms.Wire.decodeNorm
+                      (VE.EnglishGrammar.Norm.Clause.wire (VE.EnglishGrammar.Norm.ruleName h.number)
+                        (List.map VE.EnglishGrammar.Norm.ruleName (VE.EnglishGrammar.Norm.overOf rs h.number)) cl) =
+                    VE.EnglishGrammar.Norm.Clause.toNode (VE.EnglishGrammar.Norm.ruleName h.number)
+                      (List.map VE.EnglishGrammar.Norm.ruleName (VE.EnglishGrammar.Norm.overOf rs h.number)) cl
+  -- uses VE.EnglishGrammar.Failure@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Norm.Clause.toNode@VE.EnglishGrammar.Norm.Elab VE.EnglishGrammar.Norm.Clause.wire@VE.EnglishGrammar.Norm.Elab VE.EnglishGrammar.Norm.Clause@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.Header.number@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.Header@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.NormOutcome.ok@VE.EnglishGrammar.Norm.Read VE.EnglishGrammar.Norm.NormOutcome@VE.EnglishGrammar.Norm.Read VE.EnglishGrammar.Norm.NormStatement.rule@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.NormStatement@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.Run.answer@VE.EnglishGrammar.Norm.Run VE.EnglishGrammar.Norm.Run.oneSpans@VE.EnglishGrammar.Norm.Run VE.EnglishGrammar.Norm.Run.outcomeFields.match_1@VE.EnglishGrammar.Norm.Run VE.EnglishGrammar.Norm.Run.resultOf@VE.EnglishGrammar.Norm.Run VE.EnglishGrammar.Norm.Run.statementRow@VE.EnglishGrammar.Norm.Run VE.EnglishGrammar.Norm.overOf@VE.EnglishGrammar.Norm.Elab VE.EnglishGrammar.Norm.readNorm@VE.EnglishGrammar.Norm.Read VE.EnglishGrammar.Norm.ruleName@VE.EnglishGrammar.Norm.Elab VE.EnglishGrammar.Norm.toNodesChecked@VE.EnglishGrammar.Norm.Owners VE.EnglishGrammar.Run.Case.E@VE.EnglishGrammar.Run VE.EnglishGrammar.Run.Case.L@VE.EnglishGrammar.Run VE.EnglishGrammar.Run.Case.O@VE.EnglishGrammar.Run VE.EnglishGrammar.Run.Case.overlayFailure@VE.EnglishGrammar.Run VE.EnglishGrammar.Run.Case@VE.EnglishGrammar.Run VE.EnglishGrammar.workBudget@VE.EnglishGrammar.Lexicon VE.Norms.Node@VE.Norms.Tree VE.Norms.Wire.decodeNorm@VE.Norms.Wire
+  -- expr 4015041955
+theorem VE.EnglishGrammar.Norm.Run.answer_partial_no_node
+  ∀ (id : String) (c : VE.EnglishGrammar.Run.Case) (s : String),
+    (VE.EnglishGrammar.Norm.Run.resultOf (VE.EnglishGrammar.Norm.Run.answer id c s)).getObjValD "status" =
+        Lean.Json.str "unformalised" →
+      (VE.EnglishGrammar.Norm.Run.resultOf (VE.EnglishGrammar.Norm.Run.answer id c s)).getObjValD "statements" =
+          Lean.Json.null ∧
+        ∃ rs,
+          VE.EnglishGrammar.Norm.readNorm c.E c.O c.L VE.EnglishGrammar.workBudget s =
+              VE.EnglishGrammar.Norm.NormOutcome.ok rs ∧
+            VE.EnglishGrammar.Norm.spansOf rs ≠ [] ∧
+              (VE.EnglishGrammar.Norm.Run.resultOf (VE.EnglishGrammar.Norm.Run.answer id c s)).getObjValD "spans" =
+                Lean.Json.arr (List.map VE.EnglishGrammar.Norm.Run.spanRow (VE.EnglishGrammar.Norm.spansOf rs)).toArray
+  -- uses VE.EnglishGrammar.Norm.NormOutcome.ok@VE.EnglishGrammar.Norm.Read VE.EnglishGrammar.Norm.NormOutcome@VE.EnglishGrammar.Norm.Read VE.EnglishGrammar.Norm.NormStatement@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.Run.answer@VE.EnglishGrammar.Norm.Run VE.EnglishGrammar.Norm.Run.resultOf@VE.EnglishGrammar.Norm.Run VE.EnglishGrammar.Norm.Run.spanRow@VE.EnglishGrammar.Norm.Run VE.EnglishGrammar.Norm.UnformalisedSpan@VE.EnglishGrammar.Norm.Owners VE.EnglishGrammar.Norm.readNorm@VE.EnglishGrammar.Norm.Read VE.EnglishGrammar.Norm.spansOf@VE.EnglishGrammar.Norm.Owners VE.EnglishGrammar.Run.Case.E@VE.EnglishGrammar.Run VE.EnglishGrammar.Run.Case.L@VE.EnglishGrammar.Run VE.EnglishGrammar.Run.Case.O@VE.EnglishGrammar.Run VE.EnglishGrammar.Run.Case@VE.EnglishGrammar.Run VE.EnglishGrammar.workBudget@VE.EnglishGrammar.Lexicon
+  -- expr 3364267731
+theorem VE.EnglishGrammar.Norm.Run.answer_stopped
+  ∀ (id : String) (c : VE.EnglishGrammar.Run.Case) (s : String) (i : Nat)
+    (o : VE.Grammar.Outcome VE.EnglishGrammar.Tok VE.EnglishGrammar.Reject VE.EnglishGrammar.Norm.Piece),
+    c.overlayFailure = Option.none →
+      VE.EnglishGrammar.Norm.readNorm c.E c.O c.L VE.EnglishGrammar.workBudget s =
+          VE.EnglishGrammar.Norm.NormOutcome.stopped i o →
+        (VE.EnglishGrammar.Norm.Run.resultOf (VE.EnglishGrammar.Norm.Run.answer id c s)).getObjValD "status" ≠
+            Lean.Json.str "one" ∧
+          (VE.EnglishGrammar.Norm.Run.resultOf (VE.EnglishGrammar.Norm.Run.answer id c s)).getObjValD "sentence" =
+            if VE.EnglishGrammar.Norm.Run.stopNamesSentence o = Bool.true then Lean.ToJson.toJson i else Lean.Json.null
+  -- uses VE.EnglishGrammar.Failure@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Norm.NormOutcome.stopped@VE.EnglishGrammar.Norm.Read VE.EnglishGrammar.Norm.NormOutcome@VE.EnglishGrammar.Norm.Read VE.EnglishGrammar.Norm.Piece@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.Run.answer@VE.EnglishGrammar.Norm.Run VE.EnglishGrammar.Norm.Run.resultOf@VE.EnglishGrammar.Norm.Run VE.EnglishGrammar.Norm.Run.stopNamesSentence@VE.EnglishGrammar.Norm.Run VE.EnglishGrammar.Norm.readNorm@VE.EnglishGrammar.Norm.Read VE.EnglishGrammar.Reject@VE.EnglishGrammar.Syntax VE.EnglishGrammar.Run.Case.E@VE.EnglishGrammar.Run VE.EnglishGrammar.Run.Case.L@VE.EnglishGrammar.Run VE.EnglishGrammar.Run.Case.O@VE.EnglishGrammar.Run VE.EnglishGrammar.Run.Case.overlayFailure@VE.EnglishGrammar.Run VE.EnglishGrammar.Run.Case@VE.EnglishGrammar.Run VE.EnglishGrammar.Tok@VE.EnglishGrammar.Token VE.EnglishGrammar.workBudget@VE.EnglishGrammar.Lexicon VE.Grammar.Outcome@VE.Grammar.Reading
+  -- expr 2448106416
+theorem VE.EnglishGrammar.Norm.Run.findSome_lookup
+  ∀ (t : List (String × Lean.Json)) (k : String),
+    List.findSome? (fun p => if p.fst = k then Option.some p.snd else Option.none) t = List.lookup k t
+  -- uses
+  -- expr 3929366658
+theorem VE.EnglishGrammar.Norm.Run.getD_mkObj
+  ∀ (l : List (String × Lean.Json)) (k : String),
+    (Lean.Json.mkObj l).getObjValD k = (List.lookup k l.reverse).getD Lean.Json.null
+  -- uses
+  -- expr 676846406
+theorem VE.EnglishGrammar.Norm.Run.lookup_append
+  ∀ (l1 l2 : List (String × Lean.Json)) (k : String), List.lookup k (l1 ++ l2) = (List.lookup k l1).or (List.lookup k l2)
+  -- uses
+  -- expr 894527267
+theorem VE.EnglishGrammar.Norm.Run.lookup_none
+  ∀ (l : List (String × Lean.Json)) (k : String),
+    (∀ (p : String × Lean.Json), p ∈ l → p.fst ≠ k) → List.lookup k l = Option.none
+  -- uses
+  -- expr 3820532703
+theorem VE.EnglishGrammar.Norm.Run.statementFields_statuses
+  List.map (fun x => x.fst) VE.EnglishGrammar.Run.statementFields =
+    List.map (fun x => x.fst) VE.EnglishGrammar.Run.statementStatusCodes
+  -- uses VE.EnglishGrammar.Run.statementFields@VE.EnglishGrammar.Run VE.EnglishGrammar.Run.statementStatusCodes@VE.EnglishGrammar.Run
+  -- expr 2903848201
+theorem VE.EnglishGrammar.Norm.Run.statementStatusCodes_classed
+  ∀ (s : String × List String),
+    s ∈ VE.EnglishGrammar.Run.statementStatusCodes →
+      ∀ (c : String),
+        c ∈ s.snd →
+          (List.lookup c
+                (VE.EnglishGrammar.Run.codeClasses ++ VE.EnglishGrammar.Run.statementCodeRows ++
+                  VE.EnglishGrammar.Run.renderCodeRows)).isSome =
+            Bool.true
+  -- uses VE.EnglishGrammar.Run.codeClasses@VE.EnglishGrammar.Run VE.EnglishGrammar.Run.renderCodeRows@VE.EnglishGrammar.Run VE.EnglishGrammar.Run.statementCodeRows@VE.EnglishGrammar.Run VE.EnglishGrammar.Run.statementStatusCodes@VE.EnglishGrammar.Run
+  -- expr 716745084
 theorem VE.EnglishGrammar.Norm.action_mark
   ∀ (τs : List VE.EnglishGrammar.Ty) (k : VE.EnglishGrammar.Norm.NormAct)
     (xs : VE.Grammar.Args VE.EnglishGrammar.sig (VE.EnglishGrammar.Norm.NormAct.action τs k).args)
@@ -18530,6 +18656,11 @@ theorem VE.EnglishGrammar.Norm.ntTy_ne
   ∀ (n : Nat), VE.EnglishGrammar.ntTy n ≠ VE.EnglishGrammar.Ty.norm
   -- uses VE.EnglishGrammar.Ty.norm@VE.EnglishGrammar.Syntax VE.EnglishGrammar.Ty@VE.EnglishGrammar.Syntax VE.EnglishGrammar.ntTy@VE.EnglishGrammar.Catalogue
   -- expr 3726216517
+theorem VE.EnglishGrammar.Norm.opOf_agrees
+  ∀ (r : VE.Norms.Regulated) (p : VE.EnglishGrammar.Norm.Polarity),
+    p.fits r.role = Bool.true → VE.Acts.opOf r p.sign = p.op?
+  -- uses VE.Acts.Op@VE.Acts.Table VE.Acts.opOf@VE.Acts.Table VE.EnglishGrammar.Norm.Polarity.fits@VE.EnglishGrammar.Norm.Rules VE.EnglishGrammar.Norm.Polarity.op?@VE.EnglishGrammar.Norm.Owners VE.EnglishGrammar.Norm.Polarity.sign@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.Polarity@VE.EnglishGrammar.Norm.Value VE.Norms.Regulated.role@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree
+  -- expr 1114394176
 theorem VE.EnglishGrammar.Norm.prefixMap_ok
   ∀ (E : VE.EnglishGrammar.Env) (L : VE.EnglishGrammar.Lexicon),
     VE.EnglishGrammar.Norm.prefixMap.Ok (VE.EnglishGrammar.grammar E L)
@@ -18631,6 +18762,14 @@ theorem VE.EnglishGrammar.Norm.sem_start
       VE.Grammar.Tree.sem G VE.EnglishGrammar.sig acts t
   -- uses VE.EnglishGrammar.Terminal@VE.EnglishGrammar.Token VE.EnglishGrammar.Tok@VE.EnglishGrammar.Token VE.EnglishGrammar.sig@VE.EnglishGrammar.Actions VE.Grammar.Action@VE.Grammar.Meaning VE.Grammar.Grammar.mk@VE.Grammar.Basic VE.Grammar.Grammar.rank@VE.Grammar.Basic VE.Grammar.Grammar.rules@VE.Grammar.Basic VE.Grammar.Grammar@VE.Grammar.Basic VE.Grammar.Tree.sem@VE.Grammar.Meaning VE.Grammar.Tree@VE.Grammar.Derives VE.Grammar.Val@VE.Grammar.Meaning
   -- expr 3198410814
+theorem VE.EnglishGrammar.Norm.soft_strict_iff
+  ∀ (m : VE.EnglishGrammar.Norm.Mode), m.soft = VE.SoftNorms.Mode.strict ↔ m = VE.EnglishGrammar.Norm.Mode.strict
+  -- uses VE.EnglishGrammar.Norm.Mode.soft@VE.EnglishGrammar.Norm.Owners VE.EnglishGrammar.Norm.Mode.strict@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.Mode@VE.EnglishGrammar.Norm.Value VE.SoftNorms.Mode.strict@VE.SoftNorms.Tree VE.SoftNorms.Mode@VE.SoftNorms.Tree
+  -- expr 1263964081
+theorem VE.EnglishGrammar.Norm.sourceView_nil
+  ∀ (E : VE.EnglishGrammar.Env) (L : VE.EnglishGrammar.Lexicon), VE.EnglishGrammar.Norm.sourceView E L [] = (E, L)
+  -- uses VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Norm.sourceView@VE.EnglishGrammar.Norm.Owners
+  -- expr 103916977
 theorem VE.EnglishGrammar.Norm.start_norm
   ∀ (E : VE.EnglishGrammar.Env) (L : VE.EnglishGrammar.Lexicon),
     VE.EnglishGrammar.Norm.normTy E L (VE.EnglishGrammar.Norm.normGrammar E L).start = VE.EnglishGrammar.Ty.norm
@@ -18640,12 +18779,32 @@ theorem VE.EnglishGrammar.Norm.strings_map
   ∀ (o : List String), VE.Bridge.strings (Lean.Json.arr (List.map Lean.Json.str o).toArray) = Except.ok o
   -- uses VE.Bridge.strings@VE.Bridge
   -- expr 1546829244
+theorem VE.EnglishGrammar.Norm.toNodeChecked_ok
+  ∀ (n : String) (o : List String) (c : VE.EnglishGrammar.Norm.Clause) (nd : VE.Norms.Node),
+    VE.EnglishGrammar.Norm.Clause.toNodeChecked n o c = Except.ok nd ↔
+      c.residuals = [] ∧ VE.EnglishGrammar.Norm.Clause.toNode n o c = Except.ok nd
+  -- uses VE.EnglishGrammar.Norm.Clause.residuals@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.Clause.toNode@VE.EnglishGrammar.Norm.Elab VE.EnglishGrammar.Norm.Clause.toNodeChecked@VE.EnglishGrammar.Norm.Owners VE.EnglishGrammar.Norm.Clause@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.Residual@VE.EnglishGrammar.Norm.Value VE.Norms.Node@VE.Norms.Tree
+  -- expr 1982919419
 theorem VE.EnglishGrammar.Norm.toNode_fields
   ∀ (n : String) (o : List String) (c : VE.EnglishGrammar.Norm.Clause) (nd : VE.Norms.Node),
     VE.EnglishGrammar.Norm.Clause.toNode n o c = Except.ok nd →
       nd.name = n ∧ nd.pred = c.pred ∧ nd.sign = c.force.sign ∧ nd.over = o ∧ nd.carveOuts.length = c.carveOuts.length
   -- uses VE.EnglishGrammar.EFormula@VE.EnglishGrammar.Syntax VE.EnglishGrammar.Norm.Clause.carveOuts@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.Clause.force@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.Clause.pred@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.Clause.toNode@VE.EnglishGrammar.Norm.Elab VE.EnglishGrammar.Norm.Clause@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.Polarity.sign@VE.EnglishGrammar.Norm.Value VE.Formula@VE.Syntax VE.Norms.Node.carveOuts@VE.Norms.Tree VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node.over@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.Node.sign@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree
   -- expr 888278624
+theorem VE.EnglishGrammar.Norm.toNodesChecked_authoring
+  VE.EnglishGrammar.Norm.ReadNormAuthoring →
+    ∀ (E : VE.EnglishGrammar.Env) (O : VE.EnglishGrammar.Overlay) (L : VE.EnglishGrammar.Lexicon) (b : Nat) (s : String)
+      (rs : List VE.EnglishGrammar.Norm.NormStatement),
+      VE.EnglishGrammar.Norm.readNorm E O L b s = VE.EnglishGrammar.Norm.NormOutcome.ok rs →
+        VE.EnglishGrammar.Norm.toNodesChecked rs = VE.EnglishGrammar.Norm.toNodes rs
+  -- uses VE.EnglishGrammar.Env@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.EnglishGrammar.Norm.NormOutcome.ok@VE.EnglishGrammar.Norm.Read VE.EnglishGrammar.Norm.NormOutcome@VE.EnglishGrammar.Norm.Read VE.EnglishGrammar.Norm.NormStatement@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.ReadNormAuthoring@VE.EnglishGrammar.Norm.Owners VE.EnglishGrammar.Norm.readNorm@VE.EnglishGrammar.Norm.Read VE.EnglishGrammar.Norm.toNodes@VE.EnglishGrammar.Norm.Elab VE.EnglishGrammar.Norm.toNodesChecked@VE.EnglishGrammar.Norm.Owners VE.EnglishGrammar.Overlay@VE.EnglishGrammar.Lexicon VE.Norms.Node@VE.Norms.Tree
+  -- expr 176103630
+theorem VE.EnglishGrammar.Norm.toNodesChecked_ok
+  ∀ (rs : List VE.EnglishGrammar.Norm.NormStatement) (nds : List VE.Norms.Node),
+    VE.EnglishGrammar.Norm.toNodesChecked rs = Except.ok nds ↔
+      VE.EnglishGrammar.Norm.spansOf rs = [] ∧ VE.EnglishGrammar.Norm.toNodes rs = Except.ok nds
+  -- uses VE.EnglishGrammar.Norm.NormStatement@VE.EnglishGrammar.Norm.Value VE.EnglishGrammar.Norm.UnformalisedSpan@VE.EnglishGrammar.Norm.Owners VE.EnglishGrammar.Norm.spansOf@VE.EnglishGrammar.Norm.Owners VE.EnglishGrammar.Norm.toNodes@VE.EnglishGrammar.Norm.Elab VE.EnglishGrammar.Norm.toNodesChecked@VE.EnglishGrammar.Norm.Owners VE.Norms.Node@VE.Norms.Tree
+  -- expr 743519664
 theorem VE.EnglishGrammar.Norm.tree_id
   ∀ (t : VE.Grammar.Tree VE.EnglishGrammar.Tok), VE.EnglishGrammar.Norm.prefixMap.tree t = t
   -- uses VE.EnglishGrammar.Norm.prefixMap@VE.EnglishGrammar.Norm.Rules VE.EnglishGrammar.Tok@VE.EnglishGrammar.Token VE.Grammar.RuleMap.tree@VE.Grammar.Extension VE.Grammar.Tree@VE.Grammar.Derives
@@ -39671,10 +39830,10 @@ theorem VE.Readings.grows_bar
   ∀ (X : VE.Rights.RightsDoc) (b : VE.Rights.Bar),
     VE.Readings.Grows X
       { soft := X.soft, rights := X.rights, rs := X.rs, limits := X.limits, bars := X.bars ++ [b],
-        outsideCites := X.outsideCites, sourceOrder := X.sourceOrder, sourceUnits := X.sourceUnits }
+        outsideCites := X.outsideCites, sourceOrder := X.sourceOrder, sourceUnits := X.sourceUnits, located := X.located }
       [] 1
-  -- uses VE.Readings.Grows@VE.Readings.Shape VE.Rights.Bar@VE.Rights.Tree VE.Rights.RightsDoc.bars@VE.Rights.Tree VE.Rights.RightsDoc.limits@VE.Rights.Tree VE.Rights.RightsDoc.mk@VE.Rights.Tree VE.Rights.RightsDoc.outsideCites@VE.Rights.Tree VE.Rights.RightsDoc.rights@VE.Rights.Tree VE.Rights.RightsDoc.rs@VE.Rights.Tree VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.RightsDoc.sourceOrder@VE.Rights.Tree VE.Rights.RightsDoc.sourceUnits@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
-  -- expr 1426053719
+  -- uses VE.Readings.Grows@VE.Readings.Shape VE.Rights.Bar@VE.Rights.Tree VE.Rights.RightsDoc.bars@VE.Rights.Tree VE.Rights.RightsDoc.limits@VE.Rights.Tree VE.Rights.RightsDoc.located@VE.Rights.Tree VE.Rights.RightsDoc.mk@VE.Rights.Tree VE.Rights.RightsDoc.outsideCites@VE.Rights.Tree VE.Rights.RightsDoc.rights@VE.Rights.Tree VE.Rights.RightsDoc.rs@VE.Rights.Tree VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.RightsDoc.sourceOrder@VE.Rights.Tree VE.Rights.RightsDoc.sourceUnits@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
+  -- expr 577578169
 theorem VE.Readings.grows_place
   ∀ (X : VE.Rights.RightsDoc) (c : VE.Compose.Content) (cs : List (String × List String)),
     VE.Readings.Grows X (VE.Readings.place X c cs) (VE.Readings.normsOf c) (VE.Readings.contrib c)
@@ -50054,6 +50213,16 @@ theorem VE.Rights.limPack_mem_narrowings
     VE.Rights.Narrowing.limPack ∈ VE.Rights.narrowings D N ↔ VE.Rights.scopeLimits D N ≠ []
   -- uses VE.Rights.Limitation@VE.Rights.Tree VE.Rights.Line@VE.Rights.Tree VE.Rights.Narrowing.limPack@VE.Rights.Correlate VE.Rights.Narrowing@VE.Rights.Correlate VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.narrowings@VE.Rights.Correlate VE.Rights.scopeLimits@VE.Rights.Correlate
   -- expr 611274591
+theorem VE.Rights.limitationScope_texts
+  ∀ (D : VE.Rights.RightsDoc) (l : List (String × String)) (c : List (Option VE.Tableau.Certificate)),
+    List.map VE.Rights.Finding.text
+        (VE.Rights.limitationScope
+          { soft := D.soft, rights := D.rights, rs := D.rs, limits := D.limits, bars := D.bars,
+            outsideCites := D.outsideCites, sourceOrder := D.sourceOrder, sourceUnits := D.sourceUnits, located := l }
+          c) =
+      List.map VE.Rights.Finding.text (VE.Rights.limitationScope D c)
+  -- uses VE.Rights.Finding.text@VE.Rights.Scope VE.Rights.Finding@VE.Rights.Scope VE.Rights.RightsDoc.bars@VE.Rights.Tree VE.Rights.RightsDoc.limits@VE.Rights.Tree VE.Rights.RightsDoc.mk@VE.Rights.Tree VE.Rights.RightsDoc.outsideCites@VE.Rights.Tree VE.Rights.RightsDoc.rights@VE.Rights.Tree VE.Rights.RightsDoc.rs@VE.Rights.Tree VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.RightsDoc.sourceOrder@VE.Rights.Tree VE.Rights.RightsDoc.sourceUnits@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.limitationScope@VE.Rights.Scope VE.Tableau.Certificate@VE.Tableau
+  -- expr 3155610192
 theorem VE.Rights.limitation_scope_sound
   ∀ (D : VE.Rights.RightsDoc),
     VE.Rights.WellFormedRights D = Bool.true →
@@ -50241,6 +50410,15 @@ theorem VE.Rights.noDistinction_sound
             ∀ (q : String), q ∈ VE.SoftNorms.cone (VE.Rights.correlate D) p → ¬q ∈ D.rights.protected
   -- uses VE.Rights.RightsDoc.rights@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.RightsEnv.protected@VE.Rights.Tree VE.Rights.WellFormedRights@VE.Rights.Correlate VE.Rights.correlate@VE.Rights.Correlate VE.Rights.independentReported@VE.Rights.Distinction VE.Rights.rightDerived@VE.Rights.Tree VE.SoftNorms.cone@VE.SoftNorms.Semantics
   -- expr 3153249130
+theorem VE.Rights.noDistinction_texts
+  ∀ (D : VE.Rights.RightsDoc) (l : List (String × String)),
+    List.map VE.Rights.Finding.text
+        (VE.Rights.noDistinction
+          { soft := D.soft, rights := D.rights, rs := D.rs, limits := D.limits, bars := D.bars,
+            outsideCites := D.outsideCites, sourceOrder := D.sourceOrder, sourceUnits := D.sourceUnits, located := l }) =
+      List.map VE.Rights.Finding.text (VE.Rights.noDistinction D)
+  -- uses VE.Rights.Finding.text@VE.Rights.Scope VE.Rights.Finding@VE.Rights.Scope VE.Rights.RightsDoc.bars@VE.Rights.Tree VE.Rights.RightsDoc.limits@VE.Rights.Tree VE.Rights.RightsDoc.mk@VE.Rights.Tree VE.Rights.RightsDoc.outsideCites@VE.Rights.Tree VE.Rights.RightsDoc.rights@VE.Rights.Tree VE.Rights.RightsDoc.rs@VE.Rights.Tree VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.RightsDoc.sourceOrder@VE.Rights.Tree VE.Rights.RightsDoc.sourceUnits@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.noDistinction@VE.Rights.Distinction
+  -- expr 2177693301
 theorem VE.Rights.no_distinction_sound
   ∀ (D : VE.Rights.RightsDoc),
     VE.Rights.WellFormedRights D = Bool.true →

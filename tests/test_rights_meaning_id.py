@@ -254,15 +254,26 @@ def _answers(directory):
     return answers
 
 
-def _verdict(answer):
+# Rights report members added after the snapshot was recorded: rights-cfr-2 (docs/rights/rights-cfr-2/DELTA.md row 4)
+# locates `unlicensed_limitations` and `distinction_hits` by source span. They are not verdicts (each repeats a list
+# the snapshot still compares) and the snapshot predates them; any other new member is still a difference.
+LATER_REPORT_MEMBERS = {"unlicensed_limitations_located", "distinction_hits_located"}
+
+
+def _verdict(answer, recorded=None):
     """The verdicts and reasons of an answer: each unit's status, the coverage by status with the residual and its
-    reasons, the premises' status and the rights report (each conflict's verdict and status text)."""
+    reasons, the premises' status and the rights report (each conflict's verdict and status text). With `recorded`
+    (the snapshot's report), the report leaves out the `LATER_REPORT_MEMBERS` the snapshot does not have."""
     check, coverage = answer["check"], answer["check"]["coverage"]
+    report = check["rights"]["report"]
+    if recorded is not None:
+        report = {key: value for key, value in report.items()
+                  if key in recorded or key not in LATER_REPORT_MEMBERS}
     return json.dumps({"units": [(unit["id"], unit["status"]) for unit in answer["units"]],
                        "coverage": {key: coverage[key] for key in (
                            "bytes_by_status", "soft_status", "residual_total", "unformalised_reasons",
                            "rights_residual_labels", "soft_residual_labels")},
-                       "premises": check["premises"]["status"], "rights": check["rights"]["report"]}, sort_keys=True)
+                       "premises": check["premises"]["status"], "rights": report}, sort_keys=True)
 
 
 NORMAL = {"omitted": "omitted", "defaults": "omitted", "nulls": "omitted", "default-mode": "default-mode",
@@ -275,7 +286,7 @@ def test_no_verdict_or_reason_changes(tmp_path):
     fixture's check answer is its normal form's but for the document id."""
     main, now = _main(), _answers(tmp_path)
     for name, normal in NORMAL.items():
-        assert _verdict(now[name]) == _verdict(main[name])
+        assert _verdict(now[name], main[name]["check"]["rights"]["report"]) == _verdict(main[name])
         assert now[name]["meaning_ids"] == main[normal]["main_meaning_ids"]
         assert {**now[name]["check"], "document_id": None} == {**now[normal]["check"], "document_id": None}
 
