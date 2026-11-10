@@ -1,0 +1,8 @@
+trust_mutants: 19 definitions, 71 mutants (9 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/Rights/Run.lean:442 VE.Rights.Run.conflictAnswerOf (D[V], trusted) list-empty: (targets (soften (correlate D))).map (·.1) -> [] (lean/VE/Rights/Run.lean:442: typeclass instance problem is stuck, it is often due to metavariables)
+UNKNOWN lean/VE/Rights/Run.lean:445 VE.Rights.Run.conflictAnswerOf (D[V], trusted) list-empty: M -> [] (lean/VE/Rights/Run.lean:445: Unknown constant `Nat.null`)
+trust_mutants: 5 KILLED, 0 SURVIVOR, 2 UNKNOWN, 2 INVALID, 0 ALLOWED, 0 NOT RUN, 62 OTHER SHARD in 176 s
+trust_mutants: D[V], trusted: 2 UNKNOWN, 14 OTHER SHARD
+trust_mutants: G[V], trusted: 4 KILLED, 2 INVALID, 33 OTHER SHARD
+trust_mutants: S, trusted: 1 KILLED, 15 OTHER SHARD
+trust_mutants: steps: wall plan 13 s, scratch 2.7 s, control_build 0.3 s, probe_install 1.2 s, mutants 152.4 s, cleanup 6.5 s, reads 0.2 s; lake control_build 0.3 s (1), probe_install 1.2 s (1), control_probes 31.4 s (5), mutant_builds 40.7 s (11), mutant_checks 167.3 s (4), stage_controls 8.2 s (3), mutant_probes 36.7 s (5)
