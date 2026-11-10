@@ -44,6 +44,8 @@ text, and every statement here equals it. No statement had to change.
   they are tied to it by `checkBodyChecked_encode`.
 - In the selected run, the three `test_assurance_manifest.py` failures came from these two pins.
 
+**Trust table.** `tools/trust-classes.json` classifies the 12 new definitions of `DocumentView.lean` as untied G[V], as `checkBody`, `checkCore` and `checkDocSets` are. They still count as trusted (+97), and the ties are the FOLLOW-UPS row's pass. `tests/test_scope_lean.py` drops `VE.Scope.statusOf` from its list of scope definitions that no theorem states, because `statusOf_known` now states it.
+
 **Overlap.** The merge note says qt-a4b edits `Checked` in the same file. This item adds a field at the structure's
 end, and the merge note's rebase-second rule applies to whichever branch merges second. Neither branch was present
 locally at the time of writing.
