@@ -35,6 +35,12 @@ def occurredBefore (V : EventsEnv) (E : EventSort) (t : VE.Term) : VE.Formula :=
   .ex E.sort (.ex V.day (.and (.binary E.on (.var 1) (.var 0))
     (.binary V.before (.var 0) (Term.shift (Term.shift t)))))
 
+/-- "An earlier state at the place that ended", the `pre` of "returns to" (reviews/dri-decisions-20261110-ps-7.md):
+    `∃y:S. ∃u. ends_S(y, u) ∧ before(u, t) ∧ at(y, p)`, `at` a base predicate (S, place) the document declares. -/
+def endedAtBefore (V : EventsEnv) (S : StateSort) (atP : String) (p t : VE.Term) : VE.Formula :=
+  .ex S.sort (.ex V.day (.and (.binary S.ends (.var 1) (.var 0)) (.and
+    (.binary V.before (.var 0) (Term.shift (Term.shift t))) (.binary atP (.var 1) (Term.shift (Term.shift p))))))
+
 /-- "stops" and "ceases" ("ceases" reads as "stops"). -/
 def stops (V : EventsEnv) (S : StateSort) (x t : VE.Term) (body : VE.Formula) : Reading :=
   generic (inProgressBefore V S x t) body
@@ -51,6 +57,10 @@ def resumes (V : EventsEnv) (S : StateSort) (t : VE.Term) (body : VE.Formula) : 
 def again (V : EventsEnv) (E : EventSort) (t : VE.Term) (body : VE.Formula) : Reading :=
   generic (occurredBefore V E t) body
 
+/-- "returns to" the place `p`. -/
+def returnsTo (V : EventsEnv) (S : StateSort) (atP : String) (p t : VE.Term) (body : VE.Formula) : Reading :=
+  generic (endedAtBefore V S atP p t) body
+
 theorem stops_eq (V : EventsEnv) (S : StateSort) (x t : VE.Term) (body : VE.Formula) :
     stops V S x t body = generic (inProgressBefore V S x t) body := rfl
 theorem continues_eq (V : EventsEnv) (S : StateSort) (x t : VE.Term) (body : VE.Formula) :
@@ -61,6 +71,8 @@ theorem resumes_eq (V : EventsEnv) (S : StateSort) (t : VE.Term) (body : VE.Form
     resumes V S t body = generic (endedBefore V S t) body := rfl
 theorem again_eq (V : EventsEnv) (E : EventSort) (t : VE.Term) (body : VE.Formula) :
     again V E t body = generic (occurredBefore V E t) body := rfl
+theorem returnsTo_eq (V : EventsEnv) (S : StateSort) (atP : String) (p t : VE.Term) (body : VE.Formula) :
+    returnsTo V S atP p t body = generic (endedAtBefore V S atP p t) body := rfl
 
 theorem stops_defined (V : EventsEnv) (S : StateSort) (x t : VE.Term) (body : VE.Formula)
     (M : VE.Structure.{u}) (τ : VE.Valuation M) : (stops V S x t body).DefinedAt M τ :=
@@ -76,6 +88,9 @@ theorem resumes_defined (V : EventsEnv) (S : StateSort) (t : VE.Term) (body : VE
   generic_defined _ _ M τ
 theorem again_defined (V : EventsEnv) (E : EventSort) (t : VE.Term) (body : VE.Formula)
     (M : VE.Structure.{u}) (τ : VE.Valuation M) : (again V E t body).DefinedAt M τ :=
+  generic_defined _ _ M τ
+theorem returnsTo_defined (V : EventsEnv) (S : StateSort) (atP : String) (p t : VE.Term) (body : VE.Formula)
+    (M : VE.Structure.{u}) (τ : VE.Valuation M) : (returnsTo V S atP p t body).DefinedAt M τ :=
   generic_defined _ _ M τ
 
 end VE.Presupposition.Events

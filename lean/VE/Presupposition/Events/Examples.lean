@@ -73,6 +73,22 @@ def againPre : VE.Formula := (again V visit t .top).pre
 #guard !againPre.eval (evs [("visit_on", [["v", "d"]])]) []
 #guard !againPre.eval (evs [("audit_on", [["w", "a"]])]) []
 
+-- "returns to" p (reviews/dri-decisions-20261110-ps-7.md): (a) an earlier stay at p ended before t; (b) at q only;
+-- (c) it ends on t or later; (d) no stated end (F: not assumed); (e) a variable place and day (the lifts)
+def places (rels : List (String × List (List String))) : VE.FiniteModel String :=
+  chain ["a", "b", "c", "d"] [("t", "c"), ("b", "b"), ("p", "p")] [("stay", ["s", "y"]), ("place", ["p", "q"])] rels
+def retPre : VE.Formula := (returnsTo V stay "at" (.const "p") t .top).pre
+#guard retPre.eval (places [("ends", [["y", "a"]]), ("at", [["y", "p"]])]) []
+#guard !retPre.eval (places [("ends", [["y", "a"]]), ("at", [["y", "q"]])]) []
+#guard !retPre.eval (places [("ends", [["y", "c"]]), ("at", [["y", "p"]])]) []
+#guard !retPre.eval (places [("ends", [["y", "d"]]), ("at", [["y", "p"]])]) []
+#guard !retPre.eval (places [("begins", [["y", "a"]]), ("at", [["y", "p"]])]) []
+def somePlace (M : VE.FiniteModel String) : Bool :=
+  (VE.Formula.ex "place" (.all "day" (.implies (.binary "before" (.const "b") (.var 0))
+    (endedAtBefore V stay "at" (.var 1) (.var 0))))).eval M []
+#guard somePlace (places [("ends", [["y", "a"]]), ("at", [["y", "p"]])])
+#guard !somePlace (places [("ends", [["y", "c"]]), ("at", [["y", "p"]])])
+
 -- a variable day under "on each day after a", and a variable stay under "some stay": the lifts
 def eachDay (p : VE.Term → VE.Formula) : VE.Formula :=
   .all "day" (.implies (.binary "before" (.const "a") (.var 0)) (p (.var 0)))
