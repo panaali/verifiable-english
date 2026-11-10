@@ -1,0 +1,88 @@
+{
+ "listed-base": {
+  "error": "unknown document metadata",
+  "sha256": "319b99350d129762375b8ce5c4cd8b81925cb37168db6895449fbbe34fb8c86e",
+  "status": "error"
+ },
+ "listed-duplicate-id": {
+  "error": "unknown document metadata",
+  "sha256": "319b99350d129762375b8ce5c4cd8b81925cb37168db6895449fbbe34fb8c86e",
+  "status": "error"
+ },
+ "listed-extra-member": {
+  "error": "unknown document metadata",
+  "sha256": "319b99350d129762375b8ce5c4cd8b81925cb37168db6895449fbbe34fb8c86e",
+  "status": "error"
+ },
+ "listed-id-not-token": {
+  "error": "unknown document metadata",
+  "sha256": "319b99350d129762375b8ce5c4cd8b81925cb37168db6895449fbbe34fb8c86e",
+  "status": "error"
+ },
+ "listed-limit": {
+  "error": "unknown document metadata",
+  "sha256": "319b99350d129762375b8ce5c4cd8b81925cb37168db6895449fbbe34fb8c86e",
+  "status": "error"
+ },
+ "listed-link-fields": {
+  "error": "unknown document metadata",
+  "sha256": "319b99350d129762375b8ce5c4cd8b81925cb37168db6895449fbbe34fb8c86e",
+  "status": "error"
+ },
+ "listed-links-over": {
+  "error": "unknown document metadata",
+  "sha256": "319b99350d129762375b8ce5c4cd8b81925cb37168db6895449fbbe34fb8c86e",
+  "status": "error"
+ },
+ "listed-not-an-object": {
+  "error": "unknown document metadata",
+  "sha256": "319b99350d129762375b8ce5c4cd8b81925cb37168db6895449fbbe34fb8c86e",
+  "status": "error"
+ },
+ "listed-part-not-token": {
+  "error": "unknown document metadata",
+  "sha256": "319b99350d129762375b8ce5c4cd8b81925cb37168db6895449fbbe34fb8c86e",
+  "status": "error"
+ },
+ "listed-polarity": {
+  "error": "unknown document metadata",
+  "sha256": "319b99350d129762375b8ce5c4cd8b81925cb37168db6895449fbbe34fb8c86e",
+  "status": "error"
+ },
+ "listed-relation-before-polarity": {
+  "error": "unknown document metadata",
+  "sha256": "319b99350d129762375b8ce5c4cd8b81925cb37168db6895449fbbe34fb8c86e",
+  "status": "error"
+ },
+ "listed-relation-prevents": {
+  "error": "unknown document metadata",
+  "sha256": "319b99350d129762375b8ce5c4cd8b81925cb37168db6895449fbbe34fb8c86e",
+  "status": "error"
+ },
+ "listed-share": {
+  "error": "unknown document metadata",
+  "sha256": "319b99350d129762375b8ce5c4cd8b81925cb37168db6895449fbbe34fb8c86e",
+  "status": "error"
+ },
+ "listed-side": {
+  "error": "unknown document metadata",
+  "sha256": "319b99350d129762375b8ce5c4cd8b81925cb37168db6895449fbbe34fb8c86e",
+  "status": "error"
+ },
+ "listed-without-block": {
+  "error": "UnsupportedProfile: Unsupported profile purposes@0",
+  "sha256": "c78ff285a525ef1b8f81773536ecde24de010915d2a5d70ed234b7eea30c4017",
+  "status": "error"
+ },
+ "plain": {
+  "document_id": "295ec9d51e5de2034e650617b7fbdef38047053ed56bf51831b5ddfbf4b1d8b1",
+  "sha256": "20a1373343d6ada8086043ad94423e349c2ed3293cb94191faea04423f39863d",
+  "source_id": "fd1d01d7b4bb94e242078e72690721261b16df04cec0433eee6abac2601d161a",
+  "status": "ok"
+ },
+ "unlisted-base": {
+  "error": "unknown document metadata",
+  "sha256": "319b99350d129762375b8ce5c4cd8b81925cb37168db6895449fbbe34fb8c86e",
+  "status": "error"
+ }
+}

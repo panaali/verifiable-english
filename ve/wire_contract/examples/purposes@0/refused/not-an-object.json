@@ -1,1 +1,1 @@
-{"check": "1.1b", "args": {}, "text": "InvalidPurposes: purposes must be an object whose only member is links", "purposes": null}
+{"check": "1.1b", "args": {}, "text": "InvalidPurposes: purposes must be an object whose only member is links", "purposes": ["links"]}
