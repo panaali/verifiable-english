@@ -159,6 +159,10 @@ def scopes (k : Nat) : String := ",\"elided\":[],\"clauses\":[" ++ ",".intercala
 #guard says (doc (scopes 64)) == "ResourceLimit: formula depth exceeds 64" &&
   says (doc (scopes 63 ++ ",\"relation\":{" ++ rel ++ "}")) == "ResourceLimit: formula depth exceeds 64" &&
   says (doc (scopes 63)) != "ResourceLimit: formula depth exceeds 64"
+-- the charge itself, which no answer shows below the request size limits (40,000 clauses reach step 6's same text)
+def deep (d : Json) : Option Bool := (deepLine <$> decodeClauseDoc (parse (profiles on)) d).toOption
+#guard deep (doc (scopes 64)) == some true && deep (doc (scopes 63 ++ ",\"relation\":{" ++ rel ++ "}")) == some true &&
+  deep (doc (scopes 63)) == some false
 #guard says (bodies [257]) == "ResourceLimit: rules" && says (bodies [200, 57]) == "ResourceLimit: rules" &&
   says (bodies [1, 256] true) == "ResourceLimit: rules"
 
