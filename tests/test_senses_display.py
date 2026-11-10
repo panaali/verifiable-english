@@ -1,7 +1,8 @@
-"""The senses display (senses plan 2.8, B7; sn-b7 as cut by reviews/dri-decisions-20261101-sn-b7b8.md item 1): each
-candidate of an open unit is rendered under the projection `senses.project` returns for its resolving lines and
-re-read by Lean under that same projection, on fixtures that read as merged (s16, one candidate; `The riddle is
-funny.`, two)."""
+"""The senses display (senses plan 2.8, B7; sn-b7 as cut by reviews/dri-decisions-20261101-sn-b7b8.md item 1, and
+sn-b7b): each candidate of an open unit is rendered under the projection `senses.project` returns for its resolving
+lines and re-read by Lean under that same projection (`senses.read`'s `reread`, sn-b6d), on fixtures that read as
+merged (s16, one candidate; `The riddle is funny.`, two); a resolved body is Lean's preamble lines and its rendering,
+re-read by Lean; the glossary and the hover rows are the sense map's (g2, g3)."""
 from __future__ import annotations
 
 import copy
@@ -37,7 +38,7 @@ def reading(place, source):
 
 def shown(place, source):
     env, overlay = place
-    return display.candidates(env, [PACK], reading(place, source), overlay=overlay)
+    return display.candidates(env, [PACK], source, reading(place, source), overlay=overlay)
 
 
 @pytest.fixture
@@ -51,7 +52,7 @@ def calls(monkeypatch):
         return project(env, packs, lines, used, **kw)
 
     def spy_read(env, source, packs, **kw):
-        seen["read"].append(source)
+        seen["read"].append(source if kw.get("reread") is None else kw["reread"])
         return read(env, source, packs, **kw)
 
     monkeypatch.setattr(display.route, "project", spy_project)
@@ -66,17 +67,26 @@ def test_two_candidates_each_reread_under_its_own_projection(place, calls):
     assert [c["lines"] for c in unit["candidates"]] == [AMUSING, STRANGE]
     calls["read"].clear()
     rows = shown(place, TWO)
-    assert rows == [{"sentence": 0, "candidate": 0, "lines": AMUSING, "text": TWO},
-                    {"sentence": 0, "candidate": 1, "lines": STRANGE, "text": TWO}]
+    assert rows == [{"sentence": 0, "candidate": 0, "lines": AMUSING, "lacking": [AMUSING], "text": TWO},
+                    {"sentence": 0, "candidate": 1, "lines": STRANGE, "lacking": [STRANGE], "text": TWO}]
     assert calls["project"] == [AMUSING, STRANGE]
-    assert calls["read"][1:] == [AMUSING + "\n" + TWO, STRANGE + "\n" + TWO]
+    assert calls["read"][1:] == [(0, 0, TWO), (0, 1, TWO)]
 
 
 def test_one_candidate_reread_under_its_own_projection(place, calls):
     line = "In this document, odd means strange."
     rows = shown(place, S16)
-    assert rows == [{"sentence": 0, "candidate": 0, "lines": line, "text": S16}]
-    assert calls["project"] == [line] and calls["read"][-1] == line + "\n" + S16
+    assert rows == [{"sentence": 0, "candidate": 0, "lines": line, "lacking": [line], "text": S16}]
+    assert calls["project"] == [line] and calls["read"][-1] == (0, 0, S16)
+
+
+def test_the_lines_a_candidate_lacks_are_those_not_in_leans_preamble(place):
+    """A document with a line for `odd`: each candidate's lines keep it (Lean's `lines`), and only the line for the
+    unresolved `funny` is the one the document lacks."""
+    odd = "In this document, odd means strange."
+    rows = shown(place, odd + "\n" + TWO + "\n" + S16)
+    assert [(r["sentence"], r["lines"], r["lacking"]) for r in rows] == [
+        (1, odd + "\n" + AMUSING, [AMUSING]), (1, odd + "\n" + STRANGE, [STRANGE])]
 
 
 def test_a_resolved_reading_has_no_candidate_to_render(place, calls):
@@ -121,16 +131,77 @@ def test_a_base_projection_is_not_the_candidates(place, monkeypatch):
         shown(place, TWO)
 
 
-def test_a_reread_under_another_projection_is_refused(place, calls):
-    """A two-sentence document whose other sentence uses `tells`: the candidate's projection has `tells`, the re-read
-    of its lines and its one sentence does not, so the projections differ and the display fails closed (a re-read
-    under a given projection is sn-b6c's)."""
+def test_a_reread_under_another_projection_is_refused(place, calls, monkeypatch):
+    """A two-sentence document whose other sentence uses `tells`: Lean re-reads each candidate's rendering in its
+    document, under the candidate's own projection (sn-b6d), so both are shown (sn-b7 failed closed here). The
+    same candidates with a projection identity patched are refused before anything is re-read."""
     source = TWO + "\nAlice tells the riddle."
     answer = reading(place, source)
     assert answer["used"] == ["funny", "tells"] and len(answer["units"][0]["candidates"]) == 2
-    with pytest.raises(CheckerUnavailable, match="does not re-read under its projection"):
-        shown(place, source)
-    assert calls["read"][-1] == AMUSING + "\n" + TWO
+    assert [r["text"] for r in shown(place, source)] == [TWO, TWO]
+    assert calls["read"][-2:] == [(0, 0, TWO), (0, 1, TWO)]
+    answer["units"][0]["candidates"][1]["identities"]["lexicon_id"] = "0" * 64
+    env, overlay = place
+    calls["read"].clear()
+    with pytest.raises(CheckerUnavailable, match="not the one its reading lists"):
+        display.candidates(env, [PACK], source, answer, overlay=overlay)
+    assert calls["read"] == [(0, 0, TWO)]
+
+
+@pytest.mark.parametrize("outcome", ["different", "unknown", None])
+def test_a_candidate_is_shown_only_when_leans_reread_is_same(place, monkeypatch, outcome):
+    """The display reads the re-read's `outcome` only (the relay binds its unit and candidate): `different`,
+    `unknown` (the budget ended) and no re-read (a refused reading) are each CheckerUnavailable."""
+    read = route.read
+
+    def tampered(env, source, packs, **kw):
+        answer = read(env, source, packs, **kw)
+        if kw.get("reread") is not None:
+            if outcome is None:
+                del answer["reading"]["reread"]
+            else:
+                answer["reading"]["reread"]["outcome"] = outcome
+        return answer
+
+    monkeypatch.setattr(display.route, "read", tampered)
+    with pytest.raises(CheckerUnavailable, match="does not re-read"):
+        shown(place, TWO)
+
+
+RESOLVED = AMUSING + "\nThe riddle is funny.\nAlice tells the riddle."
+
+
+def test_the_body_is_leans_preamble_then_the_rendering_reread(place, calls):
+    """g1's mechanism on a fixture that reads as merged: Lean's preamble line, then the body rendered under the
+    reading's projected environment with nothing on the default occurrence, and Lean's re-read of that text."""
+    env, overlay = place
+    answer = reading(place, RESOLVED)
+    assert answer["preamble"] == [AMUSING] and [o["is_default"] for o in answer["sense_map"]] == [True, True]
+    calls["read"].clear()
+    assert display.body(env, [PACK], RESOLVED, answer, overlay=overlay) == RESOLVED
+    assert calls["read"] == [RESOLVED] and calls["project"] == []
+    assert display.body(env, [PACK], TWO, reading(place, TWO), overlay=overlay) is None
+
+
+def test_a_body_with_a_switched_occurrence_is_not_rendered(place, calls):
+    """Python's renderer has no wording for a sense with its gloss, so a body whose sense map has a switched
+    occurrence is not rendered (and nothing is re-read); its reading is still shown."""
+    env, overlay = place
+    source = AMUSING + "\nThe riddle is funny (meaning strange)."
+    calls["read"].clear()
+    assert display.body(env, [PACK], source, reading(place, source), overlay=overlay) is None
+    assert calls["read"] == [source]
+
+
+def test_a_body_rendered_under_another_projection_is_checker_unavailable(place, monkeypatch):
+    """Seeded-bug check (a gloss on a default occurrence): the body rendered under the base projection, where
+    `funny` has no default and each sense is written with its gloss, is not the text Lean reads back."""
+    env, overlay = place
+    base = route.project(env, [PACK], "", ["funny", "tells"], overlay=overlay)["projection"]["environment"]
+    render = display._render
+    monkeypatch.setattr(display, "_render", lambda environment, *a: render(base, *a))
+    with pytest.raises(CheckerUnavailable, match="does not re-read to the reading"):
+        display.body(env, [PACK], RESOLVED, reading(place, RESOLVED), overlay=overlay)
 
 
 def _rebound(field, value):
@@ -149,13 +220,13 @@ def _rebound(field, value):
 
 
 @pytest.mark.parametrize("field, value", [
-    ("formula", ["unary", "sense__funny_1", ["const", "riddle"]]),
+    ("formula", ["unary", "sense__funny_2", ["const", "riddle"]]),
     ("mark", True), ("mark", 0), ("status", "open"), ("units", None),
     ("environment_id", "0" * 64), ("lexicon_id", "0" * 64), ("grammar_id", "0" * 64),
 ])
 def test_a_reread_bound_to_another_formula_or_projection_is_refused(place, monkeypatch, field, value):
-    """Every field the display reads from the re-read (status, the one unit, its formula and mark, the projection's
-    identities) is bound to the candidate: a rebound value is CheckerUnavailable."""
+    """Every field the display reads from the body's re-read (status, the units, each formula and mark, the
+    projection's identities) is bound to the reading: a rebound value is CheckerUnavailable."""
     read = route.read
     sources = []
 
@@ -167,7 +238,45 @@ def test_a_reread_bound_to_another_formula_or_projection_is_refused(place, monke
     monkeypatch.setattr(display.route, "read", tampered)
     env, overlay = place
     with pytest.raises(CheckerUnavailable, match="does not re-read"):
-        display.candidates(env, [PACK], tampered(env, TWO, [PACK], overlay=overlay)["reading"], overlay=overlay)
+        display.body(env, [PACK], RESOLVED, tampered(env, RESOLVED, [PACK], overlay=overlay)["reading"],
+                     overlay=overlay)
+
+
+GLOSSED = AMUSING + "\nThe riddle is funny.\nThe riddle is funny (meaning strange).\nAlice tells the riddle."
+
+
+def test_g2_the_glossary_is_the_sense_maps(place):
+    """g2 on a fixture that reads as merged: one row per used sense in Lean's order, written as its first occurrence
+    is (the source bytes of its span), with Lean's gloss and the projected description; then the unused defaults."""
+    rows = display.glossary(GLOSSED, reading(place, GLOSSED))
+    assert rows == {"senses": [
+        {"symbol": "sense__funny_1", "written": "funny", "gloss": "amusing", "description": "causes laughter",
+         "is_default": True, "sentences": [1]},
+        {"symbol": "sense__funny_2", "written": "funny (meaning strange)", "gloss": "strange",
+         "description": "odd, hard to explain", "is_default": False, "sentences": [2]},
+        {"symbol": "sense__tells_1", "written": "tells", "gloss": "says aloud", "description": "says the joke to "
+         "someone", "is_default": True, "sentences": [3]}], "unused": []}
+    unused = "In this document, odd means strange.\nThe riddle is funny (meaning strange)."
+    assert display.glossary(unused, reading(place, unused))["unused"] == ["odd"]
+    assert display.glossary(TWO, reading(place, TWO)) == {"senses": [], "unused": []}
+
+
+def test_g3_hover_spans_cut_the_source_at_token_boundaries(place):
+    """g3: each hover row is a sense-map entry whose bytes are exactly its written words, cut where its tokens
+    start and end; a candidate's entries keep their candidate."""
+    source = "Alice tells the riddle. " + GLOSSED.split("\n", 1)[1].replace("\n", " ")
+    source = AMUSING + "  \u00a0" + source
+    answer = reading(place, source)
+    rows = display.hover(source, answer)
+    data = source.encode()
+    assert [data[r["byte_start"]:r["byte_stop"]].decode() for r in rows] == [
+        "tells", "funny", "funny (meaning strange)", "tells"]
+    assert all(data[r["byte_start"] - 1:r["byte_start"]] == b" " and data[r["byte_stop"]:r["byte_stop"] + 1] in
+               (b" ", b".") for r in rows)
+    assert [(r["symbol"], r["is_default"], r["gloss"]) for r in rows][1:3] == [
+        ("sense__funny_1", True, "amusing"), ("sense__funny_2", False, "strange")]
+    assert rows[0]["description"] == "says the joke to someone"
+    assert [r.get("candidate") for r in display.hover(TWO, reading(place, TWO))] == [0, 1]
 
 
 def test_each_lines_is_projected_once_within_the_limit(place, calls, monkeypatch):
@@ -178,14 +287,14 @@ def test_each_lines_is_projected_once_within_the_limit(place, calls, monkeypatch
     assert [len(u["candidates"]) for u in answer["units"]] == [2, 2]
     env, overlay = place
     monkeypatch.setattr(display, "MAX_CANDIDATES", 4)
-    rows = display.candidates(env, [PACK], answer, overlay=overlay)
+    rows = display.candidates(env, [PACK], source, answer, overlay=overlay)
     assert [(r["sentence"], r["candidate"], r["text"]) for r in rows] == [(s, c, TWO) for s in (0, 1) for c in (0, 1)]
     assert calls["project"] == [AMUSING, STRANGE]
     monkeypatch.setattr(display, "MAX_CANDIDATES", 3)
     calls["project"].clear()
     calls["read"].clear()
     with pytest.raises(ResourceLimit, match="at most 3 candidates"):
-        display.candidates(env, [PACK], answer, overlay=overlay)
+        display.candidates(env, [PACK], source, answer, overlay=overlay)
     assert calls == {"project": [], "read": []}
 
 
@@ -202,10 +311,20 @@ def test_render_senses_cli_shows_leans_reading_and_the_checked_candidates(tmp_pa
     assert main(_cli(tmp_path, place, TWO, "--view", "ve_english")) == 3
     out = json.loads(capsys.readouterr().out)
     assert out["operation"] == "senses.read" and out["reading"]["status"] == "open"
-    assert [(r["lines"], r["text"]) for r in out["renderings"]] == [(AMUSING, TWO), (STRANGE, TWO)]
-    assert main(_cli(tmp_path, place, "Alice tells the riddle.")) == 0
+    assert [(r["lines"], r["lacking"], r["text"]) for r in out["renderings"]] == [
+        (AMUSING, [AMUSING], TWO), (STRANGE, [STRANGE], TWO)]
+    assert out["text"] is None and "glossary" not in out and "hover" not in out
+    assert main(_cli(tmp_path, place, RESOLVED, "--glossary", "--json")) == 0
     out = json.loads(capsys.readouterr().out)
-    assert out["reading"]["status"] == "one" and out["renderings"] == []
+    assert out["reading"]["status"] == "one" and out["renderings"] == [] and out["text"] == RESOLVED
+    assert out["glossary"] == display.glossary(RESOLVED, out["reading"])
+    assert out["hover"] == display.hover(RESOLVED, out["reading"]) and len(out["hover"]) == 2
+
+
+def test_glossary_and_json_need_senses(tmp_path, place, capsys):
+    args = _cli(tmp_path, place, TWO, "--glossary")
+    del args[-3:-1]
+    assert main(args) == 2 and "give --senses PACK" in capsys.readouterr().out
 
 
 def test_render_senses_cli_refuses_another_view(tmp_path, place, capsys):
