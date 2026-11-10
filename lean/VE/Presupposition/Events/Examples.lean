@@ -4,7 +4,8 @@ import VE.Events.Examples
 /-! # PS-7 fixtures (presupposition PLAN PS-7, P9, P10 and UDHR u055's and u067's "change")
 
 `#guard` lines on finite events situations, both directions for each row: a state with no stated end
-(persistence is never assumed: the same begin day with a stated end changes the answer), a state that
+(persistence is never assumed: the same begin day with a stated end changes "is in progress on" and `strong`;
+the `pre` "in progress before" cannot fail by an end, since a state is in progress on its own begin day), a state that
 begins on the day itself, an earlier state or event of another sort, and days and instances bound by
 an outer quantifier (the lifts). P9 and P10 are at formula level (ps-2ab's `admit` is not on main).
 Days run a < b < c < d; the day term `t` is c. -/
@@ -41,6 +42,8 @@ def states : List (VE.FiniteModel String) := [noEnd, endA, endC, onT, none0]
 -- events' "is in progress on": persistence is never assumed (noEnd against endA), the last day counts (endC)
 #guard states.map (ip.eval · []) == [true, false, true, true, false]
 #guard (inProgress V stay x (.const "b")).eval endA [] == false && (inProgress V stay x (.const "a")).eval endA []
+-- the `pre` reads only the begin day: a stated end before t leaves it true (endA as noEnd)
+#guard ipBefore.eval noEnd [] == ipBefore.eval endA []
 
 -- "stops" / "ceases": in progress before the day; a state beginning on t is not
 #guard states.map ((stops V stay x t (.not ip)).pre.eval · []) == [true, true, true, false, false]
@@ -63,6 +66,7 @@ def other (rels : List (String × List (List String))) : VE.FiniteModel String :
 #guard !(resumes V stay t ip).pre.eval (other [("ends", [["y", "c"]])]) []
 #guard !(resumes V stay t ip).pre.eval (other [("ends", [["y", "d"]])]) []
 #guard !(resumes V stay t ip).pre.eval (other [("job_ends", [["j", "a"]])]) []
+#guard !(resumes V stay t ip).pre.eval (other [("begins", [["y", "a"]])]) []
 
 -- "again": an earlier visit; a visit on t or later, or an earlier audit, does not count
 def evs (rels : List (String × List (List String))) : VE.FiniteModel String :=
@@ -118,6 +122,11 @@ def p9F : Frame := .andR ipBefore .hole
 #guard states.all fun M => (p9F.goal p9.pre).eval M [] &&
   [assertedAt p9F p9, conditionedAt p9F p9, inPlaceAt p9F p9].all (·.eval M [] == (p9F.plug p9.weak).eval M [])
 #guard states.map ((p9F.plug p9.strong).eval · []) == [true, false, true, false, false]
+-- the phrase's content entails the pre on every situation; with "ongoing" read as in progress on t (`ip`) instead,
+-- the goal fails on onT and asserted and conditioned differ there: one reading rests on "ongoing" = before t
+#guard states.all fun M => !(VE.Formula.and ipBefore ip).eval M [] || p9.pre.eval M []
+#guard !((Frame.andR ip .hole).goal p9.pre).eval onT [] &&
+  (assertedAt (.andR ip .hole) p9).eval onT [] != (conditionedAt (.andR ip .hole) p9).eval onT []
 
 -- P10 (u0168.s01), "remain firm", Claude's firmness as a state: {assumed: the before part as its own unit, then
 -- the clause; conditioned: goal → clause}. They differ where the firmness begins on t (not in progress before).
@@ -135,7 +144,14 @@ def stateless : VE.FiniteModel String := other [("begins", [["y", "c"]])]
 #guard change.eval changed [] && !change.eval stateless []
 #guard !(stops V stay x t (.not ip)).pre.eval stateless [] && (stops V stay x t (.not ip)).weak.eval stateless []
 
+-- every situation above satisfies events' premises (one begin, one end, no end before the begin, the order)
+#guard (states ++ [stayS [("begins", [["s", "b"]])], other [("ends", [["y", "a"]])], other [("job_ends", [["j", "a"]])],
+  evs [("visit_on", [["v", "a"]])], evs [("audit_on", [["w", "a"]])], changed, stateless,
+  places [("ends", [["y", "a"]]), ("at", [["y", "p"]])]]).all (VE.Events.Examples.firstFailing V · == none)
+#guard VE.Events.Examples.firstFailing V (stayS [("begins", [["s", "b"]]), ("ends", [["s", "a"]])]) != none
+
 -- ps-1-locate-path: `locate` follows the path (a `locate` that ignores it gives one answer for both)
+#guard Frame.locate (.or .top .bottom) [0] == some (.orL .hole .bottom, .top)
 #guard (Frame.locate (.and .top .bottom) [0]).map (·.2) == some .top &&
   (Frame.locate (.and .top .bottom) [1]).map (·.2) == some .bottom
 
