@@ -1,0 +1,269 @@
+{
+ "base": "de7fb94690644f6eb7f0d422ce33d050e27c8bd4",
+ "changes": [
+  {
+   "added": 106,
+   "deleted": 0,
+   "path": "docs/arch/AR-23/closure_probe.py"
+  },
+  {
+   "added": 25,
+   "deleted": 0,
+   "path": "docs/arch/AR-23/evidence.toml"
+  },
+  {
+   "added": 221,
+   "deleted": 0,
+   "path": "docs/arch/AR-23/evidence/ab-delta.json"
+  },
+  {
+   "added": 794,
+   "deleted": 0,
+   "path": "docs/arch/AR-23/evidence/ab.json"
+  },
+  {
+   "added": 594,
+   "deleted": 0,
+   "path": "docs/arch/AR-23/evidence/closure-probe.json"
+  },
+  {
+   "added": 49,
+   "deleted": 1,
+   "path": "docs/arch/AR-23/evidence/closure-tests.json"
+  },
+  {
+   "added": 68,
+   "deleted": 0,
+   "path": "docs/arch/AR-23/evidence/mutants.json"
+  },
+  {
+   "added": 27,
+   "deleted": 0,
+   "path": "docs/arch/AR-23/evidence/out.json"
+  },
+  {
+   "added": 51,
+   "deleted": 0,
+   "path": "docs/arch/AR-23/evidence/statements.json"
+  },
+  {
+   "added": 717,
+   "deleted": 0,
+   "path": "docs/arch/AR-23/evidence/trust.json"
+  },
+  {
+   "added": 52,
+   "deleted": 0,
+   "path": "docs/arch/AR-23/mutants.json"
+  },
+  {
+   "added": 64,
+   "deleted": 0,
+   "path": "docs/arch/AR-23/trust-mutants-allow.json"
+  },
+  {
+   "added": 1361,
+   "deleted": 58,
+   "path": "docs/arch/AR-23/trust-mutants.json"
+  },
+  {
+   "added": 16,
+   "deleted": 15,
+   "path": "docs/codemap/INDEX.md"
+  },
+  {
+   "added": 1,
+   "deleted": 0,
+   "path": "docs/codemap/docs__rights.md"
+  },
+  {
+   "added": 1,
+   "deleted": 1,
+   "path": "docs/codemap/lean__VE__Closure.md"
+  },
+  {
+   "added": 4,
+   "deleted": 5,
+   "path": "docs/codemap/tests--part-3.md"
+  },
+  {
+   "added": 5,
+   "deleted": 5,
+   "path": "docs/codemap/tests--part-4.md"
+  },
+  {
+   "added": 6,
+   "deleted": 5,
+   "path": "docs/codemap/tests--part-5.md"
+  },
+  {
+   "added": 9,
+   "deleted": 10,
+   "path": "docs/codemap/tests--part-6.md"
+  },
+  {
+   "added": 10,
+   "deleted": 0,
+   "path": "docs/codemap/tests--part-7.md"
+  },
+  {
+   "added": 3,
+   "deleted": 3,
+   "path": "docs/spec/assurance-manifest.md"
+  },
+  {
+   "added": 1,
+   "deleted": 0,
+   "path": "lean/VE/Audit.lean"
+  },
+  {
+   "added": 25,
+   "deleted": 0,
+   "path": "lean/VE/Closure/Checks.lean"
+  },
+  {
+   "added": 10,
+   "deleted": 3,
+   "path": "lean/VE/Closure/Consequence.lean"
+  },
+  {
+   "added": 2,
+   "deleted": 2,
+   "path": "lean/VE/Closure/CoreEquiv.lean"
+  },
+  {
+   "added": 18,
+   "deleted": 95,
+   "path": "lean/VE/Closure/Finite.lean"
+  },
+  {
+   "added": 35,
+   "deleted": 114,
+   "path": "lean/VE/Closure/Syntax.lean"
+  },
+  {
+   "added": 2,
+   "deleted": 1,
+   "path": "lean/VE/Closure/Tableau.lean"
+  },
+  {
+   "added": 8,
+   "deleted": 39,
+   "path": "lean/VE/Core/Conservativity.lean"
+  },
+  {
+   "added": 2,
+   "deleted": 1,
+   "path": "lean/VE/Data/Background.lean"
+  },
+  {
+   "added": 2,
+   "deleted": 1,
+   "path": "lean/VE/Definitions/Route.lean"
+  },
+  {
+   "added": 2,
+   "deleted": 1,
+   "path": "lean/VE/Route/Background.lean"
+  },
+  {
+   "added": 14,
+   "deleted": 11,
+   "path": "lean/VE/Route/Budget.lean"
+  },
+  {
+   "added": 3,
+   "deleted": 2,
+   "path": "lean/VE/Route/Checker.lean"
+  },
+  {
+   "added": 4,
+   "deleted": 2,
+   "path": "lean/VE/Route/WireSound.lean"
+  },
+  {
+   "added": 3,
+   "deleted": 3,
+   "path": "lean/VE/Route/frozen-sources.sha256"
+  },
+  {
+   "added": 15,
+   "deleted": 10,
+   "path": "lean/VE/Service/Family.lean"
+  },
+  {
+   "added": 2,
+   "deleted": 1,
+   "path": "lean/VE/Service/FamilyBundle.lean"
+  },
+  {
+   "added": 6,
+   "deleted": 5,
+   "path": "lean/axioms.txt"
+  },
+  {
+   "added": 1,
+   "deleted": 0,
+   "path": "lean/checkers.lock"
+  },
+  {
+   "added": 170,
+   "deleted": 168,
+   "path": "lean/declarations.txt"
+  },
+  {
+   "added": 9,
+   "deleted": 0,
+   "path": "lean/statements.txt"
+  },
+  {
+   "added": 1,
+   "deleted": 0,
+   "path": "tools/trust-classes.json"
+  },
+  {
+   "added": 7,
+   "deleted": 7,
+   "path": "ve/assurance-manifest.json"
+  }
+ ],
+ "commits": [
+  {
+   "hash": "ea963bb04fbaf3edf302aa72dba853a2b19e697e",
+   "subject": "AR-23: evidence.toml; CPU and gate-collection probes"
+  },
+  {
+   "hash": "f166b4dea23ba47f511b0164aead976fd97e2bdb",
+   "subject": "AR-23: evidence: statements, trust, corpus A/B (0 unlisted, recordings byte-identical), OUT, closure probe and tests"
+  },
+  {
+   "hash": "547dc3aa2969ca791b40cf6841f2fa6953e1e3ba",
+   "subject": "AR-23: seeded mutants (4/4 killed): connective swap, wrong Finite alias, dropped and wrong embedding case"
+  },
+  {
+   "hash": "95594da74fb9df6a8467a04a85c87e307c32a921",
+   "subject": "AR-23: trust-mutants evidence (18 mutants of 4 K definitions, all allowed with the proof each breaks)"
+  },
+  {
+   "hash": "6e7a58b60170231b064a870ae625a3ff78925ad4",
+   "subject": "AR-23: regenerate lean/declarations.txt after the closure checks"
+  },
+  {
+   "hash": "a585d8363cfec6a4f23051fc1c966a03aebb38ab",
+   "subject": "AR-23: closure checks of the embedding, the finite aliases and the connectives; trust-mutants allow file"
+  },
+  {
+   "hash": "8decd382f292278519786a9c6611e147f5918e19",
+   "subject": "AR-23: regenerate the Lean inventories, audit manifests, frozen list, checker pins and code map"
+  },
+  {
+   "hash": "6566dd8b7a2dda3c9787e9cb4b8b817e2911c2bb",
+   "subject": "AR-23: re-pin the decoder files Service/Family and Service/FamilyBundle (proof edits only, no decoder changed)"
+  },
+  {
+   "hash": "e81ed68002a3553cb688ccdfb04cea4718228b12",
+   "subject": "AR-23: closure's typing, checker, meaning and consequence through Core; Closure/Finite aliases Core's"
+  }
+ ],
+ "head": "ea963bb04fbaf3edf302aa72dba853a2b19e697e"
+}
