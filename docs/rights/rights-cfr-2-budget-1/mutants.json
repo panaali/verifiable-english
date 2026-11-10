@@ -76,5 +76,18 @@
   ],
   "test": "lean/VE/SoftNorms/Run.lean:127 (#guard: <k> 1, <j> 2)",
   "result": "lake build VE.SoftNorms.Run: error at :127; build failed"
+ },
+ {
+  "id": "S7-disjoint-not-subtracted",
+  "behaviour": "WP(T) under pair evidence is openCoherence less the DISJOINT-discharged pairs",
+  "definition": "VE.SoftNorms.Run.openAfterClassification",
+  "language": "Lean",
+  "file": "lean/VE/SoftNorms/Run.lean",
+  "mutation": [
+   "pure ((VE.SoftNorms.Wire.openCoherence src.D).filter (!disjoint.contains ·))",
+   "pure (VE.SoftNorms.Wire.openCoherence src.D)"
+  ],
+  "test": "lean/ResponseShape/Schemas/SoftPairsChecks.lean:24 and :26 (#guard)",
+  "result": "lake build ResponseShape.Schemas.SoftPairsChecks: errors at :24, :26; build failed"
  }
 ]
