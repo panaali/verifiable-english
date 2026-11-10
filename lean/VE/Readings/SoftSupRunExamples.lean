@@ -83,15 +83,18 @@ def certsq : Json := match parse r#"{"avoid_required":{"rule":"expand","at":2,"c
   | _ => .null
 /-- W-14's case: under `rs1:1` conflict, certificate and model evidence, then under `[]` a conflict piece alone; each
     scope's shown labels and accepted pieces. -/
-def scopes (c : SDCase) : SDM (List (List (String × List String) × List (Bool × Bool) × List ChoiceResult)) := do
+def scopes (c : SDCase) :
+    SDM (List (List (String × List String) × List (Bool × Bool) × List ChoiceResult × List String)) := do
   let e := caseJ [("conflict", caseJ [("conflict_certificates", certs4a)]),
     ("certificate", caseJ [("certificate", ← boundCert c (X1 c) [])]),
+    ("countermodel", caseJ [("model", model c ["ve__bit__1__0"]), ("filling", Json.mkObj [])]),
     ("model", caseJ [("model", model c ["ve__bit__1__0"]), ("filling", Json.mkObj [])])]
   let s1 ← sdScope c A1 (Json.arr #[]) qJ e
   let s2 ← sdScope c [] (Json.arr #[]) qJ (caseJ [("conflict", caseJ [("conflict_certificates", certs4a)]),
-    ("witness", caseJ [("witness", caseJ [("target", "x_required"), ("tuple", toJson ["a"])])])])
+    ("witness", caseJ [("witness", caseJ [("target", "x_required"), ("tuple", toJson ["a"])])]),
+    ("model", caseJ [("model", model c ["ve__bit__1__0", "c"]), ("filling", Json.mkObj [])])])
   pure ([s1, s2].map fun s => (s.used, s.info.notes.map (fun n => (n.accepted, n.error.isSome)),
-    [s.info.conflict, s.info.query, s.info.premise]))
+    [s.info.conflict, s.info.query, s.info.premise], s.encoded.map (·.1)))
 
 def conflictJ (c : SDCase) (A : List (String × Nat)) (more : List (String × Json)) : SDM String :=
   (·.compress) <$> runSDSup "t" "readings-conflict" c (caseJ ([("assumed", toJson A)] ++ more))
@@ -115,8 +118,9 @@ soft premises are shown by their choice labels (`shownWith_eq`), never `rd-2-`. 
 #guard (run env4a doc4a scopes).1.toOption == some [
   ([("conflict", ["readings:rs1@1:1:quiet", "soft:exception:must-x:sufficient:0", "soft:coherence:must-x,need-not-x"]),
     ("certificate", ["readings:rs1@1:1:quiet", "soft:exception:must-x:sufficient:0", "soft:coherence:must-x,need-not-x"]),
-    ("model", [])], [(true, false), (true, false), (true, false)], [.free, .proved, .model]),
-  ([("conflict", [])], [(false, false), (false, true)], [.unknown, .unknown, .unknown])]
+    ("countermodel", []), ("model", [])], [(true, false), (true, false), (false, false), (true, false)],
+    [.free, .proved, .model], ["model"]),
+  ([("conflict", []), ("model", [])], [(false, false), (false, true), (false, false)], [.unknown, .unknown, .unknown], [])]
 -- `NSDq`'s conflict answer under `[]` rests on its `Fill_T` premise alone, replayed in the middle with the slot
 #guard (run envq docq fun c => (·.used) <$> sdScope c [] (Json.arr #[]) .null
   (caseJ [("conflict", caseJ [("conflict_certificates", certsq)])])).1.toOption ==
@@ -124,6 +128,9 @@ soft premises are shown by their choice labels (`shownWith_eq`), never `rd-2-`. 
 
 /-! ## `readings-conflict`: one check over the superposed document -/
 
+#guard text (run envq docq fun c => conflictJ c none' [("conflict_certificates", certsq)]) |>.startsWith
+  ("{\"assumed\":[],\"id\":\"t\",\"reading_premises\":[\"readings:rs1@1:1:quiet\"," ++
+    "\"unsaid:pair:help_required,help_permitted\"],\"status\":\"ok\"")
 #guard ans (run env4a doc4a fun c => conflictJ c A1 [("conflict_certificates", certs4a)]) ==
   ("{\"assumed\":[[\"rs1\",1]],\"id\":\"t\",\"reading_premises\":[\"readings:rs1@1:1:quiet\"],\"status\":\"ok\"," ++
     "\"targets\":[\"x_permitted\",\"y_permitted\",\"x_required\",\"x_required->x_permitted\"],\"verdict\":\"CONFLICT-FREE\"}",
@@ -150,9 +157,13 @@ def big8 (c : SDCase) : SDM (Nat × List String) := do
   let r ← attempt (witnessJ c ["a", "a"])
   let m ← (·.compress) <$> runSDSup "t" "readings-model" c (caseJ [("assumed", toJson none'), ("model", model c []),
     ("filling", Json.mkObj [])])
-  pure (c.checked.length, [a, b, match r with | .ok x => x | .error e => e, m])
+  let s ← sdScope c [] (Json.arr #[]) .null (caseJ [("witness", caseJ [("witness", caseJ [("model", model c []),
+    ("filling", Json.mkObj []), ("target", "x_required->x_permitted"), ("tuple", toJson ["a"])])])])
+  pure (c.checked.length, [a, b, match r with | .ok x => x | .error e => e, m,
+    toString (s.info.conflict == .conflict, s.encoded.map (·.1), s.info.notes.map (·.accepted))])
 #guard match run env4 (bigJ 8) big8 with
-  | (.ok (n, [a, b, r, m]), k) => n == 256 && k == { admissions := 1, routes := 1, checks := 2 } &&
+  | (.ok (n, [a, b, r, m, w]), k) => n == 256 && k == { admissions := 1, routes := 1, images := 1, checks := 3 } &&
+    w == "(true, ([witness], [true]))" &&
     a == "{\"assumed\":[],\"choice\":[[\"rs0\",0],[\"rs1\",0],[\"rs2\",0],[\"rs3\",0],[\"rs4\",0],[\"rs5\",0],[\"rs6\",0],[\"rs7\",0]]," ++
       "\"id\":\"t\",\"status\":\"ok\",\"target\":\"x_required->x_permitted\",\"verdict\":\"CONFLICT\"}" &&
     b.endsWith "\"verdict\":\"UNKNOWN\"}" && r == "InvalidInput: witness tuple has the wrong length or sort" &&

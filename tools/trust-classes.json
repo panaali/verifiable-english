@@ -20810,7 +20810,33 @@
             "VE.Readings.Run.shownWith_eq"
           ]
         },
-        "VE.Readings.Run.sdProofs",
+        {
+          "name": "VE.Readings.Run.sdProofs",
+          "tied": [
+            "VE.Readings.Run.SDCase.replay_query",
+            "VE.Readings.Run.SDCase.replay_conflict"
+          ]
+        },
+        {
+          "name": "VE.Readings.Run.SDCase.replay",
+          "tied": [
+            "VE.Readings.Run.SDCase.replay_query",
+            "VE.Readings.Run.SDCase.replay_conflict"
+          ]
+        },
+        {
+          "name": "VE.Readings.Run.SDCase.middle",
+          "tied": [
+            "VE.Readings.Run.SDCase.replay_query",
+            "VE.Readings.Run.SDCase.replay_conflict"
+          ]
+        },
+        {
+          "name": "VE.Readings.Run.SDCase.images",
+          "tied": [
+            "VE.Readings.Run.SDCase.images_shown"
+          ]
+        },
         "VE.Readings.Run.sdScope"
       ]
     },

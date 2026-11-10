@@ -32157,6 +32157,10 @@ theorem VE.Readings.Run.SDCase.bind_eq
         (VE.Readings.slotUnder c.N.D A ++ VE.Readings.supX c.N) (VE.Readings.sup c.N.D).snd own conclusion j
   -- uses VE.Formula@VE.Syntax VE.NormDefaults.Wire.bindCertX@VE.NormDefaults.LayeredEntail VE.Readings.Choice@VE.Readings.Choice VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.Run.SDCase.N@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.bind@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.x@VE.Readings.SoftSupRun VE.Readings.Run.SDCase@VE.Readings.SoftSupRun VE.Readings.Wire.Admitted.re@VE.Readings.Wire VE.Readings.Wire.Admitted2.a@VE.Readings.SupWire VE.Readings.Wire.AdmittedSD.b@VE.Readings.SoftWire VE.Readings.Wire.ReadingsEnvironment.lowerJson@VE.Readings.Wire VE.Readings.Wire.SupReplaySD.r@VE.Readings.SoftSupWire VE.Readings.slotUnder@VE.Readings.Choice VE.Readings.sup@VE.Readings.Choice VE.Readings.supU@VE.Readings.Unspecified VE.Readings.supX@VE.Readings.SoftSup VE.Rights.RightsDoc@VE.Rights.Tree VE.Tableau.Certificate@VE.Tableau
   -- expr 2886605240
+theorem VE.Readings.Run.SDCase.fill_formulas
+  ∀ (c : VE.Readings.Run.SDCase), List.map (fun x => x.snd) c.FL = c.fp
+  -- uses VE.Formula@VE.Syntax VE.Readings.Run.SDCase.FL@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.fp@VE.Readings.SoftSupRun VE.Readings.Run.SDCase@VE.Readings.SoftSupRun
+  -- expr 65907967
 theorem VE.Readings.Run.SDCase.free_eq
   ∀ (c : VE.Readings.Run.SDCase) (A : VE.Readings.Choice) (certs : List (Option VE.Tableau.Certificate)),
     c.free A certs =
@@ -32239,11 +32243,23 @@ theorem VE.Readings.Run.SDCase.hv
   ∀ (self : VE.Readings.Run.SDCase), self.v = VE.Readings.Wire.supVocabulary self.x.r.b.a.re self.x.r.b.D
   -- uses VE.Bridge.Vocabulary@VE.Bridge VE.Readings.Run.SDCase.v@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.x@VE.Readings.SoftSupRun VE.Readings.Run.SDCase@VE.Readings.SoftSupRun VE.Readings.Wire.Admitted.re@VE.Readings.Wire VE.Readings.Wire.Admitted2.D@VE.Readings.SupWire VE.Readings.Wire.Admitted2.a@VE.Readings.SupWire VE.Readings.Wire.AdmittedSD.b@VE.Readings.SoftWire VE.Readings.Wire.SupReplaySD.r@VE.Readings.SoftSupWire VE.Readings.Wire.supVocabulary@VE.Readings.SupWire
   -- expr 3306352965
+theorem VE.Readings.Run.SDCase.images_shown
+  ∀ (c : VE.Readings.Run.SDCase) (A : VE.Readings.Choice) (used : List String),
+    VE.Readings.Run.shownWith (c.images A) used = VE.Readings.sdShown c.N A used
+  -- uses VE.Readings.Choice@VE.Readings.Choice VE.Readings.Run.SDCase.N@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.images@VE.Readings.SoftSupRun VE.Readings.Run.SDCase@VE.Readings.SoftSupRun VE.Readings.Run.shownWith@VE.Readings.SoftSupRun VE.Readings.sdShown@VE.Readings.SoftSupLabels
+  -- expr 4131400312
 theorem VE.Readings.Run.SDCase.local_eq
   ∀ (c : VE.Readings.Run.SDCase) (M : VE.FiniteModel VE.Bridge.Entity)
     (G : VE.NormDefaults.FiniteFill c.U VE.Bridge.Entity), c.localFree M G = VE.Readings.Wire.localFree c.U M G
   -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel@VE.Finite VE.NormDefaults.FiniteFill@VE.NormDefaults.Evidence VE.Readings.Run.SDCase.U@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.localFree@VE.Readings.SoftSupRun VE.Readings.Run.SDCase@VE.Readings.SoftSupRun VE.Readings.Wire.localFree@VE.Readings.VerdictsWire
   -- expr 2795788179
+theorem VE.Readings.Run.SDCase.middle_full
+  ∀ (c : VE.Readings.Run.SDCase) (A : VE.Readings.Choice),
+    List.take (List.length c.slot) (List.map (fun x => x.snd) c.middle) ++ VE.Readings.atoms c.N.D A ++
+        List.drop (List.length c.slot) (List.map (fun x => x.snd) c.middle) =
+      c.slotX A ++ c.fp
+  -- uses VE.Formula@VE.Syntax VE.Readings.Choice@VE.Readings.Choice VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.Run.SDCase.N@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.fp@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.middle@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.slot@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.slotX@VE.Readings.SoftSupRun VE.Readings.Run.SDCase@VE.Readings.SoftSupRun VE.Readings.atoms@VE.Readings.Choice
+  -- expr 4050838901
 theorem VE.Readings.Run.SDCase.model_eq
   ∀ (c : VE.Readings.Run.SDCase) (A : VE.Readings.Choice) (M : VE.FiniteModel VE.Bridge.Entity)
     (G : VE.NormDefaults.FiniteFill c.U VE.Bridge.Entity) (Γ : List VE.Formula) (φ : VE.Formula),
@@ -32264,6 +32280,24 @@ theorem VE.Readings.Run.SDCase.premises_eq
         ((VE.Readings.sup c.N.D).snd ++ Γ)
   -- uses VE.Formula@VE.Syntax VE.NormDefaults.Wire.premisesX@VE.NormDefaults.LayeredEntail VE.Readings.Choice@VE.Readings.Choice VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.Run.SDCase.N@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.premises@VE.Readings.SoftSupRun VE.Readings.Run.SDCase@VE.Readings.SoftSupRun VE.Readings.slotUnder@VE.Readings.Choice VE.Readings.sup@VE.Readings.Choice VE.Readings.supU@VE.Readings.Unspecified VE.Readings.supX@VE.Readings.SoftSup VE.Rights.RightsDoc@VE.Rights.Tree
   -- expr 2028991519
+theorem VE.Readings.Run.SDCase.replay_conflict
+  ∀ (c : VE.Readings.Run.SDCase) (A : VE.Readings.Choice) (certs : List (Option VE.Tableau.Certificate)),
+    c.replay A (VE.Readings.Run.sdProofs c certs Option.none) (List.map (fun x => x.snd) c.middle) =
+      (c.ts.zip certs).all fun x =>
+        match x.snd with
+        | Option.some k =>
+          VE.Tableau.checkCertificate (VE.Norms.envAt c.F 0) (c.bgb ++ c.slotX A ++ c.fp)
+            (VE.Norms.targetConclusion x.fst) k
+        | Option.none => Bool.true
+  -- uses VE.Formula@VE.Syntax VE.Norms.envAt@VE.Norms.Tree VE.Norms.targetConclusion@VE.Norms.Replay VE.Readings.Choice@VE.Readings.Choice VE.Readings.Run.SDCase.F@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.bgb@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.fp@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.free.match_1@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.middle@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.replay@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.slotX@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.ts@VE.Readings.SoftSupRun VE.Readings.Run.SDCase@VE.Readings.SoftSupRun VE.Readings.Run.sdProofs@VE.Readings.SoftSupRun VE.Tableau.Certificate@VE.Tableau VE.Tableau.checkCertificate@VE.TableauChecker
+  -- expr 1923852078
+theorem VE.Readings.Run.SDCase.replay_query
+  ∀ (c : VE.Readings.Run.SDCase) (A : VE.Readings.Choice) (Γ : List VE.Formula) (φ : VE.Formula)
+    (cert : VE.Tableau.Certificate),
+    c.replay A (VE.Readings.Run.sdProofs c [] (Option.some (Γ, φ, cert))) (List.map (fun x => x.snd) c.middle) =
+      VE.Tableau.checkCertificate (VE.Norms.envAt c.F (VE.Norms.size c.F)) (c.premises A Γ) φ cert
+  -- uses VE.Formula@VE.Syntax VE.Norms.envAt@VE.Norms.Tree VE.Norms.size@VE.Norms.Tree VE.Readings.Choice@VE.Readings.Choice VE.Readings.Run.SDCase.F@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.middle@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.premises@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.replay@VE.Readings.SoftSupRun VE.Readings.Run.SDCase@VE.Readings.SoftSupRun VE.Readings.Run.sdProofs@VE.Readings.SoftSupRun VE.Tableau.Certificate@VE.Tableau VE.Tableau.checkCertificate@VE.TableauChecker
+  -- expr 3414485598
 theorem VE.Readings.Run.SDCase.slotX_eq
   ∀ (c : VE.Readings.Run.SDCase) (A : VE.Readings.Choice),
     c.slotX A = VE.Readings.slotUnder c.N.D A ++ VE.Readings.supX c.N
