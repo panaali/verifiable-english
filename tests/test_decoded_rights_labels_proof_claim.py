@@ -1,5 +1,5 @@
 """No record claims the decoded route discharges the hypothesis `hk` of `legacy_labels_nodup_of_identifiers`,
-unless a theorem in lean/VE/NormDefaults/ concludes from a successful decode that act keys pass `VE.Bridge.identifier`."""
+unless a lean/VE/NormDefaults/ theorem concludes from a successful decode that act keys pass `VE.Bridge.identifier`."""
 
 import re
 from pathlib import Path
