@@ -1,3 +1,5 @@
+- `tests/test_search_budget_answer.py` — The search-budget relay reads only a typed answer bound to its request (R8).
+- `tests/test_search_options.py` — Request budgets and non-degenerate witnesses at public API boundaries.
 - `tests/test_select_defer.py` — `select_tests --defer-heavy`: a builder run leaves the heavy test files that only weak reasons select to the chain gate, and never records them as passed.
 - `tests/test_select_fast_stage.py` — `select_tests --fast-stage`: the cheap units of a selection, run first on the host that sends the rest to sharded runners, so a failing pin is heard in minutes…
 - `tests/test_select_tests.py` — The test selector: AST change units, map lookups, drift, the recorder, whole plans, and the map-free `--impacted` fast path.
@@ -84,5 +86,3 @@
 - `tests/test_wire_contract_lean.py` — The Lean wire contract engine (service mode `diagnose`) on the engine corpus of docs/spec/wire-contract.md 8.1.
 - `tests/test_wire_contract_lint.py` — The tooling fixtures of docs/spec/wire-contract.md 8.2 (L1 to L13 and L15; L14 is in tests/test_wire_contract_lean.py), and the lint rules the wire review foun…
 - `tests/test_wire_contract_precondition.py` — Ground the S3-pre inherited-profile discrepancy with a reachable case.
-- `tests/test_wire_contract_rust.py` — The generated Rust contract tables and the Rust engine (docs/spec/wire-contract-s4-2.md 9).
-- `tests/test_wire_contract_s4_lean.py` — Stage S4 item 1, the Lean and tooling fixtures (docs/spec/wire-contract-s4.md section 8.4).
