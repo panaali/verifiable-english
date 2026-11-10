@@ -2471,8 +2471,10 @@ limit is the enumerated row, not an error.
 item 1 and 2026-11-10 sc-11w item 1, manage-agents/reviews/dri-decisions-20261110-sc-11w.md). By that decision's one
 signed edit of 14.8's `def sdSuperposable` (the checker's `SIGNED` table; 14.8's text above is the approved one),
 `sdSuperposable` reads `decide (sdSizeCharge N ≤ maxSdSizeCharge)` first. `sdSizeCharge N` is the source document's
-rules times its AST nodes: the frame's rules, rights and limitations, every fixed content and every candidate's, read
-from `N.D` without building `sup N.D` or `supU N`. `maxSdSizeCharge` = 16,384 is measured (docs/rd-9/sc-11w/cpu.md):
+units times its AST nodes, read from `N.D` without building `sup N.D` or `supU N`. The units are each frame rule,
+right, limitation and definition, and each fixed content, bar, reading set, candidate, coupling and narrowing. The
+nodes are each unit's formulas, at least one per unit, plus one per cite, label, `over` name, coupled set and kept
+candidate. `maxSdSizeCharge` = 16,384 is measured (docs/rd-9/sc-11w/cpu.md):
 compiled Lean on the VM (AMD EPYC 7B12, 32 vCPU, 5-minute load 44 to 80), `routeSD` takes at most 0.69 s Lean CPU on
 the 191-, 767- and 3,071-node guard documents, on NSDheavy, on W-13's `NSDbig 8` and on documents at 16,384 whose
 `superposable` and `WellFormedU (supU N)` hold. Over the charge, `routeSD` gives the enumerated row with today's cause.
