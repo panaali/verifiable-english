@@ -1,0 +1,172 @@
+shard 2/2: 63 units; commands: ['lake build', 'lake build ve_english_lean_bench ve_scope_bench']
++ lake build
+⚠ [32/790] Replayed VE.Core.TableauExtendedClosure
+warning: VE/Core/TableauExtendedClosure.lean:83:21: `Option.some_bind` has been deprecated: Use `Option.bind_some` instead
+warning: VE/Core/TableauExtendedClosure.lean:87:23: `Option.some_bind` has been deprecated: Use `Option.bind_some` instead
+warning: VE/Core/TableauExtendedClosure.lean:83:21: This simp argument is unused:
+  Option.some_bind
+
+Hint: Omit it from the simp argument list.
+  simp only [hx,̵ ̵O̵p̵t̵i̵o̵n̵.̵s̵o̵m̵e̵_̵b̵i̵n̵d̵] at ht
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: VE/Core/TableauExtendedClosure.lean:87:23: This simp argument is unused:
+  Option.some_bind
+
+Hint: Omit it from the simp argument list.
+  simp only [hy, O̵p̵t̵i̵o̵n̵.̵s̵o̵m̵e̵_̵b̵i̵n̵d̵,̵ ̵Option.pure_def, Option.some.injEq] at ht
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: VE/Core/TableauExtendedClosure.lean:87:58: This simp argument is unused:
+... (5632 lines cut; full output in shard-full.txt)
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+⚠ [601/757] Replayed VE.Numbers.Round
+warning: VE/Numbers/Round.lean:150:38: This simp argument is unused:
+  ← Rat.intCast_add
+
+Hint: Omit it from the simp argument list.
+  simp [̵←̵ ̵R̵a̵t̵.̵i̵n̵t̵C̵a̵s̵t̵_̵a̵d̵d̵,̵ ̵R̵a̵t̵.̵i̵n̵t̵C̵a̵s̵t̵_̵i̵n̵j̵]̵[̲R̲a̲t̲.̲i̲n̲t̲C̲a̲s̲t̲_̲i̲n̲j̲]̲
+
+Note: Simp arguments with `←` have the additional effect of removing the other direction from the simp set, even if the simp argument itself is unused. If the hint above does not work, try replacing `←` with `-` to only get that effect and silence this warning.
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+⚠ [612/757] Replayed VE.Service.Document
+warning: VE/Service/Document.lean:2199:33: This simp argument is unused:
+  Except.mapError
+
+Hint: Omit it from the simp argument list.
+  simp [UnitContent.judgedIn, h, E̵x̵c̵e̵p̵t̵.̵m̵a̵p̵E̵r̵r̵o̵r̵,̵ ̵bind, Except.bind, pure, Except.pure]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+✔ [752/757] Built ScopeBenchMain (961ms)
+✔ [753/757] Built ScopeBenchMain:c.o (276ms)
+✔ [754/757] Built EnglishLeanBenchMain (1.6s)
+✔ [755/757] Built ve_scope_bench:exe (549ms)
+✔ [756/757] Built EnglishLeanBenchMain:c.o (1.0s)
+✔ [757/757] Built ve_english_lean_bench:exe (480ms)
+Build completed successfully (757 jobs).
+info: syncing channel updates for 1.98.1-x86_64-unknown-linux-gnu
+info: latest update on 2026-09-03 for version 1.98.1 (48a229cea 2026-09-01)
+info: downloading 3 components
+warn: the missing active toolchain `1.98.1-x86_64-unknown-linux-gnu` has been auto-installed
+warn: this might cause rustup commands to take longer time to finish than expected
+info: you may opt out with `RUSTUP_AUTO_INSTALL=0` or `rustup set auto-install disable`
+    Updating crates.io index
+ Downloading crates ...
+  Downloaded block-buffer v0.10.4
+  Downloaded cpufeatures v0.2.17
+  Downloaded autocfg v1.5.1
+  Downloaded crypto-common v0.1.7
+  Downloaded cfg-if v1.0.5
+  Downloaded num-integer v0.1.47
+  Downloaded quote v1.0.47
+  Downloaded serde_derive v1.0.229
+  Downloaded version_check v0.9.5
+  Downloaded generic-array v0.14.7
+  Downloaded itoa v1.0.18
+  Downloaded digest v0.10.7
+  Downloaded zmij v1.0.23
+  Downloaded sha2 v0.10.9
+  Downloaded unicode-ident v1.0.26
+  Downloaded proc-macro2 v1.0.107
+  Downloaded serde_core v1.0.229
+  Downloaded num-traits v0.2.19
+  Downloaded serde v1.0.229
+  Downloaded memchr v2.8.3
+  Downloaded num-bigint v0.4.8
+  Downloaded typenum v1.20.1
+  Downloaded serde_json v1.0.151
+  Downloaded syn v3.0.6
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling typenum v1.20.1
+   Compiling unicode-ident v1.0.26
+   Compiling quote v1.0.47
+   Compiling generic-array v0.14.7
+   Compiling autocfg v1.5.1
+   Compiling serde_core v1.0.229
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling syn v3.0.6
+   Compiling serde v1.0.229
+   Compiling serde_json v1.0.151
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling itoa v1.0.18
+   Compiling cfg-if v1.0.5
+   Compiling memchr v2.8.3
+   Compiling cpufeatures v0.2.17
+   Compiling sha2 v0.10.9
+   Compiling serde_derive v1.0.229
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `release` profile [optimized] target(s) in 17.29s
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling typenum v1.20.1
+   Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.26
+   Compiling generic-array v0.14.7
+   Compiling autocfg v1.5.1
+   Compiling serde_core v1.0.229
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling syn v3.0.6
+   Compiling serde v1.0.229
+   Compiling serde_json v1.0.151
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling memchr v2.8.3
+   Compiling itoa v1.0.18
+   Compiling cfg-if v1.0.5
+   Compiling cpufeatures v0.2.17
+   Compiling sha2 v0.10.9
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling serde_derive v1.0.229
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 9.25s
+order: failed last time []; changed ['tests/test_rd9_sc11_charge_wording.py', 'tests/test_rd9_statements.py']; then the rest; --maxfail 5
+chunks: ; from the plan: tests/test_trust_mutants.py::chunk(3/4), tests/test_trust_mutants.py::chunk(1/4), tests/test_acts_vocab_mutants.py::chunk(1/2), tests/test_acts_vocab_mutants.py::chunk(2/2), tests/test_english_evidence.py::chunk(1/4)
+recording 63 units with 4 jobs in /tmp/ve-select-run-657isfkr
+  tests/test_lean_dump_cache.py: exit 1 in 519.8 s, 305 functions
+chunked tests/test_acts_vocab_mutants.py: 2 of 2 chunks, exit 0, 3117.4 s in all, longest chunk 1562.5 s; 643 passed, 0 skipped, 0 failed; each of its 643 tests ran in exactly one chunk
+chunked tests/test_trust_mutants.py: 2 of 4 chunks, exit 0, 4094.4 s in all, longest chunk 2117.0 s; 404 passed, 0 skipped, 0 failed; each of its 404 tests ran in exactly one chunk
+chunked tests/test_english_evidence.py: 1 of 4 chunks, exit 0, 790.6 s in all, longest chunk 790.6 s; 19 passed, 0 skipped, 0 failed; each of its 19 tests ran in exactly one chunk
+FAILED tests/test_lean_dump_cache.py (exit 1): tests/test_lean_dump_cache.py::test_a_replayed_dump_is_the_cold_dump_of_the_real_tree, tests/test_lean_dump_cache.py::test_the_audit_replays_lean_output_and_checks_it_as_fresh, tests/test_lean_dump_cache.py::test_the_real_tree_runs_no_code_while_it_elaborates; log /tmp/ve-select-run-657isfkr/tests__test_lean_dump_cache.py.log
+        if shutil.which("lake") is None:
+            pytest.skip("lake is not on PATH")
+        cold = lean_statements.dump_all(cache=True)
+        assert "from cache" not in capsys.readouterr().err
+        warm = lean_statements.dump_all(cache=True)
+>       assert "lean-statements: from cache " in capsys.readouterr().err
+E       AssertionError: assert 'lean-statements: from cache ' in 'lean-statements: not cached: lean/VE/Readings/SoftSupWireExamples.lean runs code while it elaborates (run_meta)\n'
+E        +  where 'lean-statements: not cached: lean/VE/Readings/SoftSupWireExamples.lean runs code while it elaborates (run_meta)\n' = CaptureResult(out='', err='lean-statements: not cached: lean/VE/Readings/SoftSupWireExamples.lean runs code while it elaborates (run_meta)\n').err
+E        +    where CaptureResult(out='', err='lean-statements: not cached: lean/VE/Readings/SoftSupWireExamples.lean runs code while it elaborates (run_meta)\n') = readouterr()
+E        +      where readouterr = <_pytest.capture.CaptureFixture object at 0x7f5fc2a34f50>.readouterr
+
+tests/test_lean_dump_cache.py:415: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_lean_dump_cache.py::test_the_real_tree_runs_no_code_while_it_elaborates - AssertionError: assert 'lean/VE/Readings/SoftSupWireExamples.lean runs code while it elaborates (run_meta)' is None
+ +  where 'lean/VE/Readings/SoftSupWireExamples.lean runs code while it elaborates (run_meta)' = <function evaluates at 0x7f5fc26499b0>(PosixPath('/home/runner/work/verifiable-english/verifiable-english'), [PosixPath('/home/runner/work/verifiable-english/verifiable-english/lean/EnglishLeanBenchMain.lean'), PosixPath('/home...lish/lean/Main.lean'), PosixPath('/home/runner/work/verifiable-english/verifiable-english/lean/MeteredMain.lean'), ...])
+ +    where <function evaluates at 0x7f5fc26499b0> = C.evaluates
+ +    and   [PosixPath('/home/runner/work/verifiable-english/verifiable-english/lean/EnglishLeanBenchMain.lean'), PosixPath('/home...lish/lean/Main.lean'), PosixPath('/home/runner/work/verifiable-english/verifiable-english/lean/MeteredMain.lean'), ...] = <function sources at 0x7f5fc25e4b40>(PosixPath('/home/runner/work/verifiable-english/verifiable-english'))
+ +      where <function sources at 0x7f5fc25e4b40> = lean_statements.sources
+FAILED tests/test_lean_dump_cache.py::test_the_audit_replays_lean_output_and_checks_it_as_fresh - assert (2 == 1)
+ +  where 2 = len([24, 24])
+FAILED tests/test_lean_dump_cache.py::test_a_replayed_dump_is_the_cold_dump_of_the_real_tree - AssertionError: assert 'lean-statements: from cache ' in 'lean-statements: not cached: lean/VE/Readings/SoftSupWireExamples.lean runs code while it elaborates (run_meta)\n'
+ +  where 'lean-statements: not cached: lean/VE/Readings/SoftSupWireExamples.lean runs code while it elaborates (run_meta)\n' = CaptureResult(out='', err='lean-statements: not cached: lean/VE/Readings/SoftSupWireExamples.lean runs code while it elaborates (run_meta)\n').err
+ +    where CaptureResult(out='', err='lean-statements: not cached: lean/VE/Readings/SoftSupWireExamples.lean runs code while it elaborates (run_meta)\n') = readouterr()
+ +      where readouterr = <_pytest.capture.CaptureFixture object at 0x7f5fc2a34f50>.readouterr
+3 failed, 57 passed in 518.79s (0:08:38)
+recorded 59 units for tree e5b1289950; 2 others left to the static graph until they run (2 with only some of their chunks here); 1 failed
+SHARD 2/2: exit 1 in 3913.2 s; 63 units, 62 passed
