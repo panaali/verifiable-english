@@ -286,3 +286,121 @@ def test_the_rule_tags_are_forced_only_for_many(lake, tmp_path):
         assert run.stdout.split() == [json.dumps(status)], status
     run = forcing(lake, tmp_path, "many")
     assert run.returncode != 0 and "the rule tags were forced" in run.stderr + run.stdout
+
+
+# ------------------------------------------------------------------ EN-2 route fixtures (spec 8: R-f1..R-f24, R-stale)
+
+def _env(sorts: dict, predicates: dict) -> dict:
+    """`Norm/Examples.lean`'s `envOf`: a `norms@0` environment, with the lexicon Python selects."""
+    return case_of(Environment({"language": "ve.core@0.2", "profiles": ["norms@0", "relational-fol@0"],
+                                "spec_revision": "ve-v0.2-expand2-2026-09-25",
+                                "vocabulary": {"constants": {}, "sorts": sorts, "predicates": predicates}}))
+
+
+def _regulated(role: str, act: str, args=("act",), **more) -> dict:
+    return {"arguments": list(args), "description": role,
+            "regulated": {"role": role, "default": "deny", "act": act, **more}}
+
+
+def route_fixtures() -> list[tuple[str, dict, str]]:
+    """`(id, case, source)` of each EN-2 route fixture, over `Norm/Examples.lean`'s environments (`act`, `two`,
+    `help`, `pair`, `item`, `fd`), the RSP use case (f20, f22) and f21's constitution environment."""
+    acts = {"act": {"description": "act"}}
+    act = _env(acts, {"permitted": _regulated("permission", "{0} be done")})
+    two = _env(acts, {"permitted": _regulated("permission", "{0} be done"),
+                      "required": _regulated("obligation", "{0} be done", permission="permitted")})
+    help_ = _env({"state": {"description": "state"}, "person": {"description": "person"}},
+                 {"permitted": _regulated("permission", "{0} help {1}", ("state", "person"))})
+    pair = _env(acts, {"permitted": _regulated("permission", "{0} help {1}", ("act", "act"))})
+    item = lambda **negative: _env({"item": {"description": "item"}}, {"admitted": {
+        "arguments": ["item"], "description": "admitted", "verbalisation": "{0} is admitted", **negative,
+        "regulated": {"role": "plain", "default": "deny"}}})
+    fd = _env({"person": {"description": "A sort."}, "service": {"description": "A sort."},
+               "dservice": {"description": "A sort.", "verbalisation": {"singular": "deployed service",
+                                                                        "plural": "deployed services"}}},
+              {"deployed": {"arguments": ["service"], "description": "d", "verbalisation": "{0} is deployed"},
+               "reviewed": {"arguments": ["service"], "description": "r", "verbalisation": "{0} is reviewed"},
+               "used": _regulated("permission", "{0} be used", ("service",))})
+    f8 = ("Rule 1. Every act must not be done.\nRule 2. Every act must not be done.\n"
+          "Rule 3 (exception to rules 1 and 2). Every act may be done.")
+    rsp = {r["id"]: r["text"] for r in blocks("rsp")}
+    rows = [
+        ("f1", two, "Rule 1. Every act must not be done.\nRule 2 (exception to rule 1). Every act may be done.\n"
+                    "Rule 3. Every act must be done.\nRule 4. Every act need not be done."),
+        ("f2", act, "Rule 1. No act may be done."), ("f3", act, "Rule 1. A act may be done."),
+        ("f4", act, "Rule 1. Every act should be done."),
+        ("f5", help_, "Rule 1. Every state may help each person."),
+        ("f5-any", help_, "Rule 1. Every state may help any person."),
+        ("f6", help_, "Rule 1. Every state may help every person."),
+        ("f7", act, "Rule 1. Every act must not be done.\nRule 2. Every act may be done.\n"
+                    "Rule 2 takes precedence over rule 1."),
+        ("f8", act, f8), ("f9", act, f8.replace("rules 1 and 2", "rules 1, and 2")),
+        ("f10", act, "Rule 1. Every act may be done, except when this holds in all cases."),
+        ("f11", two, "Rule 1. Every act may be done.\nRule 2. Every act must be done, if that act may be done. "
+                     "Except when that act may be done. Except when this holds in all cases."),
+        ("f12", item(), "Rule 1. For every item, it is not the case that that item is admitted."),
+        ("f12-negative", item(negative_verbalisation="{0} is not admitted"), "Rule 1. Every item is not admitted."),
+        ("f13", act, "Rule 2. Every act may be done."),
+        ("f14", act, "Rule 1. Every act may be done.\nRule 1 takes precedence over rule 3."),
+        ("f15", act, "Rule 1. Rule 2. Every act may be done."),
+        ("f16", act, "Rule 1. Except when this holds in all cases."), ("f17", act, "Rule 1. Every act must be sung."),
+        ("f18", fd, "Rule 1. Every service may be used, if every deployed service is reviewed."), ("f19", act, ""),
+        *((f"f20-{i}", use_case("rsp"), rsp[i]) for i in ("f6-maintain", "f6-keep-past", "f8-public", "f10-in-line")),
+        ("f21", constitution(), F21[0]),
+        ("f22", use_case("rsp"), rsp["rows-cond"]), ("f22-should", use_case("rsp"), rsp["f5-default"]),
+        ("f23", pair, "Rule 1. Every first act may help each second act."),
+        ("f23-any", pair, "Rule 1. Every first act may help any second act."),
+        ("f24", act, "Rule 9 takes precedence over rule 1."),
+        ("stale", {**use_case("rsp"), "lexicon": use_case("fsf")["lexicon"]}, F21[0])]
+    return [(ident, {"id": ident, **case, "kind": "blocks", "source": source}, source) for ident, case, source in rows]
+
+
+# Each fixture's answer (spec 8): `one` with Python's nodes, or (status, code, sentence); `stale` is decodeCase's error.
+ROUTE_EXPECTED = {"f3": ("none", "NoDerivation", 1), "f4": ("none", "NoDerivation", 1), "f6": ("none", "NoDerivation", 1),
+                  "f9": ("none", "NoDerivation", 4), "f17": ("none", "NoDerivation", 1),
+                  "f22-should": ("none", "NoDerivation", 1), "f18": ("many", "Ambiguous", 1),
+                  "f13": ("rejected", "ExpectedRule", 0), "f14": ("rejected", "UnknownRule", None),
+                  "f15": ("rejected", "NoConsequence", 0), "f16": ("rejected", "StrayCarveOut", 1),
+                  "f19": ("rejected", "EmptyDocument", None), "f24": ("rejected", "UnknownRule", None)}
+
+
+def recorded_route_fixtures() -> list[dict]:
+    return [case for mode, case in map(json.loads, (ROOT / "tests/data/route-cases.jsonl").read_text().splitlines())
+            if mode == "english.statement"]
+
+
+def test_the_route_fixtures_are_recorded():
+    """`tests/data/route-cases.jsonl`'s english.statement cases are `route_fixtures()`, in order
+    (`docs/en-e3-norm/en-2b/route_fixtures.py --write` writes them)."""
+    assert recorded_route_fixtures() == [case for _, case, _ in route_fixtures()]
+
+
+def test_each_route_fixture_through_the_service():
+    """R-f1..R-f24 and R-stale through the registered mode (`ve_service`, `english.statement`): each fixture's
+    status, code and sentence; every `one` answer's nodes are Python's (`parse_english`), its rule rows numbered
+    1..k with their spans in increasing order inside the source; f18's `many` shows two different trees."""
+    from ve.backends.lean_service import LeanService
+    executable = lean_build("ve_service") / "ve_service"
+    cases = route_fixtures()
+    with LeanService(executable, timeout=HANG_TIMEOUT) as service:
+        rows = {row["id"]: row for row in service.run("english.statement", [case for _, case, _ in cases])}
+    assert rows.pop("stale") == {"id": "stale", "status": "error",
+                                 "error": "InvalidInput: the lexicon names another environment"}
+    sources = {ident: source for ident, _, source in cases}
+    for ident, row in rows.items():
+        result = row["result"]
+        if ident in ROUTE_EXPECTED:
+            assert (result["status"], result["code"], result.get("sentence")) == ROUTE_EXPECTED[ident], (ident, result)
+            continue
+        assert result["status"] == "one", (ident, result)
+        case = next(c for i, c, _ in cases if i == ident)
+        env = Environment(case["environment"])
+        python = [r.to_dict()["norm"] for r in parse_english(env, sources[ident]).rules]
+        rules = [s for s in result["statements"] if s["kind"] == "rule"]
+        assert [s["node"]["norm"] for s in rules] == python, ident
+        assert [s["number"] for s in rules] == list(range(1, len(rules) + 1)), ident
+        ends = [end for s in rules for end in s["span"]]
+        assert ends == sorted(ends) and all(a < b for a, b in zip(ends[::2], ends[1::2])), ident
+        assert ends[-1] <= len(sources[ident].encode()), ident
+    witnesses = rows["f18"]["result"]["witnesses"]
+    assert len(witnesses) == 2 and witnesses[0] != witnesses[1]

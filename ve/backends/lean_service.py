@@ -164,6 +164,8 @@ DEADLINES: dict[str, tuple[float, float]] = {
     "scope": (120.0, 120.0),
     # The `act-readings` mode (act-phrases AP-4): one phrase's readings, within the parse limits of one act check.
     "act-readings": _CORE,
+    # The `english.statement` mode (en-e3-norm EN-2): english.read's deadline (spec 2.3, recipe step 4).
+    "english.statement": _CORE,
 }
 WALL_FACTOR = 10.0
 _MIB = 1 << 20

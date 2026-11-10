@@ -1,0 +1,300 @@
+{
+  "$id": "english.statement.json",
+  "$comment": "Mode english.statement: Norm.Run.statementCaseReported. readNorm's outcome for one rule-block text.",
+  "row": {
+    "anyOf": [
+      {"$ref": "common.json#/$defs/case_error"},
+      {
+        "additionalProperties": false,
+        "properties": {"error": {"$ref": "common.json#/$defs/text"}, "id": {"x-echo": "/id"}, "status": {"const": "error"}},
+        "required": ["id", "status", "error"],
+        "type": "object"
+      },
+      {
+        "additionalProperties": false,
+        "properties": {
+          "id": {"type": "string", "x-equals": "/id"},
+          "result": {"$ref": "#/$defs/answer"},
+          "status": {"const": "ok"}
+        },
+        "required": ["id", "status", "result"],
+        "type": "object"
+      }
+    ]
+  },
+  "$defs": {
+    "answer": {
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "identities": {"$ref": "#/$defs/identities"},
+            "statements": {
+              "items": {"anyOf": [{"$ref": "#/$defs/rule_row"}, {"$ref": "#/$defs/precedence_row"}]},
+              "minItems": 1,
+              "type": "array"
+            },
+            "status": {"const": "one"}
+          },
+          "required": ["status", "statements", "identities"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "class": {
+              "enum": [
+                "ResourceLimit",
+                "SyntaxError",
+                "CheckerUnavailable",
+                "AmbiguousDerivation",
+                "TypeMismatch",
+                "VEError"
+              ]
+            },
+            "code": {"enum": ["UnformalisedSpan"]},
+            "identities": {"$ref": "#/$defs/identities"},
+            "spans": {"items": {"$ref": "#/$defs/span_row"}, "minItems": 1, "type": "array"},
+            "status": {"const": "unformalised"},
+            "text": {"$ref": "common.json#/$defs/text"}
+          },
+          "required": ["status", "code", "text", "class", "spans", "identities"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "class": {
+              "enum": [
+                "ResourceLimit",
+                "SyntaxError",
+                "CheckerUnavailable",
+                "AmbiguousDerivation",
+                "TypeMismatch",
+                "VEError"
+              ]
+            },
+            "code": {"enum": ["NoDerivation"]},
+            "identities": {"$ref": "#/$defs/identities"},
+            "sentence": {"$ref": "common.json#/$defs/nat"},
+            "status": {"const": "none"},
+            "text": {"$ref": "common.json#/$defs/text"}
+          },
+          "required": ["status", "code", "text", "class", "sentence", "identities"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "class": {
+              "enum": [
+                "ResourceLimit",
+                "SyntaxError",
+                "CheckerUnavailable",
+                "AmbiguousDerivation",
+                "TypeMismatch",
+                "VEError"
+              ]
+            },
+            "code": {"enum": ["Ambiguous"]},
+            "identities": {"$ref": "#/$defs/identities"},
+            "sentence": {"$ref": "common.json#/$defs/nat"},
+            "status": {"const": "many"},
+            "text": {"$ref": "common.json#/$defs/text"},
+            "witnesses": {
+              "items": {"items": {"$ref": "#/$defs/tree_row"}, "type": "array"},
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            }
+          },
+          "required": ["status", "code", "text", "class", "sentence", "witnesses", "identities"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "class": {
+              "enum": [
+                "ResourceLimit",
+                "SyntaxError",
+                "CheckerUnavailable",
+                "AmbiguousDerivation",
+                "TypeMismatch",
+                "VEError"
+              ]
+            },
+            "code": {"enum": ["Budget"]},
+            "identities": {"$ref": "#/$defs/identities"},
+            "sentence": {"$ref": "common.json#/$defs/nat"},
+            "status": {"const": "budget"},
+            "text": {"$ref": "common.json#/$defs/text"}
+          },
+          "required": ["status", "code", "text", "class", "sentence", "identities"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "class": {
+              "enum": [
+                "ResourceLimit",
+                "SyntaxError",
+                "CheckerUnavailable",
+                "AmbiguousDerivation",
+                "TypeMismatch",
+                "VEError"
+              ]
+            },
+            "code": {"enum": ["InvalidGrammar", "InvalidOverlay"]},
+            "failure": {
+              "maxItems": 3,
+              "minItems": 3,
+              "prefixItems": [{"type": "string"}, {"type": "string"}, {"type": "string"}],
+              "type": "array"
+            },
+            "fault": {"enum": ["lexicon", "notWellFormed", "notTyped"]},
+            "identities": {"$ref": "#/$defs/identities"},
+            "status": {"const": "invalidGrammar"},
+            "text": {"$ref": "common.json#/$defs/text"}
+          },
+          "required": ["status", "code", "text", "class", "identities"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "class": {
+              "enum": [
+                "ResourceLimit",
+                "SyntaxError",
+                "CheckerUnavailable",
+                "AmbiguousDerivation",
+                "TypeMismatch",
+                "VEError"
+              ]
+            },
+            "code": {
+              "enum": [
+                "SourceTooLong",
+                "TextTooLong",
+                "BadCharacter",
+                "OpenQuote",
+                "BadNumeral",
+                "EmptyDocument",
+                "EmptySentence",
+                "Unterminated",
+                "BadSpacing",
+                "UnboundReference",
+                "ShadowedName",
+                "SortMismatch",
+                "MarkerDepth",
+                "NestingLimit",
+                "NumeralBound",
+                "CoefficientNotNumeral",
+                "PronounUnresolved",
+                "BlockedWording",
+                "CoordinationRepeated",
+                "CoordinationForm",
+                "NaturalScoped",
+                "RelativeForm",
+                "Internal",
+                "ExpectedRule",
+                "NoConsequence",
+                "StrayConsequence",
+                "StrayCarveOut",
+                "UnknownRule",
+                "NodeRefused",
+                "NodeLimit",
+                "RenderUnread",
+                "RenderMismatch",
+                "NoWording",
+                "InvalidInput"
+              ]
+            },
+            "identities": {"$ref": "#/$defs/identities"},
+            "sentence": {"$ref": "common.json#/$defs/nat"},
+            "span": {
+              "maxItems": 2,
+              "minItems": 2,
+              "prefixItems": [{"$ref": "common.json#/$defs/nat"}, {"$ref": "common.json#/$defs/nat"}],
+              "type": "array"
+            },
+            "status": {"const": "rejected"},
+            "text": {"$ref": "common.json#/$defs/text"}
+          },
+          "required": ["status", "code", "text", "class", "identities"],
+          "type": "object"
+        }
+      ]
+    },
+    "identities": {
+      "$comment": "Norm.Run.answerWith: the source's SHA-256 and english.read's case identities (Run.decodeCase).",
+      "additionalProperties": false,
+      "properties": {
+        "actions_version": {"type": "string"},
+        "environment_id": {"type": "string"},
+        "grammar_id": {"type": "string"},
+        "lexicon_id": {"type": "string"},
+        "overlay_digest": {"type": "string"},
+        "source_sha256": {"$ref": "common.json#/$defs/hex64"}
+      },
+      "required": ["source_sha256", "environment_id", "lexicon_id", "grammar_id", "actions_version"],
+      "type": "object"
+    },
+    "precedence_row": {
+      "$comment": "Norm.Run.statementRow of a precedence line: rule `rule` takes precedence over rule `over`.",
+      "additionalProperties": false,
+      "properties": {
+        "kind": {"const": "precedence"},
+        "over": {"$ref": "common.json#/$defs/nat"},
+        "rule": {"$ref": "common.json#/$defs/nat"}
+      },
+      "required": ["kind", "rule", "over"],
+      "type": "object"
+    },
+    "rule_row": {
+      "$comment": "Norm.Run.statementRow of a rule block: its number, its header's targets, its W1 node and its byte span.",
+      "additionalProperties": false,
+      "properties": {
+        "exception_to": {"items": {"$ref": "common.json#/$defs/nat"}, "type": "array"},
+        "kind": {"const": "rule"},
+        "node": {
+          "additionalProperties": false,
+          "properties": {"norm": {"$ref": "common.json#/$defs/norm_node"}},
+          "required": ["norm"],
+          "type": "object"
+        },
+        "number": {"$ref": "common.json#/$defs/nat"},
+        "span": {
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [{"$ref": "common.json#/$defs/nat"}, {"$ref": "common.json#/$defs/nat"}],
+          "type": "array"
+        }
+      },
+      "required": ["kind", "number", "exception_to", "node", "span"],
+      "type": "object"
+    },
+    "span_row": {
+      "$comment": "Norm.Run.spanRow: a phrase read and not formalised, its bytes, row, meaning owner and place.",
+      "additionalProperties": false,
+      "properties": {
+        "owner": {"type": "string"},
+        "place": {"enum": ["act", "guard", "carve_out", "bearer"]},
+        "row": {"type": "string"},
+        "start": {"$ref": "common.json#/$defs/nat"},
+        "stop": {"$ref": "common.json#/$defs/nat"}
+      },
+      "required": ["start", "stop", "row", "owner", "place"],
+      "type": "object"
+    },
+    "tree_row": {
+      "$comment": "Run.treeRows: one node of a witness tree, its rule tag and token span [start, stop).",
+      "maxItems": 3,
+      "minItems": 3,
+      "prefixItems": [{"type": "string"}, {"$ref": "common.json#/$defs/nat"}, {"$ref": "common.json#/$defs/nat"}],
+      "type": "array"
+    }
+  }
+}
