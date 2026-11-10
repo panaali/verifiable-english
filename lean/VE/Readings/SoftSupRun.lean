@@ -160,6 +160,10 @@ theorem local_eq (M : VE.FiniteModel Entity) (G : VE.NormDefaults.FiniteFill c.U
 theorem taken_eq (A : Choice) : c.taken A = takenBy c.N.D A := by
   cases c; subst_vars; rfl
 
+theorem labels_eq : c.labels = (slotLabelled c.N.D).map (·.1) ++
+    (VE.NormDefaults.Admission.fillLabelled (supU c.N)).map (·.1) := by
+  cases c; subst_vars; rfl
+
 /-- `bindCertX` on the case's values: the certificate bound to the source environment and to `premisesX (supU N)
     (slotUnder N.D A ++ supX N) (sup N.D).2` followed by the request's own premises (D14, `bind_eq`). -/
 def bind (A : Choice) (own : List Json) (conclusion j : Json) : Except String VE.Tableau.Certificate := do
@@ -347,6 +351,29 @@ theorem replay_conflict (A : Choice) (certs : List (Option VE.Tableau.Certificat
   simp [sdProofs, SupProof.check, List.append_assoc]
   congr; funext x; rcases x with ⟨t, _ | k⟩ <;> simp
 
+/-- A piece's labels (14.11, `usedLabels`): those its proofs still replay without, dropped greedily. -/
+def usedOf (A : Choice) (ps : List SupProof) : List String :=
+  if ps.isEmpty then [] else usedLabels (c.replay A ps) [] c.middle []
+
+/-- The labels a piece shows still replay its proofs (`greedy_replay_sound`), when its own check passed. -/
+theorem usedOf_replays (A : Choice) (ps : List SupProof) (h : c.replay A ps (c.middle.map (·.2)) = true) :
+    c.replay A ps (blank c.middle (c.usedOf A ps)) = true := by
+  unfold usedOf
+  split
+  · rename_i he; simp [replay, List.isEmpty_iff.mp he]
+  · exact greedy_replay_sound _ _ h
+
+/-- A piece's labels as shown: the slot's as they are, the soft premises' by their choice labels through the scope's
+    images, then `Fill_T`'s (`relabel_shown`: `sdShown`). -/
+def relabel (images : List (List (String × String))) (ls : List String) : List String :=
+  ls.filter (fun l => !(c.XL.map (·.1)).contains l && !(c.FL.map (·.1)).contains l) ++
+    shownWith images (ls.filter (c.XL.map (·.1)).contains) ++ ls.filter (c.FL.map (·.1)).contains
+
+theorem relabel_shown (A : Choice) (ls : List String) : c.relabel (c.images A) ls =
+    ls.filter (fun l => !(c.XL.map (·.1)).contains l && !(c.FL.map (·.1)).contains l) ++
+      sdShown c.N A (ls.filter (c.XL.map (·.1)).contains) ++ ls.filter (c.FL.map (·.1)).contains := by
+  simp only [relabel, images_shown]
+
 end SDCase
 
 /-- One scope under `A`: each piece of `e` on the case's values, the conflict certificates decoded and checked once
@@ -360,7 +387,6 @@ def sdScope (c : SDCase) (A : Choice) (Γ φ e : Json) : SDM SupScope := do
   let mut encoded : List (String × Choice) := []
   let mut st : List (String × Bool) := []
   let mut cf : Free := none
-  let L := c.middle
   for name in ["conflict", "witness", "certificate", "countermodel", "unsat", "model"] do
     if let some p := pieceOf e name then
       let query := name == "certificate" || name == "unsat"
@@ -380,11 +406,8 @@ def sdScope (c : SDCase) (A : Choice) (Γ φ e : Json) : SDM SupScope := do
           else if query then answer.getObjValD "accepted" == .bool true
           else answer.getObjValD "valid" == .bool true && answer.getObjValD "conclusion_value" == .bool false
         st := st ++ [(name, ok)]
-        let mut used := []
-        if ok && !proofs.isEmpty then
-          sdTick fun k => { k with replays := k.replays + 1 }
-          used := usedLabels (c.replay A proofs) [] L []
-        raw := raw ++ [(name, used)]
+        if ok && (name == "conflict" || query) then sdTick fun k => { k with replays := k.replays + 1 }
+        raw := raw ++ [(name, if ok then c.usedOf A proofs else [])]
         let shown := if ok && (name == "witness" || name == "countermodel" || name == "model") then
           some (if name == "witness" then (p.getObjValD "witness").getObjValD "model" else p.getObjValD "model")
           else none
@@ -394,9 +417,7 @@ def sdScope (c : SDCase) (A : Choice) (Γ φ e : Json) : SDM SupScope := do
   if st.any (·.2) then
     sdTick fun k => { k with images := k.images + 1 }
     images := c.images A
-  let soft := c.XL.map (·.1)
-  let used := raw.map (fun (n, ls) => (n, ls.filter (fun l => !soft.contains l && !(c.FL.map (·.1)).contains l) ++
-    shownWith images (ls.filter soft.contains) ++ ls.filter (c.FL.map (·.1)).contains))
+  let used := raw.map (fun (n, ls) => (n, c.relabel images ls))
   let noted := notes.map (fun n => { n with conditionalOn := ((used.find? (·.1 == n.name)).map (·.2)).getD [] })
   let on (n : String) := (st.find? (·.1 == n)).map (·.2) |>.getD false
   let cs : ChoiceResult := if on "conflict" then .free else if on "witness" then .conflict else .unknown

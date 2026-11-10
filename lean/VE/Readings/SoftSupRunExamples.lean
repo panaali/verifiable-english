@@ -81,19 +81,21 @@ def docq : Json := parse r#"{"units":[{"id":"u1"}],"reading_sets":[{"id":"rs1","
 def certsq : Json := match parse r#"{"avoid_required":{"rule":"expand","at":2,"children":[{"rule":"expand","at":3,"children":[{"rule":"expand","at":4,"children":[{"rule":"expand","at":5,"children":[{"rule":"close"}]}]}]}]},"greet_required":{"rule":"expand","at":2,"children":[{"rule":"expand","at":3,"children":[{"rule":"expand","at":4,"children":[{"rule":"expand","at":5,"children":[{"rule":"close"}]}]}]}]},"help_permitted":{"rule":"expand","at":2,"children":[{"rule":"expand","at":3,"children":[{"rule":"expand","at":4,"children":[{"rule":"expand","at":5,"children":[{"rule":"close"}]}]}]}]},"help_required":{"rule":"expand","at":2,"children":[{"rule":"expand","at":3,"children":[{"rule":"expand","at":4,"children":[{"rule":"expand","at":5,"children":[{"rule":"close"}]}]}]}]},"help_required->help_permitted":{"rule":"expand","at":2,"children":[{"rule":"expand","at":1,"children":[{"rule":"expand","at":3,"children":[{"rule":"expand","at":4,"children":[{"rule":"expand","at":5,"children":[{"rule":"expand","at":6,"children":[{"rule":"expand","at":8,"children":[{"rule":"close"},{"rule":"expand","at":9,"children":[{"rule":"expand","at":10,"children":[{"rule":"expand","at":11,"children":[{"rule":"expand","at":13,"children":[{"rule":"close"}]},{"rule":"expand","at":13,"children":[{"rule":"close"}]}]},{"rule":"expand","at":11,"children":[{"rule":"expand","at":12,"children":[{"rule":"close"}]},{"rule":"expand","at":12,"children":[{"rule":"close"}]}]}]}]}]}]}]}],"parameter":"w:1"}]}],"parameter":"w:0"}]}}"# with
   | .obj kvs => Json.mkObj (kvs.toList.map fun (k, v) => (k, certJ v))
   | _ => .null
-/-- W-14's case: under `rs1:1` conflict, certificate and model evidence, then under `[]` a conflict piece alone; each
-    scope's shown labels and accepted pieces. -/
-def scopes (c : SDCase) :
-    SDM (List (List (String × List String) × List (Bool × Bool) × List ChoiceResult × List String)) := do
-  let e := caseJ [("conflict", caseJ [("conflict_certificates", certs4a)]),
-    ("certificate", caseJ [("certificate", ← boundCert c (X1 c) [])]),
-    ("countermodel", caseJ [("model", model c ["ve__bit__1__0"]), ("filling", Json.mkObj [])]),
-    ("model", caseJ [("model", model c ["ve__bit__1__0"]), ("filling", Json.mkObj [])])]
-  let s1 ← sdScope c A1 (Json.arr #[]) qJ e
-  let s2 ← sdScope c [] (Json.arr #[]) qJ (caseJ [("conflict", caseJ [("conflict_certificates", certs4a)]),
-    ("witness", caseJ [("witness", caseJ [("target", "x_required"), ("tuple", toJson ["a"])])]),
-    ("model", caseJ [("model", model c ["ve__bit__1__0", "c"]), ("filling", Json.mkObj [])])])
-  pure ([s1, s2].map fun s => (s.used, s.info.notes.map (fun n => (n.accepted, n.error.isSome)),
+/-- W-14's case, four scopes of `NSD4a`: under `rs1:1` conflict, certificate, a countermodel that is not one, a refused
+    `unsat` and a model; under `[]` an UNKNOWN conflict, a countermodel and an invalid model; a countermodel and a
+    model; an UNKNOWN conflict and a refused witness. Each scope's shown labels, notes, statuses, encoded pieces. -/
+def scopes (c : SDCase) : SDM (List (List (String × List String) × List (Bool × Bool × List String) ×
+    List ChoiceResult × List String)) := do
+  let mJ (on : List String) := caseJ [("model", model c on), ("filling", Json.mkObj [])]
+  let cm := caseJ [("model", model c ["c"]), ("filling", parse "{\"unsaid__y_permitted\":[[\"a\"]]}")]
+  let conflict := ("conflict", caseJ [("conflict_certificates", certs4a)])
+  let s1 ← sdScope c A1 (Json.arr #[]) qJ (caseJ [conflict, ("certificate", caseJ [("certificate", ← boundCert c (X1 c) [])]),
+    ("countermodel", mJ ["ve__bit__1__0"]), ("unsat", Json.mkObj []), ("model", mJ ["ve__bit__1__0"])])
+  let s2 ← sdScope c [] (Json.arr #[]) qJ (caseJ [conflict, ("countermodel", cm), ("model", mJ ["ve__bit__1__0", "c"])])
+  let s3 ← sdScope c [] (Json.arr #[]) qJ (caseJ [("countermodel", cm), ("model", mJ ["ve__bit__1__0"])])
+  let s4 ← sdScope c [] (Json.arr #[]) qJ (caseJ [conflict,
+    ("witness", caseJ [("witness", caseJ [("target", "x_required"), ("tuple", toJson ["a"])])])])
+  pure ([s1, s2, s3, s4].map fun s => (s.used, s.info.notes.map (fun n => (n.accepted, n.error.isSome, n.conditionalOn)),
     [s.info.conflict, s.info.query, s.info.premise], s.encoded.map (·.1)))
 
 def conflictJ (c : SDCase) (A : List (String × Nat)) (more : List (String × Json)) : SDM String :=
@@ -114,13 +116,18 @@ and certificate pieces; a label replay per accepted piece with proofs; one label
 piece, none for the scope without (its conflict piece UNKNOWN, its witness refused and noted, never a verdict). The
 soft premises are shown by their choice labels (`shownWith_eq`), never `rd-2-`. -/
 
-#guard count (run env4a doc4a scopes) == { admissions := 1, routes := 1, images := 1, replays := 2, checks := 2 }
+#guard count (run env4a doc4a scopes) == { admissions := 1, routes := 1, images := 3, replays := 2, checks := 3 }
+def used3 : List String :=
+  ["readings:rs1@1:1:quiet", "soft:exception:must-x:sufficient:0", "soft:coherence:must-x,need-not-x"]
 #guard (run env4a doc4a scopes).1.toOption == some [
-  ([("conflict", ["readings:rs1@1:1:quiet", "soft:exception:must-x:sufficient:0", "soft:coherence:must-x,need-not-x"]),
-    ("certificate", ["readings:rs1@1:1:quiet", "soft:exception:must-x:sufficient:0", "soft:coherence:must-x,need-not-x"]),
-    ("countermodel", []), ("model", [])], [(true, false), (true, false), (false, false), (true, false)],
+  ([("conflict", used3), ("certificate", used3), ("countermodel", []), ("model", [])],
+    [(true, false, used3), (true, false, used3), (false, false, []), (false, true, []), (true, false, [])],
     [.free, .proved, .model], ["model"]),
-  ([("conflict", []), ("model", [])], [(false, false), (false, true), (false, false)], [.unknown, .unknown, .unknown], [])]
+  ([("conflict", []), ("countermodel", []), ("model", [])], [(false, false, []), (true, false, []), (false, false, [])],
+    [.unknown, .refuted, .unknown], ["countermodel"]),
+  ([("countermodel", []), ("model", [])], [(true, false, []), (true, false, [])], [.unknown, .refuted, .model],
+    ["countermodel", "model"]),
+  ([("conflict", [])], [(false, false, []), (false, true, [])], [.unknown, .unknown, .unknown], [])]
 -- `NSDq`'s conflict answer under `[]` rests on its `Fill_T` premise alone, replayed in the middle with the slot
 #guard (run envq docq fun c => (·.used) <$> sdScope c [] (Json.arr #[]) .null
   (caseJ [("conflict", caseJ [("conflict_certificates", certsq)])])).1.toOption ==
@@ -160,7 +167,7 @@ def big8 (c : SDCase) : SDM (Nat × List String) := do
   let s ← sdScope c [] (Json.arr #[]) .null (caseJ [("witness", caseJ [("witness", caseJ [("model", model c []),
     ("filling", Json.mkObj []), ("target", "x_required->x_permitted"), ("tuple", toJson ["a"])])])])
   pure (c.checked.length, [a, b, match r with | .ok x => x | .error e => e, m,
-    toString (s.info.conflict == .conflict, s.encoded.map (·.1), s.info.notes.map (·.accepted))])
+    toString (s.info.conflict == .conflict, s.encoded.map (·.1), s.info.notes.map (·.shown == some (model c [])))])
 #guard match run env4 (bigJ 8) big8 with
   | (.ok (n, [a, b, r, m, w]), k) => n == 256 && k == { admissions := 1, routes := 1, images := 1, checks := 3 } &&
     w == "(true, ([witness], [true]))" &&
