@@ -41,3 +41,4 @@ FOLLOW-UP: pk-1-cfr-1b a valid differential of the 33 norm-defaults route cases 
 7 PASS: no DELTA row. 8 PASS: no user-visible change (DELTA.md). 9 PASS: select_tests picks the test for a pack REPORT
 change. 13 N.A. (no test removed). 14 PASS: both directions in `test_scan_refuses_and_accepts`. 15 PASS.
 SELF-REVIEW: 2 A, 4 B, 4 C; fixed 10.
+Selected tests (committed 82a855b2e, `mac-pytest.sh --select`, cloud run pk-1-cfr-1-82a855b2-t277231): 4 shards, 185 units passed, exit=0.
