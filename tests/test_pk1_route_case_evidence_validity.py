@@ -56,7 +56,6 @@ def test_pk1_route_case_evidence_validity() -> None:
 
 
 def test_follow_up_exemptions_are_still_needed() -> None:
-    """Each exempt record is still flagged without its exemption, so it leaves FOLLOW_UPS once fixed."""
     for rel in FOLLOW_UPS:
         path = (ROOT / rel).resolve()
         assert path in {p for p, _ in _faults(path.parents[1], {})}, rel
