@@ -4035,6 +4035,18 @@
 'VE.Paths.warshall_iff_path' depends on axioms: [propext, Quot.sound]
 'VE.Paths.warshall_preserves_closed' depends on axioms: [propext, Quot.sound]
 'VE.Paths.warshall_sound' depends on axioms: [propext, Quot.sound]
+'VE.Presupposition.Events.again_defined' does not depend on any axioms
+'VE.Presupposition.Events.again_eq' does not depend on any axioms
+'VE.Presupposition.Events.continues_defined' does not depend on any axioms
+'VE.Presupposition.Events.continues_eq' does not depend on any axioms
+'VE.Presupposition.Events.noLonger_defined' does not depend on any axioms
+'VE.Presupposition.Events.noLonger_eq' does not depend on any axioms
+'VE.Presupposition.Events.resumes_defined' does not depend on any axioms
+'VE.Presupposition.Events.resumes_eq' does not depend on any axioms
+'VE.Presupposition.Events.returnsTo_defined' does not depend on any axioms
+'VE.Presupposition.Events.returnsTo_eq' does not depend on any axioms
+'VE.Presupposition.Events.stops_defined' does not depend on any axioms
+'VE.Presupposition.Events.stops_eq' does not depend on any axioms
 'VE.Presupposition.Examples.s22_neg_s2' depends on axioms: [propext]
 'VE.Presupposition.Examples.s22_pos_s1' depends on axioms: [propext]
 'VE.Presupposition.Examples.s22_pos_s2' depends on axioms: [propext]
