@@ -95,6 +95,16 @@ def J18 : List Pick := [[("o1", .assumed), ("o2", .conditioned)], [("o1", .condi
 def neg2 (pc : PositionClass) : Report :=
   { checked := ["o1", "o2"].map (fun i => { chk i .top with pos := pc }), bases := [], baseTree := emptyTree }
 #guard groups fixtureTable (neg2 .negated) == [] && (groups fixtureTable (neg2 .top)).length == 1
+-- positions inside lists (the trust-mutants survivors): the pick or candidate that decides is first, middle or last
+def pAA : Pick := [("o1", .assumed), ("o2", .assumed)]
+def pCC : Pick := [("o1", .conditioned), ("o2", .conditioned)]
+def pAC : Pick := [("o1", .assumed), ("o2", .conditioned)]
+#guard couplable [pAA, pAC, pCC] g18 && couplable [pAC, pCC, pAA] g18
+#guard !couplable [pAC, pCC] g18 && !couplable [pCC, pAC] g18
+#guard !couplable [pAA, pAC, pCC] { g18 with cands := [.assumed, .unconditional] }
+#guard !couplable [pAA, pAC, pCC] { g18 with cands := [.unconditional, .assumed] }
+#guard repCandidate g18 [("o1", .conditioned), ("o2", .asserted)] == .asserted
+#guard repCandidate g18 [("o1", .conditioned), ("o2", .assumed)] == .assumed
 
 /-! ## R-3: a pick names emitted readings only -/
 
@@ -192,6 +202,30 @@ example : ¬ SameModels.{0} D15 R15 mixed15 cond15 := by
   unfold SatUnder at hm; rw [if_neg (by decide)] at hm
   have : holds mNone (formulasUnder D15 R15 mixed15 ++ VE.Norms.elaborate (treeUnder D15 R15 mixed15)) = true :=
     List.all_eq_true.mpr fun a ha => (VE.eval_iff_denote _ _ _).mpr (hm a ha)
+  exact absurd this (by decide)
+
+-- two background formulas, two fixed rules over two regulated predicates: each premise read, first and last
+def regOf (p : String) : VE.Norms.Regulated :=
+  { name := p, sorts := ["entity"], allowByDefault := false, role := .obligation, act := none, permission := none }
+def nodeY : VE.Norms.Node := { fixedNode with name := "r-y", pred := "y" }
+def D2n : PDoc :=
+  { D15 with background := [bgF, saidF],
+             norms := { regulated := [regOf "x", regOf "y"], definitions := [], nodes := [fixedNode, nodeY] } }
+#guard formulasUnder D2n R15 cond15 == [bgF, saidF] ++ formulasUnder D15 R15 cond15
+#guard (treeUnder D2n R15 cond15).nodes == [fixedNode, nodeY]
+def mXo : VE.FiniteModel String := model [("entity", ["a"])] [("x", [["a"]])] []
+def mYo : VE.FiniteModel String := model [("entity", ["a"])] [("y", [["a"]])] []
+#guard (VE.Norms.elaborate (treeUnder D2n R15 cond15)).map (ev mXo) == [true, false]
+#guard (VE.Norms.elaborate (treeUnder D2n R15 cond15)).map (ev mYo) == [false, true]
+example : ¬ SatUnder.{0} D2n R15 cond15 mXo.asStructure := by
+  unfold SatUnder; rw [if_neg (by decide)]; intro h
+  have : holds mXo (VE.Norms.elaborate (treeUnder D2n R15 cond15)) = true :=
+    List.all_eq_true.mpr fun a ha => (VE.eval_iff_denote _ _ _).mpr (h a (List.mem_append_right _ ha))
+  exact absurd this (by decide)
+example : ¬ SatUnder.{0} D2n R15 cond15 mYo.asStructure := by
+  unfold SatUnder; rw [if_neg (by decide)]; intro h
+  have : holds mYo (VE.Norms.elaborate (treeUnder D2n R15 cond15)) = true :=
+    List.all_eq_true.mpr fun a ha => (VE.eval_iff_denote _ _ _).mpr (h a (List.mem_append_right _ ha))
   exact absurd this (by decide)
 
 /-! ## S22 (R-9): two picks on an `unspecified` predicate, a gap where no rule decides and `p` is true -/
