@@ -5,14 +5,22 @@ outputs. No approved theorem statement changed and no hypothesis was added, so n
 
 Batch AR-23 of the architecture plan (`ARCHITECTURE-REVIEW-2026-10.md` 4.5, Phase C), named by the DRI for the
 2026-11-09 pass (`reviews/dri-decisions-20261105-arch-pass.md` item 2). Branch `infra/arch-20261109-1`. Merge base at
-the time of writing: `a5088a09b`. Main was merged twice: at `a8572afb0` (generated files regenerated under R12 at
-`8c9b52855`) and at `b58755067` (regenerated at `eb334fbd1`).
+the time of writing: `a3454b6ba`.
+
+Main was merged three times, each followed by a regeneration of the generated files under R12:
+- at `a8572afb0` (regenerated at `8c9b52855`);
+- at `b58755067` (regenerated at `eb334fbd1`);
+- at `7f741e751` (regenerated at `ee43c72ce`).
+
+After the last evidence, main moved on to `f3f40d51d` with two merges (en-e3a, sa-checked-view). They touch none of
+this batch's files and were not merged here. The merge base of this branch and main is still `a3454b6ba`, which the
+saved evidence names.
 
 ## Measured outcome
 
 | Measure | Before (base) | After (head) | Command and output |
 |---|---|---|---|
-| Trusted lines, whole tree | 62,095 (K 994, S 14,568) at `de7fb9469` | 62,085 (K 984, S 14,568) | `uv run python tools/trust_map.py --check` at head: "against a5088a09b523: K -10, S +0, D +0, G +0, tied +0, unclassified +0, trusted -10 … PASS" |
+| Trusted lines, whole tree | 62,095 (K 994, S 14,568) at `de7fb9469` | 62,085 (K 984, S 14,568) | `uv run python tools/trust_map.py --check` at head: "against a3454b6ba598: K -10, S +0, D +0, G +0, tied +0, unclassified +0, trusted -10 … PASS" |
 | K in `VE/Closure/` | 102 (`Syntax` 92, `Paths` 6, `Consequence` 4) | 92 (`Syntax` 82, `Paths` 6, `Consequence` 4) | `trust_map.py --files <outside the tree>` at base and head (`evidence/trust.json`, `closure_files`) |
 | Untied [V] | 46,533 | 46,533 | the same `--check` run: D +0, G +0, tied +0 |
 | Untrusted lines | C 12,817, P 112,752 | C 12,761, P 112,648 | `evidence/trust.json` `totals.delta`: C −56, P −104, T +24, all lines −138 |
@@ -115,15 +123,24 @@ are untouched.
 - **Corpus A/B, merge base `95ed0e49b` (after the first merge of main).** Recorded again the same way: the base
   worktree at `95ed0e49b` and the head at `14e7dbe2e`. The recordings are byte-identical (`4d806d67…`): 100,530 the
   same, 30 unavailable on both sides, 0 unlisted.
-- **Corpus A/B, merge base `a5088a09b` (after the second merge of main; the saved one).** The base worktree at
-  `a5088a09b` and the head at `eb334fbd1`, recorded at the same time. The recordings are byte-identical (SHA-256
-  `8de0da3e…` for both). `uv run python -m tools.evidence ab … --base-commit a5088a09b… --head-commit eb334fbd1…
-  --delta evidence/ab-delta.json` gave "ab PASS" over 100,560 records: 100,538 the same, 22 unavailable on both sides
-  with identical outputs (R7, DELTA rows 1–4), and 0 unlisted (`evidence/ab.json`). After `eb334fbd1`, only
-  `docs/arch/AR-23/` changes.
-- **The three runs agree.** Whole-UDHR pilot records timed out on both sides in each run: 10, then 9, then 1. All but
-  one answered, the same on both sides, in a later run. The exception, `udhr-20261018T1800Z` `translation-whole.ve.md`,
-  timed out on both sides in all three runs (DELTA row 2).
+- **Corpus A/B, merge base `a5088a09b` (after the second merge of main).** Recordings byte-identical (`8de0da3e…`):
+  100,538 the same, 22 unavailable on both sides, 0 unlisted.
+- **Corpus A/B, merge base `a3454b6ba` (after the third merge of main; the saved one).** The base worktree at
+  `a3454b6ba` and the head at `ee43c72ce`, recorded at the same time.
+  - The raw recordings differed in 4 pilot `document_check` records. On each, one side's Rust accelerator subprocess
+    timed out (`CheckerUnavailable: Rust checker failed: … timed out after 14–20 seconds`) while the other side
+    answered: 1 head-side time-out and 3 base-side.
+  - All 4 were re-run on both sides with `uv run python docs/arch/AR-20/pilot_rerun.py` (AR-20's script, unchanged).
+    Each answered the same on both sides, in 80–200 s. Each re-run equals the recorded answer of the side that
+    answered: 1 of 1 on base, 3 of 3 on head (`evidence/pilot-rerun.json`).
+  - With the re-run outcomes in place of those 4 records, the two recordings are byte-identical (SHA-256 `c62acba7…`).
+  - `uv run python -m tools.evidence ab … --base-commit a3454b6ba… --head-commit ee43c72ce… --delta
+    evidence/ab-delta.json` gave "ab PASS" over 100,560 records: 100,531 the same, 29 unavailable on both sides with
+    identical outputs (R7, DELTA rows 1–4), and 0 unlisted (`evidence/ab.json`).
+  - After `ee43c72ce`, only `docs/` changes.
+- **The four runs agree.** Whole-UDHR pilot records timed out on both sides in each run: 10, 9, 1, then 8. The
+  machine load differed between runs. `udhr-20261018T1800Z` `translation-whole.ve.md` timed out in all four. Every
+  other one answered in at least one run, the same on both sides.
 - **Lean output differential (OUT).** Every `lean_exe` was built in both checkouts. The baseline was saved at
   `de7fb9469` with `tools/lean_output_diff.py --save-baseline`, and the head was compared with `--all --jobs 8`:
   "441 invocations, 441 run on both builds …; 1 differences, 0 timed out". The one difference is the `ve_service`
@@ -168,7 +185,7 @@ docs/arch/AR-23/trust-mutants-allow.json …` selected 18 mutants of the 4 chang
 `denote`, `Entails`).
 - The first run gave 0 KILLED, 14 SURVIVOR and 4 UNKNOWN.
 - Rerun with the allow file (`--rescore`): "0 KILLED, 0 SURVIVOR, 0 UNKNOWN, 0 INVALID, 18 ALLOWED, 0 NOT RUN", exit 0.
-- Rescored again after each merge of main (bases `95ed0e49b` and `a5088a09b`): the same result, exit 0 (`docs/arch/AR-23/trust-mutants.json`).
+- Rescored again after each merge of main (bases `95ed0e49b`, `a5088a09b` and `a3454b6ba`): the same result, exit 0 (`docs/arch/AR-23/trust-mutants.json`).
 
 The 16 allowed mutants of `denote`, `WellFormed` and `Entails` are Props that no check can evaluate. Each allow reason
 names the proofs that mutant breaks, as R16 asks. The 2 `all-any` mutants of `toCore` name a constructor that does not
@@ -177,7 +194,7 @@ exist. `toCore` itself is checked per constructor kind by the new `#guard`s, and
 ## Trust (D3)
 
 `uv run python tools/trust_map.py --check` on the final head: K 984, S 14,568, trusted 62,085. Against the merge base,
-K −10, S +0, untied [V] +0, with no new allowance. "PASS: K, S and untied [V] within a5088a09b523 and the allowances
+K −10, S +0, untied [V] +0, with no new allowance. "PASS: K, S and untied [V] within a3454b6ba598 and the allowances
 introduced since". Phase C asks for a reduction (plan 4.1 item 3), and K fell. See "Measured outcome" for why it fell
 less than the plan estimated.
 
@@ -204,21 +221,37 @@ less than the plan estimated.
 
 ## After the gate
 
-The chain gates the final code commit `<G>`. After `docs/arch/AR-23/evidence/scope.json` and `ab.json` name the
-commit the A/B recorded, only `docs/arch/AR-23/` changes up to `<G>`. Then make one report commit that changes only
+The chain gates the final commit `<G>`. From `ee43c72ce` (the commit the A/B recorded) to `<G>`, only `docs/` changes:
+`docs/arch/AR-23/`, and `docs/CONSOLIDATION-PLAN.md` (the quoted step 3 ledger row, which no recorder reads). Then make one report commit that changes only
 `docs/arch/AR-23/`:
 
     cp gate-result.json docs/arch/AR-23/evidence/gate.json
     uv run python -m tools.evidence scope --base main --head <G> --out docs/arch/AR-23/evidence/scope.json
-    uv run python -m tools.evidence ab ~/.cache/ve-ar23c/base.jsonl ~/.cache/ve-ar23c/head.jsonl \
-        --base-commit a5088a09b523154f4024db96fe636c92689a9b97 --head-commit <G> \
+    uv run python -m tools.evidence ab ~/.cache/ve-ar23d/base2.jsonl ~/.cache/ve-ar23d/head2.jsonl \
+        --base-commit a3454b6ba598c95e5a4cad1d1bbea07dfa0b58f5 --head-commit <G> \
         --out docs/arch/AR-23/evidence/ab.json --delta docs/arch/AR-23/evidence/ab-delta.json \
         --corpus probe conformance readings pilots discourse rights quantity norm_defaults document
     uv run python tools/batch_evidence.py --check docs/arch/AR-23 --report-commit HEAD
 
-If main moves before the merge, the A/B must be recorded again against the new merge base.
+If main is merged again before the train merges this branch, record the A/B again against the new merge base, as
+above (`~/.cache/ve-ar23d/` holds the recordings of `a3454b6ba`). Main had already moved to `f3f40d51d` when this
+report was written.
 
-<SELECTED>
+## Selected tests
+
+`MAC_PYTEST_NO_DEFER=1 zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`, on the committed
+`9b5e061ea` (clean tree): 465 test units in 6 shards; 1 failed.
+- The failure was `tests/test_consolidation_tools.py::test_committed_ledger_names_real_declarations`. The plan's
+  section 4 quotes the trust ledger's measured figures, and step 3's "removed" figure fell from 30 to 14 trusted lines
+  because this batch did part of step 3.
+- Fixed at `68f6e9d80`: `docs/CONSOLIDATION-PLAN.md` quotes the remeasured row, with a note in its measurement
+  paragraph. `tools/consolidation-ledger.json` is unchanged, because no file went or moved.
+- Rerun of the failed id alone: `zsh mac-pytest.sh -- tests/test_consolidation_tools.py::test_committed_ledger_names_real_declarations`
+  gave "1 passed" (HEAD `68f6e9d8`, clean).
+- After the third merge of main: `uv run pytest -q tests/test_consolidation_tools.py -k ledger` gave "45 passed".
+  `tests/test_assurance_manifest.py -k pinned` gave "2 passed".
+- The selected set was not run again after that merge, which brought only main's own changes. The chain's gate runs
+  on the final HEAD.
 
 ## Spec re-read
 
@@ -285,7 +318,10 @@ Files touched, checked at the start against `git diff --name-only main...<branch
   several. Both are shared tables. The merge with main was automatic, and the files were regenerated and checked
   (`regen_generated.py --check`, `tests/test_assurance_manifest.py -k pinned`).
 - `tools/layer_policy.py` is not touched.
+- `docs/CONSOLIDATION-PLAN.md`: the quoted step 3 ledger row (14 removed lines, down from 30) and a one-line note in
+  its measurement paragraph (`68f6e9d80`).
 
 ## Pre-existing failures
 
-<PREEXISTING>
+None met. The one failure of the selected run (above) was this batch's, and it is fixed. No test listed in
+`main-known-red.txt` failed in the selected run.

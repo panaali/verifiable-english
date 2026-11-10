@@ -6,7 +6,7 @@
 # evidence/ab.json. Saved beside it and stated in REPORT.md: the statements diff (statements.json), the trust
 # measurement before and after (trust.json), the Lean output differential (out.json), closure's version and atom-free
 # gates row for row on both runners (closure-probe.json, from closure_probe.py), and the closure tests, fuzz and CPU
-# (closure-tests.json). The trust-mutants record and its allow file are ../trust-mutants.json and
+# (closure-tests.json), and the re-run of the 4 records one side timed out on (pilot-rerun.json). The trust-mutants record and its allow file are ../trust-mutants.json and
 # ../trust-mutants-allow.json.
 batch = "AR-23"
 
