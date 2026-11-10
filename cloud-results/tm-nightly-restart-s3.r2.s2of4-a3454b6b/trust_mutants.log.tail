@@ -1,0 +1,10 @@
+trust_mutants: 83 definitions, 110 mutants (27 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/Route/Inert.lean:13 VE.Route.Admission.Kind.inert (S, trusted) bool-flip: true -> false (lean/VE/Purposes/Examples.lean:50: Expression)
+UNKNOWN lean/VE/Presupposition/Admit.lean:64 VE.Presupposition.peelRule (G[V], trusted) lit-plus: 0 -> 1 (lean/VE/Presupposition/Admit.lean:64: Missing cases:)
+SURVIVOR lean/VE/Presupposition/Admit.lean:220 VE.Presupposition.readingsDoc (G[V], trusted) lit-minus: 1 -> 0
+UNKNOWN lean/VE/Service/Standalone.lean:320 VE.Service.Standalone.validatedComposedEnvironment (G[V], trusted) bool-flip: false -> true (lean/VE/Service/ActsExamples.lean:559: Expression (Lean elaborates it otherwise than without the ...)
+trust_mutants: 23 KILLED, 1 SURVIVOR, 3 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 83 OTHER SHARD in 5412 s
+trust_mutants: D[V], trusted: 5 KILLED, 21 OTHER SHARD
+trust_mutants: G[V], trusted: 12 KILLED, 1 SURVIVOR, 2 UNKNOWN, 41 OTHER SHARD
+trust_mutants: S, trusted: 6 KILLED, 1 UNKNOWN, 21 OTHER SHARD
+trust_mutants: steps: wall plan 15.6 s, scratch 2.9 s, control_build 0.3 s, probe_install 1.4 s, mutants 5389.5 s, cleanup 2.5 s, reads 0.4 s; lake control_build 0.3 s (1), probe_install 1.3 s (1), control_probes 224.7 s (26), mutant_builds 320.1 s (32), mutant_checks 12626.3 s (34), stage_controls 5753.1 s (12), mutant_probes 341.7 s (28)
