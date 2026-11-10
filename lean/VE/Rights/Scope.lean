@@ -127,15 +127,30 @@ def mechText : Narrowing → String
   | .dominatedBy M => s!"dominatedBy {M}"
   | .bar => "bar"
 
+/-- A line's span (8: findings are report lines with the line's span): the id of the source unit that authored the
+line instance, from the located lines; `""` when the request locates no line. -/
+def lineSpan (D : RightsDoc) (N : Line) : String :=
+  ((D.located.find? (·.1 == N.node.name)).map (·.2)).getD ""
+
 /-- The audit: every unlicensed mechanism of a line in scope of some limitation. -/
 def limitationScope (D : RightsDoc) (certs : List (Option VE.Tableau.Certificate)) : List Finding :=
   (linesOf D).flatMap (fun RN =>
     if D.limits.any (fun L => inScope D L RN.1 RN.2) then
       (narrowings D RN.2).filterMap (fun n =>
         if licensed D certs RN.2 n then none
-        else some ⟨"UnlicensedLimitation", RN.2.node.name, RN.1, "",
+        else some ⟨"UnlicensedLimitation", RN.2.node.name, RN.1, lineSpan D RN.2,
           s!"UnlicensedLimitation: {mechText n} of rule {RN.2.node.name} on right {RN.1}"⟩)
     else [])
+
+/-- Locating lines moves only the findings' spans: their texts, so their emptiness, are the unlocated audit's. -/
+theorem limitationScope_texts (D : RightsDoc) (l : List (String × String)) (c : List (Option VE.Tableau.Certificate)) :
+    (limitationScope { D with located := l } c).map Finding.text = (limitationScope D c).map Finding.text := by
+  have h1 : linesOf { D with located := l } = linesOf D := rfl
+  have h2 : ∀ L R N, inScope { D with located := l } L R N = inScope D L R N := fun _ _ _ => rfl
+  have h3 : ∀ N, narrowings { D with located := l } N = narrowings D N := fun _ => rfl
+  have h4 : ∀ N n, licensed { D with located := l } c N n = licensed D c N n := fun _ _ => rfl
+  simp only [limitationScope, h1, h2, h3, h4, List.map_flatMap]
+  try (congr 1; funext RN; split <;> first | rfl | (simp only [List.map_filterMap]; congr 1; funext n; split <;> rfl))
 
 theorem licensed_of_scope {D : RightsDoc} {certs : List (Option VE.Tableau.Certificate)}
     (hc : limitationScope D certs = []) {L : Limitation} (hL : L ∈ D.limits) {R : String} {N : Line}
