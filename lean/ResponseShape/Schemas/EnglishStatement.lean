@@ -39,8 +39,9 @@ def treeRow : Shape :=
 def identities : Shape :=
   c "Norm.Run.answerWith: the source's SHA-256 and english.read's case identities (Run.decodeCase)." [
     obj, .required ["source_sha256", "environment_id", "lexicon_id", "grammar_id", "actions_version"],
-    closed [("source_sha256", ref "common.json#/$defs/hex64"), ("environment_id", str),
-      ("overlay_digest", str), ("lexicon_id", str), ("grammar_id", str), ("actions_version", str)]]
+    closed [("source_sha256", ref "common.json#/$defs/hex64"), ("environment_id", ref "common.json#/$defs/hex64"),
+      ("overlay_digest", ref "common.json#/$defs/hex64"), ("lexicon_id", ref "common.json#/$defs/hex64"),
+      ("grammar_id", ref "common.json#/$defs/hex64"), ("actions_version", ref "common.json#/$defs/text")]]
 
 /-- A member's shape in a status's object (`statementFields`' names). -/
 def member (status : String) : String → Shape

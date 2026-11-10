@@ -232,11 +232,11 @@
       "$comment": "Norm.Run.answerWith: the source's SHA-256 and english.read's case identities (Run.decodeCase).",
       "additionalProperties": false,
       "properties": {
-        "actions_version": {"type": "string"},
-        "environment_id": {"type": "string"},
-        "grammar_id": {"type": "string"},
-        "lexicon_id": {"type": "string"},
-        "overlay_digest": {"type": "string"},
+        "actions_version": {"$ref": "common.json#/$defs/text"},
+        "environment_id": {"$ref": "common.json#/$defs/hex64"},
+        "grammar_id": {"$ref": "common.json#/$defs/hex64"},
+        "lexicon_id": {"$ref": "common.json#/$defs/hex64"},
+        "overlay_digest": {"$ref": "common.json#/$defs/hex64"},
         "source_sha256": {"$ref": "common.json#/$defs/hex64"}
       },
       "required": ["source_sha256", "environment_id", "lexicon_id", "grammar_id", "actions_version"],
