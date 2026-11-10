@@ -378,6 +378,7 @@ def lean_name_layer(module: str) -> int | None:
                   "VE.Calc.RunExamples", "VE.Defaults.RouteExamples", "VE.Defaults.ZoneWireExamples", "VE.Readings.ActsExamples",
                   "VE.Cardinality.RunExamples", "VE.Scope.RunExamples", "VE.Senses.RunExamples",
                   "VE.Events.RouteExamples", "VE.Commands.RunExamples", "VE.Commands.RunSplit",
+                  "VE.RightClauses.RunExamples",
                   "VE.EnglishGrammar.JudgmentRunExamples", "VE.Senses.TextsExamples", "VE.Acts.RunExamples",
                   "VE.Rights.OpenActExamples", "VE.EnglishGrammar.SourceWordsExamples"}:
         return 4  # runner-boundary acceptance fixtures import EnglishGrammar.Run, Question.Run, Alternatives.Run, Calc.Run,
