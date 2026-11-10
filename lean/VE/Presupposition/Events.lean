@@ -25,8 +25,7 @@ def inProgress (V : EventsEnv) (S : StateSort) (x t : VE.Term) : VE.Formula :=
 def inProgressBefore (V : EventsEnv) (S : StateSort) (x t : VE.Term) : VE.Formula :=
   .ex V.day (.and (.binary V.before (.var 0) (Term.shift t)) (inProgress V S (Term.shift x) (.var 0)))
 
-/-- "An earlier state that ended", the `pre` of "resumes": `∃y:S. ∃u. ends_S(y, u) ∧ before(u, t)`. Latest-stay limit
-    (shared with "returns to", row ps-7c): it asks for some earlier state that ended, not that the latest one did. -/
+/-- "An earlier state that ended", the `pre` of "resumes": `∃y:S. ∃u. ends_S(y, u) ∧ before(u, t)`. -/
 def endedBefore (V : EventsEnv) (S : StateSort) (t : VE.Term) : VE.Formula :=
   .ex S.sort (.ex V.day (.and (.binary S.ends (.var 1) (.var 0))
     (.binary V.before (.var 0) (Term.shift (Term.shift t)))))
@@ -51,7 +50,8 @@ def continues (V : EventsEnv) (S : StateSort) (x t : VE.Term) (body : VE.Formula
 /-- "no longer"; the translator's `body` is the "not on the day" part (`¬IP_S(x, t)`). -/
 def noLonger (V : EventsEnv) (S : StateSort) (x t : VE.Term) (body : VE.Formula) : Reading :=
   generic (inProgressBefore V S x t) body
-/-- "resumes". -/
+/-- "resumes". Latest-stay limit (shared with "returns to", row ps-7c): the pre asks for some earlier state that
+    ended, not that the latest one did (the ps-7c guard in Events/Examples.lean records today's value). -/
 def resumes (V : EventsEnv) (S : StateSort) (t : VE.Term) (body : VE.Formula) : Reading :=
   generic (endedBefore V S t) body
 /-- "again", on an event sort. -/
