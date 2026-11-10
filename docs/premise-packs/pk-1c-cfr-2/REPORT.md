@@ -43,6 +43,7 @@ check`). HEAD: `4 passed`.
   trust_mutants sweep, no `lean/` change (no lake build, audit or trust allowance).
 - `uv run python tools/regen_generated.py --check`: exit 0 (38 entries). `select_tests.py --base 1ee886ca05`: 182/579
   units, both tests; `--static --paths …/PacksLegacyExamples.lean` also selects both.
+- Final selected run on committed 7de5de4bd1 (`MAC_PYTEST_NO_DEFER=1 mac-pytest.sh --select`): exit 0, 182 units, 0 failed.
 - SELF-REVIEW: 0 A, 2 B, 8 C; fixed 8 (both B; C: (2c) refusal, negated kernel, cite forms, message, counts, lane).
 
 ## Self-review against BUILDER-CHECKLIST
