@@ -16,6 +16,9 @@ import VE.Readings.SoftSeparate
 import VE.Readings.SoftSeparateExamples
 import VE.Readings.SoftSup
 import VE.Readings.SoftSupExamples
+import VE.Readings.SoftSupLabels
+import VE.Readings.SoftSupWire
+import VE.Readings.SoftSupWireExamples
 import VE.Closure.OrderChecks
 import VE.Grammar.TableProofs
 import VE.Grammar.Meaning
@@ -144,6 +147,8 @@ import VE.RightClauses.Tree
 import VE.RightClauses.Plain
 import VE.RightClauses.Relation
 import VE.RightClauses.Examples
+import VE.RightClauses.PlainWellFormed
+import VE.RightClauses.PlainWellFormed.Corollaries
 import VE.SpeechActs.Run
 import VE.SpeechActs.Source.Run
 import VE.SpeechActs.Source.Admission.Run
@@ -202,6 +207,7 @@ import VE.Risk.Wire
 import VE.Risk.Admission
 import VE.Rights.Examples
 import VE.Rights.Run
+import VE.Rights.OpenActExamples
 import VE.Judgments.Decl
 import VE.Judgments.Scan
 import VE.Judgments.Status
@@ -220,6 +226,7 @@ import VE.Commands.Examples
 import VE.Commands.RunExamples
 import VE.Commands.RunSplit
 import VE.Commands.StepsExamples
+import VE.Commands.StepsProofs
 import VE.Ask.Basic
 import VE.Ask.Sound
 import VE.Ask.Sources
@@ -259,6 +266,8 @@ import VE.Acts.Grammar
 import VE.Acts.RuleExamples
 import VE.Acts.Meaning
 import VE.Acts.Readings
+import VE.Acts.Specialise
+import VE.Acts.SpecialiseExamples
 import VE.Acts.Sources
 import VE.Acts.Situation
 import VE.Acts.MeaningExamples
@@ -308,6 +317,8 @@ import VE.Scope.FarTheorems
 import VE.Scope.FarExamples
 import VE.Scope.Reach
 import VE.Scope.ReachExamples
+import VE.Scope.Authoring
+import VE.Scope.AuthoringExamples
 import VE.Service.ScopeAdmission
 import VE.Service.ScopeExamples
 import VE.Service.DocumentChain
