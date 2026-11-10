@@ -2371,6 +2371,13 @@
    "reason": "sc-7 recheck F8, F9: lean/VE/Scope/Authoring.lean untied V +2 (sc-7 total K +0, S +37, V +113, trusted +150): Pinned.clause refuses every Unicode 16.0 Sentence_Terminal, ':' and their NFKC forms, after dropping trailing closers and Cf, Mn, Me, Default_Ignorable_Code_Point and U+2800; Pinned.wordChar refuses C1 controls and the five fillers drawn as a space",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-7, 2026-11-09",
    "commit": "da5303b7876924d4fba67866390ed6f0d0b36cbc"
+  },
+  {
+   "class": "V",
+   "lines": 76,
+   "reason": "et-5: V +76 (VE/EnglishGrammar/SourceWords.lean +67, VE/EnglishGrammar/Advice.lean +9; the SourceWordsExamples helpers are T)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), et-5, 2026-10-18",
+   "commit": "61a11aa21edcf115843a6b44a9aff9e623a6d6e4"
   }
  ]
 }
