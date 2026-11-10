@@ -2454,7 +2454,7 @@ Each value is computed once per case, and its size is charged before it is used.
 | --- | --- | --- |
 | the compatible choices (`search`) | once per case; `choices` is read from the same cut | `maxChoiceChecks` 1024 (past it: enumerated) |
 | `sdChoiceText` per choice | at most 64 choices: admission's result, not run again (`sdCheck_of_admitted`); past 64: once, in the route | `sdCheckWork N ≤ maxSdCheckWork`, checked before the first `sdChoiceText` (over: enumerated, no choice read) |
-| `sup N.D`, `supU N`, `fill (supU N)`, `softXL N (sup N.D).1`, `premisesX`, `targets` | once per case; every piece of a `readings-verdicts` case runs on that value (as `conflictReplay` does), never re-admitting per piece as `x.run` does on the norms chain | 256 rules plus unspecified predicates; 10,000 AST nodes (section 9) on `supU N` |
+| `sup N.D`, `supU N`, `fill (supU N)`, `softXL N (sup N.D).1`, `premisesX`, `targets` | once per case; every piece of a `readings-verdicts` case runs on that value (as `conflictReplay` does), never re-admitting per piece as `x.run` does on the norms chain | `sdSizeCharge N ≤ maxSdSizeCharge` (16,384), read first by `sdSuperposable` before `sup N.D` or `supU N` is built (over: enumerated); then 256 rules plus unspecified predicates; 10,000 AST nodes (section 9) on `supU N` |
 | `labelImage N c`, per choice taking `A` | once per scope, and only when a piece was accepted | within `sdCheckWork` |
 | `usedLabels` | per accepted piece, one replay per label of slot, `supX` and `Fill_T` | the labels within `sdCheckWork`; each replay is the piece's own certificate, within `max_steps` |
 | a request's JSON members (evidence, model, certificates) | decoded once; the input bytes charged by the existing admission memo | the existing limits |
@@ -2465,9 +2465,19 @@ costs about 29 µs of Lean CPU per unit of `sdCheckWork`, so `NSDbig 8` (256 cho
 `NSDbig 10` (1024 choices, 123,904 units) 3.67 s, over R4's 1 s. It replaces this spec's arithmetic value 4,194,304
 (1024 choices × 4096 premises and rule nodes). Past 64 choices, a document is decided in one proof when `sdCheckWork`
 is within 32,768 (measured: 256 W-13-shaped choices); `maxChoiceChecks` 1024 stays as a second bound. Exceeding either
-limit is the enumerated row, not an error. `sdSuperposable` (`superposable`, `WellFormedU (supU N)`) is read
-before the work limit and not charged, unlike this section's first sentence: 10.98 s and 94-100 s measured on the
-767- and 3,071-node guard documents; row sc-11w bounds it before sc-11b (DRI 2026-11-09 sc-11-3 item 2).
+limit is the enumerated row, not an error.
+
+`superposable N.D` and `WellFormedU (supU N)` are charged before they are built (DRI decisions 2026-11-09 sc-11-3
+item 1 and 2026-11-10 sc-11w item 1, manage-agents/reviews/dri-decisions-20261110-sc-11w.md). By that decision's one
+signed edit of 14.8's `def sdSuperposable` (the checker's `SIGNED` table; 14.8's text above is the approved one),
+`sdSuperposable` reads `decide (sdSizeCharge N ≤ maxSdSizeCharge)` first. `sdSizeCharge N` is the source document's
+rules times its AST nodes: the frame's rules, rights and limitations, every fixed content and every candidate's, read
+from `N.D` without building `sup N.D` or `supU N`. `maxSdSizeCharge` = 16,384 is measured (docs/rd-9/sc-11w/cpu.md):
+compiled Lean on the VM (AMD EPYC 7B12, 32 vCPU, 5-minute load 44 to 80), `routeSD` takes at most 0.69 s Lean CPU on
+the 191-, 767- and 3,071-node guard documents, on NSDheavy, on W-13's `NSDbig 8` and on documents at 16,384 whose
+`superposable` and `WellFormedU (supU N)` hold. Over the charge, `routeSD` gives the enumerated row with today's cause.
+`sdCheckWork` is evaluated without building the premises it counts (`sdCheckWork_eq_fast`). The 10.98 s and 94-100 s
+measured on the 767- and 3,071-node guard documents were that premise build, not `sdSuperposable`'s.
 
 ### 14.12 Existing text and tests that sc-11b changes
 

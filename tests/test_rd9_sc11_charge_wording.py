@@ -6,7 +6,9 @@ documents spend their CPU in `sdSuperposable`, which `routeSD` reads before `sdC
 nothing, and sc-11w no longer has to build a cost-proportional charge. The ruling orders SoftSupWire.lean's module
 docstring, the REPORT's OPEN-SC11-7 paragraph and 14.11's closing paragraph to say so. The class is a text that
 promises a charge nobody builds, or hides the uncharged read: one table (`PLACES`) names every text that states
-the route's limits, and each must carry the ruling's facts and none of the stale phrases.
+the route's limits, and each must carry the ruling's facts and none of the stale phrases. Since sc-11w (DRI
+2026-11-10 sc-11w item 1) `sdSuperposable` reads a size charge first, so the code comment and 14.11 (`CURRENT`) state
+that charge instead, and sc-11's REPORT keeps the wording sc-11 merged with.
 """
 
 from __future__ import annotations
@@ -40,12 +42,24 @@ def _report_bullet(text: str) -> str:
     return text.split("- **OPEN-SC11-7**", 1)[1].split("\n- **", 1)[0]
 
 
-# Every text that states routeSD's limits: (path, the part that must carry the ruling's wording).
+# Every text that states routeSD's limits: (path, the part that must carry the ruling's wording). sc-11's REPORT
+# records sc-11 as merged; the code comment and 14.11 state the limits as they are now (CURRENT, sc-11w).
 PLACES = (
-    ("lean/VE/Readings/SoftSupWire.lean", _module_docstring),
-    ("docs/spec/rd-9-soft-chain.md", _section("### 14.11", "### 14.12")),
     ("docs/rd-9/sc-11/REPORT.md", _report_bullet),
 )
+CURRENT = (
+    ("lean/VE/Readings/SoftSupWire.lean", _module_docstring),
+    ("docs/spec/rd-9-soft-chain.md", _section("### 14.11", "### 14.12")),
+)
+# DRI 2026-11-10 sc-11w item 1: `sdSuperposable` reads the size charge first, and the measured seconds were
+# `sdCheckWork`'s premise build; a current text that still says the read is uncharged is stale.
+CURRENT_REQUIRED = (
+    "sdSizeCharge N ≤ maxSdSizeCharge",
+    "`sdCheckWork_eq_fast`",
+    "10.98 s and 94-100 s",
+    "premise build",
+)
+CURRENT_STALE = ("not charged",)
 # Every file of the item that could repeat the withdrawn promise anywhere.
 SCANNED = (
     "docs/spec/rd-9-soft-chain.md",
@@ -70,6 +84,22 @@ def wording_faults(part: str) -> list[str]:
 def test_probe_f1_each_limits_text_says_sd_superposable_is_read_before_the_work_limit(path, cut):
     """PROBE F1 of sc-11-review: the ruling's wording, in each place the ruling names."""
     assert wording_faults(cut((ROOT / path).read_text(encoding="utf-8"))) == []
+
+
+def current_faults(part: str) -> list[str]:
+    flat = _flat(part)
+    return [f"missing: {r}" for r in CURRENT_REQUIRED if r not in flat] + [
+        f"stale: {s}" for s in STALE + CURRENT_STALE if s in flat]
+
+
+@pytest.mark.parametrize(("path", "cut"), CURRENT, ids=[p for p, _ in CURRENT])
+def test_each_current_limits_text_says_sd_superposable_reads_the_charge_first(path, cut):
+    """sc-11w: the code comment and 14.11 state the size charge, and the uncharged read is gone."""
+    assert current_faults(cut((ROOT / path).read_text(encoding="utf-8"))) == []
+
+
+def test_the_sc11_wording_is_stale_in_a_current_text():
+    assert "stale: not charged" in current_faults(" ".join(REQUIRED + CURRENT_REQUIRED))
 
 
 @pytest.mark.parametrize("path", SCANNED)
@@ -100,6 +130,6 @@ def test_a_text_with_the_ruling_and_a_stale_phrase_fails():
 
 def test_each_place_cut_is_a_proper_part_of_its_file():
     """A cut that fell back to the whole file would let a far-away sentence satisfy the check."""
-    for path, cut in PLACES:
+    for path, cut in PLACES + CURRENT:
         text = (ROOT / path).read_text(encoding="utf-8")
         assert 0 < len(cut(text)) < len(text) // 2, path
