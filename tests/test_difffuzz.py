@@ -301,8 +301,10 @@ def test_builtin_argument_sort_truth_table_agrees_on_every_profile_list(built):
             differs.append((roots[i], lean[i], rust[i]))
     assert not differs, json.dumps(differs[:5], indent=1)[:6000]
     assert all(roots.index(probe) in rust for probe in BUILTIN_SORT_PROBES.values())
+    # right-clauses@0 (registered by cmp-s3-cfr-1) is a wrapper Rust does not model, as readings@1
     assert gated <= {"Unsupported profile acts@0", "Unsupported profile readings@1",
-                     "Unsupported profile rights@0", "Unsupported profile norm-defaults@0"}, gated
+                     "Unsupported profile rights@0", "Unsupported profile norm-defaults@0",
+                     "Unsupported profile right-clauses@0"}, gated
 
 
 def test_request_envelope_fields_precede_predicate_sort_fault(built):
