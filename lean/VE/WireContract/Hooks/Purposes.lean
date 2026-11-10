@@ -128,6 +128,10 @@ def registered : List String := ["purposes_block", "purposes_ids"]
 
 #guard Tables.Purposes.table.hookNames.all registered.contains
 #guard Tables.Purposes.table.revision == 1  -- purposes@0.json's revision: a new revision updates this pin
+-- every entry is a classifier check, so `hooks`' predicate and view (the engine's defaults) are never called
+#guard Tables.Purposes.table.phases.all fun p => p.entries.all fun
+  | .check c => match c.kind with | .classifier .. => true | _ => false
+  | _ => false
 
 /-! The round trip: on each fixture the engine's record over the generated table names `row` and its text is the
 decoder's (`check`'s for 2.1b); a clean block gives no record. -/
