@@ -33,6 +33,11 @@ gate refuses all 1192 mutants of the route by schema alone. **en-e3bb must add a
 `tools/binding_census.py --answers` re-asked the recorded answers: english.statement's 7, plus 13 English answers
 whose `actions_version` main had left at 45 (now 47).
 
+**Pre-review [relay] at `d15500d98`.** The gate stopped at the service handshake: the `ve_service` it ran
+listed the modes without `english.statement`, so it was a stale binary, and no route was reached. After
+`lake build ve_service` (956 jobs, up to date) the handshake passes, and `tools/relay_mutation_gate.py` exits 0 with
+49 routes, 154559 mutants and 0 failures (english.statement: 7 fixtures, all 1192 mutants refused). No code changed.
+
 ## Seeded bugs (each planted alone, shown failing, restored)
 
 Python (`/tmp/e3b_seed.py` runs each with its test; recorded in `seeded-bugs.json`, re-run at `d15500d98`, all caught):
