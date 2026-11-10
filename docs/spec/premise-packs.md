@@ -252,7 +252,8 @@ uses them, and R16 asks that every new trusted definition be exercised by a test
 ## 4. Acceptance fixtures
 
 The stub checks fixtures A1–A9 by `#guard` (stub:416–482), and the F1 and A9′ checks by `#guard` (stub:484–512). pk-1 keeps them as `#guard`s in
-`lean/VE/NormDefaults/PacksExamples.lean` and adds the corpus checks (L1, L2).
+`lean/VE/NormDefaults/PacksExamples.lean` (F1 in `PacksLegacyExamples.lean`, A9′ in
+`lean/ResponseShape/Encoders/NormDefaults.lean`; section 5) and adds the corpus checks (L1, L2).
 
 | # | Fixture | Expected |
 |---|---|---|
@@ -275,9 +276,10 @@ The stub checks fixtures A1–A9 by `#guard` (stub:416–482), and the F1 and A9
 
 **Files.** `Readings.SupExtra` imports `NormDefaults.Layered` (through `SupFill` and `Unspecified`), and
 `Layered.lean` must import the core, so the core cannot hold `transfers_X`, and it cannot hold what reads
-`Layered.lean`'s `softLabelledU`, `layeredCase` or `FilledX`. The stub's `planFiles` (stub:534) is this list. It gives
-every stub declaration its file, and a check (stub:603) fails when a declaration uses a module its file cannot
-import, or a declaration of a later file, or when a file's importer is among its imports. Seeded bugs M12–M16 show
+`Layered.lean`'s `softLabelledU`, `layeredCase` or `FilledX`. The stub's `planFiles` (stub:538) is this list without
+`PacksExamples.lean`, which is not in the checked plan. It gives a file to every declaration the stub's `stubDecls`
+lists (not section 4's fixtures), and a check (stub:607) fails when one uses a module its file cannot import, or a
+declaration of a later file, or when a file's importer is among its imports. Seeded bugs M12–M16 show
 that the check fails on the draft's placement (`transfers_X` in the core) and on each kind of misplacement.
 
 | File, in import order | Imports | Imported by | Holds |
@@ -286,7 +288,7 @@ that the check fails on the draft's placement (`transfers_X` in the core) and on
 | `lean/VE/NormDefaults/Layered.lean` (hunks below) | unchanged, plus `Packs` | as today | `softPack`, `rightsPack` (after `softLabelledU`, before `LayeredU`); pk-1b: `legacyKinds`, `legacyRows` (before `layeredCase`) |
 | `lean/VE/NormDefaults/PacksLegacy.lean` (new, theorems) | `VE.NormDefaults.Layered` | `LayeredAdmission.lean`, `Readings/UnspecifiedWire.lean` | `softLabelledU_labels_nodup`, `legacy_labels_nodup_of_actKeys`, `assemble_legacy_soft`, `assemble_legacy_rights`, `packPremises_legacy`, `packFault_legacy_rights`, `packFault_legacy_soft`, `filledX_whole`; pk-1b: `dispatch_legacy` |
 | `lean/VE/Readings/SupPacks.lean` (new, theorems) | `VE.Readings.SupExtra` | nothing yet | `transfers_append`, `transfers_X` |
-| `lean/VE/NormDefaults/PacksExamples.lean` (new) | `PacksLegacy`, `VE.Rights.Examples`, `ResponseShape.Schemas.NormDefaults` | nothing | fixtures A1–A9, A9′ and F1 |
+| `lean/VE/NormDefaults/PacksExamples.lean` (new; not in the checked plan: it holds none of the declarations `stubDecls` checks) | as built: `VE.NormDefaults.Packs`, `VE.Rights.Examples`, `VE.Defaults.Examples` (no layer 2 to layer 4 import) | `PacksLegacyExamples.lean` and the example files above it | fixtures A1–A9; F1 is in `PacksLegacyExamples.lean`, and A9′, which reads the response shape, is a `#guard` in `lean/ResponseShape/Encoders/NormDefaults.lean` (layer 4) |
 | The first provider (AT-2) | above all of these | | `packEntry`, `furtherEntries` (with its shape row), `expandBy`, `ExpandsOn`, `OriginsExact` |
 
 **Shared-file hunks** (queue SYNTHESIS 4.2: PK-1 is first on `Layered.lean`; no branch in flight edits these files):
