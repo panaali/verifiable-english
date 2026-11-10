@@ -955,7 +955,7 @@ theorem runMode_sensesProject (j : Json) :
 theorem runMode_englishCommand (j : Json) : runMode .englishCommand j = VE.Commands.Run.caseReported j := rfl
 theorem runMode_actReadings (j : Json) : runMode .actReadings j = VE.Acts.Run.actReadingsReported j := rfl
 theorem runMode_englishStatement (j : Json) :
-    runMode .englishStatement j = VE.EnglishGrammar.Norm.Run.statementCaseReported j := rfl
+  VE.Service.runMode .englishStatement j = VE.EnglishGrammar.Norm.Run.statementCaseReported j := rfl
 
 
 theorem caseResult_ok (m : Mode) (i : Nat) (j : Json) : caseResult m i (.ok j) = runMode m j := rfl

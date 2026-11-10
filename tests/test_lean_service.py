@@ -1431,14 +1431,23 @@ _SCHEMA_SEEDS = {
                                               "from": [0, 1, 2, 3]}],
                                     "paraphrase": "{0} has the right to seek asylum."}]}),
     # The mode's `one` row for E13's source "Rule 1.\nX." (docs/spec/en-e3-norm.md section 8).
-    "english.statement": ({"id": "c", "kind": "blocks", "source": "Rule 1.\nX."}, {"id": "c", "status": "ok", "result": {
-        "status": "one", "statements": [{"kind": "rule", "number": 1, "exception_to": [], "span": [0, 10], "node": {
-            "norm": {"name": "rule-1", "predicate": "in_scope", "sign": True, "guard": ["unary", "publicly_deployed",
-                                                                                         ["var", 0]],
-                     "unless": [], "over": []}}}],
-        "identities": {"source_sha256": "8" * 64, "environment_id": "env", "lexicon_id": "l", "grammar_id": "g",
-                       "actions_version": "v"}}}),
+    "english.statement": (
+        {"id": "c", "kind": "blocks", "source": "Rule 1.\nX."},
+        {"id": "c", "status": "ok", "result": {
+            "status": "one",
+            "statements": [{"kind": "rule", "number": 1, "exception_to": [], "span": [0, 10], "node": {"norm": {
+                "name": "rule-1", "predicate": "in_scope", "sign": True,
+                "guard": ["unary", "publicly_deployed", ["var", 0]], "unless": [], "over": []}}}],
+            "identities": {"source_sha256": "8" * 64, "environment_id": "a" * 64, "lexicon_id": "b" * 64,
+                           "grammar_id": "c" * 64, "actions_version": "47"}}}),
 }
+
+
+def test_the_english_statement_seed_is_a_valid_row():
+    """The mode's seed fits its schema unmutated, so each mutation below is refused for the mutation alone."""
+    from ve.backends.service_schema import check_row
+    case, row = _SCHEMA_SEEDS["english.statement"]
+    check_row("english.statement", row, case, 0)
 
 
 @settings(max_examples=48, deadline=None,

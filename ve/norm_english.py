@@ -386,8 +386,11 @@ def statement_class(python, lean) -> str:
     raised; `lean` is the checked `english.statement` result, or the `CheckerUnavailable` its relay raised. A Lean
     code's class is `codes.json`'s (`english_grammar.codes`); `lean-unavailable` is tested first, so the classes
     partition the records and such an answer is never `both-refuse` or `lean-stricter` (verifier 3)."""
+    from .backends.service_schema import same_json
     from .english_grammar import codes
     classes = codes()[0]
+    if not isinstance(lean, (dict, CheckerUnavailable)):
+        raise TypeError("lean must be the checked english.statement result or CheckerUnavailable")
     if isinstance(lean, CheckerUnavailable) or classes.get(lean.get("code")) == "CheckerUnavailable":
         return "lean-unavailable"
     admitted = not isinstance(python, BaseException)
@@ -395,7 +398,7 @@ def statement_class(python, lean) -> str:
         if not admitted:
             return "lean-looser"
         nodes = [row["node"]["norm"] for row in lean["statements"] if row["kind"] == "rule"]
-        return "agree" if _by_position(nodes) == _by_position(python) else "different-node"
+        return "agree" if same_json(_by_position(nodes), _by_position(python)) else "different-node"
     if not admitted:
         return "both-refuse"
     return "lean-unknown" if lean["status"] == "budget" or classes.get(lean.get("code")) == "ResourceLimit" \
