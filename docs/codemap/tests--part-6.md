@@ -1,3 +1,4 @@
+- `tests/test_readings_sd_lean.py` — Readings under the soft completion through the Lean service (docs/spec/rd-9-soft-chain.md 8.3; plan SC-4).
 - `tests/test_readings_sd_relay.py` — The relay of Lean's soft-completion rows (rd-9-soft-chain.md 3; plan SC-4, SC-8): Python checks the row's schema and its binding to the request (DRI ruling R8)…
 - `tests/test_readings_stage_trace.py` — The readings admission stage timer of `ve_service` (lean/VE/Readings/Stage.lean, lean/VE/Service/StageTimes.lean).
 - `tests/test_readings_sup_verdicts.py` — RD-7: the superposed service owns verdicts, dependency replay and the complete English plan.
@@ -78,4 +79,3 @@
 - `tests/test_senses_read_members.py` — sn-b6c: the members a `senses.read` route answer gains (byte spans and glosses in the sense map, the texts of docs/spec/senses.md 3.2 and plan 2.8), each equal…
 - `tests/test_senses_route.py` — Spec fixture admission through the Python transport and the compiled Lean reader.
 - `tests/test_service_schema_compiler.py` — The response schema compiler (`ve/backends/service_schema.py`): what it reads and when, and that compiling on first use is safe from the service pool's threads.
-- `tests/test_shape_binding_mutants.py` — The generic binding checker on genuine Lean answers: one mutation test per mode (test-architecture rank 10, the first, additive step; ADR 0001).

@@ -14326,7 +14326,7 @@ module VE.NormDefaults.PacksExamples f02567f5aab795b53ef0a0d53e2ad42be8e80be4ad5
 141:0-141:100 theorem VE.NormDefaults.Packs.Fixtures.rightsPack_conditions@VE.NormDefaults.PacksExamples
 143:0-146:53 theorem VE.NormDefaults.Packs.Fixtures.assemble_conditions@VE.NormDefaults.PacksExamples
 154:0-163:98 theorem VE.NormDefaults.Packs.Fixtures.decodeLayered_conditions@VE.NormDefaults.PacksExamples
-module VE.NormDefaults.PacksLabels e791013bda89351ad62b12feb0112d952cb57408c53ecadf1ccbc44b2f9cc4e4
+module VE.NormDefaults.PacksLabels 43cd69633d27d398ed4abd49a90807b91f8278f72afd76a07cc6ab025c904908
 17:0-32:26 theorem VE.NormDefaults.Packs.pk_split@VE.NormDefaults.PacksLabels
 34:0-54:11 theorem VE.NormDefaults.Packs.pk_ruleName_sep@VE.NormDefaults.PacksLabels
 56:0-61:52 theorem VE.NormDefaults.Packs.pk_ruleName@VE.NormDefaults.PacksLabels
@@ -14372,7 +14372,7 @@ module VE.NormDefaults.PacksLegacy b900667f6d8c24a34cbeabfbc843e02bd0266baca11d1
 268:0-276:45 theorem VE.NormDefaults.Packs.layeredCase_some@VE.NormDefaults.PacksLegacy
 278:0-293:7 theorem VE.NormDefaults.Packs.dispatch_legacy@VE.NormDefaults.PacksLegacy
 295:0-305:104 theorem VE.NormDefaults.Packs.kindCase_eq@VE.NormDefaults.PacksLegacy
-module VE.NormDefaults.PacksLegacyExamples f218ed8b948023402710e60198a0921b35b9edc89cf5876f7212e3e8f56035d2
+module VE.NormDefaults.PacksLegacyExamples 5679cbef259126483b1f064ef2245387422e7fc975d8a05ba48d150773280058
 18:0-21:113 def VE.NormDefaults.Packs.Fixtures.muX@VE.NormDefaults.PacksLegacyExamples
 24:0-26:97 def VE.NormDefaults.Packs.Fixtures.rightsDocs@VE.NormDefaults.PacksLegacyExamples
 27:0-27:97 def VE.NormDefaults.Packs.Fixtures.legacyU@VE.NormDefaults.PacksLegacyExamples

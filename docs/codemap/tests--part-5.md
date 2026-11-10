@@ -1,3 +1,5 @@
+- `tests/test_p1_preflight.py` — (no module docstring)
+- `tests/test_p1_reconcile.py` — Append-only budget reconciliation and request reuse across schedule changes.
 - `tests/test_pack_conditions_doc.py` — The docstring of `Pack.conditions` names its readers (pk-1-conditions-b-cfr-1; finding pkcb-F3).
 - `tests/test_package_facade.py` — `ve/__init__.py` resolves its public names lazily: `import ve` loads no submodule, each name is its module's.
 - `tests/test_packs_guard_mutants.py` — The premise-pack fixtures can fail (pk-1 review F1, B; standing ruling R16 in DRI-RULINGS.md).
@@ -77,4 +79,3 @@
 - `tests/test_readings_sd_ce4.py` — `CE4`, the constitution's four sets, under the soft completion (docs/spec/rd-9-soft-chain-PLAN.md 5.2: C1 to C8; plan SC-4, SC-5 and SC-8; rd-9-looprecheck2 A2…
 - `tests/test_readings_sd_differential.py` — The soft completion's differential (docs/spec/rd-9-soft-chain.md 3.11 and 8.3; plan SC-8; build checklist 2).
 - `tests/test_readings_sd_document.py` — Readings under the soft completion through `ve document` (docs/spec/rd-9-soft-chain.md 3.8 and 8.3; plan SC-8).
-- `tests/test_readings_sd_lean.py` — Readings under the soft completion through the Lean service (docs/spec/rd-9-soft-chain.md 8.3; plan SC-4).
