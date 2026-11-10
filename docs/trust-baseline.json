@@ -2427,6 +2427,76 @@
    "reason": "norm-defaults-cfr-1b: V +31 (VE/NormDefaults/Layered.lean +12, VE/NormDefaults/Explain.lean +11, VE/NormDefaults/Wire.lean +3, ResponseShape/Schemas/NormDefaults.lean +3, VE/Acts/Decode.lean +1, VE/NormDefaults/Run.lean +1); K +0, S +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), norm-defaults-cfr-1b, 2026-10-18",
    "commit": "c94ad399b7b1f6804c12fbc555a5758d5e971ae6"
+  },
+  {
+   "class": "V",
+   "lines": 109,
+   "reason": "ps-2ac: VE/Presupposition/Run.lean V +109 (G[V] untied: the presuppositions report value Outcome, Line, Goal, Row, Shown, Inconsistency, lexiconOk, lineOf, englishLine, outcomeOf, checkedRow, docPremise, refutedLines, shownOf, shown); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ps-2ac, 2026-10-18",
+   "commit": "a5088a09b523154f4024db96fe636c92689a9b97"
+  },
+  {
+   "class": "S",
+   "lines": 3,
+   "reason": "rights-cfr-2: VE/Rights/Run.lean +45 V (findingJson, conflictAnswer, exhibit, situationTables, conflictBudget, runRightsKind, regenerated), ResponseShape/Schemas/Rights.lean +33 V (located_findings, situation, packages, scope, elaborate), VE/Rights/Tree.lean +3 S (RightsDoc.located); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), rights-cfr-2, 2026-11-09",
+   "commit": "33fe04615107cfb12e4402877992e6ff7b6e95d8"
+  },
+  {
+   "class": "V",
+   "lines": 78,
+   "reason": "rights-cfr-2: VE/Rights/Run.lean +45 V (findingJson, conflictAnswer, exhibit, situationTables, conflictBudget, runRightsKind, regenerated), ResponseShape/Schemas/Rights.lean +33 V (located_findings, situation, packages, scope, elaborate), VE/Rights/Tree.lean +3 S (RightsDoc.located); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), rights-cfr-2, 2026-11-09",
+   "commit": "33fe04615107cfb12e4402877992e6ff7b6e95d8"
+  },
+  {
+   "class": "V",
+   "lines": 5,
+   "reason": "rights-cfr-2: VE/Rights/Run.lean +50 V (findingJson, conflictAnswerOf, conflictAnswer, exhibit, situationTables, conflictBudget, runRightsKind, regenerated), ResponseShape/Schemas/Rights.lean +33 V (located_findings, situation, packages, scope, elaborate), VE/Rights/Tree.lean +3 S (RightsDoc.located); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), rights-cfr-2, 2026-11-09",
+   "commit": "33fe04615107cfb12e4402877992e6ff7b6e95d8"
+  },
+  {
+   "class": "V",
+   "lines": 100,
+   "reason": "sa-checked-view: V +100 (lean/VE/Service/DocumentView.lean +97, lean/VE/Service/Document.lean +3); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sa-checked-view, 2026-10-18",
+   "commit": "a7659c5f12aebb2945cfb2106ed29a20663ab836"
+  },
+  {
+   "class": "S",
+   "lines": 46,
+   "reason": "en-e3a: Norm/Run.lean +110, Norm/Owners.lean +36, Norm/Rules.lean +13, EnglishGrammar/Run.lean +8 (K +0, S +46, V +121; trusted +167; statementSpans, sentenceBytes, opensStatement classed G[V])",
+   "signature": "SIGNED by the DRI 2026-11-09 (reviews/dri-decisions-20261109-en-e3a-2.md item 1)",
+   "commit": "a0102f0e5350727e99ddcae2e0b59ed03f2f4192"
+  },
+  {
+   "class": "V",
+   "lines": 121,
+   "reason": "en-e3a: Norm/Run.lean +110, Norm/Owners.lean +36, Norm/Rules.lean +13, EnglishGrammar/Run.lean +8 (K +0, S +46, V +121; trusted +167; statementSpans, sentenceBytes, opensStatement classed G[V])",
+   "signature": "SIGNED by the DRI 2026-11-09 (reviews/dri-decisions-20261109-en-e3a-2.md item 1)",
+   "commit": "a0102f0e5350727e99ddcae2e0b59ed03f2f4192"
+  },
+  {
+   "class": "S",
+   "lines": 16,
+   "reason": "cmp-s3-cfr-1: S +16 lean/VE/RightClauses/Wire.lean (NoClauseKeys, NoReadingSets, PlainOnWire); V +121: Wire.lean +77 (the clause, relation and elided readers), Run.lean +29 (the clauses-elaborate case), Compose/Dispatch.lean +11 (environmentWrappers, withoutClauses, environmentRows), ResponseShape Skeletons +2, Schemas +1, Service Registry +1, Protocol +1, Standalone -1; K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s3-cfr-1, 2026-10-18",
+   "commit": "6db6ee16ddb10f843b396b78299a980abc43fefb"
+  },
+  {
+   "class": "V",
+   "lines": 121,
+   "reason": "cmp-s3-cfr-1: S +16 lean/VE/RightClauses/Wire.lean (NoClauseKeys, NoReadingSets, PlainOnWire); V +121: Wire.lean +77 (the clause, relation and elided readers), Run.lean +29 (the clauses-elaborate case), Compose/Dispatch.lean +11 (environmentWrappers, withoutClauses, environmentRows), ResponseShape Skeletons +2, Schemas +1, Service Registry +1, Protocol +1, Standalone -1; K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s3-cfr-1, 2026-10-18",
+   "commit": "6db6ee16ddb10f843b396b78299a980abc43fefb"
+  },
+  {
+   "class": "S",
+   "lines": 105,
+   "reason": "ps-3: VE/Presupposition/Couple.lean S +105 (K +0, V +0; tied +26)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ps-3, 2026-11-10",
+   "commit": "c94ad399b7b1f6804c12fbc555a5758d5e971ae6"
   }
  ]
 }

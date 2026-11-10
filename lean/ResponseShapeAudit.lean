@@ -7,6 +7,7 @@ import ResponseShape.Encoders.Alternatives
 import ResponseShape.Encoders.Ask
 import ResponseShape.Encoders.Calc
 import ResponseShape.Encoders.Cardinality
+import ResponseShape.Encoders.ClausesElaborate
 import ResponseShape.Encoders.Command
 import ResponseShape.Encoders.Common
 import ResponseShape.Encoders.Conformance
@@ -124,6 +125,8 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.Cardinality.runCaseReported_fits
 #print axioms ResponseShape.Encoders.Cardinality.runCase_fits
 #print axioms ResponseShape.Encoders.Cardinality.sizesJson_fits
+#print axioms ResponseShape.Encoders.ClausesElaborate.elaborateCase_fits
+#print axioms ResponseShape.Encoders.ClausesElaborate.runCaseReported_fits
 #print axioms ResponseShape.Encoders.Command.caseReported_fits
 #print axioms ResponseShape.Encoders.Command.encode_fits
 #print axioms ResponseShape.Encoders.Command.readingJson_fits
@@ -448,6 +451,7 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.Reports.wants_fits
 #print axioms ResponseShape.Encoders.Rights.admission_fits
 #print axioms ResponseShape.Encoders.Rights.bar_fits
+#print axioms ResponseShape.Encoders.Rights.conflictAnswer_fits
 #print axioms ResponseShape.Encoders.Rights.elaborate_fits
 #print axioms ResponseShape.Encoders.Rights.firstFailure_of_not_free
 #print axioms ResponseShape.Encoders.Rights.firstFailure_text

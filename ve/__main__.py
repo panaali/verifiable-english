@@ -37,22 +37,117 @@ EXIT_CHECKER_UNAVAILABLE = 5
 
 
 def _render_senses(args, env):
-    """`ve render --view ve_english --senses PACK`: Lean's senses reading of the text, with each candidate of an open
-    unit rendered and re-read under its own projection (senses plan 2.8). Exit codes as `ve senses check`."""
+    """`ve render --view ve_english --senses PACK`: Lean's senses reading of the text, its checked text (Lean's
+    preamble lines and the rendered body, re-read by Lean) and each candidate of an open unit rendered and re-read
+    under its own projection, with the lines the document lacks (senses plan 2.8); `--glossary` and `--json` add
+    the glossary and the hover rows of the sense map. Exit codes as `ve senses check`."""
     if args.view not in (None, "ve_english") or args.with_legend or args.surface == "strict":
         raise VEError("--senses renders English text in the ve_english view only")
     from .assurance import operation
     from .backends.senses import OPERATION, read
     from .senses import load_pack
-    from .senses.display import candidates
+    from .senses import display
     packs = [load_pack(path) for path in args.senses]
     overlay = loads_json(_read(args.english_vocabulary)) if args.english_vocabulary else None
-    result = read(env, _read(args.source, MAX_SOURCE_BYTES).decode("utf-8"), packs, overlay=overlay)
-    renderings = candidates(env, packs, result["reading"], overlay=overlay)
+    source = _read(args.source, MAX_SOURCE_BYTES).decode("utf-8")
+    result = read(env, source, packs, overlay=overlay)
+    reading = result["reading"]
+    shown = {**display.body(env, packs, source, reading, overlay=overlay),
+             "renderings": display.candidates(env, packs, source, reading, overlay=overlay)}
+    if args.glossary:
+        shown["glossary"] = display.glossary(source, reading)
+    if args.json:
+        shown["hover"] = display.hover(source, reading)
     _emit({"operation": OPERATION, "assurance": operation(OPERATION)["assurance"]["current"],
-           "intent": "unconfirmed", "proof": "not_checked", "conclusions": "not_checked", **result,
-           "renderings": renderings})
-    return 0 if result["reading"]["status"] == "one" else 3
+           "intent": "unconfirmed", "proof": "not_checked", "conclusions": "not_checked", **result, **shown})
+    return 0 if reading["status"] == "one" else 3
+
+
+def _write(path: str, text: str) -> None:
+    """Replace a file whole: the text goes to a temporary file beside it, which then takes its name."""
+    target = Path(path)
+    temporary = target.with_name(target.name + ".ve-tmp")
+    temporary.write_text(text, encoding="utf-8")
+    temporary.replace(target)
+
+
+def _senses_resolve(options, env, packs, overlay, source):
+    """Lean's line for the word and gloss put first in the text, then Lean's reading of the result; the file is
+    rewritten only when Lean gives the line and admits the new text (status `one` or `open`). Exit 0 for status
+    `one`, else 3."""
+    from .backends.senses import read
+    first = read(env, source, packs, overlay=overlay, line=(options.word, options.gloss))
+    line = first.pop("line")
+    if "text" not in line:
+        return {"line": line, "written": False, **first}, 3
+    result = read(env, line["text"] + "\n" + source, packs, overlay=overlay)
+    written = result["reading"]["status"] in ("one", "open")
+    if written:
+        _write(options.source, line["text"] + "\n" + source)
+    return {"line": line, "written": written, **result}, 0 if result["reading"]["status"] == "one" else 3
+
+
+def _senses_propose_readings(options, env, packs, overlay, source):
+    """The reading sets of the open units Lean's reading leaves with two or more candidates, validated by the
+    readings validation and written to `--output` as `{"reading_sets": [...]}` when there is one; a one-candidate
+    unit gets its resolving lines and Lean's text instead. Exit 0 for an admitted reading, else 3."""
+    from .backends.senses import read
+    from .senses.display import propose_readings
+    result = read(env, source, packs, overlay=overlay)
+    proposal = propose_readings(env, packs, source, result["reading"], overlay=overlay)
+    written = bool(options.output and proposal["reading_sets"])
+    if written:
+        _write(options.output, json.dumps({"reading_sets": proposal["reading_sets"]}, ensure_ascii=False, indent=2)
+               + "\n")
+    return {**result, **proposal, "output_written": written}, 0 if result["reading"]["status"] in ("one", "open") \
+        else 3
+
+
+SENSES_COMMANDS = {
+    "resolve": (_senses_resolve, "Put Lean's line for a word and gloss first in the text and re-read it."),
+    "propose-readings": (_senses_propose_readings,
+                         "Write the reading sets of Lean's open units from their candidates and flip models."),
+}
+
+
+def _senses_subcommand(argv):
+    """`ve senses resolve` and `ve senses propose-readings` (senses plan B7): Lean's answer relayed, with the
+    honesty fields and `review_status` of `ve senses check`. Exit 2 for invalid input, 4 for a resource limit, 5
+    (from `main`) when the checker is unavailable."""
+    command = argv[0]
+    run, description = SENSES_COMMANDS[command]
+    parser = argparse.ArgumentParser(prog=f"python -m ve senses {command}", description=description)
+    parser.add_argument("--env", required=True, help="environment JSON file")
+    parser.add_argument("--pack", action="append", required=True, help="sense pack JSON file")
+    parser.add_argument("--english-vocabulary", help="English display overlay JSON file")
+    if command == "resolve":
+        parser.add_argument("--word", required=True, help="a word of the packs")
+        parser.add_argument("--gloss", required=True, help="the gloss of the sense the document gives it")
+    else:
+        parser.add_argument("--output", help="reading-set JSON file to write (none when no unit has a set)")
+    parser.add_argument("source", help="English text file (a file: resolve rewrites it)")
+    options = parser.parse_args(argv[1:])
+    try:
+        from .assurance import operation
+        from .backends.senses import OPERATION
+        from .senses import load_pack, pack_review
+        if options.source == "-":
+            raise VEError("ve senses reads its text from a file, not standard input")
+        env = Environment(loads_json(_read(options.env)))
+        packs = [load_pack(path) for path in options.pack]
+        overlay = loads_json(_read(options.english_vocabulary)) if options.english_vocabulary else None
+        source = _read(options.source, MAX_SOURCE_BYTES).decode("utf-8")
+        answer, code = run(options, env, packs, overlay, source)
+        _emit({"operation": OPERATION, "assurance": operation(OPERATION)["assurance"]["current"],
+               "intent": "unconfirmed", "proof": "not_checked", "conclusions": "not_checked", **answer,
+               "review_status": pack_review(packs, answer["dictionary_id"])})
+        return code
+    except VEError as exc:
+        _emit({"status": "ResourceLimit" if exc.code == "ResourceLimit" else "InvalidInput", "error": exc.to_dict()})
+        return 4 if exc.code == "ResourceLimit" else 2
+    except (UnicodeError, OSError, ValueError) as exc:
+        _emit({"status": "InvalidInput", "error": {"code": "InvalidInput", "message": str(exc)}})
+        return 2
 
 
 def main(argv=None):
@@ -95,6 +190,8 @@ def _main(argv=None):
         except (VEError, UnicodeError, OSError) as exc:
             _emit({"status": "InvalidInput", "error": str(exc)})
             return 2
+    if argv[:1] == ["senses"] and argv[1:2] and argv[1] in SENSES_COMMANDS:
+        return _senses_subcommand(argv[1:])
     if argv[:2] == ["senses", "project"]:
         project_parser = argparse.ArgumentParser(
             prog="python -m ve senses project",
@@ -296,6 +393,9 @@ def _main(argv=None):
         if command == "render":
             sub.add_argument("--senses", action="append", metavar="PACK",
                              help="sense pack JSON file: show each candidate of an open unit as English")
+            sub.add_argument("--glossary", action="store_true", help="with --senses: add the sense map's glossary")
+            sub.add_argument("--json", action="store_true",
+                             help="with --senses: add the sense map's hover rows (byte spans, glosses)")
         if command in ("evaluate", "check"):
             sub.add_argument("--model", required=command == "evaluate", help="complete finite-model JSON")
             sub.add_argument("--candidate-ast", help="document AST JSON to check against source")
@@ -312,6 +412,8 @@ def _main(argv=None):
         env = Environment.from_json(_read(args.env))
         if getattr(args, "senses", None):
             return _render_senses(args, env)
+        if getattr(args, "glossary", False) or getattr(args, "json", False):
+            raise VEError("--glossary and --json show a senses reading: give --senses PACK")
         if args.command == "propose":
             from .propose import adopt, propose, write_proposal
             vocabulary = loads_json(_read(args.english_vocabulary)) if args.english_vocabulary else None
