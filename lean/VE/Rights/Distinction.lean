@@ -35,8 +35,17 @@ def noDistinction (D : RightsDoc) : List Finding :=
     if independentReported D p then []
     else (distinctionHits D p).filterMap (fun hit =>
       if hit.2.2 then none
-      else some ⟨"ProtectedInCone", hit.1.node.name, hit.1.right, "",
+      else some ⟨"ProtectedInCone", hit.1.node.name, hit.1.right, lineSpan D hit.1,
         s!"ProtectedInCone: {hit.2.1} in rule {hit.1.node.name} on right {hit.1.right}"⟩))
+
+/-- Locating lines moves only the findings' spans. -/
+theorem noDistinction_texts (D : RightsDoc) (l : List (String × String)) :
+    (noDistinction { D with located := l }).map Finding.text = (noDistinction D).map Finding.text := by
+  have h1 : rightDerivedPreds { D with located := l } = rightDerivedPreds D := rfl
+  have h2 : ∀ p, independentReported { D with located := l } p = independentReported D p := fun _ => rfl
+  have h3 : ∀ p, distinctionHits { D with located := l } p = distinctionHits D p := fun _ => rfl
+  simp only [noDistinction, h1, h2, h3, List.map_flatMap]
+  try (congr 1; funext p; split <;> first | rfl | (simp only [List.map_filterMap]; congr 1; funext hit; split <;> rfl))
 
 /-- Well-formedness puts every right-derived predicate among `T″`'s regulated names. -/
 theorem rightDerived_regulated (D : RightsDoc) (h : WellFormedRights D = true) (p : String)
