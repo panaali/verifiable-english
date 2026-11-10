@@ -154,6 +154,30 @@
    "verdict": "KILLED",
    "test": "lean/VE/Service/Protocol.lean theorem runMode_clausesElaborate (rfl)",
    "how": "lake build of the named module fails"
+  },
+  {
+   "name": "model-fault-skipped",
+   "file": "lean/VE/Service/Standalone.lean",
+   "definition": "VE.Service.Standalone.reportedModel",
+   "change": {
+    "from": "| .error fault => reportedFault j fault",
+    "to": "| .error _ => reported modelCase j"
+   },
+   "verdict": "KILLED",
+   "test": "tests/test_right_clauses.py::test_right_clauses_model_mode_faulty_models_answer_as_without_the_profile; tests/test_right_clauses.py::test_right_clauses_environment_and_model_answer_as_without_the_profile",
+   "how": "review F2: planted, lake build ve_service, the build pinned in a temporary copy of lean/checkers.lock, both tests fail (a faulty model under the profile is refused by the name, as on main); source and lock restored, rebuilt"
+  },
+  {
+   "name": "relay-gate-no-build",
+   "file": "tools/relay_mutation_gate.py",
+   "definition": "main",
+   "change": {
+    "from": "failure = build_executables()",
+    "to": "failure = None"
+   },
+   "verdict": "KILLED",
+   "test": "tests/test_relay_mutation_gate.py::test_the_gate_builds_every_executable_it_asks_before_asking",
+   "how": "review F-ready1: planted, the test fails (the gate asks without building), restored"
   }
  ]
 }

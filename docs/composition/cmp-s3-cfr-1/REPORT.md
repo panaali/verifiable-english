@@ -1,10 +1,10 @@
 # cmp-s3-cfr-1: the right-clauses wire, the `clauses-elaborate` mode and the registration (cmp-s3b part 1)
 
 Status: deliverables (1)-(5) built; 8.5's `decode_unstructured` and `elaborate_plain` proved, no `sorry`. No signature reserved.
+Fix round of b8d143bc's review: F1 FOLLOW-UPS row filed, F2 model-mode text corrected and swept, F-ready1 relay gate builds first ("Review fixes").
 HEAD: last code commit is the one before this REPORT's final edit (the chain's gate-result.json records the HEAD it ran on).
 Ruled 11-10: the 37 moved rights-list environment answers are DELTA row 1's, and `PlainOnWire`'s form is confirmed
-(dri-decisions-20261110-cmp-s3-cfr-1-env.md items 1-2). Size: ~1,660 counted plus 1,409 exempt proof lines, accepted (-count.md item 1).
-Signatures used: cmp-s3 Q1 A1 (`hd`), 10-31 item 2 with 11-09 cmp-s3-cfr-1 items 2 and 4 (DELTA row 1), R16 (trust).
+(dri-decisions-20261110-cmp-s3-cfr-1-env.md items 1-2). Size: ~1,660 counted plus 1,409 exempt proof lines, accepted (-count.md item 1). Signatures used: cmp-s3 Q1 A1 (`hd`), 10-31 item 2 with 11-09 cmp-s3-cfr-1 items 2 and 4 (DELTA row 1), R16 (trust).
 
 ## Deliverables
 
@@ -38,7 +38,7 @@ Not delivered here:
 - **`total: null`.** The service's restricted JSON has no null; rights' `_wire` writes an optional null by omission.
   So a relation without `total` reads as `total: null`. An explicit null is read too, if one arrives. Spec 7 says
   a missing key is `invalid relation`, so this is a deviation the wire forces. The DRI signed both wire readings
-  (reviews/dri-decisions-20261109-cmp-s3-cfr-1.md item 2); the spec erratum is a FOLLOW-UPS line. cmp-s3-cfr-1b's
+  (reviews/dri-decisions-20261109-cmp-s3-cfr-1.md item 2); the spec erratum is the FOLLOW-UPS line (evidence/follow-ups-row.md). cmp-s3-cfr-1b's
   relay must match both.
 - **Order (4.1 step 2, 7).** Units in document order. In each unit, every line object goes through `decodeLine` on
   the object without the three keys (this gives `<n>`), then `elided`, `clauses` (each clause in order) and
@@ -78,6 +78,24 @@ Not delivered here:
   is 8.5's "no line object has `clauses` or `relation`" for any JSON value, including one whose object tree holds a
   key twice.
 
+## Review fixes (review of b8d143bc, cmp-s3-cfr-1-review.final.md)
+
+- **F1 (A).** The R16 ties-pass row and the spec-erratum line (11-09 item 2) were claimed but not filed. Filed in
+  FOLLOW-UPS.md as `## cmp-s3-cfr-1`; the same text is evidence/follow-ups-row.md. The review's probe passes. It is
+  not a pytest: FOLLOW-UPS.md lives outside the tree, and tests are hermetic.
+- **F2 (A).** The records said the model mode "refuses the name as on main". Lean checks the environment, then the
+  model's tables, then the profile list, so a faulty model gets the answer it gets without the profile (main refused
+  it by the name). DELTA row 1, "Environments" above and the test docstring now say so. The class: every one-node
+  mutation of a valid model (126 replacements and the dropped keys, at least twelve `InvalidModel` texts) answers as without
+  the profile when that is a fault, and is refused by the name when the model holds
+  (test_right_clauses_model_mode_faulty_models_answer_as_without_the_profile); the review's two models are pinned in
+  test_right_clauses_environment_and_model_answer_as_without_the_profile. Behaviour unchanged; inside DELTA row 1's
+  condition, as the review says.
+- **F-ready1 (B).** review-ready's relay mutation gate ran a `ve_service` older than the tree, so the handshake failed
+  for every route. On a fresh build the gate passes (48 routes, 150,599 mutants, 0 failures). The class: the gate now
+  builds the service and every one-shot runner before it asks any (`build_executables`, skipped under
+  `VE_LEAN_PREBUILT` and without lake, as tests/lean_build.py does), and a failed build fails the gate.
+
 ## Seeded bugs (each planted alone, restored; test run on a build of the change)
 
 | Bug | Language, file | Fails |
@@ -90,6 +108,8 @@ Not delivered here:
 | DELTA's negative test, profile off: a rights record changes (`runCaseReported` appends `!` to every refusal) | Lean, lean/VE/Rights/Run.lean (frozen; planted for this run only and restored) | tests/test_right_clauses.py::test_right_clauses_profile_off_evidence. Planted; ve_service built; profile_off_evidence.py rerun into profile-off.json as `head_answers` (6 of 28 answers move); the test fails ("At index 0 diff"); file and source restored |
 | DELTA's negative test, environments: the rights decoder reads the frame with the profile (`withoutClauses` dropped) | Lean, lean/VE/Service/Standalone.lean `validatedLayerEnvironment` | tests/test_right_clauses.py::test_right_clauses_environment_texts_kept |
 | The composed gate (document layers) reads the base rows | Lean, lean/VE/Service/Standalone.lean `validatedComposedEnvironment` | tests/test_right_clauses.py::test_right_clauses_environment_texts_kept (after the `documents@1, judgments@0` fixture; the probe lists alone missed it) |
+| Review F2: the model mode skips a model's table fault (`\| .error _ => reported modelCase j`), so a faulty model under the profile is refused by the name, as on main | Lean, lean/VE/Service/Standalone.lean `reportedModel` | tests/test_right_clauses.py::test_right_clauses_model_mode_faulty_models_answer_as_without_the_profile and ::test_right_clauses_environment_and_model_answer_as_without_the_profile (both fail; the build pinned in a temporary copy of lean/checkers.lock) |
+| Review F-ready1: the relay gate asks without building (`failure = None`) | Python, tools/relay_mutation_gate.py `main` | tests/test_relay_mutation_gate.py::test_the_gate_builds_every_executable_it_asks_before_asking |
 
 Each was planted alone by /tmp's seed script: plant, `lake build ve_service`, run the named test with the build
 pinned in a temporary lock, restore, rebuild. The Python ones needed no build. mutants.json lists them. One mutant per new trusted definition: trust mutants, below.
@@ -139,7 +159,8 @@ Schemas +1, Registry +1, Protocol +1, Standalone -1. Untied [V] is Wire.lean's c
 `elaborateJson`, `stripElided` and `stripProfile` to the 8.5 theorems; `plainLineJson`, `lineWith`, `headKeys`,
 `mapUnit`, `headStep`, `headUnit`, `headLine`, `unitBody`, `dropKeys`, `bodyLines`, `mapMember`, `mapArr`,
 `members`, `bodyRight` and `jsonLineName` to the forward lemmas that state them against `plainSource`, `CLine` or
-`lineName`. Proof modules are P. FOLLOW-UPS row: "## cmp-s3-cfr-1".
+`lineName`. Proof modules are P. FOLLOW-UPS row: "## cmp-s3-cfr-1" (filed in the fix round, review F1; its text is
+docs/composition/cmp-s3-cfr-1/evidence/follow-ups-row.md: the ties pass and the spec erratum of 11-09 item 2).
 
 ## Size
 
