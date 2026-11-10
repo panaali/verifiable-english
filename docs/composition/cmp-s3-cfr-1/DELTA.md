@@ -1,0 +1,21 @@
+# cmp-s3-cfr-1: user-visible deltas
+
+With the profile off, nothing changes. The rights mode's answers to the 28 recorded rights route cases are
+byte-identical to the base build's (saved digests, docs/composition/cmp-s3-cfr-1/profile-off.json, base 6db6ee16d).
+K10's line is refused with today's `fields do not match` text. Environment answers move only for lists that hold the
+profile with every rights profile. There, 37 of 106 such lists move from the base's `Unsupported profile
+right-clauses@0`, each to the answer for the same list without the profile: 16 to `ok`, 21 to that list's own
+refusal. None of the 154 other probed lists moves (probe in REPORT "The wire"; environment-texts.json). No row below
+is a changed record of spec 9.3, so the row the DRI signed ahead for this item (reviews/dri-decisions-20261109-lp0801.md
+item 1) is not needed.
+
+| Delta | Detail | Evidence (negative tests) | Ruling |
+|---|---|---|---|
+| Documents that enable `right-clauses@0` with `rights@0` are read by the new head | The `clauses-elaborate` mode reads them (spec 4.1, 7). `right-clauses@0` joins the profile table's environment list, and Lean's environment mode accepts an environment listing it with `rights@0`, where the base refused it with `UnsupportedProfile: Unsupported profile right-clauses@0`. It gates such a list by the whole table, as for `readings@1`, reads the rights frame without the profile, and answers as for the same environment without it, but for the echoed profile list and the identity. That answer is an acceptance for 16 of the 106 probed rights lists. For 21 it is the list's own refusal without the profile (`UnsupportedProfile: the norms route admits FOL documents only`, with closure@0, nary@0 or order@0). The other 69 keep the base text. The DRI confirmed all 37 under this row (reviews/dri-decisions-20261110-cmp-s3-cfr-1-env.md item 1). The model mode decides no model under the profile. Lean checks the environment, then the model's tables, then the profile list: a well-formed model is refused with `UnsupportedProfile: Unsupported profile right-clauses@0`, as in the base, and a faulty model gets the answer it gets without the profile (for example `InvalidModel: relation tuple contains a dangling or wrong-sort entity` at `/relations/charged/0/0`), where the base refused it by the name (review F2). Python's model view drops the profile (`MODEL_REDUCTIONS`). The DRI confirmed this acceptance is this row's registration, with the same-answer test as an added condition (reviews/dri-decisions-20261109-cmp-s3-cfr-1.md item 4). | `test_right_clauses_k10_profile_off`; `test_right_clauses_environment_and_model_answer_as_without_the_profile` (an accepted list and a refused one, `closure@0`, each answer as without the profile; review F2's two faulty models answer as without it); `test_right_clauses_model_mode_faulty_models_answer_as_without_the_profile` (every one-node mutation of a valid model: a fault answers as without the profile, a model that holds is refused by the name); `test_right_clauses_environment_texts_kept` (saved: the 37 moved answers each equal the answer without the profile; live: every rights list with up to two more profiles, and `documents@1, judgments@0`, answers as without the profile or refuses it by name); `test_right_clauses_profile_off_evidence` (profile off: the saved base and head digests of every recorded rights answer are equal); `test_right_clauses_profile_on_regression` (profile on with `elided: []`: each document elaborates to itself, and the rights mode answers the plained document as the written one, or the head refuses it with the profile-off text). REPORT "Seeded bugs" shows a changed profile-off record failing the saved-digest check, and a rights frame read with the profile failing the environment test. | SIGNED by the DRI 2026-10-31 (reviews/dri-decisions-20261031-spec-right-clauses.md item 2) |
+
+## Statement change (not an answer delta)
+
+`elaborate_plain` (spec 8.5) has the hypothesis `(hd : PlainOnWire D)` after `hp`: W1's budgeted decoder reads every
+structured line's plain guard back within `VE.Limits.maxDepth` and `maxNodes`. SIGNED by the DRI 2026-11-04
+(reviews/dri-decisions-20261104-cmp-s3.md Q1 A1). Its counterexample for the statement as written is `notChain` in
+lean/VE/RightClauses/Examples.lean. `decode_unstructured` is word for word.
