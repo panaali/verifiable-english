@@ -17,7 +17,7 @@ from layer_policy import lean_layer  # noqa: E402
 SPEC = ROOT / "docs/spec/premise-packs.md"
 STUB = ROOT / "docs/spec/premise-packs/SpecStubs_pk1.lean"
 MARK = "not in the checked plan"
-TOKEN = r"`([^`]+)`(?!'s)"  # a backticked name, not a possessive ("`Layered.lean`'s own imports")
+TOKEN = r"`([^`\s]+)`(?!'s)"  # a backticked name, not a possessive ("`Layered.lean`'s own imports")
 
 
 def file_rows() -> list[list[str]]:
@@ -77,9 +77,9 @@ def test_planned_imports_respect_layers():
         if not path.startswith("lean/"):
             continue
         own = path.removeprefix("lean/").removesuffix(".lean").replace("/", ".")
-        imports = [m for t in re.findall(TOKEN, row[1]) if (m := module(t, path))]
-        importers = [m for t in re.findall(TOKEN, row[2]) if (m := module(t, path))]
-        edges = [(own, m) for m in imports] + [(m, own) for m in importers]
+        imports, importers = ([module(t, path) for t in re.findall(TOKEN, cell)] for cell in row[1:3])
+        bad += [f"{row[0]}: an import or importer names no module" for m in imports + importers if m is None]
+        edges = [(own, m) for m in imports if m] + [(m, own) for m in importers if m]
         bad += [f"{a} (layer {lean_layer(a)}) imports {b} (layer {lean_layer(b)})"
                 for a, b in edges if lean_layer(a) < lean_layer(b)]
     assert not bad, "spec 5 plans imports the layer policy refuses:\n" + "\n".join(bad)
