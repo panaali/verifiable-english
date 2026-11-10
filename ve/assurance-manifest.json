@@ -66,7 +66,7 @@
     "ve/readings_verdicts/binding.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 44265,
+    "total_lines": 44842,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -834,12 +834,12 @@
       },
       {
         "file": "lean/VE/EnglishGrammar/Run.lean",
-        "lines": 759,
-        "sha256": "14bb7dd1c0b9f3ee4e59d527556753b7f4348346678774ccdd79c526e04e8cd4",
+        "lines": 800,
+        "sha256": "bcc1f80385cff70400435cc4e7ff18732341ecd27c380c1a338a5741c1f6da70",
         "ranges": [
           [
             1,
-            759
+            800
           ]
         ],
         "declarations": [
@@ -855,7 +855,7 @@
           "grammarCase",
           "judgmentsField"
         ],
-        "reason": "english-lean S2.4 (docs/spec/english-lean-s2.md 2.10, 4.3, 4.4): ve_english_route decodes the case (environment through Env.decode, overlay, the ve.english-lexicon@1 lexicon, which must name the environment), computes the six identities and writes the english.read and english.grammar answers; shadow only while english.admission keeps authority python; S3 validates alternatives and risk profile environments at the reader boundary (docs/spec/english-lean-s3.md 2.3); the full file is pinned conservatively; jt-2c: `decodeCase` and `environmentId` read the environment through `VE.Compose.decidingEnvironment` (without the document layers), the identities as written"
+        "reason": "english-lean S2.4 (docs/spec/english-lean-s2.md 2.10, 4.3, 4.4): ve_english_route decodes the case (environment through Env.decode, overlay, the ve.english-lexicon@1 lexicon, which must name the environment), computes the six identities and writes the english.read and english.grammar answers; shadow only while english.admission keeps authority python; S3 validates alternatives and risk profile environments at the reader boundary (docs/spec/english-lean-s3.md 2.3); the full file is pinned conservatively; jt-2c: `decodeCase` and `environmentId` read the environment through `VE.Compose.decidingEnvironment` (without the document layers), the identities as written; en-e3a (en-e3-norm 2.3, M8/M9): english.statement's code hunk (statementCodeRows appended to codeClasses, statementStatusCodes, statementFields, statementUnsentenced) and the three members the english.grammar export writes for them; no decoder changes, the file stays pinned whole"
       },
       {
         "file": "lean/VE/Json.lean",
@@ -1423,7 +1423,7 @@
       {
         "file": "lean/VE/Readings/Wire.lean",
         "lines": 1059,
-        "sha256": "a1f8444b70c79084e87c170c92d04eac013894f723db734cdd73251d2b5e4acb",
+        "sha256": "59f17b191a3b5940e787fa31e06254075b8ac7b7f82ddce1e9e4ad61552e87c1",
         "ranges": [
           [
             1,
@@ -1451,6 +1451,25 @@
         "reason": "readings@1 S1 decoder: environment on the three chains, W2 units and active reading sets, situations, keys and probes, and (DRI ruling 2 of 2026-10-03) the chain text that reports `ResourceLimit: decision predicate <n>` first, and (DRI ruling 4) the frame of a norm-defaults@0 environment read with each `unspecified` completion as the placeholder `deny`; the full file is pinned conservatively; readings-defaults RD-2a: the abstention only off the norms chain, and S1's admission after decoding (`admitDecoded`), which the filled document's admission also runs; jt-crossplan-fixes X3: on the norms chain the readings environment decodes its frame with the v0 constant fields (no `verbalisation` on a nonliteral constant); jt-2: the frame and the lowered JSON read without Compose.documentLayers (judgments@0), the gate and identities with the list as written"
       },
       {
+        "file": "lean/VE/RightClauses/Wire.lean",
+        "lines": 230,
+        "sha256": "75913d7b770400cd1e3e5a671fafd7a78b234ef5f48faae1cfefe0a7ea565be5",
+        "ranges": [
+          [
+            1,
+            230
+          ]
+        ],
+        "declarations": [
+          "decodeClauseDoc",
+          "decodeRelation",
+          "decodeClause",
+          "elaborateJson",
+          "stripElided"
+        ],
+        "reason": "right-clauses clause, relation and elided decoder and the plained-document rewriter of clauses-elaborate; the full file is pinned conservatively; the ve-integration merge: `decodeClauseDoc` sets the rights document's new `located` field to `[]`, as `decodeRightsSource` does (the mode reports no findings)"
+      },
+      {
         "file": "lean/VE/Rights/Admission.lean",
         "lines": 471,
         "sha256": "1b43543b7e666ae3874d748c88ce0a88665f996f5584888b71c94db76e527756",
@@ -1472,7 +1491,7 @@
       {
         "file": "lean/VE/Rights/Wire.lean",
         "lines": 697,
-        "sha256": "5be42b913732dd33878d081227c8bb25c6927558f6718457a77f7ec475501fad",
+        "sha256": "fab8db83fb146eecc0a1dd6ad96eb1e4bed367de966816bd0d5c2bf73096d0be",
         "ranges": [
           [
             1,
@@ -1800,12 +1819,12 @@
       },
       {
         "file": "lean/VE/Service/Document.lean",
-        "lines": 2893,
-        "sha256": "3b3862951a3467bcfbdeffa12ace8db1680d4cf21c4b7872981edad9906bcccf",
+        "lines": 2896,
+        "sha256": "7b80cfa4c9c445a5a3c33770e6301feb75241cd47c898ca94022c075ba87bbab",
         "ranges": [
           [
             1,
-            2893
+            2896
           ]
         ],
         "declarations": [
@@ -2232,6 +2251,27 @@
           "replayUnblockedEntailment"
         ],
         "reason": "et-4b: the full file: the norm-defaults-certificate replay on an events document (spec 6.3), with the block and without one; it decodes by eventsHook, decodeSoftU and replayLayeredOn"
+      },
+      {
+        "file": "lean/VE/EnglishGrammar/Norm/Run.lean",
+        "lines": 303,
+        "sha256": "3ccffd316421b414d5b1f6f9bfd768da5e78a1c64b9f4e76a4e21c18eeb6ad3b",
+        "ranges": [
+          [
+            1,
+            303
+          ]
+        ],
+        "declarations": [
+          "statementRequest",
+          "statementCase",
+          "statementCaseReported",
+          "answerWith",
+          "outcomeFields",
+          "stoppedFields",
+          "statementRow"
+        ],
+        "reason": "en-e3a (docs/spec/en-e3-norm.md 2.3, EN-2): english.statement kind blocks: `statementRequest` decodes the request (english.read's case through `decodeCase`, `kind`, `source`), `answerWith` writes the answer from readNorm's outcome through the span gate and the one decoder; not registered until en-e3ab and nothing relays to it yet; the full file is pinned conservatively"
       }
     ],
     "other_json": {
@@ -2432,7 +2472,15 @@
       "lean/VE/Commands/RunSplit.lean": "test fixtures only: ci-2b's `#guard`s build speech-source payloads and english.command reading contexts as JSON and read the pinned `VE.SpeechActs.Source.decodeSpeechSource` and `commandContext`; no runner path",
       "lean/VE/Scope/Authoring.lean": "scope's authoring wordings (SC-7, spec 2.2): `Pinned.parseGovernor` builds the part of a scope@0 block a wording fixes (Json.mkObj, Json.arr) and `classify`/`renderGovernor`/`paraphrase` read it back with getObjValD/getStr?/getNat?; no route or relay decodes a request with them yet (the IDE wiring is sc-7b)",
       "lean/VE/Scope/AuthoringExamples.lean": "fixtures only: SC-7's #guard checks (scope spec 2.2, 7.8 F5a) write each row's expected block as a JSON literal (Json.parse) and compare it with `parseGovernor`'s; no runtime JSON handling",
-      "lean/VE/Commands/StepsProofs.lean": "proofs only: `readStep_conservative` names its decoded environment as section 7 states it (`Lean.Json`, `decodeSpeechEnvironmentFull`) and its lemmas trace that decoder; the module decodes nothing at run time"
+      "lean/VE/Commands/StepsProofs.lean": "proofs only: `readStep_conservative` names its decoded environment as section 7 states it (`Lean.Json`, `decodeSpeechEnvironmentFull`) and its lemmas trace that decoder; the module decodes nothing at run time",
+      "lean/VE/Service/DocumentView.lean": "sa-checked-view (spec 5.1): the checked view's typed mirrors read the request fields `checkBody` reads (`id`, `document`, `admit`, `lexicon`, `packs`, `units`, `reading_sets`) and are tied to it by checkBodyChecked_encode, checkCoreChecked_encode and checkDocSetsView_answer (the answer is checkDocSets's, byte for byte); no service mode dispatches it, and it builds no answer JSON of its own",
+      "lean/ResponseShape/Schemas/RightsChecks.lean": "fixtures only: #guard checks of rights.json's elaborate, scope and packages rows on the mode's answers and their variants build JSON; no runner path",
+      "lean/VE/EnglishGrammar/Norm/RunExamples.lean": "fixtures only: #guard checks of english.statement's answers (docs/spec/en-e3-norm.md section 8, EN-2: E1-E17, f18, the whole-mode requests); no runner path",
+      "lean/VE/RightClauses/Run.lean": "lean:runner-glue: clauses-elaborate case dispatch and response rows (cmp-s3-cfr-1); reads the request through the pinned RightClauses/Wire.lean and Rights/Wire.lean",
+      "lean/VE/RightClauses/RunExamples.lean": "fixtures only: #guard checks of spec right-clauses 7 and 9.1 build clauses-elaborate requests as JSON and read the answers of `VE.RightClauses.runCaseReported`; no runner path",
+      "lean/VE/RightClauses/WireDecode.lean": "theorems only: spec right-clauses 8.5's forward lemmas through the pinned decoders; JSON access only in statements and proofs",
+      "lean/VE/RightClauses/WireName.lean": "theorems only: line-name lemmas of spec right-clauses 8.5 through the pinned decoders; JSON access only in statements and proofs",
+      "lean/VE/RightClauses/WireTheorems.lean": "theorems only: spec right-clauses 8.5's `elaborate_plain` and `decode_unstructured`; JSON access only in statements and proofs"
     }
   },
   "plan_operations": {
