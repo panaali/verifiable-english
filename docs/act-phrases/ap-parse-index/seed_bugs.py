@@ -3,8 +3,11 @@
 definition it replaces in compiled code, or a `#guard`), record the failing lines (KILLED), restore the file, and
 write mutants.json beside this script. One plant per new trusted definition and per claimed behaviour; the service
 plant (the quadratic grammar build, caught by tests/test_ap_parse_index.py at the CPU deadline) is the REPORT's.
+The fix round's plants (review F1, F-ready1) are run here too: each `SERVICE` plant is built into `ve_service`, pinned
+for the run only (the lock is restored), and caught by the F1 tests at the route's CPU deadline; each `PYTHON` plant
+by the command named with it.
 Run from the repository root: `python3 docs/act-phrases/ap-parse-index/seed_bugs.py [ids...]`."""
-import json, os, re, subprocess, sys
+import json, os, re, signal, subprocess, sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -48,14 +51,58 @@ BUGS = [
     (WI, "checkActBy-lexical-text", "VE.Acts.Wire.checkActBy", "a lexical act is returned with another text",
      "| .ok a => .ok (a, none)", "| .ok a => .ok (a ++ \" \", none)", ["VE.Acts.Wire"]),
     (WI, "joinedActBy-no-budget", "VE.Acts.Wire.joinedActBy", "a joined act is read with no step budget",
-     "readingsBy V R rawCap stepBudget ts.toArray", "readingsBy V R rawCap 0 ts.toArray", DEC),
+     "readingsBy V R.get rawCap stepBudget ts.toArray", "readingsBy V R.get rawCap 0 ts.toArray", DEC),
     (NW, "actsOf-no-frames", "VE.Norms.Wire.actsOf", "a document's acts are read under no frames",
-     "let R := VE.Acts.reader V", "let R := VE.Acts.reader ⟨[], []⟩", DEC),
+     "let R := VE.Acts.lazyReader V", "let R := VE.Acts.lazyReader ⟨[], []⟩", DEC),
     (TB, "combineFast-dead-end-kept", "VE.Grammar.combineFast", "an end position with an empty suffix still combines",
      "      | [] => []\n", "      | [] => p.2.map fun t => (p.1, [t])\n", ["VE.Grammar.Table"]),
     (TB, "row-charged-a-constant", "VE.Grammar.rowAt", "a row is charged a constant, not its rules and positions",
      "(nt, o2, s1 + P.positions + c2)", "(nt, o2, 1 + c2)", [GEX]),
 ]
+
+F1 = "tests/test_ap_parse_index.py::test_an_act_that_needs_no_grammar_is_answered_under_a_vocabulary_whose_grammar_is_slow"
+# Review F1: (file, id, definition, behaviour, before, after); caught by the F1 tests in the pinned service.
+SERVICE = [
+    (NW, "actsOf-eager-reader", "VE.Norms.Wire.actsOf", "the reader is built before any act needs it",
+     "let R := VE.Acts.lazyReader V", "let R := Thunk.pure (VE.Acts.reader V)"),
+    (WI, "joinedActBy-reader-before-slot", "VE.Acts.Wire.joinedActBy", "the reader is built before the slot check",
+     "  if ts.any (fun t", "  if 0 < R.get.1.size + 1 && ts.any (fun t"),
+]
+# Review F-ready1: (file, id, definition, behaviour, before, after, command that must fail).
+PYTHON = [
+    ("tools/layer_policy.py", "lean-layer-index-dropped", "tools.layer_policy.lean_layer",
+     "VE.Acts.Index loses its layer-2 row (layer 3, above the act modules that import it)",
+     '"VE.Acts.Tree", "VE.Acts.Index"}', '"VE.Acts.Tree"}', ["python3", "tools/check_lean_imports.py"]),
+]
+
+
+def run(cmd):
+    p = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True)
+    return p.returncode, p.stdout + p.stderr
+
+
+def service():
+    """Build `ve_service` with the plant, pin it for this run, and run the F1 tests: the ids that fail."""
+    rc, failing = lake(["ve_service"])
+    if rc:
+        print("ve_service did not build:", failing, file=sys.stderr)
+        return 0, []
+    lock = ROOT / "lean/checkers.lock"
+    saved = lock.read_text()
+    try:
+        run(["uv", "run", "python", "tools/regen_generated.py", "--write", "--only", "checker-pins"])
+        rc, out = run(["uv", "run", "python", "-m", "pytest", "-q", "-p", "no:cacheprovider", F1])
+    finally:
+        lock.write_text(saved)
+    failed = sorted(set(re.findall(r"^FAILED (.+?)(?: - .*)?$", out, re.M)))
+    if not failed:
+        print(out[-2000:], file=sys.stderr)
+    return rc, failed
+
+
+def python_check(cmd):
+    rc, out = run(cmd)
+    return rc, [" ".join(cmd) + ": " + line for line in out.splitlines()[:1]] if rc else []
 
 
 def lake(targets):
@@ -69,10 +116,17 @@ def lake(targets):
 
 
 def main():
+    # A SIGTERM (`timeout`) raises SystemExit, so each `finally` restores the planted file and the lock.
+    signal.signal(signal.SIGTERM, lambda *_: sys.exit(143))
     only = set(sys.argv[1:])
     out = Path(__file__).with_name("mutants.json")
     rows = [r for r in json.loads(out.read_text())["mutants"] if r["id"] not in only] if out.exists() and only else []
-    for f, mid, defn, beh, before, after, check in BUGS:
+    plants = ([(f, mid, defn, beh, before, after, "Lean", lambda t=check: lake(t))
+               for f, mid, defn, beh, before, after, check in BUGS]
+              + [(f, mid, defn, beh, before, after, "Lean", service) for f, mid, defn, beh, before, after in SERVICE]
+              + [(f, mid, defn, beh, before, after, "Python", lambda c=cmd: python_check(c))
+                 for f, mid, defn, beh, before, after, cmd in PYTHON])
+    for f, mid, defn, beh, before, after, language, check in plants:
         if only and mid not in only:
             continue
         path = ROOT / f
@@ -80,15 +134,15 @@ def main():
         assert text.count(before) == 1, (mid, text.count(before))
         try:
             path.write_text(text.replace(before, after))
-            rc, failing = lake(check)
+            rc, failing = check()
         finally:
             path.write_text(text)
-        rows.append({"id": mid, "language": "Lean", "file": f, "definition": defn, "behaviour": beh,
+        rows.append({"id": mid, "language": language, "file": f, "definition": defn, "behaviour": beh,
                      "status": "KILLED" if rc != 0 and failing else "SURVIVED", "test": ", ".join(failing)})
         print(mid, rows[-1]["status"], rows[-1]["test"], flush=True)
-    order = [b[1] for b in BUGS]
+    order = [b[1] for b in plants]
     rows.sort(key=lambda r: order.index(r["id"]) if r["id"] in order else len(order))
-    rc, _ = lake([GEX, "VE.Acts.RunExamples", "VE.Acts.MeaningExamples", *DEC])
+    rc, _ = lake([GEX, "VE.Acts.RunExamples", "VE.Acts.MeaningExamples", *DEC, "ve_service"])
     head = {"item": "ap-parse-index", "command": "python3 docs/act-phrases/ap-parse-index/seed_bugs.py",
             "restored_build_returncode": rc}
     body = ",\n".join("  " + json.dumps(r, ensure_ascii=False) for r in rows)

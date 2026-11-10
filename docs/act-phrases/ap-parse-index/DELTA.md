@@ -10,7 +10,7 @@ step count, `#guard`, budget boundary and parse tree of the existing fixtures is
 
 | # | Change | Evidence | Ruling |
 |---|---|---|---|
-| 1 | Trust growth, K +0, S +3, V +24 (trusted +27): `lean/VE/Acts/Wire.lean` +10, `Acts/Index.lean` +6, `Acts/Readings.lean` +5, `Acts/Meaning.lean` +3 (S), `Norms/Wire.lean` +2, `Acts/Run.lean` +1; seven fast forms tied by their equality theorems | `uv run python tools/trust_map.py --check`; `docs/act-phrases/ap-parse-index/mutants.json` (each new trusted definition's bug killed by a proof or `#guard`); FOLLOW-UPS.md "## ap-parse-index" | R16 |
+| 1 | Trust growth, K +0, S +3, V +24 (trusted +27): `lean/VE/Acts/Wire.lean` +10, `Acts/Index.lean` +6, `Acts/Readings.lean` +5, `Acts/Meaning.lean` +3 (S), `Norms/Wire.lean` +2, `Acts/Run.lean` +1; seven fast forms tied by their equality theorems, and `lazyReader` (review F1) by `lazyReader_get`; re-measured after the review fix, unchanged | `uv run python tools/trust_map.py --check`; `docs/act-phrases/ap-parse-index/mutants.json` (each new trusted definition's bug killed by a proof or `#guard`); FOLLOW-UPS.md "## ap-parse-index" | R16 |
 
 ## Evidence (no row: an availability gain on a fail-closed path)
 
@@ -20,5 +20,11 @@ step count, `#guard`, budget boundary and parse tree of the existing fixtures is
   that pinned the gap (DRI 2026-11-09 ap-parse-index item 2; `Test-changed:` trailer).
 - `norms`, a document with 128 frames and a joined act: answered with its parts (`p027__1`, `p027__2`) within the
   deadline (`tests/test_ap_parse_index.py`).
+- Review F1 (no row: the same answers and availability as on main): under a vocabulary whose grammar takes longer
+  to build than the 5 s deadline (128 frames, 64 modifiers each), a lexical act, a lexical refusal, a slot joined to a
+  word and a document with no act are answered within the deadline, as on main; the first fix candidate built the
+  reader for every document and made them `CheckerUnavailable`. The reader is now built only when a joined act is
+  listed (`Acts.lazyReader`). Evidence:
+  `tests/test_ap_parse_index.py::test_an_act_that_needs_no_grammar_is_answered_under_a_vocabulary_whose_grammar_is_slow`.
 - The 400-byte phrase with 32 to 128 frames: a deterministic step-budget `LIMIT`, never `CheckerUnavailable` (before:
   `LIMIT` at 32 frames, 3.2 s of CPU; `CheckerUnavailable` at 128 frames, 21 s).
