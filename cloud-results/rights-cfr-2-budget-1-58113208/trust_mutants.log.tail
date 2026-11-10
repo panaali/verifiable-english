@@ -1,0 +1,21 @@
+trust_mutants: 1 definitions, 17 mutants (17 to run), 4 jobs, base 3a5ee6ae3f04
+SURVIVOR lean/VE/SoftNorms/Run.lean:120 VE.SoftNorms.Run.openAfterClassification (D[V], trusted) eq-ne: == -> !=
+SURVIVOR lean/VE/SoftNorms/Run.lean:121 VE.SoftNorms.Run.openAfterClassification (D[V], trusted) list-empty: (VE.SoftNorms.Wire.openCoherence src.D) -> []
+SURVIVOR lean/VE/SoftNorms/Run.lean:121 VE.SoftNorms.Run.openAfterClassification (D[V], trusted) list-empty: (VE.SoftNorms.Wire.openCoherence src.D).filter (!disjoint.contains ·) -> []
+SURVIVOR lean/VE/SoftNorms/Run.lean:121 VE.SoftNorms.Run.openAfterClassification (D[V], trusted) not-drop: ! -> 
+SURVIVOR lean/VE/SoftNorms/Run.lean:121 VE.SoftNorms.Run.openAfterClassification (D[V], trusted) list-first: (VE.SoftNorms.Wire.openCoherence src.D) -> ((VE.SoftNorms.Wire.openCoherence src.D).take 1)
+SURVIVOR lean/VE/SoftNorms/Run.lean:121 VE.SoftNorms.Run.openAfterClassification (D[V], trusted) list-empty: disjoint -> []
+SURVIVOR lean/VE/SoftNorms/Run.lean:121 VE.SoftNorms.Run.openAfterClassification (D[V], trusted) list-first: (VE.SoftNorms.Wire.openCoherence src.D).filter (!disjoint.contains ·) -> (((VE.SoftNorms.Wire.openCoherence src.D).filter (!disjoint.contains ·)).take 1)
+SURVIVOR lean/VE/SoftNorms/Run.lean:121 VE.SoftNorms.Run.openAfterClassification (D[V], trusted) list-drop-last: (VE.SoftNorms.Wire.openCoherence src.D) -> ((VE.SoftNorms.Wire.openCoherence src.D).dropLast)
+SURVIVOR lean/VE/SoftNorms/Run.lean:121 VE.SoftNorms.Run.openAfterClassification (D[V], trusted) list-first: disjoint -> (disjoint.take 1)
+SURVIVOR lean/VE/SoftNorms/Run.lean:121 VE.SoftNorms.Run.openAfterClassification (D[V], trusted) list-drop-last: disjoint -> (disjoint.dropLast)
+SURVIVOR lean/VE/SoftNorms/Run.lean:121 VE.SoftNorms.Run.openAfterClassification (D[V], trusted) list-drop-last: (VE.SoftNorms.Wire.openCoherence src.D).filter (!disjoint.contains ·) -> (((VE.SoftNorms.Wire.openCoherence src.D).filter (!disjoint.contains ·)).dropLast)
+SURVIVOR lean/VE/SoftNorms/Run.lean:121 VE.SoftNorms.Run.openAfterClassification (D[V], trusted) list-last: (VE.SoftNorms.Wire.openCoherence src.D) -> ((VE.SoftNorms.Wire.openCoherence src.D).reverse.take 1)
+SURVIVOR lean/VE/SoftNorms/Run.lean:121 VE.SoftNorms.Run.openAfterClassification (D[V], trusted) list-last: (VE.SoftNorms.Wire.openCoherence src.D).filter (!disjoint.contains ·) -> (((VE.SoftNorms.Wire.openCoherence src.D).filter (!disjoint.contains ·)).reverse.take 1)
+SURVIVOR lean/VE/SoftNorms/Run.lean:121 VE.SoftNorms.Run.openAfterClassification (D[V], trusted) list-drop-first: (VE.SoftNorms.Wire.openCoherence src.D).filter (!disjoint.contains ·) -> (((VE.SoftNorms.Wire.openCoherence src.D).filter (!disjoint.contains ·)).drop 1)
+SURVIVOR lean/VE/SoftNorms/Run.lean:121 VE.SoftNorms.Run.openAfterClassification (D[V], trusted) list-drop-first: (VE.SoftNorms.Wire.openCoherence src.D) -> ((VE.SoftNorms.Wire.openCoherence src.D).drop 1)
+SURVIVOR lean/VE/SoftNorms/Run.lean:121 VE.SoftNorms.Run.openAfterClassification (D[V], trusted) list-last: disjoint -> (disjoint.reverse.take 1)
+SURVIVOR lean/VE/SoftNorms/Run.lean:121 VE.SoftNorms.Run.openAfterClassification (D[V], trusted) list-drop-first: disjoint -> (disjoint.drop 1)
+trust_mutants: 0 KILLED, 17 SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 731 s
+trust_mutants: D[V], trusted: 17 SURVIVOR
+trust_mutants: steps: wall plan 12.5 s, scratch 4.7 s, control_build 0.3 s, probe_install 1.4 s, mutants 708.3 s, cleanup 3.6 s; lake control_build 0.2 s (1), probe_install 1.4 s (1), mutant_builds 50.6 s (17), mutant_checks 2587.9 s (17)
