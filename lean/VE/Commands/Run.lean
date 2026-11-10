@@ -80,8 +80,8 @@ def proofTask (ctx : Context) (s : String) : Option Outcome :=
           | _ => .refused Texts.missingObligation Texts.proofAct
         | none => .ofText Texts.queryMismatch
 
-/-- The public entry for `english.command` (A3), through CI-3's step reader: a proof task's outcome is
-`lift (.core s) false`, else `readStep`. Source-wrapper integration is deferred to ci-2b. -/
+/-- The one public entry (A3): the `english.command` mode and the source wrapper both call it. Through CI-3's step
+reader: a proof task's outcome is `lift (.core s) false`, else `readStep`. -/
 def readInstruction (ctx : Context) (s : String) : StepOutcome :=
   match proofTask ctx s with
   | some o => lift (.core s) false o
