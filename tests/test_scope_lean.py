@@ -33,8 +33,9 @@ def test_the_scope_files_are_classified():
 
 # The document mode's block decoder and fold helpers (sc-1b), named one by one: no theorem states them yet (the
 # spec's statement over the decoder, `decodeScope_bound`, waits for sc-1ae; sc-5rd's payload lemmas state
-# `decodeParts`, `decodeGovernor`, `decodeEffect` and `listMember`; sa-checked-view's `statusOf_known`, `statusOf`); R16's condition for them is met by
-# `lean/VE/Scope/WireExamples.lean`'s #guards and docs/scope/sc-1b/trust-mutants.json.
+# `decodeParts`, `decodeGovernor`, `decodeEffect` and `listMember`; sa-checked-view's `statusOf_known`, `statusOf`);
+# R16's condition for them is met by `lean/VE/Scope/WireExamples.lean`'s #guards and
+# docs/scope/sc-1b/trust-mutants.json.
 WIRE = [f"VE/Scope/Wire.lean: VE.Scope.{name}" for name in (
     "byStatus", "changers", "decodeListName", "decodeReach", "spanIn")]
 
