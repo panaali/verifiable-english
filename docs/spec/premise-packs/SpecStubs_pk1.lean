@@ -515,8 +515,12 @@ end VE.NormDefaults.Packs.Fixtures
 
 /-! ## 5 The build's files, checked
 
-`planFiles` is spec section 5's file list: each pk-1 file in import order, the modules it imports, the modules that
-will import it, and the stub declarations it holds. The check below fails when a declaration uses a module outside
+`planFiles` is spec section 5's file list without its fixture file: `Packs.lean`, the hunks of `Layered.lean`,
+`PacksLegacy.lean`, `SupPacks.lean` and the first provider, in import order, with the modules each imports, the
+modules that will import it, and the stub declarations it holds. `PacksExamples.lean` is not in the checked plan: it
+holds no stub declaration (this file's fixtures are outside `stubDecls`'s namespaces), and as built it imports
+`VE.NormDefaults.Packs`, `VE.Rights.Examples` and `VE.Defaults.Examples`; A9′ moved to
+`lean/ResponseShape/Encoders/NormDefaults.lean`, so no layer-2 file imports `ResponseShape`. The check below fails when a declaration uses a module outside
 its file's imports or a declaration of a later file, when a file's importer is already among its imports (an import
 cycle), or when a stub declaration has no file. -/
 
