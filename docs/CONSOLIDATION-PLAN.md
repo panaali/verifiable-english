@@ -678,7 +678,9 @@ steps 3 and 4 remeasured on AR-20 (2026-10-26: `VE/Closure/Paths.lean` re-export
 `decodeSoftDoc` and `decodeFilledDoc` call `Route.Admission.decodeDoc`, step 4a);
 step 7 remeasured on cmp-s4c (2026-11-05: the discourse `runCase` decides the composed path;
 its 21 trusted lines, up from 18, bring step 7 to 734 lines); step 6 remeasured at this merge
-from the current ledger (1,835 reclassified lines);
+from the current ledger (1,835 reclassified lines); step 3 remeasured on AR-23 (2026-11-10: closure's `denote` is now
+Core's on the embedding, so the ledger's closure `denote`, `Paths`, `Finite` and `Consequence` rows hold 14 trusted
+lines, down from 30);
 the current measurements follow:
 
 The merged step 2a ledger now identifies no remaining runner lines in that row; the table below records
@@ -689,7 +691,7 @@ the current source classification alongside the previously measured steps.
 | 1 | 0 | 23 | 0 | 0 | 23 | 5 | 1.5 | 3.1 |
 | 2a | 0 | 0 | 0 | 0 | 0 | 4 | 1 | 0.0 |
 | 2b | 117 | 0 | 0 | 0 | 117 | 2 | 2 | 29.2 |
-| 3 | 30 | 0 | 0 | 10 | 20 | 14 | 2 | 0.7 |
+| 3 | 14 | 0 | 0 | 10 | 4 | 14 | 2 | 0.1 |
 | 4 | 697 | 0 | 0 | 420 | 277 | 14 | 2 | 9.9 |
 | 5 | 0 | 466 | 0 | 0 | 466 | 14 | 1 | 33.3 |
 | 6 | 35 | 0 | 1835 | 0 | 35 | 3 | 1 | 11.7 |
