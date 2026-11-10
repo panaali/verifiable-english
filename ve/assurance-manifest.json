@@ -66,7 +66,7 @@
     "ve/readings_verdicts/binding.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 44612,
+    "total_lines": 44842,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -1451,6 +1451,25 @@
         "reason": "readings@1 S1 decoder: environment on the three chains, W2 units and active reading sets, situations, keys and probes, and (DRI ruling 2 of 2026-10-03) the chain text that reports `ResourceLimit: decision predicate <n>` first, and (DRI ruling 4) the frame of a norm-defaults@0 environment read with each `unspecified` completion as the placeholder `deny`; the full file is pinned conservatively; readings-defaults RD-2a: the abstention only off the norms chain, and S1's admission after decoding (`admitDecoded`), which the filled document's admission also runs; jt-crossplan-fixes X3: on the norms chain the readings environment decodes its frame with the v0 constant fields (no `verbalisation` on a nonliteral constant); jt-2: the frame and the lowered JSON read without Compose.documentLayers (judgments@0), the gate and identities with the list as written"
       },
       {
+        "file": "lean/VE/RightClauses/Wire.lean",
+        "lines": 230,
+        "sha256": "75913d7b770400cd1e3e5a671fafd7a78b234ef5f48faae1cfefe0a7ea565be5",
+        "ranges": [
+          [
+            1,
+            230
+          ]
+        ],
+        "declarations": [
+          "decodeClauseDoc",
+          "decodeRelation",
+          "decodeClause",
+          "elaborateJson",
+          "stripElided"
+        ],
+        "reason": "right-clauses clause, relation and elided decoder and the plained-document rewriter of clauses-elaborate; the full file is pinned conservatively; the ve-integration merge: `decodeClauseDoc` sets the rights document's new `located` field to `[]`, as `decodeRightsSource` does (the mode reports no findings)"
+      },
+      {
         "file": "lean/VE/Rights/Admission.lean",
         "lines": 471,
         "sha256": "1b43543b7e666ae3874d748c88ce0a88665f996f5584888b71c94db76e527756",
@@ -2456,7 +2475,12 @@
       "lean/VE/Commands/StepsProofs.lean": "proofs only: `readStep_conservative` names its decoded environment as section 7 states it (`Lean.Json`, `decodeSpeechEnvironmentFull`) and its lemmas trace that decoder; the module decodes nothing at run time",
       "lean/VE/Service/DocumentView.lean": "sa-checked-view (spec 5.1): the checked view's typed mirrors read the request fields `checkBody` reads (`id`, `document`, `admit`, `lexicon`, `packs`, `units`, `reading_sets`) and are tied to it by checkBodyChecked_encode, checkCoreChecked_encode and checkDocSetsView_answer (the answer is checkDocSets's, byte for byte); no service mode dispatches it, and it builds no answer JSON of its own",
       "lean/ResponseShape/Schemas/RightsChecks.lean": "fixtures only: #guard checks of rights.json's elaborate, scope and packages rows on the mode's answers and their variants build JSON; no runner path",
-      "lean/VE/EnglishGrammar/Norm/RunExamples.lean": "fixtures only: #guard checks of english.statement's answers (docs/spec/en-e3-norm.md section 8, EN-2: E1-E17, f18, the whole-mode requests); no runner path"
+      "lean/VE/EnglishGrammar/Norm/RunExamples.lean": "fixtures only: #guard checks of english.statement's answers (docs/spec/en-e3-norm.md section 8, EN-2: E1-E17, f18, the whole-mode requests); no runner path",
+      "lean/VE/RightClauses/Run.lean": "lean:runner-glue: clauses-elaborate case dispatch and response rows (cmp-s3-cfr-1); reads the request through the pinned RightClauses/Wire.lean and Rights/Wire.lean",
+      "lean/VE/RightClauses/RunExamples.lean": "fixtures only: #guard checks of spec right-clauses 7 and 9.1 build clauses-elaborate requests as JSON and read the answers of `VE.RightClauses.runCaseReported`; no runner path",
+      "lean/VE/RightClauses/WireDecode.lean": "theorems only: spec right-clauses 8.5's forward lemmas through the pinned decoders; JSON access only in statements and proofs",
+      "lean/VE/RightClauses/WireName.lean": "theorems only: line-name lemmas of spec right-clauses 8.5 through the pinned decoders; JSON access only in statements and proofs",
+      "lean/VE/RightClauses/WireTheorems.lean": "theorems only: spec right-clauses 8.5's `elaborate_plain` and `decode_unstructured`; JSON access only in statements and proofs"
     }
   },
   "plan_operations": {
