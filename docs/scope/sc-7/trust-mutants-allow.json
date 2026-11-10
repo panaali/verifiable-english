@@ -1,0 +1,79 @@
+{
+ "allow": [
+  {
+   "definition": "VE.Scope.Pinned.clause",
+   "operator": "list-empty",
+   "reason": "ill-typed where it is UNKNOWN: `list-empty` turns `(s.splitOn \" \")` into `[]`, which does not elaborate (Invalid field notation: Type of at lean/VE/Scope/Authoring.lean:39); the definition is killed by body-true at :39; body-false at :39; and-or at :39; or-and at :40; all-any at :39; any-all at :39; le-eq at :40; le-lt at :40; list-first at :39; list-last at :39; list-drop-first at :39; list-drop-last at :39"
+  },
+  {
+   "definition": "VE.Scope.Pinned.spaced",
+   "operator": "list-empty",
+   "reason": "ill-typed where it is UNKNOWN: `list-empty` turns `(s.splitOn \" \")` into `[]`, which does not elaborate (Invalid field notation: Type of at lean/VE/Scope/Authoring.lean:24); the definition is killed by body-true at :24; body-false at :24; not-drop at :24; and-or at :24; all-any at :24; not-drop at :24"
+  },
+  {
+   "definition": "VE.Scope.Pinned.cap",
+   "operator": "list-empty",
+   "reason": "ill-typed where it is UNKNOWN: `list-empty` turns `n` into `[]`, which does not elaborate (failed to synthesize at lean/VE/Scope/Authoring.lean:33); the definition is killed by lit-plus at :33; lit-minus at :33"
+  },
+  {
+   "definition": "VE.Scope.Pinned.uncap",
+   "operator": "list-empty",
+   "reason": "ill-typed where it is UNKNOWN: `list-empty` turns `h` into `[]`, which does not elaborate (failed to synthesize at lean/VE/Scope/Authoring.lean:34); the definition is killed by lit-plus at :34; lit-minus at :34"
+  },
+  {
+   "definition": "VE.Scope.Pinned.between",
+   "operator": "list-empty",
+   "reason": "ill-typed where it is UNKNOWN: `list-empty` turns `(s.toString.dropSuffix? suf)` into `[]`, which does not elaborate (Type mismatch at lean/VE/Scope/Authoring.lean:130); the definition is killed by the hand mutant `between` (no suffix drop) of docs/scope/sc-7/mutants.json, killed at AuthoringExamples.lean:25"
+  },
+  {
+   "definition": "VE.Scope.Pinned.splitOnce",
+   "operator": "list-empty",
+   "reason": "ill-typed where it is UNKNOWN: `list-empty` turns `[a, b]` into `[]`, which does not elaborate (Unknown identifier `a` at lean/VE/Scope/Authoring.lean:133); the definition is killed by the hand mutant `splitOnce` (first separator wins) of docs/scope/sc-7/mutants.json, killed at AuthoringExamples.lean:90"
+  },
+  {
+   "definition": "VE.Scope.Pinned.onList",
+   "operator": "list-empty",
+   "reason": "ill-typed where it is UNKNOWN: `list-empty` turns `(rest.dropSuffix? \".\")` into `[]`, which does not elaborate (Invalid field notation: Type of at lean/VE/Scope/Authoring.lean:140); the definition is killed by and-or at :141"
+  },
+  {
+   "definition": "VE.Scope.Pinned.readHeading",
+   "operator": "list-empty",
+   "reason": "ill-typed where it is UNKNOWN: `list-empty` turns `(w.takeWhile (· == '#'))` into `[]`, which does not elaborate (don't know how to synthesize implicit argument `α` at lean/VE/Scope/Authoring.lean:146); the definition is killed by not-drop at :148; and-or at :148; or-and at :151; le-lt at :148; le-eq at :148; eq-ne at :146; lit-plus at :148"
+  },
+  {
+   "definition": "VE.Scope.Pinned.Row",
+   "operator": "ctor-drop",
+   "reason": "ill-typed where it is UNKNOWN: dropping a constructor of `Row` leaves `classify`, `Row.wording` and `Row.paraphrase` naming it (\"Unknown constant\" at lean/VE/Scope/Authoring.lean:75), so the mutant does not elaborate; each constructor is the row of one round-trip #guard of lean/VE/Scope/AuthoringExamples.lean"
+  },
+  {
+   "definition": "VE.Scope.Pinned.readings",
+   "operator": "list-empty",
+   "reason": "ill-typed where it is UNKNOWN: `list-empty` puts `[]` in place of the row list (\"Function expected\"), of `c.splitOn \"its kind\"`, of `onList …` (an `Option`, \"Application type mismatch\") and of the section `s` (a `String`, \"don't know how to synthesize implicit argument\") at lean/VE/Scope/Authoring.lean:161-172, so those mutants do not elaborate; where it elaborates it is KILLED (:161, :163, :167, :168, :172, :173, :173, :173, :179)"
+  },
+  {
+   "definition": "VE.Scope.Pinned.parseGovernor",
+   "operator": "list-empty",
+   "reason": "ill-typed where it is UNKNOWN: `list-empty` turns the pattern `[b]` into `[]`, leaving `some b` with no `b` (\"Unknown identifier\" at lean/VE/Scope/Authoring.lean:185); the hand mutant `B2 parseGovernor` (`b :: _`, first reading wins) of docs/scope/sc-7/mutants.json is killed at AuthoringExamples.lean:88"
+  },
+  {
+   "definition": "VE.Scope.Pinned.spaced",
+   "operator": "list-first",
+   "reason": "equivalent where it is a SURVIVOR: `!w.isEmpty` becomes `!(w.take 1).isEmpty`, and a string is empty exactly when its first character is (lean/VE/Scope/Authoring.lean:24); every other `list-first` mutant of `spaced` is KILLED (:24, :24)"
+  },
+  {
+   "definition": "VE.Scope.Pinned.readings",
+   "operator": "list-first",
+   "reason": "equivalent where it is a SURVIVOR: the section's `!s.isEmpty` becomes `!(s.take 1).isEmpty`, and a string is empty exactly when its first character is (lean/VE/Scope/Authoring.lean:172); every other `list-first` mutant of `readings` is KILLED (:161, :161, :165, :172, :173, :179)"
+  },
+  {
+   "definition": "VE.Scope.Pinned.wordChar",
+   "operator": "le-lt",
+   "reason": "equivalent where it is a SURVIVOR: `0x20 ≤ c.toNat` and `0x20 < c.toNat` differ only at U+0020, which `!VE.Discourse.spaceChar c` (the conjunct before it, lean/VE/Scope/Authoring.lean:26) already refuses; the other mutants of `wordChar` are KILLED by the slot guards of lean/VE/Scope/AuthoringExamples.lean"
+  },
+  {
+   "definition": "VE.Scope.Pinned.clause",
+   "operator": "list-last",
+   "reason": "equivalent where it is a SURVIVOR: `list-last` turns `(w.dropRightWhile closers.contains).toList` into `((w.dropRightWhile closers.contains).toList).reverse.take 1`, and `(l.reverse.take 1).getLast?` is `l.getLast?` for every list `l` (both are none on [] and the last element otherwise; lean/VE/Scope/Authoring.lean:39); the other list-last mutants of `clause` are KILLED or do not elaborate"
+  }
+ ]
+}
