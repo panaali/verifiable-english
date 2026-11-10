@@ -72,3 +72,65 @@ def test_a_then_instruction_unit_is_refused_by_the_speech_source_route(lean):
     signed = check("Then click check.\n", unit("c", 0, "asserted", {"ast": U("reviewed", "atlas")}),
                    [reading_set("c", 1, "authored", "instruction", click)])
     assert refused in signed["error"]
+
+
+def _relayed(wording, source="many"):
+    """`english.command`'s genuine row for `wording` over the binding inventory's `many` environment (or the corpus'
+    `click` case), with the request it answers."""
+    from test_relay_binding_inventory import _command_sources
+    from ve.backends import english_lean, relay
+    from ve.english import EnglishVocabulary
+    from ve.environment import Environment
+    if source == "many":
+        raw, _, queries = _command_sources()["many"]
+    else:
+        [case] = [c for c in command_cases() if c["id"] == "click"]
+        raw, queries = case["environment"], case["queries"]
+    env = Environment(raw)
+    case = english_lean.command_request(env, wording, EnglishVocabulary(env), {}, unit="u1", queries=queries)
+    return relay.decide_once(english_lean.COMMAND_MODE, case), case
+
+
+@pytest.mark.parametrize("wording, source, problem", [
+    ("Click Check, then do not share the token.", "click", "the steps outcome is not bound to the request"),
+    ("Review the meaning, then review the meaning.", "many", "alternatives are not one reading each")])
+def test_the_relay_refuses_a_sequence_it_does_not_bind_yet(wording, source, problem):
+    """Until ci-3c binds them, a genuine `steps` answer and a `many` of sequences are CheckerUnavailable, never a
+    Python verdict and never a crash (R8)."""
+    from ve.backends import english_lean
+    from ve.errors import CheckerUnavailable
+    row, case = _relayed(wording, source)
+    with pytest.raises(CheckerUnavailable, match=problem):
+        english_lean.command_answer(row, case)
+
+
+def _mutants(alternatives):
+    yield [alternatives[1], alternatives[0]]                   # reordered
+    yield alternatives[:1]                                     # one dropped
+    yield alternatives + alternatives[:1]                      # duplicated
+    yield [{**alternatives[0], "readings": []}, alternatives[1]]          # emptied
+    yield [{**alternatives[0], "readings": [0, 1]}, alternatives[1]]      # a sequence over both readings
+    yield [alternatives[0], {**alternatives[1], "readings": [2]}]         # an index out of range
+    yield [alternatives[0], {**alternatives[1], "readings": [0]}]         # a reading named twice
+
+
+def test_a_many_answer_s_alternatives_are_bound_to_its_readings():
+    """The genuine `many` of single readings relays; each rebound alternative list is CheckerUnavailable."""
+    import copy
+    from ve.backends import english_lean
+    from ve.errors import CheckerUnavailable
+    row, case = _relayed("Review the meaning.")
+    assert english_lean.command_answer(row, case)["alternatives"] == [
+        {"shape": "core", "readings": [0]}, {"shape": "core", "readings": [1]}]
+    for alternatives in _mutants(row["result"]["alternatives"]):
+        bad = copy.deepcopy(row)
+        bad["result"]["alternatives"] = alternatives
+        with pytest.raises(CheckerUnavailable):
+            english_lean.command_answer(bad, case)
+
+
+def test_a_then_step_is_relayed_with_its_flag():
+    from ve.backends import english_lean
+    row, case = _relayed("Then click Check.", "click")
+    answer = english_lean.command_answer(row, case)
+    assert (answer["outcome"], answer["after_previous"]) == ("one", True)
