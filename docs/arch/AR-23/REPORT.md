@@ -228,8 +228,10 @@ less than the plan estimated.
 ## After the gate
 
 The chain gates the final commit `<G>`. From `ee43c72ce` (the commit the A/B recorded) to `<G>`, only these change:
-`docs/arch/AR-23/`, `docs/CONSOLIDATION-PLAN.md` (the quoted step 3 ledger row) and `tools/trust-classes.json` (main's
-module order restored). No recorder reads any of them. Then make one report commit that changes only
+`docs/arch/AR-23/`, `docs/CONSOLIDATION-PLAN.md` (the quoted step 3 ledger row), `tools/trust-classes.json` (main's
+module order restored) and, for review F1, `tools/evidence/__init__.py`, `tools/evidence/ab.py`,
+`tools/batch_evidence.py` and `tests/test_evidence_toolkit.py` (the A/B writer and the batch check, not the recorder:
+`tools/lean_first_diff.py record` imports neither). No recorder reads any of them. Then make one report commit that changes only
 `docs/arch/AR-23/`:
 
     cp gate-result.json docs/arch/AR-23/evidence/gate.json
