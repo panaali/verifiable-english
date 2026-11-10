@@ -247,6 +247,9 @@ def slotsJoined (e : String) : List String :=
 #guard ["&nbsp;", "&#32;", "&#x20;", "&period;", "&#46;", "&#46;&#32;The", ".&nbsp;The", "&amp;", "&#5;"].all fun e =>
   (slotsEnding e ++ slotsJoined e).all (parseGovernor · == none)
 #guard ["x&nbsp;y", "x&#32;", "x&#x20;y", "x&period;", "&#46;", "x.&nbsp;y"].all (!clause ·)
+-- a reference after another "&", or before one, and a pair at a word's start (trust mutants: the first or last "&" only,
+-- the first pair skipped)
+#guard ["x&y&nbsp;z", "x&nbsp;&y", ".\u200By", "\u0301\u0301y", "x .\uFFFCThe"].all (!clause ·)
 -- "&" with no run of two before ";", or with no ";", is no reference
 #guard ["AT&T", "AT&T;", "AT&T,", "x&;", "x&#;", "R&D-heavy", "x&y", "x&nbsp"].all clause
 #guard trip "The rules below are called the AT&T rules." "{\"list_name\": \"the AT&T rules\"}"
