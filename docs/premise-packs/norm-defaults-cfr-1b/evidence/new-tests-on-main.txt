@@ -1,3 +1,10 @@
+# The new tests/test_norm_defaults_response_binding.py (commit 4d36ebffbc of norm-defaults-cfr-1b, before the self-review
+# fixes) copied into a detached worktree of main at c94ad399b7b1f6804c12fbc555a5758d5e971ae6, run there with main's
+# client, schema and ve_service (the shared build of main's Lean tree, restored by lean-prep.sh):
+#   uv run pytest -q -p no:cacheprovider tests/test_norm_defaults_response_binding.py -rf
+# Accepted on main (DID NOT RAISE): *-rules-forged_generated, *-rules-ghost, *-rules-appended under acts@0 and rights@0.
+# The rest fail because main's rows carry no 'sources' (KeyError in the forge, or the genuine row lacks it).
+
 FAILED tests/test_norm_defaults_response_binding.py::test_genuine_answers_pass
 FAILED tests/test_norm_defaults_response_binding.py::test_norm_defaults_response_binding[acts-status-rules-forged_generated]
 FAILED tests/test_norm_defaults_response_binding.py::test_norm_defaults_response_binding[rights-fan-status-rules-forged_generated]

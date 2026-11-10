@@ -5,7 +5,8 @@ A `norm-defaults-status` row's `tuple` is the request's, its `rules` are distinc
 rule (response schema, rendered from `ResponseShape/Schemas/NormDefaults.lean`). Each echo names its rule and the request
 rule it comes from, a rule of the request (`lean_service.bind_answers`); a rule may differ from its source, a name Lean
 generated, only when the profiles list contains `acts@0` (a part) or `rights@0` (a fan-out or bar rule). A forged
-generated name is refused whatever the profile. A `norm-defaults-certificate`
+generated name is refused unless the echo is forged with it to a request source: only Lean's naming tells that one, and
+Python keeps no copy of it (R8). A `norm-defaults-certificate`
 row's `premises` is the count of the regenerated premises its certificate is bound to (`bind_answers`). Each forged
 row reaches the client from a scripted service and is `CheckerUnavailable`; Lean's own rows still pass. The assurance
 manifest lists every kind the mode answers.
@@ -53,6 +54,19 @@ def _rights_fan_out(case):
     return fanned
 
 
+def _rights_bar(case):
+    """A liberty of the state to arrest, barred by `b30` read as a rule: Lean names the bar rule `rights-bar-1`."""
+    barred = copy.deepcopy(case)
+    barred["environment"]["vocabulary"]["rights"]["holders"] = ["person", "state"]
+    barred["document"] = [
+        {"right": {"name": "liberty", "holder": "state", "guard": ["top"], "lines": [{"kind": "liberty", "cites": {}, "norm": {
+            "name": "may-arrest", "predicate": "arrest_permitted", "sign": True, "guard": ["top"], "unless": [],
+            "over": []}}]}},
+        {"bar": {"name": "b30", "reading": "rule", "decided_by": "unstated"}}]
+    barred["model"]["relations"] = {"arbitrary": [["s", "p"]], "rights__bar__1": [["s", "p"]]}
+    return barred
+
+
 def _certificate_with_a_premise(document):
     """`certificate_case` with the case's own premise `⊤`: the row counts the regenerated premises only."""
     conclusion = _conjunction([f for _, f in document.fill_premises] + [f for _, f in document.filled.premises()])
@@ -73,6 +87,7 @@ def _cases():
                               predicate="csam_generation_permitted", tuple=["claude0"], method="enumerate"),
         "rights-status": rights,
         "rights-fan-status": _rights_fan_out(rights),
+        "rights-bar-status": _rights_bar(rights),
         "acts-status": {"id": "norm-defaults-status", "kind": "norm-defaults-status", "norms": [ACTS_RULE],
                         "environment": _acts_environment(), "predicate": "p027__1", "tuple": ["a"],
                         "method": "table3", "model": {"complete": True, "domains": {"person": ["a"]},
@@ -106,10 +121,13 @@ def test_genuine_answers_pass(genuine, tmp_path):
     assert genuine["rights-status"][1]["rules"] == ["art9"]
     assert genuine["acts-status"][1]["rules"] == ["r027-a1"]  # Lean's part name (`Acts.Elaborate.partRule`)
     assert genuine["rights-fan-status"][1]["rules"] == ["rights-fan-1"]  # Lean's fan-out name (`Rights.fanName`)
-    # Each rule with the request rule Lean echoes as its source: itself, the split rule, the fanned-out norm.
-    assert [genuine[name][1]["sources"] for name in ("status", "rights-status", "acts-status", "rights-fan-status")] == [
+    assert genuine["rights-bar-status"][1]["rules"] == ["rights-bar-1"]  # Lean's bar rule name (`Rights.barRuleName`)
+    # Each rule with the request rule Lean echoes as its source: itself, the split rule, the fanned-out norm, the bar.
+    names = ("status", "rights-status", "acts-status", "rights-fan-status", "rights-bar-status")
+    assert [genuine[name][1]["sources"] for name in names] == [
         [{"rule": "no-csam-generation", "source": "no-csam-generation"}], [{"rule": "art9", "source": "art9"}],
-        [{"rule": "r027-a1", "source": "r027"}], [{"rule": "rights-fan-1", "source": "art9"}]]
+        [{"rule": "r027-a1", "source": "r027"}], [{"rule": "rights-fan-1", "source": "art9"}],
+        [{"rule": "rights-bar-1", "source": "b30"}]]
     for name, own in (("certificate", 0), ("certificate-premise", 1)):
         case, row = genuine[name]
         assert len(case["premises"]) == own and row["valid"] is True
@@ -225,6 +243,7 @@ FORGERIES = [
     # A generated rule name Lean did not answer, under acts@0 and under rights@0 (norm-defaults-cfr-1b), or one no
     # rule of the request.
     _forge("acts-status", "rules", forged_generated), _forge("rights-fan-status", "rules", forged_generated),
+    _forge("rights-bar-status", "rules", forged_generated),
     _forge("acts-status", "rules", ghost), _forge("rights-fan-status", "rules", ghost),
     _forge("acts-status", "rules", appended), _forge("rights-fan-status", "rules", appended),
     # A source echo that names another rule, or a source that is no rule of the request (cfr-1b).
@@ -233,6 +252,10 @@ FORGERIES = [
     _forge("acts-status", "sources", _echo(own_rule, no_such_rule)),
     _forge("rights-fan-status", "sources", _echo(own_rule, no_such_rule)),
     _forge("rights-fan-status", "sources", _echo(own_rule, own_rule)),
+    _forge("rights-bar-status", "sources", _echo(own_rule, no_such_rule)),
+    _forge("rights-bar-status", "sources", _echo(generated_name, own_source)),
+    # A rule that is a request rule, echoed from another request rule.
+    _forge("rights-bar-status", "sources", _echo(lambda row: "may-arrest", own_source)),
     _forge("status", "sources", _echo(own_rule, no_such_rule)),
     _forge("acts-status", "sources", dropped), _forge("rights-fan-status", "sources", doubled),
     # The rule and its echo forged together to a generated name, without acts@0 or rights@0.
@@ -261,7 +284,10 @@ def test_norm_defaults_response_binding(genuine, tmp_path, name, forge):
 
 
 # Each bound field deleted or retyped (BUILDER-CHECKLIST 1): the schema or the binding refuses it.
-RETYPED = [7, True, None, [], {}, 1.5, "\ud800", [7], [True], [None], [[]], [{}]]
+DEEP = [[]]
+for _ in range(10_000):
+    DEEP = [DEEP]
+RETYPED = [7, True, None, [], {}, 1.5, "\ud800", [7], [True], [None], [[]], [{}], DEEP]
 FIELDS = [("status", "tuple"), ("status", "rules"), ("acts-status", "rules"), ("rights-fan-status", "rules"),
           ("status", "sources"), ("acts-status", "sources"), ("rights-fan-status", "sources"),
           ("certificate", "premises")]
@@ -278,6 +304,20 @@ def test_each_bound_field_deleted_or_retyped_is_no_answer(genuine, tmp_path, nam
             _scripted(tmp_path, case, mutant)
 
 
+@pytest.mark.parametrize("name", ["acts-status", "rights-fan-status", "rights-bar-status"])
+@pytest.mark.parametrize("key", ["rule", "source"])
+def test_each_echo_field_deleted_retyped_or_extended_is_no_answer(genuine, tmp_path, name, key):
+    """Each field of a `sources` echo deleted or retyped, or an extra key beside it: the schema or the binding refuses
+    the row (BUILDER-CHECKLIST 1)."""
+    case, row = genuine[name]
+    echo = row["sources"][0]
+    echoes = [{k: v for k, v in echo.items() if k != key}, {**echo, "extra": echo[key]}]
+    echoes += [{**echo, key: value} for value in RETYPED]
+    for forged in echoes:
+        with pytest.raises(CheckerUnavailable, match="malformed response"):
+            _scripted(tmp_path, case, {**row, "sources": [forged]})
+
+
 def test_a_certificate_case_without_its_certificate_has_no_count(genuine, tmp_path):
     """No certificate (or no premise list) in the request: no premise count binds, so no `ok` row is an answer."""
     case, row = genuine["certificate"]
@@ -292,11 +332,14 @@ def test_request_rules_on_each_source_shape(genuine):
     assert _rule_names(genuine["status"][0]) == {"no-csam-generation"}
     assert _rule_names(genuine["acts-status"][0]) == {"r027"}
     assert _rule_names(genuine["rights-fan-status"][0]) == {"art9"}
-    case = {"environment": {"profiles": ["rights@0"]}, "document": {"units": [{"content": {"right": {"lines": [
-        {"kind": "power", "liberty": {"name": "may"}, "recognition": {"name": "rec"}}]}}}, {"content": {"bar": {
-            "name": "b30"}}}, {"content": {"limitation": {"name": "l29"}}}]}}
-    assert _rule_names(case) == {"may", "rec", "b30"}
-    assert _rule_names({**case, "environment": {"profiles": ["soft-norms@0"]}}) == set()
+    assert _rule_names(genuine["rights-bar-status"][0]) == {"may-arrest", "b30"}
+    case = {"environment": {"profiles": ["rights@0"]}, "norms": [{"norm": {"name": "outside-the-route"}}],
+            "document": [{"right": {"name": "r", "lines": [
+                {"kind": "power", "liberty": {"name": "may"}, "recognition": {"name": "rec"}}]}},
+                {"right_lines": {"right": "r", "lines": [{"kind": "claim", "norm": {"name": "late"}}]}},
+                {"norm": {"name": "outside"}}, {"limitation": {"name": "l29"}}]}
+    assert _rule_names(case) == {"may", "rec", "late", "outside"}
+    assert _rule_names({**case, "environment": {"profiles": ["soft-norms@0"]}}) == {"outside-the-route"}
 
 
 @pytest.mark.parametrize("environment", [None, {}, {"profiles": None}, {"profiles": {}},
@@ -319,14 +362,16 @@ def test_status_rule_binding_without_generated_profile(environment):
 def test_a_generated_rule_needs_its_echo(profile):
     """Under `acts@0` or `rights@0` a rule Lean generated passes with the echo naming it and a request source, and
     with nothing less: no echo, an echo of another rule, or a source the request does not hold."""
-    case = {"kind": "norm-defaults-status", "environment": {"profiles": [profile]}, "norms": [{"norm": {"name": "r1"}}]}
+    case = {"kind": "norm-defaults-status", "environment": {"profiles": [profile]}, "norms": [{"norm": {"name": "r1"}}],
+            "document": [{"norm": {"name": "r1"}}]}
 
     def answer(rules, sources):
         return {"status": "ok", "results": [{"index": 0, "result": {"status": "ok", "rules": rules,
                                                                      "sources": sources}}]}
     bind_answers(MODE, answer(["g1"], [{"rule": "g1", "source": "r1"}]), {"cases": [case]})
     for rules, sources in ((["g1"], []), (["g1"], None), (["g2"], [{"rule": "g1", "source": "r1"}]),
-                           (["g1"], [{"rule": "g1", "source": "g1"}]), (["g1"], ["r1"])):
+                           (["g1"], [{"rule": "g1", "source": "g1"}]), (["g1"], ["r1"]),
+                           (["r1"], [{"rule": "r1", "source": "g1"}])):
         with pytest.raises(Invalid):
             bind_answers(MODE, answer(rules, sources), {"cases": [case]})
 
