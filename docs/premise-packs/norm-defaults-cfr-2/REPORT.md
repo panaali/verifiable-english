@@ -13,7 +13,7 @@ test_norm_defaults_documented_support.py reads `todayGate` and `pendingWithDefau
 is the opposite direction. `disagreements(<git show de7fb9469:docs/spec/norm-defaults.md>, Dispatch.lean)` on main's
 spec: "names no composed block: Their combination with `norm-defaults@0` is rejected at profile validation ...", "spec:
 [] for risk@0 ...; todayGate: refused", "spec: [] for alternatives@0 ...; todayGate: admitted". `select_tests.py --paths
-<Dispatch.lean> <spec> --static --explain` selects it for both. Size: light-lane.py check "LIGHT <n> changed lines".
+<Dispatch.lean> <spec> --static --explain` selects it for both. Size: light-lane.py check "LIGHT 149 changed lines".
 
 **Seeded bugs** (each planted, `uv run pytest -q tests/test_norm_defaults_documented_support.py` FAILED, restored):
 S1 docs/spec/norm-defaults.md, old sentence restored: "names no composed block". S2 same file, risk row "admitted":
@@ -21,9 +21,9 @@ S1 docs/spec/norm-defaults.md, old sentence restored: "names no composed block".
 admitted". S4 lean/VE/Compose/Dispatch.lean (source text only, test function called directly since conftest rebuilds
 Lean): gate refuses alternatives with norm-defaults: "spec: ['admitted'] for alternatives@0 ...; todayGate: refused".
 No product code changed in any language. **Spec re-read:** every line the spec cites, against its file.
-**Test runs:** PENDING.
+**Test runs:** `MAC_PYTEST_NO_DEFER=1 mac-pytest.sh --select` on 9371b1fc5: exit 0, 221 units passed; regen --check: rc 0.
 **Self-review against BUILDER-CHECKLIST:** 1 N.A. no relayed answer; 2 PASS both deliverables (test above); 3 PASS
-S1-S4; 4 N.A. no product code; 5 N.A. no binding; 6 PASS chain gate on final HEAD; 7 PASS no DRI row; 8 PASS DELTA.md
+S1-S4; 4 N.A. no product code; 5 N.A. no binding; 6 PASS selected run above; 7 PASS no DRI row; 8 PASS DELTA.md
 (no user-visible delta); 9 PASS select_tests line above; 10 N.A. no Lean; 11 N.A. no limit; 12 N.A. no runtime code;
 13 N.A. no test removed; 14 PASS `..._refuses`, commands cited, spec re-read; 15 PASS no overclaim (spec "Not built"
 list), nothing cut, S1-S4, no limit.
