@@ -17,7 +17,6 @@ from __future__ import annotations
 import functools
 
 from .defaults import _decider, _rules, _unbound
-from .errors import VEError
 
 UNSET = "unstated"
 
@@ -154,15 +153,17 @@ def strict_sentence(deciders):
 
 
 def fails(case, row):
-    """DE6 when Lean's `forced` is empty, otherwise DE6′ and one DE11 per entry, in Lean's order."""
+    """DE6 when Lean's `forced` is empty, otherwise DE6′ and one DE11 per entry, in Lean's order, each DE11 through
+    W7's gate (`Gate`; DE6 and DE6′ are df-1bbc's)."""
     text = _Text(case)
     model = case["model"]["model"]
+    gate = Gate(case, (e for ids in model["domains"].values() for e in ids))
     head = "Even if no exception applies" + (" beyond those the text states" if row["forced"] else "")
     out = [f"{head}, the conclusion does not follow. It fails here: {text.situation(model)}."]
     for entry in row["forced"]:
         condition = text.condition(text.rule(entry["rule"]), entry["condition"], entry["tuple"])
-        out.append(_line_words("DE11")["sentence"].format(rule=entry["rule"], condition=condition))
-    return out
+        out.append(gate.add("DE11:", _line_words("DE11")["sentence"], {"rule": entry["rule"], "condition": condition}))
+    return gate.check(out)
 
 
 def collision(case, row):
@@ -255,14 +256,17 @@ def templates():
 
 
 class Gate:
-    """W7's gate for one zone answer: every sentence shown and every row inside DE10″ has exactly one derivation
-    from all registered wordings (`templates`), from its own. The slots are closed classes: the request's rules and
-    entities, the query's clause either way, and the conditions, parties, acts, considerations and rows shown."""
+    """W7's gate for one zone answer (`ve.readings_s2_english.gated` over `templates`): every sentence shown and
+    every row inside DE10″ has exactly one derivation, its own, and shows no generated name. The slots are closed
+    classes of strings: the request's rules and entities, the query's clause either way, and the conditions,
+    parties, acts, considerations and rows shown (two decisions shown in the same words are one value here)."""
 
-    def __init__(self, case):
-        self.classes = {"rule": set(_rules(case)), "entity": {e for ids in case["model"]["domains"].values()
-                                                               for e in ids}}
-        self.built = []
+    def __init__(self, case, entities=None):
+        from .readings_s2_english import _all_reserved
+        self.classes = {"rule": set(_rules(case)), "entity": set(entities if entities is not None else (
+            e for ids in case["model"]["domains"].values() for e in ids))}
+        self.reserved, self.author_names, self.built = _all_reserved(), frozenset(
+            {*self.classes["rule"], *self.classes["entity"]}), []
 
     def options(self, name):
         return self.classes.get(name, set())
@@ -277,16 +281,10 @@ class Gate:
         self.built.append((name, text))
         return text
 
-    def derivations(self, text):
-        from .readings_s2_english import _match
-        return [name for name, elements in templates().items()
-                for end, _ in _match(elements, text, 0, self, ()) if end == len(text)]
-
     def check(self, shown):
+        from .readings_s2_english import gated
         for name, text in self.built:
-            found = self.derivations(text)
-            if found != [name]:
-                raise VEError(f"InvalidInput: zone wording {name} has {len(found)} derivations: {text}")
+            gated(name, text, self, templates())
         return shown
 
 
