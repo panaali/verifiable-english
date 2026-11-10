@@ -68,6 +68,17 @@ def test_every_table_file_is_planned_or_marked():
         assert MARK in " ".join(row), f"spec 5's row {row[0]} is not in planFiles and does not say '{MARK}'"
         assert name in comment and MARK in comment, \
             f"the stub's section-5 comment does not say that {name} is {MARK}"
+    for row in file_rows():
+        if key(row[0]) in planned_keys:
+            assert MARK not in " ".join(row), f"spec 5's row {row[0]} is in planFiles but says '{MARK}'"
+
+
+def test_every_plan_file_is_a_table_row():
+    """The opposite direction: the parse found the plan, and every `planFiles` entry is one of spec 5's rows."""
+    _, planned = plan_section()
+    rows = {key(row[0]) for row in file_rows()}
+    assert len(planned) >= 5 and len(rows) >= 6
+    assert [f for f in planned if key(f) not in rows] == []
 
 
 def test_planned_imports_respect_layers():
