@@ -125,14 +125,21 @@ def main(argv=None):
     return 0
 
 
+# A question at one situation (defeasible plan DF-5): its members, df-5's `defaults-zone` request's but the document's.
+SITUATED = ("situation", "record", "observations", "query")
+
+
 def _assume_no_exception(doc, conclusion, args):
     """`--assume-no-exception` (defeasible plan DF-1b): Lean's strict answer, else its answer with no exception
     assumed (`ve.defaults.ask`), on a soft-norms@0 document without open reading sets; the document's assertions are
     the question's premises. On a document with a content-bearing set (DF-3), the readings' answer with Lean's
-    `default` member (`_readings_without_exception`)."""
-    from ..defaults import ask
+    `default` member (`_readings_without_exception`). A question that names a `situation` (DF-5) is asked there, with
+    its record and observations (`ve.defaults.ask_zone`); the situation gives the facts, so the document asserts none."""
+    from ..defaults import ask, ask_zone
     from ..readings_s1 import READINGS
-    if _content_bearing(doc) and doc.get("readings_components") is None and not (args.sentence or args.narrowing):
+    situated = type(conclusion) is dict and "situation" in conclusion
+    if (not situated and _content_bearing(doc) and doc.get("readings_components") is None
+            and not (args.sentence or args.narrowing)):
         return _readings_without_exception(doc, conclusion, args)
     if args.under or args.sentence or args.narrowing:
         raise VEError("--assume-no-exception takes no --under, --sentence or --narrowing")
@@ -143,6 +150,13 @@ def _assume_no_exception(doc, conclusion, args):
     environment["profiles"] = [p for p in environment["profiles"] if p != READINGS]
     norms = [u["content"] for u in doc["units"] if u["kind"] == "norm"]
     premises = [u["content"] for u in doc["units"] if u["kind"] == "asserted" and u["content"] is not None]
+    if situated:
+        if set(conclusion) != set(SITUATED):
+            raise VEError("InvalidInput: a question at a situation has the members " + ", ".join(SITUATED))
+        if premises:
+            raise VEError("InvalidInput: a question at a situation takes its facts from the situation; "
+                          "the document asserts some")
+        return ask_zone(environment, norms, conclusion)
     return ask(environment, norms, premises, conclusion)
 
 

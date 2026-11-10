@@ -974,6 +974,7 @@
         "ResponseShape.Skeletons.english",
         "ResponseShape.Skeletons.englishCheck",
         "ResponseShape.Skeletons.englishCommand",
+        "ResponseShape.Skeletons.clausesElaborate",
         "ResponseShape.Skeletons.englishGrammar",
         "ResponseShape.Skeletons.englishQuestion",
         "ResponseShape.Skeletons.englishRead",
@@ -2058,7 +2059,9 @@
         "VE.Compose.dispatch",
         "VE.Compose.documentLayers",
         "VE.Compose.environmentProfiles",
-        "VE.Compose.environmentWrapper",
+        "VE.Compose.environmentRows",
+        "VE.Compose.environmentWrappers",
+        "VE.Compose.withoutClauses",
         {
           "name": "VE.Compose.gateOf",
           "tied": [
@@ -20933,6 +20936,330 @@
         "VE.EnglishGrammar.Norm.RunExamples.tB",
         "VE.EnglishGrammar.Norm.RunExamples.whole",
         "VE.EnglishGrammar.Norm.RunExamples.wholeRow"
+      ]
+    },
+    "VE/RightClauses/Wire.lean": {
+      "S": [
+        "VE.RightClauses.NoClauseKeys",
+        "VE.RightClauses.NoReadingSets",
+        "VE.RightClauses.PlainOnWire"
+      ],
+      "D[V]": [
+        {
+          "name": "VE.RightClauses.decodeClauseDoc",
+          "tied": [
+            "VE.RightClauses.decode_unstructured",
+            "VE.RightClauses.elaborate_plain"
+          ]
+        },
+        {
+          "name": "VE.RightClauses.elaborateJson",
+          "tied": [
+            "VE.RightClauses.elaborate_plain"
+          ]
+        },
+        {
+          "name": "VE.RightClauses.stripElided",
+          "tied": [
+            "VE.RightClauses.decode_unstructured"
+          ]
+        },
+        {
+          "name": "VE.RightClauses.stripProfile",
+          "tied": [
+            "VE.RightClauses.decode_unstructured",
+            "VE.RightClauses.elaborate_plain"
+          ]
+        },
+        {
+          "name": "VE.RightClauses.plainLineJson",
+          "tied": [
+            "VE.RightClauses.plainLine_decode"
+          ]
+        },
+        {
+          "name": "VE.RightClauses.lineWith",
+          "tied": [
+            "VE.RightClauses.plainLine_decode"
+          ]
+        },
+        {
+          "name": "VE.RightClauses.headKeys",
+          "tied": [
+            "VE.RightClauses.plainLine_decode"
+          ]
+        },
+        {
+          "name": "VE.RightClauses.mapUnit",
+          "tied": [
+            "VE.RightClauses.fold_plain"
+          ]
+        },
+        {
+          "name": "VE.RightClauses.headStep",
+          "tied": [
+            "VE.RightClauses.fold_plain"
+          ]
+        },
+        {
+          "name": "VE.RightClauses.headUnit",
+          "tied": [
+            "VE.RightClauses.headUnit_mem"
+          ]
+        },
+        {
+          "name": "VE.RightClauses.headLine",
+          "tied": [
+            "VE.RightClauses.headUnit_mem",
+            "VE.RightClauses.headLine_plainless"
+          ]
+        },
+        {
+          "name": "VE.RightClauses.unitBody",
+          "tied": [
+            "VE.RightClauses.headUnit_mem"
+          ]
+        },
+        {
+          "name": "VE.RightClauses.dropKeys",
+          "tied": [
+            "VE.RightClauses.headUnit_mem"
+          ]
+        },
+        {
+          "name": "VE.RightClauses.bodyLines",
+          "tied": [
+            "VE.RightClauses.headUnit_mem"
+          ]
+        },
+        {
+          "name": "VE.RightClauses.mapMember",
+          "tied": [
+            "VE.RightClauses.decodeLine_guard"
+          ]
+        },
+        {
+          "name": "VE.RightClauses.mapArr",
+          "tied": [
+            "VE.RightClauses.decodeLines_plain"
+          ]
+        },
+        {
+          "name": "VE.RightClauses.members",
+          "tied": [
+            "VE.RightClauses.headLine_plainless"
+          ]
+        },
+        {
+          "name": "VE.RightClauses.bodyRight",
+          "tied": [
+            "VE.RightClauses.addUnit_plain"
+          ]
+        },
+        {
+          "name": "VE.RightClauses.jsonLineName",
+          "tied": [
+            "VE.RightClauses.decodeLine_name"
+          ]
+        },
+        "VE.RightClauses.rebuild",
+        "VE.RightClauses.mapDoc",
+        "VE.RightClauses.unitsOf",
+        "VE.RightClauses.decodeSpan",
+        "VE.RightClauses.decodeRole",
+        "VE.RightClauses.hasKeys",
+        "VE.RightClauses.decodeClause",
+        "VE.RightClauses.decodeRelation",
+        "VE.RightClauses.decodeElided",
+        "VE.RightClauses.decodeClauses",
+        "VE.RightClauses.decodeRelationOpt",
+        "VE.RightClauses.unitSpanOf"
+      ]
+    },
+    "VE/RightClauses/Run.lean": {
+      "G[V]": [
+        "VE.RightClauses.Run.labelledJson",
+        "VE.RightClauses.Run.elaborateCase",
+        "VE.RightClauses.Run.runCaseReported"
+      ]
+    },
+    "VE/RightClauses/WireDecode.lean": {
+      "P": [
+        "VE.RightClauses.mapPair",
+        "VE.RightClauses.Distinct"
+      ]
+    },
+    "VE/RightClauses/WireTheorems.lean": {
+      "P": [
+        "VE.RightClauses.plainUnits",
+        "VE.RightClauses.plainOnWireB"
+      ]
+    },
+    "ResponseShape/Schemas/ClausesElaborate.lean": {
+      "G[R]": [
+        "ResponseShape.Schemas.ClausesElaborate.file",
+        "ResponseShape.Schemas.ClausesElaborate.result",
+        "ResponseShape.Schemas.ClausesElaborate.row"
+      ]
+    },
+    "VE/RightClauses/RunExamples.lean": {
+      "T": [
+        "VE.RightClauses.RunExamples.parse",
+        "VE.RightClauses.RunExamples.profiles",
+        "VE.RightClauses.RunExamples.on",
+        "VE.RightClauses.RunExamples.doc",
+        "VE.RightClauses.RunExamples.ask",
+        "VE.RightClauses.RunExamples.says",
+        "VE.RightClauses.RunExamples.off",
+        "VE.RightClauses.RunExamples.rel",
+        "VE.RightClauses.RunExamples.charged",
+        "VE.RightClauses.RunExamples.countryOf",
+        "VE.RightClauses.RunExamples.twoLines",
+        "VE.RightClauses.RunExamples.plainOnWire",
+        "VE.RightClauses.RunExamples.depth64"
+      ]
+    },
+    "VE/Presupposition/Couple.lean": {
+      "C": [
+        "VE.Presupposition.instDecidablePickFits",
+        "VE.Presupposition.instDecidablePickedWF",
+        "VE.Presupposition.instDecidableUniform"
+      ],
+      "G[R]": [
+        "VE.Presupposition.sourceLabel"
+      ],
+      "G[V]": [
+        {
+          "name": "VE.Presupposition.SourceChoice",
+          "tied": [
+            "VE.Presupposition.sourceChoice_closed"
+          ]
+        },
+        {
+          "name": "VE.Presupposition.choiceOf",
+          "tied": [
+            "VE.Presupposition.couplings_spec",
+            "VE.Presupposition.couplings_spec_admit",
+            "VE.Presupposition.mem_choiceOf"
+          ]
+        },
+        {
+          "name": "VE.Presupposition.couplingConstraints",
+          "tied": [
+            "VE.Presupposition.couplings_spec",
+            "VE.Presupposition.couplings_spec_admit"
+          ]
+        },
+        {
+          "name": "VE.Presupposition.groupConstraints",
+          "tied": [
+            "VE.Presupposition.groupConstraints_iff"
+          ]
+        },
+        {
+          "name": "VE.Presupposition.sourceChoices",
+          "tied": [
+            "VE.Presupposition.sourceChoice_closed",
+            "VE.Presupposition.sourceChoice_entails",
+            "VE.Presupposition.sourceChoice_members"
+          ]
+        }
+      ],
+      "S": [
+        "VE.Presupposition.Group",
+        "VE.Presupposition.Pick",
+        "VE.Presupposition.PickFits",
+        "VE.Presupposition.PickedWF",
+        "VE.Presupposition.SameDecides",
+        "VE.Presupposition.SameModels",
+        "VE.Presupposition.SatUnder",
+        "VE.Presupposition.Uniform",
+        "VE.Presupposition.assumptionsUnder",
+        "VE.Presupposition.couplable",
+        "VE.Presupposition.coupledSet",
+        "VE.Presupposition.formulasUnder",
+        "VE.Presupposition.groups",
+        "VE.Presupposition.pickOf",
+        "VE.Presupposition.pickedU",
+        "VE.Presupposition.readingFor",
+        "VE.Presupposition.rep",
+        "VE.Presupposition.repCandidate",
+        "VE.Presupposition.treeUnder",
+        "VE.Presupposition.uniformB",
+        "VE.Presupposition.unitFormulas",
+        "VE.Presupposition.unitRule"
+      ]
+    },
+    "VE/Presupposition/Couple/Fixtures.lean": {
+      "T": [
+        "VE.Presupposition.CoupleExamples.D15",
+        "VE.Presupposition.CoupleExamples.D15x",
+        "VE.Presupposition.CoupleExamples.D22",
+        "VE.Presupposition.CoupleExamples.D22n",
+        "VE.Presupposition.CoupleExamples.D2n",
+        "VE.Presupposition.CoupleExamples.E19",
+        "VE.Presupposition.CoupleExamples.E22",
+        "VE.Presupposition.CoupleExamples.J15",
+        "VE.Presupposition.CoupleExamples.J18",
+        "VE.Presupposition.CoupleExamples.J19",
+        "VE.Presupposition.CoupleExamples.K19",
+        "VE.Presupposition.CoupleExamples.R15",
+        "VE.Presupposition.CoupleExamples.R15x",
+        "VE.Presupposition.CoupleExamples.R22",
+        "VE.Presupposition.CoupleExamples.allPicks",
+        "VE.Presupposition.CoupleExamples.bgF",
+        "VE.Presupposition.CoupleExamples.c0",
+        "VE.Presupposition.CoupleExamples.chk",
+        "VE.Presupposition.CoupleExamples.chk15",
+        "VE.Presupposition.CoupleExamples.chk22",
+        "VE.Presupposition.CoupleExamples.chkNeg",
+        "VE.Presupposition.CoupleExamples.cond15",
+        "VE.Presupposition.CoupleExamples.cond22",
+        "VE.Presupposition.CoupleExamples.diff19",
+        "VE.Presupposition.CoupleExamples.dropRel",
+        "VE.Presupposition.CoupleExamples.emptyTree",
+        "VE.Presupposition.CoupleExamples.fixedNode",
+        "VE.Presupposition.CoupleExamples.g18",
+        "VE.Presupposition.CoupleExamples.g22",
+        "VE.Presupposition.CoupleExamples.g3",
+        "VE.Presupposition.CoupleExamples.gA",
+        "VE.Presupposition.CoupleExamples.gB",
+        "VE.Presupposition.CoupleExamples.gC",
+        "VE.Presupposition.CoupleExamples.holds",
+        "VE.Presupposition.CoupleExamples.ids5",
+        "VE.Presupposition.CoupleExamples.instr",
+        "VE.Presupposition.CoupleExamples.m22",
+        "VE.Presupposition.CoupleExamples.mDec",
+        "VE.Presupposition.CoupleExamples.mOneReadyBusy",
+        "VE.Presupposition.CoupleExamples.mXo",
+        "VE.Presupposition.CoupleExamples.mYo",
+        "VE.Presupposition.CoupleExamples.mixed15",
+        "VE.Presupposition.CoupleExamples.mixed22",
+        "VE.Presupposition.CoupleExamples.models15",
+        "VE.Presupposition.CoupleExamples.neg2",
+        "VE.Presupposition.CoupleExamples.node22",
+        "VE.Presupposition.CoupleExamples.nodeY",
+        "VE.Presupposition.CoupleExamples.pAA",
+        "VE.Presupposition.CoupleExamples.pAC",
+        "VE.Presupposition.CoupleExamples.pCC",
+        "VE.Presupposition.CoupleExamples.preUser",
+        "VE.Presupposition.CoupleExamples.reg22",
+        "VE.Presupposition.CoupleExamples.regOf",
+        "VE.Presupposition.CoupleExamples.rep2",
+        "VE.Presupposition.CoupleExamples.rep22",
+        "VE.Presupposition.CoupleExamples.rep3",
+        "VE.Presupposition.CoupleExamples.repNeg",
+        "VE.Presupposition.CoupleExamples.report19",
+        "VE.Presupposition.CoupleExamples.saidF",
+        "VE.Presupposition.CoupleExamples.same19",
+        "VE.Presupposition.CoupleExamples.sets5",
+        "VE.Presupposition.CoupleExamples.sets7",
+        "VE.Presupposition.CoupleExamples.tIn",
+        "VE.Presupposition.CoupleExamples.theOwnerBusy",
+        "VE.Presupposition.CoupleExamples.unit15",
+        "VE.Presupposition.CoupleExamples.unit22",
+        "VE.Presupposition.CoupleExamples.unitsX",
+        "VE.Presupposition.CoupleExamples.ver0"
       ]
     }
   }
