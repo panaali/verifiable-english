@@ -1,6 +1,6 @@
 import VE.Bridge
 import VE.TableauChecker
-import VE.TableauExtendedChecker
+import VE.Closure.Tableau
 import VE.Closure.Bridge
 
 /-! The data-only wire adapter. Serialization and hash identity correspondence

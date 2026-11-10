@@ -9,6 +9,7 @@ import ResponseShape.Schemas.Document
 import ResponseShape.Schemas.Question
 import ResponseShape.Schemas.Ask
 import ResponseShape.Schemas.Words
+import ResponseShape.Schemas.ActReadings
 import ResponseShape.Schemas.Metered
 import ResponseShape.Schemas.Discourse
 import ResponseShape.Schemas.English
@@ -40,6 +41,7 @@ import ResponseShape.Schemas.Cardinality
 import ResponseShape.Schemas.Scope
 import ResponseShape.Schemas.SensesProject
 import ResponseShape.Schemas.Command
+import ResponseShape.Schemas.ClausesElaborate
 
 /-! The client's response schemas (`ve/backends/lean_service_schema/`), one module per file. -/
 
@@ -64,6 +66,7 @@ def files : List File := [
   Question.file,
   Ask.file,
   Words.file,
+  ActReadings.file,
   Metered.file,
   Environment.file,
   Evaluate.file,
@@ -91,7 +94,8 @@ def files : List File := [
   Cardinality.file,
   Scope.file,
   SensesProject.file,
-  Command.file].map File.qualified
+  Command.file,
+  ClausesElaborate.file].map File.qualified
 
 /-- `{file name: document}`: what `tools/response_schemas.py` writes. -/
 def rendered : Except String Json := do

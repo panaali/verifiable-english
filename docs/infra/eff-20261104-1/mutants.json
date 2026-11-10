@@ -1,0 +1,214 @@
+{
+ "mutants": [
+  {
+   "name": "i-trust_mutants-is-plan-only",
+   "file": "tools/trust_mutants.py",
+   "test": "tests/test_trust_mutants.py::test_any_other_change_beside_a_plan_only_input_is_a_full_run[tool-tools/trust_mutants.py]",
+   "failed": true,
+   "line": "PLAN_ONLY_TOOL = frozenset({\"tools/layer_policy.py\"})"
+  },
+  {
+   "name": "ii-no-list-check-for-the-new-cases",
+   "file": "tools/trust_mutants.py",
+   "test": "tests/test_trust_mutants.py::test_a_plan_only_input_that_moves_the_mutant_list_is_a_full_run[base]",
+   "failed": true,
+   "line": "        if [tuple(r[k] for k in (\"id\", \"file\", \"line\", \"definition\", \"operator\", \"before\", \"after\"))"
+  },
+  {
+   "name": "iii-an-include_str-file-is-unread",
+   "file": "tools/trust_mutants.py",
+   "test": "tests/test_trust_mutants.py::test_a_file_lake_or_lean_may_read_is_a_full_run[include-str]",
+   "failed": true,
+   "line": "LISTS_FILES.search(lake) or Path(name).name.casefold() in lake)"
+  },
+  {
+   "name": "iv-base-skips-the-file-checks",
+   "file": "tools/trust_mutants.py",
+   "test": "tests/test_trust_mutants.py::test_any_other_change_beside_a_plan_only_input_is_a_full_run[base-and-a-file-of-the-import-closure]",
+   "failed": true,
+   "line": "            if why := why_not(changed) if changed else \"its per-file digests show no change\" if {"
+  },
+  {
+   "name": "v-an-old-record-is-plan-only",
+   "file": "tools/trust_mutants.py",
+   "test": "tests/test_trust_mutants.py::test_any_other_change_beside_a_plan_only_input_is_a_full_run[old-record-without-tool-files]",
+   "failed": true,
+   "line": "            whole = \"tool\" in differ and (not moved or not PLAN_ONLY_TOOL.issuperset(moved))"
+  },
+  {
+   "name": "vi-the-record-loses-plan_only",
+   "file": "tools/trust_mutants.py",
+   "test": "tests/test_trust_mutants.py::test_a_plan_only_rescore_in_one_run_and_in_parts_gives_one_record[base]",
+   "failed": true,
+   "line": "if k in (\"full_run\", \"plan_only\")})}"
+  },
+  {
+   "name": "vii-merge-needs-a-changed-file",
+   "file": "tools/trust_mutants.py",
+   "test": "tests/test_trust_mutants.py::test_a_plan_only_rescore_in_one_run_and_in_parts_gives_one_record[base]",
+   "failed": true,
+   "line": "mode == \"checks\" and (not (rescore_part[\"changed\"] or rescore_part.get(\"plan_only\"))"
+  },
+  {
+   "name": "viii-parts-may-disagree-on-plan_only",
+   "file": "tools/trust_mutants.py",
+   "test": "tests/test_trust_mutants.py::test_merge_binds_rescore_to_owned_rows[plan-only-disagrees]",
+   "failed": true,
+   "line": "for x in (\"mode\", \"head\", \"file\", \"changed\", \"plan_only\", \"full_run\"))]"
+  },
+  {
+   "name": "ix-outside-test-files-not-searched",
+   "file": "tools/trust_mutants.py",
+   "test": "tests/test_trust_mutants.py::test_a_file_lake_or_lean_may_read_is_a_full_run[outside-test]",
+   "failed": true,
+   "line": "return \"\\n\".join([*out, *(t.read_text() for t in outside)]).casefold()"
+  },
+  {
+   "name": "x-case-matters",
+   "file": "tools/trust_mutants.py",
+   "test": "tests/test_trust_mutants.py::test_a_file_lake_or_lean_may_read_is_a_full_run[bare-name]",
+   "failed": true,
+   "line": "LISTS_FILES.search(lake) or Path(name).name.casefold() in lake)"
+  },
+  {
+   "name": "xi-directory-listing-is-no-read",
+   "file": "tools/trust_mutants.py",
+   "test": "tests/test_trust_mutants.py::test_a_file_lake_or_lean_may_read_is_a_full_run[read-dir]",
+   "failed": true,
+   "line": "LISTS_FILES.search(lake) or Path(name).name.casefold() in lake)"
+  },
+  {
+   "name": "xii-table-digest-needs-no-listing",
+   "file": "tools/trust_mutants.py",
+   "test": "tests/test_trust_mutants.py::test_plan_only_inputs_go_on_to_the_checks_and_are_recorded[table]",
+   "failed": true,
+   "line": "*(x for x in changed if x == CLASS_TABLE or no_build_reads(x, \"\"))]"
+  },
+  {
+   "name": "xiii-tool_files-not-recorded",
+   "file": "tools/trust_mutants.py",
+   "test": "tests/test_trust_mutants.py::test_plan_only_inputs_go_on_to_the_checks_and_are_recorded[plan-only-module]",
+   "failed": true,
+   "line": "\"files\": files, \"tool_files\": tool_files}"
+  },
+  {
+   "name": "xiv-stripper-ignores-strings",
+   "file": "tools/trust_mutants.py",
+   "test": "tests/test_trust_mutants.py::test_a_read_after_comment_like_text_is_still_a_read[string-dashes]",
+   "failed": true,
+   "line": "elif kind == \"mark\" and token[0] == 'NOT A MARK':"
+  },
+  {
+   "name": "xiv-b-stripper-ignores-strings-against-lean",
+   "file": "tools/trust_mutants.py",
+   "test": "tests/test_trust_mutants.py::test_lean_code_blanks_what_lean_skips_and_nothing_it_reads",
+   "failed": true,
+   "line": "elif kind == \"mark\" and token[0] == 'NOT A MARK':"
+  },
+  {
+   "name": "xv-stripper-ignores-char-literals",
+   "file": "tools/trust_mutants.py",
+   "test": "tests/test_trust_mutants.py::test_a_read_after_comment_like_text_is_still_a_read[char-quote]",
+   "failed": true,
+   "line": "elif kind == \"mark\" and token[0] == \"NOT A MARK\":"
+  },
+  {
+   "name": "xvi-stripper-ignores-raw-strings",
+   "file": "tools/trust_mutants.py",
+   "test": "tests/test_trust_mutants.py::test_a_read_after_comment_like_text_is_still_a_read[raw-string]",
+   "failed": true,
+   "line": "r'(?P<raw>NOT A MARK)'"
+  },
+  {
+   "name": "xvii-holes-not-read-after-s!",
+   "file": "tools/trust_mutants.py",
+   "test": "tests/test_trust_mutants.py::test_a_read_after_comment_like_text_is_still_a_read[interpolated]",
+   "failed": true,
+   "line": "i = LEAN_STRING_TAIL.match(text, i).end()"
+  },
+  {
+   "name": "xviii-a-brace-with-no-prefix-is-plain",
+   "file": "tools/trust_mutants.py",
+   "test": "tests/test_trust_mutants.py::test_a_read_after_comment_like_text_is_still_a_read[holes-no-prefix-says]",
+   "failed": true,
+   "line": "if not tail:"
+  },
+  {
+   "name": "xix-block-comments-do-not-nest",
+   "file": "tools/trust_mutants.py",
+   "test": "tests/test_trust_mutants.py::test_a_name_only_in_a_lean_comment_carries[nested-block-NOTES.md]",
+   "failed": true,
+   "line": "nesting += 0 if mark[0] == \"/-\" else -1"
+  },
+  {
+   "name": "xix-b-a-block-runs-to-the-last-closer",
+   "file": "tools/trust_mutants.py",
+   "test": "tests/test_trust_mutants.py::test_a_read_after_comment_like_text_is_still_a_read[nested-block-end]",
+   "failed": true,
+   "line": "i = text.rfind(\"-/\") + 2"
+  },
+  {
+   "name": "xx-unterminated-comment-is-blanked",
+   "file": "tools/trust_mutants.py",
+   "test": "tests/test_trust_mutants.py::test_a_read_after_comment_like_text_is_still_a_read[unterminated-comment]",
+   "failed": true,
+   "line": "else:"
+  },
+  {
+   "name": "xxi-an-opener-inside-a-token-is-a-comment",
+   "file": "tools/trust_mutants.py",
+   "test": "tests/test_trust_mutants.py::test_a_read_after_comment_like_text_is_still_a_read[dashes-inside-a-token]",
+   "failed": true,
+   "line": "if False:"
+  },
+  {
+   "name": "xxii-any-file-loses-comments",
+   "file": "tools/trust_mutants.py",
+   "test": "tests/test_trust_mutants.py::test_a_file_that_is_no_lean_source_stays_whole[lakefile-toml]",
+   "failed": true,
+   "line": "return lean_code(text)"
+  },
+  {
+   "name": "xxiii-comments-are-searched",
+   "file": "tools/trust_mutants.py",
+   "test": "tests/test_trust_mutants.py::test_the_real_trees_comments_cost_no_full_run",
+   "failed": true,
+   "line": "return text"
+  },
+  {
+   "name": "xxiv-prime-ends-a-word",
+   "file": "tools/trust_mutants.py",
+   "test": "tests/test_trust_mutants.py::test_lean_code_blanks_what_lean_skips_and_nothing_it_reads",
+   "failed": true,
+   "line": "LEAN_REST = LEAN_LETTER + \"0-9!?"
+  },
+  {
+   "name": "xxv-doc-comment-opens-with-two-chars",
+   "file": "tools/trust_mutants.py",
+   "test": "tests/test_trust_mutants.py::test_lean_code_blanks_what_lean_skips_and_nothing_it_reads",
+   "failed": true,
+   "line": "r\"|(?P<comment>--|/-)\""
+  },
+  {
+   "name": "xxvi-escaped-identifier-unknown",
+   "file": "tools/trust_mutants.py",
+   "test": "tests/test_trust_mutants.py::test_a_read_after_comment_like_text_is_still_a_read[escaped-identifier]",
+   "failed": true,
+   "line": "elif kind == \"mark\" and token[0] == \"NOT A MARK\":"
+  },
+  {
+   "name": "xxvii-recursion-crashes",
+   "file": "tools/trust_mutants.py",
+   "test": "tests/test_trust_mutants.py::test_text_nested_past_the_recursion_limit_stays_whole",
+   "failed": true,
+   "line": "except LeanUnsure:"
+  },
+  {
+   "name": "xxviii-docstring-loses-the-condition",
+   "file": "tools/trust_mutants.py",
+   "test": "tests/test_trust_mutants.py::test_the_docstring_states_the_condition_where_it_claims_the_carry",
+   "failed": true,
+   "line": "an outside --test file, a generated inventory, trust_map's table, or a lean/*.md. Trust_map's table"
+  }
+ ]
+}

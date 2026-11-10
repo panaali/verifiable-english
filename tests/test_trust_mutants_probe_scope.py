@@ -16,7 +16,7 @@ import sys
 import pytest
 
 from subprocesses import HANG_TIMEOUT
-from test_trust_mutants import DECIDE_FALSE, PATH, REFUTE, ROOT, dump, git, scaffold
+from test_trust_mutants import DECIDE_FALSE, PATH, REFUTE, ROOT, dump, git, scaffold, tool
 
 sys.path.insert(0, str(ROOT / "tools"))
 import lake_outputs  # noqa: E402
@@ -115,6 +115,149 @@ def test_an_entry_without_its_done_marker_is_absent():
         assert tm.refusal(entry, control) == "Lean could not elaborate it in the probe"
 
 
+def test_lazy_controls_only_probe_read_checks_and_reuse_entries():
+    calls = []
+    spans = {(1, 1), (2, 2), (3, 3)}
+
+    def probing(file, only):
+        calls.append((file, only))
+        return {s: whole() for s in (spans if only is None else only)}, spans
+
+    cache = tm.ControlProbes({"A.lean": None, "B.lean": None}, probing)
+    assert calls == []  # a file with no candidate kill is never probed
+    assert cache.get(("A.lean", (1, 1)), {(1, 1)}) == whole()
+    assert cache.get(("A.lean", (1, 1)), {(1, 1)}) == whole()
+    assert cache.get(("A.lean", (2, 2)), {(1, 1), (2, 2)}) == whole()
+    assert calls == [("A.lean", {(1, 1)}), ("A.lean", {(2, 2)})]
+
+
+def test_lazy_control_incomplete_scope_falls_back_and_timeout_stays_unknown():
+    calls = []
+
+    def probing(file, only):
+        calls.append(only)
+        if only is None:
+            return {(1, 1): whole(**{"Demo.f": "old"}), (2, 2): whole()}, {(1, 1), (2, 2)}
+        return {(1, 1): {"flags": {"hash 1"}, "consts": {}}}, {(1, 1), (2, 2)}
+
+    cache = tm.ControlProbes({"A.lean": None}, probing)
+    control = cache.get(("A.lean", (1, 1)), {(1, 1)})
+    assert calls == [{(1, 1)}, None] and control == whole(**{"Demo.f": "old"})
+    assert tm.refusal(whole(**{"Demo.f": "drift"}), control) == (
+        "Demo.f, which it reads, is not what it is without the mutant")
+    assert cache.get(("A.lean", (2, 2)), {(2, 2)}) == whole() and len(calls) == 2
+
+    timed_out = tm.ControlProbes({"A.lean": None}, lambda f, only: ({}, {(1, 1)}))
+    assert tm.refusal(whole(), timed_out.get(("A.lean", (1, 1)), {(1, 1)})) == (
+        "Lean could not elaborate it in the probe")
+
+
+def test_lazy_control_of_a_file_outside_the_targets_is_none_as_in_eager():
+    """eff-20261108-1 F1: `settle` can read a check module no target names (in the mutated module's cone, imported by
+    a target). Eager's `hashes` has no entry for it, so `.get` is None; the lazy cache gives the same None without
+    probing, never a KeyError, and `refusal` reads it as not elaborated (UNKNOWN)."""
+    calls = []
+    cache = tm.ControlProbes({"A.lean": None}, lambda f, only: calls.append(f) or ({}, set()))
+    eager: dict = {}
+    for scope in ({(2, 2)}, set()):
+        assert cache.get(("Far/Mid.lean", (2, 2)), scope) is None is eager.get(("Far/Mid.lean", (2, 2)))
+    assert calls == []
+    assert tm.refusal(whole(), cache.get(("Far/Mid.lean", (2, 2)), {(2, 2)})) == (
+        "Lean could not elaborate it in the probe")
+
+
+def test_concurrent_lazy_control_of_one_file_is_computed_once():
+    from concurrent.futures import ThreadPoolExecutor
+    from threading import Event
+
+    entered, second, release = Event(), Event(), Event()
+    calls = []
+
+    def probing(file, only):
+        calls.append(only)
+        if len(calls) > 1:  # a second computation (no shared lock): the test fails on `calls`
+            second.set()
+            return {(1, 1): whole()}, {(1, 1)}
+        entered.set()
+        assert release.wait(timeout=HANG_TIMEOUT)
+        return {(1, 1): whole()}, {(1, 1)}
+
+    class Watched:  # the file's lock, which says when the second reader is waiting on it
+        def __init__(self, inner):
+            self.inner, self.tries = inner, 0
+
+        def __enter__(self):
+            self.tries += 1
+            if self.tries == 2:
+                second.set()
+            self.inner.acquire()
+
+        def __exit__(self, *exc):
+            self.inner.release()
+
+    cache = tm.ControlProbes({"A.lean": None}, probing)
+    cache.locks["A.lean"] = Watched(cache.locks["A.lean"])
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        one = pool.submit(cache.get, ("A.lean", (1, 1)), {(1, 1)})
+        assert entered.wait(timeout=HANG_TIMEOUT)
+        two = pool.submit(cache.get, ("A.lean", (1, 1)), {(1, 1)})
+        assert second.wait(timeout=HANG_TIMEOUT)  # the second reader is at the lock (or computing without it)
+        release.set()
+        assert one.result() == two.result() == whole()
+    assert calls == [{(1, 1)}]
+
+
+def test_lazy_controls_of_different_files_can_probe_together():
+    from concurrent.futures import ThreadPoolExecutor
+    from threading import Barrier
+
+    both = Barrier(2)
+
+    def probing(file, only):
+        both.wait(timeout=HANG_TIMEOUT)
+        return {(1, 1): whole()}, {(1, 1)}
+
+    cache = tm.ControlProbes({"A.lean": None, "B.lean": None}, probing)
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        a = pool.submit(cache.get, ("A.lean", (1, 1)), {(1, 1)})
+        b = pool.submit(cache.get, ("B.lean", (1, 1)), {(1, 1)})
+        assert a.result() == b.result() == whole()
+
+
+def test_run_reads_the_unmutated_control_for_a_drifted_constant(tmp_path, monkeypatch):
+    lean = tmp_path / "lean"
+    (lean / "Demo").mkdir(parents=True)
+    (lean / "Demo/Defs.lean").write_text("abc")
+    (lean / "Demo/Check.lean").write_text("import Demo.Defs\n#guard true\n")
+
+    class Scratch:
+        def __init__(self):
+            self.lean = lean
+
+        def lake(self, env, *args, timeout=None):
+            return (1, "FAIL") if "+Demo.Check" in args and (lean / "Demo/Defs.lean").read_text() != "abc" else (0, "")
+
+    key = ("Demo/Check.lean", (2, 2))
+    control = tm.ControlProbes({key[0]: None}, lambda f, only: ({(2, 2): whole(**{"Demo.f": "old"})}, {(2, 2)}))
+    monkeypatch.setattr(tm, "targets", lambda *args: ["Demo.Defs", "Demo.Check"])
+    monkeypatch.setattr(tm, "moved", lambda *args: None)
+    monkeypatch.setattr(tm, "located", lambda output, pattern=tm.ERROR: [(*key[:1], 2, 1, "bad")] if output else [])
+    monkeypatch.setattr(tm, "named", lambda text, roles: (text, {"tmChk_2": (2, 2)}))
+    monkeypatch.setattr(tm, "probe", lambda lake, env, text, roles, path, outside=False, only=None: {
+        (2, 2): whole(**{"Demo.f": "drift"})})
+
+    def settle(found, read, checkout, roles, rebuild, reads, scope):
+        scope({key})
+        return "UNKNOWN", reads(key)
+
+    monkeypatch.setattr(tm, "settle", settle)
+    mutant = tm.Mutant("M001", "Demo/Defs.lean", 1, "Demo.f", "body-true", 0, 1, (1, 1), "a", "X")
+    mutant.edit = (1, "X")
+    tree = tm.Tree({"Demo/Check.lean": [(2, 2, "check", None)]}, {}, {}, {})
+    assert tm.run(mutant, Scratch(), tree, [], [], {}, hashes=control) == (
+        "UNKNOWN", "Demo.f, which it reads, is not what it is without the mutant")
+
+
 # --- `probe(only=...)` and `kept`, without Lean ------------------------------------------------------------------
 
 
@@ -167,6 +310,27 @@ def test_probe_keeps_an_entry_whose_walk_did_not_finish_without_done(tmp_path):
     path = tmp_path / "A.lean"
     got = tm.probe(FakeLake(path, cut=("tmChk_4",)), {}, PROBED, PROBED_ROLES, path, only={(2, 2), (4, 5)})
     assert tm.complete(got[(2, 2)]) and not tm.complete(got[(4, 5)])
+
+
+def test_a_probe_past_the_build_timeout_says_so_and_stays_unknown(tmp_path):
+    """tm-m509-reads-linear (2): a probe run killed at --build-timeout (`TIMED_OUT`, the scoped one and the whole
+    file's) leaves each check it was to walk unknown with that reason, not "Lean could not elaborate it"; a run Lean
+    failed keeps the old reason."""
+    path, calls = tmp_path / "A.lean", []
+
+    def lake(env, *args):
+        calls.append(env.get("TM_TRUST_ONLY"))
+        return tm.TIMED_OUT, f"lake {args[0]} did not finish in 500 s (--build-timeout)"
+    probes = tm.Probes(lambda f, only: (tm.probe(lake, {}, PROBED, PROBED_ROLES, path, only=only),
+                                        {(2, 2), (4, 5), (6, 6), (7, 7)}))
+    probes.scope({("A.lean", (2, 2))})
+    got = tm.settle([("A.lean", 2, REFUTE)], lambda f: PROBED, lambda f: PROBED, {"A.lean": PROBED_ROLES}, None,
+                    lambda key: tm.refusal(probes(key), whole()))
+    assert calls == ["tmChk_2", None]  # the scoped probe, then the whole file's (`Probes`)
+    assert got[0] == "UNKNOWN" and got[1].endswith("(the probe did not finish in 500 s (--build-timeout))"), got
+    failed = tm.probe(lambda env, *args: (1, "error"), {}, PROBED, PROBED_ROLES, path)
+    assert failed == {} and tm.refusal(failed.get((2, 2)), whole()) == "Lean could not elaborate it in the probe"
+    assert tm.refusal(whole(), probes(("A.lean", (2, 2)))) == "the probe did not finish in 500 s (--build-timeout)"
 
 
 # F3's shapes (review 5): a `mutual … end` holding a `decide` theorem, `where` and `termination_by` tails, a docstring
@@ -349,6 +513,78 @@ def test_the_walk_reads_and_prints_only(edit, fault):
         assert edit(tm.READS) != tm.READS and any(fault in x for x in faults), faults
 
 
+# tm-m509-reads-linear (1): the List worklist `READS` had (`++` copied it per constant), rebuilt from today's text
+LIST_WORKLIST = [
+    ("  let mut todo : Array Name := roots.foldl (fun a e => a ++ e.getUsedConstants) #[]\n  let mut head := 0\n",
+     "  let mut todo : List Name := roots.foldl (fun a e => a ++ e.getUsedConstants.toList) []\n"),
+    ("  while head < todo.size do\n    let c := todo[head]!\n    head := head + 1\n",
+     "  while !todo.isEmpty do\n    let c := todo.head!\n    todo := todo.tail!\n"),
+    ("todo ++ info.type.getUsedConstants ++ value.getUsedConstants\n",
+     "todo ++ info.type.getUsedConstants.toList ++ value.getUsedConstants.toList\n")]
+ORDER_DEFS = """namespace Demo
+
+def helper (n : Nat) : Nat := n + 1
+def shared (n : Nat) : Nat := helper n + helper (n + 1)
+def other (n : Nat) : Nat := helper (2 * n)
+def twice (n : Nat) : Nat := shared n + other n
+
+mutual
+def isEven : Nat → Bool
+  | 0 => true
+  | n + 1 => isOdd n
+def isOdd : Nat → Bool
+  | 0 => false
+  | n + 1 => isEven n
+end
+
+end Demo
+"""
+ORDER = "import Demo.Defs\nopen Demo\n\n#guard twice 2 == 12\n\nexample : isEven 4 = true := by decide\n"
+
+
+@pytest.fixture(scope="module")
+def order_package(tmp_path_factory) -> Path:
+    root = tmp_path_factory.mktemp("order")
+    scaffold(root, ".")
+    (root / "lean/Demo/Defs.lean").write_text(ORDER_DEFS)
+    (root / "lean/Demo/Order.lean").write_text(ORDER)
+    assert lake_in(root / "lean")({**os.environ, **PATH}, "build", "Demo.Order")[0] == 0
+    return root
+
+
+def walk_lines(root: Path, reads: str, monkeypatch) -> list[str]:
+    """Every line `reads`, installed, prints for `ORDER`'s checks, in order, without the call's nonce."""
+    lean, env, said = root / "lean", {**os.environ, **PATH}, []
+    with monkeypatch.context() as patch:
+        patch.setattr(tm, "READS", reads)
+        assert tm.install(lambda *a: lake_in(lean)(env, *a), lean)
+
+    def lake(env_: dict, *args: str) -> tuple[int, str]:
+        said.append((env_["TM_TRUST_NONCE"], got := lake_in(lean)(env_, *args)))
+        return got
+    tm.probe(lake, env, ORDER, [(4, 4, "check", None), (6, 6, "check", None)], lean / "Demo/Order.lean")
+    (nonce, (code, out)), = said
+    return [rest for mark, _, rest in (x.partition(" ") for x in out.splitlines()) if mark == nonce]
+
+
+def test_the_linear_worklist_walks_in_the_list_order(order_package, monkeypatch):
+    """tm-m509-reads-linear (1): `READS`'s Array queue prints exactly the lines the List worklist printed, in the
+    same order (`hash`, each `const`, `done`), for a check over a shared closure (`helper` under `shared` and
+    `other`) and one over a cycle (`isEven`/`isOdd`'s `_unsafe_rec`s)."""
+    lines = walk_lines(order_package, tm.READS, monkeypatch)
+    assert [x.split()[2] for x in lines if x.startswith("tmChk_4 const")] == [
+        "Demo.twice", "Demo.shared", "Demo.other", "Demo.helper"]  # the List's order: breadth first
+    assert any(" const Demo.isOdd._unsafe_rec " in x for x in lines)
+    for k in ("tmChk_4", "tmChk_6"):
+        mine = [x for x in lines if x.startswith(k + " ")]
+        assert mine[-1] == f"{k} done" and sum(" const " in x for x in mine) >= 3, mine
+    old = tm.READS
+    for new, before in LIST_WORKLIST:
+        assert old.count(new) == 1, new
+        old = old.replace(new, before)
+    assert lines == walk_lines(order_package, old, monkeypatch)
+
+
 # --- the seeds, in real Lean, in five modes ----------------------------------------------------------------------
 
 
@@ -448,7 +684,8 @@ def write(row):
 
 
 def probing(lake, env, text, roles, path, outside=False, only=None):
-    row = {"file": path.name, "only": None if only is None else sorted(only)}
+    row = {"file": path.name, "only": None if only is None else sorted(only),
+           "control": "TM_TRUST_MUTATED" not in env}
     if mode == "naive" and only is not None:
         roles = [r for r in roles if (r[0], r[1]) in only]
     got = probe(lake, env, text, roles, path, outside, None if mode == "off" else only)
@@ -485,27 +722,25 @@ sys.exit(tm.main(sys.argv[4:]))
 MODES = ("off", "on", "dual", "cut-1", "naive")
 
 
-def seeded(root: Path, scratch: Path, mode: str) -> tuple[dict, list[dict], str]:
+def seeded(root: Path, scratch: Path, mode: str, control_mode: str = "eager",
+           max_mutants: int = 1000, jobs: int = 4) -> tuple[dict, list[dict], str]:
     scratch.mkdir(parents=True, exist_ok=True)
     (wrapper := scratch / "wrapper.py").write_text(WRAPPER)
     log, out = scratch / "probes.jsonl", scratch / "evidence.json"
     env = {**os.environ, **PATH, "TMPDIR": str(scratch), "VE_LEAN_SHARE": "off"}
     done = subprocess.run([sys.executable, str(wrapper), str(ROOT / "tools"), mode, str(log), "--root", str(root),
-                           "--base", "HEAD~1", "--jobs", "4", "--json", str(out), "--test", "outside/Check.lean",
-                           "--max-mutants", "1000"], env=env, capture_output=True, text=True, timeout=HANG_TIMEOUT)
+                           "--base", "HEAD~1", "--jobs", str(jobs), "--control-probes", control_mode,
+                           "--json", str(out), "--test", "outside/Check.lean",
+                           "--max-mutants", str(max_mutants)], env=env, capture_output=True, text=True,
+                          timeout=HANG_TIMEOUT)
     mutants = json.loads(out.read_text())["mutants"] if out.is_file() else []
     rows = [json.loads(x) for x in log.read_text().splitlines()] if log.is_file() else []
     return {m["id"]: (m["definition"], m["operator"], m["status"], m["raw_status"], m["detail"])
             for m in mutants}, rows, done.stderr[-3000:]
 
 
-def test_the_scoped_probe_classifies_the_seeds_as_the_whole_file_probe(tmp_path_factory):
-    """Design 6 and review 8: the seed package's mutants get the same status, raw_status and detail with the scoped
-    probe (`on`, `dual`, and `cut-1`, which must fall back) as with the whole file's (`off`); in `dual` every scoped
-    entry carries `done` and equals the whole file's, none absent in both and none falling back; the controls'
-    probes are whole-file in every mode; `reading` refuses a key `settle` did not hand over; and the wrong design
-    (`naive`) changes S1. A KILLED detail cites the first kill in Lake's output order, which two check modules built
-    at once can swap (without the probe too), so it is compared up to that."""
+@pytest.fixture(scope="module")
+def seed_package(tmp_path_factory):
     root = tmp_path_factory.mktemp("seeds")
     scaffold(root, ".")
     for name, text in (("Defs", SEED_DEFS), ("Mid", SEED_MID), ("Examples", SEED_EXAMPLES), ("Second", SEED_SECOND)):
@@ -515,9 +750,37 @@ def test_the_scoped_probe_classifies_the_seeds_as_the_whole_file_probe(tmp_path_
     dump(root, tmp_path_factory.mktemp("dump"), ["pre", "Demo.small_lt"])
     git(root, "add", ".")
     git(root, "commit", "-qm", "head")
+    return root
+
+
+def test_eager_and_lazy_controls_agree_on_seeded_package(seed_package, tmp_path_factory):
+    eager, eager_rows, err = seeded(seed_package, tmp_path_factory.mktemp("eager-control"), "on", "eager", 30, 1)
+    assert eager, err
+    lazy, lazy_rows, err = seeded(seed_package, tmp_path_factory.mktemp("lazy-control"), "on", "lazy", 30, 1)
+    assert lazy, err
+    assert eager == lazy
+    eager_controls = [r for r in eager_rows if r.get("control")]
+    lazy_controls = [r for r in lazy_rows if r.get("control")]
+    assert eager_controls and lazy_controls
+    assert all(r["only"] is None for r in eager_controls)
+    assert any(r["only"] is not None for r in lazy_controls)
+    # eager: today's calls, one whole-file control per check file, all before any mutant; lazy: inside a mutant
+    probes = [r for r in eager_rows if "file" in r]
+    assert probes[:len(eager_controls)] == eager_controls and all(r["id"] is None for r in eager_controls)
+    assert len({r["file"] for r in eager_controls}) == len(eager_controls)
+    assert all(r["id"] is not None for r in lazy_controls)
+    assert {r["file"] for r in lazy_controls} <= {r["file"] for r in eager_controls}
+
+
+def test_the_scoped_probe_classifies_the_seeds_as_the_whole_file_probe(seed_package, tmp_path_factory):
+    """Design 6 and review 8: the seed package's mutants get the same status, raw_status and detail with the scoped
+    probe (`on`, `dual`, and `cut-1`, which must fall back) as with the whole file's (`off`); in `dual every scoped
+    entry carries `done` and equals the whole file's, none absent in both and none falling back; eager controls
+    are whole-file; `reading` refuses a key `settle` did not hand over. A KILLED detail cites the first kill in
+    Lake's output order, which two check modules built at once can swap, so it is compared up to that."""
     got, rows = {}, {}
     for mode in MODES:
-        got[mode], rows[mode], err = seeded(root, tmp_path_factory.mktemp(mode), mode)
+        got[mode], rows[mode], err = seeded(seed_package, tmp_path_factory.mktemp(mode), mode)
         assert got[mode], (mode, err)
     off = got["off"]
     same = lambda v: v[:4] + (("KILLED",) if v[3] == "KILLED" else (v[4],))  # noqa: E731
@@ -565,3 +828,27 @@ def test_the_scoped_probe_classifies_the_seeds_as_the_whole_file_probe(tmp_path_
     assert s6 and all(v[2] == "KILLED" and "outside/Check.lean" in v[4] for _, v in s6), s6
     rfl = SEED_SECOND.split("\n").index("example : Demo.tag 1 = 2 := rfl") + 1
     assert any(r["file"] == "Second.lean" and any(s <= rfl <= e for s, e in r["only"]) for r in dual)
+
+
+def test_probe_f1_a_check_module_outside_the_targets_gives_lazy_the_eager_verdicts(tmp_path_factory):
+    """eff-20261108-1 F1 (real Lean): `Demo/Far/Mid` sits in `Demo.Defs`' cone and `Demo/Check` (a target) imports
+    it, but no target names it (another directory, no statement names `inc`, no --deep), so it is outside the
+    control `files`. Its failing `#guard` is read by `settle`: eager gives UNKNOWN (no control), and lazy must give
+    the same rows, not a KeyError in a worker that loses every verdict of the run."""
+    root = tmp_path_factory.mktemp("f1") / "p"
+    root.mkdir()
+    scaffold(root, "Far")
+    for name, text in (("Defs", "namespace Demo\n\ndef inc (n : Nat) : Nat := n + 1\n\nend Demo\n"),
+                       ("Far/Mid", "import Demo.Defs\n#guard Demo.inc 1 == 2\n"),
+                       ("Check", "import Demo.Far.Mid\n#guard Demo.inc 0 == 1\n")):
+        (root / f"lean/Demo/{name}.lean").write_text(text)
+    dump(root, tmp_path_factory.mktemp("f1-dump"), [])
+    git(root, "add", ".")
+    git(root, "commit", "-qm", "head")
+    got = {}
+    for mode in ("eager", "lazy"):
+        done, mutants = tool(root, tmp_path_factory.mktemp(f"f1-{mode}"), "--control-probes", mode)
+        assert "Traceback" not in done.stderr, done.stderr[-3000:]
+        got[mode] = [(m["id"], m["status"], m["raw_status"], m["detail"]) for m in mutants]
+    assert got["eager"] and got["lazy"] == got["eager"], got
+    assert all(s == "UNKNOWN" and "Far/Mid.lean" in d and "could not elaborate" in d for _, s, _, d in got["lazy"])

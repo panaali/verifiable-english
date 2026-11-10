@@ -58,6 +58,8 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
 try:
     from git_words import names_git, program_is_git as _program_is_git, words as _command_words
+    import path_expressions
+    from path_expressions import callee as _callee
 finally:
     sys.path.remove(str(ROOT / "tools"))
 LIST = "tests/history-dependent.json"
@@ -66,7 +68,7 @@ FORMAT = "ve-history-tests@1"
 MAP_FORMAT = "ve-history-map@1"
 # The files besides the sources the list names (`named_sources`) whose change can make the lint fail: its two
 # inputs and its own code.
-INPUTS = (LIST, MAP_EXTRACT, "tools/history_tests.py", "tools/git_words.py")
+INPUTS = (LIST, MAP_EXTRACT, "tools/history_tests.py", "tools/git_words.py", "tools/path_expressions.py")
 START, READ = "starts git", "reads .git"
 # A pytest run started by the code: the source does not say which test files it runs (a list in data, a directory,
 # the whole suite), so the unit is listed, which is the safe side.
@@ -146,11 +148,6 @@ def _subcommand(arguments) -> str:
     return ""
 
 
-def _callee(call: ast.Call) -> str:
-    return call.func.attr if isinstance(call.func, ast.Attribute) else (
-        call.func.id if isinstance(call.func, ast.Name) else "")
-
-
 def _names_git_path(text: str) -> bool:
     return text == ".git" or text.startswith(".git/") or "/.git/" in text or text.endswith("/.git")
 
@@ -196,8 +193,7 @@ class _Scanner(ast.NodeVisitor):
         self.dynamic: set[str] = set()
         # The values assigned to each name in each code object (by qualified name), for a program or a path held
         # in a variable (`git = shutil.which("git")`, `TOOL = ROOT / "tools/x.py"`).
-        self.assigned: dict[tuple[str, str], list[ast.AST]] = {}
-        self._assignments(tree, "<module>", "")
+        self.assigned: dict[tuple[str, str], list[ast.AST]] = path_expressions.assignments(tree)
         # A module's or class's named argument vector (`GIT = ("git", "-c", ...)`) starts nothing where it is
         # bound: the code that uses the name does.
         self.vectors: dict[str, ast.AST] = {}
@@ -232,19 +228,6 @@ class _Scanner(ast.NodeVisitor):
                 for node in ast.walk(statement.value):
                     if _string(node) is not None and isinstance(node, ast.Constant):
                         self._ref(("plugin", node.value))
-
-    def _assignments(self, node, scope: str, prefix: str) -> None:
-        for child in ast.iter_child_nodes(node):
-            if isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef)):
-                self._assignments(child, prefix + child.name, prefix + child.name + ".<locals>.")
-            elif isinstance(child, ast.ClassDef):
-                self._assignments(child, prefix + child.name, prefix + child.name + ".")
-            else:
-                if isinstance(child, (ast.Assign, ast.AnnAssign, ast.NamedExpr)) and child.value is not None:
-                    for target in child.targets if isinstance(child, ast.Assign) else [child.target]:
-                        if isinstance(target, ast.Name):
-                            self.assigned.setdefault((scope, target.id), []).append(child.value)
-                self._assignments(child, scope, prefix)
 
     def code(self) -> set[str]:
         """Every piece of code of the file and every name it binds to git (`programs`): all a script runs."""
@@ -488,49 +471,10 @@ class _Scanner(ast.NodeVisitor):
             self._ref(("attribute", value.id, *chain))
         self.generic_visit(node)
 
-    def _path(self, node, depth: int = 0) -> tuple[str | None, bool]:
-        """The path an expression makes, as far as this file says: `(text, True)` relative to the root when it is
-        built from `__file__` (`Path(__file__).resolve().parents[1] / "tools" / "gate.py"`), `(text, False)` for
-        literal parts after an unknown base, `(None, False)` when the source does not say."""
-        if depth > 8:
-            return None, False
-        if isinstance(node, ast.Constant) and isinstance(node.value, str):
-            return node.value, False
-        if isinstance(node, ast.Name):
-            if node.id == "__file__":
-                return self.file, True
-            values = self._values(node.id)
-            return self._path(values[0], depth + 1) if len(values) == 1 else (None, False)
-        if isinstance(node, ast.BinOp) and isinstance(node.op, ast.Div):
-            (left, anchored), (right, _) = self._path(node.left, depth + 1), self._path(node.right, depth + 1)
-            if right is None:
-                return None, False
-            if left is None:
-                return right, False
-            return os.path.normpath(os.path.join(left, right)), anchored
-        if isinstance(node, ast.Call):
-            if _callee(node) in ("Path", "PurePath", "str", "fspath", "resolve", "absolute", "realpath", "abspath") \
-                    and len(node.args) <= 1:
-                inner = node.args[0] if node.args else (node.func.value if isinstance(node.func, ast.Attribute)
-                                                        else None)
-                return self._path(inner, depth + 1) if inner is not None else (None, False)
-            if _callee(node) == "join" and node.args:
-                parts = [self._path(argument, depth + 1) for argument in node.args]
-                if all(text is not None for text, _ in parts):
-                    return os.path.normpath(os.path.join(*(text for text, _ in parts))), parts[0][1]
-            return None, False
-        if isinstance(node, ast.Attribute) and node.attr == "parent":
-            text, anchored = self._path(node.value, depth + 1)
-            return (os.path.dirname(text) or ".", anchored) if text is not None else (None, False)
-        if isinstance(node, ast.Subscript) and isinstance(node.value, ast.Attribute) and node.value.attr == "parents" \
-                and isinstance(node.slice, ast.Constant) and type(node.slice.value) is int:
-            text, anchored = self._path(node.value.value, depth + 1)
-            if text is None:
-                return None, False
-            for _ in range(node.slice.value + 1):
-                text = os.path.dirname(text) or "."
-            return text, anchored
-        return None, False
+    def _path(self, node) -> tuple[str | None, bool]:
+        """The path an expression makes, as far as this file says (`path_expressions.path_of`, with the values
+        assigned where the current code would find them)."""
+        return path_expressions.path_of(node, self._values, self.file)
 
     def visit_Constant(self, node) -> None:
         if isinstance(node.value, str):

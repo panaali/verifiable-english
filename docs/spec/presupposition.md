@@ -933,9 +933,98 @@ structure Report where
 ```
 
 The bodies of `tableOk`, `premisesBefore`, `unitContent`, `unitAsserted`, `unitReadings`, `nodeCertificate`,
-`unitModes`, `claimReading`, `ruleReading` and `ruleConditions` are in the stub, as written in sections 1.4 to 1.8;
-`claimReading` and `ruleReading` set `aliases := []`. Draft 2 drops `unitUnformalised`, which no statement uses any
-more (R-6). The definitions that draft 2 changes or adds are written here in full:
+`unitModes`, `claimReading`, `ruleReading` and `ruleConditions` follow, copied verbatim from the PS-S stub (sections
+1.4 to 1.8 as the stub wrote them; ps-s-stub-c). With them come the two helpers `env` and `unitOf` that they and
+the certificate statement read, and the bodies of the signatures above that they or the statements call
+(`Carrier.root`, `Carrier.cand`, `Candidate.root`, `Candidate.core`, `Args.tuple`, `rowNames`). `claimReading` and
+`ruleReading` set `aliases := []`; `expectedReadings` below fills the claim readings' aliases, and rule readings
+keep none. `tableOk` calls `cellOk`, written below.
+
+```lean
+def Carrier.root : Carrier → Root
+  | .asserted => .asserted
+  | .conditioned => .conditioned
+  | _ => .bare
+
+def Carrier.cand : Carrier → Option Candidate
+  | .assumed _ => some .assumed
+  | .conditioned => some .conditioned
+  | .asserted => some .asserted
+  | .inPlace => some .inPlace
+  | .unconditional _ => some .unconditional
+  | .proved _ | .unresolved => none
+
+def Candidate.root : Candidate → Root
+  | .asserted => .asserted
+  | .conditioned => .conditioned
+  | _ => .bare
+
+def Candidate.core : Candidate → Bool
+  | .assumed | .conditioned | .asserted => true
+  | _ => false
+
+def Args.tuple (a : Args) : Option String × Option VE.Formula × Option VE.Formula × Option VE.Formula :=
+  (a.sort, a.restriction, a.body, a.pre)
+
+def rowNames : List String := ["definite", "plural", "generic"]
+
+def tableOk (rows : List String) (t : CandidateTable) : Bool :=
+  rows.all (fun row => [PositionClass.top, .negated, .antecedent, .consequent, .disjunct, .ruleAct,
+    .ruleGuard].all (fun pc => cellOk pc (t row pc)))
+
+def env (D : PDoc) : VE.Environment := D.E
+def unitOf (D : PDoc) (u : String) : Option DocUnit := D.units.find? (fun x => x.id == u)
+
+def unitContent (D : PDoc) (u : String) : Option VE.Formula :=
+  match unitOf D u with
+  | some ⟨_, _, .claim a⟩ => some a
+  | _ => none
+
+def unitAsserted (D : PDoc) (u : String) : Bool := ((unitOf D u).map (·.asserted)).getD false
+
+def unitReadings (D : PDoc) (u : String) : Option (List RReading) :=
+  match unitOf D u with
+  | some ⟨_, _, .readings rs⟩ => some rs
+  | _ => none
+
+def nodeCertificate (D : PDoc) (n : String) : Option VE.Tableau.Certificate :=
+  (D.proofs.find? (fun x => x.1 == n)).map (·.2)
+
+/-- D2-3: the declared background, then the asserted claims of the units strictly before `u`, in order. -/
+def premisesBefore (D : PDoc) (u : String) : List VE.Formula :=
+  D.background ++ (D.units.takeWhile (fun x => x.id != u)).filterMap (fun x =>
+    match x.content with
+    | .claim a => if x.asserted then some a else none
+    | _ => none)
+
+def unitModes (R : Report) (u : String) : List (Root × VE.Formula) :=
+  (R.checked.filter (fun c => c.ob.unit == u)).map (fun c => (c.ob.carrier.root, c.goal))
+
+/-- One candidate's reading of an unresolved claim obligation `c`, the unit's other obligations as recorded. -/
+def claimReading (R : Report) (c : Checked) (B : VE.Formula) (k : Candidate) : RReading :=
+  let ms := (R.checked.filter (fun d => d.ob.unit == c.ob.unit)).map (fun d =>
+    (if d.ob.id == c.ob.id then k.root else d.ob.carrier.root, d.goal))
+  { cand := k, aliases := [], content := .claim (carried ms B),
+    premise := (match k with
+      | .assumed => some c.goal
+      | .unconditional => some (c.frame.close c.pre)
+      | _ => none) }
+
+/-- One candidate's reading of an unresolved rule-act obligation `c` on the base rule `N`. -/
+def ruleReading (R : Report) (c : Checked) (N : VE.Norms.Node) (k : Candidate) : RReading :=
+  let conds := (R.checked.filter (fun d => d.ob.position == .ruleAct N.name)).filterMap (fun d =>
+    if d.ob.id == c.ob.id then (if k == .conditioned then some d.pre else none)
+    else if d.ob.carrier == .conditioned then some d.pre else none)
+  { cand := k, aliases := [], content := .rule (conds.foldl conditionNode N),
+    premise := if k == .assumed then some c.goal else none }
+
+/-- The rule conditions recorded on the rule named `n`, in block order. -/
+def ruleConditions (R : Report) (n : String) : List VE.Formula :=
+  (R.checked.filter (fun d => d.ob.position == .ruleAct n && d.ob.carrier == .conditioned)).map (·.pre)
+```
+
+Draft 2 drops `unitUnformalised`, which no statement uses any more (R-6). The definitions that draft 2 changes or
+adds are written here in full:
 
 ```lean
 /-- R-2: in place only in a negated or antecedent cell, and only beside conditioned. -/
@@ -1012,7 +1101,11 @@ restriction path; a generic row has no restriction.
    readings@1's separation check accepts each open set (its diagnostic). The separation function is named by the
    document (R-8): with `norm-defaults@0`, readings-defaults' `separates (fillDoc N) s i j σ` with
    `fillHolds N s i σ.base` (under the unspecified completion); without it, readings@1's `separates D s i j σ`.
-   On the soft chain an open set that contains a conditioned rule reading is refused first (below).
+   On the soft chain an open set that contains a conditioned rule reading is refused first (below). Step 5 learns
+   the chain where it calls the separation: PS-2a reads `chain` from the readings environment there, as `abstention`
+   reads `re.chain` (`lean/VE/Readings/Wire.lean`), so `PDoc` is unchanged (its `defaults` is true on both the norms
+   and the soft chain and does not tell them apart). Like the separation's other inputs (`fillDoc N`, σ), the
+   readings environment is a fixed parameter of `admit`, not a field of `PDoc`; no statement below changes.
 
 An open set that contains a conditioned rule reading needs an `unspecified` predicate, hence `norm-defaults@0`, and
 is therefore admitted on the norms chain only. On the rights chain `abstention` in `lean/VE/Readings/Wire.lean`
@@ -1221,6 +1314,8 @@ Lean writes the text; Python prints it. `<o>` is an obligation id.
 | `PresuppositionDefault: <o>: <predicate>` | a conditioned rule, or an unresolved rule obligation whose cell lists conditioned (R-7), whose predicate has an allow or deny default |
 | `PresuppositionUnresolved: <o>` | an unresolved obligation on a unit with one content |
 | `PresuppositionCandidates: <o>` | readings not exactly the emitted candidates, or fewer than two (R-D3); a recorded carrier not in the cell; a recorded in place at a frame that is not shallow (R-D1); a heading carrier other than proved and assumed (R-10); a second unresolved obligation in one unit |
+| `each other reading needs a distinguishing model id`; `distinguishing model does not separate readings` | check step 5: a pair of an open set's readings has no recorded situation; or none of its recorded situations separates it (readings@1's own texts, `lean/VE/Readings/Run.lean`; DRI reviews/dri-decisions-20261109-ps-2ab-2.md item 1) |
+| `UnsupportedProfile: a conditioned rule reading needs the norms chain (presupposition)` | check step 5, on the soft chain: an open set contains a conditioned rule reading (R-8; DRI 2026-11-04, item 2; A26) |
 | `ResourceLimit: presuppositions` | over budget: UNKNOWN, never a rejection |
 
 `PresuppositionRefuted: <o>: <unit>` is a report line, not a diagnostic.
@@ -1321,8 +1416,8 @@ listed elements, and only the listed tuples are true. "The owner" is `definite 0
 ### 7.3 Admission fixtures (PS-2a in Lean, PS-2b as documents)
 
 One fixture per accept rule and per diagnostic. The fixture table of the stub stands in for PS-E1's. A5u-allow,
-A5u-deny, A19, A20, A21, A24, A25, A26 (soft and rights chain), A27 and A28 are PS-2a's and PS-2b's condition
-fixtures: their task files name them as tests their gates must select (DRI 2026-11-04, item 1).
+A5u-deny, A19, A20, A21, A24, A25, A26 (soft chain), A27 (rights chain) and A28 are PS-2a's and PS-2b's condition
+fixtures: their task files must name them as tests their gates must select (DRI 2026-11-04, item 1).
 
 | Id | Document | Expected |
 |---|---|---|
@@ -1337,7 +1432,7 @@ fixtures: their task files name them as tests their gates must select (DRI 2026-
 | A7 | S17: proved, the certificate cites its own unit or the later "There is exactly one owner." | `PresuppositionCertificate: p1` |
 | A8 | S10: the same unit after "Alice has exactly one manager." | admitted, proved |
 | A9 | assumed carrier whose unit states `pre` without the projected hypothesis (S21: "There is exactly one owner." where the goal is "If the shop is open, there is exactly one owner") | `PresuppositionAssumedUnit: p1: <unit>` |
-| A10 | conditioned recorded as `B → G` instead of `G → B` | `PresuppositionMismatch: p1: content` |
+| A10 | conditioned recorded as `B → G` instead of `G → B` | `PresuppositionMismatch: p1: clause` (step 4: `B → G` peels to `G`; DRI reviews/dri-decisions-20261109-ps-2ab-2.md item 2) |
 | A11 | S16 with the two root goals recorded in the opposite nesting | `PresuppositionMismatch: p1: content` |
 | A12 | row `"title"` | `PresuppositionUnknownRow: p1: title` |
 | A13 | path `[2]` into an `ex` | `PresuppositionPosition: p1` |

@@ -638,6 +638,26 @@ theorem fill_sim_author (N : NDoc) (hN : WellFormedSD N = true) (hs : superposab
     (fun p ss hp vs hvs => pullF_canon hh hc hN hsu B hcB he (envAt_sub hp) vs hvs)
     _ _ ρ ((VE.check_iff_wellFormed _ _ _).mpr (VE.Norms.decides_wellFormed hT sign))
 
+/-- The outcome formulas transfer at an encoded filled base (`fill_sim`). -/
+theorem outcome_pullF (N : NDoc) (hN : WellFormedSD N = true) (hs : superposable N.D = true)
+    (hsu : VE.NormDefaults.WellFormedU (supU N) = true) (c : Choice) (hc : Compatible N.D c)
+    (B : VE.Structure.{u}) (hB : VE.Norms.BaseAdmissible (fill (supU N)) B) (hsl : Sat B (slotP N.D))
+    (he : Encodes N.D c B) {q : Regulated} (hq : q ∈ (supU N).D.T.regulated) (vs : List B.Carrier)
+    (hvs : VE.TupleTyped B q.sorts vs) :
+    (VE.Norms.outcomeBase (fill (supU N)) q.name).denote B (VE.Norms.tupleVal vs) ↔
+      (VE.Norms.outcomeBase (fill (choiceU N c)) q.name).denote (pullF N c B) (VE.Norms.tupleVal vs) := by
+  have hh := hyps_sd hN hs
+  have hcY : VE.Norms.ConstantsTyped (fill (choiceU N c)) (pullF N c B) := fun x s hx =>
+    hB.1.1 x s (constants_choiceSD hh x s hx)
+  have hregX : (supU N).D.T.regulated = N.D.frame.soft.T.regulated := by rw [supU_D hh]; exact sup_reg
+  have hregY : (choiceU N c).D.T.regulated = N.D.frame.soft.T.regulated := by rw [choiceU_D hh]; exact choice_reg c
+  have hqf : q ∈ N.D.frame.soft.T.regulated := hregX ▸ hq
+  rw [VE.NormDefaults.outcomeBase_fill hsu hB.1.1 hq vs hvs, outcomeBase_fill_v (valid_fill_choiceSD hh hc hN hsu)
+    hcY (hregY ▸ hqf) vs ((VE.Norms.tupleTyped_relation B _ _ vs).mpr hvs)]
+  split
+  · exact not_congr (fill_sim N hN hs hsu c hc B hB hsl he q hqf _ false)
+  · exact fill_sim N hN hs hsu c hc B hB hsl he q hqf _ true
+
 /-- `Fill_T` transfers at an encoded filled base. -/
 theorem fillPremisesSD_pull (N : NDoc) (hN : WellFormedSD N = true) (hs : superposable N.D = true)
     (hsu : VE.NormDefaults.WellFormedU (supU N) = true) (c : Choice) (hc : Compatible N.D c)
@@ -654,16 +674,8 @@ theorem fillPremisesSD_pull (N : NDoc) (hN : WellFormedSD N = true) (hs : superp
   have hregY : (choiceU N c).D.T.regulated = N.D.frame.soft.T.regulated := by rw [choiceU_D hh]; exact choice_reg c
   have tp : ∀ ss (vs : List B.Carrier), VE.TupleTyped B ss vs ↔ VE.TupleTyped (pullF N c B) ss vs :=
     fun ss vs => (VE.Norms.tupleTyped_relation B _ _ vs).symm
-  have hO : ∀ q ∈ (supU N).D.T.regulated, ∀ vs : List B.Carrier, VE.TupleTyped B q.sorts vs →
-      ((VE.Norms.outcomeBase (fill (supU N)) q.name).denote B (VE.Norms.tupleVal vs) ↔
-        (VE.Norms.outcomeBase (fill (choiceU N c)) q.name).denote (pullF N c B) (VE.Norms.tupleVal vs)) := by
-    intro q hq vs hvs
-    have hqf : q ∈ N.D.frame.soft.T.regulated := hregX ▸ hq
-    rw [VE.NormDefaults.outcomeBase_fill hsu hcX hq vs hvs,
-      outcomeBase_fill_v hvY hcY (hregY ▸ hqf) vs ((tp _ vs).mp hvs)]
-    split
-    · exact not_congr (fill_sim N hN hs hsu c hc B hB hsl he q hqf _ false)
-    · exact fill_sim N hN hs hsu c hc B hB hsl he q hqf _ true
+  have hO := fun (q : Regulated) (hq : q ∈ (supU N).D.T.regulated) =>
+    outcome_pullF N hN hs hsu c hc B hB hsl he hq
   have hG : ∀ q ∈ (supU N).D.T.regulated, ∀ vs : List B.Carrier, VE.TupleTyped B q.sorts vs →
       ((VE.NormDefaults.gapF (supU N) q.name).denote B (VE.Norms.tupleVal vs) ↔
         (VE.NormDefaults.gapF (choiceU N c) q.name).denote (pullF N c B) (VE.Norms.tupleVal vs)) := by
@@ -859,6 +871,23 @@ theorem selects_fillRoot (U : UDoc) (T : Tree) (f : Nat) (M : Node) :
     VE.Norms.selects T f (fillRoot U M) = VE.Norms.selects T f M := by
   unfold fillRoot; split <;> rfl
 
+/-- A rule's selection on the filled tree is typed over the full filled vocabulary at its act's sorts. -/
+theorem selects_fill_wf {U : UDoc} {Z : SoftDoc} (hU : U.D = soften Z) (hv : Valid (fill U)) {K : SoftNode}
+    (hK : K ∈ Z.T.nodes) (hreg : K.pred ∈ Z.T.regulated.map (·.name)) :
+    (VE.Norms.selects (fill U).T (fuel (fill U).T) (VE.SoftNorms.primeNode Z K)).WellFormed
+      (envAt (fill U) (size (fill U))) (VE.SoftNorms.sortsOf Z K.pred).reverse := by
+  obtain ⟨r, hr, hrn⟩ := List.mem_map.mp hreg
+  have e : (fill U).T.regulated = Z.T.regulated := by show U.D.T.regulated = _; rw [hU]; rfl
+  have hk := VE.Norms.index_before hv (show r ∈ (fill U).T.regulated by rw [e]; exact hr)
+  have hs : VE.SoftNorms.sortsOf Z K.pred = r.sorts := by
+    unfold VE.SoftNorms.sortsOf VE.SoftNorms.sortsIn; rw [← hrn, ← e, VE.Norms.find_regulated hv hk]; rfl
+  have hK0 : VE.SoftNorms.primeNode Z K ∈ U.D.T.nodes := by rw [hU]; exact List.mem_map_of_mem hK
+  have hsel := VE.Norms.selects_wellFormed (VE.Norms.rulesTyped_of_valid hv hk) (fuel (fill U).T) _
+    (VE.NormDefaults.mem_fill_nodes.mpr (Or.inl ⟨_, hK0, rfl⟩)) (by rw [VE.NormDefaults.fillRoot_pred]; exact hrn.symm)
+  rw [selects_fillRoot] at hsel
+  rw [hs]
+  exact VE.Norms.envAt_mono (Nat.le_of_lt (List.getElem?_eq_some_iff.mp hk).1) _ _ hsel
+
 /-- A rule's selection on the filled tree, as `cohPremiseU` reads it, is its soft selection on the canonical
     interpretation of `fill U`. -/
 theorem selU_canon {U : UDoc} {Z : SoftDoc} (hU : U.D = soften Z) (hu : FillLite U) (hv : Valid (fill U))
@@ -867,22 +896,10 @@ theorem selU_canon {U : UDoc} {Z : SoftDoc} (hU : U.D = soften Z) (hu : FillLite
     (hvs : VE.TupleTyped B (VE.SoftNorms.sortsOf Z K.pred) vs) :
     (VE.Defaults.selU U Z K).denote B (VE.Norms.tupleVal vs) ↔
       VE.SoftNorms.SelectsSoftD Z (canon (fill U) B) (VE.Norms.tupleVal vs) (VE.SoftNorms.fuel Z) K := by
-  obtain ⟨r, hr, hrn⟩ := List.mem_map.mp hreg
-  have e : (fill U).T.regulated = Z.T.regulated := by show U.D.T.regulated = _; rw [hU]; rfl
-  have hk := VE.Norms.index_before hv (show r ∈ (fill U).T.regulated by rw [e]; exact hr)
-  have hs : VE.SoftNorms.sortsOf Z K.pred = r.sorts := by
-    unfold VE.SoftNorms.sortsOf VE.SoftNorms.sortsIn; rw [← hrn, ← e, VE.Norms.find_regulated hv hk]; rfl
-  rw [hs] at hvs
   have hK0 : VE.SoftNorms.primeNode Z K ∈ U.D.T.nodes := by rw [hU]; exact List.mem_map_of_mem hK
-  have hsel := VE.Norms.selects_wellFormed (VE.Norms.rulesTyped_of_valid hv hk) (fuel (fill U).T) _
-    (VE.NormDefaults.mem_fill_nodes.mpr (Or.inl ⟨_, hK0, rfl⟩)) (by rw [VE.NormDefaults.fillRoot_pred]; exact hrn.symm)
-  rw [selects_fillRoot] at hsel
-  have hw : (VE.Norms.selects (fill U).T (fuel (fill U).T) (VE.SoftNorms.primeNode Z K)).WellFormed
-      (envAt (fill U) (size (fill U))) r.sorts.reverse :=
-    VE.Norms.envAt_mono (Nat.le_of_lt (List.getElem?_eq_some_iff.mp hk).1) _ _ hsel
   unfold VE.Defaults.selU
-  rw [VE.SoftNorms.canon_subst hv B hc _ _ _ hw _ (VE.Norms.tupleVal_typed B _ vs hvs), VE.Norms.selects_denote,
-    selects_fill_fuel_lite hu.author _ _ hK0, ← VE.Norms.selects_denote]
+  rw [VE.SoftNorms.canon_subst hv B hc _ _ _ (selects_fill_wf hU hv hK hreg) _ (VE.Norms.tupleVal_typed B _ vs hvs),
+    VE.Norms.selects_denote, selects_fill_fuel_lite hu.author _ _ hK0, ← VE.Norms.selects_denote]
   revert hK0; rw [hU]; intro _
   exact VE.SoftNorms.selectsPrime_denote Z _ _ K
 
@@ -1029,5 +1046,656 @@ theorem supX_pull (N : NDoc) (hN : WellFormedSD N = true) (hs : superposable N.D
     List.append_nil, List.append_nil]
   simp only [Sat, List.forall_mem_append]
   exact and_congr (exc_pullF hh hc he hsl) (coh_pullF hh hc hN hsu hB he)
+
+/-! ## Superposition (13.3)
+
+Down: a base of the filled superposed document under `A` encodes one compatible choice taking `A`
+(`encodes_unique_slot`, `encodes_atoms`); its filled pull is a base of that choice's filled document (`pullF_admissible`,
+`fillPremisesSD_pull`, `supX_pull`), and the two conflict-freedoms agree there (`conflictFree_pullF`, through
+`fill_sim`). Up: a base of a choice's filled document with an element is lifted by S2a's `upB`, applied to the base
+with its `unsaid__` tables emptied (`dropUnsaid`) so that S2a's lemmas apply; the third disjunct of `upRel` keeps the
+tables, so the lift is a base of the filled superposed document (`upB_admissibleF`) and its filled pull is the base it
+was lifted from (`pullF_upB`). -/
+
+open VE.SoftNorms (envPrime decisionNames)
+open VE.NormDefaults (unsaidNames)
+
+section Down
+variable {N : NDoc} (hh : Hyps N.D) {c : Choice}
+include hh
+
+theorem sortsOf_choiceU (p : String) :
+    VE.NormDefaults.sortsOf (choiceU N c).D p = VE.NormDefaults.sortsOf (supU N).D p := by
+  unfold VE.NormDefaults.sortsOf; rw [choiceU_D hh, supU_D hh]; simp only [soften]; rw [regs_eq c]
+
+/-- `nameMap` carries the filled choice's vocabulary into the filled superposed document's. -/
+theorem fullF_nameMap {p : String} {ss : List String} (hp : (fill (choiceU N c)).E.predicates p = some ss) :
+    (fill (supU N)).E.predicates (nameMap N.D c p) = some ss := by
+  rw [VE.NormDefaults.fill_E] at hp ⊢
+  by_cases hu : p ∈ unsaidNames (choiceU N c)
+  · obtain ⟨q, hq, rfl⟩ := List.mem_map.mp hu
+    rw [VE.NormDefaults.fillEnv_unsaid _ hq] at hp
+    rw [nameMap_unsaid hh, VE.NormDefaults.fillEnv_unsaid (supU N) hq, ← sortsOf_choiceU hh]; exact hp
+  · rw [VE.NormDefaults.fillEnv_off _ hu, choiceU_D hh, soften_E] at hp
+    have hn : nameMap N.D c p ∉ unsaidNames (supU N) := by
+      intro h
+      obtain ⟨q, hq, he⟩ := List.mem_map.mp h
+      by_cases hd : p ∈ decisionNames (choiceDoc N.D c).1.soft
+      · exact unsaid_not_decision _ q (he ▸ nameMap_decision hh c hd)
+      · rw [nameMap_nondecision hh c hd] at he; exact hu (List.mem_map.mpr ⟨q, hq, he⟩)
+    rw [VE.NormDefaults.fillEnv_off _ hn, supU_D hh, soften_E]
+    exact envPrime_nameMap hh c hp
+
+theorem pullF_admissible (hc : Compatible N.D c) (hN : WellFormedSD N = true)
+    (hsu : VE.NormDefaults.WellFormedU (supU N) = true) (B : VE.Structure.{u})
+    (hadm : B.Admissible (envAt (fill (supU N)) 0)) :
+    (pullF N c B).Admissible (envAt (fill (choiceU N c)) 0) := by
+  refine ⟨fun x s hx => hadm.1 x s (constants_choiceSD hh x s hx), ?_⟩
+  rintro p vs ⟨hne, hrel⟩
+  obtain ⟨ss', hss', htt⟩ := hadm.2 _ _ hrel
+  by_cases hpl : p ∈ layerNames (fill (choiceU N c)).T
+  · exfalso
+    rw [layerNames_fill_lite (fillLite_choiceSD hh hc hN hsu), choiceU_D hh] at hpl
+    obtain ⟨q, hq, rfl⟩ := List.mem_map.mp hpl
+    rw [nameMap_frame hh c (by rw [choice_sym_frame hh c hq]; simp)] at hss'
+    have hl : q.name ∈ layerNames (fill (supU N)).T := by
+      rw [layerNames_fill_lite (fillLite_of_uvalid (VE.NormDefaults.uvalid hsu)), supU_D hh]
+      exact (layer_iff hh hc _).mp hpl
+    have : (envAt (fill (supU N)) 0).predicates q.name = none := by simp [envAt, VE.Norms.hide, hl]
+    rw [this] at hss'; cases hss'
+  · rw [envAt_size_pred] at hne
+    obtain ⟨ss, hss⟩ := Option.ne_none_iff_exists'.mp hne
+    have h3 := (envAt_sub hss').symm.trans (fullF_nameMap hh hss)
+    cases h3
+    exact ⟨ss', by rw [VE.Norms.envAt_base hpl]; exact hss, (VE.Norms.tupleTyped_relation B _ _ vs).mpr htt⟩
+
+theorem pullF_literals (B : VE.Structure.{u}) (hl : Sat B (VE.Norms.backgroundBase (fill (supU N)))) :
+    Sat (pullF N c B) (VE.Norms.backgroundBase (fill (choiceU N c))) := by
+  have e : (fill (choiceU N c)).lits = (fill (supU N)).lits := by
+    rw [VE.NormDefaults.fill_lits, VE.NormDefaults.fill_lits, choiceU_D hh, supU_D hh]
+    show (build N.D (fun _ => true) (pickC c)).1.soft.lits = (sup N.D).1.soft.lits
+    rw [(build_shape N.D (fun _ => true) (pickC c)).lits, (sup_shape N.D).lits]; rfl
+  intro a ha
+  unfold VE.Norms.backgroundBase at ha
+  rw [e] at ha
+  have := hl a ha
+  obtain ⟨x, _, rfl⟩ := List.mem_map.mp ha
+  exact this
+end Down
+
+theorem conflict_fill_v {U : VE.NormDefaults.UDoc} (hv : Valid (fill U)) {B : VE.Structure.{u}}
+    (hc : VE.Norms.ConstantsTyped (fill U) B) {r : Regulated} (hr : r ∈ U.D.T.regulated) (vs : List B.Carrier)
+    (hvs : VE.TupleTyped B r.sorts vs) :
+    (VE.Norms.conflict (fill U) r).denote B (VE.Norms.tupleVal vs) ↔
+      DecidesD (fill U).T (canon (fill U) B) (VE.Norms.tupleVal vs) r.name true ∧
+        DecidesD (fill U).T (canon (fill U) B) (VE.Norms.tupleVal vs) r.name false := by
+  have hk := VE.Norms.index_before hv (show r ∈ (fill U).T.regulated from hr)
+  have hT := VE.Norms.rulesTyped_of_valid hv hk
+  have hρ := VE.Norms.tupleVal_typed B _ vs hvs
+  simp only [VE.Norms.conflict, VE.Norms.pos, VE.Norms.neg, VE.Formula.denote]
+  rw [VE.SoftNorms.canon_subst hv B hc _ _ _ (VE.Norms.decides_wellFormed hT true) _ hρ,
+    VE.SoftNorms.canon_subst hv B hc _ _ _ (VE.Norms.decides_wellFormed hT false) _ hρ,
+    VE.Norms.decides_denote, VE.Norms.decides_denote]
+
+
+theorem unsaid_not_bit (D : Doc) (q : String) : ¬ IsBit D (unsaidName q) := by
+  rintro ⟨m, j, _, _, h⟩
+  have h1 : (unsaidName q).data.head? = some 'u' := by simp [unsaidName, String.data_append]
+  rw [h] at h1; simp [bitName, String.data_append] at h1
+
+/-- A base with its `unsaid__` tables emptied: what S2a's lift reads of a filled choice base. -/
+def dropUnsaid (N : NDoc) (B : VE.Structure.{u}) : VE.Structure.{u} :=
+  { B with relation := fun p vs => p ∉ N.unspec.map unsaidName ∧ B.relation p vs }
+
+theorem envAt_fill_off_lite {U : VE.NormDefaults.UDoc} (hu : FillLite U) (k : Nat) {p : String}
+    (hp : p ∉ unsaidNames U) : (envAt (fill U) k).predicates p = (envAt U.D k).predicates p := by
+  simp only [envAt, VE.Norms.hide, layerNames_fill_lite hu]
+  split
+  · rfl
+  · rw [VE.NormDefaults.fill_E, VE.NormDefaults.fillEnv_off U hp]
+
+/-- A formula over a document's vocabulary at layer `k` is one over its filled document's. -/
+theorem wf_fill_at {U : UDoc} (hu : FillLite U) (k : Nat) {a : VE.Formula} {Γ : List String}
+    (h : a.WellFormed (envAt U.D k) Γ) : a.WellFormed (envAt (fill U) k) Γ :=
+  VE.Definitions.wf_mono (E := envAt U.D k) (E' := envAt (fill U) k) rfl rfl (envAt_fill_mono_lite hu k) a Γ h
+
+theorem wf_fill_full {U : UDoc} (hu : FillLite U) {a : VE.Formula} {Γ : List String}
+    (h : a.WellFormed (envAt U.D (size U.D)) Γ) : a.WellFormed (envAt (fill U) (size (fill U))) Γ := by
+  have hsz : size (fill U) = size U.D := by unfold size; rw [syms_fill_lite hu]
+  rw [hsz]; exact wf_fill_at hu _ h
+
+/-- The filled choice's full vocabulary has no choice sort and no choice constant. -/
+theorem fullY_free {N : NDoc} (hh : Hyps N.D) (c : Choice) :
+    "ve__reading" ∉ (envAt (fill (choiceU N c)) (size (fill (choiceU N c)))).sorts ∧
+      (envAt (fill (choiceU N c)) (size (fill (choiceU N c)))).constants "ve__here" = none := by
+  refine ⟨?_, ?_⟩
+  · show "ve__reading" ∉ (fillEnv (choiceU N c)).sorts
+    rw [VE.NormDefaults.fillEnv_sorts, choiceU_D hh, soften_E, envPrime_sorts, choice_E c]
+    exact frame_sorts_free hh.wf
+  · show (fillEnv (choiceU N c)).constants "ve__here" = none
+    rw [VE.NormDefaults.fillEnv_constants, choiceU_D hh, soften_E, envPrime_constants, choice_E c]
+    exact frame_here hh
+
+section Up
+variable {N : NDoc} (hh : Hyps N.D) {c : Choice} (hc : Compatible N.D c) (hN : WellFormedSD N = true)
+  (hsu : VE.NormDefaults.WellFormedU (supU N) = true) (B₀ : VE.Structure.{u}) (e : B₀.Carrier)
+  (hadm : B₀.Admissible (envAt (fill (choiceU N c)) 0))
+include hh hc hN hsu hadm
+
+theorem dropUnsaid_admissible :
+    (dropUnsaid N B₀).Admissible (envAt (soften (choiceDoc N.D c).1.soft) 0) := by
+  refine ⟨fun x s hx => hadm.1 x s (by
+    show (fillEnv (choiceU N c)).constants x = some s
+    rw [VE.NormDefaults.fillEnv_constants, choiceU_D hh]; exact hx), ?_⟩
+  rintro p vs ⟨hp, hb⟩
+  obtain ⟨ss, hss, htt⟩ := hadm.2 p vs hb
+  rw [envAt_fill_off_lite (fillLite_choiceSD hh hc hN hsu) 0 hp, choiceU_D hh] at hss
+  exact ⟨ss, hss, (VE.Norms.tupleTyped_relation B₀ _ _ vs).mpr htt⟩
+
+/-- S2a's lift is admissible for the filled superposed document's base vocabulary. -/
+theorem upB_admissibleF : (upB N.D c B₀ e).Admissible (envAt (fill (supU N)) 0) := by
+  have hX := fillLite_of_uvalid (VE.NormDefaults.uvalid hsu)
+  have hr := upB_admissible hh hc (dropUnsaid N B₀) e (dropUnsaid_admissible hh hc hN hsu B₀ hadm)
+  have hmono := fun p ss (h : (envAt (soften (sup N.D).1.soft) 0).predicates p = some ss) =>
+    envAt_fill_mono_lite hX 0 p ss (by rw [supU_D hh]; exact h)
+  refine ⟨fun x s hx => hr.1 x s (by
+    show (soften (sup N.D).1.soft).E.constants x = some s
+    rw [← supU_D hh]; exact hx), ?_⟩
+  intro p vs hrel
+  by_cases hp : p ∈ N.unspec.map unsaidName
+  · obtain ⟨q, hq, rfl⟩ := List.mem_map.mp hp
+    rcases hrel with ⟨h, _⟩ | ⟨_, hd, _⟩ | ⟨_, _, _, hb⟩
+    · exact absurd (onBit_isBit h) (unsaid_not_bit _ q)
+    · exact absurd hd (unsaid_not_decision _ q)
+    · obtain ⟨ss, hss, htt⟩ := hadm.2 _ vs hb
+      have h1 := envAt_sub hss
+      rw [VE.NormDefaults.fill_E, VE.NormDefaults.fillEnv_unsaid _ hq, sortsOf_choiceU hh] at h1
+      cases h1
+      refine ⟨_, ?_, tt_up htt⟩
+      rw [VE.Norms.envAt_base (fun hl => ?_), VE.NormDefaults.fill_E, VE.NormDefaults.fillEnv_unsaid _ hq]
+      rw [layerNames_fill_lite hX] at hl
+      obtain ⟨r, hr', he⟩ := List.mem_map.mp hl
+      have := (hX.valid.decl r hr').1
+      rw [he, hX.unsaid q hq] at this; cases this
+  · have hrel' : (upB N.D c (dropUnsaid N B₀) e).relation p vs := by
+      rcases hrel with h | ⟨h1, h2, q, hq, hqe, hb⟩ | ⟨h1, h2, h3, hb⟩
+      · exact Or.inl h
+      · refine Or.inr (Or.inl ⟨h1, h2, q, hq, hqe, ⟨fun hu => ?_, hb⟩⟩)
+        obtain ⟨q', _, rfl⟩ := List.mem_map.mp hu
+        exact unsaid_not_decision _ q' hq
+      · exact Or.inr (Or.inr ⟨h1, h2, h3, hp, hb⟩)
+    obtain ⟨ss, hss, htt⟩ := hr.2 p vs hrel'
+    exact ⟨ss, hmono p ss hss, (VE.Norms.tupleTyped_relation (upB N.D c (dropUnsaid N B₀) e) (upRel N.D c B₀ e) ss vs).mpr htt⟩
+
+/-- Pulled back with `pullF`, the lift is the base it was lifted from, `unsaid__` tables included. -/
+theorem pullF_upB (p : String) (vs : List B₀.Carrier) :
+    (pullF N c (upB N.D c B₀ e)).relation p vs ↔ B₀.relation p vs := by
+  have hY := fillLite_choiceSD hh hc hN hsu
+  by_cases hp : p ∈ N.unspec.map unsaidName
+  · obtain ⟨q, hq, rfl⟩ := List.mem_map.mp hp
+    refine (pullF_unsaid hh (c := c) (upB N.D c B₀ e) hq vs).trans ⟨?_, fun hb => ?_⟩
+    · rintro (⟨h, _⟩ | ⟨_, hd, _⟩ | ⟨_, _, _, hb⟩)
+      · exact absurd (onBit_isBit h) (unsaid_not_bit _ q)
+      · exact absurd hd (unsaid_not_decision _ q)
+      · exact hb
+    · exact Or.inr (Or.inr ⟨unsaid_not_bit _ q, unsaid_not_decision _ q, unsaid_not_decision _ q, hb⟩)
+  · have hpu := pull_upB hh c (dropUnsaid N B₀) e (dropUnsaid_admissible hh hc hN hsu B₀ hadm) p vs
+    have hfull : (envAt (fill (choiceU N c)) (size (fill (choiceU N c)))).predicates p =
+        (choiceEnvFull N.D c).predicates p := by
+      rw [envAt_size_pred, VE.NormDefaults.fill_E, VE.NormDefaults.fillEnv_off _ hp, choiceU_D hh,
+        choiceEnvFull_eq hh c]; rfl
+    have hnm : nameMap N.D c p ∉ N.unspec.map unsaidName := by
+      intro h
+      obtain ⟨q, hq, he⟩ := List.mem_map.mp h
+      by_cases hd : p ∈ decisionNames (choiceDoc N.D c).1.soft
+      · exact unsaid_not_decision _ q (he ▸ nameMap_decision hh c hd)
+      · rw [nameMap_nondecision hh c hd] at he; exact hp (List.mem_map.mpr ⟨q, hq, he⟩)
+    have hrel : ∀ q, q ∉ N.unspec.map unsaidName → (upRel N.D c B₀ e q vs ↔ upRel N.D c (dropUnsaid N B₀) e q vs) := by
+      intro q hq
+      refine or_congr Iff.rfl (or_congr ?_ ?_)
+      · refine and_congr_right fun _ => and_congr_right fun _ => exists_congr fun q' => and_congr_right fun hq' =>
+          and_congr_right fun _ => ⟨fun hb => ⟨fun hu => ?_, hb⟩, fun h => h.2⟩
+        obtain ⟨q'', _, rfl⟩ := List.mem_map.mp hu
+        exact unsaid_not_decision _ q'' hq'
+      · exact and_congr_right fun _ => and_congr_right fun _ => and_congr_right fun _ =>
+          ⟨fun hb => ⟨hq, hb⟩, fun h => h.2⟩
+    show (_ ≠ none ∧ upRel N.D c B₀ e (nameMap N.D c p) vs) ↔ _
+    rw [hfull, hrel _ hnm]
+    exact hpu.trans ⟨fun h => h.2, fun h => ⟨hp, h⟩⟩
+
+/-- A formula over the filled choice's vocabulary reads the pulled lift as it reads `B₀`. -/
+theorem pullF_up (φ : VE.Formula) (Γ : List String)
+    (hφ : φ.WellFormed (envAt (fill (choiceU N c)) (size (fill (choiceU N c)))) Γ) (ρ : VE.Valuation B₀) :
+    φ.denote (pullF N c (upB N.D c B₀ e)) ρ ↔ φ.denote B₀ ρ :=
+  ext_denote (E := envAt (fill (choiceU N c)) (size (fill (choiceU N c)))) (S := B₀) (fullY_free hh c).1
+    (fullY_free hh c).2 (pullF N c (upB N.D c B₀ e)).relation (upDom B₀) (upConst B₀ e)
+    (fun p _ _ vs => pullF_upB hh hc hN hsu B₀ e hadm p vs)
+    (fun σ hσ => by show (if σ = "ve__reading" then _ else _) = _; exact if_neg hσ)
+    (fun x hx => by show (if x = "ve__here" then _ else _) = _; exact if_neg hx) φ Γ ρ hφ
+
+/-- A formula over the filled choice's vocabulary reads the filled expansion of the pulled lift as that of `B₀`
+    (S2a's `canon_pull_up` through `fill`). -/
+theorem canon_pullF_up (φ : VE.Formula) (Γ : List String)
+    (hφ : φ.WellFormed (envAt (fill (choiceU N c)) (size (fill (choiceU N c)))) Γ) (ρ : VE.Valuation B₀) :
+    φ.denote (canon (fill (choiceU N c)) (pullF N c (upB N.D c B₀ e))) ρ ↔ φ.denote (canon (fill (choiceU N c)) B₀) ρ := by
+  have hvY := valid_fill_choiceSD hh hc hN hsu
+  refine ext_denote (E := envAt (fill (choiceU N c)) (size (fill (choiceU N c)))) (S := canon (fill (choiceU N c)) B₀)
+    (fullY_free hh c).1 (fullY_free hh c).2 (canon (fill (choiceU N c)) (pullF N c (upB N.D c B₀ e))).relation (upDom B₀) (upConst B₀ e)
+    (fun p _ _ vs => ?_) (fun σ hσ => ?_) (fun x hx => ?_) φ Γ ρ hφ
+  · show (match VE.Norms.expTable (fill (choiceU N c)).T (size (fill (choiceU N c))) p with
+        | some F => F.denote (pullF N c (upB N.D c B₀ e)) (VE.Norms.tupleVal vs)
+        | none => (pullF N c (upB N.D c B₀ e)).relation p vs) ↔
+      (match VE.Norms.expTable (fill (choiceU N c)).T (size (fill (choiceU N c))) p with
+        | some F => F.denote B₀ (VE.Norms.tupleVal vs)
+        | none => B₀.relation p vs)
+    cases hF : VE.Norms.expTable (fill (choiceU N c)).T (size (fill (choiceU N c))) p with
+    | none => exact pullF_upB hh hc hN hsu B₀ e hadm p vs
+    | some F =>
+      obtain ⟨ss, _, hFw⟩ := VE.Norms.expTable_wellFormed hvY _ p F hF
+      exact pullF_up hh hc hN hsu B₀ e hadm F _ (VE.Norms.envAt_mono (Nat.zero_le _) _ _ hFw) _
+  · show (if σ = "ve__reading" then _ else _) = _; exact if_neg hσ
+  · show (if x = "ve__here" then _ else _) = _; exact if_neg hx
+
+
+/-- `choiceX` reads the pulled lift as it reads `B₀`: an exception premise through the frame, a coherence premise
+    through its selections' types. -/
+theorem choiceX_up : Sat (pullF N c (upB N.D c B₀ e)) (choiceX N c) ↔ Sat B₀ (choiceX N c) := by
+  have hvY := valid_fill_choiceSD hh hc hN hsu
+  have hsv := sup_softValid hh
+  have e2 : choiceX N c = VE.Defaults.softX (choiceU N c) (correlate (choiceDoc N.D c).1) [] := by
+    simp [choiceX, softX, softXL, VE.Defaults.softX, choiceU]
+  have tt : ∀ p (vs : List B₀.Carrier), VE.TupleTyped (pullF N c (upB N.D c B₀ e))
+      (VE.SoftNorms.sortsOf (choiceDoc N.D c).1.soft p) vs ↔
+      VE.TupleTyped B₀ (VE.SoftNorms.sortsOf (choiceDoc N.D c).1.soft p) vs :=
+    fun p vs => (VE.Norms.tupleTyped_relation (upB N.D c B₀ e) _ _ vs).trans ⟨tt_down (sortsY_free hh hc p), tt_up⟩
+  have hat : ∀ (n : String) ss (ρ : VE.Valuation B₀),
+      (VE.Norms.atom n ss).denote (pullF N c (upB N.D c B₀ e)) ρ ↔ (VE.Norms.atom n ss).denote B₀ ρ := by
+    intro n ss ρ; unfold VE.Norms.atom; split
+    · exact exists_congr fun v => and_congr_right fun _ => pullF_upB hh hc hN hsu B₀ e hadm _ _
+    · exact exists_congr fun v => exists_congr fun w => and_congr_right fun _ => and_congr_right fun _ =>
+        pullF_upB hh hc hN hsu B₀ e hadm _ _
+    · exact Iff.rfl
+  rw [e2, VE.Defaults.softX_eq, choice_correlate hh, List.append_nil]
+  simp only [Sat, List.forall_mem_append]
+  refine and_congr (forall₂_congr fun a ha => ?_) (forall₂_congr fun a ha => ?_)
+  · obtain ⟨M, hM, ha⟩ := List.mem_flatMap.mp ha
+    cases hm : M.mode <;> cases hx : M.exception <;> simp only [VE.SoftNorms.excPremisesOf, hm, hx] at ha <;>
+      try exact absurd ha List.not_mem_nil
+    rename_i ex
+    have hC : ∀ C ∈ ex.sufficient ++ ex.necessary, ∀ ρ, C.denote (pullF N c (upB N.D c B₀ e)) ρ ↔ C.denote B₀ ρ := by
+      intro C hC ρ
+      obtain ⟨Γ, hw⟩ := choice_exc_typed hh c hM hx C hC
+      exact (pullF_denote_frame hh (c := c) (upB N.D c B₀ e) C Γ hw ρ).symm.trans (up_frame hh (c := c) B₀ e C Γ hw ρ)
+    rcases List.mem_append.mp ha with h | h <;> obtain ⟨C, hCm, rfl⟩ := List.mem_map.mp h <;>
+      rw [VE.Norms.bindAll_denote_nil, VE.Norms.bindAll_denote_nil] <;>
+      refine forall_congr' fun vs => imp_congr (tt _ vs) ?_ <;> simp only [VE.Formula.denote, VE.SoftNorms.exceptedF]
+    · rw [hC C (List.mem_append_left _ hCm), hat]
+    · rw [hC C (List.mem_append_right _ hCm), hat]
+  · obtain ⟨⟨M, K⟩, hMK, rfl⟩ := List.mem_map.mp ha
+    obtain ⟨hM, hK, -⟩ := VE.SoftNorms.mem_collidingPairs.mp hMK
+    have hsel : ∀ K ∈ (choiceDoc N.D c).1.soft.T.nodes, ∀ ρ,
+        (VE.Defaults.selU (choiceU N c) (choiceDoc N.D c).1.soft K).denote (pullF N c (upB N.D c B₀ e)) ρ ↔
+          (VE.Defaults.selU (choiceU N c) (choiceDoc N.D c).1.soft K).denote B₀ ρ := by
+      intro K hK ρ
+      have hreg := hsv.predReg _ (fmap_mem hh c hK)
+      rw [(fmap_fields hh c hK).1, sup_reg, ← choice_reg c] at hreg
+      exact pullF_up hh hc hN hsu B₀ e hadm _ _ (VE.Norms.envAt_mono (Nat.zero_le _) _ _
+        (VE.Norms.subst_wellFormed hvY _ _ _ (selects_fill_wf (choiceU_D hh c) hvY hK hreg))) ρ
+    rw [VE.Defaults.cohPremiseU_selU, VE.Norms.bindAll_denote_nil, VE.Norms.bindAll_denote_nil]
+    refine forall_congr' fun vs => imp_congr (tt _ vs) ?_
+    simp only [VE.Formula.denote]
+    rw [hsel M hM, hsel K hK]
+
+end Up
+
+/-- A conflict-free base of a valid document has a document expansion. -/
+theorem expansion_of_conflictFree {D : VE.Norms.Doc} (hv : Valid D) {B : VE.Structure.{u}}
+    (hB : VE.Norms.BaseAdmissible D B) (hcf : VE.Norms.ConflictFree D B) : ∃ S, VE.Norms.DocumentExpansion D B S := by
+  obtain ⟨S, ⟨hr, hpa⟩, _⟩ := VE.Norms.expansion_unique hv B hB hcf (size D) (Nat.le_refl _)
+  exact ⟨S, (VE.Norms.documentExpansion_iff hv B S hB).mpr ⟨hr, hpa⟩⟩
+
+section Shared
+variable {N : NDoc} (hh : Hyps N.D) (c : Choice)
+include hh
+
+/-- A predicate of `sharedEnvSD N` is declared alike in the filled choice's document, and `nameMap` keeps it. -/
+theorem sharedSD_pred {p : String} {ss : List String} (hp : (sharedEnvSD N).predicates p = some ss) :
+    (fill (choiceU N c)).E.predicates p = some ss ∧ nameMap N.D c p = p := by
+  rw [sharedEnvSD, envAt_size_pred, VE.NormDefaults.fill_E] at hp
+  rw [VE.NormDefaults.fill_E]
+  by_cases hu : p ∈ unsaidNames (freeU N)
+  · obtain ⟨q, hq, rfl⟩ := List.mem_map.mp hu
+    rw [VE.NormDefaults.fillEnv_unsaid _ hq] at hp
+    cases hp
+    refine ⟨?_, nameMap_unsaid hh c q⟩
+    have hrf : (freeU N).D.T.regulated = N.D.frame.soft.T.regulated := by
+      show (correlate (free N.D).1).T.regulated = _
+      rw [(correlate_noRights _ (free_noRights N.D hh.noRights)).1, free_regs]
+    have hrc : (choiceU N c).D.T.regulated = N.D.frame.soft.T.regulated := by rw [choiceU_D hh]; exact choice_reg c
+    rw [VE.NormDefaults.fillEnv_unsaid (choiceU N c) hq]
+    unfold VE.NormDefaults.sortsOf
+    rw [hrc, hrf]
+  · rw [VE.NormDefaults.fillEnv_off _ hu] at hp
+    have h0 : (envPrime (free N.D).1.soft).predicates p = some ss := by
+      have : (freeU N).D = soften (free N.D).1.soft := by
+        show soften (correlate (free N.D).1) = _; rw [(correlate_noRights _ (free_noRights N.D hh.noRights)).1]
+      rw [this] at hp; exact hp
+    refine ⟨?_, nameMap_shared hh c (by rw [h0]; simp)⟩
+    rw [VE.NormDefaults.fillEnv_off (choiceU N c) hu, choiceU_D hh]
+    exact free_envPrime_sub hh c h0
+
+omit hh in
+theorem sharedSD_sorts : (sharedEnvSD N).sorts = N.D.frame.soft.E.sorts := sharedEnv_sorts N.D
+omit hh in
+theorem sharedSD_constants : (sharedEnvSD N).constants = N.D.frame.soft.E.constants := sharedEnv_constants N.D
+
+/-- A formula over `sharedEnvSD N` is one over the filled choice's full vocabulary. -/
+theorem sharedSD_liftY {φ : VE.Formula} {Γ : List String} (hφ : φ.WellFormed (sharedEnvSD N) Γ) :
+    φ.WellFormed (envAt (fill (choiceU N c)) (size (fill (choiceU N c)))) Γ := by
+  refine wf_sub ?_ ?_ ?_ φ Γ hφ
+  · intro s hs
+    rw [sharedSD_sorts] at hs
+    show s ∈ (fillEnv (choiceU N c)).sorts
+    rw [VE.NormDefaults.fillEnv_sorts, choiceU_D hh, soften_E, envPrime_sorts, choice_E c]; exact hs
+  · intro x s hx
+    rw [sharedSD_constants] at hx
+    show (fillEnv (choiceU N c)).constants x = some s
+    rw [VE.NormDefaults.fillEnv_constants, choiceU_D hh, soften_E, envPrime_constants, choice_E c]; exact hx
+  · intro p ss hp
+    rw [envAt_size_pred]; exact (sharedSD_pred hh c hp).1
+
+/-- A formula over `sharedEnvSD N` is one over the filled superposed document's full vocabulary. -/
+theorem sharedSD_liftX {φ : VE.Formula} {Γ : List String} (hφ : φ.WellFormed (sharedEnvSD N) Γ) :
+    φ.WellFormed (envAt (fill (supU N)) (size (fill (supU N)))) Γ := by
+  refine wf_sub ?_ ?_ ?_ φ Γ hφ
+  · intro s hs
+    rw [sharedSD_sorts] at hs
+    show s ∈ (fillEnv (supU N)).sorts
+    rw [VE.NormDefaults.fillEnv_sorts, supU_D hh, soften_E, envPrime_sorts, sup_E]
+    unfold choiceEnv; split
+    · exact hs
+    · exact List.mem_append_left _ hs
+  · intro x s hx
+    rw [sharedSD_constants] at hx
+    show (fillEnv (supU N)).constants x = some s
+    rw [VE.NormDefaults.fillEnv_constants, supU_D hh]
+    exact frame_const_sup hh hx
+  · intro p ss hp
+    obtain ⟨h1, h2⟩ := sharedSD_pred hh [] hp
+    have := fullF_nameMap hh h1
+    rw [h2] at this
+    rw [envAt_size_pred]; exact this
+
+/-- A formula over `sharedEnv N.D` is one over `sharedEnvSD N`: the free document's filled vocabulary adds only the
+    `unsaid__` tables. -/
+theorem sharedEnv_SD (hN : WellFormedSD N = true) {φ : VE.Formula} {Γ : List String}
+    (hφ : φ.WellFormed (sharedEnv N.D) Γ) : φ.WellFormed (sharedEnvSD N) Γ := by
+  have hu : VE.NormDefaults.UValid (freeU N) := by
+    simp only [WellFormedSD, Bool.and_eq_true] at hN; exact VE.NormDefaults.uvalid hN.1.2
+  refine wf_sub (E := sharedEnv N.D) (E' := sharedEnvSD N) (fun s hs => by rw [sharedSD_sorts]; rwa [sharedEnv_sorts] at hs)
+    (fun x s hx => by rw [sharedSD_constants]; rwa [sharedEnv_constants] at hx) (fun p ss hp => ?_) φ Γ hφ
+  have h0 : (freeU N).D.E.predicates p = some ss := envAt_sub hp
+  rw [sharedEnvSD, envAt_size_pred, VE.NormDefaults.fill_E, VE.NormDefaults.fillEnv_off _ fun h => ?_]
+  · exact h0
+  · obtain ⟨q, hq, rfl⟩ := List.mem_map.mp h
+    rw [hu.freshPred q hq] at h0; cases h0
+
+/-- At a base that encodes `c`, the gate patterns of the filled superposed expansion name `c`. -/
+theorem gate_canonF (hsu : VE.NormDefaults.WellFormedU (supU N) = true) {c : Choice} (hc : Compatible N.D c) (B : VE.Structure.{u}) (he : Encodes N.D c B) :
+    ∀ m (hm : m < N.D.sets.length) i, i < N.D.sets[m].candidates.length →
+      ((pattern (m + 1) (setSize N.D m) i).denote (canon (fill (supU N)) B) [] ↔ c.index N.D.sets[m].id = some i) := by
+  have hcomp : complete N.D c = true := by simp only [Compatible, compatible, Bool.and_eq_true] at hc; exact hc.1.1
+  have hnd : (c.map (·.1)).Nodup := by rw [complete_map hcomp]; exact supReady_nodup hh.ready
+  intro m hm i hi
+  rw [← choiceAtom_eq (findIdx_of_nodup (supReady_nodup hh.ready) hm) (by rw [setSize_eq hm]; exact hi),
+    encodes_canon_fill hh hsu B he _ (List.getElem_mem hm) i hi]
+  exact ⟨fun hx => index_of_mem hnd hx, mem_of_index⟩
+
+end Shared
+
+section SharedCanon
+variable {N : NDoc} (hh : Hyps N.D) {c : Choice} (hc : Compatible N.D c) (hN : WellFormedSD N = true)
+  (hsu : VE.NormDefaults.WellFormedU (supU N) = true) (B : VE.Structure.{u})
+  (hcB : ∀ x s, (fill (supU N)).E.constants x = some s → ∃ v, B.constant x = some v) (he : Encodes N.D c B)
+include hh hc hN hsu hcB he
+
+/-- A sentence over `sharedEnvSD N` reads the two filled expansions alike (S2a's `shared_canon` through `fill`). -/
+theorem shared_canonF (φ : VE.Formula) (hφ : φ.WellFormed (sharedEnvSD N) []) :
+    φ.denote (canon (fill (supU N)) B) [] ↔ φ.denote (canon (fill (choiceU N c)) (pullF N c B)) [] := by
+  have hck := (VE.check_iff_wellFormed _ _ _).mpr hφ
+  refine (denote_relation_congr (sharedEnvSD N) (canon (fill (supU N)) B) (pullF N c (canon (fill (supU N)) B)).relation
+    (fun p ss hp vs _ => ?_) φ [] [] hck).trans (denote_relation_congr (sharedEnvSD N) (pullF N c (canon (fill (supU N)) B))
+      (canon (fill (choiceU N c)) (pullF N c B)).relation
+      (fun p ss hp vs hvs => pullF_canon hh hc hN hsu B hcB he (sharedSD_pred hh c hp).1 vs hvs) φ [] [] hck)
+  obtain ⟨h1, h2⟩ := sharedSD_pred hh c hp
+  show _ ↔ (_ ≠ none ∧ (canon (fill (supU N)) B).relation (nameMap N.D c p) vs)
+  rw [h2, envAt_size_pred, h1]
+  exact ⟨fun h => ⟨by simp, h⟩, fun h => h.2⟩
+
+end SharedCanon
+
+/-- Conflict-freedom transfers at an encoded filled base (`superpose_conflict_iff` through `fill`). -/
+theorem conflictFree_pullF (N : NDoc) (hN : WellFormedSD N = true) (hs : superposable N.D = true)
+    (hsu : VE.NormDefaults.WellFormedU (supU N) = true) (c : Choice) (hc : Compatible N.D c)
+    (B : VE.Structure.{u}) (hB : VE.Norms.BaseAdmissible (fill (supU N)) B) (hsl : Sat B (slotP N.D))
+    (he : Encodes N.D c B) :
+    VE.Norms.ConflictFree (fill (supU N)) B ↔ VE.Norms.ConflictFree (fill (choiceU N c)) (pullF N c B) := by
+  have hh := hyps_sd hN hs
+  have hcY : VE.Norms.ConstantsTyped (fill (choiceU N c)) (pullF N c B) := fun x s hx =>
+    hB.1.1 x s (constants_choiceSD hh x s hx)
+  have hregX : (supU N).D.T.regulated = N.D.frame.soft.T.regulated := by rw [supU_D hh]; exact sup_reg
+  have hregY : (choiceU N c).D.T.regulated = N.D.frame.soft.T.regulated := by rw [choiceU_D hh]; exact choice_reg c
+  have tp : ∀ ss (vs : List B.Carrier), VE.TupleTyped B ss vs ↔ VE.TupleTyped (pullF N c B) ss vs :=
+    fun ss vs => (VE.Norms.tupleTyped_relation B _ _ vs).symm
+  have hconf : ∀ r ∈ (supU N).D.T.regulated, ∀ vs : List B.Carrier, VE.TupleTyped B r.sorts vs →
+      ((VE.Norms.conflict (fill (supU N)) r).denote B (VE.Norms.tupleVal vs) ↔
+        (VE.Norms.conflict (fill (choiceU N c)) r).denote (pullF N c B) (VE.Norms.tupleVal vs)) := by
+    intro r hr vs hvs
+    have hrf : r ∈ N.D.frame.soft.T.regulated := hregX ▸ hr
+    rw [conflict_fill_v (valid_fill_supU hsu) hB.1.1 hr vs hvs,
+      conflict_fill_v (valid_fill_choiceSD hh hc hN hsu) hcY (hregY ▸ hrf) vs ((tp _ vs).mp hvs),
+      fill_sim N hN hs hsu c hc B hB hsl he r hrf _ true, fill_sim N hN hs hsu c hc B hB hsl he r hrf _ false]
+  have hpair : ∀ pr ∈ VE.Norms.pairs (supU N).D.T, ∀ vs : List B.Carrier, VE.TupleTyped B pr.sorts vs →
+      ((VE.Norms.pairConflict (fill (supU N)) pr).denote B (VE.Norms.tupleVal vs) ↔
+        (VE.Norms.pairConflict (fill (choiceU N c)) pr).denote (pullF N c B) (VE.Norms.tupleVal vs)) := by
+    intro pr hpr vs hvs
+    obtain ⟨r, hr, hrn, _, _, hrs⟩ := VE.NormDefaults.pair_req hpr
+    obtain ⟨m, hm, hmn, _, hms⟩ := VE.NormDefaults.pair_perm (VE.NormDefaults.uvalid hsu) hpr
+    simp only [VE.Norms.pairConflict, VE.Formula.denote]
+    rw [← hrn, ← hmn, outcome_pullF N hN hs hsu c hc B hB hsl he hr vs (hrs ▸ hvs),
+      outcome_pullF N hN hs hsu c hc B hB hsl he hm vs (hms ▸ hvs)]
+  have hreg : (fill (choiceU N c)).T.regulated = (fill (supU N)).T.regulated := hregY.trans hregX.symm
+  have hpairs : VE.Norms.pairs (fill (choiceU N c)).T = VE.Norms.pairs (supU N).D.T := by
+    unfold VE.Norms.pairs; rw [hreg]; rfl
+  unfold VE.Norms.ConflictFree
+  rw [hpairs, hreg]
+  constructor
+  · rintro ⟨h1, h2⟩
+    exact ⟨fun r hr vs hvs hx => h1 r hr vs ((tp _ vs).mpr hvs) ((hconf r hr vs ((tp _ vs).mpr hvs)).mpr hx),
+      fun pr hpr vs hvs hx => h2 pr hpr vs ((tp _ vs).mpr hvs) ((hpair pr hpr vs ((tp _ vs).mpr hvs)).mpr hx)⟩
+  · rintro ⟨h1, h2⟩
+    exact ⟨fun r hr vs hvs hx => h1 r hr vs ((tp _ vs).mp hvs) ((hconf r hr vs hvs).mp hx),
+      fun pr hpr vs hvs hx => h2 pr hpr vs ((tp _ vs).mp hvs) ((hpair pr hpr vs hvs).mp hx)⟩
+
+
+/-- The lift of a base of a choice's filled document taking `A` is a base of the filled superposed document under
+    `A`. -/
+theorem upB_baseX (N : NDoc) (hN : WellFormedSD N = true) (hs : superposable N.D = true)
+    (hsu : VE.NormDefaults.WellFormedU (supU N) = true) {c : Choice} (hc : Compatible N.D c) {A : Choice}
+    (hAc : ∀ x ∈ A, x ∈ c) (B₀ : VE.Structure.{u}) (e : B₀.Carrier)
+    (hB₀ : VE.NormDefaults.Wire.BaseAdmissibleX (choiceU N c) (choiceX N c) B₀) :
+    VE.NormDefaults.Wire.BaseAdmissibleX (supU N) (slotUnder N.D A ++ supX N) (upB N.D c B₀ e) := by
+  have hh := hyps_sd hN hs
+  have hvY := valid_fill_choiceSD hh hc hN hsu
+  obtain ⟨⟨⟨hadm, hlit⟩, hfill⟩, hX⟩ := hB₀
+  have hcm : complete N.D c = true := by simp only [Compatible, compatible, Bool.and_eq_true] at hc; exact hc.1.1
+  have henc := upB_encodes hh.ready hc B₀ e
+  have hsl := upB_slot hh hc B₀ e
+  have hUb : VE.Norms.BaseAdmissible (fill (supU N)) (upB N.D c B₀ e) := by
+    refine ⟨upB_admissibleF hh hc hN hsu B₀ e hadm, fun a ha => ?_⟩
+    refine upB_literals hh B₀ e (fun a ha => hlit a ?_) a ?_
+    · unfold VE.Norms.backgroundBase at ha ⊢; rw [VE.NormDefaults.fill_lits, choiceU_D hh]; exact ha
+    · unfold VE.Norms.backgroundBase at ha ⊢; rw [VE.NormDefaults.fill_lits, supU_D hh] at ha; exact ha
+  refine ⟨⟨hUb, (fillPremisesSD_pull N hN hs hsu c hc _ hUb hsl henc).mpr fun a ha =>
+    (pullF_up hh hc hN hsu B₀ e hadm a [] (VE.Norms.envAt_mono (Nat.zero_le _) _ _ (fillPremises_wf_v hvY a ha)) []).mpr
+      (hfill a ha)⟩, fun a ha => ?_⟩
+  rcases List.mem_append.mp ha with ha | ha
+  · rcases List.mem_append.mp ha with ha | ha
+    · exact hsl a ha
+    · exact (encodes_atoms N.D c hcm _ henc A).mpr hAc a ha
+  · exact (supX_pull N hN hs hsu c hc _ hUb hsl henc).mpr ((choiceX_up hh hc hN hsu B₀ e hadm).mpr hX) a ha
+
+/-- A base of the filled superposed document under `A` encodes one compatible choice taking `A`, and its filled pull
+    is a base of that choice's filled document. -/
+theorem pullF_baseX (N : NDoc) (hN : WellFormedSD N = true) (hs : superposable N.D = true)
+    (hsu : VE.NormDefaults.WellFormedU (supU N) = true) (A : Choice) (B : VE.Structure.{u})
+    (hB : VE.NormDefaults.Wire.BaseAdmissibleX (supU N) (slotUnder N.D A ++ supX N) B) :
+    ∃ c, Compatible N.D c ∧ (∀ x ∈ A, x ∈ c) ∧ Encodes N.D c B ∧ Sat B (slotP N.D) ∧
+      VE.NormDefaults.Wire.BaseAdmissibleX (choiceU N c) (choiceX N c) (pullF N c B) := by
+  have hh := hyps_sd hN hs
+  obtain ⟨⟨hBb, hBf⟩, hBX⟩ := hB
+  have hsl : Sat B (slotP N.D) := fun a ha => hBX a (List.mem_append_left _ (List.mem_append_left _ ha))
+  obtain ⟨c, hc, he, _⟩ := encodes_unique_slot N.D hh.wf hh.chain hs B hsl
+  have hcm : complete N.D c = true := by simp only [Compatible, compatible, Bool.and_eq_true] at hc; exact hc.1.1
+  refine ⟨c, hc, (encodes_atoms N.D c hcm B he A).mp
+    (fun a ha => hBX a (List.mem_append_left _ (List.mem_append_right _ ha))), he, hsl,
+    ⟨⟨pullF_admissible hh hc hN hsu B hBb.1, pullF_literals hh B hBb.2⟩,
+      (fillPremisesSD_pull N hN hs hsu c hc B hBb hsl he).mp hBf⟩,
+    (supX_pull N hN hs hsu c hc B hBb hsl he).mp (fun a ha => hBX a (List.mem_append_right _ ha))⟩
+
+/-- Superposition under the soft completion: CONFLICT-FREE under `A` exactly when every compatible choice taking
+    `A` is, each read with its own `X` and `Fill_T`. -/
+theorem sd_superpose_conflict_free (N : NDoc) (hN : WellFormedSD N = true) (hs : superposable N.D = true)
+    (hsu : VE.NormDefaults.WellFormedU (supU N) = true) (A : Choice)
+    (hA : ∀ x ∈ A, (candidate N.D x.1 x.2).isSome) :
+    VE.NormDefaults.Wire.ConflictFreeX.{u} (supU N) (slotUnder N.D A ++ supX N) ↔
+      ∀ c, Compatible N.D c → (∀ x ∈ A, x ∈ c) → VE.NormDefaults.Wire.ConflictFreeX.{u} (choiceU N c) (choiceX N c) := by
+  have hh := hyps_sd hN hs
+  constructor
+  · intro hcf c hc hAc B₀ hB₀
+    have hvY := valid_fill_choiceSD hh hc hN hsu
+    by_cases hne : Nonempty B₀.Carrier
+    · obtain ⟨e⟩ := hne
+      have hU := upB_baseX N hN hs hsu hc hAc B₀ e hB₀
+      have hY := (conflictFree_pullF N hN hs hsu c hc _ hU.1.1 (upB_slot hh hc B₀ e)
+        (upB_encodes hh.ready hc B₀ e)).mp (hcf _ hU)
+      have hup := fun a Γ (hw : a.WellFormed (envAt (fill (choiceU N c)) 0) Γ) =>
+        pullF_up hh hc hN hsu B₀ e hB₀.1.1.1 a Γ (VE.Norms.envAt_mono (Nat.zero_le _) _ _ hw)
+      have ttp : ∀ ss (vs : List B₀.Carrier), VE.TupleTyped B₀ ss vs → VE.TupleTyped (pullF N c (upB N.D c B₀ e)) ss vs :=
+        fun ss vs h => (VE.Norms.tupleTyped_relation (upB N.D c B₀ e) _ ss vs).mpr (tt_up h)
+      refine ⟨fun r hr vs hvs hx => ?_, fun pr hpr vs hvs hx => ?_⟩
+      · obtain ⟨k, hk⟩ := VE.Norms.mem_syms_index (hvY.regulated r hr)
+        exact hY.1 r hr vs (ttp _ vs hvs) ((hup _ _ (VE.Norms.conflict_wellFormed hvY hk) _).mpr hx)
+      · exact hY.2 pr hpr vs (ttp _ vs hvs) ((hup _ _ (VE.Norms.pairConflict_wellFormed hvY hpr) _).mpr hx)
+    · exact conflictFree_empty hvY B₀ hne
+  · intro hall B hB
+    obtain ⟨c, hc, hAc, he, hsl, hY⟩ := pullF_baseX N hN hs hsu A B hB
+    exact (conflictFree_pullF N hN hs hsu c hc B hB.1.1 hsl he).mpr (hall c hc hAc _ hY)
+
+/-- ALL under `A`: a certificate on the filled superposed document proves `φ` in every compatible choice taking
+    `A`, read in that choice's filled document with its own `X` (`sdSem`'s `entails`). -/
+theorem sd_superpose_all (N : NDoc) (hN : WellFormedSD N = true) (hs : superposable N.D = true)
+    (hsu : VE.NormDefaults.WellFormedU (supU N) = true) (A : Choice)
+    (hA : ∀ x ∈ A, (candidate N.D x.1 x.2).isSome)
+    (hcf : VE.NormDefaults.Wire.ConflictFreeX.{u} (supU N) (slotUnder N.D A ++ supX N))
+    (Γ : List VE.Formula) (φ : VE.Formula) (hΓ : ∀ a ∈ Γ, a.WellFormed (sharedEnvSD N) [])
+    (hφ : φ.WellFormed (sharedEnvSD N) []) (cert : VE.Tableau.Certificate)
+    (accepted : supCertificateCheckSD N A Γ φ cert = true) :
+    ∀ c, Compatible N.D c → (∀ x ∈ A, x ∈ c) →
+      VE.NormDefaults.EntailsX.{u} (choiceU N c) (choiceX N c) ((choiceDoc N.D c).2 ++ Γ) φ := by
+  intro c hc hAc S hBX hE hS
+  have hh := hyps_sd hN hs
+  have hX := fillLite_of_uvalid (VE.NormDefaults.uvalid hsu)
+  have hvX := valid_fill_supU hsu
+  have hvY := valid_fill_choiceSD hh hc hN hsu
+  have hcB₀ : VE.Norms.ConstantsTyped (fill (choiceU N c)) (VE.Norms.restrictAll (fill (choiceU N c)).T S) :=
+    hBX.1.1.1.1
+  have hwY : ∀ a ∈ (choiceDoc N.D c).2 ++ Γ, a.WellFormed (envAt (fill (choiceU N c)) (size (fill (choiceU N c)))) [] :=
+    fun a ha => (List.mem_append.mp ha).elim
+      (fun ha => sharedSD_liftY hh c (sharedEnv_SD hh hN (asserted_shared N.D hh.wf hh.ready c hc a ha)))
+      (fun ha => sharedSD_liftY hh c (hΓ a ha))
+  -- a base with an element, lifted to the filled superposed document
+  have hB₁ : VE.NormDefaults.Wire.BaseAdmissibleX (choiceU N c) (choiceX N c)
+      (VE.Compose.adjoinOne (VE.Norms.restrictAll (fill (choiceU N c)).T S)) :=
+    ⟨⟨⟨(VE.Compose.adjoin_admissible _ _).mpr hBX.1.1.1, (VE.Compose.adjoin_sat _ _).mpr hBX.1.1.2⟩,
+      (VE.Compose.adjoin_sat _ _).mpr hBX.1.2⟩, (VE.Compose.adjoin_sat _ _).mpr hBX.2⟩
+  have hU := upB_baseX N hN hs hsu hc hAc (VE.Compose.adjoinOne (VE.Norms.restrictAll (fill (choiceU N c)).T S)) none hB₁
+  have henc := upB_encodes hh.ready hc (VE.Compose.adjoinOne (VE.Norms.restrictAll (fill (choiceU N c)).T S)) none
+  have hcU := fun x s (hx : (fill (supU N)).E.constants x = some s) => (hU.1.1.1.1 x s hx).imp fun _ h => h.1
+  obtain ⟨S', hE'⟩ := expansion_of_conflictFree hvX hU.1.1 (hcf _ hU)
+  -- each side read on its canonical interpretation
+  have chainY : ∀ a : VE.Formula, a.WellFormed (envAt (fill (choiceU N c)) (size (fill (choiceU N c)))) [] → (a.denote S [] ↔
+      a.denote (canon (fill (choiceU N c)) (pullF N c (upB N.D c (VE.Compose.adjoinOne (VE.Norms.restrictAll (fill (choiceU N c)).T S)) none))) []) := fun a ha =>
+    (documentExpansion_canon hvY hE a ha).trans ((canon_adjoin hvY _ hcB₀ ha).symm.trans
+      (canon_pullF_up hh hc hN hsu _ none hB₁.1.1.1 a [] ha []).symm)
+  have chainX : ∀ a : VE.Formula, a.WellFormed (sharedEnvSD N) [] → (a.denote S' [] ↔
+      a.denote (canon (fill (choiceU N c)) (pullF N c (upB N.D c (VE.Compose.adjoinOne (VE.Norms.restrictAll (fill (choiceU N c)).T S)) none))) []) := fun a ha =>
+    (documentExpansion_canon hvX hE' a (sharedSD_liftX hh ha)).trans (shared_canonF hh hc hN hsu _ hcU henc a ha)
+  have hsupwf : ∀ a ∈ (sup N.D).2, a.WellFormed (envAt (fill (supU N)) (size (fill (supU N)))) [] := by
+    have hw : sideWF N.D (sup N.D) = true := by
+      have := hs; simp only [superposable, Bool.and_eq_true] at this; exact this.2
+    simp only [sideWF, Bool.and_eq_true, List.all_eq_true] at hw
+    exact fun a ha => wf_fill_full hX ((VE.check_iff_wellFormed _ _ _).mp (hw.2 a ha))
+  have hsat : Sat S' ((sup N.D).2 ++ Γ) := by
+    intro a ha
+    rcases List.mem_append.mp ha with ha | ha
+    · refine (documentExpansion_canon hvX hE' a (hsupwf a ha)).mpr ((assertions_iff hh hc _ _
+        (fun ψ hψ => shared_canonF hh hc hN hsu _ hcU henc ψ (sharedEnv_SD hh hN hψ)) (gate_canonF hh hsu hc _ henc)).mpr
+        (fun b hb => (chainY b (hwY b (List.mem_append_left _ hb))).mp (hS b (List.mem_append_left _ hb))) a ha)
+    · exact (chainX a (hΓ a ha)).mpr ((chainY a (hwY a (List.mem_append_right _ ha))).mp (hS a (List.mem_append_right _ ha)))
+  -- the certificate on the filled superposed document
+  have hXw : ∀ a ∈ slotUnder N.D A ++ supX N, a.WellFormed (envAt (fill (supU N)) 0) [] := by
+    intro a ha
+    rcases List.mem_append.mp ha with ha | ha
+    · exact wf_fill_at hX 0 (slot_wellFormed N.D hh.wf hh.chain hs A hA a ha)
+    · exact softX_wellFormed N (sup N.D).1 (by rw [sup_correlate hh]; exact sup_wfSoft hh) hsu a ha
+  have hφS' := VE.NormDefaults.acceptanceX (supU N) hsu _ hXw _ φ cert accepted S' (by rw [hE'.1]; exact hU)
+    (by rw [hE'.1]; exact hE') hsat
+  exact (chainY φ (sharedSD_liftY hh c hφ)).mpr ((chainX φ hφ).mp hφS')
+
+/-- A checked filled model on the superposed document is a countermodel of the choice its bits encode
+    (`sdSem`'s `counter`). -/
+theorem sd_superpose_countermodel (N : NDoc) (hN : WellFormedSD N = true) (hs : superposable N.D = true)
+    (hsu : VE.NormDefaults.WellFormedU (supU N) = true) (A : Choice)
+    (Γ : List VE.Formula) (φ : VE.Formula) (hΓ : ∀ a ∈ Γ, a.WellFormed (sharedEnvSD N) [])
+    (hφ : φ.WellFormed (sharedEnvSD N) []) (M : VE.FiniteModel VE.Bridge.Entity)
+    (valid : M.Valid (envAt (supU N).D 0)) (F : VE.NormDefaults.FiniteFill (supU N) VE.Bridge.Entity)
+    (hm : (VE.NormDefaults.modelCheckX (supU N) (slotUnder N.D A ++ supX N) M F ((sup N.D).2 ++ Γ) φ).1 = true)
+    (hn : (VE.NormDefaults.modelCheckX (supU N) (slotUnder N.D A ++ supX N) M F ((sup N.D).2 ++ Γ) φ).2 = false)
+    (hl : VE.Readings.Wire.localFree (supU N) M F = true) :
+    ∃ c, Compatible N.D c ∧ (∀ x ∈ A, x ∈ c) ∧
+      Encodes N.D c (VE.NormDefaults.withFill (supU N) M.asStructure (VE.NormDefaults.finFill M F)) ∧
+      CounterX (choiceU N c) (choiceX N c) ((choiceDoc N.D c).2 ++ Γ) φ := by
+  have hh := hyps_sd hN hs
+  obtain ⟨hBX, hΓW, hφW⟩ := VE.NormDefaults.modelCheckX_sound (supU N) hsu _ M valid F _ φ hm
+  obtain ⟨c, hc, hAc, he, hsl, hYX⟩ := pullF_baseX N hN hs hsu A _ hBX
+  refine ⟨c, hc, hAc, he, ?_⟩
+  have hX := fillLite_of_uvalid (VE.NormDefaults.uvalid hsu)
+  have hvX := valid_fill_supU hsu
+  have hvY := valid_fill_choiceSD hh hc hN hsu
+  have hcW := hBX.1.1.1.1
+  have hcB := fun x s (hx : (fill (supU N)).E.constants x = some s) => (hcW x s hx).imp fun _ h => h.1
+  obtain ⟨S, hE⟩ := expansion_of_conflictFree hvY hYX.1.1 ((conflictFree_pullF N hN hs hsu c hc _ hBX.1.1 hsl he).mp
+    (VE.Readings.Wire.conflictFree_of_localFree (supU N) hsu M F hl))
+  have hsub := fun a (ha : a.WellFormed (envAt (fill (supU N)) (size (fill (supU N)))) []) =>
+    VE.SoftNorms.canon_subst hvX _ hcW _ a [] ha [] (typed_nil _)
+  have hsupwf : ∀ a ∈ (sup N.D).2, a.WellFormed (envAt (fill (supU N)) (size (fill (supU N)))) [] := by
+    have hw : sideWF N.D (sup N.D) = true := by
+      have := hs; simp only [superposable, Bool.and_eq_true] at this; exact this.2
+    simp only [sideWF, Bool.and_eq_true, List.all_eq_true] at hw
+    exact fun a ha => wf_fill_full hX ((VE.check_iff_wellFormed _ _ _).mp (hw.2 a ha))
+  refine ⟨S, by rw [hE.1]; exact hYX, by rw [hE.1]; exact hE, fun a ha => ?_, fun hφS => ?_⟩
+  · rcases List.mem_append.mp ha with ha | ha
+    · exact (documentExpansion_canon hvY hE a (sharedSD_liftY hh c (sharedEnv_SD hh hN
+        (asserted_shared N.D hh.wf hh.ready c hc a ha)))).mpr ((assertions_iff hh hc _ _
+        (fun ψ hψ => shared_canonF hh hc hN hsu _ hcB he ψ (sharedEnv_SD hh hN hψ)) (gate_canonF hh hsu hc _ he)).mp
+        (fun b hb => (hsub b (hsupwf b hb)).mp (hΓW b (List.mem_append_left _ hb))) a ha)
+    · exact (documentExpansion_canon hvY hE a (sharedSD_liftY hh c (hΓ a ha))).mpr
+        ((shared_canonF hh hc hN hsu _ hcB he a (hΓ a ha)).mp
+          ((hsub a (sharedSD_liftX hh (hΓ a ha))).mp (hΓW a (List.mem_append_right _ ha))))
+  · have h1 := (hsub φ (sharedSD_liftX hh hφ)).mpr ((shared_canonF hh hc hN hsu _ hcB he φ hφ).mpr
+      ((documentExpansion_canon hvY hE φ (sharedSD_liftY hh c hφ)).mp hφS))
+    rw [hφW, hn] at h1
+    exact Bool.false_ne_true h1
 
 end VE.Readings

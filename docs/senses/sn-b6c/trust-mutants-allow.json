@@ -1,0 +1,28 @@
+{
+ "allow": [
+  {"definition": "VE.Senses.Run.readCase", "operator": "lit-plus",
+   "reason": "equivalent: (0, 0, none, []) is taken only when documentInput refuses the text, and then the outcome is a lexical rejection (no member reads count, d or the sentences) or documentRequest has already thrown"},
+  {"definition": "VE.Senses.Run.readCase", "operator": "list-empty",
+   "reason": "does not elaborate (implicit argument α cannot be synthesized)"},
+  {"definition": "VE.Senses.Run.occurrenceJson", "operator": "list-first",
+   "reason": "equivalent: the candidate member is a list of at most one entry (one per Option arm)"},
+  {"definition": "VE.Senses.Run.occurrenceJson", "operator": "list-last",
+   "reason": "equivalent: the candidate member is a list of at most one entry; see list-first"},
+  {"definition": "VE.Senses.Run.senseEntryJson", "operator": "list-first",
+   "reason": "equivalent: the gloss and the byte span come each from an Option.toList (at most one entry)"},
+  {"definition": "VE.Senses.Run.senseEntryJson", "operator": "list-last",
+   "reason": "equivalent: as list-first"},
+  {"definition": "VE.Senses.Run.senseEntryJson", "operator": "list-empty",
+   "reason": "does not elaborate (Function expected, invalid projection or field, a pattern variable's type)"},
+  {"definition": "VE.Senses.Run.outcomeJson", "operator": "list-first",
+   "reason": "equivalent on every cut that survives: fences.toList is an Option's, faultFields gives one entry for every fault, and textsJson (extra) one entry or none in every arm; the cut of S2's fields is killed by the front-matter refusal guard in TextsExamples"},
+  {"definition": "VE.Senses.Run.outcomeJson", "operator": "list-last",
+   "reason": "equivalent: as list-first"},
+  {"definition": "VE.Senses.Run.outcomeJson", "operator": "list-empty",
+   "reason": "does not elaborate (implicit argument, field notation, Function expected, application type mismatch); the cut of S2's fields elaborates and is killed by the front-matter refusal guard in TextsExamples"},
+  {"definition": "VE.Senses.Run.outcomeJson", "operator": "append-right",
+   "reason": "does not elaborate (application type mismatch: a fault is no field list)"},
+  {"definition": "VE.Senses.Run.outcomeJson", "operator": "bool-flip",
+   "reason": "killed in effect: the default texts := false is elaborated into readCase's call, so the document mode's pin (RunExamples.lean:120) that fails reads readCase, which the tool's attribution rule leaves UNKNOWN"}
+ ]
+}

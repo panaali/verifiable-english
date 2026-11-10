@@ -55,6 +55,7 @@ class _Filled:
                       (fill_name(rule.predicate),) if rule.predicate in unspec and not rule.over else rule.over)
                  for rule in author_rules]
         self._display = NormDocument(env, [*roots, *generated])
+        self._display._relayed = self._display  # a view of Lean's accepted fill, not a request: nothing is relayed
         self.rules = self._display.rules
         if tuple(self._display.order) != self.order or any(
                 formula_to_data(env, self._display._elaborate_python(item["label"].removeprefix("layer:norms:")),

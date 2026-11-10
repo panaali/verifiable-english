@@ -1,0 +1,772 @@
+{
+ "changed": [
+  {
+   "base": {
+    "command": {
+     "act": "submit_required",
+     "args": [
+      "q1"
+     ],
+     "force": "require",
+     "guard": [
+      "top"
+     ]
+    },
+    "outcome": "one"
+   },
+   "class": "b2",
+   "env": "b5320c7b32471601",
+   "head": {
+    "class": "SyntaxError",
+    "outcome": "refused",
+    "text": "NoDerivation: The sentence to prove has no reading with the current vocabulary. Unknown English phrase 'is a cat'. Nearest declared wordings: 'is classified as \"cat\"'; '\"q1\"'; 'tom'."
+   },
+   "source": "tests",
+   "wording": "Prove that tom is a cat using these premises."
+  },
+  {
+   "base": {
+    "class": "SyntaxError",
+    "outcome": "refused",
+    "text": "The character at position 4 cannot appear outside a quoted name."
+   },
+   "class": "R1",
+   "env": "efcd309e63123d25",
+   "head": {
+    "class": "SyntaxError",
+    "outcome": "refused",
+    "text": "BadCharacter: The character at position 4 cannot appear outside a quoted name."
+   },
+   "source": "tests",
+   "wording": "Click, if atla\u0000 is reviewed."
+  },
+  {
+   "base": {
+    "class": "SyntaxError",
+    "outcome": "refused",
+    "text": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'atla'. Nearest declared wordings: 'atlas'; 'is cat'; 'tom'."
+   },
+   "class": "R1",
+   "env": "efcd309e63123d25",
+   "head": {
+    "class": "SyntaxError",
+    "outcome": "refused",
+    "text": "NoDerivation: The condition has no reading with the current vocabulary. Unknown English phrase 'atla'. Nearest declared wordings: 'atlas'; 'is cat'; 'tom'."
+   },
+   "source": "tests",
+   "wording": "Click, if atla\t is reviewed."
+  },
+  {
+   "base": {
+    "class": "SyntaxError",
+    "outcome": "refused",
+    "text": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'atla'. Nearest declared wordings: 'atlas'; 'is cat'; 'tom'."
+   },
+   "class": "R1",
+   "env": "efcd309e63123d25",
+   "head": {
+    "class": "SyntaxError",
+    "outcome": "refused",
+    "text": "NoDerivation: The condition has no reading with the current vocabulary. Unknown English phrase 'atla'. Nearest declared wordings: 'atlas'; 'is cat'; 'tom'."
+   },
+   "source": "tests",
+   "wording": "Click, if atla\n is reviewed."
+  },
+  {
+   "base": {
+    "class": "SyntaxError",
+    "outcome": "refused",
+    "text": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'atla'. Nearest declared wordings: 'atlas'; 'is cat'; 'tom'."
+   },
+   "class": "R1",
+   "env": "efcd309e63123d25",
+   "head": {
+    "class": "SyntaxError",
+    "outcome": "refused",
+    "text": "NoDerivation: The condition has no reading with the current vocabulary. Unknown English phrase 'atla'. Nearest declared wordings: 'atlas'; 'is cat'; 'tom'."
+   },
+   "source": "tests",
+   "wording": "Click, if atla\u000b is reviewed."
+  },
+  {
+   "base": {
+    "class": "SyntaxError",
+    "outcome": "refused",
+    "text": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'atla'. Nearest declared wordings: 'atlas'; 'is cat'; 'tom'."
+   },
+   "class": "R1",
+   "env": "efcd309e63123d25",
+   "head": {
+    "class": "SyntaxError",
+    "outcome": "refused",
+    "text": "NoDerivation: The condition has no reading with the current vocabulary. Unknown English phrase 'atla'. Nearest declared wordings: 'atlas'; 'is cat'; 'tom'."
+   },
+   "source": "tests",
+   "wording": "Click, if atla\f is reviewed."
+  },
+  {
+   "base": {
+    "class": "SyntaxError",
+    "outcome": "refused",
+    "text": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'atla'. Nearest declared wordings: 'atlas'; 'is cat'; 'tom'."
+   },
+   "class": "R1",
+   "env": "efcd309e63123d25",
+   "head": {
+    "class": "SyntaxError",
+    "outcome": "refused",
+    "text": "NoDerivation: The condition has no reading with the current vocabulary. Unknown English phrase 'atla'. Nearest declared wordings: 'atlas'; 'is cat'; 'tom'."
+   },
+   "source": "tests",
+   "wording": "Click, if atla\r is reviewed."
+  },
+  {
+   "base": {
+    "class": "SyntaxError",
+    "outcome": "refused",
+    "text": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'atla'. Nearest declared wordings: 'atlas'; 'is cat'; 'tom'."
+   },
+   "class": "R1",
+   "env": "efcd309e63123d25",
+   "head": {
+    "class": "SyntaxError",
+    "outcome": "refused",
+    "text": "NoDerivation: The condition has no reading with the current vocabulary. Unknown English phrase 'atla'. Nearest declared wordings: 'atlas'; 'is cat'; 'tom'."
+   },
+   "source": "tests",
+   "wording": "Click, if atla\u001c is reviewed."
+  },
+  {
+   "base": {
+    "class": "SyntaxError",
+    "outcome": "refused",
+    "text": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'atla'. Nearest declared wordings: 'atlas'; 'is cat'; 'tom'."
+   },
+   "class": "R1",
+   "env": "efcd309e63123d25",
+   "head": {
+    "class": "SyntaxError",
+    "outcome": "refused",
+    "text": "NoDerivation: The condition has no reading with the current vocabulary. Unknown English phrase 'atla'. Nearest declared wordings: 'atlas'; 'is cat'; 'tom'."
+   },
+   "source": "tests",
+   "wording": "Click, if atla\u001d is reviewed."
+  },
+  {
+   "base": {
+    "class": "SyntaxError",
+    "outcome": "refused",
+    "text": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'atla'. Nearest declared wordings: 'atlas'; 'is cat'; 'tom'."
+   },
+   "class": "R1",
+   "env": "efcd309e63123d25",
+   "head": {
+    "class": "SyntaxError",
+    "outcome": "refused",
+    "text": "NoDerivation: The condition has no reading with the current vocabulary. Unknown English phrase 'atla'. Nearest declared wordings: 'atlas'; 'is cat'; 'tom'."
+   },
+   "source": "tests",
+   "wording": "Click, if atla\u001e is reviewed."
+  },
+  {
+   "base": {
+    "class": "SyntaxError",
+    "outcome": "refused",
+    "text": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'atla'. Nearest declared wordings: 'atlas'; 'is cat'; 'tom'."
+   },
+   "class": "R1",
+   "env": "efcd309e63123d25",
+   "head": {
+    "class": "SyntaxError",
+    "outcome": "refused",
+    "text": "NoDerivation: The condition has no reading with the current vocabulary. Unknown English phrase 'atla'. Nearest declared wordings: 'atlas'; 'is cat'; 'tom'."
+   },
+   "source": "tests",
+   "wording": "Click, if atla\u001f is reviewed."
+  },
+  {
+   "base": {
+    "class": "SyntaxError",
+    "outcome": "refused",
+    "text": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'atla'. Nearest declared wordings: 'atlas'; 'is cat'; 'tom'."
+   },
+   "class": "R1",
+   "env": "efcd309e63123d25",
+   "head": {
+    "class": "SyntaxError",
+    "outcome": "refused",
+    "text": "NoDerivation: The condition has no reading with the current vocabulary. Unknown English phrase 'atla'. Nearest declared wordings: 'atlas'; 'is cat'; 'tom'."
+   },
+   "source": "tests",
+   "wording": "Click, if atla  is reviewed."
+  },
+  {
+   "base": {
+    "class": "SyntaxError",
+    "outcome": "refused",
+    "text": "The character at position 4 cannot appear outside a quoted name."
+   },
+   "class": "R1",
+   "env": "efcd309e63123d25",
+   "head": {
+    "class": "SyntaxError",
+    "outcome": "refused",
+    "text": "BadCharacter: The character at position 4 cannot appear outside a quoted name."
+   },
+   "source": "tests",
+   "wording": "Click, if atla\u007f is reviewed."
+  },
+  {
+   "base": {
+    "class": "SyntaxError",
+    "outcome": "refused",
+    "text": "The character at position 4 cannot appear outside a quoted name."
+   },
+   "class": "R1",
+   "env": "8f148b2e8ad64cb1",
+   "head": {
+    "class": "SyntaxError",
+    "outcome": "refused",
+    "text": "BadCharacter: The character at position 4 cannot appear outside a quoted name."
+   },
+   "source": "tests",
+   "wording": "How check, if atla\u0000 is reviewed."
+  },
+  {
+   "base": {
+    "class": "SyntaxError",
+    "outcome": "refused",
+    "text": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'atla'. Nearest declared wordings: 'atlas'; 'is cat'; 'tom'."
+   },
+   "class": "R1",
+   "env": "8f148b2e8ad64cb1",
+   "head": {
+    "class": "SyntaxError",
+    "outcome": "refused",
+    "text": "NoDerivation: The condition has no reading with the current vocabulary. Unknown English phrase 'atla'. Nearest declared wordings: 'atlas'; 'is cat'; 'tom'."
+   },
+   "source": "tests",
+   "wording": "How check, if atla\t is reviewed."
+  },
+  {
+   "base": {
+    "class": "SyntaxError",
+    "outcome": "refused",
+    "text": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'atla'. Nearest declared wordings: 'atlas'; 'is cat'; 'tom'."
+   },
+   "class": "R1",
+   "env": "8f148b2e8ad64cb1",
+   "head": {
+    "class": "SyntaxError",
+    "outcome": "refused",
+    "text": "NoDerivation: The condition has no reading with the current vocabulary. Unknown English phrase 'atla'. Nearest declared wordings: 'atlas'; 'is cat'; 'tom'."
+   },
+   "source": "tests",
+   "wording": "How check, if atla\n is reviewed."
+  },
+  {
+   "base": {
+    "class": "SyntaxError",
+    "outcome": "refused",
+    "text": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'atla'. Nearest declared wordings: 'atlas'; 'is cat'; 'tom'."
+   },
+   "class": "R1",
+   "env": "8f148b2e8ad64cb1",
+   "head": {
+    "class": "SyntaxError",
+    "outcome": "refused",
+    "text": "NoDerivation: The condition has no reading with the current vocabulary. Unknown English phrase 'atla'. Nearest declared wordings: 'atlas'; 'is cat'; 'tom'."
+   },
+   "source": "tests",
+   "wording": "How check, if atla\u000b is reviewed."
+  },
+  {
+   "base": {
+    "class": "SyntaxError",
+    "outcome": "refused",
+    "text": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'atla'. Nearest declared wordings: 'atlas'; 'is cat'; 'tom'."
+   },
+   "class": "R1",
+   "env": "8f148b2e8ad64cb1",
+   "head": {
+    "class": "SyntaxError",
+    "outcome": "refused",
+    "text": "NoDerivation: The condition has no reading with the current vocabulary. Unknown English phrase 'atla'. Nearest declared wordings: 'atlas'; 'is cat'; 'tom'."
+   },
+   "source": "tests",
+   "wording": "How check, if atla\f is reviewed."
+  },
+  {
+   "base": {
+    "class": "SyntaxError",
+    "outcome": "refused",
+    "text": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'atla'. Nearest declared wordings: 'atlas'; 'is cat'; 'tom'."
+   },
+   "class": "R1",
+   "env": "8f148b2e8ad64cb1",
+   "head": {
+    "class": "SyntaxError",
+    "outcome": "refused",
+    "text": "NoDerivation: The condition has no reading with the current vocabulary. Unknown English phrase 'atla'. Nearest declared wordings: 'atlas'; 'is cat'; 'tom'."
+   },
+   "source": "tests",
+   "wording": "How check, if atla\r is reviewed."
+  },
+  {
+   "base": {
+    "class": "SyntaxError",
+    "outcome": "refused",
+    "text": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'atla'. Nearest declared wordings: 'atlas'; 'is cat'; 'tom'."
+   },
+   "class": "R1",
+   "env": "8f148b2e8ad64cb1",
+   "head": {
+    "class": "SyntaxError",
+    "outcome": "refused",
+    "text": "NoDerivation: The condition has no reading with the current vocabulary. Unknown English phrase 'atla'. Nearest declared wordings: 'atlas'; 'is cat'; 'tom'."
+   },
+   "source": "tests",
+   "wording": "How check, if atla\u001c is reviewed."
+  },
+  {
+   "base": {
+    "class": "SyntaxError",
+    "outcome": "refused",
+    "text": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'atla'. Nearest declared wordings: 'atlas'; 'is cat'; 'tom'."
+   },
+   "class": "R1",
+   "env": "8f148b2e8ad64cb1",
+   "head": {
+    "class": "SyntaxError",
+    "outcome": "refused",
+    "text": "NoDerivation: The condition has no reading with the current vocabulary. Unknown English phrase 'atla'. Nearest declared wordings: 'atlas'; 'is cat'; 'tom'."
+   },
+   "source": "tests",
+   "wording": "How check, if atla\u001d is reviewed."
+  },
+  {
+   "base": {
+    "class": "SyntaxError",
+    "outcome": "refused",
+    "text": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'atla'. Nearest declared wordings: 'atlas'; 'is cat'; 'tom'."
+   },
+   "class": "R1",
+   "env": "8f148b2e8ad64cb1",
+   "head": {
+    "class": "SyntaxError",
+    "outcome": "refused",
+    "text": "NoDerivation: The condition has no reading with the current vocabulary. Unknown English phrase 'atla'. Nearest declared wordings: 'atlas'; 'is cat'; 'tom'."
+   },
+   "source": "tests",
+   "wording": "How check, if atla\u001e is reviewed."
+  },
+  {
+   "base": {
+    "class": "SyntaxError",
+    "outcome": "refused",
+    "text": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'atla'. Nearest declared wordings: 'atlas'; 'is cat'; 'tom'."
+   },
+   "class": "R1",
+   "env": "8f148b2e8ad64cb1",
+   "head": {
+    "class": "SyntaxError",
+    "outcome": "refused",
+    "text": "NoDerivation: The condition has no reading with the current vocabulary. Unknown English phrase 'atla'. Nearest declared wordings: 'atlas'; 'is cat'; 'tom'."
+   },
+   "source": "tests",
+   "wording": "How check, if atla\u001f is reviewed."
+  },
+  {
+   "base": {
+    "class": "SyntaxError",
+    "outcome": "refused",
+    "text": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'atla'. Nearest declared wordings: 'atlas'; 'is cat'; 'tom'."
+   },
+   "class": "R1",
+   "env": "8f148b2e8ad64cb1",
+   "head": {
+    "class": "SyntaxError",
+    "outcome": "refused",
+    "text": "NoDerivation: The condition has no reading with the current vocabulary. Unknown English phrase 'atla'. Nearest declared wordings: 'atlas'; 'is cat'; 'tom'."
+   },
+   "source": "tests",
+   "wording": "How check, if atla  is reviewed."
+  },
+  {
+   "base": {
+    "class": "SyntaxError",
+    "outcome": "refused",
+    "text": "The character at position 4 cannot appear outside a quoted name."
+   },
+   "class": "R1",
+   "env": "8f148b2e8ad64cb1",
+   "head": {
+    "class": "SyntaxError",
+    "outcome": "refused",
+    "text": "BadCharacter: The character at position 4 cannot appear outside a quoted name."
+   },
+   "source": "tests",
+   "wording": "How check, if atla\u007f is reviewed."
+  },
+  {
+   "base": {
+    "command": {
+     "act": "submit_required",
+     "args": [
+      "q1"
+     ],
+     "force": "require",
+     "guard": [
+      "top"
+     ]
+    },
+    "outcome": "one"
+   },
+   "class": "b2",
+   "env": "a046840cf7dfc103",
+   "head": {
+    "class": "SyntaxError",
+    "outcome": "refused",
+    "text": "NoDerivation: The sentence to prove has no reading with the current vocabulary. Unknown English phrase 'is a cat'. Nearest declared wordings: 'is classified as \"cat\"'; '\"q1\"'; 'tom'."
+   },
+   "source": "tests",
+   "wording": "Prove that tom is a cat using these premises."
+  },
+  {
+   "base": {
+    "command": {
+     "act": "submit_required",
+     "args": [
+      "q1"
+     ],
+     "force": "require",
+     "guard": [
+      "top"
+     ]
+    },
+    "outcome": "one"
+   },
+   "class": "b2",
+   "env": "b12d3e4a1bce9d81",
+   "head": {
+    "class": "SyntaxError",
+    "outcome": "refused",
+    "text": "NoDerivation: The sentence to prove has no reading with the current vocabulary. Unknown English phrase 'is a cat'. Nearest declared wordings: 'is classified as \"cat\"'; '\"q1\"'; 'tom'."
+   },
+   "source": "tests",
+   "wording": "Prove that tom is a cat using these premises."
+  },
+  {
+   "base": {
+    "command": {
+     "act": "submit_required",
+     "args": [
+      "q1"
+     ],
+     "force": "require",
+     "guard": [
+      "top"
+     ]
+    },
+    "outcome": "one"
+   },
+   "class": "b2",
+   "env": "89c59f6a1b71be7f",
+   "head": {
+    "class": "SyntaxError",
+    "outcome": "refused",
+    "text": "NoDerivation: The sentence to prove has no reading with the current vocabulary. Unknown English phrase 'is a cat'. Nearest declared wordings: 'is classified as \"cat\"'; '\"q1\"'; 'tom'."
+   },
+   "source": "tests",
+   "wording": "Prove that tom is a cat using these premises."
+  },
+  {
+   "base": {
+    "command": {
+     "act": "submit_required",
+     "args": [
+      "q1"
+     ],
+     "force": "require",
+     "guard": [
+      "top"
+     ]
+    },
+    "outcome": "one"
+   },
+   "class": "b2",
+   "env": "04da4266dcc671bf",
+   "head": {
+    "class": "SyntaxError",
+    "outcome": "refused",
+    "text": "NoDerivation: The sentence to prove has no reading with the current vocabulary. Unknown English phrase 'is a cat'. Nearest declared wordings: 'is classified as \"cat\"'; '\"q1\"'; 'tom'."
+   },
+   "source": "tests",
+   "wording": "Prove that tom is a cat using these premises."
+  },
+  {
+   "base": {
+    "command": {
+     "act": "submit_required",
+     "args": [
+      "q1"
+     ],
+     "force": "require",
+     "guard": [
+      "top"
+     ]
+    },
+    "outcome": "one"
+   },
+   "class": "b2",
+   "env": "b5c14776b30d778c",
+   "head": {
+    "class": "SyntaxError",
+    "outcome": "refused",
+    "text": "NoDerivation: The sentence to prove has no reading with the current vocabulary. Unknown English phrase 'is a cat'. Nearest declared wordings: 'is classified as \"cat\"'; '\"q1\"'; 'tom'."
+   },
+   "source": "tests",
+   "wording": "Prove that tom is a cat using these premises."
+  },
+  {
+   "base": {
+    "command": {
+     "act": "submit_required",
+     "args": [
+      "q1"
+     ],
+     "force": "require",
+     "guard": [
+      "top"
+     ]
+    },
+    "outcome": "one"
+   },
+   "class": "b2",
+   "env": "4be9e7d38b860e46",
+   "head": {
+    "class": "SyntaxError",
+    "outcome": "refused",
+    "text": "NoDerivation: The sentence to prove has no reading with the current vocabulary. Unknown English phrase 'is a cat'. Nearest declared wordings: 'is classified as \"cat\"'; '\"q1\"'; 'tom'."
+   },
+   "source": "tests",
+   "wording": "Prove that tom is a cat using these premises."
+  },
+  {
+   "base": {
+    "class": "VEError",
+    "outcome": "refused",
+    "text": "InvalidInput: query required"
+   },
+   "class": "R1",
+   "env": "dbee0039f3c7c591",
+   "head": {
+    "class": "VEError",
+    "outcome": "refused",
+    "text": "QueryMismatch: u"
+   },
+   "source": "tests",
+   "wording": "Prove that atlas is reviewed using these premises."
+  },
+  {
+   "base": {
+    "command": {
+     "act": "submit_required",
+     "args": [
+      "q1"
+     ],
+     "force": "require",
+     "guard": [
+      "top"
+     ]
+    },
+    "outcome": "one"
+   },
+   "class": "b2",
+   "env": "dbee0039f3c7c591",
+   "head": {
+    "outcome": "limit",
+    "readings": 0
+   },
+   "source": "tests",
+   "wording": "Prove that atlas                                                                                                                                                                                                                                                                                                                                                                is reviewed using these premises."
+  },
+  {
+   "base": {
+    "class": "VEError",
+    "outcome": "refused",
+    "text": "AmbiguousDerivation: multiple declared acts match"
+   },
+   "class": "many",
+   "env": "fa96c9d363a620f7",
+   "head": {
+    "outcome": "many",
+    "readings": 2
+   },
+   "source": "tests",
+   "wording": "Review the meaning."
+  },
+  {
+   "base": {
+    "class": "VEError",
+    "outcome": "refused",
+    "text": "InvalidInput: query required"
+   },
+   "class": "R1",
+   "env": "9efd66c767fe1417",
+   "head": {
+    "class": "VEError",
+    "outcome": "refused",
+    "text": "QueryMismatch: u"
+   },
+   "source": "q1-4",
+   "wording": "Prove that atlas is reviewed using these premises."
+  },
+  {
+   "base": {
+    "class": "VEError",
+    "outcome": "refused",
+    "text": "InvalidInput: query required"
+   },
+   "class": "R1",
+   "env": "39fa6499a94e2604",
+   "head": {
+    "class": "VEError",
+    "outcome": "refused",
+    "text": "QueryMismatch: u"
+   },
+   "source": "q1-4",
+   "wording": "Prove that atlas is reviewed using these premises."
+  },
+  {
+   "base": {
+    "class": "VEError",
+    "outcome": "refused",
+    "text": "InvalidInput: query required"
+   },
+   "class": "R1",
+   "env": "a046840cf7dfc103",
+   "head": {
+    "class": "VEError",
+    "outcome": "refused",
+    "text": "QueryMismatch: u"
+   },
+   "source": "q1-4",
+   "wording": "Prove that atlas is reviewed using these premises."
+  },
+  {
+   "base": {
+    "class": "SyntaxError",
+    "outcome": "refused",
+    "text": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is reviewed'. Nearest declared wordings: 'is checked'; 'service'; 'alice'."
+   },
+   "class": "R1",
+   "env": "a4fabc1974338c8a",
+   "head": {
+    "class": "SyntaxError",
+    "outcome": "refused",
+    "text": "NoDerivation: The sentence to prove has no reading with the current vocabulary. Unknown English phrase 'is reviewed'. Nearest declared wordings: 'is checked'; 'service'; 'alice'."
+   },
+   "source": "q1-4",
+   "wording": "Prove that atlas is reviewed using these premises."
+  },
+  {
+   "base": {
+    "command": {
+     "act": "click_required",
+     "args": [
+      "check"
+     ],
+     "force": "require",
+     "guard": [
+      "top"
+     ]
+    },
+    "outcome": "one"
+   },
+   "class": "b2",
+   "env": "a046840cf7dfc103",
+   "head": {
+    "class": "SyntaxError",
+    "outcome": "refused",
+    "text": "EmptySentence: The condition is empty."
+   },
+   "source": "ci-1 F3",
+   "wording": "Click check, if ."
+  },
+  {
+   "base": {
+    "class": "SyntaxError",
+    "outcome": "refused",
+    "text": "Sentence 1 has no reading with the current vocabulary. Expected '.' or ', ' here. Use the English paraphrase as a writing example."
+   },
+   "class": "R1",
+   "env": "a046840cf7dfc103",
+   "head": {
+    "class": "SyntaxError",
+    "outcome": "refused",
+    "text": "NoDerivation: The condition has no reading with the current vocabulary. Expected '.' or ', ' here. Use the English paraphrase as a writing example."
+   },
+   "source": "ci-1 F3",
+   "wording": "Click check, if atlas is reviewed and beacon is reviewed or tom is a cat."
+  },
+  {
+   "base": {
+    "class": "VEError",
+    "outcome": "refused",
+    "text": "InvalidInput: query required"
+   },
+   "class": "R1",
+   "env": "a124698a95a56fcd",
+   "head": {
+    "class": "VEError",
+    "outcome": "refused",
+    "text": "QueryMismatch: u"
+   },
+   "source": "spec P2-P3",
+   "wording": "Prove that atlas is reviewed using these premises."
+  },
+  {
+   "base": {
+    "class": "VEError",
+    "outcome": "refused",
+    "text": "InvalidInput: query required"
+   },
+   "class": "R1",
+   "env": "a124698a95a56fcd",
+   "head": {
+    "class": "VEError",
+    "outcome": "refused",
+    "text": "QueryMismatch: u"
+   },
+   "source": "spec P2-P3",
+   "wording": "Prove that atlas is reviewed using these premises."
+  },
+  {
+   "base": {
+    "class": "VEError",
+    "outcome": "refused",
+    "text": "InvalidInput: query required"
+   },
+   "class": "R1",
+   "env": "a124698a95a56fcd",
+   "head": {
+    "class": "VEError",
+    "outcome": "refused",
+    "text": "QueryMismatch: u"
+   },
+   "source": "spec P2-P3",
+   "wording": "Prove that atlas is reviewed using these premises."
+  }
+ ],
+ "corpus_sha256": "7381f7ee81b3dacd4245dab1ce17b4f1557d97d45549c376615d69ce60f3f1f4",
+ "counts": {
+  "R1": 33,
+  "b2": 9,
+  "many": 1,
+  "same": 24165
+ },
+ "head": "4c0a4e2bd3fea87f11214fdcdd287659d96c70f2",
+ "rows": 24208,
+ "tree_dirty": false
+}

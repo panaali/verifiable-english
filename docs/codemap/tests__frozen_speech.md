@@ -1,3 +1,4 @@
 - `tests/frozen_speech/__init__.py` — Frozen pre-switch speech oracle.
 - `tests/frozen_speech/speech_acts.py` — Strict experimental speech-acts@0 semantic core.
 - `tests/frozen_speech/speech_document.py` — Experimental ve-document@2 source wrapper; never admits P0 evidence.
+- `tests/frozen_speech/speech_english.py` — The pre-switch speech parser of `ve/speech_english.py`, frozen at ci-2b's base (63b2b596f): its command branch (`_command_candidates`, `parse_speech`'s `You ma…

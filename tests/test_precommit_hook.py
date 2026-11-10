@@ -601,3 +601,34 @@ def test_large_staged_change_passes(staging, tmp_path):
     result = staging.run("--timings", PATH=without_lean(tmp_path))
     assert result.returncode == 0, result.stderr
     assert "lean --deps: pinned toolchain unavailable; plain-layout grammar only" in result.stderr
+
+
+def test_staged_python_layer_declaration_classifies_the_module(staging):
+    # arch-20261109-2: a module's own first-line declaration, read from the index, places it as a table row does.
+    staging.stage("ve/planted_module.py", "# ve-layer: 4 (a planted route module)\nfrom ve import parser\n")
+    passes(staging)
+    staging.stage("ve/planted_module.py", "# ve-layer: 2 (a planted container)\nfrom ve import parser\n")
+    stderr = rejects(staging, "ve/planted_module.py: new outward import ve.planted_module -> ve.parser (layer 2 -> 3)")
+    assert "`# ve-layer: <1-5> (<reason>)`" in stderr, stderr
+    staging.stage("ve/planted_module.py", "# ve-layer: 4\nfrom ve import parser\n")
+    stderr = rejects(staging, "Python layer declaration refused: ve/planted_module.py:1: "
+                              "layer declaration '# ve-layer: 4' gives no reason")
+    assert "unmapped" not in stderr, stderr
+    staging.stage("ve/planted_module.py", "import ve.ast\n")
+    rejects(staging, "unmapped Python module ve.planted_module (declare it on the file's first line: "
+                     "`# ve-layer: <1-5> (<reason>)`, or add it to tools/layer_policy.py)")
+
+
+def test_staged_lean_layer_declaration_classifies_the_module(staging):
+    path = "lean/VE/Core/Planted.lean"
+    body = "import VE.Core.Bridge\nimport VE.Surface\n\nnamespace VE\nend VE\n"
+    staging.stage(path, "-- ve-layer: 3 (a planted surface module)\n" + body)
+    staging.rehash(path)
+    passes(staging)
+    staging.stage(path, "-- ve-layer: 2 (a planted profile module)\n" + body)
+    staging.rehash(path)
+    stderr = rejects(staging, f"{path}: new outward Lean import VE.Core.Planted -> VE.Surface (layer 2 -> 3)")
+    assert "`-- ve-layer: <1-5> (<reason>)`" in stderr, stderr
+    staging.stage(path, "-- ve-layer: 9 (no such layer)\n" + body)
+    staging.rehash(path)
+    rejects(staging, f"Lean layer declaration refused: {path}:1: unknown layer 9")

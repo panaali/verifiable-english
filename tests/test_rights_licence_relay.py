@@ -54,9 +54,12 @@ def _resync(row):
     """Make a scope answer's findings and `licensed` agree with its mechanisms (Run.lean `narrowingsJson`), so a
     forgery is refused by the check it aims at, not by the findings it would otherwise contradict."""
     if "licensed" in row:
-        row["findings"] = [f"UnlicensedLimitation: {m['mechanism']} of rule {entry['rule']} on right {entry['right']}"
-                           for entry in row["narrowings"] if entry["in_scope"]
-                           for m in entry["mechanisms"] if m["licence"] is None]
+        located = [{"code": "UnlicensedLimitation", "rule": entry["rule"], "right": entry["right"], "span": None,
+                    "text": f"UnlicensedLimitation: {m['mechanism']} of rule {entry['rule']} on right {entry['right']}"}
+                   for entry in row["narrowings"] if entry["in_scope"]
+                   for m in entry["mechanisms"] if m["licence"] is None]
+        row["findings"] = [finding["text"] for finding in located]
+        row["located_findings"] = located
         row["licensed"] = not row["findings"]
 
 

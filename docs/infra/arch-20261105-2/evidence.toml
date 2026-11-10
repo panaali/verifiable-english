@@ -1,0 +1,23 @@
+# arch-20261105-2 (PIPELINE-LIMITS L175, backlog arch-actions-stamp): raising actions_version stops rewriting
+# recorded test files. Checked with: uv run python tools/batch_evidence.py --check docs/infra/arch-20261105-2
+# The scope changes lean/ (test-class RunExamples.lean and the generated declarations.txt), so [ab] is named: the
+# seven required corpora plus norm_defaults and document, recorded by tools/lean_first_diff.py at the merge base
+# e433588f (its own worktree) and at the head (this checkout), kept out of the tree (over 1 MB) with their SHA-256
+# in evidence/ab.json; seven whole-UDHR records the head lost to the 600 s timeout under load were re-run with
+# rerun_timeouts.py. [gate] is saved after the chain's gate (REPORT.md, "After the gate").
+batch = "arch-20261105-2"
+evidence = "evidence"
+
+[scope]
+file = "scope.json"
+
+[gate]
+file = "gate.json"
+
+[mutants]
+file = "mutants-result.json"
+min = 3
+
+[ab]
+file = "ab.json"
+corpora = ["probe", "conformance", "readings", "pilots", "discourse", "rights", "quantity", "norm_defaults", "document"]

@@ -26,6 +26,7 @@
           "coverage": {"$ref": "#/$defs/coverage"},
           "document_id": {"$ref": "common.json#/$defs/hex64"},
           "id": {"type": "string", "x-equals": "/id"},
+          "judgment_lines": {"$ref": "#/$defs/judgment_lines"},
           "judgments": {"$ref": "#/$defs/judgments"},
           "source": {"type": "string"},
           "source_id": {"$ref": "common.json#/$defs/hex64"},
@@ -246,6 +247,35 @@
         "status": {"const": "error"}
       },
       "required": ["id", "status", "error", "span"],
+      "type": "object"
+    },
+    "judgment_lines": {
+      "$comment": "Service.Document.linesJson: the legend and status lines of the bound judgments.",
+      "additionalProperties": false,
+      "properties": {
+        "legend": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "lines": {"items": {"type": "string"}, "minItems": 1, "type": "array"},
+              "term": {"$ref": "common.json#/$defs/token"}
+            },
+            "required": ["term", "lines"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "status": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {"line": {"type": "string"}, "unit": {"$ref": "common.json#/$defs/token"}},
+            "required": ["unit", "line"],
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": ["legend", "status"],
       "type": "object"
     },
     "judgments": {

@@ -1,0 +1,30 @@
+{
+  "item": "sn-b6c",
+  "note": "Each mutant was planted, the Lean route rebuilt for a Lean one (lake build ve_senses_route; VE_NATIVE_PREBUILT=1), the named test run alone, and the file restored from its saved copy (git status clean).",
+  "mutants": [
+    {"id": "S1", "file": "ve/backends/senses.py", "behaviour": "a span off by one byte accepted by the relay (task seeded bug)",
+     "mutation": "_byte_spans_problem: the white-space and cut-word edge check -> if False",
+     "test": "tests/test_senses_read_members.py::test_a_span_off_by_one_byte_is_refused",
+     "result": "4 failed: start-1, start+1, stop-1, stop+1 (into a space)"},
+    {"id": "S2", "file": "lean/VE/Senses/Run.lean", "behaviour": "each span is the bytes of its tokens; stop+1 onto a punctuation token (DRI 20261108 item 4)",
+     "mutation": "byteSpan: (last).2.2 -> (last).2.2 + 1",
+     "test": "tests/test_senses_read_members.py::test_each_span_is_the_bytes_of_its_words",
+     "result": "3 failed: golden 0 by the relay (CheckerUnavailable, a span ending in a space); goldens 1 and 2 by the golden values ('funny.', 'strange.')"},
+    {"id": "S3", "file": "lean/VE/Senses/Texts.lean", "behaviour": "a 3.2 text with a slot swapped (task seeded bug)",
+     "mutation": "divergeText: the added line's gloss g1 -> g2",
+     "test": "tests/test_senses_route.py::test_every_refusal_carries_its_arguments[s17]",
+     "result": "1 failed; and the #guards at lean/VE/Senses/TextsExamples.lean:14 and :18 fail the build"},
+    {"id": "S4", "file": "ve/backends/senses.py", "behaviour": "Mixed warnings bound one per mixed word",
+     "mutation": "_warnings_problem: the Mixed words check -> if False",
+     "test": "tests/test_senses_read_members.py::test_warning_rebinding_is_refused",
+     "result": "2 failed: mixed-dropped, mixed-word"},
+    {"id": "S5", "file": "lean/VE/Senses/Run.lean", "behaviour": "each entry's gloss is its own sense's",
+     "mutation": "senseEntryJson: P.map.find? (·.1 == o.symbol) -> P.map.head?",
+     "test": "tests/test_senses_read_members.py::test_each_span_is_the_bytes_of_its_words",
+     "result": "3 failed"},
+    {"id": "S6", "file": "lean/VE/Senses/Run.lean", "behaviour": "NoSenseFits only for one unresolved word (DRI 20261108 item 2)",
+     "mutation": "textsJson: some [w] -> some (w :: _)",
+     "test": "tests/test_senses_read_members.py::test_the_texts_of_a_source_answer_are_leans",
+     "result": "1 failed: a hint for 'Alice is funny and odd.'"}
+  ]
+}

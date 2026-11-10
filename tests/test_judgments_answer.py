@@ -137,10 +137,12 @@ def rebinds(usage):
 
 
 def lean_s(usage):
-    """The mutants that stay bound: a unit dropped from a `units` list of two or more. Which units use a term is
-    Lean's decision (R8: the relay binds and never recomputes it), and no display shows the map yet (jt-2c)."""
+    """The mutants that stay bound: a unit dropped from a `units` list of two or more, when another term still lists
+    it (`judgment_lines` has its status row, jt-3b). Which units use a term is Lean's decision (R8: the relay binds and
+    never recomputes it), and no display shows the map yet (jt-2c)."""
+    listed = [unit for r in usage["used"] for unit in r["units"]]
     return {f"drop {('used', i, 'units', j)}" for i, r in enumerate(usage["used"]) if len(r["units"]) > 1
-            for j in range(len(r["units"]))}
+            for j, unit in enumerate(r["units"]) if listed.count(unit) > 1}
 
 
 @pytest.mark.parametrize("name", GENUINE)
@@ -168,6 +170,90 @@ def test_the_field_is_there_exactly_under_the_profile(service, genuine):
     assert not relayed(case, {**row, "judgments": {"used": [{"term": "arbitrary", "units": ["u1"]}], "unused": []}})
 
 
+def rebind_lines(lines, unit_ids):
+    """Each term or unit of `judgment_lines` pushed out of the request, or to a place the request gives it no right to."""
+    def changed(fn):
+        m = deepcopy(lines)
+        fn(m)
+        return m
+    for i, r in enumerate(lines["legend"]):
+        for fresh in ("undeclared", "arrest", ""):
+            yield f"legend {i} -> {fresh!r}", changed(lambda m: m["legend"][i].update(term=fresh))
+        yield f"legend {i} repeated", changed(lambda m: m["legend"].append(deepcopy(r)))
+        yield f"legend {i} without a line", changed(lambda m: m["legend"][i].update(lines=[]))
+        yield f"legend {i} with an empty line", changed(lambda m: m["legend"][i]["lines"].append(""))
+        yield f"legend {i} with an extra member", changed(lambda m: m["legend"][i].update(extra=1))
+    for i, r in enumerate(lines["status"]):
+        for fresh in ("u999", "u0", "U1", ""):
+            yield f"status {i} -> {fresh!r}", changed(lambda m: m["status"][i].update(unit=fresh))
+        yield f"status {i} repeated", changed(lambda m: m["status"].append(deepcopy(r)))
+        yield f"status {i} with an empty line", changed(lambda m: m["status"][i].update(line=""))
+        yield f"status {i} with an extra member", changed(lambda m: m["status"][i].update(extra=1))
+    used = {r["unit"] for r in lines["status"]}
+    for fresh in unit_ids:
+        if fresh not in used:
+            # A unit of the request that uses no judgment: a row Lean did not write.
+            yield f"status for unused {fresh}", changed(lambda m: m["status"].append({"unit": fresh, "line": "Open."}))
+    yield "extra member", changed(lambda m: m.update(extra=[]))
+
+
+def lean_s_lines(lines):
+    """The mutants that stay bound: the text is Lean's and only typed (R8), so another string in its place is relayed
+    (`RETYPES`' "7"), and a row of two or more lines may lose one or be reordered; a row keeps at least one."""
+    out = {f"retype {('status', i, 'line')} '7'" for i in range(len(lines["status"]))}
+    for i, r in enumerate(lines["legend"]):
+        out |= {f"retype {('legend', i, 'lines', j)} '7'" for j in range(len(r["lines"]))}
+        if len(r["lines"]) > 1:
+            out |= {f"drop {('legend', i, 'lines', j)}" for j in range(len(r["lines"]))}
+            out |= {f"reorder {('legend', i, 'lines')}", f"rotate {('legend', i, 'lines')}"}
+    return out
+
+
+LINES_GENUINE = {**GENUINE, "decider": (((
+    record("arbitrary", decided_by="governance_function", factors=["the source", "the budget"]),),
+    STATUS["J-alpha"][1]), ([("arbitrary", ["u1"])], []))}
+
+
+@pytest.mark.parametrize("name", LINES_GENUINE)
+def test_every_mutant_of_the_lines_is_refused(service, name):
+    """R8: drop, empty, retype, duplicate and reorder each member of `judgment_lines`, and rebind each term and unit.
+    The text itself is only typed: a changed word is relayed, as `test_a_changed_word_of_the_text_is_lean_s` states."""
+    (records, units), _ = LINES_GENUINE[name]
+    case = {"id": "d", "document": document(service, units, records), "admit": False}
+    row = service.run("document", [case])[0]
+    lines = row["judgment_lines"]
+    assert relayed(case, row) and lines["legend"] and {r["term"] for r in lines["legend"]} == {r["name"] for r in records}
+    unit_ids = [x["id"] for x in units]
+    accepted, count = set(), 0
+    for label, mutated in [*mutants(lines), *rebind_lines(lines, unit_ids)]:
+        if json.dumps(mutated, sort_keys=True) == json.dumps(lines, sort_keys=True):
+            continue
+        count += 1
+        if relayed(case, {**row, "judgment_lines": mutated}):
+            accepted.add(label)
+    assert count > 15 and accepted == lean_s_lines(lines)
+
+
+def test_a_changed_word_of_the_text_is_lean_s(service):
+    """The relay holds no word list and decides nothing about the text (R8, plan JT-3): only its type is checked."""
+    (records, units), _ = GENUINE["J-alpha"]
+    case = {"id": "d", "document": document(service, units, records), "admit": False}
+    row = service.run("document", [case])[0]
+    changed = deepcopy(row["judgment_lines"])
+    changed["status"][0]["line"] = "Another line."
+    assert relayed(case, {**row, "judgment_lines": changed})
+
+
+def test_the_lines_are_there_exactly_under_the_profile(service, genuine):
+    case, row = genuine["J-alpha"]
+    assert not relayed(case, {k: v for k, v in row.items() if k != "judgment_lines"})
+    plain = [p for p in PROFILES if p != "judgments@0"]
+    case = {"id": "d", "document": document(service, STATUS["J-alpha"][1], J1, profiles=plain), "admit": False}
+    row = service.run("document", [case])[0]
+    assert "judgment_lines" not in row and relayed(case, row)
+    assert not relayed(case, {**row, "judgment_lines": {"legend": [], "status": []}})
+
+
 # The order check at its boundaries (spec 8.3, A5): each list in the request's order is accepted, and the same
 # members in any other order are refused, though every member is bound.
 ORDERS = [
@@ -193,7 +279,10 @@ def test_the_order_is_lean_s(genuine, label, name, usage, accepted):
     """Which terms a unit uses is Lean's: a bound map other than Lean's is relayed as it is (the binding decides no
     usage); only a map out of the request's order or naming is refused."""
     case, row = genuine[name]
-    assert relayed(case, {**row, "judgments": usage}) == accepted
+    # The status rows stand for the units this map lists, so that only the map's own binding is at stake.
+    using = sorted({unit for r in usage["used"] for unit in r["units"]})
+    lines = {**row["judgment_lines"], "status": [{"unit": unit, "line": "Open."} for unit in using]}
+    assert relayed(case, {**row, "judgments": usage, "judgment_lines": lines}) == accepted
 
 
 # `ve/openterms.py` off the live document path (JT-2, Python): a rights document Lean's `document` mode answers takes

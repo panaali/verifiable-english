@@ -10,6 +10,7 @@ from ..backends.lean_service import CheckerUnavailable
 from ..environment import Environment, listed_profiles
 from ..errors import ResourceLimit, VEError
 from ..identity import source_id
+from ..profiles import DOCUMENT_LAYERS
 from ..readings import active_reading_sets, rights_meaning_id
 from ..wire import digest
 from .source import (STATUSES, _RIGHTS_KINDS, _document_id, _english_fences, _environment, _parts, _split,
@@ -57,6 +58,10 @@ def _document_case(raw: bytes, admit: bool, directory: Path | None = None, prepa
             # The proposal names the environment the chain reads the fences in (`chain_environment`).
             environment = chain_environment(meta["environment"])
             profiles = listed_profiles(environment)
+            if any(p in DOCUMENT_LAYERS for p in profiles):
+                # Lean reads a fence without the document layers (`Service.Document.Env.forModes`).
+                profiles = [p for p in profiles if p not in DOCUMENT_LAYERS]
+                environment = {**environment, "profiles": profiles}
             if "soft-norms@0" in profiles and "rights@0" not in profiles:
                 # Batch 16f: a soft-norms document's fences are read in the soft route's `E″`, which the
                 # proposal names (Lean `Service.Document.softLayer`).
@@ -338,7 +343,8 @@ def _lean_document(raw: bytes, path: Path, row: dict, *, admitted: bool, prepare
             "soft_document": soft_document, "norm_defaults": norm_defaults, "senses": senses, "reports": None,
             "rights_document": rights_document, "readings_s1": readings_s1, "readings_s2": readings_s2,
             "readings_components": readings_components, "reading_plan": reading_plan,
-            "lean": {"coverage": row["coverage"], "admitted": admitted}}
+            "lean": {"coverage": row["coverage"], "admitted": admitted,
+                     **({"judgment_lines": row["judgment_lines"]} if "judgment_lines" in row else {})}}
 
 
 def _cardinality_document(raw, meta, body, fences, declared, row, path, admitted):
@@ -400,12 +406,14 @@ def _bind_document_answer(body, meta, declared, row, senses=None):
     composed = bool(composed_set_units(meta))
     require(type(row) is dict and type(row.get("source")) is str and
             set(row) == {"id", "status", "document_id", "source_id", "source", "units", "coverage"} |
-            ({"judgments", "undeclared_evaluative"} if judged else set()) |
+            ({"judgments", "judgment_lines", "undeclared_evaluative"} if judged else set()) |
             ({"composed_readings"} if composed else set()) |
             ({key for key in ("cardinality", "composed") if key in row}
              if "cardinality@0" in listed_profiles(meta.get("environment")) else set()))
     if judged:
         require(_judgments_bound(row["judgments"], meta.get("open_terms", []), [u.get("id") for u, _ in declared]))
+        require(_judgment_lines_bound(row["judgment_lines"], row["judgments"], meta.get("open_terms", []),
+                                      [u.get("id") for u, _ in declared]))
         require(_undeclared_bound(row["undeclared_evaluative"], meta.get("environment"), meta.get("open_terms", [])))
     source = row["source"].encode("utf-8")
     require(source == body)
@@ -515,29 +523,63 @@ def _bind_document_answer(body, meta, declared, row, senses=None):
     require(same(coverage, expected))
 
 
+def _ordered(values, order) -> bool:
+    """Whether every value is in `order`, and the values stand in `order`'s order with no repeat."""
+    if not all(type(v) is str and v in order for v in values):
+        return False
+    places = [order.index(v) for v in values]
+    return all(a < b for a, b in zip(places, places[1:]))
+
+
+def _open_term_names(open_terms) -> list:
+    return [t.get("name") if type(t) is dict else None for t in open_terms] if type(open_terms) is list else []
+
+
 def _judgments_bound(usage, open_terms, unit_ids) -> bool:
     """Whether a `judgments` usage map (Lean's `usageMap`, docs/spec/judgment-terms.md 8.3) is bound to the request:
     every declared open term once, across `used` and `unused`, each list in declaration order; each `units` list
     non-empty, of units of the request, in the request's unit order. Which units use which term is Lean's."""
-    names = [t.get("name") if type(t) is dict else None for t in open_terms] if type(open_terms) is list else []
-
-    def ordered(values, order):
-        # Every value is in `order`, and the values stand in `order`'s order with no repeat.
-        if not all(type(v) is str and v in order for v in values):
-            return False
-        places = [order.index(v) for v in values]
-        return all(a < b for a, b in zip(places, places[1:]))
+    names = _open_term_names(open_terms)
     if type(usage) is not dict or set(usage) != {"used", "unused"}:
         return False
     used, unused = usage["used"], usage["unused"]
     if type(used) is not list or type(unused) is not list:
         return False
     if not all(type(r) is dict and set(r) == {"term", "units"} and type(r["units"]) is list and r["units"]
-               and ordered(r["units"], unit_ids) for r in used):
+               and _ordered(r["units"], unit_ids) for r in used):
         return False
     terms = [r["term"] for r in used]
-    return (ordered(terms, names) and ordered(unused, names) and
+    return (_ordered(terms, names) and _ordered(unused, names) and
             sorted(map(str, terms + unused)) == sorted(map(str, names)))
+
+
+def _judgment_lines_bound(lines, usage, open_terms, unit_ids) -> bool:
+    """Whether `judgment_lines` (Lean's `linesJson`, plan 2.4 and docs/spec/judgment-terms.md 9.2) is bound to the
+    request: a legend row for each declared open term, in declaration order; a status row for each unit the usage map
+    lists, in the request's unit order. The text is Lean's: a non-empty string that can be shown, not repeated within a
+    row, and nothing else about it is read."""
+    def text(value):
+        if type(value) is not str or not value:
+            return False
+        try:
+            value.encode("utf-8")
+        except UnicodeEncodeError:
+            return False
+        return True
+    if type(lines) is not dict or set(lines) != {"legend", "status"}:
+        return False
+    legend, status = lines["legend"], lines["status"]
+    if type(legend) is not list or type(status) is not list:
+        return False
+    if not all(type(r) is dict and set(r) == {"term", "lines"} and type(r["lines"]) is list and r["lines"]
+               and all(text(line) for line in r["lines"]) and len(set(map(str, r["lines"]))) == len(r["lines"])
+               for r in legend):
+        return False
+    if not all(type(r) is dict and set(r) == {"unit", "line"} and text(r["line"]) for r in status):
+        return False
+    units = [r["unit"] for r in status]
+    return ([r["term"] for r in legend] == _open_term_names(open_terms) and _ordered(units, unit_ids) and
+            set(units) == {unit for row in usage["used"] for unit in row["units"]})
 
 
 def _undeclared_bound(names, environment, open_terms) -> bool:

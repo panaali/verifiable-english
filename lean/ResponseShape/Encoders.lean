@@ -17,12 +17,14 @@ import ResponseShape.Encoders.Question
 import ResponseShape.Encoders.SearchBudget
 import ResponseShape.Encoders.Ask
 import ResponseShape.Encoders.Words
+import ResponseShape.Encoders.ActReadings
 import ResponseShape.Encoders.Metered
 import ResponseShape.Encoders.Calc
 import ResponseShape.Encoders.Cardinality
 import ResponseShape.Encoders.Scope
 import ResponseShape.Encoders.SensesProject
 import ResponseShape.Encoders.Command
+import ResponseShape.Encoders.ClausesElaborate
 
 /-! # Every encoder against its shape
 
@@ -88,5 +90,7 @@ theorem runMode_fits (m : VE.Service.Mode) (j : Json) (hj : CaseWF j) : Fits j (
   · exact Scope.runCaseReported_fits j
   · exact SensesProject.projectCaseReported_fits j
   · exact Command.caseReported_fits j
+  · exact ActReadings.actReadingsReported_fits j
+  · exact ClausesElaborate.runCaseReported_fits j
 
 end ResponseShape.Encoders

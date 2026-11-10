@@ -185,4 +185,90 @@ def sides (c : Choice) (M : VE.FiniteModel String) (author sign pl : Bool) : Boo
 -- with S2a's `pull` in place of `pullF` the gap's table is dropped and the choice's `F_p` never applies (S-5)
 #guard sides [("rs1", 1)] (m1 true [["a", "u"]] [["a", "u"]]) false true false == (true, false)
 
+/-! ## `sd_superpose_conflict_free`, each direction
+
+A CONFLICT side is shown by a filled finite model that is a base of the side's premises (background, `Fill_T`, `X`)
+where a conflict target of the filled tree holds; the choice's side reads the model's filled pull. The CONFLICT-FREE
+direction on NSD4a and NSD4c under `A = [(rs1,1)]` is derived through the per-choice route
+(`tests/test_readings_sd_lean.py::test_sd_superpose_conflict_free_derived_rows`). -/
+
+/-- Whether `M` with the filling `F` is a base of `U` with `X`, and whether a conflict target of `fill U` holds on it. -/
+def conflictAt (U : VE.NormDefaults.UDoc) (X : List VE.Formula) (M : VE.FiniteModel String)
+    (F : VE.NormDefaults.FiniteFill U String) : Bool × Bool :=
+  (VE.Norms.backgroundValid U.D M && VE.NormDefaults.fillValid U M F && X.all (·.eval (M.withFill F) []),
+   (VE.Norms.targets (fill U)).any fun t => (VE.NormDefaults.allTuples M t.2.1).any fun vs =>
+     t.2.2.eval (M.withFill F) (VE.Norms.tupleVal vs))
+/-- The filling of `y_permitted`: yes for `a`, or empty. -/
+def fY {U : VE.NormDefaults.UDoc} (y : Bool) : VE.NormDefaults.FiniteFill U String :=
+  fun n => if y && n == "unsaid__y_permitted" then [["a"]] else []
+/-- `conflictAt` on the superposed side under `A` and on choice `c`'s side. -/
+def bothSides (N : NDoc) (A c : Choice) (M : VE.FiniteModel String) (y : Bool) : (Bool × Bool) × (Bool × Bool) :=
+  (conflictAt (supU N) (slotUnder N.D A ++ supX N) M (fY y), conflictAt (choiceU N c) (choiceX N c) (pullFM N c M) (fY y))
+
+-- CONFLICT on both sides: NSD4c and NSD4 under `A = []`, bits naming `(rs1,0)` (strict `must-x`, guard `y_permitted`),
+-- wherever the filling says `y_permitted`; with the filling empty no target holds
+#guard [NSD4c, NSD4].all fun N => bothSides N [] [("rs1", 0)] (m4 false [] []) true == ((true, true), (true, true))
+#guard bothSides NSD4c [] [("rs1", 0)] (m4 false [] []) false == ((true, false), (true, false))
+-- NSD4a under `A = [(rs1,1)]` rests on `supX`'s coherence premise: where both defaults select, the model is a base of
+-- neither side, and with `[]` for `supX` it is a base where a target holds (CONFLICT)
+#guard bothSides NSD4a [("rs1", 1)] [("rs1", 1)] (m4 true [] []) true == ((false, true), (false, true))
+#guard conflictAt (supU NSD4a) (slotUnder NSD4a.D [("rs1", 1)] ++ []) (m4 true [] []) (fY true) == (true, true)
+-- NSD4c under `A = [(rs1,1)]`: the strict `need-not-x` blocks the default `must-x`; the same model is a base of both
+-- sides with no target
+#guard bothSides NSD4c [("rs1", 1)] [("rs1", 1)] (m4 true [] []) true == ((true, false), (true, false))
+
+/-! ## `sharedEnvSD` is the free document's vocabulary, not `supU`'s (sc-10a review F2)
+
+`sd_superpose_all`'s queries are typed over `sharedEnvSD`. A query naming a superposed decision table or a bit is typed
+over `fill (supU N)`'s vocabulary and not over `sharedEnvSD N`. -/
+
+def q5 : VE.Formula := .all "agent" (.all "user" (.binary "soft__excepted__rd_2_no_deception" (.var 1) (.var 0)))
+def q6 : VE.Formula := .unary "ve__bit__1__0" (.const "ve__here")
+#guard [q5, q6].all fun q => !q.check (sharedEnvSD NSD1) [] &&
+  q.check (envAt (fill (supU NSD1)) (size (fill (supU NSD1)))) []
+
+/-! ## `sd_superpose_all` and `sd_superpose_countermodel` (13.5)
+
+A filled finite model is checked as the per-choice route checks one: `modelCheckX` (a base where the premises hold, and
+the query's value) and `localFree`; the choice's side reads the model's filled pull. The certificate rows are the
+per-choice route's (`tests/test_readings_sd_lean.py::test_fsd1_verdicts_query_some_all_none`: `(rs1,0)` proved, ALL
+under `rs1:0`, `(rs1,1)` refuted); no superposed certificate exists under `A = []`, since the countermodel below names
+`(rs1,1)`. -/
+
+/-- A finite model over `Entity`, each entity named by itself. -/
+def toE (M : VE.FiniteModel String) : VE.FiniteModel VE.Bridge.Entity where
+  domains s := (M.domains s).map (("", ·))
+  constants x := (M.constants x).map (("", ·))
+  relations p := (M.relations p).map (·.map (("", ·)))
+def avoidAll : VE.Formula := .all "agent" (.all "user" (.binary "avoid_required" (.var 1) (.var 0)))
+def fillOf {U : VE.NormDefaults.UDoc} (F : List (String × List (List String))) :
+    VE.NormDefaults.FiniteFill U VE.Bridge.Entity :=
+  fun n => (((F.find? (·.1 == n)).map (·.2)).getD []).map (·.map (("", ·)))
+/-- `modelCheckX` and `localFree` on the superposed side under `A` and on choice `c`'s side. -/
+def checkSides (N : NDoc) (A c : Choice) (M : VE.FiniteModel String) (F : List (String × List (List String)))
+    (Γ : List VE.Formula) (φ : VE.Formula) : (Bool × Bool × Bool) × (Bool × Bool × Bool) :=
+  let r1 := VE.NormDefaults.modelCheckX (supU N) (slotUnder N.D A ++ supX N) (toE M) (fillOf F) ((sup N.D).2 ++ Γ) φ
+  let r2 := VE.NormDefaults.modelCheckX (choiceU N c) (choiceX N c) (toE (pullFM N c M)) (fillOf F)
+    ((choiceDoc N.D c).2 ++ Γ) φ
+  ((r1.1, r1.2, VE.Readings.Wire.localFree (supU N) (toE M) (fillOf F)),
+   (r2.1, r2.2, VE.Readings.Wire.localFree (choiceU N c) (toE (pullFM N c M)) (fillOf F)))
+/-- The choices a model's bits name. -/
+def named (N : NDoc) (M : VE.FiniteModel String) : List Choice :=
+  (choices N.D).filter fun c => (atoms N.D c).all (·.eval M [])
+
+-- the countermodel: NSD1 under `A = []`, the bit on, `soft__excepted__rd_2_no_deception = {(a,u)}`, the filling no.
+-- It passes with the query false and `localFree`; its bits name `(rs1,1)`, whose side it is a countermodel of. Read as
+-- `(rs1,0)` (the other choice) it holds the query: that choice's strict rule decides it
+#guard named NSD1 (m1 true [["a", "u"]] []) == [[("rs1", 1)]]
+#guard checkSides NSD1 [] [("rs1", 1)] (m1 true [["a", "u"]] []) [] [] avoidAll ==
+  ((true, false, true), (true, false, true))
+#guard (checkSides NSD1 [] [("rs1", 0)] (m1 true [["a", "u"]] []) [] [] avoidAll).2 == (true, true, true)
+-- under `A = [(rs1,0)]` a model naming `(rs1,0)` holds the query on both sides (ALL)
+#guard checkSides NSD1 [("rs1", 0)] [("rs1", 0)] (m1 false [] []) [] [] avoidAll == ((true, true, true), (true, true, true))
+-- without `hl`: NSD4 under `A = [(rs1,0)]`, `Γ = [∃a. y_permitted a]`, `φ = ⊥`, the bit naming `(rs1,0)`, the filling yes
+-- for `y_permitted`, every excepted table empty. The model passes `modelCheckX` with `⊥` false, but it is not
+-- `localFree` on either side, so it has no expansion and is no `CounterX`
+#guard checkSides NSD4 [("rs1", 0)] [("rs1", 0)] (m4 false [] []) [("unsaid__y_permitted", [["a"]])]
+  [.ex "assistant" (.unary "y_permitted" (.var 0))] .bottom == ((true, false, false), (true, false, false))
+
 end VE.Readings.SoftSupExamples

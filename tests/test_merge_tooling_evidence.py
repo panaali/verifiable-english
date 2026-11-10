@@ -101,5 +101,5 @@ def test_the_generated_file_table_names_every_entry():
     sys.path.insert(0, str(ROOT / "tools"))
     import regen_generated
     section = DOC.split("## 1.", 1)[1].split("`python tools/regen_generated.py --list`", 1)[0]
-    listed = re.findall(r"^\| ([a-z-]+) \|", section, re.M)
+    listed = re.findall(r"^\| ([a-z0-9-]+) \|", section, re.M)
     assert listed == [entry.name for entry in regen_generated.GENERATED]

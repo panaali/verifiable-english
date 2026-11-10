@@ -173,7 +173,8 @@ def _rights_report(doc):
            for c in reading_set["readings"]):
         return None
     from ..rights_route import report_rights
-    return report_rights(doc["environment"], _rights_source_units(doc), rights)
+    return report_rights(doc["environment"], _rights_source_units(doc), rights,
+                         located=[u["id"] for u in doc["units"] if _in_rights_source(u)])
 
 
 def coverage_defaults(doc):
@@ -349,7 +350,9 @@ def _profile_lines(doc, residual, rights_report=None):
                if rights is not None else {}),
             **({"rights_report": {
                 "unlicensed_limitations": rights_report["unlicensed_limitations"],
+                "unlicensed_limitations_located": rights_report["unlicensed_limitations_located"],
                 "distinction_hits": rights_report["distinction_hits"],
+                "distinction_hits_located": rights_report["distinction_hits_located"],
                 "limitation_premises_used": rights_report["limitation_premises_used"]}}
                if rights is not None and rights_report is not None else {})}
 
@@ -438,6 +441,13 @@ def check_document(path, *, raw=None):
 
 def _check_document(path, *, raw=None):
     doc = _load(Path(path), admit=True, raw=raw)
+    report = _checked_report(doc)
+    lines = doc.get("lean", {}).get("judgment_lines")
+    # Lean's lines of a `judgments@0` document (jt-3's legend and status), verbatim.
+    return report if lines is None else {**report, "judgment_lines": lines}
+
+
+def _checked_report(doc):
     if "discourse" not in doc:
         return _report(doc)
     try:

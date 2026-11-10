@@ -1,0 +1,27 @@
+import sys, time, json
+sys.path.insert(0, sys.argv[1] + "/tools")
+import trust_mutants as t
+LOG = open(sys.argv[2], "a")
+orig_probe, orig_lake, orig_settle = t.probe, t.Scratch.lake, t.settle
+def probe(lake, env, text, roles, path, outside=False, only=None):
+    side = "mutant" if env.get("TM_TRUST_MUTATED") else "control"
+    def lk(e, *a):
+        s = time.monotonic(); code, out = lake(e, *a)
+        LOG.write(json.dumps({"side": side, "file": str(path), "only": sorted(only) if only is not None else None,
+            "rc": code, "secs": round(time.monotonic() - s, 1), "out_bytes": len(out),
+            "nonce_lines": sum(1 for l in out.splitlines() if l.startswith(e["TM_TRUST_NONCE"])),
+            "non_nonce_tail": [l for l in out.splitlines() if not l.startswith(e["TM_TRUST_NONCE"])][-8:]}) + "\n"); LOG.flush()
+        return code, out
+    got = orig_probe(lk, env, text, roles, path, outside, only)
+    for span, entry in got.items():
+        if "RouteExamples" in str(path) and span[0] in (62,):
+            LOG.write(json.dumps({"side": side, "entry62": {"flags": sorted(entry["flags"]), "consts": len(entry["consts"])}}) + "\n")
+    LOG.write(json.dumps({"side": side, "file": str(path), "entries": {f"{s[0]}-{s[1]}": sorted(e["flags"] - {x for x in e["flags"] if x.startswith("hash")}) for s, e in got.items()}}) + "\n"); LOG.flush()
+    return got
+def settle(errors, *a, **k):
+    LOG.write(json.dumps({"errors": [(f, n, m[:160]) for f, n, m in errors]}) + "\n"); LOG.flush()
+    r = orig_settle(errors, *a, **k)
+    LOG.write(json.dumps({"settle": r}) + "\n"); LOG.flush()
+    return r
+t.probe, t.settle = probe, settle
+sys.exit(t.main(sys.argv[3:]))

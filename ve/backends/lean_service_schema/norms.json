@@ -34,7 +34,8 @@
                   "then": {"$ref": "#/$defs/norms-witness"},
                   "when": {"allOf": [{"$ref": "#/$defs/kind/norms-conflict"}, {"required": ["witness"]}]}
                 },
-                {"then": {"$ref": "#/$defs/norms-conflict"}, "when": {"$ref": "#/$defs/kind/norms-conflict"}}
+                {"then": {"$ref": "#/$defs/norms-conflict"}, "when": {"$ref": "#/$defs/kind/norms-conflict"}},
+                {"then": {"$ref": "#/$defs/acts-elaborate"}, "when": {"$ref": "#/$defs/kind/acts-elaborate"}}
               ]
             }
           ]
@@ -45,7 +46,74 @@
     ]
   },
   "$defs": {
+    "acts-elaborate": {
+      "$comment": "Acts.Run.runElaborate (runElaborate_fits): the elaborated document's parts, part rules, joined acts kept whole and, per split source, its parts with D-28's text; or REFUSED with the elaboration's diagnostic and every list empty. Python binds each source, index and copied field to the request (ve/norms.py bound_elaboration).",
+      "additionalProperties": false,
+      "else": {"not": {"required": ["diagnostic"]}},
+      "if": {"properties": {"verdict": {"const": "REFUSED"}}},
+      "properties": {
+        "diagnostic": {"type": "string"},
+        "environment_id": {"$ref": "common.json#/$defs/hex64"},
+        "id": {"type": "string", "x-equals": "/id"},
+        "kept": {"$ref": "common.json#/$defs/strings"},
+        "predicates": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "act": {"anyOf": [{"type": "string"}, {"type": "null"}]},
+              "default": {"enum": ["allow", "deny", "unspecified"]},
+              "index": {"$ref": "common.json#/$defs/nat"},
+              "name": {"type": "string"},
+              "permission": {"anyOf": [{"type": "string"}, {"type": "null"}]},
+              "role": {"enum": ["permission", "obligation", "plain"]},
+              "sorts": {"$ref": "common.json#/$defs/strings"},
+              "source": {"type": "string"}
+            },
+            "required": ["name", "source", "index", "sorts", "role", "default", "act", "permission"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "rules": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "guard": {"$ref": "common.json#/$defs/generated_formula"},
+              "index": {"$ref": "common.json#/$defs/nat"},
+              "name": {"type": "string"},
+              "over": {"$ref": "common.json#/$defs/strings"},
+              "pred": {"type": "string"},
+              "sign": {"type": "boolean"},
+              "source": {"type": "string"},
+              "unless": {"$ref": "common.json#/$defs/generated_formulas"}
+            },
+            "required": ["name", "source", "index", "pred", "sign", "guard", "unless", "over"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "split": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "parts": {"$ref": "common.json#/$defs/strings"},
+              "source": {"type": "string"},
+              "text": {"type": "string"}
+            },
+            "required": ["source", "parts", "text"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "status": {"const": "ok"},
+        "verdict": {"enum": ["ELABORATED", "REFUSED"]}
+      },
+      "required": ["id", "status", "environment_id", "verdict", "predicates", "rules", "kept", "split"],
+      "then": {"required": ["diagnostic"]},
+      "type": "object"
+    },
     "kind": {
+      "acts-elaborate": {"properties": {"kind": {"const": "acts-elaborate"}}, "required": ["kind"], "type": "object"},
       "admission": {"properties": {"kind": {"const": "admission"}}, "required": ["kind"], "type": "object"},
       "background": {"properties": {"kind": {"const": "background"}}, "required": ["kind"], "type": "object"},
       "norms-certificate": {"properties": {"kind": {"const": "norms-certificate"}}, "required": ["kind"], "type": "object"},

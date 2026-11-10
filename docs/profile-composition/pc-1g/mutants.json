@@ -1,0 +1,195 @@
+{
+ "item": "pc-1g",
+ "note": "One mutant per new trusted definition, each applied to the committed file, rebuilt (lake build; the service for pytest checks) and restored (/tmp runner, VE_NATIVE_PREBUILT=1). Every mutant breaks its named #guard, proof or test.",
+ "mutants": [
+  {
+   "definition": "rightsAuthorFormulas",
+   "file": "lean/VE/Judgments/Chain.lean",
+   "mutant": "R.rs.map (\u00b7.guard) ++",
+   "test": "lake build VE.Judgments.Chain: correlate_judged (correlate_covered no longer proves)",
+   "caught": true,
+   "detail": "the proof of correlate_judged (mem_author_holder) no longer checks; error: VE/Judgments/Chain.lean:89:55: Application type mismatch: The argument",
+   "language": "Lean"
+  },
+  {
+   "definition": "blockFormulas",
+   "file": "lean/VE/Judgments/Chain.lean",
+   "mutant": "(L.conditions.take 0).map fun c => VE.Formula.unary c.name (.var 0)).getD [])",
+   "test": "lake build VE.Judgments.ChainExamples: ChainExamples F1.4 #guards",
+   "caught": true,
+   "detail": "error: VE/Judgments/ChainExamples.lean:279:0: Expression",
+   "language": "Lean"
+  },
+  {
+   "definition": "linesFormulas",
+   "file": "lean/VE/Judgments/Chain.lean",
+   "mutant": "pure (fs.take 0).flatten",
+   "test": "tests/test_judgments_chain.py::test_a_judgment_in_a_right_s_line_is_read_by_the_right_s_unit[guard]",
+   "caught": true,
+   "detail": "E       AssertionError: {'error': 'JudgmentListedUnused: u029 morality', 'id': 'c', 'status': 'error'}",
+   "language": "Lean"
+  },
+  {
+   "definition": "ruleFormulas",
+   "file": "lean/VE/Judgments/Chain.lean",
+   "mutant": "pure ((\u2190 blockFormula (n.getObjValD \"guard\")) :: carveOuts.take 0)",
+   "test": "tests/test_judgments_chain.py::test_a_judgment_in_a_right_s_line_is_read_by_the_right_s_unit[unless]",
+   "caught": true,
+   "detail": "E       AssertionError: {'error': 'JudgmentListedUnused: u029 morality', 'id': 'c', 'status': 'error'}",
+   "language": "Lean"
+  },
+  {
+   "definition": "blockFormula",
+   "file": "lean/VE/Judgments/Chain.lean",
+   "mutant": "| _ => pure .top",
+   "test": "tests/test_judgments_chain.py::test_a_judgment_in_a_right_s_line_is_read_by_the_right_s_unit[guard]",
+   "caught": true,
+   "detail": "E       AssertionError: {'error': 'JudgmentListedUnused: u029 morality', 'id': 'c', 'status': 'error'}",
+   "language": "Lean"
+  },
+  {
+   "definition": "andAll",
+   "file": "lean/VE/Judgments/Chain.lean",
+   "mutant": "def andAll (fs : List VE.Formula) : VE.Formula := (fs.take 0).foldr .and .top",
+   "test": "lake build VE.Judgments.Chain: preds_andAll",
+   "caught": true,
+   "detail": "preds_andAll no longer proves; error: VE/Judgments/Chain.lean:212:59: Type mismatch",
+   "language": "Lean"
+  },
+  {
+   "definition": "UnitContent.judgedIn (rights block)",
+   "file": "lean/VE/Service/Document.lean",
+   "mutant": "pure (some (.formula (VE.Judgments.andAll (fs.take 0))))",
+   "test": "lake build VE.Judgments.ChainExamples: ChainExamples F1.4 #guards",
+   "caught": true,
+   "detail": "error: VE/Judgments/ChainExamples.lean:279:0: Expression",
+   "language": "Lean"
+  },
+  {
+   "definition": "UnitContent.judgedIn (a rights norm unit beside its cites)",
+   "file": "lean/VE/Service/Document.lean",
+   "mutant": "let again := VE.SoftNorms.Wire.decodeSoftNorm se rule",
+   "test": "tests/test_judgments_chain.py::test_a_rights_document_and_its_twin_have_the_same_verdict_fields_and_other_identities[2]",
+   "caught": true,
+   "detail": "E           AssertionError: ({'error': 'CheckerUnavailable: a soft rule the soft route accepted does not decode again: InvalidInput: expected norm...4d85d38f3d0833b5f4cff18c2eb3807e', 'id': 'c', 'source': 'Unit 1.",
+   "language": "Lean"
+  },
+  {
+   "definition": "judgmentsApart",
+   "file": "lean/VE/Service/Document.lean",
+   "mutant": "def judgmentsApart : List String := [\"alternatives@0\", \"rights@0\", \"risk@0\"]",
+   "test": "lake build VE.Judgments.ChainExamples: ChainExamples F1.4 #guards",
+   "caught": true,
+   "detail": "error: VE/Judgments/ChainExamples.lean:278:0: Expression",
+   "language": "Lean"
+  },
+  {
+   "definition": "dropKey",
+   "file": "lean/VE/Service/Document.lean",
+   "mutant": "| .obj kvs => Json.mkObj kvs.toList",
+   "test": "lake build VE.Judgments.ChainExamples: ChainExamples 2e #guard (verdictFields on an answer)",
+   "caught": true,
+   "detail": "error: VE/Judgments/ChainExamples.lean:332:0: Expression",
+   "language": "Lean"
+  },
+  {
+   "definition": "setVerdictFields",
+   "file": "lean/VE/Service/Document.lean",
+   "mutant": "| .arr ss => a.setObjVal! \"reading_sets\" (.arr ss)",
+   "test": "lake build VE.Judgments.ChainExamples: ChainExamples 2e #guard",
+   "caught": true,
+   "detail": "error: VE/Judgments/ChainExamples.lean:349:0: Expression",
+   "language": "Lean"
+  },
+  {
+   "definition": "verdictFields",
+   "file": "lean/VE/Service/Document.lean",
+   "mutant": "dropKey \"meaning_id\" u",
+   "test": "lake build VE.Judgments.ChainExamples: ChainExamples 2e #guard",
+   "caught": true,
+   "detail": "error: VE/Judgments/ChainExamples.lean:349:0: Expression",
+   "language": "Lean"
+  },
+  {
+   "definition": "unitStatuses",
+   "file": "lean/VE/Service/Document.lean",
+   "mutant": "((u.getObjValD \"id\").getStr?.toOption.getD \"\", (u.getObjValD \"kind\").getStr?.toOption.getD \"\")",
+   "test": "lake build VE.Judgments.ChainExamples: ChainExamples F1.3i and F1.4 #guards",
+   "caught": true,
+   "detail": "error: VE/Judgments/ChainExamples.lean:279:0: Expression",
+   "language": "Lean"
+  },
+  {
+   "definition": "judgmentCodes",
+   "file": "lean/VE/Service/Document.lean",
+   "mutant": "[\"JudgmentNotListed\",",
+   "test": "lake build VE.Judgments.ChainExamples: ChainExamples 2d #guard",
+   "caught": true,
+   "detail": "error: VE/Judgments/ChainExamples.lean:342:0: Expression",
+   "language": "Lean"
+  },
+  {
+   "definition": "judgmentGateTexts",
+   "file": "lean/VE/Service/Document.lean",
+   "mutant": "(VE.Compose.profileTable.filter (\u00b7.profile == \"judgments@1\")).flatMap",
+   "test": "lake build VE.Judgments.ChainExamples: ChainExamples 2d #guard",
+   "caught": true,
+   "detail": "error: VE/Judgments/ChainExamples.lean:342:0: Expression",
+   "language": "Lean"
+  },
+  {
+   "definition": "layerRefusal",
+   "file": "lean/VE/Service/Document.lean",
+   "mutant": "false ||",
+   "test": "lake build VE.Judgments.ChainExamples: ChainExamples 2d #guard",
+   "caught": true,
+   "detail": "error: VE/Judgments/ChainExamples.lean:342:0: Expression",
+   "language": "Lean"
+  },
+  {
+   "definition": "layerRelaxes",
+   "file": "lean/VE/Service/Document.lean",
+   "mutant": "def layerRelaxes : List String := [\"invalid open term arguments\"]",
+   "test": "lake build VE.Judgments.ChainExamples: ChainExamples F1.3c #guard",
+   "caught": true,
+   "detail": "error: VE/Judgments/ChainExamples.lean:330:0: Expression",
+   "language": "Lean"
+  },
+  {
+   "definition": "noUnitStatus",
+   "file": "lean/VE/Service/Document.lean",
+   "mutant": "| .arr us => us.all fun _ => true",
+   "test": "lake build VE.Judgments.ChainExamples: ChainExamples F1.3i #guard",
+   "caught": true,
+   "detail": "error: VE/Judgments/ChainExamples.lean:332:0: Expression",
+   "language": "Lean"
+  },
+  {
+   "definition": "withoutStatuses",
+   "file": "lean/VE/Service/Document.lean",
+   "mutant": "| .arr us => front.setObjVal! \"units\" (.arr us)",
+   "test": "lake build VE.Judgments.ChainExamples: ChainExamples F1.3i #guard",
+   "caught": true,
+   "detail": "error: VE/Judgments/ChainExamples.lean:332:0: Expression",
+   "language": "Lean"
+  },
+  {
+   "definition": "verdictFields (undeclared_evaluative, DRI 2026-11-03 pc-1g stop item 4)",
+   "file": "lean/VE/Service/Document.lean",
+   "mutant": "[\"judgments\", \"document_id\", \"source_id\", \"coverage\"].foldl",
+   "test": "lake build VE.Judgments.ChainExamples: the F1.1/F1.6 and F1.4 twin #guard",
+   "caught": true,
+   "detail": "error: VE/Judgments/ChainExamples.lean:364:0: Expression",
+   "language": "Lean"
+  },
+  {
+   "definition": "withoutJudgmentsIn (pc-1's; the round-trip guard's subject)",
+   "file": "lean/VE/Service/Document.lean",
+   "mutant": "let front := front.setObjVal! \"environment\" (front.getObjValD \"environment\")",
+   "test": "lake build VE.Judgments.ChainExamples: F1.3m's twin profiles, F1.3c and the twin front-matter round-trip #guards",
+   "caught": true,
+   "detail": "error: VE/Judgments/ChainExamples.lean:107:0: Expression",
+   "language": "Lean"
+  }
+ ]
+}

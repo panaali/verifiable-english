@@ -1,0 +1,3 @@
+- `docs/rights/rights-cfr-4/scan_open_acts.py` — rights-cfr-4 evidence: the rights@0 documents with declared open_terms under the given roots, and every unit content whose predicate (or fan-out predicate) is …
+- `docs/rights/rights-cfr-5/header_delta.py` — rights-cfr-5 evidence: parse_line at the base commit against the worktree, on header variants.
+- `docs/rights/rights-cfr-5/line_roundtrip.py` — rights-cfr-5 evidence: render_line -> parse_line over the rights generator's lines.

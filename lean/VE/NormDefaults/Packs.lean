@@ -9,7 +9,11 @@ premises of a list of packs, one per provider, in one fixed order (`packOrder`).
 
 Today's routes give `[soft]` and `[soft, rights]` (`Layered.lean`'s `softPack`, `rightsPack`); a plain norm-defaults
 document gives the empty list (JT-R2). On those lists every output is today's (`legacyIds`, `X_legacy`,
-`elaborateArrays_legacy`; the legacy theorems over `Layered.lean` are in `PacksLegacy.lean`). -/
+`elaborateArrays_legacy`; the legacy theorems over `Layered.lean` are in `PacksLegacy.lean`).
+
+`Pack.conditions` has two readers, both in `Defaults/Uniform.lean`: `packConditions` looks them up by decision key for
+the uniform decision premises (`dfltUniform`), and with `providerConditions` the defaults route refuses a document any
+of whose packs states a condition until EXP-D3 settles (`defaultsRows`, `Defaults/Route.lean`). -/
 namespace VE.NormDefaults.Packs
 open Lean
 open VE.Norms (envAt size)
@@ -33,7 +37,7 @@ structure Pack where
   consts : List (String × String)
   labelled : List (String × VE.Formula)
   origins : List (String × RequestPath)
-  /-- Each stated sufficient condition and its decision (profile-composition 1.9; no reader yet). -/
+  /-- Each stated sufficient condition and its decision (profile-composition 1.9), read by `packConditions` and `providerConditions`. -/
   conditions : List (VE.SoftNorms.DecisionKey × VE.Formula)
 
 /-- 2.2: the one order of `X`. -/
@@ -373,11 +377,18 @@ def labelledJson (l : String) (a : VE.Formula) (origin : Option RequestPath) : J
   Json.mkObj ([("label", .str l), ("ast", VE.SoftNorms.Wire.enc a)] ++
     match origin with | some o => [("origin", toJson o)] | none => [])
 
-/-- 2.7: the `"soft"` and `"rights"` arrays as today, and nothing else, whatever the pack list: `layered_elaborate`
-is closed on these two keys, and `layeredCase_fits` quantifies over every `LayeredU`. -/
+/-- 2.7: the `"soft"` and `"rights"` arrays as today, whatever the pack list: `layered_elaborate` is closed on these two
+keys and `eventsArray`'s, and `layeredCase_fits` quantifies over every `LayeredU`. -/
 def elaborateArrays (qs : List Pack) : List (String × Json) :=
   [("soft", Json.arr ((packPremises qs "soft").map (fun (l, a) => labelledJson l a none)).toArray),
    ("rights", Json.arr ((packPremises qs "rights").map (fun (l, a) => labelledJson l a none)).toArray)]
+
+/-- The `events` pack's labelled premises, on a document that has them (events 3): a pack's premises are never empty,
+so a list without the pack gets no key and its answer is byte-identical. -/
+def eventsArray (qs : List Pack) : List (String × Json) :=
+  match packPremises qs "events" with
+  | [] => []
+  | ls => [("events_premises", Json.arr (ls.map (fun (l, a) => labelledJson l a none)).toArray)]
 
 /-- 2.7: the keys pk-1's elaborate writes do not depend on the packs (the fact the encoder theorem needs). -/
 theorem elaborateArrays_keys (qs : List Pack) : (elaborateArrays qs).map (·.1) = ["soft", "rights"] := rfl

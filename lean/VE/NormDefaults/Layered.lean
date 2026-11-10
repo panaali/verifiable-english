@@ -2,6 +2,7 @@ import VE.NormDefaults.Report
 import VE.NormDefaults.Explain
 import VE.Rights.Wire
 import VE.NormDefaults.Packs
+import VE.Events.Wire
 
 /-! The soft and rights branches of `norm-defaults@0` (docs/spec/norm-defaults.md 2.3 and
 3.3): `fill` runs last, so the soft route checks `fill (soften T)` and the rights route
@@ -96,9 +97,23 @@ def withUnsaid (U : UDoc) (base : Json) : Except String Json := do
 def unspecOf (environment : Json) (Dd : Doc) : List String :=
   (Dd.T.regulated.map Regulated.name).filter ((unspecifiedNames environment).contains ·)
 
+/-! ## The events hook (docs/spec/events-time-causation.md 3): without one, each is the environment and no pack -/
+
+/-- The environment the route decodes. -/
+def hookView (H : Option VE.Events.EventsHook) (environment : Json) : Json := (H.map (·.view)).getD environment
+
+/-- The block's decoded form. -/
+def hookBlock (H : Option VE.Events.EventsHook) : Option VE.Events.EventsDecoded := H.bind (·.decoded)
+
+/-- The pack, in the `assemble` list. -/
+def hookPacks (H : Option VE.Events.EventsHook) : List Packs.Pack := (hookBlock H).map VE.Events.eventsPack |>.toList
+
+/-- The date constants: declared in the regenerated environment, so no pack's names, and charged to the vocabulary. -/
+def hookNames (H : Option VE.Events.EventsHook) : Nat := ((hookBlock H).map (·.V.dates.length)).getD 0
+
 /-- The soft branch: `soften` over the placeholder completions, then `fill`. -/
-def decodeSoftU (environment norms : Json) : Except String LayeredU := do
-  let env' ← placeholderJson environment
+def decodeSoftU (environment norms : Json) (H : Option VE.Events.EventsHook := none) : Except String LayeredU := do
+  let env' ← placeholderJson (hookView H environment)
   let src ← VE.SoftNorms.Wire.decodeSoftSource env' norms
   let U : UDoc := ⟨soften src.D, unspecOf environment (soften src.D)⟩
   checkAuthorN environment (VE.SoftNorms.decisions src.D).length U
@@ -107,8 +122,8 @@ def decodeSoftU (environment norms : Json) : Except String LayeredU := do
     let baseEnv ← withUnsaid U (← VE.SoftNorms.Wire.basePrimeJson src.D env')
     let envId ← VE.Route.Wire.environmentId profiles (← canonicalEnvironmentJsonU environment)
     let docHash ← VE.SoftNorms.Wire.softDocumentHash profiles environment norms
-    let packs ← Packs.assemble U (authorVocab environment (VE.SoftNorms.decisions src.D).length U)
-      [softPack U src.D]
+    let packs ← Packs.assemble U (authorVocab environment (VE.SoftNorms.decisions src.D).length U + hookNames H)
+      ([softPack U src.D] ++ hookPacks H)
     pure ⟨"soft-norms@0", src.D, U, h, packs,
       VE.SoftNorms.Wire.primeModelVocabulary src.se src.D, VE.SoftNorms.Wire.primeModel_valid src,
       baseEnv, envId, docHash⟩
@@ -116,8 +131,9 @@ def decodeSoftU (environment norms : Json) : Except String LayeredU := do
 
 /-- The rights branch: `correlate` and `soften` over the placeholder completions, then `fill`;
 the limitation premises stay in the base. -/
-def decodeRightsU (environment document : Json) : Except String LayeredU := do
-  let env' ← placeholderJson environment
+def decodeRightsU (environment document : Json) (H : Option VE.Events.EventsHook := none) :
+    Except String LayeredU := do
+  let env' ← placeholderJson (hookView H environment)
   let src ← VE.Rights.Wire.decodeRightsSource env' document
   let D := VE.Rights.correlate src.D
   let U : UDoc := ⟨soften D, unspecOf environment (soften D)⟩
@@ -129,8 +145,8 @@ def decodeRightsU (environment document : Json) : Except String LayeredU := do
       let envId ← VE.Route.Wire.environmentId profiles (← canonicalEnvironmentJsonU environment)
       let docHash ← VE.Rights.Wire.rightsDocumentHash profiles environment document
       let packs ← Packs.assemble U
-        (authorVocab environment ((VE.Rights.genDecls src.D).length + (VE.SoftNorms.decisions D).length) U)
-        [softPack U D, rightsPack src.D]
+        (authorVocab environment ((VE.Rights.genDecls src.D).length + (VE.SoftNorms.decisions D).length) U + hookNames H)
+        ([softPack U D, rightsPack src.D] ++ hookPacks H)
       pure ⟨"rights@0", D, U, h, packs,
         VE.Rights.Wire.primeModelVocabularyR src.re src.D, (fun M h => VE.Rights.Wire.primeModelR_valid src M hg h),
         baseEnv, envId, docHash⟩
@@ -144,13 +160,18 @@ def layeredRoute (environment : Json) : Option String :=
   else if ps.contains "soft-norms@0" then some "soft-norms@0"
   else none
 
+/-- A case's open terms: its own, or its document's. -/
+def caseOpenTerms (j : Json) : Json :=
+  if (j.getObjVal? "open_terms").toBool then j.getObjValD "open_terms" else (j.getObjValD "document").getObjValD "open_terms"
+
 /-- Decode a case's source on its branch: `norms` on the soft route, `document` on the
 rights route, as those routes read them. -/
 def decodeLayered (j : Json) : Except String LayeredU := do
   let environment ← j.getObjVal? "environment"
+  let H ← VE.Events.eventsHook environment (caseOpenTerms j)
   match layeredRoute environment with
-  | some "rights@0" => decodeRightsU environment (j.getObjValD "document")
-  | some _ => decodeSoftU environment (j.getObjValD "norms")
+  | some "rights@0" => decodeRightsU environment (j.getObjValD "document") H
+  | some _ => decodeSoftU environment (j.getObjValD "norms") H
   | none => throw "UnsupportedProfile: the layered norm-defaults branch needs soft-norms@0 or rights@0"
 
 /-- The source JSON the bindings name: `norms` or `document`. -/
@@ -159,7 +180,7 @@ def sourceField (L : LayeredU) : String := if L.route == "rights@0" then "docume
 /-! ## Regenerated outputs -/
 
 def layeredElaborate (L : LayeredU) : List (String × Json) :=
-  regeneratedU L.U ++ Packs.elaborateArrays L.packs ++
+  regeneratedU L.U ++ Packs.elaborateArrays L.packs ++ Packs.eventsArray L.packs ++
   [("environment_id", .str L.envId), ("document_hash", .str L.docHash),
    ("base_environment", L.baseEnv)]
 

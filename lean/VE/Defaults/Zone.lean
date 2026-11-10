@@ -205,18 +205,12 @@ def zoneMin {α : Type} [DecidableEq α] (L : LayeredU) (X : List (String × VE.
       let dec := decisionAtoms L.D M
       .ok (S.filter (fun A => S.all (fun B => !decSub dec B A || decSub dec A B)))
 
-/-- nd-atoms' bounded enumeration over `openAtomsAll` (C10) (the atom list given, no cone pruning; `zoneCharge` first,
-    so `unknown (budget)` beyond `maxDefaultAtoms` is counted, never listed), then the full assignments that satisfy X
-    and `Fill_T` (each premise evaluated on the finite situation) and agree with the observations, then the minimality
-    filter over their decision parts. The record and the atom list are built once in `zoneMin` and once here, both
-    after the charge. -/
-def defaultZoneOf {α : Type} [DecidableEq α] (L : LayeredU) (X : List (String × VE.Formula)) (M : VE.FiniteModel α)
-    (record : List ((String × List α) × Bool)) (obs : List ((VE.Norms.Regulated × List α) × Bool))
-    (r : VE.Norms.Regulated) (vs : List α) (proposed : List (List ((String × List α) × Bool))) : DefaultZone α :=
-  have _ := proposed
-  match zoneMin L X M record obs with
-  | .error z => z
-  | .ok Min =>
+/-- The zone of the outcome `r` at `vs` from `zoneMin`'s minimal assignments `Min` (`defaultZoneOf`'s answer after a
+    complete enumeration; `defaultZoneOf_eq`): the wire reads `zoneMin` once and gives its result here and to
+    `forcedOfMin` (DRI 2026-11-04, df-5 item 2). -/
+def zoneOfMin {α : Type} [DecidableEq α] (L : LayeredU) (M : VE.FiniteModel α)
+    (record : List ((String × List α) × Bool)) (r : VE.Norms.Regulated) (vs : List α)
+    (Min : List (List (String × List α))) : DefaultZone α :=
     let rec' := record ++ switchesOffRecord L.D M record
     let C := zoneAtoms L M record
     let φ := VE.Norms.outcomeBase (VE.NormDefaults.fill L.U) r.name
@@ -244,6 +238,19 @@ def defaultZoneOf {α : Type} [DecidableEq α] (L : LayeredU) (X : List (String 
           | some p => .notSaid (wit p.1.1) (wit p.2.1)
           | none => .unknown (.branch [] "none checked")
 
+/-- nd-atoms' bounded enumeration over `openAtomsAll` (C10) (the atom list given, no cone pruning; `zoneCharge` first,
+    so `unknown (budget)` beyond `maxDefaultAtoms` is counted, never listed), then the full assignments that satisfy X
+    and `Fill_T` (each premise evaluated on the finite situation) and agree with the observations, then the minimality
+    filter over their decision parts. The record and the atom list are built once in `zoneMin` and once here, both
+    after the charge. -/
+def defaultZoneOf {α : Type} [DecidableEq α] (L : LayeredU) (X : List (String × VE.Formula)) (M : VE.FiniteModel α)
+    (record : List ((String × List α) × Bool)) (obs : List ((VE.Norms.Regulated × List α) × Bool))
+    (r : VE.Norms.Regulated) (vs : List α) (proposed : List (List ((String × List α) × Bool))) : DefaultZone α :=
+  have _ := proposed
+  match zoneMin L X M record obs with
+  | .error z => z
+  | .ok Min => zoneOfMin L M record r vs Min
+
 /-- DE10's first form ("no exceptions here …", `short`) only when every decision atom the record leaves open is an
     exception; otherwise the second ("no assumptions here …", `long`). -/
 def zoneForm {α : Type} [DecidableEq α] (L : LayeredU) (M : VE.FiniteModel α)
@@ -265,6 +272,16 @@ def noExceptionRecord {α : Type} (D : SoftDoc) (M : VE.FiniteModel α) : List (
   (VE.SoftNorms.exceptedDecisions D).flatMap (fun (n, ss) =>
     (VE.NormDefaults.allTuples M ss).map (fun vs => ((n, vs), false)))
 
+/-- `forcedAllOf`'s list from `zoneMin`'s minimal assignments `Min` (`forcedAllOf_eq`); `none` when `Min` is empty. -/
+def forcedOfMin {α : Type} [DecidableEq α] (L : LayeredU) (M : VE.FiniteModel α)
+    (record : List ((String × List α) × Bool)) (Min : List (List (String × List α))) :
+    Option (List (String × List α)) :=
+    if Min.isEmpty then none else
+    let C := zoneAtoms L M record
+    let V₀ := VE.NormDefaults.coneAtomVX M (openNames L) (record ++ switchesOffRecord L.D M record) C []
+    some (((noExceptionRecord L.D M).map (·.1)).filter (fun a =>
+      if C.contains a then Min.all (·.contains a) else V₀ a.1 a.2 == some true)).eraseDups
+
 /-- The exception atoms true in every default completion, from the same complete enumeration as `defaultZoneOf`;
     `none` when that enumeration is not complete (the budget, or a branch left unknown) or finds no default
     completion. "The facts here force <e>" is rendered only from a `some` list. An atom the enumeration varies is
@@ -276,12 +293,7 @@ def forcedAllOf {α : Type} [DecidableEq α] (L : LayeredU) (X : List (String ×
   have _ := proposed
   match zoneMin L X M record obs with
   | .error _ => none
-  | .ok Min =>
-    if Min.isEmpty then none else
-    let C := zoneAtoms L M record
-    let V₀ := VE.NormDefaults.coneAtomVX M (openNames L) (record ++ switchesOffRecord L.D M record) C []
-    some (((noExceptionRecord L.D M).map (·.1)).filter (fun a =>
-      if C.contains a then Min.all (·.contains a) else V₀ a.1 a.2 == some true)).eraseDups
+  | .ok Min => forcedOfMin L M record Min
 
 /-! ## Proofs -/
 
@@ -917,6 +929,7 @@ theorem defaultZone_byDefault_sound {α : Type} [DecidableEq α] (L : LayeredU) 
     subst hz
     rcases zoneMin_error hm with ⟨h, _⟩ | ⟨_, h⟩ | ⟨_, _, h⟩ <;> cases h
   rename_i Min hm
+  dsimp only [zoneOfMin] at hz
   split at hz <;> try (cases hz; done)
   rename_i hq
   split at hz <;> try (cases hz; done)
@@ -968,6 +981,7 @@ theorem defaultZone_leftTo_sound {α : Type} [DecidableEq α] (L : LayeredU) (X 
     subst hz
     rcases zoneMin_error hm with ⟨h, _⟩ | ⟨_, h⟩ | ⟨_, _, h⟩ <;> cases h
   rename_i Min hm
+  dsimp only [zoneOfMin] at hz
   split at hz <;> try (cases hz; done)
   rename_i hq
   split at hz <;> try (cases hz; done)
@@ -1025,6 +1039,7 @@ theorem defaultZone_notSaid_sound {α : Type} [DecidableEq α] (L : LayeredU) (X
     subst hz
     rcases zoneMin_error hm with ⟨h, _⟩ | ⟨_, h⟩ | ⟨_, _, h⟩ <;> cases h
   rename_i Min hm
+  dsimp only [zoneOfMin] at hz
   split at hz <;> try (cases hz; done)
   rename_i hq
   split at hz <;> try (cases hz; done)
@@ -1069,6 +1084,7 @@ theorem defaultZone_noCompletion_sound {α : Type} [DecidableEq α] (L : Layered
   · rename_i z hm
     subst hz
     exact zoneMin_noCompletion hm R hR ho
+  dsimp only [zoneOfMin] at hz
   split at hz <;> try (cases hz; done)
   split at hz <;> try (cases hz; done)
   split at hz <;> try (cases hz; done)
@@ -1088,6 +1104,7 @@ theorem defaultZone_budget {α : Type} [DecidableEq α] (L : LayeredU) (X : List
     subst hz
     rcases zoneMin_error hm with ⟨h, hlt⟩ | ⟨_, h⟩ | ⟨_, _, h⟩ <;> cases h
     exact ⟨rfl, rfl, hlt⟩
+  dsimp only [zoneOfMin] at hz
   split at hz <;> try (cases hz; done)
   split at hz <;> try (cases hz; done)
   split at hz <;> try (cases hz; done)
@@ -1170,6 +1187,7 @@ theorem forcedAll_sound {α : Type} [DecidableEq α] (L : LayeredU) (X : List (S
   split at hf
   · cases hf
   rename_i Min hm
+  unfold forcedOfMin at hf
   split at hf
   · cases hf
   rename_i hne
@@ -1237,6 +1255,20 @@ theorem forced_everywhere {α : Type} [DecidableEq α] (L : LayeredU) (X : List 
   exact hle a ha (hall R' hdc)
 
 end Zone
+
+/-- `defaultZoneOf` is `zoneOfMin` on `zoneMin`'s result (DRI 2026-11-04, df-5 item 2). -/
+theorem defaultZoneOf_eq (L : LayeredU) (X : List (String × VE.Formula)) (M : VE.FiniteModel α)
+    (record : List ((String × List α) × Bool)) (obs : List ((VE.Norms.Regulated × List α) × Bool))
+    (r : VE.Norms.Regulated) (vs : List α) (proposed : List (List ((String × List α) × Bool))) :
+    defaultZoneOf L X M record obs r vs proposed =
+      match zoneMin L X M record obs with | .error z => z | .ok Min => zoneOfMin L M record r vs Min := rfl
+
+/-- `forcedAllOf` is `forcedOfMin` on `zoneMin`'s result. -/
+theorem forcedAllOf_eq (L : LayeredU) (X : List (String × VE.Formula)) (M : VE.FiniteModel α)
+    (record : List ((String × List α) × Bool)) (obs : List ((VE.Norms.Regulated × List α) × Bool))
+    (proposed : List (List ((String × List α) × Bool))) :
+    forcedAllOf L X M record obs proposed =
+      match zoneMin L X M record obs with | .error _ => none | .ok Min => forcedOfMin L M record Min := rfl
 
 end Proofs
 

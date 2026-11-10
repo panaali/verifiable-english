@@ -1,9 +1,14 @@
-import VE.Attitudes.Syntax
+import VE.Attitudes.Semantics
+import VE.Attitudes.Route
+import VE.Attitudes.Theorems
+import VE.NormDefaults.LayeredEntail
+import VE.Defaults.Route
 
 /-! `#guard`s on the values sections 2.1 to 2.4 of docs/spec/attitudes.md compute, on the fixtures of
-section 7.1 (F-AT0 to F-AT3, C-a's two conditions, C-e's reading-set part). The fixture documents
-are the spec stub's (docs/spec/attitudes/SpecStubs_attitudes.lean, S5), copied as written; the
-checks that read `checkAtt`, the frame and the semantics are at-1b's and at-1's. -/
+section 7.1 (F-AT0 to F-AT3, C-a's two conditions, C-e's reading-set part), and from at-1b on sections
+2.5 and 2.6: elaboration, one guard per row of 5.2, what passes, 7.5's guard per theorem. The fixture
+documents are the spec stub's (docs/spec/attitudes/SpecStubs_attitudes.lean, S5), copied as written;
+the frame and the semantics are at-1's. -/
 
 namespace VE.Attitudes.Examples
 open VE.Attitudes
@@ -315,5 +320,839 @@ def c_e_three : AttDoc :=
   c_e_doc ([0, 1, 2].map (fun i => { c_e_node with content := .unary categories[i]! (.const "s1") })) guard1
 #guard (partsOf c_e_three).length == 3 && (names c_e_three).drop 3 ==
   ["attitudes__wants__1", "attitudes__wants__2", "attitudes__wants__3"]
+
+/-! ## 2.5 Elaboration (at-1b) -/
+
+def Γ1 : List String := [sortS, sortC]
+def cat0 : String := categories[0]!
+def att2 (n : String) : VE.Formula := .binary n (.var 1) (.var 0)
+def knows1 : VE.Formula := att2 "attitudes__knows__1"
+def ql1 : VE.Formula := att2 "attitudes__thinks_quite_likely__1"
+/-- F-AT1's elaborated guard (spec 7.1). -/
+def guard1F : VE.Formula := .or (.and knows1 (att2 "attitudes__intends__1")) ql1
+
+instance : Inhabited Key := ⟨⟨.knows, "", none, .top⟩⟩
+
+def nodesOf (A : AttDoc) : Option (List VE.Norms.Node) := (toNorms A).map (·.T.nodes)
+
+#guard guard1.toFormula fat1 Γ1 == some guard1F
+#guard atom fat1 (keys fat1)[0]! (.var 1) (some (.var 0)) == knows1 &&
+  atom fat1 (keys fat1)[0]! (.const "c0") none == .unary "attitudes__knows__1" (.const "c0")
+-- every connective elaborates its operands in order, a binder extends the context, and a condition without a key
+-- (holder out of scope) makes the whole formula none, on either side
+def knowsA : AFormula := .att (cond .knows cat0)
+def qlA : AFormula := .att (cond ql cat0)
+def noKey : AFormula := .att { cond .knows cat0 with holder := .var 5 }
+#guard (AFormula.base .top).toFormula fat1 [] == some .top && knowsA.toFormula fat1 Γ1 == some knows1 &&
+  noKey.toFormula fat1 Γ1 == none && (AFormula.not knowsA).toFormula fat1 Γ1 == some (.not knows1) &&
+  (AFormula.not noKey).toFormula fat1 Γ1 == none
+#guard (AFormula.and knowsA qlA).toFormula fat1 Γ1 == some (.and knows1 ql1) &&
+  (AFormula.or knowsA qlA).toFormula fat1 Γ1 == some (.or knows1 ql1) &&
+  (AFormula.implies knowsA qlA).toFormula fat1 Γ1 == some (.implies knows1 ql1)
+#guard [AFormula.and, AFormula.or, AFormula.implies].all (fun f =>
+  (f noKey qlA).toFormula fat1 Γ1 == none && (f knowsA noKey).toFormula fat1 Γ1 == none)
+-- under a binder the same holder index reaches the same sort only because the context grew
+#guard (AFormula.all "z" (.att { cond .knows cat0 with holder := .var 2, slot := some (sortS, .var 1) })).toFormula
+    fat1 Γ1 == some (.all "z" (.binary "attitudes__knows__1" (.var 2) (.var 1))) &&
+  (AFormula.ex "z" (.att { cond .knows cat0 with holder := .var 2, slot := some (sortS, .var 1) })).toFormula
+    fat1 Γ1 == some (.ex "z" (.binary "attitudes__knows__1" (.var 2) (.var 1))) &&
+  (AFormula.all "z" noKey).toFormula fat1 Γ1 == none && (AFormula.ex "z" noKey).toFormula fat1 Γ1 == none
+-- `toNode` and `toNorms`: the rule's fields, its carve-outs in order, in the rule's context; every rule; over `envAtt`
+#guard nodesOf fat1 == some [⟨"u0165-s01", "weapons_uplift_permitted", false, guard1F, [], []⟩]
+def fat1c : AttDoc :=
+  docOf table [] [{ ruleOf "u0165-s01" guard1 with
+    sign := true, over := ["other"], carveOuts := [qlA, .base .top, knowsA] }]
+#guard nodesOf fat1c == some [⟨"u0165-s01", "weapons_uplift_permitted", true, guard1F, [ql1, .top, knows1], ["other"]⟩]
+#guard (nodesOf fat2).map (·.map (·.name)) == some ["u0165-s01", "u0165-s07"]
+#guard nodesOf (docOf table [] [ruleOf "a" guard1, ruleOf "b" noKey]) == none &&
+  nodesOf (docOf table [] [ruleOf "a" noKey, ruleOf "b" guard1]) == none &&
+  (ruleOf "a" noKey).toNode fat1 == none && ARule.toNode fat1 { ruleOf "a" guard1 with carveOuts := [qlA, noKey] } == none &&
+  ARule.toNode fat1 { ruleOf "a" guard1 with carveOuts := [noKey, qlA] } == none
+#guard match toNorms { threeDoc with lits := ["l1", "l2"] } with
+  | some D => D.lits == ["l1", "l2"] && D.T.regulated == threeRegulated && D.T.definitions == threeDefinitions &&
+      (names fat1).all (fun n => D.E.predicates n == some [sortC, sortS]) && D.E.sorts == envP.sorts
+  | none => false
+-- F-AT0 elaborates to its own guard, with nothing added
+#guard nodesOf fat0 == some [⟨"u0165-s01", "weapons_uplift_permitted", false, contentOf cat0, [], []⟩]
+-- C-e's part: no rule (`toNorms` elaborates the rules alone); its claim is its atom at its holder, closed
+#guard nodesOf c_e_part == nodesOf (c_e_doc [] guard1) && partClaim c_e_part c_e_node ==
+  some (.unary "attitudes__wants__1" (.const "c0"))
+#guard partClaim c_e_part { c_e_node with holder := .var 0 } == none &&
+  partClaim { c_e_part with holders := [sortC, sortS] } { c_e_node with holder := .var 0 } == none
+
+/-! ## 2.6 The fixtures of 5.2 and 7.1 that 2.1 to 2.4 did not need (the stub's S5) -/
+
+/-- A fixture document with more vocabulary: extra predicates `ps` in `E`; those of `authored` also in
+    `authorPredicates`, and those of `worded` also in the lexical view and the lexicon; constants `cs` of sort
+    `situation` in `E`, and those of `spelled` also in the view and the lexicon. -/
+def docWith (rules : List ARule) (ps : List (String × List String)) (authored worded : List String)
+    (cs spelled : List String) : AttDoc :=
+  let d := docOf table [] rules
+  { d with
+    E := { envP with predicates := preds (predicateList ++ ps),
+                     constants := fun c => if cs.contains c then some sortS else none },
+    authorPredicates := d.authorPredicates ++ authored,
+    lex := lexOf [sortC, sortS]
+      (vocabP ++ (ps.filter (fun p => worded.contains p.1)).map (fun p => (p.1, p.2, none)))
+      ((spelled.filter cs.contains).map (·, sortS)) }
+
+/-- F-AT1 with its `knows` condition changed to `c`, and extra vocabulary as `docWith`. -/
+def withKnows (c : Cond) (ps : List (String × List String)) (authored worded cs spelled : List String) : AttDoc :=
+  docWith [ruleOf "u0165-s01" (.or (.and (.att c) (.att (cond (.act .intends) cat0))) qlA)] ps authored worded cs spelled
+
+def withCond (c : Cond) : AttDoc := docOf table [] [ruleOf "u0165-s01" (.att c)]
+def longWord : Word := "extraordinarily overwhelmingly and almost certainly likely"
+def longTable : Table :=
+  { fixtureTable with candidates := [longWord], lowerBound := [(longWord, "x")], above := [], knowsThinks := [] }
+def lexNoWording : Lex :=
+  { lexP with lexicon := { lexP.lexicon with wordings := lexP.lexicon.wordings.filter (·.1 != cat0) } }
+def lexWrongArgs : Lex :=
+  { lexP with env := { lexP.env with predicates := lexP.env.predicates.map (fun d =>
+      if d.name == cat0 then { d with args := [sortC] } else d) } }
+def morePreds (n : Nat) : List (String × List String) := (List.range n).map (fun i => (s!"p{i}", [sortS]))
+def fatMore (n : Nat) : AttDoc :=
+  docWith fat1.rules (morePreds n) ((morePreds n).map (·.1)) ((morePreds n).map (·.1)) [] []
+
+def guardP (i : Nat) : AFormula :=
+  .or (.and (.att (cond .knows categories[i]!))
+      (.base (.binary s!"intentionally_does_restricted_action_{i + 1}" (.var 1) (.var 0))))
+    (.att (cond ql categories[i]!))
+def fat5 : AttDoc := docOf table [] ((List.range 7).map (fun i => ruleOf s!"u0165-s0{i + 1}" (guardP i)))
+def guard6 : AFormula := .or (.or knowsA (.att (cond (.thinks "very likely") cat0))) qlA
+def fat6 : AttDoc := docOf table [] [ruleOf "u0165-s01" guard6]
+def guard7 : AFormula := .or knowsA (.att (cond (.thinks "very likely") cat0))
+def table7 : Table := { fixtureTableNoPair with knowsThinks := [("quite likely", "E2.knows-thinks.quite-likely")] }
+def fat7 : AttDoc := docOf table7 [] [ruleOf "u0165-s01" guard7]
+def fat7item : AttDoc := docOf fixtureTableNoPair [] [ruleOf "u0165-s01" guard7]
+def unsaidP : String := "unsaid__weapons_uplift_permitted"
+def fat8 : AttDoc :=
+  withKnows { cond .knows cat0 with content := .unary unsaidP (.var 0) } [(unsaidP, [sortS])] [unsaidP] [unsaidP] [] []
+def guard9 : AFormula := .and (.base (contentOf cat0)) (.not knowsA)
+def fat9 : AttDoc := docOf table [] [ruleOf "u0165-s01" guard9]
+def closedC1 : Cond := { cond .knows cat0 with slot := none, content := .unary cat0 (.const "s1") }
+def ca1 : AttDoc := withKnows { cond .knows cat0 with slot := none, content := .top } [] [] [] [] []
+def ca2 : AttDoc := withKnows { cond .knows cat0 with content := .top } [] [] [] [] []
+def cb1 : AttDoc := withKnows closedC1 [] [] [] ["s1"] ["s1"]
+def cb2 : AttDoc := withKnows { cond .knows cat0 with slot := some (sortS, .const "s1") } [] [] [] ["s1"] ["s1"]
+def wantsDoc (φ : VE.Formula) : AttDoc :=
+  docWith [ruleOf "u0165-s01" (.or (.and knowsA (.att { cond (.act .wants) cat0 with content := φ })) qlA)] [] [] [] [] []
+def cc1 : AttDoc := wantsDoc (contentOf cat0)
+def cc2 : AttDoc := wantsDoc (.and (contentOf cat0) (contentOf categories[6]!))
+def cd1 : AttDoc := withKnows closedC1 [] [] [] ["s1"] []
+def cd2 : AttDoc :=
+  withKnows { cond .knows cat0 with content := .unary "extra_case" (.var 0) } [("extra_case", [sortS])] [] [] [] []
+/-- C-e's third document: the part with the compound content. -/
+def c_e_compound : AttDoc :=
+  c_e_doc [{ c_e_node with content := .and (.unary cat0 (.const "s1")) (.unary categories[6]! (.const "s1")) }] guard1
+
+/-- D16: `E` declares a generated name. -/
+def d16 : AttDoc :=
+  { fat1 with E := { envP with predicates := fun p =>
+      if p == "attitudes__knows__1" then some [sortS] else envP.predicates p } }
+
+/-- `checkAtt`'s answer is exactly this text. -/
+def fails (A : AttDoc) (text : String) : Bool := errOf (checkAtt A) == text && !WellFormedAtt A
+def passes (A : AttDoc) : Bool := errOf (checkAtt A) == "ok" && WellFormedAtt A
+def textD14c : String := "UnsupportedProfile: this 'wants' content has no reviewed wording in attitudes@0"
+def textD14d : String := "InvalidInput: an attitude condition names a symbol with no entry in the English lexicon"
+
+/-! ## 5.2 `checkAtt`, one guard per row, in the order of the table -/
+
+#guard fails { fat1 with decidedBy := "" } "InvalidInput: attitudes decided_by is not a token"
+#guard fails { fat1 with holders := ["robot"] } "UnknownSymbol: Unknown holder sort 'robot'"
+#guard fails { fat1 with T := badTableKnows } "InvalidInput: the attitude table is not closure-reviewed"
+#guard fails { fat1 with declared := [("as likely as not", "quite likely")] }
+  "UnsupportedProfile: a declared scale pair names a word that attitudes@0 does not admit"
+#guard fails { fat1 with declared := List.replicate 64 ("very likely", "quite likely") }
+  "ResourceLimit: At most 64 order pairs"
+#guard fails { fat1 with authorPredicates := fat1.authorPredicates ++ ["attitudes__x"] }
+  "InvalidInput: predicate attitudes__x uses the reserved prefix attitudes__"
+#guard fails { fat1 with lex := lexNoWording }
+  "InvalidInput: the English lexicon fails V1 for predicate mass_casualty_weapon_uplift"
+#guard fails { fat1 with lex := lexWrongArgs }
+  "InvalidInput: the English lexicon does not describe the document's environment"
+#guard fails (withCond { cond ql cat0 with holder := .var 5 }) "UnboundVariable: Variable index 5 is outside its scope"
+#guard fails (withCond { cond ql cat0 with holder := .var 0 })
+  "InvalidInput: attitude holder of sort situation is not of a holder sort"
+#guard fails (withCond (cond (.thinks "unlikely") cat0))
+  "UnsupportedProfile: 'thinks it unlikely' is not admitted by attitudes@0"
+#guard fails (withCond (cond (.thinks "as likely as not") cat0))
+  "UnsupportedProfile: 'thinks it as likely as not' is not admitted by attitudes@0"
+#guard fails (withCond { cond ql cat0 with slot := some ("place", .var 0) }) "UnknownSymbol: Unknown slot sort 'place'"
+#guard fails (withCond { cond ql cat0 with slot := some (sortS, .var 1) })
+  "TypeMismatch: attitude slot term has sort 'claude_instance', not 'situation'"
+#guard fails (withCond { cond ql cat0 with content := .ex sortS (.unary cat0 (.var 0)) })
+  "InvalidInput: an attitude content has a quantifier"
+#guard fails (withCond { cond ql cat0 with content := .binary "weapons_uplift_permitted" (.var 0) (.var 0) })
+  "UnknownSymbol: Unknown predicate 'weapons_uplift_permitted'"
+#guard fails (withCond { cond ql cat0 with slot := none }) "UnboundVariable: Variable index 0 is outside its scope"
+#guard fails ca2 "InvalidInput: an attitude content does not mention its slot"
+#guard fails cb2 "InvalidInput: an attitude slot term is not a variable of the guard"
+#guard fails cc2 textD14c
+#guard fails cd1 textD14d
+#guard fails (fatMore 240) "ResourceLimit: MAX_PREDICATES"
+#guard fails d16 "DuplicateDeclaration: generated predicate attitudes__knows__1"
+#guard fails (docOf longTable [] [ruleOf "u0165-s01" (.att (cond (.thinks longWord) cat0))])
+  "ResourceLimit: generated predicate attitudes__thinks_extraordinarily_overwhelmingly_and_almost_certainly_likely__1 exceeds 64 bytes"
+#guard fails { fat1 with rules := [ruleOf "u0165-s01" (.and qlA (.base (.unary cat0 (.var 1))))] }
+  "TypeMismatch: Predicate 'mass_casualty_weapon_uplift' expects ('situation',), received ('claude_instance',)"
+
+/-! ## 7.4 `checkAtt`, the other side: what passes -/
+
+#guard passes fat1 && passes fat0 && passes fat2 && passes fat3 && passes fat3none && passes fat5 && passes fat6
+#guard passes fat7 && passes fat7item && passes fat8 && passes fat9 && passes ca1 && passes cb1 && passes cc1
+-- spec 7.1's computed values: F-AT5's 14 generated keys; F-AT9's one key and elaborated guard
+#guard (keys fat5).length == 14 && names fat9 == ["attitudes__knows__1"] &&
+  guard9.toFormula fat9 Γ1 == some (.and (contentOf cat0) (.not knows1))
+-- D14d: admitted exactly when every symbol has its entry (spec 7.4): C-b's first with `s1` in the lexicon, C-d's two
+#guard passes cb1 && fails cd1 textD14d && fails cd2 textD14d
+-- C-e: the part is admitted and named after the rules' keys; the same node in a guard, and the compound part, are not
+#guard passes c_e_part && fails c_e_guard textD14c && fails c_e_compound textD14c
+#guard errOf (checkParts c_e_part c_e_part.parts) == "ok" && errOf (checkCond c_e_part [] c_e_node) == textD14c &&
+  errOf (checkCond c_e_part [] c_e_node (part := true)) == "ok"
+-- D14c reads the wording without its subject (reviews/dri-decisions-20261105-at-1b.md item 1), and only the document's
+-- own: a wording `wantsPhrase?` refuses is refused at D14c; one with no subject never gets there (D6a's V3)
+def wordedDoc (w : String) : AttDoc :=
+  { docWith [ruleOf "u0165-s01" (.att (cond (.act .wants) "safe_p"))] [("safe_p", [sortS])] ["safe_p"] [] [] [] with
+    lex := lexOf [sortC, sortS] (vocabP ++ [("safe_p", [sortS], some w)]) [] }
+#guard passes (wordedDoc "{0} is safe") && fails (wordedDoc "{0} is not safe") textD14c
+#guard fails (wordedDoc "is safe") "InvalidInput: the English lexicon fails V3 for predicate safe_p" &&
+  fails (wordedDoc "{0} is {0}") "InvalidInput: the English lexicon fails V3 for predicate safe_p"
+-- `renderable` is `renderCheck` of a guard's condition (`part` false): a closed `wants` part is not `renderable`
+#guard renderable fat1 (cond .knows cat0) && !renderable c_e_part c_e_node && !renderable fat1 (cond (.act .wants) "absent")
+-- at the limit of MAX_PREDICATES, and one over: 15 author predicates and 3 keys, then 238 and 239 more
+#guard (fatMore 238).authorPredicates.length + (keys (fatMore 238)).length == VE.Reports.maxPredicates &&
+  passes (fatMore 238) && fails (fatMore 239) "ResourceLimit: MAX_PREDICATES"
+-- at the bound of the order pairs: 54 declared and the table's 10, then 55
+#guard passes { fat1 with declared := List.replicate 54 ("very likely", "quite likely") } &&
+  fails { fat1 with declared := List.replicate 55 ("very likely", "quite likely") }
+    "ResourceLimit: At most 64 order pairs"
+
+/-! ## 7.5 One guard per theorem (spec 6.1's five) -/
+
+#guard (keys fat1).all (fun k => (fat1.E.predicates (name fat1 k)).isNone && (name fat1 k).utf8ByteSize ≤ 64 &&
+  !(fat1.regulated.map (·.name) ++ fat1.definitions.map (·.name)).contains (name fat1 k))
+#guard decide ((keys fat2).map (name fat2)).Nodup
+#guard (keys fat2).all (fun k => keyOf fat2 (name fat2 k) == some k)
+#guard (contentOf cat0).check fat1.E [sortS] && (contentOf cat0).check (envAtt fat1) [sortS]
+#guard match toNorms fat1 with
+  | some D => VE.Norms.WellFormed D
+  | none => false
+
+/-! ## Each branch of 2.6, for the trust mutants (R16): every list's first and last entry, each side of each test -/
+
+#guard [VE.Formula.unary "p" (.var 0), .binary "p" (.var 0) (.const "c"), .binary "p" (.const "c") (.var 0),
+    .eq (.var 0) (.const "c"), .eq (.const "c") (.var 0), .not (contentOf "p"), .and (contentOf "p") .top,
+    .and .top (contentOf "p"), .or (contentOf "p") .top, .or .top (contentOf "p"), .implies (contentOf "p") .top,
+    .implies .top (contentOf "p")].all mentionsSlot
+#guard [VE.Formula.top, .bottom, .unary "p" (.var 1), .unary "p" (.const "c"), .binary "p" (.var 1) (.const "c"),
+    .eq (.var 1) (.const "c"), .not .top, .and .top .top, .or .top .top, .implies .top .top,
+    .all "s" (contentOf "p"), .ex "s" (contentOf "p")].all (!mentionsSlot ·)
+
+/-- F-AT1 with its lexical view changed. -/
+def viewed (f : VE.EnglishGrammar.Env → VE.EnglishGrammar.Env) : AttDoc :=
+  { fat1 with lex := { lexP with env := f lexP.env } }
+def mapPreds (f : VE.EnglishGrammar.PredDecl → VE.EnglishGrammar.PredDecl) (e : VE.EnglishGrammar.Env) :
+    VE.EnglishGrammar.Env := { e with predicates := e.predicates.map f }
+-- `lexPred`: in the view with `E`'s sorts and matching arity, and with a wording
+#guard lexPred fat1 cat0 && !lexPred fat1 "absent" && !lexPred { fat1 with lex := lexWrongArgs } cat0 &&
+  !lexPred { fat1 with lex := lexNoWording } cat0 && !lexPred (viewed (mapPreds ({ · with arity := 2 }))) cat0 &&
+  !lexPred { fat1 with E := { envP with predicates := fun _ => none } } cat0 &&
+  !lexPred { fat1 with lex := { lexP with lexicon := { lexP.lexicon with wordings := [("absent", "{0} is absent")] } } } "absent"
+-- `lexTerm`: a variable needs none; a constant in the view with its sort, and with a spelling
+#guard lexTerm fat1 (.var 9) && lexTerm c_e_part (.const "s1") && !lexTerm c_e_part (.const "absent") &&
+  !lexTerm { c_e_part with E := { c_e_part.E with constants := fun _ => none } } (.const "s1") &&
+  !lexTerm { c_e_part with lex := { c_e_part.lex with lexicon := { c_e_part.lex.lexicon with spellings := [] } } }
+    (.const "s1") &&
+  !lexTerm { c_e_part with E := { c_e_part.E with constants := fun _ => some sortC } } (.const "s1") &&
+  !lexTerm { fat1 with lex := { lexP with lexicon := { lexP.lexicon with spellings := [("absent", "absent")] } } }
+    (.const "absent")
+-- `lexCovers`: every connective reads both operands; both positions of a binary atom and of an equation
+def lexA : VE.Formula := .unary cat0 (.const "s1")
+def lexB : VE.Formula := .unary "absent" (.const "s1")
+def lexC : VE.Formula := .unary cat0 (.const "absent")
+#guard [VE.Formula.top, .bottom, lexA, .binary "weapons_uplift_permitted" (.var 0) (.const "s1"), .eq (.var 0) (.const "s1"),
+    .not lexA, .all "x" lexA, .ex "x" lexA, .and lexA lexA, .or lexA lexA, .implies lexA lexA].all (lexCovers c_e_part)
+#guard [lexB, lexC, .binary "absent" (.var 0) (.var 0), .binary "weapons_uplift_permitted" (.const "absent") (.var 0),
+    .binary "weapons_uplift_permitted" (.var 0) (.const "absent"), .eq (.const "absent") (.var 0),
+    .eq (.var 0) (.const "absent"), .not lexB, .all "x" lexB, .ex "x" lexB, .and lexB lexA, .and lexA lexB,
+    .or lexB lexA, .or lexA lexB, .implies lexB lexA, .implies lexA lexB].all (!lexCovers c_e_part ·)
+-- `renderCheck`: each failure with its text, one holder or slot symbol at a time; each mode's `wants` shape
+def wc (slot : Option (String × VE.Term)) (φ : VE.Formula) : Cond :=
+  { holder := .const "c0", mode := .act .wants, slot := slot, content := φ }
+#guard errOf (renderCheck c_e_part (wc (some (sortS, .var 0)) (contentOf cat0))) == "ok" &&
+  errOf (renderCheck c_e_part (wc none lexA) true) == "ok" && errOf (renderCheck c_e_part (wc none lexA)) == textD14c
+-- a part's wording is found wherever it stands in the lexicon, as a slotted condition's is
+#guard [categories[1]!, "weapons_uplift_permitted"].all (fun p =>
+  errOf (renderCheck c_e_part (wc none (.unary p (.const "s1"))) true) == "ok" &&
+  errOf (renderCheck c_e_part (wc (some (sortS, .var 0)) (.unary p (.var 0)))) == "ok")
+#guard errOf (renderCheck c_e_part (wc (some (sortS, .var 0)) (contentOf "absent"))) == textD14c &&
+  errOf (renderCheck c_e_part (wc none lexB) true) == textD14c &&
+  errOf (renderCheck c_e_part (wc none (.binary cat0 (.const "s1") (.const "s1"))) true) == textD14c &&
+  errOf (renderCheck c_e_part (wc none (contentOf cat0)) true) == textD14c
+#guard errOf (renderCheck c_e_part { wc none lexB with mode := .knows }) == textD14d &&
+  errOf (renderCheck c_e_part { wc none lexA with mode := .knows, holder := .const "absent" }) == textD14d &&
+  errOf (renderCheck c_e_part { wc none lexA with mode := ql }) == "ok" &&
+  errOf (renderCheck c_e_part { wc none lexA with mode := .act .says }) == "ok"
+#guard errOf (renderCheck c_e_part { wc (some (sortS, .const "s1")) (contentOf cat0) with mode := .knows }) ==
+  "InvalidInput: an attitude slot term is not a variable of the guard"
+-- `lexAgrees`: generated symbols aside; each conjunct on its own, with the offending entry first and last
+def gensort : VE.EnglishGrammar.SortDecl := { name := "gen", generated := true }
+def robot : VE.EnglishGrammar.SortDecl := { name := "robot" }
+def genpred : VE.EnglishGrammar.PredDecl := { name := "gen_p", arity := 1, args := [sortS], generated := true }
+def extra : VE.EnglishGrammar.PredDecl := { name := "extra", arity := 1, args := [sortS] }
+def genconst : VE.EnglishGrammar.ConstDecl := { name := "gc", sort := "gen", generated := true }
+def undeclared : VE.EnglishGrammar.ConstDecl := { name := "gc", sort := sortS }
+#guard lexAgrees fat1 && lexAgrees (viewed ({ · with sorts := gensort :: lexP.env.sorts ++ [gensort] })) &&
+  lexAgrees (viewed ({ · with predicates := genpred :: lexP.env.predicates ++ [genpred] })) &&
+  lexAgrees (viewed ({ · with constants := [genconst, genconst] })) && lexAgrees c_e_part
+#guard [viewed ({ · with sorts := robot :: lexP.env.sorts }), viewed ({ · with sorts := lexP.env.sorts ++ [robot] }),
+    viewed ({ · with sorts := lexP.env.sorts.drop 1 }), viewed ({ · with sorts := lexP.env.sorts.dropLast }),
+    viewed ({ · with sorts := lexP.env.sorts.drop 1 ++ [gensort] }),
+    viewed ({ · with predicates := extra :: lexP.env.predicates }),
+    viewed ({ · with predicates := lexP.env.predicates ++ [extra] }),
+    viewed ({ · with predicates := lexP.env.predicates.drop 1 }),
+    viewed ({ · with predicates := lexP.env.predicates.dropLast }),
+    { fat1 with authorPredicates := "extra" :: fat1.authorPredicates, lex := { lexP with env := { lexP.env with
+        predicates := extra :: lexP.env.predicates } } },
+    viewed (mapPreds ({ · with arity := 7 })), { fat1 with lex := lexWrongArgs },
+    viewed ({ · with constants := [undeclared] }), viewed ({ · with constants := [genconst, undeclared] }),
+    viewed ({ · with constants := [undeclared, genconst] })].all (!lexAgrees ·)
+-- `checkCond`, `checkConds`, `checkParts`, `checkNames`: the first and the last entry both count
+#guard errOf (checkConds fat1 []) == "ok" && errOf (checkParts fat1 []) == "ok" && errOf (checkNames fat1 []) == "ok" &&
+  errOf (checkConds fat1 (condsOf fat1)) == "ok"
+def badCond : List String × Cond := ([], cond .knows cat0)
+#guard errOf (checkConds fat1 [badCond, (Γ1, cond .knows cat0)]) == "UnboundVariable: Variable index 1 is outside its scope" &&
+  errOf (checkConds fat1 [(Γ1, cond .knows cat0), badCond]) == "UnboundVariable: Variable index 1 is outside its scope"
+#guard errOf (checkParts c_e_part [c_e_node, cond .knows cat0]) == "UnboundVariable: Variable index 1 is outside its scope" &&
+  errOf (checkParts c_e_part [cond .knows cat0, c_e_node]) == "UnboundVariable: Variable index 1 is outside its scope"
+-- a part is closed: a holder or slot variable fails `termSort`, a slot at a constant D14b (spec 2.6)
+#guard fails (c_e_doc [{ c_e_node with holder := .var 0 }] guard1) "UnboundVariable: Variable index 0 is outside its scope" &&
+  fails (c_e_doc [{ c_e_node with slot := some (sortS, .var 0), content := contentOf cat0 }] guard1)
+    "UnboundVariable: Variable index 0 is outside its scope" &&
+  fails (c_e_doc [{ c_e_node with mode := .knows, slot := some (sortS, .const "s1"), content := contentOf cat0 }] guard1)
+    "InvalidInput: an attitude slot term is not a variable of the guard"
+#guard errOf (checkCond fat1 Γ1 (cond .knows cat0)) == "ok" && errOf (checkCond fat1 Γ1 (cond (.act .says) cat0)) == "ok" &&
+  errOf (checkCond { fat1 with T := preReportTable } Γ1 (cond .knows cat0)) ==
+    "UnsupportedProfile: 'knows' is not admitted by attitudes@0" &&
+  errOf (checkCond fat1 Γ1 { cond ql cat0 with content := .binary cat0 (.var 0) (.var 0) }) ==
+    "TypeMismatch: Predicate 'mass_casualty_weapon_uplift' has arity 1, not 2" &&
+  errOf (checkCond fat1 Γ1 { cond ql cat0 with slot := some (sortC, .var 1) }) ==
+    "TypeMismatch: Predicate 'mass_casualty_weapon_uplift' expects ('situation',), received ('claude_instance',)"
+-- a closed content is typed in the empty context, a slotted one in the slot's alone
+#guard errOf (checkCond fat1 Γ1 { cond ql cat0 with content := .unary cat0 (.var 1) }) ==
+  "UnboundVariable: Variable index 1 is outside its scope"
+-- `checkAtt`'s lists: the last entry of each counts
+#guard fails { fat1 with holders := [sortC, "robot"] } "UnknownSymbol: Unknown holder sort 'robot'" &&
+  fails { fat1 with holders := ["robot", sortC] } "UnknownSymbol: Unknown holder sort 'robot'"
+#guard [[("very likely", "quite likely"), ("very likely", "as likely as not")],
+    [("very likely", "as likely as not"), ("very likely", "quite likely")]].all (fun ps =>
+  fails { fat1 with declared := ps } "UnsupportedProfile: a declared scale pair names a word that attitudes@0 does not admit")
+-- the first and the last admitted word, on each side of a declared pair
+#guard passes { fat1 with declared := [("almost certain", "more likely than not"), ("more likely than not", "almost certain")] }
+-- several failures of the lexicon: the first is named
+#guard fails { fat1 with lex := { lexP with lexicon := { lexP.lexicon with
+    wordings := lexP.lexicon.wordings.filter (fun w => w.1 != cat0 && w.1 != categories[1]!) } } }
+  "InvalidInput: the English lexicon fails V1 for predicate mass_casualty_weapon_uplift"
+#guard passes { fat1 with holders := [sortS, sortC] } && passes { fat1 with holders := [sortC, sortS] } &&
+  fails { fat1 with authorPredicates := "attitudes__x" :: fat1.authorPredicates }
+    "InvalidInput: predicate attitudes__x uses the reserved prefix attitudes__"
+-- `checkNames`: each check, on the first and the last key; a regulated name and a defined one
+def wordsTable (ws : List Word) : Table :=
+  { candidates := ws, lowerBound := ws.map (·, "x"), above := [], factive := some "x", knowsBelieves := none,
+    knowsThinks := [] }
+def thinksDoc (ws : List Word) : AttDoc :=
+  docOf (wordsTable ws) [] [ruleOf "u0165-s01" (ws.foldr (fun w g => .or (.att (cond (.thinks w) cat0)) g) (.base .top))]
+#guard fails (thinksDoc ["a:b"]) "InvalidInput: generated predicate attitudes__thinks_a:b__1 contains ':'" &&
+  fails (thinksDoc ["a", "a:b"]) "InvalidInput: generated predicate attitudes__thinks_a:b__1 contains ':'"
+#guard fails (thinksDoc ["a b", "a_b"]) "InvalidInput: generated predicate names collide" && passes (thinksDoc ["a", "b"])
+#guard errOf (checkNames fat1 (keys fat1).reverse) == "ok"
+def namedAs (rs ds : List String) : AttDoc :=
+  { fat1 with regulated := rs.map (fun n => { regulatedP with name := n }),
+              definitions := ds.map (fun n => { name := n, args := [], body := .top }) }
+#guard [namedAs ["attitudes__knows__1", "x"] [], namedAs ["x", "attitudes__knows__1"] [],
+    namedAs [] ["attitudes__knows__1", "x"], namedAs [] ["x", "attitudes__knows__1"],
+    namedAs ["attitudes__knows__1"] ["x"], namedAs ["x"] ["attitudes__knows__1"]].all (fun A =>
+  errOf (checkNames A (keys fat1)) == "DuplicateDeclaration: generated predicate attitudes__knows__1")
+-- 64 bytes is the limit: a word whose name has exactly 64 passes, one byte more does not
+def wordOf (n : Nat) : Word := String.mk (List.replicate n 'a')
+#guard (name (thinksDoc [wordOf 43]) (keys (thinksDoc [wordOf 43]))[0]!).utf8ByteSize == 64 && passes (thinksDoc [wordOf 43]) &&
+  (errOf (checkAtt (thinksDoc [wordOf 44]))).startsWith "ResourceLimit: generated predicate"
+
+/-! ## `AWellFormed`: decided, with a proof that the decision is the predicate, so its guards can fail -/
+
+def awf (A : AttDoc) : List String → AFormula → Bool
+  | Γ, .base φ => φ.check A.E Γ
+  | Γ, .att c => match c.key A Γ with
+    | some k => (keys A).contains k && c.slot.all (fun p => p.2.sortOf A.E Γ == some p.1)
+    | none => false
+  | Γ, .not a => awf A Γ a
+  | Γ, .and a b | Γ, .or a b | Γ, .implies a b => awf A Γ a && awf A Γ b
+  | Γ, .all s a | Γ, .ex s a => A.E.sorts.contains s && awf A (s :: Γ) a
+
+theorem awf_iff (A : AttDoc) (Γ : List String) (a : AFormula) : awf A Γ a = true ↔ AWellFormed A Γ a := by
+  induction a generalizing Γ with
+  | base φ => exact VE.check_iff_wellFormed A.E Γ φ
+  | att c =>
+    simp only [awf, AWellFormed]
+    cases hk : c.key A Γ <;> cases c.slot <;> simp
+  | not a ih => exact ih Γ
+  | and a b iha ihb | or a b iha ihb | implies a b iha ihb =>
+    simp only [awf, AWellFormed, Bool.and_eq_true, iha, ihb]
+  | all s a ih | ex s a ih =>
+    simp only [awf, AWellFormed, Bool.and_eq_true, ih, List.contains_iff_mem]
+
+#guard awf fat1 Γ1 guard1 && awf fat1 Γ1 (.base (contentOf cat0)) && awf fat1 Γ1 (.not knowsA)
+#guard !awf fat1 Γ1 (.base (contentOf "absent")) && !awf fat1 Γ1 noKey && !awf fat1 Γ1 (.not noKey)
+-- a condition outside the document's keys (spec 11 item 6), and a slot term of another sort, are not well formed
+#guard !awf fat1 Γ1 (.att (cond (.act .wants) cat0)) &&
+  !awf fat1 Γ1 (.att { cond .knows cat0 with slot := some (sortC, .var 0) })
+#guard [AFormula.and, AFormula.or, AFormula.implies].all (fun f => awf fat1 Γ1 (f knowsA qlA) &&
+  !awf fat1 Γ1 (f noKey qlA) && !awf fat1 Γ1 (f knowsA noKey))
+#guard [AFormula.all, AFormula.ex].all (fun f => awf fat1 Γ1 (f sortS (.base .top)) && !awf fat1 Γ1 (f "place" (.base .top)) &&
+  !awf fat1 Γ1 (f sortS noKey))
+
+
+/-! ## 2.7 The frame (at-1c): F-AT1, F-AT2 (labels, premise count), F-AT3, F-AT6 (the pairs), F-AT7, F-AT0 -/
+
+def pairNames (A : AttDoc) : List (String × String) := (framePairs A).map (fun p => (name A p.1, name A p.2))
+def kn (m : String) (i : Nat) : String := "attitudes__" ++ m ++ "__" ++ toString i
+
+-- F-AT1 (spec 7.1): two premises, with their labels
+#guard frameLabels fat1 == ["attitude:factive:attitudes__knows__1",
+  "attitude:entails:attitudes__knows__1:attitudes__thinks_quite_likely__1"] && (framePremises fat1).length == 2
+-- F-AT1's premises as written: ∀h ∀x. knows(h, x) → C(x), and ∀h ∀x. knows(h, x) → thinks_quite_likely(h, x)
+#guard framePremises fat1 == [.all sortC (.all sortS (.implies knows1 (contentOf cat0))),
+  .all sortC (.all sortS (.implies knows1 ql1))]
+-- F-AT2: four premises (factive ×2, knows→thinks ×2), one distinct label each, no pair across contents
+#guard (framePremises fat2).length == 4 && (frameLabels fat2).length == 4 && decide (frameLabels fat2).Nodup &&
+  pairNames fat2 == [(kn "knows" 1, kn "thinks_quite_likely" 1), (kn "knows" 2, kn "thinks_quite_likely" 2)] &&
+  (frameLabels fat2).take 2 == ["attitude:factive:" ++ kn "knows" 1, "attitude:factive:" ++ kn "knows" 2]
+-- F-AT6: four premises; the pairs knows→very, knows→quite, very→quite (`framePairs_transitive`'s instance)
+#guard (framePremises fat6).length == 4 && pairNames fat6 ==
+  [(kn "knows" 1, kn "thinks_very_likely" 1), (kn "knows" 1, kn "thinks_quite_likely" 1),
+    (kn "thinks_very_likely" 1, kn "thinks_quite_likely" 1)]
+-- F-AT3 (7.4, premise 4 exactly when the scale orders the words): with the pair one premise, without it none
+#guard pairNames fat3 == [(kn "thinks_very_likely" 1, kn "thinks_quite_likely" 1)] && pairNames fat3none == [] &&
+  (framePremises fat3).length == 1 && fat3.scale.atLeast "very likely" "quite likely" &&
+  !fat3.scale.atLeast "quite likely" "very likely"
+-- F-AT7 (7.4, premise 3 exactly where its item passed): without very likely's item only the factive premise
+#guard framePremises fat7 == [factive fat7 ((knowsKeys fat7).head!)] &&
+  pairNames fat7item == [(kn "knows" 1, kn "thinks_very_likely" 1)] && (framePremises fat7item).length == 2
+-- F-AT0 no premise; F-AT5 fourteen
+#guard framePremises fat0 == [] && frameLabels fat0 == [] && (framePremises fat5).length == 14 &&
+  (frameLabels fat5).length == 14 && decide (frameLabels fat5).Nodup
+-- C-a: a closed key is closed over its holder only (variable 0); no pair between keys differing in `slotSort`
+#guard framePremises c_a_both == [.all sortC (.implies (.unary (kn "knows" 1) (.var 0)) .top),
+  .all sortC (.all sortS (.implies (.binary (kn "knows" 2) (.var 1) (.var 0)) .top))]
+-- `knows → believes` exactly when the table has premise 2
+def fatB (T : Table) : AttDoc := docOf T [] [ruleOf "u0165-s01" (.or knowsA (.att (cond (.act .believes) cat0)))]
+#guard pairNames (fatB table) == [(kn "knows" 1, kn "believes" 1)] &&
+  pairNames (fatB { table with knowsBelieves := none }) == []
+-- `entailsMode`: no pair starts at says, believes, wants, intends, none ends at knows, `thinks w` not to itself
+#guard [Mode.act .says, .act .believes, .act .wants, .act .intends].all (fun m =>
+    [Mode.act .believes, .knows, .thinks "likely", .act .says].all (fun m2 => !entailsMode fat1 m m2)) &&
+  [Mode.knows, .thinks "very likely", .act .believes].all (fun m => !entailsMode fat1 m .knows) &&
+  !entailsMode fat1 (.thinks "likely") (.thinks "likely") && entailsMode fat1 (.thinks "very likely") (.thinks "likely") &&
+  !entailsMode fat1 (.thinks "likely") (.thinks "very likely") && entailsMode fat1 .knows (.thinks "likely") &&
+  !entailsMode { fat1 with T := { table with knowsThinks := [] } } .knows (.thinks "likely") &&
+  !entailsMode fat1 .knows (.act .intends)
+-- a pair whose target is the document's first key; premise 3 from a table's last item only
+#guard pairNames (docOf table [] [ruleOf "u0165-s01" (.or qlA knowsA)]) == [(kn "knows" 1, kn "thinks_quite_likely" 1)] &&
+  entailsMode (docOf fixtureTableNoPair [] []) .knows ql && !entailsMode (docOf fixtureTableNoPair [] []) .knows
+    (.thinks "likely")
+-- `sameSubject`: each of holder sort, slot sort and content separates
+def keyK : Key := ⟨.knows, sortC, some sortS, contentOf cat0⟩
+#guard sameSubject keyK { keyK with mode := ql } && !sameSubject keyK { keyK with holderSort := sortS } &&
+  !sameSubject keyK { keyK with slotSort := none } && !sameSubject keyK { keyK with content := .top }
+
+
+/-! ## 2.8 F-AT1's points (spec 7.2), on what is decidable: the frame and the elaborated guard on `interp`'s finite
+model; `Intended` and `AFormula.denote` are propositions, pinned by the examples further below -/
+
+abbrev FM := VE.FiniteModel Nat
+/-- One instance `0`, one situation `1`, the category true or false, and the attitude tuples by generated name. -/
+def routeModel (cat : Bool) (J : List (String × List Nat)) : FM :=
+  { domains := fun s => if s == sortC then [0] else if s == sortS then [1] else [],
+    constants := fun _ => none,
+    relations := fun r => if cat && r == cat0 then [[1]] else (J.filter (·.1 == r)).map (·.2) }
+def RM1 : FM := routeModel false [(kn "thinks_quite_likely" 1, [0, 1])]
+def RM2 : FM := routeModel false [(kn "knows" 1, [0, 1]), (kn "thinks_quite_likely" 1, [0, 1])]
+def RM3 : FM := routeModel true [(kn "knows" 1, [0, 1])]
+def RM4 : FM := routeModel true []
+def frameHolds (A : AttDoc) (M : FM) : Bool := (framePremises A).all (·.eval M [])
+def guardAt (M : FM) : Bool := ((guard1.toFormula fat1 Γ1).map (·.eval M [1, 0])).getD false
+-- 7.2's "frame holds" column: M1 true, M2 false, M3 false, M4 true; the elaborated guard: true, true, false, false
+#guard [RM1, RM2, RM3, RM4].map (frameHolds fat1) == [true, false, false, true] &&
+  [RM1, RM2, RM3, RM4].map guardAt == [true, true, false, false]
+
+/-! ## 2.9 The route views and the pack, on F-AT1 (spec 7.3, what is computable without AT-2) -/
+
+def U1 : VE.NormDefaults.UDoc :=
+  match toU fat1 ["weapons_uplift_permitted"] with
+  | some U => U
+  | none => ⟨⟨envP, [], ⟨[], [], []⟩⟩, []⟩
+/-- The first failing frame premise's label (PK-1's diagnostic names it), or none. -/
+instance (U : VE.NormDefaults.UDoc) (φ : VE.Formula) : Decidable (UnsaidFree U φ) := by
+  unfold UnsaidFree; infer_instance
+def firstFailing (A : AttDoc) (M : FM) : Option String :=
+  (((attitudesPack A).labelled).find? (fun p => !p.2.eval M [])).map (·.1)
+-- `toU`: the elaborated document with the unspecified list, `WellFormedU` true; none when elaboration fails
+#guard (toU fat1 ["weapons_uplift_permitted"]).isSome && VE.NormDefaults.WellFormedU U1 &&
+  U1.unspec == ["weapons_uplift_permitted"] && (match toNorms fat1 with
+    | some D => U1.D.T.nodes == D.T.nodes | none => false) &&
+  (toU { fat1 with rules := [ruleOf "u0165-s01" noKey] } []).isNone
+-- RM1-RM4: the first failing frame label: none, the factive premise, the entailment, none
+#guard [RM1, RM2, RM3, RM4].map (firstFailing fat1) == [none, some "attitude:factive:attitudes__knows__1",
+  some "attitude:entails:attitudes__knows__1:attitudes__thinks_quite_likely__1", none]
+-- `table3` and `enumerateSettled`: `some false` at RM1, `none` at RM4
+#guard VE.NormDefaults.table3 U1 RM1 "weapons_uplift_permitted" [0, 1] == some false &&
+  VE.NormDefaults.table3 U1 RM4 "weapons_uplift_permitted" [0, 1] == none &&
+  VE.NormDefaults.enumerateSettled U1 RM1 "weapons_uplift_permitted" [0, 1] == some false &&
+  VE.NormDefaults.enumerateSettled U1 RM4 "weapons_uplift_permitted" [0, 1] == none
+-- the frame reads no unsaid table on U1 (`UnsaidFree`, decided) and is typed over `envAt (fill U1) 0` and `baseEnvAtt`
+#guard (framePremises fat1).all (fun φ => decide (UnsaidFree U1 φ) &&
+  φ.check (VE.Norms.envAt (VE.NormDefaults.fill U1) 0) [] && φ.check (baseEnvAtt fat1) [])
+-- F-AT8 (SR-1): a factive premise names `unsaid__weapons_uplift_permitted`, and `WellFormedU` is false
+#guard (match toU fat8 ["weapons_uplift_permitted"] with
+    | some U => !VE.NormDefaults.WellFormedU U && (framePremises fat8).any (fun φ => !decide (UnsaidFree U φ))
+    | none => false)
+-- the frame holds on RM4's two filled situations
+def Fyes : VE.NormDefaults.FiniteFill U1 Nat := fun n => if n == unsaidP then [[0, 1]] else []
+def Fno : VE.NormDefaults.FiniteFill U1 Nat := fun _ => []
+#guard frameHolds fat1 (RM4.withFill Fyes) && frameHolds fat1 (RM4.withFill Fno)
+-- PK-1 as built: a `constraint` pack with no names and no conditions, the frame as its labelled premises
+#guard (attitudesPack fat1).id == "attitudes" && (attitudesPack fat1).kind == .constraint &&
+  (attitudesPack fat1).decls.isEmpty && (attitudesPack fat1).consts.isEmpty &&
+  (attitudesPack fat1).conditions.isEmpty && (attitudesPack fat1).names.isEmpty
+-- `attitudesPack_premises` (F-AT1, F-AT2): the labels and the premises, in order; one origin per label, each the root
+-- while `labelOrigin` is the stand-in (reviews/dri-decisions-20261108-at-1c.md item 1(b))
+#guard [fat1, fat2].all (fun A => (attitudesPack A).labelled.map (·.2) == framePremises A &&
+  (attitudesPack A).labelled.map (·.1) == frameLabels A &&
+  (attitudesPack A).origins == (frameLabels A).map (fun l => (l, labelOrigin A l)) &&
+  (attitudesPack A).origins.all (·.2.isEmpty))
+/-- Drafts 1–4's pack, which declared the keys' names a second time; kept only to show `assemble`'s refusal. -/
+def draft4Pack (A : AttDoc) : VE.NormDefaults.Packs.Pack :=
+  { attitudesPack A with kind := .vocabulary, decls := (keys A).map (fun k => (name A k, k.sorts)) }
+-- `assemble` takes the pack (it has no name); a pack declaring the keys' names is refused
+/-- reviews/dri-decisions-20261108-at-1c.md item 1(a): while `labelOrigin` is AT-2's stand-in (every origin the root,
+    pinned just above), no route registers the `attitudes` pack: no profile row for `attitudes@0`, no layered kind that
+    needs the pack. AT-2 lifts it when it writes the body. -/
+def labelOriginStandInUnread : Bool :=
+  !(labelOrigin fat1 "attitude:factive:attitudes__knows__1").isEmpty ||
+    (!VE.Compose.profileTable.any (·.profile == "attitudes@0") && !VE.NormDefaults.Wire.layeredRows.any (·.pack == some "attitudes"))
+#guard labelOriginStandInUnread
+#guard (match VE.NormDefaults.Packs.assemble U1 0 [attitudesPack fat1] with
+    | .ok ps => ps.map (·.id) == ["attitudes"] | .error _ => false) &&
+  errOf ((VE.NormDefaults.Packs.assemble U1 0 [draft4Pack fat1]).map (fun _ => ())) ==
+    "InvalidInput: generated name attitudes__knows__1 of pack attitudes is already declared"
+-- the base vocabulary of U1 declares each key's name with its sorts; `envX` is that environment
+#guard (keys fat1).all (fun k => (VE.Norms.envAt (VE.NormDefaults.fill U1) 0).predicates (name fat1 k) ==
+  some [sortC, sortS])
+example : VE.NormDefaults.Packs.envX U1 [attitudesPack fat1] = VE.Norms.envAt (VE.NormDefaults.fill U1) 0 := rfl
+-- `attitudesRow`: its fields as 2.9 writes them, and the slot agrees with the interface (PC-3's C1)
+#guard attitudesRow.profile == "attitudes@0" && attitudesRow.requires == ["norm-defaults@0", "norms@0"] &&
+  attitudesRow.refuses == [("reports@0", "attitudes@0 with reports@0 is not admitted")] &&
+  attitudesRow.slot == "pack" && VE.Compose.slotAgrees attitudesRow.slot attitudesRow.interface &&
+  !VE.Compose.slotAgrees "constraint" attitudesRow.interface
+
+
+/-! ## 7.5 One guard per theorem (at-1c's six; `table_reviewed`'s is in 2.1 above) -/
+
+/-- Every mode once on one content: `knows`, two degrees, and the four acts. -/
+def guardAll : AFormula :=
+  [Mode.act .says, .act .believes, .act .wants, .act .intends, .thinks "very likely"].foldl
+    (fun g m => .or g (.att (cond m cat0))) (.or knowsA qlA)
+def fatAll : AttDoc := docOf table [] [ruleOf "u0165-s01" guardAll]
+-- `frame_wellFormed`, `frame_universalQF`, `frameLabels_nodup` (F-AT2)
+#guard WellFormedAtt fat2 && (framePremises fat2).all (fun φ => φ.check (baseEnvAtt fat2) [] &&
+    VE.SoftNorms.universalQF φ) && (frameLabels fat2).length == (framePremises fat2).length &&
+  decide (frameLabels fat2).Nodup
+-- `framePairs_modes` (F-AT6, and every mode on one content: pairs start at knows or a degree, none ends at knows)
+#guard WellFormedAtt fatAll && pairNames fatAll == [(kn "knows" 1, kn "thinks_quite_likely" 1),
+    (kn "knows" 1, kn "believes" 1), (kn "knows" 1, kn "thinks_very_likely" 1),
+    (kn "thinks_very_likely" 1, kn "thinks_quite_likely" 1)] &&
+  [fat6, fatAll].all (fun A => (framePairs A).all (fun p =>
+    (p.1.mode == .knows || match p.1.mode with | .thinks _ => true | _ => false) && p.2.mode != .knows))
+-- `framePairs_transitive` (F-AT6): its instance knows→very, very→quite, knows→quite; and closed on every pair
+#guard (match (knowsKeys fat6).head?, (keys fat6).find? (·.mode == .thinks "very likely"), (keys fat6).find? (·.mode == ql) with
+    | some k, some v, some q => [(k, v), (v, q), (k, q)].all (framePairs fat6).contains
+    | _, _, _ => false) &&
+  [fat6, fatAll].all (fun A => (framePairs A).all (fun p => (framePairs A).all (fun q =>
+    p.2 != q.1 || p.1 == q.2 || (framePairs A).contains (p.1, q.2))))
+-- `empty_relations_frame` (F-AT1, F-AT2): with no attitude tuple every frame premise holds, the category either way
+#guard [fat1, fat2].all (fun A => [true, false].all (fun b => frameHolds A (routeModel b [])))
+
+/-! ## 2.8 and 2.9's propositions, pinned on F-AT1's points: no `#guard` evaluates a proposition, so each example
+below stops elaborating when its definition changes what it says -/
+
+def keyQ : Key := { keyK with mode := ql }
+theorem keys_fat1 : keys fat1 = [keyK, { keyK with mode := .act .intends }, keyQ] := by decide
+theorem pairs_fat1 : framePairs fat1 = [(keyK, keyQ)] := by decide
+/-- A finite model as a structure whose carrier is `Nat` by unfolding. -/
+abbrev St (M : FM) : VE.Structure.{0} :=
+  { Carrier := Nat, domain := fun s v => v ∈ M.domains s, constant := M.constants,
+    relation := fun r vs => vs ∈ M.relations r }
+/-- F-AT1's points (7.2): the category true or false; the keys in `ks` hold at `[0, 1]`. -/
+def v01 : List Nat := [0, 1]
+def v1 : List Nat := [1]
+abbrev MA (A : AttDoc) (cat : Bool) (ks : List Key) : AttModel A :=
+  ⟨St (routeModel cat []), fun k vs => k ∈ ks ∧ vs = [0, 1]⟩
+abbrev M := MA fat1
+
+-- `contentAt`: the slot content at `[h, x]`, true with the category; never at a one-tuple for a slot key
+example : contentAt (St (routeModel true [])) keyK [0, 1] ∧ ¬ contentAt (St (routeModel false [])) keyK [0, 1] ∧
+    ¬ contentAt (St (routeModel true [])) keyK [0] ∧ contentAt (St (routeModel true [])) { keyK with
+      slotSort := none, content := .top } [0] := by
+  refine ⟨⟨rfl, 1, rfl, by decide⟩, ?_, ?_, ⟨rfl, trivial⟩⟩
+  · rintro ⟨_, v, hv, hr⟩
+    cases hv; exact absurd hr (by decide)
+  · rintro ⟨h, _⟩; exact nomatch h
+-- 7.2's "Intended" column: M1 and M4 intended
+theorem intended_M1_M4 : Intended fat1 (M false [keyQ]) ∧ Intended fat1 (M true []) := by
+  refine ⟨⟨?_, ?_, ?_⟩, ⟨fun _ _ ⟨h, _⟩ => (nomatch h), fun _ _ _ _ ⟨h, _⟩ => (nomatch h),
+    fun _ _ _ ⟨h, _⟩ => (nomatch h)⟩⟩
+  · rintro k vs ⟨hk, rfl⟩
+    rw [List.mem_singleton] at hk; subst hk
+    exact ⟨by rw [keys_fat1]; decide, by simp only [keyQ, keyK, Key.sorts, Option.toList, VE.TupleTyped]; decide⟩
+  · rintro k _ hm vs ⟨hk, rfl⟩
+    rw [List.mem_singleton] at hk; subst hk; exact nomatch hm
+  · rintro p hp vs ⟨h1, rfl⟩
+    rw [pairs_fat1, List.mem_singleton] at hp; subst hp; exact absurd h1 (by decide)
+-- M2 is not (knowing a false content), M3 is not (the pair knows → thinks quite likely broken)
+theorem not_intended_M2_M3 : ¬ Intended fat1 (M false [keyK, keyQ]) ∧ ¬ Intended fat1 (M true [keyK]) := by
+  refine ⟨fun ⟨_, h, _⟩ => ?_, fun ⟨_, _, h⟩ => ?_⟩
+  · obtain ⟨_, v, hv, hr⟩ := h keyK (by rw [keys_fat1]; decide) rfl [0, 1] ⟨by decide, rfl⟩
+    cases hv; exact absurd hr (by decide)
+  · exact absurd (h (keyK, keyQ) (by rw [pairs_fat1]; decide) [0, 1] ⟨by decide, rfl⟩).1 (by decide)
+-- an untyped tuple (reversed) is not intended
+example : ¬ Intended fat1 ⟨St (routeModel false []), fun k vs => k = keyQ ∧ vs = [1, 0]⟩ :=
+  fun ⟨h, _⟩ => absurd (h keyQ [1, 0] ⟨rfl, rfl⟩).2.1 (by decide)
+-- the guard under the attitude semantics (7.2): true at M1 and M2, false at M3 and M4
+example : AFormula.denote fat1 (M false [keyQ]) Γ1 [1, 0] guard1 ∧
+    AFormula.denote fat1 (M false [keyK, keyQ]) Γ1 [1, 0] guard1 ∧
+    ¬ AFormula.denote fat1 (M true [keyK]) Γ1 [1, 0] guard1 ∧ ¬ AFormula.denote fat1 (M true []) Γ1 [1, 0] guard1 := by
+  refine ⟨Or.inr ⟨keyQ, by decide, 0, rfl, 1, rfl, by decide, rfl⟩,
+    Or.inr ⟨keyQ, by decide, 0, rfl, 1, rfl, by decide, rfl⟩, ?_, ?_⟩
+  · rintro (⟨_, ⟨k, hk, _, _, _, _, h, _⟩⟩ | ⟨k, hk, _, _, _, _, h, _⟩)
+    · have : k = { keyK with mode := .act .intends } := Option.some.inj (hk.symm.trans (by decide))
+      subst this; exact absurd h (by decide)
+    · have : k = keyQ := Option.some.inj (hk.symm.trans (by decide))
+      subst this; exact absurd h (by decide)
+  · rintro (⟨⟨_, _, _, _, _, _, h, _⟩, _⟩ | ⟨_, _, _, _, _, _, h, _⟩) <;> exact nomatch h
+-- each connective of `AFormula.denote` both ways, on F-AT1's points (base, not, implies, all, ex)
+example : AFormula.denote fat1 (M true []) Γ1 [1, 0] (.base (contentOf cat0)) ∧
+    ¬ AFormula.denote fat1 (M false []) Γ1 [1, 0] (.base (contentOf cat0)) ∧
+    ¬ AFormula.denote fat1 (M false [keyQ]) Γ1 [1, 0] (.not qlA) ∧ AFormula.denote fat1 (M true []) Γ1 [1, 0] (.not qlA) ∧
+    ¬ AFormula.denote fat1 (M true [keyK]) Γ1 [1, 0] (.implies knowsA qlA) ∧
+    AFormula.denote fat1 (M true [keyK, keyQ]) Γ1 [1, 0] (.implies knowsA qlA) ∧
+    AFormula.denote fat1 (M true []) Γ1 [1, 0] (.all sortS (.base (contentOf cat0))) ∧
+    ¬ AFormula.denote fat1 (M false []) Γ1 [1, 0] (.all sortS (.base (contentOf cat0))) ∧
+    AFormula.denote fat1 (M true []) Γ1 [1, 0] (.ex sortC (.base .top)) ∧
+    ¬ AFormula.denote fat1 (M true []) Γ1 [1, 0] (.ex sortS (.base .bottom)) := by
+  have hq : (cond ql cat0).key fat1 Γ1 = some keyQ := by decide
+  have hk : (cond .knows cat0).key fat1 Γ1 = some keyK := by decide
+  refine ⟨⟨1, rfl, by decide⟩, fun ⟨_, hv, hr⟩ => ?_, fun h => h ⟨keyQ, hq, 0, rfl, 1, rfl, by decide, rfl⟩, ?_, ?_,
+    fun _ => ⟨keyQ, hq, 0, rfl, 1, rfl, by decide, rfl⟩, fun v hv => ?_, fun h => ?_, ⟨0, by decide, trivial⟩,
+    fun ⟨_, _, h⟩ => h⟩
+  · cases hv; exact absurd hr (by decide)
+  · rintro ⟨_, _, _, _, _, _, h, _⟩; exact nomatch h
+  · intro h
+    obtain ⟨k, hk', _, _, _, _, hJ, _⟩ := h ⟨keyK, hk, 0, rfl, 1, rfl, by decide, rfl⟩
+    rw [hq] at hk'; cases hk'; exact absurd hJ (by decide)
+  · have : v = 1 := by simpa [routeModel, sortC, sortS] using hv
+    subst this; exact ⟨1, rfl, by decide⟩
+  · obtain ⟨_, hv, hr⟩ := h 1 (by decide); cases hv; exact absurd hr (by decide)
+-- a closed condition reads the holder's one-tuple (C-a's closed `knows`, holder variable 1, so instance `0`)
+def condC : Cond := { cond .knows cat0 with slot := none, content := .top }
+def keyC : Key := ⟨.knows, sortC, none, .top⟩
+example : AFormula.denote ca1 ⟨St (routeModel false []), fun k vs => k = keyC ∧ vs = [0]⟩ Γ1 [1, 0] (.att condC) ∧
+    ¬ AFormula.denote ca1 ⟨St (routeModel false []), fun k vs => k = keyC ∧ vs = [0, 1]⟩ Γ1 [1, 0] (.att condC) := by
+  have hk : condC.key ca1 Γ1 = some keyC := by decide
+  refine ⟨⟨keyC, hk, 0, rfl, rfl, rfl⟩, fun ⟨k, hk', _, hv, hJ⟩ => ?_⟩
+  rw [hk] at hk'; cases hk'; cases hv; exact absurd hJ.2 (by decide)
+-- `contentAt` holds at no other tuple length
+example : ¬ contentAt (St (routeModel true [])) keyK [] ∧ ¬ contentAt (St (routeModel true [])) keyK [0, 1, 1] :=
+  ⟨id, id⟩
+-- `interp` and `restrict` on F-AT9 (one key, `knows`; the kernel does not reduce `String.map`, so no degree's name):
+-- `interp` reads a generated name as its key's relation and any other name as the structure's
+example : (interp fat9 (MA fat9 false [keyK])).relation (kn "knows" 1) v01 ∧
+    ¬ (interp fat9 (MA fat9 true [])).relation (kn "knows" 1) v01 ∧ (interp fat9 (MA fat9 true [])).relation cat0 v1 ∧
+    ¬ (interp fat9 (MA fat9 false [keyK])).relation cat0 v1 := by
+  simp only [interp, show keyOf fat9 (kn "knows" 1) = some keyK by decide +kernel,
+    show keyOf fat9 cat0 = none by decide +kernel]
+  decide
+-- `restrict` reads the generated names back as the keys' relations, and hides them from the structure
+example : (restrict fat9 (St RM3)).J keyK v01 ∧ ¬ (restrict fat9 (St RM1)).J keyK v01 ∧
+    ¬ (restrict fat9 (St RM3)).S.relation (kn "knows" 1) v01 ∧
+    (restrict fat9 (St RM3)).S.relation cat0 v1 ∧ ¬ (restrict fat9 (St RM3)).J { keyK with content := .top } v01 := by
+  show (keyK ∈ keys fat9 ∧ v01 ∈ RM3.relations (name fat9 keyK)) ∧
+    ¬ (keyK ∈ keys fat9 ∧ v01 ∈ RM1.relations (name fat9 keyK)) ∧
+    ¬ (keyOf fat9 (kn "knows" 1) = none ∧ v01 ∈ RM3.relations (kn "knows" 1)) ∧
+    (keyOf fat9 cat0 = none ∧ v1 ∈ RM3.relations cat0) ∧
+    ¬ ({ keyK with content := .top } ∈ keys fat9 ∧ _)
+  decide +kernel
+-- the frame closure (7.4, `forced_iff_reachable`'s row): the seed [knows] reaches thinks quite likely at its tuple,
+-- the seed [thinks] does not reach knows, and nothing moves to another tuple
+example : seedClosure fat1 [(keyK, [0, 1])] keyQ [0, 1] ∧ ¬ seedClosure fat1 [(keyQ, [0, 1])] keyK [0, 1] ∧
+    ¬ seedClosure fat1 [(keyK, [0, 1])] keyQ [1, 0] ∧ seedClosure fat1 [(keyK, [0, 1])] keyK [0, 1] := by
+  refine ⟨⟨keyK, List.mem_singleton_self _, (VE.Closure.reachEval_iff .star _ _ _).1 (by rw [pairs_fat1]; decide)⟩,
+    ?_, ?_, ⟨keyK, List.mem_singleton_self _, (VE.Closure.reachEval_iff .star _ _ _).1 (by rw [pairs_fat1]; decide)⟩⟩
+  · rintro ⟨k, hk, hr⟩
+    rw [List.mem_singleton, Prod.mk.injEq] at hk
+    rw [hk.1] at hr
+    exact absurd ((VE.Closure.reachEval_iff .star _ _ _).2 hr) (by rw [pairs_fat1]; decide)
+  · rintro ⟨k, hk, _⟩
+    rw [List.mem_singleton, Prod.mk.injEq] at hk
+    exact absurd hk.2 (by decide)
+-- `SettledAsX` with no extra premise is norm-defaults' `SettledAs`; with `⊥` among them it holds of either answer
+example (U : VE.NormDefaults.UDoc) (B : VE.Structure.{0}) (r : VE.Norms.Regulated) (vs : List B.Carrier) (b : Bool) :
+    SettledAsX U [] B r vs b ↔ VE.NormDefaults.SettledAs U B r vs b := by
+  simp only [SettledAsX, VE.NormDefaults.SettledAs, VE.NormDefaults.baseAdmissibleX_nil]
+example (U : VE.NormDefaults.UDoc) (B : VE.Structure.{0}) (r : VE.Norms.Regulated) (vs : List B.Carrier) (b : Bool) :
+    SettledAsX U [.bottom] B r vs b := fun _ hX => absurd (hX.2 _ (List.mem_singleton_self _)) id
+
+/-! ## 7.4 and 7.5 for at-1d's seven statements, on F-AT1's points. `frame_iff_intended` takes `WellFormedAtt A`,
+which `decide +kernel` does not reduce (probed on F-AT9: its `Decidable` instance gets stuck): its examples take it as a
+hypothesis, and the `#guard` below evaluates it on both documents -/
+
+#guard WellFormedAtt fat1 && WellFormedAtt fat7item
+/-- F-AT1's points with a second instance `2`, the category true. -/
+def twoHoldersAt : FM := { routeModel true [] with domains := fun s => if s == sortC then [0, 2] else
+  if s == sortS then [1] else [] }
+theorem typed_v01 (M : FM) (cat : Bool) (hM : M = routeModel cat [] ∨ M = twoHoldersAt) :
+    VE.TupleTyped (St M) [sortC, sortS] v01 := by
+  rcases hM with rfl | rfl <;> (try cases cat) <;> exact ⟨by decide, by decide, trivial⟩
+def keyI : Key := { keyK with mode := .act .intends }
+def keyV : Key := { keyK with mode := .thinks "very likely" }
+theorem pairs_fat7item : framePairs fat7item = [(keyK, keyV)] := by decide
+theorem typed01 (A : AttDoc) (cat : Bool) (ks : List Key) (hks : ∀ k ∈ ks, k ∈ keys A ∧ k.sorts = [sortC, sortS]) :
+    ∀ k vs, (MA A cat ks).J k vs → k ∈ keys A ∧ VE.TupleTyped (MA A cat ks).S k.sorts vs := by
+  rintro k vs ⟨hk, rfl⟩
+  refine ⟨(hks k hk).1, ?_⟩
+  rw [(hks k hk).2]
+  exact typed_v01 _ cat (.inl rfl)
+theorem inFat1 : ∀ k ∈ [keyK, keyQ], k ∈ keys fat1 ∧ k.sorts = [sortC, sortS] := by
+  rw [keys_fat1]; decide
+/-- A broken frame pair breaks the frame, read off its premise (not through `frame_iff_intended`). -/
+theorem pair_breaks {A : AttDoc} (h : WellFormedAtt A = true) (m : AttModel.{0} A) {k k2 : Key}
+    (hp : (k, k2) ∈ framePairs A) {vs : List m.S.Carrier} (hT : VE.TupleTyped m.S k.sorts vs) (h1 : m.J k vs)
+    (h2 : ¬ m.J k2 vs) : ¬ VE.Norms.Sat (interp A m) (framePremises A) := fun hS => h2 <|
+  (atomAt_interp h m (mem_framePairs.1 hp).2.1 (sorts_of_pair hp ▸ hT)).1
+    ((closeOver_denote _ _ _).1 (hS _ (List.mem_append_right _ (List.mem_map_of_mem hp)))
+      vs ((tupleTyped_interp A m _ _).2 hT) ((atomAt_interp h m (mem_framePairs.1 hp).1 hT).2 h1))
+
+-- `frame_iff_intended` (7.4, 7.5): both sides at M1 and M4; neither at M2 (left to right, from M2 not intended) and
+-- M3 (right to left, from M3's broken pair)
+example (h : WellFormedAtt fat1 = true) :
+    (VE.Norms.Sat (interp fat1 (M false [keyQ])) (framePremises fat1) ∧ Intended fat1 (M false [keyQ])) ∧
+    (VE.Norms.Sat (interp fat1 (M true [])) (framePremises fat1) ∧ Intended fat1 (M true [])) ∧
+    (¬ VE.Norms.Sat (interp fat1 (M false [keyK, keyQ])) (framePremises fat1) ∧
+      ¬ Intended fat1 (M false [keyK, keyQ])) ∧
+    (¬ VE.Norms.Sat (interp fat1 (M true [keyK])) (framePremises fat1) ∧ ¬ Intended fat1 (M true [keyK])) := by
+  have iff := fun cat ks (hks : ks ⊆ [keyK, keyQ]) =>
+    frame_iff_intended fat1 h (M cat ks) (typed01 fat1 cat ks fun k hk => inFat1 k (hks hk))
+  have h3 := pair_breaks (k := keyK) (k2 := keyQ) (vs := v01) h (M true [keyK]) (by rw [pairs_fat1]; exact List.mem_singleton_self _) (typed_v01 _ true (.inl rfl))
+    ⟨List.mem_singleton_self _, rfl⟩ (by rintro ⟨hq, -⟩; exact absurd hq (by decide))
+  refine ⟨⟨(iff false [keyQ] (by decide)).2 intended_M1_M4.1, intended_M1_M4.1⟩,
+    ⟨(iff true [] (by decide)).2 intended_M1_M4.2, intended_M1_M4.2⟩,
+    ⟨fun hS => not_intended_M2_M3.1 ((iff false _ (by decide)).1 hS), not_intended_M2_M3.1⟩,
+    ⟨h3, fun hI => h3 ((iff true [keyK] (by decide)).2 hI)⟩⟩
+-- F-AT7 with very likely's item (premise 3): knowing without thinking very likely breaks the frame, so the point is
+-- not intended (right to left); without the item (`fat7`) the same point satisfies the frame
+example (h : WellFormedAtt fat7item = true) : ¬ VE.Norms.Sat (interp fat7item (MA fat7item true [keyK]))
+    (framePremises fat7item) ∧ ¬ Intended fat7item (MA fat7item true [keyK]) := by
+  have h3 := pair_breaks (k := keyK) (k2 := keyV) (vs := v01) h (MA fat7item true [keyK]) (by rw [pairs_fat7item]; exact List.mem_singleton_self _)
+    (typed_v01 _ true (.inl rfl)) ⟨List.mem_singleton_self _, rfl⟩ (by rintro ⟨hq, -⟩; exact absurd hq (by decide))
+  refine ⟨h3, fun hI => h3 ((frame_iff_intended fat7item h _ (typed01 fat7item true [keyK] ?_)).2 hI)⟩
+  rw [show keys fat7item = [keyK, keyV] by decide]; decide
+#guard !frameHolds fat7item (routeModel true [(kn "knows" 1, [0, 1])]) &&
+  frameHolds fat7 (routeModel true [(kn "knows" 1, [0, 1])])
+
+-- `knows_factive` (F-AT1): no intended model with the category false holds `knows` (M2's tuple)
+example (J : Key → List Nat → Prop) (hI : Intended fat1 ⟨St (routeModel false []), J⟩) : ¬ J keyK v01 := fun hJ => by
+  obtain ⟨_, v, hv, hr⟩ := knows_factive fat1 _ hI keyK (by rw [keys_fat1]; decide) rfl v01 hJ
+  cases hv
+  have hr' : [1] ∈ (routeModel false []).relations cat0 := hr
+  exact absurd hr' (by decide)
+-- `seed_intended` (F-AT1): the closure of the seed [knows] at the category true is intended (M3 with its pair);
+-- `mistaken_belief_admissible` (M1): thinking quite likely held of the false category
+example : Intended fat1 ⟨St (routeModel true []), seedClosure fat1 [(keyK, v01)]⟩ ∧
+    ∃ J, Intended fat1 ⟨St (routeModel false []), J⟩ ∧ J keyQ v01 := by
+  refine ⟨seed_intended fat1 _ _ (fun p hp => ?_) (fun p hp _ => ?_), mistaken_belief_admissible fat1 (St (routeModel false [])) keyQ
+    (inFat1 keyQ (by decide)).1 (by decide) v01 (typed_v01 _ false (.inl rfl))⟩
+  · rw [List.mem_singleton.1 hp]; exact ⟨(inFat1 keyK (by decide)).1, typed_v01 _ true (.inl rfl)⟩
+  · rw [List.mem_singleton.1 hp]; exact ⟨rfl, 1, rfl, by decide⟩
+-- `seed_least` (F-AT1): every intended model holding `knows` at a tuple holds `thinks quite likely` there
+example (S : VE.Structure.{0}) (J : Key → List S.Carrier → Prop) (vs : List S.Carrier)
+    (hI : Intended fat1 ⟨S, J⟩) (hk : J keyK vs) : J keyQ vs :=
+  seed_least fat1 ⟨S, J⟩ hI [(keyK, vs)] (fun p hp => by rw [List.mem_singleton.1 hp]; exact hk) keyQ vs
+    ⟨keyK, List.mem_singleton_self _, (VE.Closure.reachEval_iff .star _ _ _).1 (by rw [pairs_fat1]; decide)⟩
+
+-- `forced_iff_reachable` (7.4): the seed [knows] forces `thinks quite likely`; the seed [thinks] does not force
+-- `knows`, the seed [knows] does not force `intends`, nor `thinks quite likely` at another holder (instance `2`)
+abbrev Forced (M : FM) (seed : List (Key × List Nat)) (k : Key) (vs : List Nat) : Prop :=
+  ∀ J : Key → List Nat → Prop, Intended fat1 ⟨St M, J⟩ → (∀ p ∈ seed, J p.1 p.2) → J k vs
+example : Forced (routeModel true []) [(keyK, v01)] keyQ v01 ∧ ¬ Forced (routeModel true []) [(keyQ, v01)] keyK v01 ∧
+    ¬ Forced (routeModel true []) [(keyK, v01)] keyI v01 ∧ ¬ Forced twoHoldersAt [(keyK, v01)] keyQ [2, 1] := by
+  have fr := fun (M : FM) (k0 : Key) (hk0 : k0 ∈ [keyK, keyQ]) (hM : M = routeModel true [] ∨ M = twoHoldersAt)
+      (hc : k0.mode = .knows → contentAt (St M) k0 v01) =>
+    forced_iff_reachable fat1 (St M) [(k0, v01)] (fun p hp => by
+      rw [List.mem_singleton.1 hp]; exact ⟨(inFat1 k0 hk0).1, (inFat1 k0 hk0).2 ▸ typed_v01 M true hM⟩)
+      (fun p hp => by rw [List.mem_singleton.1 hp]; exact hc)
+  have cK : ∀ M, M = routeModel true [] ∨ M = twoHoldersAt → keyK.mode = .knows → contentAt (St M) keyK v01 := by
+    rintro M (rfl | rfl) _ <;> exact ⟨rfl, 1, rfl, by decide⟩
+  have cQ : keyQ.mode = .knows → contentAt (St (routeModel true [])) keyQ v01 := fun hm => absurd hm (by decide)
+  have nr : ∀ k0 k vs, (vs = v01 → VE.Closure.Reachable .star (fun a b => (a, b) ∈ framePairs fat1) k0 k → False) →
+      ¬ seedClosure fat1 [(k0, v01)] k vs := by
+    rintro k0 k vs hn ⟨k1, hk1, hr⟩
+    rw [List.mem_singleton, Prod.mk.injEq] at hk1
+    exact hn hk1.2 (hk1.1 ▸ hr)
+  refine ⟨(fr _ keyK (by decide) (.inl rfl) (cK _ (.inl rfl)) keyQ v01).2 ⟨keyK, List.mem_singleton_self _,
+      (VE.Closure.reachEval_iff .star _ _ _).1 (by rw [pairs_fat1]; decide)⟩,
+    fun hf => nr _ _ _ (fun _ hr => absurd ((VE.Closure.reachEval_iff .star _ _ _).2 hr) (by rw [pairs_fat1]; decide))
+      ((fr _ keyQ (by decide) (.inl rfl) cQ keyK v01).1 hf),
+    fun hf => nr _ _ _ (fun _ hr => absurd ((VE.Closure.reachEval_iff .star _ _ _).2 hr) (by rw [pairs_fat1]; decide))
+      ((fr _ keyK (by decide) (.inl rfl) (cK _ (.inl rfl)) keyI v01).1 hf),
+    fun hf => nr _ _ _ (fun h _ => absurd h (by decide)) ((fr _ keyK (by decide) (.inr rfl) (cK _ (.inr rfl)) keyQ [2, 1]).1 hf)⟩
+
+-- `guard_collapse` (F-AT1, a = `intends`): in every intended model guard1 is `thinks quite likely` (7.2: true at
+-- M1, false at M4 under both)
+example (m : AttModel.{0} fat1) (hI : Intended fat1 m) (ρ : VE.Valuation m.S) :
+    AFormula.denote fat1 m Γ1 ρ guard1 ↔ AFormula.denote fat1 m Γ1 ρ qlA :=
+  guard_collapse fat1 m hI Γ1 ρ _ _ _ keyK keyQ (by decide) (by decide) (by rw [pairs_fat1]; decide) rfl rfl
+/-- An attitude formula's elaboration evaluated on a finite model, or none. -/
+def evalAt (A : AttDoc) (Γ : List String) (ρ : List Nat) (M : FM) (a : AFormula) : Option Bool :=
+  (a.toFormula A Γ).map (·.eval M ρ)
+-- the collapse fails without the pair (no premise 3): knows and intends without thinks, the frame holding
+def fat1np : AttDoc := docOf { table with knowsThinks := [] } [] [ruleOf "u0165-s01" guard1]
+def RMki : FM := routeModel true [(kn "knows" 1, [0, 1]), (kn "intends" 1, [0, 1])]
+#guard pairNames fat1np == [] && frameHolds fat1np RMki && evalAt fat1np Γ1 [1, 0] RMki guard1 == some true &&
+  evalAt fat1np Γ1 [1, 0] RMki qlA == some false && !frameHolds fat1 RMki
+-- 7.4's other `guard_collapse` points: on F-AT1, knows, intends and thinks with the category true (both true); on F-AT5
+-- (a = the hand-named term), knows and thinks with the term and the category true (both true), the term alone (both false)
+def RMkit : FM := routeModel true [(kn "knows" 1, [0, 1]), (kn "intends" 1, [0, 1]), (kn "thinks_quite_likely" 1, [0, 1])]
+def term1 : String × List Nat := ("intentionally_does_restricted_action_1", [0, 1])
+#guard frameHolds fat1 RMkit && evalAt fat1 Γ1 [1, 0] RMkit guard1 == some true &&
+  evalAt fat1 Γ1 [1, 0] RMkit qlA == some true &&
+  [routeModel true [(kn "knows" 1, [0, 1]), (kn "thinks_quite_likely" 1, [0, 1]), term1], routeModel true [term1]].map
+    (fun M => (frameHolds fat5 M, evalAt fat5 Γ1 [1, 0] M (guardP 0), evalAt fat5 Γ1 [1, 0] M qlA)) ==
+  [(true, some true, some true), (true, some false, some false)]
+-- and when the holders differ: instance 2 knows and intends (and so thinks), instance 0 does not think
+def Γ3 : List String := [sortS, sortC, sortC]
+def guardH : AFormula := .or (.and (.att { cond .knows cat0 with holder := .var 2 })
+  (.att { cond (.act .intends) cat0 with holder := .var 2 })) qlA
+def RMh : FM := { routeModel true [(kn "knows" 1, [2, 1]), (kn "intends" 1, [2, 1]),
+  (kn "thinks_quite_likely" 1, [2, 1])] with domains := twoHoldersAt.domains }
+#guard frameHolds fat1 RMh && evalAt fat1 Γ3 [1, 0, 2] RMh guardH == some true &&
+  evalAt fat1 Γ3 [1, 0, 2] RMh qlA == some false && evalAt fat1 Γ3 [1, 0, 2] RMh guard1 == some false
+-- on a transitive pair (F-AT6, knows → quite likely through very likely): the pair is there, and the collapse holds
+-- at each of the seven points (of sixteen) satisfying the frame
+def g6 : AFormula := .or (.and knowsA (.base (contentOf cat0))) qlA
+def points6 : List FM := [true, false].flatMap fun c => (List.range 8).map fun i => routeModel c
+  (((List.range 3).filter (i.testBit ·)).map fun j =>
+    ([kn "knows" 1, kn "thinks_very_likely" 1, kn "thinks_quite_likely" 1][j]!, [0, 1]))
+#guard (framePairs fat6).contains (keyK, keyQ) && (points6.filter (frameHolds fat6)).length == 7 &&
+  points6.all fun M => !frameHolds fat6 M || evalAt fat6 Γ1 [1, 0] M g6 == evalAt fat6 Γ1 [1, 0] M qlA
 
 end VE.Attitudes.Examples

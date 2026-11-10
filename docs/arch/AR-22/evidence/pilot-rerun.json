@@ -1,0 +1,26 @@
+{
+ "recorded_answers_equal_to_rerun": {
+  "base": {
+   "answered_in_recording": 1,
+   "equal_to_rerun": 1
+  },
+  "head": {
+   "answered_in_recording": 0,
+   "equal_to_rerun": 0
+  }
+ },
+ "rows": [
+  {
+   "answered": true,
+   "base_outcome_sha256": "0f3b4f33d062f1e6c71a359d3bcbb608c8605ee16ff4354b30f607a4583329e3",
+   "base_seconds": 317,
+   "case": "pilot/udhr-20261026T1800Z:usecases/udhr-pilot/run-20261026T1800Z/experiment-whole/translation-whole.ve.md",
+   "head_outcome_sha256": "0f3b4f33d062f1e6c71a359d3bcbb608c8605ee16ff4354b30f607a4583329e3",
+   "head_seconds": 319,
+   "same": true,
+   "source_sha256": "c2de2d5aaf7c47a6810102b70caa03a74ee4660a",
+   "timeout": 600
+  }
+ ],
+ "tool": "uv run python docs/arch/AR-20/pilot_rerun.py --base-root <base worktree at the merge base> --head-root <this checkout> --case <the records whose outcomes differed in the concurrent recording> --out <file>; the full outcomes stay outside the tree, each side's outcome here as the SHA-256 of its compact sorted JSON, the form the recorder writes. They replace these records in both recordings before `python -m tools.evidence ab` (ab.json names the resulting recordings)."
+}

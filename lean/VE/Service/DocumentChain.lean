@@ -17,25 +17,40 @@ universe u
 
 /-- A case's environment is `E.lower` as the relay sends it. -/
 theorem requestOf_environment (E : Env) (front : Json) (units : List SourceUnit)
-    (hr : VE.NormDefaults.Wire.layeredRoute (wireJson 257 E.lower) = some "soft-norms@0") :
+    (hr : VE.NormDefaults.Wire.layeredRoute (wireJson 257 E.lower) = some "soft-norms@0")
+    (hv : (VE.Compose.listedProfiles (wireJson 257 E.lower)).contains "events@0" = false) :
     (requestOf E front units).getObjVal? "environment" = .ok (wireJson 257 E.lower) := by
   unfold requestOf
-  simp only [hr, bne_self_eq_false, if_false, Bool.false_eq_true]
+  simp only [hr, hv, bne_self_eq_false, Bool.false_or, if_false, Bool.false_eq_true]
   apply VE.Calc.Run.mkObj_get
   · cases (front.getObjVal? "completions") <;> simp [Except.toOption]
   · simp
 
-/-- A document's layered route is the soft branch: `requestOf` makes a case on no other. -/
+/-- A document's layered route is the soft branch with no events hook: `requestOf` makes a case on no other route
+and on no list with `events@0`. -/
 theorem layeredOf_soft (E : Env) (front : Json) (units : List SourceUnit) (L : VE.NormDefaults.Wire.LayeredU)
     (h : layeredOf E front units = .ok L) :
     ∃ environment norms, VE.NormDefaults.Wire.decodeSoftU environment norms = .ok L := by
   unfold layeredOf VE.NormDefaults.Wire.decodeLayered at h
   obtain ⟨environment, he, h⟩ := VE.Order.ProfileGate.bind_ok h
   by_cases hr : VE.NormDefaults.Wire.layeredRoute (wireJson 257 E.lower) = some "soft-norms@0"
-  · rw [requestOf_environment E front units hr] at he
-    cases he
-    rw [hr] at h
-    exact ⟨_, _, h⟩
+  · by_cases hv : (VE.Compose.listedProfiles (wireJson 257 E.lower)).contains "events@0" = true
+    · have hm : "events@0" ∈ VE.Compose.listedProfiles (wireJson 257 E.lower) := by simpa using hv
+      have hn : requestOf E front units = .null := by simp [requestOf, hr, hm]
+      rw [hn] at he
+      cases he
+    · have hv' : (VE.Compose.listedProfiles (wireJson 257 E.lower)).contains "events@0" = false := by simpa using hv
+      rw [requestOf_environment E front units hr hv'] at he
+      cases he
+      obtain ⟨H, hH, h⟩ := VE.Order.ProfileGate.bind_ok h
+      have hH' : H = none := by
+        unfold VE.Events.eventsHook at hH
+        rw [if_neg hv] at hH
+        cases hH
+        rfl
+      subst hH'
+      rw [hr] at h
+      exact ⟨_, _, h⟩
   · have hn : requestOf E front units = .null := by simp [requestOf, hr]
     rw [hn] at he
     cases he
@@ -46,7 +61,7 @@ theorem layeredOf_ids (E : Env) (front : Json) (units : List SourceUnit) (L : VE
   have _ := hs
   obtain ⟨environment, norms, hL⟩ := layeredOf_soft E front units L h
   obtain ⟨_, src, _, _, _, _, hl, _⟩ := VE.NormDefaults.Wire.decodeSoftU_source environment norms L hL
-  simp [hl, VE.NormDefaults.Wire.softPack]
+  simp [hl, VE.NormDefaults.Wire.softPack, VE.NormDefaults.Wire.hookPacks, VE.NormDefaults.Wire.hookBlock]
 
 /-- PC-2a (2). `acceptanceX` at the document's layered document, applied directly: `L.wfU`, and
 `decodeSoftU_X_wellFormed` (LayeredAdmission.lean:53) or, for rights, `decodeRightsU_X_wellFormed`. -/

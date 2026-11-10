@@ -1,0 +1,39 @@
+{
+"allow": [
+{
+"definition": "VE.Presupposition.Carrier",
+"operator": "ctor-drop",
+"reason": "does not elaborate: every constructor is named by an arm of Carrier.root or Carrier.cand (Wire.lean:30-41), so a dropped one is an unknown constant there, not a check's refutation; the hand mutant L-Carrier (mutants.json) drops inPlace and stops Wire.lean:38, and L-Carrier.root and L-Carrier.cand break Examples.lean:481-486"
+},
+{
+"definition": "VE.Presupposition.Candidate",
+"operator": "ctor-drop",
+"reason": "the five constructors share one line (Wire.lean:27), so the drop removes all of them and Carrier.cand (Wire.lean:36) does not elaborate; the hand mutant L-Candidate drops inPlace alone and stops cellOk and carrierAllowed (Wire.lean:87, :91, :120)"
+},
+{
+"definition": "VE.Presupposition.Position",
+"operator": "ctor-drop",
+"reason": "does not elaborate: `path` and `ruleAct` are named by ruleConditions (Wire.lean:134) and every constructor by the R-10 guard (Examples.lean:489), an unknown constant rather than a refutation; the hand mutant L-Position drops heading and fails Examples.lean:489"
+},
+{
+"definition": "VE.Presupposition.cellOk",
+"operator": "list-empty",
+"reason": "does not elaborate: a bare `[]` in place of `cs` leaves the element type of `.assumed`, `.asserted`, `.inPlace` or `.conditioned` unknown (Wire.lean:86-89, invalid dotted identifier); the hand mutants M-cellOk-inPlace-alone, L-cellOk-nodup and L-cellOk-assumed-asserted read the same list (Examples.lean:501, :505, :508)"
+},
+{
+"definition": "VE.Presupposition.tableOk",
+"operator": "list-empty",
+"reason": "does not elaborate: the mutant writes `[]` and a line break in place of the two-line class list (Wire.lean:95-96), and `[]` followed by `.all (fun pc => …)` is refused (function expected); the hand mutant L-tableOk-ruleGuard drops one class and fails Examples.lean:509, and the badAt guards fail for each other class dropped"
+},
+{
+"definition": "VE.Presupposition.unitModes",
+"operator": "list-empty",
+"reason": "does not elaborate: a bare `[]` in place of `R.checked` leaves the element type of `c.ob` unknown (Wire.lean:116, invalid field notation); the hand mutant L-unitModes-filter (every unit's obligations) fails Examples.lean:551"
+},
+{
+"definition": "VE.Presupposition.ruleConditions",
+"operator": "list-empty",
+"reason": "does not elaborate: a bare `[]` in place of `R.checked` leaves the element type of `d.ob` unknown (Wire.lean:134, invalid field notation); the hand mutants L-ruleConditions-carrier and L-ruleConditions-rule fail Examples.lean:565"
+}
+]
+}

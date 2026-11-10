@@ -59,8 +59,10 @@ match the stub's statements token for token, after whitespace normalisation. The
     sessions carry 279 elaborate, 715 conflict, 219 status, 2,705 report and 55 certificate `norm-defaults` cases,
     plus about 900 readings cases (`evidence/ab_recorded_kinds.txt`). They include both `InvalidModel(rights)` and
     `InvalidModel(soft)` cases.
-  - The 33 `norm-defaults` cases of `tests/data/route-cases.jsonl`, one session each: 0 differences
-    (`evidence/ab_route_cases.txt`).
+  - The 33 `norm-defaults` cases of `tests/data/route-cases.jsonl`, one session each: the differential is
+    INVALID and exited 1 (`evidence/ab_route_cases.txt`: none of its invocations ran the rebuilt
+    `ve_speech_acts_route`), so it is not valid evidence and these cases have no valid differential (corrected by
+    pk-1-cfr-1).
 - **A1–A9, A9′, F1, F1′**: `#guard`s in `PacksExamples.lean`, which imports `Packs.lean` alone, and in
   `PacksLegacyExamples.lean`, which covers today's rights documents in both list orders, `envX`/`fullEnv` on a real
   tree, F1 and F1′. The A9′ guards read `layered_elaborate`'s closed keys and sit beside `layeredCase_fits`.
@@ -179,9 +181,10 @@ df50d5b7c, c7932eeac, 5cde0da38, 573e19f50, d21c1c3c7.
    Overlap: only `lean/VE.lean` (union-merged) and the generated trust ledger are shared with in-flight branches.
 3. **Tests and gates can fail.** PASS: M1–M9 in `mutants.json`; the guard-only mutants of every trusted
    `Packs.lean` definition in `tests/test_packs_guard_mutants.py`, with the unmutated control.
-4. **Python, Lean and Rust agree; valid inputs pass.** PASS: `evidence/ab_full.txt` and
-   `evidence/ab_route_cases.txt` (0 differences). Rust is untouched (`rust/target/release/ve` repinned unchanged,
-   `6422647f…`).
+4. **Python, Lean and Rust agree; valid inputs pass.** PASS for what `evidence/ab_full.txt` covers (0 differences,
+   exit 0: every conformance corpus and the sessions recorded from 17 test files). The route-case run is INVALID
+   (exit 1, section 2) and counts for nothing (corrected by pk-1-cfr-1). Rust is untouched
+   (`rust/target/release/ve` repinned unchanged, `6422647f…`).
 5. **R8 binding.** N.A.: no new relayed field. Origins and their binding land with AT-2.
 6. **Gate evidence matches the final HEAD.** PASS: the chain gates the committed final HEAD. The evidence commit
    list above comes from `main..HEAD --no-merges`. `ve_service`'s digest is unchanged since the A/B run.

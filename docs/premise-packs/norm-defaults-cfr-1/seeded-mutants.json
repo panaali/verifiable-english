@@ -1,0 +1,23 @@
+{
+  "item": "norm-defaults-cfr-1",
+  "mutants": [
+    {
+      "file": "ve/backends/lean_service.py",
+      "fault": "Treat a missing or malformed profiles list as an exemption from rule-name binding",
+      "test": "tests/test_norm_defaults_response_binding.py::test_status_rule_binding_without_generated_profile",
+      "observed": "4 failed, 2 passed before fix; 6 passed after fix"
+    },
+    {
+      "file": "lean/ResponseShape/Schemas/NormDefaults.lean",
+      "fault": "Drop .equals /tuple from the status row and regenerate norm-defaults.json",
+      "test": "tests/test_norm_defaults_response_binding.py::test_status_tuple_schema_binds_request_without_service",
+      "observed": "Failed: DID NOT RAISE Invalid; passed after restoring and regenerating the schema"
+    },
+    {
+      "file": "conformance/binding_probes.py",
+      "fault": "Remove norm-defaults-gaps from the route probe inventory",
+      "test": "tests/test_assurance_manifest.py::test_every_lean_binding_has_a_probe",
+      "observed": "AssertionError naming the missing norm-defaults-gaps key; 1 passed after restore"
+    }
+  ]
+}

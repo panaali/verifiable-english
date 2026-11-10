@@ -1,0 +1,6 @@
+{"allow": [
+  {"definition": "VE.EnglishGrammar.sourceWordAdvice", "operator": "list-drop-last", "reason": "equivalent: `sourceWords` ends with `eventsFixed`, whose rows are `.fixed`, not refusals, so `filterMap` drops the last row with or without the mutant"},
+  {"definition": "VE.EnglishGrammar.sourceWordAdvice", "operator": "list-empty", "reason": "does not typecheck: a bare `[]` in place of `sourceWords` or its `filterMap` leaves the element type unresolved (Lean reports a type error, not a refutation)"},
+  {"definition": "VE.EnglishGrammar.advice", "operator": "list-empty", "reason": "does not typecheck: a bare `[]` in place of `adviceTable` or its `find?` leaves the element type unresolved (Lean reports a type error, not a refutation)"},
+  {"definition": "VE.EnglishGrammar.Run.grammarCase", "operator": "list-empty", "reason": "does not typecheck: a bare `[]` in place of `adviceTable` or its `map` leaves the element type unresolved (Lean reports a type error, not a refutation)"}
+]}

@@ -1,0 +1,379 @@
+{
+ "item": "sc-7",
+ "mutants": [
+  {
+   "kind": "R16 mutant",
+   "definition": "VE.Scope.Pinned.Row.wording",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "called {n}.\"",
+   "after": "named {n}.\"",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:25:0"
+  },
+  {
+   "kind": "R16 mutant",
+   "definition": "VE.Scope.Pinned.frameWording",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "def frameWording : String := \"Every instance of Claude must not:\"",
+   "after": "def frameWording : String := \"Every instance of Claude must never:\"",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:21:0"
+  },
+  {
+   "kind": "R16 mutant",
+   "definition": "VE.Scope.Pinned.kindWording",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "or thinks it quite likely that it is\"",
+   "after": "or thinks it likely that it is\"",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:34:0"
+  },
+  {
+   "kind": "R16 mutant",
+   "definition": "VE.Scope.Pinned.textOf",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "def textOf (j : Json) : String := j.getStr?.toOption.getD \"\"",
+   "after": "def textOf (j : Json) : String := \"the\"",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:29:0"
+  },
+  {
+   "kind": "R16 mutant",
+   "definition": "VE.Scope.Pinned.englishOf",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "textOf (j.getObjValD \"english\")",
+   "after": "textOf (j.getObjValD \"text\")",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:29:0"
+  },
+  {
+   "kind": "R16 mutant",
+   "definition": "VE.Scope.Pinned.narrowed?",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "| .arr #[.str \"and\", .str \"own\", c] => some (englishOf c)",
+   "after": "| .arr #[.str \"and\", c, .str \"own\"] => some (englishOf c)",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:29:0"
+  },
+  {
+   "kind": "R16 mutant",
+   "definition": "VE.Scope.Pinned.renderGovernor",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "def renderGovernor (b : Json) : String := (classify b).wording",
+   "after": "def renderGovernor (b : Json) : String := (classify (b.getObjValD \"effect\")).wording",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:21:0"
+  },
+  {
+   "kind": "R16 mutant",
+   "definition": "VE.Scope.Pinned.between",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "(w.dropPrefix? pre).bind fun s => (s.toString.dropSuffix? suf).map (·.toString)",
+   "after": "(w.dropPrefix? pre).map (·.toString)",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:25:0"
+  },
+  {
+   "kind": "R16 mutant",
+   "definition": "VE.Scope.Pinned.splitOnce",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "| [a, b] => some (a, b)",
+   "after": "| a :: rest => some (a, sep.intercalate rest)",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:103:0"
+  },
+  {
+   "kind": "R16 mutant",
+   "definition": "VE.Scope.Pinned.classify",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "(a.getObjValD \"level\").getNat?.toOption.getD 0",
+   "after": "(a.getObjValD \"level\").getNat?.toOption.getD 1",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:95:0"
+  },
+  {
+   "kind": "R16 mutant",
+   "definition": "VE.Scope.Pinned.readHeading",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "if !(1 ≤ k && k ≤ 6 && spaced h)",
+   "after": "if !(0 ≤ k && k ≤ 6 && spaced h)",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:93:0"
+  },
+  {
+   "kind": "R16 mutant",
+   "definition": "VE.Scope.Pinned.kindCondition",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "Json.arr #[.str \"or\", Json.arr #[.str \"and\"",
+   "after": "Json.arr #[.str \"and\", Json.arr #[.str \"and\"",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:34:0"
+  },
+  {
+   "kind": "seeded bug",
+   "definition": "VE.Scope.Pinned.spaced",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "fun w => !w.isEmpty && w.all",
+   "after": "fun w => w.all",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:69:0"
+  },
+  {
+   "kind": "seeded bug",
+   "definition": "VE.Scope.Pinned.parseGovernor",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "| [b] => some b",
+   "after": "| b :: _ => some b",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:101:0"
+  },
+  {
+   "kind": "seeded bug",
+   "definition": "VE.Scope.Pinned.readHeading",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "let h ← ((w.drop k).dropPrefix? \" \").map (·.toString)\n  if !(1 ≤ k && k ≤ 6 && spaced h) then none",
+   "after": "let h := (w.drop k).trimLeft\n  if !(k ≤ 6 && spaced h) then none",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:65:0"
+  },
+  {
+   "kind": "seeded bug",
+   "definition": "VE.Scope.Pinned.Row.paraphrase",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "{if h.startsWith \"If \" then \"if\" else \"when\"}",
+   "after": "when",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:49:0"
+  },
+  {
+   "kind": "seeded bug",
+   "definition": "VE.Service.Document.unitStatuses",
+   "file": "lean/VE/Service/Document.lean",
+   "before": "(u.getObjValD \"status\").getStr?.toOption.getD \"\"",
+   "after": "(u.getObjValD \"support\").getStr?.toOption.getD \"\"",
+   "status": "KILLED",
+   "test": "VE/Service/ScopeExamples.lean:205:0",
+   "note": "sc-4-f12: the check that the pinned u0047.s06 is UNFORMALISED reads the document mode's status; Document.lean is not changed by this item (sc-7 review F4: the check moved from FarExamples.lean:95 to ScopeExamples.lean:205; the reviewer replanted it there and both statuses become \"none\"; not replanted in the fix round)"
+  },
+  {
+   "kind": "seeded bug",
+   "definition": "VE.Scope.Pinned.clause",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "def clause (s : String) : Bool := spaced s && (s.splitOn \" \").all fun w =>\n  !\".?!:…‽。？！：．\".contains (w.dropRightWhile (\"”’\\\")]»\".contains ·)).back",
+   "after": "def clause (s : String) : Bool := spaced s && !s.endsWith \".\" && !s.endsWith \":\"",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:110:0",
+   "note": "sc-7 review F1: the code before the fix; also fails :113"
+  },
+  {
+   "kind": "seeded bug",
+   "definition": "VE.Scope.Pinned.clause",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "(w.dropRightWhile (\"”’\\\")]»\".contains ·)).back",
+   "after": "w.back",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:113:0",
+   "note": "sc-7 review F1: a sentence end before a closing quote or bracket"
+  },
+  {
+   "kind": "seeded bug",
+   "definition": "VE.Scope.Pinned.clause",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "\".?!:…‽。？！：．\"",
+   "after": "\".?!:\"",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:113:0",
+   "note": "sc-7 review F1: the ellipsis and full-width sentence ends"
+  },
+  {
+   "kind": "seeded bug",
+   "definition": "VE.Scope.Pinned.listName",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "n.startsWith \"the \" && clause n",
+   "after": "n.startsWith \"the \" && spaced n",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:113:0",
+   "note": "sc-7 review F1: a sentence end in the list name"
+  },
+  {
+   "kind": "seeded bug",
+   "definition": "VE.Scope.Pinned.readings",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "if clause s && s.all (fun ch => ch != ' ' && ch != ',') && clause r then",
+   "after": "if !s.isEmpty && s.all (fun ch => wordChar ch && ch != ',') && clause r then",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:113:0",
+   "note": "sc-7 review F1: a sentence end in the section slot"
+  },
+  {
+   "kind": "seeded bug",
+   "definition": "VE.Scope.Pinned.readings",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "if clause s && s.all (fun ch => ch != ' ' && ch != ',') && clause r then",
+   "after": "if clause s && s.all (fun ch => ch != ' ') && clause r then",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:125:0",
+   "note": "sc-7 review F1: a comma in the section slot (review F5)"
+  },
+  {
+   "kind": "seeded bug",
+   "definition": "VE.Scope.Pinned.closers",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "def closers : String := \"\\\"')*>]_`}~«»༻༽᚜‘’‛“”‟‹›⁆⁾₎⌉⌋〉❩❫❭❯❱❳❵⟆⟧⟩⟫⟭⟯⦄⦆⦈⦊⦌⦎⦐⦒⦔⦖⦘⧙⧛⧽⸂⸃⸄⸅⸉⸊⸌⸍⸜⸝⸠⸡⸣⸥⸧⸩⹖⹘⹚⹜〉》」』】〕〗〙〛〞〟﴾︘︶︸︺︼︾﹀﹂﹄﹈﹚﹜﹞＂＇）］｝｠｣\"",
+   "after": "def closers : String := \"”’\\\")]»\"",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:138:0; VE/Scope/AuthoringExamples.lean:142:0",
+   "note": "sc-7 review F7: the closer set before the fix (` ” ’ \" ) ] » ` only): PROBE F7 and the membership guard fail"
+  },
+  {
+   "kind": "seeded bug",
+   "definition": "VE.Scope.Pinned.closers",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "def closers : String := \"\\\"')*>]_`}~«»༻༽᚜‘’‛“”‟‹›⁆⁾₎⌉⌋〉❩❫❭❯❱❳❵⟆⟧⟩⟫⟭⟯⦄⦆⦈⦊⦌⦎⦐⦒⦔⦖⦘⧙⧛⧽⸂⸃⸄⸅⸉⸊⸌⸍⸜⸝⸠⸡⸣⸥⸧⸩⹖⹘⹚⹜〉》」』】〕〗〙〛〞〟﴾︘︶︸︺︼︾﹀﹂﹄﹈﹚﹜﹞＂＇）］｝｠｣\"",
+   "after": "def closers : String := \"\\\")*>]_`}~«»༻༽᚜‘’‛“”‟‹›⁆⁾₎⌉⌋〉❩❫❭❯❱❳❵⟆⟧⟩⟫⟭⟯⦄⦆⦈⦊⦌⦎⦐⦒⦔⦖⦘⧙⧛⧽⸂⸃⸄⸅⸉⸊⸌⸍⸜⸝⸠⸡⸣⸥⸧⸩⹖⹘⹚⹜〉》」』】〕〗〙〛〞〟﴾︘︶︸︺︼︾﹀﹂﹄﹈﹚﹜﹞＂＇）］｝｠｣\"",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:138:0; VE/Scope/AuthoringExamples.lean:142:0; tests/test_scope_authoring.py::test_review_f7_clause_refuses_exactly_the_documented_closers",
+   "note": "sc-7 review F7: the ASCII `'` dropped from closers (the review's 'stop.' wording); the sweep, run on this mutant's olean, no longer refuses U+0027"
+  },
+  {
+   "kind": "seeded bug",
+   "definition": "VE.Scope.Pinned.closers",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "def closers : String := \"\\\"')*>]_`}~«»༻༽᚜‘’‛“”‟‹›⁆⁾₎⌉⌋〉❩❫❭❯❱❳❵⟆⟧⟩⟫⟭⟯⦄⦆⦈⦊⦌⦎⦐⦒⦔⦖⦘⧙⧛⧽⸂⸃⸄⸅⸉⸊⸌⸍⸜⸝⸠⸡⸣⸥⸧⸩⹖⹘⹚⹜〉》」』】〕〗〙〛〞〟﴾︘︶︸︺︼︾﹀﹂﹄﹈﹚﹜﹞＂＇）］｝｠｣\"",
+   "after": "def closers : String := \"\\\"')*>]_`}~«»༻༽᚜‘’‛“”‟‹›⁆⁾₎⌉⌋〉❩❫❭❯❱❳❵⟆⟧⟩⟫⟭⟯⦄⦆⦈⦊⦌⦎⦐⦒⦔⦖⦘⧙⧛⧽⸂⸃⸄⸅⸉⸊⸌⸍⸜⸝⸠⸡⸣⸥⸧⸩⹖⹘⹚⹜〉》」』】〕〗〙〛〞〟﴾︘︶︸︺︼︾﹀﹂﹄﹈﹚﹜﹞＂＇）］｝｠｣,\"",
+   "status": "KILLED",
+   "test": "tests/test_scope_authoring.py::test_review_f7_clause_refuses_exactly_the_documented_closers",
+   "note": "sc-7 review F7: a character the docstring does not name (`,`) added to closers: refused, not named"
+  },
+  {
+   "kind": "seeded bug",
+   "definition": "VE.Scope.Pinned.closers",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "`＇`, `>`, and Markdown's",
+   "after": "`＇`, and Markdown's",
+   "status": "KILLED",
+   "test": "tests/test_scope_authoring.py::test_review_f7_clause_refuses_exactly_the_documented_closers",
+   "note": "sc-7 review F7: the docstring stops naming `>`, which the code still drops: the docstring no longer says exactly what the code refuses"
+  },
+  {
+   "kind": "seeded bug",
+   "definition": "VE.Scope.Pinned.clause",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "(w.dropRightWhile (closers.contains ·)).back",
+   "after": "(if closers.contains w.back then w.dropRight 1 else w).back",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:150:0",
+   "note": "sc-7 review F7: one closer dropped, not all: a sentence end before two closers (`x.)” y`) is accepted; only the class guard fails"
+  },
+  {
+   "kind": "seeded bug",
+   "definition": "VE.Scope.Pinned.clause",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "‼‽⁇",
+   "after": "‽⁇",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:159:0; VE/Scope/AuthoringExamples.lean:163:0; VE/Scope/AuthoringExamples.lean:171:0",
+   "note": "sc-7 recheck F8: one sentence end (‼) dropped from clause's set: PROBE F8 (:159), the one-guard-per-added-sentence-end loop (:163) and the mixed guard (:171) fail"
+  },
+  {
+   "kind": "seeded bug",
+   "definition": "VE.Scope.Pinned.clause",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "(0x200B,0x200F)",
+   "after": "(0x200C,0x200F)",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:163:0; VE/Scope/AuthoringExamples.lean:169:0; VE/Scope/AuthoringExamples.lean:171:0; VE/Scope/AuthoringExamples.lean:177:0",
+   "note": "sc-7 recheck F9: U+200B dropped from the stripped set: PROBE F9 (:169) and the guards that put U+200B after a sentence end fail"
+  },
+  {
+   "kind": "seeded bug",
+   "definition": "VE.Scope.Pinned.clause",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "(0x300,0x36F)",
+   "after": "(0x300,0x300), (0x302,0x36F)",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:169:0; VE/Scope/AuthoringExamples.lean:171:0",
+   "note": "sc-7 recheck F9: U+0301 dropped from the stripped set: PROBE F9 (:169) and the DRI note's \"x.)\\u0301 y\" (:171) fail"
+  },
+  {
+   "kind": "seeded bug",
+   "definition": "VE.Scope.Pinned.clause; VE.Scope.Pinned.wordChar",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "(0x3164,0x3164), | 0x2800, 0x3164, 0xFFA0].contains",
+   "after": " | 0x2800, 0xFFA0].contains",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:183:0; VE/Scope/AuthoringExamples.lean:189:0",
+   "note": "sc-7 recheck F9 (DRI note amendment): U+3164 dropped from the set, both from clause's stripped ranges and from wordChar's fillers: `#guard !clause \"x.\\u3164\"` (:183) and the filler-as-a-space guard (:189) fail"
+  },
+  {
+   "kind": "seeded bug",
+   "definition": "VE.Scope.Pinned.wordChar",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "0x2800, 0x3164, 0xFFA0].contains",
+   "after": "0x2800, 0xFFA0].contains",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:189:0",
+   "note": "sc-7 recheck F9: U+3164 dropped from wordChar only: \"x.\\u3164The rules below are called the y\" (one word, a filler for a space) is accepted; :189 fails"
+  },
+  {
+   "kind": "seeded bug",
+   "definition": "VE.Scope.Pinned.clause",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "(0x483,0x489)",
+   "after": "(0x484,0x489)",
+   "status": "KILLED",
+   "test": "tests/test_scope_authoring.py::test_review_f7_clause_refuses_exactly_the_documented_closers; tests/test_scope_authoring.py::test_review_f9_no_invisible_character_hides_a_sentence_end",
+   "note": "sc-7 recheck F9: U+0483 (Mn), which no #guard names, dropped from the stripped set: lake build passes; the Unicode sweep fails (\"named, not refused\": U+0483; hidden pairs (\".\", U+0483) and the rest). Run with the statement-inventory import stubbed, since the inventory is stale while a mutant is planted"
+  },
+  {
+   "kind": "seeded bug",
+   "definition": "VE.Scope.Pinned.clause",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "status": "KILLED",
+   "before": "\",;-%/&+=#$@\".contains c",
+   "after": "\",;-%/&+=#$@.\".contains c",
+   "test": "VE/Scope/AuthoringExamples.lean:69:0; VE/Scope/AuthoringExamples.lean:113:0; VE/Scope/AuthoringExamples.lean:138:0; VE/Scope/AuthoringExamples.lean:150:0; VE/Scope/AuthoringExamples.lean:216:0",
+   "note": "sc-7 DRI note 2026-11-09 (c) seeded bug (1), on b880471cf: \".\" added to the allow-list; lake build fails at five guards (2.2's refused variants, review F1's sweep, PROBE F7, F7's closer sweep, and the allow-list's refused-neighbour guard)"
+  },
+  {
+   "kind": "seeded bug",
+   "definition": "VE.Scope.Pinned.clause",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "status": "KILLED",
+   "before": "|| \",;-%/&+=#$@\".contains c",
+   "after": "|| \",;-%/&+=#$@\".contains c || c.toNat == 0xFFFC",
+   "test": "VE/Scope/AuthoringExamples.lean:203:0; VE/Scope/AuthoringExamples.lean:206:0",
+   "note": "sc-7 DRI note 2026-11-09 (c) seeded bug (2), on b880471cf: U+FFFC admitted; lake build fails at the recheck's blank-character guards (\"x.\\uFFFC y\" as a condition and a list name, and in every slot)"
+  },
+  {
+   "kind": "seeded bug",
+   "definition": "VE.Scope.Pinned.clause",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "status": "KILLED",
+   "before": "(0xC0 ≤ c.toNat && c.toNat ≤ 0x24F && ![0xD7, 0xF7, 0x1C3].contains c.toNat) || ",
+   "after": "",
+   "test": "VE/Scope/AuthoringExamples.lean:214:0; VE/Scope/AuthoringExamples.lean:220:0; VE/Scope/AuthoringExamples.lean:221:0; VE/Scope/AuthoringExamples.lean:222:0",
+   "note": "sc-7 DRI note 2026-11-09 (c) seeded bug (3), on b880471cf: the Latin letter range dropped; lake build fails at the accepted-direction guards (one word per allow-list class, \"xǀ\" beside \"ǃ\", and the two \"café\" round trips)"
+  },
+  {
+   "kind": "seeded bug",
+   "definition": "VE.Scope.Pinned.clause",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "status": "KILLED",
+   "before": "toList.getLast?).any fun c =>",
+   "after": "toList.getLast?).all fun c =>",
+   "test": "VE/Scope/AuthoringExamples.lean:209:0; VE/Scope/AuthoringExamples.lean:210:0",
+   "note": "sc-7 DRI note 2026-11-09 (c) seeded bug (4), on b880471cf: an empty word let through (Option.all is true on none); lake build fails at the empty-word guards (\")\", \"x )\", \"x ”’\" refused, as a word and in a condition and a list name)"
+  },
+  {
+   "kind": "seeded bug",
+   "definition": "VE.Scope.Pinned.clause",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "status": "KILLED",
+   "before": "|| \",;-%/&+=#$@\".contains c",
+   "after": "|| \",;-%/&+=#$@\".contains c || c.toNat == 0xFFFD",
+   "test": "tests/test_scope_authoring.py::test_clause_accepts_exactly_its_documented_allow_list",
+   "note": "sc-7 DRI note 2026-11-09 (c), on b880471cf: U+FFFD, which no #guard names, admitted: lake build passes; the single-process exactness sweep fails ('bare': accepted, not allowed: U+FFFD). Run after tools/lean_statements.py on the planted tree, then restored and regenerated"
+  }
+ ]
+}

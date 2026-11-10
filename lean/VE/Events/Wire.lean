@@ -1,23 +1,28 @@
 import VE.Events.Premises
 import VE.NormDefaults.Packs
+import VE.Compose.Dispatch
+import Std.Data.HashSet
 
 /-! The `events` block on the wire (docs/spec/events-time-causation.md 1.2, 1.3, 4 and 6.3; plan 2.9): `decodeEvents`
 reads the block and checks it against the environment's vocabulary in the order of spec 4, items 2 to 7, then gives
-the decoded block, the regenerated environment (`regenEnv`) and the `events` premise pack. The profile row (item 1)
-is AR-10's table's and the open-term check of item 5 (`LinkNotOpen`) reads the document; both are the route's (et-4b).
-The named dates are constants of the regenerated environment, as `unsaid__` names are (plan 2.8), so the pack
+the decoded block, the regenerated environment (`regenEnv`) and the `events` premise pack. `eventsHook` is what a
+layered decoder runs first: the profile row (item 1, AR-10's table), the block with the open-term check of item 5
+(`LinkNotOpen`, which reads the case's open terms) and the environment the route decodes. The named dates are constants of the regenerated environment, as `unsaid__` names are (plan 2.8), so the pack
 declares no name of its own and `Packs.assemble` checks it as a constraint pack. -/
 namespace VE.Events
 open Lean
 open VE.Time (Civil parseIso)
 open VE.Bridge (fields strings)
 
-/-- The decoded block, the regenerated environment and the origins of the pack's labels. -/
+/-- The decoded block, the regenerated environment and the origins of the pack's labels. `labelled` is `eventsLabelled
+V`, evaluated once, by the decoder that charges its size. -/
 structure EventsDecoded where
   V : EventsEnv
   E : VE.Environment
   origins : List (String × VE.NormDefaults.Packs.RequestPath)
   typed : EventsTyped E V = true
+  labelled : List (String × VE.Formula)
+  labelled_eq : labelled = eventsLabelled V
 
 /-! ## The vocabulary, as the block reads it -/
 
@@ -93,10 +98,12 @@ def firstFault (cs : List (Bool × String)) : Except String Unit :=
   | some c => throw c.2
   | none => pure ()
 
-/-- The first name already seen, or listed earlier. -/
-def repeatOf (seen : List String) : List String → Option String
-  | [] => none
-  | n :: ns => if seen.contains n then some n else repeatOf (n :: seen) ns
+/-- The first name already seen, or listed earlier, in one pass over a list of any size. -/
+def repeatOf (seen : List String) (ns : List String) : Option String :=
+  (ns.foldl (fun (acc : Option String × Std.HashSet String) n => match acc.1 with
+    | some r => (some r, acc.2)
+    | none => if acc.2.contains n then (some n, acc.2) else (none, acc.2.insert n))
+    (none, Std.HashSet.ofList seen)).1
 
 def roleSig (W : VocabView) (day s p : String) : Bool × String := (W.args p != some [s, day], s!"EventsSort: {p}")
 
@@ -145,48 +152,130 @@ def checkDates (W : VocabView) (raw : List String) (anchor : Option String) :
   if let some n := W.names.find? ownedByEvents then throw s!"EventsReserved: {n}"
   pure (all, a)
 
-/-- Item 7: every generated premise within `limit` nodes. -/
-def checkPremiseSize (limit : Nat) (ls : List (String × VE.Formula)) : Except String Unit :=
-  firstFault (ls.map fun (l, a) => (decide (VE.Bridge.formulaNodes a > limit), s!"ResourceLimit: events premise {l}"))
+/-- Item 7: every generated premise within `limit` nodes, then the whole pack, whose size is charged once. -/
+def checkPremiseSize (limit : Nat) (ls : List (String × VE.Formula)) : Except String Unit := do
+  let sized := ls.map fun (l, a) => (l, VE.Bridge.formulaNodes a)
+  firstFault (sized.map fun (l, n) => (decide (n > limit), s!"ResourceLimit: events premise {l}"))
+  if (sized.map (·.2)).sum > limit then throw "ResourceLimit: events premises"
 
-/-- Spec 1.2 and 4: `none` without the block; otherwise the block, checked in order, its regenerated environment. -/
-def decodeEvents (environment : Lean.Json) : Except String (Option EventsDecoded) :=
+/-- Item 5's last check: each link is an open term of the case with the same decider. -/
+def checkOpen (opens : List (String × String)) (ls : List Link) : Except String Unit :=
+  firstFault (ls.map fun l =>
+    (!opens.contains (l.predicate, l.decidedBy.getD "unstated"), s!"LinkNotOpen: {l.predicate}"))
+
+/-- The block through item 5, before the check that needs the case's open terms. -/
+structure BlockLinks where
+  W : VocabView
+  V0 : EventsEnv
+  links : List Link
+  dates : List String
+  anchor : Option String
+
+/-- Items 2 to 5 without `LinkNotOpen`. The role and link count is charged first: every later step reads those lists
+    against each other, and the link pairs of `link_weaker` are quadratic in it. -/
+def decodeThroughLinks (environment b : Json) : Except String BlockLinks := do
+  objectAt b "" ["day", "before", "events", "states", "dates", "links"] ["anchor"]
+  let day ← strAt b "" "day"
+  let before ← strAt b "" "before"
+  let events ← (← arrAt b "" "events").mapM decodeEventSort
+  let states ← (← arrAt b "" "states").mapM decodeStateSort
+  let dates ← (strings (b.getObjValD "dates")).mapError fun _ => invalid ".dates"
+  let anchor ← match b.getObjVal? "anchor" with
+    | .ok a => some <$> (a.getStr?.mapError fun _ => invalid ".anchor")
+    | .error _ => pure none
+  let raw ← (← arrAt b "" "links").mapM decodeLinkRaw
+  if events.length + 2 * states.length + raw.length > VE.Limits.maxPredicates then
+    throw "ResourceLimit: events premises"
+  let W := vocabView environment
+  let V0 : EventsEnv := ⟨day, before, events, states, [], none, []⟩
+  checkDay W V0 (raw.map (·.1))
+  checkRoles W V0
+  pure ⟨W, V0, ← checkLinks W V0 raw, dates, anchor⟩
+
+/-- Items 6 and 7 on a block that passed item 5. -/
+def finishEvents (r : BlockLinks) : Except String EventsDecoded := do
+  let (ds, a) ← checkDates r.W r.dates r.anchor
+  let V : EventsEnv := { r.V0 with dates := ds, anchor := a, links := r.links }
+  let labelled := eventsLabelled V
+  checkPremiseSize VE.Limits.maxNodes labelled
+  if h : WellFormedEvents r.W.env V = true then
+    pure ⟨V, regenEnv r.W.env V, [], regen_typed r.W.env V h, labelled, rfl⟩
+  else throw "InvalidInput: events"
+
+/-- `decodeEvents` with a check of the links between items 5 and 6 (`checkOpen` on the route). -/
+def decodeEventsWith (open_ : List Link → Except String Unit) (environment : Lean.Json) :
+    Except String (Option EventsDecoded) :=
   match environment.getObjVal? "events" with
   | .error _ => pure none
   | .ok b => do
-    objectAt b "" ["day", "before", "events", "states", "dates", "links"] ["anchor"]
-    let day ← strAt b "" "day"
-    let before ← strAt b "" "before"
-    let events ← (← arrAt b "" "events").mapM decodeEventSort
-    let states ← (← arrAt b "" "states").mapM decodeStateSort
-    let dates ← (strings (b.getObjValD "dates")).mapError fun _ => invalid ".dates"
-    let anchor ← match b.getObjVal? "anchor" with
-      | .ok a => some <$> (a.getStr?.mapError fun _ => invalid ".anchor")
-      | .error _ => pure none
-    let raw ← (← arrAt b "" "links").mapM decodeLinkRaw
-    let W := vocabView environment
-    let V0 : EventsEnv := ⟨day, before, events, states, [], none, []⟩
-    checkDay W V0 (raw.map (·.1))
-    checkRoles W V0
-    let links ← checkLinks W V0 raw
-    let (ds, a) ← checkDates W dates anchor
-    let V : EventsEnv := { V0 with dates := ds, anchor := a, links := links }
-    checkPremiseSize VE.Limits.maxNodes (eventsLabelled V)
-    if h : WellFormedEvents W.env V = true then
-      pure (some ⟨V, regenEnv W.env V, [], regen_typed W.env V h⟩)
-    else throw "InvalidInput: events"
+    let r ← decodeThroughLinks environment b
+    open_ r.links
+    some <$> finishEvents r
+
+/-- Spec 1.2 and 4: `none` without the block; otherwise the block, checked in order, its regenerated environment. -/
+def decodeEvents (environment : Lean.Json) : Except String (Option EventsDecoded) :=
+  decodeEventsWith (fun _ => pure ()) environment
+
+/-- A route's check of the links only refuses: what it passes is `decodeEvents`' own result. -/
+theorem decodeEventsWith_ok {c : List Link → Except String Unit} {environment : Lean.Json} {r : Option EventsDecoded}
+    (h : decodeEventsWith c environment = .ok r) : decodeEvents environment = .ok r := by
+  unfold decodeEvents decodeEventsWith at *
+  split at h
+  · exact h
+  · obtain ⟨b, hb, h⟩ := VE.Order.ProfileGate.bind_ok h
+    obtain ⟨_, _, h⟩ := VE.Order.ProfileGate.bind_ok h
+    simp only [bind, Except.bind, hb]
+    exact h
 
 /-- Spec 6.3: the `events` pack, last in `packOrder`; its labels are `eventsLabelled` (1.4). -/
 def eventsPack (d : EventsDecoded) : VE.NormDefaults.Packs.Pack :=
-  { id := "events", kind := .constraint, decls := [], consts := [], labelled := eventsLabelled d.V,
+  { id := "events", kind := .constraint, decls := [], consts := [], labelled := d.labelled,
     origins := d.origins, conditions := [] }
 
 /-- An absent block gives no pack (PK-1's rule then leaves X as the other packs' X). -/
 theorem eventsX_absent (environment : Lean.Json) (h : (environment.getObjVal? "events").toOption = none) :
     decodeEvents environment = .ok none := by
-  unfold decodeEvents
+  unfold decodeEvents decodeEventsWith
   cases he : environment.getObjVal? "events" with
   | error => rfl
   | ok b => rw [he] at h; cases h
+
+/-! ## The route's hook (spec 3, 4) -/
+
+/-- The open terms of a case as `(name, decider)` (`Loader.openTermNames` owns their schema): a row without both names
+nothing, so its link is not open. -/
+def openTermsOf (terms : Json) : List (String × String) :=
+  match terms with
+  | .arr ts => ts.toList.filterMap fun t =>
+    match (t.getObjValD "name").getStr?, (t.getObjValD "decided_by").getStr? with
+    | .ok n, .ok d => some (n, d)
+    | _, _ => none
+  | _ => []
+
+/-- What a layered decoder reads from the hook: the environment it decodes, and the decoded block. -/
+structure EventsHook where
+  view : Json
+  decoded : Option EventsDecoded
+
+/-- The environment a layered route decodes: no block, no `events@0`, one constant of the day sort per named date. Its
+identities keep reading the environment as written, so the block is in the bytes they bind. -/
+def routeView (environment : Json) (d : Option EventsDecoded) : Except String Json := do
+  let vocab ← environment.getObjVal? "vocabulary"
+  let constants ← fields (← vocab.getObjVal? "constants")
+  let dated := (d.map fun d => d.V.dates.map fun D => (dateName D, Json.mkObj [("sort", .str d.V.day),
+    ("description", .str (if d.V.anchor == some D then "the date of this document" else D.iso))])).getD []
+  let profiles := (VE.Compose.listedProfiles environment).filter (· != "events@0")
+  let bare := Json.mkObj ((← fields environment).filter (·.1 != "events"))
+  pure ((bare.setObjVal! "profiles" (toJson profiles)).setObjVal! "vocabulary"
+    (vocab.setObjVal! "constants" (Json.mkObj (constants ++ dated))))
+
+/-- `none` for a list without `events@0`, which every decoder reads as before, a block included. Otherwise the row
+(item 1), the block (items 2 to 7) and the environment the route decodes. -/
+def eventsHook (environment terms : Json) : Except String (Option EventsHook) := do
+  if (VE.Compose.listedProfiles environment).contains "events@0" then
+    let _ ← VE.Compose.gateOf VE.Compose.profileTable (VE.Compose.listedProfiles environment)
+    let d ← decodeEventsWith (checkOpen (openTermsOf terms)) environment
+    pure (some ⟨← routeView environment d, d⟩)
+  else pure none
 
 end VE.Events

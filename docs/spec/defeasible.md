@@ -1366,6 +1366,9 @@ Named situations are also checked on the wire: `situationX`, `decodeFilling` and
 | DF-σ | (new; C1) two strict rules: "must X" and "must not X", `x_required` deny | `∀a. ⊥` | on the one-assistant situation `modelCheckX` gives `(true, false)`, but `localFree` is false and `xModelOk` is false. `EntailsX U X [] (∀a. ⊥)` holds, because every conflict-free situation has no assistant. Plan draft 2's `basis_needs_sound` would have concluded the opposite. With the empty domain checked on the wire (R1): `X` is consistent there, and `∀a. ⊥` holds there; the claim is unaffected |
 | DF-ω | (new; R2) DF-δ, the request with its pair certificate missing (`[]` or `[none]`) and no collision | `∀a. x_required(a)` | `defaultCoherenceCheck` is false for both, and no collision exists on any one-element situation. `defaults-coherence`: UNKNOWN, pair (r1, r2) `unknown`, never COLLISION. `defaults-certificate`: UNKNOWN (no-exception coherence not checked), never FOLLOWS |
 
+The routes compared (certificate route here, DF-γ; enumeration in 8.6, DF-μ′): see the paragraph at the end of 8.6
+(synthesis round 2, NM-1).
+
 ### 8.2 The "exactly when" claims, one fixture for each direction
 
 | Claim | Holds | Fails |
@@ -1448,6 +1451,13 @@ rows show why the hypotheses are needed:
 | DF-ξ | Z-ε's shape: DF-α at {a} | by default yes, and weighing's settled answer under `noExceptionRecord` is yes; `hadm` holds (a completion meets the record). Without the record weighing's answer is not settled. DF-π at {a}: by default yes, settled yes, `hadm` holds |
 | DF-ξ′ | (new in draft 1; recomputed, R14) DF-β at {a} with `urgent(a)` | `hadm` fails: no completion meets weighing's record "no exception", because the stated condition forces the exception. Zone of `x_required`: **notSaid** (the exception is forced; `x_required` is then a gap), and weighing's record gives **no completion**, so both sides of `defaultZone_eq_noException` are false there. Zone of `x_permitted`: **by default yes**, and weighing's record again gives **no completion**: the left side holds and the right side does not. So the theorem needs `hadm`. Draft 1 attributed this to `hsuff`, which draft 2 deletes |
 | budget | DF-λ at 13 operators | 26 open atoms > 12: **unknown (budget 26)** |
+
+**The routes compared (synthesis round 2, NM-1; fixture-backed, no wider claim).** The DF-5 enumeration computes the
+minimal default completions and answers `leftTo` when they differ (DF-μ′); the certificate route answers UNKNOWN after
+a failed coherence gate (DF-γ); soft-norms' `ValueSoft` is per situation; authored ALL/SOME is neither sceptical nor
+credulous consequence. Neither uniqueness across completions nor equivalence between the routes is claimed (NM-1,
+synthesis round 2 DECISIONS item 6). Any comparison with the literature is marked "citation unchecked" until a checked
+primary citation is attached.
 
 ### 8.7 From the pilots
 

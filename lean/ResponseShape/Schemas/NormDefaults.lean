@@ -55,7 +55,9 @@ def kind : Def :=
     ("defaults-elaborate", kindIs "defaults-elaborate"),
     ("defaults-coherence", kindIs "defaults-coherence"),
     ("defaults-certificate", kindIs "defaults-certificate"),
-    ("defaults-model", kindIs "defaults-model")]
+    ("defaults-model", kindIs "defaults-model"),
+    ("defaults-zone", kindIs "defaults-zone"),
+    ("acts-elaborate", kindIs "acts-elaborate")]
 
 /-- The fields of `elaborate`, shared with `layered_elaborate`. -/
 def elaborateFields : List (String × Shape) := [
@@ -122,7 +124,10 @@ def base_environment : Shape :=
           .required ["sorts", "predicates", "constants"],
           closed [
             ("sorts", n [obj, .equals "/environment/vocabulary/sorts"]),
-            ("constants", n [obj, .equals "/environment/vocabulary/constants"]),
+            ("constants", n [obj, .ite (.onCase (ref "common.json#/$defs/request_block/events"))
+              -- The request's constants and the block's named dates (events 3); et-5's relay binds them.
+              (.object [] (some (n [obj, .required ["sort", "description"], closed [("sort", str), ("description", str)]])))
+              (.equals "/environment/vocabulary/constants")]),
             ("predicates", n [
               obj,
               .object [] (some (n [obj, .required ["arguments"], props [("arguments", ref "common.json#/$defs/strings")]]))])]])]]
@@ -136,9 +141,16 @@ def layered_elaborate : Shape :=
       closed (elaborateFields ++ [
         ("soft", ref "common.json#/$defs/labelled_list"),
         ("rights", ref "common.json#/$defs/labelled_list"),
+        ("events_premises", ref "common.json#/$defs/labelled_list"),
         ("environment_id", str),
         ("document_hash", str),
         ("base_environment", ref "#/$defs/base_environment")])]
+
+/- et-4b: `base_environment` and `layered_elaborate` as `tools/response_schemas.py` renders them, pinned by their digests
+(the events selector on the constants, the optional `events_premises`). -/
+#guard [base_environment, layered_elaborate].map (fun (s : Shape) =>
+  (render "norm-defaults.json" 64 s).toOption.map fun (j : Json) => hash j.compress) ==
+  ([some 5141493250304792031, some 3476203141762586412] : List (Option UInt64))
 
 def report_line : Shape :=
   c
@@ -189,8 +201,8 @@ def status : Shape :=
       ("status", constS "ok"),
       ("point_status", enumS ["SETTLED yes", "SETTLED no", "UNDECIDED", "UNKNOWN"]),
       ("predicate", n [str, .equals "/predicate"]),
-      ("tuple", ref "common.json#/$defs/strings"),
-      ("rules", ref "common.json#/$defs/strings"),
+      ("tuple", n [ref "common.json#/$defs/strings", .equals "/tuple"]),
+      ("rules", n [ref "common.json#/$defs/strings", .uniqueStrings]),
       ("differs", n [arr, .items (ref "#/$defs/atom")])]]
 
 def witness_conflict : Shape :=
@@ -324,6 +336,43 @@ def defaults_model : Shape :=
     .ite (props [("verdict", constS "DOES-NOT-FOLLOW")]) (.required ["situation", "forced"])
       (.allOf [.not (.required ["situation"]), .not (.required ["forced"])])]
 
+def defaults_zone_line : Shape :=
+  c "Defaults.Wire.ZoneLine.json: one true decision of the completion shown, DE11 (a stated condition's index), DE10f (in forcedAll) or DE13 (the decision by its key)." [
+    .anyOf [
+      n [obj, .required ["row", "rule", "condition", "tuple"], closed [("row", constS "DE11"), ("rule", str),
+        ("condition", ref "common.json#/$defs/nat"), ("tuple", ref "common.json#/$defs/strings")]],
+      n [obj, .required ["row", "rule", "tuple"], closed [("row", constS "DE10f"), ("rule", str),
+        ("tuple", ref "common.json#/$defs/strings")]],
+      n [obj, .required ["row", "decision", "tuple"], closed [("row", constS "DE13"),
+        ("decision", ref "soft-norms.json#/$defs/decision_key"), ("tuple", ref "common.json#/$defs/strings")]]]]
+
+def defaults_zone : Shape :=
+  c "Defaults.Wire.zoneFields (defaults-zone): the zone (defaultZoneOf); with byDefault (its value) or leftTo, DE10's form (zoneFormOf), forcedAll (forcedAllOf) and the completions shown, each a list of rows; with noCompletion its labels; with unknown its reason." [
+    obj,
+    .required ["id", "status", "zone"],
+    closed [
+      ("id", ref "common.json#/$defs/id_ok"),
+      ("status", constS "ok"),
+      ("zone", enumS ["byDefault", "leftTo", "notSaid", "noCompletion", "unknown"]),
+      ("value", .type ["boolean"]),
+      ("form", enumS ["short", "long"]),
+      ("forced_all", n [arr, .items (n [obj, .required ["rule", "tuple"],
+        closed [("rule", str), ("tuple", ref "common.json#/$defs/strings")]])]),
+      ("completions", n [arr, .items (n [arr, .items (ref "#/$defs/defaults_zone_line")])]),
+      ("labels", ref "common.json#/$defs/strings"),
+      ("reason", str)],
+    .allOf [
+      .ite (props [("zone", enumS ["byDefault", "leftTo"])]) (.required ["form", "forced_all", "completions"])
+        (.allOf [.not (.required ["form"]), .not (.required ["forced_all"]), .not (.required ["completions"])]),
+      .ite (props [("zone", constS "byDefault")]) (.required ["value"]) (.not (.required ["value"])),
+      .ite (props [("zone", constS "noCompletion")]) (.required ["labels"]) (.not (.required ["labels"])),
+      .ite (props [("zone", constS "unknown")]) (.required ["reason"]) (.not (.required ["reason"]))]]
+
+/- df-5: `defaults_zone_line` and `defaults_zone` as `tools/response_schemas.py` renders them, pinned by their digests. -/
+#guard [defaults_zone_line, defaults_zone].map (fun (s : Shape) =>
+  (render "norm-defaults.json" 64 s).toOption.map fun (j : Json) => hash j.compress) ==
+  ([some 17762975791275432491, some 4795886175990517229] : List (Option UInt64))
+
 def «row» : Shape :=
   .select [
     (ref "#/$defs/norm_defaults_path", .anyOf [
@@ -342,7 +391,9 @@ def «row» : Shape :=
         (ref "#/$defs/kind/defaults-elaborate", ref "#/$defs/defaults_elaborate"),
         (ref "#/$defs/kind/defaults-coherence", ref "#/$defs/defaults_coherence"),
         (ref "#/$defs/kind/defaults-certificate", ref "#/$defs/defaults_certificate"),
-        (ref "#/$defs/kind/defaults-model", ref "#/$defs/defaults_model")]]),
+        (ref "#/$defs/kind/defaults-model", ref "#/$defs/defaults_model"),
+        (ref "#/$defs/kind/defaults-zone", ref "#/$defs/defaults_zone"),
+        (ref "#/$defs/kind/acts-elaborate", ref "norms.json#/$defs/acts-elaborate")]]),
     ((.bool true), ref "norms.json#/row")]
 
 def file : File where
@@ -368,7 +419,9 @@ def file : File where
     ("defaults_situation", .schema defaults_situation),
     ("defaults_coherence", .schema defaults_coherence),
     ("defaults_certificate", .schema defaults_certificate),
-    ("defaults_model", .schema defaults_model)]
+    ("defaults_model", .schema defaults_model),
+    ("defaults_zone_line", .schema defaults_zone_line),
+    ("defaults_zone", .schema defaults_zone)]
 
 
 /- The plain `elaborate` row as `tools/response_schemas.py` renders it (ap-1be): a closed object whose every member is

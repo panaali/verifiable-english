@@ -74,11 +74,15 @@ def u0047Doc : Json := Json.mkObj [("units", .arr ((VE.Scope.Examples.layoutOf u
   [("id", .str x.id), ("support", .str "none"), ("kind", toJson ["unformalised", "norms"]),
    ("meaning", Json.mkObj [("unformalised", .str "norms")])]).toArray)]
 def u0047Anchors : List VE.Discourse.Anchor := [anc "doc" none "Constitution" (spanOver u0047 "u0047.s05" "u0047.s06")]
--- no rule is named, so nothing is recorded: the document is returned as written (u0047.s06 keeps no content, with
--- the translation's residual `UnresolvedScope`); a declaration guessed for it is refused, never a guessed edge
+-- no rule is named, so nothing is recorded: the document is returned as written (u0047.s06 keeps no content and is
+-- UNFORMALISED, `meaning: {"unformalised": "norms"}`, with no residual: `UnresolvedScope` is SC-5's, spec 1612, and is
+-- not built; `VE.Service.ScopeExamples.u0047Statuses` checks the status); a declaration guessed for it is refused,
+-- never a guessed edge
 #guard same (govW u0047 u0047Anchors u0047Doc []) u0047Doc
 #guard errorOf (govW u0047 u0047Anchors u0047Doc [] [("u0047.s06", "broad-safety", "doc")]) ==
   "ScopeForward: u0047.s06: rule broad-safety has no later exception in doc"
+-- the pinned spans [26947, 27042] and [27042, 27251] are 95 and 209 bytes: the same units
+#guard (VE.Scope.Examples.layoutOf u0047).map (fun x => x.span.2 - x.span.1) == [95, 209]
 
 /-! ## F12-f, F12-f0: "Rule r1 has exceptions stated later in this section." on h.s02 -/
 

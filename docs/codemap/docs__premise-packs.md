@@ -1,0 +1,1 @@
+- `docs/premise-packs/norm-defaults-cfr-1/evidence/genuine_pairs.py` — norm-defaults-cfr-1 evidence: Lean's own status and certificate rows pass the row schema and the binding.

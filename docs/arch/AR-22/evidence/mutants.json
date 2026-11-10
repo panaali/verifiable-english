@@ -1,0 +1,131 @@
+{
+ "mutants": [
+  {
+   "id": "M1",
+   "file": "lean/VE/CertificateWire.lean",
+   "claim": "(a) the atom-free gate, decoder half: closure's decoder refuses an invariant that is not a closure formula (Core's n-ary atom) with `invalid indexed formula`; seeded: an undecodable invariant is replaced by `top` instead of refused",
+   "source_sha256": "45b337e58cd3bad5e619574a2479cef2b91bc7d4a9694547351f718cc3fbb484",
+   "command": [
+    "bash",
+    "-c",
+    "set -u; lock=$(mktemp); cp lean/checkers.lock \"$lock\"; trap 'cp \"$lock\" lean/checkers.lock; rm -f \"$lock\"' EXIT; (cd lean && PATH=$HOME/.elan/bin:$PATH lake build ve_conformance ve_service >/dev/null 2>&1) || { echo 'the mutant does not build: not a kill'; exit 0; }; uv run python tools/regen_generated.py --write --only checker-pins >/dev/null 2>&1 || { echo 'pinning failed: not a kill'; exit 0; }; VE_NATIVE_PREBUILT=1 uv run pytest -q -p no:cacheprovider -rfE tests/test_closure_core_replay.py::test_certificate_runner_keeps_closures_version_gate_and_refusal_texts tests/test_closure_core_replay.py::test_route_runner_keeps_closures_version_gate_and_refusal_texts; s=$?; [ $s -eq 1 ] && exit 1; exit 0"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 1030.3,
+   "output_tail": "*_answer(row), **({'steps': row['steps']} if 'steps' in row else {})}\n                   for row in rows('route', cases)}\n>       assert answers == {\n            'v1': {'status': 'ok', 'valid': True, 'steps': 4},\n            'v0': {'status': 'ok', 'valid': True, 'steps': 4},\n            'v2': {'status': 'ok', 'valid': False, 'steps': 4},\n            'atom-invariant': {'status': 'error', 'valid': False, 'error': 'invalid indexed formula'},\n            'induct-v0': {'status': 'ok', 'valid': False, 'steps': 1},\n            'rule': {'status': 'error', 'valid': False, 'error': 'unknown tableau rule'},\n        }\nE       AssertionError: assert {'v1': {'stat...eps': 1}, ...} == {'v1': {'stat...ormula'}, ...}\nE         \nE         Omitting 5 identical items, use -vv to show\nE         Differing items:\nE         {'atom-invariant': {'status': 'ok', 'valid': False, 'steps': 1}} != {'atom-invariant': {'status': 'error', 'valid': False, 'error': 'invalid indexed formula'}}\nE         Use -v to get more diff\n\ntests/test_closure_core_replay.py:116: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_closure_core_replay.py::test_certificate_runner_keeps_closures_version_gate_and_refusal_texts\nFAILED tests/test_closure_core_replay.py::test_route_runner_keeps_closures_version_gate_and_refusal_texts\n2 failed in 1.98s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-efaqqicm)\n"
+  },
+  {
+   "id": "M2",
+   "file": "lean/VE/Closure/Tableau.lean",
+   "claim": "(a) the atom-free gate, embedding half: Core's replay sees exactly the closure invariant (embedClosure), never an atom; seeded: embedTrace hands Core an n-ary atom in place of the invariant",
+   "source_sha256": "2e31e6468c0760b474fc8c1773578bbc682358b4c541d3ac1c7e355bc9fff42c",
+   "command": [
+    "bash",
+    "-c",
+    "set -u; lock=$(mktemp); cp lean/checkers.lock \"$lock\"; trap 'cp \"$lock\" lean/checkers.lock; rm -f \"$lock\"' EXIT; (cd lean && PATH=$HOME/.elan/bin:$PATH lake build ve_conformance ve_service >/dev/null 2>&1) || { echo 'the mutant does not build: not a kill'; exit 0; }; uv run python tools/regen_generated.py --write --only checker-pins >/dev/null 2>&1 || { echo 'pinning failed: not a kill'; exit 0; }; VE_NATIVE_PREBUILT=1 uv run pytest -q -p no:cacheprovider -rfE tests/test_closure_core_replay.py::test_certificate_runner_keeps_closures_version_gate_and_refusal_texts tests/test_closure_induction.py::test_induction_python_lean_differential; s=$?; [ $s -eq 1 ] && exit 1; exit 0"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 2066.0,
+   "output_tail": ", f'w:{path_step.branch.next_witness - 1}'\n                path_step = path_step.expand(0, a)[0].expand(parameter=b)[0]\n                no_edge, s_edge = path_step.expand()\n                no_edge.close()\n                s_edge = s_edge.extra('closure-edge@0', len(s_edge.branch.formulas) - 1)\n                # Use the transitivity conjunct of P(a) at x,a,b.\n                s_edge = s_edge.expand(trans_at, 'w:0')[0].expand(parameter=a)[0].expand(parameter=b)[0]\n                no_pair, path = s_edge.expand()\n                for child in no_pair.expand():\n                    child.close()\n                path.close()\n                continuation.expand()[0].close()\n                cert = {**_binding(env, tuple(ps), goal), 'trace': root.node}\n            checked = check_entailment_certificate(env, ps, goal, cert)\n>           assert checked.valid, checked\n                   ^^^^^^^^^^^^^\nE           AssertionError: EntailmentCertificateCheck(valid=False, status='InvalidCertificate', steps=0, detail='certificate does not replay')\n\nconformance/induction.py:138: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_closure_core_replay.py::test_certificate_runner_keeps_closures_version_gate_and_refusal_texts\nFAILED tests/test_closure_induction.py::test_induction_python_lean_differential\n2 failed in 1.68s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-covdodv1)\n"
+  },
+  {
+   "id": "M3",
+   "file": "lean/VE/Closure/Tableau.lean",
+   "claim": "(b) the second flag is `version == @1`: an `@0` certificate cannot use the induction rule; seeded: `true` in its place",
+   "source_sha256": "2e31e6468c0760b474fc8c1773578bbc682358b4c541d3ac1c7e355bc9fff42c",
+   "command": [
+    "bash",
+    "-c",
+    "set -u; lock=$(mktemp); cp lean/checkers.lock \"$lock\"; trap 'cp \"$lock\" lean/checkers.lock; rm -f \"$lock\"' EXIT; (cd lean && PATH=$HOME/.elan/bin:$PATH lake build ve_conformance ve_service >/dev/null 2>&1) || { echo 'the mutant does not build: not a kill'; exit 0; }; uv run python tools/regen_generated.py --write --only checker-pins >/dev/null 2>&1 || { echo 'pinning failed: not a kill'; exit 0; }; VE_NATIVE_PREBUILT=1 uv run pytest -q -p no:cacheprovider -rfE tests/test_closure_core_replay.py::test_certificate_runner_keeps_closures_version_gate_and_refusal_texts tests/test_closure_core_replay.py::test_route_runner_keeps_closures_version_gate_and_refusal_texts tests/test_closure_induction.py::test_induction_python_lean_differential; s=$?; [ $s -eq 1 ] && exit 1; exit 0"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 2499.4,
+   "output_tail": "ons: these must fail logically,\n        # not merely because a commitment became stale.\n        from ve.ast import formula_from_data\n        from ve.environment import Environment\n        from conformance.certificates import envelope\n        env = Environment(base['environment'])\n        ps = [formula_from_data(env, f) for f in base['premises']]\n        goal = formula_from_data(env, base['conclusion'])\n        from ve.ast import Top\n        for name, changed in [('no_base', [ps[0], Top(), ps[2]]),\n                              ('no_step', [ps[0], ps[1], Top()]),\n                              ('negative_path', [Not(ps[0]), ps[1], ps[2]])]:\n            cert = {**_binding(env, tuple(changed), goal), 'trace': copy.deepcopy(base['certificate']['trace'])}\n            cases.append(envelope('induction_forged_' + name, env, changed, goal, cert))\n        for case in cases:\n>           assert not replay_python(case), case['id']\n                   ^^^^^^^^^^^^^^^^^^^^^^^\nE           AssertionError: induction_forged_old_version\n\nconformance/induction.py:259: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_closure_core_replay.py::test_certificate_runner_keeps_closures_version_gate_and_refusal_texts\nFAILED tests/test_closure_induction.py::test_induction_python_lean_differential\n2 failed, 1 passed in 3.75s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-ax6ypbsf)\n"
+  },
+  {
+   "id": "M4",
+   "file": "lean/VE/Closure/Tableau.lean",
+   "claim": "(b) the defining equation pins the flag: the same seeded bug as M3, and `checkCertificate_eq_core_replay` (with `_v0`) no longer builds",
+   "source_sha256": "2e31e6468c0760b474fc8c1773578bbc682358b4c541d3ac1c7e355bc9fff42c",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && out=$(PATH=$HOME/.elan/bin:$PATH lake build VE.Closure.CoreEquiv 2>&1); rc=$?; printf '%s\\n' \"$out\" | grep -E 'error' | head -6; exit $rc"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 119.1,
+   "output_tail": "error: VE/Closure/CoreEquiv.lean:58:0: maximum recursion depth has been reached\nerror: VE/Closure/CoreEquiv.lean:58:0: maximum recursion depth has been reached\nerror: VE/Closure/CoreEquiv.lean:73:8: (kernel) unknown constant 'VE.Closure.CoreEquiv.checkCertificate_eq_core_replay'\nerror: VE/Closure/CoreEquiv.lean:86:8: (kernel) unknown constant 'VE.Closure.CoreEquiv.checkCertificate_eq_core_replay'\nerror: Lean exited with code 1\nerror: build failed\n"
+  },
+  {
+   "id": "M5",
+   "file": "lean/VE/CertificateWire.lean",
+   "claim": "(c) the refusal text of a rejected certificate: closure's decoder refuses an unknown rule with `unknown tableau rule` on both runners; seeded: the text changes",
+   "source_sha256": "45b337e58cd3bad5e619574a2479cef2b91bc7d4a9694547351f718cc3fbb484",
+   "command": [
+    "bash",
+    "-c",
+    "set -u; lock=$(mktemp); cp lean/checkers.lock \"$lock\"; trap 'cp \"$lock\" lean/checkers.lock; rm -f \"$lock\"' EXIT; (cd lean && PATH=$HOME/.elan/bin:$PATH lake build ve_conformance ve_service >/dev/null 2>&1) || { echo 'the mutant does not build: not a kill'; exit 0; }; uv run python tools/regen_generated.py --write --only checker-pins >/dev/null 2>&1 || { echo 'pinning failed: not a kill'; exit 0; }; VE_NATIVE_PREBUILT=1 uv run pytest -q -p no:cacheprovider -rfE tests/test_closure_core_replay.py::test_certificate_runner_keeps_closures_version_gate_and_refusal_texts tests/test_closure_core_replay.py::test_route_runner_keeps_closures_version_gate_and_refusal_texts; s=$?; [ $s -eq 1 ] && exit 1; exit 0"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 2852.5,
+   "output_tail": "row), **({'steps': row['steps']} if 'steps' in row else {})}\n                   for row in rows('route', cases)}\n>       assert answers == {\n            'v1': {'status': 'ok', 'valid': True, 'steps': 4},\n            'v0': {'status': 'ok', 'valid': True, 'steps': 4},\n            'v2': {'status': 'ok', 'valid': False, 'steps': 4},\n            'atom-invariant': {'status': 'error', 'valid': False, 'error': 'invalid indexed formula'},\n            'induct-v0': {'status': 'ok', 'valid': False, 'steps': 1},\n            'rule': {'status': 'error', 'valid': False, 'error': 'unknown tableau rule'},\n        }\nE       AssertionError: assert {'v1': {'stat...ormula'}, ...} == {'v1': {'stat...ormula'}, ...}\nE         \nE         Omitting 5 identical items, use -vv to show\nE         Differing items:\nE         {'rule': {'status': 'error', 'valid': False, 'error': 'unknown closure tableau rule'}} != {'rule': {'status': 'error', 'valid': False, 'error': 'unknown tableau rule'}}\nE         Use -v to get more diff\n\ntests/test_closure_core_replay.py:116: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_closure_core_replay.py::test_certificate_runner_keeps_closures_version_gate_and_refusal_texts\nFAILED tests/test_closure_core_replay.py::test_route_runner_keeps_closures_version_gate_and_refusal_texts\n2 failed in 2.14s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-r5ittkj4)\n"
+  },
+  {
+   "id": "M6",
+   "file": "lean/VE/CertificateWire.lean",
+   "claim": "(c) the refusal text of a rejected certificate: a closure certificate bound to other inputs is refused with `certificate is stale or bound to different inputs`; seeded: the text changes",
+   "source_sha256": "45b337e58cd3bad5e619574a2479cef2b91bc7d4a9694547351f718cc3fbb484",
+   "command": [
+    "bash",
+    "-c",
+    "set -u; lock=$(mktemp); cp lean/checkers.lock \"$lock\"; trap 'cp \"$lock\" lean/checkers.lock; rm -f \"$lock\"' EXIT; (cd lean && PATH=$HOME/.elan/bin:$PATH lake build ve_conformance ve_service >/dev/null 2>&1) || { echo 'the mutant does not build: not a kill'; exit 0; }; uv run python tools/regen_generated.py --write --only checker-pins >/dev/null 2>&1 || { echo 'pinning failed: not a kill'; exit 0; }; VE_NATIVE_PREBUILT=1 uv run pytest -q -p no:cacheprovider -rfE tests/test_closure_core_replay.py::test_certificate_runner_keeps_closures_version_gate_and_refusal_texts; s=$?; [ $s -eq 1 ] && exit 1; exit 0"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 2317.6,
+   "output_tail": "ke(LEAN, cases)}\n>       assert answers == {\n            'v1': {'status': 'ok', 'valid': True},\n            'v0': {'status': 'ok', 'valid': False},\n            'v2': {'status': 'ok', 'valid': False},\n            'core-version': {'status': 'ok', 'valid': False},\n            'atom-invariant': {'status': 'error', 'valid': False, 'error': 'invalid indexed formula'},\n            'atom-conclusion': {'status': 'error', 'valid': False, 'error': 'invalid indexed formula'},\n            'stale': {'status': 'error', 'valid': False, 'error': 'certificate is stale or bound to different inputs'},\n            'rule': {'status': 'error', 'valid': False, 'error': 'unknown tableau rule'},\n        }\nE       AssertionError: assert {'v1': {'stat...: False}, ...} == {'v1': {'stat...: False}, ...}\nE         \nE         Omitting 7 identical items, use -vv to show\nE         Differing items:\nE         {'stale': {'status': 'error', 'valid': False, 'error': 'certificate is stale'}} != {'stale': {'status': 'error', 'valid': False, 'error': 'certificate is stale or bound to different inputs'}}\nE         Use -v to get more diff\n\ntests/test_closure_core_replay.py:67: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_closure_core_replay.py::test_certificate_runner_keeps_closures_version_gate_and_refusal_texts\n1 failed in 1.56s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-xf8y3sog)\n"
+  },
+  {
+   "id": "M7",
+   "file": "lean/VE/Closure/Tableau.lean",
+   "claim": "closure's version gate accepts `@0`: `@0` certificates keep their verdicts; seeded: the gate accepts only `@1`",
+   "source_sha256": "2e31e6468c0760b474fc8c1773578bbc682358b4c541d3ac1c7e355bc9fff42c",
+   "command": [
+    "bash",
+    "-c",
+    "set -u; lock=$(mktemp); cp lean/checkers.lock \"$lock\"; trap 'cp \"$lock\" lean/checkers.lock; rm -f \"$lock\"' EXIT; (cd lean && PATH=$HOME/.elan/bin:$PATH lake build ve_conformance ve_service >/dev/null 2>&1) || { echo 'the mutant does not build: not a kill'; exit 0; }; uv run python tools/regen_generated.py --write --only checker-pins >/dev/null 2>&1 || { echo 'pinning failed: not a kill'; exit 0; }; VE_NATIVE_PREBUILT=1 uv run pytest -q -p no:cacheprovider -rfE tests/test_closure_core_replay.py::test_certificates_without_induction_keep_their_verdict_at_both_versions tests/test_closure_core_replay.py::test_route_runner_keeps_closures_version_gate_and_refusal_texts tests/test_closure_induction.py::test_previous_closure_version_replays_all_original_rules; s=$?; [ $s -eq 1 ] && exit 1; exit 0"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 2144.0,
+   "output_tail": "{'status': 'ok', 'valid': True, 'steps': 4}}\nE         {'v2': {'status': 'ok', 'valid': True, 'steps': 4}} != {'v2': {'status': 'ok', 'valid': False, 'steps': 4}}\nE         Use -v to get more diff\n\ntests/test_closure_core_replay.py:116: AssertionError\n___________ test_previous_closure_version_replays_all_original_rules ___________\n\n    def test_previous_closure_version_replays_all_original_rules():\n        cases, _ = old_cases()\n        for case in cases:\n            case['certificate']['checker_version'] = 've-tableau-closure-checker@0'\n>           assert replay_python(case)\nE           AssertionError: assert False\nE            +  where False = replay_python({'id': 'closure_review_transitivity', 'environment': {'language': 've.core@0.1', 'profiles': ['closure@0', 'relational...const', 'b'], ['const', 'c']]], 'conclusion': ['reach', 'plus', ['named', 'rel'], ['const', 'a'], ['const', 'c']], ...})\n\ntests/test_closure_induction.py:34: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_closure_core_replay.py::test_certificates_without_induction_keep_their_verdict_at_both_versions\nFAILED tests/test_closure_core_replay.py::test_route_runner_keeps_closures_version_gate_and_refusal_texts\nFAILED tests/test_closure_induction.py::test_previous_closure_version_replays_all_original_rules\n3 failed in 5.57s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-jp5_pm3k)\n"
+  },
+  {
+   "id": "M8",
+   "file": "tools/layer_policy.py",
+   "claim": "the layer policy places the surviving closure tableau `VE.Closure.Tableau` (which now imports Core's replay) in layer 1 beside `VE.CertificateWire`, its importer; seeded: the row is dropped, so the module falls to layer 2 and the import check reports an outward import",
+   "source_sha256": "ac86f1b830a4fad7ad10f5ca77b09543a68fd017fa5c10d087e3d9e261168aa2",
+   "command": [
+    "python3",
+    "tools/check_lean_imports.py"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 12.8,
+   "output_tail": "new outward Lean import: VE.CertificateWire -> VE.Closure.Tableau\n"
+  }
+ ]
+}

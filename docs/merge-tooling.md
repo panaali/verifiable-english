@@ -22,11 +22,13 @@ its merge strategy:
 | english-lexicon-fixtures | `lean/VE/EnglishGrammar/LexiconFixtures.lean` | regenerate |
 | question-fixtures | `lean/VE/Question/Fixtures.lean` | regenerate |
 | calc-units-fixtures | `lean/VE/Calc/UnitsExamples.lean` | regenerate |
+| presupposition-table | `lean/VE/Presupposition/Table.lean` | regenerate |
 | english-run-copy | `lean/VE/Service/EnglishRun.lean` | regenerate |
 | route-cases | `lean/VE/Route/examples/route-cases.json` | regenerate |
 | lean-roots | `lean/VE.lean`, `lean/ResponseShape.lean` | union |
 | lake-build | (the build every later entry reads) | - |
 | numbers-phrases | `ve/numbers_phrases.json` (from `VE.Numbers.Phrases`) | regenerate |
+| defaults-words | `ve/defaults_words.json` (from `VE.Defaults.Wire.zoneHeads`, `zoneLineWords`, `zoneJoins`) | regenerate |
 | profile-table | `ve/profile_table.json` (from `VE.Compose.profileTable`) | regenerate |
 | lean-mode-deps | `tools/lean-mode-deps.json` | regenerate |
 | lean-statements | `lean/statements.txt`, `predicates.txt`, `declarations.txt` | regenerate |
@@ -40,6 +42,7 @@ its merge strategy:
 | english-codes | `ve/english_grammar/codes.json` | regenerate |
 | question-codes | `ve/question/codes.json` | regenerate |
 | question-lock | `ve/question/LOCK.json` | regenerate |
+| english-s3-comparison | `conformance/english-lean/s3-fixture-comparison.json` (its records carry Lean's `actions_version`; written under one hash seed) | regenerate |
 | assurance-manifest | `ve/assurance-manifest.json` (decoder total recomputed) | json (check only) |
 | assurance-doc | `docs/spec/assurance-manifest.md` (`assurance_manifest.py --check`, new) | regenerate |
 | layer-ledgers | `tools/layer-exceptions.json`, `lean-layer-exceptions.json` | json (check only) |

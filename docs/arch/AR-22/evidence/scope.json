@@ -1,0 +1,352 @@
+{
+ "base": "da5303b7876924d4fba67866390ed6f0d0b36cbc",
+ "changes": [
+  {
+   "added": 1,
+   "deleted": 1,
+   "path": "docs/ARCHITECTURE-LAYERS.md"
+  },
+  {
+   "added": 1,
+   "deleted": 1,
+   "path": "docs/ARCHITECTURE.md"
+  },
+  {
+   "added": 187,
+   "deleted": 28,
+   "path": "docs/arch/AR-22/DELTA.md"
+  },
+  {
+   "added": 363,
+   "deleted": 85,
+   "path": "docs/arch/AR-22/REPORT.md"
+  },
+  {
+   "added": 22,
+   "deleted": 0,
+   "path": "docs/arch/AR-22/evidence.toml"
+  },
+  {
+   "added": 230,
+   "deleted": 72,
+   "path": "docs/arch/AR-22/evidence/ab-delta.json"
+  },
+  {
+   "added": 844,
+   "deleted": 176,
+   "path": "docs/arch/AR-22/evidence/ab.json"
+  },
+  {
+   "added": 116,
+   "deleted": 0,
+   "path": "docs/arch/AR-22/evidence/mutants.json"
+  },
+  {
+   "added": 36,
+   "deleted": 11,
+   "path": "docs/arch/AR-22/evidence/out.json"
+  },
+  {
+   "added": 143,
+   "deleted": 117,
+   "path": "docs/arch/AR-22/evidence/pilot-rerun.json"
+  },
+  {
+   "added": 40,
+   "deleted": 10,
+   "path": "docs/arch/AR-22/evidence/row3b-tests.json"
+  },
+  {
+   "added": 1001,
+   "deleted": 21,
+   "path": "docs/arch/AR-22/evidence/statements.json"
+  },
+  {
+   "added": 509,
+   "deleted": 95,
+   "path": "docs/arch/AR-22/evidence/trust.json"
+  },
+  {
+   "added": 88,
+   "deleted": 0,
+   "path": "docs/arch/AR-22/mutants.json"
+  },
+  {
+   "added": 34,
+   "deleted": 31,
+   "path": "docs/codemap/INDEX.md"
+  },
+  {
+   "added": 3,
+   "deleted": 0,
+   "path": "docs/codemap/docs__attitudes.md"
+  },
+  {
+   "added": 4,
+   "deleted": 0,
+   "path": "docs/codemap/docs__infra.md"
+  },
+  {
+   "added": 0,
+   "deleted": 6,
+   "path": "docs/codemap/lean__VE.md"
+  },
+  {
+   "added": 2,
+   "deleted": 5,
+   "path": "docs/codemap/lean__VE__Closure.md"
+  },
+  {
+   "added": 1,
+   "deleted": 1,
+   "path": "docs/codemap/tests--part-1.md"
+  },
+  {
+   "added": 7,
+   "deleted": 5,
+   "path": "docs/codemap/tests--part-2.md"
+  },
+  {
+   "added": 5,
+   "deleted": 5,
+   "path": "docs/codemap/tests--part-3.md"
+  },
+  {
+   "added": 9,
+   "deleted": 11,
+   "path": "docs/codemap/tests--part-4.md"
+  },
+  {
+   "added": 12,
+   "deleted": 12,
+   "path": "docs/codemap/tests--part-5.md"
+  },
+  {
+   "added": 13,
+   "deleted": 14,
+   "path": "docs/codemap/tests--part-6.md"
+  },
+  {
+   "added": 8,
+   "deleted": 0,
+   "path": "docs/codemap/tests--part-7.md"
+  },
+  {
+   "added": 78,
+   "deleted": 77,
+   "path": "docs/spec/assurance-manifest.md"
+  },
+  {
+   "added": 7,
+   "deleted": 3,
+   "path": "lean/CLOSURE.md"
+  },
+  {
+   "added": 137,
+   "deleted": 131,
+   "path": "lean/VE/Audit.lean"
+  },
+  {
+   "added": 1,
+   "deleted": 1,
+   "path": "lean/VE/CertificateWire.lean"
+  },
+  {
+   "added": 0,
+   "deleted": 105,
+   "path": "lean/VE/Closure/Congruence.lean"
+  },
+  {
+   "added": 10,
+   "deleted": 567,
+   "path": "lean/VE/Closure/CoreEquiv.lean"
+  },
+  {
+   "added": 0,
+   "deleted": 75,
+   "path": "lean/VE/Closure/Induction.lean"
+  },
+  {
+   "added": 0,
+   "deleted": 103,
+   "path": "lean/VE/Closure/PathRules.lean"
+  },
+  {
+   "added": 0,
+   "deleted": 190,
+   "path": "lean/VE/Closure/Substitution.lean"
+  },
+  {
+   "added": 115,
+   "deleted": 4,
+   "path": "lean/VE/Closure/Tableau.lean"
+  },
+  {
+   "added": 1,
+   "deleted": 1,
+   "path": "lean/VE/Route/Checker.lean"
+  },
+  {
+   "added": 1,
+   "deleted": 1,
+   "path": "lean/VE/Route/Steps.lean"
+  },
+  {
+   "added": 2,
+   "deleted": 2,
+   "path": "lean/VE/Route/frozen-sources.sha256"
+  },
+  {
+   "added": 0,
+   "deleted": 209,
+   "path": "lean/VE/TableauExtended.lean"
+  },
+  {
+   "added": 0,
+   "deleted": 264,
+   "path": "lean/VE/TableauExtendedChecker.lean"
+  },
+  {
+   "added": 0,
+   "deleted": 260,
+   "path": "lean/VE/TableauExtendedClosure.lean"
+  },
+  {
+   "added": 0,
+   "deleted": 183,
+   "path": "lean/VE/TableauExtendedExtra.lean"
+  },
+  {
+   "added": 0,
+   "deleted": 53,
+   "path": "lean/VE/TableauExtendedInduction.lean"
+  },
+  {
+   "added": 0,
+   "deleted": 106,
+   "path": "lean/VE/TableauExtendedRules.lean"
+  },
+  {
+   "added": 135,
+   "deleted": 121,
+   "path": "lean/axioms.txt"
+  },
+  {
+   "added": 5,
+   "deleted": 0,
+   "path": "lean/checkers.lock"
+  },
+  {
+   "added": 1705,
+   "deleted": 1436,
+   "path": "lean/declarations.txt"
+  },
+  {
+   "added": 21,
+   "deleted": 17,
+   "path": "lean/predicates.txt"
+  },
+  {
+   "added": 969,
+   "deleted": 883,
+   "path": "lean/statements.txt"
+  },
+  {
+   "added": 124,
+   "deleted": 0,
+   "path": "tests/test_closure_core_replay.py"
+  },
+  {
+   "added": 0,
+   "deleted": 3,
+   "path": "tools/consolidation-ledger.json"
+  },
+  {
+   "added": 1,
+   "deleted": 3,
+   "path": "tools/layer_policy.py"
+  },
+  {
+   "added": 0,
+   "deleted": 4,
+   "path": "tools/lean-layer-exceptions.json"
+  },
+  {
+   "added": 826,
+   "deleted": 943,
+   "path": "tools/trust-classes.json"
+  },
+  {
+   "added": 2579,
+   "deleted": 2579,
+   "path": "ve/assurance-manifest.json"
+  }
+ ],
+ "commits": [
+  {
+   "hash": "2154cbab4e6231fe9806518b768c174d4a70af5e",
+   "subject": "AR-22: evidence and report measured again against the merge base da5303b78"
+  },
+  {
+   "hash": "585b51b5621bc1113e168121f23dce3a9da27817",
+   "subject": "AR-22: regenerate after the merge of main (R12); keep main's order in tools/trust-classes.json and ve/assurance-manifest.json"
+  },
+  {
+   "hash": "ce977f05711e806bba49960f4b6241fe1764c8d1",
+   "subject": "AR-22: evidence and report measured again against the merge base 2be443f75"
+  },
+  {
+   "hash": "916c2785cc7350d76e20a15da5c5181061b68a2f",
+   "subject": "AR-22: regenerate the generated files after the merge of main (R12); keep main's order in ve/assurance-manifest.json"
+  },
+  {
+   "hash": "1a91dbce710e0e660cf521dc85f7ab932ba95e29",
+   "subject": "AR-22: REPORT: the batch_evidence sub-check results"
+  },
+  {
+   "hash": "7a67d0a3261923ad82a3cda0289d7cb783399d68",
+   "subject": "AR-22: REPORT"
+  },
+  {
+   "hash": "5c4fe41563961e8450fe1b1fa69ed193ef33b008",
+   "subject": "AR-22: keep main's entry order in ve/assurance-manifest.json, which the merge driver had sorted"
+  },
+  {
+   "hash": "876192d1b40dd07b655bec4bbd43356cd73833b1",
+   "subject": "AR-22: evidence measured again against the merge base a6d0d389a: A/B, trust, statements, OUT, row 3b tests"
+  },
+  {
+   "hash": "01d1e6030353433cf9de9c9aeef796c453703561",
+   "subject": "AR-22: regenerate the generated files after the merge of main (R12)"
+  },
+  {
+   "hash": "3b7a0acafd0ad604a4e2a199b953c340a7318524",
+   "subject": "AR-22: evidence: statements with covers, trust, OUT, row 3b tests, corpus A/B, seeded mutants 7/7, DELTA"
+  },
+  {
+   "hash": "73b73ad0dfdae7d315b2f5d080a69b62cd941e09",
+   "subject": "AR-22: regenerate the generated files after the merge of main (R12)"
+  },
+  {
+   "hash": "adc23b80655fe726834a67154189739600813478",
+   "subject": "AR-22: regenerate the generated files after the merge of main (R12)"
+  },
+  {
+   "hash": "171a04dd3649865b2251cb7a89df6657169eb754",
+   "subject": "AR-22: test closure's gates on both runners; seeded-mutant spec; docs"
+  },
+  {
+   "hash": "262f2d231a3b5e3d670058a0a673eb894c657ca5",
+   "subject": "AR-22: repin CertificateWire.lean in the assurance manifest after its import edit"
+  },
+  {
+   "hash": "adcec810089fd7886f1aa06376300858cf0c43ec",
+   "subject": "AR-22: regenerate the Lean inventories, audit manifests, frozen list, pins and code map"
+  },
+  {
+   "hash": "1eccc87b0fbcb643dd5fb6b6e9139e4564daf4c3",
+   "subject": "AR-22: closure certificates replay through Core; delete the closure tableau copy"
+  }
+ ],
+ "head": "2154cbab4e6231fe9806518b768c174d4a70af5e"
+}

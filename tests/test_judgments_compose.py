@@ -253,6 +253,9 @@ def test_ve_document_check_and_coverage_answer_as_the_twin(texts, name):
     for run, named in ((check_document, True), (lambda path: coverage(load_document(path)), False)):
         ids = {}
         answers = {tag: without_identities(run(texts[name, tag]), ids.setdefault(tag, [])) for tag in ("judged", "twin")}
+        # `ve document check` places Lean's lines under the profile only (jt-3b); the rest is the twin's.
+        lines = answers["judged"].pop("judgment_lines", None)
+        assert (type(lines) is dict) is named and "judgment_lines" not in answers["twin"]
         assert answers["judged"] == answers["twin"]
         assert bool(ids["judged"]) is named and not set(ids["judged"]) & set(ids["twin"])
 

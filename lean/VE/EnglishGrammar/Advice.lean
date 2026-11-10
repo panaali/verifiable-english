@@ -1,5 +1,6 @@
 import VE.EnglishGrammar.Token
 import VE.EnglishGrammar.Lexicon
+import VE.EnglishGrammar.SourceWords
 
 namespace VE.EnglishGrammar
 
@@ -50,6 +51,15 @@ def adviceRows : List AdviceRow :=
    ⟨"alternatives-another", "alternatives@0", [aw "another action"],
      "Another action needs a rule on an action as its reference."⟩]
 
+/-- The source-word catalogue's refusals of authored text (frame `authored`, `SourceWords`), after the rows above. -/
+def sourceWordAdvice : List AdviceRow :=
+  sourceWords.filterMap fun r => match r.kind with
+    | .refuse code text _ => if r.frame == "authored" then some ⟨code, r.profile, [aw r.word], text⟩ else none
+    | _ => none
+
+/-- Every advice row, in the order `advice` reads them. -/
+def adviceTable : List AdviceRow := adviceRows ++ sourceWordAdvice
+
 def advWords (toks : List Tok) : List (Option String) :=
   toks.map fun t => match t with
     | .word x _ => some (fold x)
@@ -70,7 +80,7 @@ def advice (profiles : List String) (toks : List Tok) : Option (String × String
   else if (["they", "them", "their", "her", "him", "his"].map some).contains (ws.headD none) then
     some ("plural-pronoun", pluralText)
   else (List.range ws.length).findSome? fun i =>
-    (adviceRows.find? fun r => profiles.contains r.profile && r.patterns.any (advPrefix (ws.drop i))).map
+    (adviceTable.find? fun r => profiles.contains r.profile && r.patterns.any (advPrefix (ws.drop i))).map
       fun r => (r.id, r.text)
 
 end VE.EnglishGrammar

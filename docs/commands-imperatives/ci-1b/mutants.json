@@ -1,0 +1,58 @@
+{
+ "how": "each mutant in a scratch overlay of lean/VE/Commands/Read.lean with the statements cut (from '## The statements (section 3)' to the end), compiled with lean --root against the built tree, then lean/VE/Commands/Examples.lean compiled against it, so each fails its #guard and not a proof; control (no mutation): Examples.lean compiles with no error; with the statements kept (mode full) the same mutant breaks the proofs listed in proofs_break (lean --root on the overlay: first errors)",
+ "commit": "a946d66e4",
+ "mutants": [
+  {
+   "definition": "VE.Commands.declared",
+   "behaviour": "readCommand_typed's decoder half: declared checks each regulated predicate's sorts",
+   "mutant": "declared drops the conjunct se.ne.rv.environment.predicates g.name == some g.sorts, so it ignores a regulated act whose arguments repeat",
+   "file": "lean/VE/Commands/Read.lean",
+   "test": "lean/VE/Commands/Examples.lean:323 #guard match decodeSpeechEnvironmentFull rawEnv, lexOf E_web with (the raw-tree fixture)",
+   "fails": 1,
+   "proofs_break": [
+    "declared_of_decode",
+    "readCommand_typed_of_facts"
+   ]
+  },
+  {
+   "definition": "VE.Commands.guardList",
+   "behaviour": "guard_ambiguous: every guard of an ambiguous condition is a reading",
+   "mutant": "guardList keeps the first guard of .ambiguous gs (gs.take 1)",
+   "file": "lean/VE/Commands/Read.lean",
+   "test": "lean/VE/Commands/Examples.lean:167 and :170 (W17's two-guard rows over goCase)",
+   "fails": 2,
+   "proofs_break": [
+    "guard_ambiguous",
+    "outcome_checked"
+   ]
+  },
+  {
+   "definition": "VE.Commands.refusalOf",
+   "behaviour": "guard_limit and refused_classed: an exhausted condition is limit, never a classed refusal",
+   "mutant": "refusalOf classes .error .limit as unread: .refused \"NoDerivation\" (ofCondition \"Sentence 1 has no reading.\")",
+   "file": "lean/VE/Commands/Read.lean",
+   "test": "lean/VE/Commands/Examples.lean:175 #guard web \"Click Check rule conflict, if draft is approved.\" 0 == .limit (W18)",
+   "fails": 1,
+   "proofs_break": [
+    "guard_limit",
+    "refused_classed"
+   ]
+  },
+  {
+   "definition": "VE.Commands.Examples.rawShare",
+   "behaviour": "the raw-tree fixture is a tree jsonWF? refuses (DRI ci-1 item 1 (i))",
+   "mutant": "rawShare built well formed (Json.mkObj, arguments once)",
+   "file": "lean/VE/Commands/Examples.lean",
+   "test": "lean/VE/Commands/Examples.lean:322 #guard !VE.Scope.jsonWF? rawEnv and :323 (the counterexample)",
+   "fails": 2
+  },
+  {
+   "definition": "VE.Commands.Examples (the fixture list guard)",
+   "behaviour": "hw excludes no fixture environment (DRI ci-1 item 1 (ii)); the guard is not vacuous",
+   "mutant": "rawEnv added to the list of fixture environments",
+   "file": "lean/VE/Commands/Examples.lean",
+   "test": "lean/VE/Commands/Examples.lean:299 #guard [E_web, webWith none definitesWeb, ...].all VE.Scope.jsonWF?",
+   "fails": 1
+  }
+ ]
+}

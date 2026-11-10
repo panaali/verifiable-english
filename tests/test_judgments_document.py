@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from copy import deepcopy
 import json
+from pathlib import Path
 
 import pytest
 
@@ -347,11 +348,15 @@ def test_the_profile_requires_documents_and_its_records_are_w2s(service):
 
 
 def test_layers_judgments_does_not_compose_with_are_unavailable(service):
-    # PC-1 composes the soft chain (tests/test_judgments_chain.py); the rights chain stays apart until pc-1g.
+    # PC-1 composes the soft chain and pc-1g the rights chain (tests/test_judgments_chain.py): a document listing
+    # `rights@0` without a rights block answers its twin's own refusal.
     rights = sorted(PROFILES + ["rights@0", "soft-norms@0"])
     text = document(service, [unit("u1", kind="meta")], J1, profiles=rights)
-    assert outcome(answer(service, text)) == (
-        "CheckerUnavailable: judgments@0 with rights@0 needs its composed Lean route", None)
+    refusal = ("CheckerUnavailable: a rights environment the rights route rejects keeps its loader's diagnostic: "
+               "InvalidInput: invalid rights block", None)
+    assert outcome(answer(service, text)) == refusal
+    plain = document(service, [unit("u1", kind="meta")], J1, profiles=[p for p in rights if p != "judgments@0"])
+    assert outcome(answer(service, plain)) == refusal
     front, body = document(service, [unit("u1", kind="meta")], J1).split("\n---\n")
     senses = front[:-1] + ', "senses": []}\n---\n' + body
     assert outcome(answer(service, senses)) == (
@@ -453,17 +458,19 @@ def fence_text():
 
 @pytest.mark.parametrize("surface", ["strict", "english"])
 def test_a_fence_another_mode_refuses_keeps_its_diagnostic_under_the_profile(service, tmp_path, fence_text, surface):
-    """A fence the `parse` mode (strict, `locatedFence`) or the English reader (with the lexicon Python builds for
-    the same document without the layer) refuses is refused with that mode's text and span, as without the
-    profile, never `UnsupportedProfile: Unsupported profile judgments@0` (review F1)."""
+    """A fence the `parse` mode (strict, `locatedFence`) or the English reader (with the lexicon the relay builds for
+    each document) refuses is refused with that mode's text and span, as without the profile, never
+    `UnsupportedProfile: Unsupported profile judgments@0` (review F1)."""
     from ve.document import _document_case
     text = fence_text.replace('"surface": "strict"', f'"surface": "{surface}"')
-    case = {"id": "d", "document": text, "admit": False}
+    layered = listed(text, with_profile(PLAIN_FENCE))
+    cases = [{"id": "d", "document": t, "admit": False} for t in (text, layered)]
     if surface == "english":
-        path = tmp_path / "e.ve.md"
-        path.write_text(text)
-        case["lexicon"] = _document_case(path.read_bytes(), False, tmp_path)["lexicon"]
-    plain, judged = service.run("document", [case, {**case, "document": listed(text, with_profile(PLAIN_FENCE))}])
+        for case in cases:
+            path = tmp_path / "e.ve.md"
+            path.write_text(case["document"])
+            case["lexicon"] = _document_case(path.read_bytes(), False, tmp_path)["lexicon"]
+    plain, judged = service.run("document", cases)
     assert plain["status"] == "error" and plain["error"].startswith("SyntaxError: "), plain
     assert judged == plain
     if surface == "strict":
@@ -516,3 +523,193 @@ def test_ve_document_relays_lean_s_refusal_of_a_judgments_document(service, tmp_
         with pytest.raises(Exception) as raised:
             load_document(path)
         assert not isinstance(raised.value, CheckerUnavailable) and str(raised.value).startswith(message), raised.value
+
+
+# jt-3b (DRI 2026-11-02, jt-3 items 1-3; 2026-11-05, jt-3b): a `judgments@0` document's authored fences send the bound
+# names to `english.read`, and the report places jt-3's lines. Each document goes through `ve document check` or the
+# case the relay builds, never a hand-supplied lexicon.
+FENCE_VOCAB = {"sorts": {"limit": {"description": "a limit"}},
+               "constants": {"atlas": {"description": "a limit", "sort": "limit"}},
+               "predicates": {p: {"arguments": ["limit"], "description": p}
+                              for p in ("reasonable_limit", "reasonable_grounds", "due_date", "published")}}
+JUDGED_FENCE = with_profile(PLAIN_FENCE)
+REASONABLE = ("UndeclaredEvaluative: 'Reasonable' is a judgment. Say who decides it ('… is a judgment for the "
+              "operator'), or define it ('In this document, a reasonable limit means …').")
+BOUND = record("reasonable_limit", "limit", decided_by="governance_function", factors=["the budget"])
+GOLDEN = Path(__file__).parent / "data" / "judgments-document-before-jt-3b.json"
+
+
+def said(predicate):
+    return f'Atlas is classified as "{predicate}".'
+
+
+def fenced(sentences, records=(), meanings=None, profiles=JUDGED_FENCE):
+    """A document of one English fence per sentence, each unit with its line of source."""
+    sentences = [sentences] if isinstance(sentences, str) else sentences
+    meanings = meanings or ["specified"] * len(sentences)
+    lines, fences, placed, cursor = [], [], [], 0
+    for i, (sentence, meaning) in enumerate(zip(sentences, meanings)):
+        line, uid = "Atlas is odd.\n", f"a{i}"
+        lines.append(line)
+        fences.append(f"```ve {uid}\n{sentence}\n```\n")
+        placed.append({"id": uid, "span": [cursor, cursor + len(line)], "kind": "asserted", "meaning": meaning,
+                       "support": "assumption", "content": {"fence": uid}, "surface": "english"})
+        cursor += len(line)
+    front = {"format": "ve-document@1", "environment": environment(FENCE_VOCAB, profiles), "units": placed,
+             "open_terms": list(records)}
+    return "---\n" + json.dumps(front) + "\n---\n" + "".join(lines) + "".join(fences)
+
+
+def bound_text(profiles=JUDGED_FENCE):
+    return fenced(said("reasonable_limit"), [BOUND], [opened("reasonable_limit")], profiles)
+
+
+def relayed_row(service, text, tmp_path):
+    """Lean's row for the case the relay builds for `text`."""
+    from ve.document import _document_case
+    return service.run("document", [_document_case(text.encode("utf-8"), False, tmp_path)])[0]
+
+
+def ve_check(text, tmp_path, capsys):
+    """`ve document check` on `text`: its exit code and its report, or the refusal it raises with Lean's text (as for
+    every refusal of a document) as the `error`. `CheckerUnavailable` is the command's own exit code."""
+    from ve.__main__ import main as ve_main
+    from ve.errors import VEError
+    path = tmp_path / "fenced.ve.md"
+    path.write_text(text, encoding="utf-8")
+    capsys.readouterr()
+    try:
+        code = ve_main(["document", "check", str(path)])
+    except VEError as exc:
+        return 1, {"error": str(exc)}
+    return code, json.loads(capsys.readouterr().out)
+
+
+def test_an_unbound_word_in_an_authored_fence_is_refused_with_lean_s_text(tmp_path, capsys):
+    """DRI conditions (a): the refusal in `ve document check`, Lean's text verbatim."""
+    code, out = ve_check(fenced(said("reasonable_limit")), tmp_path, capsys)
+    assert code == 1 and out["error"] == REASONABLE
+
+
+def test_a_bound_word_answers_the_report_as_today(service, tmp_path, capsys):
+    """DRI condition (b): the same fence with the word bound answers the report. The row is the base's mode answer
+    (recorded on b13cf9e3e, the plain document's proposal then being the only one that reached the reader) with
+    `judgment_lines` beside it."""
+    code, out = ve_check(bound_text(), tmp_path, capsys)
+    assert code == 0 and out["coverage"]["bytes_by_status"] == {"OPEN": 14}
+    row = relayed_row(service, bound_text(), tmp_path)
+    before = json.loads(GOLDEN.read_text())["judged-bound"]
+    assert {k: v for k, v in row.items() if k != "judgment_lines"} == before
+
+
+def test_without_the_profile_the_same_document_answers_byte_identically(service, tmp_path, capsys):
+    """DRI condition (c), J-λ: the document without `judgments@0` is the base's answer, byte for byte."""
+    text = fenced(said("reasonable_limit"), profiles=PLAIN_FENCE)
+    row = relayed_row(service, text, tmp_path)
+    assert json.dumps(row, sort_keys=True, ensure_ascii=False) == json.dumps(
+        json.loads(GOLDEN.read_text())["plain"], sort_keys=True, ensure_ascii=False)
+    code, out = ve_check(text, tmp_path, capsys)
+    assert code == 0 and "judgment_lines" not in out
+
+
+def test_the_proposal_is_the_one_the_plain_document_carries(tmp_path):
+    """DRI condition (d): the relay's proposal names the environment Lean reads a fence in, with or without the layer."""
+    from ve.document import _document_case
+    judged, plain = (_document_case(fenced(said("published"), profiles=p).encode("utf-8"), False, tmp_path)
+                     for p in (JUDGED_FENCE, PLAIN_FENCE))
+    assert judged["lexicon"] == plain["lexicon"]
+
+
+def test_two_predicates_of_one_row_bind_one_by_one(tmp_path, capsys):
+    """DRI 2026-11-02, jt-3 item 3: `reasonable_grounds` bound refuses `reasonable_limit`, and binds itself."""
+    grounds = [record("reasonable_grounds", "limit")]
+    code, out = ve_check(fenced(said("reasonable_limit"), grounds), tmp_path, capsys)
+    assert code == 1 and out["error"] == REASONABLE
+    code, out = ve_check(fenced(said("reasonable_grounds"), grounds, [opened("reasonable_grounds")]), tmp_path, capsys)
+    assert code == 0 and out["coverage"]["bytes_by_status"] == {"OPEN": 14}
+
+
+@pytest.mark.parametrize("sentence", [said("due_date"), "Atlas is published."])
+def test_another_sense_and_a_plain_word_are_not_refused(tmp_path, capsys, sentence):
+    code, out = ve_check(fenced(sentence), tmp_path, capsys)
+    assert code == 0 and out["coverage"]["bytes_by_status"] == {"CHECKED": 14}
+
+
+def test_the_refusal_names_the_first_fence_in_unit_order_before_any_unit_s_status(tmp_path, capsys):
+    """Fault order (R2): the fences are read while the units compile, in unit order, before spec 8.1's unit checks, so
+    a later unit's `JudgmentNotChecked` waits; a bound word in a `specified` unit keeps that refusal."""
+    grounds = [record("reasonable_grounds", "limit")]
+    text = fenced(["Atlas is published.", said("reasonable_grounds"), said("reasonable_limit")], grounds)
+    code, out = ve_check(text, tmp_path, capsys)
+    assert code == 1 and out["error"] == REASONABLE
+    code, out = ve_check(fenced(said("reasonable_grounds"), grounds), tmp_path, capsys)
+    assert code == 1 and out["error"] == "JudgmentNotChecked: a0 reasonable_grounds"
+    # A fence of two sentences: the reader's refusal comes before the document's one-sentence rule, under the profile.
+    code, out = ve_check(fenced(f'{said("reasonable_limit")} Atlas is published.'), tmp_path, capsys)
+    assert code == 1 and out["error"] == REASONABLE
+    code, out = ve_check(fenced("Atlas is published. Atlas is published."), tmp_path, capsys)
+    assert code == 1 and out["error"] == "each VE fence must contain exactly one sentence"
+
+
+def test_the_report_places_lean_s_lines(service, tmp_path, capsys):
+    """The legend names the decider and the factors, the unit's status line is neutral, and `ve document check` shows
+    them as Lean wrote them. An unused term has its legend and no status row."""
+    code, out = ve_check(bound_text(), tmp_path, capsys)
+    assert code == 0 and out["judgment_lines"] == relayed_row(service, bound_text(), tmp_path)["judgment_lines"] == {
+        "legend": [{"term": "reasonable_limit", "lines": [
+            'Whether a limit is classified as "reasonable_limit" is a judgment for the governance function.',
+            "The text mentions these points: the budget."]}],
+        "status": [{"unit": "a0",
+                    "line": 'Open: this uses the judgment whether a limit is classified as "reasonable_limit".'}]}
+    code, out = ve_check(fenced("Atlas is published.", [record("reasonable_grounds", "limit")]), tmp_path, capsys)
+    assert code == 0 and out["judgment_lines"] == {
+        "legend": [{"term": "reasonable_grounds", "lines": [
+            'Whether a limit is classified as "reasonable_grounds" is a judgment; the text does not say who makes it.']}],
+        "status": []}
+
+
+def limit_document(count):
+    """A document binding `count` names, beside `FENCE_VOCAB`'s predicates, with a plain sentence in its fence."""
+    names = [f"term_{i}" for i in range(count)]
+    vocabulary = deepcopy(FENCE_VOCAB)
+    vocabulary["predicates"].update({n: {"arguments": ["limit"], "description": n} for n in names})
+    front = {"format": "ve-document@1", "environment": environment(vocabulary, JUDGED_FENCE),
+             "units": [{"id": "a", "span": [0, 14], "kind": "asserted", "meaning": "specified",
+                        "support": "assumption", "content": {"fence": "a"}, "surface": "english"}],
+             "open_terms": [record(n, "limit") for n in names]}
+    return "---\n" + json.dumps(front) + "\n---\nAtlas is odd.\n```ve a\nAtlas is published.\n```\n"
+
+
+def test_the_bound_names_are_charged_against_the_vocabulary_s_limit(service, tmp_path):
+    """A bound name is a base predicate (`Judgments.admit`), so the vocabulary's limit (`VE.Limits.maxPredicates`, 256)
+    charges the names a fence is sent, before any fence is read; `JudgmentLines.maxJudgments` (4096, the reader's own)
+    is above it. At the limit every term has its legend row; one over is Lean's `ResourceLimit`, never a verdict."""
+    from ve.document import load_document
+    from ve.errors import CheckerUnavailable
+    path = tmp_path / "limit.ve.md"
+    path.write_text(limit_document(252))
+    assert [u["status"] for u in load_document(path)["units"]] == ["CHECKED"]
+    row = relayed_row(service, limit_document(252), tmp_path)
+    assert [r["term"] for r in row["judgment_lines"]["legend"]] == [f"term_{i}" for i in range(252)]
+    text = limit_document(253)
+    assert relayed_row(service, text, tmp_path)["error"] == "ResourceLimit: vocabulary size"
+    path.write_text(text)
+    with pytest.raises(CheckerUnavailable):
+        load_document(path)
+
+
+def test_a_soft_document_s_fence_is_read_with_the_bound_names(service, tmp_path):
+    """The soft route reads a fence over its own `E″` (`softContentOf`), and the names reach it too. `ve document` then
+    refuses as Lean did; a bound fence is answered by the mode, and building Python's document from a soft
+    `judgments@0` answer stays PC-1's open `CheckerUnavailable`, with or without a fence."""
+    from ve.document import load_document
+    soft = ["documents@1", "judgments@0", "norms@0", "relational-fol@0", "soft-norms@0"]
+    path = tmp_path / "soft.ve.md"
+    path.write_text(fenced(said("reasonable_limit"), profiles=soft))
+    with pytest.raises(Exception, match="^UndeclaredEvaluative: 'Reasonable' is a judgment") as raised:
+        load_document(path)
+    assert str(raised.value) == REASONABLE
+    row = relayed_row(service, bound_text(soft), tmp_path)
+    assert row["status"] == "ok" and row["judgment_lines"]["status"][0]["unit"] == "a0"
+    plain = fenced(said("reasonable_limit"), profiles=[p for p in soft if p != "judgments@0"])
+    assert relayed_row(service, plain, tmp_path)["status"] == "ok"

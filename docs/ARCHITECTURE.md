@@ -72,7 +72,7 @@ the gate now stores collected IDs with the checked commit and compares them with
 Lean; `tools/check_python_layers.py`, `tools/check_lean_imports.py` and `tools/check_rust_deps.py` enforce
 inward-only imports against the exception ledgers counted above. The remaining Python exceptions are helpers
 that sit one layer too far out (the AST's wire tag table and numeral reader, search's formula walkers) and a few
-legacy registration and entry-point edges; most Lean exceptions are the legacy `Core` and `TableauExtended*` proofs
+legacy registration and entry-point edges; most Lean exceptions are the legacy `Core` proofs
 importing `Closure` and `Route` machinery. Rust's crate split is done: `ve-kernel` and `ve-profile` are separate
 crates and `ve-core` is a re-export facade, so cargo enforces the Rust boundary. How to run the checkers and the
 test-selection policy: [ARCHITECTURE-LAYERS.md](ARCHITECTURE-LAYERS.md).

@@ -1,0 +1,330 @@
+{
+ "item": "ps-e1",
+ "how": "Each mutant is applied alone with find/replace, `uv run pytest -q tests/test_ps_e1.py -k <test>` must fail, and the file is restored. No product code changed; the seeded bugs are in the scorer, the audit, the stub generator and the runner. `failed` is the first failing test id from that run.",
+ "mutants": [
+  {
+   "id": "M1",
+   "file": "docs/presupposition/ps-e1/e1_score.py",
+   "claim": "candidate bar 6/40 becomes above 6/40",
+   "find": "c.get(k, 0) >= bars[\"candidate_min\"]",
+   "replace": "c.get(k, 0) > bars[\"candidate_min\"]",
+   "test": "test_candidate_bar_is_6_of_40_on_each_item",
+   "failed": "test_candidate_bar_is_6_of_40_on_each_item[6-40-True]"
+  },
+  {
+   "id": "M2",
+   "file": "docs/presupposition/ps-e1/e1_score.py",
+   "claim": "candidate on either item instead of each",
+   "find": "all(c.get(k, 0) >= bars[\"candidate_min\"] for c in each)",
+   "replace": "any(c.get(k, 0) >= bars[\"candidate_min\"] for c in each)",
+   "test": "test_candidate_bar_is_6_of_40_on_each_item",
+   "failed": "test_candidate_bar_is_6_of_40_on_each_item[5-40-False]"
+  },
+  {
+   "id": "M3",
+   "file": "docs/presupposition/ps-e1/e1_score.py",
+   "claim": "one-reading bar 36/40 becomes above 36/40",
+   "find": "c.get(k, 0) >= bars[\"one_reading_min\"]",
+   "replace": "c.get(k, 0) > bars[\"one_reading_min\"]",
+   "test": "test_one_reading_bar_is_36_of_40_on_both",
+   "failed": "test_one_reading_bar_is_36_of_40_on_both[36-40-assumed]"
+  },
+  {
+   "id": "M4",
+   "file": "docs/presupposition/ps-e1/e1_score.py",
+   "claim": "(d) bar trips at 10/40",
+   "find": "counts[i[\"id\"]][\"d\"] > bars[\"cannot_tell_max\"]",
+   "replace": "counts[i[\"id\"]][\"d\"] >= bars[\"cannot_tell_max\"]",
+   "test": "test_cannot_tell_above_10_of_40_on_either_item_admits_no_carrier",
+   "failed": "test_cannot_tell_above_10_of_40_on_either_item_admits_no_carrier[10-10-False]"
+  },
+  {
+   "id": "M5",
+   "file": "docs/presupposition/ps-e1/e1_score.py",
+   "claim": "(b) and (e) always one class (R-D4)",
+   "find": "if row[\"be_one_class\"]:",
+   "replace": "if True:",
+   "test": "test_b_and_e_are_one_class_only_where_the_stub_row_says_so",
+   "failed": "test_b_and_e_are_one_class_only_where_the_stub_row_says_so"
+  },
+  {
+   "id": "M6",
+   "file": "docs/presupposition/ps-e1/e1_score.py",
+   "claim": "(b) and (e) never one class (R-D4)",
+   "find": "if row[\"be_one_class\"]:",
+   "replace": "if False:",
+   "test": "test_b_and_e_are_one_class_only_where_the_stub_row_says_so",
+   "failed": "test_b_and_e_are_one_class_only_where_the_stub_row_says_so"
+  },
+  {
+   "id": "M7",
+   "file": "docs/presupposition/ps-e1/e1_score.py",
+   "claim": "control item bar above 36/40",
+   "find": "n >= bars[\"control_min\"]",
+   "replace": "n > bars[\"control_min\"]",
+   "test": "test_controls_bar_is_36_of_40_on_11_of_12",
+   "failed": "test_controls_bar_is_36_of_40_on_11_of_12"
+  },
+  {
+   "id": "M8",
+   "file": "docs/presupposition/ps-e1/e1_score.py",
+   "claim": "controls need 12 of 12",
+   "find": "passing >= bars[\"controls_passing_min\"]",
+   "replace": "passing > bars[\"controls_passing_min\"]",
+   "test": "test_controls_bar_is_36_of_40_on_11_of_12",
+   "failed": "test_controls_bar_is_36_of_40_on_11_of_12"
+  },
+  {
+   "id": "M9",
+   "file": "docs/presupposition/ps-e1/e1_score.py",
+   "claim": "suspension bar below 6/40",
+   "find": "n <= bars[\"suspension_c_max\"]",
+   "replace": "n < bars[\"suspension_c_max\"]",
+   "test": "test_suspension_bar_is_at_most_6_of_40_on_each",
+   "failed": "test_suspension_bar_is_at_most_6_of_40_on_each[6-True]"
+  },
+  {
+   "id": "M10",
+   "file": "docs/presupposition/ps-e1/e1_score.py",
+   "claim": "proviso on either item",
+   "find": "if all(n >= bars[\"proviso_min\"] for n in pair.values()) and cell",
+   "replace": "if any(n >= bars[\"proviso_min\"] for n in pair.values()) and cell",
+   "test": "test_proviso_adds_unconditional_only_at_6_of_40_on_both",
+   "failed": "test_proviso_adds_unconditional_only_at_6_of_40_on_both[5-6-False]"
+  },
+  {
+   "id": "M11",
+   "file": "docs/presupposition/ps-e1/e1_score.py",
+   "claim": "proviso opens a one-reading cell",
+   "find": " and cell[\"status\"] == \"open\":",
+   "replace": ":",
+   "test": "test_proviso_leaves_a_one_reading_cell_and_the_table_has_the_spec_shape",
+   "failed": "test_proviso_leaves_a_one_reading_cell_and_the_table_has_the_spec_shape"
+  },
+  {
+   "id": "M12",
+   "file": "docs/presupposition/ps-e1/e1_score.py",
+   "claim": "call error scored as an answer (F2)",
+   "find": "return \"d\", \"error\"",
+   "replace": "return \"b\", \"error\"",
+   "test": "test_tally_counts_errors_and_malformed_as_d_and_refuses_a_missing_trial",
+   "failed": "test_tally_counts_errors_and_malformed_as_d_and_refuses_a_missing_trial"
+  },
+  {
+   "id": "M13",
+   "file": "docs/presupposition/ps-e1/e1_score.py",
+   "claim": "a no-carrier class does not empty the row",
+   "find": "if any(c[\"no_carrier\"] for c in classes.values()):",
+   "replace": "if all(c[\"no_carrier\"] for c in classes.values()):",
+   "test": "test_row_cell_one_reading_needs_every_class_and_a_no_carrier_class_empties_it",
+   "failed": "test_row_cell_one_reading_needs_every_class_and_a_no_carrier_class_empties_it"
+  },
+  {
+   "id": "M14",
+   "file": "docs/presupposition/ps-e1/e1_score.py",
+   "claim": "assumed and asserted share a cell",
+   "find": "union.remove(\"asserted\")",
+   "replace": "pass",
+   "test": "test_row_cell_obeys_cell_ok",
+   "failed": "test_row_cell_obeys_cell_ok"
+  },
+  {
+   "id": "M15",
+   "file": "docs/presupposition/ps-e1/e1_score.py",
+   "claim": "share order reversed",
+   "find": "key=lambda k: (-total[k], order.index(k))), \"status\"",
+   "replace": "key=lambda k: (total[k], order.index(k))), \"status\"",
+   "test": "test_row_cell_union_order_ties_and_disagreement",
+   "failed": "test_row_cell_union_order_ties_and_disagreement"
+  },
+  {
+   "id": "M16",
+   "file": "docs/presupposition/ps-e1/e1_score.py",
+   "claim": "tableOk always true",
+   "find": "return all(line == \"true\" for line in",
+   "replace": "return True or all(line == \"true\" for line in",
+   "test": "test_table_ok_is_leans_answer_both_ways",
+   "failed": "test_table_ok_is_leans_answer_both_ways"
+  },
+  {
+   "id": "M17",
+   "file": "docs/presupposition/ps-e1/e1_score.py",
+   "claim": "a rebound raw record is accepted",
+   "find": "raise ValueError(f\"rebound raw record: {id_}#{trial}\")",
+   "replace": "pass",
+   "test": "test_bound_accepts_a_true_record_and_refuses_a_rebound_or_outside_one",
+   "failed": "test_bound_accepts_a_true_record_and_refuses_a_rebound_or_outside_one"
+  },
+  {
+   "id": "M18",
+   "file": "docs/presupposition/ps-e1/e1_items.py",
+   "claim": "rule acts keep (a)",
+   "find": "rows = {} if cell == \"rule_act\" else {\"a\": FALSE}",
+   "replace": "rows = {\"a\": FALSE}",
+   "test": "test_audit_accepts_the_frozen_items_and_prompts_are_blind",
+   "failed": "test_audit_accepts_the_frozen_items_and_prompts_are_blind"
+  },
+  {
+   "id": "M19",
+   "file": "docs/presupposition/ps-e1/e1_items.py",
+   "claim": "(e) offered in every cell",
+   "find": "({\"e\": TRUE} if cell in E_CELLS else {})",
+   "replace": "{\"e\": TRUE}",
+   "test": "test_audit_accepts_the_frozen_items_and_prompts_are_blind",
+   "failed": "test_audit_accepts_the_frozen_items_and_prompts_are_blind"
+  },
+  {
+   "id": "M20",
+   "file": "docs/presupposition/ps-e1/e1_items.py",
+   "claim": "audit skips the shallow check",
+   "find": "need(r[\"shallow\"] is True,",
+   "replace": "need(True,",
+   "test": "test_audit_refuses",
+   "failed": "test_audit_refuses[not_shallow]"
+  },
+  {
+   "id": "M21",
+   "file": "docs/presupposition/ps-e1/e1_items.py",
+   "claim": "audit skips a control's key against the stub",
+   "find": "need(i[\"expected\"] == (\"b\" if r[\"base\"] else \"a\"),",
+   "replace": "need(True,",
+   "test": "test_audit_refuses",
+   "failed": "test_audit_refuses[control_key_flipped]"
+  },
+  {
+   "id": "M22",
+   "file": "docs/presupposition/ps-e1/e1_stub.py",
+   "claim": "the goal guard of target items is dropped",
+   "find": "if i[\"family\"] in (\"target\", \"suspension\"):\n        out.append(\"#guard !ev M (f.goal r.pre)\")",
+   "replace": "if False:\n        out.append(\"#guard !ev M (f.goal r.pre)\")",
+   "test": "test_saved_stub_table_is_leans_output_and_a_failing_guard_stops_the_generator",
+   "failed": "test_saved_stub_table_is_leans_output_and_a_failing_guard_stops_the_generator"
+  },
+  {
+   "id": "M23",
+   "file": "docs/presupposition/ps-e1/e1_runner.py",
+   "claim": "resume re-calls saved trials",
+   "find": "if records.get((i[\"id\"], t), {}).get(\"state\") != \"final\"]",
+   "replace": "]",
+   "test": "test_runner_runs_every_trial_at_most_four_at_once_and_resumes",
+   "failed": "test_runner_runs_every_trial_at_most_four_at_once_and_resumes"
+  },
+  {
+   "id": "M24",
+   "file": "docs/presupposition/ps-e1/e1_runner.py",
+   "claim": "eight workers",
+   "find": "max_workers=cfg[\"concurrency\"]) as pool:\n        for future in [pool.submit(worker) for _ in range(cfg[\"concurrency\"])]:",
+   "replace": "max_workers=8) as pool:\n        for future in [pool.submit(worker) for _ in range(8)]:",
+   "test": "test_runner_runs_every_trial_at_most_four_at_once_and_resumes",
+   "failed": "test_runner_runs_every_trial_at_most_four_at_once_and_resumes"
+  },
+  {
+   "id": "M25",
+   "file": "docs/presupposition/ps-e1/e1_runner.py",
+   "claim": "count cap off by one",
+   "find": "state[\"calls\"] + state[\"inflight\"] >= cfg[\"call_cap\"]",
+   "replace": "state[\"calls\"] + state[\"inflight\"] > cfg[\"call_cap\"]",
+   "test": "test_runner_call_cap",
+   "failed": "test_runner_call_cap[39-39-cap]"
+  },
+  {
+   "id": "M26",
+   "file": "docs/presupposition/ps-e1/e1_runner.py",
+   "claim": "CW cap ignores the reserve",
+   "find": "state[\"charged\"] + RESERVE_CW * (state[\"inflight\"] + 1) > cfg[\"cw_cap\"]",
+   "replace": "state[\"charged\"] > cfg[\"cw_cap\"]",
+   "test": "test_runner_cw_cap_stops_before_the_reserve_can_pass_it",
+   "failed": "test_runner_cw_cap_stops_before_the_reserve_can_pass_it"
+  },
+  {
+   "id": "M27",
+   "file": "docs/presupposition/ps-e1/e1_runner.py",
+   "claim": "projection never exceeds the cap",
+   "find": "\"within_cap\": projection <= cfg[\"cw_cap\"]",
+   "replace": "\"within_cap\": True",
+   "test": "test_pilot_projection_against_the_cap",
+   "failed": "test_pilot_projection_against_the_cap"
+  },
+  {
+   "id": "M28",
+   "file": "docs/presupposition/ps-e1/e1_runner.py",
+   "claim": "a run without a pilot is allowed",
+   "find": "if not measured or not measured[\"within_cap\"]:",
+   "replace": "if False:",
+   "test": "test_main_runs_the_audit_first_and_refuses_a_run_without_a_pilot_within_the_cap",
+   "failed": "test_main_runs_the_audit_first_and_refuses_a_run_without_a_pilot_within_the_cap"
+  },
+  {
+   "id": "M29",
+   "file": "docs/presupposition/ps-e1/e1_runner.py",
+   "claim": "the third outage retries forever",
+   "find": "retry = outage and base[\"attempts\"] < MAX_ATTEMPTS",
+   "replace": "retry = outage",
+   "test": "test_third_attempt_of_an_outage_is_a_final_call_error",
+   "failed": "test_third_attempt_of_an_outage_is_a_final_call_error"
+  },
+  {
+   "id": "M30",
+   "file": "docs/presupposition/ps-e1/e1_runner.py",
+   "claim": "a paid-credit fallback is not noticed",
+   "find": "raise Abort(f\"paid-credit fallback reported: {usage['fallback_credit']!r}\")",
+   "replace": "pass",
+   "test": "test_paid_credit_fallback_and_picker_failure_stop_the_run",
+   "failed": "test_paid_credit_fallback_and_picker_failure_stop_the_run"
+  },
+  {
+   "id": "M31",
+   "file": "docs/presupposition/ps-e1/e1_runner.py",
+   "claim": "API keys reach the CLI",
+   "find": "if not k.endswith(\"API_KEY\") and not k.startswith(\"CLAUDE\")\n           and k not in",
+   "replace": "if not k.startswith(\"CLAUDE\")\n           and k not in",
+   "test": "test_reader_command_is_the_smallest_context_and_strips_api_keys",
+   "failed": "test_reader_command_is_the_smallest_context_and_strips_api_keys"
+  },
+  {
+   "id": "M32",
+   "file": "docs/research/presupposition-E1/candidate-table.json",
+   "claim": "a saved table that is not the generator's output",
+   "find": "\"assumed\"",
+   "replace": "\"conditioned\"",
+   "test": "test_saved_table_and_results_are_the_generators_output",
+   "failed": "test_saved_table_and_results_are_the_generators_output"
+  },
+  {
+   "id": "M33",
+   "file": "docs/research/presupposition-E1/raw/T-CS-TOP-a/01.json",
+   "claim": "a saved raw answer changed after scoring",
+   "find": "\"answer\": \"(c)\"",
+   "replace": "\"answer\": \"(b)\"",
+   "test": "test_saved_table_and_results_are_the_generators_output",
+   "failed": "test_saved_table_and_results_are_the_generators_output"
+  },
+  {
+   "id": "M34",
+   "file": "docs/presupposition/ps-e1/e1_score.py",
+   "claim": "a met proviso bar passes unnoted",
+   "find": "elif all(n >= bars[\"proviso_min\"] for n in pair.values()):",
+   "replace": "elif False:",
+   "test": "test_proviso_leaves_a_one_reading_cell_and_the_table_has_the_spec_shape",
+   "failed": "test_proviso_leaves_a_one_reading_cell_and_the_table_has_the_spec_shape"
+  },
+  {
+   "id": "M35",
+   "file": "docs/presupposition/ps-e1/e1_runner.py",
+   "claim": "an outage with zero reported usage is charged nothing",
+   "find": "used = RESERVE_CW if reported is None or outage else reported",
+   "replace": "used = RESERVE_CW if reported is None else reported",
+   "test": "test_outage_is_retried_and_three_failures_in_a_row_stop",
+   "failed": "test_outage_is_retried_and_three_failures_in_a_row_stop"
+  },
+  {
+   "id": "M36",
+   "file": "tools/regen_generated.py",
+   "claim": "the PS-E1 writers are not registered",
+   "find": "    \"docs/presupposition/ps-e1/e1_score.py\": \"PS-E1 results from saved raw answers, checked by tests/test_ps_e1.py\",\n",
+   "replace": "",
+   "test": "tests/test_regen_generated.py::test_every_script_with_a_writing_mode_is_registered_or_excluded_with_a_reason",
+   "failed": "tests/test_regen_generated.py::test_every_script_with_a_writing_mode_is_registered_or_excluded_with_a_reason"
+  }
+ ]
+}

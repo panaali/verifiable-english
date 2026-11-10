@@ -50,11 +50,21 @@ def d12 : List Rat := List.replicate 9 1 ++ List.replicate 3 (-1)
 #guard signs 2 = [[1, 1], [-1, 1], [1, -1], [-1, -1]] ∧ (signs 12).length = 4096
 #guard [choose 12 0, choose 12 1, choose 12 2, choose 12 3, choose 3 5, choose 0 0] = [1, 12, 66, 220, 0, 1]
 
-/-! The limit: 16 values, the most a decoded sign flip has, end within `Work.maxWork` (2¹⁶ vectors); one unit less refuses. -/
+/-! The limit: 16 values, the most a decoded sign flip has, end within `Work.maxWork` (2¹⁶ vectors); one unit less
+refuses. The charge counts value bits (12.2's unit): `(2¹⁶ + 2) · 72 · (1 + 2 · 1 + 32 + 3)` for sixteen 1s. -/
 def d16 : List Rat := List.replicate 16 1
-#guard signFlipWork maxSignFlip = 1114128 ∧ signFlipWork maxSignFlip ≤ Work.maxWork
-#guard signFlipC Work.maxWork d16 = some (1 / 32768, 1114128) ∧ signFlipC 1114127 d16 = none
-#guard signFlipC 2 [] = some (1, 1) ∧ signFlipC 0 [] = none
+#guard signFlipWork d16 = 179311968 ∧ signFlipWork d16 ≤ Work.maxWork
+#guard signFlipC Work.maxWork d16 = some (1 / 32768, 179311968) ∧ signFlipC 179311967 d16 = none
+#guard signFlipC 120 [] = some (1, 120) ∧ signFlipC 119 [] = none ∧ signFlipC 0 d16 = none
+
+/-! Large values the length-only charge (`n + 2ⁿ (n + 1)`: 1,114,128 and 53,260 units) admitted within `Work.maxWork`
+and the bits refuse: sixteen 2,000-bit integers (the numerators' bits), and twelve 1,000-bit numerators over
+2,000-bit odd denominators (the denominators' bits: their least common multiple has about 24,000). -/
+def big16 : List Rat := (List.range 16).map fun i => ((2 ^ 1999 + i : Nat) : Rat)
+def big12 : List Rat := (List.range 12).map fun i => ((2 ^ 999 : Nat) : Rat) / ((2 ^ 1999 + 2 * i + 1 : Nat) : Rat)
+#guard signFlipWork big16 = 9612065232 ∧ signFlipC Work.maxWork big16 = none
+#guard signFlipWork big12 = 11241469680 ∧ signFlipC Work.maxWork big12 = none
+#guard ((signFlipC 11241469680 big12).map (·.2)) = some 11241469680 ∧ signFlipC 11241469679 big12 = none
 
 /-! A binomial tail and S-5's unguarded values (the domain 0 ≤ p ≤ 1 is `Denotes.binom`'s, me-7b). -/
 #guard binomialTail 10 8 (1 / 2) = 7 / 128 ∧ binomialTail 10 0 (1 / 3) = 1 ∧ binomialTail 10 11 (1 / 2) = 0

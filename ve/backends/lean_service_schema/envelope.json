@@ -111,7 +111,9 @@
           "cardinality",
           "scope",
           "senses.project",
-          "english.command"
+          "english.command",
+          "act-readings",
+          "clauses-elaborate"
         ]
       },
       "protocol": {"const": 2},

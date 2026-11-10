@@ -291,8 +291,8 @@ def test_fsf_r2_probes_record_lean_s_answer_on_each_merged_item():
     the layer; D1's environment waits for PC-2a/2b) and a judged unit OPEN where admitted; the defaults flag refused
     on an open reading set; RS8's set refused on its governor's own unit."""
     probes = json.loads((FSF_R2 / "probes.json").read_text())
-    assert probes["JT-a"]["diagnostic"] == ("CheckerUnavailable: soft-norms with norm-defaults, readings, alternatives "
-                                            "or risk needs its composed Lean route")
+    assert probes["JT-a"]["diagnostic"] == ("CheckerUnavailable: soft-norms with readings, alternatives or risk needs "
+                                            "its composed Lean route")
     assert probes["JT-b"]["diagnostic"] == "JudgmentUnbound: ot1_level_reached"
     for probe in ("JT-c", "JT-d", "SC-b", "SC-d"):
         assert probes[probe]["admitted"] and set(probes[probe]["units"].values()) == {"OPEN"}, probe

@@ -1,0 +1,806 @@
+{
+ "item": "et-4b",
+ "note": "Wire.lean's mutants are tests/test_events_wire_mutants.py's (HOOK by hand, the rest generated from the source as written); every other new trusted definition is trust-mutants.json's (tools/trust_mutants.py with --test WireExamples and RouteExamples)",
+ "mutants": [
+  {
+   "id": "hook-no-profile-test",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "line": 275,
+   "definition": "VE.Events.eventsHook",
+   "before": "if (VE.Compose.listedProfiles environment).contains \"events@0\" then",
+   "after": "if true then",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[hook-no-profile-test]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "hook-no-row",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "line": 276,
+   "definition": "VE.Events.eventsHook",
+   "before": "let _ ← VE.Compose.gateOf VE.Compose.profileTable (VE.Compose.listedProfiles environment)",
+   "after": "let _ := ()",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[hook-no-row]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "hook-no-open-check",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "line": 277,
+   "definition": "VE.Events.eventsHook",
+   "before": "decodeEventsWith (checkOpen (openTermsOf terms)) environment",
+   "after": "decodeEvents environment",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[hook-no-open-check]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "open-ignores-decider",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "line": 164,
+   "definition": "VE.Events.checkOpen",
+   "before": "(l.predicate, l.decidedBy.getD \"unstated\")",
+   "after": "(l.predicate, \"the drafters\")",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[open-ignores-decider]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "open-first-link-only",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "line": 163,
+   "definition": "VE.Events.checkOpen",
+   "before": "firstFault (ls.map fun l =>\n    (!opens",
+   "after": "firstFault ((ls.take 1).map fun l =>\n    (!opens",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[open-first-link-only]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "open-terms-name-only",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "line": 251,
+   "definition": "VE.Events.openTermsOf",
+   "before": ".ok n, .ok d => some (n, d)",
+   "after": ".ok n, _ => some (n, \"the drafters\")",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[open-terms-name-only]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "hook-dates-before-open",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "line": 277,
+   "definition": "VE.Events.eventsHook",
+   "before": "let d ← decodeEventsWith (checkOpen (openTermsOf terms)) environment",
+   "after": "let _ ← decodeEvents environment\n    let d ← decodeEventsWith (checkOpen (openTermsOf terms)) environment",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[hook-dates-before-open]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "view-keeps-the-block",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "line": 268,
+   "definition": "VE.Events.routeView",
+   "before": "(·.1 != \"events\")",
+   "after": "(fun _ => true)",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[view-keeps-the-block]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "view-keeps-the-profile",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "line": 267,
+   "definition": "VE.Events.routeView",
+   "before": ".filter (· != \"events@0\")",
+   "after": "",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[view-keeps-the-profile]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "view-no-dates",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "line": 270,
+   "definition": "VE.Events.routeView",
+   "before": "(constants ++ dated)",
+   "after": "constants",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[view-no-dates]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "view-drops-the-constants",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "line": 270,
+   "definition": "VE.Events.routeView",
+   "before": "(constants ++ dated)",
+   "after": "dated",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[view-drops-the-constants]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "view-anchor-as-iso",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "line": 266,
+   "definition": "VE.Events.routeView",
+   "before": "if d.V.anchor == some D then \"the date of this document\" else D.iso",
+   "after": "D.iso",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[view-anchor-as-iso]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "charge-states-once",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "line": 187,
+   "definition": "VE.Events.decodeThroughLinks",
+   "before": "2 * states.length",
+   "after": "states.length",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[charge-states-once]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "charge-no-links",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "line": 187,
+   "definition": "VE.Events.decodeThroughLinks",
+   "before": "+ raw.length > VE.Limits.maxPredicates",
+   "after": "> VE.Limits.maxPredicates",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[charge-no-links]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "charge-off-by-one",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "line": 187,
+   "definition": "VE.Events.decodeThroughLinks",
+   "before": "raw.length > VE.Limits.maxPredicates",
+   "after": "raw.length ≥ VE.Limits.maxPredicates",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[charge-off-by-one]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "sum-off-by-one",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "line": 159,
+   "definition": "VE.Events.checkPremiseSize",
+   "before": "(sized.map (·.2)).sum > limit",
+   "after": "(sized.map (·.2)).sum ≥ limit",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[sum-off-by-one]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "sum-first-only",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "line": 159,
+   "definition": "VE.Events.checkPremiseSize",
+   "before": "(sized.map (·.2)).sum > limit",
+   "after": "((sized.take 1).map (·.2)).sum > limit",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[sum-first-only]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "repeat-ignores-seen",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "line": 106,
+   "definition": "VE.Events.repeatOf",
+   "before": "Std.HashSet.ofList seen",
+   "after": "(∅ : Std.HashSet String)",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[repeat-ignores-seen]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "repeat-last-wins",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "line": 104,
+   "definition": "VE.Events.repeatOf",
+   "before": "| some r => (some r, acc.2)",
+   "after": "| some _ => (if acc.2.contains n then some n else acc.1, acc.2)",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[repeat-last-wins]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "drop-checkDates-2",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.checkDates",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[drop-checkDates-2]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "drop-checkDates-4",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.checkDates",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[drop-checkDates-4]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "drop-checkDates-5",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.checkDates",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[drop-checkDates-5]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "drop-checkLinks-1",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.checkLinks",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[drop-checkLinks-1]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "drop-checkLinks-2",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.checkLinks",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[drop-checkLinks-2]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "drop-checkPremiseSize-1",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.checkPremiseSize",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[drop-checkPremiseSize-1]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "drop-checkPremiseSize-2",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.checkPremiseSize",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[drop-checkPremiseSize-2]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "drop-checkRoles-0",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.checkRoles",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[drop-checkRoles-0]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "drop-checkRoles-1",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.checkRoles",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[drop-checkRoles-1]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "drop-checkRoles-2",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.checkRoles",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[drop-checkRoles-2]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "drop-checkRoles-3",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.checkRoles",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[drop-checkRoles-3]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "drop-checkRoles-4",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.checkRoles",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[drop-checkRoles-4]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "drop-checkRoles-5",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.checkRoles",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[drop-checkRoles-5]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "drop-decodeEventSort-0",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.decodeEventSort",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[drop-decodeEventSort-0]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "drop-decodeEventsWith-1",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.decodeEventsWith",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[drop-decodeEventsWith-1]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "drop-decodeLinkRaw-0",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.decodeLinkRaw",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[drop-decodeLinkRaw-0]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "drop-decodeLinkRaw-4",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.decodeLinkRaw",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[drop-decodeLinkRaw-4]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "drop-decodeStateSort-0",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.decodeStateSort",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[drop-decodeStateSort-0]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "drop-decodeThroughLinks-0",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.decodeThroughLinks",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[drop-decodeThroughLinks-0]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "drop-decodeThroughLinks-11",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.decodeThroughLinks",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[drop-decodeThroughLinks-11]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "drop-decodeThroughLinks-12",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.decodeThroughLinks",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[drop-decodeThroughLinks-12]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "drop-decodeThroughLinks-8",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.decodeThroughLinks",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[drop-decodeThroughLinks-8]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "drop-finishEvents-3",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.finishEvents",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[drop-finishEvents-3]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "drop-objectAt-1",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.objectAt",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[drop-objectAt-1]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "drop-objectAt-2",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.objectAt",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[drop-objectAt-2]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "sibling-checkDay-rolePreds-V-0-(V.events.map-(·.on))",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.checkDay",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[sibling-checkDay-rolePreds-V-0-(V.events.map-(·.on))]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "sibling-checkDay-rolePreds-V-0-(V.states.flatMap-fun-s-=>-[s.begins,-s.ends])",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.checkDay",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[sibling-checkDay-rolePreds-V-0-(V.states.flatMap-fun-s-=>-[s.begins,-s.ends])]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "sibling-checkLinks-contains-c-0-contains-e",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.checkLinks",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[sibling-checkLinks-contains-c-0-contains-e]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "sibling-checkLinks-contains-e-0-contains-c",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.checkLinks",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[sibling-checkLinks-contains-e-0-contains-c]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "sibling-checkLinks-roleSorts-V-0-eventSorts-V",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.checkLinks",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[sibling-checkLinks-roleSorts-V-0-eventSorts-V]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "sibling-checkLinks-roleSorts-V-0-stateSorts-V",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.checkLinks",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[sibling-checkLinks-roleSorts-V-0-stateSorts-V]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "sibling-checkLinks-roleSorts-V-1-eventSorts-V",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.checkLinks",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[sibling-checkLinks-roleSorts-V-1-eventSorts-V]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "sibling-checkLinks-roleSorts-V-1-stateSorts-V",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.checkLinks",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[sibling-checkLinks-roleSorts-V-1-stateSorts-V]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "sibling-checkRoles-eventSorts-V-0-roleSorts-V",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.checkRoles",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[sibling-checkRoles-eventSorts-V-0-roleSorts-V]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "sibling-checkRoles-eventSorts-V-0-stateSorts-V",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.checkRoles",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[sibling-checkRoles-eventSorts-V-0-stateSorts-V]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "sibling-checkRoles-eventSorts-V-1-roleSorts-V",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.checkRoles",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[sibling-checkRoles-eventSorts-V-1-roleSorts-V]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "sibling-checkRoles-eventSorts-V-1-stateSorts-V",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.checkRoles",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[sibling-checkRoles-eventSorts-V-1-stateSorts-V]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "sibling-checkRoles-rolePreds-V-0-(V.events.map-(·.on))",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.checkRoles",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[sibling-checkRoles-rolePreds-V-0-(V.events.map-(·.on))]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "sibling-checkRoles-rolePreds-V-0-(V.states.flatMap-fun-s-=>-[s.begins,-s.ends])",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.checkRoles",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[sibling-checkRoles-rolePreds-V-0-(V.states.flatMap-fun-s-=>-[s.begins,-s.ends])]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "sibling-checkRoles-rolePreds-V-1-(V.events.map-(·.on))",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.checkRoles",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[sibling-checkRoles-rolePreds-V-1-(V.events.map-(·.on))]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "sibling-checkRoles-roleSorts-V-0-eventSorts-V",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.checkRoles",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[sibling-checkRoles-roleSorts-V-0-eventSorts-V]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "sibling-checkRoles-roleSorts-V-0-stateSorts-V",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.checkRoles",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[sibling-checkRoles-roleSorts-V-0-stateSorts-V]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "sibling-checkRoles-stateSorts-V-0-eventSorts-V",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.checkRoles",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[sibling-checkRoles-stateSorts-V-0-eventSorts-V]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "sibling-checkRoles-stateSorts-V-0-roleSorts-V",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.checkRoles",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[sibling-checkRoles-stateSorts-V-0-roleSorts-V]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "swap-checkDates-0",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.checkDates",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[swap-checkDates-0]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "swap-checkDates-1",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.checkDates",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[swap-checkDates-1]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "swap-checkDates-4",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.checkDates",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[swap-checkDates-4]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "swap-checkLinks-1",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.checkLinks",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[swap-checkLinks-1]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "swap-checkPremiseSize-1",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.checkPremiseSize",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[swap-checkPremiseSize-1]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "swap-checkRoles-0",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.checkRoles",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[swap-checkRoles-0]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "swap-checkRoles-1",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.checkRoles",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[swap-checkRoles-1]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "swap-checkRoles-2",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.checkRoles",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[swap-checkRoles-2]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "swap-checkRoles-3",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.checkRoles",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[swap-checkRoles-3]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "swap-checkRoles-4",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.checkRoles",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[swap-checkRoles-4]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "swap-decodeLinkRaw-0",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.decodeLinkRaw",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[swap-decodeLinkRaw-0]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "swap-decodeLinkRaw-1",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.decodeLinkRaw",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[swap-decodeLinkRaw-1]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "swap-decodeLinkRaw-2",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.decodeLinkRaw",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[swap-decodeLinkRaw-2]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "swap-decodeThroughLinks-0",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.decodeThroughLinks",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[swap-decodeThroughLinks-0]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "swap-decodeThroughLinks-1",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.decodeThroughLinks",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[swap-decodeThroughLinks-1]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "swap-decodeThroughLinks-11",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.decodeThroughLinks",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[swap-decodeThroughLinks-11]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "swap-decodeThroughLinks-2",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.decodeThroughLinks",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[swap-decodeThroughLinks-2]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "swap-decodeThroughLinks-3",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.decodeThroughLinks",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[swap-decodeThroughLinks-3]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "swap-decodeThroughLinks-4",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.decodeThroughLinks",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[swap-decodeThroughLinks-4]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "swap-decodeThroughLinks-5",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.decodeThroughLinks",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[swap-decodeThroughLinks-5]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "swap-decodeThroughLinks-6",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.decodeThroughLinks",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[swap-decodeThroughLinks-6]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "swap-objectAt-1",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "definition": "VE.Events.objectAt",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[swap-objectAt-1]",
+   "fails": "a #guard of lean/VE/Events/WireExamples.lean"
+  },
+  {
+   "id": "layer-policy-drops-the-fixture",
+   "language": "Python",
+   "file": "tools/layer_policy.py",
+   "before": "\"VE.Events.RouteExamples\"}",
+   "after": "(the entry removed)",
+   "test": "python3 tools/check_lean_imports.py (run by tests/test_precommit_hook.py and the gate)",
+   "fails": "new outward Lean import: VE.Events.RouteExamples -> VE.NormDefaults.Run"
+  },
+  {
+   "id": "eventsArray-reads-soft",
+   "language": "Lean",
+   "file": "lean/VE/NormDefaults/Packs.lean",
+   "definition": "VE.NormDefaults.Packs.eventsArray",
+   "test": "tests/test_packs_guard_mutants.py::test_each_mutant_fails_a_guard",
+   "fails": "a #guard of lean/VE/NormDefaults/PacksExamples.lean"
+  },
+  {
+   "id": "eventsArray-key",
+   "language": "Lean",
+   "file": "lean/VE/NormDefaults/Packs.lean",
+   "definition": "VE.NormDefaults.Packs.eventsArray",
+   "test": "tests/test_packs_guard_mutants.py::test_each_mutant_fails_a_guard",
+   "fails": "a #guard of lean/VE/NormDefaults/PacksExamples.lean"
+  },
+  {
+   "id": "f1-unblocked-certificate-refused",
+   "language": "Lean",
+   "file": "lean/VE/NormDefaults/Run.lean",
+   "definition": "VE.NormDefaults.Run.runCaseE",
+   "test": "cd lean && lake build VE.Events.RouteExamples",
+   "fails": "the #guards at lean/VE/Events/RouteExamples.lean:333 and :336 (the no-block certificate valid true and false, and the same answer as the list without events@0)"
+  },
+  {
+   "id": "f1-unblocked-reads-the-raw-environment",
+   "language": "Lean",
+   "file": "lean/VE/Events/Chain.lean",
+   "definition": "VE.Events.replayUnblockedEntailment",
+   "test": "cd lean && lake build VE.Events.RouteExamples",
+   "fails": "the proof of VE.Events.unblocked_wire_acceptance; with that proof stubbed, the #guards at lean/VE/Events/RouteExamples.lean:326 (every served kind as on the list without events@0), 332 to 342"
+  },
+  {
+   "id": "order-links-before-roles",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "line": 192,
+   "definition": "VE.Events.decodeThroughLinks",
+   "before": "checkRoles W V0\n  pure ⟨W, V0, ← checkLinks W V0 raw, dates, anchor⟩",
+   "after": "let ls ← checkLinks W V0 raw\n  checkRoles W V0\n  pure ⟨W, V0, ls, dates, anchor⟩",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[order-links-before-roles]",
+   "fails": "the item-4 sort-fault #guards of lean/VE/Events/WireExamples.lean (EventsSort: deed, day, act, tenancy, the duplicate sorts), each beside the base block's link, whose sorts are then no role sorts (et-4b-tm)"
+  },
+  {
+   "id": "order-dates-before-links",
+   "language": "Lean",
+   "file": "lean/VE/Events/Wire.lean",
+   "line": 193,
+   "definition": "VE.Events.decodeThroughLinks",
+   "before": "pure ⟨W, V0, ← checkLinks W V0 raw, dates, anchor⟩",
+   "after": "let _ ← checkDates W dates anchor\n  pure ⟨W, V0, ← checkLinks W V0 raw, dates, anchor⟩",
+   "test": "tests/test_events_wire_mutants.py::test_every_mutant_fails_a_fixture[order-dates-before-links]",
+   "fails": "the #guards of lean/VE/Events/WireExamples.lean \"Item 5 before item 6\" (EventsSort: missing beside InvalidDate) and LinkNotOpen on badDate (et-4b-tm)"
+  }
+ ]
+}

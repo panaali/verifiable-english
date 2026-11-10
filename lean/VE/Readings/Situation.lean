@@ -446,27 +446,21 @@ theorem shared_canon (φ : VE.Formula) (hφ : φ.WellFormed (sharedEnv D) []) :
       pull_canon hh hc B hcB he (free_envPrime_sub hh c (sharedEnv_sub hh hp)) vs hvs) φ [] [] hck
   exact h1.trans h2
 
-include hc hcB he in
-theorem assertions_canon :
-    Sat (canon (soften (sup D).1.soft) B) (sup D).2 ↔
-      Sat (canon (soften (choiceDoc D c).1.soft) (pull D c B)) (choiceDoc D c).2 := by
-  have hcomp : complete D c = true := by
-    simp only [Compatible, compatible, Bool.and_eq_true] at hc; exact hc.1.1
-  have hnd : (c.map (·.1)).Nodup := by rw [complete_map hcomp]; exact supReady_nodup hh.ready
+include hc in
+/-- The assertions in force read alike on two structures where every shared sentence reads alike and the gate patterns
+    read the first as naming `c`. -/
+theorem assertions_iff (X Y : VE.Structure.{u})
+    (hshared : ∀ φ : VE.Formula, φ.WellFormed (sharedEnv D) [] → (φ.denote X [] ↔ φ.denote Y []))
+    (hgate : ∀ m (hm : m < D.sets.length) i, i < D.sets[m].candidates.length →
+      ((pattern (m + 1) (setSize D m) i).denote X [] ↔ c.index D.sets[m].id = some i)) :
+    Sat X (sup D).2 ↔ Sat Y (choiceDoc D c).2 := by
   have hsh := asserted_shared D hh.wf hh.ready c hc
-  have hgate : ∀ m (hm : m < D.sets.length) i, i < D.sets[m].candidates.length →
-      ((pattern (m + 1) (setSize D m) i).denote (canon (soften (sup D).1.soft) B) [] ↔
-        c.index D.sets[m].id = some i) := by
-    intro m hm i hi
-    rw [← choiceAtom_eq (findIdx_of_nodup (supReady_nodup hh.ready) hm) (by rw [setSize_eq hm]; exact hi),
-      VE.SoftNorms.canon_base B _ [] (choiceAtom_wf hh _ i []) [], he _ (List.getElem_mem hm) i hi]
-    exact ⟨fun hx => index_of_mem hnd hx, mem_of_index⟩
   constructor
   · intro hX a ha
     have ha' := ha
     rw [choiceDoc, build_snd] at ha'
     obtain ⟨it, hit, ha'⟩ := List.mem_flatMap.mp ha'
-    apply (shared_canon hh hc B hcB he a (hsh a ha)).mp
+    apply (hshared a (hsh a ha)).mp
     cases it with
     | fixed u c' cs =>
       simp only [buildAsserted, if_true] at ha'
@@ -491,7 +485,7 @@ theorem assertions_canon :
     · have hmem : a ∈ (choiceDoc D c).2 := by
         rw [choiceDoc, build_snd]
         exact List.mem_flatMap.mpr ⟨_, hit, by simp only [buildAsserted, if_true]; exact ha'⟩
-      exact (shared_canon hh hc B hcB he a (hsh a hmem)).mpr (hY a hmem)
+      exact (hshared a (hsh a hmem)).mpr (hY a hmem)
     · obtain ⟨φ, rfl, rfl⟩ := asserted_gate ha'
       simp only [VE.Formula.denote]
       intro hp
@@ -501,7 +495,19 @@ theorem assertions_canon :
         rw [choiceDoc, build_snd]
         refine List.mem_flatMap.mpr ⟨_, mem_sets.mp (List.getElem_mem hm), ?_⟩
         simp [buildAsserted, hidx, hx, hxc, asserted]
-      exact (shared_canon hh hc B hcB he φ (hsh φ hmem)).mpr (hY φ hmem)
+      exact (hshared φ (hsh φ hmem)).mpr (hY φ hmem)
+
+include hc hcB he in
+theorem assertions_canon :
+    Sat (canon (soften (sup D).1.soft) B) (sup D).2 ↔
+      Sat (canon (soften (choiceDoc D c).1.soft) (pull D c B)) (choiceDoc D c).2 := by
+  have hcomp : complete D c = true := by
+    simp only [Compatible, compatible, Bool.and_eq_true] at hc; exact hc.1.1
+  have hnd : (c.map (·.1)).Nodup := by rw [complete_map hcomp]; exact supReady_nodup hh.ready
+  refine assertions_iff hh hc _ _ (shared_canon hh hc B hcB he) fun m hm i hi => ?_
+  rw [← choiceAtom_eq (findIdx_of_nodup (supReady_nodup hh.ready) hm) (by rw [setSize_eq hm]; exact hi),
+    VE.SoftNorms.canon_base B _ [] (choiceAtom_wf hh _ i []) [], he _ (List.getElem_mem hm) i hi]
+  exact ⟨fun hx => index_of_mem hnd hx, mem_of_index⟩
 
 end K
 

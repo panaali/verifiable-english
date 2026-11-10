@@ -1,0 +1,78 @@
+{
+ "item": "eff-tm-headmoved",
+ "note": "Seeded bugs planted one at a time in the changed Python product code, each shown to fail the named tests, then restored (git checkout of the file). S1-S5 are the build round's (REPORT.md, Seeded bugs); S6-S9 are the fix round's (review F1, F-ready1), run 2026-11-08 by the builder on ce4e8a71b. S6 and S7 are probe F1's mutants A and B.",
+ "mutants": [
+  {
+   "id": "S1",
+   "file": "tools/trust_mutants.py",
+   "behaviour": "a moved HEAD with identical inputs and plan carries judged verdicts",
+   "change": "resumable restores the old HEAD equality guard",
+   "test": "tests/test_trust_mutants.py::test_resume_carries_judged_verdicts_after_a_docs_only_commit",
+   "result": "1 failed"
+  },
+  {
+   "id": "S2",
+   "file": "tools/trust_mutants.py",
+   "behaviour": "a changed selected test file reruns every verdict",
+   "change": "the inputs comparison skips the selected-test digest",
+   "test": "tests/test_trust_mutants.py::test_resume_reruns_judged_verdicts_when_an_input_or_plan_changes[test]",
+   "result": "1 failed"
+  },
+  {
+   "id": "S3",
+   "file": "tools/trust_mutants.py",
+   "behaviour": "--merge accepts parts of different commits with identical inputs",
+   "change": "AGREED requires equal heads",
+   "test": "tests/test_trust_mutants.py::test_merge_carries_parts_from_identical_inputs_at_different_commits",
+   "result": "1 failed"
+  },
+  {
+   "id": "S4",
+   "file": "tools/trust_mutants.py",
+   "behaviour": "a changed plan reruns every verdict",
+   "change": "PLANNED omits the mutant's after",
+   "test": "tests/test_trust_mutants.py::test_resume_reruns_judged_verdicts_when_an_input_or_plan_changes[plan]",
+   "result": "1 failed"
+  },
+  {
+   "id": "S5",
+   "file": "tools/trust_mutants.py",
+   "behaviour": "a changed Lean input reruns every verdict",
+   "change": "the inputs comparison skips the Lean digest",
+   "test": "tests/test_trust_mutants.py::test_resume_reruns_judged_verdicts_when_an_input_or_plan_changes[lean]",
+   "result": "1 failed"
+  },
+  {
+   "id": "S6",
+   "file": "tools/trust_mutants.py",
+   "behaviour": "--merge refuses a part whose resumed is not of its type",
+   "change": "unread: fits(d[\"resumed\"], RESUMED, (\"ignored\", \"carried\")) replaced by True",
+   "test": "tests/test_trust_mutants.py::test_merge_refuses_a_part_whose_tree_or_resume_is_not_written_by_this_tool[resumed-kept-True, resumed-rerun-'1', resumed-file-None, resumed-ignored-None, resumed-x-1, resumed-head-1, resumed-missing-kept, resumed-not-a-dict]",
+   "result": "8 failed (the merge base's 8; 1 before the fix)"
+  },
+  {
+   "id": "S7",
+   "file": "tools/trust_mutants.py",
+   "behaviour": "resumed.carried is present exactly when PREV's head is another commit, with the CARRIED wording",
+   "change": "unread: the two resumed.carried clauses deleted",
+   "test": "tests/test_trust_mutants.py::test_merge_refuses_a_part_whose_tree_or_resume_is_not_written_by_this_tool[resumed-carried-wrong-value, resumed-moved-head-no-carried, resumed-carried-at-same-head, resumed-carried-when-ignored]",
+   "result": "4 failed (0 before the fix)"
+  },
+  {
+   "id": "S8",
+   "file": "tools/trust_mutants.py",
+   "behaviour": "--resume writes carried only when HEAD moved",
+   "change": "sweep: `if got[0] != head` replaced by `if True`",
+   "test": "tests/test_trust_mutants.py::test_a_resume_at_the_same_head_judges_only_the_unjudged_and_gives_the_one_runs_record",
+   "result": "2 failed (also test_a_resumed_part_merges_with_the_others_into_the_one_runs_record)"
+  },
+  {
+   "id": "S9",
+   "file": "tools/trust_mutants.py",
+   "behaviour": "--merge marks a part of another commit carried in its shards entry",
+   "change": "merge: the shards entry's carried dropped",
+   "test": "tests/test_trust_mutants.py::test_merge_carries_parts_from_identical_inputs_at_different_commits",
+   "result": "1 failed"
+  }
+ ]
+}

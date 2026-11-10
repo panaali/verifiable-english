@@ -110,6 +110,20 @@ theorem admission_fits (id reportId : String) (res : Admission.Admitted) :
   fits
   all_goals exact Common.claimJson_fits _
 
+theorem conflictAnswer_fits (id : String) (j : Json) (res : RightsConflictReplay)
+    (h : replayRightsConflict j = .ok res) (M : Option (VE.FiniteModel VE.Bridge.Entity)) :
+    Fits req (skel% "rights.json#/$defs/packages") (conflictAnswer id res M) := by
+  unfold conflictAnswer conflictAnswerOf situationTables VE.Route.Wire.ok
+  cases M <;> simp only [Option.isSome_none, Option.isSome_some, Option.map_none, Option.map_some,
+    Option.getD_none, Option.getD_some] <;> fits
+  -- Not conflict-free with no failing target: impossible (`firstFailure_of_not_free`).
+  all_goals
+    exfalso
+    have := firstFailure_of_not_free j _ h (by simp_all)
+    simp_all
+
+-- `conflictAnswer` stays folded: the other alternatives would otherwise unfold it while failing to unify.
+attribute [local irreducible] conflictAnswer in
 theorem runRightsKind_fits (id kind : String) (j : Json) {w : Json} (hobj : j.getObjVal? "id" = .ok w)
     (hp : usesRightsPath j = true) (hK : KindRead "evaluate" j kind) :
     OkFits j Skeletons.rights (runRightsKind id kind j) := by
@@ -120,6 +134,7 @@ theorem runRightsKind_fits (id kind : String) (j : Json) {w : Json} (hobj : j.ge
   all_goals okfits
   all_goals kind_norm
   all_goals first
+    | fits_from conflictAnswer_fits _ _ _ ‹replayRightsConflict j = .ok _› _
     | (unfold runAdmission; okfits; fits_from admission_fits _ _ _)
     | fits_from elaborate_fits _ _ _ _ _
     | (have h := projections_fits (req := j) id _ j _ ‹projectionsResult _ j = .ok _›
@@ -127,11 +142,6 @@ theorem runRightsKind_fits (id kind : String) (j : Json) {w : Json} (hobj : j.ge
        fits_from h)
     | fits_from bar_fits _ _ _ _ _
     | ((try simp only [VE.Route.Wire.ok]); fits)
-  -- Not conflict-free with no failing target: impossible (`firstFailure_of_not_free`).
-  all_goals
-    exfalso
-    have := firstFailure_of_not_free j _ ‹replayRightsConflict j = .ok _› (by simp_all)
-    simp_all
 
 theorem runCase_fits (j : Json) (hp : usesRightsPath j = true) : OkFits j Skeletons.rights (runCase j) := by
   unfold runCase
@@ -163,8 +173,10 @@ theorem firstFailure_text {res : RightsConflictReplay} {d : String} (h : firstFa
 
 /-- What `runRightsKind` writes for a rights-conflict case over certificate packages: beside
 UNKNOWN, a detail naming the first failing certificate, the status line of that detail and no
-premise; beside CONFLICT-FREE, the CONFLICT-FREE status line and no detail. The per-verdict
-constraints of `ResponseShape.Schemas.Rights.packages` say the same; the skeleton theorem
+premise; beside CONFLICT-FREE, the CONFLICT-FREE status line, no detail, and the report parts of
+rights.md 7.3 (the weighing points, whether a situation is exhibited, the budget and the
+situation's tables or null). The per-verdict constraints of
+`ResponseShape.Schemas.Rights.packages` say the same; the skeleton theorem
 (`runRightsKind_fits`) checks only the fields, not these patterns and counts. -/
 theorem runRightsKind_packages (id : String) (j answer : Json)
     (hw : (j.getObjVal? "witness").toBool = false)
@@ -174,16 +186,22 @@ theorem runRightsKind_packages (id : String) (j answer : Json)
         answer = VE.Route.Wire.ok id [("verdict", .str "UNKNOWN"),
           ("status_text", .str ("UNKNOWN: " ++ d ++ ", budget 10000")), ("targets", T),
           ("conditional_on", toJson ([] : List String)), ("detail", .str d)]) ∨
-      (∃ rest C, answer = VE.Route.Wire.ok id [("verdict", .str "CONFLICT-FREE"),
+      (∃ rest C W e S, answer = VE.Route.Wire.ok id [("verdict", .str "CONFLICT-FREE"),
           ("status_text", .str ("CONFLICT-FREE among rules on the same act, conditional on " ++ rest)),
-          ("targets", T), ("conditional_on", C)]) := by
+          ("targets", T), ("conditional_on", C), ("weighing_points", W), ("situation_exhibited", .bool e),
+          ("budget", toJson conflictBudget), ("situation", S)]) := by
   unfold runRightsKind at h
   simp only [String.reduceBEq, Bool.false_eq_true, ↓reduceIte, hw, Bool.and_false] at h
   cases hr : replayRightsConflict j with
   | error e => simp [hr] at h; cases h
   | ok res =>
-    simp only [hr] at h
-    cases h
+    simp only [hr, bind, Except.bind, pure, Except.pure] at h
+    cases hx : exhibit res.src j with
+    | error e => simp [hx] at h
+    | ok M =>
+    simp only [hx, Except.ok.injEq] at h
+    subst h
+    unfold conflictAnswer conflictAnswerOf
     refine ⟨toJson (List.map (fun x => x.fst) (VE.Norms.targets (VE.SoftNorms.soften (correlate res.src.D)))), ?_⟩
     cases hf : res.conflictFree
     · have hs := firstFailure_of_not_free j res hr hf
@@ -194,6 +212,6 @@ theorem runRightsKind_packages (id : String) (j answer : Json)
       simp [hd, toString]
     · right
       simp only [↓reduceIte, toString, String.append_assoc]
-      cases firstFailure res <;> exact ⟨_, _, rfl⟩
+      cases firstFailure res <;> exact ⟨_, _, _, _, _, rfl⟩
 
 end ResponseShape.Encoders.Rights

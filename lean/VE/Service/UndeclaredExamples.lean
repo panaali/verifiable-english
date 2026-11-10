@@ -63,4 +63,125 @@ def member (profiles : List String) (key : String) : Except String Json := do
     ("make_reasonable_efforts", ["make", "reasonable", "efforts"]), ("reasonable_grounds", ["reasonable", "grounds"]),
     ("trial", ["trial", "0", "is", "a", "fair", "trial"])]
 
+/-! ### jt-3b: authored fences and the report's lines
+
+The bound names reach an authored fence through `contentOf`, and the report places jt-3's lines
+(`tests/test_judgments_document.py` runs the same documents through `ve document check`). -/
+
+def fenceVocabulary : Json := Json.mkObj [
+  ("sorts", Json.mkObj [("limit", Json.mkObj [("description", .str "a limit")])]),
+  ("constants", Json.mkObj [("atlas", Json.mkObj [("description", .str "a limit"), ("sort", .str "limit")])]),
+  ("predicates", Json.mkObj (["reasonable_limit", "reasonable_grounds", "due_date", "published"].map fun p =>
+    (p, Json.mkObj [("arguments", toJson ["limit"]), ("description", .str p)])))]
+
+def plainProfiles : List String := ["documents@1", "relational-fol@0"]
+def fenceProfiles : List String := ["documents@1", "judgments@0", "relational-fol@0"]
+
+def pairs (rows : List (String × String)) : Json := Json.arr (rows.map fun (a, b) => toJson [a, b]).toArray
+
+/-- The proposal Python sends for the environment the chain reads a fence in. -/
+def lexicon : Json :=
+  let env := Json.mkObj [("language", .str "ve.core@0.2"), ("profiles", toJson plainProfiles),
+    ("spec_revision", .str "ve-v0.2-expand2-2026-09-25"), ("vocabulary", fenceVocabulary)]
+  Json.mkObj [("format", .str VE.EnglishGrammar.Run.lexiconFormat),
+    ("environment_id", .str ((VE.EnglishGrammar.Run.environmentId env).toOption.getD "")),
+    ("nouns", pairs [("limit", "limit")]), ("letters", pairs [("limit", "L")]),
+    ("wordings", pairs [("due_date", "{0} is classified as \"due_date\""), ("published", "{0} is published"),
+      ("reasonable_grounds", "{0} is classified as \"reasonable_grounds\""),
+      ("reasonable_limit", "{0} is classified as \"reasonable_limit\"")]),
+    ("negatives", toJson ([] : List String)), ("aliases", toJson ([] : List String)),
+    ("spellings", pairs [("atlas", "atlas")])]
+
+def term (name : String) (decider : String := "unstated") (factors : List String := []) : Json :=
+  Json.mkObj [("name", .str name), ("arguments", toJson ["limit"]), ("decided_by", .str decider),
+    ("necessary", toJson ([] : List String)), ("sufficient", toJson ([] : List String)), ("factors", toJson factors),
+    ("precedents", toJson ([] : List String)), ("jurisdiction", .str "document"), ("version", toJson (1 : Nat))]
+
+def opened (names : List String) : Json := Json.mkObj [("open", toJson names)]
+
+/-- A one-unit document over a fence reading `sentence`. -/
+def fenced (profiles : List String) (sentence : String) (terms : List Json := [])
+    (meaning : Json := .str "specified") : String :=
+  let environment := Json.mkObj [("language", .str "ve.core@0.2"), ("profiles", toJson profiles),
+    ("spec_revision", .str "ve-v0.2-expand2-2026-09-25"), ("vocabulary", fenceVocabulary)]
+  let unit := Json.mkObj [("id", .str "a"), ("span", toJson [0, 14]), ("kind", .str "asserted"),
+    ("meaning", meaning), ("support", .str "assumption"), ("content", Json.mkObj [("fence", .str "a")]),
+    ("surface", .str "english")]
+  let front := Json.mkObj [("format", .str "ve-document@1"), ("environment", environment), ("units", toJson [unit]),
+    ("open_terms", toJson terms)]
+  "---\n" ++ front.compress ++ "\n---\nAtlas is odd.\n```ve a\n" ++ sentence ++ "\n```\n"
+
+def answer (text : String) : Except String Json :=
+  checkCore (Json.mkObj [("id", .str "d"), ("document", .str text), ("admit", .bool false), ("lexicon", lexicon)])
+
+def said (p : String) : String := s!"Atlas is classified as \"{p}\"."
+def bound : String := fenced fenceProfiles (said "reasonable_limit")
+  [term "reasonable_limit" "governance_function" ["the budget"]] (opened ["reasonable_limit"])
+def refusal : String := "UndeclaredEvaluative: 'Reasonable' is a judgment. Say who decides it ('… is a judgment for " ++
+  "the operator'), or define it ('In this document, a reasonable limit means …')."
+def refused (text : String) : Option String := match answer text with
+  | .error m => some m
+  | .ok _ => none
+def lines (text : String) : Option Json := ((answer text).toOption).bind (·.getObjVal? "judgment_lines" |>.toOption)
+
+-- An unbound word in an authored fence is refused with 9.5's text, and only under the profile (J-λ).
+#guard refused (fenced fenceProfiles (said "reasonable_limit")) == some refusal
+#guard refused (fenced plainProfiles (said "reasonable_limit")) == none
+-- Per predicate (DRI item 3): `reasonable_grounds` bound does not bind `reasonable_limit`, and binds itself.
+#guard refused (fenced fenceProfiles (said "reasonable_limit") [term "reasonable_grounds"]) == some refusal
+#guard refused (fenced fenceProfiles (said "reasonable_grounds") [term "reasonable_grounds"]
+  (opened ["reasonable_grounds"])) == none
+-- Bound, a plain word, and another sense (`due_date`) answer.
+#guard refused bound == none
+#guard refused (fenced fenceProfiles "Atlas is published.") == none
+#guard refused (fenced fenceProfiles (said "due_date")) == none
+-- Another refusal keeps its class, under the profile and without it.
+#guard ((refused (fenced fenceProfiles "Atlas is odd.")).map (·.startsWith "SyntaxError: ")) == some true
+#guard refused (fenced fenceProfiles "Atlas is odd.") == refused (fenced plainProfiles "Atlas is odd.")
+-- The lines: the legend with the decider and the factors, the unit's neutral status line.
+def boundLines : Json := Json.mkObj [
+  ("legend", toJson [Json.mkObj [("term", .str "reasonable_limit"), ("lines", toJson [
+    "Whether a limit is classified as \"reasonable_limit\" is a judgment for the governance function.",
+    "The text mentions these points: the budget."])]]),
+  ("status", toJson [Json.mkObj [("unit", .str "a"), ("line", .str
+    "Open: this uses the judgment whether a limit is classified as \"reasonable_limit\".")]])]
+#guard lines bound == some boundLines
+-- An unused bound term has its legend and no status row; no line says who decides what the text leaves unstated.
+#guard lines (fenced fenceProfiles "Atlas is published." [term "reasonable_grounds"]) == some (Json.mkObj [
+  ("legend", toJson [Json.mkObj [("term", .str "reasonable_grounds"), ("lines", toJson [
+    "Whether a limit is classified as \"reasonable_grounds\" is a judgment; the text does not say who makes it."])]]),
+  ("status", toJson ([] : List Json))])
+#guard lines (fenced plainProfiles "Atlas is published.") == none
+-- Every term has its row, the third argument's factors included, in declaration order.
+#guard legendRows [⟨"b", ["limit"], "unstated", ["f"]⟩, ⟨"a", ["limit", "limit"], "reviewer", []⟩] ==
+  [("b", ["Whether a limit is classified as \"b\" is a judgment; the text does not say who makes it.",
+      "The text mentions these points: f."]),
+   ("a", ["Whether a limit has the recorded relation \"a\" to a limit (the same or another) is a judgment for the reviewer."])]
+-- A soft document's `E″` keeps the names (`softContentOf` reads its fences over it); `tests/test_judgments_document.py`
+-- runs a soft document's fence through the service.
+#guard (do
+    let E ← environmentOf ((Json.parse ((bound.drop 4).takeWhile (· != '\n'))).toOption.getD .null |>.getObjValD "environment")
+      (toJson ([] : List Json)) false
+    let X ← layeredIds { E with boundNames := some (toJson ["p"]) } E
+    pure X.boundNames).toOption == some (some (toJson ["p"]))
+-- Two judgments of one unit, in declaration order, and the rows of the units that depend on them.
+def view (id : String) (ps : List String) : VE.Judgments.UnitView :=
+  { id, meaning := "open", listed := ps, asserted := true, set := none,
+    own := some (.formula (ps.foldr (fun p f => .and (.unary p (.var 0)) f) .top)) }
+def declared : List VE.Judgments.Judgment := [⟨"a", ["limit"], "unstated", []⟩, ⟨"b", ["limit"], "unstated", []⟩]
+#guard statusRows [] declared [view "u1" ["b", "a"], view "u2" [], view "u3" ["b"]] ==
+  [("u1", "Open: this uses the judgments whether a limit is classified as \"a\" and whether a limit is classified as \"b\"."),
+   ("u3", "Open: this uses the judgment whether a limit is classified as \"b\".")]
+-- Three bound terms, the fence's in the middle: every name reaches the fence, and every term has its legend row.
+#guard refused (fenced fenceProfiles (said "reasonable_grounds")
+  [term "reasonable_limit", term "reasonable_grounds", term "published"] (opened ["reasonable_grounds"])) == none
+#guard ((lines (fenced fenceProfiles (said "reasonable_grounds")
+    [term "reasonable_limit", term "reasonable_grounds", term "published"] (opened ["reasonable_grounds"]))).bind
+    fun j => (j.getObjValD "legend").getArr?.toOption.map (·.toList.map (·.getObjValD "term"))) ==
+  some [.str "reasonable_limit", .str "reasonable_grounds", .str "published"]
+-- `linesJson` writes every status row, in order.
+#guard linesJson [] [("u1", "x"), ("u2", "y"), ("u3", "z")] == Json.mkObj [("legend", toJson ([] : List Json)),
+  ("status", toJson [Json.mkObj [("unit", .str "u1"), ("line", .str "x")], Json.mkObj [("unit", .str "u2"),
+    ("line", .str "y")], Json.mkObj [("unit", .str "u3"), ("line", .str "z")]])]
+
 end VE.Service.UndeclaredExamples

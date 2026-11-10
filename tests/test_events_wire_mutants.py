@@ -15,6 +15,9 @@ sort, and the node limit read on the first premise only. This test plants those 
 - `swap`: each two adjacent check steps of a `do` block swapped when the second does not read what the first binds,
   so the fault order (spec 4's items, then each item's checks, as written) is pinned by a fixture with both faults.
 
+By hand beside them: `HOOK`, et-4b's route hook, one per claimed behaviour, and `ORDER`, the two order pins across
+the `decodeThroughLinks`/`finishEvents` split that no swap of one `do` block reaches (DRI 2026-11-08, et-4b-gate 3).
+
 The checks' own conditions get the tool's operators (`--classes all`: docs/events-time-causation/et-4/
 all-mutants.json). Each mutant is elaborated with `lake env lean` as one file, `Wire.lean` then the fixtures; it is
 killed when `Wire.lean` elaborates and every error is a failed `#guard`. The unmutated file must elaborate cleanly, a
@@ -23,6 +26,8 @@ mutant must change the source, and a mutant listed as equivalent must elaborate 
 from __future__ import annotations
 
 from functools import partial
+import json
+import os
 import re
 import shutil
 import subprocess
@@ -46,7 +51,44 @@ REVIEW = {
     "review-state-fields": ('objectAt j ".states"', "pure () --"),
     "review-link-fields": ('objectAt j ".links"', "pure () --"),
     "review-link-cause-sort": ("contains c", "contains e"),
-    "review-premise-after-first": ("(ls.map fun (l, a)", "((ls.take 1).map fun (l, a)"),
+    "review-premise-after-first": ("(sized.map fun (l, n)", "((sized.take 1).map fun (l, n)"),
+}
+
+# et-4b's hook (seeded bugs): what the kinds below do not reach, each one behaviour the report claims.
+HOOK = {
+    "hook-no-profile-test": ('if (VE.Compose.listedProfiles environment).contains "events@0" then', "if true then"),
+    "hook-no-row": ("let _ ← VE.Compose.gateOf VE.Compose.profileTable (VE.Compose.listedProfiles environment)",
+                    "let _ := ()"),
+    "hook-no-open-check": ("decodeEventsWith (checkOpen (openTermsOf terms)) environment", "decodeEvents environment"),
+    "open-ignores-decider": ('(l.predicate, l.decidedBy.getD "unstated")', '(l.predicate, "the drafters")'),
+    "open-first-link-only": ("firstFault (ls.map fun l =>\n    (!opens", "firstFault ((ls.take 1).map fun l =>\n    (!opens"),
+    "open-terms-name-only": ('.ok n, .ok d => some (n, d)', '.ok n, _ => some (n, "the drafters")'),
+    "hook-dates-before-open": ("let d ← decodeEventsWith (checkOpen (openTermsOf terms)) environment",
+                               "let _ ← decodeEvents environment\n    "
+                               "let d ← decodeEventsWith (checkOpen (openTermsOf terms)) environment"),
+    "view-keeps-the-block": ('(·.1 != "events")', "(fun _ => true)"),
+    "view-keeps-the-profile": ('.filter (· != "events@0")', ""),
+    "view-no-dates": ("(constants ++ dated)", "constants"),
+    "view-drops-the-constants": ("(constants ++ dated)", "dated"),
+    "view-anchor-as-iso": ('if d.V.anchor == some D then "the date of this document" else D.iso', "D.iso"),
+    "charge-states-once": ("2 * states.length", "states.length"),
+    "charge-no-links": ("+ raw.length > VE.Limits.maxPredicates", "> VE.Limits.maxPredicates"),
+    "charge-off-by-one": ("raw.length > VE.Limits.maxPredicates", "raw.length ≥ VE.Limits.maxPredicates"),
+    "sum-off-by-one": ("(sized.map (·.2)).sum > limit", "(sized.map (·.2)).sum ≥ limit"),
+    "sum-first-only": ("(sized.map (·.2)).sum > limit", "((sized.take 1).map (·.2)).sum > limit"),
+    "repeat-ignores-seen": ("Std.HashSet.ofList seen", "(∅ : Std.HashSet String)"),
+    "repeat-last-wins": ("| some r => (some r, acc.2)", "| some _ => (if acc.2.contains n then some n else acc.1, acc.2)"),
+}
+
+# Spec 4's item order across the split (reviews/dri-decisions-20261108-et-4b-gate.md item 3): the two swaps the
+# generator made before `decodeEvents` was split into `decodeThroughLinks` and `finishEvents`, each killed by a
+# fixture with both faults in WireExamples.lean: each item-4 sort fault (`EventsSort: deed` and the rest) beside the
+# base block's link, whose sorts are then no role sorts; "Item 5 before item 6" (and `LinkNotOpen` on `badDate`).
+ORDER = {
+    "order-links-before-roles": ("  checkRoles W V0\n  pure ⟨W, V0, ← checkLinks W V0 raw, dates, anchor⟩",
+                                 "  let ls ← checkLinks W V0 raw\n  checkRoles W V0\n  pure ⟨W, V0, ls, dates, anchor⟩"),
+    "order-dates-before-links": ("  pure ⟨W, V0, ← checkLinks W V0 raw, dates, anchor⟩",
+                                 "  let _ ← checkDates W dates anchor\n  pure ⟨W, V0, ← checkLinks W V0 raw, dates, anchor⟩"),
 }
 
 # Lists one check may read for another: each is replaced by each other one of its group.
@@ -55,7 +97,7 @@ SIBLINGS = (("roleSorts V", "eventSorts V", "stateSorts V"),
             ("contains c", "contains e"))
 
 # The statements that start a check step whatever their form; `if … throw` is one too.
-HEADS = ("objectAt ", "firstFault ", "checkDay ", "checkRoles ", "checkPremiseSize ")
+HEADS = ("objectAt ", "firstFault ", "checkDay ", "checkRoles ", "checkPremiseSize ", "open_ ")
 
 # Mutants that change the source and that no input tells apart from it, each with the reason.
 EQUIVALENT = {
@@ -66,9 +108,6 @@ EQUIVALENT = {
     "sibling-checkRoles-rolePreds-V-1-(V.states.flatMap-fun-s-=>-[s.begins,-s.ends])":
         "an event role named twice is refused first: one predicate has one signature, so two events on it share a "
         "sort (DuplicateDeclaration: event sort), and an event and a state on it share a sort (state sort)",
-    "drop-decodeEvents-15":
-        "no block reaches the node limit: every generated premise has a fixed shape, at most 20 nodes, against "
-        "maxNodes = 10000 (a guard pins the bound); `checkPremiseSize` is pinned at its boundary on its own",
 }
 
 
@@ -162,17 +201,28 @@ def _generated(text: str) -> dict[str, str]:
 
 
 def _review(name: str, text: str) -> str:
-    old, new = REVIEW[name]
+    old, new = REVIEW.get(name) or HOOK.get(name) or ORDER[name]
     assert text.count(old) == 1, name
     return text.replace(old, new)
 
 
 def _mutants() -> dict[str, str]:
     text = WIRE.read_text()
-    return {**{n: _review(n, text) for n in REVIEW}, **_generated(text)}
+    return {**{n: _review(n, text) for n in (*REVIEW, *HOOK, *ORDER)}, **_generated(text)}
 
 
 MUTANTS = _mutants()
+
+
+def mutant_cases() -> dict[str, str]:
+    """Each mutant's operator, definition and changed lines by name: tools/gate_collection.py pairs by it."""
+    before, out = WIRE.read_text().split("\n"), {}
+    for name, text in MUTANTS.items():
+        after = text.split("\n")
+        start = len(os.path.commonprefix([before, after]))
+        end = len(os.path.commonprefix([before[start:][::-1], after[start:][::-1]]))
+        out[name] = json.dumps([*name.split("-")[:2], before[start:len(before) - end], after[start:len(after) - end]])
+    return out
 
 
 def _assemble(wire: str) -> str:
@@ -265,10 +315,11 @@ def test_the_generated_mutants_cover_every_check_step_list_and_order():
     text = WIRE.read_text()
     generated = _generated(text)
     blocks = dict(_blocks(text))
-    assert set(blocks) == {"objectAt", "decodeEventSort", "decodeStateSort", "decodeLinkRaw", "checkRoles",
-                           "checkLinks", "checkDates", "decodeEvents"}
+    assert set(blocks) == {"objectAt", "decodeEventSort", "decodeStateSort", "decodeLinkRaw", "checkRoles", "checkLinks",
+                           "checkDates", "checkPremiseSize", "decodeThroughLinks", "finishEvents", "decodeEventsWith",
+                           "routeView", "eventsHook"}
     drops = {n.rsplit("-", 1)[0] for n in generated if n.startswith("drop-")}
-    assert drops == {f"drop-{d}" for d in blocks}
+    assert drops == {f"drop-{d}" for d in blocks} - {"drop-routeView", "drop-eventsHook"}  # binds and a result only
     # Every `throw` of a `do` block is in a dropped step, a bind (whose value is needed), or a result.
     lines = text.split("\n")
     for name, stmts in blocks.items():
@@ -278,8 +329,8 @@ def test_the_generated_mutants_cover_every_check_step_list_and_order():
                 assert _droppable(stmt) or _bound(stmt) or "pure" in stmt, (name, stmt)
     assert len([n for n in generated if n.startswith("drop-checkRoles-")]) == len(blocks["checkRoles"]) == 6
     assert len([n for n in generated if n.startswith("swap-checkRoles-")]) == 5
-    # Spec 4's items 3 to 6 as decodeEvents runs them: day, roles, links, dates.
-    assert {"swap-decodeEvents-10", "swap-decodeEvents-11", "swap-decodeEvents-12"} <= set(generated)
+    # Spec 4's items 3 and 4 as the decoder runs them, and the open-term check a route adds before the dates.
+    assert "swap-decodeThroughLinks-11" in generated and "drop-decodeEventsWith-1" in generated
     siblings = [n for n in generated if n.startswith("sibling-")]
     assert len(siblings) == sum(text.count(t) * (len(g) - 1) for g in SIBLINGS for t in g) == 22
     # The review's seven are of these kinds: five a generated mutant makes as written, up to the dropped line's

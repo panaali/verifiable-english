@@ -1,6 +1,6 @@
 import VE.Route.Layer
 import VE.ClaimGraph
-import VE.TableauExtendedChecker
+import VE.Closure.Tableau
 import VE.Order.Tableau
 import VE.Order.Consequence
 import VE.Closure.Consequence

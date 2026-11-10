@@ -141,6 +141,15 @@ def joinCheck (name act : String) (ts : List Tok) : Except String String :=
   | some _ => throw s!"InvalidInput: act phrase for {name} has a comma outside a fixed phrase"
   | none => pure act
 
+/-- A simple act: the Bool view of `joinCheck` (`joinWords`, *for* included, and commas) on the act's tokens under the
+fixed phrases `fx`; an act `lex` refuses is not simple. `check` runs `joinCheck` itself through `checkWith`. -/
+def joinFree (fx : List String) (act : String) : Bool :=
+  match lex fx act with
+  | .ok ts => match joinCheck "" act ts with
+    | .ok _ => true
+    | .error _ => false
+  | .error _ => false
+
 /-- 1.3: AP-1 acceptance; the canonical act, or the diagnostic of 10 (D-1 to D-6, or `decodeFixed`'s). -/
 def check (fx : List String) (name : String) (arity : Nat) (raw : Lean.Json) : Except String String :=
   checkWith (joinCheck name) fx name arity raw
@@ -190,6 +199,39 @@ theorem check_no_join {fx : List String} {name : String} {k : Nat} {raw : Lean.J
         next => split at hc <;> cases hc
     next => cases hc
   next => cases hc
+
+/-- What `check` accepts is a simple act (commands-imperatives 9): the join test `check` ran is the one `joinFree` views. -/
+theorem check_joinFree {fx : List String} {name : String} {k : Nat} {raw : Lean.Json} {a : String}
+    (hc : check fx name k raw = .ok a) : joinFree fx a = true := by
+  have hl : ∃ ts, lex fx a = .ok ts := by
+    unfold check checkWith joinCheck at hc
+    simp only [bind, Except.bind, pure, Except.pure] at hc
+    split at hc
+    next =>
+      split at hc
+      next =>
+        split at hc
+        next => cases hc
+        next =>
+          split at hc
+          next ts hlex =>
+            split at hc
+            next => cases hc
+            next => cases hc
+            next => cases hc; exact ⟨ts, hlex⟩
+          next => split at hc <;> cases hc
+      next => cases hc
+    next => cases hc
+  obtain ⟨ts, hl⟩ := hl
+  have hno := check_no_join hc hl
+  have hn : ts.find? (fun t => match t with | .word w => joinWords.contains w.toLower | .comma => true | _ => false) =
+      none := List.find?_eq_none.mpr fun t ht => by
+    obtain ⟨hw, hco⟩ := hno t ht
+    cases t <;> simp_all
+  unfold joinFree joinCheck
+  rw [hl]
+  simp only [hn]
+  rfl
 
 /-- A loop whose body never stops early ran its body without error on every element. -/
 theorem forIn_ok {α ε : Type} {f : α → PUnit → Except ε (ForInStep PUnit)} :
