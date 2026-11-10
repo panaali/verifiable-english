@@ -1,0 +1,4 @@
+{"allow": [
+ {"definition": "VE.Acts.Wire.checkActBy", "operator": "list-empty", "reason": "ill-typed: `[]` where `joinedActBy R fx V name ts`, an `Except String Act`, stood; Lean refuses it at elaboration (Type mismatch), a message the tool does not class as a refusal"},
+ {"definition": "VE.Acts.Run.rowsOf", "operator": "list-empty", "reason": "ill-typed: `[]` with no element type where the meanings `ms` stood; Lean refuses it at elaboration (pattern variable with metavariables), as ap-4 allowed for the same cut of `rowsOf`"}
+]}

@@ -426,6 +426,9 @@ def l6Steps (n : Nat) : Option Nat :=
 
 #guard framesOk ⟨V5.frames ++ padFrames 126, []⟩ && !framesOk ⟨V5.frames ++ padFrames 127, []⟩
 #guard [0, 30, 62, 126].all fun n => l6Steps n == some (23152 + 1984 * n)
+-- the hashed first occurrences and first places, directly (`firstsGo_eq`, `idxGo_getD`)
+#guard firstsGo ∅ ["S", "J", "S", "FW"] == ["S", "J", "FW"] &&
+  ["S", "J", "FW", "x"].map (fun y => (idxGo ["S", "J", "S", "FW"] 0 ∅).getD y 4) == [0, 1, 3, 4]
 
 /-- Whether compiled code runs the forms that build the grammar and read the rule table once, and skip an empty
 suffix (each `@[csimp]` lemma of ap-parse-index is installed), read when the check elaborates. -/

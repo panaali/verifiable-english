@@ -2081,7 +2081,7 @@ module VE.Acts.Grammar 76062da13ce95077161196680557a723e977eb3a4bc5cc62b87ce0758
 362:0-367:21 def VE.Acts.attachOf@VE.Acts.Grammar
 368:0-372:71 def VE.Acts.edgeLhs@VE.Acts.Grammar
 374:0-385:50 theorem VE.Acts.modifier_edges@VE.Acts.Grammar
-module VE.Acts.GrammarExamples 8fc865e63223e07fc14afe7aa4edb403daf2f633c986413084462a560f984209
+module VE.Acts.GrammarExamples 6eff26375c7a8a747be0ab2d4e37486610d83b8f783d3f90329ed435ef5ba6aa
 21:0-21:40 def VE.Acts.Examples.t@VE.Acts.GrammarExamples
 22:0-22:61 def VE.Acts.Examples.trees@VE.Acts.GrammarExamples
 23:0-25:19 def VE.Acts.Examples.own@VE.Acts.GrammarExamples
@@ -2125,8 +2125,8 @@ module VE.Acts.GrammarExamples 8fc865e63223e07fc14afe7aa4edb403daf2f633c98641308
 421:0-421:115 def VE.Acts.Examples.l6Fixed@VE.Acts.GrammarExamples
 422:0-422:95 def VE.Acts.Examples.l6@VE.Acts.GrammarExamples
 423:0-425:55 def VE.Acts.Examples.l6Steps@VE.Acts.GrammarExamples
-430:0-432:55 def VE.Acts.Examples.onceInstalled@VE.Acts.GrammarExamples
-435:0-437:94 def VE.Acts.Examples.elabOnceInstalled@VE.Acts.GrammarExamples
+433:0-435:55 def VE.Acts.Examples.onceInstalled@VE.Acts.GrammarExamples
+438:0-440:94 def VE.Acts.Examples.elabOnceInstalled@VE.Acts.GrammarExamples
 module VE.Acts.Index b27227eeeb013eb70474c86592c5a9a0116690d4e6a146862ea55b486962ad50
 18:0-21:93 def VE.Acts.firstsGo@VE.Acts.Index
 23:0-26:57 def VE.Acts.idxGo@VE.Acts.Index
