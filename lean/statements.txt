@@ -32150,6 +32150,129 @@ theorem VE.Readings.Run.RightsChoiceModel.valid
     self.M.Valid (VE.Norms.envAt (VE.SoftNorms.soften (VE.Rights.correlate self.src.D)) 0)
   -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.Valid@VE.Finite VE.Norms.envAt@VE.Norms.Tree VE.Readings.Run.RightsChoiceModel.M@VE.Readings.SupRun VE.Readings.Run.RightsChoiceModel.src@VE.Readings.SupRun VE.Readings.Run.RightsChoiceModel@VE.Readings.SupRun VE.Rights.Wire.RightsSource.D@VE.Rights.Wire VE.Rights.correlate@VE.Rights.Correlate VE.SoftNorms.soften@VE.SoftNorms.Soften
   -- expr 2780730869
+theorem VE.Readings.Run.SDCase.bind_eq
+  ∀ (c : VE.Readings.Run.SDCase) (A : VE.Readings.Choice) (own : List Lean.Json) (conclusion j : Lean.Json),
+    c.bind A own conclusion j =
+      VE.NormDefaults.Wire.bindCertX c.x.r.b.a.re.lowerJson (VE.Readings.supU c.N)
+        (VE.Readings.slotUnder c.N.D A ++ VE.Readings.supX c.N) (VE.Readings.sup c.N.D).snd own conclusion j
+  -- uses VE.Formula@VE.Syntax VE.NormDefaults.Wire.bindCertX@VE.NormDefaults.LayeredEntail VE.Readings.Choice@VE.Readings.Choice VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.Run.SDCase.N@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.bind@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.x@VE.Readings.SoftSupRun VE.Readings.Run.SDCase@VE.Readings.SoftSupRun VE.Readings.Wire.Admitted.re@VE.Readings.Wire VE.Readings.Wire.Admitted2.a@VE.Readings.SupWire VE.Readings.Wire.AdmittedSD.b@VE.Readings.SoftWire VE.Readings.Wire.ReadingsEnvironment.lowerJson@VE.Readings.Wire VE.Readings.Wire.SupReplaySD.r@VE.Readings.SoftSupWire VE.Readings.slotUnder@VE.Readings.Choice VE.Readings.sup@VE.Readings.Choice VE.Readings.supU@VE.Readings.Unspecified VE.Readings.supX@VE.Readings.SoftSup VE.Rights.RightsDoc@VE.Rights.Tree VE.Tableau.Certificate@VE.Tableau
+  -- expr 2886605240
+theorem VE.Readings.Run.SDCase.free_eq
+  ∀ (c : VE.Readings.Run.SDCase) (A : VE.Readings.Choice) (certs : List (Option VE.Tableau.Certificate)),
+    c.free A certs =
+      VE.NormDefaults.Wire.conflictFreeCheckX (VE.Readings.supU c.N)
+        (VE.Readings.slotUnder c.N.D A ++ VE.Readings.supX c.N) certs
+  -- uses VE.Formula@VE.Syntax VE.NormDefaults.Wire.conflictFreeCheckX@VE.NormDefaults.LayeredEntail VE.Readings.Choice@VE.Readings.Choice VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.Run.SDCase.N@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.free@VE.Readings.SoftSupRun VE.Readings.Run.SDCase@VE.Readings.SoftSupRun VE.Readings.slotUnder@VE.Readings.Choice VE.Readings.supU@VE.Readings.Unspecified VE.Readings.supX@VE.Readings.SoftSup VE.Tableau.Certificate@VE.Tableau
+  -- expr 2242268193
+theorem VE.Readings.Run.SDCase.free_sound
+  ∀ (c : VE.Readings.Run.SDCase) (A : VE.Readings.Choice),
+    (∀ (z : String × Nat), z ∈ A → (VE.Readings.candidate c.N.D z.fst z.snd).isSome = Bool.true) →
+      ∀ (certs : List (Option VE.Tableau.Certificate)),
+        c.free A certs = Bool.true →
+          ∀ (ch : VE.Readings.Choice),
+            VE.Readings.Compatible c.N.D ch →
+              (∀ (z : String × Nat), z ∈ A → z ∈ ch) →
+                VE.NormDefaults.Wire.ConflictFreeX (VE.Readings.choiceU c.N ch) (VE.Readings.choiceX c.N ch)
+  -- uses VE.NormDefaults.Wire.ConflictFreeX@VE.NormDefaults.Layered VE.Readings.Candidate@VE.Readings.Doc VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.Run.SDCase.N@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.free@VE.Readings.SoftSupRun VE.Readings.Run.SDCase@VE.Readings.SoftSupRun VE.Readings.candidate@VE.Readings.Doc VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.choiceX@VE.Readings.SoftDefaults VE.Tableau.Certificate@VE.Tableau
+  -- expr 2584003682
+theorem VE.Readings.Run.SDCase.hF
+  ∀ (self : VE.Readings.Run.SDCase), self.F = VE.NormDefaults.fill self.U
+  -- uses VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.Doc@VE.Norms.Tree VE.Readings.Run.SDCase.F@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.U@VE.Readings.SoftSupRun VE.Readings.Run.SDCase@VE.Readings.SoftSupRun
+  -- expr 998135223
+theorem VE.Readings.Run.SDCase.hFL
+  ∀ (self : VE.Readings.Run.SDCase), self.FL = (VE.NormDefaults.Admission.fillLabels self.U).zip self.fp
+  -- uses VE.Formula@VE.Syntax VE.NormDefaults.Admission.fillLabels@VE.NormDefaults.Admission VE.Readings.Run.SDCase.FL@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.U@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.fp@VE.Readings.SoftSupRun VE.Readings.Run.SDCase@VE.Readings.SoftSupRun
+  -- expr 1694527457
+theorem VE.Readings.Run.SDCase.hQ
+  ∀ (self : VE.Readings.Run.SDCase), self.envQ = VE.Readings.sharedEnvSD self.x.r.N
+  -- uses VE.Environment@VE.Syntax VE.Readings.Run.SDCase.envQ@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.x@VE.Readings.SoftSupRun VE.Readings.Run.SDCase@VE.Readings.SoftSupRun VE.Readings.Wire.AdmittedSD.N@VE.Readings.SoftWire VE.Readings.Wire.SupReplaySD.r@VE.Readings.SoftSupWire VE.Readings.sharedEnvSD@VE.Readings.SoftSup
+  -- expr 1012587303
+theorem VE.Readings.Run.SDCase.hS
+  ∀ (self : VE.Readings.Run.SDCase), self.S = VE.Readings.sup self.x.r.N.D
+  -- uses VE.Formula@VE.Syntax VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.Run.SDCase.S@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.x@VE.Readings.SoftSupRun VE.Readings.Run.SDCase@VE.Readings.SoftSupRun VE.Readings.Wire.AdmittedSD.N@VE.Readings.SoftWire VE.Readings.Wire.SupReplaySD.r@VE.Readings.SoftSupWire VE.Readings.sup@VE.Readings.Choice VE.Rights.RightsDoc@VE.Rights.Tree
+  -- expr 2919087050
+theorem VE.Readings.Run.SDCase.hU
+  ∀ (self : VE.Readings.Run.SDCase), self.U = VE.Readings.supU self.x.r.N
+  -- uses VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.Readings.Run.SDCase.U@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.x@VE.Readings.SoftSupRun VE.Readings.Run.SDCase@VE.Readings.SoftSupRun VE.Readings.Wire.AdmittedSD.N@VE.Readings.SoftWire VE.Readings.Wire.SupReplaySD.r@VE.Readings.SoftSupWire VE.Readings.supU@VE.Readings.Unspecified
+  -- expr 248192422
+theorem VE.Readings.Run.SDCase.hX
+  ∀ (self : VE.Readings.Run.SDCase), self.X = List.map (fun x => x.snd) self.XL
+  -- uses VE.Formula@VE.Syntax VE.Readings.Run.SDCase.X@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.XL@VE.Readings.SoftSupRun VE.Readings.Run.SDCase@VE.Readings.SoftSupRun
+  -- expr 508620737
+theorem VE.Readings.Run.SDCase.hXL
+  ∀ (self : VE.Readings.Run.SDCase), self.XL = VE.Readings.softXL self.x.r.N self.S.fst
+  -- uses VE.Formula@VE.Syntax VE.Readings.Run.SDCase.S@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.XL@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.x@VE.Readings.SoftSupRun VE.Readings.Run.SDCase@VE.Readings.SoftSupRun VE.Readings.Wire.AdmittedSD.N@VE.Readings.SoftWire VE.Readings.Wire.SupReplaySD.r@VE.Readings.SoftSupWire VE.Readings.softXL@VE.Readings.SoftDefaults VE.Rights.RightsDoc@VE.Rights.Tree
+  -- expr 2180997158
+theorem VE.Readings.Run.SDCase.hbg
+  ∀ (self : VE.Readings.Run.SDCase), self.bg = VE.Norms.background self.F
+  -- uses VE.Formula@VE.Syntax VE.Norms.background@VE.Norms.Prefix VE.Readings.Run.SDCase.F@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.bg@VE.Readings.SoftSupRun VE.Readings.Run.SDCase@VE.Readings.SoftSupRun
+  -- expr 2282381894
+theorem VE.Readings.Run.SDCase.hbgb
+  ∀ (self : VE.Readings.Run.SDCase), self.bgb = VE.Norms.backgroundBase self.F
+  -- uses VE.Formula@VE.Syntax VE.Norms.backgroundBase@VE.Norms.Prefix VE.Readings.Run.SDCase.F@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.bgb@VE.Readings.SoftSupRun VE.Readings.Run.SDCase@VE.Readings.SoftSupRun
+  -- expr 3950946428
+theorem VE.Readings.Run.SDCase.hc
+  ∀ (self : VE.Readings.Run.SDCase), self.checked = VE.Readings.checkedChoices self.x.r.N.D
+  -- uses VE.Readings.Choice@VE.Readings.Choice VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.Run.SDCase.checked@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.x@VE.Readings.SoftSupRun VE.Readings.Run.SDCase@VE.Readings.SoftSupRun VE.Readings.Wire.AdmittedSD.N@VE.Readings.SoftWire VE.Readings.Wire.SupReplaySD.r@VE.Readings.SoftSupWire VE.Readings.checkedChoices@VE.Readings.Choice
+  -- expr 2962413627
+theorem VE.Readings.Run.SDCase.hcanon
+  ∀ (self : VE.Readings.Run.SDCase), self.canon = VE.NormDefaults.Wire.canonicalEnvironmentJsonU self.x.r.b.a.re.lowerJson
+  -- uses VE.NormDefaults.Wire.canonicalEnvironmentJsonU@VE.NormDefaults.Wire VE.Readings.Run.SDCase.canon@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.x@VE.Readings.SoftSupRun VE.Readings.Run.SDCase@VE.Readings.SoftSupRun VE.Readings.Wire.Admitted.re@VE.Readings.Wire VE.Readings.Wire.Admitted2.a@VE.Readings.SupWire VE.Readings.Wire.AdmittedSD.b@VE.Readings.SoftWire VE.Readings.Wire.ReadingsEnvironment.lowerJson@VE.Readings.Wire VE.Readings.Wire.SupReplaySD.r@VE.Readings.SoftSupWire
+  -- expr 1418882706
+theorem VE.Readings.Run.SDCase.hel
+  ∀ (self : VE.Readings.Run.SDCase), self.el = VE.Norms.elaborate self.F.T
+  -- uses VE.Formula@VE.Syntax VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.elaborate@VE.Norms.Elaborate VE.Readings.Run.SDCase.F@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.el@VE.Readings.SoftSupRun VE.Readings.Run.SDCase@VE.Readings.SoftSupRun
+  -- expr 3997478169
+theorem VE.Readings.Run.SDCase.hfp
+  ∀ (self : VE.Readings.Run.SDCase), self.fp = VE.NormDefaults.fillPremises self.U
+  -- uses VE.Formula@VE.Syntax VE.NormDefaults.fillPremises@VE.NormDefaults.Premises VE.Readings.Run.SDCase.U@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.fp@VE.Readings.SoftSupRun VE.Readings.Run.SDCase@VE.Readings.SoftSupRun
+  -- expr 3063987244
+theorem VE.Readings.Run.SDCase.hslot
+  ∀ (self : VE.Readings.Run.SDCase), self.slot = VE.Readings.slotLabelled self.x.r.N.D
+  -- uses VE.Compose.Labelled@VE.Compose.Slot VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.Run.SDCase.slot@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.x@VE.Readings.SoftSupRun VE.Readings.Run.SDCase@VE.Readings.SoftSupRun VE.Readings.Wire.AdmittedSD.N@VE.Readings.SoftWire VE.Readings.Wire.SupReplaySD.r@VE.Readings.SoftSupWire VE.Readings.slotLabelled@VE.Readings.Choice
+  -- expr 4144523306
+theorem VE.Readings.Run.SDCase.hts
+  ∀ (self : VE.Readings.Run.SDCase), self.ts = VE.Norms.targets self.F
+  -- uses VE.Formula@VE.Syntax VE.Norms.targets@VE.Norms.Replay VE.Readings.Run.SDCase.F@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.ts@VE.Readings.SoftSupRun VE.Readings.Run.SDCase@VE.Readings.SoftSupRun
+  -- expr 4288148028
+theorem VE.Readings.Run.SDCase.hv
+  ∀ (self : VE.Readings.Run.SDCase), self.v = VE.Readings.Wire.supVocabulary self.x.r.b.a.re self.x.r.b.D
+  -- uses VE.Bridge.Vocabulary@VE.Bridge VE.Readings.Run.SDCase.v@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.x@VE.Readings.SoftSupRun VE.Readings.Run.SDCase@VE.Readings.SoftSupRun VE.Readings.Wire.Admitted.re@VE.Readings.Wire VE.Readings.Wire.Admitted2.D@VE.Readings.SupWire VE.Readings.Wire.Admitted2.a@VE.Readings.SupWire VE.Readings.Wire.AdmittedSD.b@VE.Readings.SoftWire VE.Readings.Wire.SupReplaySD.r@VE.Readings.SoftSupWire VE.Readings.Wire.supVocabulary@VE.Readings.SupWire
+  -- expr 3306352965
+theorem VE.Readings.Run.SDCase.local_eq
+  ∀ (c : VE.Readings.Run.SDCase) (M : VE.FiniteModel VE.Bridge.Entity)
+    (G : VE.NormDefaults.FiniteFill c.U VE.Bridge.Entity), c.localFree M G = VE.Readings.Wire.localFree c.U M G
+  -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel@VE.Finite VE.NormDefaults.FiniteFill@VE.NormDefaults.Evidence VE.Readings.Run.SDCase.U@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.localFree@VE.Readings.SoftSupRun VE.Readings.Run.SDCase@VE.Readings.SoftSupRun VE.Readings.Wire.localFree@VE.Readings.VerdictsWire
+  -- expr 2795788179
+theorem VE.Readings.Run.SDCase.model_eq
+  ∀ (c : VE.Readings.Run.SDCase) (A : VE.Readings.Choice) (M : VE.FiniteModel VE.Bridge.Entity)
+    (G : VE.NormDefaults.FiniteFill c.U VE.Bridge.Entity) (Γ : List VE.Formula) (φ : VE.Formula),
+    c.model A M G Γ φ = VE.NormDefaults.modelCheckX c.U (VE.Readings.slotUnder c.N.D A ++ VE.Readings.supX c.N) M G Γ φ
+  -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel@VE.Finite VE.Formula@VE.Syntax VE.NormDefaults.FiniteFill@VE.NormDefaults.Evidence VE.NormDefaults.modelCheckX@VE.NormDefaults.LayeredEntail VE.Readings.Choice@VE.Readings.Choice VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.Run.SDCase.N@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.U@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.model@VE.Readings.SoftSupRun VE.Readings.Run.SDCase@VE.Readings.SoftSupRun VE.Readings.slotUnder@VE.Readings.Choice VE.Readings.supX@VE.Readings.SoftSup
+  -- expr 4009453375
+theorem VE.Readings.Run.SDCase.premises_check
+  ∀ (c : VE.Readings.Run.SDCase) (A : VE.Readings.Choice) (Γ : List VE.Formula) (φ : VE.Formula)
+    (cert : VE.Tableau.Certificate),
+    VE.Tableau.checkCertificate (VE.Norms.envAt c.F (VE.Norms.size c.F)) (c.premises A Γ) φ cert = Bool.true →
+      VE.Readings.supCertificateCheckSD c.N A Γ φ cert = Bool.true
+  -- uses VE.Formula@VE.Syntax VE.Norms.envAt@VE.Norms.Tree VE.Norms.size@VE.Norms.Tree VE.Readings.Choice@VE.Readings.Choice VE.Readings.Run.SDCase.F@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.N@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.premises@VE.Readings.SoftSupRun VE.Readings.Run.SDCase@VE.Readings.SoftSupRun VE.Readings.supCertificateCheckSD@VE.Readings.SoftSup VE.Tableau.Certificate@VE.Tableau VE.Tableau.checkCertificate@VE.TableauChecker
+  -- expr 770922045
+theorem VE.Readings.Run.SDCase.premises_eq
+  ∀ (c : VE.Readings.Run.SDCase) (A : VE.Readings.Choice) (Γ : List VE.Formula),
+    c.premises A Γ =
+      VE.NormDefaults.Wire.premisesX (VE.Readings.supU c.N) (VE.Readings.slotUnder c.N.D A ++ VE.Readings.supX c.N)
+        ((VE.Readings.sup c.N.D).snd ++ Γ)
+  -- uses VE.Formula@VE.Syntax VE.NormDefaults.Wire.premisesX@VE.NormDefaults.LayeredEntail VE.Readings.Choice@VE.Readings.Choice VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.Run.SDCase.N@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.premises@VE.Readings.SoftSupRun VE.Readings.Run.SDCase@VE.Readings.SoftSupRun VE.Readings.slotUnder@VE.Readings.Choice VE.Readings.sup@VE.Readings.Choice VE.Readings.supU@VE.Readings.Unspecified VE.Readings.supX@VE.Readings.SoftSup VE.Rights.RightsDoc@VE.Rights.Tree
+  -- expr 2028991519
+theorem VE.Readings.Run.SDCase.slotX_eq
+  ∀ (c : VE.Readings.Run.SDCase) (A : VE.Readings.Choice),
+    c.slotX A = VE.Readings.slotUnder c.N.D A ++ VE.Readings.supX c.N
+  -- uses VE.Formula@VE.Syntax VE.Readings.Choice@VE.Readings.Choice VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.Run.SDCase.N@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.slotX@VE.Readings.SoftSupRun VE.Readings.Run.SDCase@VE.Readings.SoftSupRun VE.Readings.slotUnder@VE.Readings.Choice VE.Readings.supX@VE.Readings.SoftSup
+  -- expr 3504146256
+theorem VE.Readings.Run.SDCase.taken_eq
+  ∀ (c : VE.Readings.Run.SDCase) (A : VE.Readings.Choice), c.taken A = VE.Readings.takenBy c.N.D A
+  -- uses VE.Readings.Choice@VE.Readings.Choice VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.Run.SDCase.N@VE.Readings.SoftSupRun VE.Readings.Run.SDCase.taken@VE.Readings.SoftSupRun VE.Readings.Run.SDCase@VE.Readings.SoftSupRun VE.Readings.takenBy@VE.Readings.Choice
+  -- expr 2955110355
 theorem VE.Readings.Run.SoftChoiceModel.valid
   ∀ (self : VE.Readings.Run.SoftChoiceModel), self.M.Valid (VE.Norms.envAt (VE.SoftNorms.soften self.src.D) 0)
   -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.Valid@VE.Finite VE.Norms.envAt@VE.Norms.Tree VE.Readings.Run.SoftChoiceModel.M@VE.Readings.SupRun VE.Readings.Run.SoftChoiceModel.src@VE.Readings.SupRun VE.Readings.Run.SoftChoiceModel@VE.Readings.SupRun VE.SoftNorms.Wire.SoftSource.D@VE.SoftNorms.Wire VE.SoftNorms.soften@VE.SoftNorms.Soften
@@ -32163,6 +32286,10 @@ theorem VE.Readings.Run.candidateJson_eq
     VE.Readings.Run.candidateJson a R i = VE.Readings.Run.candidateJsonSpec a R i
   -- uses VE.Readings.ReadingSet@VE.Readings.Doc VE.Readings.Run.candidateJson@VE.Readings.Run VE.Readings.Run.candidateJsonSpec@VE.Readings.Run VE.Readings.Wire.Admitted@VE.Readings.Wire
   -- expr 3237936075
+theorem VE.Readings.Run.choices_isEmpty
+  ∀ (D : VE.Readings.Doc), (VE.Readings.choices D).isEmpty = (VE.Readings.checkedChoices D).isEmpty
+  -- uses VE.Readings.Choice@VE.Readings.Choice VE.Readings.Doc@VE.Readings.Doc VE.Readings.checkedChoices@VE.Readings.Choice VE.Readings.choices@VE.Readings.Choice
+  -- expr 4239903380
 theorem VE.Readings.Run.lower_verdicts_all
   ∀ (x : VE.Readings.Run.LowerVerdicts),
     VE.Readings.foldEntailment x.conflictRows x.queryRows = VE.Readings.ReadingVerdict.all →
@@ -32466,6 +32593,15 @@ theorem VE.Readings.Run.setPairs_eq
     VE.Readings.Run.setPairs a R RJ = VE.Readings.Run.setPairsSpec a R RJ
   -- uses VE.Readings.ReadingSet@VE.Readings.Doc VE.Readings.Run.setPairs@VE.Readings.Run VE.Readings.Run.setPairsSpec@VE.Readings.Run VE.Readings.Wire.Admitted@VE.Readings.Wire VE.Readings.Wire.SetJ@VE.Readings.Wire
   -- expr 2795821486
+theorem VE.Readings.Run.shownWith_eq
+  ∀ (N : VE.Readings.NDoc) (A : VE.Readings.Choice) (used : List String),
+    VE.Readings.Run.shownWith
+        (List.map (VE.Readings.labelImage N)
+          (List.filter (fun c => List.all A fun x => List.contains c x) (VE.Readings.checkedChoices N.D)))
+        used =
+      VE.Readings.sdShown N A used
+  -- uses VE.Readings.Choice@VE.Readings.Choice VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.Run.shownWith@VE.Readings.SoftSupRun VE.Readings.checkedChoices@VE.Readings.Choice VE.Readings.labelImage@VE.Readings.SoftSupLabels VE.Readings.sdShown@VE.Readings.SoftSupLabels
+  -- expr 4078420175
 theorem VE.Readings.Run.sideAt_sidesOf
   ∀ (a : VE.Readings.Wire.Admitted) (s : String) (n i : Nat),
     VE.Readings.Run.sideAt a s (VE.Readings.Run.sidesOf a s n) i = VE.Readings.sideOf a.D s i
