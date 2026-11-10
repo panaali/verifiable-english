@@ -1,0 +1,31 @@
+{
+ "head": "547dc3aa2969ca791b40cf6841f2fa6953e1e3ba",
+ "pytest": {
+  "command": "VE_NATIVE_PREBUILT=1 uv run pytest -q -p no:cacheprovider tests/test_closure.py tests/test_closure_certificates.py tests/test_closure_core_replay.py tests/test_closure_induction.py tests/test_closure_witnesses.py tests/test_data_three_way.py tests/test_p0_three_way.py tests/test_assurance_manifest.py -n 8 -rs",
+  "result": "235 passed, 3 skipped in 51.45s",
+  "skipped": [
+   "SKIPPED [1] tests/test_p0_three_way.py:93: dependency-order is outside Rust scope",
+   "SKIPPED [1] tests/test_p0_three_way.py:93: labels is outside Rust scope",
+   "SKIPPED [1] tests/test_p0_three_way.py:93: admission is outside Rust scope"
+  ]
+ },
+ "fuzz_closure": {
+  "command": "uv run python rust/fuzz_closure.py --output <scratch> --summary <scratch>, at the head and in the base worktree",
+  "summary": {
+   "seed": 20260924,
+   "cases": 3000,
+   "agreements": 3000,
+   "true": 1701,
+   "false": 1299,
+   "empty_domain_cases": 1204,
+   "body_cases": 2500,
+   "nested_cases": 622,
+   "forced_outer_parameter_cases": 1500,
+   "self_loop_models": 961,
+   "forced_cycle_models": 353,
+   "jsonl_sha256": "23e85ddd96f65f2817c014e6f7a5936c7e79fe67cbe61340fbf8394bb9ef79ce"
+  },
+  "base_and_head_jsonl_byte_identical": true
+ },
+ "closure_probe": "evidence/closure-probe.json: @0, @1, @2 and Core's version, atom invariant and conclusion, stale, unknown rule, induction under @0; certificate and route runners; base and head rows equal byte for byte"
+}
