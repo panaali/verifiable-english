@@ -105,6 +105,17 @@ def riskEveryCannotText (i : Nat) (chooser harm : String) : String :=
   s!"might lead to {harm}'; or some available action cannot lead to it: 'there is an action such that both " ++
   s!"that action is available to {chooser} and that action cannot lead to {harm}'."
 
+/-- The rows EN-2 appends to `Run.codeClasses` (one hunk; the one code table). -/
+def statementCodeRows : List (String × String) :=
+  [("ExpectedRule", "SyntaxError"), ("NoConsequence", "SyntaxError"), ("StrayConsequence", "SyntaxError"),
+   ("StrayCarveOut", "SyntaxError"), ("UnknownRule", "VEError"), ("UnformalisedSpan", "VEError"),
+   ("NodeRefused", "VEError"), ("NodeLimit", "ResourceLimit")]
+
+/-- The rows EN-3 appends to `Run.codeClasses` (kind `render`; `UnknownRule` is EN-2's). -/
+def renderCodeRows : List (String × String) :=
+  [("RenderUnread", "CheckerUnavailable"), ("RenderMismatch", "CheckerUnavailable"),
+   ("NoWording", "CheckerUnavailable"), ("InvalidInput", "VEError")]
+
 def codeClasses : List (String × String) :=
   [("SourceTooLong", "ResourceLimit"), ("TextTooLong", "ResourceLimit"), ("BadCharacter", "SyntaxError"),
    ("OpenQuote", "SyntaxError"), ("BadNumeral", "SyntaxError"), ("EmptyDocument", "SyntaxError"),
@@ -117,7 +128,7 @@ def codeClasses : List (String × String) :=
    ("NoDerivation", "SyntaxError"), ("Ambiguous", "AmbiguousDerivation"), ("Budget", "ResourceLimit"),
    ("InvalidGrammar", "CheckerUnavailable"), ("ConclusionWithoutPremise", "SyntaxError"),
    ("ConclusionNotDerived", "SyntaxError"), ("IllTyped", "TypeMismatch"), ("NotOneSentence", "SyntaxError"),
-   ("InvalidOverlay", "VEError"), ("UndeclaredEvaluative", "SyntaxError")]
+   ("InvalidOverlay", "VEError"), ("UndeclaredEvaluative", "SyntaxError")] ++ statementCodeRows
 
 theorem codeClasses_total : ∀ r : Reject, (codeClasses.lookup r.code).isSome = true := by
   intro r
@@ -149,6 +160,34 @@ read, and translation mode's `NotOneSentence`. Every other refusal names its sen
 def unsentencedCodes : List String :=
   ["SourceTooLong", "TextTooLong", "BadCharacter", "OpenQuote", "BadNumeral", "EmptyDocument", "EmptySentence",
    "Unterminated", "BadSpacing", "NotOneSentence"]
+
+/-- english.statement's statuses and the codes each may carry (`rendered` and the four render codes join with
+EN-3's rows). -/
+def statementStatusCodes : List (String × List String) :=
+  [("one", []), ("unformalised", ["UnformalisedSpan"]), ("none", ["NoDerivation"]), ("many", ["Ambiguous"]),
+   ("budget", ["Budget"]), ("invalidGrammar", ["InvalidGrammar", "InvalidOverlay"]), ("rendered", []),
+   ("rejected", VE.EnglishGrammar.Run.rejectCodes ++
+     ["ExpectedRule", "NoConsequence", "StrayConsequence", "StrayCarveOut", "UnknownRule", "NodeRefused", "NodeLimit",
+      "RenderUnread", "RenderMismatch", "NoWording", "InvalidInput"])]
+
+/-- english.statement's members of each status besides `status` and `identities`: required, then optional. The
+schema (recipe step 2) reads it; `english.grammar` exports it, `tools/english_codes.py` writes it to
+`ve/english_grammar/codes.json`, and the relay reads it there. -/
+def statementFields : List (String × List String × List String) :=
+  [("one", ["statements"], []), ("unformalised", ["code", "text", "class", "spans"], []),
+   ("none", ["code", "text", "class", "sentence"], []),
+   ("many", ["code", "text", "class", "sentence", "witnesses"], []),
+   ("budget", ["code", "text", "class", "sentence"], []),
+   ("invalidGrammar", ["code", "text", "class"], ["fault", "failure"]),
+   ("rendered", ["text", "blocks"], []),
+   ("rejected", ["code", "text", "class"], ["sentence", "span"])]
+
+/-- The codes whose answer never names a sentence: the lexer's (english.read's `unsentencedCodes`), the codes of a
+whole text, and the render codes. A `rejected` answer names a sentence exactly when its code is not here. -/
+def statementUnsentenced : List String :=
+  VE.EnglishGrammar.Run.unsentencedCodes ++
+    ["UnknownRule", "NodeRefused", "NodeLimit", "UnformalisedSpan", "Internal", "RenderUnread", "RenderMismatch",
+     "NoWording", "InvalidInput"]
 
 def noPremiseText (i : Nat) : String :=
   s!"Sentence {i + 1} is marked as a conclusion, and no earlier sentence is a premise."
@@ -673,6 +712,8 @@ def grammarCase (j : Json) : Except String Json := do
   pure (VE.Route.Wire.ok id [("result", Json.mkObj [("identities", Json.mkObj c.identities),
     ("nonterminals", toJson names), ("ranks", toJson G.rank), ("rules", Json.arr rules.toArray),
     ("codes", toJson codeClasses), ("statuses", toJson statusCodes), ("unsentenced", toJson unsentencedCodes),
+    ("statement_statuses", toJson statementStatusCodes), ("statement_fields", toJson statementFields),
+    ("statement_unsentenced", toJson statementUnsentenced),
     ("advice", toJson advice),
     ("policy", policyJson c.E)])])
 
