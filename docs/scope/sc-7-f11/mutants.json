@@ -1,28 +1,28 @@
 {
  "item": "sc-7-f11",
- "note": "Each mutant was planted in lean/VE/Scope/Authoring.lean, `lake build VE.Scope.AuthoringExamples` was run, and the file was restored; `failing` lists every #guard that failed.",
+ "note": "Each mutant was planted in lean/VE/Scope/Authoring.lean, `lake build VE.Scope.AuthoringExamples` was run, and the file was restored; `failing` lists every #guard that failed. Two earlier survivors (`follower` without `allowed c`; its ASCII range widened to U+0080) were closed by the guards at AuthoringExamples.lean:235-238.",
  "mutants": [
   {
    "kind": "R16 mutant",
    "definition": "VE.Scope.Pinned.clause",
    "file": "lean/VE/Scope/Authoring.lean",
-   "before": "(w.toList.zip w.toList.tail).all fun (a, b) => allowed a || allowed b || closers.contains b",
-   "after": "true",
+   "before": "&&\n  (w.toList.zip w.toList.tail).all fun (a, b) => allowed a || follower b",
+   "after": "",
    "name": "drop the new condition",
    "status": "KILLED",
    "test": "VE/Scope/AuthoringExamples.lean:220:0",
    "failing": [
     "VE/Scope/AuthoringExamples.lean:220:0",
     "VE/Scope/AuthoringExamples.lean:225:0",
-    "VE/Scope/AuthoringExamples.lean:232:0"
+    "VE/Scope/AuthoringExamples.lean:241:0"
    ]
   },
   {
    "kind": "R16 mutant",
    "definition": "VE.Scope.Pinned.clause",
    "file": "lean/VE/Scope/Authoring.lean",
-   "before": "(w.toList.zip w.toList.tail).all fun (a, b) => allowed a || allowed b || closers.contains b",
-   "after": "(w.toList.zip w.toList.tail).all fun (a, b) => allowed a || a == '!' || allowed b || closers.contains b",
+   "before": "(w.toList.zip w.toList.tail).all fun (a, b) => allowed a || follower b",
+   "after": "(w.toList.zip w.toList.tail).all fun (a, b) => allowed a || a == '!' || follower b",
    "name": "allow \"!\" inside a word",
    "status": "KILLED",
    "test": "VE/Scope/AuthoringExamples.lean:225:0",
@@ -34,60 +34,22 @@
    "kind": "R16 mutant",
    "definition": "VE.Scope.Pinned.clause",
    "file": "lean/VE/Scope/Authoring.lean",
-   "before": "(w.toList.zip w.toList.tail).all fun (a, b) => allowed a || allowed b || closers.contains b",
-   "after": "(w.toList.zip w.toList.tail).all fun (a, b) => allowed a || a == '.' || allowed b || closers.contains b",
+   "before": "(w.toList.zip w.toList.tail).all fun (a, b) => allowed a || follower b",
+   "after": "(w.toList.zip w.toList.tail).all fun (a, b) => allowed a || a == '.' || follower b",
    "name": "allow \".\" inside a word",
    "status": "KILLED",
    "test": "VE/Scope/AuthoringExamples.lean:220:0",
    "failing": [
     "VE/Scope/AuthoringExamples.lean:220:0",
     "VE/Scope/AuthoringExamples.lean:225:0",
-    "VE/Scope/AuthoringExamples.lean:232:0"
+    "VE/Scope/AuthoringExamples.lean:241:0"
    ]
   },
   {
    "kind": "R16 mutant",
    "definition": "VE.Scope.Pinned.clause",
    "file": "lean/VE/Scope/Authoring.lean",
-   "before": "(w.toList.zip w.toList.tail).all fun (a, b) => allowed a || allowed b || closers.contains b",
-   "after": "(w.toList.zip w.toList.tail).all fun (a, b) => allowed a || allowed b",
-   "name": "no closer after a sentence end inside a word",
-   "status": "KILLED",
-   "test": "VE/Scope/AuthoringExamples.lean:228:0",
-   "failing": [
-    "VE/Scope/AuthoringExamples.lean:228:0",
-    "VE/Scope/AuthoringExamples.lean:230:0",
-    "VE/Scope/AuthoringExamples.lean:242:0",
-    "VE/Scope/AuthoringExamples.lean:246:0"
-   ]
-  },
-  {
-   "kind": "R16 mutant",
-   "definition": "VE.Scope.Pinned.clause",
-   "file": "lean/VE/Scope/Authoring.lean",
-   "before": "(w.toList.zip w.toList.tail).all fun (a, b) => allowed a || allowed b || closers.contains b",
-   "after": "(w.toList.zip w.toList.tail).all fun (a, b) => allowed a || closers.contains b",
-   "name": "no allow-listed character after a sentence end inside a word",
-   "status": "KILLED",
-   "test": "VE/Scope/AuthoringExamples.lean:89:0",
-   "failing": [
-    "VE/Scope/AuthoringExamples.lean:131:0",
-    "VE/Scope/AuthoringExamples.lean:132:0",
-    "VE/Scope/AuthoringExamples.lean:154:0",
-    "VE/Scope/AuthoringExamples.lean:228:0",
-    "VE/Scope/AuthoringExamples.lean:229:0",
-    "VE/Scope/AuthoringExamples.lean:230:0",
-    "VE/Scope/AuthoringExamples.lean:238:0",
-    "VE/Scope/AuthoringExamples.lean:243:0",
-    "VE/Scope/AuthoringExamples.lean:254:0",
-    "VE/Scope/AuthoringExamples.lean:89:0"
-   ]
-  },
-  {
-   "kind": "R16 mutant",
-   "definition": "VE.Scope.Pinned.clause",
-   "file": "lean/VE/Scope/Authoring.lean",
-   "before": "(w.toList.zip w.toList.tail).all fun (a, b) => allowed a || allowed b || closers.contains b",
+   "before": "(w.toList.zip w.toList.tail).all fun (a, b) => allowed a || follower b",
    "after": "(w.toList.zip w.toList.tail).all fun (a, b) => allowed a || wordChar b",
    "name": "the follower may be any word character",
    "status": "KILLED",
@@ -95,7 +57,149 @@
    "failing": [
     "VE/Scope/AuthoringExamples.lean:220:0",
     "VE/Scope/AuthoringExamples.lean:225:0",
-    "VE/Scope/AuthoringExamples.lean:232:0"
+    "VE/Scope/AuthoringExamples.lean:241:0"
+   ]
+  },
+  {
+   "kind": "R16 mutant",
+   "definition": "VE.Scope.Pinned.follower",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "allowed c || closers.contains c || (0x21 ≤ c.toNat && c.toNat ≤ 0x7E) || (0x2010 ≤ c.toNat && c.toNat ≤ 0x2027)",
+   "after": "allowed c || (0x21 ≤ c.toNat && c.toNat ≤ 0x7E) || (0x2010 ≤ c.toNat && c.toNat ≤ 0x2027)",
+   "name": "follower: no closer",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:262:0",
+   "failing": [
+    "VE/Scope/AuthoringExamples.lean:262:0"
+   ]
+  },
+  {
+   "kind": "R16 mutant",
+   "definition": "VE.Scope.Pinned.follower",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "allowed c || closers.contains c || (0x21 ≤ c.toNat && c.toNat ≤ 0x7E) || (0x2010 ≤ c.toNat && c.toNat ≤ 0x2027)",
+   "after": "closers.contains c || (0x21 ≤ c.toNat && c.toNat ≤ 0x7E) || (0x2010 ≤ c.toNat && c.toNat ≤ 0x2027)",
+   "name": "follower: no allow-listed character",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:236:0",
+   "failing": [
+    "VE/Scope/AuthoringExamples.lean:236:0",
+    "VE/Scope/AuthoringExamples.lean:238:0"
+   ]
+  },
+  {
+   "kind": "R16 mutant",
+   "definition": "VE.Scope.Pinned.follower",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "allowed c || closers.contains c || (0x21 ≤ c.toNat && c.toNat ≤ 0x7E) || (0x2010 ≤ c.toNat && c.toNat ≤ 0x2027)",
+   "after": "allowed c || closers.contains c || (0x2010 ≤ c.toNat && c.toNat ≤ 0x2027)",
+   "name": "follower: no ASCII graphic range",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:228:0",
+   "failing": [
+    "VE/Scope/AuthoringExamples.lean:228:0",
+    "VE/Scope/AuthoringExamples.lean:230:0",
+    "VE/Scope/AuthoringExamples.lean:232:0",
+    "VE/Scope/AuthoringExamples.lean:236:0"
+   ]
+  },
+  {
+   "kind": "R16 mutant",
+   "definition": "VE.Scope.Pinned.follower",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "allowed c || closers.contains c || (0x21 ≤ c.toNat && c.toNat ≤ 0x7E) || (0x2010 ≤ c.toNat && c.toNat ≤ 0x2027)",
+   "after": "allowed c || closers.contains c || (0x21 ≤ c.toNat && c.toNat ≤ 0x80) || (0x2010 ≤ c.toNat && c.toNat ≤ 0x2027)",
+   "name": "follower: the ASCII range widened to U+0080",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:236:0",
+   "failing": [
+    "VE/Scope/AuthoringExamples.lean:236:0"
+   ]
+  },
+  {
+   "kind": "R16 mutant",
+   "definition": "VE.Scope.Pinned.follower",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "allowed c || closers.contains c || (0x21 ≤ c.toNat && c.toNat ≤ 0x7E) || (0x2010 ≤ c.toNat && c.toNat ≤ 0x2027)",
+   "after": "allowed c || closers.contains c || (0x21 ≤ c.toNat && c.toNat ≤ 0x7E)",
+   "name": "follower: U+2010..U+2027 dropped",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:228:0",
+   "failing": [
+    "VE/Scope/AuthoringExamples.lean:228:0",
+    "VE/Scope/AuthoringExamples.lean:230:0",
+    "VE/Scope/AuthoringExamples.lean:232:0",
+    "VE/Scope/AuthoringExamples.lean:236:0"
+   ]
+  },
+  {
+   "kind": "R16 mutant",
+   "definition": "VE.Scope.Pinned.follower",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "allowed c || closers.contains c || (0x21 ≤ c.toNat && c.toNat ≤ 0x7E) || (0x2010 ≤ c.toNat && c.toNat ≤ 0x2027)",
+   "after": "allowed c || closers.contains c || (0x21 ≤ c.toNat && c.toNat ≤ 0x7E) || (0x2010 ≤ c.toNat && c.toNat ≤ 0x2030)",
+   "name": "follower: the range widened to U+2030",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:236:0",
+   "failing": [
+    "VE/Scope/AuthoringExamples.lean:236:0",
+    "VE/Scope/AuthoringExamples.lean:241:0"
+   ]
+  },
+  {
+   "kind": "R16 mutant",
+   "definition": "VE.Scope.Pinned.clause",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "&& !charRef w &&",
+   "after": "&&",
+   "name": "drop the charRef conjunct",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:245:0",
+   "failing": [
+    "VE/Scope/AuthoringExamples.lean:245:0",
+    "VE/Scope/AuthoringExamples.lean:247:0",
+    "VE/Scope/AuthoringExamples.lean:249:0"
+   ]
+  },
+  {
+   "kind": "R16 mutant",
+   "definition": "VE.Scope.Pinned.charRef",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "2 ≤ r.length",
+   "after": "1 ≤ r.length",
+   "name": "charRef: a run of one counts",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:251:0",
+   "failing": [
+    "VE/Scope/AuthoringExamples.lean:251:0"
+   ]
+  },
+  {
+   "kind": "R16 mutant",
+   "definition": "VE.Scope.Pinned.charRef",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "c.isAlphanum || c == '#'",
+   "after": "c.isAlphanum",
+   "name": "charRef: no \"#\" in the run",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:245:0",
+   "failing": [
+    "VE/Scope/AuthoringExamples.lean:245:0",
+    "VE/Scope/AuthoringExamples.lean:247:0",
+    "VE/Scope/AuthoringExamples.lean:249:0"
+   ]
+  },
+  {
+   "kind": "R16 mutant",
+   "definition": "VE.Scope.Pinned.charRef",
+   "file": "lean/VE/Scope/Authoring.lean",
+   "before": "(t.drop r.length).startsWith \";\"",
+   "after": "true",
+   "name": "charRef: no \";\" needed",
+   "status": "KILLED",
+   "test": "VE/Scope/AuthoringExamples.lean:251:0",
+   "failing": [
+    "VE/Scope/AuthoringExamples.lean:251:0"
    ]
   },
   {
@@ -109,8 +213,11 @@
    "test": "VE/Scope/AuthoringExamples.lean:229:0",
    "failing": [
     "VE/Scope/AuthoringExamples.lean:229:0",
-    "VE/Scope/AuthoringExamples.lean:246:0",
-    "VE/Scope/AuthoringExamples.lean:255:0"
+    "VE/Scope/AuthoringExamples.lean:230:0",
+    "VE/Scope/AuthoringExamples.lean:232:0",
+    "VE/Scope/AuthoringExamples.lean:251:0",
+    "VE/Scope/AuthoringExamples.lean:266:0",
+    "VE/Scope/AuthoringExamples.lean:275:0"
    ]
   },
   {
@@ -121,10 +228,10 @@
    "after": "[0xD7, 0xF7]",
    "name": "allowed: U+01C3 allowed",
    "status": "KILLED",
-   "test": "VE/Scope/AuthoringExamples.lean:250:0",
+   "test": "VE/Scope/AuthoringExamples.lean:270:0",
    "failing": [
-    "VE/Scope/AuthoringExamples.lean:250:0",
-    "VE/Scope/AuthoringExamples.lean:252:0"
+    "VE/Scope/AuthoringExamples.lean:270:0",
+    "VE/Scope/AuthoringExamples.lean:272:0"
    ]
   }
  ]

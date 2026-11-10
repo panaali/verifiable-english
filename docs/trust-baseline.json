@@ -2465,8 +2465,8 @@
   },
   {
    "class": "V",
-   "lines": 8,
-   "reason": "sc-7-f11: lean/VE/Scope/Authoring.lean V +8 (Pinned.allowed, new, 4 lines with its blank line; Pinned.clause +4: the inside-a-word follower rule and its docstring); K +0, S +0",
+   "lines": 22,
+   "reason": "sc-7-f11: lean/VE/Scope/Authoring.lean V +22 (new: Pinned.allowed +4, Pinned.follower +6, Pinned.charRef +7, each with its blank line; Pinned.clause +5: the inside-a-word follower rule, the charRef conjunct and its docstring); K +0, S +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-7-f11, 2026-11-10",
    "commit": "f3f40d51dc6dfffeb57834ee5652ff7b514eaeed"
   }

@@ -20411,6 +20411,8 @@
         "VE.Scope.Pinned.spaced",
         "VE.Scope.Pinned.closers",
         "VE.Scope.Pinned.allowed",
+        "VE.Scope.Pinned.charRef",
+        "VE.Scope.Pinned.follower",
         "VE.Scope.Pinned.clause",
         "VE.Scope.Pinned.listName",
         "VE.Scope.Pinned.cap",
