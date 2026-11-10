@@ -2420,6 +2420,13 @@
    "reason": "ps-2ac: VE/Presupposition/Run.lean V +109 (G[V] untied: the presuppositions report value Outcome, Line, Goal, Row, Shown, Inconsistency, lexiconOk, lineOf, englishLine, outcomeOf, checkedRow, docPremise, refutedLines, shownOf, shown); K +0, S +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ps-2ac, 2026-10-18",
    "commit": "a5088a09b523154f4024db96fe636c92689a9b97"
+  },
+  {
+   "class": "S",
+   "lines": 41,
+   "reason": "ps-7: lean/VE/Presupposition/Events.lean +28 (S: inProgress, inProgressBefore, endedBefore, occurredBefore, endedAtBefore; the six readings G[V] tied by their _eq rfl statements), lean/VE/Presupposition/Frame.lean +13 (Frame.locate C -> S, ps-1-locate-path); K +0, trusted +41",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ps-7, 2026-11-10",
+   "commit": "a7659c5f12aebb2945cfb2106ed29a20663ab836"
   }
  ]
 }
