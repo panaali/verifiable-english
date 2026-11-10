@@ -1,0 +1,5 @@
+job=avp-ps-3-3686c68e-t338112-s2 nproc=4 host=runnervm7aw5e date=2026-11-10T19:22:58Z
+Mem:              15           1           9           0           4          13
+/dev/root       145G   63G   83G  44% /
+ 19:22:58 up 17 min,  0 user,  load average: 1.31, 0.42, 0.15
+Lean (version 4.24.0, x86_64-unknown-linux-gnu, commit 797c613eb9b6d4ec95db23e3e00af9ac6657f24b, Release)
