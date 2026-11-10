@@ -18447,6 +18447,117 @@
         "VE.Presupposition.instDecidableShallow"
       ]
     },
+    "VE/Presupposition/Couple.lean": {
+      "C": [
+        "VE.Presupposition.instDecidablePickFits"
+      ],
+      "G[R]": [
+        "VE.Presupposition.sourceLabel"
+      ],
+      "G[V]": [
+        {
+          "name": "VE.Presupposition.SourceChoice",
+          "tied": [
+            "VE.Presupposition.sourceChoice_closed"
+          ]
+        },
+        {
+          "name": "VE.Presupposition.choiceOf",
+          "tied": [
+            "VE.Presupposition.couplings_spec",
+            "VE.Presupposition.mem_choiceOf"
+          ]
+        },
+        {
+          "name": "VE.Presupposition.couplingConstraints",
+          "tied": [
+            "VE.Presupposition.couplings_spec"
+          ]
+        },
+        {
+          "name": "VE.Presupposition.groupConstraints",
+          "tied": [
+            "VE.Presupposition.groupConstraints_iff"
+          ]
+        },
+        {
+          "name": "VE.Presupposition.sourceChoices",
+          "tied": [
+            "VE.Presupposition.sourceChoice_closed",
+            "VE.Presupposition.sourceChoice_entails"
+          ]
+        }
+      ],
+      "S": [
+        "VE.Presupposition.Group",
+        "VE.Presupposition.Pick",
+        "VE.Presupposition.PickFits",
+        "VE.Presupposition.PickedWF",
+        "VE.Presupposition.SameDecides",
+        "VE.Presupposition.SameModels",
+        "VE.Presupposition.SatUnder",
+        "VE.Presupposition.Uniform",
+        "VE.Presupposition.assumptionsUnder",
+        "VE.Presupposition.couplable",
+        "VE.Presupposition.coupledSet",
+        "VE.Presupposition.formulasUnder",
+        "VE.Presupposition.groups",
+        "VE.Presupposition.pickOf",
+        "VE.Presupposition.pickedU",
+        "VE.Presupposition.readingFor",
+        "VE.Presupposition.rep",
+        "VE.Presupposition.repCandidate",
+        "VE.Presupposition.treeUnder",
+        "VE.Presupposition.uniformB",
+        "VE.Presupposition.unitFormulas",
+        "VE.Presupposition.unitRule"
+      ]
+    },
+    "VE/Presupposition/CoupleExamples.lean": {
+      "T": [
+        "VE.Presupposition.CoupleExamples.D15",
+        "VE.Presupposition.CoupleExamples.D22",
+        "VE.Presupposition.CoupleExamples.E19",
+        "VE.Presupposition.CoupleExamples.E22",
+        "VE.Presupposition.CoupleExamples.J15",
+        "VE.Presupposition.CoupleExamples.J18",
+        "VE.Presupposition.CoupleExamples.J19",
+        "VE.Presupposition.CoupleExamples.K19",
+        "VE.Presupposition.CoupleExamples.R15",
+        "VE.Presupposition.CoupleExamples.R22",
+        "VE.Presupposition.CoupleExamples.allPicks",
+        "VE.Presupposition.CoupleExamples.chk",
+        "VE.Presupposition.CoupleExamples.chk15",
+        "VE.Presupposition.CoupleExamples.chk22",
+        "VE.Presupposition.CoupleExamples.chkNeg",
+        "VE.Presupposition.CoupleExamples.diff19",
+        "VE.Presupposition.CoupleExamples.dropRel",
+        "VE.Presupposition.CoupleExamples.emptyTree",
+        "VE.Presupposition.CoupleExamples.g18",
+        "VE.Presupposition.CoupleExamples.g22",
+        "VE.Presupposition.CoupleExamples.g3",
+        "VE.Presupposition.CoupleExamples.holds",
+        "VE.Presupposition.CoupleExamples.ids5",
+        "VE.Presupposition.CoupleExamples.instr",
+        "VE.Presupposition.CoupleExamples.m22",
+        "VE.Presupposition.CoupleExamples.mOneReadyBusy",
+        "VE.Presupposition.CoupleExamples.mixed15",
+        "VE.Presupposition.CoupleExamples.mixed22",
+        "VE.Presupposition.CoupleExamples.models15",
+        "VE.Presupposition.CoupleExamples.node22",
+        "VE.Presupposition.CoupleExamples.preUser",
+        "VE.Presupposition.CoupleExamples.reg22",
+        "VE.Presupposition.CoupleExamples.rep22",
+        "VE.Presupposition.CoupleExamples.repNeg",
+        "VE.Presupposition.CoupleExamples.report19",
+        "VE.Presupposition.CoupleExamples.same19",
+        "VE.Presupposition.CoupleExamples.sets7",
+        "VE.Presupposition.CoupleExamples.theOwnerBusy",
+        "VE.Presupposition.CoupleExamples.unit15",
+        "VE.Presupposition.CoupleExamples.unit22",
+        "VE.Presupposition.CoupleExamples.ver0"
+      ]
+    },
     "VE/Presupposition/Examples.lean": {
       "T": [
         "VE.Presupposition.Examples.a18bi",

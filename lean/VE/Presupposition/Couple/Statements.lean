@@ -179,8 +179,8 @@ theorem pickOf_iff {ch : Pick} (hn : (ch.map (·.1)).Nodup) (o : String) (k : Ca
 theorem mem_choiceOf {t : CandidateTable} {R : Report} (hid : (R.checked.map (·.ob.id)).Nodup) (ver : String → Nat)
     (ch : Pick) {c : Checked} (hc : c ∈ R.checked) (i : Nat) :
     (c.ob.id, ver c.ob.id, i) ∈ choiceOf t R ver ch ↔ ∃ k, (c.ob.id, k) ∈ ch ∧ (emitted t c).idxOf k = i := by
-  unfold choiceOf pickIndex
-  simp only [List.mem_filterMap, Option.map_map]
+  unfold choiceOf
+  simp only [List.mem_filterMap]
   constructor
   · rintro ⟨x, hx, he⟩
     obtain ⟨d, hd, he⟩ := Option.map_eq_some_iff.mp he
