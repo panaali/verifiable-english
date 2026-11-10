@@ -122,6 +122,14 @@ def elided (d : Json) : Option (Json × Json) :=
 #guard elided (doc ",\"elided\":[]") == some (parse "0", parse "[0]")
 #guard elided (twoLinesWith "[[30,40]]" "[[150,175],[180,181]]") == some (parse "36", parse "[10,26]")
 #guard elided (twoLinesWith "[[0,1],[99,100]]" "[]") == some (parse "2", parse "[2,0]")
+-- two lines of one unit that elide the same bytes: 6 sums over the unit's lines, so the unit counts them once per line
+def sameUnit : Json := parse <|
+  "[{\"right\":{\"name\":\"r21\",\"holder\":\"person\",\"lines\":[" ++
+  "{\"kind\":\"claim\",\"norm\":{\"name\":\"equal-access\",\"predicate\":\"public_service_access_required\"," ++
+  "\"sign\":true,\"guard\":[\"top\"],\"unless\":[],\"over\":[]},\"elided\":[[30,40]]}," ++
+  "{\"kind\":\"claim\",\"norm\":{\"name\":\"access-2\",\"predicate\":\"public_service_access_required\"," ++
+  "\"sign\":true,\"guard\":[\"top\"],\"unless\":[],\"over\":[]},\"elided\":[[30,40]]}]},\"span\":[0,100]}]"
+#guard elided sameUnit == some (parse "20", parse "[20]")
 #guard (unitElided [((("r21" : String), ("equal-access" : String)), 7)] (parse ("[{\"limitation\":{}},{\"right\":{\"name\":\"r21\",\"lines\":[" ++
   "{\"norm\":{\"name\":\"equal-access\"}},{\"norm\":{\"name\":\"other\"}}]}}]"))) == ([0, 7] : List Nat)
 -- an extra member that sorts first, then last
