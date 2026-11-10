@@ -579,8 +579,42 @@ def test_named_latency_and_fuzz_ab_are_checked(batch):
         '{"head_commit": "%s", "pass": true, "samples": {"docs/a/s1.ve.md": {"base_cpu_ms": 1, "head_cpu_ms": 9}, '
         '"docs/a/s1.ve.md": {"base_cpu_ms": 1, "head_cpu_ms": 1}, "docs/b/s1.ve.md": {"base_cpu_ms": 1, '
         '"head_cpu_ms": 1}}}' % HEAD)
-    with pytest.raises(EvidenceError, match="occurs twice"):
+    assert any("occurs twice" in error for error in batch_evidence.check(batch)[1])
+    assert batch_evidence.main(["--check", str(batch)]) == 1
+
+
+# AR-23 review F1: before the gate, `--check` stopped at the missing gate.json, so the wrong A/B base was never
+# reported and the build report said the check passed "except for gate.json". A file that cannot be read is now
+# one error of its own section; every other section is still checked, and the check still fails.
+UNREADABLE = {"missing": None, "empty": "", "not JSON": "{", "a key twice": '{"a": 1, "a": 2}'}
+
+
+@pytest.mark.parametrize("kind", sorted(UNREADABLE))
+@pytest.mark.parametrize("unread, planted", [("gate", "ab"), ("mutants", "ab"), ("ab", "gate")])
+def test_ar23_f1_an_unreadable_section_hides_no_other_section(batch, capsys, unread, planted, kind):
+    (batch / "evidence.toml").write_text(TOML + '[ab]\nfile = "ab.json"\n')
+    _write(batch, "ab", {**AB, "base_commit": "c" * 40})
+    if planted == "gate":
+        _write(batch, "ab", AB), _write(batch, "gate", {**GATE, "failures": [{"test": "t"}]})
+    target = batch / "evidence" / f"{unread}.json"
+    target.unlink()
+    if UNREADABLE[kind] is not None:
+        target.write_text(UNREADABLE[kind])
+    errors = batch_evidence.check(batch)[1]
+    assert any(str(target) in error for error in errors), errors
+    expected = "not on the batch's merge base" if planted == "ab" else "lists failures"
+    assert any(expected in error for error in errors), errors
+    assert batch_evidence.main(["--check", str(batch)]) == 1
+    out = capsys.readouterr().out
+    assert str(target) in out and expected in out
+
+
+def test_ar23_f1_an_unreadable_scope_still_stops_the_check(batch, capsys):
+    (batch / "evidence" / "scope.json").unlink()
+    with pytest.raises(EvidenceError, match="no such evidence file"):
         batch_evidence.check(batch)
+    assert batch_evidence.main(["--check", str(batch)]) == 1
+    assert "scope.json: no such evidence file" in capsys.readouterr().out
 
 
 def test_tally_claims_check_a_ledger_against_its_table(batch):
@@ -814,8 +848,8 @@ def test_f2_ab_measurements_take_both_commits_from_two_clean_checkouts(history, 
     assert not (tmp_path / "l.json").exists()
     recording = tmp_path / "r.jsonl"
     recording.write_text('{"x": 1}\n')
-    assert ab.compare(recording, recording, tool, tool) == (None, [f"corpus comparison compared the head {tool} "
-                                                                   "with itself"])
+    assert ab.compare(recording, recording, tool, tool, repository=repo) == (
+        None, [f"corpus comparison compared the head {tool} with itself"])
 
 
 def test_f2_a_mutant_counts_only_for_its_file_at_the_head(history):
