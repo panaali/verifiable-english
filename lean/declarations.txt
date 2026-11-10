@@ -7896,7 +7896,7 @@ module VE.Commands.Run b1d335aab31263083125b5cd42e6a0d0564aa5f4d428ebacd0a0c9589
 691:0-696:74 theorem VE.Commands.firstStep_eq@VE.Commands.Run
 698:0-705:38 theorem VE.Commands.lastStep_eq@VE.Commands.Run
 707:0-754:28 theorem VE.Commands.stepOrder_forward@VE.Commands.Run
-module VE.Commands.RunExamples 6b6d474fc280b22dc02d4e5c21ac987667c7c097b44907f170dcd3249c9af6c1
+module VE.Commands.RunExamples 287011c93a7c5293083835d29e0fde4c17d91150a0fcae6af9af3023d7c05bc5
 32:0-35:108 def VE.Commands.RunExamples.withDual@VE.Commands.RunExamples
 37:0-47:105 def VE.Commands.RunExamples.proofEnv@VE.Commands.RunExamples
 49:0-53:21 def VE.Commands.RunExamples.lexJson@VE.Commands.RunExamples
@@ -7927,7 +7927,9 @@ module VE.Commands.RunExamples 6b6d474fc280b22dc02d4e5c21ac987667c7c097b44907f17
 293:0-296:18 def VE.Commands.RunExamples.webKind@VE.Commands.RunExamples
 310:0-311:55 def VE.Commands.RunExamples.srcUnit@VE.Commands.RunExamples
 312:0-312:102 def VE.Commands.RunExamples.attributed@VE.Commands.RunExamples
-module VE.Commands.RunSplit 09543ccd7a51bb3b39768b01f2b735729af8ab2894c29ade60a73e5efac83ed8
+338:0-338:76 def VE.Commands.RunExamples.ck@VE.Commands.RunExamples
+339:0-343:21 def VE.Commands.RunExamples.fieldsOf@VE.Commands.RunExamples
+module VE.Commands.RunSplit 5cf724d8d41c9a93de2bf66825a878bb9cf28c0f0b81afa73bbaa09ee6363354
 16:0-19:48 theorem VE.Commands.readInstruction_refused_classed@VE.Commands.RunSplit
 21:0-30:63 theorem VE.Commands.readInstruction_typed@VE.Commands.RunSplit
 62:0-62:38 def VE.Commands.SourceExamples.env@VE.Commands.RunSplit
@@ -7944,7 +7946,10 @@ module VE.Commands.RunSplit 09543ccd7a51bb3b39768b01f2b735729af8ab2894c29ade60a7
 122:0-122:66 def VE.Commands.SourceExamples.hedged@VE.Commands.RunSplit
 123:0-123:106 def VE.Commands.SourceExamples.one@VE.Commands.RunSplit
 124:0-132:78 def VE.Commands.SourceExamples.mixed@VE.Commands.RunSplit
-148:0-149:110 def VE.Commands.SourceExamples.fenced@VE.Commands.RunSplit
+149:0-149:49 def VE.Commands.SourceExamples.cmd@VE.Commands.RunSplit
+150:0-153:116 def VE.Commands.SourceExamples.signed@VE.Commands.RunSplit
+154:0-155:65 def VE.Commands.SourceExamples.thenText@VE.Commands.RunSplit
+165:0-166:110 def VE.Commands.SourceExamples.fenced@VE.Commands.RunSplit
 module VE.Commands.SplitOnLemmas 3af87024f43088fb316ff7d9dc64836e51ebe12059f5bf77ea9af2f099cf5d08
 17:0-26:52 def VE.Commands.SplitOn.splitOnL@VE.Commands.SplitOnLemmas
 32:0-36:88 theorem VE.Commands.SplitOn.splitOnL_ne_nil@VE.Commands.SplitOnLemmas
