@@ -32830,6 +32830,21 @@ theorem VE.Readings.Wire.SupReplayND.wfu
   ∀ (self : VE.Readings.Wire.SupReplayND), VE.NormDefaults.WellFormedU (VE.Readings.supU self.f.r.N) = Bool.true
   -- uses VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.Readings.Wire.AdmittedND.N@VE.Readings.UnspecifiedWire VE.Readings.Wire.AdmittedNDFull.r@VE.Readings.UnspecifiedWire VE.Readings.Wire.SupReplayND.f@VE.Readings.SupFillWire VE.Readings.Wire.SupReplayND@VE.Readings.SupFillWire VE.Readings.supU@VE.Readings.Unspecified
   -- expr 2611956498
+theorem VE.Readings.Wire.SupReplaySD.parts
+  ∀ (x : VE.Readings.Wire.SupReplaySD),
+    VE.Readings.superposable x.r.N.D = Bool.true ∧
+      VE.NormDefaults.WellFormedU (VE.Readings.supU x.r.N) = Bool.true ∧
+        VE.Readings.Wire.sdChecked x.r.b.a.re x.r.N = Bool.true
+  -- uses VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.Wire.Admitted.re@VE.Readings.Wire VE.Readings.Wire.Admitted2.a@VE.Readings.SupWire VE.Readings.Wire.AdmittedSD.N@VE.Readings.SoftWire VE.Readings.Wire.AdmittedSD.b@VE.Readings.SoftWire VE.Readings.Wire.SupReplaySD.r@VE.Readings.SoftSupWire VE.Readings.Wire.SupReplaySD@VE.Readings.SoftSupWire VE.Readings.Wire.sdChecked@VE.Readings.SoftSupWire VE.Readings.supU@VE.Readings.Unspecified VE.Readings.superposable@VE.Readings.Choice
+  -- expr 2139812854
+theorem VE.Readings.Wire.SupReplaySD.route
+  ∀ (self : VE.Readings.Wire.SupReplaySD), VE.Readings.Wire.routeSD self.r.b.a.re self.r.N = VE.Readings.Route.superposed
+  -- uses VE.Readings.Route.superposed@VE.Readings.Route VE.Readings.Route@VE.Readings.Route VE.Readings.Wire.Admitted.re@VE.Readings.Wire VE.Readings.Wire.Admitted2.a@VE.Readings.SupWire VE.Readings.Wire.AdmittedSD.N@VE.Readings.SoftWire VE.Readings.Wire.AdmittedSD.b@VE.Readings.SoftWire VE.Readings.Wire.SupReplaySD.r@VE.Readings.SoftSupWire VE.Readings.Wire.SupReplaySD@VE.Readings.SoftSupWire VE.Readings.Wire.routeSD@VE.Readings.SoftSupWire
+  -- expr 3818708454
+theorem VE.Readings.Wire.SupReplaySD.sat
+  ∀ (self : VE.Readings.Wire.SupReplaySD), (VE.Readings.choices self.r.N.D).isEmpty = Bool.false
+  -- uses VE.Readings.Choice@VE.Readings.Choice VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.Wire.AdmittedSD.N@VE.Readings.SoftWire VE.Readings.Wire.SupReplaySD.r@VE.Readings.SoftSupWire VE.Readings.Wire.SupReplaySD@VE.Readings.SoftSupWire VE.Readings.choices@VE.Readings.Choice
+  -- expr 1413349898
 theorem VE.Readings.Wire.UnsaidAdmitted.frame
   ∀ {r : VE.Readings.Wire.AdmittedSD} (self : VE.Readings.Wire.UnsaidAdmitted r),
     self.a.D.frame = (VE.Readings.fillDoc r.N).frame
@@ -33020,6 +33035,11 @@ theorem VE.Readings.Wire.chainText_eq
     VE.Readings.Wire.chainText c X = VE.Readings.Wire.chainTextSpec c X
   -- uses VE.Formula@VE.Syntax VE.Readings.Chain@VE.Readings.Doc VE.Readings.Wire.chainText@VE.Readings.Wire VE.Readings.Wire.chainTextSpec@VE.Readings.Wire VE.Rights.RightsDoc@VE.Rights.Tree
   -- expr 904810859
+theorem VE.Readings.Wire.checkedChoices_eq_choices
+  ∀ (D : VE.Readings.Doc),
+    (VE.Readings.checkedChoices D).length ≤ VE.Readings.maxChoices → VE.Readings.checkedChoices D = VE.Readings.choices D
+  -- uses VE.Readings.Choice@VE.Readings.Choice VE.Readings.Doc@VE.Readings.Doc VE.Readings.checkedChoices@VE.Readings.Choice VE.Readings.choices@VE.Readings.Choice VE.Readings.maxChoices@VE.Readings.Choice
+  -- expr 2415288874
 theorem VE.Readings.Wire.choiceLayeredG_norms_packs
   ∀ (b : VE.Readings.Wire.Admitted2) (N : VE.Readings.NDoc) (c : VE.Readings.Choice)
     (wfc : VE.NormDefaults.WellFormedU (VE.Readings.choiceU N c) = Bool.true) (hN : N.D = b.D),
@@ -33723,6 +33743,26 @@ theorem VE.Readings.Wire.readings_wire_satisfiable
     VE.Readings.Wire.replaySup j = Except.ok r → ∃ c, VE.Readings.Compatible r.D c
   -- uses VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Wire.SupReplay.D@VE.Readings.SupWire VE.Readings.Wire.SupReplay@VE.Readings.SupWire VE.Readings.Wire.replaySup@VE.Readings.SupWire
   -- expr 1505476592
+theorem VE.Readings.Wire.readings_wire_sd_all_sound
+  ∀ (x : VE.Readings.Wire.SupReplaySD) (A : VE.Readings.Choice),
+    (∀ (z : String × Nat), z ∈ A → (VE.Readings.candidate x.r.N.D z.fst z.snd).isSome = Bool.true) →
+      ∀ (certs : List (Option VE.Tableau.Certificate)),
+        VE.NormDefaults.Wire.conflictFreeCheckX (VE.Readings.supU x.r.N)
+              (VE.Readings.slotUnder x.r.N.D A ++ VE.Readings.supX x.r.N) certs =
+            Bool.true →
+          ∀ (Γ : List VE.Formula) (φ : VE.Formula),
+            (∀ (a : VE.Formula), a ∈ Γ → VE.Formula.WellFormed (VE.Readings.sharedEnvSD x.r.N) [] a) →
+              VE.Formula.WellFormed (VE.Readings.sharedEnvSD x.r.N) [] φ →
+                ∀ (cert : VE.Tableau.Certificate),
+                  VE.Readings.supCertificateCheckSD x.r.N A Γ φ cert = Bool.true →
+                    ∀ (c : VE.Readings.Choice),
+                      VE.Readings.Compatible x.r.N.D c →
+                        (∀ (z : String × Nat), z ∈ A → z ∈ c) →
+                          VE.NormDefaults.Wire.ConflictFreeX (VE.Readings.choiceU x.r.N c) (VE.Readings.choiceX x.r.N c) ∧
+                            VE.NormDefaults.EntailsX (VE.Readings.choiceU x.r.N c) (VE.Readings.choiceX x.r.N c)
+                              ((VE.Readings.choiceDoc x.r.N.D c).snd ++ Γ) φ
+  -- uses VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax VE.NormDefaults.EntailsX@VE.NormDefaults.LayeredEntail VE.NormDefaults.Wire.ConflictFreeX@VE.NormDefaults.Layered VE.NormDefaults.Wire.conflictFreeCheckX@VE.NormDefaults.LayeredEntail VE.Readings.Candidate@VE.Readings.Doc VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.Wire.AdmittedSD.N@VE.Readings.SoftWire VE.Readings.Wire.SupReplaySD.r@VE.Readings.SoftSupWire VE.Readings.Wire.SupReplaySD@VE.Readings.SoftSupWire VE.Readings.candidate@VE.Readings.Doc VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.choiceX@VE.Readings.SoftDefaults VE.Readings.sharedEnvSD@VE.Readings.SoftSup VE.Readings.slotUnder@VE.Readings.Choice VE.Readings.supCertificateCheckSD@VE.Readings.SoftSup VE.Readings.supU@VE.Readings.Unspecified VE.Readings.supX@VE.Readings.SoftSup VE.Rights.RightsDoc@VE.Rights.Tree VE.Tableau.Certificate@VE.Tableau
+  -- expr 778257449
 theorem VE.Readings.Wire.readings_wire_sd_choice_conflict
   ∀ (j : Lean.Json) (x : VE.Readings.Wire.ChoiceReplayS),
     VE.Readings.Wire.replayChoiceS j = Except.ok x →
@@ -33750,6 +33790,69 @@ theorem VE.Readings.Wire.readings_wire_sd_choice_entails
                   ((VE.Readings.choiceDoc x.r.N.D x.c).snd ++ Γ) φ
   -- uses VE.Formula@VE.Syntax VE.NormDefaults.EntailsX@VE.NormDefaults.LayeredEntail VE.NormDefaults.Wire.ConflictFreeX@VE.NormDefaults.Layered VE.NormDefaults.Wire.conflictFreeX@VE.NormDefaults.Layered VE.NormDefaults.Wire.premisesX@VE.NormDefaults.LayeredEntail VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.envAt@VE.Norms.Tree VE.Norms.size@VE.Norms.Tree VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.Wire.AdmittedSD.N@VE.Readings.SoftWire VE.Readings.Wire.ChoiceReplayS.L@VE.Readings.SoftWire VE.Readings.Wire.ChoiceReplayS.c@VE.Readings.SoftWire VE.Readings.Wire.ChoiceReplayS.r@VE.Readings.SoftWire VE.Readings.Wire.ChoiceReplayS@VE.Readings.SoftWire VE.Readings.Wire.replayChoiceS@VE.Readings.SoftWire VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.choiceX@VE.Readings.SoftDefaults VE.Rights.RightsDoc@VE.Rights.Tree VE.Tableau.Certificate@VE.Tableau VE.Tableau.checkCertificate@VE.TableauChecker
   -- expr 3788432347
+theorem VE.Readings.Wire.readings_wire_sd_choices
+  ∀ (x : VE.Readings.Wire.SupReplaySD),
+    (∃ c, VE.Readings.Compatible x.r.N.D c) ∧
+      ∀ (c : VE.Readings.Choice),
+        VE.Readings.Compatible x.r.N.D c →
+          VE.Readings.Wire.sdChoiceText x.r.b.a.re x.r.N c = Option.none ∧
+            VE.NormDefaults.WellFormedU (VE.Readings.choiceU x.r.N c) = Bool.true
+  -- uses VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.Wire.Admitted.re@VE.Readings.Wire VE.Readings.Wire.Admitted2.a@VE.Readings.SupWire VE.Readings.Wire.AdmittedSD.N@VE.Readings.SoftWire VE.Readings.Wire.AdmittedSD.b@VE.Readings.SoftWire VE.Readings.Wire.SupReplaySD.r@VE.Readings.SoftSupWire VE.Readings.Wire.SupReplaySD@VE.Readings.SoftSupWire VE.Readings.Wire.sdChoiceText@VE.Readings.SoftWire VE.Readings.choiceU@VE.Readings.Unspecified
+  -- expr 1786440079
+theorem VE.Readings.Wire.readings_wire_sd_conflict_sound
+  ∀ (x : VE.Readings.Wire.SupReplaySD) (A : VE.Readings.Choice),
+    (∀ (z : String × Nat), z ∈ A → (VE.Readings.candidate x.r.N.D z.fst z.snd).isSome = Bool.true) →
+      ∀ (certs : List (Option VE.Tableau.Certificate)),
+        VE.NormDefaults.Wire.conflictFreeCheckX (VE.Readings.supU x.r.N)
+              (VE.Readings.slotUnder x.r.N.D A ++ VE.Readings.supX x.r.N) certs =
+            Bool.true →
+          ∀ (c : VE.Readings.Choice),
+            VE.Readings.Compatible x.r.N.D c →
+              (∀ (z : String × Nat), z ∈ A → z ∈ c) →
+                VE.NormDefaults.Wire.ConflictFreeX (VE.Readings.choiceU x.r.N c) (VE.Readings.choiceX x.r.N c)
+  -- uses VE.Formula@VE.Syntax VE.NormDefaults.Wire.ConflictFreeX@VE.NormDefaults.Layered VE.NormDefaults.Wire.conflictFreeCheckX@VE.NormDefaults.LayeredEntail VE.Readings.Candidate@VE.Readings.Doc VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.Wire.AdmittedSD.N@VE.Readings.SoftWire VE.Readings.Wire.SupReplaySD.r@VE.Readings.SoftSupWire VE.Readings.Wire.SupReplaySD@VE.Readings.SoftSupWire VE.Readings.candidate@VE.Readings.Doc VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.choiceX@VE.Readings.SoftDefaults VE.Readings.slotUnder@VE.Readings.Choice VE.Readings.supU@VE.Readings.Unspecified VE.Readings.supX@VE.Readings.SoftSup VE.Tableau.Certificate@VE.Tableau
+  -- expr 2538660056
+theorem VE.Readings.Wire.readings_wire_sd_consistent_sound
+  ∀ (x : VE.Readings.Wire.SupReplaySD) (A : VE.Readings.Choice) (M : VE.FiniteModel VE.Bridge.Entity),
+    M.Valid (VE.Norms.envAt (VE.Readings.supU x.r.N).D 0) →
+      ∀ (F : VE.NormDefaults.FiniteFill (VE.Readings.supU x.r.N) VE.Bridge.Entity),
+        (VE.NormDefaults.modelCheckX (VE.Readings.supU x.r.N) (VE.Readings.slotUnder x.r.N.D A ++ VE.Readings.supX x.r.N)
+                M F (VE.Readings.sup x.r.N.D).snd VE.Formula.bottom).fst =
+            Bool.true →
+          VE.Readings.Wire.localFree (VE.Readings.supU x.r.N) M F = Bool.true →
+            ∃ c,
+              VE.Readings.Compatible x.r.N.D c ∧
+                (∀ (z : String × Nat), z ∈ A → z ∈ c) ∧
+                  VE.Readings.ConsistentX (VE.Readings.choiceU x.r.N c) (VE.Readings.choiceX x.r.N c)
+                    (VE.Readings.choiceDoc x.r.N.D c).snd
+  -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.Valid@VE.Finite VE.FiniteModel@VE.Finite VE.Formula.bottom@VE.Syntax VE.Formula@VE.Syntax VE.NormDefaults.FiniteFill@VE.NormDefaults.Evidence VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.modelCheckX@VE.NormDefaults.LayeredEntail VE.Norms.envAt@VE.Norms.Tree VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.ConsistentX@VE.Readings.Verdicts VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.Wire.AdmittedSD.N@VE.Readings.SoftWire VE.Readings.Wire.SupReplaySD.r@VE.Readings.SoftSupWire VE.Readings.Wire.SupReplaySD@VE.Readings.SoftSupWire VE.Readings.Wire.localFree@VE.Readings.VerdictsWire VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.choiceX@VE.Readings.SoftDefaults VE.Readings.slotUnder@VE.Readings.Choice VE.Readings.sup@VE.Readings.Choice VE.Readings.supU@VE.Readings.Unspecified VE.Readings.supX@VE.Readings.SoftSup VE.Rights.RightsDoc@VE.Rights.Tree
+  -- expr 1937098070
+theorem VE.Readings.Wire.readings_wire_sd_model_sound
+  ∀ (x : VE.Readings.Wire.SupReplaySD) (A : VE.Readings.Choice) (Γ : List VE.Formula) (φ : VE.Formula),
+    (∀ (a : VE.Formula), a ∈ Γ → VE.Formula.WellFormed (VE.Readings.sharedEnvSD x.r.N) [] a) →
+      VE.Formula.WellFormed (VE.Readings.sharedEnvSD x.r.N) [] φ →
+        ∀ (M : VE.FiniteModel VE.Bridge.Entity),
+          M.Valid (VE.Norms.envAt (VE.Readings.supU x.r.N).D 0) →
+            ∀ (F : VE.NormDefaults.FiniteFill (VE.Readings.supU x.r.N) VE.Bridge.Entity),
+              (VE.NormDefaults.modelCheckX (VE.Readings.supU x.r.N)
+                      (VE.Readings.slotUnder x.r.N.D A ++ VE.Readings.supX x.r.N) M F ((VE.Readings.sup x.r.N.D).snd ++ Γ)
+                      φ).fst =
+                  Bool.true →
+                (VE.NormDefaults.modelCheckX (VE.Readings.supU x.r.N)
+                        (VE.Readings.slotUnder x.r.N.D A ++ VE.Readings.supX x.r.N) M F
+                        ((VE.Readings.sup x.r.N.D).snd ++ Γ) φ).snd =
+                    Bool.false →
+                  VE.Readings.Wire.localFree (VE.Readings.supU x.r.N) M F = Bool.true →
+                    ∃ c,
+                      VE.Readings.Compatible x.r.N.D c ∧
+                        (∀ (z : String × Nat), z ∈ A → z ∈ c) ∧
+                          VE.Readings.Encodes x.r.N.D c
+                              (VE.NormDefaults.withFill (VE.Readings.supU x.r.N) M.asStructure
+                                (VE.NormDefaults.finFill M F)) ∧
+                            VE.Readings.CounterX (VE.Readings.choiceU x.r.N c) (VE.Readings.choiceX x.r.N c)
+                              ((VE.Readings.choiceDoc x.r.N.D c).snd ++ Γ) φ
+  -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.Valid@VE.Finite VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax VE.NormDefaults.FiniteFill@VE.NormDefaults.Evidence VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.finFill@VE.NormDefaults.Evidence VE.NormDefaults.modelCheckX@VE.NormDefaults.LayeredEntail VE.NormDefaults.withFill@VE.NormDefaults.Premises VE.Norms.envAt@VE.Norms.Tree VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.CounterX@VE.Readings.Verdicts VE.Readings.Encodes@VE.Readings.Choice VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.Wire.AdmittedSD.N@VE.Readings.SoftWire VE.Readings.Wire.SupReplaySD.r@VE.Readings.SoftSupWire VE.Readings.Wire.SupReplaySD@VE.Readings.SoftSupWire VE.Readings.Wire.localFree@VE.Readings.VerdictsWire VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.choiceX@VE.Readings.SoftDefaults VE.Readings.sharedEnvSD@VE.Readings.SoftSup VE.Readings.slotUnder@VE.Readings.Choice VE.Readings.sup@VE.Readings.Choice VE.Readings.supU@VE.Readings.Unspecified VE.Readings.supX@VE.Readings.SoftSup VE.Rights.RightsDoc@VE.Rights.Tree
+  -- expr 866491238
 theorem VE.Readings.Wire.readings_wire_sd_separate_sound
   ∀ (j : Lean.Json) (x : VE.Readings.Wire.SeparateReplayS),
     VE.Readings.Wire.replaySeparateS j = Except.ok x →
@@ -33847,6 +33950,32 @@ theorem VE.Readings.Wire.readings_wire_sd_verdicts_some
                     ((VE.Readings.choiceDoc y.r.N.D c).snd ++ y.x.Γ) y.x.φ
   -- uses VE.Formula@VE.Syntax VE.NormDefaults.EntailsX@VE.NormDefaults.LayeredEntail VE.NormDefaults.Wire.ConflictFreeX@VE.NormDefaults.Layered VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.CounterX@VE.Readings.Verdicts VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.ReadingVerdict.some@VE.Readings.Verdicts VE.Readings.ReadingVerdict@VE.Readings.Verdicts VE.Readings.Wire.AdmittedSD.N@VE.Readings.SoftWire VE.Readings.Wire.SDVerdicts.r@VE.Readings.SoftVerdicts VE.Readings.Wire.SDVerdicts.x@VE.Readings.SoftVerdicts VE.Readings.Wire.SDVerdicts@VE.Readings.SoftVerdicts VE.Readings.Wire.XVerdicts.A@VE.Readings.VerdictsWire VE.Readings.Wire.XVerdicts.conflictRows@VE.Readings.VerdictsWire VE.Readings.Wire.XVerdicts.queryRows@VE.Readings.VerdictsWire VE.Readings.Wire.XVerdicts.Γ@VE.Readings.VerdictsWire VE.Readings.Wire.XVerdicts.φ@VE.Readings.VerdictsWire VE.Readings.Wire.replayVerdictsSD@VE.Readings.SoftVerdicts VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.choiceX@VE.Readings.SoftDefaults VE.Readings.foldEntailment@VE.Readings.Verdicts VE.Rights.RightsDoc@VE.Rights.Tree
   -- expr 1437322667
+theorem VE.Readings.Wire.readings_wire_sd_witness_sound
+  ∀ (x : VE.Readings.Wire.SupReplaySD) (A : VE.Readings.Choice) (t : String × List String × VE.Formula),
+    t ∈ VE.Norms.targets (VE.NormDefaults.fill (VE.Readings.supU x.r.N)) →
+      ∀ (M : VE.FiniteModel VE.Bridge.Entity),
+        M.Valid (VE.Norms.envAt (VE.Readings.supU x.r.N).D 0) →
+          VE.Norms.backgroundValid (VE.Readings.supU x.r.N).D M = Bool.true →
+            ∀ (F : VE.NormDefaults.FiniteFill (VE.Readings.supU x.r.N) VE.Bridge.Entity),
+              VE.NormDefaults.fillValid (VE.Readings.supU x.r.N) M F = Bool.true →
+                VE.NormDefaults.Wire.extraValid (VE.Readings.supU x.r.N)
+                      (VE.Readings.slotUnder x.r.N.D A ++ VE.Readings.supX x.r.N) M F =
+                    Bool.true →
+                  ∀ (vs : List VE.Bridge.Entity),
+                    VE.TupleTyped
+                        (VE.NormDefaults.withFill (VE.Readings.supU x.r.N) M.asStructure (VE.NormDefaults.finFill M F))
+                        t.snd.fst vs →
+                      VE.Formula.eval (M.withFill F) (VE.Norms.tupleVal vs) t.snd.snd = Bool.true →
+                        ∃ c,
+                          VE.Readings.Compatible x.r.N.D c ∧
+                            (∀ (z : String × Nat), z ∈ A → z ∈ c) ∧
+                              VE.Readings.Encodes x.r.N.D c
+                                  (VE.NormDefaults.withFill (VE.Readings.supU x.r.N) M.asStructure
+                                    (VE.NormDefaults.finFill M F)) ∧
+                                ¬VE.NormDefaults.Wire.ConflictFreeX (VE.Readings.choiceU x.r.N c)
+                                    (VE.Readings.choiceX x.r.N c)
+  -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.Valid@VE.Finite VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel.withFill@VE.NormDefaults.Evidence VE.FiniteModel@VE.Finite VE.Formula.eval@VE.Finite VE.Formula@VE.Syntax VE.NormDefaults.FiniteFill@VE.NormDefaults.Evidence VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.Wire.ConflictFreeX@VE.NormDefaults.Layered VE.NormDefaults.Wire.extraValid@VE.NormDefaults.Report VE.NormDefaults.fill@VE.NormDefaults.Tree VE.NormDefaults.fillValid@VE.NormDefaults.Evidence VE.NormDefaults.finFill@VE.NormDefaults.Evidence VE.NormDefaults.withFill@VE.NormDefaults.Premises VE.Norms.backgroundValid@VE.Norms.Conflict VE.Norms.envAt@VE.Norms.Tree VE.Norms.targets@VE.Norms.Replay VE.Norms.tupleVal@VE.Norms.Basic VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Encodes@VE.Readings.Choice VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.Wire.AdmittedSD.N@VE.Readings.SoftWire VE.Readings.Wire.SupReplaySD.r@VE.Readings.SoftSupWire VE.Readings.Wire.SupReplaySD@VE.Readings.SoftSupWire VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.choiceX@VE.Readings.SoftDefaults VE.Readings.slotUnder@VE.Readings.Choice VE.Readings.supU@VE.Readings.Unspecified VE.Readings.supX@VE.Readings.SoftSup VE.TupleTyped@VE.Semantics
+  -- expr 3978657180
 theorem VE.Readings.Wire.readings_wire_separate_sound
   ∀ (j : Lean.Json) (r : VE.Readings.Wire.SeparateReplay),
     VE.Readings.Wire.replaySeparate j = Except.ok r →
@@ -34018,12 +34147,38 @@ theorem VE.Readings.Wire.replayPair_D
     {sj : VE.Readings.Wire.SituationJ}, VE.Readings.Wire.replayPair a s sid other = Except.ok (x, sj) → x.D = a.D
   -- uses VE.Readings.Doc@VE.Readings.Doc VE.Readings.Wire.Admitted.D@VE.Readings.Wire VE.Readings.Wire.Admitted@VE.Readings.Wire VE.Readings.Wire.SeparateReplay.D@VE.Readings.Wire VE.Readings.Wire.SeparateReplay@VE.Readings.Wire VE.Readings.Wire.SituationJ@VE.Readings.Wire VE.Readings.Wire.replayPair@VE.Readings.Wire
   -- expr 3380054106
+theorem VE.Readings.Wire.routeSD_superposed_iff
+  ∀ (re : VE.Readings.Wire.ReadingsEnvironment) (N : VE.Readings.NDoc),
+    VE.Readings.Wire.routeSD re N = VE.Readings.Route.superposed ↔
+      VE.Readings.routeOf Bool.true N.D = VE.Readings.Route.enumerated ∧
+        VE.Readings.Wire.sdSuperposable N = Bool.true ∧ VE.Readings.Wire.sdChecked re N = Bool.true
+  -- uses VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.Route.enumerated@VE.Readings.Route VE.Readings.Route.superposed@VE.Readings.Route VE.Readings.Route@VE.Readings.Route VE.Readings.Wire.ReadingsEnvironment@VE.Readings.Wire VE.Readings.Wire.routeSD@VE.Readings.SoftSupWire VE.Readings.Wire.sdChecked@VE.Readings.SoftSupWire VE.Readings.Wire.sdSuperposable@VE.Readings.SoftSupWire VE.Readings.routeOf@VE.Readings.Route
+  -- expr 591570932
 theorem VE.Readings.Wire.same_name
   ∀ {l : List Lean.Json},
     List.Pairwise (fun a b => VE.Readings.Wire.jeq (a.getObjValD "name") (b.getObjValD "name") = Bool.false) l →
       ∀ (t : Lean.Json), t ∈ l → ∀ (t' : Lean.Json), t' ∈ l → t.getObjValD "name" = t'.getObjValD "name" → t = t'
   -- uses VE.Readings.Wire.jeq@VE.Readings.Companions
   -- expr 4220798877
+theorem VE.Readings.Wire.sdCheck_of_admitted
+  ∀ (b : VE.Readings.Wire.Admitted2) (r : VE.Readings.Wire.AdmittedSD),
+    VE.Readings.Wire.admitSDOf b = Except.ok r →
+      VE.Readings.supReady r.N.D = Bool.true →
+        (VE.Readings.checkedChoices r.N.D).length ≤ VE.Readings.maxChoices →
+          VE.Readings.Wire.sdCheckWork r.N ≤ VE.Readings.Wire.maxSdCheckWork →
+            VE.Readings.Wire.sdChecked r.b.a.re r.N = Bool.true
+  -- uses VE.Readings.Choice@VE.Readings.Choice VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.Wire.Admitted.re@VE.Readings.Wire VE.Readings.Wire.Admitted2.a@VE.Readings.SupWire VE.Readings.Wire.Admitted2@VE.Readings.SupWire VE.Readings.Wire.AdmittedSD.N@VE.Readings.SoftWire VE.Readings.Wire.AdmittedSD.b@VE.Readings.SoftWire VE.Readings.Wire.AdmittedSD@VE.Readings.SoftWire VE.Readings.Wire.admitSDOf@VE.Readings.SoftWire VE.Readings.Wire.maxSdCheckWork@VE.Readings.SoftSupWire VE.Readings.Wire.sdCheckWork@VE.Readings.SoftSupWire VE.Readings.Wire.sdChecked@VE.Readings.SoftSupWire VE.Readings.checkedChoices@VE.Readings.Choice VE.Readings.maxChoices@VE.Readings.Choice VE.Readings.supReady@VE.Readings.Choice
+  -- expr 590100667
+theorem VE.Readings.Wire.sdChecked_spec
+  ∀ (re : VE.Readings.Wire.ReadingsEnvironment) (N : VE.Readings.NDoc),
+    VE.Readings.supReady N.D = Bool.true →
+      VE.Readings.Wire.sdChecked re N = Bool.true →
+        ∀ (c : VE.Readings.Choice),
+          VE.Readings.Compatible N.D c →
+            VE.Readings.Wire.sdChoiceText re N c = Option.none ∧
+              VE.NormDefaults.WellFormedU (VE.Readings.choiceU N c) = Bool.true
+  -- uses VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.Wire.ReadingsEnvironment@VE.Readings.Wire VE.Readings.Wire.sdChecked@VE.Readings.SoftSupWire VE.Readings.Wire.sdChoiceText@VE.Readings.SoftWire VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.supReady@VE.Readings.Choice
+  -- expr 1200514626
 theorem VE.Readings.Wire.sdSem_normsShaped
   ∀ (N : VE.Readings.NDoc),
     VE.Readings.normsShaped N.D = Bool.true →
@@ -35414,6 +35569,13 @@ theorem VE.Readings.choice_name_inj
           N' ∈ (VE.Readings.choiceDoc D c).fst.soft.T.nodes → N.name = N'.name → N = N'
   -- uses VE.Formula@VE.Syntax VE.Norms.Node.name@VE.Norms.Tree VE.Readings.Choice@VE.Readings.Choice VE.Readings.Doc@VE.Readings.Doc VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.choiceDoc@VE.Readings.Choice VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree
   -- expr 3716736098
+theorem VE.Readings.choice_name_sep
+  ∀ {N : VE.Readings.NDoc},
+    VE.Readings.Hyps N.D →
+      ∀ (c : VE.Readings.Choice) {M : VE.SoftNorms.SoftNode},
+        M ∈ (VE.Readings.choiceDoc N.D c).fst.soft.T.nodes → ¬':' ∈ M.name.data ∧ ¬',' ∈ M.name.data
+  -- uses VE.Formula@VE.Syntax VE.Norms.Node.name@VE.Norms.Tree VE.Readings.Choice@VE.Readings.Choice VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.choiceDoc@VE.Readings.Choice VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree
+  -- expr 3246450337
 theorem VE.Readings.choice_names_nodup
   ∀ {D : VE.Readings.Doc},
     VE.Readings.Hyps D →
@@ -35661,6 +35823,57 @@ theorem VE.Readings.chosen_spec
               VE.Readings.chosenIdx D c m < VE.Readings.setSize D m
   -- uses VE.Readings.Choice.index@VE.Readings.Choice VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Doc.sets@VE.Readings.Doc VE.Readings.Doc@VE.Readings.Doc VE.Readings.ReadingSet.id@VE.Readings.Doc VE.Readings.ReadingSet@VE.Readings.Doc VE.Readings.chosenIdx@VE.Readings.BaseUp VE.Readings.setSize@VE.Readings.Choice VE.Readings.supReady@VE.Readings.Choice
   -- expr 3709016694
+theorem VE.Readings.cohPair_dead
+  ∀ {N : VE.Readings.NDoc},
+    VE.Readings.Hyps N.D →
+      ∀ {c : VE.Readings.Choice},
+        VE.Readings.Compatible N.D c →
+          VE.Readings.WellFormedSD N = Bool.true →
+            VE.NormDefaults.WellFormedU (VE.Readings.supU N) = Bool.true →
+              ∀ {B : VE.Structure},
+                VE.Norms.BaseAdmissible (VE.NormDefaults.fill (VE.Readings.supU N)) B →
+                  VE.Readings.Encodes N.D c B →
+                    ∀ {P Q : VE.SoftNorms.SoftNode},
+                      (P, Q) ∈ VE.SoftNorms.collidingPairs (VE.Readings.sup N.D).fst.soft →
+                        ((∀ (M : VE.SoftNorms.SoftNode),
+                              M ∈ (VE.Readings.choiceDoc N.D c).fst.soft.T.nodes → VE.Readings.fmap N.D c M ≠ P) ∨
+                            ∀ (M : VE.SoftNorms.SoftNode),
+                              M ∈ (VE.Readings.choiceDoc N.D c).fst.soft.T.nodes → VE.Readings.fmap N.D c M ≠ Q) →
+                          VE.Formula.denote B []
+                            (VE.NormDefaults.Wire.cohPremiseU (VE.Readings.supU N) (VE.Readings.sup N.D).fst.soft P Q)
+  -- uses VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.Wire.cohPremiseU@VE.NormDefaults.Layered VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.BaseAdmissible@VE.Norms.Prefix VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Encodes@VE.Readings.Choice VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.WellFormedSD@VE.Readings.SoftDefaults VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.fmap@VE.Readings.ChoiceFacts VE.Readings.sup@VE.Readings.Choice VE.Readings.supU@VE.Readings.Unspecified VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.collidingPairs@VE.SoftNorms.Tree VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 4040970743
+theorem VE.Readings.cohPair_pullF
+  ∀ {N : VE.Readings.NDoc},
+    VE.Readings.Hyps N.D →
+      ∀ {c : VE.Readings.Choice},
+        VE.Readings.Compatible N.D c →
+          VE.Readings.WellFormedSD N = Bool.true →
+            VE.NormDefaults.WellFormedU (VE.Readings.supU N) = Bool.true →
+              ∀ {B : VE.Structure},
+                VE.Norms.BaseAdmissible (VE.NormDefaults.fill (VE.Readings.supU N)) B →
+                  VE.Readings.Encodes N.D c B →
+                    ∀ {M M' : VE.SoftNorms.SoftNode},
+                      M ∈ (VE.Readings.choiceDoc N.D c).fst.soft.T.nodes →
+                        M' ∈ (VE.Readings.choiceDoc N.D c).fst.soft.T.nodes →
+                          (VE.Readings.fmap N.D c M, VE.Readings.fmap N.D c M') ∈
+                              VE.SoftNorms.collidingPairs (VE.Readings.sup N.D).fst.soft →
+                            (VE.Formula.denote B []
+                                (VE.NormDefaults.Wire.cohPremiseU (VE.Readings.supU N) (VE.Readings.sup N.D).fst.soft
+                                  (VE.Readings.fmap N.D c M) (VE.Readings.fmap N.D c M')) ↔
+                              VE.Formula.denote (VE.Readings.pullF N c B) []
+                                (VE.NormDefaults.Wire.cohPremiseU (VE.Readings.choiceU N c)
+                                  (VE.Readings.choiceDoc N.D c).fst.soft M M'))
+  -- uses VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.Wire.cohPremiseU@VE.NormDefaults.Layered VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.BaseAdmissible@VE.Norms.Prefix VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Encodes@VE.Readings.Choice VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.WellFormedSD@VE.Readings.SoftDefaults VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.fmap@VE.Readings.ChoiceFacts VE.Readings.pullF@VE.Readings.SoftSup VE.Readings.sup@VE.Readings.Choice VE.Readings.supU@VE.Readings.Unspecified VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.collidingPairs@VE.SoftNorms.Tree VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 1387474392
+theorem VE.Readings.cohPremise_swap
+  ∀ (U : VE.NormDefaults.UDoc) (D : VE.SoftNorms.SoftDoc) {P Q : VE.SoftNorms.SoftNode},
+    VE.SoftNorms.sortsOf D P.pred = VE.SoftNorms.sortsOf D Q.pred →
+      ∀ (S : VE.Structure),
+        VE.Formula.denote S [] (VE.NormDefaults.Wire.cohPremiseU U D P Q) ↔
+          VE.Formula.denote S [] (VE.NormDefaults.Wire.cohPremiseU U D Q P)
+  -- uses VE.Formula.denote@VE.Semantics VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.cohPremiseU@VE.NormDefaults.Layered VE.Norms.Node.pred@VE.Norms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.sortsOf@VE.SoftNorms.Tree VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 1163689175
 theorem VE.Readings.coh_canonY
   ∀ {D : VE.Readings.Doc},
     VE.Readings.Hyps D →
@@ -35725,6 +35938,11 @@ theorem VE.Readings.collides_conflict
     d.collides = Bool.true → VE.Readings.dConflictRow e d = VE.Readings.ChoiceResult.conflict
   -- uses VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.Readings.ChoiceResult.conflict@VE.Readings.Verdicts VE.Readings.ChoiceResult@VE.Readings.Verdicts VE.Readings.DEvidence.collides@VE.Readings.DefaultVerdicts VE.Readings.DEvidence@VE.Readings.DefaultVerdicts VE.Readings.Wire.XEvidence@VE.Readings.VerdictsWire VE.Readings.dConflictRow@VE.Readings.DefaultVerdicts VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree
   -- expr 716440437
+theorem VE.Readings.collidingPairs_correlate
+  ∀ {X : VE.Rights.RightsDoc} {x : VE.SoftNorms.SoftNode × VE.SoftNorms.SoftNode},
+    x ∈ VE.SoftNorms.collidingPairs X.soft → x ∈ VE.SoftNorms.collidingPairs (VE.Rights.correlate X)
+  -- uses VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.collidingPairs@VE.SoftNorms.Tree
+  -- expr 2199060367
 theorem VE.Readings.compatible_fillDoc
   ∀ (N : VE.Readings.NDoc) (c : VE.Readings.Choice),
     VE.Readings.Compatible (VE.Readings.fillDoc N) c ↔ VE.Readings.Compatible N.D c
@@ -36897,6 +37115,44 @@ theorem VE.Readings.excLabels_length
   ∀ (D : VE.SoftNorms.SoftDoc), (VE.SoftNorms.Wire.excLabels D).length = (VE.SoftNorms.excPremises D).length
   -- uses VE.Formula@VE.Syntax VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.Wire.excLabels@VE.SoftNorms.Wire VE.SoftNorms.excPremises@VE.SoftNorms.Soften
   -- expr 3163521560
+theorem VE.Readings.excLabels_nodes
+  ∀ (Y : VE.SoftNorms.SoftDoc), VE.SoftNorms.Wire.excLabels Y = List.flatMap VE.Readings.nodeExcLabels Y.T.nodes
+  -- uses VE.Readings.nodeExcLabels@VE.Readings.SoftSupLabels VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.Wire.excLabels@VE.SoftNorms.Wire
+  -- expr 2706127918
+theorem VE.Readings.excPrem_dead
+  ∀ {N : VE.Readings.NDoc},
+    VE.Readings.Hyps N.D →
+      ∀ {c : VE.Readings.Choice},
+        VE.Readings.Compatible N.D c →
+          ∀ {B : VE.Structure},
+            VE.Readings.Encodes N.D c B →
+              VE.Norms.Sat B (VE.Readings.slotP N.D) →
+                ∀ {K : VE.SoftNorms.SoftNode},
+                  K ∈ (VE.Readings.sup N.D).fst.soft.T.nodes →
+                    (∀ (M : VE.SoftNorms.SoftNode),
+                        M ∈ (VE.Readings.choiceDoc N.D c).fst.soft.T.nodes → VE.Readings.fmap N.D c M ≠ K) →
+                      ∀ (a : VE.Formula),
+                        a ∈ VE.SoftNorms.excPremisesOf (VE.Readings.sup N.D).fst.soft K → VE.Formula.denote B [] a
+  -- uses VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Norms.Sat@VE.Norms.Prefix VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Encodes@VE.Readings.Choice VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.fmap@VE.Readings.ChoiceFacts VE.Readings.slotP@VE.Readings.Choice VE.Readings.sup@VE.Readings.Choice VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.excPremisesOf@VE.SoftNorms.Soften VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 712251940
+theorem VE.Readings.excPrem_pullF
+  ∀ {N : VE.Readings.NDoc},
+    VE.Readings.Hyps N.D →
+      ∀ {c : VE.Readings.Choice},
+        VE.Readings.Compatible N.D c →
+          VE.NormDefaults.WellFormedU (VE.Readings.supU N) = Bool.true →
+            ∀ {B : VE.Structure},
+              VE.Norms.BaseAdmissible (VE.NormDefaults.fill (VE.Readings.supU N)) B →
+                VE.Readings.Encodes N.D c B →
+                  ∀ {M : VE.SoftNorms.SoftNode},
+                    M ∈ (VE.Readings.choiceDoc N.D c).fst.soft.T.nodes →
+                      ∀ {j : Nat} {a a' : VE.Formula},
+                        (VE.SoftNorms.excPremisesOf (VE.Readings.choiceDoc N.D c).fst.soft M)[j]? = Option.some a →
+                          (VE.SoftNorms.excPremisesOf (VE.Readings.sup N.D).fst.soft (VE.Readings.fmap N.D c M))[j]? =
+                              Option.some a' →
+                            (VE.Formula.denote B [] a' ↔ VE.Formula.denote (VE.Readings.pullF N c B) [] a)
+  -- uses VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.BaseAdmissible@VE.Norms.Prefix VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Encodes@VE.Readings.Choice VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.fmap@VE.Readings.ChoiceFacts VE.Readings.pullF@VE.Readings.SoftSup VE.Readings.sup@VE.Readings.Choice VE.Readings.supU@VE.Readings.Unspecified VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.excPremisesOf@VE.SoftNorms.Soften VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 1241072665
 theorem VE.Readings.exc_down
   ∀ {D : VE.Readings.Doc},
     VE.Readings.Hyps D →
@@ -36906,6 +37162,14 @@ theorem VE.Readings.exc_down
             VE.Norms.Sat (VE.Readings.pull D c B) (VE.SoftNorms.excPremises (VE.Readings.choiceDoc D c).fst.soft)
   -- uses VE.Formula@VE.Syntax VE.Norms.Sat@VE.Norms.Prefix VE.Readings.Choice@VE.Readings.Choice VE.Readings.Doc@VE.Readings.Doc VE.Readings.Encodes@VE.Readings.Choice VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.pull@VE.Readings.Choice VE.Readings.sup@VE.Readings.Choice VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.SoftNorms.excPremises@VE.SoftNorms.Soften VE.Structure@VE.Semantics
   -- expr 3833171663
+theorem VE.Readings.exc_mem_softLabelledU
+  ∀ (U : VE.NormDefaults.UDoc) {D : VE.SoftNorms.SoftDoc} {K : VE.SoftNorms.SoftNode},
+    K ∈ D.T.nodes →
+      ∀ {j : Nat} {l : String} {a : VE.Formula},
+        (VE.Readings.nodeExcLabels K)[j]? = Option.some l →
+          (VE.SoftNorms.excPremisesOf D K)[j]? = Option.some a → (l, a) ∈ VE.NormDefaults.Wire.softLabelledU U D
+  -- uses VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.softLabelledU@VE.NormDefaults.Layered VE.Readings.nodeExcLabels@VE.Readings.SoftSupLabels VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.excPremisesOf@VE.SoftNorms.Soften
+  -- expr 563723081
 theorem VE.Readings.exc_pullF
   ∀ {N : VE.Readings.NDoc},
     VE.Readings.Hyps N.D →
@@ -37173,6 +37437,17 @@ theorem VE.Readings.fillItem_set
     VE.Readings.fillItem N (VE.Readings.Item.set R) = VE.Readings.Item.set (VE.Readings.fillSet N R)
   -- uses VE.Readings.Item.set@VE.Readings.Doc VE.Readings.Item@VE.Readings.Doc VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.ReadingSet@VE.Readings.Doc VE.Readings.fillItem@VE.Readings.Unspecified VE.Readings.fillSet@VE.Readings.Unspecified
   -- expr 2300121325
+theorem VE.Readings.fillLabels_choice
+  ∀ (N : VE.Readings.NDoc),
+    VE.Readings.WellFormedSD N = Bool.true →
+      VE.Readings.superposable N.D = Bool.true →
+        VE.NormDefaults.WellFormedU (VE.Readings.supU N) = Bool.true →
+          ∀ (c : VE.Readings.Choice),
+            VE.Readings.Compatible N.D c →
+              VE.NormDefaults.Admission.fillLabels (VE.Readings.choiceU N c) =
+                VE.NormDefaults.Admission.fillLabels (VE.Readings.supU N)
+  -- uses VE.NormDefaults.Admission.fillLabels@VE.NormDefaults.Admission VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.WellFormedSD@VE.Readings.SoftDefaults VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.supU@VE.Readings.Unspecified VE.Readings.superposable@VE.Readings.Choice
+  -- expr 3760882963
 theorem VE.Readings.fillLite_choiceSD
   ∀ {N : VE.Readings.NDoc},
     VE.Readings.Hyps N.D →
@@ -37616,6 +37891,15 @@ theorem VE.Readings.fmap_exception_none
           N.exception = Option.none → (VE.Readings.fmap D c N).exception = Option.none
   -- uses VE.Formula@VE.Syntax VE.Readings.Choice@VE.Readings.Choice VE.Readings.Doc@VE.Readings.Doc VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.fmap@VE.Readings.ChoiceFacts VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.SoftNorms.Exception@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.exception@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree
   -- expr 3693385795
+theorem VE.Readings.fmap_exception_shape
+  ∀ {N : VE.Readings.NDoc},
+    VE.Readings.Hyps N.D →
+      ∀ (c : VE.Readings.Choice) {M : VE.SoftNorms.SoftNode},
+        M ∈ (VE.Readings.choiceDoc N.D c).fst.soft.T.nodes →
+          Option.map (fun e => (e.sufficient.length, e.necessary.length)) (VE.Readings.fmap N.D c M).exception =
+            Option.map (fun e => (e.sufficient.length, e.necessary.length)) M.exception
+  -- uses VE.Formula@VE.Syntax VE.Readings.Choice@VE.Readings.Choice VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.fmap@VE.Readings.ChoiceFacts VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.SoftNorms.Exception.necessary@VE.SoftNorms.Tree VE.SoftNorms.Exception.sufficient@VE.SoftNorms.Tree VE.SoftNorms.Exception@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.exception@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree
+  -- expr 651409861
 theorem VE.Readings.fmap_exception_up
   ∀ {D : VE.Readings.Doc},
     VE.Readings.Hyps D →
@@ -37715,6 +37999,15 @@ theorem VE.Readings.fmap_name_cases
             ∃ k, (VE.Readings.fmap D c N).name = VE.Readings.qualify k N.name
   -- uses VE.Formula@VE.Syntax VE.Norms.Node.name@VE.Norms.Tree VE.Readings.Choice@VE.Readings.Choice VE.Readings.Doc@VE.Readings.Doc VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.fmap@VE.Readings.ChoiceFacts VE.Readings.qualify@VE.Readings.Choice VE.Readings.reservedName@VE.Readings.Doc VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree
   -- expr 3460716393
+theorem VE.Readings.fmap_name_det
+  ∀ {N : VE.Readings.NDoc},
+    VE.Readings.Hyps N.D →
+      ∀ {c₁ c₂ : VE.Readings.Choice} {M₁ M₂ : VE.SoftNorms.SoftNode},
+        M₁ ∈ (VE.Readings.choiceDoc N.D c₁).fst.soft.T.nodes →
+          M₂ ∈ (VE.Readings.choiceDoc N.D c₂).fst.soft.T.nodes →
+            (VE.Readings.fmap N.D c₁ M₁).name = (VE.Readings.fmap N.D c₂ M₂).name → M₁.name = M₂.name
+  -- uses VE.Formula@VE.Syntax VE.Norms.Node.name@VE.Norms.Tree VE.Readings.Choice@VE.Readings.Choice VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.fmap@VE.Readings.ChoiceFacts VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree
+  -- expr 2763449870
 theorem VE.Readings.fname_eq
   ∀ {D : VE.Readings.Doc},
     VE.Readings.Hyps D →
@@ -38615,6 +38908,17 @@ theorem VE.Readings.idxOf_getElem_nodup
   ∀ (l : List String), l.Nodup → ∀ (k : Nat) (h : k < l.length), List.idxOf l[k] l = k
   -- uses
   -- expr 1164429425
+theorem VE.Readings.image_pair_mem
+  ∀ {N : VE.Readings.NDoc},
+    VE.Readings.Hyps N.D →
+      ∀ (c : VE.Readings.Choice) {x : VE.SoftNorms.SoftNode × VE.SoftNorms.SoftNode},
+        x ∈ VE.SoftNorms.collidingPairs (VE.Readings.choiceDoc N.D c).fst.soft →
+          (if (VE.Readings.fmap N.D c x.fst).name < (VE.Readings.fmap N.D c x.snd).name then
+              (VE.Readings.fmap N.D c x.fst, VE.Readings.fmap N.D c x.snd)
+            else (VE.Readings.fmap N.D c x.snd, VE.Readings.fmap N.D c x.fst)) ∈
+            VE.SoftNorms.collidingPairs (VE.Readings.sup N.D).fst.soft
+  -- uses VE.Formula@VE.Syntax VE.Norms.Node.name@VE.Norms.Tree VE.Readings.Choice@VE.Readings.Choice VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.fmap@VE.Readings.ChoiceFacts VE.Readings.sup@VE.Readings.Choice VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.collidingPairs@VE.SoftNorms.Tree
+  -- expr 4140547847
 theorem VE.Readings.inForce_fillDoc
   ∀ (N : VE.Readings.NDoc) (n : VE.Readings.Narrowing),
     VE.Readings.inForce (VE.Readings.fillDoc N) n = Option.map (VE.Readings.fillSet N) (VE.Readings.inForce N.D n)
@@ -38752,11 +39056,55 @@ theorem VE.Readings.keyedNodes_pairwise
         List.Pairwise (fun a b => VE.Readings.keyPair a ≠ VE.Readings.keyPair b) (VE.Readings.keyedNodes X)
   -- uses VE.Readings.Chain@VE.Readings.Doc VE.Readings.chainWF@VE.Readings.Doc VE.Readings.keyPair@VE.Readings.Lines VE.Readings.keyedNodes@VE.Readings.Separate VE.Readings.linesOnce@VE.Readings.Lines VE.Rights.RightsDoc@VE.Rights.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
   -- expr 3026231284
+theorem VE.Readings.labelImage_fst
+  ∀ (N : VE.Readings.NDoc),
+    VE.Readings.WellFormedSD N = Bool.true →
+      VE.Readings.superposable N.D = Bool.true →
+        VE.NormDefaults.WellFormedU (VE.Readings.supU N) = Bool.true →
+          ∀ (c : VE.Readings.Choice),
+            VE.Readings.Compatible N.D c →
+              List.map (fun x => x.fst) (VE.Readings.labelImage N c) =
+                List.map (fun x => x.fst) (VE.Readings.softXL N (VE.Readings.choiceDoc N.D c).fst)
+  -- uses VE.Formula@VE.Syntax VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.WellFormedSD@VE.Readings.SoftDefaults VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.labelImage@VE.Readings.SoftSupLabels VE.Readings.softXL@VE.Readings.SoftDefaults VE.Readings.supU@VE.Readings.Unspecified VE.Readings.superposable@VE.Readings.Choice VE.Rights.RightsDoc@VE.Rights.Tree
+  -- expr 863244337
+theorem VE.Readings.labelImage_functional
+  ∀ (N : VE.Readings.NDoc),
+    VE.Readings.WellFormedSD N = Bool.true →
+      VE.Readings.superposable N.D = Bool.true →
+        VE.NormDefaults.WellFormedU (VE.Readings.supU N) = Bool.true →
+          ∀ (c₁ c₂ : VE.Readings.Choice),
+            VE.Readings.Compatible N.D c₁ →
+              VE.Readings.Compatible N.D c₂ →
+                ∀ (l₁ l₂ s : String),
+                  (l₁, s) ∈ VE.Readings.labelImage N c₁ → (l₂, s) ∈ VE.Readings.labelImage N c₂ → l₁ = l₂
+  -- uses VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.WellFormedSD@VE.Readings.SoftDefaults VE.Readings.labelImage@VE.Readings.SoftSupLabels VE.Readings.supU@VE.Readings.Unspecified VE.Readings.superposable@VE.Readings.Choice
+  -- expr 1507954887
+theorem VE.Readings.labelImage_snd_mem
+  ∀ (N : VE.Readings.NDoc),
+    VE.Readings.WellFormedSD N = Bool.true →
+      VE.Readings.superposable N.D = Bool.true →
+        VE.NormDefaults.WellFormedU (VE.Readings.supU N) = Bool.true →
+          ∀ (c : VE.Readings.Choice),
+            VE.Readings.Compatible N.D c →
+              ∀ (p : String × String),
+                p ∈ VE.Readings.labelImage N c →
+                  p.snd ∈ List.map (fun x => x.fst) (VE.Readings.softXL N (VE.Readings.sup N.D).fst)
+  -- uses VE.Formula@VE.Syntax VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.WellFormedSD@VE.Readings.SoftDefaults VE.Readings.labelImage@VE.Readings.SoftSupLabels VE.Readings.softXL@VE.Readings.SoftDefaults VE.Readings.sup@VE.Readings.Choice VE.Readings.supU@VE.Readings.Unspecified VE.Readings.superposable@VE.Readings.Choice VE.Rights.RightsDoc@VE.Rights.Tree
+  -- expr 3494162454
 theorem VE.Readings.labelOf_fillCand
   ∀ (N : VE.Readings.NDoc) (a : VE.Readings.Candidate) (axis : String),
     VE.Readings.labelOf (VE.Readings.fillCand N a) axis = VE.Readings.labelOf a axis
   -- uses VE.Readings.Candidate@VE.Readings.Doc VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.fillCand@VE.Readings.Unspecified VE.Readings.labelOf@VE.Readings.Choice
   -- expr 2723930901
+theorem VE.Readings.label_unique
+  ∀ {U : VE.NormDefaults.UDoc} {D : VE.SoftNorms.SoftDoc},
+    (∀ (K : VE.SoftNorms.SoftNode), K ∈ D.T.nodes → ¬':' ∈ K.name.data ∧ ¬',' ∈ K.name.data) →
+      (∀ (K : VE.SoftNorms.SoftNode),
+          K ∈ D.T.nodes → ∀ (K' : VE.SoftNorms.SoftNode), K' ∈ D.T.nodes → K.name = K'.name → K = K') →
+        ∀ {l : String} {a a' : VE.Formula},
+          (l, a) ∈ VE.NormDefaults.Wire.softLabelledU U D → (l, a') ∈ VE.NormDefaults.Wire.softLabelledU U D → a = a'
+  -- uses VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.softLabelledU@VE.NormDefaults.Layered VE.Norms.Node.name@VE.Norms.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree
+  -- expr 1110382616
 theorem VE.Readings.layerNames_fill_lite
   ∀ {U : VE.NormDefaults.UDoc},
     VE.Readings.FillLite U → VE.Norms.layerNames (VE.NormDefaults.fill U).T = VE.Norms.layerNames U.D.T
@@ -39076,6 +39424,23 @@ theorem VE.Readings.mem_genKeys_outweighs
         g.fst = VE.Readings.GenKey.outweighs a L H → (a, L, H) ∈ VE.SoftNorms.outweighsTriples (VE.Rights.correlate X)
   -- uses VE.Readings.GenKey.outweighs@VE.Readings.Separate VE.Readings.GenKey@VE.Readings.Separate VE.Readings.genKeys@VE.Readings.Separate VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate VE.SoftNorms.outweighsTriples@VE.SoftNorms.Tree
   -- expr 3165802434
+theorem VE.Readings.mem_labelImage
+  ∀ {N : VE.Readings.NDoc} {c : VE.Readings.Choice} {p : String × String},
+    p ∈ VE.Readings.labelImage N c →
+      (∃ M,
+          M ∈ (VE.Readings.choiceDoc N.D c).fst.soft.T.nodes ∧
+            p ∈ (VE.Readings.nodeExcLabels M).zip (VE.Readings.nodeExcLabels (VE.Readings.fmap N.D c M))) ∨
+        ∃ x,
+          x ∈ VE.SoftNorms.collidingPairs (VE.Readings.choiceDoc N.D c).fst.soft ∧
+            p.fst = VE.SoftNorms.Wire.cohLabel x.fst x.snd ∧
+              p.snd =
+                have y :=
+                  if (VE.Readings.fmap N.D c x.fst).name < (VE.Readings.fmap N.D c x.snd).name then
+                    (VE.Readings.fmap N.D c x.fst, VE.Readings.fmap N.D c x.snd)
+                  else (VE.Readings.fmap N.D c x.snd, VE.Readings.fmap N.D c x.fst);
+                VE.SoftNorms.Wire.cohLabel y.fst y.snd
+  -- uses VE.Formula@VE.Syntax VE.Norms.Node.name@VE.Norms.Tree VE.Readings.Choice@VE.Readings.Choice VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.fmap@VE.Readings.ChoiceFacts VE.Readings.labelImage@VE.Readings.SoftSupLabels VE.Readings.nodeExcLabels@VE.Readings.SoftSupLabels VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.Wire.cohLabel@VE.SoftNorms.Wire VE.SoftNorms.collidingPairs@VE.SoftNorms.Tree
+  -- expr 4014964338
 theorem VE.Readings.mem_linesAux
   ∀ {L : List (String × VE.Rights.SourceLine)} {k : Nat} {x : String × VE.Rights.Line},
     x ∈ VE.Rights.linesAux L k → ∃ e, e ∈ L ∧ ∃ k', x.snd ∈ VE.Rights.instancesOf e.fst e.snd k'
@@ -39159,6 +39524,18 @@ theorem VE.Readings.mem_sets_getElem
   ∀ {D : VE.Readings.Doc} {R : VE.Readings.ReadingSet}, R ∈ D.sets → ∃ m hm, D.sets[m] = R
   -- uses VE.Readings.Doc.sets@VE.Readings.Doc VE.Readings.Doc@VE.Readings.Doc VE.Readings.ReadingSet@VE.Readings.Doc
   -- expr 2201544530
+theorem VE.Readings.mem_softLabelledU
+  ∀ {U : VE.NormDefaults.UDoc} {D : VE.SoftNorms.SoftDoc} {l : String} {a : VE.Formula},
+    (l, a) ∈ VE.NormDefaults.Wire.softLabelledU U D →
+      (∃ K,
+          K ∈ D.T.nodes ∧
+            ∃ j,
+              (VE.Readings.nodeExcLabels K)[j]? = Option.some l ∧ (VE.SoftNorms.excPremisesOf D K)[j]? = Option.some a) ∨
+        ∃ x,
+          x ∈ VE.SoftNorms.collidingPairs D ∧
+            l = VE.SoftNorms.Wire.cohLabel x.fst x.snd ∧ a = VE.NormDefaults.Wire.cohPremiseU U D x.fst x.snd
+  -- uses VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.cohPremiseU@VE.NormDefaults.Layered VE.NormDefaults.Wire.softLabelledU@VE.NormDefaults.Layered VE.Readings.nodeExcLabels@VE.Readings.SoftSupLabels VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.Wire.cohLabel@VE.SoftNorms.Wire VE.SoftNorms.collidingPairs@VE.SoftNorms.Tree VE.SoftNorms.excPremisesOf@VE.SoftNorms.Soften
+  -- expr 3870161513
 theorem VE.Readings.mem_supAssertedAux
   ∀ (D : VE.Readings.Doc) (l : List VE.Readings.Item) (m0 : Nat) (a : VE.Formula),
     a ∈ VE.Readings.supAssertedAux D l m0 ↔
@@ -39223,6 +39600,23 @@ theorem VE.Readings.mem_usesOfUnit
     n ∈ VE.Readings.usesOfUnit D u ↔ ∃ c cs, VE.Readings.Item.fixed u c cs ∈ D.items ∧ n ∈ VE.Readings.uses c cs
   -- uses VE.Compose.Content@VE.Compose.Content VE.Readings.Doc.items@VE.Readings.Doc VE.Readings.Doc@VE.Readings.Doc VE.Readings.Item.fixed@VE.Readings.Doc VE.Readings.Item@VE.Readings.Doc VE.Readings.uses@VE.Readings.Doc VE.Readings.usesOfUnit@VE.Readings.Doc
   -- expr 2422928612
+theorem VE.Readings.mem_zip_get
+  ∀ {α β : Type} {L₁ : List α} {L₂ : List β} {x : α} {y : β},
+    (x, y) ∈ L₁.zip L₂ → ∃ j, L₁[j]? = Option.some x ∧ L₂[j]? = Option.some y
+  -- uses
+  -- expr 111994735
+theorem VE.Readings.mem_zip_nodeExcLabels
+  ∀ {M M' : VE.SoftNorms.SoftNode},
+    M'.mode = M.mode →
+      Option.map (fun e => (e.sufficient.length, e.necessary.length)) M'.exception =
+          Option.map (fun e => (e.sufficient.length, e.necessary.length)) M.exception →
+        ∀ {p : String × String},
+          p ∈ (VE.Readings.nodeExcLabels M).zip (VE.Readings.nodeExcLabels M') →
+            ∃ k i,
+              (k = "sufficient".data ∨ k = "necessary".data) ∧
+                p.fst.data = VE.Readings.excData M.name k i ∧ p.snd.data = VE.Readings.excData M'.name k i
+  -- uses VE.Formula@VE.Syntax VE.Norms.Node.name@VE.Norms.Tree VE.Readings.excData@VE.Readings.SoftSupLabels VE.Readings.nodeExcLabels@VE.Readings.SoftSupLabels VE.SoftNorms.Exception.necessary@VE.SoftNorms.Tree VE.SoftNorms.Exception.sufficient@VE.SoftNorms.Tree VE.SoftNorms.Exception@VE.SoftNorms.Tree VE.SoftNorms.Mode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.exception@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.mode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
+  -- expr 326264631
 theorem VE.Readings.model_of_every
   ∀ {N : VE.Readings.NDoc} {r : VE.Readings.ComponentRows},
     VE.Readings.Covers N [] r.premises →
@@ -39455,6 +39849,44 @@ theorem VE.Readings.no_set_declares
           ∀ (R : VE.Readings.ReadingSet), R ∈ D.sets → ¬("rule", N.name) ∈ VE.Readings.declaredBy R
   -- uses VE.Norms.Node.name@VE.Norms.Tree VE.Readings.Doc.frame@VE.Readings.Doc VE.Readings.Doc.sets@VE.Readings.Doc VE.Readings.Doc@VE.Readings.Doc VE.Readings.FixedNorm@VE.Readings.ChoiceFacts VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.ReadingSet@VE.Readings.Doc VE.Readings.declaredBy@VE.Readings.Doc VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree
   -- expr 4203211691
+theorem VE.Readings.nodeExcLabels_fmap_length
+  ∀ {N : VE.Readings.NDoc},
+    VE.Readings.Hyps N.D →
+      ∀ (c : VE.Readings.Choice) {M : VE.SoftNorms.SoftNode},
+        M ∈ (VE.Readings.choiceDoc N.D c).fst.soft.T.nodes →
+          (VE.Readings.nodeExcLabels (VE.Readings.fmap N.D c M)).length = (VE.Readings.nodeExcLabels M).length
+  -- uses VE.Formula@VE.Syntax VE.Readings.Choice@VE.Readings.Choice VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.fmap@VE.Readings.ChoiceFacts VE.Readings.nodeExcLabels@VE.Readings.SoftSupLabels VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree
+  -- expr 3947204450
+theorem VE.Readings.nodeExcLabels_get
+  ∀ {K : VE.SoftNorms.SoftNode} {j : Nat} {l : String},
+    (VE.Readings.nodeExcLabels K)[j]? = Option.some l →
+      ∃ e,
+        K.mode = VE.SoftNorms.Mode.default ∧
+          K.exception = Option.some e ∧
+            (j < e.sufficient.length ∧ l.data = VE.Readings.excData K.name "sufficient".data j ∨
+              e.sufficient.length ≤ j ∧ l.data = VE.Readings.excData K.name "necessary".data (j - e.sufficient.length))
+  -- uses VE.Formula@VE.Syntax VE.Norms.Node.name@VE.Norms.Tree VE.Readings.excData@VE.Readings.SoftSupLabels VE.Readings.nodeExcLabels@VE.Readings.SoftSupLabels VE.SoftNorms.Exception.sufficient@VE.SoftNorms.Tree VE.SoftNorms.Exception@VE.SoftNorms.Tree VE.SoftNorms.Mode.default@VE.SoftNorms.Tree VE.SoftNorms.Mode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.exception@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.mode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
+  -- expr 1726018565
+theorem VE.Readings.nodeExcLabels_length
+  ∀ (M M' : VE.SoftNorms.SoftNode),
+    M'.mode = M.mode →
+      Option.map (fun e => (e.sufficient.length, e.necessary.length)) M'.exception =
+          Option.map (fun e => (e.sufficient.length, e.necessary.length)) M.exception →
+        (VE.Readings.nodeExcLabels M').length = (VE.Readings.nodeExcLabels M).length
+  -- uses VE.Formula@VE.Syntax VE.Readings.nodeExcLabels@VE.Readings.SoftSupLabels VE.SoftNorms.Exception.necessary@VE.SoftNorms.Tree VE.SoftNorms.Exception.sufficient@VE.SoftNorms.Tree VE.SoftNorms.Exception@VE.SoftNorms.Tree VE.SoftNorms.Mode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.exception@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.mode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
+  -- expr 1841179099
+theorem VE.Readings.nodeExcLabels_length_prem
+  ∀ (D : VE.SoftNorms.SoftDoc) (K : VE.SoftNorms.SoftNode),
+    (VE.Readings.nodeExcLabels K).length = (VE.SoftNorms.excPremisesOf D K).length
+  -- uses VE.Formula@VE.Syntax VE.Readings.nodeExcLabels@VE.Readings.SoftSupLabels VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.excPremisesOf@VE.SoftNorms.Soften
+  -- expr 1508706632
+theorem VE.Readings.nodeExcLabels_pos
+  ∀ {K : VE.SoftNorms.SoftNode},
+    ¬':' ∈ K.name.data →
+      ∀ {j j' : Nat} {l : String},
+        (VE.Readings.nodeExcLabels K)[j]? = Option.some l → (VE.Readings.nodeExcLabels K)[j']? = Option.some l → j = j'
+  -- uses VE.Norms.Node.name@VE.Norms.Tree VE.Readings.nodeExcLabels@VE.Readings.SoftSupLabels VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
+  -- expr 3058436516
 theorem VE.Readings.nodeFacts_of_home
   ∀ (D : VE.Readings.Doc),
     D.chain ≠ VE.Readings.Chain.rights →
@@ -40927,6 +41359,10 @@ theorem VE.Readings.qName_chosenAt
       | Option.none => n
   -- uses VE.Readings.Choice@VE.Readings.Choice VE.Readings.Doc@VE.Readings.Doc VE.Readings.chosenAt@VE.Readings.ChoiceFacts VE.Readings.position@VE.Readings.Choice VE.Readings.qName@VE.Readings.Choice VE.Readings.qName_chosenAt.match_1@VE.Readings.ChoiceFacts VE.Readings.qualify@VE.Readings.Choice
   -- expr 2352409601
+theorem VE.Readings.qualify_data_mem
+  ∀ {k : Nat} {n : String} {ch : Char}, ch ∈ n.data → ch ∈ (VE.Readings.qualify k n).data
+  -- uses VE.Readings.qualify@VE.Readings.Choice
+  -- expr 1011696286
 theorem VE.Readings.qualify_inj
   ∀ {k k' : Nat} {n n' : String}, VE.Readings.qualify k n = VE.Readings.qualify k' n' → k = k' ∧ n = n'
   -- uses VE.Readings.qualify@VE.Readings.Choice
@@ -41272,6 +41708,28 @@ theorem VE.Readings.scanOthers_eq
       (want && Gs.any fun G => valid G && hits G, adm || Gs.any valid)
   -- uses VE.Readings.scanOthers@VE.Readings.Scan
   -- expr 97539792
+theorem VE.Readings.sdShown_image
+  ∀ (N : VE.Readings.NDoc),
+    VE.Readings.supReady N.D = Bool.true →
+      (VE.Readings.checkedChoices N.D).length ≤ VE.Readings.maxChoiceChecks →
+        ∀ (A : VE.Readings.Choice) (used : List String) (c : VE.Readings.Choice),
+          VE.Readings.Compatible N.D c →
+            (∀ (x : String × Nat), x ∈ A → x ∈ c) →
+              ∀ (l s : String), (l, s) ∈ VE.Readings.labelImage N c → s ∈ used → l ∈ VE.Readings.sdShown N A used
+  -- uses VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.checkedChoices@VE.Readings.Choice VE.Readings.labelImage@VE.Readings.SoftSupLabels VE.Readings.maxChoiceChecks@VE.Readings.Choice VE.Readings.sdShown@VE.Readings.SoftSupLabels VE.Readings.supReady@VE.Readings.Choice
+  -- expr 542216414
+theorem VE.Readings.sdShown_mem
+  ∀ (N : VE.Readings.NDoc),
+    VE.Readings.supReady N.D = Bool.true →
+      (VE.Readings.checkedChoices N.D).length ≤ VE.Readings.maxChoiceChecks →
+        ∀ (A : VE.Readings.Choice) (used : List String) (l : String),
+          l ∈ VE.Readings.sdShown N A used →
+            ∃ c,
+              VE.Readings.Compatible N.D c ∧
+                (∀ (x : String × Nat), x ∈ A → x ∈ c) ∧
+                  l ∈ List.map (fun x => x.fst) (VE.Readings.softXL N (VE.Readings.choiceDoc N.D c).fst)
+  -- uses VE.Formula@VE.Syntax VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.checkedChoices@VE.Readings.Choice VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.maxChoiceChecks@VE.Readings.Choice VE.Readings.sdShown@VE.Readings.SoftSupLabels VE.Readings.softXL@VE.Readings.SoftDefaults VE.Readings.supReady@VE.Readings.Choice VE.Rights.RightsDoc@VE.Rights.Tree
+  -- expr 3157084984
 theorem VE.Readings.sd_superpose_all
   ∀ (N : VE.Readings.NDoc),
     VE.Readings.WellFormedSD N = Bool.true →
@@ -41368,6 +41826,36 @@ theorem VE.Readings.selU_canon
                             (VE.Norms.tupleVal vs) (VE.SoftNorms.fuel Z) K)
   -- uses VE.Defaults.selU@VE.Defaults.Premises VE.Formula.denote@VE.Semantics VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.ConstantsTyped@VE.Norms.Subst VE.Norms.Doc@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Valid@VE.Norms.Valid VE.Norms.tupleVal@VE.Norms.Basic VE.Readings.FillLite@VE.Readings.SoftSup VE.SoftNorms.SelectsSoftD@VE.SoftNorms.Semantics VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.regulated@VE.SoftNorms.Tree VE.SoftNorms.canon@VE.SoftNorms.Coherence VE.SoftNorms.fuel@VE.SoftNorms.Tree VE.SoftNorms.soften@VE.SoftNorms.Soften VE.SoftNorms.sortsOf@VE.SoftNorms.Tree VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.TupleTyped@VE.Semantics
   -- expr 1969184650
+theorem VE.Readings.sel_pullF
+  ∀ {N : VE.Readings.NDoc},
+    VE.Readings.Hyps N.D →
+      ∀ {c : VE.Readings.Choice},
+        VE.Readings.Compatible N.D c →
+          VE.Readings.WellFormedSD N = Bool.true →
+            VE.NormDefaults.WellFormedU (VE.Readings.supU N) = Bool.true →
+              ∀ {B : VE.Structure},
+                VE.Norms.BaseAdmissible (VE.NormDefaults.fill (VE.Readings.supU N)) B →
+                  VE.Readings.Encodes N.D c B →
+                    (∀ (M : VE.SoftNorms.SoftNode),
+                        M ∈ (VE.Readings.choiceDoc N.D c).fst.soft.T.nodes →
+                          ∀ (vs : List B.Carrier),
+                            VE.TupleTyped B (VE.SoftNorms.sortsOf (VE.Readings.choiceDoc N.D c).fst.soft M.pred) vs →
+                              (VE.Formula.denote B (VE.Norms.tupleVal vs)
+                                  (VE.Defaults.selU (VE.Readings.supU N) (VE.Readings.sup N.D).fst.soft
+                                    (VE.Readings.fmap N.D c M)) ↔
+                                VE.Formula.denote (VE.Readings.pullF N c B) (VE.Norms.tupleVal vs)
+                                  (VE.Defaults.selU (VE.Readings.choiceU N c) (VE.Readings.choiceDoc N.D c).fst.soft
+                                    M))) ∧
+                      ∀ (K : VE.SoftNorms.SoftNode),
+                        K ∈ (VE.Readings.sup N.D).fst.soft.T.nodes →
+                          (∀ (M : VE.SoftNorms.SoftNode),
+                              M ∈ (VE.Readings.choiceDoc N.D c).fst.soft.T.nodes → VE.Readings.fmap N.D c M ≠ K) →
+                            ∀ (vs : List B.Carrier),
+                              VE.TupleTyped B (VE.SoftNorms.sortsOf (VE.Readings.sup N.D).fst.soft K.pred) vs →
+                                ¬VE.Formula.denote B (VE.Norms.tupleVal vs)
+                                    (VE.Defaults.selU (VE.Readings.supU N) (VE.Readings.sup N.D).fst.soft K)
+  -- uses VE.Defaults.selU@VE.Defaults.Premises VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.BaseAdmissible@VE.Norms.Prefix VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.tupleVal@VE.Norms.Basic VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Encodes@VE.Readings.Choice VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.WellFormedSD@VE.Readings.SoftDefaults VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.choiceU@VE.Readings.Unspecified VE.Readings.fmap@VE.Readings.ChoiceFacts VE.Readings.pullF@VE.Readings.SoftSup VE.Readings.sup@VE.Readings.Choice VE.Readings.supU@VE.Readings.Unspecified VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.sortsOf@VE.SoftNorms.Tree VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.TupleTyped@VE.Semantics
+  -- expr 761117533
 theorem VE.Readings.selectable_mem
   ∀ {X : VE.Rights.RightsDoc} {k p : String} {N : VE.SoftNorms.SoftNode},
     N ∈ VE.Readings.selectable X k p → N ∈ (VE.Rights.correlate X).T.nodes ∧ N.pred = p
@@ -42216,6 +42704,29 @@ theorem VE.Readings.softPremises_strict
   ∀ (S : VE.SoftNorms.SoftDoc), VE.Readings.StrictNodes S → VE.SoftNorms.softPremises S = []
   -- uses VE.Formula@VE.Syntax VE.Readings.StrictNodes@VE.Readings.Unspecified VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.softPremises@VE.SoftNorms.Soften
   -- expr 990647433
+theorem VE.Readings.softXL_choice_unique
+  ∀ {N : VE.Readings.NDoc},
+    VE.Readings.Hyps N.D →
+      ∀ (c : VE.Readings.Choice) {l : String} {a a' : VE.Formula},
+        (l, a) ∈ VE.Readings.softXL N (VE.Readings.choiceDoc N.D c).fst →
+          (l, a') ∈ VE.Readings.softXL N (VE.Readings.choiceDoc N.D c).fst → a = a'
+  -- uses VE.Formula@VE.Syntax VE.Readings.Choice@VE.Readings.Choice VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.softXL@VE.Readings.SoftDefaults VE.Rights.RightsDoc@VE.Rights.Tree
+  -- expr 217701323
+theorem VE.Readings.softXL_labels
+  ∀ (N : VE.Readings.NDoc) (X : VE.Rights.RightsDoc),
+    List.map (fun x => x.fst) (VE.Readings.softXL N X) =
+      List.flatMap VE.Readings.nodeExcLabels (VE.Rights.correlate X).T.nodes ++
+        List.map (fun x => VE.SoftNorms.Wire.cohLabel x.fst x.snd) (VE.SoftNorms.collidingPairs (VE.Rights.correlate X))
+  -- uses VE.Formula@VE.Syntax VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.nodeExcLabels@VE.Readings.SoftSupLabels VE.Readings.softXL@VE.Readings.SoftDefaults VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.Wire.cohLabel@VE.SoftNorms.Wire VE.SoftNorms.collidingPairs@VE.SoftNorms.Tree
+  -- expr 2651271989
+theorem VE.Readings.softXL_sup_unique
+  ∀ {N : VE.Readings.NDoc},
+    VE.Readings.Hyps N.D →
+      ∀ {l : String} {a a' : VE.Formula},
+        (l, a) ∈ VE.Readings.softXL N (VE.Readings.sup N.D).fst →
+          (l, a') ∈ VE.Readings.softXL N (VE.Readings.sup N.D).fst → a = a'
+  -- uses VE.Formula@VE.Syntax VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.softXL@VE.Readings.SoftDefaults VE.Readings.sup@VE.Readings.Choice VE.Rights.RightsDoc@VE.Rights.Tree
+  -- expr 3652169999
 theorem VE.Readings.softX_strict
   ∀ (N : VE.Readings.NDoc) (X : VE.Rights.RightsDoc),
     VE.Readings.noRights X = Bool.true → VE.Readings.allStrict X = Bool.true → VE.Readings.softX N X = []
@@ -42542,6 +43053,41 @@ theorem VE.Readings.supFrame_no_sets
   ∀ {D : VE.Readings.Doc}, D.sets = [] → VE.Readings.supFrame D = D.frame
   -- uses VE.Readings.Doc.frame@VE.Readings.Doc VE.Readings.Doc.sets@VE.Readings.Doc VE.Readings.Doc@VE.Readings.Doc VE.Readings.ReadingSet@VE.Readings.Doc VE.Readings.supFrame@VE.Readings.Choice VE.Rights.RightsDoc@VE.Rights.Tree
   -- expr 2131597697
+theorem VE.Readings.supLabel_other
+  ∀ (N : VE.Readings.NDoc),
+    VE.Readings.WellFormedSD N = Bool.true →
+      VE.Readings.superposable N.D = Bool.true →
+        VE.NormDefaults.WellFormedU (VE.Readings.supU N) = Bool.true →
+          ∀ (c : VE.Readings.Choice),
+            VE.Readings.Compatible N.D c →
+              ∀ (B : VE.Structure),
+                VE.Norms.BaseAdmissible (VE.NormDefaults.fill (VE.Readings.supU N)) B →
+                  VE.Norms.Sat B (VE.Readings.slotP N.D) →
+                    VE.Readings.Encodes N.D c B →
+                      ∀ (s : String) (a' : VE.Formula),
+                        (s, a') ∈ VE.Readings.softXL N (VE.Readings.sup N.D).fst →
+                          (∀ (p : String × String), p ∈ VE.Readings.labelImage N c → p.snd ≠ s) →
+                            VE.Formula.denote B [] a'
+  -- uses VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.BaseAdmissible@VE.Norms.Prefix VE.Norms.Sat@VE.Norms.Prefix VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Encodes@VE.Readings.Choice VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.WellFormedSD@VE.Readings.SoftDefaults VE.Readings.labelImage@VE.Readings.SoftSupLabels VE.Readings.slotP@VE.Readings.Choice VE.Readings.softXL@VE.Readings.SoftDefaults VE.Readings.sup@VE.Readings.Choice VE.Readings.supU@VE.Readings.Unspecified VE.Readings.superposable@VE.Readings.Choice VE.Rights.RightsDoc@VE.Rights.Tree VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 4180782489
+theorem VE.Readings.supLabel_pull
+  ∀ (N : VE.Readings.NDoc),
+    VE.Readings.WellFormedSD N = Bool.true →
+      VE.Readings.superposable N.D = Bool.true →
+        VE.NormDefaults.WellFormedU (VE.Readings.supU N) = Bool.true →
+          ∀ (c : VE.Readings.Choice),
+            VE.Readings.Compatible N.D c →
+              ∀ (B : VE.Structure),
+                VE.Norms.BaseAdmissible (VE.NormDefaults.fill (VE.Readings.supU N)) B →
+                  VE.Norms.Sat B (VE.Readings.slotP N.D) →
+                    VE.Readings.Encodes N.D c B →
+                      ∀ (l s : String) (a a' : VE.Formula),
+                        (l, s) ∈ VE.Readings.labelImage N c →
+                          (l, a) ∈ VE.Readings.softXL N (VE.Readings.choiceDoc N.D c).fst →
+                            (s, a') ∈ VE.Readings.softXL N (VE.Readings.sup N.D).fst →
+                              (VE.Formula.denote B [] a' ↔ VE.Formula.denote (VE.Readings.pullF N c B) [] a)
+  -- uses VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.BaseAdmissible@VE.Norms.Prefix VE.Norms.Sat@VE.Norms.Prefix VE.Readings.Choice@VE.Readings.Choice VE.Readings.Compatible@VE.Readings.Choice VE.Readings.Encodes@VE.Readings.Choice VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.WellFormedSD@VE.Readings.SoftDefaults VE.Readings.choiceDoc@VE.Readings.Choice VE.Readings.labelImage@VE.Readings.SoftSupLabels VE.Readings.pullF@VE.Readings.SoftSup VE.Readings.slotP@VE.Readings.Choice VE.Readings.softXL@VE.Readings.SoftDefaults VE.Readings.sup@VE.Readings.Choice VE.Readings.supU@VE.Readings.Unspecified VE.Readings.superposable@VE.Readings.Choice VE.Rights.RightsDoc@VE.Rights.Tree VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 2888428069
 theorem VE.Readings.supModelCheckExtra_nil
   ∀ {α : Type u} [inst : DecidableEq α] (D : VE.Readings.Doc) (A : VE.Readings.Choice) (Γ : List VE.Formula)
     (M : VE.FiniteModel α), VE.Readings.supModelCheckExtra D A [] Γ M = VE.Readings.supModelCheck D A Γ M
@@ -42707,6 +43253,12 @@ theorem VE.Readings.sup_name_inj
         M ∈ (VE.Readings.sup D).fst.soft.T.nodes → M' ∈ (VE.Readings.sup D).fst.soft.T.nodes → M.name = M'.name → M = M'
   -- uses VE.Formula@VE.Syntax VE.Norms.Node.name@VE.Norms.Tree VE.Readings.Doc@VE.Readings.Doc VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.sup@VE.Readings.Choice VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree
   -- expr 2826279757
+theorem VE.Readings.sup_name_sep
+  ∀ {N : VE.Readings.NDoc},
+    VE.Readings.Hyps N.D →
+      ∀ {K : VE.SoftNorms.SoftNode}, K ∈ (VE.Readings.sup N.D).fst.soft.T.nodes → ¬':' ∈ K.name.data ∧ ¬',' ∈ K.name.data
+  -- uses VE.Formula@VE.Syntax VE.Norms.Node.name@VE.Norms.Tree VE.Readings.Hyps@VE.Readings.ChoiceFacts VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.NDoc@VE.Readings.Unspecified VE.Readings.sup@VE.Readings.Choice VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree
+  -- expr 822948296
 theorem VE.Readings.sup_no_sets
   ∀ (D : VE.Readings.Doc),
     D.sets = [] →
@@ -43933,6 +44485,17 @@ theorem VE.Readings.yields_stable_le
         N ∈ D.T.nodes → r N ≤ k → k ≤ k' → (VE.SoftNorms.YieldsSoftD D S ρ k' N ↔ VE.SoftNorms.YieldsSoftD D S ρ k N)
   -- uses VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.YieldsSoftD@VE.SoftNorms.Semantics VE.SoftNorms.children@VE.SoftNorms.Tree VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
   -- expr 288798178
+theorem VE.Readings.zip_flatMap_of_length
+  ∀ {α β γ : Type} (f : α → List β) (g : α → List γ) (l : List α),
+    (∀ (x : α), x ∈ l → (f x).length = (g x).length) →
+      (List.flatMap f l).zip (List.flatMap g l) = List.flatMap (fun x => (f x).zip (g x)) l
+  -- uses
+  -- expr 3162941141
+theorem VE.Readings.zip_map_same
+  ∀ {α β γ : Type} (f : α → β) (g : α → γ) (l : List α),
+    (List.map f l).zip (List.map g l) = List.map (fun x => (f x, g x)) l
+  -- uses
+  -- expr 312175949
 theorem VE.Readings.zip_tail_ne
   ∀ {l : List (String × Nat)},
     (List.map (fun x => x.fst) l).Nodup → ∀ {x y : String × Nat}, (x, y) ∈ l.zip l.tail → x.fst ≠ y.fst

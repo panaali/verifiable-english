@@ -39,7 +39,7 @@ def test_every_built_batch_block_is_compared():
     """The sections cover SC-1's three blocks and every later batch's block that is built."""
     titles = [section[0].split()[0] for section in _checker().SECTIONS]
     assert titles[:3] == ["SC-1", "SC-1", "SC-1"]
-    assert titles[3:] == ["SC-2", "SC-4", "SC-5", "SC-6", "SC-10"]
+    assert titles[3:] == ["SC-2", "SC-4", "SC-5", "SC-6", "SC-10", "SC-11", "SC-11"]
 
 
 def _mutated_sections(checker, tmp_path, section_index, name):
@@ -69,7 +69,9 @@ def _mutated_sections(checker, tmp_path, section_index, name):
     (6, "normDefaults_wire_admissionX"), (6, "layered_wire_acceptance"),
     (5, "xQueryRow_holds"), (5, "x_rowsHold"), (5, "sdSem_normsShaped"), (5, "readings_wire_sd_verdicts_all"),
     (5, "readings_wire_sd_verdicts_inconsistent"), (7, "sd_superpose_conflict_free"), (7, "supX_pull"),
-    (7, "sd_superpose_all"), (7, "sd_superpose_countermodel"),
+    (7, "sd_superpose_all"), (7, "sd_superpose_countermodel"), (8, "labelImage_fst"), (8, "sdShown_image"),
+    (8, "fillLabels_choice"), (8, "labelImage_functional"), (8, "supLabel_pull"), (8, "supLabel_other"),
+    (9, "routeSD_superposed_iff"), (9, "sdCheck_of_admitted"), (9, "readings_wire_sd_witness_sound"),
 ])
 def test_the_check_fails_on_a_changed_statement(tmp_path, capsys, section_index, name):
     checker = _checker()
@@ -190,3 +192,20 @@ def test_a_soft_leaf_other_than_the_approved_edit_fails(tmp_path, capsys, before
     sections[SC6] = (title, start, stop, [copy if s == source else s for s in sources], expected, later)
     assert checker.main(sections) == 1
     assert "SoftLeafX: def differs" in capsys.readouterr().out
+
+
+def test_sc11_the_work_charge_read_after_the_choices_fails(tmp_path, capsys):
+    """14.11: `sdCheckWork` is read before the first `sdChoiceText`; the same conjuncts in another order differ."""
+    checker = _checker()
+    index = [s[0] for s in checker.SECTIONS].index("SC-11 wire")
+    title, start, stop, sources, expected, later = checker.SECTIONS[index]
+    text = sources[0].read_text()
+    work = " && decide (sdCheckWork N ≤ maxSdCheckWork) &&\n    (checkedChoices N.D).all (fun c => (sdChoiceText re N c).isNone)"
+    assert work in text
+    copy = tmp_path / sources[0].name
+    copy.write_text(text.replace(work, " &&\n    (checkedChoices N.D).all (fun c => (sdChoiceText re N c).isNone) &&"
+                                      " decide (sdCheckWork N ≤ maxSdCheckWork)"))
+    sections = list(checker.SECTIONS)
+    sections[index] = (title, start, stop, [copy], expected, later)
+    assert checker.main(sections) == 1
+    assert "sdChecked: def differs" in capsys.readouterr().out
