@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import copy
+import json
 import re
 from pathlib import Path
 
@@ -77,12 +78,19 @@ def _template():
     return f"{first} {second.strip()}"
 
 
+# rights-cfr-2-budget-1 (docs/rights/rights-cfr-2-budget-1/DELTA.md): the line names what `<j>` counts (R3), and with
+# no situation supplied it says none was searched, keeping the quoted budget (R1), never "UNKNOWN (budget 10000)".
+GLOSS = "colliding default pairs no ranking resolves"
+NOT_SEARCHED = "none supplied (not searched; budget 10000 unused)"
+
+
 def _spec_line(template, *, k, l, labels, j, exhibited):
     """The template's placeholders filled; the rights-conflict case has no couplings, so the optional
-    `[, under couplings <ids>]` is left out."""
+    `[, under couplings <ids>]` is left out. The one addition to the template's words is `GLOSS` after the count."""
     filled = (template.replace("[, under couplings <ids>]", "").replace("<k>", str(k)).replace("<l>", str(l))
-              .replace("<labels>", ", ".join(labels)).replace("<j>", str(j))
-              .replace("yes | UNKNOWN (<budget>)", exhibited))
+              .replace("<labels>", ", ".join(labels))
+              .replace("<j> weighing points open;", f"<j> weighing points open ({GLOSS});")
+              .replace("<j>", str(j)).replace("yes | UNKNOWN (<budget>)", exhibited))
     assert "<" not in filled and "[" not in filled
     return filled
 
@@ -97,8 +105,7 @@ def test_rights_conflict_free_report_evidence():
     # Lean's own line, before any relay, is the spec's line byte for byte (the DRI-signed row's condition).
     [raw] = run("ve_rights_route", [{"id": "c", "kind": "rights-conflict", "environment": env(ARREST),
                                      "document": WEIGHED, "packages": certified}])
-    assert raw["status_text"] == _spec_line(_template(), k=1, l=2, labels=labels, j=1,
-                                            exhibited="UNKNOWN (budget 10000)")
+    assert raw["status_text"] == _spec_line(_template(), k=1, l=2, labels=labels, j=1, exhibited=NOT_SEARCHED)
     bare = rights_route.run_rights_case(environment, WEIGHED, "rights-conflict", packages=certified)
     shown = rights_route.run_rights_case(environment, WEIGHED, "rights-conflict", packages=certified,
                                          situation=situation)
@@ -110,9 +117,8 @@ def test_rights_conflict_free_report_evidence():
         # The first sentence is kept byte for byte; 7.3's parts follow it.
         assert row["status_text"].startswith("CONFLICT-FREE among rules on the same act, conditional on 1 coherence "
                                              "premises and 2 limitation premises (")
-    # No situation sent: the line says UNKNOWN with its budget, and no situation is shown.
-    assert bare["status_text"] == _spec_line(_template(), k=1, l=2, labels=labels, j=1,
-                                             exhibited="UNKNOWN (budget 10000)")
+    # No situation sent: the line says none was supplied or searched, with the unused budget; none is shown.
+    assert bare["status_text"] == _spec_line(_template(), k=1, l=2, labels=labels, j=1, exhibited=NOT_SEARCHED)
     assert bare["situation_exhibited"] is False and bare["situation"] is None
     # A checked situation: its decision, exception and limitation tables, as the request gave them.
     assert shown["status_text"] == _spec_line(_template(), k=1, l=2, labels=labels, j=1, exhibited="yes")
@@ -126,6 +132,63 @@ def test_rights_conflict_free_report_evidence():
     report = rights_route.report_rights(environment, WEIGHED)
     assert report["conflict"]["verdict"] == "UNKNOWN"
     assert not {"weighing_points", "situation_exhibited", "budget", "situation"} & set(report["conflict"])
+
+
+def test_rights_conflict_free_without_a_situation_names_no_search():
+    """rights-cfr-2-budget-1 (1): no situation supplied, so no search ran; the line must not read as one that hit its
+    budget. It keeps the quoted budget 10000 (R1), and every JSON field is as before; a supplied one still says yes."""
+    environment, certified, situation = _weighed()
+    [raw] = run("ve_rights_route", [{"id": "c", "kind": "rights-conflict", "environment": env(ARREST),
+                                     "document": WEIGHED, "packages": certified}])
+    bare = rights_route.run_rights_case(environment, WEIGHED, "rights-conflict", packages=certified)
+    for row in (raw, bare):
+        assert "UNKNOWN (budget" not in row["status_text"] and "UNKNOWN" not in row["status_text"]
+        assert row["status_text"].endswith(f"; situation exhibited: {NOT_SEARCHED}")
+        assert (row["situation_exhibited"], row["budget"], row["situation"]) == (False, 10000, None)
+    shown = rights_route.run_rights_case(environment, WEIGHED, "rights-conflict", packages=certified,
+                                         situation=situation)
+    assert shown["status_text"].endswith("; situation exhibited: yes") and shown["situation_exhibited"] is True
+    assert shown["budget"] == 10000
+
+
+def test_rights_weighing_points_name_what_they_count():
+    """rights-cfr-2-budget-1 (2), step 1's fixture: this route's `<j>` is WP(T) with no pair evidence (the colliding
+    default pairs no ranking resolves, `openCoherence`), and the line names it (R3); the count is unchanged (1)."""
+    environment, certified, _ = _weighed()
+    bare = rights_route.run_rights_case(environment, WEIGHED, "rights-conflict", packages=certified)
+    assert bare["weighing_points"] == ["soft:coherence:may-detain,no-arbitrary-arrest"]
+    assert f"; 1 weighing points open ({GLOSS}); situation exhibited: " in bare["status_text"]
+
+
+def test_rights_no_search_delta_keeps_every_quoted_value():
+    """The R1/R3 delta test over the saved evidence (docs/rights/rights-cfr-2-budget-1/delta.json): each record's head
+    is Lean's line now, at the base's path, and it keeps every number and label the base quoted."""
+    saved = json.loads((ROOT / "docs/rights/rights-cfr-2-budget-1/delta.json").read_text(encoding="utf-8"))
+    environment, certified, situation = _weighed()
+    assert [r["situation"] for r in saved["records"]] == [False, True]
+    for record in saved["records"]:
+        shown = {"situation": situation} if record["situation"] else {}
+        row = rights_route.run_rights_case(environment, WEIGHED, "rights-conflict", packages=certified, **shown)
+        assert record["path"] == "status_text" and row[record["path"]] == record["head"]
+        quoted = re.findall(r"[a-z]+:[\w:,-]+[\w]|\d+", record["base"])
+        assert "10000" in quoted or record["situation"]
+        assert all(record["head"].count(value) >= record["base"].count(value) for value in quoted)
+
+
+NO_SEARCH_MUTATIONS = {
+    "old UNKNOWN line restored": lambda row: row.update(
+        status_text=row["status_text"].replace(NOT_SEARCHED, "UNKNOWN (budget 10000)")),
+    "count gloss dropped": lambda row: row.update(status_text=row["status_text"].replace(f" ({GLOSS})", "")),
+    "budget shifted": lambda row: row.update(status_text=row["status_text"].replace("10000 unused", "9999 unused")),
+}
+
+
+@pytest.mark.parametrize("label", sorted(NO_SEARCH_MUTATIONS))
+def test_a_mutated_no_search_line_is_refused(monkeypatch, label):
+    environment, certified, _ = _weighed()
+    _forge(monkeypatch, "rights-conflict", NO_SEARCH_MUTATIONS[label])
+    with pytest.raises(CheckerUnavailable):
+        rights_route.run_rights_case(environment, WEIGHED, "rights-conflict", packages=certified)
 
 
 @pytest.mark.parametrize("edit, error", [
