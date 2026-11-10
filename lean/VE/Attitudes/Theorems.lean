@@ -809,6 +809,18 @@ theorem old_formula_invariant (A : AttDoc) (h : WellFormedAtt A = true) (m : Att
     φ.denote (interp A m) ρ ↔ φ.denote m.S ρ :=
   denote_interp_of m (keyOf_old h) hφ fun _ _ => rfl
 
+/-- `interp` reads a key's generated name as the key's relation. -/
+theorem interp_name {A : AttDoc} (h : WellFormedAtt A = true) (m : AttModel.{u} A) {k : Key} (hk : k ∈ keys A)
+    (vs : List m.S.Carrier) : (interp A m).relation (name A k) vs ↔ m.J k vs := by
+  show (match keyOf A (name A k) with | some k => m.J k vs | none => _) ↔ _
+  rw [keyOf_name A h k hk]
+
+/-- `envAtt` declares a key's generated name with the key's sorts. -/
+theorem envAtt_name {A : AttDoc} (h : WellFormedAtt A = true) {k : Key} (hk : k ∈ keys A) :
+    (envAtt A).predicates (name A k) = some k.sorts := by
+  show (match keyOf A (name A k) with | some k => some k.sorts | none => _) = _
+  rw [keyOf_name A h k hk]
+
 /-- `interp` keeps the constants, so a term means the same on it. -/
 theorem term_interp (A : AttDoc) (m : AttModel.{u} A) (ρ : VE.Valuation m.S) (t : VE.Term) :
     t.denote (interp A m) ρ = t.denote m.S ρ := by
@@ -826,9 +838,7 @@ theorem att_elaboration_faithful (A : AttDoc) (h : WellFormedAtt A = true) (m : 
     obtain ⟨k, hk, hkA, -⟩ := ha
     simp only [AFormula.toFormula, hk, Option.map_some, Option.some.injEq] at he
     subst he
-    have hr : ∀ ws, (interp A m).relation (name A k) ws ↔ m.J k ws := fun ws => by
-      show (match keyOf A (name A k) with | some k => m.J k ws | none => _) ↔ _
-      rw [keyOf_name A h k hkA]
+    have hr := interp_name h m hkA
     simp only [AFormula.denote, hk, Option.some.injEq, exists_eq_left']
     rcases c.slot with _ | ⟨s, t⟩
     · simp only [Option.map_none, atom, VE.Formula.denote, term_interp, hr]
@@ -909,8 +919,7 @@ theorem restrict_intended (A : AttDoc) (h : WellFormedAtt A = true) (T : VE.Stru
   have hJ : ∀ k vs, (restrict A T).J k vs → k ∈ keys A ∧ VE.TupleTyped (restrict A T).S k.sorts vs := by
     rintro k vs ⟨hk, hr⟩
     obtain ⟨ss, hss, hTT⟩ := hT.2 _ vs hr
-    change (match keyOf A (name A k) with | some k => some k.sorts | none => _) = some ss at hss
-    rw [keyOf_name A h k hk, Option.some.injEq] at hss
+    rw [envAtt_name h hk, Option.some.injEq] at hss
     subst hss
     exact ⟨hk, (tupleTyped_withRelation T _ _ _).2 hTT⟩
   exact (frame_iff_intended A h (restrict A T) hJ).1 fun φ hφ =>

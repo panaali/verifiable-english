@@ -1161,6 +1161,7 @@ the `#guard` after at-1d's heading evaluates it) -/
 -- `old_formula_invariant` (7.4, φ = every situation is the category): with the category true it holds on M3's base
 -- structure and on `interp`; with it false, on neither (M2, whose `knows` and `thinks` tuples `interp` adds)
 def allCat : VE.Formula := .all sortS (contentOf cat0)
+theorem allCat_wf : allCat.WellFormed fat1.E [] := ⟨by decide, sortS, by decide, rfl⟩
 theorem allCat_at : allCat.denote (St (routeModel true [])) [] ∧ ¬ allCat.denote (St (routeModel false [])) [] := by
   refine ⟨fun v hv => ?_, fun h => ?_⟩
   · have : v = 1 := by simpa [routeModel, sortC, sortS] using hv
@@ -1169,7 +1170,7 @@ theorem allCat_at : allCat.denote (St (routeModel true [])) [] ∧ ¬ allCat.den
 example (h : WellFormedAtt fat1 = true) :
     (allCat.denote (interp fat1 (M true [keyK])) [] ∧ allCat.denote (M true [keyK]).S []) ∧
     (¬ allCat.denote (interp fat1 (M false [keyK, keyQ])) [] ∧ ¬ allCat.denote (M false [keyK, keyQ]).S []) :=
-  have i := fun c ks => old_formula_invariant fat1 h (M c ks) [] [] allCat ⟨by decide, sortS, by decide, rfl⟩
+  have i := fun c ks => old_formula_invariant fat1 h (M c ks) [] [] allCat allCat_wf
   ⟨⟨(i _ _).2 allCat_at.1, allCat_at.1⟩, ⟨fun hc => allCat_at.2 ((i _ _).1 hc), allCat_at.2⟩⟩
 
 -- `att_elaboration_faithful` (7.4: M1 true both ways, M4 false both ways; 7.5: F-AT1, M1-M4). The elaborated guard
@@ -1203,5 +1204,84 @@ example (h : WellFormedAtt fat1 = true) : ∃ φ, guard1.toFormula fat1 Γ1 = so
       ¬ AFormula.denote fat1 (M c ks) Γ1 ρ10 guard1 := fun c ks hv =>
     have g := fun x => hv ((hG c ks).1 x); ⟨g, fun a => g ((hF c ks).2 a)⟩
   exact ⟨_, guard1_elab, yes false _ (by decide), yes false _ (by decide), no true _ (by decide), no true _ (by decide)⟩
+
+-- `interp_admissible` (7.4, its hypothesis): M1's typed `J` gives an admissible `interp`; `thinks` at the reversed
+-- (untyped) tuple gives no intended model, and an `interp` that is not admissible
+theorem base_adm : (St (routeModel false [])).Admissible fat1.E :=
+  ⟨fun _ _ hc => (nomatch hc), fun _ _ hp => by simp [routeModel] at hp⟩
+abbrev Mrev : AttModel fat1 := ⟨St (routeModel false []), fun k vs => k = keyQ ∧ vs = [1, 0]⟩
+theorem keyQ_mem : keyQ ∈ keys fat1 := by rw [keys_fat1]; decide
+example (h : WellFormedAtt fat1 = true) : (interp fat1 (M false [keyQ])).Admissible (envAtt fat1) ∧
+    ¬ Intended fat1 Mrev ∧ ¬ (interp fat1 Mrev).Admissible (envAtt fat1) := by
+  refine ⟨interp_admissible fat1 h _ base_adm intended_M1_M4.1,
+    fun ⟨h1, _⟩ => absurd (h1 keyQ [1, 0] ⟨rfl, rfl⟩).2.1 (by decide), fun hA => ?_⟩
+  obtain ⟨ss, hss, hT⟩ := hA.2 (name fat1 keyQ) ([1, 0] : List Nat) ((interp_name h Mrev keyQ_mem _).2 ⟨rfl, rfl⟩)
+  rw [envAtt_name h keyQ_mem, Option.some.injEq] at hss
+  subst hss
+  exact absurd hT.1 (show ¬ 1 ∈ (routeModel false []).domains sortC by decide)
+
+-- `restrict_admissible` and `restrict_intended` (7.4, its hypothesis): M1 on `interp` (RM1) satisfies the frame, and
+-- its restriction is admissible and intended; M2 on `interp` (RM2) breaks the factive premise, and its restriction,
+-- read directly, knows the false category, so it is not intended
+example (h : WellFormedAtt fat1 = true) :
+    (restrict fat1 (interp fat1 (M false [keyQ]))).S.Admissible fat1.E ∧
+    Intended fat1 (restrict fat1 (interp fat1 (M false [keyQ]))) ∧
+    ¬ VE.Norms.Sat (interp fat1 (M false [keyK, keyQ])) (framePremises fat1) ∧
+    ¬ Intended fat1 (restrict fat1 (interp fat1 (M false [keyK, keyQ]))) := by
+  have hT1 := interp_admissible fat1 h _ base_adm intended_M1_M4.1
+  have iff := fun ks (hks : ks ⊆ [keyK, keyQ]) =>
+    frame_iff_intended fat1 h (M false ks) (typed01 fat1 false ks fun k hk => inFat1 k (hks hk))
+  have hk : keyK ∈ keys fat1 := (inFat1 keyK (by decide)).1
+  refine ⟨restrict_admissible fat1 h _ hT1, restrict_intended fat1 h _ hT1 ((iff [keyQ] (by decide)).2 intended_M1_M4.1),
+    fun hS => not_intended_M2_M3.1 ((iff _ (by decide)).1 hS), fun hI => ?_⟩
+  obtain ⟨_, v, hv, hr⟩ := hI.2.1 keyK hk rfl v01 ⟨hk, (interp_name h (M false [keyK, keyQ]) hk v01).2 ⟨by decide, rfl⟩⟩
+  cases hv
+  have hc := hr.2
+  change (match keyOf fat1 cat0 with | some k => (M false [keyK, keyQ]).J k [1] | none => [1] ∈ (routeModel false []).relations cat0) at hc
+  rw [keyOf_old h (sig := [sortS]) (by decide)] at hc
+  exact absurd hc (by decide)
+
+-- `interp_restrict` (7.4): a generated name's tuple in `J` (M1's `thinks`) on both sides, and the restriction does not
+-- keep it as an old relation; a generated name's tuple not in `J` (no attitude) on neither
+example (h : WellFormedAtt fat1 = true) :
+    ((interp fat1 (restrict fat1 (interp fat1 (M false [keyQ])))).relation (name fat1 keyQ) v01 ∧
+      (interp fat1 (M false [keyQ])).relation (name fat1 keyQ) v01) ∧
+    ¬ (restrict fat1 (interp fat1 (M false [keyQ]))).S.relation (name fat1 keyQ) v01 ∧
+    (¬ (interp fat1 (restrict fat1 (interp fat1 (M false [])))).relation (name fat1 keyQ) v01 ∧
+      ¬ (interp fat1 (M false [])).relation (name fat1 keyQ) v01) := by
+  have hT1 := interp_admissible fat1 h _ base_adm intended_M1_M4.1
+  have hT0 := interp_admissible fat1 h (M false []) base_adm
+    ⟨fun _ _ ⟨h, _⟩ => (nomatch h), fun _ _ _ _ ⟨h, _⟩ => (nomatch h), fun _ _ _ ⟨h, _⟩ => (nomatch h)⟩
+  have r1 := (interp_name h (M false [keyQ]) keyQ_mem v01).2 ⟨by decide, rfl⟩
+  have n0 : ¬ (interp fat1 (M false [])).relation (name fat1 keyQ) v01 := fun r =>
+    nomatch ((interp_name h (M false []) keyQ_mem v01).1 r).1
+  refine ⟨⟨(interp_restrict fat1 h _ hT1 _ _).2 r1, r1⟩, fun ⟨hn, _⟩ => ?_,
+    fun r => n0 ((interp_restrict fat1 h _ hT0 _ _).1 r), n0⟩
+  rw [keyOf_name fat1 h keyQ keyQ_mem] at hn
+  cases hn
+
+-- `att_old_language_conservative` (7.4, φ = every situation is the category): `[φ] ⊢ φ` on both sides; `[] ⊢ φ` on
+-- neither: the empty attitude relations satisfy the frame and refute φ (computed by the `#guard`), a countermodel to
+-- both sides
+example : VE.Entails.{0} (envAtt fat1) ([allCat] ++ framePremises fat1) allCat ∧ VE.Entails.{0} fat1.E [allCat] allCat :=
+  ⟨fun _ _ hp => hp _ (List.mem_append_left _ (List.mem_singleton_self _)), fun _ _ hp => hp _ (List.mem_singleton_self _)⟩
+example (h : WellFormedAtt fat1 = true) :
+    ¬ VE.Entails.{0} (envAtt fat1) ([] ++ framePremises fat1) allCat ∧ ¬ VE.Entails.{0} fat1.E [] allCat := by
+  have hI : Intended fat1 ⟨St (routeModel false []), fun _ _ => False⟩ :=
+    ⟨fun _ _ h => h.elim, fun _ _ _ _ h => h.elim, fun _ _ _ h => h⟩
+  exact ⟨fun hE => allCat_at.2 ((old_formula_invariant fat1 h _ [] [] allCat allCat_wf).1
+      (hE _ (interp_admissible fat1 h _ base_adm hI) fun a ha => empty_relations_frame fat1 _ a ha)),
+    fun hE => allCat_at.2 (hE _ base_adm fun _ h => nomatch h)⟩
+#guard frameHolds fat1 (routeModel false []) && !allCat.eval (routeModel false []) [] && allCat.eval (routeModel true []) []
+
+-- `att_conservative_doc`: F-AT0 (no condition, no part): no key, no frame, `envAtt` declares what `E` declares;
+-- F-AT1's conditions make the keys, the frame and `envAtt` differ; C-e's part alone (no condition) makes a key
+def c_e_only : AttDoc := c_e_doc [c_e_node] (.base (contentOf cat0))
+#guard condsOf fat0 == [] && fat0.parts == [] && keys fat0 == [] && framePremises fat0 == [] &&
+  (predicateList.map (·.1) ++ names fat1).all (fun n => (envAtt fat0).predicates n == fat0.E.predicates n) &&
+  condsOf fat1 != [] && keys fat1 != [] && framePremises fat1 != [] &&
+  (envAtt fat1).predicates (kn "knows" 1) != fat1.E.predicates (kn "knows" 1) &&
+  condsOf c_e_only == [] && keys c_e_only != [] && (envAtt c_e_only).predicates (kn "wants" 1) == some [sortC]
+example : keys fat0 = [] ∧ framePremises fat0 = [] ∧ envAtt fat0 = fat0.E := att_conservative_doc fat0 (by decide) rfl
 
 end VE.Attitudes.Examples
