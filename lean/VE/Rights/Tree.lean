@@ -123,6 +123,9 @@ structure RightsDoc where
   sourceOrder : Option (List (String × SourceLine)) := none
   /-- The ids of the source units a `cites` entry may name (3.2, 4.1 step 3). -/
   sourceUnits : List String := []
+  /-- The located lines (8: a finding carries its line's span): a line instance's rule name ↦ the id of the
+  source unit that authored it. Empty when the request locates no line. -/
+  located : List (String × String) := []
 
 /-! ## Generated names (1.6) -/
 
