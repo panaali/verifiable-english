@@ -162,7 +162,11 @@ None expected: this is a structure row (bytes 0), and the content stays a named 
   `zsh manage-agents/mac-pytest.sh --trustmut -- --max-mutants 1000 --json docs/attitudes/at-1/trust-mutants.json`, on ve-cloud-2 at
   223ba4c0 (the final Lean): `0 definitions, 0 mutants … 0 KILLED, 0 SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN`, exit 0.
   No trusted declaration's text changed, so none was selected.
-- Selected tests: (filled in after the final run).
+- Selected tests, once, on the committed tree 5efe1a8d5e (clean): `MAC_PYTEST_NO_DEFER=1 zsh manage-agents/mac-pytest.sh --select --
+  --base a3454b6ba5 --run`: `104/580 test units`; it ran on GitHub Actions in 5 shards (run at-1-5efe1a8d-t328250): `SHARD 1/5 … 28
+  units, 28 passed`, `2/5 … 23 passed`, `3/5 … 21 passed`, `4/5 … 19 passed`, `5/5 … 20 passed`, `0 failed` in each; `exit=0; 2208s`.
+  Each shard also ran its commands (`lake build`, `python3 lean/audit.py`, `tools/check_lean_imports.py`, `tools/test_layer_policy.py`),
+  all exit 0. Only this report changed after the run.
 - Not run here: the full gate (the chain runs it). No test in main-known-red.txt was touched.
 
 SELF-REVIEW: 0 A, 5 B, 4 C; fixed 9. The five B: the `hT`-failing refusal for `restrict_intended`, a mutant for the conservativity
