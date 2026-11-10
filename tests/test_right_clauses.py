@@ -18,28 +18,15 @@ from ve.backends.service_schema import check_response
 
 ROOT = Path(__file__).resolve().parents[1]
 EVIDENCE = ROOT / "docs/composition/cmp-s3-cfr-1/profile-off.json"
+ENVIRONMENT = ROOT / "tests/data/right-clauses-environment.json"
 OFF = ["norms@0", "relational-fol@0", "rights@0", "soft-norms@0"]
 ON = ["norms@0", "relational-fol@0", "right-clauses@0", "rights@0", "soft-norms@0"]
 
 
 def environment(profiles=ON):
-    """9.1's environment: rights' state Texas and persons Ann, Bob, with the base predicates `country_of` and
-    `charged`, and the regulated `public_service_access_required`."""
-    def base(*sorts):
-        return {"arguments": list(sorts), "description": "base"}
-    return {"language": "ve.core@0.2", "profiles": profiles, "spec_revision": "ve-v0.2-expand2-2026-09-25",
-            "vocabulary": {
-                "sorts": {"state": {"description": "state"}, "person": {"description": "person"}},
-                "predicates": {
-                    "public_service_access_required": {
-                        "arguments": ["state", "person"], "description": "obligation",
-                        "regulated": {"role": "obligation", "default": "deny",
-                                      "act": "{0} give {1} equal access to public service"}},
-                    "country_of": base("state", "person"), "charged": base("person")},
-                "constants": {"texas": {"sort": "state", "description": "Texas"},
-                              "ann": {"sort": "person", "description": "Ann"},
-                              "bob": {"sort": "person", "description": "Bob"}},
-                "rights": {"holders": ["person"], "bearers": ["state", "person"]}}}
+    """9.1's environment (tests/data/right-clauses-environment.json): rights' state Texas and persons Ann, Bob, with
+    the base predicates `country_of` and `charged`, and the regulated `public_service_access_required`."""
+    return {**json.loads(ENVIRONMENT.read_text()), "profiles": profiles}
 
 
 def document(**keys):
