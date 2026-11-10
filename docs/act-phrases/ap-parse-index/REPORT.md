@@ -109,7 +109,15 @@ two literal mutants, refuted by the direct `#guard` on `idxGo` but read by the t
 
 ## 7. Tests
 
-Filled by the final selected run.
+- `cd lean && lake build`: 1,331 jobs, passed at `227426cb7` (Lean unchanged since); `python3 lean/audit.py`: PASS;
+  `tools/regen_generated.py --check`: 38 entries; `tools/gate_collection.py --check --prebuilt`: 1 removed by a
+  trailer, 0 refused, 0 stale, 0 malformed; `tools/trust_map.py --check`: exit 0.
+- Selected (`mac-pytest.sh --select -- --base a0102f0e5 --run`), run 1 at `a6722c894`: `test_acts_vocab_mutants.py`
+  failed (it inlines `GrammarExamples`, which then imported `VE.Acts.Readings`); fixed by moving the new guards to
+  `ParseIndexExamples` (`227426cb7`; two of its ids rerun: passed). Run 2 at `ab56d1f1`: 471 units, 470 passed; the
+  one failure, `tests/test_consolidation_tools.py::test_committed_ledger_names_real_declarations`, read the plan's
+  quoted step 8b figure (3,750; now 3,752 with `checkActBy` and `joinedActBy`): `docs/CONSOLIDATION-PLAN.md` updated,
+  the id rerun on ve-mac-1: passed. No test of `main-known-red.txt` was hit.
 
 ## Spec re-read
 
@@ -118,6 +126,34 @@ Filled by the final selected run.
 - D-31's 128 frames against `lean/VE/Acts/Syntax.lean:67` (`checkVocab`), spec 12 limits against
   `lean/VE/Acts/Read.lean` (`rawCap`, `stepBudget`, `maxReadings` unchanged).
 
+## Size
+
+`git diff --numstat a0102f0e5`, generated files out: about 670 lines added, over the ~600 guide (product Lean 270,
+fixtures and tests 175, evidence and these docs 225). The self-review's A finding (one reader per norms document)
+and the DRI's fixture conditions came after the first measure; the bench (68 lines) was cut, nothing else is left out.
+
 ## Self-review against BUILDER-CHECKLIST
 
-Filled with section 7.
+1. Typed and contained: N.A. (no new relayed field, schema or relay; the routes' answers unchanged, section 7).
+2. Deliverables: PASS (1)-(4) in sections 1-4; the index and the charge left out by DRI -1.md and -2.md; the
+   per-document budget is `ap-parse-indexb` (-3.md).
+3. Tests can fail: PASS (`mutants.json` 21 KILLED; trust mutants exit 0, section 6).
+4. Python, Lean, Rust agree: N.A. (Lean only; answers unchanged: every `#guard` of the full build, section 7).
+5. R8 binding: N.A. (no relayed field read).
+6. Gate evidence: PASS (the chain gates the final HEAD; base `git merge-base`; main moved to `e9829cb05` with no
+   hand-written product file in common, so not synced here).
+7. Unsigned items: PASS (DELTA row 1 R16; DRI rulings -1, -2, -3 cited; no signature reserved).
+8. DELTA: PASS (no answer changed; the availability gain is DELTA evidence).
+9. Test selection: PASS (the selection holds `tests/test_ap_parse_index.py` and every test the service plant failed).
+10. Statements: PASS (new theorems state equality with the replaced definition; plants break them, `mutants.json`).
+11. Fail closed: PASS (`stepBudget` unchanged; budget 0 still `limit`, `ReadingsExamples`; 400 bytes with 32 or 128
+    frames a `LIMIT`; 129 frames refused before any parse; the per-document total fails closed, `ap-parse-indexb`).
+12. CPU: PASS (R4 timings, section 4; `l6Steps` step pins; the deadline tests).
+13. Test-removed: PASS (`gate_collection.py --check --prebuilt`, section 7).
+14. Both directions, cited, spec re-read: PASS (answered 2 to 128 frames and refused 129; `LISTED` 2 frames and `LIMIT`
+    32/128 frames; commands named; spec re-read above).
+15. Overclaim PASS (the document total marked unbounded, its time an estimate); silent cut PASS (rulings before each
+    cut); new checks can fail PASS (`l6Steps`: row-charged-a-constant; `once_installed%`: the `@[csimp]` drops;
+    the `idxGo` guard: refutes both literal mutants); limits before work PASS (129 frames; one reader per document).
+
+SELF-REVIEW: 1 A, 10 B, 5 C; fixed 15 (the size B in part, above; C `closed` twice per `act-readings` request left).
