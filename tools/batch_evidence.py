@@ -285,6 +285,7 @@ def tally_problems(claim: dict, evidence: report.Evidence) -> list[str]:
 
 
 CLAIMS = {"tally": tally_problems}
+UNREAD = object()  # a section whose evidence file could not be read; its error is already kept
 
 
 def check(directory: Path, main: str = "main", report_commit: str | None = None) -> tuple[str, list[str]]:
@@ -300,47 +301,71 @@ def _check(directory: Path, main: str) -> tuple[str, list[str]]:
     config = evidence_config.read(directory)
     folder = evidence_config.evidence_dir(directory, config)
 
-    def read(section):
-        return load(evidence_config.inside(folder, config[section]["file"]))
+    def path(section):
+        return evidence_config.inside(folder, config[section]["file"])
 
-    saved = read("scope")
+    def read(section):
+        """The section's evidence, or `UNREAD` with its error kept: a file that cannot be read (before the gate,
+        `gate.json`) skips only its own section, so every other section is still checked (AR-23 review F1: the
+        missing gate record hid a wrong A/B base from the check run before the gate)."""
+        where = path(section)  # a file outside the repository is a toml error and stops the check
+        try:
+            return load(where)
+        except EvidenceError as exc:
+            errors.append(str(exc))
+            return UNREAD
+
+    saved = load(path("scope"))  # every section is checked against the scope, so an unread scope stops here
     errors = scope_problems(saved)
     errors += scope_history_problems(saved, main)
     head = saved.get("head") if isinstance(saved, dict) else None
     base = saved.get("base") if isinstance(saved, dict) else None  # the merge base, or the check above fails
     gate = read("gate")
-    errors += gate_record_problems(head, gate)
-    note = gate_collection.read_gate_result(head, cwd=ROOT)
-    if note is not None and note != gate:
-        errors.append("gate evidence differs from its git note")
+    if gate is not UNREAD:
+        errors += gate_record_problems(head, gate)
+        note = gate_collection.read_gate_result(head, cwd=ROOT)
+        if note is not None and note != gate:
+            errors.append("gate evidence differs from its git note")
     mutants = read("mutants")
-    errors += mutant_problems(mutants, config["mutants"].get("min", 3))
-    errors += mutant_source_problems(mutants, head) if isinstance(head, str) and SHA.fullmatch(head) else []
+    if mutants is not UNREAD:
+        errors += mutant_problems(mutants, config["mutants"].get("min", 3))
+        errors += mutant_source_problems(mutants, head) if isinstance(head, str) and SHA.fullmatch(head) else []
     product = sorted(c["path"] for c in saved.get("changes") or () if isinstance(c, dict)
                      and str(c.get("path")).startswith(("ve/", "lean/")))
     if "ab" in config:
-        errors += ab.problems(read("ab"), head, set(config["ab"].get("corpora", ())) | REQUIRED_CORPORA, base)
+        comparison = read("ab")
+        if comparison is not UNREAD:
+            errors += ab.problems(comparison, head, set(config["ab"].get("corpora", ())) | REQUIRED_CORPORA, base)
     elif product:
         errors.append(f"the batch changes {product[0]} (and {len(product) - 1} more ve/ or lean/ paths) "
                       "but its evidence.toml names no [ab]")
     if "latency" in config:
-        errors += evidence_latency.problems(read("latency"), head, config["latency"]["workloads"],
-                                            config["latency"].get("allowance", evidence_latency.ALLOWANCE), base)
+        latency = read("latency")
+        if latency is not UNREAD:
+            errors += evidence_latency.problems(latency, head, config["latency"]["workloads"],
+                                                config["latency"].get("allowance", evidence_latency.ALLOWANCE), base)
     if "fuzz_ab" in config:
         evidence = read("fuzz_ab")
-        errors += fuzz_ab.problems(evidence, head, base)
-        if isinstance(evidence, dict) and evidence.get("rules") != config["fuzz_ab"].get("explained", []):
-            errors.append("fuzz A/B ran with other rules than evidence.toml names")
+        if evidence is not UNREAD:
+            errors += fuzz_ab.problems(evidence, head, base)
+            if isinstance(evidence, dict) and evidence.get("rules") != config["fuzz_ab"].get("explained", []):
+                errors.append("fuzz A/B ran with other rules than evidence.toml names")
     evidence = report.Evidence(folder)
     if "report" in config:
         target = evidence_config.inside(directory, config["report"]["file"])
-        rendered = report.render(folder, config["report"]["lines"])
-        if report.block(read_bytes(target).decode(), config["report"]["marker"]) != rendered:
-            errors.append(f"the {config['report']['marker']} block of {config['report']['file']} is not the "
-                          "rendering of the evidence (python -m tools.evidence report)")
+        try:
+            rendered = report.render(folder, config["report"]["lines"])
+            if report.block(read_bytes(target).decode(), config["report"]["marker"]) != rendered:
+                errors.append(f"the {config['report']['marker']} block of {config['report']['file']} is not the "
+                              "rendering of the evidence (python -m tools.evidence report)")
+        except EvidenceError as exc:
+            errors.append(f"report: {exc}")
     for index, claim in enumerate(config.get("claims", [])):
         kind = claim.get("kind") if isinstance(claim, dict) else None
-        errors += CLAIMS[kind](claim, evidence) if kind in CLAIMS else [f"claim {index} has no known kind"]
+        try:
+            errors += CLAIMS[kind](claim, evidence) if kind in CLAIMS else [f"claim {index} has no known kind"]
+        except EvidenceError as exc:
+            errors.append(f"claim {index}: {exc}")
     return head, errors
 
 
