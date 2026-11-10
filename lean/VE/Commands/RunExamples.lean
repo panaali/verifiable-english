@@ -299,8 +299,9 @@ def webKind (s : String) : String :=
   "Then the draft is approved.", "If draft is approved, click Ask?"].map webKind ==
   ["instruction", "instruction", "instruction", "instruction", "asserted", "asserted", "asserted", "question"]
 #guard match decodeSpeechEnvironmentFull E_web with
-  | .ok se => VE.SpeechActs.Wire.choiceKindConflicts se.ne.regulated (.str "asserted") "Then click Ask." &&
-      !VE.SpeechActs.Wire.choiceKindConflicts se.ne.regulated (.str "instruction") "If draft is approved, click Ask."
+  | .ok se => ["If draft is approved, click Ask.", "Then click Ask."].all fun w =>
+      VE.SpeechActs.Wire.choiceKindConflicts se.ne.regulated (.str "asserted") w &&
+      !VE.SpeechActs.Wire.choiceKindConflicts se.ne.regulated (.str "instruction") w
   | .error _ => false
 
 /-! The document check (finding (c), O3): an authored `Then` instruction unit is `ThenWithoutStep`, by its kind,

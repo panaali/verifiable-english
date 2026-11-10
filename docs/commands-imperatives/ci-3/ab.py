@@ -6,8 +6,9 @@ new cases can change (`Wire.surfaceKind`); each is then read by main's and this 
 (ii) The `english.command` reader: every wording of the commands fixtures (Examples, StepsExamples, RunExamples) over
 `E_web`, by main's entry (`proofTask`, else `readCommand`; Read.lean is unchanged by ci-3, so it is evaluated at
 HEAD, lifted with `lift (.core s) false`) and by `readInstruction`. Unchanged rows are counted, changed rows listed
-with their class (DRI 2026-10-28 item 2(b)): b1 refused -> read for a section 7 shape, b2 the refusing direction,
-STOP a read wording that now reads differently."""
+with their class: b1 refused -> read for a section 7 shape and b2 read -> refused (DRI 2026-10-28 item 2(b)), rr a
+refusal whose code or text changes (DRI 2026-11-09, reviews/dri-decisions-20261109-ci-3-codes.md item 1), STOP a read
+wording that now reads differently."""
 import ast
 import glob
 import json
@@ -83,8 +84,9 @@ def main(out):
         if base == head:
             continue
         b, h = kind_of(base), kind_of(head)
-        # b2 includes a refusal whose code and text change (ci-5's DELTA row 6 precedent).
+        # rr: refused -> refused with another code or text (ci-3-codes item 1); b2 only read -> refused.
         cls = ("b1" if b in ("refused", "limit") and h in ("one", "steps", "many") and "Shape.core" not in shp
+               else "rr" if b in ("refused", "limit") and h in ("refused", "limit")
                else "b2" if h in ("refused", "limit") else "STOP")
         changed.append({"wording": s, "class": cls, "base": base, "head": head, "shapes": shp})
     rec = {"corpus_files": CORPUS, "corpus_if_then_literals": len(kinds), "surface_kind_flips": flips,

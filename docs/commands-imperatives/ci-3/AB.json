@@ -15,26 +15,26 @@
  ],
  "corpus_if_then_literals": 0,
  "surface_kind_flips": [],
- "fixture_wordings": 96,
- "unchanged": 85,
+ "fixture_wordings": 99,
+ "unchanged": 88,
  "changed": [
   {
    "wording": "Click Ask, if draft is approved, then add an exception or precedence.",
-   "class": "b2",
+   "class": "rr",
    "base": "VE.Commands.StepOutcome.refused\n  \"NoDerivation\"\n  \"The condition has no reading with the current vocabulary. Unknown English phrase 'then'. Nearest declared wordings: 'token'; 'text'; '\\\"token1\\\"'.\"",
    "head": "VE.Commands.StepOutcome.refused\n  \"ConditionScope\"\n  \"a condition with a sequence of steps: write one sentence per step, with the condition on each step or on the first only\"",
    "shapes": "[VE.Commands.Shape.seq [\"Click Ask, if draft is approved\", \"add an exception or precedence\"]]"
   },
   {
    "wording": "Click Ask, if draft is approved, then click Ask.",
-   "class": "b2",
+   "class": "rr",
    "base": "VE.Commands.StepOutcome.refused\n  \"NoDerivation\"\n  \"The condition has no reading with the current vocabulary. Unknown English phrase 'then'. Nearest declared wordings: 'token'; 'text'; '\\\"token1\\\"'.\"",
    "head": "VE.Commands.StepOutcome.refused\n  \"ConditionScope\"\n  \"a condition with a sequence of steps: write one sentence per step, with the condition on each step or on the first only\"",
    "shapes": "[VE.Commands.Shape.seq [\"Click Ask, if draft is approved\", \"click Ask\"]]"
   },
   {
    "wording": "Click Ask, then click Ask, if draft is approved.",
-   "class": "b2",
+   "class": "rr",
    "base": "VE.Commands.StepOutcome.refused \"InvalidInput\" \"no single speech-act reading\"",
    "head": "VE.Commands.StepOutcome.refused\n  \"ConditionScope\"\n  \"a condition with a sequence of steps: write one sentence per step, with the condition on each step or on the first only\"",
    "shapes": "[VE.Commands.Shape.seq [\"Click Ask\", \"click Ask, if draft is approved\"]]"
@@ -48,7 +48,7 @@
   },
   {
    "wording": "If draft is approvable, click Ask.",
-   "class": "b2",
+   "class": "rr",
    "base": "VE.Commands.StepOutcome.refused \"InvalidInput\" \"no single speech-act reading\"",
    "head": "VE.Commands.StepOutcome.refused\n  \"NoDerivation\"\n  \"The condition has no reading with the current vocabulary. Unknown English phrase 'is approvable'. Nearest declared wordings: 'is approved'; 'assistant'; 'calls'.\"",
    "shapes": "[VE.Commands.Shape.preposed \"draft is approvable\" \"click Ask\"]"
@@ -62,14 +62,14 @@
   },
   {
    "wording": "If draft is approved, click Check rule conflict, then click Ask.",
-   "class": "b2",
+   "class": "rr",
    "base": "VE.Commands.StepOutcome.refused \"InvalidInput\" \"no single speech-act reading\"",
    "head": "VE.Commands.StepOutcome.refused\n  \"ConditionScope\"\n  \"a condition with a sequence of steps: write one sentence per step, with the condition on each step or on the first only\"",
    "shapes": "[VE.Commands.Shape.preposed \"draft is approved\" \"click Check rule conflict, then click Ask\",\n VE.Commands.Shape.preposed \"draft is approved, click Check rule conflict\" \"then click Ask\"]"
   },
   {
    "wording": "Review the meaning, if draft is approved, then click Ask.",
-   "class": "b2",
+   "class": "rr",
    "base": "VE.Commands.StepOutcome.refused \"AmbiguousDerivation\" \"multiple declared acts match\"",
    "head": "VE.Commands.StepOutcome.refused\n  \"ConditionScope\"\n  \"a condition with a sequence of steps: write one sentence per step, with the condition on each step or on the first only\"",
    "shapes": "[VE.Commands.Shape.seq [\"Review the meaning, if draft is approved\", \"click Ask\"]]"
