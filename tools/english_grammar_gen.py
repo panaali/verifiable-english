@@ -107,6 +107,9 @@ TRUSTED = (
     "lean/VE/EnglishGrammar/Norm/Rules.lean",
     "lean/VE/EnglishGrammar/Norm/Read.lean",
     "lean/VE/EnglishGrammar/Norm/Elab.lean",
+    # en-e3-norm EN-2: the owner pieces and the mode english.statement (docs/spec/en-e3-norm.md 2.2, 2.3).
+    "lean/VE/EnglishGrammar/Norm/Owners.lean",
+    "lean/VE/EnglishGrammar/Norm/Run.lean",
 )
 # Lean files of the same directories that hold no trusted definition, with the reason.
 UNTRUSTED = {
@@ -128,6 +131,8 @@ UNTRUSTED = {
     "lean/VE/EnglishGrammar/Extends.lean": "`Extends` and the theorem `grammar_extension`: proved",
     VERSION_TARGET: "generated from this lock file; it holds the version itself",
     "lean/VE/EnglishGrammar/Norm/Examples.lean": "the norm block fixtures",
+    "lean/VE/EnglishGrammar/Norm/OwnersExamples.lean": "en-e3-norm's owner fixtures O1-O8",
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean": "en-e3-norm's answer fixtures E1-E17",
 }
 CLASSIFIED_DIRS = ("lean/VE/Grammar/", "lean/VE/EnglishGrammar/")
 
