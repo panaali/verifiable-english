@@ -1,7 +1,7 @@
 {
  "base": "a7659c5f12aebb2945cfb2106ed29a20663ab836",
- "head": "1c5f4fef207a5fbf14de1e628244df27eb83092c",
- "tree": "bcfab8eb9721320ac9aa37e4552cdbd709df37df",
+ "head": "393a2869c4c14139fe13ddeec8d0522750911888",
+ "tree": "2c196bde81ae51254c047ca1676b81b136b02579",
  "jobs": 8,
  "control_probes": "lazy",
  "max_mutants": 1000,
@@ -9,47 +9,47 @@
  "tests": [
   "docs/document-model/sa-checked-view/view_guards.lean"
  ],
- "seconds": 2965,
+ "seconds": 4141,
  "steps": {
   "wall": {
-   "plan": 21.3,
-   "scratch": 34.4,
-   "control_build": 3.9,
-   "probe_install": 3.2,
+   "plan": 25.9,
+   "scratch": 45.2,
+   "control_build": 5.7,
+   "probe_install": 4.8,
    "control_probes": 0.0,
-   "mutants": 2896.7,
-   "cleanup": 5.5,
-   "reads": 0.2
+   "mutants": 4054.9,
+   "cleanup": 5.0,
+   "reads": 0.0
   },
   "lake": {
-   "control_build": 3.8,
-   "probe_install": 3.1,
-   "control_probes": 193.6,
-   "mutant_builds": 13086.8,
-   "mutant_checks": 144.3,
-   "outside_checks": 624.0,
-   "stage_controls": 503.9,
-   "mutant_probes": 7385.6,
+   "control_build": 5.6,
+   "probe_install": 4.7,
+   "control_probes": 369.8,
+   "mutant_builds": 9423.9,
+   "mutant_checks": 125.9,
+   "outside_checks": 571.6,
+   "stage_controls": 758.5,
+   "mutant_probes": 18921.7,
    "other": 0.0
   },
   "runs": {
    "control_build": 2,
    "probe_install": 1,
-   "control_probes": 3,
-   "mutant_builds": 364,
-   "mutant_checks": 208,
+   "control_probes": 6,
+   "mutant_builds": 351,
+   "mutant_checks": 226,
    "outside_checks": 117,
-   "stage_controls": 27,
-   "mutant_probes": 91,
+   "stage_controls": 36,
+   "mutant_probes": 109,
    "other": 0
   }
  },
  "counts": {
-  "KILLED": 91,
-  "SURVIVOR": 26,
-  "UNKNOWN": 31,
+  "KILLED": 109,
+  "SURVIVOR": 0,
+  "UNKNOWN": 0,
   "INVALID": 31,
-  "ALLOWED": 0,
+  "ALLOWED": 39,
   "NOT RUN": 0
  },
  "classes": [
@@ -57,16 +57,15 @@
  ],
  "class_counts": {
   "?, trusted": {
-   "KILLED": 91,
-   "SURVIVOR": 26,
-   "UNKNOWN": 31,
-   "INVALID": 31
+   "KILLED": 109,
+   "INVALID": 31,
+   "ALLOWED": 39
   }
  },
  "inputs": {
   "tool": "9834af87ed09993f65def3f2ee78f9d45fc4106003a4866acab412115d73b172",
   "lean": "b1ce0e88a7187269bdc9209cb956a6a6e1db79c58a49a1e09854e74d91a66c14",
-  "tests": "41f5dc8a138952685ddaf65b6c61869dfaad7d495531e026d80fc16699ef42e6",
+  "tests": "d1a85e9df920b35ebd8b507d2c2219b90707ae9777a8ca6e73e3038d57ba70d1",
   "base": "a7659c5f12aebb2945cfb2106ed29a20663ab836",
   "options": "{\"deep\": false, \"test\": [\"docs/document-model/sa-checked-view/view_guards.lean\"], \"classes\": [\"trusted\"]}",
   "files": {
@@ -936,7 +935,7 @@
    "lean/predicates.txt": "7b7d0fb4d797523cae22906af606b2af590550e065a7cc1ceb0658b3645b1aac",
    "lean/statements.txt": "ae2bcbf2a8634edec12a50e8a5eff1081da69aa5e4f01a341998803736327a47",
    "tools/trust-classes.json": "3d0165f6d26cbeef062c099cd4f35d3af9d52efb274bfc19bd53f42612bca227",
-   "docs/document-model/sa-checked-view/view_guards.lean": "263d2ba16539d1fac7b08bedeca60882ec18e707f17a2c600544ab5df8ca5bea"
+   "docs/document-model/sa-checked-view/view_guards.lean": "3a948e3d93022cf8e560c6a599c2a479a952bb8307cecd031ed4edc898aebb18"
   },
   "tool_files": {
    "lean/audit.py": "05fb69c5689a8606fefd6d43e220f23ee6dbedc4bea7245b34ae29a4fd13a1cd",
@@ -954,12 +953,13 @@
  },
  "rescore": {
   "file": "docs/document-model/sa-checked-view/trust-mutants.json",
-  "head": null,
-  "mode": "full",
-  "changed": [],
-  "reused": 0,
-  "rerun": 179,
-  "full_run": "its inputs differ (lean, tests): lean/VE/Service/DocumentView.lean is a selected declaration's file or in its import closure"
+  "head": "1c5f4fef207a5fbf14de1e628244df27eb83092c",
+  "mode": "checks",
+  "changed": [
+   "docs/document-model/sa-checked-view/view_guards.lean"
+  ],
+  "reused": 31,
+  "rerun": 148
  },
  "definitions": [
   "lean/VE/Service/DocumentView.lean: VE.Service.Document.activeKinds",
@@ -985,12 +985,12 @@
    "before": "&&",
    "after": "||",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:42: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
-   "reads": "aa77cd2ea4e6295b78449be2c017cf6751893f6b4b331a1fa7637a8710a65c0a",
+   "reads": "323ca7267d587a83b702716bdd63cacdb891290017c12095d6a20423e4010a8a",
    "killed_at": [
-    42,
-    42
+    32,
+    32
    ],
    "trust_class": "?",
    "trusted": true
@@ -1008,12 +1008,12 @@
    "before": "==",
    "after": "!=",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:42: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
-   "reads": "aa77cd2ea4e6295b78449be2c017cf6751893f6b4b331a1fa7637a8710a65c0a",
+   "reads": "323ca7267d587a83b702716bdd63cacdb891290017c12095d6a20423e4010a8a",
    "killed_at": [
-    42,
-    42
+    32,
+    32
    ],
    "trust_class": "?",
    "trusted": true
@@ -1031,12 +1031,12 @@
    "before": "==",
    "after": "!=",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:44: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
-   "reads": "3bee00d7987df855e8e940ff0635bdaf1936cb5bbbc5e04d455af66607b98d7c",
+   "reads": "e2033716981ce5de861f573d365f708995da31e345c256c426449bd4df5832e3",
    "killed_at": [
-    44,
-    44
+    32,
+    32
    ],
    "trust_class": "?",
    "trusted": true
@@ -1054,12 +1054,12 @@
    "before": "any",
    "after": "all",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:44: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
-   "reads": "3bee00d7987df855e8e940ff0635bdaf1936cb5bbbc5e04d455af66607b98d7c",
+   "reads": "e2033716981ce5de861f573d365f708995da31e345c256c426449bd4df5832e3",
    "killed_at": [
-    44,
-    44
+    32,
+    32
    ],
    "trust_class": "?",
    "trusted": true
@@ -1076,9 +1076,14 @@
    ],
    "before": "true",
    "after": "false",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:116",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:29: Expression",
+   "raw_status": "KILLED",
+   "reads": "747202c022b185c1ac2231ee0b6f1d71e9bdea0966b2060f100dcd874e0bbcf7",
+   "killed_at": [
+    29,
+    30
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -1094,9 +1099,14 @@
    ],
    "before": "16",
    "after": "17",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:66: Expression",
+   "raw_status": "KILLED",
+   "reads": "4d6810520f145f8b6e7113662ce33ec21b1190e7e69be0c72614d55e675c7804",
+   "killed_at": [
+    66,
+    68
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -1112,9 +1122,14 @@
    ],
    "before": "16",
    "after": "15",
-   "status": "SURVIVOR",
-   "detail": "",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:66: Expression",
+   "raw_status": "KILLED",
+   "reads": "4d6810520f145f8b6e7113662ce33ec21b1190e7e69be0c72614d55e675c7804",
+   "killed_at": [
+    66,
+    68
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -1133,6 +1148,8 @@
    "status": "INVALID",
    "detail": "don't know how to synthesize implicit argument `\u03b1`",
    "raw_status": "INVALID",
+   "reused_from": "1c5f4fef207a5fbf14de1e628244df27eb83092c",
+   "carried": "checks",
    "reads": "2f0d0c83cd664f2240fa2d8551b5f5936c2bf90f461ad4cf4347adf9e62840c4",
    "trust_class": "?",
    "trusted": true
@@ -1150,12 +1167,12 @@
    "before": "match a.getObjValD \"units\" with\n  | .arr xs => (rows.zip xs.toList).map fun (u, x) => readStatus u x\n  | _ => rows",
    "after": "[]\n\n",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:17: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:29: Expression",
    "raw_status": "KILLED",
-   "reads": "16f34d0c9eaf15e1e9fafe5e5462e166eaf196c4a05b416d2af02139916b7308",
+   "reads": "919b2c46381d84ae74b8fb4a359a1a41bb69866249d707fbb43872fb2d56aad4",
    "killed_at": [
-    17,
-    18
+    29,
+    30
    ],
    "trust_class": "?",
    "trusted": true
@@ -1173,12 +1190,12 @@
    "before": "let item := ((Loader.optionalList front \"reading_sets\").getArr?.toOption.getD #[]).toList.find? fun x =>\n    x.getObjValD \"id\" == .str s.id && (x.getObjValD \"version\").getNat?.toOption == some s.version\n  let written := ((item.map (\u00b7.getObjValD \"readings\")).bind (\u00b7.getArr?.toOption)).map (\u00b7.toList) |>.getD []\n  s.readings.filterMap fun (rid, _) => do\n    let r \u2190 written.find? (\u00b7.getObjValD \"id\" == .str rid)\n    let k \u2190 (VE.Route.Admission.decodeKind 16 (r.getObjValD \"kind\")).toOption\n    pure (rid, k)",
    "after": "[]\n\n\n\n\n\n",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:42: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
-   "reads": "aa77cd2ea4e6295b78449be2c017cf6751893f6b4b331a1fa7637a8710a65c0a",
+   "reads": "323ca7267d587a83b702716bdd63cacdb891290017c12095d6a20423e4010a8a",
    "killed_at": [
-    42,
-    42
+    32,
+    32
    ],
    "trust_class": "?",
    "trusted": true
@@ -1196,12 +1213,12 @@
    "before": "xs.foldl (fun acc x => if acc.any (\u00b7.1 == x.1) then acc else acc ++ [x]) []",
    "after": "[]",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:44: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
-   "reads": "3bee00d7987df855e8e940ff0635bdaf1936cb5bbbc5e04d455af66607b98d7c",
+   "reads": "e2033716981ce5de861f573d365f708995da31e345c256c426449bd4df5832e3",
    "killed_at": [
-    44,
-    44
+    32,
+    32
    ],
    "trust_class": "?",
    "trusted": true
@@ -1219,12 +1236,12 @@
    "before": "firstPerUnit (c.active.map fun (s, _) => (s.unit, candidatesOf c.front s))",
    "after": "[]",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:45: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:33: Expression",
    "raw_status": "KILLED",
-   "reads": "0cbe4cdaf64823884ba47e8d72f73ca67c6f9d8a66bf29acecefb08391fecc32",
+   "reads": "fd5d2c272303791cf131fa2d2d21b7fa8de96b93a649c31573ad9c5085a141b2",
    "killed_at": [
-    45,
-    45
+    33,
+    34
    ],
    "trust_class": "?",
    "trusted": true
@@ -1241,9 +1258,10 @@
    ],
    "before": "us",
    "after": "[]",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Service/DocumentView.lean:97: Invalid field notation: Type of",
+   "status": "ALLOWED",
+   "detail": "Lean refuses the mutant's text (the mutated declaration fails to elaborate: an `[]` or `.take` whose element type Lean cannot infer, or on `item`, an Option: Invalid field notation / Application type mismatch); every other mutant of this pair is KILLED by docs/document-model/sa-checked-view/view_guards.lean",
    "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Service/DocumentView.lean:97: Invalid field notation: Type of",
    "trust_class": "?",
    "trusted": true
   },
@@ -1259,9 +1277,10 @@
    ],
    "before": "c.active",
    "after": "[]",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Service/DocumentView.lean:112: Invalid field notation: Type of",
+   "status": "ALLOWED",
+   "detail": "a set with one reading is all view_guards.lean can check without the governed route (two readings need distinguishing models): killed by checkDocSetsView_candidates's proof and tests/test_sa_checked_view.py::test_candidates_and_readings_name_the_active_set_in_order (u0165.s03's two readings, active_kinds == candidates); the c.active mutants of this pair are KILLED by view_guards.lean's twoSets; the rest of this pair: Lean refuses the mutant's text (the mutated declaration fails to elaborate: an `[]` or `.take` whose element type Lean cannot infer, or on `item`, an Option: Invalid field notation / Application type mismatch); every other mutant of this pair is KILLED by docs/document-model/sa-checked-view/view_guards.lean",
    "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Service/DocumentView.lean:112: Invalid field notation: Type of",
    "trust_class": "?",
    "trusted": true
   },
@@ -1278,12 +1297,12 @@
    "before": " ++ [x]",
    "after": "",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:44: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
-   "reads": "3bee00d7987df855e8e940ff0635bdaf1936cb5bbbc5e04d455af66607b98d7c",
+   "reads": "e2033716981ce5de861f573d365f708995da31e345c256c426449bd4df5832e3",
    "killed_at": [
-    44,
-    44
+    32,
+    32
    ],
    "trust_class": "?",
    "trusted": true
@@ -1301,12 +1320,12 @@
    "before": "acc ++ ",
    "after": "",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:44: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
-   "reads": "3bee00d7987df855e8e940ff0635bdaf1936cb5bbbc5e04d455af66607b98d7c",
+   "reads": "e2033716981ce5de861f573d365f708995da31e345c256c426449bd4df5832e3",
    "killed_at": [
-    44,
-    44
+    32,
+    32
    ],
    "trust_class": "?",
    "trusted": true
@@ -1324,12 +1343,12 @@
    "before": "==",
    "after": "!=",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:42: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
-   "reads": "aa77cd2ea4e6295b78449be2c017cf6751893f6b4b331a1fa7637a8710a65c0a",
+   "reads": "323ca7267d587a83b702716bdd63cacdb891290017c12095d6a20423e4010a8a",
    "killed_at": [
-    42,
-    42
+    32,
+    32
    ],
    "trust_class": "?",
    "trusted": true
@@ -1349,6 +1368,8 @@
    "status": "INVALID",
    "detail": "Function expected at",
    "raw_status": "INVALID",
+   "reused_from": "1c5f4fef207a5fbf14de1e628244df27eb83092c",
+   "carried": "checks",
    "reads": "e2e2f62e565dc95320d37a91d364813be9fb0fcddc0bc4db780234166d78504b",
    "trust_class": "?",
    "trusted": true
@@ -1365,9 +1386,10 @@
    ],
    "before": "((Loader.optionalList front \"reading_sets\").getArr?.toOption.getD #[]).toList",
    "after": "[]",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Service/DocumentView.lean:79: Invalid field notation: Type of",
+   "status": "ALLOWED",
+   "detail": "Lean refuses the mutant's text (the mutated declaration fails to elaborate: an `[]` or `.take` whose element type Lean cannot infer, or on `item`, an Option: Invalid field notation / Application type mismatch); every other mutant of this pair is KILLED by docs/document-model/sa-checked-view/view_guards.lean",
    "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Service/DocumentView.lean:79: Invalid field notation: Type of",
    "trust_class": "?",
    "trusted": true
   },
@@ -1384,12 +1406,12 @@
    "before": "xs",
    "after": "[]",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:44: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
-   "reads": "3bee00d7987df855e8e940ff0635bdaf1936cb5bbbc5e04d455af66607b98d7c",
+   "reads": "e2033716981ce5de861f573d365f708995da31e345c256c426449bd4df5832e3",
    "killed_at": [
-    44,
-    44
+    32,
+    32
    ],
    "trust_class": "?",
    "trusted": true
@@ -1406,9 +1428,10 @@
    ],
    "before": "c.active",
    "after": "[]",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Service/DocumentView.lean:92: Invalid field notation: Type of",
+   "status": "ALLOWED",
+   "detail": "Lean refuses the mutant's text (the mutated declaration fails to elaborate: an `[]` or `.take` whose element type Lean cannot infer, or on `item`, an Option: Invalid field notation / Application type mismatch); every other mutant of this pair is KILLED by docs/document-model/sa-checked-view/view_guards.lean",
    "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Service/DocumentView.lean:92: Invalid field notation: Type of",
    "trust_class": "?",
    "trusted": true
   },
@@ -1427,6 +1450,8 @@
    "status": "INVALID",
    "detail": "Function expected at",
    "raw_status": "INVALID",
+   "reused_from": "1c5f4fef207a5fbf14de1e628244df27eb83092c",
+   "carried": "checks",
    "reads": "099f96efb8d8d6f67f93b79b66ef326a855d753844cd2586b206e5ee3e65311c",
    "trust_class": "?",
    "trusted": true
@@ -1446,6 +1471,8 @@
    "status": "INVALID",
    "detail": "Function expected at",
    "raw_status": "INVALID",
+   "reused_from": "1c5f4fef207a5fbf14de1e628244df27eb83092c",
+   "carried": "checks",
    "reads": "4349bbe985875980a3051cfaf578c6bd6470646fffab7cdcfe04af4facf9fb38",
    "trust_class": "?",
    "trusted": true
@@ -1463,12 +1490,12 @@
    "before": "==",
    "after": "!=",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:42: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
-   "reads": "aa77cd2ea4e6295b78449be2c017cf6751893f6b4b331a1fa7637a8710a65c0a",
+   "reads": "323ca7267d587a83b702716bdd63cacdb891290017c12095d6a20423e4010a8a",
    "killed_at": [
-    42,
-    42
+    32,
+    32
    ],
    "trust_class": "?",
    "trusted": true
@@ -1486,12 +1513,12 @@
    "before": "rows",
    "after": "[]",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:17: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:29: Expression",
    "raw_status": "KILLED",
-   "reads": "16f34d0c9eaf15e1e9fafe5e5462e166eaf196c4a05b416d2af02139916b7308",
+   "reads": "919b2c46381d84ae74b8fb4a359a1a41bb69866249d707fbb43872fb2d56aad4",
    "killed_at": [
-    17,
-    18
+    29,
+    30
    ],
    "trust_class": "?",
    "trusted": true
@@ -1508,9 +1535,10 @@
    ],
    "before": "((item.map (\u00b7.getObjValD \"readings\")).bind (\u00b7.getArr?.toOption))",
    "after": "[]",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Service/DocumentView.lean:80: Application type mismatch: The argument",
+   "status": "ALLOWED",
+   "detail": "Lean refuses the mutant's text (the mutated declaration fails to elaborate: an `[]` or `.take` whose element type Lean cannot infer, or on `item`, an Option: Invalid field notation / Application type mismatch); every other mutant of this pair is KILLED by docs/document-model/sa-checked-view/view_guards.lean",
    "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Service/DocumentView.lean:80: Application type mismatch: The argument",
    "trust_class": "?",
    "trusted": true
   },
@@ -1526,9 +1554,10 @@
    ],
    "before": "acc",
    "after": "[]",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Service/DocumentView.lean:88: Invalid projection: Type of",
+   "status": "ALLOWED",
+   "detail": "Lean refuses the mutant's text (the mutated declaration fails to elaborate: an `[]` or `.take` whose element type Lean cannot infer, or on `item`, an Option: Invalid field notation / Application type mismatch); every other mutant of this pair is KILLED by docs/document-model/sa-checked-view/view_guards.lean",
    "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Service/DocumentView.lean:88: Invalid projection: Type of",
    "trust_class": "?",
    "trusted": true
   },
@@ -1547,6 +1576,8 @@
    "status": "INVALID",
    "detail": "Function expected at",
    "raw_status": "INVALID",
+   "reused_from": "1c5f4fef207a5fbf14de1e628244df27eb83092c",
+   "carried": "checks",
    "reads": "f5f0bf00bf5a2641a2c89d0525d7bd8c83e784f6a751e09a88a1895972285a54",
    "trust_class": "?",
    "trusted": true
@@ -1563,9 +1594,10 @@
    ],
    "before": "cs",
    "after": "[]",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Service/DocumentView.lean:97: Invalid projection: Type of",
+   "status": "ALLOWED",
+   "detail": "Lean refuses the mutant's text (the mutated declaration fails to elaborate: an `[]` or `.take` whose element type Lean cannot infer, or on `item`, an Option: Invalid field notation / Application type mismatch); every other mutant of this pair is KILLED by docs/document-model/sa-checked-view/view_guards.lean",
    "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Service/DocumentView.lean:97: Invalid projection: Type of",
    "trust_class": "?",
    "trusted": true
   },
@@ -1581,9 +1613,10 @@
    ],
    "before": "(candidatesOf c.front s)",
    "after": "[]",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Service/DocumentView.lean:112: Invalid projection: Type of",
+   "status": "ALLOWED",
+   "detail": "a set with one reading is all view_guards.lean can check without the governed route (two readings need distinguishing models): killed by checkDocSetsView_candidates's proof and tests/test_sa_checked_view.py::test_candidates_and_readings_name_the_active_set_in_order (u0165.s03's two readings, active_kinds == candidates); the c.active mutants of this pair are KILLED by view_guards.lean's twoSets; the rest of this pair: Lean refuses the mutant's text (the mutated declaration fails to elaborate: an `[]` or `.take` whose element type Lean cannot infer, or on `item`, an Option: Invalid field notation / Application type mismatch); every other mutant of this pair is KILLED by docs/document-model/sa-checked-view/view_guards.lean",
    "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Service/DocumentView.lean:112: Invalid projection: Type of",
    "trust_class": "?",
    "trusted": true
   },
@@ -1600,12 +1633,12 @@
    "before": "rows.zip xs.toList",
    "after": "[]",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:17: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:29: Expression",
    "raw_status": "KILLED",
-   "reads": "16f34d0c9eaf15e1e9fafe5e5462e166eaf196c4a05b416d2af02139916b7308",
+   "reads": "919b2c46381d84ae74b8fb4a359a1a41bb69866249d707fbb43872fb2d56aad4",
    "killed_at": [
-    17,
-    18
+    29,
+    30
    ],
    "trust_class": "?",
    "trusted": true
@@ -1622,9 +1655,10 @@
    ],
    "before": "((item.map (\u00b7.getObjValD \"readings\")).bind (\u00b7.getArr?.toOption)).map (\u00b7.toList)",
    "after": "[]",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Service/DocumentView.lean:80: Application type mismatch: The argument",
+   "status": "ALLOWED",
+   "detail": "Lean refuses the mutant's text (the mutated declaration fails to elaborate: an `[]` or `.take` whose element type Lean cannot infer, or on `item`, an Option: Invalid field notation / Application type mismatch); every other mutant of this pair is KILLED by docs/document-model/sa-checked-view/view_guards.lean",
    "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Service/DocumentView.lean:80: Application type mismatch: The argument",
    "trust_class": "?",
    "trusted": true
   },
@@ -1641,12 +1675,12 @@
    "before": "acc",
    "after": "[]",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:44: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
-   "reads": "3bee00d7987df855e8e940ff0635bdaf1936cb5bbbc5e04d455af66607b98d7c",
+   "reads": "e2033716981ce5de861f573d365f708995da31e345c256c426449bd4df5832e3",
    "killed_at": [
-    44,
-    44
+    32,
+    32
    ],
    "trust_class": "?",
    "trusted": true
@@ -1664,12 +1698,12 @@
    "before": "cs.map (\u00b7.2)",
    "after": "[]",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:46: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:70: Expression",
    "raw_status": "KILLED",
-   "reads": "2ad9de0c8a80793b6e5071f2a841c88e7a3984126b87e76142f6d2b1c6f20ed5",
+   "reads": "348befa13ef49957d170048034cafed81601d2fb4f9a2d27d8e4c3a862c3d1c3",
    "killed_at": [
-    46,
-    49
+    70,
+    73
    ],
    "trust_class": "?",
    "trusted": true
@@ -1686,9 +1720,14 @@
    ],
    "before": "(candidatesOf c.front s).map (\u00b7.2)",
    "after": "[]",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:363",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
+   "raw_status": "KILLED",
+   "reads": "3aee3b14e412d884487c5371c92c4ba6b889415d2010c6016d8bc7aac46b3dff",
+   "killed_at": [
+    32,
+    32
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -1704,9 +1743,10 @@
    ],
    "before": "item",
    "after": "[]",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Service/DocumentView.lean:80: Invalid field notation: Type of",
+   "status": "ALLOWED",
+   "detail": "Lean refuses the mutant's text (the mutated declaration fails to elaborate: an `[]` or `.take` whose element type Lean cannot infer, or on `item`, an Option: Invalid field notation / Application type mismatch); every other mutant of this pair is KILLED by docs/document-model/sa-checked-view/view_guards.lean",
    "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Service/DocumentView.lean:80: Invalid field notation: Type of",
    "trust_class": "?",
    "trusted": true
   },
@@ -1723,12 +1763,12 @@
    "before": "[x]",
    "after": "[]",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:44: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
-   "reads": "3bee00d7987df855e8e940ff0635bdaf1936cb5bbbc5e04d455af66607b98d7c",
+   "reads": "e2033716981ce5de861f573d365f708995da31e345c256c426449bd4df5832e3",
    "killed_at": [
-    44,
-    44
+    32,
+    32
    ],
    "trust_class": "?",
    "trusted": true
@@ -1745,9 +1785,10 @@
    ],
    "before": "us",
    "after": "[]",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Service/DocumentView.lean:98: Invalid field notation: Type of",
+   "status": "ALLOWED",
+   "detail": "Lean refuses the mutant's text (the mutated declaration fails to elaborate: an `[]` or `.take` whose element type Lean cannot infer, or on `item`, an Option: Invalid field notation / Application type mismatch); every other mutant of this pair is KILLED by docs/document-model/sa-checked-view/view_guards.lean",
    "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Service/DocumentView.lean:98: Invalid field notation: Type of",
    "trust_class": "?",
    "trusted": true
   },
@@ -1763,9 +1804,10 @@
    ],
    "before": "item.map (\u00b7.getObjValD \"readings\")",
    "after": "[]",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Service/DocumentView.lean:80: Invalid field `bind`: The environment does not contain `List.bind`",
+   "status": "ALLOWED",
+   "detail": "Lean refuses the mutant's text (the mutated declaration fails to elaborate: an `[]` or `.take` whose element type Lean cannot infer, or on `item`, an Option: Invalid field notation / Application type mismatch); every other mutant of this pair is KILLED by docs/document-model/sa-checked-view/view_guards.lean",
    "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Service/DocumentView.lean:80: Invalid field `bind`: The environment does not contain `List.bind`",
    "trust_class": "?",
    "trusted": true
   },
@@ -1784,6 +1826,8 @@
    "status": "INVALID",
    "detail": "Function expected at",
    "raw_status": "INVALID",
+   "reused_from": "1c5f4fef207a5fbf14de1e628244df27eb83092c",
+   "carried": "checks",
    "reads": "099f96efb8d8d6f67f93b79b66ef326a855d753844cd2586b206e5ee3e65311c",
    "trust_class": "?",
    "trusted": true
@@ -1800,9 +1844,10 @@
    ],
    "before": "s.readings",
    "after": "[]",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Service/DocumentView.lean:82: Invalid field notation: Type of",
+   "status": "ALLOWED",
+   "detail": "Lean refuses the mutant's text (the mutated declaration fails to elaborate: an `[]` or `.take` whose element type Lean cannot infer, or on `item`, an Option: Invalid field notation / Application type mismatch); every other mutant of this pair is KILLED by docs/document-model/sa-checked-view/view_guards.lean",
    "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Service/DocumentView.lean:82: Invalid field notation: Type of",
    "trust_class": "?",
    "trusted": true
   },
@@ -1818,9 +1863,10 @@
    ],
    "before": "cs",
    "after": "[]",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Service/DocumentView.lean:98: Invalid projection: Type of",
+   "status": "ALLOWED",
+   "detail": "Lean refuses the mutant's text (the mutated declaration fails to elaborate: an `[]` or `.take` whose element type Lean cannot infer, or on `item`, an Option: Invalid field notation / Application type mismatch); every other mutant of this pair is KILLED by docs/document-model/sa-checked-view/view_guards.lean",
    "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Service/DocumentView.lean:98: Invalid projection: Type of",
    "trust_class": "?",
    "trusted": true
   },
@@ -1839,6 +1885,8 @@
    "status": "INVALID",
    "detail": "Function expected at",
    "raw_status": "INVALID",
+   "reused_from": "1c5f4fef207a5fbf14de1e628244df27eb83092c",
+   "carried": "checks",
    "reads": "c3f05fde11a2a50a99b6a7b415cf2e3f8070579cd5ac405e0a73d8542bc0b2e8",
    "trust_class": "?",
    "trusted": true
@@ -1856,12 +1904,12 @@
    "before": "cs.map (\u00b7.1)",
    "after": "[]",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:46: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:33: Expression",
    "raw_status": "KILLED",
-   "reads": "2ad9de0c8a80793b6e5071f2a841c88e7a3984126b87e76142f6d2b1c6f20ed5",
+   "reads": "2c6073bbcaa6099e552c14f430efe813f5bbeed9b5fa805a658979ea3bb769c1",
    "killed_at": [
-    46,
-    49
+    33,
+    34
    ],
    "trust_class": "?",
    "trusted": true
@@ -1878,9 +1926,10 @@
    ],
    "before": "written",
    "after": "[]",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Service/DocumentView.lean:82: Invalid field notation: Type of",
+   "status": "ALLOWED",
+   "detail": "Lean refuses the mutant's text (the mutated declaration fails to elaborate: an `[]` or `.take` whose element type Lean cannot infer, or on `item`, an Option: Invalid field notation / Application type mismatch); every other mutant of this pair is KILLED by docs/document-model/sa-checked-view/view_guards.lean",
    "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Service/DocumentView.lean:82: Invalid field notation: Type of",
    "trust_class": "?",
    "trusted": true
   },
@@ -1896,9 +1945,10 @@
    ],
    "before": "(VE.Scope.governedSetUnits D)",
    "after": "((VE.Scope.governedSetUnits D).take 1)",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:134",
+   "status": "ALLOWED",
+   "detail": "equivalent: (l.take 1).isEmpty and (l.reverse.take 1).isEmpty are l.isEmpty, the only use of governedSetUnits here",
    "raw_status": "SURVIVOR",
+   "raw_detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:134",
    "trust_class": "?",
    "trusted": true
   },
@@ -1915,12 +1965,12 @@
    "before": "match a.getObjValD \"units\" with\n  | .arr xs => (rows.zip xs.toList).map fun (u, x) => readStatus u x\n  | _ => rows",
    "after": "((match a.getObjValD \"units\" with\n  | .arr xs => (rows.zip xs.toList).map fun (u, x) => readStatus u x\n  | _ => rows).take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:17: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:29: Expression",
    "raw_status": "KILLED",
-   "reads": "16f34d0c9eaf15e1e9fafe5e5462e166eaf196c4a05b416d2af02139916b7308",
+   "reads": "919b2c46381d84ae74b8fb4a359a1a41bb69866249d707fbb43872fb2d56aad4",
    "killed_at": [
-    17,
-    18
+    29,
+    30
    ],
    "trust_class": "?",
    "trusted": true
@@ -1938,12 +1988,12 @@
    "before": "let item := ((Loader.optionalList front \"reading_sets\").getArr?.toOption.getD #[]).toList.find? fun x =>\n    x.getObjValD \"id\" == .str s.id && (x.getObjValD \"version\").getNat?.toOption == some s.version\n  let written := ((item.map (\u00b7.getObjValD \"readings\")).bind (\u00b7.getArr?.toOption)).map (\u00b7.toList) |>.getD []\n  s.readings.filterMap fun (rid, _) => do\n    let r \u2190 written.find? (\u00b7.getObjValD \"id\" == .str rid)\n    let k \u2190 (VE.Route.Admission.decodeKind 16 (r.getObjValD \"kind\")).toOption\n    pure (rid, k)",
    "after": "((let item := ((Loader.optionalList front \"reading_sets\").getArr?.toOption.getD #[]).toList.find? fun x =>\n    x.getObjValD \"id\" == .str s.id && (x.getObjValD \"version\").getNat?.toOption == some s.version\n  let written := ((item.map (\u00b7.getObjValD \"readings\")).bind (\u00b7.getArr?.toOption)).map (\u00b7.toList) |>.getD []\n  s.readings.filterMap fun (rid, _) => do\n    let r \u2190 written.find? (\u00b7.getObjValD \"id\" == .str rid)\n    let k \u2190 (VE.Route.Admission.decodeKind 16 (r.getObjValD \"kind\")).toOption\n    pure (rid, k)).take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:42: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:58: Expression",
    "raw_status": "KILLED",
-   "reads": "aa77cd2ea4e6295b78449be2c017cf6751893f6b4b331a1fa7637a8710a65c0a",
+   "reads": "59d7e5e9ad2197e21ecb8b2a43d0c458a40a9abfc65faa27139a62b41f55fea8",
    "killed_at": [
-    42,
-    42
+    58,
+    58
    ],
    "trust_class": "?",
    "trusted": true
@@ -1961,12 +2011,12 @@
    "before": "xs.foldl (fun acc x => if acc.any (\u00b7.1 == x.1) then acc else acc ++ [x]) []",
    "after": "((xs.foldl (fun acc x => if acc.any (\u00b7.1 == x.1) then acc else acc ++ [x]) []).take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:44: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
-   "reads": "3bee00d7987df855e8e940ff0635bdaf1936cb5bbbc5e04d455af66607b98d7c",
+   "reads": "e2033716981ce5de861f573d365f708995da31e345c256c426449bd4df5832e3",
    "killed_at": [
-    44,
-    44
+    32,
+    32
    ],
    "trust_class": "?",
    "trusted": true
@@ -1984,12 +2034,12 @@
    "before": "firstPerUnit (c.active.map fun (s, _) => (s.unit, candidatesOf c.front s))",
    "after": "((firstPerUnit (c.active.map fun (s, _) => (s.unit, candidatesOf c.front s))).take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:45: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:33: Expression",
    "raw_status": "KILLED",
-   "reads": "0cbe4cdaf64823884ba47e8d72f73ca67c6f9d8a66bf29acecefb08391fecc32",
+   "reads": "fd5d2c272303791cf131fa2d2d21b7fa8de96b93a649c31573ad9c5085a141b2",
    "killed_at": [
-    45,
-    45
+    33,
+    34
    ],
    "trust_class": "?",
    "trusted": true
@@ -2007,12 +2057,12 @@
    "before": "us",
    "after": "(us.take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:46: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:70: Expression",
    "raw_status": "KILLED",
-   "reads": "2ad9de0c8a80793b6e5071f2a841c88e7a3984126b87e76142f6d2b1c6f20ed5",
+   "reads": "348befa13ef49957d170048034cafed81601d2fb4f9a2d27d8e4c3a862c3d1c3",
    "killed_at": [
-    46,
-    49
+    70,
+    73
    ],
    "trust_class": "?",
    "trusted": true
@@ -2029,9 +2079,14 @@
    ],
    "before": "c.active",
    "after": "(c.active.take 1)",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:363",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
+   "raw_status": "KILLED",
+   "reads": "3aee3b14e412d884487c5371c92c4ba6b889415d2010c6016d8bc7aac46b3dff",
+   "killed_at": [
+    32,
+    32
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -2047,9 +2102,10 @@
    ],
    "before": "(VE.Scope.governedSetUnits D)",
    "after": "((VE.Scope.governedSetUnits D).dropLast)",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:134",
+   "status": "ALLOWED",
+   "detail": "the governed-set branch, which only a readings@1 document reaches (its route traces stages with dbgTrace, which no check reads): killed by checkDocSetsView_answer's proof and tests/test_sa_checked_view.py::test_the_view_first_component_is_check_doc_sets_byte_for_byte_and_the_services[governed]",
    "raw_status": "SURVIVOR",
+   "raw_detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:134",
    "trust_class": "?",
    "trusted": true
   },
@@ -2066,12 +2122,12 @@
    "before": "match a.getObjValD \"units\" with\n  | .arr xs => (rows.zip xs.toList).map fun (u, x) => readStatus u x\n  | _ => rows",
    "after": "((match a.getObjValD \"units\" with\n  | .arr xs => (rows.zip xs.toList).map fun (u, x) => readStatus u x\n  | _ => rows).dropLast)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:17: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:29: Expression",
    "raw_status": "KILLED",
-   "reads": "16f34d0c9eaf15e1e9fafe5e5462e166eaf196c4a05b416d2af02139916b7308",
+   "reads": "919b2c46381d84ae74b8fb4a359a1a41bb69866249d707fbb43872fb2d56aad4",
    "killed_at": [
-    17,
-    18
+    29,
+    30
    ],
    "trust_class": "?",
    "trusted": true
@@ -2089,12 +2145,12 @@
    "before": "let item := ((Loader.optionalList front \"reading_sets\").getArr?.toOption.getD #[]).toList.find? fun x =>\n    x.getObjValD \"id\" == .str s.id && (x.getObjValD \"version\").getNat?.toOption == some s.version\n  let written := ((item.map (\u00b7.getObjValD \"readings\")).bind (\u00b7.getArr?.toOption)).map (\u00b7.toList) |>.getD []\n  s.readings.filterMap fun (rid, _) => do\n    let r \u2190 written.find? (\u00b7.getObjValD \"id\" == .str rid)\n    let k \u2190 (VE.Route.Admission.decodeKind 16 (r.getObjValD \"kind\")).toOption\n    pure (rid, k)",
    "after": "((let item := ((Loader.optionalList front \"reading_sets\").getArr?.toOption.getD #[]).toList.find? fun x =>\n    x.getObjValD \"id\" == .str s.id && (x.getObjValD \"version\").getNat?.toOption == some s.version\n  let written := ((item.map (\u00b7.getObjValD \"readings\")).bind (\u00b7.getArr?.toOption)).map (\u00b7.toList) |>.getD []\n  s.readings.filterMap fun (rid, _) => do\n    let r \u2190 written.find? (\u00b7.getObjValD \"id\" == .str rid)\n    let k \u2190 (VE.Route.Admission.decodeKind 16 (r.getObjValD \"kind\")).toOption\n    pure (rid, k)).dropLast)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:42: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
-   "reads": "aa77cd2ea4e6295b78449be2c017cf6751893f6b4b331a1fa7637a8710a65c0a",
+   "reads": "323ca7267d587a83b702716bdd63cacdb891290017c12095d6a20423e4010a8a",
    "killed_at": [
-    42,
-    42
+    32,
+    32
    ],
    "trust_class": "?",
    "trusted": true
@@ -2112,12 +2168,12 @@
    "before": "xs.foldl (fun acc x => if acc.any (\u00b7.1 == x.1) then acc else acc ++ [x]) []",
    "after": "((xs.foldl (fun acc x => if acc.any (\u00b7.1 == x.1) then acc else acc ++ [x]) []).dropLast)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:44: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
-   "reads": "3bee00d7987df855e8e940ff0635bdaf1936cb5bbbc5e04d455af66607b98d7c",
+   "reads": "e2033716981ce5de861f573d365f708995da31e345c256c426449bd4df5832e3",
    "killed_at": [
-    44,
-    44
+    32,
+    32
    ],
    "trust_class": "?",
    "trusted": true
@@ -2135,12 +2191,12 @@
    "before": "firstPerUnit (c.active.map fun (s, _) => (s.unit, candidatesOf c.front s))",
    "after": "((firstPerUnit (c.active.map fun (s, _) => (s.unit, candidatesOf c.front s))).dropLast)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:45: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:33: Expression",
    "raw_status": "KILLED",
-   "reads": "0cbe4cdaf64823884ba47e8d72f73ca67c6f9d8a66bf29acecefb08391fecc32",
+   "reads": "fd5d2c272303791cf131fa2d2d21b7fa8de96b93a649c31573ad9c5085a141b2",
    "killed_at": [
-    45,
-    45
+    33,
+    34
    ],
    "trust_class": "?",
    "trusted": true
@@ -2158,12 +2214,12 @@
    "before": "us",
    "after": "(us.dropLast)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:46: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:70: Expression",
    "raw_status": "KILLED",
-   "reads": "2ad9de0c8a80793b6e5071f2a841c88e7a3984126b87e76142f6d2b1c6f20ed5",
+   "reads": "348befa13ef49957d170048034cafed81601d2fb4f9a2d27d8e4c3a862c3d1c3",
    "killed_at": [
-    46,
-    49
+    70,
+    73
    ],
    "trust_class": "?",
    "trusted": true
@@ -2180,9 +2236,14 @@
    ],
    "before": "c.active",
    "after": "(c.active.dropLast)",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:363",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
+   "raw_status": "KILLED",
+   "reads": "3aee3b14e412d884487c5371c92c4ba6b889415d2010c6016d8bc7aac46b3dff",
+   "killed_at": [
+    32,
+    32
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -2201,6 +2262,8 @@
    "status": "INVALID",
    "detail": "Invalid field `take`: The environment does not contain `Function.take`",
    "raw_status": "INVALID",
+   "reused_from": "1c5f4fef207a5fbf14de1e628244df27eb83092c",
+   "carried": "checks",
    "reads": "e2e2f62e565dc95320d37a91d364813be9fb0fcddc0bc4db780234166d78504b",
    "trust_class": "?",
    "trusted": true
@@ -2218,12 +2281,12 @@
    "before": "((Loader.optionalList front \"reading_sets\").getArr?.toOption.getD #[]).toList",
    "after": "((((Loader.optionalList front \"reading_sets\").getArr?.toOption.getD #[]).toList).take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:42: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
-   "reads": "aa77cd2ea4e6295b78449be2c017cf6751893f6b4b331a1fa7637a8710a65c0a",
+   "reads": "323ca7267d587a83b702716bdd63cacdb891290017c12095d6a20423e4010a8a",
    "killed_at": [
-    42,
-    42
+    32,
+    32
    ],
    "trust_class": "?",
    "trusted": true
@@ -2241,12 +2304,12 @@
    "before": "xs",
    "after": "(xs.take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:44: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
-   "reads": "3bee00d7987df855e8e940ff0635bdaf1936cb5bbbc5e04d455af66607b98d7c",
+   "reads": "e2033716981ce5de861f573d365f708995da31e345c256c426449bd4df5832e3",
    "killed_at": [
-    44,
-    44
+    32,
+    32
    ],
    "trust_class": "?",
    "trusted": true
@@ -2264,12 +2327,12 @@
    "before": "c.active",
    "after": "(c.active.take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:45: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:33: Expression",
    "raw_status": "KILLED",
-   "reads": "0cbe4cdaf64823884ba47e8d72f73ca67c6f9d8a66bf29acecefb08391fecc32",
+   "reads": "fd5d2c272303791cf131fa2d2d21b7fa8de96b93a649c31573ad9c5085a141b2",
    "killed_at": [
-    45,
-    45
+    33,
+    34
    ],
    "trust_class": "?",
    "trusted": true
@@ -2289,6 +2352,8 @@
    "status": "INVALID",
    "detail": "Invalid field `take`: The environment does not contain `Function.take`",
    "raw_status": "INVALID",
+   "reused_from": "1c5f4fef207a5fbf14de1e628244df27eb83092c",
+   "carried": "checks",
    "reads": "099f96efb8d8d6f67f93b79b66ef326a855d753844cd2586b206e5ee3e65311c",
    "trust_class": "?",
    "trusted": true
@@ -2308,6 +2373,8 @@
    "status": "INVALID",
    "detail": "Invalid field `take`: The environment does not contain `Function.take`",
    "raw_status": "INVALID",
+   "reused_from": "1c5f4fef207a5fbf14de1e628244df27eb83092c",
+   "carried": "checks",
    "reads": "4349bbe985875980a3051cfaf578c6bd6470646fffab7cdcfe04af4facf9fb38",
    "trust_class": "?",
    "trusted": true
@@ -2327,6 +2394,8 @@
    "status": "INVALID",
    "detail": "Invalid field `dropLast`: The environment does not contain `Function.dropLast`",
    "raw_status": "INVALID",
+   "reused_from": "1c5f4fef207a5fbf14de1e628244df27eb83092c",
+   "carried": "checks",
    "reads": "e2e2f62e565dc95320d37a91d364813be9fb0fcddc0bc4db780234166d78504b",
    "trust_class": "?",
    "trusted": true
@@ -2344,12 +2413,12 @@
    "before": "((Loader.optionalList front \"reading_sets\").getArr?.toOption.getD #[]).toList",
    "after": "((((Loader.optionalList front \"reading_sets\").getArr?.toOption.getD #[]).toList).dropLast)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:45: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
-   "reads": "7b8dbbfd430567da6a5039dc147a94a6a24a0cbef8f33e67469cd0686404e06f",
+   "reads": "323ca7267d587a83b702716bdd63cacdb891290017c12095d6a20423e4010a8a",
    "killed_at": [
-    45,
-    45
+    32,
+    32
    ],
    "trust_class": "?",
    "trusted": true
@@ -2366,9 +2435,14 @@
    ],
    "before": "xs",
    "after": "(xs.dropLast)",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:314",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
+   "raw_status": "KILLED",
+   "reads": "e2033716981ce5de861f573d365f708995da31e345c256c426449bd4df5832e3",
+   "killed_at": [
+    32,
+    32
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -2384,9 +2458,14 @@
    ],
    "before": "c.active",
    "after": "(c.active.dropLast)",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:363",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:33: Expression",
+   "raw_status": "KILLED",
+   "reads": "fd5d2c272303791cf131fa2d2d21b7fa8de96b93a649c31573ad9c5085a141b2",
+   "killed_at": [
+    33,
+    34
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -2405,6 +2484,8 @@
    "status": "INVALID",
    "detail": "Invalid field `dropLast`: The environment does not contain `Function.dropLast`",
    "raw_status": "INVALID",
+   "reused_from": "1c5f4fef207a5fbf14de1e628244df27eb83092c",
+   "carried": "checks",
    "reads": "099f96efb8d8d6f67f93b79b66ef326a855d753844cd2586b206e5ee3e65311c",
    "trust_class": "?",
    "trusted": true
@@ -2424,6 +2505,8 @@
    "status": "INVALID",
    "detail": "Invalid field `dropLast`: The environment does not contain `Function.dropLast`",
    "raw_status": "INVALID",
+   "reused_from": "1c5f4fef207a5fbf14de1e628244df27eb83092c",
+   "carried": "checks",
    "reads": "4349bbe985875980a3051cfaf578c6bd6470646fffab7cdcfe04af4facf9fb38",
    "trust_class": "?",
    "trusted": true
@@ -2441,12 +2524,12 @@
    "before": "rows",
    "after": "(rows.take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:17: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:29: Expression",
    "raw_status": "KILLED",
-   "reads": "16f34d0c9eaf15e1e9fafe5e5462e166eaf196c4a05b416d2af02139916b7308",
+   "reads": "919b2c46381d84ae74b8fb4a359a1a41bb69866249d707fbb43872fb2d56aad4",
    "killed_at": [
-    17,
-    18
+    29,
+    30
    ],
    "trust_class": "?",
    "trusted": true
@@ -2463,9 +2546,10 @@
    ],
    "before": "((item.map (\u00b7.getObjValD \"readings\")).bind (\u00b7.getArr?.toOption))",
    "after": "(((item.map (\u00b7.getObjValD \"readings\")).bind (\u00b7.getArr?.toOption)).take 1)",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Service/DocumentView.lean:82: Invalid field notation: Type of",
+   "status": "ALLOWED",
+   "detail": "Lean refuses the mutant's text (the mutated declaration fails to elaborate: an `[]` or `.take` whose element type Lean cannot infer, or on `item`, an Option: Invalid field notation / Application type mismatch); every other mutant of this pair is KILLED by docs/document-model/sa-checked-view/view_guards.lean",
    "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Service/DocumentView.lean:82: Invalid field notation: Type of",
    "trust_class": "?",
    "trusted": true
   },
@@ -2481,9 +2565,14 @@
    ],
    "before": "acc",
    "after": "(acc.take 1)",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:314, lean/VE/Service/DocumentView.lean:370",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:61: Expression",
+   "raw_status": "KILLED",
+   "reads": "3f1ab11494bb9886113205796c7b914cd37f4186f2ac9c5549910946e2bc91aa",
+   "killed_at": [
+    61,
+    62
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -2502,6 +2591,8 @@
    "status": "INVALID",
    "detail": "Invalid field `take`: The environment does not contain `Function.take`",
    "raw_status": "INVALID",
+   "reused_from": "1c5f4fef207a5fbf14de1e628244df27eb83092c",
+   "carried": "checks",
    "reads": "f5f0bf00bf5a2641a2c89d0525d7bd8c83e784f6a751e09a88a1895972285a54",
    "trust_class": "?",
    "trusted": true
@@ -2519,12 +2610,12 @@
    "before": "cs",
    "after": "(cs.take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:46: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:70: Expression",
    "raw_status": "KILLED",
-   "reads": "2ad9de0c8a80793b6e5071f2a841c88e7a3984126b87e76142f6d2b1c6f20ed5",
+   "reads": "348befa13ef49957d170048034cafed81601d2fb4f9a2d27d8e4c3a862c3d1c3",
    "killed_at": [
-    46,
-    49
+    70,
+    73
    ],
    "trust_class": "?",
    "trusted": true
@@ -2541,9 +2632,10 @@
    ],
    "before": "(candidatesOf c.front s)",
    "after": "((candidatesOf c.front s).take 1)",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:363",
+   "status": "ALLOWED",
+   "detail": "a set with one reading is all view_guards.lean can check without the governed route (two readings need distinguishing models): killed by checkDocSetsView_candidates's proof and tests/test_sa_checked_view.py::test_candidates_and_readings_name_the_active_set_in_order (u0165.s03's two readings, active_kinds == candidates); the c.active mutants of this pair are KILLED by view_guards.lean's twoSets",
    "raw_status": "SURVIVOR",
+   "raw_detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:363",
    "trust_class": "?",
    "trusted": true
   },
@@ -2560,12 +2652,12 @@
    "before": "rows",
    "after": "(rows.dropLast)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:17: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:29: Expression",
    "raw_status": "KILLED",
-   "reads": "16f34d0c9eaf15e1e9fafe5e5462e166eaf196c4a05b416d2af02139916b7308",
+   "reads": "919b2c46381d84ae74b8fb4a359a1a41bb69866249d707fbb43872fb2d56aad4",
    "killed_at": [
-    17,
-    18
+    29,
+    30
    ],
    "trust_class": "?",
    "trusted": true
@@ -2582,9 +2674,10 @@
    ],
    "before": "((item.map (\u00b7.getObjValD \"readings\")).bind (\u00b7.getArr?.toOption))",
    "after": "(((item.map (\u00b7.getObjValD \"readings\")).bind (\u00b7.getArr?.toOption)).dropLast)",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Service/DocumentView.lean:82: Invalid field notation: Type of",
+   "status": "ALLOWED",
+   "detail": "Lean refuses the mutant's text (the mutated declaration fails to elaborate: an `[]` or `.take` whose element type Lean cannot infer, or on `item`, an Option: Invalid field notation / Application type mismatch); every other mutant of this pair is KILLED by docs/document-model/sa-checked-view/view_guards.lean",
    "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Service/DocumentView.lean:82: Invalid field notation: Type of",
    "trust_class": "?",
    "trusted": true
   },
@@ -2600,9 +2693,14 @@
    ],
    "before": "acc",
    "after": "(acc.dropLast)",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:314, lean/VE/Service/DocumentView.lean:370",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:61: Expression",
+   "raw_status": "KILLED",
+   "reads": "3f1ab11494bb9886113205796c7b914cd37f4186f2ac9c5549910946e2bc91aa",
+   "killed_at": [
+    61,
+    62
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -2621,6 +2719,8 @@
    "status": "INVALID",
    "detail": "Invalid field `dropLast`: The environment does not contain `Function.dropLast`",
    "raw_status": "INVALID",
+   "reused_from": "1c5f4fef207a5fbf14de1e628244df27eb83092c",
+   "carried": "checks",
    "reads": "f5f0bf00bf5a2641a2c89d0525d7bd8c83e784f6a751e09a88a1895972285a54",
    "trust_class": "?",
    "trusted": true
@@ -2638,12 +2738,12 @@
    "before": "cs",
    "after": "(cs.dropLast)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:46: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:70: Expression",
    "raw_status": "KILLED",
-   "reads": "2ad9de0c8a80793b6e5071f2a841c88e7a3984126b87e76142f6d2b1c6f20ed5",
+   "reads": "348befa13ef49957d170048034cafed81601d2fb4f9a2d27d8e4c3a862c3d1c3",
    "killed_at": [
-    46,
-    49
+    70,
+    73
    ],
    "trust_class": "?",
    "trusted": true
@@ -2660,9 +2760,14 @@
    ],
    "before": "(candidatesOf c.front s)",
    "after": "((candidatesOf c.front s).dropLast)",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:363",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
+   "raw_status": "KILLED",
+   "reads": "3aee3b14e412d884487c5371c92c4ba6b889415d2010c6016d8bc7aac46b3dff",
+   "killed_at": [
+    32,
+    32
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -2679,12 +2784,12 @@
    "before": "rows.zip xs.toList",
    "after": "((rows.zip xs.toList).take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:17: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:29: Expression",
    "raw_status": "KILLED",
-   "reads": "16f34d0c9eaf15e1e9fafe5e5462e166eaf196c4a05b416d2af02139916b7308",
+   "reads": "919b2c46381d84ae74b8fb4a359a1a41bb69866249d707fbb43872fb2d56aad4",
    "killed_at": [
-    17,
-    18
+    29,
+    30
    ],
    "trust_class": "?",
    "trusted": true
@@ -2701,9 +2806,10 @@
    ],
    "before": "((item.map (\u00b7.getObjValD \"readings\")).bind (\u00b7.getArr?.toOption)).map (\u00b7.toList)",
    "after": "((((item.map (\u00b7.getObjValD \"readings\")).bind (\u00b7.getArr?.toOption)).map (\u00b7.toList)).take 1)",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Service/DocumentView.lean:82: Invalid field notation: Type of",
+   "status": "ALLOWED",
+   "detail": "Lean refuses the mutant's text (the mutated declaration fails to elaborate: an `[]` or `.take` whose element type Lean cannot infer, or on `item`, an Option: Invalid field notation / Application type mismatch); every other mutant of this pair is KILLED by docs/document-model/sa-checked-view/view_guards.lean",
    "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Service/DocumentView.lean:82: Invalid field notation: Type of",
    "trust_class": "?",
    "trusted": true
   },
@@ -2719,9 +2825,14 @@
    ],
    "before": "acc",
    "after": "(acc.take 1)",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:314, lean/VE/Service/DocumentView.lean:370",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:61: Expression",
+   "raw_status": "KILLED",
+   "reads": "3f1ab11494bb9886113205796c7b914cd37f4186f2ac9c5549910946e2bc91aa",
+   "killed_at": [
+    61,
+    62
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -2738,12 +2849,12 @@
    "before": "cs.map (\u00b7.2)",
    "after": "((cs.map (\u00b7.2)).take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:46: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:70: Expression",
    "raw_status": "KILLED",
-   "reads": "2ad9de0c8a80793b6e5071f2a841c88e7a3984126b87e76142f6d2b1c6f20ed5",
+   "reads": "348befa13ef49957d170048034cafed81601d2fb4f9a2d27d8e4c3a862c3d1c3",
    "killed_at": [
-    46,
-    49
+    70,
+    73
    ],
    "trust_class": "?",
    "trusted": true
@@ -2760,9 +2871,10 @@
    ],
    "before": "(candidatesOf c.front s).map (\u00b7.2)",
    "after": "(((candidatesOf c.front s).map (\u00b7.2)).take 1)",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:363",
+   "status": "ALLOWED",
+   "detail": "a set with one reading is all view_guards.lean can check without the governed route (two readings need distinguishing models): killed by checkDocSetsView_candidates's proof and tests/test_sa_checked_view.py::test_candidates_and_readings_name_the_active_set_in_order (u0165.s03's two readings, active_kinds == candidates); the c.active mutants of this pair are KILLED by view_guards.lean's twoSets",
    "raw_status": "SURVIVOR",
+   "raw_detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:363",
    "trust_class": "?",
    "trusted": true
   },
@@ -2779,12 +2891,12 @@
    "before": "rows.zip xs.toList",
    "after": "((rows.zip xs.toList).dropLast)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:17: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:29: Expression",
    "raw_status": "KILLED",
-   "reads": "16f34d0c9eaf15e1e9fafe5e5462e166eaf196c4a05b416d2af02139916b7308",
+   "reads": "919b2c46381d84ae74b8fb4a359a1a41bb69866249d707fbb43872fb2d56aad4",
    "killed_at": [
-    17,
-    18
+    29,
+    30
    ],
    "trust_class": "?",
    "trusted": true
@@ -2801,9 +2913,10 @@
    ],
    "before": "((item.map (\u00b7.getObjValD \"readings\")).bind (\u00b7.getArr?.toOption)).map (\u00b7.toList)",
    "after": "((((item.map (\u00b7.getObjValD \"readings\")).bind (\u00b7.getArr?.toOption)).map (\u00b7.toList)).dropLast)",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Service/DocumentView.lean:82: Invalid field notation: Type of",
+   "status": "ALLOWED",
+   "detail": "Lean refuses the mutant's text (the mutated declaration fails to elaborate: an `[]` or `.take` whose element type Lean cannot infer, or on `item`, an Option: Invalid field notation / Application type mismatch); every other mutant of this pair is KILLED by docs/document-model/sa-checked-view/view_guards.lean",
    "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Service/DocumentView.lean:82: Invalid field notation: Type of",
    "trust_class": "?",
    "trusted": true
   },
@@ -2820,12 +2933,12 @@
    "before": "acc",
    "after": "(acc.dropLast)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:44: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
-   "reads": "3bee00d7987df855e8e940ff0635bdaf1936cb5bbbc5e04d455af66607b98d7c",
+   "reads": "e2033716981ce5de861f573d365f708995da31e345c256c426449bd4df5832e3",
    "killed_at": [
-    44,
-    44
+    32,
+    32
    ],
    "trust_class": "?",
    "trusted": true
@@ -2843,12 +2956,12 @@
    "before": "cs.map (\u00b7.2)",
    "after": "((cs.map (\u00b7.2)).dropLast)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:46: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:70: Expression",
    "raw_status": "KILLED",
-   "reads": "2ad9de0c8a80793b6e5071f2a841c88e7a3984126b87e76142f6d2b1c6f20ed5",
+   "reads": "348befa13ef49957d170048034cafed81601d2fb4f9a2d27d8e4c3a862c3d1c3",
    "killed_at": [
-    46,
-    49
+    70,
+    73
    ],
    "trust_class": "?",
    "trusted": true
@@ -2865,9 +2978,14 @@
    ],
    "before": "(candidatesOf c.front s).map (\u00b7.2)",
    "after": "(((candidatesOf c.front s).map (\u00b7.2)).dropLast)",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:363",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
+   "raw_status": "KILLED",
+   "reads": "3aee3b14e412d884487c5371c92c4ba6b889415d2010c6016d8bc7aac46b3dff",
+   "killed_at": [
+    32,
+    32
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -2883,9 +3001,10 @@
    ],
    "before": "item",
    "after": "(item.take 1)",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Service/DocumentView.lean:82: Invalid field notation: Type of",
+   "status": "ALLOWED",
+   "detail": "Lean refuses the mutant's text (the mutated declaration fails to elaborate: an `[]` or `.take` whose element type Lean cannot infer, or on `item`, an Option: Invalid field notation / Application type mismatch); every other mutant of this pair is KILLED by docs/document-model/sa-checked-view/view_guards.lean",
    "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Service/DocumentView.lean:82: Invalid field notation: Type of",
    "trust_class": "?",
    "trusted": true
   },
@@ -2902,12 +3021,12 @@
    "before": "us",
    "after": "(us.take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:46: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:33: Expression",
    "raw_status": "KILLED",
-   "reads": "2ad9de0c8a80793b6e5071f2a841c88e7a3984126b87e76142f6d2b1c6f20ed5",
+   "reads": "2c6073bbcaa6099e552c14f430efe813f5bbeed9b5fa805a658979ea3bb769c1",
    "killed_at": [
-    46,
-    49
+    33,
+    34
    ],
    "trust_class": "?",
    "trusted": true
@@ -2924,9 +3043,10 @@
    ],
    "before": "item",
    "after": "(item.dropLast)",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Service/DocumentView.lean:82: Invalid field notation: Type of",
+   "status": "ALLOWED",
+   "detail": "Lean refuses the mutant's text (the mutated declaration fails to elaborate: an `[]` or `.take` whose element type Lean cannot infer, or on `item`, an Option: Invalid field notation / Application type mismatch); every other mutant of this pair is KILLED by docs/document-model/sa-checked-view/view_guards.lean",
    "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Service/DocumentView.lean:82: Invalid field notation: Type of",
    "trust_class": "?",
    "trusted": true
   },
@@ -2943,12 +3063,12 @@
    "before": "[x]",
    "after": "([x].dropLast)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:44: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
-   "reads": "3bee00d7987df855e8e940ff0635bdaf1936cb5bbbc5e04d455af66607b98d7c",
+   "reads": "e2033716981ce5de861f573d365f708995da31e345c256c426449bd4df5832e3",
    "killed_at": [
-    44,
-    44
+    32,
+    32
    ],
    "trust_class": "?",
    "trusted": true
@@ -2966,12 +3086,12 @@
    "before": "us",
    "after": "(us.dropLast)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:46: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:33: Expression",
    "raw_status": "KILLED",
-   "reads": "2ad9de0c8a80793b6e5071f2a841c88e7a3984126b87e76142f6d2b1c6f20ed5",
+   "reads": "2c6073bbcaa6099e552c14f430efe813f5bbeed9b5fa805a658979ea3bb769c1",
    "killed_at": [
-    46,
-    49
+    33,
+    34
    ],
    "trust_class": "?",
    "trusted": true
@@ -2988,9 +3108,10 @@
    ],
    "before": "item.map (\u00b7.getObjValD \"readings\")",
    "after": "((item.map (\u00b7.getObjValD \"readings\")).take 1)",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Service/DocumentView.lean:82: Invalid field notation: Type of",
+   "status": "ALLOWED",
+   "detail": "Lean refuses the mutant's text (the mutated declaration fails to elaborate: an `[]` or `.take` whose element type Lean cannot infer, or on `item`, an Option: Invalid field notation / Application type mismatch); every other mutant of this pair is KILLED by docs/document-model/sa-checked-view/view_guards.lean",
    "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Service/DocumentView.lean:82: Invalid field notation: Type of",
    "trust_class": "?",
    "trusted": true
   },
@@ -3009,6 +3130,8 @@
    "status": "INVALID",
    "detail": "Invalid field `take`: The environment does not contain `Function.take`",
    "raw_status": "INVALID",
+   "reused_from": "1c5f4fef207a5fbf14de1e628244df27eb83092c",
+   "carried": "checks",
    "reads": "099f96efb8d8d6f67f93b79b66ef326a855d753844cd2586b206e5ee3e65311c",
    "trust_class": "?",
    "trusted": true
@@ -3025,9 +3148,10 @@
    ],
    "before": "item.map (\u00b7.getObjValD \"readings\")",
    "after": "((item.map (\u00b7.getObjValD \"readings\")).dropLast)",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Service/DocumentView.lean:82: Invalid field notation: Type of",
+   "status": "ALLOWED",
+   "detail": "Lean refuses the mutant's text (the mutated declaration fails to elaborate: an `[]` or `.take` whose element type Lean cannot infer, or on `item`, an Option: Invalid field notation / Application type mismatch); every other mutant of this pair is KILLED by docs/document-model/sa-checked-view/view_guards.lean",
    "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Service/DocumentView.lean:82: Invalid field notation: Type of",
    "trust_class": "?",
    "trusted": true
   },
@@ -3046,6 +3170,8 @@
    "status": "INVALID",
    "detail": "Invalid field `dropLast`: The environment does not contain `Function.dropLast`",
    "raw_status": "INVALID",
+   "reused_from": "1c5f4fef207a5fbf14de1e628244df27eb83092c",
+   "carried": "checks",
    "reads": "099f96efb8d8d6f67f93b79b66ef326a855d753844cd2586b206e5ee3e65311c",
    "trust_class": "?",
    "trusted": true
@@ -3063,12 +3189,12 @@
    "before": "s.readings",
    "after": "(s.readings.take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:42: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:58: Expression",
    "raw_status": "KILLED",
-   "reads": "aa77cd2ea4e6295b78449be2c017cf6751893f6b4b331a1fa7637a8710a65c0a",
+   "reads": "59d7e5e9ad2197e21ecb8b2a43d0c458a40a9abfc65faa27139a62b41f55fea8",
    "killed_at": [
-    42,
-    42
+    58,
+    58
    ],
    "trust_class": "?",
    "trusted": true
@@ -3086,12 +3212,12 @@
    "before": "cs",
    "after": "(cs.take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:46: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:70: Expression",
    "raw_status": "KILLED",
-   "reads": "2ad9de0c8a80793b6e5071f2a841c88e7a3984126b87e76142f6d2b1c6f20ed5",
+   "reads": "348befa13ef49957d170048034cafed81601d2fb4f9a2d27d8e4c3a862c3d1c3",
    "killed_at": [
-    46,
-    49
+    70,
+    73
    ],
    "trust_class": "?",
    "trusted": true
@@ -3109,12 +3235,12 @@
    "before": "s.readings",
    "after": "(s.readings.dropLast)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:42: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
-   "reads": "aa77cd2ea4e6295b78449be2c017cf6751893f6b4b331a1fa7637a8710a65c0a",
+   "reads": "323ca7267d587a83b702716bdd63cacdb891290017c12095d6a20423e4010a8a",
    "killed_at": [
-    42,
-    42
+    32,
+    32
    ],
    "trust_class": "?",
    "trusted": true
@@ -3132,12 +3258,12 @@
    "before": "cs",
    "after": "(cs.dropLast)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:46: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:33: Expression",
    "raw_status": "KILLED",
-   "reads": "2ad9de0c8a80793b6e5071f2a841c88e7a3984126b87e76142f6d2b1c6f20ed5",
+   "reads": "2c6073bbcaa6099e552c14f430efe813f5bbeed9b5fa805a658979ea3bb769c1",
    "killed_at": [
-    46,
-    49
+    33,
+    34
    ],
    "trust_class": "?",
    "trusted": true
@@ -3157,6 +3283,8 @@
    "status": "INVALID",
    "detail": "Invalid field `take`: The environment does not contain `Function.take`",
    "raw_status": "INVALID",
+   "reused_from": "1c5f4fef207a5fbf14de1e628244df27eb83092c",
+   "carried": "checks",
    "reads": "c3f05fde11a2a50a99b6a7b415cf2e3f8070579cd5ac405e0a73d8542bc0b2e8",
    "trust_class": "?",
    "trusted": true
@@ -3174,12 +3302,12 @@
    "before": "cs.map (\u00b7.1)",
    "after": "((cs.map (\u00b7.1)).take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:46: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:70: Expression",
    "raw_status": "KILLED",
-   "reads": "2ad9de0c8a80793b6e5071f2a841c88e7a3984126b87e76142f6d2b1c6f20ed5",
+   "reads": "348befa13ef49957d170048034cafed81601d2fb4f9a2d27d8e4c3a862c3d1c3",
    "killed_at": [
-    46,
-    49
+    70,
+    73
    ],
    "trust_class": "?",
    "trusted": true
@@ -3199,6 +3327,8 @@
    "status": "INVALID",
    "detail": "Invalid field `dropLast`: The environment does not contain `Function.dropLast`",
    "raw_status": "INVALID",
+   "reused_from": "1c5f4fef207a5fbf14de1e628244df27eb83092c",
+   "carried": "checks",
    "reads": "c3f05fde11a2a50a99b6a7b415cf2e3f8070579cd5ac405e0a73d8542bc0b2e8",
    "trust_class": "?",
    "trusted": true
@@ -3216,12 +3346,12 @@
    "before": "cs.map (\u00b7.1)",
    "after": "((cs.map (\u00b7.1)).dropLast)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:46: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:33: Expression",
    "raw_status": "KILLED",
-   "reads": "2ad9de0c8a80793b6e5071f2a841c88e7a3984126b87e76142f6d2b1c6f20ed5",
+   "reads": "2c6073bbcaa6099e552c14f430efe813f5bbeed9b5fa805a658979ea3bb769c1",
    "killed_at": [
-    46,
-    49
+    33,
+    34
    ],
    "trust_class": "?",
    "trusted": true
@@ -3239,12 +3369,12 @@
    "before": "written",
    "after": "(written.take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:42: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:58: Expression",
    "raw_status": "KILLED",
-   "reads": "aa77cd2ea4e6295b78449be2c017cf6751893f6b4b331a1fa7637a8710a65c0a",
+   "reads": "59d7e5e9ad2197e21ecb8b2a43d0c458a40a9abfc65faa27139a62b41f55fea8",
    "killed_at": [
-    42,
-    42
+    58,
+    58
    ],
    "trust_class": "?",
    "trusted": true
@@ -3262,12 +3392,12 @@
    "before": "written",
    "after": "(written.dropLast)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:42: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
-   "reads": "aa77cd2ea4e6295b78449be2c017cf6751893f6b4b331a1fa7637a8710a65c0a",
+   "reads": "323ca7267d587a83b702716bdd63cacdb891290017c12095d6a20423e4010a8a",
    "killed_at": [
-    42,
-    42
+    32,
+    32
    ],
    "trust_class": "?",
    "trusted": true
@@ -3284,9 +3414,10 @@
    ],
    "before": "(VE.Scope.governedSetUnits D)",
    "after": "((VE.Scope.governedSetUnits D).reverse.take 1)",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:134",
+   "status": "ALLOWED",
+   "detail": "equivalent: (l.take 1).isEmpty and (l.reverse.take 1).isEmpty are l.isEmpty, the only use of governedSetUnits here",
    "raw_status": "SURVIVOR",
+   "raw_detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:134",
    "trust_class": "?",
    "trusted": true
   },
@@ -3303,12 +3434,12 @@
    "before": "match a.getObjValD \"units\" with\n  | .arr xs => (rows.zip xs.toList).map fun (u, x) => readStatus u x\n  | _ => rows",
    "after": "((match a.getObjValD \"units\" with\n  | .arr xs => (rows.zip xs.toList).map fun (u, x) => readStatus u x\n  | _ => rows).reverse.take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:17: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:29: Expression",
    "raw_status": "KILLED",
-   "reads": "16f34d0c9eaf15e1e9fafe5e5462e166eaf196c4a05b416d2af02139916b7308",
+   "reads": "919b2c46381d84ae74b8fb4a359a1a41bb69866249d707fbb43872fb2d56aad4",
    "killed_at": [
-    17,
-    18
+    29,
+    30
    ],
    "trust_class": "?",
    "trusted": true
@@ -3326,12 +3457,12 @@
    "before": "let item := ((Loader.optionalList front \"reading_sets\").getArr?.toOption.getD #[]).toList.find? fun x =>\n    x.getObjValD \"id\" == .str s.id && (x.getObjValD \"version\").getNat?.toOption == some s.version\n  let written := ((item.map (\u00b7.getObjValD \"readings\")).bind (\u00b7.getArr?.toOption)).map (\u00b7.toList) |>.getD []\n  s.readings.filterMap fun (rid, _) => do\n    let r \u2190 written.find? (\u00b7.getObjValD \"id\" == .str rid)\n    let k \u2190 (VE.Route.Admission.decodeKind 16 (r.getObjValD \"kind\")).toOption\n    pure (rid, k)",
    "after": "((let item := ((Loader.optionalList front \"reading_sets\").getArr?.toOption.getD #[]).toList.find? fun x =>\n    x.getObjValD \"id\" == .str s.id && (x.getObjValD \"version\").getNat?.toOption == some s.version\n  let written := ((item.map (\u00b7.getObjValD \"readings\")).bind (\u00b7.getArr?.toOption)).map (\u00b7.toList) |>.getD []\n  s.readings.filterMap fun (rid, _) => do\n    let r \u2190 written.find? (\u00b7.getObjValD \"id\" == .str rid)\n    let k \u2190 (VE.Route.Admission.decodeKind 16 (r.getObjValD \"kind\")).toOption\n    pure (rid, k)).reverse.take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:42: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:58: Expression",
    "raw_status": "KILLED",
-   "reads": "aa77cd2ea4e6295b78449be2c017cf6751893f6b4b331a1fa7637a8710a65c0a",
+   "reads": "59d7e5e9ad2197e21ecb8b2a43d0c458a40a9abfc65faa27139a62b41f55fea8",
    "killed_at": [
-    42,
-    42
+    58,
+    58
    ],
    "trust_class": "?",
    "trusted": true
@@ -3349,12 +3480,12 @@
    "before": "xs.foldl (fun acc x => if acc.any (\u00b7.1 == x.1) then acc else acc ++ [x]) []",
    "after": "((xs.foldl (fun acc x => if acc.any (\u00b7.1 == x.1) then acc else acc ++ [x]) []).reverse.take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:44: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
-   "reads": "3bee00d7987df855e8e940ff0635bdaf1936cb5bbbc5e04d455af66607b98d7c",
+   "reads": "e2033716981ce5de861f573d365f708995da31e345c256c426449bd4df5832e3",
    "killed_at": [
-    44,
-    44
+    32,
+    32
    ],
    "trust_class": "?",
    "trusted": true
@@ -3372,12 +3503,12 @@
    "before": "firstPerUnit (c.active.map fun (s, _) => (s.unit, candidatesOf c.front s))",
    "after": "((firstPerUnit (c.active.map fun (s, _) => (s.unit, candidatesOf c.front s))).reverse.take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:45: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:33: Expression",
    "raw_status": "KILLED",
-   "reads": "0cbe4cdaf64823884ba47e8d72f73ca67c6f9d8a66bf29acecefb08391fecc32",
+   "reads": "fd5d2c272303791cf131fa2d2d21b7fa8de96b93a649c31573ad9c5085a141b2",
    "killed_at": [
-    45,
-    45
+    33,
+    34
    ],
    "trust_class": "?",
    "trusted": true
@@ -3395,12 +3526,12 @@
    "before": "us",
    "after": "(us.reverse.take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:46: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:70: Expression",
    "raw_status": "KILLED",
-   "reads": "2ad9de0c8a80793b6e5071f2a841c88e7a3984126b87e76142f6d2b1c6f20ed5",
+   "reads": "348befa13ef49957d170048034cafed81601d2fb4f9a2d27d8e4c3a862c3d1c3",
    "killed_at": [
-    46,
-    49
+    70,
+    73
    ],
    "trust_class": "?",
    "trusted": true
@@ -3417,9 +3548,14 @@
    ],
    "before": "c.active",
    "after": "(c.active.reverse.take 1)",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:363",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
+   "raw_status": "KILLED",
+   "reads": "3aee3b14e412d884487c5371c92c4ba6b889415d2010c6016d8bc7aac46b3dff",
+   "killed_at": [
+    32,
+    32
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -3435,9 +3571,10 @@
    ],
    "before": "(VE.Scope.governedSetUnits D)",
    "after": "((VE.Scope.governedSetUnits D).drop 1)",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:134",
+   "status": "ALLOWED",
+   "detail": "the governed-set branch, which only a readings@1 document reaches (its route traces stages with dbgTrace, which no check reads): killed by checkDocSetsView_answer's proof and tests/test_sa_checked_view.py::test_the_view_first_component_is_check_doc_sets_byte_for_byte_and_the_services[governed]",
    "raw_status": "SURVIVOR",
+   "raw_detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:134",
    "trust_class": "?",
    "trusted": true
   },
@@ -3454,12 +3591,12 @@
    "before": "match a.getObjValD \"units\" with\n  | .arr xs => (rows.zip xs.toList).map fun (u, x) => readStatus u x\n  | _ => rows",
    "after": "((match a.getObjValD \"units\" with\n  | .arr xs => (rows.zip xs.toList).map fun (u, x) => readStatus u x\n  | _ => rows).drop 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:17: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:29: Expression",
    "raw_status": "KILLED",
-   "reads": "16f34d0c9eaf15e1e9fafe5e5462e166eaf196c4a05b416d2af02139916b7308",
+   "reads": "919b2c46381d84ae74b8fb4a359a1a41bb69866249d707fbb43872fb2d56aad4",
    "killed_at": [
-    17,
-    18
+    29,
+    30
    ],
    "trust_class": "?",
    "trusted": true
@@ -3477,12 +3614,12 @@
    "before": "let item := ((Loader.optionalList front \"reading_sets\").getArr?.toOption.getD #[]).toList.find? fun x =>\n    x.getObjValD \"id\" == .str s.id && (x.getObjValD \"version\").getNat?.toOption == some s.version\n  let written := ((item.map (\u00b7.getObjValD \"readings\")).bind (\u00b7.getArr?.toOption)).map (\u00b7.toList) |>.getD []\n  s.readings.filterMap fun (rid, _) => do\n    let r \u2190 written.find? (\u00b7.getObjValD \"id\" == .str rid)\n    let k \u2190 (VE.Route.Admission.decodeKind 16 (r.getObjValD \"kind\")).toOption\n    pure (rid, k)",
    "after": "((let item := ((Loader.optionalList front \"reading_sets\").getArr?.toOption.getD #[]).toList.find? fun x =>\n    x.getObjValD \"id\" == .str s.id && (x.getObjValD \"version\").getNat?.toOption == some s.version\n  let written := ((item.map (\u00b7.getObjValD \"readings\")).bind (\u00b7.getArr?.toOption)).map (\u00b7.toList) |>.getD []\n  s.readings.filterMap fun (rid, _) => do\n    let r \u2190 written.find? (\u00b7.getObjValD \"id\" == .str rid)\n    let k \u2190 (VE.Route.Admission.decodeKind 16 (r.getObjValD \"kind\")).toOption\n    pure (rid, k)).drop 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:42: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
-   "reads": "aa77cd2ea4e6295b78449be2c017cf6751893f6b4b331a1fa7637a8710a65c0a",
+   "reads": "323ca7267d587a83b702716bdd63cacdb891290017c12095d6a20423e4010a8a",
    "killed_at": [
-    42,
-    42
+    32,
+    32
    ],
    "trust_class": "?",
    "trusted": true
@@ -3500,12 +3637,12 @@
    "before": "xs.foldl (fun acc x => if acc.any (\u00b7.1 == x.1) then acc else acc ++ [x]) []",
    "after": "((xs.foldl (fun acc x => if acc.any (\u00b7.1 == x.1) then acc else acc ++ [x]) []).drop 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:44: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
-   "reads": "3bee00d7987df855e8e940ff0635bdaf1936cb5bbbc5e04d455af66607b98d7c",
+   "reads": "e2033716981ce5de861f573d365f708995da31e345c256c426449bd4df5832e3",
    "killed_at": [
-    44,
-    44
+    32,
+    32
    ],
    "trust_class": "?",
    "trusted": true
@@ -3523,12 +3660,12 @@
    "before": "firstPerUnit (c.active.map fun (s, _) => (s.unit, candidatesOf c.front s))",
    "after": "((firstPerUnit (c.active.map fun (s, _) => (s.unit, candidatesOf c.front s))).drop 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:45: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:33: Expression",
    "raw_status": "KILLED",
-   "reads": "0cbe4cdaf64823884ba47e8d72f73ca67c6f9d8a66bf29acecefb08391fecc32",
+   "reads": "fd5d2c272303791cf131fa2d2d21b7fa8de96b93a649c31573ad9c5085a141b2",
    "killed_at": [
-    45,
-    45
+    33,
+    34
    ],
    "trust_class": "?",
    "trusted": true
@@ -3546,12 +3683,12 @@
    "before": "us",
    "after": "(us.drop 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:46: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:70: Expression",
    "raw_status": "KILLED",
-   "reads": "2ad9de0c8a80793b6e5071f2a841c88e7a3984126b87e76142f6d2b1c6f20ed5",
+   "reads": "348befa13ef49957d170048034cafed81601d2fb4f9a2d27d8e4c3a862c3d1c3",
    "killed_at": [
-    46,
-    49
+    70,
+    73
    ],
    "trust_class": "?",
    "trusted": true
@@ -3568,9 +3705,14 @@
    ],
    "before": "c.active",
    "after": "(c.active.drop 1)",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:363",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
+   "raw_status": "KILLED",
+   "reads": "3aee3b14e412d884487c5371c92c4ba6b889415d2010c6016d8bc7aac46b3dff",
+   "killed_at": [
+    32,
+    32
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -3589,6 +3731,8 @@
    "status": "INVALID",
    "detail": "Invalid field `reverse`: The environment does not contain `Function.reverse`",
    "raw_status": "INVALID",
+   "reused_from": "1c5f4fef207a5fbf14de1e628244df27eb83092c",
+   "carried": "checks",
    "reads": "e2e2f62e565dc95320d37a91d364813be9fb0fcddc0bc4db780234166d78504b",
    "trust_class": "?",
    "trusted": true
@@ -3606,12 +3750,12 @@
    "before": "((Loader.optionalList front \"reading_sets\").getArr?.toOption.getD #[]).toList",
    "after": "((((Loader.optionalList front \"reading_sets\").getArr?.toOption.getD #[]).toList).reverse.take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:42: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
-   "reads": "aa77cd2ea4e6295b78449be2c017cf6751893f6b4b331a1fa7637a8710a65c0a",
+   "reads": "323ca7267d587a83b702716bdd63cacdb891290017c12095d6a20423e4010a8a",
    "killed_at": [
-    42,
-    42
+    32,
+    32
    ],
    "trust_class": "?",
    "trusted": true
@@ -3629,12 +3773,12 @@
    "before": "xs",
    "after": "(xs.reverse.take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:44: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
-   "reads": "3bee00d7987df855e8e940ff0635bdaf1936cb5bbbc5e04d455af66607b98d7c",
+   "reads": "e2033716981ce5de861f573d365f708995da31e345c256c426449bd4df5832e3",
    "killed_at": [
-    44,
-    44
+    32,
+    32
    ],
    "trust_class": "?",
    "trusted": true
@@ -3652,12 +3796,12 @@
    "before": "c.active",
    "after": "(c.active.reverse.take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:45: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:33: Expression",
    "raw_status": "KILLED",
-   "reads": "0cbe4cdaf64823884ba47e8d72f73ca67c6f9d8a66bf29acecefb08391fecc32",
+   "reads": "fd5d2c272303791cf131fa2d2d21b7fa8de96b93a649c31573ad9c5085a141b2",
    "killed_at": [
-    45,
-    45
+    33,
+    34
    ],
    "trust_class": "?",
    "trusted": true
@@ -3677,6 +3821,8 @@
    "status": "INVALID",
    "detail": "Invalid field `reverse`: The environment does not contain `Function.reverse`",
    "raw_status": "INVALID",
+   "reused_from": "1c5f4fef207a5fbf14de1e628244df27eb83092c",
+   "carried": "checks",
    "reads": "099f96efb8d8d6f67f93b79b66ef326a855d753844cd2586b206e5ee3e65311c",
    "trust_class": "?",
    "trusted": true
@@ -3696,6 +3842,8 @@
    "status": "INVALID",
    "detail": "Invalid field `reverse`: The environment does not contain `Function.reverse`",
    "raw_status": "INVALID",
+   "reused_from": "1c5f4fef207a5fbf14de1e628244df27eb83092c",
+   "carried": "checks",
    "reads": "4349bbe985875980a3051cfaf578c6bd6470646fffab7cdcfe04af4facf9fb38",
    "trust_class": "?",
    "trusted": true
@@ -3715,6 +3863,8 @@
    "status": "INVALID",
    "detail": "Invalid field `drop`: The environment does not contain `Function.drop`",
    "raw_status": "INVALID",
+   "reused_from": "1c5f4fef207a5fbf14de1e628244df27eb83092c",
+   "carried": "checks",
    "reads": "e2e2f62e565dc95320d37a91d364813be9fb0fcddc0bc4db780234166d78504b",
    "trust_class": "?",
    "trusted": true
@@ -3732,12 +3882,12 @@
    "before": "((Loader.optionalList front \"reading_sets\").getArr?.toOption.getD #[]).toList",
    "after": "((((Loader.optionalList front \"reading_sets\").getArr?.toOption.getD #[]).toList).drop 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:43: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
-   "reads": "9953fe9718dae0d9ce4b4ee850d29a4a42e06f2f59b02b287b0ca7bbc99b8995",
+   "reads": "323ca7267d587a83b702716bdd63cacdb891290017c12095d6a20423e4010a8a",
    "killed_at": [
-    43,
-    43
+    32,
+    32
    ],
    "trust_class": "?",
    "trusted": true
@@ -3755,12 +3905,12 @@
    "before": "xs",
    "after": "(xs.drop 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:44: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
-   "reads": "3bee00d7987df855e8e940ff0635bdaf1936cb5bbbc5e04d455af66607b98d7c",
+   "reads": "e2033716981ce5de861f573d365f708995da31e345c256c426449bd4df5832e3",
    "killed_at": [
-    44,
-    44
+    32,
+    32
    ],
    "trust_class": "?",
    "trusted": true
@@ -3778,12 +3928,12 @@
    "before": "c.active",
    "after": "(c.active.drop 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:45: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:33: Expression",
    "raw_status": "KILLED",
-   "reads": "0cbe4cdaf64823884ba47e8d72f73ca67c6f9d8a66bf29acecefb08391fecc32",
+   "reads": "fd5d2c272303791cf131fa2d2d21b7fa8de96b93a649c31573ad9c5085a141b2",
    "killed_at": [
-    45,
-    45
+    33,
+    34
    ],
    "trust_class": "?",
    "trusted": true
@@ -3803,6 +3953,8 @@
    "status": "INVALID",
    "detail": "Invalid field `drop`: The environment does not contain `Function.drop`",
    "raw_status": "INVALID",
+   "reused_from": "1c5f4fef207a5fbf14de1e628244df27eb83092c",
+   "carried": "checks",
    "reads": "099f96efb8d8d6f67f93b79b66ef326a855d753844cd2586b206e5ee3e65311c",
    "trust_class": "?",
    "trusted": true
@@ -3822,6 +3974,8 @@
    "status": "INVALID",
    "detail": "Invalid field `drop`: The environment does not contain `Function.drop`",
    "raw_status": "INVALID",
+   "reused_from": "1c5f4fef207a5fbf14de1e628244df27eb83092c",
+   "carried": "checks",
    "reads": "4349bbe985875980a3051cfaf578c6bd6470646fffab7cdcfe04af4facf9fb38",
    "trust_class": "?",
    "trusted": true
@@ -3839,12 +3993,12 @@
    "before": "rows",
    "after": "(rows.reverse.take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:17: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:29: Expression",
    "raw_status": "KILLED",
-   "reads": "16f34d0c9eaf15e1e9fafe5e5462e166eaf196c4a05b416d2af02139916b7308",
+   "reads": "919b2c46381d84ae74b8fb4a359a1a41bb69866249d707fbb43872fb2d56aad4",
    "killed_at": [
-    17,
-    18
+    29,
+    30
    ],
    "trust_class": "?",
    "trusted": true
@@ -3861,9 +4015,10 @@
    ],
    "before": "((item.map (\u00b7.getObjValD \"readings\")).bind (\u00b7.getArr?.toOption))",
    "after": "(((item.map (\u00b7.getObjValD \"readings\")).bind (\u00b7.getArr?.toOption)).reverse.take 1)",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Service/DocumentView.lean:82: Invalid field notation: Type of",
+   "status": "ALLOWED",
+   "detail": "Lean refuses the mutant's text (the mutated declaration fails to elaborate: an `[]` or `.take` whose element type Lean cannot infer, or on `item`, an Option: Invalid field notation / Application type mismatch); every other mutant of this pair is KILLED by docs/document-model/sa-checked-view/view_guards.lean",
    "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Service/DocumentView.lean:82: Invalid field notation: Type of",
    "trust_class": "?",
    "trusted": true
   },
@@ -3880,12 +4035,12 @@
    "before": "acc",
    "after": "(acc.reverse.take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:44: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:60: Expression",
    "raw_status": "KILLED",
-   "reads": "3bee00d7987df855e8e940ff0635bdaf1936cb5bbbc5e04d455af66607b98d7c",
+   "reads": "7d6edf00e2edf41d865661c8d817e5893ac2484a340e726ab36d971e75f76e63",
    "killed_at": [
-    44,
-    44
+    60,
+    60
    ],
    "trust_class": "?",
    "trusted": true
@@ -3905,6 +4060,8 @@
    "status": "INVALID",
    "detail": "Invalid field `reverse`: The environment does not contain `Function.reverse`",
    "raw_status": "INVALID",
+   "reused_from": "1c5f4fef207a5fbf14de1e628244df27eb83092c",
+   "carried": "checks",
    "reads": "f5f0bf00bf5a2641a2c89d0525d7bd8c83e784f6a751e09a88a1895972285a54",
    "trust_class": "?",
    "trusted": true
@@ -3922,12 +4079,12 @@
    "before": "cs",
    "after": "(cs.reverse.take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:46: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:70: Expression",
    "raw_status": "KILLED",
-   "reads": "2ad9de0c8a80793b6e5071f2a841c88e7a3984126b87e76142f6d2b1c6f20ed5",
+   "reads": "348befa13ef49957d170048034cafed81601d2fb4f9a2d27d8e4c3a862c3d1c3",
    "killed_at": [
-    46,
-    49
+    70,
+    73
    ],
    "trust_class": "?",
    "trusted": true
@@ -3944,9 +4101,10 @@
    ],
    "before": "(candidatesOf c.front s)",
    "after": "((candidatesOf c.front s).reverse.take 1)",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:363",
+   "status": "ALLOWED",
+   "detail": "a set with one reading is all view_guards.lean can check without the governed route (two readings need distinguishing models): killed by checkDocSetsView_candidates's proof and tests/test_sa_checked_view.py::test_candidates_and_readings_name_the_active_set_in_order (u0165.s03's two readings, active_kinds == candidates); the c.active mutants of this pair are KILLED by view_guards.lean's twoSets",
    "raw_status": "SURVIVOR",
+   "raw_detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:363",
    "trust_class": "?",
    "trusted": true
   },
@@ -3963,12 +4121,12 @@
    "before": "rows",
    "after": "(rows.drop 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:17: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:29: Expression",
    "raw_status": "KILLED",
-   "reads": "16f34d0c9eaf15e1e9fafe5e5462e166eaf196c4a05b416d2af02139916b7308",
+   "reads": "919b2c46381d84ae74b8fb4a359a1a41bb69866249d707fbb43872fb2d56aad4",
    "killed_at": [
-    17,
-    18
+    29,
+    30
    ],
    "trust_class": "?",
    "trusted": true
@@ -3985,9 +4143,10 @@
    ],
    "before": "((item.map (\u00b7.getObjValD \"readings\")).bind (\u00b7.getArr?.toOption))",
    "after": "(((item.map (\u00b7.getObjValD \"readings\")).bind (\u00b7.getArr?.toOption)).drop 1)",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Service/DocumentView.lean:82: Invalid field notation: Type of",
+   "status": "ALLOWED",
+   "detail": "Lean refuses the mutant's text (the mutated declaration fails to elaborate: an `[]` or `.take` whose element type Lean cannot infer, or on `item`, an Option: Invalid field notation / Application type mismatch); every other mutant of this pair is KILLED by docs/document-model/sa-checked-view/view_guards.lean",
    "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Service/DocumentView.lean:82: Invalid field notation: Type of",
    "trust_class": "?",
    "trusted": true
   },
@@ -4004,12 +4163,12 @@
    "before": "acc",
    "after": "(acc.drop 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:44: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:60: Expression",
    "raw_status": "KILLED",
-   "reads": "3bee00d7987df855e8e940ff0635bdaf1936cb5bbbc5e04d455af66607b98d7c",
+   "reads": "7d6edf00e2edf41d865661c8d817e5893ac2484a340e726ab36d971e75f76e63",
    "killed_at": [
-    44,
-    44
+    60,
+    60
    ],
    "trust_class": "?",
    "trusted": true
@@ -4029,6 +4188,8 @@
    "status": "INVALID",
    "detail": "Invalid field `drop`: The environment does not contain `Function.drop`",
    "raw_status": "INVALID",
+   "reused_from": "1c5f4fef207a5fbf14de1e628244df27eb83092c",
+   "carried": "checks",
    "reads": "f5f0bf00bf5a2641a2c89d0525d7bd8c83e784f6a751e09a88a1895972285a54",
    "trust_class": "?",
    "trusted": true
@@ -4046,12 +4207,12 @@
    "before": "cs",
    "after": "(cs.drop 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:46: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:70: Expression",
    "raw_status": "KILLED",
-   "reads": "2ad9de0c8a80793b6e5071f2a841c88e7a3984126b87e76142f6d2b1c6f20ed5",
+   "reads": "348befa13ef49957d170048034cafed81601d2fb4f9a2d27d8e4c3a862c3d1c3",
    "killed_at": [
-    46,
-    49
+    70,
+    73
    ],
    "trust_class": "?",
    "trusted": true
@@ -4068,9 +4229,14 @@
    ],
    "before": "(candidatesOf c.front s)",
    "after": "((candidatesOf c.front s).drop 1)",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:363",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
+   "raw_status": "KILLED",
+   "reads": "3aee3b14e412d884487c5371c92c4ba6b889415d2010c6016d8bc7aac46b3dff",
+   "killed_at": [
+    32,
+    32
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -4087,12 +4253,12 @@
    "before": "rows.zip xs.toList",
    "after": "((rows.zip xs.toList).reverse.take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:17: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:29: Expression",
    "raw_status": "KILLED",
-   "reads": "16f34d0c9eaf15e1e9fafe5e5462e166eaf196c4a05b416d2af02139916b7308",
+   "reads": "919b2c46381d84ae74b8fb4a359a1a41bb69866249d707fbb43872fb2d56aad4",
    "killed_at": [
-    17,
-    18
+    29,
+    30
    ],
    "trust_class": "?",
    "trusted": true
@@ -4109,9 +4275,10 @@
    ],
    "before": "((item.map (\u00b7.getObjValD \"readings\")).bind (\u00b7.getArr?.toOption)).map (\u00b7.toList)",
    "after": "((((item.map (\u00b7.getObjValD \"readings\")).bind (\u00b7.getArr?.toOption)).map (\u00b7.toList)).reverse.take 1)",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Service/DocumentView.lean:82: Invalid field notation: Type of",
+   "status": "ALLOWED",
+   "detail": "Lean refuses the mutant's text (the mutated declaration fails to elaborate: an `[]` or `.take` whose element type Lean cannot infer, or on `item`, an Option: Invalid field notation / Application type mismatch); every other mutant of this pair is KILLED by docs/document-model/sa-checked-view/view_guards.lean",
    "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Service/DocumentView.lean:82: Invalid field notation: Type of",
    "trust_class": "?",
    "trusted": true
   },
@@ -4127,9 +4294,14 @@
    ],
    "before": "acc",
    "after": "(acc.reverse.take 1)",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:314, lean/VE/Service/DocumentView.lean:370",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:61: Expression",
+   "raw_status": "KILLED",
+   "reads": "3f1ab11494bb9886113205796c7b914cd37f4186f2ac9c5549910946e2bc91aa",
+   "killed_at": [
+    61,
+    62
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -4146,12 +4318,12 @@
    "before": "cs.map (\u00b7.2)",
    "after": "((cs.map (\u00b7.2)).reverse.take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:46: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:70: Expression",
    "raw_status": "KILLED",
-   "reads": "2ad9de0c8a80793b6e5071f2a841c88e7a3984126b87e76142f6d2b1c6f20ed5",
+   "reads": "348befa13ef49957d170048034cafed81601d2fb4f9a2d27d8e4c3a862c3d1c3",
    "killed_at": [
-    46,
-    49
+    70,
+    73
    ],
    "trust_class": "?",
    "trusted": true
@@ -4168,9 +4340,10 @@
    ],
    "before": "(candidatesOf c.front s).map (\u00b7.2)",
    "after": "(((candidatesOf c.front s).map (\u00b7.2)).reverse.take 1)",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:363",
+   "status": "ALLOWED",
+   "detail": "a set with one reading is all view_guards.lean can check without the governed route (two readings need distinguishing models): killed by checkDocSetsView_candidates's proof and tests/test_sa_checked_view.py::test_candidates_and_readings_name_the_active_set_in_order (u0165.s03's two readings, active_kinds == candidates); the c.active mutants of this pair are KILLED by view_guards.lean's twoSets",
    "raw_status": "SURVIVOR",
+   "raw_detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:363",
    "trust_class": "?",
    "trusted": true
   },
@@ -4187,12 +4360,12 @@
    "before": "rows.zip xs.toList",
    "after": "((rows.zip xs.toList).drop 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:17: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:29: Expression",
    "raw_status": "KILLED",
-   "reads": "16f34d0c9eaf15e1e9fafe5e5462e166eaf196c4a05b416d2af02139916b7308",
+   "reads": "919b2c46381d84ae74b8fb4a359a1a41bb69866249d707fbb43872fb2d56aad4",
    "killed_at": [
-    17,
-    18
+    29,
+    30
    ],
    "trust_class": "?",
    "trusted": true
@@ -4209,9 +4382,10 @@
    ],
    "before": "((item.map (\u00b7.getObjValD \"readings\")).bind (\u00b7.getArr?.toOption)).map (\u00b7.toList)",
    "after": "((((item.map (\u00b7.getObjValD \"readings\")).bind (\u00b7.getArr?.toOption)).map (\u00b7.toList)).drop 1)",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Service/DocumentView.lean:82: Invalid field notation: Type of",
+   "status": "ALLOWED",
+   "detail": "Lean refuses the mutant's text (the mutated declaration fails to elaborate: an `[]` or `.take` whose element type Lean cannot infer, or on `item`, an Option: Invalid field notation / Application type mismatch); every other mutant of this pair is KILLED by docs/document-model/sa-checked-view/view_guards.lean",
    "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Service/DocumentView.lean:82: Invalid field notation: Type of",
    "trust_class": "?",
    "trusted": true
   },
@@ -4228,12 +4402,12 @@
    "before": "acc",
    "after": "(acc.drop 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:44: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
-   "reads": "3bee00d7987df855e8e940ff0635bdaf1936cb5bbbc5e04d455af66607b98d7c",
+   "reads": "e2033716981ce5de861f573d365f708995da31e345c256c426449bd4df5832e3",
    "killed_at": [
-    44,
-    44
+    32,
+    32
    ],
    "trust_class": "?",
    "trusted": true
@@ -4251,12 +4425,12 @@
    "before": "cs.map (\u00b7.2)",
    "after": "((cs.map (\u00b7.2)).drop 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:46: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:70: Expression",
    "raw_status": "KILLED",
-   "reads": "2ad9de0c8a80793b6e5071f2a841c88e7a3984126b87e76142f6d2b1c6f20ed5",
+   "reads": "348befa13ef49957d170048034cafed81601d2fb4f9a2d27d8e4c3a862c3d1c3",
    "killed_at": [
-    46,
-    49
+    70,
+    73
    ],
    "trust_class": "?",
    "trusted": true
@@ -4273,9 +4447,14 @@
    ],
    "before": "(candidatesOf c.front s).map (\u00b7.2)",
    "after": "(((candidatesOf c.front s).map (\u00b7.2)).drop 1)",
-   "status": "SURVIVOR",
-   "detail": "the proofs it breaks: lean/VE/Service/DocumentView.lean:363",
-   "raw_status": "SURVIVOR",
+   "status": "KILLED",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
+   "raw_status": "KILLED",
+   "reads": "3aee3b14e412d884487c5371c92c4ba6b889415d2010c6016d8bc7aac46b3dff",
+   "killed_at": [
+    32,
+    32
+   ],
    "trust_class": "?",
    "trusted": true
   },
@@ -4291,9 +4470,10 @@
    ],
    "before": "item",
    "after": "(item.reverse.take 1)",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Service/DocumentView.lean:82: Invalid field notation: Type of",
+   "status": "ALLOWED",
+   "detail": "Lean refuses the mutant's text (the mutated declaration fails to elaborate: an `[]` or `.take` whose element type Lean cannot infer, or on `item`, an Option: Invalid field notation / Application type mismatch); every other mutant of this pair is KILLED by docs/document-model/sa-checked-view/view_guards.lean",
    "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Service/DocumentView.lean:82: Invalid field notation: Type of",
    "trust_class": "?",
    "trusted": true
   },
@@ -4310,12 +4490,12 @@
    "before": "us",
    "after": "(us.reverse.take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:46: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:33: Expression",
    "raw_status": "KILLED",
-   "reads": "2ad9de0c8a80793b6e5071f2a841c88e7a3984126b87e76142f6d2b1c6f20ed5",
+   "reads": "2c6073bbcaa6099e552c14f430efe813f5bbeed9b5fa805a658979ea3bb769c1",
    "killed_at": [
-    46,
-    49
+    33,
+    34
    ],
    "trust_class": "?",
    "trusted": true
@@ -4332,9 +4512,10 @@
    ],
    "before": "item",
    "after": "(item.drop 1)",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Service/DocumentView.lean:82: Invalid field notation: Type of",
+   "status": "ALLOWED",
+   "detail": "Lean refuses the mutant's text (the mutated declaration fails to elaborate: an `[]` or `.take` whose element type Lean cannot infer, or on `item`, an Option: Invalid field notation / Application type mismatch); every other mutant of this pair is KILLED by docs/document-model/sa-checked-view/view_guards.lean",
    "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Service/DocumentView.lean:82: Invalid field notation: Type of",
    "trust_class": "?",
    "trusted": true
   },
@@ -4351,12 +4532,12 @@
    "before": "[x]",
    "after": "([x].drop 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:44: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
-   "reads": "3bee00d7987df855e8e940ff0635bdaf1936cb5bbbc5e04d455af66607b98d7c",
+   "reads": "e2033716981ce5de861f573d365f708995da31e345c256c426449bd4df5832e3",
    "killed_at": [
-    44,
-    44
+    32,
+    32
    ],
    "trust_class": "?",
    "trusted": true
@@ -4374,12 +4555,12 @@
    "before": "us",
    "after": "(us.drop 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:46: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:33: Expression",
    "raw_status": "KILLED",
-   "reads": "2ad9de0c8a80793b6e5071f2a841c88e7a3984126b87e76142f6d2b1c6f20ed5",
+   "reads": "2c6073bbcaa6099e552c14f430efe813f5bbeed9b5fa805a658979ea3bb769c1",
    "killed_at": [
-    46,
-    49
+    33,
+    34
    ],
    "trust_class": "?",
    "trusted": true
@@ -4396,9 +4577,10 @@
    ],
    "before": "item.map (\u00b7.getObjValD \"readings\")",
    "after": "((item.map (\u00b7.getObjValD \"readings\")).reverse.take 1)",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Service/DocumentView.lean:82: Invalid field notation: Type of",
+   "status": "ALLOWED",
+   "detail": "Lean refuses the mutant's text (the mutated declaration fails to elaborate: an `[]` or `.take` whose element type Lean cannot infer, or on `item`, an Option: Invalid field notation / Application type mismatch); every other mutant of this pair is KILLED by docs/document-model/sa-checked-view/view_guards.lean",
    "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Service/DocumentView.lean:82: Invalid field notation: Type of",
    "trust_class": "?",
    "trusted": true
   },
@@ -4417,6 +4599,8 @@
    "status": "INVALID",
    "detail": "Invalid field `reverse`: The environment does not contain `Function.reverse`",
    "raw_status": "INVALID",
+   "reused_from": "1c5f4fef207a5fbf14de1e628244df27eb83092c",
+   "carried": "checks",
    "reads": "099f96efb8d8d6f67f93b79b66ef326a855d753844cd2586b206e5ee3e65311c",
    "trust_class": "?",
    "trusted": true
@@ -4433,9 +4617,10 @@
    ],
    "before": "item.map (\u00b7.getObjValD \"readings\")",
    "after": "((item.map (\u00b7.getObjValD \"readings\")).drop 1)",
-   "status": "UNKNOWN",
-   "detail": "lean/VE/Service/DocumentView.lean:82: Invalid field notation: Type of",
+   "status": "ALLOWED",
+   "detail": "Lean refuses the mutant's text (the mutated declaration fails to elaborate: an `[]` or `.take` whose element type Lean cannot infer, or on `item`, an Option: Invalid field notation / Application type mismatch); every other mutant of this pair is KILLED by docs/document-model/sa-checked-view/view_guards.lean",
    "raw_status": "UNKNOWN",
+   "raw_detail": "lean/VE/Service/DocumentView.lean:82: Invalid field notation: Type of",
    "trust_class": "?",
    "trusted": true
   },
@@ -4454,6 +4639,8 @@
    "status": "INVALID",
    "detail": "Invalid field `drop`: The environment does not contain `Function.drop`",
    "raw_status": "INVALID",
+   "reused_from": "1c5f4fef207a5fbf14de1e628244df27eb83092c",
+   "carried": "checks",
    "reads": "099f96efb8d8d6f67f93b79b66ef326a855d753844cd2586b206e5ee3e65311c",
    "trust_class": "?",
    "trusted": true
@@ -4471,12 +4658,12 @@
    "before": "s.readings",
    "after": "(s.readings.reverse.take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:42: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:58: Expression",
    "raw_status": "KILLED",
-   "reads": "aa77cd2ea4e6295b78449be2c017cf6751893f6b4b331a1fa7637a8710a65c0a",
+   "reads": "59d7e5e9ad2197e21ecb8b2a43d0c458a40a9abfc65faa27139a62b41f55fea8",
    "killed_at": [
-    42,
-    42
+    58,
+    58
    ],
    "trust_class": "?",
    "trusted": true
@@ -4494,12 +4681,12 @@
    "before": "cs",
    "after": "(cs.reverse.take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:46: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:70: Expression",
    "raw_status": "KILLED",
-   "reads": "2ad9de0c8a80793b6e5071f2a841c88e7a3984126b87e76142f6d2b1c6f20ed5",
+   "reads": "348befa13ef49957d170048034cafed81601d2fb4f9a2d27d8e4c3a862c3d1c3",
    "killed_at": [
-    46,
-    49
+    70,
+    73
    ],
    "trust_class": "?",
    "trusted": true
@@ -4517,12 +4704,12 @@
    "before": "s.readings",
    "after": "(s.readings.drop 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:42: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
-   "reads": "aa77cd2ea4e6295b78449be2c017cf6751893f6b4b331a1fa7637a8710a65c0a",
+   "reads": "323ca7267d587a83b702716bdd63cacdb891290017c12095d6a20423e4010a8a",
    "killed_at": [
-    42,
-    42
+    32,
+    32
    ],
    "trust_class": "?",
    "trusted": true
@@ -4540,12 +4727,12 @@
    "before": "cs",
    "after": "(cs.drop 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:46: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:33: Expression",
    "raw_status": "KILLED",
-   "reads": "2ad9de0c8a80793b6e5071f2a841c88e7a3984126b87e76142f6d2b1c6f20ed5",
+   "reads": "2c6073bbcaa6099e552c14f430efe813f5bbeed9b5fa805a658979ea3bb769c1",
    "killed_at": [
-    46,
-    49
+    33,
+    34
    ],
    "trust_class": "?",
    "trusted": true
@@ -4565,6 +4752,8 @@
    "status": "INVALID",
    "detail": "Invalid field `reverse`: The environment does not contain `Function.reverse`",
    "raw_status": "INVALID",
+   "reused_from": "1c5f4fef207a5fbf14de1e628244df27eb83092c",
+   "carried": "checks",
    "reads": "c3f05fde11a2a50a99b6a7b415cf2e3f8070579cd5ac405e0a73d8542bc0b2e8",
    "trust_class": "?",
    "trusted": true
@@ -4582,12 +4771,12 @@
    "before": "cs.map (\u00b7.1)",
    "after": "((cs.map (\u00b7.1)).reverse.take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:46: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:70: Expression",
    "raw_status": "KILLED",
-   "reads": "2ad9de0c8a80793b6e5071f2a841c88e7a3984126b87e76142f6d2b1c6f20ed5",
+   "reads": "348befa13ef49957d170048034cafed81601d2fb4f9a2d27d8e4c3a862c3d1c3",
    "killed_at": [
-    46,
-    49
+    70,
+    73
    ],
    "trust_class": "?",
    "trusted": true
@@ -4607,6 +4796,8 @@
    "status": "INVALID",
    "detail": "Invalid field `drop`: The environment does not contain `Function.drop`",
    "raw_status": "INVALID",
+   "reused_from": "1c5f4fef207a5fbf14de1e628244df27eb83092c",
+   "carried": "checks",
    "reads": "c3f05fde11a2a50a99b6a7b415cf2e3f8070579cd5ac405e0a73d8542bc0b2e8",
    "trust_class": "?",
    "trusted": true
@@ -4624,12 +4815,12 @@
    "before": "cs.map (\u00b7.1)",
    "after": "((cs.map (\u00b7.1)).drop 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:46: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:33: Expression",
    "raw_status": "KILLED",
-   "reads": "2ad9de0c8a80793b6e5071f2a841c88e7a3984126b87e76142f6d2b1c6f20ed5",
+   "reads": "2c6073bbcaa6099e552c14f430efe813f5bbeed9b5fa805a658979ea3bb769c1",
    "killed_at": [
-    46,
-    49
+    33,
+    34
    ],
    "trust_class": "?",
    "trusted": true
@@ -4647,12 +4838,12 @@
    "before": "written",
    "after": "(written.reverse.take 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:42: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:58: Expression",
    "raw_status": "KILLED",
-   "reads": "aa77cd2ea4e6295b78449be2c017cf6751893f6b4b331a1fa7637a8710a65c0a",
+   "reads": "59d7e5e9ad2197e21ecb8b2a43d0c458a40a9abfc65faa27139a62b41f55fea8",
    "killed_at": [
-    42,
-    42
+    58,
+    58
    ],
    "trust_class": "?",
    "trusted": true
@@ -4670,12 +4861,12 @@
    "before": "written",
    "after": "(written.drop 1)",
    "status": "KILLED",
-   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:42: Expression",
+   "detail": "/home/seyran/c2/pyt/ve-sa-checked-view-004722e9/w/docs/document-model/sa-checked-view/view_guards.lean:32: Expression",
    "raw_status": "KILLED",
-   "reads": "aa77cd2ea4e6295b78449be2c017cf6751893f6b4b331a1fa7637a8710a65c0a",
+   "reads": "323ca7267d587a83b702716bdd63cacdb891290017c12095d6a20423e4010a8a",
    "killed_at": [
-    42,
-    42
+    32,
+    32
    ],
    "trust_class": "?",
    "trusted": true
