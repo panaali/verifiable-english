@@ -19402,7 +19402,7 @@ module VE.Readings.SoftSupWire a1d3f6cad4593d0221b79a54f054058b32a4bad526bb2e197
 196:0-209:84 theorem VE.Readings.Wire.readings_wire_sd_model_sound@VE.Readings.SoftSupWire
 211:0-224:71 theorem VE.Readings.Wire.readings_wire_sd_consistent_sound@VE.Readings.SoftSupWire
 226:0-244:82 theorem VE.Readings.Wire.readings_wire_sd_witness_sound@VE.Readings.SoftSupWire
-module VE.Readings.SoftSupWireExamples 1a4b5f610cd47c64f1395c49694b3fde5c7469b6ebbc55aa47334e3dd6319af0
+module VE.Readings.SoftSupWireExamples c6044c8d223bff1ecbc1531db70026d0ae01360971912060410875491949986c
 17:0-17:74 def VE.Readings.SoftSupWireExamples.supLabels@VE.Readings.SoftSupWireExamples
 35:0-37:97 def VE.Readings.SoftSupWireExamples.NSDd@VE.Readings.SoftSupWireExamples
 51:0-54:113 def VE.Readings.SoftSupWireExamples.NSDm@VE.Readings.SoftSupWireExamples
@@ -19431,7 +19431,6 @@ module VE.Readings.SoftSupWireExamples 1a4b5f610cd47c64f1395c49694b3fde5c7469b6e
 245:0-246:123 def VE.Readings.SoftSupWireExamples.framedFrame@VE.Readings.SoftSupWireExamples
 247:0-248:87 def VE.Readings.SoftSupWireExamples.framedItems@VE.Readings.SoftSupWireExamples
 249:0-250:38 def VE.Readings.SoftSupWireExamples.framed@VE.Readings.SoftSupWireExamples
-253:0-256:10 def VE.Readings.SoftSupWireExamples.firstConjunct@VE.Readings.SoftSupWireExamples
 module VE.Readings.SoftVerdicts 091687de6752f3eb3c7430f56398d86f2acc1b235492c7cb1a8c7560723b4c40
 18:0-19:58 def VE.Readings.Wire.sdSem@VE.Readings.SoftVerdicts
 21:0-25:26 theorem VE.Readings.Wire.sdSem_normsShaped@VE.Readings.SoftVerdicts
