@@ -54,7 +54,9 @@ def claim_problems(labels: str, report: str, sources: dict[str, str]) -> list[st
     problems = []
     for path, source in ((LABELS, labels), (EXAMPLES, sources[EXAMPLES])):
         for text in comments(source):
-            if claims_discharge(text) or OVERCLAIM.search(text) or (
+            decoded = re.search(r"decoded (?:route|act key|document)", text)
+            unproved = re.search(r"\b(?:no lemma|not proved|not yet|does not)\b", text, re.IGNORECASE)
+            if claims_discharge(text) or OVERCLAIM.search(text) or (decoded and not unproved) or (
                 "decoded route" in text and "`Surface.identifier`" not in text
             ):
                 problems.append(f"{path} claims a decoded-route discharge: {text}")
