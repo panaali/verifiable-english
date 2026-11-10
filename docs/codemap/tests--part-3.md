@@ -1,3 +1,4 @@
+- `tests/test_english_e2_overlay.py` — The overlay refusals at the public boundary (spec D16, D17, 2.8; fixtures rl8 to rl10, ev15c, ev17, ovc; review A2 of English Lean E2).
 - `tests/test_english_e2_profile_matrix.py` — Lean reads what Python reads on every environment of the probe matrix (review A of English Lean E2, recheck 1).
 - `tests/test_english_e2_python.py` — Python producer behavior needed by the E2 overlay relay (spec 2.8, 8.11).
 - `tests/test_english_e2_relay.py` — E2's Lean-authoritative admission and untrusted response boundary.
@@ -87,4 +88,3 @@
 - `tests/test_lean_conformance.py` — Portable JSON differential tests.
 - `tests/test_lean_decided_share.py` — `tools/lean_decided_share.py` (readings-defaults 1.10 and 10; plan 3.9, RD-5): sums Lean's decided units' span bytes and decides nothing; Lean's list is untrus…
 - `tests/test_lean_default_build.py` — Every Lean source is compiled by the default `lake build` (et-7 review F2).
-- `tests/test_lean_document_wrapper.py` — The Lean `document` mode (lean-first batch 16a) against Python's `load_document` and `check_document` wrapper.
