@@ -146,6 +146,7 @@ import VE.Presupposition.Admit
 import VE.Presupposition.Admit.Facts
 import VE.Presupposition.Admit.Statements
 import VE.Presupposition.Examples
+import VE.Presupposition.Run
 import VE.Presupposition.Couple
 import VE.Presupposition.Couple.Statements
 import VE.Presupposition.CoupleExamples
@@ -155,6 +156,12 @@ import VE.RightClauses.Tree
 import VE.RightClauses.Plain
 import VE.RightClauses.Relation
 import VE.RightClauses.Examples
+import VE.RightClauses.Wire
+import VE.RightClauses.Run
+import VE.RightClauses.RunExamples
+import VE.RightClauses.WireDecode
+import VE.RightClauses.WireName
+import VE.RightClauses.WireTheorems
 import VE.RightClauses.PlainWellFormed
 import VE.RightClauses.PlainWellFormed.Corollaries
 import VE.SpeechActs.Run
