@@ -112,7 +112,8 @@
           "scope",
           "senses.project",
           "english.command",
-          "act-readings"
+          "act-readings",
+          "english.statement"
         ]
       },
       "protocol": {"const": 2},

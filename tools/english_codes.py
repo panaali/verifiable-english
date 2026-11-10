@@ -4,7 +4,8 @@
     python tools/english_codes.py --check
 
 The table is the `codes` and `statuses` fields of the `english.grammar` export (`VE.EnglishGrammar.Run.codeClasses`
-and `statusCodes`), read from the built `ve_service`. The relay (`ve/backends/english_lean.py`) and the senses relay
+and `statusCodes`), with `english.statement`'s statuses, fields and unsentenced codes (`statementStatusCodes`,
+`statementFields`, `statementUnsentenced`; docs/spec/en-e3-norm.md M9), read from the built `ve_service`. The relay (`ve/backends/english_lean.py`) and the senses relay
 read the file and hold no table of their own (spec 2.6, D9); `--check` fails when the file differs from the service.
 """
 from __future__ import annotations
@@ -37,14 +38,19 @@ def from_lean() -> dict:
         raise SystemExit(f"english.grammar did not export a grammar: {row!r}")
     result = row["result"]
     return {"format": CODES_FORMAT, "codes": result["codes"], "statuses": result["statuses"],
-            "unsentenced": result["unsentenced"]}
+            "unsentenced": result["unsentenced"], "statement_statuses": result["statement_statuses"],
+            "statement_fields": result["statement_fields"], "statement_unsentenced": result["statement_unsentenced"]}
 
 
 def render(table: dict) -> str:
-    """One row per line: the format, then the codes with their classes, then the statuses with their codes."""
+    """One row per line: the format, then the codes with their classes, then the statuses with their codes, then
+    english.statement's statuses, fields and unsentenced codes."""
     rows = lambda key: ",\n".join("  " + json.dumps(row) for row in table[key])
     return (f'{{\n "format": {json.dumps(table["format"])},\n "codes": [\n{rows("codes")}\n ],\n'
-            f' "statuses": [\n{rows("statuses")}\n ],\n "unsentenced": {json.dumps(table["unsentenced"])}\n}}\n')
+            f' "statuses": [\n{rows("statuses")}\n ],\n "unsentenced": {json.dumps(table["unsentenced"])},\n'
+            f' "statement_statuses": [\n{rows("statement_statuses")}\n ],\n'
+            f' "statement_fields": [\n{rows("statement_fields")}\n ],\n'
+            f' "statement_unsentenced": {json.dumps(table["statement_unsentenced"])}\n}}\n')
 
 
 def main(argv=None) -> int:

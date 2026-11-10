@@ -1430,6 +1430,14 @@ _SCHEMA_SEEDS = {
                       "readings": [{"acts": [{"act": "{0} to seek asylum", "text": "{0} has the right to seek asylum",
                                               "from": [0, 1, 2, 3]}],
                                     "paraphrase": "{0} has the right to seek asylum."}]}),
+    # The mode's `one` row for E13's source "Rule 1.\nX." (docs/spec/en-e3-norm.md section 8).
+    "english.statement": ({"id": "c", "kind": "blocks", "source": "Rule 1.\nX."}, {"id": "c", "status": "ok", "result": {
+        "status": "one", "statements": [{"kind": "rule", "number": 1, "exception_to": [], "span": [0, 10], "node": {
+            "norm": {"name": "rule-1", "predicate": "in_scope", "sign": True, "guard": ["unary", "publicly_deployed",
+                                                                                         ["var", 0]],
+                     "unless": [], "over": []}}}],
+        "identities": {"source_sha256": "8" * 64, "environment_id": "env", "lexicon_id": "l", "grammar_id": "g",
+                       "actions_version": "v"}}}),
 }
 
 
@@ -1457,7 +1465,7 @@ def test_random_malformed_responses_never_escape_schema(tmp_path, mode, mutation
         answer["results"][0]["extra"] = 1
     elif mutation == "wrong-row-type":
         field = ("status" if mode in ("english.read", "english.grammar", "english.check", "english.question",
-                                      "english.command", "ask", "words") else
+                                      "english.command", "english.statement", "ask", "words") else
                  "id" if mode in ROUTE_MODES else
                  "outcome" if mode == "diagnose" else
                  "results" if mode == "risk-eval" else
