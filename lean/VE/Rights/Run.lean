@@ -230,16 +230,23 @@ def regenerated (D : RightsDoc) (environment : Json) : List (String × Json) :=
 
 /-! ## Status of rights source units -/
 
+/-- A rule is open (rights spec 7.2) when it is a default, has switches, or an open name occurs in its act, its guard
+or a carve-out; the act is read by the shared scan as the atom of `N.pred` (only its name is read). A line's
+limitations and their conditions are its carve-outs here (`nodeOf`) and `scopeLimits` in `unitOpen`. -/
 def nodeOpen (openNames : List String) (N : SoftNode) : Bool :=
-  N.mode == .default || !N.alterable.isEmpty || !(VE.Judgments.opensIn openNames (N.guard :: N.carveOuts)).isEmpty
+  N.mode == .default || !N.alterable.isEmpty ||
+    !(VE.Judgments.opensIn openNames (.unary N.pred (.var 0) :: N.guard :: N.carveOuts)).isEmpty
 
-/-- The switch to the shared scan is byte-neutral: `nodeOpen` is the body it had before (judgment-terms spec 3). -/
+/-- `nodeOpen` read through the shared scan (judgment-terms spec 3). It was byte-neutral to the body before the scan;
+since rights-cfr-4 (DRI 2026-11-09, reviews/dri-decisions-20261109-lp0801.md item 1) it also reads the act, so a rule
+whose act predicate is an open name is open where it was not before; every other rule keeps its answer. -/
 theorem nodeOpen_eq (openNames : List String) (N : SoftNode) :
     nodeOpen openNames N =
-      (N.mode == .default || !N.alterable.isEmpty ||
+      (N.mode == .default || !N.alterable.isEmpty || openNames.contains N.pred ||
         (VE.Norms.preds N.guard).any openNames.contains ||
         N.carveOuts.any (fun f => (VE.Norms.preds f).any openNames.contains)) := by
-  simp only [nodeOpen, VE.Judgments.opensIn_isEmpty, List.any_cons, Bool.or_assoc]
+  simp only [nodeOpen, VE.Judgments.opensIn_isEmpty, List.any_cons, List.any_nil, VE.Norms.preds, Bool.or_false,
+    Bool.or_assoc]
 
 def sourceRuleNames (line : Json) : List String :=
   ["norm", "liberty", "recognition"].filterMap (fun field =>
