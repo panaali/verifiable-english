@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-arch-20261109-1-97b3c799-t344677-s1",
+ "head": "0d663e3c50e55eaa5ca949bc6aa5ad131489cd99",
+ "argv": [
+  "armsh-cand-arch-20261109-1-97b3c799-t344677-s1",
+  "0d663e3c50e55eaa5ca949bc6aa5ad131489cd99",
+  "0d3c5691f36202ffe44d27c3a3ba02f6f415d505",
+  "-",
+  "-",
+  "4",
+  "1/4"
+ ]
+}
