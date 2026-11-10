@@ -117,8 +117,11 @@ sc-11-3 item 1 and sc-11w item 1 cover this, with no DELTA row and no reserved s
 
 ## Size
 
-`git diff --numstat` against the merge base, generated files excluded, is about 600 lines. Code, fixtures, the checker
-and the test are 220. Evidence and docs (REPORT, cpu.md, cpu_bench.lean, mutants.json, 14.11) are the rest.
+`git diff --numstat` against the merge base, with generated files (codemap, inventories) excluded: +625 -20 = 645.
+- 225 of those lines are code, fixtures, the checker, trust classes and tests.
+- 90 are SoftSupWireExamples.lean fixtures that are conditions of a DRI ruling (sc-11w item 1 (a)). Those are exempt
+  from the ~600 count (adv1207 item 3), leaving about 555.
+- The rest is evidence and docs: REPORT, cpu.md, cpu_bench.lean, mutants.json and 14.11.
 
 ## Open: per-choice work over R4 inside the limits, row sc-11wc (dri-decisions-20261110-sc-11w-cpu.md)
 
