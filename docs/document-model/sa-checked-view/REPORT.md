@@ -36,6 +36,14 @@ text, and every statement here equals it. No statement had to change.
 - `checkCore` and `checkDocSets` are unchanged. The typed mirrors (`checkBodyChecked`, `checkCoreChecked`) are in
   `DocumentView.lean`, tied to them by `checkBodyChecked_encode` and `checkCoreChecked_encode`.
 
+**Assurance manifest** (`ve/assurance-manifest.json`, `docs/spec/assurance-manifest.md` via
+`tools/assurance_manifest.py --write`):
+- Document.lean's whole-file decoder pin was reviewed and re-pinned: 2896 lines, `total_lines` 44268. The 3 added
+  lines are a `Checked` field and its store, not a decoder change.
+- `DocumentView.lean` is classified under `other_json`. Its typed mirrors read only `checkBody`'s request fields, and
+  they are tied to it by `checkBodyChecked_encode`.
+- In the selected run, the three `test_assurance_manifest.py` failures came from these two pins.
+
 **Overlap.** The merge note says qt-a4b edits `Checked` in the same file. This item adds a field at the structure's
 end, and the merge note's rebase-second rule applies to whichever branch merges second. Neither branch was present
 locally at the time of writing.
