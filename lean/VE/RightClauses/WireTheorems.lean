@@ -909,4 +909,22 @@ theorem decode_unstructured (environment document : Lean.Json) (D : ClauseDoc)
         (hk u hu (k, b) (getObjVal_member hkb) hkk kl hkl hkl1 l hlk)
   | _ => simp [throw, throwThe, MonadExceptOf.throw, bind, Except.bind] at h
 
+/-- `PlainOnWire` as a check, for fixtures: W1's budgeted decoder reads every structured line's plain guard back. -/
+def plainOnWireB (D : ClauseDoc) : Bool :=
+  D.lines.all fun x => x.2.2.line.norm.toList.all fun N =>
+    match VE.Norms.Wire.budgetFormula VE.Limits.maxDepth 0
+        (enc (plainGuard (lineSorts D.doc.soft x.2.2.line).length N.guard x.2.2)) with
+    | .ok (G, _) => decide (G = plainGuard (lineSorts D.doc.soft x.2.2.line).length N.guard x.2.2)
+    | .error _ => false
+
+/-- The check is sound: a document it passes meets `elaborate_plain`'s hypothesis `PlainOnWire`. -/
+theorem plainOnWire_of_check {D : ClauseDoc} (h : plainOnWireB D = true) : PlainOnWire D := by
+  intro x hx N hN
+  simp only [plainOnWireB, List.all_eq_true] at h
+  have h' := h x hx N hN
+  split at h'
+  · rename_i G c hres
+    exact ⟨c, by rw [hres, of_decide_eq_true h']⟩
+  · simp at h'
+
 end VE.RightClauses
