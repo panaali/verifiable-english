@@ -16,6 +16,9 @@ import VE.Readings.SoftSeparate
 import VE.Readings.SoftSeparateExamples
 import VE.Readings.SoftSup
 import VE.Readings.SoftSupExamples
+import VE.Readings.SoftSupLabels
+import VE.Readings.SoftSupWire
+import VE.Readings.SoftSupWireExamples
 import VE.Closure.OrderChecks
 import VE.Grammar.TableProofs
 import VE.Grammar.Meaning
