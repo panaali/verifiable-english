@@ -3,9 +3,9 @@
 No DRI signature is reserved in this item. There are no DELTA rows (DELTA.md): no route calls `admit` until PS-4.
 Status: built: (1) `admit`; (2) the 19 statements, all proved with standard axioms only, each also over `admitWith`
 for every table and fixed input; (3) A1-A28. Run.lean (4) is cut to ps-2ac by the task's pre-approved seam ("Cut").
-Trust: V +123 untied, K +0, within R16.
+Trust: V +123 untied, K +0, within R16; R16 sweep 0 SURVIVOR, 0 UNKNOWN; selected tests 115 units, 0 failed.
 DRI rulings: reviews/dri-decisions-20261109-ps-2ab.md and -ps-2ab-2.md (separation inputs, fixtures, A10 is `clause`,
-size accepted); see "DRI rulings". Next items: ps-2ac (Run.lean), then ps-2b.
+size ~830 accepted; it is ~1,130 after the sweep's fixtures, DRI told 2026-11-10T02:57Z). Next: ps-2ac, then ps-2b.
 
 Feature item ps-2ab (plan `docs/spec/presupposition-PLAN.md` "PS-2a" and 4.6; spec `docs/spec/presupposition.md` 4.7,
 5, 7.2, 7.3, 7.5). Branch `feature/ps-2ab`, merge base a0102f0e5 (main's tip at launch, ps-2a merged). Command outputs:
