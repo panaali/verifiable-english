@@ -1,0 +1,14 @@
+trust_mutants: 45 definitions, 45 mutants (23 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/Commands/Steps.lean:82 VE.Commands.readingTuples (G[V], trusted) list-empty: (readingTuples rest) -> [] (lean/VE/Commands/StepsExamples.lean:59: Expression (it computes through a proof the mutant broke ...)
+UNKNOWN lean/VE/Compose/Dispatch.lean:1025 VE.Compose.eventsFault (G[V], trusted) list-empty: packRows.flatMap (rowChecks ps) -> [] (lean/VE/Compose/Dispatch.lean:1025: Invalid projection: Type of)
+UNKNOWN lean/VE/EnglishGrammar/Advice.lean:83 VE.EnglishGrammar.advice (G[V], trusted) list-empty: profiles -> [] (lake build did not finish in 1800 s (--build-timeout))
+UNKNOWN lean/VE/Presupposition/Admit.lean:56 VE.Presupposition.rootsWith (G[V], trusted) list-empty: (os.find? (·.carrier == .unresolved)) -> [] (lean/VE/Presupposition/Admit.lean:56: Invalid field notation: Type of)
+UNKNOWN lean/VE/Presupposition/Wire.lean:208 VE.Presupposition.expectedReadings (S, trusted) list-empty: R.bases -> [] (lean/VE/Presupposition/Wire.lean:208: Invalid projection: Type of)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:57 VE.Purposes.sameUnit (S, trusted) list-empty: U -> [] (lean/VE/Purposes/WellFormed.lean:57: Application type mismatch: The argument)
+UNKNOWN lean/VE/Rights/Run.lean:315 VE.Rights.Run.situationTables (D[V], trusted) list-empty: (genEntries D) -> [] (lean/VE/Rights/Run.lean:315: Invalid projection: Type of)
+UNKNOWN lean/VE/Rights/Run.lean:528 VE.Rights.Run.runRightsKind (G[V], trusted) list-empty: findings -> [] (lean/VE/Rights/Run.lean:528: Invalid field notation: Type of)
+trust_mutants: 12 KILLED, 0 SURVIVOR, 8 UNKNOWN, 3 INVALID, 0 ALLOWED, 0 NOT RUN, 22 OTHER SHARD in 4322 s
+trust_mutants: D[V], trusted: 5 KILLED, 1 UNKNOWN, 1 INVALID, 6 OTHER SHARD
+trust_mutants: G[V], trusted: 3 KILLED, 5 UNKNOWN, 2 INVALID, 9 OTHER SHARD
+trust_mutants: S, trusted: 4 KILLED, 2 UNKNOWN, 7 OTHER SHARD
+trust_mutants: steps: wall plan 16.3 s, scratch 4.6 s, control_build 0.3 s, probe_install 1.4 s, mutants 4295.6 s, cleanup 4 s, reads 0.2 s; lake control_build 0.3 s (1), probe_install 1.4 s (1), control_probes 312.3 s (15), mutant_builds 402.1 s (26), mutant_checks 10679 s (25), stage_controls 3674.3 s (10), mutant_probes 384.5 s (15)
