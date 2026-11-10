@@ -47,7 +47,7 @@ The trust_mutants sweep is in docs/rights/rights-cfr-2/trust-mutants.json (`mac-
 ## Notes
 
 - `runRightsKind_packages` (an encoder theorem from fu-rd9-checks, not a spec statement) now also states the four CONFLICT-FREE fields. `conflictAnswer_fits` is added. `conflictAnswer` is locally irreducible in `runRightsKind_fits`, so the other alternatives do not unfold it.
-- `lean/VE/Readings/Wire.lean` gets `, []` for the new field in its anonymous `RightsDoc` constructor (nothing else changes).
+- `lean/VE/Readings/Wire.lean` and `lean/VE/Rights/Wire.lean` each get `, []` for the new field in their anonymous `RightsDoc` constructors (nothing else changes). Their whole-file pins in ve/assurance-manifest.json are re-pinned after review (same line counts). The new check module is listed under `other_json`.
 - In-flight overlap: feature/qt-a4b also edits ve/document/report.py, in other hunks (:199, :451; mine are :116-176 and :349).
 - The status-line binding in Python keeps the wording, as it did before this item. The relay binding inventory classifies `status_text` BOUND, which needs this.
 - Size, from `git diff --numstat` without generated files and evidence JSON: 709 hand-written lines added and 74 deleted before this REPORT (89 lines) and DELTA (12 lines), so about 810 in all, within the DRI's ~850. Lean checks are 76 lines, within the ruling's 150, and product code (Lean outside the checks, plus ve/) is about 255, within its ~350.
@@ -65,7 +65,8 @@ The trust_mutants sweep is in docs/rights/rights-cfr-2/trust-mutants.json (`mac-
 
 - New and touched files: tests/test_rights_report_parts.py, test_rights_lean.py, test_rights_licence_relay.py, test_rd9_followup_bindings.py, test_rights.py, and test_relay_binding_inventory.py -k rights. All pass, except the stale-inventory test before the regen, which passes after it.
 - `lake build` passes (1342 jobs). `python3 lean/audit.py` gives PASS (810 files, 9084 theorems).
-- Selected tests: SELECTED_RESULT.
+- Selected tests (`MAC_PYTEST_NO_DEFER=1 mac-pytest.sh --select -- --base 33fe04615 --run` at 3b397f4b6+pins, clean tree; it ran on ve-cloud-2): 465 units, one failure. `tests/test_shape_binding_mutants.py::test_the_generic_checker_gives_every_mutant_the_verdict_its_shape_decides[rights]` replays recorded answers, which lacked `located_findings` (`Invalid: ... missing field located_findings`). The fix was `uv run python tools/binding_census.py --answers` (596 answers re-asked of this build) and the binding-census regen. The failed id plus tests/test_binding_census.py were then rerun on ve-mac-1 at 9667237e: `9 passed`, exit 0.
+- `uv run python tools/regen_generated.py --check`: 38 entries checked, rc 0. `tools/gate_collection.py --check --prebuilt`: 64 added, 0 refused, 0 stale, 0 malformed.
 - Not run: the full gate (the chain runs it).
 
 ## Self-review against BUILDER-CHECKLIST
