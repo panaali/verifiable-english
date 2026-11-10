@@ -83,7 +83,22 @@ def internalRow : List Json :=
 #guard get (.ok [.rule ⟨1, []⟩ cPub]) ["status", "code", "class", "text", "sentence"] "Rule 1. X.\nRule 2. Y." == internalRow
 -- only a translation-mode statement is refused: no statements over no blocks are rows, none of them one
 #guard Run.oneSpans "" [] == some [] && Run.oneSpans "" [.source []] == none &&
-  Run.oneSpans "Rule 1. X.\nRule 2. Y." [.rule ⟨1, []⟩ cPub, .source []] == none
+  Run.oneSpans "Rule 1. X.\nRule 2. Y." [.rule ⟨1, []⟩ cPub, .source []] == none &&
+  Run.oneSpans "Rule 1. X.\nRule 2. Y." [.source [], .rule ⟨1, []⟩ cPub] == none
+-- a rule over two rules lists both, in `overOf`'s order; a precedence row carries no node
+def s3 : String := "Rule 1. X.\nRule 2. Y.\nRule 3. Z.\nRule 3 takes precedence over rule 1.\nRule 3 takes precedence over rule 2."
+#guard match (result (.ok [.rule ⟨1, []⟩ cPub, .rule ⟨2, []⟩ cPub, .rule ⟨3, []⟩ cPub, .precedence 3 1, .precedence 3 2])
+    s3).getObjValD "statements" with
+  | .arr rows => rows.toList.map (fun (r : Json) => ((r.getObjValD "node").getObjValD "norm").getObjValD "over") ==
+      [Json.arr #[], Json.arr #[], Json.arr #["rule-1", "rule-2"], .null, .null]
+  | _ => false
+-- every span of an unformalised answer is a row, in order
+def spanRowOf (a b : Nat) (row owner place : String) : Json :=
+  Json.mkObj [("start", toJson a), ("stop", toJson b), ("row", .str row), ("owner", .str owner), ("place", .str place)]
+def cTwo : Clause :=
+  { cPub with residuals := [⟨30, 46, "every|norm.modifier|norms@0", "ET-T1", .act⟩, ⟨50, 55, "r", "o", .guard⟩] }
+#guard (result (.ok [.rule ⟨1, []⟩ cTwo])).getObjValD "spans" == Json.arr #[spanRowOf 30 46 "every|norm.modifier|norms@0"
+  "ET-T1" "act", spanRowOf 50 55 "r" "o" "guard"]
 -- fewer blocks than statements is `Internal` too (E12 has more): `zip` must never drop a statement
 #guard get (.ok [.rule ⟨1, []⟩ cPub, .rule ⟨2, []⟩ cPub]) ["status", "code", "class", "text", "sentence"] == internalRow
 -- M10's spans are bytes, not code points: "ë" is two bytes, so the second block starts at byte 14 (character 13)
@@ -177,7 +192,8 @@ def request (kind : String) (extra : List (String × Json) := []) : Json :=
   Json.mkObj ([("id", Json.str "c"), ("environment", Json.mkObj []), ("lexicon", Json.mkObj []),
     ("kind", Json.str kind), ("source", Json.str "Rule 1. X.")] ++ extra)
 def errorOf (j : Json) : Json := (Run.statementCaseReported j).getObjValD "error"
-#guard errorOf (request "lines") == .str "InvalidInput: english.statement reads kind blocks or render"
+#guard errorOf (request "lines") == .str "InvalidInput: english.statement reads kind blocks or render" &&
+  ["id", "status"].map (Run.statementCaseReported (request "lines")).getObjValD == str ["c", "error"]
 #guard errorOf (request "blocks" [("mode", "authoring")]) == .str ("fields do not match: expected [id, environment, " ++
   "lexicon, kind, source], got [environment, id, kind, lexicon, mode, source]")
 #guard errorOf (request "blocks") ==
@@ -195,7 +211,9 @@ def whole (extra : List (String × Json) := []) : Json := Run.resultOf (wholeRow
   ((whole).getObjValD "identities").getObjValD "overlay_digest" == .null
 #guard ["status", "code"].map (whole [("overlay", Json.mkObj [])]).getObjValD == str ["none", "NoDerivation"] &&
   (((whole [("overlay", Json.mkObj [])]).getObjValD "identities").getObjValD "overlay_digest").getStr?.isOk
--- the opposite direction: `id`, `kind` or `source` retyped is an error row, never an answer
+-- the opposite direction: `id`, `kind` or `source` retyped is an error row, never an answer; both optional members
+-- together are read
+#guard (wholeRow [("overlay", Json.mkObj []), ("generated", Json.bool true)]).getObjValD "status" == .str "ok"
 #guard (wholeRow).getObjValD "status" == .str "ok" && ["id", "kind", "source"].all fun k =>
   [Json.num 7, .null, .arr #[]].all fun v => (wholeRow [(k, v)]).getObjValD "status" == .str "error"
 open VE.EnglishGrammar.JudgmentRunExamples (environment lexicon) in
@@ -204,7 +222,9 @@ def grammarExport : Json := ((VE.EnglishGrammar.Run.grammarCase (Json.mkObj [("i
 #guard grammarExport.getObjValD "statement_statuses" == toJson VE.EnglishGrammar.Run.statementStatusCodes &&
   grammarExport.getObjValD "statement_fields" == toJson VE.EnglishGrammar.Run.statementFields &&
   grammarExport.getObjValD "statement_unsentenced" == toJson VE.EnglishGrammar.Run.statementUnsentenced &&
-  grammarExport.getObjValD "codes" == toJson VE.EnglishGrammar.Run.codeClasses
+  grammarExport.getObjValD "codes" == toJson VE.EnglishGrammar.Run.codeClasses &&
+  grammarExport.getObjValD "policy" != .null && grammarExport.getObjValD "advice" != .null &&
+  grammarExport.getObjValD "identities" != .null
 
 -- f18 through the real reader (`leanReader`): an ambiguous condition stops the reading at its rule sentence, with both
 -- trees under `normGrammar`'s rule tags (`normTags`).

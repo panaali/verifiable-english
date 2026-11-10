@@ -20182,6 +20182,7 @@
     "VE/EnglishGrammar/Norm/RunExamples.lean": {
       "T": [
         "VE.EnglishGrammar.Norm.RunExamples.big",
+        "VE.EnglishGrammar.Norm.RunExamples.cTwo",
         "VE.EnglishGrammar.Norm.RunExamples.caseD",
         "VE.EnglishGrammar.Norm.RunExamples.caseOf",
         "VE.EnglishGrammar.Norm.RunExamples.caseTwo",
@@ -20197,8 +20198,10 @@
         "VE.EnglishGrammar.Norm.RunExamples.rejectAll",
         "VE.EnglishGrammar.Norm.RunExamples.request",
         "VE.EnglishGrammar.Norm.RunExamples.result",
+        "VE.EnglishGrammar.Norm.RunExamples.s3",
         "VE.EnglishGrammar.Norm.RunExamples.sE1",
         "VE.EnglishGrammar.Norm.RunExamples.sha",
+        "VE.EnglishGrammar.Norm.RunExamples.spanRowOf",
         "VE.EnglishGrammar.Norm.RunExamples.str",
         "VE.EnglishGrammar.Norm.RunExamples.tA",
         "VE.EnglishGrammar.Norm.RunExamples.tB",
