@@ -20024,7 +20024,8 @@
     },
     "VE/RightClauses/WireTheorems.lean": {
       "P": [
-        "VE.RightClauses.plainUnits"
+        "VE.RightClauses.plainUnits",
+        "VE.RightClauses.plainOnWireB"
       ]
     },
     "ResponseShape/Schemas/ClausesElaborate.lean": {
@@ -20046,7 +20047,9 @@
         "VE.RightClauses.RunExamples.rel",
         "VE.RightClauses.RunExamples.charged",
         "VE.RightClauses.RunExamples.countryOf",
-        "VE.RightClauses.RunExamples.twoLines"
+        "VE.RightClauses.RunExamples.twoLines",
+        "VE.RightClauses.RunExamples.plainOnWire",
+        "VE.RightClauses.RunExamples.depth64"
       ]
     }
   }
