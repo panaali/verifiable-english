@@ -1,0 +1,8 @@
+trust_mutants: 19 definitions, 71 mutants (9 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/Rights/Run.lean:442 VE.Rights.Run.conflictAnswerOf (D[V], trusted) list-empty: (targets (soften (correlate D))) -> [] (lean/VE/Rights/Run.lean:442: Invalid projection: Type of)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:170 VE.Purposes.WellFormed (S, trusted) and-or: ∧ -> ∨ (lean/VE/Purposes/Examples.lean:278: Expression (VE.Purposes.Examples.wfDecidable, which it reads,...)
+trust_mutants: 6 KILLED, 0 SURVIVOR, 2 UNKNOWN, 1 INVALID, 0 ALLOWED, 0 NOT RUN, 62 OTHER SHARD in 237 s
+trust_mutants: D[V], trusted: 2 KILLED, 1 UNKNOWN, 13 OTHER SHARD
+trust_mutants: G[V], trusted: 3 KILLED, 1 INVALID, 35 OTHER SHARD
+trust_mutants: S, trusted: 1 KILLED, 1 UNKNOWN, 14 OTHER SHARD
+trust_mutants: steps: wall plan 15.8 s, scratch 2.8 s, control_build 0.3 s, probe_install 1.3 s, mutants 214.9 s, cleanup 2.4 s, reads 0.1 s; lake control_build 0.3 s (1), probe_install 1.3 s (1), control_probes 38.3 s (6), mutant_builds 40 s (11), mutant_checks 395.2 s (10), stage_controls 34 s (3), mutant_probes 49.5 s (7)
