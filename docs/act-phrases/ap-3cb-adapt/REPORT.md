@@ -165,7 +165,16 @@ Pilot bytes: none expected (proofs and examples; no answer changes). Next item: 
 
 ## 9. Final selected run
 
-(Filled in after the run on the committed tree.)
+`MAC_PYTEST_NO_DEFER=1 zsh /home/seyran/code/manage-agents/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`
+on the committed tree at `ecd0a43c1` (clean), log `/tmp/ap3cb/select.log`:
+
+```
+recorded 477 units for tree fd47c099a4; 5 others left to the static graph until they run; 0 failed
+[mac-pytest 07:35:28Z] summary: ran LOCALLY (VM) because: ve-mac-1 unreachable (...); exit=0; 9877s
+```
+
+It includes `lake build`, `lean/audit.py` and the chunked units, all with exit 0. Only this docs file was committed
+after the run. No test of main-known-red.txt was involved (0 failed).
 
 ## Notes for the DRI
 
