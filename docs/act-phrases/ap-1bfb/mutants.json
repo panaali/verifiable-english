@@ -7,7 +7,8 @@
   "test": "lean/VE/WireContract/Hooks/Acts.lean #guard (lake build VE.WireContract.Hooks.Acts)",
   "status": "KILLED",
   "failures": [
-   "error: VE/WireContract/Hooks/Acts.lean:180:0: Expression"
+   "error: VE/WireContract/Hooks/Acts.lean:180:0: Expression",
+   "error: VE/WireContract/Hooks/Acts.lean:260:0: Expression"
   ]
  },
  {
@@ -20,7 +21,10 @@
   "failures": [
    "error: VE/WireContract/Hooks/Acts.lean:223:0: Expression",
    "error: VE/WireContract/Hooks/Acts.lean:225:0: Expression",
-   "error: VE/WireContract/Hooks/Acts.lean:226:0: Expression"
+   "error: VE/WireContract/Hooks/Acts.lean:226:0: Expression",
+   "error: VE/WireContract/Hooks/Acts.lean:243:0: Expression",
+   "error: VE/WireContract/Hooks/Acts.lean:246:0: Expression",
+   "error: VE/WireContract/Hooks/Acts.lean:258:0: Expression"
   ]
  },
  {
@@ -32,7 +36,10 @@
   "status": "KILLED",
   "failures": [
    "error: VE/WireContract/Hooks/Acts.lean:225:0: Expression",
-   "error: VE/WireContract/Hooks/Acts.lean:226:0: Expression"
+   "error: VE/WireContract/Hooks/Acts.lean:226:0: Expression",
+   "error: VE/WireContract/Hooks/Acts.lean:243:0: Expression",
+   "error: VE/WireContract/Hooks/Acts.lean:246:0: Expression",
+   "error: VE/WireContract/Hooks/Acts.lean:258:0: Expression"
   ]
  },
  {
@@ -43,7 +50,8 @@
   "test": "lean/VE/WireContract/Hooks/Acts.lean #guard (lake build VE.WireContract.Hooks.Acts)",
   "status": "KILLED",
   "failures": [
-   "error: VE/WireContract/Hooks/Acts.lean:225:0: Expression"
+   "error: VE/WireContract/Hooks/Acts.lean:225:0: Expression",
+   "error: VE/WireContract/Hooks/Acts.lean:258:0: Expression"
   ]
  },
  {
@@ -87,7 +95,10 @@
   "status": "KILLED",
   "failures": [
    "error: VE/WireContract/Hooks/Acts.lean:222:0: Expression",
-   "error: VE/WireContract/Hooks/Acts.lean:223:0: Expression"
+   "error: VE/WireContract/Hooks/Acts.lean:223:0: Expression",
+   "error: VE/WireContract/Hooks/Acts.lean:240:0: Expression",
+   "error: VE/WireContract/Hooks/Acts.lean:243:0: Expression",
+   "error: VE/WireContract/Hooks/Acts.lean:255:0: Expression"
   ]
  },
  {
