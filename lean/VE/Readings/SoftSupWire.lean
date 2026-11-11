@@ -27,41 +27,6 @@ open VE.Norms (targets)
 open VE.NormDefaults (fill)
 universe u
 
-/-- One rule's AST nodes: its guard, carve-outs and exception conditions, and one per name it is `over`. -/
-def sdRuleCharge (M : VE.SoftNorms.SoftNode) : Nat :=
-  M.over.length + (((M.guard :: M.carveOuts) ++ (M.exception.map fun e => e.sufficient ++ e.necessary).getD []).map
-    VE.Bridge.formulaNodes).sum
-/-- A content's units and AST nodes: a norm one unit, an assertion one unit and its formula, a right or a line set one
-unit and its lines' rules (and the right's guard), a limitation one unit of one node per condition and one more. -/
-def sdContentCharge : VE.Compose.Content → Nat × Nat
-  | .assertion φ => (1, VE.Bridge.formulaNodes φ)
-  | .norm M => (1, sdRuleCharge M)
-  | .right R => let (r, n) := lines R.lines; (r + 1, n + VE.Bridge.formulaNodes R.guard)
-  | .rightLines _ ls => let (r, n) := lines ls; (r + 1, n + 1)
-  | .limitation L => (1, L.conditions.length + 1)
-where lines (ls : List VE.Rights.SourceLine) : Nat × Nat :=
-  let ns := ls.flatMap fun S => [S.norm, S.liberty, S.recognition].filterMap id
-  (ns.length, (ns.map sdRuleCharge).sum)
-
-/-- 14.11 (sc-11w): the source document's units times its AST nodes, read from `N.D` before `superposable` builds
-`sup N.D` and before `supU N`. Units: each frame rule, right, limitation and definition, each fixed content, bar,
-reading set, candidate, coupling and narrowing. Nodes: each unit's formulas (`sdContentCharge`, a definition's body)
-and at least one, plus one per cite, label, coupled set and kept candidate. Measured (docs/rd-9/sc-11w/cpu.md): the
-charge bounds `sdSuperposable`'s reads (at most 0.22 s on the measured documents within it), not the whole route; a
-document within both limits can still take `routeSD` over R4 in its per-choice texts (`heavyIn`, up to 1.16 s, the
-accepted gap of row sc-11wc). -/
-def sdSizeCharge (N : NDoc) : Nat :=
-  let F := N.D.frame
-  let plus (k : Nat) (p : Nat × Nat) : Nat × Nat := (p.1, p.2 + k)
-  let cs := (F.soft.T.nodes.map (sdContentCharge ∘ .norm)) ++ (F.rs.map (sdContentCharge ∘ .right)) ++
-    (F.limits.map (sdContentCharge ∘ .limitation)) ++ (F.soft.T.definitions.map fun d =>
-      (1, VE.Bridge.formulaNodes d.body)) ++ (N.D.items.flatMap fun it => match it with
-      | .fixed _ c cites => [plus cites.length (sdContentCharge c)]
-      | .bar _ _ => [(1, 1)]
-      | .set R => (1, 1) :: R.candidates.map fun a =>
-          plus (a.cites.length + a.labels.length) ((a.content.map sdContentCharge).getD (1, 1))) ++
-    (N.D.couplings.map fun K => (1, K.sets.length + 1)) ++ (N.D.narrowings.map fun K => (1, K.keeps.length + 1))
-  (cs.map (·.1)).sum * (cs.map (·.2)).sum
 def maxSdSizeCharge : Nat := 16384
 
 def sdSuperposable (N : NDoc) : Bool :=
@@ -140,23 +105,7 @@ theorem sdCheck_of_admitted (b : Admitted2) (r : AdmittedSD) (hadm : admitSDOf b
     sdChecked r.b.a.re r.N = true := by
   have _ := hr
   have heq := checkedChoices_eq_choices r.N.D hle
-  have hnone : ∀ c ∈ choices r.N.D, sdChoiceText r.b.a.re r.N c = none := by
-    unfold admitSDOf at hadm
-    rw [Stage.stage_eq] at hadm
-    simp only at hadm
-    split at hadm
-    · split at hadm
-      · cases hadm
-      · split at hadm
-        · split at hadm
-          · cases hadm
-          · rename_i hc
-            cases hadm
-            rw [heq] at hle
-            rw [if_pos hle] at hc
-            exact List.findSome?_eq_none_iff.mp hc
-        · cases hadm
-    · cases hadm
+  have hnone : ∀ c ∈ choices r.N.D, sdChoiceText r.b.a.re r.N c = none := admitSDOf_texts hadm (heq ▸ hle)
   simp only [sdChecked, Bool.and_eq_true, decide_eq_true_eq, List.all_eq_true, Option.isNone_iff_eq_none, heq]
   exact ⟨⟨by rw [← heq]; simp only [maxChoices, maxChoiceChecks] at hle ⊢; omega, hw⟩, hnone⟩
 

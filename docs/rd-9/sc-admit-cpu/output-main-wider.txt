@@ -1,0 +1,60 @@
+Build completed successfully (501 jobs).
+commit 5f756e791d; lean/ tree ba59cfa973
+machine: AMD EPYC 7B12, 32 vCPU, Linux 7.0.0-1014-gcp
+load: 16.88 19.79 31.31
+NSDheavy check: same as the Lean NDoc: true; choices 64; sdSizeCharge 14703; admitSD ok (1443 ms)
+NSDheavy s2 run1: 0.15 s | NSDheavy s2: ok (91 ms)
+NSDheavy s2 run2: 0.17 s | NSDheavy s2: ok (108 ms)
+NSDheavy s2 run3: 0.20 s | NSDheavy s2: ok (144 ms)
+NSDheavy admit run1: 1.96 s | NSDheavy admit: ok (1901 ms)
+NSDheavy admit run2: 1.88 s | NSDheavy admit: ok (1805 ms)
+NSDheavy admit run3: 2.00 s | NSDheavy admit: ok (1945 ms)
+load: 19.06 20.16 31.30
+heavyIn check: same as the Lean NDoc: true; choices 64; sdSizeCharge 12880; admitSD ok (1277 ms)
+heavyIn s2 run1: 0.15 s | heavyIn s2: ok (98 ms)
+heavyIn s2 run2: 0.15 s | heavyIn s2: ok (96 ms)
+heavyIn s2 run3: 0.19 s | heavyIn s2: ok (115 ms)
+heavyIn admit run1: 1.30 s | heavyIn admit: ok (1244 ms)
+heavyIn admit run2: 1.32 s | heavyIn admit: ok (1260 ms)
+heavyIn admit run3: 1.60 s | heavyIn admit: ok (1544 ms)
+load: 19.61 20.26 31.27
+rules16 check: same as the Lean NDoc: true; choices 64; sdSizeCharge 27615; admitSD ok (2884 ms)
+rules16 s2 run1: 0.29 s | rules16 s2: ok (253 ms)
+rules16 s2 run2: 0.32 s | rules16 s2: ok (262 ms)
+rules16 s2 run3: 0.41 s | rules16 s2: ok (355 ms)
+rules16 admit run1: 2.78 s | rules16 admit: ok (2733 ms)
+rules16 admit run2: 2.28 s | rules16 admit: ok (2215 ms)
+rules16 admit run3: 2.47 s | rules16 admit: ok (2406 ms)
+load: 20.97 20.54 31.19
+rules8 check: same as the Lean NDoc: true; choices 64; sdSizeCharge 11151; admitSD ok (1372 ms)
+rules8 s2 run1: 0.16 s | rules8 s2: ok (80 ms)
+rules8 s2 run2: 0.14 s | rules8 s2: ok (66 ms)
+rules8 s2 run3: 0.14 s | rules8 s2: ok (66 ms)
+rules8 admit run1: 1.02 s | rules8 admit: ok (964 ms)
+rules8 admit run2: 1.13 s | rules8 admit: ok (1074 ms)
+rules8 admit run3: 1.63 s | rules8 admit: ok (1555 ms)
+load: 20.97 20.55 31.13
+rules4 check: same as the Lean NDoc: true; choices 64; sdSizeCharge 5175; admitSD ok (907 ms)
+rules4 s2 run1: 0.14 s | rules4 s2: ok (50 ms)
+rules4 s2 run2: 0.15 s | rules4 s2: ok (59 ms)
+rules4 s2 run3: 0.13 s | rules4 s2: ok (49 ms)
+rules4 admit run1: 1.09 s | rules4 admit: ok (999 ms)
+rules4 admit run2: 0.87 s | rules4 admit: ok (776 ms)
+rules4 admit run3: 0.93 s | rules4 admit: ok (869 ms)
+load: 21.30 20.62 31.10
+wideGuard191 check: same as the Lean NDoc: true; choices 65; sdSizeCharge 5975; admitSD ok (18 ms)
+wideGuard191 s2 run1: 0.10 s | wideGuard191 s2: ok (13 ms)
+wideGuard191 s2 run2: 0.11 s | wideGuard191 s2: ok (15 ms)
+wideGuard191 s2 run3: 0.09 s | wideGuard191 s2: ok (12 ms)
+wideGuard191 admit run1: 0.11 s | wideGuard191 admit: ok (16 ms)
+wideGuard191 admit run2: 0.11 s | wideGuard191 admit: ok (16 ms)
+wideGuard191 admit run3: 0.07 s | wideGuard191 admit: ok (10 ms)
+load: 21.30 20.62 31.10
+NSDbig8 check: same as the Lean NDoc: true; choices 65; sdSizeCharge 1225; admitSD ok (12 ms)
+NSDbig8 s2 run1: 0.08 s | NSDbig8 s2: ok (9 ms)
+NSDbig8 s2 run2: 0.08 s | NSDbig8 s2: ok (6 ms)
+NSDbig8 s2 run3: 0.10 s | NSDbig8 s2: ok (10 ms)
+NSDbig8 admit run1: 0.09 s | NSDbig8 admit: ok (11 ms)
+NSDbig8 admit run2: 0.09 s | NSDbig8 admit: ok (10 ms)
+NSDbig8 admit run3: 0.11 s | NSDbig8 admit: ok (13 ms)
+load: 21.30 20.62 31.10

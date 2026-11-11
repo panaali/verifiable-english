@@ -6,7 +6,9 @@ import VE.Readings.SoftSeparate
 A document is under the soft completion when its profiles hold `readings@1` and `norm-defaults@0` on the soft chain
 and some set is content-bearing (`underSoftCompletion`). Its admission (`admitSD`, 4.1) is S1's and S2a's, then the
 reserved names, norm-defaults' author checks (each document's decision predicates counted) and `WellFormedU` on the
-free document and each reading's document, the soft shape, and each compatible choice, at most 64 (`sdChoiceText`).
+free document and each reading's document, the soft shape, and each compatible choice, at most 64 (`sdChoiceText`),
+after the charge `sdAdmitWork N ≤ maxSdAdmitWork` (14.11, `ResourceLimit` over it; DRI 2026-11-11 sc-admit-cpu item 3).
+The charge's measure `sdSizeCharge` (sc-11w) is defined here, so that admission and the route read one definition.
 No filled readings document is admitted: `fillDoc` is not well formed on the soft chain.
 
 Separation (4.2, `replaySeparateS`) runs S1's pair check on filled sides (`separatesS`); the situation is decoded
@@ -30,6 +32,58 @@ def sdChoiceText (re : ReadingsEnvironment) (N : NDoc) (c : Choice) : Option Str
     ((ndDocTextG re (decisionCount (choiceDoc N.D c).1) (choiceU N c)).map
       (· ++ " under " ++ choiceText N.D c))
 
+/-- One rule's AST nodes: its guard, carve-outs and exception conditions, and one per name it is `over`. -/
+def sdRuleCharge (M : VE.SoftNorms.SoftNode) : Nat :=
+  M.over.length + (((M.guard :: M.carveOuts) ++ (M.exception.map fun e => e.sufficient ++ e.necessary).getD []).map
+    VE.Bridge.formulaNodes).sum
+/-- A content's units and AST nodes: a norm one unit, an assertion one unit and its formula, a right or a line set one
+unit and its lines' rules (and the right's guard), a limitation one unit of one node per condition and one more. -/
+def sdContentCharge : VE.Compose.Content → Nat × Nat
+  | .assertion φ => (1, VE.Bridge.formulaNodes φ)
+  | .norm M => (1, sdRuleCharge M)
+  | .right R => let (r, n) := lines R.lines; (r + 1, n + VE.Bridge.formulaNodes R.guard)
+  | .rightLines _ ls => let (r, n) := lines ls; (r + 1, n + 1)
+  | .limitation L => (1, L.conditions.length + 1)
+where lines (ls : List VE.Rights.SourceLine) : Nat × Nat :=
+  let ns := ls.flatMap fun S => [S.norm, S.liberty, S.recognition].filterMap id
+  (ns.length, (ns.map sdRuleCharge).sum)
+
+/-- 14.11 (sc-11w): the source document's units times its AST nodes, read from `N.D` before `superposable` builds
+`sup N.D` and before `supU N`. Units: each frame rule, right, limitation and definition, each fixed content, bar,
+reading set, candidate, coupling and narrowing. Nodes: each unit's formulas (`sdContentCharge`, a definition's body)
+and at least one, plus one per cite, label, coupled set and kept candidate. Measured (docs/rd-9/sc-11w/cpu.md): the
+charge bounds `sdSuperposable`'s reads (at most 0.22 s on the measured documents within it), not the whole route; a
+document within both limits can still take `routeSD` over R4 in its per-choice texts (`heavyIn`, up to 1.16 s, the
+accepted gap of row sc-11wc). -/
+def sdSizeCharge (N : NDoc) : Nat :=
+  let F := N.D.frame
+  let plus (k : Nat) (p : Nat × Nat) : Nat × Nat := (p.1, p.2 + k)
+  let cs := (F.soft.T.nodes.map (sdContentCharge ∘ .norm)) ++ (F.rs.map (sdContentCharge ∘ .right)) ++
+    (F.limits.map (sdContentCharge ∘ .limitation)) ++ (F.soft.T.definitions.map fun d =>
+      (1, VE.Bridge.formulaNodes d.body)) ++ (N.D.items.flatMap fun it => match it with
+      | .fixed _ c cites => [plus cites.length (sdContentCharge c)]
+      | .bar _ _ => [(1, 1)]
+      | .set R => (1, 1) :: R.candidates.map fun a =>
+          plus (a.cites.length + a.labels.length) ((a.content.map sdContentCharge).getD (1, 1))) ++
+    (N.D.couplings.map fun K => (1, K.sets.length + 1)) ++ (N.D.narrowings.map fun K => (1, K.keeps.length + 1))
+  (cs.map (·.1)).sum * (cs.map (·.2)).sum
+/-- 14.11 (sc-admit-cpu): admission's per-reading work, the compatible choices times the source document's charge
+(`sdSizeCharge`), read before the per-choice texts (4.1 step 5); a later check of choices × size reads this one. -/
+def sdAdmitWork (N : NDoc) : Nat := (choices N.D).length * sdSizeCharge N
+/-- 14.11: measured (docs/rd-9/sc-admit-cpu/cpu.md). The per-choice texts cost about 1-11 µs of Lean CPU per unit; the
+64-choice documents at or just under 131,072 units are admitted in at most 0.83 s, and NSDheavy and heavyIn (over 1 s
+on main) are over it. -/
+def maxSdAdmitWork : Nat := 131072
+/-- 4.1 step 5's refusal over the limit. -/
+def sdAdmitWorkText (limit : Nat) (N : NDoc) : String :=
+  s!"ResourceLimit: the per-reading checks of {(choices N.D).length} readings exceed {limit} units"
+/-- 4.1 step 5 within `limit` units: at most 64 compatible choices, the charge read first, then each choice's
+    `sdChoiceText` in canonical order; more than 64, none (no per-choice text runs). -/
+def sdTextsWithin (limit : Nat) (re : ReadingsEnvironment) (N : NDoc) : Option String :=
+  if (choices N.D).length ≤ maxChoices then
+    if sdAdmitWork N ≤ limit then (choices N.D).findSome? (sdChoiceText re N) else some (sdAdmitWorkText limit N)
+  else none
+
 structure AdmittedSD where
   b : Admitted2
   N : NDoc
@@ -50,8 +104,7 @@ def admitSDOf (b : Admitted2) : Except String AdmittedSD := Stage.stage "admitSD
     | none =>
       have hT' : ndText re N = none := (ndTextWith_eq hside) ▸ hT
       if hs : softShaped N.D = true then
-        match hc : if (choices N.D).length ≤ maxChoices then
-            (choices N.D).findSome? (sdChoiceText re N) else none with
+        match hc : sdTextsWithin maxSdAdmitWork re N with
         | some e => .error e
         | none =>
           .ok ⟨b, N, rfl, by
@@ -64,6 +117,28 @@ def admitSD (environment document : Json) : Except String AdmittedSD := do
   unless underSoftCompletion b.a.re b.D do
     throw "UnsupportedProfile: the document is not under the unspecified completion"
   admitSDOf b
+
+/-- An admitted document's compatible choices, when at most 64, each pass `sdChoiceText` (4.1 step 5). -/
+theorem admitSDOf_texts {b : Admitted2} {r : AdmittedSD} (h : admitSDOf b = .ok r)
+    (hle : (choices r.N.D).length ≤ maxChoices) : ∀ c ∈ choices r.N.D, sdChoiceText r.b.a.re r.N c = none := by
+  unfold admitSDOf at h
+  rw [Stage.stage_eq] at h
+  simp only at h
+  split at h
+  · split at h
+    · cases h
+    · split at h
+      · split at h
+        · cases h
+        · rename_i hc
+          cases h
+          unfold sdTextsWithin at hc
+          rw [if_pos hle] at hc
+          split at hc
+          · exact List.findSome?_eq_none_iff.mp hc
+          · cases hc
+      · cases h
+  · cases h
 
 /-! ## The document over the filled author vocabulary (4.2) -/
 

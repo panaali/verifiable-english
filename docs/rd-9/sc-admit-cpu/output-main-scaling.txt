@@ -1,0 +1,49 @@
+commit 5f756e791d; lean/ tree ba59cfa973
+machine: AMD EPYC 7B12, 32 vCPU, Linux 7.0.0-1014-gcp
+load: 22.60 20.92 31.08
+rules0 check: same as the Lean NDoc: true; choices 64; sdSizeCharge 703; admitSD ok (77 ms)
+rules0 admit run1: 0.18 s | rules0 admit: ok (117 ms)
+rules0 admit run2: 0.16 s | rules0 admit: ok (79 ms)
+rules0 admit run3: 0.14 s | rules0 admit: ok (98 ms)
+load: 22.60 20.92 31.08
+rules1 check: same as the Lean NDoc: true; choices 64; sdSizeCharge 1680; admitSD ok (309 ms)
+rules1 admit run1: 0.34 s | rules1 admit: ok (288 ms)
+rules1 admit run2: 0.54 s | rules1 admit: ok (454 ms)
+rules1 admit run3: 0.51 s | rules1 admit: ok (457 ms)
+load: 22.71 20.97 31.04
+rules2 check: same as the Lean NDoc: true; choices 64; sdSizeCharge 2751; admitSD ok (544 ms)
+rules2 admit run1: 0.55 s | rules2 admit: ok (500 ms)
+rules2 admit run2: 0.60 s | rules2 admit: ok (530 ms)
+rules2 admit run3: 0.54 s | rules2 admit: ok (472 ms)
+load: 22.71 20.97 31.04
+guard0 check: same as the Lean NDoc: true; choices 64; sdSizeCharge 1540; admitSD ok (382 ms)
+guard0 admit run1: 0.47 s | guard0 admit: ok (389 ms)
+guard0 admit run2: 0.40 s | guard0 admit: ok (325 ms)
+guard0 admit run3: 0.48 s | guard0 admit: ok (394 ms)
+load: 23.78 21.22 31.07
+guard2 check: same as the Lean NDoc: true; choices 64; sdSizeCharge 3808; admitSD ok (679 ms)
+guard2 admit run1: 0.74 s | guard2 admit: ok (662 ms)
+guard2 admit run2: 0.67 s | guard2 admit: ok (593 ms)
+guard2 admit run3: 0.60 s | guard2 admit: ok (527 ms)
+load: 23.78 21.22 31.07
+load: 24.27 21.48 30.95
+top3 check: same as the Lean NDoc: true; choices 64; sdSizeCharge 880; admitSD ok (105 ms)
+top3 admit run1: 0.17 s | top3 admit: ok (116 ms)
+top3 admit run2: 0.23 s | top3 admit: ok (152 ms)
+top3 admit run3: 0.14 s | top3 admit: ok (94 ms)
+load: 23.92 21.46 30.89
+top9 check: same as the Lean NDoc: true; choices 64; sdSizeCharge 1288; admitSD ok (187 ms)
+top9 admit run1: 0.26 s | top9 admit: ok (183 ms)
+top9 admit run2: 0.23 s | top9 admit: ok (184 ms)
+top9 admit run3: 0.24 s | top9 admit: ok (193 ms)
+load: 23.92 21.46 30.89
+top16 check: same as the Lean NDoc: true; choices 64; sdSizeCharge 1855; admitSD ok (572 ms)
+top16 admit run1: 0.83 s | top16 admit: ok (752 ms)
+top16 admit run2: 0.68 s | top16 admit: ok (596 ms)
+top16 admit run3: 0.50 s | top16 admit: ok (456 ms)
+load: 23.92 21.46 30.89
+top32 check: same as the Lean NDoc: true; choices 64; sdSizeCharge 3519; admitSD ok (2465 ms)
+top32 admit run1: 2.56 s | top32 admit: ok (2500 ms)
+top32 admit run2: 2.68 s | top32 admit: ok (2625 ms)
+top32 admit run3: 2.40 s | top32 admit: ok (2340 ms)
+load: 23.01 21.34 30.75
