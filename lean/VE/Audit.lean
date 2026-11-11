@@ -5368,6 +5368,7 @@ import VE.WireContract.Engine
 #print axioms VE.Readings.Wire.replayPair_D
 #print axioms VE.Readings.Wire.routeSD_superposed_iff
 #print axioms VE.Readings.Wire.same_name
+#print axioms VE.Readings.Wire.sdCheckWork_eq_fast
 #print axioms VE.Readings.Wire.sdCheck_of_admitted
 #print axioms VE.Readings.Wire.sdChecked_spec
 #print axioms VE.Readings.Wire.sdSem_normsShaped
