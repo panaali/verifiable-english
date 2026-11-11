@@ -1,0 +1,42 @@
+{
+ "audit_rc": 0,
+ "base": "c6e7c9c65ab28c49a96fc8042d378413402e1b19",
+ "changed_modules": [
+  "ResponseShape/Encoders",
+  "ResponseShape/Encoders/EnglishStatement",
+  "ResponseShape/Schemas",
+  "ResponseShape/Schemas/EnglishStatement",
+  "ResponseShape/Skeletons",
+  "ResponseShapeAudit",
+  "VE/Audit",
+  "VE/Service/Protocol",
+  "VE/Service/Registry",
+  "VE/Service/RegistryExamples"
+ ],
+ "changed_oleans": {
+  "ResponseShape/Encoders": "d35494989b767037ed66e4634cdb0ce71cdd5b72caba33f60f8d2bfd7b5db22f",
+  "ResponseShape/Encoders/EnglishStatement": "21c95825c281c07e37444c24969cd18d9ce8cdd3c37501a810995843b53c2c60",
+  "ResponseShape/Schemas": "9b5b651ae01bcc7df1e4590c4190f163266aa9e6b8c06e94bdc7392a2683cd39",
+  "ResponseShape/Schemas/EnglishStatement": "d1fd7d4ad3dfa98a016792d7b24a822bcf026a395e0278523cf6b37bb6569136",
+  "ResponseShape/Skeletons": "778a609f45eeb6095f08cd7f0c0a7ec44545816b68088c89e32dd561fcb49dee",
+  "ResponseShapeAudit": null,
+  "VE/Audit": null,
+  "VE/Service/Protocol": "12967e79481ad91abcbe0745a7659c3ca9e2edb96566a2565742f4bb426080ca",
+  "VE/Service/Registry": "5503457c52768e88b1b098878f96712052186527817f53f365e89ca6ff17814d",
+  "VE/Service/RegistryExamples": "5d56bebf1ad87dd4f10a7533635c32ae87d1c7a93ec4c83eef6021d4e6418416"
+ },
+ "files": {
+  "lean/ResponseShapeAudit.lean": "13d4f4790e2cf5a0f189fd8ddb251a505e21bce901121551c43d0257d0c9c910",
+  "lean/VE/Audit.lean": "4561008ef0b7d6baf9eb224eb271c77c0978cdd6528316cd745f60cab866c905",
+  "lean/axioms.txt": "1346b594405b1475a87c6f7fd7f6d4f468aca3946dd6646e9360f273e9e5a1fb",
+  "lean/declarations.txt": "bf7ff662be74fea75460619678bf8bfb725f7fb3b41d6586bfbdfc07b33454d2",
+  "lean/predicates.txt": "5c517e85ca9ea99c85a1dc0fe7babf7b84c43c72815f30ce326cdf0df60801d1",
+  "lean/statements.txt": "b34d6462c252e47bb8a1eeb0a975ae66a05dd2b7fb34e9f44b659b6f99bebd2c"
+ },
+ "head": "e92d479e20a6766e9f6b318ed177efce213ad47d",
+ "lake_rc": 0,
+ "oleans_n": 844,
+ "oleans_sha256": "718c50b29b4848722a605db9dccef76cb5771838adce96ba39aa06ab69cfdecf",
+ "seed": "seed-fp",
+ "statements_rc": 0
+}
