@@ -159,4 +159,201 @@ theorem single_inv (hV : framesOk V = true) (hW : VocabOk V) {h : Nat} (hF : Fra
       (head_append (fun x hx => tb_not_adv hW (head_all (fw_tb h2) x hx)) (gen_ne hV h2)) (fun x hx => (hRh x hx).2)
     exact (core_not_tb hRh e2 (head_append (head_all (fw_tb h2)) (gen_ne hV h2)) (by simp [gen_ne hV h2])).elim
 
+
+/-! ### No coordination: in a normal form, a comma or join word is followed by a part -/
+
+/-- Every comma or join word of the list is followed by a token outside `fillExcl V f` (a part's first token). -/
+def Adj (V : Vocab) (f : Frame) : List Tok → Prop
+  | x :: y :: rest => (JC x → ¬ ExclW V f y) ∧ Adj V f (y :: rest)
+  | _ => True
+
+/-- The list does not end with a comma or join word. -/
+def EndOk (l : List Tok) : Prop := ∀ x ∈ l.getLast?, ¬ JC x
+
+theorem adj_cons {x : Tok} {l : List Tok} (h1 : ∀ y ∈ l.head?, JC x → ¬ ExclW V f y) (h2 : Adj V f l) :
+    Adj V f (x :: l) := by
+  cases l with
+  | nil => trivial
+  | cons y l => exact ⟨h1 y (by simp), h2⟩
+
+theorem adj_drop {x : Tok} {l : List Tok} (h : Adj V f (x :: l)) : Adj V f l := by
+  cases l with
+  | nil => trivial
+  | cons y l => exact h.2
+
+theorem adj_append : ∀ {A B : List Tok}, Adj V f A → Adj V f B → EndOk A → Adj V f (A ++ B)
+  | [], _, _, hB, _ => hB
+  | [x], _, _, hB, hl => adj_cons (fun _ _ hx => (hl x (by simp) hx).elim) hB
+  | x :: y :: A, B, hA, hB, hl => ⟨hA.1, adj_append (A := y :: A) hA.2 hB (by
+      intro z hz; exact hl z (by simpa [List.getLast?_cons_cons] using hz))⟩
+
+theorem adj_suffix : ∀ {A B : List Tok}, Adj V f (A ++ B) → Adj V f B
+  | [], _, h => h
+  | _ :: A, _, h => adj_suffix (A := A) (adj_drop h)
+
+theorem adj_nojc : ∀ {l : List Tok}, (∀ x ∈ l, ¬ JC x) → Adj V f l
+  | [], _ => trivial
+  | [_], _ => trivial
+  | x :: y :: l, h => ⟨fun hx => (h x (by simp) hx).elim, adj_nojc (fun z hz => h z (List.mem_cons_of_mem _ hz))⟩
+
+theorem endOk_nojc {l : List Tok} (h : ∀ x ∈ l, ¬ JC x) : EndOk l := fun x hx => h x (List.mem_of_getLast? hx)
+
+theorem endOk_append {A B : List Tok} (hB : EndOk B) (hne : B ≠ []) : EndOk (A ++ B) := by
+  intro x hx
+  rw [List.getLast?_append] at hx
+  cases hb : B.getLast? with
+  | none => exact absurd (List.getLast?_eq_none_iff.mp hb) hne
+  | some y => rw [hb] at hx; simp at hx; subst hx; exact hB y hb
+
+theorem adj_tailToks (j : Join) : ∀ rest : List Part, (∀ q ∈ rest, PartOk V f q) →
+    Adj V f (tailToks j rest) ∧ EndOk (tailToks j rest)
+  | [], _ => ⟨trivial, fun x hx => by simp [tailToks] at hx⟩
+  | [q], hok => by
+    have hq := hok q (by simp)
+    obtain ⟨y, r, hy, hny⟩ := part_head_not_excl hq
+    refine ⟨adj_cons (fun z hz _ => by rw [hy] at hz; simp at hz; subst hz; exact hny) (adj_nojc (part_not_jc hq)), ?_⟩
+    simp only [tailToks]
+    exact endOk_append (A := [_]) (endOk_nojc (part_not_jc hq)) (part_ne hq)
+  | q :: q' :: rest, hok => by
+    have hq := hok q (by simp)
+    obtain ⟨ih1, ih2⟩ := adj_tailToks j (q' :: rest) (fun x hx => hok x (List.mem_cons_of_mem _ hx))
+    obtain ⟨y, r, hy, hny⟩ := part_head_not_excl hq
+    rw [tailToks_cons2]
+    refine ⟨adj_cons (fun z hz _ => by rw [hy] at hz; simp at hz; subst hz; exact hny)
+      (adj_append (adj_nojc (part_not_jc hq)) ih1 (endOk_nojc (part_not_jc hq))), ?_⟩
+    obtain ⟨t, u, ht, -⟩ := tailToks_head j q' rest
+    exact endOk_append (A := [Tok.comma] ++ q.toks) ih2 (by rw [ht]; simp)
+
+theorem adj_filler {fl : Filler} (hok : ∀ p ∈ fl.parts, PartOk V f p)
+    (hj : ∀ j ps, fl = .joined j ps → 2 ≤ ps.length) : Adj V f fl.toks ∧ EndOk fl.toks ∧ fl.toks ≠ [] := by
+  cases fl with
+  | one p =>
+    have hp := hok p (by simp [Filler.parts])
+    exact ⟨adj_nojc (part_not_jc hp), endOk_nojc (part_not_jc hp), part_ne hp⟩
+  | joined j qs =>
+    obtain ⟨p, q, rest, rfl⟩ := two_parts (hj j qs rfl)
+    have hp := hok p (by simp [Filler.parts])
+    obtain ⟨a1, a2⟩ := adj_tailToks j (q :: rest) (fun x hx => hok x (List.mem_cons_of_mem _ hx))
+    obtain ⟨t, u, ht, -⟩ := tailToks_head j q rest
+    simp only [Filler.toks, listToks_eq]
+    exact ⟨adj_append (adj_nojc (part_not_jc hp)) a1 (endOk_nojc (part_not_jc hp)),
+      endOk_append a2 (by rw [ht]; simp), by simp [part_ne hp]⟩
+
+theorem mk_nojc (hW : VocabOk V) {h : Nat} (hF : FrameOk V f h) {m : String} (hm : m ∈ f.markers ++ f.mods) :
+    ∀ x ∈ (wordsOf m).map Tok.word, ¬ JC x := by
+  intro x hx hj
+  obtain ⟨w, hw, rfl⟩ := List.mem_map.mp hx
+  have hne : m ≠ "" := by rintro rfl; simp [wordsOf_empty] at hw
+  have := hW.mkRes f hF.frame m hm hne w hw
+  rcases hj with he | ⟨v, he, hv⟩
+  · cases he
+  · cases he; rw [hF.lower m hm hne _ hw] at hv; rcases hv with hv | hv | hv <;> simp_all
+
+theorem adj_blocks (hW : VocabOk V) {h : Nat} (hF : FrameOk V f h) : ∀ {bs : List Blk}, (∀ b ∈ bs, BlkOk V f b) →
+    Adj V f (blocks bs) ∧ EndOk (blocks bs)
+  | [], _ => ⟨trivial, fun x hx => by simp [blocks] at hx⟩
+  | b :: bs, hbs => by
+    obtain ⟨i1, i2⟩ := adj_blocks hW hF (fun x hx => hbs x (List.mem_cons_of_mem _ hx))
+    have hb := hbs b (by simp)
+    obtain ⟨hm, -⟩ := blkOk_marker hb hF
+    have hr : Adj V f b.rest ∧ EndOk b.rest ∧ b.rest ≠ [] := by
+      cases b with
+      | arg m fl => exact adj_filler hb.2.2.1 (fun j ps he => (hb.2.2.2 j ps he).2.1)
+      | prep m p => exact ⟨adj_nojc (part_not_jc hb.2), endOk_nojc (part_not_jc hb.2), part_ne hb.2⟩
+    obtain ⟨r1, r2, r3⟩ := hr
+    have hbt : Adj V f b.toks ∧ EndOk b.toks := ⟨adj_append (adj_nojc (mk_nojc hW hF hm)) r1
+      (endOk_nojc (mk_nojc hW hF hm)), endOk_append r2 r3⟩
+    rw [blocks_cons']
+    refine ⟨adj_append hbt.1 i1 hbt.2, ?_⟩
+    cases bs with
+    | nil => simpa [blocks] using hbt.2
+    | cons b' bs' => exact endOk_append i2 (by rw [blocks_cons']; simp [blk_ne hF (hbs b' (by simp))])
+
+
+theorem head_firstP (hV : framesOk V = true) {P : Tok → Prop} {Y : RSym} {Ys : List RSym} {w : List Tok}
+    {cs : List Piece} (hg : GenAll V (Y :: Ys) w cs) (hY : ∀ u c, Gen V Y u c → ∀ x ∈ u.head?, P x) :
+    ∀ x ∈ w.head?, P x := by
+  obtain ⟨w1, w2, c1, c2, rfl, rfl, h1, -⟩ := genAll_inv_cons hg
+  exact head_append (hY _ _ h1) (gen_ne hV h1)
+
+theorem tb_excl {x : Tok} (h : TB x) : ExclW V f x := by
+  obtain ⟨v, rfl, hv⟩ := h
+  exact ⟨v, rfl, by rcases hv with hv | hv <;> simp [fillExcl, hv]⟩
+
+theorem adv_excl {x : Tok} (h : ADV V x) : ExclW V f x := by
+  obtain ⟨v, rfl, hv⟩ := h
+  have : v.toLower ∈ V.adverbs := by simpa using hv
+  exact ⟨v, rfl, by simp [fillExcl, this]⟩
+
+theorem hd_excl (hV : framesOk V = true) {g : Frame} {h' : Nat} (hg' : (g, h') ∈ V.frames.zipIdx) {u : List Tok}
+    {ps : List Piece} (hg0 : Gen V (.n (.F h' .HD)) u ps) : ∀ x ∈ u.head?, ExclW V f x := by
+  have hgf := List.fst_mem_of_mem_zipIdx hg'
+  obtain ⟨vs, rfl, hvs, -⟩ := hd_inv hg' (framesOk_words hV g hgf).1 hg0
+  intro x hx
+  cases vs with
+  | nil => simp at hx
+  | cons v vs =>
+    simp at hx; subst hx
+    refine ⟨v, rfl, ?_⟩
+    simp only [fillExcl, List.contains_iff_mem, List.mem_append, List.mem_filterMap]
+    exact .inr ⟨g, hgf, by rw [← hvs]; rfl⟩
+
+theorem c_head (hV : framesOk V = true) {c : Core} {u : List Tok} {ps : List Piece} (hg0 : Gen V (.n (.C c)) u ps) :
+    ∀ x ∈ u.head?, ExclW V f x := by
+  obtain ⟨rhs, k, cs, hr, hg, ha⟩ := gen_rule hg0
+  rules_of hr fr hfr <;> exact head_firstP hV hg (fun _ _ h1 => hd_excl hV hfr h1)
+
+theorem l_rules {own : Bool} {c : Core} {rhs : List RSym} {k : Kind} (hr : ⟨.L own c, rhs, k⟩ ∈ schema V) :
+    ∃ Y rest, rhs = .n Y :: rest ∧ (Y = .FW ∨ Y = .ADVSO ∨ ∃ c', Y = .C c') := by
+  rules_of hr fr hfr <;> exact ⟨_, _, rfl, by simp⟩
+
+/-- The first token of a later item of a coordination (`L`): a function word, an adverb or a head's first word. -/
+theorem l_head (hV : framesOk V = true) {own : Bool} {c : Core} {u : List Tok} {ps : List Piece}
+    (hg0 : Gen V (.n (.L own c)) u ps) : ∀ x ∈ u.head?, ExclW V f x := by
+  obtain ⟨rhs, k, cs, hr, hg, ha⟩ := gen_rule hg0
+  obtain ⟨Y, rest, rfl, hY⟩ := l_rules hr
+  rcases hY with rfl | rfl | ⟨c', rfl⟩
+  · exact head_firstP hV hg (fun _ _ h1 => head_all (fun x hx => tb_excl (fw_tb h1 x hx)))
+  · exact head_firstP hV hg (fun _ _ h1 => head_all (fun x hx => adv_excl (advso_adv h1 x hx)))
+  · exact head_firstP hV hg (fun _ _ h1 => c_head hV h1)
+
+theorem t_rules {own : Bool} {c : Core} {rhs : List RSym} {k : Kind} (hr : ⟨.T own c, rhs, k⟩ ∈ schema V) :
+    (∃ o c', rhs = [.n .J, .n (.L o c')]) ∨ (∃ o c', rhs = [.t .comma, .n .J, .n (.L o c')]) ∨
+      (∃ o c' c'', rhs = [.t .comma, .n (.L o c'), .n (.T o c'')]) := by
+  rules_of hr fr hfr <;>
+    first | exact .inl ⟨_, _, rfl⟩ | exact .inr (.inl ⟨_, _, rfl⟩) | exact .inr (.inr ⟨_, _, _, rfl⟩)
+
+/-- A coordination's tail (`T`) begins with a comma or join word, then a token of `fillExcl V f`. -/
+theorem t_head2 (hV : framesOk V = true) {own : Bool} {c : Core} {u : List Tok} {ps : List Piece}
+    (hg0 : Gen V (.n (.T own c)) u ps) : ∃ x y u', u = x :: y :: u' ∧ JC x ∧ ExclW V f y := by
+  obtain ⟨rhs, k, cs, hr, hg, ha⟩ := gen_rule hg0
+  rcases t_rules hr with ⟨o, c', rfl⟩ | ⟨o, c', rfl⟩ | ⟨o, c', c'', rfl⟩
+  · obtain ⟨w1, w2, c1, c2, rfl, -, h1, h2⟩ := genAll2 hg
+    obtain ⟨v, rfl, hv⟩ := j_inv h1
+    obtain ⟨y, w2', rfl⟩ := List.exists_cons_of_ne_nil (gen_ne hV h2)
+    exact ⟨_, y, w2', rfl, .inr ⟨v, rfl, hv⟩, l_head hV h2 y (by simp)⟩
+  · obtain ⟨w1, w2, w3, c1, c2, c3, rfl, -, h1, h2, -⟩ := genAll3 hg
+    obtain ⟨x, rfl, hx, -⟩ := gen_t_inv h1
+    cases x <;> simp [Term.accepts] at hx
+    obtain ⟨v, rfl, hv⟩ := j_inv h2
+    exact ⟨_, _, w3, by simp, .inl rfl, ⟨v, rfl, jw_excl hv⟩⟩
+  · obtain ⟨w1, w2, w3, c1, c2, c3, rfl, -, h1, h2, -⟩ := genAll3 hg
+    obtain ⟨x, rfl, hx, -⟩ := gen_t_inv h1
+    cases x <;> simp [Term.accepts] at hx
+    obtain ⟨y, w2', rfl⟩ := List.exists_cons_of_ne_nil (gen_ne hV h2)
+    exact ⟨_, y, w2' ++ w3, by simp, .inl rfl, l_head hV h2 y (by simp)⟩
+
+theorem coord_rules {rhs : List RSym} {k : Kind} (hr : ⟨.COORD, rhs, k⟩ ∈ schema V) :
+    ∃ o c c', rhs = [.n (.F1 o c), .n (.T o c')] := by
+  rules_of hr fr hfr <;> exact ⟨_, _, _, rfl⟩
+
+/-- No coordination (`COORD`) reads a list in which every comma or join word is followed by a part's first token. -/
+theorem coord_false (hV : framesOk V = true) {u : List Tok} {ps : List Piece} (hg0 : Gen V (.n .COORD) u ps)
+    (hadj : Adj V f u) : False := by
+  obtain ⟨rhs, k, cs, hr, hg, ha⟩ := gen_rule hg0
+  obtain ⟨o, c, c', rfl⟩ := coord_rules hr
+  obtain ⟨w1, w2, c1, c2, rfl, -, -, h2⟩ := genAll2 hg
+  obtain ⟨x, y, u', rfl, hx, hy⟩ := t_head2 (f := f) hV h2
+  exact (adj_suffix hadj).1 hx hy
+
 end VE.Acts.NormalProofs
