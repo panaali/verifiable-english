@@ -487,7 +487,7 @@ theorem named_value (M : VE.FiniteModel Entity) (k : VE.Closure.Kind) (p : Strin
     (hc : ∀ a b, c.contains (a, b) = true ↔ VE.Closure.Path (fun x y => [x, y] ∈ M.relations p) a b) :
     reachValue (decide (k = .star)) c (t.denote M.asStructure ρ) (u.denote M.asStructure ρ) =
       (VE.Closure.Formula.reachNamed k p t u).eval M ρ := by
-  simp only [VE.Closure.Formula.eval]
+  simp only [VE.Closure.Formula.eval, VE.Closure.Formula.toCore, VE.Core.Formula.eval]
   cases t.denote M.asStructure ρ <;> cases u.denote M.asStructure ρ <;> try rfl
   exact VE.Route.Closure.reachValue_closure k c _ _ (VE.Closure.mem_namedEdges _) hc _ _
 
@@ -496,7 +496,7 @@ theorem body_value (M : VE.FiniteModel Entity) (k : VE.Closure.Kind) (x : String
     (hc : ∀ v w, c.contains (v, w) = true ↔ VE.Closure.Path (closureRel M (.body x a, ρ)) v w) :
     reachValue (decide (k = .star)) c (t.denote M.asStructure ρ) (u.denote M.asStructure ρ) =
       (VE.Closure.Formula.reachBody k x a t u).eval M ρ := by
-  simp only [VE.Closure.Formula.eval]
+  simp only [VE.Closure.Formula.eval, VE.Closure.Formula.toCore, VE.Core.Formula.eval]
   cases t.denote M.asStructure ρ <;> cases u.denote M.asStructure ρ <;> try rfl
   exact VE.Route.Closure.reachValue_closure k c _ _ (VE.Closure.mem_bodyEdges _ _) hc _ _
 
@@ -571,7 +571,7 @@ theorem evalC_sound (mem : String → List Entity → Bool) (M : VE.FiniteModel 
     simp only [Option.some.injEq] at h
     subst h
     refine ⟨?_, hs⟩
-    simp only [VE.Closure.Formula.eval]
+    simp only [VE.Closure.Formula.eval, VE.Closure.Formula.toCore, VE.Core.Formula.eval]
     cases t.denote M.asStructure ρ with
     | none => rfl
     | some v => exact Bool.eq_iff_iff.mpr (by simp [hmem])
@@ -582,7 +582,7 @@ theorem evalC_sound (mem : String → List Entity → Bool) (M : VE.FiniteModel 
     simp only [Option.some.injEq] at h
     subst h
     refine ⟨?_, hs⟩
-    simp only [VE.Closure.Formula.eval]
+    simp only [VE.Closure.Formula.eval, VE.Closure.Formula.toCore, VE.Core.Formula.eval]
     cases t.denote M.asStructure ρ <;> cases u.denote M.asStructure ρ <;> try rfl
     exact Bool.eq_iff_iff.mpr (by simp [hmem])
   | reachNamed k p t u =>
@@ -631,7 +631,7 @@ theorem evalC_sound (mem : String → List Entity → Bool) (M : VE.FiniteModel 
       simp only [Option.map_some, Option.some.injEq] at h
       subst h
       obtain ⟨hx, hP⟩ := ih ρ _ x hs ha
-      exact ⟨by simp [VE.Closure.Formula.eval, hx], hP⟩
+      exact ⟨by simp [VE.Closure.Formula.eval, VE.Closure.Formula.toCore, VE.Core.Formula.eval, hx], hP⟩
   | and a b ia ib =>
     intro ρ s r hs h
     have h := tickM_some h
@@ -642,12 +642,13 @@ theorem evalC_sound (mem : String → List Entity → Bool) (M : VE.FiniteModel 
     · rename_i s' ha
       obtain ⟨hv, hP⟩ := ia ρ _ _ hs ha
       obtain ⟨hr, hP'⟩ := ib ρ _ _ hP h
-      exact ⟨by simp only [VE.Closure.Formula.eval, ← hv, Bool.true_and]; exact hr, hP'⟩
+      exact ⟨by rw [show (VE.Closure.Formula.and a b).eval M ρ = (a.eval M ρ && b.eval M ρ) from rfl,
+        ← hv, Bool.true_and]; exact hr, hP'⟩
     · rename_i s' ha
       obtain ⟨hv, hP⟩ := ia ρ _ _ hs ha
       simp only [Option.some.injEq] at h
       subst h
-      exact ⟨by simp [VE.Closure.Formula.eval, ← hv], hP⟩
+      exact ⟨by simp [show (VE.Closure.Formula.and a b).eval M ρ = (a.eval M ρ && b.eval M ρ) from rfl, ← hv], hP⟩
   | or a b ia ib =>
     intro ρ s r hs h
     have h := tickM_some h
@@ -659,11 +660,12 @@ theorem evalC_sound (mem : String → List Entity → Bool) (M : VE.FiniteModel 
       obtain ⟨hv, hP⟩ := ia ρ _ _ hs ha
       simp only [Option.some.injEq] at h
       subst h
-      exact ⟨by simp [VE.Closure.Formula.eval, ← hv], hP⟩
+      exact ⟨by simp [show (VE.Closure.Formula.or a b).eval M ρ = (a.eval M ρ || b.eval M ρ) from rfl, ← hv], hP⟩
     · rename_i s' ha
       obtain ⟨hv, hP⟩ := ia ρ _ _ hs ha
       obtain ⟨hr, hP'⟩ := ib ρ _ _ hP h
-      exact ⟨by simp only [VE.Closure.Formula.eval, ← hv, Bool.false_or]; exact hr, hP'⟩
+      exact ⟨by rw [show (VE.Closure.Formula.or a b).eval M ρ = (a.eval M ρ || b.eval M ρ) from rfl,
+        ← hv, Bool.false_or]; exact hr, hP'⟩
   | implies a b ia ib =>
     intro ρ s r hs h
     have h := tickM_some h
@@ -674,12 +676,13 @@ theorem evalC_sound (mem : String → List Entity → Bool) (M : VE.FiniteModel 
     · rename_i s' ha
       obtain ⟨hv, hP⟩ := ia ρ _ _ hs ha
       obtain ⟨hr, hP'⟩ := ib ρ _ _ hP h
-      exact ⟨by simp only [VE.Closure.Formula.eval, ← hv, Bool.not_true, Bool.false_or]; exact hr, hP'⟩
+      exact ⟨by rw [show (VE.Closure.Formula.implies a b).eval M ρ = (!(a.eval M ρ) || b.eval M ρ) from rfl,
+        ← hv, Bool.not_true, Bool.false_or]; exact hr, hP'⟩
     · rename_i s' ha
       obtain ⟨hv, hP⟩ := ia ρ _ _ hs ha
       simp only [Option.some.injEq] at h
       subst h
-      exact ⟨by simp [VE.Closure.Formula.eval, ← hv], hP⟩
+      exact ⟨by simp [show (VE.Closure.Formula.implies a b).eval M ρ = (!(a.eval M ρ) || b.eval M ρ) from rfl, ← hv], hP⟩
   | all x a ih =>
     intro ρ s r hs h
     have h := tickM_some h

@@ -11,6 +11,17 @@
         "additionalProperties": false,
         "properties": {
           "cardinality": {"$ref": "#/$defs/cardinality_report"},
+          "composed": {
+            "additionalProperties": false,
+            "properties": {
+              "chain_document": {"type": "string"},
+              "counting_document": {"type": "string"},
+              "not_certified": {"$ref": "common.json#/$defs/strings"},
+              "scope": {"type": "string"}
+            },
+            "required": ["counting_document", "chain_document", "not_certified", "scope"],
+            "type": "object"
+          },
           "composed_readings": {"$ref": "#/$defs/composed_readings"},
           "coverage": {"$ref": "#/$defs/coverage"},
           "document_id": {"$ref": "common.json#/$defs/hex64"},
@@ -42,6 +53,15 @@
       "additionalProperties": false,
       "properties": {
         "environment_id": {"$ref": "common.json#/$defs/hex64"},
+        "leaf_labels": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {"label": {"type": "string"}, "name": {"type": "string"}},
+            "required": ["name", "label"],
+            "type": "object"
+          },
+          "type": "array"
+        },
         "report": {
           "additionalProperties": false,
           "properties": {
@@ -55,7 +75,7 @@
         "w6_environment_id": {"$ref": "common.json#/$defs/hex64"},
         "w6_target_environment_id": {"$ref": "common.json#/$defs/hex64"}
       },
-      "required": ["environment_id", "w6_environment_id", "w6_target_environment_id", "report", "report_id"],
+      "required": ["environment_id", "w6_environment_id", "w6_target_environment_id", "report", "leaf_labels", "report_id"],
       "type": "object"
     },
     "cells": {
