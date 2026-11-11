@@ -186,3 +186,48 @@ Recorded in `docs/usecases/safetyfw/accounting-seeded-bugs.json`. Only Python an
   use a live `git diff`, and the task (6) asks for it.
 - SIZE: 482 product (usecases/safetyfw_accounting.py), 274 tests, 184 other hand-written lines (the two sidecars)
   plus this REPORT. The two accounting.json files are tool output.
+
+## Tests run
+
+- `uv run pytest -q tests/test_safetyfw_accounting.py`: 40 passed.
+- Final selected run, on committed HEAD 66f4d3d421 with a clean tree:
+  `MAC_PYTEST_NO_DEFER=1 zsh manage-agents/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`.
+  It selected 50 of 594 units and exited 0. The log's last lines: "recorded 50 units for tree 0ed20308a3; ... 0
+  failed" and "ran on ve-cloud-3 (x86_64) instead of the VM because: MAC_LAST_RESORT: VM full ... exit=0".
+- `uv run python tools/regen_generated.py --check`: exit 0 (nothing stale).
+- No pre-existing main failures were met.
+- I did not run the full gate: the chain runs it.
+
+## Self-review against BUILDER-CHECKLIST
+
+1. Lean answers typed and contained: N.A. No relay, Lean answer or schema is read or added.
+2. Every deliverable built, no rule broken: PASS. See the Deliverables table, with a commit and test for each. No
+   Lean decision is copied; the tool computes no verdict. The one report test is the one the task's (6) asks for
+   (`test_saved_report_totals_are_the_sidecars`).
+3. Tests and gates can fail: PASS. Six seeded bugs, each with its failing test
+   (`docs/usecases/safetyfw/accounting-seeded-bugs.json`).
+4. Python, Lean and Rust agree: N.A. Only a stdlib Python tool and data changed. Its word tables equal account.py's
+   (probe: STOP set and SUFFIXES compared with account.py: "stop same True", "suffixes same True").
+5. R8 binding: N.A. No Lean answer is read. The tool's own binding (sidecar ids against block ids, reason arguments
+   against blocks, predicates, reading sets and PLAN items) is tested: `test_sidecar_form_problems`,
+   `test_reason_arguments_resolve`.
+6. Gate evidence matches HEAD: PASS. Main was merged (58c123285a) before the evidence was written. The selected run
+   used the committed HEAD 66f4d3d421; only this .md changed after it. The chain runs the gate.
+7. No unsigned item: PASS. No DELTA row and no trust growth.
+8. User-visible change in DELTA: N.A. No `ve` output changed. The diff touches no `ve/`, `lean/` or `rust/` file
+   (`git diff main --stat`).
+9. Test selection finds the tests: PASS. `tools/select_tests.py --base $(git merge-base HEAD main)` selects 50 of
+   594 units, `tests/test_safetyfw_accounting.py` among them.
+10. Lean statements: N.A. No Lean changed.
+11. Budgets fail closed: N.A. No budget or deadline. The 2,500-character window is tested:
+    `test_unanchored_quotes_are_problems` (third quote).
+12. CPU/memory: N.A. A one-second offline tool; nothing on a `ve` path.
+13. Removed tests: N.A. None removed or renamed.
+14. Both directions, cited evidence, spec re-read: PASS.
+    - Every reason has a passing and a failing fixture (`test_reason_arguments_resolve`, 16 cases), as do anchoring
+      (`test_elided_quote_*` and `test_unanchored_quotes_are_problems`) and layout skipping
+      (`test_anchoring_skips_layout_but_not_words`).
+    - Spec re-read: each of (1)a-e, (2), (3), (4) and (6) against the task text; deviations are under "Choices and
+      deviations".
+15. No overclaim, no silent cut, every check can fail, limits charged first: PASS. No deliverable is cut: both
+    sidecars are complete. Each new check has a seeded bug or a failing fixture. No limits apply.
