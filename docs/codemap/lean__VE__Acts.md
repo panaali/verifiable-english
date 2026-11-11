@@ -16,7 +16,10 @@
 - `lean/VE/Acts/Linearize.lean` — The normal form and the text of a simple act (docs/spec/act-phrases.md 5.5).
 - `lean/VE/Acts/Meaning.lean` — The meaning of a derivation of an act phrase: its act tree (docs/spec/act-phrases.md 1.5, 5.3; plan D9 (i)).
 - `lean/VE/Acts/MeaningExamples.lean` — Fixtures of the meaning, `readings`, `read` and `analyse` (docs/spec/act-phrases.md 5.3, 5.4, 11.2, 11.2b).
-- `lean/VE/Acts/NormalProofs.lean` — `read_normal` (docs/spec/act-phrases.md 5.6): the normal form of a `normalOk` atom reads back as its canonical atom.
+- `lean/VE/Acts/NormalBlocks.lean` — The elements, the object and the head of a normal form read back, for the uniqueness half of `read_normal` (docs/spec/act-phrases.md 5.6; `VE.Acts.NormalUnique…
+- `lean/VE/Acts/NormalInverse.lean` — Reading a derivation of the act grammar backwards, for the uniqueness half of `read_normal` (docs/spec/act-phrases.md 5.6; `VE.Acts.NormalUnique`).
+- `lean/VE/Acts/NormalProofs.lean` — The existence and bounds halves of `read_normal` (docs/spec/act-phrases.md 5.6); `read_normal` itself, with the uniqueness half, is in `VE.Acts.NormalUnique`.
+- `lean/VE/Acts/NormalUnique.lean` — The uniqueness half of `read_normal` (docs/spec/act-phrases.md 5.6), and `read_normal` itself.
 - `lean/VE/Acts/ParseIndexExamples.lean` — ap-parse-index's fixtures: the steps of a growing vocabulary, the hashed indexes, and the compiled forms. L6 (`V5`'s 64 readings) with `n` more frames, up to t…
 - `lean/VE/Acts/Read.lean` — Readings and reading of an act phrase, with the limits of D2 (docs/spec/act-phrases.md 1.6, 5.4, 5.6).
 - `lean/VE/Acts/Readings.lean` — The readings of an act phrase, `read` and `analyse` (docs/spec/act-phrases.md 1.6, 5.4), and spec 5.6's theorems about them.
