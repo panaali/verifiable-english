@@ -1,0 +1,12 @@
+{
+ "job": "testmap-08f3c2af-t398479-s1",
+ "head": "c733a3269f13b8f2a47bbdfe106e82ab758b5549",
+ "argv": [
+  "testmap-08f3c2af-t398479-s1",
+  "c733a3269f13b8f2a47bbdfe106e82ab758b5549",
+  "c733a3269f13b8f2a47bbdfe106e82ab758b5549",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-1887a7420de0.tar.zst",
+  "4ce7177af75af93171fbadc71a9ad70b032b008a2d4b0e17dfe777974e56718d",
+  "shard=ulimit -s 8192; tc=$(cat lean/lean-toolchain); tc=${tc//\\//--}; mkdir -p ~/.elan/toolchains; ln -sfn /opt/lean ~/.elan/toolchains/${tc//:/---}; mkdir -p ~/.elan/bin; for t in lean lake; do [ -e ~/.elan/bin/$t ] || ln -sfn /opt/lean/bin/$t ~/.elan/bin/$t; done; uv run --frozen python tools/test_map.py record --no-merge --jobs 4 --output \"$RUNNER_TEMP/out/map-s1.json.gz\" tests/test_english_evidence.py tests/test_difffuzz.py tests/test_inventory_path.py tests/test_english_lean_route.py tests/test_run_order.py tests/test_english_lean_s3.py tests/test_heavy_tests.py tests/test_select_fast_stage.py 2>&1 | tee \"$RUNNER_TEMP/out/shard-full.txt\"; exit ${PIPESTATUS[0]}"
+ ]
+}
