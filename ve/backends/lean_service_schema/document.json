@@ -32,24 +32,25 @@
               "profiles": {"$ref": "common.json#/$defs/strings"},
               "spec_revision": {"type": "string"},
               "vocabulary": {
+                "additionalProperties": false,
                 "properties": {
+                  "acts": true,
                   "constants": {
                     "additionalProperties": {
-                      "properties": {"description": {"type": "string"}, "sort": {"type": "string"}},
+                      "additionalProperties": false,
+                      "properties": {"description": {"type": "string"}, "sort": {"type": "string"}, "verbalisation": true},
                       "required": ["sort", "description"],
                       "type": "object"
                     },
                     "type": "object"
                   },
                   "predicates": {
-                    "additionalProperties": {
-                      "properties": {"arguments": {"$ref": "common.json#/$defs/strings"}},
-                      "required": ["arguments"],
-                      "type": "object"
-                    },
+                    "additionalProperties": {"$ref": "common.json#/$defs/environment_predicate"},
                     "type": "object"
                   },
-                  "sorts": {"additionalProperties": {"type": "object"}, "type": "object"}
+                  "rights": true,
+                  "soft": true,
+                  "sorts": {"additionalProperties": true, "type": "object"}
                 },
                 "required": ["sorts", "predicates", "constants"],
                 "type": "object"

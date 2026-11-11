@@ -273,12 +273,14 @@ def «row» : Shape :=
         ("events_view", copied "Service.Document.eventsView: under events@0 (et-5b), the environment the mode read (Events.routeView: the written one without its block and events@0, one day constant per named date); the client binds it whole to the document's environment as written (ve.events.view) and builds the document over it" <|
           n [obj, .required ["language", "profiles", "spec_revision", "vocabulary"], closed [
             ("language", str), ("profiles", ref "common.json#/$defs/strings"), ("spec_revision", str),
-            ("vocabulary", n [obj, .required ["sorts", "predicates", "constants"], props [
-              ("sorts", n [obj, .object [] (some (n [obj]))]),
-              ("predicates", n [obj, .object [] (some (n [obj, .required ["arguments"],
-                props [("arguments", ref "common.json#/$defs/strings")]]))]),
+            -- The canonical environment's vocabulary members (common.json `environment`); each declaration the
+            -- written one's, compared whole by the client, but the named dates' constants, Lean's own.
+            ("vocabulary", n [obj, .required ["sorts", "predicates", "constants"], closed [
+              ("sorts", n [obj, .object [] (some (.bool true))]),
+              ("predicates", n [obj, .object [] (some (ref "common.json#/$defs/environment_predicate"))]),
               ("constants", n [obj, .object [] (some (n [obj, .required ["sort", "description"],
-                props [("sort", str), ("description", str)]]))])]])]])]]]
+                closed [("sort", str), ("description", str), ("verbalisation", .bool true)]]))]),
+              ("soft", .bool true), ("rights", .bool true), ("acts", .bool true)]])]])]]]
 
 def file : File where
   name := "document.json"
@@ -293,6 +295,6 @@ def file : File where
 
 -- The document protocol includes every composed-reading field and every existing row, and `events_view` (et-5b).
 -- Its rendered fingerprint is fixed with this wire change; changing the shape requires review.
-#guard (file.render.toOption.map (hash ·.compress)) == some 9391587417709740161
+#guard (file.render.toOption.map (hash ·.compress)) == some 3654778105975326606
 
 end ResponseShape.Schemas.Document

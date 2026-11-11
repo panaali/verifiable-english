@@ -1096,7 +1096,7 @@ module ResponseShape.Schemas.Discourse a30f2ed071f60c78f07fc02168bd11cb9d7b2ec66
 258:0-268:42 def ResponseShape.Schemas.Discourse.row@ResponseShape.Schemas.Discourse
 270:0-288:29 def ResponseShape.Schemas.Discourse.file@ResponseShape.Schemas.Discourse
 290:0-292:99 def ResponseShape.Schemas.Discourse.rendered@ResponseShape.Schemas.Discourse
-module ResponseShape.Schemas.Document 72a520b88ad191665f2ce8ee619f90c01b36310be690ddecfe916c5ff501fd6f
+module ResponseShape.Schemas.Document 488b461fa31dbd063bbb3106a1ef286859d734c1b59dc4724d3231b55623cbd9
 11:0-30:54 def ResponseShape.Schemas.Document.unit@ResponseShape.Schemas.Document
 32:0-34:62 def ResponseShape.Schemas.Document.nullable@ResponseShape.Schemas.Document
 36:0-42:53 def ResponseShape.Schemas.Document.soft_exception@ResponseShape.Schemas.Document
@@ -1121,8 +1121,8 @@ module ResponseShape.Schemas.Document 72a520b88ad191665f2ce8ee619f90c01b36310be6
 217:0-223:47 def ResponseShape.Schemas.Document.model_error@ResponseShape.Schemas.Document
 225:0-235:55 def ResponseShape.Schemas.Document.fence_error@ResponseShape.Schemas.Document
 237:0-245:51 def ResponseShape.Schemas.Document.cardinalityReport@ResponseShape.Schemas.Document
-247:0-281:73 def ResponseShape.Schemas.Document.row@ResponseShape.Schemas.Document
-283:0-292:43 def ResponseShape.Schemas.Document.file@ResponseShape.Schemas.Document
+247:0-283:89 def ResponseShape.Schemas.Document.row@ResponseShape.Schemas.Document
+285:0-294:43 def ResponseShape.Schemas.Document.file@ResponseShape.Schemas.Document
 module ResponseShape.Schemas.English cac4d311bedeccfe8302f5450b96237f9a1caf7e562a44756c141dc01d3849df
 8:0-12:82 def ResponseShape.Schemas.English.error@ResponseShape.Schemas.English
 14:0-21:64 def ResponseShape.Schemas.English.run@ResponseShape.Schemas.English

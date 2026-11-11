@@ -8,11 +8,11 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 |---|---:|
 | leaves:bound | 298 |
 | leaves:closed domain | 313 |
-| leaves:none | 1618 |
+| leaves:none | 1617 |
 | modes | 44 |
 | today:hand | 203 |
 | today:later Lean request | 62 |
-| today:not probed | 1216 |
+| today:not probed | 1215 |
 | today:shape | 611 |
 | today:unbound | 137 |
 | answers | 599 |
@@ -3131,7 +3131,6 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/events_view/vocabulary/constants/{}/sort` | string | none |  |  | 0 | not probed |
 | `/events_view/vocabulary/predicates/@key` | key | none |  |  | 0 | not probed |
 | `/events_view/vocabulary/predicates/{}/arguments/*` | string | none |  |  | 0 | not probed |
-| `/events_view/vocabulary/sorts/@key` | key | none |  |  | 0 | not probed |
 | `/id` | any | bound | x-echo |  | 9 | shape |
 | `/id` | string | bound | x-equals |  | 9 | shape |
 | `/judgment_lines/legend/*/lines/*` | string | none |  |  | 7 | not probed |
