@@ -559,6 +559,10 @@ def gap_answer(id_, case):
     return {"route": "D1", "undecided": "unmapped gap question"}
 
 
+# G1's query: D1's own act for "delay AI development and deployment" (F24, F25), not a query-only slot.
+G1_ACT = "delay"
+
+
 def gap_probe(id_):
     """Ask VE about the two absent acts using an extension of D1's vocabulary.
 
@@ -612,7 +616,7 @@ def gap_probe(id_):
             "constants": {c: c for c in env.constants},
             "relations": {p: sorted(v) for p, v in relations.items()}})
         if id_ == "G1":
-            selected_rules = [r for r in doc.elaborated.selected_rules("delay", m, ("s",)) if r.sign]
+            selected_rules = [r for r in doc.elaborated.selected_rules(G1_ACT, m, ("s",)) if r.sign]
         else:
             selected_rules = doc.elaborated.selected_rules("plans_in_place", m, ("s", "cyber_capability"))
         rows.append({"choice": assignment, "holds": not bool(selected_rules),
