@@ -1,3 +1,4 @@
+- `tests/test_p1_amendment11.py` — Budget choice and two-turn execution/analysis, without provider calls.
 - `tests/test_p1_amendment12.py` — Ceiling-driven judge substitution: budgets, routing, reuse and disclosure.
 - `tests/test_p1_amendment13.py` — Audited abstentions, gate scope, zero-generation reuse and strict bounds.
 - `tests/test_p1_amendment14.py` — Attacker accounting recovery, exact scored reuse, and partial initial analysis.

@@ -1,0 +1,52 @@
+{
+ "mutants": [
+  {
+   "id": "M1",
+   "file": "lean/VE/Closure/Syntax.lean",
+   "claim": "(a) closure's meaning is Core's on the embedding: Closure.Formula.denote := a.toCore.denote; seeded: the embedding swaps a connective (and to or). Fails VE.Closure.conservativity (Syntax.lean:85, unsolved goals); with that proof cut by hand, the #guards Closure/Checks.lean:17, :35 and :47 refute it (REPORT.md, Seeded bugs)",
+   "find": "  | .and a b => .and a.toCore b.toCore",
+   "replace": "  | .and a b => .or a.toCore b.toCore",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && out=$(PATH=$HOME/.elan/bin:$PATH lake build VE.Closure.Checks 2>&1); s=$?; printf '%s\\n' \"$out\" | grep -E '^error' | head -6; exit $s"
+   ]
+  },
+  {
+   "id": "M2",
+   "file": "lean/VE/Closure/Finite.lean",
+   "claim": "(b) Closure/Finite is Core's under the closure names; seeded: the bodyEdges alias points at the wrong Core definition (namedEdges). Fails the corollary VE.Closure.mem_bodyEdges (Finite.lean:20, type mismatch); with that proof cut by hand, the #guard Closure/Checks.lean:56 refutes it",
+   "find": "  VE.Core.bodyEdges domain f",
+   "replace": "  VE.Core.namedEdges (domain.map fun x => [x, x])",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && out=$(PATH=$HOME/.elan/bin:$PATH lake build VE.Closure.Checks 2>&1); s=$?; printf '%s\\n' \"$out\" | grep -E '^error' | head -6; exit $s"
+   ]
+  },
+  {
+   "id": "M3",
+   "file": "lean/VE/Closure/Syntax.lean",
+   "claim": "(c) the embedding covers every closure constructor; seeded: one case (reachNamed) dropped. Fails the build of VE.Closure.Syntax (Syntax.lean:27, missing cases)",
+   "find": "  | .reachNamed k p t r => .reachNamed k p t r\n",
+   "replace": "",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && out=$(PATH=$HOME/.elan/bin:$PATH lake build VE.Closure.Checks 2>&1); s=$?; printf '%s\\n' \"$out\" | grep -E '^error' | head -6; exit $s"
+   ]
+  },
+  {
+   "id": "M4",
+   "file": "lean/VE/Closure/Syntax.lean",
+   "claim": "(c') the embedding keeps each reachability kind; seeded: reachNamed always embeds as .plus. The #guards Closure/Checks.lean:13 (rtc evaluation, on main) and :43 (toCore of a star reach) refute it",
+   "find": "  | .reachNamed k p t r => .reachNamed k p t r",
+   "replace": "  | .reachNamed _ p t r => .reachNamed .plus p t r",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && out=$(PATH=$HOME/.elan/bin:$PATH lake build VE.Closure.Checks 2>&1); s=$?; printf '%s\\n' \"$out\" | grep -E '^error' | head -6; exit $s"
+   ]
+  }
+ ]
+}

@@ -78,6 +78,7 @@
 - `tests/test_assist_split.py` — AR-9 split the assist recovery and session modules; these pin what the split must keep.
 - `tests/test_assurance_manifest.py` — The operation assurance manifest is bound to the code it describes.
 - `tests/test_attacks.py` — (no module docstring)
+- `tests/test_attitudes_at1_report.py` — at-1's report (docs/attitudes/at-1/REPORT.md): its trust shortfalls and sizes are recomputed from saved evidence.
 - `tests/test_authoring.py` — (no module docstring)
 - `tests/test_b11b_report.py` — The 11b report's measured numbers are generated from its gate artifacts.
 - `tests/test_b14c.py` — Batch 14c: n-ary definitions have one Lean owner on the core family.
@@ -88,4 +89,3 @@
 - `tests/test_b16c_evidence.py` — The 16c progress report is a view of saved evidence, independent of live git HEAD.
 - `tests/test_b16d_document.py` — Batch 16d: norm-defaults and fenced documents are Lean document answers.
 - `tests/test_b16d_evidence.py` — Check batch 16d's committed measurements without consulting live git state.
-- `tests/test_b16d_norm_roles.py` — Batch 16d review B1 and B2: which norm units make the norm-defaults document.
