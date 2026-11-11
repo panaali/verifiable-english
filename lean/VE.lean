@@ -17,6 +17,8 @@ import VE.Readings.SoftSeparateExamples
 import VE.Readings.SoftSup
 import VE.Readings.SoftSupExamples
 import VE.Readings.SoftSupLabels
+import VE.Readings.SoftSupRun
+import VE.Readings.SoftSupRunExamples
 import VE.Readings.SoftSupWire
 import VE.Readings.SoftSupWireExamples
 import VE.Closure.OrderChecks
