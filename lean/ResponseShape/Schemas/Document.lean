@@ -236,11 +236,12 @@ def fence_error : Shape :=
 
 /-- Under `cardinality@0`, `Service.Document.cardinalityReport`: the three environment identities, the report and its id. -/
 def cardinalityReport : Shape :=
-  n [obj, .required ["environment_id", "w6_environment_id", "w6_target_environment_id", "report", "report_id"], closed [
+  n [obj, .required ["environment_id", "w6_environment_id", "w6_target_environment_id", "report", "leaf_labels", "report_id"], closed [
     ("environment_id", ref "common.json#/$defs/hex64"), ("w6_environment_id", ref "common.json#/$defs/hex64"),
     ("w6_target_environment_id", ref "common.json#/$defs/hex64"),
     ("report", n [obj, .required ["root", "leaves"], closed [("root", ref "cardinality.json#/$defs/claim"),
       ("leaves", n [arr, .items (ref "cardinality.json#/$defs/claim")])]]),
+    ("leaf_labels", n [arr, .items (n [obj, .required ["name", "label"], closed [("name", str), ("label", str)]])]),
     ("report_id", ref "common.json#/$defs/hex64")]]
 
 def «row» : Shape :=
@@ -264,7 +265,11 @@ def «row» : Shape :=
         ("undeclared_evaluative", ref "#/$defs/undeclared_evaluative"),
         ("composed_readings", ref "#/$defs/composed_readings"),
         ("cardinality", copied "Service.Document.cardinalityReport: the cardinality mode's report, its identities and the leaves; the client recomputes `report_id` over the request's graph" <|
-          ref "#/$defs/cardinality_report")]]]
+          ref "#/$defs/cardinality_report"),
+        ("composed", copied "Service.Document.composedJson: under cardinality@0's chain list, each reading's document and what the row does not certify; the client binds them to the request" <|
+          n [obj, .required ["counting_document", "chain_document", "not_certified", "scope"], closed [
+            ("counting_document", str), ("chain_document", str),
+            ("not_certified", ref "common.json#/$defs/strings"), ("scope", str)]])]]]
 
 def file : File where
   name := "document.json"
@@ -279,6 +284,6 @@ def file : File where
 
 -- The document protocol includes every composed-reading field and every existing row.
 -- Its rendered fingerprint is fixed with this wire change; changing the shape requires review.
-#guard (file.render.toOption.map (hash ·.compress)) == some 6599105763662197523
+#guard (file.render.toOption.map (hash ·.compress)) == some 10036135824260254077
 
 end ResponseShape.Schemas.Document

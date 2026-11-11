@@ -13,6 +13,13 @@ from .load import load_document
 
 def render_document(path):
     doc = load_document(path)
+    if "composed" not in doc:
+        return _rendered(doc)
+    # A chain list document: Lean's scope line first, then each reading's own lines.
+    return doc["composed"]["scope"] + "\n" + _rendered(doc) + ("" if doc["chain"] is None else _rendered(doc["chain"]))
+
+
+def _rendered(doc):
     lines = []
     from ..printer import render
     render_env = (doc["soft_document"].extended_env if doc["soft_document"] is not None
