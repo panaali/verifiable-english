@@ -30,11 +30,13 @@
 - `usecases/eligibility/run.py` — Run VE on every Winter Fuel Payment profile and compare with the answer key.
 - `usecases/eligibility/source/extract_text.py` — Extract the main-content text of a pinned GOV.UK page (stdlib only).
 - `usecases/eligibility/translation.py` — VE translation of the Winter Fuel Payment rules (PLAN.md sections 4 and 6).
+- `usecases/keyed_paths.py` — Record which checker path, Lean's or Python's, computes the keyed answers of a use case.
 - `usecases/math-mini-paper/boundary/probe.py` — Task B probe: how far does VE get with Euclid's infinitude of primes?
 - `usecases/math-mini-paper/make_paper.py` — Expand `paper.template.md` into `paper.md` using only machine-produced text.
 - `usecases/math-mini-paper/theory.py` — Formal content of the mini-paper: every VE statement is built here, once.
 - `usecases/math-mini-paper/verify.py` — Re-run every check in the mini-paper from scratch and print the results table.
 - `usecases/math-mini-paper/verify_definitions.py` — W3 rerun: definition Background and a labelled T7 citation bundle.
+- `usecases/measure_keyed_paths.py` — Run the three keyed harnesses under the path recorder and save `docs/usecases/keyed-answers.json`.
 - `usecases/news-article/build_w6a_document.py` — Build `news-w6a.ve.md`: the news article as a W6a quantity document.
 - `usecases/openai-preparedness/build_document.py` — Partition the pinned PF text and ask VE to classify every unit (PLAN 7, M3).
 - `usecases/openai-preparedness/measure.py` — Map every PF byte outside CHECKED to the feature it awaits (PLAN 7, M3).
