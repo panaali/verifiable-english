@@ -1,8 +1,3 @@
-- `tests/test_safetyfw_usecases.py` — The anthropic-rsp and openai-preparedness use cases (usecases/<case>): the frozen answer keys and their transcription.
-- `tests/test_sc9_migrate.py` — SC-9's migration of the constitution pilot's translation to the soft form (docs/spec/rd-9-soft-chain-PLAN.md SC-9; `usecases/claude-constitution-pilot/run-2026…
-- `tests/test_scales_exercised.py` — Every trusted definition of `lean/VE/Scales/` is stated about by a theorem (standing ruling R16).
-- `tests/test_scope_5_4_statements.py` — The statement gate for spec 5.4 (SC-2): each proved theorem is the reviewed text, whitespace aside (sc-2c, sc-2d).
-- `tests/test_scope_5_6_statements.py` — The statement gate for spec 5.6 (SC-4): each proved theorem and each definition the statements read is the reviewed text, whitespace aside (sc-4).
 - `tests/test_scope_answer.py` — The explain route (scope SC-1c): `ve scope explain` relays Lean's rows (service mode `scope`) and never shows an answer that is not one about the document it a…
 - `tests/test_scope_authoring.py` — SC-7: scope's authoring wordings (docs/spec/scope.md 2.2, 5.8, 7.8).
 - `tests/test_scope_b1_input.py` — B1's input and its check (docs/spec/scope-PLAN.md, benchmarks B1 and C11): the case `tools/bench/scope_b1.py` builds is F1-doc's block over the full pinned con…
@@ -61,7 +56,6 @@
 - `tests/test_stage2_standalone.py` — Standalone Lean service bindings compared with Python's public identities.
 - `tests/test_stage2_validation.py` — Environment and model validation on the Lean authority (ve/backends/validation.py).
 - `tests/test_statement_block_environment.py` — The statement-layer block routes as environment validators (lf-5 post-merge).
-- `tests/test_statement_scanner.py` — The shared declaration scanner of the statement gates reads a declaration's extent as Lean does (review sc-2d-f1 F2).
 - `tests/test_stats.py` — (no module docstring)
 - `tests/test_suite_tail.py` — The suite-tail measurement (tools/bench/suite_tail.py) and the profile records it reads (tools/pytest_profile.py).
 - `tests/test_surface_registry.py` — (no module docstring)
@@ -81,3 +75,11 @@
 - `tests/test_units_relay_w6a.py` — The W6a ground family through Python's relay of Lean's quantity typing.
 - `tests/test_units_w6a.py` — W6a admission regression cases: identity, exact grid, dates, and counting.
 - `tests/test_vacuity.py` — (no module docstring)
+- `tests/test_ve_iface.py` — (no module docstring)
+- `tests/test_views.py` — Empirical injectivity, controlled vocabulary, and adversarial scope cases.
+- `tests/test_views_polish.py` — Review regressions: lexical limits, shared scopes, cells, and measurements.
+- `tests/test_w6a2_looprecheck1.py` — W6a loop recheck (round 2, recheck 1) regressions: static limits, three ways.
+- `tests/test_w6a2_numeral_characters.py` — Numeral limits count Unicode characters on every W6a route: the order and countermodel routes in Python, Lean and Rust, the quantity routes in Lean and Python'…
+- `tests/test_w6a_certificate_steps.py` — Certificate replay steps: Python's 10,000-step budget, in Lean too.
+- `tests/test_w6a_citations.py` — W6a loop recheck 1, P1 (directive incomplete): citations on the quantity document route.
+- `tests/test_w6a_documents.py` — W6a quantity documents: Lean admission (`ve_quantity` case `document`) and Python's relay of it (Lean-first batch 9 deleted Python's copy and Rust's quantity r…

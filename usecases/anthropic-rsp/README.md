@@ -68,6 +68,8 @@ its comparison without writing a file.
 
 ## Answers to the frozen key (2026-10-29)
 
+**How these answers are computed today.** Lean elaborates the soft rules and replays every certificate. Python builds the rule formulas and evaluates them on each case, so a selection, a completed outcome or a CONFLICT is Python's answer. See [who computes the keyed answers](../../docs/usecases/keyed-answers.md) for the answer-by-answer table (work item `kb-10`).
+
 `results.json` records one row per key item in `comparison`, with `agree`, `status`, `route` and `cause`. The progress
 score can read `comparison[].agree` for useful answers and `status == "UNDECIDED-faithful"` for faithful undecided
 answers. These counts are not audit-validated until `uc-audit` reviews the translation.
