@@ -105,6 +105,8 @@ refuses D1 with `judgments@0` plus `soft-norms@0`: the composed Lean route is un
 
 ## Answers to the frozen key (2026-11-11)
 
+**How these answers are computed today.** The harness asks Lean for the soft elaboration, builds each query's formulas in Python (`ve/norms.py`: which rules are selected, a predicate's outcome, the conflict targets) and has Lean replay a certificate or evaluate a model over them. The replay and the evaluation are Lean's and proved; the rule formulas are Python's until work item `kb-10` moves them onto Lean's soft-norms route (measured 2026-11-11).
+
 `run.py` asks VE each of the 239 key questions through the document built from `rules.d1.ve` and `facts.d1.ve`
 (D1: soft-norms@0 rule selection under both completion defaults and every reading choice the question's rules
 name; W1 conflict checks with certificates; relational-fol@0 entailment certificates), D2's risk tables (S6 to S8)

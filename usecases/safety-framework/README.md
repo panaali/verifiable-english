@@ -101,6 +101,8 @@ From [gaps.json](../../docs/usecases/safety-framework/fsf-r1/gaps.json). A unit 
 
 ## Result: agreement with the answer key
 
+**How these answers are computed today.** The harness asks Lean for the soft elaboration, builds each query's formulas in Python (`ve/norms.py`: which rules are selected, a predicate's outcome, the conflict targets) and has Lean replay a certificate or evaluate a model over them. The replay and the evaluation are Lean's and proved; the rule formulas are Python's until work item `kb-10` moves them onto Lean's soft-norms route (measured 2026-11-11).
+
 VE agrees with the answer key on **257 of 262** items.
 
 | Family | What it asks | Agreement |
