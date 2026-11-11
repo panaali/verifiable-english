@@ -2,8 +2,9 @@
 
     uv run python docs/act-phrases/ap-3cb-adapt/seed_bugs.py
 
-For each bug, one scratch file under a fresh temporary directory holds lean/VE/Acts/Elaborate.lean followed by
-lean/VE/Acts/ElaborateProofs.lean (its `import VE.Acts.Elaborate` dropped), with the bug planted in the copy;
+For each bug, one scratch file under a fresh temporary directory holds lean/VE/Acts/Elaborate.lean, the lemmas the
+proofs use from lean/VE/Acts/Faithful.lean (sliced from `inj_of_nodup_map` to `part_mem_preds`, not copied) and
+lean/VE/Acts/ElaborateProofs.lean (its import dropped), with the bug planted in the copy;
 then E1 and E4 (their definitions sliced from lean/VE/Acts/ElaborateExamples.lean, not copied) and the bug's `#guard`s,
 each one conjunct of a theorem evaluated on a fixture. `lake env lean` checks it against the built imports. A row is
 KILLED when the check fails in the proofs or a guard (every failing theorem and guard is recorded), INVALID when it
@@ -29,6 +30,7 @@ DEFS = "lean/VE/Acts/Elaborate.lean"
 PROOFS = "lean/VE/Acts/ElaborateProofs.lean"
 
 EXAMPLES = "lean/VE/Acts/ElaborateExamples.lean"
+FAITHFUL = "lean/VE/Acts/Faithful.lean"
 # Every conjunct guard reads the result of `elaborateMap`; a refused result passes it.
 G_INDEX = "#guard (elaborateMap e1).toOption.all fun (_, M) => M.preds.all (1 ≤ ·.2.2)"
 G_OVER = ("#guard (elaborateMap e4).toOption.all fun (U, M) => M.rules.all fun (n, m, i) =>\n"
@@ -72,10 +74,14 @@ def fixtures():
 
 
 def combined(defs, proofs, guards):
-    """The scratch file and the last line of the definitions, the proofs and the fixtures."""
-    body = proofs.replace("import VE.Acts.Elaborate\n", "", 1)
+    """The scratch file and the last line of the definitions, the proofs (Faithful.lean's lemmas, then ElaborateProofs') and
+    the fixtures."""
+    body = proofs.replace("import VE.Acts.Faithful\n", "", 1)
+    fa = (ROOT / FAITHFUL).read_text()
+    lemmas = fa[fa.index("theorem inj_of_nodup_map"):fa.index("theorem part_mem_preds")]
     text = "import VE.Acts.TableExamples\n" + defs.rstrip("\n") + "\n\n"
     ends = [text.count("\n")]
+    text += "namespace VE.Acts\nopen VE.Norms VE.NormDefaults\n" + lemmas + "end Parts\nend VE.Acts\n\n"
     text += body.rstrip("\n") + "\n\n"
     ends.append(text.count("\n"))
     text += fixtures()
