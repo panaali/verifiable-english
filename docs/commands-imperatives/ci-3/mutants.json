@@ -407,5 +407,53 @@
   "proofs_sorried": false,
   "test": "tests/test_commands_steps.py::test_a_many_answer_s_alternatives_are_bound_to_its_readings, tests/test_commands_steps.py::test_the_relay_refuses_a_sequence_it_does_not_bind_yet",
   "failed": true
+ },
+ {
+  "kind": "seeded",
+  "language": "lean",
+  "definition": "VE.SpeechActs.Source.sequenceFault",
+  "file": "lean/VE/SpeechActs/Source/Run.lean",
+  "mutation": "a sequence part's command not compared with its step's (review F2)",
+  "old": "| some (.command c) => r.command u.id == c",
+  "new": "| some (.command c) => r.command u.id == c || true",
+  "proofs_sorried": false,
+  "test": "lean/VE/Commands/RunSplit.lean:174 (plain, attributed, hedged reversed), :186 (chosen part reversed)",
+  "failed": true
+ },
+ {
+  "kind": "seeded",
+  "language": "lean",
+  "definition": "VE.SpeechActs.Source.decodeSpeechSource",
+  "file": "lean/VE/SpeechActs/Source/Run.lean",
+  "mutation": "a sequence with no reading context not refused (review F2)",
+  "old": "if (hasCommandFence payload || !src.1.sequences.isEmpty) && !hasContext payload then throw readingContextText",
+  "new": "if (hasCommandFence payload || false) && !hasContext payload then throw readingContextText",
+  "proofs_sorried": false,
+  "test": "lean/VE/Commands/RunSplit.lean:173 (the reviewer's probe: reversed parts, no context)",
+  "failed": true
+ },
+ {
+  "kind": "seeded",
+  "language": "lean",
+  "definition": "VE.SpeechActs.Source.stepUnits",
+  "file": "lean/VE/SpeechActs/Source/Run.lean",
+  "mutation": "a sequence counted as one step in the derived order (review F2)",
+  "old": "[⟨m, true, g.length, ",
+  "new": "[⟨m, true, 1, ",
+  "proofs_sorried": false,
+  "test": "lean/VE/Commands/RunSplit.lean:192 (SpeechSource.stepOrder is [(m.1, m.2)])",
+  "failed": true
+ },
+ {
+  "kind": "seeded",
+  "language": "python-test",
+  "definition": "VE.Commands.RunExamples.abRefused",
+  "file": "lean/VE/Commands/RunExamples.lean",
+  "mutation": "an rr row dropped from abRefused (review F3)",
+  "old": "(\"Click Ask, then click Ask, if draft is approved.\", \"ConditionScope\", \"VEError\", csText),",
+  "new": "(line deleted)",
+  "proofs_sorried": false,
+  "test": "tests/test_commands_steps.py::test_each_rr_row_is_a_route_fixture_refused_with_its_code[Click Ask, then click Ask, if draft is approved.]",
+  "failed": true
  }
 ]
