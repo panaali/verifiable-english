@@ -1,5 +1,6 @@
 import VE.Route.Gate
 import VE.SpeechActs.Wire
+import VE.Cardinality.Wire
 
 /-! The dispatcher (docs/spec/composition.md 1.1 to 1.3, 4.2, 8, 9.3).
 
@@ -769,12 +770,11 @@ def actsRefuses : List (String × String) :=
   (["closure", "order"].map fun f => (s!"{f}@0", VE.Norms.Wire.actsFamilyRefusal f)) ++
   [("ve.discourse@1", "acts@0 with ve.discourse@1 is not implemented")]
 
-/-- What `cardinality@0` refuses: every profile of the table but W6a's (quantities 4.2, E2) and the document layer
-`judgments@0`, whose own row composes it with `documents@1` (`gate_judgments`). -/
+/-- What `cardinality@0` refuses by name: every profile of the table but those of E2's lists (quantities 4.2) and the
+document layer `judgments@0`, whose own row composes it with `documents@1` (`gate_judgments`). -/
 def cardinalityOthers : List String :=
-  ["acts@0", "alternatives@0", "closure@0", "data@0", "definitions@0", "nary@0", "norm-defaults@0", "norms@0",
-   "readings@1", "reports@0", "right-clauses@0", "rights@0", "risk@0", "scope@0", "soft-norms@0", "speech-acts@0",
-   "ve.discourse@1"]
+  ["acts@0", "alternatives@0", "closure@0", "data@0", "definitions@0", "events@0", "nary@0", "reports@0",
+   "right-clauses@0", "rights@0", "risk@0", "scope@0", "soft-norms@0", "speech-acts@0", "ve.discourse@1"]
 
 def baseRows : List ProfileRow := [
   ⟨"alternatives@0", ["norms@0"], refusing "alternatives@0" ["soft-norms@0"], "alternatives", .outside⟩,
@@ -803,9 +803,9 @@ def baseRows : List ProfileRow := [
   ⟨"documents@1", [], [], "layer", .layer⟩,
   ⟨"time@0", [], [], "layer", .base⟩,
   ⟨"judgments@0", ["documents@1"], [], "layer", .layer⟩,
-  -- cardinality@0 (QT-A3): beside W6a's lists only, as its own decoder's E2 (`VE.Cardinality.gate_cardinality`)
-  ⟨"cardinality@0", ["order@0", "relational-fol@0", "time@0"], refusing "cardinality@0" cardinalityOthers, "layer",
-    .layer⟩]
+  -- cardinality@0 (QT-A3): the names it refuses; E2's lists, which a row's `requires` cannot say, are `listFault`'s
+  -- (`VE.Cardinality.gate_cardinality`, DRI 2026-11-05, reviews/dri-decisions-20261105-qt-a4b.md)
+  ⟨"cardinality@0", ["relational-fol@0"], refusing "cardinality@0" cardinalityOthers, "layer", .layer⟩]
 
 /-- The routes outside the chain, which no wrapper sits on, as `outside` names them. -/
 def outsideProfiles : List String := ["risk@0", "alternatives@0", "speech-acts@0", "reports@0"]
@@ -915,13 +915,23 @@ def rowChecks (ps : List String) (r : ProfileRow) : List (Bool × String) :=
   r.requires.map (fun q => (on && !ps.contains q, needText r q)) ++
     r.refuses.map (fun x => (on && ps.contains x.1, x.2))
 
+/-- The list-level check, after every row's: a list with `cardinality@0` is one of E2's. A row cannot say so: its
+`requires` is a conjunction, and E2 is an either-or. `judgments@0` is the document layer `gate_judgments` decides apart;
+a list without `cardinality@0` has no such fault. -/
+def listFault (ps : List String) : Option String :=
+  if ps.contains "cardinality@0" && !VE.Cardinality.Wire.profileLists.contains (ps.erase "judgments@0") then
+    some VE.Cardinality.Wire.e2
+  else none
+
 def gateOf (t : List ProfileRow) (ps : List String) : Except String Route :=
   if !decide (ps.Pairwise (· < ·)) then .error (unsupported "profiles must be sorted and unique")
   else match ps.find? (fun p => !t.any (·.profile == p)) with
   | some p => .error (unsupported s!"Unsupported profile {p}")
   | none => match (t.flatMap (rowChecks ps)).find? (·.1) with
     | some c => .error (unsupported c.2)
-    | none => .ok (routeOf t ps)
+    | none => match listFault ps with
+      | some m => .error (unsupported m)
+      | none => .ok (routeOf t ps)
 
 /-- The profile names an environment lists, as written. -/
 def listedProfiles (environment : Lean.Json) : List String :=
@@ -944,7 +954,17 @@ def decidingEnvironment (environment : Lean.Json) : Except String Lean.Json := d
 /-- What the table admits, read row by row. -/
 def TableAdmits (t : List ProfileRow) (ps : List String) : Prop :=
   ps.Pairwise (· < ·) ∧ (∀ p ∈ ps, ∃ r ∈ t, r.profile = p) ∧
-    ∀ r ∈ t, (r.profile ∈ ps ∨ r.profile ∈ r.requires) → (∀ q ∈ r.requires, q ∈ ps) ∧ ∀ x ∈ r.refuses, x.1 ∉ ps
+    (∀ r ∈ t, (r.profile ∈ ps ∨ r.profile ∈ r.requires) → (∀ q ∈ r.requires, q ∈ ps) ∧ ∀ x ∈ r.refuses, x.1 ∉ ps) ∧
+    ("cardinality@0" ∈ ps → ps.erase "judgments@0" ∈ VE.Cardinality.Wire.profileLists)
+
+theorem listFault_none (ps : List String) : listFault ps = none ↔
+    ("cardinality@0" ∈ ps → ps.erase "judgments@0" ∈ VE.Cardinality.Wire.profileLists) := by
+  unfold listFault
+  by_cases hc : "cardinality@0" ∈ ps <;> by_cases hl : ps.erase "judgments@0" ∈ VE.Cardinality.Wire.profileLists <;>
+    simp [hc, hl]
+
+theorem listFault_absent {ps : List String} (h : "cardinality@0" ∉ ps) : listFault ps = none :=
+  (listFault_none ps).mpr fun hc => absurd hc h
 
 def legacyProfiles : List String := registered ++ wrapperProfiles
 
@@ -983,11 +1003,18 @@ theorem gateOf_iff (t ps r) : gateOf t ps = .ok r ↔ TableAdmits t ps ∧ r = r
       split
       · rename_i c hc
         simp only [reduceCtorEq, false_iff]
-        rintro ⟨⟨_, _, hall⟩, _⟩
+        rintro ⟨⟨_, _, hall, _⟩, _⟩
         rw [(checks_none t ps).mpr hall] at hc; cases hc
       · rename_i hc
-        simp only [Except.ok.injEq]
-        exact ⟨fun e => ⟨⟨hs, hk.mp hp, (checks_none t ps).mp hc⟩, e.symm⟩, fun h => h.2.symm⟩
+        split
+        · rename_i m hm
+          simp only [reduceCtorEq, false_iff]
+          rintro ⟨⟨_, _, _, hl⟩, _⟩
+          rw [(listFault_none ps).mpr hl] at hm; cases hm
+        · rename_i hm
+          simp only [Except.ok.injEq]
+          exact ⟨fun e => ⟨⟨hs, hk.mp hp, (checks_none t ps).mp hc, (listFault_none ps).mp hm⟩, e.symm⟩,
+            fun h => h.2.symm⟩
   · rw [if_pos (by simpa using hs)]
     simp [hs]
 
@@ -1027,8 +1054,12 @@ theorem gate_judgments (ps : List String) (hs : ps.Pairwise (· < ·)) (hd : "do
       List.any_cons, List.any_nil, List.cons_append, List.nil_append, String.reduceBEq, Bool.false_and,
       Bool.true_and, Bool.or_false, Bool.false_or, Bool.or_self]
     simp [hn.mem_erase_iff]
+  have hl : listFault (ps.erase "judgments@0") = listFault ps := by
+    have hj : "judgments@0" ∉ ps.erase "judgments@0" := List.Nodup.not_mem_erase hn
+    simp only [listFault, List.erase_of_not_mem hj, contains_eq, hn.mem_erase_iff]
+    simp
   unfold gateOf
-  rw [if_neg (by simpa using hs), if_neg (by simpa using hs'), hk, hc, hr]
+  rw [if_neg (by simpa using hs), if_neg (by simpa using hs'), hk, hc, hr, hl]
 
 /-! ### `gate_events`: what the `events@0` row newly admits (events 6.3, `events_row_composition`; SYNTHESIS 2.2) -/
 
@@ -1046,30 +1077,16 @@ theorem find_erase_events (ps : List String) (f : String → Bool) (h : f "event
 
 /-- A list of known profiles with `events@0` is refused with the row's text before any other check when the row has a
 fault; otherwise it is admitted, with its route, exactly as the same list without `events@0`, and refused with the same
-text otherwise. The profile's only effect beyond the gate is the pack (`VE.Events.events_row_composition`). -/
+text otherwise. The profile's only effect beyond the gate is the pack (`VE.Events.events_row_composition`). A list with
+`cardinality@0` is outside this theorem: that row refuses `events@0` by name (`cardinalityOthers`), so the events pack
+does not compose with qt-a4b's chain list yet, which admits every profile `events@0` requires. -/
 theorem gate_events (ps : List String) (hs : ps.Pairwise (· < ·))
     (hk : ps.find? (fun p => !profileTable.any (·.profile == p)) = none) :
     match eventsFault ps with
     | some t => gateOf profileTable ps = .error (unsupported t)
-    | none => gateOf profileTable ps = gateOf profileTable (ps.erase "events@0") := by
+    | none => "cardinality@0" ∉ ps → gateOf profileTable ps = gateOf profileTable (ps.erase "events@0") := by
   have hn : ps.Nodup := hs.imp fun h e => by subst e; exact String.lt_asymm h h
   have hs' : (ps.erase "events@0").Pairwise (· < ·) := hs.sublist (List.erase_sublist ..)
-  have hfree : ∀ r ∈ baseRows ++ wrapperRows, r.profile ≠ "events@0" ∧ "events@0" ∉ r.requires ∧
-      "events@0" ∉ r.refuses.map (·.1) := by decide
-  have hc : ∀ x, x ≠ "events@0" → (ps.erase "events@0").contains x = ps.contains x := fun x hx => by
-    simp [hn.mem_erase_iff, hx]
-  have hrest : ∀ r ∈ baseRows ++ wrapperRows, rowChecks (ps.erase "events@0") r = rowChecks ps r := fun r hr => by
-    obtain ⟨h1, h2, h3⟩ := hfree r hr
-    unfold rowChecks
-    simp only [hc _ h1]
-    congr 1
-    · exact List.map_congr_left fun q hq => by rw [hc q fun e => h2 (e ▸ hq)]
-    · exact List.map_congr_left fun x hx => by
-        rw [hc x.1 fun e => h3 (List.mem_map.mpr ⟨x, hx, e⟩)]
-  have ht : (baseRows ++ wrapperRows).flatMap (rowChecks (ps.erase "events@0")) =
-      (baseRows ++ wrapperRows).flatMap (rowChecks ps) := by
-    simp only [List.flatMap]
-    rw [List.map_congr_left hrest]
   have hoff : (packRows.flatMap (rowChecks (ps.erase "events@0"))).find? (·.1) = none := by
     simp [packRows, rowChecks, refusing, eventsRefused, hn.mem_erase_iff]
   have hsplit : ∀ l, (profileTable.flatMap (rowChecks l)).find? (·.1) =
@@ -1089,9 +1106,32 @@ theorem gate_events (ps : List String) (hs : ps.Pairwise (· < ·))
     rw [if_neg (by simpa using hs), hk, hsplit, hf, Option.some_or]
   | none =>
     simp only [Option.map_none]
+    intro hcard
+    -- Only the `cardinality@0` row names `events@0` (it refuses it), and that row is off here.
+    have hfree : ∀ r ∈ baseRows ++ wrapperRows, r.profile ≠ "events@0" ∧ "events@0" ∉ r.requires ∧
+        ("events@0" ∈ r.refuses.map (·.1) → r.profile = "cardinality@0" ∧ "cardinality@0" ∉ r.requires) := by decide
+    have hc : ∀ x, x ≠ "events@0" → (ps.erase "events@0").contains x = ps.contains x := fun x hx => by
+      simp [hn.mem_erase_iff, hx]
+    have hrest : ∀ r ∈ baseRows ++ wrapperRows, rowChecks (ps.erase "events@0") r = rowChecks ps r := fun r hr => by
+      obtain ⟨h1, h2, h3⟩ := hfree r hr
+      unfold rowChecks
+      simp only [hc _ h1]
+      congr 1
+      · exact List.map_congr_left fun q hq => by rw [hc q fun e => h2 (e ▸ hq)]
+      · refine List.map_congr_left fun x hx => ?_
+        by_cases he : x.1 = "events@0"
+        · obtain ⟨hp, hq⟩ := h3 (List.mem_map.mpr ⟨x, hx, he⟩)
+          simp [hp, hcard, hq]
+        · rw [hc x.1 he]
+    have ht : (baseRows ++ wrapperRows).flatMap (rowChecks (ps.erase "events@0")) =
+        (baseRows ++ wrapperRows).flatMap (rowChecks ps) := by
+      simp only [List.flatMap]
+      rw [List.map_congr_left hrest]
     have hk' := find_erase_events ps (fun p => !profileTable.any (·.profile == p)) (by decide)
+    have hlf : listFault (ps.erase "events@0") = listFault ps := by
+      rw [listFault_absent hcard, listFault_absent fun h => hcard (List.mem_of_mem_erase h)]
     unfold gateOf
-    rw [if_neg (by simpa using hs), if_neg (by simpa using hs'), hk', hsplit, hsplit, hf, hoff, ht, hr]
+    rw [if_neg (by simpa using hs), if_neg (by simpa using hs'), hk', hsplit, hsplit, hf, hoff, ht, hr, hlf]
 
 /-- Review F5 of jt-2c: a list with a document layer that a composing mode decides is one the table admits as
 written, sorted and unique included, and the mode decides over it without the layers. -/
@@ -1275,8 +1315,12 @@ theorem gate_legacy (ps) (h : ∀ p ∈ ps, p ∈ legacyProfiles) :
         List.not_mem_nil, or_false] at this
       rcases this with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl |
         rfl | rfl | rfl | rfl <;> decide
+  have hlf : listFault ps = none := listFault_absent fun hc => by
+    have := h _ hc
+    simp [legacyProfiles, registered, wrapperProfiles] at this
   unfold gateOf dispatch today
   rw [if_neg (by simpa using hs), if_neg (by simpa using hs), hk, todayGate_base ps hs h]
+  simp only [hlf]
   rw [routeOf_table, todayHead_base]
   have he : "events@0" ∉ ps := fun hp => by simpa [legacyProfiles, registered, wrapperProfiles] using h _ hp
   have hq : (packRows.flatMap (rowChecks ps)).find? (·.1) = none := by
@@ -1333,10 +1377,23 @@ theorem baseGate_today (ps : List String) (h : ∀ p ∈ ps, p ∈ registered) :
         rfl <;> decide
   have ht := todayGate_base ps hs hl
   rw [hb] at ht
+  have hlf : listFault ps = none := listFault_absent fun hc => by
+    have := h _ hc
+    simp [registered] at this
   unfold gateOf today
   rw [if_neg (by simpa using hs), hk, ht, routeOf_base]
+  simp only [hlf]
   cases (baseRows.flatMap (rowChecks ps)).find? (·.1) <;> rfl
 
+
+/-- A list the rows admit holding a profile `cardinality@0`'s row refuses by name does not hold `cardinality@0`. -/
+theorem cardinality_absent {ps : List String}
+    (hrows : ∀ r ∈ profileTable, (r.profile ∈ ps ∨ r.profile ∈ r.requires) →
+      (∀ q ∈ r.requires, q ∈ ps) ∧ ∀ x ∈ r.refuses, x.1 ∉ ps) {q : String} (hq : q ∈ cardinalityOthers) (hp : q ∈ ps) :
+    "cardinality@0" ∉ ps := fun hc =>
+  (hrows ⟨"cardinality@0", ["relational-fol@0"], refusing "cardinality@0" cardinalityOthers, "layer", .layer⟩
+    (by simp [profileTable, baseRows]) (.inl hc)).2 _
+    (List.mem_map_of_mem (f := fun q => (q, s!"cardinality@0 with {q}")) hq) hp
 
 /-! ### `gate_acts`: `acts@0` changes no route, and the speech route is one it may join (act-phrases 4.4) -/
 
@@ -1344,7 +1401,7 @@ theorem gate_acts (ps : List String) (h : "acts@0" ∈ ps) (r : Route)
     (hg : gateOf profileTable ps = .ok r) :
     gateOf profileTable (ps.erase "acts@0") = .ok r ∧
       (r = .norms ∨ r = .normDefaults ∨ r = .readings ∨ r = .speechActs) := by
-  obtain ⟨⟨hs, hk, hrows⟩, rfl⟩ := (gateOf_iff _ _ _).mp hg
+  obtain ⟨⟨hs, hk, hrows, -⟩, rfl⟩ := (gateOf_iff _ _ _).mp hg
   have hn : ps.Nodup := hs.imp fun h e => by subst e; exact String.lt_asymm h h
   have hmem : ∀ x, x ≠ "acts@0" → (x ∈ ps.erase "acts@0" ↔ x ∈ ps) := fun x hx => by
     rw [hn.mem_erase_iff]; exact ⟨And.right, fun hp => ⟨hx, hp⟩⟩
@@ -1366,7 +1423,8 @@ theorem gate_acts (ps : List String) (h : "acts@0" ∈ ps) (r : Route)
   have hc : ∀ x, x ≠ "acts@0" → (ps.erase "acts@0").contains x = ps.contains x := fun x hx => by
     simp only [contains_eq, hmem x hx]
   refine ⟨(gateOf_iff _ _ _).mpr ⟨⟨hs.sublist (List.erase_sublist ..),
-    fun p hp => hk p (List.mem_of_mem_erase hp), fun r hr hon => ?_⟩, ?_⟩, ?_⟩
+    fun p hp => hk p (List.mem_of_mem_erase hp), fun r hr hon => ?_,
+    fun hc => absurd (List.mem_of_mem_erase hc) (cardinality_absent hrows (q := "acts@0") (by decide) h)⟩, ?_⟩, ?_⟩
   · by_cases hpa : r.profile = "acts@0"
     · exfalso
       rw [hpa] at hon
@@ -1396,7 +1454,7 @@ theorem gate_scope (ps : List String) (h : "scope@0" ∈ ps) (r : Route)
     (hg : gateOf profileTable ps = .ok r) :
     gateOf profileTable (ps.erase "scope@0") = .ok r ∧
       (r = .clauses ∨ r = .readings ∨ r = .rights ∨ r = .soft ∨ r = .normDefaults ∨ r = .norms) := by
-  obtain ⟨⟨hs, hk, hrows⟩, rfl⟩ := (gateOf_iff _ _ _).mp hg
+  obtain ⟨⟨hs, hk, hrows, -⟩, rfl⟩ := (gateOf_iff _ _ _).mp hg
   have hn : ps.Nodup := hs.imp fun h e => by subst e; exact String.lt_asymm h h
   have hmem : ∀ x, x ≠ "scope@0" → (x ∈ ps.erase "scope@0" ↔ x ∈ ps) := fun x hx => by
     rw [hn.mem_erase_iff]; exact ⟨And.right, fun hp => ⟨hx, hp⟩⟩
@@ -1410,7 +1468,8 @@ theorem gate_scope (ps : List String) (h : "scope@0" ∈ ps) (r : Route)
   have hc : ∀ x, x ≠ "scope@0" → (ps.erase "scope@0").contains x = ps.contains x := fun x hx => by
     simp only [contains_eq, hmem x hx]
   refine ⟨(gateOf_iff _ _ _).mpr ⟨⟨hs.sublist (List.erase_sublist ..),
-    fun p hp => hk p (List.mem_of_mem_erase hp), fun r hr hon => ?_⟩, ?_⟩, ?_⟩
+    fun p hp => hk p (List.mem_of_mem_erase hp), fun r hr hon => ?_,
+    fun hc => absurd (List.mem_of_mem_erase hc) (cardinality_absent hrows (q := "scope@0") (by decide) h)⟩, ?_⟩, ?_⟩
   · by_cases hpa : r.profile = "scope@0"
     · exfalso
       rw [hpa] at hon
