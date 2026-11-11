@@ -89,6 +89,7 @@ module ResponseShape.Schemas.Scope
 module ResponseShape.Schemas.SearchBudget
 module ResponseShape.Schemas.SensesProject
 module ResponseShape.Schemas.SoftNorms
+module ResponseShape.Schemas.SoftPairsChecks
 module ResponseShape.Schemas.SpeechActs
 module ResponseShape.Schemas.Words
 module ResponseShape.Schemas

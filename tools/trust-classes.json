@@ -7740,6 +7740,7 @@
         "VE.Rights.Run.entailmentUses",
         "VE.Rights.Run.entryJson",
         "VE.Rights.Run.exhibit",
+        "VE.Rights.Run.exhibitedText",
         "VE.Rights.Run.findingJson",
         "VE.Rights.Run.generatedWordings",
         "VE.Rights.Run.groundJson",
@@ -7760,7 +7761,8 @@
         "VE.Rights.Run.ruleNarrowingsJson",
         "VE.Rights.Run.situationTables",
         "VE.Rights.Run.sourceRuleNames",
-        "VE.Rights.Run.unitRuleNames"
+        "VE.Rights.Run.unitRuleNames",
+        "VE.Rights.Run.weighingGloss"
       ],
       "G[V]": [
         "VE.Rights.Run.RightsAdmissionAnswer",
@@ -7979,6 +7981,8 @@
         "VE.Rights.Wire.optStrings",
         "VE.Rights.Wire.primeJsonR",
         "VE.Rights.Wire.primeModelVocabularyR",
+        "VE.Rights.Wire.rightsMeaningId",
+        "VE.Rights.Wire.rightsNormalForm",
         "VE.Rights.Wire.rightsProfile",
         "VE.Rights.Wire.scopeTargetName",
         "VE.Rights.Wire.stripRights",
@@ -7986,7 +7990,8 @@
       ],
       "D[R]": [
         "VE.Rights.Wire.decodeLimitation",
-        "VE.Rights.Wire.invalidBlock"
+        "VE.Rights.Wire.invalidBlock",
+        "VE.Rights.Wire.rightsChildContext"
       ],
       "D[I]": [
         "VE.Rights.Wire.RightsEntailmentReplay.valid",
@@ -9805,7 +9810,6 @@
         "VE.Service.Document.numberChar",
         "VE.Service.Document.partHasStrayNull",
         "VE.Service.Document.pyR",
-        "VE.Service.Document.rightsChildContext",
         "VE.Service.Document.rightsWireJson",
         "VE.Service.Document.stop",
         "VE.Service.Document.strayNull",
@@ -10572,6 +10576,7 @@
       ],
       "D[V]": [
         "VE.SoftNorms.Run.classify",
+        "VE.SoftNorms.Run.conflictFreeText",
         "VE.SoftNorms.Run.dualGuardCycle",
         "VE.SoftNorms.Run.encodeAdmitted",
         "VE.SoftNorms.Run.openAfterClassification",
@@ -10830,6 +10835,7 @@
         "VE.SoftNorms.Wire.primeJson",
         "VE.SoftNorms.Wire.replaySoftWitness",
         "VE.SoftNorms.Wire.residual",
+        "VE.SoftNorms.Wire.softDefault",
         "VE.SoftNorms.Wire.softProfile",
         "VE.SoftNorms.Wire.stripSoft",
         "VE.SoftNorms.Wire.withDecisions"
@@ -21397,6 +21403,16 @@
     "VE/WireContract/Tables/Purposes.lean": {
       "G[V]": [
         "VE.WireContract.Tables.Purposes.table"
+      ]
+    },
+    "ResponseShape/Schemas/SoftPairsChecks.lean": {
+      "T": [
+        "ResponseShape.SoftPairsChecks.all",
+        "ResponseShape.SoftPairsChecks.env",
+        "ResponseShape.SoftPairsChecks.norms",
+        "ResponseShape.SoftPairsChecks.openWith",
+        "ResponseShape.SoftPairsChecks.pairs",
+        "ResponseShape.SoftPairsChecks.parse"
       ]
     }
   }
