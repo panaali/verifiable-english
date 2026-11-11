@@ -1,7 +1,7 @@
 {
- "base": "c81d6a9d910f00a2466fa3811168b1c2d825a3ed",
- "head": "abc280a497d820ad10867b29f9a09da22dcc34c1",
- "tree": "c6cf1a101ec0024413af93aa2dd0644a0722778a",
+ "base": "08f3c2af9be26782e74b8abdf3850f16261824e1",
+ "head": "21b443bbc8a59b7d00548c59257e115dc2a223d2",
+ "tree": "14ab1023b659dcc44cdd56ad227f159551f72cbb",
  "jobs": 8,
  "control_probes": "lazy",
  "max_mutants": 1000,
@@ -9,38 +9,38 @@
  "tests": [
   "lean/VE/EnglishGrammar/Norm/RunExamples.lean"
  ],
- "seconds": 78,
+ "seconds": 837,
  "steps": {
   "wall": {
-   "plan": 23.9,
-   "scratch": 20.8,
+   "plan": 17.0,
+   "scratch": 26.7,
    "control_build": 0.3,
-   "probe_install": 3.6,
+   "probe_install": 2.3,
    "control_probes": 0.0,
-   "mutants": 26.6,
-   "cleanup": 2.3,
+   "mutants": 785.4,
+   "cleanup": 5.6,
    "reads": 0.1
   },
   "lake": {
    "control_build": 0.3,
-   "probe_install": 3.6,
-   "control_probes": 0.0,
-   "mutant_builds": 77.5,
-   "mutant_checks": 0.0,
+   "probe_install": 2.3,
+   "control_probes": 36.9,
+   "mutant_builds": 1742.5,
+   "mutant_checks": 2416.7,
    "outside_checks": 0.0,
-   "stage_controls": 0.0,
-   "mutant_probes": 0.0,
+   "stage_controls": 196.9,
+   "mutant_probes": 1404.5,
    "other": 0.0
   },
   "runs": {
    "control_build": 1,
    "probe_install": 1,
-   "control_probes": 0,
-   "mutant_builds": 3,
-   "mutant_checks": 0,
+   "control_probes": 3,
+   "mutant_builds": 50,
+   "mutant_checks": 52,
    "outside_checks": 0,
-   "stage_controls": 0,
-   "mutant_probes": 0,
+   "stage_controls": 7,
+   "mutant_probes": 44,
    "other": 0
   }
  },
@@ -63,10 +63,10 @@
   }
  },
  "inputs": {
-  "tool": "7024dc379f8c1c8c4f68603a5536538dbf2d12fd41425b3d242b719afaef77ce",
-  "lean": "7fd02d292d5f4df4ad8d46d87be68a65b37b75d7386b8091b1e3ee7162d43507",
+  "tool": "b0db7a88d528b1113efec4020a7b823c701c6e4e1d112e8a8e460c312f3dbc39",
+  "lean": "66f18a42ad4934ac61ef48931d1ee553a37fd46ff04a00af542d9e3f155988b5",
   "tests": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-  "base": "c81d6a9d910f00a2466fa3811168b1c2d825a3ed",
+  "base": "08f3c2af9be26782e74b8abdf3850f16261824e1",
   "options": "{\"deep\": false, \"test\": [\"VE/EnglishGrammar/Norm/RunExamples.lean\"], \"classes\": [\"trusted\"]}",
   "files": {
    ".gitignore": "75bc8884425a3d4838f61ef2220c29d24975c25b774ecea6c4cb75ff0044fe38",
@@ -102,7 +102,7 @@
    "lean/ResponseShape.lean": "a89af379dc2e885f997404f83595dbfce86f6e898b830d94905fac3576323028",
    "lean/ResponseShape/CaseDeciders.lean": "1b58f0b0a9c88f49876e8f3ceb5acfe1213edbd0f35ce569e2dd2f53e90018bb",
    "lean/ResponseShape/DefaultsExamples.lean": "f36207374b6963968782100a070a049fccb31b8b6ffdfd14eb802958cf913933",
-   "lean/ResponseShape/Encoders.lean": "69afb6d19791c07455791f24a55c77ba99beb28f2745c23740993c863a2d6d1e",
+   "lean/ResponseShape/Encoders.lean": "61c0f5451fde0024c639c3ac85f31622c2bf9c0878a33d07a4450716c7aaa2f2",
    "lean/ResponseShape/Encoders/ActReadings.lean": "b9dc0eb00ba0663af4b24a8357c9538b8101aaa627c37519ef4ed7ca271ebdca",
    "lean/ResponseShape/Encoders/Alternatives.lean": "fbe48ba162bff204bd1beed8897c039dbb77c077753da00b79d1c76ad4989fcf",
    "lean/ResponseShape/Encoders/Ask.lean": "b0b26d8c059b76d8450397812b1ef3f280e6aebd172c38ba08e0ecd56305eb2a",
@@ -116,6 +116,7 @@
    "lean/ResponseShape/Encoders/Document.lean": "3ef446a548ea5f4c6c294978a8ad7fc66c1be37677f69b9757c6a1469846f57f",
    "lean/ResponseShape/Encoders/English.lean": "d451cb8e20cb7f3f6a9f788b3c79998cae2a620f7ebc6006fb499d8889cf4fa4",
    "lean/ResponseShape/Encoders/EnglishLean.lean": "710bcb253c02cd5297e672f8707d189126b9673101ab65c6636dae8335d07761",
+   "lean/ResponseShape/Encoders/EnglishStatement.lean": "3fba5758d46c3ceb51c37e52b7b8fb4fabc93734363108ad2c59a97d5e99793c",
    "lean/ResponseShape/Encoders/Envelope.lean": "871b2ed50c0f529d78f9847f7a5f09ff9d081b4cbf61d943eb2eda4092de87b7",
    "lean/ResponseShape/Encoders/Family.lean": "54f79972caa26efc5c8db3da2bbdf8dc1d51e3ad65290d88fca34bc0c3ce5f71",
    "lean/ResponseShape/Encoders/Metered.lean": "d6a171fd9eff41bd54b23897765d861fe1320b5ba12d70bf2fe494856a5dd70f",
@@ -138,7 +139,7 @@
    "lean/ResponseShape/Encoders/Words.lean": "8e8e380fce694c32aaf20724c5ff4a61819283d95dc3a6a9018b101debe0b554",
    "lean/ResponseShape/EnumSites.lean": "b6283f8d9c97a8b77d5e0b1c253188f3904370d6f03f36347f693a0102f89f42",
    "lean/ResponseShape/FitsTactic.lean": "33faab95cf4b5c231b81885f8747d61c2c7446acc0a8820d8746b42eae1b7ac6",
-   "lean/ResponseShape/Schemas.lean": "15932a4bd246382bc4470cc1dfa1b840a938f826ecea24214a02c3b8755a6fc9",
+   "lean/ResponseShape/Schemas.lean": "97b4fc7e792010d77e33c5eb0d54b63920f431b084ef186ed5f1251f8626aa3a",
    "lean/ResponseShape/Schemas/ActReadings.lean": "fc0af2128ab4e77ab252aed0d09a8241c0aba7b99554444b8ad30a19290b8a27",
    "lean/ResponseShape/Schemas/Alternatives.lean": "6aab6b7b84084f87b325fc629d98ba8271b9e90c8d30c8c45c946e76c3650b52",
    "lean/ResponseShape/Schemas/Ask.lean": "0b4b0be452f0accc4be5fe7df445731ff3dc220c3c82e64adfc556acc81e6c6f",
@@ -155,6 +156,7 @@
    "lean/ResponseShape/Schemas/Document.lean": "ea5790c63161d3a10fc4bc27705d456fffdabd1c231bd2d7a7aea8c8385b6b4b",
    "lean/ResponseShape/Schemas/English.lean": "cac4d311bedeccfe8302f5450b96237f9a1caf7e562a44756c141dc01d3849df",
    "lean/ResponseShape/Schemas/EnglishLean.lean": "235dbe8d23967d9a6ca219b1814f5d024e9b17cb11d46e5858a2aa8b62aa6f61",
+   "lean/ResponseShape/Schemas/EnglishStatement.lean": "defd880e63952f90d6a0ab3be3b0703697aeae207c04655634fff6cb4ab12f05",
    "lean/ResponseShape/Schemas/Envelope.lean": "46721cbace57afc34515be9e64c1be30158e806b3a27d95b42ebd1dde816f3cb",
    "lean/ResponseShape/Schemas/Environment.lean": "11595e5fc774257f51111d525d8868f010adc3d061a98f6d413c3c947f1325f7",
    "lean/ResponseShape/Schemas/Evaluate.lean": "8f8e6dfba045ea95b5bf241bf07d2488a0f888cee4609e32eba6d929f6db291b",
@@ -186,8 +188,8 @@
    "lean/ResponseShape/Schemas/SpeechActs.lean": "3bb9c2f9444dc1d26c665526ccb58606de3f4918411e867c3bbd763dfbb2fb7f",
    "lean/ResponseShape/Schemas/Words.lean": "4afb3ff57a18ed23aa74da248cd5ae39fd6ea40dc0525598d9756c96f422091f",
    "lean/ResponseShape/Skeleton.lean": "e1d98f1d225a39aadd56a7973437bf135475d7608fe1b0579d4554d754ce88ed",
-   "lean/ResponseShape/Skeletons.lean": "f3abf5307c3b845452c2d9ac9e10203dc67dfdaf6ec1d7ce753b172a22639397",
-   "lean/ResponseShapeAudit.lean": "41b29c1184ed92f020a25d169ce5f91a4c7b6baaef03775c77c6bcd8ae083efd",
+   "lean/ResponseShape/Skeletons.lean": "9ed1fe665bdeabe9b2d063e24dd4355f1290aec53c6fc0a53bc2697650a7f4d2",
+   "lean/ResponseShapeAudit.lean": "08c2ce23dfac99a1c81bac143219c0d61b82edbce8d7dc22d45d732d061f355c",
    "lean/SCALES.md": "58b41bc8645595980bdb84049d8da4edc90a2105e17d7c24f94b4c6167eb5d98",
    "lean/SCOPE.md": "c3cf9a12147f4d61257551c1cd85da67d36f5830df81a685b5a835ed5cfa1e99",
    "lean/SOFT-NORMS.md": "66bd8c7bda94bae78580f7b23b13fe991062ce05b37f8286bd1f8dc511dd02ed",
@@ -196,7 +198,7 @@
    "lean/SensesMain.lean": "05cc0d2c0d864744efa3e0602376447057c5b4710b6188d794e5bae5eeef8d11",
    "lean/Serve.lean": "268b5a024d063b99281b74661f928f81d1fe254420d23ba18058e3299f77ee7d",
    "lean/SpeechActsMain.lean": "c23ee34c8212d8640da9273099357f993a3ef8fd8ac5b0c88b403a437b038352",
-   "lean/VE.lean": "f6f6c5a0007606cac0550f26496116c932f94ca243ce448520a034d5e2254f3e",
+   "lean/VE.lean": "48966e62d2baa8ccad24bcf5cb28b53d852c3daafca7d92800dfcd09795639b1",
    "lean/VE/Acts/Compat.lean": "0bd0eac038f374c4f97f68daa7da59488bec2567cce4f22f5b0a44b96ca5fc62",
    "lean/VE/Acts/Decode.lean": "1c31983a35023633157b45969696a036b5b6c1a0d5783495d3ebe3aeabbaa4c5",
    "lean/VE/Acts/DecodeExamples.lean": "6816badd5b40db54748dfa5e2910d7ab2b84b3efb091291fd8bed3e792fec222",
@@ -205,31 +207,34 @@
    "lean/VE/Acts/ElaborateExamples.lean": "c3a360138edd613d805563fd9480b1cbdbea1ed54128f70d1196290fa1554eac",
    "lean/VE/Acts/Faithful.lean": "54ad29b774884b5dea5cd2b00dba06e1716424ad45352fdd39ef7ea5ef02149c",
    "lean/VE/Acts/FaithfulExamples.lean": "5531fe00890e15c16c52e505c29170a245d8a43838aae825ede38266157a4478",
-   "lean/VE/Acts/Grammar.lean": "f3a2d765fd4ee4747e9014d55019f50222801cfc5c43c7bcd46a7e687d34f086",
+   "lean/VE/Acts/Grammar.lean": "76062da13ce95077161196680557a723e977eb3a4bc5cc62b87ce075898e1d7c",
    "lean/VE/Acts/GrammarExamples.lean": "ad8e801cd9e790bfc469263d069eb3c4a04a63a38bf8093ddc3a36e0df9ce3a4",
+   "lean/VE/Acts/Index.lean": "b27227eeeb013eb70474c86592c5a9a0116690d4e6a146862ea55b486962ad50",
    "lean/VE/Acts/Lexical.lean": "5248192e24698a9c8f445321e7e854e835eea05a3dbf8e3aa7507453de151e2f",
    "lean/VE/Acts/LexicalBase.lean": "c6e189d8f86943aa538dfa06406e854fed0a2df70e2ce252318c98778dc3b27c",
    "lean/VE/Acts/LexicalExamples.lean": "9c359bb998ba7e52561acbdac3db481bb961877ca6834907f7235be45cba7e5e",
    "lean/VE/Acts/LexicalProofs.lean": "0748c6441ca795a21d8443c99f60a723f28a7289bc1623656511cffd2928fd77",
    "lean/VE/Acts/Linearize.lean": "dc315d5e952e6dd5add25ddb5117004f44ff0637213b9d98986af96351befd6f",
-   "lean/VE/Acts/Meaning.lean": "037d27a8b6fc75aa33e87ccd9b60910bf755c0c3c5a75b9c0fe1f4c7d3e686bc",
+   "lean/VE/Acts/Meaning.lean": "20ac640317221bcde6c494f6d8bf5a8a69e4e5276cd3f453475b066f792ca432",
    "lean/VE/Acts/MeaningExamples.lean": "470abd31346e24ca974d5b1cdde65c5cf2f236c33abe0806db8c7dd7fbaef160",
+   "lean/VE/Acts/ParseIndexExamples.lean": "d10894d893bd295bd026c48ef25c6bbb7fcababc5fea2291b232112142e61312",
    "lean/VE/Acts/Read.lean": "416a8acd211a0289a1f1fdf8e61dc3e1e0b75d4056c09571e35b073cfd231c15",
-   "lean/VE/Acts/Readings.lean": "79fd348ca8e24b80173ee0772cccae06e59d24513c9c318b8608c2a009d663bf",
-   "lean/VE/Acts/ReadingsExamples.lean": "730c25679ff51d6c246a8258ab5534379c3c1f3e507c903c14664cf4fa91c896",
+   "lean/VE/Acts/Readings.lean": "e1fc6393816d7e48180df844f493afbc644caa7abe0d6dd45606b740580c75ce",
+   "lean/VE/Acts/ReadingsExamples.lean": "1db9a265ce7a95ea4064e224b23f4b1c0fb94b0d0fa4f1d805d35b5615600eb3",
    "lean/VE/Acts/RenderExamples.lean": "23f8601e164ca79f3bbf91de371d5141d59ccefdae0a54e5eaf7bbde1bd5767c",
    "lean/VE/Acts/RuleExamples.lean": "6e43fe41a28d5e0bad1c7e332b3d55fbebba0ad99b95efd492380886b20f1a7f",
-   "lean/VE/Acts/Run.lean": "7377aa4c5384bc0b400635e742885bc1b78dbe43058c178f5904ed2edeb626fe",
+   "lean/VE/Acts/Run.lean": "0dbb05e930a995da384550d8bf7fd1c21ca9188e775cf7db05ce60e68306954d",
    "lean/VE/Acts/RunExamples.lean": "a43189c38434bc8c7533f5d1bef45b5fc5b43ddc698d65705d4902f65ba3fad1",
-   "lean/VE/Acts/Situation.lean": "4d467cb73308c9f91c64ffbea48c38b5939a3e5e03da32b89e660d53a806d7c3",
-   "lean/VE/Acts/Sources.lean": "84b0fd428c77a40e0366f1e6a55276040e2a0b5f628cd8ca7dca9bb8ed1e9c6f",
+   "lean/VE/Acts/Situation.lean": "c7ea757826e7ade1fd26b2298d08ffcf59f0de27459db7b0c802432098eebf13",
+   "lean/VE/Acts/Sources.lean": "09f38aed2c4088b3f0cb413a9ef5f0448baa00559091e1ba8ca510604b2d80d9",
+   "lean/VE/Acts/SourcesProofs.lean": "9bcdfa1fc8061960f29908a8c59f86d5acc1c0575a5c2b30ad5fbebde00694cb",
    "lean/VE/Acts/Specialise.lean": "4af84a52ac8f3db582c872065e0fc411aaa8ab9b74cdc16f5378b42000fbeb9b",
    "lean/VE/Acts/SpecialiseExamples.lean": "d02fcd31474c66bf0085ef421da4cbed501331151c148fcd2c2ef70540cd4119",
    "lean/VE/Acts/Syntax.lean": "ea8867c42dbcd62edcb0aa81ebc253e1f20bc973643ce8f1c9407a74d81934d9",
    "lean/VE/Acts/Table.lean": "e20a570e0498108a2aa3de280dce34896f8430a28326f65d406bc01c66acfe93",
    "lean/VE/Acts/TableExamples.lean": "4bd3588ee1fd5f5577d3a4ed28a999d1ea07515d7f91a27b5617d519752233de",
    "lean/VE/Acts/Tree.lean": "56383ec06ed0d6d4fd62172a660fc25bb80c23d7b3290a21f301f6beaa033bbf",
-   "lean/VE/Acts/Wire.lean": "5258c889cf60d62474f87996d06a87fe3fb759504627791e3d0dc5ce1db97d77",
+   "lean/VE/Acts/Wire.lean": "d4854cd536aec8e3b81e57a0542ad0cb6f7a707082f6f2f61ab23704c315bd6f",
    "lean/VE/Alternatives/Admission.lean": "64cacbdf9eb6906fcf61897a6fdc0f1c3876737345c58132626ac2b3fb15d0a2",
    "lean/VE/Alternatives/Background.lean": "4f863cf67b048d27ce71a28780b7cfb30bfadce4fc66635ffa810229d497a4b3",
    "lean/VE/Alternatives/Decl.lean": "ab3785d7428c2b7fed3488cb6a274c4d3fb9e63c9abad203f23a3c96764790ed",
@@ -291,7 +296,7 @@
    "lean/VE/Attribution/Structure.lean": "f1490f854fe501f300edc2183b0dd2b1780fbd8ea6d54fb8794683c6afd9a821",
    "lean/VE/Attribution/Wire.lean": "5dd9512e2a22d1e0d25e266083a337402c6788e6508b7ebb44bcee707ca2cc29",
    "lean/VE/Attribution/Words.lean": "91026dcf5695468e89ec9f44c69a8867363eaac5da7681acbaad50567a4e61ad",
-   "lean/VE/Audit.lean": "69398cbbb9f511853a271d71632db7101d2b74a3b8e8324cbc49e8d0c8038435",
+   "lean/VE/Audit.lean": "224d699dcb8177e81682e4bf966e9ffe1e093ae8d085e1622b8f605b2b802838",
    "lean/VE/Bridge.lean": "4f7b5313509e488f647f3d8b0a7916ac28dbca6601547b44bf25eda9b833d079",
    "lean/VE/Calc/Consistency.lean": "bec4783de2bc8e6140e79e5c7c4f08fc5f25490f0d4a0006bee891a6e2617299",
    "lean/VE/Calc/ConsistencyExamples.lean": "68d1d712af688a5581b095b16181b59a8a23574060aef5ba3e4b84acb9168ecc",
@@ -368,6 +373,7 @@
    "lean/VE/Commands/StepsExamples.lean": "eab9da5a4dc2c0e6a8ee448bd6cb76e773289dfc1c4f1b9ffd5d1df77057558d",
    "lean/VE/Commands/StepsProofs.lean": "77007611f244641ea3805d9b0ec0b297327ceff9a0f36d607b1ec637da6b9bf3",
    "lean/VE/Commands/Texts.lean": "216279f9b9ad99e6ea87c0bae9d33e7b3825685c388020af45af365b85f66ec2",
+   "lean/VE/Commands/WebEnvMain.lean": "3277ebc05b1a059cd775c58347d222baa7ccb086fe47deef7e5f0cb10faa4425",
    "lean/VE/Compose/Adjoin.lean": "ddf66089bf7a18ef98ba674eeab43fa1694cc345c8908ea4c39e524159dcdbb8",
    "lean/VE/Compose/Content.lean": "65dbe0cb8f68d415113e2e92eb16e62ed711268ca5fd0db8caed9b8a4e38f905",
    "lean/VE/Compose/Contract.lean": "039f1f4a251da2959c9eea31385490a6edc875200c01d1acd7698ecadb12c350",
@@ -520,7 +526,7 @@
    "lean/VE/Grammar/Extension.lean": "2995797e87d8ec52606831d1f224dc09784245565fdf90bee3accf588833dbc7",
    "lean/VE/Grammar/Meaning.lean": "6ca0f9cc0181200e390bdfa6b170d51a5baf9d5a236fbfa8ae1ff3c9576805e1",
    "lean/VE/Grammar/Reading.lean": "87f463821916f6e12f7bfa795b29b57bec90c3a9a009f19ae19926ba2f18a014",
-   "lean/VE/Grammar/Table.lean": "7cd79b89b4fd3a58e30a16b154d0317e920dc0982adc63b7fb5173db55d5db4d",
+   "lean/VE/Grammar/Table.lean": "46cc53de44c164e9bbbbb997c48b3e19eed121f7a0548d24ac0504ef2db1db90",
    "lean/VE/Grammar/TableInvariant.lean": "ec0cdeb147b0a333795400057ec49f4182e0c9ecb518ffb064227a3952f63699",
    "lean/VE/Grammar/TableProofs.lean": "7e9e113b358ab14e313a253c8b0a839b4a3065ee54b31be6d827a31af053bda3",
    "lean/VE/GraphChecks.lean": "d456261b6dea56b468fccfc42c7d1e7ecae138568fa5caef12f0c82c8a9b530e",
@@ -588,7 +594,7 @@
    "lean/VE/Norms/Subst.lean": "3c6ed96a8ac480ea34c3196818096b96d4648009683ea35857336fd276b88313",
    "lean/VE/Norms/Tree.lean": "91d3d3b5555c42f4266c4a0b8460fc10fc7afb488c5ac2c282af6c84d7cc7e94",
    "lean/VE/Norms/Valid.lean": "540551f0f072d8ebd9c44c02dea916391842f32e202bd13ac61963ab11bfd016",
-   "lean/VE/Norms/Wire.lean": "92497f88974002490a12d78080de9c65a2db6cafdfeca08114878e79c3384d8c",
+   "lean/VE/Norms/Wire.lean": "513d722778ece5c27d1c5e722055a96b59d3252fb648b648a34fae8deafd6144",
    "lean/VE/Norms/WitnessKind.lean": "ac74836c6a8925ebfaa63727edcbce830c04a1911675ff42f9a36746c6cdf1d2",
    "lean/VE/Numbers/Bits.lean": "7b714b2301933d1b6c07889939d3223df1f761edce394fdc30f22af0f0cbdba5",
    "lean/VE/Numbers/Decimal.lean": "3422fc6c957bf7b8f6e3d9dfd34092a8259a870f31a26b4a2619f7ffde97855d",
@@ -623,7 +629,7 @@
    "lean/VE/Presupposition/Couple/Statements.lean": "13a372c6133c6699ce8150506bab14c8319b0afe64fb1f6e86f0fa7ee0ee66f5",
    "lean/VE/Presupposition/CoupleExamples.lean": "0b9a6bc7fb308fed7aa1f3407ed81446d20220463525167d3a8a9d5e212f974a",
    "lean/VE/Presupposition/Events.lean": "ceac1d47595c4de1b054183436324c81ad1ce078f5d466800f391dbf893f5216",
-   "lean/VE/Presupposition/Events/Examples.lean": "fec3b685812567a8fc126cc956c57622b55fa9edc856456a21944d4853cc8ad1",
+   "lean/VE/Presupposition/Events/Examples.lean": "718a2e92e5289c543d087b6afef70b0cf594ffd2f35ae5677022793bcc709d76",
    "lean/VE/Presupposition/Examples.lean": "e7b578ff7fe7e74be7169fa9b70f735ca588a15564842f685e46e142e72c35f1",
    "lean/VE/Presupposition/Frame.lean": "f2d8e7e3901b41eb80e64f7e2b14819f50d81c9d4be8bed345795db51f2cf25d",
    "lean/VE/Presupposition/Reading.lean": "6e9b9d7700fb2fae6a1329a7f5367fff36d7a13b97cde129c59e20dfd3ca301f",
@@ -693,6 +699,8 @@
    "lean/VE/Readings/SoftSup.lean": "f1384ebbba084d8b344f7cb8cf03f69d566da99bc17fce0d99154611bc337346",
    "lean/VE/Readings/SoftSupExamples.lean": "026662391d7673a9fd9e5051e78940a5b1d0f51a05c033b9a26c98a6babaa2bd",
    "lean/VE/Readings/SoftSupLabels.lean": "b255f90c4123e91d15ade7da1a22e6ad5b3ab57ff65a8d02de5e4082ceb54fb2",
+   "lean/VE/Readings/SoftSupRun.lean": "30963e3cd4693f060b3c8e6ff7fed2d2a0b6f297c0328060b2ec9b7753bd43d0",
+   "lean/VE/Readings/SoftSupRunExamples.lean": "676b0f7fe529bf5905217ce8b9368fc1dfbf9cf295d26b4e41bfacf87e05e74d",
    "lean/VE/Readings/SoftSupWire.lean": "7f1d9a9efd7c976390f8c98b6486b1d859ed7177815fdeaad81a65fc4d16fbf8",
    "lean/VE/Readings/SoftSupWireExamples.lean": "c6044c8d223bff1ecbc1531db70026d0ae01360971912060410875491949986c",
    "lean/VE/Readings/SoftVerdicts.lean": "091687de6752f3eb3c7430f56398d86f2acc1b235492c7cb1a8c7560723b4c40",
@@ -816,8 +824,8 @@
    "lean/VE/Scales/Premises.lean": "0bee338a1cfe575bd4e3417d9cdf9bd6c2290fefc182aeea901478a1f703afd2",
    "lean/VE/Scales/Syntax.lean": "e53539123d3a928e1b73fa1ab85bc9af4e0c71f07efc09fc2d16262a41c69ddc",
    "lean/VE/Scales/Theorems.lean": "bb8ba1477e430a0db8380e53d0947299cf4220ffa1f5d7406146bd7156512eef",
-   "lean/VE/Scope/Authoring.lean": "55996bc27e6febcc2161427fc12fcf01d2521d6487232cb4dd73da361ba4da90",
-   "lean/VE/Scope/AuthoringExamples.lean": "41abf0f2550aafcc7e5761272eb878c954d5adfb0430ee8abf0f6833cc25fd12",
+   "lean/VE/Scope/Authoring.lean": "bd07295b5d47f340f7ebc96d3917b244b384a3b52f419a5c0ddd53ee5f129852",
+   "lean/VE/Scope/AuthoringExamples.lean": "1e62529a1cfdcec841e7aa83ed16012f6bd62d49c618913154ad9b3b25b992ef",
    "lean/VE/Scope/EffectLemmas.lean": "46db251138e4da2479c66379f461332c927118d154ee90299f64d9649337d0cb",
    "lean/VE/Scope/Effects.lean": "76d034cbd2f835309381cbbd7b032eaf69a03bb29fe463e3bad6e9508aa33639",
    "lean/VE/Scope/English.lean": "5dffb7496b2af33fb81857b9b28e294aabcab877fdf66c63c35681c8ac79c560",
@@ -876,11 +884,11 @@
    "lean/VE/Service/Graph.lean": "e27c762fff7a13689df799082ee369d1f93ed8597f0e307202202b2accccbc7c",
    "lean/VE/Service/MemoExamples.lean": "b888ce8c45e458fb26a203dd68158e08123c9e31c94f23fa34182d06a73a6c24",
    "lean/VE/Service/ParseDiagnostic.lean": "7e27424725f2b15a76a6c438bfa5b4b27c714bf8cfa08b960a7a09cd522305a0",
-   "lean/VE/Service/Protocol.lean": "bf6e10c4f5856a2457fe91fae0818a876d727142aae7cf832709a26b212e0f0f",
+   "lean/VE/Service/Protocol.lean": "7b64405464d9f768ebe00786ede77ebe0fd702bb48d0986279a37bd94b46ea72",
    "lean/VE/Service/Readings.lean": "357a25dda81bfbce40b2361f8f437a74231e199228e53130f099f543e35816ed",
    "lean/VE/Service/ReadingsChoices.lean": "9881463bf7607b77d6a448d01d81e24452dc5adfa467673a91a7b1a13c86b4a5",
-   "lean/VE/Service/Registry.lean": "1db75b98ae13a06d5f6ce8614aa2f6d8b2b7698fcc5f187f4800285f9bfd863e",
-   "lean/VE/Service/RegistryExamples.lean": "516dadcbc5f08cf942d2ed3b293580fe92d2da6e6a4ffc931d1d6818c392395b",
+   "lean/VE/Service/Registry.lean": "cef1d0114712fa1b952f076bcc0040d4a04a3de8a921433702dd534502c163b2",
+   "lean/VE/Service/RegistryExamples.lean": "29fa6dbd86bf5b7e7ca9ce867568320ed162698485412f7214c52db251894a1e",
    "lean/VE/Service/ScopeAdmission.lean": "3da036d23c388942399f69cc71248898cc87f7d23132ddc1b91ebecd027f13bd",
    "lean/VE/Service/ScopeExamples.lean": "bd18780203861e2cd265608e0be97284832c26fd2798404862264ae99bf44e49",
    "lean/VE/Service/SoftSourceExamples.lean": "997b857139abfb9c3ad49024350a2ef990bd30a899a46f0e9a64fb25851a294d",
@@ -952,37 +960,38 @@
    "lean/VE/Words/Situation.lean": "04a0781486d2ef00feb590ccf206ff7ba43f98dff6689995a7770e83e09f5d6a",
    "lean/WEIGHING.md": "585afaf27f9e164716670979a228eefd8035b56ee35879c519e61c0e407cac47",
    "lean/audit.py": "05fb69c5689a8606fefd6d43e220f23ee6dbedc4bea7245b34ae29a4fd13a1cd",
-   "lean/axioms.txt": "a7266638c357cff0f56bd5ae1863ad358f9a72b5f2c19a205e66c827b3e7c266",
-   "lean/checkers.lock": "473aa03a706e422baf703221033c30e61f23509a402c95324523820a6d4af9a9",
-   "lean/declarations.txt": "1341e96a353f9b632a58edc45cca804e39bdc6620bedc3442ffa4dd382cc8eb4",
+   "lean/axioms.txt": "43570e7dd19bba31ba64c5e84b39f68d7fb02d3b80879fbad5acfef7aa5e86ea",
+   "lean/checkers.lock": "fc2f3eb9221a2ded4ede69e7e521cbad6bb6c7597fa4daedb4c0fac27f770b5b",
+   "lean/declarations.txt": "ba24772e2fdb18d8e0d6ecc61d3ce330cc20f135c28c013b97b98041e04ec469",
    "lean/lake-manifest.json": "8579a8594992ccc571614869d24b997dba98134cffdbd5a0b26220a419e0de8e",
    "lean/lakefile.toml": "ffc47dfd06119c3518785b5059d81216b2f82b140509bfd25cd3273cbe04d4f5",
    "lean/lean-toolchain": "42779d67b81608af8a12aa4328d2ab47ca201925b3b2bd68369587b5340bb434",
-   "lean/predicates.txt": "87f1e6c762dc60c39dcf7f9b9d9b7942728452c7c3fc470ab665183347285560",
-   "lean/statements.txt": "deb4e2f4fdde049f536936c24fbcd46c6df3bc8763c715ed87e02cef3dc842e9",
-   "tools/trust-classes.json": "a27930f9cb3f7c7e72dce7e20458d2a2ef66bd545e40856331d78174aeb2f7de"
+   "lean/predicates.txt": "bb14e160212cb0f07429f14b3a60d0281a50321f19ba59ed3a760a029de08344",
+   "lean/statements.txt": "4c582f3edd880335633c7f5ee4f5538cbf83a97190a55b43388ec5db2b41b883",
+   "tools/trust-classes.json": "11b11e355392c29bd75dfce4ecad05d134a3565aba1e7cbdf04869044197345a"
   },
   "tool_files": {
    "lean/audit.py": "05fb69c5689a8606fefd6d43e220f23ee6dbedc4bea7245b34ae29a4fd13a1cd",
    "tools/cache_store.py": "8bc5b8f9345c4b6b3631fe8dc7a09d6764b935ac68aa2d652940c8ae55859f0a",
-   "tools/check_lean_imports.py": "08c3b15fbb1e28a7b85af1438c8de219f515f223253742cee7b0e2d340763dfa",
+   "tools/check_lean_imports.py": "8549915b9c8ef00204402dec5fe1aaa7c84b123f68d68c7b3b9f74d665bef241",
    "tools/lake_outputs.py": "94dfe92cf6e2ee132b35c3526fa11b9aa27e943d7d5afaf64685b674c4d9804b",
-   "tools/layer_policy.py": "574c0a20e0c863cd32a728c7ca33780bfe786f33c8dc0def4c1a43eb88c84e50",
+   "tools/layer_policy.py": "5f31e1730c51a3e2ae8eddee6f65a6d7a808a4befbec2d803c7533aa719f3267",
    "tools/lean_dump_cache.py": "5c14d3407bec99011813bc86e087741cb7a57e9c3fb1cb092771c568c6b444c4",
    "tools/lean_share.py": "fb51c782a26c1e1f75cb6c50109da6fe705d7ef0b1d08ac859bda8d277ce25ca",
    "tools/lean_statements.py": "312d7c93ac754239d718567f0013fdad6511db5ec222ac10d5dd2c254c133a16",
-   "tools/regen_generated.py": "358a08d3977443d9ba250e3ef20370f56a39dacfb5a633151a42a7d59b905ee6",
+   "tools/regen_generated.py": "9e272c017710913a998c5b928add8e324728284789479613f0ea9df100dd267c",
    "tools/trust_map.py": "81082574f08249aea02a276fe8323ce76cbacdc09d6ba8851ef55ee2e77830a7",
    "tools/trust_mutants.py": "4517658c0fd91ead7e0253b2d2466354c9c6cda276d974098460f1068afd6862"
   }
  },
  "rescore": {
-  "file": "../ship-rescore-1286294.json",
-  "head": "abc280a497d820ad10867b29f9a09da22dcc34c1",
-  "mode": "identical",
+  "file": "../ship-rescore-2228924.json",
+  "head": null,
+  "mode": "full",
   "changed": [],
-  "reused": 47,
-  "rerun": 3
+  "reused": 0,
+  "rerun": 50,
+  "full_run": "its inputs differ (tool): tools/check_lean_imports.py, tools/regen_generated.py"
  },
  "definitions": [
   "lean/VE/EnglishGrammar/Norm/Run.lean: VE.EnglishGrammar.Norm.Run.leanReader",
@@ -1004,8 +1013,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/Norm/RunExamples.lean:29: Expression",
    "raw_status": "KILLED",
-   "reused_from": "abc280a497d820ad10867b29f9a09da22dcc34c1",
-   "reads": "fdf5f86e55b9e23282bd0769ea6ac6a4f8c1471a412c3c103db6a8e579512081",
+   "reads": "7df946184026321e169d6b2a4df06ad4748eb8aa32bac66b1027d4b90f70b2fa",
    "killed_at": [
     29,
     29
@@ -1047,8 +1055,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/Norm/RunExamples.lean:29: Expression",
    "raw_status": "KILLED",
-   "reused_from": "abc280a497d820ad10867b29f9a09da22dcc34c1",
-   "reads": "fdf5f86e55b9e23282bd0769ea6ac6a4f8c1471a412c3c103db6a8e579512081",
+   "reads": "7df946184026321e169d6b2a4df06ad4748eb8aa32bac66b1027d4b90f70b2fa",
    "killed_at": [
     29,
     29
@@ -1071,8 +1078,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/Norm/RunExamples.lean:29: Expression",
    "raw_status": "KILLED",
-   "reused_from": "abc280a497d820ad10867b29f9a09da22dcc34c1",
-   "reads": "fdf5f86e55b9e23282bd0769ea6ac6a4f8c1471a412c3c103db6a8e579512081",
+   "reads": "7df946184026321e169d6b2a4df06ad4748eb8aa32bac66b1027d4b90f70b2fa",
    "killed_at": [
     29,
     29
@@ -1095,8 +1101,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/Norm/RunExamples.lean:29: Expression",
    "raw_status": "KILLED",
-   "reused_from": "abc280a497d820ad10867b29f9a09da22dcc34c1",
-   "reads": "fdf5f86e55b9e23282bd0769ea6ac6a4f8c1471a412c3c103db6a8e579512081",
+   "reads": "7df946184026321e169d6b2a4df06ad4748eb8aa32bac66b1027d4b90f70b2fa",
    "killed_at": [
     29,
     29
@@ -1138,8 +1143,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/Norm/RunExamples.lean:29: Expression",
    "raw_status": "KILLED",
-   "reused_from": "abc280a497d820ad10867b29f9a09da22dcc34c1",
-   "reads": "fdf5f86e55b9e23282bd0769ea6ac6a4f8c1471a412c3c103db6a8e579512081",
+   "reads": "7df946184026321e169d6b2a4df06ad4748eb8aa32bac66b1027d4b90f70b2fa",
    "killed_at": [
     29,
     29
@@ -1162,8 +1166,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/Norm/RunExamples.lean:29: Expression",
    "raw_status": "KILLED",
-   "reused_from": "abc280a497d820ad10867b29f9a09da22dcc34c1",
-   "reads": "fdf5f86e55b9e23282bd0769ea6ac6a4f8c1471a412c3c103db6a8e579512081",
+   "reads": "7df946184026321e169d6b2a4df06ad4748eb8aa32bac66b1027d4b90f70b2fa",
    "killed_at": [
     29,
     29
@@ -1186,8 +1189,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/Norm/RunExamples.lean:29: Expression",
    "raw_status": "KILLED",
-   "reused_from": "abc280a497d820ad10867b29f9a09da22dcc34c1",
-   "reads": "fdf5f86e55b9e23282bd0769ea6ac6a4f8c1471a412c3c103db6a8e579512081",
+   "reads": "7df946184026321e169d6b2a4df06ad4748eb8aa32bac66b1027d4b90f70b2fa",
    "killed_at": [
     29,
     29
@@ -1210,8 +1212,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/Norm/RunExamples.lean:29: Expression",
    "raw_status": "KILLED",
-   "reused_from": "abc280a497d820ad10867b29f9a09da22dcc34c1",
-   "reads": "fdf5f86e55b9e23282bd0769ea6ac6a4f8c1471a412c3c103db6a8e579512081",
+   "reads": "7df946184026321e169d6b2a4df06ad4748eb8aa32bac66b1027d4b90f70b2fa",
    "killed_at": [
     29,
     29
@@ -1253,8 +1254,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/Norm/RunExamples.lean:29: Expression",
    "raw_status": "KILLED",
-   "reused_from": "abc280a497d820ad10867b29f9a09da22dcc34c1",
-   "reads": "fdf5f86e55b9e23282bd0769ea6ac6a4f8c1471a412c3c103db6a8e579512081",
+   "reads": "7df946184026321e169d6b2a4df06ad4748eb8aa32bac66b1027d4b90f70b2fa",
    "killed_at": [
     29,
     29
@@ -1277,8 +1277,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/Norm/RunExamples.lean:29: Expression",
    "raw_status": "KILLED",
-   "reused_from": "abc280a497d820ad10867b29f9a09da22dcc34c1",
-   "reads": "fdf5f86e55b9e23282bd0769ea6ac6a4f8c1471a412c3c103db6a8e579512081",
+   "reads": "7df946184026321e169d6b2a4df06ad4748eb8aa32bac66b1027d4b90f70b2fa",
    "killed_at": [
     29,
     29
@@ -1301,8 +1300,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/Norm/RunExamples.lean:29: Expression",
    "raw_status": "KILLED",
-   "reused_from": "abc280a497d820ad10867b29f9a09da22dcc34c1",
-   "reads": "fdf5f86e55b9e23282bd0769ea6ac6a4f8c1471a412c3c103db6a8e579512081",
+   "reads": "7df946184026321e169d6b2a4df06ad4748eb8aa32bac66b1027d4b90f70b2fa",
    "killed_at": [
     29,
     29
@@ -1325,8 +1323,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/Norm/RunExamples.lean:29: Expression",
    "raw_status": "KILLED",
-   "reused_from": "abc280a497d820ad10867b29f9a09da22dcc34c1",
-   "reads": "fdf5f86e55b9e23282bd0769ea6ac6a4f8c1471a412c3c103db6a8e579512081",
+   "reads": "7df946184026321e169d6b2a4df06ad4748eb8aa32bac66b1027d4b90f70b2fa",
    "killed_at": [
     29,
     29
@@ -1349,8 +1346,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/Norm/RunExamples.lean:252: Expression",
    "raw_status": "KILLED",
-   "reused_from": "abc280a497d820ad10867b29f9a09da22dcc34c1",
-   "reads": "d5d2360a7f9425a5d056d6726768870f01b5db5565ea4c6c0faa863105bdfd10",
+   "reads": "2f55f7d4182190fc2c672ba0a677ad13b942147f5f3e953ced339e29632a8531",
    "killed_at": [
     252,
     260
@@ -1373,8 +1369,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/Norm/RunExamples.lean:29: Expression",
    "raw_status": "KILLED",
-   "reused_from": "abc280a497d820ad10867b29f9a09da22dcc34c1",
-   "reads": "fdf5f86e55b9e23282bd0769ea6ac6a4f8c1471a412c3c103db6a8e579512081",
+   "reads": "7df946184026321e169d6b2a4df06ad4748eb8aa32bac66b1027d4b90f70b2fa",
    "killed_at": [
     29,
     29
@@ -1397,8 +1392,7 @@
    "status": "INVALID",
    "detail": "Invalid field `dropLast`: The environment does not contain `Array.dropLast`",
    "raw_status": "INVALID",
-   "reused_from": "abc280a497d820ad10867b29f9a09da22dcc34c1",
-   "reads": "d70727df463b0c9e111ab5903c42f23f37fcfd782ce5c6127e61657896930305",
+   "reads": "07625b7b8e07c3a24c3d5732e2f9de9731d6ae6b82a70e75bea63d6a2bb80eee",
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -1417,8 +1411,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/Norm/RunExamples.lean:29: Expression",
    "raw_status": "KILLED",
-   "reused_from": "abc280a497d820ad10867b29f9a09da22dcc34c1",
-   "reads": "fdf5f86e55b9e23282bd0769ea6ac6a4f8c1471a412c3c103db6a8e579512081",
+   "reads": "7df946184026321e169d6b2a4df06ad4748eb8aa32bac66b1027d4b90f70b2fa",
    "killed_at": [
     29,
     29
@@ -1441,8 +1434,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/Norm/RunExamples.lean:252: Expression",
    "raw_status": "KILLED",
-   "reused_from": "abc280a497d820ad10867b29f9a09da22dcc34c1",
-   "reads": "d5d2360a7f9425a5d056d6726768870f01b5db5565ea4c6c0faa863105bdfd10",
+   "reads": "2f55f7d4182190fc2c672ba0a677ad13b942147f5f3e953ced339e29632a8531",
    "killed_at": [
     252,
     260
@@ -1465,8 +1457,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/Norm/RunExamples.lean:29: Expression",
    "raw_status": "KILLED",
-   "reused_from": "abc280a497d820ad10867b29f9a09da22dcc34c1",
-   "reads": "fdf5f86e55b9e23282bd0769ea6ac6a4f8c1471a412c3c103db6a8e579512081",
+   "reads": "7df946184026321e169d6b2a4df06ad4748eb8aa32bac66b1027d4b90f70b2fa",
    "killed_at": [
     29,
     29
@@ -1489,8 +1480,7 @@
    "status": "INVALID",
    "detail": "Invalid field `dropLast`: The environment does not contain `Array.dropLast`",
    "raw_status": "INVALID",
-   "reused_from": "abc280a497d820ad10867b29f9a09da22dcc34c1",
-   "reads": "d70727df463b0c9e111ab5903c42f23f37fcfd782ce5c6127e61657896930305",
+   "reads": "07625b7b8e07c3a24c3d5732e2f9de9731d6ae6b82a70e75bea63d6a2bb80eee",
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -1509,8 +1499,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/Norm/RunExamples.lean:29: Expression",
    "raw_status": "KILLED",
-   "reused_from": "abc280a497d820ad10867b29f9a09da22dcc34c1",
-   "reads": "fdf5f86e55b9e23282bd0769ea6ac6a4f8c1471a412c3c103db6a8e579512081",
+   "reads": "7df946184026321e169d6b2a4df06ad4748eb8aa32bac66b1027d4b90f70b2fa",
    "killed_at": [
     29,
     29
@@ -1533,8 +1522,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/Norm/RunExamples.lean:29: Expression",
    "raw_status": "KILLED",
-   "reused_from": "abc280a497d820ad10867b29f9a09da22dcc34c1",
-   "reads": "fdf5f86e55b9e23282bd0769ea6ac6a4f8c1471a412c3c103db6a8e579512081",
+   "reads": "7df946184026321e169d6b2a4df06ad4748eb8aa32bac66b1027d4b90f70b2fa",
    "killed_at": [
     29,
     29
@@ -1557,8 +1545,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/Norm/RunExamples.lean:29: Expression",
    "raw_status": "KILLED",
-   "reused_from": "abc280a497d820ad10867b29f9a09da22dcc34c1",
-   "reads": "fdf5f86e55b9e23282bd0769ea6ac6a4f8c1471a412c3c103db6a8e579512081",
+   "reads": "7df946184026321e169d6b2a4df06ad4748eb8aa32bac66b1027d4b90f70b2fa",
    "killed_at": [
     29,
     29
@@ -1581,8 +1568,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/Norm/RunExamples.lean:29: Expression",
    "raw_status": "KILLED",
-   "reused_from": "abc280a497d820ad10867b29f9a09da22dcc34c1",
-   "reads": "fdf5f86e55b9e23282bd0769ea6ac6a4f8c1471a412c3c103db6a8e579512081",
+   "reads": "7df946184026321e169d6b2a4df06ad4748eb8aa32bac66b1027d4b90f70b2fa",
    "killed_at": [
     29,
     29
@@ -1605,8 +1591,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/Norm/RunExamples.lean:29: Expression",
    "raw_status": "KILLED",
-   "reused_from": "abc280a497d820ad10867b29f9a09da22dcc34c1",
-   "reads": "fdf5f86e55b9e23282bd0769ea6ac6a4f8c1471a412c3c103db6a8e579512081",
+   "reads": "7df946184026321e169d6b2a4df06ad4748eb8aa32bac66b1027d4b90f70b2fa",
    "killed_at": [
     29,
     29
@@ -1629,8 +1614,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/Norm/RunExamples.lean:29: Expression",
    "raw_status": "KILLED",
-   "reused_from": "abc280a497d820ad10867b29f9a09da22dcc34c1",
-   "reads": "fdf5f86e55b9e23282bd0769ea6ac6a4f8c1471a412c3c103db6a8e579512081",
+   "reads": "7df946184026321e169d6b2a4df06ad4748eb8aa32bac66b1027d4b90f70b2fa",
    "killed_at": [
     29,
     29
@@ -1653,8 +1637,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/Norm/RunExamples.lean:92: Expression",
    "raw_status": "KILLED",
-   "reused_from": "abc280a497d820ad10867b29f9a09da22dcc34c1",
-   "reads": "b45917fc8946159380b15ff9de3b5b620fccec419eae6e40e173791a1db46667",
+   "reads": "db9ffbbdf08578e4c10b5c16d2dcd1a9e6cd2ba35650228a0ae8aa02d6f6e1a6",
    "killed_at": [
     92,
     97
@@ -1677,8 +1660,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/Norm/RunExamples.lean:29: Expression",
    "raw_status": "KILLED",
-   "reused_from": "abc280a497d820ad10867b29f9a09da22dcc34c1",
-   "reads": "fdf5f86e55b9e23282bd0769ea6ac6a4f8c1471a412c3c103db6a8e579512081",
+   "reads": "7df946184026321e169d6b2a4df06ad4748eb8aa32bac66b1027d4b90f70b2fa",
    "killed_at": [
     29,
     29
@@ -1701,8 +1683,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/Norm/RunExamples.lean:29: Expression",
    "raw_status": "KILLED",
-   "reused_from": "abc280a497d820ad10867b29f9a09da22dcc34c1",
-   "reads": "fdf5f86e55b9e23282bd0769ea6ac6a4f8c1471a412c3c103db6a8e579512081",
+   "reads": "7df946184026321e169d6b2a4df06ad4748eb8aa32bac66b1027d4b90f70b2fa",
    "killed_at": [
     29,
     29
@@ -1725,8 +1706,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/Norm/RunExamples.lean:29: Expression",
    "raw_status": "KILLED",
-   "reused_from": "abc280a497d820ad10867b29f9a09da22dcc34c1",
-   "reads": "fdf5f86e55b9e23282bd0769ea6ac6a4f8c1471a412c3c103db6a8e579512081",
+   "reads": "7df946184026321e169d6b2a4df06ad4748eb8aa32bac66b1027d4b90f70b2fa",
    "killed_at": [
     29,
     29
@@ -1749,8 +1729,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/Norm/RunExamples.lean:29: Expression",
    "raw_status": "KILLED",
-   "reused_from": "abc280a497d820ad10867b29f9a09da22dcc34c1",
-   "reads": "fdf5f86e55b9e23282bd0769ea6ac6a4f8c1471a412c3c103db6a8e579512081",
+   "reads": "7df946184026321e169d6b2a4df06ad4748eb8aa32bac66b1027d4b90f70b2fa",
    "killed_at": [
     29,
     29
@@ -1773,8 +1752,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/Norm/RunExamples.lean:252: Expression",
    "raw_status": "KILLED",
-   "reused_from": "abc280a497d820ad10867b29f9a09da22dcc34c1",
-   "reads": "d5d2360a7f9425a5d056d6726768870f01b5db5565ea4c6c0faa863105bdfd10",
+   "reads": "2f55f7d4182190fc2c672ba0a677ad13b942147f5f3e953ced339e29632a8531",
    "killed_at": [
     252,
     260
@@ -1797,8 +1775,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/Norm/RunExamples.lean:29: Expression",
    "raw_status": "KILLED",
-   "reused_from": "abc280a497d820ad10867b29f9a09da22dcc34c1",
-   "reads": "fdf5f86e55b9e23282bd0769ea6ac6a4f8c1471a412c3c103db6a8e579512081",
+   "reads": "7df946184026321e169d6b2a4df06ad4748eb8aa32bac66b1027d4b90f70b2fa",
    "killed_at": [
     29,
     29
@@ -1821,8 +1798,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/Norm/RunExamples.lean:252: Expression",
    "raw_status": "KILLED",
-   "reused_from": "abc280a497d820ad10867b29f9a09da22dcc34c1",
-   "reads": "d5d2360a7f9425a5d056d6726768870f01b5db5565ea4c6c0faa863105bdfd10",
+   "reads": "2f55f7d4182190fc2c672ba0a677ad13b942147f5f3e953ced339e29632a8531",
    "killed_at": [
     252,
     260
@@ -1845,8 +1821,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/Norm/RunExamples.lean:29: Expression",
    "raw_status": "KILLED",
-   "reused_from": "abc280a497d820ad10867b29f9a09da22dcc34c1",
-   "reads": "fdf5f86e55b9e23282bd0769ea6ac6a4f8c1471a412c3c103db6a8e579512081",
+   "reads": "7df946184026321e169d6b2a4df06ad4748eb8aa32bac66b1027d4b90f70b2fa",
    "killed_at": [
     29,
     29
@@ -1869,8 +1844,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/Norm/RunExamples.lean:252: Expression",
    "raw_status": "KILLED",
-   "reused_from": "abc280a497d820ad10867b29f9a09da22dcc34c1",
-   "reads": "d5d2360a7f9425a5d056d6726768870f01b5db5565ea4c6c0faa863105bdfd10",
+   "reads": "2f55f7d4182190fc2c672ba0a677ad13b942147f5f3e953ced339e29632a8531",
    "killed_at": [
     252,
     260
@@ -1893,8 +1867,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/Norm/RunExamples.lean:29: Expression",
    "raw_status": "KILLED",
-   "reused_from": "abc280a497d820ad10867b29f9a09da22dcc34c1",
-   "reads": "fdf5f86e55b9e23282bd0769ea6ac6a4f8c1471a412c3c103db6a8e579512081",
+   "reads": "7df946184026321e169d6b2a4df06ad4748eb8aa32bac66b1027d4b90f70b2fa",
    "killed_at": [
     29,
     29
@@ -1917,8 +1890,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/Norm/RunExamples.lean:252: Expression",
    "raw_status": "KILLED",
-   "reused_from": "abc280a497d820ad10867b29f9a09da22dcc34c1",
-   "reads": "d5d2360a7f9425a5d056d6726768870f01b5db5565ea4c6c0faa863105bdfd10",
+   "reads": "2f55f7d4182190fc2c672ba0a677ad13b942147f5f3e953ced339e29632a8531",
    "killed_at": [
     252,
     260
@@ -1941,8 +1913,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/Norm/RunExamples.lean:29: Expression",
    "raw_status": "KILLED",
-   "reused_from": "abc280a497d820ad10867b29f9a09da22dcc34c1",
-   "reads": "fdf5f86e55b9e23282bd0769ea6ac6a4f8c1471a412c3c103db6a8e579512081",
+   "reads": "7df946184026321e169d6b2a4df06ad4748eb8aa32bac66b1027d4b90f70b2fa",
    "killed_at": [
     29,
     29
@@ -1965,8 +1936,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/Norm/RunExamples.lean:29: Expression",
    "raw_status": "KILLED",
-   "reused_from": "abc280a497d820ad10867b29f9a09da22dcc34c1",
-   "reads": "fdf5f86e55b9e23282bd0769ea6ac6a4f8c1471a412c3c103db6a8e579512081",
+   "reads": "7df946184026321e169d6b2a4df06ad4748eb8aa32bac66b1027d4b90f70b2fa",
    "killed_at": [
     29,
     29
@@ -1990,7 +1960,6 @@
    "detail": "equivalent: `(acc.reverse.take 1).getLast?` is the head of `acc.reverse`, which is `acc.getLast?` (M043, line 67); en-e3a's trust-mutants-allow.json allows the same `getLast?` of a one-element reverse",
    "raw_status": "SURVIVOR",
    "raw_detail": "",
-   "reused_from": "abc280a497d820ad10867b29f9a09da22dcc34c1",
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -2009,8 +1978,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/Norm/RunExamples.lean:29: Expression",
    "raw_status": "KILLED",
-   "reused_from": "abc280a497d820ad10867b29f9a09da22dcc34c1",
-   "reads": "fdf5f86e55b9e23282bd0769ea6ac6a4f8c1471a412c3c103db6a8e579512081",
+   "reads": "7df946184026321e169d6b2a4df06ad4748eb8aa32bac66b1027d4b90f70b2fa",
    "killed_at": [
     29,
     29
@@ -2033,8 +2001,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/Norm/RunExamples.lean:29: Expression",
    "raw_status": "KILLED",
-   "reused_from": "abc280a497d820ad10867b29f9a09da22dcc34c1",
-   "reads": "fdf5f86e55b9e23282bd0769ea6ac6a4f8c1471a412c3c103db6a8e579512081",
+   "reads": "7df946184026321e169d6b2a4df06ad4748eb8aa32bac66b1027d4b90f70b2fa",
    "killed_at": [
     29,
     29
@@ -2057,8 +2024,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/Norm/RunExamples.lean:29: Expression",
    "raw_status": "KILLED",
-   "reused_from": "abc280a497d820ad10867b29f9a09da22dcc34c1",
-   "reads": "fdf5f86e55b9e23282bd0769ea6ac6a4f8c1471a412c3c103db6a8e579512081",
+   "reads": "7df946184026321e169d6b2a4df06ad4748eb8aa32bac66b1027d4b90f70b2fa",
    "killed_at": [
     29,
     29
@@ -2081,8 +2047,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/Norm/RunExamples.lean:92: Expression",
    "raw_status": "KILLED",
-   "reused_from": "abc280a497d820ad10867b29f9a09da22dcc34c1",
-   "reads": "b45917fc8946159380b15ff9de3b5b620fccec419eae6e40e173791a1db46667",
+   "reads": "db9ffbbdf08578e4c10b5c16d2dcd1a9e6cd2ba35650228a0ae8aa02d6f6e1a6",
    "killed_at": [
     92,
     97
@@ -2105,8 +2070,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/Norm/RunExamples.lean:29: Expression",
    "raw_status": "KILLED",
-   "reused_from": "abc280a497d820ad10867b29f9a09da22dcc34c1",
-   "reads": "fdf5f86e55b9e23282bd0769ea6ac6a4f8c1471a412c3c103db6a8e579512081",
+   "reads": "7df946184026321e169d6b2a4df06ad4748eb8aa32bac66b1027d4b90f70b2fa",
    "killed_at": [
     29,
     29
@@ -2129,8 +2093,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/Norm/RunExamples.lean:29: Expression",
    "raw_status": "KILLED",
-   "reused_from": "abc280a497d820ad10867b29f9a09da22dcc34c1",
-   "reads": "fdf5f86e55b9e23282bd0769ea6ac6a4f8c1471a412c3c103db6a8e579512081",
+   "reads": "7df946184026321e169d6b2a4df06ad4748eb8aa32bac66b1027d4b90f70b2fa",
    "killed_at": [
     29,
     29
@@ -2153,8 +2116,7 @@
    "status": "KILLED",
    "detail": "lean/VE/EnglishGrammar/Norm/RunExamples.lean:29: Expression",
    "raw_status": "KILLED",
-   "reused_from": "abc280a497d820ad10867b29f9a09da22dcc34c1",
-   "reads": "fdf5f86e55b9e23282bd0769ea6ac6a4f8c1471a412c3c103db6a8e579512081",
+   "reads": "7df946184026321e169d6b2a4df06ad4748eb8aa32bac66b1027d4b90f70b2fa",
    "killed_at": [
     29,
     29
@@ -2163,5 +2125,5 @@
    "trusted": true
   }
  ],
- "where": "ve-cloud-3"
+ "where": "ve-cloud-2"
 }
