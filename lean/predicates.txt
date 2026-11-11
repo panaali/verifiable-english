@@ -121,7 +121,10 @@ module VE.Acts.LexicalProofs
 module VE.Acts.Linearize
 module VE.Acts.Meaning
 module VE.Acts.MeaningExamples
+module VE.Acts.NormalBlocks
+module VE.Acts.NormalInverse
 module VE.Acts.NormalProofs
+module VE.Acts.NormalUnique
 module VE.Acts.ParseIndexExamples
 module VE.Acts.Read
 module VE.Acts.Readings
@@ -880,12 +883,29 @@ VE.Acts.DerivedIn@VE.Acts.Read
 VE.Acts.IntendedActs@VE.Acts.Faithful
 VE.Acts.Lexical.Accepts@VE.Acts.LexicalProofs
 VE.Acts.Lexical.Grouped@VE.Acts.LexicalProofs
+VE.Acts.NormalProofs.ADV@VE.Acts.NormalBlocks
+VE.Acts.NormalProofs.Adj@VE.Acts.NormalUnique
+VE.Acts.NormalProofs.BlkOk@VE.Acts.NormalInverse
+VE.Acts.NormalProofs.Box@VE.Acts.NormalInverse
+VE.Acts.NormalProofs.EF@VE.Acts.NormalInverse
+VE.Acts.NormalProofs.EndOk@VE.Acts.NormalUnique
+VE.Acts.NormalProofs.ExclW@VE.Acts.NormalInverse
+VE.Acts.NormalProofs.FillW@VE.Acts.NormalInverse
 VE.Acts.NormalProofs.FinD@VE.Acts.NormalProofs
 VE.Acts.NormalProofs.FinDs@VE.Acts.NormalProofs
 VE.Acts.NormalProofs.FrameOk@VE.Acts.NormalProofs
 VE.Acts.NormalProofs.Gen@VE.Acts.NormalProofs
 VE.Acts.NormalProofs.GenAll@VE.Acts.NormalProofs
+VE.Acts.NormalProofs.IsTok@VE.Acts.NormalInverse
+VE.Acts.NormalProofs.JC@VE.Acts.NormalInverse
+VE.Acts.NormalProofs.NTA@VE.Acts.NormalBlocks
+VE.Acts.NormalProofs.Next@VE.Acts.NormalInverse
+VE.Acts.NormalProofs.ObjOk@VE.Acts.NormalBlocks
 VE.Acts.NormalProofs.PartOk@VE.Acts.NormalProofs
+VE.Acts.NormalProofs.Stop@VE.Acts.NormalInverse
+VE.Acts.NormalProofs.TB@VE.Acts.NormalBlocks
+VE.Acts.NormalProofs.VocabOk@VE.Acts.NormalInverse
+VE.Acts.RenderExamples.ReadsBack@VE.Acts.RenderExamples
 VE.Acts.SourceExact@VE.Acts.Sources
 VE.Alternatives.AltConflictFree@VE.Alternatives.Background
 VE.Alternatives.AltConflictFreeU@VE.Alternatives.FillWire
