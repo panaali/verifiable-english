@@ -1,7 +1,44 @@
-{"allow": [
-  {"definition": "VE.WireContract.Tables.Acts.table", "operator": "bool-flip", "reason": "equivalent: the Bools the guards leave are the inherited flags of the own environment phase, which no Lean engine function reads (only Table.lean declares them); the included phases' flags are tied to Tables.Norms by the structural #guard"},
-  {"definition": "VE.WireContract.Hooks.Acts.ruleTyping", "operator": "list-drop-first", "reason": "equivalent: typingEnvironment is some only when the decoder reads acts@0, so the profiles are sorted and unique and their first is acts@0, never data@0"},
-  {"definition": "VE.WireContract.Hooks.Acts.ruleTyping", "operator": "list-drop-last", "reason": "equivalent: the decoded profiles hold norms@0 and relational-fol@0, which sort after data@0, so their last is never data@0"},
-  {"definition": "VE.WireContract.Hooks.Acts.ruleTyping", "operator": "lit-plus", "reason": "does not elaborate: a pattern literal of `go` made 1 or 2 leaves its match without a case (Missing cases); the start of the node total is killed by the node-budget #guard"},
-  {"definition": "VE.WireContract.Hooks.Acts.registered", "operator": "list-empty", "reason": "does not elaborate: `\"acts_environment\" []` applies a string (Function expected)"}
-]}
+{
+ "allow": [
+  {
+   "definition": "VE.WireContract.Tables.Acts.table",
+   "operator": "bool-flip",
+   "reason": "equivalent: the Bools the guards leave are the inherited flags of the own environment phase, which no Lean engine function reads (only Table.lean declares them); the included phases' flags are tied to Tables.Norms by the structural #guard"
+  },
+  {
+   "definition": "VE.WireContract.Hooks.Acts.ruleTyping",
+   "operator": "list-drop-first",
+   "reason": "equivalent: typingEnvironment is some only when the decoder reads acts@0, so the profiles are sorted and unique and their first is acts@0, never data@0"
+  },
+  {
+   "definition": "VE.WireContract.Hooks.Acts.ruleTyping",
+   "operator": "list-drop-last",
+   "reason": "equivalent: the decoded profiles hold norms@0 and relational-fol@0, which sort after data@0, so their last is never data@0"
+  },
+  {
+   "definition": "VE.WireContract.Hooks.Acts.ruleTyping",
+   "operator": "lit-plus",
+   "reason": "does not elaborate: a pattern literal of `go` made 1 or 2 leaves its match without a case (Missing cases); the start of the node total is killed by the node-budget #guard"
+  },
+  {
+   "definition": "VE.WireContract.Hooks.Acts.registered",
+   "operator": "list-empty",
+   "reason": "does not elaborate: `\"acts_environment\" []` applies a string (Function expected)"
+  },
+  {
+   "definition": "VE.WireContract.Tables.Acts.table",
+   "operator": "list-empty",
+   "reason": "not equivalent, and never built unnoticed: with the included name checks' location [\"norm\", \"name\"] cut, the module's build aborts (Lean exits 134 while the node-budget #guard runs the mutated table), which the tool records as UNKNOWN for want of a located error (M147, M221, M274)"
+  },
+  {
+   "definition": "VE.WireContract.Tables.Acts.table",
+   "operator": "list-first",
+   "reason": "not equivalent, and never built unnoticed: with the included name checks' location [\"norm\", \"name\"] cut, the module's build aborts (Lean exits 134 while the node-budget #guard runs the mutated table), which the tool records as UNKNOWN for want of a located error (M147, M221, M274)"
+  },
+  {
+   "definition": "VE.WireContract.Tables.Acts.table",
+   "operator": "list-drop-last",
+   "reason": "not equivalent, and never built unnoticed: with the included name checks' location [\"norm\", \"name\"] cut, the module's build aborts (Lean exits 134 while the node-budget #guard runs the mutated table), which the tool records as UNKNOWN for want of a located error (M147, M221, M274)"
+  }
+ ]
+}
