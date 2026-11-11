@@ -245,6 +245,22 @@ def readingsOf (j : Json) : List Json := ((j.getObjValD "readings").getArr?.toOp
 #guard [webGet "If draft is approved, click Check rule conflict, then click Ask." "code",
   webGet "If draft is approved, click Check rule conflict, then click Ask." "class",
   webGet "Click Ask, then add an exception or precedence." "code"] == [.str "ConditionScope", .str "VEError", .str "InvalidInput"]
+-- AB.md's refused -> refused rows (class rr; reviews/dri-decisions-20261109-ci-3-codes.md item 1, whose condition
+-- keeps each one a guard here): each refused through the mode with its exact code, text and class (`ConditionScope`'s
+-- `VEError`; the condition reader's `NoDerivation` is a `SyntaxError`, as for a condition written after the command).
+-- tests/test_commands_steps.py ties every rr row of AB.json to its row of this table.
+def csText : String :=
+  "a condition with a sequence of steps: write one sentence per step, with the condition on each step or on the first only"
+def abRefused : List (String × String × String × String) := [
+  ("Click Ask, if draft is approved, then add an exception or precedence.", "ConditionScope", "VEError", csText),
+  ("Click Ask, if draft is approved, then click Ask.", "ConditionScope", "VEError", csText),
+  ("Click Ask, then click Ask, if draft is approved.", "ConditionScope", "VEError", csText),
+  ("If draft is approvable, click Ask.", "NoDerivation", "SyntaxError", "The condition has no reading with the " ++
+    "current vocabulary. Unknown English phrase 'is approvable'. Nearest declared wordings: 'is approved'; 'assistant'; 'calls'."),
+  ("If draft is approved, click Check rule conflict, then click Ask.", "ConditionScope", "VEError", csText),
+  ("Review the meaning, if draft is approved, then click Ask.", "ConditionScope", "VEError", csText)]
+#guard abRefused.all fun (s, code, cls, text) => refuses (request s (env := E_web)) code text && webGet s "class" == .str cls
+#guard webGet "Click Ask, if draft is approvable." "class" == .str "SyntaxError"
 #guard [request "Then click Ask." (env := E_web), request "Click Check rule conflict, then click Ask." (env := E_web),
   request "Review the meaning, then click Ask." (env := E_web), request "  Click Check, then do not share the token."].all encodes
 
@@ -310,18 +326,18 @@ attributed instructions included; a `Then` wording of another kind, or an instru
 def srcUnit (id : String) (kind : Json) (w : String) : VE.SpeechActs.Source.SourceUnit :=
   ⟨id, (0, 0), kind, .null, none, w, none, none, .null⟩
 def attributed : Json := toJson [Json.str "attributed", .str "alice", .str "says", .str "instruction"]
-#guard VE.SpeechActs.Source.thenFault (·.kind) [srcUnit "a" (.str "instruction") "Click Ask.",
+#guard VE.SpeechActs.Source.thenFault (·.kind) "" [srcUnit "a" (.str "instruction") "Click Ask.",
     srcUnit "b" (.str "instruction") "Then click Ask."] ==
   some ("ThenWithoutStep: a Then step names no earlier instruction step as its antecedent; write the steps in one " ++
     "sentence, joined by ', then ' (unit b)")
-#guard [VE.SpeechActs.Source.thenFault (·.kind) [srcUnit "a" (.str "asserted") "Then the draft is approved."],
-  VE.SpeechActs.Source.thenFault (·.kind) [srcUnit "a" (.str "instruction") "Click Check rule conflict, then click Ask."]] ==
+#guard [VE.SpeechActs.Source.thenFault (·.kind) "" [srcUnit "a" (.str "asserted") "Then the draft is approved."],
+  VE.SpeechActs.Source.thenFault (·.kind) "" [srcUnit "a" (.str "instruction") "Click Check rule conflict, then click Ask."]] ==
   [none, none]
 #guard (VE.Route.Admission.decodeKind 16 attributed).isOk &&
-  (VE.SpeechActs.Source.thenFault (·.kind) [srcUnit "q" attributed "Then click Ask."]).isSome
+  (VE.SpeechActs.Source.thenFault (·.kind) "" [srcUnit "q" attributed "Then click Ask."]).isSome
 -- The effective kind decides: an asserted unit with a signed `instruction` choice is a `Then` step; the reverse is not.
-#guard (VE.SpeechActs.Source.thenFault (fun _ => .str "instruction") [srcUnit "c" (.str "asserted") "Then click Ask."]).isSome &&
-  (VE.SpeechActs.Source.thenFault (fun _ => .str "asserted") [srcUnit "c" (.str "instruction") "Then click Ask."]).isNone
+#guard (VE.SpeechActs.Source.thenFault (fun _ => .str "instruction") "" [srcUnit "c" (.str "asserted") "Then click Ask."]).isSome &&
+  (VE.SpeechActs.Source.thenFault (fun _ => .str "asserted") "" [srcUnit "c" (.str "instruction") "Then click Ask."]).isNone
 
 
 /-! R16 fixtures for the trust-mutant survivors of ci-3's sweep (docs/commands-imperatives/ci-3/trust-mutants.json):
