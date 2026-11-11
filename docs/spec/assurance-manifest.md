@@ -162,7 +162,7 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Cardinality/Document.lean` | 288 | 288 | 1–288 | `4bbc57c938ee…` |
 | `lean/VE/Cardinality/Render.lean` | 148 | 148 | 1–148 | `b648cc5cc71e…` |
 | `lean/VE/Cardinality/Run.lean` | 292 | 292 | 1–292 | `e55af9708515…` |
-| `lean/VE/Cardinality/Wire.lean` | 304 | 304 | 1–304 | `b892dbef05b3…` |
+| `lean/VE/Cardinality/Wire.lean` | 317 | 317 | 1–317 | `a22630ef3792…` |
 | `lean/VE/CertificateWire.lean` | 321 | 181 | 46–216, 231–240 | `45b337e58cd3…` |
 | `lean/VE/Closure/Bridge.lean` | 100 | 58 | 10–67 | `215839deaae1…` |
 | `lean/VE/Commands/Run.lean` | 311 | 311 | 1–311 | `2ad2a3ccdb29…` |
@@ -214,7 +214,7 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Scope/Wire.lean` | 174 | 174 | 1–174 | `cea31d4f1f9e…` |
 | `lean/VE/Senses/Decode.lean` | 93 | 93 | 1–93 | `5f0f5265fe8d…` |
 | `lean/VE/Senses/Run.lean` | 534 | 534 | 1–534 | `9ab843d3b1df…` |
-| `lean/VE/Service/Document.lean` | 2896 | 2896 | 1–2896 | `7b80cfa4c9c4…` |
+| `lean/VE/Service/Document.lean` | 3010 | 3010 | 1–3010 | `784c021ffc3c…` |
 | `lean/VE/Service/Family.lean` | 819 | 819 | 1–819 | `d8a7154234ce…` |
 | `lean/VE/Service/FamilyBundle.lean` | 501 | 501 | 1–501 | `6e377c82470e…` |
 | `lean/VE/Service/FamilyNorms.lean` | 393 | 393 | 1–393 | `418076df3e0a…` |
@@ -230,12 +230,12 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Time/Document.lean` | 613 | 613 | 1–613 | `4407e998d007…` |
 | `lean/VE/Time/Wire.lean` | 856 | 856 | 1–856 | `147a419f9ee3…` |
 | `lean/VE/Words/Run.lean` | 161 | 161 | 1–161 | `0678825160c8…` |
+| `lean/VE/RightClauses/Wire.lean` | 230 | 230 | 1–230 | `75913d7b7704…` |
 | `lean/VE/Defaults/ZoneWire.lean` | 463 | 463 | 1–463 | `1b2585cf4016…` |
 | `lean/VE/Events/Wire.lean` | 281 | 281 | 1–281 | `29d30fe8c593…` |
-| `lean/VE/Events/Chain.lean` | 204 | 204 | 1–204 | `80d03aefca6e…` |
+| `lean/VE/Events/Chain.lean` | 206 | 206 | 1–206 | `766ad4455823…` |
 | `lean/VE/EnglishGrammar/Norm/Run.lean` | 303 | 303 | 1–303 | `3ccffd316421…` |
-| `lean/VE/RightClauses/Wire.lean` | 230 | 230 | 1–230 | `75913d7b7704…` |
-| **total** | | **44,848** | | |
+| **total** | | **44,977** | | |
 <!-- END GENERATED -->
 
 Outside the decoder count: `lean/VE/Order/Surface.lean` (order text parser, `lean:order-surface-parser`), the runner

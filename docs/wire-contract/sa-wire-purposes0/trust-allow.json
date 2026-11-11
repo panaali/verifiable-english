@@ -1,0 +1,15 @@
+{"allow": [
+  {"definition": "VE.WireContract.Hooks.Purposes.classifier", "operator": "arm-default", "reason": "does not elaborate: the default arm has one pattern where the match has three"},
+  {"definition": "VE.WireContract.Hooks.Purposes.classifier", "operator": "list-empty", "reason": "does not elaborate: [] for B.links has no field links, and the Nodup instance of [] for B.links.map (·.id) is stuck on its element type"},
+  {"definition": "VE.WireContract.Hooks.Purposes.sideMember", "operator": "list-empty", "reason": "does not elaborate: the pattern [(k, .str i)] binds k and i, which [] does not"},
+  {"definition": "VE.WireContract.Hooks.Purposes.linkMember", "operator": "list-empty", "reason": "equivalent: the getD default is unreachable: linkMember reaches it only for a link decodeLink refuses after its share decodes, so decodeSide refuses its reason or target and sideMember returns some"},
+  {"definition": "VE.WireContract.Hooks.Purposes.linkMember", "operator": "list-drop-first", "reason": "equivalent: the getD default is unreachable: linkMember reaches it only for a link decodeLink refuses after its share decodes, so decodeSide refuses its reason or target and sideMember returns some"},
+  {"definition": "VE.WireContract.Hooks.Purposes.linkMember", "operator": "list-drop-last", "reason": "equivalent: the getD default is unreachable: linkMember reaches it only for a link decodeLink refuses after its share decodes, so decodeSide refuses its reason or target and sideMember returns some"},
+  {"definition": "VE.WireContract.Hooks.Purposes.member", "operator": "lit-minus", "reason": "equivalent: the 1 is decodeLink's link number inside find?, which reads only isOk; decodeLink uses the number only in 1.1d's text (linkFieldsOk)"},
+  {"definition": "VE.WireContract.Hooks.Purposes.member", "operator": "lit-plus", "reason": "equivalent: the 1 is decodeLink's link number inside find?, which reads only isOk; decodeLink uses the number only in 1.1d's text (linkFieldsOk)"},
+  {"definition": "VE.WireContract.Diagnose.units", "operator": "list-first", "reason": "does not elaborate on the corpus list (anonymous constructors without an expected type); the cut on the norms list is killed"},
+  {"definition": "VE.WireContract.Diagnose.units", "operator": "list-last", "reason": "does not elaborate on the corpus list (anonymous constructors without an expected type); the cut on the norms list is killed"},
+  {"definition": "VE.WireContract.Diagnose.units", "operator": "list-drop-first", "reason": "does not elaborate on the corpus list (anonymous constructors without an expected type); the cut on the norms list is killed"},
+  {"definition": "VE.WireContract.Diagnose.units", "operator": "list-drop-last", "reason": "does not elaborate on the corpus list (anonymous constructors without an expected type); the cut on the norms list is killed"},
+  {"definition": "VE.WireContract.Tables.Purposes.table", "operator": "bool-flip", "reason": "equivalent: the only Bools of the table are inherited flags, which no Lean engine function reads (VE.WireContract.Table)"}
+]}

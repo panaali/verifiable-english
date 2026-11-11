@@ -7,13 +7,13 @@ namespace VE.Cardinality.Wire
 open Lean
 open VE.Order.ProfileGate (bind_ok)
 
-/-- E2's lists project onto W6a's own: an environment past E2 meets W6a's profile check at E4. -/
+/-- E2's lists project onto W6a's own (`projectedProfiles`, which `projectW6` lists): an environment past E2 meets
+W6a's profile check at E4. -/
 theorem profileLists_projected {ps : List String} (h : ps ∈ profileLists) :
-    ps.filter (· != "cardinality@0") ∈ VE.Time.Wire.w6Profiles := by
-  simp only [profileLists, List.mem_map] at h
-  obtain ⟨l, hl, rfl⟩ := h
-  simp only [VE.Time.Wire.w6Profiles, List.mem_cons, List.not_mem_nil, or_false] at hl
-  rcases hl with rfl | rfl <;> decide
+    projectedProfiles ps ∈ VE.Time.Wire.w6Profiles := by
+  simp only [profileLists, VE.Time.Wire.w6Profiles, List.map_cons, List.map_nil, List.cons_append, List.nil_append,
+    List.mem_cons, List.not_mem_nil, or_false] at h
+  rcases h with rfl | rfl | rfl <;> decide
 
 /-- E6: at most 64 finite sorts are declared. -/
 theorem finiteSorts_length {env : Json} {xs : List String} (h : finiteSorts env = .ok xs) :
