@@ -169,9 +169,10 @@ DISTINGUISHING = {"RS1": [("crossed", "s", "novel_chem_bio_weapons")], "RS2 and 
     ("crossed", "s", "automated_rd")], "RS3o": [("full_substitution_at_competitive_cost", "s")],
     "RS3i": [("double_rate", "s"), ("automation_attributable", "s")], "RS3c": [("double_rate", "s"),
                                                                               ("automation_attributable", "s")],
-    "RS4": [("competitor_better_mitigation", "s"), ("clear_evidence", "s")],
-    "RS5": [("competitors_strong_measures", "s"), ("clear_evidence", "s"), ("highly_capable", "s")],
-    "RS7": [("risk_report_approved", "s")], "RS9": [], "RS11": [("publicly_deployed", "s"),
+    "RS4": [("competitor_better_mitigation", "s"), ("mitigation_evidence", "s")],
+    "RS5": [("competitors_strong_measures", "s"), ("competitors_evidence", "s"), ("highly_capable", "s"),
+            ("develops_highly_capable", "c")],
+    "RS7": [("risk_report_approved", "s")], "RS9": [], "RS11": [("off_cycle_public_deployment", "s"),
                                                                ("more_capable_than_analyzed", "s")],
     "RS13": [], "RS6redact": [("redaction_reason_listed", "s")], "RS6split": [("external_review_process", "s")],
     "RS6notice": [("substantiated", "s"), ("material_safety_risk", "s")],
@@ -556,7 +557,7 @@ def situation_model(harness_set):
     for name, *args in DISTINGUISHING[harness_set]:
         relations[name].append(list(args))
     return FiniteModel.from_dict(env, {"complete": True, "domains": {"situation": ["s"], "threshold": list(
-        V.THRESHOLDS)}, "constants": {c: c for c in V.THRESHOLDS}, "relations": relations})
+        V.THRESHOLDS), "competitor": ["c"]}, "constants": {c: c for c in V.THRESHOLDS}, "relations": relations})
 
 
 def open_term_declarations(names=None):

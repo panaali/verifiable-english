@@ -55,7 +55,10 @@
 - `tests/test_answer_cutoff.py` — The answer-level cutoff (tools/answer_cutoff.py, tools/answer_replay.py) and the request records of tools/test_map_recorder.py: an R1 experiment that tools/gat…
 - `tests/test_answer_store.py` — The Lean answer store (tests/answer_store.py): R1 only, exact batches, every client check on a hit.
 - `tests/test_ap2_limits_provisional.py` — ap-2's raw cap and step budget stay provisional while the plan's condition for dropping the word fails (review F2).
+- `tests/test_ap3cb_adapt_report.py` — ap-3cb-adapt: the report's claims about the seeded bugs are read from the saved seed evidence (mutants.json).
+- `tests/test_ap6.py` — AP-6: the report's statement claims are bound to the plan's statement and the built one.
 - `tests/test_ap7.py` — AP-7: the draw, the sample's binding, and the score recomputed from the saved records.
+- `tests/test_ap_parse_index.py` — ap-parse-index: reading an act phrase stays within the 5 s CPU deadline at D-31's 128 frames (DRI 2026-11-09 ap-4 item 2, ap-parse-index items 1 and 2).
 - `tests/test_ar3_report.py` — AR-3's report and DELTA against their saved evidence (docs/arch/AR-3/evidence), never the live tree or history.
 - `tests/test_ar6_report.py` — The AR-6 report is a view of saved evidence, independent of live git HEAD.
 - `tests/test_ar8_evidence.py` — AR-8's report agrees with its SAVED evidence (fixed base and head commits, never the live tree).
@@ -78,14 +81,10 @@
 - `tests/test_assist_split.py` — AR-9 split the assist recovery and session modules; these pin what the split must keep.
 - `tests/test_assurance_manifest.py` — The operation assurance manifest is bound to the code it describes.
 - `tests/test_attacks.py` — (no module docstring)
+- `tests/test_attitudes_at1_report.py` — at-1's report (docs/attitudes/at-1/REPORT.md): its trust shortfalls and sizes are recomputed from saved evidence.
 - `tests/test_authoring.py` — (no module docstring)
 - `tests/test_b11b_report.py` — The 11b report's measured numbers are generated from its gate artifacts.
 - `tests/test_b14c.py` — Batch 14c: n-ary definitions have one Lean owner on the core family.
 - `tests/test_b15a_evidence.py` — Recompute batch 15a report numbers from frozen artifacts, never live Git.
 - `tests/test_b15b_evidence.py` — Recompute batch 15b report numbers from saved evidence, never live Git.
 - `tests/test_b16a_evidence.py` — Batch 16a report checks read committed snapshots, never moving Git refs.
-- `tests/test_b16b_evidence.py` — Batch 16b's report numbers come from its saved evidence (docs/lean-first/b16b/evidence/), never from live git: the generated block of DELTA.md is regenerated, …
-- `tests/test_b16c_evidence.py` — The 16c progress report is a view of saved evidence, independent of live git HEAD.
-- `tests/test_b16d_document.py` — Batch 16d: norm-defaults and fenced documents are Lean document answers.
-- `tests/test_b16d_evidence.py` — Check batch 16d's committed measurements without consulting live git state.
-- `tests/test_b16d_norm_roles.py` — Batch 16d review B1 and B2: which norm units make the norm-defaults document.

@@ -18,6 +18,9 @@ BY_NAME = {name: tuple(row for row in ROWS if row["profile"] == name) for name i
 # `VE.Compose.decidingEnvironment`; Python sends them as written (jt-2c), except the lexicon proposal of a document's
 # English fences, which names the environment Lean reads a fence in, without them (`Service.Document.Env.forModes`).
 DOCUMENT_LAYERS = tuple(_TABLE["document_layers"])
+# `VE.Cardinality.Wire`: E2's chain list and the W6a list it projects onto (`projectedProfiles`).
+CARDINALITY_CHAIN = _TABLE["cardinality_chain"]
+CARDINALITY_CHAIN_PROJECTED = _TABLE["cardinality_chain_projected"]
 
 
 # Statement layers whose own Lean routes check them. They declare no vocabulary
@@ -63,6 +66,8 @@ MODEL_REDUCTIONS = {
     "soft-norms@0": ModelReduction(vocabulary=("soft",), predicate_fields=("instruction_of",)),
     "order@0": _KEPT,
     "readings@1": ModelReduction(),
+    # right-clauses@0 adds keys to a rights document's lines, none to the environment: no model reads it.
+    "right-clauses@0": ModelReduction(),
     BASE: _KEPT,
     "speech-acts@0": ModelReduction(blocks=("speech_acts",)),
     "reports@0": ModelReduction(vocabulary=("reports",), constant_fields=("verbalisation",)),
@@ -136,3 +141,11 @@ def model_view(data: dict) -> dict:
                   if "regulated" in decl else decl for name, decl in vocabulary["predicates"].items()}
     return {**data, "profiles": [p for p in data["profiles"] if p != "acts@0"],
             "vocabulary": {**{k: v for k, v in vocabulary.items() if k != "acts"}, "predicates": predicates}}
+
+
+# `rights@0`: every line kind with its rule-bearing fields, in the order the line states its rules: a power line states
+# a liberty and a recognition rule, every other kind one norm. Whatever names or owns a line's rules reads this table
+# (compose-s2 fix4 A2), so a new kind cannot be added without saying which fields carry its rules: `ve.rights`, and
+# the binding of the request rules a relayed answer names (`backends.lean_service`, norm-defaults-cfr-1b).
+LINE_RULE_FIELDS = {"claim": ("norm",), "liberty": ("norm",), "immunity": ("norm",), "power": ("liberty", "recognition")}
+RULE_FIELDS = tuple(dict.fromkeys(field for fields in LINE_RULE_FIELDS.values() for field in fields))

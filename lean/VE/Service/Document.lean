@@ -116,12 +116,6 @@ def wireJson : Nat → Json → Json
 #guard wireJson 8 (Json.mkObj [("a", .null), ("b", Json.arr #[Json.mkObj [("c", .null), ("d", 1)]])]) ==
   Json.mkObj [("b", Json.arr #[Json.mkObj [("d", 1)]])]
 
-/-- Normalize only nulls the rights source decoder treats as absent. Unknown
-members, including unknown members with null values, reach its closed-field
-checks. The response schema copies the authored content without normalization. -/
-def rightsChildContext (context key : String) : String :=
-  if context == "line" && ["norm", "liberty", "recognition"].contains key then "norm" else key
-
 def rightsWireJson : Nat → String → Json → Json
   | 0, _, j => j
   | fuel + 1, context, .arr xs =>
@@ -141,10 +135,10 @@ def rightsWireJson : Nat → String → Json → Json
         | _ => []
       Json.mkObj (kvs.toList.filterMap fun (k, v) =>
         if v == .null && (known.contains k || context == "cites" || context == "fan_out") then none
-        else some (k, rightsWireJson fuel (rightsChildContext context k) v))
+        else some (k, rightsWireJson fuel (VE.Rights.Wire.rightsChildContext context k) v))
   | _, _, j => j
 
-#guard ["norm", "liberty", "recognition"].all (fun key => rightsChildContext "line" key == "norm")
+#guard ["norm", "liberty", "recognition"].all (fun key => VE.Rights.Wire.rightsChildContext "line" key == "norm")
 #guard (rightsWireJson 8 "source" (Json.mkObj [("right", Json.mkObj
   [("guard", .null), ("annotation", .null)])])).getObjValD "right" ==
   Json.mkObj [("annotation", .null)]
@@ -250,7 +244,8 @@ def hasNull : Nat → Json → Bool
   | _, _ => false
 
 /-- Which unit content's nulls the mode reads as Python's relays read them, absent (`wireJson`), while the identity
-keeps them (`nullableMeaningId`): none (`plain`); under `rights@0` every unit's content; in a soft-norms document
+keeps them (`nullableMeaningId`; a rights block's id binds `VE.Rights.Wire.rightsNormalForm`, which omits a `null` soft field of a
+line's norm objects): none (`plain`); under `rights@0` every unit's content; in a soft-norms document
 (batch 16f) the norm object of a unit's content, which only the soft route reads. -/
 inductive Nullable | plain | rights | soft
   deriving DecidableEq
@@ -806,7 +801,8 @@ structure Env where
   boundNames : Option Json := none
 
 /-- Python's `Environment.identity_version`: a frozen envelope's, else its profiles'. -/
-def Env.version (E : Env) : String := (E.legacy.map (·.version)).getD (VE.Route.Wire.identityVersion E.profiles)
+def Env.version (E : Env) : String :=
+  (E.legacy.map (·.version)).getD (VE.Route.Wire.identityVersion ((E.cardinality.map (·.profiles)).getD E.profiles))
 
 def Env.data (E : Env) : Bool := E.profiles.contains "data@0"
 
@@ -1098,15 +1094,17 @@ def frozenEnv (json : Json) : Except String Env :=
 
 /-- A `cardinality@0` document's environment (quantities 4.1, QT-A4): the AR-10 gate over its list, then its own decoder
 (4.2, E1 to E8), which a list the gate admits reaches with `judgments@0` too, and refuses. `checked` and `rv` are W6a's
-core target's envelope with no words: no first-order formula is read under this profile (`contentOf`, `check`). -/
+core target's envelope with no words: no first-order formula is read under this profile (`contentOf`, `check`). Its
+`profiles` are the W6a part's, so this reading runs nothing of the chain under the chain list (`check`); the identities'
+version is the list as written (`Env.version`). -/
 def cardinalityEnv (written : Json) : Except String Env := do
   let profiles ← VE.Route.Gate.profilesOf written
   let _ ← VE.Compose.gateOf VE.Compose.profileTable profiles
   let w ← VE.Cardinality.Wire.decodeEnvironment written
   let empty := Json.mkObj [("sorts", Json.mkObj []), ("predicates", Json.mkObj []), ("constants", Json.mkObj [])]
   let checked ← Standalone.validated (w.w6.target.setObjVal! "vocabulary" empty)
-  pure ⟨written, checked, ← VE.Route.Run.decodeRouteVocabulary checked.envelope, profiles, w.environmentId, .none, false,
-    none, some w, none⟩
+  pure ⟨written, checked, ← VE.Route.Run.decodeRouteVocabulary checked.envelope, "cardinality@0" :: w.w6.profiles,
+    w.environmentId, .none, false, none, some w, none⟩
 
 /-- What `judgments@0` does not compose with in this mode (PC-1): the soft and rights chains are read by
 `UnitContent.judgedIn` (the rights reader, pc-1g). Every other composing mode keeps `VE.Compose.documentLayersApart`. -/
@@ -1473,7 +1471,7 @@ def softCanonical (N : VE.SoftNorms.SoftNode) (authored : Json) : Json :=
 
 /-- `_content` in a rights document (`rights=True`), at the unit's place in the unit loop: a soft norm, after its
 single-rule check, in canonical form (with the unit's `cites` on a `norm` unit), then the kind check of `normRole`;
-a rights block as written. Each is bound to its content environment (`content_env`): the document's for a rights
+a rights block answered as written, its id bound to its normal form (`VE.Rights.Wire.rightsNormalForm`, rights 3.5). Each is bound to its content environment (`content_env`): the document's for a rights
 kind, `E″′` for any other. Formula and fenced content are typed in `E″′`, which the mode does not build. -/
 def rightsContentOf (E : Env) (R : RightsDoc) (kind : RowKind) (content : Json) :
     Except String (UnitContent × String) := do
@@ -1504,7 +1502,8 @@ def rightsContentOf (E : Env) (R : RightsDoc) (kind : RowKind) (content : Json) 
   if (RightsKind.ofName? key).isSome then
     -- Under any other kind the content environment is `E″′`, which has no `rights@0`.
     unless kind matches .rights _ do throw "UnsupportedProfile: rights@0 is required"
-    return (.rights content, ← bound content)
+    -- Rights 3.5: the id binds the normal form; the content is answered as written.
+    return (.rights content, ← VE.Rights.Wire.rightsMeaningId E.profiles E.envId content)
   if key == "ast" || key == "fence" then
     throw (unavailable "formula content in a rights document is typed in its extended environment")
   throw "unit fence must match its id"
@@ -2313,21 +2312,122 @@ open VE.Route.Admission (token)
 
 /-! ## The case -/
 
-/-- A `cardinality@0` document's claim graph (quantities 4.1, 4.3): `Cardinality.Document.admitGraph`, each node then
-bound to the asserted unit of its name, which holds its statement, so a report rests on nothing the document does not
-assert (W6a's provenance rule for an asserted leaf, `VE.Time.Document`; bridges have no label here yet: qt-a4b). The
-report and its identities are the `cardinality` mode's document row (`Run.reportJson`, `Run.reportId`). -/
+/-- Whether a front-matter unit holds counting content, read by `Cardinality.Wire.decodeStatement`. -/
+def countingUnit (u : Json) : Bool := ((u.getObjValD "content").getObjVal? "cardinality").toOption.isSome
+
+/-- A unit the other reading of a chain list document decides, as this reading sees it: its span in the source's
+partition, a passage without a formal reading here. -/
+def elsewhere (reason : String) (u : Json) : Json :=
+  Json.mkObj [("id", u.getObjValD "id"), ("span", u.getObjValD "span"), ("kind", toJson ["unformalised", reason]),
+    ("meaning", Json.mkObj [("unformalised", .str reason)]), ("support", u.getObjValD "support")]
+
+/-- The chain list's front matter as the counting reading reads it (quantities 4.1; DRI 2026-11-05,
+reviews/dri-decisions-20261105-qt-a4b.md item 3): its counting units, every other unit `elsewhere`, and no member the
+chain reads, so counting statements neither enter nor are decided by the chain. -/
+def countingFront (front : Json) : Except String Json := do
+  let units := (Loader.optionalList front "units").getArr?.toOption.getD #[]
+  unless units.any countingUnit do
+    throw "UnsupportedProfile: a document under cardinality@0's chain list holds a counting unit"
+  let kept ← (fields front).map (·.filter fun kv => !["open_terms", "reading_sets", "narrowings"].contains kv.1)
+  pure ((Json.mkObj kept).setObjVal! "units" (toJson (units.toList.map fun u =>
+    if countingUnit u then u else elsewhere "chain" u)))
+
+/-- The chain list's document as the chain reads it: every counting unit `elsewhere` (the form a counting passage has
+without this profile), under the environment without `cardinality@0` and without the cardinality and W6a fields (E4's
+other projection). It is an ordinary chain document, which Lean checks on its own request, so its premises and verdict
+are those of the same text with no counting statement. It is there whatever the units are (qt-a4b review F1): with no
+other unit left the chain still reads the fences, open terms, reading sets and narrowings, which no counting reading
+checks, so a document never leaves the chain's checks by holding counting units only. -/
+def chainFront (front environment : Json) : Except String Json := do
+  let units := (Loader.optionalList front "units").getArr?.toOption.getD #[]
+  let kept ← (fields environment).map (·.filter fun kv =>
+    !["profiles", "cardinality_schema", "cardinality", "unit_schema", "units"].contains kv.1)
+  let lowered := Json.mkObj (kept ++ [("profiles", toJson ((listedProfiles environment).filter (· != "cardinality@0")))])
+  pure ((front.setObjVal! "environment" lowered).setObjVal! "units" (toJson (units.toList.map fun u =>
+    if countingUnit u then elsewhere "counting" u else u)))
+
+/-- A reading's document of a chain list text: its front matter over the text's own body. -/
+def readingText (body : String) (front : Json) : String := "---\n" ++ front.compress ++ "\n---\n" ++ body
+
+/-- The chain's document of a chain list text `text` whose front matter is `whole`: `chainFront` over the same body.
+The one definition of the chain's request, which the answer carries (`composedJson`) and the chain's own check binds
+(`chainBound`). -/
+def chainDocument (text : String) (whole : Json) : Except String String := do
+  let (_, body) ← Loader.frontText text
+  pure (readingText body (← chainFront whole (whole.getObjValD "environment")))
+
+/-- The chain reading of a chain list document, asked on its own request with the document as written (`chain_of`):
+the text the chain checks is exactly the parent's `chainDocument`, so the chain answers for the parent's own chain
+reading, with no member, environment key, unit or body of another document (qt-a4b review F2). The parent is a document
+under the chain list; any other relay of a chain request is the relay's fault, never the document's. -/
+def chainBound (text : String) (parent : Json) : Except String Unit := do
+  let .str p := parent | throw "InvalidInput: chain_of must be a string"
+  let bound : Except String Bool := do
+    let (front, _) ← Loader.frontText p
+    let whole ← frontJson front
+    pure (listedProfiles (whole.getObjValD "environment") == VE.Cardinality.Wire.chainProfiles &&
+      (← chainDocument p whole) == text)
+  unless bound matches .ok true do
+    throw (unavailable "the chain's request is not the chain reading of the chain list document it names")
+
+/-- A claim graph's `label` members by node name, and the graph without them, which is what `admitGraph` decodes (its
+node has no label, and the `cardinality` mode, whose request has no units, refuses one). The nodes are counted first. -/
+def graphLabelled (graph : Json) : Except String (Json × Std.HashMap String String) := do
+  let .arr nodes := graph.getObjValD "nodes" | return (graph, ∅)
+  if nodes.size > VE.Cardinality.Document.maxGraphNodes then throw VE.Cardinality.Document.nodeLimit
+  let (bare, labels) ← nodes.foldlM (init := ((#[] : Array Json), (∅ : Std.HashMap String String))) fun (bare, labels) n =>
+    match n, n.getObjVal? "label" with
+    | .obj kvs, .ok l => do
+      let some text := l.getStr?.toOption | throw "claim graph node label must be a string"
+      let name := (n.getObjValD "name").getStr?.toOption.getD ""
+      pure (bare.push (.obj (kvs.erase "label")), labels.insert name text)
+    | _, _ => pure (bare.push n, labels)
+  pure (graph.setObjVal! "nodes" (.arr bare), labels)
+
+/-- W6a's provenance rule's quoted half (`VE.Time.Document.LeafAdmitted`): a leaf labelled `bridge:accepts(agent,unit)`
+states exactly a quoted unit's content, the unit attributed to that agent. A deduction is never a bridge. -/
+def bridgeAdmitted {w : VE.Cardinality.CardEnv} {γ : Type} (units : Std.HashMap String SourceUnit)
+    (n : VE.Cardinality.Document.CNode w γ) (label : String) : Bool :=
+  match VE.Route.Admission.parseLabel label, n.deduction with
+  | some (.bridge agent unit), none => match units[unit]? with
+    | some { decoded := .route k, meaningId := some m, .. } =>
+      k.quoted && VE.Route.Admission.agentMatches k agent && m == n.adm.meaningId
+    | _ => false
+  | _, _ => false
+
+/-- A `cardinality@0` document's claim graph (quantities 4.1, 4.3): `Cardinality.Document.admitGraph`, then each node
+bound by W6a's provenance rule (`VE.Time.Document`). A node without a label, or labelled `asserted`, is the asserted
+unit of its name, holding its statement; a bridge leaf is `bridgeAdmitted`, so a quoted unit enters only through one.
+The report and its identities are the `cardinality` mode's document row (`Run.reportJson`, `Run.reportId`, whose
+document is the graph as written, labels included); `leaf_labels` names the leaves that carry a label. -/
 def cardinalityReport (w : VE.Cardinality.CardEnv) (graph : Json) (units : List SourceUnit) : Except String Json := do
-  let g ← VE.Cardinality.Document.admitGraph w VE.Cardinality.Run.decodeCertificate VE.Cardinality.checkDeduction graph
-  let meanings : Std.HashMap String (Option String) := units.foldl
-    (fun m u => if u.kind == .str "asserted" then m.insert u.id u.meaningId else m) ∅
+  let (bare, labels) ← graphLabelled graph
+  let g ← VE.Cardinality.Document.admitGraph w VE.Cardinality.Run.decodeCertificate VE.Cardinality.checkDeduction bare
+  let held : Std.HashMap String SourceUnit := units.foldl (fun m u => m.insert u.id u) ∅
   for n in g.nodes do
-    unless meanings[n.name]? == some (some n.adm.meaningId) do
-      throw s!"claim graph node {n.name} is not an asserted unit holding its statement"
+    match labels[n.name]? with
+    | none | some "asserted" =>
+      unless (held[n.name]?.any fun u => u.kind == .str "asserted" && u.meaningId == some n.adm.meaningId) do
+        throw s!"claim graph node {n.name} is not an asserted unit holding its statement"
+    | some label =>
+      unless bridgeAdmitted held n label do
+        throw s!"AdmissionError: node {n.name} is not admitted under label {label}"
   let report := VE.Cardinality.Run.reportJson g
+  let labelled := g.leaves.filterMap fun n => labels[n.name]?.map fun l =>
+    Json.mkObj [("name", .str n.name), ("label", .str l)]
   pure (Json.mkObj [("environment_id", .str w.environmentId), ("w6_environment_id", .str w.w6.environmentId),
     ("w6_target_environment_id", .str w.w6.targetId), ("report", report),
-    ("report_id", .str (← VE.Cardinality.Run.reportId w graph report))])
+    ("leaf_labels", Json.arr labelled.toArray), ("report_id", .str (← VE.Cardinality.Run.reportId w graph report))])
+
+/-- What a chain list row says of itself: each reading's document, and that the chain's verdict covers no counting unit. -/
+def composedJson (text : String) (whole counting : Json) : Except String Json := do
+  let (_, body) ← Loader.frontText text
+  let counted := (Loader.optionalList whole "units").getArr?.toOption.getD #[] |>.toList.filter countingUnit
+    |>.filterMap fun u => (u.getObjValD "id").getStr?.toOption
+  pure (Json.mkObj [("counting_document", .str (readingText body counting)),
+    ("chain_document", .str (← chainDocument text whole)),
+    ("not_certified", toJson counted),
+    ("scope", .str s!"The chain's premises and verdict cover no counting statement: {", ".intercalate counted} are admitted and not certified against them.")])
 
 /-- The checked document: its identities, its source and units, and what its coverage reads. -/
 structure Checked where
@@ -2347,11 +2447,18 @@ structure Checked where
   undeclared : List String := []
   /-- Under `cardinality@0`, the admitted claim graph's report (`cardinalityReport`). -/
   cardinality : Option Json := none
+  /-- Under the chain list, what this row does not cover: the chain's document and the counting units' scope. -/
+  composed : Option Json := none
+  /-- The active reading sets, the value the status fold read (`Loader.activeOf`); the checked view's candidates. -/
+  active : List (FrontSet × List Bool) := []
 
 /-- `withGraph := false` is `load_document` alone: everything but `_report`'s claim-graph part (its reading checks, W2
-admission and the narrowing choices), which `check_document` adds (batch 16b). -/
+admission and the narrowing choices), which `check_document` adds (batch 16b). `parent`: the chain list document
+whose chain reading `text` is (`chainBound`), bound before anything else is read. -/
 def check (text : String) (withGraph : Bool := true) (lexicon : Option Json := none) (packs : Option Json := none)
-    (governed : Option Json := none) (governedSets : Option Json := none) : Except String Checked := do
+    (governed : Option Json := none) (governedSets : Option Json := none) (parent : Option Json := none) :
+    Except String Checked := do
+  if let some p := parent then chainBound text p
   let doc ← split text (senses := true)
   -- `scope@0`'s fold (`VE.Scope.foldGovernors`) writes no `judgments` member: the two do not compose yet.
   if ["scope@0", "judgments@0"].all (listedProfiles (doc.front.getObjValD "environment")).contains then
@@ -2372,7 +2479,11 @@ def check (text : String) (withGraph : Bool := true) (lexicon : Option Json := n
   unless environment matches .obj _ do throw "document needs an embedded environment"
   let senses := (front.getObjVal? "senses").isOk
   let E ← environmentOf environment (front.getObjValD "units") senses
-  -- Open terms, reading sets and narrowings read the first-order chain, which cardinality content is not (qt-a4b).
+  -- The chain list: this row reads its counting units, and the chain reads the rest on its own request (`chainText`).
+  let chainList := E.cardinality.any (·.profiles == VE.Cardinality.Wire.chainProfiles)
+  let whole := front
+  let front ← if chainList then countingFront front else pure front
+  -- Open terms, reading sets and narrowings read the first-order chain, which W6a's lists have no words for (qt-a4c).
   if E.cardinality.isSome then
     if let some k := ["open_terms", "reading_sets", "narrowings"].find? (front.getObjVal? · |>.isOk) then
       throw s!"UnsupportedProfile: {k} beside cardinality@0 is not composed"
@@ -2407,7 +2518,7 @@ def check (text : String) (withGraph : Bool := true) (lexicon : Option Json := n
   let used := authored.filterMap fun u =>
     let id := (u.getObjValD "id").getStr?.toOption
     if (u.getObjValD "content").getObjValD "fence" == .str (id.getD "") then id else none
-  unless (doc.fences.map Prod.fst).all used.contains do throw "unbound VE fence"
+  unless chainList || (doc.fences.map Prod.fst).all used.contains do throw "unbound VE fence"
   let unitIds := units.map (·.id)
   -- A reading that carries its own vocabulary splits the document into the readings route's components
   -- (`has_companions`, `load_components`), which this mode composes only under norm-defaults@0 (batch 16d).
@@ -2463,17 +2574,19 @@ def check (text : String) (withGraph : Bool := true) (lexicon : Option Json := n
     doc.source, units, ← units.mapM rowOf, front, block,
     if judged then some (VE.Judgments.usageMap E.rv.definitions J views) else none,
     (let js := records.map (·.1); (js, if judged then statusRows E.rv.definitions js views else [])),
-    if judged then VE.Judgments.undeclaredEvaluative VE.EnglishGrammar.evaluativeRows E.basePredicates J else [], report⟩
+    if judged then VE.Judgments.undeclaredEvaluative VE.EnglishGrammar.evaluativeRows E.basePredicates J else [], report,
+    ← if chainList then some <$> composedJson text whole front else pure none, active⟩
 
 def encode (id : String) (c : Checked) : Json :=
   VE.Route.Wire.ok id ([("document_id", .str c.documentId), ("source_id", .str c.sourceId),
     ("source", .str c.source), ("units", toJson (c.rows.map unitJson)),
     ("coverage", coverageJson c.front c.units c.source.utf8ByteSize c.block)] ++
-    match c.judgments, c.cardinality with
-    | some m, _ => [("judgments", usageJson m), ("judgment_lines", linesJson c.lines.1 c.lines.2),
+    match c.judgments, c.cardinality, c.composed with
+    | some m, _, _ => [("judgments", usageJson m), ("judgment_lines", linesJson c.lines.1 c.lines.2),
         ("undeclared_evaluative", Json.arr (c.undeclared.map Json.str).toArray)]
-    | none, some r => [("cardinality", r)]
-    | none, none => [])
+    | none, some r, _ => [("cardinality", r)]
+    | none, none, some j => [("composed", j)]
+    | none, none, none => [])
 
 /-- A case `{"id", "document"}`, with `"admit": false` for `load_document` alone: the entry without scope's branch
 (scope 8.1). -/
@@ -2486,7 +2599,7 @@ def checkBody (j : Json) : Except String Json := do
     | .error _ => pure true
   let lexicon := (j.getObjVal? "lexicon").toOption
   pure (encode id (← check text withGraph lexicon (j.getObjVal? "packs").toOption (j.getObjVal? "units").toOption
-    (j.getObjVal? "reading_sets").toOption))
+    (j.getObjVal? "reading_sets").toOption (j.getObjVal? "chain_of").toOption))
 
 /-- `checkBody` after row 16 (PC-1), the check before every other: so `checkDoc` and `checkDocSets` begin with it on
 every request. A `scope@0` request's row 16 runs at the top of their scope branch, before the gate, which then calls

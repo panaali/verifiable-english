@@ -3,7 +3,7 @@ import VE.NormDefaults.PacksLegacy
 import VE.NormDefaults.PacksLabels
 import VE.Rights.Examples
 import VE.Readings.UnspecifiedWire
-import VE.Defaults.Examples
+import VE.NormDefaults.Examples
 
 /-! The premise-pack fixtures over today's sources (docs/spec/premise-packs.md 4): today's rights documents assemble
 unchanged, `envX` and `fullEnv` on a real tree, F1, and F1′, the counterexample to the approved
@@ -101,12 +101,12 @@ def legacyAnswers (L : VE.NormDefaults.Wire.LayeredU) : List String :=
 
 /-! ## F1′: the approved `legacy_labels_nodup` is false
 
-`WellFormedRights` checks neither limitation names nor predicate names for `:` (only the route's JSON environment
-decoder applies `VE.Bridge.identifier` to predicate names). With limitations `x` and `x:p` over every line, and act
+`WellFormedRights` checks neither limitation names nor predicate names for `:` (the route's JSON environment decoder
+checks predicate names with `Surface.identifier`). With limitations `x` and `x:p` over every line, and act
 keys `p:q` and `q`, the label `rights:limitation:<limitation>:<act>:necessary:c` of (`x`, `p:q`) is that of
 (`x:p`, `q`). The statement's hypotheses hold and its conclusion fails. Its replacement
 `legacy_labels_nodup_of_actKeys` (DRI decision 2026-10-27, item 3) adds that no act key has `:`, which `cx` fails
-and the decoded route ensures (`bridge_identifier_sep`). -/
+and `VE.Bridge.identifier` implies (`bridge_identifier_sep`); no lemma yet ties decoded act keys to it. -/
 
 open VE.Rights.Examples (mkRights line strictNode block) in
 open VE.Norms.Checks (perm) in
@@ -124,17 +124,17 @@ def cx : VE.Rights.RightsDoc :=
    "rights:limitation:x:p:p:q:necessary:c", "rights:limitation:x:p:q:necessary:c"]
 #guard !decide (legacyLabels cx).Nodup
 #guard (VE.Rights.condKeys cx).map (·.2.1) == ["p:q", "q", "p:q", "q"]
--- The route's own repeated-label check refuses it (no decoded document reaches this: predicates are identifiers).
+-- The route's own repeated-label check refuses it (whether a decoded document can reach this is not proved).
 #guard diag (assemble (legacyU cx) 0 (legacyPacks cx)) ==
   "InvalidInput: premise label rights:limitation:x:p:q:necessary:c of pack rights is used twice"
 
 -- The act-key hypothesis of `legacy_labels_nodup_of_actKeys`: `cx` fails it; the well-formed sources hold it (their
--- act keys are route identifiers), and their labels are distinct, as the theorem says.
+-- act keys pass `VE.Bridge.identifier`), and their labels are distinct, as the theorem says.
 #guard (VE.Rights.condKeys cx).any (·.2.1.toList.contains ':')
 #guard (rightsDocs.take 6).all fun R => (VE.Rights.condKeys R).all (fun k => !k.2.1.toList.contains ':' &&
   VE.Bridge.identifier k.2.1) && decide (legacyLabels R).Nodup
 #guard (rightsDocs.take 6).any fun R => !(VE.Rights.condKeys R).isEmpty
--- `VE.Bridge.identifier`, the route's check on predicate names, refuses `:` anywhere and accepts its neighbours
+-- `VE.Bridge.identifier` (the hypothesis `hk` of `legacy_labels_nodup_of_identifiers`) refuses `:` anywhere, accepts
 -- `9` and `_`; `;` (just past `:`) and the 64-byte budget are refused too.
 #guard ["p", "q", "p9", "p_q", "publish_about_permitted", "a" ++ "".pushn '0' 63].all VE.Bridge.identifier
 #guard ["p:q", ":", "p:", ":p", "x:p", "p;", "", "P", "9p", "a" ++ "".pushn '0' 64].all (!VE.Bridge.identifier ·)
@@ -160,3 +160,24 @@ theorem choiceLayeredG_norms_packs (b : Admitted2) (N : NDoc) (c : Choice)
   rfl
 
 end VE.Readings.Wire
+
+-- norm-defaults-cfr-1b: the request rule each generated rule comes from (a status row's `sources`). A fan-out instance
+-- names its line's norm, a bar rule the bar read as a rule; a query bar and a plain line generate none.
+open VE.Rights.Examples (alpha beta fanMap eta) in
+#guard VE.NormDefaults.Wire.rightsSources (beta fanMap) ==
+  [("rights-fan-1", "no-torture"), ("rights-fan-2", "no-torture")]
+open VE.Rights.Examples (eta) in
+#guard VE.NormDefaults.Wire.rightsSources (eta) == [("rights-bar-1", "b30")]
+open VE.Rights.Examples (eta) in
+#guard VE.NormDefaults.Wire.rightsSources { (eta) with bars := [⟨"b30", .query, some "unstated"⟩] } == []
+#guard VE.NormDefaults.Wire.rightsSources VE.Rights.Examples.alpha == []
+#guard VE.NormDefaults.Wire.ruleSources [("rights-fan-1", "no-torture")] ["rights-fan-1", "art9"] ==
+  [("rights-fan-1", "no-torture"), ("art9", "art9")]
+#guard VE.NormDefaults.Wire.sourcesJson [("r-a1", "r"), ("r-a2", "r")] ==
+  Lean.Json.arr #[Lean.Json.mkObj [("rule", "r-a1"), ("source", "r")], Lean.Json.mkObj [("rule", "r-a2"), ("source", "r")]]
+-- A status row's fields (`statusFields`): the settled point's deciding rule with its source from the route's table.
+#guard (VE.NormDefaults.Wire.statusFields VE.NormDefaults.Examples.u5b
+    ⟨fun s => if s == "act" then [("act", "a")] else [], fun _ => none, fun _ => []⟩ "x_required" [("act", "a")] true none
+    [("every-act", "src")]).map (fun x => (x.1, x.2.compress)) ==
+  [("tuple", "[\"a\"]"), ("rules", "[\"every-act\"]"), ("sources", "[{\"rule\":\"every-act\",\"source\":\"src\"}]"),
+   ("differs", "[]")]

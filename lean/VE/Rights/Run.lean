@@ -13,7 +13,8 @@ import VE.Judgments.Scan
   `colliding_pairs`, `conflict_targets`, `narrowings` (per line: the limitations in scope, the
   bar's reach, and each mechanism with its licence without certificates and the grounds it rests
   on), `rule_narrowings` (per rule: the mechanisms naming it, and what each of its citations
-  licenses), `distinction` (per right-derived predicate), `fragment`,
+  licenses), `distinction` (per right-derived predicate), `findings` with `located_findings` (each with its line's
+  span when the request's optional `located` names each unit's source unit), `fragment`,
   `warnings`; or the shared diagnostic.
 * `rights-projections`: `model` (a finite base model over `E″′_base` passing
   `Background_base″`) and optionally `holder` / `bearer` → `rights_of`, `duties_of`: the
@@ -21,8 +22,9 @@ import VE.Judgments.Scan
 * `rights-scope`: `certificates` (scope target `<rule>:<mechanism>` ↦ package) → `findings`
   and, per mechanism, its licence and the certification target `∀x̄. cond_n° → limpack_N`
   (`conclusion`) a package must prove (`Wire.rights_wire_scope_sound`).
-* `rights-conflict`: `packages` (target ↦ package over `Background_base″`) → `CONFLICT-FREE`
-  with `conditional_on`, or `UNKNOWN` (`Wire.rights_wire_conflict_sound`); or `witness` →
+* `rights-conflict`: `packages` (target ↦ package over `Background_base″`) and optionally a `situation` (a finite base
+  model, checked) → `CONFLICT-FREE` with `conditional_on` and 7.3's parts (`weighing_points`, `situation_exhibited`,
+  `budget`, `situation`), or `UNKNOWN` (`Wire.rights_wire_conflict_sound`); or `witness` →
   `CONFLICT`, classified (`Wire.rights_wire_conflict_witness_sound`).
 * `rights-bar`: rule reading → per right-derived permission predicate: the barred right
   lines, the blocked default rules (on `m` or `require` on its dual) and the strict rules
@@ -211,8 +213,15 @@ def distinctionJson (D : RightsDoc) : Json :=
      ("hits", Json.arr ((distinctionHits D p).map (fun (N, q, c) => Json.mkObj [("rule", .str N.node.name),
         ("right", .str N.right), ("protected", .str q), ("cited", .bool c)])).toArray)])).toArray
 
+/-- A finding as a report row (8): its code, rule and right, its line's span (`lineSpan`; `null` when the request
+locates no line) and its text. -/
+def findingJson (f : Finding) : Json :=
+  Json.mkObj [("code", .str f.code), ("rule", .str f.rule), ("right", .str f.right),
+    ("span", if f.span.isEmpty then .null else .str f.span), ("text", .str f.text)]
+
 def regenerated (D : RightsDoc) (environment : Json) : List (String × Json) :=
   let soft := VE.SoftNorms.Wire.regeneratedCore (correlate D) environment
+  let findings := noDistinction D
   [("environment_prime", (primeJsonR D environment).toOption.getD .null),
    ("generated", Json.arr (generatedKeys D).toArray),
    ("wordings", generatedWordings D),
@@ -225,7 +234,8 @@ def regenerated (D : RightsDoc) (environment : Json) : List (String × Json) :=
    ("narrowings", elaboratedNarrowingsJson D),
    ("rule_narrowings", ruleNarrowingsJson D),
    ("distinction", distinctionJson D),
-   ("findings", Json.arr ((noDistinction D).map (fun f => Json.str f.text)).toArray)] ++
+   ("findings", Json.arr (findings.map (fun f => Json.str f.text)).toArray),
+   ("located_findings", Json.arr (findings.map findingJson).toArray)] ++
   soft.filter (fun kv => kv.1 != "environment_prime")
 
 /-! ## Status of rights source units -/
@@ -281,6 +291,29 @@ def unitStatuses (D : RightsDoc) (openNames : List String) (document : Json) : J
   match document with
   | .arr units => toJson (units.toList.map (unitOpen D names))
   | _ => toJson ([] : List Bool)
+
+/-- The located lines of a request (8): its optional `located` field gives, for each unit of `document` after the
+`source_units` entry, the id of the source unit it was copied from, one of `source_units`; every line of a `right` or
+`right_lines` unit is located at that id. Its length is compared before its items are decoded. -/
+def locate (D : RightsDoc) (j : Json) : Except String (List (String × String)) := do
+  let .ok value := j.getObjVal? "located" | pure []
+  let units := match j.getObjValD "document" with
+    | .arr us => us.toList.filter (fun (u : Json) => !(u.getObjVal? "source_units").toBool)
+    | _ => []
+  unless (value.getArr?.map Array.size).toOption == some units.length do
+    throw "InvalidInput: located must name one source unit per document unit"
+  let ids ← VE.Bridge.strings value
+  if let some u := ids.find? (fun u => !D.sourceUnits.contains u) then throw s!"UnknownSymbol: unit {u}"
+  let names : List (String × String) := (units.zip ids).flatMap (fun (u, i) => (unitRuleNames u).map (·, i))
+  pure ((linesOf D).filterMap (fun (_, N) =>
+    (names.find? (·.1 == lineSourceName N)).map (fun (_, i) => (N.node.name, i))))
+
+/-- The exhibited situation's tables (5.3 (2)): for each decision predicate of `T″` (the exceptions, switches and
+`outweighs` decisions) and each rights-generated predicate (limitation, condition and, under a bar, aimed), its
+tuples in the checked finite base model. -/
+def situationTables (D : RightsDoc) (M : VE.FiniteModel VE.Bridge.Entity) : Json :=
+  Json.arr ((VE.SoftNorms.decisionNames (correlate D) ++ (genEntries D).map (·.1)).map (fun p => Json.mkObj
+    [("predicate", .str p), ("tuples", toJson ((M.relations p).map (·.map (·.2))))])).toArray
 
 /-! ## Projections on a finite base model -/
 
@@ -372,6 +405,60 @@ def barResult (src : RightsSource) (environment document certs : Json) : List (S
   let _ := document
   [("bars", Json.arr rows.toArray)]
 
+/-! ## The conflict answer (7.3) -/
+
+/-- The situation a request exhibits (5.3 (2)): its optional `situation`, a finite base model over `E″′_base` that
+must pass `Background_base″`; `none` when the request has none. -/
+def exhibit (src : RightsSource) (j : Json) : Except String (Option (VE.FiniteModel VE.Bridge.Entity)) :=
+  match j.getObjVal? "situation" with
+  | .ok m => do
+    let ⟨M, _⟩ ← decodeModelR src (Json.mkObj [("model", m)])
+    unless backgroundValidR src.D M do throw (VE.Route.Wire.invalidModel "rights background")
+    pure (some M)
+  | .error _ => pure none
+
+/-- The budget the rights route quotes: beside UNKNOWN, and as unused beside a CONFLICT-FREE answer with no
+situation supplied (`exhibitedText`). No situation is searched for here. -/
+def conflictBudget : Nat := 10000
+
+/-- 7.3's situation part on this route: `yes` for the request's checked situation; with none supplied, no search ran,
+so the line says so and that the budget went unused (rights-cfr-2-budget-1), never an UNKNOWN of a search. -/
+def exhibitedText (supplied : Bool) : String :=
+  if supplied then "yes" else VE.SoftNorms.Wire.notSearchedText conflictBudget
+
+/-- What `<j>` counts (7.3), named after it: WP(T) with no pair evidence (`openCoherence`), the soft route's
+`openAfterClassification` with none discharged (docs/rights/rights-cfr-2-budget-1/REPORT.md). -/
+def weighingGloss : String := "colliding default pairs no ranking resolves"
+
+/-- A rights-conflict answer over certificate packages, from the replay's verdict `free`, its first failing certificate
+and the premises its certificates use. CONFLICT-FREE carries 7.3's status line: the premises it is conditional on with
+their labels, the weighing points open (the colliding default pairs no ranking resolves; no pair evidence is taken
+here) and whether a situation is exhibited (`exhibitedText`); beside it the same parts as fields. UNKNOWN
+names the first failing certificate. -/
+def conflictAnswerOf (id : String) (D : RightsDoc) (free : Bool) (failure : Option String) (uses : String → Bool)
+    (M : Option (VE.FiniteModel VE.Bridge.Entity)) : Json :=
+  let verdict := if free then "CONFLICT-FREE" else "UNKNOWN"
+  let weighing := VE.SoftNorms.Wire.openCoherence (correlate D)
+  let labels := weighing ++ (limPremisesLabelled D).map (·.1)
+  let conditional := if free then labels.filter uses else []
+  let coherence := conditional.filter (fun l => l.startsWith "soft:")
+  let limitation := conditional.filter (fun l => l.startsWith "rights:")
+  let exhibited := exhibitedText M.isSome
+  let statusText := if free then
+    s!"CONFLICT-FREE among rules on the same act, conditional on {coherence.length} coherence premises and {limitation.length} limitation premises ({", ".intercalate conditional}); {weighing.length} weighing points open ({weighingGloss}); situation exhibited: {exhibited}"
+    else s!"UNKNOWN: {failure.getD "target unspecified"}, budget 10000"
+  VE.Route.Wire.ok id ([("verdict", .str verdict), ("status_text", .str statusText),
+    ("targets", toJson ((targets (soften (correlate D))).map (·.1))),
+    ("conditional_on", toJson conditional)] ++
+    (if free then [("weighing_points", toJson weighing), ("situation_exhibited", .bool M.isSome),
+      ("budget", toJson conflictBudget), ("situation", (M.map (situationTables D)).getD .null)] else []) ++
+    match failure with
+    | some d => if free then [] else [("detail", .str d)]
+    | none => [])
+
+def conflictAnswer (id : String) (res : RightsConflictReplay) (M : Option (VE.FiniteModel VE.Bridge.Entity)) : Json :=
+  conflictAnswerOf id res.src.D res.conflictFree (firstFailure res) (conflictUses res) M
+
 /-! ## Dispatch -/
 
 def encodeAdmitted (id reportId : String) (res : Admission.Admitted) : Json :=
@@ -437,15 +524,19 @@ def runRightsKind (id kind : String) (j : Json) : Except String Json := do
     let openNames ← match j.getObjVal? "open_predicates" with
       | .ok value => VE.Bridge.strings value
       | .error _ => pure []
-    return VE.Route.Wire.ok id (regenerated src.D environment ++
-      [("unit_open", unitStatuses src.D openNames document)])
+    let D := { src.D with located := ← locate src.D j }
+    return VE.Route.Wire.ok id (regenerated D environment ++ [("unit_open", unitStatuses D openNames document)])
   if kind == "rights-projections" then
     let src ← decodeRightsSource (← j.getObjVal? "environment") (j.getObjValD "document")
     return VE.Route.Wire.ok id (← projectionsResult src j)
   if kind == "rights-scope" then
     let r ← replayRightsScope j
-    return VE.Route.Wire.ok id [("findings", Json.arr (r.findings.map (fun f => Json.str f.text)).toArray),
-      ("licensed", .bool r.findings.isEmpty), ("narrowings", narrowingsJson r.src.D r.certs)]
+    -- The replay's findings with their spans: the same texts, so `licensed` is `r.findings.isEmpty`
+    -- (`limitationScope_texts`) and `rights_wire_scope_sound` speaks of this answer.
+    let findings := limitationScope { r.src.D with located := ← locate r.src.D j } r.certs
+    return VE.Route.Wire.ok id [("findings", Json.arr (findings.map (fun f => Json.str f.text)).toArray),
+      ("licensed", .bool findings.isEmpty), ("located_findings", Json.arr (findings.map findingJson).toArray),
+      ("narrowings", narrowingsJson r.src.D r.certs)]
   if kind == "rights-certificate" then
     let r ← replayRightsEntailment j
     let conditional := if r.valid then (openLabels r.src.D).filter (entailmentUses r) else []
@@ -469,19 +560,7 @@ def runRightsKind (id kind : String) (j : Json) : Except String Json := do
       (if w.conflict then [("witness_kind", .str (witnessKind w.target))] else []))
   if kind == "rights-conflict" then
     let res ← replayRightsConflict j
-    let verdict := if res.conflictFree then "CONFLICT-FREE" else "UNKNOWN"
-    let conditional := if res.conflictFree then (openLabels res.src.D).filter (conflictUses res) else []
-    let coherence := conditional.filter (fun l => l.startsWith "soft:")
-    let limitation := conditional.filter (fun l => l.startsWith "rights:")
-    let statusText := if res.conflictFree then
-      s!"CONFLICT-FREE among rules on the same act, conditional on {coherence.length} coherence premises and {limitation.length} limitation premises"
-      else s!"UNKNOWN: {(firstFailure res).getD "target unspecified"}, budget 10000"
-    return VE.Route.Wire.ok id ([("verdict", .str verdict), ("status_text", .str statusText),
-      ("targets", toJson ((targets (soften (correlate res.src.D))).map (·.1))),
-      ("conditional_on", toJson conditional)] ++
-      match firstFailure res with
-      | some d => if res.conflictFree then [] else [("detail", .str d)]
-      | none => [])
+    return conflictAnswer id res (← exhibit res.src j)
   throw s!"UnsupportedProfile: case kind {kind} is not available on the rights route"
 
 def runCase (j : Json) : Except String Json := do

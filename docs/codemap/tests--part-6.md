@@ -1,3 +1,20 @@
+- `tests/test_readings_defaults_statements.py` — The RD-1 declarations against the approved text of docs/spec/readings-defaults.md 6.2.
+- `tests/test_readings_lazy_pairs.py` — The readings route evaluates the other reading's side of a pair lazily (batch 3d review B; the DRI note of 2026-10-04 on batch 3b's eager completions).
+- `tests/test_readings_lean_sharing.py` — The readings route builds each candidate's document once per request and evaluates a pair lazily (lean-first plan F5b; batch 3b review B1, B2).
+- `tests/test_readings_memo.py` — Process-local readings admission memo through the real Lean service and Python relay.
+- `tests/test_readings_nd_document.py` — Readings under the unspecified completion through `ve document` (readings-defaults plan RD-2b; spec 3, 4.2, 4.3).
+- `tests/test_readings_nd_lean.py` — Readings under the unspecified completion through the Lean service (docs/spec/readings-defaults.md 8.3; plan RD-2a).
+- `tests/test_readings_rd5_plain_probe.py` — A pair separated on a plain regulated predicate gets E24 (readings-defaults RD-5).
+- `tests/test_readings_rd5_udhr.py` — RD-5 behavior tests: copy declarations, reproduce the migrated UDHR, and replay witnesses through Lean.
+- `tests/test_readings_rd6b_differential.py` — RD-6b: 200 generated norms-chain documents under the completion, the superposed route against the retained enumerated oracle (plan RD-6b, fixtures; review B5 o…
+- `tests/test_readings_route_fuzz.py` — Lean's readings answers fuzzed against the route's check (lf-3 review B1 and B2, build checklist 4 and 5).
+- `tests/test_readings_route_relay.py` — The readings route relays Lean (docs/LEAN-FIRST-PLAN.md rule 2, lean-first batch 3).
+- `tests/test_readings_s1_differential.py` — The differential of docs/spec/composition-s1.md 9.3, seeded, since lean-first batch 3.
+- `tests/test_readings_s1_document.py` — S1 through the document path (docs/spec/composition-s1.md 2, 4.8, 6, 9.4): content-bearing sets admitted by Lean with Python's and Rust's agreement, situations…
+- `tests/test_readings_s1_integration.py` — S1 content admission through the ordinary document entry point.
+- `tests/test_readings_s1_lean.py` — Lean readings route (docs/spec/composition-s1.md 8.4) on inputs in the shapes of the item-1 fixtures (9.2).
+- `tests/test_readings_s1_pilot_rebuild.py` — The pilot's shared reading-set rebuild command after an environment edit.
+- `tests/test_readings_s1_python.py` — Python entry points opened by the S1 wrapper profile.
 - `tests/test_readings_s2_answer.py` — S2's row (`readings-elaborate`) is relayed as Lean's answer bound to the request it asked about (R8; AR-17).
 - `tests/test_readings_s2_document.py` — S2a through the document path (docs/spec/composition-s2.md 1.1, 4, 6, 9): the route, the refusals before any verdict, the verdicts across readings and the repo…
 - `tests/test_readings_s2_lean.py` — Lean readings route, S2a case kinds (docs/spec/composition-s2.md 3, 8.5) on the fixtures of 9.2.
@@ -28,13 +45,16 @@
 - `tests/test_reports_status.py` — Directive 2 property: Lean statuses and details for nested content reach unit and document status and the residual through the Python relay.
 - `tests/test_reports_wants.py` — The `wants` test's one owner (docs/spec/attitudes.md section 10 item 6, RC-4; AT-1w): Lean's `reports-wants` kind (`VE.Reports.wantsPhrase?`, `lean/VE/Attribut…
 - `tests/test_response_schemas.py` — The client's response schemas are generated from their one Lean source (lf-1 recheck B).
+- `tests/test_right_clauses.py` — `right-clauses@0` on the service (docs/spec/right-clauses.md 8.1, 9.1, 9.3; cmp-s3-cfr-1): the registered profile's `clauses-elaborate` mode reads 9.1's docume…
 - `tests/test_right_clauses_duplicate.py` — cmp-s3a-cfr-2: a rule name on two structured lines gets rights' own `DuplicateDeclaration` text.
 - `tests/test_right_clauses_lean.py` — Source checks of `plain_wellFormed` (docs/spec/right-clauses.md 8.3; cmp-s3a-cfr-1).
 - `tests/test_rights.py` — Rights holder-side elaboration regressions.
 - `tests/test_rights_lean.py` — Lean rights route (docs/spec/rights.md 9.4, item 4) on inputs in the shapes of the item-1 fixtures.
 - `tests/test_rights_licence_relay.py` — rights-licence-relay: Lean returns each narrowing mechanism's licence with the grounds it rests on, and the relay binds them to the request instead of deriving…
+- `tests/test_rights_meaning_id.py` — Rights 3.5: a right unit's meaning id binds its normal form, every soft field at its default omitted.
 - `tests/test_rights_open_act_is_open.py` — rights-cfr-4: a right whose act is a declared open term is OPEN (docs/spec/rights.md 7.2).
 - `tests/test_rights_render_status.py` — Rights rendering must describe the checked unit status accurately.
+- `tests/test_rights_report_parts.py` — rights-cfr-2/3 (docs/rights/rights-cfr-2/REPORT.md): a CONFLICT-FREE answer gives rights.md 7.3's report parts (the spec's line, read from the spec file, and t…
 - `tests/test_rights_three_way.py` — The relayed rights source, its soft embedding, and document loading agree on fixtures and 1,000 generated documents (docs/spec/rights.md 10).
 - `tests/test_risk_diagnostics.py` — Python's environment check and the Lean risk route give one diagnostic (risk.md 4.1, 6).
 - `tests/test_risk_differential.py` — risk.md 8.3: Lean's `possibleE`/`certainE`/`witnessE` against brute force.
@@ -50,6 +70,7 @@
 - `tests/test_route_parity.py` — docs/lean-first/b1/route_parity.py, the Gate-1 byte parity of lean-first batch 1, passes only on evidence.
 - `tests/test_route_row_schemas.py` — The statement-layer route modes' answers are closed (lf-1 review B, finding class 8).
 - `tests/test_route_transport.py` — Every route transport contains every answer that is not Lean's answer to the request (lf-3 looprecheck1 B1 and B2, build checklist 4 and 5), on the transports …
+- `tests/test_rsp_fidelity_fix.py` — anthropic-rsp-fidelity-fix: the T fixes of the RSP use-case audit (PLAN section 12, item 19).
 - `tests/test_run_cache.py` — The run cache (`tools/run_cache.py`): a stored run is used only while every input it is keyed on is unchanged.
 - `tests/test_run_order.py` — Test speed B5: an agent's selected run starts the tests that failed last time and the changed ones, and stops after `--maxfail` failures; the gate never stops …
 - `tests/test_runner.py` — (no module docstring)
@@ -57,26 +78,6 @@
 - `tests/test_rust_jsonl_schema.py` — The Rust JSONL checker's records are checked against `ve/backends/rust_schema/jsonl.json` before any field is read (lf-0 fix3, build checklist line 4): a recor…
 - `tests/test_rust_memory_budget.py` — Memory budgets of the checker processes (2026-10-10 and 2026-10-11 OOM incidents).
 - `tests/test_rust_reproducible.py` — The Rust checker build is path-independent, so lean/checkers.lock pins it in every checkout.
+- `tests/test_sa_checked_view.py` — sa-checked-view (docs/spec/purpose-explanation.md 5.1): the typed checked view changes no answer.
 - `tests/test_safety_framework.py` — Safety-framework use case (usecases/safety-framework): fails on any mismatch with the answer key or any change in what VE computes.
-- `tests/test_safetyfw_usecases.py` — The anthropic-rsp and openai-preparedness use cases (usecases/<case>): the frozen answer keys and their transcription.
-- `tests/test_sc9_migrate.py` — SC-9's migration of the constitution pilot's translation to the soft form (docs/spec/rd-9-soft-chain-PLAN.md SC-9; `usecases/claude-constitution-pilot/run-2026…
-- `tests/test_scales_exercised.py` — Every trusted definition of `lean/VE/Scales/` is stated about by a theorem (standing ruling R16).
-- `tests/test_scope_5_4_statements.py` — The statement gate for spec 5.4 (SC-2): each proved theorem is the reviewed text, whitespace aside (sc-2c, sc-2d).
-- `tests/test_scope_5_6_statements.py` — The statement gate for spec 5.6 (SC-4): each proved theorem and each definition the statements read is the reviewed text, whitespace aside (sc-4).
-- `tests/test_scope_answer.py` — The explain route (scope SC-1c): `ve scope explain` relays Lean's rows (service mode `scope`) and never shows an answer that is not one about the document it a…
-- `tests/test_scope_authoring.py` — SC-7: scope's authoring wordings (docs/spec/scope.md 2.2, 5.8, 7.8).
-- `tests/test_scope_b1_input.py` — B1's input and its check (docs/spec/scope-PLAN.md, benchmarks B1 and C11): the case `tools/bench/scope_b1.py` builds is F1-doc's block over the full pinned con…
-- `tests/test_scope_document.py` — SC-1b: the Lean document mode admits `scope@0` (docs/spec/scope.md 5.2, 7.2) on the F1 part document, the pinned constitution's hard-constraint block (u0164.s0…
-- `tests/test_scope_forward.py` — SC-4: scope@0's forward declarations (docs/spec/scope.md 1.9, 3, 5.6, 7.6) through the document mode.
-- `tests/test_scope_lean.py` — scope@0's Lean core (sc-1a, sc-3a, sc-1ab, sc-1ac, sc-1ad): the layout's list runs, label reaches and anchors, the effects on a rule's JSON object, and `govern…
-- `tests/test_scope_readings_document.py` — Scope spec 11 (sc-5rb): a reading set on a governed unit, checked once per joint choice by the document mode.
-- `tests/test_scope_rights_reach.py` — SC-6: the UDHR's rights reach (docs/spec/scope.md 5.8, 7.8).
-- `tests/test_scope_sc5r_stub.py` — Scope spec section 11's statement stub (sc-5r): every placeholder it leaves to sc-5rb is pinned by a statement.
-- `tests/test_search_budget_answer.py` — The search-budget relay reads only a typed answer bound to its request (R8).
-- `tests/test_search_options.py` — Request budgets and non-degenerate witnesses at public API boundaries.
-- `tests/test_select_defer.py` — `select_tests --defer-heavy`: a builder run leaves the heavy test files that only weak reasons select to the chain gate, and never records them as passed.
-- `tests/test_select_fast_stage.py` — `select_tests --fast-stage`: the cheap units of a selection, run first on the host that sends the rest to sharded runners, so a failing pin is heard in minutes…
-- `tests/test_select_tests.py` — The test selector: AST change units, map lookups, drift, the recorder, whole plans, and the map-free `--impacted` fast path.
-- `tests/test_senses_display.py` — The senses display (senses plan 2.8, B7; sn-b7 as cut by reviews/dri-decisions-20261101-sn-b7b8.md item 1): each candidate of an open unit is rendered under th…
-- `tests/test_senses_document.py` — RD-8 (readings-defaults plan, section 6): senses in `ve document`.
-- `tests/test_senses_lean.py` — Source checks of the senses layer in Lean (docs/spec/senses.md 5.2 and 5.3).
+- `tests/test_safetyfw_accounting.py` — Source accounting of the safety-framework-style cases (usecases/safetyfw_accounting.py).

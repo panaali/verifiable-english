@@ -165,12 +165,14 @@ def actsFixed (ps : List String) (environment : Json) : Except String (List Stri
   | _, _ => pure []
 
 /-- The act check from AP-3 on, once per act (act-phrases 6.4): `Acts.Wire.checkAct` on each declaration's act under
-the fixed phrases `fx` and the frames `V`, in order: the first refusal, or each joined act and its one meaning. -/
+the fixed phrases `fx` and the frames `V`, in order: the first refusal, or each joined act and its one meaning. The
+reader is built at most once, by the first joined act listed (`checkActBy`, `Acts.lazyReader`), else never. -/
 def actsOf (fx : List String) (V : VE.Acts.Vocab) (regs : List Regulated) :
     Except String (List (String × VE.Acts.Act)) :=
+  let R := VE.Acts.lazyReader V
   regs.filterMapM fun r => match r.act with
     | some a => do
-      let (_, A) ← VE.Acts.Wire.checkAct fx V r.name r.sorts.length (.str a)
+      let (_, A) ← VE.Acts.Wire.checkActBy R fx V r.name r.sorts.length (.str a)
       pure (A.map (r.name, ·))
     | none => pure none
 

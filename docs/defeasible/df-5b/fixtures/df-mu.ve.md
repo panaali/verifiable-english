@@ -1,0 +1,4 @@
+---
+{"format": "ve-document@1", "environment": {"language": "ve.core@0.2", "spec_revision": "ve-v0.2-expand2-2026-09-25", "profiles": ["documents@1", "norm-defaults@0", "norms@0", "relational-fol@0", "soft-norms@0"], "vocabulary": {"sorts": {"operator": {"description": "operator"}}, "predicates": {"instructs": {"arguments": ["operator"], "description": "instructs", "regulated": {"role": "plain", "default": "unspecified"}}}, "constants": {}, "soft": {"parties": ["operator"], "outranking": {"mode": "strict"}}}}, "units": [{"id": "u0", "span": [0, 9], "kind": "norm", "meaning": "specified", "support": "assumption", "content": {"norm": {"name": "g1", "predicate": "instructs", "sign": true, "guard": ["top"], "unless": [], "over": [], "mode": "default", "exception": {"decided_by": "operator", "sufficient": [], "necessary": [], "factors": []}}}}]}
+---
+Rule g1.

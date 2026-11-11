@@ -30,6 +30,9 @@ def check_soft_source(environment, norms=None, *, generated=False, layers=frozen
         source["vocabulary"].pop("rights", None)
     if "readings@1" in layers:
         source["profiles"] = [p for p in source["profiles"] if p != "readings@1"]
+    if "right-clauses@0" in layers and "rights@0" in layers:
+        # sits on rights@0 and adds keys to its lines, nothing to the frame (Lean's `VE.Compose.withoutClauses`)
+        source["profiles"] = [p for p in source["profiles"] if p != "right-clauses@0"]
     if "norm-defaults@0" in layers:
         vocabulary = source.get("vocabulary") if type(source) is dict else None
         predicates = vocabulary.get("predicates") if type(vocabulary) is dict else None
@@ -81,7 +84,7 @@ class SoftEnvironment(Environment):
         profiles = data.get("profiles") if type(data) is dict else None
         layers = set(self.LAYERS)
         if type(profiles) is list:
-            layers.update(p for p in profiles if p in ("norm-defaults@0", "readings@1"))
+            layers.update(p for p in profiles if p in ("norm-defaults@0", "readings@1", "right-clauses@0"))
         row = check_soft_source(data, generated=generated, layers=frozenset(layers))
         try:
             self._init_soft(data, row)

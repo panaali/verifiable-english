@@ -1,0 +1,54 @@
+# arch-20261109-2: the layer checks' output on the base code (commit de7fb946, before) and on the final code (after), same tree
+## python3 tools/check_lean_imports.py (before, exit 0)
+Lean layer graph kept (812 modules, 18 reviewed legacy edges)
+## python3 tools/check_lean_imports.py (after, exit 0)
+Lean layer graph kept (812 modules, 18 reviewed legacy edges)
+## uv run python tools/check_python_layers.py (before, exit 0)
+
+╔══╗─────────▶╔╗ ╔╗      ╔╗◀───┐
+╚╣╠╝◀─────┐  ╔╝╚╗║║────▶╔╝╚╗   │
+ ║║   ╔══╦══╦╩╗╔╝║║  ╔╦═╩╗╔╝╔═╦══╗
+ ║║╔══╣╔╗║╔╗║╔╣║ ║║ ╔╬╣╔╗║║ ║│║╔═╝
+╔╣╠╣║║║╚╝║╚╝║║║╚╗║╚═╝║║║║║╚╗║═╣║
+╚══╩╩╩╣╔═╩══╩╝╚═╝╚═══╩╩╝╚╩═╩╩═╩╝
+  └──▶║║                    ▲ 
+      ╚╝────────────────────┘
+
+
+---------
+Contracts
+---------
+
+Analyzed 189 files, 1068 dependencies.
+--------------------------------------
+
+VE inward-only imports (reviewed legacy edges) KEPT (9 ignored imports)
+
+Contracts: 1 kept, 0 broken.
+## uv run python tools/check_python_layers.py (after, exit 0)
+
+╔══╗─────────▶╔╗ ╔╗      ╔╗◀───┐
+╚╣╠╝◀─────┐  ╔╝╚╗║║────▶╔╝╚╗   │
+ ║║   ╔══╦══╦╩╗╔╝║║  ╔╦═╩╗╔╝╔═╦══╗
+ ║║╔══╣╔╗║╔╗║╔╣║ ║║ ╔╬╣╔╗║║ ║│║╔═╝
+╔╣╠╣║║║╚╝║╚╝║║║╚╗║╚═╝║║║║║╚╗║═╣║
+╚══╩╩╩╣╔═╩══╩╝╚═╝╚═══╩╩╝╚╩═╩╩═╩╝
+  └──▶║║                    ▲ 
+      ╚╝────────────────────┘
+
+
+---------
+Contracts
+---------
+
+Analyzed 189 files, 1068 dependencies.
+--------------------------------------
+
+VE inward-only imports (reviewed legacy edges) KEPT (9 ignored imports)
+
+Contracts: 1 kept, 0 broken.
+## sha256 .importlinter (before: 0acb98b07740001c0aa52565e541bc51bf0201cbaf99ebf4dcf9d43dc425b50e)
+0acb98b07740001c0aa52565e541bc51bf0201cbaf99ebf4dcf9d43dc425b50e  .importlinter
+## uv run python tools/layer_declarations.py (after)
+0 in-module layer declarations
+exit 0

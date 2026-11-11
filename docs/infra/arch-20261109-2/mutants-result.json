@@ -1,0 +1,213 @@
+{
+ "mutants": [
+  {
+   "id": "Sa1",
+   "file": "tools/layer_policy.py",
+   "claim": "seeded bug (a): lean_layer ignores the module's declaration and returns its name rules' layer",
+   "source_sha256": "cde78689e5d1c77eaa75e689b188efb1b698d4a5667f2981a79d756fe2420ed0",
+   "tests": [
+    "tools/test_layer_policy.py::LayerDeclarationTests::test_a_lean_declaration_places_the_module_both_ways",
+    "tools/test_layer_policy.py::LayerDeclarationTests::test_a_new_lean_module_with_an_upward_import_passes_once_it_declares_its_layer"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tools/test_layer_policy.py::LayerDeclarationTests::test_a_lean_declaration_places_the_module_both_ways",
+    "tools/test_layer_policy.py::LayerDeclarationTests::test_a_new_lean_module_with_an_upward_import_passes_once_it_declares_its_layer"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 1.9,
+   "output_tail": "eclares_its_layer(self):\n        with TemporaryDirectory() as directory:\n            root = write(Path(directory), {\"lean/VE/Route/Run.lean\": \"\",\n                                           \"lean/VE/Planted/Fixture.lean\": \"import VE.Route.Run\\n\"})\n            code, error = lean_check(root)\n            self.assertEqual(code, 1, error)\n            self.assertIn(\"new outward Lean import: VE.Planted.Fixture -> VE.Route.Run (layer 2 -> 4); import inward, \"\n                          \"or if VE.Planted.Fixture belongs in layer 4 or higher, declare it on the file's first \"\n                          \"line: `-- ve-layer: <1-5> (<reason>)`\", error)\n            (root / \"lean/VE/Planted/Fixture.lean\").write_text(\"-- ve-layer: 4 (reads Route.Run)\\nimport VE.Route.Run\\n\")\n            code, error = lean_check(root)\n>           self.assertEqual(code, 0, error)\nE           AssertionError: 1 != 0 : new outward Lean import: VE.Planted.Fixture -> VE.Route.Run (layer 2 -> 4); import inward, or if VE.Planted.Fixture belongs in layer 4 or higher, declare it on the file's first line: `-- ve-layer: <1-5> (<reason>)`\n\ntools/test_layer_policy.py:978: AssertionError\n=========================== short test summary info ============================\nFAILED tools/test_layer_policy.py::LayerDeclarationTests::test_a_lean_declaration_places_the_module_both_ways\nFAILED tools/test_layer_policy.py::LayerDeclarationTests::test_a_new_lean_module_with_an_upward_import_passes_once_it_declares_its_layer\n2 failed in 0.28s\n"
+  },
+  {
+   "id": "Sa2",
+   "file": "tools/layer_policy.py",
+   "claim": "seeded bug (a): python_layer ignores the declared rows and reads the PYTHON table alone",
+   "source_sha256": "cde78689e5d1c77eaa75e689b188efb1b698d4a5667f2981a79d756fe2420ed0",
+   "tests": [
+    "tools/test_layer_policy.py::LayerDeclarationTests::test_a_python_declaration_places_its_module_or_package"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tools/test_layer_policy.py::LayerDeclarationTests::test_a_python_declaration_places_its_module_or_package"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 2.1,
+   "output_tail": "\n                {\"ve.planted\": 3, \"ve.planted.a\": 3, \"ve.planted.b\": 4, \"ve.backends.planted\": 4,\n                 \"ve.backends.relay\": 1, \"ve.alone\": 2, \"ve.nowhere\": None})\nE           AssertionError: {'ve.planted': None, 've.planted.a': None, 've.planted.b[91 chars]None} != {'ve.planted': 3, 've.planted.a': 3, 've.planted.b': 4, [79 chars]None}\nE           - {'ve.alone': None,\nE           ?              ^^^^\nE           \nE           + {'ve.alone': 2,\nE           ?              ^\nE           \nE           -  've.backends.planted': 1,\nE           ?                         ^\nE           \nE           +  've.backends.planted': 4,\nE           ?                         ^\nE           \nE              've.backends.relay': 1,\nE              've.nowhere': None,\nE           -  've.planted': None,\nE           ?                ^^^^\nE           \nE           +  've.planted': 3,\nE           ?                ^\nE           \nE           -  've.planted.a': None,\nE           ?                  ^^^^\nE           \nE           +  've.planted.a': 3,\nE           ?                  ^\nE           \nE           -  've.planted.b': None}\nE           ?                  ^^^^\nE           \nE           +  've.planted.b': 4}\nE           ?                  ^\n\ntools/test_layer_policy.py:946: AssertionError\n=========================== short test summary info ============================\nFAILED tools/test_layer_policy.py::LayerDeclarationTests::test_a_python_declaration_places_its_module_or_package\n1 failed in 0.21s\n"
+  },
+  {
+   "id": "Sb",
+   "file": "tools/layer_policy.py",
+   "claim": "seeded bug (b): a declaration with no reason is accepted (empty reason)",
+   "source_sha256": "cde78689e5d1c77eaa75e689b188efb1b698d4a5667f2981a79d756fe2420ed0",
+   "tests": [
+    "tools/test_layer_policy.py::LayerDeclarationTests::test_a_declaration_without_a_reason_is_refused",
+    "tools/test_layer_policy.py::LayerDeclarationTests::test_python_check_refuses_each_bad_declaration_by_file"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tools/test_layer_policy.py::LayerDeclarationTests::test_a_declaration_without_a_reason_is_refused"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 2.1,
+   "output_tail": "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = PosixPath('/tmp/tmp_b2sardz/tools/layer-exceptions.json'), mode = 'r'\nbuffering = -1, encoding = 'locale', errors = None, newline = None\n\n    def open(self, mode='r', buffering=-1, encoding=None,\n             errors=None, newline=None):\n        \"\"\"\n        Open the file pointed to by this path and return a file object, as\n        the built-in open() function does.\n        \"\"\"\n        if \"b\" not in mode:\n            encoding = io.text_encoding(encoding)\n>       return io.open(self, mode, buffering, encoding, errors, newline)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE       FileNotFoundError: [Errno 2] No such file or directory: '/tmp/tmp_b2sardz/tools/layer-exceptions.json'\n\n../../.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/pathlib/__init__.py:771: FileNotFoundError\n=========================== short test summary info ============================\nSUBFAILED(source='-- ve-layer: 4\\n') tools/test_layer_policy.py::LayerDeclarationTests::test_a_declaration_without_a_reason_is_refused\nFAILED tools/test_layer_policy.py::LayerDeclarationTests::test_a_declaration_without_a_reason_is_refused\nSUBFAILED(source='# ve-layer: 4\\n') tools/test_layer_policy.py::LayerDeclarationTests::test_python_check_refuses_each_bad_declaration_by_file\n3 failed, 1 passed, 3 subtests passed in 0.40s\n"
+  },
+  {
+   "id": "Sc1",
+   "file": "tools/layer_policy.py",
+   "claim": "seeded bug (c): a Lean declaration overrides a role rule (aggregation target, entry point, runner, service, response shape)",
+   "source_sha256": "cde78689e5d1c77eaa75e689b188efb1b698d4a5667f2981a79d756fe2420ed0",
+   "tests": [
+    "tools/test_layer_policy.py::LayerDeclarationTests::test_a_declaration_cannot_override_a_role_rule"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tools/test_layer_policy.py::LayerDeclarationTests::test_a_declaration_cannot_override_a_role_rule"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 1.8,
+   "output_tail": "n there, even of the same layer, is refused.\n        cases = {\"VE\": 5, \"VE.Audit\": 5, \"VE.Checks\": 5, \"Main\": 4, \"RiskMain\": 4, \"VE.Norms.Run\": 4,\n                 \"VE.Service.Planted\": 4, \"ResponseShape.Planted\": 4}\n        with TemporaryDirectory() as directory:\n            root = Path(directory)\n            for module, fixed in cases.items():\n                for layer in (2, fixed):\n                    path = layer_policy.lean_path(module)\n                    write(root, {path: f\"-- ve-layer: {layer} (an override)\\nimport VE.Core\\n\"})\n                    with self.subTest(module=module, layer=layer), self.assertRaises(ValueError) as caught:\n                        layer_policy.lean_layer(module, root)\n>                   self.assertIn(f\"{path}:1: {module}'s role fixes its layer at {fixed}\", str(caught.exception))\n                                                                                               ^^^^^^^^^^^^^^^^\nE                   AttributeError: '_AssertRaisesContext' object has no attribute 'exception'\n\ntools/test_layer_policy.py:891: AttributeError\n----------------------------- Captured stdout call -----------------------------\nu\n=========================== short test summary info ============================\nSUBFAILED(module='VE', layer=2) tools/test_layer_policy.py::LayerDeclarationTests::test_a_declaration_cannot_override_a_role_rule\nFAILED tools/test_layer_policy.py::LayerDeclarationTests::test_a_declaration_cannot_override_a_role_rule\n2 failed in 0.23s\n"
+  },
+  {
+   "id": "Sc2",
+   "file": "tools/layer_policy.py",
+   "claim": "seeded bug (c): a Python declaration in an app area (layer 5 by rule) is ignored instead of refused",
+   "source_sha256": "cde78689e5d1c77eaa75e689b188efb1b698d4a5667f2981a79d756fe2420ed0",
+   "tests": [
+    "tools/test_layer_policy.py::LayerDeclarationTests::test_a_declaration_cannot_override_a_role_rule"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tools/test_layer_policy.py::LayerDeclarationTests::test_a_declaration_cannot_override_a_role_rule"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 1.8,
+   "output_tail": "ixed)\n            write(root, {\"ve_experiments/planted.py\": \"# ve-layer: 2 (an app module)\\n\", \"ve/__init__.py\": \"\",\n                         \"ve/errors.py\": \"# ve-layer: 1 (a table row)\\n\"})\n            for module, words in ((\"ve_experiments.planted\", \"in an app area, layer 5 by rule\"),\n                                  (\"ve.errors\", \"also listed in tools/layer_policy.py's PYTHON table at layer 1\"),\n                                  (\"ve.planted\", \"the root package ve declares no layer\")):\n                if module == \"ve.planted\":\n                    (root / \"ve/__init__.py\").write_text(\"# ve-layer: 1 (the facade)\\n\")\n                with self.subTest(module=module), self.assertRaises(ValueError) as caught:\n                    layer_policy.python_layer(module, root)\n>               self.assertIn(words, str(caught.exception))\n                                         ^^^^^^^^^^^^^^^^\nE               AttributeError: '_AssertRaisesContext' object has no attribute 'exception'\n\ntools/test_layer_policy.py:903: AttributeError\n----------------------------- Captured stdout call -----------------------------\nuuuuuuuuuuuuuuuuu\n=========================== short test summary info ============================\nSUBFAILED(module='ve_experiments.planted') tools/test_layer_policy.py::LayerDeclarationTests::test_a_declaration_cannot_override_a_role_rule\nFAILED tools/test_layer_policy.py::LayerDeclarationTests::test_a_declaration_cannot_override_a_role_rule\n2 failed, 16 subtests passed in 0.24s\n"
+  },
+  {
+   "id": "Sd",
+   "file": "tools/layer_policy.py",
+   "claim": "one owner: a Lean module named by a set or == rule of lean_name_layer may also declare",
+   "source_sha256": "cde78689e5d1c77eaa75e689b188efb1b698d4a5667f2981a79d756fe2420ed0",
+   "tests": [
+    "tools/test_layer_policy.py::LayerDeclarationTests::test_a_lean_module_named_by_the_policy_cannot_also_declare"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tools/test_layer_policy.py::LayerDeclarationTests::test_a_lean_module_named_by_the_policy_cannot_also_declare"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 1.9,
+   "output_tail": "mples\", \"VE.Calc.Ties\"} <= layer_policy.lean_named())\n        self.assertNotIn(\"VE.Norms.Planted\", layer_policy.lean_named())\n        with TemporaryDirectory() as directory:\n            root = Path(directory)\n            for module, layer in ((\"VE.Norms.FlaggedSpec\", 4), (\"VE.Judgments.ChainExamples\", 4), (\"VE.Calc.Ties\", 4)):\n                for declared in (2, layer):\n                    write(root, {layer_policy.lean_path(module): f\"-- ve-layer: {declared} (a second owner)\\n\"})\n                    with self.subTest(module=module, declared=declared), self.assertRaises(ValueError) as caught:\n                        layer_policy.lean_layer(module, root)\n                    self.assertIn(f\"{module} is also named in tools/layer_policy.py's lean_name_layer at layer {layer}\",\n>                                 str(caught.exception))\n                                      ^^^^^^^^^^^^^^^^\nE                   AttributeError: '_AssertRaisesContext' object has no attribute 'exception'\n\ntools/test_layer_policy.py:922: AttributeError\n----------------------------- Captured stdout call -----------------------------\nu\n=========================== short test summary info ============================\nSUBFAILED(module='VE.Norms.FlaggedSpec', declared=2) tools/test_layer_policy.py::LayerDeclarationTests::test_a_lean_module_named_by_the_policy_cannot_also_declare\nFAILED tools/test_layer_policy.py::LayerDeclarationTests::test_a_lean_module_named_by_the_policy_cannot_also_declare\n2 failed in 0.33s\n"
+  },
+  {
+   "id": "Se",
+   "file": "tools/layer_policy.py",
+   "claim": "a declaration off the first line is ignored instead of refused",
+   "source_sha256": "cde78689e5d1c77eaa75e689b188efb1b698d4a5667f2981a79d756fe2420ed0",
+   "tests": [
+    "tools/test_layer_policy.py::LayerDeclarationTests::test_a_declaration_off_the_first_line_is_refused"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tools/test_layer_policy.py::LayerDeclarationTests::test_a_declaration_off_the_first_line_is_refused"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 2.5,
+   "output_tail": " A\\n-- ve-layer: 4 (x)\\n\", \"/-! A module.\\nve-layer: 4 (x)\\n-/\\n\",\n                       \"-- ve-layer: 4 (x)\\n-- ve-layer: 4 (twice)\\n\", \"import A\\n  -- VE_Layer: 4 (x)\\n\"):\n>           self.refused(source, \"--\", \"must be the file's first line\")\n\ntools/test_layer_policy.py:857: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nself = <test_layer_policy.LayerDeclarationTests testMethod=test_a_declaration_off_the_first_line_is_refused>\nsource = 'import A\\n-- ve-layer: 4 (x)\\n', comment = '--'\nwords = (\"must be the file's first line\",)\n\n    def refused(self, source: str, comment: str, *words: str) -> None:\n        with self.subTest(source=source), self.assertRaises(ValueError) as caught:\n            self.READ(source, \"lean/VE/Planted.lean\", comment)\n>       self.assertIn(\"lean/VE/Planted.lean:\", str(caught.exception))\n                                                   ^^^^^^^^^^^^^^^^\nE       AttributeError: '_AssertRaisesContext' object has no attribute 'exception'\n\ntools/test_layer_policy.py:814: AttributeError\n----------------------------- Captured stdout call -----------------------------\nu\n=========================== short test summary info ============================\nSUBFAILED(source='import A\\n-- ve-layer: 4 (x)\\n') tools/test_layer_policy.py::LayerDeclarationTests::test_a_declaration_off_the_first_line_is_refused\nFAILED tools/test_layer_policy.py::LayerDeclarationTests::test_a_declaration_off_the_first_line_is_refused\n2 failed in 0.36s\n"
+  },
+  {
+   "id": "Sf",
+   "file": "tools/layer_policy.py",
+   "claim": "code that starts with ve_layer (not a comment) is read as an attempted declaration",
+   "source_sha256": "cde78689e5d1c77eaa75e689b188efb1b698d4a5667f2981a79d756fe2420ed0",
+   "tests": [
+    "tools/test_layer_policy.py::LayerDeclarationTests::test_valid_declarations_are_read"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tools/test_layer_policy.py::LayerDeclarationTests::test_valid_declarations_are_read"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 2.5,
+   "output_tail": "e[int, str] | None:\n        \"\"\"The layer a file declares on its first line, `<comment> ve-layer: <n> (<reason>)`, as (layer, reason);\n        None when the file is absent (`source` None) or declares none. Fails closed: a first line that looks like a\n        declaration but is not exactly this form, an unknown layer, an empty reason, and a look-alike line anywhere\n        else in the file raise ValueError naming `path` and the line.\"\"\"\n        if source is None:\n            return None\n        lines = source.split(\"\\n\")\n        form = declaration_form(comment)\n    \n        def lookalike(line: str) -> bool:\n            text = line.lstrip(\" \\t\\ufeff\")\n            rest = text.lstrip(DECLARATION_MARKS)\n            word = rest.lstrip(\" \\t\").lower()\n            return word.startswith(DECLARATION_LOOKALIKE)\n    \n        for number, line in enumerate(lines[1:], 2):\n            if lookalike(line):\n>               raise ValueError(f\"{path}:{number}: a layer declaration must be the file's first line; {form}\")\nE               ValueError: x:2: a layer declaration must be the file's first line; declare it on the file's first line: `# ve-layer: <1-5> (<reason>)`\n\ntools/layer_policy.py:97: ValueError\n----------------------------- Captured stdout call -----------------------------\nuuuuuu\n=========================== short test summary info ============================\nFAILED tools/test_layer_policy.py::LayerDeclarationTests::test_valid_declarations_are_read\n1 failed, 6 subtests passed in 0.31s\n"
+  },
+  {
+   "id": "Sg",
+   "file": "tools/check_lean_imports.py",
+   "claim": "the Lean check reads declarations from this checkout, not the tree it checks",
+   "source_sha256": "08c3b15fbb1e28a7b85af1438c8de219f515f223253742cee7b0e2d340763dfa",
+   "tests": [
+    "tools/test_layer_policy.py::LayerDeclarationTests::test_a_new_lean_module_with_an_upward_import_passes_once_it_declares_its_layer",
+    "tools/test_layer_policy.py::LayerDeclarationTests::test_an_unmapped_lean_module_names_the_declaration"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tools/test_layer_policy.py::LayerDeclarationTests::test_a_new_lean_module_with_an_upward_import_passes_once_it_declares_its_layer",
+    "tools/test_layer_policy.py::LayerDeclarationTests::test_an_unmapped_lean_module_names_the_declaration"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 2.5,
+   "output_tail": "ine: `-- ve-layer: <1-5> (<reason>)`\n\ntools/test_layer_policy.py:978: AssertionError\n___ LayerDeclarationTests.test_an_unmapped_lean_module_names_the_declaration ___\n\nself = <test_layer_policy.LayerDeclarationTests testMethod=test_an_unmapped_lean_module_names_the_declaration>\n\n    def test_an_unmapped_lean_module_names_the_declaration(self):\n        with TemporaryDirectory() as directory:\n            root = write(Path(directory), {\"lean/Alien.lean\": \"\"})\n            code, error = lean_check(root)\n            self.assertEqual(code, 1, error)\n            self.assertIn(\"unmapped Lean module: Alien (declare it on the file's first line: `-- ve-layer: <1-5> \"\n                          \"(<reason>)`, or name it in tools/layer_policy.py)\", error)\n            (root / \"lean/Alien.lean\").write_text(\"-- ve-layer: 3 (an alien surface module)\\n\")\n            code, error = lean_check(root)\n>           self.assertEqual(code, 0, error)\nE           AssertionError: 1 != 0 : unmapped Lean module: Alien (declare it on the file's first line: `-- ve-layer: <1-5> (<reason>)`, or name it in tools/layer_policy.py)\n\ntools/test_layer_policy.py:1002: AssertionError\n=========================== short test summary info ============================\nFAILED tools/test_layer_policy.py::LayerDeclarationTests::test_a_new_lean_module_with_an_upward_import_passes_once_it_declares_its_layer\nFAILED tools/test_layer_policy.py::LayerDeclarationTests::test_an_unmapped_lean_module_names_the_declaration\n2 failed in 0.33s\n"
+  },
+  {
+   "id": "Sh",
+   "file": "tools/check_python_layers.py",
+   "claim": "the generated import-linter contract leaves the declared rows out of their layers",
+   "source_sha256": "91716605fb7301552551a80ad5797f2658a289996c4ef1b8d253f3b7de78c944",
+   "tests": [
+    "tools/test_layer_policy.py::LayerDeclarationTests::test_a_new_python_module_with_an_upward_import_passes_once_it_declares_its_layer"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tools/test_layer_policy.py::LayerDeclarationTests::test_a_new_python_module_with_an_upward_import_passes_once_it_declares_its_layer"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 6.6,
+   "output_tail": "  code, output = python_check(root)\n            self.assertEqual(code, 1, output)\n            self.assertIn(\"unmapped Python module ve.planted (declare it on the file's first line: \"\n                          \"`# ve-layer: <1-5> (<reason>)`, or add it to tools/layer_policy.py)\", output)\n            (root / \"ve/planted.py\").write_text(\"# ve-layer: 2 (a container)\\nfrom ve import parser\\n\")\n            code, output = python_check(root)\n>           self.assertEqual(code, 1, output)\nE           AssertionError: 0 != 1 : \nE           \u2554\u2550\u2550\u2557\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25b6\u2554\u2557 \u2554\u2557      \u2554\u2557\u25c0\u2500\u2500\u2500\u2510\nE           \u255a\u2563\u2560\u255d\u25c0\u2500\u2500\u2500\u2500\u2500\u2510  \u2554\u255d\u255a\u2557\u2551\u2551\u2500\u2500\u2500\u2500\u25b6\u2554\u255d\u255a\u2557   \u2502\nE            \u2551\u2551   \u2554\u2550\u2550\u2566\u2550\u2550\u2566\u2569\u2557\u2554\u255d\u2551\u2551  \u2554\u2566\u2550\u2569\u2557\u2554\u255d\u2554\u2550\u2566\u2550\u2550\u2557\nE            \u2551\u2551\u2554\u2550\u2550\u2563\u2554\u2557\u2551\u2554\u2557\u2551\u2554\u2563\u2551 \u2551\u2551 \u2554\u256c\u2563\u2554\u2557\u2551\u2551 \u2551\u2502\u2551\u2554\u2550\u255d\nE           \u2554\u2563\u2560\u2563\u2551\u2551\u2551\u255a\u255d\u2551\u255a\u255d\u2551\u2551\u2551\u255a\u2557\u2551\u255a\u2550\u255d\u2551\u2551\u2551\u2551\u2551\u255a\u2557\u2551\u2550\u2563\u2551\nE           \u255a\u2550\u2550\u2569\u2569\u2569\u2563\u2554\u2550\u2569\u2550\u2550\u2569\u255d\u255a\u2550\u255d\u255a\u2550\u2550\u2550\u2569\u2569\u255d\u255a\u2569\u2550\u2569\u2569\u2550\u2569\u255d\nE             \u2514\u2500\u2500\u25b6\u2551\u2551                    \u25b2 \nE                 \u255a\u255d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\nE           \nE           \nE           ---------\nE           Contracts\nE           ---------\nE           \nE           Analyzed 101 files, 1 dependencies.\nE           -----------------------------------\nE           \nE           VE inward-only imports (reviewed legacy edges) KEPT\nE           \nE           Contracts: 1 kept, 0 broken.\n\ntools/test_layer_policy.py:1014: AssertionError\n=========================== short test summary info ============================\nFAILED tools/test_layer_policy.py::LayerDeclarationTests::test_a_new_python_module_with_an_upward_import_passes_once_it_declares_its_layer\n1 failed in 1.98s\n"
+  },
+  {
+   "id": "Si",
+   "file": "tools/hooks/precommit.py",
+   "claim": "the pre-commit hook ignores a staged module's own declaration",
+   "source_sha256": "700446efb693b48c7afe8088a088a30bdd6b1850b427b994e4e2d9ffa411ccd2",
+   "tests": [
+    "tests/test_precommit_hook.py::test_staged_python_layer_declaration_classifies_the_module"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_precommit_hook.py::test_staged_python_layer_declaration_classifies_the_module"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 57.2,
+   "output_tail": "planted_module.py\", \"# ve-layer: 4 (a planted route module)\\nfrom ve import parser\\n\")\n>       passes(staging)\n\ntests/test_precommit_hook.py:609: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\nstaging = <test_precommit_hook.Staging object at 0x7b4d80f71940>\n\n    def passes(staging: Staging) -> None:\n        result = staging.run()\n>       assert result.returncode == 0, result.stderr\nE       AssertionError: pre-commit: layer imports check failed:\nE           ve/planted_module.py: unmapped Python module ve.planted_module (declare it on the file's first line: `# ve-layer: <1-5> (<reason>)`, or add it to tools/layer_policy.py)\nE         pre-commit: commit rejected. Fix the findings above; see tools/hooks/README.md for the emergency bypass (git commit --no-verify or VE_SKIP_HOOKS=1).\nE         \nE       assert 1 == 0\nE        +  where 1 = CompletedProcess(args=['/home/seyran/code/ve-arch-20261109-2/tools/hooks/pre-commit'], returncode=1, stdout='', stderr...the findings above; see tools/hooks/README.md for the emergency bypass (git commit --no-verify or VE_SKIP_HOOKS=1).\\n\").returncode\n\ntests/test_precommit_hook.py:145: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_precommit_hook.py::test_staged_python_layer_declaration_classifies_the_module\n1 failed in 23.88s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-1ywbk4eb)\n"
+  },
+  {
+   "id": "Sj",
+   "file": "tools/select_tests.py",
+   "claim": "test selection skips the Python layer check when only a declaration line changes",
+   "source_sha256": "743a2f2b617ae3f6866fdd4c6883abace238008d3cdbf7a831d88e6917be0dc0",
+   "tests": [
+    "tools/test_layer_policy.py::LayerDeclarationTests::test_a_declaration_change_runs_the_python_layer_check"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tools/test_layer_policy.py::LayerDeclarationTests::test_a_declaration_change_runs_the_python_layer_check"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 110.7,
+   "output_tail": "F                                                                        [100%]\n=================================== FAILURES ===================================\n_ LayerDeclarationTests.test_a_declaration_change_runs_the_python_layer_check __\n\nself = <test_layer_policy.LayerDeclarationTests testMethod=test_a_declaration_change_runs_the_python_layer_check>\n\n    def test_a_declaration_change_runs_the_python_layer_check(self):\n        real = (layer_policy.ROOT / \"ve/definitions.py\").read_text()\n    \n        def checks(new: str) -> bool:\n            plan = select(None, changes=[select_tests.Change(\"ve/definitions.py\", real, new)])\n            return list(select_tests.CHECK_PYTHON) in plan[\"commands\"]\n        self.assertFalse(checks(\"# a comment\\n\" + real))\n>       self.assertTrue(checks(\"# ve-layer: 2 (a container)\\n\" + real))\nE       AssertionError: False is not true\n\ntools/test_layer_policy.py:1048: AssertionError\n=========================== short test summary info ============================\nFAILED tools/test_layer_policy.py::LayerDeclarationTests::test_a_declaration_change_runs_the_python_layer_check\n1 failed in 54.77s\n"
+  }
+ ]
+}
