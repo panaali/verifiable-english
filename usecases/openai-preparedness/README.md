@@ -67,7 +67,7 @@ counts under each. “Alone” means exactly one recorded blocker.
 
 | Family | Units | Bytes | Alone: units, bytes | Here |
 |---|---:|---:|---:|---|
-| AP | 118 | 21,380 | 110, 19,504 | D1 has no act or complete rule for these duties |
+| AP | 119 | 21,554 | 111, 19,678 | D1 has no act or complete rule for these duties |
 | AT | 57 | 12,623 | 53, 11,750 | hedges, beliefs and expectations |
 | DF | 12 | 2,098 | 0, 0 | default readings |
 | ET | 29 | 8,272 | 17, 5,914 | event order and deadlines |
