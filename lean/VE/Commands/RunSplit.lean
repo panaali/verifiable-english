@@ -199,9 +199,14 @@ def seqUnits (k : String) (c1 c2 : Json) : List (String × String × String × O
 #guard (match decodeSpeechSource (mixed (payload (seqUnits "instruction" click share) [])) .null with
   | .ok s => s.1.stepOrder
   | .error _ => []) == [("m.1", "m.2")]
+#guard (match decodeSpeechSource (mixed (payload [("a", "instruction", "Click Check", some cmd), ("b", "instruction",
+    ", then click Check", some cmd), ("c", "instruction", ", then do not share the token.\n",
+    some (Json.mkObj [("command", share)]))] [])) .null with
+  | .ok s => s.1.stepOrder
+  | .error _ => []) == [("m.1", "m.2"), ("m.2", "m.3")]
 #guard (match decodeSpeechSource (payload two [("c1", click), ("c2", share)]) .null with
-  | .ok s => (s.1.stepOrder, s.1.sequences.length)
-  | .error _ => ([("", "")], 1)) == ([], 0)
+  | .ok s => (s.1.stepOrder, s.1.hasSequence)
+  | .error _ => ([("", "")], true)) == ([], false)
 -- The fences Python resolves, charged against `maxCases` before any is read (asserted fences, none resolved).
 def fenced (n : Nat) : Json :=
   payload ((List.range n).map fun i => (s!"a{i}", "asserted", "Atlas is reviewed.\n", none)) [] (ctx := false)

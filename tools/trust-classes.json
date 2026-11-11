@@ -11028,8 +11028,9 @@
         "VE.SpeechActs.Source.statusText"
       ],
       "G[R]": [
+        "VE.SpeechActs.Source.SpeechSource.hasSequence",
         "VE.SpeechActs.Source.SpeechSource.kindOf",
-        "VE.SpeechActs.Source.SpeechSource.sequences",
+        "VE.SpeechActs.Source.hasSequence",
         "VE.SpeechActs.Source.isInstruction",
         "VE.SpeechActs.Source.readingContextText",
         "VE.SpeechActs.Source.sequenceFault",
