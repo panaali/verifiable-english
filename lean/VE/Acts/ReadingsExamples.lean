@@ -287,6 +287,43 @@ def cutExact (x : Option (Doc × List String)) (V : Vocab) (fx : List String) (s
 #guard framesOk V9 && cutExact (mkDoc (e055 false "deny") (u055w 6)) V9 fx9 s055 &&
   (mkDoc (e055 false "deny") (u055w 6)).map (fun (D, _) => decide (maxChoices < (choices D).length)) == some true &&
   sc (mkDoc (e055 false "deny") (u055w 6)) V9 fx9 s055 == choiceLimit
+-- `sourceCheck_complete`'s direction: on S4, S6 and the 64-choice boundary, `SourceExact`'s decidable parts hold,
+-- decided apart from `compareViews` (paraphrases distinct, choices pairwise no permutation, and a matching `σ` drawn
+-- from the choices: a permutation of them, pointwise a permutation of the readings), the choices are at most 64, and
+-- `sourceCheck` passes
+def exactOn (x : Option (Doc × List String)) (V : Vocab) (fx : List String) (s : Source) : Bool :=
+  match x, Lexical.lex fx s.phrase, opOfSource s with
+  | some (D, u), .ok ts, some op => match phraseReadings V op rawCap stepBudget ts.toArray with
+    | .ok Rs =>
+      let cs := choiceViews D u s
+      let rs := readingViews fx s Rs
+      let σ := rs.filterMap fun r => cs.find? (·.Perm r)
+      decide (Rs.map (paraphrase fx op s.form)).Nodup && decide (cs.Pairwise fun v w => ¬ v.Perm w) &&
+        σ.length == rs.length && decide (σ.Perm cs) && (σ.zip rs).all (fun (c, r) => decide (c.Perm r)) &&
+        decide ((choices D).length ≤ maxChoices)
+    | .limit => false
+  | _, _, _ => false
+#guard [(mkDoc (e055 false "deny") (u055), s055), (mkDoc (e055 true "unspecified") (u055), s055u),
+    (mkDoc (e055 false "deny") (u055w 5), s055)].all fun (x, s) => exactOn x V9 fx9 s && sc x V9 fx9 s == "ok"
+-- and the premises fail where `sourceCheck` refuses: S5 (a choice no reading) and S7 (`unspecified` to `deny`)
+#guard [(mkDoc (e055 false "deny") (u055 true), s055), (mkDoc (e055 true "unspecified" "deny") (u055), s055u)].all
+  fun (x, s) => !exactOn x V9 fx9 s
+
+-- `View` compares the soft fields (DRI 2026-11-10, ap-4b-f2): on S4's document a choice that changes only the mode,
+-- strict to default, is refused with D-29's third text, and so is one that changes only the rank, the alterable
+-- parties, the exception or `hard`; S4 itself passes (above)
+def u055m (f : VE.SoftNorms.SoftNode → VE.SoftNorms.SoftNode) : List Item :=
+  [.fixed "u055a" (.norm (rl "u055a-r" "depr" false)) [],
+   .set ⟨"rs_u055", "u055b", 2, [⟨"deprivation_only", some (.norm (rl "u055-d" "denied" false)), [], []⟩,
+    ⟨"both_acts", some (.norm (f (rl "u055-b" "denied_arbitrarily" false))), [], []⟩]⟩]
+#guard sc (mkDoc (e055 false "deny") (u055m ({ · with mode := .default }))) V9 fx9 s055 == notReading
+#guard [u055m ({ · with rank := some "r" }), u055m ({ · with alterable := ["p"] }),
+    u055m ({ · with exception := some ⟨none, [], [], []⟩ }), u055m ({ · with hard := true })].map
+  (fun is => sc (mkDoc (e055 false "deny") is) V9 fx9 s055) == List.replicate 4 notReading
+-- `expected`'s soft fields are the norms chain's lift of the template (`strictNodeOf`, DRI 2026-11-11), read from it
+#guard let M := strictNodeOf s055.template
+  (expected fx9 s055 (.whole g11)).2.2.2.2.2.2.2 == (M.mode, M.rank, M.alterable, M.exception, M.hard) &&
+  M.mode == .strict
 -- `sourceCheck` compares `viewsOn` of the choices it bounded; spec 7's `choiceViews` is the same views (`viewsOn_choices`),
 -- checked here on documents with several choices and rules, choices that coincide once projected, and `unspecified`
 #guard [(S1, s105), (d105 [u105a, setB [bFirst, bAll], setC [cFirst, cAll], other], s105),
@@ -320,7 +357,7 @@ def dec (e : Json) : String := match VE.Readings.Wire.decodeEnvironment e with |
 -- D-29's other texts, on views: two choices that are one reading; more readings than choices
 def cv (ps : List String) (cs rs : List (List (Option View))) : String :=
   match compareViews ps cs rs with | .ok () => "ok" | .error m => m
-def vw (a : String) : Option View := some (a, .plain, true, .top, [], [], .deny)
+def vw (a : String) : Option View := some (a, .plain, true, .top, [], [], .deny, .strict, none, [], none, false)
 #guard cv ["x"] [[vw "a", vw "b"], [vw "b", vw "a"]] [[vw "a", vw "b"]] ==
   "InvalidInput: two choices give the same reading"
 #guard cv ["x", "y"] [[vw "a"]] [[vw "a"], [vw "a"]] ==
