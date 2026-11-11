@@ -227,13 +227,64 @@ def exportedAdvice : List String :=
 /-- D11: the profile wordings (fixed and as candidates) are disjoint from `alternatives@0`'s and `risk@0`'s fixed wordings. -/
 def eventsWordings : List String := sourceWords.flatMap fun r => match r.kind with
   | .fixed w => if r.profile == "events@0" then [w] else []
-  | .readings cs => if r.profile == "events@0" then cs.map (·.wording) else []
+  | .readings cs => if r.profile == "events@0" && r.frame != "source decision model" then cs.map (·.wording) else []
   | .refuse .. => []
 def otherProfileWordings : List String := VE.Alternatives.Wire.canonicalWording.map (·.2) ++ riskTemplates ++
   ["{0} is avoidable by {1}", "{0} is unavoidable by {1}", "{0} allows {1} to happen"]
-#guard eventsWordings.length == 12
+#guard eventsWordings.length == 32
 #guard eventsWordings.all fun w => !otherProfileWordings.contains w
 #guard ["{0} leads to {1}", "{0} causes {1}", "{0} might lead to {1}", "{0} allows {1} to happen"].all
   otherProfileWordings.contains
+
+/-! ## The other reading sets (spec 2.4; T11c, T16)
+
+Fixture semantics over the rows' own text: a day placed before, on or after <date> (or <event>'s day), and what 2.2's
+day phrase says of it. The statuses are read from the candidates, so a changed phrase changes them. -/
+
+inductive Place | before | on | after
+  deriving DecidableEq, Repr
+def places : List Place := [.before, .on, .after]
+/-- 2.2: "before" strictly earlier, "no later than" earlier or the same day, "after", "on or after". -/
+def phraseHolds (phrase : String) (p : Place) : Bool :=
+  match phrase with
+  | "before" => p == .before | "no later than" => p != .after
+  | "after" => p == .after | "on or after" => p != .before | _ => false
+/-- Each phrase after `pre`, up to the next `post`. -/
+def phrasesAfter (s pre post : String) : List String := ((s.splitOn pre).drop 1).map fun t => (t.splitOn post).headD ""
+def candidates (word frame : String) : List String :=
+  match eventsOf word frame with | some (.readings cs) => cs.map (·.wording) | _ => []
+/-- T11c: a candidate's status on a day: m inside the period, the opposite where its second rule says so, else silent. -/
+def untilStatus (w : String) (p : Place) : String :=
+  match phrasesAfter w "if that day is " " <date>" with
+  | inside :: rest => if phraseHolds inside p then "m" else if rest.any (phraseHolds · p) then "opposite" else "silent"
+  | [] => "none"
+#guard (candidates "until" "source date").length == 4
+#guard (candidates "until" "source date").map (untilStatus · .before) == ["m", "m", "m", "m"]
+-- 31 December 2026 (<date> itself) tells the exclusive candidates from the inclusive ones;
+#guard (candidates "until" "source date").map (untilStatus · .on) == ["silent", "opposite", "m", "m"]
+-- 1 January 2027 (the day after) tells "silent" from "ends", in both pairs.
+#guard (candidates "until" "source date").map (untilStatus · .after) == ["silent", "opposite", "silent", "opposite"]
+#guard (⟨2027, 1, 1⟩ : VE.Time.Civil).num == (⟨2026, 12, 31⟩ : VE.Time.Civil).num + 1
+/-- "by" and "since": does the candidate cover an act (or a day) so placed? -/
+def byCovers (w : String) (p : Place) : Bool := (phrasesAfter w "<vp> " " <date>").any (phraseHolds · p)
+#guard (candidates "by" "source date").map (fun w => places.map (byCovers w)) ==
+  [[true, false, false], [true, true, false]]
+-- "since": the day's place against <event>'s day; "<event> <vp> before that day" holds of a day after it.
+def flip : Place → Place | .before => .after | .on => .on | .after => .before
+def sinceCovers (w : String) (p : Place) : Bool := (phrasesAfter w "<event> <vp> " " that day").any (phraseHolds · (flip p))
+#guard (candidates "since" "source event").map (fun w => places.map (sinceCovers w)) ==
+  [[false, false, true], [false, true, true]]
+-- "while": the temporal reading is guarded by the state; the contrast is not.
+#guard (candidates "while" "source").map (·.splitOn "<state> is in progress on that day" |>.length) == [2, 1]
+-- T16's reading set {C1, C2}, the link wordings Lean checks; C3 only with a decision model, alternatives' "leads to".
+def c12 : List String := ["<cause> contributed to <effect>.", "<cause> was necessary for <effect>."]
+def causal : List String := ["resulted in", "led to", "caused", "lead to", "cause"]
+#guard causal.all fun w => candidates w "source" == c12 &&
+  candidates w "source decision model" == c12 ++ ["<action> leads to <harm>."]
+#guard ((VE.Alternatives.Wire.canonicalWording.lookup "leads_to").map fun t =>
+  (t.replace "{0}" "<action>").replace "{1}" "<harm>" ++ ".") == some "<action> leads to <harm>."
+#guard (sourceWords.filter fun r => r.frame == "source" && causal.contains r.word).length == 5
+#guard !(sourceWords.any fun r => ["leads to", "causes"].contains r.word)
+#guard (sourceWords.filter (·.frame == "authored")).map (·.word) == twelve
 
 end VE.EnglishGrammar.SourceWordsExamples
