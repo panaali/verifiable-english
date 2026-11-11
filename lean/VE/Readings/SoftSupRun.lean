@@ -69,8 +69,8 @@ theorem choices_isEmpty (D : Doc) : (choices D).isEmpty = (checkedChoices D).isE
   simp only [checkedChoices, choices, search_eq, maxChoices, maxChoiceChecks]
   cases allFrom D D.sets [] <;> rfl
 
-/-- The route of an admitted case, read once (`routeSD_superposed_iff`) in 14.11's order: `routeOf`, `superposable`
-    and `WellFormedU (supU N)` (`sdSuperposable`, not charged: sc-11w), the count, then the work, then past 64
+/-- The route of an admitted case, read once (`routeSD_superposed_iff`) in 14.11's order: `routeOf`, the size charge,
+    `superposable` and `WellFormedU (supU N)` (`sdSuperposable`), the count, then the work, then past 64
     choices each choice's text (at most 64: admission's, `sdCheck_of_admitted`). Off the superposed row: `refusal`. -/
 def sdCaseOf (refusal : NDoc → String) (b : Admitted2) : SDM SDCase := do
   modify fun k => { k with admissions := k.admissions + 1 }
@@ -79,32 +79,35 @@ def sdCaseOf (refusal : NDoc → String) (b : Admitted2) : SDM SDCase := do
   | .ok r =>
     modify fun k => { k with routes := k.routes + 1 }
     let N := r.N
-    let S := sup N.D
-    let U := asU N S.1
-    if h0 : routeOf true N.D = .enumerated ∧ superposable N.D = true ∧ VE.NormDefaults.WellFormedU U = true then
-      let checked := checkedChoices N.D
-      if h : checked.length ≤ maxChoiceChecks then
-        let XL := softXL N S.1
-        if hw : checked.length * (XL.length + (S.1.soft.T.nodes.map
-              (fun M => (M.guard :: M.carveOuts).map VE.Bridge.formulaNodes)).flatten.sum) ≤ maxSdCheckWork ∧
-            (checked.length ≤ maxChoices ∨ checked.all (fun c => (sdChoiceText r.b.a.re N c).isNone) = true) then
-          if hs : checked.isEmpty = false then
-            have hck : sdChecked r.b.a.re N = true := by
-              rcases hw.2 with hle | hall
-              · exact sdCheck_of_admitted b r hadm (superposable_supReady h0.2.1) hle hw.1
-              · simp only [sdChecked, Bool.and_eq_true, decide_eq_true_eq]
-                exact ⟨⟨h, hw.1⟩, hall⟩
-            have hr : routeSD r.b.a.re N = .superposed :=
-              (routeSD_superposed_iff _ _).mpr ⟨h0.1, by simp [sdSuperposable, h0.2.1, h0.2.2, supU, U, S], hck⟩
-            let F := fill U
-            let fp := VE.NormDefaults.fillPremises U
-            pure ⟨⟨r, hr, by rw [choices_isEmpty]; exact hs⟩, S, U, F,
-              VE.Rights.limPremisesLabelled S.1 ++ choiceLabelled N.D ++ gatedRel N.D, XL, XL.map (·.2), fp,
-              (VE.NormDefaults.Admission.fillLabels U).zip fp, targets F, VE.Norms.backgroundBase F,
-              VE.Norms.background F, VE.Norms.elaborate F.T, checked, sharedEnvSD N, supVocabulary r.b.a.re r.b.D,
-              VE.NormDefaults.Wire.canonicalEnvironmentJsonU r.b.a.re.lowerJson,
-              rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
-          else throw (unsatText N.D)
+    if h0 : routeOf true N.D = .enumerated ∧ sdSizeCharge N ≤ maxSdSizeCharge then
+      let S := sup N.D
+      let U := asU N S.1
+      if hsp : superposable N.D = true ∧ VE.NormDefaults.WellFormedU U = true then
+        let checked := checkedChoices N.D
+        if h : checked.length ≤ maxChoiceChecks then
+          let XL := softXL N S.1
+          if hw : checked.length * (XL.length + (S.1.soft.T.nodes.map
+                (fun M => (M.guard :: M.carveOuts).map VE.Bridge.formulaNodes)).flatten.sum) ≤ maxSdCheckWork ∧
+              (checked.length ≤ maxChoices ∨ checked.all (fun c => (sdChoiceText r.b.a.re N c).isNone) = true) then
+            if hs : checked.isEmpty = false then
+              have hck : sdChecked r.b.a.re N = true := by
+                rcases hw.2 with hle | hall
+                · exact sdCheck_of_admitted b r hadm (superposable_supReady hsp.1) hle hw.1
+                · simp only [sdChecked, Bool.and_eq_true, decide_eq_true_eq]
+                  exact ⟨⟨h, hw.1⟩, hall⟩
+              have hr : routeSD r.b.a.re N = .superposed :=
+                (routeSD_superposed_iff _ _).mpr ⟨h0.1,
+                  by simp [sdSuperposable, h0.2, hsp.1, hsp.2, supU, U, S], hck⟩
+              let F := fill U
+              let fp := VE.NormDefaults.fillPremises U
+              pure ⟨⟨r, hr, by rw [choices_isEmpty]; exact hs⟩, S, U, F,
+                VE.Rights.limPremisesLabelled S.1 ++ choiceLabelled N.D ++ gatedRel N.D, XL, XL.map (·.2), fp,
+                (VE.NormDefaults.Admission.fillLabels U).zip fp, targets F, VE.Norms.backgroundBase F,
+                VE.Norms.background F, VE.Norms.elaborate F.T, checked, sharedEnvSD N, supVocabulary r.b.a.re r.b.D,
+                VE.NormDefaults.Wire.canonicalEnvironmentJsonU r.b.a.re.lowerJson,
+                rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+            else throw (unsatText N.D)
+          else throw (refusal N)
         else throw (refusal N)
       else throw (refusal N)
     else throw (refusal N)
