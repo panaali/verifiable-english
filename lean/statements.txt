@@ -61248,6 +61248,11 @@ theorem VE.Service.runMode_englishRead
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.englishRead j = VE.EnglishGrammar.Run.readCaseReported j
   -- uses VE.EnglishGrammar.Run.readCaseReported@VE.EnglishGrammar.Run VE.Service.Mode.englishRead@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
   -- expr 3070480935
+theorem VE.Service.runMode_englishStatement
+  ∀ (j : Lean.Json),
+    VE.Service.runMode VE.Service.Mode.englishStatement j = VE.EnglishGrammar.Norm.Run.statementCaseReported j
+  -- uses VE.EnglishGrammar.Norm.Run.statementCaseReported@VE.EnglishGrammar.Norm.Run VE.Service.Mode.englishStatement@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
+  -- expr 3924735494
 theorem VE.Service.runMode_environment
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.environment j = VE.Service.Standalone.reportedEnvironment j
   -- uses VE.Service.Mode.environment@VE.Service.Registry VE.Service.Standalone.reportedEnvironment@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
