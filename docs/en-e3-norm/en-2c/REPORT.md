@@ -139,8 +139,17 @@ No Lean or Rust product code changed.
   - cmp-s3-cfr-1c and 1d: `tests/data/relay-gate-cases.jsonl`, plus `tools/relay_mutation_gate.py` next to
     `SERVICE_READERS["english.command"]`.
 
-  Whichever merges second resolves them.
+  Whichever merges second resolves them. cmp-s3-cfr-1c reached main first, so this branch merged main
+  (`2902e3fc05`). `tools/relay_mutation_gate.py` conflicted, and the resolution keeps both readers
+  (`clauses-elaborate`, `english.statement`). The `.jsonl` rows merged cleanly. `regen_generated.py --check`
+  checked 40 entries and found none stale.
 - **Pilot bytes moved:** 0 (shadow only).
+
+## Final selected run
+
+The run was `MAC_PYTEST_NO_DEFER=1 mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on the
+committed merge `2902e3fc05`, with a clean tree. It ran on GitHub Actions (run `en-e3bb-2902e3fc-t438550`) in 5
+shards: 101 units, 101 passed, exit 0. After it, only this report changed.
 
 ## Next
 
