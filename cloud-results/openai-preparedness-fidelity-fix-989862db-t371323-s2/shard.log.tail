@@ -1,0 +1,122 @@
+shard 3/3: 13 units; commands: []
+info: syncing channel updates for 1.98.1-x86_64-unknown-linux-gnu
+info: latest update on 2026-09-03 for version 1.98.1 (48a229cea 2026-09-01)
+info: downloading 3 components
+warn: the missing active toolchain `1.98.1-x86_64-unknown-linux-gnu` has been auto-installed
+warn: this might cause rustup commands to take longer time to finish than expected
+info: you may opt out with `RUSTUP_AUTO_INSTALL=0` or `rustup set auto-install disable`
+    Updating crates.io index
+ Downloading crates ...
+  Downloaded cpufeatures v0.2.17
+  Downloaded serde v1.0.229
+  Downloaded digest v0.10.7
+  Downloaded zmij v1.0.23
+  Downloaded autocfg v1.5.1
+  Downloaded crypto-common v0.1.7
+  Downloaded typenum v1.20.1
+  Downloaded memchr v2.8.3
+  Downloaded generic-array v0.14.7
+  Downloaded itoa v1.0.18
+  Downloaded block-buffer v0.10.4
+  Downloaded cfg-if v1.0.5
+  Downloaded serde_json v1.0.151
+  Downloaded num-integer v0.1.47
+  Downloaded serde_derive v1.0.229
+  Downloaded quote v1.0.47
+  Downloaded version_check v0.9.5
+  Downloaded num-bigint v0.4.8
+  Downloaded proc-macro2 v1.0.107
+  Downloaded sha2 v0.10.9
+  Downloaded serde_core v1.0.229
+  Downloaded num-traits v0.2.19
+  Downloaded unicode-ident v1.0.26
+  Downloaded syn v3.0.6
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling unicode-ident v1.0.26
+   Compiling quote v1.0.47
+   Compiling typenum v1.20.1
+   Compiling generic-array v0.14.7
+   Compiling autocfg v1.5.1
+   Compiling serde_core v1.0.229
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling syn v3.0.6
+   Compiling serde v1.0.229
+   Compiling serde_json v1.0.151
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling memchr v2.8.3
+   Compiling cfg-if v1.0.5
+   Compiling itoa v1.0.18
+   Compiling cpufeatures v0.2.17
+   Compiling sha2 v0.10.9
+   Compiling num-integer v0.1.47
+   Compiling serde_derive v1.0.229
+   Compiling num-bigint v0.4.8
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `release` profile [optimized] target(s) in 11.72s
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling typenum v1.20.1
+   Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.26
+   Compiling generic-array v0.14.7
+   Compiling autocfg v1.5.1
+   Compiling serde_core v1.0.229
+   Compiling num-traits v0.2.19
+   Compiling zmij v1.0.23
+   Compiling syn v3.0.6
+   Compiling serde_json v1.0.151
+   Compiling serde v1.0.229
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling itoa v1.0.18
+   Compiling cfg-if v1.0.5
+   Compiling memchr v2.8.3
+   Compiling cpufeatures v0.2.17
+   Compiling sha2 v0.10.9
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling serde_derive v1.0.229
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 6.47s
+order: failed last time []; changed ['tests/test_safetyfw_usecases.py']; then the rest; --maxfail 5
+recording 13 units with 4 jobs in /tmp/ve-select-run-fcv0ic8z
+  tests/test_safetyfw_usecases.py: exit 1 in 698.6 s, 1311 functions
+FAILED tests/test_safetyfw_usecases.py (exit 1): tests/test_safetyfw_usecases.py::test_pf_every_byte_has_ve_status_and_one_unit; log /tmp/ve-select-run-fcv0ic8z/tests__test_safetyfw_usecases.py.log
+
+pf_modules = None
+
+    def test_pf_every_byte_has_ve_status_and_one_unit(pf_modules):
+        coverage = json.loads((PF / "coverage.json").read_text())
+        units = json.loads((PF / "spans.json").read_text())["units"]
+        assert coverage["source_bytes"] == coverage["accounted_bytes"] == pf_build.TEXT_BYTES == 67418
+        assert units[0]["span"][0] == 0 and units[-1]["span"][1] == 67418
+        assert all(a["span"][1] == b["span"][0] for a, b in zip(units, units[1:]))
+        assert sum(coverage["bytes_by_status"].values()) == 67418
+        assert coverage["bytes_by_status"] == coverage["master_bytes_by_status"]
+        assert {u["status"] for u in units} == {"CHECKED", "OPEN", "LABELLED", "UNFORMALISED"}
+        assert all("reason" in u for u in units if u["status"] == "UNFORMALISED")
+        assert all(u["status"] != "LABELLED" for u in units if u["id"].startswith("p2-"))
+        readme = (PF / "README.md").read_text()
+        gaps = json.loads((PF_EVIDENCE / "gaps.json").read_text())
+        for family, data in gaps["features"].items():
+>           assert (f"| {family} | {data['units']} | {data['bytes']:,} | "
+                    f"{data['sole_units']}, {data['sole_bytes']:,} |") in readme
+E           AssertionError: assert '| AP | 119 | 21,554 | 111, 19,678 |' in '# OpenAI Preparedness Framework v2: VE translation and answers\n\nThis case records a VE translation of the *Prepared...use those rules leave the document; without N2 only C2 and C-doc change, as PLAN 6.5 says.\nNeither rerun is scored.\n'
+
+tests/test_safetyfw_usecases.py:811: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_safetyfw_usecases.py::test_pf_every_byte_has_ve_status_and_one_unit - AssertionError: assert '| AP | 119 | 21,554 | 111, 19,678 |' in '# OpenAI Preparedness Framework v2: VE translation and answers\n\nThis case records a VE translation of the *Prepared...use those rules leave the document; without N2 only C2 and C-doc change, as PLAN 6.5 says.\nNeither rerun is scored.\n'
+1 failed, 104 passed in 696.04s (0:11:36)
+recorded 13 units for tree a3efd2c8fa; 0 others left to the static graph until they run; 1 failed
+SHARD 3/3: exit 1 in 730.8 s; 13 units, 12 passed
