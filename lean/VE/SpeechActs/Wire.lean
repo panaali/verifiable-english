@@ -981,9 +981,13 @@ def surfaceKind (regulated : List VE.Norms.Regulated) (source : String) : String
   if text.startsWith "in this task, " || text.startsWith "this document is task " then return "binding"
   if text.startsWith "do not " || text.startsWith "prove that " || text.startsWith "command " then
     return "instruction"
+  -- CI-3: `If <c>, <verb> …` (the clause after the first comma) and `Then <verb> …` are instructions; an `if`
+  -- sentence with no comma ("If Alice must click Check then Atlas is reviewed.") is not.
+  let afterIf := if text.startsWith "if " then (text.splitOn ", ").tail.head? else none
+  let afterThen := if text.startsWith "then " then some (text.drop 5) else none
   for r in regulated do
     if let some verb := r.act.bind actVerb then
-      if startsWithWord text verb then return "instruction"
+      if [some text, afterIf, afterThen].any (·.any (startsWithWord · verb)) then return "instruction"
   if ["question ", "is ", "are ", "does ", "do ", "did ", "was ", "were ", "will ", "would ",
       "who ", "what ", "when ", "where ", "why ", "how ", "which ", "must ", "can "].any text.startsWith then
     return "question"

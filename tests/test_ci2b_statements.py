@@ -1,6 +1,7 @@
 """ci-2b: `readInstruction_refused_classed` and `readInstruction_typed` in lean/VE/Commands/RunSplit.lean are the
 statements of docs/spec/commands-imperatives.md section 6 word for word (whitespace normalised), the second with
-`(hw : VE.Scope.JsonWF j)` beside `hd` (reviews/dri-decisions-20261102-ci-1.md item 1) and nothing else changed."""
+`(hw : VE.Scope.JsonWF j)` beside `hd` (reviews/dri-decisions-20261102-ci-1.md item 1) and, since ci-3, `h` in section 7's
+step form; nothing else changed."""
 from __future__ import annotations
 
 import re
@@ -11,6 +12,9 @@ ROOT = Path(__file__).resolve().parents[1]
 NAMES = ("readInstruction_refused_classed", "readInstruction_typed")
 HD = "(hd : VE.SpeechActs.Wire.decodeSpeechEnvironmentFull j = .ok ctx.se)"
 HW = "(hw : VE.Scope.JsonWF j)"
+H6 = "(h : readInstruction ctx s = .one r)"
+H7 = ("(h : (∃ x, readInstruction ctx s = StepOutcome.one r x) ∨ "
+      "∃ rs, readInstruction ctx s = StepOutcome.steps rs ∧ r ∈ rs)")
 
 
 def declarations(code: str) -> dict[tuple[str, str], list[str]]:
@@ -29,6 +33,10 @@ def approved() -> dict[str, str]:
     spec = {name: found[("theorem", name)][0] for name in NAMES}
     assert HD in spec["readInstruction_typed"] and HW not in spec["readInstruction_typed"]
     spec["readInstruction_typed"] = spec["readInstruction_typed"].replace(HD, f"{HW} {HD}")
+    # ci-3: `readInstruction` returns `StepOutcome` (section 7), so `h` takes section 7's step form
+    # (as reviews/dri-decisions-20261109-ci-3-step.md item 1 for `readInstruction_typed_of_facts`); nothing else changes.
+    assert H6 in spec["readInstruction_typed"]
+    spec["readInstruction_typed"] = spec["readInstruction_typed"].replace(H6, H7)
     return spec
 
 

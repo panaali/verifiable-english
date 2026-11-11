@@ -7,13 +7,13 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 | | count |
 |---|---:|
 | leaves:bound | 301 |
-| leaves:closed domain | 320 |
-| leaves:none | 1643 |
+| leaves:closed domain | 321 |
+| leaves:none | 1646 |
 | modes | 45 |
 | today:hand | 203 |
 | today:later Lean request | 62 |
-| today:not probed | 1241 |
-| today:shape | 621 |
+| today:not probed | 1244 |
+| today:shape | 622 |
 | today:unbound | 137 |
 | answers | 606 |
 | probes | 10204 |
@@ -3779,10 +3779,14 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/error` | string | none |  | minLength | 4 | not probed |
 | `/id` | any | bound | x-echo |  | 2 | shape |
 | `/id` | string | bound | x-equals |  | 2 | shape |
+| `/result/alternatives/*/readings/*` | integer | none |  | minimum | 0 | not probed |
+| `/result/alternatives/*/shape` | string | closed domain | enum |  | 0 | shape |
 | `/result/class` | string | none |  | minLength | 1 | not probed |
 | `/result/code` | string | none |  | minLength | 1 | not probed |
 | `/result/legend/*` | string | none |  | minLength | 6 | not probed |
 | `/result/outcome` | string | closed domain | const |  | 2 | shape |
+| `/result/paraphrase` | string | none |  | minLength | 0 | not probed |
+| `/result/purpose` | string | none |  | minLength | 0 | not probed |
 | `/result/reading/command/act` | string | none |  | minLength | 1 | not probed |
 | `/result/reading/command/args/*` | string | none |  | minLength | 1 | not probed |
 | `/result/reading/command/force` | string | closed domain | enum |  | 1 | shape |
@@ -3813,6 +3817,8 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 
 | array | length bound by | positions bound by | internal agreement | probed (generic/hand) |
 |---|---|---|---|---|
+| `/result/alternatives` |  |  |  |  |
+| `/result/alternatives/*/readings` |  |  |  |  |
 | `/result/legend` |  |  |  |  |
 | `/result/reading/command/args` |  |  |  |  |
 | `/result/reading/fills` |  |  |  |  |

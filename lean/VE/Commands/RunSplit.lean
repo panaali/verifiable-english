@@ -2,10 +2,11 @@ import VE.Commands.RunExamples
 import VE.SpeechActs.Source.Run
 
 /-! The spec's two end-to-end statements of CI-2 (docs/spec/commands-imperatives.md section 6), as written there
-with `hw` beside `hd` (reviews/dri-decisions-20261102-ci-1.md item 1), proved through ci-1b's `refused_classed`,
-`guardOf_classed` and `readCommand_typed` (ci-2b). They replace ci-2's split (reviews/dri-decisions-20261104-ci-2.md
-item 1): `readInstruction_refused_classed_of` and `readInstruction_typed_of_facts` stay in `Run.lean` as the lemmas
-these proofs use. -/
+with `hw` beside `hd` (reviews/dri-decisions-20261102-ci-1.md item 1), proved through ci-1b's `refused_classed` and
+`guardOf_classed` (ci-2b). Since CI-3, `readInstruction` returns `StepOutcome` (section 7): `readInstruction_typed`'s
+premise `h` takes section 7's step form and the theorem is `readInstruction_typed_step` (ci-3). They replace ci-2's
+split (reviews/dri-decisions-20261104-ci-2.md item 1): `readInstruction_refused_classed_of` and
+`readInstruction_typed_of_facts` stay in `Run.lean` as the lemmas these proofs use. -/
 
 namespace VE.Commands
 
@@ -20,17 +21,13 @@ theorem readInstruction_refused_classed (ctx : Context) (s code text : String)
 theorem readInstruction_typed (j : Lean.Json) (ctx : Context) (r : Reading) (D : VE.SpeechActs.SpeechDoc) (u : String)
     (hw : VE.Scope.JsonWF j)
     (hd : VE.SpeechActs.Wire.decodeSpeechEnvironmentFull j = .ok ctx.se)
-    (h : readInstruction ctx s = .one r)
+    (h : (∃ x, readInstruction ctx s = StepOutcome.one r x) ∨
+      ∃ rs, readInstruction ctx s = StepOutcome.steps rs ∧ r ∈ rs)
     (hE : D.E = ctx.se.ne.rv.environment) (hS : D.scope = ctx.sc) (hR : D.regulated = ctx.se.ne.regulated)
     (hk : VE.SpeechActs.scopeOk D = true)
     (hq : ∀ q ∈ ctx.queries, (q.id, "query") ∈ ctx.se.ne.rv.vocabulary.constants) :
-    VE.SpeechActs.commandOk D (r.command u) = true := by
-  cases ht : proofTask ctx s with
-  | none =>
-    rw [readInstruction_command ctx s ht] at h
-    exact readCommand_typed ctx.se ctx.sc ctx.E ctx.L ctx.b s j r D u hw hd h hE hS hR hk
-  | some _ =>
-    exact readInstruction_typed_of_facts ctx s r D u (declared_of_decode hw hd) h hE hS hR hk hq
+    VE.SpeechActs.commandOk D (r.command u) = true :=
+  readInstruction_typed_step j ctx r D u hw hd h hE hS hR hk hq
 
 /-! ci-1's facts hold of the web fixture's and ci-2's decoded environments (each passes `jsonWF?`, so
 `declared_of_decode` applies to them). -/
@@ -147,6 +144,69 @@ def mixed (p : Json) : Json :=
 -- An asserted fence resolved as a formula is its assertion.
 #guard result (resolving (payload (one "asserted" "Atlas is reviewed.\n") [] (ctx := false)) [("c1", formula)]) ==
   "ok"
+-- ci-3: the `ThenWithoutStep` check reads each unit's own effective kind: an instruction `Then` unit after an asserted
+-- one is refused, and so is an asserted `Then` unit with a signed `instruction` choice after an instruction.
+def cmd : Json := Json.mkObj [("command", click)]
+def signed (u : String) : Json := Json.mkObj [("id", .str "rs"), ("unit", .str u), ("version", toJson 1),
+  ("status", .str "authored"), ("signature", .str "author"), ("readings", toJson [Json.mkObj [("id", .str "r"),
+    ("kind", .str "instruction"), ("meaning_id", .str "candidate"), ("content", cmd), ("admission",
+      Json.mkObj [("who", .str "author"), ("why", .str "reproducer"), ("distinguishing_models", Json.mkObj [])])]])]
+def thenText : String := "ThenWithoutStep: a Then step names no earlier instruction step as its antecedent; " ++
+  "write the steps in one sentence, joined by ', then ' (unit t)"
+#guard result (payload [("a", "asserted", "Atlas is reviewed.\n", some formula),
+  ("t", "instruction", "Then click Check.\n", some cmd)] [] (ctx := false)) == thenText
+#guard [result (payload [("c1", "instruction", "Click Check.\n", some cmd), ("t", "asserted", "Then click Check.\n",
+    some formula)] [] (ctx := false) (extra := [("reading_sets", toJson [signed "t"])])),
+  result (payload [("t", "asserted", "Then click Check.\n", some formula), ("c1", "instruction", "Click Check.\n",
+    some cmd)] [] (ctx := false) (extra := [("reading_sets", toJson [signed "t"])])),
+  result (payload [("c1", "instruction", "Click Check.\n", some cmd), ("t", "asserted", "Then click Check.\n",
+    some formula)] [] (ctx := false))] == [thenText, thenText, "ok"]
+-- ci-3 (review F2): the document form of a sequence is one instruction unit whose `MIXED` parts are its steps; each
+-- part's command (explicit, resolved or chosen) is checked against `readStep` of the whole wording, under the reading
+-- context. Reversed steps are refused for plain, attributed and hedged parts, and for a chosen part; a unit carrying
+-- one command for a two-step wording, a sequence with a non-instruction part, and one with no context are refused.
+def seqText (m : String) : String :=
+  s!"{Texts.sequenceParts.1}: {Texts.sequenceParts.2} (unit {m})"
+def seqUnits (k : String) (c1 c2 : Json) : List (String × String × String × Option Json) :=
+  [("a", k, "Click Check", some (Json.mkObj [("command", c1)])),
+   ("b", k, ", then do not share the token.\n", some (Json.mkObj [("command", c2)]))]
+#guard result (mixed (payload (seqUnits "instruction" share click) [] (ctx := false))) == readingContextText
+-- Without the context the sequence is not read: a later fault of the document is the one reported; and a context that
+-- does not decode is never read when no sequence (and no fence) needs it.
+#guard result (mixed (payload (seqUnits "instruction" share click) [] (ctx := false)
+  (extra := [("weights", .num 5)]))) == "invalid removable reading weights"
+#guard result ((payload [("c1", "instruction", "Click Check.\n", some cmd)] []).setObjVal! "reading_context"
+    (Json.mkObj [])) == "ok" &&
+  result ((mixed (payload (seqUnits "instruction" click share) [])).setObjVal! "reading_context" (Json.mkObj [])) != "ok"
+#guard ["instruction", attributed, hedged].all fun k =>
+  result (mixed (payload (seqUnits k share click) [])) == seqText "m" &&
+    result (mixed (payload (seqUnits k click share) [])) == "ok"
+#guard result (payload [("u", "instruction", "Click Check, then do not share the token.\n", some cmd)] []) == seqText "u"
+#guard result (mixed (payload [("a", "instruction", "Click Check", some cmd),
+  ("b", "asserted", ", then do not share the token.\n", some formula)] [])) == seqText "m"
+#guard result (mixed (payload [("a", "instruction", "Click Check", some cmd), ("b", "instruction", ", then click Check", some cmd),
+  ("c", "instruction", ", then do not share the token.\n", some (Json.mkObj [("command", share)]))] [])) == "ok" &&
+  result (mixed (payload [("a", "instruction", "Click Check", some cmd), ("b", "instruction",
+    ", then click Check, then do not share the token.\n", some cmd)] [])) == seqText "m"
+-- A chosen part is read through its signed choice: reversed, the sequence is refused; in order, the sequence check
+-- passes and the parts' stated status is the next fault.
+#guard result (mixed (payload [("a", "asserted", "Click Check", some formula), ("b", "instruction",
+    ", then do not share the token.\n", some cmd)] [] (extra := [("reading_sets", toJson [signed "a"])]))) == seqText "m" &&
+  result (mixed (payload [("a", "asserted", "Click Check", some formula), ("b", "instruction",
+    ", then do not share the token.\n", some (Json.mkObj [("command", share)]))] []
+    (extra := [("reading_sets", toJson [signed "a"])]))) != seqText "m"
+-- The stated order is derived content of the decoded source: the sequence's consecutive steps.
+#guard (match decodeSpeechSource (mixed (payload (seqUnits "instruction" click share) [])) .null with
+  | .ok s => s.1.stepOrder
+  | .error _ => []) == [("m.1", "m.2")]
+#guard (match decodeSpeechSource (mixed (payload [("a", "instruction", "Click Check", some cmd), ("b", "instruction",
+    ", then click Check", some cmd), ("c", "instruction", ", then do not share the token.\n",
+    some (Json.mkObj [("command", share)]))] [])) .null with
+  | .ok s => s.1.stepOrder
+  | .error _ => []) == [("m.1", "m.2"), ("m.2", "m.3")]
+#guard (match decodeSpeechSource (payload two [("c1", click), ("c2", share)]) .null with
+  | .ok s => (s.1.stepOrder, s.1.hasSequence)
+  | .error _ => ([("", "")], true)) == ([], false)
 -- The fences Python resolves, charged against `maxCases` before any is read (asserted fences, none resolved).
 def fenced (n : Nat) : Json :=
   payload ((List.range n).map fun i => (s!"a{i}", "asserted", "Atlas is reviewed.\n", none)) [] (ctx := false)
