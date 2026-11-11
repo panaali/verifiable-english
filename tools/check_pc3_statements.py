@@ -28,8 +28,10 @@ STAGED = {"RouteFacts": ('| ["acts@0", "scope@0"] =>', "| _ => False")}
 
 
 def declarations(code: str) -> dict[tuple[str, str], list[str]]:
-    """The shared scanner of the statement gates: a declaration runs to the next Lean command, so a blank line or a
-    comment inside it never ends it (review sc-2d-f1 F2), and comments are left out on both sides."""
+    """The shared scanner of the statement gates: a declaration runs to the next Lean command keyword at column 0, so
+    a blank line or a comment of any kind inside it (a doc comment at column 0 before a constructor or a field too)
+    never ends it (review sc-2d-f1 F2, F3), and comments are left out on both sides. A line that starts with `#` or
+    `@[` at column 0 in code is read as a command, so a term line at column 0 such as `#[..]` still ends it."""
     return scan(code, statements_only=True, kinds=KINDS)
 
 
