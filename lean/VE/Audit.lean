@@ -8611,6 +8611,7 @@ import VE.WireContract.Engine
 #print axioms VE.Service.runMode_englishGrammar
 #print axioms VE.Service.runMode_englishQuestion
 #print axioms VE.Service.runMode_englishRead
+#print axioms VE.Service.runMode_englishStatement
 #print axioms VE.Service.runMode_environment
 #print axioms VE.Service.runMode_evaluate
 #print axioms VE.Service.runMode_familyNorms
