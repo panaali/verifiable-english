@@ -1,6 +1,6 @@
 {
  "item": "et-5b",
- "note": "each planted alone in the source tree after the self-review fixes, its module rebuilt, the fixture files run with `lake env lean`, then restored. No Python, tools or Rust product file changed, so every seeded bug is Lean.",
+ "note": "each planted alone in the source tree after the self-review fixes, its module rebuilt, the fixture files run with `lake env lean`, then restored. L1-L28: no Python, tools or Rust product file changed then, so every seeded bug was Lean. The review fix (et-5b-review.final.md F1) changed Lean and Python product code: L29 is planted the same way; P1-P9 each alone in the Python source, the named test file run with pytest, then restored (no Rust file changed).",
  "mutants": [
   {
    "id": "L1",
@@ -252,6 +252,96 @@
    "definition": "VE.EnglishGrammar.eventsReadingSets",
    "mutant": "sinceReadings dropped from the list",
    "test": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:234",
+   "killed": true
+  },
+  {
+   "id": "L29",
+   "language": "Lean",
+   "file": "lean/VE/Service/Document.lean",
+   "definition": "VE.Service.Document.Env.eventsView",
+   "mutant": "the view dropped: `(E.events.map (·.2.view)).bind fun _ => none`",
+   "test": "lean/VE/Service/EventsDocumentExamples.lean:273, :275, :279",
+   "killed": true
+  },
+  {
+   "id": "P1",
+   "language": "Python",
+   "file": "ve/events.py",
+   "definition": "ve.events.view",
+   "mutant": "the constants relation (`_bind_constants`) not called",
+   "test": "tests/test_events_document_cli.py::test_a_tampered_events_view_is_unavailable[constant-dropped], [anchor-rebound], [date-description], [date-member], [date-retyped], [anchor-dropped]",
+   "killed": true
+  },
+  {
+   "id": "P2",
+   "language": "Python",
+   "file": "ve/document/cli.py",
+   "definition": "ve.document.cli.main",
+   "mutant": "the conclusion guard over an events document removed (`elif False:`)",
+   "test": "tests/test_events_document_cli.py::test_a_conclusion_over_an_events_document_is_unavailable (every document, plain, --under and --assume-no-exception)",
+   "killed": true
+  },
+  {
+   "id": "P3",
+   "language": "Python",
+   "file": "ve/document/report.py",
+   "definition": "ve.document.report._report_premise_context",
+   "mutant": "the events pack not added to the premise set",
+   "test": "tests/test_events_document_cli.py::test_the_check_premise_set_holds_the_events_pack",
+   "killed": true
+  },
+  {
+   "id": "P4",
+   "language": "Python",
+   "file": "ve/events.py",
+   "definition": "ve.events._bind_labels",
+   "mutant": "the date-fact count back to `len(dates) - 1` (minus one for no named date)",
+   "test": "tests/test_events_answer.py::test_a_block_with_no_named_date_has_no_date_fact; tests/test_events_document_cli.py::test_probe_f1_check_document_counts_the_checked_byte",
+   "killed": true
+  },
+  {
+   "id": "P5",
+   "language": "Python",
+   "file": "ve/document/report.py",
+   "definition": "ve.document.report._report",
+   "mutant": "the content-bearing readings guard under events removed (`elif False:`)",
+   "test": "tests/test_events_document_cli.py::test_content_bearing_readings_premises_are_unknown_under_events",
+   "killed": true
+  },
+  {
+   "id": "P6",
+   "language": "Python",
+   "file": "ve/document/lean.py",
+   "definition": "ve.document.lean._chain_environments",
+   "mutant": "the identities read the view (`_environment(view)` twice), not the written environment",
+   "test": "tests/test_events_document_cli.py::test_probe_f1_check_document_counts_the_checked_byte; test_every_subcommand_admits_a_soft_chain_events_document",
+   "killed": true
+  },
+  {
+   "id": "P7",
+   "language": "Python",
+   "file": "ve/events.py",
+   "definition": "ve.events.view",
+   "mutant": "the profiles compared with themselves (no relation to the written profiles)",
+   "test": "tests/test_events_document_cli.py::test_a_tampered_events_view_is_unavailable[events-profile-kept], [profiles-reordered], [profile-dropped]",
+   "killed": true
+  },
+  {
+   "id": "P8",
+   "language": "Python",
+   "file": "ve/events.py",
+   "definition": "ve.events.view",
+   "mutant": "the member-set check removed",
+   "test": "tests/test_events_document_cli.py::test_a_tampered_events_view_is_unavailable[extra-member], [block-kept], [member-dropped]",
+   "killed": true
+  },
+  {
+   "id": "P9",
+   "language": "Python",
+   "file": "ve/document/lean.py",
+   "definition": "ve.document.lean._bind_document_answer",
+   "mutant": "`events_view` allowed in the row's member set whenever present",
+   "test": "tests/test_events_document_cli.py::test_an_events_view_on_a_document_without_events_is_unavailable",
    "killed": true
   }
  ],
