@@ -6,8 +6,12 @@ definition with its body (`AchievesU`, `fillDoc`, `fillNamesFree`, `normsShaped`
 theorem from `theorem <name>` to the proof's `:=`. The list is read from the spec block itself, so a declaration
 added to the spec is compared without editing this file. Whitespace and comments are ignored; a declaration runs
 to the next Lean command keyword at column 0 in code (`spans`), so a blank line or a comment of any kind inside it, a
-doc comment at column 0 too, never ends it (review sc-2d-f1 F2, F3); a line that starts with `#` or `@[` at column 0
-in code is read as a command, so a term line at column 0 such as an array literal `#[..]` still ends it (`COMMANDS`).
+doc comment at column 0 too, does not end it (review sc-2d-f1 F2, F3). A term or tactic line at column 0 that starts
+the way a command does still ends it early, and the text after that line is not compared (`COMMANDS`; review
+sc-2d-f1 F4). These cases are: a line that starts with `#` (an array literal `#[..]`), a line that starts with `@[`,
+and a line that starts with a command keyword used as a term or tactic prefix: `open X in`, `set_option o v in` (Lean's
+term and tactic forms ending in ` in`) and the term `unsafe e`. These are all the term and tactic parsers of Lean
+v4.24.0's built-in syntax that start with a keyword in `COMMANDS`; a syntax a project declares could add more.
 The Lean compiler checks elaboration, and lean/audit.py checks proof dependencies. A declaration that differs from the
 approved text must be listed in PENDING with the reason, and is reported as pending the statement re-review; an
 unlisted difference, a missing or repeated declaration, or a PENDING entry that no longer differs fails.
@@ -110,11 +114,15 @@ KINDS = ("theorem", "def", "structure")
 # built Lean the next line is a command; reading on past them makes the text longer, never shorter. A `|`
 # constructor line or a structure field line at column 0 is not a command either. A column-0 line that is none of
 # these is read as part of the declaration: an unknown command makes the text longer, so it differs from the
-# approved one; it never hides a part of the declaration. The one exception: a line that starts with `#` or `@[` at
-# column 0 in code is read as a command (`#check`, `@[simp]`), so a term line at column 0 that starts with `#[`
-# (an array literal) or `@[` ends the declaration early (a C note of the DRI ruling on F3: valid Lean that hides
-# text this way is built on purpose). `binder_predicate` to `unif_hint` are the other declaration commands Lean's
-# parser lists as able to follow a doc comment, so a doc comment no longer separating them changes nothing.
+# approved one. A column-0 line in code that starts the way a command does is read as a command even when Lean reads
+# it as part of the term or tactic block, so it ends the declaration early and the text after it is not compared
+# (review sc-2d-f1 F4; C notes of the DRI rulings on F3 and F4: valid Lean that hides text this way is built on
+# purpose). Every such case: a term line that starts with `#` (an array literal `#[..]`; `#check` is a command), a
+# line that starts with `@[` (`@[simp]` is a command), and a command keyword used as a term or tactic prefix:
+# `open X in ..` and `set_option o v in ..` (term and tactic forms) and the term `unsafe ..`. These are all of Lean
+# v4.24.0's built-in term and tactic parsers that start with a keyword listed here; a syntax a project declares could
+# add more. `binder_predicate` to `unif_hint` are the other declaration commands Lean's parser lists as able to
+# follow a doc comment, so a doc comment no longer separating them changes nothing.
 COMMANDS = ("theorem", "lemma", "def", "structure", "class", "inductive", "coinductive", "abbrev", "instance",
             "example", "axiom", "opaque", "mutual", "end", "namespace", "section", "open", "export", "universe",
             "variable", "private", "protected", "noncomputable", "partial", "unsafe", "nonrec", "attribute",
