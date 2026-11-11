@@ -45,7 +45,8 @@ Certificates: `NSD4a` under `rs1:1` (targets; W-1a's query) and `NSDq` under `[]
 - **Build**: `lake build` PASS; `python3 lean/audit.py` PASS (827 files, 9326 theorems, standard axioms only); fixtures build in
   ~46 s; `tools/check_lean_imports.py` kept (the fixtures declare layer 4: they read `Readings.Run`); `tools/assurance_manifest.py --check` 0.
 - **Statements**: `tools/check_rd9_sc1_statements.py`: "SC-11 labels PASS: 11 exact", "SC-11 wire PASS: 15 exact", 0 pending;
-  `tests/test_rd9_statements.py`: 43 passed. **Selected tests**: SELECTED.
+  `tests/test_rd9_statements.py`: 43 passed. **Selected tests**: `MAC_PYTEST_NO_DEFER=1 mac-pytest.sh --select -- --base a3454b6ba --run` on dd6cf4f43
+  (tree 9900a779d1, run on the VM): 112 units recorded, 0 failed, exit 0; no test of main-known-red.txt met.
 
 ## Seeded bugs (`docs/rd-9/sc-11c/mutants.json`, all Lean, each KILLED)
 
@@ -70,7 +71,7 @@ M11 the filling ignored (:124, :127, :142); M12 a scope's failing model reads `l
 1. N.A.: no relayed answer (nothing dispatches here; sc-11b's relay rows). 2. PASS: rows above; moves signed by the DRI. 3. PASS:
 14 seeded bugs KILLED (mutants.json); trust mutants 108 KILLED, 0 survivors. 4. N.A.: no Python or Rust product code. 5. N.A.: no relay binding
 (sc-11b). 6. PASS: the chain gates the final HEAD. 7. PASS: R16 allowance and FOLLOW-UPS row; no DELTA; no reserved signature.
-8. PASS: no user-visible change (:196 compares with `runSDKind`). 9. PASS: SELECT9. 10. PASS: the ties' theorems break under M5,
+8. PASS: no user-visible change (:196 compares with `runSDKind`). 9. PASS: `tools/select_tests.py --base a3454b6ba` selects 119 units, not all; among them tests/test_rd9_statements.py, test_assurance_manifest.py, test_trust_budget.py. 10. PASS: the ties' theorems break under M5,
 M6, M6b; statements 11 + 15 exact; audit PASS. 11. PASS: over the work limit the route refuses (:196; the order is argued in
 `sdCaseOf`, SoftSupWireExamples' W-13 rows pin the route values); a refused piece is no verdict (:127). 12. PASS: `NSDbig 8`
 read once in the fixtures (46 s, was 96 s). 13. PASS: no test removed. 14. PASS: both directions above; spec re-read above.
