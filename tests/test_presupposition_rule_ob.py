@@ -3,7 +3,7 @@
 The block of review F2: p1 a claim on u1, p2 a rule act on r2, and rule r1 given two different nodes. `admit`
 refuses it in step 5's rule check, which named the block's first obligation (`PresuppositionMismatch: p1: rule`)
 though p1 is no obligation of r1. No service mode runs `admit` yet (PS-4 puts its report in the document answer),
-so the test elaborates the block with `lake env lean` against the built `VE.Presupposition.Admit`, under
+so the test elaborates the block with `lake env lean` against the built `VE.Presupposition.Examples`, under
 `tmp_path`, and reads the diagnostic Lean prints. Lean decides every answer; Python only compares the text.
 The same block's `#guard`s are in `lean/VE/Presupposition/Run.lean`'s guard section.
 """
@@ -17,7 +17,7 @@ import pytest
 from subprocesses import HANG_TIMEOUT
 from tests.lean_build import LEAN, lean_build
 
-IMPORT = "VE.Presupposition.Run"
+IMPORT = "VE.Presupposition.Examples"
 
 # The block, built from the presupposition examples only (they are on main before this item, so the test runs there).
 SOURCE = f"""import {IMPORT}
