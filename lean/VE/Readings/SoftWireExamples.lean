@@ -51,5 +51,12 @@ def refusal (limit : Nat) : Option String :=
     sdAdmitWork N ≤ maxSdAdmitWork && (sdTextsWithin maxSdAdmitWork re N).isSome &&
       sdTextsWithin maxSdAdmitWork re N == (choices N.D).findSome? (sdChoiceText re N)
   | .error _ => false
+-- every choice is read, the last one too: under 253 declared names only NSDbig 2's fourth choice (both default
+-- readings, three decision predicates) fails, and that is the text (trust_mutants' `take 1`, `dropLast` survivors)
+#guard match decodeEnvironment (envWith 253) with
+  | .ok re => let N := NSDbig 2
+    (choices N.D).map (fun c => (sdChoiceText re N c).isSome) == [false, false, false, true] &&
+      sdTextsWithin maxSdAdmitWork re N == sdChoiceText re N [("rs0", 1), ("rs1", 1)]
+  | .error _ => false
 
 end VE.Readings.SoftWireExamples
