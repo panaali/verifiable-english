@@ -18,7 +18,7 @@ theorem embedKind_inj (k l : Kind) : embedKind k = embedKind l ↔ k = l := by
 
 theorem embedClosure_inj (a b : Formula) : embedClosure a = embedClosure b ↔ a = b := by
   induction a generalizing b <;> cases b <;>
-    simp_all [embedClosure, embedKind_inj]
+    simp_all [embedClosure, Formula.toCore]
 
 def embedEdge : Edge → Core.Edge
   | .named p => .named p
@@ -29,7 +29,7 @@ theorem embedEdge_inj (e f : Edge) : embedEdge e = embedEdge f ↔ e = f := by
 
 theorem reach_embed (k : Kind) (e : Edge) (t u : Term) :
     Core.Formula.reach (embedKind k) (embedEdge e) t u = embedClosure (Formula.reach k e t u) := by
-  cases e <;> rfl
+  cases e <;> cases k <;> rfl
 
 theorem extraRule_eq (rule : String) : Core.Tableau.extraRule rule = Tableau.extraRule rule := rfl
 
