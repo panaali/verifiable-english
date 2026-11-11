@@ -1,0 +1,9 @@
+Review F1 exact probe, 2026-11-10 after DRI filing
+
+Command:
+timeout 300 python3 -c 'import pathlib,re; s=pathlib.Path("/home/seyran/code/manage-agents/FOLLOW-UPS.md").read_text(); assert re.search(r"(?im)^## rights-cfr-1(?:\s|$)",s), "R16 ties-pass row for rights-cfr-1 is absent"'
+
+Exit code: 0
+Output: none
+
+The central row at line 2373 names both VE.Rights.Wire.rightsNormalForm and VE.SoftNorms.Wire.softDefault. The DRI recorded its filing in reviews/dri-decisions-20261110-stale6h-0708.md item 1.
