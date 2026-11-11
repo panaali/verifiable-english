@@ -225,7 +225,16 @@ def markdown(delta: dict) -> str:
         lines.append(f"| {c['name']} | {c['size']} | {c['no_round_trip']} | "
                      + " | ".join(str(counts[k]) for k in CLASSES) + " |")
     lines += ["", f"`lean-unavailable` ids ({len(delta['lean_unavailable'])}): "
-              + (", ".join(f"`{i}`" for i in delta["lean_unavailable"]) or "none"), ""]
+              + (", ".join(f"`{i}`" for i in delta["lean_unavailable"]) or "none"), "",
+              f"Blocks Lean answers `NodeRefused` or `NodeLimit`: "
+              f"{sum(r['lean'].get('code') in ('NodeRefused', 'NodeLimit') for r in delta['rows'])} "
+              "(each would be a row below, whatever its class).", "",
+              "Known differences of english-lean-s6.md section 5 whose environment no `Environment` admits, so that "
+              "neither reader is given a text: " + (", ".join(f"`{d}`" for d in delta["known_not_constructible"])
+                                                    or "none") + ".", "",
+              "## Rows by Lean's answer", "", "| corpus | class | Lean | rows |", "|---|---|---|---|"]
+    causes = Counter((r["corpus"], r["class"], r["lean"].get("code") or r["lean"]["status"]) for r in delta["rows"])
+    lines += [f"| {corpus} | {cls} | {lean} | {n} |" for (corpus, cls, lean), n in sorted(causes.items())] + [""]
     sections = [("Layout rows (english-lean-s6.md:533; decided here, a refused layout is a Lean code)",
                  lambda r: r.get("difference", "").startswith("layout-")),
                 ("`lean-unknown` rows (not decided as rejections)",
@@ -251,8 +260,9 @@ def main(argv=None) -> int:
     with tempfile.TemporaryDirectory(prefix="w1-delta-") as directory:
         scratch = args.scratch or Path(directory)
         scratch.mkdir(parents=True, exist_ok=True)
-        if args.build_only:  # the records of an earlier run in `--scratch`, read again
+        if args.build_only:  # the records of an earlier run in `--scratch`, read again, with its commit
             skipped = json.loads((scratch / "skipped.json").read_text())
+            commit = skipped.pop("commit")
         else:
             for name in ("own.jsonl", "suite.jsonl"):
                 (scratch / name).unlink(missing_ok=True)
@@ -262,7 +272,7 @@ def main(argv=None) -> int:
             pinned()
             skipped = {name: units(name) for name in PILOTS}
             skipped["known"] = known()
-            (scratch / "skipped.json").write_text(json.dumps(skipped))
+            (scratch / "skipped.json").write_text(json.dumps({**skipped, "commit": commit}))
             suite(scratch, args.workers)
         records = [json.loads(line) for name in ("own.jsonl", "suite.jsonl") if (scratch / name).exists()
                    for line in (scratch / name).read_text().splitlines()]
