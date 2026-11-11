@@ -1,0 +1,23 @@
+{
+ "job": "ap-1bfb.s10of10-9a39f7c3",
+ "head": "f9b81f7657b69104041a6942f4dbf499737f2332",
+ "argv": [
+  "ap-1bfb.s10of10-9a39f7c3",
+  "f9b81f7657b69104041a6942f4dbf499737f2332",
+  "5b7293287f6eed2c64325896a0b9cadd1fd602b6",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-1887a7420de0.tar.zst",
+  "4ce7177af75af93171fbadc71a9ad70b032b008a2d4b0e17dfe777974e56718d",
+  "--max-mutants",
+  "1000",
+  "--test",
+  "lean/VE/WireContract/Hooks/Acts.lean",
+  "--test",
+  "lean/VE/WireContract/Diagnose.lean",
+  "--budget",
+  "6300",
+  "--shard",
+  "10/10",
+  "--jobs",
+  "4"
+ ]
+}
