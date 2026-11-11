@@ -2553,6 +2553,48 @@
    "reason": "en-e3a-cutback: VE/EnglishGrammar/Norm/Run.lean +9 (statementSpans -2, oneSpansOf +6 new, oneSpans -3, Reader +2, answerWith +3, leanReader +2, outcomeFields +1), VE/EnglishGrammar/Norm/Rules.lean -3 (normTags deleted); K +0, S +0, V +6",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), en-e3a-cutback, 2026-10-18",
    "commit": "c81d6a9d910f00a2466fa3811168b1c2d825a3ed"
+  },
+  {
+   "class": "V",
+   "lines": 84,
+   "reason": "sc-11c: VE/Readings/SoftSupRun.lean trusted +84 (sdScope, sdProofs untied G[V]; sdShared, sdAssumed, sdModel, SDCase.labels D[V]); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-11c, 2026-10-18",
+   "commit": "a3454b6ba5982d7cb5e216d10432a94f6177652a"
+  },
+  {
+   "class": "S",
+   "lines": 3,
+   "reason": "ap-parse-index: trusted +27 (K +0, S +3, V +24): VE/Acts/Wire.lean +10 (checkActBy, joinedActBy), VE/Acts/Index.lean +6 (idxGo), VE/Acts/Readings.lean +5 (reader), VE/Acts/Meaning.lean +3 (S: meaningWith), VE/Norms/Wire.lean +2 (actsOf's reader), VE/Acts/Run.lean +1 (taggedWith); firstsGo, closedFast, buildFast, combineFast, readingsBy, readingsOnce, readOnce tied by their equality theorems",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-parse-index, 2026-11-09",
+   "commit": "a0102f0e5350727e99ddcae2e0b59ed03f2f4192"
+  },
+  {
+   "class": "V",
+   "lines": 24,
+   "reason": "ap-parse-index: trusted +27 (K +0, S +3, V +24): VE/Acts/Wire.lean +10 (checkActBy, joinedActBy), VE/Acts/Index.lean +6 (idxGo), VE/Acts/Readings.lean +5 (reader), VE/Acts/Meaning.lean +3 (S: meaningWith), VE/Norms/Wire.lean +2 (actsOf's reader), VE/Acts/Run.lean +1 (taggedWith); firstsGo, closedFast, buildFast, combineFast, readingsBy, readingsOnce, readOnce tied by their equality theorems",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-parse-index, 2026-11-09",
+   "commit": "a0102f0e5350727e99ddcae2e0b59ed03f2f4192"
+  },
+  {
+   "class": "V",
+   "lines": 22,
+   "reason": "sc-7-f11: lean/VE/Scope/Authoring.lean V +22 (new: Pinned.allowed +4, Pinned.follower +6, Pinned.charRef +7, each with its blank line; Pinned.clause +5: the inside-a-word follower rule, the charRef conjunct and its docstring); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-7-f11, 2026-11-10",
+   "commit": "f3f40d51dc6dfffeb57834ee5652ff7b514eaeed"
+  },
+  {
+   "class": "S",
+   "lines": 5,
+   "reason": "ap-4bb: VE/Acts/Sources.lean S +5 (View, ruleView, expected compare SoftNode's mode, rank, alterable, exception, hard; DRI 2026-11-10 ap-4b-f2 item 1); VE/Acts/Situation.lean V -15 (atomSituation, rulePred now tied by atomSituation_separated, rulePred_eq_some); sourceCheck, compareViews, pick also tied by sourceCheck_complete, compareViews_complete, pick_of_forall₂; K +0; trusted -10",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-4bb, 2026-10-18",
+   "commit": "97b3c7999add79633321ed10742aef613d66c5a2"
+  },
+  {
+   "class": "V",
+   "lines": 4,
+   "reason": "en-e3b (en-e3ab scope): VE/Service/Registry.lean +1, VE/Service/Protocol.lean +1, ResponseShape/Skeletons.lean +1, ResponseShape/Schemas.lean +1 (english.statement's registry, dispatch, skeleton and schema-file cases)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), en-e3b, 2026-10-18",
+   "commit": "f3f40d51dc6dfffeb57834ee5652ff7b514eaeed"
   }
  ]
 }

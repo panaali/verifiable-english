@@ -1,3 +1,5 @@
+- `tests/test_p0_three_way.py` — Three-way P0 conformance: Python, Rust and the Lean `route` subcommand give identical verdicts on every shipped case of the P0 families (PLAN-EXPAND2 3.10(2)).
+- `tests/test_p1.py` — (no module docstring)
 - `tests/test_p1_amendment11.py` — Budget choice and two-turn execution/analysis, without provider calls.
 - `tests/test_p1_amendment12.py` — Ceiling-driven judge substitution: budgets, routing, reuse and disclosure.
 - `tests/test_p1_amendment13.py` — Audited abstentions, gate scope, zero-generation reuse and strict bounds.
@@ -19,6 +21,7 @@
 - `tests/test_pc1g_trust_mutants.py` — The saved pc-1g trust mutation record has a verdict for every planned mutant.
 - `tests/test_pc3_statements.py` — PC-3's Lean declarations against the approved blocks of docs/spec/profile-composition.md 1.2 to 1.6 (build checklist 17), and the check's ability to fail.
 - `tests/test_pc9_statements.py` — PC-9's Lean declarations against the approved blocks of docs/spec/profile-composition.md 1.8 and 1.9 (build checklist 17), and the check's ability to fail.
+- `tests/test_pf_fidelity_fix.py` — openai-preparedness-fidelity-fix: the T fixes of the use-case audit and the K findings of PLAN section 12.
 - `tests/test_pk1_route_case_evidence_validity.py` — pk-1-cfr-1: each "0 differences" claim (list item, paragraph or table row) of a premise-pack REPORT.md or DELTA.md cites existing evidence with no "INVALID" fi…
 - `tests/test_pk1c_fixture_assurance_claim.py` — No docs/premise-packs/pk-1c/ record calls a `#guard` or `#eval` check a kernel check: those run in the compiled evaluator, not the kernel (pk-1c-cfr-2).
 - `tests/test_platform_contract.py` — `tools/platform_contract.py`: the x86 platform contract suite (test-architecture plan rank 2, section 3.3).
@@ -78,5 +81,3 @@
 - `tests/test_readings_nd_document.py` — Readings under the unspecified completion through `ve document` (readings-defaults plan RD-2b; spec 3, 4.2, 4.3).
 - `tests/test_readings_nd_lean.py` — Readings under the unspecified completion through the Lean service (docs/spec/readings-defaults.md 8.3; plan RD-2a).
 - `tests/test_readings_rd5_plain_probe.py` — A pair separated on a plain regulated predicate gets E24 (readings-defaults RD-5).
-- `tests/test_readings_rd5_udhr.py` — RD-5 behavior tests: copy declarations, reproduce the migrated UDHR, and replay witnesses through Lean.
-- `tests/test_readings_rd6b_differential.py` — RD-6b: 200 generated norms-chain documents under the completion, the superposed route against the retained enumerated oracle (plan RD-6b, fixtures; review B5 o…
