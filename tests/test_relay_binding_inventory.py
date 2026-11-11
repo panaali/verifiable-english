@@ -54,6 +54,8 @@ ROUTES = {
     "document-soft-defaults": ("document", "document.json", "row"),
     # commands-imperatives CI-2 (D9): `read_command`'s row, the one owner of command English.
     "english.command": ("english.command", "english.command.json", "row"),
+    # en-e3bb (D9): the W1 path's shadow reading, `ve.norm_english.read_statement`.
+    "english.statement": ("english.statement", "english.statement.json", "row"),
 }
 
 
@@ -365,6 +367,35 @@ INVENTORY["english.command"] = {
     "result.text": lean("the refusal's or the limit's text"),
     "error": lean("a refusal of the request, raised by the relay as Lean's diagnostic"),
     "case_index": lean("an error row's position; a refusal is raised, not read"),
+}
+
+
+_STATEMENT_REFUSAL = lean("a refusal's member, bound as `english.read`'s relay binds it (`statement_problem`)")
+INVENTORY["english.statement"] = {
+    "id": BOUND, "status": BOUND, "error": lean("a refusal of the request, which the shadow records as unavailable"),
+    "case_index": lean("an error row's position; a refusal is raised, not read"),
+    **{f"result.identities.{name}": BOUND for name in ("actions_version", "environment_id", "grammar_id",
+                                                        "lexicon_id", "overlay_digest", "source_sha256")},
+    "result.status": lean("readNorm's outcome; its members are `statementFields`'"),
+    "result.code": lean("the refusal's code, one of its status's (`statementStatusCodes`)"), "result.class": BOUND,
+    "result.text": lean("Lean's wording of the refusal"), **dict.fromkeys((
+        "result.sentence", "result.span", "result.span[]", "result.fault", "result.failure", "result.failure[]",
+        "result.witnesses", "result.witnesses[]", "result.witnesses[][]", "result.witnesses[][][]", "result.spans",
+        "result.spans[].owner", "result.spans[].place", "result.spans[].row", "result.spans[].start",
+        "result.spans[].stop"), _STATEMENT_REFUSAL),
+    "result.statements": lean("how many statements the text has is Lean's reading (`oneSpans`); EN-3's manifest "
+                              "binds the block count"),
+    "result.statements[].kind": BOUND, "result.statements[].number": BOUND,
+    "result.statements[].exception_to": BOUND, "result.statements[].exception_to[]": BOUND,
+    "result.statements[].rule": BOUND, "result.statements[].over": BOUND,
+    "result.statements[].node.norm.name": BOUND, "result.statements[].node.norm.over": BOUND,
+    "result.statements[].node.norm.over[]": BOUND,
+    "result.statements[].node.norm.predicate": lean("a regulated predicate of the request; which one is the reading"),
+    "result.statements[].node.norm.sign": lean("the rule's force"),
+    "result.statements[].node.norm.guard": FORMULA, "result.statements[].node.norm.unless": lean("the carve-outs"),
+    "result.statements[].node.norm.unless[]": FORMULA, "result.statements[].span": BOUND,
+    "result.statements[].span[]": lean("where a block ends is Lean's (`statementSpans`); the span is bound inside the "
+                                       "source, on character boundaries, at the rule's header and in order"),
 }
 
 
@@ -782,6 +813,23 @@ def _command_relays(monkeypatch):
     return relays
 
 
+def _statement_relays(monkeypatch):
+    """The W1 texts of `tests/test_english_statement_answer.py` (rule rows with headers, exceptions and precedence
+    lines, a no-break space, a guard; a block refused naming its sentence, one naming none, one without a reading)."""
+    from tests.test_english_statement_answer import sources
+    from ve.norm_english import read_statement
+    relays = {}
+    for name, (env, text) in sources().items():
+        if name in ("lines", "empty"):
+            continue
+        calls = {"english.statement": lambda env=env, text=text: read_statement(env, text)}
+        relay = Relay("english.statement", calls, lambda case: "english.statement", [(service_relay, "decide")])
+        with monkeypatch.context() as patch:
+            relay.record(patch)
+        relays[name] = relay
+    return relays
+
+
 @pytest.fixture(scope="module")
 def relays():
     from tests.test_soft_norms_lean import SERVICE
@@ -791,7 +839,8 @@ def relays():
         return {**{("soft", name): relay for name, relay in _soft_relays(monkeypatch).items()},
                 **{("rights", name): relay for name, relay in _rights_relays(monkeypatch).items()},
                 **{("document", name): relay for name, relay in _document_relays(monkeypatch).items()},
-                **{("command", name): relay for name, relay in _command_relays(monkeypatch).items()}}
+                **{("command", name): relay for name, relay in _command_relays(monkeypatch).items()},
+                **{("statement", name): relay for name, relay in _statement_relays(monkeypatch).items()}}
 
 
 def _survivors(relay, route, pool=None):
@@ -869,6 +918,9 @@ UNEXERCISED = {
                                         "test_a_mutated_conflict_report_part_is_refused")},
     # `acts@0` refuses `rights@0`; the rights route's prime is bound by the soft route's binder (ap-1bg)
     "rights-elaborate": _ACTS_PRIME,
+    # The W1 path sends no overlay.
+    "english.statement": {"result.identities.overlay_digest":
+                          "test_an_overlay_digest_the_request_did_not_send_is_unavailable"},
     "soft-elaborate": {
         **_ACTS_PRIME,
         # The soft relay never sends a rights block (`check_soft_source` removes it); the same prime

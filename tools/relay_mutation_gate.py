@@ -10,7 +10,8 @@ A *route* is one way `ve` reads a Lean answer:
   mode whose one caller reads the answer further (`SERVICE_READERS`: `ask`, read by `ve.ask.read_answer`;
   `words`, read by `ve.words.read_answer`; `document`; `metered`, read by `ve.evaluate.read_evaluation` and
   `ve.search.read_nonvacuity`; `english.command`, read by `ve.backends.english_lean.command_answer`;
-  `act-readings`, read by `ve.acts.read_answer`), by that caller's reader too, on every fixture whose genuine answer
+  `act-readings`, read by `ve.acts.read_answer`; `english.statement`, read by `ve.norm_english.statement_answer`),
+  by that caller's reader too, on every fixture whose genuine answer
   is not a rejection row;
 * each one-shot runner call that a `ve` call site makes: every assurance-manifest binding of a runner other
   than `ve_service` whose operation has Lean call sites, and every call of the one-shot route reader
@@ -429,6 +430,19 @@ def _command_reader(case):
 
 
 SERVICE_READERS["english.command"] = _command_reader
+
+
+def _statement_reader(case):
+    """How `ve.norm_english.read_statement` reads the service's response to `case` (en-e3-norm 2.4, the W1 path's
+    shadow): `relay.decided`, then `statement_answer`, the answer bound to the request read under its environment
+    (`statement_problem`)."""
+    from ve.backends import relay
+    from ve.norm_english import statement_answer
+    env = _environment(case["environment"])
+    return lambda response: statement_answer(relay.decided(response["results"])[0], case, env)
+
+
+SERVICE_READERS["english.statement"] = _statement_reader
 
 
 def _exchange_outcome(replay: _Replay, mode: str, text: str, read=None) -> tuple[str, str]:
