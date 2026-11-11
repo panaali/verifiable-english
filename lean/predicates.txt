@@ -277,6 +277,7 @@ module VE.Commands.Steps
 module VE.Commands.StepsExamples
 module VE.Commands.StepsProofs
 module VE.Commands.Texts
+module VE.Commands.WebEnvMain
 module VE.Compose.Adjoin
 module VE.Compose.Content
 module VE.Compose.Contract
