@@ -27,7 +27,7 @@ The two runs (exit 0 each; output quoted):
     python3 usecases/safetyfw_accounting.py anthropic-rsp --source manage-agents/pilots/anthropic-rsp/source/rsp-3.4.txt --check --report docs/usecases/safetyfw/anthropic-rsp/accounting.json
     anthropic-rsp: 87 blocks, 226 unaccounted words in 51 blocks, 9 blocks with a loss {'1': 9, 'limit 4': 1, 'limit 9': 1}, 0 of 94 quotes unanchored
     python3 usecases/safetyfw_accounting.py openai-preparedness --source manage-agents/pilots/openai-preparedness/source/pf-v2.txt --check --report docs/usecases/safetyfw/openai-preparedness/accounting.json
-    openai-preparedness: 97 blocks, 604 unaccounted words in 83 blocks, 17 blocks with a loss {'1': 23, '3': 1, 'limit 21': 1}, 0 of 113 quotes unanchored
+    openai-preparedness: 97 blocks, 606 unaccounted words in 83 blocks, 17 blocks with a loss {'1': 23, '3': 1, 'limit 21': 1}, 0 of 110 quotes unanchored
 
 The source hashes in the saved reports are the pinned ones: RSP `c7de7fe2…`, Preparedness `d2e3dd5b…` (README:
 `d2e3dd5b80e5…`).
@@ -40,8 +40,8 @@ usecases/*/answer-key.json` prints nothing. No rule, legend, key or harness was 
 | | anthropic-rsp | openai-preparedness |
 |---|---:|---:|
 | blocks (rules + facts) | 87 (76 + 11) | 97 (86 + 11) |
-| quotes anchored in the pinned source | 94 of 94 | 113 of 113 |
-| unaccounted words before any sidecar | 226 in 51 blocks | 604 in 83 blocks |
+| quotes anchored in the pinned source | 94 of 94 | 110 of 110 |
+| unaccounted words before any sidecar | 226 in 51 blocks | 606 in 83 blocks |
 | entries: restates | 54 | 99 |
 | entries: exposition | 12 | 35 |
 | entries: rule | 4 | 18 |
@@ -158,10 +158,11 @@ The re-audit should decide which.
    s2-only-if-third. Their span is empty and their line is `omits: nothing`, but the sibling's losses apply to them
    too (rows-uncond has rows-cond's three). Fix: each such header quotes its own sentence.
 
-safety-framework (out of scope; the tool runs on it unchanged): 34 of 36 quotes anchor with
-`--source manage-agents/pilots/safety-framework/source/fsf-3.1.txt`. 26 of its 60 blocks quote nothing, and the two
-failures in f16-ds and f16-ds-strict pair a short quote with the next opening quote. Its headers would need each
-block to quote its own source sentence in full (at least 12 characters), with no bare short quotes next to it.
+safety-framework (out of scope; the tool runs on it unchanged): 36 of 36 quotes anchor with
+`--source manage-agents/pilots/safety-framework/source/fsf-3.1.txt`. 26 of its 60 blocks quote nothing. Before the
+review fix F1 the regex skipped f16-ds's and f16-ds-strict's short "should" and paired its closing mark with the next
+quote's opening one, so two quotes failed to anchor; the quote scanner now pairs them (`otherwise assess` anchors).
+Its headers would need each block to quote its own source sentence in full (at least 12 characters).
 
 ## Seeded bugs (each planted, its one test run and seen to fail, then restored with `git checkout`)
 
@@ -175,6 +176,17 @@ Recorded in `docs/usecases/safetyfw/accounting-seeded-bugs.json`. Only Python an
 | d | usecases/anthropic-rsp/accounting.d1.txt | f18-rso's `loss 1` changed to `restates` | `test_saved_report_totals_are_the_sidecars[anthropic-rsp]` |
 | e | usecases/safetyfw_accounting.py | no line-end hyphen tolerance | `test_anchoring_skips_layout_but_not_words` |
 | f | usecases/safetyfw_accounting.py | `open` accepted without a decider | `test_reason_arguments_resolve["every year" open minor-False]` |
+| g | usecases/safetyfw_accounting.py | F1: `quotes` back to the straight-quote regex | `test_nested_quote_keeps_its_inner_words_on_the_real_header` (8 failed) |
+| h | usecases/safetyfw_accounting.py | F1: a closing mark closes any open quote | `test_unpaired_quote_marks_are_problems[“the board may "veto” any launch”]` |
+| i | usecases/safetyfw_accounting.py | F1: a quote emitted at every depth | `test_generated_nested_quotes_are_recovered_whole` (5 failed) |
+
+## Review fixes (review fid-account-1-review.final.md)
+
+| Finding | Fix | Regression tests | Commit |
+|---|---|---|---|
+| F1 (B) nested curly quotes cut words out of the span | `scan_quotes`: one scanner pairs “ and ” by direction with a stack, a straight mark closes a straight quote open innermost or opens one, and only outermost quotes are returned; an unpaired mark is an `UNPAIRED` problem, never dropped text. The class also covered safety-framework's f16-ds/f16-ds-strict (a skipped short quote paired with the next quote's opening mark). f16-without-noinput/-nodelib now account "filibuster" (`restates`, with the "ability to" words they already restated); Preparedness's accounting.json re-saved: 110 quotes (f12-lra, f12-lra-unscoped and cl-levels were split before), 606 words. RSP's report is byte-identical. | `test_nested_quote_keeps_its_inner_words_on_the_real_header` (PROBE F1), `test_a_short_quote_does_not_make_the_text_between_two_quotes_a_quote`, `test_quotes_pair_by_direction_and_nest` (6), `test_unpaired_quote_marks_are_problems` (6), `test_generated_nested_quotes_are_recovered_whole` (2,000 seeded fields) | 82430920e7 |
+
+PROBE F1 failed before the fix (`AssertionError`; the quote ended at "the ability to ") and passes after it.
 
 ## Notes for the DRI
 
@@ -190,6 +202,10 @@ Recorded in `docs/usecases/safetyfw/accounting-seeded-bugs.json`. Only Python an
 ## Tests run
 
 - `uv run pytest -q tests/test_safetyfw_accounting.py`: 40 passed.
+- Review fixes: `uv run pytest -q tests/test_safetyfw_accounting.py`: 55 passed. Selected run on committed HEAD
+  82430920e7: `zsh manage-agents/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` selected 37 of
+  594 units, ran on GitHub Actions (5 shards, run fid-account-1-0a3b9250-t412804), all passed, exit 0. `lake build`
+  "Build completed successfully (1406 jobs)"; `python3 lean/audit.py` PASS (854 files). No Lean or Rust changed.
 - Final selected run, on committed HEAD 66f4d3d421 with a clean tree:
   `MAC_PYTEST_NO_DEFER=1 zsh manage-agents/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`.
   It selected 50 of 594 units and exited 0. The log's last lines: "recorded 50 units for tree 0ed20308a3; ... 0
