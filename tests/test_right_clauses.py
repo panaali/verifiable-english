@@ -419,50 +419,91 @@ def test_right_clauses_differential(service):
     assert labels["F11"] == ["rights:relation:equal-access:total"] and labels["F12"] == labels["F14"] == []
 
 
-def _bound(result, doc):
+def _bound(result, name):
     from ve.backends.lean_service import CheckerUnavailable
     from ve.right_clauses import bind
+    env, doc = DIFFERENTIAL[name]
     try:
-        return bind(result, doc)
+        return bind(result, doc, env)
     except CheckerUnavailable:
         return None
 
 
+def _rebound_units(units):
+    """Plained documents that differ from the request's by one name, key or unit (each must be refused)."""
+    def edit(f):
+        u = deepcopy(units)
+        f(u)
+        return u
+    line = lambda u: u[0]["right"]["lines"][0]
+    out = [units[:-1], units + [units[0]], [{"bar": units[0]}] + units[1:], units[0],
+           edit(lambda u: line(u)["norm"].update(name="other")),
+           edit(lambda u: line(u)["norm"].update(predicate="absent")),
+           edit(lambda u: line(u).update(kind="duty")),
+           edit(lambda u: line(u).update(elided=[])),
+           edit(lambda u: line(u).pop("norm")),
+           edit(lambda u: line(u)["norm"].pop("guard")),
+           edit(lambda u: u[0]["right"].update(name="other-right")),
+           edit(lambda u: u[0]["right"].update(holder="state")),
+           edit(lambda u: u[0].update(span=[0, 100])),
+           edit(lambda u: u[0]["right"]["lines"].append(line(u)))]
+    for k, unit in enumerate(units):
+        if "limitation" in unit:
+            out.append(edit(lambda u: u[k]["limitation"].update(name="zzz")))
+            out.append(edit(lambda u: u[k]["limitation"]["conditions"][0].update(role="sufficient")))
+        if "source_units" in unit:
+            out.append(edit(lambda u: u[k].update(source_units=["u036"])))
+    return out
+
+
+def _rebound_slots(slot):
+    """Slots that name another premise, or order them otherwise than `Lim ++ Rel` (each must be refused)."""
+    out = [slot[:-1], slot + slot[-1:], slot[::-1]]
+    for old, new in [("equal-access", "other"), ("determined_by_law", "other"), ("l29", "l30"),
+                     ("public_service_access_required", "absent"), (":necessary:", ":sufficient:")]:
+        out.append([{**r, "label": r["label"].replace(old, new)} for r in slot])
+    return [s for s in out if s != slot]
+
+
 def test_right_clauses_relay_binds_every_field(service):
     """R8: every unit, line and label of the answer is the request's. Each field of a genuine answer retyped fails the
-    schema; each rebound (a unit, line or premise dropped, added or renamed) is `CheckerUnavailable`."""
+    schema; each rebound (a unit, line, name or premise dropped, added, renamed or moved) is `CheckerUnavailable`,
+    and so is a plained text too deep to read. How many `Lim` rows there are is Lean's (rights' scope): dropping K13's
+    one limitation premise is not refused (its labels may repeat, DRI 2026-11-04 Q3)."""
     names = ["K3", "K13", "F11"]
     rows = exchange(service, "clauses-elaborate", [{"id": k, "environment": DIFFERENTIAL[k][0], "document":
                                                    DIFFERENTIAL[k][1]} for k in names])
     for name, row in zip(names, rows):
-        doc, result = DIFFERENTIAL[name][1], row["result"]
-        assert _bound(result, doc) is not None, name
+        result = row["result"]
+        assert _bound(result, name) is not None, name
         units = json.loads(result["plained"])
-        renamed = deepcopy(units)
-        renamed[0]["right"]["lines"][0]["norm"]["name"] = "other"
-        plained = [units[:-1], units + [units[0]], renamed, [{"bar": units[0]}] + units[1:], units[0]]
-        slots = [result["clause_slot"][:-1], result["clause_slot"] + result["clause_slot"][-1:],
-                 [{**r, "label": r["label"].replace("equal-access", "other")} for r in result["clause_slot"]],
-                 [{**r, "label": r["label"].replace("determined_by_law", "other")} for r in result["clause_slot"]],
-                 [{**r, "label": r["label"].replace("l29", "l30")} for r in result["clause_slot"]]]
-        for mutant in [{**result, "plained": canonical(p)} for p in plained] + [{**result, "plained": "["}] + [
-                {**result, "clause_slot": s} for s in slots if s != result["clause_slot"]]:
-            assert _bound(mutant, doc) is None, (name, mutant)
-        case = [{"id": "0", "environment": DIFFERENTIAL[name][0], "document": doc}]
+        mutants = [{**result, "plained": canonical(p)} for p in _rebound_units(units)] + [
+            {**result, "plained": p} for p in ("[", "[" * 100000 + "]" * 100000)] + [
+            {**result, "clause_slot": s} for s in _rebound_slots(result["clause_slot"])]
+        for mutant in mutants:
+            assert _bound(mutant, name) is None, (name, mutant)
+        assert len(mutants) >= 15
+        case = [{"id": "0", "environment": DIFFERENTIAL[name][0], "document": DIFFERENTIAL[name][1]}]
         text = json.dumps(case, ensure_ascii=False)
         _, response = service.exchange("clauses-elaborate", text, 1, timeout=HANG_TIMEOUT)
         request = {"id": response["id"], "mode": "clauses-elaborate", "cases": case,
                    "digests": [case_digest(t) for t in case_texts(text)], "bytes": len(text.encode())}
         check_response("clauses-elaborate", response, request)
-        for path, value in [(("plained",), 1), (("plained",), None), (("clause_slot",), {}),
-                            (("clause_slot", 0, "label"), 7), (("clause_slot", 0, "ast"), "top"), (("clause_slot", 0), [])]:
-            bad = deepcopy(response)
-            target = bad["results"][0]["result"]["result"]
-            for key in path[:-1]:
-                target = target[key]
-            target[path[-1]] = value
-            with pytest.raises(Invalid):
-                check_response("clauses-elaborate", bad, request)
+        paths = [("plained",), ("clause_slot",)] + [p for p in [("clause_slot", 0, "label"), ("clause_slot", 0, "ast"),
+                                                                ("clause_slot", 0)] if result["clause_slot"]]
+        for path in paths:
+            for value in (7, True, None, [], {}, 1.5, [[[]] * 3]):
+                bad = deepcopy(response)
+                target = bad["results"][0]["result"]["result"]
+                for key in path[:-1]:
+                    target = target[key]
+                if path[-1] == "clause_slot" and value == []:
+                    continue  # an empty slot is a slot (K1, K2); the binding refuses it where premises are due
+                target[path[-1]] = value
+                with pytest.raises(Invalid):
+                    check_response("clauses-elaborate", bad, request)
+    lim = rows[1]["result"]
+    assert _bound({**lim, "clause_slot": lim["clause_slot"][1:]}, "K13") is not None
 
 
 def _tree(n):

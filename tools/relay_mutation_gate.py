@@ -436,7 +436,8 @@ def _clauses_reader(case):
     then `bind`, the answer's units, lines and totality premises bound to the request's document."""
     from ve import right_clauses
     from ve.backends import relay
-    return lambda response: right_clauses.bind(relay.decided(response["results"])[0]["result"], case["document"])
+    return lambda response: right_clauses.bind(relay.decided(response["results"])[0]["result"], case["document"],
+                                               case["environment"])
 
 
 SERVICE_READERS["clauses-elaborate"] = _clauses_reader
