@@ -7734,6 +7734,7 @@
         "VE.Rights.Run.entailmentUses",
         "VE.Rights.Run.entryJson",
         "VE.Rights.Run.exhibit",
+        "VE.Rights.Run.exhibitedText",
         "VE.Rights.Run.findingJson",
         "VE.Rights.Run.generatedWordings",
         "VE.Rights.Run.groundJson",
@@ -7754,7 +7755,8 @@
         "VE.Rights.Run.ruleNarrowingsJson",
         "VE.Rights.Run.situationTables",
         "VE.Rights.Run.sourceRuleNames",
-        "VE.Rights.Run.unitRuleNames"
+        "VE.Rights.Run.unitRuleNames",
+        "VE.Rights.Run.weighingGloss"
       ],
       "G[V]": [
         "VE.Rights.Run.RightsAdmissionAnswer",
@@ -10582,6 +10584,7 @@
       ],
       "D[V]": [
         "VE.SoftNorms.Run.classify",
+        "VE.SoftNorms.Run.conflictFreeText",
         "VE.SoftNorms.Run.dualGuardCycle",
         "VE.SoftNorms.Run.encodeAdmitted",
         "VE.SoftNorms.Run.openAfterClassification",
@@ -21333,6 +21336,16 @@
     "VE/WireContract/Tables/Purposes.lean": {
       "G[V]": [
         "VE.WireContract.Tables.Purposes.table"
+      ]
+    },
+    "ResponseShape/Schemas/SoftPairsChecks.lean": {
+      "T": [
+        "ResponseShape.SoftPairsChecks.all",
+        "ResponseShape.SoftPairsChecks.env",
+        "ResponseShape.SoftPairsChecks.norms",
+        "ResponseShape.SoftPairsChecks.openWith",
+        "ResponseShape.SoftPairsChecks.pairs",
+        "ResponseShape.SoftPairsChecks.parse"
       ]
     }
   }
