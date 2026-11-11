@@ -1,9 +1,9 @@
 {
- "comment": "The trust budget (tools/trust_map.py, architecture plan AR-4, DRI decision D3): K, S and untied [V] lines as the merge train last measured them on main (`--write`), and every signed allowance that raised them (`--allow`). The check measures the base commit; per-file counts are in the gate record (`--files`), not here.",
+ "comment": "The trust budget (tools/trust_map.py, architecture plan AR-4, DRI decision D3): K, S and untied [V] lines as the merge train last measured them on main (`--write`), and every signed allowance that raised them (`--allow`). The check measures the base commit; per-file counts are in the gate record (`--files`), not here. Recorded 2026-11-11 (DRI, kb-0; fable-team/architect/inbox/20261111T0452Z-dri.md (d)): MEASURED 63,068 trusted lines (K 984 + S 14,795 + untied [V] 47,289) by `python3 tools/trust_map.py` on main 97b3c7999a (the kb-0 tree, same lean/); replaces the stale 50,034; a no-growth ratchet until kb-5 replaces it with the kernel ratchet (tools/kernel_closure.py, 9,565).",
  "budget": {
-  "K": 997,
-  "S": 9958,
-  "V": 39079
+  "K": 984,
+  "S": 14795,
+  "V": 47289
  },
  "allowances": [
   {
