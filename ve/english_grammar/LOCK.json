@@ -1,6 +1,6 @@
 {
  "format": "ve.english-grammar-lock@1",
- "actions_version": "47",
+ "actions_version": "48",
  "files": {
   "lean/VE/EnglishGrammar/Actions.lean": "c006b1d40d125153f1329daa092278ec2bd2ec8423d20f7c2923da61e25e1389",
   "lean/VE/EnglishGrammar/Advice.lean": "cf3610add55379a34a61cbeaf1f023dc857e18ad201fc90adf311ab4ebedd1cd",
@@ -19,9 +19,9 @@
   "lean/VE/EnglishGrammar/Lexicon.lean": "fc9641fc6cefdf9ac33ae5443eeaded5ddfe582ce21c5b649b95f57abf6a2e49",
   "lean/VE/EnglishGrammar/Norm/Elab.lean": "cd1cc7419508696013df155fe503d9d81ff87f05e2736832a2cdae62acd37449",
   "lean/VE/EnglishGrammar/Norm/Owners.lean": "de1098a71b5e81270fb68886a7c1be64b5951b4870577494674b67dcb76657ab",
-  "lean/VE/EnglishGrammar/Norm/Read.lean": "9a7f187efba43ea5d555a19b66ea61db46d9c0b257b03ef2941c3ecd89422cc2",
-  "lean/VE/EnglishGrammar/Norm/Rules.lean": "7cd657e7e8337c7bbc0ff67de2e344a3a3107084ced7596b167bba59f4744e84",
-  "lean/VE/EnglishGrammar/Norm/Run.lean": "3ccffd316421b414d5b1f6f9bfd768da5e78a1c64b9f4e76a4e21c18eeb6ad3b",
+  "lean/VE/EnglishGrammar/Norm/Read.lean": "445e833167ecac65662117c1db566064aa64ae22b5a570e01ddd0b207519296d",
+  "lean/VE/EnglishGrammar/Norm/Rules.lean": "c3958930918aec6ed2692e6b54277366a04f7632ab0758a6523c3d6a931988a0",
+  "lean/VE/EnglishGrammar/Norm/Run.lean": "e6b2e54e1f1899adbd49f62e0c3784067fb3635befe8102e69222c87d6e416c6",
   "lean/VE/EnglishGrammar/Norm/Value.lean": "b956579652a01c8d82004b929fc76dd1613abfedfdd4d7616567bbc6381c6b12",
   "lean/VE/EnglishGrammar/Policy.lean": "8053398c790011e867c874295b99b6ad8f5465457abe1a95f7c4d292e270c2fb",
   "lean/VE/EnglishGrammar/Read.lean": "ed29bf0a5c8e3fc49bd8af86b885206dc905ba0e2e55c9670303b9eec4db73df",

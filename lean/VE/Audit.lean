@@ -3130,6 +3130,7 @@ import VE.WireContract.Engine
 #print axioms VE.EnglishGrammar.Norm.readNorm_complete
 #print axioms VE.EnglishGrammar.Norm.readNorm_eq
 #print axioms VE.EnglishGrammar.Norm.readNorm_numbered
+#print axioms VE.EnglishGrammar.Norm.readNorm_on
 #print axioms VE.EnglishGrammar.Norm.readNorm_sound
 #print axioms VE.EnglishGrammar.Norm.readNorm_unique
 #print axioms VE.EnglishGrammar.Norm.semAll_start
