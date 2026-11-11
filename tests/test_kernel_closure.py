@@ -62,7 +62,8 @@ def test_the_requests_leave_the_subject_unread_and_cut_the_wrap_at_it():
 
 def test_every_subject_body_is_cut_at_every_uncovered_kind():
     """Uncovered code is outside the kernel whichever kernel subject runs it (a soft-norms case falls
-    through to the norms runner, which runs `Norms.Plain.run`)."""
+    through to the norms runner, which runs `Norms.Plain.run`), and whichever kernel theorem's statement
+    unfolds to it (review kb-0 F3: `runCase_dispatch` read route's uncovered runners into its spec)."""
     a = {"name": "a", "tier": "kernel", "entry": ["Ea"], "theorems": ["Ta"], "subject": ["Sa"],
          "uncovered": [{"name": "Ua", "kinds": ["k"], "why": "a kind no listed theorem covers"}]}
     b = {"name": "b", "tier": "kernel", "entry": ["Eb"], "theorems": ["Tb"], "subject": ["Sb"]}
@@ -72,6 +73,10 @@ def test_every_subject_body_is_cut_at_every_uncovered_kind():
     assert out["body:a"]["opaque"] == ["Ua"] and out["body:b"]["opaque"] == ["Ua"]
     assert "body:c" not in out
     assert out["wrap:a"]["opaque"] == ["Sa"]
+    assert out["spec:a"]["opaque"] == ["Sa", "Ua"] and out["spec:b"]["opaque"] == ["Sb", "Ua"]
+    assert out["spec:c"]["opaque"] == ["Sc"]
+    named = {"paths": [dict(a, subject=["Sa", "Ua"])]}
+    assert kernel_closure.requests(named)[0]["opaque"] == ["Sa", "Ua"]
     assert out["keys:v"] == {"name": "keys:v", "roots": ["V1", "V2"], "opaque": [], "mode": "run"}
 
 
@@ -119,26 +124,58 @@ def lake():
     return found
 
 
-def test_the_lean_half_tells_a_gate_theorem_from_one_that_states_the_answer(lake):
+GATES = ["VE.Order.certificate_runCase_profiles", "VE.Order.profile_gate"]
+SOUND = ["VE.CertificateWire.Query.accepts_sound", "VE.CertificateWire.ClosureQuery.accepts_sound"]
+ACCEPTS = ["VE.CertificateWire.Query.accepts", "VE.CertificateWire.ClosureQuery.accepts"]
+SPLITTER = "_private.VE.Route.Admission.0.VE.Route.Admission.NodeAdmitted.match_1.splitter"
+ROUTE = next(path for path in KERNEL if path["name"] == "route")
+
+
+@pytest.fixture(scope="module")
+def lean_answer(lake):
+    """One run of the Lean half (one load of the environment) for every test of it below: probe
+    requests, and this registry's spec and wrap requests of every kernel path."""
+    measured = [r for r in kernel_closure.requests(REGISTRY)
+                if r["name"].split(":")[0] in {"spec", "wrap"} and r["name"].split(":")[1] in {p["name"] for p in KERNEL}]
+    raw, census = kernel_closure.run_lean([
+        {"name": "runner", "roots": GATES + SOUND, "opaque": ["VE.CertificateWire.runCase"]},
+        {"name": "decision", "roots": GATES + SOUND, "opaque": ACCEPTS},
+        {"name": "soft", "roots": ["VE.SoftNorms.Run.soft_wire_acceptance"], "opaque": ["VE.SoftNorms.Run.runCase"]},
+        {"name": "splitter", "roots": [SPLITTER], "opaque": [], "mode": "run"},
+        {"name": "route-uncut", "roots": ROUTE["theorems"], "opaque": ROUTE["subject"]},
+        *measured,
+    ], [], [], HANG_TIMEOUT)
+    return raw, census
+
+
+def test_the_lean_half_tells_a_gate_theorem_from_one_that_states_the_answer(lean_answer):
     """`answersStated` on the compiled statements: the profile gates (`runCase j = .ok r → P j`, `r`
     unused) state no answer; `Query.accepts q = true → Entails …` and `runCase j = .ok answer → …
     answer …` do. A private `match_1.splitter` that `unfold` creates is ranged by its user name."""
-    gates = ["VE.Order.certificate_runCase_profiles", "VE.Order.profile_gate"]
-    sound = ["VE.CertificateWire.Query.accepts_sound", "VE.CertificateWire.ClosureQuery.accepts_sound"]
-    accepts = ["VE.CertificateWire.Query.accepts", "VE.CertificateWire.ClosureQuery.accepts"]
-    splitter = "_private.VE.Route.Admission.0.VE.Route.Admission.NodeAdmitted.match_1.splitter"
-    raw, census = kernel_closure.run_lean([
-        {"name": "runner", "roots": gates + sound, "opaque": ["VE.CertificateWire.runCase"]},
-        {"name": "decision", "roots": gates + sound, "opaque": accepts},
-        {"name": "soft", "roots": ["VE.SoftNorms.Run.soft_wire_acceptance"], "opaque": ["VE.SoftNorms.Run.runCase"]},
-        {"name": "splitter", "roots": [splitter], "opaque": [], "mode": "run"},
-    ], [], [], HANG_TIMEOUT)
+    raw, census = lean_answer
     assert census == []
     assert raw["runner"]["stated"] == {"VE.CertificateWire.runCase": []}
-    assert raw["decision"]["stated"] == {accepts[0]: [sound[0]], accepts[1]: [sound[1]]}
+    assert raw["decision"]["stated"] == {ACCEPTS[0]: [SOUND[0]], ACCEPTS[1]: [SOUND[1]]}
     assert raw["soft"]["stated"] == {"VE.SoftNorms.Run.runCase": ["VE.SoftNorms.Run.soft_wire_acceptance"]}
     assert raw["splitter"]["unranged"] == [] and raw["splitter"]["missing"] == []
     assert any(d["name"] == "VE.Route.Admission.NodeAdmitted" for d in raw["splitter"]["decls"])
+
+
+def test_no_kernel_spec_or_wrap_reads_an_uncovered_runner(lean_answer):
+    """Review kb-0 F3: the records say `uncovered` code is outside the kernel, but only the census body
+    was cut there. Route's `runCase_dispatch` states `runCase = dispatch …`, so its spec read
+    `Definitions.Bundle.runBundle` and `Route.Run.runAdmit` (the `bundle` and `admission` kinds) into
+    the kernel's 8,956 lines. Every kernel path's spec is now cut at every `uncovered` name, and the
+    tool reports one a kernel spec or wrap still reaches."""
+    raw, _ = lean_answer
+    uncovered = kernel_closure.uncovered_names(REGISTRY)
+    uncut = {d["name"] for d in raw["route-uncut"]["decls"]}
+    assert {"VE.Definitions.Bundle.runBundle", "VE.Route.Run.runAdmit"} <= uncut  # the finding's example
+    for path in KERNEL:
+        parts = {part: raw[f"{part}:{path['name']}"] for part in ("spec", "wrap")}
+        assert all(not part["missing"] for part in parts.values()), path["name"]
+        assert kernel_closure.uncovered_problems(path, parts, uncovered) == [], path["name"]
+        assert {d["name"] for part in parts.values() for d in part["decls"]}.isdisjoint(uncovered), path["name"]
 
 
 def census_row(name, module="VE.M", first=1):
@@ -318,3 +355,25 @@ def test_measure_reports_what_the_lean_half_finds(monkeypatch):
     registry["paths"][0]["covered_writers"] = [{"name": "W", "kinds": ["x"], "theorems": ["T"]}]
     covered = kernel_closure.measure(registry)
     assert covered["verdict_writers"][0]["inside"] == "body" and len(covered["problems"]) == 2
+
+
+def test_measure_reports_an_uncovered_runner_a_kernel_spec_or_wrap_reaches(monkeypatch):
+    """Review kb-0 F3 on a fixed Lean answer: an `uncovered` declaration in a kernel path's spec or wrap
+    would count inside the kernel, so it is a problem (exit 1); on a candidate path it is not; the
+    spec's `stated` keeps the subjects only (the uncovered names are opaque there too)."""
+    uncovered = [{"name": "M.d20", "kinds": ["k"], "why": "a kind no listed theorem covers"},
+                 {"name": "M.d40", "kinds": ["k"], "why": "a kind no listed theorem covers"}]
+    registry = {"verdict_tokens": [], "paths": [
+        {"name": "k", "tier": "kernel", "entry": ["E"], "theorems": ["T"], "subject": ["S"], "uncovered": uncovered},
+        {"name": "c", "tier": "candidate", "entry": ["Ec"], "theorems": ["Tc"], "subject": ["Sc"]}]}
+    raw = {"spec:k": lean_part([("M", 1, 10), ("M", 20, 21)], {"S": ["T"], "M.d20": [], "M.d40": []}),
+           "wrap:k": lean_part([("M", 40, 41)]), "body:k": lean_part([]),
+           "spec:c": lean_part([("M", 20, 21)], {"Sc": ["Tc"]}), "wrap:c": lean_part([("M", 40, 41)])}
+    monkeypatch.setattr(kernel_closure, "run_lean", lambda *args, **kw: (raw, []))
+    result = kernel_closure.measure(registry)
+    assert result["problems"] == [
+        "k: uncovered M.d20 is reached by the path's spec (it would count inside the kernel)",
+        "k: uncovered M.d40 is reached by the path's wrap (it would count inside the kernel)"]
+    assert result["paths"][0]["stated"] == {"S": ["T"]}
+    raw["spec:k"], raw["wrap:k"] = lean_part([("M", 1, 10)], {"S": ["T"]}), lean_part([("M", 5, 12)])
+    assert kernel_closure.measure(registry)["problems"] == []

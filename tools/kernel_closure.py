@@ -25,6 +25,10 @@ registry's `covered_writers` names each such writer with its kind and theorem; c
 theorem covers is `uncovered` and stays outside). A writer outside the kernel is a place where a
 feature states a verdict on its own authority (section 3).
 
+`uncovered` code is outside the kernel by construction: every kernel request (spec and census body)
+is cut there, whichever path names it, and the tool reports an `uncovered` declaration that a kernel
+path's spec or wrap still reaches (a wrap that runs it without a subject makes it wrap, not uncovered).
+
 The kernel's size is the number of distinct source lines in the spec and wrap of all paths of
 tier `kernel`. Nothing here is a hand-kept classification: change the registry or the Lean and
 the number moves.
@@ -74,15 +78,20 @@ def uncovered_names(registry: dict) -> list[str]:
 
 def requests(registry: dict) -> list[dict]:
     """The closure requests of a registry: per path, `spec:<name>` and `wrap:<name>`; per kernel path
-    also `body:<name>`, the code its subjects run for the case kinds its theorems cover."""
+    also `body:<name>`, the code its subjects run for the case kinds its theorems cover. A kernel path's
+    spec and body are both cut at every `uncovered` name: a theorem that unfolds a dispatcher
+    (`runCase = dispatch …`) would otherwise read the uncovered runners the dispatcher calls into the
+    kernel (review kb-0 F3)."""
     out = []
     uncovered = uncovered_names(registry)
     for path in registry["paths"]:
         subject = path.get("subject", [])
-        out.append({"name": "spec:" + path["name"], "roots": path["theorems"], "opaque": subject})
+        kernel = path.get("tier") == "kernel"
+        spec_cut = subject + [n for n in uncovered if n not in subject] if kernel else subject
+        out.append({"name": "spec:" + path["name"], "roots": path["theorems"], "opaque": spec_cut})
         cut = subject + path.get("delegates", []) + [x["name"] for x in path.get("nonverdict", [])]
         out.append({"name": "wrap:" + path["name"], "roots": path["entry"], "opaque": cut, "mode": "run"})
-        if path.get("tier") == "kernel":
+        if kernel:
             out.append({"name": "body:" + path["name"], "roots": subject, "opaque": uncovered, "mode": "run"})
     for name, entry in registry.get("keys", {}).get("validators", {}).items():
         out.append({"name": "keys:" + name, "roots": entry, "opaque": [], "mode": "run"})
@@ -125,6 +134,16 @@ def registry_problems(registry: dict) -> list[str]:
     problems += [f"keys: {name} is not a path of the registry"
                  for name in registry.get("keys", {}).get("paths", []) if name not in names]
     return problems
+
+
+def uncovered_problems(path: dict, parts: dict, uncovered: list[str]) -> list[str]:
+    """`uncovered` code is outside the kernel: no kernel path's spec or wrap may hold an `uncovered`
+    declaration. The spec is cut there (`requests`); a wrap that reaches one runs it without passing a
+    subject, so it is wrap (inside, unproved), and the registry is wrong to call it uncovered."""
+    if path.get("tier") != "kernel":
+        return []
+    return [f"{path['name']}: uncovered {d['name']} is reached by the path's {part} (it would count inside the kernel)"
+            for part, measured in parts.items() for d in measured["decls"] if d["name"] in uncovered]
 
 
 def subject_problems(path: dict, stated: dict) -> list[str]:
@@ -192,6 +211,7 @@ def measure(registry: dict, timeout: float = 3600) -> dict:
     raw, census = run_lean(requests(registry), registry.get("verdict_tokens", []), registry.get("imports", []), timeout)
     rows, kernel_ranges, body_starts, ranges_of = [], [], set(), {}
     problems = registry_problems(registry)
+    uncovered = uncovered_names(registry)
     for path in registry["paths"]:
         spec, wrap = raw["spec:" + path["name"]], raw["wrap:" + path["name"]]
         parts = [spec, wrap] + ([raw["body:" + path["name"]]] if path.get("tier") == "kernel" else [])
@@ -206,6 +226,7 @@ def measure(registry: dict, timeout: float = 3600) -> dict:
                 problems.append(f"{path['name']}: reached constants with no source range (not counted): "
                                 + ", ".join(part["unranged"]))
         problems += subject_problems(path, spec["stated"])
+        problems += uncovered_problems(path, {"spec": spec, "wrap": wrap}, uncovered)
         ranges = [(d["module"], d["from"], d["to"]) for part in (spec, wrap) for d in part["decls"]]
         ranges_of[path["name"]] = ranges
         if path.get("tier") == "kernel":
@@ -214,7 +235,7 @@ def measure(registry: dict, timeout: float = 3600) -> dict:
         rows.append({"name": path["name"], "tier": path.get("tier", "candidate"), "modes": path.get("modes", []),
                      "theorems": len(path["theorems"]), "spec_lines": spec["lines"], "wrap_lines": wrap["lines"],
                      "lines": covered(ranges), "axioms": sorted(set(spec["axioms"]) | set(wrap["axioms"])),
-                     "stated": spec["stated"], "spec_modules": spec["modules"], "wrap_modules": wrap["modules"]})
+                     "stated": {s: spec["stated"].get(s, []) for s in path.get("subject", [])}, "spec_modules": spec["modules"], "wrap_modules": wrap["modules"]})
     covered_writers = {x["name"] for path in registry["paths"] if path.get("tier") == "kernel"
                        for x in path.get("covered_writers", [])}
     writers, census_problems = classify_writers(census, {(module, first) for module, first, _ in kernel_ranges},
