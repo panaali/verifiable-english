@@ -44,6 +44,7 @@ PLACEMENTS = {
     "We do not deploy models that reach a High capability threshold": ("readings", "rs3-no-deploy", ("JT",)),
     "Such models require additional safeguards": ("readings", "rs18-develop", ("JT", "ET")),
     "We do not currently possess any models that have Critical": ("blocked_rule", "no-critical-models", ("AT",)),
+    "we will prioritize Biological capability evaluations": ("blocked_rule", "fn5-indicator", ("AP",)),
     "We will require the following practices": ("rule", "f4-security", ("JT",)),
     "plausible chance of reaching a capability threshold": ("condition", "ot7", ("JT",)),
     "If justified by our forecasts and threat models": ("blocked_rule", "f5-checkpoint", ("JT", "ET")),
@@ -147,7 +148,8 @@ BLOCKED_RULE_REASONS = {"f5-checkpoint": "event_order", "f5-ambiguous": "unmappe
                         "f7-evaluations": "event_order", "f7-compile": "event_order", "f9-specific": "quantifier_scope",
                         "f9-efficacy": "quantifier_scope", "f9-threshold": "quantifier_scope",
                         "f7-report": "attitude", "f14-document": "unmapped_clause",
-                        "f16-sag-recommend": "unmapped_clause", "no-critical-models": "attitude"}
+                        "f16-sag-recommend": "unmapped_clause", "no-critical-models": "attitude",
+                        "fn5-indicator": "unmapped_duty"}
 BLOCKER_FAMILY = {"event_order": "ET", "quantifier_scope": "SC", "attitude": "AT",
                   "unmapped_clause": "AP"}
 
@@ -206,6 +208,7 @@ FACT_ANCHORS = {
     "cyb-critical": "[Critical] A tool-augmented model",
     "ais-high": "[High] The model’s impact",
     "ais-critical": "[Critical] The model is ca- pable",
+    "cl-levels": "Also, we are removing terms",
 }
 
 
@@ -249,7 +252,8 @@ def _model():
     return FiniteModel.from_dict(env, {"complete": True,
         "domains": {"situation": ["s"], "level": list(T.vocabulary.LEVELS),
                     "category": sorted({c for c, _ in T.vocabulary.LEVELS.values()}),
-                    "proposal": ["p"], "requirement": ["r"], "capability": ["c"]},
+                    "proposal": ["p"], "requirement": ["r"], "capability": ["c"],
+                    "evaluation": ["biological_capability_evaluations"]},
         "constants": {c: c for c in env.constants}, "relations": relations})
 
 

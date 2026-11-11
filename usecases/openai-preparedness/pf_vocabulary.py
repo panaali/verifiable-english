@@ -56,6 +56,10 @@ BASE = {
     "in_category": base(["level", "category"], "{0} is in Tracked Category {1}", "{0} concerns {1}"),
     "high": base(["level"], "{0} is a High level", "{0} is high"),
     "critical": base(["level"], "{0} is a Critical level", "{0} is critical"),
+    "low": base(["level"], "{0} is a \"low\" level (a term the change log removes)", "{0} is low"),
+    "medium": base(["level"], "{0} is a \"medium\" level (a term the change log removes)", "{0} is medium"),
+    "indicator_for": base(["evaluation", "level"], "{0} is used as an indicator for {1} (footnote 5)", "{0} indicates {1}"),
+    "chemical": base(["evaluation"], "{0} evaluates a chemical capability", "{0} is chemical"),
     "reached": base(["situation", "level"], "the model at {0} has reached {1}; SAG decides this", "{0} has reached {1}"),
     "proposed": base(["proposal"], "{0} is proposed"),
     "required": base(["requirement"], "{0} is a requirement"),
@@ -235,12 +239,15 @@ def environment():
                 "proposal": "a safeguard or governance proposal",
                 "requirement": "a stated safeguard requirement",
                 "capability": "a frontier capability considered for a Tracked Category",
+                "evaluation": "a capability evaluation (footnote 5)",
             }.items()},
                 "predicates": {**BASE, **{name: duty(*pair) for name, pair in ACTS.items()}},
                 "constants": {**{k: {"sort": "level", "description": f"Table 1: {c}, {g}"}
                                  for k, (c, g) in LEVELS.items()},
                               **{c: {"sort": "category", "description": f"Tracked Category {c}"}
-                                 for c in sorted({pair[0] for pair in LEVELS.values()})}}}}
+                                 for c in sorted({pair[0] for pair in LEVELS.values()})},
+                              "biological_capability_evaluations": {
+                                  "sort": "evaluation", "description": "footnote 5: Biological capability evaluations"}}}}
 
 
 def text():

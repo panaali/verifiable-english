@@ -25,6 +25,9 @@
       },
       "capability": {
         "description": "a frontier capability considered for a Tracked Category"
+      },
+      "evaluation": {
+        "description": "a capability evaluation (footnote 5)"
       }
     },
     "predicates": {
@@ -38,7 +41,7 @@
         "arguments": [
           "situation"
         ],
-        "description": "the model at {0} appears likely to cross a threshold; SAG decides this"
+        "description": "the covered system at {0} appears likely to cross a capability threshold; OpenAI ('we') decides this (OT9)"
       },
       "reasonable_evidence": {
         "arguments": [
@@ -50,7 +53,7 @@
         "arguments": [
           "situation"
         ],
-        "description": "the three conditions of 4.3 hold at {0}; their assessment is open"
+        "description": "4.3's conditions for adjusting the safeguards required in that capability area hold at {0}: the adjustment does not meaningfully increase the overall risk of severe harm, is publicly acknowledged, and keeps safeguards more protective than the other developer's, with information shared to validate it; their assessment is open"
       },
       "sufficient_safeguards": {
         "arguments": [
@@ -62,7 +65,7 @@
         "arguments": [
           "situation"
         ],
-        "description": "{0} is a major deployment; OpenAI decides this"
+        "description": "{0} is a major deployment; the decider is unstated (OT13)"
       },
       "safeguard_selection": {
         "arguments": [
@@ -92,7 +95,7 @@
         "arguments": [
           "situation"
         ],
-        "description": "{0} has a risk of a misaligned model circumventing human control and oversight"
+        "description": "{0} has a risk of a misaligned model circumventing human control and oversight and executing severe harms"
       },
       "large_scale_internal": {
         "arguments": [
@@ -127,6 +130,35 @@
         ],
         "description": "{0} is a Critical level",
         "verbalisation": "{0} is critical"
+      },
+      "low": {
+        "arguments": [
+          "level"
+        ],
+        "description": "{0} is a \"low\" level (a term the change log removes)",
+        "verbalisation": "{0} is low"
+      },
+      "medium": {
+        "arguments": [
+          "level"
+        ],
+        "description": "{0} is a \"medium\" level (a term the change log removes)",
+        "verbalisation": "{0} is medium"
+      },
+      "indicator_for": {
+        "arguments": [
+          "evaluation",
+          "level"
+        ],
+        "description": "{0} is used as an indicator for {1} (footnote 5)",
+        "verbalisation": "{0} indicates {1}"
+      },
+      "chemical": {
+        "arguments": [
+          "evaluation"
+        ],
+        "description": "{0} evaluates a chemical capability",
+        "verbalisation": "{0} is chemical"
       },
       "reached": {
         "arguments": [
@@ -170,19 +202,19 @@
         "arguments": [
           "situation"
         ],
-        "description": "{0} has a significant capability increase"
+        "description": "there is reason to believe at {0} that a significant increase in capability has occurred; OpenAI ('we') decides this (OT20)"
       },
       "adjustment_confirmed": {
         "arguments": [
           "situation"
         ],
-        "description": "another developer's unsafeguarded High or Critical release is rigorously confirmed at {0}"
+        "description": "it is rigorously confirmed at {0} that another frontier AI developer developed or released a system with High or Critical capability in a Tracked Category without comparable safeguards"
       },
       "adjustment_made": {
         "arguments": [
           "situation"
         ],
-        "description": "OpenAI adjusts safeguards at {0}"
+        "description": "OpenAI makes 4.3's marginal-risk adjustment at {0}: it adjusts the level of safeguards it requires in that capability area"
       },
       "lra_found": {
         "arguments": [
@@ -292,11 +324,23 @@
         ],
         "description": "an employee requests a summary of the testing results and SAG recommendation at {0}"
       },
-      "highly_sensitive": {
+      "beyond_sensitive_limits": {
         "arguments": [
           "situation"
         ],
-        "description": "the summary requested at {0} involves highly sensitive information"
+        "description": "the summary requested at {0} goes beyond the limits set for highly sensitive information (5.1)"
+      },
+      "potential_noncompliance": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "{0} is a reported or otherwise identified potential instance of noncompliance with the Framework (5.1)"
+      },
+      "conservative_upper_bound_used": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "a conservative upper bound of the model's non-sandbagged evaluation results is used at {0} (Table 2)"
       },
       "persuasion_risk": {
         "arguments": [
@@ -314,7 +358,7 @@
         "arguments": [
           "situation"
         ],
-        "description": "the Board finds it necessary at {0} to reverse the decision"
+        "description": "the Board finds it necessary at {0} to act on the decision (Appendix B)"
       },
       "decided_without_sag": {
         "arguments": [
@@ -407,66 +451,66 @@
         "arguments": [
           "situation"
         ],
-        "description": "Appendix B: final decisions and Board reversal",
+        "description": "Appendix B: the Board may reverse a decision of OpenAI Leadership",
         "regulated": {
           "role": "permission",
           "default": "allow",
-          "act": "{0} have the decision reversed"
+          "act": "{0} have the decision reversed by the Board"
         }
       },
-      "process_change": {
+      "revised_course_mandated": {
         "arguments": [
           "situation"
         ],
-        "description": "Appendix B: final within the operational process",
+        "description": "Appendix B: the Board may mandate a revised course of action",
         "regulated": {
           "role": "permission",
           "default": "allow",
-          "act": "{0} have the decision changed within the operational process"
+          "act": "{0} have a revised course of action mandated by the Board"
         }
       },
       "adjustment_permission": {
         "arguments": [
           "situation"
         ],
-        "description": "{0} may have safeguards adjusted",
+        "description": "{0} may have its required safeguards in that capability area adjusted (4.3)",
         "regulated": {
           "role": "permission",
           "default": "allow",
-          "act": "{0} have its required safeguards adjusted"
+          "act": "{0} have its required safeguards in that capability area adjusted"
         }
       },
       "misuse_safeguards": {
         "arguments": [
           "situation"
         ],
-        "description": "Table 1: misuse safeguards for deployment",
+        "description": "Table 1 BIO-H and CYB-H: safeguards against misuse meeting High standard (Appendix C.1)",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} have misuse safeguards"
+          "act": "{0} have misuse safeguards meeting the High standard"
         }
       },
       "security_controls": {
         "arguments": [
           "situation"
         ],
-        "description": "Table 1 and C.3: security controls",
+        "description": "Table 1: security controls meeting High standard (Appendix C.3)",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} have security controls"
+          "act": "{0} have security controls meeting the High standard"
         }
       },
       "alignment_safeguards": {
         "arguments": [
           "situation"
         ],
-        "description": "Table 1: CYB-H large-scale internal safeguards",
+        "description": "Table 1 CYB-H: safeguards meeting High standard against misalignment (Appendix C.2)",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} have misalignment safeguards"
+          "act": "{0} have misalignment safeguards meeting the High standard"
         }
       },
       "halt_development": {
@@ -484,22 +528,22 @@
         "arguments": [
           "situation"
         ],
-        "description": "1, 2.2, 4.2: safeguards before deployment",
+        "description": "1, 2.2, 4.2: robust and effective safeguards that sufficiently minimize the associated risk of severe harm before deployment",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} have safeguards before deployment"
+          "act": "{0} have safeguards sufficiently minimizing severe-harm risk before deployment"
         }
       },
       "safeguards_during_development": {
         "arguments": [
           "situation"
         ],
-        "description": "4.4: Critical safeguards during development",
+        "description": "4.4 and Appendix C: sufficient safeguards (safety and security controls) during development",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} have safeguards during development"
+          "act": "{0} have sufficient safety as well as security controls during development"
         }
       },
       "development_security_controls": {
@@ -539,22 +583,33 @@
         "arguments": [
           "situation"
         ],
-        "description": "3.3: SAG reviews the report",
+        "description": "3.3: the SAG reviews the Capabilities Report and decides on next steps",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} have SAG review the Capabilities Report"
+          "act": "{0} have SAG review the Capabilities Report as well as decide on next steps"
+        }
+      },
+      "capabilities_report_submitted": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "3.3: the Scalable Evaluations' results and any noteworthy observations that should affect their interpretation are compiled into a Capabilities Report submitted to the SAG",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} have results compiled into a Capabilities Report submitted to the SAG"
         }
       },
       "safeguard_work": {
         "arguments": [
           "situation"
         ],
-        "description": "4: work before formal determination",
+        "description": "4: work on safeguards to sufficiently reduce the risks of severe harm associated with that threshold, even before a formal capability determination",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} start safeguard work"
+          "act": "{0} start safeguard work to sufficiently reduce the threshold's severe-harm risk"
         }
       },
       "safeguards_report": {
@@ -572,22 +627,22 @@
         "arguments": [
           "situation"
         ],
-        "description": "4.1: first safeguard-selection step",
+        "description": "4.1: the plausible ways in which the associated risk of severe harm can come to fruition in the proposed deployment",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} identify ways severe harm can arise"
+          "act": "{0} identify plausible ways severe harm can arise in the proposed deployment"
         }
       },
       "specific_safeguards_per_path": {
         "arguments": [
           "situation"
         ],
-        "description": "4.1: second safeguard-selection step",
+        "description": "4.1: specific safeguards that either exist or should be implemented that would address the risk",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} identify specific safeguards per risk path"
+          "act": "{0} identify specific safeguards that would address each risk path"
         }
       },
       "efficacy_methods_per_safeguard": {
@@ -649,66 +704,66 @@
         "arguments": [
           "situation"
         ],
-        "description": "5.1: SAG documentation",
+        "description": "5.1: relevant reports made to the SAG and the SAG's decision and reasoning",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} have the decision documented"
+          "act": "{0} have reports to SAG as well as SAG decisions with reasoning documented"
         }
       },
       "noncompliance_investigated": {
         "arguments": [
           "situation"
         ],
-        "description": "5.1: noncompliance",
+        "description": "5.1: track and appropriately investigate potential noncompliance",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} have noncompliance investigated"
+          "act": "{0} have potential noncompliance tracked as well as appropriately investigated"
         }
       },
       "corrective_action": {
         "arguments": [
           "situation"
         ],
-        "description": "5.1: substantiated noncompliance",
+        "description": "5.1: appropriate and proportional corrective action where reports are substantiated",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} have corrective action taken"
+          "act": "{0} take appropriate as well as proportional corrective action"
         }
       },
       "public_disclosure": {
         "arguments": [
           "situation"
         ],
-        "description": "5.2: major deployment disclosure",
+        "description": "5.2: it includes the scope of testing performed, capability evaluations for each Tracked Category, the reasoning for the deployment decision, and any other context about the model's development or capabilities that was decisive in the decision to deploy; it may be redacted or summarized where necessary, such as to protect intellectual property or safety",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} have public disclosure"
+          "act": "{0} have Preparedness Framework results publicly released"
         }
       },
       "safeguards_disclosed": {
         "arguments": [
           "situation"
         ],
-        "description": "5.2: beyond High disclosure",
+        "description": "5.2: information about the safeguards implemented to sufficiently minimize the associated risks; it may be redacted or summarized where necessary, such as to protect intellectual property or safety",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} have safeguards disclosed"
+          "act": "{0} disclose safeguards implemented to sufficiently minimize associated risks"
         }
       },
       "sag_recommendation": {
         "arguments": [
           "situation"
         ],
-        "description": "Appendix B: SAG role",
+        "description": "Appendix B: recommendations on potential next steps and any applicable risks, as well as rationale, provided to OpenAI Leadership",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} have SAG recommendations sent to Leadership"
+          "act": "{0} have SAG next-step recommendations with risks as well as rationale sent"
         }
       },
       "ssc_visibility": {
@@ -748,11 +803,11 @@
         "arguments": [
           "situation"
         ],
-        "description": "C.2: safeguards against a misaligned model",
+        "description": "C.2: the risk of a misaligned model circumventing human control and oversight and executing severe harms",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} have safeguards that sufficiently minimize misaligned-model risk"
+          "act": "{0} have safeguards that sufficiently minimize misaligned-model severe-harm risk"
         }
       },
       "tracking": {
@@ -781,11 +836,11 @@
         "arguments": [
           "situation"
         ],
-        "description": "3.2: forecast-based checkpoint",
+        "description": "3.2: an appropriate checkpoint during development, covered by the Framework",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} have a development checkpoint selected"
+          "act": "{0} have an appropriate development checkpoint selected to be covered"
         }
       },
       "additional_safety_measures": {
@@ -847,11 +902,11 @@
         "arguments": [
           "situation"
         ],
-        "description": "Table 2: Sandbagging response; elicitation or conservative bound remains open",
+        "description": "Table 2: Sandbagging response; the alternative, a conservative upper bound, is the rule's carve-out",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} have sandbagging addressed"
+          "act": "{0} adopt an elicitation approach that overcomes sandbagging"
         }
       },
       "ara_tracking": {
@@ -869,22 +924,22 @@
         "arguments": [
           "situation"
         ],
-        "description": "Table 2: Undermining Safeguards response",
+        "description": "Table 2: Undermining Safeguards: robust to the discovered capability and/or propensity",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} have a safeguards case robust to the discovered capability"
+          "act": "{0} have a safeguards case robust to discovered capability as well as propensity"
         }
       },
       "nuclear_safeguards": {
         "arguments": [
           "situation"
         ],
-        "description": "Table 2: Nuclear response; the further actions it may consider remain open",
+        "description": "Table 2: Nuclear and Radiological: heighten safeguards (and consider further actions) in consultation with appropriate US government actors, accounting for the complexity of classified information handling; the further actions remain open",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} heighten nuclear safeguards in consultation with US government actors"
+          "act": "{0} heighten safeguards consulting appropriate US government actors"
         }
       },
       "pandemic_policy_contribution": {
@@ -946,18 +1001,18 @@
         "arguments": [
           "situation"
         ],
-        "description": "4.2: Safeguards Report contents",
+        "description": "4.2: an assessment on the residual risk of severe harm based on the deployment",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} include a residual risk assessment in the Safeguards Report"
+          "act": "{0} include an assessment of residual severe-harm risk in the Safeguards Report"
         }
       },
       "persuasion_handled_outside": {
         "arguments": [
           "situation"
         ],
-        "description": "change log item 4",
+        "description": "change log item 4: including via the Model Spec and policy prohibitions on the use of OpenAI's tools for political campaigning or lobbying, and ongoing investigations of misuse of its products (including detecting and disrupting influence operations)",
         "regulated": {
           "role": "obligation",
           "default": "deny",
@@ -1034,6 +1089,10 @@
       "cybersecurity": {
         "sort": "category",
         "description": "Tracked Category cybersecurity"
+      },
+      "biological_capability_evaluations": {
+        "sort": "evaluation",
+        "description": "footnote 5: Biological capability evaluations"
       }
     }
   }

@@ -141,7 +141,7 @@ def mutated_rule(block_id):
     """The rule a mutant changes, parsed by VE from its mutated text."""
     from ve.norm_english import parse_english
     modal = M3_ALIGNMENT[block_id]
-    text = (f"Rule 1. Every situation {modal} have misalignment safeguards, "
+    text = (f"Rule 1. Every situation {modal} have misalignment safeguards meeting the High standard, "
             "if that situation has reached \"cybersecurity_high\".")
     data = parse_english(SoftEnvironment(vocabulary()), text).rules[0].to_dict()["norm"]
     data["name"] = block_id
@@ -340,7 +340,8 @@ def model(doc, found):
                 relations[atom[0]].append(list(atom[1:]))
         _MODELS[key] = FiniteModel.from_dict(env, {"complete": True,
             "domains": {"situation": ["s"], "level": list(V.LEVELS), "category": sorted({c for c, _ in V.LEVELS.values()}),
-                        "proposal": ["p"], "requirement": ["r"], "capability": ["k"]},
+                        "proposal": ["p"], "requirement": ["r"], "capability": ["k"],
+                        "evaluation": ["biological_capability_evaluations", "e"]},
             "constants": {c: c for c in env.constants},
             "relations": {p: sorted(v) for p, v in relations.items()}})
     return _MODELS[key]
@@ -488,6 +489,32 @@ def silence(case, predicates, *, baseline=None, route="silence"):
         rows.append({"choice": assignment, "holds": not new, "rules": new})
     return {"route": f"D1 soft-norms@0 selected_rules, deny and allow completion; {route}",
             "cone": list(sets), "choices": rows}
+
+
+def indicator_silence(case):
+    """G7: the Framework is silent on a chemical evaluation indicating a High or Critical level when two models of
+    every selected premise (fn5-indicator among them) differ on it: one where the case's chemical evaluation "e"
+    indicates such a level and one where it indicates none. Neither the claim nor its negation is then entailed."""
+    from ve.evaluate import evaluate
+    env = T.base_environment()
+    goal = A.formula_from_data(env, ["exists", "evaluation", ["and", ["unary", "chemical", ["var", 0]], [
+        "exists", "level", ["and", ["binary", "indicator_for", ["var", 1], ["var", 0]],
+                            ["or", ["unary", "high", ["var", 0]], ["unary", "critical", ["var", 0]]]]]]])
+    rows = []
+    for assignment in choices(("RS2",)):
+        choice = {**BASE, **assignment}
+        doc = document(tuple(sorted(choice.items())), "deny")
+        silent = atoms(case, choice) | {("chemical", "e")}
+        values = []
+        for found in (silent, silent | {("indicator_for", "e", "biological_and_chemical_high")}):
+            check_premises(doc, frozenset(found), choice)
+            values.append(evaluate(doc.elaborated.base_environment(), goal, model(doc, frozenset(found)),
+                                   trace=False).value)
+        rows.append({"choice": assignment, "holds": values == [False, True],
+                     "reason": "two models of the selected premises differ on the claim" if values == [False, True]
+                     else f"the premises decide the claim: {values}"})
+    return {"route": "D1 relational-fol@0: two finite models of the selected premises", "cone": ["RS2"],
+            "choices": rows}
 
 
 def mentioning(difference):
@@ -669,8 +696,26 @@ def never_answer(id_):
     if id_ == "N3":
         # run() answers N3 last, from every other item's selections (dead_rules); alone it stays open.
         return {"route": "D1", "undecided": "translation limit (SC): N3 needs the other items' witnesses"}
-    return {"route": "D1", "undecided": "VE limit (SC): D1 has no closure premise that the level sort holds "
-                                        "exactly Table 1's six levels, so an unnamed seventh level is not excluded"}
+    if id_ == "N4":
+        return low_medium_never()
+    return {"route": "D1", "undecided": "unmapped never question"}
+
+
+def low_medium_never():
+    """N4: a rule's level guard needs a reached level; from the change log's premise (cl-levels: no level is low or
+    medium) no situation reaches a "low" or "medium" level, on every reading (the premise is "always")."""
+    env = T.base_environment()
+    premises = tuple(f for b, fs in T.facts() if b.id == "cl-levels" for f in fs)
+    goal = A.formula_from_data(env, ["forall", "situation", ["not", ["exists", "level", ["and", [
+        "binary", "reached", ["var", 1], ["var", 0]], ["or", ["unary", "low", ["var", 0]],
+                                                      ["unary", "medium", ["var", 0]]]]]]])
+    holds = entailed(premises, goal)
+    result = {"route": "D1 relational-fol@0 entailment certificate (cl-levels)", "cone": [],
+              "choices": [{"choice": {}, "holds": True if holds else None,
+                           "reason": holds or "UNKNOWN", "rules": ["cl-levels"]}]}
+    if not holds:
+        result["undecided"] = "resource limit: no entailment certificate"
+    return result
 
 
 def persuasion_probe():
@@ -927,8 +972,7 @@ def gap_answer(id_, case):
         return silence(case, mentioning(atoms(case, BASE) - atoms(baseline, BASE)), baseline=baseline,
                        route="no rule beyond those of a case without persuasion")
     if id_ == "G7":
-        return {"route": "D1", "undecided": "translation limit (SC): footnote 5's indicator relation between "
-                                            "biological evaluations and the category's capabilities is not in D1"}
+        return indicator_silence(case)
     if id_ == "G8":
         return query(case, ATOMS["SUF"], role="obligation")
     if id_ == "G9":
