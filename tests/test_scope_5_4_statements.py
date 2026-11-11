@@ -18,6 +18,7 @@ missing.
 from __future__ import annotations
 
 from pathlib import Path
+import re
 
 import pytest
 
@@ -71,11 +72,11 @@ PROVED = tuple(name for kind, name in DECLARED if kind == "theorem")
 
 
 def statement(text: str, name: str) -> str | None:
-    """The statement of theorem `name` in `text` (Lean source, or spec 5.4's section: its Lean block), read by the
-    shared scanner: from `theorem name` to the `:=` that starts the proof (`proof_cut`: a `:=` inside the statement,
-    `{ L with scope := s }`, is kept), comments left out, whitespace normalised. A blank line or a comment inside the
-    statement does not end it (review sc-2d-f1 F2)."""
-    code = text.split("```lean", 1)[1].split("```", 1)[0] if "```lean" in text else text
+    """The first statement of theorem `name` in `text` (Lean source, or a spec's Markdown: its Lean blocks), read by
+    the shared scanner: from `theorem name` to the `:=` that starts the proof (`proof_cut`: a `:=` inside the
+    statement, `{ L with scope := s }`, is kept), comments left out, whitespace normalised. A blank line or a comment
+    inside the statement does not end it (review sc-2d-f1 F2)."""
+    code = "\n".join(re.findall(r"```lean\n(.*?)```", text, re.S)) if "```lean" in text else text
     texts = declarations(code, statements_only=True).get(("theorem", name))
     return texts[0] if texts else None
 
