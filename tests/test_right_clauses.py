@@ -180,6 +180,33 @@ def test_right_clauses_k4_product_elided_bytes(service):
     assert {k: lines["result"][k] for k in ELIDED} == {"elided_bytes": 20, "unit_elided_bytes": [20]}, lines
 
 
+def test_right_clauses_power_line_elided_bytes(service):
+    """1.1 allows `elided` on a power line, whose name is its liberty's (`jsonLineName`): its unit reports the line's
+    bytes, beside a claim line's unit; without the elision both report 0."""
+    env = environment()
+    predicates = env["vocabulary"]["predicates"]
+    predicates["marry_permitted"] = {"arguments": ["person"], "description": "permission", "regulated": {
+        "role": "permission", "default": "allow", "act": "{0} marry"}}
+    predicates["recognise_required"] = {"arguments": ["state", "person"], "description": "obligation", "regulated": {
+        "role": "obligation", "default": "deny", "act": "{0} recognise {1}"}}
+    predicates["married"] = {"arguments": ["person"], "description": "married"}
+    env["vocabulary"]["rights"]["alters"] = {"marry_permitted": {
+        "holder_slot": 0, "status": "married", "recognition": "recognise_required"}}
+    norm = {"sign": True, "guard": ["top"], "unless": [], "over": []}
+
+    def doc(elided):
+        power = {"kind": "power", "cites": {}, "elided": elided,
+                 "liberty": {"name": "may-marry", "predicate": "marry_permitted", **norm},
+                 "recognition": {"name": "recognise-marriage", "predicate": "recognise_required", **norm}}
+        return document(elided=[[30, 40]]) + [
+            {"right": {"name": "r16", "holder": "person", "lines": [power]}, "span": [100, 200]}]
+    with_, without = exchange(service, "clauses-elaborate", [
+        {"id": str(i), "environment": env, "document": doc(e)} for i, e in enumerate([[[105, 112]], []])])
+    assert with_["status"] == "ok" and {k: with_["result"][k] for k in ELIDED} == {
+        "elided_bytes": 17, "unit_elided_bytes": [10, 7]}, with_
+    assert {k: without["result"][k] for k in ELIDED} == {"elided_bytes": 10, "unit_elided_bytes": [10, 0]}, without
+
+
 def test_right_clauses_existing_answers_unchanged(service):
     """The DELTA row's negative test: on K1 and every K fixture, the answer without the two added fields is the base
     build's, as canonical JSON (saved: base-answers.json, run before this item), an error is unchanged and gains

@@ -19,7 +19,9 @@ The defect: Examples.lean:91 summed the fixture's literal `[(30, 40)]`, and no p
 
 RunExamples.lean adds route-level `#guard`s: K4 gives `10` and `[10]`; no span gives `0` and `[0]`; two units give 36
 and `[10, 26]`, and `[2, 0]` for a unit without spans; and `unitElided` on a unit without a line body, and on a line
-with no entry.
+with no entry. `test_right_clauses_power_line_elided_bytes` covers a power line. Spec 1.1 allows `elided` on one, and
+its key is its liberty's name (`jsonLineName`). Eliding `[105, 112)` makes its unit report 7, beside the claim unit's
+10 (17 in total). Without the elision, the power unit reports 0.
 
 Where this differs from the task's Files line: the route's output is built in Run.lean (cmp-s3-cfr-1 put it there),
 not in Wire.lean. So Run.lean calls ElidedBytes.lean, and Wire.lean is unchanged.
@@ -46,9 +48,13 @@ not in Wire.lean. So Run.lean calls ElidedBytes.lean, and Wire.lean is unchanged
 
 `entryElided` reads each decoded elided span once, when Run.lean binds `es`. `elidedTotal` and `unitElided` read only
 those numbers. `unitElided` does (named line objects) × (entries) key comparisons. That is the bound `plainLineJson`
-already has, and the rights limits cap both counts (256 rules, the generated norm layer's size). Spans per line are
-bounded only by the request size, and the head's `checkSpans` is already quadratic in them. Spec 10 adds no new limit,
-and neither does this item: the stated limit is the request size, together with `decodeClauseDoc`'s 1,024 units and
+already has, and the rights limits cap both counts (256 rules, the generated norm layer's size). This item's work is
+linear in the decoded spans. Spans per line are bounded only by the 16 MiB request. The head's `checkSpans` on main
+(Plain.lean, since cmp-s3-cfr-1) is quadratic in one line's spans: measured at about 13 s for about 40k spans in one
+line (one run, on this branch's base). It stays so until cmp-s3-cfr-1b merges, which makes it O(s log s) and owns that
+fixture (test_right_clauses_w1_budget, 30,000 spans in one line). As of this HEAD, cfr-1b has not merged. This item
+adds no span-count limit and does not touch `checkSpans` (reviews/dri-decisions-20261110-cmp-s3a-cfr-3.md item 2,
+DRI 2026-11-10 23:42Z). Spec 10 adds no new limit, and neither does this item: the stated limit is the request size, together with `decodeClauseDoc`'s 1,024 units and
 rights' rule and layer limits. Fixture: `test_right_clauses_elided_bytes_large_request` uses 32 units (right r21 and 31
 `right_lines` units of it), each with one line eliding 500 one-byte spans, which is 16,000 spans. It answers 16,000,
 with 500 for each unit, in 0.13 s locally, within `HANG_TIMEOUT`. With more lines on one predicate, rights refuses
