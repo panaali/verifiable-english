@@ -23,11 +23,12 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
 
 import kernel_closure  # noqa: E402
+from lean_statements import inventory_path  # noqa: E402
 
 REGISTRY = json.loads((ROOT / "tools/kernel-paths.json").read_text())
 BASELINE = json.loads((ROOT / "docs/kernel/closure-baseline.json").read_text())
 STATEMENTS = dict(re.findall(r"^theorem (\S+)\n((?:(?!theorem ).*\n)*)",
-                             (ROOT / "lean/statements.txt").read_text(), re.MULTILINE))
+                             inventory_path("lean/statements.txt").read_text(), re.MULTILINE))
 KERNEL = [path for path in REGISTRY["paths"] if path["tier"] == "kernel"]
 
 
