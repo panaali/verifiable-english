@@ -1359,17 +1359,21 @@ structure Source where
   units : List String             -- fixed units every reading shares (u105a)
   sets : List String
 
-/-- What a rule says, for comparison: its predicate's act, role and completion; its sign, guard, carve-outs, over. -/
-abbrev View := String × VE.Norms.Role × Bool × VE.Formula × List VE.Formula × List String × VE.NormDefaults.Completion
+/-- What a rule says, for comparison: its predicate's act, role and completion; its sign, guard, carve-outs, over;
+    its mode, rank, alterable parties, exception and hardness (DRI 2026-11-10, ap-4b-f2). -/
+abbrev View := String × VE.Norms.Role × Bool × VE.Formula × List VE.Formula × List String × VE.NormDefaults.Completion ×
+  VE.SoftNorms.Mode × Option String × List String × Option VE.SoftNorms.Exception × Bool
 /-- `unspec` is the frame's original `unspecified` predicates (`VE.Readings.UnspecifiedWire.unspecOf`): the frame
     itself is decoded with `unspecified` read as the placeholder `deny` (`Readings/Wire.lean:80–84`), so the
     completion is read as `VE.NormDefaults.completionOf ⟨_, unspec⟩ r` does, never from `allowByDefault` alone. -/
 def ruleView (D : VE.Readings.Doc) (unspec : List String) (N : VE.SoftNorms.SoftNode) : Option View
 /-- The act is `Simple.text fx (some (s.role == .plain)) x`: the part's act for an atom (`partAct`), the join's text
-    for a whole join (5.5). -/
+    for a whole join (5.5). The soft fields are the template's as the norms chain lifts it (`strictNodeOf`), the only
+    chain `acts@0` reaches (4.4; DRI 2026-11-11, ap-4bb). -/
 def expected (fx : List String) (s : Source) (x : Simple) : View :=
+  let M := VE.Readings.strictNodeOf s.template
   (Simple.text fx (some (s.role == .plain)) x, s.role, s.sign, s.template.guard, s.template.carveOuts,
-   s.template.over, s.completion)
+   s.template.over, s.completion, M.mode, M.rank, M.alterable, M.exception, M.hard)
 def choicesOn (D : VE.Readings.Doc) (sets : List String) : List (List (String × Nat)) :=
   firsts ((VE.Readings.choices D).map (fun c => c.filter (fun x => sets.contains x.1)))
 def choiceRules (D : VE.Readings.Doc) (s : Source) (c : List (String × Nat)) : List VE.SoftNorms.SoftNode
@@ -1397,6 +1401,7 @@ def SourceExact (D : VE.Readings.Doc) (unspec : List String) (V : Vocab) (fx : L
 theorem sourceCheck_exact (D unspec V fx N b s) (h : framesOk V = true)
     (hc : sourceCheck D unspec V fx N b s = .ok ()) : SourceExact D unspec V fx N b s
 theorem sourceCheck_complete (D unspec V fx N b s) (h : framesOk V = true)
+    (hn : (VE.Readings.choices D).length ≤ VE.Readings.maxChoices)
     (he : SourceExact D unspec V fx N b s) : sourceCheck D unspec V fx N b s = .ok ()
 
 /-- A separating situation built from simple acts, checked by `VE.Readings.separates` (no new soundness theorem). -/
@@ -1411,7 +1416,11 @@ phrase, so G12's two whole readings under *must not* collided and no reading set
 first lists the readings' paraphrases through `paraphrases` (D-32), then compares; its diagnostics are D-29's. The
 completion compared is `deny`, `allow` or `unspecified`, read from the original metadata (`unspec`), so a choice that
 changes only `unspecified` to `deny` is refused (fixture S7; SR3). `Readings/Run.lean`'s admission passes
-`UnspecifiedWire.unspecOf re D` as `unspec`.
+`UnspecifiedWire.unspecOf re D` as `unspec`. A choice whose rule changes only its mode, rank, alterable parties,
+exception or hardness is refused too (D-29's third text; DRI 2026-11-10, ap-4b-f2). `sourceCheck_complete` takes
+`hn` (DRI 2026-11-02 triage item 8c): `SourceExact` reads the cut list `VE.Readings.choices` returns, so a document
+over `maxChoices` choices whose cut part is exact satisfies it while `sourceCheck` refuses it with `ResourceLimit`
+(`sourceCheck_complete_needs_bound`, `lean/VE/Acts/SourcesProofs.lean`).
 
 **The `act-readings` mode** (AP-4; registered through AR-10's mode registry; the relayed-route recipe): request
 `{phrase, fixed, frames, adverbs, role, sign, form}`; row `{id, status, verdict ∈ {LISTED, LIMIT, REFUSED},
