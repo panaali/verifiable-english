@@ -1,6 +1,7 @@
 import VE.Acts.Readings
 import VE.Readings.Choice
 import VE.NormDefaults.Tree
+import VE.Readings.Unspecified
 
 /-! Sources and exact reading sets (docs/spec/act-phrases.md 1.8, 7; plan AP-4, G4).
 
@@ -35,9 +36,11 @@ structure Source where
   units : List String             -- fixed units every reading shares (u105a)
   sets : List String
 
-/-- What a rule says, for comparison: its predicate's act, role and completion; its sign, guard, carve-outs, over. -/
-abbrev View := String × VE.Norms.Role × Bool × VE.Formula × List VE.Formula × List String × VE.NormDefaults.Completion
-set_option synthInstance.maxSize 1024 in
+/-- What a rule says, for comparison: its predicate's act, role and completion; its sign, guard, carve-outs, over;
+    its mode, rank, alterable parties, exception and hardness (DRI 2026-11-10, ap-4b-f2). -/
+abbrev View := String × VE.Norms.Role × Bool × VE.Formula × List VE.Formula × List String × VE.NormDefaults.Completion ×
+  VE.SoftNorms.Mode × Option String × List String × Option VE.SoftNorms.Exception × Bool
+set_option synthInstance.maxSize 16384 in
 instance : DecidableEq View := inferInstance
 
 /-- `unspec` is the frame's original `unspecified` predicates (`VE.Readings.Wire.unspecOf`): the frame itself is decoded
@@ -47,13 +50,16 @@ instance : DecidableEq View := inferInstance
 def ruleView (D : VE.Readings.Doc) (unspec : List String) (N : VE.SoftNorms.SoftNode) : Option View :=
   (D.frame.soft.T.regulated.find? (·.name == N.pred)).bind fun r => r.act.map fun a =>
     (a, r.role, N.sign, N.guard, N.carveOuts, N.over,
-     VE.NormDefaults.completionOf ⟨⟨D.frame.soft.E, [], ⟨[], [], []⟩⟩, unspec⟩ r)
+     VE.NormDefaults.completionOf ⟨⟨D.frame.soft.E, [], ⟨[], [], []⟩⟩, unspec⟩ r,
+     N.mode, N.rank, N.alterable, N.exception, N.hard)
 
 /-- The act is `Simple.text fx (some (s.role == .plain)) x`: the part's act for an atom (`partAct`), the join's text
-    for a whole join (5.5). -/
+    for a whole join (5.5). The soft fields are the template's as the norms chain lifts it (`strictNodeOf`), the only
+    chain `acts@0` reaches (4.4; DRI 2026-11-11, ap-4bb). -/
 def expected (fx : List String) (s : Source) (x : Simple) : View :=
+  let M := VE.Readings.strictNodeOf s.template
   (Simple.text fx (some (s.role == .plain)) x, s.role, s.sign, s.template.guard, s.template.carveOuts,
-   s.template.over, s.completion)
+   s.template.over, s.completion, M.mode, M.rank, M.alterable, M.exception, M.hard)
 
 def choicesOn (D : VE.Readings.Doc) (sets : List String) : List (List (String × Nat)) :=
   firsts ((VE.Readings.choices D).map (fun c => c.filter (fun x => sets.contains x.1)))
