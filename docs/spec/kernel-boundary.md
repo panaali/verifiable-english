@@ -13,14 +13,17 @@ Labels: **(M)** measured on main `97b3c7999a` with the commands in section 1; **
    service mode's way to a verdict. Its trusted lines are its *spec* (what the acceptance theorems
    say, transitively) plus its *wrap* (what runs between the wire and the code the theorems are
    about). `tools/kernel_closure.py` measures both from the compiled Lean environment (section 2).
-2. **The kernel is four paths that already exist:** certificate replay, the route, norms and soft
-   norms. Together they are **9,565 lines (M)**, under the 10,000-line target. The five frozen keys
-   rest on 17,355 lines (M): these four paths plus wire code around two proved evaluators
-   (`metered`, `quantity`) that no theorem covers yet (section 1.3).
+2. **The kernel is three paths that already exist:** the route, norms and soft norms. Together they
+   are **8,956 lines (M)**, under the 10,000-line target. The `checkCertificate` mode's path is a
+   candidate: its theorems state what the checker's decision means, not what its runner's answer
+   means, so its wire (the stale-certificate binding check, the closure branch, the decoders) is
+   unproved, as in `metered` (section 1.2; KB-6). The five frozen keys rest on 16,831 lines (M):
+   the three kernel paths plus wire code around two proved evaluators (`metered`, `quantity`) that
+   no theorem covers yet (section 1.3).
 3. **Only the kernel states a verdict.** Every other mode is *shell*: it may elaborate, search,
    display and refuse, and it may show a verdict only as a row the kernel itself produced for a
    case the answer carries (the carry rule, section 3). Today 54 definitions write a verdict token
-   and 51 of them, in 25 modules, are outside the kernel (M); that count goes to zero.
+   and 53 of them, in 27 modules, are outside the kernel (M); that count goes to zero.
 4. **One statement form.** A document's checked content is one core document: definitions, rules
    (soft-norm nodes) and premises over one vocabulary, `(X : SoftDoc, P : List Formula)`, whose
    acceptance theorem is already proved for any `X` and any `P` (`VE.Compose.slot_route_acceptance`).
@@ -43,11 +46,11 @@ one route per stack. The Lean it proved (`Compose/Slot.lean`) is kept: it is the
 
 | Quantity | Value | Source |
 |---|---:|---|
-| Trusted lines quoted in both reviews | 50,034 | S: `docs/trust-baseline.json` `budget` (997 + 9,958 + 39,079) |
+| Trusted lines quoted in both reviews | 50,034 | S: `docs/trust-baseline.json` `budget` on main `97b3c7999a` (997 + 9,958 + 39,079); this batch records 63,068 there (DRI decision (d)) |
 | Trusted lines by the same tool today | **63,068** | M: `python3 tools/trust_map.py --check` (984 K + 14,795 S + 47,289 untied [V]) |
 | Lean lines | 267,229 in 843 files | M: same run |
 
-The baseline file is 13,034 lines behind because the merge train's `--write` has not run; the
+On main the baseline file is 13,034 lines behind because the merge train's `--write` has not run; the
 check passes because it compares a branch with its base commit, not with the file. The tool's
 output says so. More important, the number is a hand-kept classification of every declaration
 (`tools/trust-classes.json`): it counts a decoder as trusted until someone records a tie by hand,
@@ -64,11 +67,11 @@ python3 tools/kernel_closure.py --out docs/kernel/closure-baseline.json
 
 | Path | Tier | Theorems | Spec | Wrap | Lines |
 |---|---|---:|---:|---:|---:|
-| certificate (`checkCertificate`) | kernel | 4 | 1,709 | 5 | 1,714 |
 | route | kernel | 26 | 4,879 | 15 | 4,890 |
 | norms | kernel | 21 | 4,365 | 2,703 | 4,404 |
 | softNorms | kernel | 2 | 4,730 | 35 | 4,738 |
-| **kernel, distinct lines** | | | | | **9,565** |
+| **kernel, distinct lines** | | | | | **8,956** |
+| certificate (`checkCertificate`) | candidate | 4 | 1,372 | 637 | 1,377 |
 | metered (`evaluate-budgeted`) | candidate | 7 | 519 | 3,761 | 3,761 |
 | quantity | candidate | 4 | 613 | 1,804 | 2,040 |
 | rights | candidate | 2 | 5,598 | 35 | 5,614 |
@@ -88,12 +91,22 @@ All (M), saved in `docs/kernel/closure-baseline.json`. Other measurements of the
 | Code that runs for the document mode | 35,142 lines (M) |
 | Spec of the abstract route theorems of every family (`*_route_acceptance`, `_countermodel`, `_entails_iff`, `_intended`; 37 theorems) | 4,445 lines (M) |
 | Spec of `VE.Norms.norms_route_acceptance` alone | 761 lines (M) |
-| Definitions that write a verdict token, outside example, check and schema modules | 54, of them 51 in 25 modules outside the kernel (M) |
+| Definitions that write a verdict token, outside example, check and schema modules | 54, of them 53 in 27 modules outside the kernel (M) |
+| Lean lines under the frozen keys' answers (the registry's `keys`; section 1.3) | 16,831, of them 8,956 in the kernel (M) |
 
 Reading the table:
 
 - The kernel paths are small because their theorems are about a runner and say what its answer
-  means in terms of the logic. The reader reads the decoders and the meaning, not the runner.
+  means in terms of the logic. The reader reads the decoders and the meaning, not the runner. The
+  tool checks the first half from the compiled statements: for each kernel subject, some listed
+  theorem has a hypothesis `subject … = .ok answer` whose answer it uses again (or
+  `subject … = true`); a subject that only gate theorems mention is reported.
+- `certificate` is a candidate for that reason. The theorems on `CertificateWire.runCase` state the
+  profile gate only (`runCase j = .ok r → ProfilesAccepted …`, with `r` unused); the ones that say
+  what `valid` means are about the decision `Query.accepts` / `ClosureQuery.accepts`. So those are
+  its subject, and the runner, the binding check `decodeQuery`, `runClosureCase` and the decoders
+  are its 637-line wrap: proved core, unproved wire, as in `metered`. Kept in the kernel it would
+  make the total 9,614 (M). KB-6 promotes it once a theorem on `runCase` states its answer.
 - `document` and `discourse` are large because their theorems are stated in terms of other large
   functions (`checkDocSets j = .ok a → … checkCore j' = .ok a …`): the specification is the
   implementation. This is the wrapper architecture as one number.
@@ -111,14 +124,14 @@ five reproduce their recorded answers with exit code 0 (M): RSP 111/126, Prepare
 |---|---:|
 | Service modes the five keys call | 9 of 43 |
 | Calls to `document`, `readingsRoute` or `discourse` (35,142, 20,356 and 35,782 lines of code) | 0 |
-| Lean lines under the keys' answers (spec and wrap of every path they call; validators in full) | 17,355 |
-| of which in the proved kernel | 9,565 |
+| Lean lines under the keys' answers (spec and wrap of every path they call; validators in full) | 16,831 |
+| of which in the proved kernel | 8,956 |
 | Calls to `metered` `evaluate-budgeted` (proved core 519 lines; 3,761 lines of wire code under no theorem) | 24,945 |
 | Calls to `quantity` (proved core 613 lines; 1,804 lines of wire code under no theorem) | 9,452 |
 | Calls to `route` `certificate` (kernel) | 12,746 |
 
 So the keyed answers do not depend on the wrapper modes at all, and what separates them from a fully
-proved path is about 7,800 lines of wire code around two proved evaluators and three validators
+proved path is about 7,900 lines of wire code around two proved evaluators and three validators
 (KB-7, KB-8). In every harness the Python side holds the premises between `soft-elaborate` and
 `route certificate`: the harnesses already work by the carry rule of section 3.
 
@@ -130,10 +143,15 @@ proved path is about 7,800 lines of wire code around two proved evaluators and t
 |---|---|
 | `entry` | the right-hand side of the mode's `runMode_*` pin in `lean/VE/Service/Protocol.lean` |
 | `theorems` | the theorems that say what an accepted answer means |
-| `subject` | the runner those theorems are about: `∀ j answer, subject j = .ok answer → …` |
+| `subject` | the runner (or decision) those theorems are about: some listed theorem states its answer, `∀ j answer, subject j = .ok answer → …` with `answer` used again, or `subject q = true → …` about `q`; the tool reports a kernel subject with none (a theorem that only gates the input does not count) |
 | `delegates` | entries of other paths this entry hands cases to |
 | `nonverdict` | exits reviewed as carrying no verdict, each with its reason |
+| `uncovered` | kernel paths: code a subject runs for case kinds no listed theorem covers, with the kinds and the reason; outside the kernel (section 3) |
+| `covered_writers` | kernel paths: each verdict writer inside the kernel only because a subject runs it, with the case kinds it writes for and the listed theorems that cover them |
 | `tier` | `kernel` or `candidate` |
+
+The registry's `keys` names the paths and validators the frozen keys call (section 1.3); the tool
+reports the distinct lines under them and how many lie in the kernel.
 
 **Spec.** The reading closure of the theorems' statements: every constant a statement mentions, and
 for each definition reached its type and body, for each inductive type its constructors. A theorem
@@ -148,7 +166,8 @@ kernel total is the distinct lines over all paths of tier `kernel`.
 
 The tool refuses a registry that names a constant the environment lacks, and reports any
 definition on a path that the compiler replaces (`implemented_by`, `extern`) or the kernel cannot
-unfold (`partial`, `opaque`); none is on a path today (M).
+unfold (`partial`, `opaque`), and any reached constant it cannot place in a source range; none is
+on a path today (M).
 
 What the measure does not cover, and what covers it:
 
@@ -163,9 +182,16 @@ What the measure does not cover, and what covers it:
 
 **Verdict rule.** A *verdict token* is a string an answer uses to assert something about a document:
 today `CHECKED`, `CONFLICT-FREE`, `CONFLICT`, `INCONSISTENT`, `FOLLOWABLE`, `DILEMMA`, `ALL`, `SOME`,
-`NONE` (the registry's `verdict_tokens`; `valid: true` on a certificate row is the kernel's own).
-Only a definition inside the kernel may write one. `tools/kernel_closure.py` lists every definition
-whose body holds one of these literals and whether it is inside the kernel.
+`NONE` (the registry's `verdict_tokens`; `valid: true` on a `route` or `norms-certificate` row is
+the kernel's own). Only a definition inside the kernel may write one. `tools/kernel_closure.py`
+lists every definition whose body holds one of these literals and whether it is inside the kernel:
+in a kernel path's spec or wrap, or in code a kernel subject runs for a case kind a listed theorem
+covers. A writer of the last kind must be a `covered_writers` entry naming its kinds and theorems,
+or the tool reports it; code for kinds no theorem covers (`uncovered`) is outside. Today that is
+the soft route's kinds other than `admission` (`SoftNorms.Run.runSoftKind`, whose `soft-conflict`
+writes `CONFLICT` and `CONFLICT-FREE` and whose `soft-elaborate` writes `CHECKED` through
+`residualStatus`), the plain kinds on a layered norms environment (`Norms.Plain.run`) and the
+route's `bundle` and `admission` kinds (M).
 
 **Carry rule.** A shell mode that wants to show a verdict does not compute it. It elaborates the
 request into kernel cases; the kernel answers each case; the answer is a fold of the kernel's rows,
@@ -319,7 +345,7 @@ verifier's amendment (an import boundary, not a flag; an expiry).
 5. `tools/trust_map.py` keeps running until KB-5; its number is reported as "classified lines",
    never as the trusted base.
 
-Targets (A, to be re-set after KB-4 measures them): kernel at most 9,565 now, at most 7,000 after
+Targets (A, to be re-set after KB-4 measures them): kernel at most 8,956 now, at most 7,000 after
 KB-4; verdict writers outside the kernel 0 after KB-2; document-mode spec at most 1,500 after KB-2a.
 
 ## 7. Build work, in order
@@ -334,13 +360,13 @@ check of section 6 passes.
 |---|---|---|---|
 | KB-1 | Wire the measure: `lean/VE/Kernel/Carry.lean` (section 3, verbatim), the kernel check in the gate and in `tools/regen_generated.py`, the experimental import boundary, a rewritten `docs/trust-baseline.json` (`trust_map.py --write`, so the old file says 63,068) | kernel (signed here: +about 70 lines) | the gate fails on a seeded kernel growth of one definition and on a seeded verdict writer in a shell module |
 | KB-2a | The document mode shows verdicts by the carry rule: `Service.Document`'s unit statuses become one fold over kernel rows; the chain's routes are called as kernel paths | shell | `document`'s spec at most 1,500 lines; its two verdict writers are the fold; every `tests/` document fixture's answer is unchanged except for the added carried cases |
-| KB-2b | The same for the other writers: readings (17), the service's own modes (9, the document's among them), alternatives (6), discourse (5), risk (3), speech acts (3), the rest (8); one change per module group of `closure-baseline.json` `verdict_writers` | shell | writers outside the kernel fall by the group's count |
+| KB-2b | The same for the other writers: readings (17), the service's own modes (9, the document's among them), alternatives (6), discourse (5), risk (3), speech acts (3), soft norms (2: `runSoftKind` and `residualStatus`, kinds no theorem covers; with KB-3), the rest (8); one change per module group of `closure-baseline.json` `verdict_writers` | shell | writers outside the kernel fall by the group's count |
 | KB-7 | A wire theorem for `metered` `evaluate-budgeted` on the entry's own runner (`MeteredRun.runCase`), ending in `MeteredProofs.fol_sound` and its three siblings | candidate, then kernel | `metered`: wrap at most 30 lines, spec at most 2,500 (A) |
 | KB-8 | The same for `quantity` (`Time.Wire.runCase`), ending in `checkW6Certificate_sound`, `evalB_sorted_sound`, `refutesB_sorted_sound` and `admit_quantity_report_sound` | candidate, then kernel | `quantity`: wrap at most 30 lines |
 | KB-3 | The core mode: the soft route's `soft-certificate`, `soft-conflict` and `admission` kinds accept `premises` (the slot `P`), with the wire theorem from `slot_route_acceptance`; then delete, one per family as it lowers, the pair refusals (`Document.lean:1166-1180`), `layersApart`, `listedStacks` and `RouteFacts` | kernel (signed per change) | a document listing `judgments@0` with `soft-norms@0` (RSP probe P8) is admitted through the slot and its judgments are premises of the carried case; the refusal text is gone from `lean/` |
 | KB-4 | Shrink the kernel's own spec: the acts decoder becomes a lowering instead of a decoder parameter (removes norms' 2,703-line wrap); one formula codec with a round-trip theorem replaces the per-route decoders (`CONSOLIDATION-PLAN.md` step 8a) | kernel | kernel at most 7,000 lines (A) |
 | KB-5 | Retire the class table as a gate: `trust_map.py` reports only; `docs/ARCHITECTURE.md` section 5 is rendered from `closure-baseline.json` | tools | `tests/test_architecture_docs.py` reads the new file |
-| KB-6 | Promote rights, alternatives and reports to `kernel` once their theorems name the entry's own runner (their wrap is already 22 to 35 lines) | kernel | each path's row has tier `kernel`; the total stays within the signed figure |
+| KB-6 | Promote rights, alternatives and reports to `kernel` once their theorems name the entry's own runner (their wrap is already 22 to 35 lines); and `certificate` once a theorem on `CertificateWire.runCase` states what `valid: true` means for both its branches (today its subject is the decision `Query.accepts`, its wrap 637 lines) | kernel | each path's row has tier `kernel`; the total stays within the signed figure |
 
 Order: KB-1, then KB-7 and KB-8 (they are under the frozen keys' answers today), then KB-3 (it
 unblocks judgment terms beside norms, the largest family the RSP's unchecked bytes wait for: 50
@@ -371,7 +397,7 @@ Work this decision stops or changes:
 
 | Risk | Why it may bite | What limits it |
 |---|---|---|
-| The registry's theorem lists were grouped mechanically (theorems whose hypothesis is `subject … = .ok …`) | a listed theorem may say less than a reader assumes (for example only one case kind) | KB-1 adds a per-kind table: each case kind of a kernel runner names its theorem, or is listed `nonverdict` |
+| The registry's theorem lists were grouped mechanically (theorems whose hypothesis is `subject … = .ok …`) | a listed theorem may say less than a reader assumes (for example only one case kind, or only the input's profile gate, as `certificate`'s did on `runCase`) | the tool reports a kernel subject no listed theorem states the answer of (section 2), and a verdict writer under a subject that no `covered_writers` entry ties to a kind and theorem (section 3); the uncovered kinds found so far are listed `uncovered`. KB-1 adds the full per-kind table: each case kind of a kernel runner names its theorem, or is listed `nonverdict` or `uncovered` (kinds whose answers carry `valid`, `checked` or `admitted`, which are not verdict tokens, are found only by that table) |
 | Carrying cases makes answers larger and the document mode slower | each verdict row now carries its case | the cases are the ones the chain already builds; measure UDHR time and memory before and after KB-2a, and refuse the batch if it is markedly slower (the lean-first rule) |
 | A fold becomes a second place where verdicts are made | a status fold reads rows and writes `CHECKED` | folds are kernel code, counted and reviewed; target: one status fold |
 | Fidelity, not soundness, loses the answers (RSP 111 → 77, Preparedness 231 → 68 after audit; S: `reviews/uc-audit-rsppf-20261111.md`) | this design does not by itself repair a mistranslation | it makes the translated core statements part of every answer, which is what a back-translation check and a per-rule distinguishing scenario need; those aids are the operations seat's and the audit loop's |

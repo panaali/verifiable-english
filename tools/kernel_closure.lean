@@ -22,9 +22,13 @@ With `"mode": "run"` the roots are definitions and the closure is the code that 
 Input: the JSON file named by the environment variable `VE_KC_CFG`,
 `{"out": <path>, "paths": [{"name", "roots": [..], "opaque": [..], "mode": "statement"|"run"}]}`.
 Output (the file `out`): per path, the project constants reached with module and line range,
-the line count per module (overlapping ranges counted once), and the reached definitions the
-compiler replaces (`implemented_by`, `extern`) or the kernel cannot unfold (`opaque`, `partial`). -/
-open Lean Elab Command
+the line count per module (overlapping ranges counted once), the reached definitions the
+compiler replaces (`implemented_by`, `extern`) or the kernel cannot unfold (`opaque`, `partial`),
+the reached constants with no source range (`unranged`; the Python half reports them), and, in
+statement mode, `stated`: for each opaque name (the path's subject), the roots whose statement
+says something about its answer (`answersStated`). A subject no root states the answer of is
+not what the theorems are about (the Python half reports it for a kernel path). -/
+open Lean Elab Command Meta
 
 namespace VE.KernelClosure
 
@@ -94,15 +98,45 @@ def coveredLines (ranges : Array (Nat × Nat)) : Nat := Id.run do
   return total
 
 /-- The source range that holds a constant: its own, or that of the nearest name prefix that
-has one (`f.match_1`, `f._unary` and the like sit inside `f`). -/
+has one (`f.match_1`, `f._unary` and the like sit inside `f`). A private auxiliary
+(`_private.M.0.f.match_1.splitter`, made by `unfold` in a proof) is looked up by its user name. -/
 partial def rangeOf (n : Name) : CommandElabM (Option (Name × Nat × Nat)) := do
   match ← findDeclarationRanges? n with
   | some r => return some (n, r.range.pos.line, r.range.endPos.line)
   | none =>
+    if let some user := privateToUserName? n then
+      if user != n then
+        if let some found ← rangeOf user then return some found
     match n with
     | .str p _ => if p.isAnonymous then return none else rangeOf p
     | .num p _ => if p.isAnonymous then return none else rangeOf p
     | .anonymous => return none
+
+/-- The value of an accepted answer: `v` in `Except.ok v` or `some v`. -/
+def acceptedValue? (e : Expr) : Option Expr :=
+  let e := e.consumeMData
+  if e.isAppOfArity ``Except.ok 3 || e.isAppOfArity ``Option.some 2 then some e.appArg! else none
+
+/-- The subjects among `subjects` whose answer the statement of the theorem `thm` says something
+about (kernel-boundary section 2): the statement has a hypothesis `s args = .ok answer` (or
+`some answer`) whose `answer` is a variable that another hypothesis or the conclusion mentions,
+or a hypothesis `s args = true` whose arguments the conclusion mentions. A theorem that only gates
+the input (`s j = .ok r → P j`, with `r` unused) states nothing about the answer. -/
+def answersStated (thm : Name) (subjects : List Name) : MetaM (List Name) := do
+  let some info := (← getEnv).find? thm | return []
+  forallTelescope info.type fun xs body => do
+    let types ← xs.mapM inferType
+    let mut out : List Name := []
+    for i in [:types.size] do
+      let some (_, lhs, rhs) := types[i]!.consumeMData.eq? | continue
+      let some s := subjects.find? (lhs.consumeMData.getAppFn.isConstOf ·) | continue
+      let others := ((List.range types.size).filterMap fun k => if k == i then none else types[k]?) ++ [body]
+      let stated := match acceptedValue? rhs with
+        | some a => a.isFVar && others.any (·.containsFVar a.fvarId!)
+        | none => rhs.consumeMData.isConstOf ``Bool.true &&
+            lhs.consumeMData.getAppArgs.any fun a => a.isFVar && body.containsFVar a.fvarId!
+      if stated && !out.contains s then out := s :: out
+    return out
 
 def strList (j : Json) (key : String) : List Name :=
   match j.getObjValD key with
@@ -145,6 +179,15 @@ def measure (path : Json) : CommandElabM Json := do
     total := total + k
     modules := modules.push (toString m, k)
   let sortedModules := modules.qsort (fun a b => a.2 > b.2 || (a.2 == b.2 && a.1 < b.1))
+  -- statement mode: for each opaque name (the path's subject), the roots that state its answer
+  let mut stated : Array (String × Json) := #[]
+  if statement then
+    let mut bySubject : Std.HashMap Name (Array String) := {}
+    for r in roots do
+      for s in ← liftTermElabM (answersStated r opaqueNames) do
+        bySubject := bySubject.insert s ((bySubject.getD s #[]).push (toString r))
+    for s in opaqueNames do
+      stated := stated.push (toString s, toJson (bySubject.getD s #[]))
   return Json.mkObj [
     ("name", name), ("mode", if statement then "statement" else "run"),
     ("roots", toJson (roots.map toString)), ("opaque", toJson (opaqueNames.map toString)),
@@ -153,6 +196,7 @@ def measure (path : Json) : CommandElabM Json := do
     ("modules", Json.mkObj (sortedModules.toList.map fun (m, k) => (m, toJson k))),
     ("axioms", toJson (reached.axioms.map toString)),
     ("flagged", Json.arr flagged), ("unranged", Json.arr unranged),
+    ("stated", Json.mkObj stated.toList),
     ("decls", Json.arr rows)]
 
 /-- The string literals of `tokens` that a term mentions. -/
