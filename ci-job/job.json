@@ -1,0 +1,12 @@
+{
+ "job": "testmap-b81b82ef-t384420-s0",
+ "head": "c6e7c9c65ab28c49a96fc8042d378413402e1b19",
+ "argv": [
+  "testmap-b81b82ef-t384420-s0",
+  "c6e7c9c65ab28c49a96fc8042d378413402e1b19",
+  "c6e7c9c65ab28c49a96fc8042d378413402e1b19",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-f6c1626f0db3.tar.zst",
+  "e5233a3c53ba4caa046a88f806b1fedf89094835b1aaa29fe1ff9b390924d176",
+  "shard=ulimit -s 8192; tc=$(cat lean/lean-toolchain); tc=${tc//\\//--}; mkdir -p ~/.elan/toolchains; ln -sfn /opt/lean ~/.elan/toolchains/${tc//:/---}; mkdir -p ~/.elan/bin; for t in lean lake; do [ -e ~/.elan/bin/$t ] || ln -sfn /opt/lean/bin/$t ~/.elan/bin/$t; done; uv run --frozen python tools/test_map.py record --no-merge --jobs 4 --output \"$RUNNER_TEMP/out/map-s0.json.gz\" tests/test_consolidation_tools.py tests/test_lean_document_wrapper.py tests/test_ap_parse_index.py tests/test_agent_policy_rerun.py tests/test_acts_lexical_mutants.py tests/test_encoder_shapes.py tests/test_risk_fixtures.py tests/test_readings_verdicts_lean.py tests/test_question_reading.py tests/test_lean_certificates.py tests/test_nested_pytest.py tests/test_senses_route.py tests/test_readings_lazy_pairs.py tests/test_rust_memory_budget.py tests/test_test_schedule.py tests/test_stage2_graph.py tests/test_cmp_s4_evaluate_once.py tests/test_defaults_readings.py tests/test_p1_infrastructure.py tests/test_question_answering_measure_report.py tests/test_senses_display_cli.py tests/test_english_unambiguity.py tests/test_lean_first_b13b.py tests/test_entailment_adversarial.py tests/test_w6a_citations.py tests/test_rd9_followup_bindings.py tests/test_profile_table.py tests/test_compose_integration.py tests/test_rd9_dri_signatures.py tests/test_scope_5_4_statements.py tests/test_rights_meaning_id.py tests/test_gate_rerun.py tests/test_readings_constant_display.py tests/test_rd9_r14_candidates.py tests/test_ar6_report.py 2>&1 | tee \"$RUNNER_TEMP/out/shard-full.txt\"; exit ${PIPESTATUS[0]}"
+ ]
+}
