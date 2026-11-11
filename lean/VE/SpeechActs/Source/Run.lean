@@ -668,20 +668,71 @@ def coreUnit (u : SourceUnit) (chosen : Bool) : Json :=
   Json.mkObj (kept ++ if chosen || u.kind == .str "instruction" || u.kind == .str "question" then
     [("source", .str u.wording)] else [])
 
+/-- An instruction by its effective kind `kindOf` (after a signed choice; attributed and hedged instructions included). -/
+def isInstruction (kindOf : SourceUnit → Json) (u : SourceUnit) : Bool :=
+  (VE.Route.Admission.decodeKind 16 (kindOf u)).toOption.any (Wire.wraps · .instruction)
+
+/-- The units as written, in document order: a `MIXED` unit's parts (consecutive, `readUnits`) as one group, named
+by the parent, with its whole wording (from its first part's start to its last part's end of `source`); any other
+unit alone, with its own wording. -/
+def unitGroups (source : String) (units : List SourceUnit) : List (String × String × List SourceUnit) :=
+  (units.foldr (fun u gs => match u.parent, gs with
+    | some p, (q, g) :: rest => if g.head?.bind (·.parent) == some p then (q, u :: g) :: rest else (p, [u]) :: gs
+    | p, _ => (p.getD u.id, [u]) :: gs) []).map fun (m, g) =>
+    let a := (g.head?.map (·.span.1)).getD 0
+    let z := (g.getLast?.map (·.span.2)).getD 0
+    (m, Loader.byteStrip ((String.fromUTF8? (source.toUTF8.extract a z)).getD ""), g)
+
+/-- The document form of a sequence (commands-imperatives PLAN, CI-3): a group with an instruction part whose wording
+joins steps with `, then ` (the reader's only sequence cut). Its parts must be its steps (`sequenceFault`). -/
+def sequences (kindOf : SourceUnit → Json) (source : String) (units : List SourceUnit) :
+    List (String × String × List SourceUnit) :=
+  (unitGroups source units).filter fun (_, w, g) => g.any (isInstruction kindOf) && 2 ≤ (w.splitOn ", then ").length
+
 /-- The units as the stated order sees them (commands-imperatives section 7, finding (c)): an instruction unit by its
-effective kind `kindOf` (after a signed choice; attributed and hedged instructions included), and an instruction whose
-wording has the `Then <x>.` shape is an `after` unit. No unit field names a source antecedent (OPEN O3;
-reviews/dri-decisions-20261102-ci-0.md item 5), so every authored `Then` unit is in `thenWithoutStep`. Each unit is one
-step here: no route derives a document's stated order yet (the plan's `OrderMismatch` has no stated order to read). -/
-def stepUnits (kindOf : SourceUnit → Json) (units : List SourceUnit) : List VE.Commands.StepUnit :=
-  units.map fun u =>
-    let ins := (VE.Route.Admission.decodeKind 16 (kindOf u)).toOption.any (Wire.wraps · .instruction)
-    ⟨u.id, ins, 1, ins && (VE.Commands.shapes u.wording).any (· matches .after _), none⟩
+effective kind, a sequence (`sequences`) as one unit named by its group of as many steps as parts, and an
+instruction whose wording has the `Then <x>.` shape an `after` unit. No unit field names a source antecedent (OPEN O3;
+reviews/dri-decisions-20261102-ci-0.md item 5), so every authored `Then` unit is in `thenWithoutStep`. -/
+def stepUnits (kindOf : SourceUnit → Json) (source : String) (units : List SourceUnit) : List VE.Commands.StepUnit :=
+  let seqs := (sequences kindOf source units).map (·.1)
+  (unitGroups source units).flatMap fun (m, w, g) =>
+    if seqs.contains m then
+      [⟨m, true, g.length, (VE.Commands.shapes w).any (· matches .after _), none⟩]
+    else g.map fun u =>
+      let ins := isInstruction kindOf u
+      ⟨u.id, ins, 1, ins && (VE.Commands.shapes u.wording).any (· matches .after _), none⟩
 
 /-- `ThenWithoutStep`, naming the first such unit, when a `Then` unit follows no named earlier instruction unit. -/
-def thenFault (kindOf : SourceUnit → Json) (units : List SourceUnit) : Option String :=
-  (VE.Commands.thenWithoutStep (stepUnits kindOf units)).head?.map fun u =>
+def thenFault (kindOf : SourceUnit → Json) (source : String) (units : List SourceUnit) : Option String :=
+  (VE.Commands.thenWithoutStep (stepUnits kindOf source units)).head?.map fun u =>
     s!"{VE.Commands.Texts.thenWithoutStep.1}: {VE.Commands.Texts.thenWithoutStep.2} (unit {u})"
+
+/-- A sequence's fault, naming its unit, when its parts are not its steps: the whole wording read under the reading
+context `ctx` (`readInstruction`, so `readStep` outside the proof task) must be `steps rs`, with one part per step,
+each an instruction (effective kind) whose decoded command `roleOf` is its step's, in order. -/
+def sequenceFault (ctx : VE.Commands.Context) (kindOf : SourceUnit → Json) (roleOf : SourceUnit → Option Wire.Role)
+    (source : String) (units : List SourceUnit) : Option String :=
+  ((sequences kindOf source units).find? fun (_, w, g) => match VE.Commands.readInstruction ctx w with
+    | .steps rs => !(rs.length == g.length && (g.zip rs).all fun (u, r) => isInstruction kindOf u &&
+        match roleOf u with
+        | some (.command c) => r.command u.id == c
+        | _ => false)
+    | _ => true).map fun (m, _, _) =>
+    s!"{VE.Commands.Texts.sequenceParts.1}: {VE.Commands.Texts.sequenceParts.2} (unit {m})"
+
+/-- A unit's effective kind in the decoded source (after a signed choice). -/
+def SpeechSource.kindOf (src : SpeechSource) (u : SourceUnit) : Json :=
+  ((src.dec.units.find? (·.id == u.id)).map (·.kind)).getD u.kind
+
+/-- The decoded source's sequences (`sequences`). -/
+def SpeechSource.sequences (src : SpeechSource) : List (String × String × List SourceUnit) :=
+  VE.SpeechActs.Source.sequences src.kindOf src.source src.units
+
+/-- The stated order, derived content of the decoded source (commands-imperatives PLAN, CI-3): the consecutive steps
+of each sequence, named `m.1` … `m.n` by its unit (`VE.Commands.stepOrder`). No `Then` unit is paired: none names an
+antecedent (OPEN O3), so `readSource` refuses each. -/
+def SpeechSource.stepOrder (src : SpeechSource) : List (String × String) :=
+  VE.Commands.stepOrder (stepUnits src.kindOf src.source src.units)
 
 
 /-- A2 (commands-imperatives S34): a unit or `MIXED` part of `metadata.units` has fence content and a kind that
@@ -780,7 +831,8 @@ def readSource (payload evidence : Json) : Except String { src : SpeechSource //
      | .ok r => [("reading_sets", r)]
      | .error _ => []))
   let dec ← Run.checkedDocument environment document
-  if let some e := thenFault (fun u => ((dec.units.find? (·.id == u.id)).map (·.kind)).getD u.kind) units then throw e
+  let kindOf := fun (u : SourceUnit) => ((dec.units.find? (·.id == u.id)).map (·.kind)).getD u.kind
+  if let some e := thenFault kindOf source units then throw e
   -- 3.2: every resolved fence decodes to the role its kind reads (`Wire.roleFits`): a fence of a kind wrapping
   -- `instruction` is a command (so the loop below reads it), one wrapping `question` a question, one wrapping `norm`
   -- a norm. Formula content in their place would decode to no role and the unit would be dropped, never read.
@@ -803,6 +855,12 @@ def readSource (payload evidence : Json) : Except String { src : SpeechSource //
         | .one r _ => r.command id == c
         | _ => false
       unless read do throw "InvalidInput: resolved speech fences"
+  -- The document form of a sequence (CI-3): its parts, by their decoded commands (explicit, resolved or chosen), are
+  -- the steps of its whole wording, read under the context; a payload with none is refused by `decodeSpeechSource`.
+  if hasContext payload && !(sequences kindOf source units).isEmpty then
+    let ctx ← commandContext payload environment dec.se dec.D.scope
+    if let some e := sequenceFault ctx kindOf (fun u => (dec.units.find? (·.id == u.id)).map (·.role)) source units then
+      throw e
   for u in units do
     if let some s := u.explicit then
       unless s == .str (unitStatus u (latestOf sets u.id)) do
@@ -820,7 +878,7 @@ def readSource (payload evidence : Json) : Except String { src : SpeechSource //
 other check of `readSource`. -/
 def decodeSpeechSource (payload evidence : Json) : Except String { src : SpeechSource // src.payload = payload } := do
   let src ← readSource payload evidence
-  if hasCommandFence payload && !hasContext payload then throw readingContextText
+  if (hasCommandFence payload || !src.1.sequences.isEmpty) && !hasContext payload then throw readingContextText
   pure src
 
 /-- A2: a command fence is never taken from the payload: one without the reading context is refused. -/

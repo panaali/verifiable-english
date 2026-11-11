@@ -22,6 +22,10 @@ def queryMismatch : String × String := ("QueryMismatch", "")
 (section 7, finding (c); OPEN O3 ruled: no unit field names one, so every authored `Then` unit is refused). -/
 def thenWithoutStep : String × String :=
   ("ThenWithoutStep", "a Then step names no earlier instruction step as its antecedent; write the steps in one sentence, joined by ', then '")
+/-- A document unit whose wording is a sequence of steps whose parts are not those steps: the plan's document form of a
+sequence is one instruction unit whose `MIXED` parts are its steps, each carrying its step's command (CI-3). -/
+def sequenceParts : String × String :=
+  ("InvalidInput", "a sequence of steps is one instruction unit whose parts are its steps, each with its step's command")
 
 /-- Every code the reader writes, with its class: `VEError`, the class Python raises for each today. CI-3 adds
 `ConditionScope` and `ThenWithoutStep` (section 10). -/
