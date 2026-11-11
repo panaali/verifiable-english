@@ -1,3 +1,5 @@
+- `tools/source_graph.py` — Static dependency graph of the repository's Python files, Lean modules and tests.
+- `tools/source_words_export.lean` — (no module docstring)
 - `tools/stage2_parity.py` — Gate 2 parity: rerun the Stage 0 probe matrix under a backend authority and diff it.
 - `tools/test_chunks.py` — Which tests of one test file a chunk runs: the one rule that splits a file's collected tests into k parts.
 - `tools/test_layer_policy.py` — Boundary checks for the selector's non-import dependencies and fallback.
