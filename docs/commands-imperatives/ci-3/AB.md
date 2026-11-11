@@ -39,6 +39,20 @@ unchanged `#guard`s (RunExamples, Examples). 88 rows are unchanged; 11 change:
 | 11 | Then click Check rule conflict. | b1 | `refused "InvalidInput" "no single speech-act reading"` | `one { force := require, act := "click_check_required", fills := [], guard := VE.Formula.top } true` |
 
 Every b1 row is a `#guard` of `lean/VE/Commands/RunExamples.lean` (section 7's fixtures through the mode), pinned
-by `tests/test_commands_steps.py::test_each_b1_row_is_a_route_fixture_that_reads`. The rr rows are section 7's own
+by `tests/test_commands_steps.py::test_each_b1_row_is_a_route_fixture_that_reads`. Every rr row is a row of `abRefused` in the same file (refused through the mode with its exact code, text and class), pinned by `::test_each_rr_row_is_a_route_fixture_refused_with_its_code`. The rr rows are section 7's own
 outcomes (`ConditionScope` for a condition with a sequence; `NoDerivation` for "If draft is approvable, click Ask.",
 equal to `readCommand` of "Click Ask, if draft is approvable.", `preposed_eq`'s other direction).
+
+## Document refusals (the speech-source wrapper), class b2
+
+Not reader rows: two document checks of `lean/VE/SpeechActs/Source/Run.lean` refuse sources that main accepts, read ->
+refused, nothing newly accepted (DELTA.md rows 3 and 8).
+
+| # | Document | Class | Base | Head |
+|---|---|---|---|---|
+| D1 | an instruction unit (by effective kind) of the `Then <x>.` shape | b2 | accepted | `ThenWithoutStep: … (unit <id>)` |
+| D2 | a unit or `MIXED` unit with an instruction part and a `, then ` wording whose parts are not, in order, the steps of `readStep` of the whole wording (review F2) | b2 | accepted | `InvalidInput: a sequence of steps is one instruction unit whose parts are its steps, each with its step's command (unit <id>)`; `InvalidInput: command reading context` without the context |
+
+D2's in-order form is accepted as before. Fixtures: `lean/VE/Commands/RunSplit.lean` (SourceExamples) and
+`tests/test_commands_steps.py`. Finding (d)'s translation form (a demand part and a GAP part for a refused step) is
+refused by D2 in this wrapper; the translation writer's GAP part stays with OPEN O4/O8 (REPORT).
