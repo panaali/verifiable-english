@@ -1,6 +1,6 @@
 {
   "contract": "acts@0",
-  "revision": 1,
+  "revision": 2,
   "format": 1,
   "status": "shadow",
   "input": [
@@ -10,7 +10,8 @@
   "adapter": "acts_source",
   "uses": [
     "limits",
-    "names"
+    "names",
+    "norms@0"
   ],
   "codes": {
     "ACTS_RESOURCE_LIMIT": {
@@ -77,6 +78,23 @@
               "inherited": true,
               "says": "The norms route's environment decoder, reading `acts@0`, accepts `/environment`, and a `defined` declaration has `definitions@0`."
             }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "rules",
+      "checks": [
+        {
+          "id": "norms",
+          "kind": "include",
+          "contract": "norms@0",
+          "phases": [
+            "profiles",
+            "rule-shape",
+            "rules",
+            "references",
+            "semantic"
           ]
         }
       ]

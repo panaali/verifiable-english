@@ -312,6 +312,13 @@ ACTS = [
     ("A1", lambda e, r: None, None, None, None, None),
     ("A1b", lambda e, r: r.clear(), None, None, None, None),
     ("A2", without_norms, "1.1d", "/environment", "InvalidInput", "UnsupportedProfile: acts@0 requires norms@0"),
+    # the rule phases, `norms@0`'s under the include `norms`, typed over the environment that reads `acts@0`
+    ("A3", lambda e, r: r[0]["norm"].update(guard=["unary", "d", ["var", 0]]), "norms/4.7b", "/norms/0",
+     "UnknownSymbol", None),
+    ("A4", lambda e, r: r.append(copy.deepcopy(r[0])), "norms/4.2", "/norms/1/norm/name", "DuplicateDeclaration",
+     "DuplicateDeclaration: rule r0"),
+    ("A5", lambda e, r: r.append({"norm": {**r[0]["norm"], "name": "r1", "over": ["r0"]}}) or
+     r[0]["norm"].update(over=["r1"]), "norms/6.1", "/norms", "InvalidInput", "DependencyCycle: r0, r1"),
 ]
 
 

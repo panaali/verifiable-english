@@ -5,6 +5,9 @@ Every fault is applied to the base source, the unit's example `base.json`, and e
 one phrase over each limit is a fault, and the sources at each limit (`at_limits`, which `limit.json` is, and
 `at_count`) are accepted. Around the limits: a count over its limit with a phrase over its own, an act over its
 limit that is not an act phrase, and an act over its limit after a refused fixed phrase, each the one Lean names.
+
+The rule phases (ap-1bfb): `norms@0`'s phases from `profiles` to `semantic`, included as `norms`, each with faults on
+the base source's rules; the rule count's limit is `limits.json`'s.
 """
 
 from copy import deepcopy
@@ -125,6 +128,39 @@ def _faults():
             ("joined-act", "1.1d", lambda root: _act(root).update(act="{0} seek and enjoy asylum"))]
 
 
+def _rule(name, predicate="protected", guard=("unary", "c", ("var", 0)), over=()):
+    return {"norm": {"name": name, "predicate": predicate, "sign": True, "guard": json.loads(json.dumps(guard)),
+                     "unless": [], "over": list(over)}}
+
+
+def _norm(i, **fields):
+    return lambda root: root["norms"][i]["norm"].update(fields)
+
+
+def _rule_faults():
+    """(name, check, path, apply, args) of each fault of the included rule phases; `args` is `None` where the
+    check is inherited (its text is each language's legacy text)."""
+    rules = json.loads((ROOT / "ve/wire_contract/limits.json").read_text())["MAX_RULES"]
+    return [
+        ("rules-limit", "norms/2.2", "/norms",
+         lambda root: root["norms"].extend(_rule(f"r{i}") for i in range(1, rules + 1)), {}),
+        ("unit-field", "norms/3.1", "/norms/0", lambda root: root["norms"][0].update(extra=1), {}),
+        ("guard-shape", "norms/3.8b", "/norms/0/norm/guard", _norm(0, guard=5), None),
+        ("name-repeat", "norms/4.2", "/norms/1/norm/name", lambda root: root["norms"].append(_rule("r0")),
+         {"value": "r0"}),
+        ("predicate-unregulated", "norms/4.4", "/norms/0/norm/predicate", _norm(0, predicate="c"), {"value": "c"}),
+        ("guard-arity", "norms/4.7a", "/norms/0", _norm(0, guard=["binary", "c", ["var", 0], ["var", 0]]), None),
+        ("guard-predicate", "norms/4.7b", "/norms/0", _norm(0, guard=["unary", "d", ["var", 0]]), None),
+        ("guard-on-a-plain-act", "norms/4.7b", "/norms/1",
+         lambda root: root["norms"].extend([_rule("r1", "paid", ("unary", "paid", ("const", "k")))]), None),
+        ("over-unknown", "norms/5.1", "/norms/0/norm/over/0", _norm(0, over=["zz"]), {"value": "zz"}),
+        ("precedence-cycle", "norms/6.1", "/norms",
+         lambda root: root.update(norms=[_rule("r0", over=["r1"]), _rule("r1", over=["r0"])]), {"detail": "r0, r1"}),
+    ]
+
+
 def catalogue():
-    return [Fault(name, check, "/environment", apply, frozenset({name}), base=lambda: deepcopy(base()))
-            for name, check, apply in _faults()]
+    environment = [Fault(name, check, "/environment", apply, frozenset({name}), base=lambda: deepcopy(base()))
+                   for name, check, apply in _faults()]
+    return environment + [Fault(name, check, path, apply, frozenset({name}), base=lambda: deepcopy(base()), args=args)
+                          for name, check, path, apply, args in _rule_faults()]

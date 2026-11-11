@@ -15,6 +15,34 @@
       "act-bytes-over-after-phrase",
       "act-bytes-over-not-an-act",
       "joined-act"
+    ],
+    "norms/2.2": [
+      "rules-limit"
+    ],
+    "norms/3.1": [
+      "unit-field"
+    ],
+    "norms/3.8b": [
+      "guard-shape"
+    ],
+    "norms/4.2": [
+      "name-repeat"
+    ],
+    "norms/4.4": [
+      "predicate-unregulated"
+    ],
+    "norms/4.7a": [
+      "guard-arity"
+    ],
+    "norms/4.7b": [
+      "guard-on-a-plain-act",
+      "guard-predicate"
+    ],
+    "norms/5.1": [
+      "over-unknown"
+    ],
+    "norms/6.1": [
+      "precedence-cycle"
     ]
   },
   "unreached": {}

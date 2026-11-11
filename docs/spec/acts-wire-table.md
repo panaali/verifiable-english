@@ -6,3 +6,5 @@
 | `1.1b` | `ACTS_RESOURCE_LIMIT` | Each declared fixed phrase, normalised, is at most `maxPhraseBytes` bytes long in UTF-8 (`VE.Acts.Lexical`). |
 | `1.1c` | `ACTS_RESOURCE_LIMIT` | Each regulated predicate's act phrase, normalised, is at most `maxActBytes` bytes long in UTF-8 (`VE.Acts.Lexical`). |
 | `1.1d` | `ACTS_INVALID_ENVIRONMENT` | The norms route's environment decoder, reading `acts@0`, accepts `/environment`, and a `defined` declaration has `definitions@0`. |
+| **Phase 2, rules** | | No check of this phase runs unless every check of the earlier phases holds over the whole input. |
+| `norms` | `include` | The checks of phase `profiles`, `rule-shape`, `rules`, `references`, `semantic` of `norms@0`, in their order, on the input. |

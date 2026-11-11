@@ -12,7 +12,7 @@ import pytest
 
 from conformance.acts_contract import REGISTRY, acts_source
 from conformance.wire_contract_engine import CLEAN, Fault, load, run
-from conformance.wire_contract_faults import catalogue, catalogue_index
+from conformance.wire_contract_faults import catalogue, catalogue_index, expected_record, route
 from conformance.wire_contract_faults_acts import EXAMPLES, at_count, at_limits, base, limits
 from tests import lean_routes
 from tests.subprocesses import HANG_TIMEOUT
@@ -90,7 +90,8 @@ def test_the_recorded_corpus_gives_one_record_in_both_engines(tmp_path):
     assert any("norms@0" not in raw["profiles"] for _, raw, _ in recorded)  # F1's source is recorded
     pairs = engine_records([(raw, norms) for _, raw, norms in recorded])
     assert sum(lean is not None for _, lean in pairs) > len(catalogue("acts@0"))
-    assert [label for (label, _, _), (python, lean) in zip(recorded, pairs) if python != lean] == []
+    assert [label for (label, _, _), (python, lean) in zip(recorded, pairs)
+            if comparable(python) != comparable(lean)] == []
 
 
 def test_the_limits_are_leans_and_never_copied():
@@ -111,24 +112,47 @@ def test_the_sources_at_each_limit_are_accepted_and_clean_in_python():
         assert run(CONTRACT, {"environment": raw, "norms": norms}, registry=REGISTRY) is CLEAN
 
 
+def own_texts(check):
+    """Whether a record at `check` keeps its text and args to each language: an inherited member of an included
+    `norms@0` phase (2.7). 1.1's inherited members carry the text of Lean's decoder in both."""
+    _, steps = route(CONTRACT, check)
+    return check.startswith("norms/") and bool(steps[-1][1].get("inherited"))
+
+
+def comparable(record):
+    """A record as both engines must give it (`own_texts`)."""
+    if record is None or not own_texts(record["check"]):
+        return record
+    return {k: v for k, v in record.items() if k not in ("text", "args")}
+
+
+def expected(fault, lean=False):
+    """The fault's expected record: the catalogue's fields, and for an inherited member (a record without its
+    own `text`) the legacy validator's text, unless the language keeps its own (`own_texts`) and is Lean."""
+    record = expected_record(CONTRACT, fault)
+    if "text" not in record and not (lean and own_texts(fault.check)):
+        error = legacy(*fault.source())
+        assert error is not None, fault.name
+        record["text"] = str(error)
+    return record
+
+
 def test_every_fault_gives_its_member_in_python_with_leans_text():
     for fault in catalogue("acts@0"):
         raw, norms = fault.source()
-        error = legacy(raw, norms)
         outcome = run(CONTRACT, {"environment": raw, "norms": norms}, registry=REGISTRY)
-        assert error is not None and isinstance(outcome, Fault), fault.name
-        assert outcome.record["check"] == fault.check and outcome.record["text"] == str(error), fault.name
+        assert legacy(raw, norms) is not None and isinstance(outcome, Fault), fault.name
+        record = expected(fault)
+        assert {k: outcome.record[k] for k in record} == record, fault.name
 
 
 def test_every_fault_gives_its_record_in_lean_and_the_sources_at_each_limit_are_clean():
-    from conformance.wire_contract_faults import expected_record
     faults = catalogue("acts@0")
     rows = lean_routes.diagnose("acts@0", [case(*f.source()) for f in faults] + [case(*s) for s in accepted()])
     for fault, row in zip(faults, rows):
-        record = row["diagnostic"]
         assert row["outcome"] == "fault", fault.name
-        assert {k: record[k] for k in expected_record(CONTRACT, fault)} == expected_record(CONTRACT, fault)
-        assert record["text"] == str(legacy(*fault.source())), fault.name
+        record = expected(fault, lean=True)
+        assert {k: row["diagnostic"][k] for k in record} == record, fault.name
     assert [row["outcome"] for row in rows[len(faults):]] == ["clean"] * len(accepted())
 
 

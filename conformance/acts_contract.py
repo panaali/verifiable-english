@@ -3,12 +3,14 @@ plan synthesis round 2): it reports and refuses nothing.
 
 `acts_environment` names the member of 1.1 from the text Lean's environment decoder wrote when it refused the
 environment, as `ve.norms_contract.typing_failure` names 4.7's from the class: the limits and their texts are
-`VE.Acts.Lexical`'s, and none is computed here. Diagnostic only: the legacy validator alone accepts or rejects.
+`VE.Acts.Lexical`'s, and none is computed here. The included phases of `norms@0` (ap-1bfb) run `norms@0`'s own hooks
+and classifiers: each reads the environment through `Environment`, which Lean's environment mode decodes reading
+`acts@0`. Diagnostic only: the legacy validator alone accepts or rejects.
 """
 
 from ve.environment import Environment
 from ve.errors import VEError
-from ve.norms_contract import NORM_KINDS, in_domain as norms_domain, source
+from ve.norms_contract import CLASSIFIERS, HOOKS, NORM_KINDS, in_domain as norms_domain, source
 from ve.wire_contract.registry import Registry
 
 # The head and tail of `VE.Acts.Lexical`'s refusal at each of its three limits, by member; any other refusal
@@ -44,5 +46,5 @@ def acts_environment(root, items):
     return None
 
 
-REGISTRY = Registry().register(classifiers={"acts_environment": acts_environment},
+REGISTRY = Registry().register(hooks=HOOKS, classifiers={**CLASSIFIERS, "acts_environment": acts_environment},
                                adapters={"acts_source": acts_source})

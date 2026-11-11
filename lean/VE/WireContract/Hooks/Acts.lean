@@ -59,13 +59,44 @@ def member (environment : Json) (e : String) : ClassifierResult :=
   else if (actsOf environment).any (fun (p, k, raw) => refusedWith e (check [] p k raw)) then .fail "1.1c" (message e)
   else .fail "1.1d" (message e)
 
+/-! ## The rule phases: `norms@0`'s, with an environment that reads `acts@0` (ap-1bfb)
+
+`acts@0.json` includes `norms@0`'s phases from `profiles` to `semantic`; their hooks are `Hooks.Norms`', except 4.7,
+whose `Hooks.Norms.typingEnvironment` decodes without `acts` and so is `none` on every `acts@0` source. -/
+
+/-- The environment 4.7 reads: the norms route's, decoded reading `acts@0` as 1.1 decodes it; `none` before 1.1
+    holds. -/
+def typingEnvironment (root : Json) : Option VE.Environment := do
+  let ne ← (VE.Norms.Wire.decodeNormsEnvironment (environmentOf root) (acts := true) (joined := true)).toOption
+  pure ne.rv.environment
+
+/-- 4.7 at the `i`-th rule: `Hooks.Norms.ruleTyping`'s walk, one running total over the earlier rules (each well
+    typed, by rule 2) and then this one, over `typingEnvironment`. -/
+def ruleTyping (root : Json) (i : Nat) : ClassifierResult :=
+  match typingEnvironment root with
+  | none => .ok
+  | some E =>
+    let data := (Hooks.Norms.profiles root).contains "data@0"
+    let rec go : Nat → Nat → List Json → ClassifierResult
+      | _, _, [] => .ok
+      | 0, n, rule :: _ => match Hooks.Norms.typeRule E data rule n with
+        | some (.error e) => Hooks.Norms.typingMember e
+        | _ => .ok
+      | j + 1, n, rule :: rest => match Hooks.Norms.typeRule E data rule n with
+        | some (.ok next) => go j next rest
+        | _ => .ok
+    go i 0 (Hooks.Norms.rulesOf root)
+
 def classifier : String → Json → List Pointer → ClassifierResult
   | "acts_environment", root, _ => match decoded (environmentOf root) with
     | .ok () => .ok
     | .error e => member (environmentOf root) e
-  | _, _, _ => .ok
+  | "rule_typing", root, items => match Hooks.Norms.itemIndex items 0 with
+    | some i => ruleTyping root i
+    | none => .ok
+  | name, root, items => Hooks.Norms.classifier name root items
 
-def hooks : Hooks := ⟨fun _ _ _ => .ok, classifier, fun _ v => v⟩
+def hooks : Hooks := ⟨Hooks.Norms.predicate, classifier, Hooks.Norms.view⟩
 
 /-- `acts@0` listed, and the source without it in `norms@0`'s domain: no `norm-defaults@0`, no statement layer. -/
 def inDomain (environment norms : Json) : Bool :=
@@ -81,7 +112,7 @@ def adapter (case : Json) : Except String Json :=
   Hooks.Norms.sourceAdapter (fun k => k == "norms-elaborate" || k == "norms-conflict" || k == "norms-certificate")
     inDomain case
 
-def registered : List String := ["acts_environment"]
+def registered : List String := "acts_environment" :: Hooks.Norms.registered
 
 #guard Tables.Acts.table.hookNames.all registered.contains
 
@@ -145,13 +176,29 @@ def around : List String := ["anna", "zora"]
   "UnsupportedProfile: acts@0 requires norms@0"
 -- the records through the generated table
 #guard recordOf (envOf [] (actOf maxActBytes)) == none
-#guard Tables.Acts.table.revision == 1  -- acts@0.json's revision: a new revision updates this pin
+#guard Tables.Acts.table.revision == 2  -- acts@0.json's revision: a new revision updates this pin
 #guard [(envOf (phrasesOf (maxPhrases + 1)) (actOf 20), "1.1a", "ACTS_RESOURCE_LIMIT", "ResourceLimit"),
     (envOf [phraseOf (maxPhraseBytes + 1)] (actOf 20), "1.1b", "ACTS_RESOURCE_LIMIT", "ResourceLimit"),
     (envOf [] (actOf (maxActBytes + 1)), "1.1c", "ACTS_RESOURCE_LIMIT", "ResourceLimit"),
     (envOf [] "{0} seek and enjoy asylum", "1.1d", "ACTS_INVALID_ENVIRONMENT", "InvalidInput")].all fun (j, c, k, l) =>
   recordOf j == some (["acts@0", c, k, l, "/environment", "environment"].map Json.str ++ [(recordOf j).get!.getD 6 .null,
     toJson true])
+-- the rule phases (ap-1bfb): `norms@0`'s members, under the include `norms`, typed over `acts@0`'s environment
+def ruleOf (name pred : String) (guard : Json) : Json := Json.mkObj [("norm", Json.mkObj [("name", name),
+  ("predicate", pred), ("sign", true), ("guard", guard), ("unless", Json.arr #[]), ("over", Json.arr #[])])]
+def unaryOn (p : String) : Json := toJson [toJson "unary", toJson p, toJson [toJson "var", toJson 0]]
+def checkOf (norms : List Json) (environment : Json := envOf [] (actOf 20)) : Option String :=
+  (run Tables.Acts.table hooks (Json.mkObj [("environment", environment), ("norms", toJson norms)])).map fun f =>
+    ((record Tables.Acts.table f).getObjValD "check").getStr?.toOption.getD ""
+#guard checkOf [ruleOf "r0" "paid" (unaryOn "w")] == none && (typingEnvironment (Json.mkObj
+  [("environment", envOf [] (actOf 20))])).isSome
+#guard checkOf [ruleOf "r0" "paid" (unaryOn "w"), ruleOf "r1" "paid" (unaryOn "nope")] == some "norms/4.7b"
+#guard checkOf [ruleOf "r0" "paid" (toJson [toJson "unary", toJson "w", toJson [toJson "const", toJson "k"]])] ==
+  some "norms/4.7b"
+#guard checkOf [ruleOf "r0" "w" (unaryOn "w")] == some "norms/4.4"
+#guard checkOf [ruleOf "r0" "paid" (unaryOn "w"), ruleOf "r0" "paid" (unaryOn "w")] == some "norms/4.2"
+-- 1.1 comes first, and a rule is not typed over an environment 1.1 refuses
+#guard checkOf [ruleOf "r0" "paid" (unaryOn "nope")] (envOf [] (actOf (maxActBytes + 1))) == some "1.1c"
 -- the adapter reads `acts@0` sources of the norms route only, wherever `acts@0` is listed
 def caseOf (kind : String) (ps : List String) : Json :=
   Json.mkObj [("kind", kind), ("environment", envOf [] (actOf 20) ps), ("norms", Json.arr #[])]
