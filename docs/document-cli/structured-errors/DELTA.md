@@ -1,0 +1,8 @@
+# document-cli-structured-errors: user-visible delta
+
+Feature item document-cli-structured-errors (follow-up filed by the DRI decider,
+reviews/dri-decisions-20261110-df-5b.md item 2). Python error presentation only; no Lean, no verdict.
+
+| # | Delta | Ruling | Evidence |
+| --- | --- | --- | --- |
+| D1 | `ve document` (`check`, `render`, `coverage`, `readings`): an input diagnostic (`VEError`, any code: `InvalidInput`, `UnsupportedProfile`, `ResourceLimit`, ...) changes from a Python traceback on stderr with exit 1 and nothing on stdout to the structured `{"status", "error"}` on stdout that every other subcommand gives, exit 2 (`status` `InvalidInput`), or exit 4 for `ResourceLimit` (`status` `ResourceLimit`). `error` is the exception's own `to_dict()`: its code, its message with every quoted name, and its `path`/`span` when it has one. `CheckerUnavailable` is unchanged (exit 5, `main`'s answer). | R1 | `tests/test_document_cli_errors.py::test_document_errors_are_structured` (5 cases: `--under` without `--conclusion`, `weighing@0` at load on `check` and `readings`, a front matter nested past the parser's depth on `check` and `readings`) asserts `record == {"status": ..., "error": exc.to_dict()}` and `(error.code, error.message) == (exc.code, exc.message)` against the exception `ve.document.cli.main` raises for the same argv, plus the exit code and no `Traceback`; `test_under_without_conclusion_prints_no_traceback` (a process: exit 2, the exact JSON, no `Traceback` on stderr); `test_checker_unavailable_is_unchanged[check, readings]`. Base output (REPORT.md, "Base and head"): exit 1, 0 bytes on stdout, `ve.errors.VEError: --under requires --conclusion` as the traceback's last line. |
