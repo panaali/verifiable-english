@@ -79,7 +79,8 @@ def recorded_sources(output):
                                                    "no:cacheprovider", "-o", "addopts=", "-m", "not live", "-k",
                                                    "acts and not recorded_corpus", *RECORDED_TESTS]),
                             cwd=ROOT, env=environment, capture_output=True, text=True, timeout=HANG_TIMEOUT)
-    assert result.returncode == 0, result.stdout[-4000:]
+    # A recorded test that fails (exit 1) still records its sources; the comparison below is this test's own.
+    assert result.returncode in (0, 1), result.stdout[-4000:]
     return json.loads(output.read_text())
 
 

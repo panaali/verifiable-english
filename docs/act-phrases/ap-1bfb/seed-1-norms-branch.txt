@@ -1,0 +1,10 @@
+E         2 failed, 8 passed, 13 deselected in 1.76s
+FAILED tests/test_acts_contract.py::test_a_source_without_norms_gives_one_record_in_both_engines
+FAILED tests/test_acts_contract.py::test_the_recorded_corpus_gives_one_record_in_both_engines
+FAILED tests/test_wire_contract_s5_lean.py::test_fixtures_records_and_legacy_agreement[acts@0]
+3 failed, 8 passed, 12 deselected in 5.63s
+E       AssertionError: assert ['tests/test_...both_engines'] == []
+E         
+E         Left contains one more item: 'tests/test_acts_contract.py::test_a_source_without_norms_gives_one_record_in_both_engines'
+E         Use -v to get more diff
+1 failed, 7 deselected in 3.63s

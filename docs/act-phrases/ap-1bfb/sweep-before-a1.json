@@ -1,0 +1,639 @@
+{
+ "cases": 45,
+ "differing": [
+  "profiles-without-norms",
+  "defined-without-definitions",
+  "admission-without-norms",
+  "language"
+ ],
+ "rows": [
+  {
+   "case": "kind-elaborate",
+   "python": {
+    "status": "ok",
+    "outcome": "clean"
+   },
+   "lean": {
+    "status": "ok",
+    "outcome": "clean"
+   },
+   "differs": []
+  },
+  {
+   "case": "kind-conflict",
+   "python": {
+    "status": "ok",
+    "outcome": "clean"
+   },
+   "lean": {
+    "status": "ok",
+    "outcome": "clean"
+   },
+   "differs": []
+  },
+  {
+   "case": "kind-certificate",
+   "python": {
+    "status": "ok",
+    "outcome": "clean"
+   },
+   "lean": {
+    "status": "ok",
+    "outcome": "clean"
+   },
+   "differs": []
+  },
+  {
+   "case": "kind-defaults",
+   "python": {
+    "status": "error",
+    "error": "UnsupportedProfile: case kind norm-defaults-elaborate has no wire contract input"
+   },
+   "lean": {
+    "status": "error",
+    "error": "UnsupportedProfile: case kind norm-defaults-elaborate has no wire contract input"
+   },
+   "differs": []
+  },
+  {
+   "case": "kind-soft",
+   "python": {
+    "status": "error",
+    "error": "UnsupportedProfile: case kind soft-elaborate has no wire contract input"
+   },
+   "lean": {
+    "status": "error",
+    "error": "UnsupportedProfile: case kind soft-elaborate has no wire contract input"
+   },
+   "differs": []
+  },
+  {
+   "case": "kind-missing",
+   "python": {
+    "status": "error",
+    "error": "UnsupportedProfile: case kind null has no wire contract input"
+   },
+   "lean": {
+    "status": "error",
+    "error": "UnsupportedProfile: case kind null has no wire contract input"
+   },
+   "differs": []
+  },
+  {
+   "case": "domain-plain-norms",
+   "python": {
+    "status": "error",
+    "error": "UnsupportedProfile: the case is outside the unit's domain"
+   },
+   "lean": {
+    "status": "error",
+    "error": "UnsupportedProfile: the case is outside the unit's domain"
+   },
+   "differs": []
+  },
+  {
+   "case": "domain-norm-defaults",
+   "python": {
+    "status": "error",
+    "error": "UnsupportedProfile: the case is outside the unit's domain"
+   },
+   "lean": {
+    "status": "error",
+    "error": "UnsupportedProfile: the case is outside the unit's domain"
+   },
+   "differs": []
+  },
+  {
+   "case": "domain-soft",
+   "python": {
+    "status": "error",
+    "error": "UnsupportedProfile: the case is outside the unit's domain"
+   },
+   "lean": {
+    "status": "error",
+    "error": "UnsupportedProfile: the case is outside the unit's domain"
+   },
+   "differs": []
+  },
+  {
+   "case": "domain-quantity",
+   "python": {
+    "status": "error",
+    "error": "UnsupportedProfile: the case is outside the unit's domain"
+   },
+   "lean": {
+    "status": "error",
+    "error": "UnsupportedProfile: the case is outside the unit's domain"
+   },
+   "differs": []
+  },
+  {
+   "case": "domain-norms-string",
+   "python": {
+    "status": "error",
+    "error": "UnsupportedProfile: the case is outside the unit's domain"
+   },
+   "lean": {
+    "status": "error",
+    "error": "UnsupportedProfile: the case is outside the unit's domain"
+   },
+   "differs": []
+  },
+  {
+   "case": "domain-norms-member",
+   "python": {
+    "status": "error",
+    "error": "UnsupportedProfile: the case is outside the unit's domain"
+   },
+   "lean": {
+    "status": "error",
+    "error": "UnsupportedProfile: the case is outside the unit's domain"
+   },
+   "differs": []
+  },
+  {
+   "case": "profiles-without-norms",
+   "python": {
+    "status": "ok",
+    "outcome": "fault",
+    "check": "1.1d",
+    "text": "UnsupportedProfile: acts@0 requires norms@0"
+   },
+   "lean": {
+    "status": "ok",
+    "outcome": "fault",
+    "check": "1.1d",
+    "text": "UnsupportedProfile: norms@0 is required"
+   },
+   "differs": [
+    "text"
+   ]
+  },
+  {
+   "case": "profiles-acts-only",
+   "python": {
+    "status": "ok",
+    "outcome": "fault",
+    "check": "1.1d",
+    "text": "UnsupportedProfile: Missing profile relational-fol@0"
+   },
+   "lean": {
+    "status": "ok",
+    "outcome": "fault",
+    "check": "1.1d",
+    "text": "UnsupportedProfile: Missing profile relational-fol@0"
+   },
+   "differs": []
+  },
+  {
+   "case": "profiles-unsorted",
+   "python": {
+    "status": "ok",
+    "outcome": "fault",
+    "check": "1.1d",
+    "text": "UnsupportedProfile: profiles must be sorted and unique"
+   },
+   "lean": {
+    "status": "ok",
+    "outcome": "fault",
+    "check": "1.1d",
+    "text": "UnsupportedProfile: profiles must be sorted and unique"
+   },
+   "differs": []
+  },
+  {
+   "case": "profiles-repeated",
+   "python": {
+    "status": "ok",
+    "outcome": "fault",
+    "check": "1.1d",
+    "text": "UnsupportedProfile: profiles must be sorted and unique"
+   },
+   "lean": {
+    "status": "ok",
+    "outcome": "fault",
+    "check": "1.1d",
+    "text": "UnsupportedProfile: profiles must be sorted and unique"
+   },
+   "differs": []
+  },
+  {
+   "case": "profiles-definitions",
+   "python": {
+    "status": "ok",
+    "outcome": "clean"
+   },
+   "lean": {
+    "status": "ok",
+    "outcome": "clean"
+   },
+   "differs": []
+  },
+  {
+   "case": "profiles-data",
+   "python": {
+    "status": "ok",
+    "outcome": "clean"
+   },
+   "lean": {
+    "status": "ok",
+    "outcome": "clean"
+   },
+   "differs": []
+  },
+  {
+   "case": "profiles-time",
+   "python": {
+    "status": "ok",
+    "outcome": "clean"
+   },
+   "lean": {
+    "status": "ok",
+    "outcome": "clean"
+   },
+   "differs": []
+  },
+  {
+   "case": "profiles-documents",
+   "python": {
+    "status": "ok",
+    "outcome": "clean"
+   },
+   "lean": {
+    "status": "ok",
+    "outcome": "clean"
+   },
+   "differs": []
+  },
+  {
+   "case": "profiles-without-fol",
+   "python": {
+    "status": "ok",
+    "outcome": "fault",
+    "check": "1.1d",
+    "text": "UnsupportedProfile: Missing profile relational-fol@0"
+   },
+   "lean": {
+    "status": "ok",
+    "outcome": "fault",
+    "check": "1.1d",
+    "text": "UnsupportedProfile: Missing profile relational-fol@0"
+   },
+   "differs": []
+  },
+  {
+   "case": "multibyte-act",
+   "python": {
+    "status": "ok",
+    "outcome": "fault",
+    "check": "1.1d",
+    "text": "InvalidInput: invalid act phrase for paid"
+   },
+   "lean": {
+    "status": "ok",
+    "outcome": "fault",
+    "check": "1.1d",
+    "text": "InvalidInput: invalid act phrase for paid"
+   },
+   "differs": []
+  },
+  {
+   "case": "multibyte-phrase",
+   "python": {
+    "status": "ok",
+    "outcome": "fault",
+    "check": "1.1d",
+    "text": "InvalidInput: fixed phrase 'naïve rest' has 'naïve', which is not a word of letters"
+   },
+   "lean": {
+    "status": "ok",
+    "outcome": "fault",
+    "check": "1.1d",
+    "text": "InvalidInput: fixed phrase 'naïve rest' has 'naïve', which is not a word of letters"
+   },
+   "differs": []
+  },
+  {
+   "case": "multibyte-act-long",
+   "python": {
+    "status": "ok",
+    "outcome": "fault",
+    "check": "1.1d",
+    "text": "InvalidInput: invalid act phrase for paid"
+   },
+   "lean": {
+    "status": "ok",
+    "outcome": "fault",
+    "check": "1.1d",
+    "text": "InvalidInput: invalid act phrase for paid"
+   },
+   "differs": []
+  },
+  {
+   "case": "multibyte-phrase-long",
+   "python": {
+    "status": "ok",
+    "outcome": "fault",
+    "check": "1.1b",
+    "text": "ResourceLimit: fixed phrase 'zeta éééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééé' is over 300 bytes"
+   },
+   "lean": {
+    "status": "ok",
+    "outcome": "fault",
+    "check": "1.1b",
+    "text": "ResourceLimit: fixed phrase 'zeta éééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééé' is over 300 bytes"
+   },
+   "differs": []
+  },
+  {
+   "case": "spaces-act-double",
+   "python": {
+    "status": "ok",
+    "outcome": "clean"
+   },
+   "lean": {
+    "status": "ok",
+    "outcome": "clean"
+   },
+   "differs": []
+  },
+  {
+   "case": "spaces-act-edges",
+   "python": {
+    "status": "ok",
+    "outcome": "clean"
+   },
+   "lean": {
+    "status": "ok",
+    "outcome": "clean"
+   },
+   "differs": []
+  },
+  {
+   "case": "spaces-phrase-double",
+   "python": {
+    "status": "ok",
+    "outcome": "fault",
+    "check": "1.1d",
+    "text": "InvalidInput: fixed phrases 'equal pay for equal work' and 'equal  pay' overlap, or one holds the other"
+   },
+   "lean": {
+    "status": "ok",
+    "outcome": "fault",
+    "check": "1.1d",
+    "text": "InvalidInput: fixed phrases 'equal pay for equal work' and 'equal  pay' overlap, or one holds the other"
+   },
+   "differs": []
+  },
+  {
+   "case": "spaces-phrase-edges",
+   "python": {
+    "status": "ok",
+    "outcome": "fault",
+    "check": "1.1d",
+    "text": "InvalidInput: fixed phrases 'equal pay for equal work' and ' equal pay ' overlap, or one holds the other"
+   },
+   "lean": {
+    "status": "ok",
+    "outcome": "fault",
+    "check": "1.1d",
+    "text": "InvalidInput: fixed phrases 'equal pay for equal work' and ' equal pay ' overlap, or one holds the other"
+   },
+   "differs": []
+  },
+  {
+   "case": "spaces-act-tab",
+   "python": {
+    "status": "ok",
+    "outcome": "clean"
+   },
+   "lean": {
+    "status": "ok",
+    "outcome": "clean"
+   },
+   "differs": []
+  },
+  {
+   "case": "regulated-64",
+   "python": {
+    "status": "ok",
+    "outcome": "clean"
+   },
+   "lean": {
+    "status": "ok",
+    "outcome": "clean"
+   },
+   "differs": []
+  },
+  {
+   "case": "regulated-65",
+   "python": {
+    "status": "ok",
+    "outcome": "fault",
+    "check": "1.1d",
+    "text": "ResourceLimit: regulated predicates"
+   },
+   "lean": {
+    "status": "ok",
+    "outcome": "fault",
+    "check": "1.1d",
+    "text": "ResourceLimit: regulated predicates"
+   },
+   "differs": []
+  },
+  {
+   "case": "defined-without-definitions",
+   "python": {
+    "status": "ok",
+    "outcome": "fault",
+    "check": "1.1d",
+    "text": "Definitions require definitions@0"
+   },
+   "lean": {
+    "status": "ok",
+    "outcome": "fault",
+    "check": "1.1d",
+    "text": "defined declarations require the definitions@0 profile"
+   },
+   "differs": [
+    "text"
+   ]
+  },
+  {
+   "case": "defined-with-definitions",
+   "python": {
+    "status": "ok",
+    "outcome": "clean"
+   },
+   "lean": {
+    "status": "ok",
+    "outcome": "clean"
+   },
+   "differs": []
+  },
+  {
+   "case": "defined-regulated",
+   "python": {
+    "status": "ok",
+    "outcome": "fault",
+    "check": "1.1d",
+    "text": "RegulatedDefinedPredicate: paid"
+   },
+   "lean": {
+    "status": "ok",
+    "outcome": "fault",
+    "check": "1.1d",
+    "text": "RegulatedDefinedPredicate: paid"
+   },
+   "differs": []
+  },
+  {
+   "case": "flag-functional",
+   "python": {
+    "status": "ok",
+    "outcome": "fault",
+    "check": "1.1d",
+    "text": "fields do not match: expected [arguments, description], got [arguments, description, functional]"
+   },
+   "lean": {
+    "status": "ok",
+    "outcome": "fault",
+    "check": "1.1d",
+    "text": "fields do not match: expected [arguments, description], got [arguments, description, functional]"
+   },
+   "differs": []
+  },
+  {
+   "case": "flag-total",
+   "python": {
+    "status": "ok",
+    "outcome": "fault",
+    "check": "1.1d",
+    "text": "fields do not match: expected [arguments, description], got [arguments, description, total]"
+   },
+   "lean": {
+    "status": "ok",
+    "outcome": "fault",
+    "check": "1.1d",
+    "text": "fields do not match: expected [arguments, description], got [arguments, description, total]"
+   },
+   "differs": []
+  },
+  {
+   "case": "flag-plain-functional",
+   "python": {
+    "status": "ok",
+    "outcome": "fault",
+    "check": "1.1d",
+    "text": "fields do not match: expected [arguments, description], got [arguments, description, functional]"
+   },
+   "lean": {
+    "status": "ok",
+    "outcome": "fault",
+    "check": "1.1d",
+    "text": "fields do not match: expected [arguments, description], got [arguments, description, functional]"
+   },
+   "differs": []
+  },
+  {
+   "case": "admission",
+   "python": {
+    "status": "ok",
+    "outcome": "clean"
+   },
+   "lean": {
+    "status": "ok",
+    "outcome": "clean"
+   },
+   "differs": []
+  },
+  {
+   "case": "admission-no-document",
+   "python": {
+    "status": "error",
+    "error": "UnsupportedProfile: the case is outside the unit's domain"
+   },
+   "lean": {
+    "status": "error",
+    "error": "UnsupportedProfile: the case is outside the unit's domain"
+   },
+   "differs": []
+  },
+  {
+   "case": "admission-units-string",
+   "python": {
+    "status": "error",
+    "error": "UnsupportedProfile: the case is outside the unit's domain"
+   },
+   "lean": {
+    "status": "error",
+    "error": "UnsupportedProfile: the case is outside the unit's domain"
+   },
+   "differs": []
+  },
+  {
+   "case": "admission-mixed",
+   "python": {
+    "status": "ok",
+    "outcome": "clean"
+   },
+   "lean": {
+    "status": "ok",
+    "outcome": "clean"
+   },
+   "differs": []
+  },
+  {
+   "case": "admission-without-norms",
+   "python": {
+    "status": "ok",
+    "outcome": "fault",
+    "check": "1.1d",
+    "text": "UnsupportedProfile: acts@0 requires norms@0"
+   },
+   "lean": {
+    "status": "ok",
+    "outcome": "fault",
+    "check": "1.1d",
+    "text": "UnsupportedProfile: norms@0 is required"
+   },
+   "differs": [
+    "text"
+   ]
+  },
+  {
+   "case": "language",
+   "python": {
+    "status": "ok",
+    "outcome": "fault",
+    "check": "1.1d",
+    "text": "UnsupportedProfile: Unsupported profiles or specification revision"
+   },
+   "lean": {
+    "status": "ok",
+    "outcome": "fault",
+    "check": "1.1d",
+    "text": "UnsupportedProfile: Unsupported language"
+   },
+   "differs": [
+    "text"
+   ]
+  },
+  {
+   "case": "spec-revision",
+   "python": {
+    "status": "ok",
+    "outcome": "fault",
+    "check": "1.1d",
+    "text": "UnsupportedProfile: Unsupported specification revision x"
+   },
+   "lean": {
+    "status": "ok",
+    "outcome": "fault",
+    "check": "1.1d",
+    "text": "UnsupportedProfile: Unsupported specification revision x"
+   },
+   "differs": []
+  }
+ ]
+}
