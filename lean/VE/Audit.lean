@@ -9,6 +9,7 @@ import VE.Acts.Faithful
 import VE.Acts.FaithfulExamples
 import VE.Acts.Grammar
 import VE.Acts.GrammarExamples
+import VE.Acts.Index
 import VE.Acts.Lexical
 import VE.Acts.LexicalProofs
 import VE.Acts.Read
@@ -210,6 +211,7 @@ import VE.Grammar.Derives
 import VE.Grammar.Extension
 import VE.Grammar.Meaning
 import VE.Grammar.Reading
+import VE.Grammar.Table
 import VE.Grammar.TableInvariant
 import VE.Grammar.TableProofs
 import VE.GraphChecks
@@ -683,9 +685,13 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.Wire.joinedAct_read
 #print axioms VE.Acts.analyse_one
 #print axioms VE.Acts.applies_agree
+#print axioms VE.Acts.buildFast_eq
+#print axioms VE.Acts.build_eq_fast
 #print axioms VE.Acts.build_wf
 #print axioms VE.Acts.catalaValue_congr
+#print axioms VE.Acts.closedFast_eq
 #print axioms VE.Acts.closed_cl
+#print axioms VE.Acts.closed_eq_fast
 #print axioms VE.Acts.closed_ok
 #print axioms VE.Acts.compareViews_ok
 #print axioms VE.Acts.decides_tracks
@@ -704,14 +710,20 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.elaborate_wellFormed
 #print axioms VE.Acts.exists_child_tracks
 #print axioms VE.Acts.firstEqualPair_none
+#print axioms VE.Acts.firstsGo_empty
+#print axioms VE.Acts.firstsGo_eq
+#print axioms VE.Acts.firsts_filter
 #print axioms VE.Acts.frameRules_ok
 #print axioms VE.Acts.framesOk_words
 #print axioms VE.Acts.getElem?_map_idxOf
 #print axioms VE.Acts.globalRules_ok
 #print axioms VE.Acts.grammar_wf
+#print axioms VE.Acts.idxGo_get?
+#print axioms VE.Acts.idxGo_getD
 #print axioms VE.Acts.inj_of_nodup_map
 #print axioms VE.Acts.intended_tracks
 #print axioms VE.Acts.kwSyms_ok
+#print axioms VE.Acts.lazyReader_get
 #print axioms VE.Acts.listing_limit
 #print axioms VE.Acts.listing_nodup
 #print axioms VE.Acts.listing_ok
@@ -741,12 +753,15 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.readIn_none
 #print axioms VE.Acts.readIn_ok
 #print axioms VE.Acts.readIn_unique
+#print axioms VE.Acts.read_eq_once
 #print axioms VE.Acts.read_many
 #print axioms VE.Acts.read_none
 #print axioms VE.Acts.read_unique
+#print axioms VE.Acts.readingsBy_reader
 #print axioms VE.Acts.readingsIn_exact
 #print axioms VE.Acts.readingsIn_limit
 #print axioms VE.Acts.readingsIn_nodup
+#print axioms VE.Acts.readings_eq_once
 #print axioms VE.Acts.readings_exact
 #print axioms VE.Acts.readings_limit
 #print axioms VE.Acts.readings_nodup
@@ -3359,7 +3374,9 @@ import VE.WireContract.Engine
 #print axioms VE.Grammar.addCapped_eq
 #print axioms VE.Grammar.byNt_sym
 #print axioms VE.Grammar.byTerm_sym
+#print axioms VE.Grammar.combineFast_eq
 #print axioms VE.Grammar.combine_eq
+#print axioms VE.Grammar.combine_eq_fast
 #print axioms VE.Grammar.combine_ok
 #print axioms VE.Grammar.dedup_of_nodup
 #print axioms VE.Grammar.derivesAll_cons
@@ -5368,6 +5385,7 @@ import VE.WireContract.Engine
 #print axioms VE.Readings.Wire.replayPair_D
 #print axioms VE.Readings.Wire.routeSD_superposed_iff
 #print axioms VE.Readings.Wire.same_name
+#print axioms VE.Readings.Wire.sdCheckWork_eq_fast
 #print axioms VE.Readings.Wire.sdCheck_of_admitted
 #print axioms VE.Readings.Wire.sdChecked_spec
 #print axioms VE.Readings.Wire.sdSem_normsShaped
