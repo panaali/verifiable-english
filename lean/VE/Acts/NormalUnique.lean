@@ -118,9 +118,14 @@ theorem eq_ite_iff {α : Type} {a x y : α} {c : Prop} [Decidable c] :
     (a = if c then x else y) ↔ (c ∧ a = x) ∨ (¬c ∧ a = y) := by
   by_cases hc : c <;> simp [hc]
 
+/-- A goal kept whole while `rules_of` splits a rule's cases. -/
+def Box (p : Prop) : Prop := p
+theorem box_intro {p : Prop} (h : Box p) : p := h
+
 /-- The rules of the table whose left side is the one in `hr : ⟨X, rhs, k⟩ ∈ schema V`, one goal per rule, with
 `rhs` and `k` substituted; a frame's rule names the frame `fr` and its number's membership `hfr`. -/
 macro "rules_of" hr:ident fr:ident hfr:ident : tactic => `(tactic| (
+  apply box_intro
   simp only [schema, List.mem_append, List.mem_flatMap] at $hr:ident
   rcases $hr:ident with $hr:ident | ⟨⟨$fr:ident, _⟩, $hfr:ident, $hr:ident⟩ <;>
   first
@@ -129,7 +134,7 @@ macro "rules_of" hr:ident fr:ident hfr:ident : tactic => `(tactic| (
       intros <;> subst_vars)
   | (simp [globalRules, items, many1, tail] at $hr:ident <;>
       revert $hr:ident <;> simp only [or_imp, and_imp, forall_and, imp_self, forall_exists_index] <;> and_intros <;>
-      intros <;> subst_vars)))
+      intros <;> subst_vars)) <;> simp only [Box])
 
 /-- `gen_inv` with the rule written out. -/
 theorem gen_rule {X : NT} {w : List Tok} {ps : List Piece} (hg : Gen V (.n X) w ps) :
@@ -336,9 +341,9 @@ theorem mk_inv {m : String} (hw : wordsOf m ≠ []) {u : List Tok} {ps : List Pi
     ps = [] ∧ ∃ vs : List String, u = vs.map .word ∧ vs.map String.toLower = wordsOf m := by
   obtain ⟨rhs, k, cs, hr, hg, ha⟩ := gen_rule hg
   rules_of hr fr hfr
-  · obtain ⟨w, ws, hws⟩ := List.exists_cons_of_ne_nil hw
-    rw [hws, ap_MK] at ha; exact (Option.some.inj ha).symm
-  · obtain ⟨vs, rfl, hvs, -⟩ := kw_inv hg; exact ⟨vs, rfl, hvs⟩
+  obtain ⟨w, ws, hws⟩ := List.exists_cons_of_ne_nil hw
+  refine ⟨by rw [hws, ap_MK] at ha; exact (Option.some.inj ha).symm, ?_⟩
+  obtain ⟨vs, rfl, hvs, -⟩ := kw_inv hg; exact ⟨vs, rfl, hvs⟩
 
 theorem one_lower {vs : List String} {w : String} (h : vs.map String.toLower = [w]) : ∃ v, vs = [v] ∧ v.toLower = w := by
   match vs, h with
@@ -657,5 +662,106 @@ theorem pt_head {h : Nat} {u : List Tok} {cs : List Piece} (hg : Gen V (.n (.F h
     obtain ⟨x, rfl, hx, -⟩ := gen_t_inv h1
     cases x <;> simp [Term.accepts] at hx
     exact ⟨_, _, rfl, .inl rfl⟩
+
+theorem jw_not_part {p : Part} (hp : PartOk V f p) {v : String} (hv : v.toLower = "and" ∨ v.toLower = "or" ∨ v.toLower = "nor")
+    {rest : List Tok} : p.toks ≠ .word v :: rest := by
+  obtain ⟨x, rest', he, hx⟩ := part_head_not_excl hp
+  rw [he]; intro e; cases e
+  exact hx ⟨v, rfl, jw_excl hv⟩
+
+theorem pt_inv {h : Nat} (hf : (f, h) ∈ V.frames.zipIdx) (j : Join) : ∀ (rest : List Part) (q : Part)
+    {u v r : List Tok} {cs : List Piece}, Gen V (.n (.F h .PT)) u cs → u ++ v = tailToks j (q :: rest) ++ r →
+    (∀ x ∈ q :: rest, PartOk V f x) → Stop V f v → Stop V f r →
+    u = tailToks j (q :: rest) ∧ v = r ∧ ∀ p, listOf (.part p :: cs) = some (j, (p :: q :: rest).map .part)
+  | rest, q, u, v, r, cs, hg, he, hok, hv, hr => by
+    obtain ⟨rhs, k, cs', hr', hg, ha⟩ := gen_rule hg
+    rules_of hr' fr hfr <;> (have e := zip_frame hf hfr; subst fr)
+    · rw [ap_PT1] at ha; cases ha
+      obtain ⟨w1, w2, c1, c2, rfl, rfl, h1, h2⟩ := genAll2 hg
+      obtain ⟨v0, rfl, hv0⟩ := j_inv h1
+      cases rest with
+      | nil =>
+        simp only [tailToks, List.append_assoc, List.singleton_append, List.cons_append, List.cons.injEq,
+          Tok.word.injEq] at he
+        obtain ⟨rfl, he⟩ := he
+        obtain ⟨rfl, rfl, rfl⟩ := fl_part hf h2 he (hok q (by simp)) hv hr
+        refine ⟨by simp [tailToks], rfl, fun p => ?_⟩
+        rw [j_pieces h1 j (jw_lower j)]
+        simp [listOf]
+      | cons q' rest => simp [tailToks] at he
+    · obtain ⟨w1, w2, w3, c1, c2, c3, rfl, rfl, h1, h2, h3⟩ := genAll3 hg
+      obtain ⟨x, rfl, hx, -⟩ := gen_t_inv h1
+      cases x <;> simp [Term.accepts] at hx
+      obtain ⟨v0, rfl, hv0⟩ := j_inv h2
+      cases rest with
+      | nil => simp [tailToks] at he
+      | cons q' rest =>
+        simp only [tailToks_cons2, List.append_assoc, List.singleton_append, List.cons_append, List.cons.injEq,
+          true_and] at he
+        obtain ⟨x, rest', hq, hx⟩ := part_head_not_excl (hok q (by simp))
+        rw [hq] at he
+        simp only [List.nil_append, List.cons_append, List.cons.injEq] at he
+        exact (hx (he.1 ▸ ⟨v0, rfl, jw_excl hv0⟩)).elim
+    · obtain ⟨w1, w2, w3, c1, c2, c3, rfl, rfl, h1, h2, h3⟩ := genAll3 hg
+      obtain ⟨x, rfl, hx, hp1⟩ := gen_t_inv h1
+      cases x <;> simp [Term.accepts] at hx
+      simp [piecesOf] at hp1; subst hp1
+      rw [ap_PT2] at ha; cases ha
+      cases rest with
+      | nil => simp [tailToks] at he
+      | cons q' rest =>
+        simp only [tailToks_cons2, List.append_assoc, List.singleton_append, List.cons_append, List.cons.injEq,
+          true_and] at he
+        obtain ⟨x3, w3', rfl, hx3⟩ := pt_head h3
+        obtain ⟨xt, ut, htl, hxt⟩ := tailToks_head j q' rest
+        obtain ⟨rfl, he2, rfl⟩ := fl_part hf h2 he (hok q (by simp)) (stop_jc hx3) (by rw [htl]; exact stop_jc hxt)
+        obtain ⟨e3, rfl, hl⟩ := pt_inv hf j rest q' h3 he2 (fun x hx => hok x (List.mem_cons_of_mem _ hx)) hv hr
+        refine ⟨by rw [tailToks_cons2, ← e3]; simp, rfl, fun p => ?_⟩
+        simp only [List.nil_append, List.singleton_append, listOf_part, hl q, Option.map_some]
+        rfl
+
+theorem ap_PL_inv {h : Nat} {p : Part} {cs : List Piece} {j : Join} {ps : List Part} {X : List Piece}
+    (hl : listOf (.part p :: cs) = some (j, ps.map .part))
+    (ha : applyRule ⟨.F h .PL, [.n (.F h .FL), .n (.F h .PT)], .shape⟩ (.part p :: cs) = some X) : X = [.list j ps] := by
+  unfold applyRule at ha
+  split at ha <;> simp_all [Function.comp_def, mapM_some, mapM_part]
+
+theorem pl_inv {h : Nat} (hf : (f, h) ∈ V.frames.zipIdx) {j : Join} {ps : List Part} {u v r : List Tok}
+    {cs : List Piece} (hg : Gen V (.n (.F h .PL)) u cs) (he : u ++ v = listToks j ps ++ r) (hlen : 2 ≤ ps.length)
+    (hok : ∀ x ∈ ps, PartOk V f x) (hv : Stop V f v) (hr : Stop V f r) :
+    u = listToks j ps ∧ v = r ∧ cs = [.list j ps] := by
+  obtain ⟨p, q, rest, rfl⟩ : ∃ p q rest, ps = p :: q :: rest := by
+    match ps, hlen with
+    | p :: q :: rest, _ => exact ⟨p, q, rest, rfl⟩
+  obtain ⟨rhs, k, cs', hr', hg, ha⟩ := gen_rule hg
+  rules_of hr' fr hfr
+  have e := zip_frame hf hfr; subst fr
+  obtain ⟨w1, w2, c1, c2, rfl, rfl, h1, h2⟩ := genAll2 hg
+  rw [listToks_eq, List.append_assoc, List.append_assoc] at he
+  obtain ⟨x2, w2', rfl, hx2⟩ := pt_head h2
+  obtain ⟨xt, ut, htl, hxt⟩ := tailToks_head j q rest
+  obtain ⟨rfl, he2, rfl⟩ := fl_part hf h1 he (hok p (by simp)) (stop_jc hx2) (by rw [htl]; exact stop_jc hxt)
+  obtain ⟨e2, rfl, hl⟩ := pt_inv hf j rest q h2 he2 (fun x hx => hok x (List.mem_cons_of_mem _ hx)) hv hr
+  refine ⟨by rw [listToks_eq, e2], rfl, ap_PL_inv (hl p) ha⟩
+
+/-- A part followed by a comma or a join word, where the normal form has the part followed by an element (or the end):
+impossible. -/
+theorem jc_after_part (hW : VocabOk V) (hfr : f ∈ V.frames) {h : Nat} (hf : (f, h) ∈ V.frames.zipIdx) {p : Part}
+    {u x w r : List Tok} {cs : List Piece} (hg : Gen V (.n (.F h .FL)) u cs) (he : u ++ x ++ w = p.toks ++ r)
+    (hx : ∃ y x', x = y :: x' ∧ JC y) (hp : PartOk V f p) (hr : Next V f r) : False := by
+  obtain ⟨y, x', rfl, hy⟩ := hx
+  rw [List.append_assoc] at he
+  obtain ⟨-, rfl, -⟩ := fl_part hf hg he hp (stop_jc hy) (next_stop hr)
+  exact ef_not_jc hW hfr (hr y (by simp)) hy
+
+theorem pl_one (hW : VocabOk V) (hfr : f ∈ V.frames) {h : Nat} (hf : (f, h) ∈ V.frames.zipIdx) {p : Part}
+    {u v r : List Tok} {cs : List Piece} (hg : Gen V (.n (.F h .PL)) u cs) (he : u ++ v = p.toks ++ r)
+    (hp : PartOk V f p) (hr : Next V f r) : False := by
+  obtain ⟨rhs, k, cs', hr', hg, ha⟩ := gen_rule hg
+  rules_of hr' fr hfr'
+  have e := zip_frame hf hfr'; subst fr
+  obtain ⟨w1, w2, c1, c2, rfl, rfl, h1, h2⟩ := genAll2 hg
+  rw [List.append_assoc, ← List.append_assoc w1] at he
+  exact jc_after_part hW hfr hf h1 he (pt_head h2) hp hr
 
 end VE.Acts.NormalProofs
