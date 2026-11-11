@@ -1,4 +1,4 @@
-import VE.Acts.Elaborate
+import VE.Acts.Faithful
 
 /-! The split map is exact and a part is its source's declaration with atom i's act (docs/spec/act-phrases.md 6.6:
 `splitMap_exact`, `elaborate_parts`).
@@ -6,24 +6,12 @@ import VE.Acts.Elaborate
 The proofs of `wip/ap-3cb` (ap-3c's definitions), ported to the splits read once (ap-3d): every step reads the split
 `splitAtoms D` through `elaborateMap_ok`, so `partsOf`, `splitMap`, `splitReg` and `splitNode` take it as `sa`. Both
 statements are 6.6's, unchanged; they need no hypothesis on the source: step 3 (`namesOk`) gives the fresh, distinct
-generated names, and step 7's backstop gives that no split rule keeps its name.
+generated names, and step 7's backstop gives that no split rule keeps its name. `inj_of_nodup_map`, `mem_splitReg`
+and `mem_splitNode` are Faithful.lean's.
 -/
 
 namespace VE.Acts
 open VE.Norms VE.NormDefaults
-
-/-- Two members of a list whose images are distinct are equal when their images are. -/
-theorem inj_of_nodup_map {α β : Type} {f : α → β} :
-    ∀ {l : List α}, (l.map f).Nodup → ∀ {x y}, x ∈ l → y ∈ l → f x = f y → x = y
-  | [], _, _, _, hx, _, _ => absurd hx List.not_mem_nil
-  | a :: l, h, x, y, hx, hy, e => by
-    rw [List.map_cons, List.nodup_cons] at h
-    simp only [List.mem_cons] at hx hy
-    rcases hx with rfl | hx <;> rcases hy with rfl | hy
-    · rfl
-    · exact absurd (e ▸ List.mem_map_of_mem hy) h.1
-    · exact absurd (e.symm ▸ List.mem_map_of_mem hx) h.1
-    · exact inj_of_nodup_map h.2 hx hy e
 
 /-- Step 3 passed: every part name is fresh (no source regulated predicate, not unspecified) and the part names are
     distinct; every part rule name is fresh (no source rule) and the part rule names are distinct. -/
@@ -79,28 +67,6 @@ theorem mem_rules {D : ActsDoc} {sa : String → Option (List Atom)} {x : String
       ∃ N ∈ D.U.D.T.nodes, ∃ y ∈ partsOf sa N.pred, x = (partRule N.name y.2, N.name, y.2) := by
   simp only [splitMap, List.mem_flatMap, List.mem_map]
   exact ⟨fun ⟨N, hN, y, hy, e⟩ => ⟨N, hN, y, hy, e.symm⟩, fun ⟨N, hN, y, hy, e⟩ => ⟨N, hN, y, hy, e.symm⟩⟩
-
-theorem mem_splitReg {D : ActsDoc} {sa : String → Option (List Atom)} {r s : Regulated} :
-    s ∈ splitReg D sa r ↔ (partsOf sa r.name = [] ∧ s = r) ∨
-      ∃ x ∈ partsOf sa r.name, s = { r with name := partPred r.name x.2, act := some (partAct D.fixed r.role x.1),
-                                            permission := r.permission.map (partPred · x.2) } := by
-  unfold splitReg
-  cases partsOf sa r.name with
-  | nil => simp
-  | cons y ys =>
-    simp only [List.mem_map, reduceCtorEq, false_and, false_or]
-    constructor <;> rintro ⟨x, hx, e⟩ <;> exact ⟨x, hx, e.symm⟩
-
-theorem mem_splitNode {sa : String → Option (List Atom)} {N K : Node} :
-    K ∈ splitNode sa N ↔ (partsOf sa N.pred = [] ∧ K = N) ∨
-      ∃ x ∈ partsOf sa N.pred, K = { N with name := partRule N.name x.2, pred := partPred N.pred x.2,
-                                            over := N.over.map (partRule · x.2) } := by
-  unfold splitNode
-  cases partsOf sa N.pred with
-  | nil => simp
-  | cons y ys =>
-    simp only [List.mem_map, reduceCtorEq, false_and, false_or]
-    constructor <;> rintro ⟨x, hx, e⟩ <;> exact ⟨x, hx, e.symm⟩
 
 theorem splitMap_exact (D : ActsDoc) {U' : VE.NormDefaults.UDoc} {M : SplitMap} (h : elaborateMap D = .ok (U', M)) :
     (∀ q, (q ∈ U'.D.T.regulated.map (·.name) ∧ q ∉ D.U.D.T.regulated.map (·.name)) ↔ ∃ p i, (q, p, i) ∈ M.preds) ∧
