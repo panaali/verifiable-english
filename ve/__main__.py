@@ -7,7 +7,7 @@ import sys
 from .ast import doc_from_json, document_to_data
 from .check import check
 from .environment import Environment
-from .errors import CheckerUnavailable, ResourceLimit, VEError
+from .errors import CheckerUnavailable, ResourceLimit, VEError, diagnostic_answer
 from .fol import document_from_named_fol
 from .limits import MAX_PACKAGE_BYTES, MAX_SOURCE_BYTES
 from .model import FiniteModel
@@ -35,10 +35,10 @@ def _emit(value):
 
 def _emit_error(exc):
     """The one structured answer for an input diagnostic: `{status, error}` on stdout, and its exit code (4 for
-    `ResourceLimit`, else 2). `CheckerUnavailable` is not a `VEError`; `main` answers it."""
-    limit = exc.code == "ResourceLimit"
-    _emit({"status": "ResourceLimit" if limit else "InvalidInput", "error": exc.to_dict()})
-    return 4 if limit else 2
+    `ResourceLimit`, else 2), from `diagnostic_answer`. `CheckerUnavailable` is not a `VEError`; `main` answers it."""
+    answer, code = diagnostic_answer(exc)
+    _emit(answer)
+    return code
 
 
 EXIT_CHECKER_UNAVAILABLE = 5
