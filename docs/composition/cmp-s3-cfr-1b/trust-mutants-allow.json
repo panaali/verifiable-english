@@ -1,0 +1,4 @@
+{"allow": [
+{"definition": "VE.RightClauses.checkSpans", "operator": "list-empty", "reason": "ill-typed as generated: [] for the Option (earlier.getEntryLT? s.2) does not elaborate (Invalid projection)"},
+{"definition": "VE.RightClauses.checkBody", "operator": "list-empty", "reason": "ill-typed as generated: [] for the field access L.clauses does not elaborate (Invalid field notation)"}
+]}

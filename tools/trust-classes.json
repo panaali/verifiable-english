@@ -17868,7 +17868,21 @@
         "VE.RightClauses.Examples.verdict",
         "VE.RightClauses.Examples.twice",
         "VE.RightClauses.Examples.twoHolders",
-        "VE.RightClauses.Examples.across"
+        "VE.RightClauses.Examples.across",
+        "VE.RightClauses.Examples.checkSpansPairwise",
+        "VE.RightClauses.Examples.spanLists",
+        "VE.RightClauses.Examples.samePairwise",
+        "VE.RightClauses.Examples.world",
+        "VE.RightClauses.Examples.oneClaim",
+        "VE.RightClauses.Examples.claimLine",
+        "VE.RightClauses.Examples.f11Trigger",
+        "VE.RightClauses.Examples.f11",
+        "VE.RightClauses.Examples.f11World",
+        "VE.RightClauses.Examples.f12Scope",
+        "VE.RightClauses.Examples.f12",
+        "VE.RightClauses.Examples.f13",
+        "VE.RightClauses.Examples.twoStates",
+        "VE.RightClauses.Examples.slotChecks"
       ]
     },
     "VE/Acts/DecodeTwins.lean": {
@@ -21208,7 +21222,9 @@
       "G[V]": [
         "VE.RightClauses.Run.labelledJson",
         "VE.RightClauses.Run.elaborateCase",
-        "VE.RightClauses.Run.runCaseReported"
+        "VE.RightClauses.Run.runCaseReported",
+        "VE.RightClauses.Run.lineObjects",
+        "VE.RightClauses.Run.deepLine"
       ]
     },
     "VE/RightClauses/WireDecode.lean": {
@@ -21244,7 +21260,10 @@
         "VE.RightClauses.RunExamples.countryOf",
         "VE.RightClauses.RunExamples.twoLines",
         "VE.RightClauses.RunExamples.plainOnWire",
-        "VE.RightClauses.RunExamples.depth64"
+        "VE.RightClauses.RunExamples.depth64",
+        "VE.RightClauses.RunExamples.bodies",
+        "VE.RightClauses.RunExamples.scopes",
+        "VE.RightClauses.RunExamples.deep"
       ]
     },
     "VE/Presupposition/Run.lean": {

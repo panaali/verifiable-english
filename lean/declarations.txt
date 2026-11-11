@@ -21664,7 +21664,7 @@ module VE.RightClauses.Run b2cb0c25cc9bde7a4bd4d0c0b0a6ece1e033a4938792307643f8e
 20:0-25:76 def VE.RightClauses.Run.deepLine@VE.RightClauses.Run
 27:0-50:60 def VE.RightClauses.Run.elaborateCase@VE.RightClauses.Run
 52:0-55:111 def VE.RightClauses.Run.runCaseReported@VE.RightClauses.Run
-module VE.RightClauses.RunExamples 5bd637410dd1183888f8faaa988603efbe6e54ba0b738852ab9706a3c9bd0622
+module VE.RightClauses.RunExamples c310c0772adfb7d86ac0324e94f54a0bd159efd1b5aae91361485535df1a79ec
 9:0-9:67 def VE.RightClauses.RunExamples.parse@VE.RightClauses.RunExamples
 10:0-18:41 def VE.RightClauses.RunExamples.profiles@VE.RightClauses.RunExamples
 19:0-19:103 def VE.RightClauses.RunExamples.on@VE.RightClauses.RunExamples
@@ -21679,8 +21679,8 @@ module VE.RightClauses.RunExamples 5bd637410dd1183888f8faaa988603efbe6e54ba0b738
 128:0-128:111 def VE.RightClauses.RunExamples.plainOnWire@VE.RightClauses.RunExamples
 129:0-129:94 def VE.RightClauses.RunExamples.depth64@VE.RightClauses.RunExamples
 145:0-149:121 def VE.RightClauses.RunExamples.bodies@VE.RightClauses.RunExamples
-156:0-158:36 def VE.RightClauses.RunExamples.scopes@VE.RightClauses.RunExamples
-163:0-163:100 def VE.RightClauses.RunExamples.deep@VE.RightClauses.RunExamples
+157:0-159:36 def VE.RightClauses.RunExamples.scopes@VE.RightClauses.RunExamples
+164:0-164:100 def VE.RightClauses.RunExamples.deep@VE.RightClauses.RunExamples
 module VE.RightClauses.Tree bd6257aa16d4dec44578a9ab55d090325827fbc5f22d9d9f6372247d14f06e2d
 14:0-15:28 inductive VE.RightClauses.Role@VE.RightClauses.Tree
 15:11-15:22 instance VE.RightClauses.instDecidableEqRole@VE.RightClauses.Tree

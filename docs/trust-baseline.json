@@ -2501,14 +2501,14 @@
   {
    "class": "S",
    "lines": 6,
-   "reason": "cmp-s3-cfr-1b: S +6 (VE/RightClauses/Plain.lean), V +80 (VE/RightClauses/Examples.lean +52, Run.lean +17, RunExamples.lean +11); K +0",
+   "reason": "cmp-s3-cfr-1b: S +6 (VE/RightClauses/Plain.lean: checkSpans, checkBody), V +17 (VE/RightClauses/Run.lean: lineObjects, deepLine, elaborateCase's two charges); K +0; the fixtures are T",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s3-cfr-1b, 2026-11-11",
    "commit": "69fc95777676036f90b8cb8af69d27b08cf3eb88"
   },
   {
    "class": "V",
-   "lines": 80,
-   "reason": "cmp-s3-cfr-1b: S +6 (VE/RightClauses/Plain.lean), V +80 (VE/RightClauses/Examples.lean +52, Run.lean +17, RunExamples.lean +11); K +0",
+   "lines": 17,
+   "reason": "cmp-s3-cfr-1b: S +6 (VE/RightClauses/Plain.lean: checkSpans, checkBody), V +17 (VE/RightClauses/Run.lean: lineObjects, deepLine, elaborateCase's two charges); K +0; the fixtures are T",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s3-cfr-1b, 2026-11-11",
    "commit": "69fc95777676036f90b8cb8af69d27b08cf3eb88"
   }
