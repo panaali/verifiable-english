@@ -167,6 +167,8 @@ DEADLINES: dict[str, tuple[float, float]] = {
     # The `clauses-elaborate` mode (right-clauses 8.1): the head's decoding and checks, then the rights decoder and
     # its checks on the plained document, as the `rights` mode runs them.
     "clauses-elaborate": (120.0, 120.0),
+    # The `english.statement` mode (en-e3-norm EN-2): english.read's deadline (spec 2.3, recipe step 4).
+    "english.statement": _CORE,
 }
 WALL_FACTOR = 10.0
 _MIB = 1 << 20

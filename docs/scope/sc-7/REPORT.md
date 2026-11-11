@@ -57,7 +57,7 @@ relay and binding fuzz tests (docs/ROUTE-RECIPE.md), well past 600.
 
 ## Evidence
 
-- **Trust** (`tools/trust_map.py --check`): K +0, S +37, D +140, trusted +149 against da5303b78769, all in Authoring.lean.
+- **Trust** (`tools/trust_map.py --check`): K +0, S +37, V +112, trusted +149 against da5303b78769, all in Authoring.lean (re-measured by sc-7-f11 on main f3f40d51d: `trust_map.py --files` gives Authoring.lean S 37, D 140 of which D[V] 112 and D[I] 28, trusted 149; "D +140" counted the D[I] lines, which are not trusted).
 - **Trust mutants**: `mac-pytest.sh --trustmut -- --max-mutants 1000 --test lean/VE/Scope/AuthoringExamples.lean --json
   docs/scope/sc-7/trust-mutants.json --allow docs/scope/sc-7/trust-mutants-allow.json`, a full run on b11beab23 (the
   allow-list round; later commits change no Lean): 229 KILLED, 0 SURVIVOR, 0 UNKNOWN, 64 INVALID, 27 ALLOWED (ill-typed, or

@@ -205,6 +205,57 @@ def slotsEnding (e : String) : List String :=
   (parseGovernor · == none)
 #guard [0x1D159, 0xE000, 0xFFFC].all fun n => [s!".{Char.ofNat n}", s!"{Char.ofNat n}", s!".{Char.ofNat n}”"].all fun e =>
   (slotsEnding e).all (parseGovernor · == none)
+
+/-! ## sc-7-f11: a sentence end inside a word, with a blank-looking character in place of the space (`clause`) -/
+
+/-- Each slot with `e` inside a word, joined to the next word with no space. -/
+def slotsJoined (e : String) : List String :=
+  [s!"## If the user says x{e}The rest", s!"## When asked{e}The refuse", s!"The hard constraints apply only where x{e}The y.",
+   s!"The hard constraints do not apply when x{e}The y.", s!"Notwithstanding the rules of section 3, x{e}The y.",
+   s!"Notwithstanding the rules of section 3{e}The, x.", s!"This applies only where x{e}The y.",
+   s!"The rules below are called the x{e}The rules below are called the y.",
+   s!"In place of their own condition, the x{e}The y apply only where {kindWording}."]
+-- the recheck's FOLLOW-UP F11: U+1D159, U+FFFC and U+E000 joined, as a list name and as a condition, and in every slot,
+-- alone, after a closer and before one
+#guard [0x1D159, 0xFFFC, 0xE000].all fun n => let c := Char.ofNat n
+  [s!"The rules below are called the x.{c}The rules below are called the y.",
+   s!"The hard constraints apply only where the x.{c}The rules below are called the y."].all (parseGovernor · == none) &&
+  [s!".{c}", s!".”{c}", s!".{c}”"].all fun e => (slotsJoined e).all (parseGovernor · == none)
+-- the class: each of F7's sentence ends, joined by a blank-looking, invisible or mark character, in every slot
+#guard ".?!:…‽。？！：．".toList.all fun t => [0x1D159, 0xFFFC, 0xE000, 0x200B, 0x2060, 0x3164, 0x2800, 0x0301].all fun n =>
+  (slotsJoined s!"{t}{Char.ofNat n}").all (parseGovernor · == none)
+-- the other direction: a "." inside a word before a `follower` stays in its slot
+#guard [".", ".)", "”", ".(", ".—"].all fun e => (slotsJoined e).all fun w => (parseGovernor w).isSome
+#guard trip "The hard constraints apply only where the dose is over 3.5 mg, e.g in a trial." "{\"reach\": {\"list_name\": \"the hard constraints\"}, \"effect\": {\"reguard\": [\"and\", \"own\", {\"english\": \"the dose is over 3.5 mg, e.g in a trial\"}]}}"
+#guard ["e.g", "3.5", "x.y", "x.)y", "x.”’y", "Claude’s", "(x)", "“x”", "x—y", "x\u200By", "cafe\u0301s", "x..y", "x——y",
+  "wait...,", "((a))", "“(a)”)", "(b)—is", "user’(s)", "(a)–(b)", "x.!y", "x.~y", "x.\u2010y", "x.\u2027y", "x.\u2024y"].all clause
+#guard ["The hard constraints apply only where the act (see “(a)”) is final.", "The hard constraints apply only where the act ((a)) is final.",
+  "The hard constraints apply only where the act—(a) or (b)—is final.", "The hard constraints apply only where the user’(s) act is final.",
+  "The hard constraints apply only where the user says wait..., then x."].all fun w => (parseGovernor w).isSome
+-- `follower`'s edges: the ends of its two ranges and a Latin letter are in, the characters just beside them are not
+#guard [0x21, 0x7E, 0x2010, 0x2027, 0xC0, 0x24F].all (follower ∘ Char.ofNat) &&
+  ![0x20, 0x7F, 0x80, 0x200F, 0x2028, 0xBF, 0x250, 0xD7].any (follower ∘ Char.ofNat)
+#guard ["x.Ày", "x.ɏy", "x”éy"].all clause
+-- what this rule refuses that was accepted: a character outside the allow-list, then one that is no `follower`, inside a
+-- word (the edges of `follower`'s two ranges among them)
+#guard ["x.\u0301y", "x\u200B\u200By", "xαβy", "x”\u0301y", "Привет,", "日本語-text", "x.\u200Fy", "x.\u2030y", "x.¡y", "x.\u2060y"].all
+  (!clause ·)
+-- a Markdown character reference in a word draws a space or a sentence end where the source has none (`charRef`; the
+-- DRI decision 2026-11-10 sc-7-f11 item 1): refused in every slot, at a word's end and inside it
+#guard ["The hard constraints apply only where x&#46; y.", "The rules below are called the x.&nbsp;The rules below are called the y."].all
+  (parseGovernor · == none)
+#guard ["&nbsp;", "&#32;", "&#x20;", "&period;", "&#46;", "&#46;&#32;The", ".&nbsp;The", "&amp;", "&#5;"].all fun e =>
+  (slotsEnding e ++ slotsJoined e).all (parseGovernor · == none)
+#guard ["x&nbsp;y", "x&#32;", "x&#x20;y", "x&period;", "&#46;", "x.&nbsp;y"].all (!clause ·)
+-- a reference after another "&", or before one, and a pair at a word's start (trust mutants: the first or last "&" only,
+-- the first pair skipped)
+#guard ["x&y&nbsp;z", "x&nbsp;&y", ".\u200By", "\u0301\u0301y", "x .\uFFFCThe"].all (!clause ·)
+-- a run of one is a reference too (the ruling's "non-empty run"; sc-7-f11 review F2), in every slot
+#guard ["&a;", "&#;", "&1;", "AT&T;", "x&#;", "x&a;y", "R&D;"].all (!clause ·)
+#guard ["&a;", "&#;", "AT&T;", "x&#;"].all fun e => (slotsEnding e ++ slotsJoined e).all (parseGovernor · == none)
+-- "&" with no run before ";", or with no ";", is no reference
+#guard ["AT&T", "AT&T,", "x&;", "x&;y", "R&D-heavy", "x&y", "x&nbsp", "x&-;"].all clause
+#guard trip "The rules below are called the AT&T rules." "{\"list_name\": \"the AT&T rules\"}"
 -- a word that is empty once its closers are dropped is refused
 #guard [")", "x )", "x ”’", "\"", "x *_"].all (!clause ·)
 #guard ["The hard constraints apply only where x ) y.", "The rules below are called the x ” The rules below are called the y."].all
