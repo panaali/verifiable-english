@@ -564,3 +564,70 @@ def test_right_clauses_rights_environment_reads_the_profile():
         assert str(refusal.value) == "UnknownSymbol: sort citizen"
     with pytest.raises(VEError, match="^UnsupportedProfile: rights@0 is required$"):
         RightsEnvironment(environment([p for p in ON if p != "rights@0"]))
+
+
+def test_right_clauses_bind_counts_only_what_its_docstring_binds(service):
+    """cmp-s3-cfr-1b review F2: the module docstring claimed `bind` leaves "no row missing or extra", but `bind` does
+    not count `Lim` rows (rights' scope is Lean's, DRI 2026-11-04 Q3). `bind`'s docstring owns the contract; the module
+    docstring defers to it. Both sides of that contract are pinned on K13's genuine slot `[Lim, Rel]`: a `Lim` row
+    dropped or doubled binds; the totality row dropped, doubled or moved, and a plained unit dropped or doubled, do not."""
+    import ve.right_clauses as relay
+    assert "no row missing or extra" not in relay.__doc__
+    assert "`bind`" in relay.__doc__ and "is Lean's" in relay.__doc__
+    assert "is not bound here" in relay.bind.__doc__
+    [row] = exchange(service, "clauses-elaborate", [{"id": "K13", "environment": DIFFERENTIAL["K13"][0],
+                                                     "document": DIFFERENTIAL["K13"][1]}])
+    result = row["result"]
+    slot = result["clause_slot"]
+    assert [r["label"].split(":")[1] for r in slot] == ["limitation", "relation"]
+    lim, rel = slot
+    for kept in ([rel], [lim, lim, rel], [lim, lim, lim, rel]):
+        assert _bound({**result, "clause_slot": kept}, "K13") is not None, kept
+    for refused in ([lim], [lim, rel, rel], [rel, lim], [lim, rel, lim], []):
+        assert _bound({**result, "clause_slot": refused}, "K13") is None, refused
+    units = json.loads(result["plained"])
+    for refused in (units[:-1], units + units[-1:]):
+        assert _bound({**result, "plained": canonical(refused)}, "K13") is None
+
+
+REPORT = ROOT / "docs/composition/cmp-s3-cfr-1b/REPORT.md"
+# reviews/dri-decisions-20261111-cmp-s3-cfr-1b.md item 1: the three route verdicts moved to cmp-s3-cfr-1c, on condition
+# that this item's REPORT lists them as moved and cites the decision (cmp-s3-cfr-1b review F1).
+MOVED = {"reviews/dri-decisions-20261111-cmp-s3-cfr-1b.md item 1": (
+    ("K3", "fragment: no (rights:relation:equal-access:total)"),
+    ("F12", "OPEN through the open term `full_equality`"),
+    ("F14", "E19"))}
+
+
+def _section(text: str, title: str) -> str:
+    assert f"\n## {title}\n" in text, f"no section {title!r}"
+    start = text.index(f"\n## {title}\n")
+    end = text.find("\n## ", start + 1)
+    return text[start:end if end >= 0 else len(text)]
+
+
+def test_right_clauses_report_lists_every_moved_item():
+    """cmp-s3-cfr-1b review F1 (a silent cut): every route verdict a DRI decision moved out of this item is listed in
+    the REPORT's "Moved" section with the decision cited; the Deliverables table marks it not delivered, and no plan
+    (2) row that names its fixture claims it unexcepted; the summary, Next items, Spec re-read and self-review items 2 and 15
+    cite the decision."""
+    text = REPORT.read_text(encoding="utf-8")
+    moved = _section(text, "Moved")
+    table = [line for line in _section(text, "Deliverables").splitlines() if line.startswith("| (")]
+    summary = text.split("\n## ", 1)[0]
+    review = _section(text, "Self-review against BUILDER-CHECKLIST")
+    items = {n: " ".join(review[review.index(f"\n{n}. "):review.find(f"\n{n + 1}. ")].split()) for n in (2, 15)}
+    for decision, verdicts in MOVED.items():
+        cited = decision.split(" item ")[0]
+        assert decision in moved and decision in summary, decision
+        for part in (_section(text, "Next items"), _section(text, "Spec re-read"), items[2]):
+            assert cited in part
+        assert "moved route verdicts" in items[15] and '"Moved"' in items[15]
+        moved_rows = [line for line in table if cited in line]
+        assert moved_rows and all("not delivered, moved" in line for line in moved_rows)
+        for fixture, verdict in verdicts:
+            assert verdict in moved, verdict
+            assert any(fixture in line for line in moved_rows), fixture
+            for line in table:  # plan (2) rows: the fixtures' verdicts; (1)'s differential stays (the decision keeps it)
+                if line.startswith("| (2)") and fixture in line.replace("K13", "") and line not in moved_rows:
+                    assert "excepted" in line, line

@@ -3,7 +3,9 @@
 No DRI signature is reserved in this item. Branch feature/cmp-s3-cfr-1b. Plan: prompts/task-cmp-s3.txt deliverables
 (1) (only `clauseSlot_wellFormed`), (3), (4), (5); docs/spec/right-clauses.md 8.4, 9.1-9.3, W1. Scope ruling:
 reviews/dri-decisions-20261110-cmp-s3-cfr-1b.md (Q1: RC1-RC5 rendering moved; Q2: the proof stays, proof lines exempt
-from the size line). Prerequisite cmp-s3-cfr-1 is on main (merge base, then main merged at the end).
+from the size line). Prerequisite cmp-s3-cfr-1 is on main (merge base, then main merged at the end). Three route
+verdicts of (2) are not built here: moved to cmp-s3-cfr-1c (reviews/dri-decisions-20261111-cmp-s3-cfr-1b.md item 1);
+see "Moved".
 
 ## Deliverables
 
@@ -13,8 +15,9 @@ from the size line). Prerequisite cmp-s3-cfr-1 is on main (merge base, then main
 | (1) "render RC1-RC5" | not delivered, moved: RC1-RC4 to cmp-s3-cfr-1d, RC5 to cmp-s3-candrel (reviews/dri-decisions-20261110-cmp-s3-cfr-1b.md item 1; spec 2 shows each RC only through W7) | none |
 | (1) byte for byte with Lean on K1-K15, F11, F12, F14 | 735cd7ed66 | test_right_clauses_differential (plained bytes and slot rows equal; refusals raise Lean's text as its class; K10, K11, K12, K14 texts pinned) |
 | Schema and binding, fuzz that retypes and rebinds each field (R8) | 4e3667a472, 735cd7ed66 | test_right_clauses_relay_binds_every_field; tools/relay_mutation_gate.py --route service:clauses-elaborate: 528 mutants, 528 refused, 0 allowed (CFR1A/CFR1B allow rows dropped) |
-| (2) 9.1 K2, K3, K10, K13 | Examples.lean (cmp-s3-cfr-1 sections K2, K3, K13; slot at layer 0 in this item's section), differential | K_FIXTURES, DIFFERENTIAL rows K2, K3, K10, K13 (K13: `Lim_D`'s premise before `Rel_D`'s) |
-| (2) 9.2 F11-F14 (G8 waits for cmp-s3-candrel) | Examples.lean "cmp-s3-cfr-1b" section | #guards; F11, F12, F14 in the differential |
+| (2) 9.1 K2, K3, K10, K13: the head's answers (K3's route verdict excepted, row below) | Examples.lean (cmp-s3-cfr-1 sections K2, K3, K13; slot at layer 0 in this item's section), differential | K_FIXTURES, DIFFERENTIAL rows K2, K3, K10, K13 (K13: `Lim_D`'s premise before `Rel_D`'s) |
+| (2) 9.2 F11-F14: the head's answers (G8 waits for cmp-s3-candrel; F12's and F14's route verdicts excepted, row below) | Examples.lean "cmp-s3-cfr-1b" section | #guards; F11, F12, F14 in the differential |
+| (2) the route verdicts of K3, F12 and F14 (spec 4.1 step 6) | not delivered, moved to cmp-s3-cfr-1c (reviews/dri-decisions-20261111-cmp-s3-cfr-1b.md item 1); see "Moved" | none here; cfr-1c's test_right_clauses_k3_route_fragment, test_right_clauses_f12_route_open, test_right_clauses_f14_route_admitted |
 | (2) K9, K10, K15 | K_FIXTURES, DIFFERENTIAL | test_right_clauses_differential |
 | (2) W1's 10,000-node budget on `plain D`, a large well-formed document within it (evaluator rule 2026-10-27) | 4e3667a472 (the head charges lines before decoding, spans in O(s log s), cites by one set, deep plain guards) | test_right_clauses_w1_budget: four 400-atom clauses read; four 833-atom clauses pass the node budget (the layer budget refuses them); one atom more is `AST exceeds 10,000 nodes`; 257 lines, 64 conjuncts, 30,000 spans and 20,000 cites end within the deadline |
 | (3) `clauseSlot_wellFormed` (8.4) as stated | 8d9ade24d6 | the statement is spec 8.4's word for word; standard axioms only (lean/audit.py); Examples.lean checks the slot at layer 0 on K3, K13, F11 |
@@ -26,6 +29,18 @@ from the size line). Prerequisite cmp-s3-cfr-1 is on main (merge base, then main
 stratum graph is part of the correlated one (`PWF.layer_names`), generated names are fresh (`PWF.genDecls_fresh`, the
 soft check), and rights' `checkShape` puts the right's holder sort on the holder slot. So the cmp-s3 REPORT's missing
 premise ("every regulated or defined name is a layer name of the base tree") does follow from `WellFormedRights (plain D)`.
+
+## Moved
+
+Not built in this item; moved to cmp-s3-cfr-1c (reviews/dri-decisions-20261111-cmp-s3-cfr-1b.md item 1, under R9),
+together with spec 4.1 step 6 for both heads. Each is a route verdict: it exists only once the head hands the plained,
+key-free document to the head `dispatch` names, with Rel_D in the slot, and no route does that yet. This item keeps
+K3, F12 and F14 as #guards on the head and in the differential (rows above).
+
+- (a) K3's report `fragment: no (rights:relation:equal-access:total)` (cfr-1c: test_right_clauses_k3_route_fragment).
+- (b) F12's unit OPEN through the open term `full_equality` (cfr-1c: test_right_clauses_f12_route_open).
+- (c) F14's set admitted through S1 on plained candidates, separated at the non-country pair, worded by composition.md
+  E19 (cfr-1c: test_right_clauses_f14_route_admitted).
 
 ## Main's answers (the DELTA's evidence)
 
@@ -54,6 +69,9 @@ its mutants fail.
 | Depth charge on any line | Run.lean `deepLine` | `any` to `all` (trust mutant M024) | RunExamples.lean:168 (`deep`, one deep line among shallow ones) |
 | Line charge on a bodiless unit | Run.lean `lineObjects` | `getD 0` to `getD 1` (M035) | RunExamples.lean:152 |
 | Depth charge on candidates | Run.lean `deepLine` | only the first candidate group read (M062) | RunExamples.lean:180 (`deepIn`) |
+| The module docstring defers to `bind` (review F2) | ve/right_clauses.py module docstring | "no row missing or extra" restored | test_right_clauses_bind_counts_only_what_its_docstring_binds |
+| `Lim` rows are not counted (review F2) | ve/right_clauses.py `bind` | a repeated `Lim` label refused | test_right_clauses_bind_counts_only_what_its_docstring_binds (K13 `[Lim, Lim, Rel]`) |
+| The REPORT lists every moved item (review F1) | REPORT.md | this item's REPORT at 3a5e040544 | test_right_clauses_report_lists_every_moved_item ("Moved" missing) |
 
 The K8 and K2 mutants are refused by the kernel in the proofs that state those behaviours (`clauseSlot_wellFormed`,
 `clauseSlot_no_total`), not at a hash or build step of the tooling. No `#guard` can catch them, because the mutated
@@ -100,7 +118,8 @@ cmp-s3a-cfr-3's. Nothing is claimed before a pilot audit.
 ## Next items
 
 cmp-s3-cfr-1d (RC1-RC4 rendering through W7), cmp-s3-candrel (G8, RC5, F13's set form), cmp-s3-cfr-1c (reading
-candidates under the profile, K12's join).
+candidates under the profile, K12's join, spec 4.1 step 6 for both heads, and the route verdicts of K3, F12 and F14:
+see "Moved", reviews/dri-decisions-20261111-cmp-s3-cfr-1b.md item 1).
 
 ## Notes for the DRI
 
@@ -118,6 +137,21 @@ candidates under the profile, K12's join).
 - W1 (test_right_clauses_w1_budget) against right-clauses.md:609-610: the AST budget is W1's own text, with no new limit.
   The two earlier charges answer W1's existing texts (`ResourceLimit: rules`, `formula depth exceeds 64`), as DELTA
   rows 1 and 2 under R2.
+- K3, F12, F14 (right-clauses.md:572, 591, 593) against what is built: the head's columns (slot, plain guard,
+  `elided`, `selectsAt`, `plainContent`) are #guards and differential rows. The route columns, K3's
+  `fragment: no (…:total)`, F12's "unit OPEN through the open term" and F14's "admitted through S1 … worded by E19",
+  are not built: moved to cmp-s3-cfr-1c (reviews/dri-decisions-20261111-cmp-s3-cfr-1b.md item 1; "Moved").
+
+## Review fixes (cmp-s3-cfr-1b-review.final.md, text only; no answer, verdict or binding changes)
+
+- F1: the three route verdicts the DRI moved (reviews/dri-decisions-20261111-cmp-s3-cfr-1b.md item 1) are listed:
+  summary, Deliverables (not delivered), "Moved", Next items, Spec re-read, self-review 2 and 15.
+  test_right_clauses_report_lists_every_moved_item checks every moved verdict in each of those places, and that no
+  plan (2) row naming its fixture claims it unexcepted.
+- F2: ve/right_clauses.py's module docstring no longer says `bind` leaves "no row missing or extra"; it defers to
+  `bind`'s docstring, which owns the contract. test_right_clauses_bind_counts_only_what_its_docstring_binds pins both
+  sides on K13: a `Lim` row dropped or doubled binds (review note C1), a totality row or plained unit dropped or doubled
+  does not.
 
 ## Tests run
 
@@ -138,8 +172,10 @@ candidates under the profile, K12's join).
    [], {}, 1.5, a nested list) and a 100,000-deep plained text. tools/relay_mutation_gate.py --route
    service:clauses-elaborate: 528 mutants, 528 refused.
 2. Deliverables built: PASS. See the Deliverables table (commit and test per row). RC1-RC5 were moved by
-   reviews/dri-decisions-20261110-cmp-s3-cfr-1b.md item 1. ve/right_clauses.py only relays and binds (R8).
-3. Tests can fail: PASS. Seeded bugs table, mutants.json (14 entries), trust-mutants.json (exit 0: 0 SURVIVOR,
+   reviews/dri-decisions-20261110-cmp-s3-cfr-1b.md item 1; the route verdicts of K3, F12 and F14 by
+   reviews/dri-decisions-20261111-cmp-s3-cfr-1b.md item 1 (listed under "Moved" and in the Deliverables table as not
+   delivered). ve/right_clauses.py only relays and binds (R8).
+3. Tests can fail: PASS. Seeded bugs table, mutants.json (16 entries), trust-mutants.json (exit 0: 0 SURVIVOR,
    0 UNKNOWN).
 4. Python and Lean agree: PASS. test_right_clauses_differential compares bytes with Lean's on K1-K15, F11, F12 and F14.
 5. R8 binding: PASS. test_right_clauses_relay_binds_every_field drops, adds, renames and moves units, lines, names and
@@ -163,6 +199,7 @@ candidates under the profile, K12's join).
     test removed).
 14. Both directions, cited evidence, spec re-read: PASS. Each charge has an accepted side (`bodies [256]`, `scopes 63`,
     `deepIn ... == some false`) and a refused side. See the Spec re-read section.
-15. Overclaim, silent cut, checks that can fail, limits before work: PASS. The RC rendering cut is DRI-ruled. Every new
+15. Overclaim, silent cut, checks that can fail, limits before work: PASS. The RC rendering cut and the three moved route
+    verdicts are DRI-ruled and listed (Deliverables, "Moved"; test_right_clauses_report_lists_every_moved_item). Every new
     #guard has a mutant that breaks it (mutants.json). `lineObjects` charges lines before `decodeClauseDoc`
     (Run.lean `elaborateCase`).

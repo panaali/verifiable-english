@@ -4,7 +4,8 @@ Lean's `clauses-elaborate` mode is the head of the profile (4.1): it decodes a r
 clauses, a relation and `elided` spans, checks them in 4.1's order with section 7's texts, plains every structured line
 (1.2) and returns the plained document's canonical bytes with the premise slot `Lim_{plain D} ++ Rel_D` (1.3). Python
 decodes, checks and plains nothing (R8): it sends the document, and binds the answer to it. The service checks the
-schema; `bind` checks that every unit, line and label the answer names is the request's, with no row missing or extra.
+schema; `bind` checks that every unit, line and label the answer names is the request's (its docstring says what is
+bound: the plained units and lines one for one, the totality rows exactly; how many `Lim` rows there are is Lean's).
 A rejection is Lean's text, raised as its class; an answer that does not bind is `CheckerUnavailable`, never a Python
 verdict. The English of RC1 to RC5 is not shown here (cmp-s3-cfr-1d).
 """
