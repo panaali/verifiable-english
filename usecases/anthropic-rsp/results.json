@@ -886,7 +886,7 @@
    "key": "SOME(rel)",
    "route": "D1 norms@0 W1 check_conflict with a validated witness model",
    "status": "agree",
-   "ve": "SOME(RS4=rel&RS7=exec | RS4=rel&RS7=final)"
+   "ve": "SOME(RS1=cond&RS4=rel&RS5=import&RS7=exec | RS1=cond&RS4=rel&RS5=import&RS7=final | RS1=cond&RS4=rel&RS5=noimport&RS7=exec | RS1=cond&RS4=rel&RS5=noimport&RS7=final | RS1=uncond&RS4=rel&RS5=import&RS7=exec | RS1=uncond&RS4=rel&RS5=import&RS7=final | RS1=uncond&RS4=rel&RS5=noimport&RS7=exec | RS1=uncond&RS4=rel&RS5=noimport&RS7=final | RS1=ov&RS4=rel&RS5=import&RS7=exec | RS1=ov&RS4=rel&RS5=import&RS7=final | RS1=ov&RS4=rel&RS5=noimport&RS7=exec | RS1=ov&RS4=rel&RS5=noimport&RS7=final)"
   },
   {
    "agree": true,
@@ -1001,7 +1001,7 @@
    "cause": null,
    "id": "N3",
    "key": "ALL",
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion; silence; family N witness situation",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion; family N witness situation",
    "status": "agree",
    "ve": "ALL"
   },
@@ -1202,7 +1202,7 @@
   }
  ],
  "cost": {
-  "documents_built": 42,
+  "documents_built": 38,
   "prover_calls": 64
  },
  "items": {
@@ -2970,12 +2970,48 @@
    "choices": [
     {
      "choice": {
+      "RS1": "cond",
       "RS4": "scope",
+      "RS5": "import",
       "RS7": "exec"
      },
      "holds": false,
-     "rules": "all opposite-sign pairs",
+     "rules": [
+      [
+       "f12-final",
+       "f12-board-approval"
+      ],
+      [
+       "f24-delay",
+       "f26-need-not-delay"
+      ],
+      [
+       "f25-delay",
+       "f26-need-not-delay"
+      ],
+      [
+       "rows-cond",
+       "rows-uncond",
+       "f10-in-line"
+      ],
+      [
+       "f13-redact-p",
+       "f16-only-legal"
+      ],
+      [
+       "f24-delay",
+       "f25-delay"
+      ],
+      [
+       "f19-unredacted",
+       "f13-minimize-default"
+      ]
+     ],
      "w1": [
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
       "CONFLICT-FREE",
       "CONFLICT-FREE",
       "CONFLICT-FREE"
@@ -2983,12 +3019,48 @@
     },
     {
      "choice": {
+      "RS1": "cond",
       "RS4": "scope",
+      "RS5": "import",
       "RS7": "final"
      },
      "holds": false,
-     "rules": "all opposite-sign pairs",
+     "rules": [
+      [
+       "f12-final",
+       "f12-board-approval"
+      ],
+      [
+       "f24-delay",
+       "f26-need-not-delay"
+      ],
+      [
+       "f25-delay",
+       "f26-need-not-delay"
+      ],
+      [
+       "rows-cond",
+       "rows-uncond",
+       "f10-in-line"
+      ],
+      [
+       "f13-redact-p",
+       "f16-only-legal"
+      ],
+      [
+       "f24-delay",
+       "f25-delay"
+      ],
+      [
+       "f19-unredacted",
+       "f13-minimize-default"
+      ]
+     ],
      "w1": [
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
       "CONFLICT-FREE",
       "CONFLICT-FREE",
       "CONFLICT-FREE"
@@ -2996,33 +3068,1087 @@
     },
     {
      "choice": {
-      "RS4": "rel",
+      "RS1": "cond",
+      "RS4": "scope",
+      "RS5": "noimport",
       "RS7": "exec"
      },
-     "holds": true,
-     "rules": "all opposite-sign pairs",
+     "holds": false,
+     "rules": [
+      [
+       "f12-final",
+       "f12-board-approval"
+      ],
+      [
+       "f24-delay",
+       "f26-need-not-delay"
+      ],
+      [
+       "f25-delay",
+       "f26-need-not-delay"
+      ],
+      [
+       "rows-cond",
+       "rows-uncond",
+       "f10-in-line"
+      ],
+      [
+       "f13-redact-p",
+       "f16-only-legal"
+      ],
+      [
+       "f24-delay",
+       "f25-delay"
+      ],
+      [
+       "f19-unredacted",
+       "f13-minimize-default"
+      ]
+     ],
      "w1": [
       "CONFLICT-FREE",
-      "CONFLICT",
-      "CONFLICT"
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE"
      ]
     },
     {
      "choice": {
-      "RS4": "rel",
+      "RS1": "cond",
+      "RS4": "scope",
+      "RS5": "noimport",
       "RS7": "final"
      },
+     "holds": false,
+     "rules": [
+      [
+       "f12-final",
+       "f12-board-approval"
+      ],
+      [
+       "f24-delay",
+       "f26-need-not-delay"
+      ],
+      [
+       "f25-delay",
+       "f26-need-not-delay"
+      ],
+      [
+       "rows-cond",
+       "rows-uncond",
+       "f10-in-line"
+      ],
+      [
+       "f13-redact-p",
+       "f16-only-legal"
+      ],
+      [
+       "f24-delay",
+       "f25-delay"
+      ],
+      [
+       "f19-unredacted",
+       "f13-minimize-default"
+      ]
+     ],
+     "w1": [
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "cond",
+      "RS4": "rel",
+      "RS5": "import",
+      "RS7": "exec"
+     },
      "holds": true,
-     "rules": "all opposite-sign pairs",
+     "rules": [
+      [
+       "f12-final",
+       "f12-board-approval"
+      ],
+      [
+       "f24-delay",
+       "f26-need-not-delay"
+      ],
+      [
+       "f25-delay",
+       "f26-need-not-delay"
+      ],
+      [
+       "rows-cond",
+       "rows-uncond",
+       "f10-in-line"
+      ],
+      [
+       "f13-redact-p",
+       "f16-only-legal"
+      ],
+      [
+       "f24-delay",
+       "f25-delay"
+      ],
+      [
+       "f19-unredacted",
+       "f13-minimize-default"
+      ]
+     ],
      "w1": [
       "CONFLICT-FREE",
       "CONFLICT",
-      "CONFLICT"
+      "CONFLICT",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "cond",
+      "RS4": "rel",
+      "RS5": "import",
+      "RS7": "final"
+     },
+     "holds": true,
+     "rules": [
+      [
+       "f12-final",
+       "f12-board-approval"
+      ],
+      [
+       "f24-delay",
+       "f26-need-not-delay"
+      ],
+      [
+       "f25-delay",
+       "f26-need-not-delay"
+      ],
+      [
+       "rows-cond",
+       "rows-uncond",
+       "f10-in-line"
+      ],
+      [
+       "f13-redact-p",
+       "f16-only-legal"
+      ],
+      [
+       "f24-delay",
+       "f25-delay"
+      ],
+      [
+       "f19-unredacted",
+       "f13-minimize-default"
+      ]
+     ],
+     "w1": [
+      "CONFLICT-FREE",
+      "CONFLICT",
+      "CONFLICT",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "cond",
+      "RS4": "rel",
+      "RS5": "noimport",
+      "RS7": "exec"
+     },
+     "holds": true,
+     "rules": [
+      [
+       "f12-final",
+       "f12-board-approval"
+      ],
+      [
+       "f24-delay",
+       "f26-need-not-delay"
+      ],
+      [
+       "f25-delay",
+       "f26-need-not-delay"
+      ],
+      [
+       "rows-cond",
+       "rows-uncond",
+       "f10-in-line"
+      ],
+      [
+       "f13-redact-p",
+       "f16-only-legal"
+      ],
+      [
+       "f24-delay",
+       "f25-delay"
+      ],
+      [
+       "f19-unredacted",
+       "f13-minimize-default"
+      ]
+     ],
+     "w1": [
+      "CONFLICT-FREE",
+      "CONFLICT",
+      "CONFLICT",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "cond",
+      "RS4": "rel",
+      "RS5": "noimport",
+      "RS7": "final"
+     },
+     "holds": true,
+     "rules": [
+      [
+       "f12-final",
+       "f12-board-approval"
+      ],
+      [
+       "f24-delay",
+       "f26-need-not-delay"
+      ],
+      [
+       "f25-delay",
+       "f26-need-not-delay"
+      ],
+      [
+       "rows-cond",
+       "rows-uncond",
+       "f10-in-line"
+      ],
+      [
+       "f13-redact-p",
+       "f16-only-legal"
+      ],
+      [
+       "f24-delay",
+       "f25-delay"
+      ],
+      [
+       "f19-unredacted",
+       "f13-minimize-default"
+      ]
+     ],
+     "w1": [
+      "CONFLICT-FREE",
+      "CONFLICT",
+      "CONFLICT",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "uncond",
+      "RS4": "scope",
+      "RS5": "import",
+      "RS7": "exec"
+     },
+     "holds": false,
+     "rules": [
+      [
+       "f12-final",
+       "f12-board-approval"
+      ],
+      [
+       "f24-delay",
+       "f26-need-not-delay"
+      ],
+      [
+       "f25-delay",
+       "f26-need-not-delay"
+      ],
+      [
+       "rows-cond",
+       "rows-uncond",
+       "f10-in-line"
+      ],
+      [
+       "f13-redact-p",
+       "f16-only-legal"
+      ],
+      [
+       "f24-delay",
+       "f25-delay"
+      ],
+      [
+       "f19-unredacted",
+       "f13-minimize-default"
+      ]
+     ],
+     "w1": [
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "uncond",
+      "RS4": "scope",
+      "RS5": "import",
+      "RS7": "final"
+     },
+     "holds": false,
+     "rules": [
+      [
+       "f12-final",
+       "f12-board-approval"
+      ],
+      [
+       "f24-delay",
+       "f26-need-not-delay"
+      ],
+      [
+       "f25-delay",
+       "f26-need-not-delay"
+      ],
+      [
+       "rows-cond",
+       "rows-uncond",
+       "f10-in-line"
+      ],
+      [
+       "f13-redact-p",
+       "f16-only-legal"
+      ],
+      [
+       "f24-delay",
+       "f25-delay"
+      ],
+      [
+       "f19-unredacted",
+       "f13-minimize-default"
+      ]
+     ],
+     "w1": [
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "uncond",
+      "RS4": "scope",
+      "RS5": "noimport",
+      "RS7": "exec"
+     },
+     "holds": false,
+     "rules": [
+      [
+       "f12-final",
+       "f12-board-approval"
+      ],
+      [
+       "f24-delay",
+       "f26-need-not-delay"
+      ],
+      [
+       "f25-delay",
+       "f26-need-not-delay"
+      ],
+      [
+       "rows-cond",
+       "rows-uncond",
+       "f10-in-line"
+      ],
+      [
+       "f13-redact-p",
+       "f16-only-legal"
+      ],
+      [
+       "f24-delay",
+       "f25-delay"
+      ],
+      [
+       "f19-unredacted",
+       "f13-minimize-default"
+      ]
+     ],
+     "w1": [
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "uncond",
+      "RS4": "scope",
+      "RS5": "noimport",
+      "RS7": "final"
+     },
+     "holds": false,
+     "rules": [
+      [
+       "f12-final",
+       "f12-board-approval"
+      ],
+      [
+       "f24-delay",
+       "f26-need-not-delay"
+      ],
+      [
+       "f25-delay",
+       "f26-need-not-delay"
+      ],
+      [
+       "rows-cond",
+       "rows-uncond",
+       "f10-in-line"
+      ],
+      [
+       "f13-redact-p",
+       "f16-only-legal"
+      ],
+      [
+       "f24-delay",
+       "f25-delay"
+      ],
+      [
+       "f19-unredacted",
+       "f13-minimize-default"
+      ]
+     ],
+     "w1": [
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "uncond",
+      "RS4": "rel",
+      "RS5": "import",
+      "RS7": "exec"
+     },
+     "holds": true,
+     "rules": [
+      [
+       "f12-final",
+       "f12-board-approval"
+      ],
+      [
+       "f24-delay",
+       "f26-need-not-delay"
+      ],
+      [
+       "f25-delay",
+       "f26-need-not-delay"
+      ],
+      [
+       "rows-cond",
+       "rows-uncond",
+       "f10-in-line"
+      ],
+      [
+       "f13-redact-p",
+       "f16-only-legal"
+      ],
+      [
+       "f24-delay",
+       "f25-delay"
+      ],
+      [
+       "f19-unredacted",
+       "f13-minimize-default"
+      ]
+     ],
+     "w1": [
+      "CONFLICT-FREE",
+      "CONFLICT",
+      "CONFLICT",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "uncond",
+      "RS4": "rel",
+      "RS5": "import",
+      "RS7": "final"
+     },
+     "holds": true,
+     "rules": [
+      [
+       "f12-final",
+       "f12-board-approval"
+      ],
+      [
+       "f24-delay",
+       "f26-need-not-delay"
+      ],
+      [
+       "f25-delay",
+       "f26-need-not-delay"
+      ],
+      [
+       "rows-cond",
+       "rows-uncond",
+       "f10-in-line"
+      ],
+      [
+       "f13-redact-p",
+       "f16-only-legal"
+      ],
+      [
+       "f24-delay",
+       "f25-delay"
+      ],
+      [
+       "f19-unredacted",
+       "f13-minimize-default"
+      ]
+     ],
+     "w1": [
+      "CONFLICT-FREE",
+      "CONFLICT",
+      "CONFLICT",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "uncond",
+      "RS4": "rel",
+      "RS5": "noimport",
+      "RS7": "exec"
+     },
+     "holds": true,
+     "rules": [
+      [
+       "f12-final",
+       "f12-board-approval"
+      ],
+      [
+       "f24-delay",
+       "f26-need-not-delay"
+      ],
+      [
+       "f25-delay",
+       "f26-need-not-delay"
+      ],
+      [
+       "rows-cond",
+       "rows-uncond",
+       "f10-in-line"
+      ],
+      [
+       "f13-redact-p",
+       "f16-only-legal"
+      ],
+      [
+       "f24-delay",
+       "f25-delay"
+      ],
+      [
+       "f19-unredacted",
+       "f13-minimize-default"
+      ]
+     ],
+     "w1": [
+      "CONFLICT-FREE",
+      "CONFLICT",
+      "CONFLICT",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "uncond",
+      "RS4": "rel",
+      "RS5": "noimport",
+      "RS7": "final"
+     },
+     "holds": true,
+     "rules": [
+      [
+       "f12-final",
+       "f12-board-approval"
+      ],
+      [
+       "f24-delay",
+       "f26-need-not-delay"
+      ],
+      [
+       "f25-delay",
+       "f26-need-not-delay"
+      ],
+      [
+       "rows-cond",
+       "rows-uncond",
+       "f10-in-line"
+      ],
+      [
+       "f13-redact-p",
+       "f16-only-legal"
+      ],
+      [
+       "f24-delay",
+       "f25-delay"
+      ],
+      [
+       "f19-unredacted",
+       "f13-minimize-default"
+      ]
+     ],
+     "w1": [
+      "CONFLICT-FREE",
+      "CONFLICT",
+      "CONFLICT",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "ov",
+      "RS4": "scope",
+      "RS5": "import",
+      "RS7": "exec"
+     },
+     "holds": false,
+     "rules": [
+      [
+       "f12-final",
+       "f12-board-approval"
+      ],
+      [
+       "f24-delay",
+       "f26-need-not-delay"
+      ],
+      [
+       "f25-delay",
+       "f26-need-not-delay"
+      ],
+      [
+       "rows-cond",
+       "rows-uncond",
+       "f10-in-line"
+      ],
+      [
+       "f13-redact-p",
+       "f16-only-legal"
+      ],
+      [
+       "f24-delay",
+       "f25-delay"
+      ],
+      [
+       "f19-unredacted",
+       "f13-minimize-default"
+      ]
+     ],
+     "w1": [
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "ov",
+      "RS4": "scope",
+      "RS5": "import",
+      "RS7": "final"
+     },
+     "holds": false,
+     "rules": [
+      [
+       "f12-final",
+       "f12-board-approval"
+      ],
+      [
+       "f24-delay",
+       "f26-need-not-delay"
+      ],
+      [
+       "f25-delay",
+       "f26-need-not-delay"
+      ],
+      [
+       "rows-cond",
+       "rows-uncond",
+       "f10-in-line"
+      ],
+      [
+       "f13-redact-p",
+       "f16-only-legal"
+      ],
+      [
+       "f24-delay",
+       "f25-delay"
+      ],
+      [
+       "f19-unredacted",
+       "f13-minimize-default"
+      ]
+     ],
+     "w1": [
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "ov",
+      "RS4": "scope",
+      "RS5": "noimport",
+      "RS7": "exec"
+     },
+     "holds": false,
+     "rules": [
+      [
+       "f12-final",
+       "f12-board-approval"
+      ],
+      [
+       "f24-delay",
+       "f26-need-not-delay"
+      ],
+      [
+       "f25-delay",
+       "f26-need-not-delay"
+      ],
+      [
+       "rows-cond",
+       "rows-uncond",
+       "f10-in-line"
+      ],
+      [
+       "f13-redact-p",
+       "f16-only-legal"
+      ],
+      [
+       "f24-delay",
+       "f25-delay"
+      ],
+      [
+       "f19-unredacted",
+       "f13-minimize-default"
+      ]
+     ],
+     "w1": [
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "ov",
+      "RS4": "scope",
+      "RS5": "noimport",
+      "RS7": "final"
+     },
+     "holds": false,
+     "rules": [
+      [
+       "f12-final",
+       "f12-board-approval"
+      ],
+      [
+       "f24-delay",
+       "f26-need-not-delay"
+      ],
+      [
+       "f25-delay",
+       "f26-need-not-delay"
+      ],
+      [
+       "rows-cond",
+       "rows-uncond",
+       "f10-in-line"
+      ],
+      [
+       "f13-redact-p",
+       "f16-only-legal"
+      ],
+      [
+       "f24-delay",
+       "f25-delay"
+      ],
+      [
+       "f19-unredacted",
+       "f13-minimize-default"
+      ]
+     ],
+     "w1": [
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "ov",
+      "RS4": "rel",
+      "RS5": "import",
+      "RS7": "exec"
+     },
+     "holds": true,
+     "rules": [
+      [
+       "f12-final",
+       "f12-board-approval"
+      ],
+      [
+       "f24-delay",
+       "f26-need-not-delay"
+      ],
+      [
+       "f25-delay",
+       "f26-need-not-delay"
+      ],
+      [
+       "rows-cond",
+       "rows-uncond",
+       "f10-in-line"
+      ],
+      [
+       "f13-redact-p",
+       "f16-only-legal"
+      ],
+      [
+       "f24-delay",
+       "f25-delay"
+      ],
+      [
+       "f19-unredacted",
+       "f13-minimize-default"
+      ]
+     ],
+     "w1": [
+      "CONFLICT-FREE",
+      "CONFLICT",
+      "CONFLICT",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "ov",
+      "RS4": "rel",
+      "RS5": "import",
+      "RS7": "final"
+     },
+     "holds": true,
+     "rules": [
+      [
+       "f12-final",
+       "f12-board-approval"
+      ],
+      [
+       "f24-delay",
+       "f26-need-not-delay"
+      ],
+      [
+       "f25-delay",
+       "f26-need-not-delay"
+      ],
+      [
+       "rows-cond",
+       "rows-uncond",
+       "f10-in-line"
+      ],
+      [
+       "f13-redact-p",
+       "f16-only-legal"
+      ],
+      [
+       "f24-delay",
+       "f25-delay"
+      ],
+      [
+       "f19-unredacted",
+       "f13-minimize-default"
+      ]
+     ],
+     "w1": [
+      "CONFLICT-FREE",
+      "CONFLICT",
+      "CONFLICT",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "ov",
+      "RS4": "rel",
+      "RS5": "noimport",
+      "RS7": "exec"
+     },
+     "holds": true,
+     "rules": [
+      [
+       "f12-final",
+       "f12-board-approval"
+      ],
+      [
+       "f24-delay",
+       "f26-need-not-delay"
+      ],
+      [
+       "f25-delay",
+       "f26-need-not-delay"
+      ],
+      [
+       "rows-cond",
+       "rows-uncond",
+       "f10-in-line"
+      ],
+      [
+       "f13-redact-p",
+       "f16-only-legal"
+      ],
+      [
+       "f24-delay",
+       "f25-delay"
+      ],
+      [
+       "f19-unredacted",
+       "f13-minimize-default"
+      ]
+     ],
+     "w1": [
+      "CONFLICT-FREE",
+      "CONFLICT",
+      "CONFLICT",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "ov",
+      "RS4": "rel",
+      "RS5": "noimport",
+      "RS7": "final"
+     },
+     "holds": true,
+     "rules": [
+      [
+       "f12-final",
+       "f12-board-approval"
+      ],
+      [
+       "f24-delay",
+       "f26-need-not-delay"
+      ],
+      [
+       "f25-delay",
+       "f26-need-not-delay"
+      ],
+      [
+       "rows-cond",
+       "rows-uncond",
+       "f10-in-line"
+      ],
+      [
+       "f13-redact-p",
+       "f16-only-legal"
+      ],
+      [
+       "f24-delay",
+       "f25-delay"
+      ],
+      [
+       "f19-unredacted",
+       "f13-minimize-default"
+      ]
+     ],
+     "w1": [
+      "CONFLICT-FREE",
+      "CONFLICT",
+      "CONFLICT",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE"
      ]
     }
    ],
    "cone": [
+    "RS1",
     "RS4",
+    "RS5",
     "RS7"
    ],
    "route": "D1 norms@0 W1 check_conflict with a validated witness model"
@@ -3146,6 +4272,12 @@
    "route": "D1 norms@0 W1 check_conflict with a validated witness model"
   },
   "C4": {
+   "basis": {
+    "different_acts": {
+     "f13-redact-p": "{0} have material redacted from the public version",
+     "f16-only-legal": "{0} have material redacted from the version given to external reviewers"
+    }
+   },
    "choices": [
     {
      "choice": {
@@ -3197,6 +4329,12 @@
    "route": "D1 norms@0 W1 check_conflict with a validated witness model"
   },
   "C6": {
+   "basis": {
+    "different_acts": {
+     "f13-minimize-default": "{0} have redactions minimized in public as well as regular-clearance versions",
+     "f19-unredacted": "{0} have unredacted Risk Reports shared with at least two hundred employees"
+    }
+   },
    "choices": [
     {
      "choice": {
@@ -3672,7 +4810,7 @@
    "choices": [
     {
      "choice": {},
-     "default_sensitive": false,
+     "default_sensitive": null,
      "holds": true,
      "rules": [
       "f25-meet"
@@ -3894,13 +5032,30 @@
   "N3": {
    "choices": [
     {
-     "choice": {},
+     "choice": {
+      "RS5": "import"
+     },
      "holds": true,
-     "reason": "no selected rule on the queried acts"
+     "reason": "no F25 rule selects on posture_matched or delay",
+     "rules": [
+      "f24-delay"
+     ]
+    },
+    {
+     "choice": {
+      "RS5": "noimport"
+     },
+     "holds": true,
+     "reason": "no F25 rule selects on posture_matched or delay",
+     "rules": [
+      "f24-delay"
+     ]
     }
    ],
-   "cone": [],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion; silence; family N witness situation"
+   "cone": [
+    "RS5"
+   ],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion; family N witness situation"
   },
   "N4": {
    "route": "D1",
@@ -4685,15 +5840,15 @@
   },
   "M10": {
    "cases": 49,
-   "choices": 282,
-   "documents_built": 42,
+   "choices": 303,
+   "documents_built": 38,
    "prover_calls": 64,
    "rules": 76,
    "units": 303,
    "wall_time": "printed by run.py; intentionally not pinned by --check"
   },
   "M2": {
-   "max_choices_per_item": 8,
+   "max_choices_per_item": 24,
    "reading_sets": 25,
    "some_answers": 31,
    "ve_readings": "P2 pending (RS1 has a no-rule reading)"
@@ -4865,13 +6020,11 @@
      "f9-internal"
     ],
     "row T4": [
-     "f5-evidence-strict"
+     "f5-evidence-strict",
+     "f5-evidence-default"
     ],
     "section 1 \"We will strive to advance these recommendations through a mixture of example-setting ...\" (RS12 default; under intent no rule)": [
      "s1-advance-default"
-    ],
-    "the same \"should\"": [
-     "f5-evidence-default"
     ]
    },
    "violations": []
@@ -4889,7 +6042,7 @@
    "untraced": []
   },
   "M7": {
-   "insensitive_choices": 58,
+   "insensitive_choices": 57,
    "sensitive_choices": 117
   },
   "M8": {
@@ -4912,7 +6065,7 @@
     "D7"
    ],
    "validated_countermodels": 38,
-   "w1_conflict_witnesses": 4
+   "w1_conflict_witnesses": 14
   },
   "M9": {
    "detected": 6,
@@ -5174,7 +6327,7 @@
      "without": "NONE"
     },
     "C-doc": {
-     "with": "SOME(RS4=rel&RS7=exec | RS4=rel&RS7=final)",
+     "with": "SOME(RS1=cond&RS4=rel&RS5=import&RS7=exec | RS1=cond&RS4=rel&RS5=import&RS7=final | RS1=cond&RS4=rel&RS5=noimport&RS7=exec | RS1=cond&RS4=rel&RS5=noimport&RS7=final | RS1=uncond&RS4=rel&RS5=import&RS7=exec | RS1=uncond&RS4=rel&RS5=import&RS7=final | RS1=uncond&RS4=rel&RS5=noimport&RS7=exec | RS1=uncond&RS4=rel&RS5=noimport&RS7=final | RS1=ov&RS4=rel&RS5=import&RS7=exec | RS1=ov&RS4=rel&RS5=import&RS7=final | RS1=ov&RS4=rel&RS5=noimport&RS7=exec | RS1=ov&RS4=rel&RS5=noimport&RS7=final)",
      "without": "NONE"
     },
     "C1": {
