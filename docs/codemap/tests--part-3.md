@@ -32,6 +32,7 @@
 - `tests/test_english_lean_tokens.py` — Python's English grammar converted to word tokens reads like Python (plan section 4, S0 first cut).
 - `tests/test_english_runner_root.py` — The one-shot English executable has a distinct root and preserves its wire bytes.
 - `tests/test_english_statement_blocks.py` — The 120 pinned rule blocks: Lean's node against Python's recorded node (en-e3-norm EN-1; spec english-lean-s6 f22).
+- `tests/test_english_statement_shadow.py` — The `english.statement` shadow comparator (docs/spec/en-e3-norm.md 2.4, Shadow; fixtures E14 and P5).
 - `tests/test_english_unambiguity.py` — (no module docstring)
 - `tests/test_entailment.py` — (no module docstring)
 - `tests/test_entailment_adversarial.py` — Adversarial checks for the small trusted tableau replayer.
@@ -85,4 +86,3 @@
 - `tests/test_jt_e3.py` — Small, model-free checks of JT-E3's agreement and blind runner.
 - `tests/test_judgments_answer.py` — The relay of the `document` mode's `judgments` field (judgment-terms-PLAN.md JT-2, Python; docs/spec/ judgment-terms.md 8.3): schema and binding only (R8), and…
 - `tests/test_judgments_chain.py` — PC-1: `judgments@0` beside the soft chain in Lean's document mode, and row 16, the clash validation (docs/spec/profile-composition.md 1.7, 3.1 and 5.1; the G3 …
-- `tests/test_judgments_compose.py` — jt-2c: the modes that compose with `judgments@0` decide over the environment without the document layers (`VE.Compose.decidingEnvironment`) and name the list a…
