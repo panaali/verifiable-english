@@ -1,0 +1,83 @@
+{
+ "restored_build_returncode": 0,
+ "mutants": [
+  {
+   "id": "d9-dropped",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Meaning.lean",
+   "definition": "VE.Acts.normalOk",
+   "behaviour": "`longEnd` dropped: a joined filler with a long first or last part is accepted",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/RenderExamples.lean:111, lean/VE/Acts/RenderExamples.lean:114, lean/VE/Acts/RenderExamples.lean:119, lean/VE/Acts/RenderExamples.lean:129, lean/VE/Acts/NormalProofs.lean:783",
+   "fixtures": [
+    "lean/VE/Acts/RenderExamples.lean:111",
+    "lean/VE/Acts/RenderExamples.lean:114",
+    "lean/VE/Acts/RenderExamples.lean:119",
+    "lean/VE/Acts/RenderExamples.lean:129"
+   ],
+   "proofs": [
+    "lean/VE/Acts/NormalProofs.lean:783"
+   ]
+  },
+  {
+   "id": "canon-args-kept",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Linearize.lean",
+   "definition": "VE.Acts.Atom.canon",
+   "behaviour": "the object is not put first",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/TableExamples.lean:206, lean/VE/Acts/TableExamples.lean:211, lean/VE/Acts/NormalProofs.lean:740, lean/VE/Acts/NormalProofs.lean:830, lean/VE/Acts/NormalProofs.lean:841",
+   "fixtures": [
+    "lean/VE/Acts/TableExamples.lean:206",
+    "lean/VE/Acts/TableExamples.lean:211"
+   ],
+   "proofs": [
+    "lean/VE/Acts/NormalProofs.lean:740",
+    "lean/VE/Acts/NormalProofs.lean:830",
+    "lean/VE/Acts/NormalProofs.lean:841"
+   ]
+  },
+  {
+   "id": "normal-marker-repeated",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Linearize.lean",
+   "definition": "VE.Acts.Atom.normal",
+   "behaviour": "a joined filler is written with its marker repeated",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/TableExamples.lean:177, lean/VE/Acts/NormalProofs.lean:695, lean/VE/Acts/NormalProofs.lean:698",
+   "fixtures": [
+    "lean/VE/Acts/TableExamples.lean:177"
+   ],
+   "proofs": [
+    "lean/VE/Acts/NormalProofs.lean:695",
+    "lean/VE/Acts/NormalProofs.lean:698"
+   ]
+  },
+  {
+   "id": "spans-short",
+   "language": "Lean",
+   "file": "lean/VE/Acts/NormalProofs.lean",
+   "definition": "VE.Acts.NormalProofs.spans",
+   "behaviour": "the derivation list misses the spans that end at the last token",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/NormalProofs.lean:997",
+   "fixtures": [],
+   "proofs": [
+    "lean/VE/Acts/NormalProofs.lean:997"
+   ]
+  },
+  {
+   "id": "vk1-reserved",
+   "language": "Lean",
+   "file": "lean/VE/Acts/RenderExamples.lean",
+   "definition": "VE.Acts.RenderExamples.Vk1",
+   "behaviour": "the canon family's vocabulary declares the reserved *then*",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/RenderExamples.lean:141",
+   "fixtures": [
+    "lean/VE/Acts/RenderExamples.lean:141"
+   ],
+   "proofs": []
+  }
+ ]
+}
