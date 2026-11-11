@@ -281,6 +281,7 @@ import VE.Acts.Grammar
 import VE.Acts.RuleExamples
 import VE.Acts.Meaning
 import VE.Acts.Readings
+import VE.Acts.NormalProofs
 import VE.Acts.Specialise
 import VE.Acts.SpecialiseExamples
 import VE.Acts.Sources
