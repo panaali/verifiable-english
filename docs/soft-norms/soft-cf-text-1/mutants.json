@@ -1,0 +1,67 @@
+[
+ {
+  "id": "S1-old-exhibited-text",
+  "behaviour": "with no coherent_model sent the soft CONFLICT-FREE line says none was supplied or searched and quotes the budget as unused, never UNKNOWN (budget N) (R1)",
+  "definition": "VE.SoftNorms.Run.conflictFreeText",
+  "language": "Lean",
+  "file": "lean/VE/SoftNorms/Run.lean",
+  "mutation": [
+   "{if exhibit then \"yes\" else notSearchedText budget}",
+   "{if exhibit then \"yes\" else s!\"UNKNOWN (budget {budget})\"}"
+  ],
+  "test": "lean/VE/SoftNorms/Run.lean:129 (#guard, the no-model line); tests/test_soft_norms_lean.py::test_soft_conflict_free_without_a_coherent_model_names_no_search (also ::test_soft_weighing_point_count_is_the_open_wp_list, ::test_soft_no_search_delta_keeps_every_quoted_value)",
+  "result": "lake build VE.SoftNorms.Run: error at :129, build failed. With the #guards dropped so ve_service builds (pinned temporarily): the three tests FAILED ('UNKNOWN' not in the line; the line equals the spec's 'none supplied' form; delta head). File and lock restored."
+ },
+ {
+  "id": "S2-j-is-conditional-length",
+  "behaviour": "<j> counts the open WP(T) (openAfterClassification), not the <k> coherence premises used",
+  "definition": "VE.SoftNorms.Run.conflictFreeText",
+  "language": "Lean",
+  "file": "lean/VE/SoftNorms/Run.lean",
+  "mutation": [
+   "{openLabels.length} weighing points open",
+   "{conditional.length} weighing points open"
+  ],
+  "test": "lean/VE/SoftNorms/Run.lean:129, :130 (#guards, <k> 1 / <j> 2 and <k> 0 / <j> 1); tests/test_soft_norms_lean.py::test_soft_weighing_point_count_is_the_open_wp_list (also ::test_soft_no_search_delta_keeps_every_quoted_value)",
+  "result": "lake build VE.SoftNorms.Run: errors at :129 and :130, build failed. With the #guards dropped so ve_service builds (pinned temporarily): both tests FAILED ('conditional on 0 coherence premises; 1 weighing points open; ' not in the line, which printed 0). File and lock restored."
+ },
+ {
+  "id": "S3-shared-wording-drops-the-budget",
+  "behaviour": "the no-search words keep the quoted budget value (R1 (a)), one owner for the rights and soft routes",
+  "definition": "VE.SoftNorms.Wire.notSearchedText",
+  "language": "Lean",
+  "file": "lean/VE/SoftNorms/Wire.lean",
+  "mutation": [
+   "s!\"none supplied (not searched; budget {budget} unused)\"",
+   "s!\"none supplied (not searched; budget unused)\""
+  ],
+  "test": "lean/VE/SoftNorms/Run.lean:129 (#guard)",
+  "result": "lake build VE.SoftNorms.Run ResponseShape.Schemas.RightsChecks: error at SoftNorms/Run.lean:129, build failed. File restored."
+ },
+ {
+  "id": "S4-yes-lost-with-a-model",
+  "behaviour": "with a checked coherent_model the line still says yes",
+  "definition": "VE.SoftNorms.Run.conflictFreeText",
+  "language": "Lean",
+  "file": "lean/VE/SoftNorms/Run.lean",
+  "mutation": [
+   "{if exhibit then \"yes\" else notSearchedText budget}",
+   "{notSearchedText budget}"
+  ],
+  "test": "lean/VE/SoftNorms/Run.lean:130 (#guard, exhibit true says yes); tests/test_soft_norms_lean.py::test_soft_conflict_free_without_a_coherent_model_names_no_search asserts the with-model line too",
+  "result": "lake build VE.SoftNorms.Run: error at :130, build failed. File restored."
+ },
+ {
+  "id": "S5-rights-quotes-another-budget",
+  "behaviour": "the rights line, now reading the shared words, still quotes its own budget 10000 (unchanged byte for byte)",
+  "definition": "VE.Rights.Run.exhibitedText",
+  "language": "Lean",
+  "file": "lean/VE/Rights/Run.lean",
+  "mutation": [
+   "else VE.SoftNorms.Wire.notSearchedText conflictBudget",
+   "else VE.SoftNorms.Wire.notSearchedText 7"
+  ],
+  "test": "lean/ResponseShape/Schemas/RightsChecks.lean:56, :58, :61 (pinned rights answers and the no-search #guard)",
+  "result": "lake build ResponseShape.Schemas.RightsChecks: errors at :56, :58, :61; build failed. File restored."
+ }
+]

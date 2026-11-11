@@ -1,0 +1,9 @@
+{"allow": [
+{"definition": "VE.RightClauses.checkSpans", "operator": "list-empty", "reason": "ill-typed as generated: [] for the Option (earlier.getEntryLT? s.2) does not elaborate (Invalid projection)"},
+{"definition": "VE.RightClauses.checkBody", "operator": "list-empty", "reason": "ill-typed as generated: [] for the field access L.clauses does not elaborate (Invalid field notation)"},
+{"definition": "VE.RightClauses.checkBody", "operator": "append-right", "reason": "ill-typed as generated: dropping the right operand of (·.span) ++ leaves a function where a list is expected (Application type mismatch)"},
+{"definition": "VE.RightClauses.Run.lineObjects", "operator": "list-empty", "reason": "ill-typed as generated: [] for the Option (unitBody u) or its map does not elaborate (failed to synthesize)"},
+{"definition": "VE.RightClauses.Run.deepLine", "operator": "list-empty", "reason": "ill-typed as generated where it is UNKNOWN: [] for D.lines, D.cands or the appended list leaves the projections untyped (Invalid projection); the elaborating one (the candidates' flatMap to []) is killed by RunExamples' deepIn #guard"},
+{"definition": "VE.RightClauses.Run.deepLine", "operator": "list-first", "reason": "equivalent where it survives: x.2.2.relation.toList is an Option's list, at most one element, so take 1 is the identity (the D.cands and flatMap occurrences are killed by RunExamples' deepIn #guard)"},
+{"definition": "VE.RightClauses.Run.deepLine", "operator": "list-last", "reason": "equivalent where it survives: x.2.2.relation.toList has at most one element, so reverse.take 1 is the identity (the other occurrences are killed by RunExamples' deep and deepIn #guards)"}
+]}
