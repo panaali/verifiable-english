@@ -1,9 +1,10 @@
-import VE.RightClauses.Wire
+import VE.RightClauses.ElidedBytes
 import VE.Compose.Dispatch
 import VE.CertificateWire
 
 /-! The `clauses-elaborate` mode (docs/spec/right-clauses.md 8.1): the head of `right-clauses@0` on one document, in the
-order of 4.1, answering with the plained document's canonical bytes and `clauseSlotLabelled`. -/
+order of 4.1, answering with the plained document's canonical bytes, `clauseSlotLabelled` and `elided_bytes` (6: the
+document total and, in `unit_elided_bytes`, one count per unit in document order; ElidedBytes.lean). -/
 namespace VE.RightClauses.Run
 open Lean VE.RightClauses
 open VE.SoftNorms.Wire (enc)
@@ -26,7 +27,8 @@ def deepLine (D : ClauseDoc) : Bool :=
 
 /-- 4.1 in order: `dispatch` (its refusals are final), decoding, the head's checks on fixed lines and candidates,
     then the rights decoder and its checks on the plained document (step 6), whose texts are the answer. Output: the
-    plained document's canonical bytes and `clauseSlotLabelled`. `elided_bytes` is not computed here (cmp-s3a-cfr-3). -/
+    plained document's canonical bytes, `clauseSlotLabelled`, and the elided bytes of the decoded document (its total
+    and each unit's), every span read once (`entryElided`). -/
 def elaborateCase (j : Json) : Except String Json := do
   VE.Bridge.exactFields j ["id", "environment", "document"]
   let id ← VE.Bridge.stringField j "id"
@@ -46,8 +48,10 @@ def elaborateCase (j : Json) : Except String Json := do
   if deepLine D then throw "ResourceLimit: formula depth exceeds 64"
   let plained := elaborateJson D document
   let _ ← VE.Rights.Wire.decodeRightsSource (stripProfile environment) plained
+  let es := entryElided D
   pure (VE.Route.Wire.ok id [("result", Json.mkObj [("plained", .str (← VE.CertificateWire.canonical 257 plained)),
-    ("clause_slot", labelledJson (clauseSlotLabelled D))])])
+    ("clause_slot", labelledJson (clauseSlotLabelled D)), ("elided_bytes", toJson (elidedTotal es)),
+    ("unit_elided_bytes", toJson (unitElided es document))])])
 
 def runCaseReported (j : Json) : Json :=
   match elaborateCase j with

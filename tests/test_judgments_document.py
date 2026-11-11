@@ -571,24 +571,26 @@ def relayed_row(service, text, tmp_path):
 
 
 def ve_check(text, tmp_path, capsys):
-    """`ve document check` on `text`: its exit code and its report, or the refusal it raises with Lean's text (as for
-    every refusal of a document) as the `error`. `CheckerUnavailable` is the command's own exit code."""
+    """`ve document check` on `text`: its exit code and its report, or its refusal with Lean's text (as for every
+    refusal of a document): the structured `{status, error}`, exit 2 (document-cli-structured-errors).
+    `CheckerUnavailable` is the command's own exit code."""
     from ve.__main__ import main as ve_main
-    from ve.errors import VEError
     path = tmp_path / "fenced.ve.md"
     path.write_text(text, encoding="utf-8")
     capsys.readouterr()
-    try:
-        code = ve_main(["document", "check", str(path)])
-    except VEError as exc:
-        return 1, {"error": str(exc)}
+    code = ve_main(["document", "check", str(path)])
     return code, json.loads(capsys.readouterr().out)
+
+
+def refusal(out):
+    """The text of a refusal `ve_check` returned (status `InvalidInput`), else None."""
+    return out["error"]["message"] if out.get("status") == "InvalidInput" else None
 
 
 def test_an_unbound_word_in_an_authored_fence_is_refused_with_lean_s_text(tmp_path, capsys):
     """DRI conditions (a): the refusal in `ve document check`, Lean's text verbatim."""
     code, out = ve_check(fenced(said("reasonable_limit")), tmp_path, capsys)
-    assert code == 1 and out["error"] == REASONABLE
+    assert code == 2 and refusal(out) == REASONABLE
 
 
 def test_a_bound_word_answers_the_report_as_today(service, tmp_path, capsys):
@@ -624,7 +626,7 @@ def test_two_predicates_of_one_row_bind_one_by_one(tmp_path, capsys):
     """DRI 2026-11-02, jt-3 item 3: `reasonable_grounds` bound refuses `reasonable_limit`, and binds itself."""
     grounds = [record("reasonable_grounds", "limit")]
     code, out = ve_check(fenced(said("reasonable_limit"), grounds), tmp_path, capsys)
-    assert code == 1 and out["error"] == REASONABLE
+    assert code == 2 and refusal(out) == REASONABLE
     code, out = ve_check(fenced(said("reasonable_grounds"), grounds, [opened("reasonable_grounds")]), tmp_path, capsys)
     assert code == 0 and out["coverage"]["bytes_by_status"] == {"OPEN": 14}
 
@@ -641,14 +643,14 @@ def test_the_refusal_names_the_first_fence_in_unit_order_before_any_unit_s_statu
     grounds = [record("reasonable_grounds", "limit")]
     text = fenced(["Atlas is published.", said("reasonable_grounds"), said("reasonable_limit")], grounds)
     code, out = ve_check(text, tmp_path, capsys)
-    assert code == 1 and out["error"] == REASONABLE
+    assert code == 2 and refusal(out) == REASONABLE
     code, out = ve_check(fenced(said("reasonable_grounds"), grounds), tmp_path, capsys)
-    assert code == 1 and out["error"] == "JudgmentNotChecked: a0 reasonable_grounds"
+    assert code == 2 and refusal(out) == "JudgmentNotChecked: a0 reasonable_grounds"
     # A fence of two sentences: the reader's refusal comes before the document's one-sentence rule, under the profile.
     code, out = ve_check(fenced(f'{said("reasonable_limit")} Atlas is published.'), tmp_path, capsys)
-    assert code == 1 and out["error"] == REASONABLE
+    assert code == 2 and refusal(out) == REASONABLE
     code, out = ve_check(fenced("Atlas is published. Atlas is published."), tmp_path, capsys)
-    assert code == 1 and out["error"] == "each VE fence must contain exactly one sentence"
+    assert code == 2 and refusal(out) == "each VE fence must contain exactly one sentence"
 
 
 def test_the_report_places_lean_s_lines(service, tmp_path, capsys):
