@@ -8,6 +8,7 @@
 - `tools/trust_changes.py` — The trust report's changed files (architecture decision D2, AR-2): each Lean file changed since a base commit, with the lines it holds in each trusted class.
 - `tools/trust_map.py` — Trust budget (bundle TB of docs/CONSOLIDATION-PLAN.md, step 0).
 - `tools/trust_mutants.py` — Mechanical mutants of the trusted Lean definitions a branch adds or changes, and the survivors (R16 signs trusted growth only when "every new trusted definitio…
+- `tools/webapp_commands_env.py` — Write `usecases/webapp-commands/environment.json` from its Lean owner, `VE.Commands.Examples.E_web` (CI-8, (iv)).
 - `tools/wire_contract.py` — Lint format-1 wire tables and generate their single English reading.
 - `tools/wire_contract_lean.py` — Render format-1 contracts as data-only Lean table modules.
 - `tools/wire_contract_rust.py` — Render format-1 contracts as data-only Rust table modules (docs/spec/wire-contract-s4-2.md 4).

@@ -25,6 +25,7 @@ import ResponseShape.Encoders.Scope
 import ResponseShape.Encoders.SensesProject
 import ResponseShape.Encoders.Command
 import ResponseShape.Encoders.ClausesElaborate
+import ResponseShape.Encoders.EnglishStatement
 
 /-! # Every encoder against its shape
 
@@ -92,5 +93,6 @@ theorem runMode_fits (m : VE.Service.Mode) (j : Json) (hj : CaseWF j) : Fits j (
   · exact Command.caseReported_fits j
   · exact ActReadings.actReadingsReported_fits j
   · exact ClausesElaborate.runCaseReported_fits j
+  · exact EnglishStatement.statementCaseReported_fits j
 
 end ResponseShape.Encoders

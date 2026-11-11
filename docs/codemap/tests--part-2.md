@@ -1,3 +1,6 @@
+- `tests/test_b16d_document.py` — Batch 16d: norm-defaults and fenced documents are Lean document answers.
+- `tests/test_b16d_evidence.py` — Check batch 16d's committed measurements without consulting live git state.
+- `tests/test_b16d_norm_roles.py` — Batch 16d review B1 and B2: which norm units make the norm-defaults document.
 - `tests/test_b16e_rights_document.py` — Batch 16e: rights@0 documents (with and without the readings@1 head) are Lean document answers.
 - `tests/test_b16f_document.py` — Batch 16f: the document mode's remaining groups are Lean answers, typed and bound.
 - `tests/test_b16f_senses_document.py` — Batch 16f: a document with `senses` is decided by Lean's `document` mode, which composes the senses route.
@@ -86,4 +89,3 @@
 - `tests/test_eligibility_wfp.py` — Winter Fuel Payment use case (usecases/eligibility): VE against a frozen answer key.
 - `tests/test_encoder_shapes.py` — The encoder theorems (`lean/ResponseShape/Encoders.lean`) can fail (lf-1 recheck 3, B).
 - `tests/test_english.py` — Writable English boundaries, scoped references and independent ambiguity checks.
-- `tests/test_english_e26_ab.py` — English E2.6: the corpus A/B of Lean's English authority, from the saved comparisons alone (no live checkout and no git): every verdict row has a rule and a di…
