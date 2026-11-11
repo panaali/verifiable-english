@@ -5,6 +5,8 @@
 | `1.1a` | `ACTS_RESOURCE_LIMIT` | The `acts` block of `/environment/vocabulary` declares at most `maxPhrases` fixed phrases (`VE.Acts.Lexical`). |
 | `1.1b` | `ACTS_RESOURCE_LIMIT` | Each declared fixed phrase, normalised, is at most `maxPhraseBytes` bytes long in UTF-8 (`VE.Acts.Lexical`). |
 | `1.1c` | `ACTS_RESOURCE_LIMIT` | Each regulated predicate's act phrase, normalised, is at most `maxActBytes` bytes long in UTF-8 (`VE.Acts.Lexical`). |
-| `1.1d` | `ACTS_INVALID_ENVIRONMENT` | The norms route's environment decoder, reading `acts@0`, accepts `/environment`, and a `defined` declaration has `definitions@0`. |
+| `1.1d` | `ACTS_INVALID_ENVIRONMENT` | The norms route's environment decoder, reading `acts@0` after its profile row, accepts `/environment`, and a `defined` declaration has `definitions@0`. |
+| `1.1e` | `ACTS_RESOURCE_LIMIT` | The `acts` block of `/environment/vocabulary` declares at most as many frames as D-31's first condition allows (`VE.Acts.Syntax.checkVocab`, 31a). |
+| `1.1f` | `ACTS_INVALID_FRAMES` | The frames and adverbs of the `acts` block decode, and they meet D-31's other conditions, 31b to 31s (`VE.Acts.Syntax.checkVocab`). |
 | **Phase 2, rules** | | No check of this phase runs unless every check of the earlier phases holds over the whole input. |
 | `norms` | `include` | The checks of phase `profiles`, `rule-shape`, `rules`, `references`, `semantic` of `norms@0`, in their order, on the input. |

@@ -6,6 +6,10 @@ one phrase over each limit is a fault, and the sources at each limit (`at_limits
 `at_count`) are accepted. Around the limits: a count over its limit with a phrase over its own, an act over its
 limit that is not an act phrase, and an act over its limit after a refused fixed phrase, each the one Lean names.
 
+The frames and adverbs of the `acts` block (ap-1bfb, D-31): a frame count over 31a's limit, found from Lean's decoder
+as the others are, is 1.1e, alone and with a refused head; each other condition, 31b to 31s, has a fault of its own,
+1.1f, as has a frame that does not decode. Their texts are Lean's.
+
 The rule phases (ap-1bfb): `norms@0`'s phases from `profiles` to `semantic`, included as `norms`, each with faults on
 the base source's rules; the rule count's limit is `limits.json`'s.
 """
@@ -56,7 +60,8 @@ def limits():
     each, the largest size of a family of sources that it accepts."""
     return {"maxActBytes": _largest(lambda n: lambda root: _act(root).update(act=act(n)), 16),
             "maxPhraseBytes": _largest(lambda n: lambda root: _fixed(root).append(phrase(n)), 16),
-            "maxPhrases": _largest(lambda n: lambda root: _fixed(root).extend(phrases(n - 1)), 2)}
+            "maxPhrases": _largest(lambda n: lambda root: _fixed(root).extend(phrases(n - 1)), 2),
+            "maxFrames": _largest(lambda n: lambda root: _block(root).update(frames=frames(n)), 2)}
 
 
 def phrase(size):
@@ -75,6 +80,15 @@ def phrases(count):
     return [f"p{tag(i)} q{tag(i)}" for i in range(count)]
 
 
+def frame(head, markers=(), split=(), modifiers=()):
+    return {"head": head, "markers": list(markers), "split": list(split), "modifiers": list(modifiers)}
+
+
+def frames(count):
+    """`count` frames of one head word each, no head shared, so none begins another."""
+    return [frame("v" + chr(97 + i // 26) + chr(97 + i % 26)) for i in range(count)]
+
+
 def base():
     value = json.loads((EXAMPLES / "base.json").read_text())
     return value["environment"], value["norms"]
@@ -82,6 +96,10 @@ def base():
 
 def _fixed(root):
     return root["environment"]["vocabulary"]["acts"]["fixed"]
+
+
+def _block(root):
+    return root["environment"]["vocabulary"]["acts"]
 
 
 def _act(root, predicate="paid"):
@@ -105,6 +123,46 @@ def at_count():
     return raw, norms
 
 
+def at_frames():
+    """`base()` with `maxFrames` frames and an adverb."""
+    raw, norms = base()
+    _block({"environment": raw}).update(frames=frames(limits()["maxFrames"]), adverbs=["promptly"])
+    return raw, norms
+
+
+def _vocabulary(frames_=None, adverbs=None):
+    """An edit that declares the `acts` block's frames and adverbs."""
+    def apply(root):
+        if frames_ is not None:
+            _block(root)["frames"] = frames_
+        if adverbs is not None:
+            _block(root)["adverbs"] = adverbs
+    return apply
+
+
+# One fault per condition of D-31 after 31a, in its order: (row, frames, adverbs).
+D31 = [
+    ("31b", [frame("")], None),
+    ("31c", [frame("Give")], None),
+    ("31d", [frame("give to")], None),
+    ("31e", [frame("give"), frame("give")], None),
+    ("31f", [frame("give"), frame("give up")], None),
+    ("31g", [frame("give", ["to", "to"])], None),
+    ("31h", [frame("give", modifiers=["for", "for"])], None),
+    ("31i", [frame("give", ["to"], split=["for"])], None),
+    ("31j", [frame("give", modifiers=[""])], None),
+    ("31k", [frame("give", ["to"], modifiers=["to"])], None),
+    ("31l", [frame("give", ["in  front"])], None),
+    ("31m", [frame("give", ["To"])], None),
+    ("31n", [frame("give", ["and"])], None),
+    ("31o", [frame("give", ["in", "in front"])], None),
+    ("31p", None, ["promptly", "promptly"]),
+    ("31q", None, ["Promptly"]),
+    ("31r", [frame("give", ["to"])], ["give"]),
+    ("31s", [frame("give", ["up"]), frame("up")], None),
+]
+
+
 def _faults():
     """(name, check, apply) of each fault."""
     n = limits()
@@ -118,7 +176,17 @@ def _faults():
     def act_over_after_phrase(root):
         act_over(root)
         _fixed(root).append("seek and")
-    return [("phrases-over", "1.1a", count_over),
+    def frames_over(root):
+        _block(root)["frames"] = frames(n["maxFrames"] + 1)
+    def frames_over_with_bad_head(root):
+        frames_over(root)
+        _block(root)["frames"][0]["head"] = "Give"
+    return [("frames-over", "1.1e", frames_over),
+            ("frames-over-with-bad-head", "1.1e", frames_over_with_bad_head),
+            *((f"frames-{row}", "1.1f", _vocabulary(fs, adverbs)) for row, fs, adverbs in D31),
+            ("frame-fields", "1.1f", _vocabulary([{"head": "give", "markers": []}])),
+            ("frames-not-an-array", "1.1f", _vocabulary(7)),
+            ("phrases-over", "1.1a", count_over),
             ("phrases-over-with-long-phrase", "1.1a", count_and_bytes_over),
             ("phrase-bytes-over", "1.1b", lambda root: _fixed(root).append(phrase(n["maxPhraseBytes"] + 1))),
             ("act-bytes-over", "1.1c", act_over),

@@ -1,0 +1,7 @@
+Seeded bug lean-typing-without-acts: Hooks/Acts.lean typingEnvironment decoded without (acts := true) (joined := true); lake build VE.WireContract.Hooks.Acts:
+error: VE/WireContract/Hooks/Acts.lean:193:0: Expression
+error: VE/WireContract/Hooks/Acts.lean:195:0: Expression
+error: VE/WireContract/Hooks/Acts.lean:196:0: Expression
+error: Lean exited with code 1
+error: build failed
+Lines 193-196 are the rule-phase #guards: the clean rule's typingEnvironment isSome, norms/4.7b on an unknown predicate, norms/4.7b on an unknown constant. Restored with git checkout.

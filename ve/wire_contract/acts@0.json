@@ -22,6 +22,10 @@
       "class": "InvalidInput",
       "summary": "invalid environment"
     },
+    "ACTS_INVALID_FRAMES": {
+      "class": "InvalidInput",
+      "summary": "invalid frames or adverbs"
+    },
     "ACTS_INVALID_INPUT": {
       "class": "InvalidInput",
       "summary": "invalid input"
@@ -76,7 +80,27 @@
                 "message"
               ],
               "inherited": true,
-              "says": "The norms route's environment decoder, reading `acts@0`, accepts `/environment`, and a `defined` declaration has `definitions@0`."
+              "says": "The norms route's environment decoder, reading `acts@0` after its profile row, accepts `/environment`, and a `defined` declaration has `definitions@0`."
+            },
+            {
+              "id": "1.1e",
+              "code": "ACTS_RESOURCE_LIMIT",
+              "text": "{message}",
+              "returns": [
+                "message"
+              ],
+              "inherited": true,
+              "says": "The `acts` block of `/environment/vocabulary` declares at most as many frames as D-31's first condition allows (`VE.Acts.Syntax.checkVocab`, 31a)."
+            },
+            {
+              "id": "1.1f",
+              "code": "ACTS_INVALID_FRAMES",
+              "text": "{message}",
+              "returns": [
+                "message"
+              ],
+              "inherited": true,
+              "says": "The frames and adverbs of the `acts` block decode, and they meet D-31's other conditions, 31b to 31s (`VE.Acts.Syntax.checkVocab`)."
             }
           ]
         }

@@ -9,10 +9,12 @@ edit 2 of plan synthesis round 2): it reports and refuses nothing.
 `Hooks.Norms.w1Environment` and `typingEnvironment` decode without `acts := true`, so they refuse every `acts@0`
 environment; this module's 1.1 decodes with it, as `Norms.Wire.decodeSource` does. When the decoder refuses, the
 member is the limit of `VE.Acts.Lexical` whose own function gives exactly the decoder's text: `decodeFixed` on the
-declared phrases (1.1a), `phraseToks` on one of them (1.1b) or `check` on one act (1.1c); any other refusal is
-1.1d. The limits and texts are Lexical's, read here and never copied. After a refusal the classifier reads each
-declared phrase and each act once more, so its work is linear in the environment. Diagnostic only: no verdict
-depends on this module. -/
+declared phrases (1.1a), `phraseToks` on one of them (1.1b) or `check` on one act (1.1c); a refusal that
+`Acts.Wire.decodeVocab` gives on the `acts` block's frames and adverbs (D-31, `Acts.Syntax.checkVocab`; ap-1bfb) is
+1.1e at its limit (31a) and 1.1f otherwise; any other refusal is 1.1d. The limits and texts are Lexical's and D-31's,
+read here and never copied. After a refusal the classifier reads each declared phrase, the frames and adverbs, and
+each act once more, so its work is linear in the environment (D-31's pairwise checks run on at most 31a's frames).
+Diagnostic only: no verdict depends on this module. -/
 
 namespace VE.WireContract.Hooks.Acts
 open Lean
@@ -49,11 +51,16 @@ def actsOf (environment : Json) : List (String × Nat × Json) :=
     | _, _ => none
   | .error _ => []
 
+/-- The `acts` block of the environment's vocabulary, whose frames and adverbs `Acts.Wire.decodeVocab` reads. -/
+def blockOf (environment : Json) : Json := (environment.getObjValD "vocabulary").getObjValD "acts"
+
 /-- The member of the decoder's refusal `e`. `check` runs without the phrases: its limit refusal comes before it
     reads them. -/
 def member (environment : Json) (e : String) : ClassifierResult :=
   let fx := fixedOf environment
-  if !e.startsWith "ResourceLimit:" then .fail "1.1d" (message e)
+  if refusedWith e (VE.Acts.Wire.decodeVocab (blockOf environment)) then
+    .fail (if e.startsWith "ResourceLimit:" then "1.1e" else "1.1f") (message e)
+  else if !e.startsWith "ResourceLimit:" then .fail "1.1d" (message e)
   else if fx.length > maxPhrases then .fail (if refusedWith e (decodeFixed fx) then "1.1a" else "1.1d") (message e)
   else if fx.any (refusedWith e ∘ phraseToks) then .fail "1.1b" (message e)
   else if (actsOf environment).any (fun (p, k, raw) => refusedWith e (check [] p k raw)) then .fail "1.1c" (message e)
@@ -181,6 +188,29 @@ def around : List String := ["anna", "zora"]
     (envOf [phraseOf (maxPhraseBytes + 1)] (actOf 20), "1.1b", "ACTS_RESOURCE_LIMIT", "ResourceLimit"),
     (envOf [] (actOf (maxActBytes + 1)), "1.1c", "ACTS_RESOURCE_LIMIT", "ResourceLimit"),
     (envOf [] "{0} seek and enjoy asylum", "1.1d", "ACTS_INVALID_ENVIRONMENT", "InvalidInput")].all fun (j, c, k, l) =>
+  recordOf j == some (["acts@0", c, k, l, "/environment", "environment"].map Json.str ++ [(recordOf j).get!.getD 6 .null,
+    toJson true])
+-- the frames and adverbs (ap-1bfb, D-31): 31a's limit found from `decodeVocab`, never written here
+def frameOf (head : String) (markers : List String := []) : Json := Json.mkObj [("head", head),
+  ("markers", toJson markers), ("split", Json.arr #[]), ("modifiers", Json.arr #[])]
+def framesOf (n : Nat) : List Json :=
+  (List.range n).map fun i => frameOf (String.mk ['v', Char.ofNat (97 + i / 26), Char.ofNat (97 + i % 26)])
+def framed (frames : List Json) (adverbs : List String := []) : Json :=
+  let e := envOf [] (actOf 20)
+  e.setObjVal! "vocabulary" ((e.getObjValD "vocabulary").setObjVal! "acts"
+    (Json.mkObj [("fixed", Json.arr #[]), ("frames", toJson frames), ("adverbs", toJson adverbs)]))
+def framesLimit : Nat :=
+  ((List.range 600).find? fun n => !(VE.Acts.Wire.decodeVocab (Json.mkObj [("frames", toJson (framesOf (n + 1)))])).isOk).getD 0
+#guard framesLimit > 0 && memberOf (framed (framesOf framesLimit) ["promptly"]) == none
+#guard memberOf (framed (framesOf (framesLimit + 1))) == some "1.1e"
+#guard memberOf (framed (frameOf "Give" :: framesOf framesLimit)) == some "1.1e"
+#guard memberOf (framed [frameOf "Give"]) == some "1.1f"
+#guard memberOf (framed [frameOf "give" ["to"], frameOf "up"] ["give"]) == some "1.1f"
+#guard memberOf (framed [Json.mkObj [("head", "give")]]) == some "1.1f"
+-- a refusal of the frames is not one of the act limits', nor an act's refusal one of the frames'
+#guard memberOf ((framed [frameOf "give"]).setObjVal! "language" "x") == some "1.1d"
+#guard [(framed (framesOf (framesLimit + 1)), "1.1e", "ACTS_RESOURCE_LIMIT", "ResourceLimit"),
+    (framed [frameOf "Give"], "1.1f", "ACTS_INVALID_FRAMES", "InvalidInput")].all fun (j, c, k, l) =>
   recordOf j == some (["acts@0", c, k, l, "/environment", "environment"].map Json.str ++ [(recordOf j).get!.getD 6 .null,
     toJson true])
 -- the rule phases (ap-1bfb): `norms@0`'s members, under the include `norms`, typed over `acts@0`'s environment

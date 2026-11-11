@@ -1,3 +1,4 @@
+Seeded bug lean-norms-branch-removed: the profile-row gate removed from Hooks/Acts.lean decoded (and its #guard, which fails the build otherwise); ve_service rebuilt; uv run pytest -q tests/test_acts_contract.py tests/test_wire_contract_s5_lean.py -k acts:
 E         2 failed, 8 passed, 13 deselected in 1.76s
 FAILED tests/test_acts_contract.py::test_a_source_without_norms_gives_one_record_in_both_engines
 FAILED tests/test_acts_contract.py::test_the_recorded_corpus_gives_one_record_in_both_engines

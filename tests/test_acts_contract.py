@@ -13,7 +13,7 @@ import pytest
 from conformance.acts_contract import REGISTRY, acts_source
 from conformance.wire_contract_engine import CLEAN, Fault, load, run
 from conformance.wire_contract_faults import catalogue, catalogue_index, expected_record, route
-from conformance.wire_contract_faults_acts import EXAMPLES, at_count, at_limits, base, limits
+from conformance.wire_contract_faults_acts import D31, EXAMPLES, at_count, at_frames, at_limits, base, limits
 from tests import lean_routes
 from tests.subprocesses import HANG_TIMEOUT
 from tools import nested_pytest
@@ -38,7 +38,7 @@ def legacy(raw, norms):
 
 def accepted():
     examples = [json.loads(p.read_text()) for p in sorted(EXAMPLES.glob("*.json"))]
-    return [(e["environment"], e["norms"]) for e in examples] + [at_count()]
+    return [(e["environment"], e["norms"]) for e in examples] + [at_count(), at_frames()]
 
 
 def case(raw, norms, kind="norms-elaborate"):
@@ -153,6 +153,9 @@ def test_every_fault_gives_its_record_in_lean_and_the_sources_at_each_limit_are_
         assert row["outcome"] == "fault", fault.name
         record = expected(fault, lean=True)
         assert {k: row["diagnostic"][k] for k in record} == record, fault.name
+    # each condition of D-31 after 31a has a text of its own, which its fault reaches
+    texts = {row["diagnostic"]["text"] for f, row in zip(faults, rows) if f.name.startswith("frames-31")}
+    assert len(texts) == len(D31)
     assert [row["outcome"] for row in rows[len(faults):]] == ["clean"] * len(accepted())
 
 

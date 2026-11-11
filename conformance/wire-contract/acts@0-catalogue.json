@@ -16,6 +16,32 @@
       "act-bytes-over-not-an-act",
       "joined-act"
     ],
+    "1.1e": [
+      "frames-over",
+      "frames-over-with-bad-head"
+    ],
+    "1.1f": [
+      "frame-fields",
+      "frames-31b",
+      "frames-31c",
+      "frames-31d",
+      "frames-31e",
+      "frames-31f",
+      "frames-31g",
+      "frames-31h",
+      "frames-31i",
+      "frames-31j",
+      "frames-31k",
+      "frames-31l",
+      "frames-31m",
+      "frames-31n",
+      "frames-31o",
+      "frames-31p",
+      "frames-31q",
+      "frames-31r",
+      "frames-31s",
+      "frames-not-an-array"
+    ],
     "norms/2.2": [
       "rules-limit"
     ],

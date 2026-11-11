@@ -319,6 +319,9 @@ ACTS = [
      "DuplicateDeclaration: rule r0"),
     ("A5", lambda e, r: r.append({"norm": {**r[0]["norm"], "name": "r1", "over": ["r0"]}}) or
      r[0]["norm"].update(over=["r1"]), "norms/6.1", "/norms", "InvalidInput", "DependencyCycle: r0, r1"),
+    # a refused adverb of the `acts` block (D-31, 31p)
+    ("A6", lambda e, r: e["vocabulary"]["acts"].update(adverbs=["promptly", "promptly"]), "1.1f", "/environment",
+     "InvalidInput", None),
 ]
 
 
