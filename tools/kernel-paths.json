@@ -1,0 +1,509 @@
+{
+ "comment": "The verdict paths of the Lean service (docs/spec/kernel-boundary.md, section 2). tier kernel: the path's answers may carry a verdict and its spec and wrap lines count toward the kernel total; tier candidate: measured, not yet admitted. entry: the right-hand side of the mode's runMode_* pin; theorems: what an accepted answer means; subject: the runner or decision the theorems are about (not read): some listed theorem must state its answer (`subject … = .ok answer` with the answer used, or `subject … = true`), or the tool reports it; delegates: entries of other paths this entry hands cases to; nonverdict: exits reviewed as carrying no verdict, each with its reason. uncovered (kernel paths): code a subject runs for case kinds no listed theorem covers, with the kinds and the reason; it is outside the kernel (every kernel path's spec and census body is cut there; the tool reports one a kernel spec or wrap still reaches) and its verdict writers count outside. covered_writers (kernel paths): each verdict writer that is inside the kernel only because a subject runs it, with the case kinds it writes for and the listed theorems that cover them; an unnamed one is reported. Measured by tools/kernel_closure.py; only the architect seat changes a tier. imports: modules that hold a listed theorem and are imported only by VE.Audit (build them first: lake build <module>).",
+ "verdict_tokens": [
+  "CHECKED",
+  "CONFLICT-FREE",
+  "CONFLICT",
+  "INCONSISTENT",
+  "FOLLOWABLE",
+  "DILEMMA",
+  "ALL",
+  "SOME",
+  "NONE"
+ ],
+ "imports": [
+  "VE.Route.MeteredProofs"
+ ],
+ "keys": {
+  "comment": "The Lean code under the five frozen keys' answers (docs/kernel/frozen-keys-20261111.md): the spec and wrap of every path whose mode the keys call, and the validators the keys call, counted in full (their whole run closure). Measured as keyed_lines; keyed_kernel_lines is the part inside the kernel.",
+  "paths": [
+   "route",
+   "norms",
+   "softNorms",
+   "metered",
+   "quantity",
+   "risk"
+  ],
+  "validators": {
+   "check": [
+    "VE.Service.Standalone.reported",
+    "VE.Service.Standalone.checkCase"
+   ],
+   "model": [
+    "VE.Service.Standalone.reportedModel"
+   ],
+   "environment": [
+    "VE.Service.Standalone.reportedEnvironment"
+   ]
+  }
+ },
+ "paths": [
+  {
+   "name": "certificate",
+   "tier": "candidate",
+   "modes": [
+    "checkCertificate"
+   ],
+   "entry": [
+    "VE.CertificateWire.runCaseReportedSteps"
+   ],
+   "subject": [
+    "VE.CertificateWire.Query.accepts",
+    "VE.CertificateWire.ClosureQuery.accepts"
+   ],
+   "theorems": [
+    "VE.Order.certificate_runCase_profiles",
+    "VE.Order.profile_gate",
+    "VE.CertificateWire.Query.accepts_sound",
+    "VE.CertificateWire.ClosureQuery.accepts_sound"
+   ],
+   "delegates": [],
+   "nonverdict": []
+  },
+  {
+   "name": "route",
+   "tier": "kernel",
+   "modes": [
+    "route"
+   ],
+   "entry": [
+    "VE.Route.Run.runCaseReported"
+   ],
+   "subject": [
+    "VE.Route.Run.runCase",
+    "VE.Route.Wire.runFol",
+    "VE.Route.Wire.runClosure",
+    "VE.Route.Wire.runOrder"
+   ],
+   "theorems": [
+    "VE.Route.Run.route_gate",
+    "VE.Route.RunSound.route_closure_certificate",
+    "VE.Route.RunSound.route_closure_countermodel",
+    "VE.Route.RunSound.route_closure_evaluate",
+    "VE.Route.RunSound.route_fol_certificate",
+    "VE.Route.RunSound.route_fol_countermodel",
+    "VE.Route.RunSound.route_fol_evaluate",
+    "VE.Route.RunSound.route_order_certificate",
+    "VE.Route.RunSound.route_order_countermodel",
+    "VE.Route.RunSound.route_order_evaluate",
+    "VE.Route.RunSound.runCase_dispatch",
+    "VE.Route.RunSound.dispatch_fol",
+    "VE.Route.WireSound.runFol_accepted",
+    "VE.Route.WireSound.runFol_certificate_acceptance",
+    "VE.Route.WireSound.runFol_countermodel",
+    "VE.Route.WireSound.runFol_evaluate",
+    "VE.Route.RunSound.dispatch_closure",
+    "VE.Route.WireSound.runClosure_accepted",
+    "VE.Route.WireSound.runClosure_certificate_acceptance",
+    "VE.Route.WireSound.runClosure_countermodel",
+    "VE.Route.WireSound.runClosure_evaluate",
+    "VE.Route.RunSound.dispatch_order",
+    "VE.Route.WireSound.runOrder_accepted",
+    "VE.Route.WireSound.runOrder_certificate_acceptance",
+    "VE.Route.WireSound.runOrder_countermodel",
+    "VE.Route.WireSound.runOrder_evaluate"
+   ],
+   "delegates": [],
+   "nonverdict": [],
+   "uncovered": [
+    {
+     "name": "VE.Definitions.Bundle.runBundle",
+     "kinds": [
+      "bundle"
+     ],
+     "why": "answers `checked` (the lemmas accepted) on the fol family; no listed theorem states what a bundle answer means"
+    },
+    {
+     "name": "VE.Route.Run.runAdmit",
+     "kinds": [
+      "admission"
+     ],
+     "why": "answers `admitted: true` on the fol family; no listed theorem states what a route admission answer means"
+    }
+   ]
+  },
+  {
+   "name": "norms",
+   "tier": "kernel",
+   "modes": [
+    "norms"
+   ],
+   "entry": [
+    "VE.Norms.Run.runCaseReported"
+   ],
+   "subject": [
+    "VE.Norms.Run.runCase",
+    "VE.Norms.Run.runCaseIn",
+    "VE.Norms.Run.runAdmission",
+    "VE.Norms.Run.runAdmissionIn"
+   ],
+   "theorems": [
+    "VE.Norms.FlaggedSpec.norms_wire_conflict_exclusive",
+    "VE.Norms.FlaggedSpec.norms_wire_conflict_free",
+    "VE.Norms.FlaggedSpec.norms_wire_conflict_refuted",
+    "VE.Norms.FlaggedSpec.runCase_conflict",
+    "VE.Norms.Run.norms_wire_acceptance",
+    "VE.Norms.RunSound.norms_wire_certificate_acceptance",
+    "VE.Norms.RunSound.runCase_certificate",
+    "VE.Acts.Decode.norms_wire_acceptance_elaborated",
+    "VE.Acts.Decode.norms_wire_certificate_acceptance_elaborated",
+    "VE.Acts.Decode.norms_wire_conflict_exclusive_elaborated",
+    "VE.Acts.Decode.norms_wire_conflict_free_elaborated",
+    "VE.Acts.Decode.norms_wire_conflict_refuted_elaborated",
+    "VE.Norms.FlaggedSpec.norms_wire_conflict_exclusiveIn",
+    "VE.Norms.FlaggedSpec.norms_wire_conflict_freeIn",
+    "VE.Norms.FlaggedSpec.norms_wire_conflict_refutedIn",
+    "VE.Norms.FlaggedSpec.runCase_conflictIn",
+    "VE.Norms.Run.norms_wire_acceptanceIn",
+    "VE.Norms.RunSound.norms_wire_certificate_acceptanceIn",
+    "VE.Norms.RunSound.runCase_certificateIn",
+    "VE.Norms.Run.runAdmission_sound",
+    "VE.Norms.Run.runAdmission_soundIn"
+   ],
+   "delegates": [
+    "VE.Route.Run.runCaseReported"
+   ],
+   "nonverdict": [
+    {
+     "name": "VE.Acts.Run.runElaborate",
+     "why": "acts-elaborate returns an elaboration to show, never a verdict (act-phrases 6.7)"
+    }
+   ],
+   "uncovered": [
+    {
+     "name": "VE.Norms.Plain.run",
+     "kinds": [
+      "background",
+      "evaluate",
+      "countermodel",
+      "certificate"
+     ],
+     "why": "the plain kinds on a layered environment (no norm objects) answer `valid` and countermodels; no listed theorem covers them (Norms/Run.lean, runCaseIn)"
+    }
+   ],
+   "covered_writers": [
+    {
+     "name": "VE.Norms.Run.runCaseIn",
+     "kinds": [
+      "norms-conflict"
+     ],
+     "theorems": [
+      "VE.Norms.FlaggedSpec.norms_wire_conflict_freeIn",
+      "VE.Norms.FlaggedSpec.norms_wire_conflict_refutedIn",
+      "VE.Norms.FlaggedSpec.norms_wire_conflict_exclusiveIn",
+      "VE.Norms.FlaggedSpec.runCase_conflictIn"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "softNorms",
+   "tier": "kernel",
+   "modes": [
+    "softNorms"
+   ],
+   "entry": [
+    "VE.SoftNorms.Run.runCaseReported"
+   ],
+   "subject": [
+    "VE.SoftNorms.Run.runCase",
+    "VE.SoftNorms.Run.runAdmission"
+   ],
+   "theorems": [
+    "VE.SoftNorms.Run.soft_wire_acceptance",
+    "VE.SoftNorms.Run.runAdmission_sound"
+   ],
+   "delegates": [
+    "VE.Norms.Run.runCaseReported"
+   ],
+   "nonverdict": [
+    {
+     "name": "VE.SoftNorms.Run.reportedCode",
+     "why": "names the diagnostic code of a rejection row; runs only when runCase refused"
+    },
+    {
+     "name": "VE.SoftNorms.Run.dualGuardCycle",
+     "why": "adds a flag to a rejection row; runs only when runCase refused"
+    }
+   ],
+   "uncovered": [
+    {
+     "name": "VE.SoftNorms.Run.runSoftKind",
+     "kinds": [
+      "soft-rule",
+      "soft-rules",
+      "soft-elaborate",
+      "soft-pairs",
+      "soft-certificate",
+      "soft-conflict"
+     ],
+     "why": "every soft kind but admission: soft-certificate answers `valid`, soft-conflict CONFLICT or CONFLICT-FREE, soft-elaborate a `soft_status` of CHECKED (residualStatus); the listed theorems cover admission only (KB-3)"
+    }
+   ]
+  },
+  {
+   "name": "metered",
+   "tier": "candidate",
+   "modes": [
+    "metered"
+   ],
+   "entry": [
+    "VE.Route.MeteredRun.runCaseReported"
+   ],
+   "subject": [
+    "VE.Route.Metered.evaluate",
+    "VE.Route.Metered.scan",
+    "VE.Route.Metered.scanState"
+   ],
+   "theorems": [
+    "VE.Route.MeteredProofs.fol_sound",
+    "VE.Route.MeteredProofs.order_sound",
+    "VE.Route.MeteredProofs.closure_sound",
+    "VE.Route.MeteredProofs.core_sound",
+    "VE.Route.Metered.scan_sound",
+    "VE.Route.Metered.scanState_sound",
+    "VE.Route.Metered.scan_exhausted_unknown"
+   ],
+   "delegates": [],
+   "nonverdict": []
+  },
+  {
+   "name": "quantity",
+   "tier": "candidate",
+   "modes": [
+    "quantity"
+   ],
+   "entry": [
+    "VE.Time.Wire.runCaseReported",
+    "VE.Time.Document.extension"
+   ],
+   "subject": [
+    "VE.Time.Wire.checkW6Certificate",
+    "VE.Time.evalB",
+    "VE.Time.refutesB",
+    "VE.Time.Document.admitDocument"
+   ],
+   "theorems": [
+    "VE.Time.Wire.checkW6Certificate_sound",
+    "VE.Time.Wire.evalB_sorted_sound",
+    "VE.Time.Wire.refutesB_sorted_sound",
+    "VE.Time.Document.admit_quantity_report_sound"
+   ],
+   "delegates": [],
+   "nonverdict": []
+  },
+  {
+   "name": "rights",
+   "tier": "candidate",
+   "modes": [
+    "rights"
+   ],
+   "entry": [
+    "VE.Rights.Run.runCaseReported"
+   ],
+   "subject": [
+    "VE.Rights.Run.runCase",
+    "VE.Rights.Run.runAdmission"
+   ],
+   "theorems": [
+    "VE.Rights.Run.rights_wire_acceptance",
+    "VE.Rights.Run.runAdmission_sound"
+   ],
+   "delegates": [
+    "VE.SoftNorms.Run.runCaseReported",
+    "VE.Norms.Run.runCaseReported",
+    "VE.Route.Run.runCaseReported"
+   ],
+   "nonverdict": []
+  },
+  {
+   "name": "normDefaults",
+   "tier": "candidate",
+   "modes": [
+    "normDefaults"
+   ],
+   "entry": [
+    "VE.NormDefaults.Run.runCaseReported"
+   ],
+   "subject": [
+    "VE.NormDefaults.Run.runCase",
+    "VE.NormDefaults.Run.runCaseIn",
+    "VE.NormDefaults.Run.runAdmission",
+    "VE.NormDefaults.Run.runAdmissionIn",
+    "VE.NormDefaults.Admission.runAdmissionX"
+   ],
+   "theorems": [
+    "VE.NormDefaults.Run.normDefaults_wire_admission",
+    "VE.NormDefaults.Run.normDefaults_wire_admissionX",
+    "VE.Acts.Decode.normDefaults_wire_admission_elaborated",
+    "VE.NormDefaults.Run.normDefaults_wire_admissionIn",
+    "VE.NormDefaults.Run.runAdmission_sound",
+    "VE.NormDefaults.Run.runAdmission_soundIn",
+    "VE.NormDefaults.Admission.runAdmissionX_sound"
+   ],
+   "delegates": [
+    "VE.SoftNorms.Run.runCaseReported",
+    "VE.Norms.Run.runCaseReported",
+    "VE.Route.Run.runCaseReported"
+   ],
+   "nonverdict": []
+  },
+  {
+   "name": "alternatives",
+   "tier": "candidate",
+   "modes": [
+    "alternatives"
+   ],
+   "entry": [
+    "VE.Alternatives.Run.runCaseReported"
+   ],
+   "subject": [
+    "VE.Alternatives.Run.runCase",
+    "VE.Alternatives.Run.runAdmission"
+   ],
+   "theorems": [
+    "VE.Alternatives.Run.alternatives_wire_acceptance",
+    "VE.Alternatives.Run.runAdmission_sound"
+   ],
+   "delegates": [
+    "VE.SoftNorms.Run.runCaseReported",
+    "VE.Norms.Run.runCaseReported",
+    "VE.Route.Run.runCaseReported"
+   ],
+   "nonverdict": []
+  },
+  {
+   "name": "risk",
+   "tier": "candidate",
+   "modes": [
+    "risk"
+   ],
+   "entry": [
+    "VE.Risk.Run.runCaseReported"
+   ],
+   "subject": [
+    "VE.Risk.Run.runCase",
+    "VE.Risk.Run.runAdmission",
+    "VE.Risk.Run.replayAudit",
+    "VE.Risk.Run.replayRiskConflict",
+    "VE.Risk.Run.replayRiskFollowable",
+    "VE.Risk.Run.replayDecision"
+   ],
+   "theorems": [
+    "VE.Risk.Run.risk_wire_acceptance",
+    "VE.Risk.Run.runAdmission_sound",
+    "VE.Risk.Run.risk_wire_audit_sound",
+    "VE.Risk.Run.risk_wire_conflict_sound",
+    "VE.Risk.Run.risk_wire_followable_sound",
+    "VE.Risk.Run.risk_wire_scenario_sound"
+   ],
+   "delegates": [
+    "VE.SoftNorms.Run.runCaseReported",
+    "VE.Norms.Run.runCaseReported",
+    "VE.Route.Run.runCaseReported"
+   ],
+   "nonverdict": []
+  },
+  {
+   "name": "reports",
+   "tier": "candidate",
+   "modes": [
+    "reports"
+   ],
+   "entry": [
+    "VE.Reports.Run.runCaseReported"
+   ],
+   "subject": [
+    "VE.Reports.Run.runCase",
+    "VE.Reports.Run.runAdmission",
+    "VE.Reports.Run.runCountermodel"
+   ],
+   "theorems": [
+    "VE.Reports.Run.reports_wire_acceptance",
+    "VE.Reports.Run.runAdmission_sound",
+    "VE.Reports.Run.runCountermodel_sound"
+   ],
+   "delegates": [
+    "VE.SoftNorms.Run.runCaseReported",
+    "VE.Norms.Run.runCaseReported",
+    "VE.Route.Run.runCaseReported"
+   ],
+   "nonverdict": []
+  },
+  {
+   "name": "readingsRoute",
+   "tier": "candidate",
+   "modes": [
+    "readingsRoute"
+   ],
+   "entry": [
+    "VE.Readings.Run.runCaseReported"
+   ],
+   "subject": [
+    "VE.Readings.Run.replayVerdictsND"
+   ],
+   "theorems": [
+    "VE.Ask.Asked.hreplay",
+    "VE.Readings.Run.readings_wire_verdicts_all",
+    "VE.Readings.Run.readings_wire_verdicts_conflict",
+    "VE.Readings.Run.readings_wire_verdicts_conflict_free",
+    "VE.Readings.Run.readings_wire_verdicts_inconsistent",
+    "VE.Readings.Run.readings_wire_verdicts_model",
+    "VE.Readings.Run.readings_wire_verdicts_none",
+    "VE.Readings.Run.readings_wire_verdicts_some"
+   ],
+   "delegates": [],
+   "nonverdict": []
+  },
+  {
+   "name": "discourse",
+   "tier": "candidate",
+   "modes": [
+    "discourse"
+   ],
+   "entry": [
+    "VE.Discourse.Run.runCaseReported"
+   ],
+   "subject": [
+    "VE.Discourse.Run.runCase",
+    "VE.Discourse.runAll"
+   ],
+   "theorems": [
+    "VE.Discourse.Run.discourse_wire_acceptance",
+    "VE.Discourse.chainBase_of",
+    "VE.Discourse.envelopeChecks_profiles",
+    "VE.Discourse.runAll_cons",
+    "VE.Discourse.runAll_nil",
+    "VE.Discourse.runAll_ok"
+   ],
+   "delegates": [],
+   "nonverdict": []
+  },
+  {
+   "name": "document",
+   "tier": "candidate",
+   "modes": [
+    "document"
+   ],
+   "entry": [
+    "VE.Service.Document.runCaseReported"
+   ],
+   "subject": [
+    "VE.Service.Document.checkDocSetsView",
+    "VE.Service.Document.checkDocSets",
+    "VE.Service.Document.checkDoc"
+   ],
+   "theorems": [
+    "VE.Service.Document.checkDocSetsView_candidates",
+    "VE.Service.Document.checkDocSetsView_ok",
+    "VE.Service.Document.checkDocSetsView_packs",
+    "VE.Service.Document.checkDocSetsView_readings",
+    "VE.Service.Document.checkDocSetsView_rows",
+    "VE.Scope.scope_admission_sets",
+    "VE.Scope.scope_admission"
+   ],
+   "delegates": [],
+   "nonverdict": []
+  }
+ ]
+}
