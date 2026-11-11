@@ -6,7 +6,8 @@
   fixture instances; F2, NormalProofs' header now says what that module proves. Two checks keep the class out: every
   declaration of spec 5.6 must be in Lean, and a module's first sentence may name only declared 5.6 theorems.
 - Open items: none. No DRI signature is needed: DELTA.md has no rows, and trust is +0.
-- Not run: the full gate and the trust-mutant sweep (no trusted growth; see "Trust"). The selected tests: see "Tests".
+- Tests: lake build, lean/audit.py and the selected tests pass (selected: 449 units on the committed tree
+  6814834494, commit 0a330c2fb4, 0 failed). Not run: the full gate and the trust-mutant sweep (no trusted growth).
 
 Branch `feature/ap-2bc`, base main `5f756e791d`. Spec docs/spec/act-phrases.md 5.6, `read_normal` at line 917.
 Decisions: reviews/dri-decisions-20261030-ap-2bb.md items 1 and 3, reviews/dri-decisions-20261110-fable-interim-apply.md
@@ -121,7 +122,11 @@ made a no-op → `::test_a_header_naming_an_unproved_theorem_fails` FAILED. No R
 - `cd lean && lake build` → `Build completed successfully (1408 jobs)`.
 - `python3 lean/audit.py` → `PASS` (above).
 - `uv run pytest -q tests/test_ap56_statements.py` → `3 passed`.
-- Selected tests: see the last section (run on the committed tree).
+- Selected tests, on the committed tree (git status clean; tree 6814834494, commit 0a330c2fb4): `zsh mac-pytest.sh
+  --select -- --base $(git merge-base HEAD main) --run` → `recorded 449 units for tree 6814834494; 66 others left to
+  the static graph until they run; 0 failed`, `summary: ran LOCALLY (VM) …; exit=0; 4144s`. The run includes
+  tests/test_ap56_statements.py. No test of main-known-red.txt was involved. The commit after it changes only this
+  REPORT.
 
 ## Notes for the DRI
 
@@ -138,10 +143,11 @@ made a no-op → `::test_a_header_naming_an_unproved_theorem_fails` FAILED. No R
    statement and a header naming an undeclared theorem.
 4. Python, Lean and Rust agree: N.A., Lean proofs and a statement checker.
 5. R8 binding: N.A.
-6. Gate evidence matches the final HEAD: the chain's gate runs on the final commit; the selected run is below.
+6. Gate evidence matches the final HEAD: the chain's gate runs on the final commit; the selected run is on
+   0a330c2fb4, whose successor changes only this REPORT.
 7. No unsigned item: PASS, DELTA.md has no rows, trust +0.
 8. Every user-visible change in DELTA: PASS, there is none.
-9. Test selection finds the tests: see the selected run below.
+9. Test selection finds the tests: PASS, the selected run includes tests/test_ap56_statements.py and the act tests.
 10. Lean statements say what is claimed: PASS, `tools/check_ap56_statements.py` (all 11 declarations of 5.6).
 11. Budgets and limits: N.A., no runtime path changed.
 12. No CPU or memory regression: PASS, no runtime code changed.
