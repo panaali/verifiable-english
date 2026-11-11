@@ -4577,6 +4577,12 @@
         "VE.Grammar.addTerms",
         "VE.Grammar.avail",
         "VE.Grammar.combine",
+        {
+          "name": "VE.Grammar.combineFast",
+          "tied": [
+            "VE.Grammar.combineFast_eq"
+          ]
+        },
         "VE.Grammar.dedup",
         "VE.Grammar.fill",
         "VE.Grammar.finalPass",
@@ -15889,7 +15895,19 @@
           ]
         },
         "VE.Acts.RSym.nt?",
-        "VE.Acts.build"
+        "VE.Acts.build",
+        {
+          "name": "VE.Acts.buildFast",
+          "tied": [
+            "VE.Acts.buildFast_eq"
+          ]
+        },
+        {
+          "name": "VE.Acts.closedFast",
+          "tied": [
+            "VE.Acts.closedFast_eq"
+          ]
+        }
       ],
       "P": [
         "VE.Acts.RuleS.ok"
@@ -15995,6 +16013,7 @@
     "VE/Acts/Wire.lean": {
       "D[V]": [
         "VE.Acts.Wire.checkAct",
+        "VE.Acts.Wire.checkActBy",
         "VE.Acts.Wire.decodeFrame",
         "VE.Acts.Wire.decodeVocab",
         {
@@ -16003,7 +16022,8 @@
             "VE.Readings.Wire.readings_lexical_only"
           ]
         },
-        "VE.Acts.Wire.joinedAct"
+        "VE.Acts.Wire.joinedAct",
+        "VE.Acts.Wire.joinedActBy"
       ]
     },
     "VE/Acts/Decode.lean": {
@@ -16317,6 +16337,7 @@
         "VE.Acts.joinAct",
         "VE.Acts.longEnd",
         "VE.Acts.meaning",
+        "VE.Acts.meaningWith",
         "VE.Acts.normalOk",
         "VE.Acts.piecesOf",
         "VE.Acts.singleAct"
@@ -16338,13 +16359,38 @@
         },
         "VE.Acts.analyse",
         {
+          "name": "VE.Acts.lazyReader",
+          "tied": [
+            "VE.Acts.lazyReader_get"
+          ]
+        },
+        {
           "name": "VE.Acts.phraseReadings",
           "tied": [
             "VE.Acts.phraseReadings_exact"
           ]
         },
         "VE.Acts.read",
-        "VE.Acts.readings"
+        {
+          "name": "VE.Acts.readOnce",
+          "tied": [
+            "VE.Acts.read_eq_once"
+          ]
+        },
+        "VE.Acts.reader",
+        "VE.Acts.readings",
+        {
+          "name": "VE.Acts.readingsBy",
+          "tied": [
+            "VE.Acts.readingsBy_reader"
+          ]
+        },
+        {
+          "name": "VE.Acts.readingsOnce",
+          "tied": [
+            "VE.Acts.readings_eq_once"
+          ]
+        }
       ]
     },
     "VE/Acts/MeaningExamples.lean": {
@@ -20084,7 +20130,8 @@
         "VE.Acts.Run.spans",
         "VE.Acts.Run.tagBase",
         "VE.Acts.Run.tagTree",
-        "VE.Acts.Run.tagged"
+        "VE.Acts.Run.tagged",
+        "VE.Acts.Run.taggedWith"
       ],
       "G[I]": [
         "VE.Acts.Run.sameTok"
@@ -21367,6 +21414,27 @@
         "ResponseShape.SoftPairsChecks.openWith",
         "ResponseShape.SoftPairsChecks.pairs",
         "ResponseShape.SoftPairsChecks.parse"
+      ]
+    },
+    "VE/Acts/ParseIndexExamples.lean": {
+      "T": [
+        "VE.Acts.ParseIndexExamples.elabOnceInstalled",
+        "VE.Acts.ParseIndexExamples.l6",
+        "VE.Acts.ParseIndexExamples.l6Fixed",
+        "VE.Acts.ParseIndexExamples.l6Steps",
+        "VE.Acts.ParseIndexExamples.onceInstalled",
+        "VE.Acts.ParseIndexExamples.padFrames"
+      ]
+    },
+    "VE/Acts/Index.lean": {
+      "G[V]": [
+        {
+          "name": "VE.Acts.firstsGo",
+          "tied": [
+            "VE.Acts.firstsGo_eq"
+          ]
+        },
+        "VE.Acts.idxGo"
       ]
     }
   }
