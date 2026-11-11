@@ -1,6 +1,6 @@
 # ci-3 report: steps, `Then` steps and conditions written first on the `english.command` route
 
-No DELTA row reserves a DRI signature: rows 1-7 cite a signed decision or R3/R16.
+No DELTA row reserves a DRI signature: rows 1-8 cite a signed decision or R3/R16. Review fixes: section "Review fixes" below.
 
 Spec: docs/spec/commands-imperatives.md section 7 (the statement gate passed in reviews/dri-decisions-20261102-ci-0.md
 item 1). Plan: commands-imperatives-PLAN.md "CI-3. Steps and conditions written first". Branch `feature/ci-3`, merged
@@ -85,8 +85,8 @@ numbers are on the merged tree.
 
 ## Trust
 
-`tools/trust_map.py --check` against d3bb8bfbc650: K +0, S +0, trusted +89. That is VE/Commands/Run.lean +84,
-VE/SpeechActs/Wire.lean +4 and VE/SpeechActs/Source/Run.lean +1. The allowance is in docs/trust-baseline.json, SIGNED
+`tools/trust_map.py --check` against d3bb8bfbc650: K +0, S +0, trusted +103 (after the review fixes; +89 before).
+That is VE/Commands/Run.lean +84, VE/SpeechActs/Wire.lean +4 and VE/SpeechActs/Source/Run.lean +15. The allowance is in docs/trust-baseline.json, SIGNED
 by standing ruling R16, and FOLLOW-UPS.md "## ci-3" asks for the ties pass. Fixture definitions are classified `T`
 (tools/trust-classes.json).
 
@@ -135,17 +135,56 @@ No product line was added after that ruling.
 - `python3 lean/audit.py`: PASS. 819 source files and 9242 theorems, only the standard axioms (run once on this
   tree after `lake build` built 1353 jobs with no error and no `sorry`).
 - `uv run python tools/regen_generated.py --check`: 38 entries checked, none stale.
-- `tools/gate_collection.py --check --prebuilt`: 33425 collected, 14 added (on 2f3694d6e; the twin-fallback test added after it makes 15, not re-collected), 0 removed, 0 refused, 0 stale, 0 malformed.
-- Selected tests, run once on the committed tree f790ddde0 (`MAC_PYTEST_NO_DEFER=1 mac-pytest.sh --select -- --base
-  d3bb8bfbc --run`, on ve-cloud-2 and Actions): 493 units, 1 failed,
-  `tests/test_lean_layers_once.py::test_no_route_of_the_service_calls_a_twinned_original`. The walk from
-  `VE.Service.runMode` now reaches `shapeOutcomeCharged` -> `shapeOutcome`: ci-3a's `@[csimp]` twin hands every shape
-  but `.seq` to its original, whose code for them is the same, and ci-3 is the first item to put `readStep` on a
-  route. Steps.lean is ci-3a's file and outside this item, so the test exempts exactly that (twin, original) pair
-  (`TWIN_FALLBACKS`). Any other caller of the original still fails. The new
-  `test_each_twin_fallback_is_a_registered_twin_calling_its_own_original` fails once the exemption is no longer
-  needed. Rerun of the failed file: `uv run pytest -q tests/test_lean_layers_once.py`, 5 passed. A cheap follow-up
-  would spell out the three branches in `shapeOutcomeCharged` and drop the exemption (ci-3a's owner; not filed here).
+- `tools/gate_collection.py --check --prebuilt`: 33425 collected, 14 added, 0 removed, 0 refused, 0 stale, 0 malformed (on 2f3694d6e; the review fixes add 6 tests, below, and remove none: the twin-fallback test 604c8d9a8 added is gone with its exemption).
+- Selected tests before the review, on f790ddde0: 493 units, 1 failed
+  (`tests/test_lean_layers_once.py::test_no_route_of_the_service_calls_a_twinned_original`: the walk reached
+  `shapeOutcomeCharged` -> `shapeOutcome`). Commit 604c8d9a8 exempted that pair; review F1 found the exemption an
+  unsigned removal of a check, and the fix removes it (section "Review fixes").
+- Selected tests after the review fixes, run once on 535841f1a (tree fdea0a14b6; the commits after it touch only
+  docs/ and RunSplit.lean's guards, which `lake build` checks): `mac-pytest.sh --select -- --base d3bb8bfbc --run`,
+  on ve-cloud-2: 455 units planned, 443 recorded, 0 failed, exit 0 (6812 s).
+
+## Review fixes (reviews of 604c8d9a8: ci-3-review.final.md, F1-F4)
+
+| Finding | Fix | Regression test | Commit |
+|---|---|---|---|
+| F1 (A) unsigned removal of a check (`TWIN_FALLBACKS`) | The class is a `@[csimp]` twin that calls its own original, so compiled code reaches the original. `shapeOutcomeCharged` (lean/VE/Commands/Steps.lean) now writes the `.core`, `.preposed` and `.after` cases itself, as `shapeOutcome` does (`shapeOutcome_charged` still proves the two equal, by `rfl` on those cases). The exemption and its "still needed" test are removed, and `tests/test_lean_layers_once.py` is byte for byte its pre-604c8d9a8 text. No check is weakened, so no signature is needed. | `tests/test_lean_layers_once.py::test_no_route_of_the_service_calls_a_twinned_original` (failed on f790ddde0 with the twin calling its original; passes) | dc360e738 |
+| F2 (B) the plan's document form of a sequence was not checked | lean/VE/SpeechActs/Source/Run.lean: `unitGroups` (a `MIXED` unit's parts with their whole wording, or a lone unit), `sequences` (a group with an instruction part, by effective kind, whose wording joins steps with `, then `, the reader's only sequence cut; no 8-step cap, so a longer one is refused, not skipped), and `sequenceFault`: `readInstruction` (`readStep` outside the proof task) of the whole wording under the reading context must be `steps rs`, with one instruction part per step whose decoded command (explicit, resolved or chosen) is `r.command part` in order. `decodeSpeechSource` asks for the context as for a command fence (Python's `SpeechSource` retry sends it). `stepUnits` counts a sequence as one unit of `n` steps, and `SpeechSource.stepOrder` derives the stated order (`m.1`, `m.2`). The class covers plain, attributed, hedged and chosen parts, a lone unit carrying one command for a two-step wording, a non-instruction part, and a part count that is not the step count. New text `Texts.sequenceParts` (`InvalidInput`). DELTA row 8 (b2), AB.md D2. | `RunSplit.lean` SourceExamples guards (the probe's payload: `readingContextText` without context, and with context the sequence text for reversed steps, plain/attributed/hedged/chosen; in order `ok`; the derived order); `tests/test_commands_steps.py::test_a_sequence_unit_s_parts_are_read_against_the_whole_wording[plain,attributed,hedged]`, `::test_python_s_retry_sends_a_sequence_its_reading_context` | efaf624af, 1a503c533 (guards for trust-mutant readSource:860), 535841f1a (manifest re-pin) |
+| F3 (A) the codes signature's guard condition was unmet | RunExamples.lean `abRefused`: the six rr rows, each refused through the mode with its exact code, text and class. A test ties every rr row of AB.json to the table, mirroring the b1 test. DELTA row 2 now states the class honestly: every row stays in the `VEError` family, but rows 1 and 2 go from `SyntaxError` to `VEError` and row 5 from `VEError` to `SyntaxError` (`NoDerivation` is the condition reader's `SyntaxError`, as for "Click Ask, if draft is approvable.", now a guard). | `tests/test_commands_steps.py::test_each_rr_row_is_a_route_fixture_refused_with_its_code[*]` (6); the `abRefused` guard | 3601d1770 |
+| F4 (B) relay gate PASS on a stale binary | No code. The probe ran on HEAD c1bb63faa, whose last commit touching `lean/` is a3518835f (`git log -1 -- lean`, the regenerated inventories; the product Lean is efaf624af's). The first run exited 11: the binary predated the commits, because `lake` found nothing to rebuild for unchanged source hashes. The binary was then deleted, so `lake build ve_service` relinked it, and the probe was rerun unchanged: | the probe | c1bb63faa. Commit 1a503c533 (RunSplit.lean guards) and the inventories after it touch `lean/` again, so the probe is run once more on the final HEAD, after a forced relink, as the item's last step; that output is in the handoff report |
+
+F4 probe output (exit status **0**):
+
+```
+F4: fresh ve_service lean/.lake/build/bin/ve_service (mtime 1794377886 >= last lean commit 1794377786) at c1bb63faac
+F4: RELAY GATE START
+...
+service:english.command: 6 fixtures, 1133 mutants, 1133 refused, 0 allowed, 3.8 s
+...
+call:ve.backends.speech_source:decide_source: 2 fixtures, 2061 mutants, 1993 refused, 68 allowed, 136.1 s
+relay_mutation_gate: 48 routes, 152947 mutants, 0 failures
+F4: RELAY GATE END rc=0
+```
+
+Seeded bugs of the fixes (each failed, then was restored; mutants.json's last four entries):
+
+| Language | File | Bug | Failing check |
+|---|---|---|---|
+| Lean | lean/VE/SpeechActs/Source/Run.lean | `sequenceFault` does not compare a part's command with its step's | RunSplit.lean:174 (plain, attributed, hedged reversed), :186 (chosen) |
+| Lean | lean/VE/SpeechActs/Source/Run.lean | `decodeSpeechSource` does not ask a sequence for its context | RunSplit.lean:173 (the probe's payload) |
+| Lean | lean/VE/SpeechActs/Source/Run.lean | `stepUnits` counts a sequence as one step | RunSplit.lean:192 (`stepOrder` is [(m.1, m.2)]) |
+| Lean | lean/VE/SpeechActs/Source/Run.lean | the sweep's survivor: `hasContext payload && …` -> `||` | RunSplit.lean:176 and :178 (after 1a503c533) |
+| Lean | lean/VE/Commands/Steps.lean | the twin calls its original (604c8d9a8's tree) | `tests/test_lean_layers_once.py::test_no_route_of_the_service_calls_a_twinned_original` on f790ddde0 (not replanted: a Steps.lean edit rebuilds the whole tree, over 50 min) |
+| Python (test) | lean/VE/Commands/RunExamples.lean | an rr row dropped from `abRefused` | `test_each_rr_row_is_a_route_fixture_refused_with_its_code[Click Ask, then click Ask, if draft is approved.]` |
+
+No Python or Rust product file changed in the fixes. Python only relays the new refusal; its retry already selects
+on Lean's `InvalidInput: command reading context`.
+
+Left to the translation writer (OPEN O4/O8): finding (d)'s translation form, a demand part plus a GAP part for a
+refused step, has a `, then ` wording whose `readStep` is a refusal. This wrapper therefore refuses it under F2's
+check (refusing direction, b2). Accepting it needs the GAP part's owner (O4) and a step-naming refusal (O8).
+
+Not done (pre-existing): no test of main-known-red.txt was selected or touched.
 
 ## Pilot bytes (an estimate; nothing is claimed before a pilot audit)
 
@@ -225,7 +264,7 @@ left to the merge train (R12 for the generated files).
     No test sleeps, times or uses a wall deadline (`tests/test_hang_guards.py` is selected).
 12. N.A. for pilot timing (L70 forbids whole-UDHR runs). The eager pattern is guarded by the `limit` and
     `readingsBound` guards in item 11.
-13. PASS. `tools/gate_collection.py --check --prebuilt` (on 2f3694d6e): 14 added, plus the twin-fallback test after it, 0 removed, 0 refused, 0 stale, 0 malformed. No
+13. PASS. `tools/gate_collection.py --check --prebuilt` (on 2f3694d6e): 14 added, plus the review fixes' tests, 0 removed, 0 refused, 0 stale, 0 malformed. No
     test is removed.
 14. PASS. Each new check is tested in both directions:
     - `surfaceKind`: instruction for "If c, click …" and asserted for (ββ) (RunExamples webKind guards);
