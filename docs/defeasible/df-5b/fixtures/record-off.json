@@ -1,0 +1,1 @@
+{"situation": {"complete": true, "domains": {"assistant": ["a"]}, "constants": {}, "relations": {"soft__excepted__r1": [], "soft__off__r1__user": []}}, "record": [{"decision": {"off": "r1", "party": "user"}, "tuple": ["a"], "value": true}], "observations": [], "query": {"outcome": "x_permitted", "tuple": ["a"]}}

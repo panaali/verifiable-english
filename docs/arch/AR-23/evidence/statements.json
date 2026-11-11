@@ -1,0 +1,51 @@
+{
+ "base": "de7fb94690644f6eb7f0d422ce33d050e27c8bd4",
+ "head": "547dc3aa2969ca791b40cf6841f2fa6953e1e3ba",
+ "tool": "uv run python tools/lean_statements.py --diff <base statements.txt> <head statements.txt> (and predicates.txt); each kept entry compared byte for byte (statement text, -- uses line with @Module tags, -- expr hash)",
+ "statements": {
+  "base_entries": 8506,
+  "head_entries": 8507,
+  "added": [
+   "VE.Closure.entails_iff"
+  ],
+  "removed": [],
+  "changed": [],
+  "kept_all_byte_identical": true,
+  "uses_closure_denote": [
+   "VE.Closure.conservativity",
+   "VE.Closure.conservativity_without_reach",
+   "VE.Closure.countermodelCheck_iff",
+   "VE.Closure.eval_false_iff_not_denote",
+   "VE.Closure.eval_iff_denote",
+   "VE.Core.embedClosure_denote",
+   "VE.Data.Background.closure_data_route_acceptance",
+   "VE.Data.Background.closure_data_route_countermodel",
+   "VE.Definitions.closure_acceptance",
+   "VE.Route.Background.closure_route_acceptance",
+   "VE.Route.WireSound.closure_denote_forget",
+   "VE.Service.Family.closureRefutes_sound",
+   "VE.Service.Family.closure_graph_sound",
+   "VE.Service.FamilyBundle.closure_bundle_sound"
+  ],
+  "uses_closure_denote_count": 14,
+  "uses_closure_denote_all_byte_identical": true,
+  "named_in_task_byte_identical": {
+   "VE.Closure.conservativity": true,
+   "VE.Route.Background.closure_route_acceptance": true,
+   "VE.Core.embedClosure_denote": true,
+   "VE.Core.embedClosure_check": true,
+   "VE.Core.entails_closure": true,
+   "VE.Closure.check_iff_wellFormed": true,
+   "VE.Closure.eval_iff_denote": true,
+   "VE.Closure.Tableau.checkCertificate_sound": true,
+   "VE.Route.Budget.evalC_sound": true,
+   "VE.Closure.CoreEquiv.checkCertificate_eq_core_replay": true
+  }
+ },
+ "predicates": {
+  "added": 0,
+  "removed": 0,
+  "changed": 0,
+  "byte_identical": true
+ }
+}
