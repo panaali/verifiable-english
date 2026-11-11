@@ -274,6 +274,28 @@ theorem ruleReading_ok {D : ActsDoc} {A : Act} {N : Node} {R : List Simple} (h :
       · simp only [bind, Except.bind] at h
         split at h <;> cases h
 
+/-- Each generated rule of the map is a part `splitNode` built from a rule `N` of the source, named with `N`'s name as
+its source (norm-defaults-cfr-1b: the status row's `sources`). -/
+theorem splitMap_rules_built (D : ActsDoc) (sa : String → Option (List Atom)) {x : String × String × Nat}
+    (hx : x ∈ (splitMap D sa).rules) :
+    ∃ N ∈ D.U.D.T.nodes, x.2.1 = N.name ∧ ∃ P ∈ splitNode sa N, P.name = x.1 := by
+  simp only [splitMap, List.mem_flatMap, List.mem_map] at hx
+  obtain ⟨N, hN, y, hy, rfl⟩ := hx
+  refine ⟨N, hN, rfl, ?_⟩
+  unfold splitNode
+  split
+  next h => rw [h] at hy; cases hy
+  next => exact ⟨_, List.mem_map.mpr ⟨y, hy, rfl⟩, rfl⟩
+
+/-- On an elaborated document, each generated rule's source is a rule of the source document, and the generated rule
+is a rule of the result, built from it by `splitNode`. -/
+theorem elaborateMap_sources {D : ActsDoc} {U' : UDoc} {M : SplitMap} (h : elaborateMap D = .ok (U', M))
+    {x : String × String × Nat} (hx : x ∈ M.rules) :
+    ∃ N ∈ D.U.D.T.nodes, x.2.1 = N.name ∧ ∃ P ∈ U'.D.T.nodes, P.name = x.1 ∧ P ∈ splitNode (splitAtoms D) N := by
+  obtain ⟨_, _, rfl, rfl, _⟩ := elaborateMap_ok h
+  obtain ⟨N, hN, hs, P, hP, hn⟩ := splitMap_rules_built D _ hx
+  exact ⟨N, hN, hs, P, List.mem_flatMap.mpr ⟨N, hN, hP⟩, hn, hP⟩
+
 theorem elaborateMap_fst (D : ActsDoc) : (elaborateMap D).map (·.1) = elaborate D := rfl
 
 theorem elaborate_ok {D : ActsDoc} {U' : VE.NormDefaults.UDoc} (h : elaborate D = .ok U') :

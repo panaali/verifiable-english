@@ -16,7 +16,7 @@ from __future__ import annotations
 
 import json
 
-from .errors import CheckerUnavailable, ResourceLimit, VEError
+from .errors import CheckerUnavailable, VEError, diagnostic_answer
 
 MODE = "act-readings"
 
@@ -146,10 +146,9 @@ def main(argv: list[str]) -> int:
     except CheckerUnavailable:
         raise
     except VEError as exc:
-        limit = exc.code == ResourceLimit.code
-        print(json.dumps({"status": "ResourceLimit" if limit else "InvalidInput", "error": exc.to_dict()},
-                         ensure_ascii=False, indent=2))
-        return 4 if limit else 2
+        answer, code = diagnostic_answer(exc)
+        print(json.dumps(answer, ensure_ascii=False, indent=2))
+        return code
     except (OSError, UnicodeError) as exc:
         print(json.dumps({"status": "InvalidInput", "error": {"code": "InvalidInput", "message": str(exc)}},
                          ensure_ascii=False, indent=2))
