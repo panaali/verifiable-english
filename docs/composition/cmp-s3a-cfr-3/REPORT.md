@@ -128,7 +128,10 @@ exists.
   disjoint (so the overlap fixture is a refusal) against :55.
 - `unit_elided_bytes` has one entry per unit of the request's `document`, and a unit with no rights line body reports
   0. That is the narrower binding (`x-length: "/document"`), not a list of only the units that have lines.
-- Main known-red: none of the tests this item touches is listed in main-known-red.txt.
+- Main known-red: main-known-red.txt lists two tests in tests/test_lean_service.py, both
+  `test_the_sub_tick_deadline_tests_hold_on_a_fast_machine_and_need_the_response_check` (lf-14d). They are
+  pre-existing, and this item does not edit them; it changes only that file's `_SCHEMA_SEEDS` row for
+  clauses-elaborate. No right-clauses test is listed.
 
 ## Self-review against BUILDER-CHECKLIST
 
