@@ -6,6 +6,7 @@ existing fixture or test (step 1, and the soft probe below).
 **What changed:** with no situation supplied, a `rights-conflict` CONFLICT-FREE answer no longer says a search hit its
 budget. The line names what `<j>` counts, and rights.md 7.3 writes both forms. The soft route's `<j>` is now WP(T)
 from the same owner (`Wire.openCoherence`) instead of a repeat of `<k>`. Every JSON field stays as it was.
+**Tests:** the selected run on committed 6a64a65a0d (`mac-pytest.sh --select`, 476 of 581 units, on ve-cloud-3) had 1 failure, `tests/test_assurance_manifest.py::test_every_json_handling_lean_file_is_classified`. The new check module was not yet classified. It was fixed in 568a2952c2, and that id was re-run on ve-mac-1: 1 passed. Nothing else failed. lean/audit.py passed, and `regen_generated.py --check` passed.
 **Open:** the full gate, which the chain runs on the final HEAD. The soft route's own no-search text is a follow-up
 (Notes); it has been sent to the DRI.
 
