@@ -73,7 +73,9 @@ RECORDED_TESTS = ("tests/test_acts_contract.py", "tests/test_wire_contract_s5_le
 def recorded_sources(output):
     """The `[test id, environment, norms]` rows `tests/contract_input_recorder.py` records for `acts@0` while the
     recorded test files run."""
-    environment = nested_pytest.environment(os.environ, VE_CONTRACT_INPUTS=str(output), VE_CONTRACT_UNIT="acts@0",
+    # An outer recorder's settings (this file runs under `tests/test_wire_gate_corpus.py`'s) are not this run's.
+    outer = {k: v for k, v in os.environ.items() if not k.startswith("VE_CONTRACT_")}
+    environment = nested_pytest.environment(outer, VE_CONTRACT_INPUTS=str(output), VE_CONTRACT_UNIT="acts@0",
                                             VE_NATIVE_PREBUILT="1", PYTHONPATH=str(ROOT))
     result = subprocess.run(nested_pytest.command(["-q", "-p", "tests.contract_input_recorder", "-p",
                                                    "no:cacheprovider", "-o", "addopts=", "-m", "not live", "-k",

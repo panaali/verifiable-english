@@ -10,8 +10,12 @@ import json
 import os
 from pathlib import Path
 import subprocess
+import sys
 
 ROOT = Path(__file__).resolve().parents[3]
+sys.path.insert(0, str(ROOT))
+
+from tools import nested_pytest  # noqa: E402
 HOOK = "lean/VE/WireContract/Hooks/Acts.lean"
 PY = "conformance/acts_contract.py"
 FAULTS = "conformance/wire_contract_faults_acts.py"
@@ -86,8 +90,8 @@ def check(command):
         result = subprocess.run(command.split(), cwd=ROOT / "lean", env=env, capture_output=True, text=True)
         lines = [line for line in (result.stdout + result.stderr).splitlines() if line.startswith("error: VE/")]
     else:
-        result = subprocess.run(["uv", "run", "pytest", "-q", "-p", "no:cacheprovider", command], cwd=ROOT,
-                                capture_output=True, text=True)
+        result = subprocess.run(nested_pytest.command(["-q", "-p", "no:cacheprovider", command]), cwd=ROOT,
+                                env=nested_pytest.environment(os.environ), capture_output=True, text=True)
         lines = [line for line in result.stdout.splitlines() if line.startswith(("FAILED", "ERROR"))]
     return result.returncode != 0, lines
 
