@@ -28,7 +28,7 @@ open VE.Acts VE.Acts.Examples VE.Acts.RuleExamples VE.Acts.MeaningExamples
 #eval rd1 (ap 3) [] "{0} to marry and to found a family"        -- VE.Acts.ReadOutcome.none
 #eval rawOf (ap 3) [] "{0} to found a family and to marry"      -- some 1
 #eval n (ap 3) [] "{0} to found a family and to marry"          -- some 1
-#eval rd1 (ap 3) [] "{0} to found a family and to marry"
+#eval rd1 (ap 3) [] "{0} to found a family and to marry"      -- abridged (beWord false, mods [] omitted):
 -- .ok (.all false false [{toWord := true, head := ["found"], args := [("", .one (.words ["a", "family"]))]},
 --                        {toWord := true, head := ["marry"], args := []}])
 ```
@@ -53,6 +53,9 @@ Each fixture is written three ways, in AST form (`ve-document@1`), each with its
   over the item alone).
 - `<f>.reified.ve.md`: route (a), the act reified as the event sort `distinction` / `limitation` / `publication` with
   one role predicate per slot; each guard is `reifyFormula` of the source guard (the shape `NaryExamples.lean` pins).
+- In `NaryExamples.lean` (scratch) μ keeps rights.md's two unranked rules, r19 (may) and r12 (must not, if the item
+  attacks the honour of the second person). The documents fold r12 into r19's condition, so that the premise set has
+  a model and the check is the same kind of work on both routes.
 - `<f>.reified-otp.ve.md`: the same, with route (a)'s hypothesis `OneEventPerTuple` stated as six premises (each role
   functional and total on the event sort, an event for every filler pair, at most one).
 
@@ -119,11 +122,11 @@ Stopped at the timebox. How far it got:
 - **B1, the lift alone** (commit afc49cb06a; MEASURED by building `VE` after each step):
   - `Arity` became `1 ≤ n ∧ n ≤ 6`. The four executable copies of the check moved with it (`Tree.lean` `check` and
     `semanticCheck`, `Once.lean`, `Family.lean`).
-  - Two `VE.Norms` theorems no longer build: `atom_denote` (`Basic.lean`) and `atom_wellFormed` (`Elaborate.lean`).
+  - Before the probe stopped, two `VE.Norms` theorems failed to build: `atom_denote` (`Basic.lean`) and `atom_wellFormed` (`Elaborate.lean`).
     Both are false for arity 3 to 6 over `VE.Formula`, whose atoms are unary or binary only (`atom` gives `bottom`),
     so the formula type has to change.
   - Outside `VE.Norms`, `VE.NormDefaults.Check` stopped next (`check_eq := rfl` at line 150: "Not a definitional
-    equality"). The probe stopped there.
+    equality"). The probe stopped there. Modules downstream of it were not built, so two is a lower bound.
 - **B2, `VE.Norms.Basic` re-proved over `VE.Core.Formula`** (commit 798a08fc49; MEASURED). `lake build VE.Norms.Basic`
   succeeds with no `sorry`: `atom` gives `.atom p (vars n)` for arity 3 to 6, and `atom_denote` holds for 1 to 6.
   - Each of the five formula inductions (`wf_mono`, `denote_forget`, `inst`, `inst_denote`, `inst_wellFormed`) gains
@@ -131,7 +134,7 @@ Stopped at the timebox. How far it got:
   - Seven helper theorems are new (`vars_mapM`, `mapM_sortOf_congr`, `forget_relation'`, `term_denote_forget`,
     `mapM_inst_denote`, `mapM_inst_sortOf`, `lift_sortOf`).
   - Size: `git diff --numstat feature/ap-6 scratch/ap-6-route-b -- lean/VE/Norms/Basic.lean` gives **+180 −45** (the
-    45 are the renamed type).
+    45 are mostly the renamed type).
 - **B3, the type renamed in 18 more `VE.Norms` files** (commit db114f6a20, a probe: 165 lines renamed).
   `lake build VE.Norms.Elaborate` stops in `Tree.lean` on three executable definitions, not theorems:
   - `preds` and `typeDiagnostic` lack the new cases. `typeDiagnostic`'s texts are Python's, so a new case is a
@@ -161,8 +164,9 @@ formula-statement theorems span 297 lines, so the rate is 0.76 changed lines per
 | the executable definitions that match on formulas (B3's three, `Family.lean`, `Wire.lean`, `Checks.lean`) | 200 to 600 |
 | **total** | **about 1,600 to 3,200** |
 
-The definitions row is not measured. Python's `ve/norms.py` and Rust's parity code are not counted. B2 is the module
-with the most inductions over formulas, so the rate may be high for the rest.
+The definitions row is not measured. Python's `ve/norms.py` and Rust's parity code are not counted. Basic holds the
+formula inductions (`wf_mono`, `denote_forget`, `inst_denote`, `inst_wellFormed`) that later modules call; whether
+those modules re-prove at a lower rate is not measured.
 
 **Faithfulness statement**: not proved. Route (b)'s statement is "every existing theorem of `VE.Norms` re-proved over
 `VE.Core.embedClosure`", and 1 of 25 modules was done.
@@ -178,8 +182,10 @@ decoder: `invalid signature: distinguish_permitted`. Route (b) on scratch does n
 - Each run is one `ve document check` (Lean admission, norm layers regenerated and validated, the premise set's model).
 - Cost is CPU seconds of the check and its children (`ChildCPU`, tests/subprocesses.py, as tools/bench measures).
 - 21 runs each, interleaved, after one warm-up. Every run is admitted with a model.
-- Machine: `multi-agent-lab`, AMD EPYC 7B12, 32 CPUs, Linux 7.0.0-1014-gcp, Python 3.14.7, at commit 8eda0371fd.
-- Load average: 99.40 / 97.32 / 62.85 before, 104.00 / 97.58 / 70.35 after (a shared, heavily loaded VM).
+- Machine: `multi-agent-lab`, AMD EPYC 7B12, 32 CPUs, Linux 7.0.0-1014-gcp, Python 3.14.7, at commit 0c01a3ada1
+  (`machine` in `timing.json`; its product files are 8eda0371fd's).
+- Load average (`load_before`, `load_after`): 99.40 / 97.32 / 62.85 before, 104.00 / 97.58 / 70.35 after (a shared,
+  heavily loaded VM).
 - `--verify timing.json` recomputes the verdict from the saved raw rows.
 
 | Fixture | binary (s CPU, median) | reified (s) | ratio | reified-otp (s) | ratio |
