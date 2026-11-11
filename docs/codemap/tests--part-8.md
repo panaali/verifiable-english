@@ -1,3 +1,6 @@
+- `tests/test_w6a_review_regressions.py` — Regressions for the W6a review findings, each generalized to its class.
+- `tests/test_w6a_route_limits.py` — W6a limits directive on the `route` subcommand: nothing runs unmetered.
+- `tests/test_w6b_gates.py` — Baseline route rejects integer-quantifier W6b syntax before evidence.
 - `tests/test_wire_contract_corpus.py` — Hand-derived format-1 cases from wire-contract.md section 8.1.
 - `tests/test_wire_contract_engine.py` — Independent cases for the format-1 diagnostic interpreter.
 - `tests/test_wire_contract_faults.py` — The fault catalogue and the oracle of the soft-norms gate (wire-contract.md 8.3), checked without Lean.
