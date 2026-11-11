@@ -1,0 +1,51 @@
+{
+ "head": "66cc2c2b74cb11b98e95998f4505f5cf759d8697",
+ "build": "5af340f669e413f39e0c47418c5eeaeddc429bafe0ac9b7034228068aba839c8",
+ "answers": {
+  "conjuncts-64": {
+   "code": "ResourceLimit",
+   "error": "ResourceLimit: formula depth exceeds 64",
+   "status": "error"
+  },
+  "conjuncts-65": {
+   "code": "ResourceLimit",
+   "error": "ResourceLimit: formula depth exceeds 64",
+   "status": "error"
+  },
+  "conjuncts-100": {
+   "code": "ResourceLimit",
+   "error": "ResourceLimit: formula depth exceeds 64",
+   "status": "error"
+  },
+  "conjuncts-40000": {
+   "code": "ResourceLimit",
+   "error": "ResourceLimit: formula depth exceeds 64",
+   "status": "error"
+  },
+  "conjuncts-63-relation": {
+   "code": "ResourceLimit",
+   "error": "ResourceLimit: formula depth exceeds 64",
+   "status": "error"
+  },
+  "copies-257": {
+   "code": "DuplicateDeclaration",
+   "error": "DuplicateDeclaration: rule equal-access",
+   "status": "error"
+  },
+  "copies-257-first-bad": {
+   "code": "DuplicateDeclaration",
+   "error": "DuplicateDeclaration: rule equal-access",
+   "status": "error"
+  },
+  "distinct-256": {
+   "code": "ResourceLimit",
+   "error": "ResourceLimit: vocabulary size",
+   "status": "error"
+  },
+  "distinct-257": {
+   "code": "ResourceLimit",
+   "error": "ResourceLimit: vocabulary size",
+   "status": "error"
+  }
+ }
+}
