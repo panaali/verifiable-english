@@ -66,7 +66,7 @@
     "ve/readings_verdicts/binding.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 45678,
+    "total_lines": 45684,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -2034,12 +2034,12 @@
       },
       {
         "file": "lean/VE/SoftNorms/Wire.lean",
-        "lines": 532,
-        "sha256": "79fe0f70846e87d736ba2f11565f96df595853e9ffd440b42b823d68ffa88a3d",
+        "lines": 538,
+        "sha256": "0c6b2246749d8002951140f08aed3a55229d76b0499770a90d7a6e50ea4ed4ee",
         "ranges": [
           [
             1,
-            532
+            538
           ]
         ],
         "declarations": [
@@ -2238,6 +2238,25 @@
         "reason": "et-4b: the full file: the norm-defaults-certificate replay on an events document (spec 6.3), with the block and without one; it decodes by eventsHook, decodeSoftU and replayLayeredOn; qt-a4b merge with ve-integration 3395d65592: `events_row_composition`'s gate clause holds for a list without `cardinality@0` (`Compose.gate_events`), whose row now refuses `events@0` by name"
       },
       {
+        "file": "lean/VE/RightClauses/Wire.lean",
+        "lines": 230,
+        "sha256": "75913d7b770400cd1e3e5a671fafd7a78b234ef5f48faae1cfefe0a7ea565be5",
+        "ranges": [
+          [
+            1,
+            230
+          ]
+        ],
+        "declarations": [
+          "decodeClauseDoc",
+          "decodeRelation",
+          "decodeClause",
+          "elaborateJson",
+          "stripElided"
+        ],
+        "reason": "right-clauses clause, relation and elided decoder and the plained-document rewriter of clauses-elaborate; the full file is pinned conservatively; the ve-integration merge: `decodeClauseDoc` sets the rights document's new `located` field to `[]`, as `decodeRightsSource` does (the mode reports no findings)"
+      },
+      {
         "file": "lean/VE/EnglishGrammar/Norm/Run.lean",
         "lines": 303,
         "sha256": "3ccffd316421b414d5b1f6f9bfd768da5e78a1c64b9f4e76a4e21c18eeb6ad3b",
@@ -2257,25 +2276,6 @@
           "statementRow"
         ],
         "reason": "en-e3a (docs/spec/en-e3-norm.md 2.3, EN-2): english.statement kind blocks: `statementRequest` decodes the request (english.read's case through `decodeCase`, `kind`, `source`), `answerWith` writes the answer from readNorm's outcome through the span gate and the one decoder; not registered until en-e3ab and nothing relays to it yet; the full file is pinned conservatively"
-      },
-      {
-        "file": "lean/VE/RightClauses/Wire.lean",
-        "lines": 230,
-        "sha256": "75913d7b770400cd1e3e5a671fafd7a78b234ef5f48faae1cfefe0a7ea565be5",
-        "ranges": [
-          [
-            1,
-            230
-          ]
-        ],
-        "declarations": [
-          "decodeClauseDoc",
-          "decodeRelation",
-          "decodeClause",
-          "elaborateJson",
-          "stripElided"
-        ],
-        "reason": "right-clauses clause, relation and elided decoder and the plained-document rewriter of clauses-elaborate; the full file is pinned conservatively; the ve-integration merge: `decodeClauseDoc` sets the rights document's new `located` field to `[]`, as `decodeRightsSource` does (the mode reports no findings)"
       },
       {
         "file": "lean/VE/Readings/SoftSupRun.lean",
@@ -2431,7 +2431,6 @@
       "lean/VE/Service/ScopeExamples.lean": "fixtures only: SC-1b's #guard checks build small scope@0 part documents as request JSON and run the document mode (`checkDoc`) on them; no service mode reads this file",
       "lean/VE/Defaults/RouteExamples.lean": "fixtures only: #guard checks of the defaults-* kinds through the norm-defaults mode (docs/spec/defeasible.md 8.1) build request JSON; no runner path",
       "lean/ResponseShape/DefaultsExamples.lean": "fixtures only: #guard checks of the defaults-* rows of norm-defaults.json on the mode's answers and their variants build JSON; no runner path",
-      "lean/ResponseShape/Schemas/RightsChecks.lean": "fixtures only: #guard checks of rights.json's elaborate, scope and packages rows on the mode's answers and their variants build JSON; no runner path",
       "lean/VE/Cardinality/RunExamples.lean": "fixtures only: #guard checks of docs/spec/quantities.md 4.1, 4.2 and 9.1 run the cardinality case runner on cases built with Json.parse and Json.mkObj; no runner path",
       "lean/VE/Cardinality/RunTheorems.lean": "statements about the cardinality certificate decoder and runner (decodeCertificate_sound over Json.getObjVal?, the regionsJson and erasedJson answer fields, the runCaseReported rows); no runtime JSON handling",
       "lean/ScopeBenchMain.lean": "measurement only: the ve_scope_bench executable of scope benchmark B1 (tools/bench/test_perf.py::test_scope_b1) reads a document case from a JSON file, runs decodeScope and governFast, and prints the layout rows, the list run and the run path's answer as JSON; no admission path, service mode or record reads it",
@@ -2495,6 +2494,13 @@
       "lean/ResponseShape/Encoders/NormDefaults.lean": "encoder theorems of the norm-defaults mode (runCaseReported_fits, of_elaborate): proofs over the runner's rows; no decoding",
       "lean/VE/Acts/Run.lean": "act-phrases ap-3dc: the acts-elaborate row's encoder (Acts.Run.runElaborate); it reads the request through Norms.Wire.decodeSource and NormDefaults.Wire.decodeSourceU and writes the decoded ElaboratedU (runElaborate_fits)",
       "lean/VE/Events/RouteExamples.lean": "fixtures only: #guard checks of the hook through decodeLayered and the norm-defaults mode on JSON environments built with Json.parse and Json.mkObj; no runner path",
+      "lean/VE/RightClauses/Run.lean": "lean:runner-glue: clauses-elaborate case dispatch and response rows (cmp-s3-cfr-1); reads the request through the pinned RightClauses/Wire.lean and Rights/Wire.lean",
+      "lean/VE/RightClauses/ElidedBytes.lean": "lean:runner-glue: `unitElided` (cmp-s3a-cfr-3) groups the decoded lines' elided bytes per unit of the request's document; it walks the units through the pinned RightClauses/Wire.lean helpers (`unitBody`, `bodyLines`, `bodyRight`, `jsonLineName`) and reads no span from JSON (the bytes come from `decodeClauseDoc`'s lines)",
+      "lean/VE/RightClauses/RunExamples.lean": "fixtures only: #guard checks of spec right-clauses 7 and 9.1 build clauses-elaborate requests as JSON and read the answers of `VE.RightClauses.runCaseReported`; no runner path",
+      "lean/VE/RightClauses/WireDecode.lean": "theorems only: spec right-clauses 8.5's forward lemmas through the pinned decoders; JSON access only in statements and proofs",
+      "lean/VE/RightClauses/WireName.lean": "theorems only: line-name lemmas of spec right-clauses 8.5 through the pinned decoders; JSON access only in statements and proofs",
+      "lean/VE/RightClauses/WireTheorems.lean": "theorems only: spec right-clauses 8.5's `elaborate_plain` and `decode_unstructured`; JSON access only in statements and proofs",
+      "lean/ResponseShape/Schemas/RightsChecks.lean": "fixtures only: #guard checks of rights.json's elaborate, scope and packages rows on the mode's answers and their variants build JSON; no runner path",
       "lean/VE/Rights/OpenActExamples.lean": "fixtures only: #guard checks of docs/spec/rights.md 7.2 (rights-cfr-4) read unitOpen on right units built with Json.mkObj; no runner path",
       "lean/VE/Acts/RunExamples.lean": "fixtures only: `#guard`s that build act-readings requests as JSON and read the rows `actReadingsReported` writes (act-phrases ap-4, spec 7 and 11.4: the pilot counts, AR1 pinned, the limits); no admission path or record reads them",
       "lean/VE/Commands/StepsExamples.lean": "test fixtures only: ci-3a's `#guard`s build their environments as JSON and read them with the pinned decoder (`decodeSpeechEnvironmentFull`)",
@@ -2503,18 +2509,13 @@
       "lean/VE/Scope/Authoring.lean": "scope's authoring wordings (SC-7, spec 2.2): `Pinned.parseGovernor` builds the part of a scope@0 block a wording fixes (Json.mkObj, Json.arr) and `classify`/`renderGovernor`/`paraphrase` read it back with getObjValD/getStr?/getNat?; no route or relay decodes a request with them yet (the IDE wiring is sc-7b)",
       "lean/VE/Scope/AuthoringExamples.lean": "fixtures only: SC-7's #guard checks (scope spec 2.2, 7.8 F5a) write each row's expected block as a JSON literal (Json.parse) and compare it with `parseGovernor`'s; no runtime JSON handling",
       "lean/VE/Commands/StepsProofs.lean": "proofs only: `readStep_conservative` names its decoded environment as section 7 states it (`Lean.Json`, `decodeSpeechEnvironmentFull`) and its lemmas trace that decoder; the module decodes nothing at run time",
-      "lean/VE/Readings/SoftSupRunExamples.lean": "fixtures: #guards that admit NSD4a, NSDq and NSDbig n from JSON and run the soft runners on them (W-13, W-14, D14); no runner, service mode or record reads it (rd-9 sc-11c)",
       "lean/VE/Service/DocumentView.lean": "sa-checked-view (spec 5.1): the checked view's typed mirrors read the request fields `checkBody` reads (`id`, `document`, `admit`, `lexicon`, `packs`, `units`, `reading_sets`) and are tied to it by checkBodyChecked_encode, checkCoreChecked_encode and checkDocSetsView_answer (the answer is checkDocSets's, byte for byte); no service mode dispatches it, and it builds no answer JSON of its own",
-      "lean/ResponseShape/Schemas/SoftPairsChecks.lean": "fixtures only: #guard checks of SoftNorms.Run.openAfterClassification (WP(T) under DISJOINT pair evidence) parse a fixture's environment, norms and certificate packages; no runner path",
       "lean/VE/EnglishGrammar/Norm/RunExamples.lean": "fixtures only: #guard checks of english.statement's answers (docs/spec/en-e3-norm.md section 8, EN-2: E1-E17, f18, the whole-mode requests); no runner path",
-      "lean/VE/RightClauses/Run.lean": "lean:runner-glue: clauses-elaborate case dispatch and response rows (cmp-s3-cfr-1); reads the request through the pinned RightClauses/Wire.lean and Rights/Wire.lean",
-      "lean/VE/RightClauses/RunExamples.lean": "fixtures only: #guard checks of spec right-clauses 7 and 9.1 build clauses-elaborate requests as JSON and read the answers of `VE.RightClauses.runCaseReported`; no runner path",
-      "lean/VE/RightClauses/WireDecode.lean": "theorems only: spec right-clauses 8.5's forward lemmas through the pinned decoders; JSON access only in statements and proofs",
-      "lean/VE/RightClauses/WireName.lean": "theorems only: line-name lemmas of spec right-clauses 8.5 through the pinned decoders; JSON access only in statements and proofs",
-      "lean/VE/RightClauses/WireTheorems.lean": "theorems only: spec right-clauses 8.5's `elaborate_plain` and `decode_unstructured`; JSON access only in statements and proofs",
       "lean/VE/WireContract/Hooks/Purposes.lean": "diagnostic only: no verdict depends on it. The classifiers and the adapter of the contract purposes@0, in shadow (sa-wire-purposes0); they call VE.Purposes.Wire's decoder and its parts read-only and only read their results; idsAgree's #guard checks 2.1b against VE.Purposes.check",
+      "lean/ResponseShape/Schemas/SoftPairsChecks.lean": "fixtures only: #guard checks of SoftNorms.Run.openAfterClassification (WP(T) under DISJOINT pair evidence) parse a fixture's environment, norms and certificate packages; no runner path",
+      "lean/VE/Commands/WebEnvMain.lean": "generator only: prints VE.Commands.Examples.E_web and its lexicon as JSON for usecases/webapp-commands/environment.json; reads no request and is not a service decoder",
       "lean/ResponseShape/Encoders/EnglishStatement.lean": "theorems that the english.statement mode's rows fit their response shape (statementCaseReported_fits); JSON access only in statements and proofs (not on any runner path)",
-      "lean/VE/Commands/WebEnvMain.lean": "generator only: prints VE.Commands.Examples.E_web and its lexicon as JSON for usecases/webapp-commands/environment.json; reads no request and is not a service decoder"
+      "lean/VE/Readings/SoftSupRunExamples.lean": "fixtures: #guards that admit NSD4a, NSDq and NSDbig n from JSON and run the soft runners on them (W-13, W-14, D14); no runner, service mode or record reads it (rd-9 sc-11c)"
     }
   },
   "plan_operations": {

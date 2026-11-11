@@ -8,11 +8,11 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 |---|---:|
 | leaves:bound | 301 |
 | leaves:closed domain | 320 |
-| leaves:none | 1641 |
+| leaves:none | 1643 |
 | modes | 45 |
 | today:hand | 203 |
 | today:later Lean request | 62 |
-| today:not probed | 1239 |
+| today:not probed | 1241 |
 | today:shape | 621 |
 | today:unbound | 137 |
 | answers | 606 |
@@ -3861,7 +3861,9 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/id` | any | bound | x-echo |  | 3 | shape |
 | `/id` | string | bound | x-equals |  | 3 | shape |
 | `/result/clause_slot/*/label` | string | none |  | minLength | 1 | not probed |
+| `/result/elided_bytes` | integer | none |  | minimum | 3 | not probed |
 | `/result/plained` | string | none |  | minLength | 3 | not probed |
+| `/result/unit_elided_bytes/*` | integer | none |  | minimum | 3 | not probed |
 | `/status` | string | closed domain | const |  | 3 | shape |
 
 | grammar at | grammar | bound whole by | observed |
@@ -3871,6 +3873,7 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | array | length bound by | positions bound by | internal agreement | probed (generic/hand) |
 |---|---|---|---|---|
 | `/result/clause_slot` |  |  |  |  |
+| `/result/unit_elided_bytes` | x-length |  |  |  |
 
 ## english.statement
 

@@ -524,6 +524,25 @@ theorem VE.Acts.Decode.wellFormedU_D
   ∀ {U : VE.NormDefaults.UDoc}, VE.NormDefaults.WellFormedU U = Bool.true → VE.Norms.WellFormed U.D = Bool.true
   -- uses VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.Norms.WellFormed@VE.Norms.Tree
   -- expr 2973806689
+theorem VE.Acts.ElaborateExamples.e1_map
+  ∀ {U' : VE.NormDefaults.UDoc} {M : VE.Acts.SplitMap},
+    VE.Acts.elaborateMap VE.Acts.ElaborateExamples.e1 = Except.ok (U', M) →
+      M =
+        { preds := [("p027__1", "p027", 1), ("p027__2", "p027", 2)],
+          rules := [("r027-a1", "r027", 1), ("r027-a2", "r027", 2)] }
+  -- uses VE.Acts.ElaborateExamples.e1@VE.Acts.ElaborateExamples VE.Acts.SplitMap.mk@VE.Acts.Elaborate VE.Acts.SplitMap@VE.Acts.Elaborate VE.Acts.elaborateMap@VE.Acts.Elaborate VE.NormDefaults.UDoc@VE.NormDefaults.Tree
+  -- expr 3780769692
+theorem VE.Acts.ElaborateExamples.e4_map
+  ∀ {U' : VE.NormDefaults.UDoc} {M : VE.Acts.SplitMap},
+    VE.Acts.elaborateMap VE.Acts.ElaborateExamples.e4 = Except.ok (U', M) →
+      VE.Acts.splitAtoms VE.Acts.ElaborateExamples.e4 "p027" =
+          Option.some [VE.Acts.TableExamples.torture, VE.Acts.TableExamples.cruel] →
+        M =
+          { preds := [("p027__1", "p027", 1), ("p027__2", "p027", 2)],
+            rules :=
+              [("r027-a1", "r027", 1), ("r027-a2", "r027", 2), ("r027b-a1", "r027b", 1), ("r027b-a2", "r027b", 2)] }
+  -- uses VE.Acts.Atom@VE.Acts.Tree VE.Acts.ElaborateExamples.e4@VE.Acts.ElaborateExamples VE.Acts.SplitMap.mk@VE.Acts.Elaborate VE.Acts.SplitMap@VE.Acts.Elaborate VE.Acts.TableExamples.cruel@VE.Acts.TableExamples VE.Acts.TableExamples.torture@VE.Acts.TableExamples VE.Acts.elaborateMap@VE.Acts.Elaborate VE.Acts.splitAtoms@VE.Acts.Elaborate VE.NormDefaults.UDoc@VE.NormDefaults.Tree
+  -- expr 1997267675
 theorem VE.Acts.Examples.acceptsTable_terms
   ∀ (t : VE.Acts.Term), (VE.Acts.Examples.acceptsTable.any fun x => x.fst.ctorIdx == t.ctorIdx) = Bool.true
   -- uses VE.Acts.Examples.acceptsTable@VE.Acts.GrammarExamples VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.Term.ctorIdx@VE.Acts.Syntax VE.Acts.Term@VE.Acts.Syntax
@@ -1275,6 +1294,34 @@ theorem VE.Acts.elaborate_one_reading
                           VE.Acts.opOf r N.sign = Option.some op ∧ VE.Acts.table op A = [R]
   -- uses VE.Acts.Act.one@VE.Acts.Tree VE.Acts.Act@VE.Acts.Tree VE.Acts.ActsDoc.U@VE.Acts.Elaborate VE.Acts.ActsDoc.acts@VE.Acts.Elaborate VE.Acts.ActsDoc@VE.Acts.Elaborate VE.Acts.Atom@VE.Acts.Tree VE.Acts.Op@VE.Acts.Table VE.Acts.Simple@VE.Acts.Table VE.Acts.dualOf@VE.Acts.Elaborate VE.Acts.elaborate@VE.Acts.Elaborate VE.Acts.opOf@VE.Acts.Table VE.Acts.readingOf@VE.Acts.Elaborate VE.Acts.table@VE.Acts.Table VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.Node.sign@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Tree.nodes@VE.Norms.Tree VE.Norms.Tree.regulated@VE.Norms.Tree
   -- expr 3219671281
+theorem VE.Acts.elaborate_parts
+  ∀ (D : VE.Acts.ActsDoc) {U' : VE.NormDefaults.UDoc} {M : VE.Acts.SplitMap},
+    VE.Acts.elaborateMap D = Except.ok (U', M) →
+      (∀ (q p : String) (i : Nat),
+          (q, p, i) ∈ M.preds →
+            ∃ r,
+              r ∈ D.U.D.T.regulated ∧
+                r.name = p ∧
+                  ∃ atoms a,
+                    VE.Acts.splitAtoms D p = Option.some atoms ∧
+                      atoms[i - 1]? = Option.some a ∧
+                        List.find? (fun x => x.name == q) U'.D.T.regulated =
+                            Option.some
+                              { name := q, sorts := r.sorts, allowByDefault := r.allowByDefault, role := r.role,
+                                act := Option.some (VE.Acts.partAct D.fixed r.role a),
+                                permission := Option.map (fun x => VE.Acts.partPred x i) r.permission } ∧
+                          U'.D.E.predicates q = D.U.D.E.predicates p ∧ (q ∈ U'.unspec ↔ p ∈ D.U.unspec)) ∧
+        ∀ (n m : String) (i : Nat),
+          (n, m, i) ∈ M.rules →
+            ∃ N,
+              N ∈ D.U.D.T.nodes ∧
+                N.name = m ∧
+                  List.find? (fun x => x.name == n) U'.D.T.nodes =
+                    Option.some
+                      { name := n, pred := VE.Acts.partPred N.pred i, sign := N.sign, guard := N.guard,
+                        carveOuts := N.carveOuts, over := List.map (fun x => VE.Acts.partRule x i) N.over }
+  -- uses VE.Acts.ActsDoc.U@VE.Acts.Elaborate VE.Acts.ActsDoc.fixed@VE.Acts.Elaborate VE.Acts.ActsDoc@VE.Acts.Elaborate VE.Acts.Atom@VE.Acts.Tree VE.Acts.SplitMap.preds@VE.Acts.Elaborate VE.Acts.SplitMap.rules@VE.Acts.Elaborate VE.Acts.SplitMap@VE.Acts.Elaborate VE.Acts.elaborateMap@VE.Acts.Elaborate VE.Acts.partAct@VE.Acts.Linearize VE.Acts.partPred@VE.Acts.Elaborate VE.Acts.partRule@VE.Acts.Elaborate VE.Acts.splitAtoms@VE.Acts.Elaborate VE.Environment.predicates@VE.Syntax VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc.unspec@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.Norms.Doc.E@VE.Norms.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Node.carveOuts@VE.Norms.Tree VE.Norms.Node.guard@VE.Norms.Tree VE.Norms.Node.mk@VE.Norms.Tree VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node.over@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.Node.sign@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree VE.Norms.Regulated.allowByDefault@VE.Norms.Tree VE.Norms.Regulated.mk@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated.permission@VE.Norms.Tree VE.Norms.Regulated.role@VE.Norms.Tree VE.Norms.Regulated.sorts@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Tree.nodes@VE.Norms.Tree VE.Norms.Tree.regulated@VE.Norms.Tree
+  -- expr 1857175075
 theorem VE.Acts.elaborate_unspec
   ∀ (D : VE.Acts.ActsDoc) {U' : VE.NormDefaults.UDoc},
     VE.Acts.elaborate D = Except.ok U' → U'.unspec = List.flatMap (VE.Acts.partNames D) D.U.unspec
@@ -1446,10 +1493,27 @@ theorem VE.Acts.mem_partNamesIn
         VE.Acts.partsOf sa p = [] ∧ q = p ∨ ∃ x, x ∈ VE.Acts.partsOf sa p ∧ q = VE.Acts.partPred p x.snd)
   -- uses VE.Acts.ActsDoc.U@VE.Acts.Elaborate VE.Acts.ActsDoc@VE.Acts.Elaborate VE.Acts.Atom@VE.Acts.Tree VE.Acts.partNamesIn@VE.Acts.Elaborate VE.Acts.partPred@VE.Acts.Elaborate VE.Acts.partsOf@VE.Acts.Elaborate VE.Acts.splitMap@VE.Acts.Elaborate VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Tree.regulated@VE.Norms.Tree
   -- expr 4162673854
+theorem VE.Acts.mem_partsOf
+  ∀ {sa : String → Option (List VE.Acts.Atom)} {p : String} {x : VE.Acts.Atom × Nat},
+    x ∈ VE.Acts.partsOf sa p → ∃ atoms, sa p = Option.some atoms ∧ 1 ≤ x.snd ∧ atoms[x.snd - 1]? = Option.some x.fst
+  -- uses VE.Acts.Atom@VE.Acts.Tree VE.Acts.partsOf@VE.Acts.Elaborate
+  -- expr 89307498
+theorem VE.Acts.mem_preds
+  ∀ {D : VE.Acts.ActsDoc} {sa : String → Option (List VE.Acts.Atom)} {x : String × String × Nat},
+    x ∈ (VE.Acts.splitMap D sa).preds ↔
+      ∃ r, r ∈ D.U.D.T.regulated ∧ ∃ y, y ∈ VE.Acts.partsOf sa r.name ∧ x = (VE.Acts.partPred r.name y.snd, r.name, y.snd)
+  -- uses VE.Acts.ActsDoc.U@VE.Acts.Elaborate VE.Acts.ActsDoc@VE.Acts.Elaborate VE.Acts.Atom@VE.Acts.Tree VE.Acts.SplitMap.preds@VE.Acts.Elaborate VE.Acts.partPred@VE.Acts.Elaborate VE.Acts.partsOf@VE.Acts.Elaborate VE.Acts.splitMap@VE.Acts.Elaborate VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Tree.regulated@VE.Norms.Tree
+  -- expr 3899999579
 theorem VE.Acts.mem_preds_atom
   ∀ {p n : String} {ss : List String}, n ∈ VE.Norms.preds (VE.Norms.atom p ss) → n = p
   -- uses VE.Norms.atom@VE.Norms.Basic VE.Norms.preds@VE.Norms.Tree
   -- expr 3423978402
+theorem VE.Acts.mem_rules
+  ∀ {D : VE.Acts.ActsDoc} {sa : String → Option (List VE.Acts.Atom)} {x : String × String × Nat},
+    x ∈ (VE.Acts.splitMap D sa).rules ↔
+      ∃ N, N ∈ D.U.D.T.nodes ∧ ∃ y, y ∈ VE.Acts.partsOf sa N.pred ∧ x = (VE.Acts.partRule N.name y.snd, N.name, y.snd)
+  -- uses VE.Acts.ActsDoc.U@VE.Acts.Elaborate VE.Acts.ActsDoc@VE.Acts.Elaborate VE.Acts.Atom@VE.Acts.Tree VE.Acts.SplitMap.rules@VE.Acts.Elaborate VE.Acts.partRule@VE.Acts.Elaborate VE.Acts.partsOf@VE.Acts.Elaborate VE.Acts.splitMap@VE.Acts.Elaborate VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree VE.Norms.Tree.nodes@VE.Norms.Tree
+  -- expr 3396329560
 theorem VE.Acts.mem_specPremises
   ∀ {E : VE.Norms.Doc} {ρ : VE.Acts.Restrictive} {acts : List (String × VE.Acts.Atom)} {φ : VE.Formula},
     φ ∈ VE.Acts.specPremises E ρ acts →
@@ -1493,6 +1557,18 @@ theorem VE.Acts.modifier_edges
       ∀ (a : VE.Acts.Attach), VE.Acts.attachOf r.kind = Option.some a → VE.Acts.edgeLhs r.lhs a = Bool.true
   -- uses VE.Acts.Attach@VE.Acts.Grammar VE.Acts.RuleS.kind@VE.Acts.Grammar VE.Acts.RuleS.lhs@VE.Acts.Grammar VE.Acts.RuleS@VE.Acts.Grammar VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.attachOf@VE.Acts.Grammar VE.Acts.edgeLhs@VE.Acts.Grammar VE.Acts.schema@VE.Acts.Grammar
   -- expr 366501910
+theorem VE.Acts.namesOk_ok
+  ∀ {D : VE.Acts.ActsDoc} {M : VE.Acts.SplitMap},
+    VE.Acts.namesOk D M = Except.ok () →
+      (∀ (q : String),
+          q ∈ List.map (fun x => x.fst) M.preds →
+            (∀ (r : VE.Norms.Regulated), r ∈ D.U.D.T.regulated → r.name ≠ q) ∧ ¬q ∈ D.U.unspec) ∧
+        (List.map (fun x => x.fst) M.preds).Nodup ∧
+          (∀ (n : String),
+              n ∈ List.map (fun x => x.fst) M.rules → ∀ (N : VE.Norms.Node), N ∈ D.U.D.T.nodes → N.name ≠ n) ∧
+            (List.map (fun x => x.fst) M.rules).Nodup
+  -- uses VE.Acts.ActsDoc.U@VE.Acts.Elaborate VE.Acts.ActsDoc@VE.Acts.Elaborate VE.Acts.SplitMap.preds@VE.Acts.Elaborate VE.Acts.SplitMap.rules@VE.Acts.Elaborate VE.Acts.SplitMap@VE.Acts.Elaborate VE.Acts.namesOk@VE.Acts.Elaborate VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc.unspec@VE.NormDefaults.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Tree.nodes@VE.Norms.Tree VE.Norms.Tree.regulated@VE.Norms.Tree
+  -- expr 739591770
 theorem VE.Acts.namesOk_preds
   ∀ {D : VE.Acts.ActsDoc} {M : VE.Acts.SplitMap},
     VE.Acts.namesOk D M = Except.ok () →
@@ -1832,6 +1908,28 @@ theorem VE.Acts.splitDoc_none
   ∀ (D : VE.Acts.ActsDoc), VE.Acts.splitDoc D (fun x => Option.none) (VE.Acts.splitMap D fun x => Option.none) = D.U
   -- uses VE.Acts.ActsDoc.U@VE.Acts.Elaborate VE.Acts.ActsDoc@VE.Acts.Elaborate VE.Acts.Atom@VE.Acts.Tree VE.Acts.splitDoc@VE.Acts.Elaborate VE.Acts.splitMap@VE.Acts.Elaborate VE.NormDefaults.UDoc@VE.NormDefaults.Tree
   -- expr 3012397504
+theorem VE.Acts.splitMap_exact
+  ∀ (D : VE.Acts.ActsDoc) {U' : VE.NormDefaults.UDoc} {M : VE.Acts.SplitMap},
+    VE.Acts.elaborateMap D = Except.ok (U', M) →
+      (∀ (q : String),
+          q ∈ List.map (fun x => x.name) U'.D.T.regulated ∧ ¬q ∈ List.map (fun x => x.name) D.U.D.T.regulated ↔
+            ∃ p i, (q, p, i) ∈ M.preds) ∧
+        (∀ (n : String),
+            n ∈ List.map (fun x => x.name) U'.D.T.nodes ∧ ¬n ∈ List.map (fun x => x.name) D.U.D.T.nodes ↔
+              ∃ m i, (n, m, i) ∈ M.rules) ∧
+          (∀ (q p : String) (i : Nat),
+              (q, p, i) ∈ M.preds →
+                q = VE.Acts.partPred p i ∧
+                  p ∈ List.map (fun x => x.name) D.U.D.T.regulated ∧
+                    ¬p ∈ List.map (fun x => x.name) U'.D.T.regulated ∧ 1 ≤ i) ∧
+            (∀ (n m : String) (i : Nat),
+                (n, m, i) ∈ M.rules →
+                  n = VE.Acts.partRule m i ∧
+                    m ∈ List.map (fun x => x.name) D.U.D.T.nodes ∧ ¬m ∈ List.map (fun x => x.name) U'.D.T.nodes ∧ 1 ≤ i) ∧
+              (∀ (q p : String) (i j : Nat), (q, p, i) ∈ M.preds → 1 ≤ j → j ≤ i → ∃ q', (q', p, j) ∈ M.preds) ∧
+                (List.map (fun x => x.fst) M.preds).Nodup ∧ (List.map (fun x => x.fst) M.rules).Nodup
+  -- uses VE.Acts.ActsDoc.U@VE.Acts.Elaborate VE.Acts.ActsDoc@VE.Acts.Elaborate VE.Acts.SplitMap.preds@VE.Acts.Elaborate VE.Acts.SplitMap.rules@VE.Acts.Elaborate VE.Acts.SplitMap@VE.Acts.Elaborate VE.Acts.elaborateMap@VE.Acts.Elaborate VE.Acts.partPred@VE.Acts.Elaborate VE.Acts.partRule@VE.Acts.Elaborate VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Tree.nodes@VE.Norms.Tree VE.Norms.Tree.regulated@VE.Norms.Tree
+  -- expr 862688641
 theorem VE.Acts.splitMap_rules_built
   ∀ (D : VE.Acts.ActsDoc) (sa : String → Option (List VE.Acts.Atom)) {x : String × String × Nat},
     x ∈ (VE.Acts.splitMap D sa).rules →
@@ -49981,6 +50079,70 @@ theorem VE.RightClauses.PWF.yields_ext
             (VE.Norms.yields { regulated := r, definitions := d, nodes := List.map f' L } n (f' x))
   -- uses VE.Formula@VE.Syntax VE.Norms.Definition@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Tree.mk@VE.Norms.Tree VE.Norms.yields@VE.Norms.Elaborate VE.RightClauses.PWF.FExt@VE.RightClauses.PlainWellFormed.Guards VE.RightClauses.PWF.TRel@VE.RightClauses.PlainWellFormed.W1Ext
   -- expr 1786409147
+theorem VE.RightClauses.SlotWF.baseEnv_layer0
+  ∀ (D : VE.RightClauses.ClauseDoc),
+    VE.Rights.WellFormedRights (VE.RightClauses.plain D) = Bool.true →
+      ∀ (p : String) (s : List String),
+        (VE.RightClauses.baseEnv D).predicates p = Option.some s →
+          (VE.Norms.envAt (VE.SoftNorms.soften (VE.Rights.correlate (VE.RightClauses.plain D))) 0).predicates p =
+            Option.some s
+  -- uses VE.Environment.predicates@VE.Syntax VE.Norms.envAt@VE.Norms.Tree VE.RightClauses.ClauseDoc@VE.RightClauses.Tree VE.RightClauses.baseEnv@VE.RightClauses.Tree VE.RightClauses.plain@VE.RightClauses.Plain VE.Rights.WellFormedRights@VE.Rights.Correlate VE.Rights.correlate@VE.Rights.Correlate VE.SoftNorms.soften@VE.SoftNorms.Soften
+  -- expr 3500049590
+theorem VE.RightClauses.SlotWF.entry_relation
+  ∀ (D : VE.RightClauses.ClauseDoc),
+    VE.RightClauses.WellFormedClauses D = Bool.true →
+      ∀ (x : String × String × VE.RightClauses.CLine),
+        x ∈ D.lines →
+          ∀ (rel : VE.RightClauses.Relation),
+            x.snd.snd.relation = Option.some rel →
+              ∃ Rt,
+                VE.Rights.rightOf D.doc x.fst = Option.some Rt ∧
+                  VE.RightClauses.relationOk (VE.RightClauses.baseEnv D) Rt
+                      (Option.map (VE.Rights.holderSlot D.doc) (VE.Rights.instancesOf x.fst x.snd.snd.line 0).head?)
+                      (VE.RightClauses.lineSorts D.doc.soft x.snd.snd.line) rel =
+                    Bool.true
+  -- uses VE.RightClauses.CLine.line@VE.RightClauses.Tree VE.RightClauses.CLine.relation@VE.RightClauses.Tree VE.RightClauses.CLine@VE.RightClauses.Tree VE.RightClauses.ClauseDoc.doc@VE.RightClauses.Tree VE.RightClauses.ClauseDoc.lines@VE.RightClauses.Tree VE.RightClauses.ClauseDoc@VE.RightClauses.Tree VE.RightClauses.Relation@VE.RightClauses.Tree VE.RightClauses.WellFormedClauses@VE.RightClauses.Plain VE.RightClauses.baseEnv@VE.RightClauses.Tree VE.RightClauses.lineSorts@VE.RightClauses.Tree VE.RightClauses.relationOk@VE.RightClauses.Plain VE.Rights.Line@VE.Rights.Tree VE.Rights.Right@VE.Rights.Tree VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.Rights.holderSlot@VE.Rights.Tree VE.Rights.instancesOf@VE.Rights.Tree VE.Rights.rightOf@VE.Rights.Tree
+  -- expr 4116501085
+theorem VE.RightClauses.SlotWF.except_bind_ok_iff
+  ∀ {α β : Type} {x : Except String α} {f : α → Except String β} {b : β},
+    x >>= f = Except.ok b ↔ ∃ a, x = Except.ok a ∧ f a = Except.ok b
+  -- uses
+  -- expr 3200979648
+theorem VE.RightClauses.SlotWF.getElem?_idxOf
+  ∀ (l : List String) (a : String), a ∈ l → l[List.idxOf a l]? = Option.some a
+  -- uses
+  -- expr 2460649946
+theorem VE.RightClauses.SlotWF.holder_sort
+  ∀ (X : VE.Rights.RightsDoc) (Rt : VE.Rights.Right) (N : VE.Rights.Line),
+    VE.Rights.checkShape X Rt N = Except.ok () →
+      N.ikind = VE.Rights.IKind.claim ∨ N.ikind = VE.Rights.IKind.liberty ∨ N.ikind = VE.Rights.IKind.immunity →
+        VE.Rights.rightOf X N.right = Option.some Rt →
+          VE.Rights.sortsOf X N ≠ [] → (VE.Rights.sortsOf X N)[VE.Rights.holderSlot X N]? = Option.some Rt.holder
+  -- uses VE.Rights.IKind.claim@VE.Rights.Tree VE.Rights.IKind.immunity@VE.Rights.Tree VE.Rights.IKind.liberty@VE.Rights.Tree VE.Rights.IKind@VE.Rights.Tree VE.Rights.Line.ikind@VE.Rights.Tree VE.Rights.Line.right@VE.Rights.Tree VE.Rights.Line@VE.Rights.Tree VE.Rights.Right.holder@VE.Rights.Tree VE.Rights.Right@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.checkShape@VE.Rights.Correlate VE.Rights.holderSlot@VE.Rights.Tree VE.Rights.rightOf@VE.Rights.Tree VE.Rights.sortsOf@VE.Rights.Tree
+  -- expr 3770273593
+theorem VE.RightClauses.SlotWF.idx_holder
+  ∀ (ss : List String) (h : String) (x : Nat),
+    x ∈ VE.Rights.holderObjectSlots ss h → ss[List.idxOf h (List.drop 1 ss) + 1]? = Option.some h
+  -- uses VE.Rights.holderObjectSlots@VE.Rights.Correlate
+  -- expr 1069885874
+theorem VE.RightClauses.SlotWF.layer_keep
+  ∀ {T : VE.Norms.Tree} {x : String},
+    x ∈ VE.Norms.layerNames T → VE.RightClauses.PWF.keepOf T.regulated T.definitions x = Bool.true
+  -- uses VE.Norms.Tree.definitions@VE.Norms.Tree VE.Norms.Tree.regulated@VE.Norms.Tree VE.Norms.Tree@VE.Norms.Tree VE.Norms.layerNames@VE.Norms.Tree VE.RightClauses.PWF.keepOf@VE.RightClauses.PlainWellFormed.W1Ext
+  -- expr 2031337412
+theorem VE.RightClauses.SlotWF.restRights_ok
+  ∀ (X : VE.Rights.RightsDoc), VE.Rights.checkRights X = Except.ok () → VE.RightClauses.PWF.restRights X = Except.ok ()
+  -- uses VE.RightClauses.PWF.restRights@VE.RightClauses.PlainWellFormed.Clauses VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.checkRights@VE.Rights.Correlate
+  -- expr 232190068
+theorem VE.RightClauses.SlotWF.shape_ok
+  ∀ (X : VE.Rights.RightsDoc),
+    VE.Rights.checkRights X = Except.ok () →
+      ∀ (RN : String × VE.Rights.Line),
+        RN ∈ VE.Rights.linesOf X →
+          ∀ (Rt : VE.Rights.Right),
+            VE.Rights.rightOf X RN.fst = Option.some Rt → VE.Rights.checkShape X Rt RN.snd = Except.ok ()
+  -- uses VE.Rights.Line@VE.Rights.Tree VE.Rights.Right@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.checkRights@VE.Rights.Correlate VE.Rights.checkShape@VE.Rights.Correlate VE.Rights.linesOf@VE.Rights.Tree VE.Rights.rightOf@VE.Rights.Tree
+  -- expr 3318075781
 theorem VE.RightClauses.addUnit_order
   ∀ (se : VE.SoftNorms.Wire.SoftEnvironment) {acc acc' : VE.Rights.Wire.Units} (u : Lean.Json),
     VE.Rights.Wire.addUnit se acc u = Except.ok acc' → ∃ t, acc'.order = acc.order ++ t
@@ -50042,12 +50204,12 @@ theorem VE.RightClauses.bodyRight_of
   -- uses VE.Bridge.stringField@VE.Bridge VE.RightClauses.bodyRight@VE.RightClauses.Wire
   -- expr 4244141143
 theorem VE.RightClauses.checkEntry_ok
-  ∀ {D : VE.RightClauses.ClauseDoc} {cl : List (String × String × VE.RightClauses.CLine)} {Dr : VE.Rights.RightsDoc}
-    {src : List (String × VE.Rights.SourceLine)} {x : String × String × VE.RightClauses.CLine},
-    VE.RightClauses.checkEntry D cl Dr src x = Except.ok () →
+  ∀ {D : VE.RightClauses.ClauseDoc} {units : Std.HashSet String} {cl : List (String × String × VE.RightClauses.CLine)}
+    {Dr : VE.Rights.RightsDoc} {src : List (String × VE.Rights.SourceLine)} {x : String × String × VE.RightClauses.CLine},
+    VE.RightClauses.checkEntry D units cl Dr src x = Except.ok () →
       VE.RightClauses.entryOk cl Dr src x = Bool.true ∧ VE.RightClauses.shapeOk x.snd.snd = Bool.true
   -- uses VE.RightClauses.CLine@VE.RightClauses.Tree VE.RightClauses.ClauseDoc@VE.RightClauses.Tree VE.RightClauses.checkEntry@VE.RightClauses.Plain VE.RightClauses.entryOk@VE.RightClauses.Plain VE.RightClauses.shapeOk@VE.RightClauses.Plain VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.SourceLine@VE.Rights.Tree
-  -- expr 850674221
+  -- expr 3483751514
 theorem VE.RightClauses.clauseSlot_eq
   ∀ (D : VE.RightClauses.ClauseDoc),
     VE.RightClauses.clauseSlot D = VE.Rights.limPremises (VE.RightClauses.plain D) ++ VE.RightClauses.relPremises D
@@ -50080,6 +50242,13 @@ theorem VE.RightClauses.clauseSlot_no_total
       VE.RightClauses.clauseSlot D = VE.Rights.limPremises (VE.RightClauses.plain D)
   -- uses VE.Formula@VE.Syntax VE.RightClauses.CLine.relation@VE.RightClauses.Tree VE.RightClauses.CLine@VE.RightClauses.Tree VE.RightClauses.ClauseDoc.lines@VE.RightClauses.Tree VE.RightClauses.ClauseDoc@VE.RightClauses.Tree VE.RightClauses.Relation.total@VE.RightClauses.Tree VE.RightClauses.Relation@VE.RightClauses.Tree VE.RightClauses.clauseSlot@VE.RightClauses.Relation VE.RightClauses.plain@VE.RightClauses.Plain VE.Rights.limPremises@VE.Rights.Correlate
   -- expr 3841627243
+theorem VE.RightClauses.clauseSlot_wellFormed
+  ∀ (D : VE.RightClauses.ClauseDoc),
+    VE.RightClauses.WellFormedClauses D = Bool.true →
+      VE.Rights.WellFormedRights (VE.RightClauses.plain D) = Bool.true →
+        VE.Compose.SlotWellFormed (VE.Rights.correlate (VE.RightClauses.plain D)) (VE.RightClauses.clauseSlot D)
+  -- uses VE.Compose.SlotWellFormed@VE.Compose.Slot VE.RightClauses.ClauseDoc@VE.RightClauses.Tree VE.RightClauses.WellFormedClauses@VE.RightClauses.Plain VE.RightClauses.clauseSlot@VE.RightClauses.Relation VE.RightClauses.plain@VE.RightClauses.Plain VE.Rights.WellFormedRights@VE.Rights.Correlate VE.Rights.correlate@VE.Rights.Correlate
+  -- expr 3637332513
 theorem VE.RightClauses.clause_fails_not_selected
   ∀ (D : VE.RightClauses.ClauseDoc),
     VE.RightClauses.WellFormedClauses D = Bool.true →

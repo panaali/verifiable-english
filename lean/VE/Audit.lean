@@ -5,6 +5,8 @@ import VE.Acts.Compat
 import VE.Acts.Decode
 import VE.Acts.DecodeTwins
 import VE.Acts.Elaborate
+import VE.Acts.ElaborateExamples
+import VE.Acts.ElaborateProofs
 import VE.Acts.Faithful
 import VE.Acts.FaithfulExamples
 import VE.Acts.Grammar
@@ -592,6 +594,8 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.Decode.sourceOf_sources
 #print axioms VE.Acts.Decode.splitEnv_route
 #print axioms VE.Acts.Decode.wellFormedU_D
+#print axioms VE.Acts.ElaborateExamples.e1_map
+#print axioms VE.Acts.ElaborateExamples.e4_map
 #print axioms VE.Acts.Examples.acceptsTable_terms
 #print axioms VE.Acts.Examples.tableToks_kinds
 #print axioms VE.Acts.FaithfulExamples.appliesB_iff
@@ -717,6 +721,7 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.elaborate_identity
 #print axioms VE.Acts.elaborate_ok
 #print axioms VE.Acts.elaborate_one_reading
+#print axioms VE.Acts.elaborate_parts
 #print axioms VE.Acts.elaborate_unspec
 #print axioms VE.Acts.elaborate_wellFormed
 #print axioms VE.Acts.eq_of_perm_of_pairwise
@@ -745,11 +750,15 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.mapM_ok
 #print axioms VE.Acts.mem_firsts
 #print axioms VE.Acts.mem_partNamesIn
+#print axioms VE.Acts.mem_partsOf
+#print axioms VE.Acts.mem_preds
 #print axioms VE.Acts.mem_preds_atom
+#print axioms VE.Acts.mem_rules
 #print axioms VE.Acts.mem_specPremises
 #print axioms VE.Acts.mem_splitNode
 #print axioms VE.Acts.mem_splitReg
 #print axioms VE.Acts.modifier_edges
+#print axioms VE.Acts.namesOk_ok
 #print axioms VE.Acts.namesOk_preds
 #print axioms VE.Acts.node_regulated
 #print axioms VE.Acts.node_typed
@@ -796,6 +805,7 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.specialises_refl
 #print axioms VE.Acts.specialises_trans
 #print axioms VE.Acts.splitDoc_none
+#print axioms VE.Acts.splitMap_exact
 #print axioms VE.Acts.splitMap_rules_built
 #print axioms VE.Acts.splits_eq
 #print axioms VE.Acts.table_free_all_own
@@ -7185,6 +7195,15 @@ import VE.WireContract.Engine
 #print axioms VE.RightClauses.PWF.validateW1_ok
 #print axioms VE.RightClauses.PWF.wellFormed_check
 #print axioms VE.RightClauses.PWF.yields_ext
+#print axioms VE.RightClauses.SlotWF.baseEnv_layer0
+#print axioms VE.RightClauses.SlotWF.entry_relation
+#print axioms VE.RightClauses.SlotWF.except_bind_ok_iff
+#print axioms VE.RightClauses.SlotWF.getElem?_idxOf
+#print axioms VE.RightClauses.SlotWF.holder_sort
+#print axioms VE.RightClauses.SlotWF.idx_holder
+#print axioms VE.RightClauses.SlotWF.layer_keep
+#print axioms VE.RightClauses.SlotWF.restRights_ok
+#print axioms VE.RightClauses.SlotWF.shape_ok
 #print axioms VE.RightClauses.addUnit_order
 #print axioms VE.RightClauses.addUnit_plain
 #print axioms VE.RightClauses.addUnit_plain_none
@@ -7196,6 +7215,7 @@ import VE.WireContract.Engine
 #print axioms VE.RightClauses.clauseSlot_labelled
 #print axioms VE.RightClauses.clauseSlot_labelled_of_doc
 #print axioms VE.RightClauses.clauseSlot_no_total
+#print axioms VE.RightClauses.clauseSlot_wellFormed
 #print axioms VE.RightClauses.clause_fails_not_selected
 #print axioms VE.RightClauses.clause_fails_not_selected_of_doc
 #print axioms VE.RightClauses.contains_of_mem

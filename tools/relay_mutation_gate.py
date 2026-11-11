@@ -10,8 +10,9 @@ A *route* is one way `ve` reads a Lean answer:
   mode whose one caller reads the answer further (`SERVICE_READERS`: `ask`, read by `ve.ask.read_answer`;
   `words`, read by `ve.words.read_answer`; `document`; `metered`, read by `ve.evaluate.read_evaluation` and
   `ve.search.read_nonvacuity`; `english.command`, read by `ve.backends.english_lean.command_answer`;
-  `act-readings`, read by `ve.acts.read_answer`; `english.statement`, read by `ve.norm_english.statement_answer`),
-  by that caller's reader too, on every fixture whose genuine answer
+  `act-readings`, read by `ve.acts.read_answer`; `clauses-elaborate`, read by `ve.right_clauses.bind`;
+  `english.statement`, read by `ve.norm_english.statement_answer`), by that caller's reader too, on every fixture
+  whose genuine answer
   is not a rejection row;
 * each one-shot runner call that a `ve` call site makes: every assurance-manifest binding of a runner other
   than `ve_service` whose operation has Lean call sites, and every call of the one-shot route reader
@@ -430,6 +431,18 @@ def _command_reader(case):
 
 
 SERVICE_READERS["english.command"] = _command_reader
+
+
+def _clauses_reader(case):
+    """How `ve.right_clauses.elaborate` reads the service's response to `case` (cmp-s3-cfr-1b): `relay.decided`,
+    then `bind`, the answer's units, lines and totality premises bound to the request's document."""
+    from ve import right_clauses
+    from ve.backends import relay
+    return lambda response: right_clauses.bind(relay.decided(response["results"])[0]["result"], case["document"],
+                                               case["environment"])
+
+
+SERVICE_READERS["clauses-elaborate"] = _clauses_reader
 
 
 def _statement_reader(case):
