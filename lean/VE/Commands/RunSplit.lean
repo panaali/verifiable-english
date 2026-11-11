@@ -161,6 +161,40 @@ def thenText : String := "ThenWithoutStep: a Then step names no earlier instruct
     some cmd)] [] (ctx := false) (extra := [("reading_sets", toJson [signed "t"])])),
   result (payload [("c1", "instruction", "Click Check.\n", some cmd), ("t", "asserted", "Then click Check.\n",
     some formula)] [] (ctx := false))] == [thenText, thenText, "ok"]
+-- ci-3 (review F2): the document form of a sequence is one instruction unit whose `MIXED` parts are its steps; each
+-- part's command (explicit, resolved or chosen) is checked against `readStep` of the whole wording, under the reading
+-- context. Reversed steps are refused for plain, attributed and hedged parts, and for a chosen part; a unit carrying
+-- one command for a two-step wording, a sequence with a non-instruction part, and one with no context are refused.
+def seqText (m : String) : String :=
+  s!"{Texts.sequenceParts.1}: {Texts.sequenceParts.2} (unit {m})"
+def seqUnits (k : String) (c1 c2 : Json) : List (String × String × String × Option Json) :=
+  [("a", k, "Click Check", some (Json.mkObj [("command", c1)])),
+   ("b", k, ", then do not share the token.\n", some (Json.mkObj [("command", c2)]))]
+#guard result (mixed (payload (seqUnits "instruction" share click) [] (ctx := false))) == readingContextText
+#guard ["instruction", attributed, hedged].all fun k =>
+  result (mixed (payload (seqUnits k share click) [])) == seqText "m" &&
+    result (mixed (payload (seqUnits k click share) [])) == "ok"
+#guard result (payload [("u", "instruction", "Click Check, then do not share the token.\n", some cmd)] []) == seqText "u"
+#guard result (mixed (payload [("a", "instruction", "Click Check", some cmd),
+  ("b", "asserted", ", then do not share the token.\n", some formula)] [])) == seqText "m"
+#guard result (mixed (payload [("a", "instruction", "Click Check", some cmd), ("b", "instruction", ", then click Check", some cmd),
+  ("c", "instruction", ", then do not share the token.\n", some (Json.mkObj [("command", share)]))] [])) == "ok" &&
+  result (mixed (payload [("a", "instruction", "Click Check", some cmd), ("b", "instruction",
+    ", then click Check, then do not share the token.\n", some cmd)] [])) == seqText "m"
+-- A chosen part is read through its signed choice: reversed, the sequence is refused; in order, the sequence check
+-- passes and the parts' stated status is the next fault.
+#guard result (mixed (payload [("a", "asserted", "Click Check", some formula), ("b", "instruction",
+    ", then do not share the token.\n", some cmd)] [] (extra := [("reading_sets", toJson [signed "a"])]))) == seqText "m" &&
+  result (mixed (payload [("a", "asserted", "Click Check", some formula), ("b", "instruction",
+    ", then do not share the token.\n", some (Json.mkObj [("command", share)]))] []
+    (extra := [("reading_sets", toJson [signed "a"])]))) != seqText "m"
+-- The stated order is derived content of the decoded source: the sequence's consecutive steps.
+#guard (match decodeSpeechSource (mixed (payload (seqUnits "instruction" click share) [])) .null with
+  | .ok s => s.1.stepOrder
+  | .error _ => []) == [("m.1", "m.2")]
+#guard (match decodeSpeechSource (payload two [("c1", click), ("c2", share)]) .null with
+  | .ok s => (s.1.stepOrder, s.1.sequences.length)
+  | .error _ => ([("", "")], 1)) == ([], 0)
 -- The fences Python resolves, charged against `maxCases` before any is read (asserted fences, none resolved).
 def fenced (n : Nat) : Json :=
   payload ((List.range n).map fun i => (s!"a{i}", "asserted", "Atlas is reviewed.\n", none)) [] (ctx := false)
