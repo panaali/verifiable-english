@@ -81,30 +81,31 @@ def sdCaseOf (refusal : NDoc → String) (b : Admitted2) : SDM SDCase := do
     let N := r.N
     let S := sup N.D
     let U := asU N S.1
-    let checked := checkedChoices N.D
-    if h : routeOf true N.D = .enumerated ∧ superposable N.D = true ∧ VE.NormDefaults.WellFormedU U = true ∧
-        checked.length ≤ maxChoiceChecks then
-      let XL := softXL N S.1
-      if hw : checked.length * (XL.length + (S.1.soft.T.nodes.map
-            (fun M => (M.guard :: M.carveOuts).map VE.Bridge.formulaNodes)).flatten.sum) ≤ maxSdCheckWork ∧
-          (checked.length ≤ maxChoices ∨ checked.all (fun c => (sdChoiceText r.b.a.re N c).isNone) = true) then
-        if hs : checked.isEmpty = false then
-          have hck : sdChecked r.b.a.re N = true := by
-            rcases hw.2 with hle | hall
-            · exact sdCheck_of_admitted b r hadm (superposable_supReady h.2.1) hle hw.1
-            · simp only [sdChecked, Bool.and_eq_true, decide_eq_true_eq]
-              exact ⟨⟨h.2.2.2, hw.1⟩, hall⟩
-          have hr : routeSD r.b.a.re N = .superposed :=
-            (routeSD_superposed_iff _ _).mpr ⟨h.1, by simp [sdSuperposable, h.2.1, h.2.2.1, supU, U, S], hck⟩
-          let F := fill U
-          let fp := VE.NormDefaults.fillPremises U
-          pure ⟨⟨r, hr, by rw [choices_isEmpty]; exact hs⟩, S, U, F,
-            VE.Rights.limPremisesLabelled S.1 ++ choiceLabelled N.D ++ gatedRel N.D, XL, XL.map (·.2), fp,
-            (VE.NormDefaults.Admission.fillLabels U).zip fp, targets F, VE.Norms.backgroundBase F,
-            VE.Norms.background F, VE.Norms.elaborate F.T, checked, sharedEnvSD N, supVocabulary r.b.a.re r.b.D,
-            VE.NormDefaults.Wire.canonicalEnvironmentJsonU r.b.a.re.lowerJson,
-            rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
-        else throw (unsatText N.D)
+    if h0 : routeOf true N.D = .enumerated ∧ superposable N.D = true ∧ VE.NormDefaults.WellFormedU U = true then
+      let checked := checkedChoices N.D
+      if h : checked.length ≤ maxChoiceChecks then
+        let XL := softXL N S.1
+        if hw : checked.length * (XL.length + (S.1.soft.T.nodes.map
+              (fun M => (M.guard :: M.carveOuts).map VE.Bridge.formulaNodes)).flatten.sum) ≤ maxSdCheckWork ∧
+            (checked.length ≤ maxChoices ∨ checked.all (fun c => (sdChoiceText r.b.a.re N c).isNone) = true) then
+          if hs : checked.isEmpty = false then
+            have hck : sdChecked r.b.a.re N = true := by
+              rcases hw.2 with hle | hall
+              · exact sdCheck_of_admitted b r hadm (superposable_supReady h0.2.1) hle hw.1
+              · simp only [sdChecked, Bool.and_eq_true, decide_eq_true_eq]
+                exact ⟨⟨h, hw.1⟩, hall⟩
+            have hr : routeSD r.b.a.re N = .superposed :=
+              (routeSD_superposed_iff _ _).mpr ⟨h0.1, by simp [sdSuperposable, h0.2.1, h0.2.2, supU, U, S], hck⟩
+            let F := fill U
+            let fp := VE.NormDefaults.fillPremises U
+            pure ⟨⟨r, hr, by rw [choices_isEmpty]; exact hs⟩, S, U, F,
+              VE.Rights.limPremisesLabelled S.1 ++ choiceLabelled N.D ++ gatedRel N.D, XL, XL.map (·.2), fp,
+              (VE.NormDefaults.Admission.fillLabels U).zip fp, targets F, VE.Norms.backgroundBase F,
+              VE.Norms.background F, VE.Norms.elaborate F.T, checked, sharedEnvSD N, supVocabulary r.b.a.re r.b.D,
+              VE.NormDefaults.Wire.canonicalEnvironmentJsonU r.b.a.re.lowerJson,
+              rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+          else throw (unsatText N.D)
+        else throw (refusal N)
       else throw (refusal N)
     else throw (refusal N)
 
@@ -208,11 +209,11 @@ def sdAssumed (c : SDCase) (j : Json) : Except String Choice := do
   unless c.taken A do throw (untakenText c.N.D A)
   pure A
 
-/-- A base model of the superposed vocabulary (`decodeSupModel`, on the case's vocabulary) and its `filling`. -/
+/-- A base model of the superposed vocabulary, decoded on the case's vocabulary (`decodeModelData` refuses a dangling
+    constant or a wrong-sort tuple, which `decodeSupModel`'s `valid` would), and its `filling` (`decodeFilling`). -/
 def sdModel (c : SDCase) (j : Json) :
     Except String (VE.FiniteModel Entity × VE.NormDefaults.FiniteFill c.U Entity) := do
   let data ← VE.Bridge.decodeModelData c.v (j.getObjValD "model")
-  unless data.valid c.v do throw "model is not semantically admissible"
   pure (data.toModel, ← VE.NormDefaults.Wire.decodeFilling c.U data.toModel (j.getObjValD "filling"))
 
 /-- The superposed proofs a piece's answer replays: one per conflict certificate, then the query's. The labelled
@@ -273,8 +274,9 @@ def sdCertificateCore (id : String) (c : SDCase) (j : Json) (pre : Free := none)
 
 /-- `valid` is the model check with `localFree` (14.3: a reported model has no conflict at any tuple); the first
     failing premise is named by its label, a soft premise by the choice label it is the image of under the choice
-    the model encodes (`labelImage`; `null` for none), never by its superposed label. -/
-def sdModelRun (id : String) (c : SDCase) (j : Json) : SDM Json := do
+    the model encodes (`labelImage`, counted; `null` for none), never by its superposed label. In a scope (`named`
+    false) a soft premise is not named: a scope reads `labelImage` only for an accepted piece (14.11). -/
+def sdModelRun (id : String) (c : SDCase) (j : Json) (named : Bool := true) : SDM Json := do
   let A ← sdAssumed c j
   let (Γ, φ) ← sdShared c.envQ j
   let (M, G) ← sdModel c j
@@ -282,18 +284,22 @@ def sdModelRun (id : String) (c : SDCase) (j : Json) : SDM Json := do
   let ch := encodedChoice c.N.D M
   let failing := (c.slot ++ A.map (fun x => (s!"readings:{x.1}:{x.2}", choiceAtom c.N.D x.1 x.2)) ++ c.XL ++ c.FL).find?
     (fun x => !x.2.eval (M.withFill G) [])
+  let soft := failing.any (fun l => c.XL.any (·.1 == l.1))
+  if soft && named then sdTick fun k => { k with images := k.images + 1 }
   let shown := failing.bind fun l =>
-    if c.XL.any (·.1 == l.1) then ((labelImage c.N ch).find? (·.2 == l.1)).map (·.1) else some l.1
+    if soft then (if named then ((labelImage c.N ch).find? (·.2 == l.1)).map (·.1) else none) else some l.1
   pure (okWith id [("valid", .bool (res.1 && c.localFree M G)), ("conclusion_value", .bool res.2),
     ("first_failing", match shown with | some l => .str l | none => .null),
     ("assumed", choiceJson A), ("choice", choiceJson ch)])
 
-/-- The three kinds on one routed case; any other kind is refused as `runSDKind` refuses it. -/
-def runSDSup (id kind : String) (c : SDCase) (j : Json) : SDM Json :=
-  if kind == "readings-conflict" then (·.1) <$> sdConflictCore id c j
-  else if kind == "readings-certificate" then (·.1) <$> sdCertificateCore id c j
-  else if kind == "readings-model" then sdModelRun id c j
-  else throw s!"UnsupportedProfile: case kind {kind} is not available on the readings route"
+/-- The superposed kinds the dispatch (sc-11b) sends to a routed case. -/
+inductive SDKind | conflict | certificate | model
+
+def runSDSup (id : String) (kind : SDKind) (c : SDCase) (j : Json) : SDM Json :=
+  match kind with
+  | .conflict => (·.1) <$> sdConflictCore id c j
+  | .certificate => (·.1) <$> sdCertificateCore id c j
+  | .model => sdModelRun id c j
 
 /-! ## The verdict scopes (14.11 rows four and five) -/
 
@@ -398,7 +404,7 @@ def sdScope (c : SDCase) (A : Choice) (Γ φ e : Json) : SDM SupScope := do
       if cf.isNone && (name == "conflict" || query) then cf := some (← sdFree c A packages)
       let res ← attempt (if name == "conflict" || name == "witness" then sdConflictCore "readings-verdicts" c body cf
         else if query then sdCertificateCore "readings-verdicts" c body cf
-        else (·, []) <$> sdModelRun "readings-verdicts" c body)
+        else (·, []) <$> sdModelRun "readings-verdicts" c body false)
       match res with
       | .error err => notes := notes ++ [{ name := name, accepted := false, error := some err }]
       | .ok (answer, proofs) =>

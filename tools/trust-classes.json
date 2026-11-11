@@ -20746,7 +20746,8 @@
         "VE.Readings.Run.sdConflictCore",
         "VE.Readings.Run.sdCertificateCore",
         "VE.Readings.Run.sdModelRun",
-        "VE.Readings.Run.runSDSup"
+        "VE.Readings.Run.runSDSup",
+        "VE.Readings.Run.SDKind"
       ],
       "D[V]": [
         "VE.Readings.Run.sdShared",
