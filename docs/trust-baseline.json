@@ -2532,6 +2532,13 @@
    "reason": "et-5b: V +122 in total (SourceWords.lean +72: the always/eventually rows, their no-anchor rows, soft-norms' rule row, and the other reading sets of spec 2.4 with linkCandidate; Document.lean +50: ownedProfiles, eventsView, eventsAnchorChecks, eventsLayeredOf, chainLayeredOf), K +0, S +0; +46 over the earlier et-5b allowance of 76",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), et-5b, 2026-11-11",
    "commit": "0295df174375667a79dec7c1dd214f9128fe4909"
+  },
+  {
+   "class": "V",
+   "lines": 19,
+   "reason": "et-5b review F1: V +141 in total (SourceWords.lean +72; Document.lean +60: the earlier +50 and Env.eventsView, Checked.eventsView and encode's events_view arm, the view the mode read in its answer; ResponseShape/Schemas/Document.lean +9: the events_view shape), K +0, S +0; +19 over the earlier et-5b allowances of 122",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), et-5b, 2026-11-11",
+   "commit": "0295df174375667a79dec7c1dd214f9128fe4909"
   }
  ]
 }

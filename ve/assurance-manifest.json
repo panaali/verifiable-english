@@ -66,7 +66,7 @@
     "ve/readings_verdicts/binding.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 45084,
+    "total_lines": 45094,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -1800,12 +1800,12 @@
       },
       {
         "file": "lean/VE/Service/Document.lean",
-        "lines": 3075,
-        "sha256": "b1f5c5cc7dd687b1c83efef9c9dc957c7c718fffcca32cea423bb5ec17e4a05f",
+        "lines": 3085,
+        "sha256": "fbc472a473d5e3cbd6177ed467b9cc33593727be7153d3c7cb2e9153490c1e48",
         "ranges": [
           [
             1,
-            3075
+            3085
           ]
         ],
         "declarations": [
@@ -1867,11 +1867,12 @@
           "requestOf",
           "layeredOf",
           "eventsView",
+          "Env.eventsView",
           "eventsAnchorChecks",
           "eventsLayeredOf",
           "chainLayeredOf"
         ],
-        "reason": "W2 document service wrapper: front matter (its JSON forms Python reads as other values deferred) and its gates (the environment mode's fault where no route is composed), unit partition and contents, a rights document's rights source (the rights route's decoder), a soft-norms document's soft source, E'' and rule source (the soft route's decoders), soft canonical content and statuses, plain norm content (the norms route's decoders), reading sets and their status fold, narrowings, graph admission, located model and fence diagnostics, statuses and coverage; JT-2: judgments@0's records and admission (Judgments.records after W2), each active set's raw readings (setCandidates), the unit statuses and the usage map, and the decoders reading the environment without the document layers; jt-2 review F1: the parse, model and English cases read Env.forModes, and a located model's identity is the list's as written; merge with SC-1b: check refuses judgments@0 with scope@0, whose fold (Scope.foldGovernors) writes no judgments member; full file pinned conservatively; sc-5rb: checkDocSets, the entry with scope's per-choice GOVERN (VE.Scope.governSetsWith), and withSets, which hands check GOVERN's reading sets (withUnits drops a case's own); sc-5rc: composedReadingRow, composedSetRow, composedReadings and checkDocSetsAnswered relay the governed readings by set, version, unit and reading id; jt-2c: `environmentOf` refuses a document layer beside a profile it does not compose with by `VE.Compose.decidingEnvironment` (was `judgmentsApart`); pc-2a: `softFrame` reads a soft frame under norm-defaults@0 over the placeholder completions; `requestOf` and `layeredOf` (namespace VE.Service.DocumentChain) make the norm-defaults mode's case and run its own `decodeLayered`, then `validateCompletions`; `admitGraph` takes the layered route's admission on this chain; et-4b merge: `requestOf` makes no case for a list with `events@0` (refused by `ownedProfiles`), so the case's events hook is none (`layeredOf_soft`); jt-3b merge with et-4b: both edits pinned whole (jt-3b's `Env.boundNames`, `legendRows`, `statusRows` and `linesJson`; et-4b's `events@0` refusal in `requestOf`); qt-a4b merge with ve-integration 3395d65592: both edits pinned whole (qt-a4b's chain list reading: `cardinalityEnv`'s profiles, `chainBound`, `composedJson` and `check`'s `parent`; main's `boundNames`, `judgment_lines`, `active` and the rights rule readers); et-5b: an events@0 document's view and hook (`eventsView`, `Events.eventsHook` over the document's open terms), spec 2.9 item 8 (`eventsAnchorChecks`) and the soft branch through the hook (`eventsLayeredOf`, `chainLayeredOf`)"
+        "reason": "W2 document service wrapper: front matter (its JSON forms Python reads as other values deferred) and its gates (the environment mode's fault where no route is composed), unit partition and contents, a rights document's rights source (the rights route's decoder), a soft-norms document's soft source, E'' and rule source (the soft route's decoders), soft canonical content and statuses, plain norm content (the norms route's decoders), reading sets and their status fold, narrowings, graph admission, located model and fence diagnostics, statuses and coverage; JT-2: judgments@0's records and admission (Judgments.records after W2), each active set's raw readings (setCandidates), the unit statuses and the usage map, and the decoders reading the environment without the document layers; jt-2 review F1: the parse, model and English cases read Env.forModes, and a located model's identity is the list's as written; merge with SC-1b: check refuses judgments@0 with scope@0, whose fold (Scope.foldGovernors) writes no judgments member; full file pinned conservatively; sc-5rb: checkDocSets, the entry with scope's per-choice GOVERN (VE.Scope.governSetsWith), and withSets, which hands check GOVERN's reading sets (withUnits drops a case's own); sc-5rc: composedReadingRow, composedSetRow, composedReadings and checkDocSetsAnswered relay the governed readings by set, version, unit and reading id; jt-2c: `environmentOf` refuses a document layer beside a profile it does not compose with by `VE.Compose.decidingEnvironment` (was `judgmentsApart`); pc-2a: `softFrame` reads a soft frame under norm-defaults@0 over the placeholder completions; `requestOf` and `layeredOf` (namespace VE.Service.DocumentChain) make the norm-defaults mode's case and run its own `decodeLayered`, then `validateCompletions`; `admitGraph` takes the layered route's admission on this chain; et-4b merge: `requestOf` makes no case for a list with `events@0` (refused by `ownedProfiles`), so the case's events hook is none (`layeredOf_soft`); jt-3b merge with et-4b: both edits pinned whole (jt-3b's `Env.boundNames`, `legendRows`, `statusRows` and `linesJson`; et-4b's `events@0` refusal in `requestOf`); qt-a4b merge with ve-integration 3395d65592: both edits pinned whole (qt-a4b's chain list reading: `cardinalityEnv`'s profiles, `chainBound`, `composedJson` and `check`'s `parent`; main's `boundNames`, `judgment_lines`, `active` and the rights rule readers); et-5b: an events@0 document's view and hook (`eventsView`, `Events.eventsHook` over the document's open terms), spec 2.9 item 8 (`eventsAnchorChecks`) and the soft branch through the hook (`eventsLayeredOf`, `chainLayeredOf`); et-5b review F1: the answer carries the view the mode read (Env.eventsView, Checked.eventsView, encode's events_view)"
       },
       {
         "file": "lean/VE/Service/Family.lean",

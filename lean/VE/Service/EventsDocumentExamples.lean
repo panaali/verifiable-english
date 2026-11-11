@@ -259,3 +259,21 @@ def isoEnv : Json := envOf (some (blockD "[]" "2026-10-13"))
 #guard outcome t15Env [("reading_sets", Json.arr #[readingSet "A2"])] == "AnchorOpen: A2"
 #guard outcome (withAnchor isoEnv) == "AnchorNotOpen: date_of_this_document"
 #guard outcome (withAnchor t15Env (anchorConst "thinking")) [] == "AnchorNotOpen: date_of_this_document"
+
+/-! ## The answer carries the view the mode read (et-5b review F1)
+
+A client builds an `events@0` document over the environment Lean's mode read, never its own: the row's `events_view`
+is the hook's view (`Env.eventsView`), with the named date's constant and without the block or `events@0`. The twin
+document over that view lists no `events@0`, and its row carries none. -/
+
+def rowOf (text : String) : Option Json :=
+  (VE.Service.Document.checkBody (Json.mkObj [("id", .str "d"), ("document", .str text)])).toOption
+def viewOf (text : String) : Option Json := (rowOf text).bind fun r => (r.getObjVal? "events_view").toOption
+def datedView : Option Json := viewOf (assertedDoc (t15Env "[\"2030-01-01\"]") [])
+#guard datedView.map (fun v => (((v.getObjValD "vocabulary").getObjValD "constants").getObjVal? "date__2030_01_01").isOk)
+  == some true
+#guard datedView.map (fun v => (v.getObjVal? "events").isOk || (VE.Compose.listedProfiles v).contains "events@0")
+  == some false
+#guard datedView == ((VE.Service.Document.environmentOf (t15Env "[\"2030-01-01\"]") (terms := some (.arr #[]))).toOption.bind
+  (·.eventsView))
+#guard (datedView.bind fun v => rowOf (assertedDoc v [])).map (fun r => (r.getObjVal? "events_view").isOk) == some false

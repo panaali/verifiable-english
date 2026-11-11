@@ -9735,6 +9735,7 @@
         "VE.Service.Document.envelopeKeys",
         "VE.Service.Document.environmentOf",
         "VE.Service.Document.eventsView",
+        "VE.Service.Document.Env.eventsView",
         "VE.Service.Document.extendedEnv",
         "VE.Service.Document.formulaCheck",
         "VE.Service.Document.formulaOf",
@@ -10035,7 +10036,10 @@
         "VE.Service.EventsDocumentExamples.v",
         "VE.Service.EventsDocumentExamples.weaker",
         "VE.Service.EventsDocumentExamples.withAnchor",
-        "VE.Service.EventsDocumentExamples.withBlock"
+        "VE.Service.EventsDocumentExamples.withBlock",
+        "VE.Service.EventsDocumentExamples.rowOf",
+        "VE.Service.EventsDocumentExamples.viewOf",
+        "VE.Service.EventsDocumentExamples.datedView"
       ]
     },
     "VE/Service/Family.lean": {
