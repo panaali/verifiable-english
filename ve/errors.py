@@ -97,6 +97,15 @@ class ResourceLimit(VEError):
     code = "ResourceLimit"
 
 
+def diagnostic_answer(exc: VEError) -> tuple[dict, int]:
+    """The command line's structured answer to an input diagnostic and its exit code: `ResourceLimit` with exit 4 for a
+    limit, else `InvalidInput` with exit 2; `error` is the exception's own `to_dict()`. A limit is known by its class,
+    never its `code`: the relay keeps Lean's class but sets the code to Lean's wire code (`SOFT_RESOURCE_LIMIT`,
+    `ACTS_RESOURCE_LIMIT`, ...), so a code comparison answers a relayed limit as invalid input."""
+    limit = isinstance(exc, ResourceLimit)
+    return {"status": "ResourceLimit" if limit else "InvalidInput", "error": exc.to_dict()}, 4 if limit else 2
+
+
 class CheckerUnavailable(RuntimeError):
     """An operational failure: no verdict was obtained, so none is reported.
 
