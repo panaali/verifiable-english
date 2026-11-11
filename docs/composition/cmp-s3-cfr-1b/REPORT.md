@@ -164,6 +164,11 @@ see "Moved", reviews/dri-decisions-20261111-cmp-s3-cfr-1b.md item 1).
 - Selected tests on the committed tree fb50a170b0: `MAC_PYTEST_NO_DEFER=1 zsh mac-pytest.sh --select -- --base
   $(git merge-base HEAD main) --run` gave "recorded 514 units for tree ac809bd7c4; ... 0 failed", "ran on ve-cloud-2,
   select_tests, exit=0". Commits after it touch docs/*.md only.
+- Review fixes (7cd6ba66c7, tree 1303c94cc6): `lake build` "Build completed successfully (1400 jobs)";
+  `python3 lean/audit.py` PASS (845 source files, 9485 theorems); `regen_generated.py --check` "checked 39 entries";
+  `gate_collection.py --check --prebuilt` "10 added, 0 removed by a trailer, 0 refused, 0 stale and 0 malformed";
+  selected tests "recorded 484 units for tree 1303c94cc6; ... 0 failed", "ran on ve-cloud-2, select_tests, exit=0"
+  (test_right_clauses.py exit 0). The 30 broad or heavy files it defers are the chain gate's; not run here.
 - Pre-existing failures from main-known-red.txt: none met.
 
 ## Self-review against BUILDER-CHECKLIST
