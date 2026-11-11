@@ -211,18 +211,19 @@ def _match(elements, text, pos, slots, binds):
     raise VEError("InvalidInput: invalid S2 grammar element")
 
 
-def derivations(text, slots):
-    """Every derivation of `text` from a registered template: (template, bindings)."""
-    return [(name, binds) for name, elements in TEMPLATES.items()
+def derivations(text, slots, templates=None):
+    """Every derivation of `text` from a registered template (`TEMPLATES`, or the wordings `templates` registers
+    besides them: defeasible DE10 to DE13, `ve.defaults_english.templates`): (template, bindings)."""
+    return [(name, binds) for name, elements in (TEMPLATES if templates is None else templates).items()
             for end, binds in _match(elements, text, 0, slots, ()) if end == len(text)]
 
 
-def gated(intended, text, slots):
+def gated(intended, text, slots, templates=None):
     """W7's all-derivations gate: `text` has exactly one derivation, from `intended`; and no generated name, no
     reserved prefix of the document's environment and no `may not` (2.4, G6, G9)."""
     if type(text) is not str or hidden_in(text, slots.reserved, slots.author_names) is not None:
         raise VEError(f"InvalidInput: S2 wording {intended} shows a generated name or `may not`")
-    found = derivations(text, slots)
+    found = derivations(text, slots, templates)
     if len(found) != 1 or found[0][0] != intended:
         raise VEError(f"InvalidInput: S2 wording {intended} has {len(found)} derivations: {text}")
     return text
