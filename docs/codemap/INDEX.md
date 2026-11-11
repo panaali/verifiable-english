@@ -57,7 +57,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [docs/norm-defaults/](docs__norm-defaults.md) — 2 modules — -
 - [docs/oom-rootcause/](docs__oom-rootcause.md) — 2 modules — -
 - [docs/perf/](docs__perf.md) — 2 modules — -
-- [docs/premise-packs/](docs__premise-packs.md) — 1 modules — -
+- [docs/premise-packs/](docs__premise-packs.md) — 2 modules — -
 - [docs/premise-scale/](docs__premise-scale.md) — 4 modules — -
 - [docs/presupposition/](docs__presupposition.md) — 8 modules — -
 - [docs/profile-composition/](docs__profile-composition.md) — 5 modules — -

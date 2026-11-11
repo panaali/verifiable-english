@@ -1741,8 +1741,8 @@ Delegates: `/` to norms.
 | `/forced_all/*/tuple/*` | string | none |  |  | 0 | not probed |
 | `/form` | string | closed domain | enum |  | 0 | shape |
 | `/gaps` | string | closed domain | enum |  | 3 | shape |
-| `/id` | any | bound | x-echo |  | 28 | shape |
-| `/id` | string | bound | x-equals |  | 28 | shape |
+| `/id` | any | bound | x-echo |  | 31 | shape |
+| `/id` | string | bound | x-equals |  | 31 | shape |
 | `/kept/*` | string | none |  |  | 0 | not probed |
 | `/kind` | string | closed domain | enum |  | 3 | shape |
 | `/kinds` | any | bound | x-equals |  | 0 | shape |
@@ -1752,8 +1752,8 @@ Delegates: `/` to norms.
 | `/pairs/*/rules/0` | string | none |  |  | 0 | not probed |
 | `/pairs/*/rules/1` | string | none |  |  | 0 | not probed |
 | `/pairs/*/status` | string | closed domain | enum |  | 0 | shape |
-| `/point_status` | string | closed domain | enum |  | 0 | shape |
-| `/predicate` | string | bound | x-equals |  | 3 | shape |
+| `/point_status` | string | closed domain | enum |  | 3 | shape |
+| `/predicate` | string | bound | x-equals |  | 6 | shape |
 | `/predicates/*/act` | string | none |  |  | 0 | not probed |
 | `/predicates/*/default` | string | closed domain | enum |  | 0 | shape |
 | `/predicates/*/index` | integer | none |  | minimum | 0 | not probed |
@@ -1788,7 +1788,7 @@ Delegates: `/` to norms.
 | `/residual/gaps/*` | string | none |  |  | 1 | unbound |
 | `/residual/ungrounded_defaults` | integer | none |  | minimum | 3 | unbound |
 | `/rights/*/label` | string | none |  | minLength | 1 | not probed |
-| `/rules/*` | string | none |  |  | 4 | unbound |
+| `/rules/*` | string | none |  |  | 7 | unbound |
 | `/rules/*/index` | integer | none |  | minimum | 0 | not probed |
 | `/rules/*/name` | string | none |  |  | 0 | not probed |
 | `/rules/*/over/*` | string | none |  |  | 0 | not probed |
@@ -1797,17 +1797,17 @@ Delegates: `/` to norms.
 | `/situation/filling/@key` | key | none |  |  | 0 | not probed |
 | `/situation/filling/{}/*/*` | string | none |  |  | 0 | not probed |
 | `/soft/*/label` | string | none |  | minLength | 0 | not probed |
-| `/sources/*/rule` | string | none |  |  | 0 | not probed |
-| `/sources/*/source` | string | none |  |  | 0 | not probed |
+| `/sources/*/rule` | string | none |  |  | 3 | not probed |
+| `/sources/*/source` | string | none |  |  | 3 | not probed |
 | `/split/*/parts/*` | string | none |  |  | 0 | not probed |
 | `/split/*/source` | string | none |  |  | 0 | not probed |
 | `/split/*/text` | string | none |  |  | 0 | not probed |
-| `/status` | string | closed domain | const |  | 28 | shape |
+| `/status` | string | closed domain | const |  | 31 | shape |
 | `/target` | string | bound | x-equals |  | 5 | shape |
 | `/targets/*` | string | none |  |  | 33 | unbound |
 | `/tuple` | any | bound | x-equals |  | 0 | shape |
-| `/tuple/*` | string | bound | x-equals |  | 3 | shape |
-| `/tuple/*` | string | none |  |  | 3 | unbound |
+| `/tuple/*` | string | bound | x-equals |  | 6 | shape |
+| `/tuple/*` | string | none |  |  | 6 | unbound |
 | `/under/*/predicate` | string | none |  |  | 2 | unbound |
 | `/under/*/tuple/*` | string | none |  |  | 2 | unbound |
 | `/unsaid/*/description` | string | none |  | minLength | 3 | hand: `ve/norm_defaults.py:__init__` |

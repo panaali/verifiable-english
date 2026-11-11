@@ -3,7 +3,6 @@ import VE.NormDefaults.PacksLegacy
 import VE.NormDefaults.PacksLabels
 import VE.Rights.Examples
 import VE.Readings.UnspecifiedWire
-import VE.Defaults.Examples
 import VE.NormDefaults.Examples
 
 /-! The premise-pack fixtures over today's sources (docs/spec/premise-packs.md 4): today's rights documents assemble
@@ -74,27 +73,6 @@ def gen (n : String) : Pack := ⟨"soft", .vocabulary, [(n, [])], [], [], [], []
 #guard rightsDocs.all fun R => !VE.SoftNorms.WellFormedSoft (VE.Rights.correlate R) ||
   decide (((VE.NormDefaults.Wire.softLabelledU (legacyU R) (VE.Rights.correlate R)).map (·.1)).Nodup)
 #guard (rightsDocs.map VE.Rights.WellFormedRights) == [true, true, true, true, true, true, false, false]
-
--- norm-defaults-cfr-1b: the request rule each generated rule comes from (a status row's `sources`). A fan-out instance
--- names its line's norm, a bar rule the bar read as a rule; a query bar and a plain line generate none.
-open VE.Rights.Examples (alpha beta fanMap eta) in
-#guard VE.NormDefaults.Wire.rightsSources (beta fanMap) ==
-  [("rights-fan-1", "no-torture"), ("rights-fan-2", "no-torture")]
-open VE.Rights.Examples (eta) in
-#guard VE.NormDefaults.Wire.rightsSources (eta) == [("rights-bar-1", "b30")]
-open VE.Rights.Examples (eta) in
-#guard VE.NormDefaults.Wire.rightsSources { (eta) with bars := [⟨"b30", .query, some "unstated"⟩] } == []
-#guard VE.NormDefaults.Wire.rightsSources VE.Rights.Examples.alpha == []
-#guard VE.NormDefaults.Wire.ruleSources [("rights-fan-1", "no-torture")] ["rights-fan-1", "art9"] ==
-  [("rights-fan-1", "no-torture"), ("art9", "art9")]
-#guard VE.NormDefaults.Wire.sourcesJson [("r-a1", "r"), ("r-a2", "r")] ==
-  Lean.Json.arr #[Lean.Json.mkObj [("rule", "r-a1"), ("source", "r")], Lean.Json.mkObj [("rule", "r-a2"), ("source", "r")]]
--- A status row's fields (`statusFields`): the settled point's deciding rule with its source from the route's table.
-#guard (VE.NormDefaults.Wire.statusFields VE.NormDefaults.Examples.u5b
-    ⟨fun s => if s == "act" then [("act", "a")] else [], fun _ => none, fun _ => []⟩ "x_required" [("act", "a")] true none
-    [("every-act", "src")]).map (fun x => (x.1, x.2.compress)) ==
-  [("tuple", "[\"a\"]"), ("rules", "[\"every-act\"]"), ("sources", "[{\"rule\":\"every-act\",\"source\":\"src\"}]"),
-   ("differs", "[]")]
 
 /-! ## 2.10: the kind table's legacy rows
 
@@ -182,3 +160,24 @@ theorem choiceLayeredG_norms_packs (b : Admitted2) (N : NDoc) (c : Choice)
   rfl
 
 end VE.Readings.Wire
+
+-- norm-defaults-cfr-1b: the request rule each generated rule comes from (a status row's `sources`). A fan-out instance
+-- names its line's norm, a bar rule the bar read as a rule; a query bar and a plain line generate none.
+open VE.Rights.Examples (alpha beta fanMap eta) in
+#guard VE.NormDefaults.Wire.rightsSources (beta fanMap) ==
+  [("rights-fan-1", "no-torture"), ("rights-fan-2", "no-torture")]
+open VE.Rights.Examples (eta) in
+#guard VE.NormDefaults.Wire.rightsSources (eta) == [("rights-bar-1", "b30")]
+open VE.Rights.Examples (eta) in
+#guard VE.NormDefaults.Wire.rightsSources { (eta) with bars := [⟨"b30", .query, some "unstated"⟩] } == []
+#guard VE.NormDefaults.Wire.rightsSources VE.Rights.Examples.alpha == []
+#guard VE.NormDefaults.Wire.ruleSources [("rights-fan-1", "no-torture")] ["rights-fan-1", "art9"] ==
+  [("rights-fan-1", "no-torture"), ("art9", "art9")]
+#guard VE.NormDefaults.Wire.sourcesJson [("r-a1", "r"), ("r-a2", "r")] ==
+  Lean.Json.arr #[Lean.Json.mkObj [("rule", "r-a1"), ("source", "r")], Lean.Json.mkObj [("rule", "r-a2"), ("source", "r")]]
+-- A status row's fields (`statusFields`): the settled point's deciding rule with its source from the route's table.
+#guard (VE.NormDefaults.Wire.statusFields VE.NormDefaults.Examples.u5b
+    ⟨fun s => if s == "act" then [("act", "a")] else [], fun _ => none, fun _ => []⟩ "x_required" [("act", "a")] true none
+    [("every-act", "src")]).map (fun x => (x.1, x.2.compress)) ==
+  [("tuple", "[\"a\"]"), ("rules", "[\"every-act\"]"), ("sources", "[{\"rule\":\"every-act\",\"source\":\"src\"}]"),
+   ("differs", "[]")]
