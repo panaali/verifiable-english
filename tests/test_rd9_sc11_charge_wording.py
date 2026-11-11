@@ -175,7 +175,7 @@ _FAST_COUNTER_PLACES = (
 )
 _CHARGE_PLACES = (
     ("lean/VE/Readings/SoftSupWire.lean", _module_docstring),
-    ("lean/VE/Readings/SoftSupWire.lean", lambda t: t.split("/-- 14.11 (sc-11w)", 1)[1].split("def sdSizeCharge", 1)[0]),
+    ("lean/VE/Readings/SoftWire.lean", lambda t: t.split("/-- 14.11 (sc-11w)", 1)[1].split("def sdSizeCharge", 1)[0]),
     ("docs/spec/rd-9-soft-chain.md", _section("### 14.11", "### 14.12")),
     ("docs/rd-9/sc-11w/cpu.md", _section("Results:", "## ")),
     ("docs/rd-9/sc-11w/REPORT.md", _section("12. CPU:", "13. ")),

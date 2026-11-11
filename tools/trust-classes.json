@@ -12195,9 +12195,14 @@
         "VE.Readings.Wire.admitSD",
         "VE.Readings.Wire.admitSDOf",
         "VE.Readings.Wire.sdChoiceText",
+        "VE.Readings.Wire.sdTextsWithin",
         "VE.Readings.Wire.underSoftCompletion"
       ],
       "C": [
+        "VE.Readings.Wire.sdRuleCharge",
+        "VE.Readings.Wire.sdContentCharge",
+        "VE.Readings.Wire.sdSizeCharge",
+        "VE.Readings.Wire.sdAdmitWork",
         "VE.Readings.Wire.UnsaidAdmitted",
         "VE.Readings.Wire.admitUnsaid",
         "VE.Readings.Wire.SeparateReplayS",
@@ -12206,6 +12211,10 @@
         "VE.Readings.Wire.ChoiceReplayS",
         "VE.Readings.Wire.replayChoiceAtS",
         "VE.Readings.Wire.replayChoiceS"
+      ],
+      "G[R]": [
+        "VE.Readings.Wire.maxSdAdmitWork",
+        "VE.Readings.Wire.sdAdmitWorkText"
       ]
     },
     "VE/Readings/SoftSeparate.lean": {
@@ -20623,9 +20632,6 @@
         "VE.Readings.Wire.sdChecked",
         "VE.Readings.Wire.routeSD",
         "VE.Readings.Wire.SupReplaySD",
-        "VE.Readings.Wire.sdRuleCharge",
-        "VE.Readings.Wire.sdContentCharge",
-        "VE.Readings.Wire.sdSizeCharge",
         "VE.Readings.Wire.sdCheckWorkFast"
       ],
       "G[R]": [
@@ -20663,6 +20669,16 @@
         "VE.Readings.SoftSupWireExamples.framedItems",
         "VE.Readings.SoftSupWireExamples.NSDsets",
         "VE.Readings.SoftSupWireExamples.NSDcands"
+      ]
+    },
+    "VE/Readings/SoftWireExamples.lean": {
+      "T": [
+        "VE.Readings.SoftWireExamples.heavyIn",
+        "VE.Readings.SoftWireExamples.NSDlimit",
+        "VE.Readings.SoftWireExamples.atLimit",
+        "VE.Readings.SoftWireExamples.overLimit",
+        "VE.Readings.SoftWireExamples.texts",
+        "VE.Readings.SoftWireExamples.refusal"
       ]
     },
     "VE/Presupposition/Events.lean": {

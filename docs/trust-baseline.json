@@ -2581,6 +2581,13 @@
    "reason": "ap-4bb: VE/Acts/Sources.lean S +5 (View, ruleView, expected compare SoftNode's mode, rank, alterable, exception, hard; DRI 2026-11-10 ap-4b-f2 item 1); VE/Acts/Situation.lean V -15 (atomSituation, rulePred now tied by atomSituation_separated, rulePred_eq_some); sourceCheck, compareViews, pick also tied by sourceCheck_complete, compareViews_complete, pick_of_forall₂; K +0; trusted -10",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-4bb, 2026-10-18",
    "commit": "97b3c7999add79633321ed10742aef613d66c5a2"
+  },
+  {
+   "class": "V",
+   "lines": 6,
+   "reason": "sc-admit-cpu: VE/Readings/SoftWire.lean V +6 (sdTextsWithin, G[V]: admission's per-choice texts behind the charge); K +0, S +0; the move of sdRuleCharge, sdContentCharge, sdSizeCharge (class C) from SoftSupWire.lean to SoftWire.lean is net 0; SoftWireExamples.lean T only",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-admit-cpu, 2026-10-18",
+   "commit": "5f756e791d4c493df8a75fe5090ddce0439c3c3c"
   }
  ]
 }

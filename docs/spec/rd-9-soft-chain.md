@@ -337,8 +337,11 @@ Each answer is recorded verbatim; a "yes" is reported as a failure of the line, 
    `decisionCount` and `WellFormedU` on the free document; then the same on each reading's document with content, in
    admission order (`activeOf`), its text suffixed ` under <set>@<v>:<i>`.
 4. `softShaped N.D`, else `InvalidInput: norm-defaults document is not well formed`.
-5. When the compatible choices number at most 64, each in canonical order: `sdChoiceText re N c` (S2a's chain text on
-   the choice, then step 3's checks on `choiceU N c` with its decision count, suffixed ` under <choice>`).
+5. When the compatible choices number at most 64: first the charge, within `maxSdAdmitWork` (14.11):
+   `sdAdmitWork N ≤ maxSdAdmitWork`, else `ResourceLimit: the per-reading checks of <n> readings exceed 131072 units`
+   (`<n>` the compatible choices; no choice is read). Then each choice in canonical order: `sdChoiceText re N c` (S2a's
+   chain text on the choice, then step 3's checks on `choiceU N c` with its decision count, suffixed ` under <choice>`).
+   Over 64 choices no per-choice text runs here and the charge is not read.
 
 No filled readings document is admitted (RD-2a's step 4 does not exist here; Q1). The result carries
 `WellFormedSD N`, established by steps 1, 3 and 4.
@@ -2453,7 +2456,7 @@ Each value is computed once per case, and its size is charged before it is used.
 | Value | Read | Charged against |
 | --- | --- | --- |
 | the compatible choices (`search`) | once per case; `choices` is read from the same cut | `maxChoiceChecks` 1024 (past it: enumerated) |
-| `sdChoiceText` per choice | at most 64 choices: admission's result, not run again (`sdCheck_of_admitted`); past 64: once, in the route | `sdCheckWork N ≤ maxSdCheckWork`, checked before the first `sdChoiceText` (over: enumerated, no choice read) |
+| `sdChoiceText` per choice | at most 64 choices: admission's result, not run again (`sdCheck_of_admitted`); past 64: once, in the route | at most 64 (admission, 4.1 step 5): `sdAdmitWork N ≤ maxSdAdmitWork` (131,072), read before the first `sdChoiceText` (over: `ResourceLimit`, no choice read); in the route: `sdCheckWork N ≤ maxSdCheckWork`, checked before the first `sdChoiceText` (over: enumerated, no choice read) |
 | `sup N.D`, `supU N`, `fill (supU N)`, `softXL N (sup N.D).1`, `premisesX`, `targets` | once per case; every piece of a `readings-verdicts` case runs on that value (as `conflictReplay` does), never re-admitting per piece as `x.run` does on the norms chain | `sdSizeCharge N ≤ maxSdSizeCharge` (16,384), read first by `sdSuperposable` before `sup N.D` or `supU N` is built (over: enumerated); then 256 rules plus unspecified predicates; 10,000 AST nodes (section 9) on `supU N` |
 | `labelImage N c`, per choice taking `A` | once per scope, and only when a piece was accepted | within `sdCheckWork` |
 | `usedLabels` | per accepted piece, one replay per label of slot, `supX` and `Fill_T` | the labels within `sdCheckWork`; each replay is the piece's own certificate, within `max_steps` |
@@ -2485,6 +2488,22 @@ up to 1.16 s at load 43-67). That is the accepted gap of row sc-11wc, which boun
 `sdCheckWork` is evaluated without building the coherence premises it counts (`sdCheckWork_eq_fast`); it still builds
 the exception premises (`excPremises`), one formula per exception condition. The 10.98 s and 94-100 s
 measured on the 767- and 3,071-node guard documents were the coherence premise build, not `sdSuperposable`'s.
+
+Admission's per-choice texts are charged before they run (DRI decision 2026-11-11 sc-admit-cpu item 3,
+manage-agents/reviews/dri-decisions-20261111-sc-admit-cpu.md). `sdAdmitWork N` is the compatible choices times
+`sdSizeCharge N`. `sdSizeCharge` is defined beside admission (SoftWire.lean), and the route reads that same definition.
+`maxSdAdmitWork` = 131,072 is measured (docs/rd-9/sc-admit-cpu/cpu.md): compiled Lean on the VM (AMD EPYC 7B12,
+32 vCPU, 5-minute load 27 to 41). The whole `admitSD` takes:
+- 0.57-0.61 s on the at-limit shape (`NSDbig 6` and thirteen two- and three-node fixed rules, 64 choices of 2,048
+  units);
+- at most 0.23 s on NSDheavy and heavyIn, which are now refused (on main they were admitted in 1.88-2.00 s and
+  1.30-1.60 s).
+
+The provisional 524,288 and 262,144 admit documents over R4 (`withRules 6 4 (wide 4)`, 331,200 units, 0.87-1.09 s;
+32 one-node rules, 225,216 units, 2.40-2.68 s). The charge does not bound S1's and S2a's admission (`admitS2`), which
+runs before it. Nor does it bound the per-choice texts of documents with many fixed rules and few choices: 30 rules
+and 16 choices (37,840 units) are admitted in 1.54-1.63 s, about 0.9-1.0 s of it in `admitS2`. That cost grows with
+the number of fixed rules (one set and 64 rules: 8.6 s in `admitS2`), and it is row sc-admit-rules.
 
 ### 14.12 Existing text and tests that sc-11b changes
 
