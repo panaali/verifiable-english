@@ -1,0 +1,5 @@
+trust_mutants: --rescore ci-job/rescore.json: a full run, since its inputs differ (tool): tools/check_lean_imports.py, tools/regen_generated.py
+trust_mutants: 2 definitions, 50 mutants (7 to run), 4 jobs, base c733a3269f13
+trust_mutants: 6 KILLED, 0 SURVIVOR, 0 UNKNOWN, 0 INVALID, 1 ALLOWED, 0 NOT RUN, 43 OTHER SHARD in 152 s
+trust_mutants: G[V], trusted: 6 KILLED, 1 ALLOWED, 43 OTHER SHARD
+trust_mutants: steps: wall plan 10 s, scratch 3.5 s, control_build 0.1 s, probe_install 1.1 s, mutants 131.3 s, cleanup 5.8 s; lake control_build 0.1 s (1), probe_install 1.1 s (1), control_probes 10.6 s (3), mutant_builds 108.5 s (7), mutant_checks 246.3 s (9), stage_controls 49.5 s (3), mutant_probes 38.2 s (6)
