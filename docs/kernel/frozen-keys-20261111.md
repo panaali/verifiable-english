@@ -45,10 +45,12 @@ What the table shows:
 1. The five keys call 9 of the service's 43 modes. None calls the `document`, `readingsRoute` or
    `discourse` mode, whose code is 35,142, 20,356 and 35,782 lines: the largest wrappers carry no keyed
    answer.
-2. All Lean code under the keys' answers is **16,831 distinct lines** (spec and wrap of the ten paths
+2. All Lean code under the keys' answers is **16,607 distinct lines** (spec and wrap of the ten paths
    above, the three validators counted in full; the registry's `keys`, measured by `tools/kernel_closure.py`
-   as `keyed_lines`). The proved kernel is 8,956 of them. (The first measurement, 17,355 and 9,565, also
-   counted the `checkCertificate` path, which no key calls and which is now a candidate.)
+   as `keyed_lines`). The proved kernel is 8,732 of them. (The first measurement, 17,355 and 9,565, also
+   counted the `checkCertificate` path, which no key calls and which is now a candidate; the second,
+   16,831 and 8,956, also read the route's `bundle` and `admission` runners, which no theorem covers,
+   through `runCase_dispatch`.)
 3. The gap between the two is wire code around a proved core: `metered` (every "no" answer and every
    countermodel: 24,945 calls across the keys), `quantity` (eligibility's 9,403 calls), `risk`, and the
    three validators. Rows `kb-7` (metered) and `kb-8` (quantity) close the first two.

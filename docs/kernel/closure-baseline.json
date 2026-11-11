@@ -1,7 +1,7 @@
 {
- "kernel_lines": 8956,
- "keyed_kernel_lines": 8956,
- "keyed_lines": 16831,
+ "kernel_lines": 8732,
+ "keyed_kernel_lines": 8732,
+ "keyed_lines": 16607,
  "paths": [
   {
    "axioms": [],
@@ -66,16 +66,15 @@
   },
   {
    "axioms": [],
-   "lines": 4890,
+   "lines": 4265,
    "modes": [
     "route"
    ],
    "name": "route",
-   "spec_lines": 4879,
+   "spec_lines": 4254,
    "spec_modules": {
     "VE.Bridge": 116,
-    "VE.CertificateWire": 160,
-    "VE.ClaimGraph": 80,
+    "VE.CertificateWire": 154,
     "VE.Closure.Bridge": 43,
     "VE.Closure.Paths": 3,
     "VE.Closure.Syntax": 54,
@@ -98,7 +97,6 @@
     "VE.Core.TableauExtendedRules": 20,
     "VE.Core.Wire": 108,
     "VE.Data.Background": 28,
-    "VE.Definitions.Bundle": 163,
     "VE.Definitions.Elaborate": 52,
     "VE.Definitions.Layer": 120,
     "VE.Definitions.Route": 9,
@@ -112,7 +110,7 @@
     "VE.Order.Tableau": 244,
     "VE.Order.Wire": 156,
     "VE.Paths": 28,
-    "VE.Route.Admission": 415,
+    "VE.Route.Admission": 60,
     "VE.Route.AstLimit": 70,
     "VE.Route.Background": 33,
     "VE.Route.Budget": 210,
@@ -124,9 +122,9 @@
     "VE.Route.Layer": 83,
     "VE.Route.PyDecoder": 97,
     "VE.Route.Route": 45,
-    "VE.Route.Run": 76,
+    "VE.Route.Run": 57,
     "VE.Route.RunSound": 2,
-    "VE.Route.Steps": 11,
+    "VE.Route.Steps": 9,
     "VE.Route.Typed": 6,
     "VE.Route.Wire": 374,
     "VE.Route.WireSound": 241,
