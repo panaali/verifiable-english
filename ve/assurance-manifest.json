@@ -66,17 +66,17 @@
     "ve/readings_verdicts/binding.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 44848,
+    "total_lines": 45022,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
         "file": "lean/VE/Acts/Decode.lean",
-        "lines": 265,
-        "sha256": "1c31983a35023633157b45969696a036b5b6c1a0d5783495d3ebe3aeabbaa4c5",
+        "lines": 300,
+        "sha256": "c0babad9b2bdf1edd175d8e1dc548ea725ea2b08acafd37bd33e23d1ee60c46c",
         "ranges": [
           [
             1,
-            265
+            300
           ]
         ],
         "declarations": [
@@ -894,12 +894,12 @@
       },
       {
         "file": "lean/VE/NormDefaults/Layered.lean",
-        "lines": 484,
-        "sha256": "0a96a2de151eea9df726bb675671ce8670f5453e06e51ffffab4487266fd8562",
+        "lines": 602,
+        "sha256": "19eedcc9c6b7f66e64507173ea633cc09fc07b89599e1148f04b21011bfc1999",
         "ranges": [
           [
             1,
-            484
+            602
           ]
         ],
         "declarations": [
@@ -994,12 +994,12 @@
       },
       {
         "file": "lean/VE/NormDefaults/Wire.lean",
-        "lines": 495,
-        "sha256": "eabb8e4eb7fd2482a21a28b7f2063e1bc41be533a99ece1141c1d859d715b136",
+        "lines": 516,
+        "sha256": "9876241865b796462eaea9a12f113bd4fc955f8489e9cbd31ef747c18e232334",
         "ranges": [
           [
             1,
-            495
+            516
           ]
         ],
         "declarations": [
@@ -1346,7 +1346,7 @@
       {
         "file": "lean/VE/Readings/UnspecifiedWire.lean",
         "lines": 798,
-        "sha256": "52b99f25af05e6b1bc89085d5b3900176b772555f6267496157f6116f0fe0611",
+        "sha256": "4640089712d9ba1910cf94af61bd762a02300b59e7e8231e8c9eb236359defc4",
         "ranges": [
           [
             1,
