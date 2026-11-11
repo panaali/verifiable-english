@@ -24,6 +24,8 @@
 - `docs/act-phrases/ap-3b/seed_bugs.py` — ap-3b seeded bugs and the constructor sweep: plant each one, show that the fixtures fail, restore the file.
 - `docs/act-phrases/ap-3c/check_statements.py` — ap-3c statement gate: each 6.6 theorem Elaborate.lean proves equals draft 2's text, whitespace normalised.
 - `docs/act-phrases/ap-3c/seed_bugs.py` — ap-3c seeded bugs: plant each one in Elaborate.lean, show that a fixture fails, restore the file.
+- `docs/act-phrases/ap-3cb-adapt/check_statements.py` — ap-3cb-adapt statement gate: each 6.6 theorem ElaborateProofs.lean proves equals the spec's text, whitespace normalised.
+- `docs/act-phrases/ap-3cb-adapt/seed_bugs.py` — ap-3cb-adapt seeded bugs: each bug breaks `splitMap_exact` or `elaborate_parts`, in a /tmp copy only.
 - `docs/act-phrases/ap-3d/check_statements.py` — ap-3d statement gate: each theorem this item proves equals the specification's text, whitespace normalised.
 - `docs/act-phrases/ap-3d/seed_bugs.py` — ap-3d seeded bugs: plant each one, show that a fixture fails, restore the files.
 - `docs/act-phrases/ap-3db/check_statements.py` — ap-3db statement gate: the theorems of spec 6.4 this item reaches keep the specification's text.

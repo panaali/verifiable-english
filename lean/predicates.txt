@@ -107,6 +107,7 @@ module VE.Acts.DecodeExamples
 module VE.Acts.DecodeTwins
 module VE.Acts.Elaborate
 module VE.Acts.ElaborateExamples
+module VE.Acts.ElaborateProofs
 module VE.Acts.Faithful
 module VE.Acts.FaithfulExamples
 module VE.Acts.Grammar

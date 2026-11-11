@@ -5,7 +5,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 
 - [bench/](bench.md) — 4 modules — -
 - [conformance/](conformance.md) — 69 modules — `evaluation.json` contains **701** valid environment/model/document cases (**4,912 formulas**).
-- [docs/act-phrases/](docs__act-phrases.md) — 42 modules — -
+- [docs/act-phrases/](docs__act-phrases.md) — 44 modules — -
 - [docs/arch/](docs__arch.md) — 29 modules — -
 - [docs/architecture/](docs__architecture.md) — 1 modules — -
 - [docs/attitudes/](docs__attitudes.md) — 6 modules — -
@@ -63,7 +63,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [docs/profile-composition/](docs__profile-composition.md) — 5 modules — -
 - [docs/question-answering/](docs__question-answering.md) — 7 modules — -
 - [docs/readings-defaults/](docs__readings-defaults.md) — 7 modules — -
-- [docs/rights/](docs__rights.md) — 3 modules — -
+- [docs/rights/](docs__rights.md) — 6 modules — -
 - [docs/scale-choice-batch/](docs__scale-choice-batch.md) — 1 modules — -
 - [docs/scope/](docs__scope.md) — 9 modules — -
 - [docs/spec/](docs__spec.md) — 9 modules — -
@@ -80,9 +80,9 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/](lean.md) — 15 modules — This project uses Lean **4.24.0**, core Lean and `Std`, with no Mathlib or external Lake dependencies.
 - [lean/ResponseShape/](lean__ResponseShape.md) — 8 modules — -
 - [lean/ResponseShape/Encoders/](lean__ResponseShape__Encoders.md) — 33 modules — -
-- [lean/ResponseShape/Schemas/](lean__ResponseShape__Schemas.md) — 45 modules — -
+- [lean/ResponseShape/Schemas/](lean__ResponseShape__Schemas.md) — 46 modules — -
 - [lean/VE/](lean__VE.md) — 27 modules — -
-- [lean/VE/Acts/](lean__VE__Acts.md) — 33 modules — -
+- [lean/VE/Acts/](lean__VE__Acts.md) — 34 modules — -
 - [lean/VE/Alternatives/](lean__VE__Alternatives.md) — 13 modules — -
 - [lean/VE/Arith/](lean__VE__Arith.md) — 10 modules — -
 - [lean/VE/Ask/](lean__VE__Ask.md) — 15 modules — -

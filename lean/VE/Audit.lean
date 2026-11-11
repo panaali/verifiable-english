@@ -5,6 +5,8 @@ import VE.Acts.Compat
 import VE.Acts.Decode
 import VE.Acts.DecodeTwins
 import VE.Acts.Elaborate
+import VE.Acts.ElaborateExamples
+import VE.Acts.ElaborateProofs
 import VE.Acts.Faithful
 import VE.Acts.FaithfulExamples
 import VE.Acts.Grammar
@@ -585,6 +587,8 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.Decode.sourceOf_lexical
 #print axioms VE.Acts.Decode.splitEnv_route
 #print axioms VE.Acts.Decode.wellFormedU_D
+#print axioms VE.Acts.ElaborateExamples.e1_map
+#print axioms VE.Acts.ElaborateExamples.e4_map
 #print axioms VE.Acts.Examples.acceptsTable_terms
 #print axioms VE.Acts.Examples.tableToks_kinds
 #print axioms VE.Acts.FaithfulExamples.appliesB_iff
@@ -700,6 +704,7 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.elaborate_identity
 #print axioms VE.Acts.elaborate_ok
 #print axioms VE.Acts.elaborate_one_reading
+#print axioms VE.Acts.elaborate_parts
 #print axioms VE.Acts.elaborate_unspec
 #print axioms VE.Acts.elaborate_wellFormed
 #print axioms VE.Acts.exists_child_tracks
@@ -720,11 +725,15 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.mapM_ok
 #print axioms VE.Acts.mem_firsts
 #print axioms VE.Acts.mem_partNamesIn
+#print axioms VE.Acts.mem_partsOf
+#print axioms VE.Acts.mem_preds
 #print axioms VE.Acts.mem_preds_atom
+#print axioms VE.Acts.mem_rules
 #print axioms VE.Acts.mem_specPremises
 #print axioms VE.Acts.mem_splitNode
 #print axioms VE.Acts.mem_splitReg
 #print axioms VE.Acts.modifier_edges
+#print axioms VE.Acts.namesOk_ok
 #print axioms VE.Acts.namesOk_preds
 #print axioms VE.Acts.node_regulated
 #print axioms VE.Acts.node_typed
@@ -762,6 +771,7 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.specialises_refl
 #print axioms VE.Acts.specialises_trans
 #print axioms VE.Acts.splitDoc_none
+#print axioms VE.Acts.splitMap_exact
 #print axioms VE.Acts.splits_eq
 #print axioms VE.Acts.table_free_all_own
 #print axioms VE.Acts.table_free_all_own_split
