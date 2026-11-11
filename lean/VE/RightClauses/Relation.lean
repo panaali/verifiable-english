@@ -274,7 +274,7 @@ stratum graph is a subgraph of the correlated one (`PWF.layer_names`), and no ge
 namespace SlotWF
 open VE.RightClauses.PWF (bind_eq_ok)
 
-theorem bind_ok' {α β : Type} {x : Except String α} {f : α → Except String β} {b : β} :
+theorem except_bind_ok_iff {α β : Type} {x : Except String α} {f : α → Except String β} {b : β} :
     (x >>= f) = .ok b ↔ ∃ a, x = .ok a ∧ f a = .ok b := by
   cases x <;> simp [bind, Except.bind]
 
@@ -317,12 +317,12 @@ theorem shape_ok (X : RightsDoc) (h : VE.Rights.checkRights X = .ok ()) (RN : St
     | some R =>
       simp only []
       intro hx
-      obtain ⟨_, -, hx⟩ := bind_ok'.1 hx
+      obtain ⟨_, -, hx⟩ := except_bind_ok_iff.1 hx
       split at hx
       · simp [throw, throwThe, MonadExceptOf.throw, Except.bind, bind] at hx
       · simp [Except.bind, bind, pure, Except.pure] at hx; exact hx.symm) (linesOf X)).1 h3 RN hRN
   simp only [hR] at this
-  obtain ⟨u, hs, -⟩ := bind_ok'.1 this
+  obtain ⟨u, hs, -⟩ := except_bind_ok_iff.1 this
   cases u; exact hs
 
 theorem getElem?_idxOf : ∀ (l : List String) (a : String), a ∈ l → l[l.idxOf a]? = some a
@@ -405,7 +405,7 @@ theorem holder_sort (X : RightsDoc) (Rt : VE.Rights.Right) (N : Line) (hs : VE.R
       split at hs
       · simp only [pure, Except.pure, bind, Except.bind] at hs
         split at hs
-        · obtain ⟨u, ho, -⟩ := bind_ok'.1 hs
+        · obtain ⟨u, ho, -⟩ := except_bind_ok_iff.1 hs
           exact os _ _ ho
         · revert hs; simp [throw, throwThe, MonadExceptOf.throw, bind, Except.bind]
       · revert hs; simp [throw, throwThe, MonadExceptOf.throw, bind, Except.bind]

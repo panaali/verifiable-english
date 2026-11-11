@@ -7100,6 +7100,15 @@ import VE.WireContract.Engine
 #print axioms VE.RightClauses.PWF.validateW1_ok
 #print axioms VE.RightClauses.PWF.wellFormed_check
 #print axioms VE.RightClauses.PWF.yields_ext
+#print axioms VE.RightClauses.SlotWF.baseEnv_layer0
+#print axioms VE.RightClauses.SlotWF.entry_relation
+#print axioms VE.RightClauses.SlotWF.except_bind_ok_iff
+#print axioms VE.RightClauses.SlotWF.getElem?_idxOf
+#print axioms VE.RightClauses.SlotWF.holder_sort
+#print axioms VE.RightClauses.SlotWF.idx_holder
+#print axioms VE.RightClauses.SlotWF.layer_keep
+#print axioms VE.RightClauses.SlotWF.restRights_ok
+#print axioms VE.RightClauses.SlotWF.shape_ok
 #print axioms VE.RightClauses.addUnit_order
 #print axioms VE.RightClauses.addUnit_plain
 #print axioms VE.RightClauses.addUnit_plain_none
@@ -7111,6 +7120,7 @@ import VE.WireContract.Engine
 #print axioms VE.RightClauses.clauseSlot_labelled
 #print axioms VE.RightClauses.clauseSlot_labelled_of_doc
 #print axioms VE.RightClauses.clauseSlot_no_total
+#print axioms VE.RightClauses.clauseSlot_wellFormed
 #print axioms VE.RightClauses.clause_fails_not_selected
 #print axioms VE.RightClauses.clause_fails_not_selected_of_doc
 #print axioms VE.RightClauses.contains_of_mem

@@ -2497,6 +2497,20 @@
    "reason": "ps-2ac: VE/Presupposition/Run.lean V +109 (G[V] untied: the presuppositions report value Outcome, Line, Goal, Row, Shown, Inconsistency, lexiconOk, lineOf, englishLine, outcomeOf, checkedRow, docPremise, refutedLines, shownOf, shown); K +0, S +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ps-2ac, 2026-10-18",
    "commit": "a5088a09b523154f4024db96fe636c92689a9b97"
+  },
+  {
+   "class": "S",
+   "lines": 6,
+   "reason": "cmp-s3-cfr-1b: S +6 (VE/RightClauses/Plain.lean), V +80 (VE/RightClauses/Examples.lean +52, Run.lean +17, RunExamples.lean +11); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s3-cfr-1b, 2026-11-11",
+   "commit": "69fc95777676036f90b8cb8af69d27b08cf3eb88"
+  },
+  {
+   "class": "V",
+   "lines": 80,
+   "reason": "cmp-s3-cfr-1b: S +6 (VE/RightClauses/Plain.lean), V +80 (VE/RightClauses/Examples.lean +52, Run.lean +17, RunExamples.lean +11); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s3-cfr-1b, 2026-11-11",
+   "commit": "69fc95777676036f90b8cb8af69d27b08cf3eb88"
   }
  ]
 }
