@@ -12,7 +12,8 @@ SIZE: 512 product (`rules.d1.ve` 198, `pf_vocabulary.py` 143, `run.py` 130, `bui
 about 85 + this REPORT other hand-written lines (PLAN section 12 46, README.md 35, docs/usecases/safetyfw/REPORT.md 2). Source: `git diff --numstat $(git merge-base HEAD main)`
 (added + deleted). Generated, by the case's own scripts only: `environment.d1.json` (pf_vocabulary.py),
 `spans.json`, `coverage.json` (build_document.py), `docs/usecases/safetyfw/openai-preparedness/{units,gaps}.json`
-(measure.py), `results.json` (run.py).
+(measure.py), `docs/usecases/safetyfw/openai-preparedness/stage0.json` (stage0.py: P5 bytes, P7 regulated
+predicates 58 -> 59), `results.json` (run.py).
 
 DELTA: none (no product code under `ve/`, `lean/` or `rust/` changed).
 
