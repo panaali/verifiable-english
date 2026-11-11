@@ -66,7 +66,7 @@
     "ve/readings_verdicts/binding.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 44977,
+    "total_lines": 45055,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -1471,15 +1471,18 @@
       },
       {
         "file": "lean/VE/Rights/Wire.lean",
-        "lines": 697,
-        "sha256": "fab8db83fb146eecc0a1dd6ad96eb1e4bed367de966816bd0d5c2bf73096d0be",
+        "lines": 772,
+        "sha256": "fd80f8045035c225711382f801dc52b8d107f96ab73e7f8b4391e26677e1810e",
         "ranges": [
           [
             1,
-            697
+            772
           ]
         ],
         "declarations": [
+          "rightsChildContext",
+          "rightsNormalForm",
+          "rightsMeaningId",
           "decodeRightsEnvironment",
           "decodeRightsSource",
           "replayRightsConflict",
@@ -1800,12 +1803,12 @@
       },
       {
         "file": "lean/VE/Service/Document.lean",
-        "lines": 3010,
-        "sha256": "784c021ffc3c66b9ad28caadc14fa51c5ab8c419d94227176f6609dc33ecbe63",
+        "lines": 3006,
+        "sha256": "c8ac9d53395a786a26b0d9e84e4f98d5de912b7749f41a5e4c88a5f0570287dc",
         "ranges": [
           [
             1,
-            3010
+            3006
           ]
         ],
         "declarations": [
@@ -1819,7 +1822,6 @@
           "unitRules",
           "environmentOf",
           "rightsWireJson",
-          "rightsChildContext",
           "rightsDoc",
           "rightsContentOf",
           "softCanonical",
@@ -2030,12 +2032,12 @@
       },
       {
         "file": "lean/VE/SoftNorms/Wire.lean",
-        "lines": 525,
-        "sha256": "308401c5e256c6faec2687f317082dda66ec8ee00dd1892b5d753c14637a6af5",
+        "lines": 532,
+        "sha256": "79fe0f70846e87d736ba2f11565f96df595853e9ffd440b42b823d68ffa88a3d",
         "ranges": [
           [
             1,
-            525
+            532
           ]
         ],
         "declarations": [
@@ -2171,25 +2173,6 @@
         "reason": "question answering Q2.4: the words mode decodes the environment, the lexicon (bound to the environment's id, policy-checked) and each item, and words its line"
       },
       {
-        "file": "lean/VE/RightClauses/Wire.lean",
-        "lines": 230,
-        "sha256": "75913d7b770400cd1e3e5a671fafd7a78b234ef5f48faae1cfefe0a7ea565be5",
-        "ranges": [
-          [
-            1,
-            230
-          ]
-        ],
-        "declarations": [
-          "decodeClauseDoc",
-          "decodeRelation",
-          "decodeClause",
-          "elaborateJson",
-          "stripElided"
-        ],
-        "reason": "right-clauses clause, relation and elided decoder and the plained-document rewriter of clauses-elaborate; the full file is pinned conservatively; the ve-integration merge: `decodeClauseDoc` sets the rights document's new `located` field to `[]`, as `decodeRightsSource` does (the mode reports no findings)"
-      },
-      {
         "file": "lean/VE/Defaults/ZoneWire.lean",
         "lines": 463,
         "sha256": "1b2585cf4016730e4020e1a81ddbaa9fd12083f79c17f39d1ecd63fb15f0241c",
@@ -2272,6 +2255,25 @@
           "statementRow"
         ],
         "reason": "en-e3a (docs/spec/en-e3-norm.md 2.3, EN-2): english.statement kind blocks: `statementRequest` decodes the request (english.read's case through `decodeCase`, `kind`, `source`), `answerWith` writes the answer from readNorm's outcome through the span gate and the one decoder; not registered until en-e3ab and nothing relays to it yet; the full file is pinned conservatively"
+      },
+      {
+        "file": "lean/VE/RightClauses/Wire.lean",
+        "lines": 230,
+        "sha256": "75913d7b770400cd1e3e5a671fafd7a78b234ef5f48faae1cfefe0a7ea565be5",
+        "ranges": [
+          [
+            1,
+            230
+          ]
+        ],
+        "declarations": [
+          "decodeClauseDoc",
+          "decodeRelation",
+          "decodeClause",
+          "elaborateJson",
+          "stripElided"
+        ],
+        "reason": "right-clauses clause, relation and elided decoder and the plained-document rewriter of clauses-elaborate; the full file is pinned conservatively; the ve-integration merge: `decodeClauseDoc` sets the rights document's new `located` field to `[]`, as `decodeRightsSource` does (the mode reports no findings)"
       }
     ],
     "other_json": {
@@ -2481,7 +2483,8 @@
       "lean/VE/RightClauses/RunExamples.lean": "fixtures only: #guard checks of spec right-clauses 7 and 9.1 build clauses-elaborate requests as JSON and read the answers of `VE.RightClauses.runCaseReported`; no runner path",
       "lean/VE/RightClauses/WireDecode.lean": "theorems only: spec right-clauses 8.5's forward lemmas through the pinned decoders; JSON access only in statements and proofs",
       "lean/VE/RightClauses/WireName.lean": "theorems only: line-name lemmas of spec right-clauses 8.5 through the pinned decoders; JSON access only in statements and proofs",
-      "lean/VE/RightClauses/WireTheorems.lean": "theorems only: spec right-clauses 8.5's `elaborate_plain` and `decode_unstructured`; JSON access only in statements and proofs"
+      "lean/VE/RightClauses/WireTheorems.lean": "theorems only: spec right-clauses 8.5's `elaborate_plain` and `decode_unstructured`; JSON access only in statements and proofs",
+      "lean/ResponseShape/Schemas/SoftPairsChecks.lean": "fixtures only: #guard checks of SoftNorms.Run.openAfterClassification (WP(T) under DISJOINT pair evidence) parse a fixture's environment, norms and certificate packages; no runner path"
     }
   },
   "plan_operations": {

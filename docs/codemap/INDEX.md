@@ -64,7 +64,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [docs/profile-composition/](docs__profile-composition.md) — 5 modules — -
 - [docs/question-answering/](docs__question-answering.md) — 7 modules — -
 - [docs/readings-defaults/](docs__readings-defaults.md) — 7 modules — -
-- [docs/rights/](docs__rights.md) — 3 modules — -
+- [docs/rights/](docs__rights.md) — 6 modules — -
 - [docs/scale-choice-batch/](docs__scale-choice-batch.md) — 1 modules — -
 - [docs/scope/](docs__scope.md) — 9 modules — -
 - [docs/spec/](docs__spec.md) — 9 modules — -
@@ -81,7 +81,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/](lean.md) — 15 modules — This project uses Lean **4.24.0**, core Lean and `Std`, with no Mathlib or external Lake dependencies.
 - [lean/ResponseShape/](lean__ResponseShape.md) — 8 modules — -
 - [lean/ResponseShape/Encoders/](lean__ResponseShape__Encoders.md) — 34 modules — -
-- [lean/ResponseShape/Schemas/](lean__ResponseShape__Schemas.md) — 46 modules — -
+- [lean/ResponseShape/Schemas/](lean__ResponseShape__Schemas.md) — 47 modules — -
 - [lean/VE/](lean__VE.md) — 27 modules — -
 - [lean/VE/Acts/](lean__VE__Acts.md) — 33 modules — -
 - [lean/VE/Alternatives/](lean__VE__Alternatives.md) — 13 modules — -
@@ -139,8 +139,8 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [tests/ part 4](tests--part-4.md) — 85 modules — -
 - [tests/ part 5](tests--part-5.md) — 83 modules — -
 - [tests/ part 6](tests--part-6.md) — 81 modules — -
-- [tests/ part 7](tests--part-7.md) — 87 modules — -
-- [tests/ part 8](tests--part-8.md) — 17 modules — -
+- [tests/ part 7](tests--part-7.md) — 86 modules — -
+- [tests/ part 8](tests--part-8.md) — 19 modules — -
 - [tests/frozen_speech/](tests__frozen_speech.md) — 4 modules — Frozen pre-switch speech oracle.
 - [tools/ part 1](tools--part-1.md) — 98 modules — -
 - [tools/ part 2](tools--part-2.md) — 14 modules — -
