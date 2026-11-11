@@ -50,5 +50,18 @@
   ],
   "test": "lean/VE/SoftNorms/Run.lean:130 (#guard, exhibit true says yes); tests/test_soft_norms_lean.py::test_soft_conflict_free_without_a_coherent_model_names_no_search asserts the with-model line too",
   "result": "lake build VE.SoftNorms.Run: error at :130, build failed. File restored."
+ },
+ {
+  "id": "S5-rights-quotes-another-budget",
+  "behaviour": "the rights line, now reading the shared words, still quotes its own budget 10000 (unchanged byte for byte)",
+  "definition": "VE.Rights.Run.exhibitedText",
+  "language": "Lean",
+  "file": "lean/VE/Rights/Run.lean",
+  "mutation": [
+   "else VE.SoftNorms.Wire.notSearchedText conflictBudget",
+   "else VE.SoftNorms.Wire.notSearchedText 7"
+  ],
+  "test": "lean/ResponseShape/Schemas/RightsChecks.lean:56, :58, :61 (pinned rights answers and the no-search #guard)",
+  "result": "lake build ResponseShape.Schemas.RightsChecks: errors at :56, :58, :61; build failed. File restored."
  }
 ]
