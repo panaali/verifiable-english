@@ -1,0 +1,52 @@
+{
+  "contract": "purposes@0",
+  "revision": 1,
+  "format": 1,
+  "status": "shadow",
+  "input": ["purposes"],
+  "adapter": "purposes_block",
+  "uses": [],
+  "codes": {
+    "PURPOSES_INVALID_BLOCK": {"class": "InvalidInput", "summary": "invalid purposes block"},
+    "PURPOSES_RESOURCE_LIMIT": {"class": "ResourceLimit", "summary": "resource limit"},
+    "PURPOSES_INVALID_LINK": {"class": "InvalidInput", "summary": "invalid purposes link"},
+    "PURPOSES_INVALID_ID": {"class": "InvalidInput", "summary": "invalid id"},
+    "PURPOSES_DUPLICATE_LINK": {"class": "InvalidInput", "summary": "duplicate link id"},
+    "PURPOSES_INVALID_INPUT": {"class": "InvalidInput", "summary": "invalid input"}
+  },
+  "residual": "PURPOSES_INVALID_INPUT",
+  "phases": [
+    {"name": "decode", "checks": [
+      {"id": "1.1", "kind": "classifier", "classifier": "purposes_block", "at": "/purposes", "emits": [
+        {"id": "1.1b", "code": "PURPOSES_INVALID_BLOCK",
+         "text": "InvalidPurposes: purposes must be an object whose only member is links",
+         "says": "`/purposes` is an object whose only member is `links`, an array (`VE.Purposes.Wire.linksOf`)."},
+        {"id": "1.1c", "code": "PURPOSES_RESOURCE_LIMIT", "text": "ResourceLimit: purposes links exceed {limit}",
+         "returns": ["limit"], "says": "`links` has at most `maxLinks` links (`VE.Purposes`)."},
+        {"id": "1.1d", "code": "PURPOSES_INVALID_LINK",
+         "text": "InvalidPurposes: link {link} must have id, relation, polarity, reason, target and marker, and may have share",
+         "returns": ["link"], "says": "Each link has exactly `id`, `relation`, `polarity`, `reason`, `target` and `marker`, and may have `share` (`linkFieldsOk`)."},
+        {"id": "1.1e", "code": "PURPOSES_INVALID_ID", "text": "InvalidPurposes: invalid id {id}",
+         "returns": ["id"], "says": "A link's `id` and `marker`, and every part or mention id of a side, is a token (`idOf`)."},
+        {"id": "1.1f", "code": "PURPOSES_INVALID_LINK",
+         "text": "InvalidPurposes: link {link} has relation {relation}; a purposes link's relation is because or in order to",
+         "returns": ["link", "relation"], "says": "A link's `relation` is `because` or `in order to` (`Relation.ofWire?`)."},
+        {"id": "1.1g", "code": "PURPOSES_INVALID_LINK",
+         "text": "InvalidPurposes: link {link} has polarity {polarity}; it must be affirmed or denied",
+         "returns": ["link", "polarity"], "says": "A link's `polarity` is `affirmed` or `denied` (`Polarity.ofWire?`)."},
+        {"id": "1.1h", "code": "PURPOSES_INVALID_LINK",
+         "text": "InvalidPurposes: link {link} has share {share}; it must be plain, sole, partly or not_sole",
+         "returns": ["link", "share"], "says": "A link's `share`, when present, is `plain`, `sole`, `partly` or `not_sole` (`shareOf`)."},
+        {"id": "1.1i", "code": "PURPOSES_INVALID_LINK",
+         "text": "InvalidPurposes: link {link} has a side that is not a list of parts or mentions",
+         "returns": ["link"], "says": "A link's `reason` and `target` are each an array of `{\"part\": id}` or `{\"mention\": id}` objects (`decodeSide`)."}
+      ]}
+    ]},
+    {"name": "check", "checks": [
+      {"id": "2.1", "kind": "classifier", "classifier": "purposes_ids", "at": "/purposes", "emits": [
+        {"id": "2.1b", "code": "PURPOSES_DUPLICATE_LINK", "text": "InvalidPurposes: two links have the same id",
+         "says": "No two links have the same `id`: the one fault of `VE.Purposes.check` that reads no checked unit."}
+      ]}
+    ]}
+  ]
+}

@@ -1,0 +1,1 @@
+{"check": "1.1h", "args": {"link": "l1", "share": "mostly"}, "text": "InvalidPurposes: link l1 has share mostly; it must be plain, sole, partly or not_sole", "purposes": {"links": [{"id": "l1", "relation": "in order to", "polarity": "affirmed", "share": "mostly", "reason": [{"part": "u0146.s01.p3"}], "target": [{"part": "u0146.s01.p1"}], "marker": "u0146.s01.p2"}]}}
