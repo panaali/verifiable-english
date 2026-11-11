@@ -1,1 +1,2 @@
 - `docs/premise-packs/norm-defaults-cfr-1/evidence/genuine_pairs.py` — norm-defaults-cfr-1 evidence: Lean's own status and certificate rows pass the row schema and the binding.
+- `docs/premise-packs/norm-defaults-cfr-1b/evidence/resave_c9_sources.py` — Re-ask every saved C9 point-status case and add only the `sources` field Lean now sends (norm-defaults-cfr-1b).
