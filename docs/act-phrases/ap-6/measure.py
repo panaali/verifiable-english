@@ -2,7 +2,8 @@
 
 Each fixture (docs/act-phrases/ap-6/fixtures/) has two documents: `<f>.binary.ve.md`, the binary route as today's
 language states it (the act's last bound slot dropped), and `<f>.reified.ve.md`, route (a) (the act reified as an event
-sort with one role predicate per bound non-subject slot). Both are checked with today's `ve document check`, the
+sort with one role predicate per bound non-subject slot), and `<f>.reified-otp.ve.md`, route (a) with its hypothesis
+`OneEventPerTuple` stated as premises (each role functional and total, one event per filler tuple). All are checked with today's `ve document check`, the
 product's own path: Lean admission, the norm layers regenerated and validated, and the premise set's model. Neither
 route's Lean is needed: route (a)'s reified document is an ordinary binary norms document.
 
@@ -34,7 +35,8 @@ sys.path.insert(0, str(ROOT / "tests"))
 from subprocesses import HANG_TIMEOUT, ChildCPU  # noqa: E402
 
 FIXTURES = ("u019", "u057", "mu")
-VARIANTS = ("binary", "reified")
+VARIANTS = ("binary", "reified", "reified-otp")
+ROUTE_A = ("reified", "reified-otp")
 BAR = 1.25  # the plan's pre-registered ratio (act-phrases-PLAN.md, AP-6)
 FLOOR = ROOT / "tests/data/rd9-docroute.ve.md"  # a one-rule document: the CLI's fixed cost
 
@@ -55,14 +57,15 @@ def check_once(path: Path) -> dict:
 
 
 def verdict(rows: dict) -> dict:
-    """Per fixture, the ratio of the medians (reified over binary, CPU) and whether it is within the bar."""
+    """Per fixture and route (a) variant, the ratio of the CPU medians over the binary route's, and whether every
+    ratio is within the bar (both variants must be: the conservative reading of bar row 2)."""
     out = {}
     for name in FIXTURES:
-        binary = statistics.median(r["cpu_s"] for r in rows[name]["binary"])
-        reified = statistics.median(r["cpu_s"] for r in rows[name]["reified"])
-        ratio = reified / binary
-        out[name] = {"binary_cpu_median_s": round(binary, 4), "reified_cpu_median_s": round(reified, 4),
-                     "ratio": round(ratio, 4), "within_bar": ratio <= BAR}
+        median = {v: statistics.median(r["cpu_s"] for r in rows[name][v]) for v in VARIANTS}
+        ratios = {v: median[v] / median["binary"] for v in ROUTE_A}
+        out[name] = {"cpu_median_s": {v: round(median[v], 4) for v in VARIANTS},
+                     "ratio": {v: round(ratios[v], 4) for v in ROUTE_A},
+                     "within_bar": all(r <= BAR for r in ratios.values())}
     out["all_within_bar"] = all(out[name]["within_bar"] for name in FIXTURES)
     return out
 

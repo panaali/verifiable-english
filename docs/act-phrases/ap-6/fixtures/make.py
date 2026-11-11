@@ -17,7 +17,13 @@ def AND(a, b): return ["and", a, b]
 def EX(s, b): return ["exists", s, b]
 def NOT(a): return ["not", a]
 
-def doc(name, sorts, preds, consts, norms, facts, claim, events=None):
+def doc(name, sorts, preds, consts, norms, facts, claim, events=None, roles=None):
+    if roles:  # route (a) also with its hypothesis stated as premises
+        _doc(name.replace(".reified", ".reified-otp"), sorts, preds, consts, norms,
+             facts + one_event_per_tuple(events[0], roles), claim, events)
+    _doc(name, sorts, preds, consts, norms, facts, claim, events)
+
+def _doc(name, sorts, preds, consts, norms, facts, claim, events=None):
     profiles = ["documents@1", "norm-defaults@0", "norms@0", "relational-fol@0"]
     env = {"language": "ve.core@0.2", "profiles": profiles, "spec_revision": "ve-v0.2-expand2-2026-09-25",
            "vocabulary": {"sorts": {s: {"description": s} for s in sorts}, "predicates": preds,
@@ -47,6 +53,26 @@ def doc(name, sorts, preds, consts, norms, facts, claim, events=None):
          "graph": {"root": "claim", "nodes": [{"name": "claim", "ast": claim[0], "unit": units[-1]["id"]}]}}
     (OUT / f"{name}.ve.md").write_text("---\n" + json.dumps(d, indent=1) + "\n---\n" + "\n".join(lines) + "\n")
 
+def ALL(s, b): return ["forall", s, b]
+def IMP(a, b): return ["implies", a, b]
+def EQ(a, b): return ["eq", a, b]
+
+def one_event_per_tuple(ev, roles):
+    """`OneEventPerTuple` (route (a)'s hypothesis) as premises, for an act with two slots `roles = [(sort, role)] * 2`:
+    each role functional and total on the event sort, an event for every filler tuple, and at most one."""
+    (s1, r1), (s2, r2) = roles
+    out = []
+    for s, r in roles:
+        out.append((ALL(ev, ALL(s, ALL(s, IMP(AND(bi(r, V(2), V(1)), bi(r, V(2), V(0))), EQ(V(1), V(0)))))),
+                    f"Each {ev} has at most one {r} filler."))
+        out.append((ALL(ev, EX(s, bi(r, V(1), V(0)))), f"Each {ev} has a {r} filler."))
+    out.append((ALL(s1, ALL(s2, EX(ev, AND(bi(r1, V(0), V(2)), bi(r2, V(0), V(1)))))),
+                f"Every pair of fillers has a {ev}."))
+    out.append((ALL(ev, ALL(ev, ALL(s1, ALL(s2, IMP(AND(AND(bi(r1, V(3), V(1)), bi(r2, V(3), V(0))),
+                                                     AND(bi(r1, V(2), V(1)), bi(r2, V(2), V(0)))), EQ(V(3), V(2))))))),
+                f"Every pair of fillers has at most one {ev}."))
+    return out
+
 def reg(args, act, role="permission", default="allow"):
     return {"arguments": args, "description": act, "regulated": {"role": role, "default": default, "act": act}}
 def base(args, desc):
@@ -75,7 +101,7 @@ doc("u019.reified", ["bearer", "person", "ground", "distinction"],
      (bi("distinction_against", C("d1"), C("ann")), "Distinction d1 is against Ann."),
      (bi("distinction_ground", C("d1"), C("race")), "Distinction d1 is on the ground of race.")],
     (NOT(bi("distinguish_permitted", C("state"), C("d1"))), "The state may not make distinction d1."),
-    events=["distinction"])
+    events=["distinction"], roles=[("person", "distinction_against"), ("ground", "distinction_ground")])
 
 # u057 (reworded): the right to found a family and to marry, without any limitation due to a ground
 fam = {"found_a_family_entitled": reg(["person"], "{0} found a family", "permission", "deny"),
@@ -112,7 +138,7 @@ doc("u057.reified", ["bearer", "person", "ground", "limitation"],
      (bi("limitation_ground", C("l1"), C("religion")), "Limitation l1 is due to religion.")],
     (AND(un("marry_entitled", C("ann")), NOT(bi("limit_permitted", C("state"), C("l1")))),
      "Ann has the right to marry and the state may not make limitation l1."),
-    events=["limitation"])
+    events=["limitation"], roles=[("person", "limitation_of"), ("ground", "limitation_ground")])
 
 # rights.md (mu): publish_about(person, item, person); liberty of right 19, claim of right 12 as its exception
 doc("mu.binary", ["person", "item"],
@@ -138,4 +164,4 @@ doc("mu.reified", ["person", "item", "publication"],
      (bi("publication_of", C("p1"), C("leak")), "Publication p1 publishes the leak."),
      (bi("publication_about", C("p1"), C("carol")), "Publication p1 is about Carol.")],
     (NOT(bi("publish_about_permitted", C("bob"), C("p1"))), "Bob may not make publication p1."),
-    events=["publication"])
+    events=["publication"], roles=[("item", "publication_of"), ("person", "publication_about")])
