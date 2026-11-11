@@ -2574,6 +2574,13 @@
    "reason": "ap-parse-index: trusted +27 (K +0, S +3, V +24): VE/Acts/Wire.lean +10 (checkActBy, joinedActBy), VE/Acts/Index.lean +6 (idxGo), VE/Acts/Readings.lean +5 (reader), VE/Acts/Meaning.lean +3 (S: meaningWith), VE/Norms/Wire.lean +2 (actsOf's reader), VE/Acts/Run.lean +1 (taggedWith); firstsGo, closedFast, buildFast, combineFast, readingsBy, readingsOnce, readOnce tied by their equality theorems",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-parse-index, 2026-11-09",
    "commit": "a0102f0e5350727e99ddcae2e0b59ed03f2f4192"
+  },
+  {
+   "class": "V",
+   "lines": 8,
+   "reason": "soft-cf-text-1: VE/SoftNorms/Wire.lean +6 V (notSearchedText, the one owner of the no-search words for the rights and soft CONFLICT-FREE lines), VE/SoftNorms/Run.lean +2 V (conflictFreeText docstring and its call of notSearchedText); K +0, S +0; each exercised by a #guard that can fail (SoftNorms/Run.lean :129, :130; mutants S1-S4)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), soft-cf-text-1, 2026-11-11",
+   "commit": "b81b82ef91add8f6ea2fce62feeb421a5bed0c7b"
   }
  ]
 }
