@@ -40,8 +40,15 @@ pinned in `lean/checkers.lock`) is the one `lake build --no-build ve_service` re
 up to date), it states all 44 modes with `english.statement` last, and with it `tools/relay_mutation_gate.py`
 (run as review-ready runs it) exits 0: 49 routes, 154559 mutants, 0 failures (english.statement: 7 fixtures,
 all 1192 mutants refused). The earlier note's "rebuild" was a no-op build of this same binary, so the pre-review
-runs met a different file at that path. Something outside the branch must have swapped the build in and out
-again. No code changed for either failure.
+runs met a different file at that path. No code changed for either failure.
+
+**Pre-review [relay] at `a74937f28` (third time): the cause.** This item's builder runs on ve-cloud-2 (c2b lane,
+`en-e3b-placement.txt`: `host=ve-cloud-2`); review-ready runs on the VM, in the VM's own copy of the worktree, whose
+`lean/.lake` is a separate build. `cloud2-builder.sh back` moves that copy to the branch's HEAD but builds no Lean, and
+review-ready runs `tools/relay_mutation_gate.py` without a `lake build`, so it meets the VM's older `ve_service`
+(the branch registers `english.statement` in `ve_service` at `5b030b388`, Lean last changed at `10911361d`). On
+ve-cloud-2, at `a74937f28`, the same command exits 0 again: 49 routes, 154559 mutants, 0 failures. The fix is
+outside the branch: `cd lean && lake build ve_service` in the VM's worktree before [relay] (sent to the orchestrator).
 
 ## Seeded bugs (each planted alone, shown failing, restored)
 
