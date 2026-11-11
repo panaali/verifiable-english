@@ -20,7 +20,14 @@ empty. A rule whose first symbol has nothing at the row is skipped in the same w
 The budget counts steps: one per rule attempt and per suffix attempt, failed or not, and one per
 combination of a first symbol's tree with a suffix list. An attempt that indexing skips is an attempt
 that fails at once, so every row costs at least the number of rules and rule positions; the count is
-the same as without indexing. It is checked after each row, so the work done is at most the budget plus
+the same as without indexing. What a row does beyond its steps is bounded per step: per row, `accepted`
+(one test per distinct terminal, each at most the longest exclusion list `E`), the row's arrays (one entry
+per nonterminal and per rule) and the groups, each at most the row's charge of rules and positions; per
+attempt, one look-up per end position of the first symbol's entry, at most `n + 1` for a sentence of `n`
+tokens (`combineFast` skips an end position whose suffix is empty without reading its trees); per
+combination, one insertion (a merge over at most `n + 1` end positions, an append to at most `cap` items).
+So a step costs at most a constant times `cap + n + E`, and the budget bounds the time (ap-parse-index
+REPORT). It is checked after each row, so the work done is at most the budget plus
 one row; when it is exceeded the result is `none`, never a shorter list. The last pass re-checks each
 returned tree against `Tree.derives` and the sentence, removes duplicates and keeps at most `cap` trees;
 under well-formedness it changes nothing.
@@ -174,6 +181,33 @@ def combine (first : Bucket (Tree T)) (next : Nat → Bucket (List (Tree T))) (l
   first.flatMap fun p => p.2.flatMap fun t =>
     if last then [(p.1, [t])]
     else (next p.1).flatMap fun q => q.2.map fun us => (q.1, t :: us)
+
+/-- `combine` that reads the suffix entry once per end position and skips, without reading its trees, an
+end position where the suffix has nothing (`combine_eq_fast`). Compiled code runs it, so what an attempt
+does beyond its charged steps is at most one look-up per end position of the first symbol's entry. -/
+def combineFast (first : Bucket (Tree T)) (next : Nat → Bucket (List (Tree T))) (last : Bool) :
+    List (Nat × List (Tree T)) :=
+  first.flatMap fun p =>
+    if last then p.2.map fun t => (p.1, [t])
+    else match next p.1 with
+      | [] => []
+      | nx => p.2.flatMap fun t => nx.flatMap fun q => q.2.map fun us => (q.1, t :: us)
+
+omit [DecidableEq T] in
+theorem combineFast_eq (first : Bucket (Tree T)) (next : Nat → Bucket (List (Tree T))) (last : Bool) :
+    combineFast first next last = combine first next last := by
+  unfold combineFast combine
+  congr 1
+  funext p
+  cases last
+  · simp only [Bool.false_eq_true, if_false]
+    split <;> simp_all
+  · simp only [if_true]
+    induction p.2 <;> simp_all
+
+@[csimp] theorem combine_eq_fast : @combine = @combineFast := by
+  funext T first next last
+  exact (combineFast_eq first next last).symm
 
 /-- The rules applied at the start position `i`, in the order given: the trees of each rule are
 added to the entry of its left-hand side. Each rule attempt is a step, and so is each combination. -/
