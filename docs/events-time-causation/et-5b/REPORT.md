@@ -144,7 +144,16 @@ file), so every seeded bug is in Lean.
     unchanged.
   - `tools/trust_map.py --check`: PASS (above).
   - Trust-mutant sweep: exit 3, no survivor or UNKNOWN (above).
-  - The selected run: SELECTED_RESULT.
+  - The selected run (`mac-pytest.sh --select`, `MAC_PYTEST_NO_DEFER=1`, on the committed `b05c0d1b3`, on
+    ve-cloud-3, 8727 s): 483 test files exited 0 and one failed, `tests/test_assurance_manifest.py`, with 4 tests
+    (`test_trusted_decoder_line_ranges_are_pinned`, `test_decoder_files_are_pinned_whole`,
+    `test_full_file_decoder_pins_cover_the_current_file`, `test_every_json_handling_lean_file_is_classified`). These
+    are this item's, not main's: the hand-reviewed pins of `ve/assurance-manifest.json` did not cover the new hunks.
+    Fixed: `Document.lean` and `Events/Wire.lean` re-pinned (full file, with `eventsView`, `eventsAnchorChecks`,
+    `eventsLayeredOf` and `chainLayeredOf` named as `Document.lean` decoders); `Events/Anchor.lean` pinned as a
+    full-file decoder (`openAnchor` reads the vocabulary); `EventsDocumentExamples.lean` listed as fixtures under
+    `other_json`. Then the layout and `docs/spec/assurance-manifest.md` were regenerated, and
+    `uv run pytest -q tests/test_assurance_manifest.py` gave 152 passed.
 
 ## Spec re-read
 
@@ -190,7 +199,8 @@ file), so every seeded bug is in Lean.
 7. Unsigned items: PASS. DELTA row 1 is SIGNED by the DRI (11-10 item 1) and row 2 cites R16.
 8. Every user-visible change is in DELTA: PASS. The base texts were probed:
    `test_a_list_off_the_soft_chain_stays_unavailable` and the EventsDocumentExamples naming guards.
-9. Test selection: PENDING (the selected run).
+9. Test selection: PASS. The selected run reached this item's tests (`tests/test_events_document.py`, the events wire
+   mutants, `test_assurance_manifest.py`); its one failing file is fixed and rerun (above).
 10. Lean statements: N.A. No theorem was added or changed (`tools/lean_statements.py`: `changed: 0`).
 11. Budgets and limits: PASS: `test_the_dates_are_charged_at_their_limit`, `counted 256/257`, `weaker 30/60`.
 12. CPU: PASS by construction. The block is decoded once per document (`Env.events`), and no pilot lists `events@0`.
