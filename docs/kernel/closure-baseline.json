@@ -1,40 +1,32 @@
 {
- "kernel_lines": 9565,
+ "kernel_lines": 8956,
+ "keyed_kernel_lines": 8956,
+ "keyed_lines": 16831,
  "paths": [
   {
    "axioms": [],
-   "lines": 1714,
+   "lines": 1377,
    "modes": [
     "checkCertificate"
    ],
    "name": "certificate",
-   "spec_lines": 1709,
+   "spec_lines": 1372,
    "spec_modules": {
     "VE.Bridge": 280,
-    "VE.CertificateWire": 11,
+    "VE.CertificateWire": 220,
     "VE.Closure.Bridge": 78,
     "VE.Closure.Consequence": 6,
     "VE.Closure.Finite": 4,
     "VE.Closure.Paths": 4,
     "VE.Closure.Surface": 175,
     "VE.Closure.Syntax": 35,
-    "VE.Closure.Tableau": 35,
+    "VE.Closure.Tableau": 16,
     "VE.Consequence": 5,
-    "VE.Core.Congruence": 29,
     "VE.Core.Consequence": 3,
-    "VE.Core.Conservativity": 3,
     "VE.Core.Finite": 36,
-    "VE.Core.Induction": 8,
-    "VE.Core.PathRules": 6,
-    "VE.Core.Paths": 7,
-    "VE.Core.Substitution": 40,
-    "VE.Core.Syntax": 71,
-    "VE.Core.TableauExtended": 72,
-    "VE.Core.TableauExtendedChecker": 49,
-    "VE.Core.TableauExtendedClosure": 70,
-    "VE.Core.TableauExtendedExtra": 50,
-    "VE.Core.TableauExtendedInduction": 14,
-    "VE.Core.TableauExtendedRules": 20,
+    "VE.Core.Paths": 4,
+    "VE.Core.Syntax": 61,
+    "VE.Core.TableauExtendedExtra": 3,
     "VE.Finite": 36,
     "VE.Limits": 4,
     "VE.Order.ProfileGate": 13,
@@ -42,15 +34,34 @@
     "VE.Semantics": 49,
     "VE.Surface": 245,
     "VE.Syntax": 54,
-    "VE.Tableau": 63,
-    "VE.TableauChecker": 43,
-    "VE.TableauClosure": 63
+    "VE.Tableau": 13
+   },
+   "stated": {
+    "VE.CertificateWire.ClosureQuery.accepts": [
+     "VE.CertificateWire.ClosureQuery.accepts_sound"
+    ],
+    "VE.CertificateWire.Query.accepts": [
+     "VE.CertificateWire.Query.accepts_sound"
+    ]
    },
    "theorems": 4,
-   "tier": "kernel",
-   "wrap_lines": 5,
+   "tier": "candidate",
+   "wrap_lines": 637,
    "wrap_modules": {
-    "VE.CertificateWire": 5
+    "VE.Bridge": 173,
+    "VE.CertificateWire": 225,
+    "VE.Closure.Bridge": 53,
+    "VE.Closure.Paths": 3,
+    "VE.Closure.Syntax": 35,
+    "VE.Closure.Tableau": 16,
+    "VE.Core.Paths": 1,
+    "VE.Core.Syntax": 41,
+    "VE.Core.TableauExtendedExtra": 3,
+    "VE.Limits": 4,
+    "VE.Paths": 3,
+    "VE.Surface": 18,
+    "VE.Syntax": 49,
+    "VE.Tableau": 13
    }
   },
   {
@@ -126,6 +137,38 @@
     "VE.TableauChecker": 43,
     "VE.TableauClosure": 63,
     "VE.Time.Budget": 21
+   },
+   "stated": {
+    "VE.Route.Run.runCase": [
+     "VE.Route.RunSound.route_closure_certificate",
+     "VE.Route.RunSound.route_closure_countermodel",
+     "VE.Route.RunSound.route_closure_evaluate",
+     "VE.Route.RunSound.route_fol_certificate",
+     "VE.Route.RunSound.route_fol_countermodel",
+     "VE.Route.RunSound.route_fol_evaluate",
+     "VE.Route.RunSound.route_order_certificate",
+     "VE.Route.RunSound.route_order_countermodel",
+     "VE.Route.RunSound.route_order_evaluate",
+     "VE.Route.RunSound.runCase_dispatch"
+    ],
+    "VE.Route.Wire.runClosure": [
+     "VE.Route.WireSound.runClosure_accepted",
+     "VE.Route.WireSound.runClosure_certificate_acceptance",
+     "VE.Route.WireSound.runClosure_countermodel",
+     "VE.Route.WireSound.runClosure_evaluate"
+    ],
+    "VE.Route.Wire.runFol": [
+     "VE.Route.WireSound.runFol_accepted",
+     "VE.Route.WireSound.runFol_certificate_acceptance",
+     "VE.Route.WireSound.runFol_countermodel",
+     "VE.Route.WireSound.runFol_evaluate"
+    ],
+    "VE.Route.Wire.runOrder": [
+     "VE.Route.WireSound.runOrder_accepted",
+     "VE.Route.WireSound.runOrder_certificate_acceptance",
+     "VE.Route.WireSound.runOrder_countermodel",
+     "VE.Route.WireSound.runOrder_evaluate"
+    ]
    },
    "theorems": 26,
    "tier": "kernel",
@@ -204,6 +247,37 @@
     "VE.Tableau": 63,
     "VE.TableauChecker": 43,
     "VE.TableauClosure": 63
+   },
+   "stated": {
+    "VE.Norms.Run.runAdmission": [
+     "VE.Norms.Run.runAdmission_sound"
+    ],
+    "VE.Norms.Run.runAdmissionIn": [
+     "VE.Norms.Run.runAdmission_soundIn"
+    ],
+    "VE.Norms.Run.runCase": [
+     "VE.Norms.FlaggedSpec.norms_wire_conflict_exclusive",
+     "VE.Norms.FlaggedSpec.norms_wire_conflict_free",
+     "VE.Norms.FlaggedSpec.norms_wire_conflict_refuted",
+     "VE.Norms.FlaggedSpec.runCase_conflict",
+     "VE.Norms.Run.norms_wire_acceptance",
+     "VE.Norms.RunSound.norms_wire_certificate_acceptance",
+     "VE.Norms.RunSound.runCase_certificate"
+    ],
+    "VE.Norms.Run.runCaseIn": [
+     "VE.Acts.Decode.norms_wire_acceptance_elaborated",
+     "VE.Acts.Decode.norms_wire_certificate_acceptance_elaborated",
+     "VE.Acts.Decode.norms_wire_conflict_exclusive_elaborated",
+     "VE.Acts.Decode.norms_wire_conflict_free_elaborated",
+     "VE.Acts.Decode.norms_wire_conflict_refuted_elaborated",
+     "VE.Norms.FlaggedSpec.norms_wire_conflict_exclusiveIn",
+     "VE.Norms.FlaggedSpec.norms_wire_conflict_freeIn",
+     "VE.Norms.FlaggedSpec.norms_wire_conflict_refutedIn",
+     "VE.Norms.FlaggedSpec.runCase_conflictIn",
+     "VE.Norms.Run.norms_wire_acceptanceIn",
+     "VE.Norms.RunSound.norms_wire_certificate_acceptanceIn",
+     "VE.Norms.RunSound.runCase_certificateIn"
+    ]
    },
    "theorems": 21,
    "tier": "kernel",
@@ -325,6 +399,14 @@
     "VE.TableauChecker": 43,
     "VE.TableauClosure": 63
    },
+   "stated": {
+    "VE.SoftNorms.Run.runAdmission": [
+     "VE.SoftNorms.Run.runAdmission_sound"
+    ],
+    "VE.SoftNorms.Run.runCase": [
+     "VE.SoftNorms.Run.soft_wire_acceptance"
+    ]
+   },
    "theorems": 2,
    "tier": "kernel",
    "wrap_lines": 35,
@@ -362,6 +444,11 @@
     "VE.Semantics": 14,
     "VE.Syntax": 17,
     "VE.Time.Budget": 41
+   },
+   "stated": {
+    "VE.Route.Metered.evaluate": [],
+    "VE.Route.Metered.scan": [],
+    "VE.Route.Metered.scanState": []
    },
    "theorems": 7,
    "tier": "candidate",
@@ -448,6 +535,18 @@
     "VE.Time.Semantics": 86,
     "VE.Time.Syntax": 78,
     "VE.Time.Wire": 50
+   },
+   "stated": {
+    "VE.Time.Document.admitDocument": [
+     "VE.Time.Document.admit_quantity_report_sound"
+    ],
+    "VE.Time.Wire.checkW6Certificate": [],
+    "VE.Time.evalB": [
+     "VE.Time.Wire.evalB_sorted_sound"
+    ],
+    "VE.Time.refutesB": [
+     "VE.Time.Wire.refutesB_sorted_sound"
+    ]
    },
    "theorems": 4,
    "tier": "candidate",
@@ -550,6 +649,14 @@
     "VE.TableauChecker": 43,
     "VE.TableauClosure": 63
    },
+   "stated": {
+    "VE.Rights.Run.runAdmission": [
+     "VE.Rights.Run.runAdmission_sound"
+    ],
+    "VE.Rights.Run.runCase": [
+     "VE.Rights.Run.rights_wire_acceptance"
+    ]
+   },
    "theorems": 2,
    "tier": "candidate",
    "wrap_lines": 35,
@@ -640,6 +747,25 @@
     "VE.TableauChecker": 43,
     "VE.TableauClosure": 63,
     "VE.Time.Calendar": 29
+   },
+   "stated": {
+    "VE.NormDefaults.Admission.runAdmissionX": [
+     "VE.NormDefaults.Admission.runAdmissionX_sound"
+    ],
+    "VE.NormDefaults.Run.runAdmission": [
+     "VE.NormDefaults.Run.runAdmission_sound"
+    ],
+    "VE.NormDefaults.Run.runAdmissionIn": [
+     "VE.NormDefaults.Run.runAdmission_soundIn"
+    ],
+    "VE.NormDefaults.Run.runCase": [
+     "VE.NormDefaults.Run.normDefaults_wire_admission",
+     "VE.NormDefaults.Run.normDefaults_wire_admissionX"
+    ],
+    "VE.NormDefaults.Run.runCaseIn": [
+     "VE.Acts.Decode.normDefaults_wire_admission_elaborated",
+     "VE.NormDefaults.Run.normDefaults_wire_admissionIn"
+    ]
    },
    "theorems": 7,
    "tier": "candidate",
@@ -785,6 +911,14 @@
     "VE.TableauChecker": 43,
     "VE.TableauClosure": 63
    },
+   "stated": {
+    "VE.Alternatives.Run.runAdmission": [
+     "VE.Alternatives.Run.runAdmission_sound"
+    ],
+    "VE.Alternatives.Run.runCase": [
+     "VE.Alternatives.Run.alternatives_wire_acceptance"
+    ]
+   },
    "theorems": 2,
    "tier": "candidate",
    "wrap_lines": 22,
@@ -876,6 +1010,26 @@
     "VE.Time.Decimal": 40,
     "VE.Time.Syntax": 3,
     "VE.Time.Wire": 143
+   },
+   "stated": {
+    "VE.Risk.Run.replayAudit": [
+     "VE.Risk.Run.risk_wire_audit_sound"
+    ],
+    "VE.Risk.Run.replayDecision": [
+     "VE.Risk.Run.risk_wire_scenario_sound"
+    ],
+    "VE.Risk.Run.replayRiskConflict": [
+     "VE.Risk.Run.risk_wire_conflict_sound"
+    ],
+    "VE.Risk.Run.replayRiskFollowable": [
+     "VE.Risk.Run.risk_wire_followable_sound"
+    ],
+    "VE.Risk.Run.runAdmission": [
+     "VE.Risk.Run.runAdmission_sound"
+    ],
+    "VE.Risk.Run.runCase": [
+     "VE.Risk.Run.risk_wire_acceptance"
+    ]
    },
    "theorems": 6,
    "tier": "candidate",
@@ -1015,6 +1169,17 @@
     "VE.TableauChecker": 43,
     "VE.TableauClosure": 63
    },
+   "stated": {
+    "VE.Reports.Run.runAdmission": [
+     "VE.Reports.Run.runAdmission_sound"
+    ],
+    "VE.Reports.Run.runCase": [
+     "VE.Reports.Run.reports_wire_acceptance"
+    ],
+    "VE.Reports.Run.runCountermodel": [
+     "VE.Reports.Run.runCountermodel_sound"
+    ]
+   },
    "theorems": 3,
    "tier": "candidate",
    "wrap_lines": 32,
@@ -1135,6 +1300,17 @@
     "VE.Tableau": 63,
     "VE.TableauChecker": 43,
     "VE.TableauClosure": 63
+   },
+   "stated": {
+    "VE.Readings.Run.replayVerdictsND": [
+     "VE.Readings.Run.readings_wire_verdicts_all",
+     "VE.Readings.Run.readings_wire_verdicts_conflict",
+     "VE.Readings.Run.readings_wire_verdicts_conflict_free",
+     "VE.Readings.Run.readings_wire_verdicts_inconsistent",
+     "VE.Readings.Run.readings_wire_verdicts_model",
+     "VE.Readings.Run.readings_wire_verdicts_none",
+     "VE.Readings.Run.readings_wire_verdicts_some"
+    ]
    },
    "theorems": 8,
    "tier": "candidate",
@@ -1591,6 +1767,12 @@
     "VE.Weighing.Zone": 10,
     "VE.Words.Situation": 5
    },
+   "stated": {
+    "VE.Discourse.Run.runCase": [
+     "VE.Discourse.Run.discourse_wire_acceptance"
+    ],
+    "VE.Discourse.runAll": []
+   },
    "theorems": 6,
    "tier": "candidate",
    "wrap_lines": 4541,
@@ -1932,6 +2114,15 @@
     "VE.Weighing.Zone": 10,
     "VE.Words.Situation": 5
    },
+   "stated": {
+    "VE.Service.Document.checkDoc": [
+     "VE.Scope.scope_admission"
+    ],
+    "VE.Service.Document.checkDocSets": [
+     "VE.Scope.scope_admission_sets"
+    ],
+    "VE.Service.Document.checkDocSetsView": []
+   },
    "theorems": 7,
    "tier": "candidate",
    "wrap_lines": 12347,
@@ -2055,6 +2246,7 @@
  "verdict_writers": [
   {
    "in_kernel": false,
+   "inside": null,
    "module": "VE.Alternatives.Run",
    "name": "VE.Alternatives.Run.runConflict",
    "tokens": [
@@ -2063,6 +2255,7 @@
   },
   {
    "in_kernel": false,
+   "inside": null,
    "module": "VE.Alternatives.Run",
    "name": "VE.Alternatives.Run.runConflictU",
    "tokens": [
@@ -2071,6 +2264,7 @@
   },
   {
    "in_kernel": false,
+   "inside": null,
    "module": "VE.Alternatives.Run",
    "name": "VE.Alternatives.Run.runConflictWitness",
    "tokens": [
@@ -2079,6 +2273,7 @@
   },
   {
    "in_kernel": false,
+   "inside": null,
    "module": "VE.Alternatives.Run",
    "name": "VE.Alternatives.Run.runFollowable",
    "tokens": [
@@ -2088,6 +2283,7 @@
   },
   {
    "in_kernel": false,
+   "inside": null,
    "module": "VE.Alternatives.Run",
    "name": "VE.Alternatives.Run.runFollowableU",
    "tokens": [
@@ -2097,6 +2293,7 @@
   },
   {
    "in_kernel": false,
+   "inside": null,
    "module": "VE.Alternatives.Run",
    "name": "VE.Alternatives.Run.runValidate",
    "tokens": [
@@ -2105,6 +2302,7 @@
   },
   {
    "in_kernel": false,
+   "inside": null,
    "module": "VE.Attribution.Status",
    "name": "VE.Reports.Status.render",
    "tokens": [
@@ -2113,6 +2311,7 @@
   },
   {
    "in_kernel": false,
+   "inside": null,
    "module": "VE.Commands.RunSplit",
    "name": "VE.Commands.SourceExamples.mixed",
    "tokens": [
@@ -2121,6 +2320,7 @@
   },
   {
    "in_kernel": false,
+   "inside": null,
    "module": "VE.Discourse.Admission",
    "name": "VE.Discourse.loadedStatus",
    "tokens": [
@@ -2129,6 +2329,7 @@
   },
   {
    "in_kernel": false,
+   "inside": null,
    "module": "VE.Discourse.Admission",
    "name": "VE.Discourse.statusOf",
    "tokens": [
@@ -2137,6 +2338,7 @@
   },
   {
    "in_kernel": false,
+   "inside": null,
    "module": "VE.Discourse.Loader",
    "name": "VE.Discourse.Loader.statuses",
    "tokens": [
@@ -2145,6 +2347,7 @@
   },
   {
    "in_kernel": false,
+   "inside": null,
    "module": "VE.Discourse.Loader",
    "name": "VE.Discourse.Loader.w2SetStatus",
    "tokens": [
@@ -2153,6 +2356,7 @@
   },
   {
    "in_kernel": false,
+   "inside": null,
    "module": "VE.Discourse.Loader",
    "name": "VE.Discourse.Loader.w2Status",
    "tokens": [
@@ -2161,6 +2365,7 @@
   },
   {
    "in_kernel": false,
+   "inside": null,
    "module": "VE.NormDefaults.Layered",
    "name": "VE.NormDefaults.Wire.layeredCase",
    "tokens": [
@@ -2170,6 +2375,7 @@
   },
   {
    "in_kernel": false,
+   "inside": null,
    "module": "VE.NormDefaults.Run",
    "name": "VE.NormDefaults.Run.runOtherCaseIn",
    "tokens": [
@@ -2179,6 +2385,7 @@
   },
   {
    "in_kernel": true,
+   "inside": "body",
    "module": "VE.Norms.Run",
    "name": "VE.Norms.Run.runCaseIn",
    "tokens": [
@@ -2188,6 +2395,7 @@
   },
   {
    "in_kernel": false,
+   "inside": null,
    "module": "VE.Purposes.WellFormed",
    "name": "VE.Purposes.covered",
    "tokens": [
@@ -2196,6 +2404,7 @@
   },
   {
    "in_kernel": false,
+   "inside": null,
    "module": "VE.Readings.ComponentsWire",
    "name": "VE.Readings.Run.productResult",
    "tokens": [
@@ -2206,6 +2415,7 @@
   },
   {
    "in_kernel": false,
+   "inside": null,
    "module": "VE.Readings.DefaultVerdicts",
    "name": "VE.Readings.Run.verdictWord",
    "tokens": [
@@ -2216,6 +2426,7 @@
   },
   {
    "in_kernel": false,
+   "inside": null,
    "module": "VE.Readings.SupFillWire",
    "name": "VE.Readings.Run.runConflictND",
    "tokens": [
@@ -2225,6 +2436,7 @@
   },
   {
    "in_kernel": false,
+   "inside": null,
    "module": "VE.Readings.SupRun",
    "name": "VE.Readings.Run.conflictFreeAnswer",
    "tokens": [
@@ -2233,6 +2445,7 @@
   },
   {
    "in_kernel": false,
+   "inside": null,
    "module": "VE.Readings.SupRun",
    "name": "VE.Readings.Run.conflictPackageAnswer",
    "tokens": [
@@ -2241,6 +2454,7 @@
   },
   {
    "in_kernel": false,
+   "inside": null,
    "module": "VE.Readings.SupRun",
    "name": "VE.Readings.Run.runConflict",
    "tokens": [
@@ -2249,6 +2463,7 @@
   },
   {
    "in_kernel": false,
+   "inside": null,
    "module": "VE.Readings.SupVerdictsWire",
    "name": "VE.Readings.Run.supCandidateJson",
    "tokens": [
@@ -2257,6 +2472,7 @@
   },
   {
    "in_kernel": false,
+   "inside": null,
    "module": "VE.Readings.SupVerdictsWire",
    "name": "VE.Readings.Run.supPlan",
    "tokens": [
@@ -2267,6 +2483,7 @@
   },
   {
    "in_kernel": false,
+   "inside": null,
    "module": "VE.Readings.SupVerdictsWire",
    "name": "VE.Readings.Run.supResult",
    "tokens": [
@@ -2278,6 +2495,7 @@
   },
   {
    "in_kernel": false,
+   "inside": null,
    "module": "VE.Readings.SupVerdictsWire",
    "name": "VE.Readings.Run.supScope",
    "tokens": [
@@ -2287,6 +2505,7 @@
   },
   {
    "in_kernel": false,
+   "inside": null,
    "module": "VE.Readings.VerdictsWire",
    "name": "VE.Readings.Run.conflictResult",
    "tokens": [
@@ -2295,6 +2514,7 @@
   },
   {
    "in_kernel": false,
+   "inside": null,
    "module": "VE.Readings.VerdictsWire",
    "name": "VE.Readings.Run.entailmentResult",
    "tokens": [
@@ -2305,6 +2525,7 @@
   },
   {
    "in_kernel": false,
+   "inside": null,
    "module": "VE.Readings.VerdictsWire",
    "name": "VE.Readings.Run.lowerInfo",
    "tokens": [
@@ -2314,6 +2535,7 @@
   },
   {
    "in_kernel": false,
+   "inside": null,
    "module": "VE.Readings.VerdictsWire",
    "name": "VE.Readings.Run.word",
    "tokens": [
@@ -2324,6 +2546,7 @@
   },
   {
    "in_kernel": false,
+   "inside": null,
    "module": "VE.Readings.VerdictsWire",
    "name": "VE.Readings.conflictRowItems",
    "tokens": [
@@ -2332,6 +2555,7 @@
   },
   {
    "in_kernel": false,
+   "inside": null,
    "module": "VE.Readings.VerdictsWire",
    "name": "VE.Readings.gateItems",
    "tokens": [
@@ -2340,6 +2564,7 @@
   },
   {
    "in_kernel": false,
+   "inside": null,
    "module": "VE.Readings.VerdictsWire",
    "name": "VE.Readings.planItems",
    "tokens": [
@@ -2352,6 +2577,7 @@
   },
   {
    "in_kernel": false,
+   "inside": null,
    "module": "VE.Rights.Run",
    "name": "VE.Rights.Run.conflictAnswerOf",
    "tokens": [
@@ -2360,6 +2586,7 @@
   },
   {
    "in_kernel": false,
+   "inside": null,
    "module": "VE.Rights.Run",
    "name": "VE.Rights.Run.runRightsKind",
    "tokens": [
@@ -2368,6 +2595,7 @@
   },
   {
    "in_kernel": false,
+   "inside": null,
    "module": "VE.Risk.Run",
    "name": "VE.Risk.Run.runConflict",
    "tokens": [
@@ -2377,6 +2605,7 @@
   },
   {
    "in_kernel": false,
+   "inside": null,
    "module": "VE.Risk.Run",
    "name": "VE.Risk.Run.runDecision",
    "tokens": [
@@ -2385,6 +2614,7 @@
   },
   {
    "in_kernel": false,
+   "inside": null,
    "module": "VE.Risk.Run",
    "name": "VE.Risk.Run.runFollowable",
    "tokens": [
@@ -2394,6 +2624,7 @@
   },
   {
    "in_kernel": false,
+   "inside": null,
    "module": "VE.Scope.Wire",
    "name": "VE.Scope.statusOf",
    "tokens": [
@@ -2402,6 +2633,7 @@
   },
   {
    "in_kernel": false,
+   "inside": null,
    "module": "VE.Service.Document",
    "name": "VE.Service.Document.UnitStatus.name",
    "tokens": [
@@ -2410,6 +2642,7 @@
   },
   {
    "in_kernel": false,
+   "inside": null,
    "module": "VE.Service.Document",
    "name": "VE.Service.Document.check",
    "tokens": [
@@ -2418,14 +2651,16 @@
   },
   {
    "in_kernel": false,
+   "inside": null,
    "module": "VE.Service.DocumentView",
-   "name": "_private.VE.Service.DocumentView.0.VE.Scope.statusOf.match_1.splitter",
+   "name": "VE.Scope.statusOf",
    "tokens": [
     "CHECKED"
    ]
   },
   {
    "in_kernel": false,
+   "inside": null,
    "module": "VE.Service.Family",
    "name": "VE.Service.Family.readings",
    "tokens": [
@@ -2436,6 +2671,7 @@
   },
   {
    "in_kernel": false,
+   "inside": null,
    "module": "VE.Service.FamilyNorms",
    "name": "VE.Service.FamilyNorms.conflictCase",
    "tokens": [
@@ -2444,6 +2680,7 @@
   },
   {
    "in_kernel": false,
+   "inside": null,
    "module": "VE.Service.FamilyNorms",
    "name": "VE.Service.FamilyNorms.folCase",
    "tokens": [
@@ -2452,6 +2689,7 @@
   },
   {
    "in_kernel": false,
+   "inside": null,
    "module": "VE.Service.FamilyNorms",
    "name": "VE.Service.FamilyNorms.genericCase",
    "tokens": [
@@ -2461,6 +2699,7 @@
   },
   {
    "in_kernel": false,
+   "inside": null,
    "module": "VE.Service.Readings",
    "name": "VE.Service.Readings.readingsCase",
    "tokens": [
@@ -2471,6 +2710,7 @@
   },
   {
    "in_kernel": false,
+   "inside": null,
    "module": "VE.Service.ReadingsChoices",
    "name": "VE.Service.ReadingsChoices.check",
    "tokens": [
@@ -2480,7 +2720,8 @@
    ]
   },
   {
-   "in_kernel": true,
+   "in_kernel": false,
+   "inside": null,
    "module": "VE.SoftNorms.Run",
    "name": "VE.SoftNorms.Run.runSoftKind",
    "tokens": [
@@ -2489,7 +2730,8 @@
    ]
   },
   {
-   "in_kernel": true,
+   "in_kernel": false,
+   "inside": null,
    "module": "VE.SoftNorms.Wire",
    "name": "VE.SoftNorms.Wire.residualStatus",
    "tokens": [
@@ -2498,6 +2740,7 @@
   },
   {
    "in_kernel": false,
+   "inside": null,
    "module": "VE.SpeechActs.Run",
    "name": "VE.SpeechActs.Run.runCase",
    "tokens": [
@@ -2507,6 +2750,7 @@
   },
   {
    "in_kernel": false,
+   "inside": null,
    "module": "VE.SpeechActs.Source.Run",
    "name": "VE.SpeechActs.Source.premiseFields",
    "tokens": [
@@ -2515,6 +2759,7 @@
   },
   {
    "in_kernel": false,
+   "inside": null,
    "module": "VE.SpeechActs.Source.Run",
    "name": "VE.SpeechActs.Source.reconciles",
    "tokens": [

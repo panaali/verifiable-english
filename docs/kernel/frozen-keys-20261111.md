@@ -31,7 +31,7 @@ the "before" figures of every row in [the kernel boundary](../spec/kernel-bounda
 | `route`, certificate | 5,918 | 2,842 | 3,980 | 6 | 0 | kernel: proved from the wire |
 | `route`, dependency-order / background | 2,023 | 1,178 | 728 | 87 | 1 | kernel path, non-verdict kinds |
 | `norms`, norms-conflict | 0 | 0 | 0 | 1 | 0 | kernel: proved from the wire |
-| `soft-norms`, soft-elaborate | 182 | 206 | 154 | 0 | 0 | kernel path, an elaboration (no verdict) |
+| `soft-norms`, soft-elaborate | 182 | 206 | 154 | 0 | 0 | kernel path, a kind no theorem covers (registry `uncovered`): outside the kernel; its `soft_status` is `CHECKED` or `OPEN` (`residualStatus`) |
 | `metered`, evaluate-budgeted | 6,384 | 1,272 | 9,120 | 8,169 | 0 | **candidate: proved core 519 lines, 3,761 lines of wire code under no theorem** |
 | `quantity` (certificate, document, countermodel, plain) | 25 | 20 | 4 | 0 | 9,403 | **candidate: proved core 613 lines, 1,804 lines of wire code under no theorem** |
 | `risk` (risk-decision, risk-elaborate) | 3 | 6 | 2 | 0 | 0 | candidate: spec 6,159, wrap 5,669 |
@@ -45,8 +45,10 @@ What the table shows:
 1. The five keys call 9 of the service's 43 modes. None calls the `document`, `readingsRoute` or
    `discourse` mode, whose code is 35,142, 20,356 and 35,782 lines: the largest wrappers carry no keyed
    answer.
-2. All Lean code under the keys' answers is **17,355 distinct lines** (spec and wrap of the ten paths
-   above, the three validators counted in full). The proved kernel is 9,565 of them.
+2. All Lean code under the keys' answers is **16,831 distinct lines** (spec and wrap of the ten paths
+   above, the three validators counted in full; the registry's `keys`, measured by `tools/kernel_closure.py`
+   as `keyed_lines`). The proved kernel is 8,956 of them. (The first measurement, 17,355 and 9,565, also
+   counted the `checkCertificate` path, which no key calls and which is now a candidate.)
 3. The gap between the two is wire code around a proved core: `metered` (every "no" answer and every
    countermodel: 24,945 calls across the keys), `quantity` (eligibility's 9,403 calls), `risk`, and the
    three validators. Rows `kb-7` (metered) and `kb-8` (quantity) close the first two.

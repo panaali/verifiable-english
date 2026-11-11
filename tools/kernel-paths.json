@@ -1,5 +1,5 @@
 {
- "comment": "The verdict paths of the Lean service (docs/spec/kernel-boundary.md, section 2). tier kernel: the path's answers may carry a verdict and its spec and wrap lines count toward the kernel total; tier candidate: measured, not yet admitted. entry: the right-hand side of the mode's runMode_* pin; theorems: what an accepted answer means; subject: the runner the theorems are about (not read); delegates: entries of other paths this entry hands cases to; nonverdict: exits reviewed as carrying no verdict, each with its reason. Measured by tools/kernel_closure.py; only the architect seat changes a tier. imports: modules that hold a listed theorem and are imported only by VE.Audit (build them first: lake build <module>).",
+ "comment": "The verdict paths of the Lean service (docs/spec/kernel-boundary.md, section 2). tier kernel: the path's answers may carry a verdict and its spec and wrap lines count toward the kernel total; tier candidate: measured, not yet admitted. entry: the right-hand side of the mode's runMode_* pin; theorems: what an accepted answer means; subject: the runner or decision the theorems are about (not read): some listed theorem must state its answer (`subject … = .ok answer` with the answer used, or `subject … = true`), or the tool reports it; delegates: entries of other paths this entry hands cases to; nonverdict: exits reviewed as carrying no verdict, each with its reason. uncovered (kernel paths): code a subject runs for case kinds no listed theorem covers, with the kinds and the reason; it is outside the kernel and its verdict writers count outside. covered_writers (kernel paths): each verdict writer that is inside the kernel only because a subject runs it, with the case kinds it writes for and the listed theorems that cover them; an unnamed one is reported. Measured by tools/kernel_closure.py; only the architect seat changes a tier. imports: modules that hold a listed theorem and are imported only by VE.Audit (build them first: lake build <module>).",
  "verdict_tokens": [
   "CHECKED",
   "CONFLICT-FREE",
@@ -14,10 +14,33 @@
  "imports": [
   "VE.Route.MeteredProofs"
  ],
+ "keys": {
+  "comment": "The Lean code under the five frozen keys' answers (docs/kernel/frozen-keys-20261111.md): the spec and wrap of every path whose mode the keys call, and the validators the keys call, counted in full (their whole run closure). Measured as keyed_lines; keyed_kernel_lines is the part inside the kernel.",
+  "paths": [
+   "route",
+   "norms",
+   "softNorms",
+   "metered",
+   "quantity",
+   "risk"
+  ],
+  "validators": {
+   "check": [
+    "VE.Service.Standalone.reported",
+    "VE.Service.Standalone.checkCase"
+   ],
+   "model": [
+    "VE.Service.Standalone.reportedModel"
+   ],
+   "environment": [
+    "VE.Service.Standalone.reportedEnvironment"
+   ]
+  }
+ },
  "paths": [
   {
    "name": "certificate",
-   "tier": "kernel",
+   "tier": "candidate",
    "modes": [
     "checkCertificate"
    ],
@@ -25,7 +48,8 @@
     "VE.CertificateWire.runCaseReportedSteps"
    ],
    "subject": [
-    "VE.CertificateWire.runCase"
+    "VE.CertificateWire.Query.accepts",
+    "VE.CertificateWire.ClosureQuery.accepts"
    ],
    "theorems": [
     "VE.Order.certificate_runCase_profiles",
@@ -80,7 +104,23 @@
     "VE.Route.WireSound.runOrder_evaluate"
    ],
    "delegates": [],
-   "nonverdict": []
+   "nonverdict": [],
+   "uncovered": [
+    {
+     "name": "VE.Definitions.Bundle.runBundle",
+     "kinds": [
+      "bundle"
+     ],
+     "why": "answers `checked` (the lemmas accepted) on the fol family; no listed theorem states what a bundle answer means"
+    },
+    {
+     "name": "VE.Route.Run.runAdmit",
+     "kinds": [
+      "admission"
+     ],
+     "why": "answers `admitted: true` on the fol family; no listed theorem states what a route admission answer means"
+    }
+   ]
   },
   {
    "name": "norms",
@@ -128,6 +168,32 @@
      "name": "VE.Acts.Run.runElaborate",
      "why": "acts-elaborate returns an elaboration to show, never a verdict (act-phrases 6.7)"
     }
+   ],
+   "uncovered": [
+    {
+     "name": "VE.Norms.Plain.run",
+     "kinds": [
+      "background",
+      "evaluate",
+      "countermodel",
+      "certificate"
+     ],
+     "why": "the plain kinds on a layered environment (no norm objects) answer `valid` and countermodels; no listed theorem covers them (Norms/Run.lean, runCaseIn)"
+    }
+   ],
+   "covered_writers": [
+    {
+     "name": "VE.Norms.Run.runCaseIn",
+     "kinds": [
+      "norms-conflict"
+     ],
+     "theorems": [
+      "VE.Norms.FlaggedSpec.norms_wire_conflict_freeIn",
+      "VE.Norms.FlaggedSpec.norms_wire_conflict_refutedIn",
+      "VE.Norms.FlaggedSpec.norms_wire_conflict_exclusiveIn",
+      "VE.Norms.FlaggedSpec.runCase_conflictIn"
+     ]
+    }
    ]
   },
   {
@@ -158,6 +224,20 @@
     {
      "name": "VE.SoftNorms.Run.dualGuardCycle",
      "why": "adds a flag to a rejection row; runs only when runCase refused"
+    }
+   ],
+   "uncovered": [
+    {
+     "name": "VE.SoftNorms.Run.runSoftKind",
+     "kinds": [
+      "soft-rule",
+      "soft-rules",
+      "soft-elaborate",
+      "soft-pairs",
+      "soft-certificate",
+      "soft-conflict"
+     ],
+     "why": "every soft kind but admission: soft-certificate answers `valid`, soft-conflict CONFLICT or CONFLICT-FREE, soft-elaborate a `soft_status` of CHECKED (residualStatus); the listed theorems cover admission only (KB-3)"
     }
    ]
   },
