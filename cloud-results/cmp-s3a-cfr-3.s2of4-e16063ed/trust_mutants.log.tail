@@ -1,0 +1,7 @@
+trust_mutants: 5 definitions, 79 mutants (20 to run), 4 jobs, base 0d663e3c50e5
+SURVIVOR lean/VE/RightClauses/ElidedBytes.lean:34 VE.RightClauses.unitElided (D[V], trusted) list-drop-last: ["span"] -> (["span"].dropLast)
+trust_mutants: 15 KILLED, 1 SURVIVOR, 0 UNKNOWN, 4 INVALID, 0 ALLOWED, 0 NOT RUN, 59 OTHER SHARD in 110 s
+trust_mutants: D[V], trusted: 7 KILLED, 1 SURVIVOR, 4 INVALID, 30 OTHER SHARD
+trust_mutants: G[V], trusted: 3 KILLED, 7 OTHER SHARD
+trust_mutants: S, trusted: 5 KILLED, 22 OTHER SHARD
+trust_mutants: steps: wall plan 12.5 s, scratch 4.8 s, control_build 0.2 s, probe_install 1.4 s, mutants 87.5 s, cleanup 3.6 s; lake control_build 0.1 s (1), probe_install 1.4 s (1), control_probes 20 s (7), mutant_builds 20.6 s (20), mutant_checks 82.1 s (21), stage_controls 14.1 s (5), mutant_probes 138.7 s (20)
