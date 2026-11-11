@@ -1072,6 +1072,33 @@ theorem VE.Acts.applies_agree
           (VE.Norms.AppliesD S₁ ρ₁ N ↔ VE.Norms.AppliesD S₂ ρ₂ K)
   -- uses VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Norms.AppliesD@VE.Norms.Elaborate VE.Norms.Node.carveOuts@VE.Norms.Tree VE.Norms.Node.guard@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
   -- expr 2486149005
+theorem VE.Acts.atomSituation_holds
+  ∀ (D : VE.Readings.Doc) (s : String) (i j : Nat),
+    (∀ (p : String), VE.Acts.rulePred D s i = Option.some p → VE.Acts.rulePred D s j = Option.some p) →
+      (VE.Acts.atomSituation D s i j).probe = VE.Readings.Probe.holds
+  -- uses VE.Acts.atomSituation@VE.Acts.Situation VE.Acts.rulePred@VE.Acts.Situation VE.Readings.Doc@VE.Readings.Doc VE.Readings.Probe.holds@VE.Readings.Separate VE.Readings.Probe@VE.Readings.Separate VE.Readings.Situation.probe@VE.Readings.Separate
+  -- expr 541878914
+theorem VE.Acts.atomSituation_probe
+  ∀ (D : VE.Readings.Doc) (s : String) (i j : Nat) (p : String),
+    VE.Acts.rulePred D s i = Option.some p →
+      VE.Acts.rulePred D s j ≠ Option.some p →
+        (VE.Acts.atomSituation D s i j).probe =
+          VE.Readings.Probe.selects "norm" p (List.map (fun x => 0) (VE.SoftNorms.sortsIn D.frame.soft.T.regulated p))
+  -- uses VE.Acts.atomSituation@VE.Acts.Situation VE.Acts.rulePred@VE.Acts.Situation VE.Readings.Doc.frame@VE.Readings.Doc VE.Readings.Doc@VE.Readings.Doc VE.Readings.Probe.selects@VE.Readings.Separate VE.Readings.Probe@VE.Readings.Separate VE.Readings.Situation.probe@VE.Readings.Separate VE.Rights.RightsDoc.soft@VE.Rights.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.regulated@VE.SoftNorms.Tree VE.SoftNorms.sortsIn@VE.SoftNorms.Tree
+  -- expr 2378739520
+theorem VE.Acts.atomSituation_separated
+  ∀ (D : VE.Readings.Doc),
+    VE.Readings.WellFormedDoc D = Bool.true →
+      ∀ (s : String) (i j : Nat),
+        ((VE.Readings.candidate D s i).bind fun x => x.content) ≠ Option.none →
+          ((VE.Readings.candidate D s j).bind fun x => x.content) ≠ Option.none →
+            VE.Readings.separates D s i j (VE.Acts.atomSituation D s i j) = Bool.true → VE.Readings.Separated D s i j
+  -- uses VE.Acts.atomSituation@VE.Acts.Situation VE.Compose.Content@VE.Compose.Content VE.Readings.Candidate.content@VE.Readings.Doc VE.Readings.Candidate@VE.Readings.Doc VE.Readings.Doc@VE.Readings.Doc VE.Readings.Separated@VE.Readings.Separate VE.Readings.WellFormedDoc@VE.Readings.Doc VE.Readings.candidate@VE.Readings.Doc VE.Readings.separates@VE.Readings.Separate
+  -- expr 3730466685
+theorem VE.Acts.atomSituation_valid
+  ∀ (D : VE.Readings.Doc) (s : String) (i j : Nat), (VE.Acts.atomSituation D s i j).base.Valid (VE.Readings.authorEnv D)
+  -- uses VE.Acts.atomSituation@VE.Acts.Situation VE.FiniteModel.Valid@VE.Finite VE.Readings.Doc@VE.Readings.Doc VE.Readings.Situation.base@VE.Readings.Separate VE.Readings.authorEnv@VE.Readings.Separate
+  -- expr 883980259
 theorem VE.Acts.build_wf
   ∀ {rs : List VE.Acts.RuleS},
     (∀ (r : VE.Acts.RuleS), r ∈ rs → r.ok = Bool.true) →
@@ -1094,6 +1121,13 @@ theorem VE.Acts.closed_ok
     rs.all VE.Acts.RuleS.ok = Bool.true → ∀ (r : VE.Acts.RuleS), r ∈ VE.Acts.closed rs → r.ok = Bool.true
   -- uses VE.Acts.RuleS.ok@VE.Acts.Grammar VE.Acts.RuleS@VE.Acts.Grammar VE.Acts.closed@VE.Acts.Grammar
   -- expr 3933089701
+theorem VE.Acts.compareViews_complete
+  ∀ {ps : List String} {cs rs : List (List (Option VE.Acts.View))},
+    List.Pairwise (fun v w => ¬v.Perm w) cs →
+      ∀ {σ : List (List (Option VE.Acts.View))},
+        σ.Perm cs → List.Forall₂ List.Perm σ rs → VE.Acts.compareViews ps cs rs = Except.ok ()
+  -- uses List.Forall₂@VE.Acts.Sources VE.Acts.View@VE.Acts.Sources VE.Acts.compareViews@VE.Acts.Sources
+  -- expr 1492596577
 theorem VE.Acts.compareViews_ok
   ∀ {ps : List String} {cs rs : List (List (Option VE.Acts.View))},
     VE.Acts.compareViews ps cs rs = Except.ok () →
@@ -1205,6 +1239,11 @@ theorem VE.Acts.elaborate_wellFormed
     VE.Acts.elaborate D = Except.ok U' → VE.NormDefaults.WellFormedU U' = Bool.true
   -- uses VE.Acts.ActsDoc@VE.Acts.Elaborate VE.Acts.elaborate@VE.Acts.Elaborate VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree
   -- expr 3613047864
+theorem VE.Acts.eq_of_perm_of_pairwise
+  ∀ {cs : List (List (Option VE.Acts.View))},
+    List.Pairwise (fun v w => ¬v.Perm w) cs → ∀ {a c : List (Option VE.Acts.View)}, a ∈ cs → c ∈ cs → a.Perm c → a = c
+  -- uses VE.Acts.View@VE.Acts.Sources
+  -- expr 2205118507
 theorem VE.Acts.exists_child_tracks
   ∀ {T T' : VE.Norms.Tree} {p q : String} {f : VE.Norms.Node → VE.Norms.Node},
     (∀ (N : VE.Norms.Node), N ∈ T.nodes → N.pred = p → f N ∈ T'.nodes ∧ (f N).pred = q ∧ (f N).sign = N.sign) →
@@ -1222,6 +1261,11 @@ theorem VE.Acts.firstEqualPair_none
   ∀ (k : Nat) (ts : List String), VE.Acts.firstEqualPair k ts = Option.none ↔ ts.Nodup
   -- uses VE.Acts.firstEqualPair@VE.Acts.Table
   -- expr 2471763056
+theorem VE.Acts.forall₂_mem_left
+  ∀ {α β : Type} {R : α → β → Prop} {l₁ : List α} {l₂ : List β},
+    List.Forall₂ R l₁ l₂ → ∀ {a : α}, a ∈ l₁ → ∃ b, b ∈ l₂ ∧ R a b
+  -- uses List.Forall₂@VE.Acts.Sources
+  -- expr 2716566473
 theorem VE.Acts.frameRules_ok
   ∀ (V : VE.Acts.Vocab) (h : Nat) {f : VE.Acts.Frame},
     f.head ≠ [] → (VE.Acts.frameRules V h f).all VE.Acts.RuleS.ok = Bool.true
@@ -1437,6 +1481,14 @@ theorem VE.Acts.pick_forall₂
   ∀ {cs rs σ : List (List (Option VE.Acts.View))}, VE.Acts.pick cs rs = Option.some σ → List.Forall₂ List.Perm σ rs
   -- uses List.Forall₂@VE.Acts.Sources VE.Acts.View@VE.Acts.Sources VE.Acts.pick@VE.Acts.Sources
   -- expr 1719054101
+theorem VE.Acts.pick_of_forall₂
+  ∀ {cs : List (List (Option VE.Acts.View))},
+    List.Pairwise (fun v w => ¬v.Perm w) cs →
+      ∀ {σ rs : List (List (Option VE.Acts.View))},
+        (∀ (c : List (Option VE.Acts.View)), c ∈ σ → c ∈ cs) →
+          List.Forall₂ List.Perm σ rs → VE.Acts.pick cs rs = Option.some σ
+  -- uses List.Forall₂@VE.Acts.Sources VE.Acts.View@VE.Acts.Sources VE.Acts.pick@VE.Acts.Sources
+  -- expr 2566430783
 theorem VE.Acts.preds_bindAll
   ∀ (body : VE.Formula) (ss : List String), VE.Norms.preds (VE.Norms.bindAll ss body) = VE.Norms.preds body
   -- uses VE.Formula@VE.Syntax VE.Norms.bindAll@VE.Norms.Basic VE.Norms.preds@VE.Norms.Tree
@@ -1561,6 +1613,12 @@ theorem VE.Acts.refsOk_preds
           ∀ {φ : VE.Formula}, φ ∈ N.guard :: N.carveOuts → ∀ {q : String}, q ∈ VE.Norms.preds φ → sa q = Option.none
   -- uses VE.Acts.ActsDoc.U@VE.Acts.Elaborate VE.Acts.ActsDoc@VE.Acts.Elaborate VE.Acts.Atom@VE.Acts.Tree VE.Acts.refsOk@VE.Acts.Elaborate VE.Formula@VE.Syntax VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Node.carveOuts@VE.Norms.Tree VE.Norms.Node.guard@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree VE.Norms.Tree.nodes@VE.Norms.Tree VE.Norms.preds@VE.Norms.Tree
   -- expr 1685259287
+theorem VE.Acts.rulePred_eq_some
+  ∀ (D : VE.Readings.Doc) (s : String) (i : Nat) (p : String),
+    VE.Acts.rulePred D s i = Option.some p ↔
+      ∃ N, ((VE.Readings.candidate D s i).bind fun x => x.content) = Option.some (VE.Compose.Content.norm N) ∧ N.pred = p
+  -- uses VE.Acts.rulePred@VE.Acts.Situation VE.Compose.Content.norm@VE.Compose.Content VE.Compose.Content@VE.Compose.Content VE.Norms.Node.pred@VE.Norms.Tree VE.Readings.Candidate.content@VE.Readings.Doc VE.Readings.Candidate@VE.Readings.Doc VE.Readings.Doc@VE.Readings.Doc VE.Readings.candidate@VE.Readings.Doc VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
+  -- expr 4087168980
 theorem VE.Acts.ruleReading_ok
   ∀ {D : VE.Acts.ActsDoc} {A : VE.Acts.Act} {N : VE.Norms.Node} {R : List VE.Acts.Simple},
     VE.Acts.ruleReading D A N = Except.ok R →
@@ -1599,12 +1657,66 @@ theorem VE.Acts.sourceCheck_choices_le
     VE.Acts.sourceCheck D unspec V fx N b s = Except.ok () → (VE.Readings.choices D).length ≤ VE.Readings.maxChoices
   -- uses VE.Acts.Source@VE.Acts.Sources VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.sourceCheck@VE.Acts.Sources VE.Readings.Choice@VE.Readings.Choice VE.Readings.Doc@VE.Readings.Doc VE.Readings.choices@VE.Readings.Choice VE.Readings.maxChoices@VE.Readings.Choice
   -- expr 2720630957
+theorem VE.Acts.sourceCheck_complete
+  ∀ (D : VE.Readings.Doc) (unspec : List String) (V : VE.Acts.Vocab) (fx : List String) (N b : Nat) (s : VE.Acts.Source),
+    VE.Acts.framesOk V = Bool.true →
+      (VE.Readings.choices D).length ≤ VE.Readings.maxChoices →
+        VE.Acts.SourceExact D unspec V fx N b s → VE.Acts.sourceCheck D unspec V fx N b s = Except.ok ()
+  -- uses VE.Acts.Source@VE.Acts.Sources VE.Acts.SourceExact@VE.Acts.Sources VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.framesOk@VE.Acts.Syntax VE.Acts.sourceCheck@VE.Acts.Sources VE.Readings.Choice@VE.Readings.Choice VE.Readings.Doc@VE.Readings.Doc VE.Readings.choices@VE.Readings.Choice VE.Readings.maxChoices@VE.Readings.Choice
+  -- expr 1635240441
+theorem VE.Acts.sourceCheck_complete_needs_bound
+  ∀ {D : VE.Readings.Doc} {unspec : List String} {V : VE.Acts.Vocab} {fx : List String} {N b : Nat} {s : VE.Acts.Source}
+    {ts : List VE.Acts.Lexical.Tok} {op : VE.Acts.Op} {Rs : List (List VE.Acts.Simple)} {ps : List String},
+    VE.Acts.framesOk V = Bool.true →
+      VE.Acts.Lexical.lex fx s.phrase = Except.ok ts →
+        VE.Acts.opOfSource s = Option.some op →
+          VE.Acts.phraseReadings V op N b ts.toArray = VE.Acts.Listing.ok Rs →
+            VE.Acts.paraphrases fx op s.form "the source phrase" Rs = Except.ok ps →
+              VE.Acts.compareViews ps (VE.Acts.choiceViews D unspec s) (VE.Acts.readingViews fx s Rs) = Except.ok () →
+                VE.Readings.maxChoices < (VE.Readings.choices D).length →
+                  VE.Acts.SourceExact D unspec V fx N b s ∧
+                    VE.Acts.sourceCheck D unspec V fx N b s =
+                      Except.error
+                        (ToString.toString "ResourceLimit: the document has more than " ++
+                          (ToString.toString VE.Readings.maxChoices ++
+                            ToString.toString " choices, too many to compare with the source phrase's readings"))
+  -- uses VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.Lexical.lex@VE.Acts.Lexical VE.Acts.Listing.ok@VE.Acts.Read VE.Acts.Listing@VE.Acts.Read VE.Acts.Op@VE.Acts.Table VE.Acts.Simple@VE.Acts.Table VE.Acts.Source.form@VE.Acts.Sources VE.Acts.Source.phrase@VE.Acts.Sources VE.Acts.Source@VE.Acts.Sources VE.Acts.SourceExact@VE.Acts.Sources VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.choiceViews@VE.Acts.Sources VE.Acts.compareViews@VE.Acts.Sources VE.Acts.framesOk@VE.Acts.Syntax VE.Acts.opOfSource@VE.Acts.Sources VE.Acts.paraphrases@VE.Acts.Table VE.Acts.phraseReadings@VE.Acts.Readings VE.Acts.readingViews@VE.Acts.Sources VE.Acts.sourceCheck@VE.Acts.Sources VE.Readings.Choice@VE.Readings.Choice VE.Readings.Doc@VE.Readings.Doc VE.Readings.choices@VE.Readings.Choice VE.Readings.maxChoices@VE.Readings.Choice
+  -- expr 633195627
+theorem VE.Acts.sourceCheck_eq
+  ∀ {D : VE.Readings.Doc} {unspec : List String} {V : VE.Acts.Vocab} {fx : List String} {N b : Nat} {s : VE.Acts.Source}
+    {ts : List VE.Acts.Lexical.Tok} {op : VE.Acts.Op} {Rs : List (List VE.Acts.Simple)} {ps : List String},
+    VE.Acts.Lexical.lex fx s.phrase = Except.ok ts →
+      VE.Acts.opOfSource s = Option.some op →
+        VE.Acts.phraseReadings V op N b ts.toArray = VE.Acts.Listing.ok Rs →
+          VE.Acts.paraphrases fx op s.form "the source phrase" Rs = Except.ok ps →
+            VE.Acts.sourceCheck D unspec V fx N b s =
+              if VE.Readings.maxChoices < (VE.Readings.choices D).length then
+                Except.error
+                  (ToString.toString "ResourceLimit: the document has more than " ++
+                        ToString.toString VE.Readings.maxChoices ++
+                      ToString.toString " choices, too many to " ++
+                    "compare with the source phrase's readings")
+              else VE.Acts.compareViews ps (VE.Acts.choiceViews D unspec s) (VE.Acts.readingViews fx s Rs)
+  -- uses VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.Lexical.lex@VE.Acts.Lexical VE.Acts.Listing.ok@VE.Acts.Read VE.Acts.Listing@VE.Acts.Read VE.Acts.Op@VE.Acts.Table VE.Acts.Simple@VE.Acts.Table VE.Acts.Source.form@VE.Acts.Sources VE.Acts.Source.phrase@VE.Acts.Sources VE.Acts.Source@VE.Acts.Sources VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.choiceViews@VE.Acts.Sources VE.Acts.compareViews@VE.Acts.Sources VE.Acts.opOfSource@VE.Acts.Sources VE.Acts.paraphrases@VE.Acts.Table VE.Acts.phraseReadings@VE.Acts.Readings VE.Acts.readingViews@VE.Acts.Sources VE.Acts.sourceCheck@VE.Acts.Sources VE.Readings.Choice@VE.Readings.Choice VE.Readings.Doc@VE.Readings.Doc VE.Readings.choices@VE.Readings.Choice VE.Readings.maxChoices@VE.Readings.Choice
+  -- expr 3496701327
 theorem VE.Acts.sourceCheck_exact
   ∀ (D : VE.Readings.Doc) (unspec : List String) (V : VE.Acts.Vocab) (fx : List String) (N b : Nat) (s : VE.Acts.Source),
     VE.Acts.framesOk V = Bool.true →
       VE.Acts.sourceCheck D unspec V fx N b s = Except.ok () → VE.Acts.SourceExact D unspec V fx N b s
   -- uses VE.Acts.Source@VE.Acts.Sources VE.Acts.SourceExact@VE.Acts.Sources VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.framesOk@VE.Acts.Syntax VE.Acts.sourceCheck@VE.Acts.Sources VE.Readings.Doc@VE.Readings.Doc
   -- expr 3181368861
+theorem VE.Acts.sourceExact_of_compare
+  ∀ {D : VE.Readings.Doc} {unspec : List String} {V : VE.Acts.Vocab} {fx : List String} {N b : Nat} {s : VE.Acts.Source}
+    {ts : List VE.Acts.Lexical.Tok} {op : VE.Acts.Op} {Rs : List (List VE.Acts.Simple)} {ps : List String},
+    VE.Acts.framesOk V = Bool.true →
+      VE.Acts.Lexical.lex fx s.phrase = Except.ok ts →
+        VE.Acts.opOfSource s = Option.some op →
+          VE.Acts.phraseReadings V op N b ts.toArray = VE.Acts.Listing.ok Rs →
+            VE.Acts.paraphrases fx op s.form "the source phrase" Rs = Except.ok ps →
+              VE.Acts.compareViews ps (VE.Acts.choiceViews D unspec s) (VE.Acts.readingViews fx s Rs) = Except.ok () →
+                VE.Acts.SourceExact D unspec V fx N b s
+  -- uses VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.Lexical.lex@VE.Acts.Lexical VE.Acts.Listing.ok@VE.Acts.Read VE.Acts.Listing@VE.Acts.Read VE.Acts.Op@VE.Acts.Table VE.Acts.Simple@VE.Acts.Table VE.Acts.Source.form@VE.Acts.Sources VE.Acts.Source.phrase@VE.Acts.Sources VE.Acts.Source@VE.Acts.Sources VE.Acts.SourceExact@VE.Acts.Sources VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.choiceViews@VE.Acts.Sources VE.Acts.compareViews@VE.Acts.Sources VE.Acts.framesOk@VE.Acts.Syntax VE.Acts.opOfSource@VE.Acts.Sources VE.Acts.paraphrases@VE.Acts.Table VE.Acts.phraseReadings@VE.Acts.Readings VE.Acts.readingViews@VE.Acts.Sources VE.Readings.Doc@VE.Readings.Doc
+  -- expr 1650467188
 theorem VE.Acts.specPremises_plain
   ∀ (E : VE.Norms.Doc) (ρ : VE.Acts.Restrictive) (acts : List (String × VE.Acts.Atom)) (r : VE.Norms.Regulated),
     r ∈ E.T.regulated →
