@@ -2577,9 +2577,9 @@
   },
   {
    "class": "V",
-   "lines": 8,
-   "reason": "soft-cf-text-1: VE/SoftNorms/Wire.lean +6 V (notSearchedText, the one owner of the no-search words for the rights and soft CONFLICT-FREE lines), VE/SoftNorms/Run.lean +2 V (conflictFreeText docstring and its call of notSearchedText); K +0, S +0; each exercised by a #guard that can fail (SoftNorms/Run.lean :129, :130; mutants S1-S4)",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), soft-cf-text-1, 2026-11-11",
+   "lines": 5,
+   "reason": "ps-2ab-rule-firstob: VE/Presupposition/Admit.lean +5 (ruleOb); Run.lean fixtures r1b, docF2, obsF2 classed T; K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ps-2ab-rule-firstob, 2026-11-11",
    "commit": "b81b82ef91add8f6ea2fce62feeb421a5bed0c7b"
   },
   {
@@ -2602,6 +2602,13 @@
    "reason": "norm-defaults-cfr-1b: V +31 (VE/NormDefaults/Layered.lean +12, VE/NormDefaults/Explain.lean +11, VE/NormDefaults/Wire.lean +3, ResponseShape/Schemas/NormDefaults.lean +3, VE/Acts/Decode.lean +1, VE/NormDefaults/Run.lean +1); K +0, S +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), norm-defaults-cfr-1b, 2026-10-18",
    "commit": "c94ad399b7b1f6804c12fbc555a5758d5e971ae6"
+  },
+  {
+   "class": "V",
+   "lines": 8,
+   "reason": "soft-cf-text-1: VE/SoftNorms/Wire.lean +6 V (notSearchedText, the one owner of the no-search words for the rights and soft CONFLICT-FREE lines), VE/SoftNorms/Run.lean +2 V (conflictFreeText docstring and its call of notSearchedText); K +0, S +0; each exercised by a #guard that can fail (SoftNorms/Run.lean :129, :130; mutants S1-S4)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), soft-cf-text-1, 2026-11-11",
+   "commit": "b81b82ef91add8f6ea2fce62feeb421a5bed0c7b"
   },
   {
    "class": "S",
