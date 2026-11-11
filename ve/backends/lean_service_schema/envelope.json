@@ -112,7 +112,9 @@
           "scope",
           "senses.project",
           "english.command",
-          "act-readings"
+          "act-readings",
+          "clauses-elaborate",
+          "english.statement"
         ]
       },
       "protocol": {"const": 2},

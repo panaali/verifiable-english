@@ -701,10 +701,12 @@ theorem closure_denote_forget (E : VE.Environment) (ns : List String) (S : VE.St
         (a.denote (VE.Definitions.forget ns S) ρ ↔ a.denote S ρ)
   | .top, _, _, _ | .bottom, _, _, _ => Iff.rfl
   | .unary p t, _, ρ, ⟨_, hp, _⟩ => by
-    simp only [VE.Closure.Formula.denote, term_denote_forget]
+    simp only [VE.Closure.Formula.denote, VE.Closure.Formula.toCore, VE.Core.Formula.denote,
+      term_denote_forget]
     simp [VE.Definitions.forget, (hide_predicates_some hp).1]
   | .binary p t u, _, ρ, ⟨_, _, hp, _⟩ => by
-    simp only [VE.Closure.Formula.denote, term_denote_forget]
+    simp only [VE.Closure.Formula.denote, VE.Closure.Formula.toCore, VE.Core.Formula.denote,
+      term_denote_forget]
     simp [VE.Definitions.forget, (hide_predicates_some hp).1]
   | .eq t u, _, _, _ => Iff.rfl
   | .not a, Γ, ρ, h => not_congr (closure_denote_forget E ns S a Γ ρ h)

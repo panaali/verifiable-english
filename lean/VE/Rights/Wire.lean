@@ -1,5 +1,6 @@
 import VE.Rights.Route
 import VE.SoftNorms.Admission
+import VE.CertificateWire
 import VE.Limits
 
 /-! The rights decoder and replays (docs/spec/rights.md 3, 9.3 and 9.4).
@@ -37,6 +38,80 @@ open VE.Bridge (exactFields fields stringField strings)
 open VE.SoftNorms (SoftNode SoftDoc soften decisions)
 open VE.SoftNorms.Wire (SoftEnvironment stripSoft withDecisions enc softProfile)
 open VE.Order.ProfileGate (bind_ok)
+
+/-- A line's norm fields are the only children whose soft defaults affect a rights meaning id. -/
+def rightsChildContext (context key : String) : String :=
+  if context == "line" && ["norm", "liberty", "recognition"].contains key then "norm" else key
+
+/-- Rights 3.5 normal form. The document and identity routes share this one decision. -/
+def rightsNormalForm (content : Json) : Json :=
+  let soft := fun (kv : String × Json) =>
+    VE.SoftNorms.Wire.softDefault kv || (VE.SoftNorms.Wire.softKeys.contains kv.1 && kv.2 == .null)
+  let norm := fun (j : Json) => match j with
+    | .obj kvs => Json.mkObj (kvs.toList.filter (!soft ·))
+    | j => j
+  let line := fun (j : Json) => match j with
+    | .obj kvs => Json.mkObj (kvs.toList.map fun (k, v) =>
+        (k, if rightsChildContext "line" k == "norm" then norm v else v))
+    | j => j
+  match content with
+  | .obj kvs => match kvs.toList with
+    | [(kind, .obj body)] =>
+      if ["right", "right_lines"].contains kind then
+        match body.toList.lookup "lines" with
+        | some (.arr ls) => Json.mkObj [(kind, (Json.obj body).setObjVal! "lines" (.arr (ls.map line)))]
+        | _ => content
+      else content
+    | _ => content
+  | _ => content
+
+#guard
+  -- Two lines, and a member on each side of `lines` (`holder` before it, `name` after it in the object's order).
+  let line := fun (soft : List (String × Json)) => Json.mkObj [("kind", .str "claim"),
+    ("norm", Json.mkObj ([("name", .str "n")] ++ soft))]
+  let n := fun (soft : List (String × Json)) => Json.mkObj [("right", Json.mkObj [("holder", .str "p"),
+    ("lines", Json.arr #[line soft, line soft]), ("name", .str "r")])]
+  rightsNormalForm (n [("mode", .str "strict"), ("rank", .null), ("alterable", Json.arr #[]), ("exception", .null),
+      ("hard", .bool false)]) == n [] &&
+    rightsNormalForm (n [("mode", .null), ("hard", .null), ("alterable", .null)]) == n [] &&
+    rightsNormalForm (n [("mode", .str "default")]) == n [("mode", .str "default")] &&
+    rightsNormalForm (n [("hard", .bool true)]) == n [("hard", .bool true)] &&
+    rightsNormalForm (n [("alterable", Json.arr #[.str "court"])]) == n [("alterable", Json.arr #[.str "court"])] &&
+    rightsNormalForm (n [("exception", Json.mkObj [("decided_by", .str "court")])]) ==
+      n [("exception", Json.mkObj [("decided_by", .str "court")])] &&
+    rightsNormalForm (n [("guard", .null)]) == n [("guard", .null)]
+#guard
+  let p := fun (soft : List (String × Json)) => Json.mkObj [("right_lines", Json.mkObj [("right", .str "r"),
+    ("lines", Json.arr #[Json.mkObj [("kind", .str "power"),
+      ("liberty", Json.mkObj ([("name", .str "l")] ++ soft)),
+      ("recognition", Json.mkObj ([("name", .str "c")] ++ soft))]])])]
+  rightsNormalForm (p [("mode", .str "strict"), ("alterable", Json.arr #[])]) == p [] &&
+    rightsNormalForm (p [("rank", .str "high")]) == p [("rank", .str "high")]
+#guard
+  let b := Json.mkObj [("bar", Json.mkObj [("name", .str "b"), ("mode", .str "strict")])]
+  rightsNormalForm b == b
+#guard
+  -- `lines` the last member of the body.
+  let n := fun (soft : List (String × Json)) => Json.mkObj [("right", Json.mkObj [("holder", .str "p"),
+    ("lines", Json.arr #[Json.mkObj [("kind", .str "claim"), ("norm", Json.mkObj ([("name", .str "n")] ++ soft))]])])]
+  rightsNormalForm (n [("mode", .str "strict")]) == n []
+
+
+def rightsMeaningId (profiles : List String) (environmentId : String) (content : Json) :
+    Except String String :=
+  VE.CertificateWire.documentDigest s!"ve-meaning-{VE.Route.Wire.identityVersion profiles}\n"
+    (Json.mkObj [("environment_id", .str environmentId), ("ast", rightsNormalForm content)])
+
+#guard
+  let body := fun (soft : List (String × Json)) => Json.mkObj [("right", Json.mkObj [
+    ("name", .str "r"), ("lines", Json.arr #[Json.mkObj [
+      ("kind", .str "claim"), ("norm", Json.mkObj ([("name", .str "n")] ++ soft))]])])]
+  (rightsMeaningId ["rights@0"] "env" (body [])).toOption ==
+    (rightsMeaningId ["rights@0"] "env" (body [("mode", .str "strict")])).toOption &&
+  (rightsMeaningId ["rights@0"] "env" (body [])).toOption !=
+    (rightsMeaningId ["rights@0"] "env" (body [("mode", .str "default")])).toOption &&
+  (rightsMeaningId ["rights@0"] "env" (body [])).toOption !=
+    (rightsMeaningId ["rights@0"] "other-env" (body [])).toOption
 
 def rightsProfile : String := "rights@0"
 
@@ -288,7 +363,7 @@ def decodeRightsSource (environment document : Json) : Except String RightsSourc
   let us ← units.foldlM (addUnit re.se) {}
   let D : RightsDoc :=
     ⟨⟨re.se.ne.rv.environment, re.se.ne.rv.literals, re.se.soft, ⟨re.se.ne.regulated, [], us.outside⟩⟩,
-     re.block, us.rs, us.limits, us.bars, us.cites, some us.order, us.sourceUnits.getD []⟩
+     re.block, us.rs, us.limits, us.bars, us.cites, some us.order, us.sourceUnits.getD [], []⟩
   match hv : validateRightsOnce D with
   | .error e => throw e
   | .ok () => pure ⟨re, D, by unfold WellFormedRights; rw [← validateRightsOnce_eq, hv], rfl, rfl, rfl⟩

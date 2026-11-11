@@ -660,19 +660,29 @@
       "type": "object"
     },
     "status": {
-      "$comment": "NormDefaults.Run.runOtherCase and Wire.runLayered norm-defaults-status: the requested predicate's point status, then NormDefaults.Wire.statusFields: the tuple's entity ids, the deciding author rules and the atoms where two UNDECIDED fillings differ.",
+      "$comment": "NormDefaults.Run.runOtherCase and Wire.runLayered norm-defaults-status: the requested predicate's point status, then NormDefaults.Wire.statusFields: the tuple's entity ids, the deciding author rules, each with the request rule it comes from (Wire.ruleSources: an acts@0 part's split rule, a rights@0 fan-out's norm or bar rule's bar, else itself), and the atoms where two UNDECIDED fillings differ.",
       "additionalProperties": false,
       "properties": {
         "differs": {"items": {"$ref": "#/$defs/atom"}, "type": "array"},
         "id": {"$ref": "common.json#/$defs/id_ok"},
         "point_status": {"enum": ["SETTLED yes", "SETTLED no", "UNDECIDED", "UNKNOWN"]},
         "predicate": {"type": "string", "x-equals": "/predicate"},
-        "rules": {"$ref": "common.json#/$defs/strings"},
+        "rules": {"$ref": "common.json#/$defs/strings", "x-unique-strings": true},
+        "sources": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {"rule": {"type": "string"}, "source": {"type": "string"}},
+            "required": ["rule", "source"],
+            "type": "object"
+          },
+          "type": "array"
+        },
         "status": {"const": "ok"},
-        "tuple": {"$ref": "common.json#/$defs/strings"}
+        "tuple": {"$ref": "common.json#/$defs/strings", "x-equals": "/tuple"}
       },
-      "required": ["id", "status", "point_status", "predicate", "tuple", "rules", "differs"],
-      "type": "object"
+      "required": ["id", "status", "point_status", "predicate", "tuple", "rules", "sources", "differs"],
+      "type": "object",
+      "x-same-length": ["rules", "sources"]
     },
     "witness_conflict": {
       "$comment": "A conflict witness replay (NormDefaults.Wire.replayWitnessU and Wire.witnessConflictX): the requested target; exactly a CONFLICT also carries NormDefaults.Wire.conflictFields: the tuple's entity ids, the kind, the deciding assignment and the deciding author rules.",

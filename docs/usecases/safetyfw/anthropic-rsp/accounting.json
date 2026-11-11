@@ -1,0 +1,1875 @@
+{
+ "case": "anthropic-rsp",
+ "source_sha256": "c7de7fe2f1f44cdd650efb327ecd798f1140034cf6328eb2e494de587c2c3063",
+ "blocks": [
+  {
+   "id": "rows-cond",
+   "file": "rules.d1.ve",
+   "span_length": 368,
+   "used": [
+    "crossed",
+    "listed",
+    "plans_in_place"
+   ],
+   "unaccounted": [
+    "apply",
+    "asl",
+    "capabil",
+    "case",
+    "detail",
+    "expand",
+    "improve",
+    "level",
+    "maintain",
+    "mitig",
+    "monitor",
+    "overall",
+    "potential",
+    "practic",
+    "previou",
+    "propens",
+    "protection",
+    "report",
+    "risk",
+    "set",
+    "state",
+    "strong",
+    "system",
+    "use"
+   ],
+   "entries": [
+    {
+     "words": "Mitigations-our plan as a company",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "We will maintain or improve on our ASL-3 protections",
+     "reason": "loss",
+     "arg": "1"
+    },
+    {
+     "words": "We will apply protections at least as strong as our ASL-3 protections (see previous row) to an expanded set of potential use cases",
+     "reason": "loss",
+     "arg": "1"
+    },
+    {
+     "words": "We will detail the state of our AI systems' capabilities and propensities, our monitoring practices, and the overall level of risk in our Risk Reports",
+     "reason": "loss",
+     "arg": "1"
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "rows-uncond",
+   "file": "rules.d1.ve",
+   "span_length": 0,
+   "used": [
+    "listed",
+    "plans_in_place"
+   ],
+   "unaccounted": [],
+   "entries": [],
+   "problems": []
+  },
+  {
+   "id": "f5-strict",
+   "file": "rules.d1.ve",
+   "span_length": 55,
+   "used": [
+    "crossed",
+    "listed",
+    "strong_argument"
+   ],
+   "unaccounted": [
+    "developer",
+    "frontier"
+   ],
+   "entries": [
+    {
+     "words": "A frontier developer",
+     "reason": "reading",
+     "arg": "RS2"
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f5-default",
+   "file": "rules.d1.ve",
+   "span_length": 0,
+   "used": [
+    "crossed",
+    "listed",
+    "strong_argument"
+   ],
+   "unaccounted": [],
+   "entries": [],
+   "problems": []
+  },
+  {
+   "id": "f5-evidence-strict",
+   "file": "rules.d1.ve",
+   "span_length": 459,
+   "used": [
+    "ai_evidence_risk",
+    "automated_rd",
+    "crossed",
+    "evidentiary_standards"
+   ],
+   "unaccounted": [],
+   "entries": [],
+   "problems": []
+  },
+  {
+   "id": "f5-evidence-default",
+   "file": "rules.d1.ve",
+   "span_length": 459,
+   "used": [
+    "ai_evidence_risk",
+    "automated_rd",
+    "crossed",
+    "evidentiary_standards"
+   ],
+   "unaccounted": [],
+   "entries": [],
+   "problems": []
+  },
+  {
+   "id": "s1-advance-default",
+   "file": "rules.d1.ve",
+   "span_length": 84,
+   "used": [
+    "advance_recommendations"
+   ],
+   "unaccounted": [
+    "example",
+    "mixture",
+    "sett",
+    "strive"
+   ],
+   "entries": [
+    {
+     "words": "We will strive to",
+     "reason": "reading",
+     "arg": "RS12advance"
+    },
+    {
+     "words": "through a mixture of example-setting",
+     "reason": "exposition",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f6-maintain",
+   "file": "rules.d1.ve",
+   "span_length": 42,
+   "used": [
+    "roadmap_maintained"
+   ],
+   "unaccounted": [],
+   "entries": [],
+   "problems": []
+  },
+  {
+   "id": "f6-share",
+   "file": "rules.d1.ve",
+   "span_length": 155,
+   "used": [
+    "roadmap_shared"
+   ],
+   "unaccounted": [
+    "benefit",
+    "director",
+    "long",
+    "term",
+    "trust",
+    "well"
+   ],
+   "entries": [
+    {
+     "words": "Board of Directors (Board)",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "Long-Term Benefit Trust (LTBT)",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "as well as",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f6-updates",
+   "file": "rules.d1.ve",
+   "span_length": 85,
+   "used": [
+    "roadmap_updates"
+   ],
+   "unaccounted": [
+    "achieve",
+    "provide"
+   ],
+   "entries": [
+    {
+     "words": "We will provide updates on whether we achieve the goals",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f6-keep-past",
+   "file": "rules.d1.ve",
+   "span_length": 54,
+   "used": [
+    "past_roadmaps_kept"
+   ],
+   "unaccounted": [
+    "keep",
+    "link"
+   ],
+   "entries": [
+    {
+     "words": "keep",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "at that link",
+     "reason": "loss",
+     "arg": "1"
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f6-strive-default",
+   "file": "rules.d1.ve",
+   "span_length": 135,
+   "used": [
+    "goal_revised_less_ambitious",
+    "goals_kept"
+   ],
+   "unaccounted": [
+    "achieve",
+    "revise",
+    "strive",
+    "unable"
+   ],
+   "entries": [
+    {
+     "words": "we will strive to",
+     "reason": "reading",
+     "arg": "RS12strive"
+    },
+    {
+     "words": "where we revise the goals in a less ambitious direction simply because we are unable to achieve them",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f7-publish",
+   "file": "rules.d1.ve",
+   "span_length": 116,
+   "used": [
+    "risk_reports_published"
+   ],
+   "unaccounted": [
+    "discuss",
+    "public",
+    "system",
+    "version"
+   ],
+   "entries": [
+    {
+     "words": "discussing the risks of our systems",
+     "reason": "exposition",
+     "arg": ""
+    },
+    {
+     "words": "We will publish a public version of our Risk Report",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f8-public",
+   "file": "rules.d1.ve",
+   "span_length": 66,
+   "used": [
+    "in_scope",
+    "publicly_deployed"
+   ],
+   "unaccounted": [
+    "cover"
+   ],
+   "entries": [
+    {
+     "words": "It will cover",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f8-internal",
+   "file": "rules.d1.ve",
+   "span_length": 356,
+   "used": [
+    "determined_by_publication",
+    "exceeds_prior_report",
+    "in_scope",
+    "internally_deployed"
+   ],
+   "unaccounted": [
+    "posed",
+    "relat",
+    "well"
+   ],
+   "entries": [
+    {
+     "words": "as well as",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "could pose risks related to",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "those posed by",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f8-autonomous",
+   "file": "rules.d1.ve",
+   "span_length": 115,
+   "used": [
+    "autonomous_research_use",
+    "in_scope",
+    "internally_deployed"
+   ],
+   "unaccounted": [
+    "include",
+    "minimum"
+   ],
+   "entries": [
+    {
+     "words": "this will-at a minimum-include",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f9-public",
+   "file": "rules.d1.ve",
+   "span_length": 540,
+   "used": [
+    "more_capable_than_analyzed",
+    "off_cycle_public_deployment",
+    "off_cycle_published"
+   ],
+   "unaccounted": [
+    "affect",
+    "analys",
+    "artifact",
+    "automat",
+    "biological",
+    "capabil",
+    "card",
+    "change",
+    "chemical",
+    "circumstanc",
+    "determine",
+    "high",
+    "how",
+    "individual",
+    "misalign",
+    "prior",
+    "production",
+    "propens",
+    "relat",
+    "stak",
+    "system",
+    "weapon"
+   ],
+   "entries": [
+    {
+     "words": "an analysis of an individual model's relevant risks",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "(e.g., how the model's capabilities and propensities affect or change prior analyses)",
+     "reason": "exposition",
+     "arg": ""
+    },
+    {
+     "words": "in the following circumstances",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "that we determine is",
+     "reason": "open",
+     "arg": "more_capable_than_analyzed"
+    },
+    {
+     "words": "risks related to chemical/biological weapons production, high-stakes misalignment, or automated R&D",
+     "reason": "open",
+     "arg": "more_capable_than_analyzed"
+    },
+    {
+     "words": "(e.g., in a prior Risk Report, System Card, or other public artifact",
+     "reason": "exposition",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f9-internal",
+   "file": "rules.d1.ve",
+   "span_length": 316,
+   "used": [
+    "exceeds_all_analyzed",
+    "off_cycle_internal_deployment",
+    "off_cycle_published"
+   ],
+   "unaccounted": [
+    "30",
+    "artifact",
+    "automat",
+    "card",
+    "days",
+    "determin",
+    "high",
+    "misalign",
+    "prior",
+    "relat",
+    "stak",
+    "system"
+   ],
+   "entries": [
+    {
+     "words": "Within 30 days of",
+     "reason": "loss",
+     "arg": "limit 9"
+    },
+    {
+     "words": "determining that",
+     "reason": "open",
+     "arg": "exceeds_all_analyzed"
+    },
+    {
+     "words": "could pose risks related to high-stakes misalignment or automated R&D",
+     "reason": "open",
+     "arg": "exceeds_all_analyzed"
+    },
+    {
+     "words": "(e.g., in a prior Risk Report, System Card, or other public artifact",
+     "reason": "exposition",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f10-candid-default",
+   "file": "rules.d1.ve",
+   "span_length": 68,
+   "used": [
+    "candid_reports"
+   ],
+   "unaccounted": [
+    "intend"
+   ],
+   "entries": [
+    {
+     "words": "We intend",
+     "reason": "reading",
+     "arg": "RS12candid"
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f10-in-line",
+   "file": "rules.d1.ve",
+   "span_length": 117,
+   "used": [
+    "describes_mitigation_and_deviates",
+    "deviation_reported"
+   ],
+   "unaccounted": [
+    "chang",
+    "description",
+    "future",
+    "keep",
+    "line",
+    "practic"
+   ],
+   "entries": [
+    {
+     "words": "we will keep our future practices in line with this description",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "changes",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f10-attempt-strict",
+   "file": "rules.d1.ve",
+   "span_length": 136,
+   "used": [
+    "strong_attempt"
+   ],
+   "unaccounted": [
+    "ensure"
+   ],
+   "entries": [
+    {
+     "words": "to ensure that",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f10-attempt-default",
+   "file": "rules.d1.ve",
+   "span_length": 0,
+   "used": [
+    "strong_attempt"
+   ],
+   "unaccounted": [],
+   "entries": [],
+   "problems": []
+  },
+  {
+   "id": "f11-factual",
+   "file": "rules.d1.ve",
+   "span_length": 41,
+   "used": [
+    "factual_documented"
+   ],
+   "unaccounted": [
+    "docu"
+   ],
+   "entries": [
+    {
+     "words": "A Risk Report will document the following",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f11-analyses",
+   "file": "rules.d1.ve",
+   "span_length": 107,
+   "used": [
+    "risk_analysed"
+   ],
+   "unaccounted": [
+    "conclusion",
+    "level",
+    "model",
+    "overall",
+    "provide",
+    "reason",
+    "regard",
+    "specific",
+    "threat"
+   ],
+   "entries": [
+    {
+     "words": "We will provide our reasoning and conclusions regarding both specific threat models and overall risk levels",
+     "reason": "loss",
+     "arg": "1"
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f11-review",
+   "file": "rules.d1.ve",
+   "span_length": 58,
+   "used": [
+    "past_reviewed"
+   ],
+   "unaccounted": [
+    "addres",
+    "decision"
+   ],
+   "entries": [
+    {
+     "words": "We will address",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "and decisions",
+     "reason": "loss",
+     "arg": "1"
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f11-goal-missed",
+   "file": "rules.d1.ve",
+   "span_length": 86,
+   "used": [
+    "goal_miss_addressed",
+    "roadmap_goal_missed"
+   ],
+   "unaccounted": [
+    "case",
+    "chang",
+    "fail",
+    "meet"
+   ],
+   "entries": [
+    {
+     "words": "Changes to our Frontier Safety Roadmap",
+     "reason": "loss",
+     "arg": "1"
+    },
+    {
+     "words": "any cases where we failed to meet our goals",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f11-marginal",
+   "file": "rules.d1.ve",
+   "span_length": 243,
+   "used": [
+    "marginal_analysed",
+    "marginal_justification"
+   ],
+   "unaccounted": [
+    "additional",
+    "addres",
+    "based",
+    "justify",
+    "ours",
+    "system"
+   ],
+   "entries": [
+    {
+     "words": "by AI systems such as ours",
+     "reason": "open",
+     "arg": "marginal_justification"
+    },
+    {
+     "words": "are justifying our decision to move forward based partly on",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "we will additionally address the following",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f11-assess",
+   "file": "rules.d1.ve",
+   "span_length": 73,
+   "used": [
+    "assessed_in_report",
+    "in_scope"
+   ],
+   "unaccounted": [],
+   "entries": [],
+   "problems": []
+  },
+  {
+   "id": "f12-internal-feedback",
+   "file": "rules.d1.ve",
+   "span_length": 196,
+   "used": [
+    "internal_feedback"
+   ],
+   "unaccounted": [],
+   "entries": [],
+   "problems": []
+  },
+  {
+   "id": "f12-external-default",
+   "file": "rules.d1.ve",
+   "span_length": 88,
+   "used": [
+    "external_feedback"
+   ],
+   "unaccounted": [],
+   "entries": [],
+   "problems": []
+  },
+  {
+   "id": "f12-approval",
+   "file": "rules.d1.ve",
+   "span_length": 91,
+   "used": [
+    "executive_approved"
+   ],
+   "unaccounted": [
+    "officer",
+    "responsible",
+    "scal",
+    "sent"
+   ],
+   "entries": [
+    {
+     "words": "will be sent to the CEO and Responsible Scaling Officer (RSO)",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f12-final",
+   "file": "rules.d1.ve",
+   "span_length": 52,
+   "used": [
+    "board_approved"
+   ],
+   "unaccounted": [
+    "ceo",
+    "determin",
+    "make",
+    "rso",
+    "ultimate"
+   ],
+   "entries": [
+    {
+     "words": "The CEO and RSO will make the ultimate determination",
+     "reason": "reading",
+     "arg": "RS7"
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f12-share",
+   "file": "rules.d1.ve",
+   "span_length": 174,
+   "used": [
+    "governance_notified",
+    "risk_report_approved"
+   ],
+   "unaccounted": [],
+   "entries": [],
+   "problems": []
+  },
+  {
+   "id": "f12-board-approval",
+   "file": "rules.d1.ve",
+   "span_length": 224,
+   "used": [
+    "board_approved",
+    "marginal_major_role"
+   ],
+   "unaccounted": [
+    "ceo",
+    "event",
+    "just",
+    "previou",
+    "rather",
+    "requir",
+    "rso"
+   ],
+   "entries": [
+    {
+     "words": "In the event that",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "(see previous section)",
+     "reason": "exposition",
+     "arg": ""
+    },
+    {
+     "words": "(rather than just the CEO and RSO)",
+     "reason": "exposition",
+     "arg": ""
+    },
+    {
+     "words": "will be required",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f13-minimize-default",
+   "file": "rules.d1.ve",
+   "span_length": 156,
+   "used": [
+    "redactions_minimized"
+   ],
+   "unaccounted": [],
+   "entries": [],
+   "problems": []
+  },
+  {
+   "id": "f13-redact-p",
+   "file": "rules.d1.ve",
+   "span_length": 113,
+   "used": [
+    "redaction",
+    "redaction_reason_listed"
+   ],
+   "unaccounted": [],
+   "entries": [],
+   "problems": []
+  },
+  {
+   "id": "f13-disclose",
+   "file": "rules.d1.ve",
+   "span_length": 210,
+   "used": [
+    "redactions_disclosed"
+   ],
+   "unaccounted": [
+    "aim",
+    "brief",
+    "case",
+    "give",
+    "high",
+    "justific",
+    "level",
+    "many",
+    "necessari",
+    "though",
+    "very"
+   ],
+   "entries": [
+    {
+     "words": "aim to give a brief justification for such redactions",
+     "reason": "rule",
+     "arg": "f13-justify-default"
+    },
+    {
+     "words": "though in many cases this will necessarily be very high-level",
+     "reason": "exposition",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f13-justify-default",
+   "file": "rules.d1.ve",
+   "span_length": 210,
+   "used": [
+    "redactions_justified"
+   ],
+   "unaccounted": [
+    "case",
+    "disclose",
+    "existence",
+    "high",
+    "level",
+    "many",
+    "necessari",
+    "report",
+    "though",
+    "very"
+   ],
+   "entries": [
+    {
+     "words": "We will disclose the existence of each redaction made in the public version of the report",
+     "reason": "rule",
+     "arg": "f13-disclose"
+    },
+    {
+     "words": "though in many cases this will necessarily be very high-level",
+     "reason": "exposition",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f14-public-review-default",
+   "file": "rules.d1.ve",
+   "span_length": 99,
+   "used": [
+    "public_review_sought"
+   ],
+   "unaccounted": [
+    "practice",
+    "report",
+    "risk",
+    "seek",
+    "toward",
+    "work"
+   ],
+   "entries": [
+    {
+     "words": "We will work toward a practice of seeking",
+     "reason": "reading",
+     "arg": "RS12review"
+    },
+    {
+     "words": "on our Risk Reports",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f14-full-review",
+   "file": "rules.d1.ve",
+   "span_length": 196,
+   "used": [
+    "full_review",
+    "highly_capable",
+    "significantly_redacted"
+   ],
+   "unaccounted": [
+    "anytime",
+    "complete",
+    "cover",
+    "describ",
+    "minimum",
+    "proces"
+   ],
+   "entries": [
+    {
+     "words": "At a minimum",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "complete a full external review process",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "(described below)",
+     "reason": "exposition",
+     "arg": ""
+    },
+    {
+     "words": "anytime a Risk Report covers",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f14-ltbt-request",
+   "file": "rules.d1.ve",
+   "span_length": 115,
+   "used": [
+    "ltbt_requested_review",
+    "ltbt_review"
+   ],
+   "unaccounted": [
+    "ltbt'",
+    "upon"
+   ],
+   "entries": [
+    {
+     "words": "upon the LTBT's request",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f15-financial-interest",
+   "file": "rules.d1.ve",
+   "span_length": 92,
+   "used": [
+    "candidate_has_financial_interest",
+    "candidate_selected"
+   ],
+   "unaccounted": [
+    "itself",
+    "minimum"
+   ],
+   "entries": [
+    {
+     "words": "At a minimum",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "itself",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f15-revenue-strict",
+   "file": "rules.d1.ve",
+   "span_length": 161,
+   "used": [
+    "candidate_revenue_dependent",
+    "candidate_selected"
+   ],
+   "unaccounted": [
+    "continu",
+    "part",
+    "team",
+    "work"
+   ],
+   "entries": [
+    {
+     "words": "external review parties should not be teams whose",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "continuing to work with them",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f15-revenue-default",
+   "file": "rules.d1.ve",
+   "span_length": 0,
+   "used": [
+    "candidate_revenue_dependent",
+    "candidate_selected"
+   ],
+   "unaccounted": [],
+   "entries": [],
+   "problems": []
+  },
+  {
+   "id": "f15-select-approval",
+   "file": "rules.d1.ve",
+   "span_length": 99,
+   "used": [
+    "reviewers_approved",
+    "selecting_reviewers"
+   ],
+   "unaccounted": [],
+   "entries": [],
+   "problems": []
+  },
+  {
+   "id": "f16-share-one-week",
+   "file": "rules.d1.ve",
+   "span_length": 168,
+   "used": [
+    "shared_with_reviewers",
+    "submitted_under_external_review"
+   ],
+   "unaccounted": [
+    "involve"
+   ],
+   "entries": [
+    {
+     "words": "The external review process will involve",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f16-ask-commentary",
+   "file": "rules.d1.ve",
+   "span_length": 225,
+   "used": [
+    "commentary_asked",
+    "external_review_process"
+   ],
+   "unaccounted": [
+    "find",
+    "made",
+    "memorialize",
+    "topic",
+    "written"
+   ],
+   "entries": [
+    {
+     "words": "to memorialize its findings on the topics above in a written report that is made public",
+     "reason": "loss",
+     "arg": "limit 4"
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f16-before-board-default",
+   "file": "rules.d1.ve",
+   "span_length": 146,
+   "used": [
+    "early_full_review",
+    "external_review_process"
+   ],
+   "unaccounted": [],
+   "entries": [],
+   "problems": []
+  },
+  {
+   "id": "f16-all-sections",
+   "file": "rules.d1.ve",
+   "span_length": 82,
+   "used": [
+    "external_review_process",
+    "sections_shared"
+   ],
+   "unaccounted": [
+    "section"
+   ],
+   "entries": [
+    {
+     "words": "All sections",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f16-split-p",
+   "file": "rules.d1.ve",
+   "span_length": 205,
+   "used": [
+    "external_review_process",
+    "split_review"
+   ],
+   "unaccounted": [
+    "section",
+    "shar"
+   ],
+   "entries": [
+    {
+     "words": "All sections",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "of the Risk Report will be shared with at least one external reviewer",
+     "reason": "rule",
+     "arg": "f16-all-sections"
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f16-only-legal",
+   "file": "rules.d1.ve",
+   "span_length": 161,
+   "used": [
+    "external_review_process",
+    "legal_prohibition_redaction",
+    "legal_rights_redaction",
+    "only_legal_redactions"
+   ],
+   "unaccounted": [],
+   "entries": [],
+   "problems": []
+  },
+  {
+   "id": "f18-rso",
+   "file": "rules.d1.ve",
+   "span_length": 123,
+   "used": [
+    "rso_maintained"
+   ],
+   "unaccounted": [
+    "designat",
+    "implement",
+    "member",
+    "policy",
+    "responsible",
+    "staff"
+   ],
+   "entries": [
+    {
+     "words": "a designated member of staff who is responsible for the implementation of this policy",
+     "reason": "loss",
+     "arg": "1"
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f19-brief-ltbt",
+   "file": "rules.d1.ve",
+   "span_length": 86,
+   "used": [
+    "ltbt_briefed"
+   ],
+   "unaccounted": [],
+   "entries": [],
+   "problems": []
+  },
+  {
+   "id": "f19-unredacted",
+   "file": "rules.d1.ve",
+   "span_length": 101,
+   "used": [
+    "unredacted_shared"
+   ],
+   "unaccounted": [
+    "200",
+    "anthropic",
+    "final",
+    "large",
+    "number",
+    "share"
+   ],
+   "entries": [
+    {
+     "words": "We will share",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "final",
+     "reason": "loss",
+     "arg": "1"
+    },
+    {
+     "words": "with a large number of Anthropic employees (at least 200",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f19-minimally-redacted",
+   "file": "rules.d1.ve",
+   "span_length": 93,
+   "used": [
+    "minimally_redacted_shared"
+   ],
+   "unaccounted": [
+    "anthropic'",
+    "share"
+   ],
+   "entries": [
+    {
+     "words": "We will share",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "Anthropic's",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f20-process",
+   "file": "rules.d1.ve",
+   "span_length": 139,
+   "used": [
+    "reporting_process"
+   ],
+   "unaccounted": [],
+   "entries": [],
+   "problems": []
+  },
+  {
+   "id": "f20-recipients",
+   "file": "rules.d1.ve",
+   "span_length": 145,
+   "used": [
+    "recipient_options"
+   ],
+   "unaccounted": [
+    "receiv",
+    "staff"
+   ],
+   "entries": [
+    {
+     "words": "Staff will have more than one option for who receives these reports",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f20-investigate",
+   "file": "rules.d1.ve",
+   "span_length": 172,
+   "used": [
+    "investigated",
+    "noncompliance_report_received"
+   ],
+   "unaccounted": [],
+   "entries": [],
+   "problems": []
+  },
+  {
+   "id": "f20-quarterly",
+   "file": "rules.d1.ve",
+   "span_length": 121,
+   "used": [
+    "quarterly_updates"
+   ],
+   "unaccounted": [
+    "potential",
+    "provide",
+    "regard",
+    "substantiat"
+   ],
+   "entries": [
+    {
+     "words": "We will provide quarterly updates to the Board regarding reports of potential noncompliance, whether substantiated or not",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f20-notify-board",
+   "file": "rules.d1.ve",
+   "span_length": 170,
+   "used": [
+    "board_notified",
+    "material_safety_risk"
+   ],
+   "unaccounted": [
+    "notice",
+    "provide",
+    "public"
+   ],
+   "entries": [
+    {
+     "words": "we may provide",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "public notice of the same",
+     "reason": "rule",
+     "arg": "f20-notice-p"
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f20-notice-p",
+   "file": "rules.d1.ve",
+   "span_length": 44,
+   "used": [
+    "material_safety_risk",
+    "public_notice"
+   ],
+   "unaccounted": [
+    "provide"
+   ],
+   "entries": [
+    {
+     "words": "provide",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f20-retaliation",
+   "file": "rules.d1.ve",
+   "span_length": 51,
+   "used": [
+    "retaliation_protection"
+   ],
+   "unaccounted": [
+    "final"
+   ],
+   "entries": [
+    {
+     "words": "Finally",
+     "reason": "exposition",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f20-board-recipient",
+   "file": "rules.d1.ve",
+   "span_length": 100,
+   "used": [
+    "board_member_recipient",
+    "concerns_rso"
+   ],
+   "unaccounted": [],
+   "entries": [],
+   "problems": []
+  },
+  {
+   "id": "f21-no-impeding",
+   "file": "rules.d1.ve",
+   "span_length": 206,
+   "used": [
+    "disparagement_obligation",
+    "impedes_safety_concerns"
+   ],
+   "unaccounted": [],
+   "entries": [],
+   "problems": []
+  },
+  {
+   "id": "f21-clause",
+   "file": "rules.d1.ve",
+   "span_length": 174,
+   "used": [
+    "clause_allows_concerns",
+    "non_disparagement_clause_offered"
+   ],
+   "unaccounted": [
+    "disclosure",
+    "existence"
+   ],
+   "entries": [
+    {
+     "words": "nor will it preclude disclosure of the existence of that clause",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f22-internal-review",
+   "file": "rules.d1.ve",
+   "span_length": 81,
+   "used": [
+    "internal_review"
+   ],
+   "unaccounted": [],
+   "entries": [],
+   "problems": []
+  },
+  {
+   "id": "f22-third-party-review",
+   "file": "rules.d1.ve",
+   "span_length": 151,
+   "used": [
+    "compliance_review"
+   ],
+   "unaccounted": [],
+   "entries": [],
+   "problems": []
+  },
+  {
+   "id": "f23-approval",
+   "file": "rules.d1.ve",
+   "span_length": 111,
+   "used": [
+    "change_approved",
+    "rsp_change_proposed"
+   ],
+   "unaccounted": [
+    "chang"
+   ],
+   "entries": [
+    {
+     "words": "Changes to the RSP",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f23-publish",
+   "file": "rules.d1.ve",
+   "span_length": 169,
+   "used": [
+    "rsp_updated",
+    "update_published"
+   ],
+   "unaccounted": [
+    "draft",
+    "public",
+    "record",
+    "share"
+   ],
+   "entries": [
+    {
+     "words": "we will publicly share the updated version",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "will record the differences from the prior draft",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f23-website",
+   "file": "rules.d1.ve",
+   "span_length": 62,
+   "used": [
+    "website_version"
+   ],
+   "unaccounted": [
+    "maintain",
+    "rsp"
+   ],
+   "entries": [
+    {
+     "words": "We will maintain the current version of the RSP",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f24-argument",
+   "file": "rules.d1.ve",
+   "span_length": 389,
+   "used": [
+    "argument_required",
+    "in_the_lead",
+    "lead_evidence"
+   ],
+   "unaccounted": [],
+   "entries": [],
+   "problems": []
+  },
+  {
+   "id": "f24-delay",
+   "file": "rules.d1.ve",
+   "span_length": 310,
+   "used": [
+    "delay",
+    "in_the_lead",
+    "lead_delay_needed",
+    "lead_evidence",
+    "lead_no_longer_believed"
+   ],
+   "unaccounted": [],
+   "entries": [],
+   "problems": []
+  },
+  {
+   "id": "f25-meet",
+   "file": "rules.d1.ve",
+   "span_length": 498,
+   "used": [
+    "competitors_evidence",
+    "competitors_strong_measures",
+    "develops_highly_capable",
+    "highly_capable",
+    "posture_matched"
+   ],
+   "unaccounted": [],
+   "entries": [],
+   "problems": []
+  },
+  {
+   "id": "f25-delay",
+   "file": "rules.d1.ve",
+   "span_length": 405,
+   "used": [
+    "competitors_evidence",
+    "competitors_strong_measures",
+    "delay",
+    "develops_highly_capable",
+    "highly_capable",
+    "posture_attainable",
+    "posture_delay_needed"
+   ],
+   "unaccounted": [],
+   "entries": [],
+   "problems": []
+  },
+  {
+   "id": "f26-effort",
+   "file": "rules.d1.ve",
+   "span_length": 382,
+   "used": [
+    "competitor_better_mitigation",
+    "mitigation_evidence",
+    "significant_effort"
+   ],
+   "unaccounted": [],
+   "entries": [],
+   "problems": []
+  },
+  {
+   "id": "f26-need-not-delay",
+   "file": "rules.d1.ve",
+   "span_length": 390,
+   "used": [
+    "competitor_better_mitigation",
+    "delay",
+    "mitigation_evidence"
+   ],
+   "unaccounted": [
+    "however",
+    "necessari"
+   ],
+   "entries": [
+    {
+     "words": "However, we will not necessarily delay",
+     "reason": "reading",
+     "arg": "RS4"
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "threshold-t1",
+   "file": "facts.d1.ve",
+   "span_length": 48,
+   "used": [
+    "listed",
+    "non_novel_chem_bio_weapons"
+   ],
+   "unaccounted": [],
+   "entries": [],
+   "problems": []
+  },
+  {
+   "id": "threshold-t2",
+   "file": "facts.d1.ve",
+   "span_length": 44,
+   "used": [
+    "listed",
+    "novel_chem_bio_weapons"
+   ],
+   "unaccounted": [],
+   "entries": [],
+   "problems": []
+  },
+  {
+   "id": "threshold-t3",
+   "file": "facts.d1.ve",
+   "span_length": 45,
+   "used": [
+    "listed",
+    "misaligned_high_stakes"
+   ],
+   "unaccounted": [],
+   "entries": [],
+   "problems": []
+  },
+  {
+   "id": "threshold-t4",
+   "file": "facts.d1.ve",
+   "span_length": 28,
+   "used": [
+    "automated_rd",
+    "listed"
+   ],
+   "unaccounted": [],
+   "entries": [],
+   "problems": []
+  },
+  {
+   "id": "highly-capable-t4",
+   "file": "facts.d1.ve",
+   "span_length": 117,
+   "used": [
+    "automated_rd",
+    "crossed",
+    "highly_capable"
+   ],
+   "unaccounted": [
+    "describ"
+   ],
+   "entries": [
+    {
+     "words": "described in Section 1",
+     "reason": "exposition",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "t4-suff",
+   "file": "facts.d1.ve",
+   "span_length": 274,
+   "used": [
+    "automated_rd",
+    "crossed",
+    "full_substitution_at_competitive_cost",
+    "scenario_2"
+   ],
+   "unaccounted": [
+    "consider",
+    "met"
+   ],
+   "entries": [
+    {
+     "words": "We will consider this threshold to be met",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "t4-only-if",
+   "file": "facts.d1.ve",
+   "span_length": 0,
+   "used": [
+    "automated_rd",
+    "crossed",
+    "full_substitution_at_competitive_cost",
+    "scenario_2"
+   ],
+   "unaccounted": [],
+   "entries": [],
+   "problems": []
+  },
+  {
+   "id": "s2-suff-result",
+   "file": "facts.d1.ve",
+   "span_length": 413,
+   "used": [
+    "automation_attributable",
+    "double_rate",
+    "scenario_2"
+   ],
+   "unaccounted": [
+    "absence",
+    "consider",
+    "occurr"
+   ],
+   "entries": [
+    {
+     "words": "We would consider scenario (2) to have occurred where",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "in the absence of",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "s2-suff-third",
+   "file": "facts.d1.ve",
+   "span_length": 100,
+   "used": [
+    "automation_attributable",
+    "continuation_accelerates",
+    "double_rate",
+    "scenario_2"
+   ],
+   "unaccounted": [],
+   "entries": [],
+   "problems": []
+  },
+  {
+   "id": "s2-only-if-result",
+   "file": "facts.d1.ve",
+   "span_length": 0,
+   "used": [
+    "automation_attributable",
+    "double_rate",
+    "scenario_2"
+   ],
+   "unaccounted": [],
+   "entries": [],
+   "problems": []
+  },
+  {
+   "id": "s2-only-if-third",
+   "file": "facts.d1.ve",
+   "span_length": 0,
+   "used": [
+    "automation_attributable",
+    "continuation_accelerates",
+    "double_rate",
+    "scenario_2"
+   ],
+   "unaccounted": [],
+   "entries": [],
+   "problems": []
+  }
+ ],
+ "totals": {
+  "blocks": 87,
+  "blocks_with_loss": 9,
+  "losses_by_class": {
+   "1": 9,
+   "limit 4": 1,
+   "limit 9": 1
+  },
+  "entries_by_reason": {
+   "exposition": 12,
+   "loss": 11,
+   "open": 5,
+   "reading": 7,
+   "restates": 54,
+   "rule": 4
+  },
+  "unaccounted_words": 226,
+  "blocks_with_unaccounted_words": 51,
+  "quotes": 94,
+  "unanchored_quotes": 0,
+  "elided_quotes_without_source": 0
+ },
+ "problems": []
+}

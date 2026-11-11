@@ -678,7 +678,13 @@ steps 3 and 4 remeasured on AR-20 (2026-10-26: `VE/Closure/Paths.lean` re-export
 `decodeSoftDoc` and `decodeFilledDoc` call `Route.Admission.decodeDoc`, step 4a);
 step 7 remeasured on cmp-s4c (2026-11-05: the discourse `runCase` decides the composed path;
 its 21 trusted lines, up from 18, bring step 7 to 734 lines); step 6 remeasured at this merge
-from the current ledger (1,835 reclassified lines);
+from the current ledger (1,835 reclassified lines); step 3 remeasured on AR-23 (2026-11-10: closure's `denote` is now
+Core's on the embedding, so the ledger's closure `denote`, `Paths`, `Finite` and `Consequence` rows hold 14 trusted
+lines, down from 30); steps 6 and 8b remeasured at the merge of
+ve-integration into rights-cfr-1 (2026-11-10: 1,836 reclassified lines; 3,783 tied, the rights decoder
+lines of rights-cfr-1 with ci-5's speech decoder lines), then with ap-parse-index's two tied lines
+(3,785 tied); step 8b remeasured at the merge of ve-integration into ci-3 (2026-11-11: 3,795 tied, ci-3's four
+speech-source decoder lines with ve-integration's 3,791);
 the current measurements follow:
 
 The merged step 2a ledger now identifies no remaining runner lines in that row; the table below records
@@ -689,13 +695,13 @@ the current source classification alongside the previously measured steps.
 | 1 | 0 | 23 | 0 | 0 | 23 | 5 | 1.5 | 3.1 |
 | 2a | 0 | 0 | 0 | 0 | 0 | 4 | 1 | 0.0 |
 | 2b | 117 | 0 | 0 | 0 | 117 | 2 | 2 | 29.2 |
-| 3 | 30 | 0 | 0 | 10 | 20 | 14 | 2 | 0.7 |
+| 3 | 14 | 0 | 0 | 10 | 4 | 14 | 2 | 0.1 |
 | 4 | 697 | 0 | 0 | 420 | 277 | 14 | 2 | 9.9 |
 | 5 | 0 | 466 | 0 | 0 | 466 | 14 | 1 | 33.3 |
-| 6 | 35 | 0 | 1835 | 0 | 35 | 3 | 1 | 11.7 |
-| 7 | 734 | 0 | 0 | 60 | 674 | 6 | 2 | 56.2 |
+| 6 | 35 | 0 | 1836 | 0 | 35 | 3 | 1 | 11.7 |
+| 7 | 739 | 0 | 0 | 60 | 679 | 6 | 2 | 56.6 |
 | 8a | 87 | 225 | 0 | 60 | 252 | 10 | 1.5 | 16.8 |
-| 8b | 0 | 3754 | 0 | 0 | 3754 | 30 | 3 | 41.7 |
+| 8b | 0 | 3795 | 0 | 0 | 3795 | 30 | 3 | 42.2 |
 | 9 | 88 | 0 | 0 | 0 | 88 | 18 | 2 | 2.4 |
 | 10 | 0 | 0 | 0 | 0 | 0 | 4 | 1 | 0.0 |
 

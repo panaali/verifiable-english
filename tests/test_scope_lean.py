@@ -33,10 +33,11 @@ def test_the_scope_files_are_classified():
 
 # The document mode's block decoder and fold helpers (sc-1b), named one by one: no theorem states them yet (the
 # spec's statement over the decoder, `decodeScope_bound`, waits for sc-1ae; sc-5rd's payload lemmas state
-# `decodeParts`, `decodeGovernor`, `decodeEffect` and `listMember`); R16's condition for them is met by
-# `lean/VE/Scope/WireExamples.lean`'s #guards and docs/scope/sc-1b/trust-mutants.json.
+# `decodeParts`, `decodeGovernor`, `decodeEffect` and `listMember`; sa-checked-view's `statusOf_known`, `statusOf`);
+# R16's condition for them is met by `lean/VE/Scope/WireExamples.lean`'s #guards and
+# docs/scope/sc-1b/trust-mutants.json.
 WIRE = [f"VE/Scope/Wire.lean: VE.Scope.{name}" for name in (
-    "byStatus", "changers", "decodeListName", "decodeReach", "spanIn", "statusOf")]
+    "byStatus", "changers", "decodeListName", "decodeReach", "spanIn")]
 
 
 # The per-choice GOVERN's helpers (sc-5rb, scope spec 11.2), named one by one: sc-5rd's lemmas for
@@ -50,11 +51,13 @@ READINGS = [f"VE/Scope/Readings.lean: VE.Scope.{name}" for name in (
 # The authoring wordings' table and readers (sc-7, scope spec 2.2), named one by one: `scope_parseRender` and
 # `scope_renderParse` state `Pinned.parseGovernor` and `Pinned.renderGovernor`; these remain, and R16's condition for
 # them is met by `lean/VE/Scope/AuthoringExamples.lean`'s #guards, docs/scope/sc-7/trust-mutants.json and
-# docs/scope/sc-7/mutants.json.
+# docs/scope/sc-7/mutants.json; sc-7-f11's `allowed`, `charRef` and `follower` by the same #guards,
+# docs/scope/sc-7-f11/trust-mutants.json and docs/scope/sc-7-f11/mutants.json.
 AUTHORING = [f"VE/Scope/Authoring.lean: VE.Scope.Pinned.{name}" for name in (
-    "Row", "Row.wording", "attitude", "between", "cap", "classify", "clause", "closers", "english", "englishOf",
-    "frameBlock", "frameWording", "heading", "kindCondition", "kindWording", "listName", "narrowed?", "narrowing", "onList",
-    "onName", "readHeading", "readings", "spaced", "splitOnce", "textOf", "uncap", "wordChar")]
+    "Row", "Row.wording", "allowed", "attitude", "between", "cap", "charRef", "classify", "clause", "closers", "english",
+    "englishOf", "follower", "frameBlock", "frameWording", "heading", "kindCondition", "kindWording", "listName",
+    "narrowed?", "narrowing", "onList", "onName", "readHeading", "readings", "spaced", "splitOnce", "textOf", "uncap",
+    "wordChar")]
 
 
 def test_every_trusted_scope_definition_is_used_by_a_theorem():

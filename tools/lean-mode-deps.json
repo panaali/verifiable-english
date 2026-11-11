@@ -33,6 +33,10 @@
       "VE.CertificateWire",
       "VE.Route.Run"
     ],
+    "clauses-elaborate": [
+      "VE.RightClauses.Run",
+      "VE.Route.Run"
+    ],
     "diagnose": [
       "VE.Service.Diagnose",
       "VE.Route.Run"
@@ -67,6 +71,10 @@
     ],
     "english.read": [
       "VE.EnglishGrammar.Run",
+      "VE.Route.Run"
+    ],
+    "english.statement": [
+      "VE.EnglishGrammar.Norm.Run",
       "VE.Route.Run"
     ],
     "environment": [
@@ -178,8 +186,8 @@
     ]
   },
   "sources": {
-    "lean/VE/Service/Protocol.lean": "a7bcf56e900add9a1b01f099254a869e3ee3aeb70569a2470e56667ded791a6a",
-    "lean/VE/Service/Registry.lean": "a150249d6424d60198dd867ffe5e027a190e02cb84084e1bbf8b2d0cc5bfd30a",
+    "lean/VE/Service/Protocol.lean": "7b64405464d9f768ebe00786ede77ebe0fd702bb48d0986279a37bd94b46ea72",
+    "lean/VE/Service/Registry.lean": "cef1d0114712fa1b952f076bcc0040d4a04a3de8a921433702dd534502c163b2",
     "tools/lean_mode_deps.lean": "50dc1459ef617a9ca489fd9a5068a5b875a48c661f3cf6ac573f6a157950c8e7"
   }
 }

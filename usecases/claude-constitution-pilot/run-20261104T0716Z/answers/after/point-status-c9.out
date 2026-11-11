@@ -149,6 +149,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -307,6 +308,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -465,6 +467,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -623,6 +626,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -756,6 +760,12 @@
      "predicate": "system_prompt_compliance_required",
      "rules": [
       "comply-operator-prompt"
+     ],
+     "sources": [
+      {
+       "rule": "comply-operator-prompt",
+       "source": "comply-operator-prompt"
+      }
      ],
      "status": "ok",
      "tuple": [
@@ -916,6 +926,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -1075,6 +1086,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -1234,6 +1246,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -1393,6 +1406,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -1527,6 +1541,12 @@
      "predicate": "system_prompt_compliance_required",
      "rules": [
       "comply-operator-prompt"
+     ],
+     "sources": [
+      {
+       "rule": "comply-operator-prompt",
+       "source": "comply-operator-prompt"
+      }
      ],
      "status": "ok",
      "tuple": [
@@ -1687,6 +1707,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -1846,6 +1867,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -2005,6 +2027,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -2164,6 +2187,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -2298,6 +2322,12 @@
      "predicate": "system_prompt_compliance_required",
      "rules": [
       "comply-operator-prompt"
+     ],
+     "sources": [
+      {
+       "rule": "comply-operator-prompt",
+       "source": "comply-operator-prompt"
+      }
      ],
      "status": "ok",
      "tuple": [
@@ -2459,6 +2489,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -2619,6 +2650,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -2779,6 +2811,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -2939,6 +2972,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -3074,6 +3108,12 @@
      "predicate": "system_prompt_compliance_required",
      "rules": [
       "comply-operator-prompt"
+     ],
+     "sources": [
+      {
+       "rule": "comply-operator-prompt",
+       "source": "comply-operator-prompt"
+      }
      ],
      "status": "ok",
      "tuple": [
@@ -3234,6 +3274,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -3393,6 +3434,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -3552,6 +3594,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -3711,6 +3754,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -3845,6 +3889,12 @@
      "predicate": "system_prompt_compliance_required",
      "rules": [
       "comply-operator-prompt"
+     ],
+     "sources": [
+      {
+       "rule": "comply-operator-prompt",
+       "source": "comply-operator-prompt"
+      }
      ],
      "status": "ok",
      "tuple": [
@@ -4006,6 +4056,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -4166,6 +4217,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -4326,6 +4378,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -4486,6 +4539,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -4621,6 +4675,12 @@
      "predicate": "system_prompt_compliance_required",
      "rules": [
       "comply-operator-prompt"
+     ],
+     "sources": [
+      {
+       "rule": "comply-operator-prompt",
+       "source": "comply-operator-prompt"
+      }
      ],
      "status": "ok",
      "tuple": [
@@ -4782,6 +4842,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -4942,6 +5003,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -5102,6 +5164,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -5262,6 +5325,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -5397,6 +5461,12 @@
      "predicate": "system_prompt_compliance_required",
      "rules": [
       "comply-operator-prompt"
+     ],
+     "sources": [
+      {
+       "rule": "comply-operator-prompt",
+       "source": "comply-operator-prompt"
+      }
      ],
      "status": "ok",
      "tuple": [
@@ -5559,6 +5629,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -5720,6 +5791,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -5881,6 +5953,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -6042,6 +6115,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -6178,6 +6252,12 @@
      "predicate": "system_prompt_compliance_required",
      "rules": [
       "comply-operator-prompt"
+     ],
+     "sources": [
+      {
+       "rule": "comply-operator-prompt",
+       "source": "comply-operator-prompt"
+      }
      ],
      "status": "ok",
      "tuple": [
@@ -6338,6 +6418,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -6497,6 +6578,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -6656,6 +6738,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -6815,6 +6898,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -6949,6 +7033,12 @@
      "predicate": "system_prompt_compliance_required",
      "rules": [
       "comply-operator-prompt"
+     ],
+     "sources": [
+      {
+       "rule": "comply-operator-prompt",
+       "source": "comply-operator-prompt"
+      }
      ],
      "status": "ok",
      "tuple": [
@@ -7110,6 +7200,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -7270,6 +7361,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -7430,6 +7522,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -7590,6 +7683,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -7725,6 +7819,12 @@
      "predicate": "system_prompt_compliance_required",
      "rules": [
       "comply-operator-prompt"
+     ],
+     "sources": [
+      {
+       "rule": "comply-operator-prompt",
+       "source": "comply-operator-prompt"
+      }
      ],
      "status": "ok",
      "tuple": [
@@ -7886,6 +7986,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -8046,6 +8147,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -8206,6 +8308,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -8366,6 +8469,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -8501,6 +8605,12 @@
      "predicate": "system_prompt_compliance_required",
      "rules": [
       "comply-operator-prompt"
+     ],
+     "sources": [
+      {
+       "rule": "comply-operator-prompt",
+       "source": "comply-operator-prompt"
+      }
      ],
      "status": "ok",
      "tuple": [
@@ -8663,6 +8773,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -8824,6 +8935,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -8985,6 +9097,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -9146,6 +9259,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -9282,6 +9396,12 @@
      "predicate": "system_prompt_compliance_required",
      "rules": [
       "comply-operator-prompt"
+     ],
+     "sources": [
+      {
+       "rule": "comply-operator-prompt",
+       "source": "comply-operator-prompt"
+      }
      ],
      "status": "ok",
      "tuple": [
@@ -9443,6 +9563,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -9603,6 +9724,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -9763,6 +9885,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -9923,6 +10046,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -10058,6 +10182,12 @@
      "predicate": "system_prompt_compliance_required",
      "rules": [
       "comply-operator-prompt"
+     ],
+     "sources": [
+      {
+       "rule": "comply-operator-prompt",
+       "source": "comply-operator-prompt"
+      }
      ],
      "status": "ok",
      "tuple": [
@@ -10220,6 +10350,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -10381,6 +10512,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -10542,6 +10674,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -10703,6 +10836,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -10839,6 +10973,12 @@
      "predicate": "system_prompt_compliance_required",
      "rules": [
       "comply-operator-prompt"
+     ],
+     "sources": [
+      {
+       "rule": "comply-operator-prompt",
+       "source": "comply-operator-prompt"
+      }
      ],
      "status": "ok",
      "tuple": [
@@ -11001,6 +11141,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -11162,6 +11303,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -11323,6 +11465,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -11484,6 +11627,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -11620,6 +11764,12 @@
      "predicate": "system_prompt_compliance_required",
      "rules": [
       "comply-operator-prompt"
+     ],
+     "sources": [
+      {
+       "rule": "comply-operator-prompt",
+       "source": "comply-operator-prompt"
+      }
      ],
      "status": "ok",
      "tuple": [
@@ -11783,6 +11933,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -11945,6 +12096,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -12107,6 +12259,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -12269,6 +12422,7 @@
      "point_status": "UNDECIDED",
      "predicate": "system_prompt_compliance_required",
      "rules": [],
+     "sources": [],
      "status": "ok",
      "tuple": [
       "c",
@@ -12406,6 +12560,12 @@
      "predicate": "system_prompt_compliance_required",
      "rules": [
       "comply-operator-prompt"
+     ],
+     "sources": [
+      {
+       "rule": "comply-operator-prompt",
+       "source": "comply-operator-prompt"
+      }
      ],
      "status": "ok",
      "tuple": [

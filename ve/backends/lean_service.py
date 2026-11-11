@@ -27,8 +27,10 @@ result `i` must carry position `i`, the SHA-256 of the text
 of case `i` as sent (`case_digests`) and the identity fields the runners echo from the
 case, so an omitted, reordered, duplicated or substituted result is rejected by binding.
 Every field must also be well formed (`lean_service_schema/`, compiled by
-`service_schema.py`). Content that preserves binding, such as the targets inside one
-norms result, is the service's responsibility and is not checked here.
+`service_schema.py`). A binding no schema keyword can state is its mode's `MODE_BINDINGS` entry
+(`bind_answers`; norm-defaults: a status row's rules and a certificate row's premise count).
+Content that preserves binding, such as the targets inside one norms result, is the service's
+responsibility and is not checked here.
 
 Supervision: an address-space limit on the process, a deadline per request, recycling
 after a number of requests or above an RSS threshold, and a small pool.
@@ -90,6 +92,7 @@ import time
 
 from ..errors import CheckerUnavailable, ResourceLimit, VEError
 from ..limits import MAX_CASES, MAX_LINE_BYTES  # the service's handshake limits (VE.Limits)
+from ..profiles import RULE_FIELDS
 from ..environment_wire import EncodedEnvironment
 from .service_schema import MODES, Invalid, check_handshake, check_response
 
@@ -162,6 +165,11 @@ DEADLINES: dict[str, tuple[float, float]] = {
     "scope": (120.0, 120.0),
     # The `act-readings` mode (act-phrases AP-4): one phrase's readings, within the parse limits of one act check.
     "act-readings": _CORE,
+    # The `clauses-elaborate` mode (right-clauses 8.1): the head's decoding and checks, then the rights decoder and
+    # its checks on the plained document, as the `rights` mode runs them.
+    "clauses-elaborate": (120.0, 120.0),
+    # The `english.statement` mode (en-e3-norm EN-2): english.read's deadline (spec 2.3, recipe step 4).
+    "english.statement": _CORE,
 }
 WALL_FACTOR = 10.0
 _MIB = 1 << 20
@@ -352,6 +360,98 @@ def request_context(nonce: str, mode: str, cases_text: str, count: int,
         cases = None
     return {"id": nonce, "mode": mode, "cases": cases, "digests": digests,
             "bytes": len(cases_text.strip().encode())}
+
+
+# The profiles under which Lean answers rules by names it generates, absent from the request: `acts@0` splits a joined
+# act into parts (`VE.Acts.Elaborate.partRule`), `rights@0` names fan-out and bar rules (`VE.Rights.Tree.fanName`,
+# `barRuleName`). Only under them may a status rule differ from the request source Lean echoes for it.
+GENERATED_RULE_PROFILES = ("acts@0", "rights@0")
+# The request objects that are rules, by the key that holds them: a `rights@0` line's rule fields (`RULE_FIELDS`), a
+# `{"norm": ...}` unit, and a `{"bar": ...}` unit (the source of a bar rule).
+_RULE_KEYS = frozenset((*RULE_FIELDS, "norm", "bar"))
+
+
+def _profiles(case: dict) -> list:
+    environment = case.get("environment")
+    profiles = environment.get("profiles") if isinstance(environment, dict) else None
+    return profiles if isinstance(profiles, list) else []
+
+
+def _rule_names(case: dict) -> set:
+    """The names of the case's request rules: its `norms` units' (`{"norm": {"name", ...}}`); under `rights@0`, whose
+    route reads the `document` (`Wire.decodeLayered`), the rules the document holds instead (`_RULE_KEYS`, at any
+    depth; a bar's name whatever its reading)."""
+    if "rights@0" not in _profiles(case):
+        units = case.get("norms")
+        return {unit["norm"]["name"] for unit in units if isinstance(unit, dict) and isinstance(unit.get("norm"), dict)
+                and type(unit["norm"].get("name")) is str} if isinstance(units, list) else set()
+    names, stack = set(), [case.get("document")]
+    while stack:
+        node = stack.pop()
+        if isinstance(node, list):
+            stack.extend(node)
+        elif isinstance(node, dict):
+            for key, value in node.items():
+                if key in _RULE_KEYS and isinstance(value, dict) and type(value.get("name")) is str:
+                    names.add(value["name"])
+                stack.append(value)
+    return names
+
+
+def _bind_status_rules(row: dict, case: dict) -> None:
+    """Each status rule against the request source Lean echoes for it (`sources`, `Wire.ruleSources`; the schema types
+    it and states its length): the echo names the rule, in order; its source is a rule of the request
+    (`_rule_names`); and a rule other than its source, one Lean generated, only under `GENERATED_RULE_PROFILES` and
+    named by no request rule. A generated name forged together with its echo to a request source is not caught: only
+    Lean's naming tells it, and Python keeps no copy of it (R8)."""
+    rules, sources = row.get("rules"), row.get("sources")
+    if not (isinstance(rules, list) and isinstance(sources, list) and len(rules) == len(sources)):
+        raise Invalid("norm-defaults-status sources is not one echo per rule")
+    names, generated = _rule_names(case), any(profile in GENERATED_RULE_PROFILES for profile in _profiles(case))
+    for rule, echo in zip(rules, sources):
+        source = echo.get("source") if isinstance(echo, dict) else None
+        if not isinstance(echo, dict) or echo.get("rule") != rule:
+            raise Invalid(f"norm-defaults-status sources does not echo rule {rule!r}")
+        if source not in names:
+            raise Invalid(f"norm-defaults-status rule {rule!r} has source {source!r}, no rule of the request")
+        if rule != source and not generated:
+            raise Invalid(f"norm-defaults-status rules name {rule!r}, no rule of the request")
+        if rule != source and rule in names:
+            raise Invalid(f"norm-defaults-status rule {rule!r} is a request rule echoed from {source!r}")
+
+
+def _bind_norm_defaults(row: dict, case: dict) -> None:
+    """The bindings of the norm-defaults mode's rows that no schema keyword states (the schema binds a status row's
+    `tuple`, distinct `rules` and one `sources` echo per rule): each status rule's echoed source is a rule of the
+    request (`_bind_status_rules`), and a certificate row counts the regenerated premises its certificate is bound to,
+    its premise meaning ids less the case's own premises (`Wire.bindingOk` binds the ids)."""
+    kind = case.get("kind")
+    if kind == "norm-defaults-status":
+        _bind_status_rules(row, case)
+    elif kind == "norm-defaults-certificate":
+        certificate, premises = case.get("certificate"), case.get("premises")
+        ids = certificate.get("premise_meaning_ids") if isinstance(certificate, dict) else None
+        count = row.get("premises")
+        if not (isinstance(ids, list) and isinstance(premises, list) and type(count) is int
+                and count == len(ids) - len(premises)):
+            raise Invalid("norm-defaults-certificate premises is not the count its certificate is bound to")
+
+
+# The bindings of a mode's `ok` rows that its response schema does not state, by mode.
+MODE_BINDINGS = {"norm-defaults": _bind_norm_defaults}
+
+
+def bind_answers(mode: str, response: object, request: dict) -> None:
+    """Raise `Invalid` unless every `ok` result of a schema-checked `response` is bound to its case by its
+    mode's `MODE_BINDINGS` entry (none: nothing to add)."""
+    bind = MODE_BINDINGS.get(mode)
+    if bind is None or not isinstance(response, dict) or response.get("status") != "ok":
+        return
+    cases = request.get("cases") or []
+    for result in response.get("results") or ():
+        row, index = result.get("result"), result.get("index")
+        if isinstance(row, dict) and row.get("status") == "ok":
+            bind(row, cases[index])
 
 
 _hashes: dict[tuple, str] = {}
@@ -744,7 +844,9 @@ class LeanService:
                 raise _Failure(f"service could not read the request: {response.get('error')}")
             raise _Failure(f"response id does not match the request nonce: {raw[:200]!r}")
         try:
-            check_response(mode, response, request_context(nonce, mode, cases_text, count, texts, expanded))
+            context = request_context(nonce, mode, cases_text, count, texts, expanded)
+            check_response(mode, response, context)
+            bind_answers(mode, response, context)
         except Invalid as exc:
             raise _Failure(f"malformed response ({exc}): {raw[:200]!r}") from None
         return raw, response

@@ -6,6 +6,7 @@
 - `lean/ResponseShape/Schemas/Cardinality.lean` — The source of `ve/backends/lean_service_schema/cardinality.json` (`file`; `tools/response_schemas.py` writes it): the `cardinality` mode's row (`VE.Cardinality…
 - `lean/ResponseShape/Schemas/Check.lean` — The source of `ve/backends/lean_service_schema/check.json` (`file`; `tools/response_schemas.py` writes it).
 - `lean/ResponseShape/Schemas/CheckCertificate.lean` — The source of `ve/backends/lean_service_schema/check-certificate.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/ClausesElaborate.lean` — The source of `ve/backends/lean_service_schema/clauses-elaborate.json` (`file`; `tools/response_schemas.py` writes it): the `clauses-elaborate` mode's row (`VE…
 - `lean/ResponseShape/Schemas/Command.lean` — The source of `ve/backends/lean_service_schema/english.command.json` (`file`; `tools/response_schemas.py` writes it): the `english.command` mode's row (`VE.Com…
 - `lean/ResponseShape/Schemas/Common.lean` — `common.json`: the value domains every mode shares.
 - `lean/ResponseShape/Schemas/Diagnose.lean` — The source of `ve/backends/lean_service_schema/diagnose.json` (`file`; `tools/response_schemas.py` writes it).
@@ -13,6 +14,7 @@
 - `lean/ResponseShape/Schemas/Document.lean` — The checked projection of the W2 wrapper.
 - `lean/ResponseShape/Schemas/English.lean` — The source of `ve/backends/lean_service_schema/english.json` (`file`; `tools/response_schemas.py` writes it).
 - `lean/ResponseShape/Schemas/EnglishLean.lean` — The three formula-level English service rows.
+- `lean/ResponseShape/Schemas/EnglishStatement.lean` — The source of `ve/backends/lean_service_schema/english.statement.json` (`file`; `tools/response_schemas.py` writes it): the `english.statement` mode's row (`VE…
 - `lean/ResponseShape/Schemas/Envelope.lean` — The source of `ve/backends/lean_service_schema/envelope.json` (`file`; `tools/response_schemas.py` writes it).
 - `lean/ResponseShape/Schemas/Environment.lean` — The source of `ve/backends/lean_service_schema/environment.json` (`file`; `tools/response_schemas.py` writes it).
 - `lean/ResponseShape/Schemas/Evaluate.lean` — The source of `ve/backends/lean_service_schema/evaluate.json` (`file`; `tools/response_schemas.py` writes it).
@@ -32,6 +34,7 @@
 - `lean/ResponseShape/Schemas/ReadingsRoute.lean` — The source of `ve/backends/lean_service_schema/readings-route.json` (`file`; `tools/response_schemas.py` writes it).
 - `lean/ResponseShape/Schemas/Reports.lean` — The source of `ve/backends/lean_service_schema/reports.json` (`file`; `tools/response_schemas.py` writes it).
 - `lean/ResponseShape/Schemas/Rights.lean` — The source of `ve/backends/lean_service_schema/rights.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/RightsChecks.lean` — rights-cfr-2/3 (docs/rights/rights-cfr-2/REPORT.md): the `rights` mode's answers that carry the new report parts (`Run.findingJson`, `Run.conflictAnswerOf`, `R…
 - `lean/ResponseShape/Schemas/Risk.lean` — The source of `ve/backends/lean_service_schema/risk.json` (`file`; `tools/response_schemas.py` writes it).
 - `lean/ResponseShape/Schemas/RiskEval.lean` — The source of `ve/backends/lean_service_schema/risk-eval.json` (`file`; `tools/response_schemas.py` writes it).
 - `lean/ResponseShape/Schemas/Route.lean` — The source of `ve/backends/lean_service_schema/route.json` (`file`; `tools/response_schemas.py` writes it).
@@ -39,5 +42,6 @@
 - `lean/ResponseShape/Schemas/SearchBudget.lean` — The `search-budget` row (`VE.SearchBudget.Run`): the premise check's budget and, for each sort the request lists, its raised bounds `{"sort", "least", "most"}`…
 - `lean/ResponseShape/Schemas/SensesProject.lean` — The source of `ve/backends/lean_service_schema/senses.project.json` (`file`; `tools/response_schemas.py` writes it): the `senses.project` mode's row (`VE.Sense…
 - `lean/ResponseShape/Schemas/SoftNorms.lean` — The source of `ve/backends/lean_service_schema/soft-norms.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/SoftPairsChecks.lean` — rights-cfr-2-budget-1 (docs/rights/rights-cfr-2-budget-1/REPORT.md): WP(T) under pair evidence, `SoftNorms.Run.openAfterClassification`, which is `Wire.openCoh…
 - `lean/ResponseShape/Schemas/SpeechActs.lean` — The source of `ve/backends/lean_service_schema/speech-acts.json` (`file`; `tools/response_schemas.py` writes it).
 - `lean/ResponseShape/Schemas/Words.lean` — The `words` row (plan Q2.4): Lean's lines for the readings and norm-defaults English, one per item of the request, with the identities of the environment and l…

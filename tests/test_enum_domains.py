@@ -298,8 +298,9 @@ def test_packages_conflict_verdict(lake, tmp_path, verdict, proved):
     assert _row(lake, tmp_path, "common.json#/$defs/packages_conflict", fields) is proved
 
 
-# The status row carries `Wire.statusFields` (tuple, deciding rules, differing atoms): a row without them is refused.
-STATUS_FIELDS = ', ("tuple", toJson ts), ("rules", toJson ts), ("differs", Json.arr #[])'
+# The status row carries `Wire.statusFields` (tuple, deciding rules, their sources, differing atoms): a row without
+# them is refused. The skeleton types fields only; `sources` having one echo per rule is the schema's `x-same-length`.
+STATUS_FIELDS = ', ("tuple", toJson ts), ("rules", toJson ts), ("sources", Json.arr #[]), ("differs", Json.arr #[])'
 
 
 @pytest.mark.parametrize("status, extra, proved", [("SETTLED yes", STATUS_FIELDS, True),

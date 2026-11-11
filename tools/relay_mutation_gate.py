@@ -10,7 +10,7 @@ A *route* is one way `ve` reads a Lean answer:
   mode whose one caller reads the answer further (`SERVICE_READERS`: `ask`, read by `ve.ask.read_answer`;
   `words`, read by `ve.words.read_answer`; `document`; `metered`, read by `ve.evaluate.read_evaluation` and
   `ve.search.read_nonvacuity`; `english.command`, read by `ve.backends.english_lean.command_answer`;
-  `act-readings`, read by `ve.acts.read_answer`), by that caller's reader too, on every fixture whose genuine answer
+  `act-readings`, read by `ve.acts.read_answer`; `clauses-elaborate`, read by `ve.right_clauses.bind`), by that caller's reader too, on every fixture whose genuine answer
   is not a rejection row;
 * each one-shot runner call that a `ve` call site makes: every assurance-manifest binding of a runner other
   than `ve_service` whose operation has Lean call sites, and every call of the one-shot route reader
@@ -57,6 +57,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -428,6 +429,18 @@ def _command_reader(case):
 
 
 SERVICE_READERS["english.command"] = _command_reader
+
+
+def _clauses_reader(case):
+    """How `ve.right_clauses.elaborate` reads the service's response to `case` (cmp-s3-cfr-1b): `relay.decided`,
+    then `bind`, the answer's units, lines and totality premises bound to the request's document."""
+    from ve import right_clauses
+    from ve.backends import relay
+    return lambda response: right_clauses.bind(relay.decided(response["results"])[0]["result"], case["document"],
+                                               case["environment"])
+
+
+SERVICE_READERS["clauses-elaborate"] = _clauses_reader
 
 
 def _exchange_outcome(replay: _Replay, mode: str, text: str, read=None) -> tuple[str, str]:
@@ -913,6 +926,27 @@ def manifest_untyped() -> list[dict]:
     return found
 
 
+def gate_executables() -> list[str]:
+    """The Lean executables the gate asks: the service and every one-shot route's runner."""
+    return sorted({DEFAULT_EXECUTABLE.name, *(spec[0] for spec in ONE_SHOT.values())})
+
+
+def build_executables(run=None) -> str | None:
+    """Build the executables the gate asks before it asks them, so a binary older than the tree never answers
+    for it (cmp-s3-cfr-1 review F-ready1: a stale `ve_service` failed the handshake for every route). With
+    `VE_LEAN_PREBUILT` the gate's build is used as it is, and without lake the existing executables, as
+    `tests/lean_build.py` does. Returns the build's failure, or None."""
+    if os.environ.get("VE_LEAN_PREBUILT"):
+        return None
+    lake = shutil.which("lake")
+    if lake is None:
+        return None
+    done = (run or subprocess.run)([lake, "build", *gate_executables()], cwd=ROOT / "lean", capture_output=True, text=True)
+    if done.returncode:
+        return "lake build failed: " + " | ".join((done.stdout + done.stderr).strip().splitlines()[-12:])
+    return None
+
+
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     parser.add_argument("--record", nargs="*", metavar="TEST", help="rewrite the fixture cases from a test run")
@@ -921,6 +955,10 @@ def main(argv=None) -> int:
     args = parser.parse_args(argv)
     if args.record is not None:
         return record(args.record or list(RECORD_TESTS))
+    failure = build_executables()
+    if failure:
+        print(f"relay_mutation_gate: {failure}", file=sys.stderr)
+        return 1
     report = run_gate(set(args.route) if args.route else None)
     if args.json:
         args.json.write_text(json.dumps(report, indent=1, sort_keys=True) + "\n")

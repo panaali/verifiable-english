@@ -38,8 +38,12 @@
 - `tools/history_tests.py` — The tests whose result can depend on git history: `tests/history-dependent.json` and its lint.
 - `tools/identity_lint.py` — Fail on a new identity preimage built in Python (architecture plan AR-6, rule 4 of the relay lint; DRI D7).
 - `tools/inventory_lint.py` — Gate 2 inventory lint: no retained code imports a class-A body.
+- `tools/kernel_closure.lean` — The reading closure of a verdict path (docs/spec/kernel-boundary.md, section 2).
+- `tools/kernel_closure.py` — The kernel boundary, measured (docs/spec/kernel-boundary.md, section 2).
+- `tools/kernel_trace.py` — Run a use-case harness and record which Lean service modes and case kinds it asks for.
 - `tools/lake_output_hash.lean` — (no module docstring)
 - `tools/lake_outputs.py` — Lake's executables as they are on disk, not as their traces say (finding class 13: a stale binary).
+- `tools/layer_declarations.py` — List every in-module layer declaration, Lean and Python, with its layer and reason; refuse a malformed one.
 - `tools/layer_policy.py` — Single source of truth for the five repository layers.
 - `tools/lean_decided_share.py` — The Lean-decided share of a document (docs/spec/readings-defaults.md 1.10 and 10; plan 3.9 and RD-5): display only.
 - `tools/lean_dump_cache.py` — A content-keyed cache of the two Lean dumps of `tools/regen_generated.py`: `cached`.
@@ -92,7 +96,3 @@
 - `tools/select_tests_evidence.py` — Measure tools/select_tests.py on past commits and on seeded bugs.
 - `tools/select_tests_seeds.py` — Seeded edits that check tools/select_tests.py against the complete suite.
 - `tools/semantic_inventory.py` — Generate the Stage 0, AST based dependency and deletion inventory.
-- `tools/since_pass.py` — Select against the branch's last passing tree, not against main (test-speed plan, batch B3).
-- `tools/source_graph.py` — Static dependency graph of the repository's Python files, Lean modules and tests.
-- `tools/source_words_export.lean` — (no module docstring)
-- `tools/stage2_parity.py` — Gate 2 parity: rerun the Stage 0 probe matrix under a backend authority and diff it.

@@ -65,6 +65,7 @@
 - `ve/report_english.py` — The reports@0 English of attribution.md section 2: one grammar for typed and rendered text, bound to a manifest (2.4).
 - `ve/reports.py` — Reports document view over Lean's checked elaboration.
 - `ve/reports_route.py` — Checked reports route.
+- `ve/right_clauses.py` — Python relay for the `right-clauses@0` profile (docs/spec/right-clauses.md 8.1, 10).
 - `ve/rights.py` — Rights environment and Python views of Lean's rights elaboration.
 - `ve/rights_route.py` — Relay rights decisions and reports from the Lean rights route.
 - `ve/risk.py` — Lean risk route transport.
