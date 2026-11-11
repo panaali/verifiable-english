@@ -162,11 +162,11 @@ Rule 1. Every situation must have a safeguards case robust to discovered capabil
 Rule 1. Every situation must heighten safeguards consulting appropriate US government actors, if that situation is classified as "nuclear_found".
 ## f12-nuclear-unscoped | RS4=N & RS4s=unscoped | Table 2, Nuclear and Radiological: “Heighten safeguards (and consider further actions) in consultation with appropriate US government actors, accounting for the complexity of classified information handling.” (RS4s=unscoped: no stated condition)
 Rule 1. Every situation must heighten safeguards consulting appropriate US government actors.
-## f17-suff | RS12=suff | 2.1: “We treat a frontier capability as a Tracked Category if” its risk meets five criteria
+## f17-suff | RS12=suff | 2.1: “We treat a frontier capability as a Tracked Category if the capability creates a risk that meets five criteria:” (RS12=suff: the five criteria are sufficient)
 Rule 1. Every capability must be tracked as a category, if all of the following hold: (a) that capability is plausible; (b) all of the following hold: (i) that capability is measurable; (ii) all of the following hold: (a) that capability is severe; (b) both that capability is classified as "net_new" and that capability is irremediable.
-## f17-iff | RS12=iff | 2.1 and 2.3: the five criteria read as necessary and sufficient for Tracked Category treatment
+## f17-iff | RS12=iff | 2.1: “We treat a frontier capability as a Tracked Category if the capability creates a risk that meets five criteria:” (RS12=iff, with 2.3: the five criteria read as necessary and sufficient for Tracked Category treatment)
 Rule 1. Every capability must be tracked as a category, if all of the following hold: (a) that capability is plausible; (b) all of the following hold: (i) that capability is measurable; (ii) all of the following hold: (a) that capability is severe; (b) both that capability is classified as "net_new" and that capability is irremediable.
-## f17-iff-only | RS12=iff | 2.1 and 2.3: under the iff reading a missing criterion precludes Tracked Category treatment
+## f17-iff-only | RS12=iff | 2.1: “We treat a frontier capability as a Tracked Category if the capability creates a risk that meets five criteria:” (RS12=iff, with 2.3: a missing criterion precludes Tracked Category treatment)
 Rule 1. Every capability must not be tracked as a category, if it is not the case that all of the following hold: (a) that capability is plausible; (b) all of the following hold: (i) that capability is measurable; (ii) all of the following hold: (a) that capability is severe; (b) both that capability is classified as "net_new" and that capability is irremediable.
 ## f13-review | always | 2.3: “We will periodically review the latest research and findings for each Research Category.”; periodicity remains ET-blocked
 Rule 1. Every situation must have research categories reviewed.
