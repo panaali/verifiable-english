@@ -23,7 +23,7 @@
   {
    "definition": "VE.Scope.Pinned.charRef",
    "operator": "list-first",
-   "reason": "equivalent where it survives: `(t.drop r.length).take 1` then `startsWith \";\"` reads only the first character either way; the `(w.splitOn \"&\").tail.take 1` mutant is killed by AuthoringExamples.lean:252 (\"x&y&nbsp;z\")"
+   "reason": "equivalent where it survives: `(t.drop r.length).take 1` then `startsWith \";\"` reads only the first character either way, and `!(r.take 1).isEmpty` is `!r.isEmpty` (sc-7-f11 review F2's non-empty run); the `(w.splitOn \"&\").tail.take 1` mutant is killed by AuthoringExamples.lean:252 (\"x&y&nbsp;z\")"
   },
   {
    "definition": "VE.Scope.Pinned.charRef",
