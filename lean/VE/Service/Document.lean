@@ -809,6 +809,10 @@ structure Env where
   `json` is then the hook's view, and `profiles` and `envId` are the written environment's. -/
   events : Option (Json × VE.Events.EventsHook) := none
 
+/-- The environment an `events@0` document's mode read (`eventsView`, et-5b): the hook's view, which the answer
+carries (`Checked.eventsView`); `none` for every other document. -/
+def Env.eventsView (E : Env) : Option Json := E.events.map (·.2.view)
+
 /-- Python's `Environment.identity_version`: a frozen envelope's, else its profiles'. -/
 def Env.version (E : Env) : String :=
   (E.legacy.map (·.version)).getD (VE.Route.Wire.identityVersion ((E.cardinality.map (·.profiles)).getD E.profiles))
@@ -2519,6 +2523,9 @@ structure Checked where
   composed : Option Json := none
   /-- The active reading sets, the value the status fold read (`Loader.activeOf`); the checked view's candidates. -/
   active : List (FrontSet × List Bool) := []
+  /-- Under `events@0` (et-5b), the environment the mode read (`eventsView`: the hook's `Events.routeView`), so a
+  client builds the document over Lean's view, never its own; its identities stay the written environment's. -/
+  eventsView : Option Json := none
 
 /-- `withGraph := false` is `load_document` alone: everything but `_report`'s claim-graph part (its reading checks, W2
 admission and the narrowing choices), which `check_document` adds (batch 16b). `parent`: the chain list document
@@ -2644,18 +2651,21 @@ def check (text : String) (withGraph : Bool := true) (lexicon : Option Json := n
     if judged then some (VE.Judgments.usageMap E.rv.definitions J views) else none,
     (let js := records.map (·.1); (js, if judged then statusRows E.rv.definitions js views else [])),
     if judged then VE.Judgments.undeclaredEvaluative VE.EnglishGrammar.evaluativeRows E.basePredicates J else [], report,
-    ← if chainList then some <$> composedJson text whole front else pure none, active⟩
+    ← if chainList then some <$> composedJson text whole front else pure none, active, E.eventsView⟩
 
 def encode (id : String) (c : Checked) : Json :=
   VE.Route.Wire.ok id ([("document_id", .str c.documentId), ("source_id", .str c.sourceId),
     ("source", .str c.source), ("units", toJson (c.rows.map unitJson)),
     ("coverage", coverageJson c.front c.units c.source.utf8ByteSize c.block)] ++
-    match c.judgments, c.cardinality, c.composed with
+    (match c.judgments, c.cardinality, c.composed with
     | some m, _, _ => [("judgments", usageJson m), ("judgment_lines", linesJson c.lines.1 c.lines.2),
         ("undeclared_evaluative", Json.arr (c.undeclared.map Json.str).toArray)]
     | none, some r, _ => [("cardinality", r)]
     | none, none, some j => [("composed", j)]
-    | none, none, none => [])
+    | none, none, none => []) ++
+    match c.eventsView with
+    | some v => [("events_view", v)]
+    | none => [])
 
 /-- A case `{"id", "document"}`, with `"admit": false` for `load_document` alone: the entry without scope's branch
 (scope 8.1). -/
