@@ -168,6 +168,18 @@ def deep (d : Json) : Option Bool := (deepLine <$> decodeClauseDoc (parse (profi
 #guard deep (doc (",\"elided\":[]},{\"kind\":\"claim\",\"norm\":{\"name\":\"equal-access-2\",\"predicate\":" ++
   "\"public_service_access_required\",\"sign\":true,\"guard\":[\"top\"],\"unless\":[],\"over\":[]}" ++ scopes 64)) ==
   some true
+/-- `deepLine` on fixed lines and candidate groups (the wire builds none yet), each line deep (`true`: 64 conjuncts)
+    or shallow; a deep line anywhere, first or last, is charged. -/
+def deepIn (fixed : List Bool) (groups : List (List Bool)) : Option Bool := do
+  let line (keys : String) := (decodeClauseDoc (parse (profiles on)) (doc keys)).toOption.bind (·.lines.head?)
+  let D ← (decodeClauseDoc (parse (profiles on)) (doc ",\"elided\":[]")).toOption
+  let s ← line ",\"elided\":[]"
+  let d ← line (scopes 64)
+  let pick (b : Bool) := if b then d else s
+  pure (deepLine ⟨D.doc, fixed.map pick, groups.map fun g => ("s", 0, .assertion .top, g.map pick)⟩)
+#guard deepIn [true, false] [] == some true && deepIn [false] [[false], [false, false]] == some false &&
+  deepIn [] [[true], [false]] == some true && deepIn [] [[false], [true]] == some true &&
+  deepIn [false] [[false, true]] == some true
 #guard says (bodies [257]) == "ResourceLimit: rules" && says (bodies [200, 57]) == "ResourceLimit: rules" &&
   says (bodies [1, 256] true) == "ResourceLimit: rules"
 

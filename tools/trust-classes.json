@@ -21263,7 +21263,8 @@
         "VE.RightClauses.RunExamples.depth64",
         "VE.RightClauses.RunExamples.bodies",
         "VE.RightClauses.RunExamples.scopes",
-        "VE.RightClauses.RunExamples.deep"
+        "VE.RightClauses.RunExamples.deep",
+        "VE.RightClauses.RunExamples.deepIn"
       ]
     },
     "VE/Presupposition/Run.lean": {
