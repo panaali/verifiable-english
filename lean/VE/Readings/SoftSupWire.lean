@@ -14,9 +14,12 @@ own terms through sc-10b's three superposition theorems, which they apply and do
 
 `maxSdCheckWork` is measured (14.11, DRI decision 2026-11-09 item 1, docs/rd-9/sc-11/w13-cpu.md): about 29 µs of
 Lean CPU per unit of `sdCheckWork` on W-13's shape, so 32,768 units keep the route check under R4's 1 s on that
-shape. `sdSuperposable` (`superposable`, `WellFormedU (supU N)`) is read before the work limit and not charged:
-10.98 s and 94-100 s measured on the 767- and 3,071-node guard documents; row sc-11w bounds it before sc-11b (DRI
-2026-11-09 sc-11-3 item 2). -/
+shape. `sdSuperposable` reads the size charge first (`sdSizeCharge N ≤ maxSdSizeCharge`, 14.11, DRI 2026-11-10
+sc-11w item 1), so `superposable N.D` and `WellFormedU (supU N)` are charged before they are built; `sdCheckWork` is
+evaluated without building the coherence premises it counts (`sdCheckWork_eq_fast`), though it still builds the
+exception premises (`excPremises`, one formula per exception condition). The 10.98 s and 94-100 s of the 767- and
+3,071-node guard documents were `sdCheckWork`'s premise build (docs/rd-9/sc-11w/cpu.md). Within both limits `routeSD`
+is not yet bounded by R4 on every shape: `heavyIn` took up to 1.16 s, open as row sc-11wc. -/
 namespace VE.Readings.Wire
 open VE.Readings
 open VE.Bridge (Entity)
@@ -24,13 +27,65 @@ open VE.Norms (targets)
 open VE.NormDefaults (fill)
 universe u
 
-def sdSuperposable (N : NDoc) : Bool := superposable N.D && VE.NormDefaults.WellFormedU (supU N)
+/-- One rule's AST nodes: its guard, carve-outs and exception conditions, and one per name it is `over`. -/
+def sdRuleCharge (M : VE.SoftNorms.SoftNode) : Nat :=
+  M.over.length + (((M.guard :: M.carveOuts) ++ (M.exception.map fun e => e.sufficient ++ e.necessary).getD []).map
+    VE.Bridge.formulaNodes).sum
+/-- A content's units and AST nodes: a norm one unit, an assertion one unit and its formula, a right or a line set one
+unit and its lines' rules (and the right's guard), a limitation one unit of one node per condition and one more. -/
+def sdContentCharge : VE.Compose.Content → Nat × Nat
+  | .assertion φ => (1, VE.Bridge.formulaNodes φ)
+  | .norm M => (1, sdRuleCharge M)
+  | .right R => let (r, n) := lines R.lines; (r + 1, n + VE.Bridge.formulaNodes R.guard)
+  | .rightLines _ ls => let (r, n) := lines ls; (r + 1, n + 1)
+  | .limitation L => (1, L.conditions.length + 1)
+where lines (ls : List VE.Rights.SourceLine) : Nat × Nat :=
+  let ns := ls.flatMap fun S => [S.norm, S.liberty, S.recognition].filterMap id
+  (ns.length, (ns.map sdRuleCharge).sum)
+
+/-- 14.11 (sc-11w): the source document's units times its AST nodes, read from `N.D` before `superposable` builds
+`sup N.D` and before `supU N`. Units: each frame rule, right, limitation and definition, each fixed content, bar,
+reading set, candidate, coupling and narrowing. Nodes: each unit's formulas (`sdContentCharge`, a definition's body)
+and at least one, plus one per cite, label, coupled set and kept candidate. Measured (docs/rd-9/sc-11w/cpu.md): the
+charge bounds `sdSuperposable`'s reads (at most 0.22 s on the measured documents within it), not the whole route; a
+document within both limits can still take `routeSD` over R4 in its per-choice texts (`heavyIn`, up to 1.16 s, the
+accepted gap of row sc-11wc). -/
+def sdSizeCharge (N : NDoc) : Nat :=
+  let F := N.D.frame
+  let plus (k : Nat) (p : Nat × Nat) : Nat × Nat := (p.1, p.2 + k)
+  let cs := (F.soft.T.nodes.map (sdContentCharge ∘ .norm)) ++ (F.rs.map (sdContentCharge ∘ .right)) ++
+    (F.limits.map (sdContentCharge ∘ .limitation)) ++ (F.soft.T.definitions.map fun d =>
+      (1, VE.Bridge.formulaNodes d.body)) ++ (N.D.items.flatMap fun it => match it with
+      | .fixed _ c cites => [plus cites.length (sdContentCharge c)]
+      | .bar _ _ => [(1, 1)]
+      | .set R => (1, 1) :: R.candidates.map fun a =>
+          plus (a.cites.length + a.labels.length) ((a.content.map sdContentCharge).getD (1, 1))) ++
+    (N.D.couplings.map fun K => (1, K.sets.length + 1)) ++ (N.D.narrowings.map fun K => (1, K.keeps.length + 1))
+  (cs.map (·.1)).sum * (cs.map (·.2)).sum
+def maxSdSizeCharge : Nat := 16384
+
+def sdSuperposable (N : NDoc) : Bool :=
+  decide (sdSizeCharge N ≤ maxSdSizeCharge) && superposable N.D && VE.NormDefaults.WellFormedU (supU N)
 
 /-- 14.11: the compatible choices times the superposed premises and rule nodes each check reads. -/
 def maxSdCheckWork : Nat := 32768
 def sdCheckWork (N : NDoc) : Nat :=
   (checkedChoices N.D).length * ((softXL N (sup N.D).1).length + ((sup N.D).1.soft.T.nodes.map
     (fun M => (M.guard :: M.carveOuts).map VE.Bridge.formulaNodes)).flatten.sum)
+
+/-- `sdCheckWork` as evaluated (`@[csimp]`): `softXL`'s length is its exception labels' and colliding pairs', so no
+coherence premise is built (its `cohPremiseU` expansions cost 89.7 s on the 3,071-node guard document,
+docs/rd-9/sc-11w/cpu.md). The exception premises are still built: `min` reads `excPremises X`'s length. -/
+def sdCheckWorkFast (N : NDoc) : Nat :=
+  let S := (sup N.D).1
+  let X := VE.Rights.correlate S
+  (checkedChoices N.D).length * (min (VE.SoftNorms.Wire.excLabels X).length (VE.SoftNorms.excPremises X).length +
+    (VE.SoftNorms.collidingPairs X).length + (S.soft.T.nodes.map
+      (fun M => (M.guard :: M.carveOuts).map VE.Bridge.formulaNodes)).flatten.sum)
+
+@[csimp] theorem sdCheckWork_eq_fast : @sdCheckWork = @sdCheckWorkFast := by
+  funext N
+  simp [sdCheckWork, sdCheckWorkFast, softXL, VE.NormDefaults.Wire.softLabelledU]
 
 /-- DRI ruling 5 extended by 3.3 step 5, within its limits. -/
 def sdChecked (re : ReadingsEnvironment) (N : NDoc) : Bool :=
@@ -111,7 +166,7 @@ theorem SupReplaySD.parts (x : SupReplaySD) :
       sdChecked x.r.b.a.re x.r.N = true := by
   obtain ⟨-, hsp, hck⟩ := (routeSD_superposed_iff _ _).mp x.route
   simp only [sdSuperposable, Bool.and_eq_true] at hsp
-  exact ⟨hsp.1, hsp.2, hck⟩
+  exact ⟨hsp.1.2, hsp.2, hck⟩
 
 theorem readings_wire_sd_choices (x : SupReplaySD) :
     (∃ c, Compatible x.r.N.D c) ∧ ∀ c, Compatible x.r.N.D c →
