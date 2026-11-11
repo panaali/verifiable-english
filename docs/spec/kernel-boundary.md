@@ -262,10 +262,22 @@ Soundness is not relaxed. No check, guard or theorem is removed. A verdict that 
 computes today with no theorem behind it becomes a kernel row with one. The one change a reader
 sees: an answer that shows a verdict also shows the core case it is about.
 
-**For the DRI:** this fixes what `CHECKED` claims in public wording: "the core statements shown for
-this unit were proved", with the translation step visible. `NORTH-STAR.md` line 5 (retained text is
-not coverage) is unaffected. If the wording must stay as it is, the alternative is a faithfulness
-theorem per feature before its verdicts count, which is the path that produced the present size.
+**What each token claims.** The tokens are of two kinds, and the public wording keeps them apart
+(DRI, 2026-11-11):
+
+- *Admission* (`CHECKED` on a document unit; `docs/spec/document.md`): the unit's text has exactly
+  one formal reading and the checker admitted the core statements it lowers to (well-formed over the
+  document's vocabulary, lemmas and certificates replayed). It does not say the statements are true
+  or that anything follows from them. Under the carry rule its public wording is: "the core
+  statements shown for this unit were admitted by the checker; how the unit's English was turned
+  into them is shown with them".
+- *Consequence* (`CONFLICT-FREE`, `CONFLICT` with a witness, `valid` on a certificate, `ALL`, `SOME`,
+  `NONE` over readings): a kernel theorem about the core document, replayed from a certificate or a
+  model.
+
+Both kinds are the kernel's to state. `NORTH-STAR.md` line 5 (retained text is not coverage) is
+unaffected. The alternative to the carry rule is a faithfulness theorem per feature before its
+statuses count, which is the path that produced the present size.
 
 ## 4. The statement and composition model
 
