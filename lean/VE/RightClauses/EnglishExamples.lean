@@ -1,3 +1,4 @@
+-- ve-layer: 4 (fixtures of English.lean and of the clauses-elaborate mode)
 import VE.RightClauses.English
 import VE.RightClauses.Examples
 import VE.RightClauses.Run

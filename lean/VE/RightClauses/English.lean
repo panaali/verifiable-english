@@ -1,3 +1,4 @@
+-- ve-layer: 4 (the S3 wording: the core English renderer, the norm grammar's consequence and the question layer's W7 gate)
 import VE.RightClauses.Tree
 import VE.Question.Frames
 import VE.EnglishGrammar.Norm.Rules
