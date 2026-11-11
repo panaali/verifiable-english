@@ -2,15 +2,18 @@ import ResponseShape
 
 /-! The source of `ve/backends/lean_service_schema/clauses-elaborate.json` (`file`; `tools/response_schemas.py` writes
 it): the `clauses-elaborate` mode's row (`VE.RightClauses.Run.runCaseReported`, docs/spec/right-clauses.md 8.1): the
-plained document's canonical bytes and the slot `clauseSlotLabelled`, each premise its label and generated formula.
-The relay that binds them to the request is cmp-s3-cfr-1b's. -/
+plained document's canonical bytes, the slot `clauseSlotLabelled` (each premise its label and generated formula), and
+the elided bytes (6): the document total and one count per unit of the request's document, in its order. The relay
+that binds them to the request is cmp-s3-cfr-1b's. -/
 namespace ResponseShape.Schemas.ClausesElaborate
 open Lean ResponseShape
 
 def result : Shape :=
-  c "VE.RightClauses.Run.elaborateCase: the plained document's canonical bytes and clauseSlotLabelled." [
-    obj, .required ["plained", "clause_slot"],
+  c "VE.RightClauses.Run.elaborateCase: the plained document's canonical bytes, clauseSlotLabelled and the elided bytes." [
+    obj, .required ["plained", "clause_slot", "elided_bytes", "unit_elided_bytes"],
     closed [("plained", ref "common.json#/$defs/text"),
+      ("elided_bytes", ref "common.json#/$defs/nat"),
+      ("unit_elided_bytes", n [arr, .items (ref "common.json#/$defs/nat"), .length "/document"]),
       ("clause_slot", n [arr, .items (n [obj, .required ["label", "ast"],
         closed [("label", ref "common.json#/$defs/text"), ("ast", ref "common.json#/$defs/generated_formula")]])])]]
 
