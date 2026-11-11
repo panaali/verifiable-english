@@ -105,7 +105,8 @@ theorem checkCertificate_sound_v0 (E : Environment) (premises : List VE.Formula)
   apply (conservativity S [] conclusion).mp
   apply checkCertificate_sound E (premises.map embed) (embed conclusion) c hc S hS
   intro a ha
-  obtain ⟨f,hf,rfl⟩ := List.mem_map.mp ha
+  obtain ⟨g,hg,rfl⟩ := List.mem_map.mp ha
+  obtain ⟨f,hf,rfl⟩ := List.mem_map.mp hg
   exact (conservativity S [] f).mpr (hp f hf)
 
 end VE.Closure.Tableau

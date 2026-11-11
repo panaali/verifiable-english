@@ -1,3 +1,4 @@
+- `tests/test_b16d_norm_roles.py` — Batch 16d review B1 and B2: which norm units make the norm-defaults document.
 - `tests/test_b16e_rights_document.py` — Batch 16e: rights@0 documents (with and without the readings@1 head) are Lean document answers.
 - `tests/test_b16f_document.py` — Batch 16f: the document mode's remaining groups are Lean answers, typed and bound.
 - `tests/test_b16f_senses_document.py` — Batch 16f: a document with `senses` is decided by Lean's `document` mode, which composes the senses route.
