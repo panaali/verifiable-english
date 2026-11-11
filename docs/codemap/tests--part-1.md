@@ -56,6 +56,7 @@
 - `tests/test_answer_store.py` — The Lean answer store (tests/answer_store.py): R1 only, exact batches, every client check on a hit.
 - `tests/test_ap2_limits_provisional.py` — ap-2's raw cap and step budget stay provisional while the plan's condition for dropping the word fails (review F2).
 - `tests/test_ap7.py` — AP-7: the draw, the sample's binding, and the score recomputed from the saved records.
+- `tests/test_ap_parse_index.py` — ap-parse-index: reading an act phrase stays within the 5 s CPU deadline at D-31's 128 frames (DRI 2026-11-09 ap-4 item 2, ap-parse-index items 1 and 2).
 - `tests/test_ar3_report.py` — AR-3's report and DELTA against their saved evidence (docs/arch/AR-3/evidence), never the live tree or history.
 - `tests/test_ar6_report.py` — The AR-6 report is a view of saved evidence, independent of live git HEAD.
 - `tests/test_ar8_evidence.py` — AR-8's report agrees with its SAVED evidence (fixed base and head commits, never the live tree).
@@ -87,5 +88,3 @@
 - `tests/test_b16a_evidence.py` — Batch 16a report checks read committed snapshots, never moving Git refs.
 - `tests/test_b16b_evidence.py` — Batch 16b's report numbers come from its saved evidence (docs/lean-first/b16b/evidence/), never from live git: the generated block of DELTA.md is regenerated, …
 - `tests/test_b16c_evidence.py` — The 16c progress report is a view of saved evidence, independent of live git HEAD.
-- `tests/test_b16d_document.py` — Batch 16d: norm-defaults and fenced documents are Lean document answers.
-- `tests/test_b16d_evidence.py` — Check batch 16d's committed measurements without consulting live git state.

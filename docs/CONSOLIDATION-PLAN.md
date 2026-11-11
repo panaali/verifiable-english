@@ -680,7 +680,10 @@ step 7 remeasured on cmp-s4c (2026-11-05: the discourse `runCase` decides the co
 its 21 trusted lines, up from 18, bring step 7 to 734 lines); step 6 remeasured at this merge
 from the current ledger (1,835 reclassified lines); step 3 remeasured on AR-23 (2026-11-10: closure's `denote` is now
 Core's on the embedding, so the ledger's closure `denote`, `Paths`, `Finite` and `Consequence` rows hold 14 trusted
-lines, down from 30);
+lines, down from 30); steps 6 and 8b remeasured at the merge of
+ve-integration into rights-cfr-1 (2026-11-10: 1,836 reclassified lines; 3,783 tied, the rights decoder
+lines of rights-cfr-1 with ci-5's speech decoder lines), then with ap-parse-index's two tied lines
+(3,785 tied);
 the current measurements follow:
 
 The merged step 2a ledger now identifies no remaining runner lines in that row; the table below records
@@ -697,7 +700,7 @@ the current source classification alongside the previously measured steps.
 | 6 | 35 | 0 | 1836 | 0 | 35 | 3 | 1 | 11.7 |
 | 7 | 739 | 0 | 0 | 60 | 679 | 6 | 2 | 56.6 |
 | 8a | 87 | 225 | 0 | 60 | 252 | 10 | 1.5 | 16.8 |
-| 8b | 0 | 3750 | 0 | 0 | 3750 | 30 | 3 | 41.7 |
+| 8b | 0 | 3791 | 0 | 0 | 3791 | 30 | 3 | 42.1 |
 | 9 | 88 | 0 | 0 | 0 | 88 | 18 | 2 | 2.4 |
 | 10 | 0 | 0 | 0 | 0 | 0 | 4 | 1 | 0.0 |
 

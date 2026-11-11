@@ -70,8 +70,9 @@ theorem decodeRightsU_packs {environment document : Json} {H : Option EventsHook
     · cases h
   · cases h
 
-/-- Spec 6.3: a list the row refuses is refused with its text before any events check, one it admits is gated as the
-list without `events@0` (`Compose.gate_events`), and the block's only effect on the route is its pack, last in `X`. -/
+/-- Spec 6.3: a list the row refuses is refused with its text before any events check, one it admits without
+`cardinality@0` is gated as the list without `events@0` (`Compose.gate_events`; the `cardinality@0` row refuses
+`events@0` by name), and the block's only effect on the route is its pack, last in `X`. -/
 theorem events_row_composition (environment terms : Json) (hs : (VE.Compose.listedProfiles environment).Pairwise (· < ·))
     (he : "events@0" ∈ VE.Compose.listedProfiles environment)
     (hk : (VE.Compose.listedProfiles environment).find?
@@ -79,6 +80,7 @@ theorem events_row_composition (environment terms : Json) (hs : (VE.Compose.list
     (∀ t, VE.Compose.eventsFault (VE.Compose.listedProfiles environment) = some t →
       eventsHook environment terms = .error (VE.Compose.unsupported t)) ∧
     (VE.Compose.eventsFault (VE.Compose.listedProfiles environment) = none →
+      "cardinality@0" ∉ VE.Compose.listedProfiles environment →
       VE.Compose.gateOf VE.Compose.profileTable (VE.Compose.listedProfiles environment) =
         VE.Compose.gateOf VE.Compose.profileTable ((VE.Compose.listedProfiles environment).erase "events@0")) ∧
     (∀ (H : Option EventsHook) (d : EventsDecoded), hookBlock H = some d →

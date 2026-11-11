@@ -29,7 +29,7 @@ EXPECTED = {
                              "environment_id, premise_meaning_ids, conclusion_meaning_id, w6], got []",
     "fa1b-countermodel": "ok refutes", "fa1-countermodel": "ok does not refute",
     "e2-profiles": "UnsupportedProfile: cardinality@0 requires order@0, relational-fol@0 and time@0, optionally "
-                   "with documents@1",
+                   "with documents@1, or norm-defaults@0, norms@0, readings@1 and relational-fol@0",
     "s1-format": "Unsupported cardinality format",
     "s5-not-finite": "CardinalityNotFinite(user)",  # the plan's seeded bug
     "s7-terms": "ResourceLimit: At most 64 terms in a count",

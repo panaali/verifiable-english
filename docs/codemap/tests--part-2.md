@@ -1,3 +1,5 @@
+- `tests/test_b16d_document.py` — Batch 16d: norm-defaults and fenced documents are Lean document answers.
+- `tests/test_b16d_evidence.py` — Check batch 16d's committed measurements without consulting live git state.
 - `tests/test_b16d_norm_roles.py` — Batch 16d review B1 and B2: which norm units make the norm-defaults document.
 - `tests/test_b16e_rights_document.py` — Batch 16e: rights@0 documents (with and without the readings@1 head) are Lean document answers.
 - `tests/test_b16f_document.py` — Batch 16f: the document mode's remaining groups are Lean answers, typed and bound.
@@ -63,6 +65,7 @@
 - `tests/test_defaults_readings.py` — Readings unless an exception applies (docs/spec/defeasible-PLAN.md 2.4 and batch DF-3; spec docs/spec/defeasible.md 3.9, 7.4 and 8.3): the `default` member of …
 - `tests/test_defaults_uniform.py` — The defaults kinds' refusal of provider conditions through the relay (docs/spec/profile-composition.md 1.9, E1d).
 - `tests/test_defaults_zone.py` — The `defaults-zone` kind through the Lean service (defeasible plan 2.7 and batch DF-5; spec 3.8, 4 and 8.6).
+- `tests/test_defaults_zone_cli.py` — `ve document readings PATH --conclusion Q --assume-no-exception` at one situation (batch df-5b; defeasible plan DF-1b and DF-5, spec 8.6): a question file that…
 - `tests/test_defaults_zone_ties.py` — df-5 loop recheck F1: the zone wire's tied definitions are bound to the request's values, not only to its types.
 - `tests/test_defeasible_baseline_evidence.py` — DF-0.3, the defeasible plan's baseline, checked from its SAVED evidence only (`docs/research/evidence/defeasible/baseline/`, written by `research/defeasible/ba…
 - `tests/test_definitions.py` — W3 definition elaboration and the identity-bound declaration hook.
@@ -78,13 +81,10 @@
 - `tests/test_discourse_three_way.py` — Discourse evidence on one text (docs/spec/discourse.md 10 alpha and alpha-prime, 11).
 - `tests/test_document.py` — (no module docstring)
 - `tests/test_document_chain.py` — PC-2a: `ve document check` composes soft-norms@0 with norm-defaults@0 through the norm-defaults mode's own decoder (docs/spec/profile-composition.md 3.2 and 5.…
+- `tests/test_document_cli_errors.py` — `ve document` errors are structured answers (item document-cli-structured-errors, reviews/dri-decisions-20261110-df-5b.md item 2): a `VEError` gives `{status, …
 - `tests/test_document_lean_switch.py` — Lean-first batch 16b: `ve-document@1` documents are checked by the Lean `document` mode.
 - `tests/test_document_split.py` — AR-16a split `ve/document.py` into the package `ve/document/`; these pin what the split must keep.
 - `tests/test_e1_core.py` — (no module docstring)
 - `tests/test_e1_prompts.py` — (no module docstring)
 - `tests/test_eff_tests_report.py` — docs/eff-tests/REPORT.md: every number regenerated from the saved evidence in docs/eff-tests/evidence/.
 - `tests/test_eligibility_wfp.py` — Winter Fuel Payment use case (usecases/eligibility): VE against a frozen answer key.
-- `tests/test_encoder_shapes.py` — The encoder theorems (`lean/ResponseShape/Encoders.lean`) can fail (lf-1 recheck 3, B).
-- `tests/test_english.py` — Writable English boundaries, scoped references and independent ambiguity checks.
-- `tests/test_english_e26_ab.py` — English E2.6: the corpus A/B of Lean's English authority, from the saved comparisons alone (no live checkout and no git): every verdict row has a rule and a di…
-- `tests/test_english_e26_boundary.py` — English E2.6: where Lean's English reader refused an environment or a text that Python's reader admitted, found by the corpus A/B under Lean authority, Lean no…

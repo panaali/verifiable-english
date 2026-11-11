@@ -702,13 +702,21 @@ CHECKED; the holistic flag with its `outweighs` terms is OPEN. No new status.
 
 ```text
 CONFLICT-FREE among rules on the same act, conditional on <k> coherence premises (<labels>); <j> weighing points open;
-coherent situation exhibited: yes | UNKNOWN (<budget>)
+coherent situation exhibited: yes | UNKNOWN (<budget>) | none supplied (not searched; <budget> unused)
 CONFLICT: <witness kind> at <situation>            witness kind ∈ {strict collision on <p>, pair conflict on <act> with
                                                    <strict rule | completion> against <rule>}
 UNKNOWN: <target>, <budget>
 ```
 
 A witness of the unconditional claim (a weighing point) is shown under the first question, never as CONFLICT.
+
+On the CONFLICT-FREE line `<k>` counts the coherence premises the certificates use (`conditional_on`, 6.4), and `<j>`
+counts WP(T) (6.2) under the request's pair evidence: the `weighing_points` a `soft-pairs` request with the same
+evidence lists, so `<j>` is at least `<k>` and can exceed it when a certificate does not use an open premise. `yes` is
+the situation part when the request sends a `coherent_model` that satisfies `Background′`. `none supplied` is the
+situation part when it sends none: no coherent-situation search runs, and the budget the line quotes goes unused.
+`UNKNOWN (<budget>)` is reserved for a search that ran out of budget; the soft route runs none (soft-cf-text-1, the
+words of rights.md 7.3). The `budget` and `coherent_exhibit` fields carry the same two facts.
 
 ### 7.4 Authority, scoped (review B1)
 

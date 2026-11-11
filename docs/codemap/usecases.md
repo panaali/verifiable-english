@@ -43,6 +43,7 @@
 - `usecases/openai-preparedness/reference.py` — Independent, stdlib-only reading of PLAN 3 and 4 for families A, B, C and G.
 - `usecases/openai-preparedness/run.py` — Answer the frozen Preparedness questions with the translated VE documents.
 - `usecases/openai-preparedness/source/extract_text.py` — Extract the pinned Preparedness Framework v2 text that the span accounting partitions.
+- `usecases/openai-preparedness/source/quote_evidence.py` — Pin source-checked header quotations without distributing the pinned source text.
 - `usecases/openai-preparedness/stage0.py` — PF stage 0: source parts P1/P2/P5/P6/P8, routed probes P3/P4, lint P7 and audit M6.
 - `usecases/question-answering/agent-policy/build.py` — Build the four source-bound agent-policy question fixtures (plan §6.2).
 - `usecases/question-answering/build_group.py` — Regenerate the small, source-bound G fixture in the question-answering spec.
