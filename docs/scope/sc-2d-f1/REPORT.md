@@ -1,7 +1,7 @@
 # sc-2d-f1: pin spec 5.4's effect-statement binders from the elaborated statements — build report
 
 Status: **done**. No DRI signature reserved, no DELTA row (tests and docs only), trust +0. Base `0295df1743`.
-SIZE: 0 product, 142 tests, 6 other hand-written lines (plus this report).
+SIZE: 0 product, 227 tests, 6 other hand-written lines (plus this report); the review fix (F1) added 85 test lines.
 Pilot: 0 bytes (tests and docs only); nothing claimed. Next: none.
 
 ## Deliverables
@@ -56,7 +56,7 @@ Seeded bugs for F1 (each planted alone, then restored with `git checkout` or the
 - Chain run 1 (selected tests, 3 shards): `tests/test_inventory_path.py::test_no_train_only_path_is_read_outside_the_accessor` failed: `typed` read `ROOT / "lean/statements.txt"` directly. Fixed: it reads the list through the accessor, `lean_statements.inventory_path(lean_statements.STATEMENTS)` (which refuses a stale inventory). Afterwards that test and `tests/test_scope_5_4_statements.py` (43) pass.
 - `uv run python tools/select_tests.py --paths <p>` selects `tests/test_scope_5_4_statements.py` for each of `lean/statements.txt` (the new input), `docs/spec/scope.md` and `lean/VE/Scope/Theorems.lean`, and for `--base $(git merge-base HEAD main)`.
 - `uv run python tools/trust_map.py --check`: `K +0, S +0, D +0, G +0, tied +0, unclassified +0, trusted +0`, PASS.
-- `light-lane.py check`: `LIGHT 148 changed lines outside generated files <= 150 (3 files), no trusted-core file`; no trust_mutants sweep (the task asks for none).
+- `light-lane.py check`: before the review fix `LIGHT 148 changed lines outside generated files <= 150 (3 files), no trusted-core file`; after it `NOT 318 changed lines outside generated files > 150 (4 files) against 0295df17` (size only: still no trusted-core file), so the branch takes the normal lane. No trust_mutants sweep (no product code).
 - Overlap: no in-flight `feature/*`, `lean-first/*`, `infra/*` or `foundation/*` branch touches these files.
 - Spec re-read: `reguard_applies`, `restrict_applies`, `carveOut_applies`, `applyEffect_typed`, `commute_applies` against docs/spec/scope.md:1246-1319 (5.4, `### 5.4` at :1237); their telescopes, as printed by the parser, match the pins name for name.
 
