@@ -1,5 +1,6 @@
 import VE.Acts.MeaningExamples
 import VE.Acts.Sources
+import VE.Acts.SourcesProofs
 import VE.Acts.Situation
 import VE.Readings.UnspecifiedWire
 
@@ -272,6 +273,20 @@ def u055w (n : Nat) : List Item := u055 ++ (List.range n).map fun k => .set ⟨s
 #guard [5, 6].map (fun n => sc (mkDoc (e055 false "deny") (u055w n)) V9 fx9 s055) == ["ok", choiceLimit]
 #guard [5, 6].map (fun n => (mkDoc (e055 false "deny") (u055w n)).map (fun (D, _) => (choices D).length)) ==
   [some 64, some 65]
+-- item 8c's counterexample (`sourceCheck_complete_needs_bound`): S4 beside six sets is 128 choices, cut at 65; the
+-- theorem's decidable premises hold on it (lexing, op, readings, paraphrases, D-29 passing on the cut `choiceViews`,
+-- 65 > 64), so `SourceExact` holds while `sourceCheck` refuses: `sourceCheck_complete` needs the bound
+def cutExact (x : Option (Doc × List String)) (V : Vocab) (fx : List String) (s : Source) : Bool :=
+  match x, Lexical.lex fx s.phrase, opOfSource s with
+  | some (D, u), .ok ts, some op => match phraseReadings V op rawCap stepBudget ts.toArray with
+    | .ok Rs => match paraphrases fx op s.form "the source phrase" Rs with
+      | .ok ps => (compareViews ps (choiceViews D u s) (readingViews fx s Rs)).toBool
+      | .error _ => false
+    | .limit => false
+  | _, _, _ => false
+#guard framesOk V9 && cutExact (mkDoc (e055 false "deny") (u055w 6)) V9 fx9 s055 &&
+  (mkDoc (e055 false "deny") (u055w 6)).map (fun (D, _) => decide (maxChoices < (choices D).length)) == some true &&
+  sc (mkDoc (e055 false "deny") (u055w 6)) V9 fx9 s055 == choiceLimit
 -- `sourceCheck` compares `viewsOn` of the choices it bounded; spec 7's `choiceViews` is the same views (`viewsOn_choices`),
 -- checked here on documents with several choices and rules, choices that coincide once projected, and `unspecified`
 #guard [(S1, s105), (d105 [u105a, setB [bFirst, bAll], setC [cFirst, cAll], other], s105),
