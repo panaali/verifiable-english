@@ -390,12 +390,15 @@ def _bind_conflict(row, elaborated, witness=None, situation=None):
             limitation = sum(label.startswith('rights:') for label in conditional)
             # 7.3's report parts: the weighing points are the elaborated colliding pairs no ranking resolves, the
             # situation is the one the request sent (its tables are the request's own rows, Run.lean
-            # `situationTables`), else the line says UNKNOWN with the budget.
+            # `situationTables`), else the line says none was supplied and the budget went unused (Run.lean
+            # `exhibitedText`; no search runs on this route).
             weighing = [entry['label'] for entry in elaborated['colliding_pairs'] if not entry['comparable']]
-            exhibited = 'yes' if situation is not None else f"UNKNOWN (budget {row['budget']})"
+            exhibited = ('yes' if situation is not None
+                         else f"none supplied (not searched; budget {row['budget']} unused)")
             expected = (f'CONFLICT-FREE among rules on the same act, conditional on {coherence} '
                         f'coherence premises and {limitation} limitation premises ({", ".join(conditional)}); '
-                        f'{len(weighing)} weighing points open; situation exhibited: {exhibited}')
+                        f'{len(weighing)} weighing points open (colliding default pairs no ranking resolves); '
+                        f'situation exhibited: {exhibited}')
             if (row['status_text'] != expected or row['weighing_points'] != weighing or
                     row['situation_exhibited'] is not (situation is not None)):
                 raise ValueError('unbound conflict status text or report part')
