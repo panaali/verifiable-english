@@ -1,0 +1,114 @@
+{
+ "comment": "cmp-s3-cfr-1d seeded bugs, each planted alone, the named Lean module rebuilt or the named test run, then restored (git checkout). The trusted definitions' mutants (Run.lean englishJson, englishOf, elaborateCase) are tools/trust_mutants.py's: trust-mutants.json (45 KILLED, 0 SURVIVOR, 3 ALLOWED with trust-mutants-allow.json).",
+ "mutants": [
+  {
+   "name": "RC1-guard-before-relation",
+   "file": "lean/VE/RightClauses/English.lean",
+   "definition": "rc1",
+   "change": {
+    "from": "++ consequence ++ rel ++ conds ++ tail",
+    "to": "++ consequence ++ conds ++ rel ++ tail"
+   },
+   "verdict": "KILLED",
+   "test": "lean/VE/RightClauses/EnglishExamples.lean:44 #guard (rc1Line: relation, then guard, then clause)",
+   "how": "cd lean && lake build VE.RightClauses.EnglishExamples (tree 42865aea67), then git checkout"
+  },
+  {
+   "name": "RC2-slots-swapped",
+   "file": "lean/VE/RightClauses/English.lean",
+   "definition": "relInstance",
+   "change": {
+    "from": "(.var (Γ.length - 1 - r.slots.1)) (.var (Γ.length - 1 - r.slots.2))",
+    "to": "(.var (Γ.length - 1 - r.slots.2)) (.var (Γ.length - 1 - r.slots.1))"
+   },
+   "verdict": "KILLED",
+   "test": "lean/VE/RightClauses/EnglishExamples.lean:44, :50 (argument order, lives_in on slots (1, 0)), :56, :63, :80 #guards",
+   "how": "cd lean && lake build VE.RightClauses.EnglishExamples (tree 42865aea67), then git checkout"
+  },
+  {
+   "name": "RC3-same-sort-that-that",
+   "file": "lean/VE/RightClauses/English.lean",
+   "definition": "rc3",
+   "change": {
+    "from": "if sj == so then .first sj else .plain sj / if sj == so then .second so else .plain so",
+    "to": ".plain sj / .plain so"
+   },
+   "verdict": "KILLED",
+   "test": "lean/VE/RightClauses/EnglishExamples.lean:80 #guard (s_a = s_b, slot o before the holder slot)",
+   "how": "cd lean && lake build VE.RightClauses.EnglishExamples (tree 42865aea67), then git checkout"
+  },
+  {
+   "name": "RC4-quotes-may-not",
+   "file": "lean/VE/RightClauses/English.lean",
+   "definition": "rc4",
+   "change": {
+    "from": "(\"\\\"\" :: banned).any (holds · t)",
+    "to": "(\"\\\"\" :: banned.filter (· != \"may not\")).any (holds · t)"
+   },
+   "verdict": "KILLED",
+   "test": "lean/VE/RightClauses/EnglishExamples.lean:92 #guard (byte form for \"may not\") and :122 (the runtime G9 check refuses the line, so the rendered count drops)",
+   "how": "cd lean && lake build VE.RightClauses.EnglishExamples (tree 42865aea67), then git checkout"
+  },
+  {
+   "name": "RC4-non-source-bytes",
+   "file": "lean/VE/RightClauses/English.lean",
+   "definition": "rc4",
+   "change": {
+    "from": "src.extract sp.1 sp.2",
+    "to": "src.extract sp.1 (sp.2 - 1)"
+   },
+   "verdict": "KILLED",
+   "test": "tests/test_right_clauses.py::test_right_clauses_rc4_w8_quotes_are_source_bytes (('quote', 'Everyon') != ('quote', 'Everyone')) and ::test_right_clauses_rc_lean_rows",
+   "how": "ve_service rebuilt with the mutant and pinned, VE_NATIVE_PREBUILT=1 VE_LEAN_PREBUILT=1 pytest -k 'rc4_w8 or rc_lean_rows', then git checkout and rebuild"
+  },
+  {
+   "name": "line-shown-without-the-gate",
+   "file": "lean/VE/RightClauses/English.lean",
+   "definition": "english",
+   "change": {
+    "from": "else if xs.flatten.all shown then .ok xs.flatten",
+    "to": "else if true then .ok xs.flatten"
+   },
+   "verdict": "KILLED",
+   "test": "lean/VE/RightClauses/English.lean english_gated (its proof no longer elaborates: 'Function expected' at the gate hypothesis)",
+   "how": "cd lean && lake build VE.RightClauses.EnglishExamples (tree 42865aea67), then git checkout"
+  },
+  {
+   "name": "relay-builds-RC4-in-Python",
+   "file": "ve/right_clauses.py",
+   "definition": "_english_bound",
+   "change": {
+    "from": "return tuple((r[\"frame\"], r[\"rule\"], r[\"text\"]) for r in rows)",
+    "to": "RC4's text built by Python from the request's elided spans (byte form for every span)"
+   },
+   "verdict": "KILLED",
+   "test": "tests/test_right_clauses.py::test_right_clauses_rc_lean_rows",
+   "how": "VE_NATIVE_PREBUILT=1 pytest -k rc_lean_rows, then git checkout"
+  },
+  {
+   "name": "relay-binds-a-suffix",
+   "file": "ve/right_clauses.py",
+   "definition": "_english_bound",
+   "change": {
+    "from": "!= _english_rows(document):",
+    "to": "!= _english_rows(document)[-len(rows):]:"
+   },
+   "verdict": "KILLED",
+   "test": "tests/test_right_clauses.py::test_right_clauses_rc_rows_retyped_and_rebound (DID NOT RAISE CheckerUnavailable for a dropped row)",
+   "how": "VE_NATIVE_PREBUILT=1 pytest -k rc_rows_retyped, then git checkout"
+  }
+ ],
+ "trust_mutants": {
+  "evidence": "docs/composition/cmp-s3-cfr-1d/trust-mutants.json",
+  "allow": "docs/composition/cmp-s3-cfr-1d/trust-mutants-allow.json",
+  "killed_by_definition": {
+   "VE.RightClauses.Run.elaborateCase": 30,
+   "VE.RightClauses.Run.englishJson": 10,
+   "VE.RightClauses.Run.englishOf": 5
+  },
+  "tests": [
+   "lean/VE/RightClauses/EnglishExamples.lean",
+   "lean/VE/RightClauses/RunExamples.lean"
+  ]
+ }
+}

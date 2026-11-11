@@ -1,0 +1,13 @@
+# cmp-s3-cfr-1d: user-visible deltas
+
+No product route prints an RC line yet: the document route still refuses every `right-clauses@0` document (spec 4.1
+step 6 is cmp-s3-cfr-1c's), and the task's DELTA row "under right-clauses@0 the route prints the RC1-RC4 sentences"
+moved with deliverables (3) and (5) to cmp-s3-cfr-1db (reviews/dri-decisions-20261111-cmp-s3-cfr-1d.md item 1). With
+the profile off nothing changes: test_right_clauses_k10_profile_off, test_right_clauses_profile_off_evidence and
+test_right_clauses_environment_texts_kept pass unchanged (`pytest tests/test_right_clauses.py -k "k10 or profile_off or
+environment_texts"`). The rows below are the service mode's, which no `ve` command reaches with the new field yet.
+
+| Delta | Detail | Evidence (negative tests) | Ruling |
+|---|---|---|---|
+| `clauses-elaborate` reads an optional request field `english` (`source`, `lexicon`) and then answers with a typed `english` field: the RC1, RC3 and RC4 rows of spec 2 in document order, each through W7's all-derivations gate | Without the field the answer has the base build's fields and values (test_right_clauses_k1_service_identity pins K1's whole result; the K fixtures and test_right_clauses_differential pass unchanged); with it, the result is that answer plus `english` (EnglishExamples.lean #guard on `dropKeys ["english"]`). With it, a request the base refused ("fields do not match") is read. New refusals only on such requests: a lexicon naming another environment (`InvalidInput: the lexicon names another environment`), a span outside the source, a line that is not worded or does not pass the gate (`CheckerUnavailable: ...`), shown lines over 65,536 bytes (`ResourceLimit: the shown lines exceed 65536 bytes`) | EnglishExamples.lean #guards (`modeEnglish`, refusals, the result without `english`); tests/test_right_clauses.py::test_right_clauses_rc_lean_rows, ::test_right_clauses_rc_g6_g9_every_shown_line, ::test_right_clauses_rc_many_lines_within_limits, ::test_right_clauses_rc_rows_retyped_and_rebound; relay_mutation_gate --route service:clauses-elaborate (1213 mutants refused) | SIGNED by the DRI 2026-10-31 (reviews/dri-decisions-20261031-spec-right-clauses.md item 2) |
+| Trusted Lean lines: Run.lean `englishJson`, `englishOf`, `elaborateCase`'s `english` branch; English.lean `Row` | V +29, K +0, S +0 (tools/trust_map.py --check on the final HEAD; REPORT "Trust (R16)"); every new trusted definition has killed trust mutants; FOLLOW-UPS.md row `## cmp-s3-cfr-1d` asks for the ties pass | trust-mutants.json (45 KILLED, 0 SURVIVOR, 3 ALLOWED); mutants.json | SIGNED by standing ruling R16 (DRI-RULINGS.md) |
