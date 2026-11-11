@@ -1,5 +1,5 @@
 {
- "comment": "The verdict paths of the Lean service (docs/spec/kernel-boundary.md, section 2). tier kernel: the path's answers may carry a verdict and its spec and wrap lines count toward the kernel total; tier candidate: measured, not yet admitted. entry: the right-hand side of the mode's runMode_* pin; theorems: what an accepted answer means; subject: the runner the theorems are about (not read); delegates: entries of other paths this entry hands cases to; nonverdict: exits reviewed as carrying no verdict, each with its reason. Measured by tools/kernel_closure.py; only the architect seat changes a tier.",
+ "comment": "The verdict paths of the Lean service (docs/spec/kernel-boundary.md, section 2). tier kernel: the path's answers may carry a verdict and its spec and wrap lines count toward the kernel total; tier candidate: measured, not yet admitted. entry: the right-hand side of the mode's runMode_* pin; theorems: what an accepted answer means; subject: the runner the theorems are about (not read); delegates: entries of other paths this entry hands cases to; nonverdict: exits reviewed as carrying no verdict, each with its reason. Measured by tools/kernel_closure.py; only the architect seat changes a tier. imports: modules that hold a listed theorem and are imported only by VE.Audit (build them first: lake build <module>).",
  "verdict_tokens": [
   "CHECKED",
   "CONFLICT-FREE",
@@ -10,6 +10,9 @@
   "ALL",
   "SOME",
   "NONE"
+ ],
+ "imports": [
+  "VE.Route.MeteredProofs"
  ],
  "paths": [
   {
@@ -180,6 +183,31 @@
     "VE.Route.Metered.scan_sound",
     "VE.Route.Metered.scanState_sound",
     "VE.Route.Metered.scan_exhausted_unknown"
+   ],
+   "delegates": [],
+   "nonverdict": []
+  },
+  {
+   "name": "quantity",
+   "tier": "candidate",
+   "modes": [
+    "quantity"
+   ],
+   "entry": [
+    "VE.Time.Wire.runCaseReported",
+    "VE.Time.Document.extension"
+   ],
+   "subject": [
+    "VE.Time.Wire.checkW6Certificate",
+    "VE.Time.evalB",
+    "VE.Time.refutesB",
+    "VE.Time.Document.admitDocument"
+   ],
+   "theorems": [
+    "VE.Time.Wire.checkW6Certificate_sound",
+    "VE.Time.Wire.evalB_sorted_sound",
+    "VE.Time.Wire.refutesB_sorted_sound",
+    "VE.Time.Document.admit_quantity_report_sound"
    ],
    "delegates": [],
    "nonverdict": []
