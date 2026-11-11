@@ -1,7 +1,7 @@
 {
  "base": "19013ac5f7250c2c7c976fb49bc68fa9a3e12afa",
- "head": "c4a339e1e50011a1d7d5da24da7fe9e279cd7d99",
- "tree": "17a5a1a73a8916ece767f1830b5af66303d253aa",
+ "head": "756aeb356ba7f52d2cdbb3e5248e760b20d5d029",
+ "tree": "29968a3533ab323c572f382bc3d36b14c49e1e5a",
  "jobs": 8,
  "control_probes": "lazy",
  "max_mutants": 60,
@@ -10,47 +10,47 @@
   "lean/VE/RightClauses/EnglishExamples.lean",
   "lean/VE/RightClauses/RunExamples.lean"
  ],
- "seconds": 726,
+ "seconds": 36,
  "steps": {
   "wall": {
-   "plan": 15.7,
-   "scratch": 21.8,
-   "control_build": 0.3,
-   "probe_install": 2.7,
+   "plan": 20.9,
+   "scratch": 7.6,
+   "control_build": 0.4,
+   "probe_install": 3.0,
    "control_probes": 0.0,
-   "mutants": 681.1,
-   "cleanup": 4.7,
-   "reads": 0.2
+   "mutants": 2.8,
+   "cleanup": 0.9,
+   "reads": 0.1
   },
   "lake": {
-   "control_build": 0.3,
-   "probe_install": 2.6,
-   "control_probes": 298.0,
-   "mutant_builds": 167.3,
-   "mutant_checks": 284.9,
+   "control_build": 0.4,
+   "probe_install": 3.0,
+   "control_probes": 0.0,
+   "mutant_builds": 2.8,
+   "mutant_checks": 0.0,
    "outside_checks": 0.0,
-   "stage_controls": 26.6,
-   "mutant_probes": 3811.5,
+   "stage_controls": 0.0,
+   "mutant_probes": 0.0,
    "other": 0.0
   },
   "runs": {
    "control_build": 1,
    "probe_install": 1,
-   "control_probes": 5,
-   "mutant_builds": 53,
-   "mutant_checks": 52,
+   "control_probes": 0,
+   "mutant_builds": 1,
+   "mutant_checks": 0,
    "outside_checks": 0,
-   "stage_controls": 5,
-   "mutant_probes": 61,
+   "stage_controls": 0,
+   "mutant_probes": 0,
    "other": 0
   }
  },
  "counts": {
   "KILLED": 45,
-  "SURVIVOR": 2,
+  "SURVIVOR": 0,
   "UNKNOWN": 0,
   "INVALID": 5,
-  "ALLOWED": 1,
+  "ALLOWED": 3,
   "NOT RUN": 0
  },
  "classes": [
@@ -59,9 +59,8 @@
  "class_counts": {
   "G[V], trusted": {
    "KILLED": 45,
-   "SURVIVOR": 2,
    "INVALID": 5,
-   "ALLOWED": 1
+   "ALLOWED": 3
   }
  },
  "inputs": {
@@ -991,13 +990,12 @@
   }
  },
  "rescore": {
-  "file": "../ship-rescore-3770122.json",
-  "head": null,
-  "mode": "full",
+  "file": "../ship-rescore-3868806.json",
+  "head": "c4a339e1e50011a1d7d5da24da7fe9e279cd7d99",
+  "mode": "identical",
   "changed": [],
-  "reused": 0,
-  "rerun": 53,
-  "full_run": "its inputs differ (options)"
+  "reused": 52,
+  "rerun": 1
  },
  "definitions": [
   "lean/VE/RightClauses/Run.lean: VE.RightClauses.Run.elaborateCase",
@@ -1017,9 +1015,11 @@
    ],
    "before": "257",
    "after": "258",
-   "status": "SURVIVOR",
-   "detail": "",
+   "status": "ALLOWED",
+   "detail": "equivalent: 257 is main's canonical-JSON fuel for the plained document, unchanged by this item (the line only moved into `let bytes`); that document has passed the rights decoder (step 6), whose formula depth limit (64) keeps its JSON depth below 80, so fuel 256, 257 and 258 give the same answer",
    "raw_status": "SURVIVOR",
+   "raw_detail": "",
+   "reused_from": "c4a339e1e50011a1d7d5da24da7fe9e279cd7d99",
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -1035,9 +1035,11 @@
    ],
    "before": "257",
    "after": "256",
-   "status": "SURVIVOR",
-   "detail": "",
+   "status": "ALLOWED",
+   "detail": "equivalent: 257 is main's canonical-JSON fuel for the plained document, unchanged by this item (the line only moved into `let bytes`); that document has passed the rights decoder (step 6), whose formula depth limit (64) keeps its JSON depth below 80, so fuel 256, 257 and 258 give the same answer",
    "raw_status": "SURVIVOR",
+   "raw_detail": "",
+   "reused_from": "c4a339e1e50011a1d7d5da24da7fe9e279cd7d99",
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -1075,6 +1077,7 @@
    "status": "KILLED",
    "detail": "lean/VE/RightClauses/EnglishExamples.lean:143: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c4a339e1e50011a1d7d5da24da7fe9e279cd7d99",
    "reads": "e5b6e60a7ffe7bcdcdf83bd50802e4ed83ceefa16d8a8e9946ddbd5124714e97",
    "killed_at": [
     143,
@@ -1098,6 +1101,7 @@
    "status": "KILLED",
    "detail": "lean/VE/RightClauses/EnglishExamples.lean:143: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c4a339e1e50011a1d7d5da24da7fe9e279cd7d99",
    "reads": "adca35453c44641737e12dc35e05d41e9d1c908fb7f49550f414eba1bfe3b9c0",
    "killed_at": [
     143,
@@ -1121,6 +1125,7 @@
    "status": "INVALID",
    "detail": "Function expected at",
    "raw_status": "INVALID",
+   "reused_from": "c4a339e1e50011a1d7d5da24da7fe9e279cd7d99",
    "reads": "4161a25590af13ded35d33d61a38157625b62ab9aa937262bb2e70f82e6dc812",
    "trust_class": "G[V]",
    "trusted": true
@@ -1140,6 +1145,7 @@
    "status": "KILLED",
    "detail": "lean/VE/RightClauses/EnglishExamples.lean:143: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c4a339e1e50011a1d7d5da24da7fe9e279cd7d99",
    "reads": "adca35453c44641737e12dc35e05d41e9d1c908fb7f49550f414eba1bfe3b9c0",
    "killed_at": [
     143,
@@ -1163,6 +1169,7 @@
    "status": "KILLED",
    "detail": "lean/VE/RightClauses/EnglishExamples.lean:143: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c4a339e1e50011a1d7d5da24da7fe9e279cd7d99",
    "reads": "01f6813d63e6f080a268d2d7d5488c052476d5d2721d32563a0df9e36f843321",
    "killed_at": [
     143,
@@ -1186,6 +1193,7 @@
    "status": "KILLED",
    "detail": "lean/VE/RightClauses/EnglishExamples.lean:143: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c4a339e1e50011a1d7d5da24da7fe9e279cd7d99",
    "reads": "adca35453c44641737e12dc35e05d41e9d1c908fb7f49550f414eba1bfe3b9c0",
    "killed_at": [
     143,
@@ -1209,6 +1217,7 @@
    "status": "KILLED",
    "detail": "lean/VE/RightClauses/EnglishExamples.lean:143: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c4a339e1e50011a1d7d5da24da7fe9e279cd7d99",
    "reads": "adca35453c44641737e12dc35e05d41e9d1c908fb7f49550f414eba1bfe3b9c0",
    "killed_at": [
     143,
@@ -1232,6 +1241,7 @@
    "status": "KILLED",
    "detail": "lean/VE/RightClauses/RunExamples.lean:42: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c4a339e1e50011a1d7d5da24da7fe9e279cd7d99",
    "reads": "f7a908c8b6c94397ba70cfbb0ed5d4d999aec141293b8fe42a3eb1ab1d1614d8",
    "killed_at": [
     42,
@@ -1255,6 +1265,7 @@
    "status": "KILLED",
    "detail": "lean/VE/RightClauses/EnglishExamples.lean:158: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c4a339e1e50011a1d7d5da24da7fe9e279cd7d99",
    "reads": "b48bc28648286f966c00421b6d194377330c137d2b27d72968ff1f35984263a1",
    "killed_at": [
     158,
@@ -1278,6 +1289,7 @@
    "status": "KILLED",
    "detail": "lean/VE/RightClauses/EnglishExamples.lean:143: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c4a339e1e50011a1d7d5da24da7fe9e279cd7d99",
    "reads": "01f6813d63e6f080a268d2d7d5488c052476d5d2721d32563a0df9e36f843321",
    "killed_at": [
     143,
@@ -1301,6 +1313,7 @@
    "status": "KILLED",
    "detail": "lean/VE/RightClauses/EnglishExamples.lean:143: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c4a339e1e50011a1d7d5da24da7fe9e279cd7d99",
    "reads": "e5b6e60a7ffe7bcdcdf83bd50802e4ed83ceefa16d8a8e9946ddbd5124714e97",
    "killed_at": [
     143,
@@ -1324,6 +1337,7 @@
    "status": "KILLED",
    "detail": "lean/VE/RightClauses/EnglishExamples.lean:143: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c4a339e1e50011a1d7d5da24da7fe9e279cd7d99",
    "reads": "adca35453c44641737e12dc35e05d41e9d1c908fb7f49550f414eba1bfe3b9c0",
    "killed_at": [
     143,
@@ -1347,6 +1361,7 @@
    "status": "KILLED",
    "detail": "lean/VE/RightClauses/EnglishExamples.lean:143: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c4a339e1e50011a1d7d5da24da7fe9e279cd7d99",
    "reads": "01f6813d63e6f080a268d2d7d5488c052476d5d2721d32563a0df9e36f843321",
    "killed_at": [
     143,
@@ -1370,6 +1385,7 @@
    "status": "KILLED",
    "detail": "lean/VE/RightClauses/EnglishExamples.lean:143: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c4a339e1e50011a1d7d5da24da7fe9e279cd7d99",
    "reads": "e5b6e60a7ffe7bcdcdf83bd50802e4ed83ceefa16d8a8e9946ddbd5124714e97",
    "killed_at": [
     143,
@@ -1393,6 +1409,7 @@
    "status": "KILLED",
    "detail": "lean/VE/RightClauses/EnglishExamples.lean:143: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c4a339e1e50011a1d7d5da24da7fe9e279cd7d99",
    "reads": "adca35453c44641737e12dc35e05d41e9d1c908fb7f49550f414eba1bfe3b9c0",
    "killed_at": [
     143,
@@ -1416,6 +1433,7 @@
    "status": "INVALID",
    "detail": "Invalid field `take`: The environment does not contain `Function.take`",
    "raw_status": "INVALID",
+   "reused_from": "c4a339e1e50011a1d7d5da24da7fe9e279cd7d99",
    "reads": "4161a25590af13ded35d33d61a38157625b62ab9aa937262bb2e70f82e6dc812",
    "trust_class": "G[V]",
    "trusted": true
@@ -1435,6 +1453,7 @@
    "status": "KILLED",
    "detail": "lean/VE/RightClauses/EnglishExamples.lean:143: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c4a339e1e50011a1d7d5da24da7fe9e279cd7d99",
    "reads": "adca35453c44641737e12dc35e05d41e9d1c908fb7f49550f414eba1bfe3b9c0",
    "killed_at": [
     143,
@@ -1458,6 +1477,7 @@
    "status": "INVALID",
    "detail": "Invalid field `dropLast`: The environment does not contain `Function.dropLast`",
    "raw_status": "INVALID",
+   "reused_from": "c4a339e1e50011a1d7d5da24da7fe9e279cd7d99",
    "reads": "4161a25590af13ded35d33d61a38157625b62ab9aa937262bb2e70f82e6dc812",
    "trust_class": "G[V]",
    "trusted": true
@@ -1477,6 +1497,7 @@
    "status": "KILLED",
    "detail": "lean/VE/RightClauses/EnglishExamples.lean:143: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c4a339e1e50011a1d7d5da24da7fe9e279cd7d99",
    "reads": "adca35453c44641737e12dc35e05d41e9d1c908fb7f49550f414eba1bfe3b9c0",
    "killed_at": [
     143,
@@ -1500,6 +1521,7 @@
    "status": "KILLED",
    "detail": "lean/VE/RightClauses/EnglishExamples.lean:143: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c4a339e1e50011a1d7d5da24da7fe9e279cd7d99",
    "reads": "01f6813d63e6f080a268d2d7d5488c052476d5d2721d32563a0df9e36f843321",
    "killed_at": [
     143,
@@ -1523,6 +1545,7 @@
    "status": "KILLED",
    "detail": "lean/VE/RightClauses/EnglishExamples.lean:158: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c4a339e1e50011a1d7d5da24da7fe9e279cd7d99",
    "reads": "b48bc28648286f966c00421b6d194377330c137d2b27d72968ff1f35984263a1",
    "killed_at": [
     158,
@@ -1546,6 +1569,7 @@
    "status": "KILLED",
    "detail": "lean/VE/RightClauses/EnglishExamples.lean:143: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c4a339e1e50011a1d7d5da24da7fe9e279cd7d99",
    "reads": "01f6813d63e6f080a268d2d7d5488c052476d5d2721d32563a0df9e36f843321",
    "killed_at": [
     143,
@@ -1569,6 +1593,7 @@
    "status": "KILLED",
    "detail": "lean/VE/RightClauses/EnglishExamples.lean:143: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c4a339e1e50011a1d7d5da24da7fe9e279cd7d99",
    "reads": "adca35453c44641737e12dc35e05d41e9d1c908fb7f49550f414eba1bfe3b9c0",
    "killed_at": [
     143,
@@ -1592,6 +1617,7 @@
    "status": "KILLED",
    "detail": "lean/VE/RightClauses/EnglishExamples.lean:143: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c4a339e1e50011a1d7d5da24da7fe9e279cd7d99",
    "reads": "adca35453c44641737e12dc35e05d41e9d1c908fb7f49550f414eba1bfe3b9c0",
    "killed_at": [
     143,
@@ -1615,6 +1641,7 @@
    "status": "KILLED",
    "detail": "lean/VE/RightClauses/EnglishExamples.lean:158: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c4a339e1e50011a1d7d5da24da7fe9e279cd7d99",
    "reads": "b48bc28648286f966c00421b6d194377330c137d2b27d72968ff1f35984263a1",
    "killed_at": [
     158,
@@ -1638,6 +1665,7 @@
    "status": "KILLED",
    "detail": "lean/VE/RightClauses/EnglishExamples.lean:158: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c4a339e1e50011a1d7d5da24da7fe9e279cd7d99",
    "reads": "b48bc28648286f966c00421b6d194377330c137d2b27d72968ff1f35984263a1",
    "killed_at": [
     158,
@@ -1661,6 +1689,7 @@
    "status": "KILLED",
    "detail": "lean/VE/RightClauses/EnglishExamples.lean:143: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c4a339e1e50011a1d7d5da24da7fe9e279cd7d99",
    "reads": "01f6813d63e6f080a268d2d7d5488c052476d5d2721d32563a0df9e36f843321",
    "killed_at": [
     143,
@@ -1684,6 +1713,7 @@
    "status": "KILLED",
    "detail": "lean/VE/RightClauses/EnglishExamples.lean:143: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c4a339e1e50011a1d7d5da24da7fe9e279cd7d99",
    "reads": "e5b6e60a7ffe7bcdcdf83bd50802e4ed83ceefa16d8a8e9946ddbd5124714e97",
    "killed_at": [
     143,
@@ -1707,6 +1737,7 @@
    "status": "KILLED",
    "detail": "lean/VE/RightClauses/EnglishExamples.lean:143: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c4a339e1e50011a1d7d5da24da7fe9e279cd7d99",
    "reads": "adca35453c44641737e12dc35e05d41e9d1c908fb7f49550f414eba1bfe3b9c0",
    "killed_at": [
     143,
@@ -1730,6 +1761,7 @@
    "status": "KILLED",
    "detail": "lean/VE/RightClauses/EnglishExamples.lean:143: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c4a339e1e50011a1d7d5da24da7fe9e279cd7d99",
    "reads": "01f6813d63e6f080a268d2d7d5488c052476d5d2721d32563a0df9e36f843321",
    "killed_at": [
     143,
@@ -1753,6 +1785,7 @@
    "status": "KILLED",
    "detail": "lean/VE/RightClauses/EnglishExamples.lean:143: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c4a339e1e50011a1d7d5da24da7fe9e279cd7d99",
    "reads": "e5b6e60a7ffe7bcdcdf83bd50802e4ed83ceefa16d8a8e9946ddbd5124714e97",
    "killed_at": [
     143,
@@ -1776,6 +1809,7 @@
    "status": "KILLED",
    "detail": "lean/VE/RightClauses/EnglishExamples.lean:143: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c4a339e1e50011a1d7d5da24da7fe9e279cd7d99",
    "reads": "adca35453c44641737e12dc35e05d41e9d1c908fb7f49550f414eba1bfe3b9c0",
    "killed_at": [
     143,
@@ -1799,6 +1833,7 @@
    "status": "KILLED",
    "detail": "lean/VE/RightClauses/EnglishExamples.lean:143: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c4a339e1e50011a1d7d5da24da7fe9e279cd7d99",
    "reads": "01f6813d63e6f080a268d2d7d5488c052476d5d2721d32563a0df9e36f843321",
    "killed_at": [
     143,
@@ -1822,6 +1857,7 @@
    "status": "KILLED",
    "detail": "lean/VE/RightClauses/EnglishExamples.lean:143: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c4a339e1e50011a1d7d5da24da7fe9e279cd7d99",
    "reads": "adca35453c44641737e12dc35e05d41e9d1c908fb7f49550f414eba1bfe3b9c0",
    "killed_at": [
     143,
@@ -1845,6 +1881,7 @@
    "status": "INVALID",
    "detail": "Invalid field `reverse`: The environment does not contain `Function.reverse`",
    "raw_status": "INVALID",
+   "reused_from": "c4a339e1e50011a1d7d5da24da7fe9e279cd7d99",
    "reads": "4161a25590af13ded35d33d61a38157625b62ab9aa937262bb2e70f82e6dc812",
    "trust_class": "G[V]",
    "trusted": true
@@ -1864,6 +1901,7 @@
    "status": "KILLED",
    "detail": "lean/VE/RightClauses/EnglishExamples.lean:158: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c4a339e1e50011a1d7d5da24da7fe9e279cd7d99",
    "reads": "b48bc28648286f966c00421b6d194377330c137d2b27d72968ff1f35984263a1",
    "killed_at": [
     158,
@@ -1887,6 +1925,7 @@
    "status": "INVALID",
    "detail": "Invalid field `drop`: The environment does not contain `Function.drop`",
    "raw_status": "INVALID",
+   "reused_from": "c4a339e1e50011a1d7d5da24da7fe9e279cd7d99",
    "reads": "4161a25590af13ded35d33d61a38157625b62ab9aa937262bb2e70f82e6dc812",
    "trust_class": "G[V]",
    "trusted": true
@@ -1906,6 +1945,7 @@
    "status": "KILLED",
    "detail": "lean/VE/RightClauses/EnglishExamples.lean:143: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c4a339e1e50011a1d7d5da24da7fe9e279cd7d99",
    "reads": "adca35453c44641737e12dc35e05d41e9d1c908fb7f49550f414eba1bfe3b9c0",
    "killed_at": [
     143,
@@ -1929,6 +1969,7 @@
    "status": "KILLED",
    "detail": "lean/VE/RightClauses/EnglishExamples.lean:158: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c4a339e1e50011a1d7d5da24da7fe9e279cd7d99",
    "reads": "b48bc28648286f966c00421b6d194377330c137d2b27d72968ff1f35984263a1",
    "killed_at": [
     158,
@@ -1952,6 +1993,7 @@
    "status": "KILLED",
    "detail": "lean/VE/RightClauses/EnglishExamples.lean:143: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c4a339e1e50011a1d7d5da24da7fe9e279cd7d99",
    "reads": "01f6813d63e6f080a268d2d7d5488c052476d5d2721d32563a0df9e36f843321",
    "killed_at": [
     143,
@@ -1975,6 +2017,7 @@
    "status": "KILLED",
    "detail": "lean/VE/RightClauses/EnglishExamples.lean:158: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c4a339e1e50011a1d7d5da24da7fe9e279cd7d99",
    "reads": "b48bc28648286f966c00421b6d194377330c137d2b27d72968ff1f35984263a1",
    "killed_at": [
     158,
@@ -1998,6 +2041,7 @@
    "status": "KILLED",
    "detail": "lean/VE/RightClauses/EnglishExamples.lean:143: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c4a339e1e50011a1d7d5da24da7fe9e279cd7d99",
    "reads": "01f6813d63e6f080a268d2d7d5488c052476d5d2721d32563a0df9e36f843321",
    "killed_at": [
     143,
@@ -2021,6 +2065,7 @@
    "status": "KILLED",
    "detail": "lean/VE/RightClauses/EnglishExamples.lean:143: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c4a339e1e50011a1d7d5da24da7fe9e279cd7d99",
    "reads": "adca35453c44641737e12dc35e05d41e9d1c908fb7f49550f414eba1bfe3b9c0",
    "killed_at": [
     143,
@@ -2044,6 +2089,7 @@
    "status": "KILLED",
    "detail": "lean/VE/RightClauses/EnglishExamples.lean:158: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c4a339e1e50011a1d7d5da24da7fe9e279cd7d99",
    "reads": "b48bc28648286f966c00421b6d194377330c137d2b27d72968ff1f35984263a1",
    "killed_at": [
     158,
@@ -2067,6 +2113,7 @@
    "status": "KILLED",
    "detail": "lean/VE/RightClauses/EnglishExamples.lean:158: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c4a339e1e50011a1d7d5da24da7fe9e279cd7d99",
    "reads": "b48bc28648286f966c00421b6d194377330c137d2b27d72968ff1f35984263a1",
    "killed_at": [
     158,
@@ -2090,6 +2137,7 @@
    "status": "KILLED",
    "detail": "lean/VE/RightClauses/EnglishExamples.lean:158: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c4a339e1e50011a1d7d5da24da7fe9e279cd7d99",
    "reads": "b48bc28648286f966c00421b6d194377330c137d2b27d72968ff1f35984263a1",
    "killed_at": [
     158,
@@ -2113,6 +2161,7 @@
    "status": "KILLED",
    "detail": "lean/VE/RightClauses/EnglishExamples.lean:158: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c4a339e1e50011a1d7d5da24da7fe9e279cd7d99",
    "reads": "b48bc28648286f966c00421b6d194377330c137d2b27d72968ff1f35984263a1",
    "killed_at": [
     158,
@@ -2136,6 +2185,7 @@
    "status": "KILLED",
    "detail": "lean/VE/RightClauses/EnglishExamples.lean:158: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c4a339e1e50011a1d7d5da24da7fe9e279cd7d99",
    "reads": "b48bc28648286f966c00421b6d194377330c137d2b27d72968ff1f35984263a1",
    "killed_at": [
     158,
@@ -2159,6 +2209,7 @@
    "status": "KILLED",
    "detail": "lean/VE/RightClauses/EnglishExamples.lean:158: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c4a339e1e50011a1d7d5da24da7fe9e279cd7d99",
    "reads": "b48bc28648286f966c00421b6d194377330c137d2b27d72968ff1f35984263a1",
    "killed_at": [
     158,
@@ -2182,6 +2233,7 @@
    "status": "KILLED",
    "detail": "lean/VE/RightClauses/EnglishExamples.lean:158: Expression",
    "raw_status": "KILLED",
+   "reused_from": "c4a339e1e50011a1d7d5da24da7fe9e279cd7d99",
    "reads": "b48bc28648286f966c00421b6d194377330c137d2b27d72968ff1f35984263a1",
    "killed_at": [
     158,
@@ -2191,5 +2243,5 @@
    "trusted": true
   }
  ],
- "where": "ve-cloud-3"
+ "where": "ve-cloud-2"
 }
