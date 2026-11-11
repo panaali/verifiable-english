@@ -185,6 +185,9 @@ after the run. No test of main-known-red.txt was involved (0 failed).
   `Elaborate.lean` stay trusted, as ap-3c recorded them.
 - Two of the task's predicted failures differ from the actual ones (section 5). Under those bugs the statements hold
   of every document, because every split result is refused. Only the proofs and E1/E4's acceptance catch them.
+- `Elaborate.lean`'s module docstring (line 11) still says "`splitMap_exact` and `elaborate_parts` come with ap-3cb".
+  They are now in `ElaborateProofs.lean`. This item may not edit `Elaborate.lean` (norm-defaults-cfr-1b is in flight
+  there), so the wording waits for the next edit of that file.
 - `regen_generated.py --write` also refreshed main's stale code map (ClausesElaborate, rights): R12.
 - The kernel evaluates `splitAtoms` on E1 but not on E4 (`String.splitOn` under a comparison of two rules'
   readings). So the E4 example is conditional on its split, which a `#guard` pins.
