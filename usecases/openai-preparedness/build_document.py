@@ -50,6 +50,7 @@ PLACEMENTS = {
     "In cases of ambiguity about whether a model is covered": ("blocked_rule", "f5-ambiguous", ("JT",)),
     "ordinarily not require additional safety measures": ("readings", "rs8-distilled", ("DF", "JT")),
     "every covered model undergoes": ("blocked_rule", "f7-evaluations", ("ET",)),
+    "are compiled into a Capabilities Report that is submitted": ("rule", "f7-compile", ("ET",)),
     "The SAG reviews the Capabilities Report": ("rule", "f7-report", ("AT",)),
     "Determine that the capability threshold has been crossed": ("readings", "rs16-recommend", ("readings",)),
     "appears likely to cross": ("rule", "f8-start", ("JT", "ET")),
@@ -110,10 +111,11 @@ READINGS = {
     # RS2 is 4.2's "also" (p12-u195, which stays UNFORMALISED for its "during development" order); RS11 shares
     # p16-u281 with RS6. Neither has a unit of its own, so neither is placed.
     "rs2-nest": ("RS2", {"nest": ["rs2-nest"], "sep": []}),
-    "rs11-final": ("RS11", {"final": ["f16-final"], "process": ["f16-process"]}),
+    # RS11 = final is excluded (PLAN 12 item 18); under process the sentence assigns a role and states no norm.
+    "rs11-final": ("RS11", {"process": []}),
     "rs6-informed": ("RS6", {"req": ["f16-informed"], "desc": []}),
     "rs7-without-sag": ("RS7", {"noinput": ["f16-without-noinput"], "nodelib": ["f16-without-nodelib"]}),
-    "rs17-board": ("RS17", {"bperm": ["f16-board-reverse"], "bmight": []}),
+    "rs17-board": ("RS17", {"bperm": ["f16-board-reverse", "f16-board-mandate"], "bmight": []}),
     "rs16-recommend": ("RS16", {"coupled": ["f7-recommend"], "option": []}),
     "rs9-residual": ("RS9", {"strict": ["f9-residual-strict"], "default": ["f9-residual-default"]}),
     "rs9-chair": ("RS9", {"strict": ["f16-chair-strict"], "default": ["f16-chair-default"]}),
@@ -121,7 +123,8 @@ READINGS = {
     "rs0-year": ("RS0", {"commitment": ["f16-year"], "prediction": []}),
     "rs8-distilled": ("RS8", {"rel": ["f6-rel"], "pred": []}),
     "rs5-adjustment": ("RS5", {"within": ["f11-within", "f11-acknowledge", "f11-protect", "f11-share"],
-                               "exception": ["f11-exception", "f11-acknowledge", "f11-protect", "f11-share"]}),
+                               "exception": ["f11-exception", "f11-exception-deploy", "f11-acknowledge", "f11-protect",
+                                             "f11-share"]}),
     "rs4-lra": ("RS4", {"N": ["f12-lra", "f12-lra-unscoped"], "P": []}),
     "rs4-sandbagging": ("RS4", {"N": ["f12-sandbagging", "f12-sandbagging-unscoped"], "P": []}),
     "rs4-ara": ("RS4", {"N": ["f12-ara", "f12-ara-unscoped"], "P": []}),
@@ -141,7 +144,7 @@ SET_FAMILIES = {"RS0": "readings", "RS1": "DF", "RS8": "DF", "RS5": "readings",
                 "RS11": "readings", "RS16": "readings", "RS17": "AT"}
 BLOCKED_RULE_REASONS = {"f5-checkpoint": "event_order", "f5-ambiguous": "unmapped_clause",
                         "f13-review": "event_order", "f13-results": "unmapped_clause",
-                        "f7-evaluations": "event_order", "f9-specific": "quantifier_scope",
+                        "f7-evaluations": "event_order", "f7-compile": "event_order", "f9-specific": "quantifier_scope",
                         "f9-efficacy": "quantifier_scope", "f9-threshold": "quantifier_scope",
                         "f7-report": "attitude", "f14-document": "unmapped_clause",
                         "f16-sag-recommend": "unmapped_clause", "no-critical-models": "attitude"}
