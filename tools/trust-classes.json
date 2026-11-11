@@ -21642,6 +21642,11 @@
         "ResponseShape.Schemas.EnglishStatement.spanRow",
         "ResponseShape.Schemas.EnglishStatement.treeRow"
       ]
+    },
+    "VE/Commands/WebEnvMain.lean": {
+      "T": [
+        "main"
+      ]
     }
   }
 }
