@@ -127,4 +127,42 @@ candidates under the profile, K12's join).
 - `uv run python tools/regen_generated.py --write`, then `--check`: "checked 39 entries".
 - `uv run python tools/gate_collection.py --check --prebuilt`: "8 added, 0 removed by a trailer, 0 refused, 0 stale
   and 0 malformed trailers".
-- Selected tests (final, committed tree): SELECTED_PLACEHOLDER
+- Selected tests on the committed tree fb50a170b0: `MAC_PYTEST_NO_DEFER=1 zsh mac-pytest.sh --select -- --base
+  $(git merge-base HEAD main) --run` gave "recorded 514 units for tree ac809bd7c4; ... 0 failed", "ran on ve-cloud-2,
+  select_tests, exit=0". Commits after it touch docs/*.md only.
+- Pre-existing failures from main-known-red.txt: none met.
+
+## Self-review against BUILDER-CHECKLIST
+
+1. Typed and contained: PASS. test_right_clauses_relay_binds_every_field retypes each answer field (7, true, null,
+   [], {}, 1.5, a nested list) and a 100,000-deep plained text. tools/relay_mutation_gate.py --route
+   service:clauses-elaborate: 528 mutants, 528 refused.
+2. Deliverables built: PASS. See the Deliverables table (commit and test per row). RC1-RC5 were moved by
+   reviews/dri-decisions-20261110-cmp-s3-cfr-1b.md item 1. ve/right_clauses.py only relays and binds (R8).
+3. Tests can fail: PASS. Seeded bugs table, mutants.json (14 entries), trust-mutants.json (exit 0: 0 SURVIVOR,
+   0 UNKNOWN).
+4. Python and Lean agree: PASS. test_right_clauses_differential compares bytes with Lean's on K1-K15, F11, F12 and F14.
+5. R8 binding: PASS. test_right_clauses_relay_binds_every_field drops, adds, renames and moves units, lines, names and
+   premises, and checks the Lim ++ Rel order.
+6. Gate evidence on the final HEAD: PASS for this builder's part. The selected tests ran on the committed tree, and the
+   chain runs the full gate. Main's answers are saved in main-answers.json, not computed from live git.
+7. No unsigned item: PASS. DELTA rows cite R2, R2, the DRI's signature (dri-decisions-20261031-spec-right-clauses.md
+   item 2) and R16. No signature is reserved.
+8. Every user-visible change is in DELTA: PASS. The two earlier refusals and the soft frame are rows. main-answers.json
+   and main_answers_probe.py hold the base's answers. Profile-off texts are unchanged
+   (test_right_clauses_profile_off_evidence, test_right_clauses_k10_profile_off).
+9. Test selection: PASS. select_tests chose 514 units, not every unit, and test_right_clauses.py is among them.
+10. Statements: PASS. `clauseSlot_wellFormed` matches spec 8.4 word for word (Spec re-read). lean/audit.py PASS. The K8
+    mutant breaks its proof.
+11. Limits fail closed: PASS. test_right_clauses_w1_budget: one atom over the limit gives `AST exceeds 10,000 nodes`;
+    257 lines give `ResourceLimit: rules` (RunExamples.lean:183). No sleeps; waits use HANG_TIMEOUT.
+12. No CPU regression: PASS. Line objects are counted before decoding, spans are O(s log s) and cites are one set.
+    test_right_clauses_w1_budget runs 30,000 spans and 20,000 cites within the deadline, and the pairwise reference
+    guard is Examples.lean:396. No pilot bytes move.
+13. Test-removed trailers: PASS. `tools/gate_collection.py --check --prebuilt`: 0 refused, 0 stale, 0 malformed (no
+    test removed).
+14. Both directions, cited evidence, spec re-read: PASS. Each charge has an accepted side (`bodies [256]`, `scopes 63`,
+    `deepIn ... == some false`) and a refused side. See the Spec re-read section.
+15. Overclaim, silent cut, checks that can fail, limits before work: PASS. The RC rendering cut is DRI-ruled. Every new
+    #guard has a mutant that breaks it (mutants.json). `lineObjects` charges lines before `decodeClauseDoc`
+    (Run.lean `elaborateCase`).
