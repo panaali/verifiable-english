@@ -67,6 +67,20 @@
       ]
     },
     {
+      "id": "atoms-reversed",
+      "file": "lean/VE/Acts/Elaborate.lean",
+      "definition": "atomsOf",
+      "claim": "the E1 and E4 examples' split pin: part 1 is torture (the theorems hold of any order; the pin catches it)",
+      "test": "lean/VE/Acts/ElaborateProofs.lean",
+      "guards": [
+        "#guard splitAtoms e1 \"p027\" == some [torture, cruel] && splitAtoms e4 \"p027\" == some [torture, cruel]"
+      ],
+      "result": "KILLED",
+      "failing": [
+        "guard `#guard splitAtoms e1 \"p027\" == some [torture, cruel] && splitAtoms e4 \"p`"
+      ]
+    },
+    {
       "id": "statement-index-from-2",
       "file": "lean/VE/Acts/ElaborateProofs.lean",
       "definition": "splitMap_exact",
