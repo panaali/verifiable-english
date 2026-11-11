@@ -472,31 +472,34 @@ def _rule_problem(row: dict, targets: list, k: int, raw: bytes, env) -> str | No
         rule = NormDocument._decode({"norm": norm})
     except VEError as exc:
         return f"a rule node does not decode: {exc}"
-    from .search import _used_predicates
-    formulas = (rule.guard, *rule.unless)
-    constants, bound = _named(formulas, len(decl.arguments))
-    if not (_used_predicates(*formulas) <= env.predicates.keys() and constants <= env.constants.keys() and bound):
+    predicates, constants, bound = _named((rule.guard, *rule.unless), len(decl.arguments))
+    if not (predicates <= env.predicates.keys() and constants <= env.constants.keys() and bound):
         return "a rule node names a predicate, constant or variable the request does not have"
     return None
 
 
-def _named(formulas, arity: int) -> tuple[set[str], bool]:
-    """The constants decoded formulas name, and whether every variable is bound: in scope of the rule's `arity`
-    arguments and the quantifiers above it (a node with a `sort` and a `body` binds one). Read without recursion."""
+def _named(formulas, arity: int) -> tuple[set[str], set[str], bool]:
+    """The predicates and constants decoded formulas name, and whether every variable is bound: in scope of the
+    rule's `arity` arguments and the quantifiers above it (a node with a `sort` and a `body` binds one). Read
+    without recursion."""
     from dataclasses import fields, is_dataclass
-    found, bound, stack = set(), True, [(f, arity) for f in formulas]
+    predicates, constants, bound, stack = set(), set(), True, [(f, arity) for f in formulas]
     while stack:
         node, depth = stack.pop()
         if isinstance(node, ast.Const):
-            found.add(node.name)
+            constants.add(node.name)
         elif isinstance(node, ast.Var):
             bound = bound and type(node.index) is int and 0 <= node.index < depth
         elif isinstance(node, (tuple, list)):
             stack.extend((item, depth) for item in node)
         elif is_dataclass(node):
-            inner = depth + 1 if {"sort", "body"} <= {f.name for f in fields(node)} else depth
-            stack.extend((getattr(node, f.name), inner if f.name == "body" else depth) for f in fields(node))
-    return found, bound
+            names = {f.name for f in fields(node)}
+            if "predicate" in names:
+                predicates.add(node.predicate)
+            inner = depth + 1 if {"sort", "body"} <= names else depth
+            stack.extend((getattr(node, f.name), inner if f.name == "body" else depth) for f in fields(node)
+                         if f.name != "predicate")
+    return predicates, constants, bound
 
 
 def statement_problem(row: dict, case: dict, env) -> str | None:

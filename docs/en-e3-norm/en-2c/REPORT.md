@@ -77,7 +77,7 @@ Each was run by `docs/en-e3-norm/en-2c/seed.py`, and the record is `mutants.json
    `test_every_retyped_dropped_or_duplicated_member_is_unavailable` fails.
 6. **The spans not all bound before nodes are read:** `test_the_spans_bound_the_rule_rows_before_any_node_is_read`
    fails.
-7. **A rule node's formulas may name an undeclared constant or an unbound variable:**
+7. **A rule node's formulas may name an undeclared predicate or constant, or an unbound variable:**
    `test_every_named_mutant_is_unavailable` and `test_every_retyped_dropped_or_duplicated_member_is_unavailable` fail.
 8. **`tools/relay_mutation_gate.py`: the gate without the english.statement reader:**
    `test_english_statement_is_read_as_the_w1_shadow_reads_it` fails.
