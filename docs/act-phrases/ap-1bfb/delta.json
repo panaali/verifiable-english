@@ -1,0 +1,107 @@
+{
+ "note": "ap-1bfb A1 (R1): Lean's acts@0 record of base.json without norms@0. The base record is main 8eda0371fd's (revision 1), whose text and args docs/act-phrases/ap-1bfb/a1-before.txt shows (its other seven fields equal the head's but the revision); the head record is this item's, from `diagnose acts@0`.",
+ "rows": [
+  {
+   "case": "acts@0 without norms@0",
+   "source": {
+    "environment": {
+     "language": "ve.core@0.2",
+     "profiles": [
+      "acts@0",
+      "relational-fol@0"
+     ],
+     "spec_revision": "ve-v0.2-expand2-2026-09-25",
+     "vocabulary": {
+      "sorts": {
+       "person": {
+        "description": "person"
+       }
+      },
+      "predicates": {
+       "paid": {
+        "arguments": [
+         "person"
+        ],
+        "description": "paid",
+        "regulated": {
+         "role": "plain",
+         "default": "deny",
+         "act": "{0} to equal pay for equal work",
+         "form": "has the right"
+        }
+       },
+       "protected": {
+        "arguments": [
+         "person"
+        ],
+        "description": "protected",
+        "regulated": {
+         "role": "permission",
+         "default": "allow",
+         "act": "{0} seek protection"
+        }
+       },
+       "c": {
+        "arguments": [
+         "person"
+        ],
+        "description": "c"
+       }
+      },
+      "constants": {},
+      "acts": {
+       "fixed": [
+        "equal pay for equal work"
+       ]
+      }
+     }
+    },
+    "norms": [
+     {
+      "norm": {
+       "name": "r0",
+       "predicate": "protected",
+       "sign": true,
+       "guard": [
+        "unary",
+        "c",
+        [
+         "var",
+         0
+        ]
+       ],
+       "unless": [],
+       "over": []
+      }
+     }
+    ]
+   },
+   "base": {
+    "args": {
+     "message": "UnsupportedProfile: norms@0 is required"
+    },
+    "check": "1.1d",
+    "class": "InvalidInput",
+    "code": "ACTS_INVALID_ENVIRONMENT",
+    "contract": "acts@0",
+    "path": "/environment",
+    "phase": "environment",
+    "revision": 1,
+    "text": "UnsupportedProfile: norms@0 is required"
+   },
+   "head": {
+    "args": {
+     "message": "UnsupportedProfile: acts@0 requires norms@0"
+    },
+    "check": "1.1d",
+    "class": "InvalidInput",
+    "code": "ACTS_INVALID_ENVIRONMENT",
+    "contract": "acts@0",
+    "path": "/environment",
+    "phase": "environment",
+    "revision": 2,
+    "text": "UnsupportedProfile: acts@0 requires norms@0"
+   }
+  }
+ ]
+}

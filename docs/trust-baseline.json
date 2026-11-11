@@ -2588,6 +2588,13 @@
    "reason": "en-e3b (en-e3ab scope): VE/Service/Registry.lean +1, VE/Service/Protocol.lean +1, ResponseShape/Skeletons.lean +1, ResponseShape/Schemas.lean +1 (english.statement's registry, dispatch, skeleton and schema-file cases)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), en-e3b, 2026-10-18",
    "commit": "f3f40d51dc6dfffeb57834ee5652ff7b514eaeed"
+  },
+  {
+   "class": "V",
+   "lines": 36,
+   "reason": "ap-1bfb: VE/WireContract/Hooks/Acts.lean +36 (typingEnvironment, ruleTyping, blockOf; decoded's profile row; member's frames members; the classifier and hooks of the included rule phases)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-1bfb, 2026-11-11",
+   "commit": "8eda0371fd7fd2a6a016b0ad0d7a8f50689181ba"
   }
  ]
 }

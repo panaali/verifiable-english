@@ -84,6 +84,19 @@ def recorded_sources(output):
     return json.loads(output.read_text())
 
 
+def test_the_saved_wording_delta_keeps_the_base_path_and_quoted_names():
+    """R1 over the saved delta of A1 (docs/act-phrases/ap-1bfb/delta.json): the head record keeps the base's path,
+    check and every profile it quoted, and is Lean's record today, at any revision."""
+    rows = json.loads((ROOT / "docs/act-phrases/ap-1bfb/delta.json").read_text())["rows"]
+    quoted = re.compile(r"[a-z][a-z-]*@[0-9]+")
+    for row in rows:
+        base_record, head = row["base"], row["head"]
+        assert (head["path"], head["check"]) == (base_record["path"], base_record["check"])
+        assert set(quoted.findall(base_record["text"])) <= set(quoted.findall(head["text"]))
+        [(_, lean)] = engine_records([(row["source"]["environment"], row["source"]["norms"])])
+        assert {k: v for k, v in lean.items() if k != "revision"} == {k: v for k, v in head.items() if k != "revision"}
+
+
 def test_the_recorded_corpus_gives_one_record_in_both_engines(tmp_path):
     """F2 of ap-1bf's review: every `acts@0` source the tests submit gives one record, or none, in both engines."""
     recorded = recorded_sources(tmp_path / "inputs.json")
