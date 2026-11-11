@@ -37,7 +37,7 @@ ROOT = Path(__file__).resolve().parents[1]
 CASES = ROOT / "tests/data/route-cases.jsonl"
 ROUTE_MODES = ("soft-norms", "rights", "speech-acts", "reports", "alternatives", "risk", "risk-eval",
                "quantity", "norm-defaults", "discourse", "readings-route", "diagnose", "calc", "cardinality", "scope", "document",
-               "act-readings")
+               "act-readings", "english.statement")
 # Top-level answer fields that are maps keyed by request names (an empty map is an answer).
 MAPS = {"worst_cases", "bound", "meaning_ids", "presuppositions", "validity", "statuses", "reading_verdicts",
         "units", "mentions", "default_exceptions_by_decider", "rule_acts"}
