@@ -2532,6 +2532,27 @@
    "reason": "qt-a4b review F1/F2: V +13 above the existing +115 allowance: VE/Service/Document.lean +13 for readingText and chainDocument (one definition of the chain's request text, always there) and the parent argument of check; chainBound is D[R]. qt-a4b total K +0, S +1, V +128 (trusted +129), within the R16 150-line cap",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a4b review F1/F2, 2026-11-09",
    "commit": "e9a6ec8d5938051a70116918e34fc3cd92aac16e"
+  },
+  {
+   "class": "V",
+   "lines": 32,
+   "reason": "rights-cfr-1: VE/Service/Document.lean +26 (rightsNormalForm), VE/SoftNorms/Wire.lean +6 (softDefault, factored out of canonicalNorm); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), rights-cfr-1, 2026-11-09",
+   "commit": "6db6ee16ddb10f843b396b78299a980abc43fefb"
+  },
+  {
+   "class": "V",
+   "lines": 2,
+   "reason": "rights-cfr-1 review F2: V +2 beyond prior R16 allowance; Lean rightsMeaningId replaces the deleted Python rights normalizer and digest path (final per-file V: Rights/Wire +27, SoftNorms/Wire +6, Service/Document +1)",
+   "signature": "SIGNED by standing ruling R6 (DRI-RULINGS.md), rights-cfr-1, 2026-11-09",
+   "commit": "6db6ee16ddb10f843b396b78299a980abc43fefb"
+  },
+  {
+   "class": "V",
+   "lines": 1,
+   "reason": "rights-cfr-1 review F2: the identity schema kind binds the new Lean-owned rights identity relay, which replaces the deleted Python normalizer and digest path",
+   "signature": "SIGNED by standing ruling R6 (DRI-RULINGS.md), rights-cfr-1 review F2 identity schema, 2026-11-09",
+   "commit": "6db6ee16ddb10f843b396b78299a980abc43fefb"
   }
  ]
 }

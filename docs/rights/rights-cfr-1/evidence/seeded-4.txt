@@ -1,0 +1,22 @@
+# seeded bug 4 (lean/VE/Service/Document.lean: rightsContentOf binds the rights content as written, not rightsNormalForm); full lake build, ve_service pinned for the run
+FAILED tests/test_rights_meaning_id.py::test_rights_meaning_id_omits_soft_defaults[alterable-right/norm]
+FAILED tests/test_rights_meaning_id.py::test_rights_meaning_id_omits_soft_defaults[alterable-right_lines/liberty]
+FAILED tests/test_rights_meaning_id.py::test_rights_meaning_id_omits_soft_defaults[alterable-right_lines/recognition]
+FAILED tests/test_rights_meaning_id.py::test_rights_meaning_id_omits_soft_defaults[exception-right/norm]
+FAILED tests/test_rights_meaning_id.py::test_rights_meaning_id_omits_soft_defaults[exception-right_lines/liberty]
+FAILED tests/test_rights_meaning_id.py::test_rights_meaning_id_omits_soft_defaults[exception-right_lines/recognition]
+FAILED tests/test_rights_meaning_id.py::test_rights_meaning_id_omits_soft_defaults[hard-right/norm]
+FAILED tests/test_rights_meaning_id.py::test_rights_meaning_id_omits_soft_defaults[hard-right_lines/liberty]
+FAILED tests/test_rights_meaning_id.py::test_rights_meaning_id_omits_soft_defaults[hard-right_lines/recognition]
+FAILED tests/test_rights_meaning_id.py::test_rights_meaning_id_omits_soft_defaults[mode-right/norm]
+FAILED tests/test_rights_meaning_id.py::test_rights_meaning_id_omits_soft_defaults[mode-right_lines/liberty]
+FAILED tests/test_rights_meaning_id.py::test_rights_meaning_id_omits_soft_defaults[mode-right_lines/recognition]
+FAILED tests/test_rights_meaning_id.py::test_rights_meaning_id_omits_soft_defaults[rank-right/norm]
+FAILED tests/test_rights_meaning_id.py::test_rights_meaning_id_omits_soft_defaults[rank-right_lines/liberty]
+FAILED tests/test_rights_meaning_id.py::test_rights_meaning_id_omits_soft_defaults[rank-right_lines/recognition]
+FAILED tests/test_rights_meaning_id.py::test_lean_and_python_rights_meaning_ids_agree[defaults]
+FAILED tests/test_rights_meaning_id.py::test_lean_and_python_rights_meaning_ids_agree[nulls]
+FAILED tests/test_rights_meaning_id.py::test_lean_and_python_rights_meaning_ids_agree[power-defaults]
+FAILED tests/test_rights_meaning_id.py::test_no_verdict_or_reason_changes - v...
+FAILED tests/test_rights_meaning_id.py::test_a_stored_pre_change_id_is_not_its_new_id
+20 failed, 5 passed in 2.47s
