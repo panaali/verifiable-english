@@ -1,0 +1,20 @@
+{
+  "item": "sa-checked-view",
+  "note": "Each mutant was planted in its file, the named test or proof run, and the file restored; seeded marks the task's named seeded bugs. Every new trusted definition of lean/VE/Service/DocumentView.lean has at least one; all are killed.",
+  "mutants": [
+    {"id": "rows-before-fold", "file": "lean/VE/Service/DocumentView.lean", "definition": "checkDocSetsView", "mutant": "pure (a, viewOf c c.rows)", "test": "lean/VE/Service/DocumentView.lean:checkDocSetsView_rows", "seeded": true, "killed": true},
+    {"id": "activeKinds-other-sets", "file": "lean/VE/Service/DocumentView.lean", "definition": "activeKinds", "mutant": "pure (firstPerUnit ((c.active.filter (·.1.status == \"open\")).map", "test": "lean/VE/Service/DocumentView.lean:checkDocSetsView_candidates", "seeded": true, "killed": true},
+    {"id": "readings-reordered", "file": "lean/VE/Service/DocumentView.lean", "definition": "viewOf", "mutant": "readings := us.map fun (u, cs) => (u, (cs.map (·.1)).reverse) }", "test": "lean/VE/Service/DocumentView.lean:checkDocSetsView_readings", "seeded": true, "killed": true},
+    {"id": "packs-filled", "file": "lean/VE/Service/DocumentView.lean", "definition": "viewOf", "mutant": "{ source := c.source, rows, packSources := c.units.map (·.id),", "test": "lean/VE/Service/DocumentView.lean:checkDocSetsView_packs", "seeded": true, "killed": true},
+    {"id": "packs-default", "file": "lean/VE/Service/DocumentView.lean", "definition": "CheckedView", "mutant": "packSources : List String := [\"x\"]", "test": "lean/VE/Service/DocumentView.lean:checkDocSetsView_packs", "seeded": false, "killed": true},
+    {"id": "body-admit-default", "file": "lean/VE/Service/DocumentView.lean", "definition": "checkBodyChecked", "mutant": "| .error _ => pure false\n  let lexicon", "test": "lean/VE/Service/DocumentView.lean:checkBodyChecked_encode", "seeded": false, "killed": true},
+    {"id": "core-no-clash", "file": "lean/VE/Service/DocumentView.lean", "definition": "checkCoreChecked", "mutant": "| some _ => checkBodyChecked j\n  | none => checkBodyChecked j", "test": "lean/VE/Service/DocumentView.lean:checkCoreChecked_encode", "seeded": false, "killed": true},
+    {"id": "run-units-only", "file": "lean/VE/Service/DocumentView.lean", "definition": "checkedRun", "mutant": "(withUnits j out)\n    pure (some D", "test": "lean/VE/Service/DocumentView.lean:checkDocSetsView_answer", "seeded": false, "killed": true},
+    {"id": "readStatus-keeps", "file": "lean/VE/Service/DocumentView.lean", "definition": "readStatus", "mutant": "| some _ => u\n  | none => u", "test": "lean/VE/Service/DocumentView.lean:readStatus_unitJson", "seeded": false, "killed": true},
+    {"id": "foldedRows-reversed", "file": "lean/VE/Service/DocumentView.lean", "definition": "foldedRows", "mutant": "(rows.zip xs.toList.reverse).map", "test": "lean/VE/Service/DocumentView.lean:foldGovernors_rows", "seeded": false, "killed": true},
+    {"id": "firstPerUnit-keeps-all", "file": "lean/VE/Service/DocumentView.lean", "definition": "firstPerUnit", "mutant": "acc ++ [x]) []", "test": "lean/VE/Service/DocumentView.lean:firstPerUnit_nodup", "seeded": false, "killed": true},
+    {"id": "unitSets-reversed", "file": "lean/VE/Service/DocumentView.lean", "definition": "unitSets", "mutant": "firstPerUnit (c.active.reverse.map fun (s, _) => (s.unit, candidatesOf c.front s))", "test": "lean/VE/Service/DocumentView.lean:checkDocSetsView_candidates", "seeded": false, "killed": true},
+    {"id": "candidatesOf-any-version", "file": "lean/VE/Service/DocumentView.lean", "definition": "candidatesOf", "mutant": "(version match removed)", "test": "tests/test_sa_checked_view.py::test_candidates_and_readings_name_the_active_set_in_order", "seeded": false, "killed": true},
+    {"id": "check-stores-all", "file": "lean/VE/Service/Document.lean", "definition": "check (Checked.active)", "mutant": "else [], report,\n    all⟩", "test": "tests/test_sa_checked_view.py::test_candidates_and_readings_name_the_active_set_in_order", "seeded": true, "killed": true}
+  ]
+}

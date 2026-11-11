@@ -13,6 +13,7 @@ from functools import cache
 import importlib.util
 from itertools import permutations
 import json
+import os
 from pathlib import Path
 import re
 import shutil
@@ -202,3 +203,86 @@ def test_the_comparison_fails_on_a_changed_node(lake, tmp_path):
                                                        ("empty", rows[0]["text"], [])])])
     assert out["kept"] == "same"
     assert out["changed"].startswith("differs") and out["empty"].startswith("differs")
+
+
+def answers(lake: str, tmp_path: Path, groups: list[tuple[dict, list[tuple[str, str]]]], *, whole: bool) -> dict:
+    """`english.statement`'s row for each `(id, source)` of each case, by id: the whole mode
+    (`Norm.Run.statementCaseReported`, en-e3-norm 2.3) when `whole`, else its answer on the case decoded once per
+    chunk (`Norm.Run.answer`), since the mode decodes the environment on every request."""
+    lines = ["import VE.EnglishGrammar.Norm.Run", "open Lean VE.EnglishGrammar.Norm"]
+    for case, rows in groups:
+        for k in range(0, len(rows), 20):
+            lines += ["#eval show IO Unit from do",
+                      f"  let j ← IO.ofExcept (Json.parse {lean_literal(json.dumps({**case, 'kind': 'blocks'}))})",
+                      "  let c ← IO.ofExcept (VE.EnglishGrammar.Run.decodeCase j)" if not whole else ""]
+            lines += [f"  IO.println (Run.statementCaseReported ((j.setObjVal! \"id\" {lean_literal(i)}).setObjVal! "
+                      f"\"source\" {lean_literal(t)})).compress" if whole else
+                      f"  IO.println (Run.answer {lean_literal(i)} c {lean_literal(t)}).compress" for i, t in rows[k:k + 20]]
+    source = tmp_path / "Mode.lean"
+    source.write_text("\n".join(line for line in lines if line) + "\n")
+    run = subprocess.run([lake, "env", "lean", str(source)], cwd=ROOT / "lean", capture_output=True, text=True,
+                         timeout=HANG_TIMEOUT)
+    assert run.returncode == 0, run.stdout[-2000:] + run.stderr[-2000:]
+    out = {row["id"]: row for row in map(json.loads, run.stdout.splitlines())}
+    assert len(out) == sum(len(rows) for _, rows in groups)
+    return out
+
+
+def test_each_pinned_block_through_the_mode(lake, tmp_path):
+    """The 120 pinned blocks and f21 through `english.statement` kind `blocks` (EN-2; en-e3a REPORT, R-pinned): a block
+    headed by `should` is `none` at its rule sentence; every other block is `one`, with Python's node and the block's
+    byte span. Through the whole mode: a block of each kind, and a request whose lexicon was selected for another
+    environment, which `decodeCase` refuses (R-stale)."""
+    texts = {r["id"]: r["text"] for name in CASES for r in blocks(name)} | {"f21": F21[0]}
+    nodes = {r["id"]: r["node"] for name in CASES for r in blocks(name)} | {"f21": F21[1]}
+    groups = [(use_case(name), [(r["id"], r["text"]) for r in blocks(name)]) for name in CASES]
+    out = answers(lake, tmp_path, [*groups, (constitution(), [("f21", F21[0])])], whole=False)
+    soft = next(i for i in texts if " should " in texts[i])
+    whole = answers(lake, tmp_path, [(use_case("rsp"), [("rows-cond", texts["rows-cond"]), (soft, texts[soft])]),
+                                     ({**use_case("rsp"), "lexicon": use_case("fsf")["lexicon"]}, [("stale", F21[0])])],
+                    whole=True)
+    assert whole.pop("stale") == {"id": "stale", "status": "error",
+                                  "error": "InvalidInput: the lexicon names another environment"}
+    assert whole == {i: out[i] for i in whole}
+    for ident, row in out.items():
+        result = row["result"]
+        if " should " in texts[ident]:
+            assert (result["status"], result["code"], result["sentence"]) == ("none", "NoDerivation", 1), ident
+            continue
+        assert result["status"] == "one", (ident, result)
+        [statement] = result["statements"]
+        assert [statement["node"]["norm"]] == nodes[ident], ident
+        assert statement["span"] == [0, len(texts[ident].encode())], ident
+    statuses = [row["result"]["status"] for row in out.values()]
+    assert (len(out), statuses.count("one"), statuses.count("none")) == (121, 104, 17)
+
+
+TAG_CASES = {"one": "(.ok [.rule ⟨1, []⟩ cPub])", "none": "(.stopped 1 .noDerivation)", "rejected": "(.ok [.source []])",
+             "unformalised": "(.ok [.rule ⟨1, []⟩ cSpan])", "many": "(.stopped 1 (.ambiguous tA tB))"}
+
+
+def forcing(lake: str, tmp_path: Path, status: str) -> subprocess.CompletedProcess:
+    """The answer to `TAG_CASES[status]` from a reader whose rule tags panic, under `LEAN_ABORT_ON_PANIC=1`."""
+    source = tmp_path / f"Tags_{status}.lean"
+    source.write_text("\n".join([
+        "import VE.EnglishGrammar.Norm.RunExamples",
+        "open Lean VE.EnglishGrammar VE.EnglishGrammar.Norm VE.EnglishGrammar.Norm.RunExamples",
+        "open VE.EnglishGrammar.Norm.OwnersExamples",
+        f"def o : NormOutcome := {TAG_CASES[status]}",
+        "def panicking : Run.Reader := ⟨fun _ _ _ _ _ => o, fun _ _ => panic! \"the rule tags were forced\"⟩",
+        "#eval IO.println ((Run.resultOf (Run.answerWith panicking \"c\" caseOf \"Rule 1. X.\")).getObjValD "
+        "\"status\").compress"]) + "\n")
+    return subprocess.run([lake, "env", "lean", str(source)], cwd=ROOT / "lean", capture_output=True, text=True,
+                          timeout=HANG_TIMEOUT, env={**os.environ, "LEAN_ABORT_ON_PANIC": "1"})
+
+
+def test_the_rule_tags_are_forced_only_for_many(lake, tmp_path):
+    """DRI 2026-11-09 (reviews/dri-decisions-20261109-en-e3a-2.md item 2): `answerWith` hands `outcomeFields` the
+    reader's rule tags unforced, and only a `many` answer (its witnesses) forces them; every other answer is written
+    with a reader whose tags panic, and `many` aborts on that panic."""
+    for status in ("one", "none", "rejected", "unformalised"):
+        run = forcing(lake, tmp_path, status)
+        assert run.returncode == 0, status + run.stdout[-2000:] + run.stderr[-2000:]
+        assert run.stdout.split() == [json.dumps(status)], status
+    run = forcing(lake, tmp_path, "many")
+    assert run.returncode != 0 and "the rule tags were forced" in run.stderr + run.stdout

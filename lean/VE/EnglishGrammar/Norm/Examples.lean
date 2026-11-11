@@ -179,17 +179,6 @@ def document (E : Env) (o : NormOutcome) : Bool :=
       fun (h, c) => Json.mkObj [("norm", (c.wire (ruleName h.number) ((overOf rs h.number).map ruleName)).getObjValD "norm")]).toArray)).toBool
   | _ => false
 
-/-- Whether a polarity is one that the role's consequence rows generate (spec 2.5). R8: it is the oracle of the
-`authored` guards below, and lands in `Rules.lean` with `readNorm_regulated`'s proof (en-s6c; DRI decision
-20261102-en-s6b item 4). -/
-def _root_.VE.EnglishGrammar.Norm.Polarity.fits : Polarity → VE.Norms.Role → Bool
-  | .modal .must, .obligation => true
-  | .modal .needNot, .obligation => true
-  | .modal .may, .permission => true
-  | .modal .mustNot, .permission => true
-  | .plain _, .plain => true
-  | _, _ => false
-
 /-- `readNorm_authoring`'s and `readNorm_regulated`'s conclusions, decided. Section 4 lets a `#guard` over every
 fixture of section 6 stand for their proofs; this item records that substitution (REPORT). -/
 def authored (E : Env) (o : NormOutcome) : Bool :=
