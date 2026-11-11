@@ -66,7 +66,7 @@
     "ve/readings_verdicts/binding.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 45055,
+    "total_lines": 45068,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -116,22 +116,24 @@
       },
       {
         "file": "lean/VE/Acts/Wire.lean",
-        "lines": 119,
-        "sha256": "5258c889cf60d62474f87996d06a87fe3fb759504627791e3d0dc5ce1db97d77",
+        "lines": 130,
+        "sha256": "d4854cd536aec8e3b81e57a0542ad0cb6f7a707082f6f2f61ab23704c315bd6f",
         "ranges": [
           [
             1,
-            119
+            130
           ]
         ],
         "declarations": [
+          "joinedActBy",
           "joinedAct",
+          "checkActBy",
           "checkAct",
           "decodeFrame",
           "decodeVocab",
           "fixedOf"
         ],
-        "reason": "act-phrases ap-3d: the act check under acts@0 from AP-3 on (reads the raw act JSON through Lexical.checkWith); no route calls it until ap-3db; the file is pinned whole"
+        "reason": "act-phrases ap-3d: the act check under acts@0 from AP-3 on (reads the raw act JSON through Lexical.checkWith); no route calls it until ap-3db; the file is pinned whole; ap-parse-index: joinedActBy and checkActBy, the same check through a reader built once (joinedAct and checkAct are them at reader V); review F1: the reader is a Thunk (Acts.lazyReader), forced only by a joined act's listing after the slot check, so a lexical act never builds it"
       },
       {
         "file": "lean/VE/Alternatives/Admission.lean",
@@ -1095,12 +1097,12 @@
       },
       {
         "file": "lean/VE/Norms/Wire.lean",
-        "lines": 461,
-        "sha256": "92497f88974002490a12d78080de9c65a2db6cafdfeca08114878e79c3384d8c",
+        "lines": 463,
+        "sha256": "513d722778ece5c27d1c5e722055a96b59d3252fb648b648a34fae8deafd6144",
         "ranges": [
           [
             29,
-            459
+            461
           ]
         ],
         "declarations": [
@@ -2236,6 +2238,25 @@
         "reason": "et-4b: the full file: the norm-defaults-certificate replay on an events document (spec 6.3), with the block and without one; it decodes by eventsHook, decodeSoftU and replayLayeredOn; qt-a4b merge with ve-integration 3395d65592: `events_row_composition`'s gate clause holds for a list without `cardinality@0` (`Compose.gate_events`), whose row now refuses `events@0` by name"
       },
       {
+        "file": "lean/VE/RightClauses/Wire.lean",
+        "lines": 230,
+        "sha256": "75913d7b770400cd1e3e5a671fafd7a78b234ef5f48faae1cfefe0a7ea565be5",
+        "ranges": [
+          [
+            1,
+            230
+          ]
+        ],
+        "declarations": [
+          "decodeClauseDoc",
+          "decodeRelation",
+          "decodeClause",
+          "elaborateJson",
+          "stripElided"
+        ],
+        "reason": "right-clauses clause, relation and elided decoder and the plained-document rewriter of clauses-elaborate; the full file is pinned conservatively; the ve-integration merge: `decodeClauseDoc` sets the rights document's new `located` field to `[]`, as `decodeRightsSource` does (the mode reports no findings)"
+      },
+      {
         "file": "lean/VE/EnglishGrammar/Norm/Run.lean",
         "lines": 303,
         "sha256": "3ccffd316421b414d5b1f6f9bfd768da5e78a1c64b9f4e76a4e21c18eeb6ad3b",
@@ -2255,25 +2276,6 @@
           "statementRow"
         ],
         "reason": "en-e3a (docs/spec/en-e3-norm.md 2.3, EN-2): english.statement kind blocks: `statementRequest` decodes the request (english.read's case through `decodeCase`, `kind`, `source`), `answerWith` writes the answer from readNorm's outcome through the span gate and the one decoder; not registered until en-e3ab and nothing relays to it yet; the full file is pinned conservatively"
-      },
-      {
-        "file": "lean/VE/RightClauses/Wire.lean",
-        "lines": 230,
-        "sha256": "75913d7b770400cd1e3e5a671fafd7a78b234ef5f48faae1cfefe0a7ea565be5",
-        "ranges": [
-          [
-            1,
-            230
-          ]
-        ],
-        "declarations": [
-          "decodeClauseDoc",
-          "decodeRelation",
-          "decodeClause",
-          "elaborateJson",
-          "stripElided"
-        ],
-        "reason": "right-clauses clause, relation and elided decoder and the plained-document rewriter of clauses-elaborate; the full file is pinned conservatively; the ve-integration merge: `decodeClauseDoc` sets the rights document's new `located` field to `[]`, as `decodeRightsSource` does (the mode reports no findings)"
       }
     ],
     "other_json": {
