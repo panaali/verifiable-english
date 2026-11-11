@@ -21514,7 +21514,7 @@ module VE.RightClauses.English 8d9a2dcd66e9a91eca00d61b042f9d157e8eb7b1876b6c48f
 189:0-191:79 def VE.RightClauses.English.firstUnshown@VE.RightClauses.English
 193:0-203:108 def VE.RightClauses.English.english@VE.RightClauses.English
 205:0-234:13 theorem VE.RightClauses.English.english_gated@VE.RightClauses.English
-module VE.RightClauses.EnglishExamples 665b5b0d51847df113e281dcce2f3963f6e1029343f4b5623d37f6633368df1a
+module VE.RightClauses.EnglishExamples e9feedc8b83d2235cda2eefcdb2e677746f1dde9602807cf0308b2d8c2874c72
 16:0-21:53 def VE.RightClauses.EnglishExamples.lexicon@VE.RightClauses.EnglishExamples
 23:0-25:34 def VE.RightClauses.EnglishExamples.source@VE.RightClauses.EnglishExamples
 27:0-29:38 def VE.RightClauses.EnglishExamples.base@VE.RightClauses.EnglishExamples

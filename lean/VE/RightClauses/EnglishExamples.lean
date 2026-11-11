@@ -154,5 +154,12 @@ def modeEnglish (j : Lean.Json) : String :=
 #guard (match VE.RightClauses.Run.elaborateCase (VE.RightClauses.dropKeys ["english"] modeCase) with
   | .ok row => ((row.getObjValD "result").getObjVal? "english").toOption.isNone
   | .error _ => false)
+-- with `english` the result is the one without it, the shown lines added last
+#guard (match VE.RightClauses.Run.elaborateCase modeCase, VE.RightClauses.Run.elaborateCase
+    (VE.RightClauses.dropKeys ["english"] modeCase) with
+  | .ok a, .ok b => ((a.getObjValD "result").getObjVal? "english").toOption.isSome &&
+      VE.RightClauses.dropKeys ["english"] (a.getObjValD "result") == b.getObjValD "result" &&
+      ((a.getObjValD "result").getObjValD "plained").getStr?.toOption.any (!·.isEmpty)
+  | _, _ => false)
 
 end VE.RightClauses.EnglishExamples
