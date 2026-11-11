@@ -153,7 +153,9 @@ SELF-REVIEW: 0 A, 9 B, 6 C; fixed 13 (all 9 B; C10, C12, C13, C14 fixed, C11 not
 11. Budgets fail closed: N.A. no budget, limit or deadline is added; the binding walks the request already decoded.
 12. CPU and memory: N.A. one linear pass over the request and the row; no Lean enumeration added (the echo is built
     with the rules it describes).
-13. Test-removed trailer: PASS. 2b8b0d01e2 carries `Test-removed: ...test_rules_named_by_lean_under_acts_or_rights_are_not_yet_bound — ...`.
+13. Test-removed trailer: PASS. The commit after a30b5fefc8 carries `Test-removed: ...test_rules_named_by_lean_under_acts_or_rights_are_not_yet_bound — ...`
+    in its final trailer block. 2b8b0d01e2 wrote it in a paragraph of its own above `Co-Authored-By`, which git does not
+    parse as a trailer, so the gate of a30b5fefc8 failed its coverage stage (its only failure; 33553 passed).
 14. Both directions, cited evidence, spec re-read: PASS. Each forgery has a genuine row that passes
     (`test_genuine_answers_pass`, `test_a_generated_rule_needs_its_echo`). Spec re-read: "a forged generated rule name
     is refused" against prompts/task-norm-defaults-cfr-1b.txt deliverable (2): refused unless forged together with its
