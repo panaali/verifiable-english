@@ -1,0 +1,32 @@
+# The new tests/test_norm_defaults_response_binding.py (commit 4d36ebffbc of norm-defaults-cfr-1b, before the self-review
+# fixes) copied into a detached worktree of main at c94ad399b7b1f6804c12fbc555a5758d5e971ae6, run there with main's
+# client, schema and ve_service (the shared build of main's Lean tree, restored by lean-prep.sh):
+#   uv run pytest -q -p no:cacheprovider tests/test_norm_defaults_response_binding.py -rf
+# Accepted on main (DID NOT RAISE): *-rules-forged_generated, *-rules-ghost, *-rules-appended under acts@0 and rights@0.
+# The rest fail because main's rows carry no 'sources' (KeyError in the forge, or the genuine row lacks it).
+
+FAILED tests/test_norm_defaults_response_binding.py::test_genuine_answers_pass
+FAILED tests/test_norm_defaults_response_binding.py::test_norm_defaults_response_binding[acts-status-rules-forged_generated]
+FAILED tests/test_norm_defaults_response_binding.py::test_norm_defaults_response_binding[rights-fan-status-rules-forged_generated]
+FAILED tests/test_norm_defaults_response_binding.py::test_norm_defaults_response_binding[acts-status-rules-ghost]
+FAILED tests/test_norm_defaults_response_binding.py::test_norm_defaults_response_binding[rights-fan-status-rules-ghost]
+FAILED tests/test_norm_defaults_response_binding.py::test_norm_defaults_response_binding[acts-status-rules-appended]
+FAILED tests/test_norm_defaults_response_binding.py::test_norm_defaults_response_binding[rights-fan-status-rules-appended]
+FAILED tests/test_norm_defaults_response_binding.py::test_norm_defaults_response_binding[acts-status-sources-echo_generated_name_own_source]
+FAILED tests/test_norm_defaults_response_binding.py::test_norm_defaults_response_binding[rights-fan-status-sources-echo_generated_name_own_source]
+FAILED tests/test_norm_defaults_response_binding.py::test_norm_defaults_response_binding[acts-status-sources-dropped]
+FAILED tests/test_norm_defaults_response_binding.py::test_norm_defaults_response_binding[rights-fan-status-sources-doubled]
+FAILED tests/test_norm_defaults_response_binding.py::test_each_bound_field_deleted_or_retyped_is_no_answer[status-sources]
+FAILED tests/test_norm_defaults_response_binding.py::test_each_bound_field_deleted_or_retyped_is_no_answer[acts-status-sources]
+FAILED tests/test_norm_defaults_response_binding.py::test_each_bound_field_deleted_or_retyped_is_no_answer[rights-fan-status-sources]
+FAILED tests/test_norm_defaults_response_binding.py::test_request_rules_on_each_source_shape
+FAILED tests/test_norm_defaults_response_binding.py::test_status_rule_binding_without_generated_profile[None]
+FAILED tests/test_norm_defaults_response_binding.py::test_status_rule_binding_without_generated_profile[environment1]
+FAILED tests/test_norm_defaults_response_binding.py::test_status_rule_binding_without_generated_profile[environment2]
+FAILED tests/test_norm_defaults_response_binding.py::test_status_rule_binding_without_generated_profile[environment3]
+FAILED tests/test_norm_defaults_response_binding.py::test_status_rule_binding_without_generated_profile[environment4]
+FAILED tests/test_norm_defaults_response_binding.py::test_status_rule_binding_without_generated_profile[environment5]
+FAILED tests/test_norm_defaults_response_binding.py::test_a_generated_rule_needs_its_echo[acts@0]
+FAILED tests/test_norm_defaults_response_binding.py::test_a_generated_rule_needs_its_echo[rights@0]
+FAILED tests/test_norm_defaults_response_binding.py::test_status_tuple_schema_binds_request_without_service
+24 failed, 28 passed in 16.53s
