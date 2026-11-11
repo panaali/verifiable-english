@@ -81,19 +81,37 @@ and signed by standing ruling R16. FOLLOW-UPS.md has `## norm-defaults-cfr-1b` (
 definitions `ruleSources`, `sourcesJson` and `rightsSources` are classified in `tools/trust-classes.json`.
 
 trust_mutants (`mac-pytest.sh --trustmut -- --max-mutants 1000 --test lean/VE/NormDefaults/PacksLegacyExamples.lean
---test lean/VE/Acts/DecodeExamples.lean --allow trust-mutants-allow.json --rescore ... --json trust-mutants.json`), last on c5251726 after the merge of main: "112 KILLED, 0 SURVIVOR, 0 UNKNOWN,
-19 INVALID, 28 ALLOWED, 0 NOT RUN" (`trust-mutants.json`, head c5251726, base 97b3c799).
+--test lean/VE/Acts/DecodeExamples.lean --allow trust-mutants-allow.json --rescore ... --json trust-mutants.json`), last on a46ac9160f (after the merge of main and the guard move below): "112 KILLED, 0 SURVIVOR, 0
+UNKNOWN, 19 INVALID, 28 ALLOWED, 0 NOT RUN" (`trust-mutants.json`, head a46ac9160f, base 97b3c799).
 
 ## Tests
 
 - `uv run pytest -q tests/test_norm_defaults_response_binding.py`: 62 passed.
-- Final selected run (`MAC_PYTEST_NO_DEFER=1 mac-pytest.sh --select`, committed tree): SELECTED_RESULT.
+- Selected run (`MAC_PYTEST_NO_DEFER=1 mac-pytest.sh --select`, committed tree a3c9499000): 477 files ran, 4 failed
+  (/tmp log; the failures were this item's, none in main-known-red.txt):
+  - `test_pk1c_fixture_assurance_claim` (2 tests): pk-1c's REPORT cites `PacksLegacyExamples.lean:131–141`, and the
+    new guards had shifted those lines. Fix (a46ac9160f): the guards move to the end of the file, and
+    `import VE.NormDefaults.Examples` replaces the redundant `import VE.Defaults.Examples` (PacksExamples imports it).
+    Lines 1–162 are main's again; every citation of this file in docs/ and tests/ lies there.
+  - `test_sc9_migrate.py::test_c9_point_status_is_measured_on_every_choice_and_condition`: the sc-9 pilot's saved C9
+    answers predate `sources`. All 160 were re-asked of the current build (`evidence/resave_c9_sources.py`), which
+    asserts that each live answer equals the saved one apart from the added `sources`, and that the echo names `rules`
+    in order.
+  - `test_shape_binding_mutants.py[norm-defaults]`: the recorded answers (`tests/data/binding-answers.jsonl.gz`)
+    lacked `sources`. They were re-asked (`binding_census.py --answers`), and only the three norm-defaults rows were
+    kept. The other six modes' rows differ only by `actions_version` 46 -> 47, which is already stale on main, and were
+    left as they are.
+  - `test_trust_mutants_probe_scope.py`: exit 143, killed when the run stopped at `--maxfail 5`.
+- Reruns on f14e263fbe (`mac-pytest.sh -- <files>`, ve-mac-1): the four files, 148 passed. The other tests that read
+  the changed files (`test_b16f_senses_document`, `test_binding_census`, `test_decoded_rights_labels_proof_claim`,
+  `test_packs_guard_mutants`, `test_defeasible_baseline_evidence`, `test_rd9_gap_relay`, `test_readings_sd_ce4`):
+  162 passed.
 - `python3 lean/audit.py` on c5251726: PASS (843 source files, 9487 theorems). `tools/check_rd9_sc1_statements.py`: PASS.
 
 ## Size, pilot bytes, self-review
 
-SIZE: 382 product (Lean 296, Python 86), 207 tests, 301 other hand-written lines (docs and evidence; the
-tool-written `tools/trust-classes.json` and `docs/trust-baseline.json` are not counted). Command: `git diff --numstat
+SIZE: 383 product (Lean 297, Python 86), 207 tests, 371 other hand-written lines (docs and evidence; the
+tool-written `tools/trust-classes.json`, `docs/trust-baseline.json` and the re-asked saved answers are not counted). Command: `git diff --numstat
 $(git merge-base HEAD main)` less the generated files (`regen_generated.py --list`). Pilot bytes: none expected to move. The binding refuses forged rows only, and
 Lean's answers on the pilots are unchanged apart from the added `sources` field (an estimate; no pilot audit was run).
 SELF-REVIEW: 0 A, 9 B, 6 C; fixed 13 (all 9 B; C10, C12, C13, C14 fixed, C11 noted above, C15 measured).
@@ -108,6 +126,9 @@ SELF-REVIEW: 0 A, 9 B, 6 C; fixed 13 (all 9 B; C10, C12, C13, C14 fixed, C11 not
   (`git diff --name-only HEAD...main`). The shared files it does touch (`docs/trust-baseline.json`,
   `tools/trust-classes.json`, `ve/assurance-manifest.json`, `ve/profiles.py`, `lean/checkers.lock`) are left to the
   merge train's rebase-second step.
+- `docs/test-architecture/binding-census.md` lists `/sources/*/rule` and `/sources/*/source` as "not probed": their
+  binding is `_bind_status_rules`, a hand binder the census sees only after a live `binding_census.py --record` probe.
+  That probe was not run here; the binding's own tests are listed under "What is bound".
 
 ## Self-review against BUILDER-CHECKLIST
 
@@ -122,7 +143,7 @@ SELF-REVIEW: 0 A, 9 B, 6 C; fixed 13 (all 9 B; C10, C12, C13, C14 fixed, C11 not
 5. R8 binding: PASS. `[*-rules-ghost]`, `[*-rules-appended]`, `[*-rules-forged_generated]`, the `*-sources-*`
    forgeries, `test_request_rules_on_each_source_shape`.
 6. Gate evidence matches HEAD: PASS. Evidence is saved (`evidence/new-tests-on-main.txt`, `trust-mutants.json` on
-   c5251726); the gate is the chain's, on the final HEAD.
+   a46ac9160f); the gate is the chain's, on the final HEAD.
 7. No unsigned item: PASS. DELTA rows 1 and 2 cite R16; no signature reserved.
 8. Every user-visible change in DELTA: PASS. DELTA row 1 (refuses more, the `sources` field); `evidence/new-tests-on-main.txt`.
 9. Test selection: PASS. `tools/select_tests.py --base 97b3c799` selects `tests/test_norm_defaults_response_binding.py`
