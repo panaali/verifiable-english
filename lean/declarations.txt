@@ -21195,11 +21195,11 @@ module VE.Readings.Wire 59f17b191a3b5940e787fa31e06254075b8ac7b7f82ddce1e9e4ad61
 1017:0-1043:54 def VE.Readings.Wire.replayPair@VE.Readings.Wire
 1045:0-1051:37 def VE.Readings.Wire.replaySeparate@VE.Readings.Wire
 1053:0-1057:75 theorem VE.Readings.Wire.readings_wire_separate_sound@VE.Readings.Wire
-module VE.RightClauses.ElidedBytes b4336a8831bb8bc75d0dbdbeb06ac3dfb83d552d1ddfc03f8ee1b167bf6b5a0b
-19:0-20:81 def VE.RightClauses.lineElided@VE.RightClauses.ElidedBytes
+module VE.RightClauses.ElidedBytes 5b724b2feec4cba2267d808ac71fc783900ebb93785439dcdfa806fa8c96f93b
+19:0-20:95 def VE.RightClauses.lineElided@VE.RightClauses.ElidedBytes
 22:0-25:53 def VE.RightClauses.entryElided@VE.RightClauses.ElidedBytes
-27:0-28:94 def VE.RightClauses.elidedTotal@VE.RightClauses.ElidedBytes
-30:0-39:15 def VE.RightClauses.unitElided@VE.RightClauses.ElidedBytes
+27:0-29:61 def VE.RightClauses.elidedTotal@VE.RightClauses.ElidedBytes
+31:0-43:15 def VE.RightClauses.unitElided@VE.RightClauses.ElidedBytes
 module VE.RightClauses.Examples 28ea642d4bae406dfbe4aec83d062004e46bfd403ffa235aed2b709106c22aee
 16:0-17:85 def VE.RightClauses.Examples.accessLine@VE.RightClauses.Examples
 19:0-20:50 def VE.RightClauses.Examples.r21@VE.RightClauses.Examples
