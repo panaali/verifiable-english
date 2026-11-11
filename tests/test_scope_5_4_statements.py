@@ -10,7 +10,9 @@ any kind, or a lost one, fails even when the spec and the Lean source are change
 Every declaration of spec 5.4's Lean block is compared with the Lean source, not only the theorems (review sc-2d-f1
 F1): the list is read from the spec block by the shared `declarations` parser of the RD statement gate, so a
 definition (`Typed`) is compared with its body, and a declaration added to the spec is compared without editing this
-file.
+file. A declaration runs to the next Lean command, as Lean reads it (review sc-2d-f1 F2): a blank line or a comment
+inside a body or a statement does not end it, so a suffix after one is compared, and a commented-out declaration is
+missing.
 """
 
 from __future__ import annotations
@@ -20,7 +22,7 @@ from pathlib import Path
 import pytest
 
 from tools import lean_statements as L
-from tools.check_readings_defaults_statements import STOP as DECLARATION_END, declarations, normal, proof_cut, signature
+from tools.check_readings_defaults_statements import declarations, normal, proof_cut, signature, span
 
 ROOT = Path(__file__).resolve().parents[1]
 EFFECTS = {
@@ -69,14 +71,13 @@ PROVED = tuple(name for kind, name in DECLARED if kind == "theorem")
 
 
 def statement(text: str, name: str) -> str | None:
-    """The statement of `name`: from `theorem name ` to the `:=` that starts the proof (`proof_cut`: a `:=` inside the
-    statement, `{ L with scope := s }`, is kept) or the next blank line, whitespace normalised."""
-    start = text.find(f"theorem {name} ")
-    if start < 0:
-        return None
-    rest = text[start:]
-    rest = rest[:rest.find("\n\n")] if "\n\n" in rest else rest
-    return " ".join(rest[:proof_cut(rest)].split())
+    """The statement of theorem `name` in `text` (Lean source, or spec 5.4's section: its Lean block), read by the
+    shared scanner: from `theorem name` to the `:=` that starts the proof (`proof_cut`: a `:=` inside the statement,
+    `{ L with scope := s }`, is kept), comments left out, whitespace normalised. A blank line or a comment inside the
+    statement does not end it (review sc-2d-f1 F2)."""
+    code = text.split("```lean", 1)[1].split("```", 1)[0] if "```lean" in text else text
+    texts = declarations(code, statements_only=True).get(("theorem", name))
+    return texts[0] if texts else None
 
 
 CLOSE = {"(": ")", "{": "}", "⦃": "⦄", "[": "]", "⟨": "⟩"}
@@ -260,13 +261,12 @@ def test_every_declaration_of_spec_5_4_is_the_lean_text(key):
 def mutant(source: str, kind: str, name: str) -> str:
     """`source` with declaration `kind name` made vacuous: a definition's body becomes `True`, a theorem's conclusion
     becomes `True` (its binders kept)."""
-    start = source.index(f"\n{kind} {name} ") + 1
-    head = source[start:start + proof_cut(source[start:])]
+    start, stop = span(source, kind, name)
+    head = source[start:start + proof_cut(source[start:stop])]
     if kind == "theorem":
         binders, _ = signature(normal(head))
         return source[:start] + f"theorem {name} {binders} : True " + source[start + len(head):]
-    stop = DECLARATION_END.search(source, source.index("\n", start) + 1)
-    return source[:start] + head + ":= True\n" + source[stop.start() if stop else len(source):]
+    return source[:start] + head + ":= True" + source[stop:]
 
 
 @pytest.mark.parametrize("key", DECLARED, ids=" ".join)
@@ -279,3 +279,36 @@ def test_a_vacuous_declaration_fails(key):
     faults = declaration_faults(spec_5_4(), changed)
     assert len(faults) == 1 and faults[0].startswith(f"{kind} {name}: Lean"), faults
     assert "True" in faults[0], faults
+
+
+# Text Lean reads as whitespace inside a declaration (review sc-2d-f1 F2): none of it ends the declaration, so a
+# suffix after it is compared.
+GAPS = {"blank line": "\n\n", "blank line of spaces": "\n   \n", "line comment at column 0": "\n-- note\n",
+        "block comment": "\n/- note -/\n", "nested block comment": "\n/- a /- b -/ c -/\n\n"}
+
+
+@pytest.mark.parametrize("gap", GAPS)
+@pytest.mark.parametrize("key", DECLARED, ids=" ".join)
+def test_a_suffix_after_a_gap_is_compared(key, gap):
+    """Review sc-2d-f1 F2: `∧ False` after a blank line or a comment, at the end of a definition's body or of a
+    theorem's statement, is part of the declaration Lean reads, and is reported as that declaration's difference."""
+    kind, name = key
+    source = lean()
+    start, stop = span(source, kind, name)
+    end = start + proof_cut(source[start:stop]) if kind == "theorem" else stop
+    changed = source[:end].rstrip() + GAPS[gap] + "  ∧ False " + source[end:]
+    faults = declaration_faults(spec_5_4(), changed)
+    assert len(faults) == 1 and faults[0].startswith(f"{kind} {name}: Lean"), faults
+    assert "∧ False" in faults[0], faults
+    if kind == "theorem":
+        assert statement(changed, name) != statement(spec_5_4(), name), name
+
+
+@pytest.mark.parametrize("key", DECLARED, ids=" ".join)
+def test_a_commented_out_declaration_is_missing(key):
+    """A declaration inside a block comment is not one Lean reads: commented out, it is reported missing."""
+    kind, name = key
+    source = lean()
+    start, stop = span(source, kind, name)
+    faults = declaration_faults(spec_5_4(), source[:start] + "/-\n" + source[start:stop] + "\n-/" + source[stop:])
+    assert faults == [f"{kind} {name}: Lean [] is not spec 5.4's {approved()[key]}"], faults
