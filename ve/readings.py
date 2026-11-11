@@ -77,10 +77,14 @@ def source_word_text(source: bytes, span, unit_span):
 
 
 def rights_meaning_id(env, content):
-    """Bind one rights candidate to its source environment and exact AST."""
-    from .softnorms import soft_digest
-    return soft_digest(f"ve-meaning-{env.identity_version}\n",
-                       {"environment_id": env.environment_id, "ast": content})
+    """Relay Lean's rights 3.5 normal form and domain-separated identity."""
+    import json
+    from .backends.relay import decide
+    from .environment_wire import wire_checked
+    return decide("identity", [{"id": "rights-meaning", "kind": "rights-meaning",
+                                 "environment": env.to_dict(),
+                                 "content_json": json.dumps(wire_checked([content])[0], ensure_ascii=False,
+                                                            separators=(",", ":"), allow_nan=False)}])[0]["identity_id"]
 
 
 def _right_situation(env, content, wire, unit_ids=()):

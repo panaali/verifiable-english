@@ -8,11 +8,11 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 |---|---:|
 | leaves:bound | 298 |
 | leaves:closed domain | 313 |
-| leaves:none | 1603 |
+| leaves:none | 1609 |
 | modes | 44 |
 | today:hand | 203 |
 | today:later Lean request | 62 |
-| today:not probed | 1201 |
+| today:not probed | 1207 |
 | today:shape | 611 |
 | today:unbound | 137 |
 | answers | 599 |
@@ -3061,6 +3061,8 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | leaf | kind | class | keyword | format | observed | bound today |
 |---|---|---|---|---|---:|---|
 | `/cardinality/environment_id` | string | none |  | pattern | 0 | not probed |
+| `/cardinality/leaf_labels/*/label` | string | none |  |  | 0 | not probed |
+| `/cardinality/leaf_labels/*/name` | string | none |  |  | 0 | not probed |
 | `/cardinality/report/leaves/*/meaning_id` | string | none |  | pattern | 0 | not probed |
 | `/cardinality/report/leaves/*/name` | string | none |  |  | 0 | not probed |
 | `/cardinality/report/root/meaning_id` | string | none |  | pattern | 0 | not probed |
@@ -3069,6 +3071,10 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/cardinality/w6_environment_id` | string | none |  | pattern | 0 | not probed |
 | `/cardinality/w6_target_environment_id` | string | none |  | pattern | 0 | not probed |
 | `/case_index` | integer | bound | x-index |  | 0 | shape |
+| `/composed/chain_document` | string | none |  |  | 0 | not probed |
+| `/composed/counting_document` | string | none |  |  | 0 | not probed |
+| `/composed/not_certified/*` | string | none |  |  | 0 | not probed |
+| `/composed/scope` | string | none |  |  | 0 | not probed |
 | `/composed_readings/*/readings/*/content/norm/name` | string | none |  |  | 0 | not probed |
 | `/composed_readings/*/readings/*/content/norm/over/*` | string | none |  |  | 0 | not probed |
 | `/composed_readings/*/readings/*/content/norm/predicate` | string | none |  |  | 0 | not probed |
@@ -3277,7 +3283,9 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 
 | array | length bound by | positions bound by | internal agreement | probed (generic/hand) |
 |---|---|---|---|---|
+| `/cardinality/leaf_labels` |  |  |  |  |
 | `/cardinality/report/leaves` |  |  |  |  |
+| `/composed/not_certified` |  |  |  |  |
 | `/composed_readings` |  |  |  |  |
 | `/composed_readings/*/readings` |  |  |  |  |
 | `/composed_readings/*/readings/*/content/norm/over` |  |  |  |  |

@@ -1,0 +1,4 @@
+# seeded bug 5 (lean/VE/SoftNorms/Wire.lean: softDefault reads hard: true as the default); lake build VE.Service.Document
+error: VE/Service/Document.lean:177:0: Expression
+error: Lean exited with code 1
+error: build failed

@@ -40,18 +40,32 @@ def decodeVocab (block : Json) : Except String Vocab := do
 def fixedOf (environment : Json) : List String :=
   (strings (((environment.getObjValD "vocabulary").getObjValD "acts").getObjValD "fixed")).toOption.getD []
 
-/-- A joined act's one meaning from its tokens `ts` (6.4): the slots standing alone (D-18), then one complete
-    listing: one meaning, none (D-16), two or more (D-15, every meaning's text), or the limit (D-17). -/
-def joinedAct (fx : List String) (V : Vocab) (name : String) (ts : List Tok) : Except String Act := do
+/-- A joined act's one meaning from its tokens `ts` (6.4): the slots standing alone (D-18), then one complete listing
+    (`R` forced only here): one meaning, none (D-16), two or more (D-15, every meaning's text), or the limit (D-17). -/
+def joinedActBy (R : Thunk (Array RuleS × VE.Grammar.Prepared Term)) (fx : List String) (V : Vocab) (name : String)
+    (ts : List Tok) : Except String Act := do
   if ts.any (fun t => match t with | .word w => w.contains '{' | _ => false) then
     throw s!"InvalidInput: act phrase for {name} has a slot joined to a word"
-  match readings V rawCap stepBudget ts.toArray with
+  match readingsBy V R.get rawCap stepBudget ts.toArray with
   | .ok [A] => pure A
   | .ok [] => throw s!"InvalidInput: act phrase for {name} has no reading under the declared frames"
   | .ok As => do
     let ms ← meaningTexts fx s!"the act phrase for {name}" As
     throw (s!"InvalidInput: act phrase for {name} has more than one reading: " ++ numbered ms)
   | .limit => throw s!"ResourceLimit: act phrase for {name} has too many readings to list; split the sentence"
+
+/-- `joinedActBy` the vocabulary's reader, built for this act when its listing needs it. -/
+def joinedAct (fx : List String) (V : Vocab) (name : String) (ts : List Tok) : Except String Act :=
+  joinedActBy (lazyReader V) fx V name ts
+
+/-- `checkAct` through a lazy reader, forced by a joined act only; a document's acts share one (`Norms.Wire.actsOf`). -/
+def checkActBy (R : Thunk (Array RuleS × VE.Grammar.Prepared Term)) (fx : List String) (V : Vocab) (name : String)
+    (arity : Nat) (raw : Json) : Except String (String × Option Act) :=
+  match check fx name arity raw with
+  | .ok a => .ok (a, none)
+  | .error e => match checkWith (fun act ts => pure (act, ts)) fx name arity raw with
+    | .ok (act, ts) => (joinedActBy R fx V name ts).map fun A => (act, some A)
+    | .error _ => .error e
 
 /-- The act check under `acts@0` from AP-3 on: a lexical act (`Lexical.check`), or a joined act: every condition of
     1.3 except 6, every slot standing alone as a word, and exactly one meaning (`read V rawCap stepBudget`). Returns
@@ -60,18 +74,14 @@ def joinedAct (fx : List String) (V : Vocab) (name : String) (ts : List Tok) : E
     1 to 5 and the lexing pass (`checkWith`) failed condition 6 only: it is joined. -/
 def checkAct (fx : List String) (V : Vocab) (name : String) (arity : Nat) (raw : Json) :
     Except String (String × Option Act) :=
-  match check fx name arity raw with
-  | .ok a => .ok (a, none)
-  | .error e => match checkWith (fun act ts => pure (act, ts)) fx name arity raw with
-    | .ok (act, ts) => (joinedAct fx V name ts).map fun A => (act, some A)
-    | .error _ => .error e
+  checkActBy (lazyReader V) fx V name arity raw
 
 /-! ### Theorems (6.4) -/
 
 /-- An act AP-1 accepts never enters the grammar (plan 2.5). -/
 theorem checkAct_lexical (fx V name k raw a) (h : Lexical.check fx name k raw = .ok a) :
     VE.Acts.Wire.checkAct fx V name k raw = .ok (a, none) := by
-  unfold checkAct; rw [h]
+  unfold checkAct checkActBy; rw [h]
 
 theorem checkWith_lex {fx name k raw act ts}
     (h : checkWith (fun a ts => (pure (a, ts) : Except String (String × List Tok))) fx name k raw = .ok (act, ts)) :
@@ -84,7 +94,8 @@ theorem checkWith_lex {fx name k raw act ts}
 
 theorem joinedAct_read {fx V name ts A} (h : joinedAct fx V name ts = .ok A) :
     read V rawCap stepBudget ts.toArray = .ok A := by
-  unfold joinedAct at h
+  unfold joinedAct joinedActBy at h
+  rw [lazyReader_get, readingsBy_reader] at h
   simp only [bind, Except.bind] at h
   split at h
   · cases h
@@ -102,12 +113,12 @@ theorem joinedAct_read {fx V name ts A} (h : joinedAct fx V name ts = .ok A) :
 
 theorem checkAct_joined (fx V name k raw a A) (h : VE.Acts.Wire.checkAct fx V name k raw = .ok (a, some A)) :
     ∃ ts, Lexical.lex fx a = .ok ts ∧ read V rawCap stepBudget ts.toArray = .ok A := by
-  unfold checkAct at h
+  unfold checkAct checkActBy at h
   split at h
   · cases h
   · split at h
     next act ts hw =>
-      cases hj : joinedAct fx V name ts with
+      cases hj : joinedActBy (lazyReader V) fx V name ts with
       | error e => rw [hj] at h; cases h
       | ok A' =>
         rw [hj] at h
