@@ -8,11 +8,11 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 |---|---:|
 | leaves:bound | 301 |
 | leaves:closed domain | 320 |
-| leaves:none | 1639 |
+| leaves:none | 1641 |
 | modes | 45 |
 | today:hand | 203 |
 | today:later Lean request | 62 |
-| today:not probed | 1237 |
+| today:not probed | 1239 |
 | today:shape | 621 |
 | today:unbound | 137 |
 | answers | 606 |
@@ -1797,6 +1797,8 @@ Delegates: `/` to norms.
 | `/situation/filling/@key` | key | none |  |  | 0 | not probed |
 | `/situation/filling/{}/*/*` | string | none |  |  | 0 | not probed |
 | `/soft/*/label` | string | none |  | minLength | 0 | not probed |
+| `/sources/*/rule` | string | none |  |  | 3 | not probed |
+| `/sources/*/source` | string | none |  |  | 3 | not probed |
 | `/split/*/parts/*` | string | none |  |  | 0 | not probed |
 | `/split/*/source` | string | none |  |  | 0 | not probed |
 | `/split/*/text` | string | none |  |  | 0 | not probed |
@@ -1885,12 +1887,13 @@ Delegates: `/` to norms.
 | `/report/assumptions` |  |  |  | drop: accept/accepted; duplicate: accept/accepted |
 | `/residual/gaps` |  |  |  | drop: accept/accepted; duplicate: accept/accepted; replace: accept/accepted; reverse: accept/accepted |
 | `/rights` |  |  |  |  |
-| `/rules` |  |  | x-unique-strings | drop: accept/accepted; duplicate: accept/accepted; replace: accept/accepted; reverse: accept/accepted |
+| `/rules` |  |  | x-same-length x-unique-strings | drop: accept/accepted; duplicate: accept/accepted; replace: accept/accepted; reverse: accept/accepted |
 | `/rules/*/over` |  |  |  |  |
 | `/rules/*/unless` |  |  |  |  |
 | `/situation/filling/{}` |  |  |  |  |
 | `/situation/filling/{}/*` |  |  |  |  |
 | `/soft` |  |  |  |  |
+| `/sources` |  |  | x-same-length |  |
 | `/split` |  |  |  |  |
 | `/split/*/parts` |  |  |  |  |
 | `/targets` |  |  |  | drop: accept/accepted; duplicate: accept/accepted; replace: accept/accepted; reverse: accept/accepted |
