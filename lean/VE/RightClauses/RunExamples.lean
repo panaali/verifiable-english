@@ -149,7 +149,8 @@ def bodies (ks : List Nat) (rl : Bool := false) : Json := parse <| "[" ++ ",".in
     "\"public_service_access_required\",\"sign\":true,\"guard\":[\"top\"],\"unless\":[],\"over\":[]}}")) ++ "]}}") ++ "]"
 -- 256 line objects are read (the first line's text); 257, in one unit or across units of either body, are refused
 -- before any is decoded
-#guard lineObjects (bodies [3, 4] true) == 7 && lineObjects (parse "{}") == 0
+#guard lineObjects (bodies [3, 4] true) == 7 && lineObjects (parse "{}") == 0 &&
+  lineObjects (parse "[{\"span\":[0,1]}]") == 0
 #guard says (bodies [256]) == "InvalidInput: elided missing on rule equal-access" &&
   says (bodies [128, 128] true) == "InvalidInput: elided missing on rule equal-access"
 -- 64 conjuncts (clauses, then the relation) are refused before `plain` nests them; 63 reach the rights decoder
@@ -163,6 +164,10 @@ def scopes (k : Nat) : String := ",\"elided\":[],\"clauses\":[" ++ ",".intercala
 def deep (d : Json) : Option Bool := (deepLine <$> decodeClauseDoc (parse (profiles on)) d).toOption
 #guard deep (doc (scopes 64)) == some true && deep (doc (scopes 63 ++ ",\"relation\":{" ++ rel ++ "}")) == some true &&
   deep (doc (scopes 63)) == some false
+-- one deep line among shallow ones is enough
+#guard deep (doc (",\"elided\":[]},{\"kind\":\"claim\",\"norm\":{\"name\":\"equal-access-2\",\"predicate\":" ++
+  "\"public_service_access_required\",\"sign\":true,\"guard\":[\"top\"],\"unless\":[],\"over\":[]}" ++ scopes 64)) ==
+  some true
 #guard says (bodies [257]) == "ResourceLimit: rules" && says (bodies [200, 57]) == "ResourceLimit: rules" &&
   says (bodies [1, 256] true) == "ResourceLimit: rules"
 
