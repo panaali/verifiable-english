@@ -44,19 +44,20 @@ After building the Lean service, run `uv run python usecases/openai-preparedness
 mutant and narrowing) from the repository root. Without the pinned source, source-dependent
 tests skip their rerun; saved evidence invariants remain tested.
 
-## Coverage, 2026-10-30
+## Coverage, 2026-11-11
 
 VE classified 389 contiguous units covering all 67,418 bytes. The master map equals the D1 map.
-CHECKED covers six Table 1 level markers and the SSC visibility clause. Three formerly CHECKED rule
+CHECKED covers six Table 1 level markers, the SSC visibility clause and change log item 2's removal of "low" and
+"medium" (`cl-levels`, 2026-11-11). Three formerly CHECKED rule
 units remain UNFORMALISED because they carry an AT wait or omit a source clause. Claims in headings and illustrative
 sections remain visible whenever the whole source unit contains a duty or hedge.
 
 | Status | Units | Bytes | Share |
 |---|---:|---:|---:|
-| CHECKED | 7 | 170 | 0.3% |
+| CHECKED | 8 | 344 | 0.5% |
 | OPEN | 44 | 9,073 | 13.5% |
 | LABELLED | 48 | 5,327 | 7.9% |
-| UNFORMALISED | 290 | 52,848 | 78.4% |
+| UNFORMALISED | 289 | 52,674 | 78.1% |
 
 Each non-CHECKED byte has a blocker in [gaps.json](../../docs/usecases/safetyfw/openai-preparedness/gaps.json).
 OPEN reading sets remain pending. UNFORMALISED units name the missing D1 feature or
@@ -65,19 +66,19 @@ counts under each. “Alone” means exactly one recorded blocker.
 
 | Family | Units | Bytes | Alone: units, bytes | Here |
 |---|---:|---:|---:|---|
-| AP | 119 | 21,554 | 111, 19,678 | D1 has no act or complete rule for these duties |
+| AP | 118 | 21,380 | 110, 19,504 | D1 has no act or complete rule for these duties |
 | AT | 57 | 12,623 | 53, 11,750 | hedges, beliefs and expectations |
 | DF | 12 | 2,098 | 0, 0 | default readings |
-| ET | 28 | 8,086 | 16, 5,728 | event order and deadlines |
+| ET | 29 | 8,272 | 17, 5,914 | event order and deadlines |
 | JT | 34 | 6,282 | 11, 1,966 | open judgments |
 | QT | 2 | 702 | 1, 305 | quantities and ratios |
-| SC | 28 | 4,896 | 25, 3,945 | per-item or universal scope |
+| SC | 27 | 4,710 | 24, 3,759 | per-item or universal scope |
 | WG | 1 | 183 | 0, 0 | weighing of risks |
 | external reference | 2 | 309 | 2, 309 | outside standards |
 | no claim to check | 48 | 5,327 | 48, 5,327 | title, contents, pure headings and marked examples |
 | readings | 95 | 14,325 | 82, 11,019 | unselected source readings |
 
-The 290 UNFORMALISED units carry specific blocker codes in `spans.json`; no unit remains
+The 289 UNFORMALISED units carry specific blocker codes in `spans.json`; no unit remains
 `not_translated`. VE reports 21 declared open terms and 31 unresolved reading sets as
 residual. `usecase-pf-run` moved ten units from UNFORMALISED to OPEN (2,021 bytes): each now carries the reading
 set or rule the key needs (section 1's deployment sentence, the two Table 1 contribution bullets, 3.3's first next
@@ -95,7 +96,7 @@ harm-count thresholds remain QT gaps. P5 and P6
 confirm the 67,418-byte partition. P7 finds no packed identifier and M6 finds no untraced authored block. P8
 refuses D1 with `judgments@0` plus `soft-norms@0`: the composed Lean route is unavailable.
 
-## Answers to the frozen key (2026-10-30)
+## Answers to the frozen key (2026-11-11)
 
 `run.py` asks VE each of the 239 key questions through the document built from `rules.d1.ve` and `facts.d1.ve`
 (D1: soft-norms@0 rule selection under both completion defaults and every reading choice the question's rules
@@ -111,18 +112,20 @@ answers figure is `comparison[].agree` (`metrics.useful_answers`). These counts 
 | B per level | 36 / 42 | 0 | 6 (key finding: truncated cells) |
 | K process triggers | 22 / 22 | 0 | 0 |
 | T AIS-C indicator | 2 / 2 | 0 | 0 |
-| C conflicts | 7 / 7 | 0 | 0 |
-| G gaps | 9 / 10 | 1 (G7: SC) | 0 |
-| N never applies | 3 / 4 | 1 (N4: SC) | 0 |
+| C conflicts | 5 / 7 | 0 | 2 (key finding: C6, C-doc) |
+| G gaps | 9 / 10 | 0 | 1 (key finding: G9) |
+| N never applies | 4 / 4 | 0 | 0 |
 | S severity | 8 / 8 | 0 | 0 |
 | D dates | 4 / 4 | 0 | 0 |
-| **Total** | **231 / 239** | **2** | **6** |
+| **Total** | **230 / 239** | **0** | **9** |
 
 The six disagreements are B-*L*/MREP: `answer-key.json` holds the cell `SOME(N` (and a stray `soft: RS1=default`)
 where PLAN 6.2 says `SOME(N ∧ unscoped)`; VE's answer equals the PLAN cell, and `reference.py` reports the same six.
-The key is not edited (PLAN 12, REPORT "Key findings"). Against PLAN 6.2's cells the count would be 237 / 239.
-G7 stays undecided because footnote 5's indicator relation is not in D1; N4 because D1 has no closure premise that
-Table 1's six levels are all the levels there are. Neither is counted as correct.
+The key is not edited (PLAN 12, REPORT "Key findings"). The other three disagreements are the K findings of PLAN 12
+items 19 and 20 (openai-preparedness-fidelity-fix): C6 and C-doc are NONE, because RS11 = final ("no other body may
+change them") is excluded by the Board sentence, and G9 is SOME(P ∨ scoped), because Table 2's nuclear row states no
+condition. Against PLAN 6.2's cells and those entries the count would be 239 / 239. G7 (footnote 5's indicator
+relation, `fn5-indicator`) and N4 (change log item 2, `cl-levels`) are answered (PLAN 12 item 21).
 
 All six PLAN 11 mutants change exactly their named results (M9 6/6); the m2 rule is flagged by the invention audit.
 Without N1 (every RS0 statement read as a prediction) 35 answers change: 34 rest on a statement made with "we
