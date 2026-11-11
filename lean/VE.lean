@@ -167,6 +167,8 @@ import VE.RightClauses.WireName
 import VE.RightClauses.WireTheorems
 import VE.RightClauses.PlainWellFormed
 import VE.RightClauses.PlainWellFormed.Corollaries
+import VE.RightClauses.English
+import VE.RightClauses.EnglishExamples
 import VE.SpeechActs.Run
 import VE.SpeechActs.Source.Run
 import VE.SpeechActs.Source.Admission.Run
