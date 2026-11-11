@@ -90,6 +90,11 @@ COMPILED_BEFORE = "VE.SoftNorms.validateSoft"  # its compiled body calls `checkS
 TWINNED = {"VE.Norms.semanticCheck", "VE.Norms.validate", "VE.Norms.WellFormed", "VE.Norms.targets",
            "VE.Norms.InFragment", "VE.SoftNorms.checkSoft", "VE.SoftNorms.softSemanticCheck",
            "VE.SoftNorms.validateSoft", "VE.SoftNorms.WellFormedSoft", "VE.SoftNorms.InFragment"}
+# (caller, original) reaches that are not a cost: the twin itself calls its original on the cases it does not
+# rewrite. `shapeOutcomeCharged` (VE/Commands/Steps.lean, ci-3a) charges a sequence's product and hands every other
+# shape (`.core`, `.preposed`, `.after`) to `shapeOutcome`, whose code for those shapes is the same; ci-3 put
+# `readStep` on the `english.command` route, so the walk reaches it. Any other caller of the original still fails.
+TWIN_FALLBACKS = {("VE.Commands.shapeOutcomeCharged", "VE.Commands.shapeOutcome")}
 
 
 @pytest.fixture(scope="module")
@@ -117,7 +122,15 @@ def test_no_route_of_the_service_calls_a_twinned_original(walks):
     _, walked = walks
     walk = walked[ENTRY]
     assert walk["size"] > 10000  # every route mode, the chains' checks included
-    assert walk["reached"] == [], sorted({(r["caller"], r["original"]) for r in walk["reached"]})
+    reached = sorted({(r["caller"], r["original"]) for r in walk["reached"]} - TWIN_FALLBACKS)
+    assert reached == [], reached
+
+
+def test_each_twin_fallback_is_a_registered_twin_calling_its_own_original(walks):
+    pairs, walked = walks
+    assert TWIN_FALLBACKS <= {(twin, original) for original, twin in pairs}
+    reached = {(r["caller"], r["original"]) for r in walked[ENTRY]["reached"]}
+    assert TWIN_FALLBACKS <= reached  # an exemption the walk no longer needs is removed
 
 
 def test_the_walk_finds_an_original_from_code_compiled_before_its_twin(walks):
