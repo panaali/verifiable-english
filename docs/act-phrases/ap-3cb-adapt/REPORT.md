@@ -186,6 +186,20 @@ recorded 477 units for tree fd47c099a4; 5 others left to the static graph until 
 It includes `lake build`, `lean/audit.py` and the chunked units, all with exit 0. Only this docs file was committed
 after the run. No test of main-known-red.txt was involved (0 failed).
 
+Review fix (section 11): the same command on the committed tree at `b347cba15` (clean; tree `028ec7ebfd`), log
+`/tmp/ap3cb/select-fix.log`. It ran on ve-cloud-2 after the Mac was unreachable:
+
+```
+100/589 test units (map 476b99b92f, 2.33 s)
+recorded 100 units for tree 028ec7ebfd; 18 others left to the static graph until they run; 0 failed
+[mac-pytest 12:14:10Z] summary: ran on ve-cloud-2 (x86_64) instead of the VM because: MAC_LAST_RESORT: ...; exit=0; 7773s
+```
+
+- It includes `lake build`, `lean/audit.py` and `tests/test_ap3cb_adapt_report.py`, all with exit 0.
+- 18 broad test files over 120 s are deferred to the chain gate by `select_tests` (not run here).
+- `gate_collection.py --check --prebuilt`: `4 added, 0 removed by a trailer, 0 refused, 0 stale and 0 malformed`.
+- Only this docs file was committed after the run.
+
 ## Notes for the DRI
 
 - The ap-3c ties pass (FOLLOW-UPS "## ap-3c", first row) cannot be met with 6.6's statements, which name only
