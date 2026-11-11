@@ -8,7 +8,8 @@ none supplied (not searched; budget N unused)`, not `UNKNOWN (budget N)`. The wo
 **Open:** the full gate, which the chain runs on the final HEAD.
 
 SIZE: 17 product (Lean +13/-4), 124 tests, 539 other hand-written lines (specs 12, DELTA 22, this REPORT 146, step-1
-probe and plugin 148 and its output 20, delta.json 103, mutants.json 66, trust and assurance records 20, ties row 2).
+probe and plugin 148 and its output 20, delta.json 103, mutants.json 66, trust and assurance records 20, ties row 2,
+the plan's 8b figure 1); generated: declarations, code map, checker pin, one recorded wire-gate test input.
 
 ## Step 1: measured before any edit
 
@@ -114,7 +115,8 @@ the VM because ve-mac-1 did not resolve; 8545 s): 525 units, 523 exit 0, 2 faile
   figure (untied lines of the units' `Wire.lean` files) is 3791 now, +6 for `notSearchedText`. Updated in
   docs/CONSOLIDATION-PLAN.md :703, as ap-parse-index did; score unchanged (42.1).
 Then tests/test_wire_gate_corpus.py and tests/test_wire_contract_faults.py: 192 passed; the ledger test: 1 passed.
-The rerun of the two failed IDs on the final commit is recorded below.
+Rerun of the two failed IDs on committed a43640b72 (`mac-pytest.sh -- <both ids>`, on the VM): 2 passed.
+Not run here: the full release gate, which the chain runs on the final HEAD.
 
 ## Notes for the DRI
 
