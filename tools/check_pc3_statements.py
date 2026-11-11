@@ -2,7 +2,7 @@
 (build checklist 17).
 
 Every declaration of those blocks is compared with the one Lean declaration of that kind and name in the files PC-3
-writes: a theorem up to its proof's `:=`, anything else in full, after whitespace normalization and with line
+writes: a theorem up to its proof's `:=`, anything else in full, after whitespace normalization and with
 comments dropped on both sides. A declaration a later batch builds (`LATER`) must not exist yet, so the list can only
 shrink. `RouteFacts` is staged: PC-3 builds its two entries, and the acts, discourse and generic entries are PC-6b's,
 PC-7b's and PC-4b's, so until they land its last clause is `| _ => False` in place of theirs (`STAGED`).
@@ -14,13 +14,11 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
-from check_readings_defaults_statements import proof_cut  # noqa: E402
+from check_readings_defaults_statements import declarations as scan  # noqa: E402
 
 SPEC = ROOT / "docs/spec/profile-composition.md"
 SOURCES = [ROOT / "lean/VE/Compose" / name for name in ("Dispatch.lean", "Stack.lean", "Contract.lean")]
 KINDS = ("theorem", "def", "structure", "inductive")
-START = re.compile(rf"^({'|'.join(KINDS)}) ([\w'!?.]+)", re.M)
-STOP = re.compile(r"^(?:\s*$|(?:theorem|def|structure|inductive|end|namespace|open|universe|/--|/-!|#|```))", re.M)
 LATER = {"ActsFaithful", "ActsPreserves", "StackRuns", "ReadingsFaithful", "readingsFaithful", "RewriterFacts",
          "VE.Discourse.caseManifest", "VE.Discourse.effectContent", "VE.Discourse.withEffectContent",
          "ResolvedEffect", "PairFacts", "stack_evidence", "stackRuns_all", "LayerFacts", "layer_evidence",
@@ -30,15 +28,9 @@ STAGED = {"RouteFacts": ('| ["acts@0", "scope@0"] =>', "| _ => False")}
 
 
 def declarations(code: str) -> dict[tuple[str, str], list[str]]:
-    code = re.sub(r"(?<![/-])--[^\n]*", "", code)
-    out: dict[tuple[str, str], list[str]] = {}
-    for start in START.finditer(code):
-        stop = STOP.search(code, code.find("\n", start.end()) + 1)
-        body = code[start.start():stop.start() if stop else len(code)]
-        if start[1] == "theorem":
-            body = body[:proof_cut(body)]
-        out.setdefault((start[1], start[2]), []).append(re.sub(r"\s+", " ", body).strip())
-    return out
+    """The shared scanner of the statement gates: a declaration runs to the next Lean command, so a blank line or a
+    comment inside it never ends it (review sc-2d-f1 F2), and comments are left out on both sides."""
+    return scan(code, statements_only=True, kinds=KINDS)
 
 
 def approved() -> dict[tuple[str, str], list[str]]:
