@@ -282,3 +282,38 @@ def test_the_records_quote_the_saved_measurement():
     assert f"**{keyed} distinct lines**" in frozen and f"The proved kernel is {keyed_kernel} of them" in frozen
     allowances = (ROOT / "docs/kernel/ALLOWANCES.md").read_text()
     assert f"signed total: {kernel} lines" in allowances
+
+
+def lean_part(decls=(), stated=None, unranged=(), missing=()):
+    return {"lines": sum(b - a + 1 for _, a, b in decls), "axioms": [], "modules": {}, "flagged": [],
+            "missing": list(missing), "unranged": list(unranged), "stated": stated or {},
+            "decls": [{"name": f"{m}.d{a}", "module": m, "from": a, "to": b} for m, a, b in decls]}
+
+
+def test_measure_reports_what_the_lean_half_finds(monkeypatch):
+    """`measure` on a fixed Lean answer: kernel and keyed totals, a subject no theorem states, an unranged
+    constant, and a writer under a subject that no covered_writers entry names."""
+    registry = {"verdict_tokens": ["CONFLICT"], "keys": {"paths": ["k"], "validators": {"v": ["V"]}}, "paths": [
+        {"name": "k", "tier": "kernel", "entry": ["E"], "theorems": ["T"], "subject": ["S", "S2"]},
+        {"name": "c", "tier": "candidate", "entry": ["Ec"], "theorems": ["Tc"], "subject": ["Sc"]}]}
+    raw = {"spec:k": lean_part([("M", 1, 10)], {"S": ["T"], "S2": []}), "wrap:k": lean_part([("M", 5, 12)]),
+           "body:k": lean_part([("M", 30, 31)]), "spec:c": lean_part([("M", 40, 49)], {"Sc": []}),
+           "wrap:c": lean_part([("M", 50, 50)], unranged=["_private.X.match_1"]),
+           "keys:v": lean_part([("N", 1, 3)])}
+    census = [{"name": "W", "module": "M", "from": 30, "to": 31, "tokens": ["CONFLICT"]}]
+    monkeypatch.setattr(kernel_closure, "run_lean", lambda *args, **kw: (raw, census))
+    result = kernel_closure.measure(registry)
+    assert result["kernel_lines"] == 12 and result["keyed_lines"] == 15 and result["keyed_kernel_lines"] == 12
+    assert [row["lines"] for row in result["paths"]] == [12, 11]
+    assert result["paths"][0]["stated"] == {"S": ["T"], "S2": []}
+    assert result["verdict_writers"] == [{"name": "W", "module": "M", "tokens": ["CONFLICT"],
+                                          "in_kernel": False, "inside": None}]
+    problems = result["problems"]
+    assert "c: reached constants with no source range (not counted): _private.X.match_1" in problems
+    assert "k: no listed theorem states what the answer of S2 means" in problems
+    assert not any("answer of Sc" in p for p in problems)
+    assert any(p.startswith("verdict writer W runs under a kernel subject") for p in problems)
+    assert len(problems) == 3
+    registry["paths"][0]["covered_writers"] = [{"name": "W", "kinds": ["x"], "theorems": ["T"]}]
+    covered = kernel_closure.measure(registry)
+    assert covered["verdict_writers"][0]["inside"] == "body" and len(covered["problems"]) == 2
