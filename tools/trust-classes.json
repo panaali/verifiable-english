@@ -20569,10 +20569,15 @@
         "VE.Readings.Wire.sdCheckWork",
         "VE.Readings.Wire.sdChecked",
         "VE.Readings.Wire.routeSD",
-        "VE.Readings.Wire.SupReplaySD"
+        "VE.Readings.Wire.SupReplaySD",
+        "VE.Readings.Wire.sdRuleCharge",
+        "VE.Readings.Wire.sdContentCharge",
+        "VE.Readings.Wire.sdSizeCharge",
+        "VE.Readings.Wire.sdCheckWorkFast"
       ],
       "G[R]": [
-        "VE.Readings.Wire.maxSdCheckWork"
+        "VE.Readings.Wire.maxSdCheckWork",
+        "VE.Readings.Wire.maxSdSizeCharge"
       ]
     },
     "VE/Readings/SoftSupWireExamples.lean": {
@@ -20589,7 +20594,22 @@
         "VE.Readings.SoftSupWireExamples.NSDbig",
         "VE.Readings.SoftSupWireExamples.NSDcount",
         "VE.Readings.SoftSupWireExamples.guarded",
-        "VE.Readings.SoftSupWireExamples.NSDheavy"
+        "VE.Readings.SoftSupWireExamples.NSDheavy",
+        "VE.Readings.SoftSupWireExamples.wideGuard191",
+        "VE.Readings.SoftSupWireExamples.wideGuard767",
+        "VE.Readings.SoftSupWireExamples.wideGuard3071",
+        "VE.Readings.SoftSupWireExamples.chargeFacts",
+        "VE.Readings.SoftSupWireExamples.sized",
+        "VE.Readings.SoftSupWireExamples.NSDsized",
+        "VE.Readings.SoftSupWireExamples.atCharge",
+        "VE.Readings.SoftSupWireExamples.overCharge",
+        "VE.Readings.SoftSupWireExamples.todayRow",
+        "VE.Readings.SoftSupWireExamples.framedFrame",
+        "VE.Readings.SoftSupWireExamples.framed",
+        "VE.Readings.SoftSupWireExamples.framedT",
+        "VE.Readings.SoftSupWireExamples.framedItems",
+        "VE.Readings.SoftSupWireExamples.NSDsets",
+        "VE.Readings.SoftSupWireExamples.NSDcands"
       ]
     },
     "VE/Presupposition/Events.lean": {
