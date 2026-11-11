@@ -274,7 +274,7 @@ theorem ap_SINGLE (rhs : List NT) (hr : rhs = [.SC] ∨ rhs = [.ADVSO, .SC] ∨ 
     rhs = [.FW, .ADVSO, .SC]) : applyRule ⟨.SINGLE, rhs.map .n, .shape⟩ cs =
     (itemOf cs).map (fun (fw, h, es) => [.act (singleAct fw h es)]) := by
   rcases hr with rfl | rfl | rfl | rfl <;> ap_tac
-theorem ap_SINGLE' (rhs : List NT) (hr : rhs = [.SC] ∨ rhs = [.ADVSO, .SC] ∨ rhs = [.FW, .SC] ∨
+theorem ap_SINGLE_of (rhs : List NT) (hr : rhs = [.SC] ∨ rhs = [.ADVSO, .SC] ∨ rhs = [.FW, .SC] ∨
     rhs = [.FW, .ADVSO, .SC]) {ps : List Piece}
     (hp : (itemOf cs).map (fun (fw, h, es) => [Piece.act (singleAct fw h es)]) = some ps) :
     applyRule ⟨.SINGLE, rhs.map .n, .shape⟩ cs = some ps := by
@@ -429,7 +429,7 @@ structure FrameOk (V : Vocab) (f : Frame) (h : Nat) : Prop where
   words : ∀ m ∈ f.markers ++ f.mods, m ≠ "" → wordsOf m ≠ []
   mods : "" ∉ f.mods
 
-theorem gen_MK' (hF : FrameOk V f h) {m : String} (hm : m ∈ f.markers ++ f.mods) (hne : m ≠ "") :
+theorem gen_MK_of (hF : FrameOk V f h) {m : String} (hm : m ∈ f.markers ++ f.mods) (hne : m ≠ "") :
     Gen V (.n (.MK m)) ((wordsOf m).map .word) [] :=
   gen_MK hF.frame hm hne (hF.lower m hm hne) (hF.words m hm hne)
 
@@ -438,7 +438,7 @@ theorem gen_arg (hF : FrameOk V f h) {m : String} {fl : Filler} (hm : m ∈ f.ma
     (hok : ∀ p ∈ fl.parts, PartOk V f p)
     (hj : ∀ j ps, fl = .joined j ps → f.split.contains m = false ∧ 2 ≤ ps.length ∧ longEnd ps = false) :
     Gen V (.n (.F h .EE)) ((wordsOf m).map .word ++ fl.toks) [.elt (.arg m fl) .own] := by
-  have hmk := gen_MK' hF (List.mem_append_left _ hm) hne
+  have hmk := gen_MK_of hF (List.mem_append_left _ hm) hne
   cases fl with
   | one p =>
     have hr : (⟨.F h (.AR m), [.n (.MK m), .n (.F h .FL)], .shape⟩ : RuleS) ∈ schema V :=
@@ -465,7 +465,7 @@ theorem gen_prep (hF : FrameOk V f h) {m : String} {p : Part} (hm : m ∈ f.mods
   have hne : m ≠ "" := fun he => hF.mods (he ▸ hm)
   have hr : (⟨.F h .EE, [.n (.MK m), .n (.F h .FL)], .shape⟩ : RuleS) ∈ schema V :=
     mem_frame hF.mem (by frame_unfold; simp [hm])
-  exact gen2 hr (gen_MK' hF (List.mem_append_right _ hm) hne) (gen_FL hF.mem p hok) (by simpa using ap_EEmod h m p)
+  exact gen2 hr (gen_MK_of hF (List.mem_append_right _ hm) hne) (gen_FL hF.mem p hok) (by simpa using ap_EEmod h m p)
 
 /-- The object, as `O`. -/
 theorem gen_obj (hF : FrameOk V f h) (hobj : "" ∈ f.markers) {fl : Filler} (hok : ∀ p ∈ fl.parts, PartOk V f p)
@@ -575,20 +575,20 @@ theorem gen_SINGLE (t b : Bool) (ws : List String) (hws : ∀ w ∈ ws, w ∈ V.
     rw [htb'] at hp
     cases ws with
     | nil =>
-      have := gen2 (hmem [.FW, .SC] (by simp)) hfw hsc (ap_SINGLE' _ [.FW, .SC] (by simp) (by simpa using hp))
+      have := gen2 (hmem [.FW, .SC] (by simp)) hfw hsc (ap_SINGLE_of _ [.FW, .SC] (by simp) (by simpa using hp))
       simpa using this
     | cons u ws =>
       have ha := gen_ADVSO (u :: ws) (by simp) hws
-      have := gen3 (hmem [.FW, .ADVSO, .SC] (by simp)) hfw ha hsc (ap_SINGLE' _ [.FW, .ADVSO, .SC] (by simp) (by simpa using hp))
+      have := gen3 (hmem [.FW, .ADVSO, .SC] (by simp)) hfw ha hsc (ap_SINGLE_of _ [.FW, .ADVSO, .SC] (by simp) (by simpa using hp))
       simpa using this
   · obtain ⟨rfl, rfl⟩ : t = false ∧ b = false := by cases t <;> cases b <;> simp_all
     cases ws with
     | nil =>
-      have := gen1 (hmem [.SC] (by simp)) hsc (ap_SINGLE' _ [.SC] (by simp) (by simpa using hp))
+      have := gen1 (hmem [.SC] (by simp)) hsc (ap_SINGLE_of _ [.SC] (by simp) (by simpa using hp))
       simpa using this
     | cons u ws =>
       have ha := gen_ADVSO (u :: ws) (by simp) hws
-      have := gen2 (hmem [.ADVSO, .SC] (by simp)) ha hsc (ap_SINGLE' _ [.ADVSO, .SC] (by simp) (by simpa using hp))
+      have := gen2 (hmem [.ADVSO, .SC] (by simp)) ha hsc (ap_SINGLE_of _ [.ADVSO, .SC] (by simp) (by simpa using hp))
       simpa using this
 
 /-- The start: `{0}` and an item. -/
