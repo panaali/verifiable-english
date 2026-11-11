@@ -281,7 +281,7 @@ def parse_english(env, source, manifest=None, *, existing_names=(), _w1=False):
         return _parse_w1(env, source, manifest, existing_names)
     try:
         document = _parse_w1(env, source, manifest, existing_names)
-    except Exception as exc:
+    except (VEError, CheckerUnavailable) as exc:  # Python's refusal, or its own relay's unavailability
         _shadow(log, env, source, exc)
         raise
     _shadow(log, env, source, [rule.to_dict()["norm"] for rule in document.rules])
@@ -449,13 +449,13 @@ def _on_boundary(raw: bytes, k: int) -> bool:
     return k == len(raw) or raw[k] & 0xC0 != 0x80
 
 
-def _rule_problem(row: dict, targets: list, k: int, raw: bytes, env, gated: bool) -> str | None:
+def _rule_problem(row: dict, targets: list, k: int, raw: bytes, env) -> str | None:
     """R8 for one rule row of a `one` answer with `k` rule rows, whose span `statement_problem` has bound: its
     `exception_to` entries name rules 1 … k; its node is named `rule-<number>` and its `over` names, in order, its
     `exception_to` and then `targets`, the rules the precedence rows give it precedence over (`Norm.overOf`), so the
     node and the rows name the same rules; its span begins with this rule's header (the rule number is the
-    request's); and its predicate and formulas are the request's (decoded and checked under its environment as a
-    rule of `NormDocument` is, unless the core checker refuses the environment as a whole)."""
+    request's); and its predicate is a regulated predicate of the request, and every predicate, constant and
+    variable its formulas name is the request's or in scope (R8: names are bound; typing them is Lean's)."""
     norm, start = row["node"]["norm"], row["span"][0]
     if not all(1 <= m <= k for m in row["exception_to"]):
         return "an exception_to entry is not a rule of the answer"
@@ -468,15 +468,35 @@ def _rule_problem(row: dict, targets: list, k: int, raw: bytes, env, gated: bool
     decl = env.predicates.get(norm["predicate"])
     if decl is None or decl.regulated is None:
         return f"the predicate {norm['predicate']!r} is not a regulated predicate of the request"
-    if not gated:
-        try:
-            rule = NormDocument._decode({"norm": norm})
-            checker = ast._Checker(env)
-            for formula in (rule.guard, *rule.unless):
-                checker.formula(formula, tuple(reversed(decl.arguments)))
-        except VEError as exc:
-            return f"a rule node does not decode under the request's environment: {exc}"
+    try:
+        rule = NormDocument._decode({"norm": norm})
+    except VEError as exc:
+        return f"a rule node does not decode: {exc}"
+    from .search import _used_predicates
+    formulas = (rule.guard, *rule.unless)
+    constants, bound = _named(formulas, len(decl.arguments))
+    if not (_used_predicates(*formulas) <= env.predicates.keys() and constants <= env.constants.keys() and bound):
+        return "a rule node names a predicate, constant or variable the request does not have"
     return None
+
+
+def _named(formulas, arity: int) -> tuple[set[str], bool]:
+    """The constants decoded formulas name, and whether every variable is bound: in scope of the rule's `arity`
+    arguments and the quantifiers above it (a node with a `sort` and a `body` binds one). Read without recursion."""
+    from dataclasses import fields, is_dataclass
+    found, bound, stack = set(), True, [(f, arity) for f in formulas]
+    while stack:
+        node, depth = stack.pop()
+        if isinstance(node, ast.Const):
+            found.add(node.name)
+        elif isinstance(node, ast.Var):
+            bound = bound and type(node.index) is int and 0 <= node.index < depth
+        elif isinstance(node, (tuple, list)):
+            stack.extend((item, depth) for item in node)
+        elif is_dataclass(node):
+            inner = depth + 1 if {"sort", "body"} <= {f.name for f in fields(node)} else depth
+            stack.extend((getattr(node, f.name), inner if f.name == "body" else depth) for f in fields(node))
+    return found, bound
 
 
 def statement_problem(row: dict, case: dict, env) -> str | None:
@@ -488,7 +508,7 @@ def statement_problem(row: dict, case: dict, env) -> str | None:
     is Lean's), all bound before any node is read, then each rule row's node and header (`_rule_problem`); for a
     refusal, a sentence of the source exactly when its code names one, the spans inside the
     source, two witness trees and the invalid-grammar fields as `english.read`'s relay binds them."""
-    from .backends.english_lean import _gate, _span, _trees, refusal_problem
+    from .backends.english_lean import _span, _trees, refusal_problem
     from .english_grammar import actions_version, codes, grammar_id, lexicon_id, statement_codes
     result, source = row["result"], case["source"]
     raw = source.encode()
@@ -526,9 +546,8 @@ def statement_problem(row: dict, case: dict, env) -> str | None:
             return "a rule row's span is not a span of the source's characters"
         if any(a[1] > b[0] for a, b in zip(spans, spans[1:])):
             return "the rule rows' spans overlap or are out of order"
-        gated = _gate(env) is not None
         for r in rules:
-            if (problem := _rule_problem(r, targets.get(r["number"], []), k, raw, env, gated)) is not None:
+            if (problem := _rule_problem(r, targets.get(r["number"], []), k, raw, env)) is not None:
                 return problem
         return None
     code = result["code"]
@@ -592,7 +611,7 @@ def _shadow(log: Path, env, source: str, python) -> None:
         line = json.dumps(statement_record(source, python, lean), sort_keys=True, ensure_ascii=False)
         with log.open("a", encoding="utf-8") as stream:
             stream.write(line + "\n")
-    except Exception:  # noqa: BLE001 - the shadow never changes the answer (2.4; as ve/english.py's comparator)
+    except (VEError, OSError):  # the request Python cannot form, or a log it cannot write: never the answer's
         pass
 
 

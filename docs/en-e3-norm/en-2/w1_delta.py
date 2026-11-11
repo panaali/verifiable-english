@@ -165,11 +165,13 @@ def known() -> list[str]:
 
 
 def suite(scratch: Path, workers: int) -> None:
+    sys.path.insert(0, str(ROOT / "tools"))
+    import nested_pytest
     files = [f"tests/test_{name}.py" for name in SUITE]
-    env = {**os.environ, "PYTHONPATH": os.pathsep.join([str(HERE), str(ROOT)]), "VE_STATEMENT_COMPARATOR": "1",
-           "VE_SHADOW_LOG": str(scratch / "suite.jsonl")}
-    subprocess.run([sys.executable, "-m", "pytest", "-q", "-p", "w1_delta", "-n", str(workers), *files],
-                   cwd=ROOT, env=env, check=False)
+    env = nested_pytest.environment(os.environ, PYTHONPATH=os.pathsep.join([str(HERE), str(ROOT)]),
+                                    VE_STATEMENT_COMPARATOR="1", VE_SHADOW_LOG=str(scratch / "suite.jsonl"))
+    subprocess.run(nested_pytest.command(["-q", "-p", "w1_delta", *files], workers=workers), cwd=ROOT, env=env,
+                   check=False)
 
 
 def _outcome(record: dict) -> str:
