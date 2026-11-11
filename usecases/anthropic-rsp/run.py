@@ -36,16 +36,22 @@ WITHOUT_NARROWING = None
 PROVER_CALLS = 0
 OT = {"OT2": "more_capable_than_analyzed", "OT3a": "exceeds_prior_report",
       "OT3b": "exceeds_all_analyzed", "OT4": "significantly_redacted", "OT5": "highly_capable",
-      "OT7": "delay_needed", "OT8": "clear_evidence", "OT10": "material_safety_risk",
+      "OT10": "material_safety_risk",
       "OT11": "noteworthy", "OT15": "full_substitution_at_competitive_cost",
       "OT16": "double_rate", "OT17": "automation_attributable", "OT18": "marginal_justification",
       "OT19": "marginal_major_role", "OT22": "autonomous_research_use",
       "OT28": "continuation_accelerates"}
+# OT7 ("as needed") and OT8 (the evidence) are found per Appendix A scenario: each scenario has its own predicate.
+# Only m3's query-only vocabulary declares an "as needed" for General upleveling (the source states none).
+SCENARIO_TERMS = {"in_the_lead": {"OT8": "lead_evidence", "OT7": "lead_delay_needed"},
+                  "competitors_strong_measures": {"OT8": "competitors_evidence", "OT7": "posture_delay_needed"},
+                  "competitor_better_mitigation": {"OT8": "mitigation_evidence", "OT7": "upleveling_delay_needed"}}
+COMPETITORS = ["c"]
 SITUATIONS = {
     "B-PUB": ("publicly_deployed",), "B-INT": ("internally_deployed",),
-    "B-INTD": ("internally_deployed",), "B-AUT": ("internally_deployed",),
-    "K2": ("publicly_deployed",), "K3": ("publicly_deployed",),
-    "K4": ("internally_deployed",), "K7": ("risk_report_approved",),
+    "B-INTD": ("internally_deployed", "determined_by_publication"), "B-AUT": ("internally_deployed",),
+    "K2": ("off_cycle_public_deployment",), "K3": ("off_cycle_public_deployment",),
+    "K4": ("off_cycle_internal_deployment",), "K7": ("risk_report_approved",),
     "K11": ("ltbt_requested_review",), "K12": ("selecting_reviewers",),
     "K13": ("candidate_has_financial_interest",),
     "K14": ("submitted_under_external_review",),
@@ -54,10 +60,12 @@ SITUATIONS = {
     "K18": ("describes_mitigation_and_deviates",),
     "K19a": ("in_the_lead",), "K19b": ("in_the_lead",),
     "K20": ("competitors_strong_measures",), "K21": ("competitor_better_mitigation",),
-    "K22": ("roadmap_goal_missed",), "G4": ("publicly_deployed",),
+    "K22": ("roadmap_goal_missed",), "G4": ("off_cycle_public_deployment",),
     "G7": ("noncompliance_report_received", "substantiated"),
     "G8": ("goal_revised_less_ambitious",),
 }
+# K20: "with at least one such competitor" (PLAN 6).
+CASE_ATOMS = {"K20": (("develops_highly_capable", "c"),)}
 PREDICATES = {
     "PUBLISH_RISK_REPORTS": "risk_reports_published", "OFF_CYCLE_ANALYSIS": "off_cycle_published",
     "MARGINAL_RISK_ANALYSES": "marginal_analysed", "BOARD_AND_LTBT_APPROVAL": "board_approved",
@@ -80,6 +88,15 @@ def applies(block, choice):
     return all(choice.get(name) == value for name, value in block.when)
 
 
+def vocabulary(default="deny"):
+    """D1's vocabulary; m3 adds the query slot its invented F26 delay needs."""
+    data = V.environment(default)
+    if MUTANT == "m3":
+        data["vocabulary"]["predicates"]["upleveling_delay_needed"] = {
+            "arguments": ["situation"], "description": "m3 only: a delay is needed at {0} (General upleveling)"}
+    return data
+
+
 @lru_cache(maxsize=None)
 def document(names, default, include=None):
     choice = dict(names)
@@ -97,28 +114,32 @@ def document(names, default, include=None):
             text = ("Rule 1. Every situation must delay AI development as well as deployment, "
                     "if all of the following hold: (a) that situation is classified as "
                     "\"competitor_better_mitigation\"; (b) both that situation is classified as "
-                    "\"clear_evidence\" and that situation is classified as \"delay_needed\".")
-            added = parse_english(T.environment(), text).rules[0].to_dict()["norm"]
+                    "\"mitigation_evidence\" and that situation is classified as \"upleveling_delay_needed\".")
+            added = parse_english(SoftEnvironment(vocabulary()), text).rules[0].to_dict()["norm"]
             added["name"] = "m3-f26-delay"
             rules.append(added)
     included = {r["name"] for r in rules}
     for rule in rules:
         rule["over"] = [n for n in ({} if MUTANT == "m1" else T.PRECEDENCE).get(rule["name"], ()) if n in included]
-    return SoftNormDocument(SoftEnvironment(V.environment(default)), [{"norm": r} for r in rules])
+    return SoftNormDocument(SoftEnvironment(vocabulary(default)), [{"norm": r} for r in rules])
 
 
 def atoms(case):
     found = set(listed_facts())
     found.update(("crossed", "s", THRESHOLDS[t]) for t in case["thresholds"])
     found.update((name, "s") for name in SITUATIONS.get(case["id"], ()))
+    found.update(CASE_ATOMS.get(case["id"], ()))
+    found.update(atom if type(atom) is tuple else (atom, "s") for atom in case.get("extra", ()))
     for term, value in case["findings"].items():
         if value and term in OT:
             found.add((OT[term], "s"))
+        for scenario, terms in SCENARIO_TERMS.items():
+            if value and term in terms and (scenario, "s") in found:
+                found.add((terms[term], "s"))
     if "T4" in case["thresholds"]:
         found.add(("highly_capable", "s"))  # a model witness of the stated 3.6 definition
     if case["findings"].get("OT5"):
         found.add(("crossed", "s", THRESHOLDS["T4"]))
-    found.update((name, "s") for name in case.get("extra", ()))
     return found
 
 
@@ -145,7 +166,7 @@ def model(doc, case):
         if atom[0] in relations:
             relations[atom[0]].append(list(atom[1:]))
     _MODELS[key] = FiniteModel.from_dict(env, {"complete": True,
-        "domains": {"situation": ["s"], "threshold": list(V.THRESHOLDS)},
+        "domains": {"situation": ["s"], "threshold": list(V.THRESHOLDS), "competitor": COMPETITORS},
         "constants": {c: c for c in env.constants},
         "relations": {p: sorted(v) for p, v in relations.items()}})
     return _MODELS[key]
@@ -179,7 +200,7 @@ def check_premises(doc, case, choice):
 
 def selected(doc, case, predicate, sign, values=None):
     m = model(doc, case)
-    sorts = V.environment()["vocabulary"]["predicates"][predicate]["arguments"]
+    sorts = vocabulary()["vocabulary"]["predicates"][predicate]["arguments"]
     domains = [m.domains[s] for s in sorts]
     names = set()
     for args in itertools.product(*domains):
@@ -315,9 +336,10 @@ CLUSTERS = {
 
 
 def witness(id_):
-    extra = {"C1": ("in_the_lead", "competitor_better_mitigation", "significant_lead"),
+    extra = {"C1": ("in_the_lead", "competitor_better_mitigation"),
              "C2": ("marginal_major_role",),
-             "C7": ("competitors_strong_measures", "competitor_better_mitigation")}
+             "C7": ("competitors_strong_measures", "competitor_better_mitigation",
+                    ("develops_highly_capable", "c"))}
     return {"id": "W", "thresholds": [], "findings": {"OT5": True, "OT8": True, "OT7": True},
             "extra": extra.get(id_, ())}
 
@@ -330,6 +352,25 @@ def opposite_sign_pairs():
                  if left["predicate"] == right["predicate"] and left["sign"] != right["sign"])
 
 
+# PLAN M2: the sets C-doc enumerates.
+C_DOC_SETS = ("RS1", "RS4", "RS5", "RS7")
+
+
+def c_doc_pairs():
+    """C-doc's checks: every opposite-sign pair, and each pair section 6.5 names (C1 to C7), so that a pair the
+    translation keeps apart (C4: the public version against the version given to the reviewers) is still checked."""
+    named = tuple(members for members in CLUSTERS.values())
+    return tuple(dict.fromkeys(tuple(pair) for pair in (*opposite_sign_pairs(), *named)))
+
+
+def different_acts(cluster):
+    """The basis of a NONE whose rules regulate different acts: each rule's act phrase, from the vocabulary."""
+    rules = [json.loads(T.parsed_rule(name)) for name in cluster]
+    if len({r["predicate"] for r in rules}) < len(rules):
+        return None
+    return {r["name"]: V.REGULATED[r["predicate"]]["regulated"]["act"] for r in rules}
+
+
 def conflict(id_):
     context = MUTANT if MUTANT in ("m1", "m3") else WITHOUT_NARROWING if WITHOUT_NARROWING == "N1" else None
     return _conflict(id_, context)
@@ -339,27 +380,30 @@ def conflict(id_):
 def _conflict(id_, context):
     cluster = CLUSTERS.get(id_)
     if id_ == "C-doc":
-        # Only pairs that can select opposite signs on one regulated predicate
-        # can witness a conflict.  Both witnesses are checked on the full D1.
-        sets = ("RS4", "RS7")
+        sets = C_DOC_SETS
     else:
         sets = tuple(sorted({s for b in T.rule_blocks() if b.id in cluster for s, _ in b.when}))
-    rows = []
+    rows, statuses = [], {}
     for assignment in choices(sets):
         choice = {**BASE, **assignment}
         checks = []
-        pairs = opposite_sign_pairs() if id_ == "C-doc" else (cluster,)
+        pairs = c_doc_pairs() if id_ == "C-doc" else (cluster,)
         for pair in pairs:
-            target = next((name for name, members in CLUSTERS.items()
-                           if len(members) == 2 and set(members) == set(pair)), id_)
-            doc = document(tuple(sorted(choice.items())), "deny", pair)
-            checked = check_conflict(doc.elaborated, model=model(doc, witness(target)), prove=True)
-            checks.append(checked.status)
+            target = next((name for name, members in CLUSTERS.items() if set(members) == set(pair)), id_)
+            # The pair's document depends on the choice only through which of its blocks apply: one W1 check each.
+            present = (target, tuple(b.id for b in T.rule_blocks() if b.id in pair and applies(b, choice)))
+            if present not in statuses:
+                doc = document(tuple(sorted(choice.items())), "deny", pair)
+                statuses[present] = check_conflict(doc.elaborated, model=model(doc, witness(target)),
+                                                   prove=True).status
+            checks.append(statuses[present])
         rows.append({"choice": assignment, "holds": True if "CONFLICT" in checks else
                      False if all(status == "CONFLICT-FREE" for status in checks) else None,
-                     "w1": checks, "rules": "all opposite-sign pairs" if id_ == "C-doc" else list(cluster)})
+                     "w1": checks, "rules": [list(pair) for pair in pairs] if id_ == "C-doc" else list(cluster)})
     result = {"route": "D1 norms@0 W1 check_conflict with a validated witness model",
               "cone": list(sets), "choices": rows}
+    if cluster is not None and different_acts(cluster) and len(cluster) == 2:
+        result["basis"] = {"different_acts": different_acts(cluster)}
     if any(row["holds"] is None for row in rows):
         result["undecided"] = "resource limit: W1 lacks a conflict-freedom certificate"
     return result
@@ -518,18 +562,16 @@ def gap_answer(id_, case):
 def gap_probe(id_):
     """Ask VE about the two absent acts using an extension of D1's vocabulary.
 
-    G1 names proceeding, which D1 has no predicate for; G3 names a cyber
-    threshold outside the table.  The extension supplies only a query slot;
-    the source translation contributes no rule for it.  m2/m4 add the invented
-    rule/row to the same probe and must change exactly this result.
+    G1 asks D1's own act `delay` (F24 and F25 translate "delay AI development and
+    deployment"): no rule requires a delay, so none forbids proceeding.  Its
+    case fact "the row's plans are not in place" needs a query-only slot; G3
+    names a cyber threshold outside the table.  The extension adds no regulated
+    predicate and the source translation contributes no rule for it.  m2/m4 add
+    the invented rule/row to the same probe and must change exactly this result.
     """
     from ve.norm_english import parse_english
     raw = copy.deepcopy(V.environment())
     if id_ == "G1":
-        raw["vocabulary"]["predicates"].pop("website_version")
-        raw["vocabulary"]["predicates"]["proceed"] = {
-            "arguments": ["situation"], "description": "development or deployment proceeds",
-            "regulated": {"role": "permission", "default": "allow", "act": "{0} proceed"}}
         raw["vocabulary"]["predicates"]["plans_missing"] = {
             "arguments": ["situation"], "description": "the row's plans are not in place"}
         values = [({}, None)]
@@ -541,11 +583,11 @@ def gap_probe(id_):
     audit_rules, audit_thresholds = set(), set()
     for assignment, _ in values:
         choice = {**BASE, **assignment}
-        rules = [json.loads(T.parsed_rule(b.id)) for b in T.rule_blocks()
-                 if applies(b, choice) and b.id != "f23-website"]
+        rules = [json.loads(T.parsed_rule(b.id)) for b in T.rule_blocks() if applies(b, choice)]
         if id_ == "G1" and (MUTANT == "m2" or WITHOUT_NARROWING == "N2"):
-            text = ("Rule 1. Every situation must not proceed, if both that situation has crossed "
-                    "\"novel_chem_bio_weapons\" and that situation is classified as \"plans_missing\".")
+            text = ("Rule 1. Every situation must delay AI development as well as deployment, if both that "
+                    "situation has crossed \"novel_chem_bio_weapons\" and that situation is classified as "
+                    "\"plans_missing\".")
             data = parse_english(SoftEnvironment(raw), text).rules[0].to_dict()["norm"]
             data["name"] = "m2-invented-stop" if MUTANT == "m2" else "without-n2-v2-stop"
             rules.append(data)
@@ -565,11 +607,12 @@ def gap_probe(id_):
                 audit_thresholds.update(threshold for (threshold,) in relations["listed"]
                                         if threshold not in V.THRESHOLDS)
         m = FiniteModel.from_dict(env, {"complete": True,
-            "domains": {"situation": ["s"], "threshold": list(raw["vocabulary"]["constants"])},
+            "domains": {"situation": ["s"], "threshold": list(raw["vocabulary"]["constants"]),
+                        "competitor": COMPETITORS},
             "constants": {c: c for c in env.constants},
             "relations": {p: sorted(v) for p, v in relations.items()}})
         if id_ == "G1":
-            selected_rules = doc.elaborated.selected_rules("proceed", m, ("s",))
+            selected_rules = [r for r in doc.elaborated.selected_rules("delay", m, ("s",)) if r.sign]
         else:
             selected_rules = doc.elaborated.selected_rules("plans_in_place", m, ("s", "cyber_capability"))
         rows.append({"choice": assignment, "holds": not bool(selected_rules),
@@ -592,11 +635,32 @@ def never_answer(id_):
         # Other Appendix A scenarios are absent from K21; this is the
         # F26-specific question under both RS4 readings.
     elif id_ == "N3":
-        result = silence(CASES["K19a"], ("posture_matched",))
+        return lead_without_competitors()
     else:
         return {"route": "D1", "undecided": "VE limit (SC): no exhaustive dead-rule or changelog-rule certificate"}
     result["route"] += "; family N witness situation"
     return result
+
+
+def lead_without_competitors():
+    """N3: the lead scenario (K19b, delay needed in both scenarios) with no competitor that has developed or will
+    soon develop a highly capable model.  RS5 is the case's premise (build_document READINGS): under import F25's
+    scenario fails, so its facts are absent; under noimport "all competitors ... are able" holds vacuously, so its
+    facts and evidence are found.  The item holds when no F25 rule selects on either of its acts."""
+    rows = []
+    for assignment in choices(("RS5",)):
+        scenario = ("in_the_lead",) + (("competitors_strong_measures",) if assignment["RS5"] == "noimport" else ())
+        case = {"id": "N3", "thresholds": [], "findings": {"OT5": True, "OT7": True, "OT8": True},
+                "extra": scenario}
+        choice = {**BASE, **assignment}
+        docs = [document(tuple(sorted(choice.items())), default) for default in ("deny", "allow")]
+        check_premises(docs[0], case, choice)
+        names = sorted({name for doc in docs for predicate in ("posture_matched", "delay")
+                        for name in selected(doc, case, predicate, True)})
+        rows.append({"choice": assignment, "holds": not any(name.startswith("f25-") for name in names),
+                     "rules": names, "reason": "no F25 rule selects on posture_matched or delay"})
+    return {"route": "D1 soft-norms@0 selected_rules, deny and allow completion; family N witness situation",
+            "cone": ["RS5"], "choices": rows}
 
 
 def answer(item):
