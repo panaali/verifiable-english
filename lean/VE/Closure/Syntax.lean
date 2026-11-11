@@ -1,4 +1,5 @@
 import VE.Closure.Paths
+import VE.Core.Syntax
 
 namespace VE.Closure
 universe u
@@ -19,43 +20,31 @@ inductive Formula where
   | reachBody (kind : Kind) (sort : String) (body : Formula) (left right : Term)
   deriving DecidableEq, Repr, BEq
 
-/-- Typing does not infer undeclared sorts or permit equality across sorts. -/
-def Formula.WellFormed (E : Environment) (Γ : List String) : Formula → Prop
-  | .top | .bottom => True
-  | .unary p t => ∃ s, E.predicates p = some [s] ∧ t.sortOf E Γ = some s
-  | .binary p t u => ∃ s r, E.predicates p = some [s, r] ∧
-      t.sortOf E Γ = some s ∧ u.sortOf E Γ = some r
-  | .eq t u => ∃ s, t.sortOf E Γ = some s ∧ u.sortOf E Γ = some s
-  | .not a => a.WellFormed E Γ
-  | .and a b | .or a b | .implies a b => a.WellFormed E Γ ∧ b.WellFormed E Γ
-  | .all s a | .ex s a => s ∈ E.sorts ∧ a.WellFormed E (s :: Γ)
+/-- The closure language embeds constructor for constructor into Core's syntax; Core's
+`Kind` and closure's are the same type (`VE.Paths.Kind`), so each kind is passed on unchanged.
+Closure's typing, checker and meaning are Core's on this embedding (`VE.Core.embedClosure`). -/
+def Formula.toCore : Formula → VE.Core.Formula
+  | .top => .top
+  | .bottom => .bottom
+  | .unary p t => .unary p t
+  | .binary p t r => .binary p t r
+  | .eq t r => .eq t r
+  | .not a => .not a.toCore
+  | .and a b => .and a.toCore b.toCore
+  | .or a b => .or a.toCore b.toCore
+  | .implies a b => .implies a.toCore b.toCore
+  | .all s a => .all s a.toCore
+  | .ex s a => .ex s a.toCore
+  | .reachNamed k p t r => .reachNamed k p t r
+  | .reachBody k s a t r => .reachBody k s a.toCore t r
 
-  | .reachNamed _ p t u => ∃ s, E.predicates p = some [s, s] ∧
-      t.sortOf E Γ = some s ∧ u.sortOf E Γ = some s
-  | .reachBody _ s a t u => s ∈ E.sorts ∧ a.WellFormed E (s :: s :: Γ) ∧
-      t.sortOf E Γ = some s ∧ u.sortOf E Γ = some s
+/-- Typing does not infer undeclared sorts or permit equality across sorts: Core's typing. -/
+def Formula.WellFormed (E : Environment) (Γ : List String) (a : Formula) : Prop :=
+  a.toCore.WellFormed E Γ
 
-/-- A total executable scope, arity and sort checker. -/
-def Formula.check (E : Environment) (Γ : List String) : Formula → Bool
-  | .top | .bottom => true
-  | .unary p t => match E.predicates p, t.sortOf E Γ with
-      | some [s], some r => s == r
-      | _, _ => false
-  | .binary p t u => match E.predicates p, t.sortOf E Γ, u.sortOf E Γ with
-      | some [s, r], some s', some r' => s == s' && r == r'
-      | _, _, _ => false
-  | .eq t u => match t.sortOf E Γ, u.sortOf E Γ with
-      | some s, some r => s == r
-      | _, _ => false
-  | .not a => a.check E Γ
-  | .and a b | .or a b | .implies a b => a.check E Γ && b.check E Γ
-  | .all s a | .ex s a => E.sorts.contains s && a.check E (s :: Γ)
-
-  | .reachNamed _ p t u => match E.predicates p, t.sortOf E Γ, u.sortOf E Γ with
-      | some [s, r], some s', some r' => s == r && s == s' && s == r'
-      | _, _, _ => false
-  | .reachBody _ s a t u => E.sorts.contains s && a.check E (s :: s :: Γ) &&
-      decide (t.sortOf E Γ = some s) && decide (u.sortOf E Γ = some s)
+/-- A total executable scope, arity and sort checker: Core's checker. -/
+def Formula.check (E : Environment) (Γ : List String) (a : Formula) : Bool :=
+  a.toCore.check E Γ
 
 /-- The two edge variants lower injectively to separate recursive constructors,
 so Lean's ordinary structural recursor includes the Body induction hypothesis. -/
@@ -69,83 +58,14 @@ def Formula.reach (k : Kind) (e : Edge) (t u : Term) : Formula :=
   | .named r => .reachNamed k r t u
   | .body s a => .reachBody k s a t u
 
-def Formula.denote (S : Structure) (ρ : Valuation S) : Formula → Prop
-  | .top => True
-  | .bottom => False
-  | .unary p t => ∃ v, t.denote S ρ = some v ∧ S.relation p [v]
-  | .binary p t u => ∃ v w, t.denote S ρ = some v ∧
-      u.denote S ρ = some w ∧ S.relation p [v, w]
-  | .eq t u => ∃ v, t.denote S ρ = some v ∧ u.denote S ρ = some v
-  | .not a => ¬ a.denote S ρ
-  | .and a b => a.denote S ρ ∧ b.denote S ρ
-  | .or a b => a.denote S ρ ∨ b.denote S ρ
-  | .implies a b => a.denote S ρ → b.denote S ρ
-  | .all s a => ∀ v, S.domain s v → a.denote S (v :: ρ)
-  | .ex s a => ∃ v, S.domain s v ∧ a.denote S (v :: ρ)
+/-- One semantics, two syntaxes: a closure formula means what its Core embedding means. -/
+def Formula.denote (S : Structure) (ρ : Valuation S) (a : Formula) : Prop :=
+  a.toCore.denote S ρ
 
-  | .reachNamed k p t u => ∃ v w, t.denote S ρ = some v ∧
-      u.denote S ρ = some w ∧ Reachable k (fun a b => S.relation p [a, b]) v w
-  | .reachBody k s a t u => ∃ v w, t.denote S ρ = some v ∧
-      u.denote S ρ = some w ∧ Reachable k
-        (fun x y => S.domain s x ∧ S.domain s y ∧ a.denote S (y :: x :: ρ)) v w
-
-/-- The executable checker recognizes exactly the independent typing predicate. -/
+/-- The executable checker recognizes exactly the typing predicate (Core's theorem on the embedding). -/
 theorem check_iff_wellFormed (E : Environment) (Γ : List String) (a : Formula) :
-    a.check E Γ = true ↔ a.WellFormed E Γ := by
-  induction a generalizing Γ with
-  | top | bottom => simp [Formula.check, Formula.WellFormed]
-  | unary p t =>
-    simp only [Formula.check, Formula.WellFormed]
-    cases hp : E.predicates p with
-    | none => simp
-    | some ss =>
-      cases ss with
-      | nil => simp
-      | cons s ss =>
-        cases ss with
-        | nil => cases ht : t.sortOf E Γ <;> simp_all <;> exact eq_comm
-        | cons r ss => simp
-  | binary p t u =>
-    simp only [Formula.check, Formula.WellFormed]
-    cases hp : E.predicates p with
-    | none => simp
-    | some ss =>
-      cases ss with
-      | nil => simp
-      | cons s ss =>
-        cases ss with
-        | nil => simp
-        | cons r ss =>
-          cases ss with
-          | nil => cases ht : t.sortOf E Γ <;> cases hu : u.sortOf E Γ <;>
-              simp_all
-          | cons q ss => simp
-  | eq t u =>
-    simp only [Formula.check, Formula.WellFormed]
-    cases ht : t.sortOf E Γ <;> cases hu : u.sortOf E Γ <;> simp <;> exact eq_comm
-  | not a ih => exact ih Γ
-  | and a b ia ib | or a b ia ib | implies a b ia ib =>
-    simp [Formula.check, Formula.WellFormed, ia, ib]
-  | all s a ih | ex s a ih =>
-    simp [Formula.check, Formula.WellFormed, ih]
-
-  | reachNamed k p t u =>
-    simp only [Formula.check, Formula.WellFormed]
-    cases hp : E.predicates p with
-    | none => simp
-    | some ss =>
-      cases ss with
-      | nil => simp
-      | cons s ss =>
-        cases ss with
-        | nil => simp
-        | cons r ss =>
-          cases ss with
-          | nil => cases ht : t.sortOf E Γ <;> cases hu : u.sortOf E Γ <;>
-              simp_all <;> grind
-          | cons q ss => simp
-  | reachBody k s a t u ih =>
-    simp [Formula.check, Formula.WellFormed, ih, and_assoc]
+    a.check E Γ = true ↔ a.WellFormed E Γ :=
+  VE.Core.check_iff_wellFormed E Γ a.toCore
 
 /-- The v0 embedding changes no constructor, term, index, or sort. -/
 def embed : VE.Formula → Formula
@@ -163,7 +83,8 @@ def embed : VE.Formula → Formula
 
 theorem conservativity (S : Structure) (ρ : Valuation S) (a : VE.Formula) :
     (embed a).denote S ρ ↔ a.denote S ρ := by
-  induction a generalizing ρ <;> simp_all [embed, Formula.denote, VE.Formula.denote]
+  induction a generalizing ρ <;>
+    simp_all [embed, Formula.denote, Formula.toCore, VE.Core.Formula.denote, VE.Formula.denote]
 
 def erase : Formula → Option VE.Formula
   | .top => some .top
