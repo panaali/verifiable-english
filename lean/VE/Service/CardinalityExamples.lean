@@ -29,9 +29,10 @@ def w : Option VE.Cardinality.CardEnv := decoded.bind (·.cardinality)
   some (listed, true, false, true, false, false)
 #guard (decoded.map (·.envId)) == (w.map (·.environmentId)) && (decoded.map (·.envId)) != none
 #guard [(["cardinality@0", "norm-defaults@0", "norms@0", "readings@1"], "UnsupportedProfile: Missing profile relational-fol@0"),
-  (["cardinality@0", "norms@0", "order@0", "relational-fol@0", "time@0"], "UnsupportedProfile: cardinality@0 with norms@0"),
+  (["cardinality@0", "norms@0", "order@0", "relational-fol@0", "time@0"], s!"UnsupportedProfile: {VE.Cardinality.Wire.e2}"),
+  (["cardinality@0", "data@0", "order@0", "relational-fol@0", "time@0"], "UnsupportedProfile: cardinality@0 with data@0"),
   (["cardinality@0", "documents@1", "judgments@0", "order@0", "relational-fol@0", "time@0"],
-    "UnsupportedProfile: cardinality@0 requires order@0, relational-fol@0 and time@0, optionally with documents@1")].all
+    s!"UnsupportedProfile: {VE.Cardinality.Wire.e2}")].all
   fun (ps, m) => said (cardinalityEnv (environment ps)) == m
 #guard said (cardinalityEnv ((environment).setObjVal! "cardinality_schema" (.str "x"))) ==
   "UnsupportedProfile: Unsupported cardinality schema"
@@ -83,6 +84,33 @@ def quoted : Json := toJson [toJson "attributed", toJson "x", toJson "says", toJ
   ([source "a" (idOf top), source "b" none], "b"), ([source "a" (idOf top) quoted, source "b" (idOf low)], "a"),
   ([source "a" (idOf top), source "b" (idOf low) (.str "meta")], "b")].all fun (us, n) => said (reportOf both us) == refused n
 
+/-! `graphLabelled` and `bridgeAdmitted`: W6a's provenance rule's quoted half, both sides of each condition. -/
+def labelled (label : Json) : Json :=
+  (graph "a" [("a", top)]).setObjVal! "nodes" (toJson [Json.mkObj [("name", .str "a"), ("statement", top), ("label", label)]])
+def bridge : Json := .str "bridge:accepts(x,q)"
+def atQ (kind : Json) (m : Option String := idOf top) : List SourceUnit :=
+  [{ source "q" m kind with decoded := (decodeRowKind false kind).toOption.getD (.route .asserted) }]
+#guard said (reportOf (labelled bridge) (atQ quoted)) == "ok" &&
+  ((reportOf (labelled bridge) (atQ quoted)).toOption.getD .null).getObjValD "leaf_labels" ==
+    toJson [Json.mkObj [("name", .str "a"), ("label", bridge)]] &&
+  (report.getObjValD "leaf_labels") == toJson ([] : List Json) &&
+  said (reportOf (labelled (.str "asserted")) [source "a" (idOf top)]) == "ok"
+def notAdmitted (l : String) : String := s!"AdmissionError: node a is not admitted under label {l}"
+#guard [(atQ quoted (idOf low), "bridge:accepts(x,q)"), (atQ quoted none, "bridge:accepts(x,q)"), (atQ (.str "asserted"), "bridge:accepts(x,q)"),
+  (atQ quoted, "bridge:accepts(y,q)"), (atQ quoted, "bridge:accepts(x,r)"), (atQ quoted, "bridge:accepts(x, q)"), (atQ quoted, "open:q")].all
+    fun (us, l) => said (reportOf (labelled (.str l)) us) == notAdmitted l
+#guard said (reportOf (labelled (.num 7)) (atQ quoted)) == "claim graph node label must be a string"
+-- a deduction is never a bridge, and the same leaf is
+def bridgedNode (deduction : Option (List String × Unit)) : Bool := match w with
+  | some w => match (VE.Cardinality.Wire.decodeStatement w top).toOption with
+    | some adm => bridgeAdmitted (Std.HashMap.ofList ((atQ quoted).map fun u => (u.id, u))) ⟨"a", adm, 1, deduction⟩ "bridge:accepts(x,q)"
+    | none => false
+  | none => false
+#guard bridgedNode none && !bridgedNode (some ([], ()))
+#guard (graphLabelled (Json.mkObj [("nodes", toJson (List.replicate 1001 (Json.mkObj [("label", .num 7)])))])).toOption.isNone &&
+  said (graphLabelled (Json.mkObj [("nodes", toJson (List.replicate 1001 (Json.mkObj [("label", .num 7)])))])) ==
+    VE.Cardinality.Document.nodeLimit
+
 /-! `check` and `encode`: an admitted row, with the report only when it is asked for. -/
 def unit (id : String) (c : Json) : Json := Json.mkObj [("id", .str id), ("span", toJson [0, 2]), ("kind", .str "asserted"),
   ("meaning", .str "specified"), ("support", .str "testimony"), ("content", c)]
@@ -102,6 +130,74 @@ def rowOf (t : String) (claims := true) : Json := (run t claims).toOption.getD .
     (idOf top).map Json.str == some (u.getObjValD "meaning_id") &&
     (((rowOf (text environment one withGraph)).getObjValD "cardinality").getObjValD "report").getObjValD "root" != .null &&
     ((rowOf (text environment one withGraph) (claims := false)).getObjVal? "cardinality").toOption.isNone
+
+/-! `cardinalityEnv`, `countingFront`, `chainFront` and `composedJson`: the chain list's two readings. -/
+def chainList : List String := VE.Cardinality.Wire.chainProfiles
+def plainEnv : Json := (environment chainList).setObjVal! "vocabulary"
+  ((env.getObjValD "vocabulary").setObjVal! "constants" (Json.mkObj []))
+def counting (id : String := "c") : Json := Json.mkObj [("id", .str id), ("span", toJson [0, 1]), ("support", .str "testimony"),
+  ("content", card top)]
+def formula : Json := Json.mkObj [("id", .str "f"), ("span", toJson [1, 2]), ("support", .str "testimony"),
+  ("content", Json.mkObj [("ast", toJson ["top"])])]
+def frontOf (units : List Json) (more : List (String × Json) := []) : Json :=
+  Json.mkObj ([("environment", plainEnv), ("units", toJson units)] ++ more)
+#guard countingUnit (counting) && !countingUnit formula && !countingUnit (Json.mkObj [("content", toJson ["cardinality"])])
+#guard said (cardinalityEnv plainEnv) == "ok" &&
+  ((cardinalityEnv plainEnv).toOption.map (·.profiles)) == some ["cardinality@0", "order@0", "relational-fol@0", "time@0"] &&
+  ((cardinalityEnv plainEnv).toOption.map (·.version)) == some (VE.Route.Wire.identityVersion chainList)
+#guard elsewhere "chain" formula == Json.mkObj [("id", .str "f"), ("span", toJson [1, 2]), ("kind", toJson ["unformalised", "chain"]),
+  ("meaning", Json.mkObj [("unformalised", .str "chain")]), ("support", .str "testimony")]
+def unitsIn (j : Option Json) : List Json := j.map (fun f => ((f.getObjValD "units").getArr?.toOption.getD #[]).toList) |>.getD []
+#guard ((countingFront (frontOf [counting, formula] [("open_terms", toJson ([] : List Json))])).toOption.map fun f =>
+    ((f.getObjVal? "open_terms").toOption.isNone, unitsIn (some f))) == some (true, [counting, elsewhere "chain" formula])
+#guard said (countingFront (frontOf [formula])) == "UnsupportedProfile: a document under cardinality@0's chain list holds a counting unit"
+-- With every unit a counting unit the chain still reads the document (qt-a4b review F1): never none.
+#guard unitsIn (chainFront (frontOf [counting]) plainEnv).toOption == [elsewhere "counting" (counting)]
+-- A counting unit anywhere in the list; the three members the chain reads go, and every other member stays.
+#guard said (countingFront (frontOf [formula, counting])) == "ok" &&
+  ((chainFront (frontOf [formula, counting]) plainEnv).toOption.isSome) &&
+  ((countingFront (frontOf [counting] (["narrowings", "open_terms", "reading_sets"].map (·, toJson ([] : List Json)) ++
+    [("version", toJson 1)]))).toOption.bind fun f => (VE.Bridge.fields f).toOption.map (·.map Prod.fst)) ==
+    some ["environment", "units", "version"]
+def lowered : Option Json := (chainFront (frontOf [counting, formula]) plainEnv).toOption
+#guard unitsIn lowered == [elsewhere "counting" (counting), formula] &&
+  ((lowered.map (·.getObjValD "environment")).bind fun e => (VE.Bridge.fields e).toOption.map (·.map Prod.fst)) ==
+    some ["language", "profiles", "spec_revision", "vocabulary"] &&
+  (lowered.map fun f => (f.getObjValD "environment").getObjValD "profiles") == some (toJson (chainList.erase "cardinality@0"))
+def answered : Json := (composedJson "---\n{}\n---\nAB" (frontOf [counting, formula]) (frontOf [counting])).toOption.getD .null
+#guard answered.getObjValD "not_certified" == toJson ["c"] && answered.getObjValD "counting_document" != .null &&
+  answered.getObjValD "chain_document" != .null &&
+  (answered.getObjValD "scope").getStr?.toOption == some "The chain's premises and verdict cover no counting statement: c are admitted and not certified against them." &&
+  (composedJson "---\n{}\n---\nAB" (frontOf [counting]) (frontOf [counting])).toOption.map (·.getObjValD "chain_document") ==
+    ((chainFront (frontOf [counting]) plainEnv).toOption.map fun f => .str (readingText "AB" f))
+/-! `chainBound`: the chain's request is exactly the chain reading of the chain list document it names (qt-a4b review F2). -/
+def chainUnits : List Json := [unit "u" (card top), unit "f" (Json.mkObj [("ast", toJson ["top"])])]
+def parentText : String := text plainEnv chainUnits [("narrowings", toJson ([] : List Json))]
+def chainOf (t : String) : String := (do let (f, _) ← VE.Discourse.Loader.frontText t; chainDocument t (← frontJson f)).toOption.getD ""
+def unbound : String := unavailable "the chain's request is not the chain reading of the chain list document it names"
+#guard (chainOf parentText).startsWith "---\n" && said (chainBound (chainOf parentText) (.str parentText)) == "ok"
+-- A member, a byte of the body, a unit's kind or an environment key of another document; a parent outside the list.
+#guard said (chainBound (chainOf (text plainEnv chainUnits)) (.str parentText)) == unbound &&
+  said (chainBound (chainOf parentText ++ " ") (.str parentText)) == unbound &&
+  said (chainBound (chainOf (text plainEnv [unit "u" (card top), unit "f" (Json.mkObj [("ast", toJson ["bottom"])])]
+    [("narrowings", toJson ([] : List Json))])) (.str parentText)) == unbound &&
+  said (chainBound (chainOf (text (plainEnv.setObjVal! "language" (.str "x")) chainUnits
+    [("narrowings", toJson ([] : List Json))])) (.str parentText)) == unbound &&
+  said (chainBound (chainOf (text environment one)) (.str (text environment one))) == unbound &&
+  said (chainBound (chainOf parentText) (.str "no front matter")) == unbound &&
+  said (chainBound (chainOf parentText) (toJson 1)) == "InvalidInput: chain_of must be a string"
+-- The document mode binds it before any other check.
+#guard said (checkCore (Json.mkObj [("id", .str "d"), ("document", .str "not a document"),
+  ("chain_of", .str parentText)])) == unbound
+-- `check`: a chain list row reads its counting units only, and a graph is refused on this path too.
+#guard let row := rowOf (text plainEnv [unit "u" (card top)])
+  row.getObjValD "status" == .str "ok" && (row.getObjValD "composed").getObjValD "not_certified" == toJson ["u"] &&
+  ((rowOf (text environment one)).getObjVal? "composed").toOption.isNone
+#guard said (run (text plainEnv [unit "u" (card top)] [("graph", graph "u" [("u", top)])])) ==
+  "UnsupportedProfile: cardinality documents require documents@1"
+-- Outside the chain list a `ve` fence no unit binds is still refused.
+#guard said (run ("---\n" ++ (Json.mkObj [("format", .str "ve-document@1"), ("environment", plain), ("units", toJson [unit "u"
+    (Json.mkObj [("ast", toJson ["top"])])])]).compress ++ "\n---\nA\n```ve v\nthere is\n```\n")) == "unbound VE fence"
 
 /-! `check`: what reads the first-order chain is refused by name; the flag `decodedEnvironment` keeps is the retained
 reader's; a graph's nodes are bound on this path too. -/

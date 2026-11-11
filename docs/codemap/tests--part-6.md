@@ -34,6 +34,7 @@
 - `tests/test_reports_status.py` — Directive 2 property: Lean statuses and details for nested content reach unit and document status and the residual through the Python relay.
 - `tests/test_reports_wants.py` — The `wants` test's one owner (docs/spec/attitudes.md section 10 item 6, RC-4; AT-1w): Lean's `reports-wants` kind (`VE.Reports.wantsPhrase?`, `lean/VE/Attribut…
 - `tests/test_response_schemas.py` — The client's response schemas are generated from their one Lean source (lf-1 recheck B).
+- `tests/test_right_clauses.py` — `right-clauses@0` on the service (docs/spec/right-clauses.md 8.1, 9.1, 9.3; cmp-s3-cfr-1): the registered profile's `clauses-elaborate` mode reads 9.1's docume…
 - `tests/test_right_clauses_duplicate.py` — cmp-s3a-cfr-2: a rule name on two structured lines gets rights' own `DuplicateDeclaration` text.
 - `tests/test_right_clauses_lean.py` — Source checks of `plain_wellFormed` (docs/spec/right-clauses.md 8.3; cmp-s3a-cfr-1).
 - `tests/test_rights.py` — Rights holder-side elaboration regressions.
@@ -41,6 +42,7 @@
 - `tests/test_rights_licence_relay.py` — rights-licence-relay: Lean returns each narrowing mechanism's licence with the grounds it rests on, and the relay binds them to the request instead of deriving…
 - `tests/test_rights_open_act_is_open.py` — rights-cfr-4: a right whose act is a declared open term is OPEN (docs/spec/rights.md 7.2).
 - `tests/test_rights_render_status.py` — Rights rendering must describe the checked unit status accurately.
+- `tests/test_rights_report_parts.py` — rights-cfr-2/3 (docs/rights/rights-cfr-2/REPORT.md): a CONFLICT-FREE answer gives rights.md 7.3's report parts (the spec's line, read from the spec file, and t…
 - `tests/test_rights_three_way.py` — The relayed rights source, its soft embedding, and document loading agree on fixtures and 1,000 generated documents (docs/spec/rights.md 10).
 - `tests/test_risk_diagnostics.py` — Python's environment check and the Lean risk route give one diagnostic (risk.md 4.1, 6).
 - `tests/test_risk_differential.py` — risk.md 8.3: Lean's `possibleE`/`certainE`/`witnessE` against brute force.
@@ -63,6 +65,7 @@
 - `tests/test_rust_jsonl_schema.py` — The Rust JSONL checker's records are checked against `ve/backends/rust_schema/jsonl.json` before any field is read (lf-0 fix3, build checklist line 4): a recor…
 - `tests/test_rust_memory_budget.py` — Memory budgets of the checker processes (2026-10-10 and 2026-10-11 OOM incidents).
 - `tests/test_rust_reproducible.py` — The Rust checker build is path-independent, so lean/checkers.lock pins it in every checkout.
+- `tests/test_sa_checked_view.py` — sa-checked-view (docs/spec/purpose-explanation.md 5.1): the typed checked view changes no answer.
 - `tests/test_safety_framework.py` — Safety-framework use case (usecases/safety-framework): fails on any mismatch with the answer key or any change in what VE computes.
 - `tests/test_safetyfw_usecases.py` — The anthropic-rsp and openai-preparedness use cases (usecases/<case>): the frozen answer keys and their transcription.
 - `tests/test_sc9_migrate.py` — SC-9's migration of the constitution pilot's translation to the soft form (docs/spec/rd-9-soft-chain-PLAN.md SC-9; `usecases/claude-constitution-pilot/run-2026…
@@ -76,7 +79,3 @@
 - `tests/test_scope_forward.py` — SC-4: scope@0's forward declarations (docs/spec/scope.md 1.9, 3, 5.6, 7.6) through the document mode.
 - `tests/test_scope_lean.py` — scope@0's Lean core (sc-1a, sc-3a, sc-1ab, sc-1ac, sc-1ad): the layout's list runs, label reaches and anchors, the effects on a rule's JSON object, and `govern…
 - `tests/test_scope_readings_document.py` — Scope spec 11 (sc-5rb): a reading set on a governed unit, checked once per joint choice by the document mode.
-- `tests/test_scope_rights_reach.py` — SC-6: the UDHR's rights reach (docs/spec/scope.md 5.8, 7.8).
-- `tests/test_scope_sc5r_stub.py` — Scope spec section 11's statement stub (sc-5r): every placeholder it leaves to sc-5rb is pinned by a statement.
-- `tests/test_search_budget_answer.py` — The search-budget relay reads only a typed answer bound to its request (R8).
-- `tests/test_search_options.py` — Request budgets and non-degenerate witnesses at public API boundaries.
