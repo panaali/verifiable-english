@@ -68,6 +68,7 @@ UNITS = {
     "norms@0": ("ve.norms_contract", ("ve.norms_contract", "legacy_validation")),
     "norm-defaults@0": ("ve.norm_defaults_contract", ("ve.norm_defaults_contract", "legacy_validation")),
     "acts@0": ("conformance.acts_contract", ("ve.norms_contract", "legacy_validation")),
+    "purposes@0": ("conformance.purposes_contract", ("conformance.purposes_contract", "legacy_validation")),
 }
 
 
@@ -692,7 +693,7 @@ def _check_unit(unit, contracts, directory, limits, names, write, findings, issu
             # below and the targeted tests verify their admission and verdicts.
             staged = os.environ.get("VE_WIRE_CONTRACT_STAGED") == "1"
             if legacy is not None and not staged:
-                legacy(root["environment"], root["norms"])
+                legacy(*(root[name] for name in contracts[unit]["input"]))
             if not staged:
                 if run(contracts[unit], root, registry=registry, contracts=contracts,
                        limits=limits, names=names) is not CLEAN:

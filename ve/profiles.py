@@ -18,6 +18,9 @@ BY_NAME = {name: tuple(row for row in ROWS if row["profile"] == name) for name i
 # `VE.Compose.decidingEnvironment`; Python sends them as written (jt-2c), except the lexicon proposal of a document's
 # English fences, which names the environment Lean reads a fence in, without them (`Service.Document.Env.forModes`).
 DOCUMENT_LAYERS = tuple(_TABLE["document_layers"])
+# `VE.Cardinality.Wire`: E2's chain list and the W6a list it projects onto (`projectedProfiles`).
+CARDINALITY_CHAIN = _TABLE["cardinality_chain"]
+CARDINALITY_CHAIN_PROJECTED = _TABLE["cardinality_chain_projected"]
 
 
 # Statement layers whose own Lean routes check them. They declare no vocabulary
@@ -63,6 +66,8 @@ MODEL_REDUCTIONS = {
     "soft-norms@0": ModelReduction(vocabulary=("soft",), predicate_fields=("instruction_of",)),
     "order@0": _KEPT,
     "readings@1": ModelReduction(),
+    # right-clauses@0 adds keys to a rights document's lines, none to the environment: no model reads it.
+    "right-clauses@0": ModelReduction(),
     BASE: _KEPT,
     "speech-acts@0": ModelReduction(blocks=("speech_acts",)),
     "reports@0": ModelReduction(vocabulary=("reports",), constant_fields=("verbalisation",)),

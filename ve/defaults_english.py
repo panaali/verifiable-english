@@ -153,15 +153,17 @@ def strict_sentence(deciders):
 
 
 def fails(case, row):
-    """DE6 when Lean's `forced` is empty, otherwise DE6′ and one DE11 per entry, in Lean's order."""
+    """DE6 when Lean's `forced` is empty, otherwise DE6′ and one DE11 per entry, in Lean's order, each DE11 through
+    W7's gate (`Gate`; DE6 and DE6′ are df-1bbc's)."""
     text = _Text(case)
     model = case["model"]["model"]
+    gate = Gate(case, (e for ids in model["domains"].values() for e in ids))
     head = "Even if no exception applies" + (" beyond those the text states" if row["forced"] else "")
     out = [f"{head}, the conclusion does not follow. It fails here: {text.situation(model)}."]
     for entry in row["forced"]:
         condition = text.condition(text.rule(entry["rule"]), entry["condition"], entry["tuple"])
-        out.append(_line_words("DE11")["sentence"].format(rule=entry["rule"], condition=condition))
-    return out
+        out.append(gate.add("DE11:", _line_words("DE11")["sentence"], {"rule": entry["rule"], "condition": condition}))
+    return gate.check(out)
 
 
 def collision(case, row):
@@ -207,9 +209,9 @@ def _line_words(row, kind=""):
     return found[0]
 
 
-def _decision(text, line, inline=False):
-    """A row after DE10 (Lean's choice) in Lean's words for its `row` and decision kind, its slots filled by the
-    existing renderers; `inline`, its words inside DE10″'s two completions."""
+def _decision(text, line):
+    """A row after DE10 (Lean's choice): the key of its words (its `row`, with a DE13's decision kind) and its slots,
+    filled by the existing renderers."""
     from .softnorms import _decision_key
     slots, kind = {"tuple": _words()["joins"]["tuple"].join(line["tuple"])}, ""
     if line["row"] == "DE13":
@@ -222,28 +224,99 @@ def _decision(text, line, inline=False):
         slots["rule"] = line["rule"]
         if line["row"] == "DE11":
             slots["condition"] = text.condition(text.rule(line["rule"]), line["condition"], line["tuple"])
-    return _line_words(line["row"], kind)["inline" if inline else "sentence"].format_map(slots)
+    return (line["row"], kind), slots
+
+
+# -- W7's all-derivations gate for DE10, DE10f, DE11 and DE13 (plan 2.8: every row is gated before it is shown)
+
+def _elements(words):
+    """Lean's words of one row as W7's grammar elements (`ve.readings_s2_english`): its text, each `{slot}` a slot,
+    `{tuple}` a series of entities in Lean's tuple join and `{first}` and `{second}` a series of rows in its `and`."""
+    import string
+    joins, out = _words()["joins"], []
+    for literal, name, _, _ in string.Formatter().parse(words):
+        out += [literal] if literal else []
+        if name == "tuple":
+            out += [("slot", "entity"), ("rep", [joins["tuple"], ("slot", "entity")])]
+        elif name in ("first", "second"):
+            out += [("slot", "inline"), ("rep", [joins["and"], ("slot", "inline")])]
+        elif name is not None:
+            out.append(("slot", name))
+    return out
+
+
+def templates():
+    """Every registered wording by name: S2's (`TEMPLATES`), and each zone row's words, DE10's three forms by zone
+    and form, and the rows after it by row and decision kind, as a sentence and inside DE10″."""
+    from .readings_s2_english import TEMPLATES
+    words = _words()
+    return {**TEMPLATES, **{f"{h['row']}:{h['zone']}:{h['form']}": _elements(h["words"]) for h in words["heads"]},
+            **{f"{w['row']}:{w['kind']}{inline}": _elements(w["inline" if inline else "sentence"])
+               for w in words["lines"] for inline in ("", ":inline")}}
+
+
+class Gate:
+    """W7's gate for one zone answer (`ve.readings_s2_english.gated` over `templates`): every sentence shown and
+    every row inside DE10″ has exactly one derivation, its own, and shows no generated name. The slots are closed
+    classes of strings: the request's rules and entities, the query's clause either way, and the conditions,
+    parties, acts, considerations and rows shown (two decisions shown in the same words are one value here)."""
+
+    def __init__(self, case, entities=None):
+        from .readings_s2_english import _all_reserved
+        self.classes = {"rule": set(_rules(case)), "entity": set(entities if entities is not None else (
+            e for ids in case["model"]["domains"].values() for e in ids))}
+        self.reserved, self.author_names, self.built = _all_reserved(), frozenset(
+            {*self.classes["rule"], *self.classes["entity"]}), []
+
+    def options(self, name):
+        return self.classes.get(name, set())
+
+    def add(self, name, words, slots, inline=False):
+        text = words.format_map(slots)
+        for key, value in slots.items():
+            if key not in ("tuple", "rule", "first", "second"):
+                self.classes.setdefault(key, set()).add(value)
+        if inline:
+            self.classes.setdefault("inline", set()).add(text)
+        self.built.append((name, text))
+        return text
+
+    def check(self, shown):
+        from .readings_s2_english import gated
+        for name, text in self.built:
+            gated(name, text, self, templates())
+        return shown
+
+
+def _line(gate, text, line, inline=False):
+    (row, kind), slots = _decision(text, line)
+    return gate.add(f"{row}:{kind}" + (":inline" if inline else ""),
+                    _line_words(row, kind)["inline" if inline else "sentence"], slots, inline)
 
 
 def zone(case, row):
     """DE10, DE10′ or DE10″, the one Lean's zone and `form` select, with the outcome Lean's zone gives, then one
     sentence per row of the completion shown; for `leftTo`, its two completions in those rows' words; no sentence
-    for a zone no row is keyed by."""
+    for a zone no row is keyed by. Each goes through W7's gate (`Gate`) before it is shown."""
     heads = [h for h in _words()["heads"] if h["zone"] == row["zone"]]
     if not heads:
         return []
     from . import words
-    text = _Text(case)
+    text, gate = _Text(case), Gate(case)
     heads = [h for h in heads if h["form"] == row["form"]]
     if len(heads) != 1:
         raise _unbound("form")
+    head = f"{heads[0]['row']}:{row['zone']}:{row['form']}"
     if row["zone"] == "leftTo":
-        first, second = (_words()["joins"]["and"].join(_decision(text, line, inline=True) for line in lines)
+        first, second = (_words()["joins"]["and"].join(_line(gate, text, line, inline=True) for line in lines)
                          for lines in row["completions"])
-        return [heads[0]["words"].format(first=first, second=second)]
+        return gate.check([gate.add(head, heads[0]["words"], {"first": first, "second": second})])
     query = case["query"]
-    result = words.clause(text.env, words.constants_of(case["model"]), query["outcome"], query["tuple"], row["value"])
-    return [heads[0]["words"].format(result=result)] + [_decision(text, line) for line in row["completions"][0]]
+    either = words.clauses(text.env, words.constants_of(case["model"]),
+                           [(query["outcome"], query["tuple"], value) for value in (True, False)])
+    gate.classes["result"] = set(either)
+    return gate.check([gate.add(head, heads[0]["words"], {"result": either[not row["value"]]})] +
+                      [_line(gate, text, line) for line in row["completions"][0]])
 
 
 def sentences(case, row):

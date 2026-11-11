@@ -13,7 +13,7 @@ from pathlib import Path
 
 import pytest
 
-from tests.test_cardinality_lean import CASES, ENV, FA1, GRAPH, PLAIN, TOP, text
+from tests.test_cardinality_lean import CASES, ENV, FA1, GRAPH, HELD, NARROWING, PLAIN, TERM, TOP, chain_text, text
 from ve import cardinality
 from ve.admission import report_identity
 from ve.backends import relay
@@ -334,7 +334,7 @@ def part(tmp_path, monkeypatch):
 
 
 def _shown(doc):
-    return doc["source_id"], doc["document_id"], doc["units"], doc["cardinality"], doc["lean"]
+    return doc["source_id"], doc["document_id"], doc["units"], doc["cardinality"], doc["lean"], doc.get("composed"), doc.get("chain")
 
 
 def test_every_mutant_of_a_document_row_is_refused_or_changes_nothing(part):
@@ -349,6 +349,152 @@ def test_every_mutant_of_a_document_row_is_refused_or_changes_nothing(part):
         except CheckerUnavailable:
             pass
     assert not accepted
+
+
+def test_a_row_s_leaf_labels_are_bound_to_the_request_graph(tmp_path, monkeypatch):
+    """Past Lean: the relay's own check on `leaf_labels`, each row named by the request's graph, none empty or extra."""
+    raw = text([{"name": "only", "statement": TOP, "label": "asserted"}])
+    path = tmp_path / "part.ve.md"
+    path.write_bytes(raw)
+    row = _lean_answer(raw, True, tmp_path, {})
+    monkeypatch.setattr(cardinality, "identities", _known())
+    good = {"name": "only", "label": "asserted"}
+    assert row["cardinality"]["leaf_labels"] == [good]
+    assert _lean_document(raw, path, row, admitted=True)["cardinality"]["leaf_labels"] == [good]
+    for labels in ([], [good, good], [{**good, "label": "bridge:accepts(fomc,only)"}], [{**good, "name": "absent"}], [{}],
+                   [{"name": "only"}], [{"label": "asserted"}], [good, {"name": "absent", "label": "asserted"}]):
+        mutant = copy.deepcopy(row)
+        mutant["cardinality"]["leaf_labels"] = labels
+        with pytest.raises(CheckerUnavailable):
+            _lean_document(raw, path, mutant, admitted=True)
+
+
+def _chain_mutants(row):
+    composed, front = row["composed"], json.loads(row["composed"]["chain_document"].split("\n---\n")[0][4:])
+    body = row["composed"]["chain_document"].split("\n---\n", 1)[1]
+
+    def lowered(change, start=front):
+        changed = copy.deepcopy(start)
+        change(changed)
+        return "---\n" + json.dumps(changed) + "\n---\n" + body
+    counting = json.loads(composed["counting_document"].split("\n---\n")[0][4:])
+    yield from ({"not_certified": []}, {"not_certified": ["absent"]}, {"not_certified": ["one", "one"]}, {"not_certified": ["two"]},
+                {"scope": ""}, {"chain_document": None}, {"counting_document": composed["chain_document"]},
+                {"chain_document": composed["counting_document"]},
+                {"chain_document": "---\n" + json.dumps(front) + "\n---\nanother body\n"},
+                {"chain_document": lowered(lambda f: f["units"].pop(0))}, {"chain_document": lowered(lambda f: f["units"].pop())},
+                {"chain_document": lowered(lambda f: f["units"][1].update(content={"ast": ["bottom"]}))},
+                {"chain_document": lowered(lambda f: f["units"][0].update(span=[0, 1]))},
+                {"chain_document": lowered(lambda f: f["units"][0].update(content={"cardinality": TOP}))},
+                {"chain_document": lowered(lambda f: f["environment"].update(profiles=["relational-fol@0"]))},
+                {"chain_document": lowered(lambda f: f["environment"].update(extra=1))},
+                {"chain_document": lowered(lambda f: f.update(reading_sets=[]))},
+                {"chain_document": lowered(lambda f: f["environment"].update(language="x"))},
+                {"counting_document": lowered(lambda f: f["environment"].update(language="x"), counting)})
+
+
+def test_a_chain_list_row_is_bound_to_the_request(tmp_path, monkeypatch):
+    """Past Lean: `composed` names the request's units in each reading, its own environment and body, none empty or extra."""
+    raw = chain_text([("one", {"cardinality": TOP}), ("two", {"ast": ["top"]})])
+    path = tmp_path / "chain.ve.md"
+    path.write_bytes(raw)
+    row = _lean_answer(raw, True, tmp_path, {})
+    doc = _lean_document(raw, path, row, admitted=True)
+    assert doc["composed"]["not_certified"] == ["one"] and doc["chain"]["units"][1]["id"] == "two"
+    for change in _chain_mutants(row):
+        with pytest.raises(CheckerUnavailable):
+            _lean_document(raw, path, {**row, "composed": {**row["composed"], **change}}, admitted=True)
+    with pytest.raises(CheckerUnavailable):
+        _lean_document(raw, path, {k: v for k, v in row.items() if k != "composed"}, admitted=True)
+    # The other side: a row under W6a's lists holds no `composed`.
+    other = text([{"name": "only", "statement": TOP}], graph=False)
+    plain = _lean_answer(other, True, tmp_path, {})
+    assert _lean_document(other, path, plain, admitted=True) and "composed" not in plain
+    with pytest.raises(CheckerUnavailable):
+        _lean_document(other, path, {**plain, "composed": row["composed"]}, admitted=True)
+
+
+# qt-a4b review F2: the chain's request is the chain reading of the document as written, which Lean derives and binds
+# (`Service.Document.chainBound`). Two documents: a unit for the chain beside the counting unit, and counting units only.
+UNBOUND = "the chain's request is not the chain reading of the chain list document it names"
+CHAIN_DOCUMENTS = {
+    "beside a unit": ([("one", {"cardinality": TOP}), ("two", None)],
+                      {"open_terms": [TERM], "reading_sets": [HELD], "narrowings": [NARROWING]}),
+    "counting only": ([("one", {"cardinality": TOP})], {"open_terms": [TERM]}),
+}
+
+
+def _compress(value) -> str:
+    """Lean's `Json.compress` for these fixtures' values; the control in the test checks that it is."""
+    return json.dumps(value, separators=(",", ":"), sort_keys=True, ensure_ascii=False)
+
+
+def _chain_request_mutants(front):
+    """Every member, environment key and unit field of the chain's front matter dropped and retyped, and the counting
+    unit read for another reason: each one makes the request another document."""
+    paths = [(k,) for k in front] + [("environment", k) for k in front["environment"]] + [
+        ("units", i, k) for i, unit in enumerate(front["units"]) for k in unit]
+    for path in paths:
+        for how in ("drop", "retype"):
+            changed = copy.deepcopy(front)
+            holder = changed
+            for step in path[:-1]:
+                holder = holder[step]
+            if how == "drop":
+                del holder[path[-1]]
+            else:
+                holder[path[-1]] = 7
+            yield "/".join(map(str, path)) + ":" + how, changed
+    changed = copy.deepcopy(front)
+    changed["units"][0].update(kind=["unformalised", "other"], meaning={"unformalised": "other"})
+    yield "units/0:other", changed
+
+
+@pytest.mark.parametrize("document", CHAIN_DOCUMENTS)
+def test_the_chain_s_request_is_its_parent_s_chain_reading_and_nothing_else(tmp_path, document):
+    units, members = CHAIN_DOCUMENTS[document]
+    raw = chain_text(units, **members)
+    path = tmp_path / "chain.ve.md"
+    path.write_bytes(raw)
+    row = _lean_answer(raw, True, tmp_path, {})
+    head, body = row["composed"]["chain_document"].split("\n---\n", 1)
+    front = json.loads(head[4:])
+    assert {k for k in members} <= set(front) and front["units"][0]["kind"] == ["unformalised", "counting"]
+
+    def asked(changed):
+        chain = "---\n" + _compress(changed) + "\n---\n" + body
+        return {**row, "composed": {**row["composed"], "chain_document": chain}}
+    # The control: Lean's own text, serialised again, is the request Lean binds, so each refusal below is the change's.
+    assert asked(front)["composed"]["chain_document"] == row["composed"]["chain_document"]
+    assert _lean_document(raw, path, asked(front), admitted=True)["chain"]["units"][0]["id"] == "one"
+    refused = {}
+    for name, changed in _chain_request_mutants(front):
+        with pytest.raises(CheckerUnavailable) as caught:
+            _lean_document(raw, path, asked(changed), admitted=True)
+        refused[name] = str(caught.value)
+    # What the relay's own binding cannot see is Lean's to refuse: a member, an environment key (the relay reads the
+    # profiles), the counting unit's reason.
+    lean_only = {f"{k}:drop" for k in members} | {
+        f"environment/{k}:drop" for k in front["environment"] if k != "profiles"} | {"units/0:other"}
+    assert all(UNBOUND in refused[name] for name in lean_only), {n: refused[n] for n in lean_only if UNBOUND not in refused[n]}
+
+
+def test_the_chain_s_request_names_the_document_and_has_no_python_path(tmp_path, monkeypatch):
+    """The case carries the document as written (`chain_of`); a chain reading Lean does not answer is never Python's."""
+    import ve.document.lean as lean
+    units, members = CHAIN_DOCUMENTS["beside a unit"]
+    raw = chain_text(units, **members)
+    path = tmp_path / "chain.ve.md"
+    path.write_bytes(raw)
+    row = _lean_answer(raw, True, tmp_path, {})
+    asked, real = [], lean._document_case
+    monkeypatch.setattr(lean, "_document_case", lambda *a, **k: asked.append(real(*a, **k)) or asked[-1])
+    _lean_document(raw, path, row, admitted=True)
+    assert [case.get("chain_of") for case in asked] == [raw.decode()]
+    assert asked[0]["document"] == row["composed"]["chain_document"]
+    monkeypatch.setattr(lean, "_document_case", lambda *a, **k: None)
+    with pytest.raises(CheckerUnavailable, match="has no Python path"):
+        _lean_document(raw, path, row, admitted=True)
 
 
 def test_a_document_row_answers_the_case_it_asked(part):
@@ -405,9 +551,13 @@ def test_every_check_of_the_relay_is_one_a_test_can_fail(monkeypatch, genuine, p
     this, real_relay = sys.modules[__name__], cardinality
     raw, path, part_row = part
     bare = text(GRAPH["document"]["nodes"], graph=False)
-    documents = {"part": (raw, True), "not-admitted": (raw, False), "no-graph": (bare, True)}
+    chain = chain_text([("one", {"cardinality": TOP}), ("two", {"ast": ["top"]})])
+    documents = {"part": (raw, True), "not-admitted": (raw, False), "no-graph": (bare, True), "chain": (chain, True)}
     rows_of = {kind: genuine(kind)[0] for kind in CALLS}
-    rows_of |= {"part": part_row, "not-admitted": part_row, "no-graph": _lean_answer(bare, True, path.parent, {})}
+    rows_of |= {"part": part_row, "not-admitted": part_row, "no-graph": _lean_answer(bare, True, path.parent, {}),
+                "chain": _lean_answer(chain, True, path.parent, {})}
+    # The chain's own request is answered apart (`test_a_chain_list_row_is_bound_to_the_request`): here, its text is the outcome.
+    monkeypatch.setattr("ve.document.lean._chain_document", lambda path, text, admitted, parent: text)
     queue = []
     monkeypatch.setattr(relay, "rows", lambda mode, cases, **options: queue.pop(0) if len(queue) > 1 else queue[0])
     monkeypatch.setattr(this, "cardinality", real_relay)
@@ -434,6 +584,21 @@ def test_every_check_of_the_relay_is_one_a_test_can_fail(monkeypatch, genuine, p
             yield kind, mutant, mutant
         row = rows_of["paraphrase"]
         yield from (("paraphrase", shape, shape) for shape in ((row,), [row, row], [7], [], None))
+        chained = rows_of["chain"]
+        yield from (("chain", mutant, mutant) for mutant in (
+            {k: v for k, v in chained.items() if k != "composed"},
+            *({**chained, "composed": {**chained["composed"], **change}} for change in _chain_mutants(chained))))
+        # A `composed` that would bind to the document, on a row of a list that has none: its chain reading is the
+        # document's units without content, under its profiles without cardinality@0.
+        head, tail = bare.decode().split("\n---\n", 1)
+        front = json.loads(head[4:])
+        lowered = {**front, "units": [{k: v for k, v in u.items() if k != "content"} for u in front["units"]],
+                   "environment": {**front["environment"],
+                                   "profiles": [p for p in front["environment"]["profiles"] if p != "cardinality@0"]}}
+        unbound_chain = "---\n" + json.dumps(lowered) + "\n---\n" + tail
+        yield ("no-graph", *2 * [{**rows_of["no-graph"], "composed": {"counting_document": bare.decode(), "chain_document": unbound_chain,
+                                                                      "not_certified": [u["id"] for u in rows_of["no-graph"]["units"]],
+                                                                      "scope": "x"}}])
         for kind, row in rows_of.items():
             yield kind, row, row
             for _, mutant in _mutants(row):
