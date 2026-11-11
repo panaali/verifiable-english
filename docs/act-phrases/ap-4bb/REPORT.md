@@ -1,7 +1,7 @@
 # ap-4bb report: `sourceCheck_complete` with item 8c's bound, `View`'s soft fields (ap-4b-f2), the R16 ties pass
 
-No DRI signature is reserved. One question is open with the DRI decider (part D's scope, "Notes for the DRI" 1); it
-does not block the item.
+No DRI signature is reserved. Part D's scope was asked and signed: reviews/dri-decisions-20261111-ap-4bb-d.md item 1
+((D) complete with the tie as built; the general bounded completeness theorem is row ap-4bc).
 
 Base `97b3c7999a` (`git merge-base HEAD main`). Branch `feature/ap-4bb`. Task: backlog row ap-4bb (carries ap-4b-f2 by
 reviews/dri-decisions-20261102-followup-triage.md item 8c); FOLLOW-UPS "## ap-4b (2026-10-31)" and "## ap-4b round 1".
@@ -33,8 +33,9 @@ seed_bugs.py 100, this REPORT and DELTA.md) plus the written-by-script mutants.j
    whatever the probe. A true version needs those premises and a semantic proof over every assignment of j's owned
    keys; it is not built. What is built ties both trusted definitions (their outputs characterised both ways, and an
    accepting `separates` made sound with no premise on the base), with `#guard`s on four documents; trust_map counts
-   both as tied. Asked the DRI decider (inbox/dri/20261111T013520Z-ap-4bb-2854848.md) whether this completes (D),
-   recommending yes with the bounded completeness theorem as ap-4bc; FOLLOW-UP line below until it answers.
+   both as tied. Counterexample in one line: a candidate j owning more than 12 generated keys makes `separates` false
+   whatever the probe. The DRI signed (D) as complete with this tie and filed ap-4bc for the general theorem with its true
+   premises (reviews/dri-decisions-20261111-ap-4bb-d.md item 1).
 2. **Trust-mutant sweep selects 0 mutants.** `mac-pytest.sh --trustmut -- --max-mutants 1000 --json
    docs/act-phrases/ap-4bb/trust-mutants.json` exited 0 with "0 definitions, 0 mutants": the changed lines of `View`,
    `ruleView` and `expected` are tuple fields no operator mutates (the one candidate in `expected`, `==` → `!=` on
@@ -81,12 +82,12 @@ None expected: no route reaches `sourceCheck` or `atomSituation` until ap-4's ad
 - `uv run python tools/trust_map.py --check`: PASS (above).
 - trust-mutants sweep: [trust-mutants.json](trust-mutants.json), 0 mutants, exit 0 (Deviations 2).
 - Selected tests: `MAC_PYTEST_NO_DEFER=1 zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on
-  the committed final tree; result in the build report.
+  the committed tree `a113043aad` (clean): "ran on ve-cloud-2, select_tests, exit=0, 8292s"; "recorded 472 units for
+  tree ba1aab129a; … 0 failed". Only this REPORT changed after it.
 
 ## Notes for the DRI
 
-1. Part (D)'s scope (Deviations 1): question sent; recommended answer "complete; the bounded completeness theorem is
-   ap-4bc".
+1. Part (D)'s scope (Deviations 1): answered by reviews/dri-decisions-20261111-ap-4bb-d.md item 1 (SIGNED; ap-4bc filed).
 2. The cloud trust-mutant runner logged "base 0d663e3c50e5" (a main object with the same message as `97b3c7999a`); the
    JSON records base `97b3c7999add…` and head `c82c6e5623`. No mutants either way.
 3. Main has moved 59 commits; only `tools/trust-classes.json` overlaps (main's 469+/412- against this branch's ties
@@ -94,6 +95,43 @@ None expected: no route reaches `sourceCheck` or `atomSituation` until ap-4's ad
 
 ## Next item
 
-None, unless the DRI keeps (D)'s general theorem open:
+ap-4bc, already filed by the DRI (reviews/dri-decisions-20261111-ap-4bb-d.md item 1): `atomSituation` separates whenever
+i's rule regulates an act j's does not, stated with `situationWF` and the `maxCells` premise. No other follow-on.
 
-FOLLOW-UP: ap-4bc `atomSituation` separates whenever i's rule regulates an act j's does not (with `situationWF` and the `maxCells` premise)
+## Spec re-read
+
+- `sourceCheck_complete` against docs/spec/act-phrases.md:1403-1405 and the task's statement: same binders, `h`, `hn`,
+  `he`, conclusion `.ok ()` (check_statements.py EQUAL).
+- `View`'s five added fields against :1364-1365 and reviews/dri-decisions-20261110-ap-4b-f2.md item 1 (mode, rank,
+  alterable, exception, hard; in `SoftNode`'s order).
+- `expected`'s fields against reviews/dri-decisions-20261111-ap-4bb.md item 1 (`strictNodeOf s.template`, not five constants).
+- The `hn` sentence (:1420-1423) against triage item 8c; 11.4's S4/S6 line (:1811) unchanged.
+- D-29's third text for a soft-field change against spec 7's D-29 row (the "a choice is not a reading ... or changes the
+  source rule's modal" text, `notReading` in the fixtures).
+
+## Self-review against BUILDER-CHECKLIST
+
+1. N.A.: no relayed answer, schema or route changes (DELTA "Public output").
+2. PASS: Deliverables table, one row per task line with commit and check; (C) built on the 11-10/11-11 signatures; (D)'s
+   scope signed in reviews/dri-decisions-20261111-ap-4bb-d.md; no Python copy, no report test.
+3. PASS: mutants.json (11 plants, all KILLED, each with its failing theorem or `#guard`); trust-mutants.json (0 selected,
+   Deviations 2).
+4. N.A.: Lean only; no Python or Rust path, and no existing fixture's answer changes (`lake build` of
+   VE.Acts.ReadingsExamples).
+5. N.A.: no field read by Python from a Lean answer is added.
+6. PASS: selected run on the committed tree a113043aad, exit 0; only this REPORT changed after it; the chain gate runs on
+   the final HEAD.
+7. PASS: DELTA rows cite SIGNED 11-02 item 8c, SIGNED 11-10 item 1 and R16; no reserved signature.
+8. PASS: DELTA rows 1-3; public output none (grep in DELTA).
+9. PASS: `tools/select_tests.py --base 97b3c7999a` selects a targeted set (lake build, audit and ~110 test files), not
+   everything.
+10. PASS: check_statements.py 14 EQUAL; plants `hn-dropped`, `pick-first-partial`, `atom-j-for-i`, `rulePred-name` break
+    the proofs.
+11. N.A. for new limits: none added; the existing choice limit's `ResourceLimit` is the counterexample's subject
+    (`ReadingsExamples.lean:287`).
+12. N.A.: proofs and `#guard`s only; `View` gains five compared fields (constant cost per rule).
+13. N.A.: no test removed or renamed (the selected run's collection, 0 failed).
+14. PASS: both directions: `:306-307` accept (S4, S6, 64) and `:309-310` refuse (S5, S7); `:319-320` refuse soft-field
+    changes and S4 passes; `separates` true both ways and false on one shared act (`:367-387`). Claims cite commands above.
+15. PASS: overclaim grep done on REPORT/DELTA ("unchanged" backed by the build and the guard diff; "none" by the grep);
+    no silent cut ((D) asked and signed before the report); every new `#guard` has a plant; no new limit.
