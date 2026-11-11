@@ -3,6 +3,7 @@
 # (docs/merge-tooling.md). Install the driver once: python3 tools/regen_generated.py --install-driver
 .gitattributes merge=ve-generated
 conformance/wire-contract/acts@0-catalogue.json merge=ve-generated
+conformance/wire-contract/purposes@0-catalogue.json merge=ve-generated
 lean/VE/WireContract/Limits.lean merge=ve-generated
 lean/VE/WireContract/Names.lean merge=ve-generated
 lean/VE/WireContract/Tables/*.lean merge=ve-generated
