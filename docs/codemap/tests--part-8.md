@@ -1,3 +1,11 @@
+- `tests/test_w6a_looprecheck1.py` — Regressions for the W6a loop recheck 1 findings, each generalized to its class.
+- `tests/test_w6a_looprecheck2.py` — W6a loop recheck 2 regressions: budgeted checks see one domain order.
+- `tests/test_w6a_review_regressions.py` — Regressions for the W6a review findings, each generalized to its class.
+- `tests/test_w6a_route_limits.py` — W6a limits directive on the `route` subcommand: nothing runs unmetered.
+- `tests/test_w6b_gates.py` — Baseline route rejects integer-quantifier W6b syntax before evidence.
+- `tests/test_wire_contract_corpus.py` — Hand-derived format-1 cases from wire-contract.md section 8.1.
+- `tests/test_wire_contract_engine.py` — Independent cases for the format-1 diagnostic interpreter.
+- `tests/test_wire_contract_faults.py` — The fault catalogue and the oracle of the soft-norms gate (wire-contract.md 8.3), checked without Lean.
 - `tests/test_wire_contract_generator.py` — Selection and oracle rules are independent of any profile catalogue.
 - `tests/test_wire_contract_lean.py` — The Lean wire contract engine (service mode `diagnose`) on the engine corpus of docs/spec/wire-contract.md 8.1.
 - `tests/test_wire_contract_lint.py` — The tooling fixtures of docs/spec/wire-contract.md 8.2 (L1 to L13 and L15; L14 is in tests/test_wire_contract_lean.py), and the lint rules the wire review foun…

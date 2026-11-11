@@ -24,6 +24,10 @@ PLAN section 12 lists the deviations of both rounds.
 The source states no licence. The PDF, extracted text and generated `.ve.md` document stay in the pinned source
 area outside git. `build_document.py --check` accepts `--source`, verifies the hash, and writes its temporary
 document under `/tmp` for VE's check.
+`source/quote_evidence.py` checks each rule and fact header quotation against that pinned text and writes
+`source/quote-hashes.json`, which pins the checked quotations without copying the text into git. Regenerate the
+hashes from the pinned source when a header changes. The gate compares every current quotation to these hashes;
+workers with the source also rerun the source comparison.
 
 ## Files and run
 
@@ -42,7 +46,8 @@ document under `/tmp` for VE's check.
 After building the Lean service, run `uv run python usecases/openai-preparedness/build_document.py --check`,
 `stage0.py --check`, `measure.py --check` and `run.py --check` (about ten minutes: it reruns the key under each
 mutant and narrowing) from the repository root. Without the pinned source, source-dependent
-tests skip their rerun; saved evidence invariants remain tested.
+reruns in the fidelity-fix tests use saved evidence and short synthetic source units in the gate;
+other saved evidence invariants remain tested.
 
 ## Coverage, 2026-11-11
 
