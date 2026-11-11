@@ -1258,9 +1258,9 @@
     16773
    ],
    "kind": "unformalised",
+   "blocked_rule": "fn5-indicator",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in Table 1 biological and cybersecurity thresholds",
-   "residual": "unmapped_duty-p6-u84-789e5489dfdf",
    "waits": [
     "AP"
    ],
@@ -2237,11 +2237,11 @@
     30483
    ],
    "kind": "unformalised",
-   "reason": "quantifier_scope",
-   "detail": "SC: D1's unary situation rule does not bind each source item in capability evaluation and deployment scope",
-   "residual": "quantifier_scope-p10-u150-7320c6c4899b",
+   "blocked_rule": "f7-compile",
+   "reason": "event_order",
+   "detail": "ET: D1 has no event-order relation for the source temporal qualifier in capability evaluation and deployment scope",
    "waits": [
-    "SC"
+    "ET"
    ],
    "status": "UNFORMALISED"
   },
@@ -3681,14 +3681,12 @@
     44865,
     45039
    ],
-   "kind": "unformalised",
-   "reason": "unmapped_duty",
-   "detail": "AP: D1 has no complete regulated act and guard for this duty in change log",
-   "residual": "unmapped_duty-p15-u245-b1881efef95f",
-   "waits": [
-    "AP"
+   "kind": "asserted",
+   "premises": [
+    "cl-levels"
    ],
-   "status": "UNFORMALISED"
+   "waits": [],
+   "status": "CHECKED"
   },
   {
    "id": "p15-u246",

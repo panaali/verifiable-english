@@ -1495,12 +1495,12 @@
   },
   {
    "blockers": [
-    "SC"
+    "ET"
    ],
    "bytes": 186,
    "id": "p10-u150",
    "kind": "unformalised",
-   "reason": "quantifier_scope",
+   "reason": "event_order",
    "status": "UNFORMALISED"
   },
   {
@@ -2443,14 +2443,11 @@
    "status": "UNFORMALISED"
   },
   {
-   "blockers": [
-    "AP"
-   ],
+   "blockers": [],
    "bytes": 174,
    "id": "p15-u245",
-   "kind": "unformalised",
-   "reason": "unmapped_duty",
-   "status": "UNFORMALISED"
+   "kind": "asserted",
+   "status": "CHECKED"
   },
   {
    "blockers": [
