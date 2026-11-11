@@ -1,3 +1,5 @@
+- `tests/test_readings_lazy_pairs.py` — The readings route evaluates the other reading's side of a pair lazily (batch 3d review B; the DRI note of 2026-10-04 on batch 3b's eager completions).
+- `tests/test_readings_lean_sharing.py` — The readings route builds each candidate's document once per request and evaluates a pair lazily (lean-first plan F5b; batch 3b review B1, B2).
 - `tests/test_readings_memo.py` — Process-local readings admission memo through the real Lean service and Python relay.
 - `tests/test_readings_nd_document.py` — Readings under the unspecified completion through `ve document` (readings-defaults plan RD-2b; spec 3, 4.2, 4.3).
 - `tests/test_readings_nd_lean.py` — Readings under the unspecified completion through the Lean service (docs/spec/readings-defaults.md 8.3; plan RD-2a).
@@ -77,7 +79,4 @@
 - `tests/test_rust_reproducible.py` — The Rust checker build is path-independent, so lean/checkers.lock pins it in every checkout.
 - `tests/test_sa_checked_view.py` — sa-checked-view (docs/spec/purpose-explanation.md 5.1): the typed checked view changes no answer.
 - `tests/test_safety_framework.py` — Safety-framework use case (usecases/safety-framework): fails on any mismatch with the answer key or any change in what VE computes.
-- `tests/test_safetyfw_usecases.py` — The anthropic-rsp and openai-preparedness use cases (usecases/<case>): the frozen answer keys and their transcription.
-- `tests/test_sc9_migrate.py` — SC-9's migration of the constitution pilot's translation to the soft form (docs/spec/rd-9-soft-chain-PLAN.md SC-9; `usecases/claude-constitution-pilot/run-2026…
-- `tests/test_scales_exercised.py` — Every trusted definition of `lean/VE/Scales/` is stated about by a theorem (standing ruling R16).
-- `tests/test_scope_5_4_statements.py` — The statement gate for spec 5.4 (SC-2): each proved theorem is the reviewed text, whitespace aside (sc-2c, sc-2d).
+- `tests/test_safetyfw_accounting.py` — Source accounting of the safety-framework-style cases (usecases/safetyfw_accounting.py).

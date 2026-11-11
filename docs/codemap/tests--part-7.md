@@ -1,3 +1,7 @@
+- `tests/test_safetyfw_usecases.py` — The anthropic-rsp and openai-preparedness use cases (usecases/<case>): the frozen answer keys and their transcription.
+- `tests/test_sc9_migrate.py` — SC-9's migration of the constitution pilot's translation to the soft form (docs/spec/rd-9-soft-chain-PLAN.md SC-9; `usecases/claude-constitution-pilot/run-2026…
+- `tests/test_scales_exercised.py` — Every trusted definition of `lean/VE/Scales/` is stated about by a theorem (standing ruling R16).
+- `tests/test_scope_5_4_statements.py` — The statement gate for spec 5.4 (SC-2): each proved theorem is the reviewed text, whitespace aside (sc-2c, sc-2d).
 - `tests/test_scope_5_6_statements.py` — The statement gate for spec 5.6 (SC-4): each proved theorem and each definition the statements read is the reviewed text, whitespace aside (sc-4).
 - `tests/test_scope_answer.py` — The explain route (scope SC-1c): `ve scope explain` relays Lean's rows (service mode `scope`) and never shows an answer that is not one about the document it a…
 - `tests/test_scope_authoring.py` — SC-7: scope's authoring wordings (docs/spec/scope.md 2.2, 5.8, 7.8).
@@ -77,8 +81,3 @@
 - `tests/test_units_relay_w6a.py` — The W6a ground family through Python's relay of Lean's quantity typing.
 - `tests/test_units_w6a.py` — W6a admission regression cases: identity, exact grid, dates, and counting.
 - `tests/test_vacuity.py` — (no module docstring)
-- `tests/test_ve_iface.py` — (no module docstring)
-- `tests/test_views.py` — Empirical injectivity, controlled vocabulary, and adversarial scope cases.
-- `tests/test_views_polish.py` — Review regressions: lexical limits, shared scopes, cells, and measurements.
-- `tests/test_w6a2_looprecheck1.py` — W6a loop recheck (round 2, recheck 1) regressions: static limits, three ways.
-- `tests/test_w6a2_numeral_characters.py` — Numeral limits count Unicode characters on every W6a route: the order and countermodel routes in Python, Lean and Rust, the quantity routes in Lean and Python'…
