@@ -1,0 +1,1 @@
+{"check": "1.1g", "args": {"link": "l1", "polarity": "doubted"}, "text": "InvalidPurposes: link l1 has polarity doubted; it must be affirmed or denied", "purposes": {"links": [{"id": "l1", "relation": "in order to", "polarity": "doubted", "share": "plain", "reason": [{"part": "u0146.s01.p3"}], "target": [{"part": "u0146.s01.p1"}], "marker": "u0146.s01.p2"}]}}

@@ -1,0 +1,16 @@
+# rights-cfr-2-budget-1: user-visible deltas
+
+Base: main f3f40d51dc. Only the `status_text` of a `rights-conflict` CONFLICT-FREE answer changes. Every JSON field
+(`verdict`, `conditional_on`, `weighing_points`, `situation_exhibited`, `budget`, `situation`, `targets`) is byte for
+byte as on the base, and so are the UNKNOWN line and every count. The saved records are in `delta.json`.
+
+Not a row, because no printed output changes: the soft route's `<j>` is now WP(T) (`openAfterClassification`, rebuilt
+on `Wire.openCoherence`) instead of a repeat of `<k>`. Across every soft-conflict user in the suite (893 tests) and
+five constructed cases, no CONFLICT-FREE answer has the two counts apart (`evidence/soft-count-probe.txt`), so no
+printed count moves on any existing fixture or test (the task's only reason to stop, adv1450 item 3). docs/spec/rights.md
+7.3 now writes rows 1 and 2's words, and rights-cfr-2's DELTA row 1 is annotated as amended by these rows.
+
+| # | Delta | Ruling |
+|---|---|---|
+| 1 | `rights-conflict`, CONFLICT-FREE, with no `situation` in the request: `status_text` ends `situation exhibited: none supplied (not searched; budget 10000 unused)` instead of `situation exhibited: UNKNOWN (budget 10000)`. No search runs on this route, so the old words read as a search that hit its budget. With a situation supplied the line still ends `situation exhibited: yes`. | R1: the quoted value `budget 10000` and the path `status_text` are kept, and the text is more specific (it says no situation was supplied or searched). Tests: `test_rights_no_search_delta_keeps_every_quoted_value` (the delta test over `delta.json`: each head keeps every number and label its base quoted), `test_rights_conflict_free_without_a_situation_names_no_search`, `test_a_mutated_no_search_line_is_refused`, `lean/ResponseShape/Schemas/RightsChecks.lean` :61-:62. The relay's copy of the words is F1 debt, owned by rights-cfr-2-text-1 |
+| 2 | `rights-conflict`, CONFLICT-FREE, both forms: `<j> weighing points open;` becomes `<j> weighing points open (colliding default pairs no ranking resolves);`. The words name what this route counts (WP(T) with no pair evidence, `SoftNorms.Wire.openCoherence`), which can differ from the soft route's `<j>` (REPORT.md, step 1). The count is unchanged. | R3: an explanation is added; nothing is removed or renamed. The pinned answers (RightsChecks.lean :55-:58) are updated. A test checks the line equals Lean's own (`test_rights_conflict_free_report_evidence`, raw `ve_service` line). The relay binds the whole line (`_bind_conflict`, `test_a_mutated_no_search_line_is_refused[count gloss dropped]`). Tests: `test_rights_weighing_points_name_what_they_count`, RightsChecks.lean :58, :62 and :66 |

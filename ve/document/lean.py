@@ -12,6 +12,7 @@ from ..errors import ResourceLimit, VEError
 from ..identity import source_id
 from ..profiles import DOCUMENT_LAYERS
 from ..readings import active_reading_sets, rights_meaning_id
+from ..softnorms import soft_digest
 from ..wire import digest
 from .source import (STATUSES, _RIGHTS_KINDS, _document_id, _english_fences, _environment, _parts, _split,
                      base_environment, chain_environment)
@@ -24,12 +25,15 @@ from .containers import (_content_environment, _defaults_environment, _free_norm
 PROPOSAL_ELSEWHERE = "InvalidInput: the lexicon names another environment"
 
 
-def _document_case(raw: bytes, admit: bool, directory: Path | None = None, prepared: dict | None = None):
+def _document_case(raw: bytes, admit: bool, directory: Path | None = None, prepared: dict | None = None,
+                   chain_of: bytes | None = None):
     """The `document` mode's case for a text, or None when Python's own path decides it: the text is not UTF-8, which
     the mode cannot be sent, or pending content-bearing readings under norm defaults still need the original Python
-    coverage path. A text with English fences carries the lexicon proposal; a senses document's pack files are read
+    coverage path (`_python_decides_mixed_readings`, never for a chain list or a chain reading). A text with English fences carries the lexicon proposal; a senses document's pack files are read
     beside it (`directory`) and sent as texts, with the proposal its senses route reads (batch 16f). A soft document
-    built for the proposal is kept in `prepared` for the document built from the answer (`_lean_document`)."""
+    built for the proposal is kept in `prepared` for the document built from the answer (`_lean_document`). `chain_of`:
+    the chain list document as written whose chain reading `raw` is, which the case names so that Lean checks the text
+    is that reading (`Service.Document.chainBound`)."""
     try:
         text = raw.decode("utf-8")
     except UnicodeDecodeError:
@@ -38,17 +42,10 @@ def _document_case(raw: bytes, admit: bool, directory: Path | None = None, prepa
         meta, _, fences = _split(raw)
     except (KeyError, TypeError, VEError):
         meta = fences = None  # Let Lean decide malformed front matter and preserve its diagnostic.
-    try:
-        profiles = listed_profiles(meta.get("environment"))
-        sets = meta.get("reading_sets", [])
-        if {"readings@1", "norm-defaults@0"} <= set(profiles) and type(sets) is list:
-            contents = [r.get("content") for s in sets if type(s) is dict
-                        for r in s.get("readings", []) if type(r) is dict]
-            if any(c is None for c in contents) and any(c is not None for c in contents):
-                return None
-    except (AttributeError, KeyError, TypeError, VEError):
-        pass  # Let Lean decide malformed front matter and preserve its diagnostic.
-    case = {"id": "document", "document": text, "admit": admit}
+    if _python_decides_mixed_readings(raw, meta, chain_of):
+        return None
+    case = {"id": "document", "document": text, "admit": admit,
+            **({} if chain_of is None else {"chain_of": chain_of.decode("utf-8")})}
     if meta is not None and "senses" in meta and directory is not None:
         from ..senses_document import pack_texts
         texts = pack_texts(meta["senses"], directory)
@@ -83,17 +80,43 @@ def _document_case(raw: bytes, admit: bool, directory: Path | None = None, prepa
     return case
 
 
-def _lean_answer(raw: bytes, admit: bool, directory: Path | None = None, prepared: dict | None = None):
+def _python_decides_mixed_readings(raw: bytes, meta, chain_of: bytes | None) -> bool:
+    """Whether Python's own coverage path decides the text: pending and content-bearing readings in the reading sets
+    of a document under `readings@1` and `norm-defaults@0`. Never for a `cardinality@0` chain list or its chain reading
+    (`chain_of`), which have no Python path: Lean judges them whatever their reading sets hold (qt-a4b re-check F3).
+    A `scope@0` wrapper still goes to Python, as on main (FOLLOW-UPS.md, qt-a4b-f3-scope: a DRI decision)."""
+    if chain_of is not None:
+        return False
+    try:
+        profiles = listed_profiles(meta.get("environment"))
+        sets = meta.get("reading_sets", [])
+        if not ({"readings@1", "norm-defaults@0"} <= set(profiles) and type(sets) is list):
+            return False
+        contents = [r.get("content") for s in sets if type(s) is dict
+                    for r in s.get("readings", []) if type(r) is dict]
+    except (AttributeError, KeyError, TypeError, VEError):
+        return False  # Let Lean decide malformed front matter and preserve its diagnostic.
+    return any(c is None for c in contents) and any(c is not None for c in contents) and not _lists_cardinality(raw)
+
+
+def _lean_answer(raw: bytes, admit: bool, directory: Path | None = None, prepared: dict | None = None,
+                 chain_of: bytes | None = None):
     """Lean's `document` row for a `ve-document@1` text, or None when Python's own path decides it: the mode
     answered `CheckerUnavailable` or `ResourceLimit` (it cannot decide, and says so), or the case cannot be sent
     (`_document_case`). A `ResourceLimit` for a document under a wrapper profile (`_lean_only`) is raised: no other
     path can decide it, and the limit is UNKNOWN, never Python's refusal of the profile. Any other rejection is Lean's diagnostic, raised verbatim; a failure of the service itself is
-    raised, never answered by Python."""
-    case = _document_case(raw, admit, directory, prepared)
+    raised, never answered by Python. A chain reading (`chain_of`) is a part of a `cardinality@0` document, which
+    only Lean reads: it is never Python's to decide, so Lean's UNKNOWN is raised and no case is the relay's fault."""
+    case = _document_case(raw, admit, directory, prepared, chain_of)
+    if case is None and chain_of is not None:
+        raise CheckerUnavailable("CheckerUnavailable: the chain reading of a cardinality@0 chain list document has no "
+                                 "Python path")
     if case is None:
         return None
     from ..backends.relay import answer
     row, error = answer("document", case)
+    if chain_of is not None and isinstance(error, (CheckerUnavailable, ResourceLimit)):
+        raise error
     if isinstance(error, ResourceLimit) and _lean_only(raw):
         # Python's own path cannot read a wrapper profile (`chain_environment`), so Lean's UNKNOWN is the answer.
         raise error
@@ -214,7 +237,7 @@ def _lean_document(raw: bytes, path: Path, row: dict, *, admitted: bool, prepare
     except Exception as exc:  # noqa: BLE001 - Lean accepted this front matter
         raise unavailable("is for a front matter Python cannot read") from exc
     if "cardinality@0" in listed_profiles(meta.get("environment")):
-        return _cardinality_document(meta, body, fences, declared, row, path, admitted)
+        return _cardinality_document(raw, meta, body, fences, declared, row, path, admitted)
     try:
         # The identities Lean answered are those of the environment its chain reads (`chain_environment`).
         env = _environment(chain_environment(meta["environment"]))
@@ -265,14 +288,18 @@ def _lean_document(raw: bytes, path: Path, row: dict, *, admitted: bool, prepare
             soft_document = rights_document.soft_document
             formula_env = soft_document.extended_env
         for unit in units:
-            # A rights document's content is bound to its content environment, with the nullable decider slots
-            # `_content` keeps (`rights_meaning_id`, Lean's `nullableMeaningId`).
-            if "content" in unit and unit["meaning_id"] != (
-                    rights_meaning_id(_content_environment(env, formula_env, unit["kind"]), unit["content"])
-                    if soft_document is not None else
-                    digest(f"ve-meaning-{formula_env.identity_version}\n",
-                           {"environment_id": formula_env.environment_id, "ast": unit["content"]})):
-                raise unavailable("is not bound to the document sent")
+            if "content" in unit:
+                content_env = _content_environment(env, formula_env, unit["kind"])
+                if rights_document is not None and unit["kind"] in _RIGHTS_KINDS:
+                    expected_id = rights_meaning_id(content_env, unit["content"])
+                else:
+                    id_env = content_env if soft_document is not None else formula_env
+                    digest_fn = soft_digest if soft_document is not None else digest
+                    expected_id = digest_fn(f"ve-meaning-{id_env.identity_version}\n",
+                                            {"environment_id": id_env.environment_id,
+                                             "ast": unit["content"]})
+                if unit["meaning_id"] != expected_id:
+                    raise unavailable("is not bound to the document sent")
         # A rights block the binding found equal to the authored one is built as the authored object itself: the
         # rights containers hold the source's lines by identity (`ve.surface.rights._line`), as on Python's path.
         compiled = [{"id": u["id"], "span": u["span"], "kind": u["kind"], "meaning": u["meaning"],
@@ -325,12 +352,14 @@ def _lean_document(raw: bytes, path: Path, row: dict, *, admitted: bool, prepare
                      **({"judgment_lines": row["judgment_lines"]} if "judgment_lines" in row else {})}}
 
 
-def _cardinality_document(meta, body, fences, declared, row, path, admitted):
+def _cardinality_document(raw, meta, body, fences, declared, row, path, admitted):
     """The document of a `cardinality@0` text (`Service.Document`, QT-A4), built from Lean's bound answer. Its statements
     stay Lean's: `environment` is its W6a projection, the one environment of it Python models, for display only."""
     from .. import cardinality
     try:
-        _bind_document_answer(body, meta, declared, row)
+        read, chain = cardinality.bind_composed(meta, body, row)
+        declared = [(u, parent) for u, parent in _parts(read["units"])]
+        _bind_document_answer(body, read, declared, row)
     except cardinality.MALFORMED as exc:
         raise cardinality.unbound("its row") from exc
     ids = cardinality.identities(meta["environment"])
@@ -346,7 +375,14 @@ def _cardinality_document(meta, body, fences, declared, row, path, admitted):
             "directory": path.parent, "document_id": row["document_id"], "units": units, "norms": None,
             "soft_document": None, "norm_defaults": None, "senses": None, "reports": None, "rights_document": None,
             "readings_s1": None, "readings_s2": None, "readings_components": None, "reading_plan": _reading_plan([], []),
-            "cardinality": row.get("cardinality"), "lean": {"coverage": row["coverage"], "admitted": admitted}}
+            "cardinality": row.get("cardinality"), "lean": {"coverage": row["coverage"], "admitted": admitted},
+            **({"composed": row["composed"], "chain": _chain_document(path, chain, admitted, raw)} if "composed" in row else {})}
+
+
+def _chain_document(path, chain, admitted, parent):
+    """The chain's part of a chain list document `parent`, on its own Lean request, which names `parent` (`chain_of`)."""
+    from .load import _load
+    return _load(path, admit=admitted, raw=chain, chain_of=parent)
 
 
 # The list lines of a composed block's coverage (`Alternatives.Wire.coverage`), each counted in the residual.
@@ -377,8 +413,8 @@ def _bind_document_answer(body, meta, declared, row, senses=None):
             set(row) == {"id", "status", "document_id", "source_id", "source", "units", "coverage"} |
             ({"judgments", "judgment_lines", "undeclared_evaluative"} if judged else set()) |
             ({"composed_readings"} if composed else set()) |
-            ({"cardinality"} if "cardinality" in row and "cardinality@0" in listed_profiles(meta.get("environment"))
-             else set()))
+            ({key for key in ("cardinality", "composed") if key in row}
+             if "cardinality@0" in listed_profiles(meta.get("environment")) else set()))
     if judged:
         require(_judgments_bound(row["judgments"], meta.get("open_terms", []), [u.get("id") for u, _ in declared]))
         require(_judgment_lines_bound(row["judgment_lines"], row["judgments"], meta.get("open_terms", []),
