@@ -32,12 +32,13 @@ Certificates: `NSD4a` under `rs1:1` (targets; W-1a's query) and `NSDq` under `[]
 ## Measurements
 
 - **Size** (`git diff --numstat a3454b6ba`, generated files and tool evidence out): SoftSupRun.lean 433, SoftSupRunExamples.lean
-  238, VE.lean 2, mutants.json ~20, this report ~75: ~770 (limit ~800, -sc-11c-asks3.md item 3); with the side tables
-  (trust-classes.json 161, assurance-manifest.json 31, trust-baseline.json 7): ~970.
+  235, VE.lean 2, mutants.json 19, this report 80: 769 (limit ~800, -sc-11c-asks3.md item 3); with the side tables
+  (trust-classes.json 161, assurance-manifest.json 31, trust-baseline.json 7): 968.
 - **Trust** (`tools/trust_map.py --check` against a3454b6ba598): PASS; K +0, S +0, tied +66, trusted +65, all SoftSupRun.lean
   (`sdScope` G[V]; `sdShared`, `sdAssumed`, `sdModel` D[V]); runners, route and `SDKind` C, counters G[R], fixtures T. Allowance
   "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-11c, 2026-10-18" (V +84, recorded before the ties); FOLLOW-UPS.md "## sc-11c".
-  Trust mutants (docs/rd-9/sc-11c/trust-mutants.json, `mac-pytest.sh --trustmut`): TRUSTMUT.
+  Trust mutants (docs/rd-9/sc-11c/trust-mutants.json, `mac-pytest.sh --trustmut`, HEAD 727edc27b): 108 KILLED, 0 SURVIVOR,
+  0 UNKNOWN (earlier sweeps' survivors fixed by the ties and fixtures above).
 - **Per case, never per piece**: `sup N.D` is built by `sdCaseOf` and again inside `supVocabulary`; `fill U` by `sdCaseOf` and
   inside `fillPremises` (approved bodies, once per case). Admission's search (cut 65) is admission's; `sdCaseOf` runs the cut-1025
   search once, after `routeOf`, `superposable` and `WellFormedU`. `SDCase.bind` encodes and hashes `premisesX` per certificate piece.
@@ -67,7 +68,7 @@ M11 the filling ignored (:124, :127, :142); M12 a scope's failing model reads `l
 ## Self-review against BUILDER-CHECKLIST
 
 1. N.A.: no relayed answer (nothing dispatches here; sc-11b's relay rows). 2. PASS: rows above; moves signed by the DRI. 3. PASS:
-seeded bugs KILLED (mutants.json); trust mutants TRUSTMUT. 4. N.A.: no Python or Rust product code. 5. N.A.: no relay binding
+14 seeded bugs KILLED (mutants.json); trust mutants 108 KILLED, 0 survivors. 4. N.A.: no Python or Rust product code. 5. N.A.: no relay binding
 (sc-11b). 6. PASS: the chain gates the final HEAD. 7. PASS: R16 allowance and FOLLOW-UPS row; no DELTA; no reserved signature.
 8. PASS: no user-visible change (:196 compares with `runSDKind`). 9. PASS: SELECT9. 10. PASS: the ties' theorems break under M5,
 M6, M6b; statements 11 + 15 exact; audit PASS. 11. PASS: over the work limit the route refuses (:196; the order is argued in
