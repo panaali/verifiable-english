@@ -15,7 +15,9 @@ import VE.Acts.LexicalProofs
 import VE.Acts.Read
 import VE.Acts.Readings
 import VE.Acts.Run
+import VE.Acts.Situation
 import VE.Acts.Sources
+import VE.Acts.SourcesProofs
 import VE.Acts.Specialise
 import VE.Acts.Table
 import VE.Acts.Wire
@@ -686,6 +688,10 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.Wire.joinedAct_read
 #print axioms VE.Acts.analyse_one
 #print axioms VE.Acts.applies_agree
+#print axioms VE.Acts.atomSituation_holds
+#print axioms VE.Acts.atomSituation_probe
+#print axioms VE.Acts.atomSituation_separated
+#print axioms VE.Acts.atomSituation_valid
 #print axioms VE.Acts.buildFast_eq
 #print axioms VE.Acts.build_eq_fast
 #print axioms VE.Acts.build_wf
@@ -694,6 +700,7 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.closed_cl
 #print axioms VE.Acts.closed_eq_fast
 #print axioms VE.Acts.closed_ok
+#print axioms VE.Acts.compareViews_complete
 #print axioms VE.Acts.compareViews_ok
 #print axioms VE.Acts.decides_tracks
 #print axioms VE.Acts.declaredOnce_mem
@@ -709,11 +716,13 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.elaborate_one_reading
 #print axioms VE.Acts.elaborate_unspec
 #print axioms VE.Acts.elaborate_wellFormed
+#print axioms VE.Acts.eq_of_perm_of_pairwise
 #print axioms VE.Acts.exists_child_tracks
 #print axioms VE.Acts.firstEqualPair_none
 #print axioms VE.Acts.firstsGo_empty
 #print axioms VE.Acts.firstsGo_eq
 #print axioms VE.Acts.firsts_filter
+#print axioms VE.Acts.forall₂_mem_left
 #print axioms VE.Acts.frameRules_ok
 #print axioms VE.Acts.framesOk_words
 #print axioms VE.Acts.getElem?_map_idxOf
@@ -749,6 +758,7 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.phraseReadings_length
 #print axioms VE.Acts.phraseReadings_nodup
 #print axioms VE.Acts.pick_forall₂
+#print axioms VE.Acts.pick_of_forall₂
 #print axioms VE.Acts.preds_bindAll
 #print axioms VE.Acts.readIn_many
 #print axioms VE.Acts.readIn_none
@@ -767,12 +777,17 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.readings_limit
 #print axioms VE.Acts.readings_nodup
 #print axioms VE.Acts.refsOk_preds
+#print axioms VE.Acts.rulePred_eq_some
 #print axioms VE.Acts.ruleReading_ok
 #print axioms VE.Acts.schema_ok
 #print axioms VE.Acts.schema_ranked
 #print axioms VE.Acts.selects_tracks
 #print axioms VE.Acts.sourceCheck_choices_le
+#print axioms VE.Acts.sourceCheck_complete
+#print axioms VE.Acts.sourceCheck_complete_needs_bound
+#print axioms VE.Acts.sourceCheck_eq
 #print axioms VE.Acts.sourceCheck_exact
+#print axioms VE.Acts.sourceExact_of_compare
 #print axioms VE.Acts.specPremises_plain
 #print axioms VE.Acts.specPremises_typed
 #print axioms VE.Acts.specialises_refl
