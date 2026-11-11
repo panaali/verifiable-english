@@ -23,6 +23,7 @@ module ResponseShape.Encoders.Discourse
 module ResponseShape.Encoders.Document
 module ResponseShape.Encoders.English
 module ResponseShape.Encoders.EnglishLean
+module ResponseShape.Encoders.EnglishStatement
 module ResponseShape.Encoders.Envelope
 module ResponseShape.Encoders.Family
 module ResponseShape.Encoders.Metered
@@ -62,6 +63,7 @@ module ResponseShape.Schemas.Discourse
 module ResponseShape.Schemas.Document
 module ResponseShape.Schemas.English
 module ResponseShape.Schemas.EnglishLean
+module ResponseShape.Schemas.EnglishStatement
 module ResponseShape.Schemas.Envelope
 module ResponseShape.Schemas.Environment
 module ResponseShape.Schemas.Evaluate
@@ -112,6 +114,7 @@ module VE.Acts.Faithful
 module VE.Acts.FaithfulExamples
 module VE.Acts.Grammar
 module VE.Acts.GrammarExamples
+module VE.Acts.Index
 module VE.Acts.Lexical
 module VE.Acts.LexicalBase
 module VE.Acts.LexicalExamples
@@ -119,6 +122,7 @@ module VE.Acts.LexicalProofs
 module VE.Acts.Linearize
 module VE.Acts.Meaning
 module VE.Acts.MeaningExamples
+module VE.Acts.ParseIndexExamples
 module VE.Acts.Read
 module VE.Acts.Readings
 module VE.Acts.ReadingsExamples
@@ -128,6 +132,7 @@ module VE.Acts.Run
 module VE.Acts.RunExamples
 module VE.Acts.Situation
 module VE.Acts.Sources
+module VE.Acts.SourcesProofs
 module VE.Acts.Specialise
 module VE.Acts.SpecialiseExamples
 module VE.Acts.Syntax
@@ -273,6 +278,7 @@ module VE.Commands.Steps
 module VE.Commands.StepsExamples
 module VE.Commands.StepsProofs
 module VE.Commands.Texts
+module VE.Commands.WebEnvMain
 module VE.Compose.Adjoin
 module VE.Compose.Content
 module VE.Compose.Contract
@@ -596,6 +602,8 @@ module VE.Readings.SoftSeparateExamples
 module VE.Readings.SoftSup
 module VE.Readings.SoftSupExamples
 module VE.Readings.SoftSupLabels
+module VE.Readings.SoftSupRun
+module VE.Readings.SoftSupRunExamples
 module VE.Readings.SoftSupWire
 module VE.Readings.SoftSupWireExamples
 module VE.Readings.SoftVerdicts
