@@ -134,7 +134,7 @@ through the pinned `Gate.decodeEnvelope`.
 <!-- BEGIN GENERATED DECODERS: python tools/assurance_manifest.py --write -->
 | File | File lines | Decoder lines | Ranges | File SHA-256 |
 |---|---:|---:|---|---|
-| `lean/VE/Acts/Decode.lean` | 265 | 265 | 1–265 | `1c31983a3502…` |
+| `lean/VE/Acts/Decode.lean` | 300 | 300 | 1–300 | `c0babad9b2bd…` |
 | `lean/VE/Acts/Lexical.lean` | 255 | 155 | 16–170 | `5248192e2469…` |
 | `lean/VE/Acts/Wire.lean` | 130 | 130 | 1–130 | `d4854cd536ae…` |
 | `lean/VE/Alternatives/Admission.lean` | 133 | 133 | 1–133 | `64cacbdf9eb6…` |
@@ -175,12 +175,12 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/EnglishGrammar/Run.lean` | 800 | 800 | 1–800 | `bcc1f80385cf…` |
 | `lean/VE/Json.lean` | 141 | 141 | 1–141 | `10dcb30ca301…` |
 | `lean/VE/NormDefaults/Admission.lean` | 368 | 368 | 1–368 | `ed661fb45dc3…` |
-| `lean/VE/NormDefaults/Layered.lean` | 484 | 484 | 1–484 | `0a96a2de151e…` |
+| `lean/VE/NormDefaults/Layered.lean` | 602 | 602 | 1–602 | `19eedcc9c6b7…` |
 | `lean/VE/NormDefaults/LayeredAdmission.lean` | 403 | 403 | 1–403 | `c32272bc4f3c…` |
 | `lean/VE/NormDefaults/LayeredEntail.lean` | 197 | 197 | 1–197 | `252900e276fa…` |
 | `lean/VE/NormDefaults/Replay.lean` | 436 | 436 | 1–436 | `d0d434a9801c…` |
 | `lean/VE/NormDefaults/Report.lean` | 529 | 529 | 1–529 | `20cab0ceb2cf…` |
-| `lean/VE/NormDefaults/Wire.lean` | 495 | 495 | 1–495 | `eabb8e4eb7fd…` |
+| `lean/VE/NormDefaults/Wire.lean` | 516 | 516 | 1–516 | `9876241865b7…` |
 | `lean/VE/Norms/Admission.lean` | 504 | 32 | 21–52 | `af7868f2baa2…` |
 | `lean/VE/Norms/Family.lean` | 506 | 506 | 1–506 | `9c2429084058…` |
 | `lean/VE/Norms/Flagged.lean` | 436 | 436 | 1–436 | `49bfe6c1255b…` |
@@ -195,7 +195,7 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Readings/SoftWire.lean` | 198 | 198 | 1–198 | `be33122a9a4d…` |
 | `lean/VE/Readings/SupFillWire.lean` | 302 | 302 | 1–302 | `e8d7e1dc2262…` |
 | `lean/VE/Readings/SupWire.lean` | 408 | 408 | 1–408 | `e78a7ee7db7d…` |
-| `lean/VE/Readings/UnspecifiedWire.lean` | 798 | 798 | 1–798 | `52b99f25af05…` |
+| `lean/VE/Readings/UnspecifiedWire.lean` | 798 | 798 | 1–798 | `4640089712d9…` |
 | `lean/VE/Readings/VerdictsWire.lean` | 1847 | 1847 | 1–1847 | `fedf217a0f31…` |
 | `lean/VE/Readings/Wire.lean` | 1059 | 1059 | 1–1059 | `59f17b191a3b…` |
 | `lean/VE/Rights/Admission.lean` | 471 | 471 | 1–471 | `1b43543b7e66…` |
@@ -235,7 +235,8 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Events/Chain.lean` | 206 | 206 | 1–206 | `766ad4455823…` |
 | `lean/VE/RightClauses/Wire.lean` | 230 | 230 | 1–230 | `75913d7b7704…` |
 | `lean/VE/EnglishGrammar/Norm/Run.lean` | 303 | 303 | 1–303 | `3ccffd316421…` |
-| **total** | | **45,074** | | |
+| `lean/VE/Readings/SoftSupRun.lean` | 436 | 436 | 1–436 | `30963e3cd469…` |
+| **total** | | **45,684** | | |
 <!-- END GENERATED -->
 
 Outside the decoder count: `lean/VE/Order/Surface.lean` (order text parser, `lean:order-surface-parser`), the runner
