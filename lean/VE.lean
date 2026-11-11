@@ -277,6 +277,7 @@ import VE.Acts.Decode
 import VE.Acts.DecodeExamples
 import VE.Acts.DecodeTwins
 import VE.Acts.Faithful
+import VE.Acts.ElaborateProofs
 import VE.Acts.FaithfulExamples
 import VE.Acts.GrammarExamples
 import VE.Acts.Grammar
