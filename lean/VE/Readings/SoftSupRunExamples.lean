@@ -74,7 +74,7 @@ def boundCert (c : SDCase) (X : List VE.Formula) (own : List Json) : Except Stri
 def A1 : List (String × Nat) := [("rs1", 1)]
 def X1 (c : SDCase) : List VE.Formula := slotUnder c.N.D A1 ++ supX c.N
 def certCase (c : SDCase) (X : List VE.Formula) (own : List Json := []) (conflict := certs4a) : SDM String := do
-  (·.compress) <$> runSDSup "t" "readings-certificate" c (caseJ [("assumed", toJson A1), ("conclusion", qJ),
+  (·.compress) <$> runSDSup "t" .certificate c (caseJ [("assumed", toJson A1), ("conclusion", qJ),
     ("conflict_certificates", conflict), ("certificate", ← boundCert c X own)])
 
 /-- `NSDq` (SoftSeparateExamples.lean, the Python fixture's JSON): one `Fill_T` premise; its five targets' traces under `[]`. -/
@@ -96,17 +96,18 @@ def scopes (c : SDCase) : SDM (List (List (String × List String) × List (Bool 
   let s2 ← sdScope c [] (Json.arr #[]) qJ (caseJ [conflict, ("countermodel", cm), ("model", mJ ["ve__bit__1__0", "c"])])
   let s3 ← sdScope c [] (Json.arr #[]) qJ (caseJ [("countermodel", cm), ("model", mJ ["ve__bit__1__0"])])
   let s4 ← sdScope c [] (Json.arr #[]) qJ (caseJ [conflict,
-    ("witness", caseJ [("witness", caseJ [("target", "x_required"), ("tuple", toJson ["a"])])])])
+    ("witness", caseJ [("witness", caseJ [("target", "x_required"), ("tuple", toJson ["a"])])]),
+    ("model", mJ ["ve__bit__1__0", "c"])])
   pure ([s1, s2, s3, s4].map fun s => (s.used, s.info.notes.map (fun n => (n.accepted, n.error.isSome, n.conditionalOn)),
     [s.info.conflict, s.info.query, s.info.premise], s.encoded.map (·.1)))
 
 def conflictJ (c : SDCase) (A : List (String × Nat)) (more : List (String × Json)) : SDM String :=
-  (·.compress) <$> runSDSup "t" "readings-conflict" c (caseJ ([("assumed", toJson A)] ++ more))
+  (·.compress) <$> runSDSup "t" .conflict c (caseJ ([("assumed", toJson A)] ++ more))
 def witnessJ (c : SDCase) (tuple : List String) : SDM String :=
   conflictJ c none' [("witness", caseJ [("model", model c []), ("filling", Json.mkObj []),
     ("target", "x_required->x_permitted"), ("tuple", toJson tuple)])]
 def modelJ (c : SDCase) (extra : List (String × Json)) : SDM String :=
-  (·.compress) <$> runSDSup "t" "readings-model" c (caseJ [("assumed", toJson A1),
+  (·.compress) <$> runSDSup "t" .model c (caseJ [("assumed", toJson A1),
     ("model", model c ["ve__bit__1__0"] extra), ("filling", Json.mkObj [])])
 def count (r : Except String α × SDCount) : SDCount := r.2
 def text (r : Except String String × SDCount) : String := match r.1 with | .ok a => a | .error e => e
@@ -118,6 +119,8 @@ and certificate pieces; a label replay per accepted piece with proofs; one label
 piece, none for the scope without (its conflict piece UNKNOWN, its witness refused and noted, never a verdict). The
 soft premises are shown by their choice labels (`shownWith_eq`), never `rd-2-`. -/
 
+-- The shown labels of `rs1:1`'s conflict and certificate (`used3`) are those of the trace Python's prover supplied: OPEN
+-- against W-1a's pin `["soft:coherence:must-x,need-not-x"]` (reviews/dri-decisions-20261110-sc-11c-asks3.md item 2, sc-11b).
 #guard count (run env4a doc4a scopes) == { admissions := 1, routes := 1, images := 3, replays := 2, checks := 3 }
 def used3 : List String :=
   ["readings:rs1@1:1:quiet", "soft:exception:must-x:sufficient:0", "soft:coherence:must-x,need-not-x"]
@@ -129,7 +132,8 @@ def used3 : List String :=
     [.unknown, .refuted, .unknown], ["countermodel"]),
   ([("countermodel", []), ("model", [])], [(true, false, []), (true, false, [])], [.unknown, .refuted, .model],
     ["countermodel", "model"]),
-  ([("conflict", [])], [(false, false, []), (false, true, [])], [.unknown, .unknown, .unknown], [])]
+  ([("conflict", []), ("model", [])], [(false, false, []), (false, true, []), (false, false, [])],
+    [.unknown, .unknown, .unknown], [])]
 -- `NSDq`'s conflict answer under `[]` rests on its `Fill_T` premise alone, replayed in the middle with the slot
 #guard (run envq docq fun c => (fun s => (s.used, s.info.notes.map (·.conditionalOn))) <$> sdScope c [] (Json.arr #[])
   .null (caseJ [("conflict", caseJ [("conflict_certificates", certsq)])])).1.toOption ==
@@ -155,6 +159,10 @@ def used3 : List String :=
 #guard text (run env4a doc4a fun c => conflictJ c none' [("conflict_certificates", certs4a)]) |>.endsWith "\"verdict\":\"UNKNOWN\"}"
 -- refused with today's texts: no candidate, a witness tuple of the wrong length, a model off the slot under `rs1:1`
 #guard text (run env4a doc4a fun c => conflictJ c [("rs1", 5)] []) == "InvalidInput: assumed reading is no candidate"
+#guard text (run env4a doc4a fun c => conflictJ c [("rs1", 0), ("rs1", 1)] []) ==
+  "ReadingsUnsatisfiable: no compatible reading takes rs1@1:0, rs1@1:1"
+#guard text (run env4a doc4a fun c => conflictJ c none' [("witness", caseJ [("model", model c []),
+  ("filling", Json.mkObj []), ("target", "nope"), ("tuple", toJson ["a"])])]) == "InvalidInput: unknown conflict target nope"
 #guard text (run env4a doc4a fun c => conflictJ c A1 [("witness", caseJ [("model", model c []), ("filling", Json.mkObj []),
   ("target", "x_required"), ("tuple", toJson ["a"])])]) == "InvalidModel(readings background): the model violates a background premise"
 
@@ -171,7 +179,7 @@ def big8 (c : SDCase) : SDM (Nat × List String) := do
   let b ← conflictJ c none' [("witness", caseJ [("model", model c []), ("filling", Json.mkObj []),
     ("target", "x_permitted"), ("tuple", toJson ["a"])])]
   let r ← attempt (witnessJ c ["a", "a"])
-  let m ← (·.compress) <$> runSDSup "t" "readings-model" c (caseJ [("assumed", toJson none'), ("model", model c []),
+  let m ← (·.compress) <$> runSDSup "t" .model c (caseJ [("assumed", toJson none'), ("model", model c []),
     ("filling", Json.mkObj [])])
   let s ← sdScope c [] (Json.arr #[]) .null (caseJ [("witness", caseJ [("witness", caseJ [("model", model c []),
     ("filling", Json.mkObj []), ("target", "x_required->x_permitted"), ("tuple", toJson ["a"])])])])
@@ -205,16 +213,23 @@ def big8 (c : SDCase) : SDM (Nat × List String) := do
 
 #guard text (run env4a doc4a fun c => modelJ c []) == "{\"assumed\":[[\"rs1\",1]],\"choice\":[[\"rs1\",1]]," ++
   "\"conclusion_value\":false,\"first_failing\":null,\"id\":\"t\",\"status\":\"ok\",\"valid\":true}"
-#guard text (run env4a doc4a fun c => (·.compress) <$> runSDSup "t" "readings-model" c (caseJ [("assumed", toJson A1),
+#guard text (run env4a doc4a fun c => (·.compress) <$> runSDSup "t" .model c (caseJ [("assumed", toJson A1),
   ("model", model c []), ("filling", Json.mkObj [])])) |>.endsWith "\"first_failing\":\"readings:rs1:1\",\"id\":\"t\",\"status\":\"ok\",\"valid\":false}"
-#guard text (run env4a doc4a fun c => (·.compress) <$> runSDSup "t" "readings-model" c (caseJ [("assumed", toJson A1),
-  ("model", model c ["ve__bit__1__0", "c"]), ("filling", Json.mkObj [])])) |>.endsWith
-    "\"first_failing\":\"soft:exception:must-x:sufficient:0\",\"id\":\"t\",\"status\":\"ok\",\"valid\":false}"
--- an `unsaid__` table in `relations` is refused by the model decoder (F-SD8); another kind is refused as today
+-- a soft premise named by its choice label, through one counted label image
+#guard match run env4a doc4a fun c => (·.compress) <$> runSDSup "t" .model c (caseJ [("assumed", toJson A1),
+    ("model", model c ["ve__bit__1__0", "c"]), ("filling", Json.mkObj [])]) with
+  | (.ok a, k) => k.images == 1 &&
+    a.endsWith "\"first_failing\":\"soft:exception:must-x:sufficient:0\",\"id\":\"t\",\"status\":\"ok\",\"valid\":false}"
+  | _ => false
+-- an inadmissible model (a tuple of the wrong sort) is refused by the model decoder
+#guard text (run env4a doc4a fun c => modelJ c [("c", parse "[[\"h\"]]")]) == "dangling or wrong-sort tuple"
+-- an `unsaid__` table in `relations` is refused by the model decoder (F-SD8) 
 #guard text (run env4a doc4a fun c => modelJ c [("unsaid__y_permitted", Json.arr #[])]) ==
   "fields do not match: expected [soft__excepted__need_not_x, soft__excepted__rd_2_must_x, ve__bit__1__0, c], " ++
     "got [c, soft__excepted__need_not_x, soft__excepted__rd_2_must_x, unsaid__y_permitted, ve__bit__1__0]"
-#guard text (run env4a doc4a fun c => (·.compress) <$> runSDSup "t" "readings-elaborate" c (caseJ [])) ==
-  "UnsupportedProfile: case kind readings-elaborate is not available on the readings route"
+-- a query naming a decision predicate of one reading is outside `sharedEnvSD N` (14.3), refused by the decoder
+#guard text (run env4a doc4a fun c => (·.compress) <$> runSDSup "t" .certificate c (caseJ [("assumed", toJson A1),
+  ("conclusion", parse "[\"forall\",\"assistant\",[\"unary\",\"soft__excepted__rd_2_must_x\",[\"var\",0]]]")])) ==
+  "ill-typed or unbound conclusion"
 
 end VE.Readings.SoftSupRunExamples
