@@ -34,7 +34,6 @@
 - `tests/test_properties.py` — (no module docstring)
 - `tests/test_propose.py` — Version 1 proposal acceptance, ambiguity boundaries, and adoption isolation.
 - `tests/test_ps_e1.py` — PS-E1 pre-call audit, scorer boundaries, runner caps and saved evidence.
-- `tests/test_purposes_contract.py` — The `purposes@0` wire table in shadow (sa-wire-purposes0): `VE.Purposes.Wire`'s decoder still decides; the contract names spec 7.1's row (and 7.2's row 2) of a…
 - `tests/test_question_answering_measure_report.py` — F4: published numbers must agree with captured measurements and fixtures.
 - `tests/test_question_answering_q2_report.py` — Question answering Q2's report numbers come from its saved evidence (docs/spec/question-answering-q2/evidence/), never from live git: the generated block of RE…
 - `tests/test_question_answering_readability.py` — Plan Q2.6: the sealed reading and writing evaluation of `ve ask` (docs/question-answering/q2-6/readability/) is the builder's from saved answers only, its mani…
@@ -80,3 +79,5 @@
 - `tests/test_readings_rd5_plain_probe.py` — A pair separated on a plain regulated predicate gets E24 (readings-defaults RD-5).
 - `tests/test_readings_rd5_udhr.py` — RD-5 behavior tests: copy declarations, reproduce the migrated UDHR, and replay witnesses through Lean.
 - `tests/test_readings_rd6b_differential.py` — RD-6b: 200 generated norms-chain documents under the completion, the superposed route against the retained enumerated oracle (plan RD-6b, fixtures; review B5 o…
+- `tests/test_readings_route_fuzz.py` — Lean's readings answers fuzzed against the route's check (lf-3 review B1 and B2, build checklist 4 and 5).
+- `tests/test_readings_route_relay.py` — The readings route relays Lean (docs/LEAN-FIRST-PLAN.md rule 2, lean-first batch 3).
