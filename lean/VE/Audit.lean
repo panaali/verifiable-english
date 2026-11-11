@@ -5264,6 +5264,7 @@ import VE.WireContract.Engine
 #print axioms VE.Readings.Wire.admissionText_of_stage
 #print axioms VE.Readings.Wire.admitDecoded_ok
 #print axioms VE.Readings.Wire.admitReadings_eq
+#print axioms VE.Readings.Wire.admitSDOf_texts
 #print axioms VE.Readings.Wire.anyF_eval
 #print axioms VE.Readings.Wire.arr_of_get
 #print axioms VE.Readings.Wire.attachedIter_links

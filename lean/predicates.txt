@@ -605,6 +605,7 @@ module VE.Readings.SoftSupWire
 module VE.Readings.SoftSupWireExamples
 module VE.Readings.SoftVerdicts
 module VE.Readings.SoftWire
+module VE.Readings.SoftWireExamples
 module VE.Readings.Stage
 module VE.Readings.Strings
 module VE.Readings.SupAll

@@ -34566,6 +34566,14 @@ theorem VE.Readings.Wire.admitReadings_eq
     VE.Readings.Wire.admitReadings environment document = VE.Readings.Wire.admitReadingsSpec environment document
   -- uses VE.Readings.Wire.Admitted@VE.Readings.Wire VE.Readings.Wire.admitReadings@VE.Readings.Wire VE.Readings.Wire.admitReadingsSpec@VE.Readings.Wire
   -- expr 1881383589
+theorem VE.Readings.Wire.admitSDOf_texts
+  ∀ {b : VE.Readings.Wire.Admitted2} {r : VE.Readings.Wire.AdmittedSD},
+    VE.Readings.Wire.admitSDOf b = Except.ok r →
+      (VE.Readings.choices r.N.D).length ≤ VE.Readings.maxChoices →
+        ∀ (c : VE.Readings.Choice),
+          c ∈ VE.Readings.choices r.N.D → VE.Readings.Wire.sdChoiceText r.b.a.re r.N c = Option.none
+  -- uses VE.Readings.Choice@VE.Readings.Choice VE.Readings.NDoc.D@VE.Readings.Unspecified VE.Readings.Wire.Admitted.re@VE.Readings.Wire VE.Readings.Wire.Admitted2.a@VE.Readings.SupWire VE.Readings.Wire.Admitted2@VE.Readings.SupWire VE.Readings.Wire.AdmittedSD.N@VE.Readings.SoftWire VE.Readings.Wire.AdmittedSD.b@VE.Readings.SoftWire VE.Readings.Wire.AdmittedSD@VE.Readings.SoftWire VE.Readings.Wire.admitSDOf@VE.Readings.SoftWire VE.Readings.Wire.sdChoiceText@VE.Readings.SoftWire VE.Readings.choices@VE.Readings.Choice VE.Readings.maxChoices@VE.Readings.Choice
+  -- expr 98233724
 theorem VE.Readings.Wire.anyF_eval
   ∀ {α : Type} [inst : DecidableEq α] (M : VE.FiniteModel α) (ρ : List α) (l : List VE.Formula),
     VE.Formula.eval M ρ (VE.Norms.anyF l) = l.any fun x => VE.Formula.eval M ρ x

@@ -47,6 +47,7 @@
 - `lean/VE/Readings/SoftSupWireExamples.lean` — SC-11's fixtures (docs/spec/rd-9-soft-chain.md 14.9), each value computed here by `#guard`: the label mapping on W-2 to W-4 (`labelImage`, `sdShown`, `fillLabe…
 - `lean/VE/Readings/SoftVerdicts.lean` — `readings-verdicts` under the soft completion (docs/spec/rd-9-soft-chain.md 4.4 and 6.9; plan SC-5).
 - `lean/VE/Readings/SoftWire.lean` — The wire under the soft completion (docs/spec/rd-9-soft-chain.md 1.1, 3, 4.1 to 4.3 and 6.8; plan SC-4).
+- `lean/VE/Readings/SoftWireExamples.lean` — sc-admit-cpu's fixtures (docs/rd-9/sc-admit-cpu/cpu.md; DRI 2026-11-11 sc-admit-cpu item 3): admission's charge `sdAdmitWork N ≤ maxSdAdmitWork`, read before t…
 - `lean/VE/Readings/Stage.lean` — Stage markers of the readings admission (reviews/dri-decisions-20261029-scale-admission-profile.md item 2).
 - `lean/VE/Readings/Strings.lean` — Prefixes of strings of one-byte characters (docs/spec/composition-s2.md 8.3: `copyCites` and the reserved names).
 - `lean/VE/Readings/SupAll.lean` — ALL under `A` (docs/spec/composition-s2.md 4.5, 8.4 `superpose_all`, `superpose_all_base`).
@@ -71,4 +72,3 @@
 - `lean/VE/Readings/Unspecified.lean` — `fill` on a readings document and separation under the completion (docs/spec/readings-defaults.md 1.2 to 1.5 and 6.2; plan RD-1).
 - `lean/VE/Readings/UnspecifiedExamples.lean` — The fixtures of RD-1 (docs/spec/readings-defaults.md 8.1) and RD-2a's admission limits (8.3: F-ND4, F-ND5, F-ND10), each a `#guard` on `fillDoc` and on separat…
 - `lean/VE/Readings/UnspecifiedWire.lean` — The wire under the unspecified completion (docs/spec/readings-defaults.md 1.1, 3, 4.1 to 4.3, 5 and 6.3; plan RD-2a).
-- `lean/VE/Readings/UpPremises.lean` — The lifted base satisfies `sup D`'s exception and coherence premises (docs/spec/composition-s2.md 8.4 `base_up`).

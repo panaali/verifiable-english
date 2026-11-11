@@ -1,1 +1,3 @@
 - `docs/rd-9/sc-11w/cpu_bench.lean` — (no module docstring)
+- `docs/rd-9/sc-admit-cpu/admit_bench.lean` — (no module docstring)
+- `docs/rd-9/sc-admit-cpu/admit_docs.py` — sc-admit-cpu: the soft-chain documents of docs/rd-9/sc-11/w13-cpu.md and docs/rd-9/sc-11w/cpu.md as readings@1 requests (environment and document JSON), for `a…

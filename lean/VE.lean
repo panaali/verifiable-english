@@ -19,6 +19,7 @@ import VE.Readings.SoftSupExamples
 import VE.Readings.SoftSupLabels
 import VE.Readings.SoftSupWire
 import VE.Readings.SoftSupWireExamples
+import VE.Readings.SoftWireExamples
 import VE.Closure.OrderChecks
 import VE.Grammar.TableProofs
 import VE.Grammar.Meaning

@@ -4749,6 +4749,7 @@
 'VE.Readings.Wire.admissionText_of_stage' depends on axioms: [propext, Quot.sound]
 'VE.Readings.Wire.admitDecoded_ok' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Readings.Wire.admitReadings_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Readings.Wire.admitSDOf_texts' depends on axioms: [propext, Quot.sound]
 'VE.Readings.Wire.anyF_eval' depends on axioms: [propext]
 'VE.Readings.Wire.arr_of_get' depends on axioms: [propext]
 'VE.Readings.Wire.attachedIter_links' depends on axioms: [propext]

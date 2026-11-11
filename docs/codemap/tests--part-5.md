@@ -47,6 +47,7 @@
 - `tests/test_question_reading.py` — Q1 end to end: a question read by Lean's `english.question` (docs/spec/question-answering.md 4.1, 7, 8).
 - `tests/test_question_reverse.py` — The reverse question corpus of Q1.3 (`conformance/question_reverse.py`, docs/spec/question-answering-PLAN.md Q1.3) on a small fixed slice: the builder of each …
 - `tests/test_question_statements.py` — The Q2 declarations (`lean/VE/Ask`, `lean/VE/Words`) against the approved text of docs/spec/question-answering.md 5.2 (build checklist 17), by `tools/question_…
+- `tests/test_rd9_admit_charge.py` — sc-admit-cpu: admission's per-reading charge on the wire (DRI 2026-11-11 sc-admit-cpu item 3; spec rd-9 4.1 step 5, 14.11).
 - `tests/test_rd9_chain_relay.py` — The readings route's chain is Lean's, relayed (review F25 of rd-9, DRI condition B1(d); DRI ruling R8).
 - `tests/test_rd9_docroute.py` — The small soft-chain document has the pilot probe's profiles, a soft rule and a claim graph.
 - `tests/test_rd9_dri_signatures.py` — The DRI's rd-9 signatures, recorded (review F27 of rd-9; manage-agents/reviews/rd-9-dri-signatures-20261015.md).
@@ -80,4 +81,3 @@
 - `tests/test_readings_memo.py` — Process-local readings admission memo through the real Lean service and Python relay.
 - `tests/test_readings_nd_document.py` — Readings under the unspecified completion through `ve document` (readings-defaults plan RD-2b; spec 3, 4.2, 4.3).
 - `tests/test_readings_nd_lean.py` — Readings under the unspecified completion through the Lean service (docs/spec/readings-defaults.md 8.3; plan RD-2a).
-- `tests/test_readings_rd5_plain_probe.py` — A pair separated on a plain regulated predicate gets E24 (readings-defaults RD-5).
