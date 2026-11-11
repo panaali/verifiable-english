@@ -17,7 +17,8 @@ if __name__ == "__main__":
 import build_document as B
 import pf_translation as T
 
-EVIDENCE = Path(__file__).with_name("quote-hashes.json")
+EVIDENCE = (PF.parents[1] / "docs/usecases/openai-preparedness/openai-preparedness-fidelity-fix"
+            / "quote-hashes.json")
 
 
 def plain(text):
