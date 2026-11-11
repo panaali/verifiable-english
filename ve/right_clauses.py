@@ -12,14 +12,15 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import json
-import re
 
 from .backends.lean_service import CheckerUnavailable
+from .backends.service_schema import same_json
 
 PROFILE = "right-clauses@0"
 MODE = "clauses-elaborate"
 _BODIES = ("right", "right_lines")
-_ROLE = re.compile(r"(.+):(necessary|sufficient)", re.DOTALL)
+_HEAD = ("elided", "clauses", "relation")
+_RELATION = "rights:relation:"
 
 
 @dataclass(frozen=True)
@@ -37,21 +38,61 @@ def elaborate(environment: dict, document: list) -> Elaboration:
     """Lean's head on one document; a refusal raises Lean's diagnostic (`relay.decide`)."""
     from .backends.relay import decide
     [row] = decide(MODE, [{"id": "clauses", "environment": environment, "document": document}])
-    return bind(row["result"], document)
+    return bind(row["result"], document, environment)
 
 
 def _unbound(what: str) -> CheckerUnavailable:
     return CheckerUnavailable(f"CheckerUnavailable: Lean's {MODE} answer {what}")
 
 
-def _bodies(units: list) -> list:
-    """Each unit's (body key, its lines' rule names), `None` for a unit without a rights body."""
+def _lines(unit) -> tuple:
+    """A unit's rights body key and its lines, as Wire.lean's `unitBody` picks them (`right` first); `None` lines when
+    the unit has no such body or its lines are no array."""
+    key = next((k for k in _BODIES if type(unit) is dict and k in unit), None)
+    body = unit[key] if key else None
+    lines = body.get("lines") if type(body) is dict else None
+    return key, lines if type(lines) is list else None
+
+
+def _with_lines(unit: dict, key: str, lines: list) -> dict:
+    return {**unit, key: {**unit[key], "lines": lines}}
+
+
+def _structured(line) -> bool:
+    """A request line whose norm guard Lean rewrites: clauses or a relation (Wire.lean `plainLineJson`)."""
+    clauses = line.get("clauses") if type(line) is dict else None
+    return bool(type(clauses) is list and clauses) or (type(line) is dict and line.get("relation") is not None)
+
+
+def _masked(line, structured: bool):
+    """The line with its norm guard left out when it is Lean's (`elaborate_plain` ties it to the line's clauses)."""
+    norm = line.get("norm") if type(line) is dict else None
+    return {**line, "norm": {**norm, "guard": None}} if structured and type(norm) is dict and "guard" in norm else line
+
+
+def _request_plained(document: list) -> list:
+    """The request as Lean's plain writes it (Wire.lean `elaborateJson`), structured guards left out: each unit without
+    `span`, each line of its rights body without the head's keys."""
     out = []
-    for unit in units:
-        key = next((k for k in _BODIES if type(unit) is dict and type(unit.get(k)) is dict), None)
-        lines = unit[key].get("lines") if key else None
-        out.append(None if key is None or type(lines) is not list else
-                   (key, [_rule(line) for line in lines]))
+    for unit in document:
+        unit = {k: v for k, v in unit.items() if k != "span"} if type(unit) is dict else unit
+        key, lines = _lines(unit)
+        if lines is not None:
+            unit = _with_lines(unit, key, [_masked({k: v for k, v in line.items() if k not in _HEAD}, _structured(line))
+                                           if type(line) is dict else line for line in lines])
+        out.append(unit)
+    return out
+
+
+def _answer_plained(units: list, document: list) -> list:
+    """Lean's plained units, the guards of the request's structured lines left out (nothing else is dropped)."""
+    out = []
+    for unit, asked in zip(units, document):
+        key, lines = _lines(unit)
+        asked_lines = _lines(asked)[1]
+        if lines is not None and asked_lines is not None and len(lines) == len(asked_lines):
+            unit = _with_lines(unit, key, [_masked(line, _structured(a)) for line, a in zip(lines, asked_lines)])
+        out.append(unit)
     return out
 
 
@@ -68,53 +109,49 @@ def _totals(document: list) -> list:
     """The request's rule names whose relation has `total` set, in document order."""
     out = []
     for unit in document:
-        for key in _BODIES:
-            body = unit.get(key) if type(unit) is dict else None
-            for line in (body.get("lines", []) if type(body) is dict and type(body.get("lines")) is list else []):
-                relation = line.get("relation") if type(line) is dict else None
-                if type(relation) is dict and relation.get("total") is not None:
-                    out.append(_rule(line))
+        for line in _lines(unit)[1] or []:
+            relation = line.get("relation") if type(line) is dict else None
+            if type(relation) is dict and relation.get("total") is not None:
+                out.append(_rule(line))
     return out
 
 
-def _limitations(document: list) -> dict:
-    """The request's limitation names, each with its conditions' names."""
-    out = {}
+def _limitation_bound(label: str, document: list, environment) -> bool:
+    """`rights:limitation:<L>:<act>:<role>:<c>`: `L` a request limitation, `act` a declared predicate, `c` one of `L`'s
+    conditions with role `role` (as ve.rights_route binds the rights route's limitation premises)."""
+    parts = label.split(":", 5)
+    vocabulary = environment.get("vocabulary") if type(environment) is dict else None
+    predicates = vocabulary.get("predicates") if type(vocabulary) is dict else None
+    if len(parts) != 6 or parts[:2] != ["rights", "limitation"] or type(predicates) is not dict or \
+            parts[3] not in predicates or parts[4] not in ("necessary", "sufficient"):
+        return False
     for unit in document:
         body = unit.get("limitation") if type(unit) is dict else None
-        if type(body) is dict and type(body.get("name")) is str and type(body.get("conditions")) is list:
-            out[body["name"]] = {c.get("name") for c in body["conditions"] if type(c) is dict}
-    return out
-
-
-def _limitation_bound(label: str, limitations: dict) -> bool:
-    """`rights:limitation:<L>:<act>:<necessary|sufficient>:<c>` with `L` a request limitation and `c` its condition."""
-    for name, conditions in limitations.items():
-        head = f"rights:limitation:{name}:"
-        for condition in conditions:
-            tail = f":{condition}"
-            if (type(condition) is str and label.startswith(head) and label.endswith(tail)
-                    and len(label) > len(head) + len(tail) and _ROLE.fullmatch(label[len(head):-len(tail)])):
-                return True
+        if type(body) is dict and body.get("name") == parts[2] and type(body.get("conditions")) is list and any(
+                type(c) is dict and c.get("name") == parts[5] and c.get("role") == parts[4] for c in body["conditions"]):
+            return True
     return False
 
 
-def bind(result: dict, document: list) -> Elaboration:
-    """R8's binding of a schema-checked `clauses-elaborate` result to the request's document."""
+def bind(result: dict, document: list, environment: dict) -> Elaboration:
+    """R8's binding of a schema-checked `clauses-elaborate` result to the request. The plained document is the
+    request's, unit for unit and line for line, less what Lean's plain drops, but for the guards of structured lines.
+    The slot is `Lim_{plain D} ++ Rel_D` (1.3): limitation premises first, each naming a request limitation, one of
+    its conditions with its role and a declared act; then one totality premise per total relation of the request, in
+    its order. Which lines a limitation scopes is Lean's (rights' scope), so how many `Lim` rows there are, and
+    whether a label repeats (cmp-s3's `cxDoc`, reviews/dri-decisions-20261104-cmp-s3.md Q3), is not bound here."""
     try:
         units = json.loads(result["plained"])
-    except ValueError:
+    except (ValueError, RecursionError):
         raise _unbound("plained no JSON document") from None
-    if type(units) is not list or type(document) is not list or len(units) != len(document):
-        raise _unbound("plained other units than the request's")
-    if _bodies(units) != _bodies(document):
-        raise _unbound("plained other lines than the request's")
+    if type(units) is not list or type(document) is not list or len(units) != len(document) or \
+            not same_json(_answer_plained(units, document), _request_plained(document)):
+        raise _unbound("plained another document than the request's")
     rows = [(row["label"], row["ast"]) for row in result["clause_slot"]]
-    relations = [label for label, _ in rows if label.startswith("rights:relation:")]
-    if relations != [f"rights:relation:{rule}:total" for rule in _totals(document)]:
-        raise _unbound("names other totality premises than the request's total relations")
-    limitations = _limitations(document)
-    for label, _ in rows:
-        if not label.startswith("rights:relation:") and not _limitation_bound(label, limitations):
+    first = next((i for i, (label, _) in enumerate(rows) if label.startswith(_RELATION)), len(rows))
+    if [label for label, _ in rows[first:]] != [f"{_RELATION}{rule}:total" for rule in _totals(document)]:
+        raise _unbound("names other totality premises than the request's total relations, or not last")
+    for label, _ in rows[:first]:
+        if not _limitation_bound(label, document, environment):
             raise _unbound(f"names a premise {label!r} of no limitation condition in the request")
     return Elaboration(result["plained"], tuple(rows))
