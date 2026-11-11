@@ -1,0 +1,34 @@
+{
+ "item": "rights-cfr-2-budget-1",
+ "route": "rights-conflict (ve_rights_route)",
+ "base": "main f3f40d51dc (lean/VE/Rights/Run.lean conflictAnswerOf), measured before any edit",
+ "rulings": {
+  "exhibited text": "R1",
+  "count gloss": "R3"
+ },
+ "unchanged_fields": [
+  "verdict",
+  "conditional_on",
+  "weighing_points",
+  "situation_exhibited",
+  "budget",
+  "situation",
+  "targets"
+ ],
+ "records": [
+  {
+   "fixture": "WEIGHED, no situation",
+   "situation": false,
+   "path": "status_text",
+   "base": "CONFLICT-FREE among rules on the same act, conditional on 1 coherence premises and 2 limitation premises (soft:coherence:may-detain,no-arbitrary-arrest, rights:limitation:l29:arrest_permitted:necessary:determined_by_law, rights:limitation:l29:arrest_permitted:sufficient:diplomatic_immunity); 1 weighing points open; situation exhibited: UNKNOWN (budget 10000)",
+   "head": "CONFLICT-FREE among rules on the same act, conditional on 1 coherence premises and 2 limitation premises (soft:coherence:may-detain,no-arbitrary-arrest, rights:limitation:l29:arrest_permitted:necessary:determined_by_law, rights:limitation:l29:arrest_permitted:sufficient:diplomatic_immunity); 1 weighing points open (colliding default pairs no ranking resolves); situation exhibited: none supplied (not searched; budget 10000 unused)"
+  },
+  {
+   "fixture": "WEIGHED, situation supplied",
+   "situation": true,
+   "path": "status_text",
+   "base": "CONFLICT-FREE among rules on the same act, conditional on 1 coherence premises and 2 limitation premises (soft:coherence:may-detain,no-arbitrary-arrest, rights:limitation:l29:arrest_permitted:necessary:determined_by_law, rights:limitation:l29:arrest_permitted:sufficient:diplomatic_immunity); 1 weighing points open; situation exhibited: yes",
+   "head": "CONFLICT-FREE among rules on the same act, conditional on 1 coherence premises and 2 limitation premises (soft:coherence:may-detain,no-arbitrary-arrest, rights:limitation:l29:arrest_permitted:necessary:determined_by_law, rights:limitation:l29:arrest_permitted:sufficient:diplomatic_immunity); 1 weighing points open (colliding default pairs no ranking resolves); situation exhibited: yes"
+  }
+ ]
+}

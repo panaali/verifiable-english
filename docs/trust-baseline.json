@@ -2469,6 +2469,90 @@
    "reason": "sc-7-f11: lean/VE/Scope/Authoring.lean V +22 (new: Pinned.allowed +4, Pinned.follower +6, Pinned.charRef +7, each with its blank line; Pinned.clause +5: the inside-a-word follower rule, the charRef conjunct and its docstring); K +0, S +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-7-f11, 2026-11-10",
    "commit": "f3f40d51dc6dfffeb57834ee5652ff7b514eaeed"
+  },
+  {
+   "class": "V",
+   "lines": 109,
+   "reason": "ps-2ac: VE/Presupposition/Run.lean V +109 (G[V] untied: the presuppositions report value Outcome, Line, Goal, Row, Shown, Inconsistency, lexiconOk, lineOf, englishLine, outcomeOf, checkedRow, docPremise, refutedLines, shownOf, shown); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ps-2ac, 2026-10-18",
+   "commit": "a5088a09b523154f4024db96fe636c92689a9b97"
+  },
+  {
+   "class": "S",
+   "lines": 16,
+   "reason": "cmp-s3-cfr-1: S +16 lean/VE/RightClauses/Wire.lean (NoClauseKeys, NoReadingSets, PlainOnWire); V +121: Wire.lean +77 (the clause, relation and elided readers), Run.lean +29 (the clauses-elaborate case), Compose/Dispatch.lean +11 (environmentWrappers, withoutClauses, environmentRows), ResponseShape Skeletons +2, Schemas +1, Service Registry +1, Protocol +1, Standalone -1; K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s3-cfr-1, 2026-10-18",
+   "commit": "6db6ee16ddb10f843b396b78299a980abc43fefb"
+  },
+  {
+   "class": "V",
+   "lines": 121,
+   "reason": "cmp-s3-cfr-1: S +16 lean/VE/RightClauses/Wire.lean (NoClauseKeys, NoReadingSets, PlainOnWire); V +121: Wire.lean +77 (the clause, relation and elided readers), Run.lean +29 (the clauses-elaborate case), Compose/Dispatch.lean +11 (environmentWrappers, withoutClauses, environmentRows), ResponseShape Skeletons +2, Schemas +1, Service Registry +1, Protocol +1, Standalone -1; K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s3-cfr-1, 2026-10-18",
+   "commit": "6db6ee16ddb10f843b396b78299a980abc43fefb"
+  },
+  {
+   "class": "S",
+   "lines": 105,
+   "reason": "ps-3: VE/Presupposition/Couple.lean S +105 (K +0, V +0; tied +26)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ps-3, 2026-11-10",
+   "commit": "c94ad399b7b1f6804c12fbc555a5758d5e971ae6"
+  },
+  {
+   "class": "V",
+   "lines": 64,
+   "reason": "sa-wire-purposes0: VE/WireContract/Hooks/Purposes.lean +61, VE/WireContract/Tables/Purposes.lean +2, VE/WireContract/Diagnose.lean +1 (V +64, K +0, S +0)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sa-wire-purposes0, 2026-10-18",
+   "commit": "1ee886ca05d28e36bcefd923208a9d3b6a0f11d0"
+  },
+  {
+   "class": "S",
+   "lines": 1,
+   "reason": "qt-a4b: K +0, S +1, V +115 (trusted +116): VE/Service/Document.lean +87, VE/Cardinality/Wire.lean +14, VE/Compose/Dispatch.lean +8 (S +1, V +7), ResponseShape/Schemas/Document.lean +5, VE/Compose/ProfilesMain.lean +2; the restated gate and list check under reviews/dri-decisions-20261105-qt-a4b.md items 1-2",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a4b, 2026-10-18",
+   "commit": "e9a6ec8d5938051a70116918e34fc3cd92aac16e"
+  },
+  {
+   "class": "V",
+   "lines": 115,
+   "reason": "qt-a4b: K +0, S +1, V +115 (trusted +116): VE/Service/Document.lean +87, VE/Cardinality/Wire.lean +14, VE/Compose/Dispatch.lean +8 (S +1, V +7), ResponseShape/Schemas/Document.lean +5, VE/Compose/ProfilesMain.lean +2; the restated gate and list check under reviews/dri-decisions-20261105-qt-a4b.md items 1-2",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a4b, 2026-10-18",
+   "commit": "e9a6ec8d5938051a70116918e34fc3cd92aac16e"
+  },
+  {
+   "class": "V",
+   "lines": 13,
+   "reason": "qt-a4b review F1/F2: V +13 above the existing +115 allowance: VE/Service/Document.lean +13 for readingText and chainDocument (one definition of the chain's request text, always there) and the parent argument of check; chainBound is D[R]. qt-a4b total K +0, S +1, V +128 (trusted +129), within the R16 150-line cap",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a4b review F1/F2, 2026-11-09",
+   "commit": "e9a6ec8d5938051a70116918e34fc3cd92aac16e"
+  },
+  {
+   "class": "V",
+   "lines": 14,
+   "reason": "rights-cfr-2-budget-1: VE/Rights/Run.lean +9 V (exhibitedText, weighingGloss, conflictBudget/conflictAnswerOf docstrings), VE/SoftNorms/Run.lean +5 V (conflictFreeText, openAfterClassification on Wire.openCoherence); K +0, S +0; each new definition exercised by a #guard that fails on its seeded bug (RightsChecks.lean :61, :62, :66; SoftNorms/Run.lean :127)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), rights-cfr-2-budget-1, 2026-11-10",
+   "commit": "f3f40d51dc6dfffeb57834ee5652ff7b514eaeed"
+  },
+  {
+   "class": "V",
+   "lines": 32,
+   "reason": "rights-cfr-1: VE/Service/Document.lean +26 (rightsNormalForm), VE/SoftNorms/Wire.lean +6 (softDefault, factored out of canonicalNorm); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), rights-cfr-1, 2026-11-09",
+   "commit": "6db6ee16ddb10f843b396b78299a980abc43fefb"
+  },
+  {
+   "class": "V",
+   "lines": 2,
+   "reason": "rights-cfr-1 review F2: V +2 beyond prior R16 allowance; Lean rightsMeaningId replaces the deleted Python rights normalizer and digest path (final per-file V: Rights/Wire +27, SoftNorms/Wire +6, Service/Document +1)",
+   "signature": "SIGNED by standing ruling R6 (DRI-RULINGS.md), rights-cfr-1, 2026-11-09",
+   "commit": "6db6ee16ddb10f843b396b78299a980abc43fefb"
+  },
+  {
+   "class": "V",
+   "lines": 1,
+   "reason": "rights-cfr-1 review F2: the identity schema kind binds the new Lean-owned rights identity relay, which replaces the deleted Python normalizer and digest path",
+   "signature": "SIGNED by standing ruling R6 (DRI-RULINGS.md), rights-cfr-1 review F2 identity schema, 2026-11-09",
+   "commit": "6db6ee16ddb10f843b396b78299a980abc43fefb"
   }
  ]
 }

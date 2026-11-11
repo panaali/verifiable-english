@@ -35,7 +35,7 @@ def checkBodyChecked (j : Json) : Except String (String × Checked) := do
     | .error _ => pure true
   let lexicon := (j.getObjVal? "lexicon").toOption
   pure (id, ← check text withGraph lexicon (j.getObjVal? "packs").toOption (j.getObjVal? "units").toOption
-    (j.getObjVal? "reading_sets").toOption)
+    (j.getObjVal? "reading_sets").toOption (j.getObjVal? "chain_of").toOption)
 
 /-- `checkCore`'s run, typed: the case id and the checked document (`checkCoreChecked_encode`). -/
 def checkCoreChecked (j : Json) : Except String (String × Checked) :=
@@ -240,7 +240,7 @@ theorem encode_units (id : String) (c : Checked) :
     (encode id c).getObjValD "units" = toJson (c.rows.map unitJson) ∧
       (encode id c).getObjValD "source" = .str c.source := by
   unfold encode VE.Route.Wire.ok
-  cases c.judgments <;> cases c.cardinality <;> exact ⟨rfl, rfl⟩
+  cases c.judgments <;> cases c.cardinality <;> cases c.composed <;> exact ⟨rfl, rfl⟩
 
 theorem toJson_jsons (l : List Json) : toJson l = Json.arr l.toArray := by
   show Json.arr (l.toArray.map toJson) = _
