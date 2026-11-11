@@ -30,8 +30,11 @@ STAGED = {"RouteFacts": ('| ["acts@0", "scope@0"] =>', "| _ => False")}
 def declarations(code: str) -> dict[tuple[str, str], list[str]]:
     """The shared scanner of the statement gates: a declaration runs to the next Lean command keyword at column 0, so
     a blank line or a comment of any kind inside it (a doc comment at column 0 before a constructor or a field too)
-    never ends it (review sc-2d-f1 F2, F3), and comments are left out on both sides. A line that starts with `#` or
-    `@[` at column 0 in code is read as a command, so a term line at column 0 such as `#[..]` still ends it."""
+    does not end it (review sc-2d-f1 F2, F3), and comments are left out on both sides. A term or tactic line at column
+    0 in code that starts the way a command does still ends it early, and the text after that line is not compared
+    (review sc-2d-f1 F4): a line that starts with `#` (an array literal `#[..]`) or `@[`, and a command keyword used
+    as a term or tactic prefix, `open X in ..`, `set_option o v in ..` or the term `unsafe ..`. These are every such
+    case in Lean v4.24.0's built-in syntax (`COMMANDS` in `check_readings_defaults_statements`)."""
     return scan(code, statements_only=True, kinds=KINDS)
 
 
