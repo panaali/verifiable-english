@@ -2,9 +2,13 @@
 
 Each record of the shadow has exactly one class, from Python's outcome and Lean's checked answer; `lean-unavailable`
 is tested first (verifier 3). The shadow runs only with `VE_STATEMENT_COMPARATOR=1` and `VE_SHADOW_LOG` both set. The
-relay that feeds it and the saved delta report are en-e3bb's (reviews/dri-decisions-20261110-en-e3b.md item 1).
+relay that feeds it (`parse_english`'s W1 path) and the saved delta report (`docs/en-e3-norm/en-2/`) are en-e3bb's.
 """
 from __future__ import annotations
+
+import json
+from pathlib import Path
+import re
 
 import pytest
 
@@ -82,8 +86,8 @@ def test_a_record_holds_both_outcomes_and_one_class():
 
 def test_the_shadow_needs_both_flags(monkeypatch, tmp_path):
     """P5: with `VE_STATEMENT_COMPARATOR=1` and `VE_SHADOW_LOG` unset, Lean is not called and no file is written in
-    the working directory; the log is the path `VE_SHADOW_LOG` names only when both are set. (Lean is asked nothing
-    on this branch in any case: the W1 path's call through the relay is en-e3bb's, and this test then holds it.)"""
+    the working directory; the log is the path `VE_SHADOW_LOG` names only when both are set (the W1 path's call
+    through the relay, en-e3bb's, is `test_the_shadow_asks_lean_and_keeps_python_s_answer`)."""
     from ve.backends import relay
     from ve.backends.lean_service import LeanService
     monkeypatch.chdir(tmp_path)
@@ -120,3 +124,89 @@ def test_the_statement_tables_are_the_lean_export():
         "RenderUnread", "RenderMismatch", "NoWording", "InvalidInput"}
     assert fields["rejected"] == (("code", "text", "class"), ("sentence", "span"))
     assert fields["one"] == (("statements",), ()) and "NodeRefused" in unsentenced
+
+
+# en-e3bb: the relay that feeds the shadow, and the saved delta report (spec 2.4, Delta report; DRI 2026-11-02 item 2).
+DELTA = Path(__file__).resolve().parents[1] / "docs/en-e3-norm/en-2"
+CLASSES = ("lean-unavailable", "agree", "lean-unknown", "lean-stricter", "lean-looser", "different-node", "both-refuse")
+
+
+def delta_rows(markdown: str) -> set[tuple[str, str, str]]:
+    """DELTA.md's rows as (corpus, id, class), from its tables."""
+    return {(m[1], m[2], m[3]) for m in re.finditer(r"^\| ([a-z-]+) \| `([^`]+)` \| ([a-z-]+) \|", markdown, re.M)}
+
+
+def check_delta(delta: dict, markdown: str, pinned: list[str]) -> None:
+    """Every corpus's per-class counts sum to its size; every record has one class of the table; every row of a
+    class other than `agree` and `both-refuse` (or answered `NodeRefused`/`NodeLimit`) is a DELTA.md row with its
+    class, and the `lean-unavailable` rows are listed by id; each pinned block is recorded once, and its class is
+    `agree` or a DELTA.md row with that class."""
+    for corpus in delta["corpora"]:
+        counts = delta["counts"][corpus["name"]]
+        assert set(counts) == set(CLASSES) and sum(counts.values()) == corpus["size"], corpus
+    rows, table = delta["rows"], delta_rows(markdown)
+    assert all(r["class"] in CLASSES for r in rows)
+    assert {(r["corpus"], r["id"], r["class"]) for r in rows} == table
+    assert all(r["class"] not in ("agree", "both-refuse") or r["lean"].get("code") in ("NodeRefused", "NodeLimit")
+               for r in rows)
+    assert sorted(delta["lean_unavailable"]) == sorted(r["id"] for r in rows if r["class"] == "lean-unavailable")
+    for corpus in delta["corpora"]:
+        listed = sum(r["corpus"] == corpus["name"] and r["class"] not in ("agree", "both-refuse") for r in rows)
+        assert listed == corpus["size"] - delta["counts"][corpus["name"]]["agree"] \
+            - delta["counts"][corpus["name"]]["both-refuse"], corpus
+    assert sorted(delta["pinned"]) == sorted(pinned)
+    assert all(found == "agree" or ("pinned", ident, found) in table for ident, found in delta["pinned"].items())
+
+
+def pinned_ids() -> list[str]:
+    root = DELTA.parents[2] / "tests/data/norm-blocks"
+    return [f"{name}/{json.loads(line)['id']}" for name in ("rsp", "fsf")
+            for line in (root / f"{name}.jsonl").read_text().splitlines()]
+
+
+def test_the_saved_delta_report_records_every_disagreement_with_its_class():
+    """The shadow agreement test (spec 2.4): it reads the saved `delta.json` and DELTA.md only."""
+    check_delta(json.loads((DELTA / "delta.json").read_text()), (DELTA / "DELTA.md").read_text(), pinned_ids())
+
+
+def test_the_delta_check_fails_on_an_unlisted_or_misclassed_disagreement():
+    """The other direction: a pinned block recorded as a disagreement that DELTA.md does not list, a row listed
+    under another class, a missing block, or counts that do not sum to the corpus each fail the check."""
+    delta, markdown = json.loads((DELTA / "delta.json").read_text()), (DELTA / "DELTA.md").read_text()
+    ident = pinned_ids()[0]
+    for broken in ({**delta, "pinned": {**delta["pinned"], ident: "lean-stricter"}},
+                   {**delta, "pinned": {k: v for k, v in delta["pinned"].items() if k != ident}},
+                   {**delta, "rows": [{**delta["rows"][0], "class": "different-node"}, *delta["rows"][1:]]},
+                   {**delta, "counts": {**delta["counts"], "pinned": {**delta["counts"]["pinned"], "agree": 119}}}):
+        with pytest.raises(AssertionError):
+            check_delta(broken, markdown, pinned_ids())
+
+
+def test_the_shadow_asks_lean_and_keeps_python_s_answer(monkeypatch, tmp_path):
+    """With both flags set, the W1 path asks `english.statement` once per call and appends one record to the log
+    `VE_SHADOW_LOG` names: Python's document is returned as without the shadow, Python's refusal is raised as it
+    stands, and a Lean that cannot answer is a `lean-unavailable` record, never a changed answer."""
+    from ve.backends import relay
+    monkeypatch.chdir(tmp_path)
+    env = environment({"permitted": permission()})
+    text = "Rule 1. Every act may be done."
+    plain = parse_english(env, text)
+    log = tmp_path / "shadow.jsonl"
+    monkeypatch.setenv("VE_STATEMENT_COMPARATOR", "1")
+    monkeypatch.setenv("VE_SHADOW_LOG", str(log))
+    assert parse_english(env, text).document_hash == plain.document_hash
+    with pytest.raises(SyntaxError, match="Expected Rule 1 with its own block"):
+        parse_english(env, "Rule 1.\nEvery act may be done.")
+
+    real = relay.decide
+
+    def unreachable(mode, cases, **kwargs):  # Python's own reader asks other modes through the same relay
+        if mode == "english.statement":
+            raise CheckerUnavailable("CheckerUnavailable: the Lean service is not running")
+        return real(mode, cases, **kwargs)
+    monkeypatch.setattr(relay, "decide", unreachable)
+    assert parse_english(env, text).document_hash == plain.document_hash
+    records = [json.loads(line) for line in log.read_text().splitlines()]
+    assert [r["class"] for r in records] == ["agree", "lean-looser", "lean-unavailable"]
+    assert records[1]["python"]["class"] == "SyntaxError" and records[1]["lean"]["status"] == "one"
+    assert sorted(p.name for p in tmp_path.iterdir()) == ["shadow.jsonl"]
