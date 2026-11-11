@@ -1,11 +1,12 @@
 import VE.Acts.MeaningExamples
+import VE.Acts.NormalProofs
 
 /-! Fixtures of the rendering round trip (docs/spec/act-phrases.md 5.5, 5.6 `read_normal`, 11.2, 11.2a).
 
 Each atom's normal form text and what `read` gives it at the production limits: G6's render pair and N1 to N5 read
 back as `one` of the atom in canonical order; `Atom.canon`'s reordering; `normalOk` on both sides of each of its
 conditions, with the review's counterexamples FR3 to FR5 and C1 to C4 (docs/act-phrases/ap-2bb/QUESTION-read_normal.md)
-on the refused side.
+on the refused side. Each family's existence half is an instance of `NormalProofs.normal_derived` (ap-2bc).
 -/
 
 namespace VE.Acts.RenderExamples
@@ -127,5 +128,29 @@ def held2 : List (List Part) := [[w "secret", .fixed 0], [.slot 1, w "secret"], 
   ![[], [w "secret"], [.slot 1], [w "secret", w "free voting", .slot 1]].any longEnd
 #guard !normalOk Vk (obj (.joined .and [w "help", w "good advice"])) &&
   !normalOk Vk (obj (.joined .and [.slot 2])) && !normalOk Vk (obj (.joined .and []))
+
+/-! ### `normal_derived` at each family (ap-2bc)
+
+The existence half of `read_normal` (deliverable (1) of ap-2bc): a derivation of the normal form that means the
+canonical atom. The `#guard`s above and below check `framesOk` and `normalOk` by evaluation; each `example` applies the
+theorem under them. -/
+
+-- `Vk` declares the reserved clause word *then* as an adverb, so it is not `framesOk` and its fixtures above are
+-- outside the theorem; `Vk1` is `Vk` without it, and `mixed` (whose one adverb is *now*) reads back under it too
+def Vk1 : Vocab := ⟨Vk.frames, ["now"]⟩
+#guard [V6, V12, V11, Vk1, V5, V8, Vs, V2s, V7].all framesOk && !framesOk Vk
+#guard normalOk Vk1 mixed && roundTrip Vk1 mixed && back Vk1 mixed != .ok (.one mixed)
+example (hV : framesOk V6 = true) (h : normalOk V6 torture = true) :
+    Derived V6 torture.normal (.one torture.canon) := NormalProofs.normal_derived V6 hV torture h            -- G6
+example (hV : framesOk V12 = true) (h : normalOk V12 n1 = true) :
+    Derived V12 n1.normal (.one n1.canon) := NormalProofs.normal_derived V12 hV n1 h                       -- N1-N3
+example (hV : framesOk V11 = true) (h : normalOk V11 (noTo through) = true) :
+    Derived V11 (noTo through).normal (.one (noTo through).canon) := NormalProofs.normal_derived V11 hV _ h -- N4, N5
+example (hV : framesOk Vk1 = true) (h : normalOk Vk1 mixed = true) :
+    Derived Vk1 mixed.normal (.one mixed.canon) := NormalProofs.normal_derived Vk1 hV mixed h              -- canon
+example (hV : framesOk V7 = true) (h : normalOk V7 (heldBy1 [.slot 1, w "secret vote", .fixed 0]) = true) :
+    Derived V7 (heldBy1 [.slot 1, w "secret vote", .fixed 0]).normal
+      (.one (heldBy1 [.slot 1, w "secret vote", .fixed 0]).canon) :=
+  NormalProofs.normal_derived V7 hV _ h                                                     -- a joined filler, D9 (i)
 
 end VE.Acts.RenderExamples
