@@ -1,8 +1,8 @@
 # sc-2c: spec 5.4's remaining SC-2 theorems — build report
 
 Status: **partial, cut by the DRI's decision**. No DRI signature is reserved here. Source HEAD `b7de96453`.
-Changed: `own_congr` and `order_refused` are proved exactly as spec 5.4 states them, with fixtures on both sides. F-raw-effect is a built counterfixture to the other five as written.
-Open: `reguard_applies`, `restrict_applies`, `carveOut_applies`, `applyEffect_typed` and `commute_applies` are false on a raw rule tree. They go to **sc-2d**, which proves them with `(hw : JsonWF o)`, SIGNED in reviews/dri-decisions-20261031-sc-2c.md item 1.
+Changed: `own_congr` and `order_refused` are proved exactly as spec 5.4 states them, with fixtures on both sides. F-raw-effect (`Examples.lean:1165`, checked by the `#guard` at :1180) refutes only the three effect identities as written, the first conjunct (`N' = { N with .. }`) of `reguard_applies`, `restrict_applies` and `carveOut_applies`, on a raw rule tree; it refutes neither typing preservation (`applyEffect_typed`) nor commutation (`commute_applies`) (corrected by sc-2d-f1).
+Open: `reguard_applies`, `restrict_applies`, `carveOut_applies`, `applyEffect_typed` and `commute_applies` go to **sc-2d**. The first three are false on a raw rule tree (F-raw-effect); no fixture shows the other two false there. sc-2d proves them with `(hw : JsonWF o)`, SIGNED in reviews/dri-decisions-20261031-sc-2c.md item 1.
 Pilot: 0 bytes (proofs only); nothing claimed.
 
 ## Statement gate and the counterexample
