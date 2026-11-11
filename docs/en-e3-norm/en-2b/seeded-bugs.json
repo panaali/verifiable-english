@@ -1,0 +1,70 @@
+{
+  "item": "en-e3b",
+  "note": "each planted alone, its test run, then restored; the Python rows were re-run on 2026-11-10 at d15500d98",
+  "seeded_bugs": [
+    {
+      "language": "Python",
+      "behaviour": "both-refuse for a Lean refusal of a Python-admitted text (spec 9)",
+      "file": "ve/norm_english.py",
+      "test": "tests/test_english_statement_shadow.py::test_a_lean_refusal_is_classed_by_python_outcome",
+      "result": "caught: 8 failed",
+      "restored": true
+    },
+    {
+      "language": "Python",
+      "behaviour": "lean-unavailable tested last (spec 9, verifier 3)",
+      "file": "ve/norm_english.py",
+      "test": "tests/test_english_statement_shadow.py::test_an_unavailable_answer_is_a_delta_row_whatever_python_did",
+      "result": "caught: 3 failed",
+      "restored": true
+    },
+    {
+      "language": "Python",
+      "behaviour": "the shadow log defaults to ve-shadow.jsonl without VE_SHADOW_LOG (P5)",
+      "file": "ve/norm_english.py",
+      "test": "tests/test_english_statement_shadow.py::test_the_shadow_needs_both_flags",
+      "result": "caught: 1 failed",
+      "restored": true
+    },
+    {
+      "language": "Python",
+      "behaviour": "nodes compared with Python == (true equals 1)",
+      "file": "ve/norm_english.py",
+      "test": "tests/test_english_statement_shadow.py::test_a_lean_reading_is_compared_by_position",
+      "result": "caught: 1 failed",
+      "restored": true
+    },
+    {
+      "language": "Python",
+      "behaviour": "the reader swaps a status's required and optional members",
+      "file": "ve/english_grammar/__init__.py",
+      "test": "tests/test_english_statement_shadow.py::test_the_statement_tables_are_the_lean_export",
+      "result": "caught: 1 failed",
+      "restored": true
+    },
+    {
+      "language": "Python",
+      "behaviour": "english_codes.py drops statement_fields from the export it copies",
+      "file": "tools/english_codes.py",
+      "test": "tests/test_english_e2_responses.py::test_the_code_table_is_the_english_grammar_export",
+      "result": "caught: 1 failed",
+      "restored": true
+    },
+    {
+      "language": "Lean",
+      "behaviour": ".englishStatement named \"english.statements\"",
+      "file": "lean/VE/Service/Registry.lean",
+      "test": "lean/VE/Service/RegistryExamples.lean:6 #guard",
+      "result": "caught: build fails",
+      "restored": true
+    },
+    {
+      "language": "Lean",
+      "behaviour": "a span row's place without bearer",
+      "file": "lean/ResponseShape/Schemas/EnglishStatement.lean",
+      "test": "statementCaseReported_fits (spanRow_fits, lean/ResponseShape/Encoders/EnglishStatement.lean:43)",
+      "result": "caught: build fails",
+      "restored": true
+    }
+  ]
+}

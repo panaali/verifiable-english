@@ -112,12 +112,19 @@ def pairsResult (src : SoftSource) (environment norms pairs : Json) : Except Str
   pure [("pairs", Json.arr (rows.map (·.2.2)).toArray), ("discharged", toJson discharged),
     ("weighing_points", toJson open_)]
 
+/-- WP(T) under the request's pair evidence (soft-norms.md:577): the open weighing points `Wire.openCoherence` (the one
+owner, which the rights route counts with no pair evidence) less the pairs the evidence discharges as DISJOINT. -/
 def openAfterClassification (src : SoftSource) (environment norms pairs : Json) : Except String (List String) := do
-  let rows ← (collidingPairs src.D).mapM fun (M, N) => do
+  let disjoint ← (collidingPairs src.D).filterMapM fun (M, N) => do
     let (status, _) ← classify src environment norms pairs M N
-    pure (cohLabel M N, status)
-  pure (rows.filterMap fun (label, status) =>
-    if status == .rankResolved || status == .disjoint then none else some label)
+    pure (if status == .disjoint then some (cohLabel M N) else none)
+  pure ((VE.SoftNorms.Wire.openCoherence src.D).filter (!disjoint.contains ·))
+
+/-- 7.3's CONFLICT-FREE line: `<k>` the premises used, `<j>` the open weighing points WP(T) (rights-cfr-2-budget-1). -/
+def conflictFreeText (conditional openLabels : List String) (exhibit : Bool) (budget : Nat) : String :=
+  s!"CONFLICT-FREE among rules on the same act, conditional on {conditional.length} coherence premises; {openLabels.length} weighing points open; coherent situation exhibited: {if exhibit then "yes" else s!"UNKNOWN (budget {budget})"}"
+
+#guard conflictFreeText ["l"] ["l", "m"] false 7 == "CONFLICT-FREE among rules on the same act, conditional on 1 coherence premises; 2 weighing points open; coherent situation exhibited: UNKNOWN (budget 7)"
 
 /-- Preserve premise positions while disabling a set of open coherence leaves.
 The certificate's binding remains to the original complete premise list. -/
@@ -359,7 +366,7 @@ def runSoftKind (id kind : String) (j : Json) : Except String Json := do
       pure true
     else pure false
     let statusText := if res.conflictFree then
-      s!"CONFLICT-FREE among rules on the same act, conditional on {conditional.length} coherence premises; {conditional.length} weighing points open; coherent situation exhibited: {if exhibit then "yes" else s!"UNKNOWN (budget {budget})"}"
+      conflictFreeText conditional openLabels exhibit budget
       else s!"UNKNOWN: {(firstFailure res).getD "target unspecified"}, budget {budget}"
     return VE.Route.Wire.ok id ([("verdict", .str verdict),
       ("status_text", .str statusText),

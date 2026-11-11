@@ -1,0 +1,27 @@
+{
+ "how": "each seeded bug planted in the working tree, the named test run, then restored with git checkout (2026-11-11); no trusted Lean definition is new (tools/trust_map.py --check: trusted +0), so these are the item's mutants",
+ "mutants": [
+  {
+   "behaviour": "the Lean print carries E_web's lexicon",
+   "mutant": "main prints Json.mkObj [(\"environment\", E_web)] (the lexicon dropped)",
+   "file": "lean/VE/Commands/WebEnvMain.lean",
+   "test": "tests/test_webapp_commands_env.py::test_the_committed_environment_is_the_lean_generators_output",
+   "result": "1 failed: environment.json is stale"
+  },
+  {
+   "behaviour": "--check compares the whole file byte for byte",
+   "mutant": "--check compares only the top-level keys of the JSON",
+   "file": "tools/webapp_commands_env.py",
+   "test": "tests/test_webapp_commands_env.py::test_check_refuses_any_other_file_and_a_failed_printer",
+   "result": "1 failed: a file with the sort token removed passed --check"
+  },
+  {
+   "behaviour": "the generator writes Lean's print, never a hand-kept copy",
+   "mutant": "expected = a hand-kept copy (tools/webapp_env_copy.json, the committed file), with E_web's task edited to webapp-copy-edited in lean/VE/Commands/Examples.lean and VE.Commands.RunExamples rebuilt",
+   "file": "tools/webapp_commands_env.py",
+   "test": "tests/test_webapp_commands_env.py::test_the_committed_environment_is_the_lean_generators_output",
+   "also_fails": "tests/test_webapp_commands_env.py::test_write_stores_exactly_what_lean_printed",
+   "result": "2 failed: the generator's own --check passed (copy against copy); the direct Lean print differed"
+  }
+ ]
+}

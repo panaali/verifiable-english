@@ -1,4 +1,4 @@
-import VE.Acts.Read
+import VE.Acts.Index
 
 /-! The act grammar's rule table (docs/spec/act-phrases.md 5.2) and its well-formedness `grammar_wf` (5.6).
 
@@ -16,7 +16,7 @@ open Lexical (Tok)
 the last item of a shared-object list. A coordination's tail is named by its last item's pattern: `TM:B` by `bare`,
 `TM:F` by `own`, `TM:R` by `rnr`. -/
 inductive Core | bare | own | last | rnr
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Hashable
 
 /-- The nonterminals of frame `h` (5.2, "Per frame h"); those of an argument marker `m` carry it, and `LST m split` is
 5.2's list `FSh:m*` (`split`) or `FNh:m°`. -/
@@ -24,7 +24,7 @@ inductive FNT
   | HD | WR | FL | PL | PT | O | OS | EE | ER | NM | ERN | OWNM | TE | TR | LFM | RE | REt | REP | RX | RR | RM
   | SPL | PX | PO | SM | MEL | MGT | MG
   | AR (m : String) | RL (m : String) | RT (m : String) | OL (m : String) | LST (m : String) (split : Bool)
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Hashable
 
 /-- The nonterminals of 5.2: `MK m` a marker's words; `C c` the cores; `F1 own c`, `L own c` and `T own c` a
 coordination's first items, later items and tails (`own`: every item has its own function word, 5.2's `F1O`, `LO`,
@@ -33,7 +33,7 @@ inductive NT
   | S | J | FW | TOK | ADVO | ADVSO | E1X | E1S | SINGLE | SC | COORD
   | MK (m : String) | C (c : Core) | F1 (own : Bool) (c : Core) | L (own : Bool) (c : Core) | T (own : Bool) (c : Core)
   | F (h : Nat) (x : FNT)
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Hashable
 
 /-- A rank per nonterminal: higher than the rank of every nonterminal that starts one of its rules (W3). -/
 def NT.rank : NT → Nat
@@ -179,6 +179,37 @@ def build (rs : List RuleS) : VE.Grammar.Grammar Term :=
     | .t a => .t a
   { rules := (rs.map (fun r => ({ lhs := names.idxOf r.lhs, rhs := r.rhs.map sym, act := 0, tag := "" } :
       VE.Grammar.Rule Term))).toArray, start := names.idxOf .S, rank := (names.map NT.rank).toArray }
+
+/-- `closed` with one hash lookup per nonterminal (`closedFast_eq`); compiled code runs it. -/
+def closedFast (rs : List RuleS) : List RuleS :=
+  rs ++ (firstsGo (Std.HashSet.ofList (rs.map (·.lhs))) (rs.flatMap (·.rhs.filterMap RSym.nt?))).map
+    (⟨·, [.t .never], .shape⟩)
+
+/-- `build` with the nonterminals numbered through one hash map (`buildFast_eq`); compiled code runs it. -/
+def buildFast (rs : List RuleS) : VE.Grammar.Grammar Term :=
+  let names := firstsGo ∅ (rs.map (·.lhs))
+  let ix := idxGo names 0 ∅
+  let sym : RSym → VE.Grammar.Sym Term
+    | .n x => .n (ix.getD x names.length)
+    | .t a => .t a
+  { rules := (rs.map (fun r => ({ lhs := ix.getD r.lhs names.length, rhs := r.rhs.map sym, act := 0, tag := "" } :
+      VE.Grammar.Rule Term))).toArray, start := ix.getD .S names.length, rank := (names.map NT.rank).toArray }
+
+theorem closedFast_eq (rs : List RuleS) : closedFast rs = closed rs := by
+  unfold closedFast closed
+  rw [firstsGo_eq, firsts_filter]
+  congr 3
+  funext x
+  simp only [Std.HashSet.contains_ofList, List.contains_eq_any_beq, List.any_map, Function.comp_def]
+  congr 2
+  funext r
+  exact Bool.beq_comm
+
+theorem buildFast_eq (rs : List RuleS) : buildFast rs = build rs := by
+  simp only [buildFast, build, firstsGo_empty, idxGo_getD]
+
+@[csimp] theorem closed_eq_fast : @closed = @closedFast := funext fun rs => (closedFast_eq rs).symm
+@[csimp] theorem build_eq_fast : @build = @buildFast := funext fun rs => (buildFast_eq rs).symm
 
 /-- The act grammar of a vocabulary (5.2). -/
 def grammar (V : Vocab) : VE.Grammar.Grammar Term := build (closed (schema V))
