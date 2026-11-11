@@ -19991,7 +19991,7 @@ module VE.Readings.SoftWire b363b7d8a0076191ecafc495adabf12f8a410f23e91e2448005a
 245:0-249:21 def VE.Readings.Wire.replayChoiceS@VE.Readings.SoftWire
 251:0-257:19 theorem VE.Readings.Wire.readings_wire_sd_choice_conflict@VE.Readings.SoftWire
 259:0-271:58 theorem VE.Readings.Wire.readings_wire_sd_choice_entails@VE.Readings.SoftWire
-module VE.Readings.SoftWireExamples 4952fb749d5b381cbe938df3b5f9b953ca7ef7e44e7c4d073188f17ae1bcb595
+module VE.Readings.SoftWireExamples e4531040c81d070716a6a9758379fe5fd5a2b9ce81c5a7bcc7451a4fc9643d3a
 14:0-15:120 def VE.Readings.SoftWireExamples.heavyIn@VE.Readings.SoftWireExamples
 16:0-19:62 def VE.Readings.SoftWireExamples.NSDlimit@VE.Readings.SoftWireExamples
 20:0-21:32 def VE.Readings.SoftWireExamples.atLimit@VE.Readings.SoftWireExamples
