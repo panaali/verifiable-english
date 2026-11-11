@@ -117,14 +117,15 @@ NOT_WORD = ({c for c in SCALARS if c.isspace() or ord(c) < 0x20 or 0x7F <= ord(c
             | {chr(n) for n in (0x115F, 0x1160, 0x2800, 0x3164, 0xFFA0)})
 
 # Lean is the oracle, in one process: one `#eval` over every Unicode scalar value c gives the characters that are no
-# `wordChar` and those for which `clause` accepts "x" c, "x" c ")", "x." c and "x." c "y"; the probe wordings'
-# verdicts; and the four docstrings as the compiled environment has them (about a minute: the interpreter takes about
+# `wordChar` and those for which `clause` accepts "x" c, "x" c ")", "x." c, "x." c "y" and "x&" c ";"; the probe wordings'
+# verdicts; and the five docstrings as the compiled environment has them (about a minute: the interpreter takes about
 # 18 microseconds a `clause`).
 SWEEP = """import Lean
 import VE.Scope.Authoring
 open Lean VE.Scope.Pinned
-def sweep : Array Nat × Array Nat × Array Nat × Array Nat × Array Nat := Id.run do
+def sweep : Array Nat × Array Nat × Array Nat × Array Nat × Array Nat × Array Nat := Id.run do
   let mut nonWord := #[]; let mut bare := #[]; let mut closed := #[]; let mut dotted := #[]; let mut joined := #[]
+  let mut referenced := #[]
   for n in [0:0x110000] do
     if n.isValidChar then
       let c := Char.ofNat n
@@ -133,14 +134,16 @@ def sweep : Array Nat × Array Nat × Array Nat × Array Nat × Array Nat := Id.
       if clause ("x" ++ c.toString ++ ")") then closed := closed.push n
       if clause ("x." ++ c.toString) then dotted := dotted.push n
       if clause ("x." ++ c.toString ++ "y") then joined := joined.push n
-  return (nonWord, bare, closed, dotted, joined)
+      if clause ("x&" ++ c.toString ++ ";") then referenced := referenced.push n
+  return (nonWord, bare, closed, dotted, joined, referenced)
 def verdicts (ws : String) : Array Bool := (Json.parse ws).toOption.getD .null |>.getArr?.toOption.getD #[] |>.map
   fun w => (parseGovernor (w.getStr?.toOption.getD "")).isSome
 #eval show CoreM Unit from do
   let env ← getEnv
-  let (nonWord, bare, closed, dotted, joined) := sweep
+  let (nonWord, bare, closed, dotted, joined, referenced) := sweep
   IO.println (Json.mkObj [("non_word", toJson nonWord), ("bare", toJson bare), ("closed", toJson closed),
-    ("dotted", toJson dotted), ("joined", toJson joined), ("closers", toJson (← findDocString? env ``closers)),
+    ("dotted", toJson dotted), ("joined", toJson joined), ("referenced", toJson referenced),
+    ("closers", toJson (← findDocString? env ``closers)), ("char_ref", toJson (← findDocString? env ``charRef)),
     ("clause", toJson (← findDocString? env ``clause)),
     ("follower", toJson (← findDocString? env ``follower)), ("word_char", toJson (← findDocString? env ``wordChar)),
     ("accepted", toJson ((WORDINGS).map verdicts))]).compress
@@ -217,6 +220,22 @@ def test_word_char_refuses_exactly_its_documented_characters(swept):
     assert chars(swept["non_word"]) == NOT_WORD
 
 
+# The DRI decision 2026-11-10 sc-7-f11 item 1, written here apart from the Lean code: a character reference is "&",
+# then a NON-EMPTY run of ASCII alphanumerics or "#", then ";".
+REF_RUN = set(string.ascii_letters + string.digits + "#")
+CHAR_REF_DOC = '"&", then a non-empty run of ASCII letters, digits or "#", then ";"'
+
+
+def test_char_ref_refuses_every_run_the_ruling_names(swept):
+    """sc-7-f11 review F2 (the class: a run the ruling calls a reference that `charRef` lets through): for every
+    Unicode scalar value c, `clause` accepts "x&" c ";" exactly when c is a word character outside the ruling's run
+    (ASCII letters, digits and "#"), so a run of one ("&a;", "&#;") is refused like a longer one; and `charRef`'s
+    docstring states the ruling's run."""
+    assert CHAR_REF_DOC in " ".join(swept["char_ref"].split()), swept["char_ref"]
+    got, want = chars(swept["referenced"]), set(SCALARS) - NOT_WORD - REF_RUN
+    assert got == want, {"accepted, a reference": sorted(got - want), "refused, no reference": sorted(want - got)}
+
+
 def test_review_f8_f9_f10_the_probe_wordings_are_refused_and_guarded(swept):
     """sc-7 recheck F8, F9 and F10: each probe wording (and the recheck's deferred U+1D159, U+E000 and U+FFFC after a
     ".", spaced and joined: sc-7-f11) is refused, and the PROBE F8, F9 and F10 guards of AuthoringExamples.lean stay,
@@ -235,5 +254,7 @@ def test_review_f8_f9_f10_the_probe_wordings_are_refused_and_guarded(swept):
                   '(slotsJoined s!"{t}{Char.ofNat n}").all (parseGovernor · == none)',
                   # the DRI decision 2026-11-10 sc-7-f11 item 1: character references refused, "AT&T" accepted
                   '"The hard constraints apply only where x&#46; y.", "The rules below are called the x.&nbsp;The rules',
-                  '#guard ["&nbsp;", "&#32;", "&#x20;", "&period;", "&#46;",', '#guard ["AT&T", "AT&T;"'):
+                  '#guard ["&nbsp;", "&#32;", "&#x20;", "&period;", "&#46;",', '#guard ["AT&T", "AT&T,"',
+                  # sc-7-f11 review F2: a run of one is a reference ("&a;", "&#;", "AT&T;"), in every slot
+                  '#guard ["&a;", "&#;", "&1;", "AT&T;", "x&#;"', '#guard ["&a;", "&#;", "AT&T;", "x&#;"].all fun e =>'):
         assert guard in examples, guard

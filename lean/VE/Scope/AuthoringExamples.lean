@@ -250,8 +250,11 @@ def slotsJoined (e : String) : List String :=
 -- a reference after another "&", or before one, and a pair at a word's start (trust mutants: the first or last "&" only,
 -- the first pair skipped)
 #guard ["x&y&nbsp;z", "x&nbsp;&y", ".\u200By", "\u0301\u0301y", "x .\uFFFCThe"].all (!clause ·)
--- "&" with no run of two before ";", or with no ";", is no reference
-#guard ["AT&T", "AT&T;", "AT&T,", "x&;", "x&#;", "R&D-heavy", "x&y", "x&nbsp"].all clause
+-- a run of one is a reference too (the ruling's "non-empty run"; sc-7-f11 review F2), in every slot
+#guard ["&a;", "&#;", "&1;", "AT&T;", "x&#;", "x&a;y", "R&D;"].all (!clause ·)
+#guard ["&a;", "&#;", "AT&T;", "x&#;"].all fun e => (slotsEnding e ++ slotsJoined e).all (parseGovernor · == none)
+-- "&" with no run before ";", or with no ";", is no reference
+#guard ["AT&T", "AT&T,", "x&;", "x&;y", "R&D-heavy", "x&y", "x&nbsp", "x&-;"].all clause
 #guard trip "The rules below are called the AT&T rules." "{\"list_name\": \"the AT&T rules\"}"
 -- a word that is empty once its closers are dropped is refused
 #guard [")", "x )", "x ”’", "\"", "x *_"].all (!clause ·)
