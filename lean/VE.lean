@@ -159,6 +159,7 @@ import VE.RightClauses.Plain
 import VE.RightClauses.Relation
 import VE.RightClauses.Examples
 import VE.RightClauses.Wire
+import VE.RightClauses.ElidedBytes
 import VE.RightClauses.Run
 import VE.RightClauses.RunExamples
 import VE.RightClauses.WireDecode
@@ -277,6 +278,7 @@ import VE.Acts.Decode
 import VE.Acts.DecodeExamples
 import VE.Acts.DecodeTwins
 import VE.Acts.Faithful
+import VE.Acts.ElaborateProofs
 import VE.Acts.FaithfulExamples
 import VE.Acts.GrammarExamples
 import VE.Acts.Grammar

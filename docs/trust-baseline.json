@@ -1,9 +1,9 @@
 {
- "comment": "The trust budget (tools/trust_map.py, architecture plan AR-4, DRI decision D3): K, S and untied [V] lines as the merge train last measured them on main (`--write`), and every signed allowance that raised them (`--allow`). The check measures the base commit; per-file counts are in the gate record (`--files`), not here.",
+ "comment": "The trust budget (tools/trust_map.py, architecture plan AR-4, DRI decision D3): K, S and untied [V] lines as the merge train last measured them on main (`--write`), and every signed allowance that raised them (`--allow`). The check measures the base commit; per-file counts are in the gate record (`--files`), not here. Recorded 2026-11-11 (DRI, kb-0; fable-team/architect/inbox/20261111T0452Z-dri.md (d)): MEASURED 63,068 trusted lines (K 984 + S 14,795 + untied [V] 47,289) by `python3 tools/trust_map.py` on main 97b3c7999a (the kb-0 tree, same lean/); replaces the stale 50,034; a no-growth ratchet until kb-5 replaces it with the kernel ratchet (tools/kernel_closure.py, 9,565).",
  "budget": {
-  "K": 997,
-  "S": 9958,
-  "V": 39079
+  "K": 984,
+  "S": 14795,
+  "V": 47289
  },
  "allowances": [
   {
@@ -2595,6 +2595,76 @@
    "reason": "en-e3a-cutback: VE/EnglishGrammar/Norm/Run.lean +9 (statementSpans -2, oneSpansOf +6 new, oneSpans -3, Reader +2, answerWith +3, leanReader +2, outcomeFields +1), VE/EnglishGrammar/Norm/Rules.lean -3 (normTags deleted); K +0, S +0, V +6",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), en-e3a-cutback, 2026-10-18",
    "commit": "c81d6a9d910f00a2466fa3811168b1c2d825a3ed"
+  },
+  {
+   "class": "V",
+   "lines": 103,
+   "reason": "ci-3: steps on the english.command route (section 7): VE/Commands/Run.lean +84 (stated order, stepCommands, readInstruction through readStep, the StepOutcome encoder), VE/SpeechActs/Wire.lean +4 (surfaceKind if/then), VE/SpeechActs/Source/Run.lean +15 (ThenWithoutStep wiring; review F2: the document form of a sequence read against the whole wording in readSource, its context in decodeSpeechSource, G[V] SpeechSource.stepOrder; the checks themselves G[R]); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ci-3, 2026-10-18",
+   "commit": "1531891aaf6b5d6a5a064448e29489245b67e496"
+  },
+  {
+   "class": "V",
+   "lines": 5,
+   "reason": "ps-2ab-rule-firstob: VE/Presupposition/Admit.lean +5 (ruleOb); Run.lean fixtures r1b, docF2, obsF2 classed T; K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ps-2ab-rule-firstob, 2026-11-11",
+   "commit": "b81b82ef91add8f6ea2fce62feeb421a5bed0c7b"
+  },
+  {
+   "class": "V",
+   "lines": 31,
+   "reason": "norm-defaults-cfr-1b: V +31 (VE/NormDefaults/Layered.lean +12, VE/NormDefaults/Explain.lean +11, VE/NormDefaults/Wire.lean +3, ResponseShape/Schemas/NormDefaults.lean +3, VE/Acts/Decode.lean +1, VE/NormDefaults/Run.lean +1); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), norm-defaults-cfr-1b, 2026-10-18",
+   "commit": "c94ad399b7b1f6804c12fbc555a5758d5e971ae6"
+  },
+  {
+   "class": "V",
+   "lines": 8,
+   "reason": "soft-cf-text-1: VE/SoftNorms/Wire.lean +6 V (notSearchedText, the one owner of the no-search words for the rights and soft CONFLICT-FREE lines), VE/SoftNorms/Run.lean +2 V (conflictFreeText docstring and its call of notSearchedText); K +0, S +0; each exercised by a #guard that can fail (SoftNorms/Run.lean :129, :130; mutants S1-S4)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), soft-cf-text-1, 2026-11-11",
+   "commit": "b81b82ef91add8f6ea2fce62feeb421a5bed0c7b"
+  },
+  {
+   "class": "S",
+   "lines": 6,
+   "reason": "cmp-s3-cfr-1b: S +6 (VE/RightClauses/Plain.lean: checkSpans, checkBody), V +17 (VE/RightClauses/Run.lean: lineObjects, deepLine, elaborateCase's two charges); K +0; the fixtures are T",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s3-cfr-1b, 2026-11-11",
+   "commit": "69fc95777676036f90b8cb8af69d27b08cf3eb88"
+  },
+  {
+   "class": "V",
+   "lines": 17,
+   "reason": "cmp-s3-cfr-1b: S +6 (VE/RightClauses/Plain.lean: checkSpans, checkBody), V +17 (VE/RightClauses/Run.lean: lineObjects, deepLine, elaborateCase's two charges); K +0; the fixtures are T",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s3-cfr-1b, 2026-11-11",
+   "commit": "69fc95777676036f90b8cb8af69d27b08cf3eb88"
+  },
+  {
+   "class": "S",
+   "lines": 11,
+   "reason": "cmp-s3a-cfr-3: ElidedBytes.lean S +11, V +11; Run.lean V +3; K +0; trusted +25",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s3a-cfr-3, 2026-10-18",
+   "commit": "97b3c7999add79633321ed10742aef613d66c5a2"
+  },
+  {
+   "class": "V",
+   "lines": 14,
+   "reason": "cmp-s3a-cfr-3: ElidedBytes.lean S +11, V +11; Run.lean V +3; K +0; trusted +25",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s3a-cfr-3, 2026-10-18",
+   "commit": "97b3c7999add79633321ed10742aef613d66c5a2"
+  },
+  {
+   "class": "S",
+   "lines": 1,
+   "reason": "cmp-s3a-cfr-3: lean/VE/RightClauses/ElidedBytes.lean S +12 V +14 (lineElided, entryElided, elidedTotal, unitElided), lean/VE/RightClauses/Run.lean V +3; K +0, trusted +29",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s3a-cfr-3, 2026-10-18",
+   "commit": "0295df174375667a79dec7c1dd214f9128fe4909"
+  },
+  {
+   "class": "V",
+   "lines": 3,
+   "reason": "cmp-s3a-cfr-3: lean/VE/RightClauses/ElidedBytes.lean S +12 V +14 (lineElided, entryElided, elidedTotal, unitElided), lean/VE/RightClauses/Run.lean V +3; K +0, trusted +29",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s3a-cfr-3, 2026-10-18",
+   "commit": "0295df174375667a79dec7c1dd214f9128fe4909"
   }
  ]
 }

@@ -39,17 +39,14 @@ def test_the_definitions_are_compared_too():
 
 def _mutate(source, kind, name, checker):
     """`source` with the Lean declaration `kind name` changed at the end of its compared text."""
-    import re
-    start = re.search(rf"^{kind} {re.escape(name)}\b", source, re.M)
-    line_end = source.find("\n", start.end())
-    stop = checker.STOP.search(source, line_end + 1)
-    text = source[start.start():stop.start()]
+    start, stop = checker.span(source, kind, name)
+    text = source[start:stop]
     if kind == "theorem":
         head, proof = text.split(":=", 1)
         changed = head.rstrip() + " ∧ True :=" + proof
     else:
         changed = text.rstrip() + " ∧ True\n"
-    return source[:start.start()] + changed + source[stop.start():]
+    return source[:start] + changed + source[stop:]
 
 
 @pytest.mark.parametrize("kind, name", _approved_names(), ids=lambda v: str(v))
