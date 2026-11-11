@@ -152,7 +152,13 @@ def shapeOutcomeCharged (se : SpeechEnvironment) (sc : Scope) (E : Env) (L : Lex
           | [] => .refused "InvalidInput" "no single speech-act reading"
           | alts => if alts.length ≤ VE.SpeechActs.Wire.readingsBound
               then .many (alts.map fun rs => .shape (.seq xs) rs) else .limit
-  | sh => shapeOutcome se sc E L b sh
+  -- The other shapes as `shapeOutcome` writes them, never a call to it: compiled code that reaches the original
+  -- defeats the twin (tests/test_lean_layers_once.py walks every route for such a call).
+  | .core s => lift (.core s) false (readCommand se sc E L b s)
+  | .preposed c x =>
+    if hasThen (x ++ ".") then conditionScope
+    else lift (.preposed c x) false (readCommand se sc E L b (capitalise x ++ ", if " ++ c ++ "."))
+  | .after x => lift (.after x) true (readCommand se sc E L b (capitalise x ++ "."))
 
 /-- The length fact is proved here again, not cited: a mutant that breaks it breaks this equation too, so a mutant
 sweep's cut removes the `@[csimp]` instead of leaving it on a broken proof. -/
