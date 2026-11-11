@@ -87,11 +87,26 @@ def recorded_sources(output):
 def test_the_recorded_corpus_gives_one_record_in_both_engines(tmp_path):
     """F2 of ap-1bf's review: every `acts@0` source the tests submit gives one record, or none, in both engines."""
     recorded = recorded_sources(tmp_path / "inputs.json")
-    assert any("norms@0" not in raw["profiles"] for _, raw, _ in recorded)  # F1's source is recorded
+    # each recorded file adds sources of its own (the s5 row's: its base without rules), and F1's source is one
+    assert {label.split("::")[0] for label, _, _ in recorded} == set(RECORDED_TESTS)
+    assert any("norms@0" not in raw["profiles"] for _, raw, _ in recorded)
     pairs = engine_records([(raw, norms) for _, raw, norms in recorded])
     assert sum(lean is not None for _, lean in pairs) > len(catalogue("acts@0"))
     assert [label for (label, _, _), (python, lean) in zip(recorded, pairs)
             if comparable(python) != comparable(lean)] == []
+
+
+def test_a_refusal_before_the_frames_is_not_theirs():
+    """1.1e and 1.1f name a refusal of the frames and adverbs only: an earlier refusal (the envelope's, a fixed
+    phrase's) stays 1.1d in both engines, though the frames are refused too."""
+    sources = []
+    for edit in (lambda raw: raw.update(language="x"), lambda raw: raw["vocabulary"]["acts"]["fixed"].append("Naive")):
+        raw, norms = base()
+        raw["vocabulary"]["acts"]["adverbs"] = ["promptly", "promptly"]
+        edit(raw)
+        sources.append((raw, norms))
+    pairs = engine_records(sources)
+    assert all(python == lean and lean["check"] == "1.1d" for python, lean in pairs), pairs
 
 
 def test_the_limits_are_leans_and_never_copied():

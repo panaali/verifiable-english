@@ -160,7 +160,8 @@ def _norm_unit(environment):
     `acts@0` when it lists that one (ap-1bfb)."""
     profiles = environment.get("profiles") if isinstance(environment, dict) else None
     listed = profiles if isinstance(profiles, list) else []
-    return "norm-defaults@0" if "norm-defaults@0" in listed else "acts@0" if "acts@0" in listed else "norms@0"
+    return "norm-defaults@0" if "norm-defaults@0" in listed else "acts@0" if "acts@0" in listed and \
+        "acts@0" in UNITS else "norms@0"
 
 
 def _record_norm(environment, norms):
@@ -183,7 +184,7 @@ def _record_norm_cases(mode, cases):
     from ve.norms_contract import active_norms
     for case in cases:
         if not isinstance(case, dict) or not (mode in NORM_ROUTES or (
-                mode == "diagnose" and case.get("unit") in ("norms@0", "norm-defaults@0", "acts@0"))):
+                mode == "diagnose" and case.get("unit") in UNITS - {"soft-norms@0"})):
             continue
         kind = case.get("kind")
         if kind == "admission":

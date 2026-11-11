@@ -17150,6 +17150,7 @@
       "G[V]": [
         "VE.WireContract.Hooks.Acts.actsOf",
         "VE.WireContract.Hooks.Acts.adapter",
+        "VE.WireContract.Hooks.Acts.blockOf",
         "VE.WireContract.Hooks.Acts.classifier",
         "VE.WireContract.Hooks.Acts.decoded",
         "VE.WireContract.Hooks.Acts.fixedOf",
@@ -17157,17 +17158,26 @@
         "VE.WireContract.Hooks.Acts.inDomain",
         "VE.WireContract.Hooks.Acts.member",
         "VE.WireContract.Hooks.Acts.refusedWith",
-        "VE.WireContract.Hooks.Acts.registered"
+        "VE.WireContract.Hooks.Acts.registered",
+        "VE.WireContract.Hooks.Acts.ruleTyping",
+        "VE.WireContract.Hooks.Acts.typingEnvironment"
       ],
       "T": [
         "VE.WireContract.Hooks.Acts.actOf",
         "VE.WireContract.Hooks.Acts.around",
         "VE.WireContract.Hooks.Acts.caseOf",
+        "VE.WireContract.Hooks.Acts.checkOf",
         "VE.WireContract.Hooks.Acts.envOf",
+        "VE.WireContract.Hooks.Acts.frameOf",
+        "VE.WireContract.Hooks.Acts.framed",
+        "VE.WireContract.Hooks.Acts.framesLimit",
+        "VE.WireContract.Hooks.Acts.framesOf",
         "VE.WireContract.Hooks.Acts.memberOf",
         "VE.WireContract.Hooks.Acts.phraseOf",
         "VE.WireContract.Hooks.Acts.phrasesOf",
-        "VE.WireContract.Hooks.Acts.recordOf"
+        "VE.WireContract.Hooks.Acts.recordOf",
+        "VE.WireContract.Hooks.Acts.ruleOf",
+        "VE.WireContract.Hooks.Acts.unaryOn"
       ]
     },
     "VE/WireContract/Tables/Acts.lean": {
