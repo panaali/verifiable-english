@@ -27,7 +27,7 @@ The two runs (exit 0 each; output quoted):
     python3 usecases/safetyfw_accounting.py anthropic-rsp --source manage-agents/pilots/anthropic-rsp/source/rsp-3.4.txt --check --report docs/usecases/safetyfw/anthropic-rsp/accounting.json
     anthropic-rsp: 87 blocks, 226 unaccounted words in 51 blocks, 9 blocks with a loss {'1': 9, 'limit 4': 1, 'limit 9': 1}, 0 of 94 quotes unanchored
     python3 usecases/safetyfw_accounting.py openai-preparedness --source manage-agents/pilots/openai-preparedness/source/pf-v2.txt --check --report docs/usecases/safetyfw/openai-preparedness/accounting.json
-    openai-preparedness: 97 blocks, 604 unaccounted words in 83 blocks, 17 blocks with a loss {'1': 23, '3': 1, 'limit 21': 1}, 0 of 113 quotes unanchored
+    openai-preparedness: 97 blocks, 606 unaccounted words in 83 blocks, 17 blocks with a loss {'1': 23, '3': 1, 'limit 21': 1}, 0 of 110 quotes unanchored
 
 The source hashes in the saved reports are the pinned ones: RSP `c7de7fe2…`, Preparedness `d2e3dd5b…` (README:
 `d2e3dd5b80e5…`).
@@ -40,8 +40,8 @@ usecases/*/answer-key.json` prints nothing. No rule, legend, key or harness was 
 | | anthropic-rsp | openai-preparedness |
 |---|---:|---:|
 | blocks (rules + facts) | 87 (76 + 11) | 97 (86 + 11) |
-| quotes anchored in the pinned source | 94 of 94 | 113 of 113 |
-| unaccounted words before any sidecar | 226 in 51 blocks | 604 in 83 blocks |
+| quotes anchored in the pinned source | 94 of 94 | 110 of 110 |
+| unaccounted words before any sidecar | 226 in 51 blocks | 606 in 83 blocks |
 | entries: restates | 54 | 99 |
 | entries: exposition | 12 | 35 |
 | entries: rule | 4 | 18 |
@@ -158,10 +158,11 @@ The re-audit should decide which.
    s2-only-if-third. Their span is empty and their line is `omits: nothing`, but the sibling's losses apply to them
    too (rows-uncond has rows-cond's three). Fix: each such header quotes its own sentence.
 
-safety-framework (out of scope; the tool runs on it unchanged): 34 of 36 quotes anchor with
-`--source manage-agents/pilots/safety-framework/source/fsf-3.1.txt`. 26 of its 60 blocks quote nothing, and the two
-failures in f16-ds and f16-ds-strict pair a short quote with the next opening quote. Its headers would need each
-block to quote its own source sentence in full (at least 12 characters), with no bare short quotes next to it.
+safety-framework (out of scope; the tool runs on it unchanged): 36 of 36 quotes anchor with
+`--source manage-agents/pilots/safety-framework/source/fsf-3.1.txt`. 26 of its 60 blocks quote nothing. Before the
+review fix F1 the regex skipped f16-ds's and f16-ds-strict's short "should" and paired its closing mark with the next
+quote's opening one, so two quotes failed to anchor; the quote scanner now pairs them (`otherwise assess` anchors).
+Its headers would need each block to quote its own source sentence in full (at least 12 characters).
 
 ## Seeded bugs (each planted, its one test run and seen to fail, then restored with `git checkout`)
 
