@@ -14,12 +14,13 @@ Labels: **(M)** measured on main `97b3c7999a` with the commands in section 1; **
    say, transitively) plus its *wrap* (what runs between the wire and the code the theorems are
    about). `tools/kernel_closure.py` measures both from the compiled Lean environment (section 2).
 2. **The kernel is four paths that already exist:** certificate replay, the route, norms and soft
-   norms. Together they are **9,565 lines (M)**, under the 10,000-line target. The frozen keys'
-   Lean calls are traced against these four in section 1.3.
+   norms. Together they are **9,565 lines (M)**, under the 10,000-line target. The five frozen keys
+   rest on 17,355 lines (M): these four paths plus wire code around two proved evaluators
+   (`metered`, `quantity`) that no theorem covers yet (section 1.3).
 3. **Only the kernel states a verdict.** Every other mode is *shell*: it may elaborate, search,
    display and refuse, and it may show a verdict only as a row the kernel itself produced for a
-   case the answer carries (the carry rule, section 3). Today 55 definitions in 29 modules write a
-   verdict token on their own authority (M); that count goes to the kernel's own few.
+   case the answer carries (the carry rule, section 3). Today 54 definitions write a verdict token
+   and 51 of them, in 25 modules, are outside the kernel (M); that count goes to zero.
 4. **One statement form.** A document's checked content is one core document: definitions, rules
    (soft-norm nodes) and premises over one vocabulary, `(X : SoftDoc, P : List Formula)`, whose
    acceptance theorem is already proved for any `X` and any `P` (`VE.Compose.slot_route_acceptance`).
@@ -68,6 +69,8 @@ python3 tools/kernel_closure.py --out docs/kernel/closure-baseline.json
 | norms | kernel | 21 | 4,365 | 2,703 | 4,404 |
 | softNorms | kernel | 2 | 4,730 | 35 | 4,738 |
 | **kernel, distinct lines** | | | | | **9,565** |
+| metered (`evaluate-budgeted`) | candidate | 7 | 519 | 3,761 | 3,761 |
+| quantity | candidate | 4 | 613 | 1,804 | 2,040 |
 | rights | candidate | 2 | 5,598 | 35 | 5,614 |
 | alternatives | candidate | 2 | 3,907 | 22 | 3,920 |
 | reports | candidate | 3 | 4,395 | 32 | 4,417 |
@@ -85,7 +88,7 @@ All (M), saved in `docs/kernel/closure-baseline.json`. Other measurements of the
 | Code that runs for the document mode | 35,142 lines (M) |
 | Spec of the abstract route theorems of every family (`*_route_acceptance`, `_countermodel`, `_entails_iff`, `_intended`; 37 theorems) | 4,445 lines (M) |
 | Spec of `VE.Norms.norms_route_acceptance` alone | 761 lines (M) |
-| Definitions that write a verdict token, outside example and check modules | 55 in 29 modules (M) |
+| Definitions that write a verdict token, outside example, check and schema modules | 54, of them 51 in 25 modules outside the kernel (M) |
 
 Reading the table:
 
@@ -99,9 +102,25 @@ Reading the table:
 
 ### 1.3 The frozen keys
 
-`/tmp/fable-arch/trace_run.py` (kept in `docs/kernel/trace_run.py`) runs a harness and records every
-Lean service call by mode and case kind. Results: section 8 (filled from the runs of 2026-11-11; a
-harness that did not finish under the host's load is marked so).
+Each of the five harnesses was run once through `tools/kernel_trace.py`, which records every Lean
+service call by mode and case kind ([frozen-keys-20261111.md](../kernel/frozen-keys-20261111.md)). All
+five reproduce their recorded answers with exit code 0 (M): RSP 111/126, Preparedness 231/239, FSF
+257/262, agent-policy 42/42, eligibility 269/269.
+
+| Fact (M) | Value |
+|---|---:|
+| Service modes the five keys call | 9 of 43 |
+| Calls to `document`, `readingsRoute` or `discourse` (35,142, 20,356 and 35,782 lines of code) | 0 |
+| Lean lines under the keys' answers (spec and wrap of every path they call; validators in full) | 17,355 |
+| of which in the proved kernel | 9,565 |
+| Calls to `metered` `evaluate-budgeted` (proved core 519 lines; 3,761 lines of wire code under no theorem) | 24,945 |
+| Calls to `quantity` (proved core 613 lines; 1,804 lines of wire code under no theorem) | 9,452 |
+| Calls to `route` `certificate` (kernel) | 12,746 |
+
+So the keyed answers do not depend on the wrapper modes at all, and what separates them from a fully
+proved path is about 7,800 lines of wire code around two proved evaluators and three validators
+(KB-7, KB-8). In every harness the Python side holds the premises between `soft-elaborate` and
+`route certificate`: the harnesses already work by the carry rule of section 3.
 
 ## 2. The measure
 
@@ -315,15 +334,23 @@ check of section 6 passes.
 |---|---|---|---|
 | KB-1 | Wire the measure: `lean/VE/Kernel/Carry.lean` (section 3, verbatim), the kernel check in the gate and in `tools/regen_generated.py`, the experimental import boundary, a rewritten `docs/trust-baseline.json` (`trust_map.py --write`, so the old file says 63,068) | kernel (signed here: +about 70 lines) | the gate fails on a seeded kernel growth of one definition and on a seeded verdict writer in a shell module |
 | KB-2a | The document mode shows verdicts by the carry rule: `Service.Document`'s unit statuses become one fold over kernel rows; the chain's routes are called as kernel paths | shell | `document`'s spec at most 1,500 lines; its two verdict writers are the fold; every `tests/` document fixture's answer is unchanged except for the added carried cases |
-| KB-2b…f | The same for readings (`Readings.VerdictsWire`, `SupVerdictsWire`, `SupRun`: 15 writers), alternatives and risk (9), discourse (5), family norms (3), the rest (one row per module group in `closure-baseline.json` `verdict_writers`) | shell | writers outside the kernel fall by the group's count |
+| KB-2b | The same for the other writers: readings (17), the service's own modes (9, the document's among them), alternatives (6), discourse (5), risk (3), speech acts (3), the rest (8); one change per module group of `closure-baseline.json` `verdict_writers` | shell | writers outside the kernel fall by the group's count |
+| KB-7 | A wire theorem for `metered` `evaluate-budgeted` on the entry's own runner (`MeteredRun.runCase`), ending in `MeteredProofs.fol_sound` and its three siblings | candidate, then kernel | `metered`: wrap at most 30 lines, spec at most 2,500 (A) |
+| KB-8 | The same for `quantity` (`Time.Wire.runCase`), ending in `checkW6Certificate_sound`, `evalB_sorted_sound`, `refutesB_sorted_sound` and `admit_quantity_report_sound` | candidate, then kernel | `quantity`: wrap at most 30 lines |
 | KB-3 | The core mode: the soft route's `soft-certificate`, `soft-conflict` and `admission` kinds accept `premises` (the slot `P`), with the wire theorem from `slot_route_acceptance`; then delete, one per family as it lowers, the pair refusals (`Document.lean:1166-1180`), `layersApart`, `listedStacks` and `RouteFacts` | kernel (signed per change) | a document listing `judgments@0` with `soft-norms@0` (RSP probe P8) is admitted through the slot and its judgments are premises of the carried case; the refusal text is gone from `lean/` |
 | KB-4 | Shrink the kernel's own spec: the acts decoder becomes a lowering instead of a decoder parameter (removes norms' 2,703-line wrap); one formula codec with a round-trip theorem replaces the per-route decoders (`CONSOLIDATION-PLAN.md` step 8a) | kernel | kernel at most 7,000 lines (A) |
 | KB-5 | Retire the class table as a gate: `trust_map.py` reports only; `docs/ARCHITECTURE.md` section 5 is rendered from `closure-baseline.json` | tools | `tests/test_architecture_docs.py` reads the new file |
 | KB-6 | Promote rights, alternatives and reports to `kernel` once their theorems name the entry's own runner (their wrap is already 22 to 35 lines) | kernel | each path's row has tier `kernel`; the total stays within the signed figure |
 
+Order: KB-1, then KB-7 and KB-8 (they are under the frozen keys' answers today), then KB-3 (it
+unblocks judgment terms beside norms, the largest family the RSP's unchecked bytes wait for: 50
+units, S: `usecases/anthropic-rsp/README.md`), then KB-2a and the rest. KB-2a and KB-2b change no
+keyed answer (no key calls those modes); they are what whole-document checks need.
+
 Not in this list, on purpose: a new statement type in Lean, a new wire format, a migration of the
-use cases. The core document and its theorem exist; the use cases already call the kernel paths
-(section 8). The work is to make everything else go through them.
+use cases. The core document and its theorem exist, and the use cases already work by elaborating
+and letting the kernel replay (section 1.3). The work is to prove the two unproved paths under
+them and to make everything else go through the kernel.
 
 Work this decision stops or changes:
 
@@ -337,8 +364,8 @@ Work this decision stops or changes:
 
 ## 8. The frozen keys on this measure
 
-See `docs/kernel/frozen-keys-20261111.md` on this branch for the per-harness tables (answers,
-wall time, Lean calls by mode and kind). They are the "before" of every KB row.
+[docs/kernel/frozen-keys-20261111.md](../kernel/frozen-keys-20261111.md) holds the per-harness tables
+(answers, wall time, Lean calls by mode and kind). They are the "before" of every KB row.
 
 ## 9. Risks and open points
 

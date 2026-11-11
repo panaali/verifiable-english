@@ -72,13 +72,17 @@ def requests(registry: dict) -> list[dict]:
     return out
 
 
-def run_lean(paths: list[dict], tokens: list[str], timeout: float) -> tuple[dict, list[dict]]:
+def run_lean(paths: list[dict], tokens: list[str], imports: list[str], timeout: float) -> tuple[dict, list[dict]]:
+    """Run the Lean half over `VE`, the service protocol and the registry's extra `imports` (modules that
+    hold a listed theorem and that only `VE.Audit` imports)."""
     with tempfile.TemporaryDirectory() as tmp:
-        cfg, out = Path(tmp) / "cfg.json", Path(tmp) / "out.json"
+        cfg, out, program = Path(tmp) / "cfg.json", Path(tmp) / "out.json", Path(tmp) / "kernel_closure.lean"
         cfg.write_text(json.dumps({"out": str(out), "paths": paths, "census": tokens}))
+        program.write_text("".join(f"import {module}\n" for module in imports)
+                           + (ROOT / "tools/kernel_closure.lean").read_text())
         env = dict(os.environ, VE_KC_CFG=str(cfg))
         env["PATH"] = str(Path.home() / ".elan/bin") + os.pathsep + env.get("PATH", "")
-        done = subprocess.run(("lake", "env", "lean", "../tools/kernel_closure.lean"), cwd=ROOT / "lean", env=env,
+        done = subprocess.run(("lake", "env", "lean", str(program)), cwd=ROOT / "lean", env=env,
                               capture_output=True, text=True, timeout=timeout)
         if done.returncode != 0 or not out.exists():
             raise SystemExit(f"kernel_closure.lean failed ({done.returncode}):\n{done.stdout[-2000:]}{done.stderr[-2000:]}")
@@ -88,7 +92,7 @@ def run_lean(paths: list[dict], tokens: list[str], timeout: float) -> tuple[dict
 
 def measure(registry: dict, timeout: float = 3600) -> dict:
     """Per path: spec and wrap lines; and the kernel tier's distinct-line total."""
-    raw, census = run_lean(requests(registry), registry.get("verdict_tokens", []), timeout)
+    raw, census = run_lean(requests(registry), registry.get("verdict_tokens", []), registry.get("imports", []), timeout)
     rows, kernel_ranges, problems, covered_starts = [], [], [], set()
     for path in registry["paths"]:
         spec, wrap = raw["spec:" + path["name"]], raw["wrap:" + path["name"]]

@@ -7,6 +7,7 @@ reads the compiled environment and runs in the gate, not here.
 from __future__ import annotations
 
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -70,5 +71,7 @@ def test_the_saved_baseline_is_of_this_registry():
 
 def test_the_kernel_is_within_the_signed_total():
     """Section 6: the kernel total rises only with the architect's signature (docs/kernel/ALLOWANCES.md)."""
-    signed = int((ROOT / "docs/kernel/ALLOWANCES.md").read_text().split("signed total:")[1].split()[0].replace(",", ""))
+    text = (ROOT / "docs/kernel/ALLOWANCES.md").read_text()
+    [figure] = re.findall(r"^signed total: ([0-9,]+) lines$", text, flags=re.MULTILINE)
+    signed = int(figure.replace(",", ""))
     assert BASELINE["kernel_lines"] <= signed
