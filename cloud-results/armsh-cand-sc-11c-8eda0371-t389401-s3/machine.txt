@@ -1,0 +1,10 @@
+job=armsh-cand-sc-11c-8eda0371-t389401-s3 shard=3/4 nproc=4 arch=aarch64 host=runnervmkb2gk date=2026-11-11T09:31:36Z ulimit_s=16384
+Mem:              15           1           9           0           5          13
+/dev/root       145G   42G  103G  29% /
+ 09:31:36 up 3 min,  0 user,  load average: 1.00, 0.42, 0.17
+pilot/codex branches: 98
+ve-cache: lean-build seed-ancestor key 1887a7420de0 asset lean-build-c02b8150641c-linux-aarch64.tar.zst sha256 16b1b0f728e9 ok, seal ok, from download, 11.6 s
+seed: mode=seed match=seed-ancestor asset=lean-build-c02b8150641c-linux-aarch64.tar.zst pruned=0 base=fd0e9c5c44d3
+seed: 70 modules rebuilt over the seed (traces), none stale
+seed: lake 360.3 s (rc 0, match seed-ancestor)
+p1-tokenizers: 443909a61d42 fetched
