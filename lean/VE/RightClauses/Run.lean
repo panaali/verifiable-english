@@ -1,4 +1,6 @@
 import VE.RightClauses.ElidedBytes
+import VE.RightClauses.English
+import VE.EnglishGrammar.Run
 import VE.Compose.Dispatch
 import VE.CertificateWire
 
@@ -25,12 +27,26 @@ def deepLine (D : ClauseDoc) : Bool :=
   (D.lines ++ D.cands.flatMap (·.2.2.2)).any fun x =>
     x.2.2.clauses.length + x.2.2.relation.toList.length ≥ VE.Limits.maxDepth
 
+/-- The rows `english` returns, as the result's `english` field (cmp-s3-cfr-1d). -/
+def englishJson (rows : List English.Row) : Json :=
+  Json.arr (rows.map fun r => Json.mkObj [("frame", .str r.frame), ("rule", .str r.rule), ("text", .str r.text)]).toArray
+
+/-- The request's optional `english` field (`source`, the pinned source the spans index; `lexicon`, the words of the
+    rights lines' soft environment, which it must name) and the shown lines of spec 2 on `D` (English.lean). -/
+def englishOf (environment : Json) (D : ClauseDoc) (j : Json) : Except String (List English.Row) := do
+  VE.Bridge.exactFields j ["source", "lexicon"]
+  let source ← VE.Bridge.stringField j "source"
+  let soft ← VE.Rights.Wire.stripRights (stripProfile environment)
+  let id ← VE.EnglishGrammar.Run.environmentId (VE.EnglishGrammar.displayJson soft (Json.mkObj []))
+  let L ← VE.EnglishGrammar.Run.decodeLexicon id (← j.getObjVal? "lexicon")
+  English.english D L source
+
 /-- 4.1 in order: `dispatch` (its refusals are final), decoding, the head's checks on fixed lines and candidates,
     then the rights decoder and its checks on the plained document (step 6), whose texts are the answer. Output: the
     plained document's canonical bytes, `clauseSlotLabelled`, and the elided bytes of the decoded document (its total
-    and each unit's), every span read once (`entryElided`). -/
+    and each unit's), every span read once (`entryElided`); with the request's `english`, the shown lines of spec 2. -/
 def elaborateCase (j : Json) : Except String Json := do
-  VE.Bridge.exactFields j ["id", "environment", "document"]
+  VE.Bridge.displayFields j ["id", "environment", "document"] ["english"]
   let id ← VE.Bridge.stringField j "id"
   let environment ← j.getObjVal? "environment"
   let document ← j.getObjVal? "document"
@@ -49,9 +65,17 @@ def elaborateCase (j : Json) : Except String Json := do
   let plained := elaborateJson D document
   let _ ← VE.Rights.Wire.decodeRightsSource (stripProfile environment) plained
   let es := entryElided D
-  pure (VE.Route.Wire.ok id [("result", Json.mkObj [("plained", .str (← VE.CertificateWire.canonical 257 plained)),
-    ("clause_slot", labelledJson (clauseSlotLabelled D)), ("elided_bytes", toJson (elidedTotal es)),
-    ("unit_elided_bytes", toJson (unitElided es document))])])
+  let bytes ← VE.CertificateWire.canonical 257 plained
+  match j.getObjVal? "english" with
+  | .ok e => do
+    let rows ← englishOf environment D e
+    pure (VE.Route.Wire.ok id [("result", Json.mkObj [("plained", .str bytes),
+      ("clause_slot", labelledJson (clauseSlotLabelled D)), ("elided_bytes", toJson (elidedTotal es)),
+      ("unit_elided_bytes", toJson (unitElided es document)), ("english", englishJson rows)])])
+  | .error _ =>
+    pure (VE.Route.Wire.ok id [("result", Json.mkObj [("plained", .str bytes),
+      ("clause_slot", labelledJson (clauseSlotLabelled D)), ("elided_bytes", toJson (elidedTotal es)),
+      ("unit_elided_bytes", toJson (unitElided es document))])])
 
 def runCaseReported (j : Json) : Json :=
   match elaborateCase j with

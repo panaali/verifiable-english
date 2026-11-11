@@ -6,7 +6,7 @@ namespace ResponseShape.Encoders.ClausesElaborate
 open Lean ResponseShape ResponseShape.Skeletons VE.RightClauses.Run
 
 theorem elaborateCase_fits (j : Json) : OkFits j Skeletons.clausesElaborate (elaborateCase j) := by
-  unfold elaborateCase labelledJson VE.Route.Wire.ok
+  unfold elaborateCase labelledJson englishJson VE.Route.Wire.ok
   okfits
   all_goals fits
 

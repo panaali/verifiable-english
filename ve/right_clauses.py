@@ -7,7 +7,9 @@ decodes, checks and plains nothing (R8): it sends the document, and binds the an
 schema; `bind` checks that every unit, line and label the answer names is the request's (its docstring says what is
 bound: the plained units and lines one for one, the totality rows exactly; how many `Lim` rows there are is Lean's).
 A rejection is Lean's text, raised as its class; an answer that does not bind is `CheckerUnavailable`, never a Python
-verdict. The English of RC1 to RC5 is not shown here (cmp-s3-cfr-1d).
+verdict. Given the pinned source, the request also carries the source and the words of the rights lines' soft
+environment (the vocabulary export Lean binds to that environment), and Lean returns the shown lines of spec 2 (RC1 to
+RC4, English.lean); Python relays their text as Lean wrote it and binds which line each names (`_english_bound`).
 """
 from __future__ import annotations
 
@@ -29,17 +31,33 @@ class Elaboration:
     """Lean's answer: the plained document's canonical bytes, as Lean wrote them, and the slot's (label, AST) rows."""
     plained: str
     clause_slot: tuple[tuple[str, object], ...]
+    english: tuple[tuple[str, str, str], ...] = ()
 
     @property
     def units(self) -> list:
         return json.loads(self.plained)
 
 
-def elaborate(environment: dict, document: list) -> Elaboration:
-    """Lean's head on one document; a refusal raises Lean's diagnostic (`relay.decide`)."""
+def elaborate(environment: dict, document: list, source: str | None = None) -> Elaboration:
+    """Lean's head on one document; a refusal raises Lean's diagnostic (`relay.decide`). With `source`, the pinned
+    source the spans index, Lean also returns the shown RC lines."""
     from .backends.relay import decide
-    [row] = decide(MODE, [{"id": "clauses", "environment": environment, "document": document}])
-    return bind(row["result"], document, environment)
+    case = {"id": "clauses", "environment": environment, "document": document}
+    if source is not None:
+        case["english"] = {"source": source, "lexicon": lexicon(environment)}
+    [row] = decide(MODE, [case])
+    return bind(row["result"], document, environment, english=source is not None)
+
+
+def lexicon(environment: dict) -> dict:
+    """The vocabulary export of the rights lines' soft environment (the profile list without `right-clauses@0` and
+    `rights@0`, no rights block), as `ve.surface.rights` reads it; Lean refuses one that names another environment."""
+    from .backends.english_lean import export
+    from .english import EnglishVocabulary
+    from .environment import Environment
+    from .surface.rights import _soft_env
+    off = {**environment, "profiles": [p for p in environment.get("profiles", []) if p != PROFILE]}
+    return export(EnglishVocabulary(_soft_env(Environment(off))))
 
 
 def _unbound(what: str) -> CheckerUnavailable:
@@ -134,7 +152,36 @@ def _limitation_bound(label: str, document: list, environment) -> bool:
     return False
 
 
-def bind(result: dict, document: list, environment: dict) -> Elaboration:
+def _english_rows(document: list) -> list:
+    """The (frame, rule) of each shown line the request asks for, in document order (spec 2, the reader's checklist):
+    RC1 for a line with clauses or a relation, RC3 for a total relation, RC4 for every line with a rule name."""
+    out = []
+    for unit in document:
+        for line in _lines(unit)[1] or []:
+            rule = _rule(line)
+            if rule is None:
+                continue
+            relation = line.get("relation") if type(line) is dict else None
+            out += [("RC1", rule)] if _structured(line) else []
+            out += [("RC3", rule)] if type(relation) is dict and relation.get("total") is not None else []
+            out.append(("RC4", rule))
+    return out
+
+
+def _english_bound(result: dict, document: list, english: bool) -> tuple:
+    """The shown lines, present exactly when asked: one row per line of `_english_rows`, its frame and rule, in order;
+    each text is Lean's, relayed as written."""
+    if not english:
+        if "english" in result:
+            raise _unbound("shows lines the request did not ask for")
+        return ()
+    rows = result.get("english")
+    if type(rows) is not list or [(r["frame"], r["rule"]) for r in rows] != _english_rows(document):
+        raise _unbound("shows other lines than the request's, or in another order")
+    return tuple((r["frame"], r["rule"], r["text"]) for r in rows)
+
+
+def bind(result: dict, document: list, environment: dict, english: bool = False) -> Elaboration:
     """R8's binding of a schema-checked `clauses-elaborate` result to the request. The plained document is the
     request's, unit for unit and line for line, less what Lean's plain drops, but for the guards of structured lines.
     The slot is `Lim_{plain D} ++ Rel_D` (1.3): limitation premises first, each naming a request limitation, one of
@@ -155,4 +202,4 @@ def bind(result: dict, document: list, environment: dict) -> Elaboration:
     for label, _ in rows[:first]:
         if not _limitation_bound(label, document, environment):
             raise _unbound(f"names a premise {label!r} of no limitation condition in the request")
-    return Elaboration(result["plained"], tuple(rows))
+    return Elaboration(result["plained"], tuple(rows), _english_bound(result, document, english))
