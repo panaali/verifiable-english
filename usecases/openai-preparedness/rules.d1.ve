@@ -52,7 +52,7 @@ Rule 1. Every situation must have sufficient safety as well as security controls
 Rule 1. Every situation must have sufficient safety as well as security controls during development, if all of the following hold: (a) there is a level such that both that situation has reached that level and that level is critical; (b) that situation is classified as "further_development".
 ## f4-security | always | C.3: “We will require the following practices for High capability models”; no coverage condition
 Rule 1. Every situation must have security practices, if there is a level such that both that situation has reached that level and that level is high.
-## f7-evaluations | always | 3.3: “Prior to deployment, every covered model undergoes Scalable Evaluations”; temporal relation remains ET-blocked
+## f7-evaluations | always | 3.3: “Prior to deployment, every covered model undergoes the suite of Scalable Evaluations.”; temporal relation remains ET-blocked
 Rule 1. Every situation must undergo evaluations before deployment, if that situation is covered.
 ## f7-report | always | 3.3: “The SAG reviews the Capabilities Report and decides on next steps.”
 Rule 1. Every situation must have SAG review the Capabilities Report as well as decide on next steps, if that situation is covered.
@@ -76,9 +76,9 @@ Rule 1. Every situation must identify specific safeguards that would address eac
 Rule 1. Every situation must identify efficacy methods per safeguard, if that situation is classified as "safeguard_selection".
 ## f9-threshold | always | 4.1: “and an efficacy threshold” for each safeguard; per-item quantification remains SC-blocked
 Rule 1. Every situation must identify an efficacy threshold per safeguard, if that situation is classified as "safeguard_selection".
-## f10-validate | always | 4.2: “If we find reasonable evidence … we will validate the information being received”
+## f10-validate | always | 4.2: “If we find reasonable evidence that our safeguards are not working as expected, we will validate the information being received and review the sufficiency of our safeguards.” (its first duty)
 Rule 1. Every situation must validate the evidence, if that situation is classified as "reasonable_evidence".
-## f10-review | always | 4.2: “review the sufficiency of our safeguards” on that evidence
+## f10-review | always | 4.2: “If we find reasonable evidence that our safeguards are not working as expected, we will validate the information being received and review the sufficiency of our safeguards.” (its second duty)
 Rule 1. Every situation must review safeguard sufficiency, if that situation is classified as "reasonable_evidence".
 ## f14-document | always | 5.1: “We will document relevant reports made to the SAG and of SAG’s decision and reasoning.”
 Rule 1. Every situation must have reports to SAG as well as SAG decisions with reasoning documented.
@@ -106,7 +106,7 @@ Rule 1. Every situation must have model access strictly limited with strong mult
 Rule 1. Every situation should have model access strictly limited with strong multifactor authentication.
 ## cl4-persuasion | RS15=rule | Change log item 4: “Going forward we will handle risks related to persuasion outside the Preparedness Framework, including via our Model Spec and policy prohibitions on the use of our tools for political campaigning or lobbying, and our ongoing investigations of misuse of our products (including detecting and disrupting influence operations).” (RS15=rule; the means it lists are in the act's legend)
 Rule 1. Every situation must have persuasion risks handled outside the Preparedness Framework, if that situation is classified as "persuasion_risk".
-## f16-ssc-visibility | always | Appendix B: “The Safety and Security Committee … will be given visibility into processes”
+## f16-ssc-visibility | always | Appendix B: “The Safety and Security Committee (SSC) of the OpenAI Board of Directors (Board) will be given visibility into processes, and can review decisions and otherwise require reports and information from OpenAI Leadership as necessary to fulfill the Board’s oversight role.” (its first clause)
 Rule 1. Every situation must give SSC visibility into processes.
 ## f16-informed | RS6=req | Appendix B: “Making all final decisions, including accepting any residual risks and making deployment go/no-go decisions, informed by SAG’s recommendations.” (RS6=req)
 Rule 1. Every situation must have Leadership informed by SAG, if that situation is classified as "leadership_decision".
@@ -122,9 +122,9 @@ Rule 1. Every situation may have a revised course of action mandated by the Boar
 Rule 1. Every situation must have the SAG Chair coordinate with OpenAI Leadership on immediate reaction, if both that situation is classified as "rapid_risk" and that situation is classified as "immediate_reaction_needed".
 ## f16-chair-default | RS9=default | Appendix B: “In the rare case that a risk of severe harm rapidly develops (e.g., there is a change in our understanding of model safety that requires urgent response), we can request a fast track for the SAG to process the report urgently. The SAG Chair should also coordinate with OpenAI Leadership for immediate reaction as needed to address the risk.” (RS9=default; requesting the fast track is optional)
 Rule 1. Every situation should have the SAG Chair coordinate with OpenAI Leadership on immediate reaction, if both that situation is classified as "rapid_risk" and that situation is classified as "immediate_reaction_needed".
-## f16-year | RS0=commitment | Appendix B: “review the Preparedness Framework … at least once a year”
+## f16-year | RS0=commitment | Appendix B: “We will review and potentially update the Preparedness Framework for continued sufficiency at least once a year.” (the review only)
 Rule 1. Every situation must have an annual review.
-## f5-ambiguous | always | 3.2: “In cases of ambiguity … the SAG is responsible for making the final determination”
+## f5-ambiguous | always | 3.2: “In cases of ambiguity about whether a model is covered by the Preparedness Framework, the SAG is responsible for making the final determination.”
 Rule 1. Every situation must have SAG make the final coverage determination, if that situation is classified as "coverage_ambiguous".
 ## f5-checkpoint | always | 3.2: “If justified by our forecasts and threat models as potentially posing a severe risk during development and prior to external deployment, we will select an appropriate checkpoint during development to be covered by the Preparedness Framework.”; timing remains open
 Rule 1. Every situation must have an appropriate development checkpoint selected to be covered, if that situation is classified as "forecast_severe_before_deployment".
@@ -170,5 +170,5 @@ Rule 1. Every capability must be tracked as a category, if all of the following 
 Rule 1. Every capability must not be tracked as a category, if it is not the case that all of the following hold: (a) that capability is plausible; (b) all of the following hold: (i) that capability is measurable; (ii) all of the following hold: (a) that capability is severe; (b) both that capability is classified as "net_new" and that capability is irremediable.
 ## f13-review | always | 2.3: “We will periodically review the latest research and findings for each Research Category.”; periodicity remains ET-blocked
 Rule 1. Every situation must have research categories reviewed.
-## f13-results | always | 2.3: “SAG will receive the results of such reviews and evaluate whether …”; assessment remains AP-blocked
+## f13-results | always | 2.3: “SAG will receive the results of such reviews and evaluate whether there is sufficient evidence to recommend updates to our internal practices or to the Preparedness Framework.”; assessment remains AP-blocked
 Rule 1. Every situation must have SAG receive the research results, if that situation is classified as "research_category_review".

@@ -730,7 +730,7 @@ def test_pf_rs13_and_untranslated_claims_have_named_residuals(pf_modules):
     assert pf_build.READINGS["rs13-employee-summary"] == ("RS13", {"permission": ["f14-summary"], "might": []})
     summary_rule = json.loads(pf_translation.parsed_rule("f14-summary"))
     assert summary_rule["predicate"] == "summary_access" and summary_rule["sign"] is True
-    assert "highly_sensitive" in json.dumps(summary_rule["unless"])
+    assert "beyond_sensitive_limits" in json.dumps(summary_rule["unless"])
     assert pf_translation.READING_SETS["RS13"] == ("permission", "might")
     exposition, _ = pf_build._fallback(1, 0, b"Contents")
     claim, _ = pf_build._fallback(1, 0, b"Employees may request a summary")

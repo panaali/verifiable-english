@@ -525,6 +525,52 @@ safety-framework 9. Report, unscored, what changes without N1 and without N2.
     "cyberdefense policies as well as tools", "request as well as receive a summary of testing results", "recommend
     implementing as well as assessing the safeguards", "coordinate with OpenAI Leadership on immediate reaction".
 
+**`openai-preparedness-fidelity-fix` (2026-11-11): the T fixes of the use-case audit (DRI decision 2026-11-10 23:46Z,
+reviews/dri-decisions-20261111-ucfix-cycle.md item 2). Section 6 and `answer-key.json` are not edited.**
+
+18. **Excluded reading: RS11 = final.** Section 3.1 offered "final: no other body may change them" for Appendix B's
+    "Making all final decisions, including accepting any residual risks and making deployment go/no-go decisions,
+    informed by SAG’s recommendations." The same appendix says "Where necessary, the Board may reverse a decision
+    and/or mandate a revised course of action.", so a reading under which no other body may change Leadership's
+    decisions is not one the source admits. RS11 keeps only "process" (`pf_translation.READING_SETS`,
+    `EXCLUDED_READINGS`); its rule `f16-final` is removed. Under "process" the sentence assigns Leadership a role and
+    states no prohibition, so `f16-process` (an invented "must not have the decision changed") is removed too: RS11 =
+    process selects no rule. `tests/test_pf_fidelity_fix.py` fails if RS11 = final, or a rule only it selects, is
+    offered again.
+19. **Key finding (K): C6 and C-doc are NONE, not SOME(final ∧ bperm).** Source: "Where necessary, the Board may
+    reverse a decision and/or mandate a revised course of action." The key's conflict exists only under RS11 = final,
+    which item 18 excludes; under RS17 = bperm the Board's two permissions (`f16-board-reverse`,
+    `f16-board-mandate`) meet no prohibition, so no choice conflicts. The section 6.5 cells stay as frozen
+    (KEY-FREEZE.md); the run answers NONE and scores both rows as disagreements with cause "key finding".
+20. **Key finding (K): G9 is SOME(P ∨ scoped), not ALL.** Source: Table 2, Nuclear and Radiological: "Heighten
+    safeguards (and consider further actions) in consultation with appropriate US government actors, accounting for
+    the complexity of classified information handling." The row states no condition, so under RS4 = N and RS4s =
+    unscoped `f12-nuclear-unscoped` reaches every model, G9's model at no threshold included, and G9's model is then
+    not covered only by C.3's "For all models, especially those presenting High capabilities, access must be strictly
+    limited, protected with strong multi-factor authentication, and may require additional approvals for access."
+    `run.SAFEGUARD_PREDICATES` includes the nuclear act; the run answers SOME on every choice except RS4 = N ∧ RS4s =
+    unscoped. The section 6.6 cell stays as frozen; the row is scored as a disagreement with cause "key finding".
+21. **G7 and N4 are answered (supersedes item 16).** G7: footnote 5's "we will prioritize Biological capability
+    evaluations and these will be used as indicators for High and Critical capabilities for the category" is the
+    fact block `fn5-indicator` (the indicator relation only; the "we will prioritize" duty stays UNFORMALISED). Two
+    finite models of every selected premise differ on whether a chemical evaluation indicates a High or Critical
+    level, so the Framework is silent on it: ALL. N4: change log item 2, "Also, we are removing terms “low” and
+    “medium” from the Framework, because those levels were not operationally involved in the execution of our
+    Preparedness work.", is the premise `cl-levels` ("No level is low. No level is medium."); an entailment
+    certificate shows that no situation reaches a low or medium level: ALL.
+22. **Translation fixes (translation-fidelity checklist classes 1, 2, 3, 5, 7, 9, 11).** Table 1's acts name the
+    standard ("meeting the High standard", Appendix C.1, C.2, C.3); F2's and F3's acts carry the sufficiency
+    ("sufficiently minimizing severe-harm risk", "sufficient safety as well as security controls"); 3.3's
+    compilation sentence is a rule of its own (`f7-compile`), and CAPREP and K4 ask it; F11's exception precedes
+    every F2 rule (`f11-exception-deploy` over `f2-no-deploy` and `f2-no-deploy-any`); F11's three "but only if"
+    duties are guarded by the marginal-risk adjustment itself (`adjustment_made`, now that adjustment, with
+    `adjustment_confirmed`), not by `adjustment_conditions`, whose legend already contains them; K10's duty is
+    "adopt an elicitation approach that overcomes sandbagging" unless a conservative upper bound is used; the
+    Board's "and/or" is two permissions; F13's review and F16's chair duty lose guards the sentences do not state;
+    N3's inventory is PLAN 4.2's commitments (`run.COMMITMENTS`). Every changed block's header quotes its full source
+    sentence. Regulated predicates: 59 of 64 (58 before: +1 the compilation act,
+    +1 the Board's mandate, -1 the removed `process_change`).
+
 ## 13. Files for the implementation round (not this commit)
 
 `environment.d1.json`, `environment.d2.json`, `environment.d3.json`; `pf.d1.ve.md`, `pf.d2.ve.md`, `pf.d3.ve.md`
