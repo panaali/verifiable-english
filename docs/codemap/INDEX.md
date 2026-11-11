@@ -4,7 +4,7 @@ Service-mode routes: `tools/repo_map.py`. Regenerate with `python tools/code_map
 Regenerated on every merge to main; on a branch it may lag that branch's own changes.
 
 - [bench/](bench.md) — 4 modules — -
-- [conformance/](conformance.md) — 67 modules — `evaluation.json` contains **701** valid environment/model/document cases (**4,912 formulas**).
+- [conformance/](conformance.md) — 69 modules — `evaluation.json` contains **701** valid environment/model/document cases (**4,912 formulas**).
 - [docs/act-phrases/](docs__act-phrases.md) — 42 modules — -
 - [docs/arch/](docs__arch.md) — 29 modules — -
 - [docs/architecture/](docs__architecture.md) — 1 modules — -
@@ -127,7 +127,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/VE/SpeechActs/](lean__VE__SpeechActs.md) — 8 modules — -
 - [lean/VE/Time/](lean__VE__Time.md) — 8 modules — -
 - [lean/VE/Weighing/](lean__VE__Weighing.md) — 5 modules — -
-- [lean/VE/WireContract/](lean__VE__WireContract.md) — 15 modules — -
+- [lean/VE/WireContract/](lean__VE__WireContract.md) — 17 modules — -
 - [lean/VE/Words/](lean__VE__Words.md) — 2 modules — -
 - [paper/](paper.md) — 10 modules — Drafted by GPT-6 Astra on `paper/v1`, after merging `ve-integration`.
 - [research/](research.md) — 2 modules — -
@@ -136,10 +136,10 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [tests/ part 2](tests--part-2.md) — 90 modules — -
 - [tests/ part 3](tests--part-3.md) — 88 modules — -
 - [tests/ part 4](tests--part-4.md) — 86 modules — -
-- [tests/ part 5](tests--part-5.md) — 83 modules — -
-- [tests/ part 6](tests--part-6.md) — 81 modules — -
-- [tests/ part 7](tests--part-7.md) — 88 modules — -
-- [tests/ part 8](tests--part-8.md) — 14 modules — -
+- [tests/ part 5](tests--part-5.md) — 82 modules — -
+- [tests/ part 6](tests--part-6.md) — 82 modules — -
+- [tests/ part 7](tests--part-7.md) — 87 modules — -
+- [tests/ part 8](tests--part-8.md) — 16 modules — -
 - [tests/frozen_speech/](tests__frozen_speech.md) — 4 modules — Frozen pre-switch speech oracle.
 - [tools/ part 1](tools--part-1.md) — 98 modules — -
 - [tools/ part 2](tools--part-2.md) — 14 modules — -
