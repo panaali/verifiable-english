@@ -103,4 +103,58 @@ The per-choice text cost grows with choices × `sdSizeCharge` (sc-11w's measure)
 - The per-choice chain text grows about with the square of the number of fixed rules: 16 rules 0.5-0.8 s, 32 rules
   2.4-2.7 s.
 
-These documents are over R4 through a live admission. Step 2 of the task therefore applies; see REPORT.md.
+These documents are over R4 through a live admission, so step 2 applies (DRI 2026-11-11 sc-admit-cpu item 1).
+
+## The limit: `maxSdAdmitWork` = 131,072
+
+The DRI's provisional value was 524,288 (item 3), lowered to the next power of two while an admitted 64-choice
+document was over 1 s:
+- 524,288 admits `withRules 6 4 (wide 4)` (331,200 units, 0.87-1.09 s) and 32 one-node rules (225,216 units,
+  2.40-2.68 s).
+- 262,144 still admits the 32-rule document.
+- 131,072 admits the 64-choice documents at or just under it within 1 s:
+  - `atLimit`, below, 0.57-0.61 s;
+  - 16 one-node rules (118,720 units), 0.50-0.83 s;
+  - one 31-node rule (107,520 units), 0.34-0.54 s.
+- 131,072 refuses every 64-choice document measured over 1 s.
+- It also refuses a few documents that were within 1 s, for example `withRules 6 2 (wide 4)` (176,064 units,
+  0.54-0.60 s). That is the conservative direction.
+
+## With the charge (step 2), at ba8900650b's parent 5cfea74ca9
+
+Output: `output-charged.txt`, at the 5-minute load printed before each case (27-41). The `lean/` tree differs from the
+final one only in SoftWireExamples.lean's last `#guard` and the generated files.
+
+| Document | Choices | `sdAdmitWork` | `admitSD` | `admitSD` CPU |
+| --- | --- | --- | --- | --- |
+| NSDheavy | 64 | 940,992 | `ResourceLimit: the per-reading checks of 64 readings exceed 131072 units` | 0.23, 0.22, 0.22 s |
+| heavyIn | 64 | 824,320 | the same refusal | 0.23, 0.20, 0.21 s |
+| `atLimit` (`NSDbig 6`, 13 rules of 2-3 nodes) | 64 | 131,072 | ok | 0.57, 0.61, 0.61 s |
+| `overLimit` (one node more) | 64 | 133,120 | the same refusal | 0.21, 0.23, 0.22 s |
+| NSDbig 6 | 64 | 44,992 | ok | 0.15, 0.18, 0.17 s |
+| `wideGuard767` | over 64 | (not read) | ok | 0.09, 0.09, 0.08 s |
+| `wideGuard3071` | 64 | (not reached) | `admitS2`'s `ResourceLimit` | 0.07, 0.08, 0.07 s |
+
+## Open: documents with many fixed rules (reported to the DRI)
+
+The charge bounds the per-choice texts on the documents above. It does not bound two other costs, both of which grow
+with the number of fixed rules faster than `sdSizeCharge` does:
+- `admitS2`, S1's and S2a's admission, which runs before `admitSDOf`;
+- the per-choice texts when there are few choices.
+
+Output: `output-gap.txt` (at ba8900650b, load 16-24) and `output-charged.txt`.
+
+| Document | Choices | `sdAdmitWork` | `admitS2` CPU | `admitSD` CPU |
+| --- | --- | --- | --- | --- |
+| `withRules 1 32 (.top)` | 2 | 2,808 | 0.50, 0.49, 0.48 s | 0.59, 0.56, 0.57 s |
+| `withRules 3 28 (.top)` | 8 | 14,288 | 0.45, 0.47, 0.45 s | 0.52, 0.54, 0.54 s |
+| `withRules 3 32 (.top)` | 8 | 17,136 | 0.86, 0.79, 0.76 s | 1.46, 0.83, 0.83 s |
+| `withRules 5 28 (.top)` | 32 | 83,072 | 0.72, 0.75, 0.75 s | 1.62, 0.95, 0.97 s |
+| `withRules 4 30 (.top)` | 16 | 37,840 | 1.32, 1.37, 1.34 s | 1.63, 1.61, 1.54 s |
+| `withRules 1 64 (.top)` | 2 | 9,656 | 6.50, 7.14, 9.19 s | 9.25, 10.34, 9.19 s |
+| `withRules 1 128 (.top)` | 2 | (not reached) | 54.41, 55.60, 55.02 s, then `ResourceLimit: generated norm layer …` | (not timed) |
+
+Lowering `maxSdAdmitWork` cannot close this gap. `admitS2` is over R4 before the charge is read, and 32,768 would
+already refuse the named NSDbig 6 (44,992). The fix is a rule-count bound or a cheaper chain check in S1's and S2a's
+admission and `choiceChainText`. That is outside this item's files. It is reported to the DRI in REPORT.md
+("Notes for the DRI").

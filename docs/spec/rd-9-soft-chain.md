@@ -2502,8 +2502,9 @@ manage-agents/reviews/dri-decisions-20261111-sc-admit-cpu.md). `sdAdmitWork N` i
 The provisional 524,288 and 262,144 admit documents over R4 (`withRules 6 4 (wide 4)`, 331,200 units, 0.87-1.09 s;
 32 one-node rules, 225,216 units, 2.40-2.68 s). The charge does not bound S1's and S2a's admission (`admitS2`), which
 runs before it. Nor does it bound the per-choice texts of documents with many fixed rules and few choices: 30 rules
-and 16 choices (37,840 units) are admitted in 1.54-1.63 s, about 0.9-1.0 s of it in `admitS2`. That cost grows with
-the number of fixed rules (one set and 64 rules: 8.6 s in `admitS2`), and it is row sc-admit-rules.
+and 16 choices (37,840 units) are admitted in 1.54-1.63 s, of which `admitS2` alone takes 1.32-1.37 s. That cost grows with
+the number of fixed rules (one set and 64 rules: 6.5-9.2 s in `admitS2`). It is open, reported to the DRI in
+docs/rd-9/sc-admit-cpu/REPORT.md.
 
 ### 14.12 Existing text and tests that sc-11b changes
 

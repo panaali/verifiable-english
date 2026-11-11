@@ -1,0 +1,32 @@
+{
+  "item": "sc-admit-cpu",
+  "decision": "manage-agents/reviews/dri-decisions-20261111-sc-admit-cpu.md item 3 (seeded bugs: drop the charge; limit one unit too high)",
+  "method": "each Lean mutant applied to lean/VE/Readings/SoftWire.lean at commit ba8900650b, `lake build VE.Readings.SoftWireExamples` run, every error line recorded, the file restored by `git checkout` (2026-11-11, /tmp script recorded in REPORT.md). The mechanical sweep of the one new trusted definition (`sdTextsWithin`) is trust-mutants.json: 13 KILLED, 0 SURVIVOR, 1 INVALID at f0b8baac7b. No Python or Rust product code changed.",
+  "guards": {
+    "SoftWireExamples.lean:34": "#guard maxSdAdmitWork == 131072",
+    "SoftWireExamples.lean:35": "#guard NSDheavy: sdSizeCharge 14703, sdAdmitWork 940992, refused with the exact ResourceLimit text",
+    "SoftWireExamples.lean:36": "#guard heavyIn: sdSizeCharge 12880, sdAdmitWork 824320, refused with the exact ResourceLimit text",
+    "SoftWireExamples.lean:38": "#guard heavyIn under an adequate limit (its own work): admitted (R5's adequate-budget row)",
+    "SoftWireExamples.lean:40": "#guard atLimit: work 131072 admitted; one unit lower refused with `exceed 131071 units`",
+    "SoftWireExamples.lean:42": "#guard overLimit: work 133120 refused",
+    "SoftWireExamples.lean:46": "#guard wideGuard767: 65 choices, work over the limit, no text and no charge (none)",
+    "SoftWireExamples.lean:56": "#guard NSDbig 2 under 253 names: only the last choice fails, and its text is the answer"
+  },
+  "mutants": [
+    {"id": "B1", "definition": "sdTextsWithin", "behaviour": "over the charge admission refuses before any per-choice text",
+     "file": "lean/VE/Readings/SoftWire.lean", "mutation": "`if sdAdmitWork N ≤ limit then` becomes `if true then` (the charge dropped)",
+     "test": "SoftWireExamples.lean:35 (NSDheavy #guard)", "result": "killed: #guards at :35, :36, :40, :42 fail", "restored": true},
+    {"id": "B2", "definition": "maxSdAdmitWork", "behaviour": "the limit is 131,072, measured",
+     "file": "lean/VE/Readings/SoftWire.lean", "mutation": "`131072` becomes `131073` (one unit too high)",
+     "test": "SoftWireExamples.lean:40 (atLimit #guard)", "result": "killed: #guards at :34, :35, :36, :40 and one more fail", "restored": true},
+    {"id": "B3", "definition": "sdAdmitWork", "behaviour": "the charge is the compatible choices times sdSizeCharge",
+     "file": "lean/VE/Readings/SoftWire.lean", "mutation": "`(choices N.D).length * sdSizeCharge N` becomes `sdSizeCharge N`",
+     "test": "SoftWireExamples.lean:35 (NSDheavy #guard)", "result": "killed: 6 #guards fail, :35, :36, :40, :42 among them", "restored": true},
+    {"id": "B4", "definition": "sdTextsWithin", "behaviour": "over 64 compatible choices no text runs and the charge is not read",
+     "file": "lean/VE/Readings/SoftWire.lean", "mutation": "the over-64 branch `else none` becomes `else if sdAdmitWork N ≤ limit then none else some (sdAdmitWorkText limit N)`",
+     "test": "SoftWireExamples.lean:46 (wideGuard767 #guard)", "result": "killed: #guard at :46 fails (a first variant replacing the 64-choice condition by `true` is rejected by admitSDOf_texts's proof first)", "restored": true},
+    {"id": "B5", "definition": "sdAdmitWorkText", "behaviour": "the refusal is the signed ResourceLimit text, byte for byte",
+     "file": "lean/VE/Readings/SoftWire.lean", "mutation": "`exceed {limit} units` becomes `exceed {limit}`",
+     "test": "SoftWireExamples.lean:35 (NSDheavy #guard)", "result": "killed: #guards at :35, :36, :40, :42 fail", "restored": true}
+  ]
+}

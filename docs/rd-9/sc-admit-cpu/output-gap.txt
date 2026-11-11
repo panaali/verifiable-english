@@ -1,0 +1,53 @@
+Build completed successfully (507 jobs).
+commit ba8900650b; lean/ tree 3c96e66591
+machine: AMD EPYC 7B12, 32 vCPU, Linux 7.0.0-1014-gcp
+load: 17.00 20.78 17.28
+few1x32 check: same as the Lean NDoc: true; choices 2; sdSizeCharge 1404; admitSD ok (588 ms)
+few1x32 s2 run1: 0.50 s | few1x32 s2: ok (443 ms)
+few1x32 s2 run2: 0.49 s | few1x32 s2: ok (437 ms)
+few1x32 s2 run3: 0.48 s | few1x32 s2: ok (423 ms)
+few1x32 admit run1: 0.59 s | few1x32 admit: ok (531 ms)
+few1x32 admit run2: 0.56 s | few1x32 admit: ok (509 ms)
+few1x32 admit run3: 0.57 s | few1x32 admit: ok (514 ms)
+load: 16.44 20.60 17.24
+few1x64 check: same as the Lean NDoc: true; choices 2; sdSizeCharge 4828; admitSD ok (7591 ms)
+few1x64 s2 run1: 6.50 s | few1x64 s2: ok (6443 ms)
+few1x64 s2 run2: 7.14 s | few1x64 s2: ok (7089 ms)
+few1x64 s2 run3: 9.19 s | few1x64 s2: ok (9136 ms)
+few1x64 admit run1: 9.25 s | few1x64 admit: ok (9235 ms)
+few1x64 admit run2: 10.34 s | few1x64 admit: ok (10217 ms)
+few1x64 admit run3: 9.19 s | few1x64 admit: ok (9102 ms)
+load: 24.14 21.86 17.91
+few3x32 check: same as the Lean NDoc: true; choices 8; sdSizeCharge 2142; admitSD ok (1107 ms)
+few3x32 s2 run1: 0.86 s | few3x32 s2: ok (807 ms)
+few3x32 s2 run2: 0.79 s | few3x32 s2: ok (749 ms)
+few3x32 s2 run3: 0.76 s | few3x32 s2: ok (717 ms)
+few3x32 admit run1: 1.46 s | few3x32 admit: ok (1399 ms)
+few3x32 admit run2: 0.83 s | few3x32 admit: ok (793 ms)
+few3x32 admit run3: 0.83 s | few3x32 admit: ok (787 ms)
+load: 23.00 21.78 17.97
+R5_28_t check: same as the Lean NDoc: true; choices 32; sdSizeCharge 2596; admitSD ok (906 ms)
+R5_28_t s2 run1: 0.72 s | R5_28_t s2: ok (684 ms)
+R5_28_t s2 run2: 0.75 s | R5_28_t s2: ok (701 ms)
+R5_28_t s2 run3: 0.75 s | R5_28_t s2: ok (701 ms)
+R5_28_t admit run1: 1.62 s | R5_28_t admit: ok (1569 ms)
+R5_28_t admit run2: 0.95 s | R5_28_t admit: ok (904 ms)
+R5_28_t admit run3: 0.97 s | R5_28_t admit: ok (932 ms)
+load: 21.87 21.56 17.92
+R3_28_t check: same as the Lean NDoc: true; choices 8; sdSizeCharge 1786; admitSD ok (580 ms)
+R3_28_t s2 run1: 0.45 s | R3_28_t s2: ok (410 ms)
+R3_28_t s2 run2: 0.47 s | R3_28_t s2: ok (425 ms)
+R3_28_t s2 run3: 0.45 s | R3_28_t s2: ok (412 ms)
+R3_28_t admit run1: 0.52 s | R3_28_t admit: ok (486 ms)
+R3_28_t admit run2: 0.54 s | R3_28_t admit: ok (501 ms)
+R3_28_t admit run3: 0.54 s | R3_28_t admit: ok (499 ms)
+load: 20.60 21.30 17.85
+Build completed successfully (507 jobs).
+commit ba8900650b; lean/ tree 3c96e66591
+machine: AMD EPYC 7B12, 32 vCPU, Linux 7.0.0-1014-gcp
+load: 20.60 21.30 17.85
+few1x128 check: same as the Lean NDoc: true; choices 2; sdSizeCharge 17820; admitSD error: ResourceLimit: generated norm layer layer:norms:x_required under rs0@1:1 (54974 ms)
+few1x128 s2 run1: 54.41 s | few1x128 s2: error: ResourceLimit: generated norm layer layer:norms:x_required under rs0@1:1 (54405 ms)
+few1x128 s2 run2: 55.60 s | few1x128 s2: error: ResourceLimit: generated norm layer layer:norms:x_required under rs0@1:1 (55605 ms)
+few1x128 s2 run3: 55.02 s | few1x128 s2: error: ResourceLimit: generated norm layer layer:norms:x_required under rs0@1:1 (55044 ms)
+load: 5.43 13.07 15.25
