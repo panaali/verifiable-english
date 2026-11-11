@@ -8,14 +8,14 @@
 - **Open:** the DRI's W1 delta decision, which gates en-e3, not this merge. The stop-point message was sent
   (`inbox/dri/20261111T190003Z-en-e3bb-3935271.md`).
 - **Trust:** +0.
-- **Size:** 193 product, 464 tests, about 350 other hand-written lines.
+- **Size:** 213 product, 470 tests, 536 other hand-written lines.
 
 Scope: task-en-e3b.txt deliverables (1)-(4) without what en-e3b built (reviews/dri-decisions-20261110-en-e3b.md
 item 1), under reviews/dri-decisions-20261102-en-e3-norm.md items 1-3.
-SIZE: 193 product, 464 tests, 348 other hand-written lines: `git diff --numstat $(git merge-base HEAD main)`.
-- Product is `ve/norm_english.py` 177 and `tools/relay_mutation_gate.py` 16.
+SIZE: 213 product, 470 tests, 536 other hand-written lines: `git diff --numstat $(git merge-base HEAD main)`.
+- Product is `ve/norm_english.py` 197 and `tools/relay_mutation_gate.py` 16.
 - Tests are the five test files plus 1 fixture line.
-- Other is `w1_delta.py` 287 and `seed.py` 61, plus this report and DELTA.md.
+- Other is `w1_delta.py` 289, `seed.py` 68, this report and DELTA.md.
 - Written by the scripts: `delta.json` 6,893 lines, the evidence DELTA.md 181 and `mutants.json` 83.
 
 ## Deliverables
@@ -24,7 +24,7 @@ SIZE: 193 product, 464 tests, 348 other hand-written lines: `git diff --numstat 
 |---|---|---|
 | (1) The W1 path sends `{id, environment, lexicon, kind: "blocks", source}` through `ve/backends/relay.py` only with both flags set. It keeps its own reading as the answer and logs the comparison with en-e3b's comparator. | `ve/norm_english.py` `parse_english` (dispatch, then the shadow around `_parse_w1`, the unchanged body), `statement_request`, `read_statement`, `_shadow` | `test_the_shadow_asks_lean_and_keeps_python_s_answer`, `test_the_shadow_needs_both_flags` |
 | (1) The schema check | `statement_answer` runs `service_schema.check_row` (the generated `english.statement.json`), then the binding | `test_every_retyped_dropped_or_duplicated_member_is_unavailable` |
-| (1) The binding: every rule number and span exists in the request; no block row is empty or extra; each rule row has exactly one span, inside the source, on UTF-8 boundaries, increasing and non-overlapping; no layout check | `statement_problem`, `_rule_problem` | `test_every_named_mutant_is_unavailable` (14-18 faults per `one` answer, singly and in pairs: 534 mutants), `test_p2_*`, `test_p3_*`, `test_an_extra_rule_row_over_a_precedence_line_is_unavailable` |
+| (1) The binding: every rule number and span exists in the request; no block row is empty or extra; each rule row has exactly one span, inside the source, on UTF-8 boundaries, increasing and non-overlapping; no layout check | `statement_problem`, `_rule_problem` | `test_every_named_mutant_is_unavailable` (17-21 faults per `one` answer, singly and in pairs: 747 mutants), `test_p2_*`, `test_p3_*`, `test_an_extra_rule_row_over_a_precedence_line_is_unavailable` |
 | (1) `SERVICE_READERS` | `_statement_reader` in `tools/relay_mutation_gate.py` | `test_english_statement_is_read_as_the_w1_shadow_reads_it` |
 | (1) `tools/relay-gate-allow.json` | unchanged: the gate allows no mutant of the route. `relay_mutation_gate.py --route service:english.statement` gives "8 fixtures, 1533 mutants, 1533 refused, 0 allowed". | the gate |
 | (1) A relay-gate `one` fixture with its reader | one row appended to `tests/data/relay-gate-cases.jsonl` (id `one`; main's rows kept, as en-e3b did) | the gate; `test_english_statement_is_read_as_the_w1_shadow_reads_it` |
@@ -36,7 +36,7 @@ SIZE: 193 product, 464 tests, 348 other hand-written lines: `git diff --numstat 
 
 The commits are `main..HEAD --no-merges` on feature/en-e3bb.
 
-## The delta report (saved evidence; `delta.json` at `8c12f69ce`, the final product code)
+## The delta report (saved evidence; `delta.json` at `c54938c37`, the final product code)
 
 The command was `uv run python docs/en-e3-norm/en-2/w1_delta.py --workers 8 --scratch /tmp/e3bb-w1-scratch`. Its
 suite part was "4693 passed".
@@ -65,7 +65,7 @@ environment is refused by `Environment` itself ("invalid signature"), so they ar
 ## Seeded bugs (Python; each planted alone, shown failing, restored)
 
 Each was run by `docs/en-e3-norm/en-2c/seed.py`, and the record is `mutants.json` (file, tests, failed). All are in
-`ve/norm_english.py` except bug 7:
+`ve/norm_english.py` except bug 8:
 1. **An answer with one rule row more than the request's numbering allows is accepted** (the header binding gone;
    spec 9): `test_an_extra_rule_row_over_a_precedence_line_is_unavailable` fails.
 2. **The span binding's overlap check dropped** (spec 9): `test_p2_…[overlap]` and `test_every_named_mutant_is_unavailable`
@@ -77,7 +77,9 @@ Each was run by `docs/en-e3-norm/en-2c/seed.py`, and the record is `mutants.json
    `test_every_retyped_dropped_or_duplicated_member_is_unavailable` fails.
 6. **The spans not all bound before nodes are read:** `test_the_spans_bound_the_rule_rows_before_any_node_is_read`
    fails.
-7. **`tools/relay_mutation_gate.py`: the gate without the english.statement reader:**
+7. **A rule node's formulas may name an undeclared constant or an unbound variable:**
+   `test_every_named_mutant_is_unavailable` and `test_every_retyped_dropped_or_duplicated_member_is_unavailable` fail.
+8. **`tools/relay_mutation_gate.py`: the gate without the english.statement reader:**
    `test_english_statement_is_read_as_the_w1_shadow_reads_it` fails.
 
 The spec's other two Python EN-2 bugs (the comparator's) were en-e3b's (`docs/en-e3-norm/en-2b/seeded-bugs.json`).
@@ -112,8 +114,9 @@ No Lean or Rust product code changed.
   - each rule row's span begins with `rule <number>` (case-folded), which is how "every rule number it names exists
     in the request" is checked;
   - a rule node's `over` equals its `exception_to` followed by the precedence rows that name it (`Elab.overOf`);
-  - the node's predicate is a regulated predicate of the request, and its formulas decode under the request's
-    environment (`NormDocument`'s checks; R8 names).
+  - the node's predicate is a regulated predicate of the request; every predicate and constant its formulas name is
+    declared there, and every variable is in scope of the rule's arguments and quantifiers. These are names only:
+    typing them is Lean's, and `tools/inventory_lint.py` bars new code from `ve.ast._Checker`, a class-A body.
 
   All of these refuse more; none accepts more. A Lean refusal of the request (an error row) is `lean-unavailable`.
 - **What the binding cannot see:** a dropped last rule row that no precedence row names. The binding cannot count the
@@ -127,8 +130,10 @@ No Lean or Rust product code changed.
   strict text it derives.
 - **One test edited outside the Files list:** `tests/test_english_e2_ledger_sites.py`. Its ledger site moves from
   `parse_english` to `_parse_w1` with the reader call; the text is unchanged.
-- **The shadow swallows its own failures** (`except Exception: pass`), as `ve/english.py`'s comparator does, so an
-  unwritable log never changes the answer.
+- **The shadow's own failures never change the answer.** A request Python cannot form, or a log it cannot write
+  (`VEError`, `OSError`), is passed over, as `ve/english.py`'s comparator does. Python's refusal (`VEError`, or
+  `CheckerUnavailable` from its own relays) is recorded and re-raised as it stands. Both handlers are narrow, so
+  `test_broad_exception_handlers_are_reviewed` needs no new entry.
 - **Overlaps with branches in flight:**
   - ci-3 and et-5b: `tests/test_relay_binding_inventory.py`, different definitions;
   - cmp-s3-cfr-1c and 1d: `tests/data/relay-gate-cases.jsonl`, plus `tools/relay_mutation_gate.py` next to
@@ -147,7 +152,7 @@ en-e3a-cutback, then en-e3 (EN-3) after the DRI's W1 delta decision.
    null, [], {}, 1.5, "\ud800" and 10k-deep at every position; the gate refuses 1533 of 1533.
 2. **Deliverables:** PASS. The table above; `git diff main...HEAD` holds no new Python copy of a Lean decision and no
    new report test of git.
-3. **Tests can fail:** PASS. `mutants.json`: 7 of 7 caught; `test_the_delta_check_fails_on_an_unlisted_or_misclassed_disagreement`.
+3. **Tests can fail:** PASS. `mutants.json`: 8 of 8 caught; `test_the_delta_check_fails_on_an_unlisted_or_misclassed_disagreement`.
 4. **Agreement:** PASS. `delta.json`: pinned 120 of 120 agree; the rest are listed for the DRI.
 5. **R8 binding:** PASS. `test_every_named_mutant_is_unavailable` (undeclared predicate, shifted number, extra and
    duplicated rows); `test_relay_binding_inventory.py[english.statement]`.
