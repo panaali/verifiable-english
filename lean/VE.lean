@@ -287,6 +287,7 @@ import VE.Acts.SpecialiseExamples
 import VE.Acts.Sources
 import VE.Acts.Situation
 import VE.Acts.MeaningExamples
+import VE.Acts.ParseIndexExamples
 import VE.Acts.ReadingsExamples
 import VE.Acts.RunExamples
 import VE.Acts.RenderExamples
