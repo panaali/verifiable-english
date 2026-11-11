@@ -1,0 +1,7 @@
+trust_mutants: --resume ci-job/resume.json: its verdicts are not reused (a full run), since it is another --max-mutants or --shard part
+trust_mutants: 21 definitions, 322 mutants (27 to run), 4 jobs, base bae4295bfd28
+trust_mutants: 24 KILLED, 0 SURVIVOR, 0 UNKNOWN, 1 INVALID, 2 ALLOWED, 0 NOT RUN, 295 OTHER SHARD in 3092 s
+trust_mutants: D[V], trusted: 2 KILLED, 1 INVALID, 2 ALLOWED, 79 OTHER SHARD
+trust_mutants: G[V], trusted: 22 KILLED, 187 OTHER SHARD
+trust_mutants: S, trusted: 29 OTHER SHARD
+trust_mutants: steps: wall plan 10.8 s, scratch 3.5 s, control_build 0.3 s, probe_install 1.1 s, mutants 3069.7 s, cleanup 6.2 s, reads 0.1 s; lake control_build 0.2 s (1), probe_install 1.1 s (1), control_probes 24.7 s (9), mutant_builds 378.8 s (29), mutant_checks 8661.2 s (18), stage_controls 2616.7 s (8), mutant_probes 70.8 s (25)
