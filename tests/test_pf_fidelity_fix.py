@@ -260,11 +260,28 @@ def _plain(text):
     return re.sub(r"[\s\-‐]+", "", text.replace("’", "'").replace("“", '"').replace("”", '"'))
 
 
+def quote_faults(blocks, source_text):
+    """(block id, quote) for every header with no quote, a cut quote ("…") or a quote the source does not contain."""
+    source, faults = _plain(source_text), []
+    for block in blocks:
+        quotes = re.findall(r"“((?:[^“”]|“[^“”]*”)*)”", block.source)
+        faults += [(block.id, None)] if not quotes else [
+            (block.id, q) for q in quotes if "…" in q or _plain(q) not in source]
+    return faults
+
+
 @pytest.mark.skipif(not B.DEFAULT_SOURCE.exists(), reason="the pinned source text is not present")
 def test_every_header_quotes_whole_source_text(pf):
-    source = _plain(B.DEFAULT_SOURCE.read_text())
-    for block in T.rule_blocks() + T.read_blocks("facts.d1.ve"):
-        quotes = re.findall(r"“((?:[^“”]|“[^“”]*”)*)”", block.source)
-        assert quotes, block.id
-        for quote in quotes:
-            assert "…" not in quote and _plain(quote) in source, (block.id, quote)
+    assert quote_faults(T.rule_blocks() + T.read_blocks("facts.d1.ve"), B.DEFAULT_SOURCE.read_text()) == []
+
+
+def test_a_cut_altered_or_missing_quote_is_a_fault():
+    source = "We will review and potentially update the Pre- paredness Framework for continued sufficiency.\n"
+    good = T.Block("good", (), "A: “We will review and potentially update the Preparedness Framework for "
+                                        "continued sufficiency.”", "")
+    cut = T.Block("cut", (), "A: “We will review … continued sufficiency.”", "")
+    altered = T.Block("altered", (), "A: “We will review the Preparedness Framework.”", "")
+    none = T.Block("none", (), "A: a paraphrase", "")
+    assert quote_faults([good, cut, altered, none], source) == [
+        ("cut", "We will review … continued sufficiency."), ("altered", "We will review the Preparedness Framework."),
+        ("none", None)]
