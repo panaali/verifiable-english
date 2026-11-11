@@ -171,6 +171,13 @@ def seqUnits (k : String) (c1 c2 : Json) : List (String × String × String × O
   [("a", k, "Click Check", some (Json.mkObj [("command", c1)])),
    ("b", k, ", then do not share the token.\n", some (Json.mkObj [("command", c2)]))]
 #guard result (mixed (payload (seqUnits "instruction" share click) [] (ctx := false))) == readingContextText
+-- Without the context the sequence is not read: a later fault of the document is the one reported; and a context that
+-- does not decode is never read when no sequence (and no fence) needs it.
+#guard result (mixed (payload (seqUnits "instruction" share click) [] (ctx := false)
+  (extra := [("weights", .num 5)]))) == "invalid removable reading weights"
+#guard result ((payload [("c1", "instruction", "Click Check.\n", some cmd)] []).setObjVal! "reading_context"
+    (Json.mkObj [])) == "ok" &&
+  result ((mixed (payload (seqUnits "instruction" click share) [])).setObjVal! "reading_context" (Json.mkObj [])) != "ok"
 #guard ["instruction", attributed, hedged].all fun k =>
   result (mixed (payload (seqUnits k share click) [])) == seqText "m" &&
     result (mixed (payload (seqUnits k click share) [])) == "ok"
