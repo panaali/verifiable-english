@@ -70,7 +70,7 @@
   "caught": true
  },
  {
-  "behaviour": "a rule node's formulas may name an undeclared constant or an unbound variable",
+  "behaviour": "a rule node's formulas may name an undeclared predicate or constant, or an unbound variable",
   "file": "ve/norm_english.py",
   "test": [
    "tests/test_english_statement_answer.py::test_every_named_mutant_is_unavailable",
