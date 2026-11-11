@@ -1,0 +1,97 @@
+f1-misuse-bio-strict | omits: "Require" reading RS1
+f1-misuse-bio-default | omits: "Require" reading RS1 ; "Risk-specific safeguard guidelines" reading RS1
+f1-misuse-cyb-strict | omits: "Require" reading RS1
+f1-misuse-cyb-default | omits: "Require" reading RS1 ; "Risk-specific safeguard guidelines" reading RS1
+f1-alignment-cyb-strict | omits: "Require" reading RS1
+f1-alignment-cyb-default | omits: "Require" reading RS1 ; "Risk-specific safeguard guidelines" reading RS1
+f1-security-strict | omits: "Require" reading RS1
+f1-security-default | omits: "Require" reading RS1 ; "Risk-specific safeguard guidelines" reading RS1
+f1-halt-strict | omits: "Until" restates ; "we have specified safeguards and security controls that would meet a Critical standard" loss 1
+f1-halt-default | omits: "Risk-specific safeguard guidelines" reading RS1
+f1-contrib-bio-strict | omits: nothing
+f1-contrib-bio-default | omits: "Risk-specific safeguard guidelines" reading RS1
+f1-contrib-cyb-strict | omits: nothing
+f1-contrib-cyb-default | omits: "Risk-specific safeguard guidelines" reading RS1
+f2-deploy | omits: "Covered systems that cross this capability threshold are required to have" restates ; "and appropriate security controls as they are developed" rule f2-security-developed
+f2-deploy-any | omits: "Covered systems that cross this capability threshold are required to have" restates ; "and appropriate security controls as they are developed" rule f2-security-developed
+f2-reminder | omits: "As a reminder" exposition ; "covered systems that reach High capability" restates
+f2-reminder-any | omits: "As a reminder" exposition ; "covered systems that reach High capability" restates
+f2-security-developed | omits: "Covered systems that cross this capability threshold are required to have" restates ; "robust and effective safeguards that sufficiently minimize the associated risk of severe harm before they are deployed" rule f2-deploy
+f2-no-deploy | omits: "We do not deploy models that reach a High capability threshold until the associated risks that they pose are sufficiently minimized" restates
+f2-no-deploy-any | omits: "We do not deploy models that reach a High capability threshold until the associated risks that they pose are sufficiently minimized" restates
+f3-develop | omits: "Increasing safeguards before internal use and further development" reading RS18 ; "or are forecasted to reach" rule f3-develop-forecast ; "Critical capability" restates ; "in a Tracked Category" restates ; "present severe dangers" exposition ; "and should be treated with extreme caution" loss 1 ; "Such models require additional safeguards" loss 1 ; "regardless of whether or when they are externally deployed" exposition
+f3-develop-forecast | omits: "Increasing safeguards before internal use and further development" reading RS18 ; "in a Tracked Category" restates ; "present severe dangers" exposition ; "and should be treated with extreme caution" loss 1 ; "Such models require additional safeguards" loss 1 ; "regardless of whether or when they are externally deployed" exposition
+f3-develop-inuse | omits: "Increasing safeguards before internal use and further development" reading RS18 ; "or are forecasted to reach" rule f3-develop-inuse-forecast ; "Critical capability" restates ; "in a Tracked Category" restates ; "present severe dangers" exposition ; "and should be treated with extreme caution" loss 1 ; "Such models require additional safeguards" loss 1 ; "regardless of whether or when they are externally deployed" exposition
+f3-develop-inuse-forecast | omits: "Increasing safeguards before internal use and further development" reading RS18 ; "in a Tracked Category" restates ; "present severe dangers" exposition ; "and should be treated with extreme caution" loss 1 ; "Such models require additional safeguards" loss 1 ; "regardless of whether or when they are externally deployed" exposition
+f3-reminder | omits: "Systems that reach Critical capability also require" restates
+f4-security | omits: "We will require the following practices for High capability models" restates
+f7-evaluations | omits: "every covered model undergoes the suite of" restates ; "Prior to" restates
+f7-report | omits: nothing
+f7-compile | omits: "Prior to deployment, every covered model undergoes the suite of Scalable Evaluations" exposition
+f7-recommend | omits: "The SAG reviews the Capabilities Report and decides on next steps" rule f7-report ; "These can include" reading RS16 ; "Determine that the capability threshold has been crossed, and therefore" reading RS16
+f8-start | omits: "even if a formal capability determination has not yet been made" restates
+f9-report | omits: "Safeguards that mitigate the risk of severe harm are at the core of our safe deployment approach" exposition ; "for covered systems that reach a capability threshold" restates ; "We compile the information on the planned safeguards needed to minimize the risk of severe harm into" loss 1
+f9-residual-strict | omits: "The Safeguards Report should include the following information" restates ; "Identified ways a risk of severe harm can be realized for the given deployment, each mapped to the associated security controls and safeguards" loss 1 ; "Details about the efficacy of those safeguards" loss 1 ; "Any notable limitations with the information provided" loss 1
+f9-residual-default | omits: "The Safeguards Report should include the following information" restates ; "Identified ways a risk of severe harm can be realized for the given deployment, each mapped to the associated security controls and safeguards" loss 1 ; "Details about the efficacy of those safeguards" loss 1 ; "Any notable limitations with the information provided" loss 1
+f9-risk-paths | omits: "We use the following process to select safeguards for a deployment" restates
+f9-specific | omits: nothing
+f9-efficacy | omits: "For each identified safeguard, we identify methods to measure their efficacy" restates
+f9-threshold | omits: nothing
+f10-validate | omits: "If we find reasonable evidence that our safeguards are not working as expected" restates ; "the information being received" restates ; "and review the sufficiency of our safeguards" rule f10-review
+f10-review | omits: "If we find reasonable evidence that our safeguards are not working as expected" restates ; "we will validate" rule f10-validate ; "the information being received" restates
+f14-document | omits: "We will document" restates
+f14-investigate | omits: "any reported or otherwise identified potential instances of noncompliance with this policy" restates ; "and where reports are substantiated, will take appropriate and proportional corrective action" rule f14-corrective
+f14-corrective | omits: "We will track and appropriately investigate any reported or otherwise identified potential" rule f14-investigate ; "instances of noncompliance with this policy" restates
+f14-summary | omits: "Employees" restates ; "on capability levels and safeguards" restates ; "(subject to certain limits" restates
+f15-disclose | omits: "We will release information about our Preparedness Framework results" restates ; "in order to facilitate public awareness of the state of frontier AI capabilities" exposition ; "This published information will include" restates
+f15-safeguards | omits: "Additionally" exposition ; "if the model is beyond a High threshold, we will include information about" restates ; "Such disclosures about results and safeguards" restates
+f15-third-party | omits: "(as described in Section 3.1)" exposition ; "for example based on results of Capabilities Report presented to them" exposition ; "If we deem that a deployment warrants" restates ; "OpenAI will work with third-parties to" restates
+f16-sag-recommend | omits: nothing
+c2-misalignment-strict | omits: "associated with" restates
+c2-misalignment-default | omits: "associated with" restates
+c3-access-strict | omits: "especially those presenting High capabilities" exposition ; "protected with strong multi-factor authentication" restates ; "and may require additional approvals for access" loss 1
+c3-access-default | omits: "especially those presenting High capabilities" exposition ; "protected with strong multi-factor authentication" restates ; "and may require additional approvals for access" loss 1
+cl4-persuasion | omits: "Going forward we will handle" restates
+f16-ssc-visibility | omits: "The Safety and Security Committee (SSC) of the OpenAI Board of Directors (Board) will be given visibility into processes" restates ; "and can review decisions and otherwise require reports and information from OpenAI Leadership as necessary to fulfill the Board's oversight role" loss 1
+f16-informed | omits: "Making all final decisions" restates ; "including accepting any residual risks and making deployment go/no-go decisions" exposition ; "SAG's" restates
+f16-without-noinput | omits: "For the avoidance of doubt" reading N2 ; "i.e., the SAG does not have the ability to" restates
+f16-without-nodelib | omits: "For the avoidance of doubt" reading N2 ; "i.e., the SAG does not have the ability to" restates
+f16-board-reverse | omits: "and/or mandate a revised course of action" rule f16-board-mandate
+f16-board-mandate | omits: "reverse a decision" rule f16-board-reverse
+f16-chair-strict | omits: "In the rare case that" exposition ; "(e.g., there is a change in our understanding of model safety that requires urgent response)" exposition ; "we can request a fast track for the SAG to process the report urgently" loss 1
+f16-chair-default | omits: "In the rare case that" exposition ; "(e.g., there is a change in our understanding of model safety that requires urgent response)" exposition ; "we can request a fast track for the SAG to process the report urgently" loss 1
+f16-year | omits: "and potentially update" exposition ; "the Preparedness Framework for continued sufficiency" loss 1
+f5-ambiguous | omits: "In cases of ambiguity about whether a model is covered by the Preparedness Framework, the SAG is responsible for making the final determination" restates
+f5-checkpoint | omits: "Preparedness Framework" restates
+f6-rel | omits: "models that we distill, fine-tune, or quantize from a model that was previously determined not to cross a High capability threshold" restates ; "barring" restates
+f11-within | omits: "If we are able to rigorously confirm that such a scenario has occurred" restates ; "then we could adjust accordingly the level of safeguards that we require in that capability area" restates ; "but only if" loss 3 ; "we assess that doing so" restates ; "we publicly acknowledge that we are making the adjustment" restates ; "in order to avoid a race to the bottom on safety" exposition ; "and share information to validate this claim" restates
+f11-exception | omits: "If we are able to rigorously confirm that such a scenario has occurred" restates ; "then we could adjust accordingly the level of safeguards that we require in that capability area" reading RS5 ; "but only if" reading RS5 ; "we assess that doing so" restates ; "we publicly acknowledge that we are making the adjustment" restates ; "in order to avoid a race to the bottom on safety" exposition ; "and share information to validate this claim" restates
+f11-exception-deploy | omits: "If we are able to rigorously confirm that such a scenario has occurred" restates ; "then we could adjust accordingly the level of safeguards that we require in that capability area" reading RS5 ; "but only if" reading RS5 ; "we assess that doing so" restates ; "we publicly acknowledge that we are making the adjustment" restates ; "in order to avoid a race to the bottom on safety" exposition ; "and share information to validate this claim" restates ; "We do not deploy models that reach a High" rule f2-no-deploy ; "capability threshold until the associated risks that they pose are sufficiently minimized" restates
+f11-acknowledge | omits: "If we are able to rigorously confirm that such a scenario has occurred" restates ; "then we could adjust accordingly the level of safeguards that we require in that capability area, but only if" restates ; "we assess that doing so" restates ; "does not meaningfully increase the overall risk of severe harm" rule f11-within ; "we publicly acknowledge that we are making" restates ; "and, in order to avoid a race to the bottom on safety" exposition ; "we keep our safeguards at a level more protective than the other AI developer" rule f11-protect ; "and share information to validate this claim" restates
+f11-protect | omits: "If we are able to rigorously confirm that such a scenario has occurred" restates ; "then we could adjust accordingly the level of safeguards that we require in that capability area, but only if" restates ; "we assess that doing so" restates ; "does not meaningfully increase the overall risk of severe harm" rule f11-within ; "we publicly acknowledge that we are making the adjustment" restates ; "and, in order to avoid a race to the bottom on safety" exposition ; "and share information to validate this claim" restates
+f11-share | omits: "If we are able to rigorously confirm that such a scenario has occurred" restates ; "then we could adjust accordingly the level of safeguards that we require in that capability area, but only if" restates ; "we assess that doing so" restates ; "does not meaningfully increase the overall risk of severe harm" rule f11-within ; "we publicly acknowledge that we are making the adjustment" restates ; "and, in order to avoid a race to the bottom on safety" exposition ; "we keep our safeguards at a level more protective than the other AI developer" rule f11-protect ; "share information to validate this claim" restates
+f12-lra | omits: "If a model has High or Critical capabilities in any of the Tracked Categories, require a" restates ; "(see Section 4.2" exposition
+f12-lra-unscoped | omits: "If a model has High or Critical capabilities in any of the Tracked Categories, require a" restates ; "(see Section 4.2" exposition
+f12-sandbagging | omits: "or use" restates
+f12-sandbagging-unscoped | omits: "or use" restates
+f12-ara | omits: "Convert" restates
+f12-ara-unscoped | omits: "Convert Autonomous Replication and Adaptation" restates
+f12-undermining | omits: "in any of the Tracked Categories, require" restates
+f12-undermining-unscoped | omits: "in any of the Tracked Categories, require" restates
+f12-nuclear | omits: nothing
+f12-nuclear-unscoped | omits: nothing
+f17-suff | omits: "We treat a frontier capability as a Tracked Category" restates ; "if the capability creates a risk that meets five criteria" restates
+f17-iff | omits: "We treat a frontier capability as a Tracked Category" restates ; "if the capability creates a risk that meets five criteria" reading RS12
+f17-iff-only | omits: "We treat a frontier capability as a Tracked Category" restates ; "if the capability creates a risk that meets five criteria" reading RS12
+f13-review | omits: "We will periodically review the latest research and findings for each Research Category" restates
+f13-results | omits: "and evaluate whether there is sufficient evidence to recommend updates to our internal practices or to the Preparedness Framework" loss 1
+bio-high | omits: nothing
+bio-critical | omits: nothing
+cyb-high | omits: nothing
+cyb-critical | omits: nothing
+ais-high | omits: nothing
+ais-critical | omits: nothing
+rs2-nest | omits: "Systems that reach Critical capability also require safeguards that sufficiently minimize associated risks during development" reading RS2
+no-critical-models | omits: "We do not currently possess any models that have Critical levels of capability" restates ; "and we expect to further update this Preparedness Framework before reaching such a level with any model" exposition
+cl-levels | omits: "from the Framework" restates ; "because those levels were not operationally involved in the execution of our Preparedness work" exposition
+fn5-indicator | omits: "Given the higher potential severity of biological threats relative to chemical ones" exposition ; "we will prioritize" loss limit 21 ; "for the category" restates
