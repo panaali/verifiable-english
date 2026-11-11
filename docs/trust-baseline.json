@@ -1,9 +1,9 @@
 {
- "comment": "The trust budget (tools/trust_map.py, architecture plan AR-4, DRI decision D3): K, S and untied [V] lines as the merge train last measured them on main (`--write`), and every signed allowance that raised them (`--allow`). The check measures the base commit; per-file counts are in the gate record (`--files`), not here.",
+ "comment": "The trust budget (tools/trust_map.py, architecture plan AR-4, DRI decision D3): K, S and untied [V] lines as the merge train last measured them on main (`--write`), and every signed allowance that raised them (`--allow`). The check measures the base commit; per-file counts are in the gate record (`--files`), not here. Recorded 2026-11-11 (DRI, kb-0; fable-team/architect/inbox/20261111T0452Z-dri.md (d)): MEASURED 63,068 trusted lines (K 984 + S 14,795 + untied [V] 47,289) by `python3 tools/trust_map.py` on main 97b3c7999a (the kb-0 tree, same lean/); replaces the stale 50,034; a no-growth ratchet until kb-5 replaces it with the kernel ratchet (tools/kernel_closure.py, 9,565).",
  "budget": {
-  "K": 997,
-  "S": 9958,
-  "V": 39079
+  "K": 984,
+  "S": 14795,
+  "V": 47289
  },
  "allowances": [
   {
@@ -2644,6 +2644,20 @@
    "reason": "cmp-s3-cfr-1d: V +29 (VE/RightClauses/Run.lean +22: englishJson, englishOf, elaborateCase's english branch; VE/RightClauses/English.lean +7: Row); K +0, S +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s3-cfr-1d, 2026-11-11",
    "commit": "19013ac5f7250c2c7c976fb49bc68fa9a3e12afa"
+  },
+  {
+   "class": "V",
+   "lines": 5,
+   "reason": "ps-2ab-rule-firstob: VE/Presupposition/Admit.lean +5 (ruleOb); Run.lean fixtures r1b, docF2, obsF2 classed T; K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ps-2ab-rule-firstob, 2026-11-11",
+   "commit": "b81b82ef91add8f6ea2fce62feeb421a5bed0c7b"
+  },
+  {
+   "class": "V",
+   "lines": 8,
+   "reason": "soft-cf-text-1: VE/SoftNorms/Wire.lean +6 V (notSearchedText, the one owner of the no-search words for the rights and soft CONFLICT-FREE lines), VE/SoftNorms/Run.lean +2 V (conflictFreeText docstring and its call of notSearchedText); K +0, S +0; each exercised by a #guard that can fail (SoftNorms/Run.lean :129, :130; mutants S1-S4)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), soft-cf-text-1, 2026-11-11",
+   "commit": "b81b82ef91add8f6ea2fce62feeb421a5bed0c7b"
   }
  ]
 }

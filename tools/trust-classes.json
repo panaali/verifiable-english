@@ -10835,6 +10835,7 @@
         "VE.SoftNorms.Wire.enc",
         "VE.SoftNorms.Wire.exceptionDecider",
         "VE.SoftNorms.Wire.firstFailure",
+        "VE.SoftNorms.Wire.notSearchedText",
         "VE.SoftNorms.Wire.openCoherence",
         "VE.SoftNorms.Wire.primeJson",
         "VE.SoftNorms.Wire.replaySoftWitness",
@@ -20483,6 +20484,7 @@
             "VE.Presupposition.regen_ok"
           ]
         },
+        "VE.Presupposition.ruleOb",
         {
           "name": "VE.Presupposition.unitsOk",
           "tied": [
@@ -21428,6 +21430,7 @@
         "VE.Presupposition.RunExamples.certOf",
         "VE.Presupposition.RunExamples.conj",
         "VE.Presupposition.RunExamples.docEmpty",
+        "VE.Presupposition.RunExamples.docF2",
         "VE.Presupposition.RunExamples.docHd",
         "VE.Presupposition.RunExamples.docNeg",
         "VE.Presupposition.RunExamples.g1",
@@ -21441,10 +21444,12 @@
         "VE.Presupposition.RunExamples.lexNoMgr",
         "VE.Presupposition.RunExamples.lineA",
         "VE.Presupposition.RunExamples.names",
+        "VE.Presupposition.RunExamples.obsF2",
         "VE.Presupposition.RunExamples.oc",
         "VE.Presupposition.RunExamples.pHd",
         "VE.Presupposition.RunExamples.place3",
         "VE.Presupposition.RunExamples.premises18b",
+        "VE.Presupposition.RunExamples.r1b",
         "VE.Presupposition.RunExamples.rc",
         "VE.Presupposition.RunExamples.readingsAt",
         "VE.Presupposition.RunExamples.refusal",
