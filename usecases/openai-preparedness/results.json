@@ -2036,22 +2036,30 @@
    "ve": "NONE"
   },
   {
-   "agree": true,
-   "cause": null,
+   "agree": false,
+   "cause": {
+    "feature_family": "key",
+    "kind": "key finding",
+    "reason": "PLAN 12 item 19: the key cell is a key finding (KEY-FREEZE.md: section 6 is not edited); VE gives NONE"
+   },
    "id": "C6",
    "key": "SOME(final & bperm)",
    "route": "D1 norms@0 W1 check_conflict with a validated witness model",
-   "status": "agree",
-   "ve": "SOME(RS11=final&RS17=bperm)"
+   "status": "disagree",
+   "ve": "NONE"
   },
   {
-   "agree": true,
-   "cause": null,
+   "agree": false,
+   "cause": {
+    "feature_family": "key",
+    "kind": "key finding",
+    "reason": "PLAN 12 item 19: the key cell is a key finding (KEY-FREEZE.md: section 6 is not edited); VE gives NONE"
+   },
    "id": "C-doc",
    "key": "SOME(final & bperm)",
    "route": "D1 norms@0 W1 check_conflict per opposite-sign pair with a validated witness model",
-   "status": "agree",
-   "ve": "SOME(RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=within&RS6=req&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=within&RS6=desc&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=within&RS6=desc&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=desc&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=desc&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=within&RS6=req&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=within&RS6=desc&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=within&RS6=desc&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=desc&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=desc&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=within&RS6=req&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=within&RS6=desc&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=within&RS6=desc&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=desc&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=desc&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=within&RS6=req&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=within&RS6=desc&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=within&RS6=desc&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=desc&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=desc&RS7=nodelib)"
+   "status": "disagree",
+   "ve": "NONE"
   },
   {
    "agree": true,
@@ -2108,17 +2116,13 @@
    "ve": "SOME(RS15=explanation)"
   },
   {
-   "agree": false,
-   "cause": {
-    "feature_family": "SC",
-    "kind": "translation limit",
-    "reason": "translation limit (SC): footnote 5's indicator relation between biological evaluations and the category's capabilities is not in D1"
-   },
+   "agree": true,
+   "cause": null,
    "id": "G7",
    "key": "ALL",
-   "route": "D1",
-   "status": "UNDECIDED-faithful",
-   "ve": "UNDECIDED"
+   "route": "D1 relational-fol@0: two finite models of the selected premises",
+   "status": "agree",
+   "ve": "ALL"
   },
   {
    "agree": true,
@@ -2130,13 +2134,17 @@
    "ve": "NONE"
   },
   {
-   "agree": true,
-   "cause": null,
+   "agree": false,
+   "cause": {
+    "feature_family": "key",
+    "kind": "key finding",
+    "reason": "PLAN 12 item 20: the key cell is a key finding (KEY-FREEZE.md: section 6 is not edited); VE gives SOME(P ∨ scoped)"
+   },
    "id": "G9",
    "key": "ALL",
    "route": "D1 soft-norms@0 selected_rules, deny and allow completion; only the C.3 access rule",
-   "status": "agree",
-   "ve": "ALL"
+   "status": "disagree",
+   "ve": "SOME(RS1=strict&RS18=inuse&RS3=ext&RS4=N&RS4s=scoped&RS5=within&RS9=strict | RS1=strict&RS18=inuse&RS3=ext&RS4=N&RS4s=scoped&RS5=within&RS9=default | RS1=strict&RS18=inuse&RS3=ext&RS4=N&RS4s=scoped&RS5=exception&RS9=strict | RS1=strict&RS18=inuse&RS3=ext&RS4=N&RS4s=scoped&RS5=exception&RS9=default | RS1=strict&RS18=inuse&RS3=ext&RS4=P&RS4s=scoped&RS5=within&RS9=strict | RS1=strict&RS18=inuse&RS3=ext&RS4=P&RS4s=scoped&RS5=within&RS9=default | RS1=strict&RS18=inuse&RS3=ext&RS4=P&RS4s=scoped&RS5=exception&RS9=strict | RS1=strict&RS18=inuse&RS3=ext&RS4=P&RS4s=scoped&RS5=exception&RS9=default | RS1=strict&RS18=inuse&RS3=ext&RS4=P&RS4s=unscoped&RS5=within&RS9=strict | RS1=strict&RS18=inuse&RS3=ext&RS4=P&RS4s=unscoped&RS5=within&RS9=default | RS1=strict&RS18=inuse&RS3=ext&RS4=P&RS4s=unscoped&RS5=exception&RS9=strict | RS1=strict&RS18=inuse&RS3=ext&RS4=P&RS4s=unscoped&RS5=exception&RS9=default | RS1=strict&RS18=inuse&RS3=any&RS4=N&RS4s=scoped&RS5=within&RS9=strict | RS1=strict&RS18=inuse&RS3=any&RS4=N&RS4s=scoped&RS5=within&RS9=default | RS1=strict&RS18=inuse&RS3=any&RS4=N&RS4s=scoped&RS5=exception&RS9=strict | RS1=strict&RS18=inuse&RS3=any&RS4=N&RS4s=scoped&RS5=exception&RS9=default | RS1=strict&RS18=inuse&RS3=any&RS4=P&RS4s=scoped&RS5=within&RS9=strict | RS1=strict&RS18=inuse&RS3=any&RS4=P&RS4s=scoped&RS5=within&RS9=default | RS1=strict&RS18=inuse&RS3=any&RS4=P&RS4s=scoped&RS5=exception&RS9=strict | RS1=strict&RS18=inuse&RS3=any&RS4=P&RS4s=scoped&RS5=exception&RS9=default | RS1=strict&RS18=inuse&RS3=any&RS4=P&RS4s=unscoped&RS5=within&RS9=strict | RS1=strict&RS18=inuse&RS3=any&RS4=P&RS4s=unscoped&RS5=within&RS9=default | RS1=strict&RS18=inuse&RS3=any&RS4=P&RS4s=unscoped&RS5=exception&RS9=strict | RS1=strict&RS18=inuse&RS3=any&RS4=P&RS4s=unscoped&RS5=exception&RS9=default | RS1=strict&RS18=devonly&RS3=ext&RS4=N&RS4s=scoped&RS5=within&RS9=strict | RS1=strict&RS18=devonly&RS3=ext&RS4=N&RS4s=scoped&RS5=within&RS9=default | RS1=strict&RS18=devonly&RS3=ext&RS4=N&RS4s=scoped&RS5=exception&RS9=strict | RS1=strict&RS18=devonly&RS3=ext&RS4=N&RS4s=scoped&RS5=exception&RS9=default | RS1=strict&RS18=devonly&RS3=ext&RS4=P&RS4s=scoped&RS5=within&RS9=strict | RS1=strict&RS18=devonly&RS3=ext&RS4=P&RS4s=scoped&RS5=within&RS9=default | RS1=strict&RS18=devonly&RS3=ext&RS4=P&RS4s=scoped&RS5=exception&RS9=strict | RS1=strict&RS18=devonly&RS3=ext&RS4=P&RS4s=scoped&RS5=exception&RS9=default | RS1=strict&RS18=devonly&RS3=ext&RS4=P&RS4s=unscoped&RS5=within&RS9=strict | RS1=strict&RS18=devonly&RS3=ext&RS4=P&RS4s=unscoped&RS5=within&RS9=default | RS1=strict&RS18=devonly&RS3=ext&RS4=P&RS4s=unscoped&RS5=exception&RS9=strict | RS1=strict&RS18=devonly&RS3=ext&RS4=P&RS4s=unscoped&RS5=exception&RS9=default | RS1=strict&RS18=devonly&RS3=any&RS4=N&RS4s=scoped&RS5=within&RS9=strict | RS1=strict&RS18=devonly&RS3=any&RS4=N&RS4s=scoped&RS5=within&RS9=default | RS1=strict&RS18=devonly&RS3=any&RS4=N&RS4s=scoped&RS5=exception&RS9=strict | RS1=strict&RS18=devonly&RS3=any&RS4=N&RS4s=scoped&RS5=exception&RS9=default | RS1=strict&RS18=devonly&RS3=any&RS4=P&RS4s=scoped&RS5=within&RS9=strict | RS1=strict&RS18=devonly&RS3=any&RS4=P&RS4s=scoped&RS5=within&RS9=default | RS1=strict&RS18=devonly&RS3=any&RS4=P&RS4s=scoped&RS5=exception&RS9=strict | RS1=strict&RS18=devonly&RS3=any&RS4=P&RS4s=scoped&RS5=exception&RS9=default | RS1=strict&RS18=devonly&RS3=any&RS4=P&RS4s=unscoped&RS5=within&RS9=strict | RS1=strict&RS18=devonly&RS3=any&RS4=P&RS4s=unscoped&RS5=within&RS9=default | RS1=strict&RS18=devonly&RS3=any&RS4=P&RS4s=unscoped&RS5=exception&RS9=strict | RS1=strict&RS18=devonly&RS3=any&RS4=P&RS4s=unscoped&RS5=exception&RS9=default | RS1=default&RS18=inuse&RS3=ext&RS4=N&RS4s=scoped&RS5=within&RS9=strict | RS1=default&RS18=inuse&RS3=ext&RS4=N&RS4s=scoped&RS5=within&RS9=default | RS1=default&RS18=inuse&RS3=ext&RS4=N&RS4s=scoped&RS5=exception&RS9=strict | RS1=default&RS18=inuse&RS3=ext&RS4=N&RS4s=scoped&RS5=exception&RS9=default | RS1=default&RS18=inuse&RS3=ext&RS4=P&RS4s=scoped&RS5=within&RS9=strict | RS1=default&RS18=inuse&RS3=ext&RS4=P&RS4s=scoped&RS5=within&RS9=default | RS1=default&RS18=inuse&RS3=ext&RS4=P&RS4s=scoped&RS5=exception&RS9=strict | RS1=default&RS18=inuse&RS3=ext&RS4=P&RS4s=scoped&RS5=exception&RS9=default | RS1=default&RS18=inuse&RS3=ext&RS4=P&RS4s=unscoped&RS5=within&RS9=strict | RS1=default&RS18=inuse&RS3=ext&RS4=P&RS4s=unscoped&RS5=within&RS9=default | RS1=default&RS18=inuse&RS3=ext&RS4=P&RS4s=unscoped&RS5=exception&RS9=strict | RS1=default&RS18=inuse&RS3=ext&RS4=P&RS4s=unscoped&RS5=exception&RS9=default | RS1=default&RS18=inuse&RS3=any&RS4=N&RS4s=scoped&RS5=within&RS9=strict | RS1=default&RS18=inuse&RS3=any&RS4=N&RS4s=scoped&RS5=within&RS9=default | RS1=default&RS18=inuse&RS3=any&RS4=N&RS4s=scoped&RS5=exception&RS9=strict | RS1=default&RS18=inuse&RS3=any&RS4=N&RS4s=scoped&RS5=exception&RS9=default | RS1=default&RS18=inuse&RS3=any&RS4=P&RS4s=scoped&RS5=within&RS9=strict | RS1=default&RS18=inuse&RS3=any&RS4=P&RS4s=scoped&RS5=within&RS9=default | RS1=default&RS18=inuse&RS3=any&RS4=P&RS4s=scoped&RS5=exception&RS9=strict | RS1=default&RS18=inuse&RS3=any&RS4=P&RS4s=scoped&RS5=exception&RS9=default | RS1=default&RS18=inuse&RS3=any&RS4=P&RS4s=unscoped&RS5=within&RS9=strict | RS1=default&RS18=inuse&RS3=any&RS4=P&RS4s=unscoped&RS5=within&RS9=default | RS1=default&RS18=inuse&RS3=any&RS4=P&RS4s=unscoped&RS5=exception&RS9=strict | RS1=default&RS18=inuse&RS3=any&RS4=P&RS4s=unscoped&RS5=exception&RS9=default | RS1=default&RS18=devonly&RS3=ext&RS4=N&RS4s=scoped&RS5=within&RS9=strict | RS1=default&RS18=devonly&RS3=ext&RS4=N&RS4s=scoped&RS5=within&RS9=default | RS1=default&RS18=devonly&RS3=ext&RS4=N&RS4s=scoped&RS5=exception&RS9=strict | RS1=default&RS18=devonly&RS3=ext&RS4=N&RS4s=scoped&RS5=exception&RS9=default | RS1=default&RS18=devonly&RS3=ext&RS4=P&RS4s=scoped&RS5=within&RS9=strict | RS1=default&RS18=devonly&RS3=ext&RS4=P&RS4s=scoped&RS5=within&RS9=default | RS1=default&RS18=devonly&RS3=ext&RS4=P&RS4s=scoped&RS5=exception&RS9=strict | RS1=default&RS18=devonly&RS3=ext&RS4=P&RS4s=scoped&RS5=exception&RS9=default | RS1=default&RS18=devonly&RS3=ext&RS4=P&RS4s=unscoped&RS5=within&RS9=strict | RS1=default&RS18=devonly&RS3=ext&RS4=P&RS4s=unscoped&RS5=within&RS9=default | RS1=default&RS18=devonly&RS3=ext&RS4=P&RS4s=unscoped&RS5=exception&RS9=strict | RS1=default&RS18=devonly&RS3=ext&RS4=P&RS4s=unscoped&RS5=exception&RS9=default | RS1=default&RS18=devonly&RS3=any&RS4=N&RS4s=scoped&RS5=within&RS9=strict | RS1=default&RS18=devonly&RS3=any&RS4=N&RS4s=scoped&RS5=within&RS9=default | RS1=default&RS18=devonly&RS3=any&RS4=N&RS4s=scoped&RS5=exception&RS9=strict | RS1=default&RS18=devonly&RS3=any&RS4=N&RS4s=scoped&RS5=exception&RS9=default | RS1=default&RS18=devonly&RS3=any&RS4=P&RS4s=scoped&RS5=within&RS9=strict | RS1=default&RS18=devonly&RS3=any&RS4=P&RS4s=scoped&RS5=within&RS9=default | RS1=default&RS18=devonly&RS3=any&RS4=P&RS4s=scoped&RS5=exception&RS9=strict | RS1=default&RS18=devonly&RS3=any&RS4=P&RS4s=scoped&RS5=exception&RS9=default | RS1=default&RS18=devonly&RS3=any&RS4=P&RS4s=unscoped&RS5=within&RS9=strict | RS1=default&RS18=devonly&RS3=any&RS4=P&RS4s=unscoped&RS5=within&RS9=default | RS1=default&RS18=devonly&RS3=any&RS4=P&RS4s=unscoped&RS5=exception&RS9=strict | RS1=default&RS18=devonly&RS3=any&RS4=P&RS4s=unscoped&RS5=exception&RS9=default)"
   },
   {
    "agree": true,
@@ -2170,22 +2178,18 @@
    "cause": null,
    "id": "N3",
    "key": "NONE",
-   "route": "D1 soft-norms@0 selected_rules: a validated case model per rule",
+   "route": "D1 soft-norms@0 selected_rules: a validated case model per rule of each commitment",
    "status": "agree",
    "ve": "NONE"
   },
   {
-   "agree": false,
-   "cause": {
-    "feature_family": "SC",
-    "kind": "VE limit",
-    "reason": "VE limit (SC): D1 has no closure premise that the level sort holds exactly Table 1's six levels, so an unnamed seventh level is not excluded"
-   },
+   "agree": true,
+   "cause": null,
    "id": "N4",
    "key": "ALL",
-   "route": "D1",
-   "status": "UNDECIDED-faithful",
-   "ve": "UNDECIDED"
+   "route": "D1 relational-fol@0 entailment certificate (cl-levels)",
+   "status": "agree",
+   "ve": "ALL"
   },
   {
    "agree": true,
@@ -2297,8 +2301,8 @@
   }
  ],
  "cost": {
-  "documents_built": 162,
-  "prover_calls": 10
+  "documents_built": 352,
+  "prover_calls": 11
  },
  "items": {
   "A-AIS-C-DEV/ALN": {
@@ -16523,7 +16527,7 @@
      "holds": true,
      "other_sign_rules": [],
      "rules": [
-      "f7-report"
+      "f7-compile"
      ],
      "sensitive_predicates": [],
      "silent_predicates": [],
@@ -16537,7 +16541,7 @@
      "holds": true,
      "other_sign_rules": [],
      "rules": [
-      "f7-report"
+      "f7-compile"
      ],
      "sensitive_predicates": [],
      "silent_predicates": [],
@@ -16549,7 +16553,7 @@
    ],
    "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
    "selected_rules": [
-    "f7-report"
+    "f7-compile"
    ]
   },
   "B-AIS-C/CONTRIB": {
@@ -16936,7 +16940,7 @@
      "holds": true,
      "other_sign_rules": [],
      "rules": [
-      "f7-report"
+      "f7-compile"
      ],
      "sensitive_predicates": [],
      "silent_predicates": [],
@@ -16946,7 +16950,7 @@
    "cone": [],
    "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
    "selected_rules": [
-    "f7-report"
+    "f7-compile"
    ]
   },
   "B-AIS-H/CONTRIB": {
@@ -17163,7 +17167,7 @@
      "holds": true,
      "other_sign_rules": [],
      "rules": [
-      "f7-report"
+      "f7-compile"
      ],
      "sensitive_predicates": [],
      "silent_predicates": [],
@@ -17177,7 +17181,7 @@
      "holds": true,
      "other_sign_rules": [],
      "rules": [
-      "f7-report"
+      "f7-compile"
      ],
      "sensitive_predicates": [],
      "silent_predicates": [],
@@ -17189,7 +17193,7 @@
    ],
    "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
    "selected_rules": [
-    "f7-report"
+    "f7-compile"
    ]
   },
   "B-BIO-C/CONTRIB": {
@@ -17579,7 +17583,7 @@
      "holds": true,
      "other_sign_rules": [],
      "rules": [
-      "f7-report"
+      "f7-compile"
      ],
      "sensitive_predicates": [],
      "silent_predicates": [],
@@ -17589,7 +17593,7 @@
    "cone": [],
    "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
    "selected_rules": [
-    "f7-report"
+    "f7-compile"
    ]
   },
   "B-BIO-H/CONTRIB": {
@@ -17806,7 +17810,7 @@
      "holds": true,
      "other_sign_rules": [],
      "rules": [
-      "f7-report"
+      "f7-compile"
      ],
      "sensitive_predicates": [],
      "silent_predicates": [],
@@ -17820,7 +17824,7 @@
      "holds": true,
      "other_sign_rules": [],
      "rules": [
-      "f7-report"
+      "f7-compile"
      ],
      "sensitive_predicates": [],
      "silent_predicates": [],
@@ -17832,7 +17836,7 @@
    ],
    "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
    "selected_rules": [
-    "f7-report"
+    "f7-compile"
    ]
   },
   "B-CYB-C/CONTRIB": {
@@ -18222,7 +18226,7 @@
      "holds": true,
      "other_sign_rules": [],
      "rules": [
-      "f7-report"
+      "f7-compile"
      ],
      "sensitive_predicates": [],
      "silent_predicates": [],
@@ -18232,7 +18236,7 @@
    "cone": [],
    "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
    "selected_rules": [
-    "f7-report"
+    "f7-compile"
    ]
   },
   "B-CYB-H/CONTRIB": {
@@ -18450,7 +18454,7 @@
      "holds": true,
      "other_sign_rules": [],
      "rules": [
-      "f7-report"
+      "f7-compile"
      ],
      "sensitive_predicates": [],
      "silent_predicates": [],
@@ -18460,7 +18464,7 @@
    "cone": [],
    "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
    "selected_rules": [
-    "f7-report"
+    "f7-compile"
    ]
   },
   "B-L0/CONTRIB": {
@@ -18671,313 +18675,7 @@
    "choices": [
     {
      "choice": {
-      "RS11": "final",
       "RS12": "suff",
-      "RS17": "bperm",
-      "RS3": "ext",
-      "RS5": "within",
-      "RS6": "req",
-      "RS7": "noinput"
-     },
-     "holds": true,
-     "rules": [
-      "f16-final & f16-board-reverse"
-     ],
-     "w1": [
-      "CONFLICT",
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "final",
-      "RS12": "suff",
-      "RS17": "bperm",
-      "RS3": "ext",
-      "RS5": "within",
-      "RS6": "req",
-      "RS7": "nodelib"
-     },
-     "holds": true,
-     "rules": [
-      "f16-final & f16-board-reverse"
-     ],
-     "w1": [
-      "CONFLICT",
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "final",
-      "RS12": "suff",
-      "RS17": "bperm",
-      "RS3": "ext",
-      "RS5": "within",
-      "RS6": "desc",
-      "RS7": "noinput"
-     },
-     "holds": true,
-     "rules": [
-      "f16-final & f16-board-reverse"
-     ],
-     "w1": [
-      "CONFLICT",
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "final",
-      "RS12": "suff",
-      "RS17": "bperm",
-      "RS3": "ext",
-      "RS5": "within",
-      "RS6": "desc",
-      "RS7": "nodelib"
-     },
-     "holds": true,
-     "rules": [
-      "f16-final & f16-board-reverse"
-     ],
-     "w1": [
-      "CONFLICT",
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "final",
-      "RS12": "suff",
-      "RS17": "bperm",
-      "RS3": "ext",
-      "RS5": "exception",
-      "RS6": "req",
-      "RS7": "noinput"
-     },
-     "holds": true,
-     "rules": [
-      "f16-final & f16-board-reverse"
-     ],
-     "w1": [
-      "CONFLICT",
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "final",
-      "RS12": "suff",
-      "RS17": "bperm",
-      "RS3": "ext",
-      "RS5": "exception",
-      "RS6": "req",
-      "RS7": "nodelib"
-     },
-     "holds": true,
-     "rules": [
-      "f16-final & f16-board-reverse"
-     ],
-     "w1": [
-      "CONFLICT",
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "final",
-      "RS12": "suff",
-      "RS17": "bperm",
-      "RS3": "ext",
-      "RS5": "exception",
-      "RS6": "desc",
-      "RS7": "noinput"
-     },
-     "holds": true,
-     "rules": [
-      "f16-final & f16-board-reverse"
-     ],
-     "w1": [
-      "CONFLICT",
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "final",
-      "RS12": "suff",
-      "RS17": "bperm",
-      "RS3": "ext",
-      "RS5": "exception",
-      "RS6": "desc",
-      "RS7": "nodelib"
-     },
-     "holds": true,
-     "rules": [
-      "f16-final & f16-board-reverse"
-     ],
-     "w1": [
-      "CONFLICT",
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "final",
-      "RS12": "suff",
-      "RS17": "bperm",
-      "RS3": "any",
-      "RS5": "within",
-      "RS6": "req",
-      "RS7": "noinput"
-     },
-     "holds": true,
-     "rules": [
-      "f16-final & f16-board-reverse"
-     ],
-     "w1": [
-      "CONFLICT",
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "final",
-      "RS12": "suff",
-      "RS17": "bperm",
-      "RS3": "any",
-      "RS5": "within",
-      "RS6": "req",
-      "RS7": "nodelib"
-     },
-     "holds": true,
-     "rules": [
-      "f16-final & f16-board-reverse"
-     ],
-     "w1": [
-      "CONFLICT",
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "final",
-      "RS12": "suff",
-      "RS17": "bperm",
-      "RS3": "any",
-      "RS5": "within",
-      "RS6": "desc",
-      "RS7": "noinput"
-     },
-     "holds": true,
-     "rules": [
-      "f16-final & f16-board-reverse"
-     ],
-     "w1": [
-      "CONFLICT",
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "final",
-      "RS12": "suff",
-      "RS17": "bperm",
-      "RS3": "any",
-      "RS5": "within",
-      "RS6": "desc",
-      "RS7": "nodelib"
-     },
-     "holds": true,
-     "rules": [
-      "f16-final & f16-board-reverse"
-     ],
-     "w1": [
-      "CONFLICT",
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "final",
-      "RS12": "suff",
-      "RS17": "bperm",
-      "RS3": "any",
-      "RS5": "exception",
-      "RS6": "req",
-      "RS7": "noinput"
-     },
-     "holds": true,
-     "rules": [
-      "f16-final & f16-board-reverse"
-     ],
-     "w1": [
-      "CONFLICT",
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "final",
-      "RS12": "suff",
-      "RS17": "bperm",
-      "RS3": "any",
-      "RS5": "exception",
-      "RS6": "req",
-      "RS7": "nodelib"
-     },
-     "holds": true,
-     "rules": [
-      "f16-final & f16-board-reverse"
-     ],
-     "w1": [
-      "CONFLICT",
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "final",
-      "RS12": "suff",
-      "RS17": "bperm",
-      "RS3": "any",
-      "RS5": "exception",
-      "RS6": "desc",
-      "RS7": "noinput"
-     },
-     "holds": true,
-     "rules": [
-      "f16-final & f16-board-reverse"
-     ],
-     "w1": [
-      "CONFLICT",
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "final",
-      "RS12": "suff",
-      "RS17": "bperm",
-      "RS3": "any",
-      "RS5": "exception",
-      "RS6": "desc",
-      "RS7": "nodelib"
-     },
-     "holds": true,
-     "rules": [
-      "f16-final & f16-board-reverse"
-     ],
-     "w1": [
-      "CONFLICT",
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "final",
-      "RS12": "suff",
-      "RS17": "bmight",
       "RS3": "ext",
       "RS5": "within",
       "RS6": "req",
@@ -18991,9 +18689,7 @@
     },
     {
      "choice": {
-      "RS11": "final",
       "RS12": "suff",
-      "RS17": "bmight",
       "RS3": "ext",
       "RS5": "within",
       "RS6": "req",
@@ -19007,9 +18703,7 @@
     },
     {
      "choice": {
-      "RS11": "final",
       "RS12": "suff",
-      "RS17": "bmight",
       "RS3": "ext",
       "RS5": "within",
       "RS6": "desc",
@@ -19023,9 +18717,7 @@
     },
     {
      "choice": {
-      "RS11": "final",
       "RS12": "suff",
-      "RS17": "bmight",
       "RS3": "ext",
       "RS5": "within",
       "RS6": "desc",
@@ -19039,9 +18731,7 @@
     },
     {
      "choice": {
-      "RS11": "final",
       "RS12": "suff",
-      "RS17": "bmight",
       "RS3": "ext",
       "RS5": "exception",
       "RS6": "req",
@@ -19055,9 +18745,7 @@
     },
     {
      "choice": {
-      "RS11": "final",
       "RS12": "suff",
-      "RS17": "bmight",
       "RS3": "ext",
       "RS5": "exception",
       "RS6": "req",
@@ -19071,9 +18759,7 @@
     },
     {
      "choice": {
-      "RS11": "final",
       "RS12": "suff",
-      "RS17": "bmight",
       "RS3": "ext",
       "RS5": "exception",
       "RS6": "desc",
@@ -19087,9 +18773,7 @@
     },
     {
      "choice": {
-      "RS11": "final",
       "RS12": "suff",
-      "RS17": "bmight",
       "RS3": "ext",
       "RS5": "exception",
       "RS6": "desc",
@@ -19103,9 +18787,7 @@
     },
     {
      "choice": {
-      "RS11": "final",
       "RS12": "suff",
-      "RS17": "bmight",
       "RS3": "any",
       "RS5": "within",
       "RS6": "req",
@@ -19119,9 +18801,7 @@
     },
     {
      "choice": {
-      "RS11": "final",
       "RS12": "suff",
-      "RS17": "bmight",
       "RS3": "any",
       "RS5": "within",
       "RS6": "req",
@@ -19135,9 +18815,7 @@
     },
     {
      "choice": {
-      "RS11": "final",
       "RS12": "suff",
-      "RS17": "bmight",
       "RS3": "any",
       "RS5": "within",
       "RS6": "desc",
@@ -19151,9 +18829,7 @@
     },
     {
      "choice": {
-      "RS11": "final",
       "RS12": "suff",
-      "RS17": "bmight",
       "RS3": "any",
       "RS5": "within",
       "RS6": "desc",
@@ -19167,9 +18843,7 @@
     },
     {
      "choice": {
-      "RS11": "final",
       "RS12": "suff",
-      "RS17": "bmight",
       "RS3": "any",
       "RS5": "exception",
       "RS6": "req",
@@ -19183,9 +18857,7 @@
     },
     {
      "choice": {
-      "RS11": "final",
       "RS12": "suff",
-      "RS17": "bmight",
       "RS3": "any",
       "RS5": "exception",
       "RS6": "req",
@@ -19199,9 +18871,7 @@
     },
     {
      "choice": {
-      "RS11": "final",
       "RS12": "suff",
-      "RS17": "bmight",
       "RS3": "any",
       "RS5": "exception",
       "RS6": "desc",
@@ -19215,9 +18885,7 @@
     },
     {
      "choice": {
-      "RS11": "final",
       "RS12": "suff",
-      "RS17": "bmight",
       "RS3": "any",
       "RS5": "exception",
       "RS6": "desc",
@@ -19231,313 +18899,7 @@
     },
     {
      "choice": {
-      "RS11": "final",
       "RS12": "iff",
-      "RS17": "bperm",
-      "RS3": "ext",
-      "RS5": "within",
-      "RS6": "req",
-      "RS7": "noinput"
-     },
-     "holds": true,
-     "rules": [
-      "f16-final & f16-board-reverse"
-     ],
-     "w1": [
-      "CONFLICT",
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "final",
-      "RS12": "iff",
-      "RS17": "bperm",
-      "RS3": "ext",
-      "RS5": "within",
-      "RS6": "req",
-      "RS7": "nodelib"
-     },
-     "holds": true,
-     "rules": [
-      "f16-final & f16-board-reverse"
-     ],
-     "w1": [
-      "CONFLICT",
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "final",
-      "RS12": "iff",
-      "RS17": "bperm",
-      "RS3": "ext",
-      "RS5": "within",
-      "RS6": "desc",
-      "RS7": "noinput"
-     },
-     "holds": true,
-     "rules": [
-      "f16-final & f16-board-reverse"
-     ],
-     "w1": [
-      "CONFLICT",
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "final",
-      "RS12": "iff",
-      "RS17": "bperm",
-      "RS3": "ext",
-      "RS5": "within",
-      "RS6": "desc",
-      "RS7": "nodelib"
-     },
-     "holds": true,
-     "rules": [
-      "f16-final & f16-board-reverse"
-     ],
-     "w1": [
-      "CONFLICT",
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "final",
-      "RS12": "iff",
-      "RS17": "bperm",
-      "RS3": "ext",
-      "RS5": "exception",
-      "RS6": "req",
-      "RS7": "noinput"
-     },
-     "holds": true,
-     "rules": [
-      "f16-final & f16-board-reverse"
-     ],
-     "w1": [
-      "CONFLICT",
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "final",
-      "RS12": "iff",
-      "RS17": "bperm",
-      "RS3": "ext",
-      "RS5": "exception",
-      "RS6": "req",
-      "RS7": "nodelib"
-     },
-     "holds": true,
-     "rules": [
-      "f16-final & f16-board-reverse"
-     ],
-     "w1": [
-      "CONFLICT",
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "final",
-      "RS12": "iff",
-      "RS17": "bperm",
-      "RS3": "ext",
-      "RS5": "exception",
-      "RS6": "desc",
-      "RS7": "noinput"
-     },
-     "holds": true,
-     "rules": [
-      "f16-final & f16-board-reverse"
-     ],
-     "w1": [
-      "CONFLICT",
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "final",
-      "RS12": "iff",
-      "RS17": "bperm",
-      "RS3": "ext",
-      "RS5": "exception",
-      "RS6": "desc",
-      "RS7": "nodelib"
-     },
-     "holds": true,
-     "rules": [
-      "f16-final & f16-board-reverse"
-     ],
-     "w1": [
-      "CONFLICT",
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "final",
-      "RS12": "iff",
-      "RS17": "bperm",
-      "RS3": "any",
-      "RS5": "within",
-      "RS6": "req",
-      "RS7": "noinput"
-     },
-     "holds": true,
-     "rules": [
-      "f16-final & f16-board-reverse"
-     ],
-     "w1": [
-      "CONFLICT",
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "final",
-      "RS12": "iff",
-      "RS17": "bperm",
-      "RS3": "any",
-      "RS5": "within",
-      "RS6": "req",
-      "RS7": "nodelib"
-     },
-     "holds": true,
-     "rules": [
-      "f16-final & f16-board-reverse"
-     ],
-     "w1": [
-      "CONFLICT",
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "final",
-      "RS12": "iff",
-      "RS17": "bperm",
-      "RS3": "any",
-      "RS5": "within",
-      "RS6": "desc",
-      "RS7": "noinput"
-     },
-     "holds": true,
-     "rules": [
-      "f16-final & f16-board-reverse"
-     ],
-     "w1": [
-      "CONFLICT",
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "final",
-      "RS12": "iff",
-      "RS17": "bperm",
-      "RS3": "any",
-      "RS5": "within",
-      "RS6": "desc",
-      "RS7": "nodelib"
-     },
-     "holds": true,
-     "rules": [
-      "f16-final & f16-board-reverse"
-     ],
-     "w1": [
-      "CONFLICT",
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "final",
-      "RS12": "iff",
-      "RS17": "bperm",
-      "RS3": "any",
-      "RS5": "exception",
-      "RS6": "req",
-      "RS7": "noinput"
-     },
-     "holds": true,
-     "rules": [
-      "f16-final & f16-board-reverse"
-     ],
-     "w1": [
-      "CONFLICT",
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "final",
-      "RS12": "iff",
-      "RS17": "bperm",
-      "RS3": "any",
-      "RS5": "exception",
-      "RS6": "req",
-      "RS7": "nodelib"
-     },
-     "holds": true,
-     "rules": [
-      "f16-final & f16-board-reverse"
-     ],
-     "w1": [
-      "CONFLICT",
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "final",
-      "RS12": "iff",
-      "RS17": "bperm",
-      "RS3": "any",
-      "RS5": "exception",
-      "RS6": "desc",
-      "RS7": "noinput"
-     },
-     "holds": true,
-     "rules": [
-      "f16-final & f16-board-reverse"
-     ],
-     "w1": [
-      "CONFLICT",
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "final",
-      "RS12": "iff",
-      "RS17": "bperm",
-      "RS3": "any",
-      "RS5": "exception",
-      "RS6": "desc",
-      "RS7": "nodelib"
-     },
-     "holds": true,
-     "rules": [
-      "f16-final & f16-board-reverse"
-     ],
-     "w1": [
-      "CONFLICT",
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "final",
-      "RS12": "iff",
-      "RS17": "bmight",
       "RS3": "ext",
       "RS5": "within",
       "RS6": "req",
@@ -19551,9 +18913,7 @@
     },
     {
      "choice": {
-      "RS11": "final",
       "RS12": "iff",
-      "RS17": "bmight",
       "RS3": "ext",
       "RS5": "within",
       "RS6": "req",
@@ -19567,9 +18927,7 @@
     },
     {
      "choice": {
-      "RS11": "final",
       "RS12": "iff",
-      "RS17": "bmight",
       "RS3": "ext",
       "RS5": "within",
       "RS6": "desc",
@@ -19583,9 +18941,7 @@
     },
     {
      "choice": {
-      "RS11": "final",
       "RS12": "iff",
-      "RS17": "bmight",
       "RS3": "ext",
       "RS5": "within",
       "RS6": "desc",
@@ -19599,9 +18955,7 @@
     },
     {
      "choice": {
-      "RS11": "final",
       "RS12": "iff",
-      "RS17": "bmight",
       "RS3": "ext",
       "RS5": "exception",
       "RS6": "req",
@@ -19615,9 +18969,7 @@
     },
     {
      "choice": {
-      "RS11": "final",
       "RS12": "iff",
-      "RS17": "bmight",
       "RS3": "ext",
       "RS5": "exception",
       "RS6": "req",
@@ -19631,9 +18983,7 @@
     },
     {
      "choice": {
-      "RS11": "final",
       "RS12": "iff",
-      "RS17": "bmight",
       "RS3": "ext",
       "RS5": "exception",
       "RS6": "desc",
@@ -19647,9 +18997,7 @@
     },
     {
      "choice": {
-      "RS11": "final",
       "RS12": "iff",
-      "RS17": "bmight",
       "RS3": "ext",
       "RS5": "exception",
       "RS6": "desc",
@@ -19663,9 +19011,7 @@
     },
     {
      "choice": {
-      "RS11": "final",
       "RS12": "iff",
-      "RS17": "bmight",
       "RS3": "any",
       "RS5": "within",
       "RS6": "req",
@@ -19679,9 +19025,7 @@
     },
     {
      "choice": {
-      "RS11": "final",
       "RS12": "iff",
-      "RS17": "bmight",
       "RS3": "any",
       "RS5": "within",
       "RS6": "req",
@@ -19695,9 +19039,7 @@
     },
     {
      "choice": {
-      "RS11": "final",
       "RS12": "iff",
-      "RS17": "bmight",
       "RS3": "any",
       "RS5": "within",
       "RS6": "desc",
@@ -19711,9 +19053,7 @@
     },
     {
      "choice": {
-      "RS11": "final",
       "RS12": "iff",
-      "RS17": "bmight",
       "RS3": "any",
       "RS5": "within",
       "RS6": "desc",
@@ -19727,9 +19067,7 @@
     },
     {
      "choice": {
-      "RS11": "final",
       "RS12": "iff",
-      "RS17": "bmight",
       "RS3": "any",
       "RS5": "exception",
       "RS6": "req",
@@ -19743,9 +19081,7 @@
     },
     {
      "choice": {
-      "RS11": "final",
       "RS12": "iff",
-      "RS17": "bmight",
       "RS3": "any",
       "RS5": "exception",
       "RS6": "req",
@@ -19759,9 +19095,7 @@
     },
     {
      "choice": {
-      "RS11": "final",
       "RS12": "iff",
-      "RS17": "bmight",
       "RS3": "any",
       "RS5": "exception",
       "RS6": "desc",
@@ -19775,1033 +19109,7 @@
     },
     {
      "choice": {
-      "RS11": "final",
       "RS12": "iff",
-      "RS17": "bmight",
-      "RS3": "any",
-      "RS5": "exception",
-      "RS6": "desc",
-      "RS7": "nodelib"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "suff",
-      "RS17": "bperm",
-      "RS3": "ext",
-      "RS5": "within",
-      "RS6": "req",
-      "RS7": "noinput"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "suff",
-      "RS17": "bperm",
-      "RS3": "ext",
-      "RS5": "within",
-      "RS6": "req",
-      "RS7": "nodelib"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "suff",
-      "RS17": "bperm",
-      "RS3": "ext",
-      "RS5": "within",
-      "RS6": "desc",
-      "RS7": "noinput"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "suff",
-      "RS17": "bperm",
-      "RS3": "ext",
-      "RS5": "within",
-      "RS6": "desc",
-      "RS7": "nodelib"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "suff",
-      "RS17": "bperm",
-      "RS3": "ext",
-      "RS5": "exception",
-      "RS6": "req",
-      "RS7": "noinput"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "suff",
-      "RS17": "bperm",
-      "RS3": "ext",
-      "RS5": "exception",
-      "RS6": "req",
-      "RS7": "nodelib"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "suff",
-      "RS17": "bperm",
-      "RS3": "ext",
-      "RS5": "exception",
-      "RS6": "desc",
-      "RS7": "noinput"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "suff",
-      "RS17": "bperm",
-      "RS3": "ext",
-      "RS5": "exception",
-      "RS6": "desc",
-      "RS7": "nodelib"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "suff",
-      "RS17": "bperm",
-      "RS3": "any",
-      "RS5": "within",
-      "RS6": "req",
-      "RS7": "noinput"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "suff",
-      "RS17": "bperm",
-      "RS3": "any",
-      "RS5": "within",
-      "RS6": "req",
-      "RS7": "nodelib"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "suff",
-      "RS17": "bperm",
-      "RS3": "any",
-      "RS5": "within",
-      "RS6": "desc",
-      "RS7": "noinput"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "suff",
-      "RS17": "bperm",
-      "RS3": "any",
-      "RS5": "within",
-      "RS6": "desc",
-      "RS7": "nodelib"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "suff",
-      "RS17": "bperm",
-      "RS3": "any",
-      "RS5": "exception",
-      "RS6": "req",
-      "RS7": "noinput"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "suff",
-      "RS17": "bperm",
-      "RS3": "any",
-      "RS5": "exception",
-      "RS6": "req",
-      "RS7": "nodelib"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "suff",
-      "RS17": "bperm",
-      "RS3": "any",
-      "RS5": "exception",
-      "RS6": "desc",
-      "RS7": "noinput"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "suff",
-      "RS17": "bperm",
-      "RS3": "any",
-      "RS5": "exception",
-      "RS6": "desc",
-      "RS7": "nodelib"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "suff",
-      "RS17": "bmight",
-      "RS3": "ext",
-      "RS5": "within",
-      "RS6": "req",
-      "RS7": "noinput"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "suff",
-      "RS17": "bmight",
-      "RS3": "ext",
-      "RS5": "within",
-      "RS6": "req",
-      "RS7": "nodelib"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "suff",
-      "RS17": "bmight",
-      "RS3": "ext",
-      "RS5": "within",
-      "RS6": "desc",
-      "RS7": "noinput"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "suff",
-      "RS17": "bmight",
-      "RS3": "ext",
-      "RS5": "within",
-      "RS6": "desc",
-      "RS7": "nodelib"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "suff",
-      "RS17": "bmight",
-      "RS3": "ext",
-      "RS5": "exception",
-      "RS6": "req",
-      "RS7": "noinput"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "suff",
-      "RS17": "bmight",
-      "RS3": "ext",
-      "RS5": "exception",
-      "RS6": "req",
-      "RS7": "nodelib"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "suff",
-      "RS17": "bmight",
-      "RS3": "ext",
-      "RS5": "exception",
-      "RS6": "desc",
-      "RS7": "noinput"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "suff",
-      "RS17": "bmight",
-      "RS3": "ext",
-      "RS5": "exception",
-      "RS6": "desc",
-      "RS7": "nodelib"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "suff",
-      "RS17": "bmight",
-      "RS3": "any",
-      "RS5": "within",
-      "RS6": "req",
-      "RS7": "noinput"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "suff",
-      "RS17": "bmight",
-      "RS3": "any",
-      "RS5": "within",
-      "RS6": "req",
-      "RS7": "nodelib"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "suff",
-      "RS17": "bmight",
-      "RS3": "any",
-      "RS5": "within",
-      "RS6": "desc",
-      "RS7": "noinput"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "suff",
-      "RS17": "bmight",
-      "RS3": "any",
-      "RS5": "within",
-      "RS6": "desc",
-      "RS7": "nodelib"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "suff",
-      "RS17": "bmight",
-      "RS3": "any",
-      "RS5": "exception",
-      "RS6": "req",
-      "RS7": "noinput"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "suff",
-      "RS17": "bmight",
-      "RS3": "any",
-      "RS5": "exception",
-      "RS6": "req",
-      "RS7": "nodelib"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "suff",
-      "RS17": "bmight",
-      "RS3": "any",
-      "RS5": "exception",
-      "RS6": "desc",
-      "RS7": "noinput"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "suff",
-      "RS17": "bmight",
-      "RS3": "any",
-      "RS5": "exception",
-      "RS6": "desc",
-      "RS7": "nodelib"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "iff",
-      "RS17": "bperm",
-      "RS3": "ext",
-      "RS5": "within",
-      "RS6": "req",
-      "RS7": "noinput"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "iff",
-      "RS17": "bperm",
-      "RS3": "ext",
-      "RS5": "within",
-      "RS6": "req",
-      "RS7": "nodelib"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "iff",
-      "RS17": "bperm",
-      "RS3": "ext",
-      "RS5": "within",
-      "RS6": "desc",
-      "RS7": "noinput"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "iff",
-      "RS17": "bperm",
-      "RS3": "ext",
-      "RS5": "within",
-      "RS6": "desc",
-      "RS7": "nodelib"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "iff",
-      "RS17": "bperm",
-      "RS3": "ext",
-      "RS5": "exception",
-      "RS6": "req",
-      "RS7": "noinput"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "iff",
-      "RS17": "bperm",
-      "RS3": "ext",
-      "RS5": "exception",
-      "RS6": "req",
-      "RS7": "nodelib"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "iff",
-      "RS17": "bperm",
-      "RS3": "ext",
-      "RS5": "exception",
-      "RS6": "desc",
-      "RS7": "noinput"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "iff",
-      "RS17": "bperm",
-      "RS3": "ext",
-      "RS5": "exception",
-      "RS6": "desc",
-      "RS7": "nodelib"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "iff",
-      "RS17": "bperm",
-      "RS3": "any",
-      "RS5": "within",
-      "RS6": "req",
-      "RS7": "noinput"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "iff",
-      "RS17": "bperm",
-      "RS3": "any",
-      "RS5": "within",
-      "RS6": "req",
-      "RS7": "nodelib"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "iff",
-      "RS17": "bperm",
-      "RS3": "any",
-      "RS5": "within",
-      "RS6": "desc",
-      "RS7": "noinput"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "iff",
-      "RS17": "bperm",
-      "RS3": "any",
-      "RS5": "within",
-      "RS6": "desc",
-      "RS7": "nodelib"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "iff",
-      "RS17": "bperm",
-      "RS3": "any",
-      "RS5": "exception",
-      "RS6": "req",
-      "RS7": "noinput"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "iff",
-      "RS17": "bperm",
-      "RS3": "any",
-      "RS5": "exception",
-      "RS6": "req",
-      "RS7": "nodelib"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "iff",
-      "RS17": "bperm",
-      "RS3": "any",
-      "RS5": "exception",
-      "RS6": "desc",
-      "RS7": "noinput"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "iff",
-      "RS17": "bperm",
-      "RS3": "any",
-      "RS5": "exception",
-      "RS6": "desc",
-      "RS7": "nodelib"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "iff",
-      "RS17": "bmight",
-      "RS3": "ext",
-      "RS5": "within",
-      "RS6": "req",
-      "RS7": "noinput"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "iff",
-      "RS17": "bmight",
-      "RS3": "ext",
-      "RS5": "within",
-      "RS6": "req",
-      "RS7": "nodelib"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "iff",
-      "RS17": "bmight",
-      "RS3": "ext",
-      "RS5": "within",
-      "RS6": "desc",
-      "RS7": "noinput"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "iff",
-      "RS17": "bmight",
-      "RS3": "ext",
-      "RS5": "within",
-      "RS6": "desc",
-      "RS7": "nodelib"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "iff",
-      "RS17": "bmight",
-      "RS3": "ext",
-      "RS5": "exception",
-      "RS6": "req",
-      "RS7": "noinput"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "iff",
-      "RS17": "bmight",
-      "RS3": "ext",
-      "RS5": "exception",
-      "RS6": "req",
-      "RS7": "nodelib"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "iff",
-      "RS17": "bmight",
-      "RS3": "ext",
-      "RS5": "exception",
-      "RS6": "desc",
-      "RS7": "noinput"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "iff",
-      "RS17": "bmight",
-      "RS3": "ext",
-      "RS5": "exception",
-      "RS6": "desc",
-      "RS7": "nodelib"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "iff",
-      "RS17": "bmight",
-      "RS3": "any",
-      "RS5": "within",
-      "RS6": "req",
-      "RS7": "noinput"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "iff",
-      "RS17": "bmight",
-      "RS3": "any",
-      "RS5": "within",
-      "RS6": "req",
-      "RS7": "nodelib"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "iff",
-      "RS17": "bmight",
-      "RS3": "any",
-      "RS5": "within",
-      "RS6": "desc",
-      "RS7": "noinput"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "iff",
-      "RS17": "bmight",
-      "RS3": "any",
-      "RS5": "within",
-      "RS6": "desc",
-      "RS7": "nodelib"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "iff",
-      "RS17": "bmight",
-      "RS3": "any",
-      "RS5": "exception",
-      "RS6": "req",
-      "RS7": "noinput"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "iff",
-      "RS17": "bmight",
-      "RS3": "any",
-      "RS5": "exception",
-      "RS6": "req",
-      "RS7": "nodelib"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "iff",
-      "RS17": "bmight",
-      "RS3": "any",
-      "RS5": "exception",
-      "RS6": "desc",
-      "RS7": "noinput"
-     },
-     "holds": false,
-     "rules": [],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
-      "RS12": "iff",
-      "RS17": "bmight",
       "RS3": "any",
       "RS5": "exception",
       "RS6": "desc",
@@ -20815,9 +19123,7 @@
     }
    ],
    "cone": [
-    "RS11",
     "RS12",
-    "RS17",
     "RS3",
     "RS5",
     "RS6",
@@ -20828,8 +19134,9 @@
     "f2-deploy-any & f11-exception",
     "f2-reminder & f11-exception",
     "f2-reminder-any & f11-exception",
+    "f2-no-deploy & f11-exception-deploy",
+    "f2-no-deploy-any & f11-exception-deploy",
     "f16-informed & f16-without-noinput",
-    "f16-final & f16-board-reverse",
     "f17-suff & f17-iff-only",
     "f17-iff & f17-iff-only"
    ],
@@ -20850,10 +19157,13 @@
      "rules": [
       "f11-within",
       "f11-exception",
+      "f11-exception-deploy",
       "f2-deploy",
       "f2-deploy-any",
       "f2-reminder",
-      "f2-reminder-any"
+      "f2-reminder-any",
+      "f2-no-deploy",
+      "f2-no-deploy-any"
      ],
      "w1": [
       "CONFLICT-FREE"
@@ -20868,10 +19178,13 @@
      "rules": [
       "f11-within",
       "f11-exception",
+      "f11-exception-deploy",
       "f2-deploy",
       "f2-deploy-any",
       "f2-reminder",
-      "f2-reminder-any"
+      "f2-reminder-any",
+      "f2-no-deploy",
+      "f2-no-deploy-any"
      ],
      "w1": [
       "CONFLICT-FREE"
@@ -20886,10 +19199,13 @@
      "rules": [
       "f11-within",
       "f11-exception",
+      "f11-exception-deploy",
       "f2-deploy",
       "f2-deploy-any",
       "f2-reminder",
-      "f2-reminder-any"
+      "f2-reminder-any",
+      "f2-no-deploy",
+      "f2-no-deploy-any"
      ],
      "w1": [
       "CONFLICT-FREE"
@@ -20904,10 +19220,13 @@
      "rules": [
       "f11-within",
       "f11-exception",
+      "f11-exception-deploy",
       "f2-deploy",
       "f2-deploy-any",
       "f2-reminder",
-      "f2-reminder-any"
+      "f2-reminder-any",
+      "f2-no-deploy",
+      "f2-no-deploy-any"
      ],
      "w1": [
       "CONFLICT-FREE"
@@ -21199,29 +19518,12 @@
    "choices": [
     {
      "choice": {
-      "RS11": "final",
       "RS17": "bperm"
-     },
-     "holds": true,
-     "rules": [
-      "f16-final",
-      "f16-process",
-      "f16-board-reverse"
-     ],
-     "w1": [
-      "CONFLICT"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "final",
-      "RS17": "bmight"
      },
      "holds": false,
      "rules": [
-      "f16-final",
-      "f16-process",
-      "f16-board-reverse"
+      "f16-board-reverse",
+      "f16-board-mandate"
      ],
      "w1": [
       "CONFLICT-FREE"
@@ -21229,29 +19531,12 @@
     },
     {
      "choice": {
-      "RS11": "process",
-      "RS17": "bperm"
-     },
-     "holds": false,
-     "rules": [
-      "f16-final",
-      "f16-process",
-      "f16-board-reverse"
-     ],
-     "w1": [
-      "CONFLICT-FREE"
-     ]
-    },
-    {
-     "choice": {
-      "RS11": "process",
       "RS17": "bmight"
      },
      "holds": false,
      "rules": [
-      "f16-final",
-      "f16-process",
-      "f16-board-reverse"
+      "f16-board-reverse",
+      "f16-board-mandate"
      ],
      "w1": [
       "CONFLICT-FREE"
@@ -21259,7 +19544,6 @@
     }
    ],
    "cone": [
-    "RS11",
     "RS17"
    ],
    "route": "D1 norms@0 W1 check_conflict with a validated witness model",
@@ -21356,7 +19640,8 @@
      "choice": {
       "RS1": "strict",
       "RS2": "nest",
-      "RS3": "ext"
+      "RS3": "ext",
+      "RS5": "within"
      },
      "holds": true,
      "rules": []
@@ -21365,7 +19650,28 @@
      "choice": {
       "RS1": "strict",
       "RS2": "nest",
-      "RS3": "any"
+      "RS3": "ext",
+      "RS5": "exception"
+     },
+     "holds": true,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS1": "strict",
+      "RS2": "nest",
+      "RS3": "any",
+      "RS5": "within"
+     },
+     "holds": true,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS1": "strict",
+      "RS2": "nest",
+      "RS3": "any",
+      "RS5": "exception"
      },
      "holds": true,
      "rules": []
@@ -21374,7 +19680,8 @@
      "choice": {
       "RS1": "strict",
       "RS2": "sep",
-      "RS3": "ext"
+      "RS3": "ext",
+      "RS5": "within"
      },
      "holds": true,
      "rules": []
@@ -21383,7 +19690,28 @@
      "choice": {
       "RS1": "strict",
       "RS2": "sep",
-      "RS3": "any"
+      "RS3": "ext",
+      "RS5": "exception"
+     },
+     "holds": true,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS1": "strict",
+      "RS2": "sep",
+      "RS3": "any",
+      "RS5": "within"
+     },
+     "holds": true,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS1": "strict",
+      "RS2": "sep",
+      "RS3": "any",
+      "RS5": "exception"
      },
      "holds": true,
      "rules": []
@@ -21392,7 +19720,8 @@
      "choice": {
       "RS1": "default",
       "RS2": "nest",
-      "RS3": "ext"
+      "RS3": "ext",
+      "RS5": "within"
      },
      "holds": true,
      "rules": []
@@ -21401,7 +19730,28 @@
      "choice": {
       "RS1": "default",
       "RS2": "nest",
-      "RS3": "any"
+      "RS3": "ext",
+      "RS5": "exception"
+     },
+     "holds": true,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS1": "default",
+      "RS2": "nest",
+      "RS3": "any",
+      "RS5": "within"
+     },
+     "holds": true,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS1": "default",
+      "RS2": "nest",
+      "RS3": "any",
+      "RS5": "exception"
      },
      "holds": true,
      "rules": []
@@ -21410,7 +19760,8 @@
      "choice": {
       "RS1": "default",
       "RS2": "sep",
-      "RS3": "ext"
+      "RS3": "ext",
+      "RS5": "within"
      },
      "holds": true,
      "rules": []
@@ -21419,7 +19770,28 @@
      "choice": {
       "RS1": "default",
       "RS2": "sep",
-      "RS3": "any"
+      "RS3": "ext",
+      "RS5": "exception"
+     },
+     "holds": true,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS1": "default",
+      "RS2": "sep",
+      "RS3": "any",
+      "RS5": "within"
+     },
+     "holds": true,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS1": "default",
+      "RS2": "sep",
+      "RS3": "any",
+      "RS5": "exception"
      },
      "holds": true,
      "rules": []
@@ -21428,7 +19800,8 @@
    "cone": [
     "RS1",
     "RS2",
-    "RS3"
+    "RS3",
+    "RS5"
    ],
    "route": "D1 soft-norms@0 selected_rules, deny and allow completion; no rule forbids development",
    "selected_rules": []
@@ -21440,7 +19813,8 @@
    "choices": [
     {
      "choice": {
-      "RS3": "ext"
+      "RS3": "ext",
+      "RS5": "within"
      },
      "default_sensitive": false,
      "holds": true,
@@ -21454,7 +19828,38 @@
     },
     {
      "choice": {
-      "RS3": "any"
+      "RS3": "ext",
+      "RS5": "exception"
+     },
+     "default_sensitive": false,
+     "holds": true,
+     "other_sign_rules": [],
+     "rules": [
+      "f2-no-deploy"
+     ],
+     "sensitive_predicates": [],
+     "silent_predicates": [],
+     "soft": false
+    },
+    {
+     "choice": {
+      "RS3": "any",
+      "RS5": "within"
+     },
+     "default_sensitive": false,
+     "holds": true,
+     "other_sign_rules": [],
+     "rules": [
+      "f2-no-deploy-any"
+     ],
+     "sensitive_predicates": [],
+     "silent_predicates": [],
+     "soft": false
+    },
+    {
+     "choice": {
+      "RS3": "any",
+      "RS5": "exception"
      },
      "default_sensitive": false,
      "holds": true,
@@ -21468,7 +19873,8 @@
     }
    ],
    "cone": [
-    "RS3"
+    "RS3",
+    "RS5"
    ],
    "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
    "selected_rules": [
@@ -21823,9 +20229,27 @@
    "audit_input": {
     "rules": []
    },
-   "route": "D1",
-   "selected_rules": [],
-   "undecided": "translation limit (SC): footnote 5's indicator relation between biological evaluations and the category's capabilities is not in D1"
+   "choices": [
+    {
+     "choice": {
+      "RS2": "nest"
+     },
+     "holds": true,
+     "reason": "two models of the selected premises differ on the claim"
+    },
+    {
+     "choice": {
+      "RS2": "sep"
+     },
+     "holds": true,
+     "reason": "two models of the selected premises differ on the claim"
+    }
+   ],
+   "cone": [
+    "RS2"
+   ],
+   "route": "D1 relational-fol@0: two finite models of the selected premises",
+   "selected_rules": []
   },
   "G8": {
    "audit_input": {
@@ -22011,6 +20435,8 @@
       "RS1": "strict",
       "RS18": "inuse",
       "RS3": "ext",
+      "RS4": "N",
+      "RS4s": "scoped",
       "RS5": "within",
       "RS9": "strict"
      },
@@ -22024,6 +20450,8 @@
       "RS1": "strict",
       "RS18": "inuse",
       "RS3": "ext",
+      "RS4": "N",
+      "RS4s": "scoped",
       "RS5": "within",
       "RS9": "default"
      },
@@ -22037,6 +20465,8 @@
       "RS1": "strict",
       "RS18": "inuse",
       "RS3": "ext",
+      "RS4": "N",
+      "RS4s": "scoped",
       "RS5": "exception",
       "RS9": "strict"
      },
@@ -22050,6 +20480,192 @@
       "RS1": "strict",
       "RS18": "inuse",
       "RS3": "ext",
+      "RS4": "N",
+      "RS4s": "scoped",
+      "RS5": "exception",
+      "RS9": "default"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-default"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "strict",
+      "RS18": "inuse",
+      "RS3": "ext",
+      "RS4": "N",
+      "RS4s": "unscoped",
+      "RS5": "within",
+      "RS9": "strict"
+     },
+     "holds": false,
+     "rules": [
+      "c3-access-strict",
+      "f12-nuclear-unscoped"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "strict",
+      "RS18": "inuse",
+      "RS3": "ext",
+      "RS4": "N",
+      "RS4s": "unscoped",
+      "RS5": "within",
+      "RS9": "default"
+     },
+     "holds": false,
+     "rules": [
+      "c3-access-default",
+      "f12-nuclear-unscoped"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "strict",
+      "RS18": "inuse",
+      "RS3": "ext",
+      "RS4": "N",
+      "RS4s": "unscoped",
+      "RS5": "exception",
+      "RS9": "strict"
+     },
+     "holds": false,
+     "rules": [
+      "c3-access-strict",
+      "f12-nuclear-unscoped"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "strict",
+      "RS18": "inuse",
+      "RS3": "ext",
+      "RS4": "N",
+      "RS4s": "unscoped",
+      "RS5": "exception",
+      "RS9": "default"
+     },
+     "holds": false,
+     "rules": [
+      "c3-access-default",
+      "f12-nuclear-unscoped"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "strict",
+      "RS18": "inuse",
+      "RS3": "ext",
+      "RS4": "P",
+      "RS4s": "scoped",
+      "RS5": "within",
+      "RS9": "strict"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-strict"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "strict",
+      "RS18": "inuse",
+      "RS3": "ext",
+      "RS4": "P",
+      "RS4s": "scoped",
+      "RS5": "within",
+      "RS9": "default"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-default"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "strict",
+      "RS18": "inuse",
+      "RS3": "ext",
+      "RS4": "P",
+      "RS4s": "scoped",
+      "RS5": "exception",
+      "RS9": "strict"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-strict"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "strict",
+      "RS18": "inuse",
+      "RS3": "ext",
+      "RS4": "P",
+      "RS4s": "scoped",
+      "RS5": "exception",
+      "RS9": "default"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-default"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "strict",
+      "RS18": "inuse",
+      "RS3": "ext",
+      "RS4": "P",
+      "RS4s": "unscoped",
+      "RS5": "within",
+      "RS9": "strict"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-strict"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "strict",
+      "RS18": "inuse",
+      "RS3": "ext",
+      "RS4": "P",
+      "RS4s": "unscoped",
+      "RS5": "within",
+      "RS9": "default"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-default"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "strict",
+      "RS18": "inuse",
+      "RS3": "ext",
+      "RS4": "P",
+      "RS4s": "unscoped",
+      "RS5": "exception",
+      "RS9": "strict"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-strict"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "strict",
+      "RS18": "inuse",
+      "RS3": "ext",
+      "RS4": "P",
+      "RS4s": "unscoped",
       "RS5": "exception",
       "RS9": "default"
      },
@@ -22063,6 +20679,8 @@
       "RS1": "strict",
       "RS18": "inuse",
       "RS3": "any",
+      "RS4": "N",
+      "RS4s": "scoped",
       "RS5": "within",
       "RS9": "strict"
      },
@@ -22076,6 +20694,8 @@
       "RS1": "strict",
       "RS18": "inuse",
       "RS3": "any",
+      "RS4": "N",
+      "RS4s": "scoped",
       "RS5": "within",
       "RS9": "default"
      },
@@ -22089,6 +20709,8 @@
       "RS1": "strict",
       "RS18": "inuse",
       "RS3": "any",
+      "RS4": "N",
+      "RS4s": "scoped",
       "RS5": "exception",
       "RS9": "strict"
      },
@@ -22102,6 +20724,192 @@
       "RS1": "strict",
       "RS18": "inuse",
       "RS3": "any",
+      "RS4": "N",
+      "RS4s": "scoped",
+      "RS5": "exception",
+      "RS9": "default"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-default"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "strict",
+      "RS18": "inuse",
+      "RS3": "any",
+      "RS4": "N",
+      "RS4s": "unscoped",
+      "RS5": "within",
+      "RS9": "strict"
+     },
+     "holds": false,
+     "rules": [
+      "c3-access-strict",
+      "f12-nuclear-unscoped"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "strict",
+      "RS18": "inuse",
+      "RS3": "any",
+      "RS4": "N",
+      "RS4s": "unscoped",
+      "RS5": "within",
+      "RS9": "default"
+     },
+     "holds": false,
+     "rules": [
+      "c3-access-default",
+      "f12-nuclear-unscoped"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "strict",
+      "RS18": "inuse",
+      "RS3": "any",
+      "RS4": "N",
+      "RS4s": "unscoped",
+      "RS5": "exception",
+      "RS9": "strict"
+     },
+     "holds": false,
+     "rules": [
+      "c3-access-strict",
+      "f12-nuclear-unscoped"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "strict",
+      "RS18": "inuse",
+      "RS3": "any",
+      "RS4": "N",
+      "RS4s": "unscoped",
+      "RS5": "exception",
+      "RS9": "default"
+     },
+     "holds": false,
+     "rules": [
+      "c3-access-default",
+      "f12-nuclear-unscoped"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "strict",
+      "RS18": "inuse",
+      "RS3": "any",
+      "RS4": "P",
+      "RS4s": "scoped",
+      "RS5": "within",
+      "RS9": "strict"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-strict"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "strict",
+      "RS18": "inuse",
+      "RS3": "any",
+      "RS4": "P",
+      "RS4s": "scoped",
+      "RS5": "within",
+      "RS9": "default"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-default"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "strict",
+      "RS18": "inuse",
+      "RS3": "any",
+      "RS4": "P",
+      "RS4s": "scoped",
+      "RS5": "exception",
+      "RS9": "strict"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-strict"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "strict",
+      "RS18": "inuse",
+      "RS3": "any",
+      "RS4": "P",
+      "RS4s": "scoped",
+      "RS5": "exception",
+      "RS9": "default"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-default"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "strict",
+      "RS18": "inuse",
+      "RS3": "any",
+      "RS4": "P",
+      "RS4s": "unscoped",
+      "RS5": "within",
+      "RS9": "strict"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-strict"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "strict",
+      "RS18": "inuse",
+      "RS3": "any",
+      "RS4": "P",
+      "RS4s": "unscoped",
+      "RS5": "within",
+      "RS9": "default"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-default"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "strict",
+      "RS18": "inuse",
+      "RS3": "any",
+      "RS4": "P",
+      "RS4s": "unscoped",
+      "RS5": "exception",
+      "RS9": "strict"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-strict"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "strict",
+      "RS18": "inuse",
+      "RS3": "any",
+      "RS4": "P",
+      "RS4s": "unscoped",
       "RS5": "exception",
       "RS9": "default"
      },
@@ -22115,6 +20923,8 @@
       "RS1": "strict",
       "RS18": "devonly",
       "RS3": "ext",
+      "RS4": "N",
+      "RS4s": "scoped",
       "RS5": "within",
       "RS9": "strict"
      },
@@ -22128,6 +20938,8 @@
       "RS1": "strict",
       "RS18": "devonly",
       "RS3": "ext",
+      "RS4": "N",
+      "RS4s": "scoped",
       "RS5": "within",
       "RS9": "default"
      },
@@ -22141,6 +20953,8 @@
       "RS1": "strict",
       "RS18": "devonly",
       "RS3": "ext",
+      "RS4": "N",
+      "RS4s": "scoped",
       "RS5": "exception",
       "RS9": "strict"
      },
@@ -22154,6 +20968,192 @@
       "RS1": "strict",
       "RS18": "devonly",
       "RS3": "ext",
+      "RS4": "N",
+      "RS4s": "scoped",
+      "RS5": "exception",
+      "RS9": "default"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-default"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "strict",
+      "RS18": "devonly",
+      "RS3": "ext",
+      "RS4": "N",
+      "RS4s": "unscoped",
+      "RS5": "within",
+      "RS9": "strict"
+     },
+     "holds": false,
+     "rules": [
+      "c3-access-strict",
+      "f12-nuclear-unscoped"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "strict",
+      "RS18": "devonly",
+      "RS3": "ext",
+      "RS4": "N",
+      "RS4s": "unscoped",
+      "RS5": "within",
+      "RS9": "default"
+     },
+     "holds": false,
+     "rules": [
+      "c3-access-default",
+      "f12-nuclear-unscoped"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "strict",
+      "RS18": "devonly",
+      "RS3": "ext",
+      "RS4": "N",
+      "RS4s": "unscoped",
+      "RS5": "exception",
+      "RS9": "strict"
+     },
+     "holds": false,
+     "rules": [
+      "c3-access-strict",
+      "f12-nuclear-unscoped"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "strict",
+      "RS18": "devonly",
+      "RS3": "ext",
+      "RS4": "N",
+      "RS4s": "unscoped",
+      "RS5": "exception",
+      "RS9": "default"
+     },
+     "holds": false,
+     "rules": [
+      "c3-access-default",
+      "f12-nuclear-unscoped"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "strict",
+      "RS18": "devonly",
+      "RS3": "ext",
+      "RS4": "P",
+      "RS4s": "scoped",
+      "RS5": "within",
+      "RS9": "strict"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-strict"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "strict",
+      "RS18": "devonly",
+      "RS3": "ext",
+      "RS4": "P",
+      "RS4s": "scoped",
+      "RS5": "within",
+      "RS9": "default"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-default"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "strict",
+      "RS18": "devonly",
+      "RS3": "ext",
+      "RS4": "P",
+      "RS4s": "scoped",
+      "RS5": "exception",
+      "RS9": "strict"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-strict"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "strict",
+      "RS18": "devonly",
+      "RS3": "ext",
+      "RS4": "P",
+      "RS4s": "scoped",
+      "RS5": "exception",
+      "RS9": "default"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-default"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "strict",
+      "RS18": "devonly",
+      "RS3": "ext",
+      "RS4": "P",
+      "RS4s": "unscoped",
+      "RS5": "within",
+      "RS9": "strict"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-strict"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "strict",
+      "RS18": "devonly",
+      "RS3": "ext",
+      "RS4": "P",
+      "RS4s": "unscoped",
+      "RS5": "within",
+      "RS9": "default"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-default"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "strict",
+      "RS18": "devonly",
+      "RS3": "ext",
+      "RS4": "P",
+      "RS4s": "unscoped",
+      "RS5": "exception",
+      "RS9": "strict"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-strict"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "strict",
+      "RS18": "devonly",
+      "RS3": "ext",
+      "RS4": "P",
+      "RS4s": "unscoped",
       "RS5": "exception",
       "RS9": "default"
      },
@@ -22167,6 +21167,8 @@
       "RS1": "strict",
       "RS18": "devonly",
       "RS3": "any",
+      "RS4": "N",
+      "RS4s": "scoped",
       "RS5": "within",
       "RS9": "strict"
      },
@@ -22180,6 +21182,8 @@
       "RS1": "strict",
       "RS18": "devonly",
       "RS3": "any",
+      "RS4": "N",
+      "RS4s": "scoped",
       "RS5": "within",
       "RS9": "default"
      },
@@ -22193,6 +21197,8 @@
       "RS1": "strict",
       "RS18": "devonly",
       "RS3": "any",
+      "RS4": "N",
+      "RS4s": "scoped",
       "RS5": "exception",
       "RS9": "strict"
      },
@@ -22206,6 +21212,192 @@
       "RS1": "strict",
       "RS18": "devonly",
       "RS3": "any",
+      "RS4": "N",
+      "RS4s": "scoped",
+      "RS5": "exception",
+      "RS9": "default"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-default"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "strict",
+      "RS18": "devonly",
+      "RS3": "any",
+      "RS4": "N",
+      "RS4s": "unscoped",
+      "RS5": "within",
+      "RS9": "strict"
+     },
+     "holds": false,
+     "rules": [
+      "c3-access-strict",
+      "f12-nuclear-unscoped"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "strict",
+      "RS18": "devonly",
+      "RS3": "any",
+      "RS4": "N",
+      "RS4s": "unscoped",
+      "RS5": "within",
+      "RS9": "default"
+     },
+     "holds": false,
+     "rules": [
+      "c3-access-default",
+      "f12-nuclear-unscoped"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "strict",
+      "RS18": "devonly",
+      "RS3": "any",
+      "RS4": "N",
+      "RS4s": "unscoped",
+      "RS5": "exception",
+      "RS9": "strict"
+     },
+     "holds": false,
+     "rules": [
+      "c3-access-strict",
+      "f12-nuclear-unscoped"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "strict",
+      "RS18": "devonly",
+      "RS3": "any",
+      "RS4": "N",
+      "RS4s": "unscoped",
+      "RS5": "exception",
+      "RS9": "default"
+     },
+     "holds": false,
+     "rules": [
+      "c3-access-default",
+      "f12-nuclear-unscoped"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "strict",
+      "RS18": "devonly",
+      "RS3": "any",
+      "RS4": "P",
+      "RS4s": "scoped",
+      "RS5": "within",
+      "RS9": "strict"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-strict"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "strict",
+      "RS18": "devonly",
+      "RS3": "any",
+      "RS4": "P",
+      "RS4s": "scoped",
+      "RS5": "within",
+      "RS9": "default"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-default"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "strict",
+      "RS18": "devonly",
+      "RS3": "any",
+      "RS4": "P",
+      "RS4s": "scoped",
+      "RS5": "exception",
+      "RS9": "strict"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-strict"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "strict",
+      "RS18": "devonly",
+      "RS3": "any",
+      "RS4": "P",
+      "RS4s": "scoped",
+      "RS5": "exception",
+      "RS9": "default"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-default"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "strict",
+      "RS18": "devonly",
+      "RS3": "any",
+      "RS4": "P",
+      "RS4s": "unscoped",
+      "RS5": "within",
+      "RS9": "strict"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-strict"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "strict",
+      "RS18": "devonly",
+      "RS3": "any",
+      "RS4": "P",
+      "RS4s": "unscoped",
+      "RS5": "within",
+      "RS9": "default"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-default"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "strict",
+      "RS18": "devonly",
+      "RS3": "any",
+      "RS4": "P",
+      "RS4s": "unscoped",
+      "RS5": "exception",
+      "RS9": "strict"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-strict"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "strict",
+      "RS18": "devonly",
+      "RS3": "any",
+      "RS4": "P",
+      "RS4s": "unscoped",
       "RS5": "exception",
       "RS9": "default"
      },
@@ -22219,6 +21411,8 @@
       "RS1": "default",
       "RS18": "inuse",
       "RS3": "ext",
+      "RS4": "N",
+      "RS4s": "scoped",
       "RS5": "within",
       "RS9": "strict"
      },
@@ -22232,6 +21426,8 @@
       "RS1": "default",
       "RS18": "inuse",
       "RS3": "ext",
+      "RS4": "N",
+      "RS4s": "scoped",
       "RS5": "within",
       "RS9": "default"
      },
@@ -22245,6 +21441,8 @@
       "RS1": "default",
       "RS18": "inuse",
       "RS3": "ext",
+      "RS4": "N",
+      "RS4s": "scoped",
       "RS5": "exception",
       "RS9": "strict"
      },
@@ -22258,6 +21456,192 @@
       "RS1": "default",
       "RS18": "inuse",
       "RS3": "ext",
+      "RS4": "N",
+      "RS4s": "scoped",
+      "RS5": "exception",
+      "RS9": "default"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-default"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "default",
+      "RS18": "inuse",
+      "RS3": "ext",
+      "RS4": "N",
+      "RS4s": "unscoped",
+      "RS5": "within",
+      "RS9": "strict"
+     },
+     "holds": false,
+     "rules": [
+      "c3-access-strict",
+      "f12-nuclear-unscoped"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "default",
+      "RS18": "inuse",
+      "RS3": "ext",
+      "RS4": "N",
+      "RS4s": "unscoped",
+      "RS5": "within",
+      "RS9": "default"
+     },
+     "holds": false,
+     "rules": [
+      "c3-access-default",
+      "f12-nuclear-unscoped"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "default",
+      "RS18": "inuse",
+      "RS3": "ext",
+      "RS4": "N",
+      "RS4s": "unscoped",
+      "RS5": "exception",
+      "RS9": "strict"
+     },
+     "holds": false,
+     "rules": [
+      "c3-access-strict",
+      "f12-nuclear-unscoped"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "default",
+      "RS18": "inuse",
+      "RS3": "ext",
+      "RS4": "N",
+      "RS4s": "unscoped",
+      "RS5": "exception",
+      "RS9": "default"
+     },
+     "holds": false,
+     "rules": [
+      "c3-access-default",
+      "f12-nuclear-unscoped"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "default",
+      "RS18": "inuse",
+      "RS3": "ext",
+      "RS4": "P",
+      "RS4s": "scoped",
+      "RS5": "within",
+      "RS9": "strict"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-strict"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "default",
+      "RS18": "inuse",
+      "RS3": "ext",
+      "RS4": "P",
+      "RS4s": "scoped",
+      "RS5": "within",
+      "RS9": "default"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-default"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "default",
+      "RS18": "inuse",
+      "RS3": "ext",
+      "RS4": "P",
+      "RS4s": "scoped",
+      "RS5": "exception",
+      "RS9": "strict"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-strict"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "default",
+      "RS18": "inuse",
+      "RS3": "ext",
+      "RS4": "P",
+      "RS4s": "scoped",
+      "RS5": "exception",
+      "RS9": "default"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-default"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "default",
+      "RS18": "inuse",
+      "RS3": "ext",
+      "RS4": "P",
+      "RS4s": "unscoped",
+      "RS5": "within",
+      "RS9": "strict"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-strict"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "default",
+      "RS18": "inuse",
+      "RS3": "ext",
+      "RS4": "P",
+      "RS4s": "unscoped",
+      "RS5": "within",
+      "RS9": "default"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-default"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "default",
+      "RS18": "inuse",
+      "RS3": "ext",
+      "RS4": "P",
+      "RS4s": "unscoped",
+      "RS5": "exception",
+      "RS9": "strict"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-strict"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "default",
+      "RS18": "inuse",
+      "RS3": "ext",
+      "RS4": "P",
+      "RS4s": "unscoped",
       "RS5": "exception",
       "RS9": "default"
      },
@@ -22271,6 +21655,8 @@
       "RS1": "default",
       "RS18": "inuse",
       "RS3": "any",
+      "RS4": "N",
+      "RS4s": "scoped",
       "RS5": "within",
       "RS9": "strict"
      },
@@ -22284,6 +21670,8 @@
       "RS1": "default",
       "RS18": "inuse",
       "RS3": "any",
+      "RS4": "N",
+      "RS4s": "scoped",
       "RS5": "within",
       "RS9": "default"
      },
@@ -22297,6 +21685,8 @@
       "RS1": "default",
       "RS18": "inuse",
       "RS3": "any",
+      "RS4": "N",
+      "RS4s": "scoped",
       "RS5": "exception",
       "RS9": "strict"
      },
@@ -22310,6 +21700,192 @@
       "RS1": "default",
       "RS18": "inuse",
       "RS3": "any",
+      "RS4": "N",
+      "RS4s": "scoped",
+      "RS5": "exception",
+      "RS9": "default"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-default"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "default",
+      "RS18": "inuse",
+      "RS3": "any",
+      "RS4": "N",
+      "RS4s": "unscoped",
+      "RS5": "within",
+      "RS9": "strict"
+     },
+     "holds": false,
+     "rules": [
+      "c3-access-strict",
+      "f12-nuclear-unscoped"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "default",
+      "RS18": "inuse",
+      "RS3": "any",
+      "RS4": "N",
+      "RS4s": "unscoped",
+      "RS5": "within",
+      "RS9": "default"
+     },
+     "holds": false,
+     "rules": [
+      "c3-access-default",
+      "f12-nuclear-unscoped"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "default",
+      "RS18": "inuse",
+      "RS3": "any",
+      "RS4": "N",
+      "RS4s": "unscoped",
+      "RS5": "exception",
+      "RS9": "strict"
+     },
+     "holds": false,
+     "rules": [
+      "c3-access-strict",
+      "f12-nuclear-unscoped"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "default",
+      "RS18": "inuse",
+      "RS3": "any",
+      "RS4": "N",
+      "RS4s": "unscoped",
+      "RS5": "exception",
+      "RS9": "default"
+     },
+     "holds": false,
+     "rules": [
+      "c3-access-default",
+      "f12-nuclear-unscoped"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "default",
+      "RS18": "inuse",
+      "RS3": "any",
+      "RS4": "P",
+      "RS4s": "scoped",
+      "RS5": "within",
+      "RS9": "strict"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-strict"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "default",
+      "RS18": "inuse",
+      "RS3": "any",
+      "RS4": "P",
+      "RS4s": "scoped",
+      "RS5": "within",
+      "RS9": "default"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-default"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "default",
+      "RS18": "inuse",
+      "RS3": "any",
+      "RS4": "P",
+      "RS4s": "scoped",
+      "RS5": "exception",
+      "RS9": "strict"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-strict"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "default",
+      "RS18": "inuse",
+      "RS3": "any",
+      "RS4": "P",
+      "RS4s": "scoped",
+      "RS5": "exception",
+      "RS9": "default"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-default"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "default",
+      "RS18": "inuse",
+      "RS3": "any",
+      "RS4": "P",
+      "RS4s": "unscoped",
+      "RS5": "within",
+      "RS9": "strict"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-strict"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "default",
+      "RS18": "inuse",
+      "RS3": "any",
+      "RS4": "P",
+      "RS4s": "unscoped",
+      "RS5": "within",
+      "RS9": "default"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-default"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "default",
+      "RS18": "inuse",
+      "RS3": "any",
+      "RS4": "P",
+      "RS4s": "unscoped",
+      "RS5": "exception",
+      "RS9": "strict"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-strict"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "default",
+      "RS18": "inuse",
+      "RS3": "any",
+      "RS4": "P",
+      "RS4s": "unscoped",
       "RS5": "exception",
       "RS9": "default"
      },
@@ -22323,6 +21899,8 @@
       "RS1": "default",
       "RS18": "devonly",
       "RS3": "ext",
+      "RS4": "N",
+      "RS4s": "scoped",
       "RS5": "within",
       "RS9": "strict"
      },
@@ -22336,6 +21914,8 @@
       "RS1": "default",
       "RS18": "devonly",
       "RS3": "ext",
+      "RS4": "N",
+      "RS4s": "scoped",
       "RS5": "within",
       "RS9": "default"
      },
@@ -22349,6 +21929,8 @@
       "RS1": "default",
       "RS18": "devonly",
       "RS3": "ext",
+      "RS4": "N",
+      "RS4s": "scoped",
       "RS5": "exception",
       "RS9": "strict"
      },
@@ -22362,6 +21944,192 @@
       "RS1": "default",
       "RS18": "devonly",
       "RS3": "ext",
+      "RS4": "N",
+      "RS4s": "scoped",
+      "RS5": "exception",
+      "RS9": "default"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-default"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "default",
+      "RS18": "devonly",
+      "RS3": "ext",
+      "RS4": "N",
+      "RS4s": "unscoped",
+      "RS5": "within",
+      "RS9": "strict"
+     },
+     "holds": false,
+     "rules": [
+      "c3-access-strict",
+      "f12-nuclear-unscoped"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "default",
+      "RS18": "devonly",
+      "RS3": "ext",
+      "RS4": "N",
+      "RS4s": "unscoped",
+      "RS5": "within",
+      "RS9": "default"
+     },
+     "holds": false,
+     "rules": [
+      "c3-access-default",
+      "f12-nuclear-unscoped"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "default",
+      "RS18": "devonly",
+      "RS3": "ext",
+      "RS4": "N",
+      "RS4s": "unscoped",
+      "RS5": "exception",
+      "RS9": "strict"
+     },
+     "holds": false,
+     "rules": [
+      "c3-access-strict",
+      "f12-nuclear-unscoped"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "default",
+      "RS18": "devonly",
+      "RS3": "ext",
+      "RS4": "N",
+      "RS4s": "unscoped",
+      "RS5": "exception",
+      "RS9": "default"
+     },
+     "holds": false,
+     "rules": [
+      "c3-access-default",
+      "f12-nuclear-unscoped"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "default",
+      "RS18": "devonly",
+      "RS3": "ext",
+      "RS4": "P",
+      "RS4s": "scoped",
+      "RS5": "within",
+      "RS9": "strict"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-strict"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "default",
+      "RS18": "devonly",
+      "RS3": "ext",
+      "RS4": "P",
+      "RS4s": "scoped",
+      "RS5": "within",
+      "RS9": "default"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-default"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "default",
+      "RS18": "devonly",
+      "RS3": "ext",
+      "RS4": "P",
+      "RS4s": "scoped",
+      "RS5": "exception",
+      "RS9": "strict"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-strict"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "default",
+      "RS18": "devonly",
+      "RS3": "ext",
+      "RS4": "P",
+      "RS4s": "scoped",
+      "RS5": "exception",
+      "RS9": "default"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-default"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "default",
+      "RS18": "devonly",
+      "RS3": "ext",
+      "RS4": "P",
+      "RS4s": "unscoped",
+      "RS5": "within",
+      "RS9": "strict"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-strict"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "default",
+      "RS18": "devonly",
+      "RS3": "ext",
+      "RS4": "P",
+      "RS4s": "unscoped",
+      "RS5": "within",
+      "RS9": "default"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-default"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "default",
+      "RS18": "devonly",
+      "RS3": "ext",
+      "RS4": "P",
+      "RS4s": "unscoped",
+      "RS5": "exception",
+      "RS9": "strict"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-strict"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "default",
+      "RS18": "devonly",
+      "RS3": "ext",
+      "RS4": "P",
+      "RS4s": "unscoped",
       "RS5": "exception",
       "RS9": "default"
      },
@@ -22375,6 +22143,8 @@
       "RS1": "default",
       "RS18": "devonly",
       "RS3": "any",
+      "RS4": "N",
+      "RS4s": "scoped",
       "RS5": "within",
       "RS9": "strict"
      },
@@ -22388,6 +22158,8 @@
       "RS1": "default",
       "RS18": "devonly",
       "RS3": "any",
+      "RS4": "N",
+      "RS4s": "scoped",
       "RS5": "within",
       "RS9": "default"
      },
@@ -22401,6 +22173,8 @@
       "RS1": "default",
       "RS18": "devonly",
       "RS3": "any",
+      "RS4": "N",
+      "RS4s": "scoped",
       "RS5": "exception",
       "RS9": "strict"
      },
@@ -22414,6 +22188,192 @@
       "RS1": "default",
       "RS18": "devonly",
       "RS3": "any",
+      "RS4": "N",
+      "RS4s": "scoped",
+      "RS5": "exception",
+      "RS9": "default"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-default"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "default",
+      "RS18": "devonly",
+      "RS3": "any",
+      "RS4": "N",
+      "RS4s": "unscoped",
+      "RS5": "within",
+      "RS9": "strict"
+     },
+     "holds": false,
+     "rules": [
+      "c3-access-strict",
+      "f12-nuclear-unscoped"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "default",
+      "RS18": "devonly",
+      "RS3": "any",
+      "RS4": "N",
+      "RS4s": "unscoped",
+      "RS5": "within",
+      "RS9": "default"
+     },
+     "holds": false,
+     "rules": [
+      "c3-access-default",
+      "f12-nuclear-unscoped"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "default",
+      "RS18": "devonly",
+      "RS3": "any",
+      "RS4": "N",
+      "RS4s": "unscoped",
+      "RS5": "exception",
+      "RS9": "strict"
+     },
+     "holds": false,
+     "rules": [
+      "c3-access-strict",
+      "f12-nuclear-unscoped"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "default",
+      "RS18": "devonly",
+      "RS3": "any",
+      "RS4": "N",
+      "RS4s": "unscoped",
+      "RS5": "exception",
+      "RS9": "default"
+     },
+     "holds": false,
+     "rules": [
+      "c3-access-default",
+      "f12-nuclear-unscoped"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "default",
+      "RS18": "devonly",
+      "RS3": "any",
+      "RS4": "P",
+      "RS4s": "scoped",
+      "RS5": "within",
+      "RS9": "strict"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-strict"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "default",
+      "RS18": "devonly",
+      "RS3": "any",
+      "RS4": "P",
+      "RS4s": "scoped",
+      "RS5": "within",
+      "RS9": "default"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-default"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "default",
+      "RS18": "devonly",
+      "RS3": "any",
+      "RS4": "P",
+      "RS4s": "scoped",
+      "RS5": "exception",
+      "RS9": "strict"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-strict"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "default",
+      "RS18": "devonly",
+      "RS3": "any",
+      "RS4": "P",
+      "RS4s": "scoped",
+      "RS5": "exception",
+      "RS9": "default"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-default"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "default",
+      "RS18": "devonly",
+      "RS3": "any",
+      "RS4": "P",
+      "RS4s": "unscoped",
+      "RS5": "within",
+      "RS9": "strict"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-strict"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "default",
+      "RS18": "devonly",
+      "RS3": "any",
+      "RS4": "P",
+      "RS4s": "unscoped",
+      "RS5": "within",
+      "RS9": "default"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-default"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "default",
+      "RS18": "devonly",
+      "RS3": "any",
+      "RS4": "P",
+      "RS4s": "unscoped",
+      "RS5": "exception",
+      "RS9": "strict"
+     },
+     "holds": true,
+     "rules": [
+      "c3-access-strict"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "default",
+      "RS18": "devonly",
+      "RS3": "any",
+      "RS4": "P",
+      "RS4s": "unscoped",
       "RS5": "exception",
       "RS9": "default"
      },
@@ -22427,13 +22387,16 @@
     "RS1",
     "RS18",
     "RS3",
+    "RS4",
+    "RS4s",
     "RS5",
     "RS9"
    ],
    "route": "D1 soft-norms@0 selected_rules, deny and allow completion; only the C.3 access rule",
    "selected_rules": [
     "c3-access-default",
-    "c3-access-strict"
+    "c3-access-strict",
+    "f12-nuclear-unscoped"
    ]
   },
   "K1": {
@@ -23049,7 +23012,7 @@
      "holds": true,
      "other_sign_rules": [],
      "rules": [
-      "f7-report"
+      "f7-compile"
      ],
      "sensitive_predicates": [],
      "silent_predicates": [],
@@ -23059,7 +23022,7 @@
    "cone": [],
    "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
    "selected_rules": [
-    "f7-report"
+    "f7-compile"
    ]
   },
   "K5": {
@@ -23401,22 +23364,254 @@
     {
      "choice": {},
      "holds": false,
-     "reason": "every commitment selected on a validated case model"
+     "reason": "every part of every commitment selected on a validated case model"
     }
    ],
+   "commitments": {
+    "F1": [
+     [
+      "f1-misuse-bio-strict",
+      "f1-misuse-bio-default"
+     ],
+     [
+      "f1-misuse-cyb-strict",
+      "f1-misuse-cyb-default"
+     ],
+     [
+      "f1-alignment-cyb-strict",
+      "f1-alignment-cyb-default"
+     ],
+     [
+      "f1-security-strict",
+      "f1-security-default"
+     ],
+     [
+      "f1-halt-strict",
+      "f1-halt-default"
+     ],
+     [
+      "f1-contrib-bio-strict",
+      "f1-contrib-bio-default"
+     ],
+     [
+      "f1-contrib-cyb-strict",
+      "f1-contrib-cyb-default"
+     ]
+    ],
+    "F10": [
+     [
+      "f10-validate"
+     ],
+     [
+      "f10-review"
+     ]
+    ],
+    "F11": [
+     [
+      "f11-within",
+      "f11-exception",
+      "f11-exception-deploy"
+     ],
+     [
+      "f11-acknowledge"
+     ],
+     [
+      "f11-protect"
+     ],
+     [
+      "f11-share"
+     ]
+    ],
+    "F12": [
+     [
+      "f12-lra",
+      "f12-lra-unscoped"
+     ],
+     [
+      "f12-sandbagging",
+      "f12-sandbagging-unscoped"
+     ],
+     [
+      "f12-ara",
+      "f12-ara-unscoped"
+     ],
+     [
+      "f12-undermining",
+      "f12-undermining-unscoped"
+     ],
+     [
+      "f12-nuclear",
+      "f12-nuclear-unscoped"
+     ]
+    ],
+    "F13": [
+     [
+      "f13-review"
+     ],
+     [
+      "f13-results"
+     ]
+    ],
+    "F14": [
+     [
+      "f14-document"
+     ],
+     [
+      "f14-summary"
+     ],
+     [
+      "f14-investigate"
+     ],
+     [
+      "f14-corrective"
+     ]
+    ],
+    "F15": [
+     [
+      "f15-disclose"
+     ],
+     [
+      "f15-safeguards"
+     ],
+     [
+      "f15-third-party"
+     ]
+    ],
+    "F16": [
+     [
+      "f16-sag-recommend"
+     ],
+     [
+      "f16-informed"
+     ],
+     [
+      "f16-without-noinput",
+      "f16-without-nodelib"
+     ],
+     [
+      "f16-ssc-visibility"
+     ],
+     [
+      "f16-board-reverse"
+     ],
+     [
+      "f16-board-mandate"
+     ],
+     [
+      "f16-year"
+     ],
+     [
+      "f16-chair-strict",
+      "f16-chair-default"
+     ]
+    ],
+    "F17": [
+     [
+      "f17-suff",
+      "f17-iff"
+     ],
+     [
+      "f17-iff-only"
+     ]
+    ],
+    "F2": [
+     [
+      "f2-deploy",
+      "f2-deploy-any",
+      "f2-reminder",
+      "f2-reminder-any"
+     ],
+     [
+      "f2-no-deploy",
+      "f2-no-deploy-any"
+     ],
+     [
+      "f2-security-developed"
+     ]
+    ],
+    "F3": [
+     [
+      "f3-develop",
+      "f3-develop-inuse",
+      "f3-reminder"
+     ],
+     [
+      "f3-develop-forecast",
+      "f3-develop-inuse-forecast"
+     ]
+    ],
+    "F4": [
+     [
+      "f4-security"
+     ]
+    ],
+    "F5": [
+     [
+      "f5-ambiguous"
+     ],
+     [
+      "f5-checkpoint"
+     ]
+    ],
+    "F6": [
+     [
+      "f6-rel"
+     ]
+    ],
+    "F7": [
+     [
+      "f7-evaluations"
+     ],
+     [
+      "f7-compile"
+     ],
+     [
+      "f7-report"
+     ],
+     [
+      "f7-recommend"
+     ]
+    ],
+    "F8": [
+     [
+      "f8-start"
+     ]
+    ],
+    "F9": [
+     [
+      "f9-risk-paths"
+     ],
+     [
+      "f9-specific"
+     ],
+     [
+      "f9-efficacy"
+     ],
+     [
+      "f9-threshold"
+     ],
+     [
+      "f9-report"
+     ],
+     [
+      "f9-residual-strict",
+      "f9-residual-default"
+     ]
+    ]
+   },
    "cone": [],
-   "route": "D1 soft-norms@0 selected_rules: a validated case model per rule",
+   "route": "D1 soft-norms@0 selected_rules: a validated case model per rule of each commitment",
    "selected_rules": [
     "f11-exception",
+    "f11-exception-deploy",
     "f11-within",
     "f12-lra",
     "f13-review",
     "f14-document",
     "f14-investigate",
+    "f16-board-mandate",
     "f16-board-reverse",
-    "f16-final",
     "f16-informed",
-    "f16-process",
     "f16-sag-recommend",
     "f16-ssc-visibility",
     "f16-without-nodelib",
@@ -23426,6 +23621,7 @@
     "f17-suff",
     "f5-checkpoint",
     "f7-evaluations",
+    "f7-report",
     "f9-efficacy",
     "f9-risk-paths",
     "f9-specific",
@@ -23450,6 +23646,46 @@
     "f10-validate": "a scored case",
     "f11-acknowledge": "a scored case",
     "f11-exception": [
+     [
+      "adjustment_conditions",
+      "s"
+     ],
+     [
+      "adjustment_confirmed",
+      "s"
+     ],
+     [
+      "reached",
+      "s",
+      "ai_self_improvement_critical"
+     ],
+     [
+      "reached",
+      "s",
+      "ai_self_improvement_high"
+     ],
+     [
+      "reached",
+      "s",
+      "biological_and_chemical_critical"
+     ],
+     [
+      "reached",
+      "s",
+      "biological_and_chemical_high"
+     ],
+     [
+      "reached",
+      "s",
+      "cybersecurity_critical"
+     ],
+     [
+      "reached",
+      "s",
+      "cybersecurity_high"
+     ]
+    ],
+    "f11-exception-deploy": [
      [
       "adjustment_conditions",
       "s"
@@ -23607,10 +23843,6 @@
       "reached",
       "s",
       "cybersecurity_high"
-     ],
-     [
-      "research_category_review",
-      "s"
      ]
     ],
     "f14-corrective": "a scored case",
@@ -23648,6 +23880,10 @@
     ],
     "f14-investigate": [
      [
+      "potential_noncompliance",
+      "s"
+     ],
+     [
       "reached",
       "s",
       "ai_self_improvement_critical"
@@ -23682,6 +23918,46 @@
     "f15-disclose": "a scored case",
     "f15-safeguards": "a scored case",
     "f15-third-party": "a scored case",
+    "f16-board-mandate": [
+     [
+      "board_finds_necessary",
+      "s"
+     ],
+     [
+      "leadership_decision",
+      "s"
+     ],
+     [
+      "reached",
+      "s",
+      "ai_self_improvement_critical"
+     ],
+     [
+      "reached",
+      "s",
+      "ai_self_improvement_high"
+     ],
+     [
+      "reached",
+      "s",
+      "biological_and_chemical_critical"
+     ],
+     [
+      "reached",
+      "s",
+      "biological_and_chemical_high"
+     ],
+     [
+      "reached",
+      "s",
+      "cybersecurity_critical"
+     ],
+     [
+      "reached",
+      "s",
+      "cybersecurity_high"
+     ]
+    ],
     "f16-board-reverse": [
      [
       "board_finds_necessary",
@@ -23724,79 +24000,7 @@
     ],
     "f16-chair-default": "a scored case",
     "f16-chair-strict": "a scored case",
-    "f16-final": [
-     [
-      "leadership_decision",
-      "s"
-     ],
-     [
-      "reached",
-      "s",
-      "ai_self_improvement_critical"
-     ],
-     [
-      "reached",
-      "s",
-      "ai_self_improvement_high"
-     ],
-     [
-      "reached",
-      "s",
-      "biological_and_chemical_critical"
-     ],
-     [
-      "reached",
-      "s",
-      "biological_and_chemical_high"
-     ],
-     [
-      "reached",
-      "s",
-      "cybersecurity_critical"
-     ],
-     [
-      "reached",
-      "s",
-      "cybersecurity_high"
-     ]
-    ],
     "f16-informed": [
-     [
-      "leadership_decision",
-      "s"
-     ],
-     [
-      "reached",
-      "s",
-      "ai_self_improvement_critical"
-     ],
-     [
-      "reached",
-      "s",
-      "ai_self_improvement_high"
-     ],
-     [
-      "reached",
-      "s",
-      "biological_and_chemical_critical"
-     ],
-     [
-      "reached",
-      "s",
-      "biological_and_chemical_high"
-     ],
-     [
-      "reached",
-      "s",
-      "cybersecurity_critical"
-     ],
-     [
-      "reached",
-      "s",
-      "cybersecurity_high"
-     ]
-    ],
-    "f16-process": [
      [
       "leadership_decision",
       "s"
@@ -24172,6 +24376,7 @@
      ]
     ],
     "f6-rel": "a scored case",
+    "f7-compile": "a scored case",
     "f7-evaluations": [
      [
       "covered",
@@ -24209,7 +24414,42 @@
      ]
     ],
     "f7-recommend": "a scored case",
-    "f7-report": "a scored case",
+    "f7-report": [
+     [
+      "covered",
+      "s"
+     ],
+     [
+      "reached",
+      "s",
+      "ai_self_improvement_critical"
+     ],
+     [
+      "reached",
+      "s",
+      "ai_self_improvement_high"
+     ],
+     [
+      "reached",
+      "s",
+      "biological_and_chemical_critical"
+     ],
+     [
+      "reached",
+      "s",
+      "biological_and_chemical_high"
+     ],
+     [
+      "reached",
+      "s",
+      "cybersecurity_critical"
+     ],
+     [
+      "reached",
+      "s",
+      "cybersecurity_high"
+     ]
+    ],
     "f8-start": "a scored case",
     "f9-efficacy": [
      [
@@ -24364,9 +24604,19 @@
    "audit_input": {
     "rules": []
    },
-   "route": "D1",
-   "selected_rules": [],
-   "undecided": "VE limit (SC): D1 has no closure premise that the level sort holds exactly Table 1's six levels, so an unnamed seventh level is not excluded"
+   "choices": [
+    {
+     "choice": {},
+     "holds": true,
+     "reason": "replayed certificate",
+     "rules": [
+      "cl-levels"
+     ]
+    }
+   ],
+   "cone": [],
+   "route": "D1 relational-fol@0 entailment certificate (cl-levels)",
+   "selected_rules": []
   },
   "S1": {
    "audit_input": {
@@ -24616,8 +24866,8 @@
     "resource_limit": 0
    },
    "C": {
-    "correct": 7,
-    "disagree": 0,
+    "correct": 5,
+    "disagree": 2,
     "faithful_undecided": 0,
     "key": 7,
     "resource_limit": 0
@@ -24631,8 +24881,8 @@
    },
    "G": {
     "correct": 9,
-    "disagree": 0,
-    "faithful_undecided": 1,
+    "disagree": 1,
+    "faithful_undecided": 0,
     "key": 10,
     "resource_limit": 0
    },
@@ -24644,9 +24894,9 @@
     "resource_limit": 0
    },
    "N": {
-    "correct": 3,
+    "correct": 4,
     "disagree": 0,
-    "faithful_undecided": 1,
+    "faithful_undecided": 0,
     "key": 4,
     "resource_limit": 0
    },
@@ -24667,10 +24917,10 @@
   },
   "M10": {
    "cases": 67,
-   "choices": 1032,
-   "documents_built": 162,
-   "prover_calls": 10,
-   "rules": 86,
+   "choices": 1043,
+   "documents_built": 352,
+   "prover_calls": 11,
+   "rules": 87,
    "units": 389,
    "wall_time": "printed by run.py; intentionally not pinned by --check"
   },
@@ -24680,21 +24930,21 @@
     "RS0"
    ],
    "reading_sets": 20,
-   "some_answers": 51,
+   "some_answers": 50,
    "ve_readings": "pending: every reading set stays open in pf.d1.ve.md; the harness answers per choice"
   },
   "M3": {
    "bytes_by_kind": {
-    "asserted": 48,
+    "asserted": 222,
     "exposition": 5327,
     "norm": 9195,
-    "unformalised": 52848
+    "unformalised": 52674
    },
    "bytes_by_status": {
-    "CHECKED": 170,
+    "CHECKED": 344,
     "LABELLED": 5327,
     "OPEN": 9073,
-    "UNFORMALISED": 52848
+    "UNFORMALISED": 52674
    },
    "residual": {
     "assumptions": 0,
@@ -24711,14 +24961,13 @@
    "conditional_by_family": {
     "A": 30,
     "B": 10,
-    "C": 2,
     "D": 2,
-    "G": 1,
+    "G": 2,
     "K": 6
    }
   },
   "M5": {
-   "regulated_predicates": 58,
+   "regulated_predicates": 59,
    "violations": []
   },
   "M6": {
@@ -24727,7 +24976,7 @@
    "untraced": []
   },
   "M7": {
-   "insensitive_choices": 122,
+   "insensitive_choices": 124,
    "sensitive_choices": 669,
    "sensitive_exactly_where_silent": true,
    "soft_key_items": 20,
@@ -24741,6 +24990,7 @@
     "D3",
     "D4",
     "N1",
+    "N4",
     "S1",
     "S2",
     "S3",
@@ -24749,12 +24999,9 @@
     "T1",
     "T2"
    ],
-   "unknown_items": [
-    "G7",
-    "N4"
-   ],
-   "w1_conflict_free": 117,
-   "w1_conflict_witnesses": 33
+   "unknown_items": [],
+   "w1_conflict_free": 52,
+   "w1_conflict_witnesses": 0
   },
   "M9": {
    "detected": 6,
@@ -24766,8 +25013,8 @@
      ],
      "changes": {
       "C-doc": {
-       "from": "SOME(RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=within&RS6=req&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=within&RS6=desc&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=within&RS6=desc&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=desc&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=desc&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=within&RS6=req&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=within&RS6=desc&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=within&RS6=desc&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=desc&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=desc&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=within&RS6=req&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=within&RS6=desc&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=within&RS6=desc&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=desc&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=desc&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=within&RS6=req&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=within&RS6=desc&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=within&RS6=desc&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=desc&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=desc&RS7=nodelib)",
-       "to": "SOME(RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=within&RS6=req&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=within&RS6=desc&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=within&RS6=desc&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=desc&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=desc&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=within&RS6=req&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=within&RS6=desc&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=within&RS6=desc&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=desc&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=desc&RS7=nodelib | RS11=final&RS12=suff&RS17=bmight&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bmight&RS3=ext&RS5=exception&RS6=req&RS7=nodelib | RS11=final&RS12=suff&RS17=bmight&RS3=ext&RS5=exception&RS6=desc&RS7=noinput | RS11=final&RS12=suff&RS17=bmight&RS3=ext&RS5=exception&RS6=desc&RS7=nodelib | RS11=final&RS12=suff&RS17=bmight&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bmight&RS3=any&RS5=exception&RS6=req&RS7=nodelib | RS11=final&RS12=suff&RS17=bmight&RS3=any&RS5=exception&RS6=desc&RS7=noinput | RS11=final&RS12=suff&RS17=bmight&RS3=any&RS5=exception&RS6=desc&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=within&RS6=req&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=within&RS6=desc&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=within&RS6=desc&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=desc&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=desc&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=within&RS6=req&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=within&RS6=desc&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=within&RS6=desc&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=desc&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=desc&RS7=nodelib | RS11=final&RS12=iff&RS17=bmight&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bmight&RS3=ext&RS5=exception&RS6=req&RS7=nodelib | RS11=final&RS12=iff&RS17=bmight&RS3=ext&RS5=exception&RS6=desc&RS7=noinput | RS11=final&RS12=iff&RS17=bmight&RS3=ext&RS5=exception&RS6=desc&RS7=nodelib | RS11=final&RS12=iff&RS17=bmight&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bmight&RS3=any&RS5=exception&RS6=req&RS7=nodelib | RS11=final&RS12=iff&RS17=bmight&RS3=any&RS5=exception&RS6=desc&RS7=noinput | RS11=final&RS12=iff&RS17=bmight&RS3=any&RS5=exception&RS6=desc&RS7=nodelib | RS11=process&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS11=process&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=nodelib | RS11=process&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=desc&RS7=noinput | RS11=process&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=desc&RS7=nodelib | RS11=process&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS11=process&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=nodelib | RS11=process&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=desc&RS7=noinput | RS11=process&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=desc&RS7=nodelib | RS11=process&RS12=suff&RS17=bmight&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS11=process&RS12=suff&RS17=bmight&RS3=ext&RS5=exception&RS6=req&RS7=nodelib | RS11=process&RS12=suff&RS17=bmight&RS3=ext&RS5=exception&RS6=desc&RS7=noinput | RS11=process&RS12=suff&RS17=bmight&RS3=ext&RS5=exception&RS6=desc&RS7=nodelib | RS11=process&RS12=suff&RS17=bmight&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS11=process&RS12=suff&RS17=bmight&RS3=any&RS5=exception&RS6=req&RS7=nodelib | RS11=process&RS12=suff&RS17=bmight&RS3=any&RS5=exception&RS6=desc&RS7=noinput | RS11=process&RS12=suff&RS17=bmight&RS3=any&RS5=exception&RS6=desc&RS7=nodelib | RS11=process&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS11=process&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=nodelib | RS11=process&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=desc&RS7=noinput | RS11=process&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=desc&RS7=nodelib | RS11=process&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS11=process&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=nodelib | RS11=process&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=desc&RS7=noinput | RS11=process&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=desc&RS7=nodelib | RS11=process&RS12=iff&RS17=bmight&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS11=process&RS12=iff&RS17=bmight&RS3=ext&RS5=exception&RS6=req&RS7=nodelib | RS11=process&RS12=iff&RS17=bmight&RS3=ext&RS5=exception&RS6=desc&RS7=noinput | RS11=process&RS12=iff&RS17=bmight&RS3=ext&RS5=exception&RS6=desc&RS7=nodelib | RS11=process&RS12=iff&RS17=bmight&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS11=process&RS12=iff&RS17=bmight&RS3=any&RS5=exception&RS6=req&RS7=nodelib | RS11=process&RS12=iff&RS17=bmight&RS3=any&RS5=exception&RS6=desc&RS7=noinput | RS11=process&RS12=iff&RS17=bmight&RS3=any&RS5=exception&RS6=desc&RS7=nodelib)"
+       "from": "NONE",
+       "to": "SOME(RS12=suff&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS12=suff&RS3=ext&RS5=exception&RS6=req&RS7=nodelib | RS12=suff&RS3=ext&RS5=exception&RS6=desc&RS7=noinput | RS12=suff&RS3=ext&RS5=exception&RS6=desc&RS7=nodelib | RS12=suff&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS12=suff&RS3=any&RS5=exception&RS6=req&RS7=nodelib | RS12=suff&RS3=any&RS5=exception&RS6=desc&RS7=noinput | RS12=suff&RS3=any&RS5=exception&RS6=desc&RS7=nodelib | RS12=iff&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS12=iff&RS3=ext&RS5=exception&RS6=req&RS7=nodelib | RS12=iff&RS3=ext&RS5=exception&RS6=desc&RS7=noinput | RS12=iff&RS3=ext&RS5=exception&RS6=desc&RS7=nodelib | RS12=iff&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS12=iff&RS3=any&RS5=exception&RS6=req&RS7=nodelib | RS12=iff&RS3=any&RS5=exception&RS6=desc&RS7=noinput | RS12=iff&RS3=any&RS5=exception&RS6=desc&RS7=nodelib)"
       },
       "C1": {
        "from": "NONE",
@@ -24787,7 +25034,7 @@
      ],
      "changes": {
       "C-doc": {
-       "from": "SOME(RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=within&RS6=req&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=within&RS6=desc&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=within&RS6=desc&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=desc&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=desc&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=within&RS6=req&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=within&RS6=desc&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=within&RS6=desc&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=desc&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=desc&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=within&RS6=req&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=within&RS6=desc&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=within&RS6=desc&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=desc&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=desc&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=within&RS6=req&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=within&RS6=desc&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=within&RS6=desc&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=desc&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=desc&RS7=nodelib)",
+       "from": "NONE",
        "to": "ALL"
       }
      },
@@ -24888,8 +25135,8 @@
      ],
      "changes": {
       "C-doc": {
-       "from": "SOME(RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=within&RS6=req&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=within&RS6=desc&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=within&RS6=desc&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=desc&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=desc&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=within&RS6=req&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=within&RS6=desc&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=within&RS6=desc&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=desc&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=desc&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=within&RS6=req&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=within&RS6=desc&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=within&RS6=desc&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=desc&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=desc&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=within&RS6=req&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=within&RS6=desc&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=within&RS6=desc&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=desc&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=desc&RS7=nodelib)",
-       "to": "SOME(RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=within&RS6=req&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=within&RS6=desc&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=within&RS6=desc&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=desc&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=desc&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=within&RS6=req&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=within&RS6=desc&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=within&RS6=desc&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=desc&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=desc&RS7=nodelib | RS11=final&RS12=suff&RS17=bmight&RS3=ext&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bmight&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bmight&RS3=any&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bmight&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=within&RS6=req&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=within&RS6=desc&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=within&RS6=desc&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=desc&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=desc&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=within&RS6=req&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=within&RS6=desc&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=within&RS6=desc&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=desc&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=desc&RS7=nodelib | RS11=final&RS12=iff&RS17=bmight&RS3=ext&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bmight&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bmight&RS3=any&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bmight&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS11=process&RS12=suff&RS17=bperm&RS3=ext&RS5=within&RS6=req&RS7=noinput | RS11=process&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS11=process&RS12=suff&RS17=bperm&RS3=any&RS5=within&RS6=req&RS7=noinput | RS11=process&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS11=process&RS12=suff&RS17=bmight&RS3=ext&RS5=within&RS6=req&RS7=noinput | RS11=process&RS12=suff&RS17=bmight&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS11=process&RS12=suff&RS17=bmight&RS3=any&RS5=within&RS6=req&RS7=noinput | RS11=process&RS12=suff&RS17=bmight&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS11=process&RS12=iff&RS17=bperm&RS3=ext&RS5=within&RS6=req&RS7=noinput | RS11=process&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS11=process&RS12=iff&RS17=bperm&RS3=any&RS5=within&RS6=req&RS7=noinput | RS11=process&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS11=process&RS12=iff&RS17=bmight&RS3=ext&RS5=within&RS6=req&RS7=noinput | RS11=process&RS12=iff&RS17=bmight&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS11=process&RS12=iff&RS17=bmight&RS3=any&RS5=within&RS6=req&RS7=noinput | RS11=process&RS12=iff&RS17=bmight&RS3=any&RS5=exception&RS6=req&RS7=noinput)"
+       "from": "NONE",
+       "to": "SOME(RS12=suff&RS3=ext&RS5=within&RS6=req&RS7=noinput | RS12=suff&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS12=suff&RS3=any&RS5=within&RS6=req&RS7=noinput | RS12=suff&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS12=iff&RS3=ext&RS5=within&RS6=req&RS7=noinput | RS12=iff&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS12=iff&RS3=any&RS5=within&RS6=req&RS7=noinput | RS12=iff&RS3=any&RS5=exception&RS6=req&RS7=noinput)"
       },
       "C2": {
        "from": "NONE",
@@ -24906,8 +25153,8 @@
    }
   },
   "useful_answers": {
-   "correct": 231,
-   "faithful_undecided": 2,
+   "correct": 230,
+   "faithful_undecided": 0,
    "field": "comparison[].agree; comparison[].status == 'UNDECIDED-faithful' marks the rest",
    "key": 239
   }
@@ -24920,8 +25167,8 @@
    ],
    "changes": {
     "C-doc": {
-     "from": "SOME(RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=within&RS6=req&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=within&RS6=desc&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=within&RS6=desc&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=desc&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=desc&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=within&RS6=req&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=within&RS6=desc&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=within&RS6=desc&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=desc&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=desc&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=within&RS6=req&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=within&RS6=desc&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=within&RS6=desc&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=desc&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=desc&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=within&RS6=req&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=within&RS6=desc&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=within&RS6=desc&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=desc&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=desc&RS7=nodelib)",
-     "to": "SOME(RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=within&RS6=req&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=within&RS6=desc&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=within&RS6=desc&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=desc&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=desc&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=within&RS6=req&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=within&RS6=desc&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=within&RS6=desc&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=desc&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=desc&RS7=nodelib | RS11=final&RS12=suff&RS17=bmight&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bmight&RS3=ext&RS5=exception&RS6=req&RS7=nodelib | RS11=final&RS12=suff&RS17=bmight&RS3=ext&RS5=exception&RS6=desc&RS7=noinput | RS11=final&RS12=suff&RS17=bmight&RS3=ext&RS5=exception&RS6=desc&RS7=nodelib | RS11=final&RS12=suff&RS17=bmight&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bmight&RS3=any&RS5=exception&RS6=req&RS7=nodelib | RS11=final&RS12=suff&RS17=bmight&RS3=any&RS5=exception&RS6=desc&RS7=noinput | RS11=final&RS12=suff&RS17=bmight&RS3=any&RS5=exception&RS6=desc&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=within&RS6=req&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=within&RS6=desc&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=within&RS6=desc&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=desc&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=desc&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=within&RS6=req&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=within&RS6=desc&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=within&RS6=desc&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=desc&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=desc&RS7=nodelib | RS11=final&RS12=iff&RS17=bmight&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bmight&RS3=ext&RS5=exception&RS6=req&RS7=nodelib | RS11=final&RS12=iff&RS17=bmight&RS3=ext&RS5=exception&RS6=desc&RS7=noinput | RS11=final&RS12=iff&RS17=bmight&RS3=ext&RS5=exception&RS6=desc&RS7=nodelib | RS11=final&RS12=iff&RS17=bmight&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bmight&RS3=any&RS5=exception&RS6=req&RS7=nodelib | RS11=final&RS12=iff&RS17=bmight&RS3=any&RS5=exception&RS6=desc&RS7=noinput | RS11=final&RS12=iff&RS17=bmight&RS3=any&RS5=exception&RS6=desc&RS7=nodelib | RS11=process&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS11=process&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=nodelib | RS11=process&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=desc&RS7=noinput | RS11=process&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=desc&RS7=nodelib | RS11=process&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS11=process&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=nodelib | RS11=process&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=desc&RS7=noinput | RS11=process&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=desc&RS7=nodelib | RS11=process&RS12=suff&RS17=bmight&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS11=process&RS12=suff&RS17=bmight&RS3=ext&RS5=exception&RS6=req&RS7=nodelib | RS11=process&RS12=suff&RS17=bmight&RS3=ext&RS5=exception&RS6=desc&RS7=noinput | RS11=process&RS12=suff&RS17=bmight&RS3=ext&RS5=exception&RS6=desc&RS7=nodelib | RS11=process&RS12=suff&RS17=bmight&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS11=process&RS12=suff&RS17=bmight&RS3=any&RS5=exception&RS6=req&RS7=nodelib | RS11=process&RS12=suff&RS17=bmight&RS3=any&RS5=exception&RS6=desc&RS7=noinput | RS11=process&RS12=suff&RS17=bmight&RS3=any&RS5=exception&RS6=desc&RS7=nodelib | RS11=process&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS11=process&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=nodelib | RS11=process&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=desc&RS7=noinput | RS11=process&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=desc&RS7=nodelib | RS11=process&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS11=process&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=nodelib | RS11=process&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=desc&RS7=noinput | RS11=process&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=desc&RS7=nodelib | RS11=process&RS12=iff&RS17=bmight&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS11=process&RS12=iff&RS17=bmight&RS3=ext&RS5=exception&RS6=req&RS7=nodelib | RS11=process&RS12=iff&RS17=bmight&RS3=ext&RS5=exception&RS6=desc&RS7=noinput | RS11=process&RS12=iff&RS17=bmight&RS3=ext&RS5=exception&RS6=desc&RS7=nodelib | RS11=process&RS12=iff&RS17=bmight&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS11=process&RS12=iff&RS17=bmight&RS3=any&RS5=exception&RS6=req&RS7=nodelib | RS11=process&RS12=iff&RS17=bmight&RS3=any&RS5=exception&RS6=desc&RS7=noinput | RS11=process&RS12=iff&RS17=bmight&RS3=any&RS5=exception&RS6=desc&RS7=nodelib)"
+     "from": "NONE",
+     "to": "SOME(RS12=suff&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS12=suff&RS3=ext&RS5=exception&RS6=req&RS7=nodelib | RS12=suff&RS3=ext&RS5=exception&RS6=desc&RS7=noinput | RS12=suff&RS3=ext&RS5=exception&RS6=desc&RS7=nodelib | RS12=suff&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS12=suff&RS3=any&RS5=exception&RS6=req&RS7=nodelib | RS12=suff&RS3=any&RS5=exception&RS6=desc&RS7=noinput | RS12=suff&RS3=any&RS5=exception&RS6=desc&RS7=nodelib | RS12=iff&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS12=iff&RS3=ext&RS5=exception&RS6=req&RS7=nodelib | RS12=iff&RS3=ext&RS5=exception&RS6=desc&RS7=noinput | RS12=iff&RS3=ext&RS5=exception&RS6=desc&RS7=nodelib | RS12=iff&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS12=iff&RS3=any&RS5=exception&RS6=req&RS7=nodelib | RS12=iff&RS3=any&RS5=exception&RS6=desc&RS7=noinput | RS12=iff&RS3=any&RS5=exception&RS6=desc&RS7=nodelib)"
     },
     "C1": {
      "from": "NONE",
@@ -24941,7 +25188,7 @@
    ],
    "changes": {
     "C-doc": {
-     "from": "SOME(RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=within&RS6=req&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=within&RS6=desc&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=within&RS6=desc&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=desc&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=desc&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=within&RS6=req&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=within&RS6=desc&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=within&RS6=desc&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=desc&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=desc&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=within&RS6=req&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=within&RS6=desc&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=within&RS6=desc&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=desc&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=desc&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=within&RS6=req&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=within&RS6=desc&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=within&RS6=desc&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=desc&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=desc&RS7=nodelib)",
+     "from": "NONE",
      "to": "ALL"
     }
    },
@@ -25042,8 +25289,8 @@
    ],
    "changes": {
     "C-doc": {
-     "from": "SOME(RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=within&RS6=req&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=within&RS6=desc&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=within&RS6=desc&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=desc&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=desc&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=within&RS6=req&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=within&RS6=desc&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=within&RS6=desc&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=desc&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=desc&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=within&RS6=req&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=within&RS6=desc&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=within&RS6=desc&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=desc&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=desc&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=within&RS6=req&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=within&RS6=desc&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=within&RS6=desc&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=desc&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=desc&RS7=nodelib)",
-     "to": "SOME(RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=within&RS6=req&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=within&RS6=desc&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=within&RS6=desc&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=desc&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=desc&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=within&RS6=req&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=within&RS6=desc&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=within&RS6=desc&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=desc&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=desc&RS7=nodelib | RS11=final&RS12=suff&RS17=bmight&RS3=ext&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bmight&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bmight&RS3=any&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bmight&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=within&RS6=req&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=within&RS6=desc&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=within&RS6=desc&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=desc&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=desc&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=within&RS6=req&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=within&RS6=desc&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=within&RS6=desc&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=desc&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=desc&RS7=nodelib | RS11=final&RS12=iff&RS17=bmight&RS3=ext&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bmight&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bmight&RS3=any&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bmight&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS11=process&RS12=suff&RS17=bperm&RS3=ext&RS5=within&RS6=req&RS7=noinput | RS11=process&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS11=process&RS12=suff&RS17=bperm&RS3=any&RS5=within&RS6=req&RS7=noinput | RS11=process&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS11=process&RS12=suff&RS17=bmight&RS3=ext&RS5=within&RS6=req&RS7=noinput | RS11=process&RS12=suff&RS17=bmight&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS11=process&RS12=suff&RS17=bmight&RS3=any&RS5=within&RS6=req&RS7=noinput | RS11=process&RS12=suff&RS17=bmight&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS11=process&RS12=iff&RS17=bperm&RS3=ext&RS5=within&RS6=req&RS7=noinput | RS11=process&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS11=process&RS12=iff&RS17=bperm&RS3=any&RS5=within&RS6=req&RS7=noinput | RS11=process&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS11=process&RS12=iff&RS17=bmight&RS3=ext&RS5=within&RS6=req&RS7=noinput | RS11=process&RS12=iff&RS17=bmight&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS11=process&RS12=iff&RS17=bmight&RS3=any&RS5=within&RS6=req&RS7=noinput | RS11=process&RS12=iff&RS17=bmight&RS3=any&RS5=exception&RS6=req&RS7=noinput)"
+     "from": "NONE",
+     "to": "SOME(RS12=suff&RS3=ext&RS5=within&RS6=req&RS7=noinput | RS12=suff&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS12=suff&RS3=any&RS5=within&RS6=req&RS7=noinput | RS12=suff&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS12=iff&RS3=ext&RS5=within&RS6=req&RS7=noinput | RS12=iff&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS12=iff&RS3=any&RS5=within&RS6=req&RS7=noinput | RS12=iff&RS3=any&RS5=exception&RS6=req&RS7=noinput)"
     },
     "C2": {
      "from": "NONE",
@@ -25207,8 +25454,8 @@
   "N2": {
    "changed": {
     "C-doc": {
-     "with": "SOME(RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=within&RS6=req&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=within&RS6=desc&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=within&RS6=desc&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=desc&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=desc&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=within&RS6=req&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=within&RS6=desc&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=within&RS6=desc&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=desc&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=desc&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=within&RS6=req&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=within&RS6=desc&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=within&RS6=desc&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=desc&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=desc&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=within&RS6=req&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=within&RS6=desc&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=within&RS6=desc&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=desc&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=desc&RS7=nodelib)",
-     "without": "SOME(RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=within&RS6=req&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=within&RS6=desc&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=within&RS6=desc&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=desc&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=desc&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=within&RS6=req&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=within&RS6=desc&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=within&RS6=desc&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=nodelib | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=desc&RS7=noinput | RS11=final&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=desc&RS7=nodelib | RS11=final&RS12=suff&RS17=bmight&RS3=ext&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bmight&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bmight&RS3=any&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=suff&RS17=bmight&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=within&RS6=req&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=within&RS6=desc&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=within&RS6=desc&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=desc&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=desc&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=within&RS6=req&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=within&RS6=desc&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=within&RS6=desc&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=nodelib | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=desc&RS7=noinput | RS11=final&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=desc&RS7=nodelib | RS11=final&RS12=iff&RS17=bmight&RS3=ext&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bmight&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bmight&RS3=any&RS5=within&RS6=req&RS7=noinput | RS11=final&RS12=iff&RS17=bmight&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS11=process&RS12=suff&RS17=bperm&RS3=ext&RS5=within&RS6=req&RS7=noinput | RS11=process&RS12=suff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS11=process&RS12=suff&RS17=bperm&RS3=any&RS5=within&RS6=req&RS7=noinput | RS11=process&RS12=suff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS11=process&RS12=suff&RS17=bmight&RS3=ext&RS5=within&RS6=req&RS7=noinput | RS11=process&RS12=suff&RS17=bmight&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS11=process&RS12=suff&RS17=bmight&RS3=any&RS5=within&RS6=req&RS7=noinput | RS11=process&RS12=suff&RS17=bmight&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS11=process&RS12=iff&RS17=bperm&RS3=ext&RS5=within&RS6=req&RS7=noinput | RS11=process&RS12=iff&RS17=bperm&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS11=process&RS12=iff&RS17=bperm&RS3=any&RS5=within&RS6=req&RS7=noinput | RS11=process&RS12=iff&RS17=bperm&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS11=process&RS12=iff&RS17=bmight&RS3=ext&RS5=within&RS6=req&RS7=noinput | RS11=process&RS12=iff&RS17=bmight&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS11=process&RS12=iff&RS17=bmight&RS3=any&RS5=within&RS6=req&RS7=noinput | RS11=process&RS12=iff&RS17=bmight&RS3=any&RS5=exception&RS6=req&RS7=noinput)"
+     "with": "NONE",
+     "without": "SOME(RS12=suff&RS3=ext&RS5=within&RS6=req&RS7=noinput | RS12=suff&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS12=suff&RS3=any&RS5=within&RS6=req&RS7=noinput | RS12=suff&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS12=iff&RS3=ext&RS5=within&RS6=req&RS7=noinput | RS12=iff&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS12=iff&RS3=any&RS5=within&RS6=req&RS7=noinput | RS12=iff&RS3=any&RS5=exception&RS6=req&RS7=noinput)"
     },
     "C2": {
      "with": "NONE",
