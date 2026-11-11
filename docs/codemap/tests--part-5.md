@@ -1,3 +1,11 @@
+- `tests/test_norms_three_way.py` — Committed W1 wire gate: regenerated Python/Lean formulas and Rust evaluation.
+- `tests/test_numbers_phrases.py` — The existing English reader consumes the Lean-generated comparison rows.
+- `tests/test_numeral_conversion.py` — Decimal text from input never reaches a bare `int(` (english-lean looprecheck1, finding 1).
+- `tests/test_oom_mutation_evidence.py` — The OOM mutation record must show the seeded fault, not a stale checker binary.
+- `tests/test_order.py` — order@0: frozen syntax/identity, evaluation, search, Farkas certificates, English, Lean.
+- `tests/test_order_gate.py` — Order foundations must not open either existing certificate trust boundary.
+- `tests/test_order_grammar.py` — Order grammar export is typed in full mode and covers canonical terms.
+- `tests/test_order_round2.py` — The order surface and finite evaluation agree in Python, Rust and Lean.
 - `tests/test_p0_three_way.py` — Three-way P0 conformance: Python, Rust and the Lean `route` subcommand give identical verdicts on every shipped case of the P0 families (PLAN-EXPAND2 3.10(2)).
 - `tests/test_p1.py` — (no module docstring)
 - `tests/test_p1_amendment11.py` — Budget choice and two-turn execution/analysis, without provider calls.
@@ -21,6 +29,7 @@
 - `tests/test_pc1g_trust_mutants.py` — The saved pc-1g trust mutation record has a verdict for every planned mutant.
 - `tests/test_pc3_statements.py` — PC-3's Lean declarations against the approved blocks of docs/spec/profile-composition.md 1.2 to 1.6 (build checklist 17), and the check's ability to fail.
 - `tests/test_pc9_statements.py` — PC-9's Lean declarations against the approved blocks of docs/spec/profile-composition.md 1.8 and 1.9 (build checklist 17), and the check's ability to fail.
+- `tests/test_pf_fidelity_fix.py` — openai-preparedness-fidelity-fix: the T fixes of the use-case audit and the K findings of PLAN section 12.
 - `tests/test_pk1_route_case_evidence_validity.py` — pk-1-cfr-1: each "0 differences" claim (list item, paragraph or table row) of a premise-pack REPORT.md or DELTA.md cites existing evidence with no "INVALID" fi…
 - `tests/test_pk1c_fixture_assurance_claim.py` — No docs/premise-packs/pk-1c/ record calls a `#guard` or `#eval` check a kernel check: those run in the compiled evaluator, not the kernel (pk-1c-cfr-2).
 - `tests/test_platform_contract.py` — `tools/platform_contract.py`: the x86 platform contract suite (test-architecture plan rank 2, section 3.3).
@@ -74,10 +83,3 @@
 - `tests/test_readings_defaults_rd6a_report.py` — RD-6a's report (docs/readings-defaults/rd6a/DELTA.md) against its saved gate evidence.
 - `tests/test_readings_defaults_rd6b_report.py` — RD-6b report checks against committed evidence, independent of the current git graph.
 - `tests/test_readings_defaults_rd8_report.py` — The RD-8 report states the saved evidence (docs/readings-defaults/rd8/evidence.json) and nothing else.
-- `tests/test_readings_defaults_statements.py` — The RD-1 declarations against the approved text of docs/spec/readings-defaults.md 6.2.
-- `tests/test_readings_lazy_pairs.py` — The readings route evaluates the other reading's side of a pair lazily (batch 3d review B; the DRI note of 2026-10-04 on batch 3b's eager completions).
-- `tests/test_readings_lean_sharing.py` — The readings route builds each candidate's document once per request and evaluates a pair lazily (lean-first plan F5b; batch 3b review B1, B2).
-- `tests/test_readings_memo.py` — Process-local readings admission memo through the real Lean service and Python relay.
-- `tests/test_readings_nd_document.py` — Readings under the unspecified completion through `ve document` (readings-defaults plan RD-2b; spec 3, 4.2, 4.3).
-- `tests/test_readings_nd_lean.py` — Readings under the unspecified completion through the Lean service (docs/spec/readings-defaults.md 8.3; plan RD-2a).
-- `tests/test_readings_rd5_plain_probe.py` — A pair separated on a plain regulated predicate gets E24 (readings-defaults RD-5).

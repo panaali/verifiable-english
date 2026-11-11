@@ -9,6 +9,7 @@
 - `lean/VE/Acts/FaithfulExamples.lean` — Fixtures of `elaborate_faithful` (docs/spec/act-phrases.md 6.6, 11.3): both sides of the iff, computed on small finite structures.
 - `lean/VE/Acts/Grammar.lean` — The act grammar's rule table (docs/spec/act-phrases.md 5.2) and its well-formedness `grammar_wf` (5.6).
 - `lean/VE/Acts/GrammarExamples.lean` — Fixtures of the act grammar (docs/spec/act-phrases.md 11.2, 11.2a, 11.2b; D-31 in 10).
+- `lean/VE/Acts/Index.lean` — First occurrences and their places, by hashing (ap-parse-index).
 - `lean/VE/Acts/Lexical.lean` — Lexical acts (docs/spec/act-phrases.md 1.1 to 1.3, 2.1, 4.2 and 4.3; batch AP-1).
 - `lean/VE/Acts/LexicalBase.lean` — The words of an act phrase (docs/spec/act-phrases.md 4.1), below `VE.Norms.Wire` and `VE.Acts.Lexical`: the reserved words, slot scanning, Python's whitespace …
 - `lean/VE/Acts/LexicalExamples.lean` — Acceptance fixtures of AP-1 (docs/spec/act-phrases.md 11.1: A1-A6, A13, A15-A19, A21-A30, A32, A33), with the boundaries of each limit and each diagnostic of `…
@@ -16,6 +17,7 @@
 - `lean/VE/Acts/Linearize.lean` — The normal form and the text of a simple act (docs/spec/act-phrases.md 5.5).
 - `lean/VE/Acts/Meaning.lean` — The meaning of a derivation of an act phrase: its act tree (docs/spec/act-phrases.md 1.5, 5.3; plan D9 (i)).
 - `lean/VE/Acts/MeaningExamples.lean` — Fixtures of the meaning, `readings`, `read` and `analyse` (docs/spec/act-phrases.md 5.3, 5.4, 11.2, 11.2b).
+- `lean/VE/Acts/ParseIndexExamples.lean` — ap-parse-index's fixtures: the steps of a growing vocabulary, the hashed indexes, and the compiled forms. L6 (`V5`'s 64 readings) with `n` more frames, up to t…
 - `lean/VE/Acts/Read.lean` — Readings and reading of an act phrase, with the limits of D2 (docs/spec/act-phrases.md 1.6, 5.4, 5.6).
 - `lean/VE/Acts/Readings.lean` — The readings of an act phrase, `read` and `analyse` (docs/spec/act-phrases.md 1.6, 5.4), and spec 5.6's theorems about them.
 - `lean/VE/Acts/ReadingsExamples.lean` — Fixtures of `phraseReadings` and the edge rule (docs/spec/act-phrases.md 7, 11.4; plan 2.4, AP-4, G5).
@@ -25,6 +27,7 @@
 - `lean/VE/Acts/RunExamples.lean` — Fixtures of the `act-readings` mode (docs/spec/act-phrases.md 7, 11.4; plan AP-4 Tests; DRI 2026-11-08 ap-4 item 1): the pilot's phrases through the mode with …
 - `lean/VE/Acts/Situation.lean` — A separating situation built from simple acts (docs/spec/act-phrases.md 7; plan AP-4).
 - `lean/VE/Acts/Sources.lean` — Sources and exact reading sets (docs/spec/act-phrases.md 1.8, 7; plan AP-4, G4).
+- `lean/VE/Acts/SourcesProofs.lean` — `sourceCheck` read from its parts, and why spec 7's `sourceCheck_complete` needs the choice bound (docs/spec/act-phrases.md 7; DRI 2026-11-02 triage item 8c).
 - `lean/VE/Acts/Specialise.lean` — Specialisation (docs/spec/act-phrases.md 1.9, 8; plan 2.6, decision D5): when one simple act is a way of doing another, through the markers and adverbs the `ac…
 - `lean/VE/Acts/SpecialiseExamples.lean` — Fixtures of `specialises` and `specPremises` (docs/spec/act-phrases.md 8, 11.5; plan AP-5).
 - `lean/VE/Acts/Syntax.lean` — The act grammar's tokens, vocabulary and terminals (docs/spec/act-phrases.md 1.1, 1.2, 1.4, 5.1).

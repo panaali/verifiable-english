@@ -1,6 +1,19 @@
+- `tests/test_ve_iface.py` — (no module docstring)
+- `tests/test_views.py` — Empirical injectivity, controlled vocabulary, and adversarial scope cases.
+- `tests/test_views_polish.py` — Review regressions: lexical limits, shared scopes, cells, and measurements.
+- `tests/test_w6a2_looprecheck1.py` — W6a loop recheck (round 2, recheck 1) regressions: static limits, three ways.
+- `tests/test_w6a2_numeral_characters.py` — Numeral limits count Unicode characters on every W6a route: the order and countermodel routes in Python, Lean and Rust, the quantity routes in Lean and Python'…
+- `tests/test_w6a_certificate_steps.py` — Certificate replay steps: Python's 10,000-step budget, in Lean too.
+- `tests/test_w6a_citations.py` — W6a loop recheck 1, P1 (directive incomplete): citations on the quantity document route.
+- `tests/test_w6a_documents.py` — W6a quantity documents: Lean admission (`ve_quantity` case `document`) and Python's relay of it (Lean-first batch 9 deleted Python's copy and Rust's quantity r…
+- `tests/test_w6a_limit_generator.py` — W6a limits directive, item 3: a differential limit-busting generator.
+- `tests/test_w6a_limits.py` — W6a limits directive: static limits before any work, metered constructions.
+- `tests/test_w6a_looprecheck1.py` — Regressions for the W6a loop recheck 1 findings, each generalized to its class.
+- `tests/test_w6a_looprecheck2.py` — W6a loop recheck 2 regressions: budgeted checks see one domain order.
 - `tests/test_w6a_review_regressions.py` — Regressions for the W6a review findings, each generalized to its class.
 - `tests/test_w6a_route_limits.py` — W6a limits directive on the `route` subcommand: nothing runs unmetered.
 - `tests/test_w6b_gates.py` — Baseline route rejects integer-quantifier W6b syntax before evidence.
+- `tests/test_webapp_commands_env.py` — CI-8 (iv): `usecases/webapp-commands/environment.json` is Lean's print of `VE.Commands.Examples.E_web` and its lexicon, written only by `tools/webapp_commands_…
 - `tests/test_wire_contract_corpus.py` — Hand-derived format-1 cases from wire-contract.md section 8.1.
 - `tests/test_wire_contract_engine.py` — Independent cases for the format-1 diagnostic interpreter.
 - `tests/test_wire_contract_faults.py` — The fault catalogue and the oracle of the soft-norms gate (wire-contract.md 8.3), checked without Lean.
