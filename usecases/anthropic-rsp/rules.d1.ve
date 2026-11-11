@@ -6,10 +6,10 @@ Rule 1. Every situation must have the plans of the company about each threshold 
 Rule 1. Every situation must make a strong argument about each threshold, if both that threshold is listed and that situation has crossed that threshold.
 ## f5-default | RS2=Ds & RS2force=default | independent | F5, the same "should", default force
 Rule 1. Every situation should make a strong argument about each threshold, if both that threshold is listed and that situation has crossed that threshold.
-## f5-evidence-strict | RS2=Ds & RS8evidence=strict | independent | row T4, right column "analyses of threats from AIs should follow very high evidentiary standards" (RS8 strict, under RS2 Ds)
-Rule 1. Every situation must have analyses of threats from AIs follow very high evidentiary standards, if that situation has crossed "automated_rd".
-## f5-evidence-default | RS2=Ds & RS8evidence=default | independent | the same "should", default force
-Rule 1. Every situation should have analyses of threats from AIs follow very high evidentiary standards, if that situation has crossed "automated_rd".
+## f5-evidence-strict | RS2=Ds & RS8evidence=strict | independent | row T4, right column, the full sentence: "In particular, at this point AI systems might be responsible for much of the research and analysis that underpins risk assessment, and might have strong capabilities for deception, manipulation and obfuscation of evidence, in which case analyses of threats from AIs should follow very high evidentiary standards with thorough and careful analysis of the possibility that much of the key evidence is suspect due to the possibility of manipulation by AI systems." (RS8 strict, under RS2 Ds)
+Rule 1. Every situation must hold threat analyses to very high evidentiary standards with thorough care, if both that situation has crossed "automated_rd" and that situation is classified as "ai_evidence_risk".
+## f5-evidence-default | RS2=Ds & RS8evidence=default | independent | row T4, the same sentence: "In particular, at this point AI systems might be responsible for much of the research and analysis that underpins risk assessment, and might have strong capabilities for deception, manipulation and obfuscation of evidence, in which case analyses of threats from AIs should follow very high evidentiary standards with thorough and careful analysis of the possibility that much of the key evidence is suspect due to the possibility of manipulation by AI systems." (the same "should", default force)
+Rule 1. Every situation should hold threat analyses to very high evidentiary standards with thorough care, if both that situation has crossed "automated_rd" and that situation is classified as "ai_evidence_risk".
 ## s1-advance-default | RS12advance=default | independent | section 1 "We will strive to advance these recommendations through a mixture of example-setting ..." (RS12 default; under intent no rule)
 Rule 1. Every situation should advance the industry-wide recommendations.
 ## f6-maintain | always | RS0 | F6, section 2 "We will maintain a Frontier Safety Roadmap"
@@ -26,14 +26,14 @@ Rule 1. Every situation should avoid the revision, if that situation is classifi
 Rule 1. Every situation must have Risk Reports published.
 ## f8-public | always | RS0 | F8, 3.1 "It will cover all publicly deployed models as of the coverage date"
 Rule 1. Every situation is classified as "in_scope", if that situation is classified as "publicly_deployed".
-## f8-internal | always | RS0 | F8, 3.1 "as well as any internally deployed models as of the coverage date that, by the time of the report's publication, we have determined (1) could pose risks ... that (2) significantly exceed those posed by models covered by a prior Risk Report"
-Rule 1. Every situation is classified as "in_scope", if both that situation is classified as "internally_deployed" and that situation is classified as "exceeds_prior_report".
+## f8-internal | always | RS0 | F8, 3.1, the full sentence: "It will cover all publicly deployed models as of the coverage date, as well as any internally deployed models as of the coverage date that, by the time of the report's publication, we have determined (1) could pose risks related to high-stakes misalignment or automated R&D that (2) significantly exceed those posed by models covered by a prior Risk Report." (the publication-time cutoff is its own guard)
+Rule 1. Every situation is classified as "in_scope", if all of the following hold: (a) that situation is classified as "internally_deployed"; (b) both that situation is classified as "exceeds_prior_report" and that situation is classified as "determined_by_publication".
 ## f8-autonomous | always | RS0 | F8, 3.1 "this will—at a minimum—include any internal models that we are deploying for large-scale, fully autonomous research" (a sufficient condition)
 Rule 1. Every situation is classified as "in_scope", if both that situation is classified as "internally_deployed" and that situation is classified as "autonomous_research_use".
-## f9-public | always | RS0 | F9, 3.1 off-cycle bullet 1 "When we publicly deploy a model that we determine is (1) significantly more capable than (2) all models for which we have publicly analyzed risks" (RS11 at and trigger give this rule; they differ only in D3)
-Rule 1. Every situation must have an off-cycle analysis of its model published, if both that situation is classified as "publicly_deployed" and that situation is classified as "more_capable_than_analyzed".
-## f9-internal | always | RS0 | F9, 3.1 off-cycle bullet 2 "Within 30 days of determining that we have an internally deployed model that (1) could pose risks ... that (2) significantly exceed those of all models for which we have publicly analyzed such risks" (the day count is D3's)
-Rule 1. Every situation must have an off-cycle analysis of its model published, if both that situation is classified as "internally_deployed" and that situation is classified as "exceeds_all_analyzed".
+## f9-public | always | RS0 | F9, 3.1 "Separate from our publication of Risk Reports, we will publish an analysis of an individual model's relevant risks (e.g., how the model's capabilities and propensities affect or change prior analyses) in the following circumstances:" bullet 1 "When we publicly deploy a model that we determine is (1) significantly more capable than (2) all models for which we have publicly analyzed risks related to chemical/biological weapons production, high-stakes misalignment, or automated R&D (e.g., in a prior Risk Report, System Card, or other public artifact)." (no coverage date; RS11 at and trigger give this rule; they differ only in D3)
+Rule 1. Every situation must have an off-cycle analysis of its model published, if both that situation is classified as "off_cycle_public_deployment" and that situation is classified as "more_capable_than_analyzed".
+## f9-internal | always | RS0 | F9, 3.1 off-cycle bullet 2 "Within 30 days of determining that we have an internally deployed model that (1) could pose risks related to high-stakes misalignment or automated R&D that (2) significantly exceed those of all models for which we have publicly analyzed such risks (e.g., in a prior Risk Report, System Card, or other public artifact)." (no coverage date; the day count is D3's)
+Rule 1. Every situation must have an off-cycle analysis of its model published, if both that situation is classified as "off_cycle_internal_deployment" and that situation is classified as "exceeds_all_analyzed".
 ## f10-candid-default | RS12candid=default | independent | F10, 3.2 "We intend for our Risk Reports to be direct, candid, and informative" (RS12 default)
 Rule 1. Every situation should have its Risk Reports candid.
 ## f10-in-line | always | RS0 | F10, 3.2 "we will keep our future practices in line with this description or track and report noteworthy changes and deviations": the first branch fails at a deviation, so the second is required
@@ -54,26 +54,26 @@ Rule 1. Every situation must have the missed goal addressed in a Risk Report, if
 Rule 1. Every situation must have the marginal risk analyses provided, if that situation is classified as "marginal_justification".
 ## f11-assess | always | RS0 | F11, 3.3 "We will conduct the assessments above with respect to each in-scope model"
 Rule 1. Every situation must be assessed in a Risk Report, if that situation is classified as "in_scope".
-## f12-internal-feedback | always | RS0 | F12, 3.4 step 2 "We will solicit comprehensive internal feedback on the report"
-Rule 1. Every situation must have comprehensive internal feedback solicited.
-## f12-external-default | RS13=default | independent | F12, 3.4 step 2 "We will usually also seek feedback from trusted external parties with relevant expertise" (RS13 default; under frequency no rule)
-Rule 1. Every situation should have feedback sought from trusted external parties.
+## f12-internal-feedback | always | RS0 | F12, 3.4 step 2 "We will solicit comprehensive internal feedback on the report, focusing on identifying potential methodological weaknesses, analytical gaps, or areas requiring additional evidence or clarification." (the focus list is in the legend)
+Rule 1. Every situation must have comprehensive internal feedback on the report solicited.
+## f12-external-default | RS13=default | independent | F12, 3.4 step 2 "We will usually also seek feedback from trusted external parties with relevant expertise." (RS13 default; under frequency no rule)
+Rule 1. Every situation should have feedback sought from trusted external parties with relevant expertise.
 ## f12-approval | always | RS0 | F12, 3.4 step 3 "will be sent to the CEO and Responsible Scaling Officer (RSO) for final review and approval"
 Rule 1. Every situation must have its Risk Report approved by the CEO with the RSO.
 ## f12-final | RS7=final | RS0 | F12, 3.4 step 3 "The CEO and RSO will make the ultimate determination" (RS7 final: no approval beyond theirs is needed); step 5 is its exception
 Rule 1. Every situation need not have its Risk Report approved by the Board as well as the LTBT.
-## f12-share | always | RS0 | F12, 3.4 step 4 "Following approval of a Risk Report, the CEO and RSO will promptly share their decision(s), the underlying Risk Report, and internal feedback with both the Board and the LTBT"
-Rule 1. Every situation must have its decision shared with the Board as well as the LTBT, if that situation is classified as "risk_report_approved".
+## f12-share | always | RS0 | F12, 3.4 step 4 "Following approval of a Risk Report, the CEO and RSO will promptly share their decision(s), the underlying Risk Report, and internal feedback with both the Board and the LTBT." ("promptly" is OT12; the sharers and what is shared are in the legend)
+Rule 1. Every situation must have the decision promptly shared with the Board as well as the LTBT, if that situation is classified as "risk_report_approved".
 ## f12-board-approval | always | RS0 | F12, 3.4 step 5 "In the event that marginal risk analysis ... plays a major role in a decision to move forward, explicit approval of the Risk Report by the Board and LTBT (rather than just the CEO and RSO) will be required"; takes precedence over f12-final
 Rule 1. Every situation must have its Risk Report approved by the Board as well as the LTBT, if that situation is classified as "marginal_major_role".
-## f13-minimize-default | RS12minimize=default | independent | F13, 3.5 "We will aim to minimize redactions to the public version of the report or to the version of the report shared with all regular-clearance Anthropic employees" (RS12 default)
-Rule 1. Every situation should have its redactions minimized.
-## f13-redact-p | RS6redact=P | independent | F13, 3.5 "Reasons we may redact material include but are not limited to:" (RS6 P: a permission for the listed reasons, which do not close the class)
-Rule 1. Every situation may have the material redacted, if that situation is classified as "redaction_reason_listed".
-## f13-disclose | always | RS0 | F13, 3.5 "We will disclose the existence of each redaction made in the public version of the report"
-Rule 1. Every situation must have the existence of each redaction disclosed.
-## f13-justify-default | RS12justify=default | independent | F13, 3.5 "and aim to give a brief justification for such redactions" (RS12 default)
-Rule 1. Every situation should have a brief justification of each redaction given.
+## f13-minimize-default | RS12minimize=default | independent | F13, 3.5 "We will aim to minimize redactions to the public version of the report or to the version of the report shared with all regular-clearance Anthropic employees." (RS12 default; both versions named)
+Rule 1. Every situation should have redactions minimized in public as well as regular-clearance versions.
+## f13-redact-p | RS6redact=P | independent | F13, 3.5 "We will publish a public version of our Risk Report." ... "Reasons we may redact material include but are not limited to:" (RS6 P: a permission on the public version, for reasons the list does not close)
+Rule 1. Every situation may have material redacted from the public version, if that situation is classified as "redaction_reason_listed".
+## f13-disclose | always | RS0 | F13, 3.5 "We will disclose the existence of each redaction made in the public version of the report and aim to give a brief justification for such redactions, though in many cases this will necessarily be very high-level." (the first clause)
+Rule 1. Every situation must have each redaction in the public version disclosed.
+## f13-justify-default | RS12justify=default | independent | F13, 3.5 "We will disclose the existence of each redaction made in the public version of the report and aim to give a brief justification for such redactions, though in many cases this will necessarily be very high-level." (the second clause; RS12 default)
+Rule 1. Every situation should have a brief justification of each public-version redaction given.
 ## f14-public-review-default | RS12review=default | independent | F14, 3.6 "We will work toward a practice of seeking comprehensive, public external review on our Risk Reports" (RS12 default)
 Rule 1. Every situation should have comprehensive public external review sought.
 ## f14-full-review | always | RS0 | F14, 3.6 "At a minimum, we will complete a full external review process (described below) with at least one external reviewer anytime a Risk Report covers highly capable models and is significantly redacted"
@@ -90,63 +90,63 @@ Rule 1. Every situation should not have the candidate selected as an external re
 Rule 1. Every situation must have the selection approved by the LTBT after consulting the Board, if that situation is classified as "selecting_reviewers".
 ## f16-share-one-week | always | RS0 | F16, 3.6.2 "The external review process will involve sharing the Risk Report with one or more external reviewers within one week of submitting the same report to our Board and LTBT"
 Rule 1. Every situation must have the report shared with the external reviewers within one week, if that situation is classified as "submitted_under_external_review".
-## f16-ask-commentary | always | RS0 | F16, 3.6.2 "We will ask the external reviewers to provide public commentary on our report within 30 days of receipt"; restated in 3.6.3 "We will ask the external reviewer to memorialize its findings on the topics above in a written report that is made public"
-Rule 1. Every situation must have the reviewers asked to comment publicly within thirty days, if that situation is classified as "external_review_process".
-## f16-before-board-default | RS12before=default | independent | F16, 3.6.2 "We will try to work toward a process that involves the full external review being completed prior to Board/LTBT review" (RS12 default)
-Rule 1. Every situation should have the full external review completed before the Board review, if that situation is classified as "external_review_process".
+## f16-ask-commentary | always | RS0 | F16, 3.6.2 "We will ask the external reviewers to provide public commentary on our report within 30 days of receipt."; restated in 3.6.3 "We will ask the external reviewer to memorialize its findings on the topics above in a written report that is made public" (the day count is D3's)
+Rule 1. Every situation must have the reviewers asked to comment publicly within thirty days of receipt, if that situation is classified as "external_review_process".
+## f16-before-board-default | RS12before=default | independent | F16, 3.6.2 "We will try to work toward a process that involves the full external review being completed prior to Board/LTBT review (and may require this later)." (RS12 default)
+Rule 1. Every situation should have the full external review done before the Board as well as LTBT review, if that situation is classified as "external_review_process".
 ## f16-all-sections | always | RS0 | F16, 3.6.2 "All sections of the Risk Report will be shared with at least one external reviewer"
 Rule 1. Every situation must have each section shared with at least one external reviewer, if that situation is classified as "external_review_process".
-## f16-split-p | RS6split=P | independent | F16, 3.6.2 "but we may choose to split the review process across different external reviewers based on their subject matter expertise" (RS6 P)
-Rule 1. Every situation may have the review split across external reviewers, if that situation is classified as "external_review_process".
-## f16-only-legal | always | RS0 | F16, 3.6.2 "For purposes of external review, the only redactions to the Risk Report will be those necessary to comply with legal prohibitions or to maintain our legal rights"
-Rule 1. Every situation must have only legally necessary redactions in the reviewed version, if that situation is classified as "external_review_process".
+## f16-split-p | RS6split=P | independent | F16, 3.6.2 "All sections of the Risk Report will be shared with at least one external reviewer, but we may choose to split the review process across different external reviewers based on their subject matter expertise." (the second clause; RS6 P)
+Rule 1. Every situation may have the review split across external reviewers by subject matter expertise, if that situation is classified as "external_review_process".
+## f16-only-legal | always | RS0 | F16, 3.6.2 "For purposes of external review, the only redactions to the Risk Report will be those necessary to comply with legal prohibitions or to maintain our legal rights." (a prohibition on the version given to the reviewers unless either ground holds)
+Rule 1. Every situation must not have material redacted from the version given to external reviewers, if that situation is classified as "external_review_process", unless either that situation is classified as "legal_prohibition_redaction" or that situation is classified as "legal_rights_redaction", or both.
 ## f18-rso | always | RS0 | F18, 4.1 "We will maintain the position of RSO, a designated member of staff who is responsible for the implementation of this policy"
 Rule 1. Every situation must have the position of RSO maintained.
-## f19-brief-ltbt | always | RS0 | F19, 4.2 "We will regularly brief the LTBT on plans and developments related to our Risk Reports" ("regularly" is OT12)
-Rule 1. Every situation must have the LTBT briefed.
+## f19-brief-ltbt | always | RS0 | F19, 4.2 "We will regularly brief the LTBT on plans and developments related to our Risk Reports." ("regularly" is OT12)
+Rule 1. Every situation must have the LTBT regularly briefed on Risk Report plans as well as developments.
 ## f19-unredacted | always | RS0 | F19, 4.3 "We will share final, unredacted Risk Reports with a large number of Anthropic employees (at least 200)"
 Rule 1. Every situation must have unredacted Risk Reports shared with at least two hundred employees.
 ## f19-minimally-redacted | always | RS0 | F19, 4.3 "We will share minimally-redacted Risk Reports with all of Anthropic's regular-clearance staff"
 Rule 1. Every situation must have minimally-redacted Risk Reports shared with all regular-clearance staff.
-## f20-process | always | RS0 | F20, 4.4 "We will maintain a process for Anthropic staff to submit anonymous or identified reports regarding potential noncompliance with this policy"
-Rule 1. Every situation must have a noncompliance reporting process maintained.
+## f20-process | always | RS0 | F20, 4.4 "We will maintain a process for Anthropic staff to submit anonymous or identified reports regarding potential noncompliance with this policy."
+Rule 1. Every situation must maintain a staff process taking anonymous as well as identified reports.
 ## f20-recipients | always | RS0 | F20, 4.4 "Staff will have more than one option for who receives these reports, including the RSO, and at least one executive who does not report to the RSO"
 Rule 1. Every situation must offer more than one option of recipient.
-## f20-investigate | always | RS0 | F20, 4.4 "When we receive a report, we will promptly investigate, take appropriate and proportional corrective action if it is substantiated, and document the report and our findings" ("promptly" OT12, the corrective action OT20)
-Rule 1. Every situation must have the report investigated, if that situation is classified as "noncompliance_report_received".
+## f20-investigate | always | RS0 | F20, 4.4 "When we receive a report, we will promptly investigate, take appropriate and proportional corrective action if it is substantiated, and document the report and our findings." ("promptly" OT12, the corrective action OT20; the action and documentation are in the legend)
+Rule 1. Every situation must have the report promptly investigated, if that situation is classified as "noncompliance_report_received".
 ## f20-quarterly | always | RS0 | F20, 4.4 "We will provide quarterly updates to the Board regarding reports of potential noncompliance, whether substantiated or not"
 Rule 1. Every situation must have quarterly updates on noncompliance reports provided to the Board.
-## f20-notify-board | always | RS0 | F20, 4.4 "If we determine that a report is (1) substantiated and (2) involves a material safety risk, we will promptly notify the Board"
-Rule 1. Every situation must have the Board notified, if both that situation is substantiated and that situation is classified as "material_safety_risk".
+## f20-notify-board | always | RS0 | F20, 4.4 "If we determine that a report is (1) substantiated and (2) involves a material safety risk, we will promptly notify the Board and we may provide public notice of the same." (the first clause; "promptly" is OT12)
+Rule 1. Every situation must have the Board promptly notified, if both that situation is substantiated and that situation is classified as "material_safety_risk".
 ## f20-notice-p | RS6notice=P | independent | F20, 4.4 "and we may provide public notice of the same" (RS6 P)
 Rule 1. Every situation may have public notice provided, if both that situation is substantiated and that situation is classified as "material_safety_risk".
 ## f20-retaliation | always | RS0 | F20, 4.4 "Finally, we will protect reporters from retaliation"
 Rule 1. Every situation must have reporters protected from retaliation.
 ## f20-board-recipient | always | RS0 | F20, 4.4 "where a report concerns the conduct of the RSO, at least one recipient will be a member of the Board"
 Rule 1. Every situation must have a member of the Board among the recipients, if that situation is classified as "concerns_rso".
-## f21-no-impeding | always | RS0 | F21, 4.5 "We will not impose contractual non-disparagement obligations on employees, candidates, or former employees in a way that could impede or discourage them from publicly raising safety concerns about Anthropic"
-Rule 1. Every situation must not impose a non-disparagement obligation impeding safety concerns.
+## f21-no-impeding | always | RS0 | F21, 4.5 "We will not impose contractual non-disparagement obligations on employees, candidates, or former employees in a way that could impede or discourage them from publicly raising safety concerns about Anthropic."
+Rule 1. Every situation must not impose a contractual non-disparagement obligation, if that situation is classified as "impedes_safety_concerns".
 ## f21-clause | always | RS0 | F21, 4.5 "If we offer agreements with a non-disparagement clause, that clause will not preclude raising safety concerns, nor will it preclude disclosure of the existence of that clause"
 Rule 1. Every situation must have the clause permit raising safety concerns, if that situation is classified as "non_disparagement_clause_offered".
-## f22-internal-review | always | RS0 | F22, 4.6 "We will regularly conduct an internal review of our implementation of this policy" ("regularly" OT12)
-Rule 1. Every situation must have an internal review of the implementation conducted.
-## f22-third-party-review | always | RS0 | F22, 4.7 "On approximately an annual basis, we will commission a third-party review that assesses whether we adhered to this policy's main procedural commitments" (the cadence OT12)
-Rule 1. Every situation must have a third-party procedural compliance review commissioned.
+## f22-internal-review | always | RS0 | F22, 4.6 "We will regularly conduct an internal review of our implementation of this policy." ("regularly" is OT12)
+Rule 1. Every situation must have an internal review of the implementation regularly conducted.
+## f22-third-party-review | always | RS0 | F22, 4.7 "On approximately an annual basis, we will commission a third-party review that assesses whether we adhered to this policy's main procedural commitments." (the cadence is OT12; what the review assesses is in the legend)
+Rule 1. Every situation must commission a third-party procedural compliance review about once a year.
 ## f23-approval | always | RS0 | F23, 4.8 "Changes to the RSP will be proposed by the CEO and RSO, and approved by the Board in consultation with the LTBT"
 Rule 1. Every situation must have the change approved by the Board, if that situation is classified as "rsp_change_proposed".
 ## f23-publish | always | RS0 | F23, 4.8 "If we update the RSP, we will publicly share the updated version prior to or on its effective date and will record the differences from the prior draft in the Change Log"
 Rule 1. Every situation must have the updated version published with its differences in the Change Log, if that situation is classified as "rsp_updated".
 ## f23-website | always | RS0 | F23, 4.8 "We will maintain the current version of the RSP on our website"
 Rule 1. Every situation must have the current version kept on the website.
-## f24-argument | always | RS0 | F24, Appendix A "Anthropic in the lead": "We will require a strong argument that catastrophic risk is contained"
-Rule 1. Every situation must require a strong argument about catastrophic risk, if all of the following hold: (a) that situation is classified as "in_the_lead"; (b) both that situation is classified as "highly_capable" and that situation is classified as "clear_evidence".
-## f24-delay | always | RS0 | F24, Appendix A "We will delay AI development and deployment as needed to achieve this, until and unless we no longer believe we have a significant lead."
-Rule 1. Every situation must delay AI development as well as deployment, if all of the following hold: (a) both that situation is classified as "in_the_lead" and that situation is classified as "highly_capable"; (b) both that situation is classified as "clear_evidence" and that situation is classified as "delay_needed".
-## f25-meet | always | RS0 | F25, Appendix A "Competitors have strong safety measures": "For our highly capable frontier models, we will meet or exceed the overall risk reduction posture of these competitors" (RS5 bears on the scenario premise, not on this rule)
-Rule 1. Every situation must at least match the posture of the competitors, if all of the following hold: (a) that situation is classified as "competitors_strong_measures"; (b) both that situation is classified as "highly_capable" and that situation is classified as "clear_evidence".
-## f25-delay | always | RS0 | F25, Appendix A "Until we are able to do so, we will delay AI development and deployment as needed to achieve this"
-Rule 1. Every situation must delay AI development as well as deployment, if all of the following hold: (a) both that situation is classified as "competitors_strong_measures" and that situation is classified as "highly_capable"; (b) both that situation is classified as "clear_evidence" and that situation is classified as "delay_needed".
-## f26-effort | always | RS0 | F26, Appendix A "General upleveling": "We will make a significant effort to meet or exceed that performance standard"
-Rule 1. Every situation must make a significant effort to match the performance standard, if both that situation is classified as "competitor_better_mitigation" and that situation is classified as "clear_evidence".
-## f26-need-not-delay | RS4=rel | independent | F26, Appendix A "However, we will not necessarily delay AI development and deployment in this scenario" (RS4 rel; under scope no rule)
-Rule 1. Every situation need not delay AI development as well as deployment, if both that situation is classified as "competitor_better_mitigation" and that situation is classified as "clear_evidence".
+## f24-argument | always | RS0 | F24, Appendix A "Anthropic in the lead. We have developed or will imminently develop a highly capable model; and we have clear evidence that no other competitor will soon develop such a model." "We will require a strong argument that catastrophic risk is contained, along the lines of our recommendations for industry-wide safety (see Section 1)." (no highly_capable guard: in_the_lead says "have developed or will imminently develop a highly capable model")
+Rule 1. Every situation must require a strong argument about catastrophic risk, if both that situation is classified as "in_the_lead" and that situation is classified as "lead_evidence".
+## f24-delay | always | RS0 | F24, Appendix A "Anthropic in the lead. We have developed or will imminently develop a highly capable model; and we have clear evidence that no other competitor will soon develop such a model." "We will delay AI development and deployment as needed to achieve this, until and unless we no longer believe we have a significant lead." (the release is the unless clause, OT9)
+Rule 1. Every situation must delay AI development as well as deployment, if all of the following hold: (a) that situation is classified as "in_the_lead"; (b) both that situation is classified as "lead_evidence" and that situation is classified as "lead_delay_needed", unless that situation is classified as "lead_no_longer_believed".
+## f25-meet | always | RS0 | F25, Appendix A "Competitors have strong safety measures. We have strong evidence that all competitors who have developed, or will soon develop, a highly capable frontier model are able to make strong arguments that catastrophic risk is contained, in the spirit of our recommendations for industry-wide safety (see Section 1)." "For our highly capable frontier models, we will meet or exceed the overall risk reduction posture of these competitors, as far as we can tell based on our best efforts to assess that posture." (the act names each of these competitors, so under RS5 noimport an empty set requires nothing; RS5 import's existence premise is the case's)
+Rule 1. Every situation must at least match the overall risk reduction posture of each competitor as best we can tell, if all of the following hold: (a) both that competitor is classified as "develops_highly_capable" and that situation is classified as "highly_capable"; (b) both that situation is classified as "competitors_strong_measures" and that situation is classified as "competitors_evidence".
+## f25-delay | always | RS0 | F25, Appendix A "Competitors have strong safety measures. We have strong evidence that all competitors who have developed, or will soon develop, a highly capable frontier model are able to make strong arguments that catastrophic risk is contained, in the spirit of our recommendations for industry-wide safety (see Section 1)." "Until we are able to do so, we will delay AI development and deployment as needed to achieve this." ("do so" is meeting or exceeding the posture of these competitors: the release holds for each of them)
+Rule 1. Every situation must delay AI development as well as deployment, if all of the following hold: (a) both that situation is classified as "competitors_strong_measures" and that situation is classified as "competitors_evidence"; (b) both that situation is classified as "highly_capable" and that situation is classified as "posture_delay_needed", unless for every competitor that is classified as "develops_highly_capable", that situation has the recorded relation "posture_attainable" to that competitor.
+## f26-effort | always | RS0 | F26, Appendix A "General upleveling. We have strong evidence that a competitor has implemented a risk mitigation that: (1) represents a significant improvement on reduction of our prioritized risks relative to our analogous mitigations; and (2) we could implement at comparable (or lower) effort or cost to our competitor." "We will make a significant effort to meet or exceed that performance standard."
+Rule 1. Every situation must make a significant effort to match the performance standard, if both that situation is classified as "competitor_better_mitigation" and that situation is classified as "mitigation_evidence".
+## f26-need-not-delay | RS4=rel | independent | F26, Appendix A "General upleveling. We have strong evidence that a competitor has implemented a risk mitigation that: (1) represents a significant improvement on reduction of our prioritized risks relative to our analogous mitigations; and (2) we could implement at comparable (or lower) effort or cost to our competitor." "However, we will not necessarily delay AI development and deployment in this scenario." (RS4 rel; under scope no rule)
+Rule 1. Every situation need not delay AI development as well as deployment, if both that situation is classified as "competitor_better_mitigation" and that situation is classified as "mitigation_evidence".
