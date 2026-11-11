@@ -95,6 +95,9 @@ structure SourceU where
   profiled : Bool
   wfU : profiled = true → WellFormedU U = true
   plain : profiled = false → U.unspec = []
+  /-- Each rule of `U` the decoder generated, with the request rule it comes from (`acts@0` parts,
+  `Acts.Decode.sourceOf`); `[]` for a decoded source, whose rules are the request's (norm-defaults-cfr-1b). -/
+  sources : List (String × String)
 
 /-- The vocabulary `checkAuthorN` charges: the declared names, the route's generated predicates and one
 `unsaid__` name per unspecified predicate (premise packs add theirs to it, `Packs.assemble`). -/
@@ -143,14 +146,32 @@ def decodeSourceUWith (joined : Bool) (environment norms : Json) : Except String
     let U : UDoc := ⟨src.D, (src.D.T.regulated.map Regulated.name).filter (names.contains ·)⟩
     checkAuthor environment U
     if h : WellFormedU U = true then
-      pure ⟨src, U, rfl, fill_wellFormed U h, true, fun _ => h, fun hc => by cases hc⟩
+      pure ⟨src, U, rfl, fill_wellFormed U h, true, fun _ => h, (fun hc => by cases hc), []⟩
     else throw "InvalidInput: norm-defaults document is not well formed"
   else do
     unless (unspecifiedNames environment).isEmpty do
       throw "UnsupportedProfile: unspecified completion requires norm-defaults@0"
     let src ← VE.Norms.Wire.decodeSource environment norms (joined := joined)
     pure ⟨src, ⟨src.D, []⟩, rfl, (by rw [fill_eq_self _ rfl]; exact src.wf), false, (fun h => by cases h),
-      fun _ => rfl⟩
+      fun _ => rfl, []⟩
+
+/-- A decoded source generates no rule: every rule of its document is the request's (norm-defaults-cfr-1b). -/
+theorem decodeSourceUWith_sources {joined : Bool} {environment norms : Json} {s : SourceU}
+    (h : decodeSourceUWith joined environment norms = .ok s) : s.sources = [] := by
+  unfold decodeSourceUWith at h
+  split at h
+  · obtain ⟨_, _, h⟩ := VE.Kit.Except.bind_ok h
+    obtain ⟨_, _, h⟩ := VE.Kit.Except.bind_ok h
+    obtain ⟨_, _, h⟩ := VE.Kit.Except.bind_ok h
+    split at h
+    · cases h; rfl
+    · cases h
+  · simp only at h
+    split at h
+    · obtain ⟨_, _, h⟩ := VE.Kit.Except.bind_ok h
+      obtain ⟨_, _, h⟩ := VE.Kit.Except.bind_ok h
+      cases h; rfl
+    · obtain ⟨_, h1, _⟩ := VE.Kit.Except.bind_ok h; cases h1
 
 /-- The decoded source. It admits a joined act, so every caller runs on the elaborated document
 (`Acts.Decode.decodeElaboratedU`, act-phrases 6.4), except `decodeSourceLexical`'s. -/
