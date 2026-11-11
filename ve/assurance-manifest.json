@@ -2391,6 +2391,7 @@
       "lean/VE/Defaults/Examples.lean": "test fixtures only: df-1a's `#guard`s parse their soft documents and finite situations from JSON literals and run the pinned decoders (`decodeSoftU`, `situationX`, `decodeFilling`) on them; no service mode reads this file",
       "lean/VE/Alternatives/FillExamples.lean": "build-time #guard fixtures that parse literal environments for decodeAltSourceU (ET-7, T12c and T12d) and literal scenario cases for runValidateU (et-7b, T12 and T12b); no runtime decoding",
       "lean/VE/Compose/ProfilesMain.lean": "generator only: prints VE.Compose.profileTable and the profiles an environment lists as JSON for ve/profile_table.json; reads no request and is not a service decoder",
+      "lean/VE/Commands/WebEnvMain.lean": "generator only: prints VE.Commands.Examples.E_web and its lexicon as JSON for usecases/webapp-commands/environment.json; reads no request and is not a service decoder",
       "lean/VE/NormDefaults/PacksExamples.lean": "fixtures only: #guard checks of docs/spec/premise-packs.md 2.10 compare the kind table's answers as compressed JSON; no runner path",
       "lean/VE/NormDefaults/PacksLegacyExamples.lean": "fixtures only: #guard checks of docs/spec/premise-packs.md 2.10 run the kind table on a decoded soft source with a case JSON and compare compressed answers; no runner path",
       "lean/VE/Acts/LexicalExamples.lean": "fixtures only: #guard cases of act-phrases AP-1 (spec 11.1) that build regulated declarations as JSON test inputs; no admission path, service mode or record reads it",
