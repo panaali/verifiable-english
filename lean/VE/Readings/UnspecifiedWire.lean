@@ -508,7 +508,7 @@ def choiceLayeredG (b : Admitted2) (N : NDoc) (c : Choice)
     let docHash ← VE.Readings.Run.choiceHash b (VE.Readings.Run.choiceJsons b.a.doc.itemsJ c)
     pure ⟨⟨"norms@0", correlate X, U, wfc, [],
       VE.Norms.Replay.baseModelVocabulary re.se.ne U.D,
-      VE.Norms.Replay.baseModel_valid re.se.ne U.D (choiceU_E_of b N hN hn c), baseEnv, envId, docHash⟩, rfl,
+      VE.Norms.Replay.baseModel_valid re.se.ne U.D (choiceU_E_of b N hN hn c), baseEnv, envId, docHash, []⟩, rfl,
       (choiceX_normsShaped N hn c).symm, fun a ha => absurd ha List.not_mem_nil⟩
   else if N.D.chain == .soft then
     if hnr : noRights X = true then
@@ -523,7 +523,7 @@ def choiceLayeredG (b : Admitted2) (N : NDoc) (c : Choice)
         let docHash ← VE.Readings.Run.choiceHash b (VE.Readings.Run.choiceJsons b.a.doc.itemsJ c)
         pure ⟨⟨"soft-norms@0", correlate X, U, wfc, [VE.NormDefaults.Wire.softPack U (correlate X)],
           VE.SoftNorms.Wire.primeModelVocabulary re.se (correlate X), VE.SoftNorms.Wire.primeModel_valid src,
-          baseEnv, envId, docHash⟩, rfl, VE.NormDefaults.Packs.X_single _, fun a ha => softX_wellFormed N X hws wfc a
+          baseEnv, envId, docHash, []⟩, rfl, VE.NormDefaults.Packs.X_single _, fun a ha => softX_wellFormed N X hws wfc a
             (by simpa only [VE.NormDefaults.Wire.LayeredU.X, VE.NormDefaults.Packs.X_single] using ha)⟩
       else throw ("InvalidInput: soft norm document is not well-formed under " ++ choiceText N.D c)
     else throw ("UnsupportedProfile: rights content requires rights@0 under " ++ choiceText N.D c)
