@@ -1,1 +1,19 @@
-{"allow": [{"definition": "VE.RightClauses.Run.englishJson", "operator": "list-empty", "reason": "ill-typed as generated: [] for rows leaves the projections r.frame, r.rule, r.text untyped (Invalid field notation); it does not elaborate"}]}
+{
+ "allow": [
+  {
+   "definition": "VE.RightClauses.Run.englishJson",
+   "operator": "list-empty",
+   "reason": "ill-typed as generated: [] for rows leaves the projections r.frame, r.rule, r.text untyped (Invalid field notation); it does not elaborate"
+  },
+  {
+   "definition": "VE.RightClauses.Run.elaborateCase",
+   "operator": "lit-plus",
+   "reason": "equivalent: 257 is main's canonical-JSON fuel for the plained document, unchanged by this item (the line only moved into `let bytes`); that document has passed the rights decoder (step 6), whose formula depth limit (64) keeps its JSON depth below 80, so fuel 256, 257 and 258 give the same answer"
+  },
+  {
+   "definition": "VE.RightClauses.Run.elaborateCase",
+   "operator": "lit-minus",
+   "reason": "equivalent: 257 is main's canonical-JSON fuel for the plained document, unchanged by this item (the line only moved into `let bytes`); that document has passed the rights decoder (step 6), whose formula depth limit (64) keeps its JSON depth below 80, so fuel 256, 257 and 258 give the same answer"
+  }
+ ]
+}
