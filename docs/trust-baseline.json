@@ -2609,6 +2609,20 @@
    "reason": "en-e3b (en-e3ab scope): VE/Service/Registry.lean +1, VE/Service/Protocol.lean +1, ResponseShape/Skeletons.lean +1, ResponseShape/Schemas.lean +1 (english.statement's registry, dispatch, skeleton and schema-file cases)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), en-e3b, 2026-10-18",
    "commit": "f3f40d51dc6dfffeb57834ee5652ff7b514eaeed"
+  },
+  {
+   "class": "V",
+   "lines": 31,
+   "reason": "norm-defaults-cfr-1b: V +31 (VE/NormDefaults/Layered.lean +12, VE/NormDefaults/Explain.lean +11, VE/NormDefaults/Wire.lean +3, ResponseShape/Schemas/NormDefaults.lean +3, VE/Acts/Decode.lean +1, VE/NormDefaults/Run.lean +1); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), norm-defaults-cfr-1b, 2026-10-18",
+   "commit": "c94ad399b7b1f6804c12fbc555a5758d5e971ae6"
+  },
+  {
+   "class": "V",
+   "lines": 84,
+   "reason": "sc-11c: VE/Readings/SoftSupRun.lean trusted +84 (sdScope, sdProofs untied G[V]; sdShared, sdAssumed, sdModel, SDCase.labels D[V]); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-11c, 2026-10-18",
+   "commit": "a3454b6ba5982d7cb5e216d10432a94f6177652a"
   }
  ]
 }
