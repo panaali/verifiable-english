@@ -1,3 +1,4 @@
+import VE.Compose.Dispatch
 import VE.Norms.Wire
 import VE.WireContract.Hooks.Norms
 import VE.WireContract.Tables.Acts
@@ -19,9 +20,14 @@ open VE.WireContract
 open VE.Acts.Lexical (check decodeFixed maxActBytes maxPhraseBytes maxPhrases phraseToks)
 open VE.WireContract.Hooks.Norms (environmentOf message)
 
-/-- 1.1d: the norms route's environment decoder reading `acts@0`, then `decodeSource`'s `definitions@0` check; a joined
-act is read by the act check, as the environment row reads it (ap-3dc). -/
+/-- 1.1d: `acts@0`'s profile row, which the environment mode reads before every decoder (act-phrases 4.4;
+`Service.Standalone.validatedLayerEnvironment`), so that without `norms@0` the row's own refusal is the text (ap-1bf
+review F1); then the norms route's environment decoder reading `acts@0`, then `decodeSource`'s `definitions@0`
+check; a joined act is read by the act check, as the environment row reads it (ap-3dc). -/
 def decoded (environment : Json) : Except String Unit := do
+  let listed := (VE.Bridge.strings (environment.getObjValD "profiles")).toOption.getD []
+  if listed.contains "acts@0" then
+    let _ ← VE.Compose.gateOf VE.Compose.baseRows listed
   let ne ← VE.Norms.Wire.decodeNormsEnvironment environment (acts := true) (joined := true)
   unless ne.rv.definitions.isEmpty || ne.profiles.contains "definitions@0" do
     throw "defined declarations require the definitions@0 profile"
@@ -134,6 +140,9 @@ def around : List String := ["anna", "zora"]
 #guard memberOf (envOf ["equal pay"] (actOf 20) (others := (List.range 64).map (s!"q{·}"))) == some "1.1d"
 #guard memberOf (envOf [] (actOf 20) (defined := true)) == some "1.1d"
 #guard memberOf (envOf [] (actOf 20) ["acts@0", "definitions@0", "norms@0", "relational-fol@0"] (defined := true)) == none
+-- without `norms@0`, the profile row's text, as the environment mode gives it (ap-1bf review F1)
+#guard (match decoded (envOf [] (actOf 20) ["acts@0", "relational-fol@0"]) with | .error e => e | .ok () => "") ==
+  "UnsupportedProfile: acts@0 requires norms@0"
 -- the records through the generated table
 #guard recordOf (envOf [] (actOf maxActBytes)) == none
 #guard Tables.Acts.table.revision == 1  -- acts@0.json's revision: a new revision updates this pin
