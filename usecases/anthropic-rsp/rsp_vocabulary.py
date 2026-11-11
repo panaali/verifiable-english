@@ -23,6 +23,8 @@ SORTS = {
                  "Risk Report, a selection of external reviewers, a noncompliance report, an update of the policy, or "
                  "a scenario of Appendix A. Every rule speaks about every situation",
     "threshold": "a capability or usage threshold of the section 1 table",
+    "competitor": "another frontier AI developer (Appendix A, \"competitors\"); the scenario of \"Competitors have strong "
+                  "safety measures\" compares the company with each of them",
 }
 THRESHOLDS = {
     "non_novel_chem_bio_weapons": "T1: \"Non-novel chemical/biological weapons production\" (section 1 table, row 1)",
@@ -68,6 +70,24 @@ BASE = {
     **{name: _base(["situation"], text) for name, text in {
         "publicly_deployed": "the model of {0} is publicly deployed as of the coverage date (3.1)",
         "internally_deployed": "the model of {0} is internally deployed as of the coverage date (3.1)",
+        "determined_by_publication": "for the internal model of {0}, the determination of (1) and (2) is made by the "
+                                     "time of the report's publication (3.1 Scope: \"by the time of the report's "
+                                     "publication, we have determined\")",
+        "off_cycle_public_deployment": "{0} is the public deployment of a model (3.1 off-cycle bullet 1, \"When we "
+                                       "publicly deploy a model\"); no coverage date: off-cycle updates are "
+                                       "\"Separate from our publication of Risk Reports\"",
+        "off_cycle_internal_deployment": "the model of {0} is an internally deployed model (3.1 off-cycle bullet 2, "
+                                         "\"we have an internally deployed model\"); no coverage date: off-cycle "
+                                         "updates are \"Separate from our publication of Risk Reports\"",
+        "ai_evidence_risk": "at {0} AI systems might be responsible for much of the research and analysis that "
+                            "underpins risk assessment, and might have strong capabilities for deception, "
+                            "manipulation and obfuscation of evidence (row T4, right column, the condition of \"in "
+                            "which case\")",
+        "legal_prohibition_redaction": "at {0} the redaction is necessary to comply with legal prohibitions (3.6.2)",
+        "legal_rights_redaction": "at {0} the redaction is necessary to maintain our legal rights (3.6.2)",
+        "impedes_safety_concerns": "at {0} a contractual non-disparagement obligation on employees, candidates, or "
+                                   "former employees is imposed in a way that could impede or discourage them from "
+                                   "publicly raising safety concerns about Anthropic (4.5)",
         "risk_report_approved": "{0} is the approval of a Risk Report (3.4 step 4)",
         "ltbt_requested_review": "at {0} the LTBT has requested an external review (3.6)",
         "selecting_reviewers": "{0} is the selection of external reviewers (3.6.1)",
@@ -90,14 +110,16 @@ BASE = {
         "roadmap_goal_unachieved": "at {0} a Frontier Safety Roadmap goal could not be achieved (section 2)",
         "goal_revised_less_ambitious": "at {0} a Roadmap goal is revised in a less ambitious direction simply "
                                        "because it could not be achieved (section 2)",
-        "competitor_better_mitigation": "at {0} a competitor has implemented a risk mitigation that (1) is a "
-                                        "significant improvement and (2) we could implement at comparable or lower "
-                                        "effort or cost (Appendix A, General upleveling)",
+        "competitor_better_mitigation": "at {0} a competitor has implemented a risk mitigation that: (1) "
+                                        "represents a significant improvement on reduction of our prioritized risks "
+                                        "relative to our analogous mitigations; and (2) we could implement at "
+                                        "comparable (or lower) effort or cost to our competitor (Appendix A, "
+                                        "General upleveling)",
         "competitors_strong_measures": "at {0} all competitors who have developed, or will soon develop, a highly "
                                        "capable frontier model are able to make strong arguments that catastrophic "
                                        "risk is contained (Appendix A)",
-        "in_the_lead": "at {0} we have developed or will imminently develop a highly capable model and no other "
-                       "competitor will soon develop one (Appendix A, Anthropic in the lead)",
+        "in_the_lead": "at {0} we have developed or will imminently develop a highly capable model (Appendix A, "
+                       "Anthropic in the lead, the scenario's first conjunct)",
         "redaction_reason_listed": "at {0} material would be redacted for one of the reasons 3.5 lists",
         "scenario_2": "at {0} there is \"dramatic acceleration\" of the pace of AI progress for reasons that likely "
                       "relate to the automation of AI R&D (T4 (2))",
@@ -118,11 +140,31 @@ BASE = {
                                     "the RSO, CEO, Board or LTBT (a sufficient judgment)", "OT4"),
     "strong_argument_made": _open(["situation"], "a strong argument that catastrophic risk is contained is made at "
                                   "{0}", "no one the text names (unstated)", "OT6"),
-    "delay_needed": _open(["situation"], "a delay is needed at {0} to achieve the scenario's aim (Appendix A, "
-                          "\"as needed\")", WE, "OT7"),
-    "clear_evidence": _open(["situation"], "we have clear or strong evidence of the scenario at {0} (Appendix A)",
-                            WE + " (\"use our best judgment\")", "OT8"),
-    "significant_lead": _open(["situation"], "we believe we have a significant lead at {0} (Appendix A)", WE, "OT9"),
+    # Appendix A: each scenario has its own evidence and its own "as needed" (PLAN 12 item 19).
+    "lead_evidence": _open(["situation"], "at {0} we have clear evidence that no other competitor will soon develop "
+                           "such a model (Appendix A, Anthropic in the lead, the scenario's second conjunct)",
+                           WE + " (\"use our best judgment\")", "OT8"),
+    "competitors_evidence": _open(["situation"], "at {0} we have strong evidence that all competitors who have "
+                                  "developed, or will soon develop, a highly capable frontier model are able to make "
+                                  "strong arguments that catastrophic risk is contained, in the spirit of our "
+                                  "recommendations for industry-wide safety (Appendix A, Competitors have strong "
+                                  "safety measures)", WE + " (\"use our best judgment\")", "OT8"),
+    "mitigation_evidence": _open(["situation"], "at {0} we have strong evidence that a competitor has implemented "
+                                 "the risk mitigation of the General upleveling scenario (Appendix A)",
+                                 WE + " (\"use our best judgment\")", "OT8"),
+    "lead_delay_needed": _open(["situation"], "a delay is needed at {0} to achieve the strong argument that "
+                               "catastrophic risk is contained (Appendix A, Anthropic in the lead, \"as needed to "
+                               "achieve this\")", WE, "OT7"),
+    "posture_delay_needed": _open(["situation"], "a delay is needed at {0} to meet or exceed the overall risk "
+                                  "reduction posture of these competitors (Appendix A, Competitors have strong "
+                                  "safety measures, \"as needed to achieve this\")", WE, "OT7"),
+    "lead_no_longer_believed": _open(["situation"], "at {0} we no longer believe we have a significant lead "
+                                     "(Appendix A, \"until and unless we no longer believe we have a significant "
+                                     "lead\")", WE, "OT9"),
+    "develops_highly_capable": _open(["competitor"], "{0} has developed, or will soon develop, a highly capable "
+                                     "frontier model (Appendix A)", WE, "OT23"),
+    "posture_attainable": _base(["situation", "competitor"], "at {0} we are able to meet or exceed the overall risk "
+                                "reduction posture of {1} (Appendix A, \"Until we are able to do so\")"),
     "material_safety_risk": _open(["situation"], "the substantiated report at {0} involves a material safety risk "
                                   "(4.4)", WE + " (\"If we determine\")", "OT10"),
     "noteworthy": _open(["situation"], "the change or deviation at {0} is noteworthy (3.2)", "no one the text names "
@@ -156,8 +198,14 @@ REGULATED = {
                              "of {1} is made at {0} (section 1, ARGk)", ("situation", "threshold")),
     "advance_recommendations": _duty("{0} advance the industry-wide recommendations", "the company works to advance "
                                      "the recommendations at {0} (section 1)"),
-    "evidentiary_standards": _duty("{0} have analyses of threats from AIs follow very high evidentiary standards",
-                                   "section 1, row 4, at {0}"),
+    "evidentiary_standards": _duty("{0} hold threat analyses to very high evidentiary standards with thorough care",
+                                   "section 1, row 4, right column, at {0}: \"In particular, at this point AI systems "
+                                   "might be responsible for much of the research and analysis that underpins risk "
+                                   "assessment, and might have strong capabilities for deception, manipulation and "
+                                   "obfuscation of evidence, in which case analyses of threats from AIs should follow "
+                                   "very high evidentiary standards with thorough and careful analysis of the "
+                                   "possibility that much of the key evidence is suspect due to the possibility of "
+                                   "manipulation by AI systems.\""),
     "roadmap_maintained": _duty("{0} have the Frontier Safety Roadmap maintained", "section 2 at {0}"),
     "roadmap_shared": _duty("{0} have the Roadmap shared as the policy states", "the Roadmap is shared with all "
                             "full-time employees, the Board and the LTBT, and published in redacted form, at {0} "
@@ -187,19 +235,34 @@ REGULATED = {
                                "risk paragraph at {0}"),
     "assessed_in_report": _duty("{0} be assessed in a Risk Report", "the assessments of 3.3 are conducted with "
                                 "respect to the model of {0}"),
-    "internal_feedback": _duty("{0} have comprehensive internal feedback solicited", "3.4 step 2 at {0}"),
-    "external_feedback": _duty("{0} have feedback sought from trusted external parties", "3.4 step 2 at {0}"),
+    "internal_feedback": _duty("{0} have comprehensive internal feedback on the report solicited", "3.4 step 2 at "
+                               "{0}: \"We will solicit comprehensive internal feedback on the report, focusing on "
+                               "identifying potential methodological weaknesses, analytical gaps, or areas requiring "
+                               "additional evidence or clarification.\""),
+    "external_feedback": _duty("{0} have feedback sought from trusted external parties with relevant expertise",
+                               "3.4 step 2 at {0}: \"We will usually also seek feedback from trusted external "
+                               "parties with relevant expertise.\""),
     "executive_approved": _duty("{0} have its Risk Report approved by the CEO with the RSO", "the report, with the "
                                 "feedback, goes to the CEO and the RSO for final review and approval (3.4 step 3)"),
     "board_approved": _duty("{0} have its Risk Report approved by the Board as well as the LTBT", "explicit "
                             "approval by the Board and the LTBT (3.4 step 5)"),
-    "governance_notified": _duty("{0} have its decision shared with the Board as well as the LTBT", "the decisions, "
-                                 "the Risk Report and the internal feedback are shared with the Board and the LTBT "
-                                 "(3.4 step 4)"),
-    "redactions_minimized": _duty("{0} have its redactions minimized", "3.5 at {0}"),
-    "redactions_disclosed": _duty("{0} have the existence of each redaction disclosed", "3.5 at {0}"),
-    "redactions_justified": _duty("{0} have a brief justification of each redaction given", "3.5 at {0}"),
-    "redaction": _may("{0} have the material redacted", "material may be redacted at {0} (3.5)"),
+    "governance_notified": _duty("{0} have the decision promptly shared with the Board as well as the LTBT", "3.4 "
+                                 "step 4 at {0}: \"Following approval of a Risk Report, the CEO and RSO will "
+                                 "promptly share their decision(s), the underlying Risk Report, and internal feedback "
+                                 "with both the Board and the LTBT.\" (\"promptly\" is OT12)"),
+    "redactions_minimized": _duty("{0} have redactions minimized in public as well as regular-clearance versions",
+                                  "3.5 at {0}: \"We will aim to minimize redactions to the public version of the "
+                                  "report or to the version of the report shared with all regular-clearance "
+                                  "Anthropic employees.\""),
+    "redactions_disclosed": _duty("{0} have each redaction in the public version disclosed", "3.5 at {0}: \"We "
+                                  "will disclose the existence of each redaction made in the public version of the "
+                                  "report\""),
+    "redactions_justified": _duty("{0} have a brief justification of each public-version redaction given", "3.5 at "
+                                  "{0}: \"and aim to give a brief justification for such redactions\" (the "
+                                  "redactions made in the public version)"),
+    "redaction": _may("{0} have material redacted from the public version", "3.5 at {0}: \"We will publish a "
+                      "public version of our Risk Report.\" ... \"Reasons we may redact material include but are "
+                      "not limited to:\" (the four listed reasons do not close the class)"),
     "public_review_sought": _duty("{0} have comprehensive public external review sought", "3.6 at {0}"),
     "full_review": _duty("{0} have a full external review completed with at least one external reviewer", "3.6 at "
                          "{0}"),
@@ -210,49 +273,79 @@ REGULATED = {
                                 "{0}: the Board consulted, the LTBT's approval obtained"),
     "shared_with_reviewers": _duty("{0} have the report shared with the external reviewers within one week",
                                    "3.6.2 at {0}"),
-    "commentary_asked": _duty("{0} have the reviewers asked to comment publicly within thirty days", "3.6.2 at {0}"),
-    "early_full_review": _duty("{0} have the full external review completed before the Board review", "3.6.2 at "
-                                 "{0}"),
+    "commentary_asked": _duty("{0} have the reviewers asked to comment publicly within thirty days of receipt",
+                              "3.6.2 at {0}: \"We will ask the external reviewers to provide public commentary on "
+                              "our report within 30 days of receipt.\" (the day count is D3's)"),
+    "early_full_review": _duty("{0} have the full external review done before the Board as well as LTBT review",
+                               "3.6.2 at {0}: \"We will try to work toward a process that involves the full "
+                               "external review being completed prior to Board/LTBT review (and may require this "
+                               "later).\""),
     "sections_shared": _duty("{0} have each section shared with at least one external reviewer", "3.6.2 at {0}"),
-    "split_review": _may("{0} have the review split across external reviewers", "3.6.2 at {0}"),
-    "only_legal_redactions": _duty("{0} have only legally necessary redactions in the reviewed version", "3.6.2 at "
-                                   "{0}"),
+    "split_review": _may("{0} have the review split across external reviewers by subject matter expertise",
+                         "3.6.2 at {0}: \"but we may choose to split the review process across different external "
+                         "reviewers based on their subject matter expertise\""),
+    "only_legal_redactions": _may("{0} have material redacted from the version given to external reviewers", "3.6.2 "
+                                  "at {0}: \"For purposes of external review, the only redactions to the Risk Report "
+                                  "will be those necessary to comply with legal prohibitions or to maintain our "
+                                  "legal rights.\" (a prohibition unless one of the two grounds holds)"),
     "rso_maintained": _duty("{0} have the position of RSO maintained", "4.1 at {0}"),
-    "ltbt_briefed": _duty("{0} have the LTBT briefed", "4.2 at {0}"),
+    "ltbt_briefed": _duty("{0} have the LTBT regularly briefed on Risk Report plans as well as developments", "4.2 "
+                          "at {0}: \"We will regularly brief the LTBT on plans and developments related to our Risk "
+                          "Reports.\" (\"regularly\" is OT12)"),
     "unredacted_shared": _duty("{0} have unredacted Risk Reports shared with at least two hundred employees", "4.3 at "
                                "{0}"),
     "minimally_redacted_shared": _duty("{0} have minimally-redacted Risk Reports shared with all regular-clearance "
                                        "staff", "4.3 at {0}"),
-    "reporting_process": _duty("{0} have a noncompliance reporting process maintained", "4.4 at {0}"),
+    "reporting_process": _duty("{0} maintain a staff process taking anonymous as well as identified reports", "4.4 "
+                               "at {0}: \"We will maintain a process for Anthropic staff to submit anonymous or "
+                               "identified reports regarding potential noncompliance with this policy.\""),
     "recipient_options": _duty("{0} offer more than one option of recipient", "4.4 at {0}: including the RSO and at "
                                "least one executive who does not report to the RSO"),
-    "investigated": _duty("{0} have the report investigated", "4.4 at {0}: investigated, corrective action if "
-                          "substantiated, the report and findings documented"),
+    "investigated": _duty("{0} have the report promptly investigated", "4.4 at {0}: \"When we receive a report, "
+                          "we will promptly investigate, take appropriate and proportional corrective action if it is "
+                          "substantiated, and document the report and our findings.\" (\"promptly\" is OT12, the "
+                          "corrective action OT20)"),
     "quarterly_updates": _duty("{0} have quarterly updates on noncompliance reports provided to the Board", "4.4 at "
                                "{0}"),
-    "board_notified": _duty("{0} have the Board notified", "4.4 at {0}"),
+    "board_notified": _duty("{0} have the Board promptly notified", "4.4 at {0}: \"If we determine that a report is "
+                            "(1) substantiated and (2) involves a material safety risk, we will promptly notify the "
+                            "Board\" (\"promptly\" is OT12)"),
     "public_notice": _may("{0} have public notice provided", "4.4 at {0}"),
     "retaliation_protection": _duty("{0} have reporters protected from retaliation", "4.4 at {0}"),
     "board_member_recipient": _duty("{0} have a member of the Board among the recipients", "4.4 at {0}"),
-    "disparagement_obligation": _may("{0} impose a non-disparagement obligation impeding safety concerns", "a "
-                                      "contractual non-disparagement obligation that could impede or discourage "
-                                      "raising safety concerns (4.5)"),
+    "disparagement_obligation": _may("{0} impose a contractual non-disparagement obligation", "4.5 at {0}: \"We "
+                                     "will not impose contractual non-disparagement obligations on employees, "
+                                     "candidates, or former employees in a way that could impede or discourage them "
+                                     "from publicly raising safety concerns about Anthropic.\""),
     "clause_allows_concerns": _duty("{0} have the clause permit raising safety concerns", "the clause does not "
                                     "preclude raising safety concerns nor disclosing the clause (4.5)"),
-    "internal_review": _duty("{0} have an internal review of the implementation conducted", "4.6 at {0}"),
-    "compliance_review": _duty("{0} have a third-party procedural compliance review commissioned", "4.7 at {0}"),
+    "internal_review": _duty("{0} have an internal review of the implementation regularly conducted", "4.6 at {0}: "
+                             "\"We will regularly conduct an internal review of our implementation of this "
+                             "policy.\" (\"regularly\" is OT12)"),
+    "compliance_review": _duty("{0} commission a third-party procedural compliance review about once a year", "4.7 "
+                               "at {0}: \"On approximately an annual basis, we will commission a third-party review "
+                               "that assesses whether we adhered to this policy's main procedural commitments.\" "
+                               "(the cadence is OT12)"),
     "change_approved": _duty("{0} have the change approved by the Board", "4.8: proposed by the CEO and RSO, "
                              "approved by the Board in consultation with the LTBT"),
     "update_published": _duty("{0} have the updated version published with its differences in the Change Log",
                               "4.8: prior to or on its effective date"),
     "website_version": _duty("{0} have the current version kept on the website", "4.8 at {0}"),
-    "argument_required": _duty("{0} require a strong argument about catastrophic risk", "a strong argument that "
-                               "catastrophic risk is contained (Appendix A)"),
-    "delay": _duty("{0} delay AI development as well as deployment", "Appendix A at {0}"),
-    "posture_matched": _duty("{0} at least match the posture of the competitors", "meet or exceed the overall risk "
-                             "reduction posture of these competitors (Appendix A)"),
-    "significant_effort": _duty("{0} make a significant effort to match the performance standard", "meet or exceed "
-                                "that performance standard (Appendix A)"),
+    "argument_required": _duty("{0} require a strong argument about catastrophic risk", "Appendix A at {0}: \"We "
+                               "will require a strong argument that catastrophic risk is contained, along the lines "
+                               "of our recommendations for industry-wide safety (see Section 1).\""),
+    "delay": _duty("{0} delay AI development as well as deployment", "Appendix A at {0}: \"We will delay AI "
+                   "development and deployment as needed to achieve this\" (Anthropic in the lead; Competitors have "
+                   "strong safety measures)"),
+    "posture_matched": _duty("{0} at least match the overall risk reduction posture of {1} as best we can tell",
+                             "Appendix A at {0}: \"For our highly capable frontier models, we will meet or exceed "
+                             "the overall risk reduction posture of these competitors, as far as we can tell based on "
+                             "our best efforts to assess that posture.\" ({1} is one of these competitors)",
+                             ("situation", "competitor")),
+    "significant_effort": _duty("{0} make a significant effort to match the performance standard", "Appendix A at "
+                                "{0}: \"We will make a significant effort to meet or exceed that performance "
+                                "standard.\" (the performance standard of the competitor's mitigation, relative to "
+                                "our analogous mitigations)"),
 }
 
 
