@@ -1,0 +1,8 @@
+job=armsh-cand-rights-cfr-1-476b99b9-t364136-cold shard=- nproc=4 arch=aarch64 host=runnervmkb2gk date=2026-11-11T02:30:25Z ulimit_s=16384
+Mem:              15           1           9           0           5          14
+/dev/root       145G   42G  103G  29% /
+ 02:30:25 up 1 min,  0 user,  load average: 1.42, 0.50, 0.18
+pilot/codex branches: 98
+seed: mode=cold-fp match=cold asset=- pruned=0 base=0b4def8a6402
+seed: lake 1229.2 s (rc 0, match cold)
+seed: fingerprint fp.json (lake rc 0, statements rc 0, audit rc 0, 532 s)

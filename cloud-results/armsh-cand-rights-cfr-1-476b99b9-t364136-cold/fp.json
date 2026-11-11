@@ -1,0 +1,32 @@
+{
+ "audit_rc": 0,
+ "base": "0b4def8a6402986736d2fc0569332f20df9991e7",
+ "changed_modules": [
+  "ResponseShape/Schemas/Identity",
+  "VE/Rights/Wire",
+  "VE/Service/Document",
+  "VE/Service/Standalone",
+  "VE/SoftNorms/Wire"
+ ],
+ "changed_oleans": {
+  "ResponseShape/Schemas/Identity": "0b32f8b6a7dbd268387ff2cac2580c954b51dcbfb9384d5f4194d65b3d5b2203",
+  "VE/Rights/Wire": "19a5baf99aa11d32665bf904ea25cdb6a9d935b43e91c2ddc0ebf57762bfb156",
+  "VE/Service/Document": "58cab4f7d355e0e599b8a1c6c0f5c1b8d876a4ef1172a6a8550a3e1e8bba1ec8",
+  "VE/Service/Standalone": "77481d9af5a3d610ea2f3553c3c3d1aa75b45baf82112dfc4db5ff40ef66c35a",
+  "VE/SoftNorms/Wire": "b841ad21e041d87f5c29b94b15217908af597551cdcf5fc8e577dbd321ea33d5"
+ },
+ "files": {
+  "lean/ResponseShapeAudit.lean": "41b29c1184ed92f020a25d169ce5f91a4c7b6baaef03775c77c6bcd8ae083efd",
+  "lean/VE/Audit.lean": "de9f3a65b56c83695863715262f1698ba77d84ac071e274125c064fa7f1b1d28",
+  "lean/axioms.txt": "c57fa484d4c6885c6931198fb3b68c741a014d7835756482e2f9ba92c7067c0d",
+  "lean/declarations.txt": "b713704db797642879207d04dd7e47ede49d99df49c0954bfc95e73f908532cb",
+  "lean/predicates.txt": "87f1e6c762dc60c39dcf7f9b9d9b7942728452c7c3fc470ab665183347285560",
+  "lean/statements.txt": "c0e14218033a1c0fb7bb7a6f7c99337f6a37af38daafc33022058f67e40104e1"
+ },
+ "head": "2768b53fc8ab58854374d4158110ef075d23e6a4",
+ "lake_rc": 0,
+ "oleans_n": 839,
+ "oleans_sha256": "5cefc40dc726a380b82cdcf4c6584c4f63d6de03168192ca47838a6c488a522b",
+ "seed": "cold-fp",
+ "statements_rc": 0
+}
