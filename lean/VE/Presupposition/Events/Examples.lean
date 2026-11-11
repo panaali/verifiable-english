@@ -162,19 +162,32 @@ def someStay (M : VE.FiniteModel String) : Bool :=
 #guard states.all fun M => ipBefore.eval M [] == (inProgressBefore V stay x (.var 0)).eval M ["c"]
 
 -- P9 (u0220.s06), "continuing with an ongoing action", the action as a state: "ongoing" (in progress before t)
--- is the phrase's left conjunct and "continuing" (in progress on t) the trigger in its right conjunct. The
--- projected goal `ongoing → pre` holds on every situation (proved within the phrase), so asserted, conditioned and
--- in place all equal the weak plug: one reading.
-def p9 : Reading := continues V stay x t ip
-def p9F : Frame := .andR ipBefore .hole
+-- is the phrase's left conjunct and "continuing" (in progress on t) the trigger in its right conjunct. Both are
+-- written out here on the fixture's constants from events' wording (as VE.Events.Examples.inProgress), not through
+-- `inProgressBefore` or `inProgress`, so a mutant of the `pre` moves `p9.pre` while the phrase stays fixed (ps-7-p9).
+-- ongoing: ∃u. before(u, t) ∧ ∃b. begins(s, b) ∧ ¬before(u, b) ∧ ¬∃e. ends(s, e) ∧ before(e, u)
+def ongoing : VE.Formula :=
+  .ex "day" (.and (.binary "before" (.var 0) (.const "t"))
+    (.ex "day" (.and (.binary "begins" (.const "s") (.var 0)) (.and (.not (.binary "before" (.var 1) (.var 0)))
+      (.not (.ex "day" (.and (.binary "ends" (.const "s") (.var 0)) (.binary "before" (.var 0) (.var 2)))))))))
+-- continuing: ∃b. begins(s, b) ∧ ¬before(t, b) ∧ ¬∃e. ends(s, e) ∧ before(e, t)
+def onDay : VE.Formula :=
+  .ex "day" (.and (.binary "begins" (.const "s") (.var 0)) (.and (.not (.binary "before" (.const "t") (.var 0)))
+    (.not (.ex "day" (.and (.binary "ends" (.const "s") (.var 0)) (.binary "before" (.var 0) (.const "t")))))))
+-- The projected goal `ongoing → pre` holds on every situation (proved within the phrase), so asserted, conditioned
+-- and in place all equal the weak plug: one reading.
+def p9 : Reading := continues V stay x t onDay
+def p9F : Frame := .andR ongoing .hole
 #guard states.all fun M => (p9F.goal p9.pre).eval M [] &&
   [assertedAt p9F p9, conditionedAt p9F p9, inPlaceAt p9F p9].all (·.eval M [] == (p9F.plug p9.weak).eval M [])
 #guard states.map ((p9F.plug p9.strong).eval · []) == [true, false, true, false, false]
--- the phrase's content entails the pre on every situation; with "ongoing" read as in progress on t (`ip`) instead,
--- the goal fails on onT and asserted and conditioned differ there: one reading rests on "ongoing" = before t
-#guard states.all fun M => !(VE.Formula.and ipBefore ip).eval M [] || p9.pre.eval M []
-#guard !((Frame.andR ip .hole).goal p9.pre).eval onT [] &&
-  (assertedAt (.andR ip .hole) p9).eval onT [] != (conditionedAt (.andR ip .hole) p9).eval onT []
+-- the phrase's content entails the pre on every situation, and the pre is "ongoing" exactly; with "ongoing" read as
+-- in progress on t (`onDay`) instead, the goal fails on onT and asserted and conditioned differ there: one reading
+-- rests on "ongoing" = before t
+#guard states.all fun M => !(VE.Formula.and ongoing onDay).eval M [] || p9.pre.eval M []
+#guard states.all fun M => p9.pre.eval M [] == ongoing.eval M []
+#guard !((Frame.andR onDay .hole).goal p9.pre).eval onT [] &&
+  (assertedAt (.andR onDay .hole) p9).eval onT [] != (conditionedAt (.andR onDay .hole) p9).eval onT []
 
 -- P10 (u0168.s01), "remain firm", Claude's firmness as a state: {assumed: the before part as its own unit, then
 -- the clause; conditioned: goal → clause}. They differ where the firmness begins on t (not in progress before).
