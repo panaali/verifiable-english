@@ -1,0 +1,126 @@
+info: syncing channel updates for 1.98.1-x86_64-unknown-linux-gnu
+info: latest update on 2026-09-03 for version 1.98.1 (48a229cea 2026-09-01)
+info: downloading 3 components
+warn: the missing active toolchain `1.98.1-x86_64-unknown-linux-gnu` has been auto-installed
+warn: this might cause rustup commands to take longer time to finish than expected
+info: you may opt out with `RUSTUP_AUTO_INSTALL=0` or `rustup set auto-install disable`
+    Updating crates.io index
+ Downloading crates ...
+  Downloaded crypto-common v0.1.7
+  Downloaded block-buffer v0.10.4
+  Downloaded autocfg v1.5.1
+  Downloaded generic-array v0.14.7
+  Downloaded version_check v0.9.5
+  Downloaded cpufeatures v0.2.17
+  Downloaded cfg-if v1.0.5
+  Downloaded itoa v1.0.18
+  Downloaded digest v0.10.7
+  Downloaded zmij v1.0.23
+  Downloaded num-integer v0.1.47
+  Downloaded num-traits v0.2.19
+  Downloaded quote v1.0.47
+  Downloaded sha2 v0.10.9
+  Downloaded serde_core v1.0.229
+  Downloaded serde_derive v1.0.229
+  Downloaded proc-macro2 v1.0.107
+  Downloaded serde v1.0.229
+  Downloaded unicode-ident v1.0.26
+  Downloaded num-bigint v0.4.8
+  Downloaded memchr v2.8.3
+  Downloaded serde_json v1.0.151
+  Downloaded syn v3.0.6
+  Downloaded typenum v1.20.1
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling typenum v1.20.1
+   Compiling unicode-ident v1.0.26
+   Compiling quote v1.0.47
+   Compiling serde_core v1.0.229
+   Compiling generic-array v0.14.7
+   Compiling autocfg v1.5.1
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling syn v3.0.6
+   Compiling serde v1.0.229
+   Compiling serde_json v1.0.151
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling memchr v2.8.3
+   Compiling itoa v1.0.18
+   Compiling cpufeatures v0.2.17
+   Compiling cfg-if v1.0.5
+   Compiling sha2 v0.10.9
+   Compiling num-integer v0.1.47
+   Compiling serde_derive v1.0.229
+   Compiling num-bigint v0.4.8
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `release` profile [optimized] target(s) in 17.49s
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling quote v1.0.47
+   Compiling typenum v1.20.1
+   Compiling unicode-ident v1.0.26
+   Compiling autocfg v1.5.1
+   Compiling generic-array v0.14.7
+   Compiling serde_core v1.0.229
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling syn v3.0.6
+   Compiling serde_json v1.0.151
+   Compiling serde v1.0.229
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling itoa v1.0.18
+   Compiling memchr v2.8.3
+   Compiling cfg-if v1.0.5
+   Compiling cpufeatures v0.2.17
+   Compiling sha2 v0.10.9
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling serde_derive v1.0.229
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 9.25s
+recording 34 units with 4 jobs in /tmp/ve-testmap-7a6d45ae4119a805144df7d7334a6a812ece0edd
+  tests/test_acts_lexical.py: exit 0 in 2.7 s, 331 functions
+  tests/test_acts_contract.py: exit 0 in 3.4 s, 536 functions
+  tests/test_ap3cb_adapt_report.py: exit 0 in 0.9 s, 177 functions
+  tests/test_alternatives_three_way.py: exit 0 in 5.4 s, 608 functions
+  tests/test_entailment.py: exit 0 in 2.5 s, 559 functions
+  tests/test_fret_w6a_rerating.py: exit 0 in 1.3 s, 398 functions
+  tests/test_bluedot_grant.py: exit 0 in 7.9 s, 761 functions
+  tests/test_gen_inv_design.py: exit 0 in 5.1 s, 215 functions
+  tests/test_agent_policy.py: exit 0 in 26.6 s, 754 functions
+  tests/test_lean_share.py: exit 0 in 33.2 s, 246 functions
+  tests/test_lexicon.py: exit 0 in 3.6 s, 615 functions
+  tests/test_me_2d_f2_delta.py: exit 0 in 1.0 s, 296 functions
+  tests/test_nary.py: exit 0 in 1.6 s, 753 functions
+  tests/test_norm_defaults_contract.py: exit 0 in 11.7 s, 628 functions
+  tests/test_order_gate.py: exit 0 in 1.9 s, 441 functions
+  tests/test_history_tests.py: exit 0 in 100.9 s, 342 functions
+  tests/test_platform_contract.py: exit 0 in 31.2 s, 390 functions
+  tests/test_profile_table.py: exit 0 in 2.1 s, 175 functions
+  tests/test_readings_memo.py: exit 0 in 6.6 s, 317 functions
+  tests/test_readings_route_fuzz.py: exit 0 in 14.7 s, 1338 functions
+  tests/test_p1_amendment13.py: exit 0 in 96.8 s, 801 functions
+  tests/test_readings_s1_pilot_rebuild.py: exit 0 in 19.3 s, 1196 functions
+  tests/test_risk_english.py: exit 0 in 3.5 s, 723 functions
+  tests/test_since_pass.py: exit 0 in 28.8 s, 301 functions
+  tests/test_soft_request_economy.py: exit 0 in 3.3 s, 1192 functions
+  tests/test_speech_acts_lean.py: exit 0 in 12.0 s, 516 functions
+  tests/test_stage2_faults.py: exit 0 in 9.4 s, 739 functions
+  tests/test_w6a2_looprecheck1.py: exit 0 in 15.8 s, 554 functions
+  tests/test_w6a_citations.py: exit 0 in 2.6 s, 602 functions
+  tests/test_regen_generated.py: exit 0 in 85.4 s, 797 functions
+  tests/test_wire_contract_lean.py: exit 0 in 1.2 s, 340 functions
+  tools/test_layer_policy.py: exit 0 in 92.3 s, 314 functions
+  tests/test_lean_document_wrapper.py: exit 0 in 568.9 s, 1573 functions
+  tests/test_consolidation_tools.py: exit 0 in 2686.9 s, 1244 functions
+wrote /home/runner/work/_temp/out/map-s0.json.gz (60 KiB); recorded 34 units; 0 failed and are left to the static graph: []
