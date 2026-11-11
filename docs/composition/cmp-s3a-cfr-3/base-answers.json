@@ -1,0 +1,166 @@
+{
+ "answers": {
+  "K1": {
+   "id": "K1",
+   "result": {
+    "clause_slot": [],
+    "plained": "[{\"right\":{\"holder\":\"person\",\"lines\":[{\"kind\":\"claim\",\"norm\":{\"guard\":[\"top\"],\"name\":\"equal-access\",\"over\":[],\"predicate\":\"public_service_access_required\",\"sign\":true,\"unless\":[]}}],\"name\":\"r21\"}}]"
+   },
+   "status": "ok"
+  },
+  "K15": {
+   "error": "InvalidInput: elided missing on rule equal-access",
+   "id": "K15",
+   "status": "error"
+  },
+  "K2": {
+   "id": "K2",
+   "result": {
+    "clause_slot": [],
+    "plained": "[{\"right\":{\"holder\":\"person\",\"lines\":[{\"kind\":\"claim\",\"norm\":{\"guard\":[\"and\",[\"top\"],[\"binary\",\"country_of\",[\"var\",1],[\"var\",0]]],\"name\":\"equal-access\",\"over\":[],\"predicate\":\"public_service_access_required\",\"sign\":true,\"unless\":[]}}],\"name\":\"r21\"}}]"
+   },
+   "status": "ok"
+  },
+  "K3": {
+   "id": "K3",
+   "result": {
+    "clause_slot": [
+     {
+      "ast": [
+       "forall",
+       "person",
+       [
+        "implies",
+        [
+         "top"
+        ],
+        [
+         "exists",
+         "state",
+         [
+          "binary",
+          "country_of",
+          [
+           "var",
+           0
+          ],
+          [
+           "var",
+           1
+          ]
+         ]
+        ]
+       ]
+      ],
+      "label": "rights:relation:equal-access:total"
+     }
+    ],
+    "plained": "[{\"right\":{\"holder\":\"person\",\"lines\":[{\"kind\":\"claim\",\"norm\":{\"guard\":[\"and\",[\"top\"],[\"binary\",\"country_of\",[\"var\",1],[\"var\",0]]],\"name\":\"equal-access\",\"over\":[],\"predicate\":\"public_service_access_required\",\"sign\":true,\"unless\":[]}}],\"name\":\"r21\"}}]"
+   },
+   "status": "ok"
+  },
+  "K4": {
+   "id": "K4",
+   "result": {
+    "clause_slot": [],
+    "plained": "[{\"right\":{\"holder\":\"person\",\"lines\":[{\"kind\":\"claim\",\"norm\":{\"guard\":[\"and\",[\"top\"],[\"unary\",\"charged\",[\"var\",0]]],\"name\":\"equal-access\",\"over\":[],\"predicate\":\"public_service_access_required\",\"sign\":true,\"unless\":[]}}],\"name\":\"r21\"}}]"
+   },
+   "status": "ok"
+  },
+  "K5": {
+   "error": "ClauseSpan: equal-access: [90, 110)",
+   "id": "K5",
+   "status": "error"
+  },
+  "K6": {
+   "error": "ClauseSpan: equal-access: [15, 25)",
+   "id": "K6",
+   "status": "error"
+  },
+  "K7": {
+   "error": "InvalidInput: ill-typed clause 0 of rule equal-access",
+   "id": "K7",
+   "status": "error"
+  },
+  "K8a": {
+   "error": "RelationShape: equal-access",
+   "id": "K8a",
+   "status": "error"
+  },
+  "K8b": {
+   "error": "RelationShape: equal-access",
+   "id": "K8b",
+   "status": "error"
+  },
+  "K9": {
+   "error": "InvalidInput: elided missing on rule equal-access",
+   "id": "K9",
+   "status": "error"
+  },
+  "clause-role": {
+   "error": "InvalidInput: invalid clause 0 of rule equal-access",
+   "id": "clause-role",
+   "status": "error"
+  },
+  "clauses-empty": {
+   "error": "InvalidInput: invalid clauses of rule equal-access",
+   "id": "clauses-empty",
+   "status": "error"
+  },
+  "clauses-scalar": {
+   "error": "InvalidInput: invalid clauses of rule equal-access",
+   "id": "clauses-scalar",
+   "status": "error"
+  },
+  "deep-clause": {
+   "error": "ResourceLimit: formula depth exceeds 64",
+   "id": "deep-clause",
+   "status": "error"
+  },
+  "elided-scalar": {
+   "error": "InvalidInput: invalid elided of rule equal-access",
+   "id": "elided-scalar",
+   "status": "error"
+  },
+  "elided-shape": {
+   "error": "InvalidInput: invalid elided of rule equal-access",
+   "id": "elided-shape",
+   "status": "error"
+  },
+  "no-unit-span": {
+   "error": "ClauseSpan: equal-access: [10, 20)",
+   "id": "no-unit-span",
+   "status": "error"
+  },
+  "relation-cites": {
+   "error": "InvalidInput: invalid relation of rule equal-access",
+   "id": "relation-cites",
+   "status": "error"
+  },
+  "relation-key": {
+   "error": "InvalidInput: invalid relation of rule equal-access",
+   "id": "relation-key",
+   "status": "error"
+  },
+  "roles": {
+   "id": "roles",
+   "result": {
+    "clause_slot": [],
+    "plained": "[{\"right\":{\"holder\":\"person\",\"lines\":[{\"kind\":\"claim\",\"norm\":{\"guard\":[\"and\",[\"and\",[\"top\"],[\"unary\",\"charged\",[\"var\",0]]],[\"unary\",\"charged\",[\"var\",0]]],\"name\":\"equal-access\",\"over\":[],\"predicate\":\"public_service_access_required\",\"sign\":true,\"unless\":[]}}],\"name\":\"r21\"}}]"
+   },
+   "status": "ok"
+  },
+  "two-relations": {
+   "error": "InvalidInput: invalid relation of rule equal-access",
+   "id": "two-relations",
+   "status": "error"
+  },
+  "unit-span": {
+   "error": "InvalidInput: invalid unit span",
+   "id": "unit-span",
+   "status": "error"
+  }
+ },
+ "commit": "3395d6559283790360f6b2ed8adc33088c491234",
+ "source": "K1 and K_FIXTURES of tests/test_right_clauses.py, run by that commit's clauses-elaborate mode"
+}

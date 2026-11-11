@@ -38,8 +38,11 @@ declared binary base predicate between two of its slots, maybe total on the hold
   label `rights:relation:<rule>:total`, and none is a limitation label. The hypothesis is signed by the DRI
   (reviews/dri-decisions-20261104-cmp-s3.md Q3): `Lim_D`'s labels can repeat on a well-formed rights document
   (pk-1c's `cx`, rebuilt as `cxDoc` in Examples.lean).
-- `clauseSlot_wellFormed` (8.4): not proved yet (cmp-s3b). It needs every base predicate that the base
-  vocabulary shows to stay visible in the correlated document's stage-0 vocabulary. No lemma in the tree gives that.
+- `clauseSlot_wellFormed` (8.4, cmp-s3-cfr-1b): every premise of the slot is a closed formula typed at layer 0 of
+  the correlated plained document, the `hP` of every slot theorem (4.2). The base vocabulary stays visible there:
+  the base tree's dependency graph is part of the correlated one, so it has an order and its layer names are all
+  the regulated and defined names; and no generated name is an author's. The holder slot carries the right's holder
+  sort, by rights' shape check.
 - `clause_fails_not_selected`: where a clause or the relation fails at a tuple, the line does not select there, so
   no duty or liberty follows from it at that tuple.
 - `relation_some_bearer`: under a total relation from the bearer slot to the holder slot, every holder in the
