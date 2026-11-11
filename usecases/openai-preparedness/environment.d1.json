@@ -190,7 +190,7 @@
         "arguments": [
           "situation"
         ],
-        "description": "forecasts and threat models justify a severe-risk development checkpoint at {0}"
+        "description": "{0} is justified by OpenAI's forecasts and threat models as potentially posing a severe risk during development and prior to external deployment (3.2)"
       },
       "distilled_from_below_high": {
         "arguments": [

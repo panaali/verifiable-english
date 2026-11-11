@@ -64,7 +64,9 @@ BASE = {
     "proposed": base(["proposal"], "{0} is proposed"),
     "required": base(["requirement"], "{0} is a requirement"),
     "coverage_ambiguous": base(["situation"], "coverage of {0} is ambiguous"),
-    "forecast_severe_before_deployment": base(["situation"], "forecasts and threat models justify a severe-risk development checkpoint at {0}"),
+    "forecast_severe_before_deployment": base(["situation"], "{0} is justified by OpenAI's forecasts and threat models as "
+                                              "potentially posing a severe risk during development and prior to "
+                                              "external deployment (3.2)"),
     "distilled_from_below_high": base(["situation"], "{0} derives from a model determined below High"),
     "significant_increase": base(["situation"], "there is reason to believe at {0} that a significant increase in capability "
                                      "has occurred; OpenAI ('we') decides this (OT20)"),
