@@ -59,7 +59,7 @@ the same way as safety-framework's `test_span_accounting_is_complete`.
 | DeepMind FSF 3.1 | Oct 28 (fsf-r2) | 4,595 (8.5%) | 7,356 (13.5%) | 35,557 (65.4%) | 6,865 (12.6%) | 54,373 |
 | Anthropic RSP 3.4 | Oct 28 (corrected baseline) | 5,327 (9.0%) | 13,214 (22.2%) | 37,248 (62.7%) | 3,621 (6.1%) | 59,410 |
 | OpenAI PF v2 (baseline) | Oct 29 (D1 family drafts) | 170 (0.3%) | 7,052 (10.5%) | 5,327 (7.9%) | 54,869 (81.4%) | 67,418 |
-| OpenAI PF v2 | Oct 30 (usecase-pf-run) | 170 (0.3%) | 9,073 (13.5%) | 5,327 (7.9%) | 52,848 (78.4%) | 67,418 |
+| OpenAI PF v2 | Nov 11 (openai-preparedness-fidelity-fix) | 170 (0.3%) | 9,073 (13.5%) | 5,327 (7.9%) | 52,848 (78.4%) | 67,418 |
 
 Sources: [fsf-r2/gaps.json](../safety-framework/fsf-r2/gaps.json) (`master_bytes_by_status`, Oct 1, Oct 18 and
 today), [anthropic-rsp/gaps.json](anthropic-rsp/gaps.json) and
