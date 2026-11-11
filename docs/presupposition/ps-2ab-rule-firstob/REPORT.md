@@ -86,8 +86,8 @@ Trust-mutants sweep (`zsh mac-pytest.sh --trustmut -- --max-mutants 1000 --json 
 
 ## Trust (R16)
 
-`uv run python tools/trust_map.py --check` on the final tree: `K +0, S +0, D +0, G +0, tied +0, unclassified +5,
-trusted +5; VE/Presupposition/Admit.lean: trusted +5` (`ruleOb` with its docstring), exit 0 after
+`uv run python tools/trust_map.py --check` on the final tree: `K +0, S +0, D +0, G +5, tied +0, unclassified +0,
+trusted +5; VE/Presupposition/Admit.lean: trusted +5` (`ruleOb` with its docstring, classed G[V]), exit 0 after
 `trust_map.py --allow` (`allowed V +5 over b81b82ef91ad`, signed "SIGNED by standing ruling R16 (DRI-RULINGS.md),
 ps-2ab-rule-firstob, 2026-11-11"). The new trusted definition `ruleOb` is exercised by Run.lean:357 and the pytest,
 which can fail (M1-M4). FOLLOW-UPS.md row under "## ps-2ab-rule-firstob" asks for the ties pass.
@@ -107,7 +107,11 @@ refusal guard in Run.lean and Examples.lean builds unchanged: `lake build` compl
   and 0 malformed trailers`.
 - `tools/select_tests.py --base $(git merge-base HEAD main)`: 121/591 units, `tests/test_presupposition_rule_ob.py`
   among them; the Lean change selects the lake build that runs Run.lean's guards.
-- Selected tests on the committed final tree: see the build report (run after this file is committed).
+- Selected tests on the committed tree 1db3d013af (`MAC_PYTEST_NO_DEFER=1 mac-pytest.sh --select -- --base <merge base>
+  --run`, ve-cloud-3): `1 failed, 287 passed` (exit 1). The failure, `tests/test_consolidation_tools.py::
+  test_committed_trust_table_covers_every_declaration` (`assert 5 == 0`: `ruleOb` unclassified), is fixed by classing
+  `ruleOb` G[V] in tools/trust-classes.json; that id rerun alone: `1 passed`. `trust_map.py --check` after it: `G +5,
+  unclassified +0, trusted +5`, exit 0.
 
 spec re-read: "step 5 names the rule's first obligation, or none" against reviews/dri-decisions-20261110-adv1658.md
 item 3 (:47-49) and the backlog row's note; "the rule's obligations" against `regen`'s `.ruleAct n` case
@@ -116,6 +120,10 @@ item 3 (:47-49) and the backlog row's note; "the rule's obligations" against `re
 Pilot bytes expected to move: 0 (no pilot output carries `admit`'s report before PS-4; an estimate, not audited).
 
 ## Notes for the DRI
+
+- `ruleOb` is classed G[V] (verdict-bearing glue, counted trusted under R16), the conservative class. Its sibling
+  `firstOb` is G[R] (diagnostic), and `ruleOb` only builds diagnostic text, so a ties or classification pass may move it
+  to G[R]; that would drop the +5 from the trusted count.
 
 - The pytest elaborates Lean directly rather than through the service (see Deviation); PS-4 can move it onto the
   document route when that route exists.
