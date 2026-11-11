@@ -1021,6 +1021,998 @@ theorem VE.Acts.Lexical.words_intercalate
       VE.Norms.Wire.words (" ".intercalate ws) = ws
   -- uses VE.Norms.Wire.pyWhitespace@VE.Acts.LexicalBase VE.Norms.Wire.words@VE.Acts.LexicalBase
   -- expr 265214043
+theorem VE.Acts.NormalProofs.FrameOk.frame
+  ∀ {V : VE.Acts.Vocab} {f : VE.Acts.Frame} {h : Nat}, VE.Acts.NormalProofs.FrameOk V f h → f ∈ V.frames
+  -- uses VE.Acts.Frame@VE.Acts.Syntax VE.Acts.NormalProofs.FrameOk@VE.Acts.NormalProofs VE.Acts.Vocab.frames@VE.Acts.Syntax VE.Acts.Vocab@VE.Acts.Syntax
+  -- expr 2763304154
+theorem VE.Acts.NormalProofs.FrameOk.lower
+  ∀ {V : VE.Acts.Vocab} {f : VE.Acts.Frame} {h : Nat},
+    VE.Acts.NormalProofs.FrameOk V f h →
+      ∀ (m : String), m ∈ f.markers ++ f.mods → m ≠ "" → ∀ (w : String), w ∈ VE.Acts.wordsOf m → w.toLower = w
+  -- uses VE.Acts.Frame.markers@VE.Acts.Syntax VE.Acts.Frame.mods@VE.Acts.Syntax VE.Acts.Frame@VE.Acts.Syntax VE.Acts.NormalProofs.FrameOk@VE.Acts.NormalProofs VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.wordsOf@VE.Acts.Syntax
+  -- expr 1787729725
+theorem VE.Acts.NormalProofs.FrameOk.mem
+  ∀ {V : VE.Acts.Vocab} {f : VE.Acts.Frame} {h : Nat}, VE.Acts.NormalProofs.FrameOk V f h → (f, h) ∈ V.frames.zipIdx
+  -- uses VE.Acts.Frame@VE.Acts.Syntax VE.Acts.NormalProofs.FrameOk@VE.Acts.NormalProofs VE.Acts.Vocab.frames@VE.Acts.Syntax VE.Acts.Vocab@VE.Acts.Syntax
+  -- expr 2522863885
+theorem VE.Acts.NormalProofs.FrameOk.mods
+  ∀ {V : VE.Acts.Vocab} {f : VE.Acts.Frame} {h : Nat}, VE.Acts.NormalProofs.FrameOk V f h → ¬"" ∈ f.mods
+  -- uses VE.Acts.Frame.mods@VE.Acts.Syntax VE.Acts.Frame@VE.Acts.Syntax VE.Acts.NormalProofs.FrameOk@VE.Acts.NormalProofs VE.Acts.Vocab@VE.Acts.Syntax
+  -- expr 3915511419
+theorem VE.Acts.NormalProofs.FrameOk.words
+  ∀ {V : VE.Acts.Vocab} {f : VE.Acts.Frame} {h : Nat},
+    VE.Acts.NormalProofs.FrameOk V f h → ∀ (m : String), m ∈ f.markers ++ f.mods → m ≠ "" → VE.Acts.wordsOf m ≠ []
+  -- uses VE.Acts.Frame.markers@VE.Acts.Syntax VE.Acts.Frame.mods@VE.Acts.Syntax VE.Acts.Frame@VE.Acts.Syntax VE.Acts.NormalProofs.FrameOk@VE.Acts.NormalProofs VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.wordsOf@VE.Acts.Syntax
+  -- expr 27799645
+theorem VE.Acts.NormalProofs.add_args
+  ∀ (L : List (String × VE.Acts.Filler)) (x : VE.Acts.Atom),
+    List.foldl VE.Acts.Atom.add x (List.map (fun q => VE.Acts.Elt.arg q.fst q.snd) L) =
+      { toWord := x.toWord, beWord := x.beWord, head := x.head, args := x.args ++ L, mods := x.mods }
+  -- uses VE.Acts.Atom.add@VE.Acts.Meaning VE.Acts.Atom.args@VE.Acts.Tree VE.Acts.Atom.beWord@VE.Acts.Tree VE.Acts.Atom.head@VE.Acts.Tree VE.Acts.Atom.mk@VE.Acts.Tree VE.Acts.Atom.mods@VE.Acts.Tree VE.Acts.Atom.toWord@VE.Acts.Tree VE.Acts.Atom@VE.Acts.Tree VE.Acts.Elt.arg@VE.Acts.Meaning VE.Acts.Elt@VE.Acts.Meaning VE.Acts.Filler@VE.Acts.Tree
+  -- expr 2253720414
+theorem VE.Acts.NormalProofs.add_mods
+  ∀ (ms : List VE.Acts.Modifier) (x : VE.Acts.Atom),
+    List.foldl VE.Acts.Atom.add x (List.map VE.Acts.Elt.mod ms) =
+      { toWord := x.toWord, beWord := x.beWord, head := x.head, args := x.args, mods := x.mods ++ ms }
+  -- uses VE.Acts.Atom.add@VE.Acts.Meaning VE.Acts.Atom.args@VE.Acts.Tree VE.Acts.Atom.beWord@VE.Acts.Tree VE.Acts.Atom.head@VE.Acts.Tree VE.Acts.Atom.mk@VE.Acts.Tree VE.Acts.Atom.mods@VE.Acts.Tree VE.Acts.Atom.toWord@VE.Acts.Tree VE.Acts.Atom@VE.Acts.Tree VE.Acts.Elt.mod@VE.Acts.Meaning VE.Acts.Elt@VE.Acts.Meaning VE.Acts.Modifier@VE.Acts.Tree
+  -- expr 823603759
+theorem VE.Acts.NormalProofs.all_obj
+  ∀ (q : String × VE.Acts.Filler → Bool) (l : List (String × VE.Acts.Filler)),
+    (List.filter (fun x => x.fst == "") l ++ List.filter (fun x => x.fst != "") l).all q = l.all q
+  -- uses VE.Acts.Filler@VE.Acts.Tree
+  -- expr 841934462
+theorem VE.Acts.NormalProofs.ap_ADVO
+  ∀ (ws : List String) (v : String),
+    VE.Acts.applyRule
+        { lhs := VE.Acts.NT.ADVO, rhs := [VE.Acts.RSym.t (VE.Acts.Term.adv ws)], kind := VE.Acts.Kind.shape }
+        [VE.Acts.Piece.w v] =
+      Option.some [VE.Acts.Piece.elt (VE.Acts.Elt.mod (VE.Acts.Modifier.adv v.toLower)) VE.Acts.Att.own]
+  -- uses VE.Acts.Att.own@VE.Acts.Meaning VE.Acts.Elt.mod@VE.Acts.Meaning VE.Acts.Kind.shape@VE.Acts.Grammar VE.Acts.Modifier.adv@VE.Acts.Tree VE.Acts.NT.ADVO@VE.Acts.Grammar VE.Acts.Piece.elt@VE.Acts.Meaning VE.Acts.Piece.w@VE.Acts.Meaning VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RSym.t@VE.Acts.Grammar VE.Acts.RSym@VE.Acts.Grammar VE.Acts.RuleS.mk@VE.Acts.Grammar VE.Acts.Term.adv@VE.Acts.Syntax VE.Acts.applyRule@VE.Acts.Meaning
+  -- expr 3486766891
+theorem VE.Acts.NormalProofs.ap_ADVSO1
+  ∀ (cs : List VE.Acts.Piece),
+    VE.Acts.applyRule { lhs := VE.Acts.NT.ADVSO, rhs := [VE.Acts.RSym.n VE.Acts.NT.ADVO], kind := VE.Acts.Kind.shape }
+        cs =
+      Option.some cs
+  -- uses VE.Acts.Kind.shape@VE.Acts.Grammar VE.Acts.NT.ADVO@VE.Acts.Grammar VE.Acts.NT.ADVSO@VE.Acts.Grammar VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RSym.n@VE.Acts.Grammar VE.Acts.RSym@VE.Acts.Grammar VE.Acts.RuleS.mk@VE.Acts.Grammar VE.Acts.applyRule@VE.Acts.Meaning
+  -- expr 717660922
+theorem VE.Acts.NormalProofs.ap_ADVSO2
+  ∀ (cs : List VE.Acts.Piece),
+    VE.Acts.applyRule
+        { lhs := VE.Acts.NT.ADVSO, rhs := [VE.Acts.RSym.n VE.Acts.NT.ADVO, VE.Acts.RSym.n VE.Acts.NT.ADVSO],
+          kind := VE.Acts.Kind.shape }
+        cs =
+      Option.some cs
+  -- uses VE.Acts.Kind.shape@VE.Acts.Grammar VE.Acts.NT.ADVO@VE.Acts.Grammar VE.Acts.NT.ADVSO@VE.Acts.Grammar VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RSym.n@VE.Acts.Grammar VE.Acts.RSym@VE.Acts.Grammar VE.Acts.RuleS.mk@VE.Acts.Grammar VE.Acts.applyRule@VE.Acts.Meaning
+  -- expr 1750247205
+theorem VE.Acts.NormalProofs.ap_AR
+  ∀ (h : Nat) (m : String) (p : VE.Acts.Part),
+    VE.Acts.applyRule
+        { lhs := VE.Acts.NT.F h (VE.Acts.FNT.AR m),
+          rhs := [VE.Acts.RSym.n (VE.Acts.NT.MK m), VE.Acts.RSym.n (VE.Acts.NT.F h VE.Acts.FNT.FL)],
+          kind := VE.Acts.Kind.shape }
+        [VE.Acts.Piece.part p] =
+      Option.some [VE.Acts.Piece.elt (VE.Acts.Elt.arg m (VE.Acts.Filler.one p)) VE.Acts.Att.own]
+  -- uses VE.Acts.Att.own@VE.Acts.Meaning VE.Acts.Elt.arg@VE.Acts.Meaning VE.Acts.FNT.AR@VE.Acts.Grammar VE.Acts.FNT.FL@VE.Acts.Grammar VE.Acts.Filler.one@VE.Acts.Tree VE.Acts.Kind.shape@VE.Acts.Grammar VE.Acts.NT.F@VE.Acts.Grammar VE.Acts.NT.MK@VE.Acts.Grammar VE.Acts.Part@VE.Acts.Tree VE.Acts.Piece.elt@VE.Acts.Meaning VE.Acts.Piece.part@VE.Acts.Meaning VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RSym.n@VE.Acts.Grammar VE.Acts.RSym@VE.Acts.Grammar VE.Acts.RuleS.mk@VE.Acts.Grammar VE.Acts.applyRule@VE.Acts.Meaning
+  -- expr 2174277577
+theorem VE.Acts.NormalProofs.ap_EE1
+  ∀ (h : Nat) (cs : List VE.Acts.Piece) (y : VE.Acts.FNT),
+    VE.Acts.applyRule
+        { lhs := VE.Acts.NT.F h VE.Acts.FNT.EE, rhs := [VE.Acts.RSym.n (VE.Acts.NT.F h y)], kind := VE.Acts.Kind.shape }
+        cs =
+      Option.some cs
+  -- uses VE.Acts.FNT.EE@VE.Acts.Grammar VE.Acts.FNT@VE.Acts.Grammar VE.Acts.Kind.shape@VE.Acts.Grammar VE.Acts.NT.F@VE.Acts.Grammar VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RSym.n@VE.Acts.Grammar VE.Acts.RSym@VE.Acts.Grammar VE.Acts.RuleS.mk@VE.Acts.Grammar VE.Acts.applyRule@VE.Acts.Meaning
+  -- expr 3072212816
+theorem VE.Acts.NormalProofs.ap_EEmod
+  ∀ (h : Nat) (m : String) (p : VE.Acts.Part),
+    VE.Acts.applyRule
+        { lhs := VE.Acts.NT.F h VE.Acts.FNT.EE,
+          rhs := [VE.Acts.RSym.n (VE.Acts.NT.MK m), VE.Acts.RSym.n (VE.Acts.NT.F h VE.Acts.FNT.FL)],
+          kind := VE.Acts.Kind.shape }
+        [VE.Acts.Piece.part p] =
+      Option.some [VE.Acts.Piece.elt (VE.Acts.Elt.mod (VE.Acts.Modifier.prep m p)) VE.Acts.Att.own]
+  -- uses VE.Acts.Att.own@VE.Acts.Meaning VE.Acts.Elt.mod@VE.Acts.Meaning VE.Acts.FNT.EE@VE.Acts.Grammar VE.Acts.FNT.FL@VE.Acts.Grammar VE.Acts.Kind.shape@VE.Acts.Grammar VE.Acts.Modifier.prep@VE.Acts.Tree VE.Acts.NT.F@VE.Acts.Grammar VE.Acts.NT.MK@VE.Acts.Grammar VE.Acts.Part@VE.Acts.Tree VE.Acts.Piece.elt@VE.Acts.Meaning VE.Acts.Piece.part@VE.Acts.Meaning VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RSym.n@VE.Acts.Grammar VE.Acts.RSym@VE.Acts.Grammar VE.Acts.RuleS.mk@VE.Acts.Grammar VE.Acts.applyRule@VE.Acts.Meaning
+  -- expr 2542205711
+theorem VE.Acts.NormalProofs.ap_ER1
+  ∀ (h : Nat) (cs : List VE.Acts.Piece),
+    VE.Acts.applyRule
+        { lhs := VE.Acts.NT.F h VE.Acts.FNT.ER, rhs := [VE.Acts.RSym.n (VE.Acts.NT.F h VE.Acts.FNT.EE)],
+          kind := VE.Acts.Kind.shape }
+        cs =
+      Option.some cs
+  -- uses VE.Acts.FNT.EE@VE.Acts.Grammar VE.Acts.FNT.ER@VE.Acts.Grammar VE.Acts.Kind.shape@VE.Acts.Grammar VE.Acts.NT.F@VE.Acts.Grammar VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RSym.n@VE.Acts.Grammar VE.Acts.RSym@VE.Acts.Grammar VE.Acts.RuleS.mk@VE.Acts.Grammar VE.Acts.applyRule@VE.Acts.Meaning
+  -- expr 1985614813
+theorem VE.Acts.NormalProofs.ap_ER2
+  ∀ (h : Nat) (cs : List VE.Acts.Piece),
+    VE.Acts.applyRule
+        { lhs := VE.Acts.NT.F h VE.Acts.FNT.ER,
+          rhs := [VE.Acts.RSym.n (VE.Acts.NT.F h VE.Acts.FNT.EE), VE.Acts.RSym.n (VE.Acts.NT.F h VE.Acts.FNT.ER)],
+          kind := VE.Acts.Kind.shape }
+        cs =
+      Option.some cs
+  -- uses VE.Acts.FNT.EE@VE.Acts.Grammar VE.Acts.FNT.ER@VE.Acts.Grammar VE.Acts.Kind.shape@VE.Acts.Grammar VE.Acts.NT.F@VE.Acts.Grammar VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RSym.n@VE.Acts.Grammar VE.Acts.RSym@VE.Acts.Grammar VE.Acts.RuleS.mk@VE.Acts.Grammar VE.Acts.applyRule@VE.Acts.Meaning
+  -- expr 3038931445
+theorem VE.Acts.NormalProofs.ap_FL_tok
+  ∀ (h : Nat) (p : VE.Acts.Part),
+    VE.Acts.applyRule
+        { lhs := VE.Acts.NT.F h VE.Acts.FNT.FL, rhs := [VE.Acts.RSym.n VE.Acts.NT.TOK], kind := VE.Acts.Kind.shape }
+        [VE.Acts.Piece.part p] =
+      Option.some [VE.Acts.Piece.part p]
+  -- uses VE.Acts.FNT.FL@VE.Acts.Grammar VE.Acts.Kind.shape@VE.Acts.Grammar VE.Acts.NT.F@VE.Acts.Grammar VE.Acts.NT.TOK@VE.Acts.Grammar VE.Acts.Part@VE.Acts.Tree VE.Acts.Piece.part@VE.Acts.Meaning VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RSym.n@VE.Acts.Grammar VE.Acts.RSym@VE.Acts.Grammar VE.Acts.RuleS.mk@VE.Acts.Grammar VE.Acts.applyRule@VE.Acts.Meaning
+  -- expr 211640369
+theorem VE.Acts.NormalProofs.ap_FL_words
+  ∀ (h : Nat) (ws : List String),
+    VE.Acts.applyRule
+        { lhs := VE.Acts.NT.F h VE.Acts.FNT.FL, rhs := [VE.Acts.RSym.n (VE.Acts.NT.F h VE.Acts.FNT.WR)],
+          kind := VE.Acts.Kind.shape }
+        (List.map VE.Acts.Piece.w ws) =
+      Option.some [VE.Acts.Piece.part (VE.Acts.Part.words ws)]
+  -- uses VE.Acts.FNT.FL@VE.Acts.Grammar VE.Acts.FNT.WR@VE.Acts.Grammar VE.Acts.Kind.shape@VE.Acts.Grammar VE.Acts.NT.F@VE.Acts.Grammar VE.Acts.Part.words@VE.Acts.Tree VE.Acts.Piece.part@VE.Acts.Meaning VE.Acts.Piece.w@VE.Acts.Meaning VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RSym.n@VE.Acts.Grammar VE.Acts.RSym@VE.Acts.Grammar VE.Acts.RuleS.mk@VE.Acts.Grammar VE.Acts.applyRule@VE.Acts.Meaning
+  -- expr 3987448615
+theorem VE.Acts.NormalProofs.ap_FW_be
+  VE.Acts.applyRule { lhs := VE.Acts.NT.FW, rhs := VE.Acts.kwSyms ["be"], kind := VE.Acts.Kind.shape }
+      [VE.Acts.Piece.w "be"] =
+    Option.some [VE.Acts.Piece.fw Bool.false Bool.true]
+  -- uses VE.Acts.Kind.shape@VE.Acts.Grammar VE.Acts.NT.FW@VE.Acts.Grammar VE.Acts.Piece.fw@VE.Acts.Meaning VE.Acts.Piece.w@VE.Acts.Meaning VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RuleS.mk@VE.Acts.Grammar VE.Acts.applyRule@VE.Acts.Meaning VE.Acts.kwSyms@VE.Acts.Grammar
+  -- expr 1437870160
+theorem VE.Acts.NormalProofs.ap_FW_to
+  VE.Acts.applyRule { lhs := VE.Acts.NT.FW, rhs := VE.Acts.kwSyms ["to"], kind := VE.Acts.Kind.shape }
+      [VE.Acts.Piece.w "to"] =
+    Option.some [VE.Acts.Piece.fw Bool.true Bool.false]
+  -- uses VE.Acts.Kind.shape@VE.Acts.Grammar VE.Acts.NT.FW@VE.Acts.Grammar VE.Acts.Piece.fw@VE.Acts.Meaning VE.Acts.Piece.w@VE.Acts.Meaning VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RuleS.mk@VE.Acts.Grammar VE.Acts.applyRule@VE.Acts.Meaning VE.Acts.kwSyms@VE.Acts.Grammar
+  -- expr 3847625329
+theorem VE.Acts.NormalProofs.ap_FW_tobe
+  VE.Acts.applyRule { lhs := VE.Acts.NT.FW, rhs := VE.Acts.kwSyms ["to", "be"], kind := VE.Acts.Kind.shape }
+      [VE.Acts.Piece.w "to", VE.Acts.Piece.w "be"] =
+    Option.some [VE.Acts.Piece.fw Bool.true Bool.true]
+  -- uses VE.Acts.Kind.shape@VE.Acts.Grammar VE.Acts.NT.FW@VE.Acts.Grammar VE.Acts.Piece.fw@VE.Acts.Meaning VE.Acts.Piece.w@VE.Acts.Meaning VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RuleS.mk@VE.Acts.Grammar VE.Acts.applyRule@VE.Acts.Meaning VE.Acts.kwSyms@VE.Acts.Grammar
+  -- expr 2518480171
+theorem VE.Acts.NormalProofs.ap_HD
+  ∀ (h : Nat) (ws : List String),
+    (∀ (w : String), w ∈ ws → w.toLower = w) →
+      ws ≠ [] →
+        VE.Acts.applyRule { lhs := VE.Acts.NT.F h VE.Acts.FNT.HD, rhs := VE.Acts.kwSyms ws, kind := VE.Acts.Kind.shape }
+            (List.map VE.Acts.Piece.w ws) =
+          Option.some [VE.Acts.Piece.head ws]
+  -- uses VE.Acts.FNT.HD@VE.Acts.Grammar VE.Acts.Kind.shape@VE.Acts.Grammar VE.Acts.NT.F@VE.Acts.Grammar VE.Acts.Piece.head@VE.Acts.Meaning VE.Acts.Piece.w@VE.Acts.Meaning VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RuleS.mk@VE.Acts.Grammar VE.Acts.applyRule@VE.Acts.Meaning VE.Acts.kwSyms@VE.Acts.Grammar
+  -- expr 2511229611
+theorem VE.Acts.NormalProofs.ap_J
+  ∀ (j : VE.Acts.Join),
+    VE.Acts.applyRule { lhs := VE.Acts.NT.J, rhs := VE.Acts.kwSyms [VE.Acts.joinWord j], kind := VE.Acts.Kind.shape }
+        [VE.Acts.Piece.w (VE.Acts.joinWord j)] =
+      Option.some [VE.Acts.Piece.j j]
+  -- uses VE.Acts.Join@VE.Acts.Tree VE.Acts.Kind.shape@VE.Acts.Grammar VE.Acts.NT.J@VE.Acts.Grammar VE.Acts.Piece.j@VE.Acts.Meaning VE.Acts.Piece.w@VE.Acts.Meaning VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RuleS.mk@VE.Acts.Grammar VE.Acts.applyRule@VE.Acts.Meaning VE.Acts.joinWord@VE.Acts.Linearize VE.Acts.kwSyms@VE.Acts.Grammar
+  -- expr 4215361680
+theorem VE.Acts.NormalProofs.ap_LST
+  ∀ (h : Nat) (m : String) (j : VE.Acts.Join) (ps : List VE.Acts.Part),
+    VE.Acts.applyRule
+        { lhs := VE.Acts.NT.F h (VE.Acts.FNT.LST m Bool.false),
+          rhs := [VE.Acts.RSym.n (VE.Acts.NT.F h (VE.Acts.FNT.OL m))], kind := VE.Acts.Kind.shape }
+        [VE.Acts.Piece.list j ps] =
+      Option.some [VE.Acts.Piece.elt (VE.Acts.Elt.arg m (VE.Acts.Filler.joined j ps)) VE.Acts.Att.own]
+  -- uses VE.Acts.Att.own@VE.Acts.Meaning VE.Acts.Elt.arg@VE.Acts.Meaning VE.Acts.FNT.LST@VE.Acts.Grammar VE.Acts.FNT.OL@VE.Acts.Grammar VE.Acts.Filler.joined@VE.Acts.Tree VE.Acts.Join@VE.Acts.Tree VE.Acts.Kind.shape@VE.Acts.Grammar VE.Acts.NT.F@VE.Acts.Grammar VE.Acts.Part@VE.Acts.Tree VE.Acts.Piece.elt@VE.Acts.Meaning VE.Acts.Piece.list@VE.Acts.Meaning VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RSym.n@VE.Acts.Grammar VE.Acts.RSym@VE.Acts.Grammar VE.Acts.RuleS.mk@VE.Acts.Grammar VE.Acts.applyRule@VE.Acts.Meaning
+  -- expr 2312873321
+theorem VE.Acts.NormalProofs.ap_MK
+  ∀ (m : String) (cs : List VE.Acts.Piece) (w : String) (ws : List String),
+    VE.Acts.applyRule { lhs := VE.Acts.NT.MK m, rhs := VE.Acts.kwSyms (w :: ws), kind := VE.Acts.Kind.shape } cs =
+      Option.some []
+  -- uses VE.Acts.Kind.shape@VE.Acts.Grammar VE.Acts.NT.MK@VE.Acts.Grammar VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RuleS.mk@VE.Acts.Grammar VE.Acts.applyRule@VE.Acts.Meaning VE.Acts.kwSyms@VE.Acts.Grammar
+  -- expr 3316035574
+theorem VE.Acts.NormalProofs.ap_O1
+  ∀ (h : Nat) (p : VE.Acts.Part),
+    VE.Acts.applyRule
+        { lhs := VE.Acts.NT.F h VE.Acts.FNT.O, rhs := [VE.Acts.RSym.n (VE.Acts.NT.F h VE.Acts.FNT.FL)],
+          kind := VE.Acts.Kind.shape }
+        [VE.Acts.Piece.part p] =
+      Option.some [VE.Acts.Piece.elt (VE.Acts.Elt.arg "" (VE.Acts.Filler.one p)) VE.Acts.Att.own]
+  -- uses VE.Acts.Att.own@VE.Acts.Meaning VE.Acts.Elt.arg@VE.Acts.Meaning VE.Acts.FNT.FL@VE.Acts.Grammar VE.Acts.FNT.O@VE.Acts.Grammar VE.Acts.Filler.one@VE.Acts.Tree VE.Acts.Kind.shape@VE.Acts.Grammar VE.Acts.NT.F@VE.Acts.Grammar VE.Acts.Part@VE.Acts.Tree VE.Acts.Piece.elt@VE.Acts.Meaning VE.Acts.Piece.part@VE.Acts.Meaning VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RSym.n@VE.Acts.Grammar VE.Acts.RSym@VE.Acts.Grammar VE.Acts.RuleS.mk@VE.Acts.Grammar VE.Acts.applyRule@VE.Acts.Meaning
+  -- expr 3156723870
+theorem VE.Acts.NormalProofs.ap_O2
+  ∀ (h : Nat) (j : VE.Acts.Join) (ps : List VE.Acts.Part),
+    VE.Acts.applyRule
+        { lhs := VE.Acts.NT.F h VE.Acts.FNT.O, rhs := [VE.Acts.RSym.n (VE.Acts.NT.F h VE.Acts.FNT.PL)],
+          kind := VE.Acts.Kind.shape }
+        [VE.Acts.Piece.list j ps] =
+      Option.some [VE.Acts.Piece.elt (VE.Acts.Elt.arg "" (VE.Acts.Filler.joined j ps)) VE.Acts.Att.own]
+  -- uses VE.Acts.Att.own@VE.Acts.Meaning VE.Acts.Elt.arg@VE.Acts.Meaning VE.Acts.FNT.O@VE.Acts.Grammar VE.Acts.FNT.PL@VE.Acts.Grammar VE.Acts.Filler.joined@VE.Acts.Tree VE.Acts.Join@VE.Acts.Tree VE.Acts.Kind.shape@VE.Acts.Grammar VE.Acts.NT.F@VE.Acts.Grammar VE.Acts.Part@VE.Acts.Tree VE.Acts.Piece.elt@VE.Acts.Meaning VE.Acts.Piece.list@VE.Acts.Meaning VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RSym.n@VE.Acts.Grammar VE.Acts.RSym@VE.Acts.Grammar VE.Acts.RuleS.mk@VE.Acts.Grammar VE.Acts.applyRule@VE.Acts.Meaning
+  -- expr 4026918605
+theorem VE.Acts.NormalProofs.ap_OL
+  ∀ (h : Nat) (m : String) (j : VE.Acts.Join) (ps : List VE.Acts.Part),
+    VE.Acts.applyRule
+        { lhs := VE.Acts.NT.F h (VE.Acts.FNT.OL m),
+          rhs := [VE.Acts.RSym.n (VE.Acts.NT.MK m), VE.Acts.RSym.n (VE.Acts.NT.F h VE.Acts.FNT.PL)],
+          kind := VE.Acts.Kind.shape }
+        [VE.Acts.Piece.list j ps] =
+      Option.some [VE.Acts.Piece.list j ps]
+  -- uses VE.Acts.FNT.OL@VE.Acts.Grammar VE.Acts.FNT.PL@VE.Acts.Grammar VE.Acts.Join@VE.Acts.Tree VE.Acts.Kind.shape@VE.Acts.Grammar VE.Acts.NT.F@VE.Acts.Grammar VE.Acts.NT.MK@VE.Acts.Grammar VE.Acts.Part@VE.Acts.Tree VE.Acts.Piece.list@VE.Acts.Meaning VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RSym.n@VE.Acts.Grammar VE.Acts.RSym@VE.Acts.Grammar VE.Acts.RuleS.mk@VE.Acts.Grammar VE.Acts.applyRule@VE.Acts.Meaning
+  -- expr 316390054
+theorem VE.Acts.NormalProofs.ap_OWNM1
+  ∀ (h : Nat) (cs : List VE.Acts.Piece),
+    VE.Acts.applyRule
+        { lhs := VE.Acts.NT.F h VE.Acts.FNT.OWNM, rhs := [VE.Acts.RSym.n (VE.Acts.NT.F h VE.Acts.FNT.O)],
+          kind := VE.Acts.Kind.shape }
+        cs =
+      Option.some cs
+  -- uses VE.Acts.FNT.O@VE.Acts.Grammar VE.Acts.FNT.OWNM@VE.Acts.Grammar VE.Acts.Kind.shape@VE.Acts.Grammar VE.Acts.NT.F@VE.Acts.Grammar VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RSym.n@VE.Acts.Grammar VE.Acts.RSym@VE.Acts.Grammar VE.Acts.RuleS.mk@VE.Acts.Grammar VE.Acts.applyRule@VE.Acts.Meaning
+  -- expr 1405055253
+theorem VE.Acts.NormalProofs.ap_OWNM2
+  ∀ (h : Nat) (cs : List VE.Acts.Piece),
+    VE.Acts.applyRule
+        { lhs := VE.Acts.NT.F h VE.Acts.FNT.OWNM,
+          rhs := [VE.Acts.RSym.n (VE.Acts.NT.F h VE.Acts.FNT.O), VE.Acts.RSym.n (VE.Acts.NT.F h VE.Acts.FNT.ER)],
+          kind := VE.Acts.Kind.shape }
+        cs =
+      Option.some cs
+  -- uses VE.Acts.FNT.ER@VE.Acts.Grammar VE.Acts.FNT.O@VE.Acts.Grammar VE.Acts.FNT.OWNM@VE.Acts.Grammar VE.Acts.Kind.shape@VE.Acts.Grammar VE.Acts.NT.F@VE.Acts.Grammar VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RSym.n@VE.Acts.Grammar VE.Acts.RSym@VE.Acts.Grammar VE.Acts.RuleS.mk@VE.Acts.Grammar VE.Acts.applyRule@VE.Acts.Meaning
+  -- expr 625727547
+theorem VE.Acts.NormalProofs.ap_PL
+  ∀ (h : Nat) (cs : List VE.Acts.Piece) (p : VE.Acts.Part) (j : VE.Acts.Join) (ps : List VE.Acts.Part),
+    VE.Acts.listOf (VE.Acts.Piece.part p :: cs) = Option.some (j, List.map VE.Acts.Piece.part ps) →
+      VE.Acts.longEnd ps = Bool.false →
+        VE.Acts.applyRule
+            { lhs := VE.Acts.NT.F h VE.Acts.FNT.PL,
+              rhs := [VE.Acts.RSym.n (VE.Acts.NT.F h VE.Acts.FNT.FL), VE.Acts.RSym.n (VE.Acts.NT.F h VE.Acts.FNT.PT)],
+              kind := VE.Acts.Kind.shape }
+            (VE.Acts.Piece.part p :: cs) =
+          Option.some [VE.Acts.Piece.list j ps]
+  -- uses VE.Acts.FNT.FL@VE.Acts.Grammar VE.Acts.FNT.PL@VE.Acts.Grammar VE.Acts.FNT.PT@VE.Acts.Grammar VE.Acts.Join@VE.Acts.Tree VE.Acts.Kind.shape@VE.Acts.Grammar VE.Acts.NT.F@VE.Acts.Grammar VE.Acts.Part@VE.Acts.Tree VE.Acts.Piece.list@VE.Acts.Meaning VE.Acts.Piece.part@VE.Acts.Meaning VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RSym.n@VE.Acts.Grammar VE.Acts.RSym@VE.Acts.Grammar VE.Acts.RuleS.mk@VE.Acts.Grammar VE.Acts.applyRule@VE.Acts.Meaning VE.Acts.listOf@VE.Acts.Meaning VE.Acts.longEnd@VE.Acts.Meaning
+  -- expr 1708840315
+theorem VE.Acts.NormalProofs.ap_PT1
+  ∀ (h : Nat) (cs : List VE.Acts.Piece),
+    VE.Acts.applyRule
+        { lhs := VE.Acts.NT.F h VE.Acts.FNT.PT,
+          rhs := [VE.Acts.RSym.n VE.Acts.NT.J, VE.Acts.RSym.n (VE.Acts.NT.F h VE.Acts.FNT.FL)],
+          kind := VE.Acts.Kind.shape }
+        cs =
+      Option.some cs
+  -- uses VE.Acts.FNT.FL@VE.Acts.Grammar VE.Acts.FNT.PT@VE.Acts.Grammar VE.Acts.Kind.shape@VE.Acts.Grammar VE.Acts.NT.F@VE.Acts.Grammar VE.Acts.NT.J@VE.Acts.Grammar VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RSym.n@VE.Acts.Grammar VE.Acts.RSym@VE.Acts.Grammar VE.Acts.RuleS.mk@VE.Acts.Grammar VE.Acts.applyRule@VE.Acts.Meaning
+  -- expr 3687253628
+theorem VE.Acts.NormalProofs.ap_PT2
+  ∀ (h : Nat) (cs : List VE.Acts.Piece),
+    VE.Acts.applyRule
+        { lhs := VE.Acts.NT.F h VE.Acts.FNT.PT,
+          rhs :=
+            [VE.Acts.RSym.t VE.Acts.Term.comma, VE.Acts.RSym.n (VE.Acts.NT.F h VE.Acts.FNT.FL),
+              VE.Acts.RSym.n (VE.Acts.NT.F h VE.Acts.FNT.PT)],
+          kind := VE.Acts.Kind.shape }
+        cs =
+      Option.some cs
+  -- uses VE.Acts.FNT.FL@VE.Acts.Grammar VE.Acts.FNT.PT@VE.Acts.Grammar VE.Acts.Kind.shape@VE.Acts.Grammar VE.Acts.NT.F@VE.Acts.Grammar VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RSym.n@VE.Acts.Grammar VE.Acts.RSym.t@VE.Acts.Grammar VE.Acts.RSym@VE.Acts.Grammar VE.Acts.RuleS.mk@VE.Acts.Grammar VE.Acts.Term.comma@VE.Acts.Syntax VE.Acts.applyRule@VE.Acts.Meaning
+  -- expr 3316952252
+theorem VE.Acts.NormalProofs.ap_S
+  ∀ (cs : List VE.Acts.Piece),
+    VE.Acts.applyRule
+        { lhs := VE.Acts.NT.S, rhs := [VE.Acts.RSym.t VE.Acts.Term.subj, VE.Acts.RSym.n VE.Acts.NT.SINGLE],
+          kind := VE.Acts.Kind.shape }
+        cs =
+      Option.some cs
+  -- uses VE.Acts.Kind.shape@VE.Acts.Grammar VE.Acts.NT.S@VE.Acts.Grammar VE.Acts.NT.SINGLE@VE.Acts.Grammar VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RSym.n@VE.Acts.Grammar VE.Acts.RSym.t@VE.Acts.Grammar VE.Acts.RSym@VE.Acts.Grammar VE.Acts.RuleS.mk@VE.Acts.Grammar VE.Acts.Term.subj@VE.Acts.Syntax VE.Acts.applyRule@VE.Acts.Meaning
+  -- expr 730747581
+theorem VE.Acts.NormalProofs.ap_SC1
+  ∀ (h : Nat) (cs : List VE.Acts.Piece),
+    VE.Acts.applyRule
+        { lhs := VE.Acts.NT.SC, rhs := [VE.Acts.RSym.n (VE.Acts.NT.F h VE.Acts.FNT.HD)], kind := VE.Acts.Kind.shape } cs =
+      Option.some cs
+  -- uses VE.Acts.FNT.HD@VE.Acts.Grammar VE.Acts.Kind.shape@VE.Acts.Grammar VE.Acts.NT.F@VE.Acts.Grammar VE.Acts.NT.SC@VE.Acts.Grammar VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RSym.n@VE.Acts.Grammar VE.Acts.RSym@VE.Acts.Grammar VE.Acts.RuleS.mk@VE.Acts.Grammar VE.Acts.applyRule@VE.Acts.Meaning
+  -- expr 971116973
+theorem VE.Acts.NormalProofs.ap_SC2
+  ∀ (h : Nat) (cs : List VE.Acts.Piece),
+    VE.Acts.applyRule
+        { lhs := VE.Acts.NT.SC,
+          rhs := [VE.Acts.RSym.n (VE.Acts.NT.F h VE.Acts.FNT.HD), VE.Acts.RSym.n (VE.Acts.NT.F h VE.Acts.FNT.SM)],
+          kind := VE.Acts.Kind.shape }
+        cs =
+      Option.some cs
+  -- uses VE.Acts.FNT.HD@VE.Acts.Grammar VE.Acts.FNT.SM@VE.Acts.Grammar VE.Acts.Kind.shape@VE.Acts.Grammar VE.Acts.NT.F@VE.Acts.Grammar VE.Acts.NT.SC@VE.Acts.Grammar VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RSym.n@VE.Acts.Grammar VE.Acts.RSym@VE.Acts.Grammar VE.Acts.RuleS.mk@VE.Acts.Grammar VE.Acts.applyRule@VE.Acts.Meaning
+  -- expr 444636999
+theorem VE.Acts.NormalProofs.ap_SINGLE
+  ∀ (cs : List VE.Acts.Piece) (rhs : List VE.Acts.NT),
+    rhs = [VE.Acts.NT.SC] ∨
+        rhs = [VE.Acts.NT.ADVSO, VE.Acts.NT.SC] ∨
+          rhs = [VE.Acts.NT.FW, VE.Acts.NT.SC] ∨ rhs = [VE.Acts.NT.FW, VE.Acts.NT.ADVSO, VE.Acts.NT.SC] →
+      VE.Acts.applyRule { lhs := VE.Acts.NT.SINGLE, rhs := List.map VE.Acts.RSym.n rhs, kind := VE.Acts.Kind.shape } cs =
+        Option.map
+          (fun x =>
+            match x with
+            | (fw, h, es) => [VE.Acts.Piece.act (VE.Acts.singleAct fw h es)])
+          (VE.Acts.itemOf cs)
+  -- uses VE.Acts.Kind.shape@VE.Acts.Grammar VE.Acts.NT.ADVSO@VE.Acts.Grammar VE.Acts.NT.FW@VE.Acts.Grammar VE.Acts.NT.SC@VE.Acts.Grammar VE.Acts.NT.SINGLE@VE.Acts.Grammar VE.Acts.NT@VE.Acts.Grammar VE.Acts.NormalProofs.ap_SINGLE.match_1@VE.Acts.NormalProofs VE.Acts.Piece.act@VE.Acts.Meaning VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RSym.n@VE.Acts.Grammar VE.Acts.RSym@VE.Acts.Grammar VE.Acts.RuleS.mk@VE.Acts.Grammar VE.Acts.applyRule@VE.Acts.Meaning VE.Acts.itemOf@VE.Acts.Meaning VE.Acts.singleAct@VE.Acts.Meaning
+  -- expr 122327177
+theorem VE.Acts.NormalProofs.ap_SINGLE_of
+  ∀ (cs : List VE.Acts.Piece) (rhs : List VE.Acts.NT),
+    rhs = [VE.Acts.NT.SC] ∨
+        rhs = [VE.Acts.NT.ADVSO, VE.Acts.NT.SC] ∨
+          rhs = [VE.Acts.NT.FW, VE.Acts.NT.SC] ∨ rhs = [VE.Acts.NT.FW, VE.Acts.NT.ADVSO, VE.Acts.NT.SC] →
+      ∀ {ps : List VE.Acts.Piece},
+        Option.map
+              (fun x =>
+                match x with
+                | (fw, h, es) => [VE.Acts.Piece.act (VE.Acts.singleAct fw h es)])
+              (VE.Acts.itemOf cs) =
+            Option.some ps →
+          VE.Acts.applyRule { lhs := VE.Acts.NT.SINGLE, rhs := List.map VE.Acts.RSym.n rhs, kind := VE.Acts.Kind.shape }
+              cs =
+            Option.some ps
+  -- uses VE.Acts.Kind.shape@VE.Acts.Grammar VE.Acts.NT.ADVSO@VE.Acts.Grammar VE.Acts.NT.FW@VE.Acts.Grammar VE.Acts.NT.SC@VE.Acts.Grammar VE.Acts.NT.SINGLE@VE.Acts.Grammar VE.Acts.NT@VE.Acts.Grammar VE.Acts.NormalProofs.ap_SINGLE.match_1@VE.Acts.NormalProofs VE.Acts.Piece.act@VE.Acts.Meaning VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RSym.n@VE.Acts.Grammar VE.Acts.RSym@VE.Acts.Grammar VE.Acts.RuleS.mk@VE.Acts.Grammar VE.Acts.applyRule@VE.Acts.Meaning VE.Acts.itemOf@VE.Acts.Meaning VE.Acts.singleAct@VE.Acts.Meaning
+  -- expr 2331630621
+theorem VE.Acts.NormalProofs.ap_SM
+  ∀ (h : Nat) (cs : List VE.Acts.Piece) (y : VE.Acts.FNT),
+    VE.Acts.applyRule
+        { lhs := VE.Acts.NT.F h VE.Acts.FNT.SM, rhs := [VE.Acts.RSym.n (VE.Acts.NT.F h y)], kind := VE.Acts.Kind.shape }
+        cs =
+      Option.some cs
+  -- uses VE.Acts.FNT.SM@VE.Acts.Grammar VE.Acts.FNT@VE.Acts.Grammar VE.Acts.Kind.shape@VE.Acts.Grammar VE.Acts.NT.F@VE.Acts.Grammar VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RSym.n@VE.Acts.Grammar VE.Acts.RSym@VE.Acts.Grammar VE.Acts.RuleS.mk@VE.Acts.Grammar VE.Acts.applyRule@VE.Acts.Meaning
+  -- expr 999466219
+theorem VE.Acts.NormalProofs.ap_TOK
+  ∀ (a : VE.Acts.Term),
+    a = VE.Acts.Term.slot ∨ a = VE.Acts.Term.fixed →
+      ∀ (p : VE.Acts.Part),
+        VE.Acts.applyRule { lhs := VE.Acts.NT.TOK, rhs := [VE.Acts.RSym.t a], kind := VE.Acts.Kind.shape }
+            [VE.Acts.Piece.part p] =
+          Option.some [VE.Acts.Piece.part p]
+  -- uses VE.Acts.Kind.shape@VE.Acts.Grammar VE.Acts.NT.TOK@VE.Acts.Grammar VE.Acts.Part@VE.Acts.Tree VE.Acts.Piece.part@VE.Acts.Meaning VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RSym.t@VE.Acts.Grammar VE.Acts.RSym@VE.Acts.Grammar VE.Acts.RuleS.mk@VE.Acts.Grammar VE.Acts.Term.fixed@VE.Acts.Syntax VE.Acts.Term.slot@VE.Acts.Syntax VE.Acts.Term@VE.Acts.Syntax VE.Acts.applyRule@VE.Acts.Meaning
+  -- expr 1628944617
+theorem VE.Acts.NormalProofs.ap_WR1
+  ∀ (h : Nat) (ex : List String) (v : String),
+    VE.Acts.applyRule
+        { lhs := VE.Acts.NT.F h VE.Acts.FNT.WR, rhs := [VE.Acts.RSym.t (VE.Acts.Term.fill ex)],
+          kind := VE.Acts.Kind.shape }
+        [VE.Acts.Piece.w v] =
+      Option.some [VE.Acts.Piece.w v]
+  -- uses VE.Acts.FNT.WR@VE.Acts.Grammar VE.Acts.Kind.shape@VE.Acts.Grammar VE.Acts.NT.F@VE.Acts.Grammar VE.Acts.Piece.w@VE.Acts.Meaning VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RSym.t@VE.Acts.Grammar VE.Acts.RSym@VE.Acts.Grammar VE.Acts.RuleS.mk@VE.Acts.Grammar VE.Acts.Term.fill@VE.Acts.Syntax VE.Acts.applyRule@VE.Acts.Meaning
+  -- expr 580433836
+theorem VE.Acts.NormalProofs.ap_WR2
+  ∀ (h : Nat) (cs : List VE.Acts.Piece) (ex : List String),
+    VE.Acts.applyRule
+        { lhs := VE.Acts.NT.F h VE.Acts.FNT.WR,
+          rhs := [VE.Acts.RSym.t (VE.Acts.Term.fill ex), VE.Acts.RSym.n (VE.Acts.NT.F h VE.Acts.FNT.WR)],
+          kind := VE.Acts.Kind.shape }
+        cs =
+      Option.some cs
+  -- uses VE.Acts.FNT.WR@VE.Acts.Grammar VE.Acts.Kind.shape@VE.Acts.Grammar VE.Acts.NT.F@VE.Acts.Grammar VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RSym.n@VE.Acts.Grammar VE.Acts.RSym.t@VE.Acts.Grammar VE.Acts.RSym@VE.Acts.Grammar VE.Acts.RuleS.mk@VE.Acts.Grammar VE.Acts.Term.fill@VE.Acts.Syntax VE.Acts.applyRule@VE.Acts.Meaning
+  -- expr 3515817837
+theorem VE.Acts.NormalProofs.atomOk_canon
+  ∀ (V : VE.Acts.Vocab) (a : VE.Acts.Atom), VE.Acts.atomOk V a.canon = VE.Acts.atomOk V a
+  -- uses VE.Acts.Atom.canon@VE.Acts.Linearize VE.Acts.Atom@VE.Acts.Tree VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.atomOk@VE.Acts.Meaning
+  -- expr 798403475
+theorem VE.Acts.NormalProofs.cands_le
+  ∀ {T K : Type} [DecidableEq T] [DecidableEq K] [inst : VE.Grammar.Accepts K T] {G : VE.Grammar.Grammar K} {w : Array T}
+    {F : List (VE.Grammar.Sym K) → List T → List (List (VE.Grammar.Tree T))},
+    (∀ (Xs : List (VE.Grammar.Sym K)) (u : List T) (us : List (VE.Grammar.Tree T)),
+        VE.Grammar.derivesAll G Xs us = Bool.true → VE.Grammar.yieldAll us = u → us ∈ F Xs u) →
+      ∀ {Xs : List (VE.Grammar.Sym K)} {i : Nat} {cands : List (Nat × List (VE.Grammar.Tree T))},
+        cands.Nodup →
+          (∀ (c : Nat × List (VE.Grammar.Tree T)), c ∈ cands → c.fst ≤ w.size ∧ VE.Grammar.SpanAll G w Xs i c.fst c.snd) →
+            cands.length ≤ (VE.Acts.NormalProofs.spans F w Xs i).length
+  -- uses VE.Acts.NormalProofs.spans@VE.Acts.NormalProofs VE.Grammar.Accepts@VE.Grammar.Basic VE.Grammar.Grammar@VE.Grammar.Basic VE.Grammar.SpanAll@VE.Grammar.TableInvariant VE.Grammar.Sym@VE.Grammar.Basic VE.Grammar.Tree@VE.Grammar.Derives VE.Grammar.derivesAll@VE.Grammar.Derives VE.Grammar.yieldAll@VE.Grammar.Derives
+  -- expr 1835980084
+theorem VE.Acts.NormalProofs.canon_eq
+  ∀ (a : VE.Acts.Atom),
+    a.canon =
+      List.foldl VE.Acts.Atom.add { toWord := a.toWord, beWord := a.beWord, head := a.head, args := [], mods := [] }
+        (List.map (fun w => VE.Acts.Elt.mod (VE.Acts.Modifier.adv w)) (VE.Acts.NormalProofs.advWords a.mods) ++
+          (List.map (fun q => VE.Acts.Elt.arg q.fst q.snd) a.canon.args ++
+            List.map (fun q => VE.Acts.Elt.mod (VE.Acts.Modifier.prep q.fst q.snd)) (VE.Acts.NormalProofs.preps a.mods)))
+  -- uses VE.Acts.Atom.add@VE.Acts.Meaning VE.Acts.Atom.args@VE.Acts.Tree VE.Acts.Atom.beWord@VE.Acts.Tree VE.Acts.Atom.canon@VE.Acts.Linearize VE.Acts.Atom.head@VE.Acts.Tree VE.Acts.Atom.mk@VE.Acts.Tree VE.Acts.Atom.mods@VE.Acts.Tree VE.Acts.Atom.toWord@VE.Acts.Tree VE.Acts.Atom@VE.Acts.Tree VE.Acts.Elt.arg@VE.Acts.Meaning VE.Acts.Elt.mod@VE.Acts.Meaning VE.Acts.Elt@VE.Acts.Meaning VE.Acts.Filler@VE.Acts.Tree VE.Acts.Modifier.adv@VE.Acts.Tree VE.Acts.Modifier.prep@VE.Acts.Tree VE.Acts.Modifier@VE.Acts.Tree VE.Acts.NormalProofs.advWords@VE.Acts.NormalProofs VE.Acts.NormalProofs.preps@VE.Acts.NormalProofs VE.Acts.Part@VE.Acts.Tree
+  -- expr 4020345910
+theorem VE.Acts.NormalProofs.collect
+  ∀ {α : Type} {P : Nat → α → Prop} (m : Nat),
+    (∀ (k : Nat), k < m → ∃ L, ∀ (x : α), P k x → x ∈ L) → ∃ L, ∀ (k : Nat), k < m → ∀ (x : α), P k x → x ∈ L
+  -- uses
+  -- expr 3192315165
+theorem VE.Acts.NormalProofs.fill_some
+  ∀ {T K : Type} [DecidableEq T] [inst : DecidableEq K] [inst_1 : VE.Grammar.Accepts K T] {G : VE.Grammar.Grammar K}
+    {cap : Nat} {w : Array T} {F : List (VE.Grammar.Sym K) → List T → List (List (VE.Grammar.Tree T))},
+    G.wf = Bool.true →
+      0 < cap →
+        ∀ {b : Nat},
+          (∀ (Xs : List (VE.Grammar.Sym K)) (u : List T) (us : List (VE.Grammar.Tree T)),
+              VE.Grammar.derivesAll G Xs us = Bool.true → VE.Grammar.yieldAll us = u → us ∈ F Xs u) →
+            ∀ (k : Nat) (suf : Array (VE.Grammar.SufRow T)) (steps : Nat) (last : VE.Grammar.NtRow T),
+              k ≤ w.size →
+                suf.size = w.size + 1 →
+                  (∀ (p : Nat), k ≤ p → p ≤ w.size → VE.Grammar.SufRowOk G cap w p (suf.getD p #[])) →
+                    steps + (List.map (VE.Acts.NormalProofs.rowB F G w) (List.range k)).sum ≤ b →
+                      (VE.Grammar.fill G.prepare cap w (Array.map (fun n => Array.replicate n []) G.prepare.shape) b k suf
+                            steps last).isSome =
+                        Bool.true
+  -- uses VE.Acts.NormalProofs.rowB@VE.Acts.NormalProofs VE.Grammar.Accepts@VE.Grammar.Basic VE.Grammar.Bucket@VE.Grammar.Table VE.Grammar.Grammar.prepare@VE.Grammar.Table VE.Grammar.Grammar.wf@VE.Grammar.Basic VE.Grammar.Grammar@VE.Grammar.Basic VE.Grammar.NtRow@VE.Grammar.Table VE.Grammar.Prepared.shape@VE.Grammar.Table VE.Grammar.SufRow@VE.Grammar.Table VE.Grammar.SufRowOk@VE.Grammar.TableInvariant VE.Grammar.Sym@VE.Grammar.Basic VE.Grammar.Tree@VE.Grammar.Derives VE.Grammar.derivesAll@VE.Grammar.Derives VE.Grammar.fill@VE.Grammar.Table VE.Grammar.yieldAll@VE.Grammar.Derives
+  -- expr 512965302
+theorem VE.Acts.NormalProofs.filterMap_none
+  ∀ {α β : Type} (l : List α), List.filterMap (fun x => Option.none) l = []
+  -- uses
+  -- expr 159884637
+theorem VE.Acts.NormalProofs.filterMap_w
+  ∀ (ws : List String),
+    List.filterMap
+        (fun x =>
+          match x with
+          | VE.Acts.Piece.w s => Option.some s
+          | x => Option.none)
+        (List.map VE.Acts.Piece.w ws) =
+      ws
+  -- uses VE.Acts.NormalProofs.filterMap_w.match_1@VE.Acts.NormalProofs VE.Acts.Piece.w@VE.Acts.Meaning VE.Acts.Piece@VE.Acts.Meaning
+  -- expr 3743361445
+theorem VE.Acts.NormalProofs.filter_obj
+  ∀ (l : List (String × VE.Acts.Filler)),
+    List.filter (fun x => x.fst == "") (List.filter (fun x => x.fst == "") l ++ List.filter (fun x => x.fst != "") l) =
+      List.filter (fun x => x.fst == "") l
+  -- uses VE.Acts.Filler@VE.Acts.Tree
+  -- expr 2071809169
+theorem VE.Acts.NormalProofs.finD_all
+  ∀ {T K : Type} [inst : VE.Grammar.Accepts K T] {G : VE.Grammar.Grammar K},
+    G.wf = Bool.true →
+      ∀ (n r : Nat) (X : VE.Grammar.Sym K) (u : List T),
+        u.length ≤ n → VE.Acts.NormalProofs.symRank G X ≤ r → VE.Acts.NormalProofs.FinD G X u
+  -- uses VE.Acts.NormalProofs.FinD@VE.Acts.NormalProofs VE.Acts.NormalProofs.symRank@VE.Acts.NormalProofs VE.Grammar.Accepts@VE.Grammar.Basic VE.Grammar.Grammar.wf@VE.Grammar.Basic VE.Grammar.Grammar@VE.Grammar.Basic VE.Grammar.Sym@VE.Grammar.Basic
+  -- expr 1538017582
+theorem VE.Acts.NormalProofs.finD_term
+  ∀ {T K : Type} [inst : VE.Grammar.Accepts K T] {G : VE.Grammar.Grammar K} {a : K} {u : List T},
+    VE.Acts.NormalProofs.FinD G (VE.Grammar.Sym.t a) u
+  -- uses VE.Acts.NormalProofs.FinD@VE.Acts.NormalProofs VE.Grammar.Accepts@VE.Grammar.Basic VE.Grammar.Grammar@VE.Grammar.Basic VE.Grammar.Sym.t@VE.Grammar.Basic
+  -- expr 3783182638
+theorem VE.Acts.NormalProofs.finDs
+  ∀ {T K : Type} [inst : VE.Grammar.Accepts K T] {G : VE.Grammar.Grammar K},
+    G.wf = Bool.true → ∀ (Xs : List (VE.Grammar.Sym K)) (u : List T), VE.Acts.NormalProofs.FinDs G Xs u
+  -- uses VE.Acts.NormalProofs.FinDs@VE.Acts.NormalProofs VE.Grammar.Accepts@VE.Grammar.Basic VE.Grammar.Grammar.wf@VE.Grammar.Basic VE.Grammar.Grammar@VE.Grammar.Basic VE.Grammar.Sym@VE.Grammar.Basic
+  -- expr 3469544950
+theorem VE.Acts.NormalProofs.finDs_seq
+  ∀ {T K : Type} [inst : VE.Grammar.Accepts K T] {G : VE.Grammar.Grammar K},
+    G.wf = Bool.true →
+      ∀ (Xs : List (VE.Grammar.Sym K)) (u : List T),
+        (∀ (Y : VE.Grammar.Sym K),
+            Y ∈ Xs →
+              ∀ (u' : List T),
+                u'.length ≤ u.length → (2 ≤ Xs.length → u'.length < u.length) → VE.Acts.NormalProofs.FinD G Y u') →
+          VE.Acts.NormalProofs.FinDs G Xs u
+  -- uses VE.Acts.NormalProofs.FinD@VE.Acts.NormalProofs VE.Acts.NormalProofs.FinDs@VE.Acts.NormalProofs VE.Grammar.Accepts@VE.Grammar.Basic VE.Grammar.Grammar.wf@VE.Grammar.Basic VE.Grammar.Grammar@VE.Grammar.Basic VE.Grammar.Sym@VE.Grammar.Basic
+  -- expr 4093477312
+theorem VE.Acts.NormalProofs.findSome_none
+  ∀ {α β : Type} (l : List α), List.findSome? (fun x => Option.none) l = Option.none
+  -- uses
+  -- expr 4062390298
+theorem VE.Acts.NormalProofs.fold_elts
+  ∀ (es : List VE.Acts.Elt) (x : VE.Acts.Atom),
+    List.foldl (fun as p => VE.Acts.addPiece (as.length - 1) as p) [x]
+        (List.map (fun e => VE.Acts.Piece.elt e VE.Acts.Att.own) es) =
+      [List.foldl VE.Acts.Atom.add x es]
+  -- uses VE.Acts.Atom.add@VE.Acts.Meaning VE.Acts.Atom@VE.Acts.Tree VE.Acts.Att.own@VE.Acts.Meaning VE.Acts.Elt@VE.Acts.Meaning VE.Acts.Piece.elt@VE.Acts.Meaning VE.Acts.Piece@VE.Acts.Meaning VE.Acts.addPiece@VE.Acts.Meaning
+  -- expr 3289649285
+theorem VE.Acts.NormalProofs.framesOk_lower
+  ∀ {V : VE.Acts.Vocab},
+    VE.Acts.framesOk V = Bool.true →
+      (∀ (f : VE.Acts.Frame), f ∈ V.frames → ∀ (w : String), w ∈ f.head → w.toLower = w) ∧
+        (∀ (f : VE.Acts.Frame),
+            f ∈ V.frames →
+              ∀ (m : String), m ∈ f.markers ++ f.mods → m ≠ "" → ∀ (w : String), w ∈ VE.Acts.wordsOf m → w.toLower = w) ∧
+          (∀ (w : String), w ∈ V.adverbs → w.toLower = w) ∧ ∀ (f : VE.Acts.Frame), f ∈ V.frames → ¬"" ∈ f.mods
+  -- uses VE.Acts.Frame.head@VE.Acts.Syntax VE.Acts.Frame.markers@VE.Acts.Syntax VE.Acts.Frame.mods@VE.Acts.Syntax VE.Acts.Frame@VE.Acts.Syntax VE.Acts.Vocab.adverbs@VE.Acts.Syntax VE.Acts.Vocab.frames@VE.Acts.Syntax VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.framesOk@VE.Acts.Syntax VE.Acts.wordsOf@VE.Acts.Syntax
+  -- expr 110318820
+theorem VE.Acts.NormalProofs.gen1
+  ∀ {V : VE.Acts.Vocab} {X : VE.Acts.NT} {Y : VE.Acts.RSym} {k : VE.Acts.Kind},
+    { lhs := X, rhs := [Y], kind := k } ∈ VE.Acts.schema V →
+      ∀ {w : List VE.Acts.Lexical.Tok} {cs ps : List VE.Acts.Piece},
+        VE.Acts.NormalProofs.Gen V Y w cs →
+          VE.Acts.applyRule { lhs := X, rhs := [Y], kind := k } cs = Option.some ps →
+            VE.Acts.NormalProofs.Gen V (VE.Acts.RSym.n X) w ps
+  -- uses VE.Acts.Kind@VE.Acts.Grammar VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.NT@VE.Acts.Grammar VE.Acts.NormalProofs.Gen@VE.Acts.NormalProofs VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RSym.n@VE.Acts.Grammar VE.Acts.RSym@VE.Acts.Grammar VE.Acts.RuleS.mk@VE.Acts.Grammar VE.Acts.RuleS@VE.Acts.Grammar VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.applyRule@VE.Acts.Meaning VE.Acts.schema@VE.Acts.Grammar
+  -- expr 1086741288
+theorem VE.Acts.NormalProofs.gen2
+  ∀ {V : VE.Acts.Vocab} {X : VE.Acts.NT} {Y1 Y2 : VE.Acts.RSym} {k : VE.Acts.Kind},
+    { lhs := X, rhs := [Y1, Y2], kind := k } ∈ VE.Acts.schema V →
+      ∀ {w1 w2 : List VE.Acts.Lexical.Tok} {c1 c2 ps : List VE.Acts.Piece},
+        VE.Acts.NormalProofs.Gen V Y1 w1 c1 →
+          VE.Acts.NormalProofs.Gen V Y2 w2 c2 →
+            VE.Acts.applyRule { lhs := X, rhs := [Y1, Y2], kind := k } (c1 ++ c2) = Option.some ps →
+              VE.Acts.NormalProofs.Gen V (VE.Acts.RSym.n X) (w1 ++ w2) ps
+  -- uses VE.Acts.Kind@VE.Acts.Grammar VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.NT@VE.Acts.Grammar VE.Acts.NormalProofs.Gen@VE.Acts.NormalProofs VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RSym.n@VE.Acts.Grammar VE.Acts.RSym@VE.Acts.Grammar VE.Acts.RuleS.mk@VE.Acts.Grammar VE.Acts.RuleS@VE.Acts.Grammar VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.applyRule@VE.Acts.Meaning VE.Acts.schema@VE.Acts.Grammar
+  -- expr 440562241
+theorem VE.Acts.NormalProofs.gen3
+  ∀ {V : VE.Acts.Vocab} {X : VE.Acts.NT} {Y1 Y2 Y3 : VE.Acts.RSym} {k : VE.Acts.Kind},
+    { lhs := X, rhs := [Y1, Y2, Y3], kind := k } ∈ VE.Acts.schema V →
+      ∀ {w1 w2 w3 : List VE.Acts.Lexical.Tok} {c1 c2 c3 ps : List VE.Acts.Piece},
+        VE.Acts.NormalProofs.Gen V Y1 w1 c1 →
+          VE.Acts.NormalProofs.Gen V Y2 w2 c2 →
+            VE.Acts.NormalProofs.Gen V Y3 w3 c3 →
+              VE.Acts.applyRule { lhs := X, rhs := [Y1, Y2, Y3], kind := k } (c1 ++ c2 ++ c3) = Option.some ps →
+                VE.Acts.NormalProofs.Gen V (VE.Acts.RSym.n X) (w1 ++ w2 ++ w3) ps
+  -- uses VE.Acts.Kind@VE.Acts.Grammar VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.NT@VE.Acts.Grammar VE.Acts.NormalProofs.Gen@VE.Acts.NormalProofs VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RSym.n@VE.Acts.Grammar VE.Acts.RSym@VE.Acts.Grammar VE.Acts.RuleS.mk@VE.Acts.Grammar VE.Acts.RuleS@VE.Acts.Grammar VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.applyRule@VE.Acts.Meaning VE.Acts.schema@VE.Acts.Grammar
+  -- expr 2287441382
+theorem VE.Acts.NormalProofs.genAll_cons
+  ∀ {V : VE.Acts.Vocab} {Y : VE.Acts.RSym} {Ys : List VE.Acts.RSym} {w1 w2 : List VE.Acts.Lexical.Tok}
+    {p1 p2 : List VE.Acts.Piece},
+    VE.Acts.NormalProofs.Gen V Y w1 p1 →
+      VE.Acts.NormalProofs.GenAll V Ys w2 p2 → VE.Acts.NormalProofs.GenAll V (Y :: Ys) (w1 ++ w2) (p1 ++ p2)
+  -- uses VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.NormalProofs.Gen@VE.Acts.NormalProofs VE.Acts.NormalProofs.GenAll@VE.Acts.NormalProofs VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RSym@VE.Acts.Grammar VE.Acts.Vocab@VE.Acts.Syntax
+  -- expr 1960768741
+theorem VE.Acts.NormalProofs.genAll_nil
+  ∀ {V : VE.Acts.Vocab}, VE.Acts.NormalProofs.GenAll V [] [] []
+  -- uses VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.NormalProofs.GenAll@VE.Acts.NormalProofs VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RSym@VE.Acts.Grammar VE.Acts.Vocab@VE.Acts.Syntax
+  -- expr 4081805902
+theorem VE.Acts.NormalProofs.gen_ADVSO
+  ∀ {V : VE.Acts.Vocab} (ws : List String),
+    ws ≠ [] →
+      (∀ (w : String), w ∈ ws → w ∈ V.adverbs ∧ w.toLower = w) →
+        VE.Acts.NormalProofs.Gen V (VE.Acts.RSym.n VE.Acts.NT.ADVSO) (List.map VE.Acts.Lexical.Tok.word ws)
+          (List.map (fun w => VE.Acts.Piece.elt (VE.Acts.Elt.mod (VE.Acts.Modifier.adv w)) VE.Acts.Att.own) ws)
+  -- uses VE.Acts.Att.own@VE.Acts.Meaning VE.Acts.Elt.mod@VE.Acts.Meaning VE.Acts.Lexical.Tok.word@VE.Acts.Lexical VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.Modifier.adv@VE.Acts.Tree VE.Acts.NT.ADVSO@VE.Acts.Grammar VE.Acts.NormalProofs.Gen@VE.Acts.NormalProofs VE.Acts.Piece.elt@VE.Acts.Meaning VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RSym.n@VE.Acts.Grammar VE.Acts.Vocab.adverbs@VE.Acts.Syntax VE.Acts.Vocab@VE.Acts.Syntax
+  -- expr 1273064124
+theorem VE.Acts.NormalProofs.gen_ER
+  ∀ {V : VE.Acts.Vocab} {f : VE.Acts.Frame} {h : Nat},
+    VE.Acts.NormalProofs.FrameOk V f h →
+      ∀ (L : List (List VE.Acts.Lexical.Tok × VE.Acts.Piece)),
+        L ≠ [] →
+          (∀ (q : List VE.Acts.Lexical.Tok × VE.Acts.Piece),
+              q ∈ L → VE.Acts.NormalProofs.Gen V (VE.Acts.RSym.n (VE.Acts.NT.F h VE.Acts.FNT.EE)) q.fst [q.snd]) →
+            VE.Acts.NormalProofs.Gen V (VE.Acts.RSym.n (VE.Acts.NT.F h VE.Acts.FNT.ER)) (List.flatMap (fun x => x.fst) L)
+              (List.map (fun x => x.snd) L)
+  -- uses VE.Acts.FNT.EE@VE.Acts.Grammar VE.Acts.FNT.ER@VE.Acts.Grammar VE.Acts.Frame@VE.Acts.Syntax VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.NT.F@VE.Acts.Grammar VE.Acts.NormalProofs.FrameOk@VE.Acts.NormalProofs VE.Acts.NormalProofs.Gen@VE.Acts.NormalProofs VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RSym.n@VE.Acts.Grammar VE.Acts.Vocab@VE.Acts.Syntax
+  -- expr 1241419186
+theorem VE.Acts.NormalProofs.gen_FL
+  ∀ {V : VE.Acts.Vocab} {f : VE.Acts.Frame} {h : Nat},
+    (f, h) ∈ V.frames.zipIdx →
+      ∀ (p : VE.Acts.Part),
+        VE.Acts.NormalProofs.PartOk V f p →
+          VE.Acts.NormalProofs.Gen V (VE.Acts.RSym.n (VE.Acts.NT.F h VE.Acts.FNT.FL)) p.toks [VE.Acts.Piece.part p]
+  -- uses VE.Acts.FNT.FL@VE.Acts.Grammar VE.Acts.Frame@VE.Acts.Syntax VE.Acts.NT.F@VE.Acts.Grammar VE.Acts.NormalProofs.Gen@VE.Acts.NormalProofs VE.Acts.NormalProofs.PartOk@VE.Acts.NormalProofs VE.Acts.Part.toks@VE.Acts.Linearize VE.Acts.Part@VE.Acts.Tree VE.Acts.Piece.part@VE.Acts.Meaning VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RSym.n@VE.Acts.Grammar VE.Acts.Vocab.frames@VE.Acts.Syntax VE.Acts.Vocab@VE.Acts.Syntax
+  -- expr 3291577408
+theorem VE.Acts.NormalProofs.gen_FW
+  ∀ {V : VE.Acts.Vocab} (t b : Bool),
+    t = Bool.true ∨ b = Bool.true →
+      VE.Acts.NormalProofs.Gen V (VE.Acts.RSym.n VE.Acts.NT.FW)
+        ((if t = Bool.true then [VE.Acts.Lexical.Tok.word "to"] else []) ++
+          if b = Bool.true then [VE.Acts.Lexical.Tok.word "be"] else [])
+        [VE.Acts.Piece.fw t b]
+  -- uses VE.Acts.Lexical.Tok.word@VE.Acts.Lexical VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.NT.FW@VE.Acts.Grammar VE.Acts.NormalProofs.Gen@VE.Acts.NormalProofs VE.Acts.Piece.fw@VE.Acts.Meaning VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RSym.n@VE.Acts.Grammar VE.Acts.Vocab@VE.Acts.Syntax
+  -- expr 4243756558
+theorem VE.Acts.NormalProofs.gen_HD
+  ∀ {V : VE.Acts.Vocab} {f : VE.Acts.Frame} {h : Nat},
+    (f, h) ∈ V.frames.zipIdx →
+      (∀ (w : String), w ∈ f.head → w.toLower = w) →
+        f.head ≠ [] →
+          VE.Acts.NormalProofs.Gen V (VE.Acts.RSym.n (VE.Acts.NT.F h VE.Acts.FNT.HD))
+            (List.map VE.Acts.Lexical.Tok.word f.head) [VE.Acts.Piece.head f.head]
+  -- uses VE.Acts.FNT.HD@VE.Acts.Grammar VE.Acts.Frame.head@VE.Acts.Syntax VE.Acts.Frame@VE.Acts.Syntax VE.Acts.Lexical.Tok.word@VE.Acts.Lexical VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.NT.F@VE.Acts.Grammar VE.Acts.NormalProofs.Gen@VE.Acts.NormalProofs VE.Acts.Piece.head@VE.Acts.Meaning VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RSym.n@VE.Acts.Grammar VE.Acts.Vocab.frames@VE.Acts.Syntax VE.Acts.Vocab@VE.Acts.Syntax
+  -- expr 789945659
+theorem VE.Acts.NormalProofs.gen_J
+  ∀ {V : VE.Acts.Vocab} (j : VE.Acts.Join),
+    VE.Acts.NormalProofs.Gen V (VE.Acts.RSym.n VE.Acts.NT.J) [VE.Acts.Lexical.Tok.word (VE.Acts.joinWord j)]
+      [VE.Acts.Piece.j j]
+  -- uses VE.Acts.Join@VE.Acts.Tree VE.Acts.Lexical.Tok.word@VE.Acts.Lexical VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.NT.J@VE.Acts.Grammar VE.Acts.NormalProofs.Gen@VE.Acts.NormalProofs VE.Acts.Piece.j@VE.Acts.Meaning VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RSym.n@VE.Acts.Grammar VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.joinWord@VE.Acts.Linearize
+  -- expr 1675161031
+theorem VE.Acts.NormalProofs.gen_MK
+  ∀ {V : VE.Acts.Vocab} {f : VE.Acts.Frame},
+    f ∈ V.frames →
+      ∀ {m : String},
+        m ∈ f.markers ++ f.mods →
+          m ≠ "" →
+            (∀ (w : String), w ∈ VE.Acts.wordsOf m → w.toLower = w) →
+              VE.Acts.wordsOf m ≠ [] →
+                VE.Acts.NormalProofs.Gen V (VE.Acts.RSym.n (VE.Acts.NT.MK m))
+                  (List.map VE.Acts.Lexical.Tok.word (VE.Acts.wordsOf m)) []
+  -- uses VE.Acts.Frame.markers@VE.Acts.Syntax VE.Acts.Frame.mods@VE.Acts.Syntax VE.Acts.Frame@VE.Acts.Syntax VE.Acts.Lexical.Tok.word@VE.Acts.Lexical VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.NT.MK@VE.Acts.Grammar VE.Acts.NormalProofs.Gen@VE.Acts.NormalProofs VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RSym.n@VE.Acts.Grammar VE.Acts.Vocab.frames@VE.Acts.Syntax VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.wordsOf@VE.Acts.Syntax
+  -- expr 314289933
+theorem VE.Acts.NormalProofs.gen_MK_of
+  ∀ {V : VE.Acts.Vocab} {f : VE.Acts.Frame} {h : Nat},
+    VE.Acts.NormalProofs.FrameOk V f h →
+      ∀ {m : String},
+        m ∈ f.markers ++ f.mods →
+          m ≠ "" →
+            VE.Acts.NormalProofs.Gen V (VE.Acts.RSym.n (VE.Acts.NT.MK m))
+              (List.map VE.Acts.Lexical.Tok.word (VE.Acts.wordsOf m)) []
+  -- uses VE.Acts.Frame.markers@VE.Acts.Syntax VE.Acts.Frame.mods@VE.Acts.Syntax VE.Acts.Frame@VE.Acts.Syntax VE.Acts.Lexical.Tok.word@VE.Acts.Lexical VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.NT.MK@VE.Acts.Grammar VE.Acts.NormalProofs.FrameOk@VE.Acts.NormalProofs VE.Acts.NormalProofs.Gen@VE.Acts.NormalProofs VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RSym.n@VE.Acts.Grammar VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.wordsOf@VE.Acts.Syntax
+  -- expr 1018649787
+theorem VE.Acts.NormalProofs.gen_PL
+  ∀ {V : VE.Acts.Vocab} {f : VE.Acts.Frame} {h : Nat},
+    (f, h) ∈ V.frames.zipIdx →
+      ∀ (j : VE.Acts.Join) (ps : List VE.Acts.Part),
+        2 ≤ ps.length →
+          (∀ (p : VE.Acts.Part), p ∈ ps → VE.Acts.NormalProofs.PartOk V f p) →
+            VE.Acts.longEnd ps = Bool.false →
+              VE.Acts.NormalProofs.Gen V (VE.Acts.RSym.n (VE.Acts.NT.F h VE.Acts.FNT.PL)) (VE.Acts.listToks j ps)
+                [VE.Acts.Piece.list j ps]
+  -- uses VE.Acts.FNT.PL@VE.Acts.Grammar VE.Acts.Frame@VE.Acts.Syntax VE.Acts.Join@VE.Acts.Tree VE.Acts.NT.F@VE.Acts.Grammar VE.Acts.NormalProofs.Gen@VE.Acts.NormalProofs VE.Acts.NormalProofs.PartOk@VE.Acts.NormalProofs VE.Acts.Part@VE.Acts.Tree VE.Acts.Piece.list@VE.Acts.Meaning VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RSym.n@VE.Acts.Grammar VE.Acts.Vocab.frames@VE.Acts.Syntax VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.listToks@VE.Acts.Linearize VE.Acts.longEnd@VE.Acts.Meaning
+  -- expr 3673124680
+theorem VE.Acts.NormalProofs.gen_PT
+  ∀ {V : VE.Acts.Vocab} {f : VE.Acts.Frame} {h : Nat},
+    (f, h) ∈ V.frames.zipIdx →
+      ∀ (j : VE.Acts.Join) (q : VE.Acts.Part) (rest : List VE.Acts.Part),
+        (∀ (r : VE.Acts.Part), r ∈ q :: rest → VE.Acts.NormalProofs.PartOk V f r) →
+          ∃ T cs,
+            (∀ (p : VE.Acts.Part), VE.Acts.listToks j (p :: q :: rest) = p.toks ++ T) ∧
+              VE.Acts.NormalProofs.Gen V (VE.Acts.RSym.n (VE.Acts.NT.F h VE.Acts.FNT.PT)) T cs ∧
+                ∀ (p : VE.Acts.Part),
+                  VE.Acts.listOf (VE.Acts.Piece.part p :: cs) =
+                    Option.some (j, List.map VE.Acts.Piece.part (p :: q :: rest))
+  -- uses VE.Acts.FNT.PT@VE.Acts.Grammar VE.Acts.Frame@VE.Acts.Syntax VE.Acts.Join@VE.Acts.Tree VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.NT.F@VE.Acts.Grammar VE.Acts.NormalProofs.Gen@VE.Acts.NormalProofs VE.Acts.NormalProofs.PartOk@VE.Acts.NormalProofs VE.Acts.Part.toks@VE.Acts.Linearize VE.Acts.Part@VE.Acts.Tree VE.Acts.Piece.part@VE.Acts.Meaning VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RSym.n@VE.Acts.Grammar VE.Acts.Vocab.frames@VE.Acts.Syntax VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.listOf@VE.Acts.Meaning VE.Acts.listToks@VE.Acts.Linearize
+  -- expr 3950138717
+theorem VE.Acts.NormalProofs.gen_S
+  ∀ {V : VE.Acts.Vocab} {w : List VE.Acts.Lexical.Tok} {ps : List VE.Acts.Piece},
+    VE.Acts.NormalProofs.Gen V (VE.Acts.RSym.n VE.Acts.NT.SINGLE) w ps →
+      VE.Acts.NormalProofs.Gen V (VE.Acts.RSym.n VE.Acts.NT.S) (VE.Acts.Lexical.Tok.slot 0 :: w) ps
+  -- uses VE.Acts.Lexical.Tok.slot@VE.Acts.Lexical VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.NT.S@VE.Acts.Grammar VE.Acts.NT.SINGLE@VE.Acts.Grammar VE.Acts.NormalProofs.Gen@VE.Acts.NormalProofs VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RSym.n@VE.Acts.Grammar VE.Acts.Vocab@VE.Acts.Syntax
+  -- expr 3155230824
+theorem VE.Acts.NormalProofs.gen_SC
+  ∀ {V : VE.Acts.Vocab} {f : VE.Acts.Frame} {h : Nat},
+    VE.Acts.NormalProofs.FrameOk V f h →
+      (∀ (w : String), w ∈ f.head → w.toLower = w) →
+        f.head ≠ [] →
+          ∀ (obj : List (List VE.Acts.Lexical.Tok × VE.Acts.Piece)),
+            ("" ∈ f.markers ∧
+                  ∃ q,
+                    obj = [q] ∧
+                      VE.Acts.NormalProofs.Gen V (VE.Acts.RSym.n (VE.Acts.NT.F h VE.Acts.FNT.O)) q.fst [q.snd]) ∨
+                ¬"" ∈ f.markers ∧ obj = [] →
+              ∀ (L : List (List VE.Acts.Lexical.Tok × VE.Acts.Piece)),
+                (∀ (q : List VE.Acts.Lexical.Tok × VE.Acts.Piece),
+                    q ∈ L → VE.Acts.NormalProofs.Gen V (VE.Acts.RSym.n (VE.Acts.NT.F h VE.Acts.FNT.EE)) q.fst [q.snd]) →
+                  VE.Acts.NormalProofs.Gen V (VE.Acts.RSym.n VE.Acts.NT.SC)
+                    (List.map VE.Acts.Lexical.Tok.word f.head ++ List.flatMap (fun x => x.fst) (obj ++ L))
+                    (VE.Acts.Piece.head f.head :: List.map (fun x => x.snd) (obj ++ L))
+  -- uses VE.Acts.FNT.EE@VE.Acts.Grammar VE.Acts.FNT.O@VE.Acts.Grammar VE.Acts.Frame.head@VE.Acts.Syntax VE.Acts.Frame.markers@VE.Acts.Syntax VE.Acts.Frame@VE.Acts.Syntax VE.Acts.Lexical.Tok.word@VE.Acts.Lexical VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.NT.F@VE.Acts.Grammar VE.Acts.NT.SC@VE.Acts.Grammar VE.Acts.NormalProofs.FrameOk@VE.Acts.NormalProofs VE.Acts.NormalProofs.Gen@VE.Acts.NormalProofs VE.Acts.Piece.head@VE.Acts.Meaning VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RSym.n@VE.Acts.Grammar VE.Acts.Vocab@VE.Acts.Syntax
+  -- expr 403825927
+theorem VE.Acts.NormalProofs.gen_SINGLE
+  ∀ {V : VE.Acts.Vocab} (t b : Bool) (ws : List String),
+    (∀ (w : String), w ∈ ws → w ∈ V.adverbs ∧ w.toLower = w) →
+      ∀ {w : List VE.Acts.Lexical.Tok} {cs ps : List VE.Acts.Piece},
+        VE.Acts.NormalProofs.Gen V (VE.Acts.RSym.n VE.Acts.NT.SC) w cs →
+          Option.map
+                (fun x =>
+                  match x with
+                  | (fw, h, es) => [VE.Acts.Piece.act (VE.Acts.singleAct fw h es)])
+                (VE.Acts.itemOf
+                  ((if (t || b) = Bool.true then [VE.Acts.Piece.fw t b] else []) ++
+                      List.map (fun w => VE.Acts.Piece.elt (VE.Acts.Elt.mod (VE.Acts.Modifier.adv w)) VE.Acts.Att.own)
+                        ws ++
+                    cs)) =
+              Option.some ps →
+            VE.Acts.NormalProofs.Gen V (VE.Acts.RSym.n VE.Acts.NT.SINGLE)
+              (((if t = Bool.true then [VE.Acts.Lexical.Tok.word "to"] else []) ++
+                    if b = Bool.true then [VE.Acts.Lexical.Tok.word "be"] else []) ++
+                  List.map VE.Acts.Lexical.Tok.word ws ++
+                w)
+              ps
+  -- uses VE.Acts.Att.own@VE.Acts.Meaning VE.Acts.Elt.mod@VE.Acts.Meaning VE.Acts.Lexical.Tok.word@VE.Acts.Lexical VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.Modifier.adv@VE.Acts.Tree VE.Acts.NT.SC@VE.Acts.Grammar VE.Acts.NT.SINGLE@VE.Acts.Grammar VE.Acts.NormalProofs.Gen@VE.Acts.NormalProofs VE.Acts.NormalProofs.ap_SINGLE.match_1@VE.Acts.NormalProofs VE.Acts.Piece.act@VE.Acts.Meaning VE.Acts.Piece.elt@VE.Acts.Meaning VE.Acts.Piece.fw@VE.Acts.Meaning VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RSym.n@VE.Acts.Grammar VE.Acts.Vocab.adverbs@VE.Acts.Syntax VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.itemOf@VE.Acts.Meaning VE.Acts.singleAct@VE.Acts.Meaning
+  -- expr 405981217
+theorem VE.Acts.NormalProofs.gen_TOK
+  ∀ {V : VE.Acts.Vocab} {x : VE.Acts.Lexical.Tok} {a : VE.Acts.Term} {p : VE.Acts.Part},
+    { lhs := VE.Acts.NT.TOK, rhs := [VE.Acts.RSym.t a], kind := VE.Acts.Kind.shape } ∈ VE.Acts.globalRules V →
+      a = VE.Acts.Term.slot ∨ a = VE.Acts.Term.fixed →
+        a.accepts x = Bool.true →
+          VE.Acts.piecesOf (VE.Acts.closed (VE.Acts.schema V)).toArray (VE.Grammar.Tree.leaf x) =
+              Option.some [VE.Acts.Piece.part p] →
+            VE.Acts.NormalProofs.Gen V (VE.Acts.RSym.n VE.Acts.NT.TOK) [x] [VE.Acts.Piece.part p]
+  -- uses VE.Acts.Kind.shape@VE.Acts.Grammar VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.NT.TOK@VE.Acts.Grammar VE.Acts.NormalProofs.Gen@VE.Acts.NormalProofs VE.Acts.Part@VE.Acts.Tree VE.Acts.Piece.part@VE.Acts.Meaning VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RSym.n@VE.Acts.Grammar VE.Acts.RSym.t@VE.Acts.Grammar VE.Acts.RSym@VE.Acts.Grammar VE.Acts.RuleS.mk@VE.Acts.Grammar VE.Acts.RuleS@VE.Acts.Grammar VE.Acts.Term.accepts@VE.Acts.Syntax VE.Acts.Term.fixed@VE.Acts.Syntax VE.Acts.Term.slot@VE.Acts.Syntax VE.Acts.Term@VE.Acts.Syntax VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.closed@VE.Acts.Grammar VE.Acts.globalRules@VE.Acts.Grammar VE.Acts.piecesOf@VE.Acts.Meaning VE.Acts.schema@VE.Acts.Grammar VE.Grammar.Tree.leaf@VE.Grammar.Derives
+  -- expr 1718124519
+theorem VE.Acts.NormalProofs.gen_WR
+  ∀ {V : VE.Acts.Vocab} {f : VE.Acts.Frame} {h : Nat},
+    (f, h) ∈ V.frames.zipIdx →
+      ∀ (ws : List String),
+        ws ≠ [] →
+          (∀ (w : String), w ∈ ws → (VE.Acts.fillExcl V f).contains w.toLower = Bool.false) →
+            VE.Acts.NormalProofs.Gen V (VE.Acts.RSym.n (VE.Acts.NT.F h VE.Acts.FNT.WR))
+              (List.map VE.Acts.Lexical.Tok.word ws) (List.map VE.Acts.Piece.w ws)
+  -- uses VE.Acts.FNT.WR@VE.Acts.Grammar VE.Acts.Frame@VE.Acts.Syntax VE.Acts.Lexical.Tok.word@VE.Acts.Lexical VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.NT.F@VE.Acts.Grammar VE.Acts.NormalProofs.Gen@VE.Acts.NormalProofs VE.Acts.Piece.w@VE.Acts.Meaning VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RSym.n@VE.Acts.Grammar VE.Acts.Vocab.frames@VE.Acts.Syntax VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.fillExcl@VE.Acts.Grammar
+  -- expr 570175627
+theorem VE.Acts.NormalProofs.gen_arg
+  ∀ {V : VE.Acts.Vocab} {f : VE.Acts.Frame} {h : Nat},
+    VE.Acts.NormalProofs.FrameOk V f h →
+      ∀ {m : String} {fl : VE.Acts.Filler},
+        m ∈ f.markers →
+          m ≠ "" →
+            (∀ (p : VE.Acts.Part), p ∈ fl.parts → VE.Acts.NormalProofs.PartOk V f p) →
+              (∀ (j : VE.Acts.Join) (ps : List VE.Acts.Part),
+                  fl = VE.Acts.Filler.joined j ps →
+                    f.split.contains m = Bool.false ∧ 2 ≤ ps.length ∧ VE.Acts.longEnd ps = Bool.false) →
+                VE.Acts.NormalProofs.Gen V (VE.Acts.RSym.n (VE.Acts.NT.F h VE.Acts.FNT.EE))
+                  (List.map VE.Acts.Lexical.Tok.word (VE.Acts.wordsOf m) ++ fl.toks)
+                  [VE.Acts.Piece.elt (VE.Acts.Elt.arg m fl) VE.Acts.Att.own]
+  -- uses VE.Acts.Att.own@VE.Acts.Meaning VE.Acts.Elt.arg@VE.Acts.Meaning VE.Acts.FNT.EE@VE.Acts.Grammar VE.Acts.Filler.joined@VE.Acts.Tree VE.Acts.Filler.parts@VE.Acts.Meaning VE.Acts.Filler.toks@VE.Acts.Linearize VE.Acts.Filler@VE.Acts.Tree VE.Acts.Frame.markers@VE.Acts.Syntax VE.Acts.Frame.split@VE.Acts.Syntax VE.Acts.Frame@VE.Acts.Syntax VE.Acts.Join@VE.Acts.Tree VE.Acts.Lexical.Tok.word@VE.Acts.Lexical VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.NT.F@VE.Acts.Grammar VE.Acts.NormalProofs.FrameOk@VE.Acts.NormalProofs VE.Acts.NormalProofs.Gen@VE.Acts.NormalProofs VE.Acts.NormalProofs.PartOk@VE.Acts.NormalProofs VE.Acts.Part@VE.Acts.Tree VE.Acts.Piece.elt@VE.Acts.Meaning VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RSym.n@VE.Acts.Grammar VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.longEnd@VE.Acts.Meaning VE.Acts.wordsOf@VE.Acts.Syntax
+  -- expr 2101721348
+theorem VE.Acts.NormalProofs.gen_kws
+  ∀ {V : VE.Acts.Vocab} (ws : List String),
+    (∀ (w : String), w ∈ ws → w.toLower = w) →
+      VE.Acts.NormalProofs.GenAll V (VE.Acts.kwSyms ws) (List.map VE.Acts.Lexical.Tok.word ws)
+        (List.map VE.Acts.Piece.w ws)
+  -- uses VE.Acts.Lexical.Tok.word@VE.Acts.Lexical VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.NormalProofs.GenAll@VE.Acts.NormalProofs VE.Acts.Piece.w@VE.Acts.Meaning VE.Acts.Piece@VE.Acts.Meaning VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.kwSyms@VE.Acts.Grammar
+  -- expr 415804908
+theorem VE.Acts.NormalProofs.gen_leaf
+  ∀ {V : VE.Acts.Vocab} {a : VE.Acts.Term} {x : VE.Acts.Lexical.Tok} {ps : List VE.Acts.Piece},
+    a.accepts x = Bool.true →
+      VE.Acts.piecesOf (VE.Acts.closed (VE.Acts.schema V)).toArray (VE.Grammar.Tree.leaf x) = Option.some ps →
+        VE.Acts.NormalProofs.Gen V (VE.Acts.RSym.t a) [x] ps
+  -- uses VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.NormalProofs.Gen@VE.Acts.NormalProofs VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RSym.t@VE.Acts.Grammar VE.Acts.RuleS@VE.Acts.Grammar VE.Acts.Term.accepts@VE.Acts.Syntax VE.Acts.Term@VE.Acts.Syntax VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.closed@VE.Acts.Grammar VE.Acts.piecesOf@VE.Acts.Meaning VE.Acts.schema@VE.Acts.Grammar VE.Grammar.Tree.leaf@VE.Grammar.Derives
+  -- expr 1297882807
+theorem VE.Acts.NormalProofs.gen_node
+  ∀ {V : VE.Acts.Vocab} {r : VE.Acts.RuleS},
+    r ∈ VE.Acts.schema V →
+      ∀ {w : List VE.Acts.Lexical.Tok} {cs ps : List VE.Acts.Piece},
+        VE.Acts.NormalProofs.GenAll V r.rhs w cs →
+          VE.Acts.applyRule r cs = Option.some ps → VE.Acts.NormalProofs.Gen V (VE.Acts.RSym.n r.lhs) w ps
+  -- uses VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.NormalProofs.Gen@VE.Acts.NormalProofs VE.Acts.NormalProofs.GenAll@VE.Acts.NormalProofs VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RSym.n@VE.Acts.Grammar VE.Acts.RuleS.lhs@VE.Acts.Grammar VE.Acts.RuleS.rhs@VE.Acts.Grammar VE.Acts.RuleS@VE.Acts.Grammar VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.applyRule@VE.Acts.Meaning VE.Acts.schema@VE.Acts.Grammar
+  -- expr 4124736763
+theorem VE.Acts.NormalProofs.gen_obj
+  ∀ {V : VE.Acts.Vocab} {f : VE.Acts.Frame} {h : Nat},
+    VE.Acts.NormalProofs.FrameOk V f h →
+      "" ∈ f.markers →
+        ∀ {fl : VE.Acts.Filler},
+          (∀ (p : VE.Acts.Part), p ∈ fl.parts → VE.Acts.NormalProofs.PartOk V f p) →
+            (∀ (j : VE.Acts.Join) (ps : List VE.Acts.Part),
+                fl = VE.Acts.Filler.joined j ps →
+                  f.split.contains "" = Bool.false ∧ 2 ≤ ps.length ∧ VE.Acts.longEnd ps = Bool.false) →
+              VE.Acts.NormalProofs.Gen V (VE.Acts.RSym.n (VE.Acts.NT.F h VE.Acts.FNT.O)) fl.toks
+                [VE.Acts.Piece.elt (VE.Acts.Elt.arg "" fl) VE.Acts.Att.own]
+  -- uses VE.Acts.Att.own@VE.Acts.Meaning VE.Acts.Elt.arg@VE.Acts.Meaning VE.Acts.FNT.O@VE.Acts.Grammar VE.Acts.Filler.joined@VE.Acts.Tree VE.Acts.Filler.parts@VE.Acts.Meaning VE.Acts.Filler.toks@VE.Acts.Linearize VE.Acts.Filler@VE.Acts.Tree VE.Acts.Frame.markers@VE.Acts.Syntax VE.Acts.Frame.split@VE.Acts.Syntax VE.Acts.Frame@VE.Acts.Syntax VE.Acts.Join@VE.Acts.Tree VE.Acts.NT.F@VE.Acts.Grammar VE.Acts.NormalProofs.FrameOk@VE.Acts.NormalProofs VE.Acts.NormalProofs.Gen@VE.Acts.NormalProofs VE.Acts.NormalProofs.PartOk@VE.Acts.NormalProofs VE.Acts.Part@VE.Acts.Tree VE.Acts.Piece.elt@VE.Acts.Meaning VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RSym.n@VE.Acts.Grammar VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.longEnd@VE.Acts.Meaning
+  -- expr 3415161960
+theorem VE.Acts.NormalProofs.gen_prep
+  ∀ {V : VE.Acts.Vocab} {f : VE.Acts.Frame} {h : Nat},
+    VE.Acts.NormalProofs.FrameOk V f h →
+      ∀ {m : String} {p : VE.Acts.Part},
+        m ∈ f.mods →
+          VE.Acts.NormalProofs.PartOk V f p →
+            VE.Acts.NormalProofs.Gen V (VE.Acts.RSym.n (VE.Acts.NT.F h VE.Acts.FNT.EE))
+              (List.map VE.Acts.Lexical.Tok.word (VE.Acts.wordsOf m) ++ p.toks)
+              [VE.Acts.Piece.elt (VE.Acts.Elt.mod (VE.Acts.Modifier.prep m p)) VE.Acts.Att.own]
+  -- uses VE.Acts.Att.own@VE.Acts.Meaning VE.Acts.Elt.mod@VE.Acts.Meaning VE.Acts.FNT.EE@VE.Acts.Grammar VE.Acts.Frame.mods@VE.Acts.Syntax VE.Acts.Frame@VE.Acts.Syntax VE.Acts.Lexical.Tok.word@VE.Acts.Lexical VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.Modifier.prep@VE.Acts.Tree VE.Acts.NT.F@VE.Acts.Grammar VE.Acts.NormalProofs.FrameOk@VE.Acts.NormalProofs VE.Acts.NormalProofs.Gen@VE.Acts.NormalProofs VE.Acts.NormalProofs.PartOk@VE.Acts.NormalProofs VE.Acts.Part.toks@VE.Acts.Linearize VE.Acts.Part@VE.Acts.Tree VE.Acts.Piece.elt@VE.Acts.Meaning VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RSym.n@VE.Acts.Grammar VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.wordsOf@VE.Acts.Syntax
+  -- expr 2722732703
+theorem VE.Acts.NormalProofs.gen_word
+  ∀ {V : VE.Acts.Vocab} {a : VE.Acts.Term} {v : String},
+    a.accepts (VE.Acts.Lexical.Tok.word v) = Bool.true →
+      VE.Acts.NormalProofs.Gen V (VE.Acts.RSym.t a) [VE.Acts.Lexical.Tok.word v] [VE.Acts.Piece.w v]
+  -- uses VE.Acts.Lexical.Tok.word@VE.Acts.Lexical VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.NormalProofs.Gen@VE.Acts.NormalProofs VE.Acts.Piece.w@VE.Acts.Meaning VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RSym.t@VE.Acts.Grammar VE.Acts.Term.accepts@VE.Acts.Syntax VE.Acts.Term@VE.Acts.Syntax VE.Acts.Vocab@VE.Acts.Syntax
+  -- expr 411880374
+theorem VE.Acts.NormalProofs.grammar_rule
+  ∀ {V : VE.Acts.Vocab} {i : Nat} {r : VE.Acts.RuleS},
+    (VE.Acts.closed (VE.Acts.schema V))[i]? = Option.some r →
+      (VE.Acts.grammar V).rules[i]? =
+        Option.some
+          { lhs := VE.Acts.NormalProofs.nm V r.lhs, rhs := List.map (VE.Acts.NormalProofs.symB V) r.rhs, act := 0,
+            tag := "" }
+  -- uses VE.Acts.NormalProofs.nm@VE.Acts.NormalProofs VE.Acts.NormalProofs.symB@VE.Acts.NormalProofs VE.Acts.RSym@VE.Acts.Grammar VE.Acts.RuleS.lhs@VE.Acts.Grammar VE.Acts.RuleS.rhs@VE.Acts.Grammar VE.Acts.RuleS@VE.Acts.Grammar VE.Acts.Term@VE.Acts.Syntax VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.closed@VE.Acts.Grammar VE.Acts.grammar@VE.Acts.Grammar VE.Acts.schema@VE.Acts.Grammar VE.Grammar.Grammar.rules@VE.Grammar.Basic VE.Grammar.Rule.mk@VE.Grammar.Basic VE.Grammar.Rule@VE.Grammar.Basic VE.Grammar.Sym@VE.Grammar.Basic
+  -- expr 1443172530
+theorem VE.Acts.NormalProofs.listOf_part
+  ∀ (p : VE.Acts.Part) (cs : List VE.Acts.Piece),
+    VE.Acts.listOf (VE.Acts.Piece.part p :: cs) =
+      Option.map (fun r => (r.fst, VE.Acts.Piece.part p :: r.snd)) (VE.Acts.listOf cs)
+  -- uses VE.Acts.Join@VE.Acts.Tree VE.Acts.Part@VE.Acts.Tree VE.Acts.Piece.part@VE.Acts.Meaning VE.Acts.Piece@VE.Acts.Meaning VE.Acts.listOf@VE.Acts.Meaning
+  -- expr 1039296293
+theorem VE.Acts.NormalProofs.lower_and
+  "and".toLower = "and"
+  -- uses
+  -- expr 1322428142
+theorem VE.Acts.NormalProofs.lower_be
+  "be".toLower = "be"
+  -- uses
+  -- expr 423641591
+theorem VE.Acts.NormalProofs.lower_nor
+  "nor".toLower = "nor"
+  -- uses
+  -- expr 2028155348
+theorem VE.Acts.NormalProofs.lower_or
+  "or".toLower = "or"
+  -- uses
+  -- expr 2136037329
+theorem VE.Acts.NormalProofs.lower_to
+  "to".toLower = "to"
+  -- uses
+  -- expr 588167230
+theorem VE.Acts.NormalProofs.mapAux_id
+  ∀ (f : Char → Char) (s : String),
+    (∀ (c : Char), c ∈ s.data → f c = c) →
+      ∀ (n : Nat) (i : String.Pos), s.endPos.byteIdx - i.byteIdx = n → String.mapAux f i s = s
+  -- uses
+  -- expr 2497368387
+theorem VE.Acts.NormalProofs.mapM_part
+  ∀ (ps : List VE.Acts.Part),
+    List.mapM
+        (fun x =>
+          match x with
+          | VE.Acts.Piece.part p => Option.some p
+          | VE.Acts.Piece.elt (VE.Acts.Elt.arg m (VE.Acts.Filler.one p)) a => Option.some p
+          | x => Option.none)
+        (List.map VE.Acts.Piece.part ps) =
+      Option.some ps
+  -- uses VE.Acts.Att@VE.Acts.Meaning VE.Acts.NormalProofs.mapM_part.match_1@VE.Acts.NormalProofs VE.Acts.Part@VE.Acts.Tree VE.Acts.Piece.part@VE.Acts.Meaning VE.Acts.Piece@VE.Acts.Meaning
+  -- expr 3635578272
+theorem VE.Acts.NormalProofs.mapM_some
+  ∀ {α : Type} (l : List α), List.mapM (fun a => Option.some a) l = Option.some l
+  -- uses
+  -- expr 3422170491
+theorem VE.Acts.NormalProofs.mem_advWords
+  ∀ {w : String} {ms : List VE.Acts.Modifier}, w ∈ VE.Acts.NormalProofs.advWords ms → VE.Acts.Modifier.adv w ∈ ms
+  -- uses VE.Acts.Modifier.adv@VE.Acts.Tree VE.Acts.Modifier@VE.Acts.Tree VE.Acts.NormalProofs.advWords@VE.Acts.NormalProofs
+  -- expr 3592111868
+theorem VE.Acts.NormalProofs.mem_closed
+  ∀ {V : VE.Acts.Vocab} {r : VE.Acts.RuleS},
+    r ∈ VE.Acts.schema V → ∃ i, (VE.Acts.closed (VE.Acts.schema V))[i]? = Option.some r
+  -- uses VE.Acts.RuleS@VE.Acts.Grammar VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.closed@VE.Acts.Grammar VE.Acts.schema@VE.Acts.Grammar
+  -- expr 1408810397
+theorem VE.Acts.NormalProofs.mem_frame
+  ∀ {V : VE.Acts.Vocab} {f : VE.Acts.Frame} {h : Nat},
+    (f, h) ∈ V.frames.zipIdx → ∀ {r : VE.Acts.RuleS}, r ∈ VE.Acts.frameRules V h f → r ∈ VE.Acts.schema V
+  -- uses VE.Acts.Frame@VE.Acts.Syntax VE.Acts.RuleS@VE.Acts.Grammar VE.Acts.Vocab.frames@VE.Acts.Syntax VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.frameRules@VE.Acts.Grammar VE.Acts.schema@VE.Acts.Grammar
+  -- expr 1066551327
+theorem VE.Acts.NormalProofs.mem_global
+  ∀ {V : VE.Acts.Vocab} {r : VE.Acts.RuleS}, r ∈ VE.Acts.globalRules V → r ∈ VE.Acts.schema V
+  -- uses VE.Acts.RuleS@VE.Acts.Grammar VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.globalRules@VE.Acts.Grammar VE.Acts.schema@VE.Acts.Grammar
+  -- expr 1200100761
+theorem VE.Acts.NormalProofs.mem_preps
+  ∀ {m : String} {p : VE.Acts.Part} {ms : List VE.Acts.Modifier},
+    (m, p) ∈ VE.Acts.NormalProofs.preps ms → VE.Acts.Modifier.prep m p ∈ ms
+  -- uses VE.Acts.Modifier.prep@VE.Acts.Tree VE.Acts.Modifier@VE.Acts.Tree VE.Acts.NormalProofs.preps@VE.Acts.NormalProofs VE.Acts.Part@VE.Acts.Tree
+  -- expr 12456287
+theorem VE.Acts.NormalProofs.normal_derived
+  ∀ (V : VE.Acts.Vocab),
+    VE.Acts.framesOk V = Bool.true →
+      ∀ (a : VE.Acts.Atom), VE.Acts.normalOk V a = Bool.true → VE.Acts.Derived V a.normal (VE.Acts.Act.one a.canon)
+  -- uses VE.Acts.Act.one@VE.Acts.Tree VE.Acts.Atom.canon@VE.Acts.Linearize VE.Acts.Atom.normal@VE.Acts.Linearize VE.Acts.Atom@VE.Acts.Tree VE.Acts.Derived@VE.Acts.Readings VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.framesOk@VE.Acts.Syntax VE.Acts.normalOk@VE.Acts.Meaning
+  -- expr 4240061087
+theorem VE.Acts.NormalProofs.normal_toks
+  ∀ (a : VE.Acts.Atom),
+    a.normal =
+      VE.Acts.Lexical.Tok.slot 0 ::
+        (((if a.toWord = Bool.true then [VE.Acts.Lexical.Tok.word "to"] else []) ++
+              if a.beWord = Bool.true then [VE.Acts.Lexical.Tok.word "be"] else []) ++
+            List.map VE.Acts.Lexical.Tok.word (VE.Acts.NormalProofs.advWords a.mods) ++
+          (List.map VE.Acts.Lexical.Tok.word a.head ++
+            (List.flatMap (fun x => List.map VE.Acts.Lexical.Tok.word (VE.Acts.wordsOf x.fst) ++ x.snd.toks)
+                a.canon.args ++
+              List.flatMap (fun q => List.map VE.Acts.Lexical.Tok.word (VE.Acts.wordsOf q.fst) ++ q.snd.toks)
+                (VE.Acts.NormalProofs.preps a.mods))))
+  -- uses VE.Acts.Atom.args@VE.Acts.Tree VE.Acts.Atom.beWord@VE.Acts.Tree VE.Acts.Atom.canon@VE.Acts.Linearize VE.Acts.Atom.head@VE.Acts.Tree VE.Acts.Atom.mods@VE.Acts.Tree VE.Acts.Atom.normal@VE.Acts.Linearize VE.Acts.Atom.toWord@VE.Acts.Tree VE.Acts.Atom@VE.Acts.Tree VE.Acts.Filler.toks@VE.Acts.Linearize VE.Acts.Filler@VE.Acts.Tree VE.Acts.Lexical.Tok.slot@VE.Acts.Lexical VE.Acts.Lexical.Tok.word@VE.Acts.Lexical VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.NormalProofs.advWords@VE.Acts.NormalProofs VE.Acts.NormalProofs.preps@VE.Acts.NormalProofs VE.Acts.Part.toks@VE.Acts.Linearize VE.Acts.Part@VE.Acts.Tree VE.Acts.wordsOf@VE.Acts.Syntax
+  -- expr 740460515
+theorem VE.Acts.NormalProofs.ntRowGo_steps
+  ∀ {T K : Type} [DecidableEq T] [inst : DecidableEq K] [inst_1 : VE.Grammar.Accepts K T] {G : VE.Grammar.Grammar K}
+    {cap : Nat} {w : Array T} {F : List (VE.Grammar.Sym K) → List T → List (List (VE.Grammar.Tree T))},
+    G.wf = Bool.true →
+      0 < cap →
+        ∀ {i : Nat},
+          i < w.size →
+            (∀ (Xs : List (VE.Grammar.Sym K)) (u : List T) (us : List (VE.Grammar.Tree T)),
+                VE.Grammar.derivesAll G Xs us = Bool.true → VE.Grammar.yieldAll us = u → us ∈ F Xs u) →
+              ∀ {suf : Array (VE.Grammar.SufRow T)},
+                (∀ (p : Nat), i < p → p ≤ w.size → VE.Grammar.SufRowOk G cap w p (suf.getD p #[])) →
+                  ∀ (post pre : List (VE.Grammar.CRule K)) (row : VE.Grammar.NtRow T) (steps : Nat),
+                    pre ++ post = G.prepare.order →
+                      VE.Grammar.NtOk G cap w i (fun r => r ∈ List.map (fun x => x.index) pre) row →
+                        (VE.Grammar.ntRowGo (VE.Grammar.accepted (VE.Grammar.termsOf G) w i) cap w i suf post row
+                              steps).snd ≤
+                          steps + (List.map (fun R => 1 + (VE.Acts.NormalProofs.spans F w R.rhs i).length) post).sum
+  -- uses VE.Acts.NormalProofs.spans@VE.Acts.NormalProofs VE.Grammar.Accepts@VE.Grammar.Basic VE.Grammar.Bucket@VE.Grammar.Table VE.Grammar.CRule.index@VE.Grammar.Table VE.Grammar.CRule.rhs@VE.Grammar.Table VE.Grammar.CRule@VE.Grammar.Table VE.Grammar.Grammar.prepare@VE.Grammar.Table VE.Grammar.Grammar.wf@VE.Grammar.Basic VE.Grammar.Grammar@VE.Grammar.Basic VE.Grammar.NtOk@VE.Grammar.TableInvariant VE.Grammar.NtRow@VE.Grammar.Table VE.Grammar.Prepared.order@VE.Grammar.Table VE.Grammar.SufRow@VE.Grammar.Table VE.Grammar.SufRowOk@VE.Grammar.TableInvariant VE.Grammar.Sym@VE.Grammar.Basic VE.Grammar.Tree@VE.Grammar.Derives VE.Grammar.accepted@VE.Grammar.Table VE.Grammar.derivesAll@VE.Grammar.Derives VE.Grammar.ntRowGo@VE.Grammar.Table VE.Grammar.termsOf@VE.Grammar.Table VE.Grammar.yieldAll@VE.Grammar.Derives
+  -- expr 1362652126
+theorem VE.Acts.NormalProofs.parse_bounds
+  ∀ {T K : Type} [inst : DecidableEq T] [inst_1 : DecidableEq K] [inst_2 : VE.Grammar.Accepts K T]
+    {G : VE.Grammar.Grammar K},
+    G.wf = Bool.true →
+      ∀ (w : Array T),
+        ∃ N0 b0, ∀ (N b : Nat), N0 ≤ N → b0 ≤ b → ∃ ts, VE.Grammar.parse G N b w = Option.some ts ∧ ts.length < N
+  -- uses VE.Grammar.Accepts@VE.Grammar.Basic VE.Grammar.Grammar.wf@VE.Grammar.Basic VE.Grammar.Grammar@VE.Grammar.Basic VE.Grammar.Tree@VE.Grammar.Derives VE.Grammar.parse@VE.Grammar.Table
+  -- expr 2739391642
+theorem VE.Acts.NormalProofs.piecesOf_node
+  ∀ (rs : Array VE.Acts.RuleS) (i : Nat) (kids : List (VE.Grammar.Tree VE.Acts.Lexical.Tok)),
+    VE.Acts.piecesOf rs (VE.Grammar.Tree.node i kids) =
+      rs[i]?.bind fun r => (List.mapM (VE.Acts.piecesOf rs) kids).bind fun l => VE.Acts.applyRule r l.flatten
+  -- uses VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RuleS@VE.Acts.Grammar VE.Acts.applyRule@VE.Acts.Meaning VE.Acts.piecesOf@VE.Acts.Meaning VE.Grammar.Tree.node@VE.Grammar.Derives VE.Grammar.Tree@VE.Grammar.Derives
+  -- expr 2612132696
+theorem VE.Acts.NormalProofs.pieces_word
+  ∀ {V : VE.Acts.Vocab} (v : String),
+    VE.Acts.piecesOf (VE.Acts.closed (VE.Acts.schema V)).toArray (VE.Grammar.Tree.leaf (VE.Acts.Lexical.Tok.word v)) =
+      Option.some [VE.Acts.Piece.w v]
+  -- uses VE.Acts.Lexical.Tok.word@VE.Acts.Lexical VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.Piece.w@VE.Acts.Meaning VE.Acts.Piece@VE.Acts.Meaning VE.Acts.RuleS@VE.Acts.Grammar VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.closed@VE.Acts.Grammar VE.Acts.piecesOf@VE.Acts.Meaning VE.Acts.schema@VE.Acts.Grammar VE.Grammar.Tree.leaf@VE.Grammar.Derives
+  -- expr 3243707996
+theorem VE.Acts.NormalProofs.read_normal_of_unique
+  ∀ (V : VE.Acts.Vocab),
+    VE.Acts.framesOk V = Bool.true →
+      ∀ (a : VE.Acts.Atom),
+        VE.Acts.normalOk V a = Bool.true →
+          (∀ (d : VE.Grammar.Tree VE.Acts.Lexical.Tok) (B : VE.Acts.Act) (c : Bool),
+              VE.Grammar.Derives (VE.Acts.grammar V) (VE.Grammar.Sym.n (VE.Acts.grammar V).start) a.normal d →
+                VE.Acts.meaning V () d = Except.ok (B, c, ()) → B = VE.Acts.Act.one a.canon) →
+            ∃ N0 b0,
+              ∀ (N b : Nat),
+                N0 ≤ N → b0 ≤ b → VE.Acts.read V N b a.normal.toArray = VE.Acts.ReadOutcome.ok (VE.Acts.Act.one a.canon)
+  -- uses VE.Acts.Act.one@VE.Acts.Tree VE.Acts.Act@VE.Acts.Tree VE.Acts.Atom.canon@VE.Acts.Linearize VE.Acts.Atom.normal@VE.Acts.Linearize VE.Acts.Atom@VE.Acts.Tree VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.ReadOutcome.ok@VE.Acts.Read VE.Acts.ReadOutcome@VE.Acts.Read VE.Acts.Term@VE.Acts.Syntax VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.framesOk@VE.Acts.Syntax VE.Acts.grammar@VE.Acts.Grammar VE.Acts.instAcceptsTermTok@VE.Acts.Syntax VE.Acts.meaning@VE.Acts.Meaning VE.Acts.normalOk@VE.Acts.Meaning VE.Acts.read@VE.Acts.Readings VE.Grammar.Derives@VE.Grammar.Derives VE.Grammar.Grammar.start@VE.Grammar.Basic VE.Grammar.Sym.n@VE.Grammar.Basic VE.Grammar.Tree@VE.Grammar.Derives
+  -- expr 2698264222
+theorem VE.Acts.NormalProofs.rowAt_steps
+  ∀ {T K : Type} [DecidableEq T] [inst : DecidableEq K] [inst_1 : VE.Grammar.Accepts K T] {G : VE.Grammar.Grammar K}
+    {cap : Nat} {w : Array T} {F : List (VE.Grammar.Sym K) → List T → List (List (VE.Grammar.Tree T))},
+    G.wf = Bool.true →
+      0 < cap →
+        ∀ {i : Nat},
+          i < w.size →
+            (∀ (Xs : List (VE.Grammar.Sym K)) (u : List T) (us : List (VE.Grammar.Tree T)),
+                VE.Grammar.derivesAll G Xs us = Bool.true → VE.Grammar.yieldAll us = u → us ∈ F Xs u) →
+              ∀ {suf : Array (VE.Grammar.SufRow T)},
+                (∀ (p : Nat), i < p → p ≤ w.size → VE.Grammar.SufRowOk G cap w p (suf.getD p #[])) →
+                  (VE.Grammar.rowAt G.prepare cap w (Array.map (fun n => Array.replicate n []) G.prepare.shape) suf
+                          i).snd.snd ≤
+                    VE.Acts.NormalProofs.rowB F G w i
+  -- uses VE.Acts.NormalProofs.rowB@VE.Acts.NormalProofs VE.Grammar.Accepts@VE.Grammar.Basic VE.Grammar.Bucket@VE.Grammar.Table VE.Grammar.Grammar.prepare@VE.Grammar.Table VE.Grammar.Grammar.wf@VE.Grammar.Basic VE.Grammar.Grammar@VE.Grammar.Basic VE.Grammar.NtRow@VE.Grammar.Table VE.Grammar.Prepared.shape@VE.Grammar.Table VE.Grammar.SufRow@VE.Grammar.Table VE.Grammar.SufRowOk@VE.Grammar.TableInvariant VE.Grammar.Sym@VE.Grammar.Basic VE.Grammar.Tree@VE.Grammar.Derives VE.Grammar.derivesAll@VE.Grammar.Derives VE.Grammar.rowAt@VE.Grammar.Table VE.Grammar.yieldAll@VE.Grammar.Derives
+  -- expr 1473744116
+theorem VE.Acts.NormalProofs.single_meaning
+  ∀ (t b : Bool) (ws hd : List String) (es : List VE.Acts.Elt),
+    Option.map
+        (fun x =>
+          match x with
+          | (fw, h, es) => [VE.Acts.Piece.act (VE.Acts.singleAct fw h es)])
+        (VE.Acts.itemOf
+          ((if (t || b) = Bool.true then [VE.Acts.Piece.fw t b] else []) ++
+              List.map (fun w => VE.Acts.Piece.elt (VE.Acts.Elt.mod (VE.Acts.Modifier.adv w)) VE.Acts.Att.own) ws ++
+            VE.Acts.Piece.head hd :: List.map (fun e => VE.Acts.Piece.elt e VE.Acts.Att.own) es)) =
+      Option.some
+        [VE.Acts.Piece.act
+            (VE.Acts.Act.one
+              (List.foldl VE.Acts.Atom.add { toWord := t, beWord := b, head := hd, args := [], mods := [] }
+                (List.map (fun w => VE.Acts.Elt.mod (VE.Acts.Modifier.adv w)) ws ++ es)))]
+  -- uses VE.Acts.Act.one@VE.Acts.Tree VE.Acts.Atom.add@VE.Acts.Meaning VE.Acts.Atom.mk@VE.Acts.Tree VE.Acts.Atom@VE.Acts.Tree VE.Acts.Att.own@VE.Acts.Meaning VE.Acts.Elt.mod@VE.Acts.Meaning VE.Acts.Elt@VE.Acts.Meaning VE.Acts.Filler@VE.Acts.Tree VE.Acts.Modifier.adv@VE.Acts.Tree VE.Acts.Modifier@VE.Acts.Tree VE.Acts.NormalProofs.ap_SINGLE.match_1@VE.Acts.NormalProofs VE.Acts.Piece.act@VE.Acts.Meaning VE.Acts.Piece.elt@VE.Acts.Meaning VE.Acts.Piece.fw@VE.Acts.Meaning VE.Acts.Piece.head@VE.Acts.Meaning VE.Acts.Piece@VE.Acts.Meaning VE.Acts.itemOf@VE.Acts.Meaning VE.Acts.singleAct@VE.Acts.Meaning
+  -- expr 4226638979
+theorem VE.Acts.NormalProofs.sufGroups_steps
+  ∀ {T K : Type} [DecidableEq T] [DecidableEq K] [inst : VE.Grammar.Accepts K T] {G : VE.Grammar.Grammar K} {cap : Nat}
+    {w : Array T} {F : List (VE.Grammar.Sym K) → List T → List (List (VE.Grammar.Tree T))},
+    G.wf = Bool.true →
+      0 < cap →
+        ∀ {i : Nat},
+          i < w.size →
+            (∀ (Xs : List (VE.Grammar.Sym K)) (u : List T) (us : List (VE.Grammar.Tree T)),
+                VE.Grammar.derivesAll G Xs us = Bool.true → VE.Grammar.yieldAll us = u → us ∈ F Xs u) →
+              ∀ {nt : VE.Grammar.NtRow T},
+                VE.Grammar.NtFull G cap w i nt →
+                  ∀ {suf : Array (VE.Grammar.SufRow T)},
+                    (∀ (p : Nat), i < p → p ≤ w.size → VE.Grammar.SufRowOk G cap w p (suf.getD p #[])) →
+                      ∀ {on : Nat → Bool} (gs : List (Nat × List (VE.Grammar.SufPos K))) (out : VE.Grammar.SufRow T)
+                        (c : Nat),
+                        (∀ (kg : Nat × List (VE.Grammar.SufPos K)),
+                            kg ∈ gs → ∀ (p : VE.Grammar.SufPos K), p ∈ kg.snd → VE.Grammar.ValidPos G p) →
+                          (VE.Grammar.sufGroups cap w i nt suf on gs out c).snd ≤
+                            c +
+                              (List.map
+                                  (fun kg =>
+                                    (List.map
+                                        (fun p =>
+                                          (VE.Acts.NormalProofs.spans F w (VE.Acts.NormalProofs.posRhs G p) i).length)
+                                        kg.snd).sum)
+                                  gs).sum
+  -- uses VE.Acts.NormalProofs.posRhs@VE.Acts.NormalProofs VE.Acts.NormalProofs.spans@VE.Acts.NormalProofs VE.Grammar.Accepts@VE.Grammar.Basic VE.Grammar.Bucket@VE.Grammar.Table VE.Grammar.Grammar.wf@VE.Grammar.Basic VE.Grammar.Grammar@VE.Grammar.Basic VE.Grammar.NtFull@VE.Grammar.TableInvariant VE.Grammar.NtRow@VE.Grammar.Table VE.Grammar.SufPos@VE.Grammar.Table VE.Grammar.SufRow@VE.Grammar.Table VE.Grammar.SufRowOk@VE.Grammar.TableInvariant VE.Grammar.Sym@VE.Grammar.Basic VE.Grammar.Tree@VE.Grammar.Derives VE.Grammar.ValidPos@VE.Grammar.TableInvariant VE.Grammar.derivesAll@VE.Grammar.Derives VE.Grammar.sufGroups@VE.Grammar.Table VE.Grammar.yieldAll@VE.Grammar.Derives
+  -- expr 3608934656
+theorem VE.Acts.NormalProofs.sufPosGo_steps
+  ∀ {T K : Type} [DecidableEq T] [DecidableEq K] [inst : VE.Grammar.Accepts K T] {G : VE.Grammar.Grammar K} {cap : Nat}
+    {w : Array T} {F : List (VE.Grammar.Sym K) → List T → List (List (VE.Grammar.Tree T))},
+    G.wf = Bool.true →
+      0 < cap →
+        ∀ {i : Nat},
+          i < w.size →
+            (∀ (Xs : List (VE.Grammar.Sym K)) (u : List T) (us : List (VE.Grammar.Tree T)),
+                VE.Grammar.derivesAll G Xs us = Bool.true → VE.Grammar.yieldAll us = u → us ∈ F Xs u) →
+              ∀ {nt : VE.Grammar.NtRow T},
+                VE.Grammar.NtFull G cap w i nt →
+                  ∀ {suf : Array (VE.Grammar.SufRow T)},
+                    (∀ (p : Nat), i < p → p ≤ w.size → VE.Grammar.SufRowOk G cap w p (suf.getD p #[])) →
+                      ∀ (ps : List (VE.Grammar.SufPos K)) (out : VE.Grammar.SufRow T) (c : Nat),
+                        (∀ (p : VE.Grammar.SufPos K), p ∈ ps → VE.Grammar.ValidPos G p) →
+                          (VE.Grammar.sufPosGo cap w i nt suf ps out c).snd ≤
+                            c +
+                              (List.map
+                                  (fun p => (VE.Acts.NormalProofs.spans F w (VE.Acts.NormalProofs.posRhs G p) i).length)
+                                  ps).sum
+  -- uses VE.Acts.NormalProofs.posRhs@VE.Acts.NormalProofs VE.Acts.NormalProofs.spans@VE.Acts.NormalProofs VE.Grammar.Accepts@VE.Grammar.Basic VE.Grammar.Bucket@VE.Grammar.Table VE.Grammar.Grammar.wf@VE.Grammar.Basic VE.Grammar.Grammar@VE.Grammar.Basic VE.Grammar.NtFull@VE.Grammar.TableInvariant VE.Grammar.NtRow@VE.Grammar.Table VE.Grammar.SufPos@VE.Grammar.Table VE.Grammar.SufRow@VE.Grammar.Table VE.Grammar.SufRowOk@VE.Grammar.TableInvariant VE.Grammar.Sym@VE.Grammar.Basic VE.Grammar.Tree@VE.Grammar.Derives VE.Grammar.ValidPos@VE.Grammar.TableInvariant VE.Grammar.derivesAll@VE.Grammar.Derives VE.Grammar.sufPosGo@VE.Grammar.Table VE.Grammar.yieldAll@VE.Grammar.Derives
+  -- expr 2661549719
+theorem VE.Acts.NormalProofs.toLower_of
+  ∀ (s : String), (∀ (c : Char), c ∈ s.data → c.toLower = c) → s.toLower = s
+  -- uses
+  -- expr 964377718
+theorem VE.Acts.NormalProofs.utf8SetAux_get
+  ∀ (f : Char → Char) (cs : List Char) (i p : String.Pos),
+    (∀ (c : Char), c ∈ cs → f c = c) → String.utf8SetAux (f (String.utf8GetAux cs i p)) cs i p = cs
+  -- uses
+  -- expr 648663284
+theorem VE.Acts.NormalProofs.wordOk_lower
+  ∀ {w : String}, VE.Acts.wordOk w = Bool.true → w.toLower = w
+  -- uses VE.Acts.wordOk@VE.Acts.Syntax
+  -- expr 2098082780
+theorem VE.Acts.NormalProofs.wordsOf_empty
+  VE.Acts.wordsOf "" = []
+  -- uses VE.Acts.wordsOf@VE.Acts.Syntax
+  -- expr 1595562743
 theorem VE.Acts.Run.firstsBy_map
   ∀ {α β : Type} [inst : DecidableEq β] (f : α → β) (xs : List α),
     List.map f (VE.Acts.Run.firstsBy f xs) = VE.Acts.firsts (List.map f xs)
