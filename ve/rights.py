@@ -9,11 +9,9 @@ from .environment import validate_authored_source
 from .softnorms import SoftEnvironment, SoftNormDocument
 
 _RULE = re.compile(r"[a-z][a-z0-9-]*\Z", re.ASCII)
-# Every line kind with its rule-bearing fields, in the order the line states its rules: a power line states a
-# liberty and a recognition rule, every other kind one norm. Whatever names or owns a line's rules reads this table
-# (compose-s2 fix4 A2), so a new kind cannot be added without saying which fields carry its rules.
-LINE_RULE_FIELDS = {"claim": ("norm",), "liberty": ("norm",), "immunity": ("norm",), "power": ("liberty", "recognition")}
-RULE_FIELDS = tuple(dict.fromkeys(field for fields in LINE_RULE_FIELDS.values() for field in fields))
+# The rights line kinds and their rule-bearing fields: one table in `ve.profiles` (layer 1, so the relay binding reads
+# it too, norm-defaults-cfr-1b).
+from .profiles import LINE_RULE_FIELDS, RULE_FIELDS  # noqa: E402
 _KINDS = frozenset(LINE_RULE_FIELDS)
 
 

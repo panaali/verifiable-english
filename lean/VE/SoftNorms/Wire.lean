@@ -176,6 +176,12 @@ all of them; certified results further filter by the accepted proof's use. -/
 def openCoherence (D : SoftDoc) : List String :=
   (collidingPairs D).filterMap (fun (M, N) => if Comparable D M N then none else some (cohLabel M N))
 
+/-- 7.3's situation part on a CONFLICT-FREE line whose request supplies no situation: no search ran, so the line says
+so and that the quoted budget went unused, never an UNKNOWN of a search. One owner for the rights route
+(`Rights.Run.exhibitedText`, rights-cfr-2-budget-1) and the soft route (`SoftNorms.Run.conflictFreeText`,
+soft-cf-text-1). -/
+def notSearchedText (budget : Nat) : String := s!"none supplied (not searched; budget {budget} unused)"
+
 def undeclaredTies (D : SoftDoc) : List (String × String) :=
   let rs := D.soft.ranks
   rs.flatMap (fun a => (rs.filter (fun b => decide (a < b))).filterMap (fun b =>
