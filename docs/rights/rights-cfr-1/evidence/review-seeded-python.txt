@@ -1,0 +1,43 @@
+F                                                                        [100%]
+ve: English comparator: {"records": 0, "excluded": 0, "planted": 0, "classes": {}} (/tmp/ve-english-comparator-vl2t6jf9)
+
+=================================== FAILURES ===================================
+__________________ test_rights_identity_is_relayed_from_lean ___________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7a412ccad5b0>
+
+    def test_rights_identity_is_relayed_from_lean(monkeypatch):
+        from ve.backends import relay
+        env = _env()
+        answer = "f" * 64
+        cases = []
+        def fake_decide(mode, sent):
+            cases.extend(sent)
+            assert mode == "identity"
+            return [{"identity_id": answer}]
+        monkeypatch.setattr(relay, "decide", fake_decide)
+        content = _with(right(), "norm", mode="strict")
+>       assert rights_meaning_id(env, content) == answer
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_rights_meaning_id.py:142: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+env = RightsEnvironment(language='ve.core@0.2', profile=None, profiles=('norms@0', 'relational-fol@0', 'rights@0', 'soft-nor...'holder_slot': 0, 'status': 'married', 'recognition': 'recognise_required'}}}, acts=None, alternatives=None, risk=None)
+content = {'right': {'name': 'life', 'holder': 'person', 'guard': ['top'], 'lines': [{'kind': 'claim', 'holder_slot': None, 'cites': {}, 'norm': {'name': 'protect', 'predicate': 'protect_required', 'sign': True, 'guard': ['top'], ...}}]}}
+
+    def rights_meaning_id(env, content):
+        """Relay Lean's rights 3.5 normal form and domain-separated identity."""
+        import json
+        from .backends.relay import decide
+        from .environment_wire import wire_checked
+>       return decide("identity", [{"id": "rights-meaning", "kind": "rights-meaning",
+                                     "environment": env.to_dict(),
+                                     "content_json": json.dumps(wire_checked([content])[0], ensure_ascii=False,
+                                                                separators=(",", ":"), allow_nan=False)}])[0]["id"]
+E       KeyError: 'id'
+
+ve/readings.py:84: KeyError
+=========================== short test summary info ============================
+FAILED tests/test_rights_meaning_id.py::test_rights_identity_is_relayed_from_lean
+1 failed in 1.06s
