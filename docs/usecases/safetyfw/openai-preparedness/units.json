@@ -1495,12 +1495,12 @@
   },
   {
    "blockers": [
-    "SC"
+    "ET"
    ],
    "bytes": 186,
    "id": "p10-u150",
    "kind": "unformalised",
-   "reason": "quantifier_scope",
+   "reason": "event_order",
    "status": "UNFORMALISED"
   },
   {
