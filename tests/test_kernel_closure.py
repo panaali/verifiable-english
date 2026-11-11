@@ -223,6 +223,7 @@ def test_the_saved_baseline_is_of_this_registry():
     for path in REGISTRY["paths"]:
         assert saved[path["name"]]["tier"] == path["tier"]
         assert saved[path["name"]]["theorems"] == len(path["theorems"])
+        assert sorted(saved[path["name"]]["stated"]) == sorted(path["subject"]), path["name"]
     kernel = [row["lines"] for row in saved.values() if row["tier"] == "kernel"]
     assert max(kernel) <= BASELINE["kernel_lines"] <= sum(kernel)
     assert BASELINE["problems"] == []
