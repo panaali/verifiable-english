@@ -832,6 +832,7 @@ module VE.WireContract.Hooks.Acts
 module VE.WireContract.Hooks.Corpus
 module VE.WireContract.Hooks.NormDefaults
 module VE.WireContract.Hooks.Norms
+module VE.WireContract.Hooks.Purposes
 module VE.WireContract.Hooks.SoftNorms
 module VE.WireContract.Limits
 module VE.WireContract.Names
@@ -840,6 +841,7 @@ module VE.WireContract.Tables.Acts
 module VE.WireContract.Tables.Corpus
 module VE.WireContract.Tables.NormDefaults
 module VE.WireContract.Tables.Norms
+module VE.WireContract.Tables.Purposes
 module VE.WireContract.Tables.SoftNorms
 module VE.Words.Run
 module VE.Words.Situation

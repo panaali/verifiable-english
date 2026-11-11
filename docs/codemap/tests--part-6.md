@@ -41,7 +41,6 @@
 - `tests/test_rights_licence_relay.py` — rights-licence-relay: Lean returns each narrowing mechanism's licence with the grounds it rests on, and the relay binds them to the request instead of deriving…
 - `tests/test_rights_open_act_is_open.py` — rights-cfr-4: a right whose act is a declared open term is OPEN (docs/spec/rights.md 7.2).
 - `tests/test_rights_render_status.py` — Rights rendering must describe the checked unit status accurately.
-- `tests/test_rights_report_parts.py` — rights-cfr-2/3 (docs/rights/rights-cfr-2/REPORT.md): a CONFLICT-FREE answer gives rights.md 7.3's report parts (the spec's line, read from the spec file, and t…
 - `tests/test_rights_three_way.py` — The relayed rights source, its soft embedding, and document loading agree on fixtures and 1,000 generated documents (docs/spec/rights.md 10).
 - `tests/test_risk_diagnostics.py` — Python's environment check and the Lean risk route give one diagnostic (risk.md 4.1, 6).
 - `tests/test_risk_differential.py` — risk.md 8.3: Lean's `possibleE`/`certainE`/`witnessE` against brute force.
@@ -80,3 +79,4 @@
 - `tests/test_scope_rights_reach.py` — SC-6: the UDHR's rights reach (docs/spec/scope.md 5.8, 7.8).
 - `tests/test_scope_sc5r_stub.py` — Scope spec section 11's statement stub (sc-5r): every placeholder it leaves to sc-5rb is pinned by a statement.
 - `tests/test_search_budget_answer.py` — The search-budget relay reads only a typed answer bound to its request (R8).
+- `tests/test_search_options.py` — Request budgets and non-degenerate witnesses at public API boundaries.
