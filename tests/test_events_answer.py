@@ -86,6 +86,17 @@ def test_genuine_answers_are_relayed_with_every_kind_of_label(genuine):
                      "not_before_begin", "link_forward", "link_weaker"}
 
 
+def test_a_block_with_no_named_date_has_no_date_fact(lean_executable):
+    """et-5b review F1: a block with no named date (no dates and no ISO anchor: the open anchor, spec 1.3) has no
+    date fact. The relay required one fewer than none (-1) and refused every such genuine answer, so no open-anchor
+    document reached the check's premise set."""
+    kind, env, source = _fixture("u2-unspecified-default")
+    env = _dated(env, ())
+    del env["events"]["anchor"]
+    shown = events.elaborate(layered.case(kind, env, source, "norm-defaults-elaborate"))
+    assert set(shown.premises) == {"events:irreflexive", "events:transitive", "events:linear"} and not shown.dates
+
+
 def test_the_relay_entry_asks_lean_and_binds(genuine):
     case, row = genuine["rich"]
     assert events.elaborate(case) == events.answer(row, case)
