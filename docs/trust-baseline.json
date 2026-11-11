@@ -2525,6 +2525,13 @@
    "reason": "sa-wire-purposes0: VE/WireContract/Hooks/Purposes.lean +61, VE/WireContract/Tables/Purposes.lean +2, VE/WireContract/Diagnose.lean +1 (V +64, K +0, S +0)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sa-wire-purposes0, 2026-10-18",
    "commit": "1ee886ca05d28e36bcefd923208a9d3b6a0f11d0"
+  },
+  {
+   "class": "V",
+   "lines": 46,
+   "reason": "et-5b: V +122 in total (SourceWords.lean +72: the always/eventually rows, their no-anchor rows, soft-norms' rule row, and the other reading sets of spec 2.4 with linkCandidate; Document.lean +50: ownedProfiles, eventsView, eventsAnchorChecks, eventsLayeredOf, chainLayeredOf), K +0, S +0; +46 over the earlier et-5b allowance of 76",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), et-5b, 2026-11-11",
+   "commit": "0295df174375667a79dec7c1dd214f9128fe4909"
   }
  ]
 }

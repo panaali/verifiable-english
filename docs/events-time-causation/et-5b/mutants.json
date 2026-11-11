@@ -69,9 +69,9 @@
    "id": "L8",
    "language": "Lean",
    "file": "lean/VE/Service/Document.lean",
-   "definition": "VE.Service.Document.check (the events branch)",
-   "mutant": "| some (written, H) => VE.Service.DocumentChain.eventsLayeredOf E front units written H -> | some _ => VE.Service.DocumentChain.layeredOf E front units",
-   "test": "lean/VE/Service/EventsDocumentExamples.lean:148",
+   "definition": "VE.Service.DocumentChain.chainLayeredOf (check's events branch, moved out of check at the main merge)",
+   "mutant": "| some (written, H) => eventsLayeredOf E front units written H -> | some _ => layeredOf E front units",
+   "test": "lean/VE/Service/EventsDocumentExamples.lean:169",
    "killed": true
   },
   {

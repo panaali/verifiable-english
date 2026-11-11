@@ -9780,7 +9780,8 @@
         "VE.Service.Document.chainDocument",
         "VE.Service.Document.composedJson",
         "VE.Service.Document.graphLabelled",
-        "VE.Service.Document.bridgeAdmitted"
+        "VE.Service.Document.bridgeAdmitted",
+        "VE.Service.DocumentChain.chainLayeredOf"
       ],
       "D[R]": [
         "VE.Service.Document.Foreign",
@@ -16810,7 +16811,13 @@
         "VE.EnglishGrammar.softAlwaysReadings",
         "VE.EnglishGrammar.sourceWordsJson",
         "VE.EnglishGrammar.untilEventReadings",
-        "VE.EnglishGrammar.withinDateReadings"
+        "VE.EnglishGrammar.withinDateReadings",
+        "VE.EnglishGrammar.untilDateReadings",
+        "VE.EnglishGrammar.byReadings",
+        "VE.EnglishGrammar.whileReadings",
+        "VE.EnglishGrammar.sinceReadings",
+        "VE.EnglishGrammar.linkCandidate",
+        "VE.EnglishGrammar.causalReadings"
       ]
     },
     "VE/EnglishGrammar/SourceWordsExamples.lean": {
@@ -16839,7 +16846,18 @@
         "VE.EnglishGrammar.SourceWordsExamples.ruleContext",
         "VE.EnglishGrammar.SourceWordsExamples.sourceReadings",
         "VE.EnglishGrammar.SourceWordsExamples.strictDefault",
-        "VE.EnglishGrammar.SourceWordsExamples.twelve"
+        "VE.EnglishGrammar.SourceWordsExamples.twelve",
+        "VE.EnglishGrammar.SourceWordsExamples.Place",
+        "VE.EnglishGrammar.SourceWordsExamples.places",
+        "VE.EnglishGrammar.SourceWordsExamples.phraseHolds",
+        "VE.EnglishGrammar.SourceWordsExamples.phrasesAfter",
+        "VE.EnglishGrammar.SourceWordsExamples.candidates",
+        "VE.EnglishGrammar.SourceWordsExamples.untilStatus",
+        "VE.EnglishGrammar.SourceWordsExamples.byCovers",
+        "VE.EnglishGrammar.SourceWordsExamples.flip",
+        "VE.EnglishGrammar.SourceWordsExamples.sinceCovers",
+        "VE.EnglishGrammar.SourceWordsExamples.c12",
+        "VE.EnglishGrammar.SourceWordsExamples.causal"
       ]
     },
     "VE/Service/SoftSourceExamples.lean": {
