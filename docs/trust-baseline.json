@@ -2511,6 +2511,13 @@
    "reason": "ps-2ac: VE/Presupposition/Run.lean V +109 (G[V] untied: the presuppositions report value Outcome, Line, Goal, Row, Shown, Inconsistency, lexiconOk, lineOf, englishLine, outcomeOf, checkedRow, docPremise, refutedLines, shownOf, shown); K +0, S +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ps-2ac, 2026-10-18",
    "commit": "a5088a09b523154f4024db96fe636c92689a9b97"
+  },
+  {
+   "class": "V",
+   "lines": 64,
+   "reason": "sa-wire-purposes0: VE/WireContract/Hooks/Purposes.lean +61, VE/WireContract/Tables/Purposes.lean +2, VE/WireContract/Diagnose.lean +1 (V +64, K +0, S +0)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sa-wire-purposes0, 2026-10-18",
+   "commit": "1ee886ca05d28e36bcefd923208a9d3b6a0f11d0"
   }
  ]
 }
