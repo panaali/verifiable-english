@@ -274,6 +274,21 @@ def _parse_consequence(text, env, words):
 def parse_english(env, source, manifest=None, *, existing_names=(), _w1=False):
     if not _w1 and _soft_surface.SOFT_PROFILE in env.profiles:
         return _parse_soft_english(env, source, manifest, existing_names=existing_names)
+    # The shadow (docs/spec/en-e3-norm.md 2.4): with both flags set, Lean's `english.statement` reads the same text
+    # and the comparison is logged; Python's reading stays the answer, raised or returned as it stands.
+    log = statement_shadow_log() if type(source) is str else None
+    if log is None:
+        return _parse_w1(env, source, manifest, existing_names)
+    try:
+        document = _parse_w1(env, source, manifest, existing_names)
+    except Exception as exc:
+        _shadow(log, env, source, exc)
+        raise
+    _shadow(log, env, source, [rule.to_dict()["norm"] for rule in document.rules])
+    return document
+
+
+def _parse_w1(env, source, manifest, existing_names):
     if type(source) is not str:
         raise SyntaxError("Norm English must be text")
     if manifest is not None:
@@ -416,6 +431,149 @@ def statement_record(source: str, python, lean) -> dict:
             {"status": lean["status"], "code": lean.get("code"),
              "nodes": [row["node"]["norm"] for row in lean.get("statements") or () if row["kind"] == "rule"]},
             "class": statement_class(python, lean)}
+
+
+STATEMENT_MODE = "english.statement"
+
+
+def statement_request(env, source: str) -> dict:
+    """The W1 path's request (2.4, Relay): `{id, environment, lexicon, kind: "blocks", source}`, with the lexicon
+    Python's reader selects."""
+    from .english_grammar import export
+    return {"id": STATEMENT_MODE, "environment": env.to_dict(), "lexicon": export(_words(env)), "kind": "blocks",
+            "source": source}
+
+
+def _on_boundary(raw: bytes, k: int) -> bool:
+    """Whether byte offset `k` of `raw` begins a UTF-8 character or ends the text."""
+    return k == len(raw) or raw[k] & 0xC0 != 0x80
+
+
+def _rule_problem(row: dict, k: int, raw: bytes, env, gated: bool) -> str | None:
+    """R8 for one rule row of a `one` answer with `k` rule rows: its `exception_to` entries and its node's `over`
+    name rules 1 … k, its node is named `rule-<number>`, its span holds that rule's header in the source, and its
+    predicate and formulas are the request's (decoded and checked under its environment as a rule of
+    `NormDocument` is, unless the core checker refuses the environment as a whole)."""
+    norm, (start, stop) = row["node"]["norm"], row["span"]
+    if not all(1 <= m <= k for m in row["exception_to"]):
+        return "an exception_to entry is not a rule of the answer"
+    if norm["name"] != f"rule-{row['number']}" or not set(norm["over"]) <= {f"rule-{m}" for m in range(1, k + 1)}:
+        return "a rule node's name or over is not a rule of the answer"
+    if not (start < stop <= len(raw) and _on_boundary(raw, start) and _on_boundary(raw, stop)):
+        return "a rule row's span is not a span of the source's characters"
+    header = re.match(r"rule ([0-9]+)", raw[start:stop].decode().casefold())
+    if header is None or header[1] != str(row["number"]):
+        return f"the source at rule {row['number']}'s span is not its header"
+    decl = env.predicates.get(norm["predicate"])
+    if decl is None or decl.regulated is None:
+        return f"the predicate {norm['predicate']!r} is not a regulated predicate of the request"
+    if not gated:
+        try:
+            rule = NormDocument._decode({"norm": norm})
+            checker = ast._Checker(env)
+            for formula in (rule.guard, *rule.unless):
+                checker.formula(formula, tuple(reversed(decl.arguments)))
+        except VEError as exc:
+            return f"a rule node does not decode under the request's environment: {exc}"
+    return None
+
+
+def statement_problem(row: dict, case: dict, env) -> str | None:
+    """Why `row`, a schema-checked `english.statement` row, is not Lean's answer to `case` read under `env` (R8;
+    docs/spec/en-e3-norm.md 2.4, Relay), or None: the echoed id and the identities; each status's members exactly
+    `statementFields`' and its code one of the status's, with Lean's class (`codes.json`); for `one`, the rule rows
+    numbered 1 … k in row order, every rule a row names in 1 … k, one span per rule row inside the source on UTF-8
+    character boundaries, the spans increasing and none overlapping the next (no layout check: where a block lies
+    is Lean's); for a refusal, a sentence of the source exactly when its code names one, the spans inside the
+    source, two witness trees and the invalid-grammar fields as `english.read`'s relay binds them."""
+    from .backends.english_lean import _gate, _span, _trees, refusal_problem
+    from .english_grammar import actions_version, codes, grammar_id, lexicon_id, statement_codes
+    result, source = row["result"], case["source"]
+    raw = source.encode()
+    if row["id"] != case["id"]:
+        return "the answer does not echo the request's id"
+    expected = {"source_sha256": hashlib.sha256(raw).hexdigest(), "environment_id": env.environment_id,
+                "lexicon_id": lexicon_id(case["lexicon"]), "grammar_id": grammar_id(env.profiles),
+                "actions_version": actions_version()}
+    if result["identities"] != expected:
+        return "the identities are not the request's"
+    statuses, fields, unsentenced = statement_codes()
+    status = result["status"]
+    if status not in fields or status == "rendered":
+        return f"the status {status!r} is not an answer to kind blocks"
+    required, optional = fields[status]
+    members = result.keys() - {"status", "identities"}
+    if not set(required) <= members or members - set(required) - set(optional):
+        return f"a {status} answer with the members {sorted(members)}"
+    if status == "one":
+        rows = result["statements"]
+        rules = [r for r in rows if r["kind"] == "rule"]
+        k = len(rules)
+        if [r["number"] for r in rules] != list(range(1, k + 1)):
+            return "the rule rows are not numbered 1 to k in row order"
+        if not all(1 <= r["rule"] <= k and 1 <= r["over"] <= k for r in rows if r["kind"] == "precedence"):
+            return "a precedence row names a rule the answer does not have"
+        gated = _gate(env) is not None
+        for r in rules:
+            if (problem := _rule_problem(r, k, raw, env, gated)) is not None:
+                return problem
+        if any(a["span"][1] > b["span"][0] for a, b in zip(rules, rules[1:])):
+            return "the rule rows' spans overlap or are out of order"
+        return None
+    code = result["code"]
+    if code not in statuses[status] or result["class"] != codes()[0].get(code):
+        return f"a {status} answer with the code {code!r} of class {result['class']!r}"
+    if status == "invalidGrammar":
+        return refusal_problem({k: v for k, v in result.items() if k != "identities"}, source)
+    if "sentence" in result and result["sentence"] >= source.count("."):
+        return "the sentence is not a sentence of the source"  # every sentence ends with a period
+    if status == "rejected" and ("sentence" in result) == (code in unsentenced):
+        return f"a {code} rejection {'names' if code in unsentenced else 'does not name'} a sentence"
+    if "span" in result and not _span(result["span"], source):
+        return "the span is not a span of the source"
+    if status == "unformalised" and not all(s["start"] < s["stop"] <= len(raw) for s in result["spans"]):
+        return "an unformalised span is not a span of the source"
+    if status == "many" and not _trees(result["witnesses"], 2):
+        return "a many answer does not carry two witness trees"
+    return None
+
+
+def statement_answer(row: dict, case: dict, env) -> dict:
+    """The result of `row`, Lean's `english.statement` row for `case`, once it has the generated shape
+    (`service_schema.check_row`) and `statement_problem` finds it bound to the request; `CheckerUnavailable`
+    otherwise. Every reader of the mode's answer reads it here."""
+    from .backends.service_schema import Invalid, check_row
+    try:
+        check_row(STATEMENT_MODE, row, case, 0)
+        if row.get("status") != "ok":
+            raise Invalid("the row is not an answer")
+        problem = statement_problem(row, case, env)
+    except Invalid as exc:
+        problem = f"it does not have the generated shape: {exc}"
+    except (KeyError, TypeError, AttributeError, IndexError, ValueError) as exc:
+        problem = f"it does not have the generated shape ({type(exc).__name__})"
+    if problem:
+        raise CheckerUnavailable(f"CheckerUnavailable: the Lean statement reader's answer is malformed: {problem}")
+    return row["result"]
+
+
+def _shadow(log: Path, env, source: str, python) -> None:
+    """Ask Lean for the W1 text through the relay and append the shadow record to `log` (2.4, Shadow). A relay
+    failure, or a request Lean refuses, is a `CheckerUnavailable` answer; nothing here changes Python's answer."""
+    from .backends import relay
+    try:
+        case = statement_request(env, source)
+        try:
+            lean = statement_answer(relay.decide(STATEMENT_MODE, [case])[0], case, env)
+        except CheckerUnavailable as exc:
+            lean = exc
+        except VEError as exc:
+            lean = CheckerUnavailable(f"CheckerUnavailable: Lean refused the request: {exc}")
+        line = json.dumps(statement_record(source, python, lean), sort_keys=True, ensure_ascii=False)
+        with log.open("a", encoding="utf-8") as stream:
+            stream.write(line + "\n")
+    except Exception:  # noqa: BLE001 - the shadow never changes the answer (2.4; as ve/english.py's comparator)
+        pass
 
 
 _SOFT_NOTE = re.compile(
