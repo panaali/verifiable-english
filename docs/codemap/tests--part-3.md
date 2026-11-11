@@ -44,6 +44,7 @@
 - `tests/test_evaluate_search.py` — (no module docstring)
 - `tests/test_events_answer.py` — et-5: the `events@0` relay (`ve/events.py`) on genuine Lean answers, and fuzz tests of its binding.
 - `tests/test_events_document.py` — et-5b: an `events@0` document through Lean's `document` mode (docs/spec/events-time-causation.md 1.3, 2.9, 4; DRI 2026-11-10 item 1).
+- `tests/test_events_document_cli.py` — et-5b review F1: every `ve document` subcommand admits an `events@0` document Lean's `document` mode checked.
 - `tests/test_events_route.py` — et-4b: an `events` document through the service's norm-defaults mode, on both layered branches.
 - `tests/test_events_wire_mutants.py` — Mutants of the `events` block's decoder each fail a fixture (et-4 review F1).
 - `tests/test_events_wordings.py` — et-5, T9: who judges which `events@0` wording (events-time-causation plan 2.7, spec 2).
@@ -85,4 +86,3 @@
 - `tests/test_jt_e3.py` — Small, model-free checks of JT-E3's agreement and blind runner.
 - `tests/test_judgments_answer.py` — The relay of the `document` mode's `judgments` field (judgment-terms-PLAN.md JT-2, Python; docs/spec/ judgment-terms.md 8.3): schema and binding only (R8), and…
 - `tests/test_judgments_chain.py` — PC-1: `judgments@0` beside the soft chain in Lean's document mode, and row 16, the clash validation (docs/spec/profile-composition.md 1.7, 3.1 and 5.1; the G3 …
-- `tests/test_judgments_compose.py` — jt-2c: the modes that compose with `judgments@0` decide over the environment without the document layers (`VE.Compose.decidingEnvironment`) and name the list a…
