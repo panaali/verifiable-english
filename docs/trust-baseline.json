@@ -2539,6 +2539,13 @@
    "reason": "qt-a4b review F1/F2: V +13 above the existing +115 allowance: VE/Service/Document.lean +13 for readingText and chainDocument (one definition of the chain's request text, always there) and the parent argument of check; chainBound is D[R]. qt-a4b total K +0, S +1, V +128 (trusted +129), within the R16 150-line cap",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a4b review F1/F2, 2026-11-09",
    "commit": "e9a6ec8d5938051a70116918e34fc3cd92aac16e"
+  },
+  {
+   "class": "V",
+   "lines": 14,
+   "reason": "rights-cfr-2-budget-1: VE/Rights/Run.lean +9 V (exhibitedText, weighingGloss, conflictBudget/conflictAnswerOf docstrings), VE/SoftNorms/Run.lean +5 V (conflictFreeText, openAfterClassification on Wire.openCoherence); K +0, S +0; each new definition exercised by a #guard that fails on its seeded bug (RightsChecks.lean :61, :62, :66; SoftNorms/Run.lean :127)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), rights-cfr-2-budget-1, 2026-11-10",
+   "commit": "f3f40d51dc6dfffeb57834ee5652ff7b514eaeed"
   }
  ]
 }
