@@ -1261,6 +1261,7 @@
    "blocked_rule": "fn5-indicator",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in Table 1 biological and cybersecurity thresholds",
+   "residual": "unmapped_duty-p6-u84-789e5489dfdf",
    "waits": [
     "AP"
    ],

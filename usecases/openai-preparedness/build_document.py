@@ -384,9 +384,9 @@ def build(source):
                 rec["reason"] = spec["meaning"]["unformalised"]
                 family, explanation = BLOCKER_DETAIL[rec["reason"]]
                 rec["detail"] = f"{family}: {explanation} in {SOURCE_SUBJECT[page]}"
-                if kind is None:
-                    # Keep every untranslated claim independently addressable
-                    # without copying the private source text into the repo.
+                if kind is None or rec["reason"] in ("unmapped_claim", "unmapped_duty"):
+                    # Keep every untranslated claim or duty independently addressable (a blocked rule's
+                    # unit included: fn5-indicator) without copying the private source text into the repo.
                     rec["residual"] = (f"{rec['reason']}-{uid}-"
                                        f"{hashlib.sha256(source[a:b]).hexdigest()[:12]}")
             if "open" in spec["meaning"]:

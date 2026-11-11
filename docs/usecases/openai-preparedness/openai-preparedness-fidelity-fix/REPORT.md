@@ -7,9 +7,9 @@ Item: the T fixes and K findings of the use-case audit for the OpenAI Preparedne
 reviews/ucfix-classify-20261111.tsv, rows `openai-preparedness`: 52 units, 50 items). Branch
 `infra/openai-preparedness-fidelity-fix`.
 
-SIZE: 506 product (`rules.d1.ve` 198, `pf_vocabulary.py` 143, `run.py` 130, `build_document.py` 19,
-`pf_translation.py` 12, `facts.d1.ve` 4), 289 tests (`tests/test_pf_fidelity_fix.py` 287, `tests/test_safetyfw_usecases.py` 2),
-46 + this REPORT other hand-written lines (PLAN section 12). Source: `git diff --numstat $(git merge-base HEAD main)`
+SIZE: 512 product (`rules.d1.ve` 198, `pf_vocabulary.py` 143, `run.py` 130, `build_document.py` 25,
+`pf_translation.py` 12, `facts.d1.ve` 4), 302 tests (`tests/test_pf_fidelity_fix.py` 287, `tests/test_safetyfw_usecases.py` 15),
+about 85 + this REPORT other hand-written lines (PLAN section 12 46, README.md 35, docs/usecases/safetyfw/REPORT.md 2). Source: `git diff --numstat $(git merge-base HEAD main)`
 (added + deleted). Generated, by the case's own scripts only: `environment.d1.json` (pf_vocabulary.py),
 `spans.json`, `coverage.json` (build_document.py), `docs/usecases/safetyfw/openai-preparedness/{units,gaps}.json`
 (measure.py), `results.json` (run.py).
@@ -113,8 +113,18 @@ Each run printed "1 failed"; (a) failed on `assert 'meeting the High standard' i
 
 ## Existing tests changed
 
-`tests/test_safetyfw_usecases.py::test_pf_rs13_and_untranslated_claims_have_named_residuals` pinned the old,
-unfaithful carve-out name `highly_sensitive`; it now names `beyond_sensitive_limits` (f14-summary). No test removed.
+In `tests/test_safetyfw_usecases.py` (pf_* tests only; no test removed):
+- `test_pf_rs13_and_untranslated_claims_have_named_residuals` pinned the old, unfaithful carve-out name
+  `highly_sensitive`; it now names `beyond_sensitive_limits` (f14-summary).
+- `test_pf_run_recomputes_every_key_item_and_records_causes` pinned the six B-*/MREP rows as the only disagreements;
+  it now also expects C6, C-doc (PLAN 12 item 19) and G9 (item 20), each with cause "key finding".
+- `test_pf_translation_lint_and_invention_audit` pinned the unanchored fact blocks; `fn5-indicator` (G7) joins them.
+
+Found by the first selected run and fixed (the commit after db649565b7): `conformance/english-lean/lexicon-report.json`
+regenerated (`uv run python -m conformance.english_lean_lexicon`); `build_document.py` keeps the residual id
+`unmapped_duty-p6-u84-789e5489dfdf` the footnote 5 unit had on main now that the unit is the blocked rule
+`fn5-indicator`; README.md's coverage and answer tables and docs/usecases/safetyfw/REPORT.md's PF row follow the
+regenerated coverage (CHECKED 170 -> 344 bytes: `cl-levels`; f7-compile's unit moves from SC to ET).
 
 ## Notes for the DRI
 
@@ -126,6 +136,9 @@ unfaithful carve-out name `highly_sensitive`; it now names `beyond_sensitive_lim
 - f16-process: of the .tsv's two options ("a duty quoting the sentence, or no rule") I took no rule: the sentence
   assigns Leadership a role and states no norm, and no item asks for one (the narrower reading).
 - `pf_vocabulary.py` has no `--check`: its writer always writes `environment.d1.json`.
+- `reference.py` (the key's independent check, not edited: one owner) still derives C6, C-doc and G9 from PLAN 3.1
+  as written, so it agrees with the frozen key cells there and not with PLAN 12 items 19 and 20;
+  `test_pf_independent_reference_and_comparator_catch_wrong_answers` still lists only the six B-*/MREP rows.
 
 ## Next item
 
