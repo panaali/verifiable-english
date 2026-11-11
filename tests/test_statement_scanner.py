@@ -3,13 +3,18 @@
 Every statement gate (RD-1 to RD-6, RD-9/SC-1, PC-3, PC-9, PC-2a and the scope 5.4 gate) reads Lean declarations
 through `tools/check_readings_defaults_statements.py`'s `declarations`. A declaration runs to the next Lean command
 keyword at column 0 in code: a blank line or a comment of any kind inside it, a doc comment `/-- -/` or `/-! -/` at
-column 0 too (review sc-2d-f1 F3), never ends it, nor does a `|` constructor line or a structure field line at column
+column 0 too (review sc-2d-f1 F3), does not end it, nor does a `|` constructor line or a structure field line at column
 0; a declaration inside a comment is not one, and a `--` or `/-` inside a string or character literal is not a
-comment. The one case that still ends a declaration early is a term line at column 0 that starts with `#` or `@[`
-(an array literal `#[..]`), which is read as a command (`#check`, `@[simp]`): the DRI ruling on F3 grades it C.
+comment. A term or tactic line at column 0 that starts the way a command does still ends a declaration early, and
+the text after that line is not compared (review sc-2d-f1 F4). The cases: a line that starts with `#` (an array
+literal `#[..]`; `#check` is a command) or `@[` (`@[simp]` is a command), and a command keyword used as a term or
+tactic prefix, `open X in ..`, `set_option o v in ..` or the term `unsafe ..`. These are every such case in Lean
+v4.24.0's built-in syntax; the DRI rulings on F3 and F4 grade them C (`EARLY_ENDS`).
 """
 
 from __future__ import annotations
+
+from pathlib import Path
 
 import pytest
 
@@ -58,6 +63,33 @@ CASES = {
 # The named exception of the records: a term line at column 0 that starts with `#` or `@[` is read as a command.
 EARLY_ENDS = {"array literal": ("def a : Array Nat :=\n#[1]\n", {("def", "a"): ["def a : Array Nat :="]}),
               "attribute-like line": ("def P : Prop :=\n@[x] True\n", {("def", "P"): ["def P : Prop :="]})}
+# Review sc-2d-f1 F4: a command keyword used as a term or tactic prefix at column 0. Each source is valid Lean
+# (checked with `lake env lean` on v4.24.0), and the scanner ends the declaration at that line, so the text after it
+# is not compared: the records must name the case (graded C by the DRI note of 2026-11-11, records only).
+EARLY_ENDS_F4 = {
+    "open in a term": ("def a : Nat :=\nopen Nat in\nsucc 0\n", {("def", "a"): ["def a : Nat :="]}),
+    "set_option in a term": ("def a : Nat :=\nset_option pp.all true in\n1\n", {("def", "a"): ["def a : Nat :="]}),
+    "open in a tactic": ("theorem t : True := by\nopen Nat in\ntrivial\n", {("theorem", "t"): ["theorem t : True"]}),
+    "set_option in a tactic": ("theorem t : True := by\nset_option pp.all true in\ntrivial\n",
+                               {("theorem", "t"): ["theorem t : True"]}),
+    "unsafe term": ("def a : Nat :=\nunsafe u0\n", {("def", "a"): ["def a : Nat :="]}),
+}
+# The line prefix each record must name for every column-0 case that ends a declaration early: Lean v4.24.0's
+# built-in term and tactic parsers that start with `#`, `@[` or a keyword of `COMMANDS` (`Lean/Parser/Term.lean`
+# `unsafe`; `Lean/Parser/Command.lean` the term and tactic `open .. in` and `set_option .. in`).
+EARLY_PREFIXES = ("`#", "`@[", "`open X in", "`set_option o v in", "`unsafe")
+SURVEYED_TOOLCHAIN = "leanprover/lean4:v4.24.0"
+ROOT = Path(__file__).resolve().parents[1]
+
+
+def _records() -> dict[str, str]:
+    """Every record of the scanner's extent: the scanner module's docstring and its `COMMANDS` comment, PC-3's
+    `declarations` docstring and this module's docstring."""
+    source = (ROOT / "tools/check_readings_defaults_statements.py").read_text()
+    comment = source.split("# The Lean commands that end a declaration", 1)[1].split("\nCOMMANDS = ", 1)[0]
+    comment = "\n".join(line.removeprefix("#") for line in comment.splitlines())
+    return {"scanner module": RD.__doc__, "COMMANDS comment": comment, "pc3 declarations": PC3.declarations.__doc__,
+            "scanner tests": __doc__}
 
 
 @pytest.mark.parametrize("scanner", SCANNERS)
@@ -72,6 +104,42 @@ def test_the_records_name_the_one_column_0_line_that_ends_a_declaration_early(ca
     """The records say what the scanner does: a column-0 `#` or `@[` line ends a declaration (a C note on F3)."""
     source, expected = EARLY_ENDS[case]
     assert PC3.declarations(source) == expected
+
+
+@pytest.mark.parametrize("scanner", SCANNERS)
+@pytest.mark.parametrize("case", EARLY_ENDS_F4)
+def test_a_column_0_term_or_tactic_prefix_ends_a_declaration_early(scanner, case):
+    """Review sc-2d-f1 F4: a column-0 `open X in`, `set_option o v in` or `unsafe` inside a term or a tactic block
+    is read as a command, so the declaration ends there (the behaviour the records must name; the scanner is
+    unchanged)."""
+    source, expected = EARLY_ENDS_F4[case]
+    assert SCANNERS[scanner](source) == expected
+
+
+@pytest.mark.parametrize("record", list(_records()))
+@pytest.mark.parametrize("prefix", EARLY_PREFIXES)
+def test_every_record_names_every_column_0_line_that_ends_a_declaration_early(record, prefix):
+    """Review sc-2d-f1 F4: each record names every column-0 case that ends a declaration early, says the text after
+    it is not compared, and claims no single exception."""
+    text = " ".join(_records()[record].split())
+    assert prefix in text, f"{record} does not name {prefix}"
+    assert "not compared" in text
+    assert "one exception" not in text and "one case" not in text
+
+
+def test_the_named_early_ends_were_surveyed_on_this_toolchain():
+    """The records call the named cases every one in Lean's built-in syntax; that survey is of
+    `SURVEYED_TOOLCHAIN`, so a toolchain bump must redo it (and update this pin) before the claim holds again."""
+    assert (ROOT / "lean/lean-toolchain").read_text().strip() == SURVEYED_TOOLCHAIN
+
+
+def test_probe_f4_the_records_name_a_column_0_open_in():
+    """PROBE F4 as the review gives it: either the scanner reads past a column-0 `open .. in`, or every record
+    names it."""
+    t = Path(__file__).read_text().split(chr(34) * 3)[1]
+    d = RD.declarations("def a : Nat :=\nopen Nat in\nsucc 0\n", True)[("def", "a")][0]
+    assert "succ" in d or all("open" in x for x in (RD.__doc__, PC3.declarations.__doc__, t)), \
+        "column-0 open .. in ends a declaration early, unnamed"
 
 
 @pytest.mark.parametrize("command", RD.COMMANDS)
