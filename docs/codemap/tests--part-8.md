@@ -1,3 +1,4 @@
+- `tests/test_webapp_commands_env.py` — CI-8 (iv): `usecases/webapp-commands/environment.json` is Lean's print of `VE.Commands.Examples.E_web` and its lexicon, written only by `tools/webapp_commands_…
 - `tests/test_wire_contract_corpus.py` — Hand-derived format-1 cases from wire-contract.md section 8.1.
 - `tests/test_wire_contract_engine.py` — Independent cases for the format-1 diagnostic interpreter.
 - `tests/test_wire_contract_faults.py` — The fault catalogue and the oracle of the soft-norms gate (wire-contract.md 8.3), checked without Lean.

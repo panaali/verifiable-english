@@ -280,7 +280,7 @@ def test_the_request_coerces_no_member():
 
 def test_the_document_caps_on_fixed_phrases_and_frames_are_limits():
     """128 fixed phrases are read and 129 are `decodeFixed`'s `ResourceLimit`; 129 frames are D-31's, refused before
-    any parse. Frames are read within the mode's deadline at 32 (the parse's cost grows with the frames: REPORT)."""
+    any parse. Frames are read within the mode's deadline at 32 (and at 128 since ap-parse-index)."""
     letters = "abcdefghijklmnopqrstuvwxyz"
     names = [f"{letters[i // 26]}{letters[i % 26]}" for i in range(129)]
     fixed = [f"the {name} thing" for name in names]
@@ -293,14 +293,15 @@ def test_the_document_caps_on_fixed_phrases_and_frames_are_limits():
     assert over["verdict"] == "LIMIT" and over["diagnostic"] == "ResourceLimit: more than 128 frames"
 
 
-def test_a_request_over_the_cpu_deadline_is_unavailable_and_the_service_recovers():
-    """DRI 2026-11-09 ap-4 item 1 (c): P64 (L6, 64 readings) with 126 frames more needs minutes of CPU (the parse's
-    cost grows with the frames); the mode's 5 s deadline answers it `CheckerUnavailable` naming the mode, never a
-    verdict, and the next request is answered."""
-    from ve.errors import CheckerUnavailable
+def test_p64_with_126_frames_more_is_listed_within_the_cpu_deadline():
+    """DRI 2026-11-09 ap-4 item 1 (c), as ap-4 item 2 and ap-parse-index item 2 replace it: P64 (L6, 64 readings) with
+    126 frames more needed minutes of CPU and was `CheckerUnavailable` at the mode's 5 s deadline; ap-parse-index builds
+    the act grammar once in near-linear time, so it is answered within the deadline, never `CheckerUnavailable`. The
+    deadline's kill and recovery are `tests/test_lean_service.py`'s
+    (`test_a_request_past_its_cpu_deadline_names_its_mode_and_is_not_retried`)."""
     letters = "abcdefghijklmnopqrstuvwxyz"
     pad = [frame(f"seek{letters[i // 26]}{letters[i % 26]}") for i in range(126)]
     phrase = "{0} to seek and to enjoy asylum" + "".join(" in " + c for c in CITIES[:6])
-    with pytest.raises(CheckerUnavailable, match="act-readings"):
-        ask(phrase, CITIES, {"frames": V5["frames"] + pad}, role="obligation")
-    assert len(ask(phrase, CITIES, V5, role="obligation")["readings"]) == 64
+    found = ask(phrase, CITIES, {"frames": V5["frames"] + pad}, role="obligation")
+    assert found["verdict"] == "LISTED" and len(found["readings"]) == 64
+    assert found == ask(phrase, CITIES, V5, role="obligation")

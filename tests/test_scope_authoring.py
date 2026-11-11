@@ -93,7 +93,10 @@ F10_WORDINGS = ("The hard constraints apply only where x⳹ y.", "The hard const
 # the recheck's deferred blank-looking characters after a ".": U+1D159, U+E000 and U+FFFC, as a condition and a list name
 BLANK_WORDINGS = tuple(w for c in ("\U0001D159", "", "￼")
                        for w in (f"The hard constraints apply only where x.{c} y.",
-                                 f"The rules below are called the x.{c} The rules below are called the y."))
+                                 f"The rules below are called the x.{c} The rules below are called the y.",
+                                 # sc-7-f11: joined, the character in place of the space
+                                 f"The rules below are called the x.{c}The rules below are called the y.",
+                                 f"The hard constraints apply only where the x.{c}The rules below are called the y."))
 CLOSER_EXTRAS = set("\"'＂＇>*_`~")
 # `clause`'s allow-list as the DRI note 2026-11-09 (c) states it, written here apart from the Lean code: ASCII letters and
 # digits, the Latin letters of U+00C0..U+024F but U+00D7 and U+00F7, and eleven ASCII punctuation characters; less
@@ -104,6 +107,9 @@ ALLOW = (set(string.ascii_letters + string.digits) | ({chr(n) for n in range(0xC
 ALLOW_DOC = ("once its trailing `closers` are dropped, a word is not empty and ends in an allow-listed character, and no "
              "other: an ASCII letter or digit, a Latin letter of U+00C0 to U+024F but U+00D7, U+00F7 and U+01C3 (\"ǃ\"), "
              f"or one of `{ALLOW_PUNCTUATION}`.")
+# `follower`'s set as its docstring states it (sc-7-f11): what may follow, inside a word, a character outside `ALLOW`.
+FOLLOWER_DOC = ("an allow-listed character, a closer, an ASCII graphic character (U+0021 to U+007E), or one of "
+                "U+2010 to U+2027 (dashes, quotes, daggers, bullets, dot leaders and the ellipsis), and no other")
 SCALARS = [chr(n) for n in range(sys.maxunicode + 1) if not 0xD800 <= n <= 0xDFFF]
 CLOSERS = {c for c in SCALARS if unicodedata.category(c) in ("Pe", "Pf", "Pi")} | CLOSER_EXTRAS
 # What `wordChar`'s docstring refuses: `str.isspace`, C0, DEL and C1, and the five fillers drawn as a space.
@@ -111,14 +117,15 @@ NOT_WORD = ({c for c in SCALARS if c.isspace() or ord(c) < 0x20 or 0x7F <= ord(c
             | {chr(n) for n in (0x115F, 0x1160, 0x2800, 0x3164, 0xFFA0)})
 
 # Lean is the oracle, in one process: one `#eval` over every Unicode scalar value c gives the characters that are no
-# `wordChar` and those for which `clause` accepts "x" c, "x" c ")" and "x." c; the probe wordings' verdicts; and the
-# three docstrings as the compiled environment has them (about a minute: the interpreter takes about 18 microseconds
-# a `clause`).
+# `wordChar` and those for which `clause` accepts "x" c, "x" c ")", "x." c, "x." c "y" and "x&" c ";"; the probe wordings'
+# verdicts; and the five docstrings as the compiled environment has them (about a minute: the interpreter takes about
+# 18 microseconds a `clause`).
 SWEEP = """import Lean
 import VE.Scope.Authoring
 open Lean VE.Scope.Pinned
-def sweep : Array Nat × Array Nat × Array Nat × Array Nat := Id.run do
-  let mut nonWord := #[]; let mut bare := #[]; let mut closed := #[]; let mut dotted := #[]
+def sweep : Array Nat × Array Nat × Array Nat × Array Nat × Array Nat × Array Nat := Id.run do
+  let mut nonWord := #[]; let mut bare := #[]; let mut closed := #[]; let mut dotted := #[]; let mut joined := #[]
+  let mut referenced := #[]
   for n in [0:0x110000] do
     if n.isValidChar then
       let c := Char.ofNat n
@@ -126,15 +133,19 @@ def sweep : Array Nat × Array Nat × Array Nat × Array Nat := Id.run do
       if clause ("x" ++ c.toString) then bare := bare.push n
       if clause ("x" ++ c.toString ++ ")") then closed := closed.push n
       if clause ("x." ++ c.toString) then dotted := dotted.push n
-  return (nonWord, bare, closed, dotted)
+      if clause ("x." ++ c.toString ++ "y") then joined := joined.push n
+      if clause ("x&" ++ c.toString ++ ";") then referenced := referenced.push n
+  return (nonWord, bare, closed, dotted, joined, referenced)
 def verdicts (ws : String) : Array Bool := (Json.parse ws).toOption.getD .null |>.getArr?.toOption.getD #[] |>.map
   fun w => (parseGovernor (w.getStr?.toOption.getD "")).isSome
 #eval show CoreM Unit from do
   let env ← getEnv
-  let (nonWord, bare, closed, dotted) := sweep
+  let (nonWord, bare, closed, dotted, joined, referenced) := sweep
   IO.println (Json.mkObj [("non_word", toJson nonWord), ("bare", toJson bare), ("closed", toJson closed),
-    ("dotted", toJson dotted), ("closers", toJson (← findDocString? env ``closers)),
-    ("clause", toJson (← findDocString? env ``clause)), ("word_char", toJson (← findDocString? env ``wordChar)),
+    ("dotted", toJson dotted), ("joined", toJson joined), ("referenced", toJson referenced),
+    ("closers", toJson (← findDocString? env ``closers)), ("char_ref", toJson (← findDocString? env ``charRef)),
+    ("clause", toJson (← findDocString? env ``clause)),
+    ("follower", toJson (← findDocString? env ``follower)), ("word_char", toJson (← findDocString? env ``wordChar)),
     ("accepted", toJson ((WORDINGS).map verdicts))]).compress
 """
 PROBES = (F7_WORDINGS, F8_WORDINGS, F9_WORDINGS, F10_WORDINGS, BLANK_WORDINGS)
@@ -177,11 +188,15 @@ def test_the_docstrings_name_unicode_16_0_the_version_of_this_python():
 def test_clause_accepts_exactly_its_documented_allow_list(swept):
     """sc-7 recheck F10 and the DRI note 2026-11-09 (c), the class of F7, F8, F9 and F10 (a character at a word's end
     that hides a sentence end): for every Unicode scalar value c, `clause` accepts "x" c and "x" c ")" exactly when c
-    is a word character in the allow-list or a closer (dropped, leaving "x"), and "x." c exactly when c is in the
-    allow-list. The docstring states the allow-list as `ALLOW` does and names no enumerated Unicode set; `closers` is
-    Unicode 16.0's Pe, Pf and Pi with its listed extras."""
+    is a word character in the allow-list or a closer (dropped, leaving "x"), "x." c exactly when c is in the
+    allow-list, and "x." c "y" exactly when c is a word character and a `follower` (sc-7-f11: inside a word, no other
+    character follows a "." and stands in for a space after it). The docstring states the allow-list as `ALLOW` does
+    and names no enumerated Unicode set, `follower`'s states its set as `FOLLOWER_DOC` does; `closers` is Unicode
+    16.0's Pe, Pf and Pi with its listed extras."""
     clause, closers = " ".join(swept["clause"].split()), swept["closers"]
     assert ALLOW_DOC in clause, clause
+    assert FOLLOWER_DOC in " ".join(swept["follower"].split()), swept["follower"]
+    follower = ALLOW | CLOSERS | {chr(n) for n in range(0x21, 0x7F)} | {chr(n) for n in range(0x2010, 0x2028)}
     for gone in ("Sentence_Terminal", "NFKC", "Default_Ignorable", "Cf, Mn", "16.0"):
         assert gone not in clause, gone
     version = re.search(r"Unicode (\d+\.\d+)'s categories Pe \(closing\s+brackets\), Pf and Pi", closers)
@@ -191,7 +206,8 @@ def test_clause_accepts_exactly_its_documented_allow_list(swept):
     for c in CLOSER_EXTRAS:
         assert (f"`` {c} ``" if c == "`" else f"`{c}`") in closers, c
     assert len(ALLOW) == 26 * 2 + 10 + (0x250 - 0xC0 - 3) + 11 == 470 and not ALLOW & (CLOSERS | NOT_WORD)
-    for key, want in (("bare", (ALLOW | CLOSERS) - NOT_WORD), ("closed", (ALLOW | CLOSERS) - NOT_WORD), ("dotted", ALLOW)):
+    for key, want in (("bare", (ALLOW | CLOSERS) - NOT_WORD), ("closed", (ALLOW | CLOSERS) - NOT_WORD), ("dotted", ALLOW),
+                      ("joined", follower - NOT_WORD)):
         got = chars(swept[key])
         assert got == want, {key: {"accepted, not allowed": sorted(got - want), "allowed, not accepted": sorted(want - got)}}
 
@@ -204,9 +220,26 @@ def test_word_char_refuses_exactly_its_documented_characters(swept):
     assert chars(swept["non_word"]) == NOT_WORD
 
 
+# The DRI decision 2026-11-10 sc-7-f11 item 1, written here apart from the Lean code: a character reference is "&",
+# then a NON-EMPTY run of ASCII alphanumerics or "#", then ";".
+REF_RUN = set(string.ascii_letters + string.digits + "#")
+CHAR_REF_DOC = '"&", then a non-empty run of ASCII letters, digits or "#", then ";"'
+
+
+def test_char_ref_refuses_every_run_the_ruling_names(swept):
+    """sc-7-f11 review F2 (the class: a run the ruling calls a reference that `charRef` lets through): for every
+    Unicode scalar value c, `clause` accepts "x&" c ";" exactly when c is a word character outside the ruling's run
+    (ASCII letters, digits and "#"), or the space that makes it the two words "x&" and ";", so a run of one ("&a;",
+    "&#;") is refused like a longer one; and `charRef`'s docstring states the ruling's run."""
+    assert CHAR_REF_DOC in " ".join(swept["char_ref"].split()), swept["char_ref"]
+    got, want = chars(swept["referenced"]), (set(SCALARS) - NOT_WORD - REF_RUN) | {" "}
+    assert got == want, {"accepted, a reference": sorted(got - want), "refused, no reference": sorted(want - got)}
+
+
 def test_review_f8_f9_f10_the_probe_wordings_are_refused_and_guarded(swept):
     """sc-7 recheck F8, F9 and F10: each probe wording (and the recheck's deferred U+1D159, U+E000 and U+FFFC after a
-    ".") is refused, and the PROBE F8, F9 and F10 guards of AuthoringExamples.lean stay, verbatim."""
+    ".", spaced and joined: sc-7-f11) is refused, and the PROBE F8, F9 and F10 guards of AuthoringExamples.lean stay,
+    verbatim."""
     assert swept["accepted"][1:] == [[False] * len(ws) for ws in PROBES[1:]]
     examples = EXAMPLES.read_text()
     def lean_escaped(wording: str) -> str:  # json's \uxxxx escapes, with Lean's upper-case hex digits as the probes write them
@@ -216,5 +249,12 @@ def test_review_f8_f9_f10_the_probe_wordings_are_refused_and_guarded(swept):
         probe = "#guard [" + ", ".join(map(render, wordings))
         assert probe + "].all (VE.Scope.Pinned.parseGovernor · == none)" in examples, wordings
     for guard in ('"The hard constraints apply only where x.\\uFFFC y."', '"The hard constraints apply only where x.\\uE000 y."',
-                  '#guard [0x1D159, 0xE000, 0xFFFC].all', '#guard !clause "x.\\u3164"', '#guard !clause "x.\\u2800"'):
+                  '#guard [0x1D159, 0xE000, 0xFFFC].all', '#guard !clause "x.\\u3164"', '#guard !clause "x.\\u2800"',
+                  '#guard [0x1D159, 0xFFFC, 0xE000].all fun n => let c := Char.ofNat n',
+                  '(slotsJoined s!"{t}{Char.ofNat n}").all (parseGovernor · == none)',
+                  # the DRI decision 2026-11-10 sc-7-f11 item 1: character references refused, "AT&T" accepted
+                  '"The hard constraints apply only where x&#46; y.", "The rules below are called the x.&nbsp;The rules',
+                  '#guard ["&nbsp;", "&#32;", "&#x20;", "&period;", "&#46;",', '#guard ["AT&T", "AT&T,"',
+                  # sc-7-f11 review F2: a run of one is a reference ("&a;", "&#;", "AT&T;"), in every slot
+                  '#guard ["&a;", "&#;", "&1;", "AT&T;", "x&#;"', '#guard ["&a;", "&#;", "AT&T;", "x&#;"].all fun e =>'):
         assert guard in examples, guard
