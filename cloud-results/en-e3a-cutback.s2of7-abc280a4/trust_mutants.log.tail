@@ -1,0 +1,5 @@
+trust_mutants: 2 definitions, 50 mutants (7 to run), 4 jobs, base 254c6b1b5d35
+UNKNOWN lean/VE/EnglishGrammar/Norm/Run.lean:160 VE.EnglishGrammar.Norm.Run.leanReader (G[V], trusted) list-empty: G.rules -> [] (lean/VE/EnglishGrammar/Norm/Run.lean:160: Type mismatch)
+trust_mutants: 6 KILLED, 0 SURVIVOR, 1 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 43 OTHER SHARD in 223 s
+trust_mutants: G[V], trusted: 6 KILLED, 1 UNKNOWN, 43 OTHER SHARD
+trust_mutants: steps: wall plan 12.7 s, scratch 4.8 s, control_build 0.2 s, probe_install 1.4 s, mutants 199.8 s, cleanup 4.3 s; lake control_build 0.2 s (1), probe_install 1.4 s (1), control_probes 16.1 s (4), mutant_builds 157.8 s (7), mutant_checks 376.9 s (10), stage_controls 103 s (4), mutant_probes 49.7 s (6)
