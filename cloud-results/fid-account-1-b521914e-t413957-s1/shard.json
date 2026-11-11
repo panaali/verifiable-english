@@ -1,0 +1,1 @@
+{"shard": 1, "shards": 4, "units": ["tests/test_regen_generated.py", "tests/test_rust_reproducible.py", "tests/test_platform_contract.py", "tests/test_b16f_document.py", "tests/test_document_split.py", "tests/test_definitions.py", "tests/test_safetyfw_accounting.py", "tests/test_heavy_tests.py"], "rc": 0, "seconds": 71.5, "passed": 8}
