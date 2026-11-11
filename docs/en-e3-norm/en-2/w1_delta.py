@@ -179,6 +179,8 @@ def _outcome(record: dict) -> str:
 def build(records: list[dict], skipped: dict, commit: str) -> dict:
     kept, seen = [], set()
     for record in records:
+        if "source_sha256" not in record:  # an `english.read` comparator record (the same log variable)
+            continue
         if "corpus" not in record:  # a `ve` process a test started: it inherits the flags, not the plugin
             record.update(corpus="suite-subprocess", id=f"subprocess/{record['source_sha256'][:12]}")
         key = (record["corpus"], record["source_sha256"], _outcome(record)) if record["corpus"] in (
@@ -241,20 +243,25 @@ def main(argv=None) -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--workers", type=int, default=8)
     parser.add_argument("--scratch", type=Path, help="the scratch directory for the logs (default: a new one)")
+    parser.add_argument("--build-only", action="store_true", help="rebuild the report from --scratch's logs")
     args = parser.parse_args(argv)
     commit = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True, text=True).stdout.strip()
     with tempfile.TemporaryDirectory(prefix="w1-delta-") as directory:
         scratch = args.scratch or Path(directory)
         scratch.mkdir(parents=True, exist_ok=True)
-        for name in ("own.jsonl", "suite.jsonl"):
-            (scratch / name).unlink(missing_ok=True)
-        os.environ.update(VE_STATEMENT_COMPARATOR="1", VE_SHADOW_LOG=str(scratch / "own.jsonl"))
-        sys.path.insert(0, str(ROOT))
-        install()
-        pinned()
-        skipped = {name: units(name) for name in PILOTS}
-        skipped["known"] = known()
-        suite(scratch, args.workers)
+        if args.build_only:  # the records of an earlier run in `--scratch`, read again
+            skipped = json.loads((scratch / "skipped.json").read_text())
+        else:
+            for name in ("own.jsonl", "suite.jsonl"):
+                (scratch / name).unlink(missing_ok=True)
+            os.environ.update(VE_STATEMENT_COMPARATOR="1", VE_SHADOW_LOG=str(scratch / "own.jsonl"))
+            sys.path.insert(0, str(ROOT))
+            install()
+            pinned()
+            skipped = {name: units(name) for name in PILOTS}
+            skipped["known"] = known()
+            (scratch / "skipped.json").write_text(json.dumps(skipped))
+            suite(scratch, args.workers)
         records = [json.loads(line) for name in ("own.jsonl", "suite.jsonl") if (scratch / name).exists()
                    for line in (scratch / name).read_text().splitlines()]
     delta = build(records, skipped, commit)
