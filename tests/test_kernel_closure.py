@@ -2,7 +2,9 @@
 
 These tests cover the Python half: the registry's shape, the line counting, the requests sent to
 the Lean half and the saved baseline's consistency. The Lean half (`tools/kernel_closure.lean`)
-reads the compiled environment and runs in the gate, not here.
+reads the compiled environment; the full measurement (`python3 tools/kernel_closure.py`, minutes)
+is run by hand and saved in `docs/kernel/closure-baseline.json`; no gate tool runs it yet (KB-1
+wires it).
 """
 from __future__ import annotations
 
@@ -75,3 +77,18 @@ def test_the_kernel_is_within_the_signed_total():
     [figure] = re.findall(r"^signed total: ([0-9,]+) lines$", text, flags=re.MULTILINE)
     signed = int(figure.replace(",", ""))
     assert BASELINE["kernel_lines"] <= signed
+
+
+RECORDS = ["tests/test_kernel_closure.py", "tools/kernel_closure.py", "tools/kernel_closure.lean",
+           "tools/kernel-paths.json", "tools/kernel_trace.py", "docs/spec/kernel-boundary.md",
+           "docs/kernel/ALLOWANCES.md", "docs/kernel/frozen-keys-20261111.md"]
+GATE_CLAIM = re.compile(r"\b(?:runs?|is\s+run|is\s+checked)\s+in\s+the\s+gate\b", re.IGNORECASE)
+
+
+def test_no_record_says_the_measure_is_gated_before_a_gate_tool_runs_it():
+    """Review kb-0 F2: this file's docstring said the Lean half ran in the gate; nothing in `tools/` ran
+    it. Until a gate tool names `kernel_closure`, no record of the batch may say so."""
+    wired = any("kernel_closure" in tool.read_text() for tool in (ROOT / "tools").glob("gate*.py"))
+    claims = [(name, m.group(0)) for name in RECORDS for m in GATE_CLAIM.finditer((ROOT / name).read_text())]
+    assert wired or claims == []
+    assert GATE_CLAIM.search("the Lean half runs in the " + "gate, not here")  # the review's quote, split
