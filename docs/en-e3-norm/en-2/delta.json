@@ -1,5 +1,5 @@
 {
- "commit": "c54938c370fb807663c31435b1603849a0bd6cd9",
+ "commit": "8582e01d2692015c2dc2300fb3aeeb516d89c091",
  "corpora": [
   {
    "name": "constitution",
@@ -93,9 +93,11 @@
   "no-argument-predicate"
  ],
  "lean_unavailable": [
-  "udhr/u035/state_claim",
+  "constitution/u0036.s05/strict",
   "constitution/u0052.s01",
   "constitution/u0123.s01.p1",
+  "constitution/u0125.s04.p2/strict",
+  "constitution/u0156.s03/strict",
   "constitution/u0165.s01",
   "constitution/u0165.s02",
   "constitution/u0165.s03",
@@ -104,9 +106,6 @@
   "constitution/u0165.s06",
   "constitution/u0165.s07",
   "constitution/u0168.s01",
-  "constitution/u0036.s05/strict",
-  "constitution/u0125.s04.p2/strict",
-  "constitution/u0156.s03/strict",
   "constitution/u0263.s04.p2/strict",
   "tests/test_english_unambiguity.py::test_every_rights_incident_shape_round_trips_with_one_reading",
   "tests/test_english_unambiguity.py::test_every_rights_incident_shape_round_trips_with_one_reading",
@@ -154,7 +153,8 @@
   "tests/test_rights.py::test_generated_rights_lines_with_two_carve_outs_are_refused_until_rights_cfr_5b",
   "tests/test_rights.py::test_generated_rights_lines_with_two_carve_outs_are_refused_until_rights_cfr_5b",
   "tests/test_rights.py::test_generated_rights_lines_with_two_carve_outs_are_refused_until_rights_cfr_5b",
-  "tests/test_rights.py::test_generated_rights_lines_with_two_carve_outs_are_refused_until_rights_cfr_5b"
+  "tests/test_rights.py::test_generated_rights_lines_with_two_carve_outs_are_refused_until_rights_cfr_5b",
+  "udhr/u035/state_claim"
  ],
  "pinned": {
   "fsf/f10-acc": "agree",
@@ -280,327 +280,19 @@
  },
  "rows": [
   {
-   "class": "lean-stricter",
-   "corpus": "udhr",
-   "id": "udhr/u074",
-   "lean": {
-    "code": "NoDerivation",
-    "nodes": [],
-    "status": "none"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "top"
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "compel_association_membership_permitted",
-      "sign": false,
-      "unless": []
-     }
-    ]
-   },
-   "source_sha256": "54b22841a801bd991349c4e639081b046524ce94d3882b676e52268b0cc48496"
-  },
-  {
-   "class": "lean-stricter",
-   "corpus": "udhr",
-   "id": "udhr/u025/state_prohibits",
-   "lean": {
-    "code": "NoDerivation",
-    "nodes": [],
-    "status": "none"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "or",
-       [
-        "unary",
-        "is_slavery",
-        [
-         "var",
-         0
-        ]
-       ],
-       [
-        "unary",
-        "is_slave_trade",
-        [
-         "var",
-         0
-        ]
-       ]
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "prohibit_slavery_and_slave_trade_required",
-      "sign": true,
-      "unless": []
-     }
-    ]
-   },
-   "source_sha256": "7005d8f54c3759f5ed247923b5f55ee890aecfbfec43165b3ce889ba1630b31a"
-  },
-  {
-   "class": "lean-stricter",
-   "corpus": "udhr",
-   "id": "udhr/u025/practice_prohibited",
-   "lean": {
-    "code": "NoDerivation",
-    "nodes": [],
-    "status": "none"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "or",
-       [
-        "unary",
-        "is_slavery",
-        [
-         "var",
-         0
-        ]
-       ],
-       [
-        "unary",
-        "is_slave_trade",
-        [
-         "var",
-         0
-        ]
-       ]
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "slavery_or_slave_trade_practice_permitted",
-      "sign": false,
-      "unless": []
-     }
-    ]
-   },
-   "source_sha256": "866585b653e85b6763fbea7c5f47a956e36f0cbf2384003f04487e6be2c8a454"
-  },
-  {
-   "class": "lean-stricter",
-   "corpus": "udhr",
-   "id": "udhr/u029/entitlement",
-   "lean": {
-    "code": "NoDerivation",
-    "nodes": [],
-    "status": "none"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "top"
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "has_the_right_to_recognition_as_a_person",
-      "sign": true,
-      "unless": []
-     }
-    ]
-   },
-   "source_sha256": "9a02150fc55966fc56900c7a990103282f7f8f5c097a281d15db54ce566a2bd4"
-  },
-  {
-   "class": "lean-stricter",
-   "corpus": "udhr",
-   "id": "udhr/u029/state_claim",
-   "lean": {
-    "code": "NoDerivation",
-    "nodes": [],
-    "status": "none"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "top"
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "secure_recognition_as_person_required",
-      "sign": true,
-      "unless": []
-     }
-    ]
-   },
-   "source_sha256": "e029c4d470007b909066a9fafe6b2194074c7e1932b3c94e6c746c3dbaf4eb2a"
-  },
-  {
-   "class": "lean-stricter",
-   "corpus": "udhr",
-   "id": "udhr/u032/entitlement",
-   "lean": {
-    "code": "NoDerivation",
-    "nodes": [],
-    "status": "none"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "top"
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "is_entitled_to_equal_protection_of_the_law",
-      "sign": true,
-      "unless": []
-     }
-    ]
-   },
-   "source_sha256": "5052858b08d118d34744a5955d6a50132cd38c52c51f1709e65ff57d50488097"
-  },
-  {
-   "class": "lean-stricter",
-   "corpus": "udhr",
-   "id": "udhr/u032/state_claim",
-   "lean": {
-    "code": "NoDerivation",
-    "nodes": [],
-    "status": "none"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "top"
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "secure_equal_protection_required",
-      "sign": true,
-      "unless": []
-     }
-    ]
-   },
-   "source_sha256": "5ce66896c8430392aedb551813dfbda74f6c2627ade01925ac6b46af1a486a0e"
-  },
-  {
-   "class": "lean-stricter",
-   "corpus": "udhr",
-   "id": "udhr/u033a/entitlement",
-   "lean": {
-    "code": "NoDerivation",
-    "nodes": [],
-    "status": "none"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "top"
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "is_entitled_to_protection_against_discrimination",
-      "sign": true,
-      "unless": []
-     }
-    ]
-   },
-   "source_sha256": "f707c568afe02ed0972604a44f8a6d2d845dadf3f3bfb68d74cc09a9cd54851f"
-  },
-  {
-   "class": "lean-stricter",
-   "corpus": "udhr",
-   "id": "udhr/u033a/state_claim",
-   "lean": {
-    "code": "NoDerivation",
-    "nodes": [],
-    "status": "none"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "top"
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "secure_protection_against_discrimination_required",
-      "sign": true,
-      "unless": []
-     }
-    ]
-   },
-   "source_sha256": "c682f59f7395fcc7805ba99d5fdc8453ea3a6e36ae01da69a07fa9201eb476b8"
-  },
-  {
-   "class": "lean-stricter",
-   "corpus": "udhr",
-   "id": "udhr/u033b/entitlement",
-   "lean": {
-    "code": "NoDerivation",
-    "nodes": [],
-    "status": "none"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "top"
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "is_entitled_to_protection_against_incitement",
-      "sign": true,
-      "unless": []
-     }
-    ]
-   },
-   "source_sha256": "bdffe0566942414564404fccc8cbaa157ca031a0b49510506b7feb982c5398fe"
-  },
-  {
-   "class": "lean-stricter",
-   "corpus": "udhr",
-   "id": "udhr/u033b/state_claim",
-   "lean": {
-    "code": "NoDerivation",
-    "nodes": [],
-    "status": "none"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "top"
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "secure_protection_against_incitement_required",
-      "sign": true,
-      "unless": []
-     }
-    ]
-   },
-   "source_sha256": "1a504208ed55695d68a116617a8faaedc8309ff223a5d7f942ac413e61ab9bc4"
-  },
-  {
    "class": "lean-unavailable",
-   "corpus": "udhr",
-   "id": "udhr/u035/state_claim",
+   "corpus": "constitution",
+   "id": "constitution/u0036.s05/strict",
    "lean": {
-    "code": "InvalidGrammar",
-    "nodes": [],
-    "status": "invalidGrammar"
+    "message": "CheckerUnavailable: Lean refused the request: UnsupportedProfile: Unsupported profile soft-norms@0",
+    "status": "unavailable"
    },
    "python": {
     "nodes": [
      {
       "guard": [
        "unary",
-       "violates_granted_fundamental_right",
+       "genuine_ambiguity",
        [
         "var",
         0
@@ -608,789 +300,13 @@
       ],
       "name": "rule-1",
       "over": [],
-      "predicate": "ensure_remedy_by_tribunals_required",
+      "predicate": "clarification_required",
       "sign": true,
       "unless": []
      }
     ]
    },
-   "source_sha256": "dfeed89471beea0ecb0508875ae6f420aea28b299b45e1aa3afe73f1febaee68"
-  },
-  {
-   "class": "lean-stricter",
-   "corpus": "udhr",
-   "id": "udhr/u054/entitlement",
-   "lean": {
-    "code": "NoDerivation",
-    "nodes": [],
-    "status": "none"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "top"
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "is_entitled_to_a_nationality",
-      "sign": true,
-      "unless": []
-     }
-    ]
-   },
-   "source_sha256": "7ba4902f5893dc8f75544d747be706979fd28274e46c5aa45f3e9ce11c405f6c"
-  },
-  {
-   "class": "lean-stricter",
-   "corpus": "udhr",
-   "id": "udhr/u061/claim",
-   "lean": {
-    "code": "NoDerivation",
-    "nodes": [],
-    "status": "none"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "or",
-       [
-        "unary",
-        "is_society",
-        [
-         "var",
-         1
-        ]
-       ],
-       [
-        "unary",
-        "is_state",
-        [
-         "var",
-         1
-        ]
-       ]
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "protect_required",
-      "sign": true,
-      "unless": []
-     }
-    ]
-   },
-   "source_sha256": "a2e1c8e994c9f21f833748f1d0656914d2e400e8df76449c3716a6570e59b25f"
-  },
-  {
-   "class": "lean-stricter",
-   "corpus": "udhr",
-   "id": "udhr/u077/nationality_country_claim",
-   "lean": {
-    "code": "NoDerivation",
-    "nodes": [],
-    "status": "none"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "binary",
-       "has_as_national",
-       [
-        "var",
-        1
-       ],
-       [
-        "var",
-        0
-       ]
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "give_equal_access_to_public_service_required",
-      "sign": true,
-      "unless": []
-     }
-    ]
-   },
-   "source_sha256": "4d8b80e8721665574ab552f58673fddc130c1eee331e26d857f50b5a78c6d1d2"
-  },
-  {
-   "class": "lean-stricter",
-   "corpus": "udhr",
-   "id": "udhr/u077/residence_country_claim",
-   "lean": {
-    "code": "NoDerivation",
-    "nodes": [],
-    "status": "none"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "binary",
-       "has_as_resident",
-       [
-        "var",
-        1
-       ],
-       [
-        "var",
-        0
-       ]
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "give_equal_access_to_public_service_required",
-      "sign": true,
-      "unless": []
-     }
-    ]
-   },
-   "source_sha256": "a3d960c5830a2642ae9513d7669087bbd301d838fb01e35342a8ca4393014571"
-  },
-  {
-   "class": "lean-stricter",
-   "corpus": "udhr",
-   "id": "udhr/u081/entitlement",
-   "lean": {
-    "code": "NoDerivation",
-    "nodes": [],
-    "status": "none"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "top"
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "has_the_right_to_social_security",
-      "sign": true,
-      "unless": []
-     }
-    ]
-   },
-   "source_sha256": "fb9853de6caba1bbeb448ef50e0afface399cd8044792b486de3a70e2dc6baff"
-  },
-  {
-   "class": "lean-stricter",
-   "corpus": "udhr",
-   "id": "udhr/u081/state_claim",
-   "lean": {
-    "code": "NoDerivation",
-    "nodes": [],
-    "status": "none"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "top"
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "secure_social_security_required",
-      "sign": true,
-      "unless": []
-     }
-    ]
-   },
-   "source_sha256": "1524d149a3127febfb935f83260e8513ea0e98b62569ff219a3ecfa7d90078da"
-  },
-  {
-   "class": "lean-stricter",
-   "corpus": "udhr",
-   "id": "udhr/u081/state_claim_within_resources",
-   "lean": {
-    "code": "NoDerivation",
-    "nodes": [],
-    "status": "none"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "unary",
-       "resources_allow",
-       [
-        "var",
-        1
-       ]
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "secure_social_security_required",
-      "sign": true,
-      "unless": []
-     }
-    ]
-   },
-   "source_sha256": "0b6cc29b443e4d87ed20da0877423c9202d9c9c1e5c42e365657e8ff4d6f358b"
-  },
-  {
-   "class": "lean-stricter",
-   "corpus": "udhr",
-   "id": "udhr/u084c/entitlement",
-   "lean": {
-    "code": "NoDerivation",
-    "nodes": [],
-    "status": "none"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "top"
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "has_the_right_to_just_and_favourable_conditions_of_work",
-      "sign": true,
-      "unless": []
-     }
-    ]
-   },
-   "source_sha256": "11fd603fc7e066bc4511d4ebdd6a5181477401b41da3f06809fe315725100986"
-  },
-  {
-   "class": "lean-stricter",
-   "corpus": "udhr",
-   "id": "udhr/u084c/state_claim",
-   "lean": {
-    "code": "NoDerivation",
-    "nodes": [],
-    "status": "none"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "top"
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "secure_just_and_favourable_conditions_of_work_required",
-      "sign": true,
-      "unless": []
-     }
-    ]
-   },
-   "source_sha256": "912d5c49342a6012ad447c676212890ba037de9048050f8d7e04e412e319c38d"
-  },
-  {
-   "class": "lean-stricter",
-   "corpus": "udhr",
-   "id": "udhr/u084d/entitlement",
-   "lean": {
-    "code": "NoDerivation",
-    "nodes": [],
-    "status": "none"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "top"
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "has_the_right_to_protection_against_unemployment",
-      "sign": true,
-      "unless": []
-     }
-    ]
-   },
-   "source_sha256": "d406c4d12f8672876b61c2855577df357528e4e48c32fe57f3b33460356ef4de"
-  },
-  {
-   "class": "lean-stricter",
-   "corpus": "udhr",
-   "id": "udhr/u084d/state_claim",
-   "lean": {
-    "code": "NoDerivation",
-    "nodes": [],
-    "status": "none"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "top"
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "secure_protection_against_unemployment_required",
-      "sign": true,
-      "unless": []
-     }
-    ]
-   },
-   "source_sha256": "23f9735670c078a68fd33aa983735830818744c558a059745428b758da8d3a64"
-  },
-  {
-   "class": "lean-stricter",
-   "corpus": "udhr",
-   "id": "udhr/u098/state_requires",
-   "lean": {
-    "code": "NoDerivation",
-    "nodes": [],
-    "status": "none"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "top"
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "make_elementary_education_compulsory_required",
-      "sign": true,
-      "unless": []
-     }
-    ]
-   },
-   "source_sha256": "3f1b72f185d1cb29e052b6fa5d37691fd1084d9ad6d3a6e6abc4698ac9c2d1d3"
-  },
-  {
-   "class": "lean-stricter",
-   "corpus": "udhr",
-   "id": "udhr/u098/person_attends",
-   "lean": {
-    "code": "NoDerivation",
-    "nodes": [],
-    "status": "none"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "unary",
-       "elementary_education_is_compulsory_for",
-       [
-        "var",
-        0
-       ]
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "attend_compulsory_elementary_education_required",
-      "sign": true,
-      "unless": []
-     }
-    ]
-   },
-   "source_sha256": "ab7cdeeb2b9010f37375fabbb074e962f414a132674b8e35e38dfcb5b1773dea"
-  },
-  {
-   "class": "lean-stricter",
-   "corpus": "udhr",
-   "id": "udhr/u098/guardian_ensures",
-   "lean": {
-    "code": "NoDerivation",
-    "nodes": [],
-    "status": "none"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "and",
-       [
-        "binary",
-        "is_parent_or_guardian_of",
-        [
-         "var",
-         1
-        ],
-        [
-         "var",
-         0
-        ]
-       ],
-       [
-        "unary",
-        "elementary_education_is_compulsory_for",
-        [
-         "var",
-         0
-        ]
-       ]
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "see_to_compulsory_elementary_education_required",
-      "sign": true,
-      "unless": []
-     }
-    ]
-   },
-   "source_sha256": "49d2c6cbf006e6b65bcf4d26855ac84597ff4322234250e1b5c9afe5c1d98960"
-  },
-  {
-   "class": "lean-stricter",
-   "corpus": "udhr",
-   "id": "udhr/u099a/state",
-   "lean": {
-    "code": "NoDerivation",
-    "nodes": [],
-    "status": "none"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "or",
-       [
-        "unary",
-        "is_technical",
-        [
-         "var",
-         0
-        ]
-       ],
-       [
-        "unary",
-        "is_professional",
-        [
-         "var",
-         0
-        ]
-       ]
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "make_education_generally_available_required",
-      "sign": true,
-      "unless": []
-     }
-    ]
-   },
-   "source_sha256": "a3991a9a1114968a1a1e6e159b9672bf16d704b65c2fc5b819347c9a0c7a116d"
-  },
-  {
-   "class": "lean-stricter",
-   "corpus": "udhr",
-   "id": "udhr/u099b/state",
-   "lean": {
-    "code": "NoDerivation",
-    "nodes": [],
-    "status": "none"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "top"
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "make_higher_education_accessible_required",
-      "sign": true,
-      "unless": []
-     }
-    ]
-   },
-   "source_sha256": "6b6d122f24d7432104682906e17f04b1d314f6abdced4be1ce449895868aa709"
-  },
-  {
-   "class": "lean-stricter",
-   "corpus": "udhr",
-   "id": "udhr/u100a/state",
-   "lean": {
-    "code": "NoDerivation",
-    "nodes": [],
-    "status": "none"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "top"
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "direct_education_to_personality_required",
-      "sign": true,
-      "unless": []
-     }
-    ]
-   },
-   "source_sha256": "421e0e67bf60e72dd30601812c82b9bb3eb19ad3cb7e4e71d92da7c4af99a153"
-  },
-  {
-   "class": "lean-stricter",
-   "corpus": "udhr",
-   "id": "udhr/u100a/education",
-   "lean": {
-    "code": "NoDerivation",
-    "nodes": [],
-    "status": "none"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "top"
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "is_directed_to_full_development_of_the_personality",
-      "sign": true,
-      "unless": []
-     }
-    ]
-   },
-   "source_sha256": "c27a9bcdb88fa0b69d8f34b0bc38453285de5eb585d253aa060c3164af799b95"
-  },
-  {
-   "class": "lean-stricter",
-   "corpus": "udhr",
-   "id": "udhr/u100b/state",
-   "lean": {
-    "code": "NoDerivation",
-    "nodes": [],
-    "status": "none"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "or",
-       [
-        "unary",
-        "is_human_rights",
-        [
-         "var",
-         0
-        ]
-       ],
-       [
-        "unary",
-        "is_fundamental_freedoms",
-        [
-         "var",
-         0
-        ]
-       ]
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "direct_education_to_strengthen_respect_required",
-      "sign": true,
-      "unless": []
-     }
-    ]
-   },
-   "source_sha256": "5c50159c62410d93f479c923ea709fd683992cec2b638756a54c77a2bf6507cb"
-  },
-  {
-   "class": "lean-stricter",
-   "corpus": "udhr",
-   "id": "udhr/u100b/education",
-   "lean": {
-    "code": "NoDerivation",
-    "nodes": [],
-    "status": "none"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "or",
-       [
-        "unary",
-        "is_human_rights",
-        [
-         "var",
-         0
-        ]
-       ],
-       [
-        "unary",
-        "is_fundamental_freedoms",
-        [
-         "var",
-         0
-        ]
-       ]
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "education_strengthens_respect_of",
-      "sign": true,
-      "unless": []
-     }
-    ]
-   },
-   "source_sha256": "a7368bb47c725816d4f659bd1944db50588d65ae867ae0ca030579bab9ed7b68"
-  },
-  {
-   "class": "lean-stricter",
-   "corpus": "udhr",
-   "id": "udhr/u105c/entitlement",
-   "lean": {
-    "code": "NoDerivation",
-    "nodes": [],
-    "status": "none"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "top"
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "has_the_right_to_share_in_scientific_advancement",
-      "sign": true,
-      "unless": []
-     }
-    ]
-   },
-   "source_sha256": "2296f356fbdf122a81a48dc3f743884b51b55b7e3661dd10ce743511ebbae65c"
-  },
-  {
-   "class": "lean-stricter",
-   "corpus": "udhr",
-   "id": "udhr/u105c/state_claim",
-   "lean": {
-    "code": "NoDerivation",
-    "nodes": [],
-    "status": "none"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "top"
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "secure_scientific_advancement_required",
-      "sign": true,
-      "unless": []
-     }
-    ]
-   },
-   "source_sha256": "39a83c0435c53e8fb96058dc340045a7d53e9bd011b227e085d8adf2d7b60c32"
-  },
-  {
-   "class": "lean-stricter",
-   "corpus": "udhr",
-   "id": "udhr/u105c/liberty",
-   "lean": {
-    "code": "NoDerivation",
-    "nodes": [],
-    "status": "none"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "top"
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "person_may_share_in_scientific_advancement",
-      "sign": true,
-      "unless": []
-     }
-    ]
-   },
-   "source_sha256": "b8d4c3c04676b26bd082123a467de6c561ff25d692b5ba5b6daea4b4dd7ad5ae"
-  },
-  {
-   "class": "lean-stricter",
-   "corpus": "udhr",
-   "id": "udhr/u110/restrictive",
-   "lean": {
-    "code": "NoDerivation",
-    "nodes": [],
-    "status": "none"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "binary",
-       "is_sole_setting_of_full_development",
-       [
-        "var",
-        0
-       ],
-       [
-        "var",
-        1
-       ]
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "perform_duties_required",
-      "sign": true,
-      "unless": []
-     }
-    ]
-   },
-   "source_sha256": "0f2caf39f94c9b526b29798bbac6bf108d6ff97269f5f5f20e199a60b847acd9"
-  },
-  {
-   "class": "lean-stricter",
-   "corpus": "udhr",
-   "id": "udhr/u110/describing",
-   "lean": {
-    "code": "NoDerivation",
-    "nodes": [],
-    "status": "none"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "top"
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "perform_duties_to_the_community_required",
-      "sign": true,
-      "unless": []
-     }
-    ]
-   },
-   "source_sha256": "bb0b853c7c8e3972f99a1fe9d9bfc27518ac6bbb42903362dfce8df5a3996dd3"
-  },
-  {
-   "class": "lean-stricter",
-   "corpus": "udhr",
-   "id": "udhr/u114/interpretive_ban",
-   "lean": {
-    "code": "NoDerivation",
-    "nodes": [],
-    "status": "none"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "unary",
-       "implies_right_to_destroy_declared_rights",
-       [
-        "var",
-        0
-       ]
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "interpretation_permitted",
-      "sign": false,
-      "unless": []
-     }
-    ]
-   },
-   "source_sha256": "22470be85cfc056ac10aee4ab0e5b0e0a1da58c6766257f3fe8562d4bd7b2b96"
+   "source_sha256": "ac14360213a23315dd7c30623d3f93f0f7330f4d1866c26d0d5a98e954519489"
   },
   {
    "class": "lean-unavailable",
@@ -1429,6 +345,54 @@
     "message": "Expected a complete rule sentence"
    },
    "source_sha256": "4a980c975b499a395ee1ebf18ba75dc44143507f25c8c7745785b1602d55c1c7"
+  },
+  {
+   "class": "lean-unavailable",
+   "corpus": "constitution",
+   "id": "constitution/u0125.s04.p2/strict",
+   "lean": {
+    "message": "CheckerUnavailable: Lean refused the request: UnsupportedProfile: Unsupported profile soft-norms@0",
+    "status": "unavailable"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "top"
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "denial_of_being_claude_permitted",
+      "sign": false,
+      "unless": []
+     }
+    ]
+   },
+   "source_sha256": "6d89dedede1c0e3ac6eaab1921f42e91fdca57c61b0ef4b40d35b2e1c71b0e5e"
+  },
+  {
+   "class": "lean-unavailable",
+   "corpus": "constitution",
+   "id": "constitution/u0156.s03/strict",
+   "lean": {
+    "message": "CheckerUnavailable: Lean refused the request: UnsupportedProfile: Unsupported profile soft-norms@0",
+    "status": "unavailable"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "top"
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "system_prompt_deception_permitted",
+      "sign": false,
+      "unless": []
+     }
+    ]
+   },
+   "source_sha256": "efbec0823670265633474396608a097ea5eb0b1d2d79c5566a725d700693d321"
   },
   {
    "class": "lean-unavailable",
@@ -1665,83 +629,6 @@
   {
    "class": "lean-unavailable",
    "corpus": "constitution",
-   "id": "constitution/u0036.s05/strict",
-   "lean": {
-    "message": "CheckerUnavailable: Lean refused the request: UnsupportedProfile: Unsupported profile soft-norms@0",
-    "status": "unavailable"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "unary",
-       "genuine_ambiguity",
-       [
-        "var",
-        0
-       ]
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "clarification_required",
-      "sign": true,
-      "unless": []
-     }
-    ]
-   },
-   "source_sha256": "ac14360213a23315dd7c30623d3f93f0f7330f4d1866c26d0d5a98e954519489"
-  },
-  {
-   "class": "lean-unavailable",
-   "corpus": "constitution",
-   "id": "constitution/u0125.s04.p2/strict",
-   "lean": {
-    "message": "CheckerUnavailable: Lean refused the request: UnsupportedProfile: Unsupported profile soft-norms@0",
-    "status": "unavailable"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "top"
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "denial_of_being_claude_permitted",
-      "sign": false,
-      "unless": []
-     }
-    ]
-   },
-   "source_sha256": "6d89dedede1c0e3ac6eaab1921f42e91fdca57c61b0ef4b40d35b2e1c71b0e5e"
-  },
-  {
-   "class": "lean-unavailable",
-   "corpus": "constitution",
-   "id": "constitution/u0156.s03/strict",
-   "lean": {
-    "message": "CheckerUnavailable: Lean refused the request: UnsupportedProfile: Unsupported profile soft-norms@0",
-    "status": "unavailable"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "top"
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "system_prompt_deception_permitted",
-      "sign": false,
-      "unless": []
-     }
-    ]
-   },
-   "source_sha256": "efbec0823670265633474396608a097ea5eb0b1d2d79c5566a725d700693d321"
-  },
-  {
-   "class": "lean-unavailable",
-   "corpus": "constitution",
    "id": "constitution/u0263.s04.p2/strict",
    "lean": {
     "message": "CheckerUnavailable: Lean refused the request: UnsupportedProfile: Unsupported profile soft-norms@0",
@@ -1771,176 +658,6 @@
     ]
    },
    "source_sha256": "7ea6cb56a48dc3f70d5a87d6c8d3ebcd0a0c8bc2ff166ff1f95ea1ec35366edf"
-  },
-  {
-   "class": "lean-stricter",
-   "corpus": "known",
-   "difference": "empty-text",
-   "id": "known/empty-text",
-   "lean": {
-    "code": "EmptyDocument",
-    "nodes": [],
-    "status": "rejected"
-   },
-   "python": {
-    "nodes": []
-   },
-   "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-  },
-  {
-   "class": "lean-looser",
-   "corpus": "known",
-   "difference": "layout-shared-line",
-   "id": "known/layout-shared-line",
-   "lean": {
-    "code": null,
-    "nodes": [
-     {
-      "guard": [
-       "top"
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "permitted",
-      "sign": true,
-      "unless": []
-     },
-     {
-      "guard": [
-       "top"
-      ],
-      "name": "rule-2",
-      "over": [],
-      "predicate": "permitted",
-      "sign": false,
-      "unless": []
-     }
-    ],
-    "status": "one"
-   },
-   "python": {
-    "class": "SyntaxError",
-    "message": "Norm consequence has no single declared reading; use Every, each, and a declared act phrase"
-   },
-   "source_sha256": "25751c972d500aec5e8bff72338ac6a7bcfe6e781355c0aadb9038c8221a77df"
-  },
-  {
-   "class": "lean-looser",
-   "corpus": "known",
-   "difference": "layout-several-lines",
-   "id": "known/layout-several-lines",
-   "lean": {
-    "code": null,
-    "nodes": [
-     {
-      "guard": [
-       "top"
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "permitted",
-      "sign": true,
-      "unless": []
-     }
-    ],
-    "status": "one"
-   },
-   "python": {
-    "class": "SyntaxError",
-    "message": "Expected Rule 1 with its own block"
-   },
-   "source_sha256": "dedfa92992489e03753f78ed3d1e08662c87bbb257a5bbfc29c096985478d88a"
-  },
-  {
-   "class": "lean-looser",
-   "corpus": "known",
-   "difference": "layout-blank-line",
-   "id": "known/layout-blank-line",
-   "lean": {
-    "code": null,
-    "nodes": [
-     {
-      "guard": [
-       "top"
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "permitted",
-      "sign": true,
-      "unless": []
-     },
-     {
-      "guard": [
-       "top"
-      ],
-      "name": "rule-2",
-      "over": [],
-      "predicate": "permitted",
-      "sign": false,
-      "unless": []
-     }
-    ],
-    "status": "one"
-   },
-   "python": {
-    "class": "SyntaxError",
-    "message": "Expected Rule 2 with its own block"
-   },
-   "source_sha256": "d8dff3f9a0cdfb7be1e1e849f19413a332c4d5b4d2ec909c694c1e4de14d396c"
-  },
-  {
-   "class": "lean-looser",
-   "corpus": "known",
-   "difference": "layout-trailing-line",
-   "id": "known/layout-trailing-line",
-   "lean": {
-    "code": null,
-    "nodes": [
-     {
-      "guard": [
-       "top"
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "permitted",
-      "sign": true,
-      "unless": []
-     }
-    ],
-    "status": "one"
-   },
-   "python": {
-    "class": "SyntaxError",
-    "message": "Expected Rule 2 with its own block"
-   },
-   "source_sha256": "59d7602e569e1d3bc00b4af14aeb184170f7c53ce5eaa829d0f1ed2464b03371"
-  },
-  {
-   "class": "lean-looser",
-   "corpus": "known",
-   "difference": "casing-lowercase-rule",
-   "id": "known/casing-lowercase-rule",
-   "lean": {
-    "code": null,
-    "nodes": [
-     {
-      "guard": [
-       "top"
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "permitted",
-      "sign": true,
-      "unless": []
-     }
-    ],
-    "status": "one"
-   },
-   "python": {
-    "class": "SyntaxError",
-    "message": "Expected Rule 1 with its own block"
-   },
-   "source_sha256": "adc809e8e4dfec04c47e32806fc6aeea6f9c346dcb2a4cf7dbe229a2aa011d69"
   },
   {
    "class": "lean-stricter",
@@ -2016,6 +733,205 @@
   {
    "class": "lean-looser",
    "corpus": "known",
+   "difference": "casing-lowercase-rule",
+   "id": "known/casing-lowercase-rule",
+   "lean": {
+    "code": null,
+    "nodes": [
+     {
+      "guard": [
+       "top"
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "permitted",
+      "sign": true,
+      "unless": []
+     }
+    ],
+    "status": "one"
+   },
+   "python": {
+    "class": "SyntaxError",
+    "message": "Expected Rule 1 with its own block"
+   },
+   "source_sha256": "adc809e8e4dfec04c47e32806fc6aeea6f9c346dcb2a4cf7dbe229a2aa011d69"
+  },
+  {
+   "class": "lean-stricter",
+   "corpus": "known",
+   "difference": "empty-text",
+   "id": "known/empty-text",
+   "lean": {
+    "code": "EmptyDocument",
+    "nodes": [],
+    "status": "rejected"
+   },
+   "python": {
+    "nodes": []
+   },
+   "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+   "class": "lean-looser",
+   "corpus": "known",
+   "difference": "layout-blank-line",
+   "id": "known/layout-blank-line",
+   "lean": {
+    "code": null,
+    "nodes": [
+     {
+      "guard": [
+       "top"
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "permitted",
+      "sign": true,
+      "unless": []
+     },
+     {
+      "guard": [
+       "top"
+      ],
+      "name": "rule-2",
+      "over": [],
+      "predicate": "permitted",
+      "sign": false,
+      "unless": []
+     }
+    ],
+    "status": "one"
+   },
+   "python": {
+    "class": "SyntaxError",
+    "message": "Expected Rule 2 with its own block"
+   },
+   "source_sha256": "d8dff3f9a0cdfb7be1e1e849f19413a332c4d5b4d2ec909c694c1e4de14d396c"
+  },
+  {
+   "class": "lean-looser",
+   "corpus": "known",
+   "difference": "layout-several-lines",
+   "id": "known/layout-several-lines",
+   "lean": {
+    "code": null,
+    "nodes": [
+     {
+      "guard": [
+       "top"
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "permitted",
+      "sign": true,
+      "unless": []
+     }
+    ],
+    "status": "one"
+   },
+   "python": {
+    "class": "SyntaxError",
+    "message": "Expected Rule 1 with its own block"
+   },
+   "source_sha256": "dedfa92992489e03753f78ed3d1e08662c87bbb257a5bbfc29c096985478d88a"
+  },
+  {
+   "class": "lean-looser",
+   "corpus": "known",
+   "difference": "layout-shared-line",
+   "id": "known/layout-shared-line",
+   "lean": {
+    "code": null,
+    "nodes": [
+     {
+      "guard": [
+       "top"
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "permitted",
+      "sign": true,
+      "unless": []
+     },
+     {
+      "guard": [
+       "top"
+      ],
+      "name": "rule-2",
+      "over": [],
+      "predicate": "permitted",
+      "sign": false,
+      "unless": []
+     }
+    ],
+    "status": "one"
+   },
+   "python": {
+    "class": "SyntaxError",
+    "message": "Norm consequence has no single declared reading; use Every, each, and a declared act phrase"
+   },
+   "source_sha256": "25751c972d500aec5e8bff72338ac6a7bcfe6e781355c0aadb9038c8221a77df"
+  },
+  {
+   "class": "lean-looser",
+   "corpus": "known",
+   "difference": "layout-trailing-line",
+   "id": "known/layout-trailing-line",
+   "lean": {
+    "code": null,
+    "nodes": [
+     {
+      "guard": [
+       "top"
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "permitted",
+      "sign": true,
+      "unless": []
+     }
+    ],
+    "status": "one"
+   },
+   "python": {
+    "class": "SyntaxError",
+    "message": "Expected Rule 2 with its own block"
+   },
+   "source_sha256": "59d7602e569e1d3bc00b4af14aeb184170f7c53ce5eaa829d0f1ed2464b03371"
+  },
+  {
+   "class": "lean-looser",
+   "corpus": "known",
+   "difference": "self-precedence",
+   "id": "known/self-precedence",
+   "lean": {
+    "code": null,
+    "nodes": [
+     {
+      "guard": [
+       "top"
+      ],
+      "name": "rule-1",
+      "over": [
+       "rule-1"
+      ],
+      "predicate": "permitted",
+      "sign": true,
+      "unless": []
+     }
+    ],
+    "status": "one"
+   },
+   "python": {
+    "class": "VEError",
+    "message": "DependencyCycle: rule-1"
+   },
+   "source_sha256": "29584bd60b0bef4398bd7269292ec8fd73a09cf039c947aec5688073d2d7c715"
+  },
+  {
+   "class": "lean-looser",
+   "corpus": "known",
    "difference": "spacing-double",
    "id": "known/spacing-double",
    "lean": {
@@ -2068,33 +984,2461 @@
    "source_sha256": "9aba39318a76be095fc848ecb8a55d0328a035ea24d125ae870041777d05b828"
   },
   {
-   "class": "lean-looser",
-   "corpus": "known",
-   "difference": "self-precedence",
-   "id": "known/self-precedence",
+   "class": "lean-unavailable",
+   "corpus": "soft-rights",
+   "id": "tests/test_english_unambiguity.py::test_every_rights_incident_shape_round_trips_with_one_reading",
    "lean": {
-    "code": null,
+    "code": "InvalidGrammar",
+    "nodes": [],
+    "status": "invalidGrammar"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "binary",
+       "arbitrary",
+       [
+        "var",
+        1
+       ],
+       [
+        "var",
+        0
+       ]
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "protect_permitted",
+      "sign": false,
+      "unless": []
+     }
+    ]
+   },
+   "source_sha256": "422777b27933a784687012a434c30e0ea39b76fb4c81166b82b36f2aaba54cda"
+  },
+  {
+   "class": "lean-unavailable",
+   "corpus": "soft-rights",
+   "id": "tests/test_english_unambiguity.py::test_every_rights_incident_shape_round_trips_with_one_reading",
+   "lean": {
+    "code": "InvalidGrammar",
+    "nodes": [],
+    "status": "invalidGrammar"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "binary",
+       "arbitrary",
+       [
+        "var",
+        1
+       ],
+       [
+        "var",
+        0
+       ]
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "deprive_permitted",
+      "sign": false,
+      "unless": []
+     }
+    ]
+   },
+   "source_sha256": "5caac5104f2880945df7c6dfba23fcdff36b9f887c17d5ab87ebea0b9635f34b"
+  },
+  {
+   "class": "lean-unavailable",
+   "corpus": "soft-rights",
+   "id": "tests/test_english_unambiguity.py::test_every_rights_incident_shape_round_trips_with_one_reading",
+   "lean": {
+    "code": "InvalidGrammar",
+    "nodes": [],
+    "status": "invalidGrammar"
+   },
+   "python": {
     "nodes": [
      {
       "guard": [
        "top"
       ],
       "name": "rule-1",
-      "over": [
-       "rule-1"
-      ],
-      "predicate": "permitted",
+      "over": [],
+      "predicate": "protect_required",
       "sign": true,
       "unless": []
+     }
+    ]
+   },
+   "source_sha256": "b13d55b7931937f8b7d8fecbba65855db94f74b5444b7ac738d73f989ccea8ec"
+  },
+  {
+   "class": "lean-unavailable",
+   "corpus": "soft-rights",
+   "id": "tests/test_english_unambiguity.py::test_every_rights_incident_shape_round_trips_with_one_reading",
+   "lean": {
+    "code": "InvalidGrammar",
+    "nodes": [],
+    "status": "invalidGrammar"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "binary",
+       "rights__lim__1",
+       [
+        "var",
+        1
+       ],
+       [
+        "var",
+        0
+       ]
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "protect_required",
+      "sign": true,
+      "unless": []
+     }
+    ]
+   },
+   "source_sha256": "b81f204e36691ce81eec83338780243ef9e2ad2a4f9ff5970aa543cc9c94ce36"
+  },
+  {
+   "class": "lean-unavailable",
+   "corpus": "soft-rights",
+   "id": "tests/test_english_unambiguity.py::test_every_rights_incident_shape_round_trips_with_one_reading",
+   "lean": {
+    "code": "InvalidGrammar",
+    "nodes": [],
+    "status": "invalidGrammar"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "top"
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "person_may_act",
+      "sign": true,
+      "unless": []
+     }
+    ]
+   },
+   "source_sha256": "c218be109304d95fe27a5e8fdd8f5ee36a97d40d4b9cfdb9c231ccc103315477"
+  },
+  {
+   "class": "lean-unavailable",
+   "corpus": "soft-rights",
+   "id": "tests/test_english_unambiguity.py::test_every_rights_incident_shape_round_trips_with_one_reading",
+   "lean": {
+    "code": "InvalidGrammar",
+    "nodes": [],
+    "status": "invalidGrammar"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "top"
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "protect_permitted",
+      "sign": false,
+      "unless": []
+     }
+    ]
+   },
+   "source_sha256": "eb507a2e7b881fa32c4d0d31235c1078af69aa03fc01f08f0372f1f1008da90b"
+  },
+  {
+   "class": "lean-unavailable",
+   "corpus": "soft-rights",
+   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
+   "lean": {
+    "code": "InvalidGrammar",
+    "nodes": [],
+    "status": "invalidGrammar"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "unary",
+       "adult",
+       [
+        "var",
+        1
+       ]
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "publish_permitted",
+      "sign": false,
+      "unless": []
+     }
+    ]
+   },
+   "source_sha256": "03503af522f8fb826b47b5570f18a14da13318b6cda67f45bf400be69a060eb6"
+  },
+  {
+   "class": "lean-unavailable",
+   "corpus": "soft-rights",
+   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
+   "lean": {
+    "code": "InvalidGrammar",
+    "nodes": [],
+    "status": "invalidGrammar"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "unary",
+       "adult",
+       [
+        "var",
+        0
+       ]
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "deprive_permitted",
+      "sign": false,
+      "unless": []
+     }
+    ]
+   },
+   "source_sha256": "0f95c3e663d59b443701038b287ecd4797924fdf0cafcc330322d42ec14e3ddb"
+  },
+  {
+   "class": "lean-unavailable",
+   "corpus": "soft-rights",
+   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
+   "lean": {
+    "code": "InvalidGrammar",
+    "nodes": [],
+    "status": "invalidGrammar"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "unary",
+       "adult",
+       [
+        "var",
+        1
+       ]
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "publish_permitted",
+      "sign": false,
+      "unless": [
+       [
+        "unary",
+        "adult",
+        [
+         "var",
+         1
+        ]
+       ]
+      ]
+     }
+    ]
+   },
+   "source_sha256": "1615059c5c6ee4c7839e23accf537cc3bd1782bad0f0a7d993c517ead236dd3a"
+  },
+  {
+   "class": "lean-unavailable",
+   "corpus": "soft-rights",
+   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
+   "lean": {
+    "code": "InvalidGrammar",
+    "nodes": [],
+    "status": "invalidGrammar"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "unary",
+       "adult",
+       [
+        "var",
+        0
+       ]
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "protect_permitted",
+      "sign": false,
+      "unless": []
+     }
+    ]
+   },
+   "source_sha256": "1942b54cdbe2f52b8ee67acc5aa5c5bdd5b21e4a6e774b1eadc42dc3f77cb7eb"
+  },
+  {
+   "class": "lean-unavailable",
+   "corpus": "soft-rights",
+   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
+   "lean": {
+    "code": "InvalidGrammar",
+    "nodes": [],
+    "status": "invalidGrammar"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "unary",
+       "adult",
+       [
+        "var",
+        1
+       ]
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "publish_permitted",
+      "sign": true,
+      "unless": []
+     }
+    ]
+   },
+   "source_sha256": "1dae9f04d543118b3acfa5003338081edaecd088f576a9d9a2bc4d24719f3eaa"
+  },
+  {
+   "class": "lean-unavailable",
+   "corpus": "soft-rights",
+   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
+   "lean": {
+    "code": "InvalidGrammar",
+    "nodes": [],
+    "status": "invalidGrammar"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "binary",
+       "q",
+       [
+        "var",
+        1
+       ],
+       [
+        "var",
+        0
+       ]
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "publish_required",
+      "sign": true,
+      "unless": []
+     }
+    ]
+   },
+   "source_sha256": "1fff8066ceeeb9ea71cb48fe208fcae20c095056166cc3917059d4910a9948b2"
+  },
+  {
+   "class": "lean-unavailable",
+   "corpus": "soft-rights",
+   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
+   "lean": {
+    "code": "InvalidGrammar",
+    "nodes": [],
+    "status": "invalidGrammar"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "binary",
+       "arbitrary",
+       [
+        "var",
+        1
+       ],
+       [
+        "var",
+        0
+       ]
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "protect_permitted",
+      "sign": false,
+      "unless": [
+       [
+        "binary",
+        "arbitrary",
+        [
+         "var",
+         1
+        ],
+        [
+         "var",
+         0
+        ]
+       ]
+      ]
+     }
+    ]
+   },
+   "source_sha256": "20903ec74325cdd61b789ee4d6b248f1b6849dcba55ecabff522ba757b374a7e"
+  },
+  {
+   "class": "lean-unavailable",
+   "corpus": "soft-rights",
+   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
+   "lean": {
+    "code": "InvalidGrammar",
+    "nodes": [],
+    "status": "invalidGrammar"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "binary",
+       "arbitrary",
+       [
+        "var",
+        1
+       ],
+       [
+        "var",
+        0
+       ]
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "protect_permitted",
+      "sign": false,
+      "unless": [
+       [
+        "unary",
+        "adult",
+        [
+         "var",
+         0
+        ]
+       ]
+      ]
+     }
+    ]
+   },
+   "source_sha256": "25668a17af5bc7d297acb74a148cb95c93da8f8429ff25930fafb2faea762d3b"
+  },
+  {
+   "class": "lean-unavailable",
+   "corpus": "soft-rights",
+   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
+   "lean": {
+    "code": "InvalidGrammar",
+    "nodes": [],
+    "status": "invalidGrammar"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "unary",
+       "adult",
+       [
+        "var",
+        1
+       ]
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "publish_required",
+      "sign": true,
+      "unless": []
+     }
+    ]
+   },
+   "source_sha256": "28b6d0f2d6f9d83f8c9fa2783415f51e230badc72f833e8f7cab018a0991d6b1"
+  },
+  {
+   "class": "lean-unavailable",
+   "corpus": "soft-rights",
+   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
+   "lean": {
+    "code": "InvalidGrammar",
+    "nodes": [],
+    "status": "invalidGrammar"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "top"
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "publish_required",
+      "sign": true,
+      "unless": [
+       [
+        "binary",
+        "q",
+        [
+         "var",
+         1
+        ],
+        [
+         "var",
+         0
+        ]
+       ]
+      ]
+     }
+    ]
+   },
+   "source_sha256": "2c520955435344dea7a12f380a38f611737e79d8579f384bb31174c7e92389fa"
+  },
+  {
+   "class": "lean-unavailable",
+   "corpus": "soft-rights",
+   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
+   "lean": {
+    "code": "InvalidGrammar",
+    "nodes": [],
+    "status": "invalidGrammar"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "top"
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "speak_permitted",
+      "sign": true,
+      "unless": []
+     }
+    ]
+   },
+   "source_sha256": "3b001981be0854ae8c1361a5474cb89c861330fefa474e84b1333caa2efa5d44"
+  },
+  {
+   "class": "lean-unavailable",
+   "corpus": "soft-rights",
+   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
+   "lean": {
+    "code": "InvalidGrammar",
+    "nodes": [],
+    "status": "invalidGrammar"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "binary",
+       "arbitrary",
+       [
+        "var",
+        1
+       ],
+       [
+        "var",
+        0
+       ]
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "protect_required",
+      "sign": true,
+      "unless": [
+       [
+        "unary",
+        "adult",
+        [
+         "var",
+         0
+        ]
+       ]
+      ]
+     }
+    ]
+   },
+   "source_sha256": "43d781bf22cd56abbb878597ec5e178263c3384ebaabefaa798e928337200b11"
+  },
+  {
+   "class": "lean-unavailable",
+   "corpus": "soft-rights",
+   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
+   "lean": {
+    "code": "InvalidGrammar",
+    "nodes": [],
+    "status": "invalidGrammar"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "unary",
+       "adult",
+       [
+        "var",
+        0
+       ]
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "protect_required",
+      "sign": true,
+      "unless": []
+     }
+    ]
+   },
+   "source_sha256": "5debd1418084fc7b72a22071a9af2c88d842f1cb7d71b26ecfdabcfb69dafc5e"
+  },
+  {
+   "class": "lean-unavailable",
+   "corpus": "soft-rights",
+   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
+   "lean": {
+    "code": "InvalidGrammar",
+    "nodes": [],
+    "status": "invalidGrammar"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "unary",
+       "adult",
+       [
+        "var",
+        0
+       ]
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "protect_required",
+      "sign": true,
+      "unless": [
+       [
+        "binary",
+        "arbitrary",
+        [
+         "var",
+         1
+        ],
+        [
+         "var",
+         0
+        ]
+       ]
+      ]
+     }
+    ]
+   },
+   "source_sha256": "65c8bec1c0b66dd4badc6b006a27cac50c2efd78a07197f207ccd5e263a27f0a"
+  },
+  {
+   "class": "lean-unavailable",
+   "corpus": "soft-rights",
+   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
+   "lean": {
+    "code": "InvalidGrammar",
+    "nodes": [],
+    "status": "invalidGrammar"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "binary",
+       "arbitrary",
+       [
+        "var",
+        1
+       ],
+       [
+        "var",
+        0
+       ]
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "protect_required",
+      "sign": true,
+      "unless": []
+     }
+    ]
+   },
+   "source_sha256": "667351135af9fe56b732b12430ec1c851673d4182c1f348d1bb5cdc86b4b998e"
+  },
+  {
+   "class": "lean-unavailable",
+   "corpus": "soft-rights",
+   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
+   "lean": {
+    "code": "InvalidGrammar",
+    "nodes": [],
+    "status": "invalidGrammar"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "top"
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "publish_required",
+      "sign": true,
+      "unless": [
+       [
+        "unary",
+        "adult",
+        [
+         "var",
+         1
+        ]
+       ]
+      ]
+     }
+    ]
+   },
+   "source_sha256": "6a8cc143970d9f5c3169576b46ffd8d56c062df7855719acb8a63a9d189be196"
+  },
+  {
+   "class": "lean-unavailable",
+   "corpus": "soft-rights",
+   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
+   "lean": {
+    "code": "InvalidGrammar",
+    "nodes": [],
+    "status": "invalidGrammar"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "top"
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "deprive_permitted",
+      "sign": false,
+      "unless": []
+     }
+    ]
+   },
+   "source_sha256": "75d09b835b942670da5afc621a9dbdb05477814b1c670ce07c632651ed13a401"
+  },
+  {
+   "class": "lean-unavailable",
+   "corpus": "soft-rights",
+   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
+   "lean": {
+    "code": "InvalidGrammar",
+    "nodes": [],
+    "status": "invalidGrammar"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "binary",
+       "arbitrary",
+       [
+        "var",
+        1
+       ],
+       [
+        "var",
+        0
+       ]
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "protect_required",
+      "sign": true,
+      "unless": [
+       [
+        "binary",
+        "arbitrary",
+        [
+         "var",
+         1
+        ],
+        [
+         "var",
+         0
+        ]
+       ]
+      ]
+     }
+    ]
+   },
+   "source_sha256": "79284e01f26f18bcb0d746781d2d1cfebd848c7e28527958a5c14020281bd3ba"
+  },
+  {
+   "class": "lean-unavailable",
+   "corpus": "soft-rights",
+   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
+   "lean": {
+    "code": "InvalidGrammar",
+    "nodes": [],
+    "status": "invalidGrammar"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "unary",
+       "adult",
+       [
+        "var",
+        0
+       ]
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "speak_permitted",
+      "sign": true,
+      "unless": []
+     }
+    ]
+   },
+   "source_sha256": "984c0563ecf4f57918085fe62cfbd906fcb983671ab5a87e8fdb4e1f9c613d53"
+  },
+  {
+   "class": "lean-unavailable",
+   "corpus": "soft-rights",
+   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
+   "lean": {
+    "code": "InvalidGrammar",
+    "nodes": [],
+    "status": "invalidGrammar"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "top"
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "publish_required",
+      "sign": true,
+      "unless": []
+     }
+    ]
+   },
+   "source_sha256": "9d669606e3c7ea555e451b8708c3a045b44f6a1cce5db85ce7398616496ce36f"
+  },
+  {
+   "class": "lean-unavailable",
+   "corpus": "soft-rights",
+   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
+   "lean": {
+    "code": "InvalidGrammar",
+    "nodes": [],
+    "status": "invalidGrammar"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "binary",
+       "q",
+       [
+        "var",
+        1
+       ],
+       [
+        "var",
+        0
+       ]
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "publish_permitted",
+      "sign": true,
+      "unless": []
+     }
+    ]
+   },
+   "source_sha256": "9de164599e718639a92f526b1fb7e1673744bdca76bf2a3f32ddd15ef3809df8"
+  },
+  {
+   "class": "lean-unavailable",
+   "corpus": "soft-rights",
+   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
+   "lean": {
+    "code": "InvalidGrammar",
+    "nodes": [],
+    "status": "invalidGrammar"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "top"
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "publish_permitted",
+      "sign": true,
+      "unless": [
+       [
+        "binary",
+        "q",
+        [
+         "var",
+         1
+        ],
+        [
+         "var",
+         0
+        ]
+       ]
+      ]
+     }
+    ]
+   },
+   "source_sha256": "a3b472203708195351cfda60a44aef2d81d35e6a50ba440c7fc615a0fd226dfa"
+  },
+  {
+   "class": "lean-unavailable",
+   "corpus": "soft-rights",
+   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
+   "lean": {
+    "code": "InvalidGrammar",
+    "nodes": [],
+    "status": "invalidGrammar"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "unary",
+       "adult",
+       [
+        "var",
+        1
+       ]
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "publish_permitted",
+      "sign": true,
+      "unless": [
+       [
+        "binary",
+        "q",
+        [
+         "var",
+         1
+        ],
+        [
+         "var",
+         0
+        ]
+       ]
+      ]
+     }
+    ]
+   },
+   "source_sha256": "a3fb548928dec81dbafa920a6555ed20f6b2c769fc5152f7a9dbbd444f0abb7d"
+  },
+  {
+   "class": "lean-unavailable",
+   "corpus": "soft-rights",
+   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
+   "lean": {
+    "code": "InvalidGrammar",
+    "nodes": [],
+    "status": "invalidGrammar"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "unary",
+       "adult",
+       [
+        "var",
+        1
+       ]
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "publish_required",
+      "sign": true,
+      "unless": [
+       [
+        "binary",
+        "q",
+        [
+         "var",
+         1
+        ],
+        [
+         "var",
+         0
+        ]
+       ]
+      ]
+     }
+    ]
+   },
+   "source_sha256": "b044e4d9cd91eb7c682698c79dc095146991dfcfac061b50bd4e83dbfbec6074"
+  },
+  {
+   "class": "lean-unavailable",
+   "corpus": "soft-rights",
+   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
+   "lean": {
+    "code": "InvalidGrammar",
+    "nodes": [],
+    "status": "invalidGrammar"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "top"
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "publish_permitted",
+      "sign": false,
+      "unless": []
+     }
+    ]
+   },
+   "source_sha256": "bda4d671c70a0c4d9f3c8a3847dfe0ff38d74374d8218eeb2cd998ed625232e5"
+  },
+  {
+   "class": "lean-unavailable",
+   "corpus": "soft-rights",
+   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
+   "lean": {
+    "code": "InvalidGrammar",
+    "nodes": [],
+    "status": "invalidGrammar"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "top"
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "protect_required",
+      "sign": true,
+      "unless": [
+       [
+        "unary",
+        "adult",
+        [
+         "var",
+         0
+        ]
+       ]
+      ]
+     }
+    ]
+   },
+   "source_sha256": "cbe3f1c58ddd4510ecef6f53fb5f212ecdbacf7e017914653433c06fc4c52337"
+  },
+  {
+   "class": "lean-unavailable",
+   "corpus": "soft-rights",
+   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
+   "lean": {
+    "code": "InvalidGrammar",
+    "nodes": [],
+    "status": "invalidGrammar"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "top"
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "speak_permitted",
+      "sign": true,
+      "unless": [
+       [
+        "unary",
+        "adult",
+        [
+         "var",
+         0
+        ]
+       ]
+      ]
+     }
+    ]
+   },
+   "source_sha256": "d0ae8545b2b40127207d6f8dc84db026345cfa9fc24d7e86976cc46bf8d22205"
+  },
+  {
+   "class": "lean-unavailable",
+   "corpus": "soft-rights",
+   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
+   "lean": {
+    "code": "InvalidGrammar",
+    "nodes": [],
+    "status": "invalidGrammar"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "unary",
+       "adult",
+       [
+        "var",
+        1
+       ]
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "publish_permitted",
+      "sign": false,
+      "unless": [
+       [
+        "binary",
+        "q",
+        [
+         "var",
+         1
+        ],
+        [
+         "var",
+         0
+        ]
+       ]
+      ]
+     }
+    ]
+   },
+   "source_sha256": "d1dd3b2e26da16fe2232b6b8c3344c40f5f125f73b3b5b61faa52063ba250c0a"
+  },
+  {
+   "class": "lean-unavailable",
+   "corpus": "soft-rights",
+   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
+   "lean": {
+    "code": "InvalidGrammar",
+    "nodes": [],
+    "status": "invalidGrammar"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "unary",
+       "adult",
+       [
+        "var",
+        0
+       ]
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "speak_permitted",
+      "sign": true,
+      "unless": [
+       [
+        "unary",
+        "adult",
+        [
+         "var",
+         0
+        ]
+       ]
+      ]
+     }
+    ]
+   },
+   "source_sha256": "d7ffc38134032b5f11f55c749ccf4c6d4175118570802e2a1a88d82ed3a71637"
+  },
+  {
+   "class": "lean-unavailable",
+   "corpus": "soft-rights",
+   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
+   "lean": {
+    "code": "InvalidGrammar",
+    "nodes": [],
+    "status": "invalidGrammar"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "top"
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "publish_permitted",
+      "sign": true,
+      "unless": []
+     }
+    ]
+   },
+   "source_sha256": "e9728834c0959dd0f01f53a6957b15657e77781d502e69c456c8ff8a31a4c021"
+  },
+  {
+   "class": "lean-unavailable",
+   "corpus": "soft-rights",
+   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
+   "lean": {
+    "code": "InvalidGrammar",
+    "nodes": [],
+    "status": "invalidGrammar"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "binary",
+       "q",
+       [
+        "var",
+        1
+       ],
+       [
+        "var",
+        0
+       ]
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "publish_permitted",
+      "sign": true,
+      "unless": [
+       [
+        "unary",
+        "adult",
+        [
+         "var",
+         1
+        ]
+       ]
+      ]
+     }
+    ]
+   },
+   "source_sha256": "ed0e2cb8ac2a7a2a89e6e9d0b4484960ab6e2a578eb7cd95919ed9b63544573f"
+  },
+  {
+   "class": "lean-unavailable",
+   "corpus": "soft-rights",
+   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
+   "lean": {
+    "code": "InvalidGrammar",
+    "nodes": [],
+    "status": "invalidGrammar"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "top"
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "deprive_permitted",
+      "sign": false,
+      "unless": [
+       [
+        "binary",
+        "arbitrary",
+        [
+         "var",
+         1
+        ],
+        [
+         "var",
+         0
+        ]
+       ]
+      ]
+     }
+    ]
+   },
+   "source_sha256": "f8875f294855e2584a31cb994a700103a07c838c2514f157fb9fd90bdd17e01f"
+  },
+  {
+   "class": "lean-unavailable",
+   "corpus": "soft-rights",
+   "id": "tests/test_rights.py::test_generated_rights_lines_with_two_carve_outs_are_refused_until_rights_cfr_5b",
+   "lean": {
+    "code": "InvalidGrammar",
+    "nodes": [],
+    "status": "invalidGrammar"
+   },
+   "python": {
+    "class": "SyntaxError",
+    "message": "Expected a complete rule sentence"
+   },
+   "source_sha256": "1d89a4bd98ae4501c9669c2ecff0ddeceb14b67bcd7be753bc5747be584a4629"
+  },
+  {
+   "class": "lean-looser",
+   "corpus": "soft-rights",
+   "id": "tests/test_rights.py::test_generated_rights_lines_with_two_carve_outs_are_refused_until_rights_cfr_5b",
+   "lean": {
+    "code": null,
+    "nodes": [
+     {
+      "guard": [
+       "unary",
+       "adult",
+       [
+        "var",
+        0
+       ]
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "protect_required",
+      "sign": true,
+      "unless": [
+       [
+        "unary",
+        "adult",
+        [
+         "var",
+         0
+        ]
+       ],
+       [
+        "binary",
+        "arbitrary",
+        [
+         "var",
+         1
+        ],
+        [
+         "var",
+         0
+        ]
+       ]
+      ]
      }
     ],
     "status": "one"
    },
    "python": {
-    "class": "VEError",
-    "message": "DependencyCycle: rule-1"
+    "class": "SyntaxError",
+    "message": "Expected a complete rule sentence"
    },
-   "source_sha256": "29584bd60b0bef4398bd7269292ec8fd73a09cf039c947aec5688073d2d7c715"
+   "source_sha256": "26c47a0b2fb3628ef64c21db326ccff5e9d50d5281c165fa33aed336fdf85c3c"
+  },
+  {
+   "class": "lean-unavailable",
+   "corpus": "soft-rights",
+   "id": "tests/test_rights.py::test_generated_rights_lines_with_two_carve_outs_are_refused_until_rights_cfr_5b",
+   "lean": {
+    "code": "InvalidGrammar",
+    "nodes": [],
+    "status": "invalidGrammar"
+   },
+   "python": {
+    "class": "SyntaxError",
+    "message": "Expected a complete rule sentence"
+   },
+   "source_sha256": "2f4c96280f9524e745d8569f63e1e0327096fc87fa62bfed1a21b94f79727fd8"
+  },
+  {
+   "class": "lean-unavailable",
+   "corpus": "soft-rights",
+   "id": "tests/test_rights.py::test_generated_rights_lines_with_two_carve_outs_are_refused_until_rights_cfr_5b",
+   "lean": {
+    "code": "InvalidGrammar",
+    "nodes": [],
+    "status": "invalidGrammar"
+   },
+   "python": {
+    "class": "SyntaxError",
+    "message": "Expected a complete rule sentence"
+   },
+   "source_sha256": "4f447dfc056ad82cb4f3bfd3b19e9d0d0be8cc163b9bd8c6a825f1ac48fdf2ac"
+  },
+  {
+   "class": "lean-unavailable",
+   "corpus": "soft-rights",
+   "id": "tests/test_rights.py::test_generated_rights_lines_with_two_carve_outs_are_refused_until_rights_cfr_5b",
+   "lean": {
+    "code": "InvalidGrammar",
+    "nodes": [],
+    "status": "invalidGrammar"
+   },
+   "python": {
+    "class": "SyntaxError",
+    "message": "Expected a complete rule sentence"
+   },
+   "source_sha256": "69e8258ff60922bd8f2d8eed29cf17f4160a1ccf698cf3c68dd3c5b5f04afd6f"
+  },
+  {
+   "class": "lean-looser",
+   "corpus": "soft-rights",
+   "id": "tests/test_rights.py::test_generated_rights_lines_with_two_carve_outs_are_refused_until_rights_cfr_5b",
+   "lean": {
+    "code": null,
+    "nodes": [
+     {
+      "guard": [
+       "unary",
+       "adult",
+       [
+        "var",
+        1
+       ]
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "publish_permitted",
+      "sign": false,
+      "unless": [
+       [
+        "unary",
+        "adult",
+        [
+         "var",
+         1
+        ]
+       ],
+       [
+        "unary",
+        "adult",
+        [
+         "var",
+         1
+        ]
+       ]
+      ]
+     }
+    ],
+    "status": "one"
+   },
+   "python": {
+    "class": "SyntaxError",
+    "message": "Expected a complete rule sentence"
+   },
+   "source_sha256": "69e8258ff60922bd8f2d8eed29cf17f4160a1ccf698cf3c68dd3c5b5f04afd6f"
+  },
+  {
+   "class": "lean-looser",
+   "corpus": "soft-rights",
+   "id": "tests/test_rights.py::test_generated_rights_lines_with_two_carve_outs_are_refused_until_rights_cfr_5b",
+   "lean": {
+    "code": null,
+    "nodes": [
+     {
+      "guard": [
+       "binary",
+       "arbitrary",
+       [
+        "var",
+        1
+       ],
+       [
+        "var",
+        0
+       ]
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "protect_permitted",
+      "sign": false,
+      "unless": [
+       [
+        "unary",
+        "adult",
+        [
+         "var",
+         0
+        ]
+       ],
+       [
+        "unary",
+        "adult",
+        [
+         "var",
+         0
+        ]
+       ]
+      ]
+     }
+    ],
+    "status": "one"
+   },
+   "python": {
+    "class": "SyntaxError",
+    "message": "Expected a complete rule sentence"
+   },
+   "source_sha256": "6cc52ff9ccc887986e1b400b70c62b25ac8628bb3579b3da06237e4804468f44"
+  },
+  {
+   "class": "lean-unavailable",
+   "corpus": "soft-rights",
+   "id": "tests/test_rights.py::test_generated_rights_lines_with_two_carve_outs_are_refused_until_rights_cfr_5b",
+   "lean": {
+    "code": "InvalidGrammar",
+    "nodes": [],
+    "status": "invalidGrammar"
+   },
+   "python": {
+    "class": "SyntaxError",
+    "message": "Expected a complete rule sentence"
+   },
+   "source_sha256": "88fa85772fe944df5322783d33d9fbf1fc95de4749de62981290b2f411cf5ae9"
+  },
+  {
+   "class": "lean-looser",
+   "corpus": "soft-rights",
+   "id": "tests/test_rights.py::test_generated_rights_lines_with_two_carve_outs_are_refused_until_rights_cfr_5b",
+   "lean": {
+    "code": null,
+    "nodes": [
+     {
+      "guard": [
+       "unary",
+       "adult",
+       [
+        "var",
+        0
+       ]
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "deprive_permitted",
+      "sign": false,
+      "unless": [
+       [
+        "unary",
+        "adult",
+        [
+         "var",
+         0
+        ]
+       ],
+       [
+        "binary",
+        "arbitrary",
+        [
+         "var",
+         1
+        ],
+        [
+         "var",
+         0
+        ]
+       ]
+      ]
+     }
+    ],
+    "status": "one"
+   },
+   "python": {
+    "class": "SyntaxError",
+    "message": "Expected a complete rule sentence"
+   },
+   "source_sha256": "88fa85772fe944df5322783d33d9fbf1fc95de4749de62981290b2f411cf5ae9"
+  },
+  {
+   "class": "lean-unavailable",
+   "corpus": "soft-rights",
+   "id": "tests/test_rights.py::test_generated_rights_lines_with_two_carve_outs_are_refused_until_rights_cfr_5b",
+   "lean": {
+    "code": "InvalidGrammar",
+    "nodes": [],
+    "status": "invalidGrammar"
+   },
+   "python": {
+    "class": "SyntaxError",
+    "message": "Expected a complete rule sentence"
+   },
+   "source_sha256": "90c4a68717554a609537edf401c215d658785ecf1bddbbe660910cd07d3f034d"
+  },
+  {
+   "class": "lean-unavailable",
+   "corpus": "soft-rights",
+   "id": "tests/test_rights.py::test_generated_rights_lines_with_two_carve_outs_are_refused_until_rights_cfr_5b",
+   "lean": {
+    "code": "InvalidGrammar",
+    "nodes": [],
+    "status": "invalidGrammar"
+   },
+   "python": {
+    "class": "SyntaxError",
+    "message": "Expected a complete rule sentence"
+   },
+   "source_sha256": "aec5dfcb5450feab52d219e669f08c3afc5b5662d379695b2838af3771a75c0f"
+  },
+  {
+   "class": "lean-unavailable",
+   "corpus": "soft-rights",
+   "id": "tests/test_rights.py::test_generated_rights_lines_with_two_carve_outs_are_refused_until_rights_cfr_5b",
+   "lean": {
+    "code": "InvalidGrammar",
+    "nodes": [],
+    "status": "invalidGrammar"
+   },
+   "python": {
+    "class": "SyntaxError",
+    "message": "Expected a complete rule sentence"
+   },
+   "source_sha256": "ce277b8c46212e8b2f8c3ee6ef5861917c345f3ddbe0fcaa5fef393809a2999d"
+  },
+  {
+   "class": "lean-unavailable",
+   "corpus": "soft-rights",
+   "id": "tests/test_rights.py::test_generated_rights_lines_with_two_carve_outs_are_refused_until_rights_cfr_5b",
+   "lean": {
+    "code": "InvalidGrammar",
+    "nodes": [],
+    "status": "invalidGrammar"
+   },
+   "python": {
+    "class": "SyntaxError",
+    "message": "Expected a complete rule sentence"
+   },
+   "source_sha256": "ff79f323defa1fa18e12d38612881212b0ec5e24f79244092a63b3f482d97395"
+  },
+  {
+   "class": "lean-stricter",
+   "corpus": "suite",
+   "id": "tests/test_alternatives_profile.py::test_available_guard_forms_bind_owner_and_distinguish_other_action",
+   "lean": {
+    "code": "NoDerivation",
+    "nodes": [],
+    "status": "none"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "forall",
+       "action",
+       [
+        "implies",
+        [
+         "and",
+         [
+          "binary",
+          "available",
+          [
+           "var",
+           0
+          ],
+          [
+           "const",
+           "r"
+          ]
+         ],
+         [
+          "not",
+          [
+           "eq",
+           [
+            "var",
+            0
+           ],
+           [
+            "var",
+            1
+           ]
+          ]
+         ]
+        ],
+        [
+         "or",
+         [
+          "binary",
+          "prevents",
+          [
+           "var",
+           0
+          ],
+          [
+           "const",
+           "h"
+          ]
+         ],
+         [
+          "binary",
+          "allows",
+          [
+           "var",
+           0
+          ],
+          [
+           "const",
+           "h"
+          ]
+         ]
+        ]
+       ]
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "permitted",
+      "sign": true,
+      "unless": []
+     }
+    ]
+   },
+   "source_sha256": "1d1579291840fea3185d639058a341b3d0e47e403b62492d603468576c669e7a"
+  },
+  {
+   "class": "lean-stricter",
+   "corpus": "suite",
+   "id": "tests/test_alternatives_profile.py::test_available_guard_forms_bind_owner_and_distinguish_other_action",
+   "lean": {
+    "code": "NoDerivation",
+    "nodes": [],
+    "status": "none"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "forall",
+       "action",
+       [
+        "implies",
+        [
+         "and",
+         [
+          "binary",
+          "available",
+          [
+           "var",
+           0
+          ],
+          [
+           "const",
+           "r"
+          ]
+         ],
+         [
+          "not",
+          [
+           "eq",
+           [
+            "var",
+            0
+           ],
+           [
+            "var",
+            1
+           ]
+          ]
+         ]
+        ],
+        [
+         "binary",
+         "prevents",
+         [
+          "var",
+          0
+         ],
+         [
+          "const",
+          "h"
+         ]
+        ]
+       ]
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "permitted",
+      "sign": true,
+      "unless": []
+     }
+    ]
+   },
+   "source_sha256": "74f4ac20e943caf9b670d801fa907e6fb4ee9d568a9baf7db51db19fde8a758b"
+  },
+  {
+   "class": "lean-stricter",
+   "corpus": "suite",
+   "id": "tests/test_alternatives_profile.py::test_available_guard_forms_bind_owner_and_distinguish_other_action",
+   "lean": {
+    "code": "NoDerivation",
+    "nodes": [],
+    "status": "none"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "forall",
+       "action",
+       [
+        "implies",
+        [
+         "binary",
+         "available",
+         [
+          "var",
+          0
+         ],
+         [
+          "const",
+          "r"
+         ]
+        ],
+        [
+         "binary",
+         "prevents",
+         [
+          "var",
+          0
+         ],
+         [
+          "const",
+          "h"
+         ]
+        ]
+       ]
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "permitted",
+      "sign": true,
+      "unless": []
+     }
+    ]
+   },
+   "source_sha256": "7c34638bb12d6f12ecc91d7d7e04a251339b7fb77bd35b5b147bf98c44419bc6"
+  },
+  {
+   "class": "lean-stricter",
+   "corpus": "suite",
+   "id": "tests/test_alternatives_profile.py::test_available_guard_forms_bind_owner_and_distinguish_other_action",
+   "lean": {
+    "code": "NoDerivation",
+    "nodes": [],
+    "status": "none"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "exists",
+       "action",
+       [
+        "and",
+        [
+         "and",
+         [
+          "binary",
+          "available",
+          [
+           "var",
+           0
+          ],
+          [
+           "const",
+           "r"
+          ]
+         ],
+         [
+          "not",
+          [
+           "eq",
+           [
+            "var",
+            0
+           ],
+           [
+            "var",
+            1
+           ]
+          ]
+         ]
+        ],
+        [
+         "binary",
+         "prevents",
+         [
+          "var",
+          0
+         ],
+         [
+          "const",
+          "h"
+         ]
+        ]
+       ]
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "permitted",
+      "sign": true,
+      "unless": []
+     }
+    ]
+   },
+   "source_sha256": "7e2ec282e5e789734de12b6d1ddf4c6b9a6d38d99f1d566f2ffc4d3eea04145d"
+  },
+  {
+   "class": "lean-stricter",
+   "corpus": "suite",
+   "id": "tests/test_alternatives_profile.py::test_available_guard_forms_bind_owner_and_distinguish_other_action",
+   "lean": {
+    "code": "NoDerivation",
+    "nodes": [],
+    "status": "none"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "exists",
+       "robot",
+       [
+        "and",
+        [
+         "binary",
+         "available",
+         [
+          "var",
+          1
+         ],
+         [
+          "var",
+          0
+         ]
+        ],
+        [
+         "forall",
+         "action",
+         [
+          "implies",
+          [
+           "and",
+           [
+            "binary",
+            "available",
+            [
+             "var",
+             0
+            ],
+            [
+             "var",
+             1
+            ]
+           ],
+           [
+            "not",
+            [
+             "eq",
+             [
+              "var",
+              0
+             ],
+             [
+              "var",
+              2
+             ]
+            ]
+           ]
+          ],
+          [
+           "binary",
+           "prevents",
+           [
+            "var",
+            0
+           ],
+           [
+            "const",
+            "h"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "permitted",
+      "sign": true,
+      "unless": []
+     }
+    ]
+   },
+   "source_sha256": "9052c571a58704b4085a2473bc1a9852f60e26dc8f6f068de59ff2c0d1867b70"
+  },
+  {
+   "class": "lean-stricter",
+   "corpus": "suite",
+   "id": "tests/test_alternatives_profile.py::test_available_guard_forms_bind_owner_and_distinguish_other_action",
+   "lean": {
+    "code": "NoDerivation",
+    "nodes": [],
+    "status": "none"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "forall",
+       "action",
+       [
+        "implies",
+        [
+         "and",
+         [
+          "binary",
+          "available",
+          [
+           "var",
+           0
+          ],
+          [
+           "const",
+           "r"
+          ]
+         ],
+         [
+          "not",
+          [
+           "eq",
+           [
+            "var",
+            0
+           ],
+           [
+            "var",
+            1
+           ]
+          ]
+         ]
+        ],
+        [
+         "binary",
+         "prevents",
+         [
+          "var",
+          0
+         ],
+         [
+          "const",
+          "h"
+         ]
+        ]
+       ]
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "permitted",
+      "sign": true,
+      "unless": []
+     }
+    ]
+   },
+   "source_sha256": "9acdc3a2193e6c79d2f43461590b91fec739629d89012c3836946b0caf422bee"
+  },
+  {
+   "class": "lean-stricter",
+   "corpus": "suite",
+   "id": "tests/test_alternatives_profile.py::test_nested_action_guard_round_trips_as_a_norm_block",
+   "lean": {
+    "code": "NoDerivation",
+    "nodes": [],
+    "status": "none"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "exists",
+       "action",
+       [
+        "and",
+        [
+         "unary",
+         "inaction",
+         [
+          "var",
+          0
+         ]
+        ],
+        [
+         "forall",
+         "action",
+         [
+          "implies",
+          [
+           "and",
+           [
+            "binary",
+            "available",
+            [
+             "var",
+             0
+            ],
+            [
+             "const",
+             "r"
+            ]
+           ],
+           [
+            "not",
+            [
+             "eq",
+             [
+              "var",
+              0
+             ],
+             [
+              "var",
+              1
+             ]
+            ]
+           ]
+          ],
+          [
+           "binary",
+           "prevents",
+           [
+            "var",
+            0
+           ],
+           [
+            "const",
+            "h"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ],
+      "name": "nested",
+      "over": [],
+      "predicate": "permitted",
+      "sign": true,
+      "unless": []
+     }
+    ]
+   },
+   "source_sha256": "1216e331f7c77a368ed0387f67eabadc128d8a8cb4b1182883f052bcede4aa96"
+  },
+  {
+   "class": "lean-stricter",
+   "corpus": "suite",
+   "id": "tests/test_alternatives_profile.py::test_nested_action_guard_round_trips_as_a_norm_block",
+   "lean": {
+    "code": "NoDerivation",
+    "nodes": [],
+    "status": "none"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "exists",
+       "action",
+       [
+        "and",
+        [
+         "unary",
+         "inaction",
+         [
+          "var",
+          0
+         ]
+        ],
+        [
+         "forall",
+         "action",
+         [
+          "implies",
+          [
+           "and",
+           [
+            "binary",
+            "available",
+            [
+             "var",
+             0
+            ],
+            [
+             "const",
+             "r"
+            ]
+           ],
+           [
+            "not",
+            [
+             "eq",
+             [
+              "var",
+              0
+             ],
+             [
+              "var",
+              2
+             ]
+            ]
+           ]
+          ],
+          [
+           "binary",
+           "prevents",
+           [
+            "var",
+            0
+           ],
+           [
+            "const",
+            "h"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ],
+      "name": "nested",
+      "over": [],
+      "predicate": "permitted",
+      "sign": true,
+      "unless": []
+     }
+    ]
+   },
+   "source_sha256": "b8d334c31b4ad518573b474dbc8afc0c3498083284fb06834260fea398c0822d"
+  },
+  {
+   "class": "lean-stricter",
+   "corpus": "suite",
+   "id": "tests/test_alternatives_profile.py::test_rules_seven_to_nine_canonical_blocks_round_trip",
+   "lean": {
+    "code": "NoDerivation",
+    "nodes": [],
+    "status": "none"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "unary",
+       "injures_human",
+       [
+        "var",
+        0
+       ]
+      ],
+      "name": "law-1-direct",
+      "over": [],
+      "predicate": "permitted",
+      "sign": false,
+      "unless": []
+     },
+     {
+      "guard": [
+       "and",
+       [
+        "unary",
+        "inaction",
+        [
+         "var",
+         0
+        ]
+       ],
+       [
+        "exists",
+        "harm",
+        [
+         "and",
+         [
+          "unary",
+          "harms_human",
+          [
+           "var",
+           0
+          ]
+         ],
+         [
+          "binary",
+          "allows",
+          [
+           "var",
+           1
+          ],
+          [
+           "var",
+           0
+          ]
+         ]
+        ]
+       ]
+      ],
+      "name": "inaction-allows",
+      "over": [],
+      "predicate": "permitted",
+      "sign": false,
+      "unless": []
+     },
+     {
+      "guard": [
+       "and",
+       [
+        "unary",
+        "harms_human",
+        [
+         "var",
+         0
+        ]
+       ],
+       [
+        "binary",
+        "avoidable",
+        [
+         "var",
+         0
+        ],
+        [
+         "var",
+         1
+        ]
+       ]
+      ],
+      "name": "prevent-harm",
+      "over": [],
+      "predicate": "prevent_required",
+      "sign": true,
+      "unless": []
+     },
+     {
+      "guard": [
+       "exists",
+       "robot",
+       [
+        "and",
+        [
+         "binary",
+         "available",
+         [
+          "var",
+          1
+         ],
+         [
+          "var",
+          0
+         ]
+        ],
+        [
+         "forall",
+         "action",
+         [
+          "implies",
+          [
+           "and",
+           [
+            "binary",
+            "available",
+            [
+             "var",
+             0
+            ],
+            [
+             "var",
+             1
+            ]
+           ],
+           [
+            "not",
+            [
+             "eq",
+             [
+              "var",
+              0
+             ],
+             [
+              "var",
+              2
+             ]
+            ]
+           ]
+          ],
+          [
+           "or",
+           [
+            "unary",
+            "injures_human",
+            [
+             "var",
+             0
+            ]
+           ],
+           [
+            "exists",
+            "harm",
+            [
+             "and",
+             [
+              "unary",
+              "harms_human",
+              [
+               "var",
+               0
+              ]
+             ],
+             [
+              "binary",
+              "allows",
+              [
+               "var",
+               1
+              ],
+              [
+               "var",
+               0
+              ]
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      ],
+      "name": "necessary-injury",
+      "over": [
+       "law-1-direct",
+       "inaction-allows"
+      ],
+      "predicate": "permitted",
+      "sign": true,
+      "unless": []
+     }
+    ]
+   },
+   "source_sha256": "a74693d883c679437aa44b659191fa704ceb6a0ad3ca9d82cfd9fc02eea299dc"
   },
   {
    "class": "lean-stricter",
@@ -3670,821 +5014,6 @@
   {
    "class": "lean-stricter",
    "corpus": "suite",
-   "id": "tests/test_alternatives_profile.py::test_nested_action_guard_round_trips_as_a_norm_block",
-   "lean": {
-    "code": "NoDerivation",
-    "nodes": [],
-    "status": "none"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "exists",
-       "action",
-       [
-        "and",
-        [
-         "unary",
-         "inaction",
-         [
-          "var",
-          0
-         ]
-        ],
-        [
-         "forall",
-         "action",
-         [
-          "implies",
-          [
-           "and",
-           [
-            "binary",
-            "available",
-            [
-             "var",
-             0
-            ],
-            [
-             "const",
-             "r"
-            ]
-           ],
-           [
-            "not",
-            [
-             "eq",
-             [
-              "var",
-              0
-             ],
-             [
-              "var",
-              1
-             ]
-            ]
-           ]
-          ],
-          [
-           "binary",
-           "prevents",
-           [
-            "var",
-            0
-           ],
-           [
-            "const",
-            "h"
-           ]
-          ]
-         ]
-        ]
-       ]
-      ],
-      "name": "nested",
-      "over": [],
-      "predicate": "permitted",
-      "sign": true,
-      "unless": []
-     }
-    ]
-   },
-   "source_sha256": "1216e331f7c77a368ed0387f67eabadc128d8a8cb4b1182883f052bcede4aa96"
-  },
-  {
-   "class": "lean-stricter",
-   "corpus": "suite",
-   "id": "tests/test_alternatives_profile.py::test_nested_action_guard_round_trips_as_a_norm_block",
-   "lean": {
-    "code": "NoDerivation",
-    "nodes": [],
-    "status": "none"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "exists",
-       "action",
-       [
-        "and",
-        [
-         "unary",
-         "inaction",
-         [
-          "var",
-          0
-         ]
-        ],
-        [
-         "forall",
-         "action",
-         [
-          "implies",
-          [
-           "and",
-           [
-            "binary",
-            "available",
-            [
-             "var",
-             0
-            ],
-            [
-             "const",
-             "r"
-            ]
-           ],
-           [
-            "not",
-            [
-             "eq",
-             [
-              "var",
-              0
-             ],
-             [
-              "var",
-              2
-             ]
-            ]
-           ]
-          ],
-          [
-           "binary",
-           "prevents",
-           [
-            "var",
-            0
-           ],
-           [
-            "const",
-            "h"
-           ]
-          ]
-         ]
-        ]
-       ]
-      ],
-      "name": "nested",
-      "over": [],
-      "predicate": "permitted",
-      "sign": true,
-      "unless": []
-     }
-    ]
-   },
-   "source_sha256": "b8d334c31b4ad518573b474dbc8afc0c3498083284fb06834260fea398c0822d"
-  },
-  {
-   "class": "lean-stricter",
-   "corpus": "suite",
-   "id": "tests/test_alternatives_profile.py::test_rules_seven_to_nine_canonical_blocks_round_trip",
-   "lean": {
-    "code": "NoDerivation",
-    "nodes": [],
-    "status": "none"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "unary",
-       "injures_human",
-       [
-        "var",
-        0
-       ]
-      ],
-      "name": "law-1-direct",
-      "over": [],
-      "predicate": "permitted",
-      "sign": false,
-      "unless": []
-     },
-     {
-      "guard": [
-       "and",
-       [
-        "unary",
-        "inaction",
-        [
-         "var",
-         0
-        ]
-       ],
-       [
-        "exists",
-        "harm",
-        [
-         "and",
-         [
-          "unary",
-          "harms_human",
-          [
-           "var",
-           0
-          ]
-         ],
-         [
-          "binary",
-          "allows",
-          [
-           "var",
-           1
-          ],
-          [
-           "var",
-           0
-          ]
-         ]
-        ]
-       ]
-      ],
-      "name": "inaction-allows",
-      "over": [],
-      "predicate": "permitted",
-      "sign": false,
-      "unless": []
-     },
-     {
-      "guard": [
-       "and",
-       [
-        "unary",
-        "harms_human",
-        [
-         "var",
-         0
-        ]
-       ],
-       [
-        "binary",
-        "avoidable",
-        [
-         "var",
-         0
-        ],
-        [
-         "var",
-         1
-        ]
-       ]
-      ],
-      "name": "prevent-harm",
-      "over": [],
-      "predicate": "prevent_required",
-      "sign": true,
-      "unless": []
-     },
-     {
-      "guard": [
-       "exists",
-       "robot",
-       [
-        "and",
-        [
-         "binary",
-         "available",
-         [
-          "var",
-          1
-         ],
-         [
-          "var",
-          0
-         ]
-        ],
-        [
-         "forall",
-         "action",
-         [
-          "implies",
-          [
-           "and",
-           [
-            "binary",
-            "available",
-            [
-             "var",
-             0
-            ],
-            [
-             "var",
-             1
-            ]
-           ],
-           [
-            "not",
-            [
-             "eq",
-             [
-              "var",
-              0
-             ],
-             [
-              "var",
-              2
-             ]
-            ]
-           ]
-          ],
-          [
-           "or",
-           [
-            "unary",
-            "injures_human",
-            [
-             "var",
-             0
-            ]
-           ],
-           [
-            "exists",
-            "harm",
-            [
-             "and",
-             [
-              "unary",
-              "harms_human",
-              [
-               "var",
-               0
-              ]
-             ],
-             [
-              "binary",
-              "allows",
-              [
-               "var",
-               1
-              ],
-              [
-               "var",
-               0
-              ]
-             ]
-            ]
-           ]
-          ]
-         ]
-        ]
-       ]
-      ],
-      "name": "necessary-injury",
-      "over": [
-       "law-1-direct",
-       "inaction-allows"
-      ],
-      "predicate": "permitted",
-      "sign": true,
-      "unless": []
-     }
-    ]
-   },
-   "source_sha256": "a74693d883c679437aa44b659191fa704ceb6a0ad3ca9d82cfd9fc02eea299dc"
-  },
-  {
-   "class": "lean-stricter",
-   "corpus": "suite",
-   "id": "tests/test_alternatives_profile.py::test_available_guard_forms_bind_owner_and_distinguish_other_action",
-   "lean": {
-    "code": "NoDerivation",
-    "nodes": [],
-    "status": "none"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "forall",
-       "action",
-       [
-        "implies",
-        [
-         "binary",
-         "available",
-         [
-          "var",
-          0
-         ],
-         [
-          "const",
-          "r"
-         ]
-        ],
-        [
-         "binary",
-         "prevents",
-         [
-          "var",
-          0
-         ],
-         [
-          "const",
-          "h"
-         ]
-        ]
-       ]
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "permitted",
-      "sign": true,
-      "unless": []
-     }
-    ]
-   },
-   "source_sha256": "7c34638bb12d6f12ecc91d7d7e04a251339b7fb77bd35b5b147bf98c44419bc6"
-  },
-  {
-   "class": "lean-stricter",
-   "corpus": "suite",
-   "id": "tests/test_alternatives_profile.py::test_available_guard_forms_bind_owner_and_distinguish_other_action",
-   "lean": {
-    "code": "NoDerivation",
-    "nodes": [],
-    "status": "none"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "forall",
-       "action",
-       [
-        "implies",
-        [
-         "and",
-         [
-          "binary",
-          "available",
-          [
-           "var",
-           0
-          ],
-          [
-           "const",
-           "r"
-          ]
-         ],
-         [
-          "not",
-          [
-           "eq",
-           [
-            "var",
-            0
-           ],
-           [
-            "var",
-            1
-           ]
-          ]
-         ]
-        ],
-        [
-         "binary",
-         "prevents",
-         [
-          "var",
-          0
-         ],
-         [
-          "const",
-          "h"
-         ]
-        ]
-       ]
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "permitted",
-      "sign": true,
-      "unless": []
-     }
-    ]
-   },
-   "source_sha256": "74f4ac20e943caf9b670d801fa907e6fb4ee9d568a9baf7db51db19fde8a758b"
-  },
-  {
-   "class": "lean-stricter",
-   "corpus": "suite",
-   "id": "tests/test_alternatives_profile.py::test_available_guard_forms_bind_owner_and_distinguish_other_action",
-   "lean": {
-    "code": "NoDerivation",
-    "nodes": [],
-    "status": "none"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "exists",
-       "action",
-       [
-        "and",
-        [
-         "and",
-         [
-          "binary",
-          "available",
-          [
-           "var",
-           0
-          ],
-          [
-           "const",
-           "r"
-          ]
-         ],
-         [
-          "not",
-          [
-           "eq",
-           [
-            "var",
-            0
-           ],
-           [
-            "var",
-            1
-           ]
-          ]
-         ]
-        ],
-        [
-         "binary",
-         "prevents",
-         [
-          "var",
-          0
-         ],
-         [
-          "const",
-          "h"
-         ]
-        ]
-       ]
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "permitted",
-      "sign": true,
-      "unless": []
-     }
-    ]
-   },
-   "source_sha256": "7e2ec282e5e789734de12b6d1ddf4c6b9a6d38d99f1d566f2ffc4d3eea04145d"
-  },
-  {
-   "class": "lean-stricter",
-   "corpus": "suite",
-   "id": "tests/test_alternatives_profile.py::test_available_guard_forms_bind_owner_and_distinguish_other_action",
-   "lean": {
-    "code": "NoDerivation",
-    "nodes": [],
-    "status": "none"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "exists",
-       "robot",
-       [
-        "and",
-        [
-         "binary",
-         "available",
-         [
-          "var",
-          1
-         ],
-         [
-          "var",
-          0
-         ]
-        ],
-        [
-         "forall",
-         "action",
-         [
-          "implies",
-          [
-           "and",
-           [
-            "binary",
-            "available",
-            [
-             "var",
-             0
-            ],
-            [
-             "var",
-             1
-            ]
-           ],
-           [
-            "not",
-            [
-             "eq",
-             [
-              "var",
-              0
-             ],
-             [
-              "var",
-              2
-             ]
-            ]
-           ]
-          ],
-          [
-           "binary",
-           "prevents",
-           [
-            "var",
-            0
-           ],
-           [
-            "const",
-            "h"
-           ]
-          ]
-         ]
-        ]
-       ]
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "permitted",
-      "sign": true,
-      "unless": []
-     }
-    ]
-   },
-   "source_sha256": "9052c571a58704b4085a2473bc1a9852f60e26dc8f6f068de59ff2c0d1867b70"
-  },
-  {
-   "class": "lean-stricter",
-   "corpus": "suite",
-   "id": "tests/test_alternatives_profile.py::test_available_guard_forms_bind_owner_and_distinguish_other_action",
-   "lean": {
-    "code": "NoDerivation",
-    "nodes": [],
-    "status": "none"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "forall",
-       "action",
-       [
-        "implies",
-        [
-         "and",
-         [
-          "binary",
-          "available",
-          [
-           "var",
-           0
-          ],
-          [
-           "const",
-           "r"
-          ]
-         ],
-         [
-          "not",
-          [
-           "eq",
-           [
-            "var",
-            0
-           ],
-           [
-            "var",
-            1
-           ]
-          ]
-         ]
-        ],
-        [
-         "or",
-         [
-          "binary",
-          "prevents",
-          [
-           "var",
-           0
-          ],
-          [
-           "const",
-           "h"
-          ]
-         ],
-         [
-          "binary",
-          "allows",
-          [
-           "var",
-           0
-          ],
-          [
-           "const",
-           "h"
-          ]
-         ]
-        ]
-       ]
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "permitted",
-      "sign": true,
-      "unless": []
-     }
-    ]
-   },
-   "source_sha256": "1d1579291840fea3185d639058a341b3d0e47e403b62492d603468576c669e7a"
-  },
-  {
-   "class": "lean-stricter",
-   "corpus": "suite",
-   "id": "tests/test_alternatives_profile.py::test_available_guard_forms_bind_owner_and_distinguish_other_action",
-   "lean": {
-    "code": "NoDerivation",
-    "nodes": [],
-    "status": "none"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "forall",
-       "action",
-       [
-        "implies",
-        [
-         "and",
-         [
-          "binary",
-          "available",
-          [
-           "var",
-           0
-          ],
-          [
-           "const",
-           "r"
-          ]
-         ],
-         [
-          "not",
-          [
-           "eq",
-           [
-            "var",
-            0
-           ],
-           [
-            "var",
-            1
-           ]
-          ]
-         ]
-        ],
-        [
-         "binary",
-         "prevents",
-         [
-          "var",
-          0
-         ],
-         [
-          "const",
-          "h"
-         ]
-        ]
-       ]
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "permitted",
-      "sign": true,
-      "unless": []
-     }
-    ]
-   },
-   "source_sha256": "9acdc3a2193e6c79d2f43461590b91fec739629d89012c3836946b0caf422bee"
-  },
-  {
-   "class": "lean-stricter",
-   "corpus": "suite",
    "id": "tests/test_asimov_laws.py::test_authored_rules_have_one_reading_and_declared_priority",
    "lean": {
     "code": "NoDerivation",
@@ -4989,183 +5518,6 @@
    "source_sha256": "9d00b09cc9f7fc26aa481244df57e6b96a23abc337c84fd42beb1ec920bde4a5"
   },
   {
-   "class": "lean-unavailable",
-   "corpus": "soft-rights",
-   "id": "tests/test_english_unambiguity.py::test_every_rights_incident_shape_round_trips_with_one_reading",
-   "lean": {
-    "code": "InvalidGrammar",
-    "nodes": [],
-    "status": "invalidGrammar"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "top"
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "protect_required",
-      "sign": true,
-      "unless": []
-     }
-    ]
-   },
-   "source_sha256": "b13d55b7931937f8b7d8fecbba65855db94f74b5444b7ac738d73f989ccea8ec"
-  },
-  {
-   "class": "lean-unavailable",
-   "corpus": "soft-rights",
-   "id": "tests/test_english_unambiguity.py::test_every_rights_incident_shape_round_trips_with_one_reading",
-   "lean": {
-    "code": "InvalidGrammar",
-    "nodes": [],
-    "status": "invalidGrammar"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "binary",
-       "arbitrary",
-       [
-        "var",
-        1
-       ],
-       [
-        "var",
-        0
-       ]
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "protect_permitted",
-      "sign": false,
-      "unless": []
-     }
-    ]
-   },
-   "source_sha256": "422777b27933a784687012a434c30e0ea39b76fb4c81166b82b36f2aaba54cda"
-  },
-  {
-   "class": "lean-unavailable",
-   "corpus": "soft-rights",
-   "id": "tests/test_english_unambiguity.py::test_every_rights_incident_shape_round_trips_with_one_reading",
-   "lean": {
-    "code": "InvalidGrammar",
-    "nodes": [],
-    "status": "invalidGrammar"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "top"
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "protect_permitted",
-      "sign": false,
-      "unless": []
-     }
-    ]
-   },
-   "source_sha256": "eb507a2e7b881fa32c4d0d31235c1078af69aa03fc01f08f0372f1f1008da90b"
-  },
-  {
-   "class": "lean-unavailable",
-   "corpus": "soft-rights",
-   "id": "tests/test_english_unambiguity.py::test_every_rights_incident_shape_round_trips_with_one_reading",
-   "lean": {
-    "code": "InvalidGrammar",
-    "nodes": [],
-    "status": "invalidGrammar"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "top"
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "person_may_act",
-      "sign": true,
-      "unless": []
-     }
-    ]
-   },
-   "source_sha256": "c218be109304d95fe27a5e8fdd8f5ee36a97d40d4b9cfdb9c231ccc103315477"
-  },
-  {
-   "class": "lean-unavailable",
-   "corpus": "soft-rights",
-   "id": "tests/test_english_unambiguity.py::test_every_rights_incident_shape_round_trips_with_one_reading",
-   "lean": {
-    "code": "InvalidGrammar",
-    "nodes": [],
-    "status": "invalidGrammar"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "binary",
-       "arbitrary",
-       [
-        "var",
-        1
-       ],
-       [
-        "var",
-        0
-       ]
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "deprive_permitted",
-      "sign": false,
-      "unless": []
-     }
-    ]
-   },
-   "source_sha256": "5caac5104f2880945df7c6dfba23fcdff36b9f887c17d5ab87ebea0b9635f34b"
-  },
-  {
-   "class": "lean-unavailable",
-   "corpus": "soft-rights",
-   "id": "tests/test_english_unambiguity.py::test_every_rights_incident_shape_round_trips_with_one_reading",
-   "lean": {
-    "code": "InvalidGrammar",
-    "nodes": [],
-    "status": "invalidGrammar"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "binary",
-       "rights__lim__1",
-       [
-        "var",
-        1
-       ],
-       [
-        "var",
-        0
-       ]
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "protect_required",
-      "sign": true,
-      "unless": []
-     }
-    ]
-   },
-   "source_sha256": "b81f204e36691ce81eec83338780243ef9e2ad2a4f9ff5970aa543cc9c94ce36"
-  },
-  {
    "class": "lean-looser",
    "corpus": "suite",
    "id": "tests/test_norm_english.py::test_four_wordings_and_identity_manifest",
@@ -5425,111 +5777,95 @@
    "source_sha256": "7ff31d4e83591e6fad4911032c358c4be1f7ba70e5460341660f12f5385346a9"
   },
   {
-   "class": "lean-unavailable",
-   "corpus": "soft-rights",
-   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
+   "class": "lean-stricter",
+   "corpus": "udhr",
+   "id": "udhr/u025/practice_prohibited",
    "lean": {
-    "code": "InvalidGrammar",
+    "code": "NoDerivation",
     "nodes": [],
-    "status": "invalidGrammar"
+    "status": "none"
    },
    "python": {
     "nodes": [
      {
       "guard": [
-       "unary",
-       "adult",
+       "or",
        [
-        "var",
-        0
-       ]
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "speak_permitted",
-      "sign": true,
-      "unless": []
-     }
-    ]
-   },
-   "source_sha256": "984c0563ecf4f57918085fe62cfbd906fcb983671ab5a87e8fdb4e1f9c613d53"
-  },
-  {
-   "class": "lean-unavailable",
-   "corpus": "soft-rights",
-   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
-   "lean": {
-    "code": "InvalidGrammar",
-    "nodes": [],
-    "status": "invalidGrammar"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "top"
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "publish_required",
-      "sign": true,
-      "unless": [
-       [
-        "binary",
-        "q",
+        "unary",
+        "is_slavery",
         [
          "var",
-         1
-        ],
+         0
+        ]
+       ],
+       [
+        "unary",
+        "is_slave_trade",
         [
          "var",
          0
         ]
        ]
-      ]
-     }
-    ]
-   },
-   "source_sha256": "2c520955435344dea7a12f380a38f611737e79d8579f384bb31174c7e92389fa"
-  },
-  {
-   "class": "lean-unavailable",
-   "corpus": "soft-rights",
-   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
-   "lean": {
-    "code": "InvalidGrammar",
-    "nodes": [],
-    "status": "invalidGrammar"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "unary",
-       "adult",
-       [
-        "var",
-        0
-       ]
       ],
       "name": "rule-1",
       "over": [],
-      "predicate": "deprive_permitted",
+      "predicate": "slavery_or_slave_trade_practice_permitted",
       "sign": false,
       "unless": []
      }
     ]
    },
-   "source_sha256": "0f95c3e663d59b443701038b287ecd4797924fdf0cafcc330322d42ec14e3ddb"
+   "source_sha256": "866585b653e85b6763fbea7c5f47a956e36f0cbf2384003f04487e6be2c8a454"
   },
   {
-   "class": "lean-unavailable",
-   "corpus": "soft-rights",
-   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
+   "class": "lean-stricter",
+   "corpus": "udhr",
+   "id": "udhr/u025/state_prohibits",
    "lean": {
-    "code": "InvalidGrammar",
+    "code": "NoDerivation",
     "nodes": [],
-    "status": "invalidGrammar"
+    "status": "none"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "or",
+       [
+        "unary",
+        "is_slavery",
+        [
+         "var",
+         0
+        ]
+       ],
+       [
+        "unary",
+        "is_slave_trade",
+        [
+         "var",
+         0
+        ]
+       ]
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "prohibit_slavery_and_slave_trade_required",
+      "sign": true,
+      "unless": []
+     }
+    ]
+   },
+   "source_sha256": "7005d8f54c3759f5ed247923b5f55ee890aecfbfec43165b3ce889ba1630b31a"
+  },
+  {
+   "class": "lean-stricter",
+   "corpus": "udhr",
+   "id": "udhr/u029/entitlement",
+   "lean": {
+    "code": "NoDerivation",
+    "nodes": [],
+    "status": "none"
    },
    "python": {
     "nodes": [
@@ -5539,18 +5875,193 @@
       ],
       "name": "rule-1",
       "over": [],
-      "predicate": "publish_permitted",
+      "predicate": "has_the_right_to_recognition_as_a_person",
       "sign": true,
       "unless": []
      }
     ]
    },
-   "source_sha256": "e9728834c0959dd0f01f53a6957b15657e77781d502e69c456c8ff8a31a4c021"
+   "source_sha256": "9a02150fc55966fc56900c7a990103282f7f8f5c097a281d15db54ce566a2bd4"
+  },
+  {
+   "class": "lean-stricter",
+   "corpus": "udhr",
+   "id": "udhr/u029/state_claim",
+   "lean": {
+    "code": "NoDerivation",
+    "nodes": [],
+    "status": "none"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "top"
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "secure_recognition_as_person_required",
+      "sign": true,
+      "unless": []
+     }
+    ]
+   },
+   "source_sha256": "e029c4d470007b909066a9fafe6b2194074c7e1932b3c94e6c746c3dbaf4eb2a"
+  },
+  {
+   "class": "lean-stricter",
+   "corpus": "udhr",
+   "id": "udhr/u032/entitlement",
+   "lean": {
+    "code": "NoDerivation",
+    "nodes": [],
+    "status": "none"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "top"
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "is_entitled_to_equal_protection_of_the_law",
+      "sign": true,
+      "unless": []
+     }
+    ]
+   },
+   "source_sha256": "5052858b08d118d34744a5955d6a50132cd38c52c51f1709e65ff57d50488097"
+  },
+  {
+   "class": "lean-stricter",
+   "corpus": "udhr",
+   "id": "udhr/u032/state_claim",
+   "lean": {
+    "code": "NoDerivation",
+    "nodes": [],
+    "status": "none"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "top"
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "secure_equal_protection_required",
+      "sign": true,
+      "unless": []
+     }
+    ]
+   },
+   "source_sha256": "5ce66896c8430392aedb551813dfbda74f6c2627ade01925ac6b46af1a486a0e"
+  },
+  {
+   "class": "lean-stricter",
+   "corpus": "udhr",
+   "id": "udhr/u033a/entitlement",
+   "lean": {
+    "code": "NoDerivation",
+    "nodes": [],
+    "status": "none"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "top"
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "is_entitled_to_protection_against_discrimination",
+      "sign": true,
+      "unless": []
+     }
+    ]
+   },
+   "source_sha256": "f707c568afe02ed0972604a44f8a6d2d845dadf3f3bfb68d74cc09a9cd54851f"
+  },
+  {
+   "class": "lean-stricter",
+   "corpus": "udhr",
+   "id": "udhr/u033a/state_claim",
+   "lean": {
+    "code": "NoDerivation",
+    "nodes": [],
+    "status": "none"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "top"
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "secure_protection_against_discrimination_required",
+      "sign": true,
+      "unless": []
+     }
+    ]
+   },
+   "source_sha256": "c682f59f7395fcc7805ba99d5fdc8453ea3a6e36ae01da69a07fa9201eb476b8"
+  },
+  {
+   "class": "lean-stricter",
+   "corpus": "udhr",
+   "id": "udhr/u033b/entitlement",
+   "lean": {
+    "code": "NoDerivation",
+    "nodes": [],
+    "status": "none"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "top"
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "is_entitled_to_protection_against_incitement",
+      "sign": true,
+      "unless": []
+     }
+    ]
+   },
+   "source_sha256": "bdffe0566942414564404fccc8cbaa157ca031a0b49510506b7feb982c5398fe"
+  },
+  {
+   "class": "lean-stricter",
+   "corpus": "udhr",
+   "id": "udhr/u033b/state_claim",
+   "lean": {
+    "code": "NoDerivation",
+    "nodes": [],
+    "status": "none"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "top"
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "secure_protection_against_incitement_required",
+      "sign": true,
+      "unless": []
+     }
+    ]
+   },
+   "source_sha256": "1a504208ed55695d68a116617a8faaedc8309ff223a5d7f942ac413e61ab9bc4"
   },
   {
    "class": "lean-unavailable",
-   "corpus": "soft-rights",
-   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
+   "corpus": "udhr",
+   "id": "udhr/u035/state_claim",
    "lean": {
     "code": "InvalidGrammar",
     "nodes": [],
@@ -5561,10 +6072,76 @@
      {
       "guard": [
        "unary",
-       "adult",
+       "violates_granted_fundamental_right",
        [
         "var",
         0
+       ]
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "ensure_remedy_by_tribunals_required",
+      "sign": true,
+      "unless": []
+     }
+    ]
+   },
+   "source_sha256": "dfeed89471beea0ecb0508875ae6f420aea28b299b45e1aa3afe73f1febaee68"
+  },
+  {
+   "class": "lean-stricter",
+   "corpus": "udhr",
+   "id": "udhr/u054/entitlement",
+   "lean": {
+    "code": "NoDerivation",
+    "nodes": [],
+    "status": "none"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "top"
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "is_entitled_to_a_nationality",
+      "sign": true,
+      "unless": []
+     }
+    ]
+   },
+   "source_sha256": "7ba4902f5893dc8f75544d747be706979fd28274e46c5aa45f3e9ce11c405f6c"
+  },
+  {
+   "class": "lean-stricter",
+   "corpus": "udhr",
+   "id": "udhr/u061/claim",
+   "lean": {
+    "code": "NoDerivation",
+    "nodes": [],
+    "status": "none"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "or",
+       [
+        "unary",
+        "is_society",
+        [
+         "var",
+         1
+        ]
+       ],
+       [
+        "unary",
+        "is_state",
+        [
+         "var",
+         1
+        ]
        ]
       ],
       "name": "rule-1",
@@ -5575,16 +6152,16 @@
      }
     ]
    },
-   "source_sha256": "5debd1418084fc7b72a22071a9af2c88d842f1cb7d71b26ecfdabcfb69dafc5e"
+   "source_sha256": "a2e1c8e994c9f21f833748f1d0656914d2e400e8df76449c3716a6570e59b25f"
   },
   {
-   "class": "lean-unavailable",
-   "corpus": "soft-rights",
-   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
+   "class": "lean-stricter",
+   "corpus": "udhr",
+   "id": "udhr/u074",
    "lean": {
-    "code": "InvalidGrammar",
+    "code": "NoDerivation",
     "nodes": [],
-    "status": "invalidGrammar"
+    "status": "none"
    },
    "python": {
     "nodes": [
@@ -5594,61 +6171,90 @@
       ],
       "name": "rule-1",
       "over": [],
-      "predicate": "speak_permitted",
-      "sign": true,
+      "predicate": "compel_association_membership_permitted",
+      "sign": false,
       "unless": []
      }
     ]
    },
-   "source_sha256": "3b001981be0854ae8c1361a5474cb89c861330fefa474e84b1333caa2efa5d44"
+   "source_sha256": "54b22841a801bd991349c4e639081b046524ce94d3882b676e52268b0cc48496"
   },
   {
-   "class": "lean-unavailable",
-   "corpus": "soft-rights",
-   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
+   "class": "lean-stricter",
+   "corpus": "udhr",
+   "id": "udhr/u077/nationality_country_claim",
    "lean": {
-    "code": "InvalidGrammar",
+    "code": "NoDerivation",
     "nodes": [],
-    "status": "invalidGrammar"
+    "status": "none"
    },
    "python": {
     "nodes": [
      {
       "guard": [
-       "unary",
-       "adult",
+       "binary",
+       "has_as_national",
        [
         "var",
         1
+       ],
+       [
+        "var",
+        0
        ]
       ],
       "name": "rule-1",
       "over": [],
-      "predicate": "publish_permitted",
-      "sign": false,
-      "unless": [
-       [
-        "unary",
-        "adult",
-        [
-         "var",
-         1
-        ]
-       ]
-      ]
+      "predicate": "give_equal_access_to_public_service_required",
+      "sign": true,
+      "unless": []
      }
     ]
    },
-   "source_sha256": "1615059c5c6ee4c7839e23accf537cc3bd1782bad0f0a7d993c517ead236dd3a"
+   "source_sha256": "4d8b80e8721665574ab552f58673fddc130c1eee331e26d857f50b5a78c6d1d2"
   },
   {
-   "class": "lean-unavailable",
-   "corpus": "soft-rights",
-   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
+   "class": "lean-stricter",
+   "corpus": "udhr",
+   "id": "udhr/u077/residence_country_claim",
    "lean": {
-    "code": "InvalidGrammar",
+    "code": "NoDerivation",
     "nodes": [],
-    "status": "invalidGrammar"
+    "status": "none"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "binary",
+       "has_as_resident",
+       [
+        "var",
+        1
+       ],
+       [
+        "var",
+        0
+       ]
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "give_equal_access_to_public_service_required",
+      "sign": true,
+      "unless": []
+     }
+    ]
+   },
+   "source_sha256": "a3d960c5830a2642ae9513d7669087bbd301d838fb01e35342a8ca4393014571"
+  },
+  {
+   "class": "lean-stricter",
+   "corpus": "udhr",
+   "id": "udhr/u081/entitlement",
+   "lean": {
+    "code": "NoDerivation",
+    "nodes": [],
+    "status": "none"
    },
    "python": {
     "nodes": [
@@ -5658,146 +6264,22 @@
       ],
       "name": "rule-1",
       "over": [],
-      "predicate": "speak_permitted",
-      "sign": true,
-      "unless": [
-       [
-        "unary",
-        "adult",
-        [
-         "var",
-         0
-        ]
-       ]
-      ]
-     }
-    ]
-   },
-   "source_sha256": "d0ae8545b2b40127207d6f8dc84db026345cfa9fc24d7e86976cc46bf8d22205"
-  },
-  {
-   "class": "lean-unavailable",
-   "corpus": "soft-rights",
-   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
-   "lean": {
-    "code": "InvalidGrammar",
-    "nodes": [],
-    "status": "invalidGrammar"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "binary",
-       "arbitrary",
-       [
-        "var",
-        1
-       ],
-       [
-        "var",
-        0
-       ]
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "protect_required",
+      "predicate": "has_the_right_to_social_security",
       "sign": true,
       "unless": []
      }
     ]
    },
-   "source_sha256": "667351135af9fe56b732b12430ec1c851673d4182c1f348d1bb5cdc86b4b998e"
+   "source_sha256": "fb9853de6caba1bbeb448ef50e0afface399cd8044792b486de3a70e2dc6baff"
   },
   {
-   "class": "lean-unavailable",
-   "corpus": "soft-rights",
-   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
+   "class": "lean-stricter",
+   "corpus": "udhr",
+   "id": "udhr/u081/state_claim",
    "lean": {
-    "code": "InvalidGrammar",
+    "code": "NoDerivation",
     "nodes": [],
-    "status": "invalidGrammar"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "binary",
-       "q",
-       [
-        "var",
-        1
-       ],
-       [
-        "var",
-        0
-       ]
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "publish_required",
-      "sign": true,
-      "unless": []
-     }
-    ]
-   },
-   "source_sha256": "1fff8066ceeeb9ea71cb48fe208fcae20c095056166cc3917059d4910a9948b2"
-  },
-  {
-   "class": "lean-unavailable",
-   "corpus": "soft-rights",
-   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
-   "lean": {
-    "code": "InvalidGrammar",
-    "nodes": [],
-    "status": "invalidGrammar"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "binary",
-       "arbitrary",
-       [
-        "var",
-        1
-       ],
-       [
-        "var",
-        0
-       ]
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "protect_permitted",
-      "sign": false,
-      "unless": [
-       [
-        "binary",
-        "arbitrary",
-        [
-         "var",
-         1
-        ],
-        [
-         "var",
-         0
-        ]
-       ]
-      ]
-     }
-    ]
-   },
-   "source_sha256": "20903ec74325cdd61b789ee4d6b248f1b6849dcba55ecabff522ba757b374a7e"
-  },
-  {
-   "class": "lean-unavailable",
-   "corpus": "soft-rights",
-   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
-   "lean": {
-    "code": "InvalidGrammar",
-    "nodes": [],
-    "status": "invalidGrammar"
+    "status": "none"
    },
    "python": {
     "nodes": [
@@ -5807,72 +6289,29 @@
       ],
       "name": "rule-1",
       "over": [],
-      "predicate": "protect_required",
-      "sign": true,
-      "unless": [
-       [
-        "unary",
-        "adult",
-        [
-         "var",
-         0
-        ]
-       ]
-      ]
-     }
-    ]
-   },
-   "source_sha256": "cbe3f1c58ddd4510ecef6f53fb5f212ecdbacf7e017914653433c06fc4c52337"
-  },
-  {
-   "class": "lean-unavailable",
-   "corpus": "soft-rights",
-   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
-   "lean": {
-    "code": "InvalidGrammar",
-    "nodes": [],
-    "status": "invalidGrammar"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "binary",
-       "q",
-       [
-        "var",
-        1
-       ],
-       [
-        "var",
-        0
-       ]
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "publish_permitted",
+      "predicate": "secure_social_security_required",
       "sign": true,
       "unless": []
      }
     ]
    },
-   "source_sha256": "9de164599e718639a92f526b1fb7e1673744bdca76bf2a3f32ddd15ef3809df8"
+   "source_sha256": "1524d149a3127febfb935f83260e8513ea0e98b62569ff219a3ecfa7d90078da"
   },
   {
-   "class": "lean-unavailable",
-   "corpus": "soft-rights",
-   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
+   "class": "lean-stricter",
+   "corpus": "udhr",
+   "id": "udhr/u081/state_claim_within_resources",
    "lean": {
-    "code": "InvalidGrammar",
+    "code": "NoDerivation",
     "nodes": [],
-    "status": "invalidGrammar"
+    "status": "none"
    },
    "python": {
     "nodes": [
      {
       "guard": [
        "unary",
-       "adult",
+       "resources_allow",
        [
         "var",
         1
@@ -5880,52 +6319,22 @@
       ],
       "name": "rule-1",
       "over": [],
-      "predicate": "publish_permitted",
-      "sign": false,
-      "unless": []
-     }
-    ]
-   },
-   "source_sha256": "03503af522f8fb826b47b5570f18a14da13318b6cda67f45bf400be69a060eb6"
-  },
-  {
-   "class": "lean-unavailable",
-   "corpus": "soft-rights",
-   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
-   "lean": {
-    "code": "InvalidGrammar",
-    "nodes": [],
-    "status": "invalidGrammar"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "unary",
-       "adult",
-       [
-        "var",
-        1
-       ]
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "publish_required",
+      "predicate": "secure_social_security_required",
       "sign": true,
       "unless": []
      }
     ]
    },
-   "source_sha256": "28b6d0f2d6f9d83f8c9fa2783415f51e230badc72f833e8f7cab018a0991d6b1"
+   "source_sha256": "0b6cc29b443e4d87ed20da0877423c9202d9c9c1e5c42e365657e8ff4d6f358b"
   },
   {
-   "class": "lean-unavailable",
-   "corpus": "soft-rights",
-   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
+   "class": "lean-stricter",
+   "corpus": "udhr",
+   "id": "udhr/u084c/entitlement",
    "lean": {
-    "code": "InvalidGrammar",
+    "code": "NoDerivation",
     "nodes": [],
-    "status": "invalidGrammar"
+    "status": "none"
    },
    "python": {
     "nodes": [
@@ -5935,121 +6344,22 @@
       ],
       "name": "rule-1",
       "over": [],
-      "predicate": "publish_required",
+      "predicate": "has_the_right_to_just_and_favourable_conditions_of_work",
       "sign": true,
-      "unless": [
-       [
-        "unary",
-        "adult",
-        [
-         "var",
-         1
-        ]
-       ]
-      ]
+      "unless": []
      }
     ]
    },
-   "source_sha256": "6a8cc143970d9f5c3169576b46ffd8d56c062df7855719acb8a63a9d189be196"
+   "source_sha256": "11fd603fc7e066bc4511d4ebdd6a5181477401b41da3f06809fe315725100986"
   },
   {
-   "class": "lean-unavailable",
-   "corpus": "soft-rights",
-   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
+   "class": "lean-stricter",
+   "corpus": "udhr",
+   "id": "udhr/u084c/state_claim",
    "lean": {
-    "code": "InvalidGrammar",
+    "code": "NoDerivation",
     "nodes": [],
-    "status": "invalidGrammar"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "unary",
-       "adult",
-       [
-        "var",
-        0
-       ]
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "protect_required",
-      "sign": true,
-      "unless": [
-       [
-        "binary",
-        "arbitrary",
-        [
-         "var",
-         1
-        ],
-        [
-         "var",
-         0
-        ]
-       ]
-      ]
-     }
-    ]
-   },
-   "source_sha256": "65c8bec1c0b66dd4badc6b006a27cac50c2efd78a07197f207ccd5e263a27f0a"
-  },
-  {
-   "class": "lean-unavailable",
-   "corpus": "soft-rights",
-   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
-   "lean": {
-    "code": "InvalidGrammar",
-    "nodes": [],
-    "status": "invalidGrammar"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "binary",
-       "arbitrary",
-       [
-        "var",
-        1
-       ],
-       [
-        "var",
-        0
-       ]
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "protect_required",
-      "sign": true,
-      "unless": [
-       [
-        "binary",
-        "arbitrary",
-        [
-         "var",
-         1
-        ],
-        [
-         "var",
-         0
-        ]
-       ]
-      ]
-     }
-    ]
-   },
-   "source_sha256": "79284e01f26f18bcb0d746781d2d1cfebd848c7e28527958a5c14020281bd3ba"
-  },
-  {
-   "class": "lean-unavailable",
-   "corpus": "soft-rights",
-   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
-   "lean": {
-    "code": "InvalidGrammar",
-    "nodes": [],
-    "status": "invalidGrammar"
+    "status": "none"
    },
    "python": {
     "nodes": [
@@ -6059,22 +6369,22 @@
       ],
       "name": "rule-1",
       "over": [],
-      "predicate": "publish_required",
+      "predicate": "secure_just_and_favourable_conditions_of_work_required",
       "sign": true,
       "unless": []
      }
     ]
    },
-   "source_sha256": "9d669606e3c7ea555e451b8708c3a045b44f6a1cce5db85ce7398616496ce36f"
+   "source_sha256": "912d5c49342a6012ad447c676212890ba037de9048050f8d7e04e412e319c38d"
   },
   {
-   "class": "lean-unavailable",
-   "corpus": "soft-rights",
-   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
+   "class": "lean-stricter",
+   "corpus": "udhr",
+   "id": "udhr/u084d/entitlement",
    "lean": {
-    "code": "InvalidGrammar",
+    "code": "NoDerivation",
     "nodes": [],
-    "status": "invalidGrammar"
+    "status": "none"
    },
    "python": {
     "nodes": [
@@ -6084,65 +6394,22 @@
       ],
       "name": "rule-1",
       "over": [],
-      "predicate": "publish_permitted",
-      "sign": true,
-      "unless": [
-       [
-        "binary",
-        "q",
-        [
-         "var",
-         1
-        ],
-        [
-         "var",
-         0
-        ]
-       ]
-      ]
-     }
-    ]
-   },
-   "source_sha256": "a3b472203708195351cfda60a44aef2d81d35e6a50ba440c7fc615a0fd226dfa"
-  },
-  {
-   "class": "lean-unavailable",
-   "corpus": "soft-rights",
-   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
-   "lean": {
-    "code": "InvalidGrammar",
-    "nodes": [],
-    "status": "invalidGrammar"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "unary",
-       "adult",
-       [
-        "var",
-        1
-       ]
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "publish_permitted",
+      "predicate": "has_the_right_to_protection_against_unemployment",
       "sign": true,
       "unless": []
      }
     ]
    },
-   "source_sha256": "1dae9f04d543118b3acfa5003338081edaecd088f576a9d9a2bc4d24719f3eaa"
+   "source_sha256": "d406c4d12f8672876b61c2855577df357528e4e48c32fe57f3b33460356ef4de"
   },
   {
-   "class": "lean-unavailable",
-   "corpus": "soft-rights",
-   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
+   "class": "lean-stricter",
+   "corpus": "udhr",
+   "id": "udhr/u084d/state_claim",
    "lean": {
-    "code": "InvalidGrammar",
+    "code": "NoDerivation",
     "nodes": [],
-    "status": "invalidGrammar"
+    "status": "none"
    },
    "python": {
     "nodes": [
@@ -6152,115 +6419,31 @@
       ],
       "name": "rule-1",
       "over": [],
-      "predicate": "deprive_permitted",
-      "sign": false,
+      "predicate": "secure_protection_against_unemployment_required",
+      "sign": true,
       "unless": []
      }
     ]
    },
-   "source_sha256": "75d09b835b942670da5afc621a9dbdb05477814b1c670ce07c632651ed13a401"
+   "source_sha256": "23f9735670c078a68fd33aa983735830818744c558a059745428b758da8d3a64"
   },
   {
-   "class": "lean-unavailable",
-   "corpus": "soft-rights",
-   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
+   "class": "lean-stricter",
+   "corpus": "udhr",
+   "id": "udhr/u098/guardian_ensures",
    "lean": {
-    "code": "InvalidGrammar",
+    "code": "NoDerivation",
     "nodes": [],
-    "status": "invalidGrammar"
+    "status": "none"
    },
    "python": {
     "nodes": [
      {
       "guard": [
-       "binary",
-       "q",
-       [
-        "var",
-        1
-       ],
-       [
-        "var",
-        0
-       ]
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "publish_permitted",
-      "sign": true,
-      "unless": [
-       [
-        "unary",
-        "adult",
-        [
-         "var",
-         1
-        ]
-       ]
-      ]
-     }
-    ]
-   },
-   "source_sha256": "ed0e2cb8ac2a7a2a89e6e9d0b4484960ab6e2a578eb7cd95919ed9b63544573f"
-  },
-  {
-   "class": "lean-unavailable",
-   "corpus": "soft-rights",
-   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
-   "lean": {
-    "code": "InvalidGrammar",
-    "nodes": [],
-    "status": "invalidGrammar"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "unary",
-       "adult",
-       [
-        "var",
-        0
-       ]
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "protect_permitted",
-      "sign": false,
-      "unless": []
-     }
-    ]
-   },
-   "source_sha256": "1942b54cdbe2f52b8ee67acc5aa5c5bdd5b21e4a6e774b1eadc42dc3f77cb7eb"
-  },
-  {
-   "class": "lean-unavailable",
-   "corpus": "soft-rights",
-   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
-   "lean": {
-    "code": "InvalidGrammar",
-    "nodes": [],
-    "status": "invalidGrammar"
-   },
-   "python": {
-    "nodes": [
-     {
-      "guard": [
-       "unary",
-       "adult",
-       [
-        "var",
-        1
-       ]
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "publish_required",
-      "sign": true,
-      "unless": [
+       "and",
        [
         "binary",
-        "q",
+        "is_parent_or_guardian_of",
         [
          "var",
          1
@@ -6269,21 +6452,64 @@
          "var",
          0
         ]
+       ],
+       [
+        "unary",
+        "elementary_education_is_compulsory_for",
+        [
+         "var",
+         0
+        ]
        ]
-      ]
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "see_to_compulsory_elementary_education_required",
+      "sign": true,
+      "unless": []
      }
     ]
    },
-   "source_sha256": "b044e4d9cd91eb7c682698c79dc095146991dfcfac061b50bd4e83dbfbec6074"
+   "source_sha256": "49d2c6cbf006e6b65bcf4d26855ac84597ff4322234250e1b5c9afe5c1d98960"
   },
   {
-   "class": "lean-unavailable",
-   "corpus": "soft-rights",
-   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
+   "class": "lean-stricter",
+   "corpus": "udhr",
+   "id": "udhr/u098/person_attends",
    "lean": {
-    "code": "InvalidGrammar",
+    "code": "NoDerivation",
     "nodes": [],
-    "status": "invalidGrammar"
+    "status": "none"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "unary",
+       "elementary_education_is_compulsory_for",
+       [
+        "var",
+        0
+       ]
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "attend_compulsory_elementary_education_required",
+      "sign": true,
+      "unless": []
+     }
+    ]
+   },
+   "source_sha256": "ab7cdeeb2b9010f37375fabbb074e962f414a132674b8e35e38dfcb5b1773dea"
+  },
+  {
+   "class": "lean-stricter",
+   "corpus": "udhr",
+   "id": "udhr/u098/state_requires",
+   "lean": {
+    "code": "NoDerivation",
+    "nodes": [],
+    "status": "none"
    },
    "python": {
     "nodes": [
@@ -6293,65 +6519,63 @@
       ],
       "name": "rule-1",
       "over": [],
-      "predicate": "publish_permitted",
-      "sign": false,
+      "predicate": "make_elementary_education_compulsory_required",
+      "sign": true,
       "unless": []
      }
     ]
    },
-   "source_sha256": "bda4d671c70a0c4d9f3c8a3847dfe0ff38d74374d8218eeb2cd998ed625232e5"
+   "source_sha256": "3f1b72f185d1cb29e052b6fa5d37691fd1084d9ad6d3a6e6abc4698ac9c2d1d3"
   },
   {
-   "class": "lean-unavailable",
-   "corpus": "soft-rights",
-   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
+   "class": "lean-stricter",
+   "corpus": "udhr",
+   "id": "udhr/u099a/state",
    "lean": {
-    "code": "InvalidGrammar",
+    "code": "NoDerivation",
     "nodes": [],
-    "status": "invalidGrammar"
+    "status": "none"
    },
    "python": {
     "nodes": [
      {
       "guard": [
-       "unary",
-       "adult",
+       "or",
        [
-        "var",
-        1
-       ]
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "publish_permitted",
-      "sign": false,
-      "unless": [
-       [
-        "binary",
-        "q",
+        "unary",
+        "is_technical",
         [
          "var",
-         1
-        ],
+         0
+        ]
+       ],
+       [
+        "unary",
+        "is_professional",
         [
          "var",
          0
         ]
        ]
-      ]
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "make_education_generally_available_required",
+      "sign": true,
+      "unless": []
      }
     ]
    },
-   "source_sha256": "d1dd3b2e26da16fe2232b6b8c3344c40f5f125f73b3b5b61faa52063ba250c0a"
+   "source_sha256": "a3991a9a1114968a1a1e6e159b9672bf16d704b65c2fc5b819347c9a0c7a116d"
   },
   {
-   "class": "lean-unavailable",
-   "corpus": "soft-rights",
-   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
+   "class": "lean-stricter",
+   "corpus": "udhr",
+   "id": "udhr/u099b/state",
    "lean": {
-    "code": "InvalidGrammar",
+    "code": "NoDerivation",
     "nodes": [],
-    "status": "invalidGrammar"
+    "status": "none"
    },
    "python": {
     "nodes": [
@@ -6361,171 +6585,295 @@
       ],
       "name": "rule-1",
       "over": [],
-      "predicate": "deprive_permitted",
-      "sign": false,
-      "unless": [
-       [
-        "binary",
-        "arbitrary",
-        [
-         "var",
-         1
-        ],
-        [
-         "var",
-         0
-        ]
-       ]
-      ]
+      "predicate": "make_higher_education_accessible_required",
+      "sign": true,
+      "unless": []
      }
     ]
    },
-   "source_sha256": "f8875f294855e2584a31cb994a700103a07c838c2514f157fb9fd90bdd17e01f"
+   "source_sha256": "6b6d122f24d7432104682906e17f04b1d314f6abdced4be1ce449895868aa709"
   },
   {
-   "class": "lean-unavailable",
-   "corpus": "soft-rights",
-   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
+   "class": "lean-stricter",
+   "corpus": "udhr",
+   "id": "udhr/u100a/education",
    "lean": {
-    "code": "InvalidGrammar",
+    "code": "NoDerivation",
     "nodes": [],
-    "status": "invalidGrammar"
+    "status": "none"
    },
    "python": {
     "nodes": [
      {
       "guard": [
-       "unary",
-       "adult",
-       [
-        "var",
-        0
-       ]
+       "top"
       ],
       "name": "rule-1",
       "over": [],
-      "predicate": "speak_permitted",
+      "predicate": "is_directed_to_full_development_of_the_personality",
       "sign": true,
-      "unless": [
+      "unless": []
+     }
+    ]
+   },
+   "source_sha256": "c27a9bcdb88fa0b69d8f34b0bc38453285de5eb585d253aa060c3164af799b95"
+  },
+  {
+   "class": "lean-stricter",
+   "corpus": "udhr",
+   "id": "udhr/u100a/state",
+   "lean": {
+    "code": "NoDerivation",
+    "nodes": [],
+    "status": "none"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "top"
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "direct_education_to_personality_required",
+      "sign": true,
+      "unless": []
+     }
+    ]
+   },
+   "source_sha256": "421e0e67bf60e72dd30601812c82b9bb3eb19ad3cb7e4e71d92da7c4af99a153"
+  },
+  {
+   "class": "lean-stricter",
+   "corpus": "udhr",
+   "id": "udhr/u100b/education",
+   "lean": {
+    "code": "NoDerivation",
+    "nodes": [],
+    "status": "none"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "or",
        [
         "unary",
-        "adult",
+        "is_human_rights",
+        [
+         "var",
+         0
+        ]
+       ],
+       [
+        "unary",
+        "is_fundamental_freedoms",
         [
          "var",
          0
         ]
        ]
-      ]
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "education_strengthens_respect_of",
+      "sign": true,
+      "unless": []
      }
     ]
    },
-   "source_sha256": "d7ffc38134032b5f11f55c749ccf4c6d4175118570802e2a1a88d82ed3a71637"
+   "source_sha256": "a7368bb47c725816d4f659bd1944db50588d65ae867ae0ca030579bab9ed7b68"
   },
   {
-   "class": "lean-unavailable",
-   "corpus": "soft-rights",
-   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
+   "class": "lean-stricter",
+   "corpus": "udhr",
+   "id": "udhr/u100b/state",
    "lean": {
-    "code": "InvalidGrammar",
+    "code": "NoDerivation",
     "nodes": [],
-    "status": "invalidGrammar"
+    "status": "none"
    },
    "python": {
     "nodes": [
      {
       "guard": [
-       "unary",
-       "adult",
+       "or",
        [
-        "var",
-        1
-       ]
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "publish_permitted",
-      "sign": true,
-      "unless": [
-       [
-        "binary",
-        "q",
+        "unary",
+        "is_human_rights",
         [
          "var",
-         1
-        ],
+         0
+        ]
+       ],
+       [
+        "unary",
+        "is_fundamental_freedoms",
         [
          "var",
          0
         ]
        ]
-      ]
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "direct_education_to_strengthen_respect_required",
+      "sign": true,
+      "unless": []
      }
     ]
    },
-   "source_sha256": "a3fb548928dec81dbafa920a6555ed20f6b2c769fc5152f7a9dbbd444f0abb7d"
+   "source_sha256": "5c50159c62410d93f479c923ea709fd683992cec2b638756a54c77a2bf6507cb"
   },
   {
-   "class": "lean-unavailable",
-   "corpus": "soft-rights",
-   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
+   "class": "lean-stricter",
+   "corpus": "udhr",
+   "id": "udhr/u105c/entitlement",
    "lean": {
-    "code": "InvalidGrammar",
+    "code": "NoDerivation",
     "nodes": [],
-    "status": "invalidGrammar"
+    "status": "none"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "top"
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "has_the_right_to_share_in_scientific_advancement",
+      "sign": true,
+      "unless": []
+     }
+    ]
+   },
+   "source_sha256": "2296f356fbdf122a81a48dc3f743884b51b55b7e3661dd10ce743511ebbae65c"
+  },
+  {
+   "class": "lean-stricter",
+   "corpus": "udhr",
+   "id": "udhr/u105c/liberty",
+   "lean": {
+    "code": "NoDerivation",
+    "nodes": [],
+    "status": "none"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "top"
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "person_may_share_in_scientific_advancement",
+      "sign": true,
+      "unless": []
+     }
+    ]
+   },
+   "source_sha256": "b8d4c3c04676b26bd082123a467de6c561ff25d692b5ba5b6daea4b4dd7ad5ae"
+  },
+  {
+   "class": "lean-stricter",
+   "corpus": "udhr",
+   "id": "udhr/u105c/state_claim",
+   "lean": {
+    "code": "NoDerivation",
+    "nodes": [],
+    "status": "none"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "top"
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "secure_scientific_advancement_required",
+      "sign": true,
+      "unless": []
+     }
+    ]
+   },
+   "source_sha256": "39a83c0435c53e8fb96058dc340045a7d53e9bd011b227e085d8adf2d7b60c32"
+  },
+  {
+   "class": "lean-stricter",
+   "corpus": "udhr",
+   "id": "udhr/u110/describing",
+   "lean": {
+    "code": "NoDerivation",
+    "nodes": [],
+    "status": "none"
+   },
+   "python": {
+    "nodes": [
+     {
+      "guard": [
+       "top"
+      ],
+      "name": "rule-1",
+      "over": [],
+      "predicate": "perform_duties_to_the_community_required",
+      "sign": true,
+      "unless": []
+     }
+    ]
+   },
+   "source_sha256": "bb0b853c7c8e3972f99a1fe9d9bfc27518ac6bbb42903362dfce8df5a3996dd3"
+  },
+  {
+   "class": "lean-stricter",
+   "corpus": "udhr",
+   "id": "udhr/u110/restrictive",
+   "lean": {
+    "code": "NoDerivation",
+    "nodes": [],
+    "status": "none"
    },
    "python": {
     "nodes": [
      {
       "guard": [
        "binary",
-       "arbitrary",
-       [
-        "var",
-        1
-       ],
+       "is_sole_setting_of_full_development",
        [
         "var",
         0
+       ],
+       [
+        "var",
+        1
        ]
       ],
       "name": "rule-1",
       "over": [],
-      "predicate": "protect_required",
+      "predicate": "perform_duties_required",
       "sign": true,
-      "unless": [
-       [
-        "unary",
-        "adult",
-        [
-         "var",
-         0
-        ]
-       ]
-      ]
+      "unless": []
      }
     ]
    },
-   "source_sha256": "43d781bf22cd56abbb878597ec5e178263c3384ebaabefaa798e928337200b11"
+   "source_sha256": "0f2caf39f94c9b526b29798bbac6bf108d6ff97269f5f5f20e199a60b847acd9"
   },
   {
-   "class": "lean-unavailable",
-   "corpus": "soft-rights",
-   "id": "tests/test_rights.py::test_generated_rights_lines_round_trip_one_by_one",
+   "class": "lean-stricter",
+   "corpus": "udhr",
+   "id": "udhr/u114/interpretive_ban",
    "lean": {
-    "code": "InvalidGrammar",
+    "code": "NoDerivation",
     "nodes": [],
-    "status": "invalidGrammar"
+    "status": "none"
    },
    "python": {
     "nodes": [
      {
       "guard": [
-       "binary",
-       "arbitrary",
-       [
-        "var",
-        1
-       ],
+       "unary",
+       "implies_right_to_destroy_declared_rights",
        [
         "var",
         0
@@ -6533,361 +6881,13 @@
       ],
       "name": "rule-1",
       "over": [],
-      "predicate": "protect_permitted",
+      "predicate": "interpretation_permitted",
       "sign": false,
-      "unless": [
-       [
-        "unary",
-        "adult",
-        [
-         "var",
-         0
-        ]
-       ]
-      ]
+      "unless": []
      }
     ]
    },
-   "source_sha256": "25668a17af5bc7d297acb74a148cb95c93da8f8429ff25930fafb2faea762d3b"
-  },
-  {
-   "class": "lean-unavailable",
-   "corpus": "soft-rights",
-   "id": "tests/test_rights.py::test_generated_rights_lines_with_two_carve_outs_are_refused_until_rights_cfr_5b",
-   "lean": {
-    "code": "InvalidGrammar",
-    "nodes": [],
-    "status": "invalidGrammar"
-   },
-   "python": {
-    "class": "SyntaxError",
-    "message": "Expected a complete rule sentence"
-   },
-   "source_sha256": "88fa85772fe944df5322783d33d9fbf1fc95de4749de62981290b2f411cf5ae9"
-  },
-  {
-   "class": "lean-unavailable",
-   "corpus": "soft-rights",
-   "id": "tests/test_rights.py::test_generated_rights_lines_with_two_carve_outs_are_refused_until_rights_cfr_5b",
-   "lean": {
-    "code": "InvalidGrammar",
-    "nodes": [],
-    "status": "invalidGrammar"
-   },
-   "python": {
-    "class": "SyntaxError",
-    "message": "Expected a complete rule sentence"
-   },
-   "source_sha256": "aec5dfcb5450feab52d219e669f08c3afc5b5662d379695b2838af3771a75c0f"
-  },
-  {
-   "class": "lean-unavailable",
-   "corpus": "soft-rights",
-   "id": "tests/test_rights.py::test_generated_rights_lines_with_two_carve_outs_are_refused_until_rights_cfr_5b",
-   "lean": {
-    "code": "InvalidGrammar",
-    "nodes": [],
-    "status": "invalidGrammar"
-   },
-   "python": {
-    "class": "SyntaxError",
-    "message": "Expected a complete rule sentence"
-   },
-   "source_sha256": "4f447dfc056ad82cb4f3bfd3b19e9d0d0be8cc163b9bd8c6a825f1ac48fdf2ac"
-  },
-  {
-   "class": "lean-unavailable",
-   "corpus": "soft-rights",
-   "id": "tests/test_rights.py::test_generated_rights_lines_with_two_carve_outs_are_refused_until_rights_cfr_5b",
-   "lean": {
-    "code": "InvalidGrammar",
-    "nodes": [],
-    "status": "invalidGrammar"
-   },
-   "python": {
-    "class": "SyntaxError",
-    "message": "Expected a complete rule sentence"
-   },
-   "source_sha256": "90c4a68717554a609537edf401c215d658785ecf1bddbbe660910cd07d3f034d"
-  },
-  {
-   "class": "lean-unavailable",
-   "corpus": "soft-rights",
-   "id": "tests/test_rights.py::test_generated_rights_lines_with_two_carve_outs_are_refused_until_rights_cfr_5b",
-   "lean": {
-    "code": "InvalidGrammar",
-    "nodes": [],
-    "status": "invalidGrammar"
-   },
-   "python": {
-    "class": "SyntaxError",
-    "message": "Expected a complete rule sentence"
-   },
-   "source_sha256": "1d89a4bd98ae4501c9669c2ecff0ddeceb14b67bcd7be753bc5747be584a4629"
-  },
-  {
-   "class": "lean-looser",
-   "corpus": "soft-rights",
-   "id": "tests/test_rights.py::test_generated_rights_lines_with_two_carve_outs_are_refused_until_rights_cfr_5b",
-   "lean": {
-    "code": null,
-    "nodes": [
-     {
-      "guard": [
-       "unary",
-       "adult",
-       [
-        "var",
-        0
-       ]
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "deprive_permitted",
-      "sign": false,
-      "unless": [
-       [
-        "unary",
-        "adult",
-        [
-         "var",
-         0
-        ]
-       ],
-       [
-        "binary",
-        "arbitrary",
-        [
-         "var",
-         1
-        ],
-        [
-         "var",
-         0
-        ]
-       ]
-      ]
-     }
-    ],
-    "status": "one"
-   },
-   "python": {
-    "class": "SyntaxError",
-    "message": "Expected a complete rule sentence"
-   },
-   "source_sha256": "88fa85772fe944df5322783d33d9fbf1fc95de4749de62981290b2f411cf5ae9"
-  },
-  {
-   "class": "lean-unavailable",
-   "corpus": "soft-rights",
-   "id": "tests/test_rights.py::test_generated_rights_lines_with_two_carve_outs_are_refused_until_rights_cfr_5b",
-   "lean": {
-    "code": "InvalidGrammar",
-    "nodes": [],
-    "status": "invalidGrammar"
-   },
-   "python": {
-    "class": "SyntaxError",
-    "message": "Expected a complete rule sentence"
-   },
-   "source_sha256": "2f4c96280f9524e745d8569f63e1e0327096fc87fa62bfed1a21b94f79727fd8"
-  },
-  {
-   "class": "lean-unavailable",
-   "corpus": "soft-rights",
-   "id": "tests/test_rights.py::test_generated_rights_lines_with_two_carve_outs_are_refused_until_rights_cfr_5b",
-   "lean": {
-    "code": "InvalidGrammar",
-    "nodes": [],
-    "status": "invalidGrammar"
-   },
-   "python": {
-    "class": "SyntaxError",
-    "message": "Expected a complete rule sentence"
-   },
-   "source_sha256": "ff79f323defa1fa18e12d38612881212b0ec5e24f79244092a63b3f482d97395"
-  },
-  {
-   "class": "lean-unavailable",
-   "corpus": "soft-rights",
-   "id": "tests/test_rights.py::test_generated_rights_lines_with_two_carve_outs_are_refused_until_rights_cfr_5b",
-   "lean": {
-    "code": "InvalidGrammar",
-    "nodes": [],
-    "status": "invalidGrammar"
-   },
-   "python": {
-    "class": "SyntaxError",
-    "message": "Expected a complete rule sentence"
-   },
-   "source_sha256": "69e8258ff60922bd8f2d8eed29cf17f4160a1ccf698cf3c68dd3c5b5f04afd6f"
-  },
-  {
-   "class": "lean-looser",
-   "corpus": "soft-rights",
-   "id": "tests/test_rights.py::test_generated_rights_lines_with_two_carve_outs_are_refused_until_rights_cfr_5b",
-   "lean": {
-    "code": null,
-    "nodes": [
-     {
-      "guard": [
-       "unary",
-       "adult",
-       [
-        "var",
-        0
-       ]
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "protect_required",
-      "sign": true,
-      "unless": [
-       [
-        "unary",
-        "adult",
-        [
-         "var",
-         0
-        ]
-       ],
-       [
-        "binary",
-        "arbitrary",
-        [
-         "var",
-         1
-        ],
-        [
-         "var",
-         0
-        ]
-       ]
-      ]
-     }
-    ],
-    "status": "one"
-   },
-   "python": {
-    "class": "SyntaxError",
-    "message": "Expected a complete rule sentence"
-   },
-   "source_sha256": "26c47a0b2fb3628ef64c21db326ccff5e9d50d5281c165fa33aed336fdf85c3c"
-  },
-  {
-   "class": "lean-looser",
-   "corpus": "soft-rights",
-   "id": "tests/test_rights.py::test_generated_rights_lines_with_two_carve_outs_are_refused_until_rights_cfr_5b",
-   "lean": {
-    "code": null,
-    "nodes": [
-     {
-      "guard": [
-       "unary",
-       "adult",
-       [
-        "var",
-        1
-       ]
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "publish_permitted",
-      "sign": false,
-      "unless": [
-       [
-        "unary",
-        "adult",
-        [
-         "var",
-         1
-        ]
-       ],
-       [
-        "unary",
-        "adult",
-        [
-         "var",
-         1
-        ]
-       ]
-      ]
-     }
-    ],
-    "status": "one"
-   },
-   "python": {
-    "class": "SyntaxError",
-    "message": "Expected a complete rule sentence"
-   },
-   "source_sha256": "69e8258ff60922bd8f2d8eed29cf17f4160a1ccf698cf3c68dd3c5b5f04afd6f"
-  },
-  {
-   "class": "lean-looser",
-   "corpus": "soft-rights",
-   "id": "tests/test_rights.py::test_generated_rights_lines_with_two_carve_outs_are_refused_until_rights_cfr_5b",
-   "lean": {
-    "code": null,
-    "nodes": [
-     {
-      "guard": [
-       "binary",
-       "arbitrary",
-       [
-        "var",
-        1
-       ],
-       [
-        "var",
-        0
-       ]
-      ],
-      "name": "rule-1",
-      "over": [],
-      "predicate": "protect_permitted",
-      "sign": false,
-      "unless": [
-       [
-        "unary",
-        "adult",
-        [
-         "var",
-         0
-        ]
-       ],
-       [
-        "unary",
-        "adult",
-        [
-         "var",
-         0
-        ]
-       ]
-      ]
-     }
-    ],
-    "status": "one"
-   },
-   "python": {
-    "class": "SyntaxError",
-    "message": "Expected a complete rule sentence"
-   },
-   "source_sha256": "6cc52ff9ccc887986e1b400b70c62b25ac8628bb3579b3da06237e4804468f44"
-  },
-  {
-   "class": "lean-unavailable",
-   "corpus": "soft-rights",
-   "id": "tests/test_rights.py::test_generated_rights_lines_with_two_carve_outs_are_refused_until_rights_cfr_5b",
-   "lean": {
-    "code": "InvalidGrammar",
-    "nodes": [],
-    "status": "invalidGrammar"
-   },
-   "python": {
-    "class": "SyntaxError",
-    "message": "Expected a complete rule sentence"
-   },
-   "source_sha256": "ce277b8c46212e8b2f8c3ee6ef5861917c345f3ddbe0fcaa5fef393809a2999d"
+   "source_sha256": "22470be85cfc056ac10aee4ab0e5b0e0a1da58c6766257f3fe8562d4bd7b2b96"
   }
  ]
 }

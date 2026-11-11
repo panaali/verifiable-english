@@ -193,12 +193,13 @@ def build(records: list[dict], skipped: dict, commit: str) -> dict:
             seen.add(key)
             kept.append(record)
     corpora = sorted({r["corpus"] for r in kept})
-    rows = [r for r in kept if r["class"] not in DECIDED or r["lean"].get("code") in ("NodeRefused", "NodeLimit")]
+    rows = sorted((r for r in kept if r["class"] not in DECIDED or r["lean"].get("code") in ("NodeRefused", "NodeLimit")),
+                  key=lambda r: (r["corpus"], r["id"], r["source_sha256"], _outcome(r)))  # not the workers' order
     return {"commit": commit, "corpora": [{"name": c, "size": sum(r["corpus"] == c for r in kept),
                                            "no_round_trip": skipped.get(c, 0) if c != "known" else 0} for c in corpora],
             "counts": {c: {k: sum(r["corpus"] == c and r["class"] == k for r in kept) for k in CLASSES}
                        for c in corpora},
-            "lean_unavailable": [r["id"] for r in kept if r["class"] == "lean-unavailable"],
+            "lean_unavailable": [r["id"] for r in rows if r["class"] == "lean-unavailable"],
             "known_not_constructible": skipped.get("known", []),
             "pinned": {r["id"]: r["class"] for r in kept if r["corpus"] == "pinned"},
             "rows": [{k: r[k] for k in ("corpus", "id", "source_sha256", "class", "python", "lean", "difference")
