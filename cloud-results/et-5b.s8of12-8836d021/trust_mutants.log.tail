@@ -1,0 +1,8 @@
+trust_mutants: --resume ci-job/resume.json: its verdicts are not reused (a full run), since it is another --max-mutants or --shard part
+trust_mutants: 21 definitions, 322 mutants (27 to run), 4 jobs, base bae4295bfd28
+UNKNOWN lean/VE/Service/Document.lean:59 VE.Service.Document.ownedProfiles (D[V], trusted) list-drop-middle: "events@0", ->  (lean/VE/Events/RouteExamples.lean:417: Expression (Lean could not elaborate it in the probe))
+trust_mutants: 23 KILLED, 0 SURVIVOR, 1 UNKNOWN, 1 INVALID, 2 ALLOWED, 0 NOT RUN, 295 OTHER SHARD in 2390 s
+trust_mutants: D[V], trusted: 4 KILLED, 1 UNKNOWN, 1 INVALID, 2 ALLOWED, 76 OTHER SHARD
+trust_mutants: G[V], trusted: 15 KILLED, 194 OTHER SHARD
+trust_mutants: S, trusted: 4 KILLED, 25 OTHER SHARD
+trust_mutants: steps: wall plan 7.6 s, scratch 3.1 s, control_build 0.2 s, probe_install 1 s, mutants 2371.9 s, cleanup 6.2 s, reads 0.1 s; lake control_build 0.1 s (1), probe_install 0.9 s (1), control_probes 71.4 s (9), mutant_builds 521.3 s (29), mutant_checks 6634.9 s (24), stage_controls 1931.3 s (9), mutant_probes 120.9 s (24)
