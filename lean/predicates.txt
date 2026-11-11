@@ -15,6 +15,7 @@ module ResponseShape.Encoders.Alternatives
 module ResponseShape.Encoders.Ask
 module ResponseShape.Encoders.Calc
 module ResponseShape.Encoders.Cardinality
+module ResponseShape.Encoders.ClausesElaborate
 module ResponseShape.Encoders.Command
 module ResponseShape.Encoders.Common
 module ResponseShape.Encoders.Conformance
@@ -53,6 +54,7 @@ module ResponseShape.Schemas.Calc
 module ResponseShape.Schemas.Cardinality
 module ResponseShape.Schemas.Check
 module ResponseShape.Schemas.CheckCertificate
+module ResponseShape.Schemas.ClausesElaborate
 module ResponseShape.Schemas.Command
 module ResponseShape.Schemas.Common
 module ResponseShape.Schemas.Diagnose
@@ -87,6 +89,7 @@ module ResponseShape.Schemas.Scope
 module ResponseShape.Schemas.SearchBudget
 module ResponseShape.Schemas.SensesProject
 module ResponseShape.Schemas.SoftNorms
+module ResponseShape.Schemas.SoftPairsChecks
 module ResponseShape.Schemas.SpeechActs
 module ResponseShape.Schemas.Words
 module ResponseShape.Schemas
@@ -381,8 +384,12 @@ module VE.EnglishGrammar.Lexicon
 module VE.EnglishGrammar.LexiconFixtures
 module VE.EnglishGrammar.Norm.Elab
 module VE.EnglishGrammar.Norm.Examples
+module VE.EnglishGrammar.Norm.Owners
+module VE.EnglishGrammar.Norm.OwnersExamples
 module VE.EnglishGrammar.Norm.Read
 module VE.EnglishGrammar.Norm.Rules
+module VE.EnglishGrammar.Norm.Run
+module VE.EnglishGrammar.Norm.RunExamples
 module VE.EnglishGrammar.Norm.Value
 module VE.EnglishGrammar.Policy
 module VE.EnglishGrammar.PolicyReference
@@ -513,6 +520,10 @@ module VE.Presupposition.Admit.Facts
 module VE.Presupposition.Admit.Statements
 module VE.Presupposition.Admit
 module VE.Presupposition.Agree
+module VE.Presupposition.Couple.Fixtures
+module VE.Presupposition.Couple.Statements
+module VE.Presupposition.Couple
+module VE.Presupposition.CoupleExamples
 module VE.Presupposition.Events.Examples
 module VE.Presupposition.Events
 module VE.Presupposition.Examples
@@ -520,6 +531,7 @@ module VE.Presupposition.Frame
 module VE.Presupposition.Reading
 module VE.Presupposition.Rows
 module VE.Presupposition.Rules
+module VE.Presupposition.Run
 module VE.Presupposition.Table
 module VE.Presupposition.Wire
 module VE.Purposes.Decl
@@ -635,7 +647,13 @@ module VE.RightClauses.PlainWellFormed.W1Check
 module VE.RightClauses.PlainWellFormed.W1Ext
 module VE.RightClauses.PlainWellFormed
 module VE.RightClauses.Relation
+module VE.RightClauses.Run
+module VE.RightClauses.RunExamples
 module VE.RightClauses.Tree
+module VE.RightClauses.Wire
+module VE.RightClauses.WireDecode
+module VE.RightClauses.WireName
+module VE.RightClauses.WireTheorems
 module VE.Rights.Admission
 module VE.Rights.Bar
 module VE.Rights.Correlate
@@ -747,6 +765,7 @@ module VE.Service.Document
 module VE.Service.DocumentChain
 module VE.Service.DocumentChainChecks
 module VE.Service.DocumentChainExamples
+module VE.Service.DocumentView
 module VE.Service.EnglishRun
 module VE.Service.Family
 module VE.Service.FamilyBundle
@@ -816,6 +835,7 @@ module VE.WireContract.Hooks.Acts
 module VE.WireContract.Hooks.Corpus
 module VE.WireContract.Hooks.NormDefaults
 module VE.WireContract.Hooks.Norms
+module VE.WireContract.Hooks.Purposes
 module VE.WireContract.Hooks.SoftNorms
 module VE.WireContract.Limits
 module VE.WireContract.Names
@@ -824,6 +844,7 @@ module VE.WireContract.Tables.Acts
 module VE.WireContract.Tables.Corpus
 module VE.WireContract.Tables.NormDefaults
 module VE.WireContract.Tables.Norms
+module VE.WireContract.Tables.Purposes
 module VE.WireContract.Tables.SoftNorms
 module VE.Words.Run
 module VE.Words.Situation
@@ -1099,6 +1120,7 @@ VE.EnglishGrammar.InDom@VE.EnglishGrammar.Extends
 VE.EnglishGrammar.LexRow.NtsIn@VE.EnglishGrammar.Extends
 VE.EnglishGrammar.LexRow.Small@VE.EnglishGrammar.Extends
 VE.EnglishGrammar.Norm.NormOneReading@VE.EnglishGrammar.Norm.Read
+VE.EnglishGrammar.Norm.ReadNormAuthoring@VE.EnglishGrammar.Norm.Owners
 VE.EnglishGrammar.envSub@VE.EnglishGrammar.Extends
 VE.EnglishGrammar.lexiconSub@VE.EnglishGrammar.Extends
 VE.Entails@VE.Semantics
@@ -1254,7 +1276,13 @@ VE.Paths.Path@VE.Paths
 VE.Paths.Reachable@VE.Paths
 VE.Presupposition.Frame.Reach@VE.Presupposition.Frame
 VE.Presupposition.Frame.shallow@VE.Presupposition.Frame
+VE.Presupposition.PickFits@VE.Presupposition.Couple
+VE.Presupposition.PickedWF@VE.Presupposition.Couple
 VE.Presupposition.Reading.DefinedAt@VE.Presupposition.Reading
+VE.Presupposition.SameDecides@VE.Presupposition.Couple
+VE.Presupposition.SameModels@VE.Presupposition.Couple
+VE.Presupposition.SatUnder@VE.Presupposition.Couple
+VE.Presupposition.Uniform@VE.Presupposition.Couple
 VE.Purposes.Link.idsOk@VE.Purposes.Wire
 VE.Purposes.WellFormed@VE.Purposes.WellFormed
 VE.Question.AtMostOneDerivation@VE.Question.Properties
@@ -1354,6 +1382,9 @@ VE.Reports.Source.J@VE.Attribution.Semantics
 VE.Reports.UniformPolarity@VE.Attribution.Content
 VE.Reports.WF@VE.Attribution.Facts
 VE.Reports.beliefsIn@VE.Attribution.Semantics
+VE.RightClauses.Distinct@VE.RightClauses.WireDecode
+VE.RightClauses.NoClauseKeys@VE.RightClauses.Wire
+VE.RightClauses.NoReadingSets@VE.RightClauses.Wire
 VE.RightClauses.PWF.DualCtx@VE.RightClauses.PlainWellFormed.SoftExt
 VE.RightClauses.PWF.EnvOK@VE.RightClauses.PlainWellFormed.Guards
 VE.RightClauses.PWF.EnvOKB@VE.RightClauses.PlainWellFormed.SoftValid
@@ -1371,6 +1402,7 @@ VE.RightClauses.PWF.QC@VE.RightClauses.PlainWellFormed.SoftValid
 VE.RightClauses.PWF.RL@VE.RightClauses.PlainWellFormed.Guards
 VE.RightClauses.PWF.TRel@VE.RightClauses.PlainWellFormed.W1Ext
 VE.RightClauses.PWF.TypesAt@VE.RightClauses.PlainWellFormed.W1Check
+VE.RightClauses.PlainOnWire@VE.RightClauses.Wire
 VE.Rights.Admission.CouplingLeaf@VE.Rights.Admission
 VE.Rights.Admission.LayerLeaf@VE.Rights.Admission
 VE.Rights.Admission.NodeAdmitted@VE.Rights.Admission
