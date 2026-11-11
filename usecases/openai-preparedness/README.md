@@ -25,7 +25,8 @@ The source states no licence. The PDF, extracted text and generated `.ve.md` doc
 area outside git. `build_document.py --check` accepts `--source`, verifies the hash, and writes its temporary
 document under `/tmp` for VE's check.
 `source/quote_evidence.py` checks each rule and fact header quotation against that pinned text and writes
-`source/quote-hashes.json`, which pins the checked quotations without copying the text into git. Regenerate the
+`docs/usecases/openai-preparedness/openai-preparedness-fidelity-fix/quote-hashes.json`, which pins the checked
+quotations without copying the text into git. Regenerate the
 hashes from the pinned source when a header changes. The gate compares every current quotation to these hashes;
 workers with the source also rerun the source comparison.
 
