@@ -23,15 +23,16 @@ IMPORT = "VE.Presupposition.Examples"
 SOURCE = f"""import {IMPORT}
 open VE.Presupposition VE.Presupposition.Examples
 def r1twin : VE.Norms.Node := {{ rule22 "r1" with guard := .top }}
-def blockF2 (extra : List VE.Norms.Node) (p3 : Bool) : PDoc :=
-  docA ([cu "u0" theOwnerU, cu "u1" theOwner, cu "u2" (ruleGoal (reg7) (rule22 "r2") pre22), ⟨"u8", true, .rule "r2"⟩] ++
-      (if p3 then [cu "u3" (ruleGoal (reg7) (rule22 "r1") pre22), ⟨"u9", true, .rule "r1"⟩] else []))
-    ([pA (.assumed "u0"), {{ p7 (.assumed "u2") with id := "p2", unit := "u8", position := .ruleAct "r2" }}] ++
-      (if p3 then [{{ p7 (.assumed "u3") with id := "p3", unit := "u9" }}] else []))
-    (tree7 ([rule22 "r1"] ++ extra ++ [rule22 "r2"])) true ["p"]
-#eval IO.println ("ANSWER one-node " ++ errOf (admit (blockF2 [] false)))
-#eval IO.println ("ANSWER two-nodes " ++ errOf (admit (blockF2 [r1twin] false)))
-#eval IO.println ("ANSWER two-nodes-p3 " ++ errOf (admit (blockF2 [r1twin] true)))
+def p2 : Obligation := {{ p7 (.assumed "u2") with id := "p2", unit := "u8", position := .ruleAct "r2" }}
+def p3 : Obligation := {{ p7 (.assumed "u3") with id := "p3", unit := "u9" }}
+def blockF2 (two : Bool) (obs : List Obligation) : PDoc :=
+  docA [cu "u0" theOwnerU, cu "u1" theOwner, cu "u2" (ruleGoal (reg7) (rule22 "r2") pre22), ⟨"u8", true, .rule "r2"⟩,
+      cu "u3" (ruleGoal (reg7) (rule22 "r1") pre22), ⟨"u9", true, .rule "r1"⟩] obs
+    (tree7 (rule22 "r1" :: (if two then [r1twin] else []) ++ [rule22 "r2"]))
+#eval IO.println ("ANSWER one-node " ++ errOf (admit (blockF2 false [pA (.assumed "u0"), p2])))
+#eval IO.println ("ANSWER two-nodes " ++ errOf (admit (blockF2 true [pA (.assumed "u0"), p2])))
+#eval IO.println ("ANSWER two-nodes-p3-last " ++ errOf (admit (blockF2 true [pA (.assumed "u0"), p2, p3])))
+#eval IO.println ("ANSWER two-nodes-p3-first " ++ errOf (admit (blockF2 true [pA (.assumed "u0"), p3, p2])))
 """
 
 
@@ -48,7 +49,7 @@ def answers(tmp_path_factory) -> dict[str, str]:
     assert run.returncode == 0, run.stdout + run.stderr
     rows = [line.split(" ", 2) for line in run.stdout.splitlines() if line.startswith("ANSWER ")]
     found = {name: text for _, name, text in rows}
-    assert len(found) == len(rows) == 3, run.stdout
+    assert len(found) == len(rows) == 4, run.stdout
     return found
 
 
@@ -64,5 +65,6 @@ def test_rule_without_obligation_names_none(answers):
 
 
 def test_rule_with_obligation_names_its_first(answers):
-    # r1's own act p3 comes after r2's p2: the rule check names p3
-    assert answers["two-nodes-p3"] == "PresuppositionMismatch: p3: rule"
+    # r1's own act p3: after r2's p2 (not the block's first rule act) and before it (not the block's last obligation)
+    assert answers["two-nodes-p3-last"] == "PresuppositionMismatch: p3: rule"
+    assert answers["two-nodes-p3-first"] == "PresuppositionMismatch: p3: rule"
