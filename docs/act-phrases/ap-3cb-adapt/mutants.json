@@ -1,0 +1,82 @@
+{
+  "restored": "SURVIVOR",
+  "bugs": [
+    {
+      "id": "parts-from-index-0",
+      "file": "lean/VE/Acts/Elaborate.lean",
+      "definition": "partsOf",
+      "claim": "splitMap_exact: every part's index is at least 1 (the `1 ≤ i` conjuncts)",
+      "test": "lean/VE/Acts/ElaborateProofs.lean",
+      "guards": [
+        "#guard (elaborateMap e1).toOption.all fun (_, M) => M.preds.all (1 ≤ ·.2.2)",
+        "#guard (elaborateMap e1).isOk && (elaborateMap e4).isOk"
+      ],
+      "result": "KILLED",
+      "failing": [
+        "guard `#guard (elaborateMap e1).toOption.all fun (_, M) => M.preds.all (1 ≤ ·.2`",
+        "proof mem_partsOf",
+        "proof splitMap_exact"
+      ]
+    },
+    {
+      "id": "split-node-over-unmapped",
+      "file": "lean/VE/Acts/Elaborate.lean",
+      "definition": "splitNode",
+      "claim": "elaborate_parts: a part rule's `over` is mapped to part i (the rule half)",
+      "test": "lean/VE/Acts/ElaborateProofs.lean",
+      "guards": [
+        "#guard (elaborateMap e4).toOption.all fun (U, M) => M.rules.all fun (n, m, i) =>\n  (U.D.T.nodes.find? (·.name == n)).all fun K => e4.U.D.T.nodes.any fun N => N.name == m && K.over == N.over.map (partRule · i)",
+        "#guard (elaborateMap e1).isOk && (elaborateMap e4).isOk"
+      ],
+      "result": "KILLED",
+      "failing": [
+        "guard `#guard (elaborateMap e1).isOk && (elaborateMap e4).isOk`",
+        "proof mem_splitNode"
+      ]
+    },
+    {
+      "id": "part-keeps-source-name",
+      "file": "lean/VE/Acts/Elaborate.lean",
+      "definition": "splitMap",
+      "claim": "splitMap_exact: a part has its own name, distinct from its source's and from the other parts' (`q = partPred p i` and the Nodup conjuncts)",
+      "test": "lean/VE/Acts/ElaborateProofs.lean",
+      "guards": [
+        "#guard (elaborateMap e1).toOption.all fun (U, M) => (M.preds.map (·.1)).Nodup &&\n  M.preds.all fun (q, p, i) => q == partPred p i && !(U.D.T.regulated.any (·.name == p))",
+        "#guard (elaborateMap e1).isOk && (elaborateMap e4).isOk"
+      ],
+      "result": "KILLED",
+      "failing": [
+        "guard `#guard (elaborateMap e1).isOk && (elaborateMap e4).isOk`",
+        "proof mem_preds"
+      ]
+    },
+    {
+      "id": "part-declaration-keeps-source-name",
+      "file": "lean/VE/Acts/Elaborate.lean",
+      "definition": "splitReg",
+      "claim": "splitMap_exact and elaborate_parts: a part is declared under its own name, and the source is gone",
+      "test": "lean/VE/Acts/ElaborateProofs.lean",
+      "guards": [
+        "#guard (elaborateMap e1).toOption.all fun (U, M) => (M.preds.map (·.1)).Nodup &&\n  M.preds.all fun (q, p, i) => q == partPred p i && !(U.D.T.regulated.any (·.name == p))",
+        "#guard (elaborateMap e1).isOk && (elaborateMap e4).isOk"
+      ],
+      "result": "KILLED",
+      "failing": [
+        "guard `#guard (elaborateMap e1).isOk && (elaborateMap e4).isOk`",
+        "proof mem_splitReg"
+      ]
+    },
+    {
+      "id": "statement-index-from-2",
+      "file": "lean/VE/Acts/ElaborateProofs.lean",
+      "definition": "splitMap_exact",
+      "claim": "the statement as 6.6 gives it is the one proved (a stronger, false clause fails the proof)",
+      "test": "lean/VE/Acts/ElaborateProofs.lean",
+      "guards": [],
+      "result": "KILLED",
+      "failing": [
+        "proof splitMap_exact"
+      ]
+    }
+  ]
+}
