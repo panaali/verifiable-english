@@ -1,0 +1,21 @@
+# Kernel allowances
+
+The kernel's size is the `kernel_lines` of [closure-baseline.json](closure-baseline.json), measured by
+`python3 tools/kernel_closure.py` ([the kernel boundary](../spec/kernel-boundary.md), sections 2 and 6).
+It may fall freely. It may rise only with a line in the table below, added in the same change that
+raises it and signed by the architect seat (`manage-agents/fable-team/architect/HANDOFF.md`).
+`tests/test_kernel_closure.py` reads the figure after the words "signed total:".
+
+signed total: 8,732 lines
+
+| Date | Change | Door | Lines | Total after | Signed |
+|---|---|---|---:|---:|---|
+| 2026-11-11 | First measurement on main `97b3c7999a`: the paths certificate, route, norms and softNorms | none | 9,565 | 9,565 | architect seat, round 1 |
+| 2026-11-11 | Review kb-0 F1: `certificate` re-measured with the subject its theorems state (`Query.accepts`, `ClosureQuery.accepts`); its 637-line wire has no theorem, so the path is a candidate (KB-6) | none | -609 | 8,956 | not needed (a fall, section 6.2) |
+| 2026-11-11 | Review kb-0 F3: each kernel path's spec is cut at the registry's `uncovered` runners, as the census body already was (route's `runCase_dispatch` read `Definitions.Bundle.runBundle` and `Route.Run.runAdmit` into the kernel) | none | -224 | 8,732 | not needed (a fall, section 6.2) |
+
+Pre-signed, to be entered by the change that uses it:
+
+| Change | Door | At most |
+|---|---|---:|
+| KB-1: `lean/VE/Kernel/Carry.lean` as in the specification's section 3 (it is counted only once a kernel path's fold uses it) | C | 80 |

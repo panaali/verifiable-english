@@ -120,11 +120,14 @@ def openAfterClassification (src : SoftSource) (environment norms pairs : Json) 
     pure (if status == .disjoint then some (cohLabel M N) else none)
   pure ((VE.SoftNorms.Wire.openCoherence src.D).filter (!disjoint.contains ·))
 
-/-- 7.3's CONFLICT-FREE line: `<k>` the premises used, `<j>` the open weighing points WP(T) (rights-cfr-2-budget-1). -/
+/-- 7.3's CONFLICT-FREE line: `<k>` the premises used, `<j>` the open weighing points WP(T) (rights-cfr-2-budget-1).
+The situation part is `yes` for the request's checked `coherent_model`; with none sent no search runs, so it says so
+and quotes the budget as unused (`notSearchedText`, soft-cf-text-1). -/
 def conflictFreeText (conditional openLabels : List String) (exhibit : Bool) (budget : Nat) : String :=
-  s!"CONFLICT-FREE among rules on the same act, conditional on {conditional.length} coherence premises; {openLabels.length} weighing points open; coherent situation exhibited: {if exhibit then "yes" else s!"UNKNOWN (budget {budget})"}"
+  s!"CONFLICT-FREE among rules on the same act, conditional on {conditional.length} coherence premises; {openLabels.length} weighing points open; coherent situation exhibited: {if exhibit then "yes" else notSearchedText budget}"
 
-#guard conflictFreeText ["l"] ["l", "m"] false 7 == "CONFLICT-FREE among rules on the same act, conditional on 1 coherence premises; 2 weighing points open; coherent situation exhibited: UNKNOWN (budget 7)"
+#guard conflictFreeText ["l"] ["l", "m"] false 7 == "CONFLICT-FREE among rules on the same act, conditional on 1 coherence premises; 2 weighing points open; coherent situation exhibited: none supplied (not searched; budget 7 unused)"
+#guard conflictFreeText [] ["m"] true 7 == "CONFLICT-FREE among rules on the same act, conditional on 0 coherence premises; 1 weighing points open; coherent situation exhibited: yes"
 
 /-- Preserve premise positions while disabling a set of open coherence leaves.
 The certificate's binding remains to the original complete premise list. -/

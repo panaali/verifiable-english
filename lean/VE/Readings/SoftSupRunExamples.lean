@@ -1,0 +1,235 @@
+-- ve-layer: 4 (runner-boundary fixtures: the soft runners compared with Readings.Run's runSDKind)
+import VE.Readings.SoftSupRun
+import VE.Readings.Run
+
+/-! sc-11c's fixtures (docs/spec/rd-9-soft-chain.md 14.9 W-13, W-14; 14.11): the soft runners on admitted cases, each
+value computed here by `#guard`. The documents are the JSON of `NSD4a` and `NSDbig n` (SoftSupExamples.lean,
+SoftSupWireExamples.lean); the conflict certificates of `NSD4a` under `rs1:1` are traces Python's prover found once
+on the premises Lean regenerates (`backgroundBase (fill (supU N)) ++ slotUnder N.D A ++ supX N ++ Fill_T`), checked
+here by Lean. `SDCount` is the measure: admissions and route checks per case (W-14), conflict checks (W-13's one
+proof), label images per scope and label replays per accepted piece (14.11 rows four and five). -/
+namespace VE.Readings.SoftSupRunExamples
+open Lean VE.Readings VE.Readings.Wire VE.Readings.Run
+
+def parse (s : String) : Json := (Json.parse s).toOption.getD .null
+/-- `NSD4a`'s environment (`x_permitted` allowed by default) and document. -/
+def env4a : Json := parse r#"{"language":"ve.core@0.2","profiles":["norm-defaults@0","norms@0","readings@1","relational-fol@0","soft-norms@0"],"spec_revision":"ve-v0.2-expand2-2026-09-25","vocabulary":{"sorts":{"assistant":{"description":"assistant"}},"predicates":{"x_required":{"arguments":["assistant"],"description":"obligation","regulated":{"role":"obligation","default":"deny","act":"{0} do x","permission":"x_permitted"}},"x_permitted":{"arguments":["assistant"],"description":"permission","regulated":{"role":"permission","default":"allow","act":"{0} do x"}},"y_permitted":{"arguments":["assistant"],"description":"permission","regulated":{"role":"permission","default":"unspecified","act":"{0} do y"}},"c":{"arguments":["assistant"],"description":"c"}},"constants":{}}}"#
+def doc4a : Json := parse r#"{"units":[{"id":"u0","kind":"norm","content":{"norm":{"name":"need-not-x","predicate":"x_required","sign":false,"guard":["top"],"unless":[],"over":[],"mode":"default","exception":{"decided_by":"unstated","sufficient":[],"necessary":[],"factors":[]}}}},{"id":"u1"}],"reading_sets":[{"id":"rs1","unit":"u1","version":1,"status":"open","readings":[{"id":"strict","kind":"norm","content":{"norm":{"name":"must-x","predicate":"x_required","sign":true,"guard":["unary","y_permitted",["var",0]],"unless":[],"over":[]}},"meaning_id":"m","admission":{"who":"w","why":"y","distinguishing_models":{}}},{"id":"default","kind":"norm","content":{"norm":{"name":"must-x","predicate":"x_required","sign":true,"guard":["unary","y_permitted",["var",0]],"unless":[],"over":[],"mode":"default","exception":{"decided_by":"unstated","sufficient":[["unary","c",["var",0]]],"necessary":[],"factors":[]}}},"meaning_id":"m","admission":{"who":"w","why":"y","distinguishing_models":{}}}],"situations":{}}]}"#
+/-- `NSDbig n`: one fixed `need-not-x` default and `n` sets of a strict and a default `must-x-k`, on `NSD4`'s frame. -/
+def env4 : Json := parse ((env4a.compress).replace "\"allow\"" "\"deny\"")
+def normJ (name : String) (sign : Bool) (guard : String) (dflt : Option String) : String :=
+  s!"\{\"norm\":\{\"name\":\"{name}\",\"predicate\":\"x_required\",\"sign\":{sign},\"guard\":{guard},\"unless\":[],\"over\":[]" ++
+    (match dflt with
+     | some s => s!",\"mode\":\"default\",\"exception\":\{\"decided_by\":\"unstated\",\"sufficient\":{s},\"necessary\":[],\"factors\":[]}"
+     | none => "") ++ "}}"
+def readingJ (id content : String) : String :=
+  s!"\{\"id\":\"{id}\",\"kind\":\"norm\",\"content\":{content},\"meaning_id\":\"m\",\"admission\":\{\"who\":\"w\",\"why\":\"y\",\"distinguishing_models\":\{}}}"
+def bigJ (n : Nat) : Json := parse (s!"\{\"units\":[\{\"id\":\"u0\",\"kind\":\"norm\",\"content\":{normJ "need-not-x" false "[\"top\"]" (some "[]")}}" ++
+  String.join ((List.range n).map fun k => s!",\{\"id\":\"u{k + 1}\"}") ++ "],\"reading_sets\":[" ++
+  ",".intercalate ((List.range n).map fun k => s!"\{\"id\":\"rs{k}\",\"unit\":\"u{k + 1}\",\"version\":1,\"status\":\"open\",\"situations\":\{},\"readings\":[" ++
+    readingJ "strict" (normJ s!"must-x-{k}" true "[\"top\"]" none) ++ "," ++
+    readingJ "default" (normJ s!"must-x-{k}" true "[\"unary\",\"y_permitted\",[\"var\",0]]" (some "[[\"unary\",\"c\",[\"var\",0]]]")) ++ "]}") ++ "]}")
+
+/-- A case from its admission on: `k` on the routed case, and what it read. -/
+def run {α : Type} (env doc : Json) (k : SDCase → SDM α) : Except String α × SDCount :=
+  match admitS2 env doc with
+  | .ok b => (sdCaseOf sdRefusal b >>= k).run.run {}
+  | .error e => (.error e, {})
+
+/-- The traces of `NSD4a`'s four conflict targets under `rs1:1` (Python's prover, once), as certificates. -/
+def certJ (trace : Json) : Json := Json.mkObj [("checker_version", "ve-tableau-checker@2"), ("environment_id", ""),
+  ("premise_meaning_ids", Json.arr #[]), ("conclusion_meaning_id", ""), ("trace", trace)]
+def traces4a : Json := parse r#"{"x_permitted":{"rule":"expand","at":4,"children":[{"rule":"expand","at":5,"children":[{"rule":"expand","at":6,"children":[{"rule":"close"}]}]}]},"y_permitted":{"rule":"expand","at":4,"children":[{"rule":"expand","at":5,"children":[{"rule":"expand","at":6,"children":[{"rule":"close"}]}]}]},"x_required":{"rule":"expand","at":4,"children":[{"rule":"expand","at":5,"children":[{"rule":"expand","at":6,"children":[{"rule":"expand","at":8,"children":[{"rule":"close"},{"rule":"expand","at":9,"children":[{"rule":"expand","at":10,"children":[{"rule":"expand","at":11,"children":[{"rule":"expand","at":13,"children":[{"rule":"expand","at":15,"children":[{"rule":"expand","at":17,"children":[{"rule":"expand","at":18,"children":[{"rule":"expand","at":7,"children":[{"rule":"expand","at":21,"children":[{"rule":"expand","at":22,"children":[{"rule":"close"},{"rule":"expand","at":23,"children":[{"rule":"expand","at":25,"children":[{"rule":"expand","at":26,"children":[{"rule":"expand","at":28,"children":[{"rule":"expand","at":30,"children":[{"rule":"expand","at":32,"children":[{"rule":"expand","at":34,"children":[{"rule":"expand","at":36,"children":[{"rule":"close"},{"rule":"expand","at":37,"children":[{"rule":"close"}]}]}]}]}]}]}]}]}]}]}]},{"rule":"expand","at":20,"children":[{"rule":"expand","at":21,"children":[{"rule":"expand","at":22,"children":[{"rule":"expand","at":25,"children":[{"rule":"expand","at":27,"children":[{"rule":"expand","at":28,"children":[{"rule":"expand","at":29,"children":[{"rule":"expand","at":31,"children":[{"rule":"expand","at":36,"children":[{"rule":"close"},{"rule":"expand","at":32,"children":[{"rule":"expand","at":34,"children":[{"rule":"expand","at":35,"children":[{"rule":"expand","at":38,"children":[{"rule":"expand","at":39,"children":[{"rule":"expand","at":40,"children":[{"rule":"expand","at":49,"children":[{"rule":"expand","at":50,"children":[{"rule":"expand","at":51,"children":[{"rule":"expand","at":52,"children":[{"rule":"close"},{"rule":"expand","at":44,"children":[{"rule":"expand","at":45,"children":[{"rule":"expand","at":47,"children":[{"rule":"expand","at":53,"children":[{"rule":"expand","at":55,"children":[{"rule":"expand","at":57,"children":[{"rule":"expand","at":61,"children":[{"rule":"expand","at":62,"children":[{"rule":"expand","at":65,"children":[{"rule":"expand","at":67,"children":[{"rule":"expand","at":69,"children":[{"rule":"expand","at":70,"children":[{"rule":"expand","at":71,"children":[{"rule":"expand","at":76,"children":[{"rule":"expand","at":77,"children":[{"rule":"expand","at":78,"children":[{"rule":"expand","at":79,"children":[{"rule":"close"},{"rule":"expand","at":80,"children":[{"rule":"expand","at":0,"children":[{"rule":"expand","at":2,"children":[{"rule":"expand","at":83,"children":[{"rule":"expand","at":84,"children":[{"rule":"expand","at":3,"children":[{"rule":"expand","at":86,"children":[{"rule":"expand","at":87,"children":[{"rule":"close"},{"rule":"close"}]}]}],"parameter":"w:0"},{"rule":"close"}]},{"rule":"close"}]}],"parameter":"w:0"}],"parameter":"w:0"}]}]},{"rule":"close"}]},{"rule":"close"}]},{"rule":"close"}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]},{"rule":"close"}]},{"rule":"close"}]},{"rule":"close"}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]},"x_required->x_permitted":{"rule":"expand","at":4,"children":[{"rule":"expand","at":5,"children":[{"rule":"expand","at":6,"children":[{"rule":"expand","at":8,"children":[{"rule":"expand","at":9,"children":[{"rule":"close"}]}]}]}]}]}}"#
+def certs4a : Json := match traces4a with
+  | .obj kvs => Json.mkObj (kvs.toList.map fun (k, v) => (k, certJ v))
+  | _ => .null
+
+def caseJ (fields : List (String × Json)) : Json := Json.mkObj fields
+def ans {α : Type} [ToString α] (r : Except String α × SDCount) : String × SDCount :=
+  (match r.1 with | .ok a => toString a | .error e => e, r.2)
+/-- A complete model of the case's superposed base vocabulary over one assistant `a`: the tables `on` hold of `h`
+    (bits) or `a`, the others are empty, `extra` added as written. -/
+def model (c : SDCase) (on : List String) (extra : List (String × Json) := []) : Json :=
+  (parse "{\"complete\":true,\"domains\":{\"assistant\":[\"a\"],\"ve__reading\":[\"h\"]},\"constants\":{\"ve__here\":\"h\"}}").setObjVal!
+    "relations" (Json.mkObj (c.v.predicates.map (fun (p, ss) =>
+      (p, if on.contains p then toJson [ss.map (fun s => if s == "ve__reading" then "h" else "a")] else Json.arr #[])) ++ extra))
+def none' : List (String × Nat) := []
+/-- W-1a's query `∀ a. c a → ¬ x_required a` over `sharedEnvSD N`, and the trace Python's prover found once for it
+    under `rs1:1` on `premisesX (supU N) (slotUnder N.D A ++ supX N) (sup N.D).2`: it reads the soft premises. -/
+def qJ : Json := parse "[\"forall\",\"assistant\",[\"implies\",[\"unary\",\"c\",[\"var\",0]],[\"not\",[\"unary\",\"x_required\",[\"var\",0]]]]]"
+/-- `∀ a. c a`, false in a model with `c` empty. -/
+def cJ : Json := parse "[\"forall\",\"assistant\",[\"unary\",\"c\",[\"var\",0]]]"
+def traceQ : Json := parse r#"{"rule":"expand","at":8,"children":[{"rule":"expand","at":9,"children":[{"rule":"expand","at":11,"children":[{"rule":"expand","at":0,"children":[{"rule":"expand","at":13,"children":[{"rule":"close"},{"rule":"expand","at":1,"children":[{"rule":"expand","at":3,"children":[{"rule":"expand","at":4,"children":[{"rule":"expand","at":17,"children":[{"rule":"expand","at":5,"children":[{"rule":"expand","at":19,"children":[{"rule":"expand","at":21,"children":[{"rule":"expand","at":20,"children":[{"rule":"expand","at":22,"children":[{"rule":"expand","at":23,"children":[{"rule":"expand","at":24,"children":[{"rule":"expand","at":25,"children":[{"rule":"close"}]},{"rule":"expand","at":25,"children":[{"rule":"close"}]}]}]},{"rule":"expand","at":23,"children":[{"rule":"expand","at":24,"children":[{"rule":"expand","at":25,"children":[{"rule":"close"}]},{"rule":"expand","at":25,"children":[{"rule":"close"}]}]}]}]}]},{"rule":"expand","at":20,"children":[{"rule":"expand","at":24,"children":[{"rule":"expand","at":23,"children":[{"rule":"expand","at":6,"children":[{"rule":"expand","at":28,"children":[{"rule":"expand","at":29,"children":[{"rule":"expand","at":31,"children":[{"rule":"expand","at":7,"children":[{"rule":"expand","at":35,"children":[{"rule":"expand","at":37,"children":[{"rule":"expand","at":36,"children":[{"rule":"expand","at":40,"children":[{"rule":"expand","at":38,"children":[{"rule":"expand","at":39,"children":[{"rule":"expand","at":44,"children":[{"rule":"expand","at":42,"children":[{"rule":"close"}]},{"rule":"expand","at":41,"children":[{"rule":"expand","at":47,"children":[{"rule":"expand","at":48,"children":[{"rule":"close"},{"rule":"expand","at":42,"children":[{"rule":"expand","at":49,"children":[{"rule":"expand","at":51,"children":[{"rule":"close"},{"rule":"expand","at":52,"children":[{"rule":"expand","at":15,"children":[{"rule":"expand","at":16,"children":[{"rule":"expand","at":55,"children":[{"rule":"close"},{"rule":"close"}]},{"rule":"close"}]},{"rule":"expand","at":16,"children":[{"rule":"expand","at":55,"children":[{"rule":"close"},{"rule":"close"}]},{"rule":"expand","at":18,"children":[{"rule":"expand","at":56,"children":[{"rule":"expand","at":57,"children":[{"rule":"close"},{"rule":"expand","at":58,"children":[{"rule":"expand","at":59,"children":[{"rule":"close"},{"rule":"expand","at":60,"children":[{"rule":"expand","at":27,"children":[{"rule":"expand","at":30,"children":[{"rule":"expand","at":34,"children":[{"rule":"expand","at":63,"children":[{"rule":"expand","at":64,"children":[{"rule":"expand","at":65,"children":[{"rule":"close"}]}]},{"rule":"expand","at":32,"children":[{"rule":"expand","at":64,"children":[{"rule":"expand","at":65,"children":[{"rule":"close"}]}]},{"rule":"expand","at":64,"children":[{"rule":"expand","at":65,"children":[{"rule":"close"}]}]}]}]},{"rule":"expand","at":32,"children":[{"rule":"expand","at":63,"children":[{"rule":"expand","at":66,"children":[{"rule":"expand","at":67,"children":[{"rule":"close"},{"rule":"expand","at":68,"children":[{"rule":"expand","at":69,"children":[{"rule":"expand","at":70,"children":[{"rule":"expand","at":72,"children":[{"rule":"expand","at":50,"children":[{"rule":"expand","at":75,"children":[{"rule":"close"},{"rule":"expand","at":76,"children":[{"rule":"expand","at":77,"children":[{"rule":"expand","at":79,"children":[{"rule":"expand","at":82,"children":[{"rule":"close"}]}]}]}]}]},{"rule":"expand","at":75,"children":[{"rule":"expand","at":76,"children":[{"rule":"expand","at":77,"children":[{"rule":"expand","at":78,"children":[{"rule":"expand","at":79,"children":[{"rule":"expand","at":83,"children":[{"rule":"expand","at":85,"children":[{"rule":"expand","at":86,"children":[{"rule":"expand","at":53,"children":[{"rule":"expand","at":88,"children":[{"rule":"close"}]},{"rule":"close"}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]},{"rule":"expand","at":66,"children":[{"rule":"close"}]}]},{"rule":"expand","at":63,"children":[{"rule":"expand","at":65,"children":[{"rule":"close"}]},{"rule":"expand","at":65,"children":[{"rule":"close"}]}]}]}]},{"rule":"expand","at":34,"children":[{"rule":"expand","at":63,"children":[{"rule":"expand","at":64,"children":[{"rule":"expand","at":67,"children":[{"rule":"expand","at":68,"children":[{"rule":"expand","at":32,"children":[{"rule":"expand","at":50,"children":[{"rule":"expand","at":71,"children":[{"rule":"close"},{"rule":"expand","at":72,"children":[{"rule":"expand","at":73,"children":[{"rule":"expand","at":75,"children":[{"rule":"close"}]}]}]}]},{"rule":"expand","at":71,"children":[{"rule":"expand","at":72,"children":[{"rule":"expand","at":74,"children":[{"rule":"close"}]}]}]}]},{"rule":"expand","at":70,"children":[{"rule":"expand","at":50,"children":[{"rule":"expand","at":72,"children":[{"rule":"close"},{"rule":"expand","at":73,"children":[{"rule":"expand","at":74,"children":[{"rule":"expand","at":76,"children":[{"rule":"close"}]}]}]}]},{"rule":"expand","at":72,"children":[{"rule":"expand","at":73,"children":[{"rule":"expand","at":75,"children":[{"rule":"close"}]}]}]}]}]}]},{"rule":"expand","at":32,"children":[{"rule":"expand","at":69,"children":[{"rule":"close"}]},{"rule":"expand","at":69,"children":[{"rule":"close"}]}]}]},{"rule":"expand","at":32,"children":[{"rule":"expand","at":68,"children":[{"rule":"close"}]},{"rule":"expand","at":68,"children":[{"rule":"close"}]}]}]}]}]},{"rule":"expand","at":32,"children":[{"rule":"expand","at":63,"children":[{"rule":"close"}]},{"rule":"expand","at":63,"children":[{"rule":"close"}]}]}]}]},{"rule":"expand","at":30,"children":[{"rule":"expand","at":34,"children":[{"rule":"expand","at":63,"children":[{"rule":"expand","at":64,"children":[{"rule":"expand","at":65,"children":[{"rule":"close"}]}]},{"rule":"expand","at":32,"children":[{"rule":"expand","at":64,"children":[{"rule":"expand","at":65,"children":[{"rule":"close"}]}]},{"rule":"expand","at":64,"children":[{"rule":"expand","at":65,"children":[{"rule":"close"}]}]}]}]},{"rule":"expand","at":32,"children":[{"rule":"expand","at":63,"children":[{"rule":"expand","at":66,"children":[{"rule":"expand","at":67,"children":[{"rule":"close"},{"rule":"expand","at":68,"children":[{"rule":"expand","at":69,"children":[{"rule":"expand","at":70,"children":[{"rule":"expand","at":72,"children":[{"rule":"expand","at":50,"children":[{"rule":"expand","at":75,"children":[{"rule":"close"},{"rule":"expand","at":76,"children":[{"rule":"expand","at":77,"children":[{"rule":"expand","at":79,"children":[{"rule":"expand","at":82,"children":[{"rule":"close"}]}]}]}]}]},{"rule":"expand","at":75,"children":[{"rule":"expand","at":76,"children":[{"rule":"expand","at":77,"children":[{"rule":"expand","at":78,"children":[{"rule":"expand","at":79,"children":[{"rule":"expand","at":83,"children":[{"rule":"expand","at":85,"children":[{"rule":"expand","at":86,"children":[{"rule":"expand","at":53,"children":[{"rule":"expand","at":88,"children":[{"rule":"close"}]},{"rule":"close"}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]},{"rule":"expand","at":66,"children":[{"rule":"close"}]}]},{"rule":"expand","at":63,"children":[{"rule":"expand","at":65,"children":[{"rule":"close"}]},{"rule":"expand","at":65,"children":[{"rule":"close"}]}]}]}]},{"rule":"expand","at":34,"children":[{"rule":"expand","at":63,"children":[{"rule":"expand","at":64,"children":[{"rule":"expand","at":67,"children":[{"rule":"expand","at":68,"children":[{"rule":"expand","at":32,"children":[{"rule":"expand","at":50,"children":[{"rule":"expand","at":71,"children":[{"rule":"close"},{"rule":"expand","at":72,"children":[{"rule":"expand","at":73,"children":[{"rule":"expand","at":75,"children":[{"rule":"close"}]}]}]}]},{"rule":"expand","at":71,"children":[{"rule":"expand","at":72,"children":[{"rule":"expand","at":74,"children":[{"rule":"close"}]}]}]}]},{"rule":"expand","at":70,"children":[{"rule":"expand","at":50,"children":[{"rule":"expand","at":72,"children":[{"rule":"close"},{"rule":"expand","at":73,"children":[{"rule":"expand","at":74,"children":[{"rule":"expand","at":76,"children":[{"rule":"close"}]}]}]}]},{"rule":"expand","at":72,"children":[{"rule":"expand","at":73,"children":[{"rule":"expand","at":75,"children":[{"rule":"close"}]}]}]}]}]}]},{"rule":"expand","at":32,"children":[{"rule":"expand","at":69,"children":[{"rule":"close"}]},{"rule":"expand","at":69,"children":[{"rule":"close"}]}]}]},{"rule":"expand","at":32,"children":[{"rule":"expand","at":68,"children":[{"rule":"close"}]},{"rule":"expand","at":68,"children":[{"rule":"close"}]}]}]}]}]},{"rule":"expand","at":32,"children":[{"rule":"expand","at":63,"children":[{"rule":"close"}]},{"rule":"expand","at":63,"children":[{"rule":"close"}]}]}]}]}]},{"rule":"close"}]}]}]}]},{"rule":"expand","at":27,"children":[{"rule":"expand","at":32,"children":[{"rule":"expand","at":57,"children":[{"rule":"close"}]},{"rule":"expand","at":34,"children":[{"rule":"expand","at":30,"children":[{"rule":"expand","at":57,"children":[{"rule":"close"}]},{"rule":"expand","at":57,"children":[{"rule":"close"}]}]},{"rule":"expand","at":30,"children":[{"rule":"expand","at":57,"children":[{"rule":"close"}]},{"rule":"expand","at":57,"children":[{"rule":"close"}]}]}]}]},{"rule":"expand","at":32,"children":[{"rule":"expand","at":57,"children":[{"rule":"close"}]},{"rule":"expand","at":34,"children":[{"rule":"expand","at":30,"children":[{"rule":"expand","at":57,"children":[{"rule":"close"}]},{"rule":"expand","at":57,"children":[{"rule":"close"}]}]},{"rule":"expand","at":30,"children":[{"rule":"expand","at":57,"children":[{"rule":"close"}]},{"rule":"expand","at":57,"children":[{"rule":"close"}]}]}]}]}]}]},{"rule":"expand","at":56,"children":[{"rule":"expand","at":27,"children":[{"rule":"expand","at":30,"children":[{"rule":"expand","at":34,"children":[{"rule":"expand","at":59,"children":[{"rule":"expand","at":60,"children":[{"rule":"expand","at":61,"children":[{"rule":"close"}]}]},{"rule":"expand","at":32,"children":[{"rule":"expand","at":60,"children":[{"rule":"expand","at":61,"children":[{"rule":"close"}]}]},{"rule":"expand","at":60,"children":[{"rule":"expand","at":61,"children":[{"rule":"close"}]}]}]}]},{"rule":"expand","at":32,"children":[{"rule":"expand","at":59,"children":[{"rule":"expand","at":62,"children":[{"rule":"expand","at":63,"children":[{"rule":"close"},{"rule":"expand","at":64,"children":[{"rule":"expand","at":65,"children":[{"rule":"expand","at":66,"children":[{"rule":"expand","at":68,"children":[{"rule":"expand","at":50,"children":[{"rule":"expand","at":71,"children":[{"rule":"close"},{"rule":"expand","at":72,"children":[{"rule":"expand","at":73,"children":[{"rule":"expand","at":75,"children":[{"rule":"expand","at":78,"children":[{"rule":"close"}]}]}]}]}]},{"rule":"expand","at":71,"children":[{"rule":"expand","at":72,"children":[{"rule":"expand","at":73,"children":[{"rule":"expand","at":74,"children":[{"rule":"expand","at":75,"children":[{"rule":"expand","at":79,"children":[{"rule":"expand","at":81,"children":[{"rule":"expand","at":82,"children":[{"rule":"expand","at":53,"children":[{"rule":"expand","at":84,"children":[{"rule":"close"}]},{"rule":"close"}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]},{"rule":"expand","at":62,"children":[{"rule":"close"}]}]},{"rule":"expand","at":59,"children":[{"rule":"expand","at":61,"children":[{"rule":"close"}]},{"rule":"expand","at":61,"children":[{"rule":"close"}]}]}]}]},{"rule":"expand","at":34,"children":[{"rule":"expand","at":59,"children":[{"rule":"expand","at":60,"children":[{"rule":"expand","at":63,"children":[{"rule":"expand","at":64,"children":[{"rule":"expand","at":32,"children":[{"rule":"expand","at":50,"children":[{"rule":"expand","at":67,"children":[{"rule":"close"},{"rule":"expand","at":68,"children":[{"rule":"expand","at":69,"children":[{"rule":"expand","at":71,"children":[{"rule":"close"}]}]}]}]},{"rule":"expand","at":67,"children":[{"rule":"expand","at":68,"children":[{"rule":"expand","at":70,"children":[{"rule":"close"}]}]}]}]},{"rule":"expand","at":66,"children":[{"rule":"expand","at":50,"children":[{"rule":"expand","at":68,"children":[{"rule":"close"},{"rule":"expand","at":69,"children":[{"rule":"expand","at":70,"children":[{"rule":"expand","at":72,"children":[{"rule":"close"}]}]}]}]},{"rule":"expand","at":68,"children":[{"rule":"expand","at":69,"children":[{"rule":"expand","at":71,"children":[{"rule":"close"}]}]}]}]}]}]},{"rule":"expand","at":32,"children":[{"rule":"expand","at":65,"children":[{"rule":"close"}]},{"rule":"expand","at":65,"children":[{"rule":"close"}]}]}]},{"rule":"expand","at":32,"children":[{"rule":"expand","at":64,"children":[{"rule":"close"}]},{"rule":"expand","at":64,"children":[{"rule":"close"}]}]}]}]}]},{"rule":"expand","at":32,"children":[{"rule":"expand","at":59,"children":[{"rule":"close"}]},{"rule":"expand","at":59,"children":[{"rule":"close"}]}]}]}]},{"rule":"expand","at":30,"children":[{"rule":"expand","at":34,"children":[{"rule":"expand","at":59,"children":[{"rule":"expand","at":60,"children":[{"rule":"expand","at":61,"children":[{"rule":"close"}]}]},{"rule":"expand","at":32,"children":[{"rule":"expand","at":60,"children":[{"rule":"expand","at":61,"children":[{"rule":"close"}]}]},{"rule":"expand","at":60,"children":[{"rule":"expand","at":61,"children":[{"rule":"close"}]}]}]}]},{"rule":"expand","at":32,"children":[{"rule":"expand","at":59,"children":[{"rule":"expand","at":62,"children":[{"rule":"expand","at":63,"children":[{"rule":"close"},{"rule":"expand","at":64,"children":[{"rule":"expand","at":65,"children":[{"rule":"expand","at":66,"children":[{"rule":"expand","at":68,"children":[{"rule":"expand","at":50,"children":[{"rule":"expand","at":71,"children":[{"rule":"close"},{"rule":"expand","at":72,"children":[{"rule":"expand","at":73,"children":[{"rule":"expand","at":75,"children":[{"rule":"expand","at":78,"children":[{"rule":"close"}]}]}]}]}]},{"rule":"expand","at":71,"children":[{"rule":"expand","at":72,"children":[{"rule":"expand","at":73,"children":[{"rule":"expand","at":74,"children":[{"rule":"expand","at":75,"children":[{"rule":"expand","at":79,"children":[{"rule":"expand","at":81,"children":[{"rule":"expand","at":82,"children":[{"rule":"expand","at":53,"children":[{"rule":"expand","at":84,"children":[{"rule":"close"}]},{"rule":"close"}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]},{"rule":"expand","at":62,"children":[{"rule":"close"}]}]},{"rule":"expand","at":59,"children":[{"rule":"expand","at":61,"children":[{"rule":"close"}]},{"rule":"expand","at":61,"children":[{"rule":"close"}]}]}]}]},{"rule":"expand","at":34,"children":[{"rule":"expand","at":59,"children":[{"rule":"expand","at":60,"children":[{"rule":"expand","at":63,"children":[{"rule":"expand","at":64,"children":[{"rule":"expand","at":32,"children":[{"rule":"expand","at":50,"children":[{"rule":"expand","at":67,"children":[{"rule":"close"},{"rule":"expand","at":68,"children":[{"rule":"expand","at":69,"children":[{"rule":"expand","at":71,"children":[{"rule":"close"}]}]}]}]},{"rule":"expand","at":67,"children":[{"rule":"expand","at":68,"children":[{"rule":"expand","at":70,"children":[{"rule":"close"}]}]}]}]},{"rule":"expand","at":66,"children":[{"rule":"expand","at":50,"children":[{"rule":"expand","at":68,"children":[{"rule":"close"},{"rule":"expand","at":69,"children":[{"rule":"expand","at":70,"children":[{"rule":"expand","at":72,"children":[{"rule":"close"}]}]}]}]},{"rule":"expand","at":68,"children":[{"rule":"expand","at":69,"children":[{"rule":"expand","at":71,"children":[{"rule":"close"}]}]}]}]}]}]},{"rule":"expand","at":32,"children":[{"rule":"expand","at":65,"children":[{"rule":"close"}]},{"rule":"expand","at":65,"children":[{"rule":"close"}]}]}]},{"rule":"expand","at":32,"children":[{"rule":"expand","at":64,"children":[{"rule":"close"}]},{"rule":"expand","at":64,"children":[{"rule":"close"}]}]}]}]}]},{"rule":"expand","at":32,"children":[{"rule":"expand","at":59,"children":[{"rule":"close"}]},{"rule":"expand","at":59,"children":[{"rule":"close"}]}]}]}]}]},{"rule":"expand","at":27,"children":[{"rule":"expand","at":32,"children":[{"rule":"expand","at":57,"children":[{"rule":"close"}]},{"rule":"expand","at":34,"children":[{"rule":"expand","at":30,"children":[{"rule":"expand","at":57,"children":[{"rule":"close"}]},{"rule":"expand","at":57,"children":[{"rule":"close"}]}]},{"rule":"expand","at":30,"children":[{"rule":"expand","at":57,"children":[{"rule":"close"}]},{"rule":"expand","at":57,"children":[{"rule":"close"}]}]}]}]},{"rule":"expand","at":32,"children":[{"rule":"expand","at":57,"children":[{"rule":"close"}]},{"rule":"expand","at":34,"children":[{"rule":"expand","at":30,"children":[{"rule":"expand","at":57,"children":[{"rule":"close"}]},{"rule":"expand","at":57,"children":[{"rule":"close"}]}]},{"rule":"expand","at":30,"children":[{"rule":"expand","at":57,"children":[{"rule":"close"}]},{"rule":"expand","at":57,"children":[{"rule":"close"}]}]}]}]}]}]}]}]}]},{"rule":"close"}]}]}]}]}]},{"rule":"expand","at":27,"children":[{"rule":"expand","at":32,"children":[{"rule":"expand","at":48,"children":[{"rule":"close"}]},{"rule":"expand","at":34,"children":[{"rule":"expand","at":30,"children":[{"rule":"expand","at":48,"children":[{"rule":"close"}]},{"rule":"expand","at":48,"children":[{"rule":"close"}]}]},{"rule":"expand","at":30,"children":[{"rule":"expand","at":48,"children":[{"rule":"close"}]},{"rule":"expand","at":48,"children":[{"rule":"close"}]}]}]}]},{"rule":"expand","at":32,"children":[{"rule":"expand","at":48,"children":[{"rule":"close"}]},{"rule":"expand","at":34,"children":[{"rule":"expand","at":30,"children":[{"rule":"expand","at":48,"children":[{"rule":"close"}]},{"rule":"expand","at":48,"children":[{"rule":"close"}]}]},{"rule":"expand","at":30,"children":[{"rule":"expand","at":48,"children":[{"rule":"close"}]},{"rule":"expand","at":48,"children":[{"rule":"close"}]}]}]}]}]}]}]}]}]},{"rule":"expand","at":41,"children":[{"rule":"expand","at":42,"children":[{"rule":"close"}]}]}]},{"rule":"close"}]}]},{"rule":"close"}]}]}],"parameter":"w:0"}]}]}]}],"parameter":"w:0"}]},{"rule":"expand","at":25,"children":[{"rule":"close"}]}]}]}]}]}],"parameter":"w:0"}]}],"parameter":"w:0"}],"parameter":"w:0"}],"parameter":"w:0"}]}],"parameter":"w:0"}]}]}]}"#
+/-- A certificate of `qJ` bound as `bindCertX` binds one: to the source environment and to `premisesX (supU N) X
+    (sup N.D).2` followed by `own` (D14's oracle: the approved definition, not the case's values). -/
+def boundCert (c : SDCase) (X : List VE.Formula) (own : List Json) : Except String Json := do
+  let env := c.x.r.b.a.re.lowerJson
+  let ps := VE.NormDefaults.Wire.profilesOf env
+  let e ← VE.Route.Wire.environmentId ps (← VE.NormDefaults.Wire.canonicalEnvironmentJsonU env)
+  let ids ← ((VE.NormDefaults.Wire.premisesX (supU c.N) X (sup c.N.D).2).map VE.Route.Wire.encodeFormula ++ own).mapM
+    (VE.Route.Wire.meaningId ps e)
+  pure (Json.mkObj [("checker_version", "ve-tableau-checker@2"), ("environment_id", .str e),
+    ("premise_meaning_ids", toJson ids), ("conclusion_meaning_id", .str (← VE.Route.Wire.meaningId ps e qJ)),
+    ("trace", traceQ)])
+def A1 : List (String × Nat) := [("rs1", 1)]
+def X1 (c : SDCase) : List VE.Formula := slotUnder c.N.D A1 ++ supX c.N
+def certCase (c : SDCase) (X : List VE.Formula) (own : List Json := []) (conflict := certs4a) : SDM String := do
+  (·.compress) <$> runSDSup "t" .certificate c (caseJ [("assumed", toJson A1), ("conclusion", qJ),
+    ("conflict_certificates", conflict), ("certificate", ← boundCert c X own)])
+
+/-- `NSDq` (SoftSeparateExamples.lean, the Python fixture's JSON): one `Fill_T` premise; its five targets' traces under `[]`. -/
+def envq : Json := parse r#"{"language":"ve.core@0.2","profiles":["norm-defaults@0","norms@0","readings@1","relational-fol@0","soft-norms@0"],"spec_revision":"ve-v0.2-expand2-2026-09-25","vocabulary":{"sorts":{"agent":{"description":"agent"},"user":{"description":"user"}},"predicates":{"asks":{"arguments":["agent","user"],"description":"{0} asks {1}"},"avoid_required":{"arguments":["agent","user"],"description":"obligation","regulated":{"role":"obligation","default":"deny","act":"{0} avoid deceiving {1}"}},"help_required":{"arguments":["agent","user"],"description":"obligation","regulated":{"role":"obligation","default":"unspecified","act":"{0} help {1}","permission":"help_permitted"}},"help_permitted":{"arguments":["agent","user"],"description":"permission","regulated":{"role":"permission","default":"unspecified","act":"{0} help {1}"}},"greet_required":{"arguments":["agent","user"],"description":"obligation","regulated":{"role":"obligation","default":"deny","act":"{0} greet {1}"}}},"constants":{}}}"#
+def docq : Json := parse r#"{"units":[{"id":"u1"}],"reading_sets":[{"id":"rs1","unit":"u1","version":1,"status":"open","readings":[{"id":"help","kind":"norm","content":{"norm":{"name":"must-help","predicate":"help_required","sign":true,"guard":["top"],"unless":[],"over":[]}},"meaning_id":"m","admission":{"who":"w","why":"y","distinguishing_models":{"greet":"79420c496266868afd9f3287e52de38580cdd427a5ce6c514d570b105fa3e949"}}},{"id":"greet","kind":"norm","content":{"norm":{"name":"must-greet","predicate":"greet_required","sign":true,"guard":["top"],"unless":[],"over":[],"mode":"default","exception":{"decided_by":"unstated","sufficient":[],"necessary":[],"factors":[]}}},"meaning_id":"m","admission":{"who":"w","why":"y","distinguishing_models":{"help":"79420c496266868afd9f3287e52de38580cdd427a5ce6c514d570b105fa3e949"}}}],"situations":{"79420c496266868afd9f3287e52de38580cdd427a5ce6c514d570b105fa3e949":{"base":{"domains":{"agent":["a"],"user":["u"]},"constants":{},"relations":{"asks":[],"unsaid__help_permitted":[["a","u"]],"unsaid__help_required":[]}},"fixed":[],"witness":"help","decisions":[],"probe":{"outcome":{"predicate":"help_required","tuple":["a","u"]}},"value":true}}}]}"#
+def certsq : Json := match parse r#"{"avoid_required":{"rule":"expand","at":2,"children":[{"rule":"expand","at":3,"children":[{"rule":"expand","at":4,"children":[{"rule":"expand","at":5,"children":[{"rule":"close"}]}]}]}]},"greet_required":{"rule":"expand","at":2,"children":[{"rule":"expand","at":3,"children":[{"rule":"expand","at":4,"children":[{"rule":"expand","at":5,"children":[{"rule":"close"}]}]}]}]},"help_permitted":{"rule":"expand","at":2,"children":[{"rule":"expand","at":3,"children":[{"rule":"expand","at":4,"children":[{"rule":"expand","at":5,"children":[{"rule":"close"}]}]}]}]},"help_required":{"rule":"expand","at":2,"children":[{"rule":"expand","at":3,"children":[{"rule":"expand","at":4,"children":[{"rule":"expand","at":5,"children":[{"rule":"close"}]}]}]}]},"help_required->help_permitted":{"rule":"expand","at":2,"children":[{"rule":"expand","at":1,"children":[{"rule":"expand","at":3,"children":[{"rule":"expand","at":4,"children":[{"rule":"expand","at":5,"children":[{"rule":"expand","at":6,"children":[{"rule":"expand","at":8,"children":[{"rule":"close"},{"rule":"expand","at":9,"children":[{"rule":"expand","at":10,"children":[{"rule":"expand","at":11,"children":[{"rule":"expand","at":13,"children":[{"rule":"close"}]},{"rule":"expand","at":13,"children":[{"rule":"close"}]}]},{"rule":"expand","at":11,"children":[{"rule":"expand","at":12,"children":[{"rule":"close"}]},{"rule":"expand","at":12,"children":[{"rule":"close"}]}]}]}]}]}]}]}],"parameter":"w:1"}]}],"parameter":"w:0"}]}}"# with
+  | .obj kvs => Json.mkObj (kvs.toList.map fun (k, v) => (k, certJ v))
+  | _ => .null
+/-- W-14's case, four scopes of `NSD4a`: under `rs1:1` conflict, certificate, a countermodel that is not one, a refused
+    `unsat` and a model; under `[]` an UNKNOWN conflict, a countermodel and an invalid model; a countermodel and a
+    model; an UNKNOWN conflict and a refused witness. Each scope's shown labels, notes, statuses, encoded pieces. -/
+def scopes (c : SDCase) : SDM (List (List (String × List String) × List (Bool × Bool × List String) ×
+    List ChoiceResult × List String)) := do
+  let mJ (on : List String) := caseJ [("model", model c on), ("filling", Json.mkObj [])]
+  let cm := caseJ [("model", model c ["c"]), ("filling", parse "{\"unsaid__y_permitted\":[[\"a\"]]}")]
+  let conflict := ("conflict", caseJ [("conflict_certificates", certs4a)])
+  let s1 ← sdScope c A1 (Json.arr #[]) qJ (caseJ [conflict, ("certificate", caseJ [("certificate", ← boundCert c (X1 c) [])]),
+    ("countermodel", mJ ["ve__bit__1__0"]), ("unsat", Json.mkObj []), ("model", mJ ["ve__bit__1__0"])])
+  let s2 ← sdScope c [] (Json.arr #[]) qJ (caseJ [conflict, ("countermodel", cm), ("model", mJ ["ve__bit__1__0", "c"])])
+  let s3 ← sdScope c [] (Json.arr #[]) qJ (caseJ [("countermodel", cm), ("model", mJ ["ve__bit__1__0"])])
+  let s4 ← sdScope c [] (Json.arr #[]) qJ (caseJ [conflict,
+    ("witness", caseJ [("witness", caseJ [("target", "x_required"), ("tuple", toJson ["a"])])]),
+    ("model", mJ ["ve__bit__1__0", "c"])])
+  pure ([s1, s2, s3, s4].map fun s => (s.used, s.info.notes.map (fun n => (n.accepted, n.error.isSome, n.conditionalOn)),
+    [s.info.conflict, s.info.query, s.info.premise], s.encoded.map (·.1)))
+
+def conflictJ (c : SDCase) (A : List (String × Nat)) (more : List (String × Json)) : SDM String :=
+  (·.compress) <$> runSDSup "t" .conflict c (caseJ ([("assumed", toJson A)] ++ more))
+def witnessJ (c : SDCase) (tuple : List String) : SDM String :=
+  conflictJ c none' [("witness", caseJ [("model", model c []), ("filling", Json.mkObj []),
+    ("target", "x_required->x_permitted"), ("tuple", toJson tuple)])]
+def modelJ (c : SDCase) (extra : List (String × Json)) : SDM String :=
+  (·.compress) <$> runSDSup "t" .model c (caseJ [("assumed", toJson A1),
+    ("model", model c ["ve__bit__1__0"] extra), ("filling", Json.mkObj [])])
+def count (r : Except String α × SDCount) : SDCount := r.2
+def text (r : Except String String × SDCount) : String := match r.1 with | .ok a => a | .error e => e
+
+/-! ## The read-once rule (W-14, 14.11)
+
+One admission and one route check per case however many pieces; one conflict check per scope, shared by its conflict
+and certificate pieces; a label replay per accepted piece with proofs; one label image per scope with an accepted
+piece, none for the scope without (its conflict piece UNKNOWN, its witness refused and noted, never a verdict). The
+soft premises are shown by their choice labels (`shownWith_eq`), never `rd-2-`. -/
+
+-- The shown labels of `rs1:1`'s conflict and certificate (`used3`) are those of the trace Python's prover supplied: OPEN
+-- against W-1a's pin `["soft:coherence:must-x,need-not-x"]` (reviews/dri-decisions-20261110-sc-11c-asks3.md item 2, sc-11b).
+#guard count (run env4a doc4a scopes) == { admissions := 1, routes := 1, images := 3, replays := 2, checks := 3 }
+def used3 : List String :=
+  ["readings:rs1@1:1:quiet", "soft:exception:must-x:sufficient:0", "soft:coherence:must-x,need-not-x"]
+#guard (run env4a doc4a scopes).1.toOption == some [
+  ([("conflict", used3), ("certificate", used3), ("countermodel", []), ("model", [])],
+    [(true, false, used3), (true, false, used3), (false, false, []), (false, true, []), (true, false, [])],
+    [.free, .proved, .model], ["model"]),
+  ([("conflict", []), ("countermodel", []), ("model", [])], [(false, false, []), (true, false, []), (false, false, [])],
+    [.unknown, .refuted, .unknown], ["countermodel"]),
+  ([("countermodel", []), ("model", [])], [(true, false, []), (true, false, [])], [.unknown, .refuted, .model],
+    ["countermodel", "model"]),
+  ([("conflict", []), ("model", [])], [(false, false, []), (false, true, []), (false, false, [])],
+    [.unknown, .unknown, .unknown], [])]
+-- `NSDq`'s conflict answer under `[]` rests on its `Fill_T` premise alone, replayed in the middle with the slot
+#guard (run envq docq fun c => (fun s => (s.used, s.info.notes.map (·.conditionalOn))) <$> sdScope c [] (Json.arr #[])
+  .null (caseJ [("conflict", caseJ [("conflict_certificates", certsq)])])).1.toOption ==
+  some ([("conflict", ["unsaid:pair:help_required,help_permitted"])], [["unsaid:pair:help_required,help_permitted"]])
+-- `NSD4` (`x_permitted` denied): a witness, a countermodel of `∀ a. c a` and a model, each encoded, in their order
+#guard (run env4 doc4a fun c => (fun s => (s.encoded.map (·.1), s.info.conflict, s.info.query, s.info.premise)) <$>
+  sdScope c [] (Json.arr #[]) cJ (caseJ [("witness", caseJ [("witness", caseJ [("model", model c []),
+    ("filling", parse "{\"unsaid__y_permitted\":[[\"a\"]]}"), ("target", "x_required->x_permitted"), ("tuple", toJson ["a"])])]),
+    ("countermodel", caseJ [("model", model c []), ("filling", Json.mkObj [])]),
+    ("model", caseJ [("model", model c []), ("filling", Json.mkObj [])])])).1.toOption ==
+  some (["witness", "countermodel", "model"], .conflict, .refuted, .model)
+
+/-! ## `readings-conflict`: one check over the superposed document -/
+
+#guard text (run envq docq fun c => conflictJ c none' [("conflict_certificates", certsq)]) |>.startsWith
+  ("{\"assumed\":[],\"id\":\"t\",\"reading_premises\":[\"readings:rs1@1:1:quiet\"," ++
+    "\"unsaid:pair:help_required,help_permitted\"],\"status\":\"ok\"")
+#guard ans (run env4a doc4a fun c => conflictJ c A1 [("conflict_certificates", certs4a)]) ==
+  ("{\"assumed\":[[\"rs1\",1]],\"id\":\"t\",\"reading_premises\":[\"readings:rs1@1:1:quiet\"],\"status\":\"ok\"," ++
+    "\"targets\":[\"x_permitted\",\"y_permitted\",\"x_required\",\"x_required->x_permitted\"],\"verdict\":\"CONFLICT-FREE\"}",
+    { admissions := 1, routes := 1, checks := 1 })
+-- under `[]` the same certificates leave the strict choice open
+#guard text (run env4a doc4a fun c => conflictJ c none' [("conflict_certificates", certs4a)]) |>.endsWith "\"verdict\":\"UNKNOWN\"}"
+-- refused with today's texts: no candidate, a witness tuple of the wrong length, a model off the slot under `rs1:1`
+#guard text (run env4a doc4a fun c => conflictJ c [("rs1", 5)] []) == "InvalidInput: assumed reading is no candidate"
+#guard text (run env4a doc4a fun c => conflictJ c [("rs1", 0), ("rs1", 1)] []) ==
+  "ReadingsUnsatisfiable: no compatible reading takes rs1@1:0, rs1@1:1"
+#guard text (run env4a doc4a fun c => conflictJ c none' [("witness", caseJ [("model", model c []),
+  ("filling", Json.mkObj []), ("target", "nope"), ("tuple", toJson ["a"])])]) == "InvalidInput: unknown conflict target nope"
+#guard text (run env4a doc4a fun c => conflictJ c A1 [("witness", caseJ [("model", model c []), ("filling", Json.mkObj []),
+  ("target", "x_required"), ("tuple", toJson ["a"])])]) == "InvalidModel(readings background): the model violates a background premise"
+
+/-! ## W-13: 256 choices, a conflict answer in one proof
+
+`NSDbig 8` is superposed (256 checked choices, work 24,832, within `maxSdCheckWork`): its conflict answer is one
+model check over the superposed document, which names the all-strict choice (another target there: UNKNOWN);
+`NSDbig 10` is over the work limit and refused with `runSDKind`'s text, read before any choice's text. -/
+
+/-- `NSDbig 8` admitted and routed once: the conflict answer, another target's, a witness tuple of the wrong length
+    (today's text), and a premise model whose choice conflicts at a tuple (`localFree` false, W-11: no reported model). -/
+def big8 (c : SDCase) : SDM (Nat × List String) := do
+  let a ← witnessJ c ["a"]
+  let b ← conflictJ c none' [("witness", caseJ [("model", model c []), ("filling", Json.mkObj []),
+    ("target", "x_permitted"), ("tuple", toJson ["a"])])]
+  let r ← attempt (witnessJ c ["a", "a"])
+  let m ← (·.compress) <$> runSDSup "t" .model c (caseJ [("assumed", toJson none'), ("model", model c []),
+    ("filling", Json.mkObj [])])
+  let s ← sdScope c [] (Json.arr #[]) .null (caseJ [("witness", caseJ [("witness", caseJ [("model", model c []),
+    ("filling", Json.mkObj []), ("target", "x_required->x_permitted"), ("tuple", toJson ["a"])])])])
+  pure (c.checked.length, [a, b, match r with | .ok x => x | .error e => e, m,
+    toString (s.info.conflict == .conflict, s.encoded.map (·.1), s.info.notes.map (·.shown == some (model c [])))])
+#guard match run env4 (bigJ 8) big8 with
+  | (.ok (n, [a, b, r, m, w]), k) => n == 256 && k == { admissions := 1, routes := 1, images := 1, checks := 3 } &&
+    w == "(true, ([witness], [true]))" &&
+    a == "{\"assumed\":[],\"choice\":[[\"rs0\",0],[\"rs1\",0],[\"rs2\",0],[\"rs3\",0],[\"rs4\",0],[\"rs5\",0],[\"rs6\",0],[\"rs7\",0]]," ++
+      "\"id\":\"t\",\"status\":\"ok\",\"target\":\"x_required->x_permitted\",\"verdict\":\"CONFLICT\"}" &&
+    b.endsWith "\"verdict\":\"UNKNOWN\"}" && r == "InvalidInput: witness tuple has the wrong length or sort" &&
+    m.endsWith "\"first_failing\":null,\"id\":\"t\",\"status\":\"ok\",\"valid\":false}"
+  | _ => false
+#guard match admitS2 env4 (bigJ 10) >>= admitSDOf with
+  | .ok r => (match runSDKind "t" "readings-conflict" r (caseJ []) with | .error e => e | .ok _ => "") ==
+      text (run env4 (bigJ 10) fun _ => pure "")
+  | .error _ => false
+
+/-! ## `readings-certificate`: bound to and checked on `premisesX` (D14) -/
+
+#guard ans (run env4a doc4a fun c => certCase c (X1 c)) ==
+  ("{\"accepted\":true,\"assumed\":[[\"rs1\",1]],\"conflict_free\":true,\"id\":\"t\"," ++
+    "\"reading_premises\":[\"readings:rs1@1:1:quiet\"],\"status\":\"ok\",\"valid\":true}", { admissions := 1, routes := 1, checks := 1 })
+-- without the conflict certificates the same certificate is valid and not accepted
+#guard text (run env4a doc4a fun c => certCase c (X1 c) [] (Json.mkObj [])) |>.startsWith "{\"accepted\":false,\"assumed\":[[\"rs1\",1]],\"conflict_free\":false"
+-- a binding that leaves `supX` out, or adds a premise, is refused (F-SD11's form)
+#guard text (run env4a doc4a fun c => certCase c (slotUnder c.N.D A1)) == "certificate is stale or bound to different inputs"
+#guard text (run env4a doc4a fun c => certCase c (X1 c) [qJ]) == "certificate is stale or bound to different inputs"
+
+/-! ## `readings-model`: `valid` with `localFree`, a soft premise named by its choice label -/
+
+#guard text (run env4a doc4a fun c => modelJ c []) == "{\"assumed\":[[\"rs1\",1]],\"choice\":[[\"rs1\",1]]," ++
+  "\"conclusion_value\":false,\"first_failing\":null,\"id\":\"t\",\"status\":\"ok\",\"valid\":true}"
+#guard text (run env4a doc4a fun c => (·.compress) <$> runSDSup "t" .model c (caseJ [("assumed", toJson A1),
+  ("model", model c []), ("filling", Json.mkObj [])])) |>.endsWith "\"first_failing\":\"readings:rs1:1\",\"id\":\"t\",\"status\":\"ok\",\"valid\":false}"
+-- a soft premise named by its choice label, through one counted label image
+#guard match run env4a doc4a fun c => (·.compress) <$> runSDSup "t" .model c (caseJ [("assumed", toJson A1),
+    ("model", model c ["ve__bit__1__0", "c"]), ("filling", Json.mkObj [])]) with
+  | (.ok a, k) => k.images == 1 &&
+    a.endsWith "\"first_failing\":\"soft:exception:must-x:sufficient:0\",\"id\":\"t\",\"status\":\"ok\",\"valid\":false}"
+  | _ => false
+-- an inadmissible model (a tuple of the wrong sort) is refused by the model decoder
+#guard text (run env4a doc4a fun c => modelJ c [("c", parse "[[\"h\"]]")]) == "dangling or wrong-sort tuple"
+-- an `unsaid__` table in `relations` is refused by the model decoder (F-SD8) 
+#guard text (run env4a doc4a fun c => modelJ c [("unsaid__y_permitted", Json.arr #[])]) ==
+  "fields do not match: expected [soft__excepted__need_not_x, soft__excepted__rd_2_must_x, ve__bit__1__0, c], " ++
+    "got [c, soft__excepted__need_not_x, soft__excepted__rd_2_must_x, unsaid__y_permitted, ve__bit__1__0]"
+-- a query naming a decision predicate of one reading is outside `sharedEnvSD N` (14.3), refused by the decoder
+#guard text (run env4a doc4a fun c => (·.compress) <$> runSDSup "t" .certificate c (caseJ [("assumed", toJson A1),
+  ("conclusion", parse "[\"forall\",\"assistant\",[\"unary\",\"soft__excepted__rd_2_must_x\",[\"var\",0]]]")])) ==
+  "ill-typed or unbound conclusion"
+
+end VE.Readings.SoftSupRunExamples
