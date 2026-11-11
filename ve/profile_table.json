@@ -102,17 +102,15 @@
    "refuses": [],
    "profile": "judgments@0"},
   {"slot": "layer",
-   "requires": ["order@0", "relational-fol@0", "time@0"],
+   "requires": ["relational-fol@0"],
    "refuses":
    [["acts@0", "cardinality@0 with acts@0"],
     ["alternatives@0", "cardinality@0 with alternatives@0"],
     ["closure@0", "cardinality@0 with closure@0"],
     ["data@0", "cardinality@0 with data@0"],
     ["definitions@0", "cardinality@0 with definitions@0"],
+    ["events@0", "cardinality@0 with events@0"],
     ["nary@0", "cardinality@0 with nary@0"],
-    ["norm-defaults@0", "cardinality@0 with norm-defaults@0"],
-    ["norms@0", "cardinality@0 with norms@0"],
-    ["readings@1", "cardinality@0 with readings@1"],
     ["reports@0", "cardinality@0 with reports@0"],
     ["right-clauses@0", "cardinality@0 with right-clauses@0"],
     ["rights@0", "cardinality@0 with rights@0"],
@@ -183,4 +181,11 @@
   "time@0",
   "right-clauses@0",
   "readings@1"],
- "document_layers": ["judgments@0"]}
+ "document_layers": ["judgments@0"],
+ "cardinality_chain_projected": ["order@0", "relational-fol@0", "time@0"],
+ "cardinality_chain":
+ ["cardinality@0",
+  "norm-defaults@0",
+  "norms@0",
+  "readings@1",
+  "relational-fol@0"]}

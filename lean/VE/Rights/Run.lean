@@ -417,14 +417,23 @@ def exhibit (src : RightsSource) (j : Json) : Except String (Option (VE.FiniteMo
     pure (some M)
   | .error _ => pure none
 
-/-- The budget an UNKNOWN on the rights route names (7.3: `UNKNOWN (<budget>)`). No situation is searched for here:
-"situation exhibited: UNKNOWN (budget 10000)" says the request supplied none for Lean to check. -/
+/-- The budget the rights route quotes: beside UNKNOWN, and as unused beside a CONFLICT-FREE answer with no
+situation supplied (`exhibitedText`). No situation is searched for here. -/
 def conflictBudget : Nat := 10000
+
+/-- 7.3's situation part on this route: `yes` for the request's checked situation; with none supplied, no search ran,
+so the line says so and that the budget went unused (rights-cfr-2-budget-1), never an UNKNOWN of a search. -/
+def exhibitedText (supplied : Bool) : String :=
+  if supplied then "yes" else VE.SoftNorms.Wire.notSearchedText conflictBudget
+
+/-- What `<j>` counts (7.3), named after it: WP(T) with no pair evidence (`openCoherence`), the soft route's
+`openAfterClassification` with none discharged (docs/rights/rights-cfr-2-budget-1/REPORT.md). -/
+def weighingGloss : String := "colliding default pairs no ranking resolves"
 
 /-- A rights-conflict answer over certificate packages, from the replay's verdict `free`, its first failing certificate
 and the premises its certificates use. CONFLICT-FREE carries 7.3's status line: the premises it is conditional on with
 their labels, the weighing points open (the colliding default pairs no ranking resolves; no pair evidence is taken
-here) and whether a situation is exhibited, or UNKNOWN with the budget; beside it the same parts as fields. UNKNOWN
+here) and whether a situation is exhibited (`exhibitedText`); beside it the same parts as fields. UNKNOWN
 names the first failing certificate. -/
 def conflictAnswerOf (id : String) (D : RightsDoc) (free : Bool) (failure : Option String) (uses : String → Bool)
     (M : Option (VE.FiniteModel VE.Bridge.Entity)) : Json :=
@@ -434,9 +443,9 @@ def conflictAnswerOf (id : String) (D : RightsDoc) (free : Bool) (failure : Opti
   let conditional := if free then labels.filter uses else []
   let coherence := conditional.filter (fun l => l.startsWith "soft:")
   let limitation := conditional.filter (fun l => l.startsWith "rights:")
-  let exhibited := if M.isSome then "yes" else s!"UNKNOWN (budget {conflictBudget})"
+  let exhibited := exhibitedText M.isSome
   let statusText := if free then
-    s!"CONFLICT-FREE among rules on the same act, conditional on {coherence.length} coherence premises and {limitation.length} limitation premises ({", ".intercalate conditional}); {weighing.length} weighing points open; situation exhibited: {exhibited}"
+    s!"CONFLICT-FREE among rules on the same act, conditional on {coherence.length} coherence premises and {limitation.length} limitation premises ({", ".intercalate conditional}); {weighing.length} weighing points open ({weighingGloss}); situation exhibited: {exhibited}"
     else s!"UNKNOWN: {failure.getD "target unspecified"}, budget 10000"
   VE.Route.Wire.ok id ([("verdict", .str verdict), ("status_text", .str statusText),
     ("targets", toJson ((targets (soften (correlate D))).map (·.1))),
