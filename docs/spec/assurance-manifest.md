@@ -162,17 +162,17 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Cardinality/Document.lean` | 288 | 288 | 1–288 | `4bbc57c938ee…` |
 | `lean/VE/Cardinality/Render.lean` | 148 | 148 | 1–148 | `b648cc5cc71e…` |
 | `lean/VE/Cardinality/Run.lean` | 292 | 292 | 1–292 | `e55af9708515…` |
-| `lean/VE/Cardinality/Wire.lean` | 304 | 304 | 1–304 | `b892dbef05b3…` |
+| `lean/VE/Cardinality/Wire.lean` | 317 | 317 | 1–317 | `a22630ef3792…` |
 | `lean/VE/CertificateWire.lean` | 321 | 181 | 46–216, 231–240 | `45b337e58cd3…` |
 | `lean/VE/Closure/Bridge.lean` | 100 | 58 | 10–67 | `215839deaae1…` |
-| `lean/VE/Commands/Run.lean` | 311 | 311 | 1–311 | `e10c4a393dff…` |
+| `lean/VE/Commands/Run.lean` | 311 | 311 | 1–311 | `2ad2a3ccdb29…` |
 | `lean/VE/Core/Bridge.lean` | 156 | 112 | 11–122 | `778e45637441…` |
 | `lean/VE/Core/Wire.lean` | 209 | 209 | 1–209 | `1d5198a59d4c…` |
 | `lean/VE/Defaults/Route.lean` | 52 | 52 | 1–52 | `b8db22d003e7…` |
 | `lean/VE/Defaults/Wire.lean` | 802 | 802 | 1–802 | `406cb2628cd2…` |
 | `lean/VE/Definitions/Bundle.lean` | 471 | 471 | 1–471 | `fc86d51a7f84…` |
 | `lean/VE/EnglishGrammar/Encode.lean` | 764 | 764 | 1–764 | `c68b8627d4e6…` |
-| `lean/VE/EnglishGrammar/Run.lean` | 759 | 759 | 1–759 | `de124dace4c6…` |
+| `lean/VE/EnglishGrammar/Run.lean` | 800 | 800 | 1–800 | `bcc1f80385cf…` |
 | `lean/VE/Json.lean` | 141 | 141 | 1–141 | `10dcb30ca301…` |
 | `lean/VE/NormDefaults/Admission.lean` | 368 | 368 | 1–368 | `ed661fb45dc3…` |
 | `lean/VE/NormDefaults/Layered.lean` | 484 | 484 | 1–484 | `0a96a2de151e…` |
@@ -197,9 +197,9 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Readings/SupWire.lean` | 408 | 408 | 1–408 | `e78a7ee7db7d…` |
 | `lean/VE/Readings/UnspecifiedWire.lean` | 798 | 798 | 1–798 | `52b99f25af05…` |
 | `lean/VE/Readings/VerdictsWire.lean` | 1847 | 1847 | 1–1847 | `fedf217a0f31…` |
-| `lean/VE/Readings/Wire.lean` | 1059 | 1059 | 1–1059 | `a1f8444b70c7…` |
+| `lean/VE/Readings/Wire.lean` | 1059 | 1059 | 1–1059 | `59f17b191a3b…` |
 | `lean/VE/Rights/Admission.lean` | 471 | 471 | 1–471 | `1b43543b7e66…` |
-| `lean/VE/Rights/Wire.lean` | 697 | 697 | 1–697 | `5be42b913732…` |
+| `lean/VE/Rights/Wire.lean` | 697 | 697 | 1–697 | `fab8db83fb14…` |
 | `lean/VE/Risk/Admission.lean` | 128 | 128 | 1–128 | `f3927135556b…` |
 | `lean/VE/Risk/Audit.lean` | 190 | 190 | 1–190 | `62c518fee5d3…` |
 | `lean/VE/Risk/Record.lean` | 1267 | 1267 | 1–1267 | `c11e28299c40…` |
@@ -213,10 +213,10 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Route/Wire.lean` | 727 | 727 | 1–727 | `4829a9c7b8ee…` |
 | `lean/VE/Scope/Wire.lean` | 174 | 174 | 1–174 | `cea31d4f1f9e…` |
 | `lean/VE/Senses/Decode.lean` | 93 | 93 | 1–93 | `5f0f5265fe8d…` |
-| `lean/VE/Senses/Run.lean` | 476 | 476 | 1–476 | `faad7417eafe…` |
-| `lean/VE/Service/Document.lean` | 2893 | 2893 | 1–2893 | `3b3862951a34…` |
-| `lean/VE/Service/Family.lean` | 814 | 814 | 1–814 | `6c3ab030f934…` |
-| `lean/VE/Service/FamilyBundle.lean` | 500 | 500 | 1–500 | `75698a329690…` |
+| `lean/VE/Senses/Run.lean` | 534 | 534 | 1–534 | `9ab843d3b1df…` |
+| `lean/VE/Service/Document.lean` | 3010 | 3010 | 1–3010 | `784c021ffc3c…` |
+| `lean/VE/Service/Family.lean` | 819 | 819 | 1–819 | `d8a7154234ce…` |
+| `lean/VE/Service/FamilyBundle.lean` | 501 | 501 | 1–501 | `6e377c82470e…` |
 | `lean/VE/Service/FamilyNorms.lean` | 393 | 393 | 1–393 | `418076df3e0a…` |
 | `lean/VE/Service/Graph.lean` | 256 | 256 | 1–256 | `e27c762fff7a…` |
 | `lean/VE/Service/Readings.lean` | 215 | 215 | 1–215 | `357a25dda81b…` |
@@ -225,15 +225,17 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/SoftNorms/Phases.lean` | 397 | 397 | 1–397 | `af73ebb4abf9…` |
 | `lean/VE/SoftNorms/Wire.lean` | 525 | 525 | 1–525 | `308401c5e256…` |
 | `lean/VE/SpeechActs/Source/Admission/Run.lean` | 632 | 632 | 1–632 | `776cebdcc648…` |
-| `lean/VE/SpeechActs/Source/Run.lean` | 934 | 934 | 1–934 | `95fb8af85ded…` |
-| `lean/VE/SpeechActs/Wire.lean` | 1322 | 1322 | 1–1322 | `84a51fbbe86c…` |
+| `lean/VE/SpeechActs/Source/Run.lean` | 1021 | 1021 | 1–1021 | `523d463ef741…` |
+| `lean/VE/SpeechActs/Wire.lean` | 1348 | 1348 | 1–1348 | `cfd11f80f5d4…` |
 | `lean/VE/Time/Document.lean` | 613 | 613 | 1–613 | `4407e998d007…` |
 | `lean/VE/Time/Wire.lean` | 856 | 856 | 1–856 | `147a419f9ee3…` |
 | `lean/VE/Words/Run.lean` | 161 | 161 | 1–161 | `0678825160c8…` |
 | `lean/VE/Defaults/ZoneWire.lean` | 463 | 463 | 1–463 | `1b2585cf4016…` |
 | `lean/VE/Events/Wire.lean` | 281 | 281 | 1–281 | `29d30fe8c593…` |
-| `lean/VE/Events/Chain.lean` | 204 | 204 | 1–204 | `80d03aefca6e…` |
-| **total** | | **44,107** | | |
+| `lean/VE/Events/Chain.lean` | 206 | 206 | 1–206 | `766ad4455823…` |
+| `lean/VE/RightClauses/Wire.lean` | 230 | 230 | 1–230 | `75913d7b7704…` |
+| `lean/VE/EnglishGrammar/Norm/Run.lean` | 303 | 303 | 1–303 | `3ccffd316421…` |
+| **total** | | **44,990** | | |
 <!-- END GENERATED -->
 
 Outside the decoder count: `lean/VE/Order/Surface.lean` (order text parser, `lean:order-surface-parser`), the runner
@@ -332,6 +334,7 @@ the manifest `notes`, not changed:
 | `senses.read` | surface | lean-only → lean | experimental / experimental | none | `ve_senses_route (default)` | `VE.Senses.senses_resolved_one_reading`<br>`VE.Senses.senses_unit_sound`<br>`VE.Senses.senses_candidate_sound`<br>`VE.Senses.candidates_complete`<br>`VE.Senses.mixed_exact`<br>`VE.Senses.readDocument_source`<br>`VE.Senses.readDocument_both`<br>`VE.Senses.defaults_read_as_lines`<br>`VE.Senses.document_unit_sound`<br>`VE.Senses.document_line_sound`<br>`VE.Senses.documentRequest_policy`<br>`VE.Senses.documentRequest_source` | none | `lean:kernel`<br>`lean:compiler`<br>`lean:decoders`<br>`lean:runner-glue`<br>`python:wire`<br>`python:backend-adapter` |
 | `senses.project` | surface | lean-only → lean | experimental / experimental | none | `ve_service senses.project` | `VE.Senses.project_valid`<br>`VE.Senses.project_extends`<br>`ResponseShape.Encoders.SensesProject.projectCaseReported_fits` | none | `lean:kernel`<br>`lean:compiler`<br>`lean:decoders`<br>`lean:runner-glue`<br>`python:wire`<br>`python:backend-adapter` |
 | `question.read` | surface | lean-only → lean | experimental / experimental | none | `ve_service english.question` | `VE.Question.got_none`<br>`VE.Question.question_reading_unique`<br>`VE.Question.asked_reads_back`<br>`VE.Question.readQuestion_ambiguous`<br>`VE.Question.readQuestion_meanings`<br>`VE.Question.readQuestion_indefinite`<br>`VE.Question.readQuestion_none`<br>`VE.Question.Run.statusCodes_classed`<br>`VE.Service.runMode_englishQuestion`<br>`VE.Question.readQuestion_one`<br>`VE.Question.readQuestion_complete`<br>`VE.Question.caseThat_reads`<br>`VE.Question.caseThat_candidates`<br>`VE.Question.fronted_text`<br>`VE.Question.mapSpan_valid`<br>`VE.Question.mapSpan_codepoints_valid`<br>`VE.Question.rephrasings_read`<br>`VE.Question.ask_one`<br>`VE.Question.ask_moved`<br>`VE.Question.ask_rephrasings`<br>`VE.Question.askable_iff`<br>`VE.Question.frames_leads`<br>`VE.Question.askedGate_sound`<br>`VE.Question.Run.oneFields_gated` | none | `lean:kernel`<br>`lean:compiler`<br>`lean:runner-glue`<br>`python:wire`<br>`python:backend-adapter` |
+| `command.read` | surface | lean-only → lean | experimental / experimental | none | `ve_service english.command` | `VE.Service.runMode_englishCommand`<br>`VE.Commands.caseReported_eq`<br>`VE.Commands.readInstruction_command`<br>`VE.Commands.proofTask_bound`<br>`VE.Commands.proofTask_addressed`<br>`VE.Commands.readInstruction_refused_classed`<br>`VE.Commands.readInstruction_typed`<br>`VE.SpeechActs.Source.commandFence_needs_context` | none | `lean:kernel`<br>`lean:compiler`<br>`lean:runner-glue`<br>`python:wire`<br>`python:backend-adapter` |
 | `question.answer` | surface | lean-only → lean | experimental / experimental | none | `ve_service ask` | `VE.Service.runMode_ask`<br>`VE.Ask.lead_sound`<br>`VE.Ask.reason_sound`<br>`VE.Ask.reason_exact`<br>`VE.Ask.split_counter`<br>`VE.Ask.splitOk_sound`<br>`VE.Ask.lead_agrees`<br>`VE.Ask.all_yes_iff_fold`<br>`VE.Ask.sourcesU_length`<br>`VE.Ask.sourcesU_zip_premisesU`<br>`VE.Ask.usedPositions_sufficient`<br>`VE.Ask.mem_cited`<br>`VE.Ask.relevantSets_sound`<br>`VE.Ask.groups_cover`<br>`VE.Ask.group_rows`<br>`VE.Ask.group_claim`<br>`VE.Ask.ask_wire_sound`<br>`VE.Ask.plain_ask_wire_sound`<br>`VE.Ask.plain_lead_sound`<br>`VE.Ask.plain_never_split`<br>`VE.Ask.zero_ask_wire_sound`<br>`VE.Ask.render_quotes_bytes`<br>`VE.Ask.render_text_matches_metadata`<br>`VE.Ask.render_asked`<br>`VE.Ask.render_cites_exact`<br>`VE.Ask.render_lead`<br>`VE.Ask.render_covers_rows`<br>`VE.Ask.render_marks_unchecked`<br>`VE.Ask.render_model_names_choice`<br>`VE.Ask.render_unused_once`<br>`VE.Ask.answerFor_bound`<br>`VE.Ask.answerFor_gated`<br>`VE.Ask.answerFor_cites`<br>`VE.Ask.checkedCites_spec` | none | `lean:kernel`<br>`lean:compiler`<br>`lean:runner-glue`<br>`python:wire`<br>`python:backend-adapter` |
 | `premise-status` | combination | python → lean | experimental / experimental | `ve.vacuity:premise_status` | none | none | none | `python:implementation` |
 | `compare` | combination | python → python | experimental / experimental | `ve.equivalence:compare` | none | none | none | `python:implementation`<br>`python:equivalence.compare` |
@@ -339,6 +342,7 @@ the manifest `notes`, not changed:
 | `document.check` | combination | python → lean | experimental / experimental | `ve.document.report:check_document` | none | none | none | `python:implementation`<br>`python:surface`<br>`python:record-identity` |
 | `wire.diagnose` | leaf | lean-only → lean | experimental / experimental | none | `ve_service diagnose soft-elaborate,admission,norms-elaborate,norms-conflict,norms-certificate,norm-defaults-elaborate,norm-defaults-conflict,norm-defaults-certificate` | none | none | `lean:kernel`<br>`lean:compiler`<br>`lean:runner-glue` |
 | `check` | combination | python → lean | experimental / experimental | `ve.check:check` | none | none | none | `python:implementation`<br>`python:display` |
+| `norm-defaults.route` | leaf | lean-only → lean | experimental / experimental | none | `ve_service norm-defaults norm-defaults-elaborate`<br>`ve_service norm-defaults norm-defaults-conflict`<br>`ve_service norm-defaults norm-defaults-status`<br>`ve_service norm-defaults norm-defaults-gaps`<br>`ve_service norm-defaults norm-defaults-report`<br>`ve_service norm-defaults norm-defaults-certificate`<br>`ve_service norm-defaults defaults-elaborate`<br>`ve_service norm-defaults defaults-coherence`<br>`ve_service norm-defaults defaults-certificate`<br>`ve_service norm-defaults defaults-model`<br>`ve_service norm-defaults defaults-zone`<br>`ve_service norm-defaults acts-elaborate` | none | none | `lean:kernel`<br>`lean:compiler`<br>`lean:decoders`<br>`lean:runner-glue` |
 <!-- END GENERATED -->
 
 ## 8. Not in this change

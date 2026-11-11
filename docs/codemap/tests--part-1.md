@@ -40,6 +40,7 @@
 - `tests/test_acts_profile.py` — act-phrases AP-1, the profile part (ap-1b): `acts@0` documents loaded, checked and refused by Lean.
 - `tests/test_acts_readings_answer.py` — ap-4: the `act-readings` relay binds Lean's answer to its request and claims no more (act-phrases 7, AR1 to AR5; DRI ruling R8; spec SR5).
 - `tests/test_acts_readings_lean.py` — ap-4: the `act-readings` mode through the service and `ve acts readings` (act-phrases 7, 11.4; plan AP-4 Tests).
+- `tests/test_acts_specialise_layer.py` — ap-5: `VE.Acts.Specialise` sits in the layer of `VE.Acts.Readings` (tools/layer_policy.py, task deliverable 3).
 - `tests/test_acts_tree_mutants.py` — Mutants of the act trees' and the table's data types each fail a fixture (ap-3 review F1).
 - `tests/test_acts_vocab_mutants.py` — Seeded mutants of the act grammar's vocabulary check and limits each fail a fixture (ap-2 review F1).
 - `tests/test_admission_evidence.py` — The saved scale admission evidence holds whole-request CPU only; the stage profiler was withdrawn (reviews/dri-decisions-20261029-scale-admission-profile.md it…
@@ -78,6 +79,7 @@
 - `tests/test_assist_split.py` — AR-9 split the assist recovery and session modules; these pin what the split must keep.
 - `tests/test_assurance_manifest.py` — The operation assurance manifest is bound to the code it describes.
 - `tests/test_attacks.py` — (no module docstring)
+- `tests/test_attitudes_at1_report.py` — at-1's report (docs/attitudes/at-1/REPORT.md): its trust shortfalls and sizes are recomputed from saved evidence.
 - `tests/test_authoring.py` — (no module docstring)
 - `tests/test_b11b_report.py` — The 11b report's measured numbers are generated from its gate artifacts.
 - `tests/test_b14c.py` — Batch 14c: n-ary definitions have one Lean owner on the core family.
@@ -86,6 +88,3 @@
 - `tests/test_b16a_evidence.py` — Batch 16a report checks read committed snapshots, never moving Git refs.
 - `tests/test_b16b_evidence.py` — Batch 16b's report numbers come from its saved evidence (docs/lean-first/b16b/evidence/), never from live git: the generated block of DELTA.md is regenerated, …
 - `tests/test_b16c_evidence.py` — The 16c progress report is a view of saved evidence, independent of live git HEAD.
-- `tests/test_b16d_document.py` — Batch 16d: norm-defaults and fenced documents are Lean document answers.
-- `tests/test_b16d_evidence.py` — Check batch 16d's committed measurements without consulting live git state.
-- `tests/test_b16d_norm_roles.py` — Batch 16d review B1 and B2: which norm units make the norm-defaults document.
