@@ -269,6 +269,7 @@ import VE.Acts.Linearize
 import VE.Acts.Table
 import VE.Acts.TableExamples
 import VE.Acts.Elaborate
+import VE.Acts.ElaborateProofs
 import VE.Acts.ElaborateExamples
 import VE.Acts.Wire
 import VE.Acts.Decode
