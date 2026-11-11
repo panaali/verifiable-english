@@ -446,7 +446,8 @@ def corpus():
             "scope": [*recorded("scope"), *ADVERSARIAL],
             "act-readings": [*recorded("act-readings"), *ADVERSARIAL],
             "english.command": [*command_cases(), *ADVERSARIAL],
-            "clauses-elaborate": [*clauses_elaborate_cases(), *ADVERSARIAL]}
+            "clauses-elaborate": [*clauses_elaborate_cases(), *ADVERSARIAL],
+            "english.statement": [*recorded("english.statement"), *ADVERSARIAL]}
 
 
 def command_cases():
