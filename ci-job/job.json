@@ -1,0 +1,19 @@
+{
+ "job": "cmp-s3a-cfr-3.s1of4-e16063ed",
+ "head": "eb07a663f7144336785675c58bcd2f1a078c6f6e",
+ "argv": [
+  "cmp-s3a-cfr-3.s1of4-e16063ed",
+  "eb07a663f7144336785675c58bcd2f1a078c6f6e",
+  "0d663e3c50e55eaa5ca949bc6aa5ad131489cd99",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-1578a2ae919d.tar.zst",
+  "403734bd9e2dde309eb747f64cc0c1b12a55ad065c0199eaf27243553908c3f7",
+  "--max-mutants",
+  "1000",
+  "--budget",
+  "6300",
+  "--shard",
+  "1/4",
+  "--jobs",
+  "4"
+ ]
+}
