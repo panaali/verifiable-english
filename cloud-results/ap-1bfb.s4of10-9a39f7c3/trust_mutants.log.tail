@@ -1,0 +1,30 @@
+trust_mutants: 7 definitions, 476 mutants (48 to run), 4 jobs, base 5b7293287f6e
+UNKNOWN lean/VE/WireContract/Hooks/Acts.lean:89 VE.WireContract.Hooks.Acts.ruleTyping (G[V], trusted) lit-plus: 0 -> 1 (lean/VE/WireContract/Hooks/Acts.lean:87: Missing cases:)
+SURVIVOR lean/VE/WireContract/Tables/Acts.lean:7 VE.WireContract.Tables.Acts.table (G[V], trusted) bool-flip: true -> false
+SURVIVOR lean/VE/WireContract/Tables/Acts.lean:7 VE.WireContract.Tables.Acts.table (G[V], trusted) lit-minus: 122 -> 121
+SURVIVOR lean/VE/WireContract/Tables/Acts.lean:7 VE.WireContract.Tables.Acts.table (G[V], trusted) bool-flip: true -> false
+SURVIVOR lean/VE/WireContract/Tables/Acts.lean:7 VE.WireContract.Tables.Acts.table (G[V], trusted) bool-flip: false -> true
+SURVIVOR lean/VE/WireContract/Tables/Acts.lean:7 VE.WireContract.Tables.Acts.table (G[V], trusted) lit-minus: 64 -> 63
+SURVIVOR lean/VE/WireContract/Tables/Acts.lean:7 VE.WireContract.Tables.Acts.table (G[V], trusted) lit-plus: 0 -> 1
+SURVIVOR lean/VE/WireContract/Tables/Acts.lean:7 VE.WireContract.Tables.Acts.table (G[V], trusted) bool-flip: true -> false
+SURVIVOR lean/VE/WireContract/Tables/Acts.lean:7 VE.WireContract.Tables.Acts.table (G[V], trusted) bool-flip: true -> false
+SURVIVOR lean/VE/WireContract/Tables/Acts.lean:7 VE.WireContract.Tables.Acts.table (G[V], trusted) list-empty: [.arg "message" .raw] -> []
+SURVIVOR lean/VE/WireContract/Tables/Acts.lean:7 VE.WireContract.Tables.Acts.table (G[V], trusted) list-empty: [.lit "InvalidInput: reserved name ", .arg "value" .raw] -> []
+SURVIVOR lean/VE/WireContract/Tables/Acts.lean:7 VE.WireContract.Tables.Acts.table (G[V], trusted) list-empty: [.lit "InvalidInput: rule predicate and precedence edges must be strings"] -> []
+SURVIVOR lean/VE/WireContract/Tables/Acts.lean:7 VE.WireContract.Tables.Acts.table (G[V], trusted) list-empty: [.arg "message" .raw] -> []
+SURVIVOR lean/VE/WireContract/Tables/Acts.lean:7 VE.WireContract.Tables.Acts.table (G[V], trusted) list-empty: [.lit "PrecedenceAcrossPredicates: rule ", .arg "rule" .raw, .lit " on ", .arg "predicate" .raw, ... -> []
+SURVIVOR lean/VE/WireContract/Tables/Acts.lean:7 VE.WireContract.Tables.Acts.table (G[V], trusted) list-drop-last: [.lit "UnsupportedProfile: norms@0 is required"] -> ([.lit "UnsupportedProfile: norms@0 is required"].dropLast)
+SURVIVOR lean/VE/WireContract/Tables/Acts.lean:7 VE.WireContract.Tables.Acts.table (G[V], trusted) list-drop-last: [.lit "InvalidInput: unless and over must be arrays"] -> ([.lit "InvalidInput: unless and over must be arrays"].dropLast)
+SURVIVOR lean/VE/WireContract/Tables/Acts.lean:7 VE.WireContract.Tables.Acts.table (G[V], trusted) list-drop-last: [{ id := "3.8a", code := "NORMS_RESOURCE_LIMIT", cls := "ResourceLimit", text := [.arg "message" ... -> ([{ id := "3.8a", code := "NORMS_RESOURCE_LIMIT", cls := "ResourceLimit", text := [.arg "message"...
+SURVIVOR lean/VE/WireContract/Tables/Acts.lean:7 VE.WireContract.Tables.Acts.table (G[V], trusted) list-drop-last: [.tok "norms"] -> ([.tok "norms"].dropLast)
+SURVIVOR lean/VE/WireContract/Tables/Acts.lean:7 VE.WireContract.Tables.Acts.table (G[V], trusted) list-drop-last: [.arg "message" .raw] -> ([.arg "message" .raw].dropLast)
+SURVIVOR lean/VE/WireContract/Tables/Acts.lean:7 VE.WireContract.Tables.Acts.table (G[V], trusted) list-drop-middle: .check { id := "3.2", loc := ⟨.item 0, [.tok "norm"]⟩, guard := [], kind := .hasType [.atom .obje... -> 
+SURVIVOR lean/VE/WireContract/Tables/Acts.lean:7 VE.WireContract.Tables.Acts.table (G[V], trusted) list-drop-first: [.lit "UnsupportedProfile: norms@0 is required"] -> ([.lit "UnsupportedProfile: norms@0 is required"].drop 1)
+SURVIVOR lean/VE/WireContract/Tables/Acts.lean:7 VE.WireContract.Tables.Acts.table (G[V], trusted) list-drop-middle: .check { id := "4.6", loc := ⟨.item 0, [.tok "norm", .tok "unless"]⟩, guard := [], kind := .maxIt... -> 
+SURVIVOR lean/VE/WireContract/Tables/Acts.lean:7 VE.WireContract.Tables.Acts.table (G[V], trusted) list-drop-middle: .arg "predicate" .raw, -> 
+SURVIVOR lean/VE/WireContract/Tables/Acts.lean:7 VE.WireContract.Tables.Acts.table (G[V], trusted) list-drop-middle: .check { id := "6.2", loc := ⟨.root, [.tok "norms"]⟩, guard := [], kind := .hook "precedence_dept... -> 
+SURVIVOR lean/VE/WireContract/Tables/Acts.lean:7 VE.WireContract.Tables.Acts.table (G[V], trusted) list-drop-first: [.tok "norms", .star] -> ([.tok "norms", .star].drop 1)
+SURVIVOR lean/VE/WireContract/Tables/Acts.lean:7 VE.WireContract.Tables.Acts.table (G[V], trusted) list-drop-first: [.lit "ResourceLimit: precedence depth"] -> ([.lit "ResourceLimit: precedence depth"].drop 1)
+trust_mutants: 21 KILLED, 25 SURVIVOR, 1 UNKNOWN, 1 INVALID, 0 ALLOWED, 0 NOT RUN, 428 OTHER SHARD in 186 s
+trust_mutants: G[V], trusted: 21 KILLED, 25 SURVIVOR, 1 UNKNOWN, 1 INVALID, 428 OTHER SHARD
+trust_mutants: steps: wall plan 12.8 s, scratch 4.8 s, control_build 0.2 s, probe_install 1.4 s, mutants 163 s, cleanup 3.8 s; lake control_build 0.1 s (1), probe_install 1.4 s (1), control_probes 9.7 s (3), mutant_builds 55.8 s (48), mutant_checks 393.2 s (49), stage_controls 27.9 s (3), mutant_probes 125.6 s (21)
