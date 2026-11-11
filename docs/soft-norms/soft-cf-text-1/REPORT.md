@@ -104,7 +104,17 @@ The ties-pass row is in `evidence/follow-ups-row.md` and appended to FOLLOW-UPS.
 While iterating: `uv run pytest tests/test_soft_norms_lean.py -k "no_search or weighing_point_count or
 delta_conflict_free or alpha_rank"` 5 passed; tests/test_rights_report_parts.py 71 passed;
 tests/test_assurance_manifest.py 152 passed. `regen_generated.py --write` once (only code-map files changed, committed).
-Final selected run: see below.
+Selected run on committed cfeb21de6 (`MAC_PYTEST_NO_DEFER=1 mac-pytest.sh --select -- --base b81b82ef9 --run`; it ran on
+the VM because ve-mac-1 did not resolve; 8545 s): 525 units, 523 exit 0, 2 failed, both fixed in the next commit.
+- `tests/test_wire_gate_corpus.py::test_gate_corpus_holds_every_test_input_of_every_unit`: the new tests elaborate a
+  soft source no corpus source builds (the constructed ⊥-guarded case). `python -m conformance.wire_contract_gate
+  --record-test-inputs` recorded it into conformance/wire-contract/soft-norms@0-test-inputs.json, adding one row
+  and changing nothing else (see Notes for the stored gate report).
+- `tests/test_consolidation_tools.py::test_committed_ledger_names_real_declarations`: the plan's measured step 8b
+  figure (untied lines of the units' `Wire.lean` files) is 3791 now, +6 for `notSearchedText`. Updated in
+  docs/CONSOLIDATION-PLAN.md :703, as ap-parse-index did; score unchanged (42.1).
+Then tests/test_wire_gate_corpus.py and tests/test_wire_contract_faults.py: 192 passed; the ledger test: 1 passed.
+The rerun of the two failed IDs on the final commit is recorded below.
 
 ## Notes for the DRI
 
@@ -114,6 +124,13 @@ Final selected run: see below.
 - The soft-conflict answer has no `weighing_points` field, unlike rights-conflict. The open WP(T) list comes from a
   `soft-pairs` request. Adding the field would change the answer's schema, and the task keeps every JSON field byte
   for byte, so this item does not add it.
+- `conformance.wire_contract_gate --record-test-inputs` also rewrote the stored gate report
+  (conformance/wire-contract/soft-norms@0-gate.json) with 290 mismatches, such as `0:r0-guard-nodes`: Python's
+  inherited text 'AST exceeds depth or node budget' against legacy 'ResourceLimit: AST exceeds depth or node budget'.
+  These are in cases this item does not touch. `python -m conformance.wire_contract_gate --check` on the committed
+  inputs, before this item's input was added, also prints "wire gate report differs" on this VM. So this item
+  commits only the recorded input and keeps the stored report, which passes `gate_failures` and its tests
+  (tests/test_wire_contract_faults.py). Why a fresh report does not reproduce the stored one is not settled here.
 - `regen_generated.py --write` also rewrote code-map files for areas this item does not touch (acts, presupposition).
   `main`'s code map was stale; it is advisory and is regenerated on merge.
 
