@@ -26,7 +26,7 @@ KEPT = {
     ("ve/english.py", "render_english.check_rendering"): "the statement layer's own rendering check",
     ("ve/english.py", "_natural_derivation"): "`require_correspondence`",
     ("ve/norm_english.py", "_parse_guard"): "kept for `norm_english.py`",
-    ("ve/norm_english.py", "_parse_w1"): "kept for `norm_english.py` (parse_english's W1 body)",
+    ("ve/norm_english.py", "_parse_w1"): "kept for `norm_english.py`",
     ("ve/norm_defaults_english.py", "parse_legend_sentence"): "`norm_defaults_english.py`",
     ("ve/readings_s2_english.py", "canonical_sentence"): "`ve/readings_s2_english.py` `canonical_sentence`",
 }
