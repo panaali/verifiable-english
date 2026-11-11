@@ -2535,8 +2535,8 @@
   },
   {
    "class": "V",
-   "lines": 19,
-   "reason": "et-5b review F1: V +141 in total (SourceWords.lean +72; Document.lean +60: the earlier +50 and Env.eventsView, Checked.eventsView and encode's events_view arm, the view the mode read in its answer; ResponseShape/Schemas/Document.lean +9: the events_view shape), K +0, S +0; +19 over the earlier et-5b allowances of 122",
+   "lines": 21,
+   "reason": "et-5b review F1: V +143 in total (SourceWords.lean +72; Document.lean +60: the earlier +50 and Env.eventsView, Checked.eventsView and encode's events_view arm, the view the mode read in its answer; ResponseShape/Schemas/Document.lean +11: the events_view shape), K +0, S +0; +21 over the earlier et-5b allowances of 122",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), et-5b, 2026-11-11",
    "commit": "0295df174375667a79dec7c1dd214f9128fe4909"
   }
