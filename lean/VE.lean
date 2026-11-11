@@ -17,6 +17,8 @@ import VE.Readings.SoftSeparateExamples
 import VE.Readings.SoftSup
 import VE.Readings.SoftSupExamples
 import VE.Readings.SoftSupLabels
+import VE.Readings.SoftSupRun
+import VE.Readings.SoftSupRunExamples
 import VE.Readings.SoftSupWire
 import VE.Readings.SoftSupWireExamples
 import VE.Closure.OrderChecks
@@ -287,6 +289,7 @@ import VE.Acts.SpecialiseExamples
 import VE.Acts.Sources
 import VE.Acts.Situation
 import VE.Acts.MeaningExamples
+import VE.Acts.ParseIndexExamples
 import VE.Acts.ReadingsExamples
 import VE.Acts.RunExamples
 import VE.Acts.RenderExamples
