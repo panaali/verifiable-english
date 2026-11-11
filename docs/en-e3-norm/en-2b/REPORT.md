@@ -33,10 +33,15 @@ gate refuses all 1192 mutants of the route by schema alone. **en-e3bb must add a
 `tools/binding_census.py --answers` re-asked the recorded answers: english.statement's 7, plus 13 English answers
 whose `actions_version` main had left at 45 (now 47).
 
-**Pre-review [relay] at `d15500d98`.** The gate stopped at the service handshake: the `ve_service` it ran
-listed the modes without `english.statement`, so it was a stale binary, and no route was reached. After
-`lake build ve_service` (956 jobs, up to date) the handshake passes, and `tools/relay_mutation_gate.py` exits 0 with
-49 routes, 154559 mutants and 0 failures (english.statement: 7 fixtures, all 1192 mutants refused). No code changed.
+**Pre-review [relay] at `d15500d98` and again at `d702d598d`.** Both times the gate stopped at the service
+handshake: the `ve_service` it started stated other modes than `envelope.json` pins, and no route was reached.
+Neither failure comes from the code. The worktree's `ve_service` (built 2026-11-10 18:18, sha256 `63c8f0d5…`,
+pinned in `lean/checkers.lock`) is the one `lake build --no-build ve_service` reports as current (956 jobs,
+up to date), it states all 44 modes with `english.statement` last, and with it `tools/relay_mutation_gate.py`
+(run as review-ready runs it) exits 0: 49 routes, 154559 mutants, 0 failures (english.statement: 7 fixtures,
+all 1192 mutants refused). The earlier note's "rebuild" was a no-op build of this same binary, so the pre-review
+runs met a different file at that path. Something outside the branch must have swapped the build in and out
+again. No code changed for either failure.
 
 ## Seeded bugs (each planted alone, shown failing, restored)
 
