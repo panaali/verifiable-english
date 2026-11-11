@@ -23,32 +23,58 @@
     ]
   },
   "$defs": {
+    "alternative": {
+      "$comment": "VE.Commands.Run.altIndexes: one alternative of many (StepOutcome.many): its shape and the positions of its readings in the answer's readings, one per step of a sequence.",
+      "additionalProperties": false,
+      "properties": {
+        "readings": {"items": {"$ref": "common.json#/$defs/nat"}, "type": "array"},
+        "shape": {"enum": ["core", "preposed", "after", "seq", "form", "purpose"]}
+      },
+      "required": ["shape", "readings"],
+      "type": "object"
+    },
     "answer": {
       "anyOf": [
         {
-          "$comment": "readInstruction's one reading.",
+          "$comment": "readInstruction's one reading, and whether it is a Then step (after_previous).",
           "additionalProperties": false,
           "properties": {
+            "after_previous": {"type": "boolean"},
             "legend": {"items": {"$ref": "common.json#/$defs/text"}, "minItems": 1, "type": "array"},
             "outcome": {"const": "one"},
             "reading": {"$ref": "#/$defs/reading"},
             "unit": {"type": "string", "x-equals": "/unit"},
             "wording": {"type": "string", "x-equals": "/wording"}
           },
-          "required": ["unit", "wording", "legend", "outcome", "reading"],
+          "required": ["unit", "wording", "legend", "outcome", "reading", "after_previous"],
           "type": "object"
         },
         {
-          "$comment": "readInstruction's readings (2 to readingsBound).",
+          "$comment": "readInstruction's stated sequence: one reading per step, in order, and speech-acts' paraphraseSteps.",
           "additionalProperties": false,
           "properties": {
+            "legend": {"items": {"$ref": "common.json#/$defs/text"}, "minItems": 1, "type": "array"},
+            "outcome": {"const": "steps"},
+            "paraphrase": {"$ref": "common.json#/$defs/text"},
+            "readings": {"items": {"$ref": "#/$defs/reading"}, "type": "array"},
+            "unit": {"type": "string", "x-equals": "/unit"},
+            "wording": {"type": "string", "x-equals": "/wording"}
+          },
+          "required": ["unit", "wording", "legend", "outcome", "readings", "paraphrase"],
+          "type": "object"
+        },
+        {
+          "$comment": "readInstruction's competing alternatives (2 to readingsBound): every alternative's readings, in order, and each alternative's shape and reading positions.",
+          "additionalProperties": false,
+          "properties": {
+            "alternatives": {"items": {"$ref": "#/$defs/alternative"}, "type": "array"},
             "legend": {"items": {"$ref": "common.json#/$defs/text"}, "minItems": 1, "type": "array"},
             "outcome": {"const": "many"},
             "readings": {"items": {"$ref": "#/$defs/reading"}, "type": "array"},
             "unit": {"type": "string", "x-equals": "/unit"},
             "wording": {"type": "string", "x-equals": "/wording"}
           },
-          "required": ["unit", "wording", "legend", "outcome", "readings"],
+          "required": ["unit", "wording", "legend", "outcome", "readings", "alternatives"],
           "type": "object"
         },
         {
@@ -78,11 +104,25 @@
           },
           "required": ["unit", "wording", "legend", "outcome", "text"],
           "type": "object"
+        },
+        {
+          "$comment": "A reading with a purpose clause (CI-7b; no reader writes it yet).",
+          "additionalProperties": false,
+          "properties": {
+            "legend": {"items": {"$ref": "common.json#/$defs/text"}, "minItems": 1, "type": "array"},
+            "outcome": {"const": "mixed"},
+            "purpose": {"$ref": "common.json#/$defs/text"},
+            "reading": {"$ref": "#/$defs/reading"},
+            "unit": {"type": "string", "x-equals": "/unit"},
+            "wording": {"type": "string", "x-equals": "/wording"}
+          },
+          "required": ["unit", "wording", "legend", "outcome", "reading", "purpose"],
+          "type": "object"
         }
       ]
     },
     "fill": {
-      "$comment": "VE.Commands.Run.readingJson: a fill's constant and words, and their span in code points of the wording (null for the proof task's query).",
+      "$comment": "VE.Commands.Run.readingJson: a fill's constant and words, and their span in code points of the wording (null for the proof task's query, and when the reading's start in the wording is not known).",
       "additionalProperties": false,
       "properties": {
         "constant": {"$ref": "common.json#/$defs/text"},

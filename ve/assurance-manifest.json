@@ -66,7 +66,7 @@
     "ve/readings_verdicts/binding.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 45684,
+    "total_lines": 46215,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -704,12 +704,12 @@
       },
       {
         "file": "lean/VE/Commands/Run.lean",
-        "lines": 311,
-        "sha256": "2ad2a3ccdb2948198ed4a76c28e05c0a46ef64a1a2e7b7579c41152caa54448d",
+        "lines": 758,
+        "sha256": "b1d335aab31263083125b5cd42e6a0d0564aa5f4d428ebacd0a0c958965e23af",
         "ranges": [
           [
             1,
-            311
+            758
           ]
         ],
         "declarations": [
@@ -717,9 +717,13 @@
           "readingJson",
           "outcomeFields",
           "encode",
-          "caseReported"
+          "caseReported",
+          "stepStarts",
+          "altParts",
+          "altIndexes",
+          "oneShape"
         ],
-        "reason": "commands-imperatives CI-2 (docs/spec/commands-imperatives.md section 6): english.command refuses a tree jsonWF? rejects, decodes the speech environment through the pinned decodeSpeechEnvironmentFull, english.read's case through decodeCase (its overlay and lexicon refusals first) and each query record through the pinned decodeQuery, and writes readInstruction's outcome with the request's id, unit and scope legend; the full file is pinned conservatively"
+        "reason": "commands-imperatives CI-2 (docs/spec/commands-imperatives.md section 6): english.command refuses a tree jsonWF? rejects, decodes the speech environment through the pinned decodeSpeechEnvironmentFull, english.read's case through decodeCase (its overlay and lexicon refusals first) and each query record through the pinned decodeQuery, and writes readInstruction's outcome with the request's id, unit and scope legend; the full file is pinned conservatively; ci-3 (section 7): readInstruction returns StepOutcome through readStep, and the encoder writes steps, many alternatives and after_previous with each step's spans"
       },
       {
         "file": "lean/VE/Core/Bridge.lean",
@@ -2072,12 +2076,12 @@
       },
       {
         "file": "lean/VE/SpeechActs/Source/Run.lean",
-        "lines": 1021,
-        "sha256": "523d463ef741d4ba8bcf3053029aa7db6e6a999ec061d1502a198641d6d0f32e",
+        "lines": 1101,
+        "sha256": "523ce698b7600bb87efdf5ccaf828bd51bb4610dbb453c11f9bb84a46a4d00d4",
         "ranges": [
           [
             1,
-            1021
+            1101
           ]
         ],
         "declarations": [
@@ -2093,18 +2097,25 @@
           "hasContext",
           "commandContext",
           "readSource",
-          "decodeSpeechSource"
+          "decodeSpeechSource",
+          "stepUnits",
+          "thenFault",
+          "isInstruction",
+          "unitGroups",
+          "sequences",
+          "sequenceFault",
+          "hasSequence"
         ],
-        "reason": "speech-act decoded-source wrapper (8.5): ve-document@2 units, reading sets, records and identity; every resolved fence required to decode to the role its kind reads (Wire.roleFits: a fence of a kind wrapping instruction is a command) and every resolved command fence read again by VE.Commands.readInstruction under the payload's reading_context, decoded once through the pinned VE.Commands.Run.decodeRequest, a payload with a command fence and no context object refused (A2, commands-imperatives CI-2), and the unresolved fences charged against VE.Limits.maxCases; the full file is pinned conservatively"
+        "reason": "speech-act decoded-source wrapper (8.5): ve-document@2 units, reading sets, records and identity; every resolved fence required to decode to the role its kind reads (Wire.roleFits: a fence of a kind wrapping instruction is a command) and every resolved command fence read again by VE.Commands.readInstruction under the payload's reading_context, decoded once through the pinned VE.Commands.Run.decodeRequest, a payload with a command fence and no context object refused (A2, commands-imperatives CI-2), and the unresolved fences charged against VE.Limits.maxCases; the full file is pinned conservatively; ci-3: an authored Then instruction unit (by its effective kind) is ThenWithoutStep after the core check; ci-3 review F2: the document form of a sequence (a unit or MIXED unit with an instruction part and a ', then ' wording) has its parts' decoded commands checked against VE.Commands.readInstruction of the whole wording under the reading context (sequenceFault), and decodeSpeechSource refuses such a payload with no context object"
       },
       {
         "file": "lean/VE/SpeechActs/Wire.lean",
-        "lines": 1348,
-        "sha256": "cfd11f80f5d48685e0c041f3549d9a130601072a65c0b1a45c8db3e46450a8c5",
+        "lines": 1352,
+        "sha256": "fa75cf01db0f321834da06bda5da471c8d66195497e700f2e7e99e0890768c98",
         "ranges": [
           [
             1,
-            1348
+            1352
           ]
         ],
         "declarations": [
@@ -2118,7 +2129,7 @@
           "checkActsBlock",
           "decodeEnvironmentWith"
         ],
-        "reason": "speech scope, content, identity and document decoder; the full file is pinned conservatively; ci-5: the profile gate and the decoder over an allowlist (acts@0 joins it), W1's acts@0 hook on, checkActsBlock; ci-2b: roleFits checks resolved command fence roles"
+        "reason": "speech scope, content, identity and document decoder; the full file is pinned conservatively; ci-5: the profile gate and the decoder over an allowlist (acts@0 joins it), W1's acts@0 hook on, checkActsBlock; ci-2b: roleFits checks resolved command fence roles; ci-3: surfaceKind reads If <c>, <verb> and Then <verb> as instructions"
       },
       {
         "file": "lean/VE/Time/Document.lean",
@@ -5078,7 +5089,9 @@
         "theorems": [
           "VE.Service.runMode_englishCommand",
           "VE.Commands.caseReported_eq",
-          "VE.Commands.readInstruction_command",
+          "VE.Commands.readInstruction_step",
+          "VE.Commands.readInstruction_refused_classed_step",
+          "VE.Commands.readInstruction_typed_step",
           "VE.Commands.proofTask_bound",
           "VE.Commands.proofTask_addressed",
           "VE.Commands.readInstruction_refused_classed",
