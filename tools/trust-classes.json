@@ -1032,7 +1032,8 @@
         "ResponseShape.Skeletons.cardinality",
         "ResponseShape.Skeletons.scope",
         "ResponseShape.Skeletons.sensesProject",
-        "ResponseShape.Skeletons.actReadings"
+        "ResponseShape.Skeletons.actReadings",
+        "ResponseShape.Skeletons.englishStatement"
       ],
       "G[I]": [
         "ResponseShape.Skeletons.identity"
@@ -21616,6 +21617,30 @@
           ]
         },
         "VE.Acts.idxGo"
+      ]
+    },
+    "ResponseShape/Encoders/EnglishStatement.lean": {
+      "P": [
+        "ResponseShape.Encoders.EnglishStatement.answerSkel",
+        "ResponseShape.Encoders.EnglishStatement.identitiesSkel",
+        "ResponseShape.Encoders.EnglishStatement.rowSkel",
+        "ResponseShape.Encoders.EnglishStatement.tacticCoded_simp",
+        "ResponseShape.Encoders.EnglishStatement.treeRowSkel"
+      ]
+    },
+    "ResponseShape/Schemas/EnglishStatement.lean": {
+      "G[R]": [
+        "ResponseShape.Schemas.EnglishStatement.answer",
+        "ResponseShape.Schemas.EnglishStatement.file",
+        "ResponseShape.Schemas.EnglishStatement.identities",
+        "ResponseShape.Schemas.EnglishStatement.member",
+        "ResponseShape.Schemas.EnglishStatement.nat",
+        "ResponseShape.Schemas.EnglishStatement.pair",
+        "ResponseShape.Schemas.EnglishStatement.precedenceRow",
+        "ResponseShape.Schemas.EnglishStatement.row",
+        "ResponseShape.Schemas.EnglishStatement.ruleRow",
+        "ResponseShape.Schemas.EnglishStatement.spanRow",
+        "ResponseShape.Schemas.EnglishStatement.treeRow"
       ]
     }
   }
