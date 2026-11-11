@@ -7,9 +7,9 @@ Item: the T fixes and K findings of the use-case audit for the OpenAI Preparedne
 reviews/ucfix-classify-20261111.tsv, rows `openai-preparedness`: 52 units, 50 items). Branch
 `infra/openai-preparedness-fidelity-fix`.
 
-SIZE: 512 product (`rules.d1.ve` 198, `pf_vocabulary.py` 143, `run.py` 130, `build_document.py` 25,
-`pf_translation.py` 12, `facts.d1.ve` 4), 302 tests (`tests/test_pf_fidelity_fix.py` 287, `tests/test_safetyfw_usecases.py` 15),
-about 85 + this REPORT other hand-written lines (PLAN section 12 46, README.md 35, docs/usecases/safetyfw/REPORT.md 2). Source: `git diff --numstat $(git merge-base HEAD main)`
+SIZE: 547 product (`rules.d1.ve` 198, `pf_vocabulary.py` 143, `run.py` 130, `build_document.py` 60,
+`pf_translation.py` 12, `facts.d1.ve` 4), 362 tests (`tests/test_pf_fidelity_fix.py` 347, `tests/test_safetyfw_usecases.py` 15),
+about 80 + this REPORT other hand-written lines (PLAN section 12 47, README.md 30, docs/usecases/safetyfw/REPORT.md 2). Source: `git diff --numstat $(git merge-base HEAD main)`
 (added + deleted). Generated, by the case's own scripts only: `environment.d1.json` (pf_vocabulary.py),
 `spans.json`, `coverage.json` (build_document.py), `docs/usecases/safetyfw/openai-preparedness/{units,gaps}.json`
 (measure.py), `docs/usecases/safetyfw/openai-preparedness/stage0.json` (stage0.py: P5 bytes, P7 regulated
@@ -109,6 +109,9 @@ Empty: no unit needed a language feature, and G7 and N4 were answered in D1 with
 | e | add a "soft" to K1 in answer-key.json (a non-MREP cell) | usecases/openai-preparedness/answer-key.json | `::test_answer_key_equals_section_6_cell_by_cell` |
 | f | point CAPREP back at the SAG-review act | usecases/openai-preparedness/run.py | `::test_capabilities_report_items_ask_the_compilation_sentence` |
 
+| g | the word-map gate back to rules only (`kind == "rule"`) | usecases/openai-preparedness/build_document.py | `::test_a_fact_anchored_on_a_partly_translated_unit_is_blocked` (`'kind': 'asserted', 'premises': ['cl-levels']`) |
+| h | HEAD 5579e976's spans.json (p15-u245 CHECKED) | usecases/openai-preparedness/spans.json | `::test_every_checked_unit_is_a_rule_or_fact_with_a_complete_word_map`, `::test_change_log_removal_of_low_and_medium_is_a_blocked_unit` ("2 failed") |
+
 Each run printed "1 failed"; (a) failed on `assert 'meeting the High standard' in '{0} have misuse safeguards'`,
 (f) on `['f7-compile', 'f7-report'] == ['f7-compile']`. Python is the only language of product code changed.
 
@@ -127,6 +130,15 @@ regenerated (`uv run python -m conformance.english_lean_lexicon`); `build_docume
 `fn5-indicator`; README.md's coverage and answer tables and docs/usecases/safetyfw/REPORT.md's PF row follow the
 regenerated coverage (f7-compile's unit moves from SC to ET; the CHECKED 170 -> 344 bytes this commit recorded for
 `cl-levels` was the overclaim the review's F1 found, undone below).
+
+## Review fix (openai-preparedness-fidelity-fix-review.final.md)
+
+| Finding | Fix | Regression tests | Commit |
+|---|---|---|---|
+| F1 (A, overclaim): `cl-levels` in FACT_ANCHORS made p15-u245 (change log item 2, its "because" clause untranslated) CHECKED, 170 -> 344 bytes | Class: anchored facts skipped the word map a CHECKED rule needs. Fact blocks now pass the same `CHECKED_CLAUSES` gate as rules (Table 1's six labels have maps; a fact without a complete map is placed as a blocked rule); `cl-levels` is a blocked unit like `fn5-indicator` and keeps main's residual id `unmapped_duty-p15-u245-b1881efef95f`. Found by the replanted bug: `BLOCKER_FAMILY` was a hand-copied subset of `BLOCKER_DETAIL`'s families without `unmapped_duty`; it is removed, `BLOCKER_DETAIL` owns each family. spans.json, coverage.json, units/gaps/stage0.json regenerated (CHECKED 170 bytes, 7 units, as on main); README (coverage table, AP row), the safetyfw REPORT PF row and PLAN 12 item 21 follow. N4 is unchanged: the fact stays selected. | `tests/test_pf_fidelity_fix.py::test_every_checked_unit_is_a_rule_or_fact_with_a_complete_word_map`, `::test_change_log_removal_of_low_and_medium_is_a_blocked_unit`, `::test_a_partial_fact_word_map_is_not_complete`, `::test_a_fact_anchored_on_a_partly_translated_unit_is_blocked`, `::test_every_blocked_reason_has_one_named_family`; `tests/test_safetyfw_usecases.py::test_pf_translation_lint_and_invention_audit` expects `cl-levels` unanchored | 989862dbe1, 4bd4c5afc2 |
+
+PROBE F1 failed before the fix (`AssertionError: {... 'premises': ['cl-levels'], ... 'status': 'CHECKED'}`) and
+passes after it (`status` UNFORMALISED, `blocked_rule` cl-levels). DELTA: none (no `ve/`, `lean/` or `rust/` change).
 
 ## Notes for the DRI
 
@@ -160,6 +172,12 @@ usecase-pf-reaudit: `zsh uc-audit.sh openai-preparedness main 3`, launched by th
    in d7b10121.
 4. `mac-pytest.sh -- -q tests/test_safetyfw_usecases.py::test_pf_stage0_and_gaps` at d7b10121: "1 passed", exit 0;
    `stage0.py`, `build_document.py` and `measure.py --check` exit 0 locally.
+
+5. Review fix: `mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` at 989862dbe1: shards 1 and 2
+   passed (16 and 12 units); shard 3 "1 failed, 104 passed" (test_pf_every_byte_has_ve_status_and_one_unit: README's
+   AP row still had HEAD's 118 units). Fixed in 4bd4c5afc2; the failed test and the other PF README test then
+   "2 passed". The five new tests and the lint test: "22 passed" locally; `build_document.py --check` exit 0;
+   `lake build` "Build completed successfully"; `lean/audit.py` PASS.
 
 No test in main-known-red.txt was involved.
 
