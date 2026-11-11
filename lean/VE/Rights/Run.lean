@@ -424,7 +424,7 @@ def conflictBudget : Nat := 10000
 /-- 7.3's situation part on this route: `yes` for the request's checked situation; with none supplied, no search ran,
 so the line says so and that the budget went unused (rights-cfr-2-budget-1), never an UNKNOWN of a search. -/
 def exhibitedText (supplied : Bool) : String :=
-  if supplied then "yes" else s!"none supplied (not searched; budget {conflictBudget} unused)"
+  if supplied then "yes" else VE.SoftNorms.Wire.notSearchedText conflictBudget
 
 /-- What `<j>` counts (7.3), named after it: WP(T) with no pair evidence (`openCoherence`), the soft route's
 `openAfterClassification` with none discharged (docs/rights/rights-cfr-2-budget-1/REPORT.md). -/

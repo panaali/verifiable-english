@@ -1,4 +1,5 @@
 import VE.Acts.Elaborate
+import VE.Acts.ElaborateProofs
 import VE.Acts.TableExamples
 
 /-! Fixtures of the elaboration (docs/spec/act-phrases.md 6.3, 11.3: E1 to E10, E16, E17; sorts `person`, guards `top`).
@@ -61,6 +62,88 @@ def e4 : ActsDoc :=
   nd "r027-a2" "p027__2" false, nd "r027b-a1" "p027__1" true ["r027-a1"], nd "r027b-a2" "p027__2" true ["r027-a2"]]
 #guard (shown (elaborateMap e4)).toOption.map (·.2.2.2.rules) == some
   [("r027-a1", "r027", 1), ("r027-a2", "r027", 2), ("r027b-a1", "r027b", 1), ("r027b-a2", "r027b", 2)]
+
+-- 6.6's theorems on E1 and E4 (11.3): the examples derive each fact through `splitMap_exact` or `elaborate_parts`.
+-- E4's split is pinned here; the kernel does not evaluate it (E1's it does, by `rfl`).
+#guard splitAtoms e1 "p027" == some [torture, cruel] && splitAtoms e4 "p027" == some [torture, cruel]
+#guard partAct fx6 .permission torture == "{0} be subjected to torture" &&
+  partAct fx6 .permission cruel == "{0} be subjected to cruel, inhuman or degrading treatment or punishment"
+
+/-- E1's map, read off the split (the kernel evaluates E1's split; the `#guard` above pins it too). -/
+theorem e1_map {U' : UDoc} {M : SplitMap} (h : elaborateMap e1 = .ok (U', M)) :
+    M = ⟨[("p027__1", "p027", 1), ("p027__2", "p027", 2)], [("r027-a1", "r027", 1), ("r027-a2", "r027", 2)]⟩ := by
+  obtain ⟨_, _, _, rfl, _⟩ := elaborateMap_ok h
+  simp only [splitMap, partsOf]
+  decide +kernel
+
+/-- E1 through `splitMap_exact`, both directions: the generated names are exactly the map's, and `p027` and `r027`
+    are neither generated nor kept. -/
+example {U' : UDoc} {M : SplitMap} (h : elaborateMap e1 = .ok (U', M)) :
+    (∀ q, (q ∈ U'.D.T.regulated.map (·.name) ∧ q ≠ "p027") ↔ q = "p027__1" ∨ q = "p027__2") ∧
+    (∀ n, (n ∈ U'.D.T.nodes.map (·.name) ∧ n ≠ "r027") ↔ n = "r027-a1" ∨ n = "r027-a2") ∧
+    "p027" ∉ U'.D.T.regulated.map (·.name) ∧ "r027" ∉ U'.D.T.nodes.map (·.name) := by
+  obtain ⟨hp, hn, hp3, hn3, -⟩ := splitMap_exact e1 h
+  have hM := e1_map h
+  subst hM
+  have sp : e1.U.D.T.regulated.map (·.name) = ["p027"] := rfl
+  have sn : e1.U.D.T.nodes.map (·.name) = ["r027"] := rfl
+  simp only [sp, sn, List.mem_singleton] at hp hn hp3 hn3
+  refine ⟨fun q => (hp q).trans ?_, fun n => (hn n).trans ?_,
+    (hp3 "p027__1" "p027" 1 (by simp)).2.2.1, (hn3 "r027-a1" "r027" 1 (by simp)).2.2.1⟩ <;> simp only [List.mem_cons, List.mem_nil_iff, or_false, Prod.mk.injEq] <;>
+    exact ⟨fun ⟨_, _, h⟩ => h.imp (·.1) (·.1),
+      fun h => h.elim (fun e => ⟨_, _, .inl ⟨e, rfl, rfl⟩⟩) (fun e => ⟨_, _, .inr ⟨e, rfl, rfl⟩⟩)⟩
+
+/-- E1 through `elaborate_parts`: part 1 is atom 1's act (*torture*, text pinned above) and part 2 atom 2's, never the
+    other way round; each keeps `p027`'s sorts, role and completion. -/
+example {U' : UDoc} {M : SplitMap} (h : elaborateMap e1 = .ok (U', M)) :
+    U'.D.T.regulated.find? (·.name == "p027__1") = some (rg "p027__1" .permission (some (partAct fx6 .permission torture))) ∧
+    U'.D.T.regulated.find? (·.name == "p027__2") = some (rg "p027__2" .permission (some (partAct fx6 .permission cruel))) := by
+  have hp := (elaborate_parts e1 h).1
+  rw [e1_map h] at hp
+  have hs : splitAtoms e1 "p027" = some [torture, cruel] := rfl
+  have hr : e1.U.D.T.regulated = [rg "p027" .permission] := rfl
+  obtain ⟨r, hr1, -, atoms, a, hsa, ha, hf, -⟩ := hp "p027__1" "p027" 1 (by simp)
+  obtain ⟨r', hr2, -, atoms', a', hsa', ha', hf', -⟩ := hp "p027__2" "p027" 2 (by simp)
+  rw [hr, List.mem_singleton] at hr1 hr2
+  rw [hs, Option.some.injEq] at hsa hsa'
+  subst hr1 hr2 hsa hsa'
+  simp only [List.getElem?_cons_zero, List.getElem?_cons_succ, Option.some.injEq, Nat.sub_self,
+    Nat.add_one_sub_one] at ha ha'
+  subst ha ha'
+  exact ⟨hf, hf'⟩
+
+/-- E4's map, read off its split `ha` (pinned by the `#guard` above). -/
+theorem e4_map {U' : UDoc} {M : SplitMap} (h : elaborateMap e4 = .ok (U', M))
+    (ha : splitAtoms e4 "p027" = some [torture, cruel]) :
+    M = ⟨[("p027__1", "p027", 1), ("p027__2", "p027", 2)],
+      [("r027-a1", "r027", 1), ("r027-a2", "r027", 2), ("r027b-a1", "r027b", 1), ("r027b-a2", "r027b", 2)]⟩ := by
+  obtain ⟨_, _, _, rfl, _⟩ := elaborateMap_ok h
+  have hr : e4.U.D.T.regulated = [rg "p027" .permission] := rfl
+  have hN : e4.U.D.T.nodes = [nd "r027" "p027" false, nd "r027b" "p027" true ["r027"]] := rfl
+  have h1 : (rg "p027" .permission).name = "p027" := rfl
+  have h2 : (nd "r027" "p027" false).pred = "p027" := rfl
+  have h3 : (nd "r027b" "p027" true ["r027"]).pred = "p027" := rfl
+  simp only [splitMap, partsOf, hr, hN, List.flatMap_cons, List.flatMap_nil, h1, h2, h3, ha]
+  decide +kernel
+
+/-- E4 through `elaborate_parts`: each part rule keeps its source's sign and guard, and `r027b-a2`'s `over` is
+    `[r027-a2]` (precedence splits pairwise). -/
+example {U' : UDoc} {M : SplitMap} (h : elaborateMap e4 = .ok (U', M))
+    (ha : splitAtoms e4 "p027" = some [torture, cruel]) :
+    U'.D.T.nodes.find? (·.name == "r027-a1") = some (nd "r027-a1" "p027__1" false) ∧
+    U'.D.T.nodes.find? (·.name == "r027b-a2") = some (nd "r027b-a2" "p027__2" true ["r027-a2"]) := by
+  have hn := (elaborate_parts e4 h).2
+  rw [e4_map h ha] at hn
+  have hN : e4.U.D.T.nodes = [nd "r027" "p027" false, nd "r027b" "p027" true ["r027"]] := rfl
+  obtain ⟨N, hN1, hn1, hf⟩ := hn "r027-a1" "r027" 1 (by simp)
+  obtain ⟨N', hN2, hn2, hf'⟩ := hn "r027b-a2" "r027b" 2 (by simp)
+  rw [hN] at hN1 hN2
+  simp only [List.mem_cons, List.mem_nil_iff, or_false] at hN1 hN2
+  rcases hN1 with rfl | rfl
+  · rcases hN2 with rfl | rfl
+    · exact absurd hn2 (by decide)
+    · rw [hf, hf']; constructor <;> rfl
+  · exact absurd hn1 (by decide)
 
 /-- E5: E1 with `p027` unspecified, beside an unspecified `k` that does not split. -/
 def e5 : ActsDoc := withActs (doc [rg "k" .obligation, rg "p027" .permission]
