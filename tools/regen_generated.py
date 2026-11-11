@@ -305,6 +305,8 @@ NOT_REGENERATED = {
     "docs/defeasible/df-1bb/evidence/select_route_cases.py": "df-1bb: appends recorded route cases once (append-only)",
     "conformance/soft_norms.py": "--write-rust-fixtures: the Rust tests' fixture, rewritten with the soft-norms unit",
     "usecases/*/*.py": "use-case results, rerun by their harness",
+    "usecases/measure_keyed_paths.py": "the keyed harnesses' checker paths, measured once (minutes, with the Lean "
+                                       "service) into docs/usecases/keyed-answers.json, the evidence its test reads",
 }
 # The flags that make a script write a committed file.
 WRITE_FLAGS = ("--write", "--update-baseline", "--lean-fixtures", "--record")

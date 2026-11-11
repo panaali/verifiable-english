@@ -1,0 +1,33 @@
+{
+ "anthropic-rsp": {
+  "lean _check_certificate_lean": 1434,
+  "lean _evaluate_lean": 652,
+  "lean soft-elaborate": 279,
+  "python _check_conflict_python": 26,
+  "python _find_conflict": 26,
+  "python completed": 362,
+  "python prover-self-replay": 1451,
+  "python selected_rules": 392
+ },
+ "openai-preparedness": {
+  "lean _check_certificate_lean": 3131,
+  "lean _evaluate_lean": 1714,
+  "lean soft-elaborate": 1237,
+  "python _check_conflict_python": 52,
+  "python _find_conflict": 52,
+  "python completed": 2620,
+  "python prover-self-replay": 3151,
+  "python selected_rules": 13394
+ },
+ "safety-framework": {
+  "lean _check_certificate_lean": 3979,
+  "lean _evaluate_lean": 9076,
+  "lean soft-elaborate": 315,
+  "python _check_conflict_python": 2426,
+  "python _evaluate_validated": 370,
+  "python _find_conflict": 2344,
+  "python holds_at": 3314,
+  "python prover-self-replay": 4059,
+  "python selected_rules": 6173
+ }
+}
