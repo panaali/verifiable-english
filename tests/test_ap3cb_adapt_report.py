@@ -38,7 +38,7 @@ BLANKET = [
 def test_no_blanket_claim_about_refusals_or_seeds():
     for name, text in (("REPORT.md", REPORT), ("seed_bugs.py", SEEDS)):
         for pattern in BLANKET:
-            assert not re.search(pattern, text), (name, pattern)
+            assert not re.search(pattern, text, re.I), (name, pattern)
 
 
 def test_each_seed_records_which_fixture_it_refuses():
