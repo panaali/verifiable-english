@@ -159,6 +159,13 @@ No product line was added after that ruling.
 - Selected tests after the review fixes, run once on 535841f1a (tree fdea0a14b6; the commits after it touch only
   docs/ and RunSplit.lean's guards, which `lake build` checks): `mac-pytest.sh --select -- --base d3bb8bfbc --run`,
   on ve-cloud-2: 455 units planned, 443 recorded, 0 failed, exit 0 (6812 s).
+- Selected tests on the final tree (HEAD e91204042, tree 9b44ec041; after the `hasSequence` refactor and the guards),
+  the same command, on ve-cloud-3: 455 units planned, 443 recorded, 0 failed, exit 0 (6692 s). The affected files
+  were also run locally after the refactor: `tests/test_commands_steps.py`, `test_lean_layers_once.py`,
+  `test_assurance_manifest.py` and `test_command_relay.py`, 208 passed.
+- `python3 lean/audit.py` after the fixes: PASS (819 source files, 9242 theorems, standard axioms only), after a
+  `lake build` of 1353 jobs with no error. `tools/regen_generated.py --check`: 38 entries checked.
+  `tools/trust_map.py --check`: PASS. `review-ready.py --delta-dri-needed`: no DELTA row reserved for the DRI.
 
 ## Review fixes (reviews of 604c8d9a8: ci-3-review.final.md, F1-F4)
 
