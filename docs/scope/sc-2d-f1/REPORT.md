@@ -35,6 +35,21 @@ No product code changed in any language. The bugs are planted in the new checker
 | M2 `telescope` reads only the leading `∀` (stops at a `∀` after a premise) | tests/test_scope_5_4_statements.py | `test_an_effect_statement_takes_exactly_the_signed_premises[reguard_applies]`, `[restrict_applies]`, `[carveOut_applies]`, `[commute_applies]` (4 failed, 39 passed) |
 | M3 the elaborated type at `hw` is not read | tests/test_scope_5_4_statements.py | `test_the_check_tells_a_changed_statement` (1 failed, 42 passed) |
 
+## Review fix (sc-2d-f1-review.final.md)
+
+| Finding | Fix | Regression tests |
+|---|---|---|
+| F1 (B): `def Typed` (spec 5.4, docs/spec/scope.md:1272) was not compared; `Typed := True` passed all 18 checks | The class (a declaration of the spec block outside a hand list is never compared) is removed: `approved()` reads every declaration of spec 5.4's Lean block with the RD statement gate's shared parser (`tools/check_readings_defaults_statements.declarations`: a theorem to its proof's `:=`, a definition with its body), and `declaration_faults` compares each with the Lean source. `PROVED` is now derived from the block, not listed by hand; `EXPECTED` pins the kinds (8 theorems, 1 def). | `test_every_declaration_of_spec_5_4_is_the_lean_text[*]` (9), `test_a_vacuous_declaration_fails[*]` (9: each def body, and each theorem's conclusion, replaced by `True`), `test_spec_5_4_declares_the_reviewed_declarations` |
+
+PROBE F1, run as given: before the fix `18 passed, 25 deselected` and `AssertionError: Typed := True was accepted by the statement gate`; after it, exit 0 with `FAILED …test_every_declaration_of_spec_5_4_is_the_lean_text[def Typed]` (the other 9 failures under the probe are `test_a_vacuous_declaration_fails`, whose baseline check sees the mutated source).
+
+Seeded bugs for F1 (each planted alone, then restored with `git checkout` or the reverse edit):
+
+| Bug | File | Fails |
+|---|---|---|
+| `def Typed … : Prop := True` in the Lean source | lean/VE/Scope/Theorems.lean | the probe's substitution: `test_every_declaration_of_spec_5_4_is_the_lean_text[def Typed]`. Planted in the file itself, the module no longer builds (`applyEffect_typed`'s proof: `Insufficient number of fields for ⟨...⟩`), and the test file's import-time inventory guard stops collection with `error: build failed` |
+| M4 `declaration_faults` compares only theorems (main's behaviour) | tests/test_scope_5_4_statements.py | `test_a_vacuous_declaration_fails[def Typed]` (1 failed, 17 passed of the two new tests) |
+
 ## Checks run
 
 - `uv run pytest -q tests/test_scope_5_4_statements.py`: 43 passed (18 before: the new cases are the 25 plants).

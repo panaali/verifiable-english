@@ -6,6 +6,11 @@ bracketed binder of any kind (`(..)`, `{..}`, `⦃..⦄`, `[..]`) in order; and 
 from the generated `lean/statements.txt`, whose telescope must match the spec's binder for binder (a named binder
 keeps its name, a hypothesis is an anonymous premise, and the premise at `hw` is `JsonWF o`). So an extra binder of
 any kind, or a lost one, fails even when the spec and the Lean source are changed together.
+
+Every declaration of spec 5.4's Lean block is compared with the Lean source, not only the theorems (review sc-2d-f1
+F1): the list is read from the spec block by the shared `declarations` parser of the RD statement gate, so a
+definition (`Typed`) is compared with its body, and a declaration added to the spec is compared without editing this
+file.
 """
 
 from __future__ import annotations
@@ -15,7 +20,7 @@ from pathlib import Path
 import pytest
 
 from tools import lean_statements as L
-from tools.check_readings_defaults_statements import proof_cut
+from tools.check_readings_defaults_statements import STOP as DECLARATION_END, declarations, normal, proof_cut, signature
 
 ROOT = Path(__file__).resolve().parents[1]
 EFFECTS = {
@@ -25,7 +30,42 @@ EFFECTS = {
     "applyEffect_typed": "D u e o o' N N' E Γ hN hw h hN' hT hc",
     "commute_applies": "D u e₁ e₂ hc o o₁ o₂ N₁ N₂ hw h₁ h₂ hN₁ hN₂ S ρ",
 }
-PROVED = ("own_congr", "order_refused", "listName_run", *EFFECTS)
+# Spec 5.4's block by kind; a change in the count is a change to review.
+EXPECTED = {"theorem": 8, "def": 1}
+
+
+def spec_5_4() -> str:
+    spec = (ROOT / "docs/spec/scope.md").read_text()
+    start = spec.index("### 5.4 SC-2")
+    return spec[start:spec.index("### 5.5", start)]
+
+
+def lean() -> str:
+    return (ROOT / "lean/VE/Scope/Theorems.lean").read_text()
+
+
+def approved(section: str | None = None) -> dict[tuple[str, str], list[str]]:
+    """Every declaration of spec 5.4's Lean block, `(kind, name)` → its normalised texts: a theorem to its proof's
+    `:=`, a definition with its body."""
+    code = (section if section is not None else spec_5_4()).split("```lean", 1)[1].split("```", 1)[0]
+    return declarations(code, statements_only=True)
+
+
+def declaration_faults(section: str, source: str) -> list[str]:
+    """Why the Lean source `source` differs from spec 5.4's block `section`, declaration by declaration; empty when
+    each is stated once in the spec and once, with the same text, in the source."""
+    built = declarations(source, statements_only=True)
+    faults = []
+    for (kind, name), texts in approved(section).items():
+        if len(texts) != 1:
+            faults.append(f"{kind} {name} is stated {len(texts)} times in spec 5.4")
+        if built.get((kind, name), []) != texts[:1]:
+            faults.append(f"{kind} {name}: Lean {built.get((kind, name), [])} is not spec 5.4's {texts[:1]}")
+    return faults
+
+
+DECLARED = sorted(approved())
+PROVED = tuple(name for kind, name in DECLARED if kind == "theorem")
 
 
 def statement(text: str, name: str) -> str | None:
@@ -144,16 +184,6 @@ def binder_faults(name: str, spec: str, elaborated: str) -> list[str]:
     return faults
 
 
-def spec_5_4() -> str:
-    spec = (ROOT / "docs/spec/scope.md").read_text()
-    start = spec.index("### 5.4 SC-2")
-    return spec[start:spec.index("### 5.5", start)]
-
-
-def lean() -> str:
-    return (ROOT / "lean/VE/Scope/Theorems.lean").read_text()
-
-
 @pytest.mark.parametrize("name", PROVED)
 def test_the_proved_statements_are_spec_5_4s_text(name):
     assert statement(spec_5_4(), name) is not None, name
@@ -211,3 +241,41 @@ def test_the_check_tells_a_changed_statement():
             assert binder_faults(name, changed, typed(name)), name
     for name in EFFECTS:  # the elaborated premise at `hw` is read, not only counted
         assert binder_faults(name, statement(spec_5_4(), name), typed(name).replace("JsonWF o →", "JsonWF o' →", 1))
+
+
+def test_spec_5_4_declares_the_reviewed_declarations():
+    """The block is read, not empty: its kinds are the reviewed counts, and it states every pinned effect theorem."""
+    kinds = {kind: sum(k == kind for k, _ in DECLARED) for kind in EXPECTED}
+    assert kinds == EXPECTED and len(DECLARED) == sum(EXPECTED.values()), DECLARED
+    assert set(EFFECTS) <= set(PROVED) and ("def", "Typed") in DECLARED, DECLARED
+
+
+@pytest.mark.parametrize("key", DECLARED, ids=" ".join)
+def test_every_declaration_of_spec_5_4_is_the_lean_text(key):
+    """Review sc-2d-f1 F1: each declaration of spec 5.4's block, a definition with its body, is the Lean source's."""
+    faults = declaration_faults(spec_5_4(), lean())
+    assert [f for f in faults if f.startswith(" ".join(key) + ":") or f.startswith(" ".join(key) + " is")] == [], faults
+
+
+def mutant(source: str, kind: str, name: str) -> str:
+    """`source` with declaration `kind name` made vacuous: a definition's body becomes `True`, a theorem's conclusion
+    becomes `True` (its binders kept)."""
+    start = source.index(f"\n{kind} {name} ") + 1
+    head = source[start:start + proof_cut(source[start:])]
+    if kind == "theorem":
+        binders, _ = signature(normal(head))
+        return source[:start] + f"theorem {name} {binders} : True " + source[start + len(head):]
+    stop = DECLARATION_END.search(source, source.index("\n", start) + 1)
+    return source[:start] + head + ":= True\n" + source[stop.start() if stop else len(source):]
+
+
+@pytest.mark.parametrize("key", DECLARED, ids=" ".join)
+def test_a_vacuous_declaration_fails(key):
+    """Review sc-2d-f1 F1, the probe for every declaration: `def Typed ... : Prop := True` (and each theorem with the
+    conclusion `True`) differs from spec 5.4, and only that declaration is reported."""
+    kind, name = key
+    changed = mutant(lean(), kind, name)
+    assert changed != lean() and declaration_faults(spec_5_4(), lean()) == [], key
+    faults = declaration_faults(spec_5_4(), changed)
+    assert len(faults) == 1 and faults[0].startswith(f"{kind} {name}: Lean"), faults
+    assert "True" in faults[0], faults
