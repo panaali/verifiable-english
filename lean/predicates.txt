@@ -598,6 +598,8 @@ module VE.Readings.SoftSeparateExamples
 module VE.Readings.SoftSup
 module VE.Readings.SoftSupExamples
 module VE.Readings.SoftSupLabels
+module VE.Readings.SoftSupRun
+module VE.Readings.SoftSupRunExamples
 module VE.Readings.SoftSupWire
 module VE.Readings.SoftSupWireExamples
 module VE.Readings.SoftVerdicts

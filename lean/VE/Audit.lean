@@ -347,6 +347,7 @@ import VE.Readings.SoftFacts
 import VE.Readings.SoftSeparate
 import VE.Readings.SoftSup
 import VE.Readings.SoftSupLabels
+import VE.Readings.SoftSupRun
 import VE.Readings.SoftSupWire
 import VE.Readings.SoftVerdicts
 import VE.Readings.SoftWire
@@ -5038,9 +5039,43 @@ import VE.WireContract.Engine
 #print axioms VE.Readings.Run.ProductReplay.sound
 #print axioms VE.Readings.Run.ProductReplay.soundBut
 #print axioms VE.Readings.Run.RightsChoiceModel.valid
+#print axioms VE.Readings.Run.SDCase.bind_eq
+#print axioms VE.Readings.Run.SDCase.fill_formulas
+#print axioms VE.Readings.Run.SDCase.free_eq
+#print axioms VE.Readings.Run.SDCase.free_sound
+#print axioms VE.Readings.Run.SDCase.hF
+#print axioms VE.Readings.Run.SDCase.hFL
+#print axioms VE.Readings.Run.SDCase.hQ
+#print axioms VE.Readings.Run.SDCase.hS
+#print axioms VE.Readings.Run.SDCase.hU
+#print axioms VE.Readings.Run.SDCase.hX
+#print axioms VE.Readings.Run.SDCase.hXL
+#print axioms VE.Readings.Run.SDCase.hbg
+#print axioms VE.Readings.Run.SDCase.hbgb
+#print axioms VE.Readings.Run.SDCase.hc
+#print axioms VE.Readings.Run.SDCase.hcanon
+#print axioms VE.Readings.Run.SDCase.hel
+#print axioms VE.Readings.Run.SDCase.hfp
+#print axioms VE.Readings.Run.SDCase.hslot
+#print axioms VE.Readings.Run.SDCase.hts
+#print axioms VE.Readings.Run.SDCase.hv
+#print axioms VE.Readings.Run.SDCase.images_shown
+#print axioms VE.Readings.Run.SDCase.labels_eq
+#print axioms VE.Readings.Run.SDCase.local_eq
+#print axioms VE.Readings.Run.SDCase.middle_full
+#print axioms VE.Readings.Run.SDCase.model_eq
+#print axioms VE.Readings.Run.SDCase.premises_check
+#print axioms VE.Readings.Run.SDCase.premises_eq
+#print axioms VE.Readings.Run.SDCase.relabel_shown
+#print axioms VE.Readings.Run.SDCase.replay_conflict
+#print axioms VE.Readings.Run.SDCase.replay_query
+#print axioms VE.Readings.Run.SDCase.slotX_eq
+#print axioms VE.Readings.Run.SDCase.taken_eq
+#print axioms VE.Readings.Run.SDCase.usedOf_replays
 #print axioms VE.Readings.Run.SoftChoiceModel.valid
 #print axioms VE.Readings.Run.VerdictsRequest.hq
 #print axioms VE.Readings.Run.candidateJson_eq
+#print axioms VE.Readings.Run.choices_isEmpty
 #print axioms VE.Readings.Run.lower_verdicts_all
 #print axioms VE.Readings.Run.lower_verdicts_none
 #print axioms VE.Readings.Run.lower_verdicts_rows
@@ -5074,6 +5109,7 @@ import VE.WireContract.Engine
 #print axioms VE.Readings.Run.rights_choice_model_sound
 #print axioms VE.Readings.Run.setFindings_eq
 #print axioms VE.Readings.Run.setPairs_eq
+#print axioms VE.Readings.Run.shownWith_eq
 #print axioms VE.Readings.Run.sideAt_sidesOf
 #print axioms VE.Readings.Run.sideIn_eq
 #print axioms VE.Readings.Run.soft_choice_model_sound

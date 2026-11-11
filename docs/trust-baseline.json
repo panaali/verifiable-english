@@ -2304,6 +2304,41 @@
   },
   {
    "class": "S",
+   "lines": 3,
+   "reason": "rights-cfr-2: VE/Rights/Run.lean +45 V (findingJson, conflictAnswer, exhibit, situationTables, conflictBudget, runRightsKind, regenerated), ResponseShape/Schemas/Rights.lean +33 V (located_findings, situation, packages, scope, elaborate), VE/Rights/Tree.lean +3 S (RightsDoc.located); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), rights-cfr-2, 2026-11-09",
+   "commit": "33fe04615107cfb12e4402877992e6ff7b6e95d8"
+  },
+  {
+   "class": "V",
+   "lines": 78,
+   "reason": "rights-cfr-2: VE/Rights/Run.lean +45 V (findingJson, conflictAnswer, exhibit, situationTables, conflictBudget, runRightsKind, regenerated), ResponseShape/Schemas/Rights.lean +33 V (located_findings, situation, packages, scope, elaborate), VE/Rights/Tree.lean +3 S (RightsDoc.located); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), rights-cfr-2, 2026-11-09",
+   "commit": "33fe04615107cfb12e4402877992e6ff7b6e95d8"
+  },
+  {
+   "class": "V",
+   "lines": 5,
+   "reason": "rights-cfr-2: VE/Rights/Run.lean +50 V (findingJson, conflictAnswerOf, conflictAnswer, exhibit, situationTables, conflictBudget, runRightsKind, regenerated), ResponseShape/Schemas/Rights.lean +33 V (located_findings, situation, packages, scope, elaborate), VE/Rights/Tree.lean +3 S (RightsDoc.located); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), rights-cfr-2, 2026-11-09",
+   "commit": "33fe04615107cfb12e4402877992e6ff7b6e95d8"
+  },
+  {
+   "class": "V",
+   "lines": 116,
+   "reason": "ps-2ab: lean/VE/Presupposition/Admit.lean +116 untied G[V] (Base, rootsWith, peelWith, peelRule, allSame, baseOf, withObligations, baseTreeOf, provedOk, needsUnspec, checkIds, Fixed, admitInputs, readingsDoc, separated, softOk, admitBase, admitWrapped); admit tied to its 17 statements, admitWith/regen/carrierOk/openOk/unitsOk/bases3/basesOf tied to their read-back lemmas (tied +102); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ps-2ab, 2026-10-18",
+   "commit": "a0102f0e5350727e99ddcae2e0b59ed03f2f4192"
+  },
+  {
+   "class": "V",
+   "lines": 7,
+   "reason": "ps-2ab (self-review fixes): lean/VE/Presupposition/Admit.lean untied G[V] now +123 in total (readingsDoc reads the background and the first unit of the id; separated returns readings@1's texts); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ps-2ab, 2026-10-18",
+   "commit": "a0102f0e5350727e99ddcae2e0b59ed03f2f4192"
+  },
+  {
+   "class": "S",
    "lines": 26,
    "reason": "ap-5: lean/VE/Acts/Specialise.lean +32 trusted (S +26: Restrictive 4, Modifier.restrictive 3, specialises 8, specPremises 11; untied G[V] +6: declaredOnce 6); K +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-5, 2026-11-09",
@@ -2401,13 +2436,6 @@
    "commit": "33fe04615107cfb12e4402877992e6ff7b6e95d8"
   },
   {
-   "class": "V",
-   "lines": 100,
-   "reason": "sa-checked-view: V +100 (lean/VE/Service/DocumentView.lean +97, lean/VE/Service/Document.lean +3); K +0, S +0",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sa-checked-view, 2026-10-18",
-   "commit": "a7659c5f12aebb2945cfb2106ed29a20663ab836"
-  },
-  {
    "class": "S",
    "lines": 41,
    "reason": "ps-7: lean/VE/Presupposition/Events.lean +28 (S: inProgress, inProgressBefore, endedBefore, occurredBefore, endedAtBefore; the six readings G[V] tied by their _eq rfl statements), lean/VE/Presupposition/Frame.lean +13 (Frame.locate C -> S, ps-1-locate-path); K +0, trusted +41",
@@ -2416,38 +2444,17 @@
   },
   {
    "class": "V",
-   "lines": 116,
-   "reason": "ps-2ab: lean/VE/Presupposition/Admit.lean +116 untied G[V] (Base, rootsWith, peelWith, peelRule, allSame, baseOf, withObligations, baseTreeOf, provedOk, needsUnspec, checkIds, Fixed, admitInputs, readingsDoc, separated, softOk, admitBase, admitWrapped); admit tied to its 17 statements, admitWith/regen/carrierOk/openOk/unitsOk/bases3/basesOf tied to their read-back lemmas (tied +102); K +0, S +0",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ps-2ab, 2026-10-18",
-   "commit": "a0102f0e5350727e99ddcae2e0b59ed03f2f4192"
+   "lines": 84,
+   "reason": "sc-11c: VE/Readings/SoftSupRun.lean trusted +84 (sdScope, sdProofs untied G[V]; sdShared, sdAssumed, sdModel, SDCase.labels D[V]); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-11c, 2026-10-18",
+   "commit": "a3454b6ba5982d7cb5e216d10432a94f6177652a"
   },
   {
    "class": "V",
-   "lines": 7,
-   "reason": "ps-2ab (self-review fixes): lean/VE/Presupposition/Admit.lean untied G[V] now +123 in total (readingsDoc reads the background and the first unit of the id; separated returns readings@1's texts); K +0, S +0",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ps-2ab, 2026-10-18",
-   "commit": "a0102f0e5350727e99ddcae2e0b59ed03f2f4192"
-  },
-  {
-   "class": "S",
-   "lines": 3,
-   "reason": "rights-cfr-2: VE/Rights/Run.lean +45 V (findingJson, conflictAnswer, exhibit, situationTables, conflictBudget, runRightsKind, regenerated), ResponseShape/Schemas/Rights.lean +33 V (located_findings, situation, packages, scope, elaborate), VE/Rights/Tree.lean +3 S (RightsDoc.located); K +0",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), rights-cfr-2, 2026-11-09",
-   "commit": "33fe04615107cfb12e4402877992e6ff7b6e95d8"
-  },
-  {
-   "class": "V",
-   "lines": 78,
-   "reason": "rights-cfr-2: VE/Rights/Run.lean +45 V (findingJson, conflictAnswer, exhibit, situationTables, conflictBudget, runRightsKind, regenerated), ResponseShape/Schemas/Rights.lean +33 V (located_findings, situation, packages, scope, elaborate), VE/Rights/Tree.lean +3 S (RightsDoc.located); K +0",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), rights-cfr-2, 2026-11-09",
-   "commit": "33fe04615107cfb12e4402877992e6ff7b6e95d8"
-  },
-  {
-   "class": "V",
-   "lines": 5,
-   "reason": "rights-cfr-2: VE/Rights/Run.lean +50 V (findingJson, conflictAnswerOf, conflictAnswer, exhibit, situationTables, conflictBudget, runRightsKind, regenerated), ResponseShape/Schemas/Rights.lean +33 V (located_findings, situation, packages, scope, elaborate), VE/Rights/Tree.lean +3 S (RightsDoc.located); K +0",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), rights-cfr-2, 2026-11-09",
-   "commit": "33fe04615107cfb12e4402877992e6ff7b6e95d8"
+   "lines": 100,
+   "reason": "sa-checked-view: V +100 (lean/VE/Service/DocumentView.lean +97, lean/VE/Service/Document.lean +3); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sa-checked-view, 2026-10-18",
+   "commit": "a7659c5f12aebb2945cfb2106ed29a20663ab836"
   },
   {
    "class": "S",
@@ -2465,9 +2472,9 @@
   },
   {
    "class": "V",
-   "lines": 22,
-   "reason": "sc-7-f11: lean/VE/Scope/Authoring.lean V +22 (new: Pinned.allowed +4, Pinned.follower +6, Pinned.charRef +7, each with its blank line; Pinned.clause +5: the inside-a-word follower rule, the charRef conjunct and its docstring); K +0, S +0",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-7-f11, 2026-11-10",
+   "lines": 14,
+   "reason": "rights-cfr-2-budget-1: VE/Rights/Run.lean +9 V (exhibitedText, weighingGloss, conflictBudget/conflictAnswerOf docstrings), VE/SoftNorms/Run.lean +5 V (conflictFreeText, openAfterClassification on Wire.openCoherence); K +0, S +0; each new definition exercised by a #guard that fails on its seeded bug (RightsChecks.lean :61, :62, :66; SoftNorms/Run.lean :127)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), rights-cfr-2-budget-1, 2026-11-10",
    "commit": "f3f40d51dc6dfffeb57834ee5652ff7b514eaeed"
   },
   {
@@ -2528,13 +2535,6 @@
   },
   {
    "class": "V",
-   "lines": 14,
-   "reason": "rights-cfr-2-budget-1: VE/Rights/Run.lean +9 V (exhibitedText, weighingGloss, conflictBudget/conflictAnswerOf docstrings), VE/SoftNorms/Run.lean +5 V (conflictFreeText, openAfterClassification on Wire.openCoherence); K +0, S +0; each new definition exercised by a #guard that fails on its seeded bug (RightsChecks.lean :61, :62, :66; SoftNorms/Run.lean :127)",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), rights-cfr-2-budget-1, 2026-11-10",
-   "commit": "f3f40d51dc6dfffeb57834ee5652ff7b514eaeed"
-  },
-  {
-   "class": "V",
    "lines": 32,
    "reason": "rights-cfr-1: VE/Service/Document.lean +26 (rightsNormalForm), VE/SoftNorms/Wire.lean +6 (softDefault, factored out of canonicalNorm); K +0, S +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), rights-cfr-1, 2026-11-09",
@@ -2556,13 +2556,6 @@
   },
   {
    "class": "S",
-   "lines": 5,
-   "reason": "ap-4bb: VE/Acts/Sources.lean S +5 (View, ruleView, expected compare SoftNode's mode, rank, alterable, exception, hard; DRI 2026-11-10 ap-4b-f2 item 1); VE/Acts/Situation.lean V -15 (atomSituation, rulePred now tied by atomSituation_separated, rulePred_eq_some); sourceCheck, compareViews, pick also tied by sourceCheck_complete, compareViews_complete, pick_of_forall₂; K +0; trusted -10",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-4bb, 2026-10-18",
-   "commit": "97b3c7999add79633321ed10742aef613d66c5a2"
-  },
-  {
-   "class": "S",
    "lines": 3,
    "reason": "ap-parse-index: trusted +27 (K +0, S +3, V +24): VE/Acts/Wire.lean +10 (checkActBy, joinedActBy), VE/Acts/Index.lean +6 (idxGo), VE/Acts/Readings.lean +5 (reader), VE/Acts/Meaning.lean +3 (S: meaningWith), VE/Norms/Wire.lean +2 (actsOf's reader), VE/Acts/Run.lean +1 (taggedWith); firstsGo, closedFast, buildFast, combineFast, readingsBy, readingsOnce, readOnce tied by their equality theorems",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-parse-index, 2026-11-09",
@@ -2574,6 +2567,20 @@
    "reason": "ap-parse-index: trusted +27 (K +0, S +3, V +24): VE/Acts/Wire.lean +10 (checkActBy, joinedActBy), VE/Acts/Index.lean +6 (idxGo), VE/Acts/Readings.lean +5 (reader), VE/Acts/Meaning.lean +3 (S: meaningWith), VE/Norms/Wire.lean +2 (actsOf's reader), VE/Acts/Run.lean +1 (taggedWith); firstsGo, closedFast, buildFast, combineFast, readingsBy, readingsOnce, readOnce tied by their equality theorems",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-parse-index, 2026-11-09",
    "commit": "a0102f0e5350727e99ddcae2e0b59ed03f2f4192"
+  },
+  {
+   "class": "V",
+   "lines": 22,
+   "reason": "sc-7-f11: lean/VE/Scope/Authoring.lean V +22 (new: Pinned.allowed +4, Pinned.follower +6, Pinned.charRef +7, each with its blank line; Pinned.clause +5: the inside-a-word follower rule, the charRef conjunct and its docstring); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-7-f11, 2026-11-10",
+   "commit": "f3f40d51dc6dfffeb57834ee5652ff7b514eaeed"
+  },
+  {
+   "class": "S",
+   "lines": 5,
+   "reason": "ap-4bb: VE/Acts/Sources.lean S +5 (View, ruleView, expected compare SoftNode's mode, rank, alterable, exception, hard; DRI 2026-11-10 ap-4b-f2 item 1); VE/Acts/Situation.lean V -15 (atomSituation, rulePred now tied by atomSituation_separated, rulePred_eq_some); sourceCheck, compareViews, pick also tied by sourceCheck_complete, compareViews_complete, pick_of_forall₂; K +0; trusted -10",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-4bb, 2026-10-18",
+   "commit": "97b3c7999add79633321ed10742aef613d66c5a2"
   }
  ]
 }
