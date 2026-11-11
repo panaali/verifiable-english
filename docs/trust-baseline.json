@@ -2602,6 +2602,48 @@
    "reason": "norm-defaults-cfr-1b: V +31 (VE/NormDefaults/Layered.lean +12, VE/NormDefaults/Explain.lean +11, VE/NormDefaults/Wire.lean +3, ResponseShape/Schemas/NormDefaults.lean +3, VE/Acts/Decode.lean +1, VE/NormDefaults/Run.lean +1); K +0, S +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), norm-defaults-cfr-1b, 2026-10-18",
    "commit": "c94ad399b7b1f6804c12fbc555a5758d5e971ae6"
+  },
+  {
+   "class": "S",
+   "lines": 6,
+   "reason": "cmp-s3-cfr-1b: S +6 (VE/RightClauses/Plain.lean: checkSpans, checkBody), V +17 (VE/RightClauses/Run.lean: lineObjects, deepLine, elaborateCase's two charges); K +0; the fixtures are T",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s3-cfr-1b, 2026-11-11",
+   "commit": "69fc95777676036f90b8cb8af69d27b08cf3eb88"
+  },
+  {
+   "class": "V",
+   "lines": 17,
+   "reason": "cmp-s3-cfr-1b: S +6 (VE/RightClauses/Plain.lean: checkSpans, checkBody), V +17 (VE/RightClauses/Run.lean: lineObjects, deepLine, elaborateCase's two charges); K +0; the fixtures are T",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s3-cfr-1b, 2026-11-11",
+   "commit": "69fc95777676036f90b8cb8af69d27b08cf3eb88"
+  },
+  {
+   "class": "S",
+   "lines": 11,
+   "reason": "cmp-s3a-cfr-3: ElidedBytes.lean S +11, V +11; Run.lean V +3; K +0; trusted +25",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s3a-cfr-3, 2026-10-18",
+   "commit": "97b3c7999add79633321ed10742aef613d66c5a2"
+  },
+  {
+   "class": "V",
+   "lines": 14,
+   "reason": "cmp-s3a-cfr-3: ElidedBytes.lean S +11, V +11; Run.lean V +3; K +0; trusted +25",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s3a-cfr-3, 2026-10-18",
+   "commit": "97b3c7999add79633321ed10742aef613d66c5a2"
+  },
+  {
+   "class": "S",
+   "lines": 1,
+   "reason": "cmp-s3a-cfr-3: lean/VE/RightClauses/ElidedBytes.lean S +12 V +14 (lineElided, entryElided, elidedTotal, unitElided), lean/VE/RightClauses/Run.lean V +3; K +0, trusted +29",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s3a-cfr-3, 2026-10-18",
+   "commit": "0295df174375667a79dec7c1dd214f9128fe4909"
+  },
+  {
+   "class": "V",
+   "lines": 3,
+   "reason": "cmp-s3a-cfr-3: lean/VE/RightClauses/ElidedBytes.lean S +12 V +14 (lineElided, entryElided, elidedTotal, unitElided), lean/VE/RightClauses/Run.lean V +3; K +0, trusted +29",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s3a-cfr-3, 2026-10-18",
+   "commit": "0295df174375667a79dec7c1dd214f9128fe4909"
   }
  ]
 }
