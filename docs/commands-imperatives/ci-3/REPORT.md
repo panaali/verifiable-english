@@ -90,13 +90,29 @@ That is VE/Commands/Run.lean +84, VE/SpeechActs/Wire.lean +4 and VE/SpeechActs/S
 by standing ruling R16, and FOLLOW-UPS.md "## ci-3" asks for the ties pass. Fixture definitions are classified `T`
 (tools/trust-classes.json).
 
-Trust-mutants sweep on the final Lean tree (HEAD db70c3c70, tree 538087148): `zsh mac-pytest.sh --trustmut --
+Trust-mutants sweep on the final Lean tree, after the review fixes (HEAD f73218bf2, tree 786e86ab8: the record's `head`
+and `tree`; the runners' snapshot 417d4111 added only this REPORT's draft, tree cc9ceb97e; `lean/` is 37975843e in
+both): `zsh mac-pytest.sh --trustmut --
+--max-mutants 1000 --shard K/3 --json <part K> --test lean/VE/Commands/RunExamples.lean --test
+lean/VE/Commands/RunSplit.lean --allow docs/commands-imperatives/ci-3/trust-mutants-allow.json`, K = 1, 2, 3, on
+ve-cloud-3, ve-cloud-2 and ve-cloud-3, each exit 0. The parts were merged with `tools/trust_mutants.py --merge`, after
+`tools-local/tm-unstamp.py` removed cloud2-run.sh's host stamp, as tm-shard.sh merge does. Over 16 definitions and 318
+mutants: **232 KILLED, 0 SURVIVOR, 0 UNKNOWN, 68 INVALID, 18 ALLOWED, 0 NOT RUN** (D[V] 164 KILLED, 52 INVALID, 17
+ALLOWED; G[V] 68 KILLED, 16 INVALID, 1 ALLOWED). The allow file is unchanged. The record is trust-mutants.json.
+
+An unsharded first run of the fixes' sweep, at 92e15cee, stopped at the remote's time limit (exit 124, 12769 s,
+no record). Before then it showed six survivors in the new code, each now fixed in the code or a guard:
+- `readSource` `&&` -> `||`: RunSplit.lean guards (1a503c533);
+- `SpeechSource.stepOrder` list-first and list-last: a three-step order guard (f73218bf2);
+- `readSource` and `decodeSpeechSource` list-first and list-last on `sequences`: equivalent (emptiness of `take 1`).
+  These are removed from trusted code, not allowed: both now call one reject-only `hasSequence` (f73218bf2).
+
+Before the review, the sweep on HEAD db70c3c70 (tree 538087148): `zsh mac-pytest.sh --trustmut --
 --max-mutants 1000 --json docs/commands-imperatives/ci-3/trust-mutants.json --test lean/VE/Commands/RunExamples.lean
 --test lean/VE/Commands/RunSplit.lean --allow docs/commands-imperatives/ci-3/trust-mutants-allow.json --rescore <the
 first sweep's record>`. It ran on the VM and exited 0 in 11976 s. Over 14 definitions and 293 mutants: **218 KILLED,
 0 SURVIVOR, 0 UNKNOWN, 60 INVALID, 15 ALLOWED, 0 NOT RUN**. By class, D[V] has 155 KILLED, 44 INVALID and 14 ALLOWED;
-G[V] has 63 KILLED, 16 INVALID and 1 ALLOWED. The record is committed as trust-mutants.json, with its `head` and
-`tree` equal to the commit it ran on. The `--rescore` did not reuse any verdicts. The main merge moved the plan from
+G[V] has 63 KILLED, 16 INVALID and 1 ALLOWED (that record is replaced by the one above). The `--rescore` did not reuse any verdicts. The main merge moved the plan from
 292 to 293 mutants and added the RunSplit `--test`, so the tool did a full run ("its inputs differ (options)").
 
 The first sweep ran at 0ff26e6f1, before the merge. It found 187 KILLED, 34 SURVIVOR and 11 UNKNOWN. Commit 496560675
