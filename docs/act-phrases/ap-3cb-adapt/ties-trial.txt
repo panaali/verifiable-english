@@ -1,0 +1,13 @@
+# trust_map.py --check with splitMap, splitReg, splitNode, splitEnv, partsOf, namesOk tied to splitMap_exact and elaborate_parts in a scratch tools/trust-classes.json (restored after; exit 1), 2026-11-11, on bed6d3bf3
+VE/Acts/Elaborate.lean: VE.Acts.partsOf: the statement of VE.Acts.splitMap_exact does not mention VE.Acts.partsOf of VE.Acts.Elaborate
+VE/Acts/Elaborate.lean: VE.Acts.partsOf: the statement of VE.Acts.elaborate_parts does not mention VE.Acts.partsOf of VE.Acts.Elaborate
+VE/Acts/Elaborate.lean: VE.Acts.splitMap: the statement of VE.Acts.splitMap_exact does not mention VE.Acts.splitMap of VE.Acts.Elaborate
+VE/Acts/Elaborate.lean: VE.Acts.splitMap: the statement of VE.Acts.elaborate_parts does not mention VE.Acts.splitMap of VE.Acts.Elaborate
+VE/Acts/Elaborate.lean: VE.Acts.splitReg: the statement of VE.Acts.splitMap_exact does not mention VE.Acts.splitReg of VE.Acts.Elaborate
+VE/Acts/Elaborate.lean: VE.Acts.splitReg: the statement of VE.Acts.elaborate_parts does not mention VE.Acts.splitReg of VE.Acts.Elaborate
+VE/Acts/Elaborate.lean: VE.Acts.splitNode: the statement of VE.Acts.splitMap_exact does not mention VE.Acts.splitNode of VE.Acts.Elaborate
+VE/Acts/Elaborate.lean: VE.Acts.splitNode: the statement of VE.Acts.elaborate_parts does not mention VE.Acts.splitNode of VE.Acts.Elaborate
+VE/Acts/Elaborate.lean: VE.Acts.splitEnv: the statement of VE.Acts.splitMap_exact does not mention VE.Acts.splitEnv of VE.Acts.Elaborate
+VE/Acts/Elaborate.lean: VE.Acts.splitEnv: the statement of VE.Acts.elaborate_parts does not mention VE.Acts.splitEnv of VE.Acts.Elaborate
+VE/Acts/Elaborate.lean: VE.Acts.namesOk: the statement of VE.Acts.splitMap_exact does not mention VE.Acts.namesOk of VE.Acts.Elaborate
+VE/Acts/Elaborate.lean: VE.Acts.namesOk: the statement of VE.Acts.elaborate_parts does not mention VE.Acts.namesOk of VE.Acts.Elaborate
