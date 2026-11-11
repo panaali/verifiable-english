@@ -50,5 +50,26 @@
   ["invalidGrammar", ["InvalidGrammar", "InvalidOverlay"]],
   ["rejected", ["SourceTooLong", "TextTooLong", "BadCharacter", "OpenQuote", "BadNumeral", "EmptyDocument", "EmptySentence", "Unterminated", "BadSpacing", "UnboundReference", "ShadowedName", "SortMismatch", "MarkerDepth", "NestingLimit", "NumeralBound", "CoefficientNotNumeral", "PronounUnresolved", "BlockedWording", "CoordinationRepeated", "CoordinationForm", "NaturalScoped", "RelativeForm", "Internal", "ConclusionWithoutPremise", "IllTyped", "NotOneSentence", "UndeclaredEvaluative"]]
  ],
- "unsentenced": ["SourceTooLong", "TextTooLong", "BadCharacter", "OpenQuote", "BadNumeral", "EmptyDocument", "EmptySentence", "Unterminated", "BadSpacing", "NotOneSentence"]
+ "unsentenced": ["SourceTooLong", "TextTooLong", "BadCharacter", "OpenQuote", "BadNumeral", "EmptyDocument", "EmptySentence", "Unterminated", "BadSpacing", "NotOneSentence"],
+ "statement_statuses": [
+  ["one", []],
+  ["unformalised", ["UnformalisedSpan"]],
+  ["none", ["NoDerivation"]],
+  ["many", ["Ambiguous"]],
+  ["budget", ["Budget"]],
+  ["invalidGrammar", ["InvalidGrammar", "InvalidOverlay"]],
+  ["rendered", []],
+  ["rejected", ["SourceTooLong", "TextTooLong", "BadCharacter", "OpenQuote", "BadNumeral", "EmptyDocument", "EmptySentence", "Unterminated", "BadSpacing", "UnboundReference", "ShadowedName", "SortMismatch", "MarkerDepth", "NestingLimit", "NumeralBound", "CoefficientNotNumeral", "PronounUnresolved", "BlockedWording", "CoordinationRepeated", "CoordinationForm", "NaturalScoped", "RelativeForm", "Internal", "ExpectedRule", "NoConsequence", "StrayConsequence", "StrayCarveOut", "UnknownRule", "NodeRefused", "NodeLimit", "RenderUnread", "RenderMismatch", "NoWording", "InvalidInput"]]
+ ],
+ "statement_fields": [
+  ["one", [["statements"], []]],
+  ["unformalised", [["code", "text", "class", "spans"], []]],
+  ["none", [["code", "text", "class", "sentence"], []]],
+  ["many", [["code", "text", "class", "sentence", "witnesses"], []]],
+  ["budget", [["code", "text", "class", "sentence"], []]],
+  ["invalidGrammar", [["code", "text", "class"], ["fault", "failure"]]],
+  ["rendered", [["text", "blocks"], []]],
+  ["rejected", [["code", "text", "class"], ["sentence", "span"]]]
+ ],
+ "statement_unsentenced": ["SourceTooLong", "TextTooLong", "BadCharacter", "OpenQuote", "BadNumeral", "EmptyDocument", "EmptySentence", "Unterminated", "BadSpacing", "NotOneSentence", "UnknownRule", "NodeRefused", "NodeLimit", "UnformalisedSpan", "Internal", "RenderUnread", "RenderMismatch", "NoWording", "InvalidInput"]
 }
