@@ -13,6 +13,9 @@
       },
       "threshold": {
         "description": "a capability or usage threshold of the section 1 table"
+      },
+      "competitor": {
+        "description": "another frontier AI developer (Appendix A, \"competitors\"); the scenario of \"Competitors have strong safety measures\" compares the company with each of them"
       }
     },
     "predicates": {
@@ -42,6 +45,48 @@
           "situation"
         ],
         "description": "the model of {0} is internally deployed as of the coverage date (3.1)"
+      },
+      "determined_by_publication": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "for the internal model of {0}, the determination of (1) and (2) is made by the time of the report's publication (3.1 Scope: \"by the time of the report's publication, we have determined\")"
+      },
+      "off_cycle_public_deployment": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "{0} is the public deployment of a model (3.1 off-cycle bullet 1, \"When we publicly deploy a model\"); no coverage date: off-cycle updates are \"Separate from our publication of Risk Reports\""
+      },
+      "off_cycle_internal_deployment": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "the model of {0} is an internally deployed model (3.1 off-cycle bullet 2, \"we have an internally deployed model\"); no coverage date: off-cycle updates are \"Separate from our publication of Risk Reports\""
+      },
+      "ai_evidence_risk": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "at {0} AI systems might be responsible for much of the research and analysis that underpins risk assessment, and might have strong capabilities for deception, manipulation and obfuscation of evidence (row T4, right column, the condition of \"in which case\")"
+      },
+      "legal_prohibition_redaction": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "at {0} the redaction is necessary to comply with legal prohibitions (3.6.2)"
+      },
+      "legal_rights_redaction": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "at {0} the redaction is necessary to maintain our legal rights (3.6.2)"
+      },
+      "impedes_safety_concerns": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "at {0} a contractual non-disparagement obligation on employees, candidates, or former employees is imposed in a way that could impede or discourage them from publicly raising safety concerns about Anthropic (4.5)"
       },
       "risk_report_approved": {
         "arguments": [
@@ -149,7 +194,7 @@
         "arguments": [
           "situation"
         ],
-        "description": "at {0} a competitor has implemented a risk mitigation that (1) is a significant improvement and (2) we could implement at comparable or lower effort or cost (Appendix A, General upleveling)"
+        "description": "at {0} a competitor has implemented a risk mitigation that: (1) represents a significant improvement on reduction of our prioritized risks relative to our analogous mitigations; and (2) we could implement at comparable (or lower) effort or cost to our competitor (Appendix A, General upleveling)"
       },
       "competitors_strong_measures": {
         "arguments": [
@@ -161,7 +206,7 @@
         "arguments": [
           "situation"
         ],
-        "description": "at {0} we have developed or will imminently develop a highly capable model and no other competitor will soon develop one (Appendix A, Anthropic in the lead)"
+        "description": "at {0} we have developed or will imminently develop a highly capable model (Appendix A, Anthropic in the lead, the scenario's first conjunct)"
       },
       "redaction_reason_listed": {
         "arguments": [
@@ -211,23 +256,54 @@
         ],
         "description": "a strong argument that catastrophic risk is contained is made at {0}. Open term OT6, decided by no one the text names (unstated)"
       },
-      "delay_needed": {
+      "lead_evidence": {
         "arguments": [
           "situation"
         ],
-        "description": "a delay is needed at {0} to achieve the scenario's aim (Appendix A, \"as needed\"). Open term OT7, decided by the company (\"we\")"
+        "description": "at {0} we have clear evidence that no other competitor will soon develop such a model (Appendix A, Anthropic in the lead, the scenario's second conjunct). Open term OT8, decided by the company (\"we\") (\"use our best judgment\")"
       },
-      "clear_evidence": {
+      "competitors_evidence": {
         "arguments": [
           "situation"
         ],
-        "description": "we have clear or strong evidence of the scenario at {0} (Appendix A). Open term OT8, decided by the company (\"we\") (\"use our best judgment\")"
+        "description": "at {0} we have strong evidence that all competitors who have developed, or will soon develop, a highly capable frontier model are able to make strong arguments that catastrophic risk is contained, in the spirit of our recommendations for industry-wide safety (Appendix A, Competitors have strong safety measures). Open term OT8, decided by the company (\"we\") (\"use our best judgment\")"
       },
-      "significant_lead": {
+      "mitigation_evidence": {
         "arguments": [
           "situation"
         ],
-        "description": "we believe we have a significant lead at {0} (Appendix A). Open term OT9, decided by the company (\"we\")"
+        "description": "at {0} we have strong evidence that a competitor has implemented the risk mitigation of the General upleveling scenario (Appendix A). Open term OT8, decided by the company (\"we\") (\"use our best judgment\")"
+      },
+      "lead_delay_needed": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "a delay is needed at {0} to achieve the strong argument that catastrophic risk is contained (Appendix A, Anthropic in the lead, \"as needed to achieve this\"). Open term OT7, decided by the company (\"we\")"
+      },
+      "posture_delay_needed": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "a delay is needed at {0} to meet or exceed the overall risk reduction posture of these competitors (Appendix A, Competitors have strong safety measures, \"as needed to achieve this\"). Open term OT7, decided by the company (\"we\")"
+      },
+      "lead_no_longer_believed": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "at {0} we no longer believe we have a significant lead (Appendix A, \"until and unless we no longer believe we have a significant lead\"). Open term OT9, decided by the company (\"we\")"
+      },
+      "develops_highly_capable": {
+        "arguments": [
+          "competitor"
+        ],
+        "description": "{0} has developed, or will soon develop, a highly capable frontier model (Appendix A). Open term OT23, decided by the company (\"we\")"
+      },
+      "posture_attainable": {
+        "arguments": [
+          "situation",
+          "competitor"
+        ],
+        "description": "at {0} we are able to meet or exceed the overall risk reduction posture of {1} (Appendix A, \"Until we are able to do so\")"
       },
       "material_safety_risk": {
         "arguments": [
@@ -322,11 +398,11 @@
         "arguments": [
           "situation"
         ],
-        "description": "section 1, row 4, at {0}",
+        "description": "section 1, row 4, right column, at {0}: \"In particular, at this point AI systems might be responsible for much of the research and analysis that underpins risk assessment, and might have strong capabilities for deception, manipulation and obfuscation of evidence, in which case analyses of threats from AIs should follow very high evidentiary standards with thorough and careful analysis of the possibility that much of the key evidence is suspect due to the possibility of manipulation by AI systems.\"",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} have analyses of threats from AIs follow very high evidentiary standards"
+          "act": "{0} hold threat analyses to very high evidentiary standards with thorough care"
         }
       },
       "roadmap_maintained": {
@@ -519,22 +595,22 @@
         "arguments": [
           "situation"
         ],
-        "description": "3.4 step 2 at {0}",
+        "description": "3.4 step 2 at {0}: \"We will solicit comprehensive internal feedback on the report, focusing on identifying potential methodological weaknesses, analytical gaps, or areas requiring additional evidence or clarification.\"",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} have comprehensive internal feedback solicited"
+          "act": "{0} have comprehensive internal feedback on the report solicited"
         }
       },
       "external_feedback": {
         "arguments": [
           "situation"
         ],
-        "description": "3.4 step 2 at {0}",
+        "description": "3.4 step 2 at {0}: \"We will usually also seek feedback from trusted external parties with relevant expertise.\"",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} have feedback sought from trusted external parties"
+          "act": "{0} have feedback sought from trusted external parties with relevant expertise"
         }
       },
       "executive_approved": {
@@ -563,55 +639,55 @@
         "arguments": [
           "situation"
         ],
-        "description": "the decisions, the Risk Report and the internal feedback are shared with the Board and the LTBT (3.4 step 4)",
+        "description": "3.4 step 4 at {0}: \"Following approval of a Risk Report, the CEO and RSO will promptly share their decision(s), the underlying Risk Report, and internal feedback with both the Board and the LTBT.\" (\"promptly\" is OT12)",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} have its decision shared with the Board as well as the LTBT"
+          "act": "{0} have the decision promptly shared with the Board as well as the LTBT"
         }
       },
       "redactions_minimized": {
         "arguments": [
           "situation"
         ],
-        "description": "3.5 at {0}",
+        "description": "3.5 at {0}: \"We will aim to minimize redactions to the public version of the report or to the version of the report shared with all regular-clearance Anthropic employees.\"",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} have its redactions minimized"
+          "act": "{0} have redactions minimized in public as well as regular-clearance versions"
         }
       },
       "redactions_disclosed": {
         "arguments": [
           "situation"
         ],
-        "description": "3.5 at {0}",
+        "description": "3.5 at {0}: \"We will disclose the existence of each redaction made in the public version of the report\"",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} have the existence of each redaction disclosed"
+          "act": "{0} have each redaction in the public version disclosed"
         }
       },
       "redactions_justified": {
         "arguments": [
           "situation"
         ],
-        "description": "3.5 at {0}",
+        "description": "3.5 at {0}: \"and aim to give a brief justification for such redactions\" (the redactions made in the public version)",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} have a brief justification of each redaction given"
+          "act": "{0} have a brief justification of each public-version redaction given"
         }
       },
       "redaction": {
         "arguments": [
           "situation"
         ],
-        "description": "material may be redacted at {0} (3.5)",
+        "description": "3.5 at {0}: \"We will publish a public version of our Risk Report.\" ... \"Reasons we may redact material include but are not limited to:\" (the four listed reasons do not close the class)",
         "regulated": {
           "role": "permission",
           "default": "deny",
-          "act": "{0} have the material redacted"
+          "act": "{0} have material redacted from the public version"
         }
       },
       "public_review_sought": {
@@ -684,22 +760,22 @@
         "arguments": [
           "situation"
         ],
-        "description": "3.6.2 at {0}",
+        "description": "3.6.2 at {0}: \"We will ask the external reviewers to provide public commentary on our report within 30 days of receipt.\" (the day count is D3's)",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} have the reviewers asked to comment publicly within thirty days"
+          "act": "{0} have the reviewers asked to comment publicly within thirty days of receipt"
         }
       },
       "early_full_review": {
         "arguments": [
           "situation"
         ],
-        "description": "3.6.2 at {0}",
+        "description": "3.6.2 at {0}: \"We will try to work toward a process that involves the full external review being completed prior to Board/LTBT review (and may require this later).\"",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} have the full external review completed before the Board review"
+          "act": "{0} have the full external review done before the Board as well as LTBT review"
         }
       },
       "sections_shared": {
@@ -717,22 +793,22 @@
         "arguments": [
           "situation"
         ],
-        "description": "3.6.2 at {0}",
+        "description": "3.6.2 at {0}: \"but we may choose to split the review process across different external reviewers based on their subject matter expertise\"",
         "regulated": {
           "role": "permission",
           "default": "deny",
-          "act": "{0} have the review split across external reviewers"
+          "act": "{0} have the review split across external reviewers by subject matter expertise"
         }
       },
       "only_legal_redactions": {
         "arguments": [
           "situation"
         ],
-        "description": "3.6.2 at {0}",
+        "description": "3.6.2 at {0}: \"For purposes of external review, the only redactions to the Risk Report will be those necessary to comply with legal prohibitions or to maintain our legal rights.\" (a prohibition unless one of the two grounds holds)",
         "regulated": {
-          "role": "obligation",
+          "role": "permission",
           "default": "deny",
-          "act": "{0} have only legally necessary redactions in the reviewed version"
+          "act": "{0} have material redacted from the version given to external reviewers"
         }
       },
       "rso_maintained": {
@@ -750,11 +826,11 @@
         "arguments": [
           "situation"
         ],
-        "description": "4.2 at {0}",
+        "description": "4.2 at {0}: \"We will regularly brief the LTBT on plans and developments related to our Risk Reports.\" (\"regularly\" is OT12)",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} have the LTBT briefed"
+          "act": "{0} have the LTBT regularly briefed on Risk Report plans as well as developments"
         }
       },
       "unredacted_shared": {
@@ -783,11 +859,11 @@
         "arguments": [
           "situation"
         ],
-        "description": "4.4 at {0}",
+        "description": "4.4 at {0}: \"We will maintain a process for Anthropic staff to submit anonymous or identified reports regarding potential noncompliance with this policy.\"",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} have a noncompliance reporting process maintained"
+          "act": "{0} maintain a staff process taking anonymous as well as identified reports"
         }
       },
       "recipient_options": {
@@ -805,11 +881,11 @@
         "arguments": [
           "situation"
         ],
-        "description": "4.4 at {0}: investigated, corrective action if substantiated, the report and findings documented",
+        "description": "4.4 at {0}: \"When we receive a report, we will promptly investigate, take appropriate and proportional corrective action if it is substantiated, and document the report and our findings.\" (\"promptly\" is OT12, the corrective action OT20)",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} have the report investigated"
+          "act": "{0} have the report promptly investigated"
         }
       },
       "quarterly_updates": {
@@ -827,11 +903,11 @@
         "arguments": [
           "situation"
         ],
-        "description": "4.4 at {0}",
+        "description": "4.4 at {0}: \"If we determine that a report is (1) substantiated and (2) involves a material safety risk, we will promptly notify the Board\" (\"promptly\" is OT12)",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} have the Board notified"
+          "act": "{0} have the Board promptly notified"
         }
       },
       "public_notice": {
@@ -871,11 +947,11 @@
         "arguments": [
           "situation"
         ],
-        "description": "a contractual non-disparagement obligation that could impede or discourage raising safety concerns (4.5)",
+        "description": "4.5 at {0}: \"We will not impose contractual non-disparagement obligations on employees, candidates, or former employees in a way that could impede or discourage them from publicly raising safety concerns about Anthropic.\"",
         "regulated": {
           "role": "permission",
           "default": "deny",
-          "act": "{0} impose a non-disparagement obligation impeding safety concerns"
+          "act": "{0} impose a contractual non-disparagement obligation"
         }
       },
       "clause_allows_concerns": {
@@ -893,22 +969,22 @@
         "arguments": [
           "situation"
         ],
-        "description": "4.6 at {0}",
+        "description": "4.6 at {0}: \"We will regularly conduct an internal review of our implementation of this policy.\" (\"regularly\" is OT12)",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} have an internal review of the implementation conducted"
+          "act": "{0} have an internal review of the implementation regularly conducted"
         }
       },
       "compliance_review": {
         "arguments": [
           "situation"
         ],
-        "description": "4.7 at {0}",
+        "description": "4.7 at {0}: \"On approximately an annual basis, we will commission a third-party review that assesses whether we adhered to this policy's main procedural commitments.\" (the cadence is OT12)",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} have a third-party procedural compliance review commissioned"
+          "act": "{0} commission a third-party procedural compliance review about once a year"
         }
       },
       "change_approved": {
@@ -948,7 +1024,7 @@
         "arguments": [
           "situation"
         ],
-        "description": "a strong argument that catastrophic risk is contained (Appendix A)",
+        "description": "Appendix A at {0}: \"We will require a strong argument that catastrophic risk is contained, along the lines of our recommendations for industry-wide safety (see Section 1).\"",
         "regulated": {
           "role": "obligation",
           "default": "deny",
@@ -959,7 +1035,7 @@
         "arguments": [
           "situation"
         ],
-        "description": "Appendix A at {0}",
+        "description": "Appendix A at {0}: \"We will delay AI development and deployment as needed to achieve this\" (Anthropic in the lead; Competitors have strong safety measures)",
         "regulated": {
           "role": "obligation",
           "default": "deny",
@@ -968,20 +1044,21 @@
       },
       "posture_matched": {
         "arguments": [
-          "situation"
+          "situation",
+          "competitor"
         ],
-        "description": "meet or exceed the overall risk reduction posture of these competitors (Appendix A)",
+        "description": "Appendix A at {0}: \"For our highly capable frontier models, we will meet or exceed the overall risk reduction posture of these competitors, as far as we can tell based on our best efforts to assess that posture.\" ({1} is one of these competitors)",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} at least match the posture of the competitors"
+          "act": "{0} at least match the overall risk reduction posture of {1} as best we can tell"
         }
       },
       "significant_effort": {
         "arguments": [
           "situation"
         ],
-        "description": "meet or exceed that performance standard (Appendix A)",
+        "description": "Appendix A at {0}: \"We will make a significant effort to meet or exceed that performance standard.\" (the performance standard of the competitor's mitigation, relative to our analogous mitigations)",
         "regulated": {
           "role": "obligation",
           "default": "deny",

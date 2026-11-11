@@ -6,16 +6,16 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 
 | | count |
 |---|---:|
-| leaves:bound | 298 |
-| leaves:closed domain | 313 |
-| leaves:none | 1605 |
-| modes | 44 |
+| leaves:bound | 301 |
+| leaves:closed domain | 320 |
+| leaves:none | 1641 |
+| modes | 45 |
 | today:hand | 203 |
 | today:later Lean request | 62 |
-| today:not probed | 1203 |
-| today:shape | 611 |
+| today:not probed | 1239 |
+| today:shape | 621 |
 | today:unbound | 137 |
-| answers | 599 |
+| answers | 606 |
 | probes | 10204 |
 | hand_binders | 51 |
 
@@ -3064,6 +3064,8 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | leaf | kind | class | keyword | format | observed | bound today |
 |---|---|---|---|---|---:|---|
 | `/cardinality/environment_id` | string | none |  | pattern | 0 | not probed |
+| `/cardinality/leaf_labels/*/label` | string | none |  |  | 0 | not probed |
+| `/cardinality/leaf_labels/*/name` | string | none |  |  | 0 | not probed |
 | `/cardinality/report/leaves/*/meaning_id` | string | none |  | pattern | 0 | not probed |
 | `/cardinality/report/leaves/*/name` | string | none |  |  | 0 | not probed |
 | `/cardinality/report/root/meaning_id` | string | none |  | pattern | 0 | not probed |
@@ -3072,6 +3074,10 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/cardinality/w6_environment_id` | string | none |  | pattern | 0 | not probed |
 | `/cardinality/w6_target_environment_id` | string | none |  | pattern | 0 | not probed |
 | `/case_index` | integer | bound | x-index |  | 0 | shape |
+| `/composed/chain_document` | string | none |  |  | 0 | not probed |
+| `/composed/counting_document` | string | none |  |  | 0 | not probed |
+| `/composed/not_certified/*` | string | none |  |  | 0 | not probed |
+| `/composed/scope` | string | none |  |  | 0 | not probed |
 | `/composed_readings/*/readings/*/content/norm/name` | string | none |  |  | 0 | not probed |
 | `/composed_readings/*/readings/*/content/norm/over/*` | string | none |  |  | 0 | not probed |
 | `/composed_readings/*/readings/*/content/norm/predicate` | string | none |  |  | 0 | not probed |
@@ -3280,7 +3286,9 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 
 | array | length bound by | positions bound by | internal agreement | probed (generic/hand) |
 |---|---|---|---|---|
+| `/cardinality/leaf_labels` |  |  |  |  |
 | `/cardinality/report/leaves` |  |  |  |  |
+| `/composed/not_certified` |  |  |  |  |
 | `/composed_readings` |  |  |  |  |
 | `/composed_readings/*/readings` |  |  |  |  |
 | `/composed_readings/*/readings/*/content/norm/over` |  |  |  |  |
@@ -3863,6 +3871,72 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | array | length bound by | positions bound by | internal agreement | probed (generic/hand) |
 |---|---|---|---|---|
 | `/result/clause_slot` |  |  |  |  |
+
+## english.statement
+
+7 recorded answers.
+
+| leaf | kind | class | keyword | format | observed | bound today |
+|---|---|---|---|---|---:|---|
+| `/case_index` | integer | bound | x-index |  | 1 | shape |
+| `/error` | string | none |  | minLength | 5 | not probed |
+| `/id` | any | bound | x-echo |  | 3 | shape |
+| `/id` | string | bound | x-equals |  | 3 | shape |
+| `/result/class` | string | closed domain | enum |  | 2 | shape |
+| `/result/code` | string | closed domain | enum |  | 2 | shape |
+| `/result/failure/0` | string | none |  |  | 0 | not probed |
+| `/result/failure/1` | string | none |  |  | 0 | not probed |
+| `/result/failure/2` | string | none |  |  | 0 | not probed |
+| `/result/fault` | string | closed domain | enum |  | 0 | shape |
+| `/result/identities/actions_version` | string | none |  | minLength | 2 | not probed |
+| `/result/identities/environment_id` | string | none |  | pattern | 2 | not probed |
+| `/result/identities/grammar_id` | string | none |  | pattern | 2 | not probed |
+| `/result/identities/lexicon_id` | string | none |  | pattern | 2 | not probed |
+| `/result/identities/overlay_digest` | string | none |  | pattern | 0 | not probed |
+| `/result/identities/source_sha256` | string | none |  | pattern | 2 | not probed |
+| `/result/sentence` | integer | none |  | minimum | 1 | not probed |
+| `/result/span/0` | integer | none |  | minimum | 0 | not probed |
+| `/result/span/1` | integer | none |  | minimum | 0 | not probed |
+| `/result/spans/*/owner` | string | none |  |  | 0 | not probed |
+| `/result/spans/*/place` | string | closed domain | enum |  | 0 | shape |
+| `/result/spans/*/row` | string | none |  |  | 0 | not probed |
+| `/result/spans/*/start` | integer | none |  | minimum | 0 | not probed |
+| `/result/spans/*/stop` | integer | none |  | minimum | 0 | not probed |
+| `/result/statements/*/exception_to/*` | integer | none |  | minimum | 0 | not probed |
+| `/result/statements/*/kind` | string | closed domain | const |  | 0 | shape |
+| `/result/statements/*/node/norm/name` | string | none |  |  | 0 | not probed |
+| `/result/statements/*/node/norm/over/*` | string | none |  |  | 0 | not probed |
+| `/result/statements/*/node/norm/predicate` | string | none |  |  | 0 | not probed |
+| `/result/statements/*/number` | integer | none |  | minimum | 0 | not probed |
+| `/result/statements/*/over` | integer | none |  | minimum | 0 | not probed |
+| `/result/statements/*/rule` | integer | none |  | minimum | 0 | not probed |
+| `/result/statements/*/span/0` | integer | none |  | minimum | 0 | not probed |
+| `/result/statements/*/span/1` | integer | none |  | minimum | 0 | not probed |
+| `/result/status` | string | closed domain | const |  | 2 | shape |
+| `/result/text` | string | none |  | minLength | 2 | not probed |
+| `/result/witnesses/*/*/0` | string | none |  |  | 0 | not probed |
+| `/result/witnesses/*/*/1` | integer | none |  | minimum | 0 | not probed |
+| `/result/witnesses/*/*/2` | integer | none |  | minimum | 0 | not probed |
+| `/status` | string | closed domain | const |  | 7 | shape |
+
+| grammar at | grammar | bound whole by | observed |
+|---|---|---|---:|
+| `/result/statements/*/node/norm/guard` | generated_formula |  | 0 |
+| `/result/statements/*/node/norm/unless/*` | generated_formula |  | 0 |
+
+| array | length bound by | positions bound by | internal agreement | probed (generic/hand) |
+|---|---|---|---|---|
+| `/result/failure` |  |  |  |  |
+| `/result/span` |  |  |  |  |
+| `/result/spans` |  |  |  |  |
+| `/result/statements` |  |  |  |  |
+| `/result/statements/*/exception_to` |  |  |  |  |
+| `/result/statements/*/node/norm/over` |  |  |  |  |
+| `/result/statements/*/node/norm/unless` |  |  |  |  |
+| `/result/statements/*/span` |  |  |  |  |
+| `/result/witnesses` |  |  |  |  |
+| `/result/witnesses/*` |  |  |  |  |
+| `/result/witnesses/*/*` |  |  |  |  |
 
 ## Grammars
 
