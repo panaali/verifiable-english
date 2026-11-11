@@ -21394,7 +21394,10 @@
         "VE.RightClauses.RunExamples.bodies",
         "VE.RightClauses.RunExamples.scopes",
         "VE.RightClauses.RunExamples.deep",
-        "VE.RightClauses.RunExamples.deepIn"
+        "VE.RightClauses.RunExamples.deepIn",
+        "VE.RightClauses.RunExamples.twoLinesWith",
+        "VE.RightClauses.RunExamples.elided",
+        "VE.RightClauses.RunExamples.sameUnit"
       ]
     },
     "VE/Presupposition/Run.lean": {
@@ -21669,6 +21672,16 @@
     "VE/Commands/WebEnvMain.lean": {
       "T": [
         "main"
+      ]
+    },
+    "VE/RightClauses/ElidedBytes.lean": {
+      "S": [
+        "VE.RightClauses.lineElided",
+        "VE.RightClauses.entryElided",
+        "VE.RightClauses.elidedTotal"
+      ],
+      "D[V]": [
+        "VE.RightClauses.unitElided"
       ]
     }
   }
