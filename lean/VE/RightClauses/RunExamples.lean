@@ -132,6 +132,9 @@ def sameUnit : Json := parse <|
 #guard elided sameUnit == some (parse "20", parse "[20]")
 #guard (unitElided [((("r21" : String), ("equal-access" : String)), 7)] (parse ("[{\"limitation\":{}},{\"right\":{\"name\":\"r21\",\"lines\":[" ++
   "{\"norm\":{\"name\":\"equal-access\"}},{\"norm\":{\"name\":\"other\"}}]}}]"))) == ([0, 7] : List Nat)
+-- a line object with no name (neither `norm` nor `liberty` names it) adds 0
+#guard (unitElided [((("r21" : String), ("equal-access" : String)), 7)] (parse ("[{\"right\":{\"name\":\"r21\",\"lines\":[" ++
+  "{\"kind\":\"claim\"},{\"norm\":{\"name\":\"equal-access\"}}]}}]"))) == ([7] : List Nat)
 -- an extra member that sorts first, then last
 #guard says (doc (",\"elided\":[],\"relation\":{\"aaa\":1," ++ rel ++ "}")) ==
   "InvalidInput: invalid relation of rule equal-access"
