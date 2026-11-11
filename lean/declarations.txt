@@ -24180,13 +24180,13 @@ module VE.Scales.Theorems bb8ba1477e430a0db8380e53d0947299cf4220ffa1f5d7406146bd
 324:0-351:72 theorem VE.Scales.reread_denote@VE.Scales.Theorems
 355:0-365:95 theorem VE.Scales.scales_conservative@VE.Scales.Theorems
 367:0-383:76 theorem VE.Scales.grade_open@VE.Scales.Theorems
-module VE.Scope.Authoring 88ab8b36fdf0cd8f481bb0978320baef3acfdca2ebc11f23ed5abd082951d3a5
+module VE.Scope.Authoring bd07295b5d47f340f7ebc96d3917b244b384a3b52f419a5c0ddd53ee5f129852
 24:0-26:178 def VE.Scope.Pinned.wordChar@VE.Scope.Authoring
 28:0-29:91 def VE.Scope.Pinned.spaced@VE.Scope.Authoring
 31:0-34:135 def VE.Scope.Pinned.closers@VE.Scope.Authoring
 36:0-38:122 def VE.Scope.Pinned.allowed@VE.Scope.Authoring
 40:0-44:113 def VE.Scope.Pinned.follower@VE.Scope.Authoring
-46:0-51:50 def VE.Scope.Pinned.charRef@VE.Scope.Authoring
+46:0-51:48 def VE.Scope.Pinned.charRef@VE.Scope.Authoring
 53:0-62:72 def VE.Scope.Pinned.clause@VE.Scope.Authoring
 64:0-65:67 def VE.Scope.Pinned.listName@VE.Scope.Authoring
 67:0-68:50 def VE.Scope.Pinned.cap@VE.Scope.Authoring
@@ -24226,7 +24226,7 @@ module VE.Scope.Authoring 88ab8b36fdf0cd8f481bb0978320baef3acfdca2ebc11f23ed5abd
 216:0-221:13 def VE.Scope.Pinned.parseGovernor@VE.Scope.Authoring
 225:0-233:11 theorem VE.Scope.scope_parseRender@VE.Scope.Authoring
 235:0-238:9 theorem VE.Scope.scope_renderParse@VE.Scope.Authoring
-module VE.Scope.AuthoringExamples eeba5a879247fd3458bec6460d69bf1029d0d7b44e665ba43f58ba4e83073532
+module VE.Scope.AuthoringExamples 1e62529a1cfdcec841e7aa83ed16012f6bd62d49c618913154ad9b3b25b992ef
 11:0-11:63 def VE.Scope.AuthoringExamples.j@VE.Scope.AuthoringExamples
 12:0-14:130 def VE.Scope.AuthoringExamples.trip@VE.Scope.AuthoringExamples
 15:0-16:52 def VE.Scope.AuthoringExamples.para@VE.Scope.AuthoringExamples

@@ -43,12 +43,12 @@ def allowed (c : Char) : Bool :=
 def follower (c : Char) : Bool :=
   allowed c || closers.contains c || (0x21 ≤ c.toNat && c.toNat ≤ 0x7E) || (0x2010 ≤ c.toNat && c.toNat ≤ 0x2027)
 
-/-- A Markdown character reference in a word ("&nbsp;", "&#46;"): "&", then a run of at least two ASCII letters, digits
-    or "#", then ";". A renderer draws it as one character, a space or a sentence end among them (`clause` refuses it;
-    "AT&T" and "AT&T;" stay; sc-7-f11, reviews/dri-decisions-20261110-sc-7-f11.md item 1). -/
+/-- A Markdown character reference in a word ("&nbsp;", "&#46;", "&a;"): "&", then a non-empty run of ASCII letters,
+    digits or "#", then ";". A renderer draws it as one character, a space or a sentence end among them (`clause`
+    refuses it; "AT&T" stays, "AT&T;" not; sc-7-f11, reviews/dri-decisions-20261110-sc-7-f11.md item 1). -/
 def charRef (w : String) : Bool := (w.splitOn "&").tail.any fun t =>
   let r := t.takeWhile fun c => c.isAlphanum || c == '#'
-  2 ≤ r.length && (t.drop r.length).startsWith ";"
+  !r.isEmpty && (t.drop r.length).startsWith ";"
 
 /-- A slot's text (a condition, a rule, a list name, a section): spaced, and no word ends a sentence or a lead-in: once
     its trailing `closers` are dropped, a word is not empty and ends in an allow-listed character, and no other: an ASCII
