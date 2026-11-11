@@ -21719,6 +21719,8 @@
         "VE.RightClauses.EnglishExamples.base",
         "VE.RightClauses.EnglishExamples.doc",
         "VE.RightClauses.EnglishExamples.lexicon",
+        "VE.RightClauses.EnglishExamples.modeCase",
+        "VE.RightClauses.EnglishExamples.modeEnglish",
         "VE.RightClauses.EnglishExamples.pubDoc",
         "VE.RightClauses.EnglishExamples.pubLine",
         "VE.RightClauses.EnglishExamples.rc1Line",

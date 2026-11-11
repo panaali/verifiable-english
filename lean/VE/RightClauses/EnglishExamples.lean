@@ -1,5 +1,6 @@
 import VE.RightClauses.English
 import VE.RightClauses.Examples
+import VE.RightClauses.Run
 
 /-! RC1 to RC4 through W7 (docs/spec/right-clauses.md 2, 9.3's English line; cmp-s3-cfr-1d): one instance each, RC3
 also with `s_a = s_b` and slot o before the holder slot, RC4's two forms and its byte form for each trigger, and
@@ -128,5 +129,30 @@ def rendered : List Row :=
   (fun t => (gated "RC2" t).isSome)
 #guard (rcFrames.map fun (_, ps) => match ps with | .lit s :: _ => s | _ => "").Pairwise
   fun a b => a ≠ "" && b ≠ "" && !a.toList.isPrefixOf b.toList && !b.toList.isPrefixOf a.toList
+
+/-! ## The mode's `english` field (`VE.RightClauses.Run.elaborateCase`): the rows as Lean writes them, the lexicon bound
+to the rights lines' soft environment, and no field without the request's `english` -/
+
+def modeCase : Lean.Json := (Lean.Json.parse "{\"id\":\"rc3\",\"environment\":{\"language\":\"ve.core@0.2\",\"profiles\":[\"norms@0\",\"relational-fol@0\",\"right-clauses@0\",\"rights@0\",\"soft-norms@0\"],\"spec_revision\":\"ve-v0.2-expand2-2026-09-25\",\"vocabulary\":{\"sorts\":{\"state\":{\"description\":\"state\"},\"person\":{\"description\":\"person\"}},\"predicates\":{\"public_service_access_required\":{\"arguments\":[\"state\",\"person\"],\"description\":\"obligation\",\"regulated\":{\"role\":\"obligation\",\"default\":\"deny\",\"act\":\"{0} give {1} equal access to public service\"}},\"country_of\":{\"arguments\":[\"state\",\"person\"],\"description\":\"base\"},\"charged\":{\"arguments\":[\"person\"],\"description\":\"base\"},\"lives_in\":{\"arguments\":[\"person\",\"state\"],\"description\":\"base\"},\"parent_of\":{\"arguments\":[\"person\",\"person\"],\"description\":\"base\"},\"publish_required\":{\"arguments\":[\"person\",\"person\"],\"description\":\"obligation\",\"regulated\":{\"role\":\"obligation\",\"default\":\"deny\",\"act\":\"{0} publish about {1}\"}}},\"constants\":{\"texas\":{\"sort\":\"state\",\"description\":\"Texas\"},\"ann\":{\"sort\":\"person\",\"description\":\"Ann\"},\"bob\":{\"sort\":\"person\",\"description\":\"Bob\"}},\"rights\":{\"holders\":[\"person\"],\"bearers\":[\"state\",\"person\"]}}},\"document\":[{\"right\":{\"name\":\"r21\",\"holder\":\"person\",\"lines\":[{\"kind\":\"claim\",\"norm\":{\"name\":\"equal-access\",\"predicate\":\"public_service_access_required\",\"sign\":true,\"guard\":[\"top\"],\"unless\":[],\"over\":[]},\"elided\":[[0,8]],\"relation\":{\"predicate\":\"country_of\",\"slots\":[0,1],\"cites\":[],\"total\":1}}]},\"span\":[0,200]}],\"english\":{\"source\":\"Everyone has equal access.                                                                                                                                                                              \",\"lexicon\":{\"format\":\"ve.english-lexicon@1\",\"environment_id\":\"e3ae58d69b3e88d847870e192bcdc72d4b99dd012adc69ccb2664ca6d846e601\",\"nouns\":[[\"person\",\"person\"],[\"state\",\"state\"]],\"letters\":[[\"person\",\"P\"],[\"state\",\"S\"]],\"wordings\":[[\"charged\",\"{0} is charged\"],[\"country_of\",\"{0} has the recorded relation \\\"country_of\\\" to {1}\"],[\"lives_in\",\"{0} has the recorded relation \\\"lives_in\\\" to {1}\"],[\"parent_of\",\"{0} has the recorded relation \\\"parent_of\\\" to {1}\"],[\"public_service_access_required\",\"{0} must give {1} equal access to public service\"],[\"publish_required\",\"{0} must publish about {1}\"]],\"negatives\":[],\"aliases\":[],\"spellings\":[[\"ann\",\"ann\"],[\"bob\",\"bob\"],[\"texas\",\"texas\"]]}}}").toOption.getD .null
+
+def modeEnglish (j : Lean.Json) : String :=
+  match VE.RightClauses.Run.elaborateCase j with
+  | .ok row => ((row.getObjValD "result").getObjValD "english").compress
+  | .error e => e
+
+#guard modeEnglish modeCase == "[" ++ ",".intercalate
+  ["{\"frame\":\"RC1\",\"rule\":\"equal-access\",\"text\":\"" ++ "Claim of right 1. Every state must give each person " ++
+    "equal access to public service, where that state has the recorded relation \\\"country_of\\\" to that person.\"}",
+   "{\"frame\":\"RC3\",\"rule\":\"equal-access\",\"text\":\"For every person there is at least one state such that " ++
+    "that state has the recorded relation \\\"country_of\\\" to that person.\"}",
+   "{\"frame\":\"RC4\",\"rule\":\"equal-access\",\"text\":\"This line leaves out: \\\"Everyone\\\".\"}"] ++ "]"
+#guard modeEnglish (modeCase.setObjVal! "english" ((modeCase.getObjValD "english").setObjVal! "lexicon"
+  (((modeCase.getObjValD "english").getObjValD "lexicon").setObjVal! "environment_id" (.str "0")))) ==
+  "InvalidInput: the lexicon names another environment"
+#guard modeEnglish (modeCase.setObjVal! "english" ((modeCase.getObjValD "english").setObjVal! "extra" .null)) ==
+  "fields do not match: expected [source, lexicon], got [extra, lexicon, source]"
+#guard (match VE.RightClauses.Run.elaborateCase (VE.RightClauses.dropKeys ["english"] modeCase) with
+  | .ok row => ((row.getObjValD "result").getObjVal? "english").toOption.isNone
+  | .error _ => false)
 
 end VE.RightClauses.EnglishExamples
