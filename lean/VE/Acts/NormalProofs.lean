@@ -1,5 +1,6 @@
 import VE.Acts.Readings
 import VE.Grammar.TableInvariant
+import VE.Grammar.TableProofs
 
 /-! `read_normal` (docs/spec/act-phrases.md 5.6): the normal form of a `normalOk` atom reads back as its canonical
 atom.
@@ -844,5 +845,463 @@ theorem normal_derived (V : Vocab) (hV : framesOk V = true) (a : Atom) (ha : nor
       rw [canon_eq a, hfh]
     have hok : actOk V (.one a.canon) = true := by simp [actOk, atomOk_canon, hatom0]
     simp only [meaning, meaningWith, hp, hcanon, hok, if_true]
+
+/-! ## (2) The bounds: finitely many derivations, and a step charge that does not grow with the cap -/
+
+section Bounds
+open VE.Grammar
+
+section Finite
+variable {T K : Type} [Accepts K T] {G : Grammar K}
+
+/-- Finitely many derivations of `X` over `u`. -/
+def FinD (G : Grammar K) (X : Sym K) (u : List T) : Prop :=
+  ∃ L : List (Tree T), ∀ t, t.derives G X = true → t.yield = u → t ∈ L
+/-- Finitely many derivations of the symbols `Xs` over `u`. -/
+def FinDs (G : Grammar K) (Xs : List (Sym K)) (u : List T) : Prop :=
+  ∃ L : List (List (Tree T)), ∀ us, derivesAll G Xs us = true → yieldAll us = u → us ∈ L
+
+/-- A family of finite lists, one for each `k < m`, collected into one. -/
+theorem collect {α : Type} {P : Nat → α → Prop} : ∀ m, (∀ k < m, ∃ L : List α, ∀ x, P k x → x ∈ L) →
+    ∃ L : List α, ∀ k < m, ∀ x, P k x → x ∈ L
+  | 0, _ => ⟨[], fun k hk => absurd hk (Nat.not_lt_zero k)⟩
+  | m + 1, h => by
+    obtain ⟨L1, h1⟩ := collect m (fun k hk => h k (by omega))
+    obtain ⟨L2, h2⟩ := h m (by omega)
+    refine ⟨L1 ++ L2, fun k hk x hx => ?_⟩
+    rcases Nat.lt_or_ge k m with hl | hl
+    · exact List.mem_append_left _ (h1 k hl x hx)
+    · exact List.mem_append_right _ (h2 x (by rw [show k = m by omega] at hx; exact hx))
+
+theorem finDs_seq (hG : G.wf = true) : ∀ (Xs : List (Sym K)) (u : List T),
+    (∀ Y ∈ Xs, ∀ u' : List T, u'.length ≤ u.length → (2 ≤ Xs.length → u'.length < u.length) → FinD G Y u') →
+    FinDs G Xs u
+  | [], u, _ => ⟨[[]], fun us h _ => by
+      match us, h with
+      | [], _ => simp⟩
+  | Y :: Ys, u, hY => by
+    have hk : ∀ k < u.length + 1, ∃ L : List (List (Tree T)), ∀ us, (∃ t ts, us = t :: ts ∧
+        t.derives G Y = true ∧ t.yield = u.take k ∧ derivesAll G Ys ts = true ∧ yieldAll ts = u.drop k) → us ∈ L := by
+      intro k hk
+      by_cases hk0 : k = 0
+      · refine ⟨[], fun us ⟨t, ts, _, ht, hy, _⟩ => ?_⟩
+        exact absurd (by rw [hy, hk0]; rfl) (yield_ne_nil hG ht)
+      by_cases hlast : Ys ≠ [] ∧ k = u.length
+      · refine ⟨[], fun us ⟨t, ts, _, _, _, hts, hy⟩ => ?_⟩
+        exact absurd (by rw [hy, hlast.2]; simp) (yieldAll_ne_nil hG hts hlast.1)
+      have hlen : 2 ≤ (Y :: Ys).length → k < u.length := by
+        intro h2
+        have hne : Ys ≠ [] := by intro he; simp [he] at h2
+        have : k ≠ u.length := fun e => hlast ⟨hne, e⟩
+        omega
+      obtain ⟨L1, h1⟩ := hY Y (by simp) (u.take k) (by simp only [List.length_take]; omega)
+        (fun h2 => by have := hlen h2; simp only [List.length_take]; omega)
+      obtain ⟨L2, h2⟩ := finDs_seq hG Ys (u.drop k) (fun Y' hY' u' hu' _ =>
+        hY Y' (by simp [hY']) u' (by simp at hu'; omega) (fun _ => by simp at hu'; omega))
+      exact ⟨L1.flatMap (fun t => L2.map (t :: ·)), fun us ⟨t, ts, he, ht, hy, hts, hys⟩ =>
+        he ▸ List.mem_flatMap.mpr ⟨t, h1 t ht hy, List.mem_map.mpr ⟨ts, h2 ts hts hys, rfl⟩⟩⟩
+    obtain ⟨L, hL⟩ := collect _ hk
+    refine ⟨L, fun us h hy => ?_⟩
+    match us, h with
+    | t :: ts, h =>
+      rw [derivesAll_cons, Bool.and_eq_true] at h
+      rw [yieldAll_cons] at hy
+      have hle : t.yield.length ≤ u.length := by rw [← hy]; simp
+      refine hL t.yield.length (by omega) _ ⟨t, ts, rfl, h.1, ?_, h.2, ?_⟩
+      · rw [← hy]; simp
+      · rw [← hy]; simp
+
+theorem finD_term {a : K} {u : List T} : FinD G (.t a) u := by
+  refine ⟨u.map .leaf, fun t ht hy => ?_⟩
+  match t, ht with
+  | .leaf x, _ => rw [yield_leaf] at hy; subst hy; simp
+
+/-- The rank of a symbol: its nonterminal's, `0` for a terminal. -/
+def symRank (G : Grammar K) : Sym K → Nat
+  | .n A => G.rank.getD A 0
+  | .t _ => 0
+
+theorem finD_all (hG : G.wf = true) : ∀ (n r : Nat) (X : Sym K) (u : List T), u.length ≤ n → symRank G X ≤ r →
+    FinD G X u := by
+  intro n
+  induction n with
+  | zero =>
+    intro r X u hu _
+    refine ⟨[], fun t ht hy => ?_⟩
+    exact absurd (by rw [hy]; exact List.eq_nil_of_length_eq_zero (by omega)) (yield_ne_nil hG ht)
+  | succ n ihn =>
+    intro r
+    induction r using Nat.strongRecOn with
+    | _ rk ihr =>
+    intro X u hu hX
+    match X with
+    | .t a => exact finD_term
+    | .n A =>
+      have hr : ∀ r < G.rules.size, ∃ L : List (Tree T), ∀ t, (∃ ks R, t = .node r ks ∧ G.rules[r]? = some R ∧
+          R.lhs = A ∧ derivesAll G R.rhs ks = true ∧ yieldAll ks = u) → t ∈ L := by
+        intro r hrs
+        have hR : G.rules[r]? = some G.rules[r] := by simp [hrs]
+        by_cases hlhs : G.rules[r].lhs = A
+        · obtain ⟨L, hL⟩ := finDs_seq hG G.rules[r].rhs u (fun Y hY u' hu' h2 => by
+            by_cases hlt : u'.length < u.length
+            · exact ihn (symRank G Y) Y u' (by omega) (Nat.le_refl _)
+            · have h1 : G.rules[r].rhs.length < 2 := by
+                rcases Nat.lt_or_ge G.rules[r].rhs.length 2 with h | h
+                · exact h
+                · exact absurd (h2 h) hlt
+              obtain ⟨rest, hrest⟩ : ∃ rest, G.rules[r].rhs = Y :: rest := by
+                match hm : G.rules[r].rhs, hY with
+                | Z :: rest, hY =>
+                  have : rest = [] := by rw [hm] at h1; simp at h1; exact List.eq_nil_of_length_eq_zero (by omega)
+                  subst this
+                  simp at hY; exact ⟨[], by rw [hY]⟩
+              match Y, hrest with
+              | .t b, _ => exact finD_term
+              | .n B, hrest =>
+                have hrank := rule_head_rank hG hR hrest
+                rw [hlhs] at hrank
+                have hX' : G.rank.getD A 0 ≤ rk := hX
+                exact ihr (G.rank.getD B 0) (by omega) (.n B) u' (by omega) (Nat.le_refl _))
+          exact ⟨L.map (.node r), fun t ⟨ks, R, he, hR', _, hks, hy⟩ => by
+            rw [hR] at hR'; cases hR'
+            exact he ▸ List.mem_map.mpr ⟨ks, hL ks hks hy, rfl⟩⟩
+        · exact ⟨[], fun t ⟨ks, R, _, hR', hl, _⟩ => by rw [hR] at hR'; cases hR'; exact absurd hl hlhs⟩
+      obtain ⟨L, hL⟩ := collect _ hr
+      refine ⟨L, fun t ht hy => ?_⟩
+      obtain ⟨r, ks, R0, rfl, hr0, hl0, hks⟩ := derives_root ht
+      have hrs : r < G.rules.size := (Array.getElem?_eq_some_iff.mp hr0).1
+      exact hL r hrs _ ⟨ks, R0, rfl, hr0, hl0, hks, by rw [← yield_node]; exact hy⟩
+theorem finDs (hG : G.wf = true) (Xs : List (Sym K)) (u : List T) : FinDs G Xs u :=
+  finDs_seq hG Xs u (fun Y _ u' _ _ => finD_all hG u'.length (symRank G Y) Y u' (Nat.le_refl _) (Nat.le_refl _))
+
+end Finite
+
+/-! ### The step charge of a parse is bounded independently of the cap -/
+
+section Steps
+variable {T K : Type} [DecidableEq T] [DecidableEq K] [Accepts K T]
+variable {G : Grammar K} {cap : Nat} {w : Array T}
+
+/-- Every derivation of `Xs` from `i`, by end position, out of the finite lists `F`. -/
+def spans (F : List (Sym K) → List T → List (List (Tree T))) (w : Array T) (Xs : List (Sym K)) (i : Nat) :
+    List (Nat × List (Tree T)) :=
+  (List.range (w.size + 1)).flatMap (fun j => (F Xs (toks w i j)).map (fun us => (j, us)))
+
+variable {F : List (Sym K) → List T → List (List (Tree T))}
+
+theorem cands_le (hF : ∀ Xs u us, derivesAll G Xs us = true → yieldAll us = u → us ∈ F Xs u) {Xs : List (Sym K)}
+    {i : Nat} {cands : List (Nat × List (Tree T))} (hn : cands.Nodup)
+    (hs : ∀ c ∈ cands, c.1 ≤ w.size ∧ SpanAll G w Xs i c.1 c.2) : cands.length ≤ (spans F w Xs i).length :=
+  length_le_of_nodup_subset hn (fun c hc => by
+    obtain ⟨hj, hd, hy⟩ := hs c hc
+    exact List.mem_flatMap.mpr ⟨c.1, List.mem_range.mpr (by omega), List.mem_map.mpr ⟨c.2, hF _ _ _ hd hy, rfl⟩⟩)
+
+theorem ntRowGo_steps (hG : G.wf = true) (hcap : 0 < cap) {i : Nat} (hi : i < w.size)
+    (hF : ∀ Xs u us, derivesAll G Xs us = true → yieldAll us = u → us ∈ F Xs u)
+    {suf : Array (SufRow T)} (hsuf : ∀ p, i < p → p ≤ w.size → SufRowOk G cap w p (suf.getD p #[])) :
+    ∀ (post pre : List (CRule K)) (row : NtRow T) (steps : Nat), pre ++ post = G.prepare.order →
+    NtOk G cap w i (fun r => r ∈ pre.map (·.index)) row →
+    (ntRowGo (accepted (termsOf G) w i) cap w i suf post row steps).2 ≤
+      steps + (post.map (fun R => 1 + (spans F w R.rhs i).length)).sum
+  | [], pre, row, steps, _, _ => by simp [ntRowGo]
+  | R :: Rs, pre, row, steps, hpo, hrow => by
+    have hRmem : R ∈ G.prepare.order := by rw [← hpo]; simp
+    obtain ⟨R0, hR0, hlhs, hrhs0, _⟩ := mem_order hRmem
+    have hnot : ¬ R.index ∈ pre.map (·.index) := by
+      have hn := order_nodup (G := G)
+      rw [← hpo, List.map_append, List.map_cons] at hn
+      exact fun hm => (List.nodup_append.mp hn).2.2 _ hm _ (by simp) rfl
+    have hD : ∀ r, (r ∈ pre.map (·.index) ∨ r = R.index) ↔ r ∈ (pre ++ [R]).map (·.index) := by
+      intro r; simp [eq_comm]
+    have hpo2 : (pre ++ [R]) ++ Rs = G.prepare.order := by rw [← hpo]; simp
+    have hdone : ∀ B, (∃ rest, R.rhs = .n B :: rest) → ∀ r R1, G.rules[r]? = some R1 → R1.lhs = B →
+        r ∈ pre.map (·.index) := by
+      rintro B ⟨rest, hrest⟩ r R1 hr1 hl1
+      have hrank := rule_head_rank hG hR0 (hrhs0.trans hrest)
+      obtain ⟨R', hR', hidx, hl'⟩ := order_complete hr1
+      rw [← hpo] at hR'
+      rcases List.mem_append.mp hR' with h | h
+      · exact List.mem_map.mpr ⟨R', h, hidx⟩
+      · exfalso
+        have hs := order_sorted (G := G)
+        rw [← hpo] at hs
+        rcases List.mem_cons.mp h with h | h
+        · subst h; rw [hl', hl1] at hlhs; rw [hlhs] at hrank; omega
+        · have := (List.pairwise_cons.mp (List.pairwise_append.mp hs).2.1).1 R' h
+          rw [hl', hl1, ← hlhs] at this
+          omega
+    have hsum : ((R :: Rs).map (fun R => 1 + (spans F w R.rhs i).length)).sum =
+        1 + (spans F w R.rhs i).length + (Rs.map (fun R => 1 + (spans F w R.rhs i).length)).sum := by simp
+    rw [hsum]
+    unfold ntRowGo
+    split
+    · rename_i hr
+      exact absurd (hrhs0.trans hr) (rhs_ne_nil_of_mem hG hR0)
+    · rename_i Y rest hr
+      have hrhs : R0.rhs = Y :: rest := hrhs0.trans hr
+      have hstep := fun (row2 : NtRow T) => ruleStep_ok hG hcap hi hsuf hrow hR0 hlhs hrhs hnot
+        (fun B hB r R1 hr1 hl1 => hdone B ⟨rest, hB ▸ hr⟩ r R1 hr1 hl1) (row2 := row2)
+      have hsz : row.size = G.rank.size := hrow.1
+      have hlt : R.lhs < row.size := by rw [hsz, ← hlhs]; exact rule_lhs_lt hG hR0
+      split
+      · split
+        · rename_i hav hnil
+          have := ntRowGo_steps hG hcap hi hF hsuf Rs (pre ++ [R]) row (steps + 1) hpo2
+            (NtOk.congr (hstep row rfl fun A => by rw [hnil]; split <;> simp [addAll_nil]) hD)
+          omega
+        · rename_i hav cands hcands
+          -- the first symbol's entry is complete-or-full for all its derivations
+          have hFst : BOk cap w.size (Span G w Y i) (firstAt w i row Y) := by
+            match Y, hr with
+            | .t a, _ => exact firstAt_term_ok hi hcap
+            | .n B, hr =>
+              refine BOk.congr (hrow.2 B) (fun j t _ => ⟨fun h => h.1, fun h => ⟨h, ?_⟩⟩)
+              obtain ⟨r, ks, R1, rfl, hr1, hl1, _⟩ := derives_root h.1
+              exact hdone B ⟨rest, hr⟩ r R1 hr1 hl1
+          have hN : rest ≠ [] → ∀ j1, i < j1 → j1 ≤ w.size →
+              BOk cap w.size (SpanAll G w rest j1) (sufGet suf j1 R.index 1) := by
+            intro hne j1 h1 h2
+            have hlen : 1 < R0.rhs.length := by
+              rw [hrhs]; cases rest <;> simp_all
+            have := hsuf j1 h1 h2 R.index R0 hR0 1 (Nat.le_refl _) hlen
+            rwa [hrhs] at this
+          obtain ⟨hca, hcn, _⟩ := combine_ok hG rfl hFst hN
+          have hle := cands_le (F := F) hF hcn hca
+          rw [← hrhs, hrhs0] at hle
+          refine Nat.le_trans (ntRowGo_steps hG hcap hi hF hsuf Rs (pre ++ [R]) _ _ hpo2
+            (NtOk.congr (hstep _ Array.size_modify fun A => by rw [getD_modify hlt]) hD)) ?_
+          simp only [List.length_map]
+          omega
+      · rename_i hav
+        have hnil := firstAt_nil_of_avail hi hRmem hr (by simpa using hav)
+        have := ntRowGo_steps hG hcap hi hF hsuf Rs (pre ++ [R]) row (steps + 1) hpo2
+          (NtOk.congr (hstep row rfl fun A => by
+            rw [hnil]
+            have : combine ([] : Bucket (Tree T)) (fun j1 => sufGet suf j1 R.index 1) rest.isEmpty = [] := by
+              simp [combine]
+            rw [this]; split <;> simp [addAll_nil]) hD)
+        omega
+
+/-- The symbols of a position's rule from the position on. -/
+def posRhs (G : Grammar K) (p : SufPos K) : List (Sym K) := ((G.rules[p.rule]?).map (fun R => R.rhs.drop p.pos)).getD []
+
+theorem sufPosGo_steps (hG : G.wf = true) (hcap : 0 < cap) {i : Nat} (hi : i < w.size)
+    (hF : ∀ Xs u us, derivesAll G Xs us = true → yieldAll us = u → us ∈ F Xs u)
+    {nt : NtRow T} (hnt : NtFull G cap w i nt)
+    {suf : Array (SufRow T)} (hsuf : ∀ p, i < p → p ≤ w.size → SufRowOk G cap w p (suf.getD p #[])) :
+    ∀ (ps : List (SufPos K)) (out : SufRow T) (c : Nat), (∀ p ∈ ps, ValidPos G p) →
+    (sufPosGo cap w i nt suf ps out c).2 ≤ c + (ps.map (fun p => (spans F w (posRhs G p) i).length)).sum
+  | [], _, c, _ => by simp [sufPosGo]
+  | p :: ps, out, c, hv => by
+    obtain ⟨R0, hR0, hpos, hlt, hsym, hlast⟩ := hv p (by simp)
+    have hvs : ∀ q ∈ ps, ValidPos G q := fun q hq => hv q (by simp [hq])
+    simp only [List.map_cons, List.sum_cons]
+    unfold sufPosGo
+    split
+    · have := sufPosGo_steps hG hcap hi hF hnt hsuf ps out c hvs
+      omega
+    · have hFst : BOk cap w.size (Span G w p.sym i) (firstAt w i nt p.sym) := by
+        match p.sym with
+        | .t a => exact firstAt_term_ok hi hcap
+        | .n B => exact hnt B
+      have hN : R0.rhs.drop (p.pos + 1) ≠ [] → ∀ j1, i < j1 → j1 ≤ w.size →
+          BOk cap w.size (SpanAll G w (R0.rhs.drop (p.pos + 1)) j1) (sufGet suf j1 p.rule (p.pos + 1)) := by
+        intro hne j1 h1 h2
+        have hlen : p.pos + 1 < R0.rhs.length := by
+          rcases Nat.lt_or_ge (p.pos + 1) R0.rhs.length with h | h
+          · exact h
+          · exact absurd (List.drop_eq_nil_of_le h) hne
+        exact hsuf j1 h1 h2 p.rule R0 hR0 (p.pos + 1) (by omega) hlen
+      obtain ⟨hca, hcn, _⟩ := combine_ok hG hlast hFst hN
+      have hle := cands_le (F := F) hF hcn hca
+      have hd : p.sym :: R0.rhs.drop (p.pos + 1) = posRhs G p := by
+        simp only [posRhs, hR0, Option.map_some, Option.getD_some, hsym]
+        exact (List.drop_eq_getElem_cons hlt).symm
+      rw [hd] at hle
+      refine Nat.le_trans (sufPosGo_steps hG hcap hi hF hnt hsuf ps _ _ hvs) ?_
+      omega
+
+theorem sufGroups_steps (hG : G.wf = true) (hcap : 0 < cap) {i : Nat} (hi : i < w.size)
+    (hF : ∀ Xs u us, derivesAll G Xs us = true → yieldAll us = u → us ∈ F Xs u)
+    {nt : NtRow T} (hnt : NtFull G cap w i nt)
+    {suf : Array (SufRow T)} (hsuf : ∀ p, i < p → p ≤ w.size → SufRowOk G cap w p (suf.getD p #[]))
+    {on : Nat → Bool} :
+    ∀ (gs : List (Nat × List (SufPos K))) (out : SufRow T) (c : Nat), (∀ kg ∈ gs, ∀ p ∈ kg.2, ValidPos G p) →
+    (sufGroups cap w i nt suf on gs out c).2 ≤
+      c + (gs.map (fun kg => (kg.2.map (fun p => (spans F w (posRhs G p) i).length)).sum)).sum
+  | [], _, c, _ => by simp [sufGroups]
+  | (k, g) :: gs, out, c, hv => by
+    have hvs : ∀ kg ∈ gs, ∀ p ∈ kg.2, ValidPos G p := fun kg hkg => hv kg (by simp [hkg])
+    simp only [List.map_cons, List.sum_cons]
+    unfold sufGroups
+    split
+    · have h1 := sufPosGo_steps hG hcap hi hF hnt hsuf g out c (hv (k, g) (by simp))
+      cases hq : sufPosGo cap w i nt suf g out c with
+      | mk out2 c2 =>
+        rw [hq] at h1
+        simp only at h1 ⊢
+        have := sufGroups_steps hG hcap hi hF hnt hsuf (on := on) gs out2 c2 hvs
+        omega
+    · have := sufGroups_steps hG hcap hi hF hnt hsuf (on := on) gs out c hvs
+      omega
+
+/-- A row's charge, bounded independently of the cap. -/
+def rowB (F : List (Sym K) → List T → List (List (Tree T))) (G : Grammar K) (w : Array T) (i : Nat) : Nat :=
+  let g := fun (kg : Nat × List (SufPos K)) => (kg.2.map (fun p => (spans F w (posRhs G p) i).length)).sum
+  (G.prepare.order.map (fun R => 1 + (spans F w R.rhs i).length)).sum + G.prepare.positions +
+    (G.prepare.byTerm.map g).sum + (G.prepare.byNt.map g).sum
+
+theorem rowAt_steps (hG : G.wf = true) (hcap : 0 < cap) {i : Nat} (hi : i < w.size)
+    (hF : ∀ Xs u us, derivesAll G Xs us = true → yieldAll us = u → us ∈ F Xs u)
+    {suf : Array (SufRow T)} (hsuf : ∀ p, i < p → p ≤ w.size → SufRowOk G cap w p (suf.getD p #[])) :
+    (rowAt G.prepare cap w (G.prepare.shape.map fun n => Array.replicate n []) suf i).2.2 ≤ rowB F G w i := by
+  have hinit : NtOk G cap w i (fun r => r ∈ ([] : List (CRule K)).map (·.index))
+      (Array.replicate G.rank.size []) := by
+    refine ⟨by simp, fun A => ?_⟩
+    simp only [Array.getD_eq_getD_getElem?, Array.getElem?_replicate]
+    have : ∀ (j : Nat) (t : Tree T), j ≤ w.size → 0 < cap →
+        ¬ (Span G w (.n A) i j t ∧ rootIn (fun r => r ∈ ([] : List (CRule K)).map (·.index)) t) := by
+      intro j t _ _ h
+      obtain ⟨_, h⟩ := h
+      cases t <;> simp [rootIn] at h
+    split <;> exact BOk.nil this
+  have hnt := ntRowGo_ok (G := G) hG hcap hi hsuf G.prepare.order [] (Array.replicate G.rank.size []) 0
+    (List.nil_append _) hinit
+  have hs1 := ntRowGo_steps (F := F) hG hcap hi hF hsuf G.prepare.order [] (Array.replicate G.rank.size []) 0
+    (List.nil_append _) hinit
+  simp only [rowAt, prepare_terms, prepare_grammar]
+  cases hq : ntRowGo (accepted (termsOf G) w i) cap w i suf G.prepare.order (Array.replicate G.rank.size []) 0 with
+  | mk nt s1 =>
+  rw [hq] at hnt hs1
+  simp only at hnt hs1 ⊢
+  have hfull : NtFull G cap w i nt := by
+    intro A
+    refine BOk.congr (hnt.2 A) (fun j t _ => ⟨fun h => h.1, fun h => ⟨h, ?_⟩⟩)
+    obtain ⟨r, ks, R1, rfl, hr1, _, _⟩ := derives_root h.1
+    obtain ⟨R', hR', hidx, _⟩ := order_complete hr1
+    exact List.mem_map.mpr ⟨R', hR', hidx⟩
+  have h1 := sufGroups_steps (F := F) hG hcap hi hF hfull hsuf (on := fun k => (accepted (termsOf G) w i).getD k false)
+    G.prepare.byTerm (G.prepare.shape.map fun n => Array.replicate n []) 0 (fun kg hkg p hp => (byTerm_sym hkg hp).1)
+  cases hq1 : sufGroups cap w i nt suf (fun k => (accepted (termsOf G) w i).getD k false) G.prepare.byTerm
+      (G.prepare.shape.map fun n => Array.replicate n []) 0 with
+  | mk o1 c1 =>
+  rw [hq1] at h1
+  simp only at h1 ⊢
+  have h2 := sufGroups_steps (F := F) hG hcap hi hF hfull hsuf (on := fun B => !(nt.getD B []).isEmpty)
+    G.prepare.byNt o1 c1 (fun kg hkg p hp => (byNt_sym hkg hp).1)
+  cases hq2 : sufGroups cap w i nt suf (fun B => !(nt.getD B []).isEmpty) G.prepare.byNt o1 c1 with
+  | mk o2 c2 =>
+  rw [hq2] at h2
+  simp only at h2 ⊢
+  simp only [rowB]
+  omega
+
+theorem fill_some (hG : G.wf = true) (hcap : 0 < cap) {b : Nat}
+    (hF : ∀ Xs u us, derivesAll G Xs us = true → yieldAll us = u → us ∈ F Xs u) :
+    ∀ (k : Nat) (suf : Array (SufRow T)) (steps : Nat) (last : NtRow T),
+    k ≤ w.size → suf.size = w.size + 1 →
+    (∀ p, k ≤ p → p ≤ w.size → SufRowOk G cap w p (suf.getD p #[])) →
+    steps + ((List.range k).map (rowB F G w)).sum ≤ b →
+    (fill G.prepare cap w (G.prepare.shape.map fun n => Array.replicate n []) b k suf steps last).isSome
+  | 0, _, _, _, _, _, _, _ => by simp [fill]
+  | k + 1, suf, steps, last, hk, hsz, hsuf, hb => by
+    have hrb := rowAt_steps (F := F) (cap := cap) (w := w) hG hcap (i := k) (by omega) hF (suf := suf)
+      (fun p h1 h2 => hsuf p (by omega) h2)
+    have hrow := rowAt_ok (G := G) (w := w) hG hcap (i := k) (by omega) (suf := suf)
+      (fun p h1 h2 => hsuf p (by omega) h2)
+    rw [List.range_succ, List.map_append, List.sum_append_nat] at hb
+    simp only [List.map_cons, List.map_nil, List.sum_cons, List.sum_nil] at hb
+    unfold fill
+    simp only
+    rw [if_neg (by omega)]
+    refine fill_some hG hcap hF k _ _ _ (by omega) (by rw [Array.size_setIfInBounds]; exact hsz) ?_ (by omega)
+    intro p h1 h2
+    simp only [Array.getD_eq_getD_getElem?, Array.getElem?_setIfInBounds]
+    by_cases hp : k = p
+    · subst hp
+      simp only [if_pos (show k < suf.size by omega)]
+      exact hrow.2
+    · rw [if_neg hp]
+      have := hsuf p (by omega) h2
+      simpa [Array.getD_eq_getD_getElem?] using this
+
+end Steps
+
+/-! ### (2) A cap and a budget from which the parse is complete, for every larger one -/
+
+/-- For a well-formed grammar and a fixed sentence, there are a raw cap `N0` and a step budget `b0` such that, for
+every cap `N ≥ N0` and budget `b ≥ b0`, the parse finishes within the budget and returns fewer than `N` trees: the
+listing it gives is complete (`parse_complete`) and not saturated. -/
+theorem parse_bounds {T K : Type} [DecidableEq T] [DecidableEq K] [Accepts K T] {G : Grammar K} (hG : G.wf = true)
+    (w : Array T) : ∃ N0 b0, ∀ N b, N0 ≤ N → b0 ≤ b → ∃ ts, parse G N b w = some ts ∧ ts.length < N := by
+  let F := fun Xs u => Classical.choose (finDs (T := T) hG Xs u)
+  have hF : ∀ Xs u us, derivesAll G Xs us = true → yieldAll us = u → us ∈ F Xs u :=
+    fun Xs u => Classical.choose_spec (finDs hG Xs u)
+  obtain ⟨L, hL⟩ := finD_all hG w.toList.length (symRank G (.n G.start)) (.n G.start) w.toList
+    (Nat.le_refl _) (Nat.le_refl _)
+  refine ⟨L.length + 1, ((List.range w.size).map (rowB F G w)).sum, fun N b hN hb => ?_⟩
+  have hsome := fill_some (cap := N) (w := w) (b := b) hG (by omega) hF w.size (Array.replicate (w.size + 1) #[]) 0 #[]
+    (Nat.le_refl _) (by simp) (fun p h1 h2 => by
+      have : p = w.size := by omega
+      subst this
+      simp only [Array.getD_eq_getD_getElem?, Array.getElem?_replicate, Nat.lt_succ_self, if_true, Option.getD_some]
+      exact sufRowOk_end hG) (by omega)
+  obtain ⟨res, hres⟩ := Option.isSome_iff_exists.mp hsome
+  have hp : ∃ ts, parse G N b w = some ts := by
+    unfold parse Prepared.parse Prepared.table
+    rw [hres]
+    exact ⟨_, rfl⟩
+  obtain ⟨ts, hts⟩ := hp
+  refine ⟨ts, hts, ?_⟩
+  have := length_le_of_nodup_subset (parse_nodup hts) (fun t ht => by
+    have hd := parse_sound hts ht
+    exact hL t hd.1 hd.2)
+  omega
+
+end Bounds
+
+/-! ## `read_normal` from uniqueness
+
+(1) and (2) give `read_normal`'s conclusion for every atom whose normal form has no derivation meaning anything other
+than its canonical atom. That uniqueness is spec 5.6's unambiguity argument (deliverable (3), item ap-2bcb); it is a
+hypothesis here, not a claim. -/
+
+theorem read_normal_of_unique (V : Vocab) (h : framesOk V = true) (a : Atom) (ha : normalOk V a = true)
+    (hu : ∀ d B c, VE.Grammar.Derives (grammar V) (.n (grammar V).start) a.normal d →
+      meaning V () d = .ok (B, c, ()) → B = .one a.canon) :
+    ∃ N0 b0, ∀ N b, N0 ≤ N → b0 ≤ b → read V N b a.normal.toArray = .ok (.one a.canon) := by
+  have hG := grammar_wf V h
+  obtain ⟨N0, b0, hb⟩ := parse_bounds hG a.normal.toArray
+  refine ⟨N0, b0, fun N b hN hB => ?_⟩
+  obtain ⟨ts, hts, hlen⟩ := hb N b hN hB
+  have hD := normal_derived V h a ha
+  unfold read
+  rw [readIn_ok]
+  have hall : ∀ A ∈ ts.filterMap (valueOf (meaning V)), A = .one a.canon := by
+    intro A hA
+    obtain ⟨t, ht, hv⟩ := List.mem_filterMap.mp hA
+    obtain ⟨c, hc⟩ := valueOf_eq_some.mp hv
+    exact hu t A c (VE.Grammar.parse_sound hts ht) hc
+  have hmem : Act.one a.canon ∈ ts.filterMap (valueOf (meaning V)) := by
+    obtain ⟨d, hd, c, hc⟩ := hD
+    exact List.mem_filterMap.mpr ⟨d, VE.Grammar.parse_complete hG hts hlen (by simpa using hd),
+      valueOf_eq_some.mpr ⟨c, hc⟩⟩
+  have hfs : firsts (ts.filterMap (valueOf (meaning V))) = [.one a.canon] := by
+    generalize ts.filterMap (valueOf (meaning V)) = l at hall hmem
+    induction l with
+    | nil => simp at hmem
+    | cons x l ih =>
+      have hx := hall x (by simp)
+      subst hx
+      have : (firsts l).filter (· ≠ Act.one a.canon) = [] := by
+        rw [List.filter_eq_nil_iff]
+        intro y hy
+        simpa using hall y (by simp [mem_firsts.mp hy])
+      show Act.one a.canon :: (firsts l).filter (· ≠ Act.one a.canon) = [Act.one a.canon]
+      rw [this]
+  unfold readingsIn listing
+  rw [hts]
+  simp only [show ¬ N ≤ ts.length from by omega, if_false, hfs]
+  rfl
 
 end VE.Acts.NormalProofs
