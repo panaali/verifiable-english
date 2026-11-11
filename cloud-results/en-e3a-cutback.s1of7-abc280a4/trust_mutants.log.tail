@@ -1,0 +1,5 @@
+trust_mutants: 2 definitions, 50 mutants (8 to run), 4 jobs, base 254c6b1b5d35
+SURVIVOR lean/VE/EnglishGrammar/Norm/Run.lean:67 VE.EnglishGrammar.Norm.Run.statementSpans (G[V], trusted) list-last: acc -> (acc.reverse.take 1)
+trust_mutants: 6 KILLED, 1 SURVIVOR, 0 UNKNOWN, 1 INVALID, 0 ALLOWED, 0 NOT RUN, 42 OTHER SHARD in 213 s
+trust_mutants: G[V], trusted: 6 KILLED, 1 SURVIVOR, 1 INVALID, 42 OTHER SHARD
+trust_mutants: steps: wall plan 12.3 s, scratch 3.1 s, control_build 0.2 s, probe_install 1.4 s, mutants 193.9 s, cleanup 2.6 s, reads 0.1 s; lake control_build 0.2 s (1), probe_install 1.4 s (1), control_probes 7.6 s (3), mutant_builds 181 s (8), mutant_checks 383.5 s (11), stage_controls 94.5 s (4), mutant_probes 35.6 s (6)
