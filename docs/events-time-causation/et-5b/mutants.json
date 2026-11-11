@@ -181,6 +181,78 @@
    "mutant": "eventsFixed ++ [softAlwaysReadings] -> eventsFixed",
    "test": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:179",
    "killed": true
+  },
+  {
+   "id": "L21",
+   "language": "Lean",
+   "file": "lean/VE/EnglishGrammar/SourceWords.lean",
+   "definition": "VE.EnglishGrammar.untilDateReadings",
+   "mutant": "the fourth candidate's 'no later than <date>' -> 'before <date>'",
+   "test": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:264",
+   "killed": true
+  },
+  {
+   "id": "L22",
+   "language": "Lean",
+   "file": "lean/VE/EnglishGrammar/SourceWords.lean",
+   "definition": "VE.EnglishGrammar.byReadings",
+   "mutant": "B2 'no later than <date>' -> 'after <date>'",
+   "test": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:270",
+   "killed": true
+  },
+  {
+   "id": "L23",
+   "language": "Lean",
+   "file": "lean/VE/EnglishGrammar/SourceWords.lean",
+   "definition": "VE.EnglishGrammar.whileReadings",
+   "mutant": "the contrast candidate gains the state guard",
+   "test": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:278",
+   "killed": true
+  },
+  {
+   "id": "L24",
+   "language": "Lean",
+   "file": "lean/VE/EnglishGrammar/SourceWords.lean",
+   "definition": "VE.EnglishGrammar.sinceReadings",
+   "mutant": "S2 'no later than that day' -> 'after that day'",
+   "test": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:275",
+   "killed": true
+  },
+  {
+   "id": "L25",
+   "language": "Lean",
+   "file": "lean/VE/EnglishGrammar/SourceWords.lean",
+   "definition": "VE.EnglishGrammar.linkCandidate",
+   "mutant": "'{1}' -> '<cause>' (both places the cause)",
+   "test": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:282",
+   "killed": true
+  },
+  {
+   "id": "L26",
+   "language": "Lean",
+   "file": "lean/VE/EnglishGrammar/SourceWords.lean",
+   "definition": "VE.EnglishGrammar.causalReadings",
+   "mutant": "the source form 'cause' dropped from the word list",
+   "test": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:234",
+   "killed": true
+  },
+  {
+   "id": "L27",
+   "language": "Lean",
+   "file": "lean/VE/EnglishGrammar/SourceWords.lean",
+   "definition": "VE.EnglishGrammar.causalReadings",
+   "mutant": "C3 'leads to' -> 'causes'",
+   "test": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:282",
+   "killed": true
+  },
+  {
+   "id": "L28",
+   "language": "Lean",
+   "file": "lean/VE/EnglishGrammar/SourceWords.lean",
+   "definition": "VE.EnglishGrammar.eventsReadingSets",
+   "mutant": "sinceReadings dropped from the list",
+   "test": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:234",
+   "killed": true
   }
  ],
  "equivalent": [

@@ -148,10 +148,51 @@ def eventuallyNoAnchorReadings : SourceWordRow := eventsRow "eventually" "source
   "This document states no date of its own, so a day after its date is not known: the reading is E1."
   "There is a day such that <clause> on that day.")
 
-/-- The reading sets ET-5 writes, and et-5b's "always" and "eventually" with their no-anchor rows; the rest of spec 2.4
-is et-5c's. -/
+/-- "m X until D", D a date (spec 2.4, T11c): exclusive or inclusive of D, each silent after the period or with the
+opposite of m from the next day (R2). -/
+def untilDateReadings : SourceWordRow := eventsReadings "until" "source date"
+  ("<date> itself tells the exclusive candidates from the inclusive ones, and the day after <date> tells the silent " ++
+   "ones from the ones with the opposite modality.")
+  ["<agent> <m> <act> on each day, if that day is before <date>. This document does not say whether <agent> <m> " ++
+     "<act> on a day on or after <date>.",
+   "<agent> <m> <act> on each day, if that day is before <date>. <agent> <opposite of m> <act> on each day, if " ++
+     "that day is on or after <date>.",
+   "<agent> <m> <act> on each day, if that day is no later than <date>. This document does not say whether " ++
+     "<agent> <m> <act> on a day after <date>.",
+   "<agent> <m> <act> on each day, if that day is no later than <date>. <agent> <opposite of m> <act> on each " ++
+     "day, if that day is after <date>."]
+
+/-- "by D", a deadline (spec 2.4): B1 before D, B2 no later than D. -/
+def byReadings : SourceWordRow := eventsReadings "by" "source date"
+  "The act on <date> itself: B2 covers it and B1 does not."
+  ["<event> <vp> before <date>.", "<event> <vp> no later than <date>."]
+
+/-- "while" (spec 2.4): the temporal reading, as "during S" has it, and the contrast, the two clauses joined by "and". -/
+def whileReadings : SourceWordRow := eventsReadings "while" "source"
+  "A day on which <state> is not in progress: the temporal reading says nothing of <clause> there, the contrast states it."
+  ["<clause> on each day, if <state> is in progress on that day.", "<clause>, and <other clause>."]
+
+/-- "since E" (spec 2.4): S1 the days after E's day, S2 E's day too. -/
+def sinceReadings : SourceWordRow := eventsReadings "since" "source event"
+  "<event>'s own day: S2 covers it and S1 does not."
+  ["<clause> on each day, if <event> <vp> before that day.", "<clause> on each day, if <event> <vp> no later than that day."]
+
+/-- A link form's wording (`VE.Events.linkWording`, one owner) as a candidate with <cause> and <effect>. -/
+def linkCandidate (form : VE.Events.LinkForm) : String :=
+  ((VE.Events.linkWording form).replace "{0}" "<cause>").replace "{1}" "<effect>" ++ "."
+
+/-- The causal words and the source forms "lead to" and "cause" (spec 2.4, etc-rev's C point): C1 and C2; where a
+decision model is declared also C3, alternatives' "leads to". The third-person "leads to" and "causes" have no row. -/
+def causalReadings : List SourceWordRow := ["resulted in", "led to", "caused", "lead to", "cause"].flatMap fun w =>
+  let s := "A situation in which the contributed link holds and the necessary link does not."
+  [eventsReadings w "source" s [linkCandidate .contributed, linkCandidate .necessary],
+   eventsReadings w "source decision model" s [linkCandidate .contributed, linkCandidate .necessary,
+     "<action> leads to <harm>."]]
+
+/-- The reading sets of spec 2.4 (ET-5's, et-5b's). "during" and "whenever" have one candidate each, so no set. -/
 def eventsReadingSets : List SourceWordRow := [untilEventReadings, withinDateReadings, alwaysReadings,
-  eventuallyReadings, alwaysNoAnchorReadings, eventuallyNoAnchorReadings]
+  eventuallyReadings, alwaysNoAnchorReadings, eventuallyNoAnchorReadings, untilDateReadings, byReadings,
+  whileReadings, sinceReadings] ++ causalReadings
 
 /-- "always" inside a rule (DRI 2026-11-03 item 3): soft-norms' force word only, the READINGS unit {strict, default}
 (docs/spec/soft-norms.md 2.2, "any force word ... is a READINGS unit"). Events adds no candidate there. -/
