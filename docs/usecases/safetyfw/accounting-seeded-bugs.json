@@ -1,0 +1,24 @@
+{
+ "item": "fid-account-1",
+ "note": "Each bug was planted, its test run and seen to fail, then the file restored with git checkout (build session 2026-11-11; g-i in the review-fix session, restored from a saved copy and checked with cmp).",
+ "seeded_bugs": [
+  {"id": "a", "file": "usecases/safetyfw_accounting.py", "change": "Source.anchor returns an elided quote as written (the middle is ignored)",
+   "test": "tests/test_safetyfw_accounting.py::test_elided_quote_spans_the_source_between_its_fragments", "result": "1 failed"},
+  {"id": "b", "file": "usecases/safetyfw_accounting.py", "change": "resolve(): `rule <id>` accepted without checking the target's accounted words (missing = [])",
+   "test": "tests/test_safetyfw_accounting.py::test_reason_arguments_resolve[\"audited every year\" rule r-keep-False]", "result": "1 failed"},
+  {"id": "c", "file": "usecases/anthropic-rsp/accounting.d1.txt", "change": "the line of f11-review deleted",
+   "test": "tests/test_safetyfw_accounting.py::test_case_sidecar_passes_in_form[anthropic-rsp]", "result": "1 failed ('f11-review: no sidecar line')"},
+  {"id": "d", "file": "usecases/anthropic-rsp/accounting.d1.txt", "change": "f18-rso's `loss 1` changed to `restates`",
+   "test": "tests/test_safetyfw_accounting.py::test_saved_report_totals_are_the_sidecars[anthropic-rsp]", "result": "1 failed"},
+  {"id": "e", "file": "usecases/safetyfw_accounting.py", "change": "Source.pattern without the line-end hyphen tolerance",
+   "test": "tests/test_safetyfw_accounting.py::test_anchoring_skips_layout_but_not_words", "result": "1 failed"},
+  {"id": "f", "file": "usecases/safetyfw_accounting.py", "change": "resolve(): `open <predicate>` accepted without a decider in its description",
+   "test": "tests/test_safetyfw_accounting.py::test_reason_arguments_resolve[\"every year\" open minor-False]", "result": "1 failed"},
+  {"id": "g", "file": "usecases/safetyfw_accounting.py", "change": "review F1: quotes() back to the straight-quote regex over norm() (no pairing, no unpaired problem)",
+   "test": "tests/test_safetyfw_accounting.py::test_nested_quote_keeps_its_inner_words_on_the_real_header", "result": "8 failed (also test_a_short_quote_does_not_make_the_text_between_two_quotes_a_quote, test_unpaired_quote_marks_are_problems x5, test_case_sidecar_passes_in_form[openai-preparedness])"},
+  {"id": "h", "file": "usecases/safetyfw_accounting.py", "change": "review F1: scan_quotes() lets a closing mark close whatever quote is open innermost (no direction check)",
+   "test": "tests/test_safetyfw_accounting.py::test_unpaired_quote_marks_are_problems[\u201cthe board may \"veto\u201d any launch\u201d]", "result": "1 failed"},
+  {"id": "i", "file": "usecases/safetyfw_accounting.py", "change": "review F1: scan_quotes() emits a quote at every depth, not only the outermost",
+   "test": "tests/test_safetyfw_accounting.py::test_generated_nested_quotes_are_recovered_whole", "result": "5 failed (also the real-header test and test_quotes_pair_by_direction_and_nest x3)"}
+ ]
+}

@@ -31,6 +31,11 @@ def allE {α : Type} (f : α → Except String Unit) : List α → Except String
 def firstOb (obs : List Obligation) (p : Obligation → Bool) : String :=
   ((obs.find? p).map (·.id)).getD ((obs.head?.map (·.id)).getD "")
 
+/-- The id of the first obligation on rule `n` (a rule act on `n`), else none: the rule check never names an obligation
+    of another unit (ps-2ab-rule-firstob). -/
+def ruleOb (obs : List Obligation) (n : String) : String :=
+  ((obs.find? (·.position == .ruleAct n)).map (·.id)).getD ""
+
 /-! ## Step 2: ids, units and rows -/
 
 def checkIds (D : PDoc) : List String → List Obligation → Except String Unit
@@ -256,7 +261,7 @@ def unitsOk (fx : Fixed) (D : PDoc) (obs : List Obligation) (R : Report) : Excep
     ensure (R.checked.any (fun c => c.ob.unit == x.1 && c.ob.carrier == .unresolved) || unitContent D x.1 == some a)
       s!"PresuppositionMismatch: {firstOb obs (·.unit == x.1)}: content") R.bases
   allE (fun N => ensure (D.norms.nodes.all (fun M => M.name != N.name || M == (ruleConditions R N.name).foldl conditionNode N))
-      s!"PresuppositionMismatch: {firstOb obs (·.position == .ruleAct N.name)}: rule") R.baseTree.nodes
+      s!"PresuppositionMismatch: {ruleOb obs N.name}: rule") R.baseTree.nodes
   ensure (VE.Norms.WellFormed ⟨D.E, D.lits, D.norms⟩ && VE.Norms.WellFormed ⟨D.E, D.lits, R.baseTree⟩)
     s!"PresuppositionMismatch: {firstOb obs (fun o => match o.position with | .ruleAct _ => true | _ => false)}: rule"
   allE (fun x => match x.content with

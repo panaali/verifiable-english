@@ -141,3 +141,11 @@ def model_view(data: dict) -> dict:
                   if "regulated" in decl else decl for name, decl in vocabulary["predicates"].items()}
     return {**data, "profiles": [p for p in data["profiles"] if p != "acts@0"],
             "vocabulary": {**{k: v for k, v in vocabulary.items() if k != "acts"}, "predicates": predicates}}
+
+
+# `rights@0`: every line kind with its rule-bearing fields, in the order the line states its rules: a power line states
+# a liberty and a recognition rule, every other kind one norm. Whatever names or owns a line's rules reads this table
+# (compose-s2 fix4 A2), so a new kind cannot be added without saying which fields carry its rules: `ve.rights`, and
+# the binding of the request rules a relayed answer names (`backends.lean_service`, norm-defaults-cfr-1b).
+LINE_RULE_FIELDS = {"claim": ("norm",), "liberty": ("norm",), "immunity": ("norm",), "power": ("liberty", "recognition")}
+RULE_FIELDS = tuple(dict.fromkeys(field for fields in LINE_RULE_FIELDS.values() for field in fields))
