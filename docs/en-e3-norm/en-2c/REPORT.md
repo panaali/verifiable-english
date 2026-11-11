@@ -36,7 +36,7 @@ SIZE: 213 product, 470 tests, 536 other hand-written lines: `git diff --numstat 
 
 The commits are `main..HEAD --no-merges` on feature/en-e3bb.
 
-## The delta report (saved evidence; `delta.json` at `c54938c37`, the final product code)
+## The delta report (saved evidence; `delta.json` at `8582e01d2`, the final product code)
 
 The command was `uv run python docs/en-e3-norm/en-2/w1_delta.py --workers 8 --scratch /tmp/e3bb-w1-scratch`. Its
 suite part was "4693 passed".
