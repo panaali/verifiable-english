@@ -138,6 +138,10 @@ listed in the row.
 3. `readings-elaborate` on the soft chain reads `generatedPredicatesJson .enumerated D` over `choices D`. That is cut
    at 65 by `search`, so it is bounded. It was not measured here.
 
+4. `sdTextsWithin` evaluates `choices N.D` up to three times: its length, `sdAdmitWork` and the texts. Main
+   evaluated it twice. The enumeration is cut at 65 by `search`. Its cost is inside the measured figures: NSDbig 6
+   took 0.15-0.18 s charged, at a higher load than main's 0.12-0.13 s.
+
 ## Next item
 
 sc-11wc, then sc-11b (the live switch) once sc-11c and sc-11wc merge.
