@@ -1,0 +1,9 @@
+{
+"allow": [
+{
+"definition": "VE.Presupposition.ruleOb",
+"operator": "list-empty",
+"reason": "does not elaborate: a bare `[]` in place of `obs`, of `obs.find? ...` (an Option) or of its `.map (·.id)` leaves `.find?` or `.getD \"\"` mistyped (Admit.lean:37, type mismatch or invalid field notation); the hand mutants M1-M3 (mutants.json) change the same lookup and fail Run.lean:357 and tests/test_presupposition_rule_ob.py"
+}
+]
+}
