@@ -207,9 +207,9 @@ theorem softLabelledU_labels_nodup (U : UDoc) (D : VE.SoftNorms.SoftDoc)
 `rights:limitation:<L>:<act>:<necessary|sufficient>:<c>` is read from the right: the condition name is an
 identifier, the kind word has no `:`, and an act key without `:` leaves the limitation name. `WellFormedRights`
 alone does not keep `:` out of act keys or limitation names (fixture F1′'s `cx`, `PacksLegacyExamples.lean`), so
-`legacy_labels_nodup_of_actKeys` takes that as a hypothesis (DRI decision 2026-10-27, item 3). On the decoded route
-the act keys are predicate names, which the environment decoder admits only through `VE.Bridge.identifier`, and
-`bridge_identifier_sep` shows that refuses `:`. -/
+`legacy_labels_nodup_of_actKeys` takes that as a hypothesis (DRI decision 2026-10-27, item 3). No lemma shows that the
+decoded route's act keys pass `VE.Bridge.identifier` (which refuses `:`, `bridge_identifier_sep`): the environment
+decoder checks `Surface.identifier` on predicate names, and no proof ties act keys to them. -/
 
 theorem pk_limBody_ident {D : VE.Rights.RightsDoc} {L : VE.Rights.Limitation} {r : ForInStep PUnit}
     (h : VE.Readings.limBody D L = .ok r) : ∀ c ∈ L.conditions, VE.Rights.identifier c.name = true := by
@@ -275,8 +275,8 @@ theorem pk_identifier_sep {n : String} (h : VE.Rights.identifier n = true) : ':'
       · exact absurd h1 (by decide)
   · cases h
 
-/-- The route's identifier (`VE.Bridge.identifier`, applied to every declared predicate name) has no `:`: it
-discharges the act-key hypothesis of `legacy_labels_nodup_of_actKeys` on the decoded route. -/
+/-- A name `VE.Bridge.identifier` admits has no `:`; `legacy_labels_nodup_of_identifiers` applies it to its hypothesis
+`hk`. That a decoded act key passes this check is not proved (the decoder checks `Surface.identifier`). -/
 theorem bridge_identifier_sep {n : String} (h : VE.Bridge.identifier n = true) : ':' ∉ n.toList := by
   simp only [VE.Bridge.identifier, VE.Surface.identifier, Bool.and_eq_true] at h
   obtain ⟨_, h⟩ := h
@@ -387,8 +387,8 @@ theorem legacy_labels_nodup_of_actKeys (U : UDoc) (R : VE.Rights.RightsDoc)
   rw [hb1]
   simp [String.data_append, pk_toString]
 
-/-- On the decoded route the act keys are declared predicate names, which `VE.Bridge.identifier` admits; that
-discharges the act-key hypothesis. -/
+/-- For well-formed `U` and `R` (`hw`, `hs`), label distinctness under the hypothesis `hk` that every act key passes
+`VE.Bridge.identifier`; the decoded route does not yet discharge `hk` (the decoder checks `Surface.identifier`). -/
 theorem legacy_labels_nodup_of_identifiers (U : UDoc) (R : VE.Rights.RightsDoc)
     (hs : VE.Rights.WellFormedRights R = true) (hw : WellFormedU U = true)
     (hk : ∀ k ∈ VE.Rights.condKeys R, VE.Bridge.identifier k.2.1 = true) :

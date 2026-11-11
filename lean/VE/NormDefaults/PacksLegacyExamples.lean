@@ -101,12 +101,12 @@ def legacyAnswers (L : VE.NormDefaults.Wire.LayeredU) : List String :=
 
 /-! ## F1′: the approved `legacy_labels_nodup` is false
 
-`WellFormedRights` checks neither limitation names nor predicate names for `:` (only the route's JSON environment
-decoder applies `VE.Bridge.identifier` to predicate names). With limitations `x` and `x:p` over every line, and act
+`WellFormedRights` checks neither limitation names nor predicate names for `:` (the route's JSON environment decoder
+checks predicate names with `Surface.identifier`). With limitations `x` and `x:p` over every line, and act
 keys `p:q` and `q`, the label `rights:limitation:<limitation>:<act>:necessary:c` of (`x`, `p:q`) is that of
 (`x:p`, `q`). The statement's hypotheses hold and its conclusion fails. Its replacement
 `legacy_labels_nodup_of_actKeys` (DRI decision 2026-10-27, item 3) adds that no act key has `:`, which `cx` fails
-and the decoded route ensures (`bridge_identifier_sep`). -/
+and `VE.Bridge.identifier` implies (`bridge_identifier_sep`); no lemma yet ties decoded act keys to it. -/
 
 open VE.Rights.Examples (mkRights line strictNode block) in
 open VE.Norms.Checks (perm) in
@@ -124,17 +124,17 @@ def cx : VE.Rights.RightsDoc :=
    "rights:limitation:x:p:p:q:necessary:c", "rights:limitation:x:p:q:necessary:c"]
 #guard !decide (legacyLabels cx).Nodup
 #guard (VE.Rights.condKeys cx).map (·.2.1) == ["p:q", "q", "p:q", "q"]
--- The route's own repeated-label check refuses it (no decoded document reaches this: predicates are identifiers).
+-- The route's own repeated-label check refuses it (whether a decoded document can reach this is not proved).
 #guard diag (assemble (legacyU cx) 0 (legacyPacks cx)) ==
   "InvalidInput: premise label rights:limitation:x:p:q:necessary:c of pack rights is used twice"
 
 -- The act-key hypothesis of `legacy_labels_nodup_of_actKeys`: `cx` fails it; the well-formed sources hold it (their
--- act keys are route identifiers), and their labels are distinct, as the theorem says.
+-- act keys pass `VE.Bridge.identifier`), and their labels are distinct, as the theorem says.
 #guard (VE.Rights.condKeys cx).any (·.2.1.toList.contains ':')
 #guard (rightsDocs.take 6).all fun R => (VE.Rights.condKeys R).all (fun k => !k.2.1.toList.contains ':' &&
   VE.Bridge.identifier k.2.1) && decide (legacyLabels R).Nodup
 #guard (rightsDocs.take 6).any fun R => !(VE.Rights.condKeys R).isEmpty
--- `VE.Bridge.identifier`, the route's check on predicate names, refuses `:` anywhere and accepts its neighbours
+-- `VE.Bridge.identifier` (the hypothesis `hk` of `legacy_labels_nodup_of_identifiers`) refuses `:` anywhere, accepts
 -- `9` and `_`; `;` (just past `:`) and the 64-byte budget are refused too.
 #guard ["p", "q", "p9", "p_q", "publish_about_permitted", "a" ++ "".pushn '0' 63].all VE.Bridge.identifier
 #guard ["p:q", ":", "p:", ":p", "x:p", "p;", "", "P", "9p", "a" ++ "".pushn '0' 64].all (!VE.Bridge.identifier ·)

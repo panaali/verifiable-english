@@ -1,0 +1,23 @@
+"""Time scoped probes of RouteExamples variants in one unmutated scratch (tool untouched)."""
+import sys, time, os, json
+from pathlib import Path
+root = Path(sys.argv[1]); sys.path.insert(0, str(root / "tools"))
+import trust_mutants as t
+env = {**os.environ, "PATH": f"{Path.home() / '.elan/bin'}{os.pathsep}{os.environ.get('PATH', '')}"}
+parent = Path("/tmp/m509drv/scr"); parent.mkdir(exist_ok=True)
+s = t.Scratch(root / "lean", parent)
+t.READS = t.READS.replace("todo := todo ++ equations.getD c [] ++ (Lean.Compiler.getImplementedBy? env c).toList ++\n      (Lean.getInitFnNameFor? env c).toList ++ [c ++ `_unsafe_rec]", "todo := equations.getD c [] ++ (Lean.Compiler.getImplementedBy? env c).toList ++\n      (Lean.getInitFnNameFor? env c).toList ++ [c ++ `_unsafe_rec] ++ todo").replace("todo := todo ++ info.type.getUsedConstants.toList ++ value.getUsedConstants.toList", "todo := info.type.getUsedConstants.toList ++ value.getUsedConstants.toList ++ todo"); assert t.READS.count("++ todo") == 2
+assert t.install(lambda *a: s.lake(env, *a), s.lean)
+f = "VE/Events/RouteExamples.lean"
+for name in sys.argv[2:]:
+    text = Path(name).read_text()
+    (s.lean / f).write_text(text)
+    decls, _, _ = t.trust_map.scan(s.lean / f, [])
+    code = t.code_only(text).split("\n")
+    roles = [(d.start, d.end, t.classify(d.kind, "\n".join(code[d.start - 1:d.end])), None) for d in decls]
+    checks = [(a, b) for a, b, r, _ in roles if r == "check"]
+    for only in ([checks[0]], checks[:5]):
+        st = time.monotonic()
+        got = t.probe(s.lake, env, text, roles, s.lean / f, False, set(only))
+        print(json.dumps({"variant": name, "n": len(only), "secs": round(time.monotonic() - st, 1),
+              "entries": {f"{k[0]}": [sorted(x for x in v['flags'] if not x.startswith('hash')), len(v['consts'])] for k, v in got.items()}}), flush=True)

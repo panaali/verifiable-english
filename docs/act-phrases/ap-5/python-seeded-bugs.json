@@ -1,0 +1,26 @@
+{
+  "note": "Python seeded bugs in the one changed Python file, planted by hand, each run with the one test, then restored (git status clean after).",
+  "control": "uv run pytest -q tests/test_acts_specialise_layer.py: 1 passed",
+  "mutants": [
+    {
+      "id": "layer-row-removed",
+      "language": "Python",
+      "file": "tools/layer_policy.py",
+      "definition": "lean_layer",
+      "behaviour": "seeded bug: VE.Acts.Specialise is dropped from the VE.Acts.Readings layer set (it falls to the package default, layer 3; tools/check_lean_imports.py still passes)",
+      "status": "KILLED",
+      "test": "tests/test_acts_specialise_layer.py::test_specialise_sits_in_the_layer_of_readings_and_imports_nothing_above_it",
+      "failure": "AssertionError: assert 3 == 2"
+    },
+    {
+      "id": "layer-one-up",
+      "language": "Python",
+      "file": "tools/layer_policy.py",
+      "definition": "lean_layer",
+      "behaviour": "seeded bug: VE.Acts.Specialise placed one layer above VE.Acts.Readings (an early `return 3`)",
+      "status": "KILLED",
+      "test": "tests/test_acts_specialise_layer.py::test_specialise_sits_in_the_layer_of_readings_and_imports_nothing_above_it",
+      "failure": "AssertionError: assert 3 == 2"
+    }
+  ]
+}

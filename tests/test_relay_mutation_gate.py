@@ -161,6 +161,39 @@ def test_every_route_has_fixtures():
     assert one_shot == set(G.ONE_SHOT)
 
 
+def test_the_gate_builds_every_executable_it_asks_before_asking(monkeypatch):
+    """cmp-s3-cfr-1 review F-ready1: a `ve_service` older than the tree failed the handshake, and so the gate, for
+    every route. `main` builds the service and every one-shot runner (lakefile executables) before it asks any, and
+    a failed build fails the gate without asking."""
+    from tests.lean_build import lean_targets
+    targets = G.gate_executables()
+    assert {"ve_service", *(spec[0] for spec in G.ONE_SHOT.values())} == set(targets)
+    assert all(lean_targets().get(name) == "lean_exe" for name in targets)
+    monkeypatch.delenv("VE_LEAN_PREBUILT", raising=False)
+    monkeypatch.setattr(G.shutil, "which", lambda name: "/fake/lake" if name == "lake" else None)
+    calls, order = [], []
+
+    class Done:
+        def __init__(self, code):
+            self.returncode, self.stdout, self.stderr = code, "", "error: boom" if code else ""
+
+    def fake_run(args, **kwargs):
+        calls.append((args, kwargs.get("cwd")))
+        order.append("build")
+        return Done(0)
+    monkeypatch.setattr(G.subprocess, "run", fake_run)
+    monkeypatch.setattr(G, "run_gate", lambda routes: order.append("gate") or {"routes": {}, "failures": [],
+                                                                              "totals": {}})
+    assert G.main([]) == 0 and order == ["build", "gate"]
+    assert calls == [(["/fake/lake", "build", *targets], G.ROOT / "lean")]
+    order.clear()
+    monkeypatch.setattr(G.subprocess, "run", lambda args, **kwargs: order.append("build") or Done(1))
+    assert G.main([]) == 1 and order == ["build"]
+    assert "boom" in G.build_executables(lambda args, **kwargs: Done(1))
+    monkeypatch.setenv("VE_LEAN_PREBUILT", "1")
+    assert G.build_executables(lambda args, **kwargs: pytest.fail("built under VE_LEAN_PREBUILT")) is None
+
+
 @pytest.fixture(scope="module")
 def built():
     lean_build("ve_service", "ve_speech_acts_route", "ve_metered")
@@ -472,3 +505,17 @@ def test_a_metered_reader_without_its_trace_binding_fails_the_gate(built, withou
     for field in ("sort", "local_id"):
         assert re.search(rf"^accepted service:metered rebind results/\*/result/evaluation/explanation/\*/bindings/\*/"
                          rf"{field}\b", failures, re.M), failures
+
+
+def test_the_senses_read_fixtures_ask_for_the_line_and_the_reread():
+    """sn-b6d: an asked member is part of a case's shape, so the recorder keeps a `line` and a `reread` case of
+    `senses.read`, and the gate's relay call asks for them: their genuine answers carry the members it mutates."""
+    lean_build("ve_senses_route")
+    cases = [json.loads(line)[3] for line in G.CASES.read_text().splitlines()
+             if json.loads(line)[:2] == ["one-shot", "ve_senses_route"]]
+    for member in ("line", "reread"):
+        [case] = [case for case in cases if member in case]
+        answer = G._senses(case, G.BIN / "ve_senses_route")
+        assert member in (answer if member == "line" else answer["reading"])
+        plain = {key: value for key, value in case.items() if key != member}
+        assert G._shape(case, {"status": "ok"}) != G._shape(plain, {"status": "ok"})

@@ -173,7 +173,8 @@ def _rights_report(doc):
            for c in reading_set["readings"]):
         return None
     from ..rights_route import report_rights
-    return report_rights(doc["environment"], _rights_source_units(doc), rights)
+    return report_rights(doc["environment"], _rights_source_units(doc), rights,
+                         located=[u["id"] for u in doc["units"] if _in_rights_source(u)])
 
 
 def coverage_defaults(doc):
@@ -199,6 +200,8 @@ def coverage(doc, scoped=None, rights_report=None):
         answer = deepcopy(doc["lean"]["coverage"])
         answer.update(_profile_lines(doc, answer["residual"], rights_report))
         answer["residual_total"] = sum(answer["residual"].values())
+        if "composed" in doc:
+            answer["chain"] = None if doc["chain"] is None else coverage(doc["chain"])
         return answer
     units = doc["units"]
     source = doc["source"]
@@ -347,7 +350,9 @@ def _profile_lines(doc, residual, rights_report=None):
                if rights is not None else {}),
             **({"rights_report": {
                 "unlicensed_limitations": rights_report["unlicensed_limitations"],
+                "unlicensed_limitations_located": rights_report["unlicensed_limitations_located"],
                 "distinction_hits": rights_report["distinction_hits"],
+                "distinction_hits_located": rights_report["distinction_hits_located"],
                 "limitation_premises_used": rights_report["limitation_premises_used"]}}
                if rights is not None and rights_report is not None else {})}
 
@@ -458,7 +463,11 @@ def _checked_report(doc):
 def _report(doc):
     if "cardinality" in doc:
         from ..cardinality import document_report
-        return document_report(doc)
+        answer = document_report(doc)
+        if "composed" in doc:
+            answer.update(not_certified=doc["composed"]["not_certified"], scope=doc["composed"]["scope"],
+                          chain=None if doc["chain"] is None else _report(doc["chain"]))
+        return answer
     joint = doc.get("discourse", {}).get("joint")
     joint_pending = joint is not None and joint["status"] == "UNKNOWN"
     soft = doc["soft_document"]

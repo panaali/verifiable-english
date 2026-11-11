@@ -171,6 +171,7 @@ class Environment:
     acts: bytes | None  # acts@0's vocabulary block, kept as written (Lean decodes it)
     alternatives: bytes | None
     risk: bytes | None
+    events: bytes | None  # events@0's block, kept as written (Lean decodes it)
     _environment_id: str = field(repr=False, compare=False)
 
     @semantic_entry("environment")
@@ -261,6 +262,7 @@ class Environment:
             reports = {"holders": tuple(block["holders"]), "evidence": block["evidence"]}
         alternatives = canonical_json(data["alternatives"]) if "alternatives" in data else None
         risk = canonical_json(data["risk"]) if "risk" in data else None
+        events = canonical_json(data["events"]) if "events" in data else None
 
         profile_sorts = {}
         profile_predicates = {}
@@ -305,6 +307,7 @@ class Environment:
             ("reports", reports),
             ("alternatives", alternatives),
             ("risk", risk),
+            ("events", events),
         )
         for field, value in values:
             object.__setattr__(self, field, value)
@@ -378,6 +381,7 @@ class Environment:
                    if self.speech_acts is not None else {}),
                 **({"alternatives": loads_json(self.alternatives)} if self.alternatives is not None else {}),
                 **({"risk": loads_json(self.risk)} if self.risk is not None else {}),
+                **({"events": loads_json(self.events)} if self.events is not None else {}),
                 "vocabulary": {"sorts": {k: sort_entry(v) for k, v in self.sorts.items()},
                                "predicates": {k: predicate_entry(v) for k, v in self.predicates.items()},
                                "constants": {k: {"sort": v.sort, **({"description": v.description}

@@ -52,6 +52,8 @@ ROUTES = {
     # PC-2a (D9): the document mode's row on the soft chain under norm-defaults@0. The retained Python
     # branch no longer accepts this chain; its soft-source check and loader diagnostics stay until PC-2b.
     "document-soft-defaults": ("document", "document.json", "row"),
+    # commands-imperatives CI-2 (D9): `read_command`'s row, the one owner of command English.
+    "english.command": ("english.command", "english.command.json", "row"),
 }
 
 
@@ -125,6 +127,12 @@ def schema_fields(route):
 BOUND, UNORDERED = "bound", "bound, unordered"
 COUNTED = "bound count, each item Lean's"  # rows are bound one per request item; their values are Lean's
 FUZZED = (BOUND, UNORDERED, COUNTED)
+
+# rights-cfr-3: each finding beside its text, with its line's span (rights_route._bind_findings).
+_LOCATED_FINDINGS = {
+    "located_findings": BOUND, "located_findings[].code": BOUND, "located_findings[].right": BOUND,
+    "located_findings[].rule": BOUND, "located_findings[].span": BOUND, "located_findings[].text": BOUND,
+}
 
 
 def lean(reason):
@@ -223,7 +231,7 @@ INVENTORY = {
         "distinction[].hits": lean("which lines in the cone mention a protected predicate; each hit is bound"),
         "distinction[].hits[].cited": BOUND, "distinction[].hits[].protected": BOUND,
         "distinction[].hits[].right": BOUND, "distinction[].hits[].rule": BOUND,
-        "findings": BOUND, "findings[]": BOUND,
+        "findings": BOUND, "findings[]": BOUND, **_LOCATED_FINDINGS,
         "generated": UNORDERED, "generated[].act": BOUND, "generated[].condition": BOUND,
         "generated[].kind": BOUND, "generated[].limitation": BOUND, "generated[].name": BOUND,
         "generated[].predicate": BOUND,
@@ -243,6 +251,7 @@ INVENTORY = {
     },
     "rights-scope": {
         **_NARROWINGS, "id": BOUND, "status": BOUND, "findings": BOUND, "findings[]": BOUND, "licensed": BOUND,
+        **_LOCATED_FINDINGS,
     },
     "rights-bar": {
         "id": BOUND, "status": BOUND, "bars": BOUND, "bars[].aimed": BOUND, "bars[].barred": BOUND,
@@ -255,6 +264,10 @@ INVENTORY = {
         "id": BOUND, "status": BOUND, "targets": BOUND, "targets[]": BOUND,
         "conditional_on": lean("which premises Lean's conflict check used; each label is bound"),
         "conditional_on[]": BOUND, "detail": BOUND, "verdict": lean("Lean's verdict"), "status_text": BOUND,
+        # rights-cfr-2: 7.3's report parts beside a CONFLICT-FREE line (rights_route._bind_conflict).
+        "weighing_points": BOUND, "weighing_points[]": BOUND, "situation_exhibited": BOUND,
+        "budget": BOUND, "situation": BOUND, "situation[].predicate": BOUND, "situation[].tuples": BOUND,
+        "situation[].tuples[]": BOUND, "situation[].tuples[][]": BOUND,
     },
     "soft-pairs": {
         "id": BOUND, "status": BOUND, "pairs": BOUND, "pairs[].pair": BOUND, "pairs[].pair[]": BOUND,
@@ -308,6 +321,7 @@ _NOT_THIS_CHAIN = {
     "span": lean("a located refusal's span, bound by `_spans_a_strict_fence`"),
     "composed_readings": lean("`scope@0`'s; refused by the row's member set without a composed set"),
     "cardinality": lean("`cardinality@0`'s; refused by the row's member set without that profile"),
+    "composed": lean("E2's chain list's; refused by the row's member set without that list (`cardinality.bind_composed`)"),
     "judgments": lean("`judgments@0`'s; refused by the row's member set without the layer"),
     "judgment_lines": lean("`judgments@0`'s; refused by the row's member set without the layer"),
     "undeclared_evaluative": lean("`judgments@0`'s; refused by the row's member set without the layer"),
@@ -330,6 +344,28 @@ def _soft_defaults_inventory():
 
 
 INVENTORY["document-soft-defaults"] = _soft_defaults_inventory()
+
+
+def _command_reading(prefix):
+    """A reading's fields (spec section 6, D9): BOUND the act, its force's role, the arguments, each fill's constant,
+    words and span, and the query; LEAN the guard and the paraphrase."""
+    return {f"{prefix}.command.act": BOUND, f"{prefix}.command.force": BOUND, f"{prefix}.command.args": BOUND,
+            f"{prefix}.command.args[]": BOUND, f"{prefix}.command.guard": FORMULA, f"{prefix}.fills": BOUND,
+            f"{prefix}.fills[].constant": BOUND, f"{prefix}.fills[].words": BOUND, f"{prefix}.fills[].span": BOUND,
+            f"{prefix}.fills[].span[]": BOUND, f"{prefix}.query": BOUND,
+            f"{prefix}.paraphrase": lean("speech-acts' paraphrase of the reading, Lean's English")}
+
+
+INVENTORY["english.command"] = {
+    "id": BOUND, "status": BOUND, "result.unit": BOUND, "result.wording": BOUND,
+    "result.legend": COUNTED, "result.legend[]": lean("a scope sentence of `VE.SpeechActs.Run.legend`"),
+    "result.outcome": lean("readInstruction's outcome"), **_command_reading("result.reading"),
+    "result.readings": UNORDERED, **_command_reading("result.readings[]"),
+    "result.code": lean("the refusal's code"), "result.class": lean("the refusal's class, one of `ve.errors`"),
+    "result.text": lean("the refusal's or the limit's text"),
+    "error": lean("a refusal of the request, raised by the relay as Lean's diagnostic"),
+    "case_index": lean("an error row's position; a refusal is raised, not read"),
+}
 
 
 @pytest.mark.parametrize("route", sorted(ROUTES))
@@ -705,6 +741,47 @@ def _rights_relays(monkeypatch):
     return relays
 
 
+def _command_sources():
+    """The service corpus's `english.command` requests (a fill, a proof task, a forbidden act, a refusal) and W10's
+    two readings (`many`) over the same environment with `the meaning`, each with its own unit."""
+    from tests.lean_service_corpus import command_cases
+    cases = {case["id"]: case for case in command_cases()}
+    raw = copy.deepcopy(cases["click"]["environment"])
+    vocabulary = raw["vocabulary"]
+    vocabulary["sorts"]["text"] = {"description": "text"}
+    vocabulary["constants"]["meaning1"] = {"sort": "text", "description": "meaning1"}
+    for name, arguments, act in (("review_required", ["user", "text"], "{0} review {1}"),
+                                 ("recheck_required", ["user"], "{0} review the meaning")):
+        vocabulary["predicates"][name] = {"arguments": arguments, "description": name,
+                                          "regulated": {"role": "obligation", "default": "deny", "act": act}}
+    raw["speech_acts"]["definites"]["the meaning"] = "meaning1"
+    sources = {name: (raw, cases[name]["wording"], cases[name]["queries"])
+               for name in ("click", "prove", "permission", "may")}
+    return {**sources, "many": (raw, "Review the meaning.", [])}
+
+
+def _command_relays(monkeypatch):
+    from ve.backends import english_lean
+    from ve.english import EnglishVocabulary
+    from ve.environment import Environment
+    from ve.errors import VEError
+
+    def call(env, wording, queries, unit):
+        try:
+            english_lean.read_command(env, wording, EnglishVocabulary(env), {}, unit=unit, queries=queries)
+        except VEError:  # Lean's refusal, `many` or `limit`, raised as Lean gives it
+            pass
+    relays = {}
+    for name, (raw, wording, queries) in _command_sources().items():
+        env = Environment(raw)
+        calls = {"english.command": lambda env=env, w=wording, q=queries, u=name: call(env, w, q, u)}
+        relay = Relay("english.command", calls, lambda case: "english.command", [(english_lean.relay, "decide_once")])
+        with monkeypatch.context() as patch:
+            relay.record(patch)
+        relays[name] = relay
+    return relays
+
+
 @pytest.fixture(scope="module")
 def relays():
     from tests.test_soft_norms_lean import SERVICE
@@ -713,7 +790,8 @@ def relays():
     with pytest.MonkeyPatch.context() as monkeypatch:
         return {**{("soft", name): relay for name, relay in _soft_relays(monkeypatch).items()},
                 **{("rights", name): relay for name, relay in _rights_relays(monkeypatch).items()},
-                **{("document", name): relay for name, relay in _document_relays(monkeypatch).items()}}
+                **{("document", name): relay for name, relay in _document_relays(monkeypatch).items()},
+                **{("command", name): relay for name, relay in _command_relays(monkeypatch).items()}}
 
 
 def _survivors(relay, route, pool=None):
@@ -782,7 +860,13 @@ def test_another_requests_genuine_answer_is_unavailable(relays, route):
 _WITNESS_ROWS = "test_unrequested_witness_rows_are_unavailable"
 _ACTS_PRIME = {"environment_prime.vocabulary.acts": "test_a_soft_views_prime_acts_block_not_bound_to_the_request_is_unavailable"}
 UNEXERCISED = {
-    "rights-conflict": {"conditional_on[]": "test_f15_rights_conflict_identities_are_bound"},
+    "rights-conflict": {"conditional_on[]": "test_f15_rights_conflict_identities_are_bound",
+                        # A CONFLICT-FREE line needs certified packages, which the report never sends; its 7.3
+                        # parts are fuzzed in tests/test_rights_report_parts.py.
+                        **dict.fromkeys(("weighing_points", "weighing_points[]", "situation_exhibited", "budget",
+                                         "situation", "situation[].predicate", "situation[].tuples",
+                                         "situation[].tuples[]", "situation[].tuples[][]"),
+                                        "test_a_mutated_conflict_report_part_is_refused")},
     # `acts@0` refuses `rights@0`; the rights route's prime is bound by the soft route's binder (ap-1bg)
     "rights-elaborate": _ACTS_PRIME,
     "soft-elaborate": {

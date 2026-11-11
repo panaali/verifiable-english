@@ -43,6 +43,13 @@ lemma exists in the tree, and the proof would exceed this item's size cap by its
 - An entry that does not name exactly one source line of its right, or that shares its rule with another entry,
   is refused with `InvalidInput: invalid clauses of rule <n>`. The wire decoder builds one entry per line, so a
   decoded document never shows this text. It is what `plain_guard` reads (`entryOk`).
+  Correction (cmp-s3a-cfr-2): the sentence before is false and withdrawn. No right-clauses wire decoder exists
+  (it is cmp-s3-cfr-1). Two lines with one rule name fail `entryOk`. They got this text where rights says
+  `DuplicateDeclaration`. Now, when the lines are in the rights document the entry is checked against (its right in
+  that document or not) and rights' first fault
+  there is a `DuplicateDeclaration`, they get that rights text unchanged (`entryError`). Otherwise they keep this
+  text: for example, when the lines are a `.rightLines` candidate's own, or when rights faults first on something
+  else. See docs/composition/cmp-s3a-cfr-2/REPORT.md.
 - `ClauseLineShape` also covers a non-power line without a norm, which the rights decoder never produces
   (`shapeOk`). `plain_guard` needs a norm on every line that carries clauses.
 - `RelationShape` also refuses a relation predicate with a reserved prefix (`rights__`, `soft__`, `ve__`; spec 1.5).

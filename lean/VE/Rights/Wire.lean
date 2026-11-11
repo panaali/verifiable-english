@@ -288,7 +288,7 @@ def decodeRightsSource (environment document : Json) : Except String RightsSourc
   let us ← units.foldlM (addUnit re.se) {}
   let D : RightsDoc :=
     ⟨⟨re.se.ne.rv.environment, re.se.ne.rv.literals, re.se.soft, ⟨re.se.ne.regulated, [], us.outside⟩⟩,
-     re.block, us.rs, us.limits, us.bars, us.cites, some us.order, us.sourceUnits.getD []⟩
+     re.block, us.rs, us.limits, us.bars, us.cites, some us.order, us.sourceUnits.getD [], []⟩
   match hv : validateRightsOnce D with
   | .error e => throw e
   | .ok () => pure ⟨re, D, by unfold WellFormedRights; rw [← validateRightsOnce_eq, hv], rfl, rfl, rfl⟩

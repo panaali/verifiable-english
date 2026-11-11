@@ -1,0 +1,11 @@
+{"allow": [
+{"definition": "VE.Commands.SplitOn.splitOnL", "operator": "ne-eq", "reason": "Lean refuses the text: with `sep = []` the guard `h.1` no longer gives `0 < sep.length` in decreasing_by (SplitOnLemmas.lean:26), so the definition does not compile"},
+{"definition": "VE.Commands.SplitOn.splitOnL", "operator": "and-or", "reason": "Lean refuses the text: `h.1` is no projection of a disjunction in decreasing_by (SplitOnLemmas.lean:26), so the definition does not compile"},
+{"definition": "VE.Commands.SplitOn.splitOnL", "operator": "lt-eq", "reason": "Lean refuses the text: the operator splits the prefix token `<+:` into `=+:`, which does not parse (SplitOnLemmas.lean:21)"},
+{"definition": "VE.Commands.SplitOn.splitOnL", "operator": "lt-le", "reason": "Lean refuses the text: the operator splits the prefix token `<+:` into `≤+:`, which does not parse (SplitOnLemmas.lean:21)"},
+{"definition": "VE.Commands.SplitOn.splitOnL", "operator": "list-empty", "reason": "Lean refuses the text: the mutated definition fails its own termination proof (decreasing_by at SplitOnLemmas.lean:26 no longer shows the dropped list shorter), so it does not compile"},
+{"definition": "VE.Commands.SplitOn.splitOnL", "operator": "list-drop-last", "reason": "Lean refuses the text: the mutated definition fails its own termination proof (decreasing_by at SplitOnLemmas.lean:26 no longer shows the dropped list shorter), so it does not compile"},
+{"definition": "VE.Commands.SplitOn.splitOnL", "operator": "list-first", "reason": "Lean refuses the text: the mutated definition fails its own termination proof (decreasing_by at SplitOnLemmas.lean:26 no longer shows the dropped list shorter), so it does not compile"},
+{"definition": "VE.Commands.SplitOn.splitOnL", "operator": "list-last", "reason": "Lean refuses the text: the mutated definition fails its own termination proof (decreasing_by at SplitOnLemmas.lean:26 no longer shows the dropped list shorter), so it does not compile"},
+{"definition": "VE.Commands.SplitOn.splitOnL", "operator": "list-drop-first", "reason": "Lean refuses the text: the mutated definition fails its own termination proof (decreasing_by at SplitOnLemmas.lean:26 no longer shows the dropped list shorter), so it does not compile"}
+]}

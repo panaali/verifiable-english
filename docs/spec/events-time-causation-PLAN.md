@@ -8,6 +8,20 @@
 > phase-1 result bears on a shared part, the plan records it under **Cross-plan issues for the DRI** (11) and leaves the
 > shared text unchanged. No bar is changed; no Lean statement is changed.
 >
+> **etc-rev, DRI 2026-11-02 fp-events-time-causation item 1** (first-pilot findings ET-R1 to ET-R3 and the C point,
+> `manage-agents/reviews/dri-decisions-20261102-fp-events-time-causation.md`). Docs only, on draft 4: no Lean statement,
+> no wire field and no bar changes.
+>
+> - **ET-R1 (A), the undated anchor** (2.2, 2.4, 2.7, 2.9, 2.12, 4.2): when the source states no date of its own, "the
+>   date of this document" is an open anchor term, the indexicals resolve against it, "always" and "eventually" keep
+>   their no-anchor readings, and A2 and E2 are refused while it is open. It is never a GAP that fails the unit. P11's
+>   assumption is corrected; new fixtures T15 to T17.
+> - **ET-R2 (B), "current" in a rule's scope** (2.4, 2.7): the in-progress rule states its tie to the acting time and the
+>   acting party and needs no stated start day; new fixture T18.
+> - **ET-R3 (B), one owner each** (2.12, 8, 10): simultaneity below day grain is a named GAP owned by this plan; "could"
+>   on a causal link is a named GAP owned by modality-counterfactual, with a request row.
+> - **C point** (2.7): "cause" and "lead to" are declared as source forms beside "caused" and "led to".
+>
 > **Changes in this draft** (draft 4):
 >
 > 1. **Phase-1 record** (new 0.1): each pilot and experiment with its bar, its measurement, its verdict and what it
@@ -203,7 +217,8 @@ bind `Ev_V` by meaning id like every other regenerated premise.
 }
 ```
 
-The values are an example (the anchor is the date the document gives for itself); each role predicate's verbalisation
+The values are an example (the anchor is the date the document gives for itself; a source that states no date of its
+own has no `anchor`, 2.4); each role predicate's verbalisation
 in the vocabulary has the form "{0} <verb phrase> on {1}" ("{0} happens on {1}" for `committed_on`), checked by Lean
 (D2) and judged by the author lint like any declared wording. Unknown
 fields are rejected. `dates` are ISO strings parsed by `VE.Time.parseIso` and admitted only when `Civil.Valid`
@@ -244,10 +259,35 @@ fact is missing where a wording needed it.
 The decoder sorts the named dates by `Civil.num`, removes none silently (`DuplicateDeclaration: date <iso>`), and
 generates one constant `date__YYYY_MM_DD` of the day sort per date with the verbalisation of W6's long form. Only
 consecutive pairs get a `date` premise; transitivity entails every other pair (`datesOrder_iff`). No declared name
-may start with `date__` (`EventsReserved: <name>`; `date__` is registered in PK-1's `reservedPrefixes`, X1). The
+may start with `date__` (`EventsReserved: <name>`; `date__` is registered in PK-1's `reservedPrefixes`, X1). An ISO
 anchor is a named date; "in the future" in a source is "on some day after the date of this document". The anchor
 "the date of this document" is the one indexical day for every plan; quantities' QT-0p "at the moment" refers to it
 once `events@0` lands (X9).
+
+**The undated anchor (ET-R1).** When the source states no date of its own, no date is supplied from outside it (no file,
+publication or run date), and "the date of this document" is the **open anchor term**, still the one indexical day:
+
+- **Declaration.** The block has no `anchor`, so `EventsEnv.anchor` is `none` and the decoder and every statement of 3
+  stay as they are. The vocabulary declares the constant `date_of_this_document` of the day sort with the fixed
+  verbalisation "the date of this document". It is not a named date: no `date__` constant, no `date` or `adjacent`
+  premise, no `named_dates` row, not one of the 64 (D5). It is open because no date is given for it, not through a W2
+  record: under `judgments@0`, which refuses nothing beside `events@0`, every W2 record binds a base predicate
+  (judgment-terms D2, `JudgmentUnbound`), and a constant is not one. The legend states that it is open (2.7).
+- **Meaning.** It denotes one day the source does not give, ordered by `before` like any day. What is certified over
+  it holds whichever day it is; a claim that needs its place against a named date is not entailed, and neither is that
+  claim's negation.
+- **Indexicals resolve against it** as against an ISO anchor. "In the future", "will" and "come to" are "there is a day
+  such that that day is after the date of this document and ...". A present state the document reports ("current"
+  outside a rule's scope, "now", "at the moment", "is talking") is "<state> is in progress on the date of this
+  document"; persistence is still never assumed (F).
+- **The no-anchor readings.** "Always" has A1 only and "eventually" E1 only (spec 2.4). The anchor-dependent candidates
+  A2 and E2 are refused while the term is open (`AnchorOpen: <candidate>`): they turn on where the undated document
+  falls, which the source does not say.
+- **Never a GAP that fails the unit.** A unit written against the open term uses the plan's constructs as a dated unit
+  does: the missing value is stated in the legend, not a missing construct.
+- A source that states a date the calendar cannot name (before 1970) is not undated: `DateRange` stands (G, ET-T3).
+
+"Current" in the scope of a rule is not an indexical day: the rule binds it (the in-progress rule, 2.7).
 
 ### 2.5 The calendar check (`embeddable`) and the calendar completion
 
@@ -312,7 +352,7 @@ batch runs, 6):
 | `<state> is in progress on <day>` | it has begun on or before that day and has not ended before that day (F) | `∃b. begins_S(x, b) ∧ ¬before(t, b) ∧ ¬∃e. ends_S(x, e) ∧ before(e, t)` |
 | `<cause> contributed to <effect>` | an open causal link, decided by its decider | `L(x, y)` (form `contributed`) |
 | `<cause> was necessary for <effect>` | an open but-for link: without the cause the effect would not have happened, decided by its decider | `N(x, y)` (form `necessary`) |
-| named dates: `12 October 2026`, `2026-10-12`, `the date of this document` | the named day | `c_D` |
+| named dates: `12 October 2026`, `2026-10-12`, `the date of this document` | the named day; with no ISO anchor, the day of the open anchor term (2.4) | `c_D`; with no ISO anchor, the constant `date_of_this_document` |
 
 **Who judges which wording** (phase 1, PH2, PH6.2). Today's author lint refuses "{0} is before {1}"
 (`BINARY_AUXILIARY`), "{0} contributed to {1}" (`BINARY_CONVERSE`, `BINARY_VERB`) and "{0} was necessary for {1}"
@@ -332,11 +372,35 @@ that give it no end; a certificate that it is in progress there needs a stated p
 is no day such that that stay ends on that day", or "that stay does not end on any day before 28 September 2026"),
 which the report shows with its support.
 
+**The in-progress rule for "current" (ET-R2).** In the scope of a rule about an acting party, "current <state>" is the
+state that party acts in at the time of acting. It is not the anchor, which would bind one day's states only. It is
+not "<state> is in progress on <day>" under "there is a day such that" either: that form asserts a start day, so a
+state with no stated start would escape the rule, a guard the source does not have. The rule's guard states two ties:
+
+- **The acting party**: a base predicate the vocabulary declares between the party and the state ("that instance of
+  Claude acts in that operator context"), so the rule binds the state that party is in, not every state of the sort.
+- **The acting time**: a day place of the regulated predicate, the day of acting `t`, with the state in the guard. The
+  guard adds that the state has not begun after `t` and has not ended before `t`: `¬∃b. begins_S(x, b) ∧ before(t, b)`
+  and `¬∃e. ends_S(x, e) ∧ before(e, t)`, written out with the state's role wordings. A day that is not a regulated
+  place ties nothing: `∀t. G(t) → O` is `(∃t. G(t)) → O`, which holds of every state.
+
+Where the regulated predicate has no day place (its two places are the party and the state, and `nary@0` is refused,
+D12), the formula states no time. The guard is the party tie alone and binds every state the party acts in in that
+situation, ended ones included; the acting time stays in the residual (2.12). A source that needs the tie uses the day
+place, with the state in the guard (T18's second rule).
+
+Neither form names or asserts a start day. Under the party tie alone, a state with no stated beginning is bound. Under
+the day place it is bound in situations that give it no later beginning, and a certificate needs a stated premise that
+it has not begun after `t`, shown with its support, as F says for ends. The rule adds no wording, no premise and no Lean
+statement.
+
 Days are quantified with the existing forms ("each day", "there is a day such that", "that day"), so no new binder is
 added. A regulated predicate may take a day argument ("{0} be presumed innocent on {1}"), which keeps it two-place.
 The legend generated from the block says, in plain English: "Times are counted in whole days: two things on the same
 day happen on the same day, and neither is before the other." and "A state is in progress from the day it begins
-through the day it ends." and, when the block declares links, the convention of 2.6. "Ends on" is inclusive because
+through the day it ends." and, when the block declares links, the convention of 2.6, and, with the open anchor term
+(read from the vocabulary, 2.4), "This document states no date of its own, so "the date of this document" is left
+open." "Ends on" is inclusive because
 that is the common English reading ("the offer ends on Friday") and the one the eligibility answer key needs (4.3, R1:
 C26's stay ends on 27 September 2026 and is in progress throughout the qualifying week); a source whose end day is
 exclusive becomes a reading set.
@@ -359,6 +423,11 @@ the source-word reading sets for "until", "by", "within", "during", "since", "wh
 "whenever", "resulted in", "led to" and "caused", and their authored-text refusals with rewrites. Quantifier scope
 inside a sentence ("every day before") is the phrase grammar's (english-lean's engine and act-phrases), not this
 plan's (X7). The wordings are checked with readers by ET-E1 before ET-5 writes them (R4).
+
+"Cause" and "lead to" in a source open the same reading set as "caused" and "led to" (etc-rev, the C point): the two
+link forms, and `leads to` only where a decision model is declared. They are source forms only: the authored-text table
+above, T9's twelve words and D11's disjointness are unchanged, and the third-person "causes" and "leads to", which are
+alternatives' and risk's fixed wordings, stay outside the row.
 
 ### 2.8 Identity and binding
 
@@ -389,6 +458,10 @@ id. A replay against a changed block, a changed date list or a changed link deci
    (`ResourceLimit: events dates`); no declared name starts with `date__` (`EventsReserved: <name>`).
 7. The regenerated premises are typed over the regenerated environment and within `MAX_NODES` each
    (`ResourceLimit: events premise <label>`).
+8. On the document route, beside `LinkNotOpen` (ET-5; no statement of 3 changes): the constant
+   `date_of_this_document`, when declared, has the day sort and the fixed verbalisation, and the block has no `anchor`
+   (`AnchorNotOpen: date_of_this_document`); a reading set in such a document has no A2 or E2 candidate
+   (`AnchorOpen: <candidate>`).
 
 ### 2.10 `alternatives@0` with the completion (ET-7)
 
@@ -446,7 +519,19 @@ The truth of every link and of every day an event is said to happen on (with the
 stated events and alternatives; whether "periodic", "constantly", "progressive", "of full age" and the like are met
 (open terms); clock time within a day (two things on the same day are on the same day; risk's `Q-clock`; a source
 that needs order within a day keeps the `time-of-day` gap, E); whether a state without a stated end has ended (F);
-durations over events; deadline fulfilment; branching futures; dates before 1970 (ET-T3).
+durations over events; deadline fulfilment; branching futures; dates before 1970 (ET-T3); the value of an open anchor
+term (2.4); the acting time of a rule with no day place (2.7).
+
+**Named GAPs, one owner each (ET-R3).** Each span below stays UNFORMALISED with the reason shown, and is never read as a
+stronger claim or as the bare link.
+
+| Span | Reason | Owner | What a translation writes meanwhile | What closes it |
+|---|---|---|---|---|
+| simultaneity below day grain ("at once") | `time-of-day` | events-time-causation | the day-grain part: the things are in progress on one day. That is weaker than the source, since things on one day need not overlap; the overlap stays in the GAP | a clock-time row of this plan, which needs W6's own decision (W6 6.2 excludes clock time); none is built or estimated here |
+| "could" on a causal link ("could have an effect", "could lead to", "could cause") | `could-on-link` | modality-counterfactual (request row in 10) | the link as its own unit, wrapped by a stub that names that owner; the unit stays refused | the owner's row; where that row uses the hedge bridge, also H-4 (hedged causal units stay refused until then, `plan-synthesis-2` DECISIONS item 2) |
+
+Order within a day ("before acting") keeps D8's `time-of-day` gap, with the same owner as the first row; it is order
+against the act, not against the document's date, so the anchor does not resolve it.
 
 ## 3. Lean statements
 
@@ -755,6 +840,10 @@ Definitions first, expectations after, so a reviewer derives each expectation be
 | T12f | ET-7, SR-A4: a scenario that violates a slot premise; a chooser of the wrong sort | today's validation texts; never clear or not clear |
 | T13 | strict precedence (E): events `confirmation`, `action`; "that confirmation happens before that action"; a confirmation on 12 October 2026 and an action on 13 October 2026, then both on 13 October 2026 | certified true, then its negation certified (the same day is not before); never UNDECIDED |
 | T14 | SETTLED needs a situation of the document (SR-B3): T11's U1 with a conviction on two days; a violated soft premise; two literals as one entity; no validated filling | `InvalidModel(events)` (detail `events:one_day:conviction`), `InvalidModel(soft)`, `InvalidModel(literals)`, UNKNOWN; never SETTLED |
+| T15 | open anchor (ET-R1), u0022.s02's shape: a block with no `anchor`; state sorts `thinking`, `standing`; the constant `date_of_this_document` as 2.4 declares it; "that thinking is in progress on the date of this document"; "there is a day such that that day is after the date of this document and that standing begins on that day"; then with `dates` 2030-01-01, the claim "the date of this document is before 1 January 2030" | both sentences load with no GAP, and likewise with `judgments@0` listed (no W2 record, so no `JudgmentUnbound`); no `date` premise and no `named_dates` row for the term; the legend has 2.7's open-anchor line. The claim and its negation are each NOT ENTAILED, with calendar countermodels |
+| T16 | open anchor (ET-R1), u0117.s01's shape: T15's anchor; a future day as in T15, a situation that begins on that day (the role atom keeps the day in the completion fragment), and "cause" between a state and a state, no decision model | the reading set {C1, C2} with the row's distinguishing situation; C2 entails C1 (`link_weaker`); no C3; no GAP |
+| T17 | A2 and E2 (ET-R1): "always" and "eventually" in T15's document; a reading set there with an A2 candidate; the same source words with an ISO anchor; a document with an ISO anchor that also declares `date_of_this_document`; T15's constant with another sort | {A1} and {E1}; `AnchorOpen: A2`; {A1, A2} and {E1, E2}; `AnchorNotOpen: date_of_this_document`, twice |
+| T18 | "current" in a rule's scope (ET-R2), u0080.s01's shape: state sort `context`; "{0} acts in {1}" between agents and contexts; the first rule binds an agent in each context that agent acts in, no day place. Situations: a context with no stated beginning; a context only another agent acts in; a context that has ended. The second rule has a day of acting as a regulated place, with the context in the guard; situations: a context that begins after that day; a context with no stated beginning | the first rule binds in the first situation, with no start day stated or assumed; does not bind the first agent in the second; binds in the third (the formula states no time, 2.7). The second rule does not bind on that day, and binds from the day the context begins; with no stated beginning it binds in that situation, and a certificate needs the stated premise |
 
 ### 4.2 From the pilots (real units, run `20261012T1800Z`)
 
@@ -770,7 +859,7 @@ Definitions first, expectations after, so a reviewer derives each expectation be
 | P8 (ET-6) | U u042, u043 restated | P1 and P2 with `committed_on` as the `act` sort's `on` role (one day per act), its wording "{0} happens on {1}", an active verb the author lint accepts (R3, 2.7; draft 3's "{0} is committed on {1}" is refused today, PH2); P2 in the reading the ET-0 audit picks, or as the reading set of both | same verdicts; fidelity: "the time when it was committed" is now one day |
 | P9 (ET-9) | U u004, 127 B | events `disregard of human rights` (a state), `barbarous act` (event kind as a sort), `outrage of the conscience of mankind`; links "contributed to", decided by "the drafters"; "barbarous" open. Rechecked under D: the disregard (a state) does not begin after the day of an act it contributed to; an act does not start after the last day of the outrage when the outrage is a state that ends; no day is stated, so the conventions constrain nothing the unit asserts | OPEN; `causal_links` lists both links with support testimony |
 | P10 (ET-6, probe) | C u0204.s03, 316 B | "Claude should ideally raise concerns before undertaking a task": events `raising of concerns`, `undertaking`; "happens before"; the "should ideally" force and the harm comparison stay with soft norms and `quantities` | probe only; claimed only with those features. ET-E2 labelled it a D-event deadline (one of the 2 pilot units), which day order states without durations |
-| P11 (ET-6, probe) | C u0022.s01, 67 B | anchor date; "there is a day such that that day is after the date of this document and this document changes on that day", hedged "likely" | the time part admitted; the unit is claimed only with `attitudes`' hedge |
+| P11 (ET-6, probe) | C u0022.s01, 67 B | the open anchor term (2.4): this source states no date of its own, and draft 4's "anchor date" assumed one (ET-R1); "there is a day such that that day is after the date of this document and this document changes on that day", hedged "likely" | the time part admitted; the unit is claimed only with `attitudes`' hedge |
 
 ### 4.3 Use-case regressions
 
@@ -892,7 +981,8 @@ runs, ET-5 joins the serialised English queue (`AT-5 → QT-A6 → ME-11 → QT-
 date-literal class reused; block shape in `ve/environment.py` only if Python still checks environment shape there; no
 `ve/profiles.py` row and no gate mirror: Python reads AR-10's generated data (X3); `ve/events.py` relays the report
 fields and binds them to the request (every named date, label and link the answer names exists in the request; no
-extra row); T9, T11d's reading set (SR-B4) and the binding fixtures; fuzz tests in `tests/test_events_answer.py`
+extra row); T9, T11d's reading set (SR-B4) and the binding fixtures; etc-rev adds 2.4's open anchor term (its wording,
+its legend line, 2.9 item 8, the no-anchor rows of "always" and "eventually") and T15 to T18; fuzz tests in `tests/test_events_answer.py`
 mutating genuine answers one and two faults at a time (each member dropped, emptied, retyped, duplicated, reordered;
 an index out of range): every mutant `CheckerUnavailable` or changing nothing shown. Seeded bugs: accept a link
 wording equal to alternatives' `leads to` (the disjointness test fails); exempt a role wording from the author lint
@@ -957,7 +1047,8 @@ constitution bytes are claimed and the residual is recorded. *Estimate*: UDHR 12
 extrapolated from the sample, of a 6,059 B upper bound. ET-E3 supports the sampling rule: 8 of its 20 causal-tagged
 units had no cause-effect relation of their own, so ET-9 samples by kind from the sentences, never by tag. All 9 of
 its units of kinds (a), (d), (e) carried a hedge or a modal, so ET-9's constitution bytes come with the hedges'
-owners (attitudes, quantities) or not at all; the estimate and the bar are unchanged.
+owners (attitudes, quantities; for "could", modality-counterfactual, 10) or not at all; the estimate and the bar are
+unchanged.
 
 ### ET-D1. Design batch: alternatives beside `readings@1` (planner, 4 h; after ET-7)
 
@@ -1082,7 +1173,8 @@ date, research 1.3).
   `fragment` line says when); a refutation outside the calendar completion fragment (UNKNOWN, A); persistence of a
   state without a stated end (F); order within a day (E); any conservativity beyond `events_conservative`'s `oldEnv`
   (X2); dates before 1970 (ET-T3); actual causation (ET-E3 FAIL); offsets in months and years (ET-T1, W6); any byte
-  before its audit.
+  before its audit; the value of an open anchor term (2.4); simultaneity below day grain and "could" on a causal link
+  (2.12's named GAPs).
 - **Risk: check time, per sort** (measured in phase 1, PH6.1). Every new sort multiplies the part's premise check by 3
   until the lazy enumeration of `infra/oom-rootcause` lands: the Rust search builds every domain-size vector up front
   (3^17 ≈ 1.29 × 10^8 for UDHR part01 with three new sorts, against 3^14 before), and the check is
@@ -1104,7 +1196,9 @@ date, research 1.3).
   records the outcome instead of choosing (D14).
 - **Open: same-day order.** Two events on one day cannot be ordered (risk's `Q-clock`); a source that needs it
   ("immediately after", "confirmed before the action") is UNFORMALISED with reason `time-of-day`; same-day facts alone
-  never make a point UNDECIDED (E).
+  never make a point UNDECIDED (E). Simultaneity below day grain ("at once") is the same gap; this plan owns both
+  (2.12).
+- **Open: "could" on a causal link.** A named GAP owned by modality-counterfactual until its row lands (2.12, 10).
 - **Open: tagging.** Research 2.2 found inconsistent `missing_feature` tags ("promote" in three features); ET-9's
   sample uses the sentences, not the tags. ET-E3 measured it for `causation`: 8 of 20 sampled units so tagged have no
   cause-effect relation of their own.
@@ -1145,11 +1239,12 @@ of them.
 | **Act-performance predicate** | attitudes, act-phrases (Group A faithfulness), causation | events designs it (ET-D2); not built here (X4) |
 | **One calendar and one date grammar** | quantities (W6 durations, ages), events, math-evidence (dated evidence) | `VE.Time.Calendar` and W6's date-literal class; no topic computes dates elsewhere. Dates before 1970 are a W6 trigger (ET-T3) that extends `VE.Time.Calendar`'s range, never a second calendar (X8) |
 | **Named open relations with a decider and support** | events (causal links), attitudes (attitude holders), weighing (decisions), math-evidence (evidence support, VEX) | one schema: the W2 open term with `arguments`, `decided_by` and per-unit `support`, plus one residual line format |
-| **Source words as reading sets with a distinguishing situation**, and the matching advice rows in authored text | every topic ("until", "should", "likely", "most", "every ... before") | one catalogue of source words, their candidate wordings and their advice texts, owned by english-lean's catalogue; events adds rows only, for "until", "by", "within", "during", "since", "while", "always", "eventually", "whenever", "resulted in", "led to", "caused" (X9) |
+| **Source words as reading sets with a distinguishing situation**, and the matching advice rows in authored text | every topic ("until", "should", "likely", "most", "every ... before") | one catalogue of source words, their candidate wordings and their advice texts, owned by english-lean's catalogue; events adds rows only, for "until", "by", "within", "during", "since", "while", "always", "eventually", "whenever", "resulted in", "led to", "caused", with "lead to" and "cause" as source forms of the last two (2.7) (X9) |
 | **Exclusive choice: choosers and alternatives** | weighing's WG-E1 and WG-10 (collisions between different acts), act-phrases (act identity) | `alternatives@0` owns exclusivity (`available`, one chooser per action). Weighing's WG-10 consumes a reviewed composition of `alternatives@0` with soft norms and defines no exclusivity relation (X6) |
 | **Intended-model checks on witnesses** (a refutation must be realisable by the intended reading: calendar days here) | quantities (integers within declared ranges), events | one pattern: a decidable `embeddable`-style check on every reported situation, plus a proved completion to the intended domain for a stated fragment, with UNKNOWN when either fails and certificates kept |
-| **Hedged causal claims** ("can lead to", "could cause", "often") | attitudes and quantities own the hedge; events owns the link | the hedge wraps a link unit; neither topic copies the other's wording |
-| **Indexical time** ("now", "currently", "at the moment", "in the future") | attitudes, discourse, events, quantities | the anchor ("the date of this document") is the one indexical day for every plan; other indexicals refer to it, and quantities' QT-0p "at the moment" refers to it once `events@0` lands (X9) |
+| **Hedged causal claims** ("can lead to", "often") | attitudes and quantities own the hedge; events owns the link | the hedge wraps a link unit; neither topic copies the other's wording. "Could" on a link is the next row |
+| **"could" on a causal link: request to modality-counterfactual** (ET-R3) | modality-counterfactual, events, attitudes, risk | Owner: modality-counterfactual, which owns the word's source-word rows and keeps the modal force of "can" and "could" (its 1.3). **Requested**: a row for "could" on a link in a document with `events@0`. Its row "could, causal" refuses with `ModalityCausal` and rewrites to risk's `might lead to`, which no `events@0` document can write (D12 refuses `risk@0`). Attitudes has no "could" mode (its D-A2), and risk cannot sit beside events, so neither can take it; events owns the link and adds no hedge. The row keeps the link in its scope and never reads the claim as the bare link. A proposal the owner may accept or change: possibility over the link unit, "There is a situation in which <cause> contributed to <effect>." Until it lands: 2.12's named GAP |
+| **Indexical time** ("now", "currently", "at the moment", "in the future") | attitudes, discourse, events, quantities | the anchor ("the date of this document", an ISO date or, when the source states no date of its own, the open anchor term, 2.4) is the one indexical day for every plan; other indexicals refer to it, and quantities' QT-0p "at the moment" refers to it once `events@0` lands (X9) |
 
 ## Change log
 
@@ -1180,6 +1275,8 @@ of them.
   producer; ET-T1 fired with its scope; actual causation cancelled; the cross-plan issues of 11. The listed changes
   are at the top of this file. No bar, no shared part and no Lean statement changed. The spec's matching draft is
   [events-time-causation.md](events-time-causation.md) draft 3.
+- etc-rev, DRI 2026-11-02 fp-events-time-causation item 1: ET-R1 to ET-R3 and the C point of the first fidelity pilot,
+  listed at the top of this file. No bar and no Lean statement changed.
 
 ## 11. Cross-plan issues for the DRI
 

@@ -1,15 +1,14 @@
 """Deliberately narrow, single-reading English for experimental speech acts."""
 from __future__ import annotations
 
-from itertools import product
 import re
 
 from .ast import _Checker, _Decoder, _to_data
-from .backends.english_lean import QUESTION_CALLERS, SPEECH_CALLER, read_question
-from .english import parse_english
+from .backends.english_lean import QUESTION_CALLERS, SPEECH_CALLER, read_command, read_question
+from .english import EnglishVocabulary, parse_english
 from .environment import RESERVED
 from .errors import VEError
-from .speech_acts import act_verb, ascii_fold, ascii_wording, wording_text
+from .speech_acts import ascii_fold, ascii_wording, wording_text
 
 
 def _formula(env, sentence):
@@ -126,28 +125,6 @@ def _alternatives(text):
     return names
 
 
-def _command_candidates(env, scope):
-    """Enumerate declared act phrases with bound names and definite synonyms."""
-    for predicate, decl in env.predicates.items():
-        reg = decl.regulated
-        # An imperative begins with its act's verb (3.2): an act whose first word after `{0}` is a slot has none.
-        if reg is None or reg.role not in ("obligation", "permission") or act_verb(reg.act) is None:
-            continue
-        names = []
-        for sort in decl.arguments[1:]:
-            choices = []
-            for name, constant in env.constants.items():
-                if constant.sort == sort:
-                    choices.append((name, name))
-                    choices.extend((phrase, name) for phrase, bound in scope.get("definites", {}).items()
-                                   if bound == name)
-            names.append(choices)
-        for bindings in product(*names):
-            display = [None, *(label for label, _ in bindings)]
-            phrase = reg.act[4:].format(*display)
-            yield phrase, predicate, tuple(value for _, value in bindings), reg.role
-
-
 # The beginnings of the wordings Lean reads for the speech-acts caller, as its contract's `callers` lists them
 # (`VE.Question.Run.speechPrefixes`): `Is it the case that ` (F1), `Must ` and `Can ` (refused with `ModalQuestion`)
 # and F2's fronted `Is `.
@@ -163,10 +140,14 @@ def _polar(env, text):
     return {"mode": "polar", "body": answer["ast"]}, "question"
 
 
-def parse_speech(env, source, scope, *, query=None, reading_set=None, warnings=None):
+def parse_speech(env, source, scope, *, query=None, reading_set=None, warnings=None, unit="command", queries=(),
+                 words=None):
     """Return a typed wire content object and its kind; reject other wordings.
 
-    Advisory lints (`OpaqueWording`) are appended to `warnings` when given.
+    A wording of no question form is a command, read by Lean (`read_command`, commands-imperatives CI-2) as the
+    command `unit` of a document with the query records `queries`, over the speech vocabulary `words` (built here
+    when not given). Advisory lints (`OpaqueWording`) of a question's sentence are appended to `warnings` when given;
+    a command's wording has none.
     """
     if type(source) is not str:
         raise VEError("InvalidInput: speech wording")
@@ -197,67 +178,12 @@ def parse_speech(env, source, scope, *, query=None, reading_set=None, warnings=N
                     "body": _body(env, domain[0], rest, warnings)}, "question"
     if text.startswith("Which "):
         raise VEError("OpenDomainWhich: list the named alternatives")
-    if text.startswith("You may "):
-        raise VEError("PermissionNotCommand: use an equality-guarded W1 rule")
-    if text.startswith("Please "):
-        raise VEError("InvalidInput: please needs author approval")
-    if " and " in text and not text.startswith("Do not "):
-        # A conjunction may be inside a declared act. Check matching phrases
-        # before issuing this diagnostic.
-        coordinated = True
-    else:
-        coordinated = False
-    if text.startswith("Prove that ") and text.endswith(" using these premises."):
-        if query is None:
-            raise VEError("InvalidInput: query required")
-        _sentence(env, text[len("Prove that "):-len(" using these premises.")] + ".", warnings)
-        from .speech_acts import PROOF_TASK_ACT
-        candidates = [(name, decl) for name, decl in env.predicates.items()
-                      if decl.regulated is not None and decl.regulated.role == "obligation"
-                      and decl.regulated.act == PROOF_TASK_ACT and decl.arguments[1:] == ("query",)]
-        if len(candidates) != 1:
-            raise VEError(f"MissingObligationRole: {PROOF_TASK_ACT}")
-        return {"force": "require", "act": candidates[0][0], "args": [query], "guard": ["top"]}, "instruction"
-    if text.endswith("."):
-        plain = text[:-1]
-        condition = None
-        if ", if " in plain:
-            plain, condition = plain.rsplit(", if ", 1)
-        forbidden = plain.startswith("Do not ")
-        if forbidden:
-            plain = plain[len("Do not "):]
-        matches = []
-        wrong_role = []
-        for phrase, predicate, args, role in _command_candidates(env, scope):
-            if ascii_fold(plain) == ascii_fold(phrase):
-                if role == ("permission" if forbidden else "obligation"):
-                    matches.append((predicate, args, role))
-                else:
-                    wrong_role.append(predicate)
-        matches = list(dict.fromkeys(matches))
-        if len(matches) == 1:
-            predicate, args, role = matches[0]
-            if role != ("permission" if forbidden else "obligation"):
-                raise VEError(f"Missing{'Permission' if forbidden else 'Obligation'}Role: {env.predicates[predicate].regulated.act}")
-            guard = _to_data(_formula(env, condition + ".")) if condition else ["top"]
-            return {"force": "forbid" if forbidden else "require", "act": predicate,
-                    "args": list(args), "guard": guard}, "instruction"
-        if len(matches) > 1:
-            raise VEError("AmbiguousDerivation: multiple declared acts match")
-        if wrong_role:
-            raise VEError(f"Missing{'Permission' if forbidden else 'Obligation'}Role: {env.predicates[wrong_role[0]].regulated.act}")
-    if coordinated:
-        raise VEError("CoordinatedActs: split into two commands")
-    raise VEError("InvalidInput: no single speech-act reading")
+    words = EnglishVocabulary(env, _defer_overlay_refusals=True) if words is None else words
+    return read_command(env, text, words, {}, unit=unit, queries=list(queries))["reading"]["command"], "instruction"
 
 
-def legend(env):
-    scope = env.speech_acts
-    result = [f"This document is task {scope['task']}."]
-    if "addressee" in scope:
-        result.append(f"In this task, you are {scope['addressee']['constant']}.")
-    for phrase, constant in sorted(scope.get("definites", {}).items()):  # Lean's canonical order
-        result.append(f"In this task, {phrase} is {constant}.")
+def legend(env, lines):
+    """The scope sentences as Lean wrote them (`VE.SpeechActs.Run.legend`, relayed in the source report), then
+    norms' W1 default sentences."""
     from .norm_english import default_sentence
-    result.extend(default_sentence(env, p) for p, d in env.predicates.items() if d.regulated is not None)
-    return "\n".join(result)
+    return "\n".join([*lines, *(default_sentence(env, p) for p, d in env.predicates.items() if d.regulated is not None)])

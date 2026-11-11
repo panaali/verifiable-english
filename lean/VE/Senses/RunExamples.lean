@@ -194,6 +194,31 @@ def fenced (fs ids allowed : List String) (defaults : List (String × Nat) := []
 #guard let j := projectCaseReported (projectReq lineFunny2 ["funny"])
   withoutVersion j != j && withVersion "projection" (versionOf "projection" j) (withoutVersion j) == j
 
+/-! ## The profile list as written (`Projection.written`, `SensesOutcome.written`)
+
+A request environment with a document layer (`judgments@0`): the reader decides without it
+(`VE.Compose.decidingEnvironment`), and the `senses.project` answer and an identified `senses.read` answer
+(`runCaseReported`) return the environment with the list as written. -/
+
+def envL : Json := Json.mkObj [("language", .str "ve.core@0.2"), ("spec_revision", .str "ve-v0.2-expand2-2026-09-25"),
+  ("profiles", toJson ["documents@1", "judgments@0", "relational-fol@0"]), ("vocabulary", EJ.source.getObjValD "vocabulary")]
+
+def layered (extra : List (String × Json)) : Json :=
+  ((req extra).setObjVal! "environment" envL).setObjVal! "lexicon"
+    (lexiconJson ((VE.EnglishGrammar.Run.environmentId (displayJson envL overlayJ)).toOption.getD "") LJ)
+
+def profilesOf (form : String) (j : Json) : Json :=
+  (((j.getObjValD "result").getObjValD form).getObjValD "environment").getObjValD "profiles"
+
+-- `Projection.written`: `senses.project` returns the request's list, not the one the reader decides over
+#guard ((VE.Compose.decidingEnvironment envL).toOption.map (·.getObjValD "profiles")) ==
+    some (toJson ["documents@1", "relational-fol@0"]) &&
+  profilesOf "projection" (projectCaseReported (layered [("lines", .str lineFunny2), ("used", toJson ["funny"])])) ==
+    envL.getObjValD "profiles"
+-- `SensesOutcome.written`: an identified `senses.read` answer returns the request's list
+#guard profilesOf "reading" (runCaseReported (layered [("source", .str "The riddle is funny.")])) ==
+  envL.getObjValD "profiles"
+
 /-! ## The preamble lines of a source answer (plan B6): the source's sentences before the body, as written -/
 
 def readingOf (j : Json) : Json := ((runCaseReported j).getObjValD "result").getObjValD "reading"

@@ -201,8 +201,8 @@ def status : Shape :=
       ("status", constS "ok"),
       ("point_status", enumS ["SETTLED yes", "SETTLED no", "UNDECIDED", "UNKNOWN"]),
       ("predicate", n [str, .equals "/predicate"]),
-      ("tuple", ref "common.json#/$defs/strings"),
-      ("rules", ref "common.json#/$defs/strings"),
+      ("tuple", n [ref "common.json#/$defs/strings", .equals "/tuple"]),
+      ("rules", n [ref "common.json#/$defs/strings", .uniqueStrings]),
       ("differs", n [arr, .items (ref "#/$defs/atom")])]]
 
 def witness_conflict : Shape :=
