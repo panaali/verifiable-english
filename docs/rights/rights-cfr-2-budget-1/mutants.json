@@ -1,0 +1,93 @@
+[
+ {
+  "id": "S1-old-exhibited-text",
+  "behaviour": "with no situation supplied the line says none was searched, never UNKNOWN (budget 10000) (R1)",
+  "definition": "VE.Rights.Run.conflictAnswerOf",
+  "language": "Lean",
+  "file": "lean/VE/Rights/Run.lean",
+  "mutation": [
+   "let exhibited := exhibitedText M.isSome",
+   "let exhibited := if M.isSome then \"yes\" else s!\"UNKNOWN (budget {conflictBudget})\""
+  ],
+  "test": "lean/ResponseShape/Schemas/RightsChecks.lean:62 (#guard: the no-situation line has no 'UNKNOWN (budget'); also :56 and :58 (pinned answers)",
+  "result": "lake build ResponseShape.Schemas.RightsChecks: errors at :56, :58, :62; build failed"
+ },
+ {
+  "id": "S2-count-gloss-dropped",
+  "behaviour": "the line names what <j> counts (R3)",
+  "definition": "VE.Rights.Run.conflictAnswerOf",
+  "language": "Lean",
+  "file": "lean/VE/Rights/Run.lean",
+  "mutation": [
+   " weighing points open ({weighingGloss}); situation",
+   " weighing points open; situation"
+  ],
+  "test": "lean/ResponseShape/Schemas/RightsChecks.lean:62 (#guard: the gloss after the count); also :55, :56, :58",
+  "result": "lake build ResponseShape.Schemas.RightsChecks: errors at :55, :56, :58, :62; build failed"
+ },
+ {
+  "id": "S3-soft-count",
+  "behaviour": "the rights <j> is WP(T) with no pair evidence (openCoherence), not the soft route's |conditional_on|",
+  "definition": "VE.Rights.Run.conflictAnswerOf",
+  "language": "Lean",
+  "file": "lean/VE/Rights/Run.lean",
+  "mutation": [
+   "; {weighing.length} weighing points open (",
+   "; {coherence.length} weighing points open ("
+  ],
+  "test": "lean/ResponseShape/Schemas/RightsChecks.lean:58 (#guard: 0 coherence premises and 2 weighing points open)",
+  "result": "lake build ResponseShape.Schemas.RightsChecks: error at :58; build failed"
+ },
+ {
+  "id": "S4-relay-old-exhibited-text",
+  "behaviour": "the relay binds the no-search line to Lean's words (R8)",
+  "definition": "ve.rights_route._bind_conflict",
+  "language": "Python",
+  "file": "ve/rights_route.py",
+  "mutation": [
+   "else f\"none supplied (not searched; budget {row['budget']} unused)\")",
+   "else f\"UNKNOWN (budget {row['budget']})\")"
+  ],
+  "test": "tests/test_rights_report_parts.py::test_rights_conflict_free_without_a_situation_names_no_search",
+  "result": "1 failed"
+ },
+ {
+  "id": "S5-relay-gloss-dropped",
+  "behaviour": "the relay binds the named count (R8)",
+  "definition": "ve.rights_route._bind_conflict",
+  "language": "Python",
+  "file": "ve/rights_route.py",
+  "mutation": [
+   "f'{len(weighing)} weighing points open (colliding default pairs no ranking resolves); '",
+   "f'{len(weighing)} weighing points open; '"
+  ],
+  "test": "tests/test_rights_report_parts.py::test_rights_weighing_points_name_what_they_count",
+  "result": "1 failed"
+ },
+ {
+  "id": "S6-soft-count-duplicate",
+  "behaviour": "the soft line's <j> is WP(T) (openLabels, from Wire.openCoherence), not a repeat of <k>",
+  "definition": "VE.SoftNorms.Run.conflictFreeText",
+  "language": "Lean",
+  "file": "lean/VE/SoftNorms/Run.lean",
+  "mutation": [
+   "coherence premises; {openLabels.length} weighing points open",
+   "coherence premises; {conditional.length} weighing points open"
+  ],
+  "test": "lean/VE/SoftNorms/Run.lean:127 (#guard: <k> 1, <j> 2)",
+  "result": "lake build VE.SoftNorms.Run: error at :127; build failed"
+ },
+ {
+  "id": "S7-disjoint-not-subtracted",
+  "behaviour": "WP(T) under pair evidence is openCoherence less the DISJOINT-discharged pairs",
+  "definition": "VE.SoftNorms.Run.openAfterClassification",
+  "language": "Lean",
+  "file": "lean/VE/SoftNorms/Run.lean",
+  "mutation": [
+   "pure ((VE.SoftNorms.Wire.openCoherence src.D).filter (!disjoint.contains ·))",
+   "pure (VE.SoftNorms.Wire.openCoherence src.D)"
+  ],
+  "test": "lean/ResponseShape/Schemas/SoftPairsChecks.lean:24 and :26 (#guard)",
+  "result": "lake build ResponseShape.Schemas.SoftPairsChecks: errors at :24, :26; build failed"
+ }
+]
