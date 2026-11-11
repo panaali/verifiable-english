@@ -1,0 +1,128 @@
+shard 2/3: 17 units; commands: []
+info: syncing channel updates for 1.98.1-x86_64-unknown-linux-gnu
+info: latest update on 2026-09-03 for version 1.98.1 (48a229cea 2026-09-01)
+info: downloading 3 components
+warn: the missing active toolchain `1.98.1-x86_64-unknown-linux-gnu` has been auto-installed
+warn: this might cause rustup commands to take longer time to finish than expected
+info: you may opt out with `RUSTUP_AUTO_INSTALL=0` or `rustup set auto-install disable`
+    Updating crates.io index
+ Downloading crates ...
+  Downloaded crypto-common v0.1.7
+  Downloaded cpufeatures v0.2.17
+  Downloaded autocfg v1.5.1
+  Downloaded cfg-if v1.0.5
+  Downloaded block-buffer v0.10.4
+  Downloaded zmij v1.0.23
+  Downloaded generic-array v0.14.7
+  Downloaded version_check v0.9.5
+  Downloaded digest v0.10.7
+  Downloaded itoa v1.0.18
+  Downloaded sha2 v0.10.9
+  Downloaded quote v1.0.47
+  Downloaded num-integer v0.1.47
+  Downloaded unicode-ident v1.0.26
+  Downloaded serde_derive v1.0.229
+  Downloaded num-traits v0.2.19
+  Downloaded serde_core v1.0.229
+  Downloaded proc-macro2 v1.0.107
+  Downloaded serde v1.0.229
+  Downloaded memchr v2.8.3
+  Downloaded num-bigint v0.4.8
+  Downloaded typenum v1.20.1
+  Downloaded serde_json v1.0.151
+  Downloaded syn v3.0.6
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling quote v1.0.47
+   Compiling typenum v1.20.1
+   Compiling unicode-ident v1.0.26
+   Compiling generic-array v0.14.7
+   Compiling serde_core v1.0.229
+   Compiling autocfg v1.5.1
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling syn v3.0.6
+   Compiling serde_json v1.0.151
+   Compiling serde v1.0.229
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling memchr v2.8.3
+   Compiling cfg-if v1.0.5
+   Compiling itoa v1.0.18
+   Compiling cpufeatures v0.2.17
+   Compiling sha2 v0.10.9
+   Compiling num-integer v0.1.47
+   Compiling serde_derive v1.0.229
+   Compiling num-bigint v0.4.8
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `release` profile [optimized] target(s) in 17.31s
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling unicode-ident v1.0.26
+   Compiling quote v1.0.47
+   Compiling typenum v1.20.1
+   Compiling autocfg v1.5.1
+   Compiling generic-array v0.14.7
+   Compiling serde_core v1.0.229
+   Compiling num-traits v0.2.19
+   Compiling zmij v1.0.23
+   Compiling syn v3.0.6
+   Compiling serde_json v1.0.151
+   Compiling serde v1.0.229
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling cfg-if v1.0.5
+   Compiling memchr v2.8.3
+   Compiling cpufeatures v0.2.17
+   Compiling itoa v1.0.18
+   Compiling sha2 v0.10.9
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling serde_derive v1.0.229
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 9.81s
+order: failed last time []; changed []; then the rest; --maxfail 5
+recording 17 units with 4 jobs in /tmp/ve-select-run-q2t3gqx2
+  tests/test_regen_generated.py: exit 0 in 81.0 s, 804 functions
+  tests/test_inventory_path.py: exit 0 in 84.3 s, 296 functions
+  tests/test_rust_reproducible.py: exit 0 in 40.6 s, 199 functions
+  tests/test_definitions.py: exit 0 in 10.2 s, 738 functions
+  tests/test_since_pass.py: exit 0 in 48.1 s, 308 functions
+  tests/test_code_map.py: exit 0 in 7.7 s, 193 functions
+  tests/test_document_split.py: exit 0 in 12.3 s, 270 functions
+  tests/test_heavy_tests.py: exit 0 in 3.9 s, 340 functions
+  tests/test_lean_first_b13b.py: exit 0 in 5.6 s, 665 functions
+  tests/test_pc3_statements.py: exit 0 in 2.0 s, 220 functions
+  tests/test_rd9_statements.py: exit 0 in 63.8 s, 236 functions
+  tests/test_scope_5_6_statements.py: exit 0 in 3.8 s, 225 functions
+  tests/test_surface_registry.py: exit 0 in 1.0 s, 435 functions
+  tests/test_document_chain.py: exit 0 in 84.5 s, 1039 functions
+  tools/test_layer_policy.py: exit 0 in 108.0 s, 314 functions
+  tests/test_scope_answer.py: exit 0 in 344.5 s, 883 functions
+  tests/test_repo_map.py: exit 0 in 415.5 s, 465 functions
+recorded 17 units for tree a40edc34f6; 0 others left to the static graph until they run; 0 failed
+UNITLOG tests__test_code_map.py.log: 6 passed in 6.95s
+UNITLOG tests__test_definitions.py.log: 11 passed in 9.46s
+UNITLOG tests__test_document_chain.py.log: 82 passed in 83.70s (0:01:23)
+UNITLOG tests__test_document_split.py.log: 47 passed in 11.63s
+UNITLOG tests__test_heavy_tests.py.log: 10 passed in 3.26s
+UNITLOG tests__test_inventory_path.py.log: 92 passed in 77.87s (0:01:17)
+UNITLOG tests__test_lean_first_b13b.py.log: 45 passed in 4.86s
+UNITLOG tests__test_pc3_statements.py.log: 3 passed in 1.31s
+UNITLOG tests__test_rd9_statements.py.log: 43 passed in 63.18s (0:01:03)
+UNITLOG tests__test_regen_generated.py.log: 62 passed in 78.41s (0:01:18)
+UNITLOG tests__test_repo_map.py.log: 33 passed in 413.09s (0:06:53)
+UNITLOG tests__test_rust_reproducible.py.log: 8 passed in 39.87s
+UNITLOG tests__test_scope_5_6_statements.py.log: 8 passed in 3.18s
+UNITLOG tests__test_scope_answer.py.log: 40 passed in 342.75s (0:05:42)
+UNITLOG tests__test_since_pass.py.log: 97 passed in 47.25s
+UNITLOG tests__test_surface_registry.py.log: 9 passed in 0.30s
+UNITLOG tools__test_layer_policy.py.log: (no count line)
