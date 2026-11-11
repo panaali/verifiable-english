@@ -1,0 +1,21 @@
+{
+ "job": "en-e3a-cutback.s3of7-abc280a4",
+ "head": "a3073d3a53261da3c699bd4f048dce1a788480b5",
+ "argv": [
+  "en-e3a-cutback.s3of7-abc280a4",
+  "a3073d3a53261da3c699bd4f048dce1a788480b5",
+  "254c6b1b5d3549d0a36733064f4aeb821ca50c44",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-1887a7420de0.tar.zst",
+  "4ce7177af75af93171fbadc71a9ad70b032b008a2d4b0e17dfe777974e56718d",
+  "--max-mutants",
+  "1000",
+  "--test",
+  "lean/VE/EnglishGrammar/Norm/RunExamples.lean",
+  "--budget",
+  "6300",
+  "--shard",
+  "3/7",
+  "--jobs",
+  "4"
+ ]
+}
