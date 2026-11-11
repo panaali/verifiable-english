@@ -13,13 +13,13 @@
    "verdict": "KILLED", "test": "lean/VE/RightClauses/RunExamples.lean:85 #guard (also PINNED K10 in tests/test_right_clauses.py::test_right_clauses_differential)"},
   {"name": "lineObjects-undercount", "file": "lean/VE/RightClauses/Run.lean", "definition": "lineObjects",
    "change": {"from": "(fun b => (bodyLines b.2).length)", "to": "(fun b => (bodyLines b.2).length - 1)"},
-   "verdict": "KILLED", "test": "lean/VE/RightClauses/RunExamples.lean:152 and :166 #guards"},
+   "verdict": "KILLED", "test": "lean/VE/RightClauses/RunExamples.lean:152 and :183 #guards (lines of the final HEAD)"},
   {"name": "line-charge-dropped", "file": "lean/VE/RightClauses/Run.lean", "definition": "elaborateCase",
    "change": {"from": "if lineObjects document > 256 then throw \"ResourceLimit: rules\"", "to": "(deleted, with the deepLine check)"},
-   "verdict": "KILLED", "test": "lean/VE/RightClauses/RunExamples.lean:162 #guard (main's answer for 257 copies of one line is DuplicateDeclaration)"},
+   "verdict": "KILLED", "test": "lean/VE/RightClauses/RunExamples.lean:183 #guard (line of the final HEAD; main's answer for 257 copies of one line is DuplicateDeclaration)"},
   {"name": "deepLine-off-by-one", "file": "lean/VE/RightClauses/Run.lean", "definition": "deepLine",
    "change": {"from": "x.2.2.relation.toList.length ≥ VE.Limits.maxDepth", "to": "x.2.2.relation.toList.length > VE.Limits.maxDepth"},
-   "verdict": "KILLED", "test": "lean/VE/RightClauses/RunExamples.lean:164 #guard (deep)"},
+   "verdict": "KILLED", "test": "lean/VE/RightClauses/RunExamples.lean:165 #guard (deep; line of the final HEAD)"},
   {"name": "checkSpans-adjacent-refused", "file": "lean/VE/RightClauses/Plain.lean", "definition": "checkSpans",
    "change": {"from": "(fun t => t.2 ≤ s.1)", "to": "(fun t => t.2 < s.1)"},
    "verdict": "KILLED", "test": "lean/VE/RightClauses/Examples.lean:114 and :396 #guards (the pairwise reference)"},
@@ -34,6 +34,15 @@
    "verdict": "KILLED", "test": "tests/test_right_clauses.py::test_right_clauses_relay_binds_every_field"},
   {"name": "soft-frame-keeps-profile", "file": "ve/softnorms.py", "definition": "check_soft_source",
    "change": {"from": "if \"right-clauses@0\" in layers and \"rights@0\" in layers:", "to": "if \"right-clauses@0\" in layers and \"rights@0\" in layers and False:"},
-   "verdict": "KILLED", "test": "tests/test_right_clauses.py::test_right_clauses_rights_environment_reads_the_profile"}
+   "verdict": "KILLED", "test": "tests/test_right_clauses.py::test_right_clauses_rights_environment_reads_the_profile"},
+  {"name": "deepLine-any-to-all", "file": "lean/VE/RightClauses/Run.lean", "definition": "deepLine",
+   "change": {"from": "(D.lines ++ D.cands.flatMap (·.2.2.2)).any fun x =>", "to": "(D.lines ++ D.cands.flatMap (·.2.2.2)).all fun x =>"},
+   "verdict": "KILLED", "test": "lean/VE/RightClauses/RunExamples.lean:168 #guard deep (one deep line among shallow ones; trust mutant M024 of the first sweep, planted on 4f5ff9a5c3's parent)"},
+  {"name": "lineObjects-bodiless-unit-counts-one", "file": "lean/VE/RightClauses/Run.lean", "definition": "lineObjects",
+   "change": {"from": "(bodyLines b.2).length)).getD 0) 0", "to": "(bodyLines b.2).length)).getD 1) 0"},
+   "verdict": "KILLED", "test": "lean/VE/RightClauses/RunExamples.lean:152 #guard lineObjects (a unit without a body counts 0; trust mutant M035 of the first sweep)"},
+  {"name": "deepLine-first-candidate-group-only", "file": "lean/VE/RightClauses/Run.lean", "definition": "deepLine",
+   "change": {"from": "(D.lines ++ D.cands.flatMap", "to": "(D.lines ++ (D.cands.take 1).flatMap"},
+   "verdict": "KILLED", "test": "lean/VE/RightClauses/RunExamples.lean:180 #guard deepIn (a deep line in the second candidate group; trust mutant M062 of the second sweep)"}
  ]
 }
