@@ -433,11 +433,12 @@ SERVICE_READERS["english.command"] = _command_reader
 
 def _clauses_reader(case):
     """How `ve.right_clauses.elaborate` reads the service's response to `case` (cmp-s3-cfr-1b): `relay.decided`,
-    then `bind`, the answer's units, lines and totality premises bound to the request's document."""
+    then `bind`, the answer's units, lines and totality premises bound to the request's document, and its shown RC lines
+    when the case asks for them (cmp-s3-cfr-1d)."""
     from ve import right_clauses
     from ve.backends import relay
     return lambda response: right_clauses.bind(relay.decided(response["results"])[0]["result"], case["document"],
-                                               case["environment"])
+                                               case["environment"], english="english" in case)
 
 
 SERVICE_READERS["clauses-elaborate"] = _clauses_reader
