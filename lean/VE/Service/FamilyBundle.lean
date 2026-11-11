@@ -472,7 +472,8 @@ theorem closure_bundle_sound (E : VE.Environment) (bg : List (Leaf VE.Closure.Fo
     ∀ k ∈ res, (ReadingCompatible k.leaves ∧ ReadingBound .or sets k.leaves) ∧
       ∀ S : VE.Structure.{u}, S.Admissible E → (∀ l ∈ k.leaves, l.2.denote S []) → k.conclusion.denote S [] :=
   bundle_sound (fun S : VE.Structure.{u} => S.Admissible E) (fun S (a : VE.Closure.Formula) => a.denote S [])
-    _ _ _ (fun c ps r h => VE.Closure.Tableau.checkCertificate_sound E ps r c h) bg sets bind Ls res accepted
+    _ _ _ (fun c ps r h => (VE.Closure.entails_iff E ps r).mp
+      (VE.Closure.Tableau.checkCertificate_sound E ps r c h)) bg sets bind Ls res accepted
 
 theorem core_bundle_sound (E : VE.Environment) (bg : List (Leaf VE.Core.Formula))
     (sets : List (ReadingSet VE.Core.Formula))

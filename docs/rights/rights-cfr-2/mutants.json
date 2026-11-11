@@ -1,0 +1,231 @@
+[
+  {
+    "id": "S1-situation-dropped",
+    "behaviour": "a CONFLICT-FREE answer exhibits the request's situation (rights.md 5.3 (2), 7.3)",
+    "definition": "VE.Rights.Run.runRightsKind",
+    "language": "Lean",
+    "file": "lean/VE/Rights/Run.lean",
+    "mutation": [
+      "return conflictAnswer id res (← exhibit res.src j)",
+      "let _ ← exhibit res.src j; return conflictAnswer id res none"
+    ],
+    "test": "tests/test_rights_report_parts.py::test_rights_conflict_free_report_evidence"
+  },
+  {
+    "id": "S1b-one-character-break",
+    "behaviour": "the CONFLICT-FREE line is rights.md 7.3's wording (DRI-signed row 1, negative test)",
+    "definition": "VE.Rights.Run.conflictAnswer",
+    "language": "Lean",
+    "file": "lean/VE/Rights/Run.lean",
+    "mutation": [
+      "{weighing.length} weighing points open",
+      "{weighing.length} weighing point open"
+    ],
+    "test": "tests/test_rights_report_parts.py::test_rights_conflict_free_report_evidence"
+  },
+  {
+    "id": "S2-protected-span-empty",
+    "behaviour": "ProtectedInCone carries its line's span (rights.md 8)",
+    "definition": "VE.Rights.noDistinction",
+    "language": "Lean",
+    "file": "lean/VE/Rights/Distinction.lean",
+    "mutation": [
+      "lineSpan D hit.1",
+      "lineSpan { D with located := [] } hit.1"
+    ],
+    "test": "tests/test_rights_report_parts.py::test_rights_findings_preserve_source_spans"
+  },
+  {
+    "id": "S3-relay-drops-span",
+    "behaviour": "the relay binds each span to the request (R8)",
+    "definition": "ve.rights_route._run_rights_case",
+    "language": "Python",
+    "file": "ve/rights_route.py",
+    "mutation": [
+      "row = decide_once(\"rights\", case)",
+      "row = decide_once(\"rights\", case); [f.update(span=None) for f in row.get(\"located_findings\", [])]"
+    ],
+    "test": "tests/test_rights_report_parts.py::test_rights_findings_preserve_source_spans"
+  },
+  {
+    "id": "S4-weighing-unbound",
+    "behaviour": "the relay binds the weighing points (R8)",
+    "definition": "ve.rights_route._bind_conflict",
+    "language": "Python",
+    "file": "ve/rights_route.py",
+    "mutation": [
+      "row['weighing_points'] != weighing",
+      "False"
+    ],
+    "test": "tests/test_rights_report_parts.py::test_a_mutated_conflict_report_part_is_refused"
+  },
+  {
+    "id": "T-M001",
+    "behaviour": "R16: the trusted definition is exercised by a check that can fail",
+    "definition": "ResponseShape.Schemas.Rights.packages",
+    "language": "Lean",
+    "file": "lean/ResponseShape/Schemas/Rights.lean",
+    "mutation": [
+      "true",
+      "false"
+    ],
+    "operator": "bool-flip",
+    "test": "lean/ResponseShape/Schemas/RightsChecks.lean:61"
+  },
+  {
+    "id": "T-M002",
+    "behaviour": "R16: the trusted definition is exercised by a check that can fail",
+    "definition": "VE.Rights.Run.conflictBudget",
+    "language": "Lean",
+    "file": "lean/VE/Rights/Run.lean",
+    "mutation": [
+      "10000",
+      "10001"
+    ],
+    "operator": "lit-plus",
+    "test": "lean/ResponseShape/Schemas/RightsChecks.lean:55"
+  },
+  {
+    "id": "T-M004",
+    "behaviour": "R16: the trusted definition is exercised by a check that can fail",
+    "definition": "ResponseShape.Schemas.Rights.located_findings",
+    "language": "Lean",
+    "file": "lean/ResponseShape/Schemas/Rights.lean",
+    "mutation": [
+      "[\n    arr,\n    .items (n [\n      obj,\n      .required [\"code\", \"rule\", \"right\", \"span\", \"text\"],\n      closed [\n        (\"code\", str),\n        (\"rule\", str),\n        (\"right\", str),\n        (\"span\", .",
+      "[]\n\n\n\n\n\n\n\n\n\n"
+    ],
+    "operator": "list-empty",
+    "test": "lean/ResponseShape/Schemas/RightsChecks.lean:43"
+  },
+  {
+    "id": "T-M005",
+    "behaviour": "R16: the trusted definition is exercised by a check that can fail",
+    "definition": "ResponseShape.Schemas.Rights.situation",
+    "language": "Lean",
+    "file": "lean/ResponseShape/Schemas/Rights.lean",
+    "mutation": [
+      "[\n    arr,\n    .items (n [\n      obj,\n      .required [\"predicate\", \"tuples\"],\n      closed [(\"predicate\", str), (\"tuples\", n [arr, .items (ref \"common.json#/$defs/strings\")])]])]",
+      "[]\n\n\n\n\n"
+    ],
+    "operator": "list-empty",
+    "test": "lean/ResponseShape/Schemas/RightsChecks.lean:61"
+  },
+  {
+    "id": "T-M006",
+    "behaviour": "R16: the trusted definition is exercised by a check that can fail",
+    "definition": "ResponseShape.Schemas.Rights.elaborate",
+    "language": "Lean",
+    "file": "lean/ResponseShape/Schemas/Rights.lean",
+    "mutation": [
+      "[\n      obj,\n      .required [\"id\", \"status\", \"environment_prime\", \"generated\", \"wordings\", \"unit_open\", \"lines\", \"limitations\", \"bars\", \"rights_background\", \"narrowings\", \"rule_narrowings\", \"distinct",
+      "[]\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+    ],
+    "operator": "list-empty",
+    "test": "lean/ResponseShape/Schemas/RightsChecks.lean:43"
+  },
+  {
+    "id": "T-M007",
+    "behaviour": "R16: the trusted definition is exercised by a check that can fail",
+    "definition": "ResponseShape.Schemas.Rights.scope",
+    "language": "Lean",
+    "file": "lean/ResponseShape/Schemas/Rights.lean",
+    "mutation": [
+      "[\n      obj,\n      .required [\"id\", \"status\", \"findings\", \"licensed\", \"located_findings\", \"narrowings\"],\n      closed [\n        (\"id\", ref \"common.json#/$defs/id_ok\"),\n        (\"status\", constS \"ok\"),",
+      "[]\n\n\n\n\n\n\n\n\n\n\n"
+    ],
+    "operator": "list-empty",
+    "test": "lean/ResponseShape/Schemas/RightsChecks.lean:43"
+  },
+  {
+    "id": "T-M009",
+    "behaviour": "R16: the trusted definition is exercised by a check that can fail",
+    "definition": "ResponseShape.Schemas.Rights.file",
+    "language": "Lean",
+    "file": "lean/ResponseShape/Schemas/Rights.lean",
+    "mutation": [
+      "[\n    (\"rights_path\", .schema rights_path),\n    (\"rights_unit\", .schema rights_unit),\n    (\"kind\", kind),\n    (\"conditional_labels\", .schema conditional_labels),\n    (\"admission\", .schema admission),\n",
+      "[]\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+    ],
+    "operator": "list-empty",
+    "test": "lean/ResponseShape/Schemas/RightsChecks.lean:43"
+  },
+  {
+    "id": "T-M010",
+    "behaviour": "R16: the trusted definition is exercised by a check that can fail",
+    "definition": "VE.Rights.Run.findingJson",
+    "language": "Lean",
+    "file": "lean/VE/Rights/Run.lean",
+    "mutation": [
+      "[(\"code\", .str f.code), (\"rule\", .str f.rule), (\"right\", .str f.right),\n    (\"span\", if f.span.isEmpty then .null else .str f.span), (\"text\", .str f.text)]",
+      "[]\n"
+    ],
+    "operator": "list-empty",
+    "test": "lean/ResponseShape/Schemas/RightsChecks.lean:40"
+  },
+  {
+    "id": "T-M012",
+    "behaviour": "R16: the trusted definition is exercised by a check that can fail",
+    "definition": "VE.Rights.Run.situationTables",
+    "language": "Lean",
+    "file": "lean/VE/Rights/Run.lean",
+    "mutation": [
+      "(VE.SoftNorms.decisionNames (correlate D) ++ (genEntries D).map (·.1))",
+      "[]"
+    ],
+    "operator": "list-empty",
+    "test": "lean/ResponseShape/Schemas/RightsChecks.lean:55"
+  },
+  {
+    "id": "T-M013",
+    "behaviour": "R16: the trusted definition is exercised by a check that can fail",
+    "definition": "VE.Rights.Run.exhibit",
+    "language": "Lean",
+    "file": "lean/VE/Rights/Run.lean",
+    "mutation": [
+      "[(\"model\", m)]",
+      "[]"
+    ],
+    "operator": "list-empty",
+    "test": "lean/ResponseShape/Schemas/RightsChecks.lean:55"
+  },
+  {
+    "id": "T-M014",
+    "behaviour": "R16: the trusted definition is exercised by a check that can fail",
+    "definition": "VE.Rights.Run.conflictAnswerOf",
+    "language": "Lean",
+    "file": "lean/VE/Rights/Run.lean",
+    "mutation": [
+      "weighing",
+      "[]"
+    ],
+    "operator": "list-empty",
+    "test": "lean/ResponseShape/Schemas/RightsChecks.lean:55"
+  },
+  {
+    "id": "T-M018",
+    "behaviour": "R16: the trusted definition is exercised by a check that can fail",
+    "definition": "VE.Rights.Run.runRightsKind",
+    "language": "Lean",
+    "file": "lean/VE/Rights/Run.lean",
+    "mutation": [
+      " ++ [(\"unit_open\", unitStatuses D openNames document)]",
+      ""
+    ],
+    "operator": "append-left",
+    "test": "lean/ResponseShape/Schemas/RightsChecks.lean:43"
+  },
+  {
+    "id": "T-M044",
+    "behaviour": "R16: the trusted definition is exercised by a check that can fail",
+    "definition": "VE.Rights.Run.regenerated",
+    "language": "Lean",
+    "file": "lean/VE/Rights/Run.lean",
+    "mutation": [
+      "findings.map (fun f => Json.str f.text)",
+      "[]"
+    ],
+    "operator": "list-empty",
+    "test": "lean/ResponseShape/Schemas/RightsChecks.lean:42"
+  }
+]
