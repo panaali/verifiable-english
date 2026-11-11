@@ -13,7 +13,7 @@ index db61072f34..02e9de2ce5 100644
  import VE.Acts.RuleExamples
 diff --git a/lean/VE/Acts/Nary.lean b/lean/VE/Acts/Nary.lean
 new file mode 100644
-index 0000000000..57d937b2ab
+index 0000000000..9af1f84083
 --- /dev/null
 +++ b/lean/VE/Acts/Nary.lean
 @@ -0,0 +1,481 @@
@@ -27,8 +27,8 @@ index 0000000000..57d937b2ab
 +A source rule on an n-ary act is written over the act's k + 1 situation variables (the subject, then the k slots, in
 +declared order). `reify` turns the act into the binary predicate `p(holder, event)` and each rule's guard and carve-outs
 +`φ(h, x₁ … xₖ)` into `∃x₁ … ∃xₖ. role₁(e, x₁) ∧ … ∧ roleₖ(e, xₖ) ∧ φ(h, x₁ … xₖ)`; every other rule stays as it is.
-+`NaryIntended` is the Catala reading of the source rules on every typed tuple, the act's n-ary extension read as the
-+tuples of its events (`ActHolds`). `reify_faithful` is section 3's statement as written. -/
++`NaryIntended` (`VE.Acts.Nary.NaryIntended`, not the plan's `VE.Core.NaryIntended`) reads an act's n-ary extension
++through its reified relation (`ActHolds`), not as NARY.md's tuple set; `reify_faithful` is proved for that reading. -/
 +namespace VE.Acts.Nary
 +open VE.Norms
 +universe u
@@ -446,7 +446,7 @@ index 0000000000..57d937b2ab
 +  simp [reify, List.mem_append, List.mem_map, eq_comm]
 +
 +/-- AP-6 route (a): the reified binary norms hold, read the Catala way, exactly when the n-ary acts hold as their
-+source rules say, given one event per argument tuple (plan section 3, verbatim). -/
++source rules say, given one event per tuple (plan section 3, right side `VE.Acts.Nary.NaryIntended`, event-based). -/
 +theorem reify_faithful (D : ActsDoc) (S : VE.Structure.{u}) (hc : OneEventPerTuple D S) :
 +    VE.Norms.holdsCatala (reify D).T S ↔ NaryIntended D S := by
 +  constructor
