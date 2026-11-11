@@ -14,6 +14,7 @@ from pathlib import Path
 
 import pytest
 
+from tools import lean_statements as L
 from tools.check_readings_defaults_statements import proof_cut
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -79,7 +80,7 @@ def spec_binders(stmt: str) -> list[tuple[str, str | None, str]]:
 
 def typed(name: str, text: str | None = None) -> str:
     """The statement Lean elaborated for `VE.Scope.<name>`, from `lean/statements.txt`, whitespace normalised."""
-    lines = (text if text is not None else (ROOT / "lean/statements.txt").read_text()).splitlines()
+    lines = (text if text is not None else L.inventory_path(L.STATEMENTS).read_text()).splitlines()
     start = lines.index(f"theorem VE.Scope.{name}") + 1
     body = []
     for line in lines[start:]:
