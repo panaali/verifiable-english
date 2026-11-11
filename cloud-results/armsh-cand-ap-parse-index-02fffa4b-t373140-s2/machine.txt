@@ -1,0 +1,10 @@
+job=armsh-cand-ap-parse-index-02fffa4b-t373140-s2 shard=2/4 nproc=4 arch=aarch64 host=runnervmkb2gk date=2026-11-11T05:00:22Z ulimit_s=16384
+Mem:              15           1           9           0           5          14
+/dev/root       145G   42G  103G  29% /
+ 05:00:23 up 0 min,  0 user,  load average: 1.26, 0.35, 0.12
+pilot/codex branches: 98
+ve-cache: lean-build seed-ancestor key 304e80728a67 asset lean-build-fcb55c071cf7-linux-aarch64.tar.zst sha256 a9f326da7899 ok, seal ok, from download, 17.8 s
+seed: mode=seed match=seed-ancestor asset=lean-build-fcb55c071cf7-linux-aarch64.tar.zst pruned=0 base=254c6b1b5d35
+seed: 487 modules rebuilt over the seed (traces), none stale
+seed: lake 959.2 s (rc 0, match seed-ancestor)
+p1-tokenizers: 443909a61d42 fetched
