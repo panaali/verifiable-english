@@ -3,13 +3,17 @@
 **Status:** deliverables 1-3 built; 4 built except what the DRI moved (T15's NOT ENTAILED, T18, the legend in an
 answer: DRI 11-10 et-5b item 2) and T9 through the reader (a seam, below); 5 built as catalogue rows with their T-row
 guards (T11c, T16's {C1, C2}, by, while, since), except the derived-wording grammar (the same seam). No DRI signature
-is reserved. DELTA row 1 carries the DRI's signature of 2026-11-10 and row 2 cites R16.
+is reserved. DELTA row 1 carries the DRI's signature of 2026-11-10, row 2 cites R16, row 3 R3 and row 4 R9.
+**Review fix (et-5b-review.final.md F1):** every `ve document` subcommand now builds an `events@0` document from Lean's
+answer (the row's new `events_view`, bound to the written environment); conclusions over one are `CheckerUnavailable`
+(et-5c). Section "Review fix" below.
 **SIZE:** 201 product, 582 tests, 615 other hand-written lines (against `git merge-base HEAD main`; product: Lean only).
 **Merge:** main merged on 2026-11-11 (rebase-second after qt-a4b; base `0295df174`). `check` then exceeded the
 heartbeat limit with the events `match` inline, so the match moved to `DocumentChain.chainLayeredOf` and `check`'s
 hunk is one line.
 **HEAD:** the branch's last commit (the chain gates it).
-**What changed:** Lean's document mode now reads an `events@0` document on the soft chain. It runs `Events.eventsHook` over
+**What changed:** Lean's document mode now reads an `events@0` document on the soft chain, and its answer carries the
+view it read (`events_view`), over which Python builds the document for `check`, `coverage`, `readings` and `render`. It runs `Events.eventsHook` over
 the document's open terms, decodes the block once, then runs `AnchorNotOpen` and `AnchorOpen` and the soft chain's checks.
 The catalogue gains the "always"/"eventually" rows, their no-anchor rows and soft-norms' rule row.
 **Open:** et-5c (the seam and the DRI's item-2 moves), et-5d and et-5e (rulings: reviews/dri-decisions-20261110-et-5b.md items 1-2).
@@ -58,7 +62,7 @@ Item: feature item et-5b (acting DRI dri-featureplan 2026-11-10). Branch `featur
 
 | Row (task deliverables, ET-5 plan lines, DRI conditions) | Delivered | Where; test |
 |---|---|---|
-| 1. The document route admits `events@0`: `ownedProfiles`, the layered decoders on main, the composition gate decides, no Python mirror | yes, on the soft chain (DRI 11-10 et-5b item 1). No Python file changed: `ve/document/lean.py`'s `_lean_only` already sends the soft chain to Lean only | `Document.lean` `ownedProfiles`, `eventsView`, `eventsLayeredOf`; EventsDocumentExamples "The route admits"; `test_an_events_document_is_checked_where_it_was_unavailable` |
+| 1. The document route admits `events@0`: `ownedProfiles`, the layered decoders on main, the composition gate decides, no Python mirror | yes, on the soft chain (DRI 11-10 et-5b item 1). Corrected by review F1: the build said no Python file needed to change, but Python could not build the checked document (its soft environment refuses the block), so no `ve document` subcommand admitted one. Now Lean's row carries `events_view` and `ve/document/lean.py` builds the document over it (section "Review fix") | `Document.lean` `ownedProfiles`, `eventsView`, `eventsLayeredOf`; EventsDocumentExamples "The route admits"; `test_an_events_document_is_checked_where_it_was_unavailable` |
 | 1. The RouteExamples guard "object expected" replaced with the new answer; the guards beside it kept | yes. "Refused by name" now checks the decoded `Env` (the view without `events@0`, with the written profiles). "Object expected" becomes `eventsLayeredOf`'s packs `["soft"]`. The `ownedLists` guards (`layeredOf` refuses an `Env` that lists `events@0`; `requestOf` is `null`) and the control are kept. A scope-path guard (no open terms gives the base text) is added | `lean/VE/Events/RouteExamples.lean` |
 | 1. Backlog row events0-owned-named-refusal | closed: the route exists | as above |
 | 2. `date_of_this_document` as 1.3 declares it | yes: `Events.anchorConstant`, `anchorWording` (`routeView` uses the same wording, one owner) | `lean/VE/Events/Anchor.lean`; mutants L13, L14 |
@@ -70,7 +74,7 @@ Item: feature item et-5b (acting DRI dri-featureplan 2026-11-10). Branch `featur
 | 4. T16 | yes: the document loads with no GAP, and `link_weaker` holds (C2 ⇒ C1); the causal words' reading set {C1, C2} is the link wordings Lean checks (`linkCandidate`, one owner: `Events.linkWording`), with C3 only under a decision model | EventsDocumentExamples T16; SourceWordsExamples "The other reading sets" |
 | 4. T17 | yes: {A1} and {E1} in T15's document; `AnchorOpen: A2`; {A1, A2} and {E1, E2} with an ISO anchor; `AnchorNotOpen` twice | EventsDocumentExamples T17 |
 | 4. T18 ("if it fits") | no → et-5c | |
-| 4. T9's "one derivation each" through the reader | no: a seam (needs the English reader to read an events environment). A fenced English unit in an events document stops at Python's lexicon step: `ve/document/lean.py` builds `Environment(environment)`, which refuses the block with `InvalidInput: invalid environment envelope` (probed before the main merge, unchanged from base). The derived-wording grammar needs the same reader → et-5c | |
+| 4. T9's "one derivation each" through the reader | no: a seam (needs the English reader to read an events environment). A fenced English unit in an events document stops at Python's lexicon step, the proposal built before Lean answers (`ve/document/lean.py` `_document_case`), whose soft environment refuses the block with `InvalidInput: invalid environment envelope` (unchanged from base). Documents without fenced English are built from Lean's answer since review F1. The derived-wording grammar needs the same reader → et-5c | |
 | 5. by, until-date, while, since, the causal words (source forms "cause" and "lead to"), their T-rows | yes, as rows (X9): `untilDateReadings` (T11c: four candidates, told apart on <date> and the day after), `byReadings` (B1/B2), `whileReadings` (temporal/contrast), `sinceReadings` (S1/S2), `causalReadings` (C1, C2; C3 "leads to" only under a decision model; no row for "leads to"/"causes"), `linkCandidate` | `SourceWords.lean`; SourceWordsExamples "The other reading sets"; mutants L21-L28 |
 | 5. The derived-wording grammar | no: the seam above (the reader refuses an events environment before any grammar runs) → et-5c | |
 | Condition i (conservativity) | yes. The code path is unchanged when the list has no `events@0` (DELTA "Everything else"). `tools/regen_generated.py --write` left `lean/VE/Route/examples/route-cases.json` unchanged (`git status` after the regen commit) | DELTA; selected run below |
@@ -108,8 +112,9 @@ file), so every seeded bug is in Lean.
   `tools/trust-classes.json` (G[V] rows, T fixtures, D[V] `chainLayeredOf`); unclassified 0.
   - `uv run python tools/trust_map.py --check` prints "PASS: K, S and untied [V] within c94ad399b7b1 and the allowances
     introduced since".
-  - The allowances (+76, then +46) are recorded in `docs/trust-baseline.json`, and the ties-pass row is in
-    FOLLOW-UPS.md "## et-5b (2026-11-10)", updated to +122.
+  - The allowances (+76, +46, then +21 for review F1: V +143 in all, `Document.lean` +60 and
+    `ResponseShape/Schemas/Document.lean` +11 with it) are recorded in `docs/trust-baseline.json`, and the ties-pass row
+    is in FOLLOW-UPS.md "## et-5b (2026-11-10)", updated to +143.
   - `tools/trust-classes.json`'s text diff against the base is larger than its content: earlier tool writes reordered
     its modules. Parsed, it only adds this item's 80 entries (none removed or changed).
 - **Trust mutants:**
@@ -155,6 +160,41 @@ file), so every seeded bug is in Lean.
     `other_json`. Then the layout and `docs/spec/assurance-manifest.md` were regenerated, and
     `uv run pytest -q tests/test_assurance_manifest.py` gave 152 passed.
 
+## Review fix (et-5b-review.final.md F1)
+
+- **Finding (B):** no product entry point admitted an `events@0` document. Lean's `document` mode answered CHECKED, but
+  Python built the document from the environment as written (`ve/document/lean.py` `_lean_document`), and its soft
+  environment refuses the block: every `ve document` subcommand answered `CheckerUnavailable: the Lean document answer
+  could not be built: VEError: InvalidInput: invalid environment envelope`.
+- **The class:** Python building a document Lean read through its events view from anything but that view, or answering
+  over it without the pack. The entry points, each now one of: built from Lean's view, refused as UNKNOWN, or refused
+  as at base before any answer:
+  - `check`, `coverage`, `readings` (the plan), `render`: built from Lean's view (below).
+  - `check`'s premise status: the set holds Lean's events pack; a content-bearing set's status is UNKNOWN.
+  - `readings --conclusion` (plain, `--under`, `--assume-no-exception`): `CheckerUnavailable` (DELTA row 4).
+  - `ve ask` and a fenced English unit's lexicon proposal: refused before any answer, as at base (et-5c's reader).
+- **Fix, Lean:** `Checked.eventsView` (`Env.eventsView`, the hook's `Events.routeView`) is encoded as the row's
+  `events_view`, present exactly under `events@0`. Its shape is closed and `copied` (bound whole by the client); the
+  encoder theorems split on the new arm (`set_option maxHeartbeats 800000 in` on `fold_fits`,
+  `fold_with_readings_fits` and `encode_units`, whose `rfl` cases doubled). Guards: EventsDocumentExamples "The answer
+  carries the view".
+- **Fix, Python:** `ve.events.view` binds the view to the written environment (the relay's one constants relation,
+  shared with `events.answer`); `_chain_environments` builds the document over it and binds `source_id` to the written
+  profiles (`events.Written`); `report._filled_soft_elaboration` asks the norm-defaults route on the written
+  environment and open terms, so the pack is Lean's and bound (`events.elaborated`). The relay's date-fact count for a
+  block with no named date was minus one (every open-anchor pack refused); it is zero.
+- **PROBE F1:** failed at f1fe61819 (the error above); passes after the fix. Regression test:
+  `tests/test_events_document_cli.py::test_probe_f1_check_document_counts_the_checked_byte`.
+- **Tests added:** `tests/test_events_document_cli.py` (five documents x four subcommands against their twins over
+  Lean's view; the identities; the pack in the premise set; conclusions; the content-bearing guard; `judgments@0`;
+  `ve ask`; 25 `events_view` mutants; a view on a document without events), `tests/test_events_answer.py::
+  test_a_block_with_no_named_date_has_no_date_fact`, and the five events documents among the relay inventory's genuine
+  document relays (`tests/test_relay_binding_inventory.py`).
+- **Seeded bugs:** `mutants.json` L29 (Lean) and P1-P9 (Python), all killed; P1 first survived (a later meaning-id check
+  caught the tampered constants), so the fuzz test now requires the view binding's own refusal.
+- **Trust:** V +143 (allowance +21, R16; DELTA row 2), `trust_map.py --check` PASS.
+- **Not run:** the full gate (the chain's); `tools/binding_census.py --record` (FOLLOW-UP above).
+
 ## Spec re-read
 
 - **`AnchorNotOpen: date_of_this_document`**, against spec 4 (:583-584) and plan 2.9 item 8 (:461-464). The spec reads
@@ -185,16 +225,19 @@ file), so every seeded bug is in Lean.
 
 ## Self-review against BUILDER-CHECKLIST
 
-1. Typed and contained: PASS. The document answer's schema is unchanged and no field was added. Malformed block
+1. Typed and contained: PASS. Review F1 added one member, `events_view`, typed by its closed shape and bound whole. Malformed block
    members reach Lean's diagnostics, or the reader's pre-existing unavailable texts: `test_only_a_ve_error_escapes_a_malformed_block_member`.
 2. Deliverables: PASS. The plan-rows table above lists every cut: the DRI's 11-10 et-5b items 1-2, and one seam (the
-   English reader of an events environment: the derived-wording grammar and T9). Nothing was cut for size. There is no Python copy of a Lean decision (no Python product file changed), and no
-   permanent report test.
+   English reader of an events environment: the derived-wording grammar and T9). Nothing was cut for size. There is no Python copy of a Lean decision (review F1's Python builds over Lean's view and binds it;
+   it recomputes nothing of it), and no permanent report test.
 3. Tests can fail: PASS. `mutants.json` L1-L28 are all killed. The trust-mutant survivors are killed or allowed with
    reasons (`trust-mutants-allow.json`).
 4. Agreement and valid inputs: PASS. LinkNotOpen's order matches `eventsHook` (the EventsDocumentExamples guard). Empty
    lists are accepted, the off-chain lists are byte-identical, and the route-cases are unchanged after the regen.
-5. R8 binding: N.A. No relayed answer or field was added. The document relay is unchanged.
+5. R8 binding: PASS (review F1). `events_view` is bound to the request by `ve.events.view` (a closed list of relations,
+   the constants by the relay's one relation), present exactly under `events@0` (`_bind_document_answer`'s member set):
+   `test_a_tampered_events_view_is_unavailable`, `test_an_events_view_on_a_document_without_events_is_unavailable`,
+   and the relay inventory's generic fuzzer over every field of five genuine rows.
 6. Gate evidence: PASS for what ran on this HEAD; the chain runs the full gate.
 7. Unsigned items: PASS. DELTA row 1 is SIGNED by the DRI (11-10 item 1) and row 2 cites R16.
 8. Every user-visible change is in DELTA: PASS. The base texts were probed:
@@ -222,11 +265,16 @@ That set is checked against Python's profile registry, which has no `events@0` r
     events document. This needs the English reader to read an `events@0` environment, which today stops at Python's
     `Environment` (`InvalidInput: invalid environment envelope`), so it cannot pass its own tests in this item;
   - T18, and T15's NOT ENTAILED;
+  - conclusions over an `events@0` document (`ve document readings --conclusion`, `--under`, `--assume-no-exception`;
+    a content-bearing set's premise status; `ve ask`): each conclusion route must read the events pack first. Until
+    then they are `CheckerUnavailable` or UNKNOWN (DELTA row 4);
   - the legend in a document answer, with the ISO anchor's long-form line.
 - **et-5d**: the events hook on the plain norm-defaults chain. R1 and the UDHR pilot read through this list, so et-6
   waits for it.
 - **et-5e**: the rights chain, after PC-2c.
 
-FOLLOW-UP: et-5c events derived-wording grammar and T9 through the reader, T18, T15 NOT ENTAILED, legend in the document answer
+FOLLOW-UP: et-5c events derived-wording grammar and T9 through the reader, T18, T15 NOT ENTAILED, legend in the document answer, conclusions over an events@0 document with its pack
+FOLLOW-UP: pre-existing on main: Python builds no soft-chain judgments@0 document (`Unsupported profile judgments@0` from the soft environment), with or without events@0
+FOLLOW-UP: binding census: re-record (`tools/binding_census.py --record`) so the events_view leaves are probed (now "not probed": the census's recorded answers hold no events document)
 FOLLOW-UP: et-5d events@0 hook on the plain norm-defaults chain of the document route (R1 and UDHR pilot lists)
 FOLLOW-UP: et-5e events@0 hook on the rights chain of the document route (after the document mode composes rights@0 with norm-defaults@0)
