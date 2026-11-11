@@ -21354,7 +21354,9 @@
         "VE.RightClauses.Run.elaborateCase",
         "VE.RightClauses.Run.runCaseReported",
         "VE.RightClauses.Run.lineObjects",
-        "VE.RightClauses.Run.deepLine"
+        "VE.RightClauses.Run.deepLine",
+        "VE.RightClauses.Run.englishJson",
+        "VE.RightClauses.Run.englishOf"
       ]
     },
     "VE/RightClauses/WireDecode.lean": {
@@ -21682,6 +21684,47 @@
       ],
       "D[V]": [
         "VE.RightClauses.unitElided"
+      ]
+    },
+    "VE/RightClauses/English.lean": {
+      "C": [
+        "VE.RightClauses.English.slotOf",
+        "VE.RightClauses.English.coreLexicon",
+        "VE.RightClauses.English.worded",
+        "VE.RightClauses.English.condition",
+        "VE.RightClauses.English.refs",
+        "VE.RightClauses.English.relInstance",
+        "VE.RightClauses.English.rc1",
+        "VE.RightClauses.English.rc3",
+        "VE.RightClauses.English.rc4",
+        "VE.RightClauses.English.lineRows",
+        "VE.RightClauses.English.english",
+        "VE.RightClauses.English.firstUnshown"
+      ],
+      "G[R]": [
+        "VE.RightClauses.English.rcFrames",
+        "VE.RightClauses.English.readings",
+        "VE.RightClauses.English.gated",
+        "VE.RightClauses.English.banned",
+        "VE.RightClauses.English.holds",
+        "VE.RightClauses.English.shown"
+      ],
+      "G[V]": [
+        "VE.RightClauses.English.Row"
+      ]
+    },
+    "VE/RightClauses/EnglishExamples.lean": {
+      "T": [
+        "VE.RightClauses.EnglishExamples.adult",
+        "VE.RightClauses.EnglishExamples.base",
+        "VE.RightClauses.EnglishExamples.doc",
+        "VE.RightClauses.EnglishExamples.lexicon",
+        "VE.RightClauses.EnglishExamples.pubDoc",
+        "VE.RightClauses.EnglishExamples.pubLine",
+        "VE.RightClauses.EnglishExamples.rc1Line",
+        "VE.RightClauses.EnglishExamples.rendered",
+        "VE.RightClauses.EnglishExamples.shownText",
+        "VE.RightClauses.EnglishExamples.source"
       ]
     }
   }

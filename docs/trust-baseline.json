@@ -2637,6 +2637,13 @@
    "reason": "cmp-s3a-cfr-3: lean/VE/RightClauses/ElidedBytes.lean S +12 V +14 (lineElided, entryElided, elidedTotal, unitElided), lean/VE/RightClauses/Run.lean V +3; K +0, trusted +29",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s3a-cfr-3, 2026-10-18",
    "commit": "0295df174375667a79dec7c1dd214f9128fe4909"
+  },
+  {
+   "class": "V",
+   "lines": 29,
+   "reason": "cmp-s3-cfr-1d: V +29 (VE/RightClauses/Run.lean +22: englishJson, englishOf, elaborateCase's english branch; VE/RightClauses/English.lean +7: Row); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s3-cfr-1d, 2026-11-11",
+   "commit": "19013ac5f7250c2c7c976fb49bc68fa9a3e12afa"
   }
  ]
 }
