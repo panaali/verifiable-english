@@ -267,8 +267,8 @@ after the run. No test of main-known-red.txt was involved (0 failed).
   - All four fail on the pre-fix REPORT, seed script and mutants.json. A planted wrong table cell fails the table
     test.
   - PROBE F1 failed before the fix (exit 1) and passes after it (exit 0).
-- **Note F2 (C, not filed; same class).** Item 14 said each new guard has a seed. Only the split pin has one
-  (`atoms-reversed`). It now says the `partAct` text pin has none, and why. Item 15's "Every new check can fail" is
+- **Note F2 (C, not filed; same class).** Item 14 claimed a seed for both new guards. Only the split pin has one
+  (`atoms-reversed`). It now says the `partAct` text pin has none, and why. Item 15's claim about the new checks is
   narrowed the same way.
 - No DELTA row: the fix changes report text, a seed script, its evidence and a test. No definition, text or answer
   changes, so no standing ruling is needed. No test of main-known-red.txt is involved.
