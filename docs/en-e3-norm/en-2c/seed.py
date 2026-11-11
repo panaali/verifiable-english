@@ -3,11 +3,14 @@ its test run, the file restored. `uv run python docs/en-e3-norm/en-2c/seed.py` w
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[3]
+sys.path.insert(0, str(ROOT / "tools"))
+import nested_pytest  # noqa: E402
 ANSWER, SHADOW = "tests/test_english_statement_answer.py", "tests/test_english_statement_shadow.py"
 MUTANTS = [
     ("an answer with one rule row more than the request's numbering allows is accepted (the header binding gone)",
@@ -30,6 +33,10 @@ MUTANTS = [
     ("the rule rows' spans not all bound before their nodes are read (limits charged after work)",
      "ve/norm_english.py", '''        spans = [r["span"] for r in rules]''', '''        spans = [r["span"] for r in rules][:1]''',
      [f"{ANSWER}::test_the_spans_bound_the_rule_rows_before_any_node_is_read"]),
+    ("a rule node's formulas may name an undeclared constant or an unbound variable", "ve/norm_english.py",
+     '''constants <= env.constants.keys() and bound):''', '''True):''',
+     [f"{ANSWER}::test_every_named_mutant_is_unavailable",
+      f"{ANSWER}::test_every_retyped_dropped_or_duplicated_member_is_unavailable"]),
     ("the gate reads english.statement without its reader", "tools/relay_mutation_gate.py",
      '''SERVICE_READERS["english.statement"] = _statement_reader''', '''pass''',
      ["tests/test_relay_mutation_gate.py::test_english_statement_is_read_as_the_w1_shadow_reads_it"]),
@@ -44,8 +51,8 @@ def main() -> int:
         assert text.count(old) == 1, (path, old)
         target.write_text(text.replace(old, new))
         try:
-            run = subprocess.run([sys.executable, "-m", "pytest", "-q", "-p", "no:randomly", *tests], cwd=ROOT,
-                                 capture_output=True, text=True)
+            run = subprocess.run(nested_pytest.command(["-q", *tests]), cwd=ROOT, capture_output=True, text=True,
+                                 env=nested_pytest.environment(os.environ))
         finally:
             target.write_text(text)
         failed = sorted({line[len("FAILED "):].split(" - ")[0] for line in run.stdout.splitlines()

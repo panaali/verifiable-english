@@ -70,6 +70,19 @@
   "caught": true
  },
  {
+  "behaviour": "a rule node's formulas may name an undeclared constant or an unbound variable",
+  "file": "ve/norm_english.py",
+  "test": [
+   "tests/test_english_statement_answer.py::test_every_named_mutant_is_unavailable",
+   "tests/test_english_statement_answer.py::test_every_retyped_dropped_or_duplicated_member_is_unavailable"
+  ],
+  "failed": [
+   "tests/test_english_statement_answer.py::test_every_named_mutant_is_unavailable",
+   "tests/test_english_statement_answer.py::test_every_retyped_dropped_or_duplicated_member_is_unavailable"
+  ],
+  "caught": true
+ },
+ {
   "behaviour": "the gate reads english.statement without its reader",
   "file": "tools/relay_mutation_gate.py",
   "test": [

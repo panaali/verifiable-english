@@ -138,6 +138,12 @@ def named(row, source: str):
     yield "over names a rule past k", lambda r, s: r[-1]["node"]["norm"]["over"].append(f"rule-{k + 1}")
     yield "exception_to past k", lambda r, s: r[-1]["exception_to"].append(k + 1)
     yield "predicate undeclared", lambda r, s: r[0]["node"]["norm"].update(predicate="absent")
+    yield "guard names an undeclared constant", lambda r, s: r[0]["node"]["norm"].update(
+        guard=["unary", r[0]["node"]["norm"]["predicate"], ["const", "absent"]])
+    yield "guard names an unbound variable", lambda r, s: r[0]["node"]["norm"].update(
+        guard=["forall", "act", ["unary", r[0]["node"]["norm"]["predicate"], ["var", 9]]])
+    yield "guard names an undeclared predicate", lambda r, s: r[0]["node"]["norm"].update(
+        guard=["unary", "absent", ["var", 0]])
     yield "extra precedence row", lambda r, s: s.append({"kind": "precedence", "rule": k, "over": 1})
     yield "precedence row past k", lambda r, s: s.append({"kind": "precedence", "rule": k + 1, "over": 1})
     yield "span dropped", lambda r, s: r[0].pop("span")
