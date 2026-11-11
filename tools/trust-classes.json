@@ -16582,10 +16582,33 @@
         "VE.Acts.MeaningExamples.toks"
       ]
     },
+    "VE/Acts/NormalProofs.lean": {
+      "P": [
+        "VE.Acts.NormalProofs.FinD",
+        "VE.Acts.NormalProofs.FinDs",
+        "VE.Acts.NormalProofs.FrameOk",
+        "VE.Acts.NormalProofs.Gen",
+        "VE.Acts.NormalProofs.GenAll",
+        "VE.Acts.NormalProofs.PartOk",
+        "VE.Acts.NormalProofs.advWords",
+        "VE.Acts.NormalProofs.nm",
+        "VE.Acts.NormalProofs.posRhs",
+        "VE.Acts.NormalProofs.preps",
+        "VE.Acts.NormalProofs.rowB",
+        "VE.Acts.NormalProofs.spans",
+        "VE.Acts.NormalProofs.symB",
+        "VE.Acts.NormalProofs.symRank",
+        "VE.Acts.NormalProofs.tacticAp_tac",
+        "VE.Acts.NormalProofs.tacticFrame_unfold",
+        "VE.Acts.NormalProofs.tacticGlobal_unfold",
+        "VE.Acts.NormalProofs.term𝔽_"
+      ]
+    },
     "VE/Acts/RenderExamples.lean": {
       "T": [
         "VE.Acts.RenderExamples.V2s",
         "VE.Acts.RenderExamples.Vk",
+        "VE.Acts.RenderExamples.Vk1",
         "VE.Acts.RenderExamples.Vo",
         "VE.Acts.RenderExamples.Vs",
         "VE.Acts.RenderExamples.atMod",
