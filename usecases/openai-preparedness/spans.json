@@ -3682,12 +3682,15 @@
     44865,
     45039
    ],
-   "kind": "asserted",
-   "premises": [
-    "cl-levels"
+   "kind": "unformalised",
+   "blocked_rule": "cl-levels",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in change log",
+   "residual": "unmapped_duty-p15-u245-b1881efef95f",
+   "waits": [
+    "AP"
    ],
-   "waits": [],
-   "status": "CHECKED"
+   "status": "UNFORMALISED"
   },
   {
    "id": "p15-u246",

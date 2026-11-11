@@ -125,7 +125,8 @@ Found by the first selected run and fixed (the commit after db649565b7): `confor
 regenerated (`uv run python -m conformance.english_lean_lexicon`); `build_document.py` keeps the residual id
 `unmapped_duty-p6-u84-789e5489dfdf` the footnote 5 unit had on main now that the unit is the blocked rule
 `fn5-indicator`; README.md's coverage and answer tables and docs/usecases/safetyfw/REPORT.md's PF row follow the
-regenerated coverage (CHECKED 170 -> 344 bytes: `cl-levels`; f7-compile's unit moves from SC to ET).
+regenerated coverage (f7-compile's unit moves from SC to ET; the CHECKED 170 -> 344 bytes this commit recorded for
+`cl-levels` was the overclaim the review's F1 found, undone below).
 
 ## Notes for the DRI
 
