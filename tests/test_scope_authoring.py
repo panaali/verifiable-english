@@ -229,10 +229,10 @@ CHAR_REF_DOC = '"&", then a non-empty run of ASCII letters, digits or "#", then 
 def test_char_ref_refuses_every_run_the_ruling_names(swept):
     """sc-7-f11 review F2 (the class: a run the ruling calls a reference that `charRef` lets through): for every
     Unicode scalar value c, `clause` accepts "x&" c ";" exactly when c is a word character outside the ruling's run
-    (ASCII letters, digits and "#"), so a run of one ("&a;", "&#;") is refused like a longer one; and `charRef`'s
-    docstring states the ruling's run."""
+    (ASCII letters, digits and "#"), or the space that makes it the two words "x&" and ";", so a run of one ("&a;",
+    "&#;") is refused like a longer one; and `charRef`'s docstring states the ruling's run."""
     assert CHAR_REF_DOC in " ".join(swept["char_ref"].split()), swept["char_ref"]
-    got, want = chars(swept["referenced"]), set(SCALARS) - NOT_WORD - REF_RUN
+    got, want = chars(swept["referenced"]), (set(SCALARS) - NOT_WORD - REF_RUN) | {" "}
     assert got == want, {"accepted, a reference": sorted(got - want), "refused, no reference": sorted(want - got)}
 
 
