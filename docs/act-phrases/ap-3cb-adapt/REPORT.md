@@ -166,7 +166,7 @@ Pilot bytes: none expected (proofs and examples; no answer changes). Next item: 
 ## 9. Final selected run
 
 `MAC_PYTEST_NO_DEFER=1 zsh /home/seyran/code/manage-agents/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`
-on the committed tree at `ecd0a43c1` (clean), log `/tmp/ap3cb/select.log`:
+on the committed tree at `6893abc90` (clean; tree `fd47c099a4`), log `/tmp/ap3cb/select.log`:
 
 ```
 recorded 477 units for tree fd47c099a4; 5 others left to the static graph until they run; 0 failed
