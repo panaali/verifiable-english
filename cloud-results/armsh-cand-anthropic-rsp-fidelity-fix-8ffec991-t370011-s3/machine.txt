@@ -1,0 +1,10 @@
+job=armsh-cand-anthropic-rsp-fidelity-fix-8ffec991-t370011-s3 shard=3/4 nproc=4 arch=aarch64 host=runnervmkb2gk date=2026-11-11T04:08:16Z ulimit_s=16384
+Mem:              15           1           9           0           5          14
+/dev/root       145G   42G  103G  29% /
+ 04:08:16 up 2 min,  0 user,  load average: 1.04, 0.36, 0.13
+pilot/codex branches: 98
+ve-cache: lean-build seed-ancestor key fcb55c071cf7 asset lean-build-9ff06119ea9b-linux-aarch64.tar.zst sha256 af8e054af4fd ok, seal ok, from download, 18.7 s
+seed: mode=seed match=seed-ancestor asset=lean-build-9ff06119ea9b-linux-aarch64.tar.zst pruned=0 base=2768b53fc8ab
+seed: 287 modules rebuilt over the seed (traces), none stale
+seed: lake 735.6 s (rc 0, match seed-ancestor)
+p1-tokenizers: 443909a61d42 fetched
