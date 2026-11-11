@@ -2581,6 +2581,13 @@
    "reason": "ap-4bb: VE/Acts/Sources.lean S +5 (View, ruleView, expected compare SoftNode's mode, rank, alterable, exception, hard; DRI 2026-11-10 ap-4b-f2 item 1); VE/Acts/Situation.lean V -15 (atomSituation, rulePred now tied by atomSituation_separated, rulePred_eq_some); sourceCheck, compareViews, pick also tied by sourceCheck_complete, compareViews_complete, pick_of_forall₂; K +0; trusted -10",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-4bb, 2026-10-18",
    "commit": "97b3c7999add79633321ed10742aef613d66c5a2"
+  },
+  {
+   "class": "V",
+   "lines": 84,
+   "reason": "sc-11c: VE/Readings/SoftSupRun.lean trusted +84 (sdScope, sdProofs untied G[V]; sdShared, sdAssumed, sdModel, SDCase.labels D[V]); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-11c, 2026-10-18",
+   "commit": "a3454b6ba5982d7cb5e216d10432a94f6177652a"
   }
  ]
 }
