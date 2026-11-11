@@ -468,7 +468,7 @@ def t_countermodel(case, choice, negative=False):
         if atom[0] in relations:
             relations[atom[0]].append(list(atom[1:]))
     m = FiniteModel.from_dict(env, {"complete": True,
-        "domains": {"situation": ["s"], "threshold": list(V.THRESHOLDS)},
+        "domains": {"situation": ["s"], "threshold": list(V.THRESHOLDS), "competitor": COMPETITORS},
         "constants": {c: c for c in env.constants},
         "relations": {p: sorted(v) for p, v in relations.items()}})
     for _, formulas in selected_facts(choice):
