@@ -1,3 +1,4 @@
+- `tests/test_order_round2.py` — The order surface and finite evaluation agree in Python, Rust and Lean.
 - `tests/test_p0_three_way.py` — Three-way P0 conformance: Python, Rust and the Lean `route` subcommand give identical verdicts on every shipped case of the P0 families (PLAN-EXPAND2 3.10(2)).
 - `tests/test_p1.py` — (no module docstring)
 - `tests/test_p1_amendment11.py` — Budget choice and two-turn execution/analysis, without provider calls.
@@ -80,4 +81,3 @@
 - `tests/test_readings_memo.py` — Process-local readings admission memo through the real Lean service and Python relay.
 - `tests/test_readings_nd_document.py` — Readings under the unspecified completion through `ve document` (readings-defaults plan RD-2b; spec 3, 4.2, 4.3).
 - `tests/test_readings_nd_lean.py` — Readings under the unspecified completion through the Lean service (docs/spec/readings-defaults.md 8.3; plan RD-2a).
-- `tests/test_readings_rd5_plain_probe.py` — A pair separated on a plain regulated predicate gets E24 (readings-defaults RD-5).
