@@ -689,6 +689,11 @@ def sequences (kindOf : SourceUnit → Json) (source : String) (units : List Sou
     List (String × String × List SourceUnit) :=
   (unitGroups source units).filter fun (_, w, g) => g.any (isInstruction kindOf) && 2 ≤ (w.splitOn ", then ").length
 
+/-- The source has a sequence: its parts are read under the reading context (`readSource`), which it then needs
+(`decodeSpeechSource`). -/
+def hasSequence (kindOf : SourceUnit → Json) (source : String) (units : List SourceUnit) : Bool :=
+  !(sequences kindOf source units).isEmpty
+
 /-- The units as the stated order sees them (commands-imperatives section 7, finding (c)): an instruction unit by its
 effective kind, a sequence (`sequences`) as one unit named by its group of as many steps as parts, and an
 instruction whose wording has the `Then <x>.` shape an `after` unit. No unit field names a source antecedent (OPEN O3;
@@ -724,9 +729,9 @@ def sequenceFault (ctx : VE.Commands.Context) (kindOf : SourceUnit → Json) (ro
 def SpeechSource.kindOf (src : SpeechSource) (u : SourceUnit) : Json :=
   ((src.dec.units.find? (·.id == u.id)).map (·.kind)).getD u.kind
 
-/-- The decoded source's sequences (`sequences`). -/
-def SpeechSource.sequences (src : SpeechSource) : List (String × String × List SourceUnit) :=
-  VE.SpeechActs.Source.sequences src.kindOf src.source src.units
+/-- The decoded source has a sequence (`hasSequence`). -/
+def SpeechSource.hasSequence (src : SpeechSource) : Bool :=
+  VE.SpeechActs.Source.hasSequence src.kindOf src.source src.units
 
 /-- The stated order, derived content of the decoded source (commands-imperatives PLAN, CI-3): the consecutive steps
 of each sequence, named `m.1` … `m.n` by its unit (`VE.Commands.stepOrder`). No `Then` unit is paired: none names an
@@ -857,7 +862,7 @@ def readSource (payload evidence : Json) : Except String { src : SpeechSource //
       unless read do throw "InvalidInput: resolved speech fences"
   -- The document form of a sequence (CI-3): its parts, by their decoded commands (explicit, resolved or chosen), are
   -- the steps of its whole wording, read under the context; a payload with none is refused by `decodeSpeechSource`.
-  if hasContext payload && !(sequences kindOf source units).isEmpty then
+  if hasContext payload && hasSequence kindOf source units then
     let ctx ← commandContext payload environment dec.se dec.D.scope
     if let some e := sequenceFault ctx kindOf (fun u => (dec.units.find? (·.id == u.id)).map (·.role)) source units then
       throw e
@@ -878,7 +883,7 @@ def readSource (payload evidence : Json) : Except String { src : SpeechSource //
 other check of `readSource`. -/
 def decodeSpeechSource (payload evidence : Json) : Except String { src : SpeechSource // src.payload = payload } := do
   let src ← readSource payload evidence
-  if (hasCommandFence payload || !src.1.sequences.isEmpty) && !hasContext payload then throw readingContextText
+  if (hasCommandFence payload || src.1.hasSequence) && !hasContext payload then throw readingContextText
   pure src
 
 /-- A2: a command fence is never taken from the payload: one without the reading context is refused. -/

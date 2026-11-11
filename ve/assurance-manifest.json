@@ -66,7 +66,7 @@
     "ve/readings_verdicts/binding.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 44791,
+    "total_lines": 44796,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -2072,12 +2072,12 @@
       },
       {
         "file": "lean/VE/SpeechActs/Source/Run.lean",
-        "lines": 1096,
-        "sha256": "c87515443fe721b397a06e581de071b83e6e1be39f00e160e64a574a66c3f78b",
+        "lines": 1101,
+        "sha256": "523ce698b7600bb87efdf5ccaf828bd51bb4610dbb453c11f9bb84a46a4d00d4",
         "ranges": [
           [
             1,
-            1096
+            1101
           ]
         ],
         "declarations": [
@@ -2099,7 +2099,8 @@
           "isInstruction",
           "unitGroups",
           "sequences",
-          "sequenceFault"
+          "sequenceFault",
+          "hasSequence"
         ],
         "reason": "speech-act decoded-source wrapper (8.5): ve-document@2 units, reading sets, records and identity; every resolved fence required to decode to the role its kind reads (Wire.roleFits: a fence of a kind wrapping instruction is a command) and every resolved command fence read again by VE.Commands.readInstruction under the payload's reading_context, decoded once through the pinned VE.Commands.Run.decodeRequest, a payload with a command fence and no context object refused (A2, commands-imperatives CI-2), and the unresolved fences charged against VE.Limits.maxCases; the full file is pinned conservatively; ci-3: an authored Then instruction unit (by its effective kind) is ThenWithoutStep after the core check; ci-3 review F2: the document form of a sequence (a unit or MIXED unit with an instruction part and a ', then ' wording) has its parts' decoded commands checked against VE.Commands.readInstruction of the whole wording under the reading context (sequenceFault), and decodeSpeechSource refuses such a payload with no context object"
       },
