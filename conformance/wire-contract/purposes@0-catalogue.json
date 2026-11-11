@@ -1,0 +1,39 @@
+{
+  "contract": "purposes@0",
+  "faults": {
+    "1.1b": [
+      "extra-member",
+      "not-an-object"
+    ],
+    "1.1c": [
+      "links-over"
+    ],
+    "1.1d": [
+      "link-fields"
+    ],
+    "1.1e": [
+      "id-not-token",
+      "mention-not-token",
+      "part-not-token"
+    ],
+    "1.1f": [
+      "relation-before-polarity",
+      "relation-prevents"
+    ],
+    "1.1g": [
+      "polarity"
+    ],
+    "1.1h": [
+      "share"
+    ],
+    "1.1i": [
+      "side",
+      "side-reason-first",
+      "side-ref-not-string"
+    ],
+    "2.1b": [
+      "duplicate-id"
+    ]
+  },
+  "unreached": {}
+}

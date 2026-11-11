@@ -21293,6 +21293,32 @@
         "VE.Presupposition.RunExamples.tC",
         "VE.Presupposition.RunExamples.with18b"
       ]
+    },
+    "VE/WireContract/Hooks/Purposes.lean": {
+      "G[V]": [
+        "VE.WireContract.Hooks.Purposes.adapter",
+        "VE.WireContract.Hooks.Purposes.classifier",
+        "VE.WireContract.Hooks.Purposes.hooks",
+        "VE.WireContract.Hooks.Purposes.linkMember",
+        "VE.WireContract.Hooks.Purposes.member",
+        "VE.WireContract.Hooks.Purposes.purposesOf",
+        "VE.WireContract.Hooks.Purposes.registered",
+        "VE.WireContract.Hooks.Purposes.shown",
+        "VE.WireContract.Hooks.Purposes.sideMember"
+      ],
+      "T": [
+        "VE.WireContract.Hooks.Purposes.block",
+        "VE.WireContract.Hooks.Purposes.idsAgree",
+        "VE.WireContract.Hooks.Purposes.link",
+        "VE.WireContract.Hooks.Purposes.links",
+        "VE.WireContract.Hooks.Purposes.recordOf",
+        "VE.WireContract.Hooks.Purposes.roundTrips"
+      ]
+    },
+    "VE/WireContract/Tables/Purposes.lean": {
+      "G[V]": [
+        "VE.WireContract.Tables.Purposes.table"
+      ]
     }
   }
 }
