@@ -56,7 +56,7 @@ theorem coreToks_head (hW : VocabOk V) (hfr : f ∈ V.frames) (hl : ∀ w ∈ f.
   intro x hx; simp [coreToks, hw0] at hx; subst hx
   exact head_word hW hfr (by rw [hw0, hl w0 (by simp [hw0])]; rfl)
 
-theorem ap_SINGLE' (cs : List Piece) (rhs : List RSym) (hr : rhs = [.n .SC] ∨ rhs = [.n .ADVSO, .n .SC] ∨
+theorem ap_SINGLE_rhs (cs : List Piece) (rhs : List RSym) (hr : rhs = [.n .SC] ∨ rhs = [.n .ADVSO, .n .SC] ∨
     rhs = [.n .FW, .n .SC] ∨ rhs = [.n .FW, .n .ADVSO, .n .SC]) :
     applyRule ⟨.SINGLE, rhs, .shape⟩ cs = (itemOf cs).map (fun (fw, h, es) => [.act (singleAct fw h es)]) := by
   rcases hr with rfl | rfl | rfl | rfl
@@ -97,7 +97,7 @@ theorem single_inv (hV : framesOk V = true) (hW : VocabOk V) {h : Nat} (hF : Fra
   · -- SC
     have h1 := genAll1 hg
     obtain ⟨rfl, rfl, rfl⟩ := nta_head_fw hws (sc_head hV hW h1)
-    rw [ap_SINGLE' cs _ (by simp)] at ha
+    rw [ap_SINGLE_rhs cs _ (by simp)] at ha
     rw [← ha, sc_inv hV hW hF hl hob hbs h1 (by simp [fwToks, coreToks])]
     rfl
   · -- ADVSO SC
@@ -110,7 +110,7 @@ theorem single_inv (hV : framesOk V = true) (hW : VocabOk V) {h : Nat} (hF : Fra
     obtain ⟨e1, rfl⟩ := split_class (ADV V) he.symm (advso_adv h1) hadv
       (fun x hx => (sc_head hV hW h2 x hx).2) (fun x hx => (hRh x hx).2)
     obtain rfl := map_word_inj e1
-    rw [ap_SINGLE' _ _ (by simp)] at ha
+    rw [ap_SINGLE_rhs _ _ (by simp)] at ha
     rw [← ha, sc_inv hV hW hF hl hob hbs h2 rfl, hwsp]
     rfl
   · -- FW SC
@@ -121,7 +121,7 @@ theorem single_inv (hV : framesOk V = true) (hW : VocabOk V) {h : Nat} (hF : Fra
     obtain ⟨-, -, rfl⟩ := nta_head_fw (t := false) (b := false) hws (X := coreToks f ob bs)
       (by simpa [fwToks] using sc_head hV hW h2)
     obtain ⟨rfl, htb⟩ := fw_pieces h1 rfl
-    rw [ap_SINGLE' _ _ (by simp)] at ha
+    rw [ap_SINGLE_rhs _ _ (by simp)] at ha
     rw [← ha, sc_inv hV hW hF hl hob hbs h2 (by simp [coreToks]), htb]
     rfl
   · -- ADVSO FW SC
@@ -145,7 +145,7 @@ theorem single_inv (hV : framesOk V = true) (hW : VocabOk V) {h : Nat} (hF : Fra
       (fun x hx => (sc_head hV hW h3 x hx).2) (fun x hx => (hRh x hx).2)
     obtain rfl := map_word_inj e3
     obtain ⟨rfl, htb⟩ := fw_pieces h1 rfl
-    rw [ap_SINGLE' _ _ (by simp)] at ha
+    rw [ap_SINGLE_rhs _ _ (by simp)] at ha
     rw [← ha, sc_inv hV hW hF hl hob hbs h3 rfl, htb, hwsp]
     rfl
   · -- ADVSO FW ADVSO SC
@@ -263,11 +263,11 @@ theorem adj_blocks (hW : VocabOk V) {h : Nat} (hF : FrameOk V f h) : ∀ {bs : L
     obtain ⟨r1, r2, r3⟩ := hr
     have hbt : Adj V f b.toks ∧ EndOk b.toks := ⟨adj_append (adj_nojc (mk_nojc hW hF hm)) r1
       (endOk_nojc (mk_nojc hW hF hm)), endOk_append r2 r3⟩
-    rw [blocks_cons']
+    rw [blocks_append_cons]
     refine ⟨adj_append hbt.1 i1 hbt.2, ?_⟩
     cases bs with
     | nil => simpa [blocks] using hbt.2
-    | cons b' bs' => exact endOk_append i2 (by rw [blocks_cons']; simp [blk_ne hF (hbs b' (by simp))])
+    | cons b' bs' => exact endOk_append i2 (by rw [blocks_append_cons]; simp [blk_ne hF (hbs b' (by simp))])
 
 
 theorem head_firstP (hV : framesOk V = true) {P : Tok → Prop} {Y : RSym} {Ys : List RSym} {w : List Tok}
@@ -356,4 +356,195 @@ theorem coord_false (hV : framesOk V = true) {u : List Tok} {ps : List Piece} (h
   obtain ⟨x, y, u', rfl, hx, hy⟩ := t_head2 (f := f) hV h2
   exact (adj_suffix hadj).1 hx hy
 
+
+/-! ### The start, and the theorems -/
+
+theorem head_nojc (hW : VocabOk V) (hfr : f ∈ V.frames) (hl : ∀ w ∈ f.head, w.toLower = w) :
+    ∀ x ∈ f.head.map Tok.word, ¬ JC x := by
+  intro x hx hj
+  obtain ⟨w, hw, rfl⟩ := List.mem_map.mp hx
+  have := hW.headRes f hfr w hw
+  rcases hj with he | ⟨v, he, hv⟩
+  · cases he
+  · cases he; rw [hl _ hw] at hv; rcases hv with hv | hv | hv <;> simp_all
+
+theorem adj_normal (hW : VocabOk V) {h : Nat} (hF : FrameOk V f h) (hl : ∀ w ∈ f.head, w.toLower = w)
+    {ob : Option Filler} (hob : ObjOk V f ob) {bs : List Blk} (hbs : ∀ b ∈ bs, BlkOk V f b) (t b : Bool)
+    (ws : List String) (hws : ∀ w ∈ ws, w ∈ V.adverbs ∧ w.toLower = w) :
+    Adj V f (fwToks t b ++ ws.map .word ++ coreToks f ob bs) := by
+  have hfw : ∀ x ∈ fwToks t b, ¬ JC x := by
+    intro x hx hj
+    obtain ⟨v, rfl, hv⟩ := fwToks_tb t b x hx
+    rcases hj with he | ⟨v', he, hv'⟩
+    · cases he
+    · cases he; rcases hv with hv | hv <;> rcases hv' with hv' | hv' | hv' <;> simp_all
+  have hwj : ∀ x ∈ ws.map Tok.word, ¬ JC x := by
+    intro x hx hj
+    obtain ⟨w, hw, rfl⟩ := List.mem_map.mp hx
+    have := hW.advRes w (hws w hw).1
+    rcases hj with he | ⟨v', he, hv'⟩
+    · cases he
+    · cases he; rw [(hws _ hw).2] at hv'; rcases hv' with hv | hv | hv <;> simp_all
+  have hpre : ∀ x ∈ fwToks t b ++ ws.map Tok.word ++ f.head.map Tok.word, ¬ JC x := by
+    intro x hx
+    simp only [List.mem_append] at hx
+    rcases hx with (hx | hx) | hx
+    · exact hfw x hx
+    · exact hwj x hx
+    · exact head_nojc hW hF.frame hl x hx
+  have hob' : Adj V f (objToks ob) ∧ EndOk (objToks ob) := by
+    cases ob with
+    | none => exact ⟨trivial, fun x hx => by simp [objToks] at hx⟩
+    | some fl =>
+      obtain ⟨a1, a2, -⟩ := adj_filler hob.2.1 (fun j ps he => (hob.2.2 j ps he).2.1)
+      exact ⟨a1, a2⟩
+  obtain ⟨b1, -⟩ := adj_blocks hW hF hbs
+  have := adj_append (adj_nojc hpre) (adj_append hob'.1 b1 hob'.2) (endOk_nojc hpre)
+  simpa [coreToks, List.append_assoc] using this
+
+/-- The start (`S`) where the normal form is `{0}`, function words, adverbs, the head, the object and the elements:
+the item's pieces (no coordination can read it). -/
+theorem s_inv (hV : framesOk V = true) (hW : VocabOk V) {h : Nat} (hF : FrameOk V f h)
+    (hl : ∀ w ∈ f.head, w.toLower = w) (hne : f.head ≠ []) {ob : Option Filler} (hob : ObjOk V f ob) {bs : List Blk}
+    (hbs : ∀ b ∈ bs, BlkOk V f b) (t b : Bool) (ws : List String) (hws : ∀ w ∈ ws, w ∈ V.adverbs ∧ w.toLower = w)
+    {ps : List Piece} (hg0 : Gen V (.n .S) (.slot 0 :: (fwToks t b ++ ws.map .word ++ coreToks f ob bs)) ps) :
+    (itemOf ((if t || b then [Piece.fw t b] else []) ++ ws.map (fun w => .elt (.mod (.adv w)) .own) ++
+      (Piece.head f.head :: (objPieces ob ++ bs.map Blk.piece)))).map
+        (fun (fw, h, es) => [Piece.act (singleAct fw h es)]) = some ps := by
+  obtain ⟨rhs, k, cs, hr, hg, ha⟩ := gen_rule hg0
+  rules_of hr fr hfr
+  · obtain ⟨w1, w2, c1, c2, he, rfl, h1, h2⟩ := genAll2 hg
+    obtain ⟨x, rfl, hx, hp⟩ := gen_t_inv h1
+    simp only [List.singleton_append, List.cons.injEq] at he
+    obtain ⟨rfl, rfl⟩ := he
+    simp [piecesOf] at hp; subst hp
+    rw [ap_S] at ha; cases ha
+    exact single_inv hV hW hF hl hne hob hbs t b ws hws h2 rfl
+  · obtain ⟨w1, w2, c1, c2, he, -, h1, h2⟩ := genAll2 hg
+    obtain ⟨x, rfl, hx, hp⟩ := gen_t_inv h1
+    simp only [List.singleton_append, List.cons.injEq] at he
+    obtain ⟨rfl, rfl⟩ := he
+    exact (coord_false hV h2 (adj_normal hW hF hl hob hbs t b ws hws)).elim
+
+/-- (3) Every derivation of `a.normal` has the pieces of `.one a.canon`. -/
+theorem normal_pieces (V : Vocab) (hV : framesOk V = true) (a : Atom) (ha : normalOk V a = true) {ps : List Piece}
+    (hg : Gen V (.n .S) a.normal ps) : ps = [.act (.one a.canon)] := by
+  have hW := vocabOk hV
+  have hwds := framesOk_words hV
+  obtain ⟨lh, lm, la, lmods⟩ := framesOk_lower hV
+  unfold normalOk at ha
+  split at ha
+  · cases ha
+  rename_i f hfind
+  have hfr : f ∈ V.frames := List.mem_of_find?_eq_some hfind
+  have hfh : f.head = a.head := by simpa using List.find?_some hfind
+  obtain ⟨h, hh⟩ : ∃ h, (f, h) ∈ V.frames.zipIdx := by
+    obtain ⟨i, hi, he⟩ := List.getElem_of_mem hfr
+    exact ⟨i, List.mem_zipIdx_iff_getElem?.mpr (by rw [List.getElem?_eq_getElem hi, he])⟩
+  have hF : FrameOk V f h := ⟨hh, hfr, lm f hfr, (hwds f hfr).2, lmods f hfr⟩
+  simp only [Bool.and_eq_true, List.all_eq_true, decide_eq_true_eq] at ha
+  obtain ⟨⟨⟨hatom, hparts⟩, _⟩, hjoin⟩ := ha
+  unfold atomOk at hatom
+  rw [hfind] at hatom
+  simp only [Bool.and_eq_true, beq_iff_eq, List.all_eq_true] at hatom
+  obtain ⟨⟨hcount, hmk⟩, hmods⟩ := hatom
+  have hpa : ∀ x ∈ a.args, ∀ p ∈ x.2.parts, PartOk V f p := by
+    intro x hx p hp
+    have := hparts p (List.mem_append_left _ (List.mem_flatMap.mpr ⟨x, hx, hp⟩))
+    cases p <;> simp_all [PartOk]
+  have hpm : ∀ q ∈ preps a.mods, PartOk V f q.2 := by
+    intro q hq
+    have := hparts q.2 (List.mem_append_right _ (List.mem_filterMap.mpr ⟨.prep q.1 q.2, mem_preps hq, rfl⟩))
+    cases hq2 : q.2 <;> simp_all [PartOk]
+  have hja : ∀ x ∈ a.args, ∀ j ps, x.2 = .joined j ps →
+      f.split.contains x.1 = false ∧ 2 ≤ ps.length ∧ longEnd ps = false := by
+    intro x hx j ps he
+    have := hjoin x hx
+    obtain ⟨m, fl⟩ := x
+    simp only at he; subst he
+    simp_all
+  -- the object, and the elements after it
+  let objs := a.args.filter (·.1 == "")
+  let rest := a.args.filter (·.1 != "")
+  let bs : List Blk := rest.map (fun x => .arg x.1 x.2) ++ (preps a.mods).map (fun q => .prep q.1 q.2)
+  have hbs : ∀ b ∈ bs, BlkOk V f b := by
+    intro b hb
+    rcases List.mem_append.mp hb with hb | hb
+    · obtain ⟨x, hx, rfl⟩ := List.mem_map.mp hb
+      obtain ⟨hxa, hxe⟩ := List.mem_filter.mp hx
+      exact ⟨by simpa using hmk x hxa, by simpa using hxe, hpa x hxa, hja x hxa⟩
+    · obtain ⟨q, hq, rfl⟩ := List.mem_map.mp hb
+      exact ⟨by simpa using hmods (.prep q.1 q.2) (mem_preps hq), hpm q hq⟩
+  obtain ⟨ob, hob, hobj⟩ : ∃ ob, ObjOk V f ob ∧ objs = (ob.map (fun fl => ("", fl))).toList := by
+    by_cases ho : "" ∈ f.markers
+    · have h1 : objs.length = 1 := by simpa [ho] using hcount
+      obtain ⟨x, hx⟩ := List.length_eq_one_iff.mp h1
+      have hxm : x ∈ objs := by rw [hx]; simp
+      obtain ⟨hxa, hxe⟩ := List.mem_filter.mp hxm
+      obtain ⟨m, fl⟩ := x
+      simp only [beq_iff_eq] at hxe
+      subst hxe
+      exact ⟨some fl, ⟨ho, hpa _ hxa, fun j ps he => hja _ hxa j ps he⟩, by rw [hx]; rfl⟩
+    · have h0 : objs = [] := by
+        have hc := hcount
+        simp only [ho, List.elem_eq_mem, decide_false, Bool.false_eq_true, if_false] at hc
+        exact List.length_eq_zero_iff.mp hc
+      exact ⟨none, ho, by rw [h0]; rfl⟩
+  have hws : ∀ w ∈ advWords a.mods, w ∈ V.adverbs ∧ w.toLower = w := by
+    intro w hw
+    have := hmods (.adv w) (mem_advWords hw)
+    exact ⟨by simpa using this, la w (by simpa using this)⟩
+  -- the normal form, as `s_inv` reads it
+  have htoks : a.normal = .slot 0 :: (fwToks a.toWord a.beWord ++ (advWords a.mods).map .word ++
+      coreToks f ob bs) := by
+    rw [normal_toks, ← hfh]
+    have hc : a.canon.args = objs ++ rest := rfl
+    simp only [coreToks, fwToks, hc, List.flatMap_append, hobj, List.append_assoc]
+    congr 4
+    cases ob <;> simp [objToks, blocks, bs, Blk.toks, Blk.marker, Blk.rest, List.flatMap_map, wordsOf_empty,
+      Filler.toks]
+  rw [htoks] at hg
+  have hs := s_inv hV hW hF (lh f hfr) (hwds f hfr).1 hob hbs a.toWord a.beWord (advWords a.mods) hws hg
+  -- the item's meaning
+  let es : List Elt := a.canon.args.map (fun q => Elt.arg q.1 q.2) ++ (preps a.mods).map (fun q => Elt.mod (.prep q.1 q.2))
+  have hes : objPieces ob ++ bs.map Blk.piece = es.map (fun e => Piece.elt e .own) := by
+    have hc : a.canon.args = objs ++ rest := rfl
+    simp only [es, hc, hobj, bs, List.map_append, List.map_map, List.append_assoc]
+    cases ob <;> simp [objPieces, Blk.piece, Function.comp_def]
+  rw [hes, single_meaning] at hs
+  have hcanon : (List.foldl Atom.add ⟨a.toWord, a.beWord, f.head, [], []⟩
+      (List.map (fun w => Elt.mod (Modifier.adv w)) (advWords a.mods) ++ es)) = a.canon := by
+    rw [canon_eq a, hfh]
+  rw [hcanon] at hs
+  exact (Option.some.inj hs).symm
+
+
+/-- (3) Every derivation of `a.normal` that has a meaning means `.one a.canon`. -/
+theorem normal_unique (V : Vocab) (hV : framesOk V = true) (a : Atom) (ha : normalOk V a = true) :
+    ∀ d B c, VE.Grammar.Derives (grammar V) (.n (grammar V).start) a.normal d →
+      meaning V () d = .ok (B, c, ()) → B = .one a.canon := by
+  intro d B c hd hm
+  have hp : piecesOf (closed (schema V)).toArray d = some [.act B] := by
+    unfold meaning meaningWith at hm
+    split at hm
+    · split at hm
+      · cases hm; assumption
+      · cases hm
+    · cases hm
+  have hg : Gen V (.n .S) a.normal [.act B] := ⟨d, hd.1, hd.2, hp⟩
+  have := normal_pieces V hV a ha hg
+  simp only [List.cons.injEq, Piece.act.injEq, and_true] at this
+  exact this
+
 end VE.Acts.NormalProofs
+
+namespace VE.Acts
+
+/-- Render round trip (docs/spec/act-phrases.md 5.6): the normal form reads back with one meaning, the atom in
+canonical order. (1) `normal_derived`, (2) `parse_bounds` and (3) `normal_unique`, through
+`read_normal_of_unique`. -/
+theorem read_normal (V : Vocab) (h : framesOk V = true) (a : Atom) (ha : normalOk V a = true) :
+    ∃ N0 b0, ∀ N b, N0 ≤ N → b0 ≤ b → read V N b a.normal.toArray = .ok (.one a.canon) :=
+  NormalProofs.read_normal_of_unique V h a ha (NormalProofs.normal_unique V h a ha)
+
+end VE.Acts
