@@ -179,8 +179,10 @@ def _outcome(record: dict) -> str:
 def build(records: list[dict], skipped: dict, commit: str) -> dict:
     kept, seen = [], set()
     for record in records:
+        if "corpus" not in record:  # a `ve` process a test started: it inherits the flags, not the plugin
+            record.update(corpus="suite-subprocess", id=f"subprocess/{record['source_sha256'][:12]}")
         key = (record["corpus"], record["source_sha256"], _outcome(record)) if record["corpus"] in (
-            "suite", "soft-rights") else (record["corpus"], record["id"])
+            "suite", "soft-rights", "suite-subprocess") else (record["corpus"], record["id"])
         if key not in seen:
             seen.add(key)
             kept.append(record)
@@ -238,10 +240,14 @@ def markdown(delta: dict) -> str:
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--workers", type=int, default=8)
+    parser.add_argument("--scratch", type=Path, help="the scratch directory for the logs (default: a new one)")
     args = parser.parse_args(argv)
     commit = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True, text=True).stdout.strip()
     with tempfile.TemporaryDirectory(prefix="w1-delta-") as directory:
-        scratch = Path(directory)
+        scratch = args.scratch or Path(directory)
+        scratch.mkdir(parents=True, exist_ok=True)
+        for name in ("own.jsonl", "suite.jsonl"):
+            (scratch / name).unlink(missing_ok=True)
         os.environ.update(VE_STATEMENT_COMPARATOR="1", VE_SHADOW_LOG=str(scratch / "own.jsonl"))
         sys.path.insert(0, str(ROOT))
         install()
