@@ -381,4 +381,97 @@ def notChain : Nat → Lean.Json
 #guard (VE.Norms.Wire.budgetFormula VE.Limits.maxDepth 0 (notChain 63)).isOk &&
   !(VE.Norms.Wire.budgetFormula VE.Limits.maxDepth 0 (.arr #["and", .arr #["top"], notChain 63])).isOk
 
+/-! ## cmp-s3-cfr-1b: the span check's reference, 9.2's F11 to F14 -/
+
+/-- Section 7's span check as written: each span against every earlier one. `checkSpans` answers as it does. -/
+def checkSpansPairwise (n : String) (u : Nat × Nat) : List (Nat × Nat) → List (Nat × Nat) → Except String Unit
+  | _, [] => .ok ()
+  | earlier, s :: rest =>
+    if s.1 < s.2 && u.1 ≤ s.1 && s.2 ≤ u.2 && earlier.all (fun t => s.2 ≤ t.1 || t.2 ≤ s.1) then
+      checkSpansPairwise n u (s :: earlier) rest
+    else .error s!"ClauseSpan: {n}: [{s.1}, {s.2})"
+/-- Every list of at most `k` spans with ends in `0 … m`. -/
+def spanLists (m k : Nat) : List (List (Nat × Nat)) :=
+  let spans := (List.range (m + 1)).flatMap fun a => (List.range (m + 1)).map fun b => (a, b)
+  (List.range (k + 1)).flatMap fun i => (List.range i).foldl (fun ls _ => ls.flatMap fun l => spans.map (· :: l)) [[]]
+def samePairwise (m k : Nat) (u : Nat × Nat) : Bool :=
+  (spanLists m k).all fun l => verdict (checkSpans "n" u ∅ l) == verdict (checkSpansPairwise "n" u [] l)
+-- every list of up to three spans in [0, 5] and of four in [0, 3], inside and across the unit's ends
+#guard (spanLists 5 3).length == 1 + 36 + 36 ^ 2 + 36 ^ 3 && samePairwise 5 3 (1, 4) && samePairwise 3 4 (0, 3)
+
+/-- A finite model over the given domains. -/
+def world (doms : List (String × List String)) (rels : List (String × List (List String))) : VE.FiniteModel String where
+  domains s := ((doms.find? (·.1 == s)).map (·.2)).getD []
+  constants _ := none
+  relations p := ((rels.find? (·.1 == p)).map (·.2)).getD []
+/-- One right `r` (holder person) with one claim line `n` on the obligation `p(state, person)`, over `base`. -/
+def oneClaim (r n p : String) (base : List (String × List String)) (sorts := ["state", "person"]) : RightsDoc :=
+  { mkRights sorts base [VE.Norms.Checks.oblig p ["state", "person"] false none "{0} act for {1}"] [] block
+      [⟨r, "person", .top, [line .claim (strictNode n p true)]⟩] [] [] with sourceUnits := ["u035", "u039", "u054"] }
+def claimLine (n p : String) (clauses : List Clause) (relation : Option Relation) (u : Nat × Nat) : CLine :=
+  ⟨line .claim (strictNode n p true), clauses, relation, [], u⟩
+
+-- F11 (UDHR u035 [3469, 3637), Art. 8): the trigger clause of 3 ("for acts violating the fundamental rights granted
+-- him ... by law", [3541, 3635)) and `has_tribunals_competent_for`, total on the holder slot, cites u035
+def f11Trigger : VE.Formula :=
+  .ex "act" (.and (.binary "violates_right_of" (.var 0) (.var 1)) (.unary "right_granted_by_law" (.var 0)))
+def f11 : ClauseDoc :=
+  ⟨oneClaim "r8" "remedy" "remedy_required" [("violates_right_of", ["act", "person"]), ("right_granted_by_law", ["act"]),
+      ("has_tribunals_competent_for", ["state", "person"])] ["state", "person", "act"],
+    [("r8", "remedy", claimLine "remedy" "remedy_required" [⟨.trigger, f11Trigger, (3541, 3635)⟩]
+      (some ⟨"has_tribunals_competent_for", (0, 1), some 1, ["u035"]⟩) (3469, 3637))], []⟩
+def f11World (violated : Bool) : VE.FiniteModel String :=
+  world [("state", ["S"]), ("person", ["P"]), ("act", ["A"])]
+    ([("has_tribunals_competent_for", [["S", "P"]]), ("right_granted_by_law", [["A"]])] ++
+      if violated then [("violates_right_of", [["A", "P"]])] else [])
+#guard WellFormedClauses f11 && diag (plain f11) == "ok"
+#guard guardOf (plain f11) "remedy" ==
+  .and (.and .top f11Trigger) (.binary "has_tribunals_competent_for" (.var 1) (.var 0))
+-- no violated right: the line selects at no tuple of that person; with one it does; the premise is in the slot
+#guard !selectsAt (plain f11) "remedy" (f11World false) ["S", "P"] && selectsAt (plain f11) "remedy" (f11World true) ["S", "P"]
+#guard (clauseSlotLabelled f11).map (·.1) == ["rights:relation:remedy:total"]
+
+-- F12 (UDHR u039 [3734, 3935), Art. 10): a scope clause and "in full equality" as a clause on `full_equality`, both
+-- in the guard in wire order, `elided: []`
+def f12Scope : VE.Formula := .unary "rights_and_charges_determined" (.var 0)
+def f12 : ClauseDoc :=
+  ⟨oneClaim "r10" "fair-hearing" "fair_hearing_required" [("rights_and_charges_determined", ["person"]),
+      ("full_equality", ["person"])],
+    [("r10", "fair-hearing", claimLine "fair-hearing" "fair_hearing_required"
+      [⟨.scope, f12Scope, (3838, 3934)⟩, ⟨.scope, .unary "full_equality" (.var 0), (3755, 3771)⟩] none (3734, 3935))], []⟩
+#guard WellFormedClauses f12 && diag (plain f12) == "ok" && relPremisesLabelled f12 == []
+#guard guardOf (plain f12) "fair-hearing" == .and (.and .top f12Scope) (.unary "full_equality" (.var 0))
+#guard selectsAt (plain f12) "fair-hearing" (model [("rights_and_charges_determined", [["Ann"]]),
+    ("full_equality", [["Ann"]])]) ["Texas", "Ann"] &&
+  !selectsAt (plain f12) "fair-hearing" (model [("rights_and_charges_determined", [["Ann"]])]) ["Texas", "Ann"]
+
+-- F13 (UDHR u054 [5239, 5284), Art. 15(1)), S3's share: the claim reading with `responsible_for` total on the holder.
+-- Two states, one person, responsible_for only with the first: the slot holds (relation_some_bearer's bearer is S1),
+-- the second state owes nothing under this line, and the unscoped claim would have it owe
+def f13 (relation : Option Relation := some ⟨"responsible_for", (0, 1), some 1, []⟩) : ClauseDoc :=
+  ⟨oneClaim "r15" "nationality" "nationality_required" [("responsible_for", ["state", "person"])],
+    [("r15", "nationality", claimLine "nationality" "nationality_required" [] relation (5239, 5284))], []⟩
+def twoStates : VE.FiniteModel String :=
+  world [("state", ["S1", "S2"]), ("person", ["P"])] [("responsible_for", [["S1", "P"]])]
+#guard WellFormedClauses (f13) && diag (plain (f13)) == "ok" && slotValid (f13) twoStates
+#guard !slotValid (f13) (world [("state", ["S1", "S2"]), ("person", ["P"])] [])
+#guard selectsAt (plain (f13)) "nationality" twoStates ["S1", "P"] &&
+  !selectsAt (plain (f13)) "nationality" twoStates ["S2", "P"] &&
+  selectsAt (plain (f13 none)) "nationality" twoStates ["S2", "P"]
+
+-- `clauseSlot_wellFormed` at K3, K13 and F11: every premise of the slot checks at layer 0 of `correlate (plain D)`
+def slotChecks (D : ClauseDoc) : Bool :=
+  (clauseSlot D).all (·.check (VE.Norms.envAt (VE.SoftNorms.soften (VE.Rights.correlate (plain D))) 0) [])
+#guard slotChecks (cdoc k3) && slotChecks k13 && slotChecks f11 && (clauseSlot f11).length == 1
+
+-- F14 (UDHR u077 [6861, 6938), Art. 21(2)): the candidate with `country_of` (total null) plains through
+-- `plainContent`, the one without it is unchanged; a state that is not the person's country separates them
+#guard plainContent r21Doc.soft [("r21", "equal-access", k2)] (.right r21) ==
+  .right (r21 (lineGuard := .and .top (.binary "country_of" (.var 1) (.var 0)))) &&
+  plainContent r21Doc.soft [] (.right r21) == .right r21 &&
+  plainContent r21Doc.soft [("r21", "equal-access", k2)] (.rightLines "r21" [accessLine]) ==
+    .rightLines "r21" [accessLine k2Guard]
+#guard !selectsAt (plain (cdoc k2)) "equal-access" (model []) ["Texas", "Ann"] &&
+  selectsAt (plain (cdoc k1)) "equal-access" (model []) ["Texas", "Ann"]
+
 end VE.RightClauses.Examples
