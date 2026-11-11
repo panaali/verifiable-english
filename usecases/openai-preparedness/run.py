@@ -78,19 +78,22 @@ SITUATIONS = {
     "K20": ("safeguards_report_compiled",), "G5": ("nuclear_found",), "G6": ("persuasion_risk",),
 }
 # Atoms a case's situation states as false ("not already implemented", "no highly sensitive information").
-STATED_FALSE = {"K2": ("safeguards_already_assessed",), "K16": ("highly_sensitive",)}
+STATED_FALSE = {"K2": ("safeguards_already_assessed",), "K16": ("beyond_sensitive_limits",)}
+# A disjunctive duty "A, or B" is written "A unless B" ('or' is reserved in acts): its item asks what is required
+# before either alternative is taken, so B is false by the question itself, not by a case fact (K10).
+ALTERNATIVES = {"sandbagging_bound": ("conservative_upper_bound_used",)}
 # K9's model has High capability "in a Tracked Category" without naming it: every High level is tried.
 SOME_HIGH_LEVEL = {"K9"}
 
 ATOMS = {"SEC": ("security_controls", "security_practices", "development_security_controls"), "MIS": ("misuse_safeguards",),
          "ALN": ("alignment_safeguards",), "SUF": ("safeguards_before_deployment", "safeguards_during_development"),
          "HALT": ("halt_development",),
-         "CAPREP": ("capabilities_report",), "SAFEREP": ("safeguards_report",), "MREP": ("misalignment_report",),
+         "CAPREP": ("capabilities_report_submitted",), "SAFEREP": ("safeguards_report",), "MREP": ("misalignment_report",),
          "DISC": ("safeguards_disclosed",), "PUBRES": ("public_disclosure",),
          "CONTRIB": ("pandemic_policy_contribution", "cyberdefense_contribution")}
 K_ITEMS = {"START_WORK_ON_SAFEGUARDS": ("safeguard_work",), "SAG_RECOMMENDS_SAFEGUARDS": ("safeguards_recommended",),
            "ADDITIONAL_SAFETY_MEASURES": ("additional_safety_measures",),
-           "CAPABILITIES_REPORT": ("capabilities_report",),
+           "CAPABILITIES_REPORT": ("capabilities_report_submitted",),
            "VALIDATE_AND_REVIEW_SUFFICIENCY": ("validate_evidence", "review_sufficiency"),
            "KEEP_SAFEGUARDS_MORE_PROTECTIVE": ("more_protective",),
            "PUBLICLY_ACKNOWLEDGE_ADJUSTMENT": ("adjustment_acknowledged",),
@@ -110,7 +113,7 @@ ALL_OF = {"VALIDATE_AND_REVIEW_SUFFICIENCY"}  # "validating ... and reviewing ..
 THRESHOLD_PREDICATES = ("security_controls", "security_practices", "development_security_controls", "misuse_safeguards", "alignment_safeguards",
                         "safeguards_before_deployment", "safeguards_during_development", "halt_development",
                         "pandemic_policy_contribution", "cyberdefense_contribution", "deployment_permitted")
-SAFEGUARD_PREDICATES = THRESHOLD_PREDICATES + ("access_limited", "misalignment_risk_minimized")
+SAFEGUARD_PREDICATES = THRESHOLD_PREDICATES + ("access_limited", "misalignment_risk_minimized", "nuclear_safeguards")
 # The Critical-specific rules (Table 1's Critical rows and 4.4): G2.
 CRITICAL_PREDICATES = ("safeguards_during_development", "halt_development")
 
@@ -160,6 +163,7 @@ def precedence():
     table = dict(T.PRECEDENCE)
     if MUTANT == "m1":
         table.pop("f11-exception")
+        table.pop("f11-exception-deploy")
     if MUTANT == "m6" or WITHOUT_NARROWING == "N2":
         table.pop(T.N2_PRECEDENCE[0])
     return table
@@ -401,6 +405,7 @@ def unset_negations(case, predicates):
     """A negated open term the case leaves unset would be read as false by the complete case model."""
     stated = {OT[t] for t in case.get("findings", {}) if t in OT} | set(STATED_FALSE.get(case["id"], ()))
     stated |= set(SITUATIONS.get(case["id"], ())) | {"critical_standard_unspecified"}
+    stated |= {b for p in predicates for b in ALTERNATIVES.get(p, ())}
     return sorted(negated(predicates) - stated)
 
 
@@ -508,12 +513,13 @@ def constant(value, route, reason):
 # --- C: W1 conflicts ------------------------------------------------------------------------------------------
 
 CLUSTERS = {
-    "C1": ("f11-within", "f11-exception", "f2-deploy", "f2-deploy-any", "f2-reminder", "f2-reminder-any"),
+    "C1": ("f11-within", "f11-exception", "f11-exception-deploy", "f2-deploy", "f2-deploy-any", "f2-reminder",
+           "f2-reminder-any", "f2-no-deploy", "f2-no-deploy-any"),
     "C2": ("f16-informed", "f16-without-noinput", "f16-without-nodelib"),
     "C3": ("f1-halt-strict", "f1-halt-default", "f3-develop", "f3-develop-inuse", "f3-reminder"),
     "C4": ("f6-rel", "f7-evaluations", "f7-report"),
     "C5": ("f1-security-strict", "f1-security-default", "f2-deploy", "f2-deploy-any"),
-    "C6": ("f16-final", "f16-process", "f16-board-reverse"),
+    "C6": ("f16-board-reverse", "f16-board-mandate"),
 }
 WITNESS = {
     "C1": ("covered", "external_deployment", "internal_deployment", "adjustment_confirmed",
@@ -731,19 +737,54 @@ def witness_for(block):
     return None
 
 
+# N3's inventory: PLAN 4.2's commitments F1 to F17, each a tuple of its parts, each part the rules (one per
+# reading) that carry it. A part with no rule, or a rule outside every part, is a dead commitment the run reports.
+COMMITMENTS = {
+    "F1": (("f1-misuse-bio-strict", "f1-misuse-bio-default"), ("f1-misuse-cyb-strict", "f1-misuse-cyb-default"),
+           ("f1-alignment-cyb-strict", "f1-alignment-cyb-default"), ("f1-security-strict", "f1-security-default"),
+           ("f1-halt-strict", "f1-halt-default"), ("f1-contrib-bio-strict", "f1-contrib-bio-default"),
+           ("f1-contrib-cyb-strict", "f1-contrib-cyb-default")),
+    "F2": (("f2-deploy", "f2-deploy-any", "f2-reminder", "f2-reminder-any"), ("f2-no-deploy", "f2-no-deploy-any"),
+           ("f2-security-developed",)),
+    "F3": (("f3-develop", "f3-develop-inuse", "f3-reminder"), ("f3-develop-forecast", "f3-develop-inuse-forecast")),
+    "F4": (("f4-security",),),
+    "F5": (("f5-ambiguous",), ("f5-checkpoint",)),
+    "F6": (("f6-rel",),),
+    "F7": (("f7-evaluations",), ("f7-compile",), ("f7-report",), ("f7-recommend",)),
+    "F8": (("f8-start",),),
+    "F9": (("f9-risk-paths",), ("f9-specific",), ("f9-efficacy",), ("f9-threshold",), ("f9-report",),
+           ("f9-residual-strict", "f9-residual-default")),
+    "F10": (("f10-validate",), ("f10-review",)),
+    "F11": (("f11-within", "f11-exception", "f11-exception-deploy"), ("f11-acknowledge",), ("f11-protect",),
+            ("f11-share",)),
+    "F12": (("f12-lra", "f12-lra-unscoped"), ("f12-sandbagging", "f12-sandbagging-unscoped"), ("f12-ara", "f12-ara-unscoped"),
+            ("f12-undermining", "f12-undermining-unscoped"), ("f12-nuclear", "f12-nuclear-unscoped")),
+    "F13": (("f13-review",), ("f13-results",)),
+    "F14": (("f14-document",), ("f14-summary",), ("f14-investigate",), ("f14-corrective",)),
+    "F15": (("f15-disclose",), ("f15-safeguards",), ("f15-third-party",)),
+    "F16": (("f16-sag-recommend",), ("f16-informed",), ("f16-without-noinput", "f16-without-nodelib"),
+            ("f16-ssc-visibility",), ("f16-board-reverse",), ("f16-board-mandate",), ("f16-year",),
+            ("f16-chair-strict", "f16-chair-default")),
+    "F17": (("f17-suff", "f17-iff"), ("f17-iff-only",)),
+}
+
+
 def dead_rules(items):
-    """N3: every F1 to F17 rule has a witness: a case model on which VE selected it, in a scored item of this
-    run or in a model built from the rule's own guard."""
+    """N3: every part of every PLAN 4.2 commitment F1 to F17 has a rule, and every such rule a witness: a case model
+    on which VE selected it, in a scored item of this run or in a model built from the rule's own guard."""
     seen = {name for item in items.values() for name in item.get("selected_rules", ())}
-    commitments = [b for b in T.rule_blocks() if re.match(r"f\d+-", b.id)]
-    witnesses = {b.id: "a scored case" if b.id in seen else witness_for(b) for b in commitments}
-    missing = sorted(n for n, w in witnesses.items() if w is None)
-    result = {"route": "D1 soft-norms@0 selected_rules: a validated case model per rule", "cone": [],
+    blocks = {b.id: b for b in T.rule_blocks()}
+    listed = [n for parts in COMMITMENTS.values() for part in parts for n in part]
+    unlisted = sorted(n for n in blocks if re.match(r"f\d+-", n) and n not in listed)
+    witnesses = {n: "a scored case" if n in seen else witness_for(blocks[n]) for n in listed if n in blocks}
+    missing = sorted({n for n in listed if witnesses.get(n) is None} | set(unlisted))
+    result = {"route": "D1 soft-norms@0 selected_rules: a validated case model per rule of each commitment",
+              "cone": [], "commitments": {f: [list(part) for part in parts] for f, parts in COMMITMENTS.items()},
               "choices": [{"choice": {}, "holds": False if not missing else None,
-                           "reason": "every commitment selected on a validated case model"}],
+                           "reason": "every part of every commitment selected on a validated case model"}],
               "witnesses": witnesses}
     if missing:
-        result["undecided"] = f"translation limit (SC): no witness model for {', '.join(missing)}"
+        result["undecided"] = f"translation limit (SC): no witness model or no commitment part for {', '.join(missing)}"
     return result
 
 
@@ -962,7 +1003,10 @@ def same_set(key, result):
 
 
 # Every disagreement, classified after its source sentence was read (PLAN 12 lists them).
-CAUSES = {}
+_K_ENTRY = "PLAN 12 item {}: the key cell is a key finding (KEY-FREEZE.md: section 6 is not edited); VE gives {}"
+CAUSES = {"C6": {"kind": "key finding", "feature_family": "key", "reason": _K_ENTRY.format(19, "NONE")},
+          "C-doc": {"kind": "key finding", "feature_family": "key", "reason": _K_ENTRY.format(19, "NONE")},
+          "G9": {"kind": "key finding", "feature_family": "key", "reason": _K_ENTRY.format(20, "SOME(P ∨ scoped)")}}
 TRANSCRIPTION = {"SOME(N": "SOME(N ∧ unscoped)"}
 
 
