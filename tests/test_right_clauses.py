@@ -752,3 +752,149 @@ def test_right_clauses_report_lists_every_moved_item():
             for line in table:  # plan (2) rows: the fixtures' verdicts; (1)'s differential stays (the decision keeps it)
                 if line.startswith("| (2)") and fixture in line.replace("K13", "") and line not in moved_rows:
                     assert "excepted" in line, line
+
+
+# ---------------------------------------------------------------- cmp-s3-cfr-1d: RC1 to RC4 (spec 2) through W7
+
+RC_SOURCE = ("Everyone has equal access to public service. This may not be denied. Officials said \"yes\" to it. "
+             "Form rd-2 applies. Café rules.").ljust(200)
+RC_ENV = _env(predicates={"lives_in": {"arguments": ["person", "state"], "description": "base"},
+                          "parent_of": {"arguments": ["person", "person"], "description": "base"},
+                          "publish_required": {"arguments": ["person", "person"], "description": "obligation",
+                                               "regulated": {"role": "obligation", "default": "deny",
+                                                             "act": "{0} publish about {1}"}}})
+CLAIM = "Claim of right 1. Every state must give each person equal access to public service"
+COUNTRY = "that state has the recorded relation \"country_of\" to that person"
+
+
+def _publish(**keys):
+    """Right `r12` (holder person) with the claim `publish` on `publish_required(person, person)`, holder slot 1."""
+    line = {"kind": "claim", "holder_slot": 1, "norm": {"name": "publish", "predicate": "publish_required", "sign": True,
+                                                         "guard": ["top"], "unless": [], "over": []}, "elided": [], **keys}
+    return [{"right": {"name": "r12", "holder": "person", "lines": [line]}, "span": [0, 200]}]
+
+
+# each RC instance (spec 2, 9.3's English line): the document and the rows Lean shows for it, (frame, rule, text)
+RC_INSTANCES = {
+    "RC1": (_spanned(document(relation=RELATION, clauses=[CHARGED], elided=[[0, 8]]), 0, 200), [
+        ("RC1", "equal-access", f"{CLAIM}, where {COUNTRY}, if that person is charged."),
+        ("RC4", "equal-access", "This line leaves out: \"Everyone\".")]),
+    "RC2": (_spanned(document(relation={**RELATION, "predicate": "lives_in", "slots": [1, 0]}), 0, 200), [
+        ("RC1", "equal-access", f"{CLAIM}, where that person has the recorded relation \"lives_in\" to that state."),
+        ("RC4", "equal-access", "This line leaves out nothing.")]),
+    "RC3": (_spanned(document(relation=TOTAL), 0, 200), [
+        ("RC1", "equal-access", f"{CLAIM}, where {COUNTRY}."),
+        ("RC3", "equal-access", f"For every person there is at least one state such that {COUNTRY}."),
+        ("RC4", "equal-access", "This line leaves out nothing.")]),
+    "RC3 same sort, slot o first": (_publish(relation={"predicate": "parent_of", "slots": [0, 1], "cites": [],
+                                                        "total": 1}), [
+        ("RC1", "publish", "Claim of right 1. Every first person must publish about each second person, where the first "
+                           "person has the recorded relation \"parent_of\" to the second person."),
+        ("RC3", "publish", "For every first person there is at least one second person such that the second person has "
+                           "the recorded relation \"parent_of\" to the first person."),
+        ("RC4", "publish", "This line leaves out nothing.")]),
+    "RC4": (_spanned(document(elided=[[0, 8], [29, 43], [45, 68], [69, 96], [97, 115], [116, 128]]), 0, 200), [
+        ("RC4", "equal-access", "This line leaves out: \"Everyone\"; \"public service\"; bytes [45, 68); bytes [69, 96); "
+                                "bytes [97, 115); \"Café rules.\".")]),
+}
+
+
+def rc_cases(*docs, source=RC_SOURCE, env=RC_ENV):
+    from ve.right_clauses import lexicon
+    return [{"id": str(i), "environment": env, "document": d, "english": {"source": source, "lexicon": lexicon(env)}}
+            for i, d in enumerate(docs)]
+
+
+def test_right_clauses_rc_lean_rows(service):
+    """Lean's `english` on each RC instance through the mode, exact bytes; bound by the relay to the request."""
+    from ve.right_clauses import bind
+    docs = [doc for doc, _ in RC_INSTANCES.values()]
+    for (name, (doc, rows)), answer in zip(RC_INSTANCES.items(), exchange(service, MODE_RC, rc_cases(*docs))):
+        assert answer["status"] == "ok", (name, answer)
+        assert bind(answer["result"], doc, RC_ENV, english=True).english == tuple(rows), name
+
+
+MODE_RC = "clauses-elaborate"
+
+
+def _quoted(text: str) -> list:
+    """RC4's parts in order: ("quote", text) or ("bytes", a, b)."""
+    import re
+    body = text.removeprefix("This line leaves out: ").removesuffix(".")
+    return [("bytes", int(m[1]), int(m[2])) if m[1] else ("quote", m[3])
+            for m in re.finditer(r'bytes \[(\d+), (\d+)\)|"([^"]*)"', body)]
+
+
+def test_right_clauses_rc4_w8_quotes_are_source_bytes(service):
+    """W8 for RC4 (composition.md 2): every quoted elided text is the source bytes of its span, byte-equal, in the
+    line's order; a span in the byte form names its own offsets, and only a span holding a trigger takes it."""
+    doc = RC_INSTANCES["RC4"][0]
+    [answer] = exchange(service, MODE_RC, rc_cases(doc))
+    [(frame, _, text)] = [(r["frame"], r["rule"], r["text"]) for r in answer["result"]["english"]]
+    spans = doc[0]["right"]["lines"][0]["elided"]
+    parts = _quoted(text)
+    assert frame == "RC4" and len(parts) == len(spans) == 6
+    source = RC_SOURCE.encode()
+    for (a, b), part in zip(spans, parts):
+        quoted = source[a:b].decode()
+        triggered = any(t in quoted for t in ("may not", '"', "ve__", "rd-", "soft__", "rights__"))
+        assert part == (("bytes", a, b) if triggered else ("quote", quoted)), (a, b, part)
+
+
+def test_right_clauses_rc_g6_g9_every_shown_line(service):
+    """G6 and G9 on every line the mode shows for the instances (no generated-name substring, no "may not", quoted
+    source text included); a lexicon that names another environment is refused by Lean."""
+    docs = [doc for doc, _ in RC_INSTANCES.values()]
+    for answer in exchange(service, MODE_RC, rc_cases(*docs)):
+        for row in answer["result"]["english"]:
+            assert not any(t in row["text"] for t in ("ve__", "rd-", "soft__", "rights__", "may not")), row
+    [wrong] = exchange(service, MODE_RC, [{**rc_cases(docs[0])[0], "english": {
+        "source": RC_SOURCE, "lexicon": {**rc_cases(docs[0])[0]["english"]["lexicon"], "environment_id": "0" * 64}}}])
+    assert wrong["error"] == "InvalidInput: the lexicon names another environment", wrong
+
+
+def test_right_clauses_rc_rows_retyped_and_rebound(service):
+    """R8: every field of a shown row retyped is refused by the schema; a row dropped, repeated, added, moved to
+    another rule or frame, or shown unasked is refused by the binding."""
+    from ve.backends.lean_service import CheckerUnavailable
+    from ve.right_clauses import bind
+    doc, _ = RC_INSTANCES["RC3"]
+    [answer] = exchange(service, MODE_RC, rc_cases(doc))
+    result = answer["result"]
+    rows = result["english"]
+    request = {"id": "0", "mode": MODE_RC, "cases": rc_cases(doc)}
+    for key in ("frame", "rule", "text"):
+        for value in (None, 1, [], ""):
+            bad = deepcopy(answer)
+            bad["result"]["english"][0][key] = value
+            with pytest.raises(Invalid):
+                check_response(MODE_RC, {"id": answer["id"], "results": [{**bad}]}, request)
+    rebound = [rows[1:], rows + [rows[-1]], [rows[0], rows[0], *rows[1:]], rows[::-1],
+               [{**rows[0], "rule": "other"}, *rows[1:]], [{**rows[0], "frame": "RC2"}, *rows[1:]]]
+    for bad in rebound:
+        with pytest.raises(CheckerUnavailable):
+            bind({**result, "english": bad}, doc, RC_ENV, english=True)
+    with pytest.raises(CheckerUnavailable):
+        bind(result, doc, RC_ENV)
+    with pytest.raises(CheckerUnavailable):
+        bind({k: v for k, v in result.items() if k != "english"}, doc, RC_ENV, english=True)
+
+
+def test_right_clauses_rc_many_lines_within_limits(service):
+    """The evaluator rule (2026-10-27): rendering reads each line once; the shown lines' bytes are charged together
+    against the stated source limit (65,536) before the gate reads them. Sixteen structured lines, each with a total
+    relation, a clause and a 3,690-byte quoted span, are shown (48 rows, about 60 KB); one more byte of quoted text
+    per line, or one 70,000-byte span, is a deterministic `ResourceLimit` before any line is gated."""
+    line = document(relation=TOTAL, clauses=[CHARGED])[0]["right"]["lines"][0]
+
+    def request(n, width):
+        lines = [{**deepcopy(line), "norm": {**line["norm"], "name": f"access-{i}"}, "clauses": [
+            {**CHARGED, "span": [i * width, i * width + 10]}], "elided": [[i * width + 10, i * width + width]]}
+            for i in range(n)]
+        doc = [{"right": {"name": "r21", "holder": "person", "lines": lines}, "span": [0, n * width]}]
+        return rc_cases(doc, source=("x" * (width - 1) + " ") * n)[0]
+    within, over, one = exchange(service, MODE_RC, [request(16, 3700), request(16, 4000), request(1, 70000)])
+    assert within["status"] == "ok" and len(within["result"]["english"]) == 48, within.get("error")
+    assert sum(len(r["text"].encode()) for r in within["result"]["english"]) <= 65536
+    for refused in (over, one):
+        assert refused["error"] == "ResourceLimit: the shown lines exceed 65536 bytes", refused

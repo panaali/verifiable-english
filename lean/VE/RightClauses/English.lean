@@ -190,12 +190,16 @@ def lineRows (D : ClauseDoc) (L : VE.EnglishGrammar.Lexicon) (src : ByteArray) (
 def firstUnshown (rows : List Row) : String :=
   ((rows.find? (!shown ·)).map fun r => s!"{r.frame} line of {r.rule}").getD ""
 
-/-- The shown lines of `D` in document order, each line read once; returned only when every one is `shown`. -/
+/-- The shown lines of `D` in document order, each line read once; returned only when every one is `shown`. The gate
+    reads a line in time quadratic in its length, so the lines' bytes are charged first, together, against the
+    stated source limit (`VE.Limits.maxSourceBytes`; the evaluator rule of 2026-10-27). -/
 def english (D : ClauseDoc) (L : VE.EnglishGrammar.Lexicon) (source : String) : Except String (List Row) :=
   match D.lines.mapM (lineRows D L source.toUTF8) with
   | .error e => .error e
   | .ok xs =>
-    if xs.flatten.all shown then .ok xs.flatten
+    if xs.flatten.foldl (· + ·.text.utf8ByteSize) 0 > VE.Limits.maxSourceBytes then
+      .error s!"ResourceLimit: the shown lines exceed {VE.Limits.maxSourceBytes} bytes"
+    else if xs.flatten.all shown then .ok xs.flatten
     else .error s!"CheckerUnavailable: the {firstUnshown xs.flatten} does not pass the all-derivations gate"
 
 /-- Every line `english` returns passes W7's all-derivations gate: over every frame of `rcFrames`, its text has
@@ -207,6 +211,8 @@ theorem english_gated : ∀ (D : ClauseDoc) (L : VE.EnglishGrammar.Lexicon) (sou
   split at h
   · cases h
   · split at h
+    · cases h
+    split at h
     · rename_i hs
       cases h
       simp only [List.all_eq_true] at hs
