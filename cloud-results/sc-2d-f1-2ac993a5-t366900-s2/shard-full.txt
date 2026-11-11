@@ -1,0 +1,142 @@
+shard 3/3: 11 units; commands: []
+info: syncing channel updates for 1.98.1-x86_64-unknown-linux-gnu
+info: latest update on 2026-09-03 for version 1.98.1 (48a229cea 2026-09-01)
+info: downloading 3 components
+warn: the missing active toolchain `1.98.1-x86_64-unknown-linux-gnu` has been auto-installed
+warn: this might cause rustup commands to take longer time to finish than expected
+info: you may opt out with `RUSTUP_AUTO_INSTALL=0` or `rustup set auto-install disable`
+    Updating crates.io index
+ Downloading crates ...
+  Downloaded generic-array v0.14.7
+  Downloaded crypto-common v0.1.7
+  Downloaded autocfg v1.5.1
+  Downloaded cfg-if v1.0.5
+  Downloaded itoa v1.0.18
+  Downloaded sha2 v0.10.9
+  Downloaded block-buffer v0.10.4
+  Downloaded cpufeatures v0.2.17
+  Downloaded version_check v0.9.5
+  Downloaded num-integer v0.1.47
+  Downloaded zmij v1.0.23
+  Downloaded digest v0.10.7
+  Downloaded proc-macro2 v1.0.107
+  Downloaded quote v1.0.47
+  Downloaded serde v1.0.229
+  Downloaded serde_core v1.0.229
+  Downloaded unicode-ident v1.0.26
+  Downloaded num-traits v0.2.19
+  Downloaded serde_derive v1.0.229
+  Downloaded typenum v1.20.1
+  Downloaded memchr v2.8.3
+  Downloaded num-bigint v0.4.8
+  Downloaded serde_json v1.0.151
+  Downloaded syn v3.0.6
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling quote v1.0.47
+   Compiling typenum v1.20.1
+   Compiling unicode-ident v1.0.26
+   Compiling generic-array v0.14.7
+   Compiling serde_core v1.0.229
+   Compiling autocfg v1.5.1
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling syn v3.0.6
+   Compiling serde v1.0.229
+   Compiling serde_json v1.0.151
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling memchr v2.8.3
+   Compiling cfg-if v1.0.5
+   Compiling cpufeatures v0.2.17
+   Compiling itoa v1.0.18
+   Compiling sha2 v0.10.9
+   Compiling serde_derive v1.0.229
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `release` profile [optimized] target(s) in 16.21s
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling unicode-ident v1.0.26
+   Compiling quote v1.0.47
+   Compiling typenum v1.20.1
+   Compiling serde_core v1.0.229
+   Compiling generic-array v0.14.7
+   Compiling autocfg v1.5.1
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling syn v3.0.6
+   Compiling serde_json v1.0.151
+   Compiling serde v1.0.229
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling cfg-if v1.0.5
+   Compiling itoa v1.0.18
+   Compiling cpufeatures v0.2.17
+   Compiling memchr v2.8.3
+   Compiling sha2 v0.10.9
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling serde_derive v1.0.229
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 8.31s
+order: failed last time []; changed ['tests/test_scope_5_4_statements.py']; then the rest; --maxfail 5
+recording 11 units with 4 jobs in /tmp/ve-select-run-ayvkerpv
+  tests/test_scope_5_4_statements.py: exit 0 in 6.5 s, 226 functions
+  tests/test_answer_cutoff.py: exit 0 in 74.0 s, 571 functions, OPAQUE
+  tests/test_inventory_path.py: exit 1 in 110.5 s, 296 functions
+  tests/test_hang_guards.py: exit 0 in 68.3 s, 993 functions
+  tests/test_platform_contract.py: exit 0 in 44.2 s, 397 functions
+  tests/test_document_split.py: exit 0 in 22.2 s, 270 functions
+  tests/test_surface_registry.py: exit 0 in 1.4 s, 435 functions
+  tests/test_test_chunks.py: exit 0 in 46.4 s, 385 functions, OPAQUE
+  tests/test_lean_dump_cache.py: exit 0 in 396.4 s, 309 functions
+  tools/test_layer_policy.py: exit 0 in 229.2 s, 314 functions
+  tests/test_wire_gate_corpus.py: exit 0 in 669.8 s, 4026 functions
+FAILED tests/test_inventory_path.py (exit 1): tests/test_inventory_path.py::test_no_train_only_path_is_read_outside_the_accessor; log /tmp/ve-select-run-ayvkerpv/tests__test_inventory_path.py.log
+E         +         ),
+E         +         1,
+E         +     ),
+E         + ]
+
+tests/test_inventory_path.py:915: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_inventory_path.py::test_no_train_only_path_is_read_outside_the_accessor - AssertionError: a read outside the accessor, or another site in an allowed function
+assert [(('tests/tes...nts.txt'), 1)] == []
+  
+  Left contains one more item: (('tests/test_scope_5_4_statements.py', 'typed', 'lean/statements.txt'), 1)
+  
+  Full diff:
+  - []
+  + [
+  +     (
+  +         (
+  +             'tests/test_scope_5_4_statements.py',
+  +             'typed',
+  +             'lean/statements.txt',
+  +         ),
+  +         1,
+  +     ),
+  + ]
+1 failed, 91 passed in 98.71s (0:01:38)
+recorded 11 units for tree a8c08381b8; 0 others left to the static graph until they run; 1 failed
+UNITLOG tests__test_answer_cutoff.py.log: 68 passed in 72.21s (0:01:12)
+UNITLOG tests__test_document_split.py.log: 47 passed in 20.76s
+UNITLOG tests__test_hang_guards.py.log: 69 passed in 67.43s (0:01:07)
+UNITLOG tests__test_inventory_path.py.log: 1 failed, 91 passed in 98.71s (0:01:38)
+UNITLOG tests__test_lean_dump_cache.py.log: 60 passed in 390.90s (0:06:30)
+UNITLOG tests__test_platform_contract.py.log: 59 passed in 43.10s
+UNITLOG tests__test_scope_5_4_statements.py.log: 43 passed in 2.62s
+UNITLOG tests__test_surface_registry.py.log: 9 passed in 0.47s
+UNITLOG tests__test_test_chunks.py.log: 59 passed in 45.57s
+UNITLOG tests__test_wire_gate_corpus.py.log: 8 passed in 665.24s (0:11:05)
+UNITLOG tools__test_layer_policy.py.log: (no count line)
