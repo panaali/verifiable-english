@@ -54,8 +54,8 @@ c3-access-default | omits: "especially those presenting High capabilities" expos
 cl4-persuasion | omits: "Going forward we will handle" restates
 f16-ssc-visibility | omits: "The Safety and Security Committee (SSC) of the OpenAI Board of Directors (Board) will be given visibility into processes" restates ; "and can review decisions and otherwise require reports and information from OpenAI Leadership as necessary to fulfill the Board's oversight role" loss 1
 f16-informed | omits: "Making all final decisions" restates ; "including accepting any residual risks and making deployment go/no-go decisions" exposition ; "SAG's" restates
-f16-without-noinput | omits: "For the avoidance of doubt" reading N2 ; "i.e., the SAG does not have the ability to" restates
-f16-without-nodelib | omits: "For the avoidance of doubt" reading N2 ; "i.e., the SAG does not have the ability to" restates
+f16-without-noinput | omits: "For the avoidance of doubt" reading N2 ; "i.e., the SAG does not have the ability to filibuster" restates
+f16-without-nodelib | omits: "For the avoidance of doubt" reading N2 ; "i.e., the SAG does not have the ability to filibuster" restates
 f16-board-reverse | omits: "and/or mandate a revised course of action" rule f16-board-mandate
 f16-board-mandate | omits: "reverse a decision" rule f16-board-reverse
 f16-chair-strict | omits: "In the rare case that" exposition ; "(e.g., there is a change in our understanding of model safety that requires urgent response)" exposition ; "we can request a fast track for the SAG to process the report urgently" loss 1

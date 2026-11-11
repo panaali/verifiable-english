@@ -124,6 +124,84 @@ def test_unanchored_quotes_are_problems(tmp_path):
         assert any("UNANCHORED" in p for p in result["problems"]), quote
 
 
+def header_source(case, block_id):
+    path = REPO / "usecases" / case / "rules.d1.ve"
+    return {b["id"]: b for b in A.read_blocks(path)}[block_id]["source"]
+
+
+def test_nested_quote_keeps_its_inner_words_on_the_real_header():
+    """F1 (fid-account-1 review): the inner “filibuster” used to close the outer quote, so the word left the span."""
+    found = A.quotes(header_source("openai-preparedness", "f16-without-noinput"))
+    assert found == ["For the avoidance of doubt, OpenAI Leadership can also make decisions without the SAG's "
+                     'participation, i.e., the SAG does not have the ability to "filibuster"']
+    rows = {b["id"]: b for b in A.account(REPO / "usecases" / "openai-preparedness")["blocks"]}
+    for block_id in ("f16-without-noinput", "f16-without-nodelib"):
+        assert any("filibuster" in e["words"] for e in rows[block_id]["entries"]), block_id
+
+
+def test_a_short_quote_does_not_make_the_text_between_two_quotes_a_quote():
+    """The same pairing class: a straight-quote regex skipping a short quote paired its closing mark with the next
+    quote's opening one (safety-framework f16-ds took ', read distributively, ... 1.3.5's ' as a quote)."""
+    assert A.quotes(header_source("safety-framework", "f16-ds")) == ["otherwise assess"]
+
+
+@pytest.mark.parametrize("field, expected", [
+    ("“the board may “veto” any launch”", ['the board may "veto" any launch']),
+    ('“the board may "veto" any launch”', ['the board may "veto" any launch']),
+    ('"the board may “veto” any launch"', ['the board may "veto" any launch']),
+    ('F2 "x" and "the board may veto"', ["the board may veto"]),
+    ("“a “b “c”” d e f g h” then “the second quote”",
+     ['a "b "c"" d e f g h', "the second quote"]),
+    ("the SAG’s view, “the company’s own plan”", ["the company's own plan"]),
+])
+def test_quotes_pair_by_direction_and_nest(field, expected):
+    assert A.scan_quotes(field) == (expected, None)
+
+
+@pytest.mark.parametrize("field", [
+    "“the board may veto any launch",  # never closed
+    "the board may veto any launch”",  # closed, never opened
+    '"the board may veto" any "launch',  # odd number of straight marks
+    '“the board may "veto any launch”',  # the curly mark closes while a straight quote is open inside
+    '“the board may "veto” any launch”',  # the same, with a curly mark left to close the outer quote
+    "“the board may “veto any launch”",  # the inner quote is closed, the outer one never
+])
+def test_unpaired_quote_marks_are_problems(tmp_path, field):
+    assert A.scan_quotes(field)[1] is not None
+    rules = [("r-x", "always", field, "Rule 1. Every situation must have the ledger audited.")]
+    found = problems(make_case(tmp_path, rules, sidecar=["r-x | omits: nothing"]))
+    assert any("r-x: UNPAIRED quote marks" in p for p in found), found
+
+
+def test_generated_nested_quotes_are_recovered_whole():
+    """A seeded generator of fields with quotes nested up to three deep in every mark style: the scanner returns
+    exactly the outermost quotes it built (those of MIN_QUOTE characters or more), in order, with no problem."""
+    import random
+    rng = random.Random(20261111)
+    marks = (("“", "”"), ('"', '"'))
+    vocabulary = "board may veto launch the plan threshold critical model safeguards report".split()
+
+    def text():
+        return " ".join(rng.choice(vocabulary) for _ in range(rng.randint(0, 4)))
+
+    def quote(depth, outer):
+        opens, closes = rng.choice([m for m in marks if not (m[0] == '"' and outer == '"')])
+        inner = text()
+        for _ in range(rng.randint(0, 2) if depth < 3 else 0):
+            inner += " " + quote(depth + 1, opens) + " " + text()
+        return opens + inner + closes
+
+    for _ in range(2000):
+        field, expected = text(), []
+        for _ in range(rng.randint(0, 3)):
+            q = quote(1, None)
+            field += " " + q + " " + text()
+            body = A.norm(q[1:-1])
+            if len(body) >= A.MIN_QUOTE:
+                expected.append(body)
+        assert A.scan_quotes(field) == (expected, None), field
+
+
 def test_anchoring_skips_layout_but_not_words():
     source = ("We will share sig- nificantly more 11 reports, Responsible Scaling Policy, Anthropic 16 with the "
               "Board within 30 days.")
