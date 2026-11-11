@@ -3,7 +3,7 @@
 Stdlib only; shared by the safety-framework-style cases (anthropic-rsp, openai-preparedness). For each block of
 `rules.d1.ve` and then `facts.d1.ve` (a header line `## <id> | <when> | [RS0|independent |] <source>` and one line
 of VE English, the format of each case's `read_blocks`), the tool takes the double-quoted text of the header's source
-field, widens each quote over its elisions to the span of the pinned source text (`--source`), and lists the content
+field (outermost quotes; a quote inside a quote stays in it, `scan_quotes`), widens each quote over its elisions to the span of the pinned source text (`--source`), and lists the content
 words of that span that are neither in the block's VE text nor in the legend of a predicate or constant the block
 uses: the UNACCOUNTED words. The sidecar `accounting.d1.txt` has one line per block, `<id> | omits: nothing` or
 `<id> | omits: "<source words>" <reason> ; ...`; `--check` passes only when every unaccounted word is in some entry
@@ -242,8 +242,40 @@ class Source:
         return out
 
 
+# The double quote marks of a source field: the curly ones open or close by direction, the straight one does
+# whichever its position needs (it closes a straight quote that is open innermost, else it opens one). Single marks
+# are never paired: the sources use ’ and ' as apostrophes too.
+OPENS, CLOSES, STRAIGHT = "“", "”", '"'
+
+
+def scan_quotes(source_field: str):
+    """(the outermost quotes of a source field, normalised and at least MIN_QUOTE long; a problem or None).
+
+    Quotes nest: “… the ability to “filibuster”” is one quote with the inner one inside it, never a quote cut at the
+    inner mark. A mark without its partner (a closing mark with nothing open, a curly closing mark while a straight
+    quote is open innermost, a quote still open at the end) is a problem, not text silently left out."""
+    out, stack, start = [], [], 0
+    for at, mark in ((m.start(), m[0]) for m in re.finditer("[%s%s%s]" % (OPENS, CLOSES, STRAIGHT), source_field)):
+        if mark == CLOSES or (mark == STRAIGHT and stack and stack[-1] == STRAIGHT):
+            if not stack or stack[-1] != (OPENS if mark == CLOSES else STRAIGHT):
+                return out, f"unpaired closing quote mark at character {at}"
+            stack.pop()
+            if not stack:
+                quote = norm(source_field[start:at])
+                if len(quote) >= MIN_QUOTE:
+                    out.append(quote)
+        else:
+            if not stack:
+                start = at + 1
+            stack.append(mark)
+    if stack:
+        return out, f"unclosed quote mark at character {start - 1}"
+    return out, None
+
+
 def quotes(source_field: str):
-    return re.findall(r'"([^"]{%d,})"' % MIN_QUOTE, norm(source_field))
+    """The outermost quotes of a source field (see scan_quotes)."""
+    return scan_quotes(source_field)[0]
 
 
 # ---------------------------------------------------------------------------------------------------------------
@@ -307,7 +339,10 @@ def account(case: Path, source_text: str | None = None, sidecar: Path | None = N
         block["used"] = used
         block["accounted"] = words(block["text"]).union(*(legend[name]["legend"] for name in used))
         spans, block["unanchored"], block["elided"] = [], [], []
-        for quote in quotes(block["source"]):
+        block["quotes"], unpaired = scan_quotes(block["source"])
+        if unpaired:
+            problems.append(f"{block['id']}: UNPAIRED quote marks in the source field: {unpaired}")
+        for quote in block["quotes"]:
             if source is None:
                 if ELISION.search(quote):
                     block["elided"].append(quote)
@@ -381,7 +416,7 @@ def account(case: Path, source_text: str | None = None, sidecar: Path | None = N
               "entries_by_reason": dict(sorted(reasons.items())),
               "unaccounted_words": sum(len(b["unaccounted"]) for b in blocks),
               "blocks_with_unaccounted_words": sum(1 for b in blocks if b["unaccounted"]),
-              "quotes": sum(len(quotes(b["source"])) for b in blocks),
+              "quotes": sum(len(b["quotes"]) for b in blocks),
               "unanchored_quotes": sum(len(b["unanchored"]) for b in blocks),
               "elided_quotes_without_source": sum(len(b["elided"]) for b in blocks)}
     return {"case": case.name, "source_sha256": None if source_text is None else
