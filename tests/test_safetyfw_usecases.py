@@ -542,7 +542,7 @@ def test_pf_translation_lint_and_invention_audit(pf_modules):
         assert json.loads(pf_translation.parsed_rule(block.id))["name"] == block.id
     facts = {block.id: formulas for block, formulas in pf_translation.facts()}
     assert all(len(facts[block]) == 2 for block in pf_build.FACT_ANCHORS if block in facts)
-    assert set(facts) - set(pf_build.FACT_ANCHORS) == {"rs2-nest", "no-critical-models"}
+    assert set(facts) - set(pf_build.FACT_ANCHORS) == {"rs2-nest", "no-critical-models", "fn5-indicator", "cl-levels"}
     assert all(len(facts[block]) == 1 for block in ("rs2-nest", "no-critical-models"))
 
 
@@ -730,7 +730,7 @@ def test_pf_rs13_and_untranslated_claims_have_named_residuals(pf_modules):
     assert pf_build.READINGS["rs13-employee-summary"] == ("RS13", {"permission": ["f14-summary"], "might": []})
     summary_rule = json.loads(pf_translation.parsed_rule("f14-summary"))
     assert summary_rule["predicate"] == "summary_access" and summary_rule["sign"] is True
-    assert "highly_sensitive" in json.dumps(summary_rule["unless"])
+    assert "beyond_sensitive_limits" in json.dumps(summary_rule["unless"])
     assert pf_translation.READING_SETS["RS13"] == ("permission", "might")
     exposition, _ = pf_build._fallback(1, 0, b"Contents")
     claim, _ = pf_build._fallback(1, 0, b"Employees may request a summary")
@@ -880,10 +880,15 @@ def test_pf_run_recomputes_every_key_item_and_records_causes(pf_clean):
     useful = saved["metrics"]["useful_answers"]
     assert (useful["correct"], useful["key"]) == (sum(r["agree"] for r in rows), 239)
     assert saved["metrics"]["M7"]["sensitive_exactly_where_silent"]
-    # The only disagreements are the six truncated key cells; VE's answer equals PLAN 6.2's cell.
+    # The only disagreements are the six truncated key cells (VE's answer equals PLAN 6.2's cell) and the K findings
+    # of PLAN 12 items 19 (C6, C-doc) and 20 (G9).
     disagree = [r for r in rows if r["status"] == "disagree"]
-    assert [r["id"] for r in disagree] == [f"B-{lv}/MREP" for lv in ("BIO-H", "BIO-C", "CYB-H", "CYB-C", "AIS-H", "AIS-C")]
-    assert all(r["cause"]["kind"] == "key finding" and r["cause"]["reason"].endswith("True") for r in disagree)
+    mrep = [f"B-{lv}/MREP" for lv in ("BIO-H", "BIO-C", "CYB-H", "CYB-C", "AIS-H", "AIS-C")]
+    assert [r["id"] for r in disagree] == mrep + ["C6", "C-doc", "G9"]
+    assert all(r["cause"]["kind"] == "key finding" for r in disagree)
+    assert all(r["cause"]["reason"].endswith("True") for r in disagree if r["id"] in mrep)
+    assert all(r["cause"]["reason"].startswith(f"PLAN 12 item {19 if r['id'] != 'G9' else 20}:")
+               for r in disagree if r["id"] not in mrep)
 
 
 def test_pf_independent_reference_and_comparator_catch_wrong_answers(pf_clean):
