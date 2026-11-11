@@ -52,6 +52,7 @@ SECTIONS = (
 # manage-agents/reviews/rd-9-b4-recheck.md, signed in manage-agents/reviews/rd-9-dri-signatures-20261015.md item 3).
 # The approved text with the edit applied must equal the Lean text exactly; any other difference fails.
 B4 = "SIGNED by DRI 2026-10-15 (B4, bounded statement re-check PASS)"
+SC11W = "SIGNED by the DRI 2026-11-10 (reviews/dri-decisions-20261110-sc-11w.md item 1)"
 SIGNED = {
     # Gains `(hN : N.D = b.D)`: the soft case types its situation vocabulary by `primeModel_valid`, which needs the
     # choice's `E` to be the request's, and `Environment` holds functions, so the signature `(b) (N)` cannot check it
@@ -66,6 +67,10 @@ SIGNED = {
                         "(ndDocTextG re (decisionCount (free N.D).1) (freeU N)).or",
                         ":= let freeDoc := free N.D ((reservedUnsaid N).map (s!\"InvalidInput: reserved name {·}\")).or "
                         "<| (ndDocTextG re (decisionCount freeDoc.1) (asU N freeDoc.1)).or")),
+    # Reads the size charge first, so `routeSD` charges `superposable N.D` and `supU N` before building them (the
+    # 2026-10-27 evaluator rule); `routeSD` and every 14.8 theorem text are unchanged (spec 14.11, sc-11w).
+    "sdSuperposable": (SC11W, (":= superposable N.D &&",
+                               ":= decide (sdSizeCharge N ≤ maxSdSizeCharge) && superposable N.D &&")),
 }
 
 

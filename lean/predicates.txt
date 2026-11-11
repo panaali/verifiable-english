@@ -89,6 +89,7 @@ module ResponseShape.Schemas.Scope
 module ResponseShape.Schemas.SearchBudget
 module ResponseShape.Schemas.SensesProject
 module ResponseShape.Schemas.SoftNorms
+module ResponseShape.Schemas.SoftPairsChecks
 module ResponseShape.Schemas.SpeechActs
 module ResponseShape.Schemas.Words
 module ResponseShape.Schemas
@@ -110,6 +111,7 @@ module VE.Acts.Faithful
 module VE.Acts.FaithfulExamples
 module VE.Acts.Grammar
 module VE.Acts.GrammarExamples
+module VE.Acts.Index
 module VE.Acts.Lexical
 module VE.Acts.LexicalBase
 module VE.Acts.LexicalExamples
@@ -117,6 +119,7 @@ module VE.Acts.LexicalProofs
 module VE.Acts.Linearize
 module VE.Acts.Meaning
 module VE.Acts.MeaningExamples
+module VE.Acts.ParseIndexExamples
 module VE.Acts.Read
 module VE.Acts.Readings
 module VE.Acts.ReadingsExamples
@@ -832,6 +835,7 @@ module VE.WireContract.Hooks.Acts
 module VE.WireContract.Hooks.Corpus
 module VE.WireContract.Hooks.NormDefaults
 module VE.WireContract.Hooks.Norms
+module VE.WireContract.Hooks.Purposes
 module VE.WireContract.Hooks.SoftNorms
 module VE.WireContract.Limits
 module VE.WireContract.Names
@@ -840,6 +844,7 @@ module VE.WireContract.Tables.Acts
 module VE.WireContract.Tables.Corpus
 module VE.WireContract.Tables.NormDefaults
 module VE.WireContract.Tables.Norms
+module VE.WireContract.Tables.Purposes
 module VE.WireContract.Tables.SoftNorms
 module VE.Words.Run
 module VE.Words.Situation
