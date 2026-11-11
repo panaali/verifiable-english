@@ -10,7 +10,7 @@
         "properties": {
           "id": {"type": "string", "x-equals": "/id"},
           "identity_id": {"$ref": "common.json#/$defs/hex64"},
-          "kind": {"enum": ["source", "meaning", "model", "claim", "edge"], "x-equals": "/kind"},
+          "kind": {"enum": ["source", "meaning", "rights-meaning", "model", "claim", "edge"], "x-equals": "/kind"},
           "status": {"const": "ok"}
         },
         "required": ["id", "status", "kind", "identity_id"],
