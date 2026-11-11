@@ -1,8 +1,8 @@
 """A pytest plugin that records every input of one wire unit that the tests themselves submit.
 
 The unit is `VE_CONTRACT_UNIT` (`soft-norms@0` by default), or each unit of `VE_CONTRACT_UNITS` with
-the test files whose inputs count for it. For `norms@0` and `norm-defaults@0`
-(wire-contract-s5.md 7.1) it also wraps each unit's `legacy_validation` and `public_rejection`, the two
+the test files whose inputs count for it. For `norms@0`, `norm-defaults@0` and `acts@0`
+(wire-contract-s5.md 7.1; ap-1bfb) it also wraps each unit's `legacy_validation` and `public_rejection`, the two
 admission routes, `NormDocument` and `UnspecifiedDocument` built over an environment, and the Lean service
 modes `norms` and `norm-defaults` and `diagnose` with a norm unit (through `tests/lean_routes.py`); a source is
 recorded for the unit whose domain holds it. For the
@@ -150,26 +150,31 @@ def _install():
 
 
 # The units other than the pilot (wire-contract-s5.md 7.1): each with the module of its contract.
-UNITS = {"soft-norms@0", "norms@0", "norm-defaults@0"}
+UNITS = {"soft-norms@0", "norms@0", "norm-defaults@0", "acts@0"}
 # The service modes of the norm routes (formerly `ve_norms_route` and `ve_norm_defaults_route`).
 NORM_ROUTES = {"norms": "norms@0", "norm-defaults": "norm-defaults@0"}
 
 
 def _norm_unit(environment):
-    """The unit a norm source belongs to: `norm-defaults@0` when its environment lists that profile."""
+    """The unit a norm source belongs to: `norm-defaults@0` when its environment lists that profile, else
+    `acts@0` when it lists that one (ap-1bfb)."""
     profiles = environment.get("profiles") if isinstance(environment, dict) else None
-    return "norm-defaults@0" if isinstance(profiles, list) and "norm-defaults@0" in profiles else "norms@0"
+    listed = profiles if isinstance(profiles, list) else []
+    return "norm-defaults@0" if "norm-defaults@0" in listed else "acts@0" if "acts@0" in listed else "norms@0"
 
 
 def _record_norm(environment, norms):
     """Record a norm source for its unit, when it is in that unit's domain (2.2)."""
+    from conformance.acts_contract import in_domain as acts_domain
     from ve.norms_contract import in_domain
     environment = environment.to_dict() if hasattr(environment, "to_dict") else environment
     norms = [unit.to_dict() if hasattr(unit, "to_dict") else unit for unit in norms] \
         if isinstance(norms, (list, tuple)) else norms
     environment, norms = json.loads(json.dumps([environment, norms], default=repr))
     unit = _norm_unit(environment)
-    if in_domain(environment, norms, defaults=unit == "norm-defaults@0"):
+    inside = acts_domain(environment, norms) if unit == "acts@0" else \
+        in_domain(environment, norms, defaults=unit == "norm-defaults@0")
+    if inside:
         _record(environment, norms, unit)
 
 
@@ -178,7 +183,7 @@ def _record_norm_cases(mode, cases):
     from ve.norms_contract import active_norms
     for case in cases:
         if not isinstance(case, dict) or not (mode in NORM_ROUTES or (
-                mode == "diagnose" and case.get("unit") in ("norms@0", "norm-defaults@0"))):
+                mode == "diagnose" and case.get("unit") in ("norms@0", "norm-defaults@0", "acts@0"))):
             continue
         kind = case.get("kind")
         if kind == "admission":

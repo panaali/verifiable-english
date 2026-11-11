@@ -235,8 +235,9 @@ NORMS = [
 ]
 NORMS[5] = ("N5", lambda e, r: r[0].update({"norm": []}), "3.2", "/norms/0/norm", "InvalidInput",
             "InvalidInput: expected norm object")
-# 2.12: the record's class is not Python's legacy code on these, by the listed exemptions.
-EXEMPT = {"N32", "N36", "N40"}
+# 2.12: the record's class is not Python's legacy code on these, by the listed exemptions; and A2, since the class
+# of `acts@0`'s 1.1d is InvalidInput for every refusal of the decoder (ap-1bf) and the legacy code is the refusal's.
+EXEMPT = {"N32", "N36", "N40", "A2"}
 # Every fixture is a case that Lean reads: N32's index is the Boolean of the spec (4098ed1c), not the negative
 # integer the restricted JSON reader refuses (`lean/VE/Json.lean`).
 LEAN_UNREADABLE = set()
@@ -296,6 +297,24 @@ NORM_DEFAULTS = [
 ]
 
 
+def base_a():
+    """`acts@0`'s base source, its example `base.json` (ap-1bfb)."""
+    from conformance.wire_contract_faults_acts import base
+    return base()
+
+
+def without_norms(e, r):
+    e["profiles"].remove("norms@0")
+
+
+# `acts@0` (ap-1bfb): the base, and without `norms@0` (F1 of ap-1bf's review: the profile row's text in both engines).
+ACTS = [
+    ("A1", lambda e, r: None, None, None, None, None),
+    ("A1b", lambda e, r: r.clear(), None, None, None, None),
+    ("A2", without_norms, "1.1d", "/environment", "InvalidInput", "UnsupportedProfile: acts@0 requires norms@0"),
+]
+
+
 def source(base, change):
     environment, norms = base()
     change(environment, norms)
@@ -322,6 +341,7 @@ def legacy_error(validate, environment, norms):
 UNITS = {
     "norms@0": (base_b, NORMS, "norms-elaborate", "Norms", legacy_norms),
     "norm-defaults@0": (base_u, NORM_DEFAULTS, "norm-defaults-elaborate", "NormDefaults", legacy_norm_defaults),
+    "acts@0": (base_a, ACTS, "norms-elaborate", "Acts", legacy_norms),
 }
 
 
@@ -381,7 +401,7 @@ def test_lean_route_rejects_where_the_engine_faults(diagnose, unit):
     """The Lean legacy validator of 2.2 on the same fixtures: it rejects exactly where `ve_diagnose` reports a
     fault, except on the listed S5-pre candidates, which are reported, not asserted."""
     base, fixtures, kind, _, _ = UNITS[unit]
-    route = binary("ve_norms_route" if unit == "norms@0" else "ve_norm_defaults_route")
+    route = binary("ve_norm_defaults_route" if unit == "norm-defaults@0" else "ve_norms_route")
     cases = [{"id": name, "kind": kind, **dict(zip(("environment", "norms"), source(base, change)))}
              for name, change, *_ in fixtures if name not in LEAN_UNREADABLE]
     diagnosed = {row["id"]: row.get("outcome") for row in run(diagnose, [unit], cases)}
@@ -563,9 +583,10 @@ def adapter_cases(unit):
     case whose root both engines diagnose, and `decoder` for one inside the domain whose environment does not
     decode (`profiles` a number or a Boolean): both engines fault at 1.1 and the legacy validator rejects with a
     `VEError`. Python's decoder raised `TypeError` on it until the env-field-types fix (s5-pre.md)."""
-    base, kind = (base_b, "norms-elaborate") if unit == "norms@0" else (base_u, "norm-defaults-elaborate")
+    base, kind = {"norms@0": (base_b, "norms-elaborate"), "acts@0": (base_a, "norms-elaborate"),
+                  "norm-defaults@0": (base_u, "norm-defaults-elaborate")}[unit]
     environment, norms = base()
-    mixed = {"units": [7, "x", {"kind": "norm", "content": norms[0]}, {"kind": "quoted", "content": norms[1]},
+    mixed = {"units": [7, "x", {"kind": "norm", "content": norms[0]}, {"kind": "quoted", "content": (norms * 2)[1]},
                        {"kind": "norm", "content": {"text": "t"}}], "graph": {"root": "r", "nodes": []}}
     other = "norm-defaults@0" if unit == "norms@0" else "norms@0"
     rows = [
@@ -601,7 +622,7 @@ def adapter_cases(unit):
         ("kind-object", _with(base, lambda c: c.update(kind={"a": [1]}), kind), "kind"),
         ("kind-missing", _with(base, lambda c: c.pop("kind"), kind), "kind"),
         ("kind-other-unit", _with(base, lambda c: c.update(
-            kind="norm-defaults-elaborate" if unit == "norms@0" else "norms-elaborate"), kind), "kind"),
+            kind="norms-elaborate" if unit == "norm-defaults@0" else "norm-defaults-elaborate"), kind), "kind"),
         ("kind-soft", _with(base, lambda c: c.update(kind="soft-elaborate"), kind), "kind"),
     ]
     assert other  # both units are listed above by their kinds and profiles
@@ -613,9 +634,10 @@ def python_adapter_row(unit, case):
     from ve.errors import UnsupportedProfile
     from ve.norm_defaults_contract import REGISTRY as DEFAULTS
     from ve.norms_contract import REGISTRY as NORMS
+    from conformance.acts_contract import REGISTRY as ACTS_REGISTRY
     from conformance.wire_contract_engine import Fault, load
     from conformance.wire_contract_engine import run as engine_run
-    registry = NORMS if unit == "norms@0" else DEFAULTS
+    registry = {"norms@0": NORMS, "norm-defaults@0": DEFAULTS, "acts@0": ACTS_REGISTRY}[unit]
     contract = load(unit)
     try:
         root = registry.adapters[contract["adapter"]](copy.deepcopy(case))

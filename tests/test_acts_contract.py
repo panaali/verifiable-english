@@ -3,8 +3,10 @@ member of 1.1 at and around each limit of `VE.Acts.Lexical`, the limits read fro
 
 from copy import deepcopy
 import json
+import os
 from pathlib import Path
 import re
+import subprocess
 
 import pytest
 
@@ -13,6 +15,8 @@ from conformance.wire_contract_engine import CLEAN, Fault, load, run
 from conformance.wire_contract_faults import catalogue, catalogue_index
 from conformance.wire_contract_faults_acts import EXAMPLES, at_count, at_limits, base, limits
 from tests import lean_routes
+from tests.subprocesses import HANG_TIMEOUT
+from tools import nested_pytest
 from ve.errors import UnsupportedProfile, VEError
 from ve.norms_contract import OUTSIDE, legacy_validation
 
@@ -59,6 +63,33 @@ def test_a_source_without_norms_gives_one_record_in_both_engines():
     [(python, lean)] = engine_records([(raw, norms)])
     assert python is not None and python == lean
     assert lean["check"] == "1.1d" and lean["text"] == str(legacy(raw, norms))
+
+
+# The test files whose `acts@0` sources the recorded corpus holds (F2 of ap-1bf's review): `-k acts` selects this
+# file and the unit's row of the s5 tests, and the corpus test itself is left out of its own run.
+RECORDED_TESTS = ("tests/test_acts_contract.py", "tests/test_wire_contract_s5_lean.py")
+
+
+def recorded_sources(output):
+    """The `[test id, environment, norms]` rows `tests/contract_input_recorder.py` records for `acts@0` while the
+    recorded test files run."""
+    environment = nested_pytest.environment(os.environ, VE_CONTRACT_INPUTS=str(output), VE_CONTRACT_UNIT="acts@0",
+                                            VE_NATIVE_PREBUILT="1", PYTHONPATH=str(ROOT))
+    result = subprocess.run(nested_pytest.command(["-q", "-p", "tests.contract_input_recorder", "-p",
+                                                   "no:cacheprovider", "-o", "addopts=", "-m", "not live", "-k",
+                                                   "acts and not recorded_corpus", *RECORDED_TESTS]),
+                            cwd=ROOT, env=environment, capture_output=True, text=True, timeout=HANG_TIMEOUT)
+    assert result.returncode == 0, result.stdout[-4000:]
+    return json.loads(output.read_text())
+
+
+def test_the_recorded_corpus_gives_one_record_in_both_engines(tmp_path):
+    """F2 of ap-1bf's review: every `acts@0` source the tests submit gives one record, or none, in both engines."""
+    recorded = recorded_sources(tmp_path / "inputs.json")
+    assert any("norms@0" not in raw["profiles"] for _, raw, _ in recorded)  # F1's source is recorded
+    pairs = engine_records([(raw, norms) for _, raw, norms in recorded])
+    assert sum(lean is not None for _, lean in pairs) > len(catalogue("acts@0"))
+    assert [label for (label, _, _), (python, lean) in zip(recorded, pairs) if python != lean] == []
 
 
 def test_the_limits_are_leans_and_never_copied():
