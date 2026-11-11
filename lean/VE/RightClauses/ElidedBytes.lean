@@ -17,7 +17,7 @@ namespace VE.RightClauses
 open Lean
 
 /-- One line's elided bytes: the sum of `b - a` over its elided spans (6). -/
-def lineElided (L : CLine) : Nat := L.elided.foldl (fun n s => n + (s.2 - s.1)) 0
+def lineElided (L : CLine) : Nat := L.elided.foldl (fun n (s : Nat × Nat) => n + (s.2 - s.1)) 0
 
 /-- Each structured line's key (right, rule name) and its elided bytes, in document order. Every span is read here,
     once. -/
@@ -25,17 +25,21 @@ def entryElided (D : ClauseDoc) : List ((String × String) × Nat) :=
   D.lines.map fun (R, n, L) => ((R, n), lineElided L)
 
 /-- The document total (6): the sum over every structured line. -/
-def elidedTotal (es : List ((String × String) × Nat)) : Nat := es.foldl (fun n e => n + e.2) 0
+def elidedTotal (es : List ((String × String) × Nat)) : Nat :=
+  es.foldl (fun n (e : (String × String) × Nat) => n + e.2) 0
 
 /-- Per unit of `document`, in document order (6, 9.3): the sum over the unit's line objects of their entries' bytes,
     each entry found by (right, rule name). A unit with no line-bearing body, or no named line, has 0. -/
 def unitElided (es : List ((String × String) × Nat)) (document : Json) : List Nat :=
   (unitsOf document).map fun u =>
-    match unitBody (dropKeys ["span"] u) with
+    match unitBody u with
     | some (k, b) =>
       let R := bodyRight k b
-      (bodyLines b).foldl (fun n l =>
-        n + (((jsonLineName l).bind fun r => (es.find? (·.1 == (R, r))).map (·.2)).getD 0)) 0
+      (bodyLines b).foldl (fun n l => n + match jsonLineName l with
+        | some r => match es.find? (fun (e : (String × String) × Nat) => e.1 == (R, r)) with
+          | some e => e.2
+          | none => 0
+        | none => 0) 0
     | none => 0
 
 end VE.RightClauses
