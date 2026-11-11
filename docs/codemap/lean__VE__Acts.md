@@ -4,6 +4,7 @@
 - `lean/VE/Acts/DecodeTwins.lean` — The twins of the reached soundness theorems (docs/spec/act-phrases.md 6.4): each entry point's theorem at the decoder it runs an `acts@0` document on, stated w…
 - `lean/VE/Acts/Elaborate.lean` — Elaboration: joined acts become rules on simple acts (docs/spec/act-phrases.md 6.3, 6.5, 6.6; plan 2.3).
 - `lean/VE/Acts/ElaborateExamples.lean` — Fixtures of the elaboration (docs/spec/act-phrases.md 6.3, 11.3: E1 to E10, E16, E17; sorts `person`, guards `top`).
+- `lean/VE/Acts/ElaborateProofs.lean` — The split map is exact and a part is its source's declaration with atom i's act (docs/spec/act-phrases.md 6.6: `splitMap_exact`, `elaborate_parts`).
 - `lean/VE/Acts/Faithful.lean` — Faithfulness of the elaboration (docs/spec/act-phrases.md 6.6, C17): each part means what the source rules mean, read of the part.
 - `lean/VE/Acts/FaithfulExamples.lean` — Fixtures of `elaborate_faithful` (docs/spec/act-phrases.md 6.6, 11.3): both sides of the iff, computed on small finite structures.
 - `lean/VE/Acts/Grammar.lean` — The act grammar's rule table (docs/spec/act-phrases.md 5.2) and its well-formedness `grammar_wf` (5.6).
@@ -24,7 +25,6 @@
 - `lean/VE/Acts/RunExamples.lean` — Fixtures of the `act-readings` mode (docs/spec/act-phrases.md 7, 11.4; plan AP-4 Tests; DRI 2026-11-08 ap-4 item 1): the pilot's phrases through the mode with …
 - `lean/VE/Acts/Situation.lean` — A separating situation built from simple acts (docs/spec/act-phrases.md 7; plan AP-4).
 - `lean/VE/Acts/Sources.lean` — Sources and exact reading sets (docs/spec/act-phrases.md 1.8, 7; plan AP-4, G4).
-- `lean/VE/Acts/SourcesProofs.lean` — `sourceCheck` read from its parts, and why spec 7's `sourceCheck_complete` needs the choice bound (docs/spec/act-phrases.md 7; DRI 2026-11-02 triage item 8c).
 - `lean/VE/Acts/Specialise.lean` — Specialisation (docs/spec/act-phrases.md 1.9, 8; plan 2.6, decision D5): when one simple act is a way of doing another, through the markers and adverbs the `ac…
 - `lean/VE/Acts/SpecialiseExamples.lean` — Fixtures of `specialises` and `specPremises` (docs/spec/act-phrases.md 8, 11.5; plan AP-5).
 - `lean/VE/Acts/Syntax.lean` — The act grammar's tokens, vocabulary and terminals (docs/spec/act-phrases.md 1.1, 1.2, 1.4, 5.1).
