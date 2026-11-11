@@ -145,6 +145,23 @@ regenerated coverage (CHECKED 170 -> 344 bytes: `cl-levels`; f7-compile's unit m
 
 usecase-pf-reaudit: `zsh uc-audit.sh openai-preparedness main 3`, launched by the DRI decider after this merge.
 
+## Tests run
+
+1. `MAC_PYTEST_NO_DEFER=1 mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` at b58ff0b36c (REPORT commit):
+   the fast stage failed `tests/test_english_lean_lexicon.py::test_every_corpus_environment_has_a_valid_selected_lexicon`
+   (the committed lexicon report hashes the case's environment). Fixed in db649565b7.
+2. The same selection at db649565b7: shards 1 and 2 passed (14 and 13 units); shard 3 "4 failed, 101 passed" in
+   tests/test_safetyfw_usecases.py (test_pf_every_byte_has_ve_status_and_one_unit,
+   test_pf_rs13_and_untranslated_claims_have_named_residuals, test_pf_run_recomputes_every_key_item_and_records_causes,
+   test_pf_translation_lint_and_invention_audit). Fixed in 54764194a5; locally "4 passed, 101 deselected".
+3. `mac-pytest.sh -- -q tests/test_safetyfw_usecases.py tests/test_english_lean_lexicon.py tests/test_pf_fidelity_fix.py`
+   at 54764194a5: "1 failed, 175 passed" (test_pf_stage0_and_gaps: stage0.json stale since the WIP commits). Fixed
+   in d7b10121.
+4. `mac-pytest.sh -- -q tests/test_safetyfw_usecases.py::test_pf_stage0_and_gaps` at d7b10121: "1 passed", exit 0;
+   `stage0.py`, `build_document.py` and `measure.py --check` exit 0 locally.
+
+No test in main-known-red.txt was involved.
+
 ## Self-review against BUILDER-CHECKLIST
 
 1. Lean answers typed and contained: N.A., no relay or schema changed.
@@ -153,8 +170,7 @@ usecase-pf-reaudit: `zsh uc-audit.sh openai-preparedness main 3`, launched by th
    and a removed field are caught); `test_a_cut_altered_or_missing_quote_is_a_fault`.
 4. Python, Lean and Rust agree: N.A., no checker code changed; run.py's base run main vs HEAD compared above.
 5. R8 binding: N.A., no Lean answer field read.
-6. Gate evidence matches HEAD: PASS, final selected run on the committed HEAD (MAC_PYTEST_NO_DEFER=1); the chain
-   runs the gate.
+6. Gate evidence matches HEAD: PASS for the tests run (see "Tests run"); the chain runs the gate on the final HEAD.
 7. No unsigned item: PASS, no DELTA row.
 8. Every user-visible change in DELTA: N.A. for product code; the use case's answer changes are in this REPORT.
 9. Test selection: PASS, `tools/select_tests.py --base $(git merge-base HEAD main)` selects
