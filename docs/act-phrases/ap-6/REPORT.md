@@ -3,7 +3,8 @@
 No DRI signature is reserved in this item. No DELTA row: nothing merged changes a verdict, a route or a trusted file.
 
 **D6 outcome: "not yet"** under the conservative reading of bar row 2 taken here (section 5). u019 and u057 stay
-co-blocked (389 B). Route (a) proves its statement with no new axiom and changes no existing theorem statement. It
+co-blocked (389 B). Route (a) proves an event-based variant of its statement (`VE.Acts.Nary.NaryIntended` in place of
+the plan's `VE.Core.NaryIntended`, section 3) with no new axiom and changes no existing theorem statement. It
 checks the fixtures within 1.25× only when its hypothesis `OneEventPerTuple` is left out of the checked premises
 (ratios 1.05, 1.09, 1.17). With the hypothesis stated as premises, the ratios are 1.29, 1.29 and 1.29. Route (b) was
 not finished in the timebox: one of the 25 `VE.Norms` modules was re-proved over `VE.Core.Formula`.
@@ -67,12 +68,22 @@ So the reified documents declare the event sort and roles as plain vocabulary, a
 
 ## 3. Route (a): reification over `events@0` event sorts (scratch/ap-6-route-a, `route-a.patch`)
 
-**Statement as built** (`lean/VE/Acts/Nary.lean:431` on the scratch branch), section 3's text unchanged:
+**Statement as built** (`lean/VE/Acts/Nary.lean:431` on the scratch branch). It is section 3's statement with a
+different right-hand side: `VE.Acts.Nary.NaryIntended` where the plan (`docs/spec/act-phrases-PLAN.md:702`) has
+`VE.Core.NaryIntended`.
 
 ```lean
 theorem VE.Acts.Nary.reify_faithful (D : ActsDoc) (S : VE.Structure.{u}) (hc : OneEventPerTuple D S) :
-    VE.Norms.holdsCatala (reify D).T S ↔ NaryIntended D S
+    VE.Norms.holdsCatala (reify D).T S ↔ VE.Acts.Nary.NaryIntended D S
 ```
+
+**How the right-hand side differs from the plan's.** `VE.Core.NaryIntended` is not defined anywhere. The plan puts it in
+`VE.Core`, where `lean/VE/Core/NARY.md` defines an n-ary extension as a set of ordered tuples, i.e. an n-ary relation
+of `S`. `VE.Acts.Nary.NaryIntended` does not read that relation. It reads the act's n-ary extension through the
+reified binary relation, `ActHolds S a h xs`: some event of the act's sort has the fillers `xs`, and
+`S.relation a.name [h, e]`. A tuple-based right-hand side would need a hypothesis linking the n-ary relation of `S` to
+`ActHolds`, and section 3 states none. So the proved theorem is a weaker, event-based variant of the plan's statement.
+The plan's tuple-based statement is neither stated nor proved (ap-6-text-1).
 
 **Definitions written** (none existed; spec section 9 and `lean/VE/Core/NARY.md` give only their names and intent):
 
@@ -216,15 +227,19 @@ The plan does not say which one it meant (Notes for the DRI).
 
 ## 6. Verdict per bar row
 
-| Bar row (plan line 1056, verbatim) | Route (a) | Route (b) |
+| Bar row (plan lines 1056-1061, without row 2's "measured by `tools/bench/test_perf.py`") | Route (a) | Route (b) |
 |---|---|---|
-| proves its faithfulness statement (section 3) with no new axiom | **PASS** (MEASURED: proved; audit PASS; `[propext, Classical.choice, Quot.sound]`) | **FAIL** (not proved: 1 of 25 modules re-proved in the timebox) |
+| proves its faithfulness statement (section 3) with no new axiom | **PASS for the event-based variant only** (MEASURED: proved with `VE.Acts.Nary.NaryIntended` as the right-hand side; audit PASS; `[propext, Classical.choice, Quot.sound]`). The plan's `VE.Core.NaryIntended` (tuple-based) is not defined or proved (section 3) | **FAIL** (not proved: 1 of 25 modules re-proved in the timebox) |
 | checks the three fixtures within 1.25× the binary route's time on the same machine | **FAIL** under the reading taken (MEASURED 1.293, 1.286, 1.294 with `OneEventPerTuple` as premises); within the bar without them (MEASURED 1.049, 1.092, 1.167) | **not measured** (the checker refuses arity 3 today; route (b) did not reach the decoders) |
 | changes no existing theorem statement (a) / re-proves all of `VE.Norms` over the embedding within 4,000 lines (b) | **PASS** (MEASURED: 0 statement lines removed or changed, 27 added) | **not met** (ESTIMATE 1,600 to 3,200 lines; not done) |
 
+Row 2's times come from `measure.py`, not from `tools/bench/test_perf.py`. Both use the same timer (`ChildCPU`,
+`tests/subprocesses.py`), outside the suite.
+
 **D6: "not yet".** Neither route meets every row. u019 and u057 stay co-blocked (389 B). This is the expected, honest
-outcome the plan names, not a failure of the item. Under the other reading of row 2, route (a) meets all three rows.
-Its build would then be ap-6b, touching:
+outcome the plan names, not a failure of the item. Under the other reading of row 2, route (a) meets rows 2 and 3,
+and row 1 only for the event-based variant (`VE.Acts.Nary.NaryIntended`, section 3), not for the plan's
+`VE.Core.NaryIntended`. If the DRI also accepts that variant, its build would be ap-6b, touching:
 
 - `lean/VE/Acts/Nary.lean` (from `route-a.patch`);
 - the `events@0` block's role declarations (`lean/VE/Events/Decl.lean`, `Wire.lean`);
@@ -272,15 +287,17 @@ It prints `all 384 4202`, `formula 158 2143` and `data 199 1563`, as run on this
 - `uv run python tools/trust_map.py --check` on this branch: `against 8eda0371fd7f: K +0, S +0, D +0, G +0, tied +0,
   unclassified +0, trusted +0` and `PASS`. No trusted file changes; no R16 row.
 - DELTA: none. No verdict, route, wording or trusted file changes.
-- SIZE: 0 product, 0 tests, 608 other hand-written lines (this report 321, `measure.py` 120, `fixtures/make.py`
-  167 lines). Generated or evidence files, not hand-written: the nine fixture documents (from `make.py`), `timing.json`
+- SIZE: 0 product, 102 tests (`tests/test_ap6.py`), 656 other hand-written lines (this report 369, `measure.py` 120,
+  `fixtures/make.py` 167 lines). Generated or evidence files, not hand-written: the nine fixture documents (from `make.py`), `timing.json`
   (from `measure.py`) and the two patches (scratch code).
 - Pilot bytes expected to move: 0 (D6 "not yet"; an estimate, nothing claimed before a pilot audit).
 - Overlap: no branch in flight (`lean-first/*`, `feature/*`, `infra/*`, `foundation/*`) touches `docs/act-phrases/ap-6/`.
 
 Spec re-read:
 
-- `reify_faithful`'s statement against `docs/spec/act-phrases-PLAN.md:701-702` (names, binder order, `.{u}`, `hc`).
+- `reify_faithful`'s statement against `docs/spec/act-phrases-PLAN.md:701-702`: the binder order, `.{u}`, `hc` and the
+  left-hand side match. The right-hand side's name and meaning do not: `VE.Acts.Nary.NaryIntended` (event-based) stands
+  where the plan has `VE.Core.NaryIntended` (tuple-based), as section 3 says.
 - Route (b)'s lift against `:703-704`.
 - The bar against `:1056-1062`.
 - Step 0's rewording against `:1064-1072` and spec F14.
@@ -290,13 +307,33 @@ Spec re-read:
 - **Bar row 2 is ambiguous for route (a)**, and D6 turns on it. Route (a)'s faithfulness is relative to
   `OneEventPerTuple`. With the hypothesis as premises the measured ratio is 1.29 (bar 1.25); as a stated assumption
   outside the premises it is 1.05 to 1.17. The conservative reading was taken (D6 "not yet").
-- If the DRI reads the row the other way, route (a) meets every row on this report's evidence and ap-6b is its build
-  (section 6).
+- If the DRI reads the row the other way, route (a) meets rows 2 and 3 on this report's evidence, and row 1 only for
+  the event-based variant `VE.Acts.Nary.NaryIntended`. The plan names `VE.Core.NaryIntended`, an n-ary extension read
+  as a tuple set (`lean/VE/Core/NARY.md`). Linking that to `ActHolds` needs a hypothesis section 3 does not state. ap-6b
+  is route (a)'s build only if the DRI accepts both the row 2 reading and the event-based variant (section 6).
 - The margin is small. The fixtures' cost is dominated by a fixed ~0.7 s CLI floor, on a loaded machine.
 - `ve-document@1` has no `events` block today (section 2). Route (a)'s documents would need one, or an equivalent, to
   name their event sorts as `events@0`'s.
 - The statement gate: spec section 9 marks AP-6's statements "not for build review". The item went ahead because the
   task assigns it and the statements are the experiment's own.
+
+## Review fixes
+
+- **F1 (A), ap-6-text-1: the built statement was recorded as the plan's.** The built `reify_faithful` has
+  `VE.Acts.Nary.NaryIntended` (event-based, through `ActHolds`) where plan:702 has `VE.Core.NaryIntended` (tuple-based,
+  `lean/VE/Core/NARY.md`). Text only. Section 3 now names the constant and says how it differs. The summary, bar row 1,
+  the D6 paragraph, the spec re-read, the Notes for the DRI and checklist 10 are qualified. The class includes the
+  scratch comments `Nary.lean:11-12` and `:430` ("as written", "verbatim"). They are corrected on `scratch/ap-6-route-a`
+  by a comments-only commit (a829321b9b), and `route-a.patch` is regenerated from it with
+  `git diff 8eda0371fd scratch/ap-6-route-a -- <its five files>`. The file still compiles (`lake env lean`), with the
+  same line numbers and axioms `[propext, Classical.choice, Quot.sound]`. The bar header's "verbatim" was the same class
+  (row 2 leaves out "measured by `tools/bench/test_perf.py`"), and it now says so. D6 does not change.
+  - Regression test: `tests/test_ap6.py`. It compares the plan's statement with the one built in `route-a.patch`, token
+    by token, and checks that the report's block is the built one. While they differ, the report must name every
+    constant that differs, and neither record may claim the plan's text ("unchanged", "verbatim", "as written",
+    "matches plan:N"). Bar row 1 must name both constants. On the pre-fix `REPORT.md` 3 of 5 tests fail; on the pre-fix
+    `route-a.patch` `test_no_record_claims_the_plan_text_while_they_differ` fails (lines 31 and 449). Review probe F1:
+    fails before, passes after.
 
 ## Self-review against BUILDER-CHECKLIST
 
@@ -305,16 +342,20 @@ Spec re-read:
    and `route-b.patch` (`git apply --check` passes on `feature/ap-6`). The fixtures are in `fixtures/`, the script is
    `measure.py`, and this report gives the verdict per row. Route (b)'s stop is the task's own cut ("where you stop,
    an ESTIMATE").
-3. Tests and gates can fail: PASS (seeded bugs S1 to S7, section 7, each with its failing build or `--verify` run).
+3. Tests and gates can fail: PASS (seeded bugs S1 to S7, section 7, each with its failing build or `--verify` run;
+   `tests/test_ap6.py` fails on the pre-fix records, Review fixes).
 4. Python, Lean and Rust agree: N.A. (no product code changes).
 5. R8 binding: N.A. (no relay).
 6. Gate evidence matches the final HEAD: PASS. The chain gates the final HEAD. `timing.json` is checked by
    `measure.py --verify`, which reruns nothing.
 7. No unsigned item: PASS (no DELTA row; none reserved).
 8. Every user-visible change in DELTA: N.A. (none).
-9. Test selection: N.A. (no test or product file changes; only `docs/act-phrases/ap-6/`).
-10. Lean statements say what is claimed: PASS. `reify_faithful` matches plan:701-702 (spec re-read, section 9). The
-    definitions it names are listed in section 3, including `ActsDoc`'s `valid` field.
+9. Test selection: PASS. No product file changes. `tests/test_ap6.py` reads only `docs/act-phrases/ap-6/` and the plan,
+   and it runs in the selected tests.
+10. Lean statements say what is claimed: PASS after review F1 (ap-6-text-1). `reify_faithful` differs from plan:701-702
+    in its right-hand side: `VE.Acts.Nary.NaryIntended` (event-based) where the plan has `VE.Core.NaryIntended`
+    (tuple-based). Section 3 says how they differ, and row 1 is qualified. The definitions it names are listed in
+    section 3, including `ActsDoc`'s `valid` field.
 11. Budgets fail closed: N.A. (no evaluator or limit added).
 12. No CPU or memory regression: N.A. (no product change). The timings are evidence, measured outside the suite.
 13. Test-removed trailers: N.A. (no test removed).
