@@ -81,16 +81,61 @@ and signed by standing ruling R16. FOLLOW-UPS.md has `## norm-defaults-cfr-1b` (
 definitions `ruleSources`, `sourcesJson` and `rightsSources` are classified in `tools/trust-classes.json`.
 
 trust_mutants (`mac-pytest.sh --trustmut -- --max-mutants 1000 --test lean/VE/NormDefaults/PacksLegacyExamples.lean
---test lean/VE/Acts/DecodeExamples.lean --allow trust-mutants-allow.json --rescore ...`): SWEEP_RESULT.
+--test lean/VE/Acts/DecodeExamples.lean --allow trust-mutants-allow.json --rescore ... --json trust-mutants.json`), last on c5251726 after the merge of main: "112 KILLED, 0 SURVIVOR, 0 UNKNOWN,
+19 INVALID, 28 ALLOWED, 0 NOT RUN" (`trust-mutants.json`, head c5251726, base 97b3c799).
 
 ## Tests
 
 - `uv run pytest -q tests/test_norm_defaults_response_binding.py`: 62 passed.
 - Final selected run (`MAC_PYTEST_NO_DEFER=1 mac-pytest.sh --select`, committed tree): SELECTED_RESULT.
-- `python3 lean/audit.py`: PASS (824 files, 9300 theorems). `tools/check_rd9_sc1_statements.py`: PASS.
+- `python3 lean/audit.py` on c5251726: PASS (843 source files, 9487 theorems). `tools/check_rd9_sc1_statements.py`: PASS.
 
 ## Size, pilot bytes, self-review
 
-Hand-written lines: SIZE_LINE. Pilot bytes: none expected to move. The binding refuses forged rows only, and
+SIZE: 382 product (Lean 296, Python 86), 207 tests, 301 other hand-written lines (docs and evidence; the
+tool-written `tools/trust-classes.json` and `docs/trust-baseline.json` are not counted). Command: `git diff --numstat
+$(git merge-base HEAD main)` less the generated files (`regen_generated.py --list`). Pilot bytes: none expected to move. The binding refuses forged rows only, and
 Lean's answers on the pilots are unchanged apart from the added `sources` field (an estimate; no pilot audit was run).
 SELF-REVIEW: 0 A, 9 B, 6 C; fixed 13 (all 9 B; C10, C12, C13, C14 fixed, C11 noted above, C15 measured).
+
+## Notes for the DRI
+
+- The sibling review's F1 (rule names unchecked when `environment.profiles` is missing or not a list) does not apply:
+  `_profiles` reads such a case as no profiles, so `_rule_names` reads its `norms` and a rule that is not its own
+  source is refused. Fixture: `tests/test_norm_defaults_response_binding.py` (the `environment` parametrization at
+  line 367: `None`, `{}`, `{"profiles": None}`, `{"profiles": {}}`, `[]`, `["norms@0"]`).
+- main moved 59 commits after the merge in 3ce045dfa8; none of them touches this item's Lean or relay definitions
+  (`git diff --name-only HEAD...main`). The shared files it does touch (`docs/trust-baseline.json`,
+  `tools/trust-classes.json`, `ve/assurance-manifest.json`, `ve/profiles.py`, `lean/checkers.lock`) are left to the
+  merge train's rebase-second step.
+
+## Self-review against BUILDER-CHECKLIST
+
+1. Typed and contained: PASS. `test_each_echo_field_deleted_retyped_or_extended_is_no_answer` (each `sources` field
+   deleted, retyped, extended) and the schema's typed `{rule, source}` items with `x-same-length`.
+2. Deliverables built, no rule broken: PASS. The deliverables table above; no Python copy of Lean's naming
+   (`_bind_status_rules` compares names with the request only); no report test added (D4).
+3. Tests can fail: PASS. Seeded bugs S1-S5 (Python), L1-L7 (Lean), `mutants.json`; trust_mutants 0 survivors
+   (`trust-mutants.json`).
+4. Lean and Python agree, valid inputs pass: PASS. `test_genuine_answers_pass` (Lean's own rows from `ve_service`:
+   author norms, split act, rights line, fan-out, bar rule, UNKNOWN points).
+5. R8 binding: PASS. `[*-rules-ghost]`, `[*-rules-appended]`, `[*-rules-forged_generated]`, the `*-sources-*`
+   forgeries, `test_request_rules_on_each_source_shape`.
+6. Gate evidence matches HEAD: PASS. Evidence is saved (`evidence/new-tests-on-main.txt`, `trust-mutants.json` on
+   c5251726); the gate is the chain's, on the final HEAD.
+7. No unsigned item: PASS. DELTA rows 1 and 2 cite R16; no signature reserved.
+8. Every user-visible change in DELTA: PASS. DELTA row 1 (refuses more, the `sources` field); `evidence/new-tests-on-main.txt`.
+9. Test selection: PASS. `tools/select_tests.py --base 97b3c799` selects `tests/test_norm_defaults_response_binding.py`
+   and the other norm-defaults suites, not every unit.
+10. Lean statements: PASS. L2, L4, L5, L6 break `ruleSources_spec`, `rightsSources_built`, `elaboratedU_sources`;
+    `tools/check_rd9_sc1_statements.py` PASS; no hypothesis added to an approved statement.
+11. Budgets fail closed: N.A. no budget, limit or deadline is added; the binding walks the request already decoded.
+12. CPU and memory: N.A. one linear pass over the request and the row; no Lean enumeration added (the echo is built
+    with the rules it describes).
+13. Test-removed trailer: PASS. 2b8b0d01e2 carries `Test-removed: ...test_rules_named_by_lean_under_acts_or_rights_are_not_yet_bound — ...`.
+14. Both directions, cited evidence, spec re-read: PASS. Each forgery has a genuine row that passes
+    (`test_genuine_answers_pass`, `test_a_generated_rule_needs_its_echo`). Spec re-read: "a forged generated rule name
+    is refused" against prompts/task-norm-defaults-cfr-1b.txt deliverable (2): refused unless forged together with its
+    echo, which only Lean's naming tells (section "Not bound", R8).
+15. Overclaim, silent cut, checks can fail, limits: PASS. "Not bound" states what passes; no deliverable cut (acts@0
+    kept); each new check has a seeded bug (S1-S5, L1-L7); no new limit (item 11).
