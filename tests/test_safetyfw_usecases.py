@@ -542,7 +542,7 @@ def test_pf_translation_lint_and_invention_audit(pf_modules):
         assert json.loads(pf_translation.parsed_rule(block.id))["name"] == block.id
     facts = {block.id: formulas for block, formulas in pf_translation.facts()}
     assert all(len(facts[block]) == 2 for block in pf_build.FACT_ANCHORS if block in facts)
-    assert set(facts) - set(pf_build.FACT_ANCHORS) == {"rs2-nest", "no-critical-models", "fn5-indicator"}
+    assert set(facts) - set(pf_build.FACT_ANCHORS) == {"rs2-nest", "no-critical-models", "fn5-indicator", "cl-levels"}
     assert all(len(facts[block]) == 1 for block in ("rs2-nest", "no-critical-models"))
 
 

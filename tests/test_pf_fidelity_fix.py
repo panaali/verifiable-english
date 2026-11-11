@@ -285,3 +285,63 @@ def test_a_cut_altered_or_missing_quote_is_a_fault():
     assert quote_faults([good, cut, altered, none], source) == [
         ("cut", "We will review … continued sufficiency."), ("altered", "We will review the Preparedness Framework."),
         ("none", None)]
+
+
+# Review F1: an anchored fact block made its whole source unit CHECKED without the word map a CHECKED rule needs.
+# The class: no placement kind (rule or fact) reaches CHECKED unless CHECKED_CLAUSES maps every word of its unit.
+CL_LEVELS_UNIT = "p15-u245"
+
+
+def _spans():
+    return {r["id"]: r for r in json.loads((PF / "spans.json").read_text())["units"]}
+
+
+def test_every_checked_unit_is_a_rule_or_fact_with_a_complete_word_map(pf):
+    checked = [r for r in _spans().values() if r["status"] == "CHECKED"]
+    assert checked
+    for r in checked:
+        blocks = [r["rule"]] if "rule" in r else r.get("premises", [])
+        assert blocks and all(b in B.CHECKED_CLAUSES for b in blocks), r
+    assert set(B.FACT_ANCHORS) <= set(B.CHECKED_CLAUSES)
+
+
+def test_change_log_removal_of_low_and_medium_is_a_blocked_unit(pf):
+    unit = _spans()[CL_LEVELS_UNIT]
+    assert unit["status"] == "UNFORMALISED" and unit["blocked_rule"] == "cl-levels", unit
+    assert unit["residual"] == "unmapped_duty-p15-u245-b1881efef95f"  # main's residual id is kept
+    assert "cl-levels" not in B.FACT_ANCHORS and "cl-levels" not in B.CHECKED_CLAUSES
+    # The block's own header quotes the sentence; its "because" clause has no element in the facts.
+    header = next(b.source for b in T.read_blocks("facts.d1.ve") if b.id == "cl-levels")
+    sentence = re.search(r"(Also, we are removing terms.*?Preparedness work\.)", header)[1].encode()
+    assert not B._complete_clause_map("cl-levels", sentence)
+
+
+def test_a_partial_fact_word_map_is_not_complete(pf, monkeypatch):
+    assert B._complete_clause_map("bio-high", b"[High]")
+    assert not B._complete_clause_map("bio-high", b"[High] The model can provide")
+    monkeypatch.setitem(B.CHECKED_CLAUSES, "bio-high", (("High", "fact", "is critical"),))
+    assert not B._complete_clause_map("bio-high", b"[High]")
+
+
+@pytest.mark.skipif(not B.DEFAULT_SOURCE.exists(), reason="the pinned source text is not present")
+def test_a_fact_anchored_on_a_partly_translated_unit_is_blocked(pf, monkeypatch):
+    source = B.DEFAULT_SOURCE.read_bytes()
+    _, records = B.build(source)
+    by_id = {r["id"]: r for r in records}
+    for block in B.FACT_ANCHORS:
+        assert any(r.get("premises") == [block] for r in records), block
+    assert by_id[CL_LEVELS_UNIT]["blocked_rule"] == "cl-levels"
+    # The F1 bug, replanted: anchor cl-levels as a fact again. The shared word-map gate still blocks the unit.
+    placements = {k: v for k, v in B.PLACEMENTS.items() if v[1] != "cl-levels"}
+    monkeypatch.setattr(B, "PLACEMENTS", placements)
+    monkeypatch.setitem(B.FACT_ANCHORS, "cl-levels", "Also, we are removing terms")
+    _, replanted = B.build(source)
+    unit = next(r for r in replanted if r["id"] == CL_LEVELS_UNIT)
+    assert unit["kind"] == "unformalised" and "premises" not in unit, unit
+    assert unit["blocked_rule"] == "cl-levels" and unit["residual"] == by_id[CL_LEVELS_UNIT]["residual"]
+
+
+def test_every_blocked_reason_has_one_named_family(pf):
+    # BLOCKER_DETAIL owns each reason's family; a reason missing from it cannot be placed (the replanted F1 hit one).
+    assert set(B.BLOCKED_RULE_REASONS.values()) <= set(B.BLOCKER_DETAIL)
+    assert not hasattr(B, "BLOCKER_FAMILY")

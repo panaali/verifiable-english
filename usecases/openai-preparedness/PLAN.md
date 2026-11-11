@@ -557,7 +557,8 @@ reviews/dri-decisions-20261111-ucfix-cycle.md item 2). Section 6 and `answer-key
     level, so the Framework is silent on it: ALL. N4: change log item 2, "Also, we are removing terms “low” and
     “medium” from the Framework, because those levels were not operationally involved in the execution of our
     Preparedness work.", is the premise `cl-levels` ("No level is low. No level is medium."); an entailment
-    certificate shows that no situation reaches a low or medium level: ALL.
+    certificate shows that no situation reaches a low or medium level: ALL. The sentence's unit stays UNFORMALISED
+    (the blocked unit `cl-levels`): the facts translate the removal, not the "because" clause.
 22. **Translation fixes (translation-fidelity checklist classes 1, 2, 3, 5, 7, 9, 11).** Table 1's acts name the
     standard ("meeting the High standard", Appendix C.1, C.2, C.3); F2's and F3's acts carry the sufficiency
     ("sufficiently minimizing severe-harm risk", "sufficient safety as well as security controls"); 3.3's

@@ -47,17 +47,18 @@ tests skip their rerun; saved evidence invariants remain tested.
 ## Coverage, 2026-11-11
 
 VE classified 389 contiguous units covering all 67,418 bytes. The master map equals the D1 map.
-CHECKED covers six Table 1 level markers, the SSC visibility clause and change log item 2's removal of "low" and
-"medium" (`cl-levels`, 2026-11-11). Three formerly CHECKED rule
+CHECKED covers six Table 1 level markers and the SSC visibility clause. Change log item 2's removal of "low" and
+"medium" (`cl-levels`) stays UNFORMALISED as a blocked unit: its facts translate the removal, not the "because"
+clause, so not every word of the unit is mapped. Three formerly CHECKED rule
 units remain UNFORMALISED because they carry an AT wait or omit a source clause. Claims in headings and illustrative
 sections remain visible whenever the whole source unit contains a duty or hedge.
 
 | Status | Units | Bytes | Share |
 |---|---:|---:|---:|
-| CHECKED | 8 | 344 | 0.5% |
+| CHECKED | 7 | 170 | 0.3% |
 | OPEN | 44 | 9,073 | 13.5% |
 | LABELLED | 48 | 5,327 | 7.9% |
-| UNFORMALISED | 289 | 52,674 | 78.1% |
+| UNFORMALISED | 290 | 52,848 | 78.4% |
 
 Each non-CHECKED byte has a blocker in [gaps.json](../../docs/usecases/safetyfw/openai-preparedness/gaps.json).
 OPEN reading sets remain pending. UNFORMALISED units name the missing D1 feature or

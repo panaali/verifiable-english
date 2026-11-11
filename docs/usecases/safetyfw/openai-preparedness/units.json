@@ -2443,11 +2443,14 @@
    "status": "UNFORMALISED"
   },
   {
-   "blockers": [],
+   "blockers": [
+    "AP"
+   ],
    "bytes": 174,
    "id": "p15-u245",
-   "kind": "asserted",
-   "status": "CHECKED"
+   "kind": "unformalised",
+   "reason": "unmapped_duty",
+   "status": "UNFORMALISED"
   },
   {
    "blockers": [

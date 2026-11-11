@@ -45,6 +45,8 @@ PLACEMENTS = {
     "Such models require additional safeguards": ("readings", "rs18-develop", ("JT", "ET")),
     "We do not currently possess any models that have Critical": ("blocked_rule", "no-critical-models", ("AT",)),
     "we will prioritize Biological capability evaluations": ("blocked_rule", "fn5-indicator", ("AP",)),
+    # The change log's removal of low and medium: the facts translate the removal, not its "because" clause.
+    "Also, we are removing terms": ("blocked_rule", "cl-levels", ("AP",)),
     "We will require the following practices": ("rule", "f4-security", ("JT",)),
     "plausible chance of reaching a capability threshold": ("condition", "ot7", ("JT",)),
     "If justified by our forecasts and threat models": ("blocked_rule", "f5-checkpoint", ("JT", "ET")),
@@ -149,14 +151,20 @@ BLOCKED_RULE_REASONS = {"f5-checkpoint": "event_order", "f5-ambiguous": "unmappe
                         "f9-efficacy": "quantifier_scope", "f9-threshold": "quantifier_scope",
                         "f7-report": "attitude", "f14-document": "unmapped_clause",
                         "f16-sag-recommend": "unmapped_clause", "no-critical-models": "attitude",
-                        "fn5-indicator": "unmapped_duty"}
-BLOCKER_FAMILY = {"event_order": "ET", "quantifier_scope": "SC", "attitude": "AT",
-                  "unmapped_clause": "AP"}
+                        "fn5-indicator": "unmapped_duty", "cl-levels": "unmapped_duty"}
 
 # Each source fragment must map to a named element of the admitted rule or its
-# vocabulary. The fragments must cover every word in the source unit. A new
-# CHECKED rule requires an entry for every condition, quantifier and object.
+# vocabulary, or to the text of the anchored fact block. The fragments must cover
+# every word in the source unit. A new CHECKED rule or fact requires an entry for
+# every condition, quantifier and object; without one its unit is a blocked rule.
 CHECKED_CLAUSES = {
+    # Table 1's level labels: the unit is the bracketed label; the row's category is the table's column.
+    "bio-high": (("High", "fact", "is high"),),
+    "bio-critical": (("Critical", "fact", "is critical"),),
+    "cyb-high": (("High", "fact", "is high"),),
+    "cyb-critical": (("Critical", "fact", "is critical"),),
+    "ais-high": (("High", "fact", "is high"),),
+    "ais-critical": (("Critical", "fact", "is critical"),),
     "f16-ssc-visibility": (
         ("The Safety and Security Committee (SSC) of the OpenAI Board of Directors (Board)",
          "description", "Safety and Security Committee of the OpenAI Board of Directors"),
@@ -170,10 +178,14 @@ def _complete_clause_map(block_id, source_text):
     clauses = CHECKED_CLAUSES.get(block_id)
     if not clauses:
         return False
-    norm = json.loads(T.parsed_rule(block_id))
-    predicate = T.vocabulary.environment()["vocabulary"]["predicates"][norm["predicate"]]
-    elements = {"description": predicate["description"], "sign": norm["sign"],
-                "act": predicate["regulated"]["act"], "guard": json.dumps(norm["guard"])}
+    fact_text = {b.id: b.text for b in T.read_blocks("facts.d1.ve")}
+    if block_id in fact_text:
+        elements = {"fact": fact_text[block_id]}
+    else:
+        norm = json.loads(T.parsed_rule(block_id))
+        predicate = T.vocabulary.environment()["vocabulary"]["predicates"][norm["predicate"]]
+        elements = {"description": predicate["description"], "sign": norm["sign"],
+                    "act": predicate["regulated"]["act"], "guard": json.dumps(norm["guard"])}
     residual = source_text.decode()
     for fragment, element, expected in clauses:
         if residual.count(fragment) != 1:
@@ -200,7 +212,8 @@ OPEN_FOR = {
     "rs9-c2-misalignment": ("ot2",),
 }
 
-# Table 1's six levels: each matched occurrence gets the two source-stated facts for that row.
+# Table 1's six level labels: each matched label gets the two source-stated facts for its row.
+# A fact block whose unit has a word outside its CHECKED_CLAUSES map is placed as a blocked rule.
 FACT_ANCHORS = {
     "bio-high": "[High] The model can pro-",
     "bio-critical": "[Critical] The model can en- able",
@@ -208,7 +221,6 @@ FACT_ANCHORS = {
     "cyb-critical": "[Critical] A tool-augmented model",
     "ais-high": "[High] The model’s impact",
     "ais-critical": "[Critical] The model is ca- pable",
-    "cl-levels": "Also, we are removing terms",
 }
 
 
@@ -333,11 +345,12 @@ def build(source):
         page = sum(p <= a for p in page_starts)
         uid = f"p{page}-u{i+1}"
         kind, ident, waits = placements.get(i, (None, None, ()))
-        if kind == "rule" and not OPEN_FOR.get(ident) and (
+        # A rule or a fact unit is CHECKED only when every source word maps to the block (one gate for both).
+        if kind in ("rule", "facts") and not OPEN_FOR.get(ident) and (
             waits or not _complete_clause_map(ident, source[a:b])
         ):
             reason = BLOCKED_RULE_REASONS.get(ident, "unmapped_clause")
-            kind, waits = "blocked_rule", (BLOCKER_FAMILY[reason],)
+            kind, waits = "blocked_rule", (BLOCKER_DETAIL[reason][0],)  # one owner of each reason's family
         if kind is None:
             spec, wait = _fallback(page, a, source[a:b])
         elif kind == "facts":
