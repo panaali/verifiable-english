@@ -449,19 +449,22 @@ def _on_boundary(raw: bytes, k: int) -> bool:
     return k == len(raw) or raw[k] & 0xC0 != 0x80
 
 
-def _rule_problem(row: dict, k: int, raw: bytes, env, gated: bool) -> str | None:
-    """R8 for one rule row of a `one` answer with `k` rule rows: its `exception_to` entries and its node's `over`
-    name rules 1 … k, its node is named `rule-<number>`, its span holds that rule's header in the source, and its
-    predicate and formulas are the request's (decoded and checked under its environment as a rule of
-    `NormDocument` is, unless the core checker refuses the environment as a whole)."""
+def _rule_problem(row: dict, rows: list, k: int, raw: bytes, env, gated: bool) -> str | None:
+    """R8 for one rule row of a `one` answer with `k` rule rows: its `exception_to` entries name rules 1 … k; its
+    node is named `rule-<number>` and its `over` names, in order, its `exception_to` and then the rules the
+    precedence rows give it precedence over (`Norm.overOf`), so the node and the rows name the same rules; its span
+    lies inside the source on UTF-8 character boundaries and begins with this rule's header (the rule number is
+    the request's); and its predicate and formulas are the request's (decoded and checked under its environment as
+    a rule of `NormDocument` is, unless the core checker refuses the environment as a whole)."""
     norm, (start, stop) = row["node"]["norm"], row["span"]
     if not all(1 <= m <= k for m in row["exception_to"]):
         return "an exception_to entry is not a rule of the answer"
-    if norm["name"] != f"rule-{row['number']}" or not set(norm["over"]) <= {f"rule-{m}" for m in range(1, k + 1)}:
-        return "a rule node's name or over is not a rule of the answer"
+    over = [*row["exception_to"], *(r["over"] for r in rows if r["kind"] == "precedence" and r["rule"] == row["number"])]
+    if norm["name"] != f"rule-{row['number']}" or norm["over"] != [f"rule-{m}" for m in over]:
+        return "a rule node's name or over is not its row's"
     if not (start < stop <= len(raw) and _on_boundary(raw, start) and _on_boundary(raw, stop)):
         return "a rule row's span is not a span of the source's characters"
-    header = re.match(r"rule ([0-9]+)", raw[start:stop].decode().casefold())
+    header = re.match(r"rule ([0-9]+)", raw[start:stop].decode(errors="replace").casefold())
     if header is None or header[1] != str(row["number"]):
         return f"the source at rule {row['number']}'s span is not its header"
     decl = env.predicates.get(norm["predicate"])
@@ -515,7 +518,7 @@ def statement_problem(row: dict, case: dict, env) -> str | None:
             return "a precedence row names a rule the answer does not have"
         gated = _gate(env) is not None
         for r in rules:
-            if (problem := _rule_problem(r, k, raw, env, gated)) is not None:
+            if (problem := _rule_problem(r, rows, k, raw, env, gated)) is not None:
                 return problem
         if any(a["span"][1] > b["span"][0] for a, b in zip(rules, rules[1:])):
             return "the rule rows' spans overlap or are out of order"
@@ -557,18 +560,27 @@ def statement_answer(row: dict, case: dict, env) -> dict:
     return row["result"]
 
 
+def read_statement(env, source: str) -> dict:
+    """Lean's `english.statement` answer to the W1 text `source` under `env`, through the relay, schema-checked and
+    bound (`statement_answer`). A relay failure, or a request Lean refuses (an error row, raised by the relay as
+    its code's class), is `CheckerUnavailable`: Lean did not read the text."""
+    from .backends import relay
+    case = statement_request(env, source)
+    try:
+        row = relay.decide(STATEMENT_MODE, [case])[0]
+    except VEError as exc:
+        raise CheckerUnavailable(f"CheckerUnavailable: Lean refused the request: {exc}") from exc
+    return statement_answer(row, case, env)
+
+
 def _shadow(log: Path, env, source: str, python) -> None:
     """Ask Lean for the W1 text through the relay and append the shadow record to `log` (2.4, Shadow). A relay
     failure, or a request Lean refuses, is a `CheckerUnavailable` answer; nothing here changes Python's answer."""
-    from .backends import relay
     try:
-        case = statement_request(env, source)
         try:
-            lean = statement_answer(relay.decide(STATEMENT_MODE, [case])[0], case, env)
+            lean = read_statement(env, source)
         except CheckerUnavailable as exc:
             lean = exc
-        except VEError as exc:
-            lean = CheckerUnavailable(f"CheckerUnavailable: Lean refused the request: {exc}")
         line = json.dumps(statement_record(source, python, lean), sort_keys=True, ensure_ascii=False)
         with log.open("a", encoding="utf-8") as stream:
             stream.write(line + "\n")
