@@ -36,6 +36,7 @@ import VE.Cardinality.Run
 import VE.Scope.Run
 import VE.Senses.Run
 import VE.Commands.Run
+import VE.RightClauses.Run
 import VE.EnglishGrammar.Norm.Run
 import Std.Data.HashMap
 import Std.Data.TreeMap.Raw.Lemmas
@@ -139,6 +140,7 @@ def runMode : Mode → Json → Json
   | .sensesProject, j => VE.Senses.Run.projectCaseReported j
   | .englishCommand, j => VE.Commands.Run.caseReported j
   | .actReadings, j => VE.Acts.Run.actReadingsReported j
+  | .clausesElaborate, j => VE.RightClauses.Run.runCaseReported j
   | .englishStatement, j => VE.EnglishGrammar.Norm.Run.statementCaseReported j
 
 /-- A case the batch decoder rejected on its own (JSON depth): the one-shot record. -/
@@ -956,6 +958,9 @@ theorem runMode_englishCommand (j : Json) : runMode .englishCommand j = VE.Comma
 theorem runMode_actReadings (j : Json) : runMode .actReadings j = VE.Acts.Run.actReadingsReported j := rfl
 theorem runMode_englishStatement (j : Json) :
   VE.Service.runMode .englishStatement j = VE.EnglishGrammar.Norm.Run.statementCaseReported j := rfl
+
+theorem runMode_clausesElaborate (j : Json) :
+    runMode .clausesElaborate j = VE.RightClauses.Run.runCaseReported j := rfl
 
 
 theorem caseResult_ok (m : Mode) (i : Nat) (j : Json) : caseResult m i (.ok j) = runMode m j := rfl

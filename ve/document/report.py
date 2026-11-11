@@ -200,6 +200,8 @@ def coverage(doc, scoped=None, rights_report=None):
         answer = deepcopy(doc["lean"]["coverage"])
         answer.update(_profile_lines(doc, answer["residual"], rights_report))
         answer["residual_total"] = sum(answer["residual"].values())
+        if "composed" in doc:
+            answer["chain"] = None if doc["chain"] is None else coverage(doc["chain"])
         return answer
     units = doc["units"]
     source = doc["source"]
@@ -461,7 +463,11 @@ def _checked_report(doc):
 def _report(doc):
     if "cardinality" in doc:
         from ..cardinality import document_report
-        return document_report(doc)
+        answer = document_report(doc)
+        if "composed" in doc:
+            answer.update(not_certified=doc["composed"]["not_certified"], scope=doc["composed"]["scope"],
+                          chain=None if doc["chain"] is None else _report(doc["chain"]))
+        return answer
     joint = doc.get("discourse", {}).get("joint")
     joint_pending = joint is not None and joint["status"] == "UNKNOWN"
     soft = doc["soft_document"]

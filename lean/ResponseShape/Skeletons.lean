@@ -68,6 +68,7 @@ abbrev cardinality : Skel := skel% "cardinality.json#/row"
 abbrev scope : Skel := skel% "scope.json#/row"
 abbrev sensesProject : Skel := skel% "senses.project.json#/row"
 abbrev englishCommand : Skel := skel% "english.command.json#/row"
+abbrev clausesElaborate : Skel := skel% "clauses-elaborate.json#/row"
 abbrev actReadings : Skel := skel% "act-readings.json#/row"
 abbrev englishStatement : Skel := skel% "english.statement.json#/row"
 
@@ -115,6 +116,7 @@ def row : VE.Service.Mode → Skel
   | .sensesProject => sensesProject
   | .englishCommand => englishCommand
   | .actReadings => actReadings
+  | .clausesElaborate => clausesElaborate
   | .englishStatement => englishStatement
 
 #guard VE.Service.modes.all fun m =>
