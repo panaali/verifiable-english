@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-openai-preparedness-fidelity-fix-62cc2ad8-t381741-s3",
+ "head": "32c2ce25019e147ea00a819da52946f9d2b28d9c",
+ "argv": [
+  "armsh-cand-openai-preparedness-fidelity-fix-62cc2ad8-t381741-s3",
+  "32c2ce25019e147ea00a819da52946f9d2b28d9c",
+  "c6e7c9c65ab28c49a96fc8042d378413402e1b19",
+  "-",
+  "-",
+  "4",
+  "3/4"
+ ]
+}
