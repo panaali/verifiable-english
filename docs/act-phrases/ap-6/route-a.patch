@@ -1,0 +1,816 @@
+diff --git a/lean/VE.lean b/lean/VE.lean
+index db61072f34..02e9de2ce5 100644
+--- a/lean/VE.lean
++++ b/lean/VE.lean
+@@ -278,6 +278,8 @@ import VE.Acts.DecodeExamples
+ import VE.Acts.DecodeTwins
+ import VE.Acts.Faithful
+ import VE.Acts.FaithfulExamples
++import VE.Acts.Nary
++import VE.Acts.NaryExamples
+ import VE.Acts.GrammarExamples
+ import VE.Acts.Grammar
+ import VE.Acts.RuleExamples
+diff --git a/lean/VE/Acts/Nary.lean b/lean/VE/Acts/Nary.lean
+new file mode 100644
+index 0000000000..57d937b2ab
+--- /dev/null
++++ b/lean/VE/Acts/Nary.lean
+@@ -0,0 +1,481 @@
++import VE.Norms.Elaborate
++import VE.Events.Decl
++
++/-! AP-6 route (a), scratch only (docs/act-phrases/ap-6/REPORT.md): an act with two or more bound non-subject slots
++reified as an event sort of `events@0`, its participant roles added to that sort as role predicates, inside binary
++norms (docs/spec/act-phrases-PLAN.md section 3; spec section 9).
++
++A source rule on an n-ary act is written over the act's k + 1 situation variables (the subject, then the k slots, in
++declared order). `reify` turns the act into the binary predicate `p(holder, event)` and each rule's guard and carve-outs
++`φ(h, x₁ … xₖ)` into `∃x₁ … ∃xₖ. role₁(e, x₁) ∧ … ∧ roleₖ(e, xₖ) ∧ φ(h, x₁ … xₖ)`; every other rule stays as it is.
++`NaryIntended` is the Catala reading of the source rules on every typed tuple, the act's n-ary extension read as the
++tuples of its events (`ActHolds`). `reify_faithful` is section 3's statement as written. -/
++namespace VE.Acts.Nary
++open VE.Norms
++universe u
++
++/-- A regulated act with k ≥ 2 bound non-subject slots: the subject's sort, the slot sorts in order, the event sort of
++`events@0` it is reified as, and one role predicate `(event, slot sort)` per slot, in slot order. -/
++structure NaryReg where
++  name : String
++  holder : String
++  slots : List String
++  allowByDefault : Bool
++  role : Role
++  act : Option String
++  permission : Option String
++  event : String
++  roles : List String
++
++/-- The act as an n-ary regulated predicate (the source arity, k + 1). -/
++def NaryReg.reg (a : NaryReg) : Regulated :=
++  ⟨a.name, a.holder :: a.slots, a.allowByDefault, a.role, a.act, a.permission⟩
++
++/-- The act reified: the same predicate, binary, over the holder and the event. -/
++def NaryReg.reified (a : NaryReg) : Regulated :=
++  ⟨a.name, [a.holder, a.event], a.allowByDefault, a.role, a.act, a.permission⟩
++
++def NaryReg.pairs (a : NaryReg) : List (String × String) := a.slots.zip a.roles
++
++/-- The document's own conditions that the reification relies on: names distinct, the n-ary acts' names not
++binary ones, two to five slots, one role per slot, each role a declared role of the act's event sort that is not the
++act's name, and the event sort an event sort of the `events@0` block. -/
++def Valid (E : VE.Environment) (V : VE.Events.EventsEnv) (binary : List Regulated) (nary : List NaryReg) : Prop :=
++  (binary.map (·.name) ++ nary.map (·.name)).Nodup ∧
++  ∀ a ∈ nary, 2 ≤ a.slots.length ∧ a.slots.length ≤ 5 ∧ a.roles.length = a.slots.length ∧
++    a.event ∈ VE.Events.eventSorts V ∧ (∀ r ∈ a.roles, r ≠ a.name) ∧
++    ∀ p ∈ a.pairs, E.predicates p.2 = some [a.event, p.1]
++
++instance (E : VE.Environment) (V : VE.Events.EventsEnv) (b : List Regulated) (n : List NaryReg) :
++    Decidable (Valid E V b n) := by unfold Valid; infer_instance
++
++/-- An n-ary acts document (route (a)): binary regulated predicates as today, n-ary acts, definitions, and the rules as
++written; a rule on an n-ary act has its guard and carve-outs over the act's k + 1 situation variables. -/
++structure ActsDoc where
++  E : VE.Environment
++  events : VE.Events.EventsEnv
++  binary : List Regulated
++  nary : List NaryReg
++  definitions : List Definition
++  nodes : List Node
++  valid : Valid E events binary nary
++
++/-! ## Formulas: lifting past the event, and the roles of an event -/
++
++def Term.liftAt (c : Nat) : VE.Term → VE.Term
++  | .var i => if i < c then .var i else .var (i + 1)
++  | .const n => .const n
++
++/-- Make room for one variable at de Bruijn position `c` (the event, under the k slot binders). -/
++def liftAt : Nat → VE.Formula → VE.Formula
++  | _, .top => .top
++  | _, .bottom => .bottom
++  | c, .unary p t => .unary p (Term.liftAt c t)
++  | c, .binary p t w => .binary p (Term.liftAt c t) (Term.liftAt c w)
++  | c, .eq t w => .eq (Term.liftAt c t) (Term.liftAt c w)
++  | c, .not a => .not (liftAt c a)
++  | c, .and a b => .and (liftAt c a) (liftAt c b)
++  | c, .or a b => .or (liftAt c a) (liftAt c b)
++  | c, .implies a b => .implies (liftAt c a) (liftAt c b)
++  | c, .all s a => .all s (liftAt (c + 1) a)
++  | c, .ex s a => .ex s (liftAt (c + 1) a)
++
++/-- `∃x:s. role(e, x) ∧ …`, one binder per (slot sort, role); the event is `var d` before the first binder. -/
++def exRoles : Nat → List (String × String) → VE.Formula → VE.Formula
++  | _, [], body => body
++  | d, (s, r) :: rs, body => .ex s (.and (.binary r (.var (d + 1)) (.var 0)) (exRoles (d + 1) rs body))
++
++/-- The event `e` has the fillers `vs` in its roles, each of its slot's sort. -/
++def RolesHold (S : VE.Structure.{u}) (e : S.Carrier) : List (String × String) → List S.Carrier → Prop
++  | [], [] => True
++  | (s, r) :: rs, v :: vs => S.domain s v ∧ S.relation r [e, v] ∧ RolesHold S e rs vs
++  | _, _ => False
++
++/-- A guard or carve-out of a rule on `a`, over the holder and the event. -/
++def reifyFormula (a : NaryReg) (φ : VE.Formula) : VE.Formula := exRoles 0 a.pairs (liftAt a.slots.length φ)
++
++def reifyNode (nary : List NaryReg) (N : Node) : Node :=
++  match nary.find? (·.name == N.pred) with
++  | some a => { N with guard := reifyFormula a N.guard, carveOuts := N.carveOuts.map (reifyFormula a) }
++  | none => N
++
++/-- The source tree: the rules as written, the n-ary acts at their source arity. -/
++def source (D : ActsDoc) : Tree := ⟨D.binary ++ D.nary.map NaryReg.reg, D.definitions, D.nodes⟩
++
++/-- The reified document: binary norms over `events@0`'s event sorts and roles. -/
++def reify (D : ActsDoc) : Doc :=
++  { E := { D.E with predicates := fun p => match D.nary.find? (·.name == p) with
++             | some a => some [a.holder, a.event]
++             | none => D.E.predicates p }
++    lits := []
++    T := ⟨D.binary ++ D.nary.map NaryReg.reified, D.definitions, D.nodes.map (reifyNode D.nary)⟩ }
++
++/-! ## The intended reading -/
++
++/-- The act holds of the holder and the slot fillers: an event of its sort has those fillers and the holder stands in
++the act to it. -/
++def ActHolds (S : VE.Structure.{u}) (a : NaryReg) (h : S.Carrier) (xs : List S.Carrier) : Prop :=
++  ∃ e, S.domain a.event e ∧ RolesHold S e a.pairs xs ∧ S.relation a.name [h, e]
++
++/-- Each event of an act's sort has exactly one filler tuple, and each typed filler tuple exactly one event. -/
++def OneEventPerTuple (D : ActsDoc) (S : VE.Structure.{u}) : Prop :=
++  ∀ a ∈ D.nary,
++    (∀ e, S.domain a.event e → ∃ xs, RolesHold S e a.pairs xs ∧ ∀ ys, RolesHold S e a.pairs ys → ys = xs) ∧
++    (∀ xs, VE.TupleTyped S a.slots xs →
++      ∃ e, S.domain a.event e ∧ RolesHold S e a.pairs xs ∧
++        ∀ e', S.domain a.event e' → RolesHold S e' a.pairs xs → e' = e)
++
++/-- The n-ary meaning: the binary predicates as `IntendedAt` reads them; for an n-ary act, on every typed tuple the
++source rules (read below the act) give a value and the act holds of the tuple exactly when it is true. -/
++def NaryIntended (D : ActsDoc) (S : VE.Structure.{u}) : Prop :=
++  (∀ r ∈ D.binary, IntendedAt (source D) r S) ∧
++  ∀ a ∈ D.nary, ∀ h xs, VE.TupleTyped S (a.holder :: a.slots) (h :: xs) →
++    ∃ b, Value (source D) a.reg (forget [a.name] S) (h :: xs) = some b ∧ (ActHolds S a h xs ↔ b = true)
++
++/-! ## Denotation lemmas -/
++
++theorem term_liftAt_denote (S : VE.Structure.{u}) (v : S.Carrier) (t : VE.Term) :
++    ∀ (l r : List S.Carrier), (Term.liftAt l.length t).denote S (l ++ v :: r) = t.denote S (l ++ r) := by
++  intro l r
++  cases t with
++  | const n => rfl
++  | var i =>
++    simp only [Term.liftAt]
++    split
++    · rename_i hi
++      simp [VE.Term.denote, List.getElem?_append_left hi]
++    · rename_i hi
++      have hi : l.length ≤ i := Nat.le_of_not_lt hi
++      simp only [VE.Term.denote]
++      rw [List.getElem?_append_right (by omega), List.getElem?_append_right hi]
++      rw [show i + 1 - l.length = (i - l.length) + 1 by omega]
++      rfl
++
++theorem liftAt_denote (S : VE.Structure.{u}) (v : S.Carrier) (a : VE.Formula) :
++    ∀ (l r : List S.Carrier), (liftAt l.length a).denote S (l ++ v :: r) ↔ a.denote S (l ++ r) := by
++  induction a with
++  | top | bottom => intros; simp [liftAt, VE.Formula.denote]
++  | unary p t => intro l r; simp [liftAt, VE.Formula.denote, term_liftAt_denote]
++  | binary p t w => intro l r; simp [liftAt, VE.Formula.denote, term_liftAt_denote]
++  | eq t w => intro l r; simp [liftAt, VE.Formula.denote, term_liftAt_denote]
++  | not a ih => intro l r; simp only [liftAt, VE.Formula.denote]; rw [ih]
++  | and a b ia ib | or a b ia ib | implies a b ia ib =>
++    intro l r; simp only [liftAt, VE.Formula.denote]; rw [ia, ib]
++  | all s a ih | ex s a ih =>
++    intro l r
++    simp only [liftAt, VE.Formula.denote]
++    have := fun w => ih (w :: l) r
++    simp only [List.length_cons, List.cons_append] at this
++    simp only [this]
++
++theorem exRoles_denote (S : VE.Structure.{u}) (e : S.Carrier) (body : VE.Formula) :
++    ∀ (rs : List (String × String)) (pre ρ : List S.Carrier),
++      (exRoles pre.length rs body).denote S (pre ++ e :: ρ) ↔
++        ∃ ys, RolesHold S e rs ys ∧ body.denote S (ys.reverse ++ pre ++ e :: ρ)
++  | [], pre, ρ => by
++    simp only [exRoles]
++    constructor
++    · intro h; exact ⟨[], trivial, by simpa using h⟩
++    · rintro ⟨ys, hy, hb⟩
++      match ys, hy with
++      | [], _ => simpa using hb
++  | (s, r) :: rs, pre, ρ => by
++    simp only [exRoles, VE.Formula.denote, VE.Term.denote]
++    have ih := exRoles_denote S e body rs
++    have he : ∀ w : S.Carrier, (w :: (pre ++ e :: ρ))[pre.length + 1]? = some e := by
++      intro w; simp
++    constructor
++    · rintro ⟨w, hw, ⟨v, x, hv, hx, hr⟩, hrest⟩
++      rw [he w] at hv; cases hv
++      simp only [List.getElem?_cons_zero, Option.some.injEq] at hx; subst hx
++      have := (ih (w :: pre) ρ).mp (by simpa using hrest)
++      obtain ⟨ys, hy, hb⟩ := this
++      exact ⟨w :: ys, ⟨hw, hr, hy⟩, by simpa using hb⟩
++    · rintro ⟨ys, hy, hb⟩
++      match ys, hy with
++      | w :: ys, ⟨hw, hr, hy⟩ =>
++        refine ⟨w, hw, ⟨e, w, he w, rfl, hr⟩, ?_⟩
++        have := (ih (w :: pre) ρ).mpr ⟨ys, hy, by simpa using hb⟩
++        simpa using this
++
++theorem rolesHold_length {S : VE.Structure.{u}} {e : S.Carrier} :
++    ∀ {rs : List (String × String)} {ys : List S.Carrier}, RolesHold S e rs ys → ys.length = rs.length
++  | [], [], _ => rfl
++  | _ :: _, _ :: _, h => by simp [rolesHold_length h.2.2]
++  | [], _ :: _, h => h.elim
++  | _ :: _, [], h => h.elim
++
++theorem rolesHold_typed {S : VE.Structure.{u}} {e : S.Carrier} :
++    ∀ {rs : List (String × String)} {ys : List S.Carrier}, RolesHold S e rs ys →
++      VE.TupleTyped S (rs.map Prod.fst) ys
++  | [], [], _ => trivial
++  | (_, _) :: _, _ :: _, h => ⟨h.1, rolesHold_typed h.2.2⟩
++  | [], _ :: _, h => h.elim
++  | _ :: _, [], h => h.elim
++
++theorem rolesHold_forget {S : VE.Structure.{u}} {e : S.Carrier} {p : String} :
++    ∀ {rs : List (String × String)} {ys : List S.Carrier}, (∀ q ∈ rs, q.2 ≠ p) →
++      (RolesHold (forget [p] S) e rs ys ↔ RolesHold S e rs ys)
++  | [], [], _ => Iff.rfl
++  | (s, r) :: rs, v :: vs, hn => by
++    have hr : r ≠ p := hn (s, r) (by simp)
++    have ih := rolesHold_forget (S := S) (e := e) (p := p) (rs := rs) (ys := vs) (fun q hq => hn q (by simp [hq]))
++    show (S.domain s v ∧ (r ∉ [p] ∧ S.relation r [e, v]) ∧ RolesHold (forget [p] S) e rs vs) ↔
++      (S.domain s v ∧ S.relation r [e, v] ∧ RolesHold S e rs vs)
++    rw [ih]; simp [hr]
++  | [], _ :: _, _ => Iff.rfl
++  | _ :: _, [], _ => Iff.rfl
++
++theorem pairs_fst (a : NaryReg) (h : a.roles.length = a.slots.length) : a.pairs.map Prod.fst = a.slots := by
++  unfold NaryReg.pairs
++  rw [List.map_fst_zip]; omega
++
++theorem pairs_length (a : NaryReg) (h : a.roles.length = a.slots.length) : a.pairs.length = a.slots.length := by
++  simp [NaryReg.pairs, h]
++
++theorem pairs_roles (a : NaryReg) : ∀ q ∈ a.pairs, q.2 ∈ a.roles := by
++  intro q hq
++  exact List.of_mem_zip hq |>.2
++
++/-- The reified formula at `(holder, event)` means the source formula at the event's one filler tuple. -/
++theorem reifyFormula_denote (S : VE.Structure.{u}) (a : NaryReg) (hl : a.roles.length = a.slots.length)
++    (φ : VE.Formula) (h e : S.Carrier) (xs : List S.Carrier) (hx : RolesHold S e a.pairs xs)
++    (hu : ∀ ys, RolesHold S e a.pairs ys → ys = xs) :
++    (reifyFormula a φ).denote S (tupleVal [h, e]) ↔ φ.denote S (tupleVal (h :: xs)) := by
++  have hd := exRoles_denote S e (liftAt a.slots.length φ) a.pairs [] [h]
++  simp only [List.length_nil, List.nil_append, List.append_nil] at hd
++  simp only [reifyFormula, tupleVal, List.reverse_cons, List.reverse_nil, List.nil_append, List.singleton_append]
++  rw [hd]
++  constructor
++  · rintro ⟨ys, hy, hb⟩
++    have hk : ys.reverse.length = a.slots.length := by
++      simp [rolesHold_length hy, pairs_length a hl]
++    rw [← hk, liftAt_denote] at hb
++    rw [hu ys hy] at hb
++    simpa using hb
++  · intro hb
++    refine ⟨xs, hx, ?_⟩
++    have hk : xs.reverse.length = a.slots.length := by
++      simp [rolesHold_length hx, pairs_length a hl]
++    rw [← hk, liftAt_denote]
++    simpa using hb
++
++/-! ## Tracking: rules mapped node by node decide alike -/
++
++section Track
++variable {T₁ T₂ : Tree} {f : Node → Node} {S₁ S₂ : VE.Structure.{u}} {ρ₁ : VE.Valuation S₁}
++  {ρ₂ : VE.Valuation S₂} {p : String}
++
++theorem mem_children_map (hn : T₂.nodes = T₁.nodes.map f)
++    (hf : ∀ N, (f N).name = N.name ∧ (f N).pred = N.pred ∧ (f N).over = N.over) {N C : Node} :
++    C ∈ children T₂ (f N) ↔ ∃ C₀ ∈ children T₁ N, C = f C₀ := by
++  simp only [mem_children_iff, hn, List.mem_map]
++  constructor
++  · rintro ⟨⟨C₀, hC₀, rfl⟩, hp, ho⟩
++    obtain ⟨_, hp₀, ho₀⟩ := hf C₀
++    obtain ⟨hnN, hpN, _⟩ := hf N
++    exact ⟨C₀, ⟨hC₀, by rw [← hp₀, hp, hpN], by rw [← ho₀, ← hnN]; exact ho⟩, rfl⟩
++  · rintro ⟨C₀, ⟨hC₀, hp, ho⟩, rfl⟩
++    obtain ⟨_, hp₀, ho₀⟩ := hf C₀
++    obtain ⟨hnN, hpN, _⟩ := hf N
++    exact ⟨⟨C₀, hC₀, rfl⟩, by rw [hp₀, hp, hpN], by rw [ho₀, hnN]; exact ho⟩
++
++theorem yields_track (hn : T₂.nodes = T₁.nodes.map f)
++    (hf : ∀ N, (f N).name = N.name ∧ (f N).pred = N.pred ∧ (f N).over = N.over)
++    (ha : ∀ N ∈ T₁.nodes, N.pred = p → (AppliesD S₂ ρ₂ (f N) ↔ AppliesD S₁ ρ₁ N)) :
++    ∀ k N, N ∈ T₁.nodes → N.pred = p → (YieldsD T₂ S₂ ρ₂ k (f N) ↔ YieldsD T₁ S₁ ρ₁ k N)
++  | 0, N, hN, hp => by simp only [YieldsD]; exact ha N hN hp
++  | k + 1, N, hN, hp => by
++    simp only [YieldsD]
++    rw [ha N hN hp]
++    apply or_congr_right
++    constructor
++    · rintro ⟨C, hC, hy⟩
++      obtain ⟨C₀, hC₀, rfl⟩ := (mem_children_map hn hf).mp hC
++      obtain ⟨hm, hp', _⟩ := mem_children_iff.mp hC₀
++      exact ⟨C₀, hC₀, (yields_track hn hf ha k C₀ hm (hp' ▸ hp)).mp hy⟩
++    · rintro ⟨C₀, hC₀, hy⟩
++      obtain ⟨hm, hp', _⟩ := mem_children_iff.mp hC₀
++      exact ⟨f C₀, (mem_children_map hn hf).mpr ⟨C₀, hC₀, rfl⟩,
++        (yields_track hn hf ha k C₀ hm (hp' ▸ hp)).mpr hy⟩
++
++theorem decides_track (hn : T₂.nodes = T₁.nodes.map f)
++    (hf : ∀ N, (f N).name = N.name ∧ (f N).pred = N.pred ∧ (f N).over = N.over ∧ (f N).sign = N.sign)
++    (ha : ∀ N ∈ T₁.nodes, N.pred = p → (AppliesD S₂ ρ₂ (f N) ↔ AppliesD S₁ ρ₁ N)) (sign : Bool) :
++    DecidesD T₂ S₂ ρ₂ p sign ↔ DecidesD T₁ S₁ ρ₁ p sign := by
++  have hf' : ∀ N, (f N).name = N.name ∧ (f N).pred = N.pred ∧ (f N).over = N.over :=
++    fun N => ⟨(hf N).1, (hf N).2.1, (hf N).2.2.1⟩
++  have hfuel : fuel T₂ = fuel T₁ := by simp [fuel, hn]
++  have hsel : ∀ N ∈ T₁.nodes, N.pred = p →
++      (SelectsD T₂ S₂ ρ₂ (fuel T₂) (f N) ↔ SelectsD T₁ S₁ ρ₁ (fuel T₁) N) := by
++    intro N hN hp
++    simp only [SelectsD, hfuel]
++    rw [ha N hN hp]
++    apply and_congr_right; intro _
++    apply not_congr
++    constructor
++    · rintro ⟨C, hC, hy⟩
++      obtain ⟨C₀, hC₀, rfl⟩ := (mem_children_map hn hf').mp hC
++      obtain ⟨hm, hp', _⟩ := mem_children_iff.mp hC₀
++      exact ⟨C₀, hC₀, (yields_track hn hf' ha _ C₀ hm (hp' ▸ hp)).mp hy⟩
++    · rintro ⟨C₀, hC₀, hy⟩
++      obtain ⟨hm, hp', _⟩ := mem_children_iff.mp hC₀
++      exact ⟨f C₀, (mem_children_map hn hf').mpr ⟨C₀, hC₀, rfl⟩,
++        (yields_track hn hf' ha _ C₀ hm (hp' ▸ hp)).mpr hy⟩
++  simp only [DecidesD, rulesOn, hn, List.mem_filter, List.mem_map]
++  constructor
++  · rintro ⟨_, ⟨⟨N, hN, rfl⟩, hp⟩, hs, hsel'⟩
++    have hp : N.pred = p := by simpa [(hf N).2.1] using hp
++    exact ⟨N, ⟨hN, by simpa using hp⟩, (hf N).2.2.2 ▸ hs, (hsel N hN hp).mp hsel'⟩
++  · rintro ⟨N, ⟨hN, hp⟩, hs, hsel'⟩
++    have hp : N.pred = p := by simpa using hp
++    exact ⟨f N, ⟨⟨N, hN, rfl⟩, by simpa [(hf N).2.1] using hp⟩, by rw [(hf N).2.2.2]; exact hs,
++      (hsel N hN hp).mpr hsel'⟩
++
++end Track
++
++/-! ## Faithfulness -/
++
++theorem reifyNode_fields (nary : List NaryReg) (N : Node) :
++    (reifyNode nary N).name = N.name ∧ (reifyNode nary N).pred = N.pred ∧ (reifyNode nary N).over = N.over ∧
++      (reifyNode nary N).sign = N.sign := by
++  unfold reifyNode; split <;> simp
++
++theorem reifyNode_of_none {nary : List NaryReg} {N : Node} (h : ∀ a ∈ nary, a.name ≠ N.pred) :
++    reifyNode nary N = N := by
++  unfold reifyNode
++  rw [List.find?_eq_none.mpr (fun a ha => by simpa using h a ha)]
++
++theorem find_name {nary : List NaryReg} (hd : (nary.map (·.name)).Nodup) {a : NaryReg} (ha : a ∈ nary) :
++    nary.find? (·.name == a.name) = some a := by
++  induction nary with
++  | nil => cases ha
++  | cons b bs ih =>
++    simp only [List.map_cons, List.nodup_cons, List.mem_map] at hd
++    rcases List.mem_cons.mp ha with rfl | ha
++    · simp
++    · have hne : b.name ≠ a.name := fun he => hd.1 ⟨a, ha, he.symm⟩
++      simp [List.find?_cons, hne, ih hd.2 ha]
++
++theorem reifyNode_of_some {nary : List NaryReg} (hd : (nary.map (·.name)).Nodup) {a : NaryReg} (ha : a ∈ nary)
++    {N : Node} (hp : N.pred = a.name) :
++    reifyNode nary N = { N with guard := reifyFormula a N.guard, carveOuts := N.carveOuts.map (reifyFormula a) } := by
++  unfold reifyNode
++  rw [hp, find_name hd ha]
++
++/-- Applies on a rule of an n-ary act, reified at `(h, e)`, means applies at the event's tuple. -/
++theorem applies_reify (S : VE.Structure.{u}) (a : NaryReg) (hl : a.roles.length = a.slots.length)
++    (N : Node) (h e : S.Carrier) (xs : List S.Carrier) (hx : RolesHold S e a.pairs xs)
++    (hu : ∀ ys, RolesHold S e a.pairs ys → ys = xs) :
++    AppliesD S (tupleVal [h, e])
++        { N with guard := reifyFormula a N.guard, carveOuts := N.carveOuts.map (reifyFormula a) } ↔
++      AppliesD S (tupleVal (h :: xs)) N := by
++  simp only [AppliesD, List.mem_map]
++  rw [reifyFormula_denote S a hl N.guard h e xs hx hu]
++  apply and_congr_right; intro _
++  apply not_congr
++  constructor
++  · rintro ⟨_, ⟨U, hU, rfl⟩, hd⟩
++    exact ⟨U, hU, (reifyFormula_denote S a hl U h e xs hx hu).mp hd⟩
++  · rintro ⟨U, hU, hd⟩
++    exact ⟨_, ⟨U, hU, rfl⟩, (reifyFormula_denote S a hl U h e xs hx hu).mpr hd⟩
++
++theorem names_nodup (D : ActsDoc) : (D.nary.map (·.name)).Nodup :=
++  (List.nodup_append.mp D.valid.1).2.1
++
++theorem binary_not_nary (D : ActsDoc) {r : Regulated} (hr : r ∈ D.binary) : ∀ a ∈ D.nary, a.name ≠ r.name := by
++  intro a ha he
++  have := (List.nodup_append.mp D.valid.1).2.2
++  exact this r.name (List.mem_map.mpr ⟨r, hr, rfl⟩) a.name (List.mem_map.mpr ⟨a, ha, rfl⟩) he.symm
++
++/-- A binary predicate's rules are untouched, so it decides alike in both trees. -/
++theorem decides_binary (D : ActsDoc) {r : Regulated} (hr : r ∈ D.binary) (S : VE.Structure.{u})
++    (ρ : VE.Valuation S) (sign : Bool) :
++    DecidesD (reify D).T S ρ r.name sign ↔ DecidesD (source D) S ρ r.name sign := by
++  apply decides_track (f := reifyNode D.nary) rfl (reifyNode_fields D.nary)
++  intro N _ hp
++  rw [reifyNode_of_none (fun a ha => hp ▸ binary_not_nary D hr a ha)]
++
++/-- An n-ary act's reified rules at `(h, e)` decide as its source rules at the event's tuple. -/
++theorem decides_nary (D : ActsDoc) {a : NaryReg} (ha : a ∈ D.nary) (S : VE.Structure.{u}) (h e : S.Carrier)
++    (xs : List S.Carrier) (hx : RolesHold S e a.pairs xs) (hu : ∀ ys, RolesHold S e a.pairs ys → ys = xs)
++    (sign : Bool) :
++    DecidesD (reify D).T S (tupleVal [h, e]) a.name sign ↔ DecidesD (source D) S (tupleVal (h :: xs)) a.name sign := by
++  apply decides_track (f := reifyNode D.nary) rfl (reifyNode_fields D.nary)
++  intro N _ hp
++  rw [reifyNode_of_some (names_nodup D) ha hp]
++  exact applies_reify S a (D.valid.2 a ha).2.2.1 N h e xs hx hu
++
++theorem roles_ne (D : ActsDoc) {a : NaryReg} (ha : a ∈ D.nary) : ∀ q ∈ a.pairs, q.2 ≠ a.name :=
++  fun q hq => (D.valid.2 a ha).2.2.2.2.1 q.2 (pairs_roles a q hq)
++
++theorem value_nary (D : ActsDoc) {a : NaryReg} (ha : a ∈ D.nary) (S : VE.Structure.{u}) (h e : S.Carrier)
++    (xs : List S.Carrier) (hx : RolesHold S e a.pairs xs) (hu : ∀ ys, RolesHold S e a.pairs ys → ys = xs) :
++    Value (reify D).T a.reified (forget [a.name] S) [h, e] = Value (source D) a.reg (forget [a.name] S) (h :: xs) := by
++  have hn := roles_ne D ha
++  have hx' : RolesHold (forget [a.name] S) e a.pairs xs := (rolesHold_forget hn).mpr hx
++  have hu' : ∀ ys, RolesHold (forget [a.name] S) e a.pairs ys → ys = xs :=
++    fun ys hy => hu ys ((rolesHold_forget hn).mp hy)
++  have h1 := decides_nary D ha (forget [a.name] S) h e xs hx' hu' true
++  have h2 := decides_nary D ha (forget [a.name] S) h e xs hx' hu' false
++  show catalaValue _ _ _ = catalaValue _ _ _
++  simp only [NaryReg.reified, NaryReg.reg] at h1 h2 ⊢
++  rw [propext h1, propext h2]
++
++theorem mem_reified {D : ActsDoc} {r : Regulated} :
++    r ∈ (reify D).T.regulated ↔ r ∈ D.binary ∨ ∃ a ∈ D.nary, r = a.reified := by
++  simp [reify, List.mem_append, List.mem_map, eq_comm]
++
++/-- AP-6 route (a): the reified binary norms hold, read the Catala way, exactly when the n-ary acts hold as their
++source rules say, given one event per argument tuple (plan section 3, verbatim). -/
++theorem reify_faithful (D : ActsDoc) (S : VE.Structure.{u}) (hc : OneEventPerTuple D S) :
++    VE.Norms.holdsCatala (reify D).T S ↔ NaryIntended D S := by
++  constructor
++  · intro hh
++    refine ⟨fun r hr => ?_, fun a ha h xs ht => ?_⟩
++    · intro vs hv
++      obtain ⟨b, hb, hiff⟩ := hh r (mem_reified.mpr (.inl hr)) vs hv
++      refine ⟨b, ?_, hiff⟩
++      rw [← hb]; simp only [Value]
++      rw [propext (decides_binary D hr _ _ true), propext (decides_binary D hr _ _ false)]
++    · obtain ⟨hdom, hxs⟩ := ht
++      obtain ⟨e, he, hx, hune⟩ := (hc a ha).2 xs hxs
++      obtain ⟨xs', hx', hu⟩ := (hc a ha).1 e he
++      have := hu xs hx; subst this
++      obtain ⟨b, hb, hiff⟩ := hh a.reified (mem_reified.mpr (.inr ⟨a, ha, rfl⟩)) [h, e] ⟨hdom, he, trivial⟩
++      have hb : Value (reify D).T a.reified (forget [a.name] S) [h, e] = some b := hb
++      have hiff : S.relation a.name [h, e] ↔ b = true := hiff
++      refine ⟨b, by rw [← value_nary D ha S h e xs hx' hu]; exact hb, ?_⟩
++      rw [← hiff]
++      constructor
++      · rintro ⟨e', he', hx'', hr⟩
++        exact (hune e' he' hx'') ▸ hr
++      · intro hr; exact ⟨e, he, hx', hr⟩
++  · rintro ⟨hb, hn⟩ r hr
++    rcases mem_reified.mp hr with hr | ⟨a, ha, rfl⟩
++    · intro vs hv
++      obtain ⟨b, hv', hiff⟩ := hb r hr vs hv
++      refine ⟨b, ?_, hiff⟩
++      rw [← hv']; simp only [Value]
++      rw [propext (decides_binary D hr _ _ true), propext (decides_binary D hr _ _ false)]
++    · intro vs hv
++      match vs, hv with
++      | [h, e], ⟨hdom, he, _⟩ =>
++        obtain ⟨xs, hx, hu⟩ := (hc a ha).1 e he
++        have hl := (D.valid.2 a ha).2.2.1
++        have hxs : VE.TupleTyped S a.slots xs := by
++          have := rolesHold_typed hx; rwa [pairs_fst a hl] at this
++        obtain ⟨b, hval, hiff⟩ := hn a ha h xs ⟨hdom, hxs⟩
++        show ∃ b, Value (reify D).T a.reified (forget [a.name] S) [h, e] = some b ∧
++          (S.relation a.name [h, e] ↔ b = true)
++        refine ⟨b, by rw [value_nary D ha S h e xs hx hu]; exact hval, ?_⟩
++        rw [← hiff]
++        constructor
++        · intro hr; exact ⟨e, he, hx, hr⟩
++        · rintro ⟨e', he', hx', hr⟩
++          obtain ⟨e₀, _, _, hune⟩ := (hc a ha).2 xs hxs
++          have h1 := hune e' he' hx'
++          have h2 := hune e he hx
++          exact (h1.trans h2.symm) ▸ hr
++
++end VE.Acts.Nary
+diff --git a/lean/VE/Acts/NaryExamples.lean b/lean/VE/Acts/NaryExamples.lean
+new file mode 100644
+index 0000000000..621d3d8d03
+--- /dev/null
++++ b/lean/VE/Acts/NaryExamples.lean
+@@ -0,0 +1,82 @@
++import VE.Acts.Nary
++
++/-! AP-6 route (a), scratch only: the three fixtures (docs/act-phrases/ap-6/fixtures/) as n-ary acts documents. Each
++reified document passes today's binary norms check (`VE.Norms.WellFormed`), and the reified guards have the shape
++`reifyFormula` promises. -/
++namespace VE.Acts.NaryExamples
++open VE.Acts.Nary VE.Norms
++
++def env (sorts : List String) (ps : List (String × List String)) : VE.Environment :=
++  { sorts, predicates := fun q => ps.lookup q, constants := fun _ => none }
++def ev (sorts : List String) : VE.Events.EventsEnv :=
++  ⟨"day", "before", sorts.map (fun s => ⟨s, s ++ "_on"⟩), [], [], none, []⟩
++def nd (n p : String) (sign : Bool) (guard : VE.Formula := .top) (over : List String := [])
++    (carveOuts : List VE.Formula := []) : Node := ⟨n, p, sign, guard, carveOuts, over⟩
++
++/-! ### u019: no distinction by a bearer against a person on a ground (UDHR Article 2) -/
++
++def u019a : NaryReg := ⟨"distinguish_permitted", "bearer", ["person", "ground"], true, .permission,
++  some "{0} make a distinction against {1} on the ground of {2}", none, "distinction",
++  ["distinction_against", "distinction_ground"]⟩
++def u019E : VE.Environment := env ["bearer", "person", "ground", "distinction", "day"]
++  [("distinguish_permitted", ["bearer", "distinction"]), ("listed_ground", ["ground"]),
++   ("distinction_against", ["distinction", "person"]), ("distinction_ground", ["distinction", "ground"]),
++   ("distinction_on", ["distinction", "day"]), ("before", ["day", "day"])]
++-- guard over (bearer, person, ground): de Bruijn 2, 1, 0
++def u019 : ActsDoc := ⟨u019E, ev ["distinction"], [], [u019a], [],
++  [nd "r019" "distinguish_permitted" false (.unary "listed_ground" (.var 0))], by decide⟩
++
++/-! ### u057 (reworded): the right to found a family and to marry, without any limitation due to a ground -/
++
++def u057a : NaryReg := ⟨"limit_permitted", "bearer", ["person", "ground"], true, .permission,
++  some "{0} limit the right of {1} to marry on the ground of {2}", none, "limitation",
++  ["limitation_of", "limitation_ground"]⟩
++def u057E : VE.Environment := env ["bearer", "person", "ground", "limitation", "day"]
++  [("limit_permitted", ["bearer", "limitation"]), ("found_a_family_entitled", ["person"]),
++   ("marry_entitled", ["person"]), ("of_full_age", ["person"]), ("marriage_ground", ["ground"]),
++   ("limitation_of", ["limitation", "person"]), ("limitation_ground", ["limitation", "ground"]),
++   ("limitation_on", ["limitation", "day"]), ("before", ["day", "day"])]
++def u057bin : List Regulated :=
++  [⟨"found_a_family_entitled", ["person"], false, .plain, some "{0} to found a family", none⟩,
++   ⟨"marry_entitled", ["person"], false, .plain, some "{0} to marry", none⟩]
++def u057 : ActsDoc := ⟨u057E, ev ["limitation"], u057bin, [u057a], [],
++  [nd "r057-a1" "found_a_family_entitled" true (.unary "of_full_age" (.var 0)),
++   nd "r057-a2" "marry_entitled" true (.unary "of_full_age" (.var 0)),
++   nd "r057-l" "limit_permitted" false (.and (.unary "of_full_age" (.var 1)) (.unary "marriage_ground" (.var 0)))],
++  by decide⟩
++
++/-! ### rights.md (μ): `publish_about(person, item, person)`, liberty of right 19 and claim of right 12 -/
++
++def muA : NaryReg := ⟨"publish_about_permitted", "person", ["item", "person"], false, .permission,
++  some "{0} publish {1} about {2}", none, "publication", ["publication_of", "publication_about"]⟩
++def muE : VE.Environment := env ["person", "item", "publication", "day"]
++  [("publish_about_permitted", ["person", "publication"]), ("attacks_honour", ["item", "person"]),
++   ("publication_of", ["publication", "item"]), ("publication_about", ["publication", "person"]),
++   ("publication_on", ["publication", "day"]), ("before", ["day", "day"])]
++-- guard over (person, item, person): de Bruijn 2, 1, 0
++def mu : ActsDoc := ⟨muE, ev ["publication"], [], [muA], [],
++  [nd "r19" "publish_about_permitted" true,
++   nd "r12" "publish_about_permitted" false (.binary "attacks_honour" (.var 1) (.var 0))], by decide⟩
++
++def fixtures : List ActsDoc := [u019, u057, mu]
++
++-- Each reified fixture is a well-formed binary norms document today.
++#guard fixtures.all (fun D => WellFormed (reify D))
++-- The reified guard of r019: `∃p:person. distinction_against(e, p) ∧ ∃g:ground. distinction_ground(e, g) ∧ listed_ground(g)` (the bearer is `var 1` at the top, the event `var 0`).
++#guard (reify u019).T.nodes.map (·.guard) ==
++  [.ex "person" (.and (.binary "distinction_against" (.var 1) (.var 0))
++    (.ex "ground" (.and (.binary "distinction_ground" (.var 2) (.var 0)) (.unary "listed_ground" (.var 0)))))]
++def roles (body : VE.Formula) : VE.Formula :=
++  .ex "item" (.and (.binary "publication_of" (.var 1) (.var 0))
++    (.ex "person" (.and (.binary "publication_about" (.var 2) (.var 0)) body)))
++-- r19's guard `top` becomes the roles alone; r12's guard reads the item and the second person through the roles, not the holder.
++#guard (reify mu).T.nodes.map (·.guard) ==
++  [roles .top, .ex "item" (.and (.binary "publication_of" (.var 1) (.var 0))
++    (.ex "person" (.and (.binary "publication_about" (.var 2) (.var 0)) (.binary "attacks_honour" (.var 1) (.var 0)))))]
++-- The binary parts of u057 are untouched.
++#guard ((reify u057).T.nodes.take 2).map (·.guard) == [.unary "of_full_age" (.var 0), .unary "of_full_age" (.var 0)]
++-- The reified predicates are binary over the holder and the event; the source ones keep their arity.
++#guard fixtures.map (fun D => ((reify D).T.regulated.map (·.sorts.length), (source D).regulated.map (·.sorts.length)))
++  == [([2], [3]), ([1, 1, 2], [1, 1, 3]), ([2], [3])]
++
++end VE.Acts.NaryExamples
+diff --git a/lean/axioms.txt b/lean/axioms.txt
+index a9c06d1a16..89f97d8244 100644
+--- a/lean/axioms.txt
++++ b/lean/axioms.txt
+@@ -162,6 +162,33 @@
+ 'VE.Acts.Lexical.words_cover' depends on axioms: [propext, Classical.choice, Quot.sound]
+ 'VE.Acts.Lexical.words_data' depends on axioms: [propext, Classical.choice, Quot.sound]
+ 'VE.Acts.Lexical.words_intercalate' depends on axioms: [propext, Classical.choice, Quot.sound]
++'VE.Acts.Nary.ActsDoc.valid' does not depend on any axioms
++'VE.Acts.Nary.applies_reify' depends on axioms: [propext, Quot.sound]
++'VE.Acts.Nary.binary_not_nary' depends on axioms: [propext, Quot.sound]
++'VE.Acts.Nary.decides_binary' depends on axioms: [propext, Classical.choice, Quot.sound]
++'VE.Acts.Nary.decides_nary' depends on axioms: [propext, Classical.choice, Quot.sound]
++'VE.Acts.Nary.decides_track' depends on axioms: [propext, Classical.choice, Quot.sound]
++'VE.Acts.Nary.exRoles_denote' depends on axioms: [propext]
++'VE.Acts.Nary.find_name' depends on axioms: [propext, Classical.choice, Quot.sound]
++'VE.Acts.Nary.liftAt_denote' depends on axioms: [propext, Quot.sound]
++'VE.Acts.Nary.mem_children_map' depends on axioms: [propext, Classical.choice, Quot.sound]
++'VE.Acts.Nary.mem_reified' depends on axioms: [propext, Quot.sound]
++'VE.Acts.Nary.names_nodup' depends on axioms: [propext, Quot.sound]
++'VE.Acts.Nary.pairs_fst' depends on axioms: [propext, Quot.sound]
++'VE.Acts.Nary.pairs_length' depends on axioms: [propext]
++'VE.Acts.Nary.pairs_roles' depends on axioms: [propext]
++'VE.Acts.Nary.reifyFormula_denote' depends on axioms: [propext, Quot.sound]
++'VE.Acts.Nary.reifyNode_fields' depends on axioms: [propext]
++'VE.Acts.Nary.reifyNode_of_none' depends on axioms: [propext, Quot.sound]
++'VE.Acts.Nary.reifyNode_of_some' depends on axioms: [propext, Classical.choice, Quot.sound]
++'VE.Acts.Nary.reify_faithful' depends on axioms: [propext, Classical.choice, Quot.sound]
++'VE.Acts.Nary.rolesHold_forget' depends on axioms: [propext]
++'VE.Acts.Nary.rolesHold_length' depends on axioms: [propext]
++'VE.Acts.Nary.rolesHold_typed' does not depend on any axioms
++'VE.Acts.Nary.roles_ne' depends on axioms: [propext]
++'VE.Acts.Nary.term_liftAt_denote' depends on axioms: [propext, Quot.sound]
++'VE.Acts.Nary.value_nary' depends on axioms: [propext, Classical.choice, Quot.sound]
++'VE.Acts.Nary.yields_track' depends on axioms: [propext, Classical.choice, Quot.sound]
+ 'VE.Acts.Run.firstsBy_map' depends on axioms: [propext]
+ 'VE.Acts.Run.witnessed_readings' depends on axioms: [propext, Classical.choice, Quot.sound]
+ 'VE.Acts.Wire.checkAct_joined' depends on axioms: [propext, Classical.choice, Quot.sound]
+diff --git a/lean/statements.txt b/lean/statements.txt
+index 63714386a3..6056af8fa9 100644
+--- a/lean/statements.txt
++++ b/lean/statements.txt
+@@ -1021,6 +1021,185 @@ theorem VE.Acts.Lexical.words_intercalate
+       VE.Norms.Wire.words (" ".intercalate ws) = ws
+   -- uses VE.Norms.Wire.pyWhitespace@VE.Acts.LexicalBase VE.Norms.Wire.words@VE.Acts.LexicalBase
+   -- expr 265214043
++theorem VE.Acts.Nary.ActsDoc.valid
++  ∀ (self : VE.Acts.Nary.ActsDoc), VE.Acts.Nary.Valid self.E self.events self.binary self.nary
++  -- uses VE.Acts.Nary.ActsDoc.E@VE.Acts.Nary VE.Acts.Nary.ActsDoc.binary@VE.Acts.Nary VE.Acts.Nary.ActsDoc.events@VE.Acts.Nary VE.Acts.Nary.ActsDoc.nary@VE.Acts.Nary VE.Acts.Nary.ActsDoc@VE.Acts.Nary VE.Acts.Nary.Valid@VE.Acts.Nary
++  -- expr 2143057419
++theorem VE.Acts.Nary.applies_reify
++  ∀ (S : VE.Structure) (a : VE.Acts.Nary.NaryReg),
++    a.roles.length = a.slots.length →
++      ∀ (N : VE.Norms.Node) (h e : S.Carrier) (xs : List S.Carrier),
++        VE.Acts.Nary.RolesHold S e a.pairs xs →
++          (∀ (ys : List S.Carrier), VE.Acts.Nary.RolesHold S e a.pairs ys → ys = xs) →
++            (VE.Norms.AppliesD S (VE.Norms.tupleVal [h, e])
++                { name := N.name, pred := N.pred, sign := N.sign, guard := VE.Acts.Nary.reifyFormula a N.guard,
++                  carveOuts := List.map (VE.Acts.Nary.reifyFormula a) N.carveOuts, over := N.over } ↔
++              VE.Norms.AppliesD S (VE.Norms.tupleVal (h :: xs)) N)
++  -- uses VE.Acts.Nary.NaryReg.pairs@VE.Acts.Nary VE.Acts.Nary.NaryReg.roles@VE.Acts.Nary VE.Acts.Nary.NaryReg.slots@VE.Acts.Nary VE.Acts.Nary.NaryReg@VE.Acts.Nary VE.Acts.Nary.RolesHold@VE.Acts.Nary VE.Acts.Nary.reifyFormula@VE.Acts.Nary VE.Formula@VE.Syntax VE.Norms.AppliesD@VE.Norms.Elaborate VE.Norms.Node.carveOuts@VE.Norms.Tree VE.Norms.Node.guard@VE.Norms.Tree VE.Norms.Node.mk@VE.Norms.Tree VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node.over@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.Node.sign@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree VE.Norms.tupleVal@VE.Norms.Basic VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
++  -- expr 1636316800
++theorem VE.Acts.Nary.binary_not_nary
++  ∀ (D : VE.Acts.Nary.ActsDoc) {r : VE.Norms.Regulated},
++    r ∈ D.binary → ∀ (a : VE.Acts.Nary.NaryReg), a ∈ D.nary → a.name ≠ r.name
++  -- uses VE.Acts.Nary.ActsDoc.binary@VE.Acts.Nary VE.Acts.Nary.ActsDoc.nary@VE.Acts.Nary VE.Acts.Nary.ActsDoc@VE.Acts.Nary VE.Acts.Nary.NaryReg.name@VE.Acts.Nary VE.Acts.Nary.NaryReg@VE.Acts.Nary VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree
++  -- expr 3318986300
++theorem VE.Acts.Nary.decides_binary
++  ∀ (D : VE.Acts.Nary.ActsDoc) {r : VE.Norms.Regulated},
++    r ∈ D.binary →
++      ∀ (S : VE.Structure) (ρ : VE.Valuation S) (sign : Bool),
++        VE.Norms.DecidesD (VE.Acts.Nary.reify D).T S ρ r.name sign ↔
++          VE.Norms.DecidesD (VE.Acts.Nary.source D) S ρ r.name sign
++  -- uses VE.Acts.Nary.ActsDoc.binary@VE.Acts.Nary VE.Acts.Nary.ActsDoc@VE.Acts.Nary VE.Acts.Nary.reify@VE.Acts.Nary VE.Acts.Nary.source@VE.Acts.Nary VE.Norms.DecidesD@VE.Norms.Elaborate VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
++  -- expr 2293039798
++theorem VE.Acts.Nary.decides_nary
++  ∀ (D : VE.Acts.Nary.ActsDoc) {a : VE.Acts.Nary.NaryReg},
++    a ∈ D.nary →
++      ∀ (S : VE.Structure) (h e : S.Carrier) (xs : List S.Carrier),
++        VE.Acts.Nary.RolesHold S e a.pairs xs →
++          (∀ (ys : List S.Carrier), VE.Acts.Nary.RolesHold S e a.pairs ys → ys = xs) →
++            ∀ (sign : Bool),
++              VE.Norms.DecidesD (VE.Acts.Nary.reify D).T S (VE.Norms.tupleVal [h, e]) a.name sign ↔
++                VE.Norms.DecidesD (VE.Acts.Nary.source D) S (VE.Norms.tupleVal (h :: xs)) a.name sign
++  -- uses VE.Acts.Nary.ActsDoc.nary@VE.Acts.Nary VE.Acts.Nary.ActsDoc@VE.Acts.Nary VE.Acts.Nary.NaryReg.name@VE.Acts.Nary VE.Acts.Nary.NaryReg.pairs@VE.Acts.Nary VE.Acts.Nary.NaryReg@VE.Acts.Nary VE.Acts.Nary.RolesHold@VE.Acts.Nary VE.Acts.Nary.reify@VE.Acts.Nary VE.Acts.Nary.source@VE.Acts.Nary VE.Norms.DecidesD@VE.Norms.Elaborate VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.tupleVal@VE.Norms.Basic VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
++  -- expr 2863185567
++theorem VE.Acts.Nary.decides_track
++  ∀ {T₁ T₂ : VE.Norms.Tree} {f : VE.Norms.Node → VE.Norms.Node} {S₁ S₂ : VE.Structure} {ρ₁ : VE.Valuation S₁}
++    {ρ₂ : VE.Valuation S₂} {p : String},
++    T₂.nodes = List.map f T₁.nodes →
++      (∀ (N : VE.Norms.Node), (f N).name = N.name ∧ (f N).pred = N.pred ∧ (f N).over = N.over ∧ (f N).sign = N.sign) →
++        (∀ (N : VE.Norms.Node), N ∈ T₁.nodes → N.pred = p → (VE.Norms.AppliesD S₂ ρ₂ (f N) ↔ VE.Norms.AppliesD S₁ ρ₁ N)) →
++          ∀ (sign : Bool), VE.Norms.DecidesD T₂ S₂ ρ₂ p sign ↔ VE.Norms.DecidesD T₁ S₁ ρ₁ p sign
++  -- uses VE.Norms.AppliesD@VE.Norms.Elaborate VE.Norms.DecidesD@VE.Norms.Elaborate VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node.over@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.Node.sign@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree VE.Norms.Tree.nodes@VE.Norms.Tree VE.Norms.Tree@VE.Norms.Tree VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
++  -- expr 2111870921
++theorem VE.Acts.Nary.exRoles_denote
++  ∀ (S : VE.Structure) (e : S.Carrier) (body : VE.Formula) (rs : List (String × String)) (pre ρ : List S.Carrier),
++    VE.Formula.denote S (pre ++ e :: ρ) (VE.Acts.Nary.exRoles pre.length rs body) ↔
++      ∃ ys, VE.Acts.Nary.RolesHold S e rs ys ∧ VE.Formula.denote S (ys.reverse ++ pre ++ e :: ρ) body
++  -- uses VE.Acts.Nary.RolesHold@VE.Acts.Nary VE.Acts.Nary.exRoles@VE.Acts.Nary VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
++  -- expr 2088810556
++theorem VE.Acts.Nary.find_name
++  ∀ {nary : List VE.Acts.Nary.NaryReg},
++    (List.map (fun x => x.name) nary).Nodup →
++      ∀ {a : VE.Acts.Nary.NaryReg}, a ∈ nary → List.find? (fun x => x.name == a.name) nary = Option.some a
++  -- uses VE.Acts.Nary.NaryReg.name@VE.Acts.Nary VE.Acts.Nary.NaryReg@VE.Acts.Nary
++  -- expr 3745119062
++theorem VE.Acts.Nary.liftAt_denote
++  ∀ (S : VE.Structure) (v : S.Carrier) (a : VE.Formula) (l r : List S.Carrier),
++    VE.Formula.denote S (l ++ v :: r) (VE.Acts.Nary.liftAt l.length a) ↔ VE.Formula.denote S (l ++ r) a
++  -- uses VE.Acts.Nary.liftAt@VE.Acts.Nary VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
++  -- expr 2866444828
++theorem VE.Acts.Nary.mem_children_map
++  ∀ {T₁ T₂ : VE.Norms.Tree} {f : VE.Norms.Node → VE.Norms.Node},
++    T₂.nodes = List.map f T₁.nodes →
++      (∀ (N : VE.Norms.Node), (f N).name = N.name ∧ (f N).pred = N.pred ∧ (f N).over = N.over) →
++        ∀ {N C : VE.Norms.Node}, C ∈ VE.Norms.children T₂ (f N) ↔ ∃ C₀, C₀ ∈ VE.Norms.children T₁ N ∧ C = f C₀
++  -- uses VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node.over@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree VE.Norms.Tree.nodes@VE.Norms.Tree VE.Norms.Tree@VE.Norms.Tree VE.Norms.children@VE.Norms.Tree
++  -- expr 295221788
++theorem VE.Acts.Nary.mem_reified
++  ∀ {D : VE.Acts.Nary.ActsDoc} {r : VE.Norms.Regulated},
++    r ∈ (VE.Acts.Nary.reify D).T.regulated ↔ r ∈ D.binary ∨ ∃ a, a ∈ D.nary ∧ r = a.reified
++  -- uses VE.Acts.Nary.ActsDoc.binary@VE.Acts.Nary VE.Acts.Nary.ActsDoc.nary@VE.Acts.Nary VE.Acts.Nary.ActsDoc@VE.Acts.Nary VE.Acts.Nary.NaryReg.reified@VE.Acts.Nary VE.Acts.Nary.NaryReg@VE.Acts.Nary VE.Acts.Nary.reify@VE.Acts.Nary VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Tree.regulated@VE.Norms.Tree
++  -- expr 3931140793
++theorem VE.Acts.Nary.names_nodup
++  ∀ (D : VE.Acts.Nary.ActsDoc), (List.map (fun x => x.name) D.nary).Nodup
++  -- uses VE.Acts.Nary.ActsDoc.nary@VE.Acts.Nary VE.Acts.Nary.ActsDoc@VE.Acts.Nary VE.Acts.Nary.NaryReg.name@VE.Acts.Nary VE.Acts.Nary.NaryReg@VE.Acts.Nary
++  -- expr 1991602161
++theorem VE.Acts.Nary.pairs_fst
++  ∀ (a : VE.Acts.Nary.NaryReg), a.roles.length = a.slots.length → List.map Prod.fst a.pairs = a.slots
++  -- uses VE.Acts.Nary.NaryReg.pairs@VE.Acts.Nary VE.Acts.Nary.NaryReg.roles@VE.Acts.Nary VE.Acts.Nary.NaryReg.slots@VE.Acts.Nary VE.Acts.Nary.NaryReg@VE.Acts.Nary
++  -- expr 3522261791
++theorem VE.Acts.Nary.pairs_length
++  ∀ (a : VE.Acts.Nary.NaryReg), a.roles.length = a.slots.length → a.pairs.length = a.slots.length
++  -- uses VE.Acts.Nary.NaryReg.pairs@VE.Acts.Nary VE.Acts.Nary.NaryReg.roles@VE.Acts.Nary VE.Acts.Nary.NaryReg.slots@VE.Acts.Nary VE.Acts.Nary.NaryReg@VE.Acts.Nary
++  -- expr 2670826067
++theorem VE.Acts.Nary.pairs_roles
++  ∀ (a : VE.Acts.Nary.NaryReg) (q : String × String), q ∈ a.pairs → q.snd ∈ a.roles
++  -- uses VE.Acts.Nary.NaryReg.pairs@VE.Acts.Nary VE.Acts.Nary.NaryReg.roles@VE.Acts.Nary VE.Acts.Nary.NaryReg@VE.Acts.Nary
++  -- expr 3838756202
++theorem VE.Acts.Nary.reifyFormula_denote
++  ∀ (S : VE.Structure) (a : VE.Acts.Nary.NaryReg),
++    a.roles.length = a.slots.length →
++      ∀ (φ : VE.Formula) (h e : S.Carrier) (xs : List S.Carrier),
++        VE.Acts.Nary.RolesHold S e a.pairs xs →
++          (∀ (ys : List S.Carrier), VE.Acts.Nary.RolesHold S e a.pairs ys → ys = xs) →
++            (VE.Formula.denote S (VE.Norms.tupleVal [h, e]) (VE.Acts.Nary.reifyFormula a φ) ↔
++              VE.Formula.denote S (VE.Norms.tupleVal (h :: xs)) φ)
++  -- uses VE.Acts.Nary.NaryReg.pairs@VE.Acts.Nary VE.Acts.Nary.NaryReg.roles@VE.Acts.Nary VE.Acts.Nary.NaryReg.slots@VE.Acts.Nary VE.Acts.Nary.NaryReg@VE.Acts.Nary VE.Acts.Nary.RolesHold@VE.Acts.Nary VE.Acts.Nary.reifyFormula@VE.Acts.Nary VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Norms.tupleVal@VE.Norms.Basic VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
++  -- expr 2800433764
++theorem VE.Acts.Nary.reifyNode_fields
++  ∀ (nary : List VE.Acts.Nary.NaryReg) (N : VE.Norms.Node),
++    (VE.Acts.Nary.reifyNode nary N).name = N.name ∧
++      (VE.Acts.Nary.reifyNode nary N).pred = N.pred ∧
++        (VE.Acts.Nary.reifyNode nary N).over = N.over ∧ (VE.Acts.Nary.reifyNode nary N).sign = N.sign
++  -- uses VE.Acts.Nary.NaryReg@VE.Acts.Nary VE.Acts.Nary.reifyNode@VE.Acts.Nary VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node.over@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.Node.sign@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree
++  -- expr 185687670
++theorem VE.Acts.Nary.reifyNode_of_none
++  ∀ {nary : List VE.Acts.Nary.NaryReg} {N : VE.Norms.Node},
++    (∀ (a : VE.Acts.Nary.NaryReg), a ∈ nary → a.name ≠ N.pred) → VE.Acts.Nary.reifyNode nary N = N
++  -- uses VE.Acts.Nary.NaryReg.name@VE.Acts.Nary VE.Acts.Nary.NaryReg@VE.Acts.Nary VE.Acts.Nary.reifyNode@VE.Acts.Nary VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree
++  -- expr 836989791
++theorem VE.Acts.Nary.reifyNode_of_some
++  ∀ {nary : List VE.Acts.Nary.NaryReg},
++    (List.map (fun x => x.name) nary).Nodup →
++      ∀ {a : VE.Acts.Nary.NaryReg},
++        a ∈ nary →
++          ∀ {N : VE.Norms.Node},
++            N.pred = a.name →
++              VE.Acts.Nary.reifyNode nary N =
++                { name := N.name, pred := N.pred, sign := N.sign, guard := VE.Acts.Nary.reifyFormula a N.guard,
++                  carveOuts := List.map (VE.Acts.Nary.reifyFormula a) N.carveOuts, over := N.over }
++  -- uses VE.Acts.Nary.NaryReg.name@VE.Acts.Nary VE.Acts.Nary.NaryReg@VE.Acts.Nary VE.Acts.Nary.reifyFormula@VE.Acts.Nary VE.Acts.Nary.reifyNode@VE.Acts.Nary VE.Formula@VE.Syntax VE.Norms.Node.carveOuts@VE.Norms.Tree VE.Norms.Node.guard@VE.Norms.Tree VE.Norms.Node.mk@VE.Norms.Tree VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node.over@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.Node.sign@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree
++  -- expr 1461374022
++theorem VE.Acts.Nary.reify_faithful
++  ∀ (D : VE.Acts.Nary.ActsDoc) (S : VE.Structure),
++    VE.Acts.Nary.OneEventPerTuple D S → (VE.Norms.holdsCatala (VE.Acts.Nary.reify D).T S ↔ VE.Acts.Nary.NaryIntended D S)
++  -- uses VE.Acts.Nary.ActsDoc@VE.Acts.Nary VE.Acts.Nary.NaryIntended@VE.Acts.Nary VE.Acts.Nary.OneEventPerTuple@VE.Acts.Nary VE.Acts.Nary.reify@VE.Acts.Nary VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.holdsCatala@VE.Norms.Elaborate VE.Structure@VE.Semantics
++  -- expr 1021482102
++theorem VE.Acts.Nary.rolesHold_forget
++  ∀ {S : VE.Structure} {e : S.Carrier} {p : String} {rs : List (String × String)} {ys : List S.Carrier},
++    (∀ (q : String × String), q ∈ rs → q.snd ≠ p) →
++      (VE.Acts.Nary.RolesHold (VE.Norms.forget [p] S) e rs ys ↔ VE.Acts.Nary.RolesHold S e rs ys)
++  -- uses VE.Acts.Nary.RolesHold@VE.Acts.Nary VE.Norms.forget@VE.Norms.Basic VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
++  -- expr 913235598
++theorem VE.Acts.Nary.rolesHold_length
++  ∀ {S : VE.Structure} {e : S.Carrier} {rs : List (String × String)} {ys : List S.Carrier},
++    VE.Acts.Nary.RolesHold S e rs ys → ys.length = rs.length
++  -- uses VE.Acts.Nary.RolesHold@VE.Acts.Nary VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
++  -- expr 4059139463
++theorem VE.Acts.Nary.rolesHold_typed
++  ∀ {S : VE.Structure} {e : S.Carrier} {rs : List (String × String)} {ys : List S.Carrier},
++    VE.Acts.Nary.RolesHold S e rs ys → VE.TupleTyped S (List.map Prod.fst rs) ys
++  -- uses VE.Acts.Nary.RolesHold@VE.Acts.Nary VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.TupleTyped@VE.Semantics
++  -- expr 3582014383
++theorem VE.Acts.Nary.roles_ne
++  ∀ (D : VE.Acts.Nary.ActsDoc) {a : VE.Acts.Nary.NaryReg},
++    a ∈ D.nary → ∀ (q : String × String), q ∈ a.pairs → q.snd ≠ a.name
++  -- uses VE.Acts.Nary.ActsDoc.nary@VE.Acts.Nary VE.Acts.Nary.ActsDoc@VE.Acts.Nary VE.Acts.Nary.NaryReg.name@VE.Acts.Nary VE.Acts.Nary.NaryReg.pairs@VE.Acts.Nary VE.Acts.Nary.NaryReg@VE.Acts.Nary
++  -- expr 3760569837
++theorem VE.Acts.Nary.term_liftAt_denote
++  ∀ (S : VE.Structure) (v : S.Carrier) (t : VE.Term) (l r : List S.Carrier),
++    VE.Term.denote S (l ++ v :: r) (VE.Acts.Nary.Term.liftAt l.length t) = VE.Term.denote S (l ++ r) t
++  -- uses VE.Acts.Nary.Term.liftAt@VE.Acts.Nary VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.Term.denote@VE.Semantics VE.Term@VE.Syntax
++  -- expr 957585841
++theorem VE.Acts.Nary.value_nary
++  ∀ (D : VE.Acts.Nary.ActsDoc) {a : VE.Acts.Nary.NaryReg},
++    a ∈ D.nary →
++      ∀ (S : VE.Structure) (h e : S.Carrier) (xs : List S.Carrier),
++        VE.Acts.Nary.RolesHold S e a.pairs xs →
++          (∀ (ys : List S.Carrier), VE.Acts.Nary.RolesHold S e a.pairs ys → ys = xs) →
++            VE.Norms.Value (VE.Acts.Nary.reify D).T a.reified (VE.Norms.forget [a.name] S) [h, e] =
++              VE.Norms.Value (VE.Acts.Nary.source D) a.reg (VE.Norms.forget [a.name] S) (h :: xs)
++  -- uses VE.Acts.Nary.ActsDoc.nary@VE.Acts.Nary VE.Acts.Nary.ActsDoc@VE.Acts.Nary VE.Acts.Nary.NaryReg.name@VE.Acts.Nary VE.Acts.Nary.NaryReg.pairs@VE.Acts.Nary VE.Acts.Nary.NaryReg.reg@VE.Acts.Nary VE.Acts.Nary.NaryReg.reified@VE.Acts.Nary VE.Acts.Nary.NaryReg@VE.Acts.Nary VE.Acts.Nary.RolesHold@VE.Acts.Nary VE.Acts.Nary.reify@VE.Acts.Nary VE.Acts.Nary.source@VE.Acts.Nary VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Value@VE.Norms.Elaborate VE.Norms.forget@VE.Norms.Basic VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
++  -- expr 3923692652
++theorem VE.Acts.Nary.yields_track
++  ∀ {T₁ T₂ : VE.Norms.Tree} {f : VE.Norms.Node → VE.Norms.Node} {S₁ S₂ : VE.Structure} {ρ₁ : VE.Valuation S₁}
++    {ρ₂ : VE.Valuation S₂} {p : String},
++    T₂.nodes = List.map f T₁.nodes →
++      (∀ (N : VE.Norms.Node), (f N).name = N.name ∧ (f N).pred = N.pred ∧ (f N).over = N.over) →
++        (∀ (N : VE.Norms.Node), N ∈ T₁.nodes → N.pred = p → (VE.Norms.AppliesD S₂ ρ₂ (f N) ↔ VE.Norms.AppliesD S₁ ρ₁ N)) →
++          ∀ (k : Nat) (N : VE.Norms.Node),
++            N ∈ T₁.nodes → N.pred = p → (VE.Norms.YieldsD T₂ S₂ ρ₂ k (f N) ↔ VE.Norms.YieldsD T₁ S₁ ρ₁ k N)
++  -- uses VE.Norms.AppliesD@VE.Norms.Elaborate VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node.over@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree VE.Norms.Tree.nodes@VE.Norms.Tree VE.Norms.Tree@VE.Norms.Tree VE.Norms.YieldsD@VE.Norms.Elaborate VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
++  -- expr 1176181588
+ theorem VE.Acts.Run.firstsBy_map
+   ∀ {α β : Type} [inst : DecidableEq β] (f : α → β) (xs : List α),
+     List.map f (VE.Acts.Run.firstsBy f xs) = VE.Acts.firsts (List.map f xs)
