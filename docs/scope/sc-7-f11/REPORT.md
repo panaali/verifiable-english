@@ -130,6 +130,28 @@ F1: the earlier text said it existed; it did not).
     codemap are read by many units.
   - No test of `main-known-red.txt` was involved.
 
+## Review round (sc-7-f11-review.final.md on b2d349624)
+
+| Finding | Fix | Regression test | Commit |
+|---|---|---|---|
+| F1 (A): R16's ties-pass row was missing | row added, FOLLOW-UPS.md:2518 "## sc-7-f11 ties pass"; DELTA and this REPORT cite it | PROBE F1 passes; not a repo test, since it reads `manage-agents/FOLLOW-UPS.md`, outside the tree (tests are hermetic) | 6f1025e93 (docs) |
+| F2 (B): `charRef` asked for a run of two | a non-empty run, as the ruling states | guards :254, :255 (run of one, every slot), :257; `test_char_ref_refuses_every_run_the_ruling_names` | dd9e73266, 7ca09b6e9 |
+| F3 (C): FOLLOW-UPS "213 KILLED" | corrected to 229 in the "## sc-7" row | (text) | outside the tree |
+
+Seeded bug (Lean): `charRef` back to `2 ≤ r.length`: :254 and :255 fail (`lake build VE.Scope.AuthoringExamples`), and
+with those two guards commented out the mutant accepts "x&a;", "x&#;", "x&Z;" and "x&0;", which the sweep test's model
+refuses. Only Lean product code changed; no Python or Rust product code.
+
+Checks: PROBE F2 failed before the fix and passes after it. `lake build`: "Build completed successfully (1363 jobs)".
+`python3 lean/audit.py`: "PASS: 830 source files; 9335 named theorem declarations". `tools/trust_map.py --check`:
+"trusted +22 … PASS". `regen_generated.py --write --skip route-cases` (route-cases needs the Rust binary, absent in this
+worktree, and reads no Scope code), then `--only lean-statements` after the docstring edit. Hand mutants: 16 KILLED.
+Trust mutants: 89 KILLED, 0 SURVIVOR (above). Selected tests (`mac-pytest.sh --select -- --base f3f40d51d --run`, on
+ve-cloud-3 at 6f1025e93): 102 units recorded, 14 broad files deferred to the chain gate, 1 failed:
+`test_char_ref_refuses_every_run_the_ruling_names` on c = " " ("x& ;" is two words: the model's error, not
+`clause`'s). After 7ca09b6e9, `pytest tests/test_scope_authoring.py`: "11 passed". No test of `main-known-red.txt` was
+involved.
+
 ## Size
 
 `git diff --numstat $(git merge-base HEAD main)`, outside the generated files (`docs/codemap/`,
