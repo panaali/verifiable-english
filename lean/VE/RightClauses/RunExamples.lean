@@ -102,17 +102,39 @@ def countryOf : String := "[\"and\",[\"top\"],[\"binary\",\"country_of\",[\"var\
 #guard runCaseReported (Json.mkObj [("id", "k")]) == Json.mkObj [("id", "k"), ("status", "error"),
   ("error", "fields do not match: expected [id, environment, document], got [id]")]
 -- two units (a `right` and its `right_lines`), each line with a total relation: both units plained, two premises
-def twoLines : Json := parse <|
+def twoLinesWith (e1 e2 : String) : Json := parse <|
   "[{\"right\":{\"name\":\"r21\",\"holder\":\"person\",\"lines\":[{\"kind\":\"claim\",\"norm\":{\"name\":" ++
   "\"equal-access\",\"predicate\":\"public_service_access_required\",\"sign\":true,\"guard\":[\"top\"],\"unless\":[]," ++
-  "\"over\":[]},\"elided\":[],\"relation\":{" ++ rel ++ ",\"total\":1}}]},\"span\":[0,100]}," ++
+  "\"over\":[]},\"elided\":" ++ e1 ++ ",\"relation\":{" ++ rel ++ ",\"total\":1}}]},\"span\":[0,100]}," ++
   "{\"right_lines\":{\"right\":\"r21\",\"lines\":[{\"kind\":\"claim\",\"norm\":{\"name\":\"equal-access-2\"," ++
   "\"predicate\":\"public_service_access_required\",\"sign\":true,\"guard\":[\"top\"],\"unless\":[],\"over\":[]}," ++
-  "\"elided\":[],\"relation\":{" ++ rel ++ ",\"total\":1}}]},\"span\":[100,200]}]"
+  "\"elided\":" ++ e2 ++ ",\"relation\":{" ++ rel ++ ",\"total\":1}}]},\"span\":[100,200]}]"
+def twoLines : Json := twoLinesWith "[]" "[]"
 #guard ((ask twoLines).map fun r => ((r.getObjValD "clause_slot").getArr?.toOption.map (·.size),
   (parse ((r.getObjValD "plained").getStr?.toOption.getD "")).getArr?.toOption.map (·.size))).toOption ==
   some (some 2, some 2)
 #guard says (doc ",\"elided\":[[30,40],[35,45]]") == "ClauseSpan: equal-access: [35, 45)"
+-- `elided_bytes` (6, 9.1 K4): K4 through the route reports 10, its one unit 10; with no elided span, 0; two units
+-- each report their own lines' spans, in document order, and the total is their sum; a unit without lines has 0
+def elided (d : Json) : Option (Json × Json) :=
+  ((ask d).map fun r => (r.getObjValD "elided_bytes", r.getObjValD "unit_elided_bytes")).toOption
+#guard elided (doc (",\"elided\":[[30,40]],\"clauses\":[" ++ charged ++ "]")) == some (parse "10", parse "[10]")
+#guard elided (doc ",\"elided\":[]") == some (parse "0", parse "[0]")
+#guard elided (twoLinesWith "[[30,40]]" "[[150,175],[180,181]]") == some (parse "36", parse "[10,26]")
+#guard elided (twoLinesWith "[[0,1],[99,100]]" "[]") == some (parse "2", parse "[2,0]")
+-- two lines of one unit that elide the same bytes: 6 sums over the unit's lines, so the unit counts them once per line
+def sameUnit : Json := parse <|
+  "[{\"right\":{\"name\":\"r21\",\"holder\":\"person\",\"lines\":[" ++
+  "{\"kind\":\"claim\",\"norm\":{\"name\":\"equal-access\",\"predicate\":\"public_service_access_required\"," ++
+  "\"sign\":true,\"guard\":[\"top\"],\"unless\":[],\"over\":[]},\"elided\":[[30,40]]}," ++
+  "{\"kind\":\"claim\",\"norm\":{\"name\":\"access-2\",\"predicate\":\"public_service_access_required\"," ++
+  "\"sign\":true,\"guard\":[\"top\"],\"unless\":[],\"over\":[]},\"elided\":[[30,40]]}]},\"span\":[0,100]}]"
+#guard elided sameUnit == some (parse "20", parse "[20]")
+#guard (unitElided [((("r21" : String), ("equal-access" : String)), 7)] (parse ("[{\"limitation\":{}},{\"right\":{\"name\":\"r21\",\"lines\":[" ++
+  "{\"norm\":{\"name\":\"equal-access\"}},{\"norm\":{\"name\":\"other\"}}]}}]"))) == ([0, 7] : List Nat)
+-- a line object with no name (neither `norm` nor `liberty` names it) adds 0
+#guard (unitElided [((("r21" : String), ("equal-access" : String)), 7)] (parse ("[{\"right\":{\"name\":\"r21\",\"lines\":[" ++
+  "{\"kind\":\"claim\"},{\"norm\":{\"name\":\"equal-access\"}}]}}]"))) == ([7] : List Nat)
 -- an extra member that sorts first, then last
 #guard says (doc (",\"elided\":[],\"relation\":{\"aaa\":1," ++ rel ++ "}")) ==
   "InvalidInput: invalid relation of rule equal-access"
@@ -139,5 +161,48 @@ def depth64 : String := (List.range 63).foldl (fun f _ => "[\"not\"," ++ f ++ "]
 #guard says (parse ("[{\"right_lines\":{\"right\":\"r99\",\"lines\":[{\"kind\":\"claim\",\"norm\":{\"name\":" ++
   "\"equal-access\",\"predicate\":\"public_service_access_required\",\"sign\":true,\"guard\":[\"top\"],\"unless\":[]," ++
   "\"over\":[]}}]}}]")) == "InvalidInput: elided missing on rule equal-access"
+
+/-! ## cmp-s3-cfr-1b: W1's rule limit, charged before the head decodes -/
+
+/-- Units of `right` (`right_lines` when `rl`) bodies holding `ks[i]` copies of the 9.1 line without `elided`. -/
+def bodies (ks : List Nat) (rl : Bool := false) : Json := parse <| "[" ++ ",".intercalate (ks.map fun k =>
+  (if rl then "{\"right_lines\":{\"right\":\"r21\",\"lines\":[" else "{\"right\":{\"name\":\"r21\",\"holder\":\"person\",\"lines\":[") ++
+  ",".intercalate (List.replicate k ("{\"kind\":\"claim\",\"norm\":{\"name\":\"equal-access\",\"predicate\":" ++
+    "\"public_service_access_required\",\"sign\":true,\"guard\":[\"top\"],\"unless\":[],\"over\":[]}}")) ++ "]}}") ++ "]"
+-- 256 line objects are read (the first line's text); 257, in one unit or across units of either body, are refused
+-- before any is decoded
+#guard lineObjects (bodies [3, 4] true) == 7 && lineObjects (parse "{}") == 0 &&
+  lineObjects (parse "[{\"span\":[0,1]}]") == 0
+#guard says (bodies [256]) == "InvalidInput: elided missing on rule equal-access" &&
+  says (bodies [128, 128] true) == "InvalidInput: elided missing on rule equal-access"
+-- 64 conjuncts (clauses, then the relation) are refused before `plain` nests them; 63 reach the rights decoder
+def scopes (k : Nat) : String := ",\"elided\":[],\"clauses\":[" ++ ",".intercalate ((List.range k).map fun i =>
+  "{\"role\":\"scope\",\"formula\":[\"unary\",\"charged\",[\"var\",0]],\"span\":[" ++ toString i ++ "," ++
+    toString (i + 1) ++ "]}") ++ "]"
+#guard says (doc (scopes 64)) == "ResourceLimit: formula depth exceeds 64" &&
+  says (doc (scopes 63 ++ ",\"relation\":{" ++ rel ++ "}")) == "ResourceLimit: formula depth exceeds 64" &&
+  says (doc (scopes 63)) != "ResourceLimit: formula depth exceeds 64"
+-- the charge itself, which no answer shows below the request size limits (40,000 clauses reach step 6's same text)
+def deep (d : Json) : Option Bool := (deepLine <$> decodeClauseDoc (parse (profiles on)) d).toOption
+#guard deep (doc (scopes 64)) == some true && deep (doc (scopes 63 ++ ",\"relation\":{" ++ rel ++ "}")) == some true &&
+  deep (doc (scopes 63)) == some false
+-- one deep line among shallow ones is enough
+#guard deep (doc (",\"elided\":[]},{\"kind\":\"claim\",\"norm\":{\"name\":\"equal-access-2\",\"predicate\":" ++
+  "\"public_service_access_required\",\"sign\":true,\"guard\":[\"top\"],\"unless\":[],\"over\":[]}" ++ scopes 64)) ==
+  some true
+/-- `deepLine` on fixed lines and candidate groups (the wire builds none yet), each line deep (`true`: 64 conjuncts)
+    or shallow; a deep line anywhere, first or last, is charged. -/
+def deepIn (fixed : List Bool) (groups : List (List Bool)) : Option Bool := do
+  let line (keys : String) := (decodeClauseDoc (parse (profiles on)) (doc keys)).toOption.bind (·.lines.head?)
+  let D ← (decodeClauseDoc (parse (profiles on)) (doc ",\"elided\":[]")).toOption
+  let s ← line ",\"elided\":[]"
+  let d ← line (scopes 64)
+  let pick (b : Bool) := if b then d else s
+  pure (deepLine ⟨D.doc, fixed.map pick, groups.map fun g => ("s", 0, .assertion .top, g.map pick)⟩)
+#guard deepIn [true, false] [] == some true && deepIn [false] [[false], [false, false]] == some false &&
+  deepIn [] [[true], [false]] == some true && deepIn [] [[false], [true]] == some true &&
+  deepIn [false] [[false, true]] == some true
+#guard says (bodies [257]) == "ResourceLimit: rules" && says (bodies [200, 57]) == "ResourceLimit: rules" &&
+  says (bodies [1, 256] true) == "ResourceLimit: rules"
 
 end VE.RightClauses.RunExamples
