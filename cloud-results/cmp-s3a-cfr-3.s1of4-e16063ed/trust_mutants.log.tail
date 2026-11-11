@@ -1,0 +1,9 @@
+trust_mutants: 5 definitions, 79 mutants (20 to run), 4 jobs, base 0d663e3c50e5
+UNKNOWN lean/VE/RightClauses/ElidedBytes.lean:20 VE.RightClauses.lineElided (S, trusted) list-empty: L.elided -> [] (lean/VE/RightClauses/ElidedBytes.lean:20: Invalid projection: Type of)
+SURVIVOR lean/VE/RightClauses/ElidedBytes.lean:34 VE.RightClauses.unitElided (D[V], trusted) list-empty: ["span"] -> []
+UNKNOWN lean/VE/RightClauses/ElidedBytes.lean:38 VE.RightClauses.unitElided (D[V], trusted) list-empty: es -> [] (lean/VE/RightClauses/ElidedBytes.lean:38: Invalid projection: Type of)
+trust_mutants: 13 KILLED, 1 SURVIVOR, 2 UNKNOWN, 4 INVALID, 0 ALLOWED, 0 NOT RUN, 59 OTHER SHARD in 81 s
+trust_mutants: D[V], trusted: 7 KILLED, 1 SURVIVOR, 1 UNKNOWN, 2 INVALID, 31 OTHER SHARD
+trust_mutants: G[V], trusted: 3 KILLED, 7 OTHER SHARD
+trust_mutants: S, trusted: 3 KILLED, 1 UNKNOWN, 2 INVALID, 21 OTHER SHARD
+trust_mutants: steps: wall plan 12.6 s, scratch 4.3 s, control_build 0.2 s, probe_install 1.4 s, mutants 59.3 s, cleanup 3.1 s; lake control_build 0.1 s (1), probe_install 1.4 s (1), control_probes 13.4 s (4), mutant_builds 20.8 s (20), mutant_checks 58 s (17), stage_controls 6.3 s (3), mutant_probes 87.4 s (15)
