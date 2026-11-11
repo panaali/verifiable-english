@@ -5,6 +5,7 @@ carry Table 1's standard and F2/F3's sufficiency, CAPREP asks 3.3's compilation 
 every F2 rule, RS11 = final stays excluded, every header quotes whole source sentences, and answer-key.json equals
 PLAN section 6 cell by cell except the six transcription findings PLAN 12 item 15 records.
 """
+import hashlib
 import json
 import re
 from pathlib import Path
@@ -14,7 +15,7 @@ import pytest
 REPO = Path(__file__).resolve().parents[1]
 PF = REPO / "usecases" / "openai-preparedness"
 LEAN_SERVICE = REPO / "lean/.lake/build/bin/ve_service"
-NAMES = ("pf_vocabulary", "pf_translation", "build_document", "stage0", "run")
+NAMES = ("pf_vocabulary", "pf_translation", "build_document", "stage0", "run", "quote_evidence")
 
 
 def _load():
@@ -22,9 +23,11 @@ def _load():
     import sys
     saved = {name: sys.modules.pop(name) for name in NAMES if name in sys.modules}
     sys.path.insert(0, str(PF))
+    sys.path.insert(0, str(PF / "source"))
     try:
         return {name: importlib.import_module(name) for name in NAMES}
     finally:
+        sys.path.remove(str(PF / "source"))
         sys.path.remove(str(PF))
         for name in NAMES:
             sys.modules.pop(name, None)
@@ -33,6 +36,7 @@ def _load():
 
 MODULES = _load()
 V, T, B, R = (MODULES[n] for n in ("pf_vocabulary", "pf_translation", "build_document", "run"))
+Q = MODULES["quote_evidence"]
 
 
 @pytest.fixture
@@ -253,26 +257,16 @@ def test_k_entries_are_the_saved_answers():
 
 # --- Class 11: whole source sentences ---------------------------------------------------------------------------
 
-def _plain(text):
-    """Source and header text compared without layout: page numbers inside a sentence, line-break hyphens,
-    whitespace and quote styles do not count."""
-    text = re.sub(r" \d{1,2} (?=[a-z])", " ", text.replace("\n", " "))
-    return re.sub(r"[\s\-‐]+", "", text.replace("’", "'").replace("“", '"').replace("”", '"'))
-
-
-def quote_faults(blocks, source_text):
-    """(block id, quote) for every header with no quote, a cut quote ("…") or a quote the source does not contain."""
-    source, faults = _plain(source_text), []
-    for block in blocks:
-        quotes = re.findall(r"“((?:[^“”]|“[^“”]*”)*)”", block.source)
-        faults += [(block.id, None)] if not quotes else [
-            (block.id, q) for q in quotes if "…" in q or _plain(q) not in source]
-    return faults
-
-
-@pytest.mark.skipif(not B.DEFAULT_SOURCE.exists(), reason="the pinned source text is not present")
 def test_every_header_quotes_whole_source_text(pf):
-    assert quote_faults(T.rule_blocks() + T.read_blocks("facts.d1.ve"), B.DEFAULT_SOURCE.read_text()) == []
+    blocks = Q.blocks()
+    evidence = json.loads(Q.EVIDENCE.read_text())
+    assert evidence == {"source_sha256": B.TEXT_SHA256, "quotes": Q.fingerprint(blocks)}
+    assert len(evidence["quotes"]) == len(blocks)
+    assert all(Q.quotes(block) and all("…" not in q for q in Q.quotes(block)) for block in blocks)
+    if B.DEFAULT_SOURCE.exists():
+        source = B.DEFAULT_SOURCE.read_bytes()
+        B.check_source(source)
+        assert Q.quote_faults(blocks, source.decode()) == []
 
 
 def test_a_cut_altered_or_missing_quote_is_a_fault():
@@ -282,7 +276,7 @@ def test_a_cut_altered_or_missing_quote_is_a_fault():
     cut = T.Block("cut", (), "A: “We will review … continued sufficiency.”", "")
     altered = T.Block("altered", (), "A: “We will review the Preparedness Framework.”", "")
     none = T.Block("none", (), "A: a paraphrase", "")
-    assert quote_faults([good, cut, altered, none], source) == [
+    assert Q.quote_faults([good, cut, altered, none], source) == [
         ("cut", "We will review … continued sufficiency."), ("altered", "We will review the Preparedness Framework."),
         ("none", None)]
 
@@ -323,22 +317,34 @@ def test_a_partial_fact_word_map_is_not_complete(pf, monkeypatch):
     assert not B._complete_clause_map("bio-high", b"[High]")
 
 
-@pytest.mark.skipif(not B.DEFAULT_SOURCE.exists(), reason="the pinned source text is not present")
 def test_a_fact_anchored_on_a_partly_translated_unit_is_blocked(pf, monkeypatch):
-    source = B.DEFAULT_SOURCE.read_bytes()
-    _, records = B.build(source)
-    by_id = {r["id"]: r for r in records}
-    for block in B.FACT_ANCHORS:
-        assert any(r.get("premises") == [block] for r in records), block
-    assert by_id[CL_LEVELS_UNIT]["blocked_rule"] == "cl-levels"
-    # The F1 bug, replanted: anchor cl-levels as a fact again. The shared word-map gate still blocks the unit.
-    placements = {k: v for k, v in B.PLACEMENTS.items() if v[1] != "cl-levels"}
-    monkeypatch.setattr(B, "PLACEMENTS", placements)
-    monkeypatch.setitem(B.FACT_ANCHORS, "cl-levels", "Also, we are removing terms")
-    _, replanted = B.build(source)
-    unit = next(r for r in replanted if r["id"] == CL_LEVELS_UNIT)
+    if B.DEFAULT_SOURCE.exists():
+        source = B.DEFAULT_SOURCE.read_bytes()
+        B.check_source(source)
+        _, records = B.build(source)
+        by_id = {r["id"]: r for r in records}
+        for block in B.FACT_ANCHORS:
+            assert any(r.get("premises") == [block] for r in records), block
+        assert by_id[CL_LEVELS_UNIT]["blocked_rule"] == "cl-levels"
+        # The F1 bug, replanted: anchor cl-levels as a fact again.
+        placements = {k: v for k, v in B.PLACEMENTS.items() if v[1] != "cl-levels"}
+        monkeypatch.setattr(B, "PLACEMENTS", placements)
+        monkeypatch.setitem(B.FACT_ANCHORS, "cl-levels", "Also, we are removing terms")
+        _, replanted = B.build(source)
+        unit = next(r for r in replanted if r["id"] == CL_LEVELS_UNIT)
+        assert unit["kind"] == "unformalised" and "premises" not in unit, unit
+        assert unit["blocked_rule"] == "cl-levels" and unit["residual"] == by_id[CL_LEVELS_UNIT]["residual"]
+    # The same placement gate is exercised on every runner, including those without the licensed source.
+    synthetic = b"Also, we are removing terms low and medium because this changes Preparedness work."
+    monkeypatch.setattr(B, "check_source", lambda source: None)
+    monkeypatch.setattr(B, "PLACEMENTS", {})
+    monkeypatch.setattr(B, "FACT_ANCHORS", {"cl-levels": "Also, we are removing terms"})
+    _, replanted = B.build(synthetic)
+    assert len(replanted) == 1
+    unit = replanted[0]
     assert unit["kind"] == "unformalised" and "premises" not in unit, unit
-    assert unit["blocked_rule"] == "cl-levels" and unit["residual"] == by_id[CL_LEVELS_UNIT]["residual"]
+    assert unit["blocked_rule"] == "cl-levels"
+    assert unit["residual"] == f"unmapped_duty-p1-u1-{hashlib.sha256(synthetic).hexdigest()[:12]}"
 
 
 def test_every_blocked_reason_has_one_named_family(pf):
