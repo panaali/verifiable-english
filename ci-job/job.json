@@ -1,0 +1,21 @@
+{
+ "job": "cmp-s3-cfr-1b.s2of3-193aa36c",
+ "head": "0421b5d7ca8c5f3db8169e501a22ad85e98ad0a0",
+ "argv": [
+  "cmp-s3-cfr-1b.s2of3-193aa36c",
+  "0421b5d7ca8c5f3db8169e501a22ad85e98ad0a0",
+  "cb3faf552f41320f450a4a5cf7e47acf4ce2e797",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-7e026d2d8359.tar.zst",
+  "08ff4cb99641363a29f671abf0660c12233447ccfa17bea9f74a3ce6f4291642",
+  "--test",
+  "lean/VE/RightClauses/Examples.lean",
+  "--test",
+  "lean/VE/RightClauses/RunExamples.lean",
+  "--budget",
+  "6300",
+  "--shard",
+  "2/3",
+  "--jobs",
+  "4"
+ ]
+}
