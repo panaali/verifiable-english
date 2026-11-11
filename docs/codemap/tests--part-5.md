@@ -27,6 +27,7 @@
 - `tests/test_precommit_hook.py` — tools/hooks/pre-commit: each check rejects a planted example and passes clean commits.
 - `tests/test_premise_packs_stub.py` — Premise-packs spec 2.6 and its stub state what `PacksLabels.lean` proves (pk-1d, one owner of the statement).
 - `tests/test_premise_scale.py` — premise-scale: Lean's premise-check budget, its per-sort domain bounds, the ground-fact route, and the Rust wall-clock limit (DRI decisions QT2, ME1, ME2, ET1).
+- `tests/test_presupposition_rule_ob.py` — ps-2ab-rule-firstob: `admit`'s rule check names the rule's first obligation, else none (ps-2ac review F2).
 - `tests/test_presupposition_table.py` — ps-2a: `lean/VE/Presupposition/Table.lean` is PS-E1's candidate table (presupposition spec section 6), generated.
 - `tests/test_presupposition_wordings.py` — PS-6r (docs/spec/presupposition-PLAN.md): wording rows for the four pilot nouns.
 - `tests/test_profile_artifacts.py` — Keep published English measurements in sync with their raw samples.
@@ -80,4 +81,3 @@
 - `tests/test_readings_nd_document.py` — Readings under the unspecified completion through `ve document` (readings-defaults plan RD-2b; spec 3, 4.2, 4.3).
 - `tests/test_readings_nd_lean.py` — Readings under the unspecified completion through the Lean service (docs/spec/readings-defaults.md 8.3; plan RD-2a).
 - `tests/test_readings_rd5_plain_probe.py` — A pair separated on a plain regulated predicate gets E24 (readings-defaults RD-5).
-- `tests/test_readings_rd5_udhr.py` — RD-5 behavior tests: copy declarations, reproduce the migrated UDHR, and replay witnesses through Lean.
