@@ -102,17 +102,39 @@ def countryOf : String := "[\"and\",[\"top\"],[\"binary\",\"country_of\",[\"var\
 #guard runCaseReported (Json.mkObj [("id", "k")]) == Json.mkObj [("id", "k"), ("status", "error"),
   ("error", "fields do not match: expected [id, environment, document], got [id]")]
 -- two units (a `right` and its `right_lines`), each line with a total relation: both units plained, two premises
-def twoLines : Json := parse <|
+def twoLinesWith (e1 e2 : String) : Json := parse <|
   "[{\"right\":{\"name\":\"r21\",\"holder\":\"person\",\"lines\":[{\"kind\":\"claim\",\"norm\":{\"name\":" ++
   "\"equal-access\",\"predicate\":\"public_service_access_required\",\"sign\":true,\"guard\":[\"top\"],\"unless\":[]," ++
-  "\"over\":[]},\"elided\":[],\"relation\":{" ++ rel ++ ",\"total\":1}}]},\"span\":[0,100]}," ++
+  "\"over\":[]},\"elided\":" ++ e1 ++ ",\"relation\":{" ++ rel ++ ",\"total\":1}}]},\"span\":[0,100]}," ++
   "{\"right_lines\":{\"right\":\"r21\",\"lines\":[{\"kind\":\"claim\",\"norm\":{\"name\":\"equal-access-2\"," ++
   "\"predicate\":\"public_service_access_required\",\"sign\":true,\"guard\":[\"top\"],\"unless\":[],\"over\":[]}," ++
-  "\"elided\":[],\"relation\":{" ++ rel ++ ",\"total\":1}}]},\"span\":[100,200]}]"
+  "\"elided\":" ++ e2 ++ ",\"relation\":{" ++ rel ++ ",\"total\":1}}]},\"span\":[100,200]}]"
+def twoLines : Json := twoLinesWith "[]" "[]"
 #guard ((ask twoLines).map fun r => ((r.getObjValD "clause_slot").getArr?.toOption.map (·.size),
   (parse ((r.getObjValD "plained").getStr?.toOption.getD "")).getArr?.toOption.map (·.size))).toOption ==
   some (some 2, some 2)
 #guard says (doc ",\"elided\":[[30,40],[35,45]]") == "ClauseSpan: equal-access: [35, 45)"
+-- `elided_bytes` (6, 9.1 K4): K4 through the route reports 10, its one unit 10; with no elided span, 0; two units
+-- each report their own lines' spans, in document order, and the total is their sum; a unit without lines has 0
+def elided (d : Json) : Option (Json × Json) :=
+  ((ask d).map fun r => (r.getObjValD "elided_bytes", r.getObjValD "unit_elided_bytes")).toOption
+#guard elided (doc (",\"elided\":[[30,40]],\"clauses\":[" ++ charged ++ "]")) == some (parse "10", parse "[10]")
+#guard elided (doc ",\"elided\":[]") == some (parse "0", parse "[0]")
+#guard elided (twoLinesWith "[[30,40]]" "[[150,175],[180,181]]") == some (parse "36", parse "[10,26]")
+#guard elided (twoLinesWith "[[0,1],[99,100]]" "[]") == some (parse "2", parse "[2,0]")
+-- two lines of one unit that elide the same bytes: 6 sums over the unit's lines, so the unit counts them once per line
+def sameUnit : Json := parse <|
+  "[{\"right\":{\"name\":\"r21\",\"holder\":\"person\",\"lines\":[" ++
+  "{\"kind\":\"claim\",\"norm\":{\"name\":\"equal-access\",\"predicate\":\"public_service_access_required\"," ++
+  "\"sign\":true,\"guard\":[\"top\"],\"unless\":[],\"over\":[]},\"elided\":[[30,40]]}," ++
+  "{\"kind\":\"claim\",\"norm\":{\"name\":\"access-2\",\"predicate\":\"public_service_access_required\"," ++
+  "\"sign\":true,\"guard\":[\"top\"],\"unless\":[],\"over\":[]},\"elided\":[[30,40]]}]},\"span\":[0,100]}]"
+#guard elided sameUnit == some (parse "20", parse "[20]")
+#guard (unitElided [((("r21" : String), ("equal-access" : String)), 7)] (parse ("[{\"limitation\":{}},{\"right\":{\"name\":\"r21\",\"lines\":[" ++
+  "{\"norm\":{\"name\":\"equal-access\"}},{\"norm\":{\"name\":\"other\"}}]}}]"))) == ([0, 7] : List Nat)
+-- a line object with no name (neither `norm` nor `liberty` names it) adds 0
+#guard (unitElided [((("r21" : String), ("equal-access" : String)), 7)] (parse ("[{\"right\":{\"name\":\"r21\",\"lines\":[" ++
+  "{\"kind\":\"claim\"},{\"norm\":{\"name\":\"equal-access\"}}]}}]"))) == ([7] : List Nat)
 -- an extra member that sorts first, then last
 #guard says (doc (",\"elided\":[],\"relation\":{\"aaa\":1," ++ rel ++ "}")) ==
   "InvalidInput: invalid relation of rule equal-access"

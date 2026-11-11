@@ -1,0 +1,30 @@
+{
+  "item": "cmp-s3a-cfr-3",
+  "note": "One mutant per new trusted definition of lean/VE/RightClauses/ElidedBytes.lean (tools/trust-classes.json: S lineElided, entryElided, elidedTotal; D[V] unitElided), plus the seeded bugs of REPORT.md. Each was planted, built and run, then restored.",
+  "mutants": [
+    {"id": "S1", "file": "lean/VE/RightClauses/ElidedBytes.lean", "definition": "VE.RightClauses.lineElided",
+     "mutation": "n + (s.2 - s.1 + 1): off by one in the span sum",
+     "test": ["lean/VE/RightClauses/Examples.lean:93 #guard (K4 gives 11)", "tests/test_right_clauses.py::test_right_clauses_k4_product_elided_bytes"],
+     "result": "killed"},
+    {"id": "S2", "file": "lean/VE/RightClauses/Plain.lean", "definition": "VE.RightClauses.checkSpans",
+     "mutation": "the disjointness test is dropped: overlapping elisions of one line are counted twice",
+     "test": ["lean/VE/RightClauses/Examples.lean:122 #guard (K6)", "tests/test_right_clauses.py::test_right_clauses_k4_product_elided_bytes"],
+     "result": "killed"},
+    {"id": "S3", "file": "lean/VE/RightClauses/ElidedBytes.lean", "definition": "VE.RightClauses.unitElided",
+     "mutation": "each line adds the document total, not its own entry",
+     "test": ["lean/VE/RightClauses/RunExamples.lean:123 #guard", "tests/test_right_clauses.py::test_right_clauses_k4_product_elided_bytes"],
+     "result": "killed"},
+    {"id": "S4", "file": "lean/VE/RightClauses/Run.lean", "definition": "VE.RightClauses.Run.elaborateCase",
+     "mutation": "plained carries the request document's bytes (an existing field changes)",
+     "test": ["tests/test_right_clauses.py::test_right_clauses_existing_answers_unchanged"],
+     "result": "killed"},
+    {"id": "S5", "file": "lean/VE/RightClauses/ElidedBytes.lean", "definition": "VE.RightClauses.entryElided",
+     "mutation": "duplicates removed across lines: a line whose spans equal an earlier line's of the same right counts 0",
+     "test": ["lean/VE/RightClauses/RunExamples.lean:132 #guard", "tests/test_right_clauses.py::test_right_clauses_k4_product_elided_bytes"],
+     "result": "killed"},
+    {"id": "M6", "file": "lean/VE/RightClauses/ElidedBytes.lean", "definition": "VE.RightClauses.elidedTotal",
+     "mutation": "max n e.2 instead of n + e.2: the total is the largest line, not the sum",
+     "test": ["lean/VE/RightClauses/RunExamples.lean:123 #guard", "lean/VE/RightClauses/RunExamples.lean:132 #guard"],
+     "result": "killed"}
+  ]
+}
