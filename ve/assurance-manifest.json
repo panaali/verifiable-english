@@ -2480,7 +2480,8 @@
       "lean/VE/RightClauses/RunExamples.lean": "fixtures only: #guard checks of spec right-clauses 7 and 9.1 build clauses-elaborate requests as JSON and read the answers of `VE.RightClauses.runCaseReported`; no runner path",
       "lean/VE/RightClauses/WireDecode.lean": "theorems only: spec right-clauses 8.5's forward lemmas through the pinned decoders; JSON access only in statements and proofs",
       "lean/VE/RightClauses/WireName.lean": "theorems only: line-name lemmas of spec right-clauses 8.5 through the pinned decoders; JSON access only in statements and proofs",
-      "lean/VE/RightClauses/WireTheorems.lean": "theorems only: spec right-clauses 8.5's `elaborate_plain` and `decode_unstructured`; JSON access only in statements and proofs"
+      "lean/VE/RightClauses/WireTheorems.lean": "theorems only: spec right-clauses 8.5's `elaborate_plain` and `decode_unstructured`; JSON access only in statements and proofs",
+      "lean/VE/WireContract/Hooks/Purposes.lean": "diagnostic only: no verdict depends on it. The classifiers and the adapter of the contract purposes@0, in shadow (sa-wire-purposes0); they call VE.Purposes.Wire's decoder and its parts read-only and only read their results; idsAgree's #guard checks 2.1b against VE.Purposes.check"
     }
   },
   "plan_operations": {
@@ -5441,7 +5442,8 @@
               "lean/VE/WireContract/Hooks/SoftNorms.lean",
               "lean/VE/WireContract/Hooks/Norms.lean",
               "lean/VE/WireContract/Hooks/NormDefaults.lean",
-              "lean/VE/WireContract/Hooks/Acts.lean"
+              "lean/VE/WireContract/Hooks/Acts.lean",
+              "lean/VE/WireContract/Hooks/Purposes.lean"
             ]
           }
         ],
