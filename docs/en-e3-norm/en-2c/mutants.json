@@ -1,0 +1,72 @@
+[
+ {
+  "behaviour": "an answer with one rule row more than the request's numbering allows is accepted (the header binding gone)",
+  "file": "ve/norm_english.py",
+  "test": [
+   "tests/test_english_statement_answer.py::test_an_extra_rule_row_over_a_precedence_line_is_unavailable"
+  ],
+  "failed": [
+   "tests/test_english_statement_answer.py::test_an_extra_rule_row_over_a_precedence_line_is_unavailable"
+  ],
+  "caught": true
+ },
+ {
+  "behaviour": "the span binding's overlap check dropped",
+  "file": "ve/norm_english.py",
+  "test": [
+   "tests/test_english_statement_answer.py::test_p2_a_rule_span_out_of_the_source_is_unavailable",
+   "tests/test_english_statement_answer.py::test_every_named_mutant_is_unavailable"
+  ],
+  "failed": [
+   "tests/test_english_statement_answer.py::test_every_named_mutant_is_unavailable",
+   "tests/test_english_statement_answer.py::test_p2_a_rule_span_out_of_the_source_is_unavailable[overlap]"
+  ],
+  "caught": true
+ },
+ {
+  "behaviour": "the shadow calls Lean with VE_SHADOW_LOG unset (the default log of english_lean.py)",
+  "file": "ve/norm_english.py",
+  "test": [
+   "tests/test_english_statement_shadow.py::test_the_shadow_needs_both_flags"
+  ],
+  "failed": [
+   "tests/test_english_statement_shadow.py::test_the_shadow_needs_both_flags"
+  ],
+  "caught": true
+ },
+ {
+  "behaviour": "the binding accepts a span that ends inside a multi-byte character",
+  "file": "ve/norm_english.py",
+  "test": [
+   "tests/test_english_statement_answer.py::test_p2_a_rule_span_out_of_the_source_is_unavailable",
+   "tests/test_english_statement_answer.py::test_every_named_mutant_is_unavailable"
+  ],
+  "failed": [
+   "tests/test_english_statement_answer.py::test_every_named_mutant_is_unavailable",
+   "tests/test_english_statement_answer.py::test_p2_a_rule_span_out_of_the_source_is_unavailable[off a UTF-8 boundary]"
+  ],
+  "caught": true
+ },
+ {
+  "behaviour": "the node's over not tied to its row's exception_to and precedence rows",
+  "file": "ve/norm_english.py",
+  "test": [
+   "tests/test_english_statement_answer.py::test_every_retyped_dropped_or_duplicated_member_is_unavailable"
+  ],
+  "failed": [
+   "tests/test_english_statement_answer.py::test_every_retyped_dropped_or_duplicated_member_is_unavailable"
+  ],
+  "caught": true
+ },
+ {
+  "behaviour": "the gate reads english.statement without its reader",
+  "file": "tools/relay_mutation_gate.py",
+  "test": [
+   "tests/test_relay_mutation_gate.py::test_english_statement_is_read_as_the_w1_shadow_reads_it"
+  ],
+  "failed": [
+   "tests/test_relay_mutation_gate.py::test_english_statement_is_read_as_the_w1_shadow_reads_it"
+  ],
+  "caught": true
+ }
+]
