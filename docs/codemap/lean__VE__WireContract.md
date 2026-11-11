@@ -4,6 +4,7 @@
 - `lean/VE/WireContract/Hooks/Corpus.lean` — The hand-written hooks, classifier and view of the engine corpus (docs/spec/wire-contract.md 8.1).
 - `lean/VE/WireContract/Hooks/NormDefaults.lean` — The hand-written hooks and adapter of the contract `norm-defaults@0` (docs/spec/wire-contract-s5.md 2.4 and 2.5).
 - `lean/VE/WireContract/Hooks/Norms.lean` — The hand-written hooks, classifiers and adapter of the contract `norms@0` (docs/spec/wire-contract-s5.md 2.3 and 2.5).
+- `lean/VE/WireContract/Hooks/Purposes.lean` — The classifiers and adapter of the contract `purposes@0`, in shadow (sa-wire-purposes0; purpose-explanation.md 5.4 and 7): they report and refuse nothing.
 - `lean/VE/WireContract/Hooks/SoftNorms.lean` — The hand-written hooks, classifiers and adapter of the pilot contract `soft-norms@0` (docs/spec/wire-contract.md section 6).
 - `lean/VE/WireContract/Limits.lean` — (no module docstring)
 - `lean/VE/WireContract/Names.lean` — (no module docstring)
@@ -12,4 +13,5 @@
 - `lean/VE/WireContract/Tables/Corpus.lean` — (no module docstring)
 - `lean/VE/WireContract/Tables/NormDefaults.lean` — (no module docstring)
 - `lean/VE/WireContract/Tables/Norms.lean` — (no module docstring)
+- `lean/VE/WireContract/Tables/Purposes.lean` — (no module docstring)
 - `lean/VE/WireContract/Tables/SoftNorms.lean` — (no module docstring)
