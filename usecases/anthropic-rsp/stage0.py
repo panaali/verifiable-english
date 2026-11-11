@@ -43,6 +43,9 @@ DATE_QUESTIONS = {
     "D4": ("2026-08-03", "2026-09-02", "30", "deadline by", "f9-internal"),
     "D5": ("2026-09-01", "2026-09-08", "7", "deadline by", "f16-share-one-week"),
 }
+# F16's "within 30 days of receipt" (f16-ask-commentary) is a day count with no key question: D3 holds it on D5's
+# case, the reviewers receiving the report on D5's last day; the request falls due 30 days later.
+RECEIPT_COUNT = ("F16-receipt", "30", "2026-10-08", "f16-ask-commentary")
 
 
 # --- D2: harm classes and might cells (P3) --------------------------------------------------------------------------
@@ -159,7 +162,8 @@ def _proved(env, stated, goal):
 @lru_cache(maxsize=None)
 def d3():
     """P4: the changelog dates (D1), the effective date before retrieval (D2), and the day counts of F8, F9 and F16
-    (D3b, D4, D5) as W6a day quantities; each goal holds with a certificate that VE's checker replays."""
+    (D3b, D4, D5, and F16's 30 days of receipt) as W6a day quantities; each goal holds with a certificate that VE's
+    checker replays."""
     stated = [_q(["date_on", _day(f"{v}_date"), ["date", iso]]) for v, iso in CHANGELOG.items()]
     stated.append(_q(["date_on", _day("retrieval_date"), ["date", RETRIEVED]]))
     env = date_environment()
@@ -179,6 +183,11 @@ def d3():
         goal = (["date_no_later", ["date", day], _day("limit_day")] if question == "publication within" else
                 ["date_no_later", _day("limit_day"), ["date", day]])
         out[item] = _proved(env, facts, _q(goal))
+    item, days, due, _ = RECEIPT_COUNT
+    env = date_environment(("start_day", "limit_day"))
+    facts = [_q(["date_on", _day("start_day"), ["date", DATE_QUESTIONS["D5"][1]]]),
+             _q(["shift_days", _day("limit_day"), _day("start_day"), days])]
+    out[item] = _proved(env, facts, _q(["date_no_later", _day("limit_day"), ["date", due]]))
     return {"certificates": out, "admitted": all(out.values())}
 
 
