@@ -7975,6 +7975,8 @@
         "VE.Rights.Wire.optStrings",
         "VE.Rights.Wire.primeJsonR",
         "VE.Rights.Wire.primeModelVocabularyR",
+        "VE.Rights.Wire.rightsMeaningId",
+        "VE.Rights.Wire.rightsNormalForm",
         "VE.Rights.Wire.rightsProfile",
         "VE.Rights.Wire.scopeTargetName",
         "VE.Rights.Wire.stripRights",
@@ -7982,7 +7984,8 @@
       ],
       "D[R]": [
         "VE.Rights.Wire.decodeLimitation",
-        "VE.Rights.Wire.invalidBlock"
+        "VE.Rights.Wire.invalidBlock",
+        "VE.Rights.Wire.rightsChildContext"
       ],
       "D[I]": [
         "VE.Rights.Wire.RightsEntailmentReplay.valid",
@@ -9801,7 +9804,6 @@
         "VE.Service.Document.numberChar",
         "VE.Service.Document.partHasStrayNull",
         "VE.Service.Document.pyR",
-        "VE.Service.Document.rightsChildContext",
         "VE.Service.Document.rightsWireJson",
         "VE.Service.Document.stop",
         "VE.Service.Document.strayNull",
@@ -10843,6 +10845,7 @@
         "VE.SoftNorms.Wire.primeJson",
         "VE.SoftNorms.Wire.replaySoftWitness",
         "VE.SoftNorms.Wire.residual",
+        "VE.SoftNorms.Wire.softDefault",
         "VE.SoftNorms.Wire.softProfile",
         "VE.SoftNorms.Wire.stripSoft",
         "VE.SoftNorms.Wire.withDecisions"
