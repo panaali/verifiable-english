@@ -8,11 +8,11 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 |---|---:|
 | leaves:bound | 298 |
 | leaves:closed domain | 313 |
-| leaves:none | 1603 |
+| leaves:none | 1605 |
 | modes | 44 |
 | today:hand | 203 |
 | today:later Lean request | 62 |
-| today:not probed | 1201 |
+| today:not probed | 1203 |
 | today:shape | 611 |
 | today:unbound | 137 |
 | answers | 599 |
@@ -3847,19 +3847,22 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 |---|---|---|---|---|---:|---|
 | `/case_index` | integer | bound | x-index |  | 0 | shape |
 | `/error` | string | none |  | minLength | 0 | not probed |
-| `/id` | any | bound | x-echo |  | 3 | shape |
-| `/id` | string | bound | x-equals |  | 3 | shape |
-| `/result/clause_slot/*/label` | string | none |  | minLength | 1 | not probed |
-| `/result/plained` | string | none |  | minLength | 3 | not probed |
-| `/status` | string | closed domain | const |  | 3 | shape |
+| `/id` | any | bound | x-echo |  | 0 | shape |
+| `/id` | string | bound | x-equals |  | 0 | shape |
+| `/result/clause_slot/*/label` | string | none |  | minLength | 0 | not probed |
+| `/result/elided_bytes` | integer | none |  | minimum | 0 | not probed |
+| `/result/plained` | string | none |  | minLength | 0 | not probed |
+| `/result/unit_elided_bytes/*` | integer | none |  | minimum | 0 | not probed |
+| `/status` | string | closed domain | const |  | 0 | shape |
 
 | grammar at | grammar | bound whole by | observed |
 |---|---|---|---:|
-| `/result/clause_slot/*/ast` | generated_formula |  | 12 |
+| `/result/clause_slot/*/ast` | generated_formula |  | 0 |
 
 | array | length bound by | positions bound by | internal agreement | probed (generic/hand) |
 |---|---|---|---|---|
 | `/result/clause_slot` |  |  |  |  |
+| `/result/unit_elided_bytes` | x-length |  |  |  |
 
 ## Grammars
 
