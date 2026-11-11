@@ -95,26 +95,28 @@ def pinned() -> None:
 
 
 def units(name: str) -> int:
-    """The pilot's norm units and readings, each rendered alone and read back; the count of nodes Python cannot
-    render as a one-rule W1 document (no English round trip, so no record)."""
+    """The pilot's norm units and norm readings with a node (a reading with a `companion` in its own environment),
+    each rendered alone and read back; the count of nodes Python cannot render as a one-rule W1 document (no
+    English round trip, so no record). A reading whose content is null has no node and is not counted."""
     from ve.environment import Environment
     from ve.norm_english import render_english
     from ve.norms import NormDocument
     raw = (ROOT / PILOTS[name]).read_text()
     meta = json.loads(raw.split("\n---\n", 1)[0].split("---\n", 1)[1])
     env = Environment(meta["environment"])
-    nodes = [(u["id"], u["content"]) for u in meta["units"] if type(u.get("content")) is dict
+    nodes = [(u["id"], None, u["content"]) for u in meta["units"] if type(u.get("content")) is dict
              and "norm" in u["content"]]
-    nodes += [(f"{s['unit']}/{r['id']}", r["content"]) for s in meta["reading_sets"] for r in s.get("readings", ())
-              if r.get("kind") == "norm"]
+    nodes += [(f"{s['unit']}/{r['id']}", r.get("companion"), r["content"]) for s in meta["reading_sets"]
+              for r in s.get("readings", ()) if r.get("kind") == "norm" and r["content"] is not None]
     skipped = 0
-    for ident, content in nodes:
+    for ident, companion, content in nodes:
         try:
-            text = render_english(NormDocument(env, [content]))[0]
+            own = env if companion is None else Environment(companion["environment"])
+            text = render_english(NormDocument(own, [content]))[0]
         except Exception:  # noqa: BLE001 - no English round trip
             skipped += 1
             continue
-        _read(env, text, name, f"{name}/{ident}")
+        _read(own, text, name, f"{name}/{ident}")
     return skipped
 
 
