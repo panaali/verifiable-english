@@ -4827,6 +4827,7 @@
         "VE.NormDefaults.Wire.atomsJson",
         "VE.NormDefaults.Wire.conflictFields",
         "VE.NormDefaults.Wire.outcomeLabel",
+        "VE.NormDefaults.Wire.sourcesJson",
         "VE.NormDefaults.Wire.statusFields",
         "VE.NormDefaults.Wire.underJson",
         "VE.NormDefaults.Wire.unsaidPredicate"
@@ -4840,6 +4841,7 @@
           ]
         },
         "VE.NormDefaults.Wire.pairPartners",
+        "VE.NormDefaults.Wire.ruleSources",
         {
           "name": "VE.NormDefaults.Wire.selectedRules",
           "tied": [
@@ -4917,6 +4919,7 @@
         "VE.NormDefaults.Wire.layeredCase",
         "VE.NormDefaults.Wire.legacyKinds",
         "VE.NormDefaults.Wire.rightsPack",
+        "VE.NormDefaults.Wire.rightsSources",
         "VE.NormDefaults.Wire.softLabelledU",
         "VE.NormDefaults.Wire.softPack",
         {
