@@ -14,7 +14,7 @@ from tests.lean_build import lean_build
 from tests.lean_service_corpus import recorded
 from tests.subprocesses import HANG_TIMEOUT
 from ve.backends.lean_service import LeanService, case_digest, case_texts
-from ve.backends.service_schema import check_response
+from ve.backends.service_schema import Invalid, check_response
 
 ROOT = Path(__file__).resolve().parents[1]
 EVIDENCE = ROOT / "docs/composition/cmp-s3-cfr-1/profile-off.json"
@@ -178,6 +178,34 @@ def test_right_clauses_k4_product_elided_bytes(service):
     assert {k: units["result"][k] for k in ELIDED} == {"elided_bytes": 36, "unit_elided_bytes": [10, 26]}, units
     assert overlap == {"id": overlap["id"], "status": "error", "error": "ClauseSpan: equal-access: [35, 45)"}
     assert {k: lines["result"][k] for k in ELIDED} == {"elided_bytes": 20, "unit_elided_bytes": [20]}, lines
+
+
+def test_right_clauses_elided_bytes_retyped_and_rebound(service):
+    """The two fields of a genuine answer are typed and bound (R8): `elided_bytes` retyped, and `unit_elided_bytes`
+    retyped per row, or with a row missing, extra or duplicated (one row per unit of `document`), is refused; the
+    genuine answer passes."""
+    cases = [{"id": "0", "environment": environment(), "document": K_FIXTURES["K4"][0]}]
+    text = json.dumps(cases, ensure_ascii=False)
+    _, response = service.exchange("clauses-elaborate", text, 1, timeout=HANG_TIMEOUT)
+    request = {"id": response["id"], "mode": "clauses-elaborate", "cases": cases,
+               "digests": [case_digest(t) for t in case_texts(text)], "bytes": len(text.encode())}
+    check_response("clauses-elaborate", response, request)
+    assert response["results"][0]["result"]["result"]["unit_elided_bytes"] == [10], response
+    bad = [-1, 1.5, "10", True, None, [], {}]
+    mutations = [("elided_bytes", v) for v in bad] + [("unit_elided_bytes", v) for v in bad[:-2] + [{}]]
+    mutations += [("unit_elided_bytes", [v]) for v in bad] + [
+        ("unit_elided_bytes", []), ("unit_elided_bytes", [10, 0]), ("unit_elided_bytes", [10, 10])]
+    missing = object()
+    for field, value in mutations + [(f, missing) for f in ELIDED]:
+        mutant = deepcopy(response)
+        row = mutant["results"][0]["result"]["result"]
+        if value is missing:
+            row.pop(field)
+        else:
+            row[field] = value
+        with pytest.raises(Invalid):
+            check_response("clauses-elaborate", mutant, request)
+            pytest.fail(f"{field} = {value!r} accepted")
 
 
 def test_right_clauses_power_line_elided_bytes(service):
