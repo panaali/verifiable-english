@@ -1,0 +1,106 @@
+{
+ "item": "ap-4bb",
+ "command": "python3 docs/act-phrases/ap-4bb/seed_bugs.py",
+ "restored_build_returncode": 0,
+ "mutants": [
+  {
+   "id": "hn-dropped",
+   "language": "Lean",
+   "file": "lean/VE/Acts/SourcesProofs.lean",
+   "definition": "VE.Acts.sourceCheck_complete",
+   "behaviour": "B: `sourceCheck_complete` without item 8c's bound no longer elaborates",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/SourcesProofs.lean:109, lean/VE/Acts/SourcesProofs.lean:114"
+  },
+  {
+   "id": "pick-first-partial",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Sources.lean",
+   "definition": "VE.Acts.pick",
+   "behaviour": "B: `pick` takes the first choice sharing any view with the reading",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/Sources.lean:160"
+  },
+  {
+   "id": "pick-first-partial+guard",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Sources.lean",
+   "definition": "VE.Acts.pick",
+   "behaviour": "B: as above, its proofs `sorry`: S4/S6/64 through B's direction fail",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/ReadingsExamples.lean:214, lean/VE/Acts/ReadingsExamples.lean:218, lean/VE/Acts/ReadingsExamples.lean:222, lean/VE/Acts/ReadingsExamples.lean:223, lean/VE/Acts/ReadingsExamples.lean:233, lean/VE/Acts/ReadingsExamples.lean:240, lean/VE/Acts/ReadingsExamples.lean:273, lean/VE/Acts/ReadingsExamples.lean:287, lean/VE/Acts/ReadingsExamples.lean:306"
+  },
+  {
+   "id": "atom-j-for-i",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Situation.lean",
+   "definition": "VE.Acts.atomSituation",
+   "behaviour": "D: `atomSituation` probes j's act for i",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/Situation.lean:50, lean/VE/Acts/Situation.lean:56"
+  },
+  {
+   "id": "atom-j-for-i+guard",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Situation.lean",
+   "definition": "VE.Acts.atomSituation",
+   "behaviour": "D: as above, `atomSituation_probe` `sorry`: the probe #guard fails",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/Situation.lean:56"
+  },
+  {
+   "id": "rulePred-name",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Situation.lean",
+   "definition": "VE.Acts.rulePred",
+   "behaviour": "D: `rulePred` reads the rule's name for its predicate",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/Situation.lean:43, lean/VE/Acts/Situation.lean:45"
+  },
+  {
+   "id": "ruleView-no-mode",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Sources.lean",
+   "definition": "VE.Acts.ruleView",
+   "behaviour": "C: `ruleView` ignores the mode again (strict to default must be refused)",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/ReadingsExamples.lean:319"
+  },
+  {
+   "id": "ruleView-no-hard",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Sources.lean",
+   "definition": "VE.Acts.ruleView",
+   "behaviour": "C: `ruleView` ignores `hard`",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/ReadingsExamples.lean:320"
+  },
+  {
+   "id": "expected-constant-rank",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Sources.lean",
+   "definition": "VE.Acts.expected",
+   "behaviour": "C: `expected` types a constant rank instead of the template's lift",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/ReadingsExamples.lean:184, lean/VE/Acts/ReadingsExamples.lean:185, lean/VE/Acts/ReadingsExamples.lean:187, lean/VE/Acts/ReadingsExamples.lean:214, lean/VE/Acts/ReadingsExamples.lean:218, lean/VE/Acts/ReadingsExamples.lean:222, lean/VE/Acts/ReadingsExamples.lean:223, lean/VE/Acts/ReadingsExamples.lean:233, lean/VE/Acts/ReadingsExamples.lean:240, lean/VE/Acts/ReadingsExamples.lean:273, lean/VE/Acts/ReadingsExamples.lean:287, lean/VE/Acts/ReadingsExamples.lean:306, lean/VE/Acts/ReadingsExamples.lean:324, lean/VE/Acts/ReadingsExamples.lean:346"
+  },
+  {
+   "id": "view-drops-alterable",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Sources.lean",
+   "definition": "VE.Acts.View",
+   "behaviour": "C: `View` drops the alterable parties (compared as one fixed list)",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/ReadingsExamples.lean:320"
+  },
+  {
+   "id": "strictNodeOf-default",
+   "language": "Lean",
+   "file": "lean/VE/Readings/Unspecified.lean",
+   "definition": "VE.Readings.strictNodeOf",
+   "behaviour": "C: the norms lift `expected` reads gives mode default (DRI 11-11)",
+   "status": "KILLED",
+   "test": "lean/VE/Readings/Unspecified.lean:503"
+  }
+ ]
+}
