@@ -5,8 +5,10 @@ Every declaration of the spec's 6.2 block is compared, not only the theorems (re
 definition with its body (`AchievesU`, `fillDoc`, `fillNamesFree`, `normsShaped`, `WellFormedND`, ...), and every
 theorem from `theorem <name>` to the proof's `:=`. The list is read from the spec block itself, so a declaration
 added to the spec is compared without editing this file. Whitespace and comments are ignored; a declaration runs
-to the next Lean command (`spans`), so a blank line or a comment inside it never ends it (review sc-2d-f1 F2). The Lean
-compiler checks elaboration, and lean/audit.py checks proof dependencies. A declaration that differs from the
+to the next Lean command keyword at column 0 in code (`spans`), so a blank line or a comment of any kind inside it, a
+doc comment at column 0 too, never ends it (review sc-2d-f1 F2, F3); a line that starts with `#` or `@[` at column 0
+in code is read as a command, so a term line at column 0 such as an array literal `#[..]` still ends it (`COMMANDS`).
+The Lean compiler checks elaboration, and lean/audit.py checks proof dependencies. A declaration that differs from the
 approved text must be listed in PENDING with the reason, and is reported as pending the statement re-review; an
 unlisted difference, a missing or repeated declaration, or a PENDING entry that no longer differs fails.
 
@@ -101,16 +103,29 @@ RD6B_NAMES = {"fill_transfers", "nd_superpose_conflict_free", "nd_superpose_all"
 KINDS = ("theorem", "def", "structure")
 # The Lean commands that end a declaration when one starts a line at column 0 in code (not in a comment or string):
 # Lean ends a declaration's term only at the next command, so a blank line or a comment inside the term never ends
-# it (review sc-2d-f1 F2). A column-0 line that is none of these is read as part of the declaration: an unknown
-# command makes the text longer, so it differs from the approved one; it never hides a part of the declaration.
+# it (review sc-2d-f1 F2). A comment of every kind, a doc comment `/-- -/` or `/-! -/` too, is not a command here:
+# it is dropped, and it never ends a declaration, even at column 0 (review sc-2d-f1 F3: Lean reads a `/--` before
+# a constructor `| c` or a structure field at column 0 as that constructor's or field's doc, inside the
+# declaration). Lean itself ends a term at a `/--` (a declaration must follow) or a `/-!` (a module doc), so in
+# built Lean the next line is a command; reading on past them makes the text longer, never shorter. A `|`
+# constructor line or a structure field line at column 0 is not a command either. A column-0 line that is none of
+# these is read as part of the declaration: an unknown command makes the text longer, so it differs from the
+# approved one; it never hides a part of the declaration. The one exception: a line that starts with `#` or `@[` at
+# column 0 in code is read as a command (`#check`, `@[simp]`), so a term line at column 0 that starts with `#[`
+# (an array literal) or `@[` ends the declaration early (a C note of the DRI ruling on F3: valid Lean that hides
+# text this way is built on purpose). `binder_predicate` to `unif_hint` are the other declaration commands Lean's
+# parser lists as able to follow a doc comment, so a doc comment no longer separating them changes nothing.
 COMMANDS = ("theorem", "lemma", "def", "structure", "class", "inductive", "coinductive", "abbrev", "instance",
             "example", "axiom", "opaque", "mutual", "end", "namespace", "section", "open", "export", "universe",
             "variable", "private", "protected", "noncomputable", "partial", "unsafe", "nonrec", "attribute",
             "set_option", "local", "scoped", "macro", "macro_rules", "syntax", "elab", "elab_rules", "notation",
             "infix", "infixl", "infixr", "prefix", "postfix", "initialize", "builtin_initialize",
             "declare_syntax_cat", "import", "prelude", "omit", "include", "add_decl_doc", "run_cmd",
-            r"deriving\s+instance")
-COMMAND = re.compile(rf"@\[|#|/--|/-!|(?:{'|'.join(COMMANDS)})(?![\w'!?.])")
+            r"deriving\s+instance", "binder_predicate", "simproc", "simproc_decl", "dsimproc", "dsimproc_decl",
+            "builtin_simproc", "builtin_simproc_decl", "builtin_dsimproc", "builtin_dsimproc_decl",
+            "grind_propagator", "builtin_grind_propagator", "declare_simp_like_tactic", "recommended_spelling",
+            "register_error_explanation", "register_tactic_tag", "tactic_extension", "unif_hint")
+COMMAND = re.compile(rf"@\[|#|(?:{'|'.join(COMMANDS)})(?![\w'!?.])")
 NAME_CHAR = re.compile(r"[\w'!?.]")
 CHAR = re.compile(r"'(?:\\(?:u\{[0-9a-fA-F]+\}|x[0-9a-fA-F]{2}|.)|[^\\'\n])'")
 RAW = re.compile(r'r(#*)"')
