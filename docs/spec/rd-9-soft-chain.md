@@ -2479,8 +2479,12 @@ compiled Lean on the VM (AMD EPYC 7B12, 32 vCPU, 5-minute load 36 to 37), `route
 the 191-, 767- and 3,071-node guard documents, on NSDheavy, on W-13's `NSDbig 8`, and on documents at or just under
 16,384 whose `superposable` and `WellFormedU (supU N)` hold. Those documents are of three shapes: many fixed rules,
 many reading sets, and many candidates. Over the charge, `routeSD` gives the enumerated row with today's cause.
-`sdCheckWork` is evaluated without building the premises it counts (`sdCheckWork_eq_fast`). The 10.98 s and 94-100 s
-measured on the 767- and 3,071-node guard documents were that premise build, not `sdSuperposable`'s.
+The charge bounds `sdSuperposable`'s reads, not the whole route: within both limits a document can still take
+`routeSD` over R4 in its per-choice texts (`heavyIn`, charge 12,880 and work 31,744, took 0.67-0.74 s at load 36 and
+up to 1.16 s at load 43-67). That is the accepted gap of row sc-11wc, which bounds it before sc-11b.
+`sdCheckWork` is evaluated without building the coherence premises it counts (`sdCheckWork_eq_fast`); it still builds
+the exception premises (`excPremises`), one formula per exception condition. The 10.98 s and 94-100 s
+measured on the 767- and 3,071-node guard documents were the coherence premise build, not `sdSuperposable`'s.
 
 ### 14.12 Existing text and tests that sc-11b changes
 

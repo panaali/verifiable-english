@@ -34,7 +34,8 @@ takes 0.95-1.44 s on the 191-node document and 1.32 s on NSDheavy, because there
    - Over the charge, `routeSD` is `.enumerated`, today's row. The `todayRow` `#guard` pins `overCharge`'s row bytes
      (`routeOf true`, the completion's finding, `choicesJson`).
 2. **A cheaper `sdCheckWork`, with no statement change.** `sdCheckWorkFast` counts the exception labels and the
-   colliding pairs, and builds no premise. The `@[csimp]` theorem `sdCheckWork_eq_fast` proves it equal to
+   colliding pairs, and builds no coherence premise; it still builds the exception premises (`excPremises`), one
+   formula per exception condition, to count them. The `@[csimp]` theorem `sdCheckWork_eq_fast` proves it equal to
    `sdCheckWork`, which is evaluated through it. On the 3,071-node document it drops from 87-97 s to 0.07 s.
 3. **The three wide-guard documents as fixtures** (lean/VE/Readings/SoftSupWireExamples.lean), each `routeSD` value
    pinned by `#guard`:
@@ -148,12 +149,30 @@ SELF-REVIEW: 2 A, 5 B, 4 C; fixed 11 (A1 the charge counts every unit; A2 14.11 
 candidate-heavy shapes; B1 asked the DRI, row sc-11wc; B2 mutant M5b; B3 trailers; B4 re-measured on the final Lean;
 B5 FOLLOW-UPS row and REPORT sections; C1-C4).
 
+## Review fix round (sc-11w-review.final.md on 89f139589f)
+
+- F1 (A): `sdCheckWorkFast` builds no coherence premise but still builds the exception premises (`min` reads
+  `excPremises X`'s length). Narrowed in SoftSupWire.lean's module docstring and `sdCheckWorkFast`'s comment, 14.11,
+  this REPORT's row 2 and cpu.md's "after" paragraph.
+- F2 (A): the charge bounds `sdSuperposable`'s reads, not the whole route. `sdSizeCharge`'s comment, the module
+  docstring and 14.11 now name the accepted sc-11wc gap (`heavyIn`, up to 1.16 s). cpu.md's summary named 0.60 s
+  as the slowest while its table has 0.74 s, and called the at-charge shapes the worst reads while `wideGuard191`'s
+  are slower; both summaries now state the table's maxima, and item 12 below says 0.74 s.
+- Class tests (tests/test_rd9_sc11_charge_wording.py): every sc-11w text is scanned for an unnarrowed premise claim
+  and for "within the charge, `routeSD` ends within R4"; each fast-counter text must name `excPremises`; each charge
+  measurement must name sc-11wc; cpu.md's summary figures are recomputed from its table. On the reviewed text 14 of
+  them fail.
+- F-ready1 (B): Python mutants P1 and P2 on tools/check_rd9_sc1_statements.py, each killed by
+  tests/test_rd9_statements.py (mutants.json).
+
 ## Self-review against BUILDER-CHECKLIST
 
 1. Typed and contained answers: N.A. (no relayed answer and no wire change; `routeSD` is not dispatched).
 2. Deliverables: PASS (rows 1-6 above; `#guard`s in SoftSupWireExamples.lean; cpu.md; 14.11).
-3. Tests can fail: PASS (mutants.json M1-M8, each with the failing `#guard` or proof).
-4. Python, Lean and Rust agree: N.A. (Lean only; no Python or Rust product code).
+3. Tests can fail: PASS (mutants.json M1-M8, each with the failing `#guard` or proof; P1-P2 for the Python
+   checker, each with its failing test).
+4. Python, Lean and Rust agree: N.A. (Lean semantics only; the one Python change is the statement checker's
+   `SIGNED` entry, seeded by P1-P2; no Rust).
 5. R8 binding: N.A. (no relay).
 6. Gate evidence on the final HEAD: PASS (selected run, the failed ids rerun, audit and build on a1d2e27dd6). The gate
    itself is the chain's.
@@ -165,12 +184,14 @@ B5 FOLLOW-UPS row and REPORT sections; C1-C4).
 10. Lean statements: PASS (`check_rd9_sc1_statements.py`; `sdCheckWork_eq_fast` proved; audit standard axioms only).
 11. Limits fail closed: PASS (over the charge, enumerated: `overCharge`, `NSDsets`, `NSDcands`, `wideGuard767` and
     `wideGuard3071` `#guard`s).
-12. CPU: PASS (cpu.md: every case at most 0.60 s; the csimp takes `sdCheckWork` from 87-97 s to 0.07 s; the examples
+12. CPU: PASS (cpu.md: every case at most 0.74 s at load 36, the slowest `heavyIn`, which took up to 1.16 s at
+    load 43-67 and is the open row sc-11wc; the csimp takes `sdCheckWork` from 87-97 s to 0.07 s; the examples
     module builds in about 1m45 interpreted).
 13. Test-removed trailers: PASS (`gate_collection.py --check --prebuilt` after the trailer commit).
 14. Both directions: PASS (`atCharge` accepts and `overCharge` refuses; the wide-guard documents on each side;
     spec re-read: 14.8 `def sdSuperposable` against docs/spec/rd-9-soft-chain.md:2297 and its signed edit, 14.11's row
     and closing paragraph against dri-decisions-20261110-sc-11w.md item 1).
-15. Four classes: PASS. No overclaim: 14.11's "at most 0.60 s" is for the measured shapes, and heavyIn is listed as
+15. Four classes: PASS. No overclaim: 14.11's "at most 0.60 s" is for the listed documents, 14.11 and the code
+    comment say the charge bounds the reads and not the whole route, and heavyIn is listed as
     open. No silent cut: per-choice work is ruled sc-11wc. Every check can fail: mutants.json. Limits charged before
     work: the `rfl` order pin.

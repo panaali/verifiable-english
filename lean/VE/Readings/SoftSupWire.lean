@@ -16,8 +16,10 @@ own terms through sc-10b's three superposition theorems, which they apply and do
 Lean CPU per unit of `sdCheckWork` on W-13's shape, so 32,768 units keep the route check under R4's 1 s on that
 shape. `sdSuperposable` reads the size charge first (`sdSizeCharge N ≤ maxSdSizeCharge`, 14.11, DRI 2026-11-10
 sc-11w item 1), so `superposable N.D` and `WellFormedU (supU N)` are charged before they are built; `sdCheckWork` is
-evaluated without building the premises it counts (`sdCheckWork_eq_fast`). The 10.98 s and 94-100 s of the 767- and
-3,071-node guard documents were `sdCheckWork`'s premise build (docs/rd-9/sc-11w/cpu.md). -/
+evaluated without building the coherence premises it counts (`sdCheckWork_eq_fast`), though it still builds the
+exception premises (`excPremises`, one formula per exception condition). The 10.98 s and 94-100 s of the 767- and
+3,071-node guard documents were `sdCheckWork`'s premise build (docs/rd-9/sc-11w/cpu.md). Within both limits `routeSD`
+is not yet bounded by R4 on every shape: `heavyIn` took up to 1.16 s, open as row sc-11wc. -/
 namespace VE.Readings.Wire
 open VE.Readings
 open VE.Bridge (Entity)
@@ -44,8 +46,10 @@ where lines (ls : List VE.Rights.SourceLine) : Nat × Nat :=
 /-- 14.11 (sc-11w): the source document's units times its AST nodes, read from `N.D` before `superposable` builds
 `sup N.D` and before `supU N`. Units: each frame rule, right, limitation and definition, each fixed content, bar,
 reading set, candidate, coupling and narrowing. Nodes: each unit's formulas (`sdContentCharge`, a definition's body)
-and at least one, plus one per cite, label, coupled set and kept candidate. Measured: within `maxSdSizeCharge`,
-`routeSD` ends within R4 (docs/rd-9/sc-11w/cpu.md). -/
+and at least one, plus one per cite, label, coupled set and kept candidate. Measured (docs/rd-9/sc-11w/cpu.md): the
+charge bounds `sdSuperposable`'s reads (at most 0.22 s on the measured documents within it), not the whole route; a
+document within both limits can still take `routeSD` over R4 in its per-choice texts (`heavyIn`, up to 1.16 s, the
+accepted gap of row sc-11wc). -/
 def sdSizeCharge (N : NDoc) : Nat :=
   let F := N.D.frame
   let plus (k : Nat) (p : Nat × Nat) : Nat × Nat := (p.1, p.2 + k)
@@ -70,7 +74,8 @@ def sdCheckWork (N : NDoc) : Nat :=
     (fun M => (M.guard :: M.carveOuts).map VE.Bridge.formulaNodes)).flatten.sum)
 
 /-- `sdCheckWork` as evaluated (`@[csimp]`): `softXL`'s length is its exception labels' and colliding pairs', so no
-premise is built (its `cohPremiseU` expansions cost 89.7 s on the 3,071-node guard document, docs/rd-9/sc-11w/cpu.md). -/
+coherence premise is built (its `cohPremiseU` expansions cost 89.7 s on the 3,071-node guard document,
+docs/rd-9/sc-11w/cpu.md). The exception premises are still built: `min` reads `excPremises X`'s length. -/
 def sdCheckWorkFast (N : NDoc) : Nat :=
   let S := (sup N.D).1
   let X := VE.Rights.correlate S
