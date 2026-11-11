@@ -75,7 +75,8 @@
    "D2": true,
    "D3b": true,
    "D4": true,
-   "D5": true
+   "D5": true,
+   "F16-receipt": true
   },
   "expected": "admitted, with certificates",
   "input": "D3: the changelog dates and the day counts of F8, F9, F16"
@@ -230,13 +231,11 @@
     "f9-internal"
    ],
    "row T4": [
-    "f5-evidence-strict"
+    "f5-evidence-strict",
+    "f5-evidence-default"
    ],
    "section 1 \"We will strive to advance these recommendations through a mixture of example-setting ...\" (RS12 default; under intent no rule)": [
     "s1-advance-default"
-   ],
-   "the same \"should\"": [
-    "f5-evidence-default"
    ]
   },
   "violations": []
