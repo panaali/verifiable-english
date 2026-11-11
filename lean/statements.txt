@@ -48262,6 +48262,14 @@ theorem VE.Reports.wf_of
   ∀ {D : VE.Reports.ReportDoc}, VE.Reports.WellFormedReports D = Bool.true → VE.Reports.WF D
   -- uses VE.Reports.ReportDoc@VE.Attribution.Content VE.Reports.WF@VE.Attribution.Facts VE.Reports.WellFormedReports@VE.Attribution.Content
   -- expr 3297433674
+theorem VE.RightClauses.English.english_gated
+  ∀ (D : VE.RightClauses.ClauseDoc) (L : VE.EnglishGrammar.Lexicon) (source : String)
+    (rows : List VE.RightClauses.English.Row),
+    VE.RightClauses.English.english D L source = Except.ok rows →
+      ∀ (r : VE.RightClauses.English.Row),
+        r ∈ rows → ∃ slots, VE.RightClauses.English.readings r.text = [(r.frame, slots)]
+  -- uses VE.EnglishGrammar.Lexicon@VE.EnglishGrammar.Lexicon VE.RightClauses.ClauseDoc@VE.RightClauses.Tree VE.RightClauses.English.Row.frame@VE.RightClauses.English VE.RightClauses.English.Row.text@VE.RightClauses.English VE.RightClauses.English.Row@VE.RightClauses.English VE.RightClauses.English.english@VE.RightClauses.English VE.RightClauses.English.readings@VE.RightClauses.English
+  -- expr 1869336240
 theorem VE.RightClauses.PWF.DualCtx.oblig
   ∀ {Q : String → VE.Formula → VE.Formula → Prop} {C : VE.SoftNorms.SoftDoc},
     VE.RightClauses.PWF.DualCtx Q C → ∀ (m r : String), VE.SoftNorms.dualOblig C m = Option.some r → Q r = Q m

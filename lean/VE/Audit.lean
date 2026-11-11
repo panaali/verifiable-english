@@ -380,6 +380,7 @@ import VE.Readings.UpSlot
 import VE.Readings.Verdicts
 import VE.Readings.VerdictsWire
 import VE.Readings.Wire
+import VE.RightClauses.English
 import VE.RightClauses.Plain
 import VE.RightClauses.PlainWellFormed
 import VE.RightClauses.PlainWellFormed.Clauses
@@ -6924,6 +6925,7 @@ import VE.WireContract.Engine
 #print axioms VE.Reports.unit_shape
 #print axioms VE.Reports.unreported_key_free
 #print axioms VE.Reports.wf_of
+#print axioms VE.RightClauses.English.english_gated
 #print axioms VE.RightClauses.PWF.DualCtx.oblig
 #print axioms VE.RightClauses.PWF.DualCtx.perm
 #print axioms VE.RightClauses.PWF.EnvOKB.hide

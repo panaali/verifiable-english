@@ -6406,6 +6406,7 @@
 'VE.Reports.unit_shape' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Reports.unreported_key_free' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Reports.wf_of' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.RightClauses.English.english_gated' depends on axioms: [propext, Quot.sound]
 'VE.RightClauses.PWF.DualCtx.oblig' does not depend on any axioms
 'VE.RightClauses.PWF.DualCtx.perm' does not depend on any axioms
 'VE.RightClauses.PWF.EnvOKB.hide' depends on axioms: [propext]
