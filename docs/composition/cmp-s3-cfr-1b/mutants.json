@@ -43,6 +43,12 @@
    "verdict": "KILLED", "test": "lean/VE/RightClauses/RunExamples.lean:152 #guard lineObjects (a unit without a body counts 0; trust mutant M035 of the first sweep)"},
   {"name": "deepLine-first-candidate-group-only", "file": "lean/VE/RightClauses/Run.lean", "definition": "deepLine",
    "change": {"from": "(D.lines ++ D.cands.flatMap", "to": "(D.lines ++ (D.cands.take 1).flatMap"},
-   "verdict": "KILLED", "test": "lean/VE/RightClauses/RunExamples.lean:180 #guard deepIn (a deep line in the second candidate group; trust mutant M062 of the second sweep)"}
+   "verdict": "KILLED", "test": "lean/VE/RightClauses/RunExamples.lean:180 #guard deepIn (a deep line in the second candidate group; trust mutant M062 of the second sweep)"},
+  {"name": "F2-module-docstring-overclaim", "file": "ve/right_clauses.py", "definition": "module docstring",
+   "change": {"from": "the request's (its docstring says what is bound: ...)", "to": "the request's, with no row missing or extra."},
+   "verdict": "KILLED", "test": "tests/test_right_clauses.py::test_right_clauses_bind_counts_only_what_its_docstring_binds (review fix, planted on the fix tree over 3a5e040544)"},
+  {"name": "F2-bind-counts-lim-rows", "file": "ve/right_clauses.py", "definition": "bind",
+   "change": {"from": "for label, _ in rows[:first]:", "to": "a repeated Lim label refused before the loop"},
+   "verdict": "KILLED", "test": "tests/test_right_clauses.py::test_right_clauses_bind_counts_only_what_its_docstring_binds (K13 [Lim, Lim, Rel] binds; review fix, planted on the fix tree over 3a5e040544)"}
  ]
 }
