@@ -1,5 +1,5 @@
 """Run a use-case harness and record which Lean service modes and case kinds it asks for.
-usage: python trace_run.py <out.json> <script.py> [args...]   (measurement aid; changes no product code)"""
+usage: python tools/kernel_trace.py <out.json> <script.py> [args...]   (measurement aid; changes no product code)"""
 import collections, json, runpy, sys, time
 out, script, *rest = sys.argv[1:]
 from ve.backends import lean_service, lean
