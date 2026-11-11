@@ -2581,6 +2581,20 @@
    "reason": "ps-2ab-rule-firstob: VE/Presupposition/Admit.lean +5 (ruleOb); Run.lean fixtures r1b, docF2, obsF2 classed T; K +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ps-2ab-rule-firstob, 2026-11-11",
    "commit": "b81b82ef91add8f6ea2fce62feeb421a5bed0c7b"
+  },
+  {
+   "class": "V",
+   "lines": 84,
+   "reason": "sc-11c: VE/Readings/SoftSupRun.lean trusted +84 (sdScope, sdProofs untied G[V]; sdShared, sdAssumed, sdModel, SDCase.labels D[V]); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-11c, 2026-10-18",
+   "commit": "a3454b6ba5982d7cb5e216d10432a94f6177652a"
+  },
+  {
+   "class": "V",
+   "lines": 4,
+   "reason": "en-e3b (en-e3ab scope): VE/Service/Registry.lean +1, VE/Service/Protocol.lean +1, ResponseShape/Skeletons.lean +1, ResponseShape/Schemas.lean +1 (english.statement's registry, dispatch, skeleton and schema-file cases)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), en-e3b, 2026-10-18",
+   "commit": "f3f40d51dc6dfffeb57834ee5652ff7b514eaeed"
   }
  ]
 }
