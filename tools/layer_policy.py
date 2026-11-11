@@ -383,6 +383,8 @@ def lean_name_layer(module: str) -> int | None:
                   "VE.Rights.OpenActExamples", "VE.EnglishGrammar.SourceWordsExamples"}:
         return 4  # runner-boundary acceptance fixtures import EnglishGrammar.Run, Question.Run, Alternatives.Run, Calc.Run,
         # NormDefaults.Run, Readings.Run, Cardinality.Run, Scope.Run, Senses.Run, Commands.Run, Acts.Run or Rights.Run
+    if module == "VE.Commands.WebEnvMain":
+        return 4  # CI-8 (iv): prints E_web and the lexicon of VE.Commands.RunExamples, a runner-boundary fixture
     if module in {"VE.EnglishGrammar.Norm.RunExamples"}:
         return 4  # en-e3-norm EN-2's answer fixtures: a runner-boundary fixture that imports EnglishGrammar.Norm.Run
     if module in {"VE.Discourse.Compose", "VE.Discourse.ComposeExamples"}:
@@ -412,7 +414,7 @@ def lean_name_layer(module: str) -> int | None:
         return 2  # act-phrases AP-1: the lexical act check, below the norms decoder that calls it
     if module in {"VE.Acts.Wire", "VE.Acts.Readings", "VE.Acts.Meaning", "VE.Acts.Grammar", "VE.Acts.Read",
                   "VE.Acts.Syntax", "VE.Acts.Table", "VE.Acts.Linearize", "VE.Acts.Tree",
-                  "VE.Acts.Specialise"} or module in {
+                  "VE.Acts.Index", "VE.Acts.Specialise"} or module in {
         "VE.Grammar.Basic", "VE.Grammar.Derives", "VE.Grammar.Reading", "VE.Grammar.Table",
         "VE.Grammar.TableInvariant", "VE.Grammar.TableProofs",
     }:

@@ -1,0 +1,7 @@
+# Each fixture's full answer at this tree against main's (tests/data/rights-cfr-1-verdicts.jsonl, recorded at 6db6ee16d)
+omitted: check answer keys differing none; units without meaning ids identical; meaning ids unchanged
+defaults: check answer keys differing none; units without meaning ids identical; meaning ids changed ['6bf5da769c4575ebd0839f6672283b5716665432baa0d4eed7331d8a0156c5f2'] -> ['92c06d5c58eee5709cea8d59babf704090e3accf01ae8c5782f3d22aa3f9f96a']
+nulls: check answer keys differing none; units without meaning ids identical; meaning ids changed ['37559a5d40d8ce62da616f79b3893b6d30545f4ca4c2dc7c73a6bb59bea15d5a'] -> ['92c06d5c58eee5709cea8d59babf704090e3accf01ae8c5782f3d22aa3f9f96a']
+default-mode: check answer keys differing none; units without meaning ids identical; meaning ids unchanged
+power-omitted: check answer keys differing none; units without meaning ids identical; meaning ids unchanged
+power-defaults: check answer keys differing none; units without meaning ids identical; meaning ids changed ['92c06d5c58eee5709cea8d59babf704090e3accf01ae8c5782f3d22aa3f9f96a', 'e14a6b3479d3dd5b3570a5fa69d72b7b5d4f23b88555d8986df63ef75d6a340c'] -> ['92c06d5c58eee5709cea8d59babf704090e3accf01ae8c5782f3d22aa3f9f96a', 'b31e0a9b80a22c97693a0919800dd169e70309fb11bd77f1f5150a0fdef783ee']

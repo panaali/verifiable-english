@@ -18,16 +18,22 @@ READING_SETS = {"RS1": ("strict", "default"), "RS3": ("ext", "any"), "RS5": ("wi
                 "RS8": ("rel", "pred"), "RS4": ("N", "P"), "RS12": ("suff", "iff"),
                 "RS13": ("permission", "might"), "RS15": ("explanation", "rule"),
                 "RS2": ("nest", "sep"), "RS4s": ("scoped", "unscoped"), "RS6": ("req", "desc"),
-                "RS7": ("noinput", "nodelib"), "RS10": ("publication", "unstated"), "RS11": ("final", "process"),
+                "RS7": ("noinput", "nodelib"), "RS10": ("publication", "unstated"), "RS11": ("process",),
                 "RS14": ("appointment", "unstated"), "RS16": ("coupled", "option"), "RS17": ("bperm", "bmight")}
-# Rule priority the text states (PLAN 3.1): F11's adjustment is an exception to the High deployment rule, and N2
+# RS11 = final ("no other body may change them") is an excluded reading (PLAN 12 item 18): the Board sentence
+# "Where necessary, the Board may reverse a decision and/or mandate a revised course of action." contradicts it.
+EXCLUDED_READINGS = {"RS11": ("final",)}
+# Rule priority the text states (PLAN 3.1): F11's adjustment is an exception to the High deployment rule, every
+# F2 rule included (VE orders rules on one act only, so each of F2's two acts has its own exception rule), and N2
 # gives the "For the avoidance of doubt" clause priority over the requirement it qualifies.
 PRECEDENCE = {"f11-exception": ("f2-deploy", "f2-deploy-any", "f2-reminder", "f2-reminder-any"),
+              "f11-exception-deploy": ("f2-no-deploy", "f2-no-deploy-any"),
               "f16-without-noinput": ("f16-informed",)}
 N2_PRECEDENCE = ("f16-without-noinput", "f16-informed")
 # RS0 (PLAN 3.1): process statements in the future or present tense ("we will", "we compile", "we do not
 # deploy", "every covered model undergoes"). N1 narrows each to a commitment; without N1 they are predictions.
-RS0_STATEMENTS = ("f2-no-deploy", "f2-no-deploy-any", "f4-security", "f7-evaluations", "f7-report", "f8-start",
+RS0_STATEMENTS = ("f2-no-deploy", "f2-no-deploy-any", "f4-security", "f7-evaluations", "f7-report", "f7-compile",
+                  "f8-start",
                   "f9-report", "f9-risk-paths", "f9-specific", "f9-efficacy", "f9-threshold", "f10-validate",
                   "f10-review", "f13-review", "f13-results", "f14-document", "f14-investigate", "f14-corrective",
                   "f15-disclose", "f15-safeguards", "f15-third-party", "f16-ssc-visibility", "f16-year")

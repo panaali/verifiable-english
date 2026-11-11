@@ -1,0 +1,10 @@
+# seeded bug 2 (ve/readings.py: _soft_default true for every mode, so mode: default is dropped)
+FAILED tests/test_rights_meaning_id.py::test_rights_meaning_id_omits_soft_defaults[exception-right/norm]
+FAILED tests/test_rights_meaning_id.py::test_rights_meaning_id_omits_soft_defaults[exception-right_lines/liberty]
+FAILED tests/test_rights_meaning_id.py::test_rights_meaning_id_omits_soft_defaults[exception-right_lines/recognition]
+FAILED tests/test_rights_meaning_id.py::test_rights_meaning_id_omits_soft_defaults[mode-right/norm]
+FAILED tests/test_rights_meaning_id.py::test_rights_meaning_id_omits_soft_defaults[mode-right_lines/liberty]
+FAILED tests/test_rights_meaning_id.py::test_rights_meaning_id_omits_soft_defaults[mode-right_lines/recognition]
+FAILED tests/test_rights_meaning_id.py::test_lean_and_python_rights_meaning_ids_agree[default-mode]
+FAILED tests/test_rights_meaning_id.py::test_no_verdict_or_reason_changes - v...
+8 failed, 17 passed in 2.35s

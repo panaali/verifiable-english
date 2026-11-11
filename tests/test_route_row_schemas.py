@@ -37,7 +37,7 @@ ROOT = Path(__file__).resolve().parents[1]
 CASES = ROOT / "tests/data/route-cases.jsonl"
 ROUTE_MODES = ("soft-norms", "rights", "speech-acts", "reports", "alternatives", "risk", "risk-eval",
                "quantity", "norm-defaults", "discourse", "readings-route", "diagnose", "calc", "cardinality", "scope", "document",
-               "act-readings")
+               "act-readings", "english.statement")
 # Top-level answer fields that are maps keyed by request names (an empty map is an answer).
 MAPS = {"worst_cases", "bound", "meaning_ids", "presuppositions", "validity", "statuses", "reading_verdicts",
         "units", "mentions", "default_exceptions_by_decider", "rule_acts"}
@@ -177,10 +177,12 @@ def test_dropped_retyped_or_emptied_fields_are_rejected(genuine):
     # test_a_mutated_verdicts_answer_is_unavailable); a JSON shape alone cannot
     # distinguish that request from an ordinary enumerated readings answer.
     # A document row's report is optional (`document.json`): the relay refuses a row without the one `check` asked for
-    # (`tests/test_cardinality_answer.py::test_a_document_row_answers_the_case_it_asked`).
+    # (`tests/test_cardinality_answer.py::test_a_document_row_answers_the_case_it_asked`). So is `composed`: the relay
+    # refuses a row that lacks it under the chain list, or has it under any other list
+    # (`tests/test_cardinality_answer.py::test_a_chain_list_row_is_bound_to_the_request`).
     assert set(accepted) == {("readings-route", "readings-verdicts", "drop decided_units"),
-                             ("document", None, "drop cardinality"), ("document", None, "drop judgment_lines"),
-                             ("document", None, "drop judgments"),
+                             ("document", None, "drop cardinality"), ("document", None, "drop composed"),
+                             ("document", None, "drop judgment_lines"), ("document", None, "drop judgments"),
                              ("document", None, "drop undeclared_evaluative")}, accepted[:10]
     assert set(checked) >= set(ROUTE_MODES) and min(checked.values()) > 0
 

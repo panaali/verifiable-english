@@ -113,7 +113,8 @@
           "senses.project",
           "english.command",
           "act-readings",
-          "clauses-elaborate"
+          "clauses-elaborate",
+          "english.statement"
         ]
       },
       "protocol": {"const": 2},
