@@ -10,6 +10,8 @@
 - `docs/act-phrases/ap-1bd/delta.py` — ap-1bd's delta, base against head: every record that changes, and why.
 - `docs/act-phrases/ap-1be/delta.py` — ap-1be's delta, base against head: every record that changes, and why.
 - `docs/act-phrases/ap-1be/seed_bugs.py` — Seeded bugs of ap-1be: one per claimed behaviour of the norm-defaults route's `wordings`, planted, run and restored.
+- `docs/act-phrases/ap-1bfb/seed_bugs.py` — ap-1bfb's seeded bugs: each is planted in the worktree, the named test or the module's `#guard`s run, and the file is restored from git.
+- `docs/act-phrases/ap-1bfb/sweep.py` — ap-1bfb A1: the 45-case engine sweep of ap-1bf's review (F1), rebuilt: kinds, domain, profile lists, multibyte text, normalised spaces, more than 64 regulated …
 - `docs/act-phrases/ap-1c/seed_bugs.py` — Seeded bugs of ap-1c: each makes `check_extends` false, and must break its proof; planted, built and restored.
 - `docs/act-phrases/ap-1d/seed_bugs.py` — Seeded bugs of ap-1d: each makes a theorem of `LexicalProofs.lean` false and must break its proof.
 - `docs/act-phrases/ap-1d/statements.py` — Statement gate of ap-1d: each theorem it proves equals docs/spec/act-phrases.md 4.3, whitespace normalised.
@@ -36,8 +38,10 @@
 - `docs/act-phrases/ap-4b/check_statements.py` — ap-4b statement gate: each declaration below equals the specification's text, whitespace normalised.
 - `docs/act-phrases/ap-4b/seed_bugs.py` — ap-4b's seeded bugs: plant each bug, build VE.Acts.ReadingsExamples, record the failing `#guard` or theorem lines (KILLED), restore the file, and write mutants…
 - `docs/act-phrases/ap-4bb/check_statements.py` — ap-4bb statement gate: ap-4b's declarations plus `sourceCheck_complete` equal spec 7's text, whitespace normalised.
+- `docs/act-phrases/ap-4bb/seed_bugs.py` — ap-4bb seeded bugs: plant each, build the fixtures, record what fails, restore.
 - `docs/act-phrases/ap-5/check_statements.py` — ap-5 statement gate: each item of spec section 8's Lean block (each `structure`, `def`, `theorem` and docstring) is in lean/VE/Acts/Specialise.lean unchanged a…
 - `docs/act-phrases/ap-5/seed_bugs.py` — ap-5 seeded bugs and mutants: plant each in lean/VE/Acts/Specialise.lean with its theorems cut (so a fixture must catch it, not a proof), build VE.Acts.Special…
 - `docs/act-phrases/ap-7/draw.py` — AP-7's constitution draw: 30 norm sentences with *and*, *or* or *nor* inside the verb phrase (PRE-REGISTRATION.md).
 - `docs/act-phrases/ap-7/dump.py` — Lean's side of AP-7: `phraseReadings` over every sample phrase under its declared vocabulary, modal included.
 - `docs/act-phrases/ap-7/runner.py` — AP-7 blind calls and scoring (PRE-REGISTRATION.md); the call and record handling is jt-e1r's runner's, for Opus.
+- `docs/act-phrases/ap-parse-index/seed_bugs.py` — ap-parse-index's seeded bugs: plant each, build the Lean module that must catch it (a proof of equality with the definition it replaces in compiled code, or a …
