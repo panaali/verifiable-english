@@ -1,0 +1,200 @@
+ve-stage begin admitNDFull
+ve-stage end ok admitNDFull
+ve-stage leave ok rs_a
+ve-stage enter rs_b
+ve-stage begin admitS2
+ve-stage end ok admitS2
+ve-stage begin admitNDFull
+ve-stage end ok admitNDFull
+ve-stage leave ok rs_b
+ve-stage enter main
+ve-stage begin admitS2
+ve-stage end ok admitS2
+ve-stage begin admitS2
+ve-stage end ok admitS2
+ve-stage begin admitNDFull
+ve-stage end ok admitNDFull
+ve-stage leave ok main
+ve-stage enter rs_a
+ve-stage begin admitS2
+ve-stage end ok admitS2
+ve-stage begin admitNDFull
+ve-stage end ok admitNDFull
+ve-stage leave ok rs_a
+ve-stage enter rs_b
+ve-stage begin admitS2
+ve-stage end ok admitS2
+ve-stage begin admitNDFull
+ve-stage end ok admitNDFull
+ve-stage leave ok rs_b
+ve-stage enter main
+ve-stage leave ok main
+info: VE/Service/MemoExamples.lean:154:0: ve-stage enter main
+ve-stage begin admitS2
+ve-stage end ok admitS2
+ve-stage begin admitS2
+ve-stage end ok admitS2
+ve-stage begin admitNDFull
+ve-stage end ok admitNDFull
+ve-stage leave ok main
+ve-stage enter rs_a
+ve-stage begin admitS2
+ve-stage end ok admitS2
+ve-stage begin admitNDFull
+ve-stage end ok admitNDFull
+ve-stage leave ok rs_a
+ve-stage enter rs_b
+ve-stage begin admitS2
+ve-stage end ok admitS2
+ve-stage begin admitNDFull
+ve-stage end ok admitNDFull
+ve-stage leave ok rs_b
+ve-stage enter main
+ve-stage begin admitS2
+ve-stage end ok admitS2
+ve-stage begin admitS2
+ve-stage end ok admitS2
+ve-stage begin admitNDFull
+ve-stage end ok admitNDFull
+ve-stage leave ok main
+ve-stage enter rs_a
+ve-stage begin admitS2
+ve-stage end ok admitS2
+ve-stage begin admitNDFull
+ve-stage end ok admitNDFull
+ve-stage leave ok rs_a
+ve-stage enter rs_b
+ve-stage begin admitS2
+ve-stage end ok admitS2
+ve-stage begin admitNDFull
+ve-stage end ok admitNDFull
+ve-stage leave ok rs_b
+✔ [1346/1393] Built ve_response_decode:exe (622ms)
+✔ [1347/1393] Built VE.Service.ActsExamples (23s)
+✔ [1348/1393] Built ResponseShape.Schemas.RightsChecks (2.0s)
+✔ [1349/1393] Built ResponseShape.Skeletons (10s)
+✔ [1350/1393] Built ResponseShape.EnumSites (1.6s)
+✔ [1351/1393] Built ResponseShape.FitsTactic (7.7s)
+✔ [1352/1393] Built ResponseShape.Encoders.Common (1.8s)
+✔ [1353/1393] Built ResponseShape.Encoders.ActReadings (3.3s)
+✔ [1354/1393] Built ResponseShape.Encoders.Envelope (4.8s)
+✔ [1355/1393] Built ResponseShape.Encoders.Metered (7.4s)
+✔ [1356/1393] Built ResponseShape.Encoders.English (7.7s)
+✔ [1357/1393] Built ResponseShape.Encoders.Ask (20s)
+✔ [1358/1393] Built VE.Commands.Examples (103s)
+✔ [1359/1393] Built ResponseShape.Encoders.Words (2.5s)
+✔ [1360/1393] Built ResponseShape.Encoders.SensesProject (21s)
+✔ [1361/1393] Built ResponseShape.Encoders.Calc (33s)
+✔ [1362/1393] Built ResponseShape.Encoders.Question (2.5s)
+✔ [1363/1393] Built ResponseShape.Encoders.RiskEval (3.4s)
+✔ [1364/1393] Built ResponseShape.Encoders.Scope (6.8s)
+✔ [1365/1393] Built ResponseShape.Encoders.Quantity (27s)
+✔ [1366/1393] Built ResponseShape.Encoders.EnglishLean (5.5s)
+✔ [1367/1393] Built ResponseShape.Encoders.Standalone (17s)
+✔ [1368/1393] Built ResponseShape.Encoders.Command (6.8s)
+✔ [1369/1393] Built ResponseShape.Encoders.ClausesElaborate (2.8s)
+✔ [1370/1393] Built ResponseShape.Encoders.SearchBudget (2.6s)
+✔ [1371/1393] Built ResponseShape.Encoders.Conformance (13s)
+✔ [1372/1393] Built ResponseShape.Encoders.Route (18s)
+✔ [1373/1393] Built ResponseShape.Encoders.Family (52s)
+✔ [1374/1393] Built VE.Commands.StepsExamples (22s)
+✔ [1375/1393] Built VE.Commands.RunExamples (28s)
+✔ [1376/1393] Built ResponseShape.Encoders.Cardinality (21s)
+✔ [1377/1393] Built ResponseShape.Encoders.Reports (19s)
+✔ [1378/1393] Built ResponseShape.Encoders.Document (86s)
+✔ [1379/1393] Built VE.Commands.StepsProofs (12s)
+✔ [1380/1393] Built VE.Commands.RunSplit (17s)
+✔ [1381/1393] Built ResponseShape.Encoders.Norms (25s)
+✔ [1382/1393] Built VE (894ms)
+⚠ [1384/1393] Built ResponseShape.Encoders.Discourse (32s)
+warning: ResponseShape/Encoders/Discourse.lean:195:58: This simp argument is unused:
+  List.append_nil
+
+Hint: Omit it from the simp argument list.
+  simp only [List.cons_append, List.nil_append, L̵i̵s̵t̵.̵a̵p̵p̵e̵n̵d̵_̵n̵i̵l̵,̵ ̵choicesJson, jointJson]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+✔ [1385/1393] Built ResponseShape.Encoders.SpeechActs (16s)
+✔ [1386/1393] Built ResponseShape.Encoders.SoftNorms (46s)
+⚠ [1387/1393] Built ResponseShape.Encoders.Alternatives (74s)
+warning: ResponseShape/Encoders/Alternatives.lean:40:83: This simp argument is unused:
+  Bool.false_eq_true
+
+Hint: Omit it from the simp argument list.
+  simp only [List.filterMap_cons, List.filterMap_nil, String.reduceEq, ↓reduceIte,̵ ̵B̵o̵o̵l̵.̵f̵a̵l̵s̵e̵_̵e̵q̵_̵t̵r̵u̵e̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ResponseShape/Encoders/Alternatives.lean:52:83: This simp argument is unused:
+  Bool.false_eq_true
+
+Hint: Omit it from the simp argument list.
+  simp only [List.filterMap_cons, List.filterMap_nil, String.reduceEq, ↓reduceIte,̵ ̵B̵o̵o̵l̵.̵f̵a̵l̵s̵e̵_̵e̵q̵_̵t̵r̵u̵e̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ResponseShape/Encoders/Alternatives.lean:87:83: This simp argument is unused:
+  Bool.false_eq_true
+
+Hint: Omit it from the simp argument list.
+  simp only [List.filterMap_cons, List.filterMap_nil, String.reduceEq, ↓reduceIte,̵ ̵B̵o̵o̵l̵.̵f̵a̵l̵s̵e̵_̵e̵q̵_̵t̵r̵u̵e̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ResponseShape/Encoders/Alternatives.lean:97:83: This simp argument is unused:
+  Bool.false_eq_true
+
+Hint: Omit it from the simp argument list.
+  simp only [List.filterMap_cons, List.filterMap_nil, String.reduceEq, ↓reduceIte,̵ ̵B̵o̵o̵l̵.̵f̵a̵l̵s̵e̵_̵e̵q̵_̵t̵r̵u̵e̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+⚠ [1388/1393] Built ResponseShape.Encoders.Rights (22s)
+warning: ResponseShape/Encoders/Rights.lean:98:31: This simp argument is unused:
+  entryJson
+
+Hint: Omit it from the simp argument list.
+  simp only [VE.Route.Wire.ok,̵ ̵e̵n̵t̵r̵y̵J̵s̵o̵n̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+⚠ [1389/1393] Built ResponseShape.Encoders.Risk (21s)
+warning: ResponseShape/Encoders/Risk.lean:17:59: unused variable `hobj`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: ResponseShape/Encoders/Risk.lean:41:56: unused variable `hobj`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: ResponseShape/Encoders/Risk.lean:49:62: unused variable `hobj`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+✔ [1390/1393] Built ResponseShape.Encoders.NormDefaults (97s)
+⚠ [1391/1393] Built ResponseShape.Encoders.ReadingsRoute (101s)
+warning: ResponseShape/Encoders/ReadingsRoute.lean:829:28: This simp argument is unused:
+  String.reduceEq
+
+Hint: Omit it from the simp argument list.
+  simp only [S̵t̵r̵i̵n̵g̵.̵r̵e̵d̵u̵c̵e̵E̵q̵,̵ ̵Bool.false_eq_true, String.reduceBEq] at *
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ResponseShape/Encoders/ReadingsRoute.lean:1243:27: This simp argument is unused:
+  List.toList_toArray
+
+Hint: Omit it from the simp argument list.
+  simp only [Json.getArr?,̵ ̵L̵i̵s̵t̵.̵t̵o̵L̵i̵s̵t̵_̵t̵o̵A̵r̵r̵a̵y̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ResponseShape/Encoders/ReadingsRoute.lean:1309:4: This simp argument is unused:
+  List.toList_toArray
+
+Hint: Omit it from the simp argument list.
+  simp only [getObjValD_set_eq wfe, getObjValD_of_ok hP, hPa, toJson_strings, Array.any_toList.symm,̵
+  ̵ ̵ ̵ ̵ ̵L̵i̵s̵t̵.̵t̵o̵L̵i̵s̵t̵_̵t̵o̵A̵r̵r̵a̵y̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ResponseShape/Encoders/ReadingsRoute.lean:1334:4: This simp argument is unused:
+  hl
+
+Hint: Omit it from the simp argument list.
+  simp only [getObjValD_set_eq wf, getObjValD_set_ne wf (show "environment" ≠ "kind" by decide), he,
+      getObjVal_set_ne wfe (show "profiles" ≠ "vocabulary" by decide), getObjVal_set_eq wfe, hP,̵
+  ̵ ̵ ̵ ̵ ̵h̵l̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+✔ [1392/1393] Built ResponseShape.Encoders (714ms)
+Build completed successfully (1393 jobs).
