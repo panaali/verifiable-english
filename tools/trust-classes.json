@@ -2060,9 +2060,6 @@
         "VE.Compose.dispatch",
         "VE.Compose.documentLayers",
         "VE.Compose.environmentProfiles",
-        "VE.Compose.environmentRows",
-        "VE.Compose.environmentWrappers",
-        "VE.Compose.withoutClauses",
         {
           "name": "VE.Compose.gateOf",
           "tied": [
@@ -2098,6 +2095,10 @@
         "VE.Compose.decidingEnvironment",
         "VE.Compose.layersApart",
         "VE.Compose.listedProfiles",
+        "VE.Compose.listFault",
+        "VE.Compose.environmentRows",
+        "VE.Compose.environmentWrappers",
+        "VE.Compose.withoutClauses",
         "VE.Compose.eventsRefused",
         "VE.Compose.packRows",
         "VE.Compose.eventsFault"
@@ -2129,7 +2130,8 @@
         "VE.Compose.Examples.todayTexts",
         "VE.Compose.Examples.unsortedLists",
         "VE.Compose.Examples.layerListing",
-        "VE.Compose.Examples.layerDecided"
+        "VE.Compose.Examples.layerDecided",
+        "VE.Compose.Examples.chainList"
       ]
     },
     "VE/Compose/Slot.lean": {
@@ -9728,7 +9730,6 @@
         "VE.Service.Document.frontJson",
         "VE.Service.Document.frozenEnv",
         "VE.Service.Document.graphLabels",
-        "VE.Service.Document.linesJson",
         "VE.Service.Document.listedProfiles",
         "VE.Service.Document.lowerScope",
         "VE.Service.Document.ownedProfiles",
@@ -9757,7 +9758,17 @@
         "VE.Service.DocumentChain.requestOf",
         "VE.Service.DocumentChain.layeredOf",
         "VE.Service.Document.cardinalityEnv",
-        "VE.Service.Document.cardinalityReport"
+        "VE.Service.Document.cardinalityReport",
+        "VE.Service.Document.countingUnit",
+        "VE.Service.Document.elsewhere",
+        "VE.Service.Document.countingFront",
+        "VE.Service.Document.chainFront",
+        "VE.Service.Document.readingText",
+        "VE.Service.Document.chainDocument",
+        "VE.Service.Document.composedJson",
+        "VE.Service.Document.graphLabelled",
+        "VE.Service.Document.bridgeAdmitted",
+        "VE.Service.Document.linesJson"
       ],
       "D[R]": [
         "VE.Service.Document.Foreign",
@@ -9797,7 +9808,8 @@
         "VE.Service.Document.unitHasStrayNull",
         "VE.Service.Document.verbalisedBy",
         "VE.Service.Document.vocabularyFault",
-        "VE.Service.Document.walked"
+        "VE.Service.Document.walked",
+        "VE.Service.Document.chainBound"
       ],
       "G[V]": [
         "VE.Service.Document.Checked",
@@ -15427,7 +15439,10 @@
         "VE.Cardinality.Wire.encBody",
         "VE.Cardinality.Wire.encOperand",
         "VE.Cardinality.Wire.encPrinted",
-        "VE.Cardinality.Wire.encode"
+        "VE.Cardinality.Wire.encode",
+        "VE.Cardinality.Wire.chainProfiles",
+        "VE.Cardinality.Wire.projectedProfiles",
+        "VE.Cardinality.Wire.e2"
       ],
       "D[R]": [
         "VE.Cardinality.Wire.checkDeclarations",
@@ -15435,7 +15450,6 @@
         "VE.Cardinality.Wire.admittedRule"
       ],
       "D[I]": [
-        "VE.Cardinality.CardEnv.profiles",
         "VE.Cardinality.Wire.format",
         "VE.Cardinality.Wire.nameOf",
         "VE.Cardinality.Wire.canonical"
@@ -17928,7 +17942,24 @@
         "VE.Service.CardinalityExamples.top",
         "VE.Service.CardinalityExamples.unit",
         "VE.Service.CardinalityExamples.w",
-        "VE.Service.CardinalityExamples.withGraph"
+        "VE.Service.CardinalityExamples.withGraph",
+        "VE.Service.CardinalityExamples.labelled",
+        "VE.Service.CardinalityExamples.bridge",
+        "VE.Service.CardinalityExamples.atQ",
+        "VE.Service.CardinalityExamples.notAdmitted",
+        "VE.Service.CardinalityExamples.bridgedNode",
+        "VE.Service.CardinalityExamples.chainList",
+        "VE.Service.CardinalityExamples.plainEnv",
+        "VE.Service.CardinalityExamples.counting",
+        "VE.Service.CardinalityExamples.formula",
+        "VE.Service.CardinalityExamples.frontOf",
+        "VE.Service.CardinalityExamples.unitsIn",
+        "VE.Service.CardinalityExamples.lowered",
+        "VE.Service.CardinalityExamples.answered",
+        "VE.Service.CardinalityExamples.chainUnits",
+        "VE.Service.CardinalityExamples.parentText",
+        "VE.Service.CardinalityExamples.chainOf",
+        "VE.Service.CardinalityExamples.unbound"
       ]
     },
     "VE/Judgments/Chain.lean": {

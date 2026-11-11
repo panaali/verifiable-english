@@ -1,3 +1,4 @@
+- `tests/test_p1_amendment11.py` — Budget choice and two-turn execution/analysis, without provider calls.
 - `tests/test_p1_amendment12.py` — Ceiling-driven judge substitution: budgets, routing, reuse and disclosure.
 - `tests/test_p1_amendment13.py` — Audited abstentions, gate scope, zero-generation reuse and strict bounds.
 - `tests/test_p1_amendment14.py` — Attacker accounting recovery, exact scored reuse, and partial initial analysis.
@@ -19,6 +20,7 @@
 - `tests/test_pc3_statements.py` — PC-3's Lean declarations against the approved blocks of docs/spec/profile-composition.md 1.2 to 1.6 (build checklist 17), and the check's ability to fail.
 - `tests/test_pc9_statements.py` — PC-9's Lean declarations against the approved blocks of docs/spec/profile-composition.md 1.8 and 1.9 (build checklist 17), and the check's ability to fail.
 - `tests/test_pk1_route_case_evidence_validity.py` — pk-1-cfr-1: each "0 differences" claim (list item, paragraph or table row) of a premise-pack REPORT.md or DELTA.md cites existing evidence with no "INVALID" fi…
+- `tests/test_pk1c_fixture_assurance_claim.py` — No docs/premise-packs/pk-1c/ record calls a `#guard` or `#eval` check a kernel check: those run in the compiled evaluator, not the kernel (pk-1c-cfr-2).
 - `tests/test_platform_contract.py` — `tools/platform_contract.py`: the x86 platform contract suite (test-architecture plan rank 2, section 3.3).
 - `tests/test_precommit_hook.py` — tools/hooks/pre-commit: each check rejects a planted example and passes clean commits.
 - `tests/test_premise_packs_stub.py` — Premise-packs spec 2.6 and its stub state what `PacksLabels.lean` proves (pk-1d, one owner of the statement).
@@ -32,7 +34,6 @@
 - `tests/test_properties.py` — (no module docstring)
 - `tests/test_propose.py` — Version 1 proposal acceptance, ambiguity boundaries, and adoption isolation.
 - `tests/test_ps_e1.py` — PS-E1 pre-call audit, scorer boundaries, runner caps and saved evidence.
-- `tests/test_purposes_contract.py` — The `purposes@0` wire table in shadow (sa-wire-purposes0): `VE.Purposes.Wire`'s decoder still decides; the contract names spec 7.1's row (and 7.2's row 2) of a…
 - `tests/test_question_answering_measure_report.py` — F4: published numbers must agree with captured measurements and fixtures.
 - `tests/test_question_answering_q2_report.py` — Question answering Q2's report numbers come from its saved evidence (docs/spec/question-answering-q2/evidence/), never from live git: the generated block of RE…
 - `tests/test_question_answering_readability.py` — Plan Q2.6: the sealed reading and writing evaluation of `ve ask` (docs/question-answering/q2-6/readability/) is the builder's from saved answers only, its mani…
