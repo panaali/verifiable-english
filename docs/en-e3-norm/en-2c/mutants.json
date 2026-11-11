@@ -59,6 +59,17 @@
   "caught": true
  },
  {
+  "behaviour": "the rule rows' spans not all bound before their nodes are read (limits charged after work)",
+  "file": "ve/norm_english.py",
+  "test": [
+   "tests/test_english_statement_answer.py::test_the_spans_bound_the_rule_rows_before_any_node_is_read"
+  ],
+  "failed": [
+   "tests/test_english_statement_answer.py::test_the_spans_bound_the_rule_rows_before_any_node_is_read"
+  ],
+  "caught": true
+ },
+ {
   "behaviour": "the gate reads english.statement without its reader",
   "file": "tools/relay_mutation_gate.py",
   "test": [

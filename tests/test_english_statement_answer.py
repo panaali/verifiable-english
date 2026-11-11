@@ -270,3 +270,23 @@ def test_a_refusal_code_and_class_are_lean_s_table(answers):
         mutant = copy.deepcopy(row)
         mutant["result"].update(change)
         assert unavailable(env, case, mutant), change
+
+
+def test_the_spans_bound_the_rule_rows_before_any_node_is_read(answers, monkeypatch):
+    """Limits are charged before work (a step count, no timing): a forged `one` answer with 5,000 rule rows, more
+    than the source holds apart, is refused before any node is decoded; the genuine answer decodes each rule node
+    once."""
+    from ve.norms import NormDocument
+    env, case, row = answers["two"]
+    calls: list[str] = []
+    real = NormDocument._decode
+    monkeypatch.setattr(NormDocument, "_decode", staticmethod(lambda data: calls.append(data["norm"]["name"])
+                                                              or real(data)))
+    mutant = copy.deepcopy(row)
+    rule, end = _rules(mutant)[0], len(case["source"].encode())
+    mutant["result"]["statements"] = [rule] + [  # rule 1 genuine, so that any node work would show
+        {**rule, "number": i, "span": [end + i, end + i + 1],
+         "node": {"norm": {**rule["node"]["norm"], "name": f"rule-{i}"}}} for i in range(2, 5001)]
+    assert unavailable(env, case, mutant) and calls == []
+    statement_answer(row, case, env)
+    assert calls == ["rule-1", "rule-2"]

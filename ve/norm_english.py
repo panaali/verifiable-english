@@ -449,22 +449,20 @@ def _on_boundary(raw: bytes, k: int) -> bool:
     return k == len(raw) or raw[k] & 0xC0 != 0x80
 
 
-def _rule_problem(row: dict, rows: list, k: int, raw: bytes, env, gated: bool) -> str | None:
-    """R8 for one rule row of a `one` answer with `k` rule rows: its `exception_to` entries name rules 1 … k; its
-    node is named `rule-<number>` and its `over` names, in order, its `exception_to` and then the rules the
-    precedence rows give it precedence over (`Norm.overOf`), so the node and the rows name the same rules; its span
-    lies inside the source on UTF-8 character boundaries and begins with this rule's header (the rule number is
-    the request's); and its predicate and formulas are the request's (decoded and checked under its environment as
-    a rule of `NormDocument` is, unless the core checker refuses the environment as a whole)."""
-    norm, (start, stop) = row["node"]["norm"], row["span"]
+def _rule_problem(row: dict, targets: list, k: int, raw: bytes, env, gated: bool) -> str | None:
+    """R8 for one rule row of a `one` answer with `k` rule rows, whose span `statement_problem` has bound: its
+    `exception_to` entries name rules 1 … k; its node is named `rule-<number>` and its `over` names, in order, its
+    `exception_to` and then `targets`, the rules the precedence rows give it precedence over (`Norm.overOf`), so the
+    node and the rows name the same rules; its span begins with this rule's header (the rule number is the
+    request's); and its predicate and formulas are the request's (decoded and checked under its environment as a
+    rule of `NormDocument` is, unless the core checker refuses the environment as a whole)."""
+    norm, start = row["node"]["norm"], row["span"][0]
     if not all(1 <= m <= k for m in row["exception_to"]):
         return "an exception_to entry is not a rule of the answer"
-    over = [*row["exception_to"], *(r["over"] for r in rows if r["kind"] == "precedence" and r["rule"] == row["number"])]
-    if norm["name"] != f"rule-{row['number']}" or norm["over"] != [f"rule-{m}" for m in over]:
+    over = [f"rule-{m}" for m in (*row["exception_to"], *targets)]
+    if norm["name"] != f"rule-{row['number']}" or norm["over"] != over:
         return "a rule node's name or over is not its row's"
-    if not (start < stop <= len(raw) and _on_boundary(raw, start) and _on_boundary(raw, stop)):
-        return "a rule row's span is not a span of the source's characters"
-    header = re.match(r"rule ([0-9]+)", raw[start:stop].decode(errors="replace").casefold())
+    header = re.match(r"rule ([0-9]+)", raw[start:row["span"][1]][:32].decode(errors="replace").casefold())
     if header is None or header[1] != str(row["number"]):
         return f"the source at rule {row['number']}'s span is not its header"
     decl = env.predicates.get(norm["predicate"])
@@ -514,14 +512,23 @@ def statement_problem(row: dict, case: dict, env) -> str | None:
         k = len(rules)
         if [r["number"] for r in rules] != list(range(1, k + 1)):
             return "the rule rows are not numbered 1 to k in row order"
-        if not all(1 <= r["rule"] <= k and 1 <= r["over"] <= k for r in rows if r["kind"] == "precedence"):
-            return "a precedence row names a rule the answer does not have"
+        targets: dict[int, list[int]] = {}
+        for r in rows:
+            if r["kind"] == "precedence":
+                if not (1 <= r["rule"] <= k and 1 <= r["over"] <= k):
+                    return "a precedence row names a rule the answer does not have"
+                targets.setdefault(r["rule"], []).append(r["over"])
+        # Every span first: increasing and apart inside the source, they bound k by its length before any node is read.
+        spans = [r["span"] for r in rules]
+        if not all(start < stop <= len(raw) and _on_boundary(raw, start) and _on_boundary(raw, stop)
+                   for start, stop in spans):
+            return "a rule row's span is not a span of the source's characters"
+        if any(a[1] > b[0] for a, b in zip(spans, spans[1:])):
+            return "the rule rows' spans overlap or are out of order"
         gated = _gate(env) is not None
         for r in rules:
-            if (problem := _rule_problem(r, rows, k, raw, env, gated)) is not None:
+            if (problem := _rule_problem(r, targets.get(r["number"], []), k, raw, env, gated)) is not None:
                 return problem
-        if any(a["span"][1] > b["span"][0] for a, b in zip(rules, rules[1:])):
-            return "the rule rows' spans overlap or are out of order"
         return None
     code = result["code"]
     if code not in statuses[status] or result["class"] != codes()[0].get(code):
