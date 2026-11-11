@@ -1,0 +1,12 @@
+{
+ "job": "testmap-8eda0371-t394311-s0",
+ "head": "5b7293287f6eed2c64325896a0b9cadd1fd602b6",
+ "argv": [
+  "testmap-8eda0371-t394311-s0",
+  "5b7293287f6eed2c64325896a0b9cadd1fd602b6",
+  "5b7293287f6eed2c64325896a0b9cadd1fd602b6",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-1887a7420de0.tar.zst",
+  "4ce7177af75af93171fbadc71a9ad70b032b008a2d4b0e17dfe777974e56718d",
+  "shard=ulimit -s 8192; tc=$(cat lean/lean-toolchain); tc=${tc//\\//--}; mkdir -p ~/.elan/toolchains; ln -sfn /opt/lean ~/.elan/toolchains/${tc//:/---}; mkdir -p ~/.elan/bin; for t in lean lake; do [ -e ~/.elan/bin/$t ] || ln -sfn /opt/lean/bin/$t ~/.elan/bin/$t; done; uv run --frozen python tools/test_map.py record --no-merge --jobs 4 --output \"$RUNNER_TEMP/out/map-s0.json.gz\" tests/test_consolidation_tools.py tests/test_lean_document_wrapper.py tests/test_webapp_commands_env.py tests/test_environment_field_types.py tests/test_events_answer.py tests/test_gate_collection_renumber.py tests/test_frozen_sources.py tests/test_p1_amendment14.py tests/test_scope_authoring.py tests/test_lean_import_reader.py tests/test_senses_project.py tests/test_b16f_senses_document.py tests/test_readings_lazy_pairs.py tests/test_rust_memory_budget.py tests/test_readings_s2_answer.py tests/test_b16f_document.py tests/test_acts_readings_lean.py tests/test_p1_amendment11.py tests/test_arith_uncharged_costs.py tests/test_question_statements.py tests/test_risk_diagnostics.py tests/test_wire_contract_lint.py tests/test_readings_nd_lean.py tests/test_entailment_adversarial.py tests/test_right_clauses_duplicate.py tests/test_rd9_followup_bindings.py tests/test_norm_english.py tests/test_nary.py tests/test_wire_contract_precondition.py tests/test_premise_packs_stub.py tests/test_pc3_statements.py tests/test_profiles.py tests/test_fol_names.py tests/test_readings_s1_python.py tests/test_lean_first_b10a_report.py tests/test_lean_service_audit.py 2>&1 | tee \"$RUNNER_TEMP/out/shard-full.txt\"; exit ${PIPESTATUS[0]}"
+ ]
+}
