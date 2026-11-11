@@ -485,7 +485,8 @@ def statement_problem(row: dict, case: dict, env) -> str | None:
     `statementFields`' and its code one of the status's, with Lean's class (`codes.json`); for `one`, the rule rows
     numbered 1 … k in row order, every rule a row names in 1 … k, one span per rule row inside the source on UTF-8
     character boundaries, the spans increasing and none overlapping the next (no layout check: where a block lies
-    is Lean's); for a refusal, a sentence of the source exactly when its code names one, the spans inside the
+    is Lean's), all bound before any node is read, then each rule row's node and header (`_rule_problem`); for a
+    refusal, a sentence of the source exactly when its code names one, the spans inside the
     source, two witness trees and the invalid-grammar fields as `english.read`'s relay binds them."""
     from .backends.english_lean import _gate, _span, _trees, refusal_problem
     from .english_grammar import actions_version, codes, grammar_id, lexicon_id, statement_codes
