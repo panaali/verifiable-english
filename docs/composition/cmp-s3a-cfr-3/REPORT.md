@@ -133,6 +133,18 @@ exists.
   pre-existing, and this item does not edit them; it changes only that file's `_SCHEMA_SEEDS` row for
   clauses-elaborate. No right-clauses test is listed.
 
+- Selected tests, with `mac-pytest.sh --select` on committed tree 706b587606:
+  - The first run had units SIGTERMed (exit 143, all within seconds of each other at about 297 s, with no JUnit
+    report) on ve-cloud-3. It stopped at `--maxfail`, and the rerun on the same tree replaces it.
+  - The rerun (ve-cloud-2, 468 units) failed one test,
+    `test_shape_binding_mutants.py::...[clauses-elaborate]`. The recorded genuine answers
+    (tests/data/binding-answers.jsonl.gz) predated the two fields.
+  - Fix: `uv run python tools/binding_census.py --answers`, which re-asks the recorded cases of this build, then
+    `regen_generated.py --write` for the census. The `clauses-elaborate` lines differ only by the two fields. The
+    re-ask also refreshes other modes' lines to main's build (`actions_version` 46 to 47, new English error codes).
+    That is the tool's output; nothing was edited by hand.
+  - The failed id plus tests/test_binding_census.py then pass on ve-mac-1: `9 passed`, HEAD aceb824e.
+
 ## Self-review against BUILDER-CHECKLIST
 
 1. Typed and contained: PASS. `test_right_clauses_elided_bytes_retyped_and_rebound` (both fields retyped, or deleted
