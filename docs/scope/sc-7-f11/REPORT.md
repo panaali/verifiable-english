@@ -1,9 +1,9 @@
 # sc-7-f11: no sentence end hides inside a word (sc-7 recheck FOLLOW-UP F11)
 
-**Status: done; awaiting the chain gate. Lean HEAD bbf0b6d67; test fix 617edc979; then docs only.** Inside a word, a character outside
+**Status: review fixes done (F1 ties-pass row, F2 non-empty run); awaiting the chain gate. Lean HEAD dd9e73266.** Inside a word, a character outside
 `clause`'s allow-list may now be followed only by a `follower`, so "the x.<U+1D159>The …" (also U+FFFC, U+E000) is
-refused. The DRI's decision 2026-11-10 adds: a Markdown character reference is refused too. Trust: V +22, R16. No DRI
-signature is reserved.
+refused. The DRI's decision 2026-11-10 adds: a Markdown character reference ("&", a non-empty run, ";") is refused too.
+Trust: V +22, R16 (ties-pass row FOLLOW-UPS.md:2518). No DRI signature is reserved.
 
 FOLLOW-UP: sc-7-f12 refuse inline HTML inside a scope slot word
 
@@ -20,10 +20,10 @@ by this item, msg.sh 18:17Z).
 | The class | yes | :225 joins each of F7's 13 sentence ends with U+1D159, U+FFFC, U+E000, U+200B, U+2060, U+3164, U+2800 or U+0301, in every slot. The test `test_clause_accepts_exactly_its_documented_allow_list` now also sweeps "x." c "y" over every Unicode scalar value c: the word is accepted exactly when c is a word character and a `follower` |
 | Accepted examples that must stay accepted | yes | :228 ("." before an allowed character, ")", "”", "(", "—", in every slot). :229 (round trip with "3.5" and "e.g"). :230 and :232 (19 words and the self-review's five sentences). :236-:238 (`follower`'s edges) |
 | Kept selected | yes | `test_clause_accepts_exactly_its_documented_allow_list` is extended: it keeps its three sweeps and adds "joined" and `follower`'s docstring. `test_word_char_refuses_exactly_its_documented_characters` is unchanged, and so is `wordChar`. The PROBE F8/F9/F10 and U+1D159/U+E000/U+FFFC guards are unchanged. `test_review_f8_f9_f10_...` adds the joined probes and checks that the new guards stay |
-| DRI 2026-11-10 item 1: refuse a Markdown character reference in a slot word | yes | `charRef`: "&", then a run of at least two ASCII letters, digits or "#", then ";". Two is the length of the shortest HTML entity name or numeric reference, so "AT&T;" stays accepted. Guards :245 (the builder's two sentences), :247 (&nbsp; &#32; &#x20; &period; &#46; in every slot), :249 and :252 (refused), :254 and :255 (AT&T accepted). Seeded bugs: three in `charRef`, one in `clause`, all KILLED |
+| DRI 2026-11-10 item 1: refuse a Markdown character reference in a slot word | yes | `charRef`: "&", then a non-empty run of ASCII letters, digits or "#", then ";", as the ruling states it (review F2: the first version asked for a run of two and let "&a;", "&#;" and "AT&T;" through). Guards :245 (the builder's two sentences), :247 (&nbsp; &#32; &#x20; &period; &#46; in every slot), :249 and :252 (refused), :254 and :255 (a run of one, in every slot), :257 and :258 ("AT&T" and "x&;" accepted). `test_char_ref_refuses_every_run_the_ruling_names` sweeps "x&" c ";" over every scalar value. Seeded bugs: three in `charRef`, one in `clause`, all KILLED |
 | DRI 2026-11-10 item 2: inline HTML | moved by the ruling | FOLLOW-UP sc-7-f12 (the line above) |
 | REPORT "D +140" corrected to "V +112" | yes | `docs/scope/sc-7/REPORT.md:60` |
-| FOLLOW-UPS.md "213 KILLED" corrected to 229 | yes | `manage-agents/FOLLOW-UPS.md`, "## sc-7" row (line 2194) |
+| FOLLOW-UPS.md "213 KILLED" corrected to 229 | yes (done in the review round, F3) | `manage-agents/FOLLOW-UPS.md`, "## sc-7" row (line 2194) |
 
 **V +112.** `uv run python tools/trust_map.py --files <out>` on main f3f40d51d gives `VE/Scope/Authoring.lean`
 {S 37, D 140, D[V] 112, D[I] 28, trusted 149}. Trusted counts K + S + untied [V], and 37 + 112 = 149. The "D +140" in
@@ -44,7 +44,7 @@ characters.
    - any run of two non-Latin letters inside a word ("xαβy", "Привет,", "日本語-text");
    - two combining marks in a row ("́́y", :252);
    - a word that starts with a sentence end and a blank character (".​y", :252).
-2. **A word holding a Markdown character reference** (:247 and :249).
+2. **A word holding a Markdown character reference** (:247, :249, :254 and :255), "AT&T;" and "x&#;" among them.
 
 Spec 2.2 (docs/spec/scope.md:360-375) leaves `<condition>` as free English, so it admits these words. They are refused
 in the refuse direction of R16 and of the DRI's decision. Before this item, a non-Latin word in a slot was already
@@ -65,24 +65,27 @@ last column is the guards that failed.
 | `clause` | allow "!" inside a word | :225 (the "!" row of the class guard) |
 | `clause` | allow "." inside a word | :220, :225, :241, :252 |
 | `clause` | the follower may be any `wordChar` | :220, :225, :241, :252 |
-| `clause` | drop the `charRef` conjunct | :245, :247, :249, :252 |
-| `follower` | no closer | :265 |
+| `clause` | drop the `charRef` conjunct | :245, :247, :249, :252, :254, :255 |
+| `follower` | no closer | :268 |
 | `follower` | no allow-listed character | :236, :238 |
 | `follower` | no ASCII graphic range | :228, :230, :232, :236 |
 | `follower` | ASCII range widened to U+0080 | :236 |
 | `follower` | U+2010..U+2027 dropped | :228, :230, :232, :236 |
 | `follower` | range widened to U+2030 | :236, :241 |
-| `charRef` | a run of one counts | :254 |
-| `charRef` | no "#" in the run | :245, :247, :249 |
-| `charRef` | no ";" needed | :254 |
-| `allowed` | no ASCII punctuation | :229, :230, :232, :254, :269, :278 |
-| `allowed` | U+01C3 allowed | :273, :275 |
+| `charRef` | a run of two needed (the first version; review F2) | :254, :255 |
+| `charRef` | no "#" in the run | :245, :247, :249, :254, :255 |
+| `charRef` | no ";" needed | :257, :258 |
+| `allowed` | no ASCII punctuation | :229, :230, :232, :257, :272, :281 |
+| `allowed` | U+01C3 allowed | :276, :278 |
 
 Only Lean product code changed. The Python edits are all in `tests/test_scope_authoring.py`, and no Rust changed.
 
 **Trust mutants.** The run was `mac-pytest.sh --trustmut -- --max-mutants 1000 --test
 lean/VE/Scope/AuthoringExamples.lean --json docs/scope/sc-7-f11/trust-mutants.json --allow
-docs/scope/sc-7-f11/trust-mutants-allow.json --rescore <first run>`, on the VM at a89a4da7f (the record's `head`). Result: 4 definitions, 130 mutants, 93 KILLED, 0 SURVIVOR, 0 UNKNOWN, 25 INVALID, 12 ALLOWED, exit 0.
+docs/scope/sc-7-f11/trust-mutants-allow.json`, rerun after review F2 on ve-cloud-2 at dd9e73266 (the record's `head`), a
+full run with no `--rescore`. Result: 4 definitions, 127 mutants, 89 KILLED, 0 SURVIVOR, 0 UNKNOWN, 25 INVALID, 13
+ALLOWED, exit 0. The one new ALLOWED is `!(r.take 1).isEmpty`, equal to `!r.isEmpty` (its reason is in the allow
+file). The run before the review fix (a89a4da7f, with `--rescore`) gave 93 KILLED, 12 ALLOWED, 130 mutants.
 
 The first run (on 656670ba6) left 11 survivors and 4 UNKNOWN:
 - Three were closed by :252: `charRef` checking only the first "&", or only the last, and `clause` skipping a word's
@@ -105,7 +108,8 @@ tied +0, unclassified +0, trusted +22 … VE/Scope/Authoring.lean: trusted +22 �
 
 The line counts include each definition's blank line. All four are classed D[V] in `tools/trust-classes.json`;
 `slotsJoined` is T. The allowance is recorded with `--allow`: "SIGNED by standing ruling R16 (DRI-RULINGS.md),
-sc-7-f11, 2026-11-10". The ties-pass row is in FOLLOW-UPS.md under "## sc-7-f11".
+sc-7-f11, 2026-11-10". The ties-pass row is FOLLOW-UPS.md:2518, "## sc-7-f11 ties pass" (added in the review round,
+F1: the earlier text said it existed; it did not).
 
 ## Checks run once on the finished code
 
@@ -151,8 +155,8 @@ the trust-mutant sweep ran.
   has two readings.
 - The DELTA row against docs/spec/scope.md:369-375 (the `<condition>`, `<list name>` and section slots of 2.2's rows).
 - `charRef` against reviews/dri-decisions-20261110-sc-7-f11.md item 1 ("&", then a non-empty run of ASCII
-  alphanumerics or "#", then ";"). The run here must hold at least two characters, so "AT&T;" stays accepted, as the
-  ruling's AT&T condition asks. A run of one can be no reference.
+  alphanumerics or "#", then ";"): the same rule. The ruling's AT&T condition is "AT&T" (no ";"), which stays accepted;
+  "AT&T;" holds the reference "&T;" and is refused (review F2 corrected the earlier run-of-two reading).
 
 ## Pilot bytes
 
