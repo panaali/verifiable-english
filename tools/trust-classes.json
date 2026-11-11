@@ -16962,6 +16962,7 @@
         "VE.Acts.ReadingsExamples.cFirst",
         "VE.Acts.ReadingsExamples.cand",
         "VE.Acts.ReadingsExamples.choiceLimit",
+        "VE.Acts.ReadingsExamples.cutExact",
         "VE.Acts.ReadingsExamples.cv",
         "VE.Acts.ReadingsExamples.d076",
         "VE.Acts.ReadingsExamples.d105",
@@ -16973,6 +16974,7 @@
         "VE.Acts.ReadingsExamples.eachOrTogether",
         "VE.Acts.ReadingsExamples.edgeSides",
         "VE.Acts.ReadingsExamples.envJ",
+        "VE.Acts.ReadingsExamples.exactOn",
         "VE.Acts.ReadingsExamples.fx9",
         "VE.Acts.ReadingsExamples.g10s",
         "VE.Acts.ReadingsExamples.g11s",
@@ -17002,6 +17004,7 @@
         "VE.Acts.ReadingsExamples.together105",
         "VE.Acts.ReadingsExamples.u055",
         "VE.Acts.ReadingsExamples.u055f",
+        "VE.Acts.ReadingsExamples.u055m",
         "VE.Acts.ReadingsExamples.u055w",
         "VE.Acts.ReadingsExamples.u055x",
         "VE.Acts.ReadingsExamples.u105a",
@@ -17210,19 +17213,22 @@
         {
           "name": "VE.Acts.compareViews",
           "tied": [
-            "VE.Acts.compareViews_ok"
+            "VE.Acts.compareViews_ok",
+            "VE.Acts.compareViews_complete"
           ]
         },
         {
           "name": "VE.Acts.pick",
           "tied": [
-            "VE.Acts.pick_forall₂"
+            "VE.Acts.pick_forall₂",
+            "VE.Acts.pick_of_forall₂"
           ]
         },
         {
           "name": "VE.Acts.sourceCheck",
           "tied": [
-            "VE.Acts.sourceCheck_exact"
+            "VE.Acts.sourceCheck_exact",
+            "VE.Acts.sourceCheck_complete"
           ]
         },
         {
@@ -17241,8 +17247,18 @@
     },
     "VE/Acts/Situation.lean": {
       "G[V]": [
-        "VE.Acts.atomSituation",
-        "VE.Acts.rulePred"
+        {
+          "name": "VE.Acts.atomSituation",
+          "tied": [
+            "VE.Acts.atomSituation_separated"
+          ]
+        },
+        {
+          "name": "VE.Acts.rulePred",
+          "tied": [
+            "VE.Acts.rulePred_eq_some"
+          ]
+        }
       ]
     },
     "VE/Readings/SoftSup.lean": {

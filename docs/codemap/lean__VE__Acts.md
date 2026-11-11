@@ -24,6 +24,7 @@
 - `lean/VE/Acts/RunExamples.lean` — Fixtures of the `act-readings` mode (docs/spec/act-phrases.md 7, 11.4; plan AP-4 Tests; DRI 2026-11-08 ap-4 item 1): the pilot's phrases through the mode with …
 - `lean/VE/Acts/Situation.lean` — A separating situation built from simple acts (docs/spec/act-phrases.md 7; plan AP-4).
 - `lean/VE/Acts/Sources.lean` — Sources and exact reading sets (docs/spec/act-phrases.md 1.8, 7; plan AP-4, G4).
+- `lean/VE/Acts/SourcesProofs.lean` — `sourceCheck` read from its parts, and why spec 7's `sourceCheck_complete` needs the choice bound (docs/spec/act-phrases.md 7; DRI 2026-11-02 triage item 8c).
 - `lean/VE/Acts/Specialise.lean` — Specialisation (docs/spec/act-phrases.md 1.9, 8; plan 2.6, decision D5): when one simple act is a way of doing another, through the markers and adverbs the `ac…
 - `lean/VE/Acts/SpecialiseExamples.lean` — Fixtures of `specialises` and `specPremises` (docs/spec/act-phrases.md 8, 11.5; plan AP-5).
 - `lean/VE/Acts/Syntax.lean` — The act grammar's tokens, vocabulary and terminals (docs/spec/act-phrases.md 1.1, 1.2, 1.4, 5.1).
