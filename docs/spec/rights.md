@@ -778,6 +778,8 @@ UNKNOWN: <target>, <budget>
 the colliding default pairs no ranking resolves, the same count the soft route prints for that evidence. `none
 supplied` is the situation part when the request gives no situation: no situation search runs, and the budget it
 quotes goes unused; `UNKNOWN (<budget>)` is reserved for a search that ran out of budget (rights-cfr-2-budget-1).
+The soft route's 7.3 line uses the same `none supplied` words for a request with no `coherent_model`, from one Lean
+definition (`VE.SoftNorms.Wire.notSearchedText`, soft-cf-text-1).
 
 ## 8. Diagnostics (shared text in Python and Lean unless marked)
 
