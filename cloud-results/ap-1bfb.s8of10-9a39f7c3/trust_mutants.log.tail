@@ -1,0 +1,34 @@
+trust_mutants: 7 definitions, 476 mutants (47 to run), 4 jobs, base 5b7293287f6e
+SURVIVOR lean/VE/WireContract/Tables/Acts.lean:7 VE.WireContract.Tables.Acts.table (G[V], trusted) lit-minus: 48 -> 47
+SURVIVOR lean/VE/WireContract/Tables/Acts.lean:7 VE.WireContract.Tables.Acts.table (G[V], trusted) bool-flip: true -> false
+SURVIVOR lean/VE/WireContract/Tables/Acts.lean:7 VE.WireContract.Tables.Acts.table (G[V], trusted) bool-flip: false -> true
+SURVIVOR lean/VE/WireContract/Tables/Acts.lean:7 VE.WireContract.Tables.Acts.table (G[V], trusted) lit-minus: 8 -> 7
+SURVIVOR lean/VE/WireContract/Tables/Acts.lean:7 VE.WireContract.Tables.Acts.table (G[V], trusted) list-empty: [.tok "norms"] -> []
+SURVIVOR lean/VE/WireContract/Tables/Acts.lean:7 VE.WireContract.Tables.Acts.table (G[V], trusted) bool-flip: false -> true
+SURVIVOR lean/VE/WireContract/Tables/Acts.lean:7 VE.WireContract.Tables.Acts.table (G[V], trusted) lit-plus: 45 -> 46
+SURVIVOR lean/VE/WireContract/Tables/Acts.lean:7 VE.WireContract.Tables.Acts.table (G[V], trusted) bool-flip: false -> true
+SURVIVOR lean/VE/WireContract/Tables/Acts.lean:7 VE.WireContract.Tables.Acts.table (G[V], trusted) lit-plus: 0 -> 1
+SURVIVOR lean/VE/WireContract/Tables/Acts.lean:7 VE.WireContract.Tables.Acts.table (G[V], trusted) list-empty: [.arg "message" .raw] -> []
+SURVIVOR lean/VE/WireContract/Tables/Acts.lean:7 VE.WireContract.Tables.Acts.table (G[V], trusted) list-empty: [.lit "ResourceLimit: precedence depth"] -> []
+SURVIVOR lean/VE/WireContract/Tables/Acts.lean:7 VE.WireContract.Tables.Acts.table (G[V], trusted) list-empty: [.tok "norms", .star] -> []
+SURVIVOR lean/VE/WireContract/Tables/Acts.lean:7 VE.WireContract.Tables.Acts.table (G[V], trusted) list-drop-last: [.lit "ResourceLimit: rules"] -> ([.lit "ResourceLimit: rules"].dropLast)
+SURVIVOR lean/VE/WireContract/Tables/Acts.lean:7 VE.WireContract.Tables.Acts.table (G[V], trusted) list-drop-last: [.tok "norm"] -> ([.tok "norm"].dropLast)
+SURVIVOR lean/VE/WireContract/Tables/Acts.lean:7 VE.WireContract.Tables.Acts.table (G[V], trusted) list-drop-last: [.lit "InvalidInput: invalid norm fields"] -> ([.lit "InvalidInput: invalid norm fields"].dropLast)
+SURVIVOR lean/VE/WireContract/Tables/Acts.lean:7 VE.WireContract.Tables.Acts.table (G[V], trusted) list-drop-last: [.check { id := "carve-out-syntax", loc := ⟨.item 0, []⟩, guard := [], kind := .classifier "carve... -> ([.check { id := "carve-out-syntax", loc := ⟨.item 0, []⟩, guard := [], kind := .classifier "carv...
+SURVIVOR lean/VE/WireContract/Tables/Acts.lean:7 VE.WireContract.Tables.Acts.table (G[V], trusted) list-drop-last: [.tok "norm", .tok "name"] -> ([.tok "norm", .tok "name"].dropLast)
+SURVIVOR lean/VE/WireContract/Tables/Acts.lean:7 VE.WireContract.Tables.Acts.table (G[V], trusted) list-drop-last: [.lit "InvalidInput: invalid sign or too many carve-outs"] -> ([.lit "InvalidInput: invalid sign or too many carve-outs"].dropLast)
+SURVIVOR lean/VE/WireContract/Tables/Acts.lean:7 VE.WireContract.Tables.Acts.table (G[V], trusted) list-drop-last: [.check { id := "5.1", loc := ⟨.item 0, []⟩, guard := [], kind := .declaredIn ⟨.root, [.tok "norm... -> ([.check { id := "5.1", loc := ⟨.item 0, []⟩, guard := [], kind := .declaredIn ⟨.root, [.tok "nor...
+SURVIVOR lean/VE/WireContract/Tables/Acts.lean:7 VE.WireContract.Tables.Acts.table (G[V], trusted) list-drop-middle: .check { id := "2.2", loc := ⟨.root, [.tok "norms"]⟩, guard := [], kind := .maxItems 256, code :=... -> 
+SURVIVOR lean/VE/WireContract/Tables/Acts.lean:7 VE.WireContract.Tables.Acts.table (G[V], trusted) list-last: [.tok "norm", .tok "over"] -> ([.tok "norm", .tok "over"].reverse.take 1)
+SURVIVOR lean/VE/WireContract/Tables/Acts.lean:7 VE.WireContract.Tables.Acts.table (G[V], trusted) list-drop-first: [.check { id := "2.1", loc := ⟨.root, [.tok "environment", .tok "profiles"]⟩, guard := [], kind :... -> ([.check { id := "2.1", loc := ⟨.root, [.tok "environment", .tok "profiles"]⟩, guard := [], kind ...
+SURVIVOR lean/VE/WireContract/Tables/Acts.lean:7 VE.WireContract.Tables.Acts.table (G[V], trusted) list-drop-middle: .check { id := "3.6", loc := ⟨.item 0, [.tok "norm", .tok "predicate"]⟩, guard := [], kind := .ha... -> 
+SURVIVOR lean/VE/WireContract/Tables/Acts.lean:7 VE.WireContract.Tables.Acts.table (G[V], trusted) list-drop-first: [.lit "InvalidInput: unless and over must be arrays"] -> ([.lit "InvalidInput: unless and over must be arrays"].drop 1)
+SURVIVOR lean/VE/WireContract/Tables/Acts.lean:7 VE.WireContract.Tables.Acts.table (G[V], trusted) list-drop-middle: .arg "rule" .raw, -> 
+SURVIVOR lean/VE/WireContract/Tables/Acts.lean:7 VE.WireContract.Tables.Acts.table (G[V], trusted) list-drop-middle: .arg "value" .raw, -> 
+SURVIVOR lean/VE/WireContract/Tables/Acts.lean:7 VE.WireContract.Tables.Acts.table (G[V], trusted) list-drop-first: [{ id := "3.9a", code := "NORMS_RESOURCE_LIMIT", cls := "ResourceLimit", text := [.arg "message" ... -> ([{ id := "3.9a", code := "NORMS_RESOURCE_LIMIT", cls := "ResourceLimit", text := [.arg "message"...
+SURVIVOR lean/VE/WireContract/Tables/Acts.lean:7 VE.WireContract.Tables.Acts.table (G[V], trusted) list-drop-first: [.lit "DuplicateDeclaration: rule ", .arg "value" .raw] -> ([.lit "DuplicateDeclaration: rule ", .arg "value" .raw].drop 1)
+SURVIVOR lean/VE/WireContract/Tables/Acts.lean:7 VE.WireContract.Tables.Acts.table (G[V], trusted) list-drop-first: [{ id := "4.7a", code := "NORMS_TYPE_MISMATCH", cls := "TypeMismatch", text := [.arg "message" .r... -> ([{ id := "4.7a", code := "NORMS_TYPE_MISMATCH", cls := "TypeMismatch", text := [.arg "message" ....
+SURVIVOR lean/VE/WireContract/Tables/Acts.lean:7 VE.WireContract.Tables.Acts.table (G[V], trusted) list-drop-first: [.tok "norms", .star, .tok "norm", .tok "name"] -> ([.tok "norms", .star, .tok "norm", .tok "name"].drop 1)
+trust_mutants: 17 KILLED, 30 SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 429 OTHER SHARD in 132 s
+trust_mutants: G[V], trusted: 17 KILLED, 30 SURVIVOR, 429 OTHER SHARD
+trust_mutants: steps: wall plan 10.1 s, scratch 3.5 s, control_build 0.2 s, probe_install 1.2 s, mutants 111.4 s, cleanup 5.7 s; lake control_build 0.1 s (1), probe_install 1.2 s (1), control_probes 10.6 s (4), mutant_builds 46.4 s (48), mutant_checks 297.7 s (48), stage_controls 7.3 s (3), mutant_probes 62.5 s (17)
