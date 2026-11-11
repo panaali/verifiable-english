@@ -42,6 +42,7 @@
 - `conformance/norm_defaults_three_way.py` — Three-way conformance for norm-defaults@0 on the spec fixtures (docs/spec/norm-defaults.md 8, 9).
 - `conformance/order.py` — order@0 differential conformance: Python search and replay vs the Lean checker.
 - `conformance/p0.py` — P0 route fixtures shared by Python, Rust and the Lean `route` subcommand.
+- `conformance/purposes_contract.py` — Python classifiers, adapter and legacy validation of the `purposes@0` wire table, in shadow (sa-wire-purposes0; docs/spec/purpose-explanation.md 5.4 and 7): it…
 - `conformance/question_answering_readability.py` — Q2.6: the zero-training reading and writing evaluation of `ve ask`, sealed and not run, and its wording counts.
 - `conformance/question_reverse.py` — Q1.3: the reverse question corpus, read by Lean's question reader (docs/spec/question-answering-PLAN.md Q1.3).
 - `conformance/replay_baseline.py` — Freeze the full v0 corpus using only the pinned pre-closure integration code.
@@ -63,5 +64,6 @@
 - `conformance/wire_contract_faults_acts.py` — The fault catalogue of `acts@0` (ap-1bf), at and around each limit of `VE.Acts.Lexical`.
 - `conformance/wire_contract_faults_norm_defaults.py` — The fault catalogue and the gate corpus of `norm-defaults@0` (wire-contract-s5.md 2.4, 8.2, 8.4).
 - `conformance/wire_contract_faults_norms.py` — The fault catalogue and the gate corpus of `norms@0` (wire-contract-s5.md 2.3, 8.1, 8.4).
+- `conformance/wire_contract_faults_purposes.py` — The fault catalogue of `purposes@0` (sa-wire-purposes0): one fault per refused example.
 - `conformance/wire_contract_gate.py` — Replay the soft-norms shadow gate (wire-contract.md 8.3 and 9) through Python, Lean and the legacy routes.
 - `conformance/wire_contract_golden.py` — Materialize the hand-derived spec fixture records for review and drift checks.
