@@ -37,12 +37,10 @@ Every table between `numbers` markers is rendered from that file; to bring them 
 Lean decides meaning and acceptance; Python reads files, relays requests to Lean and displays Lean's answers; Rust
 proposes search candidates (models, proofs) that Lean checks before anything is reported (lean-first rule 3,
 decision A of 2026-10-08). That is the rule, and section 4 lists where it does not hold yet. The exception
-that matters most: for a norm document with soft rules (every safety-framework use case), `ve/norms.py` and
-`ve/softnorms.py` keep their Python path (`_lean_route` is false for any document that is not exactly a
-`NormDocument`): Python builds the selection, outcome and conflict-target formulas and decides conflicts
-from them, and Lean replays certificates and evaluates models over those formulas. Measured 2026-11-11 on
-the Preparedness harness: 684 functions of `ve/` run under its answers, `NormDocument.selection`, `outcome`,
-`conflict_targets`, `selected_rules` and `_check_conflict_python` among them (work item `kb-10`).
+that matters most is a norm document with soft rules, which covers every safety-framework use case. There, Python builds the rule
+formulas and evaluates them on each case model, so it decides selection, completed outcomes and conflicts
+found on a model. Lean elaborates the soft rules and replays every certificate (section 4, *Norm documents
+with soft rules*; work item `kb-10`).
 
 <!-- numbers:sizes -->
 | Part | Where | Size | Notes |
@@ -147,6 +145,14 @@ inward. A package's row places every module under it; a module no row places fai
   of evidence checked by a Lean readings kind (`ve/readings_verdicts.py`).
 - **Assist** (`ve assist`): Python session, journal and recovery (editor help); proposals are untrusted and every
   "yes" is replayed through Lean (lf-17).
+- **Norm documents with soft rules** (the safety-framework use cases): Lean's `soft-elaborate` mode elaborates
+  the soft rules (`ve/softnorms.py` → `ve/backends/soft_relay.py`). The result is a `SoftenedNormDocument`, and
+  `_lean_route` sends it to no Lean norms route because it is not exactly a `NormDocument`. Python's
+  `ve/norms.py` builds the selection, outcome and conflict-target formulas and evaluates them with
+  `ve.evaluate._Evaluator`: `selected_rules`, the harnesses' completed outcomes and `_check_conflict_python`'s
+  witness search (`_find_conflict`) are Python's answers. Lean replays every certificate (conflict-freedom,
+  entailments), and the public `evaluate()` is Lean's. [Who computes the keyed answers](usecases/keyed-answers.md)
+  has the per-answer table and the saved harness counts; work item `kb-10` moves it onto Lean.
 
 ## 5. The trusted base
 

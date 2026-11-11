@@ -68,7 +68,7 @@ its comparison without writing a file.
 
 ## Answers to the frozen key (2026-10-29)
 
-**How these answers are computed today.** The harness asks Lean for the soft elaboration, builds each query's formulas in Python (`ve/norms.py`: which rules are selected, a predicate's outcome, the conflict targets) and has Lean replay a certificate or evaluate a model over them. The replay and the evaluation are Lean's and proved; the rule formulas are Python's until work item `kb-10` moves them onto Lean's soft-norms route (measured 2026-11-11).
+**How these answers are computed today.** Lean elaborates the soft rules and replays every certificate. Python builds the rule formulas and evaluates them on each case, so a selection, a completed outcome or a CONFLICT is Python's answer. See [who computes the keyed answers](../../docs/usecases/keyed-answers.md) for the answer-by-answer table (work item `kb-10`).
 
 `results.json` records one row per key item in `comparison`, with `agree`, `status`, `route` and `cause`. The progress
 score can read `comparison[].agree` for useful answers and `status == "UNDECIDED-faithful"` for faithful undecided
