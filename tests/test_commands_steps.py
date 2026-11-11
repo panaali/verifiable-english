@@ -3,6 +3,7 @@ and the saved A/B's b1 rows pinned to their Lean fixtures (DRI 2026-10-28 item 2
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 
 import pytest
@@ -21,6 +22,25 @@ def test_each_b1_row_is_a_route_fixture_that_reads(row):
     assert f'"{row["wording"]}"' in fixtures
     assert row["base"].startswith("VE.Commands.StepOutcome.refused")
     assert row["head"].split()[0].rsplit(".", 1)[1] in ("one", "steps", "many")
+
+
+def _refusal(head):
+    """The (code, text) of an A/B head `VE.Commands.StepOutcome.refused "<code>" "<text>"` (Lean's `repr`)."""
+    match = re.fullmatch(r'VE\.Commands\.StepOutcome\.refused\s+"(\w+)"\s+"(.*)"', head, re.S)
+    assert match, head
+    return match.group(1), match.group(2)
+
+
+@pytest.mark.parametrize("row", [r for r in AB["changed"] if r["class"] == "rr"], ids=lambda r: r["wording"])
+def test_each_rr_row_is_a_route_fixture_refused_with_its_code(row):
+    """reviews/dri-decisions-20261109-ci-3-codes.md item 1's condition: every refused -> refused row stays an exact-code
+    guard of RunExamples.lean (`abRefused`, refused through the mode with that code and text)."""
+    fixtures = (ROOT / "lean/VE/Commands/RunExamples.lean").read_text()
+    table = fixtures[fixtures.index("def abRefused"):fixtures.index("#guard abRefused.all")]
+    code, text = _refusal(row["head"])
+    assert f'("{row["wording"]}", "{code}", "' in table
+    assert code == "NoDerivation" or text in fixtures
+    assert row["base"].startswith("VE.Commands.StepOutcome.refused")
 
 
 def test_saved_ab_has_no_stop_row_and_no_surface_kind_flip():
@@ -72,6 +92,67 @@ def test_a_then_instruction_unit_is_refused_by_the_speech_source_route(lean):
     signed = check("Then click check.\n", unit("c", 0, "asserted", {"ast": U("reviewed", "atlas")}),
                    [reading_set("c", 1, "authored", "instruction", click)])
     assert refused in signed["error"]
+
+
+SEQUENCE = "Click check, then do not share the token.\n"
+SEQUENCE_PARTS = "InvalidInput: a sequence of steps is one instruction unit whose parts are its steps, each with its step's command"
+
+
+def _sequence(first, second, kind="instruction"):
+    """The plan's document form of a sequence: one `MIXED` unit `m` whose parts `a`, `b` are its steps (split before
+    `, then `), each with an explicit command, and the reading context Python sends."""
+    from test_speech_acts_lean import unit
+    from test_speech_source_lean import base_env
+    from ve.english import EnglishVocabulary
+    from ve.english_grammar import export
+    from ve.environment import Environment
+    env = base_env()
+    cut = SEQUENCE.index(", then ")
+    parts = [{**unit("a", 0, kind, first), "span": [0, cut], "status": "CHECKED"},
+             {**unit("b", cut, kind, second), "span": [cut, len(SEQUENCE)], "status": "CHECKED"}]
+    metadata = {"format": "ve-document@2", "environment": env,
+                "units": [{"id": "m", "span": [0, len(SEQUENCE)], "status": "MIXED", "parts": parts}]}
+    return metadata, {"lexicon": export(EnglishVocabulary(Environment(env), _defer_overlay_refusals=True))}
+
+
+@pytest.mark.parametrize("kind", ["instruction", ["attributed", "bob", "says", "instruction"],
+                                  ["hedged", "likely", "instruction"]], ids=["plain", "attributed", "hedged"])
+def test_a_sequence_unit_s_parts_are_read_against_the_whole_wording(kind):
+    """Review F2: a `MIXED` sequence's parts must be `readStep`'s steps of the whole wording, in order. Reversed step
+    commands are refused, with or without the reading context; the steps in order are accepted with it."""
+    from test_speech_acts_lean import command
+    from ve.backends.speech_source import EXECUTABLE, decide_source
+    from ve.errors import VEError
+    if not EXECUTABLE.exists():
+        pytest.skip("the Lean routes have not been built")
+    click = command("require", "click_required", ["check"])
+    share = command("forbid", "share_permitted", ["token1"])
+    reversed_, context = _sequence(share, click, kind)
+    with pytest.raises(VEError, match="^InvalidInput: command reading context$"):
+        decide_source(reversed_, SEQUENCE, {})
+    with pytest.raises(VEError) as caught:
+        decide_source(reversed_, SEQUENCE, {}, reading_context=context)
+    assert caught.value.message == SEQUENCE_PARTS + " (unit m)"
+    in_order, context = _sequence(click, share, kind)
+    report = decide_source(in_order, SEQUENCE, {}, reading_context=context)
+    assert [u["id"] for u in report["units"]] == ["a", "b"]
+
+
+def test_python_s_retry_sends_a_sequence_its_reading_context():
+    """`SpeechSource` retries a source Lean refuses for its reading context, so a sequence in order loads and a
+    reversed one is refused with Lean's text."""
+    from test_speech_acts_lean import command
+    from ve.backends.speech_source import EXECUTABLE
+    from ve.errors import VEError
+    from ve.speech_document import SpeechSource
+    if not EXECUTABLE.exists():
+        pytest.skip("the Lean routes have not been built")
+    click = command("require", "click_required", ["check"])
+    share = command("forbid", "share_permitted", ["token1"])
+    assert SpeechSource(_sequence(click, share)[0], SEQUENCE.encode(), {}).document_id
+    with pytest.raises(VEError) as caught:
+        SpeechSource(_sequence(share, click)[0], SEQUENCE.encode(), {})
+    assert caught.value.message == SEQUENCE_PARTS + " (unit m)"
 
 
 def _relayed(wording, source="many"):
