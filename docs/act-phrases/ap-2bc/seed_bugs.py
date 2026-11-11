@@ -47,9 +47,12 @@ def guard_copy() -> None:
 
 
 def failures(out: subprocess.CompletedProcess, name: str, real: str) -> list[str]:
-    blocks = re.split(r"(?m)^(?=error: )", out.stdout + out.stderr)
-    return sorted({f"{real}:{m.group(1)}" for b in blocks
-                   for m in [re.match(rf"error: (?:\./)*\S*?{name}:(\d+)", b)] if m}, key=lambda s: int(s.split(":")[1]))
+    """The lines of `name` with an error, as `lake build` (`error: path:line`) or `lean` (`path:line:col: error`)
+    prints them, reported against the file `real`."""
+    text = out.stdout + out.stderr
+    found = re.findall(rf"(?m)^error: (?:\./)*\S*?{name}:(\d+)", text) + \
+        re.findall(rf"(?m)^(?:\./)*\S*?{name}:(\d+):\d+: error", text)
+    return [f"{real}:{n}" for n in sorted(set(found), key=int)]
 
 
 def main() -> int:
