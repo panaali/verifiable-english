@@ -1,8 +1,8 @@
 {
  "base": "97b3c7999add79633321ed10742aef613d66c5a2",
- "head": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
- "tree": "aa60a2e3963ef09c7b65618cae3b8a9df9efa769",
- "jobs": 16,
+ "head": "a46ac9160f5b3b5d2e033050336030f5c39afa4a",
+ "tree": "30a6dc11fdb245f4a13e41b5db657e98fc53709a",
+ "jobs": 8,
  "control_probes": "lazy",
  "max_mutants": 1000,
  "deep": false,
@@ -10,38 +10,38 @@
   "lean/VE/NormDefaults/PacksLegacyExamples.lean",
   "lean/VE/Acts/DecodeExamples.lean"
  ],
- "seconds": 57,
+ "seconds": 4867,
  "steps": {
   "wall": {
-   "plan": 37.7,
-   "scratch": 49.9,
-   "control_build": 0.6,
-   "probe_install": 5.5,
+   "plan": 22.7,
+   "scratch": 28.9,
+   "control_build": 0.5,
+   "probe_install": 2.5,
    "control_probes": 0.0,
-   "mutants": 8.3,
-   "cleanup": 6.4,
-   "reads": 0.4
+   "mutants": 4807.3,
+   "cleanup": 4.8,
+   "reads": 0.0
   },
   "lake": {
-   "control_build": 0.6,
-   "probe_install": 5.5,
-   "control_probes": 0.0,
-   "mutant_builds": 39.2,
-   "mutant_checks": 0.0,
+   "control_build": 0.3,
+   "probe_install": 2.2,
+   "control_probes": 20.7,
+   "mutant_builds": 1010.8,
+   "mutant_checks": 33214.9,
    "outside_checks": 0.0,
-   "stage_controls": 0.0,
-   "mutant_probes": 0.0,
+   "stage_controls": 2646.5,
+   "mutant_probes": 455.9,
    "other": 0.0
   },
   "runs": {
-   "control_build": 2,
-   "probe_install": 2,
-   "control_probes": 0,
-   "mutant_builds": 12,
-   "mutant_checks": 0,
+   "control_build": 1,
+   "probe_install": 1,
+   "control_probes": 3,
+   "mutant_builds": 128,
+   "mutant_checks": 85,
    "outside_checks": 0,
-   "stage_controls": 0,
-   "mutant_probes": 0,
+   "stage_controls": 7,
+   "mutant_probes": 62,
    "other": 0
   }
  },
@@ -69,7 +69,7 @@
  },
  "inputs": {
   "tool": "6ebac874981dbce144e985cacfa1dd4f222f48b963ebb91f8fb60a81f46e1576",
-  "lean": "752cf5e7a1051d82efff5d9a41105ec0dbc5bae56a0e29ff84e58f3238ad9d65",
+  "lean": "907949e9e2a6115993802e16233f157f7e1038265a94068178bc2e392bc0cf4d",
   "tests": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
   "base": "97b3c7999add79633321ed10742aef613d66c5a2",
   "options": "{\"deep\": false, \"test\": [\"VE/Acts/DecodeExamples.lean\", \"VE/NormDefaults/PacksLegacyExamples.lean\"], \"classes\": [\"trusted\"]}",
@@ -559,7 +559,7 @@
    "lean/VE/NormDefaults/PacksExamples.lean": "f02567f5aab795b53ef0a0d53e2ad42be8e80be4ad57602dcd58de856cafc654",
    "lean/VE/NormDefaults/PacksLabels.lean": "43cd69633d27d398ed4abd49a90807b91f8278f72afd76a07cc6ab025c904908",
    "lean/VE/NormDefaults/PacksLegacy.lean": "b900667f6d8c24a34cbeabfbc843e02bd0266baca11d14622bb79290ad0f2f75",
-   "lean/VE/NormDefaults/PacksLegacyExamples.lean": "0f8600b39d7cee1751bafdeb323b3e2e8fd8e54e6196574bb29913dcdb44e9d6",
+   "lean/VE/NormDefaults/PacksLegacyExamples.lean": "7ff875f96e60b38594d6eed1f51ce2bd0ba88eea82c9f26c639055269d91c6a5",
    "lean/VE/NormDefaults/Premises.lean": "999dde3407e772c5df215824b88ede8fca8ee71a2567e27424d3bced543862c9",
    "lean/VE/NormDefaults/Replay.lean": "d0d434a9801c3064c0617328ef9eb543327aa0e72548c723bdb90d7b58bbdfc5",
    "lean/VE/NormDefaults/Report.lean": "20cab0ceb2cfc1cf5a4bd120dc63c2b72503918c881631905ee9133d24bc40e0",
@@ -956,7 +956,7 @@
    "lean/audit.py": "05fb69c5689a8606fefd6d43e220f23ee6dbedc4bea7245b34ae29a4fd13a1cd",
    "lean/axioms.txt": "063c5e44d0de34b5c2f1fddd3a3e0f0d0abcadf03e3588ad01fc648a53f41615",
    "lean/checkers.lock": "7d577d9b62ddf1a196b4bb1f4c3af3a5fa118aa7e0a6dec35c0c1a512fd5008c",
-   "lean/declarations.txt": "e4e822f4535e5d236481276823f917b96a3bdbda0e96ab4221546f32b2abf81f",
+   "lean/declarations.txt": "625dff1f30a4b027d7de84a6a13af08b7913060abd127307542e905abf64fef2",
    "lean/lake-manifest.json": "8579a8594992ccc571614869d24b997dba98134cffdbd5a0b26220a419e0de8e",
    "lean/lakefile.toml": "ffc47dfd06119c3518785b5059d81216b2f82b140509bfd25cd3273cbe04d4f5",
    "lean/lean-toolchain": "42779d67b81608af8a12aa4328d2ab47ca201925b3b2bd68369587b5340bb434",
@@ -979,12 +979,15 @@
   }
  },
  "rescore": {
-  "file": "/home/seyran/code/ve-norm-defaults-cfr-1b/docs/premise-packs/norm-defaults-cfr-1b/trust-mutants.json",
+  "file": "docs/premise-packs/norm-defaults-cfr-1b/trust-mutants.json",
   "head": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-  "mode": "identical",
-  "changed": [],
-  "reused": 147,
-  "rerun": 12
+  "mode": "checks",
+  "changed": [
+   "lean/VE/NormDefaults/PacksLegacyExamples.lean",
+   "lean/declarations.txt"
+  ],
+  "reused": 69,
+  "rerun": 90
  },
  "definitions": [
   "lean/ResponseShape/Schemas/NormDefaults.lean: ResponseShape.Schemas.NormDefaults.status",
@@ -996,90 +999,6 @@
   "lean/VE/NormDefaults/Layered.lean: VE.NormDefaults.Wire.rightsSources",
   "lean/VE/NormDefaults/Run.lean: VE.NormDefaults.Run.runOtherCaseIn",
   "lean/VE/NormDefaults/Wire.lean: VE.NormDefaults.Wire.decodeSourceUWith"
- ],
- "shards": [
-  {
-   "k": 1,
-   "n": 2,
-   "head": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "jobs": 8,
-   "seconds": 57,
-   "steps": {
-    "wall": {
-     "plan": 18.7,
-     "scratch": 27.2,
-     "control_build": 0.3,
-     "probe_install": 2.7,
-     "control_probes": 0.0,
-     "mutants": 4.5,
-     "cleanup": 3.3,
-     "reads": 0.2
-    },
-    "lake": {
-     "control_build": 0.3,
-     "probe_install": 2.7,
-     "control_probes": 0.0,
-     "mutant_builds": 26.1,
-     "mutant_checks": 0.0,
-     "outside_checks": 0.0,
-     "stage_controls": 0.0,
-     "mutant_probes": 0.0,
-     "other": 0.0
-    },
-    "runs": {
-     "control_build": 1,
-     "probe_install": 1,
-     "control_probes": 0,
-     "mutant_builds": 7,
-     "mutant_checks": 0,
-     "outside_checks": 0,
-     "stage_controls": 0,
-     "mutant_probes": 0,
-     "other": 0
-    }
-   }
-  },
-  {
-   "k": 2,
-   "n": 2,
-   "head": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "jobs": 8,
-   "seconds": 52,
-   "steps": {
-    "wall": {
-     "plan": 19.0,
-     "scratch": 22.7,
-     "control_build": 0.3,
-     "probe_install": 2.8,
-     "control_probes": 0.0,
-     "mutants": 3.8,
-     "cleanup": 3.1,
-     "reads": 0.2
-    },
-    "lake": {
-     "control_build": 0.3,
-     "probe_install": 2.8,
-     "control_probes": 0.0,
-     "mutant_builds": 13.1,
-     "mutant_checks": 0.0,
-     "outside_checks": 0.0,
-     "stage_controls": 0.0,
-     "mutant_probes": 0.0,
-     "other": 0.0
-    },
-    "runs": {
-     "control_build": 1,
-     "probe_install": 1,
-     "control_probes": 0,
-     "mutant_builds": 5,
-     "mutant_checks": 0,
-     "outside_checks": 0,
-     "stage_controls": 0,
-     "mutant_probes": 0,
-     "other": 0
-    }
-   }
-  }
  ],
  "mutants": [
   {
@@ -1098,7 +1017,6 @@
    "detail": "killed past Lean: the settled flag `&& -> ||` makes an UNKNOWN rights row name ['art9']; tests/test_norm_defaults_response_binding.py::test_genuine_answers_pass fails (rights-unknown-status, mutants.json M4)",
    "raw_status": "SURVIVOR",
    "raw_detail": "",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -1118,7 +1036,6 @@
    "detail": "killed past Lean: the settled flag `&& -> ||` makes an UNKNOWN row name rules; tests/test_norm_defaults_response_binding.py::test_genuine_answers_pass fails (unknown-status u12 names ['r'], mutants.json M3)",
    "raw_status": "SURVIVOR",
    "raw_detail": "",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -1135,13 +1052,12 @@
    "before": "==",
    "after": "!=",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:84: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:170: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "f17737ba126b117e61447e69a4b8ac1945ec788fdb5fc712f22ed01db5ad83e6",
+   "reads": "a20f503807d11f441ecaacd3d1b7d5bae0d80b860b38544554c55c8d1999dae0",
    "killed_at": [
-    83,
-    84
+    169,
+    170
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -1162,7 +1078,6 @@
    "detail": "killed past Lean: the settled flag `!= -> ==` makes a SETTLED rights row name no rule; tests/test_norm_defaults_response_binding.py::test_genuine_answers_pass fails (mutants.json M2)",
    "raw_status": "SURVIVOR",
    "raw_detail": "",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -1182,7 +1097,6 @@
    "detail": "killed past Lean: the settled flag `!= -> ==` makes a SETTLED row name no rule; tests/test_norm_defaults_response_binding.py::test_genuine_answers_pass fails (csam rules [], mutants.json M1); this sweep reads Lean checks only",
    "raw_status": "SURVIVOR",
    "raw_detail": "",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -1240,6 +1154,7 @@
    "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
    "raw_status": "KILLED",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "c22d009ff4722611ba12633f833e76d091c496ea51a0abc7d11b324703df6cc9",
    "killed_at": [
     211,
@@ -1280,13 +1195,12 @@
    "before": "rules.map fun n => (n, (gen.lookup n).getD n)",
    "after": "[]",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:88: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:174: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "20d16bd4753f4f838a93d76e18505781ee6c96da8822615b09838162f3eecefe",
+   "reads": "915856537e990b6138c02e5559e336ab1bde60941d0a82af5d082d6f22bd1566",
    "killed_at": [
-    88,
-    89
+    174,
+    175
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -1323,13 +1237,12 @@
    "before": "let \u03c1 := tupleVal tuple\n  let rules := match fillings with\n    | some (F\u2081, F\u2082) => (selectedRules U (M.withFill F\u2081) \u03c1 p ++ selectedRules U (M.withFill F\u2082) \u03c1 p).eraseDups\n    | none => if settled then (p :: pairPartners U p).flatMap (selectedRules U (M.withFill (canonicalFinite U M)) \u03c1)\n      else []\n  let differs := match fillings with\n    | some (F\u2081, F\u2082) => fillingsDiffer U F\u2081 F\u2082\n    | none => []\n  [(\"tuple\", toJson (tuple.map (\u00b7.2))), (\"rules\", toJson rules), (\"sources\", sourcesJson (ruleSources gen rules)),\n   (\"differs\", atomsJson differs)]",
    "after": "[]\n\n\n\n\n\n\n\n\n",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:93: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:179: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "794340a84ae2987d8d797041c373ded9d96401e1667003aaf3b99836dc50b331",
+   "reads": "6bf08fc62243a995871e99fd5e1bdfc6def74e28eec367a2f792935273784b13",
    "killed_at": [
-    93,
-    98
+    179,
+    183
    ],
    "trust_class": "D[V]",
    "trusted": true
@@ -1347,13 +1260,12 @@
    "before": "(VE.Rights.linesOf D).filterMap (fun RN => match RN.2.bearer, RN.2.source.norm with\n    | some _, some n => some (RN.2.node.name, n.name)\n    | _, _ => none) ++\n  (VE.Rights.barNodes D).filterMap fun B => (D.bars.find? (\u00b7.reading == .rule)).map fun b => (B.name, b.name)",
    "after": "[]\n\n\n",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:81: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:167: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "fd27b05058bc882d1e086e364a0894b31a1b3097ec2edebeb92ea66965460e3e",
+   "reads": "59856c97f9c503e35329e28c51f2963d679071db82ffd1a419c7ff8b18318d3b",
    "killed_at": [
-    80,
-    82
+    166,
+    168
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -1374,7 +1286,6 @@
    "detail": "killed past Lean: the settled flag `!= -> ==` makes a SETTLED rights row name no rule; tests/test_norm_defaults_response_binding.py::test_genuine_answers_pass fails (mutants.json M2)",
    "raw_status": "SURVIVOR",
    "raw_detail": "",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -1394,7 +1305,6 @@
    "detail": "killed past Lean: the settled flag `!= -> ==` makes a SETTLED row name no rule; tests/test_norm_defaults_response_binding.py::test_genuine_answers_pass fails (csam rules [], mutants.json M1); this sweep reads Lean checks only",
    "raw_status": "SURVIVOR",
    "raw_detail": "",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -1414,6 +1324,7 @@
    "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
    "raw_status": "KILLED",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "c22d009ff4722611ba12633f833e76d091c496ea51a0abc7d11b324703df6cc9",
    "killed_at": [
     211,
@@ -1435,13 +1346,12 @@
    "before": "rules",
    "after": "[]",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:88: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:174: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "20d16bd4753f4f838a93d76e18505781ee6c96da8822615b09838162f3eecefe",
+   "reads": "915856537e990b6138c02e5559e336ab1bde60941d0a82af5d082d6f22bd1566",
    "killed_at": [
-    88,
-    89
+    174,
+    175
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -1459,13 +1369,12 @@
    "before": "S.map (fun x => Json.mkObj [(\"rule\", .str x.1), (\"source\", .str x.2)])",
    "after": "[]",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:90: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:176: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "df9135168c54a691ea93193e8643c05709bf13a904f55e348ab1ba09e0fbcbe1",
+   "reads": "035e682323a0efd79719d65c3d6631e0f2da573937dad526dbb31523584d18f5",
    "killed_at": [
-    90,
-    92
+    176,
+    178
    ],
    "trust_class": "D[V]",
    "trusted": true
@@ -1483,13 +1392,12 @@
    "before": "[(\"tuple\", toJson (tuple.map (\u00b7.2))), (\"rules\", toJson rules), (\"sources\", sourcesJson (ruleSources gen rules)),\n   (\"differs\", atomsJson differs)]",
    "after": "[]\n",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:93: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:179: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "794340a84ae2987d8d797041c373ded9d96401e1667003aaf3b99836dc50b331",
+   "reads": "6bf08fc62243a995871e99fd5e1bdfc6def74e28eec367a2f792935273784b13",
    "killed_at": [
-    93,
-    98
+    179,
+    183
    ],
    "trust_class": "D[V]",
    "trusted": true
@@ -1529,6 +1437,7 @@
    "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
    "raw_status": "KILLED",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "c22d009ff4722611ba12633f833e76d091c496ea51a0abc7d11b324703df6cc9",
    "killed_at": [
     211,
@@ -1553,6 +1462,7 @@
    "detail": "Function expected at",
    "raw_status": "INVALID",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "4bddaf1e124eebd3188d946f1cfc5f93e8b66caa40c6f8bb4c97251fabd1570b",
    "trust_class": "G[V]",
    "trusted": true
@@ -1570,13 +1480,12 @@
    "before": "[(\"rule\", .str x.1), (\"source\", .str x.2)]",
    "after": "[]",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:90: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:176: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "df9135168c54a691ea93193e8643c05709bf13a904f55e348ab1ba09e0fbcbe1",
+   "reads": "035e682323a0efd79719d65c3d6631e0f2da573937dad526dbb31523584d18f5",
    "killed_at": [
-    90,
-    92
+    176,
+    178
    ],
    "trust_class": "D[V]",
    "trusted": true
@@ -1613,13 +1522,12 @@
    "before": "(VE.Rights.linesOf D).filterMap (fun RN => match RN.2.bearer, RN.2.source.norm with\n    | some _, some n => some (RN.2.node.name, n.name)\n    | _, _ => none)",
    "after": "[]\n\n",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:81: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:167: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "fd27b05058bc882d1e086e364a0894b31a1b3097ec2edebeb92ea66965460e3e",
+   "reads": "59856c97f9c503e35329e28c51f2963d679071db82ffd1a419c7ff8b18318d3b",
    "killed_at": [
-    80,
-    82
+    166,
+    168
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -1640,6 +1548,7 @@
    "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
    "raw_status": "KILLED",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "c22d009ff4722611ba12633f833e76d091c496ea51a0abc7d11b324703df6cc9",
    "killed_at": [
     211,
@@ -1661,13 +1570,12 @@
    "before": "gen",
    "after": "[]",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:88: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:174: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "20d16bd4753f4f838a93d76e18505781ee6c96da8822615b09838162f3eecefe",
+   "reads": "915856537e990b6138c02e5559e336ab1bde60941d0a82af5d082d6f22bd1566",
    "killed_at": [
-    88,
-    89
+    174,
+    175
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -1726,6 +1634,7 @@
    "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
    "raw_status": "KILLED",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "c22d009ff4722611ba12633f833e76d091c496ea51a0abc7d11b324703df6cc9",
    "killed_at": [
     211,
@@ -1750,6 +1659,7 @@
    "detail": "Function expected at",
    "raw_status": "INVALID",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "44ce76583c7be508c72a6adebf1efc86f9934fa212f0e84aacdd0ab90acf336d",
    "trust_class": "G[V]",
    "trusted": true
@@ -1770,6 +1680,7 @@
    "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
    "raw_status": "KILLED",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "c22d009ff4722611ba12633f833e76d091c496ea51a0abc7d11b324703df6cc9",
    "killed_at": [
     211,
@@ -1813,6 +1724,7 @@
    "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
    "raw_status": "KILLED",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "c22d009ff4722611ba12633f833e76d091c496ea51a0abc7d11b324703df6cc9",
    "killed_at": [
     211,
@@ -1837,6 +1749,7 @@
    "detail": "Function expected at",
    "raw_status": "INVALID",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "44ce76583c7be508c72a6adebf1efc86f9934fa212f0e84aacdd0ab90acf336d",
    "trust_class": "G[V]",
    "trusted": true
@@ -1857,6 +1770,7 @@
    "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
    "raw_status": "KILLED",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "c22d009ff4722611ba12633f833e76d091c496ea51a0abc7d11b324703df6cc9",
    "killed_at": [
     211,
@@ -1900,6 +1814,7 @@
    "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
    "raw_status": "KILLED",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "c22d009ff4722611ba12633f833e76d091c496ea51a0abc7d11b324703df6cc9",
    "killed_at": [
     211,
@@ -1921,13 +1836,12 @@
    "before": "rules.map fun n => (n, (gen.lookup n).getD n)",
    "after": "((rules.map fun n => (n, (gen.lookup n).getD n)).take 1)",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:88: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:174: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "20d16bd4753f4f838a93d76e18505781ee6c96da8822615b09838162f3eecefe",
+   "reads": "915856537e990b6138c02e5559e336ab1bde60941d0a82af5d082d6f22bd1566",
    "killed_at": [
-    88,
-    89
+    174,
+    175
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -1945,13 +1859,12 @@
    "before": "S",
    "after": "(S.take 1)",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:90: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:176: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "df9135168c54a691ea93193e8643c05709bf13a904f55e348ab1ba09e0fbcbe1",
+   "reads": "035e682323a0efd79719d65c3d6631e0f2da573937dad526dbb31523584d18f5",
    "killed_at": [
-    90,
-    92
+    176,
+    178
    ],
    "trust_class": "D[V]",
    "trusted": true
@@ -1969,13 +1882,12 @@
    "before": "let \u03c1 := tupleVal tuple\n  let rules := match fillings with\n    | some (F\u2081, F\u2082) => (selectedRules U (M.withFill F\u2081) \u03c1 p ++ selectedRules U (M.withFill F\u2082) \u03c1 p).eraseDups\n    | none => if settled then (p :: pairPartners U p).flatMap (selectedRules U (M.withFill (canonicalFinite U M)) \u03c1)\n      else []\n  let differs := match fillings with\n    | some (F\u2081, F\u2082) => fillingsDiffer U F\u2081 F\u2082\n    | none => []\n  [(\"tuple\", toJson (tuple.map (\u00b7.2))), (\"rules\", toJson rules), (\"sources\", sourcesJson (ruleSources gen rules)),\n   (\"differs\", atomsJson differs)]",
    "after": "((let \u03c1 := tupleVal tuple\n  let rules := match fillings with\n    | some (F\u2081, F\u2082) => (selectedRules U (M.withFill F\u2081) \u03c1 p ++ selectedRules U (M.withFill F\u2082) \u03c1 p).eraseDups\n    | none => if settled then (p :: pairPartners U p).flatMap (selectedRules U (M.withFill (canonicalFinite U M)) \u03c1)\n      else []\n  let differs := match fillings with\n    | some (F\u2081, F\u2082) => fillingsDiffer U F\u2081 F\u2082\n    | none => []\n  [(\"tuple\", toJson (tuple.map (\u00b7.2))), (\"rules\", toJson rules), (\"sources\", sourcesJson (ruleSources gen rules)),\n   (\"differs\", atomsJson differs)]).take 1)",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:93: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:179: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "794340a84ae2987d8d797041c373ded9d96401e1667003aaf3b99836dc50b331",
+   "reads": "6bf08fc62243a995871e99fd5e1bdfc6def74e28eec367a2f792935273784b13",
    "killed_at": [
-    93,
-    98
+    179,
+    183
    ],
    "trust_class": "D[V]",
    "trusted": true
@@ -1993,13 +1905,12 @@
    "before": "(VE.Rights.linesOf D).filterMap (fun RN => match RN.2.bearer, RN.2.source.norm with\n    | some _, some n => some (RN.2.node.name, n.name)\n    | _, _ => none) ++\n  (VE.Rights.barNodes D).filterMap fun B => (D.bars.find? (\u00b7.reading == .rule)).map fun b => (B.name, b.name)",
    "after": "(((VE.Rights.linesOf D).filterMap (fun RN => match RN.2.bearer, RN.2.source.norm with\n    | some _, some n => some (RN.2.node.name, n.name)\n    | _, _ => none) ++\n  (VE.Rights.barNodes D).filterMap fun B => (D.bars.find? (\u00b7.reading == .rule)).map fun b => (B.name, b.name)).take 1)",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:81: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:167: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "fd27b05058bc882d1e086e364a0894b31a1b3097ec2edebeb92ea66965460e3e",
+   "reads": "59856c97f9c503e35329e28c51f2963d679071db82ffd1a419c7ff8b18318d3b",
    "killed_at": [
-    80,
-    82
+    166,
+    168
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -2020,6 +1931,7 @@
    "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
    "raw_status": "KILLED",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "c22d009ff4722611ba12633f833e76d091c496ea51a0abc7d11b324703df6cc9",
    "killed_at": [
     211,
@@ -2060,13 +1972,12 @@
    "before": "rules.map fun n => (n, (gen.lookup n).getD n)",
    "after": "((rules.map fun n => (n, (gen.lookup n).getD n)).dropLast)",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:88: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:174: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "20d16bd4753f4f838a93d76e18505781ee6c96da8822615b09838162f3eecefe",
+   "reads": "915856537e990b6138c02e5559e336ab1bde60941d0a82af5d082d6f22bd1566",
    "killed_at": [
-    88,
-    89
+    174,
+    175
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -2084,13 +1995,12 @@
    "before": "S",
    "after": "(S.dropLast)",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:90: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:176: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "df9135168c54a691ea93193e8643c05709bf13a904f55e348ab1ba09e0fbcbe1",
+   "reads": "035e682323a0efd79719d65c3d6631e0f2da573937dad526dbb31523584d18f5",
    "killed_at": [
-    90,
-    92
+    176,
+    178
    ],
    "trust_class": "D[V]",
    "trusted": true
@@ -2108,13 +2018,12 @@
    "before": "let \u03c1 := tupleVal tuple\n  let rules := match fillings with\n    | some (F\u2081, F\u2082) => (selectedRules U (M.withFill F\u2081) \u03c1 p ++ selectedRules U (M.withFill F\u2082) \u03c1 p).eraseDups\n    | none => if settled then (p :: pairPartners U p).flatMap (selectedRules U (M.withFill (canonicalFinite U M)) \u03c1)\n      else []\n  let differs := match fillings with\n    | some (F\u2081, F\u2082) => fillingsDiffer U F\u2081 F\u2082\n    | none => []\n  [(\"tuple\", toJson (tuple.map (\u00b7.2))), (\"rules\", toJson rules), (\"sources\", sourcesJson (ruleSources gen rules)),\n   (\"differs\", atomsJson differs)]",
    "after": "((let \u03c1 := tupleVal tuple\n  let rules := match fillings with\n    | some (F\u2081, F\u2082) => (selectedRules U (M.withFill F\u2081) \u03c1 p ++ selectedRules U (M.withFill F\u2082) \u03c1 p).eraseDups\n    | none => if settled then (p :: pairPartners U p).flatMap (selectedRules U (M.withFill (canonicalFinite U M)) \u03c1)\n      else []\n  let differs := match fillings with\n    | some (F\u2081, F\u2082) => fillingsDiffer U F\u2081 F\u2082\n    | none => []\n  [(\"tuple\", toJson (tuple.map (\u00b7.2))), (\"rules\", toJson rules), (\"sources\", sourcesJson (ruleSources gen rules)),\n   (\"differs\", atomsJson differs)]).dropLast)",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:93: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:179: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "794340a84ae2987d8d797041c373ded9d96401e1667003aaf3b99836dc50b331",
+   "reads": "6bf08fc62243a995871e99fd5e1bdfc6def74e28eec367a2f792935273784b13",
    "killed_at": [
-    93,
-    98
+    179,
+    183
    ],
    "trust_class": "D[V]",
    "trusted": true
@@ -2132,13 +2041,12 @@
    "before": "(VE.Rights.linesOf D).filterMap (fun RN => match RN.2.bearer, RN.2.source.norm with\n    | some _, some n => some (RN.2.node.name, n.name)\n    | _, _ => none) ++\n  (VE.Rights.barNodes D).filterMap fun B => (D.bars.find? (\u00b7.reading == .rule)).map fun b => (B.name, b.name)",
    "after": "(((VE.Rights.linesOf D).filterMap (fun RN => match RN.2.bearer, RN.2.source.norm with\n    | some _, some n => some (RN.2.node.name, n.name)\n    | _, _ => none) ++\n  (VE.Rights.barNodes D).filterMap fun B => (D.bars.find? (\u00b7.reading == .rule)).map fun b => (B.name, b.name)).dropLast)",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:81: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:167: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "fd27b05058bc882d1e086e364a0894b31a1b3097ec2edebeb92ea66965460e3e",
+   "reads": "59856c97f9c503e35329e28c51f2963d679071db82ffd1a419c7ff8b18318d3b",
    "killed_at": [
-    80,
-    82
+    166,
+    168
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -2159,6 +2067,7 @@
    "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
    "raw_status": "KILLED",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "c22d009ff4722611ba12633f833e76d091c496ea51a0abc7d11b324703df6cc9",
    "killed_at": [
     211,
@@ -2180,13 +2089,12 @@
    "before": "rules",
    "after": "(rules.take 1)",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:88: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:174: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "20d16bd4753f4f838a93d76e18505781ee6c96da8822615b09838162f3eecefe",
+   "reads": "915856537e990b6138c02e5559e336ab1bde60941d0a82af5d082d6f22bd1566",
    "killed_at": [
-    88,
-    89
+    174,
+    175
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -2204,13 +2112,12 @@
    "before": "S.map (fun x => Json.mkObj [(\"rule\", .str x.1), (\"source\", .str x.2)])",
    "after": "((S.map (fun x => Json.mkObj [(\"rule\", .str x.1), (\"source\", .str x.2)])).take 1)",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:90: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:176: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "df9135168c54a691ea93193e8643c05709bf13a904f55e348ab1ba09e0fbcbe1",
+   "reads": "035e682323a0efd79719d65c3d6631e0f2da573937dad526dbb31523584d18f5",
    "killed_at": [
-    90,
-    92
+    176,
+    178
    ],
    "trust_class": "D[V]",
    "trusted": true
@@ -2228,13 +2135,12 @@
    "before": "[(\"tuple\", toJson (tuple.map (\u00b7.2))), (\"rules\", toJson rules), (\"sources\", sourcesJson (ruleSources gen rules)),\n   (\"differs\", atomsJson differs)]",
    "after": "([(\"tuple\", toJson (tuple.map (\u00b7.2))), (\"rules\", toJson rules), (\"sources\", sourcesJson (ruleSources gen rules)),\n   (\"differs\", atomsJson differs)].take 1)",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:93: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:179: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "794340a84ae2987d8d797041c373ded9d96401e1667003aaf3b99836dc50b331",
+   "reads": "6bf08fc62243a995871e99fd5e1bdfc6def74e28eec367a2f792935273784b13",
    "killed_at": [
-    93,
-    98
+    179,
+    183
    ],
    "trust_class": "D[V]",
    "trusted": true
@@ -2252,13 +2158,12 @@
    "before": "(VE.Rights.linesOf D)",
    "after": "((VE.Rights.linesOf D).take 1)",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:81: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:167: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "fd27b05058bc882d1e086e364a0894b31a1b3097ec2edebeb92ea66965460e3e",
+   "reads": "59856c97f9c503e35329e28c51f2963d679071db82ffd1a419c7ff8b18318d3b",
    "killed_at": [
-    80,
-    82
+    166,
+    168
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -2279,6 +2184,7 @@
    "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
    "raw_status": "KILLED",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "c22d009ff4722611ba12633f833e76d091c496ea51a0abc7d11b324703df6cc9",
    "killed_at": [
     211,
@@ -2300,13 +2206,12 @@
    "before": "rules",
    "after": "(rules.dropLast)",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:88: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:174: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "20d16bd4753f4f838a93d76e18505781ee6c96da8822615b09838162f3eecefe",
+   "reads": "915856537e990b6138c02e5559e336ab1bde60941d0a82af5d082d6f22bd1566",
    "killed_at": [
-    88,
-    89
+    174,
+    175
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -2324,13 +2229,12 @@
    "before": "S.map (fun x => Json.mkObj [(\"rule\", .str x.1), (\"source\", .str x.2)])",
    "after": "((S.map (fun x => Json.mkObj [(\"rule\", .str x.1), (\"source\", .str x.2)])).dropLast)",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:90: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:176: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "df9135168c54a691ea93193e8643c05709bf13a904f55e348ab1ba09e0fbcbe1",
+   "reads": "035e682323a0efd79719d65c3d6631e0f2da573937dad526dbb31523584d18f5",
    "killed_at": [
-    90,
-    92
+    176,
+    178
    ],
    "trust_class": "D[V]",
    "trusted": true
@@ -2348,13 +2252,12 @@
    "before": "[(\"tuple\", toJson (tuple.map (\u00b7.2))), (\"rules\", toJson rules), (\"sources\", sourcesJson (ruleSources gen rules)),\n   (\"differs\", atomsJson differs)]",
    "after": "([(\"tuple\", toJson (tuple.map (\u00b7.2))), (\"rules\", toJson rules), (\"sources\", sourcesJson (ruleSources gen rules)),\n   (\"differs\", atomsJson differs)].dropLast)",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:93: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:179: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "794340a84ae2987d8d797041c373ded9d96401e1667003aaf3b99836dc50b331",
+   "reads": "6bf08fc62243a995871e99fd5e1bdfc6def74e28eec367a2f792935273784b13",
    "killed_at": [
-    93,
-    98
+    179,
+    183
    ],
    "trust_class": "D[V]",
    "trusted": true
@@ -2372,13 +2275,12 @@
    "before": "(VE.Rights.linesOf D)",
    "after": "((VE.Rights.linesOf D).dropLast)",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:81: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:167: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "fd27b05058bc882d1e086e364a0894b31a1b3097ec2edebeb92ea66965460e3e",
+   "reads": "59856c97f9c503e35329e28c51f2963d679071db82ffd1a419c7ff8b18318d3b",
    "killed_at": [
-    80,
-    82
+    166,
+    168
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -2399,6 +2301,7 @@
    "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
    "raw_status": "KILLED",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "c22d009ff4722611ba12633f833e76d091c496ea51a0abc7d11b324703df6cc9",
    "killed_at": [
     211,
@@ -2423,6 +2326,7 @@
    "detail": "Invalid field `take`: The environment does not contain `Function.take`",
    "raw_status": "INVALID",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "4bddaf1e124eebd3188d946f1cfc5f93e8b66caa40c6f8bb4c97251fabd1570b",
    "trust_class": "G[V]",
    "trusted": true
@@ -2440,13 +2344,12 @@
    "before": "[(\"rule\", .str x.1), (\"source\", .str x.2)]",
    "after": "([(\"rule\", .str x.1), (\"source\", .str x.2)].take 1)",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:90: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:176: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "df9135168c54a691ea93193e8643c05709bf13a904f55e348ab1ba09e0fbcbe1",
+   "reads": "035e682323a0efd79719d65c3d6631e0f2da573937dad526dbb31523584d18f5",
    "killed_at": [
-    90,
-    92
+    176,
+    178
    ],
    "trust_class": "D[V]",
    "trusted": true
@@ -2467,7 +2370,6 @@
    "detail": "killed past Lean: it truncates the tuple of a two-entity point, which the response schema's x-equals /tuple refuses (tests/test_norm_defaults_response_binding.py::test_status_tuple_schema_binds_request_without_service), so the rights rows of ::test_genuine_answers_pass (tuple [s, p]) are refused",
    "raw_status": "SURVIVOR",
    "raw_detail": "",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
    "trust_class": "D[V]",
    "trusted": true
   },
@@ -2484,13 +2386,12 @@
    "before": "(VE.Rights.linesOf D).filterMap (fun RN => match RN.2.bearer, RN.2.source.norm with\n    | some _, some n => some (RN.2.node.name, n.name)\n    | _, _ => none)",
    "after": "(((VE.Rights.linesOf D).filterMap (fun RN => match RN.2.bearer, RN.2.source.norm with\n    | some _, some n => some (RN.2.node.name, n.name)\n    | _, _ => none)).take 1)",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:81: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:167: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "fd27b05058bc882d1e086e364a0894b31a1b3097ec2edebeb92ea66965460e3e",
+   "reads": "59856c97f9c503e35329e28c51f2963d679071db82ffd1a419c7ff8b18318d3b",
    "killed_at": [
-    80,
-    82
+    166,
+    168
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -2511,6 +2412,7 @@
    "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
    "raw_status": "KILLED",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "c22d009ff4722611ba12633f833e76d091c496ea51a0abc7d11b324703df6cc9",
    "killed_at": [
     211,
@@ -2535,6 +2437,7 @@
    "detail": "Invalid field `dropLast`: The environment does not contain `Function.dropLast`",
    "raw_status": "INVALID",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "4bddaf1e124eebd3188d946f1cfc5f93e8b66caa40c6f8bb4c97251fabd1570b",
    "trust_class": "G[V]",
    "trusted": true
@@ -2552,13 +2455,12 @@
    "before": "[(\"rule\", .str x.1), (\"source\", .str x.2)]",
    "after": "([(\"rule\", .str x.1), (\"source\", .str x.2)].dropLast)",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:90: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:176: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "df9135168c54a691ea93193e8643c05709bf13a904f55e348ab1ba09e0fbcbe1",
+   "reads": "035e682323a0efd79719d65c3d6631e0f2da573937dad526dbb31523584d18f5",
    "killed_at": [
-    90,
-    92
+    176,
+    178
    ],
    "trust_class": "D[V]",
    "trusted": true
@@ -2576,13 +2478,12 @@
    "before": "tuple",
    "after": "(tuple.dropLast)",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:93: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:179: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "794340a84ae2987d8d797041c373ded9d96401e1667003aaf3b99836dc50b331",
+   "reads": "6bf08fc62243a995871e99fd5e1bdfc6def74e28eec367a2f792935273784b13",
    "killed_at": [
-    93,
-    98
+    179,
+    183
    ],
    "trust_class": "D[V]",
    "trusted": true
@@ -2600,13 +2501,12 @@
    "before": "(VE.Rights.linesOf D).filterMap (fun RN => match RN.2.bearer, RN.2.source.norm with\n    | some _, some n => some (RN.2.node.name, n.name)\n    | _, _ => none)",
    "after": "(((VE.Rights.linesOf D).filterMap (fun RN => match RN.2.bearer, RN.2.source.norm with\n    | some _, some n => some (RN.2.node.name, n.name)\n    | _, _ => none)).dropLast)",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:81: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:167: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "fd27b05058bc882d1e086e364a0894b31a1b3097ec2edebeb92ea66965460e3e",
+   "reads": "59856c97f9c503e35329e28c51f2963d679071db82ffd1a419c7ff8b18318d3b",
    "killed_at": [
-    80,
-    82
+    166,
+    168
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -2627,6 +2527,7 @@
    "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
    "raw_status": "KILLED",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "c22d009ff4722611ba12633f833e76d091c496ea51a0abc7d11b324703df6cc9",
    "killed_at": [
     211,
@@ -2651,7 +2552,6 @@
    "detail": "breaks the proof of ruleSources_spec (lean/VE/NormDefaults/Explain.lean:206): a source looked up past gen's first entry is no longer in gen; the guards' tables have one entry",
    "raw_status": "SURVIVOR",
    "raw_detail": "the proofs it breaks: lean/VE/NormDefaults/Explain.lean:206",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -2671,7 +2571,6 @@
    "detail": "killed past Lean: it truncates the tuple of a two-entity point, which the response schema's x-equals /tuple refuses (tests/test_norm_defaults_response_binding.py::test_status_tuple_schema_binds_request_without_service), so the rights rows of ::test_genuine_answers_pass (tuple [s, p]) are refused",
    "raw_status": "SURVIVOR",
    "raw_detail": "",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
    "trust_class": "D[V]",
    "trusted": true
   },
@@ -2691,7 +2590,6 @@
    "detail": "breaks the proof of rightsSources_built (lean/VE/NormDefaults/Layered.lean:173); `D.bars` has at most one entry on a well-formed document (DuplicateDeclaration: bar)",
    "raw_status": "SURVIVOR",
    "raw_detail": "the proofs it breaks: lean/VE/NormDefaults/Layered.lean:173",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -2711,6 +2609,7 @@
    "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
    "raw_status": "KILLED",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "c22d009ff4722611ba12633f833e76d091c496ea51a0abc7d11b324703df6cc9",
    "killed_at": [
     211,
@@ -2732,13 +2631,12 @@
    "before": "gen",
    "after": "(gen.dropLast)",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:88: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:174: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "20d16bd4753f4f838a93d76e18505781ee6c96da8822615b09838162f3eecefe",
+   "reads": "915856537e990b6138c02e5559e336ab1bde60941d0a82af5d082d6f22bd1566",
    "killed_at": [
-    88,
-    89
+    174,
+    175
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -2756,13 +2654,12 @@
    "before": "tuple.map (\u00b7.2)",
    "after": "((tuple.map (\u00b7.2)).dropLast)",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:93: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:179: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "794340a84ae2987d8d797041c373ded9d96401e1667003aaf3b99836dc50b331",
+   "reads": "6bf08fc62243a995871e99fd5e1bdfc6def74e28eec367a2f792935273784b13",
    "killed_at": [
-    93,
-    98
+    179,
+    183
    ],
    "trust_class": "D[V]",
    "trusted": true
@@ -2780,13 +2677,12 @@
    "before": "(VE.Rights.barNodes D)",
    "after": "((VE.Rights.barNodes D).dropLast)",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:84: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:170: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "f17737ba126b117e61447e69a4b8ac1945ec788fdb5fc712f22ed01db5ad83e6",
+   "reads": "a20f503807d11f441ecaacd3d1b7d5bae0d80b860b38544554c55c8d1999dae0",
    "killed_at": [
-    83,
-    84
+    169,
+    170
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -2807,6 +2703,7 @@
    "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
    "raw_status": "KILLED",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "c22d009ff4722611ba12633f833e76d091c496ea51a0abc7d11b324703df6cc9",
    "killed_at": [
     211,
@@ -2831,6 +2728,7 @@
    "detail": "Invalid field `take`: The environment does not contain `Function.take`",
    "raw_status": "INVALID",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "44ce76583c7be508c72a6adebf1efc86f9934fa212f0e84aacdd0ab90acf336d",
    "trust_class": "G[V]",
    "trusted": true
@@ -2851,6 +2749,7 @@
    "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
    "raw_status": "KILLED",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "c22d009ff4722611ba12633f833e76d091c496ea51a0abc7d11b324703df6cc9",
    "killed_at": [
     211,
@@ -2875,6 +2774,7 @@
    "detail": "Invalid field `dropLast`: The environment does not contain `Function.dropLast`",
    "raw_status": "INVALID",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "44ce76583c7be508c72a6adebf1efc86f9934fa212f0e84aacdd0ab90acf336d",
    "trust_class": "G[V]",
    "trusted": true
@@ -2895,6 +2795,7 @@
    "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
    "raw_status": "KILLED",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "c22d009ff4722611ba12633f833e76d091c496ea51a0abc7d11b324703df6cc9",
    "killed_at": [
     211,
@@ -2919,6 +2820,7 @@
    "detail": "Invalid field notation: Type of",
    "raw_status": "INVALID",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "44ce76583c7be508c72a6adebf1efc86f9934fa212f0e84aacdd0ab90acf336d",
    "trust_class": "G[V]",
    "trusted": true
@@ -2939,6 +2841,7 @@
    "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
    "raw_status": "KILLED",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "c22d009ff4722611ba12633f833e76d091c496ea51a0abc7d11b324703df6cc9",
    "killed_at": [
     211,
@@ -2963,6 +2866,7 @@
    "detail": "Invalid field notation: Type of",
    "raw_status": "INVALID",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "44ce76583c7be508c72a6adebf1efc86f9934fa212f0e84aacdd0ab90acf336d",
    "trust_class": "G[V]",
    "trusted": true
@@ -2983,6 +2887,7 @@
    "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
    "raw_status": "KILLED",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "c22d009ff4722611ba12633f833e76d091c496ea51a0abc7d11b324703df6cc9",
    "killed_at": [
     211,
@@ -3007,6 +2912,7 @@
    "detail": "Invalid field notation: Type of",
    "raw_status": "INVALID",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "44ce76583c7be508c72a6adebf1efc86f9934fa212f0e84aacdd0ab90acf336d",
    "trust_class": "G[V]",
    "trusted": true
@@ -3027,6 +2933,7 @@
    "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
    "raw_status": "KILLED",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "c22d009ff4722611ba12633f833e76d091c496ea51a0abc7d11b324703df6cc9",
    "killed_at": [
     211,
@@ -3051,6 +2958,7 @@
    "detail": "Invalid field notation: Type of",
    "raw_status": "INVALID",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "44ce76583c7be508c72a6adebf1efc86f9934fa212f0e84aacdd0ab90acf336d",
    "trust_class": "G[V]",
    "trusted": true
@@ -3071,6 +2979,7 @@
    "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
    "raw_status": "KILLED",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "c22d009ff4722611ba12633f833e76d091c496ea51a0abc7d11b324703df6cc9",
    "killed_at": [
     211,
@@ -3095,7 +3004,6 @@
    "detail": "breaks the proof of rightsSources_built (lean/VE/NormDefaults/Layered.lean:173); `D.bars` has at most one entry on a well-formed document (DuplicateDeclaration: bar)",
    "raw_status": "SURVIVOR",
    "raw_detail": "the proofs it breaks: lean/VE/NormDefaults/Layered.lean:173",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -3115,6 +3023,7 @@
    "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
    "raw_status": "KILLED",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "c22d009ff4722611ba12633f833e76d091c496ea51a0abc7d11b324703df6cc9",
    "killed_at": [
     211,
@@ -3136,13 +3045,12 @@
    "before": "D.bars",
    "after": "(D.bars.dropLast)",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:84: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:170: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "f17737ba126b117e61447e69a4b8ac1945ec788fdb5fc712f22ed01db5ad83e6",
+   "reads": "a20f503807d11f441ecaacd3d1b7d5bae0d80b860b38544554c55c8d1999dae0",
    "killed_at": [
-    83,
-    84
+    169,
+    170
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -3163,6 +3071,7 @@
    "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
    "raw_status": "KILLED",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "c22d009ff4722611ba12633f833e76d091c496ea51a0abc7d11b324703df6cc9",
    "killed_at": [
     211,
@@ -3184,13 +3093,12 @@
    "before": "rules.map fun n => (n, (gen.lookup n).getD n)",
    "after": "((rules.map fun n => (n, (gen.lookup n).getD n)).reverse.take 1)",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:88: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:174: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "20d16bd4753f4f838a93d76e18505781ee6c96da8822615b09838162f3eecefe",
+   "reads": "915856537e990b6138c02e5559e336ab1bde60941d0a82af5d082d6f22bd1566",
    "killed_at": [
-    88,
-    89
+    174,
+    175
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -3208,13 +3116,12 @@
    "before": "S",
    "after": "(S.reverse.take 1)",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:90: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:176: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "df9135168c54a691ea93193e8643c05709bf13a904f55e348ab1ba09e0fbcbe1",
+   "reads": "035e682323a0efd79719d65c3d6631e0f2da573937dad526dbb31523584d18f5",
    "killed_at": [
-    90,
-    92
+    176,
+    178
    ],
    "trust_class": "D[V]",
    "trusted": true
@@ -3232,13 +3139,12 @@
    "before": "let \u03c1 := tupleVal tuple\n  let rules := match fillings with\n    | some (F\u2081, F\u2082) => (selectedRules U (M.withFill F\u2081) \u03c1 p ++ selectedRules U (M.withFill F\u2082) \u03c1 p).eraseDups\n    | none => if settled then (p :: pairPartners U p).flatMap (selectedRules U (M.withFill (canonicalFinite U M)) \u03c1)\n      else []\n  let differs := match fillings with\n    | some (F\u2081, F\u2082) => fillingsDiffer U F\u2081 F\u2082\n    | none => []\n  [(\"tuple\", toJson (tuple.map (\u00b7.2))), (\"rules\", toJson rules), (\"sources\", sourcesJson (ruleSources gen rules)),\n   (\"differs\", atomsJson differs)]",
    "after": "((let \u03c1 := tupleVal tuple\n  let rules := match fillings with\n    | some (F\u2081, F\u2082) => (selectedRules U (M.withFill F\u2081) \u03c1 p ++ selectedRules U (M.withFill F\u2082) \u03c1 p).eraseDups\n    | none => if settled then (p :: pairPartners U p).flatMap (selectedRules U (M.withFill (canonicalFinite U M)) \u03c1)\n      else []\n  let differs := match fillings with\n    | some (F\u2081, F\u2082) => fillingsDiffer U F\u2081 F\u2082\n    | none => []\n  [(\"tuple\", toJson (tuple.map (\u00b7.2))), (\"rules\", toJson rules), (\"sources\", sourcesJson (ruleSources gen rules)),\n   (\"differs\", atomsJson differs)]).reverse.take 1)",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:93: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:179: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "794340a84ae2987d8d797041c373ded9d96401e1667003aaf3b99836dc50b331",
+   "reads": "6bf08fc62243a995871e99fd5e1bdfc6def74e28eec367a2f792935273784b13",
    "killed_at": [
-    93,
-    98
+    179,
+    183
    ],
    "trust_class": "D[V]",
    "trusted": true
@@ -3256,13 +3162,12 @@
    "before": "(VE.Rights.linesOf D).filterMap (fun RN => match RN.2.bearer, RN.2.source.norm with\n    | some _, some n => some (RN.2.node.name, n.name)\n    | _, _ => none) ++\n  (VE.Rights.barNodes D).filterMap fun B => (D.bars.find? (\u00b7.reading == .rule)).map fun b => (B.name, b.name)",
    "after": "(((VE.Rights.linesOf D).filterMap (fun RN => match RN.2.bearer, RN.2.source.norm with\n    | some _, some n => some (RN.2.node.name, n.name)\n    | _, _ => none) ++\n  (VE.Rights.barNodes D).filterMap fun B => (D.bars.find? (\u00b7.reading == .rule)).map fun b => (B.name, b.name)).reverse.take 1)",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:81: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:167: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "fd27b05058bc882d1e086e364a0894b31a1b3097ec2edebeb92ea66965460e3e",
+   "reads": "59856c97f9c503e35329e28c51f2963d679071db82ffd1a419c7ff8b18318d3b",
    "killed_at": [
-    80,
-    82
+    166,
+    168
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -3283,6 +3188,7 @@
    "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
    "raw_status": "KILLED",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "c22d009ff4722611ba12633f833e76d091c496ea51a0abc7d11b324703df6cc9",
    "killed_at": [
     211,
@@ -3323,13 +3229,12 @@
    "before": "rules.map fun n => (n, (gen.lookup n).getD n)",
    "after": "((rules.map fun n => (n, (gen.lookup n).getD n)).drop 1)",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:88: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:174: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "20d16bd4753f4f838a93d76e18505781ee6c96da8822615b09838162f3eecefe",
+   "reads": "915856537e990b6138c02e5559e336ab1bde60941d0a82af5d082d6f22bd1566",
    "killed_at": [
-    88,
-    89
+    174,
+    175
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -3347,13 +3252,12 @@
    "before": "S",
    "after": "(S.drop 1)",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:90: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:176: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "df9135168c54a691ea93193e8643c05709bf13a904f55e348ab1ba09e0fbcbe1",
+   "reads": "035e682323a0efd79719d65c3d6631e0f2da573937dad526dbb31523584d18f5",
    "killed_at": [
-    90,
-    92
+    176,
+    178
    ],
    "trust_class": "D[V]",
    "trusted": true
@@ -3371,13 +3275,12 @@
    "before": "let \u03c1 := tupleVal tuple\n  let rules := match fillings with\n    | some (F\u2081, F\u2082) => (selectedRules U (M.withFill F\u2081) \u03c1 p ++ selectedRules U (M.withFill F\u2082) \u03c1 p).eraseDups\n    | none => if settled then (p :: pairPartners U p).flatMap (selectedRules U (M.withFill (canonicalFinite U M)) \u03c1)\n      else []\n  let differs := match fillings with\n    | some (F\u2081, F\u2082) => fillingsDiffer U F\u2081 F\u2082\n    | none => []\n  [(\"tuple\", toJson (tuple.map (\u00b7.2))), (\"rules\", toJson rules), (\"sources\", sourcesJson (ruleSources gen rules)),\n   (\"differs\", atomsJson differs)]",
    "after": "((let \u03c1 := tupleVal tuple\n  let rules := match fillings with\n    | some (F\u2081, F\u2082) => (selectedRules U (M.withFill F\u2081) \u03c1 p ++ selectedRules U (M.withFill F\u2082) \u03c1 p).eraseDups\n    | none => if settled then (p :: pairPartners U p).flatMap (selectedRules U (M.withFill (canonicalFinite U M)) \u03c1)\n      else []\n  let differs := match fillings with\n    | some (F\u2081, F\u2082) => fillingsDiffer U F\u2081 F\u2082\n    | none => []\n  [(\"tuple\", toJson (tuple.map (\u00b7.2))), (\"rules\", toJson rules), (\"sources\", sourcesJson (ruleSources gen rules)),\n   (\"differs\", atomsJson differs)]).drop 1)",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:93: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:179: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "794340a84ae2987d8d797041c373ded9d96401e1667003aaf3b99836dc50b331",
+   "reads": "6bf08fc62243a995871e99fd5e1bdfc6def74e28eec367a2f792935273784b13",
    "killed_at": [
-    93,
-    98
+    179,
+    183
    ],
    "trust_class": "D[V]",
    "trusted": true
@@ -3395,13 +3298,12 @@
    "before": "(VE.Rights.linesOf D).filterMap (fun RN => match RN.2.bearer, RN.2.source.norm with\n    | some _, some n => some (RN.2.node.name, n.name)\n    | _, _ => none) ++\n  (VE.Rights.barNodes D).filterMap fun B => (D.bars.find? (\u00b7.reading == .rule)).map fun b => (B.name, b.name)",
    "after": "(((VE.Rights.linesOf D).filterMap (fun RN => match RN.2.bearer, RN.2.source.norm with\n    | some _, some n => some (RN.2.node.name, n.name)\n    | _, _ => none) ++\n  (VE.Rights.barNodes D).filterMap fun B => (D.bars.find? (\u00b7.reading == .rule)).map fun b => (B.name, b.name)).drop 1)",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:81: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:167: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "fd27b05058bc882d1e086e364a0894b31a1b3097ec2edebeb92ea66965460e3e",
+   "reads": "59856c97f9c503e35329e28c51f2963d679071db82ffd1a419c7ff8b18318d3b",
    "killed_at": [
-    80,
-    82
+    166,
+    168
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -3422,6 +3324,7 @@
    "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
    "raw_status": "KILLED",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "c22d009ff4722611ba12633f833e76d091c496ea51a0abc7d11b324703df6cc9",
    "killed_at": [
     211,
@@ -3443,13 +3346,12 @@
    "before": " (\"rules\", toJson rules),",
    "after": "",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:93: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:179: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "794340a84ae2987d8d797041c373ded9d96401e1667003aaf3b99836dc50b331",
+   "reads": "6bf08fc62243a995871e99fd5e1bdfc6def74e28eec367a2f792935273784b13",
    "killed_at": [
-    93,
-    98
+    179,
+    183
    ],
    "trust_class": "D[V]",
    "trusted": true
@@ -3470,6 +3372,7 @@
    "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
    "raw_status": "KILLED",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "c22d009ff4722611ba12633f833e76d091c496ea51a0abc7d11b324703df6cc9",
    "killed_at": [
     211,
@@ -3491,13 +3394,12 @@
    "before": "rules",
    "after": "(rules.reverse.take 1)",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:88: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:174: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "20d16bd4753f4f838a93d76e18505781ee6c96da8822615b09838162f3eecefe",
+   "reads": "915856537e990b6138c02e5559e336ab1bde60941d0a82af5d082d6f22bd1566",
    "killed_at": [
-    88,
-    89
+    174,
+    175
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -3515,13 +3417,12 @@
    "before": "S.map (fun x => Json.mkObj [(\"rule\", .str x.1), (\"source\", .str x.2)])",
    "after": "((S.map (fun x => Json.mkObj [(\"rule\", .str x.1), (\"source\", .str x.2)])).reverse.take 1)",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:90: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:176: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "df9135168c54a691ea93193e8643c05709bf13a904f55e348ab1ba09e0fbcbe1",
+   "reads": "035e682323a0efd79719d65c3d6631e0f2da573937dad526dbb31523584d18f5",
    "killed_at": [
-    90,
-    92
+    176,
+    178
    ],
    "trust_class": "D[V]",
    "trusted": true
@@ -3539,13 +3440,12 @@
    "before": "[(\"tuple\", toJson (tuple.map (\u00b7.2))), (\"rules\", toJson rules), (\"sources\", sourcesJson (ruleSources gen rules)),\n   (\"differs\", atomsJson differs)]",
    "after": "([(\"tuple\", toJson (tuple.map (\u00b7.2))), (\"rules\", toJson rules), (\"sources\", sourcesJson (ruleSources gen rules)),\n   (\"differs\", atomsJson differs)].reverse.take 1)",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:93: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:179: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "794340a84ae2987d8d797041c373ded9d96401e1667003aaf3b99836dc50b331",
+   "reads": "6bf08fc62243a995871e99fd5e1bdfc6def74e28eec367a2f792935273784b13",
    "killed_at": [
-    93,
-    98
+    179,
+    183
    ],
    "trust_class": "D[V]",
    "trusted": true
@@ -3563,13 +3463,12 @@
    "before": "(VE.Rights.linesOf D)",
    "after": "((VE.Rights.linesOf D).reverse.take 1)",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:81: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:167: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "fd27b05058bc882d1e086e364a0894b31a1b3097ec2edebeb92ea66965460e3e",
+   "reads": "59856c97f9c503e35329e28c51f2963d679071db82ffd1a419c7ff8b18318d3b",
    "killed_at": [
-    80,
-    82
+    166,
+    168
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -3590,6 +3489,7 @@
    "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
    "raw_status": "KILLED",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "c22d009ff4722611ba12633f833e76d091c496ea51a0abc7d11b324703df6cc9",
    "killed_at": [
     211,
@@ -3611,13 +3511,12 @@
    "before": "rules",
    "after": "(rules.drop 1)",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:88: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:174: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "20d16bd4753f4f838a93d76e18505781ee6c96da8822615b09838162f3eecefe",
+   "reads": "915856537e990b6138c02e5559e336ab1bde60941d0a82af5d082d6f22bd1566",
    "killed_at": [
-    88,
-    89
+    174,
+    175
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -3635,13 +3534,12 @@
    "before": "S.map (fun x => Json.mkObj [(\"rule\", .str x.1), (\"source\", .str x.2)])",
    "after": "((S.map (fun x => Json.mkObj [(\"rule\", .str x.1), (\"source\", .str x.2)])).drop 1)",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:90: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:176: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "df9135168c54a691ea93193e8643c05709bf13a904f55e348ab1ba09e0fbcbe1",
+   "reads": "035e682323a0efd79719d65c3d6631e0f2da573937dad526dbb31523584d18f5",
    "killed_at": [
-    90,
-    92
+    176,
+    178
    ],
    "trust_class": "D[V]",
    "trusted": true
@@ -3659,13 +3557,12 @@
    "before": "[(\"tuple\", toJson (tuple.map (\u00b7.2))), (\"rules\", toJson rules), (\"sources\", sourcesJson (ruleSources gen rules)),\n   (\"differs\", atomsJson differs)]",
    "after": "([(\"tuple\", toJson (tuple.map (\u00b7.2))), (\"rules\", toJson rules), (\"sources\", sourcesJson (ruleSources gen rules)),\n   (\"differs\", atomsJson differs)].drop 1)",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:93: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:179: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "794340a84ae2987d8d797041c373ded9d96401e1667003aaf3b99836dc50b331",
+   "reads": "6bf08fc62243a995871e99fd5e1bdfc6def74e28eec367a2f792935273784b13",
    "killed_at": [
-    93,
-    98
+    179,
+    183
    ],
    "trust_class": "D[V]",
    "trusted": true
@@ -3683,13 +3580,12 @@
    "before": "(VE.Rights.linesOf D)",
    "after": "((VE.Rights.linesOf D).drop 1)",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:81: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:167: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "fd27b05058bc882d1e086e364a0894b31a1b3097ec2edebeb92ea66965460e3e",
+   "reads": "59856c97f9c503e35329e28c51f2963d679071db82ffd1a419c7ff8b18318d3b",
    "killed_at": [
-    80,
-    82
+    166,
+    168
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -3710,6 +3606,7 @@
    "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
    "raw_status": "KILLED",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "c22d009ff4722611ba12633f833e76d091c496ea51a0abc7d11b324703df6cc9",
    "killed_at": [
     211,
@@ -3731,13 +3628,12 @@
    "before": " (\"sources\", sourcesJson (ruleSources gen rules)),",
    "after": "",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:93: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:179: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "794340a84ae2987d8d797041c373ded9d96401e1667003aaf3b99836dc50b331",
+   "reads": "6bf08fc62243a995871e99fd5e1bdfc6def74e28eec367a2f792935273784b13",
    "killed_at": [
-    93,
-    98
+    179,
+    183
    ],
    "trust_class": "D[V]",
    "trusted": true
@@ -3758,6 +3654,7 @@
    "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
    "raw_status": "KILLED",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "c22d009ff4722611ba12633f833e76d091c496ea51a0abc7d11b324703df6cc9",
    "killed_at": [
     211,
@@ -3782,6 +3679,7 @@
    "detail": "Invalid field `reverse`: The environment does not contain `Function.reverse`",
    "raw_status": "INVALID",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "4bddaf1e124eebd3188d946f1cfc5f93e8b66caa40c6f8bb4c97251fabd1570b",
    "trust_class": "G[V]",
    "trusted": true
@@ -3799,13 +3697,12 @@
    "before": "[(\"rule\", .str x.1), (\"source\", .str x.2)]",
    "after": "([(\"rule\", .str x.1), (\"source\", .str x.2)].reverse.take 1)",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:90: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:176: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "df9135168c54a691ea93193e8643c05709bf13a904f55e348ab1ba09e0fbcbe1",
+   "reads": "035e682323a0efd79719d65c3d6631e0f2da573937dad526dbb31523584d18f5",
    "killed_at": [
-    90,
-    92
+    176,
+    178
    ],
    "trust_class": "D[V]",
    "trusted": true
@@ -3826,7 +3723,6 @@
    "detail": "killed past Lean: as list-first, the tuple [s, p] of the rights rows of ::test_genuine_answers_pass becomes [p], which x-equals /tuple refuses",
    "raw_status": "SURVIVOR",
    "raw_detail": "",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
    "trust_class": "D[V]",
    "trusted": true
   },
@@ -3843,13 +3739,12 @@
    "before": "(VE.Rights.linesOf D).filterMap (fun RN => match RN.2.bearer, RN.2.source.norm with\n    | some _, some n => some (RN.2.node.name, n.name)\n    | _, _ => none)",
    "after": "(((VE.Rights.linesOf D).filterMap (fun RN => match RN.2.bearer, RN.2.source.norm with\n    | some _, some n => some (RN.2.node.name, n.name)\n    | _, _ => none)).reverse.take 1)",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:81: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:167: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "fd27b05058bc882d1e086e364a0894b31a1b3097ec2edebeb92ea66965460e3e",
+   "reads": "59856c97f9c503e35329e28c51f2963d679071db82ffd1a419c7ff8b18318d3b",
    "killed_at": [
-    80,
-    82
+    166,
+    168
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -3870,6 +3765,7 @@
    "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
    "raw_status": "KILLED",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "c22d009ff4722611ba12633f833e76d091c496ea51a0abc7d11b324703df6cc9",
    "killed_at": [
     211,
@@ -3894,6 +3790,7 @@
    "detail": "Invalid field `drop`: The environment does not contain `Function.drop`",
    "raw_status": "INVALID",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "4bddaf1e124eebd3188d946f1cfc5f93e8b66caa40c6f8bb4c97251fabd1570b",
    "trust_class": "G[V]",
    "trusted": true
@@ -3911,13 +3808,12 @@
    "before": "[(\"rule\", .str x.1), (\"source\", .str x.2)]",
    "after": "([(\"rule\", .str x.1), (\"source\", .str x.2)].drop 1)",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:90: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:176: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "df9135168c54a691ea93193e8643c05709bf13a904f55e348ab1ba09e0fbcbe1",
+   "reads": "035e682323a0efd79719d65c3d6631e0f2da573937dad526dbb31523584d18f5",
    "killed_at": [
-    90,
-    92
+    176,
+    178
    ],
    "trust_class": "D[V]",
    "trusted": true
@@ -3935,13 +3831,12 @@
    "before": "tuple",
    "after": "(tuple.drop 1)",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:93: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:179: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "794340a84ae2987d8d797041c373ded9d96401e1667003aaf3b99836dc50b331",
+   "reads": "6bf08fc62243a995871e99fd5e1bdfc6def74e28eec367a2f792935273784b13",
    "killed_at": [
-    93,
-    98
+    179,
+    183
    ],
    "trust_class": "D[V]",
    "trusted": true
@@ -3959,13 +3854,12 @@
    "before": "(VE.Rights.linesOf D).filterMap (fun RN => match RN.2.bearer, RN.2.source.norm with\n    | some _, some n => some (RN.2.node.name, n.name)\n    | _, _ => none)",
    "after": "(((VE.Rights.linesOf D).filterMap (fun RN => match RN.2.bearer, RN.2.source.norm with\n    | some _, some n => some (RN.2.node.name, n.name)\n    | _, _ => none)).drop 1)",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:81: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:167: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "fd27b05058bc882d1e086e364a0894b31a1b3097ec2edebeb92ea66965460e3e",
+   "reads": "59856c97f9c503e35329e28c51f2963d679071db82ffd1a419c7ff8b18318d3b",
    "killed_at": [
-    80,
-    82
+    166,
+    168
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -3986,6 +3880,7 @@
    "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
    "raw_status": "KILLED",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "c22d009ff4722611ba12633f833e76d091c496ea51a0abc7d11b324703df6cc9",
    "killed_at": [
     211,
@@ -4010,6 +3905,7 @@
    "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
    "raw_status": "KILLED",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "c22d009ff4722611ba12633f833e76d091c496ea51a0abc7d11b324703df6cc9",
    "killed_at": [
     211,
@@ -4034,7 +3930,6 @@
    "detail": "breaks the proof of ruleSources_spec (lean/VE/NormDefaults/Explain.lean:206): a source looked up before gen's last entry is no longer in gen",
    "raw_status": "SURVIVOR",
    "raw_detail": "the proofs it breaks: lean/VE/NormDefaults/Explain.lean:206",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -4054,7 +3949,6 @@
    "detail": "killed past Lean: as list-first, the tuple [s, p] of the rights rows of ::test_genuine_answers_pass becomes [p], which x-equals /tuple refuses",
    "raw_status": "SURVIVOR",
    "raw_detail": "",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
    "trust_class": "D[V]",
    "trusted": true
   },
@@ -4074,7 +3968,6 @@
    "detail": "breaks the proof of rightsSources_built (lean/VE/NormDefaults/Layered.lean:173); `D.bars` has at most one entry on a well-formed document (DuplicateDeclaration: bar)",
    "raw_status": "SURVIVOR",
    "raw_detail": "the proofs it breaks: lean/VE/NormDefaults/Layered.lean:173",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -4094,6 +3987,7 @@
    "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
    "raw_status": "KILLED",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "c22d009ff4722611ba12633f833e76d091c496ea51a0abc7d11b324703df6cc9",
    "killed_at": [
     211,
@@ -4115,13 +4009,12 @@
    "before": "gen",
    "after": "(gen.drop 1)",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:88: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:174: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "20d16bd4753f4f838a93d76e18505781ee6c96da8822615b09838162f3eecefe",
+   "reads": "915856537e990b6138c02e5559e336ab1bde60941d0a82af5d082d6f22bd1566",
    "killed_at": [
-    88,
-    89
+    174,
+    175
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -4139,13 +4032,12 @@
    "before": "tuple.map (\u00b7.2)",
    "after": "((tuple.map (\u00b7.2)).drop 1)",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:93: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:179: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "794340a84ae2987d8d797041c373ded9d96401e1667003aaf3b99836dc50b331",
+   "reads": "6bf08fc62243a995871e99fd5e1bdfc6def74e28eec367a2f792935273784b13",
    "killed_at": [
-    93,
-    98
+    179,
+    183
    ],
    "trust_class": "D[V]",
    "trusted": true
@@ -4163,13 +4055,12 @@
    "before": "(VE.Rights.barNodes D)",
    "after": "((VE.Rights.barNodes D).drop 1)",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:84: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:170: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "f17737ba126b117e61447e69a4b8ac1945ec788fdb5fc712f22ed01db5ad83e6",
+   "reads": "a20f503807d11f441ecaacd3d1b7d5bae0d80b860b38544554c55c8d1999dae0",
    "killed_at": [
-    83,
-    84
+    169,
+    170
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -4190,6 +4081,7 @@
    "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
    "raw_status": "KILLED",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "c22d009ff4722611ba12633f833e76d091c496ea51a0abc7d11b324703df6cc9",
    "killed_at": [
     211,
@@ -4214,6 +4106,7 @@
    "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
    "raw_status": "KILLED",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "c22d009ff4722611ba12633f833e76d091c496ea51a0abc7d11b324703df6cc9",
    "killed_at": [
     211,
@@ -4238,6 +4131,7 @@
    "detail": "Invalid field `reverse`: The environment does not contain `Function.reverse`",
    "raw_status": "INVALID",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "44ce76583c7be508c72a6adebf1efc86f9934fa212f0e84aacdd0ab90acf336d",
    "trust_class": "G[V]",
    "trusted": true
@@ -4258,6 +4152,7 @@
    "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
    "raw_status": "KILLED",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "c22d009ff4722611ba12633f833e76d091c496ea51a0abc7d11b324703df6cc9",
    "killed_at": [
     211,
@@ -4282,6 +4177,7 @@
    "detail": "Invalid field `drop`: The environment does not contain `Function.drop`",
    "raw_status": "INVALID",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "44ce76583c7be508c72a6adebf1efc86f9934fa212f0e84aacdd0ab90acf336d",
    "trust_class": "G[V]",
    "trusted": true
@@ -4302,6 +4198,7 @@
    "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
    "raw_status": "KILLED",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "c22d009ff4722611ba12633f833e76d091c496ea51a0abc7d11b324703df6cc9",
    "killed_at": [
     211,
@@ -4326,6 +4223,7 @@
    "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
    "raw_status": "KILLED",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "c22d009ff4722611ba12633f833e76d091c496ea51a0abc7d11b324703df6cc9",
    "killed_at": [
     211,
@@ -4350,6 +4248,7 @@
    "detail": "Invalid field notation: Type of",
    "raw_status": "INVALID",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "44ce76583c7be508c72a6adebf1efc86f9934fa212f0e84aacdd0ab90acf336d",
    "trust_class": "G[V]",
    "trusted": true
@@ -4370,6 +4269,7 @@
    "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
    "raw_status": "KILLED",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "c22d009ff4722611ba12633f833e76d091c496ea51a0abc7d11b324703df6cc9",
    "killed_at": [
     211,
@@ -4394,6 +4294,7 @@
    "detail": "Invalid field notation: Type of",
    "raw_status": "INVALID",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "44ce76583c7be508c72a6adebf1efc86f9934fa212f0e84aacdd0ab90acf336d",
    "trust_class": "G[V]",
    "trusted": true
@@ -4414,6 +4315,7 @@
    "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
    "raw_status": "KILLED",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "c22d009ff4722611ba12633f833e76d091c496ea51a0abc7d11b324703df6cc9",
    "killed_at": [
     211,
@@ -4438,6 +4340,7 @@
    "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
    "raw_status": "KILLED",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "c22d009ff4722611ba12633f833e76d091c496ea51a0abc7d11b324703df6cc9",
    "killed_at": [
     211,
@@ -4462,6 +4365,7 @@
    "detail": "Invalid field notation: Type of",
    "raw_status": "INVALID",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "44ce76583c7be508c72a6adebf1efc86f9934fa212f0e84aacdd0ab90acf336d",
    "trust_class": "G[V]",
    "trusted": true
@@ -4482,6 +4386,7 @@
    "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
    "raw_status": "KILLED",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "c22d009ff4722611ba12633f833e76d091c496ea51a0abc7d11b324703df6cc9",
    "killed_at": [
     211,
@@ -4506,6 +4411,7 @@
    "detail": "Invalid field notation: Type of",
    "raw_status": "INVALID",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "44ce76583c7be508c72a6adebf1efc86f9934fa212f0e84aacdd0ab90acf336d",
    "trust_class": "G[V]",
    "trusted": true
@@ -4526,6 +4432,7 @@
    "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
    "raw_status": "KILLED",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "c22d009ff4722611ba12633f833e76d091c496ea51a0abc7d11b324703df6cc9",
    "killed_at": [
     211,
@@ -4550,6 +4457,7 @@
    "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
    "raw_status": "KILLED",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "c22d009ff4722611ba12633f833e76d091c496ea51a0abc7d11b324703df6cc9",
    "killed_at": [
     211,
@@ -4574,7 +4482,6 @@
    "detail": "breaks the proof of rightsSources_built (lean/VE/NormDefaults/Layered.lean:173); `D.bars` has at most one entry on a well-formed document (DuplicateDeclaration: bar)",
    "raw_status": "SURVIVOR",
    "raw_detail": "the proofs it breaks: lean/VE/NormDefaults/Layered.lean:173",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
    "trust_class": "G[V]",
    "trusted": true
   },
@@ -4594,6 +4501,7 @@
    "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
    "raw_status": "KILLED",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "c22d009ff4722611ba12633f833e76d091c496ea51a0abc7d11b324703df6cc9",
    "killed_at": [
     211,
@@ -4615,13 +4523,12 @@
    "before": "D.bars",
    "after": "(D.bars.drop 1)",
    "status": "KILLED",
-   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:84: Expression",
+   "detail": "lean/VE/NormDefaults/PacksLegacyExamples.lean:170: Expression",
    "raw_status": "KILLED",
-   "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
-   "reads": "f17737ba126b117e61447e69a4b8ac1945ec788fdb5fc712f22ed01db5ad83e6",
+   "reads": "a20f503807d11f441ecaacd3d1b7d5bae0d80b860b38544554c55c8d1999dae0",
    "killed_at": [
-    83,
-    84
+    169,
+    170
    ],
    "trust_class": "G[V]",
    "trusted": true
@@ -4642,6 +4549,7 @@
    "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
    "raw_status": "KILLED",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "c22d009ff4722611ba12633f833e76d091c496ea51a0abc7d11b324703df6cc9",
    "killed_at": [
     211,
@@ -4666,6 +4574,7 @@
    "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
    "raw_status": "KILLED",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "c22d009ff4722611ba12633f833e76d091c496ea51a0abc7d11b324703df6cc9",
    "killed_at": [
     211,
@@ -4690,6 +4599,7 @@
    "detail": "lean/ResponseShape/Schemas/NormDefaults.lean:211: Expression",
    "raw_status": "KILLED",
    "reused_from": "c5251726ac796553a0a7dd4b8e0fbebe1ad87531",
+   "carried": "checks",
    "reads": "c22d009ff4722611ba12633f833e76d091c496ea51a0abc7d11b324703df6cc9",
    "killed_at": [
     211,
@@ -4699,5 +4609,5 @@
    "trusted": true
   }
  ],
- "where": "tmpar:ve-cloud-3"
+ "where": "ve-cloud-3"
 }
