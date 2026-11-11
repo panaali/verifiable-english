@@ -8196,6 +8196,8 @@ module VE.Commands.Texts 216279f9b9ad99e6ea87c0bae9d33e7b3825685c388020af45af365
 19:0-20:60 def VE.Commands.Texts.queryMismatch@VE.Commands.Texts
 22:0-26:100 def VE.Commands.Texts.codeClasses@VE.Commands.Texts
 28:0-28:78 def VE.Commands.Texts.limitText@VE.Commands.Texts
+module VE.Commands.WebEnvMain 3277ebc05b1a059cd775c58347d222baa7ccb086fe47deef7e5f0cb10faa4425
+9:0-10:88 def main@VE.Commands.WebEnvMain
 module VE.Compose.Adjoin ddf66089bf7a18ef98ba674eeab43fa1694cc345c8908ea4c39e524159dcdbb8
 13:0-18:59 def VE.Compose.adjoinOne@VE.Compose.Adjoin
 20:0-24:18 theorem VE.Compose.adjoin_term@VE.Compose.Adjoin
