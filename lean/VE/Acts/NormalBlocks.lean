@@ -165,7 +165,7 @@ theorem ee_block (hV : framesOk V = true) (hW : VocabOk V) {h : Nat} (hF : Frame
   · exact ee_prep hW hF (by assumption) hg ha he hb hbs hv
 
 
-theorem blocks_cons' (b : Blk) (bs : List Blk) : blocks (b :: bs) = b.toks ++ blocks bs := by simp [blocks]
+theorem blocks_append_cons (b : Blk) (bs : List Blk) : blocks (b :: bs) = b.toks ++ blocks bs := by simp [blocks]
 
 theorem next_append {u v : List Tok} (hu : Next V f u) (hne : u ≠ []) : Next V f (u ++ v) := by
   obtain ⟨x, u', rfl⟩ := List.exists_cons_of_ne_nil hne
@@ -181,7 +181,7 @@ theorem er_blocks (hV : framesOk V = true) (hW : VocabOk V) {h : Nat} (hF : Fram
   | [], u, v, ps, hg0, he, _, _ => (gen_ne hV hg0 (by simp [blocks] at he; exact he.1)).elim
   | b :: bs, u, v, ps, hg0, he, hbs, hv => by
     have hbs' : ∀ x ∈ bs, BlkOk V f x := fun x hx => hbs x (by simp [hx])
-    rw [blocks_cons'] at he
+    rw [blocks_append_cons] at he
     obtain ⟨rhs, k, cs, hr, hg, ha⟩ := gen_rule hg0
     rules_of hr fr hfr <;> (have e := zip_frame hF.mem hfr; subst fr)
     · rw [ap_ER1] at ha; cases ha
@@ -247,7 +247,7 @@ theorem spl_false (hV : framesOk V = true) (hW : VocabOk V) {h : Nat} (hF : Fram
   | cons b bs =>
   have hbs' : ∀ x ∈ bs, BlkOk V f x := fun x hx => hbs x (by simp [hx])
   have hb := hbs b (by simp)
-  rw [blocks_cons'] at he
+  rw [blocks_append_cons] at he
   obtain ⟨rhs, k, cs, hr, hg, ha⟩ := gen_rule hg0
   rules_of hr fr hfr <;> (have e := zip_frame hF.mem hfr; subst fr)
   · obtain ⟨rhs2, k2, cs2, hr2, hg2, ha2⟩ := gen_rule (genAll1 hg)
@@ -362,7 +362,7 @@ theorem blocks_drop {h : Nat} (hF : FrameOk V f h) {bs : List Blk} (hbs : ∀ b 
   apply List.take_of_length_le
   refine Nat.le_of_not_lt (fun hk => ?_)
   obtain ⟨b, rest, hd⟩ := List.exists_cons_of_ne_nil (l := bs.drop k) (by simp; omega)
-  rw [hd, blocks_cons'] at he
+  rw [hd, blocks_append_cons] at he
   exact blk_ne hF (hbs b (List.mem_of_mem_drop (hd ▸ List.mem_cons_self))) (List.append_eq_nil_iff.mp he).1
 
 /-- The head's material (`SM`) where the normal form has the object (if any) and the elements `bs`: their pieces,
@@ -483,7 +483,7 @@ theorem sc_inv (hV : framesOk V = true) (hW : VocabOk V) {h : Nat} (hF : FrameOk
     have hbs0 : bs = [] := by
       cases bs with
       | nil => rfl
-      | cons b bs => exact (blk_ne hF (hbs b (by simp)) (List.append_eq_nil_iff.mp (by simpa [blocks_cons'] using hob'.2)).1).elim
+      | cons b bs => exact (blk_ne hF (hbs b (by simp)) (List.append_eq_nil_iff.mp (by simpa [blocks_append_cons] using hob'.2)).1).elim
     subst hbs0
     cases ob with
     | none => rfl

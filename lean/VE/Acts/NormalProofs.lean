@@ -2,12 +2,13 @@ import VE.Acts.Readings
 import VE.Grammar.TableInvariant
 import VE.Grammar.TableProofs
 
-/-! `read_normal` (docs/spec/act-phrases.md 5.6): the normal form of a `normalOk` atom reads back as its canonical
-atom.
+/-! The existence and bounds halves of `read_normal` (docs/spec/act-phrases.md 5.6); `read_normal` itself, with the
+uniqueness half, is in `VE.Acts.NormalUnique`.
 
 Proofs only. (1) `normal_derived`: a derivation of `a.normal` whose meaning is `.one a.canon`, built rule by rule
-from 5.2's table. (2) `normal_bounds`: a raw cap and a step budget from which the parse of `a.normal` is complete and
-unsaturated, for every larger cap and budget.
+from 5.2's table. (2) `parse_bounds`: for any input and any well-formed grammar, a raw cap and a step budget from
+which the parse is complete and unsaturated, for every larger cap and budget. `read_normal_of_unique` combines them
+with the uniqueness half, taken as a hypothesis.
 -/
 
 namespace VE.Acts.NormalProofs
@@ -1263,8 +1264,8 @@ end Bounds
 /-! ## `read_normal` from uniqueness
 
 (1) and (2) give `read_normal`'s conclusion for every atom whose normal form has no derivation meaning anything other
-than its canonical atom. That uniqueness is spec 5.6's unambiguity argument (deliverable (3), item ap-2bcb); it is a
-hypothesis here, not a claim. -/
+than its canonical atom. That uniqueness is spec 5.6's unambiguity argument (deliverable (3)); it is a hypothesis
+here, and `VE.Acts.NormalUnique.normal_unique` proves it for every `normalOk` atom. -/
 
 theorem read_normal_of_unique (V : Vocab) (h : framesOk V = true) (a : Atom) (ha : normalOk V a = true)
     (hu : ∀ d B c, VE.Grammar.Derives (grammar V) (.n (grammar V).start) a.normal d →
