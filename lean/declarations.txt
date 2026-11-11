@@ -17091,7 +17091,7 @@ module VE.Presupposition.Rules 772dc31ffb2d25e8805aadfd76532154b97c28aca02a99a2b
 137:0-140:53 theorem VE.Presupposition.conditioned_contributes_nothing@VE.Presupposition.Rules
 142:0-143:79 theorem VE.Presupposition.unsaid_iff@VE.Presupposition.Rules
 145:0-149:63 theorem VE.Presupposition.source_identity_entails@VE.Presupposition.Rules
-module VE.Presupposition.Run 85147d5efbdcdb42086e2d23661ff016a6742e337806d3acba08fd70077315b0
+module VE.Presupposition.Run c1a46f2365f6ec1992dfad2e1c4c01fe538bf831d11a55a58333e5bf69b2a387
 27:0-32:28 inductive VE.Presupposition.Outcome@VE.Presupposition.Run
 32:11-32:22 def VE.Presupposition.instDecidableEqOutcome.decEq@VE.Presupposition.Run
 32:11-32:22 instance VE.Presupposition.instDecidableEqOutcome@VE.Presupposition.Run
@@ -17170,7 +17170,8 @@ module VE.Presupposition.Run 85147d5efbdcdb42086e2d23661ff016a6742e337806d3acba0
 312:0-316:22 def VE.Presupposition.RunExamples.refusal@VE.Presupposition.Run
 317:0-317:84 def VE.Presupposition.RunExamples.docEmpty@VE.Presupposition.Run
 346:0-346:61 def VE.Presupposition.RunExamples.r1b@VE.Presupposition.Run
-347:0-352:64 def VE.Presupposition.RunExamples.docF2@VE.Presupposition.Run
+347:0-350:73 def VE.Presupposition.RunExamples.docF2@VE.Presupposition.Run
+351:0-354:88 def VE.Presupposition.RunExamples.obsF2@VE.Presupposition.Run
 module VE.Presupposition.Table f9e7e049b4c7b99aae4a75db14e61bbf233e4b29c9b6dadf284706761319437c
 8:0-29:14 def VE.Presupposition.candidateTable@VE.Presupposition.Table
 module VE.Presupposition.Wire 4c4ffc8426ed48d986c7d227dcfcaf3d4f361f1c81509961ae3a7e194bb0035c

@@ -341,17 +341,21 @@ def docEmpty : PDoc := docA [cu "u0" theOwnerU, cu "u1" theOwner] [] (tree7 [r7b
 #guard refusal docEmpty (admit docEmpty) == some ("PresuppositionMismatch: : rule", false, false)
 -- step 5's rule check names the rule's first obligation, else none (ps-2ab-rule-firstob, ps-2ac review F2): p1 a claim
 -- on u1, p2 a rule act on r2, and rule r1 given two different nodes. Admitted with one node; with two, refused by the
--- rule check, naming none (not p1, the block's first; the tree check would name p2). With r1's own act p3 after p2,
--- p3, not p2.
+-- rule check, naming none (not p1, the block's first; the tree check would name p2). With r1's own act p3, p3: after
+-- p2 (not the block's first rule act) and before it (not the block's last obligation).
 def r1b : VE.Norms.Node := { rule22 "r1" with guard := .top }
-def docF2 (extra : List VE.Norms.Node) (p3 := false) : PDoc :=
-  docA ([cu "u0" theOwnerU, cu "u1" theOwner, cu "u2" (ruleGoal (reg7) (rule22 "r2") pre22), ⟨"u8", true, .rule "r2"⟩] ++
-      (if p3 then [cu "u3" (ruleGoal (reg7) (rule22 "r1") pre22), ⟨"u9", true, .rule "r1"⟩] else []))
-    ([pA (.assumed "u0"), { p7 (.assumed "u2") with id := "p2", unit := "u8", position := .ruleAct "r2" }] ++
-      (if p3 then [{ p7 (.assumed "u3") with id := "p3", unit := "u9" }] else []))
-    (tree7 ([rule22 "r1"] ++ extra ++ [rule22 "r2"])) true ["p"]
-#guard errOf (admit (docF2 [])) == "admitted" && errOf (admit (docF2 [] true)) == "admitted"
-#guard refusal (docF2 [r1b]) (admit (docF2 [r1b])) == some ("PresuppositionMismatch: : rule", false, false)
-#guard refusal (docF2 [r1b] true) (admit (docF2 [r1b] true)) == some ("PresuppositionMismatch: p3: rule", true, false)
+def docF2 (two : Bool) (obs : List Obligation) : PDoc :=
+  docA [cu "u0" theOwnerU, cu "u1" theOwner, cu "u2" (ruleGoal (reg7) (rule22 "r2") pre22), ⟨"u8", true, .rule "r2"⟩,
+      cu "u3" (ruleGoal (reg7) (rule22 "r1") pre22), ⟨"u9", true, .rule "r1"⟩] obs
+    (tree7 (rule22 "r1" :: (if two then [r1b] else []) ++ [rule22 "r2"]))
+def obsF2 : List (List Obligation) :=
+  let p2 := { p7 (.assumed "u2") with id := "p2", unit := "u8", position := .ruleAct "r2" }
+  let p3 := { p7 (.assumed "u3") with id := "p3", unit := "u9" }
+  [[pA (.assumed "u0"), p2], [pA (.assumed "u0"), p2, p3], [pA (.assumed "u0"), p3, p2]]
+#guard obsF2.map (·.map (·.id)) == [["p1", "p2"], ["p1", "p2", "p3"], ["p1", "p3", "p2"]] &&
+  obsF2.all (fun os => errOf (admit (docF2 false os)) == "admitted")
+#guard obsF2.map (fun os => refusal (docF2 true os) (admit (docF2 true os))) ==
+  [some ("PresuppositionMismatch: : rule", false, false), some ("PresuppositionMismatch: p3: rule", true, false),
+   some ("PresuppositionMismatch: p3: rule", true, false)]
 
 end VE.Presupposition.RunExamples
