@@ -1,0 +1,1 @@
+{"situation": {"complete": true, "domains": {"operator": ["o1", "o2"]}, "constants": {}, "relations": {"soft__excepted__g1": []}}, "record": [], "observations": [{"outcome": "instructs", "tuple": ["o1"], "value": false}], "query": {"outcome": "instructs", "tuple": ["o2"]}}
