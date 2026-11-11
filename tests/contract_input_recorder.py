@@ -164,8 +164,8 @@ def _norm_unit(environment):
         "acts@0" in UNITS else "norms@0"
 
 
-def _record_norm(environment, norms):
-    """Record a norm source for its unit, when it is in that unit's domain (2.2)."""
+def _record_norm(environment, norms, only=None):
+    """Record a norm source for its unit, when it is in that unit's domain (2.2), and is `only`, when given."""
     from conformance.acts_contract import in_domain as acts_domain
     from ve.norms_contract import in_domain
     environment = environment.to_dict() if hasattr(environment, "to_dict") else environment
@@ -173,6 +173,8 @@ def _record_norm(environment, norms):
         if isinstance(norms, (list, tuple)) else norms
     environment, norms = json.loads(json.dumps([environment, norms], default=repr))
     unit = _norm_unit(environment)
+    if only is not None and unit != only:
+        return
     inside = acts_domain(environment, norms) if unit == "acts@0" else \
         in_domain(environment, norms, defaults=unit == "norm-defaults@0")
     if inside:
@@ -187,10 +189,13 @@ def _record_norm_cases(mode, cases):
                 mode == "diagnose" and case.get("unit") in UNITS - {"soft-norms@0"})):
             continue
         kind = case.get("kind")
+        # A case `diagnose` reads under `acts@0` counts for that unit only (its adapter's domain tests send it
+        # sources of the other units).
+        only = "acts@0" if mode == "diagnose" and case.get("unit") == "acts@0" else None
         if kind == "admission":
-            _record_norm(case.get("environment"), active_norms(case.get("document")))
+            _record_norm(case.get("environment"), active_norms(case.get("document")), only)
         elif isinstance(kind, str) and (kind.startswith("norms-") or kind.startswith("norm-defaults-")):
-            _record_norm(case.get("environment"), case.get("norms"))
+            _record_norm(case.get("environment"), case.get("norms"), only)
 
 
 def _install_norms():
