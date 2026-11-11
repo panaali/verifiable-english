@@ -46,7 +46,9 @@ docs/spec/act-phrases.md docs/spec/wire-contract.md lean/statements.txt` is empt
    one owner. See Notes.
 5. **The recorder's `_record_norm_cases` and `_norm_unit` now read `UNITS`** instead of literal unit tuples, so that
    dropping `acts@0` from `UNITS` stops its recording (seeded bug `py-recorder-units`); for `norms@0` and
-   `norm-defaults@0` the sets are the same as before.
+   `norm-defaults@0` the sets are the same as before. A `diagnose` case of unit `acts@0` is recorded for `acts@0` only:
+   the adapter tests send that unit sources of the other units, which are no test inputs of theirs
+   (`tests/test_wire_gate_corpus.py::test_gate_corpus_holds_every_test_input_of_every_unit`).
 6. **The s5 adapter cases' quoted unit** reads `(norms * 2)[1]`, which is `norms[1]` for both norm bases (unchanged
    bytes) and `norms[0]` for the one-rule `acts@0` base.
 
@@ -93,10 +95,10 @@ in the generated `contract_tables.rs`, the one Rust file changed). Each was plan
   elaborate, and 3 whose build aborts (Lean exit 134 under the node-budget `#guard`), each with its reason in
   [trust-allow.json](trust-allow.json).
 - SIZE: 367 product (`Hooks/Acts.lean` 160, `acts_contract.py` 47, `wire_contract_faults_acts.py` 112, `acts@0.json`
-  48), 193 tests (`test_acts_contract.py` 127, `test_wire_contract_s5_lean.py` 46, `contract_input_recorder.py` 20),
-  other hand-written lines: about 520 (`sweep.py` 182, `seed_bugs.py` 116, `trust-allow.json` 44,
-  `trust-classes.json` 32, the three seed and before texts 30, this report and DELTA.md); `git diff --numstat
-  8eda0371fd`, generated files and saved JSON evidence left out.
+  48), 208 tests (`test_acts_contract.py` 129, `test_wire_contract_s5_lean.py` 46, `contract_input_recorder.py` 33),
+  about 615 other hand-written lines (`sweep.py` 182, `seed_bugs.py` 120, `trust-allow.json` 44, `trust-classes.json`
+  32, the seed and before texts 30, this report and DELTA.md); `git diff --numstat 8eda0371fd`, generated files and
+  saved JSON evidence left out.
 - Lean: `lake build` (1406 jobs) and `python3 lean/audit.py` PASS (854 files, 9560 theorems) on the final Lean;
   `uv run python tools/regen_generated.py --write` once (40 entries; the Rust release binary pinned first with
   `--only checker-pins`, since `route-cases` runs it), `--check` 40 entries; `tools/gate_collection.py --check
@@ -154,4 +156,17 @@ in the generated `contract_tables.rs`, the one Rust file changed). Each was plan
 
 ## 7. Selected tests
 
-To be filled from the final selected run.
+- Selected run on the committed tree `9f836f9bc3` (`MAC_PYTEST_NO_DEFER=1 zsh mac-pytest.sh --select -- --base
+  $(git merge-base HEAD main) --run`; ran on ve-cloud-2, 592 units, 6941 s): **2 failed, both this item's, both
+  fixed:**
+  - `tests/test_nested_pytest.py::test_every_pytest_command_is_built_by_the_builder`: `seed_bugs.py` built a pytest
+    command itself; it now uses `tools/nested_pytest.py`'s `command` and `environment` (`6a4623af`).
+  - `tests/test_wire_gate_corpus.py::test_gate_corpus_holds_every_test_input_of_every_unit`: run under the joint
+    recorder, the corpus test's nested run inherited `VE_CONTRACT_UNITS` (fixed in `6a4623af`: it drops every
+    `VE_CONTRACT_*` setting), and `acts@0`'s adapter tests' other sources reached `norms@0`'s inputs (fixed in
+    `4471ab19`, deviation 5).
+- Rerun of the failed ids only (`zsh mac-pytest.sh -- <ids>`, ve-mac-1): `test_nested_pytest` passed at `6a4623af`;
+  `test_wire_gate_corpus` passed at `4471ab19` (exit 0, 0 failed ids). `tests/test_acts_contract.py` 10 passed at
+  `4471ab19`.
+- Pre-existing failures on main: none in this run (`main-known-red.txt` not needed).
+- The full gate was not run here (the chain runs it on the final HEAD).
