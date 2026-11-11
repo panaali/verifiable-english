@@ -1,4 +1,6 @@
 import VE.RightClauses.Tree
+import Std.Data.TreeMap
+import Std.Data.HashSet
 
 /-! The elaboration `plain` (docs/spec/right-clauses.md 1.2, 8.3) and the head's checks on structured lines (1.1,
 1.3, 1.5, 4.1 steps 3 and 4, 7).
@@ -69,12 +71,16 @@ def entryError (Dr : RightsDoc) (n : String) : String :=
 def shapeOk (L : CLine) : Bool :=
   (L.clauses.isEmpty && L.relation.isNone) ||
     (L.line.kind != .power && L.line.fanOut.isEmpty && L.line.norm.isSome)
-/-- Spans in wire order: each non-empty, inside the unit `u`, and disjoint from every earlier one (7, K6). -/
-def checkSpans (n : String) (u : Nat × Nat) : List (Nat × Nat) → List (Nat × Nat) → Except String Unit
+/-- Spans in wire order: each non-empty, inside the unit `u`, and disjoint from every earlier one (7, K6). The earlier
+    spans (`earlier`, end by start) are non-empty and pairwise disjoint, so their ends grow with their starts: a span
+    `[a, b)` overlaps one of them exactly when it overlaps the one with the greatest start below `b`. One lookup per
+    span, so the check is `O(s log s)`, not quadratic (W1 fixture, the evaluator rule of 2026-10-27); the answers are
+    the pairwise check's (`checkSpansPairwise`, Examples.lean). -/
+def checkSpans (n : String) (u : Nat × Nat) : Std.TreeMap Nat Nat → List (Nat × Nat) → Except String Unit
   | _, [] => .ok ()
   | earlier, s :: rest =>
-    if s.1 < s.2 && u.1 ≤ s.1 && s.2 ≤ u.2 && earlier.all (fun t => s.2 ≤ t.1 || t.2 ≤ s.1) then
-      checkSpans n u (s :: earlier) rest
+    if s.1 < s.2 && u.1 ≤ s.1 && s.2 ≤ u.2 && (earlier.getEntryLT? s.2).all (fun t => t.2 ≤ s.1) then
+      checkSpans n u (earlier.insert s.1 s.2) rest
     else .error s!"ClauseSpan: {n}: [{s.1}, {s.2})"
 /-- 1.1, 1.3, 1.5: two distinct slots of the line; `pred` a declared binary base predicate of their sorts with no
     reserved prefix; `total`, when set, one of the two slots, the line's holder slot `hs`, with `H_R` typed over
@@ -85,35 +91,36 @@ def relationOk (B : VE.Environment) (Rt : VE.Rights.Right) (hs : Option Nat) (ss
     B.predicates rel.pred == some [ss.getD rel.slots.1 "", ss.getD rel.slots.2 ""] &&
     !(rel.pred.startsWith "rights__" || rel.pred.startsWith "soft__" || rel.pred.startsWith "ve__") &&
     rel.total.all (fun j => (j == rel.slots.1 || j == rel.slots.2) && hs == some j && Rt.guard.check B [Rt.holder])
-/-- Clause typing, spans, the relation and its cites of one entry whose right is `Rt` (4.1 step 3). -/
-def checkBody (D : ClauseDoc) (Dr : RightsDoc) (Rt : VE.Rights.Right) (x : String × String × CLine) :
+/-- Clause typing, spans, the relation and its cites of one entry whose right is `Rt` (4.1 step 3). `units` is the
+    set of `D.doc`'s unit ids, built once per document, so a cite costs one lookup (the evaluator rule of 2026-10-27). -/
+def checkBody (D : ClauseDoc) (units : Std.HashSet String) (Dr : RightsDoc) (Rt : VE.Rights.Right) (x : String × String × CLine) :
     Except String Unit := do
   let (R, n, L) := x
   let ss := lineSorts D.doc.soft L.line
   for (c, i) in L.clauses.zipIdx do
     unless c.formula.check (baseEnv D) ss.reverse do throw s!"InvalidInput: ill-typed clause {i} of rule {n}"
-  checkSpans n L.unitSpan [] (L.clauses.map (·.span) ++ L.elided)
+  checkSpans n L.unitSpan ∅ (L.clauses.map (·.span) ++ L.elided)
   for rel in L.relation.toList do
     unless relationOk (baseEnv D) Rt ((VE.Rights.instancesOf R L.line 0).head?.map (holderSlot Dr)) ss rel do
       throw s!"RelationShape: {n}"
     for u in rel.cites do
-      unless D.doc.sourceUnits.contains u do throw s!"UnknownSymbol: unit {u}"
+      unless units.contains u do throw s!"UnknownSymbol: unit {u}"
 /-- One entry against the entries `cl` it belongs to, the rights document `Dr` holding its right and the source
     lines `src` it may name: the entry, the line shape, then `checkBody`. -/
-def checkEntry (D : ClauseDoc) (cl : List (String × String × CLine)) (Dr : RightsDoc)
+def checkEntry (D : ClauseDoc) (units : Std.HashSet String) (cl : List (String × String × CLine)) (Dr : RightsDoc)
     (src : List (String × SourceLine)) (x : String × String × CLine) : Except String Unit :=
   match VE.Rights.rightOf Dr x.1 with
   | some Rt =>
     if !entryOk cl Dr src x then .error (entryError Dr x.2.1)
     else if !shapeOk x.2.2 then .error s!"ClauseLineShape: {x.2.1}"
-    else checkBody D Dr Rt x
+    else checkBody D units Dr Rt x
   | none => .error (entryError Dr x.2.1)
 
 /-- 1.1, 1.3, 7: shape, typing, spans, relation and cites of every entry; the entries name distinct rules, each the
     rule of exactly one source line of `D.doc`, of the right the entry names, and `L.line` is that source line;
     and, for a total relation, `(holderGuardOf D R).check (baseEnv D) [holder]`. -/
 def checkClauses (D : ClauseDoc) : Except String Unit :=
-  D.lines.forM (checkEntry D D.lines D.doc (sourceLines D.doc))
+  D.lines.forM (checkEntry D (Std.HashSet.ofList D.doc.sourceUnits) D.lines D.doc (sourceLines D.doc))
 def WellFormedClauses (D : ClauseDoc) : Bool := match checkClauses D with | .ok () => true | .error _ => false
 /-- The rights document holding a candidate's right and the source lines its entries may name: the candidate's
     own right for `.right`, else `D.doc` with the content's lines. -/
@@ -126,8 +133,9 @@ def candSource (D : ClauseDoc) : VE.Compose.Content → RightsDoc × List (Strin
     sort, `H_R`) is the candidate's own when its content is `.right`, else `D.doc`'s; unit ids are `D.doc`'s. Then
     `RelationOnCandidate` for the first total relation. -/
 def checkCandidates (D : ClauseDoc) : Except String Unit := do
+  let units := Std.HashSet.ofList D.doc.sourceUnits
   for (_, _, c, cl) in D.cands do
-    cl.forM (checkEntry D cl (candSource D c).1 (candSource D c).2)
+    cl.forM (checkEntry D units cl (candSource D c).1 (candSource D c).2)
   for (s, i, _, cl) in D.cands do
     for x in cl do
       if (x.2.2.relation.bind (·.total)).isSome then throw s!"RelationOnCandidate: {s}:{i}: {x.2.1}"
@@ -311,7 +319,7 @@ theorem forM_ok {α : Type} (f : α → Except String Unit) :
       · exact hy
       · exact forM_ok f l h x hx
 
-theorem checkEntry_ok {D cl Dr src x} (h : checkEntry D cl Dr src x = .ok ()) :
+theorem checkEntry_ok {D units cl Dr src x} (h : checkEntry D units cl Dr src x = .ok ()) :
     entryOk cl Dr src x = true ∧ shapeOk x.2.2 = true := by
   unfold checkEntry at h
   split at h

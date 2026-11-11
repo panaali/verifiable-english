@@ -7,7 +7,7 @@ import sys
 from .ast import doc_from_json, document_to_data
 from .check import check
 from .environment import Environment
-from .errors import CheckerUnavailable, ResourceLimit, VEError
+from .errors import CheckerUnavailable, ResourceLimit, VEError, diagnostic_answer
 from .fol import document_from_named_fol
 from .limits import MAX_PACKAGE_BYTES, MAX_SOURCE_BYTES
 from .model import FiniteModel
@@ -31,6 +31,14 @@ def _read(path, limit=MAX_PACKAGE_BYTES):
 
 def _emit(value):
     print(json.dumps(value, ensure_ascii=False, indent=2, allow_nan=False))
+
+
+def _emit_error(exc):
+    """The one structured answer for an input diagnostic: `{status, error}` on stdout, and its exit code (4 for
+    `ResourceLimit`, else 2), from `diagnostic_answer`. `CheckerUnavailable` is not a `VEError`; `main` answers it."""
+    answer, code = diagnostic_answer(exc)
+    _emit(answer)
+    return code
 
 
 EXIT_CHECKER_UNAVAILABLE = 5
@@ -143,8 +151,7 @@ def _senses_subcommand(argv):
                "review_status": pack_review(packs, answer["dictionary_id"])})
         return code
     except VEError as exc:
-        _emit({"status": "ResourceLimit" if exc.code == "ResourceLimit" else "InvalidInput", "error": exc.to_dict()})
-        return 4 if exc.code == "ResourceLimit" else 2
+        return _emit_error(exc)
     except (UnicodeError, OSError, ValueError) as exc:
         _emit({"status": "InvalidInput", "error": {"code": "InvalidInput", "message": str(exc)}})
         return 2
@@ -272,7 +279,10 @@ def _main(argv=None):
         return scope_main(argv[1:])
     if argv[:1] == ["document"]:
         from .document import main as document_main
-        return document_main(argv[1:])
+        try:
+            return document_main(argv[1:])
+        except VEError as exc:
+            return _emit_error(exc)
     if argv[:2] == ["norms", "completions"]:
         completions_parser = argparse.ArgumentParser(prog="python -m ve norms completions")
         completions_parser.add_argument("--audit", required=True,
@@ -566,8 +576,7 @@ def _main(argv=None):
             print(print_document(env, document), end="")
         return 0
     except VEError as exc:
-        _emit({"status": "ResourceLimit" if exc.code == "ResourceLimit" else "InvalidInput", "error": exc.to_dict()})
-        return 4 if exc.code == "ResourceLimit" else 2
+        return _emit_error(exc)
     except (OSError, ValueError) as exc:
         _emit({"status": "InvalidInput", "error": {"code": "InvalidInput", "message": str(exc)}})
         return 2
