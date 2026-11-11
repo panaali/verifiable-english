@@ -229,6 +229,58 @@ def checkOf (norms : List Json) (environment : Json := envOf [] (actOf 20)) : Op
 #guard checkOf [ruleOf "r0" "paid" (unaryOn "w"), ruleOf "r0" "paid" (unaryOn "w")] == some "norms/4.2"
 -- 1.1 comes first, and a rule is not typed over an environment 1.1 refuses
 #guard checkOf [ruleOf "r0" "paid" (unaryOn "nope")] (envOf [] (actOf (maxActBytes + 1))) == some "1.1c"
+-- a joined act, which 1.1 reads (ap-3dc), is read by 4.7 too
+def joinedEnv : Json :=
+  let e := envOf ["cruel, inhuman or degrading treatment or punishment"] (actOf 20)
+  let v := e.getObjValD "vocabulary"
+  let v := v.setObjVal! "acts" (Json.mkObj [("fixed", toJson ["cruel, inhuman or degrading treatment or punishment"]),
+    ("frames", toJson [Json.mkObj [("head", "subjected"), ("markers", toJson ["to"]), ("split", toJson ["to"]),
+      ("modifiers", Json.arr #[])]])])
+  e.setObjVal! "vocabulary" (v.setObjVal! "predicates" ((v.getObjValD "predicates").setObjVal! "p027" (Json.mkObj
+    [("arguments", toJson ["person"]), ("description", "d"), ("regulated", Json.mkObj [("role", "permission"),
+      ("default", "deny"),
+      ("act", "{0} be subjected to torture or to cruel, inhuman or degrading treatment or punishment")])])))
+#guard memberOf joinedEnv == none && checkOf [ruleOf "r0" "paid" (unaryOn "nope")] joinedEnv == some "norms/4.7b"
+-- `data@0` reaches the typing walk: a `$string` binder is 4.7e with it and 4.7b without it
+def stringBinder : Json := toJson [toJson "forall", toJson "$string", toJson [toJson "top"]]
+#guard checkOf [ruleOf "r0" "paid" stringBinder] (envOf [] (actOf 20) ["acts@0", "data@0", "norms@0", "relational-fol@0"])
+  == some "norms/4.7e" && checkOf [ruleOf "r0" "paid" stringBinder] == some "norms/4.7b"
+-- one running node total over the rules, from none: two rules of half the budget each fit, and a third node is
+-- refused at the third rule
+def balancedOn : Nat → Nat → Json
+  | 0, _ => unaryOn "w"
+  | fuel + 1, n => if n ≤ 1 then unaryOn "w" else
+    toJson [toJson "and", balancedOn fuel ((n + 1) / 2), balancedOn fuel (n - (n + 1) / 2)]
+def faultOf (norms : List Json) : Option (String × String) :=
+  (run Tables.Acts.table hooks (Json.mkObj [("environment", envOf [] (actOf 20)), ("norms", toJson norms)])).map fun f =>
+    let r := record Tables.Acts.table f
+    ((r.getObjValD "check").getStr?.toOption.getD "", (r.getObjValD "path").getStr?.toOption.getD "")
+#guard let half := balancedOn 32 ((VE.Limits.maxNodes / 2 + 1) / 3)
+  faultOf [ruleOf "r0" "paid" half, ruleOf "r1" "paid" half, ruleOf "r2" "paid" (toJson [toJson "top"])] ==
+    some ("norms/4.7d", "/norms/2")
+-- the profile row before the decoder, on any list that names `acts@0`: an unsorted one with an unknown field
+#guard (match decoded ((envOf [] (actOf 20) ["norms@0", "relational-fol@0", "acts@0"]).setObjVal! "x" 1) with
+  | .error e => e | .ok () => "") == "UnsupportedProfile: profiles must be sorted and unique"
+-- the rule phases are `norms@0`'s, as its generated table has them, under the one include `norms`
+deriving instance BEq for Step
+deriving instance BEq for Base
+deriving instance BEq for Pattern
+deriving instance BEq for Value
+deriving instance BEq for Atom
+deriving instance BEq for TypeForm
+deriving instance BEq for Lit
+deriving instance BEq for NameClass
+deriving instance BEq for Renderer
+deriving instance BEq for Piece
+deriving instance BEq for Member
+deriving instance BEq for Kind
+deriving instance BEq for Check
+deriving instance BEq for Entry
+#guard match Tables.Acts.table.phases with
+  | [⟨"environment", _⟩, ⟨"rules", [.scope "norms" ⟨.root, []⟩ none none es]⟩] =>
+    es == (Tables.Norms.table.phases.filter (·.name != "environment")).flatMap (·.entries) &&
+      Tables.Norms.table.phases.map (·.name) == ["environment", "profiles", "rule-shape", "rules", "references", "semantic"]
+  | _ => false
 -- the adapter reads `acts@0` sources of the norms route only, wherever `acts@0` is listed
 def caseOf (kind : String) (ps : List String) : Json :=
   Json.mkObj [("kind", kind), ("environment", envOf [] (actOf 20) ps), ("norms", Json.arr #[])]
