@@ -39,6 +39,16 @@ G_NAMES = ("#guard (elaborateMap e1).toOption.all fun (U, M) => (M.preds.map (·
            "  M.preds.all fun (q, p, i) => q == partPred p i && !(U.D.T.regulated.any (·.name == p))")
 G_OK = "#guard (elaborateMap e1).isOk && (elaborateMap e4).isOk"
 
+
+def examples_guard(start):
+    """The `#guard` of ElaborateExamples.lean that starts with `start` (sliced, not copied)."""
+    ex = (ROOT / EXAMPLES).read_text()
+    i = ex.index(start)
+    return ex[i:ex.index("\n", i)]
+
+
+G_SPLIT = examples_guard('#guard splitAtoms e1 "p027"')
+
 # (id, file, definition, from, to, claim, guards)
 BUGS = [
     ("parts-from-index-0", DEFS, "partsOf", "((sa p).getD []).zipIdx 1", "((sa p).getD []).zipIdx 0",
@@ -56,6 +66,10 @@ BUGS = [
      "xs.map fun x => { r with name := r.name, act",
      "splitMap_exact and elaborate_parts: a part is declared under its own name, and the source is gone",
      [G_NAMES, G_OK]),
+    ("atoms-reversed", DEFS, "atomsOf", "if 2 ≤ atoms.length then some atoms else none",
+     "if 2 ≤ atoms.length then some atoms.reverse else none",
+     "the E1 and E4 examples' split pin: part 1 is torture (the theorems hold of any order; the pin catches it)",
+     ["G_SPLIT"]),
     ("statement-index-from-2", PROOFS, "splitMap_exact",
      "q = partPred p i ∧ p ∈ D.U.D.T.regulated.map (·.name) ∧ p ∉ U'.D.T.regulated.map (·.name) ∧ 1 ≤ i",
      "q = partPred p i ∧ p ∈ D.U.D.T.regulated.map (·.name) ∧ p ∉ U'.D.T.regulated.map (·.name) ∧ 2 ≤ i",
@@ -114,9 +128,10 @@ def check(text, ends):
 
 def main():
     defs, proofs = (ROOT / DEFS).read_text(), (ROOT / PROOFS).read_text()
-    restored, _ = check(*combined(defs, proofs, list(dict.fromkeys(g for b in BUGS for g in b[6]))))
+    restored, _ = check(*combined(defs, proofs, list(dict.fromkeys(G_SPLIT if g == "G_SPLIT" else g for b in BUGS for g in b[6]))))
     rows = []
     for bid, file, definition, old, new, claim, guards in BUGS:
+        guards = [G_SPLIT if g == "G_SPLIT" else g for g in guards]
         src = defs if file == DEFS else proofs
         assert src.count(old) == 1, bid
         mutated = src.replace(old, new)
