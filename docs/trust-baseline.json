@@ -2490,6 +2490,20 @@
    "reason": "ps-3: VE/Presupposition/Couple.lean S +105 (K +0, V +0; tied +26)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ps-3, 2026-11-10",
    "commit": "c94ad399b7b1f6804c12fbc555a5758d5e971ae6"
+  },
+  {
+   "class": "S",
+   "lines": 11,
+   "reason": "cmp-s3a-cfr-3: ElidedBytes.lean S +11, V +11; Run.lean V +3; K +0; trusted +25",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s3a-cfr-3, 2026-10-18",
+   "commit": "97b3c7999add79633321ed10742aef613d66c5a2"
+  },
+  {
+   "class": "V",
+   "lines": 14,
+   "reason": "cmp-s3a-cfr-3: ElidedBytes.lean S +11, V +11; Run.lean V +3; K +0; trusted +25",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s3a-cfr-3, 2026-10-18",
+   "commit": "97b3c7999add79633321ed10742aef613d66c5a2"
   }
  ]
 }
