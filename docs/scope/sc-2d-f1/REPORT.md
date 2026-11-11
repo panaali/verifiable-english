@@ -1,7 +1,9 @@
 # sc-2d-f1: pin spec 5.4's effect-statement binders from the elaborated statements — build report
 
-Status: **done**. No DRI signature reserved, no DELTA row (tests and docs only), trust +0. Base `0295df1743`.
-SIZE: 0 product, 227 tests, 6 other hand-written lines (plus this report); the review fix (F1) added 85 test lines.
+Status: **done**. No DRI signature reserved, no DELTA row (tests, gate tools and docs only), trust +0. Base `0295df1743`.
+SIZE: 0 product, 227 tests, 6 other hand-written lines (plus this report); the review fix (F1) added 85 test lines;
+the recheck fix (F2) changed 248 lines: 123 in the statement-gate tools (`tools/check_readings_defaults_statements.py`,
+`tools/check_pc3_statements.py`) and 125 in tests.
 Pilot: 0 bytes (tests and docs only); nothing claimed. Next: none.
 
 ## Deliverables
@@ -49,6 +51,22 @@ Seeded bugs for F1 (each planted alone, then restored with `git checkout` or the
 |---|---|---|
 | `def Typed … : Prop := True` in the Lean source | lean/VE/Scope/Theorems.lean | the probe's substitution: `test_every_declaration_of_spec_5_4_is_the_lean_text[def Typed]`. Planted in the file itself, the module no longer builds (`applyEffect_typed`'s proof: `Insufficient number of fields for ⟨...⟩`), and the test file's import-time inventory guard stops collection with `error: build failed` |
 | M4 `declaration_faults` compares only theorems (main's behaviour) | tests/test_scope_5_4_statements.py | `test_a_vacuous_declaration_fails[def Typed]` (1 failed, 17 passed of the two new tests) |
+
+## Recheck fix (sc-2d-f1-looprecheck1.final.md)
+
+| Finding | Fix | Regression tests |
+|---|---|---|
+| F2 (B): the declaration scanner ended a declaration at a blank line, so `∧ False` after a blank line in `Typed`'s body escaped the comparison | The class (a declaration's compared extent is not the one Lean reads) is removed in the one scanner every statement gate uses: `tools/check_readings_defaults_statements.py` gains `lex` (comments and doc comments blanked, string, raw-string and character literals skipped) and `spans`: a declaration runs to the next Lean command (`COMMANDS`, `@[`, `#`, `/--`, `/-!`) at column 0 in code. A blank line or a comment inside a declaration no longer ends it, a declaration inside a comment is no longer read as one, and comments are left out on both sides. `declarations` reads through `spans`; PC-3's own blank-line copy (used by PC-9 and PC-2a) now calls it; the 5.4 test's `statement` and `mutant` and the RD test's `_mutate` read the same spans (`span`). A column-0 line that is not a known command stays in the declaration, so an unknown command can only make a text differ, never hide part of one. Every RD, RD-9/SC-1, PC-3, PC-9 and PC-2a gate prints the same output as before on the real sources. | `test_a_suffix_after_a_gap_is_compared[*]` (45: each of the 9 declarations × a blank line, a line of spaces, a column-0 line comment, a block comment, a nested block comment), `test_a_commented_out_declaration_is_missing[*]` (9), `tests/test_statement_scanner.py` (17: blank lines in a body and a statement, comments, a column-0 continuation, commented-out and doc-comment declarations, comment marks in string and character literals, the commands that end a declaration; each through the RD and the PC-3 scanner) |
+
+PROBE F2, run as given: before the fix exit 1 (`AssertionError: Typed body suffix escaped comparison`); after it exit 0.
+
+Seeded bugs for F2 (Python, the changed tool; each planted alone, then restored from a copy):
+
+| Bug | File | Fails |
+|---|---|---|
+| A blank line ends a declaration again (`[ \t]*\n` added to `COMMAND`) | tools/check_readings_defaults_statements.py | 34 of the new tests: `test_a_suffix_after_a_gap_is_compared[def Typed-blank line]` and the blank-line, spaces and nested-comment cases of every declaration, `test_the_scanner_reads_a_declaration_as_lean_does[blank line in a body-rd]` and `[...-pc3]`; the probe fails again |
+| `lex` does not see comments | tools/check_readings_defaults_statements.py | 16: `test_a_commented_out_declaration_is_missing[*]` (9), `test_the_scanner_reads_a_declaration_as_lean_does[commented-out declaration-*]`, `[declaration in a doc comment-*]`, `[comments in a body-*]`, `test_the_span_ends_at_the_last_code_of_the_declaration` |
+| `lex` does not see string literals | tools/check_readings_defaults_statements.py | `test_the_scanner_reads_a_declaration_as_lean_does[comment marks in literals-rd]` and `[...-pc3]` |
 
 ## Checks run
 
