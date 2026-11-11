@@ -208,3 +208,5 @@ def test_the_check_tells_a_changed_statement():
         assert changed != statement(spec_5_4(), name), name
         if name in EFFECTS:
             assert binder_faults(name, changed, typed(name)), name
+    for name in EFFECTS:  # the elaborated premise at `hw` is read, not only counted
+        assert binder_faults(name, statement(spec_5_4(), name), typed(name).replace("JsonWF o →", "JsonWF o' →", 1))
