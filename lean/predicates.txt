@@ -23,6 +23,7 @@ module ResponseShape.Encoders.Discourse
 module ResponseShape.Encoders.Document
 module ResponseShape.Encoders.English
 module ResponseShape.Encoders.EnglishLean
+module ResponseShape.Encoders.EnglishStatement
 module ResponseShape.Encoders.Envelope
 module ResponseShape.Encoders.Family
 module ResponseShape.Encoders.Metered
@@ -62,6 +63,7 @@ module ResponseShape.Schemas.Discourse
 module ResponseShape.Schemas.Document
 module ResponseShape.Schemas.English
 module ResponseShape.Schemas.EnglishLean
+module ResponseShape.Schemas.EnglishStatement
 module ResponseShape.Schemas.Envelope
 module ResponseShape.Schemas.Environment
 module ResponseShape.Schemas.Evaluate
@@ -275,6 +277,7 @@ module VE.Commands.Steps
 module VE.Commands.StepsExamples
 module VE.Commands.StepsProofs
 module VE.Commands.Texts
+module VE.Commands.WebEnvMain
 module VE.Compose.Adjoin
 module VE.Compose.Content
 module VE.Compose.Contract
