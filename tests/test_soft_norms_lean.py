@@ -11,6 +11,7 @@ from __future__ import annotations
 
 from copy import deepcopy
 import json
+import re
 from pathlib import Path
 
 import pytest
@@ -365,6 +366,129 @@ def test_alpha_rank_resolved_conflict_free_unconditionally(lean):
     verdict = run(lean, [{"id": "c", "kind": "soft-conflict", "environment": environment_json,
                           "norms": alpha, "packages": certified}])[0]
     assert verdict["verdict"] == "CONFLICT-FREE" and verdict["conditional_on"] == []
+
+
+# soft-cf-text-1 (docs/soft-norms/soft-cf-text-1/DELTA.md): with no `coherent_model` no search runs, so the CONFLICT-FREE
+# line says none was supplied and quotes the budget as unused (R1, the words of rights.md 7.3), never "UNKNOWN (budget";
+# `<j>` counts the open WP(T) a `soft-pairs` request with the same evidence lists, which can exceed `<k>`.
+SOFT_SPEC = ROOT / "docs/spec/soft-norms.md"
+OPEN_PAIR = "soft:coherence:a,b"
+
+
+def soft_spec_line(*, k, j, exhibited, budget=10000):
+    """soft-norms.md 7.3's CONFLICT-FREE template (its two lines joined), one situation alternative chosen
+    (`exhibited`: "yes" or "none supplied"). The template's `(<labels>)` is not printed on the line: the labels are the
+    answer's `conditional_on` field (docs/soft-norms/soft-cf-text-1/REPORT.md, Notes)."""
+    block = SOFT_SPEC.read_text(encoding="utf-8").split("### 7.3 Status text", 1)[1].split("```text\n", 1)[1]
+    first, second = block.splitlines()[:2]
+    head, alternatives = f"{first} {second}".split("coherent situation exhibited: ")
+    [chosen] = [a for a in alternatives.split(" | ") if a.startswith(exhibited)]
+    filled = (f"{head}coherent situation exhibited: {chosen}".replace(" (<labels>)", "")
+              .replace("<k>", str(k)).replace("<j>", str(j)).replace("<budget>", f"budget {budget}"))
+    assert "<" not in filled
+    return filled
+
+
+def packages_without_coherence(environment_json, norms, row):
+    """Certificates whose traces never use a coherence premise: proved with each soft premise read as `top`, then bound
+    to the real premise list (the one Lean replays). `sufficientCoherence` drops every leaf such a trace ignores."""
+    from ve.entailment import _binding, _validate_inputs
+    profiles = environment_json["profiles"]
+    env_id = digest(f"ve-environment-{identity(profiles)}\n", environment_json)
+    doc_hash = digest(f"ve-soft-norms-{identity(profiles)}\n",
+                      {"environment_id": env_id, "document": [canonical_norm(n) for n in norms]})
+    base = base_prime(row)
+    soft = [b["ast"] for b in row["background"] if b["generator"] == "soft"]
+    out = {}
+    for t in row["conflict_targets"]:
+        closed = ["not", t["ast"]]
+        for sort in reversed(t["sorts"]):
+            closed = ["forall", sort, closed]
+        conclusion = formula_from_data(base, closed)
+        proved = prove_entailment(base, [formula_from_data(base, ["top"]) for _ in soft], conclusion)
+        assert proved.status == "Found", t["target"]
+        real = _validate_inputs(base, [formula_from_data(base, f) for f in soft], conclusion, background=True)
+        out[t["target"]] = {"environment_id": env_id, "document_hash": doc_hash, "target": t["target"],
+                            "certificate": {**_binding(base, real, conclusion), "trace": proved.certificate["trace"]}}
+    return out
+
+
+def delta_requests(lean):
+    """The requests of the saved delta records (docs/soft-norms/soft-cf-text-1/delta.json), by fixture name."""
+    environment_json = env()
+    delta = [should("a", "x_required", True), should("b", "x_permitted", False)]
+    certified = packages(environment_json, delta, elaborate(lean, environment_json, delta))
+    case = {"kind": "soft-conflict", "environment": environment_json, "norms": delta, "packages": certified}
+    coherent = model({"soft__excepted__a": [["a"]], "soft__excepted__b": []})
+    bottom = [should("a", "x_required", True, guard=("bottom",)), should("b", "x_permitted", False)]
+    loose = packages_without_coherence(environment_json, bottom, elaborate(lean, environment_json, bottom))
+    return {"delta, no model": {**case, "id": "c"},
+            "delta, no model, budget 7": {**case, "id": "c7", "budget": 7},
+            "delta, coherent model": {**case, "id": "shown", "coherent_model": coherent},
+            "bottom guard, certificates without Coh, no model": {
+                "id": "b", "kind": "soft-conflict", "environment": environment_json, "norms": bottom,
+                "packages": loose}}
+
+
+def test_soft_conflict_free_without_a_coherent_model_names_no_search(lean):
+    """soft-cf-text-1 (1): no `coherent_model`, so no search ran; the line must not read as one that hit its budget. It
+    keeps the quoted budget (R1) and every JSON field; a supplied model still says yes. The relay passes Lean's line."""
+    from ve.soft_route import check_soft_conflict
+    from ve.softnorms import SoftEnvironment, SoftNormDocument
+    requests = delta_requests(lean)
+    bare, seven, shown = run(lean, [requests[name] for name in
+                                    ("delta, no model", "delta, no model, budget 7", "delta, coherent model")])
+    for answer, budget in ((bare, 10000), (seven, 7)):
+        assert answer["verdict"] == "CONFLICT-FREE", answer
+        assert "UNKNOWN" not in answer["status_text"]
+        assert answer["status_text"].endswith(
+            f"; coherent situation exhibited: none supplied (not searched; budget {budget} unused)")
+        assert answer["status_text"] == soft_spec_line(k=1, j=1, exhibited="none supplied", budget=budget)
+        assert (answer["coherent_exhibit"], answer["budget"], answer["conditional_on"]) == (False, budget, [OPEN_PAIR])
+    assert shown["status_text"] == soft_spec_line(k=1, j=1, exhibited="yes")
+    assert (shown["coherent_exhibit"], shown["budget"], shown["conditional_on"]) == (True, 10000, [OPEN_PAIR])
+    document = SoftNormDocument(SoftEnvironment(env()), requests["delta, no model"]["norms"])
+    relayed = check_soft_conflict(document, packages=requests["delta, no model"]["packages"], budget=7)
+    assert relayed["status_text"] == seven["status_text"]
+
+
+def test_soft_weighing_point_count_is_the_open_wp_list(lean):
+    """soft-cf-text-1 (2): `<j>` counts the open WP(T) (`openAfterClassification`, rebuilt on `Wire.openCoherence`), the
+    `weighing_points` a `soft-pairs` request with the same evidence lists, not the `<k>` premises used. Default `a` is
+    guarded by bottom, so the pair target holds without its coherence premise: certificates that never use it leave
+    `<k>` 0 while the unranked pair stays one open weighing point."""
+    requests = delta_requests(lean)
+    case = requests["bottom guard, certificates without Coh, no model"]
+    answer, pairs = run(lean, [case, {"id": "p", "kind": "soft-pairs", "environment": case["environment"],
+                                      "norms": case["norms"], "pairs": {}}])
+    assert pairs["weighing_points"] == [OPEN_PAIR]
+    assert answer["verdict"] == "CONFLICT-FREE" and answer["conditional_on"] == [], answer
+    assert "conditional on 0 coherence premises; 1 weighing points open; " in answer["status_text"]
+    assert answer["status_text"] == soft_spec_line(k=0, j=len(pairs["weighing_points"]), exhibited="none supplied")
+
+
+def test_soft_no_search_delta_keeps_every_quoted_value(lean):
+    """The R1 delta test over the saved evidence (docs/soft-norms/soft-cf-text-1/delta.json): each record's head is
+    Lean's line now, at the base's path, and keeps every number the base quoted; the one phrase removed is the
+    no-search line's "UNKNOWN (budget N)"."""
+    saved = json.loads((ROOT / "docs/soft-norms/soft-cf-text-1/delta.json").read_text(encoding="utf-8"))
+    requests = delta_requests(lean)
+    assert [r["fixture"] for r in saved["records"]] == list(requests)
+    answers = run(lean, [requests[r["fixture"]] for r in saved["records"]])
+    for record, answer in zip(saved["records"], answers):
+        assert record["path"] == "status_text" and answer[record["path"]] == record["head"], record["fixture"]
+        # Every JSON field byte for byte as saved (the base's, evidence/step1-output.txt), and no field added.
+        assert {k: answer[k] for k in saved["unchanged_fields"]} == record["fields"]
+        assert set(answer) == {"id", "status", "status_text", *saved["unchanged_fields"]}
+        quoted = re.findall(r"\d+", record["base"])
+        assert all(record["head"].count(value) >= record["base"].count(value) for value in quoted)
+        budget = requests[record["fixture"]].get("budget", 10000)
+        if record["model"]:
+            assert record["head"] == record["base"]
+        else:
+            removed = f"UNKNOWN (budget {budget})"
+            assert removed in record["base"] and removed not in record["head"]
+            assert f"budget {budget} unused" in record["head"]
 
 
 def test_theta_dual_guard_cycle_on_t_prime(lean):
