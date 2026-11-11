@@ -69,7 +69,7 @@
 - `tests/test_norm_defaults_layered.py` — norm-defaults@0 on the soft and rights routes, in Lean (lean-first batch 10a; docs/spec/norm-defaults.md 2.3 and 3.3; lean/VE/NormDefaults/Layered.lean).
 - `tests/test_norm_defaults_relay_english.py` — The English display formats the Lean accepted norm-defaults rows and nothing else.
 - `tests/test_norm_defaults_report.py` — norm-defaults@0 report in Lean (lean-first batch 10a; docs/spec/norm-defaults.md 3.2 and 5).
-- `tests/test_norm_defaults_response_binding.py` — norm-defaults-cfr-1 (regrade #3, ND-FC2): the norm-defaults mode's answers are bound to their request.
+- `tests/test_norm_defaults_response_binding.py` — norm-defaults-cfr-1 (regrade #3, ND-FC2) and norm-defaults-cfr-1b: the norm-defaults mode's answers are bound to their request.
 - `tests/test_norm_defaults_soft_kinds.py` — RD-9 SC-6: the soft branch's `admission` and `norm-defaults-certificate` under norm-defaults@0 (docs/spec/rd-9-soft-chain.md 1.13, 4.5, 6.10 and 8.3's SC-6 row…
 - `tests/test_norm_defaults_switch.py` — Batch 10b: Lean answers that the Python document and admission paths consume.
 - `tests/test_norm_defaults_three_way.py` — norm-defaults@0: Python, Lean and Rust agree on the spec fixtures (docs/spec/norm-defaults.md 8, 9).
@@ -82,4 +82,3 @@
 - `tests/test_oom_mutation_evidence.py` — The OOM mutation record must show the seeded fault, not a stale checker binary.
 - `tests/test_order.py` — order@0: frozen syntax/identity, evaluation, search, Farkas certificates, English, Lean.
 - `tests/test_order_gate.py` — Order foundations must not open either existing certificate trust boundary.
-- `tests/test_order_grammar.py` — Order grammar export is typed in full mode and covers canonical terms.

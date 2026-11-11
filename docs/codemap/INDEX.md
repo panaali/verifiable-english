@@ -58,7 +58,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [docs/norm-defaults/](docs__norm-defaults.md) — 2 modules — -
 - [docs/oom-rootcause/](docs__oom-rootcause.md) — 2 modules — -
 - [docs/perf/](docs__perf.md) — 2 modules — -
-- [docs/premise-packs/](docs__premise-packs.md) — 1 modules — -
+- [docs/premise-packs/](docs__premise-packs.md) — 2 modules — -
 - [docs/premise-scale/](docs__premise-scale.md) — 4 modules — -
 - [docs/presupposition/](docs__presupposition.md) — 8 modules — -
 - [docs/profile-composition/](docs__profile-composition.md) — 5 modules — -
@@ -114,8 +114,8 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/VE/Presupposition/](lean__VE__Presupposition.md) — 18 modules — -
 - [lean/VE/Purposes/](lean__VE__Purposes.md) — 4 modules — -
 - [lean/VE/Question/](lean__VE__Question.md) — 12 modules — -
-- [lean/VE/Readings/ part 1](lean__VE__Readings--part-1.md) — 74 modules — -
-- [lean/VE/Readings/ part 2](lean__VE__Readings--part-2.md) — 5 modules — -
+- [lean/VE/Readings/ part 1](lean__VE__Readings--part-1.md) — 73 modules — -
+- [lean/VE/Readings/ part 2](lean__VE__Readings--part-2.md) — 8 modules — -
 - [lean/VE/RightClauses/](lean__VE__RightClauses.md) — 24 modules — -
 - [lean/VE/Rights/](lean__VE__Rights.md) — 13 modules — -
 - [lean/VE/Risk/](lean__VE__Risk.md) — 14 modules — -
@@ -137,18 +137,18 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [tests/ part 1](tests--part-1.md) — 90 modules — -
 - [tests/ part 2](tests--part-2.md) — 91 modules — -
 - [tests/ part 3](tests--part-3.md) — 88 modules — -
-- [tests/ part 4](tests--part-4.md) — 85 modules — -
+- [tests/ part 4](tests--part-4.md) — 84 modules — -
 - [tests/ part 5](tests--part-5.md) — 83 modules — -
 - [tests/ part 6](tests--part-6.md) — 82 modules — -
 - [tests/ part 7](tests--part-7.md) — 85 modules — -
-- [tests/ part 8](tests--part-8.md) — 22 modules — -
+- [tests/ part 8](tests--part-8.md) — 24 modules — -
 - [tests/frozen_speech/](tests__frozen_speech.md) — 4 modules — Frozen pre-switch speech oracle.
 - [tools/ part 1](tools--part-1.md) — 98 modules — -
 - [tools/ part 2](tools--part-2.md) — 15 modules — -
 - [tools/bench/](tools__bench.md) — 8 modules — -
 - [tools/evidence/](tools__evidence.md) — 7 modules — The evidence toolkit (docs/ARCHITECTURE-REVIEW-2026-10.md, T6 and AR-5a): one implementation of each batch measurement, so a batch writes `docs/<track>/<batch>…
 - [tools/hooks/](tools__hooks.md) — 1 modules — `pre-commit` runs fast checks on the **staged** content of a commit.
-- [usecases/](usecases.md) — 64 modules — -
+- [usecases/](usecases.md) — 65 modules — -
 - [ve/](ve.md) — 83 modules — VE v0 experimental language, finite semantics and checked argument API.
 - [ve/adapters/](ve__adapters.md) — 6 modules — Audited statement-layer and data adapters.
 - [ve/assist/](ve__assist.md) — 17 modules — ``ve assist``: interactive, sentence-level assisted formalisation.
