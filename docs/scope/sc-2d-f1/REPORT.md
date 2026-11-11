@@ -38,6 +38,7 @@ No product code changed in any language. The bugs are planted in the new checker
 ## Checks run
 
 - `uv run pytest -q tests/test_scope_5_4_statements.py`: 43 passed (18 before: the new cases are the 25 plants).
+- Chain run 1 (selected tests, 3 shards): `tests/test_inventory_path.py::test_no_train_only_path_is_read_outside_the_accessor` failed: `typed` read `ROOT / "lean/statements.txt"` directly. Fixed: it reads the list through the accessor, `lean_statements.inventory_path(lean_statements.STATEMENTS)` (which refuses a stale inventory). Afterwards that test and `tests/test_scope_5_4_statements.py` (43) pass.
 - `uv run python tools/select_tests.py --paths <p>` selects `tests/test_scope_5_4_statements.py` for each of `lean/statements.txt` (the new input), `docs/spec/scope.md` and `lean/VE/Scope/Theorems.lean`, and for `--base $(git merge-base HEAD main)`.
 - `uv run python tools/trust_map.py --check`: `K +0, S +0, D +0, G +0, tied +0, unclassified +0, trusted +0`, PASS.
 - `light-lane.py check`: `LIGHT 148 changed lines outside generated files <= 150 (3 files), no trusted-core file`; no trust_mutants sweep (the task asks for none).
@@ -46,7 +47,7 @@ No product code changed in any language. The bugs are planted in the new checker
 
 ## Notes for the DRI
 
-- The pin trusts `lean/statements.txt` to be fresh. A Lean edit without regeneration is caught by `tools/regen_generated.py --check` in the gate, and the test file's import (`tools/check_readings_defaults_statements.py`) refuses a stale inventory.
+- The pin trusts `lean/statements.txt` to be fresh. A Lean edit without regeneration is caught by `tools/regen_generated.py --check` in the gate, `typed` reads it through `inventory_path` (StaleInventory on a changed module), and the test file's import (`tools/check_readings_defaults_statements.py`) refuses a stale inventory.
 - Still not pinned: a premise's or the conclusion's type changed in both the spec and the Lean source with the binders kept. That is a spec change, reviewed as one; sc-2d's report now says so.
 - docs/scope/sc-2d/DELTA.md row 1 says "a statement without `hw` or with another premise fails". That is true under the new pin, so the signed row is not edited.
 
