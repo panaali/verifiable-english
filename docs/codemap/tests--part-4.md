@@ -1,3 +1,6 @@
+- `tests/test_judgments_compose.py` — jt-2c: the modes that compose with `judgments@0` decide over the environment without the document layers (`VE.Compose.decidingEnvironment`) and name the list a…
+- `tests/test_judgments_document.py` — `judgments@0` in Lean's `document` mode (judgment-terms-PLAN.md JT-2; docs/spec/judgment-terms.md 8): the fixtures of spec 11.2 and 11.3 replayed through the s…
+- `tests/test_judgments_exercised.py` — Every trusted definition of the judgment-terms files is stated about by a theorem (standing ruling R16).
 - `tests/test_judgments_undeclared.py` — The `document` mode's `undeclared_evaluative` field (judgment-terms-PLAN.md JT-3, part jt-3a; docs/spec/ judgment-terms.md 7, 8.4 and 11.7): Lean's list of the…
 - `tests/test_lake_outputs.py` — tools/lake_outputs.py: an executable whose Lake trace does not record the file beside it is stale (rd-6b review B2: an older `ve_conformance` under a trace cop…
 - `tests/test_lean_audit_record.py` — The committed axiom audit record `lean/axioms.txt` names every theorem, and the audit refuses a stale one.
@@ -66,7 +69,7 @@
 - `tests/test_norm_defaults_layered.py` — norm-defaults@0 on the soft and rights routes, in Lean (lean-first batch 10a; docs/spec/norm-defaults.md 2.3 and 3.3; lean/VE/NormDefaults/Layered.lean).
 - `tests/test_norm_defaults_relay_english.py` — The English display formats the Lean accepted norm-defaults rows and nothing else.
 - `tests/test_norm_defaults_report.py` — norm-defaults@0 report in Lean (lean-first batch 10a; docs/spec/norm-defaults.md 3.2 and 5).
-- `tests/test_norm_defaults_response_binding.py` — norm-defaults-cfr-1 (regrade #3, ND-FC2): the norm-defaults mode's answers are bound to their request.
+- `tests/test_norm_defaults_response_binding.py` — norm-defaults-cfr-1 (regrade #3, ND-FC2) and norm-defaults-cfr-1b: the norm-defaults mode's answers are bound to their request.
 - `tests/test_norm_defaults_soft_kinds.py` — RD-9 SC-6: the soft branch's `admission` and `norm-defaults-certificate` under norm-defaults@0 (docs/spec/rd-9-soft-chain.md 1.13, 4.5, 6.10 and 8.3's SC-6 row…
 - `tests/test_norm_defaults_switch.py` — Batch 10b: Lean answers that the Python document and admission paths consume.
 - `tests/test_norm_defaults_three_way.py` — norm-defaults@0: Python, Lean and Rust agree on the spec fixtures (docs/spec/norm-defaults.md 8, 9).
@@ -79,8 +82,3 @@
 - `tests/test_oom_mutation_evidence.py` — The OOM mutation record must show the seeded fault, not a stale checker binary.
 - `tests/test_order.py` — order@0: frozen syntax/identity, evaluation, search, Farkas certificates, English, Lean.
 - `tests/test_order_gate.py` — Order foundations must not open either existing certificate trust boundary.
-- `tests/test_order_grammar.py` — Order grammar export is typed in full mode and covers canonical terms.
-- `tests/test_order_round2.py` — The order surface and finite evaluation agree in Python, Rust and Lean.
-- `tests/test_p0_three_way.py` — Three-way P0 conformance: Python, Rust and the Lean `route` subcommand give identical verdicts on every shipped case of the P0 families (PLAN-EXPAND2 3.10(2)).
-- `tests/test_p1.py` — (no module docstring)
-- `tests/test_p1_amendment11.py` — Budget choice and two-turn execution/analysis, without provider calls.
