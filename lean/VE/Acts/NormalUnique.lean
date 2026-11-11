@@ -404,4 +404,92 @@ theorem sm_inv (hV : framesOk V = true) (hW : VocabOk V) {h : Nat} (hF : FrameOk
   · obtain ⟨w1, w2, c1, c2, he, -, h1, h2⟩ := genAll2 hg
     exact (spl_false hV hW hF h1 (by rw [← he]; rfl) hbs).elim
 
+
+/-! ### The head fixes the frame (`SC`) -/
+
+theorem nodup_map_idx {α β : Type} (g : α → β) : ∀ {l : List α} {i j : Nat} {a b : α}, (l.map g).Nodup →
+    l[i]? = some a → l[j]? = some b → g a = g b → i = j
+  | [], _, _, _, _, _, h, _, _ => by simp at h
+  | x :: l, 0, 0, _, _, _, _, _, _ => rfl
+  | x :: l, 0, j + 1, a, b, hn, ha, hb, he => by
+    simp only [List.map_cons, List.nodup_cons] at hn
+    simp at ha hb; subst ha
+    exact (hn.1 (List.mem_map.mpr ⟨b, List.mem_of_getElem? hb, he.symm⟩)).elim
+  | x :: l, i + 1, 0, a, b, hn, ha, hb, he => by
+    simp only [List.map_cons, List.nodup_cons] at hn
+    simp at ha hb; subst hb
+    exact (hn.1 (List.mem_map.mpr ⟨a, List.mem_of_getElem? ha, he⟩)).elim
+  | x :: l, i + 1, j + 1, a, b, hn, ha, hb, he => by
+    simp only [List.map_cons, List.nodup_cons] at hn
+    simp only [List.getElem?_cons_succ] at ha hb
+    rw [nodup_map_idx g hn.2 ha hb he]
+
+/-- `HD` of any frame where the normal form has frame `f`'s head: it is frame `f`'s, and reads its head. -/
+theorem hd_same (hV : framesOk V = true) (hW : VocabOk V) {h : Nat} (hF : FrameOk V f h)
+    (hl : ∀ w ∈ f.head, w.toLower = w) {g : Frame} {h' : Nat} (hg' : (g, h') ∈ V.frames.zipIdx) {u w R : List Tok}
+    {ps : List Piece} (hg0 : Gen V (.n (.F h' .HD)) u ps) (he : u ++ w = f.head.map .word ++ R) :
+    h' = h ∧ g = f ∧ u = f.head.map .word ∧ w = R ∧ ps = [.head f.head] := by
+  have hgf := List.fst_mem_of_mem_zipIdx hg'
+  obtain ⟨vs, rfl, hvs, rfl⟩ := hd_inv hg' (framesOk_words hV g hgf).1 hg0
+  have heq : g.head = f.head := by
+    rcases map_word_append he with ⟨t, ht, -⟩ | ⟨t, rfl, -⟩
+    · have hlv : vs.map String.toLower = vs := lower_map (fun x hx => hl x (by rw [ht]; exact List.mem_append_left _ hx))
+      have := hW.headPre g hgf f hF.frame (by rw [List.isPrefixOf_iff_prefix, ← hvs, hlv, ht]; exact List.prefix_append _ _)
+      exact this.symm
+    · exact hW.headPre f hF.frame g hgf (by
+        rw [List.isPrefixOf_iff_prefix, ← hvs, List.map_append, lower_map hl]; exact List.prefix_append _ _)
+  have hh : h' = h := by
+    have h1 := List.mem_zipIdx_iff_getElem?.mp hg'
+    have h2 := List.mem_zipIdx_iff_getElem?.mp hF.mem
+    exact nodup_map_idx _ hW.headDup h1 h2 (by simp only; rw [heq])
+  subst hh
+  have := zip_frame hF.mem hg'; subst this
+  have hlv : vs.map String.toLower = vs := by
+    rcases map_word_append he with ⟨t, ht, -⟩ | ⟨t, rfl, -⟩
+    · exact lower_map (fun x hx => hl x (by rw [ht]; exact List.mem_append_left _ hx))
+    · rw [List.map_append, lower_map hl] at hvs
+      have ht : t = [] := by simpa using hvs
+      subst ht; simp [lower_map hl]
+  rw [hlv] at hvs; subst hvs
+  have := List.append_cancel_left he
+  exact ⟨rfl, rfl, rfl, this, rfl⟩
+
+theorem part_ne {p : Part} (hp : PartOk V f p) : p.toks ≠ [] := by
+  obtain ⟨x, rest, he, -⟩ := part_head hp; rw [he]; simp
+
+theorem obj_ne {fl : Filler} (hob : ObjOk V f (some fl)) : fl.toks ≠ [] := by
+  obtain ⟨-, hok, hj⟩ := hob
+  cases fl with
+  | one p => exact part_ne (hok p (by simp [Filler.parts]))
+  | joined j qs =>
+    obtain ⟨p, q, rest, rfl⟩ := two_parts (hj j qs rfl).2.1
+    simp only [Filler.toks, listToks_eq]
+    intro he; exact part_ne (hok p (by simp [Filler.parts])) (List.append_eq_nil_iff.mp he).1
+
+/-- The item's core (`SC`) where the normal form has frame `f`'s head, then the object and elements: the head and
+their pieces. -/
+theorem sc_inv (hV : framesOk V = true) (hW : VocabOk V) {h : Nat} (hF : FrameOk V f h)
+    (hl : ∀ w ∈ f.head, w.toLower = w) {ob : Option Filler} (hob : ObjOk V f ob) {bs : List Blk}
+    (hbs : ∀ b ∈ bs, BlkOk V f b) {u : List Tok} {ps : List Piece} (hg0 : Gen V (.n .SC) u ps)
+    (he : u = f.head.map .word ++ (objToks ob ++ blocks bs)) :
+    ps = .head f.head :: (objPieces ob ++ bs.map Blk.piece) := by
+  obtain ⟨rhs, k, cs, hr, hg, ha⟩ := gen_rule hg0
+  subst he
+  rules_of hr fr hfr
+  · rw [ap_SC1] at ha; cases ha
+    obtain ⟨-, -, -, hw, rfl⟩ := hd_same hV hW hF hl hfr (genAll1 hg) (w := []) (R := objToks ob ++ blocks bs) (by simp)
+    have hob' : objToks ob = [] ∧ blocks bs = [] := List.append_eq_nil_iff.mp hw.symm
+    have hbs0 : bs = [] := by
+      cases bs with
+      | nil => rfl
+      | cons b bs => exact (blk_ne hF (hbs b (by simp)) (List.append_eq_nil_iff.mp (by simpa [blocks_cons'] using hob'.2)).1).elim
+    subst hbs0
+    cases ob with
+    | none => rfl
+    | some fl => exact (obj_ne hob hob'.1).elim
+  · rw [ap_SC2] at ha; cases ha
+    obtain ⟨w1, w2, c1, c2, he, rfl, h1, h2⟩ := genAll2 hg
+    obtain ⟨rfl, rfl, rfl, rfl, rfl⟩ := hd_same hV hW hF hl hfr h1 he.symm
+    rw [sm_inv hV hW hF hob hbs h2 rfl]; rfl
+
 end VE.Acts.NormalProofs

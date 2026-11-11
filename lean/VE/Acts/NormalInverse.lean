@@ -190,7 +190,7 @@ theorem firstDup_none : ∀ {l : List String}, firstDup l = none → l.Nodup
 
 /-- What `framesOk` gives the uniqueness argument (1.4): reserved words, prefixes and overlaps. -/
 structure VocabOk (V : Vocab) : Prop where
-  headRes : ∀ g ∈ V.frames, ∀ w ∈ g.head, w ≠ "to" ∧ w ≠ "be"
+  headRes : ∀ g ∈ V.frames, ∀ w ∈ g.head, w ≠ "to" ∧ w ≠ "be" ∧ w ≠ "and" ∧ w ≠ "or" ∧ w ≠ "nor"
   headDup : (V.frames.map (fun g => " ".intercalate g.head)).Nodup
   headPre : ∀ g ∈ V.frames, ∀ g' ∈ V.frames, g.head.isPrefixOf g'.head = true → g'.head = g.head
   modsMk : ∀ g ∈ V.frames, ∀ m ∈ g.mods, m ∉ g.markers
@@ -239,7 +239,7 @@ theorem vocabOk {V : Vocab} (h : framesOk V = true) : VocabOk V := by
     | some u => exact (hn u hx).elim
     | none =>
       have := List.find?_eq_none.mp hx w hw
-      constructor <;> (intro he; subst he; simp at this)
+      refine ⟨?_, ?_, ?_, ?_, ?_⟩ <;> (intro he; subst he; simp at this)
   · cases hx : firstDup (V.frames.map (fun g => " ".intercalate g.head)) with
     | some u => exact (h5 u hx).elim
     | none => exact firstDup_none hx
