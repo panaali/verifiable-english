@@ -11013,6 +11013,7 @@
         "VE.SpeechActs.Source.QueryRecord",
         "VE.SpeechActs.Source.Record",
         "VE.SpeechActs.Source.SpeechSource",
+        "VE.SpeechActs.Source.SpeechSource.stepOrder",
         "VE.SpeechActs.Source.answerRecord",
         "VE.SpeechActs.Source.answerRecords",
         "VE.SpeechActs.Source.checkOpenTerms",
@@ -11027,10 +11028,16 @@
         "VE.SpeechActs.Source.statusText"
       ],
       "G[R]": [
+        "VE.SpeechActs.Source.SpeechSource.kindOf",
+        "VE.SpeechActs.Source.SpeechSource.sequences",
+        "VE.SpeechActs.Source.isInstruction",
         "VE.SpeechActs.Source.readingContextText",
+        "VE.SpeechActs.Source.sequenceFault",
+        "VE.SpeechActs.Source.sequences",
         "VE.SpeechActs.Source.stepUnits",
         "VE.SpeechActs.Source.thenFault",
-        "VE.SpeechActs.Source.trivialWarnings"
+        "VE.SpeechActs.Source.trivialWarnings",
+        "VE.SpeechActs.Source.unitGroups"
       ],
       "D[R]": [
         "VE.SpeechActs.Source.commandContext",
@@ -18230,6 +18237,7 @@
         "VE.Commands.Texts.permission",
         "VE.Commands.Texts.please",
         "VE.Commands.Texts.queryMismatch",
+        "VE.Commands.Texts.sequenceParts",
         "VE.Commands.Texts.thenWithoutStep",
         "VE.Commands.Texts.unbound"
       ],
@@ -19415,11 +19423,13 @@
     },
     "VE/Commands/RunExamples.lean": {
       "T": [
+        "VE.Commands.RunExamples.abRefused",
         "VE.Commands.RunExamples.actOf",
         "VE.Commands.RunExamples.atlasReviewed",
         "VE.Commands.RunExamples.attributed",
         "VE.Commands.RunExamples.beaconReviewed",
         "VE.Commands.RunExamples.ck",
+        "VE.Commands.RunExamples.csText",
         "VE.Commands.RunExamples.ctxOf",
         "VE.Commands.RunExamples.encodes",
         "VE.Commands.RunExamples.fieldsOf",
@@ -20392,6 +20402,8 @@
         "VE.Commands.SourceExamples.payload",
         "VE.Commands.SourceExamples.resolving",
         "VE.Commands.SourceExamples.result",
+        "VE.Commands.SourceExamples.seqText",
+        "VE.Commands.SourceExamples.seqUnits",
         "VE.Commands.SourceExamples.share",
         "VE.Commands.SourceExamples.signed",
         "VE.Commands.SourceExamples.thenText",
