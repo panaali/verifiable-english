@@ -1,0 +1,203 @@
+[
+ {
+  "id": "lean-norms-branch-removed",
+  "file": "lean/VE/WireContract/Hooks/Acts.lean",
+  "definition": "decoded",
+  "bug": "the profile row's gate removed (F1 again)",
+  "test": "lean/VE/WireContract/Hooks/Acts.lean #guard (lake build VE.WireContract.Hooks.Acts)",
+  "status": "KILLED",
+  "failures": [
+   "error: VE/WireContract/Hooks/Acts.lean:180:0: Expression"
+  ]
+ },
+ {
+  "id": "lean-typing-without-acts",
+  "file": "lean/VE/WireContract/Hooks/Acts.lean",
+  "definition": "typingEnvironment",
+  "bug": "decoded without `acts := true`",
+  "test": "lean/VE/WireContract/Hooks/Acts.lean #guard (lake build VE.WireContract.Hooks.Acts)",
+  "status": "KILLED",
+  "failures": [
+   "error: VE/WireContract/Hooks/Acts.lean:223:0: Expression",
+   "error: VE/WireContract/Hooks/Acts.lean:225:0: Expression",
+   "error: VE/WireContract/Hooks/Acts.lean:226:0: Expression"
+  ]
+ },
+ {
+  "id": "lean-typing-error-ignored",
+  "file": "lean/VE/WireContract/Hooks/Acts.lean",
+  "definition": "ruleTyping",
+  "bug": "the refused rule's member dropped",
+  "test": "lean/VE/WireContract/Hooks/Acts.lean #guard (lake build VE.WireContract.Hooks.Acts)",
+  "status": "KILLED",
+  "failures": [
+   "error: VE/WireContract/Hooks/Acts.lean:225:0: Expression",
+   "error: VE/WireContract/Hooks/Acts.lean:226:0: Expression"
+  ]
+ },
+ {
+  "id": "lean-typing-first-rule-only",
+  "file": "lean/VE/WireContract/Hooks/Acts.lean",
+  "definition": "ruleTyping",
+  "bug": "every item typed as the first rule",
+  "test": "lean/VE/WireContract/Hooks/Acts.lean #guard (lake build VE.WireContract.Hooks.Acts)",
+  "status": "KILLED",
+  "failures": [
+   "error: VE/WireContract/Hooks/Acts.lean:225:0: Expression"
+  ]
+ },
+ {
+  "id": "lean-block-level",
+  "file": "lean/VE/WireContract/Hooks/Acts.lean",
+  "definition": "blockOf",
+  "bug": "the block read one level too high",
+  "test": "lean/VE/WireContract/Hooks/Acts.lean #guard (lake build VE.WireContract.Hooks.Acts)",
+  "status": "KILLED",
+  "failures": [
+   "error: VE/WireContract/Hooks/Acts.lean:205:0: Expression",
+   "error: VE/WireContract/Hooks/Acts.lean:206:0: Expression",
+   "error: VE/WireContract/Hooks/Acts.lean:207:0: Expression",
+   "error: VE/WireContract/Hooks/Acts.lean:208:0: Expression",
+   "error: VE/WireContract/Hooks/Acts.lean:209:0: Expression",
+   "error: VE/WireContract/Hooks/Acts.lean:212:0: Expression"
+  ]
+ },
+ {
+  "id": "lean-frames-members-swapped",
+  "file": "lean/VE/WireContract/Hooks/Acts.lean",
+  "definition": "member",
+  "bug": "1.1e and 1.1f swapped",
+  "test": "lean/VE/WireContract/Hooks/Acts.lean #guard (lake build VE.WireContract.Hooks.Acts)",
+  "status": "KILLED",
+  "failures": [
+   "error: VE/WireContract/Hooks/Acts.lean:205:0: Expression",
+   "error: VE/WireContract/Hooks/Acts.lean:206:0: Expression",
+   "error: VE/WireContract/Hooks/Acts.lean:207:0: Expression",
+   "error: VE/WireContract/Hooks/Acts.lean:208:0: Expression",
+   "error: VE/WireContract/Hooks/Acts.lean:209:0: Expression",
+   "error: VE/WireContract/Hooks/Acts.lean:212:0: Expression"
+  ]
+ },
+ {
+  "id": "lean-classifier-norms-typing",
+  "file": "lean/VE/WireContract/Hooks/Acts.lean",
+  "definition": "classifier",
+  "bug": "4.7 left to `Hooks.Norms`' typing environment",
+  "test": "lean/VE/WireContract/Hooks/Acts.lean #guard (lake build VE.WireContract.Hooks.Acts)",
+  "status": "KILLED",
+  "failures": [
+   "error: VE/WireContract/Hooks/Acts.lean:222:0: Expression",
+   "error: VE/WireContract/Hooks/Acts.lean:223:0: Expression"
+  ]
+ },
+ {
+  "id": "lean-hooks-no-predicates",
+  "file": "lean/VE/WireContract/Hooks/Acts.lean",
+  "definition": "hooks",
+  "bug": "the included hooks hold everywhere",
+  "test": "lean/VE/WireContract/Hooks/Acts.lean #guard (lake build VE.WireContract.Hooks.Acts)",
+  "status": "KILLED",
+  "failures": [
+   "error: VE/WireContract/Hooks/Acts.lean:228:0: Expression"
+  ]
+ },
+ {
+  "id": "lean-registered-own-only",
+  "file": "lean/VE/WireContract/Hooks/Acts.lean",
+  "definition": "registered",
+  "bug": "the included hook names unregistered",
+  "test": "lean/VE/WireContract/Hooks/Acts.lean #guard (lake build VE.WireContract.Hooks.Acts)",
+  "status": "KILLED",
+  "failures": [
+   "error: VE/WireContract/Hooks/Acts.lean:124:0: Expression"
+  ]
+ },
+ {
+  "id": "py-recorder-units",
+  "file": "tests/contract_input_recorder.py",
+  "definition": "UNITS",
+  "bug": "acts@0 dropped from the recorder's UNITS",
+  "test": "tests/test_acts_contract.py::test_the_recorded_corpus_gives_one_record_in_both_engines",
+  "status": "KILLED",
+  "failures": [
+   "FAILED tests/test_acts_contract.py::test_the_recorded_corpus_gives_one_record_in_both_engines"
+  ]
+ },
+ {
+  "id": "py-s5-units",
+  "file": "tests/test_wire_contract_s5_lean.py",
+  "definition": "UNITS",
+  "bug": "acts@0 dropped from the s5 tests' UNITS",
+  "test": "tests/test_acts_contract.py::test_the_recorded_corpus_gives_one_record_in_both_engines",
+  "status": "KILLED",
+  "failures": [
+   "FAILED tests/test_acts_contract.py::test_the_recorded_corpus_gives_one_record_in_both_engines"
+  ]
+ },
+ {
+  "id": "py-d31-text-copied",
+  "file": "conformance/acts_contract.py",
+  "definition": "acts_environment",
+  "bug": "a D-31 text copied into Python with one word changed",
+  "test": "tests/test_acts_contract.py::test_every_fault_gives_its_member_in_python_with_leans_text",
+  "status": "KILLED",
+  "failures": [
+   "FAILED tests/test_acts_contract.py::test_every_fault_gives_its_member_in_python_with_leans_text"
+  ]
+ },
+ {
+  "id": "py-oracle-unguarded",
+  "file": "conformance/acts_contract.py",
+  "definition": "vocabulary_refusal",
+  "bug": "an earlier refusal read as the frames'",
+  "test": "tests/test_acts_contract.py::test_a_refusal_before_the_frames_is_not_theirs",
+  "status": "KILLED",
+  "failures": [
+   "FAILED tests/test_acts_contract.py::test_a_refusal_before_the_frames_is_not_theirs"
+  ]
+ },
+ {
+  "id": "py-frames-class",
+  "file": "conformance/acts_contract.py",
+  "definition": "acts_environment",
+  "bug": "the frame limit named 1.1f",
+  "test": "tests/test_acts_contract.py::test_every_fault_gives_its_member_in_python_with_leans_text",
+  "status": "KILLED",
+  "failures": [
+   "FAILED tests/test_acts_contract.py::test_every_fault_gives_its_member_in_python_with_leans_text"
+  ]
+ },
+ {
+  "id": "py-registry-no-hooks",
+  "file": "conformance/acts_contract.py",
+  "definition": "REGISTRY",
+  "bug": "norms@0's hooks unregistered",
+  "test": "tests/test_acts_contract.py::test_every_fault_gives_its_member_in_python_with_leans_text",
+  "status": "KILLED",
+  "failures": [
+   "FAILED tests/test_acts_contract.py::test_every_fault_gives_its_member_in_python_with_leans_text"
+  ]
+ },
+ {
+  "id": "py-frame-limit-oracle",
+  "file": "conformance/wire_contract_faults_acts.py",
+  "definition": "limits",
+  "bug": "the frame limit one too low",
+  "test": "tests/test_acts_contract.py::test_every_fault_gives_its_member_in_python_with_leans_text",
+  "status": "KILLED",
+  "failures": [
+   "FAILED tests/test_acts_contract.py::test_every_fault_gives_its_member_in_python_with_leans_text"
+  ]
+ },
+ {
+  "id": "rust-table-code",
+  "file": "rust/ve-kernel/src/contract_tables.rs",
+  "definition": "ACTS",
+  "bug": "1.1f's code",
+  "test": "tests/test_wire_contract_rust.py::test_rust_table_rows_equal_the_contract_rows",
+  "status": "KILLED",
+  "failures": [
+   "FAILED tests/test_wire_contract_rust.py::test_rust_table_rows_equal_the_contract_rows"
+  ]
+ }
+]
