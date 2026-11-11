@@ -412,7 +412,7 @@ def lean_name_layer(module: str) -> int | None:
         return 2  # act-phrases AP-1: the lexical act check, below the norms decoder that calls it
     if module in {"VE.Acts.Wire", "VE.Acts.Readings", "VE.Acts.Meaning", "VE.Acts.Grammar", "VE.Acts.Read",
                   "VE.Acts.Syntax", "VE.Acts.Table", "VE.Acts.Linearize", "VE.Acts.Tree",
-                  "VE.Acts.Specialise"} or module in {
+                  "VE.Acts.Index", "VE.Acts.Specialise"} or module in {
         "VE.Grammar.Basic", "VE.Grammar.Derives", "VE.Grammar.Reading", "VE.Grammar.Table",
         "VE.Grammar.TableInvariant", "VE.Grammar.TableProofs",
     }:
