@@ -44,7 +44,8 @@ situations it calls `shownOf` on `admitWith`.
 - **Outcome on the field (deviation from the plan text, DRI ps-2ac-report item 1, ACCEPTED).** `admit` is all or
   nothing, so `Shown.outcome` is `checked`, `refused <admit's diagnostic>` or
   `unknown "ResourceLimit: presuppositions"` (UNKNOWN, never a refusal). Not every refusal names the obligation
-  at fault (review F1): steps 2 and 4 name it; steps 3 and 5 name the unit's or rule's first obligation; step 5's
+  at fault (review F1): steps 2 and 4 name it; steps 3 and 5 name the unit's first obligation, and step 5's rule
+  check the rule's first obligation, else none (`PresuppositionMismatch: : rule`; ps-2ab-rule-firstob); step 5's
   tree check names the block's first rule act, else its first obligation, so on an empty block it reads
   `PresuppositionMismatch: : rule` and names none; step 5's readings refusals (`needsModelText`, `notSeparatedText`,
   `softText`) name no obligation and no unit.
