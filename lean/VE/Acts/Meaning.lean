@@ -159,11 +159,14 @@ def normalOk (V : Vocab) (a : Atom) : Bool :=
 def actOk (V : Vocab) : Act → Bool
   | .one a => atomOk V a
   | .all _ _ ps | .any _ _ ps => 2 ≤ ps.length && ps.all (atomOk V)
-/-- The meaning of a derivation (5.3): its act tree, or no meaning. -/
-def meaning (V : Vocab) : Meaning Tok Unit String Act :=
-  let rs := (closed (schema V)).toArray
+/-- The meaning of a derivation read against the rule table `rs`, which is `closed (schema V)` (5.3): its act tree, or
+no meaning. A caller that reads several derivations passes the table it computed once. -/
+def meaningWith (rs : Array RuleS) (V : Vocab) : Meaning Tok Unit String Act :=
   fun _ t => match piecesOf rs t with
     | some [.act A] => if actOk V A then .ok (A, false, ()) else .error "InvalidInput: an atom does not fit its frame"
     | _ => .error "InvalidInput: this derivation has no meaning"
+
+/-- The meaning of a derivation (5.3): its act tree, or no meaning. -/
+def meaning (V : Vocab) : Meaning Tok Unit String Act := meaningWith (closed (schema V)).toArray V
 
 end VE.Acts
