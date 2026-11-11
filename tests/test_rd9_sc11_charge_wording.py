@@ -133,3 +133,106 @@ def test_each_place_cut_is_a_proper_part_of_its_file():
     for path, cut in PLACES + CURRENT:
         text = (ROOT / path).read_text(encoding="utf-8")
         assert 0 < len(cut(text)) < len(text) // 2, path
+
+
+# sc-11w review F1 and F2 (manage-agents/sc-11w-review.final.md): two overclaims about what sc-11w's limits ensure.
+# F1: `sdCheckWorkFast` builds no *coherence* premise, but it still builds the exception premises (`min` reads
+# `excPremises X`'s length). F2: the size charge bounds `sdSuperposable`'s reads, not the whole route; `heavyIn` is
+# within both limits and took up to 1.16 s (the accepted gap of row sc-11wc), and cpu.md's table has 0.74 s above
+# the 0.60 s its summary called the maximum. The class is a text of the item that claims more than its code or its
+# own table: every sc-11w text is scanned (`SC11W_TEXTS`), and the summary figures are recomputed from the table.
+SC11W_TEXTS = (
+    "lean/VE/Readings/SoftSupWire.lean",
+    "docs/spec/rd-9-soft-chain.md",
+    *sorted(str(p.relative_to(ROOT)) for p in (ROOT / "docs/rd-9/sc-11w").glob("*.md")),
+)
+# "no premise", "builds no premise", "without building the premises": a premise claim not narrowed to coherence.
+_UNNARROWED_PREMISE = re.compile(r"\b(?:no|without building the) premises?\b")
+# A claim that the charge (or being within it) makes the route end within R4.
+_CHARGE_ENSURES_R4 = re.compile(r"within `maxSdSizeCharge`, `routeSD` ends within R4")
+
+
+def overclaim_faults(text: str) -> list[str]:
+    flat = _flat(text)
+    return ([f"premise: {m.group(0)}" for m in _UNNARROWED_PREMISE.finditer(flat)]
+            + [f"R4: {m.group(0)}" for m in _CHARGE_ENSURES_R4.finditer(flat)])
+
+
+@pytest.mark.parametrize("path", SC11W_TEXTS)
+def test_probe_sc11w_f1_f2_no_text_overclaims_the_fast_counter_or_the_charge(path):
+    """PROBE F1 and F2 of sc-11w-review: no unnarrowed premise claim, no claim that the charge ensures R4."""
+    assert overclaim_faults((ROOT / path).read_text(encoding="utf-8")) == []
+
+
+# Each place that says the fast counter skips the coherence premises also says the exception premises are built,
+# and each place that states the charge's measurement names the open per-choice gap.
+_FAST_COUNTER_PLACES = (
+    ("lean/VE/Readings/SoftSupWire.lean", _module_docstring),
+    ("lean/VE/Readings/SoftSupWire.lean", lambda t: t.split("def sdCheckWork (N", 1)[1].split("def sdCheckWorkFast", 1)[0]),
+    ("docs/spec/rd-9-soft-chain.md", _section("### 14.11", "### 14.12")),
+    ("docs/rd-9/sc-11w/cpu.md", _section("## `sdCheckWork` before and after", "| Case")),
+    ("docs/rd-9/sc-11w/REPORT.md", _section("2. **A cheaper `sdCheckWork`", "3. **")),
+)
+_CHARGE_PLACES = (
+    ("lean/VE/Readings/SoftSupWire.lean", _module_docstring),
+    ("lean/VE/Readings/SoftSupWire.lean", lambda t: t.split("/-- 14.11 (sc-11w)", 1)[1].split("def sdSizeCharge", 1)[0]),
+    ("docs/spec/rd-9-soft-chain.md", _section("### 14.11", "### 14.12")),
+    ("docs/rd-9/sc-11w/cpu.md", _section("Results:", "## ")),
+    ("docs/rd-9/sc-11w/REPORT.md", _section("12. CPU:", "13. ")),
+)
+
+
+@pytest.mark.parametrize(("path", "cut"), _FAST_COUNTER_PLACES, ids=[f"{p}#{i}" for i, (p, _) in
+                                                                      enumerate(_FAST_COUNTER_PLACES)])
+def test_each_fast_counter_text_says_the_exception_premises_are_built(path, cut):
+    part = _flat(cut((ROOT / path).read_text(encoding="utf-8")))
+    assert "coherence premise" in part and "excPremises" in part
+
+
+@pytest.mark.parametrize(("path", "cut"), _CHARGE_PLACES, ids=[f"{p}#{i}" for i, (p, _) in enumerate(_CHARGE_PLACES)])
+def test_each_charge_measurement_names_the_open_per_choice_gap(path, cut):
+    part = _flat(cut((ROOT / path).read_text(encoding="utf-8")))
+    assert "sc-11wc" in part and "1.16 s" in part
+
+
+def _cpu_rows() -> list[tuple[str, int, float, float]]:
+    """cpu.md's `routeSD` table: (case, charge, the slowest `routeSD` run, the slowest `reads` run)."""
+    text = (ROOT / "docs/rd-9/sc-11w/cpu.md").read_text(encoding="utf-8")
+    table = text.split("## `routeSD` on the committed code", 1)[1].split("Results:", 1)[0]
+    rows = []
+    for line in table.splitlines():
+        cells = [c.strip() for c in line.strip().strip("|").split("|")]
+        if len(cells) != 6 or not cells[1].replace(",", "").isdigit():
+            continue
+        secs = [[float(x) for x in re.findall(r"\d+\.\d+", c)] for c in (cells[3], cells[4])]
+        rows.append((cells[0], int(cells[1].replace(",", "")), max(secs[0]), max(secs[1])))
+    return rows
+
+
+def test_cpu_summary_figures_are_the_table_maxima():
+    """F2's second half: the Results name the table's slowest `routeSD` row and the slowest reads within the charge,
+    and no summary in cpu.md or the REPORT bounds every case below the table's maximum."""
+    rows = _cpu_rows()
+    assert len(rows) >= 13
+    case, _, slowest, _ = max(rows, key=lambda r: r[2])
+    reads = max(r[3] for r in rows if r[1] <= 16384)
+    results = _flat(_section("Results:", "## ")((ROOT / "docs/rd-9/sc-11w/cpu.md").read_text(encoding="utf-8")))
+    assert f"The slowest is {case.split(' (')[0]} at {slowest:.2f} s" in results
+    assert f"at most {reads:.2f} s on any case within the charge" in results
+    for path in ("docs/rd-9/sc-11w/cpu.md", "docs/rd-9/sc-11w/REPORT.md"):
+        flat = _flat((ROOT / path).read_text(encoding="utf-8"))
+        assert [float(x) for x in re.findall(r"every case at most (\d+\.\d+) s", flat) if float(x) < slowest] == []
+
+
+# The committed text the sc-11w review found (89f139589f): the check must refuse each.
+_REVIEWED_SC11W = (
+    "`sdCheckWork` is evaluated without building the premises it counts (`sdCheckWork_eq_fast`).",
+    "`softXL`'s length is its exception labels' and colliding pairs', so no\npremise is built",
+    "counts the exception labels and the colliding pairs and builds no premise.",
+    "Measured: within `maxSdSizeCharge`,\n`routeSD` ends within R4 (docs/rd-9/sc-11w/cpu.md).",
+)
+
+
+@pytest.mark.parametrize("text", _REVIEWED_SC11W, ids=["spec", "lean-fast", "cpu", "lean-charge"])
+def test_the_reviewed_sc11w_overclaims_fail_the_check(text):
+    assert overclaim_faults(text) != []

@@ -40,11 +40,13 @@ Columns:
 | `heavyIn` (`withRules 6 9`, 47-node guards; open, row sc-11wc) | 12,880 | superposed | 0.69, 0.67, 0.74 s | 0.12, 0.10, 0.10 s | 0.04, 0.04, 0.04 s |
 
 Results:
-- Every case ends within R4's 1 s. The slowest is `NSDbig 8` at 0.60 s; its 256 per-choice texts are charged by the
-  work limit.
+- Every case here ends within R4's 1 s at this load, but the charge does not ensure that for every document within
+  both limits. The slowest is `heavyIn` at 0.74 s, and it took up to 1.16 s at a higher load (below); that is the
+  accepted gap of row sc-11wc. The slowest of the other cases is `NSDbig 8` at 0.60 s; its 256 per-choice texts are
+  charged by the work limit.
 - `withRules 2 25`, `withSets 1 40` and `withCandidates 1 121` are at or just under 16,384, with `superposable` and
-  `WellFormedU (supU N)` both true. They are the worst admitted cases for the reads before the work limit, which take
-  at most 0.18 s on them. One more shape is at 16,384 but has `superposable` false: `withRules 2 57` (64 × 256).
+  `WellFormedU (supU N)` both true. They are the largest admitted documents of their shapes. The reads take at most
+  0.10 s on them, and at most 0.22 s on any case within the charge (`wideGuard191`). One more shape is at 16,384 but has `superposable` false: `withRules 2 57` (64 × 256).
 - Without the charge, the many-sets and many-candidates documents found by the self-review would cost 2.6-12.7 s in
   `superposable` alone. With the charge they are refused in at most 0.07 s.
 - `heavyIn` took 0.85-1.16 s at load 43-67 earlier in the day (reviews/dri-decisions-20261110-sc-11w-cpu.md) and
@@ -54,7 +56,8 @@ Results:
 
 Before: `sdCheckWork`'s own body (`cpu_bench.lean`'s `slowWork`, the text 14.8 states) builds every premise of
 `softXL N (sup N.D).1`, including each `cohPremiseU`'s `fill`, `selects` and `subst` of the guard, only to count them.
-After: `sdCheckWorkFast` counts the exception labels and the colliding pairs and builds no premise. The `@[csimp]`
+After: `sdCheckWorkFast` counts the exception labels and the colliding pairs and builds no coherence premise. It
+still builds the exception premises (`excPremises`), one formula per exception condition, to read their count. The `@[csimp]`
 theorem `sdCheckWork_eq_fast` proves the two equal, and both give the same values. The "before" column was measured
 at 8b08388be5, load 44 to 76. `slowWork` does not read the size charge, so the later charge change leaves it as is.
 

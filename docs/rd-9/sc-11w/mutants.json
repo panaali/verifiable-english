@@ -1,7 +1,7 @@
 {
   "item": "sc-11w",
   "decision": "manage-agents/reviews/dri-decisions-20261110-sc-11w.md item 1 (b)",
-  "method": "each mutant applied to the file at commit 195119a8e0, `lake build VE.Readings.SoftSupWireExamples` run, every error line recorded, the file restored by `git checkout` (2026-11-10). Where a proof rejects the mutant first (M1, M2, M7, M8), a second run (the `g` variant) also patches only that proof, which shows the named #guard fails too. Line numbers are those of 195119a8e0; M1g and M2g were rerun after the run_meta order check became the rfl pin (`run_meta` makes the tree run code while it elaborates, which tests/test_lean_dump_cache.py refuses).",
+  "method": "each Lean mutant (M*) applied to the file at commit 195119a8e0, `lake build VE.Readings.SoftSupWireExamples` run, every error line recorded, the file restored by `git checkout` (2026-11-10). The Python mutants (P*) were applied to tools/check_rd9_sc1_statements.py at 89f139589f plus the review fix, `uv run pytest -q tests/test_rd9_statements.py` run, and the file restored from a copy (2026-11-11). Where a proof rejects the mutant first (M1, M2, M7, M8), a second run (the `g` variant) also patches only that proof, which shows the named #guard fails too. Line numbers are those of 195119a8e0; M1g and M2g were rerun after the run_meta order check became the rfl pin (`run_meta` makes the tree run code while it elaborates, which tests/test_lean_dump_cache.py refuses).",
   "guards": {
     "SoftSupWireExamples.lean:117": "#guard routeFacts ⟨M8, []⟩ == \"enumerated false 2 30 enumerated\" (sc-11, prints sdCheckWork)",
     "SoftSupWireExamples.lean:191": "#guard chargeFacts wideGuard191 == \"5975 true true enumerated true 256 73472 enumerated\"",
@@ -59,6 +59,12 @@
      "result": "killed: run M7p fails sdCheckWork_eq_fast's proof (SoftSupWire.lean:81); run M7 (that proof `sorry`ed) fails :117, :135, :161, :162, :163 and later #guards: `sdCheckWork` is evaluated through the csimp", "restored": true},
     {"id": "M8", "definition": "routeSD", "behaviour": "over the charge the row is today's enumerated row, byte for byte (task seeded bug 3)", "file": "lean/VE/Readings/SoftSupWire.lean",
      "mutation": "over the charge `routeSD` answers `.abstention` instead of `.enumerated`", "test": "SoftSupWireExamples.lean:230 (todayRow byte identity)",
-     "result": "killed: routeSD_superposed_iff's proof fails (SoftSupWire.lean:111); run M8g (that proof `sorry`ed) fails :193, :195, :214, :220 and the byte-identity #guard :230", "restored": true}
+     "result": "killed: routeSD_superposed_iff's proof fails (SoftSupWire.lean:111); run M8g (that proof `sorry`ed) fails :193, :195, :214, :220 and the byte-identity #guard :230", "restored": true},
+    {"id": "P1", "definition": "SC11W", "behaviour": "sdSuperposable is reported signed under its own DRI decision (Python; sc-11w-review F-ready1)", "file": "tools/check_rd9_sc1_statements.py",
+     "mutation": "`SC11W` loses its decision file: \"SIGNED by the DRI 2026-11-10\"", "test": "tests/test_rd9_statements.py::test_probe_f27_the_signed_declarations_are_no_longer_pending",
+     "result": "killed: 1 failed, 42 passed (2026-11-11); unmutated 43 passed", "restored": true},
+    {"id": "P2", "definition": "SIGNED[sdSuperposable]", "behaviour": "the one signed edit is exactly the charge read first (Python; sc-11w-review F-ready1)", "file": "tools/check_rd9_sc1_statements.py",
+     "mutation": "the signed edit's after-text reads `superposable N.D && decide (sdSizeCharge N ≤ maxSdSizeCharge) &&` (charge second)", "test": "tests/test_rd9_statements.py::test_rd9_statements_match_the_approved_text_with_nothing_unbuilt",
+     "result": "killed: 3 failed (that test, test_probe_f27_the_signed_declarations_are_no_longer_pending, test_soft_leaf_reads_the_soft_pack_as_the_premise_packs_spec_approves), 40 passed (2026-11-11)", "restored": true}
   ]
 }
