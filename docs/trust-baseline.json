@@ -2574,6 +2574,13 @@
    "reason": "ap-parse-index: trusted +27 (K +0, S +3, V +24): VE/Acts/Wire.lean +10 (checkActBy, joinedActBy), VE/Acts/Index.lean +6 (idxGo), VE/Acts/Readings.lean +5 (reader), VE/Acts/Meaning.lean +3 (S: meaningWith), VE/Norms/Wire.lean +2 (actsOf's reader), VE/Acts/Run.lean +1 (taggedWith); firstsGo, closedFast, buildFast, combineFast, readingsBy, readingsOnce, readOnce tied by their equality theorems",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-parse-index, 2026-11-09",
    "commit": "a0102f0e5350727e99ddcae2e0b59ed03f2f4192"
+  },
+  {
+   "class": "V",
+   "lines": 12,
+   "reason": "ps-2ab-rule-firstob: VE/Presupposition/Admit.lean +5 (ruleOb), VE/Presupposition/Run.lean +7 (fixtures r1b, docF2 of the rule-check guards); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ps-2ab-rule-firstob, 2026-11-11",
+   "commit": "b81b82ef91add8f6ea2fce62feeb421a5bed0c7b"
   }
  ]
 }
