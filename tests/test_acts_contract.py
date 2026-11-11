@@ -41,6 +41,26 @@ def case(raw, norms, kind="norms-elaborate"):
     return {"id": "c", "kind": kind, "environment": raw, "norms": norms}
 
 
+def engine_records(sources):
+    """Each source's record in Python's engine and in Lean's (`None` when clean), as pairs."""
+    python = [run(CONTRACT, {"environment": deepcopy(raw), "norms": deepcopy(norms)}, registry=REGISTRY)
+              for raw, norms in sources]
+    lean = lean_routes.diagnose("acts@0", [case(raw, norms) for raw, norms in sources])
+    assert [row["status"] for row in lean] == ["ok"] * len(sources)
+    return [(outcome.record if isinstance(outcome, Fault) else None, row.get("diagnostic"))
+            for outcome, row in zip(python, lean)]
+
+
+def test_a_source_without_norms_gives_one_record_in_both_engines():
+    """F1 of ap-1bf's review: without `norms@0` both engines give one check, outcome and text, the profile
+    row's, which Lean writes and Python relays."""
+    raw, norms = base()
+    raw["profiles"].remove("norms@0")
+    [(python, lean)] = engine_records([(raw, norms)])
+    assert python is not None and python == lean
+    assert lean["check"] == "1.1d" and lean["text"] == str(legacy(raw, norms))
+
+
 def test_the_limits_are_leans_and_never_copied():
     numerals = re.compile(r"(?<![0-9])(" + "|".join(str(v) for v in limits().values()) + r")(?![0-9])")
     for relative in UNIT_FILES:

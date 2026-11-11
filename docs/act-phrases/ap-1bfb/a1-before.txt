@@ -1,0 +1,12 @@
+E       AssertionError: assert ({'contract': 'acts@0', 'revision': 1, 'check': '1.1d', 'phase': 'environment', ...} is not None and {'contract': ...ronment', ...} == {'args': {'me...RONMENT', ...}
+E         
+E         Omitting 7 identical items, use -vv to show
+E         Differing items:
+E         {'args': {'message': 'UnsupportedProfile: acts@0 requires norms@0'}} != {'args': {'message': 'UnsupportedProfile: norms@0 is required'}}
+E         {'text': 'UnsupportedProfile: acts@0 requires norms@0'} != {'text': 'UnsupportedProfile: norms@0 is required'}
+E         Use -v to get more diff)
+
+tests/test_acts_contract.py:60: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_acts_contract.py::test_a_source_without_norms_gives_one_record_in_both_engines
+1 failed, 6 deselected in 0.54s
