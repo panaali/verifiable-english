@@ -19533,6 +19533,11 @@
         "VE.Commands.RunExamples.youBob"
       ]
     },
+    "VE/Commands/WebEnvMain.lean": {
+      "T": [
+        "main"
+      ]
+    },
     "VE/Acts/Run.lean": {
       "D[R]": [
         "VE.Acts.Run.decodeRequest",
