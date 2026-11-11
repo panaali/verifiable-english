@@ -52,6 +52,7 @@ Seeded bugs for F1 (each planted alone, then restored with `git checkout` or the
 
 ## Checks run
 
+- Review fix: `mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on 72b6f0aac5: 3 shards on GitHub Actions, 32 units passed, exit 0. `lake build`: completed (1390 jobs); `python3 lean/audit.py`: PASS (845 files, 9479 theorems). `tests/test_scope_5_4_statements.py`: 62 passed (43 before the fix).
 - `uv run pytest -q tests/test_scope_5_4_statements.py`: 43 passed (18 before: the new cases are the 25 plants).
 - Chain run 1 (selected tests, 3 shards): `tests/test_inventory_path.py::test_no_train_only_path_is_read_outside_the_accessor` failed: `typed` read `ROOT / "lean/statements.txt"` directly. Fixed: it reads the list through the accessor, `lean_statements.inventory_path(lean_statements.STATEMENTS)` (which refuses a stale inventory). Afterwards that test and `tests/test_scope_5_4_statements.py` (43) pass.
 - `uv run python tools/select_tests.py --paths <p>` selects `tests/test_scope_5_4_statements.py` for each of `lean/statements.txt` (the new input), `docs/spec/scope.md` and `lean/VE/Scope/Theorems.lean`, and for `--base $(git merge-base HEAD main)`.
