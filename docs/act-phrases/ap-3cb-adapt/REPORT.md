@@ -2,6 +2,8 @@
 
 **No DRI signature is reserved.** Trust growth: none (K +0, S +0, untied V +0). There is no DELTA row: the item adds
 proofs and examples only, and changes no definition, text or answer. The ap-3c ties pass does not apply (section 4).
+Review fix (section 11): F1's blanket refusal claims are narrowed to the fixtures the seeds record, and so is the
+seeds claim of note F2. A test now checks them against the saved evidence. No Lean, Python product or Rust change.
 
 Task: feature item ap-3cb-adapt (act-phrases, PORTFOLIO-PINS #8; DRI interim 2026-11-10 item 2). Spec
 [act-phrases.md](../../spec/act-phrases.md) 6.6 (lines 1242-1262) and 11.3 (E1, E4: lines 1761-1764). Plan
@@ -108,34 +110,42 @@ In `lean/VE/Acts/ElaborateExamples.lean`, after E4's `#guard`s:
 ## 5. Seeded bugs
 
 `uv run python docs/act-phrases/ap-3cb-adapt/seed_bugs.py` writes [mutants.json](mutants.json); the unmutated pair
-passes (`restored: SURVIVOR`).
+passes (`restored: SURVIVOR`) and accepts E1 and E4 (`restored_accepted`).
 - Each bug is planted in a `/tmp` copy of `Elaborate.lean`, joined with Faithful.lean's three lemmas and the proofs
   (both sliced, not copied), and checked with `lake env lean`.
 - Each bug carries `#guard`s, each evaluating one conjunct on E1 or E4 (fixtures sliced from
   `ElaborateExamples.lean`). The committed definitions are never touched.
 
-| Bug | File, definition | Fails | Note |
-|---|---|---|---|
-| `parts-from-index-0`: `zipIdx 0` (the first part is index 0) | `lean/VE/Acts/Elaborate.lean`, `partsOf` | proof `mem_partsOf`, proof `splitMap_exact`; guard `M.preds.all (1 ≤ ·.2.2)` on E1 | the `1 ≤ i` conjunct is false on E1 |
-| `split-node-over-unmapped`: `over := N.over` | same file, `splitNode` | proof `mem_splitNode` (the rule half of `elaborate_parts`); E1/E4 acceptance guard | see below |
-| `part-keeps-source-name`: map entry `(r.name, r.name, i)` | same file, `splitMap` | proof `mem_preds` (`q = partPred p i`); E1/E4 acceptance guard | see below |
-| `part-declaration-keeps-source-name`: part declared as `r.name` | same file, `splitReg` | proof `mem_splitReg` (`splitMap_exact` clause 1, `elaborate_parts` `find?`); E1/E4 acceptance guard | see below |
-| `atoms-reversed`: `some atoms.reverse` | same file, `atomsOf` | the new `#guard splitAtoms e1 "p027" == some [torture, cruel] && …` | both theorems still prove; the pin catches the order |
-| `statement-index-from-2`: `1 ≤ i` changed to `2 ≤ i` in clause 3 | `lean/VE/Acts/ElaborateProofs.lean`, `splitMap_exact` | proof `splitMap_exact`; `check_statements.py` would print DIFF | the statement proved is the spec's |
+The column "E1, E4 under the bug" is each row's `accepted` in mutants.json: one acceptance guard per fixture
+(`#guard (elaborateMap e1).isOk`, `#guard (elaborateMap e4).isOk`), so the evidence names the fixture a bug refuses.
+`tests/test_ap3cb_adapt_report.py` checks the column against mutants.json.
+
+| Bug | File, definition | Fails | E1, E4 under the bug | Note |
+|---|---|---|---|---|
+| `parts-from-index-0`: `zipIdx 0` (the first part is index 0) | `lean/VE/Acts/Elaborate.lean`, `partsOf` | proof `mem_partsOf`, proof `splitMap_exact`; guard `M.preds.all (1 ≤ ·.2.2)` on E1 | accepted, accepted | the `1 ≤ i` conjunct is false on E1 |
+| `split-node-over-unmapped`: `over := N.over` | same file, `splitNode` | proof `mem_splitNode` (the rule half of `elaborate_parts`); E4 acceptance guard | accepted, refused | see below |
+| `part-keeps-source-name`: map entry `(r.name, r.name, i)` | same file, `splitMap` | proof `mem_preds` (`q = partPred p i`); E1 and E4 acceptance guards | refused, refused | see below |
+| `part-declaration-keeps-source-name`: part declared as `r.name` | same file, `splitReg` | proof `mem_splitReg` (`splitMap_exact` clause 1, `elaborate_parts` `find?`); E1 and E4 acceptance guards | refused, refused | see below |
+| `atoms-reversed`: `some atoms.reverse` | same file, `atomsOf` | the new `#guard splitAtoms e1 "p027" == some [torture, cruel] && …` | accepted, accepted | both theorems still prove; the pin catches the order |
+| `statement-index-from-2`: `1 ≤ i` changed to `2 ≤ i` in clause 3 | `lean/VE/Acts/ElaborateProofs.lean`, `splitMap_exact` | proof `splitMap_exact`; `check_statements.py` would print DIFF | accepted, accepted | the statement proved is the spec's |
 
 The task predicted different failing conjuncts for two of these bugs, and the actual failures differ:
-- **Unmapped `over`.** The task predicted the rule half's own conjunct. What actually happens: under this bug
-  `validate` refuses every split document with an `over`, because it refuses precedence across predicates and the
-  `over` target is gone. Probe: E4 with `r027b` over a rule on another predicate is refused on main with
-  `UnknownRule: rule rk-a1`, and under the bug with `PrecedenceAcrossPredicates`. So the conjunct still holds, only
-  because nothing is accepted. The proof of the rule half breaks, and so does E4's acceptance.
+- **Unmapped `over`.** The task predicted the rule half's own conjunct. What actually happens depends on the rule.
+  - E4 is refused: `r027b`'s `over = [r027]` stays unmapped, so it names a rule the split removed. Probe: E4 with
+    `r027b` over a rule on another predicate is refused on main with `UnknownRule: rule rk-a1`, and under the bug
+    with `PrecedenceAcrossPredicates`. On E4 the rule-half conjunct holds only because the result is refused.
+  - E1 is accepted: its one rule `r027` has `over = []`, and an empty `over` is the same mapped or not. On E1 the
+    conjunct holds, and E1's result is the same as without the bug.
+  - So the proof of the rule half (`mem_splitNode`) and E4's acceptance catch the bug. The E1 fixture cannot.
 - **A part keeping its source's name.** The task predicted the Nodup conjuncts. What actually happens: step 3 or
-  `validate` refuses the result. The proofs fail at `q = partPred p i` (`mem_preds`) and at `mem_splitReg`, not at a
-  Nodup conjunct.
+  `validate` refuses E1 and E4 (both `refused` above). The proofs fail at `q = partPred p i` (`mem_preds`) and at
+  `mem_splitReg`, not at a Nodup conjunct.
 
 ## 6. Tests
 
 - The tests of the code touched: the Lean builds and the seed run above, and `check_statements.py`.
+- `tests/test_ap3cb_adapt_report.py` (review fix, section 11) checks the seed table and the refusal and seed claims
+  against mutants.json.
 - `uv run python tools/gate_collection.py --check --prebuilt`: `33698 collected ... 0 added, 0 removed by a trailer,
   0 refused, 0 stale and 0 malformed trailers`.
 - `tools/select_tests.py --base $(git merge-base HEAD main)`: `477/588 test units` (not every unit).
@@ -154,10 +164,10 @@ The task predicted different failing conjuncts for two of these bugs, and the ac
 
 ## 8. Size, pilot, next item
 
-SIZE: 213 product, 83 tests, 201 other hand-written lines (excluding this REPORT).
+SIZE: 213 product, 173 tests, 209 other hand-written lines (excluding this REPORT).
 - Product is `ElaborateProofs.lean` 212 and `VE.lean` 1. Tests are the examples and guards in
-  `ElaborateExamples.lean`.
-- Other is `check_statements.py` 37, `seed_bugs.py` 149 and `ties-trial.txt` 13, plus the 2-line saved output.
+  `ElaborateExamples.lean` (83) and `tests/test_ap3cb_adapt_report.py` (90, review fix).
+- Other is `check_statements.py` 37, `seed_bugs.py` 157 and `ties-trial.txt` 13, plus the 2-line saved output.
 - `mutants.json` and `trust-mutants.json` are written by scripts. The generated files (`Audit.lean`,
   `statements.txt`, `declarations.txt`, `predicates.txt`, `axioms.txt`, the code map) are R12.
 
@@ -183,8 +193,11 @@ after the run. No test of main-known-red.txt was involved (0 failed).
   `splitNode` and the rest. For example, `splitMap_exact` restated over `splitMap D (splitAtoms D)` and
   `splitDoc …`: that is a statement change, so outside this item. Until then the 93 untied G[V] lines of
   `Elaborate.lean` stay trusted, as ap-3c recorded them.
-- Two of the task's predicted failures differ from the actual ones (section 5). Under those bugs the statements hold
-  of every document, because every split result is refused. Only the proofs and E1/E4's acceptance catch them.
+- Two of the task's predicted failures differ from the actual ones (section 5). The fixtures say which documents each
+  bug refuses (mutants.json `accepted`). The unmapped `over` refuses E4 and leaves E1 accepted and unchanged, since
+  E1's one rule has `over = []`. A part keeping its source's name refuses both E1 and E4. On a refused fixture the
+  conjunct guards hold only vacuously. So only the proofs and the acceptance guards catch these bugs (E4's for the
+  `over` bug, E1's and E4's for the other two).
 - `Elaborate.lean`'s module docstring (line 11) still says "`splitMap_exact` and `elaborate_parts` come with ap-3cb".
   They are now in `ElaborateProofs.lean`. This item may not edit `Elaborate.lean` (norm-defaults-cfr-1b is in flight
   there), so the wording waits for the next edit of that file.
@@ -216,12 +229,15 @@ after the run. No test of main-known-red.txt was involved (0 failed).
 12. N.A.: no runtime code changed. The new `#guard`s evaluate E1 and E4 once each.
 13. PASS: no test removed. `gate_collection.py --check --prebuilt`: 0 refused, 0 stale, 0 malformed.
 14. PASS. Opposite direction: `splitMap_exact` is checked on E1 in both directions (generated names in; p027, r027
-    out). Each new guard has a seed that fails it (`atoms-reversed`) and passes unmutated (`restored: SURVIVOR`).
+    out). Of the two new guards, the split pin has a seed that fails it (`atoms-reversed`) and passes unmutated
+    (`restored: SURVIVOR`). The `partAct` text pin has no seed. `partAct` is in `Linearize.lean`, which the seeds'
+    scratch file imports built, so a seed there would need its dependents rebuilt. The pin is a literal `==` on two
+    strings, so it fails on any other text.
     Each claim in this report names its command. Spec re-read in section 7.
 15. PASS. No overclaim: "no trust growth" is from `trust_map.py --check`; "statements unchanged" is from
     `check_statements.py`; the ties pass is written as not applying, with `ties-trial.txt`. No silent cut: every
-    deliverable is built or shown not to apply. Every new check can fail: `mutants.json`. Limits: N.A. (no
-    evaluator or runner added).
+    deliverable is built or shown not to apply. Every new check but the `partAct` text pin has a seed that fails it
+    (`mutants.json`, item 14). Limits: N.A. (no evaluator or runner added).
 
 ## 10. Commits (`git log --oneline main..HEAD --no-merges`, saved at writing)
 
@@ -231,3 +247,29 @@ after the run. No test of main-known-red.txt was involved (0 failed).
 - `948bc68cc` ap-3cb-adapt: reuse Faithful.lean's inj_of_nodup_map, mem_splitReg, mem_splitNode (one owner); seeds splice them in
 - `395033388` ap-3cb-adapt: seeded bugs in /tmp copies (index 0, unmapped over, a part keeping its source's name, a stronger statement); mutants.json
 - `bd7cc77c3` ap-3cb-adapt: splitMap_exact and elaborate_parts ported to main's split functions; E1 and E4 through them; statement check
+
+## 11. Review fix (ap-3cb-adapt-review.final.md)
+
+- **F1 (A, record-only overclaim).** Sections 5 and "Notes for the DRI", and `seed_bugs.py`'s docstring, said every
+  split result or document is refused under the unmapped-`over` bug. E1 stays accepted under that bug: its one rule
+  has `over = []`.
+  - Class: a refusal claim wider than the fixtures checked. The cause was one acceptance guard, an `&&` over E1 and
+    E4, which could not say which fixture a bug refuses.
+  - Fix: `seed_bugs.py` now has one acceptance guard per fixture (`ACCEPT`) on every row, and records `accepted` per
+    fixture in mutants.json (rerun on the rebuilt tree; restored: SURVIVOR, both accepted).
+  - Section 5's table carries the record (column "E1, E4 under the bug"). The text says which fixture each bug
+    refuses: the unmapped `over` refuses E4 only; a part keeping its source's name refuses E1 and E4.
+  - Regression tests in `tests/test_ap3cb_adapt_report.py`:
+    - `test_no_blanket_claim_about_refusals_or_seeds` holds PROBE F1's pattern and the class's other forms.
+    - `test_each_seed_records_which_fixture_it_refuses` checks the per-fixture guards and evidence.
+    - `test_the_unmapped_over_bug_leaves_e1_accepted` is F1's example.
+    - `test_the_report_table_reads_the_saved_acceptance` checks the table against mutants.json.
+  - All four fail on the pre-fix REPORT, seed script and mutants.json. A planted wrong table cell fails the table
+    test.
+  - PROBE F1 failed before the fix (exit 1) and passes after it (exit 0).
+- **Note F2 (C, not filed; same class).** Item 14 said each new guard has a seed. Only the split pin has one
+  (`atoms-reversed`). It now says the `partAct` text pin has none, and why. Item 15's "Every new check can fail" is
+  narrowed the same way.
+- No DELTA row: the fix changes report text, a seed script, its evidence and a test. No definition, text or answer
+  changes, so no standing ruling is needed. No test of main-known-red.txt is involved.
+
