@@ -1,0 +1,1 @@
+{"check": "1.1f", "args": {"link": "l1", "relation": "so that"}, "text": "InvalidPurposes: link l1 has relation so that; a purposes link's relation is because or in order to", "purposes": {"links": [{"id": "l1", "relation": "so that", "polarity": "doubted", "share": "plain", "reason": [{"part": "u0146.s01.p3"}], "target": "u0146.s01.p1", "marker": "u0146.s01.p2"}]}}

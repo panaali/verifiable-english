@@ -1281,7 +1281,7 @@
 'VE.Cardinality.Wire.finiteSorts_length' depends on axioms: [propext, Quot.sound]
 'VE.Cardinality.Wire.items_ok' depends on axioms: [propext, Quot.sound]
 'VE.Cardinality.Wire.printed_eq' does not depend on any axioms
-'VE.Cardinality.Wire.profileLists_projected' depends on axioms: [propext, Quot.sound]
+'VE.Cardinality.Wire.profileLists_projected' depends on axioms: [propext]
 'VE.Cardinality.Wire.relNames_spelled' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Cardinality.Wire.ruleNames_spelled' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Cardinality.Wire.sourceFits_iff' depends on axioms: [propext]
@@ -1337,6 +1337,7 @@
 'VE.Cardinality.holds_withRegions' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Cardinality.inRegion_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Cardinality.length_filter_or' depends on axioms: [propext, Quot.sound]
+'VE.Cardinality.listFault_some' depends on axioms: [propext]
 'VE.Cardinality.lower_unary' depends on axioms: [propext]
 'VE.Cardinality.mem_firstUse' depends on axioms: [propext, Quot.sound]
 'VE.Cardinality.mem_firstUse_foldl' depends on axioms: [propext, Quot.sound]
@@ -1648,6 +1649,7 @@
 'VE.Compose.base_contains' depends on axioms: [propext, Quot.sound]
 'VE.Compose.base_mem' depends on axioms: [propext, Quot.sound]
 'VE.Compose.base_of_no_wrapper' depends on axioms: [propext, Quot.sound]
+'VE.Compose.cardinality_absent' depends on axioms: [propext, Quot.sound]
 'VE.Compose.checks_none' depends on axioms: [propext, Quot.sound]
 'VE.Compose.conflictFreeP_append' depends on axioms: [propext, Quot.sound]
 'VE.Compose.contains_eq' depends on axioms: [propext]
@@ -1681,6 +1683,8 @@
 'VE.Compose.ite_error_ok' does not depend on any axioms
 'VE.Compose.ite_ok_of' does not depend on any axioms
 'VE.Compose.known_registered' depends on axioms: [propext]
+'VE.Compose.listFault_absent' depends on axioms: [propext]
+'VE.Compose.listFault_none' depends on axioms: [propext]
 'VE.Compose.mem_base' depends on axioms: [propext, Quot.sound]
 'VE.Compose.mem_wrappers' depends on axioms: [propext]
 'VE.Compose.needs_chain' depends on axioms: [propext]
