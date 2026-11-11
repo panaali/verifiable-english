@@ -321,6 +321,7 @@ _NOT_THIS_CHAIN = {
     "span": lean("a located refusal's span, bound by `_spans_a_strict_fence`"),
     "composed_readings": lean("`scope@0`'s; refused by the row's member set without a composed set"),
     "cardinality": lean("`cardinality@0`'s; refused by the row's member set without that profile"),
+    "composed": lean("E2's chain list's; refused by the row's member set without that list (`cardinality.bind_composed`)"),
     "judgments": lean("`judgments@0`'s; refused by the row's member set without the layer"),
     "judgment_lines": lean("`judgments@0`'s; refused by the row's member set without the layer"),
     "undeclared_evaluative": lean("`judgments@0`'s; refused by the row's member set without the layer"),
