@@ -15,6 +15,7 @@ import ResponseShape.Encoders.Discourse
 import ResponseShape.Encoders.Document
 import ResponseShape.Encoders.English
 import ResponseShape.Encoders.EnglishLean
+import ResponseShape.Encoders.EnglishStatement
 import ResponseShape.Encoders.Envelope
 import ResponseShape.Encoders.Family
 import ResponseShape.Encoders.Metered
@@ -228,6 +229,22 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.EnglishLean.ok_fits
 #print axioms ResponseShape.Encoders.EnglishLean.readCase_fits
 #print axioms ResponseShape.Encoders.EnglishLean.read_fits
+#print axioms ResponseShape.Encoders.EnglishStatement.answer_fits
+#print axioms ResponseShape.Encoders.EnglishStatement.case_identities
+#print axioms ResponseShape.Encoders.EnglishStatement.invalid_fits
+#print axioms ResponseShape.Encoders.EnglishStatement.kidsRows_fits
+#print axioms ResponseShape.Encoders.EnglishStatement.lexical_fits
+#print axioms ResponseShape.Encoders.EnglishStatement.misplaced_fits
+#print axioms ResponseShape.Encoders.EnglishStatement.noSource_of_oneSpans
+#print axioms ResponseShape.Encoders.EnglishStatement.ok_fits
+#print axioms ResponseShape.Encoders.EnglishStatement.outcome_fits
+#print axioms ResponseShape.Encoders.EnglishStatement.request_identities
+#print axioms ResponseShape.Encoders.EnglishStatement.rows_fits
+#print axioms ResponseShape.Encoders.EnglishStatement.spanRow_fits
+#print axioms ResponseShape.Encoders.EnglishStatement.statementCaseReported_fits
+#print axioms ResponseShape.Encoders.EnglishStatement.stopped_fits
+#print axioms ResponseShape.Encoders.EnglishStatement.treeJson_fits
+#print axioms ResponseShape.Encoders.EnglishStatement.treeRows_fits
 #print axioms ResponseShape.Encoders.Envelope.bound_fits
 #print axioms ResponseShape.Encoders.Envelope.getObjValD_str
 #print axioms ResponseShape.Encoders.Envelope.lacks

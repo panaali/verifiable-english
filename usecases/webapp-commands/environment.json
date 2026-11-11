@@ -1,0 +1,140 @@
+{"lexicon":
+ {"wordings":
+  [["approved", "{0} is approved"],
+   ["check_required", "{0} must check {1}"],
+   ["choose_revision_required", "{0} must choose a unit revision to restore"],
+   ["choose_vocabulary_required", "{0} must choose a listed rule vocabulary"],
+   ["click_ask_required", "{0} must click Ask"],
+   ["click_check_required", "{0} must click Check rule conflict"],
+   ["click_review_required", "{0} must click Review meaning"],
+   ["review_meaning_required", "{0} must review the meaning"],
+   ["review_required", "{0} must review {1}"],
+   ["share_permitted", "{0} may share {1}"],
+   ["use_required", "{0} must use {1}"],
+   ["write_required", "{0} must write {1} as a statement"]],
+  "spellings":
+  [["assistant", "assistant"],
+   ["calls", "calls"],
+   ["draft", "draft"],
+   ["meaning1", "\"meaning1\""],
+   ["question1", "\"question1\""],
+   ["reader", "reader"],
+   ["token1", "\"token1\""]],
+  "nouns":
+  [["control", "control"],
+   ["ledger", "ledger"],
+   ["reading", "reading"],
+   ["text", "text"],
+   ["token", "token"],
+   ["user", "user"]],
+  "negatives": [],
+  "letters":
+  [["control", "A"],
+   ["ledger", "B"],
+   ["reading", "C"],
+   ["text", "D"],
+   ["token", "E"],
+   ["user", "F"]],
+  "format": "ve.english-lexicon@1",
+  "environment_id":
+  "1a97c2719978077615c24e560d8e6d007938f1d7e011f3f5239cc9e1c1e1ea69",
+  "aliases": []},
+ "environment":
+ {"vocabulary":
+  {"sorts":
+   {"user": {"description": "user"},
+    "token": {"description": "token"},
+    "text": {"description": "text"},
+    "reading": {"description": "reading"},
+    "ledger": {"description": "ledger"},
+    "control": {"description": "control"}},
+   "predicates":
+   {"write_required":
+    {"regulated":
+     {"role": "obligation",
+      "default": "deny",
+      "act": "{0} write {1} as a statement"},
+     "description": "write_required",
+     "arguments": ["user", "text"]},
+    "use_required":
+    {"regulated":
+     {"role": "obligation", "default": "deny", "act": "{0} use {1}"},
+     "description": "use_required",
+     "arguments": ["user", "control"]},
+    "share_permitted":
+    {"regulated":
+     {"role": "permission", "default": "allow", "act": "{0} share {1}"},
+     "description": "share_permitted",
+     "arguments": ["user", "token"]},
+    "review_required":
+    {"regulated":
+     {"role": "obligation", "default": "deny", "act": "{0} review {1}"},
+     "description": "review_required",
+     "arguments": ["user", "text"]},
+    "review_meaning_required":
+    {"regulated":
+     {"role": "obligation", "default": "deny", "act": "{0} review the meaning"},
+     "description": "review_meaning_required",
+     "arguments": ["user"]},
+    "click_review_required":
+    {"regulated":
+     {"role": "obligation",
+      "default": "deny",
+      "act": "{0} click Review meaning"},
+     "description": "click_review_required",
+     "arguments": ["user"]},
+    "click_check_required":
+    {"regulated":
+     {"role": "obligation",
+      "default": "deny",
+      "act": "{0} click Check rule conflict"},
+     "description": "click_check_required",
+     "arguments": ["user"]},
+    "click_ask_required":
+    {"regulated":
+     {"role": "obligation", "default": "deny", "act": "{0} click Ask"},
+     "description": "click_ask_required",
+     "arguments": ["user"]},
+    "choose_vocabulary_required":
+    {"regulated":
+     {"role": "obligation",
+      "default": "deny",
+      "act": "{0} choose a listed rule vocabulary"},
+     "description": "choose_vocabulary_required",
+     "arguments": ["user"]},
+    "choose_revision_required":
+    {"regulated":
+     {"role": "obligation",
+      "default": "deny",
+      "act": "{0} choose a unit revision to restore"},
+     "description": "choose_revision_required",
+     "arguments": ["user"]},
+    "check_required":
+    {"regulated":
+     {"role": "obligation", "default": "deny", "act": "{0} check {1}"},
+     "description": "check_required",
+     "arguments": ["user", "ledger"]},
+    "approved":
+    {"verbalisation": "{0} is approved",
+     "description": "approved",
+     "arguments": ["reading"]}},
+   "constants":
+   {"token1": {"sort": "token", "description": "token1"},
+    "reader": {"sort": "user", "description": "reader"},
+    "question1": {"sort": "text", "description": "question1"},
+    "meaning1": {"sort": "text", "description": "meaning1"},
+    "draft": {"sort": "reading", "description": "draft"},
+    "calls": {"sort": "ledger", "description": "calls"},
+    "assistant": {"sort": "control", "description": "assistant"}}},
+  "speech_acts":
+  {"task": "webapp-copy",
+   "definites":
+   {"the token": "token1",
+    "the question": "question1",
+    "the private server calls ledger": "calls",
+    "the meaning": "meaning1",
+    "the document assistant control": "assistant"},
+   "addressee": {"sort": "user", "constant": "reader"}},
+  "spec_revision": "ve-v0.2-expand2-2026-09-25",
+  "profiles": ["norms@0", "relational-fol@0", "speech-acts@0"],
+  "language": "ve.core@0.2"}}

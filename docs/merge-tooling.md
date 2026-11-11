@@ -31,6 +31,7 @@ its merge strategy:
 | numbers-phrases | `ve/numbers_phrases.json` (from `VE.Numbers.Phrases`) | regenerate |
 | defaults-words | `ve/defaults_words.json` (from `VE.Defaults.Wire.zoneHeads`, `zoneLineWords`, `zoneJoins`) | regenerate |
 | profile-table | `ve/profile_table.json` (from `VE.Compose.profileTable`) | regenerate |
+| webapp-commands-env | `usecases/webapp-commands/environment.json` (from `VE.Commands.Examples.E_web`) | regenerate |
 | lean-mode-deps | `tools/lean-mode-deps.json` | regenerate |
 | lean-statements | `lean/statements.txt`, `predicates.txt`, `declarations.txt` | regenerate |
 | lean-audit-manifests | `lean/VE/Audit.lean`, `lean/ResponseShape/Audit.lean`, `lean/axioms.txt` (`audit.py --write`, from `declarations.txt`; AR-1) | regenerate |
