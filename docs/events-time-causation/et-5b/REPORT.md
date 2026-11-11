@@ -117,7 +117,15 @@ file), so every seeded bug is in Lean.
     JSON). It printed 25 SURVIVOR and 4 UNKNOWN lines, all on the profile-check and literal lines listed above.
   - Second sweep, with the fixtures and `trust-mutants-allow.json`, at `7bfb5176c` (default cap of 60): 50 KILLED,
     7 ALLOWED, 2 UNKNOWN, 1 INVALID, 0 SURVIVOR, 71 NOT RUN past the cap (3346 s).
-  - Third run, `--rescore` of the second on the final Lean (after the main merge and the reading sets): TM_RESULT.
+  - Third run, `--rescore` of the second on the final Lean (after the main merge and the reading sets): a full run
+    (a tool input changed with the merge), at `dc7c91754`: 50 KILLED, 4 ALLOWED, 4 UNKNOWN, 2 INVALID, 0 SURVIVOR.
+    The four UNKNOWNs (M002, M040 in `environmentOf`'s profile check; M027, M039 in `eventsView`) stop at a probe that
+    cannot elaborate `RouteExamples.lean:417`. Planted by hand, each fails `RouteExamples.lean:417` and `:429` (M027
+    also `:425`). They are allowed with that evidence (`trust-mutants-allow.json`). The two INVALIDs are `list-empty`
+    texts Lean refuses (`softAlwaysReadings`, `causalReadings`), so they count for nothing.
+  - Fourth run, `--rescore` of the third with those allow entries, at `be0baa7bb` (the committed record; mode
+    "identical", 54 reused, 6 rerun): **50 KILLED, 8 ALLOWED, 2 INVALID, 0 SURVIVOR, 0 UNKNOWN, 144 NOT RUN** past the
+    default cap of 60 (exit 3, "none left but some NOT RUN").
 - **Size** (`git diff --numstat $(git merge-base HEAD main)`, generated files left out; see the SIZE line above):
   - Product Lean: 201 added, 18 deleted (`Document.lean` 76/11, `SourceWords.lean` 75/3, `Anchor.lean` 41,
     `DocumentChain.lean` 5/3, `Wire.lean` 2/1, `VE.lean` 2).
@@ -135,7 +143,7 @@ file), so every seeded bug is in Lean.
     (`actions_version` is main's). `tests/data/route-cases.jsonl` and `lean/VE/Route/examples/route-cases.json` are
     unchanged.
   - `tools/trust_map.py --check`: PASS (above).
-  - Trust-mutant sweep: TM_RESULT.
+  - Trust-mutant sweep: exit 3, no survivor or UNKNOWN (above).
   - The selected run: SELECTED_RESULT.
 
 ## Spec re-read
