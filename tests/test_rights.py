@@ -310,6 +310,10 @@ def test_rights_coverage_counts_open_limitation_terms_and_findings(tmp_path):
     assert result["coverage"]["residual_total"] == sum(residual.values())
     assert result["coverage"]["rights_report"]["unlicensed_limitations"] == [
         "UnlicensedLimitation: exception of rule protect on right life"]
+    # rights-cfr-3: beside its text, the finding carries its line's span, the unit `u0` the right is written in.
+    assert result["coverage"]["rights_report"]["unlicensed_limitations_located"] == [
+        {"code": "UnlicensedLimitation", "rule": "protect", "right": "life", "span": "u0",
+         "text": "UnlicensedLimitation: exception of rule protect on right life"}]
     assert coverage(load_document(path))["residual"] == residual
     # a bar's aimed terms are open too
     liberty = {"kind": "liberty", "holder_slot": None, "cites": {},

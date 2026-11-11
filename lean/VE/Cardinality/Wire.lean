@@ -16,13 +16,23 @@ the problem limits P1–P3 and the case runner are in `Run.lean`. -/
 namespace VE.Cardinality
 open Lean
 
+/-- The chain list: `cardinality@0` beside the first-order chain (DRI 2026-11-05, reviews/dri-decisions-20261105-qt-a4b.md
+item 1). Its W6a part is W6a's core list; its chain is read apart, on `chainEnvironment` (`Service.Document`). -/
+def Wire.chainProfiles : List String :=
+  ["cardinality@0", "norm-defaults@0", "norms@0", "readings@1", "relational-fol@0"]
+
+/-- The W6a list a cardinality list projects onto (E4): W6a's core under the chain list, and otherwise the list
+without `cardinality@0`. -/
+def Wire.projectedProfiles (ps : List String) : List String :=
+  if ps == Wire.chainProfiles then ["order@0", "relational-fol@0", "time@0"] else ps.filter (· != "cardinality@0")
+
 /-- E4's projection: the W6a environment inside a cardinality environment. It removes `cardinality_schema` and
-`cardinality`, and removes `cardinality@0` from `profiles`; nothing else changes. -/
+`cardinality`, and lists `projectedProfiles` in `profiles`; nothing else changes. -/
 def projectW6 (env : Lean.Json) : Except String Lean.Json := do
   let profiles ← VE.Bridge.strings (← env.getObjVal? "profiles")
   let base ← VE.Time.Wire.dropFields env ["cardinality_schema", "cardinality", "profiles"]
   pure (Lean.Json.mkObj ((← VE.Bridge.fields base) ++
-    [("profiles", Lean.Json.arr ((profiles.filter (· != "cardinality@0")).map Lean.Json.str).toArray)]))
+    [("profiles", Lean.Json.arr ((Wire.projectedProfiles profiles).map Lean.Json.str).toArray)]))
 
 /-- A decoded cardinality environment; the decoder fills `wf` (E5–E8). `w6` is W6a's decoding of `projectW6` of the
 request's environment (E4), with the projection's W6a identities; `environmentId` is the original environment's
@@ -32,6 +42,8 @@ structure CardEnv where
   env : CEnv
   wf : env.WellFormed
   environmentId : String
+  /-- The original environment's profiles, as listed: the version of its identities. -/
+  profiles : List String
 
 structure CAdmission (w : CardEnv) where
   formula : CFormula
@@ -40,9 +52,6 @@ structure CAdmission (w : CardEnv) where
 
 /-- An admitted statement satisfies the independent admission relation. -/
 theorem CAdmission.sound {w : CardEnv} (a : CAdmission w) : Admitted w.env a.formula := admits_sound _ _ a.admitted
-
-/-- The original environment's profiles: `cardinality@0` and the projection's. -/
-def CardEnv.profiles (w : CardEnv) : List String := "cardinality@0" :: w.w6.profiles
 
 end VE.Cardinality
 
@@ -55,8 +64,12 @@ def format : String := "ve-cardinality@1"
 
 /-! ## The environment (E1–E8) -/
 
-/-- E2: `cardinality@0` beside one of W6a's two profile lists (code point order). -/
-def profileLists : List (List String) := VE.Time.Wire.w6Profiles.map ("cardinality@0" :: ·)
+/-- E2: `cardinality@0` beside one of W6a's two profile lists, or the chain list (code point order). -/
+def profileLists : List (List String) := VE.Time.Wire.w6Profiles.map ("cardinality@0" :: ·) ++ [chainProfiles]
+
+/-- E2's text, without its code: the one refusal of a list outside `profileLists`, at this decoder and at the gate. -/
+def e2 : String :=
+  "cardinality@0 requires order@0, relational-fol@0 and time@0, optionally with documents@1, or norm-defaults@0, norms@0, readings@1 and relational-fol@0"
 
 def maxFiniteSorts : Nat := 64
 
@@ -94,7 +107,7 @@ def decodeEnvironment (env : Json) : Except String CardEnv := do
     "cardinality_schema", "cardinality"]
   let profiles ← strings (← env.getObjVal? "profiles")
   unless profileLists.contains profiles do
-    throw "UnsupportedProfile: cardinality@0 requires order@0, relational-fol@0 and time@0, optionally with documents@1"
+    throw s!"UnsupportedProfile: {e2}"
   unless (← stringField env "cardinality_schema") == format do
     throw "UnsupportedProfile: Unsupported cardinality schema"
   let w6 ← VE.Time.Wire.decodeEnvironment (← projectW6 env)
@@ -103,7 +116,7 @@ def decodeEnvironment (env : Json) : Except String CardEnv := do
   let id ← VE.Route.Wire.environmentId profiles env
   if h : (finite.all w6.vocab.sorts.contains &&
       w6.vocab.constants.all (fun c => !c.1.startsWith regionPrefix)) = true then
-    pure ⟨w6, ⟨w6.vocab.env, finite⟩, wellFormed_of w6.vocab finite h, id⟩
+    pure ⟨w6, ⟨w6.vocab.env, finite⟩, wellFormed_of w6.vocab finite h, id, profiles⟩
   else throw "InvalidInput: cardinality environment is not well formed"
 
 /-! ## Statements (S1–S10) -/
