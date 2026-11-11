@@ -9,13 +9,15 @@ from __future__ import annotations
 from collections import Counter
 import hashlib
 import json
+import os
+from pathlib import Path
 import re
 
 from .assurance import semantic_entry
 from . import ast
 from .english import EnglishParser, EnglishTraversal, EnglishVocabulary, _max_scope, english_lark_grammar
 from .surface.unambiguity import require_unique_derivation
-from .errors import SyntaxError, VEError
+from .errors import CheckerUnavailable, SyntaxError, VEError
 from .norms import Norm, NormDocument
 from .surface import norms as _registered_surface  # noqa: F401
 from .surface import softnorms as _soft_surface
@@ -364,6 +366,56 @@ def parse_english(env, source, manifest=None, *, existing_names=(), _w1=False):
     if manifest is not None and manifest.get("document_hash") != document.document_hash:
         raise VEError("IdentityMetadataMismatch: norm document hash")
     return document
+
+
+def statement_shadow_log() -> Path | None:
+    """The shadow log of `english.statement` (docs/spec/en-e3-norm.md 2.4, Shadow): the path `VE_SHADOW_LOG` names,
+    only when `VE_STATEMENT_COMPARATOR=1` is set too; otherwise none, and the W1 path asks Lean nothing."""
+    path = os.environ.get("VE_SHADOW_LOG")
+    return Path(path) if os.environ.get("VE_STATEMENT_COMPARATOR") == "1" and path else None
+
+
+def _by_position(nodes: list[dict]) -> list[dict]:
+    """W1 nodes with rule i named `rule-i`, its `over` renamed alike (2.4: both sides renamed by position)."""
+    names = {node["name"]: f"rule-{i}" for i, node in enumerate(nodes, 1)}
+    return [{**node, "name": names[node["name"]], "over": [names.get(o, o) for o in node["over"]]} for node in nodes]
+
+
+def statement_class(python, lean) -> str:
+    """The one class of a shadow record (2.4's table). `python` is Python's nodes (`list`) or the exception it
+    raised; `lean` is the checked `english.statement` result, or the `CheckerUnavailable` its relay raised. A Lean
+    code's class is `codes.json`'s (`english_grammar.codes`); `lean-unavailable` is tested first, so the classes
+    partition the records and such an answer is never `both-refuse` or `lean-stricter` (verifier 3)."""
+    from .backends.service_schema import same_json
+    from .english_grammar import codes
+    classes = codes()[0]
+    if not isinstance(lean, (dict, CheckerUnavailable)):
+        raise TypeError("lean must be the checked english.statement result or CheckerUnavailable")
+    if isinstance(lean, CheckerUnavailable) or classes.get(lean.get("code")) == "CheckerUnavailable":
+        return "lean-unavailable"
+    admitted = not isinstance(python, BaseException)
+    if lean["status"] == "one":
+        if not admitted:
+            return "lean-looser"
+        nodes = [row["node"]["norm"] for row in lean["statements"] if row["kind"] == "rule"]
+        return "agree" if same_json(_by_position(nodes), _by_position(python)) else "different-node"
+    if not admitted:
+        return "both-refuse"
+    return "lean-unknown" if lean["status"] == "budget" or classes.get(lean.get("code")) == "ResourceLimit" \
+        else "lean-stricter"
+
+
+def statement_record(source: str, python, lean) -> dict:
+    """One shadow record: the source's SHA-256, Python's outcome (its nodes, or its error class and message),
+    Lean's status, code and nodes (or the relay's failure), and exactly one class."""
+    unavailable = isinstance(lean, CheckerUnavailable)
+    return {"source_sha256": hashlib.sha256(source.encode()).hexdigest(),
+            "python": {"nodes": python} if not isinstance(python, BaseException) else
+            {"class": type(python).__name__, "message": str(python)},
+            "lean": {"status": "unavailable", "message": str(lean)} if unavailable else
+            {"status": lean["status"], "code": lean.get("code"),
+             "nodes": [row["node"]["norm"] for row in lean.get("statements") or () if row["kind"] == "rule"]},
+            "class": statement_class(python, lean)}
 
 
 _SOFT_NOTE = re.compile(
