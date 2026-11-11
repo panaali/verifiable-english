@@ -40,3 +40,4 @@
 - `docs/act-phrases/ap-7/draw.py` — AP-7's constitution draw: 30 norm sentences with *and*, *or* or *nor* inside the verb phrase (PRE-REGISTRATION.md).
 - `docs/act-phrases/ap-7/dump.py` — Lean's side of AP-7: `phraseReadings` over every sample phrase under its declared vocabulary, modal included.
 - `docs/act-phrases/ap-7/runner.py` — AP-7 blind calls and scoring (PRE-REGISTRATION.md); the call and record handling is jt-e1r's runner's, for Opus.
+- `docs/act-phrases/ap-parse-index/seed_bugs.py` — ap-parse-index's seeded bugs: plant each, build the Lean module that must catch it (a proof of equality with the definition it replaces in compiled code, or a …

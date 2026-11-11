@@ -257,6 +257,8 @@ NOT_REGENERATED = {
     "tools/question_answering_agreement.py": "Q2.6 evidence: the agreement of ask with the existing route, run on corpora and saved",
     "tools/words_ab.py": "Q2.4 evidence: the A/B of Lean's wording against the pre-Q2.4 producers, run on corpora and saved",
     "docs/spec/question-answering-q2/mutants.py": "Q2 seeded-bug evidence: each mutant is run and restored, then its result is saved",
+    "docs/act-phrases/ap-parse-index/seed_bugs.py": "ap-parse-index seeded-bug evidence: each plant is run and restored "
+                                                    "(the checker pin with it), then mutants.json is saved",
     "tools/difffuzz.py": "reviewed ledger: --update-baseline adds findings a person triages",
     "tools/stage2_parity.py": "report: docs/spec/stage2-parity.md, a migration record",
     "tools/lean_service_soak.py": "measurement report of the machine it runs on",
