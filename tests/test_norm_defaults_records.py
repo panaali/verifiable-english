@@ -14,6 +14,7 @@ DISPATCH = ROOT / "lean/VE/Compose/Dispatch.lean"
 ND_SPEC = ROOT / "docs/spec/norm-defaults.md"
 COMPOSITION = ROOT / "docs/spec/composition.md"
 NORMDEFAULTS_NOTES = ROOT / "lean/NORMDEFAULTS.md"
+INTEGRATION_GAPS = ROOT / "docs/INTEGRATION-GAPS.md"
 PK1 = ROOT / "docs/premise-packs/pk-1"
 SENTENCE = re.compile(r"(?<=[.;:])\s+(?=[A-Z`*(])")
 
@@ -50,10 +51,32 @@ def gate_legacy_faults(spec: str, source: str) -> list[str]:
     return faults
 
 
+def gate_scope_faults(spec: str, source: str) -> list[str]:
+    """Wrapper-free equivalence claims must retain `gate_legacy`'s legacy-profile hypothesis."""
+    theorem = re.search(r"theorem gate_legacy\b(.*?)\s*:= by", source, re.S)
+    assert theorem and "p ∈ legacyProfiles" in theorem.group(1)
+    return [s for s in _sentences(spec)
+            if "`todayGate`" in s and re.search(r"without wrapper profiles|wrapper-free|no wrapper profiles", s)
+            and re.search(r"\b(?:is|agrees with|equals)\b", s) and "legacy" not in s]
+
+
 def test_norm_defaults_spec_names_gate_legacy_target() -> None:
     source = DISPATCH.read_text(encoding="utf-8")
     assert gate_legacy_target(source) == "dispatch"
     assert gate_legacy_faults(ND_SPEC.read_text(encoding="utf-8"), source) == []
+
+
+def test_wrapper_free_gate_claims_keep_legacy_hypothesis() -> None:
+    assert gate_scope_faults(ND_SPEC.read_text(encoding="utf-8"), DISPATCH.read_text(encoding="utf-8")) == []
+
+
+def test_gate_scope_scan_refuses_unqualified_equivalence() -> None:
+    source = DISPATCH.read_text(encoding="utf-8")
+    for bad in ("The gate on a list without wrapper profiles is `todayGate`.",
+                "On wrapper-free lists, `gateOf profileTable` agrees with `todayGate`."):
+        assert gate_scope_faults(bad, source) == [bad]
+        assert gate_scope_faults(bad.replace("lists", "legacy-profile lists").replace(
+            "list without", "legacy-profile list without"), source) == []
 
 
 def test_gate_legacy_scan_refuses_old_sentences() -> None:
@@ -96,6 +119,22 @@ def _alternatives_excludes(block: str) -> bool:
     return '"norm-defaults@0" ∉ ps' in block
 
 
+def _claims_pair_gate_refusal(sentence: str) -> bool:
+    if "alternatives" not in sentence or (
+            "`norm-defaults@0`" not in sentence and "alternatives and risk branches" not in sentence):
+        return False
+    clauses = sentence.split(";")
+    for index, clause in enumerate(clauses):
+        denial = re.search(r"\b(?:refused|rejected|refuse|reject)\b", clause)
+        gate = re.search(r"\bprofile (?:validation|gate)\b", clause)
+        refers_to_alternatives = "alternatives" in clause or (
+            index > 0 and re.search(r"\b(?:they|both)\b", clause)
+            and "alternatives" in ";".join(clauses[:index]))
+        if denial and gate and refers_to_alternatives:
+            return True
+    return False
+
+
 def pair_record_faults(records: dict[str, str], source: str) -> list[str]:
     """Each record of the gate's alternatives/norm-defaults row that differs from `todayGate` (empty: none)."""
     admitted, faults = admits_pair(source), []
@@ -104,7 +143,7 @@ def pair_record_faults(records: dict[str, str], source: str) -> list[str]:
     assert lean_list == lean_alt == (not admitted), "Dispatch.lean's gate, TodayList and today_alternatives disagree"
     for name, text in records.items():
         for s in _sentences(text):
-            if "alternatives" in s and re.search(r"\b(refused|rejected) at profile validation", s) and admitted:
+            if _claims_pair_gate_refusal(s) and admitted:
                 faults.append(f"{name}: says refused, todayGate admits: {s}")
             if "`norm-defaults@0 ∉ ps` in" in s and "`today_alternatives`" in s and admitted:
                 faults.append(f"{name}: reads check 6 into `today_alternatives`, which Lean no longer states: {s}")
@@ -127,13 +166,14 @@ def pair_record_faults(records: dict[str, str], source: str) -> list[str]:
 
 def _records() -> dict[str, str]:
     return {p.relative_to(ROOT).as_posix(): p.read_text(encoding="utf-8")
-            for p in (COMPOSITION, NORMDEFAULTS_NOTES, ND_SPEC)}
+            for p in (COMPOSITION, NORMDEFAULTS_NOTES, ND_SPEC, INTEGRATION_GAPS)}
 
 
 def test_alternatives_norm_defaults_gate_records_agree() -> None:
     source = DISPATCH.read_text(encoding="utf-8")
     records = _records()
     assert "def todayGate" in records["docs/spec/composition.md"]  # each structural check has its record
+    assert "docs/INTEGRATION-GAPS.md" in records
     assert pair_record_faults(records, source) == []
 
 
@@ -142,6 +182,9 @@ def test_pair_scan_refuses_stale_records() -> None:
     assert admits_pair(source)
     stale = {
         "Still open: the alternatives and risk branches (spec 3.3's gap: refused at profile validation), W8.": "says",
+        "The alternatives and risk routes reject `norm-defaults@0` at the profile gate.": "says",
+        "The alternatives and risk routes still consume completed deny/allow norms; they reject "
+        "`norm-defaults@0` at the profile gate instead of treating a silent permission as decided.": "says",
         f"| 6 | `alternatives@0` with `norm-defaults@0` | `{PAIR_TEXT}` |": "check row",
         "| D46 | `alternatives@0, norm-defaults@0, norms@0, relational-fol@0` | `UnsupportedProfile: x` |": "D46",
         "and `norm-defaults@0 ∉ ps` in `today_norms`, `today_alternatives` and `today_risk` is the gate's checks 5, 6.":
