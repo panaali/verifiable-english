@@ -1,0 +1,13 @@
+{
+ "item": "fsf-fidelity-fix",
+ "note": "Seeded bugs, one per claimed behaviour; each was planted, run against the one named test (which failed), and restored with git checkout. No product code (ve/, lean/, rust/) changed, so these are all in the use case's Python harness and VE translation files.",
+ "mutants": [
+  {"id": "S1", "file": "usecases/safety-framework/translation.py", "behaviour": "RS9 = same is not offered (decision item 1 condition)", "change": "READING_SETS[\"RS9\"] = (\"same\", \"different\")", "test": "tests/test_safety_framework.py::test_excluded_readings_and_their_rules_are_never_offered_again", "result": "FAILED"},
+  {"id": "S2", "file": "usecases/safety-framework/run.py", "behaviour": "a key condition naming an excluded reading is a disagreement, never a vacuous NONE", "change": "deleted the EXCLUDED_READINGS refusal in same_set", "test": "tests/test_safety_framework.py::test_results_agree_with_the_key_except_the_recorded_findings", "result": "FAILED"},
+  {"id": "S3", "file": "usecases/safety-framework/facts.d1.ve", "behaviour": "the bridge is N1's own premise, not the document's", "change": "bridge-one-domain header 'item N1' -> 'always'", "test": "tests/test_safety_framework.py::test_every_rule_and_premise_parses_with_one_reading", "result": "FAILED"},
+  {"id": "S4", "file": "usecases/safety-framework/rules.d1.ve", "behaviour": "f9-acc: the conditions hold for every misuse level reached", "change": "f9-acc back to 'there is a level such that ...'", "test": "tests/test_safety_framework.py::test_one_mitigated_level_does_not_discharge_another_reached_level", "result": "FAILED"},
+  {"id": "S5", "file": "usecases/safety-framework/rules.d1.ve", "behaviour": "f11-rel releases ordinary internal deployment too", "change": "f11-rel condition (a) back to 'that proposal is classified as \"further_development\"'", "test": "tests/test_safety_framework.py::test_rerun_equals_committed_results", "result": "FAILED (results.json is out of date)"},
+  {"id": "S6", "file": "usecases/safety-framework/reference.py", "behaviour": "the independent reading releases ordinary internal deployment at bullets 3 and 4", "change": "elif (dev or internal) and rel -> elif dev and rel", "test": "tests/test_safety_framework.py::test_reference_reading_agrees_with_the_key_and_with_ve", "result": "FAILED"},
+  {"id": "S7", "file": "usecases/safety-framework/rules.d1.ve", "behaviour": "f16: 2.2's possible adjustment (OT16) is no exception", "change": "like_public_models restored as an exception of f16-ds and f16-ds-strict", "test": "tests/test_safety_framework.py::test_a_possible_adjustment_is_no_exception_to_the_recommended_level", "result": "FAILED"}
+ ]
+}
