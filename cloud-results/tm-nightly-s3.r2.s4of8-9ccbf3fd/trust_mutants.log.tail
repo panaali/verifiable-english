@@ -1,0 +1,9 @@
+trust_mutants: 41 definitions, 71 mutants (9 to run), 4 jobs, base a998c06909c3
+SURVIVOR lean/VE/Scope/Authoring.lean:26 VE.Scope.Pinned.wordChar (D[V], trusted) le-lt: ≤ -> <
+UNKNOWN lean/VE/Commands/Steps.lean:111 VE.Commands.shapeOutcome (G[V], trusted) le-eq: ≤ -> = (lean/VE/Commands/StepsExamples.lean:79: Expression (it computes through a proof the mutant broke ...)
+UNKNOWN lean/VE/Presupposition/Couple.lean:119 VE.Presupposition.PickedWF (S, trusted) eq-le: = -> ≤ (lean/VE/Presupposition/CoupleExamples.lean:133: Expression (VE.Presupposition.instDecidablePicked...)
+trust_mutants: 6 KILLED, 1 SURVIVOR, 2 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 62 OTHER SHARD in 1014 s
+trust_mutants: D[V], trusted: 3 KILLED, 1 SURVIVOR, 19 OTHER SHARD
+trust_mutants: G[V], trusted: 2 KILLED, 1 UNKNOWN, 28 OTHER SHARD
+trust_mutants: S, trusted: 1 KILLED, 1 UNKNOWN, 15 OTHER SHARD
+trust_mutants: steps: wall plan 18.6 s, scratch 3 s, control_build 0.3 s, probe_install 1.2 s, mutants 988.2 s, cleanup 2.4 s, reads 0.2 s; lake control_build 0.2 s (1), probe_install 1.2 s (1), control_probes 144.3 s (10), mutant_builds 100.5 s (10), mutant_checks 2227.3 s (18), stage_controls 853.7 s (7), mutant_probes 173 s (10)
