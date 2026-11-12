@@ -110,7 +110,8 @@ READINGS = {
     "rs3-reminder": ("RS3", {"ext": ["f2-reminder"], "any": ["f2-reminder-any"]}),
     "rs3-no-deploy": ("RS3", {"ext": ["f2-no-deploy"], "any": ["f2-no-deploy-any"]}),
     "rs18-develop": ("RS18", {"devonly": ["f3-develop", "f3-develop-forecast"],
-                              "inuse": ["f3-develop-inuse", "f3-develop-inuse-forecast"]}),
+                              "inuse": ["f3-develop-inuse", "f3-develop-inuse-forecast", "f3-inuse",
+                                        "f3-inuse-forecast"]}),
     # RS2 is 4.2's "also" (p12-u195, which stays UNFORMALISED for its "during development" order); RS11 shares
     # p16-u281 with RS6. Neither has a unit of its own, so neither is placed.
     "rs2-nest": ("RS2", {"nest": ["rs2-nest"], "sep": []}),

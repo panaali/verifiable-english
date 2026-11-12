@@ -98,7 +98,8 @@ def test_table_1_acts_name_the_high_standard(pf):
 
 def test_f2_f3_acts_carry_the_sufficiency(pf):
     """f2, f3 (class 1): SUF asks safeguards that sufficiently minimize the risk, and sufficient controls."""
-    assert set(R.ATOMS["SUF"]) == {"safeguards_before_deployment", "safeguards_during_development"}
+    assert set(R.ATOMS["SUF"]) == {"safeguards_before_deployment", "safeguards_during_development",
+                                   "safeguards_before_internal_use"}
     assert "sufficiently minimizing severe-harm risk" in act("safeguards_before_deployment")
     assert "sufficient safety as well as security controls" in act("safeguards_during_development")
     for name in ("f2-deploy", "f2-deploy-any", "f2-reminder", "f2-reminder-any"):

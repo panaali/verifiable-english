@@ -139,8 +139,16 @@ ACTS = {
                                      "1, 2.2, 4.2: robust and effective safeguards that sufficiently minimize the "
                                      "associated risk of severe harm before deployment"),
     "safeguards_during_development": ("{0} have sufficient safety as well as security controls during development",
-                                      "4.4 and Appendix C: sufficient safeguards (safety and security controls) "
-                                      "during development"),
+                                      "4.4: models that have reached or are forecasted to reach Critical capability "
+                                      "in a Tracked Category require additional safeguards (safety and security "
+                                      "controls) during development, regardless of whether or when they are "
+                                      "externally deployed; 4.2: safeguards that sufficiently minimize associated "
+                                      "risks during development; Appendix C: sufficient safeguards during development"),
+    "safeguards_before_internal_use": ("{0} have additional safety as well as security controls before internal use",
+                                       "4.4, its heading “Increasing safeguards before internal use and further "
+                                       "development” read under RS18 = inuse: models that have reached or are "
+                                       "forecasted to reach Critical capability in a Tracked Category require "
+                                       "additional safeguards (safety and security controls) before internal use"),
     "development_security_controls": ("{0} have appropriate security controls during its development",
                                       "2.2: appropriate security controls as covered High systems are developed"),
     "security_practices": ("{0} have security practices", "C.3: required High-level security practices"),
