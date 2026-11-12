@@ -153,7 +153,9 @@ are the item's seeded bugs. "main" means main's whole file was restored.
 - `tests/test_pk1_route_case_evidence_validity.py` was not edited. The new identity scan is in
   `tests/test_norm_defaults_records.py` and adds the universal-wording and INVALID-cite checks (the C part of
   pk1c1-F2 stays with pk-1-cfr-1c).
-- The run of the selected tests on the committed HEAD is recorded below.
+- Selected tests on committed HEAD 8674805cb (`MAC_PYTEST_NO_DEFER=1 zsh mac-pytest.sh --select -- --base 175814252
+  --run`, run on the VM by the runner's choice): exit 0, "recorded 36 units for tree 7e04d75075; ... 0 failed", 969 s.
+  Only this REPORT changed after it.
 
 ## 6. Next items
 
