@@ -285,6 +285,10 @@ import VE.Acts.Grammar
 import VE.Acts.RuleExamples
 import VE.Acts.Meaning
 import VE.Acts.Readings
+import VE.Acts.NormalProofs
+import VE.Acts.NormalInverse
+import VE.Acts.NormalBlocks
+import VE.Acts.NormalUnique
 import VE.Acts.Specialise
 import VE.Acts.SpecialiseExamples
 import VE.Acts.Sources

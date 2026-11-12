@@ -128,6 +128,7 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.Cardinality.sizesJson_fits
 #print axioms ResponseShape.Encoders.ClausesElaborate.elaborateCase_fits
 #print axioms ResponseShape.Encoders.ClausesElaborate.runCaseReported_fits
+#print axioms ResponseShape.Encoders.Command.altIndexes_fits
 #print axioms ResponseShape.Encoders.Command.caseReported_fits
 #print axioms ResponseShape.Encoders.Command.encode_fits
 #print axioms ResponseShape.Encoders.Command.readingJson_fits

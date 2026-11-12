@@ -1,0 +1,178 @@
+{
+ "restored_build_returncode": 0,
+ "mutants": [
+  {
+   "id": "d9-dropped",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Meaning.lean",
+   "definition": "VE.Acts.normalOk",
+   "behaviour": "`longEnd` dropped: a joined filler with a long first or last part is accepted",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/RenderExamples.lean:112, lean/VE/Acts/RenderExamples.lean:115, lean/VE/Acts/RenderExamples.lean:120, lean/VE/Acts/RenderExamples.lean:130, lean/VE/Acts/NormalProofs.lean:784",
+   "fixtures": [
+    "lean/VE/Acts/RenderExamples.lean:112",
+    "lean/VE/Acts/RenderExamples.lean:115",
+    "lean/VE/Acts/RenderExamples.lean:120",
+    "lean/VE/Acts/RenderExamples.lean:130"
+   ],
+   "proofs": [
+    "lean/VE/Acts/NormalProofs.lean:784"
+   ]
+  },
+  {
+   "id": "canon-args-kept",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Linearize.lean",
+   "definition": "VE.Acts.Atom.canon",
+   "behaviour": "the object is not put first",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/TableExamples.lean:206, lean/VE/Acts/TableExamples.lean:211, lean/VE/Acts/NormalProofs.lean:741, lean/VE/Acts/NormalProofs.lean:831, lean/VE/Acts/NormalProofs.lean:842",
+   "fixtures": [
+    "lean/VE/Acts/TableExamples.lean:206",
+    "lean/VE/Acts/TableExamples.lean:211"
+   ],
+   "proofs": [
+    "lean/VE/Acts/NormalProofs.lean:741",
+    "lean/VE/Acts/NormalProofs.lean:831",
+    "lean/VE/Acts/NormalProofs.lean:842"
+   ]
+  },
+  {
+   "id": "normal-marker-repeated",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Linearize.lean",
+   "definition": "VE.Acts.Atom.normal",
+   "behaviour": "a joined filler is written with its marker repeated",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/TableExamples.lean:177, lean/VE/Acts/NormalProofs.lean:696, lean/VE/Acts/NormalProofs.lean:699",
+   "fixtures": [
+    "lean/VE/Acts/TableExamples.lean:177"
+   ],
+   "proofs": [
+    "lean/VE/Acts/NormalProofs.lean:696",
+    "lean/VE/Acts/NormalProofs.lean:699"
+   ]
+  },
+  {
+   "id": "spans-short",
+   "language": "Lean",
+   "file": "lean/VE/Acts/NormalProofs.lean",
+   "definition": "VE.Acts.NormalProofs.spans",
+   "behaviour": "the derivation list misses the spans that end at the last token",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/NormalProofs.lean:998",
+   "fixtures": [],
+   "proofs": [
+    "lean/VE/Acts/NormalProofs.lean:998"
+   ]
+  },
+  {
+   "id": "vk1-reserved",
+   "language": "Lean",
+   "file": "lean/VE/Acts/RenderExamples.lean",
+   "definition": "VE.Acts.RenderExamples.Vk1",
+   "behaviour": "the canon family's vocabulary declares the reserved *then*",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/RenderExamples.lean:143",
+   "fixtures": [
+    "lean/VE/Acts/RenderExamples.lean:143"
+   ],
+   "proofs": []
+  },
+  {
+   "id": "split-joined-accepted",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Meaning.lean",
+   "definition": "VE.Acts.normalOk",
+   "behaviour": "a joined filler under a split marker is accepted (it reads as a split construct, a join of atoms)",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/RenderExamples.lean:82, lean/VE/Acts/RenderExamples.lean:85, lean/VE/Acts/RenderExamples.lean:97, lean/VE/Acts/NormalProofs.lean:784",
+   "fixtures": [
+    "lean/VE/Acts/RenderExamples.lean:82",
+    "lean/VE/Acts/RenderExamples.lean:85",
+    "lean/VE/Acts/RenderExamples.lean:97"
+   ],
+   "proofs": [
+    "lean/VE/Acts/NormalProofs.lean:784"
+   ]
+  },
+  {
+   "id": "marker-prefix-unchecked",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Syntax.lean",
+   "definition": "VE.Acts.checkVocab",
+   "behaviour": "one marker of a frame may begin another (`MK m` no longer fixes the marker)",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/GrammarExamples.lean:174, lean/VE/Acts/GrammarExamples.lean:175, lean/VE/Acts/GrammarExamples.lean:255, lean/VE/Acts/GrammarExamples.lean:258, lean/VE/Acts/GrammarExamples.lean:260, lean/VE/Acts/GrammarExamples.lean:280, lean/VE/Acts/NormalInverse.lean:284",
+   "fixtures": [
+    "lean/VE/Acts/GrammarExamples.lean:174",
+    "lean/VE/Acts/GrammarExamples.lean:175",
+    "lean/VE/Acts/GrammarExamples.lean:255",
+    "lean/VE/Acts/GrammarExamples.lean:258",
+    "lean/VE/Acts/GrammarExamples.lean:260",
+    "lean/VE/Acts/GrammarExamples.lean:280"
+   ],
+   "proofs": [
+    "lean/VE/Acts/NormalInverse.lean:284"
+   ]
+  },
+  {
+   "id": "head-overlap-unchecked",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Syntax.lean",
+   "definition": "VE.Acts.checkVocab",
+   "behaviour": "one head may begin another (`HD` no longer fixes the frame)",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/GrammarExamples.lean:174, lean/VE/Acts/GrammarExamples.lean:175, lean/VE/Acts/GrammarExamples.lean:235, lean/VE/Acts/GrammarExamples.lean:296, lean/VE/Acts/NormalInverse.lean:251",
+   "fixtures": [
+    "lean/VE/Acts/GrammarExamples.lean:174",
+    "lean/VE/Acts/GrammarExamples.lean:175",
+    "lean/VE/Acts/GrammarExamples.lean:235",
+    "lean/VE/Acts/GrammarExamples.lean:296"
+   ],
+   "proofs": [
+    "lean/VE/Acts/NormalInverse.lean:251"
+   ]
+  },
+  {
+   "id": "fill-marker-first",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Grammar.lean",
+   "definition": "VE.Acts.fillExcl",
+   "behaviour": "a marker's first word is a filler word (a filler run no longer stops at the next element)",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/RuleExamples.lean:164, lean/VE/Acts/RuleExamples.lean:182, lean/VE/Acts/RuleExamples.lean:191, lean/VE/Acts/RuleExamples.lean:202, lean/VE/Acts/RuleExamples.lean:205, lean/VE/Acts/RuleExamples.lean:37, lean/VE/Acts/RuleExamples.lean:51, lean/VE/Acts/NormalInverse.lean:516, lean/VE/Acts/NormalInverse.lean:518",
+   "fixtures": [
+    "lean/VE/Acts/RuleExamples.lean:164",
+    "lean/VE/Acts/RuleExamples.lean:182",
+    "lean/VE/Acts/RuleExamples.lean:191",
+    "lean/VE/Acts/RuleExamples.lean:202",
+    "lean/VE/Acts/RuleExamples.lean:205",
+    "lean/VE/Acts/RuleExamples.lean:37",
+    "lean/VE/Acts/RuleExamples.lean:51"
+   ],
+   "proofs": [
+    "lean/VE/Acts/NormalInverse.lean:516",
+    "lean/VE/Acts/NormalInverse.lean:518"
+   ]
+  },
+  {
+   "id": "tail-join-comma",
+   "language": "Lean",
+   "file": "lean/VE/Acts/NormalInverse.lean",
+   "definition": "VE.Acts.NormalProofs.tailToks",
+   "behaviour": "a list's last part is read after a comma, not its join word",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/NormalInverse.lean:638, lean/VE/Acts/NormalInverse.lean:648, lean/VE/Acts/NormalInverse.lean:687, lean/VE/Acts/NormalInverse.lean:698, lean/VE/Acts/NormalInverse.lean:712, lean/VE/Acts/NormalInverse.lean:1000",
+   "fixtures": [],
+   "proofs": [
+    "lean/VE/Acts/NormalInverse.lean:638",
+    "lean/VE/Acts/NormalInverse.lean:648",
+    "lean/VE/Acts/NormalInverse.lean:687",
+    "lean/VE/Acts/NormalInverse.lean:698",
+    "lean/VE/Acts/NormalInverse.lean:712",
+    "lean/VE/Acts/NormalInverse.lean:1000"
+   ]
+  }
+ ]
+}
