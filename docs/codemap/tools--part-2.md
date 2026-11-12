@@ -1,4 +1,3 @@
-- `tools/since_pass.py` — Select against the branch's last passing tree, not against main (test-speed plan, batch B3).
 - `tools/source_graph.py` — Static dependency graph of the repository's Python files, Lean modules and tests.
 - `tools/source_words_export.lean` — (no module docstring)
 - `tools/stage2_parity.py` — Gate 2 parity: rerun the Stage 0 probe matrix under a backend authority and diff it.
