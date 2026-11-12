@@ -1,0 +1,174 @@
+{
+ "item": "en-e3a-cutback",
+ "tree": "abc280a497 (the Lean of the final HEAD)",
+ "how": "each mutant written into the file, `lake build VE.EnglishGrammar.Norm.RunExamples`, the failing lines read from Lean's errors, the file restored (script in the REPORT)",
+ "not_mutated": {
+  "VE.EnglishGrammar.Norm.Run.Reader": "a structure: changing a field's type is refused by Lean (every use stops typing); its contract is exercised by every mutant above and by tests/test_english_statement_blocks.py::test_the_rule_tags_are_forced_only_for_many"
+ },
+ "mutants": [
+  {
+   "id": "span-period",
+   "language": "Lean",
+   "file": "lean/VE/EnglishGrammar/Norm/Run.lean",
+   "definition": "statementSpans",
+   "behaviour": "the reader's spans drop the last sentence's period byte (a block's continuation ends one byte short)",
+   "mutation": {
+    "before": "| some (a0, _) => acc.dropLast ++ [(a0, b)]",
+    "after": "| some (a0, _) => acc.dropLast ++ [(a0, b - 1)]"
+   },
+   "test": "lean/VE/EnglishGrammar/Norm/RunExamples.lean:29 (E1 spans)",
+   "tests": [
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:29 (E1 spans)",
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:30 (E1 answer bytes)",
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:107 (non-ASCII byte spans)",
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:115 (E13)",
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:132 (new span-equality guard)",
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:200 (E17)"
+   ],
+   "result": "build failed at the named check(s); restored"
+  },
+  {
+   "id": "opens-second-token",
+   "language": "Lean",
+   "file": "lean/VE/EnglishGrammar/Norm/Run.lean",
+   "definition": "opensStatement",
+   "behaviour": "opensStatement reads the second token",
+   "mutation": {
+    "before": "  match sent[0]? with\n  | some (Tok.word w _, _, _) => fold w == \"rule\"",
+    "after": "  match sent[1]? with\n  | some (Tok.word w _, _, _) => fold w == \"rule\""
+   },
+   "test": "lean/VE/EnglishGrammar/Norm/RunExamples.lean:29 (E1 spans)",
+   "tests": [
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:29 (E1 spans)",
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:30 (E1 answer bytes)",
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:113 (quote/numeral-led)",
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:115 (E13)",
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:132 (new span-equality guard)",
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:200 (E17)"
+   ],
+   "result": "build failed at the named check(s); restored"
+  },
+  {
+   "id": "tags-empty",
+   "language": "Lean",
+   "file": "lean/VE/EnglishGrammar/Norm/Run.lean",
+   "definition": "leanReader",
+   "behaviour": "the tags side (leanReader's tags) returns an empty array",
+   "mutation": {
+    "before": "fun G _ => G.rules.map (·.tag)⟩",
+    "after": "fun _ _ => #[]⟩"
+   },
+   "test": "lean/VE/EnglishGrammar/Norm/RunExamples.lean:252 (f18: many through the real reader, both witness trees' tags)",
+   "tests": [
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:252 (f18: many through the real reader, both witness trees' tags)"
+   ],
+   "result": "build failed at the named check(s); restored"
+  },
+  {
+   "id": "onespansof-source",
+   "language": "Lean",
+   "file": "lean/VE/EnglishGrammar/Norm/Run.lean",
+   "definition": "oneSpansOf",
+   "behaviour": "oneSpansOf accepts a translation-mode statement",
+   "mutation": {
+    "before": "if rs.any (fun | .source _ => true | _ => false) || sps",
+    "after": "if rs.any (fun | .source _ => false | _ => false) || sps"
+   },
+   "test": "lean/VE/EnglishGrammar/Norm/RunExamples.lean:84 (E11 Internal)",
+   "tests": [
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:84 (E11 Internal)",
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:87 (oneSpans over .source)",
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:168",
+    "lean/VE/EnglishGrammar/Norm/RunExamples.lean:172"
+   ],
+   "result": "build failed at the named check(s); restored"
+  },
+  {
+   "id": "onespans-lexed",
+   "language": "Lean",
+   "file": "lean/VE/EnglishGrammar/Norm/Run.lean",
+   "definition": "oneSpans",
+   "behaviour": "oneSpans (the statements' vocabulary) lexes another text than the answer",
+   "mutation": {
+    "before": ":= oneSpansOf (lexSpans source) rs",
+    "after": ":= oneSpansOf (lexSpans (source ++ \" \")) rs"
+   },
+   "test": "lean/VE/EnglishGrammar/Norm/Run.lean:271 (Run.answer_one_iff)",
+   "tests": [
+    "lean/VE/EnglishGrammar/Norm/Run.lean:271 (Run.answer_one_iff)",
+    "lean/VE/EnglishGrammar/Norm/Run.lean:286 (Run.answer_one_rows)"
+   ],
+   "result": "build failed at the named check(s); restored"
+  },
+  {
+   "id": "outcome-no-lexed",
+   "language": "Lean",
+   "file": "lean/VE/EnglishGrammar/Norm/Run.lean",
+   "definition": "outcomeFields",
+   "behaviour": "outcomeFields reads no sentences for the spans",
+   "mutation": {
+    "before": "| .ok _ => match oneSpansOf lexed rs with",
+    "after": "| .ok _ => match oneSpansOf (.error .emptyDocument) rs with"
+   },
+   "test": "lean/VE/EnglishGrammar/Norm/Run.lean:271 (Run.answer_one_iff)",
+   "tests": [
+    "lean/VE/EnglishGrammar/Norm/Run.lean:271 (Run.answer_one_iff)",
+    "lean/VE/EnglishGrammar/Norm/Run.lean:286 (Run.answer_one_rows)",
+    "lean/VE/EnglishGrammar/Norm/Run.lean:305 (Run.answer_partial_no_node)"
+   ],
+   "result": "build failed at the named check(s); restored"
+  },
+  {
+   "id": "answerwith-lexed",
+   "language": "Lean",
+   "file": "lean/VE/EnglishGrammar/Norm/Run.lean",
+   "definition": "answerWith",
+   "behaviour": "answerWith hands outcomeFields other sentences than the reader's",
+   "mutation": {
+    "before": "outcomeFields c (Thunk.mk (R.tags G)) source lexed (R.read c.E c.O c.L G lexed)",
+    "after": "outcomeFields c (Thunk.mk (R.tags G)) source (lexSpans \"\") (R.read c.E c.O c.L G lexed)"
+   },
+   "test": "lean/VE/EnglishGrammar/Norm/Run.lean:271 (Run.answer_one_iff)",
+   "tests": [
+    "lean/VE/EnglishGrammar/Norm/Run.lean:271 (Run.answer_one_iff)",
+    "lean/VE/EnglishGrammar/Norm/Run.lean:286 (Run.answer_one_rows)",
+    "lean/VE/EnglishGrammar/Norm/Run.lean:305 (Run.answer_partial_no_node)"
+   ],
+   "result": "build failed at the named check(s); restored"
+  },
+  {
+   "id": "leanreader-budget",
+   "language": "Lean",
+   "file": "lean/VE/EnglishGrammar/Norm/Run.lean",
+   "definition": "leanReader",
+   "behaviour": "leanReader reads at budget 0, not workBudget",
+   "mutation": {
+    "before": "⟨(readNormOn · · · workBudget),",
+    "after": "⟨(readNormOn · · · 0),"
+   },
+   "test": "lean/VE/EnglishGrammar/Norm/Run.lean:242 (Run.answer_misplaced)",
+   "tests": [
+    "lean/VE/EnglishGrammar/Norm/Run.lean:242 (Run.answer_misplaced)",
+    "lean/VE/EnglishGrammar/Norm/Run.lean:256 (Run.answer_stopped)",
+    "lean/VE/EnglishGrammar/Norm/Run.lean:271 (Run.answer_one_iff)"
+   ],
+   "result": "build failed at the named check(s); restored"
+  },
+  {
+   "id": "readnormon-erase",
+   "language": "Lean",
+   "file": "lean/VE/EnglishGrammar/Norm/Read.lean",
+   "definition": "readNormOn",
+   "behaviour": "readNormOn drops each sentence's last token when it erases the positions",
+   "mutation": {
+    "before": "(sents.map fun sent => sent.map (·.1)).toList",
+    "after": "(sents.map fun sent => (sent.map (·.1)).pop).toList"
+   },
+   "test": "lean/VE/EnglishGrammar/Norm/Read.lean:91 (readNorm_eq: lex is lexSpans with the positions erased)",
+   "tests": [
+    "lean/VE/EnglishGrammar/Norm/Read.lean:91 (readNorm_eq: lex is lexSpans with the positions erased)"
+   ],
+   "result": "build failed at the named check(s); restored"
+  }
+ ]
+}
