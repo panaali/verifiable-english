@@ -1,0 +1,12 @@
+{
+ "job": "testmap-9ccbf3fd-t459649-s2",
+ "head": "4a1d45122994a925c9c7c874da60d85d206c4a97",
+ "argv": [
+  "testmap-9ccbf3fd-t459649-s2",
+  "4a1d45122994a925c9c7c874da60d85d206c4a97",
+  "4a1d45122994a925c9c7c874da60d85d206c4a97",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-03897d1ce729.tar.zst",
+  "dfa9cf5426b278a685274dd713ba4a9be8c97574e13bdbd8bb9d398dee5f5897",
+  "shard=ulimit -s 8192; tc=$(cat lean/lean-toolchain); tc=${tc//\\//--}; mkdir -p ~/.elan/toolchains; ln -sfn /opt/lean ~/.elan/toolchains/${tc//:/---}; mkdir -p ~/.elan/bin; for t in lean lake; do [ -e ~/.elan/bin/$t ] || ln -sfn /opt/lean/bin/$t ~/.elan/bin/$t; done; uv run --frozen python tools/test_map.py record --no-merge --jobs 4 --output \"$RUNNER_TEMP/out/map-s2.json.gz\" tests/test_safetyfw_usecases.py tests/test_english_statement_blocks.py tests/test_risk_margins.py tests/test_readings_s2_document.py tests/test_calc_answer.py tests/test_relay_binding_inventory.py tests/test_nary_differential.py tests/test_rights.py tests/test_properties.py tests/test_readings_verdicts_lean.py tests/test_norm_defaults_report.py tests/test_rights_three_way.py tests/test_pf_fidelity_fix.py tests/test_answer_cutoff.py tests/test_readings_sup_verdicts.py tests/test_stage2_standalone.py tests/test_lean_handles.py tests/test_p1_amendment8.py tests/test_readings_lean_sharing.py tests/test_ask_null_free.py tests/test_calc_service.py tests/test_closure_induction.py tests/test_definitions_english.py tests/test_risk_lean_route.py tests/test_w6a2_numeral_characters.py tests/test_p0_three_way.py tests/test_route_transport.py tests/test_metered_lean.py tests/test_question_answering_measure_report.py tests/test_readings_route_relay.py tests/test_attacks.py tests/test_news_w6a_fixtures.py tests/test_reports_wants.py tests/test_english_lean_s2.py tests/test_readings_s1_integration.py tests/test_jt3_english.py tests/test_english_lean_adapter.py tests/test_fret_w6a_rerating.py tests/test_time_surface_w6a.py tests/test_rd9_dri_signatures.py 2>&1 | tee \"$RUNNER_TEMP/out/shard-full.txt\"; exit ${PIPESTATUS[0]}"
+ ]
+}
