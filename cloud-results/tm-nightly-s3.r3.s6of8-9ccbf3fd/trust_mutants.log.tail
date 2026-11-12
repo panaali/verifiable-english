@@ -1,0 +1,7 @@
+trust_mutants: 91 definitions, 92 mutants (11 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/Events/Wire.lean:201 VE.Events.finishEvents (D[V], trusted) eq-ne: = -> ≠ (lean/VE/Events/Wire.lean:202: Application type mismatch: The argument)
+trust_mutants: 10 KILLED, 0 SURVIVOR, 1 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 81 OTHER SHARD in 842 s
+trust_mutants: D[V], trusted: 2 KILLED, 1 UNKNOWN, 20 OTHER SHARD
+trust_mutants: G[V], trusted: 5 KILLED, 30 OTHER SHARD
+trust_mutants: S, trusted: 3 KILLED, 31 OTHER SHARD
+trust_mutants: steps: wall plan 20.6 s, scratch 4.6 s, control_build 0.3 s, probe_install 1.4 s, mutants 811.6 s, cleanup 3.4 s, reads 0.3 s; lake control_build 0.3 s (1), probe_install 1.4 s (1), control_probes 146.5 s (10), mutant_builds 93.3 s (14), mutant_checks 1606.3 s (13), stage_controls 188.7 s (5), mutant_probes 210.8 s (10)
