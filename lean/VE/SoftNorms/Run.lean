@@ -19,8 +19,8 @@ enable `norms@0`.
   (`Wire.soft_wire_conflict_sound`); or `witness` → `CONFLICT` classified as a
   strict collision or a pair conflict (`Wire.soft_wire_conflict_witness_sound`).
 * `soft-selected`: `norms`, a base `model` and `queries` (predicate, tuple) → `background`
-  and per query the rules selected and the completed outcome (`Selected.lean`,
-  `SelectedSound.soft_wire_selected`).
+  and per query the rules selected and the completed outcome (`Selected.selected_semantics`;
+  the wire answer: `soft_wire_selected` in `SelectedSound.lean`).
 * `soft-certificate`: `premises`, `conclusion`, `certificate` bound to
   `background′ ++ layer premises ++ premises` over `E′` → `valid`
   (`Wire.soft_wire_acceptance`).

@@ -121,6 +121,13 @@ Reading the table:
   coherence premises from `colliding_pairs` (`SoftNormDocument._init_soft`), which no theorem
   covers, and the norms route accepts
   `soft_premises` as the case carries them (`VE.Norms.Plain.softPremises`): that step is open.
+  Since kb-10a it also lists `VE.SoftNorms.Run.soft_wire_selected`: a `soft-selected` answer is exactly
+  `Wire.ok` with `background` and one result per request query, in order, naming its predicate and
+  tuple, with `selected = selectedAt` and `outcome = outcomeAt` for the source and model the case's
+  decoders read; `selected_semantics` says these are the rules whose selection formula, and the
+  regulated atom, hold in every full structure over `E′` whose base restriction is the model and whose
+  layer symbols agree with their meanings (`AgreesBelow` at the full prefix). No caller reads it yet
+  (kb-10b moves the keys' `selected` and `completed` onto it).
 - `document` and `discourse` are large because their theorems are stated in terms of other large
   functions (`checkDocSets j = .ok a → … checkCore j' = .ok a …`): the specification is the
   implementation. This is the wrapper architecture as one number.
