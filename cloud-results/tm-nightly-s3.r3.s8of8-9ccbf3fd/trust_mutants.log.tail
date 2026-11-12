@@ -1,0 +1,8 @@
+trust_mutants: 91 definitions, 92 mutants (12 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/RightClauses/Wire.lean:228 VE.RightClauses.PlainOnWire (S, trusted) eq-le: = -> ≤ (lean/VE/RightClauses/Wire.lean:228: failed to synthesize)
+UNKNOWN lean/VE/Presupposition/Couple.lean:49 VE.Presupposition.Uniform (S, trusted) eq-ne: = -> ≠ (lean/VE/Presupposition/CoupleExamples.lean:66: Expression (VE.Presupposition.instDecidableUniform...)
+trust_mutants: 10 KILLED, 0 SURVIVOR, 2 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 80 OTHER SHARD in 1681 s
+trust_mutants: D[V], trusted: 3 KILLED, 20 OTHER SHARD
+trust_mutants: G[V], trusted: 5 KILLED, 30 OTHER SHARD
+trust_mutants: S, trusted: 2 KILLED, 2 UNKNOWN, 30 OTHER SHARD
+trust_mutants: steps: wall plan 19.9 s, scratch 5 s, control_build 0.4 s, probe_install 1.5 s, mutants 1650.4 s, cleanup 4.2 s, reads 0.2 s; lake control_build 0.4 s (1), probe_install 1.4 s (1), control_probes 109.8 s (11), mutant_builds 149.2 s (14), mutant_checks 3146.1 s (14), stage_controls 949.1 s (5), mutant_probes 128.9 s (11)
