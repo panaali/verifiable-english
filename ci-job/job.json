@@ -1,0 +1,12 @@
+{
+ "job": "testmap-8a47faa0-t446518-s6",
+ "head": "b15402667652a04619b664787ea8381349e5fd1d",
+ "argv": [
+  "testmap-8a47faa0-t446518-s6",
+  "b15402667652a04619b664787ea8381349e5fd1d",
+  "b15402667652a04619b664787ea8381349e5fd1d",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-831c388f821b.tar.zst",
+  "b4359a3c3cd9df0ac79cf6507b8602f8b5cc2472f11f4b89078898c5131d0797",
+  "shard=ulimit -s 8192; tc=$(cat lean/lean-toolchain); tc=${tc//\\//--}; mkdir -p ~/.elan/toolchains; ln -sfn /opt/lean ~/.elan/toolchains/${tc//:/---}; mkdir -p ~/.elan/bin; for t in lean lake; do [ -e ~/.elan/bin/$t ] || ln -sfn /opt/lean/bin/$t ~/.elan/bin/$t; done; uv run --frozen python tools/test_map.py record --no-merge --jobs 4 --output \"$RUNNER_TEMP/out/map-s6.json.gz\" tests/test_lean_document_wrapper.py tests/test_ap56_statements.py tests/test_difffuzz.py tests/test_calc_algebra.py tests/test_events_wire_mutants.py tests/test_order.py tests/test_shape_binding_mutants.py tests/test_regen_generated.py tests/test_readings_verdicts_lean.py tests/test_sa_checked_view.py tests/test_since_pass.py tests/test_test_chunks.py tests/test_lean_share.py tests/test_equivalence_properties.py tests/test_senses_route.py tests/test_b16f_senses_document.py tests/test_test_schedule.py tests/test_lean_layers_once.py tests/test_stage2_faults.py tests/test_softnorms_contract.py tests/test_lineage_lint.py tests/test_lean_first_b13a.py tests/test_norms_contract.py tests/test_question_statements.py tests/test_wire_contract_lint.py tests/test_batch_evidence.py tests/test_english_e2_integer_marks.py tests/test_w6a_limits.py tests/test_scope_5_6_statements.py tests/test_cardinality_exercised.py tests/test_norm_defaults_switch.py tests/test_english_e2_overlay.py tests/test_pc3_statements.py tests/test_judgments_exercised.py tests/test_readings_defaults_rd8_report.py tests/test_wire_contract_corpus.py tests/test_b16b_evidence.py tests/test_test_speed_b2.py tests/test_acts_specialise_layer.py tests/test_lean_service_audit.py 2>&1 | tee \"$RUNNER_TEMP/out/shard-full.txt\"; exit ${PIPESTATUS[0]}"
+ ]
+}
