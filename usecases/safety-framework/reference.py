@@ -20,8 +20,10 @@ CASES = {c["id"]: c for c in json.loads((HERE / "cases.json").read_text())["case
 ACTIVITIES = json.loads((HERE / "cases.json").read_text())["activities"]
 SETS = {"RS1": ("S", "G"), "RS2": ("P", "U"), "RS3": ("F", "Ds"), "RS3force": ("strict", "default"),
         "RS4aim": ("default", "intent"),
-        "RS5": ("D", "R"), "RS6": ("same", "different"), "RS7": ("E", "M"), "RS8": ("scope", "rel"),
-        "RS9": ("same", "different")}
+        "RS5": ("D", "R"), "RS6": ("different",), "RS7": ("E", "M"), "RS8": ("scope", "rel"),
+        "RS9": ("different",)}
+# PLAN 12 "Excluded readings": the text excludes RS6 = same (2.2 against 2.1.1) and RS9 = same (footnote 5).
+EXCLUDED = {("RS6", "same"), ("RS9", "same")}
 MISUSE = {"cbrn_uplift_tcl", "cbrn_uplift_level_1", "cyber_uplift_level_1", "harmful_manipulation_level_1"}
 ML_RD = {"stealth_and_situational_awareness_tcl", "ml_rd_acceleration_level_1", "ml_rd_automation_level_1"}
 TRACKED = {"cbrn_uplift_tcl", "stealth_and_situational_awareness_tcl"}
@@ -54,10 +56,9 @@ def requirements(s, c):
             out["SEC"] = "must"                                   # F10, F11
             if external or hri:
                 out["DM"] = "must"                                # "only for external and high-risk internal"
-            elif dev and c["RS8"] == "rel":
-                out["DM"] = out.get("DM", "need not")             # "not further development"
-            if misuse and hri and c["RS8"] == "rel" and c["RS9"] == "same" and mlrd_ccl:
-                out["DM"] = "conflict"                            # F9 releases, F10 requires one act (C3)
+            elif (dev or internal) and c["RS8"] == "rel":
+                # "only for external deployment and high-risk internal deployment": the rest is released
+                out["DM"] = out.get("DM", "need not")
     gov = False
     if external and (c["RS2"] == "U" or misuse or levels & ML_RD):
         gov = True                                                # F12 (P: misuse T/CCL; U: every model), F13
@@ -77,10 +78,6 @@ def requirements(s, c):
     if c["RS3"] == "Ds" and any(l in RECOMMENDED for l in levels):
         # F16 under Ds, strict or default; no exception finding is stipulated.
         out["RECSEC"] = "must" if c["RS3force"] == "strict" else "should"
-        if misuse - TRACKED and c["RS6"] == "same":
-            # SL2+ includes the insider-threat measures, which F15 (same act) says need not be added:
-            # a strict "need not" blocks a default rule (soft-norms 4.2) and contradicts a strict one (C1).
-            out["INSIDER"] = "conflict" if c["RS3force"] == "strict" else "need not"
     return out
 
 
@@ -133,6 +130,8 @@ def matches(key_verdict, ours):
     for part in cond.split("&"):
         part = part.strip()
         literals.append(tuple(part.split("=")) if "=" in part else aliases[part])
+    if any(lit in EXCLUDED for lit in literals):
+        return False                    # the key names a reading the text excludes (PLAN 12 item 23)
     space = list(itertools.product(*(SETS[s] for s in ALL_SETS)))
     wanted = {x for x in space if all(dict(zip(ALL_SETS, x)).get(k, SETS[k][0]) == v for k, v in literals)}
     got = {x for x in space if any(all(dict(zip(ALL_SETS, x))[k] == v for k, v in t.items()) for t in true)}
@@ -142,11 +141,11 @@ def matches(key_verdict, ours):
 def family_c_g():
     rows = {}
     witness = {"levels": {"cbrn_uplift_level_1", "ml_rd_acceleration_level_1"}, "facts": {"internal", "high_risk"}}
+    # F9 releases DM-h, F10 requires DM-s: two acts (footnote 5), so no conflict (C3). F15 releases insider-misuse
+    # mitigations, F16 recommends security measures: two acts (C1). The whole document has neither (C-doc).
     rows["C3"] = verdict(lambda c: requirements(witness, c).get("DM") == "conflict", ALL_SETS)
-    insider = {"levels": {"cbrn_uplift_level_1"}, "facts": set()}
-    rows["C1"] = verdict(lambda c: requirements(insider, c).get("INSIDER") == "conflict", ALL_SETS)
-    rows["C-doc"] = verdict(lambda c: requirements(witness, c).get("DM") == "conflict"
-                            or requirements(insider, c).get("INSIDER") == "conflict", ALL_SETS)
+    rows["C1"] = ("NONE", [])
+    rows["C-doc"] = rows["C3"]
     for cid in ("C2", "C4", "C5"):
         rows[cid] = ("NONE", [])        # PLAN 6.4: exception (C2), no shared act (C4, C5)
     g1 = situation(CASES["G1"])
