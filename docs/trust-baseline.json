@@ -2665,6 +2665,34 @@
    "reason": "kb-7: statement predicates of the metered and soft-elaborate wire theorems; net trusted lines fall (ties recorded)",
    "signature": "DRI-20261111-kb7",
    "commit": "e78b6d94990fe8badf69015823b955c409306f4e"
+  },
+  {
+   "class": "V",
+   "lines": 76,
+   "reason": "et-5b: V +76 (lean/VE/Service/Document.lean +45, lean/VE/EnglishGrammar/SourceWords.lean +31); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), et-5b, 2026-11-10",
+   "commit": "c94ad399b7b1f6804c12fbc555a5758d5e971ae6"
+  },
+  {
+   "class": "V",
+   "lines": 46,
+   "reason": "et-5b: V +122 in total (SourceWords.lean +72: the always/eventually rows, their no-anchor rows, soft-norms' rule row, and the other reading sets of spec 2.4 with linkCandidate; Document.lean +50: ownedProfiles, eventsView, eventsAnchorChecks, eventsLayeredOf, chainLayeredOf), K +0, S +0; +46 over the earlier et-5b allowance of 76",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), et-5b, 2026-11-11",
+   "commit": "0295df174375667a79dec7c1dd214f9128fe4909"
+  },
+  {
+   "class": "V",
+   "lines": 21,
+   "reason": "et-5b review F1: V +143 in total (SourceWords.lean +72; Document.lean +60: the earlier +50 and Env.eventsView, Checked.eventsView and encode's events_view arm, the view the mode read in its answer; ResponseShape/Schemas/Document.lean +11: the events_view shape), K +0, S +0; +21 over the earlier et-5b allowances of 122",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), et-5b, 2026-11-11",
+   "commit": "0295df174375667a79dec7c1dd214f9128fe4909"
+  },
+  {
+   "class": "V",
+   "lines": 6,
+   "reason": "en-e3a-cutback: VE/EnglishGrammar/Norm/Run.lean +9 (statementSpans -2, oneSpansOf +6 new, oneSpans -3, Reader +2, answerWith +3, leanReader +2, outcomeFields +1), VE/EnglishGrammar/Norm/Rules.lean -3 (normTags deleted); K +0, S +0, V +6",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), en-e3a-cutback, 2026-10-18",
+   "commit": "c81d6a9d910f00a2466fa3811168b1c2d825a3ed"
   }
  ]
 }

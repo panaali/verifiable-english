@@ -20,11 +20,13 @@ def result (o : NormOutcome) (s : String := "Rule 1. X.") : Json :=
 def get (o : NormOutcome) (ks : List String) (s : String := "Rule 1. X.") : List Json :=
   ks.map (result o s).getObjValD
 def str (xs : List String) : List Json := xs.map .str
+/-- The sentences of a text with their byte positions, as `answerWith` lexes them once (none for a refusal). -/
+def sents (s : String) : Array (Array Spanned) := (lexSpans s).toOption.getD #[]
 
 -- E1: two blocks and a precedence line; one row per statement, each rule row with its block's byte span.
 def sE1 : String := "Rule 1. X.\nRule 2. Y.\nRule 2 takes precedence over rule 1."
 def oE1 : NormOutcome := .ok [.rule ⟨1, []⟩ cPub, .rule ⟨2, []⟩ cPub, .precedence 2 1]
-#guard Run.statementSpans sE1 == [(0, 10), (11, 21), (22, 58)]
+#guard Run.statementSpans (sents sE1) == [(0, 10), (11, 21), (22, 58)]
 #guard (result oE1 sE1).compress == "{\"identities\":{\"environment_id\":\"env\",\"source_sha256\":" ++
   "\"1713bb5f6762c08b78b239653372972ac0965e6a9b05a1bd1a7e087c255308d1\"},\"statements\":[{\"exception_to\":[]," ++
   "\"kind\":\"rule\",\"node\":{\"norm\":{\"guard\":[\"unary\",\"publicly_deployed\",[\"var\",0]],\"name\":\"rule-1\"," ++
@@ -102,19 +104,33 @@ def cTwo : Clause :=
 -- fewer blocks than statements is `Internal` too (E12 has more): `zip` must never drop a statement
 #guard get (.ok [.rule ⟨1, []⟩ cPub, .rule ⟨2, []⟩ cPub]) ["status", "code", "class", "text", "sentence"] == internalRow
 -- M10's spans are bytes, not code points: "ë" is two bytes, so the second block starts at byte 14 (character 13)
-#guard Run.statementSpans "Rule 1. Zoë.\nRule 2. Y." == [(0, 13), (14, 24)] &&
+#guard Run.statementSpans (sents "Rule 1. Zoë.\nRule 2. Y.") == [(0, 13), (14, 24)] &&
   match (result (.ok [.rule ⟨1, []⟩ cPub, .rule ⟨2, []⟩ cPub]) "Rule 1. Zoë.\nRule 2. Y.").getObjValD "statements" with
   | .arr rows => rows.toList.map (·.getObjValD "span") == [Json.arr #[0, 13], Json.arr #[14, 24]]
   | _ => false
 -- E13: a block over two lines is one span, from the lexer's positions: header to period.
 -- a sentence that opens with no word (a quotation, a numeral) continues its block; only "Rule" opens one
-#guard Run.statementSpans "Rule 1. X.\n\"Rule\" 2 is quoted." == [(0, 30)] &&
-  Run.statementSpans "Rule 1. X.\n2 rules hold." == [(0, 24)]
-#guard Run.statementSpans "Rule 1.\nX." == [(0, 10)] &&
+#guard Run.statementSpans (sents "Rule 1. X.\n\"Rule\" 2 is quoted.") == [(0, 30)] &&
+  Run.statementSpans (sents "Rule 1. X.\n2 rules hold.") == [(0, 24)]
+#guard Run.statementSpans (sents "Rule 1.\nX.") == [(0, 10)] &&
   get (.ok [.rule ⟨1, []⟩ cPub]) ["status"] "Rule 1.\nX." == str ["one"] &&
   (result (.ok [.rule ⟨1, []⟩ cPub]) "Rule 1.\nX.").getObjValD "statements" == Json.arr #[Json.mkObj [
     ("kind", "rule"), ("number", 1), ("exception_to", Json.arr #[]), ("span", Json.arr #[0, 10]),
     ("node", cPub.wire "rule-1" [])]]
+-- en-e3a-cutback: the spans read from the positions `answerWith` lexes once (and hands the reader) equal en-e3a's
+-- `statementSpans source`, which lexed the text a second time; on E1, E13 and a non-ASCII text.
+def lexedTwice (source : String) : List (Nat × Nat) :=
+  match lexSpans source with
+  | .error _ => []
+  | .ok sents => sents.toList.foldl (fun acc sent => match Run.sentenceBytes sent with
+      | none => acc
+      | some (a, b) =>
+        if Run.opensStatement sent then acc ++ [(a, b)]
+        else match acc.getLast? with
+          | some (a0, _) => acc.dropLast ++ [(a0, b)]
+          | none => acc) []
+#guard [sE1, "Rule 1.\nX.", "Rule 1. Zoë.\nRule 2. Y.", "Rule 1. Café.\nExcept when ü.\nRule 2. 日本."].all fun s =>
+  Run.statementSpans (sents s) == lexedTwice s && (lexedTwice s).length == (s.splitOn "Rule ").length - 1
 -- E14: the rows a Python-admitted text makes `lean-unknown` (the budget, or a code of class ResourceLimit), and those
 -- it does not; the comparator is Python's (en-e3b's `tests/test_english_statement_shadow.py`).
 def leanUnknown (row : Json) : Bool :=
@@ -227,7 +243,7 @@ def grammarExport : Json := ((VE.EnglishGrammar.Run.grammarCase (Json.mkObj [("i
   grammarExport.getObjValD "identities" != .null
 
 -- f18 through the real reader (`leanReader`): an ambiguous condition stops the reading at its rule sentence, with both
--- trees under `normGrammar`'s rule tags (`normTags`).
+-- trees under the rule tags of the grammar `answerWith` built once (`leanReader`'s tags).
 def caseD : VE.EnglishGrammar.Run.Case :=
   { E := Norm.Examples.fd, O := {}, L := Norm.Examples.LD, overlayFailure := none, identities := [] }
 def f18 : Json :=

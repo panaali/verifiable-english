@@ -9984,12 +9984,15 @@
         "VE.Service.Document.decodedEnvironment",
         "VE.Service.Document.envelopeKeys",
         "VE.Service.Document.environmentOf",
+        "VE.Service.Document.eventsView",
+        "VE.Service.Document.Env.eventsView",
         "VE.Service.Document.extendedEnv",
         "VE.Service.Document.formulaCheck",
         "VE.Service.Document.formulaOf",
         "VE.Service.Document.frontJson",
         "VE.Service.Document.frozenEnv",
         "VE.Service.Document.graphLabels",
+        "VE.Service.Document.linesJson",
         "VE.Service.Document.listedProfiles",
         "VE.Service.Document.lowerScope",
         "VE.Service.Document.ownedProfiles",
@@ -10015,6 +10018,7 @@
         "VE.Service.Document.wireJson",
         "VE.Service.Document.withUnits",
         "VE.Service.Document.withSets",
+        "VE.Service.DocumentChain.eventsLayeredOf",
         "VE.Service.DocumentChain.requestOf",
         "VE.Service.DocumentChain.layeredOf",
         "VE.Service.Document.cardinalityEnv",
@@ -10028,7 +10032,7 @@
         "VE.Service.Document.composedJson",
         "VE.Service.Document.graphLabelled",
         "VE.Service.Document.bridgeAdmitted",
-        "VE.Service.Document.linesJson"
+        "VE.Service.DocumentChain.chainLayeredOf"
       ],
       "D[R]": [
         "VE.Service.Document.Foreign",
@@ -10068,6 +10072,7 @@
         "VE.Service.Document.verbalisedBy",
         "VE.Service.Document.vocabularyFault",
         "VE.Service.Document.walked",
+        "VE.Service.DocumentChain.eventsAnchorChecks",
         "VE.Service.Document.chainBound"
       ],
       "G[V]": [
@@ -17055,6 +17060,8 @@
       "G[V]": [
         "VE.EnglishGrammar.SourceWordKind.toJson",
         "VE.EnglishGrammar.SourceWordRow.toJson",
+        "VE.EnglishGrammar.alwaysNoAnchorReadings",
+        "VE.EnglishGrammar.alwaysReadings",
         "VE.EnglishGrammar.eventsDaysAdvice",
         "VE.EnglishGrammar.eventsFixed",
         "VE.EnglishGrammar.eventsLinkAdvice",
@@ -17065,14 +17072,27 @@
         "VE.EnglishGrammar.eventsRow",
         "VE.EnglishGrammar.eventsStateAdvice",
         "VE.EnglishGrammar.eventsUntilAdvice",
+        "VE.EnglishGrammar.eventuallyNoAnchorReadings",
+        "VE.EnglishGrammar.eventuallyReadings",
+        "VE.EnglishGrammar.softAlwaysReadings",
         "VE.EnglishGrammar.sourceWordsJson",
         "VE.EnglishGrammar.untilEventReadings",
-        "VE.EnglishGrammar.withinDateReadings"
+        "VE.EnglishGrammar.withinDateReadings",
+        "VE.EnglishGrammar.untilDateReadings",
+        "VE.EnglishGrammar.byReadings",
+        "VE.EnglishGrammar.whileReadings",
+        "VE.EnglishGrammar.sinceReadings",
+        "VE.EnglishGrammar.linkCandidate",
+        "VE.EnglishGrammar.causalReadings"
       ]
     },
     "VE/EnglishGrammar/SourceWordsExamples.lean": {
       "T": [
+        "VE.EnglishGrammar.SourceWordsExamples.AnchorState",
+        "VE.EnglishGrammar.SourceWordsExamples.RuleContext",
         "VE.EnglishGrammar.SourceWordsExamples.a",
+        "VE.EnglishGrammar.SourceWordsExamples.a1",
+        "VE.EnglishGrammar.SourceWordsExamples.a2",
         "VE.EnglishGrammar.SourceWordsExamples.adviceOf",
         "VE.EnglishGrammar.SourceWordsExamples.b",
         "VE.EnglishGrammar.SourceWordsExamples.base",
@@ -17084,10 +17104,26 @@
         "VE.EnglishGrammar.SourceWordsExamples.kindReadingJson",
         "VE.EnglishGrammar.SourceWordsExamples.kindRefuseJson",
         "VE.EnglishGrammar.SourceWordsExamples.otherProfileWordings",
+        "VE.EnglishGrammar.SourceWordsExamples.readOf",
         "VE.EnglishGrammar.SourceWordsExamples.reading",
         "VE.EnglishGrammar.SourceWordsExamples.refusal",
         "VE.EnglishGrammar.SourceWordsExamples.rowJson",
-        "VE.EnglishGrammar.SourceWordsExamples.twelve"
+        "VE.EnglishGrammar.SourceWordsExamples.rowOf",
+        "VE.EnglishGrammar.SourceWordsExamples.ruleContext",
+        "VE.EnglishGrammar.SourceWordsExamples.sourceReadings",
+        "VE.EnglishGrammar.SourceWordsExamples.strictDefault",
+        "VE.EnglishGrammar.SourceWordsExamples.twelve",
+        "VE.EnglishGrammar.SourceWordsExamples.Place",
+        "VE.EnglishGrammar.SourceWordsExamples.places",
+        "VE.EnglishGrammar.SourceWordsExamples.phraseHolds",
+        "VE.EnglishGrammar.SourceWordsExamples.phrasesAfter",
+        "VE.EnglishGrammar.SourceWordsExamples.candidates",
+        "VE.EnglishGrammar.SourceWordsExamples.untilStatus",
+        "VE.EnglishGrammar.SourceWordsExamples.byCovers",
+        "VE.EnglishGrammar.SourceWordsExamples.flip",
+        "VE.EnglishGrammar.SourceWordsExamples.sinceCovers",
+        "VE.EnglishGrammar.SourceWordsExamples.c12",
+        "VE.EnglishGrammar.SourceWordsExamples.causal"
       ]
     },
     "VE/Service/SoftSourceExamples.lean": {
@@ -18595,6 +18631,12 @@
             "VE.EnglishGrammar.Norm.readNorm_complete",
             "VE.EnglishGrammar.Norm.readNorm_numbered"
           ]
+        },
+        {
+          "name": "VE.EnglishGrammar.Norm.readNormOn",
+          "tied": [
+            "VE.EnglishGrammar.Norm.readNorm_on"
+          ]
         }
       ]
     },
@@ -18641,7 +18683,6 @@
             "VE.EnglishGrammar.Norm.normMeaning_unmarked"
           ]
         },
-        "VE.EnglishGrammar.Norm.normTags",
         {
           "name": "VE.EnglishGrammar.Norm.normTy",
           "tied": [
@@ -20050,6 +20091,7 @@
     },
     "VE/Events/RouteExamples.lean": {
       "T": [
+        "VE.Events.RouteExamples.docTerms",
         "VE.Events.RouteExamples.parse",
         "VE.Events.RouteExamples.rolePred",
         "VE.Events.RouteExamples.eventPreds",
@@ -21115,6 +21157,7 @@
         "VE.EnglishGrammar.Norm.Run.decoderCode",
         "VE.EnglishGrammar.Norm.Run.leanReader",
         "VE.EnglishGrammar.Norm.Run.oneSpans",
+        "VE.EnglishGrammar.Norm.Run.oneSpansOf",
         "VE.EnglishGrammar.Norm.Run.opensStatement",
         "VE.EnglishGrammar.Norm.Run.sentenceBytes",
         "VE.EnglishGrammar.Norm.Run.statementCase",
@@ -21151,6 +21194,7 @@
         "VE.EnglishGrammar.Norm.RunExamples.grammarExport",
         "VE.EnglishGrammar.Norm.RunExamples.internalRow",
         "VE.EnglishGrammar.Norm.RunExamples.leanUnknown",
+        "VE.EnglishGrammar.Norm.RunExamples.lexedTwice",
         "VE.EnglishGrammar.Norm.RunExamples.notOne",
         "VE.EnglishGrammar.Norm.RunExamples.oE1",
         "VE.EnglishGrammar.Norm.RunExamples.rejectAll",
@@ -21158,6 +21202,7 @@
         "VE.EnglishGrammar.Norm.RunExamples.result",
         "VE.EnglishGrammar.Norm.RunExamples.s3",
         "VE.EnglishGrammar.Norm.RunExamples.sE1",
+        "VE.EnglishGrammar.Norm.RunExamples.sents",
         "VE.EnglishGrammar.Norm.RunExamples.sha",
         "VE.EnglishGrammar.Norm.RunExamples.spanRowOf",
         "VE.EnglishGrammar.Norm.RunExamples.str",
@@ -21858,6 +21903,67 @@
         "VE.SoftNorms.Run.BackgroundField",
         "VE.SoftNorms.Run.ElaborationAnswer",
         "VE.SoftNorms.Run.PremisesField"
+      ]
+    },
+    "VE/Events/Anchor.lean": {
+      "D[R]": [
+        "VE.Events.anchorConstant",
+        "VE.Events.anchorWording",
+        "VE.Events.openAnchor"
+      ],
+      "G[R]": [
+        "VE.Events.legend"
+      ]
+    },
+    "VE/Service/EventsDocumentExamples.lean": {
+      "T": [
+        "VE.Service.EventsDocumentExamples.anchorConst",
+        "VE.Service.EventsDocumentExamples.anchorJ",
+        "VE.Service.EventsDocumentExamples.anchorOf",
+        "VE.Service.EventsDocumentExamples.assertedDoc",
+        "VE.Service.EventsDocumentExamples.bin",
+        "VE.Service.EventsDocumentExamples.blockD",
+        "VE.Service.EventsDocumentExamples.byName",
+        "VE.Service.EventsDocumentExamples.calendar",
+        "VE.Service.EventsDocumentExamples.counted",
+        "VE.Service.EventsDocumentExamples.dated",
+        "VE.Service.EventsDocumentExamples.decodedOf",
+        "VE.Service.EventsDocumentExamples.doc",
+        "VE.Service.EventsDocumentExamples.envOfDoc",
+        "VE.Service.EventsDocumentExamples.ex",
+        "VE.Service.EventsDocumentExamples.isoEnv",
+        "VE.Service.EventsDocumentExamples.judged",
+        "VE.Service.EventsDocumentExamples.labels",
+        "VE.Service.EventsDocumentExamples.layered",
+        "VE.Service.EventsDocumentExamples.legendOf",
+        "VE.Service.EventsDocumentExamples.named",
+        "VE.Service.EventsDocumentExamples.ndList",
+        "VE.Service.EventsDocumentExamples.openEnv",
+        "VE.Service.EventsDocumentExamples.opens",
+        "VE.Service.EventsDocumentExamples.outcome",
+        "VE.Service.EventsDocumentExamples.ownedButEvents",
+        "VE.Service.EventsDocumentExamples.packs",
+        "VE.Service.EventsDocumentExamples.rd",
+        "VE.Service.EventsDocumentExamples.readingSet",
+        "VE.Service.EventsDocumentExamples.rule",
+        "VE.Service.EventsDocumentExamples.sortedList",
+        "VE.Service.EventsDocumentExamples.statePreds",
+        "VE.Service.EventsDocumentExamples.statuses",
+        "VE.Service.EventsDocumentExamples.t15Block",
+        "VE.Service.EventsDocumentExamples.t15Claims",
+        "VE.Service.EventsDocumentExamples.t15Env",
+        "VE.Service.EventsDocumentExamples.t16Claim",
+        "VE.Service.EventsDocumentExamples.t16Env",
+        "VE.Service.EventsDocumentExamples.t16Opens",
+        "VE.Service.EventsDocumentExamples.term",
+        "VE.Service.EventsDocumentExamples.v",
+        "VE.Service.EventsDocumentExamples.viewed",
+        "VE.Service.EventsDocumentExamples.weaker",
+        "VE.Service.EventsDocumentExamples.withAnchor",
+        "VE.Service.EventsDocumentExamples.withBlock",
+        "VE.Service.EventsDocumentExamples.rowOf",
+        "VE.Service.EventsDocumentExamples.viewOf",
+        "VE.Service.EventsDocumentExamples.datedView"
       ]
     }
   }

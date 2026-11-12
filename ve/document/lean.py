@@ -221,6 +221,21 @@ def _names_a_model_member(raw: bytes, path) -> bool:
     return False
 
 
+def _chain_environments(written, row: dict):
+    """The environment a document Lean accepted is built over, and the one its identities bind. They are one, the
+    environment as written, unless it lists `events@0` (et-5b): then the document is built over Lean's `events_view`
+    (`Service.Document.eventsView`, the environment its chain read), bound to the written one (`ve.events.view`), and
+    its identities stay the written environment's, block and profile included (Lean's `Env.profiles` and `Env.envId`).
+    The member is there exactly when the environment lists `events@0` (`_bind_document_answer`'s members). The
+    identities are `ve.events.Written` then: its `source` is the environment as written."""
+    from .. import events
+    if events.PROFILE not in listed_profiles(written):
+        env = _environment(written)
+        return env, env
+    view = events.view(row.get("events_view"), written)
+    return _environment(view), events.Written(written)
+
+
 def _lean_document(raw: bytes, path: Path, row: dict, *, admitted: bool, prepared: dict | None = None):
     """The document Lean's `document` mode accepted, built from its answer (docs/LEAN-FIRST-PLAN.md rule 2: Lean
     validates, Python constructs). The row is bound to the request first: its source is the text's body and its
@@ -240,7 +255,7 @@ def _lean_document(raw: bytes, path: Path, row: dict, *, admitted: bool, prepare
         return _cardinality_document(raw, meta, body, fences, declared, row, path, admitted)
     try:
         # The identities Lean answered are those of the environment its chain reads (`chain_environment`).
-        env = _environment(chain_environment(meta["environment"]))
+        env, identities = _chain_environments(chain_environment(meta["environment"]), row)
         senses = None
         if "senses" in meta:
             # Batch 16f: the senses route's reading of the English fences, which Lean's `document` mode composed
@@ -257,7 +272,7 @@ def _lean_document(raw: bytes, path: Path, row: dict, *, admitted: bool, prepare
     except Exception as exc:  # noqa: BLE001 - an accepted but malformed service row is unavailable
         raise unavailable("is not bound to the document sent") from exc
     try:
-        if row["source_id"] != source_id(source, env) or row["document_id"] != _document_id(meta, source, fences):
+        if row["source_id"] != source_id(source, identities) or row["document_id"] != _document_id(meta, source, fences):
             raise unavailable("is not bound to the document sent")
         governed = _governed_units(meta)
         if governed:
@@ -349,7 +364,10 @@ def _lean_document(raw: bytes, path: Path, row: dict, *, admitted: bool, prepare
             "rights_document": rights_document, "readings_s1": readings_s1, "readings_s2": readings_s2,
             "readings_components": readings_components, "reading_plan": reading_plan,
             "lean": {"coverage": row["coverage"], "admitted": admitted,
-                     **({"judgment_lines": row["judgment_lines"]} if "judgment_lines" in row else {})}}
+                     **({"judgment_lines": row["judgment_lines"]} if "judgment_lines" in row else {})},
+            # et-5b: the environment as written, whose block the events pack is Lean's elaboration of
+            # (`report._filled_soft_elaboration`); the document above is built over Lean's view of it.
+            **({"events_environment": identities.source} if identities is not env else {})}
 
 
 def _cardinality_document(raw, meta, body, fences, declared, row, path, admitted):
@@ -414,7 +432,8 @@ def _bind_document_answer(body, meta, declared, row, senses=None):
             ({"judgments", "judgment_lines", "undeclared_evaluative"} if judged else set()) |
             ({"composed_readings"} if composed else set()) |
             ({key for key in ("cardinality", "composed") if key in row}
-             if "cardinality@0" in listed_profiles(meta.get("environment")) else set()))
+             if "cardinality@0" in listed_profiles(meta.get("environment")) else set()) |
+            ({"events_view"} if "events@0" in listed_profiles(meta.get("environment")) else set()))
     if judged:
         require(_judgments_bound(row["judgments"], meta.get("open_terms", []), [u.get("id") for u, _ in declared]))
         require(_judgment_lines_bound(row["judgment_lines"], row["judgments"], meta.get("open_terms", []),

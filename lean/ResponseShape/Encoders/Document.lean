@@ -163,6 +163,8 @@ theorem units_mem {c : VE.Service.Document.Checked} {xs : Array Json} {a : Json}
   obtain ⟨u, _, rfl⟩ := h
   exact ⟨u, rfl⟩
 
+-- et-5b: `encode`'s `events_view` arm doubles the cases each key's `rfl` reduces.
+set_option maxHeartbeats 800000 in
 open VE.Service.Document in
 theorem fold_fits (j : Json) (D : VE.Scope.SDoc) (id : String) (c : VE.Service.Document.Checked) :
     Fits j Skeletons.document (VE.Scope.foldGovernors D (VE.Service.Document.encode id c)) := by
@@ -174,7 +176,7 @@ theorem fold_fits (j : Json) (D : VE.Scope.SDoc) (id : String) (c : VE.Service.D
     intro k v hk
     simp only [List.mem_cons, Prod.mk.injEq, List.not_mem_nil, or_false] at hk
     rcases hk with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;>
-      (unfold encode; split <;> rfl)
+      (unfold encode; split <;> split <;> rfl)
   unfold VE.Scope.foldGovernors
   simp only [e "id" (.str id) (by simp), e "status" (.str "ok") (by simp),
     e "document_id" (.str c.documentId) (by simp), e "source_id" (.str c.sourceId) (by simp),
@@ -196,6 +198,8 @@ theorem fold_fits (j : Json) (D : VE.Scope.SDoc) (id : String) (c : VE.Service.D
       simp only [List.filter_cons, List.filter_nil, String.reduceBNe, bne_self_eq_false, Bool.false_eq_true,
         ↓reduceIte, List.cons_append, List.nil_append] <;> fields_split <;> fits using cells_fits
 
+-- et-5b: `encode`'s `events_view` arm doubles the cases each key's `rfl` reduces.
+set_option maxHeartbeats 800000 in
 open VE.Service.Document in
 theorem fold_with_readings_fits (j : Json) (D : VE.Scope.SDoc) (id : String)
     (c : VE.Service.Document.Checked) (rs : Json)
@@ -209,7 +213,7 @@ theorem fold_with_readings_fits (j : Json) (D : VE.Scope.SDoc) (id : String)
     intro k v hk
     simp only [List.mem_cons, Prod.mk.injEq, List.not_mem_nil, or_false] at hk
     rcases hk with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;>
-      (unfold encode; split <;> rfl)
+      (unfold encode; split <;> split <;> rfl)
   unfold VE.Scope.foldGovernors
   simp only [e "id" (.str id) (by simp), e "status" (.str "ok") (by simp),
     e "document_id" (.str c.documentId) (by simp), e "source_id" (.str c.sourceId) (by simp),

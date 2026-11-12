@@ -8,11 +8,11 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 |---|---:|
 | leaves:bound | 301 |
 | leaves:closed domain | 321 |
-| leaves:none | 1646 |
+| leaves:none | 1654 |
 | modes | 45 |
 | today:hand | 203 |
 | today:later Lean request | 62 |
-| today:not probed | 1244 |
+| today:not probed | 1252 |
 | today:shape | 622 |
 | today:unbound | 137 |
 | answers | 606 |
@@ -3126,6 +3126,14 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/coverage/unformalised_reasons/{}` | integer | none |  | minimum | 1 | hand: `ve/document/lean.py:require` |
 | `/document_id` | string | none |  | pattern | 6 | hand: `ve/document/lean.py:_lean_document` |
 | `/error` | string | none |  | minLength | 6 | not probed |
+| `/events_view/language` | string | none |  |  | 0 | not probed |
+| `/events_view/profiles/*` | string | none |  |  | 0 | not probed |
+| `/events_view/spec_revision` | string | none |  |  | 0 | not probed |
+| `/events_view/vocabulary/constants/@key` | key | none |  |  | 0 | not probed |
+| `/events_view/vocabulary/constants/{}/description` | string | none |  |  | 0 | not probed |
+| `/events_view/vocabulary/constants/{}/sort` | string | none |  |  | 0 | not probed |
+| `/events_view/vocabulary/predicates/@key` | key | none |  |  | 0 | not probed |
+| `/events_view/vocabulary/predicates/{}/arguments/*` | string | none |  |  | 0 | not probed |
 | `/id` | any | bound | x-echo |  | 9 | shape |
 | `/id` | string | bound | x-equals |  | 9 | shape |
 | `/judgment_lines/legend/*/lines/*` | string | none |  |  | 7 | not probed |
@@ -3302,6 +3310,8 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/coverage/alternatives/narrowings/*/reason_spans` |  |  |  |  |
 | `/coverage/alternatives/proximate_judgments` |  |  |  | drop: accept/ve/document/lean.py:require; duplicate: accept/ve/document/lean.py:require |
 | `/coverage/alternatives/unmapped_obligations` |  |  |  |  |
+| `/events_view/profiles` |  |  |  |  |
+| `/events_view/vocabulary/predicates/{}/arguments` |  |  |  |  |
 | `/judgment_lines/legend` |  |  |  |  |
 | `/judgment_lines/legend/*/lines` |  |  |  |  |
 | `/judgment_lines/status` |  |  |  |  |
