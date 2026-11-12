@@ -1,6 +1,8 @@
-"""norm-defaults-text-1: three record claims read against what they rest on (regrade ndc2-F1, ndc2-F3, pk1c1-F1).
+"""norm-defaults-text-1: four record claims read against what they rest on (regrade ndc2-F1, ndc2-F3, pk1c1-F1, F3).
 
 1. The norm-defaults spec names `gate_legacy`'s proved target (read from the theorem in `Dispatch.lean`).
+1b. On a list with a wrapper the records say the answers need not agree with `todayGate`, and name a shared refusal
+    that `todayGate`'s checks give.
 2. Every record of the `alternatives@0` with `norm-defaults@0` gate row agrees with `todayGate`'s row in Lean.
 3. pk-1's identity claims cite a valid saved differential and claim no more than its sampled inputs."""
 
@@ -91,6 +93,109 @@ def test_gate_legacy_scan_refuses_old_sentences() -> None:
     for text, faults in cases:
         found = gate_legacy_faults(text, source)
         assert len(found) == len(faults) and all(f in g for f, g in zip(faults, found)), (text, found)
+
+
+# 1b. review F3: on a list with a wrapper the answers need not agree; they can share a refusal ----------------------
+
+ND_REPORT = ROOT / "docs/premise-packs/norm-defaults-text-1/REPORT.md"
+# Every record this item wrote or edited that could compare wrapper lists with `todayGate`.
+WRAPPER_RECORDS = (ND_SPEC, ND_REPORT, COMPOSITION, NORMDEFAULTS_NOTES, INTEGRATION_GAPS,
+                   PK1 / "DELTA.md", PK1 / "REPORT.md")
+CONTRAST = re.compile(r"\b(?:is|are|was|be)\s+(?:not|never)\s+`todayGate`|\bnot\s+`todayGate`'s|"
+                      r"\bdiffer(?:s|ent)?\b[^.]*?\b(?:from|than|with)\s+`todayGate`|\bunlike\s+`todayGate`|"
+                      r"\bdisagrees?\s+with\s+`todayGate`")
+CHECK = re.compile(r'(?:if|else if) (.+?) then\s*\.error \(unsupported "([^"]+)"\)')
+ATOM = re.compile(r'(!?)ps\.contains "([^"]+)"')
+SHARED = re.compile(r"`\[([^\]]+)\]`[^.]*?\bboth\b[^.]*?`UnsupportedProfile: ([^`]+)`")
+
+
+def wrapper_contrast_faults(text: str) -> list[str]:
+    """Sentences stating categorically that the answer on a wrapper list differs from `todayGate`'s."""
+    return [s for s in _sentences(text) if "wrapper" in s.lower() and CONTRAST.search(s) and "need not" not in s]
+
+
+def _wrappers(source: str) -> list[str]:
+    found = re.search(r'def wrapperProfiles : List String := \[([^\]]*)\]', source)
+    assert found, "wrapperProfiles not found"
+    return re.findall(r'"([^"]+)"', found.group(1))
+
+
+def _holds(cond: str, ps: list[str]) -> bool:
+    """A check's condition when it is a conjunction of `[!]ps.contains "p"` atoms (anything else fails the test)."""
+    atoms = [a.strip() for a in cond.split("&&")]
+    assert all(ATOM.fullmatch(a) for a in atoms), f"condition outside the evaluated form: {cond}"
+    return all((p in ps) != bool(neg) for neg, p in (ATOM.fullmatch(a).groups() for a in atoms))
+
+
+def shared_refusal_faults(text: str, source: str) -> list[str]:
+    """The record names a wrapper list on which `todayGate` and `dispatch` refuse with the same text, and that holds:
+    the refusal is `todayGate`'s first refusing check on the list, its condition names no wrapper (so the list without
+    its wrappers, which `dispatch` hands `todayGate` first, gets it too)."""
+    named = SHARED.findall(" ".join(text.split()))
+    if not named:
+        return ["names no shared-refusal list"]
+    body, wrappers, faults = _definition(source, "todayGate"), _wrappers(source), []
+    for listed, refusal in named:
+        ps = [p.strip() for p in listed.split(",")]
+        if not set(ps) & set(wrappers):
+            faults.append(f"{ps} has no wrapper profile")
+        if ps != sorted(set(ps)):
+            faults.append(f"{ps} is not sorted and unique, so the order check answers")
+        checks = CHECK.findall(body)
+        texts = [t for _, t in checks]
+        if refusal not in texts:
+            faults.append(f"`{refusal}` is no refusal text of `todayGate`")
+            continue
+        index = texts.index(refusal)
+        for cond, t in checks[1:index]:  # checks[0] is the sorted-and-unique check
+            if _holds(cond, ps) or _holds(cond, [p for p in ps if p not in wrappers]):
+                faults.append(f"`{t}` answers {ps} before `{refusal}`")
+        cond = checks[index][0]
+        if any(f'"{w}"' in cond for w in wrappers):
+            faults.append(f"`{refusal}`'s check names a wrapper profile")
+        if not (_holds(cond, ps) and _holds(cond, [p for p in ps if p not in wrappers])):
+            faults.append(f"`{refusal}`'s check does not refuse {ps} and its base")
+    return faults
+
+
+def test_f3_probe_no_categorical_wrapper_difference() -> None:
+    """PROBE F3 (norm-defaults-text-1-looprecheck1), verbatim."""
+    paths = [Path("docs/spec/norm-defaults.md"), Path("docs/premise-packs/norm-defaults-text-1/REPORT.md")]
+    pattern = r"on a list with a wrapper (?:it|this) is not `todayGate`"
+    assert not any(re.search(pattern, " ".join((ROOT / p).read_text().split())) for p in paths)
+
+
+def test_wrapper_records_say_need_not_agree() -> None:
+    faults = {p.relative_to(ROOT).as_posix(): wrapper_contrast_faults(p.read_text(encoding="utf-8"))
+              for p in WRAPPER_RECORDS}
+    assert {k: v for k, v in faults.items() if v} == {}
+
+
+def test_wrapper_records_name_a_shared_refusal_that_todaygate_gives() -> None:
+    source = DISPATCH.read_text(encoding="utf-8")
+    for record in (ND_SPEC, ND_REPORT):
+        assert shared_refusal_faults(record.read_text(encoding="utf-8"), source) == [], record
+
+
+def test_wrapper_scans_refuse_and_accept() -> None:
+    source = DISPATCH.read_text(encoding="utf-8")
+    for bad in ("Dispatch checks each wrapper, so on a list with a wrapper it is not `todayGate`'s answer.",
+                "On a list with a wrapper this is not `todayGate`.",
+                "With a wrapper profile the gate's answer differs from `todayGate`'s.",
+                "On wrapper lists the gate is never `todayGate`."):
+        assert wrapper_contrast_faults(bad) == [bad]
+    good = "On a list with a wrapper the answer need not agree with `todayGate`'s."
+    assert wrapper_contrast_faults(good) == []
+    shared = ("on `[alternatives@0, norm-defaults@0, readings@1, relational-fol@0]` both gates answer "
+              "`UnsupportedProfile: alternatives@0 requires norms@0`.")
+    assert shared_refusal_faults(shared, source) == []
+    for text, fault in ((shared.replace("readings@1, ", ""), "has no wrapper"),
+                        (shared.replace("norm-defaults@0, readings@1", "readings@1, norm-defaults@0"), "not sorted"),
+                        (shared.replace("alternatives@0, ", "alternatives@0, norms@0, "), "does not refuse"),
+                        (shared.replace("requires norms@0", "requires readings@1"), "no refusal text"),
+                        ("They differ.", "names no shared-refusal")):
+        found = shared_refusal_faults(text, source)
+        assert any(fault in f for f in found), (text, found)
 
 
 # 2. ndc2-F3 ---------------------------------------------------------------------------------------------------------
