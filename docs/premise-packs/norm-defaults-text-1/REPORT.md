@@ -1,7 +1,8 @@
 # norm-defaults-text-1: record corrections and review fixes (REPORT)
 
-Summary: READY FOR RECHECK. Review F1 and F2 are fixed in 41ce344aa3; both listed probes failed before and pass after.
-Selected tests passed (34 units, 0 failures); `lake build` and `lean/audit.py` passed. The merge train owns the full gate.
+Summary: READY FOR RECHECK. Review F1 and F2 are fixed in 41ce344aa3 and recheck F3 in f3f360c1c3; each listed probe
+failed before and passes after. Selected tests passed (35 units, 0 failures); `lake build` and `lean/audit.py` passed.
+The merge train owns the full gate.
 No product behavior changed, no DELTA row is needed under the item's no-DELTA ruling, and no signature is reserved.
 
 ## Review fixes (2026-11-12)
@@ -20,6 +21,31 @@ chain gate. `lake build` completed 1429 jobs; `python3 lean/audit.py` audited 86
 declarations with the standard axiom allowlist. The three tests listed in `main-known-red.txt` are pre-existing and
 were neither edited nor encountered in the selected run. No full suite, release gate, or trust-mutant sweep ran:
 this review fix changes documentation and its tests only.
+
+## Recheck fix (2026-11-12, looprecheck1 F3; DRI note reviews/dri-decisions-20261112-norm-defaults-text-1.md item 1)
+
+- F3 -> the integration status paragraph of `docs/spec/norm-defaults.md` and deliverable 1 below now say that on a
+  list with a wrapper the answers of `gateOf profileTable` (`dispatch`) and `todayGate` need not agree. They differ
+  on `[readings@1, relational-fol@0]`. On `[alternatives@0, norm-defaults@0, readings@1, relational-fol@0]` both
+  refuse with `UnsupportedProfile: alternatives@0 requires norms@0`. No other record the
+  branch touched stated the categorical difference (grep "wrapper" over the branch's files) ->
+  `tests/test_norm_defaults_records.py::test_f3_probe_no_categorical_wrapper_difference` (the probe, verbatim),
+  `::test_wrapper_records_say_need_not_agree` (every record the item touched),
+  `::test_wrapper_records_name_a_shared_refusal_that_todaygate_gives` (reads `todayGate`'s checks and
+  `wrapperProfiles` from `Dispatch.lean`: the named refusal is the first refusing check on the list and on its base,
+  and its condition names no wrapper) and `::test_wrapper_scans_refuse_and_accept` -> f3f360c1c3.
+
+Both lists' answers were read by direct Lean evaluation at 302316a182 (`lake env lean` on a scratch file evaluating
+`todayGate`, `dispatch` and `gateOf profileTable`). PROBE F3 exited 1 before the fix and 0 after. With the two records
+restored from 302316a182 the three record tests failed (`3 failed, 9 passed`); after the fix the file passes 12.
+Writing this section, the shared-refusal check paired a differing list with the shared refusal when both sat in one
+sentence; its pattern now stops at the next list (the `paired` case of `::test_wrapper_scans_refuse_and_accept`),
+and this section names the two lists in separate sentences. The
+selected run (VM fallback; cloud slots busy) passed 35 units with 0 failures and deferred `tests/test_repo_map.py`
+and `tests/test_select_tests.py` to the chain gate. `lake build` completed 1429 jobs; `python3 lean/audit.py` passed
+(864 source files, 9911 theorem declarations). Docs and tests only: no Lean, Python or Rust product change, so no
+seeded product bug applies; trust +0; no DELTA row (item-specific no-DELTA ruling); no signature reserved. The
+three `main-known-red.txt` tests are pre-existing, not edited and not selected.
 
 ## Initial build record
 
