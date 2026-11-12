@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-usecase-pf-keyfix-17581425-t480807-s3",
+ "head": "96d41b90247661ba2c6e6068e8054760a30235ad",
+ "argv": [
+  "armsh-cand-usecase-pf-keyfix-17581425-t480807-s3",
+  "96d41b90247661ba2c6e6068e8054760a30235ad",
+  "33a6b8640f6b1b93b2066183be94789291df5be0",
+  "-",
+  "-",
+  "4",
+  "3/4"
+ ]
+}
