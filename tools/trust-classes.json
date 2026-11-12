@@ -19043,6 +19043,12 @@
             "VE.EnglishGrammar.Norm.readNorm_complete",
             "VE.EnglishGrammar.Norm.readNorm_numbered"
           ]
+        },
+        {
+          "name": "VE.EnglishGrammar.Norm.readNormOn",
+          "tied": [
+            "VE.EnglishGrammar.Norm.readNorm_on"
+          ]
         }
       ]
     },
@@ -19089,7 +19095,6 @@
             "VE.EnglishGrammar.Norm.normMeaning_unmarked"
           ]
         },
-        "VE.EnglishGrammar.Norm.normTags",
         {
           "name": "VE.EnglishGrammar.Norm.normTy",
           "tied": [
@@ -21205,6 +21210,7 @@
         "VE.EnglishGrammar.Norm.Run.decoderCode",
         "VE.EnglishGrammar.Norm.Run.leanReader",
         "VE.EnglishGrammar.Norm.Run.oneSpans",
+        "VE.EnglishGrammar.Norm.Run.oneSpansOf",
         "VE.EnglishGrammar.Norm.Run.opensStatement",
         "VE.EnglishGrammar.Norm.Run.sentenceBytes",
         "VE.EnglishGrammar.Norm.Run.statementCase",
@@ -21241,6 +21247,7 @@
         "VE.EnglishGrammar.Norm.RunExamples.grammarExport",
         "VE.EnglishGrammar.Norm.RunExamples.internalRow",
         "VE.EnglishGrammar.Norm.RunExamples.leanUnknown",
+        "VE.EnglishGrammar.Norm.RunExamples.lexedTwice",
         "VE.EnglishGrammar.Norm.RunExamples.notOne",
         "VE.EnglishGrammar.Norm.RunExamples.oE1",
         "VE.EnglishGrammar.Norm.RunExamples.rejectAll",
@@ -21248,6 +21255,7 @@
         "VE.EnglishGrammar.Norm.RunExamples.result",
         "VE.EnglishGrammar.Norm.RunExamples.s3",
         "VE.EnglishGrammar.Norm.RunExamples.sE1",
+        "VE.EnglishGrammar.Norm.RunExamples.sents",
         "VE.EnglishGrammar.Norm.RunExamples.sha",
         "VE.EnglishGrammar.Norm.RunExamples.spanRowOf",
         "VE.EnglishGrammar.Norm.RunExamples.str",
