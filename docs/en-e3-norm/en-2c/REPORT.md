@@ -208,9 +208,12 @@ No Lean or Rust product code changed.
 
 ## Final selected run
 
-The run was `MAC_PYTEST_NO_DEFER=1 mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on the
-committed merge `2902e3fc05`, with a clean tree. It ran on GitHub Actions (run `en-e3bb-2902e3fc-t438550`) in 5
-shards: 101 units, 101 passed, exit 0. After it, only this report changed.
+The run was `mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on the committed review-fix HEAD
+`7334403810`, with a clean tree. It ran on GitHub Actions (run `en-e3bb-73344038-t449919`) in 5 shards: 102 units, 102
+passed, exit 0. It included `tests/test_w1_delta_suite.py`, `tests/test_english_statement_shadow.py` and
+`tests/test_history_tests.py`. `lake build` succeeded (1419 jobs). `python3 lean/audit.py` passed (856 files, 9590
+theorems). `regen_generated.py --check` checked 40 entries and found none stale. Both review probes pass. After the
+run, only this section of this report changed. Not run: the full gate (the chain runs it).
 
 ## Next
 
