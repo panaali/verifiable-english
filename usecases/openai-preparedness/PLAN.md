@@ -595,7 +595,8 @@ reviews/dri-decisions-20261111-ucfix-cycle.md item 2). Section 6 and `answer-key
     `cl-levels` and `fn5-indicator` are headed blocks of `rules.d1.ve`, each its own audit unit; `facts.d1.ve`
     holds exactly 4.1's six levels, `rs2-nest` and `no-critical-models`; N4 rests on `cl-levels`. No answer
     changed (236 of 239 agree, as before). Regulated predicates: 60 of 64 (59 before: +1 the internal-use act).
-    The situation sort's legend still says "of a covered model" (sess-3 C7): a shared change put to the DRI.
+    The situation sort's legend still says "of a covered model" (sess-3 C7): the shared change is moved to
+    `openai-preparedness-fidelity-fix-3` (DRI ruling of 2026-11-12, STOP RULE question 3, ruled (b)).
 
 ## 13. Files for the implementation round (not this commit)
 

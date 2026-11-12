@@ -1,0 +1,70 @@
+{
+ "item": "openai-preparedness-fidelity-fix-2",
+ "language": "Python (use-case translation, vocabulary and harness)",
+ "method": "planted with /tmp script, the one named test run, files restored with git checkout; tree clean after each",
+ "mutants": [
+  {
+   "id": "a",
+   "file": "usecases/openai-preparedness/rules.d1.ve",
+   "bug": "f3-inuse's act back to \"sufficient safety as well as security controls during development\"",
+   "test": "tests/test_pf_fidelity_fix.py::test_f3_internal_use_is_its_own_act_and_both_legends_say_additional",
+   "result": "FAILED: AssertionError: 'safeguards_during_development' == 'safeguards_before_internal_use'"
+  },
+  {
+   "id": "b",
+   "file": "usecases/openai-preparedness/rules.d1.ve",
+   "bug": "f11-exception's old guard (adjustment_confirmed and adjustment_conditions only, no area)",
+   "test": "tests/test_pf_fidelity_fix.py::test_one_areas_adjustment_does_not_release_another_areas_duty",
+   "result": "FAILED: assert 'f11-exception' not in {'f11-exception'}"
+  },
+  {
+   "id": "c",
+   "file": "usecases/openai-preparedness/rules.d1.ve",
+   "bug": "f11-exception-deploy back to \"Every situation may be deployed\" with no area bound",
+   "test": "tests/test_pf_fidelity_fix.py::test_the_deploy_exception_permits_only_inside_the_confirmed_area",
+   "result": "FAILED: assert {'f11-exception-deploy'} == set()"
+  },
+  {
+   "id": "d",
+   "file": "usecases/openai-preparedness/pf_vocabulary.py",
+   "bug": "f6-rel's guard legend back to \"derives from a model determined below High\"",
+   "test": "tests/test_pf_fidelity_fix.py::test_f6_guard_names_footnote_6s_three_methods",
+   "result": "FAILED: the three methods are not in the legend"
+  },
+  {
+   "id": "e",
+   "file": "usecases/openai-preparedness/rules.d1.ve",
+   "bug": "f14-summary's employee_request guard restored",
+   "test": "tests/test_pf_fidelity_fix.py::test_f14_summary_covers_the_sag_recommendation_with_no_request_guard",
+   "result": "FAILED: the guard is not ['top']"
+  },
+  {
+   "id": "f",
+   "file": "usecases/openai-preparedness/pf_vocabulary.py",
+   "bug": "robust_case's act back to \"robust to discovered capability as well as propensity\"",
+   "test": "tests/test_pf_fidelity_fix.py::test_f12_undermining_keeps_and_or",
+   "result": "FAILED: 'as well as' in the act"
+  },
+  {
+   "id": "g",
+   "file": "usecases/openai-preparedness/rules.d1.ve, usecases/openai-preparedness/run.py, usecases/openai-preparedness/pf_vocabulary.py",
+   "bug": "\"unless conservative_upper_bound_used\" on f12-sandbagging and run.py's ALTERNATIVES bound-is-false assumption restored",
+   "test": "tests/test_pf_fidelity_fix.py::test_f12_sandbagging_is_one_disjunctive_duty",
+   "result": "FAILED: the rule's unless is not empty"
+  },
+  {
+   "id": "h",
+   "file": "usecases/openai-preparedness/pf_vocabulary.py",
+   "bug": "\"for continued sufficiency\" dropped from annual_review's legend",
+   "test": "tests/test_pf_fidelity_fix.py::test_f16_year_reviews_the_framework_once_as_to_continued_sufficiency",
+   "result": "FAILED: the Appendix B sentence is not in the legend"
+  },
+  {
+   "id": "i",
+   "file": "usecases/openai-preparedness/facts.d1.ve, usecases/openai-preparedness/rules.d1.ve",
+   "bug": "cl-levels moved back into facts.d1.ve (the FACTS collection)",
+   "test": "tests/test_pf_fidelity_fix.py::test_facts_hold_exactly_their_stated_inventory",
+   "result": "FAILED: facts.d1.ve's block list differs"
+  }
+ ]
+}
