@@ -2254,7 +2254,7 @@
  ],
  "cost": {
   "documents_built": 352,
-  "prover_calls": 11
+  "prover_calls": 13
  },
  "items": {
   "A-AIS-C-DEV/ALN": {
@@ -2609,10 +2609,12 @@
       "f3-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -2631,10 +2633,12 @@
       "f3-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -2653,10 +2657,12 @@
       "f3-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -2675,10 +2681,12 @@
       "f3-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -2697,10 +2705,12 @@
       "f3-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -2719,10 +2729,12 @@
       "f3-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -2741,10 +2753,12 @@
       "f3-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -2763,10 +2777,12 @@
       "f3-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -2785,10 +2801,12 @@
       "f3-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -2807,10 +2825,12 @@
       "f3-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -2829,10 +2849,12 @@
       "f3-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -2851,10 +2873,12 @@
       "f3-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -2873,10 +2897,12 @@
       "f3-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -2895,10 +2921,12 @@
       "f3-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -2917,10 +2945,12 @@
       "f3-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -2939,10 +2969,12 @@
       "f3-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     }
@@ -3322,10 +3354,12 @@
       "f2-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -3344,10 +3378,12 @@
       "f2-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -3366,10 +3402,12 @@
       "f2-reminder-any"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -3388,10 +3426,12 @@
       "f2-reminder-any"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -3408,11 +3448,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -3429,11 +3471,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -3450,11 +3494,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -3471,11 +3517,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -3494,10 +3542,12 @@
       "f2-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -3516,10 +3566,12 @@
       "f2-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -3538,10 +3590,12 @@
       "f2-reminder-any"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -3560,10 +3614,12 @@
       "f2-reminder-any"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -3580,11 +3636,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -3601,11 +3659,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -3622,11 +3682,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -3643,11 +3705,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     }
@@ -4024,13 +4088,15 @@
      "holds": true,
      "other_sign_rules": [],
      "rules": [
-      "f3-develop-inuse"
+      "f3-inuse"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "soft": false
     },
@@ -4045,13 +4111,15 @@
      "holds": true,
      "other_sign_rules": [],
      "rules": [
-      "f3-develop-inuse"
+      "f3-inuse"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "soft": false
     },
@@ -4062,16 +4130,20 @@
       "RS3": "any",
       "RS5": "within"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": true,
      "other_sign_rules": [],
      "rules": [
       "f2-deploy-any",
       "f2-reminder-any",
-      "f3-develop-inuse"
+      "f3-inuse"
      ],
-     "sensitive_predicates": [],
-     "silent_predicates": [],
+     "sensitive_predicates": [
+      "safeguards_during_development"
+     ],
+     "silent_predicates": [
+      "safeguards_during_development"
+     ],
      "soft": false
     },
     {
@@ -4081,16 +4153,20 @@
       "RS3": "any",
       "RS5": "exception"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": true,
      "other_sign_rules": [],
      "rules": [
       "f2-deploy-any",
       "f2-reminder-any",
-      "f3-develop-inuse"
+      "f3-inuse"
      ],
-     "sensitive_predicates": [],
-     "silent_predicates": [],
+     "sensitive_predicates": [
+      "safeguards_during_development"
+     ],
+     "silent_predicates": [
+      "safeguards_during_development"
+     ],
      "soft": false
     },
     {
@@ -4104,13 +4180,15 @@
      "holds": true,
      "other_sign_rules": [],
      "rules": [
-      "f3-develop-inuse"
+      "f3-inuse"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "soft": false
     },
@@ -4125,13 +4203,15 @@
      "holds": true,
      "other_sign_rules": [],
      "rules": [
-      "f3-develop-inuse"
+      "f3-inuse"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "soft": false
     },
@@ -4146,13 +4226,15 @@
      "holds": true,
      "other_sign_rules": [],
      "rules": [
-      "f3-develop-inuse"
+      "f3-inuse"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "soft": false
     },
@@ -4167,13 +4249,15 @@
      "holds": true,
      "other_sign_rules": [],
      "rules": [
-      "f3-develop-inuse"
+      "f3-inuse"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "soft": false
     },
@@ -4190,11 +4274,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -4211,11 +4297,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -4234,10 +4322,12 @@
       "f2-reminder-any"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -4256,10 +4346,12 @@
       "f2-reminder-any"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -4276,11 +4368,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -4297,11 +4391,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -4318,11 +4414,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -4339,11 +4437,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     }
@@ -4358,7 +4458,7 @@
    "selected_rules": [
     "f2-deploy-any",
     "f2-reminder-any",
-    "f3-develop-inuse"
+    "f3-inuse"
    ]
   },
   "A-AIS-C-LINT/ALN": {
@@ -4719,13 +4819,15 @@
      "holds": true,
      "other_sign_rules": [],
      "rules": [
-      "f3-develop-inuse"
+      "f3-inuse"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "soft": false
     },
@@ -4740,13 +4842,15 @@
      "holds": true,
      "other_sign_rules": [],
      "rules": [
-      "f3-develop-inuse"
+      "f3-inuse"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "soft": false
     },
@@ -4757,16 +4861,20 @@
       "RS3": "any",
       "RS5": "within"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": true,
      "other_sign_rules": [],
      "rules": [
       "f2-deploy-any",
       "f2-reminder-any",
-      "f3-develop-inuse"
+      "f3-inuse"
      ],
-     "sensitive_predicates": [],
-     "silent_predicates": [],
+     "sensitive_predicates": [
+      "safeguards_during_development"
+     ],
+     "silent_predicates": [
+      "safeguards_during_development"
+     ],
      "soft": false
     },
     {
@@ -4776,16 +4884,20 @@
       "RS3": "any",
       "RS5": "exception"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": true,
      "other_sign_rules": [],
      "rules": [
       "f2-deploy-any",
       "f2-reminder-any",
-      "f3-develop-inuse"
+      "f3-inuse"
      ],
-     "sensitive_predicates": [],
-     "silent_predicates": [],
+     "sensitive_predicates": [
+      "safeguards_during_development"
+     ],
+     "silent_predicates": [
+      "safeguards_during_development"
+     ],
      "soft": false
     },
     {
@@ -4799,13 +4911,15 @@
      "holds": true,
      "other_sign_rules": [],
      "rules": [
-      "f3-develop-inuse"
+      "f3-inuse"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "soft": false
     },
@@ -4820,13 +4934,15 @@
      "holds": true,
      "other_sign_rules": [],
      "rules": [
-      "f3-develop-inuse"
+      "f3-inuse"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "soft": false
     },
@@ -4841,13 +4957,15 @@
      "holds": true,
      "other_sign_rules": [],
      "rules": [
-      "f3-develop-inuse"
+      "f3-inuse"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "soft": false
     },
@@ -4862,13 +4980,15 @@
      "holds": true,
      "other_sign_rules": [],
      "rules": [
-      "f3-develop-inuse"
+      "f3-inuse"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "soft": false
     },
@@ -4885,11 +5005,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -4906,11 +5028,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -4929,10 +5053,12 @@
       "f2-reminder-any"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -4951,10 +5077,12 @@
       "f2-reminder-any"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -4971,11 +5099,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -4992,11 +5122,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -5013,11 +5145,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -5034,11 +5168,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     }
@@ -5053,7 +5189,7 @@
    "selected_rules": [
     "f2-deploy-any",
     "f2-reminder-any",
-    "f3-develop-inuse"
+    "f3-inuse"
    ]
   },
   "A-AIS-H-DEV/ALN": {
@@ -5254,11 +5390,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -5274,11 +5412,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -5294,11 +5434,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -5314,11 +5456,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -5334,11 +5478,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -5354,11 +5500,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -5374,11 +5522,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -5394,11 +5544,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     }
@@ -5616,10 +5768,12 @@
       "f2-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -5637,10 +5791,12 @@
       "f2-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -5658,10 +5814,12 @@
       "f2-reminder-any"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -5679,10 +5837,12 @@
       "f2-reminder-any"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -5700,10 +5860,12 @@
       "f2-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -5721,10 +5883,12 @@
       "f2-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -5742,10 +5906,12 @@
       "f2-reminder-any"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -5763,10 +5929,12 @@
       "f2-reminder-any"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     }
@@ -5987,11 +6155,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -6007,11 +6177,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -6029,10 +6201,12 @@
       "f2-reminder-any"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -6050,10 +6224,12 @@
       "f2-reminder-any"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -6069,11 +6245,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -6089,11 +6267,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -6111,10 +6291,12 @@
       "f2-reminder-any"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -6132,10 +6314,12 @@
       "f2-reminder-any"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     }
@@ -6354,11 +6538,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -6374,11 +6560,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -6396,10 +6584,12 @@
       "f2-reminder-any"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -6417,10 +6607,12 @@
       "f2-reminder-any"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -6436,11 +6628,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -6456,11 +6650,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -6478,10 +6674,12 @@
       "f2-reminder-any"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -6499,10 +6697,12 @@
       "f2-reminder-any"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     }
@@ -6870,10 +7070,12 @@
       "f3-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -6892,10 +7094,12 @@
       "f3-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -6914,10 +7118,12 @@
       "f3-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -6936,10 +7142,12 @@
       "f3-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -6958,10 +7166,12 @@
       "f3-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -6980,10 +7190,12 @@
       "f3-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -7002,10 +7214,12 @@
       "f3-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -7024,10 +7238,12 @@
       "f3-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -7046,10 +7262,12 @@
       "f3-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -7068,10 +7286,12 @@
       "f3-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -7090,10 +7310,12 @@
       "f3-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -7112,10 +7334,12 @@
       "f3-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -7134,10 +7358,12 @@
       "f3-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -7156,10 +7382,12 @@
       "f3-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -7178,10 +7406,12 @@
       "f3-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -7200,10 +7430,12 @@
       "f3-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     }
@@ -7582,10 +7814,12 @@
       "f2-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -7604,10 +7838,12 @@
       "f2-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -7626,10 +7862,12 @@
       "f2-reminder-any"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -7648,10 +7886,12 @@
       "f2-reminder-any"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -7668,11 +7908,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -7689,11 +7931,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -7710,11 +7954,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -7731,11 +7977,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -7754,10 +8002,12 @@
       "f2-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -7776,10 +8026,12 @@
       "f2-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -7798,10 +8050,12 @@
       "f2-reminder-any"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -7820,10 +8074,12 @@
       "f2-reminder-any"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -7840,11 +8096,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -7861,11 +8119,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -7882,11 +8142,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -7903,11 +8165,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     }
@@ -8284,13 +8548,15 @@
      "holds": true,
      "other_sign_rules": [],
      "rules": [
-      "f3-develop-inuse"
+      "f3-inuse"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "soft": false
     },
@@ -8305,13 +8571,15 @@
      "holds": true,
      "other_sign_rules": [],
      "rules": [
-      "f3-develop-inuse"
+      "f3-inuse"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "soft": false
     },
@@ -8322,16 +8590,20 @@
       "RS3": "any",
       "RS5": "within"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": true,
      "other_sign_rules": [],
      "rules": [
       "f2-deploy-any",
       "f2-reminder-any",
-      "f3-develop-inuse"
+      "f3-inuse"
      ],
-     "sensitive_predicates": [],
-     "silent_predicates": [],
+     "sensitive_predicates": [
+      "safeguards_during_development"
+     ],
+     "silent_predicates": [
+      "safeguards_during_development"
+     ],
      "soft": false
     },
     {
@@ -8341,16 +8613,20 @@
       "RS3": "any",
       "RS5": "exception"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": true,
      "other_sign_rules": [],
      "rules": [
       "f2-deploy-any",
       "f2-reminder-any",
-      "f3-develop-inuse"
+      "f3-inuse"
      ],
-     "sensitive_predicates": [],
-     "silent_predicates": [],
+     "sensitive_predicates": [
+      "safeguards_during_development"
+     ],
+     "silent_predicates": [
+      "safeguards_during_development"
+     ],
      "soft": false
     },
     {
@@ -8364,13 +8640,15 @@
      "holds": true,
      "other_sign_rules": [],
      "rules": [
-      "f3-develop-inuse"
+      "f3-inuse"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "soft": false
     },
@@ -8385,13 +8663,15 @@
      "holds": true,
      "other_sign_rules": [],
      "rules": [
-      "f3-develop-inuse"
+      "f3-inuse"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "soft": false
     },
@@ -8406,13 +8686,15 @@
      "holds": true,
      "other_sign_rules": [],
      "rules": [
-      "f3-develop-inuse"
+      "f3-inuse"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "soft": false
     },
@@ -8427,13 +8709,15 @@
      "holds": true,
      "other_sign_rules": [],
      "rules": [
-      "f3-develop-inuse"
+      "f3-inuse"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "soft": false
     },
@@ -8450,11 +8734,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -8471,11 +8757,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -8494,10 +8782,12 @@
       "f2-reminder-any"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -8516,10 +8806,12 @@
       "f2-reminder-any"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -8536,11 +8828,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -8557,11 +8851,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -8578,11 +8874,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -8599,11 +8897,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     }
@@ -8618,7 +8918,7 @@
    "selected_rules": [
     "f2-deploy-any",
     "f2-reminder-any",
-    "f3-develop-inuse"
+    "f3-inuse"
    ]
   },
   "A-BIO-C-LINT/ALN": {
@@ -8979,13 +9279,15 @@
      "holds": true,
      "other_sign_rules": [],
      "rules": [
-      "f3-develop-inuse"
+      "f3-inuse"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "soft": false
     },
@@ -9000,13 +9302,15 @@
      "holds": true,
      "other_sign_rules": [],
      "rules": [
-      "f3-develop-inuse"
+      "f3-inuse"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "soft": false
     },
@@ -9017,16 +9321,20 @@
       "RS3": "any",
       "RS5": "within"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": true,
      "other_sign_rules": [],
      "rules": [
       "f2-deploy-any",
       "f2-reminder-any",
-      "f3-develop-inuse"
+      "f3-inuse"
      ],
-     "sensitive_predicates": [],
-     "silent_predicates": [],
+     "sensitive_predicates": [
+      "safeguards_during_development"
+     ],
+     "silent_predicates": [
+      "safeguards_during_development"
+     ],
      "soft": false
     },
     {
@@ -9036,16 +9344,20 @@
       "RS3": "any",
       "RS5": "exception"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": true,
      "other_sign_rules": [],
      "rules": [
       "f2-deploy-any",
       "f2-reminder-any",
-      "f3-develop-inuse"
+      "f3-inuse"
      ],
-     "sensitive_predicates": [],
-     "silent_predicates": [],
+     "sensitive_predicates": [
+      "safeguards_during_development"
+     ],
+     "silent_predicates": [
+      "safeguards_during_development"
+     ],
      "soft": false
     },
     {
@@ -9059,13 +9371,15 @@
      "holds": true,
      "other_sign_rules": [],
      "rules": [
-      "f3-develop-inuse"
+      "f3-inuse"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "soft": false
     },
@@ -9080,13 +9394,15 @@
      "holds": true,
      "other_sign_rules": [],
      "rules": [
-      "f3-develop-inuse"
+      "f3-inuse"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "soft": false
     },
@@ -9101,13 +9417,15 @@
      "holds": true,
      "other_sign_rules": [],
      "rules": [
-      "f3-develop-inuse"
+      "f3-inuse"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "soft": false
     },
@@ -9122,13 +9440,15 @@
      "holds": true,
      "other_sign_rules": [],
      "rules": [
-      "f3-develop-inuse"
+      "f3-inuse"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "soft": false
     },
@@ -9145,11 +9465,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -9166,11 +9488,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -9189,10 +9513,12 @@
       "f2-reminder-any"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -9211,10 +9537,12 @@
       "f2-reminder-any"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -9231,11 +9559,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -9252,11 +9582,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -9273,11 +9605,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -9294,11 +9628,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     }
@@ -9313,7 +9649,7 @@
    "selected_rules": [
     "f2-deploy-any",
     "f2-reminder-any",
-    "f3-develop-inuse"
+    "f3-inuse"
    ]
   },
   "A-BIO-H-DEV/ALN": {
@@ -9514,11 +9850,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -9534,11 +9872,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -9554,11 +9894,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -9574,11 +9916,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -9594,11 +9938,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -9614,11 +9960,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -9634,11 +9982,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -9654,11 +10004,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     }
@@ -9875,10 +10227,12 @@
       "f2-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -9896,10 +10250,12 @@
       "f2-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -9917,10 +10273,12 @@
       "f2-reminder-any"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -9938,10 +10296,12 @@
       "f2-reminder-any"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -9959,10 +10319,12 @@
       "f2-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -9980,10 +10342,12 @@
       "f2-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -10001,10 +10365,12 @@
       "f2-reminder-any"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -10022,10 +10388,12 @@
       "f2-reminder-any"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     }
@@ -10246,11 +10614,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -10266,11 +10636,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -10288,10 +10660,12 @@
       "f2-reminder-any"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -10309,10 +10683,12 @@
       "f2-reminder-any"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -10328,11 +10704,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -10348,11 +10726,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -10370,10 +10750,12 @@
       "f2-reminder-any"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -10391,10 +10773,12 @@
       "f2-reminder-any"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     }
@@ -10613,11 +10997,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -10633,11 +11019,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -10655,10 +11043,12 @@
       "f2-reminder-any"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -10676,10 +11066,12 @@
       "f2-reminder-any"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -10695,11 +11087,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -10715,11 +11109,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -10737,10 +11133,12 @@
       "f2-reminder-any"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -10758,10 +11156,12 @@
       "f2-reminder-any"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     }
@@ -11129,10 +11529,12 @@
       "f3-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -11151,10 +11553,12 @@
       "f3-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -11173,10 +11577,12 @@
       "f3-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -11195,10 +11601,12 @@
       "f3-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -11217,10 +11625,12 @@
       "f3-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -11239,10 +11649,12 @@
       "f3-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -11261,10 +11673,12 @@
       "f3-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -11283,10 +11697,12 @@
       "f3-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -11305,10 +11721,12 @@
       "f3-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -11327,10 +11745,12 @@
       "f3-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -11349,10 +11769,12 @@
       "f3-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -11371,10 +11793,12 @@
       "f3-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -11393,10 +11817,12 @@
       "f3-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -11415,10 +11841,12 @@
       "f3-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -11437,10 +11865,12 @@
       "f3-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -11459,10 +11889,12 @@
       "f3-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     }
@@ -11841,10 +12273,12 @@
       "f2-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -11863,10 +12297,12 @@
       "f2-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -11885,10 +12321,12 @@
       "f2-reminder-any"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -11907,10 +12345,12 @@
       "f2-reminder-any"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -11927,11 +12367,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -11948,11 +12390,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -11969,11 +12413,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -11990,11 +12436,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -12013,10 +12461,12 @@
       "f2-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -12035,10 +12485,12 @@
       "f2-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -12057,10 +12509,12 @@
       "f2-reminder-any"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -12079,10 +12533,12 @@
       "f2-reminder-any"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -12099,11 +12555,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -12120,11 +12578,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -12141,11 +12601,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -12162,11 +12624,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     }
@@ -12543,13 +13007,15 @@
      "holds": true,
      "other_sign_rules": [],
      "rules": [
-      "f3-develop-inuse"
+      "f3-inuse"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "soft": false
     },
@@ -12564,13 +13030,15 @@
      "holds": true,
      "other_sign_rules": [],
      "rules": [
-      "f3-develop-inuse"
+      "f3-inuse"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "soft": false
     },
@@ -12581,16 +13049,20 @@
       "RS3": "any",
       "RS5": "within"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": true,
      "other_sign_rules": [],
      "rules": [
       "f2-deploy-any",
       "f2-reminder-any",
-      "f3-develop-inuse"
+      "f3-inuse"
      ],
-     "sensitive_predicates": [],
-     "silent_predicates": [],
+     "sensitive_predicates": [
+      "safeguards_during_development"
+     ],
+     "silent_predicates": [
+      "safeguards_during_development"
+     ],
      "soft": false
     },
     {
@@ -12600,16 +13072,20 @@
       "RS3": "any",
       "RS5": "exception"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": true,
      "other_sign_rules": [],
      "rules": [
       "f2-deploy-any",
       "f2-reminder-any",
-      "f3-develop-inuse"
+      "f3-inuse"
      ],
-     "sensitive_predicates": [],
-     "silent_predicates": [],
+     "sensitive_predicates": [
+      "safeguards_during_development"
+     ],
+     "silent_predicates": [
+      "safeguards_during_development"
+     ],
      "soft": false
     },
     {
@@ -12623,13 +13099,15 @@
      "holds": true,
      "other_sign_rules": [],
      "rules": [
-      "f3-develop-inuse"
+      "f3-inuse"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "soft": false
     },
@@ -12644,13 +13122,15 @@
      "holds": true,
      "other_sign_rules": [],
      "rules": [
-      "f3-develop-inuse"
+      "f3-inuse"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "soft": false
     },
@@ -12665,13 +13145,15 @@
      "holds": true,
      "other_sign_rules": [],
      "rules": [
-      "f3-develop-inuse"
+      "f3-inuse"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "soft": false
     },
@@ -12686,13 +13168,15 @@
      "holds": true,
      "other_sign_rules": [],
      "rules": [
-      "f3-develop-inuse"
+      "f3-inuse"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "soft": false
     },
@@ -12709,11 +13193,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -12730,11 +13216,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -12753,10 +13241,12 @@
       "f2-reminder-any"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -12775,10 +13265,12 @@
       "f2-reminder-any"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -12795,11 +13287,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -12816,11 +13310,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -12837,11 +13333,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -12858,11 +13356,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     }
@@ -12877,7 +13377,7 @@
    "selected_rules": [
     "f2-deploy-any",
     "f2-reminder-any",
-    "f3-develop-inuse"
+    "f3-inuse"
    ]
   },
   "A-CYB-C-LINT/ALN": {
@@ -13237,13 +13737,15 @@
      "holds": true,
      "other_sign_rules": [],
      "rules": [
-      "f3-develop-inuse"
+      "f3-inuse"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "soft": false
     },
@@ -13258,13 +13760,15 @@
      "holds": true,
      "other_sign_rules": [],
      "rules": [
-      "f3-develop-inuse"
+      "f3-inuse"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "soft": false
     },
@@ -13275,16 +13779,20 @@
       "RS3": "any",
       "RS5": "within"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": true,
      "other_sign_rules": [],
      "rules": [
       "f2-deploy-any",
       "f2-reminder-any",
-      "f3-develop-inuse"
+      "f3-inuse"
      ],
-     "sensitive_predicates": [],
-     "silent_predicates": [],
+     "sensitive_predicates": [
+      "safeguards_during_development"
+     ],
+     "silent_predicates": [
+      "safeguards_during_development"
+     ],
      "soft": false
     },
     {
@@ -13294,16 +13802,20 @@
       "RS3": "any",
       "RS5": "exception"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": true,
      "other_sign_rules": [],
      "rules": [
       "f2-deploy-any",
       "f2-reminder-any",
-      "f3-develop-inuse"
+      "f3-inuse"
      ],
-     "sensitive_predicates": [],
-     "silent_predicates": [],
+     "sensitive_predicates": [
+      "safeguards_during_development"
+     ],
+     "silent_predicates": [
+      "safeguards_during_development"
+     ],
      "soft": false
     },
     {
@@ -13317,13 +13829,15 @@
      "holds": true,
      "other_sign_rules": [],
      "rules": [
-      "f3-develop-inuse"
+      "f3-inuse"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "soft": false
     },
@@ -13338,13 +13852,15 @@
      "holds": true,
      "other_sign_rules": [],
      "rules": [
-      "f3-develop-inuse"
+      "f3-inuse"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "soft": false
     },
@@ -13359,13 +13875,15 @@
      "holds": true,
      "other_sign_rules": [],
      "rules": [
-      "f3-develop-inuse"
+      "f3-inuse"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "soft": false
     },
@@ -13380,13 +13898,15 @@
      "holds": true,
      "other_sign_rules": [],
      "rules": [
-      "f3-develop-inuse"
+      "f3-inuse"
      ],
      "sensitive_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "silent_predicates": [
-      "safeguards_before_deployment"
+      "safeguards_before_deployment",
+      "safeguards_during_development"
      ],
      "soft": false
     },
@@ -13403,11 +13923,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -13424,11 +13946,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -13447,10 +13971,12 @@
       "f2-reminder-any"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -13469,10 +13995,12 @@
       "f2-reminder-any"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -13489,11 +14017,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -13510,11 +14040,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -13531,11 +14063,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -13552,11 +14086,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     }
@@ -13571,7 +14107,7 @@
    "selected_rules": [
     "f2-deploy-any",
     "f2-reminder-any",
-    "f3-develop-inuse"
+    "f3-inuse"
    ]
   },
   "A-CYB-H-DEV/ALN": {
@@ -13772,11 +14308,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -13792,11 +14330,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -13812,11 +14352,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -13832,11 +14374,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -13852,11 +14396,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -13872,11 +14418,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -13892,11 +14440,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -13912,11 +14462,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     }
@@ -14133,10 +14685,12 @@
       "f2-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -14154,10 +14708,12 @@
       "f2-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -14175,10 +14731,12 @@
       "f2-reminder-any"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -14196,10 +14754,12 @@
       "f2-reminder-any"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -14217,10 +14777,12 @@
       "f2-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -14238,10 +14800,12 @@
       "f2-reminder"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -14259,10 +14823,12 @@
       "f2-reminder-any"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -14280,10 +14846,12 @@
       "f2-reminder-any"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     }
@@ -14504,11 +15072,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -14524,11 +15094,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -14546,10 +15118,12 @@
       "f2-reminder-any"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -14567,10 +15141,12 @@
       "f2-reminder-any"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -14586,11 +15162,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -14606,11 +15184,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -14628,10 +15208,12 @@
       "f2-reminder-any"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -14649,10 +15231,12 @@
       "f2-reminder-any"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     }
@@ -14870,11 +15454,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -14890,11 +15476,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -14912,10 +15500,12 @@
       "f2-reminder-any"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -14933,10 +15523,12 @@
       "f2-reminder-any"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -14952,11 +15544,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -14972,11 +15566,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -14994,10 +15590,12 @@
       "f2-reminder-any"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -15015,10 +15613,12 @@
       "f2-reminder-any"
      ],
      "sensitive_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     }
@@ -15235,11 +15835,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -15255,11 +15857,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -15275,11 +15879,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -15295,11 +15901,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -15315,11 +15923,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -15335,11 +15945,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -15355,11 +15967,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -15375,11 +15989,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     }
@@ -15593,11 +16209,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -15613,11 +16231,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -15633,11 +16253,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -15653,11 +16275,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -15673,11 +16297,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -15693,11 +16319,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -15713,11 +16341,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -15733,11 +16363,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     }
@@ -15951,11 +16583,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -15971,11 +16605,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -15991,11 +16627,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -16011,11 +16649,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -16031,11 +16671,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -16051,11 +16693,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -16071,11 +16715,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -16091,11 +16737,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     }
@@ -16309,11 +16957,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -16329,11 +16979,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -16349,11 +17001,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -16369,11 +17023,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -16389,11 +17045,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -16409,11 +17067,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -16429,11 +17089,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -16449,11 +17111,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     }
@@ -20220,11 +20884,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -20240,11 +20906,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -20260,11 +20928,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -20280,11 +20950,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -20300,11 +20972,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -20320,11 +20994,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -20340,11 +21016,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     },
@@ -20360,11 +21038,13 @@
      "rules": [],
      "sensitive_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "silent_predicates": [
       "safeguards_before_deployment",
-      "safeguards_during_development"
+      "safeguards_during_development",
+      "safeguards_before_internal_use"
      ],
      "soft": false
     }
@@ -22420,10 +23100,10 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "sandbagging_bound"
+      "sandbagging_response"
      ],
      "silent_predicates": [
-      "sandbagging_bound"
+      "sandbagging_response"
      ],
      "soft": false
     },
@@ -22437,10 +23117,10 @@
      "other_sign_rules": [],
      "rules": [],
      "sensitive_predicates": [
-      "sandbagging_bound"
+      "sandbagging_response"
      ],
      "silent_predicates": [
-      "sandbagging_bound"
+      "sandbagging_response"
      ],
      "soft": false
     }
@@ -23258,6 +23938,7 @@
       "f1-halt-default",
       "f3-develop",
       "f3-develop-inuse",
+      "f3-inuse",
       "f3-reminder"
      ]
     },
@@ -23272,6 +23953,7 @@
       "f1-halt-default",
       "f3-develop",
       "f3-develop-inuse",
+      "f3-inuse",
       "f3-reminder"
      ]
     }
@@ -23485,11 +24167,13 @@
      [
       "f3-develop",
       "f3-develop-inuse",
+      "f3-inuse",
       "f3-reminder"
      ],
      [
       "f3-develop-forecast",
-      "f3-develop-inuse-forecast"
+      "f3-develop-inuse-forecast",
+      "f3-inuse-forecast"
      ]
     ],
     "F4": [
@@ -23571,6 +24255,8 @@
     "f17-iff",
     "f17-iff-only",
     "f17-suff",
+    "f3-inuse",
+    "f3-inuse-forecast",
     "f5-checkpoint",
     "f7-evaluations",
     "f7-report",
@@ -23598,6 +24284,21 @@
     "f10-validate": "a scored case",
     "f11-acknowledge": "a scored case",
     "f11-exception": [
+     [
+      "adjustment_area",
+      "s",
+      "ai_self_improvement"
+     ],
+     [
+      "adjustment_area",
+      "s",
+      "biological_and_chemical"
+     ],
+     [
+      "adjustment_area",
+      "s",
+      "cybersecurity"
+     ],
      [
       "adjustment_conditions",
       "s"
@@ -23638,6 +24339,21 @@
      ]
     ],
     "f11-exception-deploy": [
+     [
+      "adjustment_area",
+      "s",
+      "ai_self_improvement"
+     ],
+     [
+      "adjustment_area",
+      "s",
+      "biological_and_chemical"
+     ],
+     [
+      "adjustment_area",
+      "s",
+      "cybersecurity"
+     ],
      [
       "adjustment_conditions",
       "s"
@@ -24288,6 +25004,47 @@
     "f3-develop-forecast": "a scored case",
     "f3-develop-inuse": "a scored case",
     "f3-develop-inuse-forecast": "a scored case",
+    "f3-inuse": "a scored case",
+    "f3-inuse-forecast": [
+     [
+      "forecast_critical",
+      "s"
+     ],
+     [
+      "internal_deployment",
+      "s"
+     ],
+     [
+      "reached",
+      "s",
+      "ai_self_improvement_critical"
+     ],
+     [
+      "reached",
+      "s",
+      "ai_self_improvement_high"
+     ],
+     [
+      "reached",
+      "s",
+      "biological_and_chemical_critical"
+     ],
+     [
+      "reached",
+      "s",
+      "biological_and_chemical_high"
+     ],
+     [
+      "reached",
+      "s",
+      "cybersecurity_critical"
+     ],
+     [
+      "reached",
+      "s",
+      "cybersecurity_high"
+     ]
+    ],
     "f3-reminder": "a scored case",
     "f4-security": "a scored case",
     "f5-ambiguous": "a scored case",
@@ -24871,8 +25628,8 @@
    "cases": 67,
    "choices": 1043,
    "documents_built": 352,
-   "prover_calls": 11,
-   "rules": 87,
+   "prover_calls": 13,
+   "rules": 89,
    "units": 389,
    "wall_time": "printed by run.py; intentionally not pinned by --check"
   },
@@ -24919,7 +25676,7 @@
    }
   },
   "M5": {
-   "regulated_predicates": 59,
+   "regulated_predicates": 60,
    "violations": []
   },
   "M6": {
@@ -24928,8 +25685,8 @@
    "untraced": []
   },
   "M7": {
-   "insensitive_choices": 124,
-   "sensitive_choices": 669,
+   "insensitive_choices": 112,
+   "sensitive_choices": 681,
    "sensitive_exactly_where_silent": true,
    "soft_key_items": 14,
    "soft_key_items_matched": 14,
@@ -24966,7 +25723,7 @@
      "changes": {
       "C-doc": {
        "from": "NONE",
-       "to": "SOME(RS12=suff&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS12=suff&RS3=ext&RS5=exception&RS6=req&RS7=nodelib | RS12=suff&RS3=ext&RS5=exception&RS6=desc&RS7=noinput | RS12=suff&RS3=ext&RS5=exception&RS6=desc&RS7=nodelib | RS12=suff&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS12=suff&RS3=any&RS5=exception&RS6=req&RS7=nodelib | RS12=suff&RS3=any&RS5=exception&RS6=desc&RS7=noinput | RS12=suff&RS3=any&RS5=exception&RS6=desc&RS7=nodelib | RS12=iff&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS12=iff&RS3=ext&RS5=exception&RS6=req&RS7=nodelib | RS12=iff&RS3=ext&RS5=exception&RS6=desc&RS7=noinput | RS12=iff&RS3=ext&RS5=exception&RS6=desc&RS7=nodelib | RS12=iff&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS12=iff&RS3=any&RS5=exception&RS6=req&RS7=nodelib | RS12=iff&RS3=any&RS5=exception&RS6=desc&RS7=noinput | RS12=iff&RS3=any&RS5=exception&RS6=desc&RS7=nodelib)"
+       "to": "UNDECIDED"
       },
       "C1": {
        "from": "NONE",
@@ -25120,7 +25877,7 @@
    "changes": {
     "C-doc": {
      "from": "NONE",
-     "to": "SOME(RS12=suff&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS12=suff&RS3=ext&RS5=exception&RS6=req&RS7=nodelib | RS12=suff&RS3=ext&RS5=exception&RS6=desc&RS7=noinput | RS12=suff&RS3=ext&RS5=exception&RS6=desc&RS7=nodelib | RS12=suff&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS12=suff&RS3=any&RS5=exception&RS6=req&RS7=nodelib | RS12=suff&RS3=any&RS5=exception&RS6=desc&RS7=noinput | RS12=suff&RS3=any&RS5=exception&RS6=desc&RS7=nodelib | RS12=iff&RS3=ext&RS5=exception&RS6=req&RS7=noinput | RS12=iff&RS3=ext&RS5=exception&RS6=req&RS7=nodelib | RS12=iff&RS3=ext&RS5=exception&RS6=desc&RS7=noinput | RS12=iff&RS3=ext&RS5=exception&RS6=desc&RS7=nodelib | RS12=iff&RS3=any&RS5=exception&RS6=req&RS7=noinput | RS12=iff&RS3=any&RS5=exception&RS6=req&RS7=nodelib | RS12=iff&RS3=any&RS5=exception&RS6=desc&RS7=noinput | RS12=iff&RS3=any&RS5=exception&RS6=desc&RS7=nodelib)"
+     "to": "UNDECIDED"
     },
     "C1": {
      "from": "NONE",
