@@ -39,6 +39,7 @@
 - `tests/test_english_lean_tables.py` — The tables that the Lean English instance copies from Python stay equal to Python's.
 - `tests/test_english_lean_tokens.py` — Python's English grammar converted to word tokens reads like Python (plan section 4, S0 first cut).
 - `tests/test_english_runner_root.py` — The one-shot English executable has a distinct root and preserves its wire bytes.
+- `tests/test_english_statement_answer.py` — `english.statement`'s relay binding (docs/spec/en-e3-norm.md 2.4, Relay and Fuzz tests; section 8's P2 and P3).
 - `tests/test_english_statement_blocks.py` — The 120 pinned rule blocks: Lean's node against Python's recorded node (en-e3-norm EN-1; spec english-lean-s6 f22).
 - `tests/test_english_statement_shadow.py` — The `english.statement` shadow comparator (docs/spec/en-e3-norm.md 2.4, Shadow; fixtures E14 and P5).
 - `tests/test_english_unambiguity.py` — (no module docstring)
@@ -86,4 +87,3 @@
 - `tests/test_history_tests.py` — The inventory of tests that read git history (tests/history-dependent.json) and its lint.
 - `tests/test_identity_lint.py` — `tools/identity_lint.py` (architecture plan AR-6): no new Lean-owned identity preimage in Python.
 - `tests/test_inventory_lint.py` — The Gate 2 inventory lint (tools/inventory_lint.py).
-- `tests/test_inventory_path.py` — gi-2a: the train-only files and their one accessor (docs/infra/gen-inv-design/DESIGN.md section 4, steps 1-2).

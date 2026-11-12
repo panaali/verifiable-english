@@ -72,10 +72,11 @@ def lean_modules(root: Path) -> dict[str, Path]:
             for path in (root / "lean").rglob("*.lean") if ".lake" not in path.parts}
 
 
-def experimental_imports(read: dict[str, list[str]], roots=SERVICE_ROOTS) -> list[str]:
+def experimental_imports(read: dict[str, list[str]], roots=SERVICE_ROOTS, require_roots: bool = True) -> list[str]:
     """The imports of an experimental module by a module the service's roots reach (a root included). A missing
-    root is a problem too: the rule cannot be checked without it."""
-    problems = [f"service root {root} is not in the tree" for root in roots if root not in read]
+    root is a problem too (the rule cannot be checked without it), but for `require_roots=False`: a tree without a
+    lakefile builds no service (the layer tests' trees)."""
+    problems = [f"service root {root} is not in the tree" for root in roots if root not in read and require_roots]
     reached, todo = set(), [root for root in roots if root in read]
     while todo:
         module = todo.pop()
@@ -364,7 +365,9 @@ def main() -> int:
                        for importer, message in sorted(wrong.items()))
     diagnostic = sorted(message for importer, found in read.items() for imported in found
                         if (message := diagnostic_only_violation(importer, imported)) is not None)
-    experimental = experimental_imports(read) + expiry_problems(paths, date.today())
+    lakefile = ROOT / "lean/lakefile.toml"
+    experimental = (experimental_imports(read, require_roots=lakefile.is_file())
+                    + expiry_problems(paths, date.today()))
     for importer, found in read.items():
         for imported in found:
             if imported not in paths:
@@ -378,7 +381,6 @@ def main() -> int:
     expected = json.loads(LEDGER.read_text())
     # A tree without a lakefile has no default build (the layer tests' trees); the repository's is read directly by
     # tests/test_lean_default_build.py, so a lost lakefile still fails there and in `lake build`.
-    lakefile = ROOT / "lean/lakefile.toml"
     unbuilt = unbuilt_modules(set(paths), read, tomllib.loads(lakefile.read_text())) if lakefile.is_file() else []
     for message in unbuilt:
         print(message, file=sys.stderr)

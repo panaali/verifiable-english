@@ -77,13 +77,14 @@ python3 tools/kernel_closure.py --out docs/kernel/closure-baseline.json
 | rights | candidate | 2 | 5,620 | 35 | 5,636 |
 | alternatives | candidate | 2 | 3,908 | 22 | 3,921 |
 | reports | candidate | 3 | 4,396 | 32 | 4,418 |
-| normDefaults | candidate | 7 | 5,702 | 5,533 | 6,463 |
+| normDefaults | candidate | 7 | 5,702 | 5,535 | 6,465 |
 | risk | candidate | 6 | 6,160 | 5,670 | 7,840 |
-| readingsRoute | candidate | 8 | 9,403 | 20,443 | 24,135 |
-| discourse | candidate | 6 | 35,931 | 4,541 | 35,937 |
-| document | candidate | 7 | 34,608 | 12,409 | 35,436 |
+| readingsRoute | candidate | 8 | 9,403 | 20,445 | 24,137 |
+| discourse | candidate | 6 | 36,073 | 4,541 | 36,079 |
+| document | candidate | 7 | 34,753 | 12,818 | 35,581 |
 
-All (M), saved in `docs/kernel/closure-baseline.json`. Other measurements of the same run:
+All (M), saved in `docs/kernel/closure-baseline.json`; KB-1 regenerated it on main `35a9ba135f` (the
+candidate rows moved with main's code, the kernel rows did not). Other measurements (the census and keyed figures are the saved file's):
 
 | Quantity | Value |
 |---|---:|

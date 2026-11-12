@@ -24745,6 +24745,31 @@ theorem VE.Judgments.viewOf_legacy
       VE.Discourse.Loader.foldStatus active unit (VE.Discourse.Loader.w2Status own.isSome meaning)
   -- uses VE.Discourse.FrontSet@VE.Discourse.Manifest VE.Discourse.Loader.foldStatus@VE.Discourse.Loader VE.Discourse.Loader.w2Status@VE.Discourse.Loader VE.Judgments.Content@VE.Judgments.Status VE.Judgments.UnitView.legacy@VE.Judgments.Status VE.Judgments.viewOf@VE.Judgments.Status
   -- expr 3651100867
+theorem VE.Kernel.Path.sound
+  ∀ (self : VE.Kernel.Path) (case answer : Lean.Json), self.run case = Except.ok answer → self.Meaning case answer
+  -- uses VE.Kernel.Path.Meaning@VE.Kernel.Carry VE.Kernel.Path.run@VE.Kernel.Carry VE.Kernel.Path@VE.Kernel.Carry
+  -- expr 305414075
+theorem VE.Kernel.ran_meaning
+  ∀ (p : VE.Kernel.Path) (r : VE.Kernel.Row),
+    p.Ran r → ∀ (answer : Lean.Json), r.result = Except.ok answer → p.Meaning r.case answer
+  -- uses VE.Kernel.Path.Meaning@VE.Kernel.Carry VE.Kernel.Path.Ran@VE.Kernel.Carry VE.Kernel.Path@VE.Kernel.Carry VE.Kernel.Row.case@VE.Kernel.Carry VE.Kernel.Row.result@VE.Kernel.Carry VE.Kernel.Row@VE.Kernel.Carry
+  -- expr 21244475
+theorem VE.Kernel.shell_provenance
+  ∀ (p : VE.Kernel.Path) (elaborate : Lean.Json → Except String (List Lean.Json))
+    (fold : Lean.Json → List VE.Kernel.Row → Lean.Json) (request answer : Lean.Json),
+    VE.Kernel.shell p elaborate fold request = Except.ok answer →
+      ∃ rows, (∀ (r : VE.Kernel.Row), r ∈ rows → p.Ran r) ∧ answer = fold request rows
+  -- uses VE.Kernel.Path.Ran@VE.Kernel.Carry VE.Kernel.Path@VE.Kernel.Carry VE.Kernel.Row@VE.Kernel.Carry VE.Kernel.shell@VE.Kernel.Carry
+  -- expr 24301366
+theorem VE.Kernel.shell_sound
+  ∀ (p : VE.Kernel.Path) (elaborate : Lean.Json → Except String (List Lean.Json))
+    (fold : Lean.Json → List VE.Kernel.Row → Lean.Json) (request answer : Lean.Json),
+    VE.Kernel.shell p elaborate fold request = Except.ok answer →
+      ∃ rows,
+        answer = fold request rows ∧
+          ∀ (r : VE.Kernel.Row), r ∈ rows → ∀ (a : Lean.Json), r.result = Except.ok a → p.Meaning r.case a
+  -- uses VE.Kernel.Path.Meaning@VE.Kernel.Carry VE.Kernel.Path@VE.Kernel.Carry VE.Kernel.Row.case@VE.Kernel.Carry VE.Kernel.Row.result@VE.Kernel.Carry VE.Kernel.Row@VE.Kernel.Carry VE.Kernel.shell@VE.Kernel.Carry
+  -- expr 4022899207
 theorem VE.Kit.Except.bind_ok
   ∀ {ε α β : Type} {x : Except ε α} {f : α → Except ε β} {b : β},
     x >>= f = Except.ok b → ∃ a, x = Except.ok a ∧ f a = Except.ok b
