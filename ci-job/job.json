@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-gcp-vm1-move-plan-027f1b77-t526211-s1",
+ "head": "eb0e90619399c10d7aa99ac4ca302ef5f2b5f032",
+ "argv": [
+  "armsh-cand-gcp-vm1-move-plan-027f1b77-t526211-s1",
+  "eb0e90619399c10d7aa99ac4ca302ef5f2b5f032",
+  "53f6c624e900fc681b604ef06c46fe8c6277ea6d",
+  "-",
+  "-",
+  "4",
+  "1/4"
+ ]
+}
