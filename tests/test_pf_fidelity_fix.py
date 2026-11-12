@@ -150,7 +150,7 @@ def test_rs11_final_is_excluded_and_no_rule_of_it_returns(pf):
     """f16-final, f16-process (classes 5, 9): RS11 = final is not offered, and no rule is selected by RS11."""
     assert T.READING_SETS["RS11"] == ("process",) and T.EXCLUDED_READINGS == {"RS11": ("final",)}
     assert B.READINGS["rs11-final"] == ("RS11", {"process": []})
-    blocks = T.rule_blocks() + T.read_blocks("facts.d1.ve")
+    blocks = T.rule_blocks() + T.fact_blocks()
     assert not [b.id for b in blocks if any(s == "RS11" for s, _ in b.when)]
     assert not {"f16-final", "f16-process"} & {b.id for b in blocks}
     assert "decision_reversal" in {json.loads(T.parsed_rule(b.id))["predicate"] for b in blocks
@@ -224,7 +224,7 @@ def test_change_log_removal_of_low_and_medium_is_a_blocked_unit(pf):
     assert unit["residual"] == "unmapped_duty-p15-u245-b1881efef95f"  # main's residual id is kept
     assert "cl-levels" not in B.FACT_ANCHORS and "cl-levels" not in B.CHECKED_CLAUSES
     # The block's own header quotes the sentence; its "because" clause has no element in the facts.
-    header = next(b.source for b in T.read_blocks("facts.d1.ve") if b.id == "cl-levels")
+    header = next(b.source for b in T.fact_blocks() if b.id == "cl-levels")
     sentence = re.search(r"(Also, we are removing terms.*?Preparedness work\.)", header)[1].encode()
     assert not B._complete_clause_map("cl-levels", sentence)
 

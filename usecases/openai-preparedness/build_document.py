@@ -179,7 +179,7 @@ def _complete_clause_map(block_id, source_text):
     clauses = CHECKED_CLAUSES.get(block_id)
     if not clauses:
         return False
-    fact_text = {b.id: b.text for b in T.read_blocks("facts.d1.ve")}
+    fact_text = {b.id: b.text for b in T.fact_blocks()}
     if block_id in fact_text:
         elements = {"fact": fact_text[block_id]}
     else:
