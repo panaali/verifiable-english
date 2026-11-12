@@ -2,7 +2,8 @@
 
 No verdict, diagnostic, fault-order, limit, span or rendered-text delta: every answer of `english.statement` is the
 same bytes (E1-E17 in `lean/VE/EnglishGrammar/Norm/RunExamples.lean` unchanged in their expected values,
-`tests/test_english_statement_blocks.py` unchanged), and the mode is still not registered (en-e3ab). No theorem
+`tests/test_english_statement_blocks.py` unchanged); the mode is registered (`lean/VE/Service/Registry.lean`) and
+relayed (`ve/norm_english.py`, en-e3b, merged before this item). No theorem
 statement changes (lean/statements.txt: `readNorm_eq`'s text is the same; only the names of its auxiliary matchers
 in the dump's `uses` line move from `readNorm.match_*` to `readNormOn.match_*`, see the REPORT). The one row below
 is the identity raise base spec 2.12 forces on any edit to a hashed English grammar file.
