@@ -160,15 +160,14 @@ def test_rsp_environment_file_is_generated():
 def test_rsp_every_rule_and_premise_parses_with_one_reading(rsp_modules):
     for block in rsp_translation.rule_blocks():
         assert json.loads(rsp_translation.parsed_rule(block.id))["name"] == block.id
-    assert sum(len(f) for _, f in rsp_translation.facts()) == 15
+    assert sum(len(f) for _, f in rsp_translation.facts()) == 12  # RS3c = result excluded (PLAN 12, item 20)
 
 
 def test_rsp_n1_filters_all_rs0_definition_premises(rsp_modules):
     """F6: the T4 will/would-consider definitions must use the rule path's N1 switch."""
     facts = rsp_translation.facts()
     assert {block.id for block, _ in facts if block.narrowing == "RS0"} == {
-        "t4-suff", "t4-only-if", "s2-suff-result", "s2-suff-third",
-        "s2-only-if-result", "s2-only-if-third"}
+        "t4-suff", "t4-only-if", "s2-suff-third", "s2-only-if-third"}
     assert all(block.narrowing == "independent" for block, _ in facts
                if block.id.startswith("threshold-") or block.id == "highly-capable-t4")
     choice = rsp_run.BASE
@@ -190,7 +189,9 @@ def test_rsp_n1_counterfactual_removes_t_family_definition(item_id, case_id, rsp
     case = rsp_run.CASES[case_id]
     baseline = rsp_run.threshold_answer(item_id, case)
     verdict = rsp_run.verdict(baseline)
-    assert verdict == "ALL" if item_id in ("T1", "T3") else verdict.startswith("SOME(")
+    # T7 is NONE with N1 as well: RS3c = result is excluded (PLAN 12, item 21).
+    assert verdict == {"T1": "ALL", "T3": "ALL", "T7": "NONE"}[item_id] if item_id in ("T1", "T3", "T7") else \
+        verdict.startswith("SOME(")
     assert all(row["reason"] != "UNKNOWN" for row in baseline["choices"])
     try:
         rsp_run.WITHOUT_NARROWING = "N1"
@@ -203,10 +204,11 @@ def test_rsp_n1_counterfactual_removes_t_family_definition(item_id, case_id, rsp
 
 def test_rsp_n1_saved_comparison_includes_t_family(rsp_modules):
     changed = json.loads((RSP / "results.json").read_text())["without_narrowings"]["N1"]["changed"]
-    assert len(changed) == 54
-    assert {item: changed[item]["without"] for item in ("T1", "T2b", "T3", "T4b", "T7")} == {
-        item: "NONE" for item in ("T1", "T2b", "T3", "T4b", "T7")}
-    assert "Removing N1 changes 54 answer cells" in (RSP / "README.md").read_text()
+    assert len(changed) == 53
+    assert {item: changed[item]["without"] for item in ("T1", "T2b", "T3", "T4b")} == {
+        item: "NONE" for item in ("T1", "T2b", "T3", "T4b")}
+    assert "T7" not in changed  # NONE with and without N1 (PLAN 12, item 21)
+    assert "Removing N1 changes 53 answer cells" in (RSP / "README.md").read_text()
 
 
 def test_rsp_every_byte_is_in_exactly_one_unit(rsp_modules):
@@ -331,11 +333,15 @@ def test_rsp_run_recomputes_every_key_item_and_records_causes(rsp_modules, monke
     fresh = rsp_run.run()
     assert fresh == {k: saved[k] for k in ("items", "comparison", "cost")}
     assert [r["id"] for r in saved["comparison"]] == [k["id"] for k in items("anthropic-rsp")]
-    assert all(r["status"] in ("agree", "UNDECIDED-faithful") for r in saved["comparison"])
+    # A row may differ from the frozen key only as a PLAN section-12 key deviation that VE answers as ruled.
+    assert all(r["status"] in ("agree", "UNDECIDED-faithful") or r["cause"]["kind"] == "key finding"
+               for r in saved["comparison"])
+    assert {r["id"] for r in saved["comparison"] if r["status"] == "disagree"} == set(rsp_run.key_deviations())
     assert all(r["cause"] and r["cause"]["feature_family"] for r in saved["comparison"] if not r["agree"])
     assert all(r["route"] for r in saved["comparison"])
     assert saved["metrics"]["M1"] == rsp_run.metrics(saved)["M1"]
-    assert saved["metrics"]["M8"]["unknown_items"] == [r["id"] for r in saved["comparison"] if not r["agree"]]
+    assert saved["metrics"]["M8"]["unknown_items"] == [r["id"] for r in saved["comparison"]
+                                                       if r["status"] == "UNDECIDED-faithful"]
     assert rsp_run.without_narrowings(fresh) == saved["without_narrowings"]
     # The case audit corrected the 6x factor and the scenario's explicit strong evidence.
     cases = rsp_run.CASES
@@ -356,7 +362,9 @@ def test_rsp_run_recomputes_every_key_item_and_records_causes(rsp_modules, monke
 
 def test_rsp_independent_reference_and_comparator_catch_wrong_answers(rsp_modules):
     rows = rsp_reference.compare()
-    assert len(rows) == 68 and all(row["agrees"] for row in rows)
+    # The reference reports the frozen cells PLAN 12 (item 21) corrects, and only those.
+    assert len(rows) == 68 and {row["id"] for row in rows if not row["agrees"]} == {
+        row["id"] for row in rows} & set(rsp_run.key_deviations()) == {"C1", "C7", "C-doc"}
     assert not rsp_reference.matches("ALL", ("RS1",), lambda c: c["RS1"] == "cond")
     assert not rsp_reference.matches("NONE", (), lambda c: True)
     assert not rsp_run.same_set("ALL", {"route": "test", "cone": [],

@@ -5,9 +5,11 @@ import VE.Calc.Ties
 
 /-! PC-2a: the theorems of `ve document check` on the soft chain under `norm-defaults@0`
 (docs/spec/profile-composition.md 3.2). `requestOf` and `layeredOf` stand in `Service/Document.lean`, whose `check`
-calls `layeredOf`. PC-2 (3), "two entry points, one answer", holds by construction: the document mode and the
-`norm-defaults` mode run the one `decodeLayered`, and the parity test (F2.3, tests/test_document_chain.py) checks the
-retired Python branch against it. -/
+calls `layeredOf` on a document without `events@0`. PC-2 (3), "two entry points, one answer", holds by construction
+there: the document mode and the `norm-defaults` mode run the one `decodeLayered`, and the parity test (F2.3,
+tests/test_document_chain.py) checks the retired Python branch against it. An `events@0` document (et-5b) is read by
+`eventsLayeredOf`: the same `eventsHook` and `decodeSoftU` as `decodeLayered`'s soft branch, with no theorem of its own
+yet (the R16 ties pass). -/
 
 namespace VE.Service.DocumentChain
 open Lean

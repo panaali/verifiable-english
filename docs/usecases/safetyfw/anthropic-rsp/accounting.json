@@ -139,26 +139,16 @@
   {
    "id": "s1-advance-default",
    "file": "rules.d1.ve",
-   "span_length": 84,
+   "span_length": 179,
    "used": [
     "advance_recommendations"
    ],
-   "unaccounted": [
-    "example",
-    "mixture",
-    "sett",
-    "strive"
-   ],
+   "unaccounted": [],
    "entries": [
     {
      "words": "We will strive to",
      "reason": "reading",
      "arg": "RS12advance"
-    },
-    {
-     "words": "through a mixture of example-setting",
-     "reason": "exposition",
-     "arg": ""
     }
    ],
    "problems": []
@@ -231,24 +221,16 @@
   {
    "id": "f6-keep-past",
    "file": "rules.d1.ve",
-   "span_length": 54,
+   "span_length": 157,
    "used": [
     "past_roadmaps_kept"
    ],
-   "unaccounted": [
-    "keep",
-    "link"
-   ],
+   "unaccounted": [],
    "entries": [
     {
      "words": "keep",
      "reason": "restates",
      "arg": ""
-    },
-    {
-     "words": "at that link",
-     "reason": "loss",
-     "arg": "1"
     }
    ],
    "problems": []
@@ -520,18 +502,21 @@
   {
    "id": "f10-in-line",
    "file": "rules.d1.ve",
-   "span_length": 117,
+   "span_length": 251,
    "used": [
     "describes_mitigation_and_deviates",
-    "deviation_reported"
+    "deviation_reported",
+    "mitigation_in_place_or_planned"
    ],
    "unaccounted": [
     "chang",
     "description",
     "future",
+    "general",
     "keep",
     "line",
-    "practic"
+    "practic",
+    "subsequent"
    ],
    "entries": [
     {
@@ -542,6 +527,11 @@
     {
      "words": "changes",
      "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "(generally via subsequent Risk Reports)",
+     "reason": "exposition",
      "arg": ""
     }
    ],
@@ -1006,15 +996,12 @@
   {
    "id": "f14-ltbt-request",
    "file": "rules.d1.ve",
-   "span_length": 115,
+   "span_length": 170,
    "used": [
     "ltbt_requested_review",
     "ltbt_review"
    ],
-   "unaccounted": [
-    "ltbt'",
-    "upon"
-   ],
+   "unaccounted": [],
    "entries": [
     {
      "words": "upon the LTBT's request",
@@ -1059,10 +1046,8 @@
     "candidate_selected"
    ],
    "unaccounted": [
-    "continu",
     "part",
-    "team",
-    "work"
+    "team"
    ],
    "entries": [
     {
@@ -1125,25 +1110,13 @@
   {
    "id": "f16-ask-commentary",
    "file": "rules.d1.ve",
-   "span_length": 225,
+   "span_length": 242,
    "used": [
     "commentary_asked",
     "external_review_process"
    ],
-   "unaccounted": [
-    "find",
-    "made",
-    "memorialize",
-    "topic",
-    "written"
-   ],
-   "entries": [
-    {
-     "words": "to memorialize its findings on the topics above in a written report that is made public",
-     "reason": "loss",
-     "arg": "limit 4"
-    }
-   ],
+   "unaccounted": [],
+   "entries": [],
    "problems": []
   },
   {
@@ -1245,7 +1218,7 @@
   {
    "id": "f19-brief-ltbt",
    "file": "rules.d1.ve",
-   "span_length": 86,
+   "span_length": 162,
    "used": [
     "ltbt_briefed"
    ],
@@ -1260,24 +1233,12 @@
    "used": [
     "unredacted_shared"
    ],
-   "unaccounted": [
-    "200",
-    "anthropic",
-    "final",
-    "large",
-    "number",
-    "share"
-   ],
+   "unaccounted": [],
    "entries": [
     {
      "words": "We will share",
      "reason": "restates",
      "arg": ""
-    },
-    {
-     "words": "final",
-     "reason": "loss",
-     "arg": "1"
     },
     {
      "words": "with a large number of Anthropic employees (at least 200",
@@ -1612,7 +1573,6 @@
    "span_length": 498,
    "used": [
     "competitors_evidence",
-    "competitors_strong_measures",
     "develops_highly_capable",
     "highly_capable",
     "posture_matched"
@@ -1627,7 +1587,6 @@
    "span_length": 405,
    "used": [
     "competitors_evidence",
-    "competitors_strong_measures",
     "delay",
     "develops_highly_capable",
     "highly_capable",
@@ -1643,7 +1602,6 @@
    "file": "rules.d1.ve",
    "span_length": 382,
    "used": [
-    "competitor_better_mitigation",
     "mitigation_evidence",
     "significant_effort"
    ],
@@ -1654,21 +1612,46 @@
   {
    "id": "f26-need-not-delay",
    "file": "rules.d1.ve",
-   "span_length": 390,
+   "span_length": 627,
    "used": [
-    "competitor_better_mitigation",
     "delay",
     "mitigation_evidence"
    ],
    "unaccounted": [
+    "action",
+    "cautionary",
+    "circumstanc",
+    "commit",
+    "exce",
+    "further",
     "however",
-    "necessari"
+    "make",
+    "meet",
+    "model",
+    "necessari",
+    "performance",
+    "preclude",
+    "refrain",
+    "scenario",
+    "standard",
+    "taking",
+    "train"
    ],
    "entries": [
     {
-     "words": "However, we will not necessarily delay",
+     "words": "We will make a significant effort to meet or exceed that performance standard",
+     "reason": "rule",
+     "arg": "f26-effort"
+    },
+    {
+     "words": "However, we will not necessarily delay AI development and deployment in this scenario",
      "reason": "reading",
      "arg": "RS4"
+    },
+    {
+     "words": "Further, the commitments below do not preclude us from taking cautionary action, such as refraining from training or deploying models, in other circumstances",
+     "reason": "exposition",
+     "arg": ""
     }
    ],
    "problems": []
@@ -1780,11 +1763,12 @@
    "problems": []
   },
   {
-   "id": "s2-suff-result",
+   "id": "s2-suff-third",
    "file": "facts.d1.ve",
-   "span_length": 413,
+   "span_length": 514,
    "used": [
     "automation_attributable",
+    "continuation_accelerates",
     "double_rate",
     "scenario_2"
    ],
@@ -1808,33 +1792,6 @@
    "problems": []
   },
   {
-   "id": "s2-suff-third",
-   "file": "facts.d1.ve",
-   "span_length": 100,
-   "used": [
-    "automation_attributable",
-    "continuation_accelerates",
-    "double_rate",
-    "scenario_2"
-   ],
-   "unaccounted": [],
-   "entries": [],
-   "problems": []
-  },
-  {
-   "id": "s2-only-if-result",
-   "file": "facts.d1.ve",
-   "span_length": 0,
-   "used": [
-    "automation_attributable",
-    "double_rate",
-    "scenario_2"
-   ],
-   "unaccounted": [],
-   "entries": [],
-   "problems": []
-  },
-  {
    "id": "s2-only-if-third",
    "file": "facts.d1.ve",
    "span_length": 0,
@@ -1850,24 +1807,23 @@
   }
  ],
  "totals": {
-  "blocks": 87,
-  "blocks_with_loss": 9,
+  "blocks": 85,
+  "blocks_with_loss": 6,
   "losses_by_class": {
-   "1": 9,
-   "limit 4": 1,
+   "1": 7,
    "limit 9": 1
   },
   "entries_by_reason": {
-   "exposition": 12,
-   "loss": 11,
+   "exposition": 13,
+   "loss": 8,
    "open": 5,
    "reading": 7,
    "restates": 54,
-   "rule": 4
+   "rule": 5
   },
-  "unaccounted_words": 226,
-  "blocks_with_unaccounted_words": 51,
-  "quotes": 94,
+  "unaccounted_words": 223,
+  "blocks_with_unaccounted_words": 46,
+  "quotes": 95,
   "unanchored_quotes": 0,
   "elided_quotes_without_source": 0
  },

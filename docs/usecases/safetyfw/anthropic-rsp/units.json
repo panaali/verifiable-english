@@ -1176,13 +1176,11 @@
   },
   {
    "blockers": [
-    "JT",
-    "readings"
+    "JT"
    ],
    "bytes": 105,
    "id": "t4-continuation",
    "kind": "norm",
-   "reading_set": "rs3c_t4",
    "status": "OPEN"
   },
   {

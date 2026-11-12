@@ -416,6 +416,7 @@ module VE.EnglishGrammar.Syntax
 module VE.EnglishGrammar.Token
 module VE.EnvironmentProofs
 module VE.EvaluationCounts
+module VE.Events.Anchor
 module VE.Events.Calendar
 module VE.Events.Chain
 module VE.Events.Completion
@@ -711,6 +712,7 @@ module VE.Route.Metered
 module VE.Route.MeteredProofs
 module VE.Route.MeteredRun
 module VE.Route.MeteredTrace
+module VE.Route.MeteredWire
 module VE.Route.NonVacuity
 module VE.Route.PyDecoder
 module VE.Route.Readings
@@ -779,6 +781,7 @@ module VE.Service.DocumentChainChecks
 module VE.Service.DocumentChainExamples
 module VE.Service.DocumentView
 module VE.Service.EnglishRun
+module VE.Service.EventsDocumentExamples
 module VE.Service.Family
 module VE.Service.FamilyBundle
 module VE.Service.FamilyNorms
@@ -802,6 +805,7 @@ module VE.Service.UndeclaredExamples
 module VE.SoftNorms.ActsFrameExamples
 module VE.SoftNorms.Admission
 module VE.SoftNorms.Coherence
+module VE.SoftNorms.ElaborateSound
 module VE.SoftNorms.Once
 module VE.SoftNorms.Phases
 module VE.SoftNorms.RankProof
@@ -1537,6 +1541,9 @@ VE.Route.Layer.Admissible_in@VE.Route.Layer
 VE.Route.Layer.Admissible_out@VE.Route.Layer
 VE.Route.Layer.Compatible@VE.Route.Layer
 VE.Route.Layer.Intended@VE.Route.Layer
+VE.Route.MeteredRun.CaseModel@VE.Route.MeteredWire
+VE.Route.MeteredRun.EncodesEvaluation@VE.Route.MeteredWire
+VE.Route.MeteredRun.EvaluationAnswer@VE.Route.MeteredWire
 VE.Route.ReadingChoices.below@VE.Route.Readings
 VE.Route.ReadingChoices@VE.Route.Readings
 VE.Route.RunSound.RunnerKind@VE.Route.RunSound
@@ -1628,7 +1635,10 @@ VE.SoftNorms.RawDom@VE.SoftNorms.RankProof
 VE.SoftNorms.RawEff@VE.SoftNorms.RankProof
 VE.SoftNorms.RawEligible@VE.SoftNorms.RankProof
 VE.SoftNorms.RawOutweighs@VE.SoftNorms.RankProof
+VE.SoftNorms.Run.BackgroundField@VE.SoftNorms.ElaborateSound
 VE.SoftNorms.Run.BindingsMatchSourceAndRegeneration@VE.SoftNorms.Run
+VE.SoftNorms.Run.ElaborationAnswer@VE.SoftNorms.ElaborateSound
+VE.SoftNorms.Run.PremisesField@VE.SoftNorms.ElaborateSound
 VE.SoftNorms.Run.SoftAdmissionAnswer@VE.SoftNorms.Run
 VE.SoftNorms.SelectsSoftD@VE.SoftNorms.Semantics
 VE.SoftNorms.SoftConflictFree@VE.SoftNorms.Coherence

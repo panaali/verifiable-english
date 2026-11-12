@@ -576,30 +576,22 @@
    "ve": "ALL"
   },
   {
-   "agree": false,
-   "cause": {
-    "feature_family": "SC",
-    "kind": "translation limit",
-    "reason": "translation limit (SC): Board consultation and LTBT approval share one act"
-   },
+   "agree": true,
+   "cause": null,
    "id": "K12a",
    "key": "ALL",
-   "route": "D1",
-   "status": "UNDECIDED-faithful",
-   "ve": "UNDECIDED"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
+   "ve": "ALL"
   },
   {
-   "agree": false,
-   "cause": {
-    "feature_family": "SC",
-    "kind": "translation limit",
-    "reason": "translation limit (SC): Board consultation and LTBT approval share one act"
-   },
+   "agree": true,
+   "cause": null,
    "id": "K12b",
    "key": "ALL",
-   "route": "D1",
-   "status": "UNDECIDED-faithful",
-   "ve": "UNDECIDED"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
+   "ve": "ALL"
   },
   {
    "agree": true,
@@ -620,17 +612,13 @@
    "ve": "ALL"
   },
   {
-   "agree": false,
-   "cause": {
-    "feature_family": "ET",
-    "kind": "VE limit",
-    "reason": "VE limit (ET): prompt notice or effective-date order is not encoded"
-   },
+   "agree": true,
+   "cause": null,
    "id": "K15a",
    "key": "ALL",
-   "route": "D1/D3",
-   "status": "UNDECIDED-faithful",
-   "ve": "UNDECIDED"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
+   "ve": "ALL"
   },
   {
    "agree": true,
@@ -651,26 +639,26 @@
    "ve": "ALL"
   },
   {
-   "agree": false,
-   "cause": {
-    "feature_family": "ET",
-    "kind": "VE limit",
-    "reason": "VE limit (ET): prompt notice or effective-date order is not encoded"
-   },
-   "id": "K17",
-   "key": "ALL",
-   "route": "D1/D3",
-   "status": "UNDECIDED-faithful",
-   "ve": "UNDECIDED"
-  },
-  {
    "agree": true,
    "cause": null,
-   "id": "K18",
+   "id": "K17",
    "key": "ALL",
    "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
    "status": "agree",
    "ve": "ALL"
+  },
+  {
+   "agree": false,
+   "cause": {
+    "feature_family": "PLAN 12",
+    "kind": "key finding",
+    "reason": "key deviation: NONE (frozen key ALL); dri-decisions-20261112-anthropic-rsp-fidelity-fix-2-k18.md item 1"
+   },
+   "id": "K18",
+   "key": "ALL",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "disagree",
+   "ve": "NONE"
   },
   {
    "agree": true,
@@ -760,7 +748,7 @@
    "key": "SOME(iffo)",
    "route": "D1 relational-fol@0 entailment certificate or validated finite countermodel",
    "status": "agree",
-   "ve": "SOME(RS3o=iff&RS3i=suff&RS3c=third | RS3o=iff&RS3i=suff&RS3c=result | RS3o=iff&RS3i=iff&RS3c=third | RS3o=iff&RS3i=iff&RS3c=result)"
+   "ve": "SOME(RS3o=iff&RS3i=suff | RS3o=iff&RS3i=iff)"
   },
   {
    "agree": true,
@@ -787,7 +775,7 @@
    "key": "SOME(iffo & iffi)",
    "route": "D1 relational-fol@0 entailment certificate or validated finite countermodel",
    "status": "agree",
-   "ve": "SOME(RS3o=iff&RS3i=iff&RS3c=third | RS3o=iff&RS3i=iff&RS3c=result)"
+   "ve": "SOME(RS3o=iff&RS3i=iff)"
   },
   {
    "agree": true,
@@ -808,22 +796,30 @@
    "ve": "NONE"
   },
   {
-   "agree": true,
-   "cause": null,
+   "agree": false,
+   "cause": {
+    "feature_family": "PLAN 12",
+    "kind": "key finding",
+    "reason": "key deviation: NONE (frozen key SOME(result)); dri-decisions-20261112-anthropic-rsp-fidelity-fix-2.md item 2"
+   },
    "id": "T7",
    "key": "SOME(result)",
    "route": "D1 relational-fol@0 entailment certificate or validated finite countermodel",
-   "status": "agree",
-   "ve": "SOME(RS3o=suff&RS3i=suff&RS3c=result | RS3o=suff&RS3i=iff&RS3c=result | RS3o=iff&RS3i=suff&RS3c=result | RS3o=iff&RS3i=iff&RS3c=result)"
+   "status": "disagree",
+   "ve": "NONE"
   },
   {
-   "agree": true,
-   "cause": null,
+   "agree": false,
+   "cause": {
+    "feature_family": "PLAN 12",
+    "kind": "key finding",
+    "reason": "key deviation: NONE (frozen key SOME(rel)); dri-decisions-20261112-anthropic-rsp-fidelity-fix-2.md item 1"
+   },
    "id": "C1",
    "key": "SOME(rel)",
    "route": "D1 norms@0 W1 check_conflict with a validated witness model",
-   "status": "agree",
-   "ve": "SOME(RS4=rel)"
+   "status": "disagree",
+   "ve": "NONE"
   },
   {
    "agree": true,
@@ -871,22 +867,30 @@
    "ve": "NONE"
   },
   {
-   "agree": true,
-   "cause": null,
+   "agree": false,
+   "cause": {
+    "feature_family": "PLAN 12",
+    "kind": "key finding",
+    "reason": "key deviation: NONE (frozen key SOME(rel)); dri-decisions-20261112-anthropic-rsp-fidelity-fix-2.md item 1"
+   },
    "id": "C7",
    "key": "SOME(rel)",
    "route": "D1 norms@0 W1 check_conflict with a validated witness model",
-   "status": "agree",
-   "ve": "SOME(RS4=rel)"
+   "status": "disagree",
+   "ve": "NONE"
   },
   {
-   "agree": true,
-   "cause": null,
+   "agree": false,
+   "cause": {
+    "feature_family": "PLAN 12",
+    "kind": "key finding",
+    "reason": "key deviation: NONE (frozen key SOME(rel)); dri-decisions-20261112-anthropic-rsp-fidelity-fix-2.md item 1"
+   },
    "id": "C-doc",
    "key": "SOME(rel)",
    "route": "D1 norms@0 W1 check_conflict with a validated witness model",
-   "status": "agree",
-   "ve": "SOME(RS1=cond&RS4=rel&RS5=import&RS7=exec | RS1=cond&RS4=rel&RS5=import&RS7=final | RS1=cond&RS4=rel&RS5=noimport&RS7=exec | RS1=cond&RS4=rel&RS5=noimport&RS7=final | RS1=uncond&RS4=rel&RS5=import&RS7=exec | RS1=uncond&RS4=rel&RS5=import&RS7=final | RS1=uncond&RS4=rel&RS5=noimport&RS7=exec | RS1=uncond&RS4=rel&RS5=noimport&RS7=final | RS1=ov&RS4=rel&RS5=import&RS7=exec | RS1=ov&RS4=rel&RS5=import&RS7=final | RS1=ov&RS4=rel&RS5=noimport&RS7=exec | RS1=ov&RS4=rel&RS5=noimport&RS7=final)"
+   "status": "disagree",
+   "ve": "NONE"
   },
   {
    "agree": true,
@@ -1203,7 +1207,7 @@
  ],
  "cost": {
   "documents_built": 38,
-  "prover_calls": 64
+  "prover_calls": 32
  },
  "items": {
   "A-T0/ARG1": {
@@ -3171,7 +3175,7 @@
       "RS5": "import",
       "RS7": "exec"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
       [
        "f12-final",
@@ -3205,8 +3209,8 @@
      ],
      "w1": [
       "CONFLICT-FREE",
-      "CONFLICT",
-      "CONFLICT",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
       "CONFLICT-FREE",
       "CONFLICT-FREE",
       "CONFLICT-FREE",
@@ -3220,7 +3224,7 @@
       "RS5": "import",
       "RS7": "final"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
       [
        "f12-final",
@@ -3254,8 +3258,8 @@
      ],
      "w1": [
       "CONFLICT-FREE",
-      "CONFLICT",
-      "CONFLICT",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
       "CONFLICT-FREE",
       "CONFLICT-FREE",
       "CONFLICT-FREE",
@@ -3269,7 +3273,7 @@
       "RS5": "noimport",
       "RS7": "exec"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
       [
        "f12-final",
@@ -3303,8 +3307,8 @@
      ],
      "w1": [
       "CONFLICT-FREE",
-      "CONFLICT",
-      "CONFLICT",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
       "CONFLICT-FREE",
       "CONFLICT-FREE",
       "CONFLICT-FREE",
@@ -3318,7 +3322,7 @@
       "RS5": "noimport",
       "RS7": "final"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
       [
        "f12-final",
@@ -3352,8 +3356,8 @@
      ],
      "w1": [
       "CONFLICT-FREE",
-      "CONFLICT",
-      "CONFLICT",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
       "CONFLICT-FREE",
       "CONFLICT-FREE",
       "CONFLICT-FREE",
@@ -3563,7 +3567,7 @@
       "RS5": "import",
       "RS7": "exec"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
       [
        "f12-final",
@@ -3597,8 +3601,8 @@
      ],
      "w1": [
       "CONFLICT-FREE",
-      "CONFLICT",
-      "CONFLICT",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
       "CONFLICT-FREE",
       "CONFLICT-FREE",
       "CONFLICT-FREE",
@@ -3612,7 +3616,7 @@
       "RS5": "import",
       "RS7": "final"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
       [
        "f12-final",
@@ -3646,8 +3650,8 @@
      ],
      "w1": [
       "CONFLICT-FREE",
-      "CONFLICT",
-      "CONFLICT",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
       "CONFLICT-FREE",
       "CONFLICT-FREE",
       "CONFLICT-FREE",
@@ -3661,7 +3665,7 @@
       "RS5": "noimport",
       "RS7": "exec"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
       [
        "f12-final",
@@ -3695,8 +3699,8 @@
      ],
      "w1": [
       "CONFLICT-FREE",
-      "CONFLICT",
-      "CONFLICT",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
       "CONFLICT-FREE",
       "CONFLICT-FREE",
       "CONFLICT-FREE",
@@ -3710,7 +3714,7 @@
       "RS5": "noimport",
       "RS7": "final"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
       [
        "f12-final",
@@ -3744,8 +3748,8 @@
      ],
      "w1": [
       "CONFLICT-FREE",
-      "CONFLICT",
-      "CONFLICT",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
       "CONFLICT-FREE",
       "CONFLICT-FREE",
       "CONFLICT-FREE",
@@ -3955,7 +3959,7 @@
       "RS5": "import",
       "RS7": "exec"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
       [
        "f12-final",
@@ -3989,8 +3993,8 @@
      ],
      "w1": [
       "CONFLICT-FREE",
-      "CONFLICT",
-      "CONFLICT",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
       "CONFLICT-FREE",
       "CONFLICT-FREE",
       "CONFLICT-FREE",
@@ -4004,7 +4008,7 @@
       "RS5": "import",
       "RS7": "final"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
       [
        "f12-final",
@@ -4038,8 +4042,8 @@
      ],
      "w1": [
       "CONFLICT-FREE",
-      "CONFLICT",
-      "CONFLICT",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
       "CONFLICT-FREE",
       "CONFLICT-FREE",
       "CONFLICT-FREE",
@@ -4053,7 +4057,7 @@
       "RS5": "noimport",
       "RS7": "exec"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
       [
        "f12-final",
@@ -4087,8 +4091,8 @@
      ],
      "w1": [
       "CONFLICT-FREE",
-      "CONFLICT",
-      "CONFLICT",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
       "CONFLICT-FREE",
       "CONFLICT-FREE",
       "CONFLICT-FREE",
@@ -4102,7 +4106,7 @@
       "RS5": "noimport",
       "RS7": "final"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
       [
        "f12-final",
@@ -4136,8 +4140,8 @@
      ],
      "w1": [
       "CONFLICT-FREE",
-      "CONFLICT",
-      "CONFLICT",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
       "CONFLICT-FREE",
       "CONFLICT-FREE",
       "CONFLICT-FREE",
@@ -4172,13 +4176,13 @@
      "choice": {
       "RS4": "rel"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
       "f24-delay",
       "f26-need-not-delay"
      ],
      "w1": [
-      "CONFLICT"
+      "CONFLICT-FREE"
      ]
     }
    ],
@@ -4332,7 +4336,7 @@
    "basis": {
     "different_acts": {
      "f13-minimize-default": "{0} have redactions minimized in public as well as regular-clearance versions",
-     "f19-unredacted": "{0} have unredacted Risk Reports shared with at least two hundred employees"
+     "f19-unredacted": "{0} have final unredacted Risk Reports given to at least two hundred employees"
     }
    },
    "choices": [
@@ -4387,13 +4391,13 @@
      "choice": {
       "RS4": "rel"
      },
-     "holds": true,
+     "holds": false,
      "rules": [
       "f25-delay",
       "f26-need-not-delay"
      ],
      "w1": [
-      "CONFLICT"
+      "CONFLICT-FREE"
      ]
     }
    ],
@@ -4641,12 +4645,32 @@
    "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
   },
   "K12a": {
-   "route": "D1",
-   "undecided": "translation limit (SC): Board consultation and LTBT approval share one act"
+   "choices": [
+    {
+     "choice": {},
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "f15-select-approval"
+     ]
+    }
+   ],
+   "cone": [],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
   },
   "K12b": {
-   "route": "D1",
-   "undecided": "translation limit (SC): Board consultation and LTBT approval share one act"
+   "choices": [
+    {
+     "choice": {},
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "f15-select-approval"
+     ]
+    }
+   ],
+   "cone": [],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
   },
   "K13": {
    "choices": [
@@ -4691,8 +4715,18 @@
    "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
   },
   "K15a": {
-   "route": "D1/D3",
-   "undecided": "VE limit (ET): prompt notice or effective-date order is not encoded"
+   "choices": [
+    {
+     "choice": {},
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "f20-notify-board"
+     ]
+    }
+   ],
+   "cone": [],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
   },
   "K15b": {
    "choices": [
@@ -4733,18 +4767,26 @@
    "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
   },
   "K17": {
-   "route": "D1/D3",
-   "undecided": "VE limit (ET): prompt notice or effective-date order is not encoded"
-  },
-  "K18": {
    "choices": [
     {
      "choice": {},
      "default_sensitive": false,
      "holds": true,
      "rules": [
-      "f10-in-line"
+      "f23-publish"
      ]
+    }
+   ],
+   "cone": [],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "K18": {
+   "choices": [
+    {
+     "choice": {},
+     "default_sensitive": true,
+     "holds": false,
+     "rules": []
     }
    ],
    "cone": [],
@@ -5126,7 +5168,6 @@
    "choices": [
     {
      "choice": {
-      "RS3c": "third",
       "RS3i": "suff",
       "RS3o": "suff"
      },
@@ -5135,16 +5176,6 @@
     },
     {
      "choice": {
-      "RS3c": "result",
-      "RS3i": "suff",
-      "RS3o": "suff"
-     },
-     "holds": true,
-     "reason": "replayed certificate"
-    },
-    {
-     "choice": {
-      "RS3c": "third",
       "RS3i": "iff",
       "RS3o": "suff"
      },
@@ -5153,16 +5184,6 @@
     },
     {
      "choice": {
-      "RS3c": "result",
-      "RS3i": "iff",
-      "RS3o": "suff"
-     },
-     "holds": true,
-     "reason": "replayed certificate"
-    },
-    {
-     "choice": {
-      "RS3c": "third",
       "RS3i": "suff",
       "RS3o": "iff"
      },
@@ -5171,25 +5192,6 @@
     },
     {
      "choice": {
-      "RS3c": "result",
-      "RS3i": "suff",
-      "RS3o": "iff"
-     },
-     "holds": true,
-     "reason": "replayed certificate"
-    },
-    {
-     "choice": {
-      "RS3c": "third",
-      "RS3i": "iff",
-      "RS3o": "iff"
-     },
-     "holds": true,
-     "reason": "replayed certificate"
-    },
-    {
-     "choice": {
-      "RS3c": "result",
       "RS3i": "iff",
       "RS3o": "iff"
      },
@@ -5199,8 +5201,7 @@
    ],
    "cone": [
     "RS3o",
-    "RS3i",
-    "RS3c"
+    "RS3i"
    ],
    "route": "D1 relational-fol@0 entailment certificate or validated finite countermodel"
   },
@@ -5208,7 +5209,6 @@
    "choices": [
     {
      "choice": {
-      "RS3c": "third",
       "RS3i": "suff",
       "RS3o": "suff"
      },
@@ -5217,16 +5217,6 @@
     },
     {
      "choice": {
-      "RS3c": "result",
-      "RS3i": "suff",
-      "RS3o": "suff"
-     },
-     "holds": false,
-     "reason": "validated countermodel"
-    },
-    {
-     "choice": {
-      "RS3c": "third",
       "RS3i": "iff",
       "RS3o": "suff"
      },
@@ -5235,16 +5225,6 @@
     },
     {
      "choice": {
-      "RS3c": "result",
-      "RS3i": "iff",
-      "RS3o": "suff"
-     },
-     "holds": false,
-     "reason": "validated countermodel"
-    },
-    {
-     "choice": {
-      "RS3c": "third",
       "RS3i": "suff",
       "RS3o": "iff"
      },
@@ -5253,25 +5233,6 @@
     },
     {
      "choice": {
-      "RS3c": "result",
-      "RS3i": "suff",
-      "RS3o": "iff"
-     },
-     "holds": false,
-     "reason": "validated countermodel"
-    },
-    {
-     "choice": {
-      "RS3c": "third",
-      "RS3i": "iff",
-      "RS3o": "iff"
-     },
-     "holds": false,
-     "reason": "validated countermodel"
-    },
-    {
-     "choice": {
-      "RS3c": "result",
       "RS3i": "iff",
       "RS3o": "iff"
      },
@@ -5281,8 +5242,7 @@
    ],
    "cone": [
     "RS3o",
-    "RS3i",
-    "RS3c"
+    "RS3i"
    ],
    "route": "D1 relational-fol@0 entailment certificate or validated finite countermodel"
   },
@@ -5290,7 +5250,6 @@
    "choices": [
     {
      "choice": {
-      "RS3c": "third",
       "RS3i": "suff",
       "RS3o": "suff"
      },
@@ -5299,16 +5258,6 @@
     },
     {
      "choice": {
-      "RS3c": "result",
-      "RS3i": "suff",
-      "RS3o": "suff"
-     },
-     "holds": false,
-     "reason": "validated countermodel"
-    },
-    {
-     "choice": {
-      "RS3c": "third",
       "RS3i": "iff",
       "RS3o": "suff"
      },
@@ -5317,16 +5266,6 @@
     },
     {
      "choice": {
-      "RS3c": "result",
-      "RS3i": "iff",
-      "RS3o": "suff"
-     },
-     "holds": false,
-     "reason": "validated countermodel"
-    },
-    {
-     "choice": {
-      "RS3c": "third",
       "RS3i": "suff",
       "RS3o": "iff"
      },
@@ -5335,25 +5274,6 @@
     },
     {
      "choice": {
-      "RS3c": "result",
-      "RS3i": "suff",
-      "RS3o": "iff"
-     },
-     "holds": true,
-     "reason": "replayed certificate"
-    },
-    {
-     "choice": {
-      "RS3c": "third",
-      "RS3i": "iff",
-      "RS3o": "iff"
-     },
-     "holds": true,
-     "reason": "replayed certificate"
-    },
-    {
-     "choice": {
-      "RS3c": "result",
       "RS3i": "iff",
       "RS3o": "iff"
      },
@@ -5363,8 +5283,7 @@
    ],
    "cone": [
     "RS3o",
-    "RS3i",
-    "RS3c"
+    "RS3i"
    ],
    "route": "D1 relational-fol@0 entailment certificate or validated finite countermodel"
   },
@@ -5372,7 +5291,6 @@
    "choices": [
     {
      "choice": {
-      "RS3c": "third",
       "RS3i": "suff",
       "RS3o": "suff"
      },
@@ -5381,16 +5299,6 @@
     },
     {
      "choice": {
-      "RS3c": "result",
-      "RS3i": "suff",
-      "RS3o": "suff"
-     },
-     "holds": true,
-     "reason": "replayed certificate"
-    },
-    {
-     "choice": {
-      "RS3c": "third",
       "RS3i": "iff",
       "RS3o": "suff"
      },
@@ -5399,16 +5307,6 @@
     },
     {
      "choice": {
-      "RS3c": "result",
-      "RS3i": "iff",
-      "RS3o": "suff"
-     },
-     "holds": true,
-     "reason": "replayed certificate"
-    },
-    {
-     "choice": {
-      "RS3c": "third",
       "RS3i": "suff",
       "RS3o": "iff"
      },
@@ -5417,25 +5315,6 @@
     },
     {
      "choice": {
-      "RS3c": "result",
-      "RS3i": "suff",
-      "RS3o": "iff"
-     },
-     "holds": true,
-     "reason": "replayed certificate"
-    },
-    {
-     "choice": {
-      "RS3c": "third",
-      "RS3i": "iff",
-      "RS3o": "iff"
-     },
-     "holds": true,
-     "reason": "replayed certificate"
-    },
-    {
-     "choice": {
-      "RS3c": "result",
       "RS3i": "iff",
       "RS3o": "iff"
      },
@@ -5445,8 +5324,7 @@
    ],
    "cone": [
     "RS3o",
-    "RS3i",
-    "RS3c"
+    "RS3i"
    ],
    "route": "D1 relational-fol@0 entailment certificate or validated finite countermodel"
   },
@@ -5454,7 +5332,6 @@
    "choices": [
     {
      "choice": {
-      "RS3c": "third",
       "RS3i": "suff",
       "RS3o": "suff"
      },
@@ -5463,16 +5340,6 @@
     },
     {
      "choice": {
-      "RS3c": "result",
-      "RS3i": "suff",
-      "RS3o": "suff"
-     },
-     "holds": false,
-     "reason": "validated countermodel"
-    },
-    {
-     "choice": {
-      "RS3c": "third",
       "RS3i": "iff",
       "RS3o": "suff"
      },
@@ -5481,16 +5348,6 @@
     },
     {
      "choice": {
-      "RS3c": "result",
-      "RS3i": "iff",
-      "RS3o": "suff"
-     },
-     "holds": false,
-     "reason": "validated countermodel"
-    },
-    {
-     "choice": {
-      "RS3c": "third",
       "RS3i": "suff",
       "RS3o": "iff"
      },
@@ -5499,25 +5356,6 @@
     },
     {
      "choice": {
-      "RS3c": "result",
-      "RS3i": "suff",
-      "RS3o": "iff"
-     },
-     "holds": false,
-     "reason": "validated countermodel"
-    },
-    {
-     "choice": {
-      "RS3c": "third",
-      "RS3i": "iff",
-      "RS3o": "iff"
-     },
-     "holds": false,
-     "reason": "validated countermodel"
-    },
-    {
-     "choice": {
-      "RS3c": "result",
       "RS3i": "iff",
       "RS3o": "iff"
      },
@@ -5527,8 +5365,7 @@
    ],
    "cone": [
     "RS3o",
-    "RS3i",
-    "RS3c"
+    "RS3i"
    ],
    "route": "D1 relational-fol@0 entailment certificate or validated finite countermodel"
   },
@@ -5536,7 +5373,6 @@
    "choices": [
     {
      "choice": {
-      "RS3c": "third",
       "RS3i": "suff",
       "RS3o": "suff"
      },
@@ -5545,16 +5381,6 @@
     },
     {
      "choice": {
-      "RS3c": "result",
-      "RS3i": "suff",
-      "RS3o": "suff"
-     },
-     "holds": false,
-     "reason": "validated countermodel"
-    },
-    {
-     "choice": {
-      "RS3c": "third",
       "RS3i": "iff",
       "RS3o": "suff"
      },
@@ -5563,16 +5389,6 @@
     },
     {
      "choice": {
-      "RS3c": "result",
-      "RS3i": "iff",
-      "RS3o": "suff"
-     },
-     "holds": false,
-     "reason": "validated countermodel"
-    },
-    {
-     "choice": {
-      "RS3c": "third",
       "RS3i": "suff",
       "RS3o": "iff"
      },
@@ -5581,25 +5397,6 @@
     },
     {
      "choice": {
-      "RS3c": "result",
-      "RS3i": "suff",
-      "RS3o": "iff"
-     },
-     "holds": false,
-     "reason": "validated countermodel"
-    },
-    {
-     "choice": {
-      "RS3c": "third",
-      "RS3i": "iff",
-      "RS3o": "iff"
-     },
-     "holds": true,
-     "reason": "replayed certificate"
-    },
-    {
-     "choice": {
-      "RS3c": "result",
       "RS3i": "iff",
       "RS3o": "iff"
      },
@@ -5609,8 +5406,7 @@
    ],
    "cone": [
     "RS3o",
-    "RS3i",
-    "RS3c"
+    "RS3i"
    ],
    "route": "D1 relational-fol@0 entailment certificate or validated finite countermodel"
   },
@@ -5629,7 +5425,6 @@
    "choices": [
     {
      "choice": {
-      "RS3c": "third",
       "RS3i": "suff",
       "RS3o": "suff"
      },
@@ -5638,16 +5433,6 @@
     },
     {
      "choice": {
-      "RS3c": "result",
-      "RS3i": "suff",
-      "RS3o": "suff"
-     },
-     "holds": false,
-     "reason": "validated countermodel"
-    },
-    {
-     "choice": {
-      "RS3c": "third",
       "RS3i": "iff",
       "RS3o": "suff"
      },
@@ -5656,16 +5441,6 @@
     },
     {
      "choice": {
-      "RS3c": "result",
-      "RS3i": "iff",
-      "RS3o": "suff"
-     },
-     "holds": false,
-     "reason": "validated countermodel"
-    },
-    {
-     "choice": {
-      "RS3c": "third",
       "RS3i": "suff",
       "RS3o": "iff"
      },
@@ -5674,25 +5449,6 @@
     },
     {
      "choice": {
-      "RS3c": "result",
-      "RS3i": "suff",
-      "RS3o": "iff"
-     },
-     "holds": false,
-     "reason": "validated countermodel"
-    },
-    {
-     "choice": {
-      "RS3c": "third",
-      "RS3i": "iff",
-      "RS3o": "iff"
-     },
-     "holds": false,
-     "reason": "validated countermodel"
-    },
-    {
-     "choice": {
-      "RS3c": "result",
       "RS3i": "iff",
       "RS3o": "iff"
      },
@@ -5702,8 +5458,7 @@
    ],
    "cone": [
     "RS3o",
-    "RS3i",
-    "RS3c"
+    "RS3i"
    ],
    "route": "D1 relational-fol@0 entailment certificate or validated finite countermodel"
   },
@@ -5711,7 +5466,6 @@
    "choices": [
     {
      "choice": {
-      "RS3c": "third",
       "RS3i": "suff",
       "RS3o": "suff"
      },
@@ -5720,16 +5474,6 @@
     },
     {
      "choice": {
-      "RS3c": "result",
-      "RS3i": "suff",
-      "RS3o": "suff"
-     },
-     "holds": true,
-     "reason": "replayed certificate"
-    },
-    {
-     "choice": {
-      "RS3c": "third",
       "RS3i": "iff",
       "RS3o": "suff"
      },
@@ -5738,16 +5482,6 @@
     },
     {
      "choice": {
-      "RS3c": "result",
-      "RS3i": "iff",
-      "RS3o": "suff"
-     },
-     "holds": true,
-     "reason": "replayed certificate"
-    },
-    {
-     "choice": {
-      "RS3c": "third",
       "RS3i": "suff",
       "RS3o": "iff"
      },
@@ -5756,36 +5490,16 @@
     },
     {
      "choice": {
-      "RS3c": "result",
-      "RS3i": "suff",
-      "RS3o": "iff"
-     },
-     "holds": true,
-     "reason": "replayed certificate"
-    },
-    {
-     "choice": {
-      "RS3c": "third",
       "RS3i": "iff",
       "RS3o": "iff"
      },
      "holds": false,
      "reason": "validated countermodel"
-    },
-    {
-     "choice": {
-      "RS3c": "result",
-      "RS3i": "iff",
-      "RS3o": "iff"
-     },
-     "holds": true,
-     "reason": "replayed certificate"
     }
    ],
    "cone": [
     "RS3o",
-    "RS3i",
-    "RS3c"
+    "RS3i"
    ],
    "route": "D1 relational-fol@0 entailment certificate or validated finite countermodel"
   }
@@ -5803,7 +5517,7 @@
     "key": 12
    },
    "C": {
-    "correct": 8,
+    "correct": 5,
     "faithful_undecided": 0,
     "key": 8
    },
@@ -5818,8 +5532,8 @@
     "key": 8
    },
    "K": {
-    "correct": 21,
-    "faithful_undecided": 6,
+    "correct": 24,
+    "faithful_undecided": 2,
     "key": 27
    },
    "N": {
@@ -5833,24 +5547,24 @@
     "key": 8
    },
    "T": {
-    "correct": 9,
+    "correct": 8,
     "faithful_undecided": 0,
     "key": 9
    }
   },
   "M10": {
    "cases": 49,
-   "choices": 303,
+   "choices": 275,
    "documents_built": 38,
-   "prover_calls": 64,
+   "prover_calls": 32,
    "rules": 76,
    "units": 303,
    "wall_time": "printed by run.py; intentionally not pinned by --check"
   },
   "M2": {
    "max_choices_per_item": 24,
-   "reading_sets": 25,
-   "some_answers": 31,
+   "reading_sets": 24,
+   "some_answers": 27,
    "ve_readings": "P2 pending (RS1 has a no-rule reading)"
   },
   "M3": {
@@ -5880,16 +5594,15 @@
     "holistic_overrides": 0,
     "instruction_switches": 0,
     "open_terms": 28,
-    "unresolved_reading_sets": 30,
+    "unresolved_reading_sets": 29,
     "weighing_points": 0
    }
   },
   "M4": {
    "conditional_by_family": {
     "A": 24,
-    "C": 3,
     "G": 1,
-    "T": 3
+    "T": 2
    }
   },
   "M5": {
@@ -5998,7 +5711,7 @@
     "F6 \"It will be shared with all full-time employees as well as our Board of Directors (Board) and Long-Term Benefit Trust (LTBT)": [
      "f6-share"
     ],
-    "F6 \"We will also keep past Roadmaps available at that link\"": [
+    "F6 \"Our current Frontier Safety Roadmap is available at anthropic.com/responsible-scaling-policy/roadmap. We will also keep past Roadmaps available at that link.\" (\"that link\" is the current Roadmap's link)": [
      "f6-keep-past"
     ],
     "F6 \"We will provide updates on whether we achieve the goals": [
@@ -6023,7 +5736,7 @@
      "f5-evidence-strict",
      "f5-evidence-default"
     ],
-    "section 1 \"We will strive to advance these recommendations through a mixture of example-setting ...\" (RS12 default; under intent no rule)": [
+    "section 1 \"We will strive to advance these recommendations through a mixture of example-setting": [
      "s1-advance-default"
     ]
    },
@@ -6042,18 +5755,14 @@
    "untraced": []
   },
   "M7": {
-   "insensitive_choices": 57,
-   "sensitive_choices": 117
+   "insensitive_choices": 60,
+   "sensitive_choices": 118
   },
   "M8": {
-   "replayed_certificates": 26,
+   "replayed_certificates": 11,
    "unknown_items": [
     "K9",
     "K10",
-    "K12a",
-    "K12b",
-    "K15a",
-    "K17",
     "G4",
     "G5",
     "G6",
@@ -6064,8 +5773,8 @@
     "D6b",
     "D7"
    ],
-   "validated_countermodels": 38,
-   "w1_conflict_witnesses": 14
+   "validated_countermodels": 21,
+   "w1_conflict_witnesses": 0
   },
   "M9": {
    "detected": 6,
@@ -6094,16 +5803,10 @@
     },
     "m3": {
      "changed": [
-      "C-doc",
-      "C1",
-      "C7",
       "N2"
      ],
      "exact": true,
      "expected": [
-      "C-doc",
-      "C1",
-      "C7",
       "N2"
      ],
      "invention_audit_flags": false
@@ -6170,16 +5873,10 @@
   },
   "m3": {
    "changed": [
-    "C-doc",
-    "C1",
-    "C7",
     "N2"
    ],
    "exact": true,
    "expected": [
-    "C-doc",
-    "C1",
-    "C7",
     "N2"
    ],
    "invention_audit_flags": false
@@ -6326,18 +6023,6 @@
      "with": "ALL",
      "without": "NONE"
     },
-    "C-doc": {
-     "with": "SOME(RS1=cond&RS4=rel&RS5=import&RS7=exec | RS1=cond&RS4=rel&RS5=import&RS7=final | RS1=cond&RS4=rel&RS5=noimport&RS7=exec | RS1=cond&RS4=rel&RS5=noimport&RS7=final | RS1=uncond&RS4=rel&RS5=import&RS7=exec | RS1=uncond&RS4=rel&RS5=import&RS7=final | RS1=uncond&RS4=rel&RS5=noimport&RS7=exec | RS1=uncond&RS4=rel&RS5=noimport&RS7=final | RS1=ov&RS4=rel&RS5=import&RS7=exec | RS1=ov&RS4=rel&RS5=import&RS7=final | RS1=ov&RS4=rel&RS5=noimport&RS7=exec | RS1=ov&RS4=rel&RS5=noimport&RS7=final)",
-     "without": "NONE"
-    },
-    "C1": {
-     "with": "SOME(RS4=rel)",
-     "without": "NONE"
-    },
-    "C7": {
-     "with": "SOME(RS4=rel)",
-     "without": "NONE"
-    },
     "D3b": {
      "with": "ALL",
      "without": "NONE"
@@ -6368,7 +6053,19 @@
      "with": "ALL",
      "without": "NONE"
     },
+    "K12a": {
+     "with": "ALL",
+     "without": "NONE"
+    },
+    "K12b": {
+     "with": "ALL",
+     "without": "NONE"
+    },
     "K14": {
+     "with": "ALL",
+     "without": "NONE"
+    },
+    "K15a": {
      "with": "ALL",
      "without": "NONE"
     },
@@ -6376,7 +6073,7 @@
      "with": "ALL",
      "without": "NONE"
     },
-    "K18": {
+    "K17": {
      "with": "ALL",
      "without": "NONE"
     },
@@ -6429,7 +6126,7 @@
      "without": "NONE"
     },
     "T2b": {
-     "with": "SOME(RS3o=iff&RS3i=suff&RS3c=third | RS3o=iff&RS3i=suff&RS3c=result | RS3o=iff&RS3i=iff&RS3c=third | RS3o=iff&RS3i=iff&RS3c=result)",
+     "with": "SOME(RS3o=iff&RS3i=suff | RS3o=iff&RS3i=iff)",
      "without": "NONE"
     },
     "T3": {
@@ -6437,11 +6134,7 @@
      "without": "NONE"
     },
     "T4b": {
-     "with": "SOME(RS3o=iff&RS3i=iff&RS3c=third | RS3o=iff&RS3i=iff&RS3c=result)",
-     "without": "NONE"
-    },
-    "T7": {
-     "with": "SOME(RS3o=suff&RS3i=suff&RS3c=result | RS3o=suff&RS3i=iff&RS3c=result | RS3o=iff&RS3i=suff&RS3c=result | RS3o=iff&RS3i=iff&RS3c=result)",
+     "with": "SOME(RS3o=iff&RS3i=iff)",
      "without": "NONE"
     }
    },

@@ -4,11 +4,11 @@ f5-strict | omits: "A frontier developer" reading RS2
 f5-default | omits: nothing
 f5-evidence-strict | omits: nothing
 f5-evidence-default | omits: nothing
-s1-advance-default | omits: "We will strive to" reading RS12advance ; "through a mixture of example-setting" exposition
+s1-advance-default | omits: "We will strive to" reading RS12advance
 f6-maintain | omits: nothing
 f6-share | omits: "Board of Directors (Board)" restates ; "Long-Term Benefit Trust (LTBT)" restates ; "as well as" restates
 f6-updates | omits: "We will provide updates on whether we achieve the goals" restates
-f6-keep-past | omits: "keep" restates ; "at that link" loss 1
+f6-keep-past | omits: "keep" restates
 f6-strive-default | omits: "we will strive to" reading RS12strive ; "where we revise the goals in a less ambitious direction simply because we are unable to achieve them" restates
 f7-publish | omits: "discussing the risks of our systems" exposition ; "We will publish a public version of our Risk Report" restates
 f8-public | omits: "It will cover" restates
@@ -17,7 +17,7 @@ f8-autonomous | omits: "this will-at a minimum-include" restates
 f9-public | omits: "an analysis of an individual model's relevant risks" restates ; "(e.g., how the model's capabilities and propensities affect or change prior analyses)" exposition ; "in the following circumstances" restates ; "that we determine is" open more_capable_than_analyzed ; "risks related to chemical/biological weapons production, high-stakes misalignment, or automated R&D" open more_capable_than_analyzed ; "(e.g., in a prior Risk Report, System Card, or other public artifact" exposition
 f9-internal | omits: "Within 30 days of" loss limit 9 ; "determining that" open exceeds_all_analyzed ; "could pose risks related to high-stakes misalignment or automated R&D" open exceeds_all_analyzed ; "(e.g., in a prior Risk Report, System Card, or other public artifact" exposition
 f10-candid-default | omits: "We intend" reading RS12candid
-f10-in-line | omits: "we will keep our future practices in line with this description" restates ; "changes" restates
+f10-in-line | omits: "we will keep our future practices in line with this description" restates ; "changes" restates ; "(generally via subsequent Risk Reports)" exposition
 f10-attempt-strict | omits: "to ensure that" restates
 f10-attempt-default | omits: nothing
 f11-factual | omits: "A Risk Report will document the following" restates
@@ -44,14 +44,14 @@ f15-revenue-strict | omits: "external review parties should not be teams whose" 
 f15-revenue-default | omits: nothing
 f15-select-approval | omits: nothing
 f16-share-one-week | omits: "The external review process will involve" restates
-f16-ask-commentary | omits: "to memorialize its findings on the topics above in a written report that is made public" loss limit 4
+f16-ask-commentary | omits: nothing
 f16-before-board-default | omits: nothing
 f16-all-sections | omits: "All sections" restates
 f16-split-p | omits: "All sections" restates ; "of the Risk Report will be shared with at least one external reviewer" rule f16-all-sections
 f16-only-legal | omits: nothing
 f18-rso | omits: "a designated member of staff who is responsible for the implementation of this policy" loss 1
 f19-brief-ltbt | omits: nothing
-f19-unredacted | omits: "We will share" restates ; "final" loss 1 ; "with a large number of Anthropic employees (at least 200" restates
+f19-unredacted | omits: "We will share" restates ; "with a large number of Anthropic employees (at least 200" restates
 f19-minimally-redacted | omits: "We will share" restates ; "Anthropic's" restates
 f20-process | omits: nothing
 f20-recipients | omits: "Staff will have more than one option for who receives these reports" restates
@@ -73,7 +73,7 @@ f24-delay | omits: nothing
 f25-meet | omits: nothing
 f25-delay | omits: nothing
 f26-effort | omits: nothing
-f26-need-not-delay | omits: "However, we will not necessarily delay" reading RS4
+f26-need-not-delay | omits: "We will make a significant effort to meet or exceed that performance standard" rule f26-effort ; "However, we will not necessarily delay AI development and deployment in this scenario" reading RS4 ; "Further, the commitments below do not preclude us from taking cautionary action, such as refraining from training or deploying models, in other circumstances" exposition
 threshold-t1 | omits: nothing
 threshold-t2 | omits: nothing
 threshold-t3 | omits: nothing
@@ -81,7 +81,5 @@ threshold-t4 | omits: nothing
 highly-capable-t4 | omits: "described in Section 1" exposition
 t4-suff | omits: "We will consider this threshold to be met" restates
 t4-only-if | omits: nothing
-s2-suff-result | omits: "We would consider scenario (2) to have occurred where" restates ; "in the absence of" restates
-s2-suff-third | omits: nothing
-s2-only-if-result | omits: nothing
+s2-suff-third | omits: "We would consider scenario (2) to have occurred where" restates ; "in the absence of" restates
 s2-only-if-third | omits: nothing
