@@ -1,6 +1,29 @@
-# norm-defaults-text-1: three record overclaims corrected (REPORT)
+# norm-defaults-text-1: record corrections and review fixes (REPORT)
 
-Summary: READY FOR REVIEW. Records and one new test file only: the norm-defaults spec names `gate_legacy`'s proved
+Summary: READY FOR RECHECK. Review F1 and F2 are fixed in 41ce344aa3; both listed probes failed before and pass after.
+Selected tests passed (34 units, 0 failures); `lake build` and `lean/audit.py` passed. The merge train owns the full gate.
+No product behavior changed, no DELTA row is needed under the item's no-DELTA ruling, and no signature is reserved.
+
+## Review fixes (2026-11-12)
+
+- F1 -> qualify the wrapper-free `todayGate` claim with the legacy-profile restriction ->
+  `tests/test_norm_defaults_records.py::test_wrapper_free_gate_claims_keep_legacy_hypothesis` and
+  `::test_gate_scope_scan_refuses_unqualified_equivalence` -> 41ce344aa3.
+- F2 -> distinguish the admitted alternatives pair from the refused risk pair in `docs/INTEGRATION-GAPS.md`,
+  and include that record in the Lean-derived gate check ->
+  `tests/test_norm_defaults_records.py::test_alternatives_norm_defaults_gate_records_agree` and
+  `::test_pair_scan_refuses_stale_records` -> 41ce344aa3.
+
+The F1 and F2 executable review probes each exited 1 before the fix and 0 afterward. The focused regression file
+passed 8 tests. The selected Mac run passed 34 units with 0 failures; the selector deferred two broad files to the
+chain gate. `lake build` completed 1429 jobs; `python3 lean/audit.py` audited 864 source files and 9911 theorem
+declarations with the standard axiom allowlist. The three tests listed in `main-known-red.txt` are pre-existing and
+were neither edited nor encountered in the selected run. No full suite, release gate, or trust-mutant sweep ran:
+this review fix changes documentation and its tests only.
+
+## Initial build record
+
+Records and one new test file only: the norm-defaults spec names `gate_legacy`'s proved
 target (`dispatch`), the alternatives/norm-defaults gate records say "admitted" (ET-7, D46), and pk-1's identity
 claims are scoped to `docs/premise-packs/pk-1/evidence/ab_full.txt`; each condition test fails on main, passes here.
 No verdict, binding, Lean, Python product or Rust change; trust +0; pilot bytes 0; no DELTA row; no signature reserved.
