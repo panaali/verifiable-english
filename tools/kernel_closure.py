@@ -157,6 +157,16 @@ def subject_problems(path: dict, stated: dict) -> list[str]:
             for subject in path.get("subject", []) if not stated.get(subject)]
 
 
+def open_field_problems(path: dict, open_fields: list[str]) -> list[str]:
+    """A kernel path's statements read the answer fields they state by key. `open_fields` names the
+    listed theorems and the definitions their statements reach that quantify existentially over a
+    list of answer fields (the Lean half's `hasOpenFields`): `Json.mkObj` keeps the last value of a
+    repeated key, so such an open tail can override every field the statement claims (KB-7 F1)."""
+    if path.get("tier") != "kernel" or not open_fields:
+        return []
+    return [f"{path['name']}: a statement leaves answer fields open (state them by key): {', '.join(open_fields)}"]
+
+
 def classify_writers(census: list[dict], spec_wrap: set, body: set, covered: set) -> tuple[list[dict], list[str]]:
     """Section 3's census. A writer is inside the kernel when its declaration is in a kernel path's spec
     or wrap (`inside: "spec-or-wrap"`), or in code a kernel subject runs for a case kind a listed theorem
@@ -226,6 +236,7 @@ def measure(registry: dict, timeout: float = 3600) -> dict:
                 problems.append(f"{path['name']}: reached constants with no source range (not counted): "
                                 + ", ".join(part["unranged"]))
         problems += subject_problems(path, spec["stated"])
+        problems += open_field_problems(path, spec["open_fields"])
         problems += uncovered_problems(path, {"spec": spec, "wrap": wrap}, uncovered)
         ranges = [(d["module"], d["from"], d["to"]) for part in (spec, wrap) for d in part["decls"]]
         ranges_of[path["name"]] = ranges

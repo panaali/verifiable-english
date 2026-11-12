@@ -9,8 +9,10 @@ half's test of which theorems state a subject's answer. The full measurement
 from __future__ import annotations
 
 import json
+import os
 import re
 import shutil
+import subprocess
 import sys
 from pathlib import Path
 
@@ -144,6 +146,8 @@ def lean_answer(lake):
         {"name": "soft", "roots": ["VE.SoftNorms.Run.soft_wire_acceptance"], "opaque": ["VE.SoftNorms.Run.runCase"]},
         {"name": "splitter", "roots": [SPLITTER], "opaque": [], "mode": "run"},
         {"name": "route-uncut", "roots": ROUTE["theorems"], "opaque": ROUTE["subject"]},
+        {"name": "open-tail", "roots": ["VE.KernelClosure.openTailFixture_stated"], "opaque": []},
+        {"name": "keyed", "roots": ["VE.KernelClosure.keyedFixture_stated"], "opaque": []},
         *measured,
     ], [], [], HANG_TIMEOUT)
     return raw, census
@@ -160,6 +164,83 @@ def test_the_lean_half_tells_a_gate_theorem_from_one_that_states_the_answer(lean
     assert raw["soft"]["stated"] == {"VE.SoftNorms.Run.runCase": ["VE.SoftNorms.Run.soft_wire_acceptance"]}
     assert raw["splitter"]["unranged"] == [] and raw["splitter"]["missing"] == []
     assert any(d["name"] == "VE.Route.Admission.NodeAdmitted" for d in raw["splitter"]["decls"])
+
+
+def test_the_lean_half_finds_answer_fields_left_open_and_passes_fields_read_by_key(lean_answer):
+    """Review kb-7 F1, the class: `Json.mkObj` keeps the last value of a repeated key, so a statement
+    that writes an answer as `mkObj (fields ++ rest)` with `rest` existentially open lets the tail
+    override every field it states. The Lean half's `hasOpenFields` finds the tool's own open-tail
+    fixture and passes the same answer read by key."""
+    raw, _ = lean_answer
+    assert raw["open-tail"]["open_fields"] == ["VE.KernelClosure.openTailFixture"]
+    assert raw["keyed"]["open_fields"] == []
+
+
+def test_no_kernel_statement_leaves_answer_fields_open(lean_answer):
+    """Review kb-7 F1: no listed theorem of a kernel path, and no definition its statement reaches,
+    quantifies existentially over a list of answer fields (`soft_wire_elaborate`'s
+    `ElaborationAnswer` did, with `rest` free after the six fields it named)."""
+    raw, _ = lean_answer
+    assert {p["name"]: raw["spec:" + p["name"]]["open_fields"] for p in KERNEL} == {p["name"]: [] for p in KERNEL}
+
+
+def test_an_open_field_statement_is_a_problem_on_a_kernel_path_only():
+    kernel = {"name": "k", "tier": "kernel"}
+    assert kernel_closure.open_field_problems(kernel, ["M.Answer"]) == [
+        "k: a statement leaves answer fields open (state them by key): M.Answer"]
+    assert kernel_closure.open_field_problems(kernel, []) == []
+    assert kernel_closure.open_field_problems(dict(kernel, tier="candidate"), ["M.Answer"]) == []
+
+
+def lean_check(source: str, where: Path) -> subprocess.CompletedProcess[str]:
+    """Elaborate one Lean source against the built `VE`."""
+    file = where / "Probe.lean"
+    file.write_text(source)
+    env = dict(os.environ, PATH=str(Path.home() / ".elan/bin") + os.pathsep + os.environ.get("PATH", ""))
+    return subprocess.run(("lake", "env", "lean", str(file)), cwd=ROOT / "lean", env=env,
+                          capture_output=True, text=True, timeout=HANG_TIMEOUT)
+
+
+ELABORATE_PROBE = """import VE.SoftNorms.ElaborateSound
+open Lean VE.SoftNorms.Run
+"""
+
+
+def test_a_soft_elaborate_answer_has_no_tail_that_overrides_its_fields(lake, tmp_path):
+    """Review kb-7 PROBE F1: the reviewer's counterexample (a `Wire.ok` answer whose tail rebinds
+    `background` to `null`) is not an `ElaborationAnswer`: it does not elaborate, and its negation is
+    a theorem (`not_elaborationAnswer_of_null_background`) that a client's reading follows from."""
+    probe = ELABORATE_PROBE + (
+        "example (D : VE.SoftNorms.SoftDoc) (e : Json) : ∃ a : Json, ElaborationAnswer \"x\" D a ∧ "
+        "a.getObjValD \"background\" = Json.null := by\n"
+        "  obtain ⟨p, d, r, o, b, q, _, _, hb, hq⟩ := regeneratedCore_fields D e\n"
+        "  exact ⟨VE.Route.Wire.ok \"x\" ([(\"environment_prime\", p), (\"decisions\", d), (\"derived\", r), "
+        "(\"order\", o), (\"background\", b), (\"premises\", q)] ++ [(\"background\", Json.null)]), "
+        "⟨p, d, r, o, b, q, [(\"background\", Json.null)], rfl, hb, hq⟩, rfl⟩\n")
+    assert lean_check(probe, tmp_path).returncode != 0
+    control = ELABORATE_PROBE + (
+        "example (D : VE.SoftNorms.SoftDoc) : ¬ ∃ a : Json, ElaborationAnswer \"x\" D a ∧ "
+        "a.getObjValD \"background\" = Json.null :=\n"
+        "  fun ⟨a, ha, hn⟩ => not_elaborationAnswer_of_null_background \"x\" D a hn ha\n"
+        "example (D : VE.SoftNorms.SoftDoc) (a : Json) (h : ElaborationAnswer \"x\" D a) :\n"
+        "    BackgroundField D (a.getObjValD \"background\") ∧ PremisesField D (a.getObjValD \"premises\") :=\n"
+        "  (elaborationAnswer_reads h).2.2\n")
+    done = lean_check(control, tmp_path)
+    assert done.returncode == 0, done.stdout[-2000:] + done.stderr[-2000:]
+
+
+def test_the_spec_claims_no_carry_that_no_theorem_states():
+    """Review kb-7 PROBE F2: `soft_wire_elaborate` states the `background` and `premises` fields of a
+    `soft-elaborate` answer, not that the premises a harness carries to a certificate case are those
+    fields (the Python client reads only `premises`' labels and takes the coherence premises from
+    `colliding_pairs`). The spec says so and makes neither of the two claims the review found."""
+    text = " ".join((ROOT / "docs/spec/kernel-boundary.md").read_text().split())
+    assert [s for s in ("over exactly these fields", "states that those premises are the document") if s in text] == []
+    assert "No theorem yet ties what the keys' certificates replay to these fields" in text
+    assert "none yet states that the premises the harness carries to the certificate case are those fields" in text
+    lean = " ".join((ROOT / "lean/VE/SoftNorms/ElaborateSound.lean").read_text().split())
+    assert "has the route replay a certificate over them" not in lean
+    assert "nor about what a harness carries from this answer to a later certificate case" in lean
 
 
 def test_no_kernel_spec_or_wrap_reads_an_uncovered_runner(lean_answer):
@@ -323,9 +404,10 @@ def test_the_records_quote_the_saved_measurement():
     assert f"signed total: {kernel} lines" in allowances
 
 
-def lean_part(decls=(), stated=None, unranged=(), missing=()):
+def lean_part(decls=(), stated=None, unranged=(), missing=(), open_fields=()):
     return {"lines": sum(b - a + 1 for _, a, b in decls), "axioms": [], "modules": {}, "flagged": [],
             "missing": list(missing), "unranged": list(unranged), "stated": stated or {},
+            "open_fields": list(open_fields),
             "decls": [{"name": f"{m}.d{a}", "module": m, "from": a, "to": b} for m, a, b in decls]}
 
 

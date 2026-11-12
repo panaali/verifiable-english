@@ -9032,7 +9032,11 @@ import VE.WireContract.Engine
 #print axioms VE.SoftNorms.RanksValid.closure
 #print axioms VE.SoftNorms.RanksValid.declared
 #print axioms VE.SoftNorms.RanksValid.order
+#print axioms VE.SoftNorms.Run.elaborationAnswer_ok
+#print axioms VE.SoftNorms.Run.elaborationAnswer_reads
 #print axioms VE.SoftNorms.Run.excLabels_length
+#print axioms VE.SoftNorms.Run.mkObj_get_append
+#print axioms VE.SoftNorms.Run.not_elaborationAnswer_of_null_background
 #print axioms VE.SoftNorms.Run.regeneratedCore_fields
 #print axioms VE.SoftNorms.Run.runAdmission_sound
 #print axioms VE.SoftNorms.Run.softLabelled_formulas
