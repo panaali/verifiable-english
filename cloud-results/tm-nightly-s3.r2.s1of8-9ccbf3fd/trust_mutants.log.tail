@@ -1,0 +1,9 @@
+trust_mutants: 41 definitions, 71 mutants (9 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/Commands/SplitOnLemmas.lean:21 VE.Commands.SplitOn.splitOnL (G[V], trusted) lt-eq: < -> = (lean/VE/Commands/SplitOnLemmas.lean:21: unexpected token '+'; expected term)
+UNKNOWN lean/VE/Events/Wire.lean:201 VE.Events.finishEvents (D[V], trusted) eq-le: = -> ≤ (lean/VE/Events/Wire.lean:202: Application type mismatch: The argument)
+UNKNOWN lean/VE/Purposes/WellFormed.lean:166 VE.Purposes.WellFormed (S, trusted) le-eq: ≤ -> = (lean/VE/Purposes/Examples.lean:275: Expression (VE.Purposes.Examples.wfDecidable, which it reads,...)
+trust_mutants: 6 KILLED, 0 SURVIVOR, 3 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 62 OTHER SHARD in 532 s
+trust_mutants: D[V], trusted: 1 KILLED, 1 UNKNOWN, 21 OTHER SHARD
+trust_mutants: G[V], trusted: 4 KILLED, 1 UNKNOWN, 26 OTHER SHARD
+trust_mutants: S, trusted: 1 KILLED, 1 UNKNOWN, 15 OTHER SHARD
+trust_mutants: steps: wall plan 15.5 s, scratch 3.6 s, control_build 0.2 s, probe_install 1.2 s, mutants 505.1 s, cleanup 5.9 s, reads 0.1 s; lake control_build 0.2 s (1), probe_install 1.2 s (1), control_probes 26.4 s (6), mutant_builds 100.5 s (14), mutant_checks 1098 s (11), stage_controls 449 s (6), mutant_probes 28.2 s (7)
