@@ -1,7 +1,7 @@
 # KB-1 build report
 
 DRI signature needed: trust budget K +34 (DELTA row 2; R16 does not cover K growth), asked in manage-agents/inbox/dri/20261112T131749Z-kb-1-1064078.md.
-Status: deliverables (0) to (8) built and committed on `infra/kb-1`; trust_mutants exit 0; selected tests: see "Tests run".
+Status: deliverables (0) to (8) built and committed on `infra/kb-1`; trust_mutants exit 0; selected run: 2 failures (this branch's), fixed, rerun green.
 What changed: `lean/VE/Kernel/Carry.lean` (verbatim), the kernel check in the gate and in regen, `--check` also ratchets verdict writers outside the kernel, `--out` refuses a total above the signed one, the per-kind table, the experimental import boundary, the CHECKED wording, AGENTS.md's exception.
 Open: the DRI's K signature (stops the item until signed); 14 untied kinds for the architect (listed below); `usecases/openai-preparedness/run.py --check` already fails on main (stale `results.json`, not this branch).
 Kernel: 9,504 lines (= baseline), verdict writers outside the kernel 56 (= baseline).
@@ -116,7 +116,13 @@ Kernel check: `regen_generated.py --check --only kernel-closure`: kernel 9,504 <
   tests/test_gate_integrity.py tests/test_lean_import_reader.py tests/test_kernel_closure.py
   tests/test_lean_experimental_boundary.py`: 300 passed.
 - `uv run python tools/gate_collection.py --check --prebuilt`: 13 added, 0 refused, 0 stale, 0 malformed.
-- Final selected run on the committed HEAD: SELECTED-RESULT
+- Selected run on the committed HEAD `3932802d5b` (`MAC_PYTEST_NO_DEFER=1 zsh manage-agents/mac-pytest.sh --select -- --base
+  $(git merge-base HEAD main) --run`, ran on ve-cloud-3, log /tmp/kb1-sel-run.log): exit 1, 540 units, 2 failed, both
+  from this branch's additions: `tests/test_assurance_manifest.py::test_every_json_handling_lean_file_is_classified`
+  (the two new Lean files read or build JSON: reasons added under `other_json` in `ve/assurance-manifest.json`, layout
+  regenerated) and `tests/test_merge_tooling_evidence.py::test_the_generated_file_table_names_every_entry` (the
+  `kernel-closure` row added to `docs/merge-tooling.md`). Rerun of those two ids (`mac-pytest.sh -- <ids>`): 2 passed;
+  their two files in full: 162 passed. The fix is committed after the selected run, so the chain gate runs the tests.
 - Not run: the full gate (the chain runs it on the final HEAD).
 
 ## Notes for the DRI
@@ -148,7 +154,7 @@ Kernel check: `regen_generated.py --check --only kernel-closure`: kernel 9,504 <
 3. PASS: seeded bugs a to k; trust mutants exit 0 (`docs/kb-1/trust-mutants.json`).
 4. N.A.: no Python/Lean/Rust answer path changed.
 5. N.A.: no new field read from a Lean answer.
-6. PASS (pending the chain): selected run on the committed HEAD (Tests run); the chain gates the final HEAD.
+6. PASS (pending the chain): selected run on the committed HEAD, its 2 failures fixed and rerun (Tests run); the chain gates the final HEAD.
 7. PASS: DELTA row 1 cites R1 with its test; row 2's K growth is listed as needing the DRI in this report's first line.
 8. PASS: DELTA.md lists the help text and the trust delta; no service answer changes (no runner touched).
 9. PASS: `uv run python tools/select_tests.py --base $(git merge-base HEAD main)` selects `tests/test_kernel_closure.py`, `tests/test_lean_experimental_boundary.py`, `tests/test_gate_trust.py`.
