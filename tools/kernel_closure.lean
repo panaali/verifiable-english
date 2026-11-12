@@ -27,7 +27,9 @@ compiler replaces (`implemented_by`, `extern`) or the kernel cannot unfold (`opa
 the reached constants with no source range (`unranged`; the Python half reports them), and, in
 statement mode, `stated`: for each opaque name (the path's subject), the roots whose statement
 says something about its answer (`answersStated`). A subject no root states the answer of is
-not what the theorems are about (the Python half reports it for a kernel path). -/
+not what the theorems are about (the Python half reports it for a kernel path); and
+`open_fields`: the roots and reached definitions that quantify existentially over a list of answer
+fields (`hasOpenFields`), which the Python half reports for a kernel path. -/
 open Lean Elab Command Meta
 
 namespace VE.KernelClosure
@@ -138,6 +140,39 @@ def answersStated (thm : Name) (subjects : List Name) : MetaM (List Name) := do
       if stated && !out.contains s then out := s :: out
     return out
 
+/-- `List (String × Json)`: the fields of an answer object. -/
+def fieldList (t : Expr) : Bool :=
+  let t := t.consumeMData
+  t.isAppOfArity ``List 1 &&
+    (let p := t.appArg!.consumeMData
+     p.isAppOfArity ``Prod 2 && p.appFn!.appArg!.consumeMData.isConstOf ``String &&
+       p.appArg!.consumeMData.isConstOf ``Lean.Json)
+
+/-- The term quantifies existentially over a list of answer fields. `Json.mkObj` keeps the last
+value of a repeated key, so an answer stated as `mkObj (fields ++ rest)` with `rest` open can
+override every stated field (KB-7 F1): a statement reads the fields it states by key instead. -/
+def hasOpenFields (e : Expr) : Bool :=
+  (e.find? fun x => x.isAppOfArity ``Exists 2 && fieldList x.appFn!.appArg!).isSome
+
+/-- The roots whose statement, and the reached definitions whose body, leave answer fields open. -/
+def openFields (env : Lean.Environment) (roots : List Name) (reached : Reached) : List Name :=
+  (roots ++ reached.consts.toList).filter fun c => match env.find? c with
+    | some (.defnInfo d) => hasOpenFields d.value
+    | some info => roots.contains c && hasOpenFields info.type
+    | none => false
+
+/-- The detector's own fixtures: an answer stated with an open tail of fields, and the same answer
+read by key. `run_cmd` below refuses to measure unless the first is found and the second is not. -/
+def openTailFixture (answer : Json) : Prop :=
+  ∃ rest : List (String × Json), answer = Json.mkObj ([("status", .str "ok")] ++ rest)
+
+def keyedFixture (answer : Json) : Prop :=
+  answer.getObjVal? "status" = .ok (.str "ok")
+
+theorem openTailFixture_stated (answer : Json) (h : openTailFixture answer) : openTailFixture answer := h
+
+theorem keyedFixture_stated (answer : Json) (h : keyedFixture answer) : keyedFixture answer := h
+
 def strList (j : Json) (key : String) : List Name :=
   match j.getObjValD key with
   | .arr xs => xs.toList.filterMap fun x => x.getStr?.toOption.map String.toName
@@ -188,8 +223,10 @@ def measure (path : Json) : CommandElabM Json := do
         bySubject := bySubject.insert s ((bySubject.getD s #[]).push (toString r))
     for s in opaqueNames do
       stated := stated.push (toString s, toJson (bySubject.getD s #[]))
+  let openTails := if statement then openFields env roots reached else []
   return Json.mkObj [
     ("name", name), ("mode", if statement then "statement" else "run"),
+    ("open_fields", toJson (openTails.map toString)),
     ("roots", toJson (roots.map toString)), ("opaque", toJson (opaqueNames.map toString)),
     ("missing", toJson (missing.map toString)),
     ("lines", total), ("declarations", rows.size),
@@ -240,6 +277,10 @@ run_cmd do
   let paths := match cfg.getObjValD "paths" with
     | .arr xs => xs
     | _ => #[]
+  let env ← getEnv
+  let fixture := fun (n : Name) => openFields env [n] (closure env [n] [] true)
+  unless fixture ``openTailFixture_stated == [``openTailFixture] && fixture ``keyedFixture_stated == [] do
+    throwError "the open-fields detector misses its fixture: {fixture ``openTailFixture_stated}, {fixture ``keyedFixture_stated}"
   let mut results := #[]
   for p in paths do
     results := results.push (← measure p)

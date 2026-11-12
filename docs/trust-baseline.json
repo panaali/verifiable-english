@@ -2220,31 +2220,17 @@
   },
   {
    "class": "V",
-   "lines": 4,
-   "reason": "rights-cfr-4: lean/VE/Rights/Run.lean +4 (G[V]: nodeOpen reads the act)",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), rights-cfr-4, 2026-10-18",
-   "commit": "268829b1ac9d3a333c2c422efbd9b0beea80b287"
+   "lines": 58,
+   "reason": "sn-b6d: VE/Senses/Run.lean +58 (G[V] rereadJson, decodeReread, lineJson, and the readCase wiring of the re-read and the line)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sn-b6d, 2026-11-09",
+   "commit": "9ba8aeaedfc82fa41258a4f52bcca4820f47b663"
   },
   {
    "class": "V",
-   "lines": 41,
-   "reason": "ci-5: VE/SpeechActs/Wire.lean +31, VE/Acts/Lexical.lean +9, VE/Compose/Dispatch.lean +1 (trusted +41: D +40, G +1; K +0, S +0)",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ci-5, 2026-10-18",
-   "commit": "e9a6ec8d5938051a70116918e34fc3cd92aac16e"
-  },
-  {
-   "class": "V",
-   "lines": 57,
-   "reason": "ap-4: VE/Acts/Run.lean +54 (G[V] listReadings, listed, runActReadings; D[V] actJson, readingJson, rowsOf: the act-readings mode, act-phrases 7), VE/Service/Registry.lean +1, VE/Service/Protocol.lean +1, ResponseShape/Schemas.lean +1 (the mode's registration); K +0, S +0",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-4, 2026-10-18",
-   "commit": "da5303b7876924d4fba67866390ed6f0d0b36cbc"
-  },
-  {
-   "class": "V",
-   "lines": 6,
-   "reason": "ap-4 review fix (F2, F4): VE/Acts/Run.lean +6 (D[V] readingJson, rowsOf: each reading's acts read against its meaning's tagged derivation; G[V] witnessed and D[V] firstsBy are tied by witnessed_readings and firstsBy_map; tagTree, placeOf, Act.toks, Simple.toks, tagged, tagBase are D[I]); ap-4 in all +63 of R16's 150; K +0, S +0",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-4, 2026-11-09",
-   "commit": "da5303b7876924d4fba67866390ed6f0d0b36cbc"
+   "lines": 136,
+   "reason": "ci-3a: lean/VE/Commands/Steps.lean V +136 (G[V] Shape, Form, Alt, StepOutcome, capitalise, hasThen, shapes, lift, readingTuples, shapeOutcome, shapeAlts, combineShapes, readStep, reads; G[R] conditionScope is reject-only; productSize and shapeOutcomeCharged tied to readingTuples_length and shapeOutcome_charged); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ci-3a, 2026-11-09",
+   "commit": "d55d24faab755047e2131d11487ff3d9c124d3e8"
   },
   {
    "class": "V",
@@ -2269,10 +2255,24 @@
   },
   {
    "class": "V",
-   "lines": 136,
-   "reason": "ci-3a: lean/VE/Commands/Steps.lean V +136 (G[V] Shape, Form, Alt, StepOutcome, capitalise, hasThen, shapes, lift, readingTuples, shapeOutcome, shapeAlts, combineShapes, readStep, reads; G[R] conditionScope is reject-only; productSize and shapeOutcomeCharged tied to readingTuples_length and shapeOutcome_charged); K +0, S +0",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ci-3a, 2026-11-09",
-   "commit": "d55d24faab755047e2131d11487ff3d9c124d3e8"
+   "lines": 57,
+   "reason": "ap-4: VE/Acts/Run.lean +54 (G[V] listReadings, listed, runActReadings; D[V] actJson, readingJson, rowsOf: the act-readings mode, act-phrases 7), VE/Service/Registry.lean +1, VE/Service/Protocol.lean +1, ResponseShape/Schemas.lean +1 (the mode's registration); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-4, 2026-10-18",
+   "commit": "da5303b7876924d4fba67866390ed6f0d0b36cbc"
+  },
+  {
+   "class": "V",
+   "lines": 6,
+   "reason": "ap-4 review fix (F2, F4): VE/Acts/Run.lean +6 (D[V] readingJson, rowsOf: each reading's acts read against its meaning's tagged derivation; G[V] witnessed and D[V] firstsBy are tied by witnessed_readings and firstsBy_map; tagTree, placeOf, Act.toks, Simple.toks, tagged, tagBase are D[I]); ap-4 in all +63 of R16's 150; K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-4, 2026-11-09",
+   "commit": "da5303b7876924d4fba67866390ed6f0d0b36cbc"
+  },
+  {
+   "class": "V",
+   "lines": 41,
+   "reason": "ci-5: VE/SpeechActs/Wire.lean +31, VE/Acts/Lexical.lean +9, VE/Compose/Dispatch.lean +1 (trusted +41: D +40, G +1; K +0, S +0)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ci-5, 2026-10-18",
+   "commit": "e9a6ec8d5938051a70116918e34fc3cd92aac16e"
   },
   {
    "class": "S",
@@ -2297,10 +2297,17 @@
   },
   {
    "class": "V",
-   "lines": 58,
-   "reason": "sn-b6d: VE/Senses/Run.lean +58 (G[V] rereadJson, decodeReread, lineJson, and the readCase wiring of the re-read and the line)",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sn-b6d, 2026-11-09",
-   "commit": "9ba8aeaedfc82fa41258a4f52bcca4820f47b663"
+   "lines": 103,
+   "reason": "ci-3: steps on the english.command route (section 7): VE/Commands/Run.lean +84 (stated order, stepCommands, readInstruction through readStep, the StepOutcome encoder), VE/SpeechActs/Wire.lean +4 (surfaceKind if/then), VE/SpeechActs/Source/Run.lean +15 (ThenWithoutStep wiring; review F2: the document form of a sequence read against the whole wording in readSource, its context in decodeSpeechSource, G[V] SpeechSource.stepOrder; the checks themselves G[R]); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ci-3, 2026-10-18",
+   "commit": "1531891aaf6b5d6a5a064448e29489245b67e496"
+  },
+  {
+   "class": "V",
+   "lines": 4,
+   "reason": "rights-cfr-4: lean/VE/Rights/Run.lean +4 (G[V]: nodeOpen reads the act)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), rights-cfr-4, 2026-10-18",
+   "commit": "268829b1ac9d3a333c2c422efbd9b0beea80b287"
   },
   {
    "class": "S",
@@ -2401,6 +2408,13 @@
    "commit": "33fe04615107cfb12e4402877992e6ff7b6e95d8"
   },
   {
+   "class": "V",
+   "lines": 100,
+   "reason": "sa-checked-view: V +100 (lean/VE/Service/DocumentView.lean +97, lean/VE/Service/Document.lean +3); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sa-checked-view, 2026-10-18",
+   "commit": "a7659c5f12aebb2945cfb2106ed29a20663ab836"
+  },
+  {
    "class": "S",
    "lines": 41,
    "reason": "ps-7: lean/VE/Presupposition/Events.lean +28 (S: inProgress, inProgressBefore, endedBefore, occurredBefore, endedAtBefore; the six readings G[V] tied by their _eq rfl statements), lean/VE/Presupposition/Frame.lean +13 (Frame.locate C -> S, ps-1-locate-path); K +0, trusted +41",
@@ -2420,41 +2434,6 @@
    "reason": "ps-2ab (self-review fixes): lean/VE/Presupposition/Admit.lean untied G[V] now +123 in total (readingsDoc reads the background and the first unit of the id; separated returns readings@1's texts); K +0, S +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ps-2ab, 2026-10-18",
    "commit": "a0102f0e5350727e99ddcae2e0b59ed03f2f4192"
-  },
-  {
-   "class": "V",
-   "lines": 76,
-   "reason": "et-5b: V +76 (lean/VE/Service/Document.lean +45, lean/VE/EnglishGrammar/SourceWords.lean +31); K +0, S +0",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), et-5b, 2026-11-10",
-   "commit": "c94ad399b7b1f6804c12fbc555a5758d5e971ae6"
-  },
-  {
-   "class": "S",
-   "lines": 1,
-   "reason": "qt-a4b: K +0, S +1, V +115 (trusted +116): VE/Service/Document.lean +87, VE/Cardinality/Wire.lean +14, VE/Compose/Dispatch.lean +8 (S +1, V +7), ResponseShape/Schemas/Document.lean +5, VE/Compose/ProfilesMain.lean +2; the restated gate and list check under reviews/dri-decisions-20261105-qt-a4b.md items 1-2",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a4b, 2026-10-18",
-   "commit": "e9a6ec8d5938051a70116918e34fc3cd92aac16e"
-  },
-  {
-   "class": "V",
-   "lines": 115,
-   "reason": "qt-a4b: K +0, S +1, V +115 (trusted +116): VE/Service/Document.lean +87, VE/Cardinality/Wire.lean +14, VE/Compose/Dispatch.lean +8 (S +1, V +7), ResponseShape/Schemas/Document.lean +5, VE/Compose/ProfilesMain.lean +2; the restated gate and list check under reviews/dri-decisions-20261105-qt-a4b.md items 1-2",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a4b, 2026-10-18",
-   "commit": "e9a6ec8d5938051a70116918e34fc3cd92aac16e"
-  },
-  {
-   "class": "V",
-   "lines": 13,
-   "reason": "qt-a4b review F1/F2: V +13 above the existing +115 allowance: VE/Service/Document.lean +13 for readingText and chainDocument (one definition of the chain's request text, always there) and the parent argument of check; chainBound is D[R]. qt-a4b total K +0, S +1, V +128 (trusted +129), within the R16 150-line cap",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a4b review F1/F2, 2026-11-09",
-   "commit": "e9a6ec8d5938051a70116918e34fc3cd92aac16e"
-  },
-  {
-   "class": "V",
-   "lines": 109,
-   "reason": "ps-2ac: VE/Presupposition/Run.lean V +109 (G[V] untied: the presuppositions report value Outcome, Line, Goal, Row, Shown, Inconsistency, lexiconOk, lineOf, englishLine, outcomeOf, checkedRow, docPremise, refutedLines, shownOf, shown); K +0, S +0",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ps-2ac, 2026-10-18",
-   "commit": "a5088a09b523154f4024db96fe636c92689a9b97"
   },
   {
    "class": "S",
@@ -2478,13 +2457,6 @@
    "commit": "33fe04615107cfb12e4402877992e6ff7b6e95d8"
   },
   {
-   "class": "V",
-   "lines": 100,
-   "reason": "sa-checked-view: V +100 (lean/VE/Service/DocumentView.lean +97, lean/VE/Service/Document.lean +3); K +0, S +0",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sa-checked-view, 2026-10-18",
-   "commit": "a7659c5f12aebb2945cfb2106ed29a20663ab836"
-  },
-  {
    "class": "S",
    "lines": 46,
    "reason": "en-e3a: Norm/Run.lean +110, Norm/Owners.lean +36, Norm/Rules.lean +13, EnglishGrammar/Run.lean +8 (K +0, S +46, V +121; trusted +167; statementSpans, sentenceBytes, opensStatement classed G[V])",
@@ -2497,6 +2469,20 @@
    "reason": "en-e3a: Norm/Run.lean +110, Norm/Owners.lean +36, Norm/Rules.lean +13, EnglishGrammar/Run.lean +8 (K +0, S +46, V +121; trusted +167; statementSpans, sentenceBytes, opensStatement classed G[V])",
    "signature": "SIGNED by the DRI 2026-11-09 (reviews/dri-decisions-20261109-en-e3a-2.md item 1)",
    "commit": "a0102f0e5350727e99ddcae2e0b59ed03f2f4192"
+  },
+  {
+   "class": "V",
+   "lines": 22,
+   "reason": "sc-7-f11: lean/VE/Scope/Authoring.lean V +22 (new: Pinned.allowed +4, Pinned.follower +6, Pinned.charRef +7, each with its blank line; Pinned.clause +5: the inside-a-word follower rule, the charRef conjunct and its docstring); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-7-f11, 2026-11-10",
+   "commit": "f3f40d51dc6dfffeb57834ee5652ff7b514eaeed"
+  },
+  {
+   "class": "V",
+   "lines": 109,
+   "reason": "ps-2ac: VE/Presupposition/Run.lean V +109 (G[V] untied: the presuppositions report value Outcome, Line, Goal, Row, Shown, Inconsistency, lexiconOk, lineOf, englishLine, outcomeOf, checkedRow, docPremise, refutedLines, shownOf, shown); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ps-2ac, 2026-10-18",
+   "commit": "a5088a09b523154f4024db96fe636c92689a9b97"
   },
   {
    "class": "S",
@@ -2527,32 +2513,25 @@
    "commit": "1ee886ca05d28e36bcefd923208a9d3b6a0f11d0"
   },
   {
-   "class": "V",
-   "lines": 46,
-   "reason": "et-5b: V +122 in total (SourceWords.lean +72: the always/eventually rows, their no-anchor rows, soft-norms' rule row, and the other reading sets of spec 2.4 with linkCandidate; Document.lean +50: ownedProfiles, eventsView, eventsAnchorChecks, eventsLayeredOf, chainLayeredOf), K +0, S +0; +46 over the earlier et-5b allowance of 76",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), et-5b, 2026-11-11",
-   "commit": "0295df174375667a79dec7c1dd214f9128fe4909"
+   "class": "S",
+   "lines": 1,
+   "reason": "qt-a4b: K +0, S +1, V +115 (trusted +116): VE/Service/Document.lean +87, VE/Cardinality/Wire.lean +14, VE/Compose/Dispatch.lean +8 (S +1, V +7), ResponseShape/Schemas/Document.lean +5, VE/Compose/ProfilesMain.lean +2; the restated gate and list check under reviews/dri-decisions-20261105-qt-a4b.md items 1-2",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a4b, 2026-10-18",
+   "commit": "e9a6ec8d5938051a70116918e34fc3cd92aac16e"
   },
   {
    "class": "V",
-   "lines": 21,
-   "reason": "et-5b review F1: V +143 in total (SourceWords.lean +72; Document.lean +60: the earlier +50 and Env.eventsView, Checked.eventsView and encode's events_view arm, the view the mode read in its answer; ResponseShape/Schemas/Document.lean +11: the events_view shape), K +0, S +0; +21 over the earlier et-5b allowances of 122",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), et-5b, 2026-11-11",
-   "commit": "0295df174375667a79dec7c1dd214f9128fe4909"
+   "lines": 115,
+   "reason": "qt-a4b: K +0, S +1, V +115 (trusted +116): VE/Service/Document.lean +87, VE/Cardinality/Wire.lean +14, VE/Compose/Dispatch.lean +8 (S +1, V +7), ResponseShape/Schemas/Document.lean +5, VE/Compose/ProfilesMain.lean +2; the restated gate and list check under reviews/dri-decisions-20261105-qt-a4b.md items 1-2",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a4b, 2026-10-18",
+   "commit": "e9a6ec8d5938051a70116918e34fc3cd92aac16e"
   },
   {
    "class": "V",
-   "lines": 103,
-   "reason": "ci-3: steps on the english.command route (section 7): VE/Commands/Run.lean +84 (stated order, stepCommands, readInstruction through readStep, the StepOutcome encoder), VE/SpeechActs/Wire.lean +4 (surfaceKind if/then), VE/SpeechActs/Source/Run.lean +15 (ThenWithoutStep wiring; review F2: the document form of a sequence read against the whole wording in readSource, its context in decodeSpeechSource, G[V] SpeechSource.stepOrder; the checks themselves G[R]); K +0, S +0",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ci-3, 2026-10-18",
-   "commit": "1531891aaf6b5d6a5a064448e29489245b67e496"
-  },
-  {
-   "class": "V",
-   "lines": 22,
-   "reason": "sc-7-f11: lean/VE/Scope/Authoring.lean V +22 (new: Pinned.allowed +4, Pinned.follower +6, Pinned.charRef +7, each with its blank line; Pinned.clause +5: the inside-a-word follower rule, the charRef conjunct and its docstring); K +0, S +0",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-7-f11, 2026-11-10",
-   "commit": "f3f40d51dc6dfffeb57834ee5652ff7b514eaeed"
+   "lines": 13,
+   "reason": "qt-a4b review F1/F2: V +13 above the existing +115 allowance: VE/Service/Document.lean +13 for readingText and chainDocument (one definition of the chain's request text, always there) and the parent argument of check; chainBound is D[R]. qt-a4b total K +0, S +1, V +128 (trusted +129), within the R16 150-line cap",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a4b review F1/F2, 2026-11-09",
+   "commit": "e9a6ec8d5938051a70116918e34fc3cd92aac16e"
   },
   {
    "class": "V",
@@ -2678,6 +2657,34 @@
    "lines": 3,
    "reason": "cmp-s3a-cfr-3: lean/VE/RightClauses/ElidedBytes.lean S +12 V +14 (lineElided, entryElided, elidedTotal, unitElided), lean/VE/RightClauses/Run.lean V +3; K +0, trusted +29",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), cmp-s3a-cfr-3, 2026-10-18",
+   "commit": "0295df174375667a79dec7c1dd214f9128fe4909"
+  },
+  {
+   "class": "S",
+   "lines": 71,
+   "reason": "kb-7: statement predicates of the metered and soft-elaborate wire theorems; net trusted lines fall (ties recorded)",
+   "signature": "DRI-20261111-kb7",
+   "commit": "e78b6d94990fe8badf69015823b955c409306f4e"
+  },
+  {
+   "class": "V",
+   "lines": 76,
+   "reason": "et-5b: V +76 (lean/VE/Service/Document.lean +45, lean/VE/EnglishGrammar/SourceWords.lean +31); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), et-5b, 2026-11-10",
+   "commit": "c94ad399b7b1f6804c12fbc555a5758d5e971ae6"
+  },
+  {
+   "class": "V",
+   "lines": 46,
+   "reason": "et-5b: V +122 in total (SourceWords.lean +72: the always/eventually rows, their no-anchor rows, soft-norms' rule row, and the other reading sets of spec 2.4 with linkCandidate; Document.lean +50: ownedProfiles, eventsView, eventsAnchorChecks, eventsLayeredOf, chainLayeredOf), K +0, S +0; +46 over the earlier et-5b allowance of 76",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), et-5b, 2026-11-11",
+   "commit": "0295df174375667a79dec7c1dd214f9128fe4909"
+  },
+  {
+   "class": "V",
+   "lines": 21,
+   "reason": "et-5b review F1: V +143 in total (SourceWords.lean +72; Document.lean +60: the earlier +50 and Env.eventsView, Checked.eventsView and encode's events_view arm, the view the mode read in its answer; ResponseShape/Schemas/Document.lean +11: the events_view shape), K +0, S +0; +21 over the earlier et-5b allowances of 122",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), et-5b, 2026-11-11",
    "commit": "0295df174375667a79dec7c1dd214f9128fe4909"
   },
   {
