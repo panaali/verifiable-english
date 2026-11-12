@@ -1,0 +1,8 @@
+trust_mutants: 91 definitions, 92 mutants (11 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/Acts/Run.lean:89 VE.Acts.Run.isElaborate (G[V], trusted) eq-ne: == -> != (lean/VE/Readings/ActsExamples.lean:79: Expression (Lean could not elaborate it in the probe))
+UNKNOWN lean/VE/Commands/Steps.lean:94 VE.Commands.shapeOutcome (G[V], trusted) eq-ne: == -> != (lean/VE/Commands/StepsExamples.lean:59: Expression (it computes through a proof the mutant broke ...)
+trust_mutants: 9 KILLED, 0 SURVIVOR, 2 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 81 OTHER SHARD in 1247 s
+trust_mutants: D[V], trusted: 3 KILLED, 20 OTHER SHARD
+trust_mutants: G[V], trusted: 3 KILLED, 2 UNKNOWN, 30 OTHER SHARD
+trust_mutants: S, trusted: 3 KILLED, 31 OTHER SHARD
+trust_mutants: steps: wall plan 15.8 s, scratch 3.7 s, control_build 0.3 s, probe_install 1.2 s, mutants 1220.5 s, cleanup 5.9 s, reads 0.2 s; lake control_build 0.2 s (1), probe_install 1.2 s (1), control_probes 245.3 s (12), mutant_builds 345.8 s (15), mutant_checks 2305.1 s (17), stage_controls 500.2 s (7), mutant_probes 383.8 s (13)
