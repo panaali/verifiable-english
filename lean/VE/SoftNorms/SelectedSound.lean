@@ -54,7 +54,8 @@ theorem decodeSelectedQuery_ok {D : SoftDoc} {M : VE.FiniteModel VE.Bridge.Entit
 /-- The decoded queries: one per request query, in order. -/
 theorem decodeQueries_ok {D : SoftDoc} {M : VE.FiniteModel VE.Bridge.Entity} :
     ∀ {i : Nat} {raws : List Json} {qs : List SelectedQuery}, decodeQueries D M i raws = .ok qs →
-      qs.length = raws.length ∧ ∀ x ∈ raws.zip qs, QueryDecoded D M x.1 x.2
+      qs.length = raws.length ∧ (∀ x ∈ raws.zip qs, QueryDecoded D M x.1 x.2) ∧
+        ∀ q ∈ qs, q.pred ∈ D.T.regulated.map (·.name)
   | _, [], qs, h => by
     simp only [decodeQueries, pure, Except.pure, Except.ok.injEq] at h
     subst h
@@ -65,12 +66,16 @@ theorem decodeQueries_ok {D : SoftDoc} {M : VE.FiniteModel VE.Bridge.Entity} :
     obtain ⟨xs, hxs, h⟩ := bind_ok h
     simp only [pure, Except.pure, Except.ok.injEq] at h
     subst h
-    obtain ⟨hl, hall⟩ := decodeQueries_ok hxs
-    refine ⟨by simp [hl], ?_⟩
-    intro y hy
-    rcases List.mem_cons.mp hy with rfl | hy
-    · exact decodeSelectedQuery_ok hx
-    · exact hall y hy
+    obtain ⟨hl, hall, hreg⟩ := decodeQueries_ok hxs
+    refine ⟨by simp [hl], ?_, ?_⟩
+    · intro y hy
+      rcases List.mem_cons.mp hy with rfl | hy
+      · exact decodeSelectedQuery_ok hx
+      · exact hall y hy
+    · intro y hy
+      rcases List.mem_cons.mp hy with rfl | hy
+      · exact (decodeSelectedQuery_ok hx).2.2.1
+      · exact hreg y hy
 
 /-- The soft route's answer to a `soft-selected` case: the case's own decoders read the source,
 the model and a non-empty list of queries, each decoded query is bound to the request's query at
@@ -114,9 +119,11 @@ theorem soft_wire_selected (j answer : Json) (h : runCase j = .ok answer)
     split at hqs
     · cases hqs
     · rename_i hne
-      obtain ⟨hl, hall⟩ := decodeQueries_ok hqs
-      refine ⟨id, environment, src, M, hM, raw, qs, hid, henv, hsrc, hmod, hq, ?_, by simpa using hl, hall, rfl⟩
-      simpa [Array.isEmpty] using hne
+      obtain ⟨hl, hall, hreg⟩ := decodeQueries_ok hqs
+      refine ⟨id, environment, src, M, hM, raw, qs, hid, henv, hsrc, hmod, hq, ?_, by simpa using hl, hall, ?_⟩
+      · simpa [Array.isEmpty] using hne
+      · unfold SelectedAnswer
+        rw [List.map_congr_left (fun q hq => selectedRow_eq src.D M q (hreg q hq))]
   · cases hqs
 
 end VE.SoftNorms.Run

@@ -135,10 +135,80 @@ def decodeQueries (D : SoftDoc) (M : VE.FiniteModel VE.Bridge.Entity) :
     let xs ← decodeQueries D M (i + 1) qs
     pure (x :: xs)
 
-/-- One result row: the query as sent, the selected rules and the outcome. -/
-def selectedRow (D : SoftDoc) (M : VE.FiniteModel VE.Bridge.Entity) (q : SelectedQuery) : Json :=
+/-! ## One expansion per document
+
+`circ` builds its substitution table (`expTable`) as nested closures, which recompute a layer's
+expansion at every use. The kind expands each rule's selection formula and each regulated atom once
+per case, with the table built once as a list (`expList`); `expList_lookup` and `expanded_circ` say
+these are `circ`'s formulas, so the answer is `selectedAt` and `outcomeAt` (`selectedRow_eq`). -/
+
+/-- The table as a list: each layer symbol before `k` with its base expansion, latest first. -/
+def expList (T : Tree) : Nat → List (String × VE.Formula)
+  | 0 => []
+  | k + 1 =>
+    let rest := expList T k
+    match (syms T)[k]? with
+    | some q => (q.name, substWith (fun n => ((rest.find? (·.1 == n)).map (·.2))) (q.meaning T)) :: rest
+    | none => rest
+
+/-- A lookup in `expList`. -/
+def listTable (l : List (String × VE.Formula)) : Table := fun n => (l.find? (·.1 == n)).map (·.2)
+
+theorem expList_lookup (T : Tree) : ∀ k, listTable (expList T k) = expTable T k
+  | 0 => rfl
+  | k + 1 => by
+    funext n
+    have ih := expList_lookup T k
+    simp only [expList, expTable]
+    cases (syms T)[k]? with
+    | none => exact congrFun ih n
+    | some q =>
+      simp only [listTable, List.find?_cons] at ih ⊢
+      by_cases h : n = q.name
+      · subst h
+        simp only [beq_self_eq_true, ↓reduceIte, Option.map_some]
+        exact congrArg (fun t => some (substWith t (q.meaning T))) ih
+      · have : (q.name == n) = false := by simpa [beq_iff_eq] using Ne.symm h
+        simp only [this, h, ↓reduceIte]
+        exact congrFun ih n
+
+/-- Every rule with its expanded selection formula, and every regulated predicate with its expanded
+atom, for one document. -/
+def expanded (D : SoftDoc) : List (SoftNode × VE.Formula) × List (String × VE.Formula) :=
+  let tbl := listTable (expList (soften D).T (size (soften D)))
+  (D.T.nodes.map fun N => (N, substWith tbl (selects' D N)),
+    D.T.regulated.map fun r => (r.name, substWith tbl (atom r.name (sortsOf D r.name))))
+
+theorem expanded_circ (D : SoftDoc) (φ : VE.Formula) :
+    substWith (listTable (expList (soften D).T (size (soften D)))) φ = circ D φ := by
+  rw [expList_lookup]; rfl
+
+/-- One result row: the query as sent, the rules selected and the outcome, read from `expanded D`. -/
+def selectedRow (E : List (SoftNode × VE.Formula) × List (String × VE.Formula))
+    (M : VE.FiniteModel VE.Bridge.Entity) (q : SelectedQuery) : Json :=
   Json.mkObj [("predicate", .str q.pred), ("tuple", toJson q.ids),
-    ("selected", toJson (selectedAt D M q.pred q.tuple)), ("outcome", .bool (outcomeAt D M q.pred q.tuple))]
+    ("selected", toJson ((E.1.filter fun x => x.1.pred == q.pred && x.2.eval M (tupleVal q.tuple)).map (·.1.name))),
+    ("outcome", .bool (match E.2.find? (·.1 == q.pred) with
+      | some x => x.2.eval M (tupleVal q.tuple)
+      | none => false))]
+
+/-- For a regulated predicate, the row is `selectedAt` and `outcomeAt`. -/
+theorem selectedRow_eq (D : SoftDoc) (M : VE.FiniteModel VE.Bridge.Entity) (q : SelectedQuery)
+    (hp : q.pred ∈ D.T.regulated.map (·.name)) :
+    selectedRow (expanded D) M q = Json.mkObj [("predicate", .str q.pred), ("tuple", toJson q.ids),
+      ("selected", toJson (selectedAt D M q.pred q.tuple)), ("outcome", .bool (outcomeAt D M q.pred q.tuple))] := by
+  unfold selectedRow expanded selectedAt outcomeAt
+  simp only [expanded_circ, List.filter_map, List.map_map, List.find?_map]
+  obtain ⟨r, hr, hname⟩ := List.mem_map.mp hp
+  obtain ⟨r', hfind⟩ : ∃ r', D.T.regulated.find? (fun x => x.name == q.pred) = some r' :=
+    Option.isSome_iff_exists.mp (List.find?_isSome.mpr ⟨r, hr, by simp [hname]⟩)
+  have hname' : r'.name = q.pred := by simpa using List.find?_some hfind
+  have hf : ∀ g : Regulated → VE.Formula,
+      D.T.regulated.find? ((fun x : String × VE.Formula => x.1 == q.pred) ∘ fun r => (r.name, g r)) = some r' :=
+    fun g => by simpa [Function.comp_def] using hfind
+  rw [hf]
+  simp only [Option.map_some, hname']
+  rfl
 
 /-- The kind `soft-selected`: `environment`, `norms`, `model` and a non-empty `queries`. A model
 that fails the soft background is answered with `background: false`, not refused. -/
@@ -151,7 +221,8 @@ def runSelected (id : String) (j : Json) : Except String Json := do
       if raw.isEmpty then .error "InvalidInput: soft-selected needs at least one query"
       else decodeQueries src.D M 0 raw.toList
     | _ => .error "InvalidInput: soft-selected needs a queries array")
+  let E := expanded src.D
   pure (VE.Route.Wire.ok id [("background", .bool (classificationBackgroundValid src.D M)),
-    ("results", Json.arr (qs.map (selectedRow src.D M)).toArray)])
+    ("results", Json.arr (qs.map (selectedRow E M)).toArray)])
 
 end VE.SoftNorms.Run
