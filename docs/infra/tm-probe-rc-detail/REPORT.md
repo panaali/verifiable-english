@@ -42,7 +42,7 @@ Command for each: `uv run pytest -q tests/test_trust_mutants_probe_scope.py -k "
 
 - New and changed tests, plus the Lean F3 test, listed above.
 - `uv run pytest -q tests/test_trust_mutants_probe_scope.py` (whole file, first version): 40 passed, 1 failed (the F3 case, fixed as described above).
-- The final selected run's result is recorded by the chain (`MAC_PYTEST_NO_DEFER=1 mac-pytest.sh --select`) on the committed HEAD.
+- Final selected run on the committed tree (`MAC_PYTEST_NO_DEFER=1 zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`): exit 0, 5 shards on GitHub Actions (run tm-probe-rc-detail-4445a5f2-t468441), "summary: selected tests ran ... exit=0; 956s". After it, only this docs/*.md file changed.
 
 ## Notes for the DRI
 
