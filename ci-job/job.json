@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-tm-probe-rc-detail-14f22794-t470577-s3",
+ "head": "1696aa3af8ea895350bebd655db817038f52f55b",
+ "argv": [
+  "armsh-cand-tm-probe-rc-detail-14f22794-t470577-s3",
+  "1696aa3af8ea895350bebd655db817038f52f55b",
+  "cda76572e04c1945306e90a0e389dc1d75967ecf",
+  "-",
+  "-",
+  "4",
+  "3/4"
+ ]
+}
