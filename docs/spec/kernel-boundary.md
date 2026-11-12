@@ -13,17 +13,17 @@ Labels: **(M)** measured on main `97b3c7999a` with the commands in section 1; **
    service mode's way to a verdict. Its trusted lines are its *spec* (what the acceptance theorems
    say, transitively) plus its *wrap* (what runs between the wire and the code the theorems are
    about). `tools/kernel_closure.py` measures both from the compiled Lean environment (section 2).
-2. **The kernel is three paths that already exist:** the route, norms and soft norms. Together they
-   are **8,732 lines (M)**, under the 10,000-line target. The `checkCertificate` mode's path is a
-   candidate: its theorems state what the checker's decision means, not what its runner's answer
-   means, so its wire (the stale-certificate binding check, the closure branch, the decoders) is
-   unproved, as in `metered` (section 1.2; KB-6). The five frozen keys rest on 16,607 lines (M):
-   the three kernel paths plus wire code around two proved evaluators (`metered`, `quantity`) that
-   no theorem covers yet (section 1.3).
+2. **The kernel is four paths:** the route, norms, soft norms and, since KB-7, the `metered` mode's
+   budgeted evaluation. Together they are **9,504 lines (M)**, under the 10,000-line target. The
+   `checkCertificate` mode's path is a candidate: its theorems state what the checker's decision
+   means, not what its runner's answer means, so its wire (the stale-certificate binding check, the
+   closure branch, the decoders) is unproved (section 1.2; KB-6). The five frozen keys rest on
+   16,185 lines (M): the four kernel paths plus wire code around one proved evaluator (`quantity`), the
+   risk route and three validators that no theorem covers yet (section 1.3).
 3. **Only the kernel states a verdict.** Every other mode is *shell*: it may elaborate, search,
    display and refuse, and it may show a verdict only as a row the kernel itself produced for a
-   case the answer carries (the carry rule, section 3). Today 54 definitions write a verdict token
-   and 53 of them, in 27 modules, are outside the kernel (M); that count goes to zero.
+   case the answer carries (the carry rule, section 3). Today 57 definitions write a verdict token
+   and 56 of them, in 28 modules, are outside the kernel (M); that count goes to zero.
 4. **One statement form.** A document's checked content is one core document: definitions, rules
    (soft-norm nodes) and premises over one vocabulary, `(X : SoftDoc, P : List Formula)`, whose
    acceptance theorem is already proved for any `X` and any `P` (`VE.Compose.slot_route_acceptance`).
@@ -68,20 +68,20 @@ python3 tools/kernel_closure.py --out docs/kernel/closure-baseline.json
 | Path | Tier | Theorems | Spec | Wrap | Lines |
 |---|---|---:|---:|---:|---:|
 | route | kernel | 26 | 4,254 | 15 | 4,265 |
-| norms | kernel | 21 | 4,365 | 2,703 | 4,404 |
-| softNorms | kernel | 2 | 4,730 | 35 | 4,738 |
-| **kernel, distinct lines** | | | | | **8,732** |
+| norms | kernel | 21 | 4,371 | 2,709 | 4,410 |
+| softNorms | kernel | 3 | 4,753 | 35 | 4,761 |
+| **kernel, distinct lines** | | | | | **9,504** |
 | certificate (`checkCertificate`) | candidate | 4 | 1,372 | 637 | 1,377 |
-| metered (`evaluate-budgeted`) | candidate | 7 | 519 | 3,761 | 3,761 |
+| metered (`evaluate-budgeted`) | kernel | 2 | 3,245 | 2,080 | 3,251 |
 | quantity | candidate | 4 | 613 | 1,804 | 2,040 |
-| rights | candidate | 2 | 5,598 | 35 | 5,614 |
-| alternatives | candidate | 2 | 3,907 | 22 | 3,920 |
-| reports | candidate | 3 | 4,395 | 32 | 4,417 |
-| normDefaults | candidate | 7 | 5,693 | 5,503 | 6,433 |
-| risk | candidate | 6 | 6,159 | 5,669 | 7,839 |
-| readingsRoute | candidate | 8 | 9,357 | 20,356 | 24,044 |
-| discourse | candidate | 6 | 35,727 | 4,541 | 35,733 |
-| document | candidate | 7 | 34,403 | 12,347 | 35,231 |
+| rights | candidate | 2 | 5,620 | 35 | 5,636 |
+| alternatives | candidate | 2 | 3,908 | 22 | 3,921 |
+| reports | candidate | 3 | 4,396 | 32 | 4,418 |
+| normDefaults | candidate | 7 | 5,702 | 5,533 | 6,463 |
+| risk | candidate | 6 | 6,160 | 5,670 | 7,840 |
+| readingsRoute | candidate | 8 | 9,403 | 20,443 | 24,135 |
+| discourse | candidate | 6 | 35,931 | 4,541 | 35,937 |
+| document | candidate | 7 | 34,608 | 12,409 | 35,436 |
 
 All (M), saved in `docs/kernel/closure-baseline.json`. Other measurements of the same run:
 
@@ -91,8 +91,8 @@ All (M), saved in `docs/kernel/closure-baseline.json`. Other measurements of the
 | Code that runs for the document mode | 35,142 lines (M) |
 | Spec of the abstract route theorems of every family (`*_route_acceptance`, `_countermodel`, `_entails_iff`, `_intended`; 37 theorems) | 4,445 lines (M) |
 | Spec of `VE.Norms.norms_route_acceptance` alone | 761 lines (M) |
-| Definitions that write a verdict token, outside example, check and schema modules | 54, of them 53 in 27 modules outside the kernel (M) |
-| Lean lines under the frozen keys' answers (the registry's `keys`; section 1.3) | 16,607, of them 8,732 in the kernel (M) |
+| Definitions that write a verdict token, outside example, check and schema modules | 57, of them 56 in 28 modules outside the kernel (M) |
+| Lean lines under the frozen keys' answers (the registry's `keys`; section 1.3) | 16,185, of them 9,504 in the kernel (M) |
 
 Reading the table:
 
@@ -105,8 +105,18 @@ Reading the table:
   profile gate only (`runCase j = .ok r → ProfilesAccepted …`, with `r` unused); the ones that say
   what `valid` means are about the decision `Query.accepts` / `ClosureQuery.accepts`. So those are
   its subject, and the runner, the binding check `decodeQuery`, `runClosureCase` and the decoders
-  are its 637-line wrap: proved core, unproved wire, as in `metered`. Kept in the kernel it would
-  make the total 9,614 (M). KB-6 promotes it once a theorem on `runCase` states its answer.
+  are its 637-line wrap: proved core, unproved wire, as `metered` was before KB-7. KB-6 promotes it
+  once a theorem on `runCase` states its answer.
+- `metered` is in the kernel since KB-7: `VE.Route.MeteredRun.runWith_sound` states, on the runner
+  every entry of the mode calls, that an `evaluate-budgeted` answer encodes a metered result over
+  the formulas and the model the case's decoders read, and that a completed value is the truth of
+  every formula in that model. Before it the path had a 519-line proved core inside 3,761 lines of
+  wire code under no theorem (first measurement). Its `non-vacuity` kind has no theorem and is
+  listed as uncovered.
+- `softNorms` lists `VE.SoftNorms.Run.soft_wire_elaborate` since KB-7: the `background` and
+  `premises` fields of a `soft-elaborate` answer are, entry for entry, the encodings of
+  `background' D` and `elaborate (soften D).T`, the lists the soft route's acceptance theorems are
+  about. The keys' "yes" answers replay certificates over exactly these fields.
 - `document` and `discourse` are large because their theorems are stated in terms of other large
   functions (`checkDocSets j = .ok a → … checkCore j' = .ok a …`): the specification is the
   implementation. This is the wrapper architecture as one number.
@@ -124,16 +134,17 @@ five reproduce their recorded answers with exit code 0 (M): RSP 111/126, Prepare
 |---|---:|
 | Service modes the five keys call | 9 of 43 |
 | Calls to `document`, `readingsRoute` or `discourse` (35,142, 20,356 and 35,782 lines of code) | 0 |
-| Lean lines under the keys' answers (spec and wrap of every path they call; validators in full) | 16,607 |
-| of which in the proved kernel | 8,732 |
-| Calls to `metered` `evaluate-budgeted` (proved core 519 lines; 3,761 lines of wire code under no theorem) | 24,945 |
+| Lean lines under the keys' answers (spec and wrap of every path they call; validators in full) | 16,185 |
+| of which in the proved kernel | 9,504 |
+| Calls to `metered` `evaluate-budgeted` (kernel since KB-7; before it, 3,761 lines of wire code under no theorem) | 24,945 |
 | Calls to `quantity` (proved core 613 lines; 1,804 lines of wire code under no theorem) | 9,452 |
 | Calls to `route` `certificate` (kernel) | 12,746 |
 
-So the keyed answers do not depend on the wrapper modes at all, and what separates them from a fully
-proved path is about 7,900 lines of wire code around two proved evaluators and three validators
-(KB-7, KB-8). In every harness the Python side holds the premises between `soft-elaborate` and
-`route certificate`: the harnesses already work by the carry rule of section 3.
+So the keyed answers do not depend on the wrapper modes at all. What still separates them from a
+fully proved path is the wire code around the `quantity` evaluator (KB-8), the risk route and the
+three validators. In every harness the Python side holds the premises between `soft-elaborate` and
+`route certificate`: the harnesses already work by the carry rule of section 3, and since KB-7 a
+theorem states that those premises are the document's (`soft_wire_elaborate`).
 
 ## 2. The measure
 
@@ -347,7 +358,7 @@ verifier's amendment (an import boundary, not a flag; an expiry).
 5. `tools/trust_map.py` keeps running until KB-5; its number is reported as "classified lines",
    never as the trusted base.
 
-Targets (A, to be re-set after KB-4 measures them): kernel at most 8,732 now, at most 7,000 after
+Targets (A, to be re-set after KB-4 measures them): kernel at most 9,504 now, at most 7,000 after
 KB-4; verdict writers outside the kernel 0 after KB-2; document-mode spec at most 1,500 after KB-2a.
 
 ## 7. Build work, in order
