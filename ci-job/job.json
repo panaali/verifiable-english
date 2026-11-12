@@ -1,0 +1,12 @@
+{
+ "job": "testmap-17581425-t488968-s2",
+ "head": "96d41b90247661ba2c6e6068e8054760a30235ad",
+ "argv": [
+  "testmap-17581425-t488968-s2",
+  "96d41b90247661ba2c6e6068e8054760a30235ad",
+  "96d41b90247661ba2c6e6068e8054760a30235ad",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-a8500b42912b.tar.zst",
+  "5c5c2e096b1e185a1f1f88ec6cff6a689c24e63fe99922608dc81f10aec3acf9",
+  "shard=ulimit -s 8192; tc=$(cat lean/lean-toolchain); tc=${tc//\\//--}; mkdir -p ~/.elan/toolchains; ln -sfn /opt/lean ~/.elan/toolchains/${tc//:/---}; mkdir -p ~/.elan/bin; for t in lean lake; do [ -e ~/.elan/bin/$t ] || ln -sfn /opt/lean/bin/$t ~/.elan/bin/$t; done; uv run --frozen python tools/test_map.py record --no-merge --jobs 4 --output \"$RUNNER_TEMP/out/map-s2.json.gz\" tests/test_wire_gate_corpus.py tests/test_usecase_key_transcription.py tests/test_lean_dump_cache.py tests/test_relay_binding_inventory.py tests/test_gate_quarantine.py tests/test_nested_pytest.py tests/test_hang_guards.py tests/test_since_pass.py tests/test_test_chunks.py tests/test_pf_fidelity_fix.py tests/test_stage0_inventory.py tests/test_document_split.py tests/test_readings_verdicts_split.py tests/test_heavy_tests.py tests/test_keyed_answers_authority.py tests/test_safetyfw_accounting.py tests/test_w1_delta_suite.py tests/test_select_fast_stage.py tests/test_test_speed_b2.py 2>&1 | tee \"$RUNNER_TEMP/out/shard-full.txt\"; exit ${PIPESTATUS[0]}"
+ ]
+}
