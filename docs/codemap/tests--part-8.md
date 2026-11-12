@@ -1,4 +1,3 @@
-- `tests/test_w6a_limit_generator.py` — W6a limits directive, item 3: a differential limit-busting generator.
 - `tests/test_w6a_limits.py` — W6a limits directive: static limits before any work, metered constructions.
 - `tests/test_w6a_looprecheck1.py` — Regressions for the W6a loop recheck 1 findings, each generalized to its class.
 - `tests/test_w6a_looprecheck2.py` — W6a loop recheck 2 regressions: budgeted checks see one domain order.

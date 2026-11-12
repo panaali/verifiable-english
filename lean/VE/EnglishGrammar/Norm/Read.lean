@@ -14,23 +14,33 @@ inductive NormOutcome where
   | stopped (index : Nat) (o : VE.Grammar.Outcome Tok Reject Piece)
   | misplaced (f : BlockFault)
 
-/-- `read`'s checks, on the norm grammar, in `read`'s order. The start type is `.norm`. Then `lex`, then
-`readDocument` from `NState.init`, then `assemble`. -/
-def readNorm (E : Env) (O : Overlay) (L : Lexicon) (b : Nat) (s : String) : NormOutcome :=
-  let G := normGrammar E L
+/-- `readNorm`'s steps on the grammar `G` it built and the text's sentences with their byte positions (`lexSpans`;
+`lex` is them with the positions erased): `read`'s checks, then `readDocument` from `NState.init`, then `assemble`.
+The statement mode builds `G` and lexes once and reads both again (the evaluator rule of 2026-10-27). -/
+def readNormOn (E : Env) (O : Overlay) (L : Lexicon) (b : Nat) (G : VE.Grammar.Grammar Terminal)
+    (lexed : Except Reject (Array (Array Spanned))) : NormOutcome :=
   let A := normActs E L
   if !L.valid E O then .invalidGrammar .lexicon
   else if !(G.wf && terminatorFree G) then .invalidGrammar .notWellFormed
   else if !(G.typed sig (normTy E L) A && decide (normTy E L G.start = .norm)) then .invalidGrammar .notTyped
-  else match lex s with
+  else match lexed with
     | .error r => .lexical r
     | .ok sents =>
-      match readDocument G (normMeaning G A) NState.init b sents.toList with
+      match readDocument G (normMeaning G A) NState.init b (sents.map fun sent => sent.map (·.1)).toList with
       | (.ok ps, _) =>
         match assemble (ps.map (·.1)) with
         | .ok rs => .ok rs
         | .error f => .misplaced f
       | (.stopped i o, _) => .stopped i o
+
+/-- `read`'s checks, on the norm grammar, in `read`'s order. The start type is `.norm`. Then `lex`, then
+`readDocument` from `NState.init`, then `assemble`. -/
+def readNorm (E : Env) (O : Overlay) (L : Lexicon) (b : Nat) (s : String) : NormOutcome :=
+  readNormOn E O L b (normGrammar E L) (lexSpans s)
+
+/-- `readNorm` is `readNormOn` on the grammar it builds and the sentences `lexSpans` gives. -/
+theorem readNorm_on (E : Env) (O : Overlay) (L : Lexicon) (b : Nat) (s : String) :
+    readNorm E O L b s = readNormOn E O L b (normGrammar E L) (lexSpans s) := rfl
 
 def NormOneReading (E : Env) (O : Overlay) (L : Lexicon) (s : String) (rs : List NormStatement) : Prop :=
   L.valid E O = true ∧
@@ -47,7 +57,7 @@ theorem readNorm_checks {E : Env} {O : Overlay} {L : Lexicon} {b : Nat} {s : Str
     L.valid E O = true ∧ (normGrammar E L).wf = true ∧ terminatorFree (normGrammar E L) = true ∧
       (normGrammar E L).typed sig (normTy E L) (normActs E L) = true ∧
       normTy E L (normGrammar E L).start = .norm := by
-  unfold readNorm at h
+  unfold readNorm readNormOn at h
   by_cases h1 : L.valid E O = true
   · by_cases h2 : ((normGrammar E L).wf && terminatorFree (normGrammar E L)) = true
     · by_cases h3 : ((normGrammar E L).typed sig (normTy E L) (normActs E L) &&
@@ -76,8 +86,9 @@ theorem readNorm_eq {E : Env} {O : Overlay} {L : Lexicon} {b : Nat} {s : String}
           | .ok rs => .ok rs
           | .error f => .misplaced f
         | (.stopped i o, _) => .stopped i o := by
-  unfold readNorm
+  unfold readNorm readNormOn lex
   simp only [h1, h2, h3, h4, h5, Bool.not_true, Bool.and_self, decide_true, Bool.false_eq_true, if_false]
+  cases lexSpans s <;> rfl
 
 /-- A document of norm sentences carries no mark. -/
 theorem doc_unmarked {E : Env} {L : Lexicon} : ∀ {st st2 : NState} {ws : List (List Tok)} {ps : List (Piece × Bool)},

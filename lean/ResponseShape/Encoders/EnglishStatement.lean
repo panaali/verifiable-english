@@ -56,18 +56,23 @@ theorem case_identities (j : Json) :
 abbrev rowSkel : Skel :=
   .alt [skel% "english.statement.json#/$defs/rule_row", skel% "english.statement.json#/$defs/precedence_row"]
 
-/-- A `one` answer's rows hold no translation-mode statement (`oneSpans` refuses one). -/
-theorem noSource_of_oneSpans {source : String} {rs : List NormStatement} {sps : List (Nat × Nat)}
-    (h : Run.oneSpans source rs = some sps) : ∀ r ∈ rs, ∀ cs, r ≠ .source cs := by
+/-- A `one` answer's rows hold no translation-mode statement (`oneSpansOf` refuses one). -/
+theorem noSource_of_oneSpansOf {lexed : Except Reject (Array (Array Spanned))} {rs : List NormStatement}
+    {sps : List (Nat × Nat)} (h : Run.oneSpansOf lexed rs = some sps) : ∀ r ∈ rs, ∀ cs, r ≠ .source cs := by
   intro r hr cs0 heq
   subst heq
-  unfold Run.oneSpans at h
+  unfold Run.oneSpansOf at h
   simp only [] at h
   split at h
   · cases h
   · rename_i hc
     simp only [Bool.or_eq_true, not_or, List.any_eq_true, not_exists, not_and] at hc
     exact absurd rfl (hc.1 _ hr)
+
+/-- A `one` answer's rows hold no translation-mode statement (`oneSpans` refuses one). -/
+theorem noSource_of_oneSpans {source : String} {rs : List NormStatement} {sps : List (Nat × Nat)}
+    (h : Run.oneSpans source rs = some sps) : ∀ r ∈ rs, ∀ cs, r ≠ .source cs :=
+  noSource_of_oneSpansOf h
 
 theorem rows_fits (rs : List NormStatement) (sps : List (Nat × Nat)) (h : ∀ r ∈ rs, ∀ cs, r ≠ .source cs) :
     Fits req (.arr [] rowSkel) (Json.arr ((rs.zip sps).map fun (r, sp) => Run.statementRow rs sp r).toArray) := by
@@ -81,7 +86,8 @@ theorem rows_fits (rs : List NormStatement) (sps : List (Nat × Nat)) (h : ∀ r
   | source cs0 => exact absurd rfl (h _ hr cs0)
 
 section outcome
-variable (cs : VE.EnglishGrammar.Run.Case) (tags : Thunk (Array String)) (source : String) (ids : Json)
+variable (cs : VE.EnglishGrammar.Run.Case) (tags : Thunk (Array String)) (source : String)
+  (lexed : Except Reject (Array (Array Spanned))) (ids : Json)
   (hids : Fits req identitiesSkel ids)
 include hids
 
@@ -92,21 +98,21 @@ macro "coded_simp" : tactic =>
     Option.toList, List.map_cons, List.map_nil])
 
 theorem misplaced_fits (f : BlockFault) :
-    Fits req answerSkel (Json.mkObj (Run.outcomeFields cs tags source (.misplaced f) ++ [("identities", ids)])) := by
+    Fits req answerSkel (Json.mkObj (Run.outcomeFields cs tags source lexed (.misplaced f) ++ [("identities", ids)])) := by
   cases f <;> simp only [Run.outcomeFields, BlockFault.code, BlockFault.text, BlockFault.sentence?] <;>
     coded_simp <;> fits using hids
 
 theorem lexical_fits (r : Reject) :
-    Fits req answerSkel (Json.mkObj (Run.outcomeFields cs tags source (.lexical r) ++ [("identities", ids)])) := by
+    Fits req answerSkel (Json.mkObj (Run.outcomeFields cs tags source lexed (.lexical r) ++ [("identities", ids)])) := by
   cases r <;> simp only [Run.outcomeFields, VE.EnglishGrammar.Run.lexicalSpan, Reject.code] <;> coded_simp <;> fits using hids
 
 theorem invalid_fits (g : GrammarFault) :
-    Fits req answerSkel (Json.mkObj (Run.outcomeFields cs tags source (.invalidGrammar g) ++ [("identities", ids)])) := by
+    Fits req answerSkel (Json.mkObj (Run.outcomeFields cs tags source lexed (.invalidGrammar g) ++ [("identities", ids)])) := by
   cases g <;> simp only [Run.outcomeFields, VE.EnglishGrammar.Run.invalidFields, VE.EnglishGrammar.Run.faultName,
     VE.EnglishGrammar.Run.failureJson] <;> coded_simp <;> (repeat' split) <;> fits using hids
 
 theorem stopped_fits (i : Nat) (o : VE.Grammar.Outcome Tok Reject Piece) :
-    Fits req answerSkel (Json.mkObj (Run.outcomeFields cs tags source (.stopped i o) ++ [("identities", ids)])) := by
+    Fits req answerSkel (Json.mkObj (Run.outcomeFields cs tags source lexed (.stopped i o) ++ [("identities", ids)])) := by
   cases o with
   | rejected r =>
     cases r <;> simp only [Run.outcomeFields, Run.stoppedFields, Reject.code] <;> coded_simp <;>
@@ -116,12 +122,12 @@ theorem stopped_fits (i : Nat) (o : VE.Grammar.Outcome Tok Reject Piece) :
       fits using hids, treeJson_fits
 
 theorem ok_fits (rs : List NormStatement) :
-    Fits req answerSkel (Json.mkObj (Run.outcomeFields cs tags source (.ok rs) ++ [("identities", ids)])) := by
+    Fits req answerSkel (Json.mkObj (Run.outcomeFields cs tags source lexed (.ok rs) ++ [("identities", ids)])) := by
   simp only [Run.outcomeFields]
   split
   · split
     · rename_i sps h
-      have hs := noSource_of_oneSpans h
+      have hs := noSource_of_oneSpansOf h
       simp only [VE.EnglishGrammar.Run.status, List.cons_append, List.nil_append]
       fits using hids, rows_fits
     · coded_simp
@@ -133,13 +139,13 @@ theorem ok_fits (rs : List NormStatement) :
       fits using hids, spanRow_fits
 
 theorem outcome_fits (o : NormOutcome) :
-    Fits req answerSkel (Json.mkObj (Run.outcomeFields cs tags source o ++ [("identities", ids)])) := by
+    Fits req answerSkel (Json.mkObj (Run.outcomeFields cs tags source lexed o ++ [("identities", ids)])) := by
   cases o
-  · exact ok_fits cs tags source ids hids _
-  · exact invalid_fits cs tags source ids hids _
-  · exact lexical_fits cs tags source ids hids _
-  · exact stopped_fits cs tags source ids hids _ _
-  · exact misplaced_fits cs tags source ids hids _
+  · exact ok_fits cs tags source lexed ids hids _
+  · exact invalid_fits cs tags source lexed ids hids _
+  · exact lexical_fits cs tags source lexed ids hids _
+  · exact stopped_fits cs tags source lexed ids hids _ _
+  · exact misplaced_fits cs tags source lexed ids hids _
 
 end outcome
 
@@ -154,7 +160,7 @@ theorem answer_fits (id : String) (cs : VE.EnglishGrammar.Run.Case) (source : St
     fits
     all_goals exact hids
   · fits
-    all_goals exact outcome_fits cs _ source _ hids _
+    all_goals exact outcome_fits cs _ source _ _ hids _
 
 /-- The request decoder keeps `decodeCase`'s case, so its identities fit. -/
 theorem request_identities (j : Json) :
