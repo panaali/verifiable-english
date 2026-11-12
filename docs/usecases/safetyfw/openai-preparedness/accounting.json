@@ -1,0 +1,3062 @@
+{
+ "case": "openai-preparedness",
+ "source_sha256": "d2e3dd5b80e5bb86079911230358e0c2bb78f12435757959e14dae50e4d48d0f",
+ "blocks": [
+  {
+   "id": "f1-misuse-bio-strict",
+   "file": "rules.d1.ve",
+   "span_length": 97,
+   "used": [
+    "biological_and_chemical_high",
+    "external_deployment",
+    "misuse_safeguards",
+    "reached"
+   ],
+   "unaccounted": [
+    "require"
+   ],
+   "entries": [
+    {
+     "words": "Require",
+     "reason": "reading",
+     "arg": "RS1"
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f1-misuse-bio-default",
+   "file": "rules.d1.ve",
+   "span_length": 132,
+   "used": [
+    "biological_and_chemical_high",
+    "external_deployment",
+    "misuse_safeguards",
+    "reached"
+   ],
+   "unaccounted": [
+    "guidelin",
+    "require",
+    "risk",
+    "specific"
+   ],
+   "entries": [
+    {
+     "words": "Require",
+     "reason": "reading",
+     "arg": "RS1"
+    },
+    {
+     "words": "Risk-specific safeguard guidelines",
+     "reason": "reading",
+     "arg": "RS1"
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f1-misuse-cyb-strict",
+   "file": "rules.d1.ve",
+   "span_length": 94,
+   "used": [
+    "cybersecurity_high",
+    "external_deployment",
+    "misuse_safeguards",
+    "reached"
+   ],
+   "unaccounted": [
+    "require"
+   ],
+   "entries": [
+    {
+     "words": "Require",
+     "reason": "reading",
+     "arg": "RS1"
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f1-misuse-cyb-default",
+   "file": "rules.d1.ve",
+   "span_length": 129,
+   "used": [
+    "cybersecurity_high",
+    "external_deployment",
+    "misuse_safeguards",
+    "reached"
+   ],
+   "unaccounted": [
+    "guidelin",
+    "require",
+    "risk",
+    "specific"
+   ],
+   "entries": [
+    {
+     "words": "Require",
+     "reason": "reading",
+     "arg": "RS1"
+    },
+    {
+     "words": "Risk-specific safeguard guidelines",
+     "reason": "reading",
+     "arg": "RS1"
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f1-alignment-cyb-strict",
+   "file": "rules.d1.ve",
+   "span_length": 112,
+   "used": [
+    "alignment_safeguards",
+    "cybersecurity_high",
+    "large_scale_internal",
+    "reached"
+   ],
+   "unaccounted": [
+    "require"
+   ],
+   "entries": [
+    {
+     "words": "Require",
+     "reason": "reading",
+     "arg": "RS1"
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f1-alignment-cyb-default",
+   "file": "rules.d1.ve",
+   "span_length": 147,
+   "used": [
+    "alignment_safeguards",
+    "cybersecurity_high",
+    "large_scale_internal",
+    "reached"
+   ],
+   "unaccounted": [
+    "guidelin",
+    "require",
+    "risk",
+    "specific"
+   ],
+   "entries": [
+    {
+     "words": "Require",
+     "reason": "reading",
+     "arg": "RS1"
+    },
+    {
+     "words": "Risk-specific safeguard guidelines",
+     "reason": "reading",
+     "arg": "RS1"
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f1-security-strict",
+   "file": "rules.d1.ve",
+   "span_length": 61,
+   "used": [
+    "reached",
+    "security_controls"
+   ],
+   "unaccounted": [
+    "require"
+   ],
+   "entries": [
+    {
+     "words": "Require",
+     "reason": "reading",
+     "arg": "RS1"
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f1-security-default",
+   "file": "rules.d1.ve",
+   "span_length": 96,
+   "used": [
+    "reached",
+    "security_controls"
+   ],
+   "unaccounted": [
+    "guidelin",
+    "require",
+    "risk",
+    "safeguard",
+    "specific"
+   ],
+   "entries": [
+    {
+     "words": "Require",
+     "reason": "reading",
+     "arg": "RS1"
+    },
+    {
+     "words": "Risk-specific safeguard guidelines",
+     "reason": "reading",
+     "arg": "RS1"
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f1-halt-strict",
+   "file": "rules.d1.ve",
+   "span_length": 118,
+   "used": [
+    "critical",
+    "critical_standard_unspecified",
+    "further_development",
+    "halt_development",
+    "reached"
+   ],
+   "unaccounted": [
+    "control",
+    "meet",
+    "safeguard",
+    "secur",
+    "until"
+   ],
+   "entries": [
+    {
+     "words": "Until",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "we have specified safeguards and security controls that would meet a Critical standard",
+     "reason": "loss",
+     "arg": "1"
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f1-halt-default",
+   "file": "rules.d1.ve",
+   "span_length": 34,
+   "used": [
+    "critical",
+    "critical_standard_unspecified",
+    "further_development",
+    "halt_development",
+    "reached"
+   ],
+   "unaccounted": [
+    "guidelin",
+    "risk",
+    "safeguard",
+    "specific"
+   ],
+   "entries": [
+    {
+     "words": "Risk-specific safeguard guidelines",
+     "reason": "reading",
+     "arg": "RS1"
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f1-contrib-bio-strict",
+   "file": "rules.d1.ve",
+   "span_length": 67,
+   "used": [
+    "biological_and_chemical_critical",
+    "pandemic_policy_contribution",
+    "reached"
+   ],
+   "unaccounted": [],
+   "entries": [],
+   "problems": []
+  },
+  {
+   "id": "f1-contrib-bio-default",
+   "file": "rules.d1.ve",
+   "span_length": 34,
+   "used": [
+    "biological_and_chemical_critical",
+    "pandemic_policy_contribution",
+    "reached"
+   ],
+   "unaccounted": [
+    "guidelin",
+    "risk",
+    "safeguard",
+    "specific"
+   ],
+   "entries": [
+    {
+     "words": "Risk-specific safeguard guidelines",
+     "reason": "reading",
+     "arg": "RS1"
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f1-contrib-cyb-strict",
+   "file": "rules.d1.ve",
+   "span_length": 76,
+   "used": [
+    "cyberdefense_contribution",
+    "cybersecurity_high",
+    "reached"
+   ],
+   "unaccounted": [],
+   "entries": [],
+   "problems": []
+  },
+  {
+   "id": "f1-contrib-cyb-default",
+   "file": "rules.d1.ve",
+   "span_length": 34,
+   "used": [
+    "cyberdefense_contribution",
+    "cybersecurity_high",
+    "reached"
+   ],
+   "unaccounted": [
+    "guidelin",
+    "risk",
+    "safeguard",
+    "specific"
+   ],
+   "entries": [
+    {
+     "words": "Risk-specific safeguard guidelines",
+     "reason": "reading",
+     "arg": "RS1"
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f2-deploy",
+   "file": "rules.d1.ve",
+   "span_length": 248,
+   "used": [
+    "external_deployment",
+    "reached",
+    "safeguards_before_deployment"
+   ],
+   "unaccounted": [
+    "appropriate",
+    "capabil",
+    "control",
+    "cros",
+    "develop",
+    "requir",
+    "secur",
+    "system",
+    "threshold"
+   ],
+   "entries": [
+    {
+     "words": "Covered systems that cross this capability threshold are required to have",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "and appropriate security controls as they are developed",
+     "reason": "rule",
+     "arg": "f2-security-developed"
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f2-deploy-any",
+   "file": "rules.d1.ve",
+   "span_length": 248,
+   "used": [
+    "external_deployment",
+    "internal_deployment",
+    "reached",
+    "safeguards_before_deployment"
+   ],
+   "unaccounted": [
+    "appropriate",
+    "capabil",
+    "control",
+    "cros",
+    "develop",
+    "requir",
+    "secur",
+    "system",
+    "threshold"
+   ],
+   "entries": [
+    {
+     "words": "Covered systems that cross this capability threshold are required to have",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "and appropriate security controls as they are developed",
+     "reason": "rule",
+     "arg": "f2-security-developed"
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f2-reminder",
+   "file": "rules.d1.ve",
+   "span_length": 165,
+   "used": [
+    "external_deployment",
+    "reached",
+    "safeguards_before_deployment"
+   ],
+   "unaccounted": [
+    "capabil",
+    "reminder",
+    "system"
+   ],
+   "entries": [
+    {
+     "words": "As a reminder",
+     "reason": "exposition",
+     "arg": ""
+    },
+    {
+     "words": "covered systems that reach High capability",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f2-reminder-any",
+   "file": "rules.d1.ve",
+   "span_length": 165,
+   "used": [
+    "external_deployment",
+    "internal_deployment",
+    "reached",
+    "safeguards_before_deployment"
+   ],
+   "unaccounted": [
+    "capabil",
+    "reminder",
+    "system"
+   ],
+   "entries": [
+    {
+     "words": "As a reminder",
+     "reason": "exposition",
+     "arg": ""
+    },
+    {
+     "words": "covered systems that reach High capability",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f2-security-developed",
+   "file": "rules.d1.ve",
+   "span_length": 270,
+   "used": [
+    "development_security_controls",
+    "further_development",
+    "reached"
+   ],
+   "unaccounted": [
+    "associat",
+    "capabil",
+    "cros",
+    "deploy",
+    "effective",
+    "harm",
+    "minimize",
+    "requir",
+    "risk",
+    "robust",
+    "safeguard",
+    "severe",
+    "sufficient",
+    "threshold"
+   ],
+   "entries": [
+    {
+     "words": "Covered systems that cross this capability threshold are required to have",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "robust and effective safeguards that sufficiently minimize the associated risk of severe harm before they are deployed",
+     "reason": "rule",
+     "arg": "f2-deploy"
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f2-no-deploy",
+   "file": "rules.d1.ve",
+   "span_length": 131,
+   "used": [
+    "deployment_permitted",
+    "external_deployment",
+    "reached",
+    "sufficient_safeguards"
+   ],
+   "unaccounted": [
+    "associat",
+    "capabil",
+    "minimiz",
+    "pose",
+    "threshold",
+    "until"
+   ],
+   "entries": [
+    {
+     "words": "We do not deploy models that reach a High capability threshold until the associated risks that they pose are sufficiently minimized",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f2-no-deploy-any",
+   "file": "rules.d1.ve",
+   "span_length": 131,
+   "used": [
+    "deployment_permitted",
+    "external_deployment",
+    "internal_deployment",
+    "reached",
+    "sufficient_safeguards"
+   ],
+   "unaccounted": [
+    "associat",
+    "capabil",
+    "minimiz",
+    "pose",
+    "threshold",
+    "until"
+   ],
+   "entries": [
+    {
+     "words": "We do not deploy models that reach a High capability threshold until the associated risks that they pose are sufficiently minimized",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f3-develop",
+   "file": "rules.d1.ve",
+   "span_length": 378,
+   "used": [
+    "critical",
+    "further_development",
+    "reached",
+    "safeguards_during_development"
+   ],
+   "unaccounted": [
+    "additional",
+    "capabil",
+    "category",
+    "caution",
+    "danger",
+    "deploy",
+    "external",
+    "extreme",
+    "forecast",
+    "increas",
+    "internal",
+    "present",
+    "regardles",
+    "require",
+    "severe",
+    "track",
+    "treat",
+    "use"
+   ],
+   "entries": [
+    {
+     "words": "Increasing safeguards before internal use and further development",
+     "reason": "reading",
+     "arg": "RS18"
+    },
+    {
+     "words": "or are forecasted to reach",
+     "reason": "rule",
+     "arg": "f3-develop-forecast"
+    },
+    {
+     "words": "Critical capability",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "in a Tracked Category",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "present severe dangers",
+     "reason": "exposition",
+     "arg": ""
+    },
+    {
+     "words": "and should be treated with extreme caution",
+     "reason": "loss",
+     "arg": "1"
+    },
+    {
+     "words": "Such models require additional safeguards",
+     "reason": "loss",
+     "arg": "1"
+    },
+    {
+     "words": "regardless of whether or when they are externally deployed",
+     "reason": "exposition",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f3-develop-forecast",
+   "file": "rules.d1.ve",
+   "span_length": 378,
+   "used": [
+    "forecast_critical",
+    "further_development",
+    "safeguards_during_development"
+   ],
+   "unaccounted": [
+    "additional",
+    "category",
+    "caution",
+    "danger",
+    "deploy",
+    "external",
+    "extreme",
+    "increas",
+    "internal",
+    "present",
+    "regardles",
+    "require",
+    "severe",
+    "track",
+    "treat",
+    "use"
+   ],
+   "entries": [
+    {
+     "words": "Increasing safeguards before internal use and further development",
+     "reason": "reading",
+     "arg": "RS18"
+    },
+    {
+     "words": "in a Tracked Category",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "present severe dangers",
+     "reason": "exposition",
+     "arg": ""
+    },
+    {
+     "words": "and should be treated with extreme caution",
+     "reason": "loss",
+     "arg": "1"
+    },
+    {
+     "words": "Such models require additional safeguards",
+     "reason": "loss",
+     "arg": "1"
+    },
+    {
+     "words": "regardless of whether or when they are externally deployed",
+     "reason": "exposition",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f3-develop-inuse",
+   "file": "rules.d1.ve",
+   "span_length": 378,
+   "used": [
+    "critical",
+    "further_development",
+    "internal_deployment",
+    "reached",
+    "safeguards_during_development"
+   ],
+   "unaccounted": [
+    "additional",
+    "capabil",
+    "category",
+    "caution",
+    "danger",
+    "external",
+    "extreme",
+    "forecast",
+    "increas",
+    "present",
+    "regardles",
+    "require",
+    "severe",
+    "track",
+    "treat",
+    "use"
+   ],
+   "entries": [
+    {
+     "words": "Increasing safeguards before internal use and further development",
+     "reason": "reading",
+     "arg": "RS18"
+    },
+    {
+     "words": "or are forecasted to reach",
+     "reason": "rule",
+     "arg": "f3-develop-inuse-forecast"
+    },
+    {
+     "words": "Critical capability",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "in a Tracked Category",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "present severe dangers",
+     "reason": "exposition",
+     "arg": ""
+    },
+    {
+     "words": "and should be treated with extreme caution",
+     "reason": "loss",
+     "arg": "1"
+    },
+    {
+     "words": "Such models require additional safeguards",
+     "reason": "loss",
+     "arg": "1"
+    },
+    {
+     "words": "regardless of whether or when they are externally deployed",
+     "reason": "exposition",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f3-develop-inuse-forecast",
+   "file": "rules.d1.ve",
+   "span_length": 378,
+   "used": [
+    "forecast_critical",
+    "further_development",
+    "internal_deployment",
+    "safeguards_during_development"
+   ],
+   "unaccounted": [
+    "additional",
+    "category",
+    "caution",
+    "danger",
+    "external",
+    "extreme",
+    "increas",
+    "present",
+    "regardles",
+    "require",
+    "severe",
+    "track",
+    "treat",
+    "use"
+   ],
+   "entries": [
+    {
+     "words": "Increasing safeguards before internal use and further development",
+     "reason": "reading",
+     "arg": "RS18"
+    },
+    {
+     "words": "in a Tracked Category",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "present severe dangers",
+     "reason": "exposition",
+     "arg": ""
+    },
+    {
+     "words": "and should be treated with extreme caution",
+     "reason": "loss",
+     "arg": "1"
+    },
+    {
+     "words": "Such models require additional safeguards",
+     "reason": "loss",
+     "arg": "1"
+    },
+    {
+     "words": "regardless of whether or when they are externally deployed",
+     "reason": "exposition",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f3-reminder",
+   "file": "rules.d1.ve",
+   "span_length": 92,
+   "used": [
+    "critical",
+    "further_development",
+    "reached",
+    "safeguards_during_development"
+   ],
+   "unaccounted": [
+    "capabil",
+    "require",
+    "system"
+   ],
+   "entries": [
+    {
+     "words": "Systems that reach Critical capability also require",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f4-security",
+   "file": "rules.d1.ve",
+   "span_length": 66,
+   "used": [
+    "reached",
+    "security_practices"
+   ],
+   "unaccounted": [
+    "capabil",
+    "require"
+   ],
+   "entries": [
+    {
+     "words": "We will require the following practices for High capability models",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f7-evaluations",
+   "file": "rules.d1.ve",
+   "span_length": 84,
+   "used": [
+    "evaluations_before_deployment"
+   ],
+   "unaccounted": [
+    "model",
+    "prior",
+    "suite"
+   ],
+   "entries": [
+    {
+     "words": "every covered model undergoes the suite of",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "Prior to",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f7-report",
+   "file": "rules.d1.ve",
+   "span_length": 65,
+   "used": [
+    "capabilities_report"
+   ],
+   "unaccounted": [],
+   "entries": [],
+   "problems": []
+  },
+  {
+   "id": "f7-compile",
+   "file": "rules.d1.ve",
+   "span_length": 269,
+   "used": [
+    "capabilities_report_submitted"
+   ],
+   "unaccounted": [
+    "deploy",
+    "model",
+    "prior",
+    "suite",
+    "undergo"
+   ],
+   "entries": [
+    {
+     "words": "Prior to deployment, every covered model undergoes the suite of Scalable Evaluations",
+     "reason": "exposition",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f7-recommend",
+   "file": "rules.d1.ve",
+   "span_length": 278,
+   "used": [
+    "safeguards_already_assessed",
+    "safeguards_recommended",
+    "threshold_determined"
+   ],
+   "unaccounted": [
+    "decid",
+    "determine",
+    "report",
+    "review",
+    "step",
+    "therefore"
+   ],
+   "entries": [
+    {
+     "words": "The SAG reviews the Capabilities Report and decides on next steps",
+     "reason": "rule",
+     "arg": "f7-report"
+    },
+    {
+     "words": "These can include",
+     "reason": "reading",
+     "arg": "RS16"
+    },
+    {
+     "words": "Determine that the capability threshold has been crossed, and therefore",
+     "reason": "reading",
+     "arg": "RS16"
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f8-start",
+   "file": "rules.d1.ve",
+   "span_length": 246,
+   "used": [
+    "likely_to_cross",
+    "safeguard_work"
+   ],
+   "unaccounted": [
+    "made",
+    "yet"
+   ],
+   "entries": [
+    {
+     "words": "even if a formal capability determination has not yet been made",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f9-report",
+   "file": "rules.d1.ve",
+   "span_length": 271,
+   "used": [
+    "reached",
+    "safeguards_report"
+   ],
+   "unaccounted": [
+    "approach",
+    "capabil",
+    "compile",
+    "core",
+    "deploy",
+    "harm",
+    "inform",
+    "minimize",
+    "mitigate",
+    "need",
+    "plann",
+    "risk",
+    "safe",
+    "severe",
+    "system",
+    "threshold"
+   ],
+   "entries": [
+    {
+     "words": "Safeguards that mitigate the risk of severe harm are at the core of our safe deployment approach",
+     "reason": "exposition",
+     "arg": ""
+    },
+    {
+     "words": "for covered systems that reach a capability threshold",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "We compile the information on the planned safeguards needed to minimize the risk of severe harm into",
+     "reason": "loss",
+     "arg": "1"
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f9-residual-strict",
+   "file": "rules.d1.ve",
+   "span_length": 389,
+   "used": [
+    "residual_risk_assessment",
+    "safeguards_report_compiled"
+   ],
+   "unaccounted": [
+    "associat",
+    "control",
+    "detail",
+    "efficacy",
+    "given",
+    "identif",
+    "inform",
+    "limit",
+    "mapp",
+    "notable",
+    "provid",
+    "realiz",
+    "secur",
+    "ways"
+   ],
+   "entries": [
+    {
+     "words": "The Safeguards Report should include the following information",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "Identified ways a risk of severe harm can be realized for the given deployment, each mapped to the associated security controls and safeguards",
+     "reason": "loss",
+     "arg": "1"
+    },
+    {
+     "words": "Details about the efficacy of those safeguards",
+     "reason": "loss",
+     "arg": "1"
+    },
+    {
+     "words": "Any notable limitations with the information provided",
+     "reason": "loss",
+     "arg": "1"
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f9-residual-default",
+   "file": "rules.d1.ve",
+   "span_length": 389,
+   "used": [
+    "residual_risk_assessment",
+    "safeguards_report_compiled"
+   ],
+   "unaccounted": [
+    "associat",
+    "control",
+    "detail",
+    "efficacy",
+    "given",
+    "identif",
+    "inform",
+    "limit",
+    "mapp",
+    "notable",
+    "provid",
+    "realiz",
+    "secur",
+    "ways"
+   ],
+   "entries": [
+    {
+     "words": "The Safeguards Report should include the following information",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "Identified ways a risk of severe harm can be realized for the given deployment, each mapped to the associated security controls and safeguards",
+     "reason": "loss",
+     "arg": "1"
+    },
+    {
+     "words": "Details about the efficacy of those safeguards",
+     "reason": "loss",
+     "arg": "1"
+    },
+    {
+     "words": "Any notable limitations with the information provided",
+     "reason": "loss",
+     "arg": "1"
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f9-risk-paths",
+   "file": "rules.d1.ve",
+   "span_length": 198,
+   "used": [
+    "risk_paths",
+    "safeguard_selection"
+   ],
+   "unaccounted": [
+    "proces",
+    "select",
+    "use"
+   ],
+   "entries": [
+    {
+     "words": "We use the following process to select safeguards for a deployment",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f9-specific",
+   "file": "rules.d1.ve",
+   "span_length": 126,
+   "used": [
+    "safeguard_selection",
+    "specific_safeguards_per_path"
+   ],
+   "unaccounted": [],
+   "entries": [],
+   "problems": []
+  },
+  {
+   "id": "f9-efficacy",
+   "file": "rules.d1.ve",
+   "span_length": 76,
+   "used": [
+    "efficacy_methods_per_safeguard",
+    "safeguard_selection"
+   ],
+   "unaccounted": [
+    "identif",
+    "measure"
+   ],
+   "entries": [
+    {
+     "words": "For each identified safeguard, we identify methods to measure their efficacy",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f9-threshold",
+   "file": "rules.d1.ve",
+   "span_length": 25,
+   "used": [
+    "efficacy_threshold_per_safeguard",
+    "safeguard_selection"
+   ],
+   "unaccounted": [],
+   "entries": [],
+   "problems": []
+  },
+  {
+   "id": "f10-validate",
+   "file": "rules.d1.ve",
+   "span_length": 172,
+   "used": [
+    "reasonable_evidence",
+    "validate_evidence"
+   ],
+   "unaccounted": [
+    "expect",
+    "find",
+    "inform",
+    "receiv",
+    "review",
+    "sufficiency"
+   ],
+   "entries": [
+    {
+     "words": "If we find reasonable evidence that our safeguards are not working as expected",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "the information being received",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "and review the sufficiency of our safeguards",
+     "reason": "rule",
+     "arg": "f10-review"
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f10-review",
+   "file": "rules.d1.ve",
+   "span_length": 172,
+   "used": [
+    "reasonable_evidence",
+    "review_sufficiency"
+   ],
+   "unaccounted": [
+    "expect",
+    "find",
+    "inform",
+    "receiv",
+    "validate"
+   ],
+   "entries": [
+    {
+     "words": "If we find reasonable evidence that our safeguards are not working as expected",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "we will validate",
+     "reason": "rule",
+     "arg": "f10-validate"
+    },
+    {
+     "words": "the information being received",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f14-document",
+   "file": "rules.d1.ve",
+   "span_length": 85,
+   "used": [
+    "decision_documented"
+   ],
+   "unaccounted": [
+    "docu"
+   ],
+   "entries": [
+    {
+     "words": "We will document",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f14-investigate",
+   "file": "rules.d1.ve",
+   "span_length": 229,
+   "used": [
+    "noncompliance_investigated",
+    "potential_noncompliance"
+   ],
+   "unaccounted": [
+    "action",
+    "corrective",
+    "instanc",
+    "policy",
+    "proportional",
+    "substantiat",
+    "take"
+   ],
+   "entries": [
+    {
+     "words": "any reported or otherwise identified potential instances of noncompliance with this policy",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "and where reports are substantiated, will take appropriate and proportional corrective action",
+     "reason": "rule",
+     "arg": "f14-corrective"
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f14-corrective",
+   "file": "rules.d1.ve",
+   "span_length": 229,
+   "used": [
+    "corrective_action",
+    "substantiated_noncompliance"
+   ],
+   "unaccounted": [
+    "identif",
+    "instanc",
+    "investigate",
+    "otherwise",
+    "policy",
+    "potential",
+    "track"
+   ],
+   "entries": [
+    {
+     "words": "We will track and appropriately investigate any reported or otherwise identified potential",
+     "reason": "rule",
+     "arg": "f14-investigate"
+    },
+    {
+     "words": "instances of noncompliance with this policy",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f14-summary",
+   "file": "rules.d1.ve",
+   "span_length": 190,
+   "used": [
+    "beyond_sensitive_limits",
+    "employee_request",
+    "summary_access"
+   ],
+   "unaccounted": [
+    "capabil",
+    "certain",
+    "employe",
+    "level",
+    "safeguard",
+    "subject"
+   ],
+   "entries": [
+    {
+     "words": "Employees",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "on capability levels and safeguards",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "(subject to certain limits",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f15-disclose",
+   "file": "rules.d1.ve",
+   "span_length": 447,
+   "used": [
+    "major_deployment",
+    "public_disclosure"
+   ],
+   "unaccounted": [
+    "awarenes",
+    "facilitate",
+    "frontier",
+    "include",
+    "inform",
+    "order",
+    "publish",
+    "release",
+    "state"
+   ],
+   "entries": [
+    {
+     "words": "We will release information about our Preparedness Framework results",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "in order to facilitate public awareness of the state of frontier AI capabilities",
+     "reason": "exposition",
+     "arg": ""
+    },
+    {
+     "words": "This published information will include",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f15-safeguards",
+   "file": "rules.d1.ve",
+   "span_length": 310,
+   "used": [
+    "major_deployment",
+    "reached",
+    "safeguards_disclosed"
+   ],
+   "unaccounted": [
+    "additional",
+    "beyond",
+    "disclosur",
+    "include",
+    "result",
+    "threshold"
+   ],
+   "entries": [
+    {
+     "words": "Additionally",
+     "reason": "exposition",
+     "arg": ""
+    },
+    {
+     "words": "if the model is beyond a High threshold, we will include information about",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "Such disclosures about results and safeguards",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f15-third-party",
+   "file": "rules.d1.ve",
+   "span_length": 293,
+   "used": [
+    "deeper_testing_warranted",
+    "third_party_available",
+    "third_party_evaluation"
+   ],
+   "unaccounted": [
+    "3",
+    "based",
+    "deploy",
+    "describ",
+    "example",
+    "present",
+    "report",
+    "result",
+    "work"
+   ],
+   "entries": [
+    {
+     "words": "(as described in Section 3.1)",
+     "reason": "exposition",
+     "arg": ""
+    },
+    {
+     "words": "for example based on results of Capabilities Report presented to them",
+     "reason": "exposition",
+     "arg": ""
+    },
+    {
+     "words": "If we deem that a deployment warrants",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "OpenAI will work with third-parties to",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f16-sag-recommend",
+   "file": "rules.d1.ve",
+   "span_length": 171,
+   "used": [
+    "framework_deployment",
+    "sag_recommendation"
+   ],
+   "unaccounted": [],
+   "entries": [],
+   "problems": []
+  },
+  {
+   "id": "c2-misalignment-strict",
+   "file": "rules.d1.ve",
+   "span_length": 152,
+   "used": [
+    "misaligned_model_risk",
+    "misalignment_risk_minimized"
+   ],
+   "unaccounted": [
+    "associat"
+   ],
+   "entries": [
+    {
+     "words": "associated with",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "c2-misalignment-default",
+   "file": "rules.d1.ve",
+   "span_length": 152,
+   "used": [
+    "misaligned_model_risk",
+    "misalignment_risk_minimized"
+   ],
+   "unaccounted": [
+    "associat"
+   ],
+   "entries": [
+    {
+     "words": "associated with",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "c3-access-strict",
+   "file": "rules.d1.ve",
+   "span_length": 194,
+   "used": [
+    "access_limited"
+   ],
+   "unaccounted": [
+    "additional",
+    "approval",
+    "capabil",
+    "especial",
+    "factor",
+    "high",
+    "multi",
+    "present",
+    "protect",
+    "require"
+   ],
+   "entries": [
+    {
+     "words": "especially those presenting High capabilities",
+     "reason": "exposition",
+     "arg": ""
+    },
+    {
+     "words": "protected with strong multi-factor authentication",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "and may require additional approvals for access",
+     "reason": "loss",
+     "arg": "1"
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "c3-access-default",
+   "file": "rules.d1.ve",
+   "span_length": 194,
+   "used": [
+    "access_limited"
+   ],
+   "unaccounted": [
+    "additional",
+    "approval",
+    "capabil",
+    "especial",
+    "factor",
+    "high",
+    "multi",
+    "present",
+    "protect",
+    "require"
+   ],
+   "entries": [
+    {
+     "words": "especially those presenting High capabilities",
+     "reason": "exposition",
+     "arg": ""
+    },
+    {
+     "words": "protected with strong multi-factor authentication",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "and may require additional approvals for access",
+     "reason": "loss",
+     "arg": "1"
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "cl4-persuasion",
+   "file": "rules.d1.ve",
+   "span_length": 322,
+   "used": [
+    "persuasion_handled_outside",
+    "persuasion_risk"
+   ],
+   "unaccounted": [
+    "forward",
+    "going",
+    "handle"
+   ],
+   "entries": [
+    {
+     "words": "Going forward we will handle",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f16-ssc-visibility",
+   "file": "rules.d1.ve",
+   "span_length": 266,
+   "used": [
+    "ssc_visibility"
+   ],
+   "unaccounted": [
+    "board'",
+    "decision",
+    "fulfill",
+    "given",
+    "inform",
+    "leadership",
+    "necessary",
+    "otherwise",
+    "oversight",
+    "report",
+    "require",
+    "review",
+    "role"
+   ],
+   "entries": [
+    {
+     "words": "The Safety and Security Committee (SSC) of the OpenAI Board of Directors (Board) will be given visibility into processes",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "and can review decisions and otherwise require reports and information from OpenAI Leadership as necessary to fulfill the Board's oversight role",
+     "reason": "loss",
+     "arg": "1"
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f16-informed",
+   "file": "rules.d1.ve",
+   "span_length": 142,
+   "used": [
+    "leadership_decision",
+    "recommendation_informed"
+   ],
+   "unaccounted": [
+    "accept",
+    "deploy",
+    "includ",
+    "making",
+    "residual",
+    "risk",
+    "sag'"
+   ],
+   "entries": [
+    {
+     "words": "Making all final decisions",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "including accepting any residual risks and making deployment go/no-go decisions",
+     "reason": "exposition",
+     "arg": ""
+    },
+    {
+     "words": "SAG's",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f16-without-noinput",
+   "file": "rules.d1.ve",
+   "span_length": 157,
+   "used": [
+    "decided_without_sag",
+    "leadership_decision",
+    "recommendation_informed"
+   ],
+   "unaccounted": [
+    "abil",
+    "avoidance",
+    "doubt",
+    "filibuster"
+   ],
+   "entries": [
+    {
+     "words": "For the avoidance of doubt",
+     "reason": "reading",
+     "arg": "N2"
+    },
+    {
+     "words": "i.e., the SAG does not have the ability to filibuster",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f16-without-nodelib",
+   "file": "rules.d1.ve",
+   "span_length": 157,
+   "used": [
+    "decided_without_sag",
+    "leadership_decision",
+    "sag_participation"
+   ],
+   "unaccounted": [
+    "abil",
+    "avoidance",
+    "doubt",
+    "filibuster"
+   ],
+   "entries": [
+    {
+     "words": "For the avoidance of doubt",
+     "reason": "reading",
+     "arg": "N2"
+    },
+    {
+     "words": "i.e., the SAG does not have the ability to filibuster",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f16-board-reverse",
+   "file": "rules.d1.ve",
+   "span_length": 91,
+   "used": [
+    "board_finds_necessary",
+    "decision_reversal",
+    "leadership_decision"
+   ],
+   "unaccounted": [
+    "action",
+    "course",
+    "mandate",
+    "revis"
+   ],
+   "entries": [
+    {
+     "words": "and/or mandate a revised course of action",
+     "reason": "rule",
+     "arg": "f16-board-mandate"
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f16-board-mandate",
+   "file": "rules.d1.ve",
+   "span_length": 91,
+   "used": [
+    "board_finds_necessary",
+    "leadership_decision",
+    "revised_course_mandated"
+   ],
+   "unaccounted": [
+    "reverse"
+   ],
+   "entries": [
+    {
+     "words": "reverse a decision",
+     "reason": "rule",
+     "arg": "f16-board-reverse"
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f16-chair-strict",
+   "file": "rules.d1.ve",
+   "span_length": 339,
+   "used": [
+    "chair_coordination",
+    "immediate_reaction_needed",
+    "rapid_risk"
+   ],
+   "unaccounted": [
+    "case",
+    "change",
+    "model",
+    "proces",
+    "rare",
+    "report",
+    "request",
+    "requir",
+    "response",
+    "safety",
+    "understand",
+    "urgent"
+   ],
+   "entries": [
+    {
+     "words": "In the rare case that",
+     "reason": "exposition",
+     "arg": ""
+    },
+    {
+     "words": "(e.g., there is a change in our understanding of model safety that requires urgent response)",
+     "reason": "exposition",
+     "arg": ""
+    },
+    {
+     "words": "we can request a fast track for the SAG to process the report urgently",
+     "reason": "loss",
+     "arg": "1"
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f16-chair-default",
+   "file": "rules.d1.ve",
+   "span_length": 339,
+   "used": [
+    "chair_coordination",
+    "immediate_reaction_needed",
+    "rapid_risk"
+   ],
+   "unaccounted": [
+    "case",
+    "change",
+    "model",
+    "proces",
+    "rare",
+    "report",
+    "request",
+    "requir",
+    "response",
+    "safety",
+    "understand",
+    "urgent"
+   ],
+   "entries": [
+    {
+     "words": "In the rare case that",
+     "reason": "exposition",
+     "arg": ""
+    },
+    {
+     "words": "(e.g., there is a change in our understanding of model safety that requires urgent response)",
+     "reason": "exposition",
+     "arg": ""
+    },
+    {
+     "words": "we can request a fast track for the SAG to process the report urgently",
+     "reason": "loss",
+     "arg": "1"
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f16-year",
+   "file": "rules.d1.ve",
+   "span_length": 111,
+   "used": [
+    "annual_review"
+   ],
+   "unaccounted": [
+    "continu",
+    "framework",
+    "potential",
+    "preparednes",
+    "sufficiency",
+    "update"
+   ],
+   "entries": [
+    {
+     "words": "and potentially update",
+     "reason": "exposition",
+     "arg": ""
+    },
+    {
+     "words": "the Preparedness Framework for continued sufficiency",
+     "reason": "loss",
+     "arg": "1"
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f5-ambiguous",
+   "file": "rules.d1.ve",
+   "span_length": 143,
+   "used": [
+    "coverage_ambiguous",
+    "coverage_decided"
+   ],
+   "unaccounted": [
+    "ambigu",
+    "case",
+    "cover",
+    "framework",
+    "making",
+    "model",
+    "preparednes",
+    "responsible"
+   ],
+   "entries": [
+    {
+     "words": "In cases of ambiguity about whether a model is covered by the Preparedness Framework, the SAG is responsible for making the final determination",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f5-checkpoint",
+   "file": "rules.d1.ve",
+   "span_length": 240,
+   "used": [
+    "checkpoint_selected",
+    "forecast_severe_before_deployment"
+   ],
+   "unaccounted": [
+    "preparednes"
+   ],
+   "entries": [
+    {
+     "words": "Preparedness Framework",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f6-rel",
+   "file": "rules.d1.ve",
+   "span_length": 275,
+   "used": [
+    "additional_safety_measures",
+    "distilled_from_below_high",
+    "significant_increase"
+   ],
+   "unaccounted": [
+    "barr",
+    "cros",
+    "fine",
+    "previous",
+    "quantize",
+    "threshold",
+    "tune"
+   ],
+   "entries": [
+    {
+     "words": "models that we distill, fine-tune, or quantize from a model that was previously determined not to cross a High capability threshold",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "barring",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f11-within",
+   "file": "rules.d1.ve",
+   "span_length": 514,
+   "used": [
+    "adjustment_conditions",
+    "adjustment_confirmed",
+    "adjustment_permission"
+   ],
+   "unaccounted": [
+    "able",
+    "according",
+    "acknowledge",
+    "asses",
+    "avoid",
+    "bottom",
+    "but",
+    "claim",
+    "doing",
+    "level",
+    "making",
+    "occurr",
+    "order",
+    "race",
+    "require",
+    "safety",
+    "scenario",
+    "share"
+   ],
+   "entries": [
+    {
+     "words": "If we are able to rigorously confirm that such a scenario has occurred",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "then we could adjust accordingly the level of safeguards that we require in that capability area",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "but only if",
+     "reason": "loss",
+     "arg": "3"
+    },
+    {
+     "words": "we assess that doing so",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "we publicly acknowledge that we are making the adjustment",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "in order to avoid a race to the bottom on safety",
+     "reason": "exposition",
+     "arg": ""
+    },
+    {
+     "words": "and share information to validate this claim",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f11-exception",
+   "file": "rules.d1.ve",
+   "span_length": 514,
+   "used": [
+    "adjustment_conditions",
+    "adjustment_confirmed",
+    "safeguards_before_deployment"
+   ],
+   "unaccounted": [
+    "able",
+    "according",
+    "acknowledge",
+    "asses",
+    "avoid",
+    "bottom",
+    "but",
+    "claim",
+    "doing",
+    "level",
+    "making",
+    "occurr",
+    "order",
+    "race",
+    "require",
+    "safety",
+    "scenario",
+    "share"
+   ],
+   "entries": [
+    {
+     "words": "If we are able to rigorously confirm that such a scenario has occurred",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "then we could adjust accordingly the level of safeguards that we require in that capability area",
+     "reason": "reading",
+     "arg": "RS5"
+    },
+    {
+     "words": "but only if",
+     "reason": "reading",
+     "arg": "RS5"
+    },
+    {
+     "words": "we assess that doing so",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "we publicly acknowledge that we are making the adjustment",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "in order to avoid a race to the bottom on safety",
+     "reason": "exposition",
+     "arg": ""
+    },
+    {
+     "words": "and share information to validate this claim",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f11-exception-deploy",
+   "file": "rules.d1.ve",
+   "span_length": 646,
+   "used": [
+    "adjustment_conditions",
+    "adjustment_confirmed",
+    "deployment_permitted"
+   ],
+   "unaccounted": [
+    "able",
+    "according",
+    "acknowledge",
+    "asses",
+    "associat",
+    "avoid",
+    "bottom",
+    "but",
+    "claim",
+    "doing",
+    "level",
+    "making",
+    "minimiz",
+    "occurr",
+    "order",
+    "pose",
+    "race",
+    "require",
+    "safety",
+    "scenario",
+    "share",
+    "sufficient",
+    "threshold",
+    "until"
+   ],
+   "entries": [
+    {
+     "words": "If we are able to rigorously confirm that such a scenario has occurred",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "then we could adjust accordingly the level of safeguards that we require in that capability area",
+     "reason": "reading",
+     "arg": "RS5"
+    },
+    {
+     "words": "but only if",
+     "reason": "reading",
+     "arg": "RS5"
+    },
+    {
+     "words": "we assess that doing so",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "we publicly acknowledge that we are making the adjustment",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "in order to avoid a race to the bottom on safety",
+     "reason": "exposition",
+     "arg": ""
+    },
+    {
+     "words": "and share information to validate this claim",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "We do not deploy models that reach a High",
+     "reason": "rule",
+     "arg": "f2-no-deploy"
+    },
+    {
+     "words": "capability threshold until the associated risks that they pose are sufficiently minimized",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f11-acknowledge",
+   "file": "rules.d1.ve",
+   "span_length": 514,
+   "used": [
+    "adjustment_acknowledged",
+    "adjustment_confirmed",
+    "adjustment_made"
+   ],
+   "unaccounted": [
+    "able",
+    "according",
+    "acknowledge",
+    "asses",
+    "avoid",
+    "bottom",
+    "but",
+    "claim",
+    "doing",
+    "harm",
+    "increase",
+    "inform",
+    "keep",
+    "making",
+    "meaningful",
+    "occurr",
+    "order",
+    "overall",
+    "protective",
+    "race",
+    "require",
+    "safety",
+    "scenario",
+    "severe",
+    "share",
+    "validate"
+   ],
+   "entries": [
+    {
+     "words": "If we are able to rigorously confirm that such a scenario has occurred",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "then we could adjust accordingly the level of safeguards that we require in that capability area, but only if",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "we assess that doing so",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "does not meaningfully increase the overall risk of severe harm",
+     "reason": "rule",
+     "arg": "f11-within"
+    },
+    {
+     "words": "we publicly acknowledge that we are making",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "and, in order to avoid a race to the bottom on safety",
+     "reason": "exposition",
+     "arg": ""
+    },
+    {
+     "words": "we keep our safeguards at a level more protective than the other AI developer",
+     "reason": "rule",
+     "arg": "f11-protect"
+    },
+    {
+     "words": "and share information to validate this claim",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f11-protect",
+   "file": "rules.d1.ve",
+   "span_length": 514,
+   "used": [
+    "adjustment_confirmed",
+    "adjustment_made",
+    "more_protective"
+   ],
+   "unaccounted": [
+    "able",
+    "according",
+    "acknowledge",
+    "asses",
+    "avoid",
+    "bottom",
+    "but",
+    "claim",
+    "doing",
+    "harm",
+    "increase",
+    "inform",
+    "making",
+    "meaningful",
+    "occurr",
+    "order",
+    "overall",
+    "public",
+    "race",
+    "require",
+    "safety",
+    "scenario",
+    "severe",
+    "share",
+    "validate"
+   ],
+   "entries": [
+    {
+     "words": "If we are able to rigorously confirm that such a scenario has occurred",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "then we could adjust accordingly the level of safeguards that we require in that capability area, but only if",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "we assess that doing so",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "does not meaningfully increase the overall risk of severe harm",
+     "reason": "rule",
+     "arg": "f11-within"
+    },
+    {
+     "words": "we publicly acknowledge that we are making the adjustment",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "and, in order to avoid a race to the bottom on safety",
+     "reason": "exposition",
+     "arg": ""
+    },
+    {
+     "words": "and share information to validate this claim",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f11-share",
+   "file": "rules.d1.ve",
+   "span_length": 514,
+   "used": [
+    "adjustment_confirmed",
+    "adjustment_made",
+    "validation_shared"
+   ],
+   "unaccounted": [
+    "able",
+    "according",
+    "acknowledge",
+    "asses",
+    "avoid",
+    "bottom",
+    "but",
+    "claim",
+    "doing",
+    "harm",
+    "increase",
+    "keep",
+    "making",
+    "meaningful",
+    "occurr",
+    "order",
+    "overall",
+    "protective",
+    "public",
+    "race",
+    "require",
+    "safety",
+    "scenario",
+    "severe",
+    "share",
+    "validate"
+   ],
+   "entries": [
+    {
+     "words": "If we are able to rigorously confirm that such a scenario has occurred",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "then we could adjust accordingly the level of safeguards that we require in that capability area, but only if",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "we assess that doing so",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "does not meaningfully increase the overall risk of severe harm",
+     "reason": "rule",
+     "arg": "f11-within"
+    },
+    {
+     "words": "we publicly acknowledge that we are making the adjustment",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "and, in order to avoid a race to the bottom on safety",
+     "reason": "exposition",
+     "arg": ""
+    },
+    {
+     "words": "we keep our safeguards at a level more protective than the other AI developer",
+     "reason": "rule",
+     "arg": "f11-protect"
+    },
+    {
+     "words": "share information to validate this claim",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f12-lra",
+   "file": "rules.d1.ve",
+   "span_length": 138,
+   "used": [
+    "critical",
+    "lra_found",
+    "misalignment_report",
+    "reached"
+   ],
+   "unaccounted": [
+    "4",
+    "capabil",
+    "categor",
+    "require",
+    "track"
+   ],
+   "entries": [
+    {
+     "words": "If a model has High or Critical capabilities in any of the Tracked Categories, require a",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "(see Section 4.2",
+     "reason": "exposition",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f12-lra-unscoped",
+   "file": "rules.d1.ve",
+   "span_length": 138,
+   "used": [
+    "critical",
+    "misalignment_report",
+    "reached"
+   ],
+   "unaccounted": [
+    "4",
+    "capabil",
+    "categor",
+    "require",
+    "track"
+   ],
+   "entries": [
+    {
+     "words": "If a model has High or Critical capabilities in any of the Tracked Categories, require a",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "(see Section 4.2",
+     "reason": "exposition",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f12-sandbagging",
+   "file": "rules.d1.ve",
+   "span_length": 137,
+   "used": [
+    "conservative_upper_bound_used",
+    "sandbagging_bound",
+    "sandbagging_found"
+   ],
+   "unaccounted": [
+    "use"
+   ],
+   "entries": [
+    {
+     "words": "or use",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f12-sandbagging-unscoped",
+   "file": "rules.d1.ve",
+   "span_length": 137,
+   "used": [
+    "conservative_upper_bound_used",
+    "sandbagging_bound"
+   ],
+   "unaccounted": [
+    "use"
+   ],
+   "entries": [
+    {
+     "words": "or use",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f12-ara",
+   "file": "rules.d1.ve",
+   "span_length": 67,
+   "used": [
+    "ara_found",
+    "ara_tracking"
+   ],
+   "unaccounted": [
+    "convert"
+   ],
+   "entries": [
+    {
+     "words": "Convert",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f12-ara-unscoped",
+   "file": "rules.d1.ve",
+   "span_length": 67,
+   "used": [
+    "ara_tracking"
+   ],
+   "unaccounted": [
+    "adapt",
+    "autonomou",
+    "convert",
+    "replic"
+   ],
+   "entries": [
+    {
+     "words": "Convert Autonomous Replication and Adaptation",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f12-undermining",
+   "file": "rules.d1.ve",
+   "span_length": 166,
+   "used": [
+    "critical",
+    "reached",
+    "robust_case",
+    "undermining_found"
+   ],
+   "unaccounted": [
+    "categor",
+    "require",
+    "track"
+   ],
+   "entries": [
+    {
+     "words": "in any of the Tracked Categories, require",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f12-undermining-unscoped",
+   "file": "rules.d1.ve",
+   "span_length": 166,
+   "used": [
+    "critical",
+    "reached",
+    "robust_case"
+   ],
+   "unaccounted": [
+    "categor",
+    "require",
+    "track"
+   ],
+   "entries": [
+    {
+     "words": "in any of the Tracked Categories, require",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f12-nuclear",
+   "file": "rules.d1.ve",
+   "span_length": 170,
+   "used": [
+    "nuclear_found",
+    "nuclear_safeguards"
+   ],
+   "unaccounted": [],
+   "entries": [],
+   "problems": []
+  },
+  {
+   "id": "f12-nuclear-unscoped",
+   "file": "rules.d1.ve",
+   "span_length": 170,
+   "used": [
+    "nuclear_safeguards"
+   ],
+   "unaccounted": [],
+   "entries": [],
+   "problems": []
+  },
+  {
+   "id": "f17-suff",
+   "file": "rules.d1.ve",
+   "span_length": 110,
+   "used": [
+    "criteria_exclusion",
+    "criteria_tracking",
+    "net_new"
+   ],
+   "unaccounted": [
+    "creat",
+    "criteria",
+    "five",
+    "frontier",
+    "risk",
+    "treat"
+   ],
+   "entries": [
+    {
+     "words": "We treat a frontier capability as a Tracked Category",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "if the capability creates a risk that meets five criteria",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f17-iff",
+   "file": "rules.d1.ve",
+   "span_length": 110,
+   "used": [
+    "criteria_exclusion",
+    "criteria_tracking",
+    "net_new"
+   ],
+   "unaccounted": [
+    "creat",
+    "criteria",
+    "five",
+    "frontier",
+    "risk",
+    "treat"
+   ],
+   "entries": [
+    {
+     "words": "We treat a frontier capability as a Tracked Category",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "if the capability creates a risk that meets five criteria",
+     "reason": "reading",
+     "arg": "RS12"
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f17-iff-only",
+   "file": "rules.d1.ve",
+   "span_length": 110,
+   "used": [
+    "criteria_exclusion",
+    "criteria_tracking",
+    "net_new"
+   ],
+   "unaccounted": [
+    "creat",
+    "criteria",
+    "five",
+    "frontier",
+    "risk",
+    "treat"
+   ],
+   "entries": [
+    {
+     "words": "We treat a frontier capability as a Tracked Category",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "if the capability creates a risk that meets five criteria",
+     "reason": "reading",
+     "arg": "RS12"
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f13-review",
+   "file": "rules.d1.ve",
+   "span_length": 87,
+   "used": [
+    "research_review"
+   ],
+   "unaccounted": [
+    "category",
+    "find",
+    "latest",
+    "periodical"
+   ],
+   "entries": [
+    {
+     "words": "We will periodically review the latest research and findings for each Research Category",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f13-results",
+   "file": "rules.d1.ve",
+   "span_length": 174,
+   "used": [
+    "research_category_review",
+    "research_results_received"
+   ],
+   "unaccounted": [
+    "evaluate",
+    "evidence",
+    "framework",
+    "internal",
+    "practic",
+    "preparednes",
+    "recommend",
+    "sufficient",
+    "updat"
+   ],
+   "entries": [
+    {
+     "words": "and evaluate whether there is sufficient evidence to recommend updates to our internal practices or to the Preparedness Framework",
+     "reason": "loss",
+     "arg": "1"
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "bio-high",
+   "file": "facts.d1.ve",
+   "span_length": 23,
+   "used": [
+    "biological_and_chemical",
+    "biological_and_chemical_high"
+   ],
+   "unaccounted": [],
+   "entries": [],
+   "problems": []
+  },
+  {
+   "id": "bio-critical",
+   "file": "facts.d1.ve",
+   "span_length": 23,
+   "used": [
+    "biological_and_chemical",
+    "biological_and_chemical_critical",
+    "critical"
+   ],
+   "unaccounted": [],
+   "entries": [],
+   "problems": []
+  },
+  {
+   "id": "cyb-high",
+   "file": "facts.d1.ve",
+   "span_length": 13,
+   "used": [
+    "cybersecurity_high"
+   ],
+   "unaccounted": [],
+   "entries": [],
+   "problems": []
+  },
+  {
+   "id": "cyb-critical",
+   "file": "facts.d1.ve",
+   "span_length": 13,
+   "used": [
+    "critical",
+    "cybersecurity_critical"
+   ],
+   "unaccounted": [],
+   "entries": [],
+   "problems": []
+  },
+  {
+   "id": "ais-high",
+   "file": "facts.d1.ve",
+   "span_length": 19,
+   "used": [
+    "ai_self_improvement",
+    "ai_self_improvement_high"
+   ],
+   "unaccounted": [],
+   "entries": [],
+   "problems": []
+  },
+  {
+   "id": "ais-critical",
+   "file": "facts.d1.ve",
+   "span_length": 19,
+   "used": [
+    "ai_self_improvement",
+    "ai_self_improvement_critical",
+    "critical"
+   ],
+   "unaccounted": [],
+   "entries": [],
+   "problems": []
+  },
+  {
+   "id": "rs2-nest",
+   "file": "facts.d1.ve",
+   "span_length": 125,
+   "used": [
+    "critical",
+    "reached"
+   ],
+   "unaccounted": [
+    "associat",
+    "capabil",
+    "develop",
+    "minimize",
+    "require",
+    "risk",
+    "safeguard",
+    "sufficient",
+    "system"
+   ],
+   "entries": [
+    {
+     "words": "Systems that reach Critical capability also require safeguards that sufficiently minimize associated risks during development",
+     "reason": "reading",
+     "arg": "RS2"
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "no-critical-models",
+   "file": "facts.d1.ve",
+   "span_length": 183,
+   "used": [
+    "critical",
+    "existing_at_publication",
+    "reached"
+   ],
+   "unaccounted": [
+    "capabil",
+    "current",
+    "expect",
+    "framework",
+    "further",
+    "posses",
+    "preparednes",
+    "update"
+   ],
+   "entries": [
+    {
+     "words": "We do not currently possess any models that have Critical levels of capability",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "and we expect to further update this Preparedness Framework before reaching such a level with any model",
+     "reason": "exposition",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "cl-levels",
+   "file": "facts.d1.ve",
+   "span_length": 161,
+   "used": [
+    "medium"
+   ],
+   "unaccounted": [
+    "because",
+    "execution",
+    "framework",
+    "involv",
+    "operational",
+    "preparednes",
+    "work"
+   ],
+   "entries": [
+    {
+     "words": "from the Framework",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "because those levels were not operationally involved in the execution of our Preparedness work",
+     "reason": "exposition",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "fn5-indicator",
+   "file": "facts.d1.ve",
+   "span_length": 245,
+   "used": [
+    "biological_and_chemical_critical",
+    "biological_and_chemical_high",
+    "biological_capability_evaluations",
+    "indicator_for"
+   ],
+   "unaccounted": [
+    "category",
+    "given",
+    "higher",
+    "ones",
+    "potential",
+    "prioritize",
+    "relative",
+    "sever",
+    "threat"
+   ],
+   "entries": [
+    {
+     "words": "Given the higher potential severity of biological threats relative to chemical ones",
+     "reason": "exposition",
+     "arg": ""
+    },
+    {
+     "words": "we will prioritize",
+     "reason": "loss",
+     "arg": "limit 21"
+    },
+    {
+     "words": "for the category",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  }
+ ],
+ "totals": {
+  "blocks": 97,
+  "blocks_with_loss": 17,
+  "losses_by_class": {
+   "1": 23,
+   "3": 1,
+   "limit 21": 1
+  },
+  "entries_by_reason": {
+   "exposition": 35,
+   "loss": 25,
+   "reading": 30,
+   "restates": 99,
+   "rule": 18
+  },
+  "unaccounted_words": 606,
+  "blocks_with_unaccounted_words": 83,
+  "quotes": 110,
+  "unanchored_quotes": 0,
+  "elided_quotes_without_source": 0
+ },
+ "problems": []
+}

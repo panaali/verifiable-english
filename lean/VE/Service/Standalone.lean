@@ -708,6 +708,14 @@ def identityCase (j : Json) : Except String Json := do
       let e ← validatedEnvironment environment
       let environmentId ← environmentIdOf e.profiles environment
       VE.Route.Wire.meaningId e.profiles environmentId (← j.getObjVal? "ast")
+    else if kind == "rights-meaning" then do
+      let environment ← j.getObjVal? "environment"
+      -- A rights document also hashes norm-plus-cites content in a generated soft frame. Identity
+      -- recomputation does not admit that frame; the document route owns its admission and diagnostics.
+      let profiles ← VE.Route.Gate.profilesOf environment
+      let environmentId ← environmentIdOf profiles environment
+      let content ← Json.parse (← VE.Bridge.stringField j "content_json")
+      VE.Rights.Wire.rightsMeaningId profiles environmentId content
     else if kind == "model" then do
       let row ← modelCase j
       VE.Bridge.stringField row "model_id"

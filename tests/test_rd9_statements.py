@@ -107,14 +107,18 @@ SC4 = 4
 
 def test_probe_f27_the_signed_declarations_are_no_longer_pending(capsys):
     """PROBE F27 (its checker half): nothing is reported `PENDING re-review`; both B4 declarations are reported
-    signed, with the approved text and its one edit."""
+    signed, with the approved text and its one edit, and so is sc-11w's `sdSuperposable` (DRI 2026-11-10 sc-11w
+    item 1), each under its own signature."""
     checker = _checker()
     assert checker.main() == 0
     out = capsys.readouterr().out
     assert "PENDING re-review" not in out
-    assert not hasattr(checker, "PENDING") and set(checker.SIGNED) == {"choiceLayeredG", "ndTextWith"}
-    for name in checker.SIGNED:
+    assert not hasattr(checker, "PENDING")
+    assert set(checker.SIGNED) == {"choiceLayeredG", "ndTextWith", "sdSuperposable"}
+    for name in ("choiceLayeredG", "ndTextWith"):
         assert f"{name}: SIGNED by DRI 2026-10-15 (B4, bounded statement re-check PASS)" in out
+    assert ("sdSuperposable: SIGNED by the DRI 2026-11-10 (reviews/dri-decisions-20261110-sc-11w.md item 1): "
+            "approved text with its one signed edit") in out
 
 
 def _changed_def(checker, tmp_path, name, before, after):

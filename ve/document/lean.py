@@ -12,6 +12,7 @@ from ..errors import ResourceLimit, VEError
 from ..identity import source_id
 from ..profiles import DOCUMENT_LAYERS
 from ..readings import active_reading_sets, rights_meaning_id
+from ..softnorms import soft_digest
 from ..wire import digest
 from .source import (STATUSES, _RIGHTS_KINDS, _document_id, _english_fences, _environment, _parts, _split,
                      base_environment, chain_environment)
@@ -302,14 +303,18 @@ def _lean_document(raw: bytes, path: Path, row: dict, *, admitted: bool, prepare
             soft_document = rights_document.soft_document
             formula_env = soft_document.extended_env
         for unit in units:
-            # A rights document's content is bound to its content environment, with the nullable decider slots
-            # `_content` keeps (`rights_meaning_id`, Lean's `nullableMeaningId`).
-            if "content" in unit and unit["meaning_id"] != (
-                    rights_meaning_id(_content_environment(env, formula_env, unit["kind"]), unit["content"])
-                    if soft_document is not None else
-                    digest(f"ve-meaning-{formula_env.identity_version}\n",
-                           {"environment_id": formula_env.environment_id, "ast": unit["content"]})):
-                raise unavailable("is not bound to the document sent")
+            if "content" in unit:
+                content_env = _content_environment(env, formula_env, unit["kind"])
+                if rights_document is not None and unit["kind"] in _RIGHTS_KINDS:
+                    expected_id = rights_meaning_id(content_env, unit["content"])
+                else:
+                    id_env = content_env if soft_document is not None else formula_env
+                    digest_fn = soft_digest if soft_document is not None else digest
+                    expected_id = digest_fn(f"ve-meaning-{id_env.identity_version}\n",
+                                            {"environment_id": id_env.environment_id,
+                                             "ast": unit["content"]})
+                if unit["meaning_id"] != expected_id:
+                    raise unavailable("is not bound to the document sent")
         # A rights block the binding found equal to the authored one is built as the authored object itself: the
         # rights containers hold the source's lines by identity (`ve.surface.rights._line`), as on Python's path.
         compiled = [{"id": u["id"], "span": u["span"], "kind": u["kind"], "meaning": u["meaning"],

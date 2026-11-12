@@ -1,0 +1,1731 @@
+diff --git a/lean/VE/Norms/Basic.lean b/lean/VE/Norms/Basic.lean
+index ec5fb16110..827a35e837 100644
+--- a/lean/VE/Norms/Basic.lean
++++ b/lean/VE/Norms/Basic.lean
+@@ -1,4 +1,5 @@
+ import VE.Route.Examples
++import VE.Core.Syntax
+ 
+ /-! Formula and structure helpers for W1 norms (docs/spec/norms.md section 6).
+ 
+@@ -15,34 +16,39 @@ universe u
+ 
+ /-! ## Connectives in Python's shapes -/
+ 
+-def anyF (l : List VE.Formula) : VE.Formula := l.foldl .or .bottom
+-def allF (l : List VE.Formula) : VE.Formula := l.foldl .and .top
++def anyF (l : List VE.Core.Formula) : VE.Core.Formula := l.foldl .or .bottom
++def allF (l : List VE.Core.Formula) : VE.Core.Formula := l.foldl .and .top
+ /-- `a ↔ b` as Python and W3 write it. -/
+-def iffF (a b : VE.Formula) : VE.Formula := .and (.implies a b) (.implies b a)
++def iffF (a b : VE.Core.Formula) : VE.Core.Formula := .and (.implies a b) (.implies b a)
+ /-- Universal binders in declared argument order: `∀x₁:s₁. … ∀xₖ:sₖ. body`. -/
+-def bindAll (sorts : List String) (body : VE.Formula) : VE.Formula :=
++def bindAll (sorts : List String) (body : VE.Core.Formula) : VE.Core.Formula :=
+   sorts.foldr (fun s a => .all s a) body
+ 
++/-- The situation variables in declared argument order: `var (n-1), …, var 0`. -/
++def vars : Nat → List VE.Term
++  | 0 => []
++  | n + 1 => .var n :: vars n
++
+ /-- The atom of a unary or binary symbol applied to its situation variables. -/
+-def atom (p : String) (sorts : List String) : VE.Formula :=
++def atom (p : String) (sorts : List String) : VE.Core.Formula :=
+   match sorts with
+   | [_] => .unary p (.var 0)
+   | [_, _] => .binary p (.var 1) (.var 0)
+-  | _ => .bottom
++  | ss => if 3 ≤ ss.length ∧ ss.length ≤ 6 then .atom p (vars ss.length) else .bottom
+ 
+ /-- Relation tuples stay in declared argument order; formulas use de Bruijn
+ valuation order. -/
+ def tupleVal {α : Type u} (vs : List α) : List α := vs.reverse
+ 
+-theorem anyF_denote (S : VE.Structure.{u}) (ρ : VE.Valuation S) (l : List VE.Formula) :
++theorem anyF_denote (S : VE.Structure.{u}) (ρ : VE.Valuation S) (l : List VE.Core.Formula) :
+     (anyF l).denote S ρ ↔ ∃ a ∈ l, a.denote S ρ := by
+-  suffices h : ∀ acc : VE.Formula, (l.foldl .or acc).denote S ρ ↔ acc.denote S ρ ∨ ∃ a ∈ l, a.denote S ρ by
+-    simp [anyF, h, VE.Formula.denote]
++  suffices h : ∀ acc : VE.Core.Formula, (l.foldl .or acc).denote S ρ ↔ acc.denote S ρ ∨ ∃ a ∈ l, a.denote S ρ by
++    simp [anyF, h, VE.Core.Formula.denote]
+   induction l with
+   | nil => intro acc; simp
+   | cons b l ih =>
+     intro acc
+-    simp only [List.foldl_cons, ih, VE.Formula.denote, List.mem_cons, exists_eq_or_imp]
++    simp only [List.foldl_cons, ih, VE.Core.Formula.denote, List.mem_cons, exists_eq_or_imp]
+     constructor
+     · rintro ((h | h) | h)
+       · exact Or.inl h
+@@ -53,23 +59,23 @@ theorem anyF_denote (S : VE.Structure.{u}) (ρ : VE.Valuation S) (l : List VE.Fo
+       · exact Or.inl (Or.inr h)
+       · exact Or.inr h
+ 
+-theorem allF_denote (S : VE.Structure.{u}) (ρ : VE.Valuation S) (l : List VE.Formula) :
++theorem allF_denote (S : VE.Structure.{u}) (ρ : VE.Valuation S) (l : List VE.Core.Formula) :
+     (allF l).denote S ρ ↔ ∀ a ∈ l, a.denote S ρ := by
+-  suffices h : ∀ acc : VE.Formula, (l.foldl .and acc).denote S ρ ↔ acc.denote S ρ ∧ ∀ a ∈ l, a.denote S ρ by
+-    simp [allF, h, VE.Formula.denote]
++  suffices h : ∀ acc : VE.Core.Formula, (l.foldl .and acc).denote S ρ ↔ acc.denote S ρ ∧ ∀ a ∈ l, a.denote S ρ by
++    simp [allF, h, VE.Core.Formula.denote]
+   induction l with
+   | nil => intro acc; simp
+   | cons b l ih =>
+     intro acc
+-    simp only [List.foldl_cons, ih, VE.Formula.denote, List.mem_cons, forall_eq_or_imp]
++    simp only [List.foldl_cons, ih, VE.Core.Formula.denote, List.mem_cons, forall_eq_or_imp]
+     exact ⟨fun ⟨⟨h₁, h₂⟩, h₃⟩ => ⟨h₁, h₂, h₃⟩, fun ⟨h₁, h₂, h₃⟩ => ⟨⟨h₁, h₂⟩, h₃⟩⟩
+ 
+-theorem iffF_denote (S : VE.Structure.{u}) (ρ : VE.Valuation S) (a b : VE.Formula) :
++theorem iffF_denote (S : VE.Structure.{u}) (ρ : VE.Valuation S) (a b : VE.Core.Formula) :
+     (iffF a b).denote S ρ ↔ (a.denote S ρ ↔ b.denote S ρ) := by
+-  simp only [iffF, VE.Formula.denote]
++  simp only [iffF, VE.Core.Formula.denote]
+   exact ⟨fun h => ⟨h.1, h.2⟩, fun h => ⟨h.1, h.2⟩⟩
+ 
+-theorem bindAll_denote (S : VE.Structure.{u}) (sorts : List String) (body : VE.Formula)
++theorem bindAll_denote (S : VE.Structure.{u}) (sorts : List String) (body : VE.Core.Formula)
+     (ρ : VE.Valuation S) :
+     (bindAll sorts body).denote S ρ ↔
+       ∀ vs, VE.TupleTyped S sorts vs → body.denote S (vs.reverse ++ ρ) := by
+@@ -83,7 +89,7 @@ theorem bindAll_denote (S : VE.Structure.{u}) (sorts : List String) (body : VE.F
+     · intro h
+       simpa using h [] trivial
+   | cons s ss ih =>
+-    simp only [bindAll, List.foldr, VE.Formula.denote] at ih ⊢
++    simp only [bindAll, List.foldr, VE.Core.Formula.denote] at ih ⊢
+     constructor
+     · intro h vs hvs
+       match vs, hvs with
+@@ -92,7 +98,7 @@ theorem bindAll_denote (S : VE.Structure.{u}) (sorts : List String) (body : VE.F
+       exact (ih (v :: ρ)).mpr fun vs hvs => by simpa using h (v :: vs) ⟨hv, hvs⟩
+ 
+ /-- The closed binder form at the empty valuation reads the body at `tupleVal`. -/
+-theorem bindAll_denote_nil (S : VE.Structure.{u}) (sorts : List String) (body : VE.Formula) :
++theorem bindAll_denote_nil (S : VE.Structure.{u}) (sorts : List String) (body : VE.Core.Formula) :
+     (bindAll sorts body).denote S [] ↔
+       ∀ vs, VE.TupleTyped S sorts vs → body.denote S (tupleVal vs) := by
+   simpa [tupleVal] using bindAll_denote S sorts body []
+@@ -104,17 +110,36 @@ theorem tupleTyped_length {S : VE.Structure.{u}} :
+   | [], _ :: _, h => h.elim
+   | _ :: _, [], h => h.elim
+ 
+-/-- An arity is one of the two v0 atom shapes. -/
+-def Arity (sorts : List String) : Prop := sorts.length = 1 ∨ sorts.length = 2
++/-- AP-6 route (b), scratch: regulated arity lifted to one to six. -/
++def Arity (sorts : List String) : Prop := 1 ≤ sorts.length ∧ sorts.length ≤ 6
++
++theorem vars_mapM (S : VE.Structure.{u}) :
++    ∀ (vs : List S.Carrier) (ρ : VE.Valuation S),
++      (vars vs.length).mapM (fun t => t.denote S (tupleVal vs ++ ρ)) = some vs
++  | [], _ => rfl
++  | v :: ws, ρ => by
++    have ih := vars_mapM S ws (v :: ρ)
++    simp only [tupleVal, List.reverse_cons, List.append_assoc, List.singleton_append] at ih ⊢
++    simp only [List.length_cons, vars, List.mapM_cons]
++    rw [ih]
++    have hv : (VE.Term.var ws.length).denote S (ws.reverse ++ v :: ρ) = some v := by
++      simp [VE.Term.denote, List.getElem?_append_right]
++    simp [hv]
+ 
+ theorem atom_denote (S : VE.Structure.{u}) (p : String) (sorts : List String) (ha : Arity sorts)
+     (vs : List S.Carrier) (hv : VE.TupleTyped S sorts vs) :
+     (atom p sorts).denote S (tupleVal vs) ↔ S.relation p vs := by
+-  unfold Arity at ha
+   have hl := tupleTyped_length hv
+   match sorts, vs, ha, hl with
+-  | [_], [v], _, _ => simp [atom, tupleVal, VE.Formula.denote, VE.Term.denote]
+-  | [_, _], [v, w], _, _ => simp [atom, tupleVal, VE.Formula.denote, VE.Term.denote]
++  | [_], [v], _, _ => simp [atom, tupleVal, VE.Core.Formula.denote, VE.Term.denote]
++  | [_, _], [v, w], _, _ => simp [atom, tupleVal, VE.Core.Formula.denote, VE.Term.denote]
++  | s₁ :: s₂ :: s₃ :: ss, vs, ⟨_, h6⟩, hl =>
++    have h3 : 3 ≤ (s₁ :: s₂ :: s₃ :: ss).length ∧ (s₁ :: s₂ :: s₃ :: ss).length ≤ 6 := ⟨by simp, h6⟩
++    simp only [atom, if_pos h3, VE.Core.Formula.denote]
++    rw [← hl]
++    have := vars_mapM S vs []
++    simp only [List.append_nil] at this
++    simp [this]
+ 
+ /-- `tupleVal_typed`: a typed relation tuple gives a typed valuation of the
+ reversed context. -/
+@@ -222,10 +247,14 @@ theorem sortOf_congr {E E' : VE.Environment} (hc : E'.constants = E.constants) (
+     (t : VE.Term) : t.sortOf E' Γ = t.sortOf E Γ := by
+   cases t <;> simp [VE.Term.sortOf, hc]
+ 
++theorem mapM_sortOf_congr {E E' : VE.Environment} (hc : E'.constants = E.constants) (Γ : List String)
++    (ts : List VE.Term) : ts.mapM (·.sortOf E' Γ) = ts.mapM (·.sortOf E Γ) := by
++  congr 1; funext t; exact sortOf_congr hc Γ t
++
+ /-- Well-formedness is monotone in the declared predicates. -/
+ theorem wf_mono {E E' : VE.Environment} (hs : E'.sorts = E.sorts) (hc : E'.constants = E.constants)
+     (hp : ∀ r ss, E.predicates r = some ss → E'.predicates r = some ss) :
+-    ∀ (a : VE.Formula) (Γ : List String), a.WellFormed E Γ → a.WellFormed E' Γ := by
++    ∀ (a : VE.Core.Formula) (Γ : List String), a.WellFormed E Γ → a.WellFormed E' Γ := by
+   intro a
+   induction a with
+   | top | bottom => intro _ h; exact h
+@@ -243,9 +272,18 @@ theorem wf_mono {E E' : VE.Environment} (hs : E'.sorts = E.sorts) (hc : E'.const
+     intro Γ h; exact ⟨ia Γ h.1, ib Γ h.2⟩
+   | all s a ih | ex s a ih =>
+     intro Γ h; exact ⟨hs ▸ h.1, ih _ h.2⟩
++  | atom r ts =>
++    intro Γ ⟨h3, h6, ss, hr, ht⟩
++    exact ⟨h3, h6, ss, hp _ _ hr, by rw [mapM_sortOf_congr hc]; exact ht⟩
++  | reachNamed k r t w =>
++    intro Γ ⟨s, hr, ht, hw⟩
++    exact ⟨s, hp _ _ hr, by rw [sortOf_congr hc]; exact ht, by rw [sortOf_congr hc]; exact hw⟩
++  | reachBody k s a t w ih =>
++    intro Γ ⟨hs', ha, ht, hw⟩
++    exact ⟨hs ▸ hs', ih _ ha, by rw [sortOf_congr hc]; exact ht, by rw [sortOf_congr hc]; exact hw⟩
+ 
+ theorem wf_hide_mono (E : VE.Environment) {ns ms : List String} (hsub : ∀ r, r ∈ ms → r ∈ ns)
+-    (a : VE.Formula) (Γ : List String) (h : a.WellFormed (hide E ns) Γ) :
++    (a : VE.Core.Formula) (Γ : List String) (h : a.WellFormed (hide E ns) Γ) :
+     a.WellFormed (hide E ms) Γ := by
+   refine wf_mono (E := hide E ns) (E' := hide E ms) rfl rfl ?_ a Γ h
+   intro r ss hr
+@@ -256,27 +294,35 @@ theorem wf_hide_mono (E : VE.Environment) {ns ms : List String} (hsub : ∀ r, r
+     simp only [this, if_false]
+     simpa [hn] using hr
+ 
++theorem forget_relation' {ns : List String} (S : VE.Structure.{u}) {r : String} (hr : r ∉ ns)
++    (vs : List S.Carrier) : (forget ns S).relation r vs ↔ S.relation r vs := by
++  simp [forget, hr]
++
++theorem term_denote_forget (ns : List String) (S : VE.Structure.{u}) (ρ : VE.Valuation S) (t : VE.Term) :
++    t.denote (forget ns S) ρ = t.denote S ρ := by
++  cases t <;> rfl
++
+ /-- Truth of a formula over `E` ignores the relations of undeclared symbols. -/
+ theorem denote_forget {E : VE.Environment} {ns : List String}
+     (hn : ∀ r ∈ ns, E.predicates r = none) (S : VE.Structure.{u})
+-    (a : VE.Formula) (Γ : List String) (ρ : VE.Valuation S) (hw : a.WellFormed E Γ) :
++    (a : VE.Core.Formula) (Γ : List String) (ρ : VE.Valuation S) (hw : a.WellFormed E Γ) :
+     a.denote (forget ns S) ρ ↔ a.denote S ρ := by
+   induction a generalizing Γ ρ with
+   | unary r t =>
+     obtain ⟨_, hr, _⟩ := hw
+     have : r ∉ ns := fun h => by rw [hn r h] at hr; cases hr
+-    simp [VE.Formula.denote, forget, this, VE.Term.denote]
++    simp [VE.Core.Formula.denote, forget, this, VE.Term.denote]
+   | binary r t w =>
+     obtain ⟨_, _, hr, _⟩ := hw
+     have : r ∉ ns := fun h => by rw [hn r h] at hr; cases hr
+-    simp [VE.Formula.denote, forget, this, VE.Term.denote]
+-  | eq t w => simp [VE.Formula.denote, forget, VE.Term.denote]
+-  | top | bottom => simp [VE.Formula.denote]
+-  | not a ih => simp only [VE.Formula.denote]; rw [ih Γ ρ hw]
++    simp [VE.Core.Formula.denote, forget, this, VE.Term.denote]
++  | eq t w => simp [VE.Core.Formula.denote, forget, VE.Term.denote]
++  | top | bottom => simp [VE.Core.Formula.denote]
++  | not a ih => simp only [VE.Core.Formula.denote]; rw [ih Γ ρ hw]
+   | and a b ia ib | or a b ia ib | implies a b ia ib =>
+-    simp only [VE.Formula.denote]; rw [ia Γ ρ hw.1, ib Γ ρ hw.2]
++    simp only [VE.Core.Formula.denote]; rw [ia Γ ρ hw.1, ib Γ ρ hw.2]
+   | all t a ih | ex t a ih =>
+-    simp only [VE.Formula.denote]
++    simp only [VE.Core.Formula.denote]
+     constructor
+     · intro h
+       first
+@@ -286,9 +332,24 @@ theorem denote_forget {E : VE.Environment} {ns : List String}
+       first
+       | exact fun v hv => (ih (t :: Γ) (v :: ρ) hw.2).mpr (h v hv)
+       | exact let ⟨v, hv, ha⟩ := h; ⟨v, hv, (ih (t :: Γ) (v :: ρ) hw.2).mpr ha⟩
++  | atom r ts =>
++    obtain ⟨_, _, _, hr, _⟩ := hw
++    have : r ∉ ns := fun h => by rw [hn r h] at hr; cases hr
++    simp only [VE.Core.Formula.denote, term_denote_forget, forget_relation' S this]
++    exact Iff.rfl
++  | reachNamed k r t w =>
++    obtain ⟨_, hr, _⟩ := hw
++    have : r ∉ ns := fun h => by rw [hn r h] at hr; cases hr
++    simp only [VE.Core.Formula.denote, term_denote_forget, forget_relation' S this]
++    exact Iff.rfl
++  | reachBody k s a t w ih =>
++    have key : ∀ x y, a.denote (forget ns S) (y :: x :: ρ) ↔ a.denote S (y :: x :: ρ) :=
++      fun x y => ih (s :: s :: Γ) (y :: x :: ρ) hw.2.1
++    simp only [VE.Core.Formula.denote, key, term_denote_forget]
++    rfl
+ 
+ theorem denote_forget_hide {E : VE.Environment} {ns ms : List String} (hsub : ∀ r ∈ ms, r ∈ ns)
+-    (S : VE.Structure.{u}) (a : VE.Formula) (Γ : List String) (ρ : VE.Valuation S)
++    (S : VE.Structure.{u}) (a : VE.Core.Formula) (Γ : List String) (ρ : VE.Valuation S)
+     (hw : a.WellFormed (hide E ns) Γ) :
+     a.denote (forget ms S) ρ ↔ a.denote S ρ :=
+   denote_forget (fun r hr => by simp [hide, hsub r hr]) S a Γ ρ hw
+@@ -317,7 +378,7 @@ def Term.inst (σ : List VE.Term) : VE.Term → VE.Term
+   | .const c => .const c
+ 
+ /-- Replace variable `i` by `σ[i]`, lifting under binders (Python `_instantiate`). -/
+-def inst : List VE.Term → VE.Formula → VE.Formula
++def inst : List VE.Term → VE.Core.Formula → VE.Core.Formula
+   | _, .top => .top
+   | _, .bottom => .bottom
+   | σ, .unary p t => .unary p (Term.inst σ t)
+@@ -329,6 +390,10 @@ def inst : List VE.Term → VE.Formula → VE.Formula
+   | σ, .implies a b => .implies (inst σ a) (inst σ b)
+   | σ, .all s a => .all s (inst (.var 0 :: σ.map Term.shift) a)
+   | σ, .ex s a => .ex s (inst (.var 0 :: σ.map Term.shift) a)
++  | σ, .atom p ts => .atom p (ts.map (Term.inst σ))
++  | σ, .reachNamed k p t u => .reachNamed k p (Term.inst σ t) (Term.inst σ u)
++  | σ, .reachBody k s a t u =>
++    .reachBody k s (inst (.var 0 :: (.var 0 :: σ.map Term.shift).map Term.shift) a) (Term.inst σ t) (Term.inst σ u)
+ 
+ theorem shift_denote (S : VE.Structure.{u}) (ρ : VE.Valuation S) (v : S.Carrier) (t : VE.Term) :
+     (Term.shift t).denote S (v :: ρ) = t.denote S ρ := by
+@@ -365,40 +430,67 @@ theorem term_inst_denote {S : VE.Structure.{u}} {ρ : VE.Valuation S} {σ : List
+       List.getElem?_eq_getElem hv]
+     exact h.2 i hs hv
+ 
++theorem mapM_inst_denote {S : VE.Structure.{u}} {ρ : VE.Valuation S} {σ : List VE.Term}
++    {vs : List S.Carrier} (h : Denotes S ρ σ vs) (E : VE.Environment) (Γ : List String)
++    (hl : Γ.length = vs.length) :
++    ∀ (ts : List VE.Term) (ss : List String), ts.mapM (·.sortOf E Γ) = some ss →
++      (ts.map (Term.inst σ)).mapM (·.denote S ρ) = ts.mapM (·.denote S vs)
++  | [], _, _ => rfl
++  | t :: ts, ss, hts => by
++    simp only [List.mapM_cons, Option.bind_eq_bind, Option.bind_eq_some_iff, Option.pure_def,
++      Option.some.injEq] at hts
++    obtain ⟨s, hs, ss', hss', _⟩ := hts
++    simp only [List.map_cons, List.mapM_cons, term_inst_denote h E Γ hl t s hs,
++      mapM_inst_denote h E Γ hl ts ss' hss']
++
+ /-- Instantiation meets its specification on formulas typed in a context of the
+ tuple's length. -/
+-theorem inst_denote (S : VE.Structure.{u}) (E : VE.Environment) (a : VE.Formula) :
++theorem inst_denote (S : VE.Structure.{u}) (E : VE.Environment) (a : VE.Core.Formula) :
+     ∀ (Γ : List String) (σ : List VE.Term) (ρ : VE.Valuation S) (vs : List S.Carrier),
+       a.WellFormed E Γ → Γ.length = vs.length → Denotes S ρ σ vs →
+       ((inst σ a).denote S ρ ↔ a.denote S vs) := by
+   induction a with
+-  | top | bottom => intros; simp [inst, VE.Formula.denote]
++  | top | bottom => intros; simp [inst, VE.Core.Formula.denote]
+   | unary p t =>
+     intro Γ σ ρ vs ⟨s, _, ht⟩ hl h
+-    simp only [inst, VE.Formula.denote, term_inst_denote h E Γ hl t s ht]
++    simp only [inst, VE.Core.Formula.denote, term_inst_denote h E Γ hl t s ht]
+   | binary p t w =>
+     intro Γ σ ρ vs ⟨s, s', _, ht, hw⟩ hl h
+-    simp only [inst, VE.Formula.denote, term_inst_denote h E Γ hl t s ht,
++    simp only [inst, VE.Core.Formula.denote, term_inst_denote h E Γ hl t s ht,
+       term_inst_denote h E Γ hl w s' hw]
+   | eq t w =>
+     intro Γ σ ρ vs ⟨s, ht, hw⟩ hl h
+-    simp only [inst, VE.Formula.denote, term_inst_denote h E Γ hl t s ht,
++    simp only [inst, VE.Core.Formula.denote, term_inst_denote h E Γ hl t s ht,
+       term_inst_denote h E Γ hl w s hw]
+   | not a ih =>
+     intro Γ σ ρ vs hw hl h
+-    simp only [inst, VE.Formula.denote]; rw [ih Γ σ ρ vs hw hl h]
++    simp only [inst, VE.Core.Formula.denote]; rw [ih Γ σ ρ vs hw hl h]
+   | and a b ia ib | or a b ia ib | implies a b ia ib =>
+     intro Γ σ ρ vs hw hl h
+-    simp only [inst, VE.Formula.denote]; rw [ia Γ σ ρ vs hw.1 hl h, ib Γ σ ρ vs hw.2 hl h]
++    simp only [inst, VE.Core.Formula.denote]; rw [ia Γ σ ρ vs hw.1 hl h, ib Γ σ ρ vs hw.2 hl h]
+   | all s a ih | ex s a ih =>
+     intro Γ σ ρ vs hw hl h
+-    simp only [inst, VE.Formula.denote]
++    simp only [inst, VE.Core.Formula.denote]
+     have key : ∀ v, (inst (.var 0 :: σ.map Term.shift) a).denote S (v :: ρ) ↔
+         a.denote S (v :: vs) := fun v =>
+       ih (s :: Γ) _ (v :: ρ) (v :: vs) hw.2 (by simp [hl]) (denotes_cons h v)
+     first
+     | exact forall_congr' fun v => imp_congr_right fun _ => key v
+     | exact exists_congr fun v => and_congr_right fun _ => key v
++  | atom p ts =>
++    intro Γ σ ρ vs ⟨_, _, ss, _, ht⟩ hl h
++    simp only [inst, VE.Core.Formula.denote, mapM_inst_denote h E Γ hl ts ss ht]
++  | reachNamed k p t w =>
++    intro Γ σ ρ vs ⟨s, _, ht, hw⟩ hl h
++    simp only [inst, VE.Core.Formula.denote, term_inst_denote h E Γ hl t s ht,
++      term_inst_denote h E Γ hl w s hw]
++  | reachBody k s a t w ih =>
++    intro Γ σ ρ vs ⟨_, ha, ht, hw⟩ hl h
++    have key : ∀ x y, (inst (.var 0 :: (.var 0 :: σ.map Term.shift).map Term.shift) a).denote S (y :: x :: ρ) ↔
++        a.denote S (y :: x :: vs) := fun x y =>
++      ih (s :: s :: Γ) _ (y :: x :: ρ) (y :: x :: vs) ha (by simp [hl]) (denotes_cons (denotes_cons h x) y)
++    simp only [inst, VE.Core.Formula.denote, term_inst_denote h E Γ hl t s ht,
++      term_inst_denote h E Γ hl w s hw, key]
+ 
+ theorem term_inst_sortOf (E : VE.Environment) (Γ Γ' : List String) (σ : List VE.Term)
+     (hl : σ.length = Γ'.length)
+@@ -413,12 +505,42 @@ theorem term_inst_sortOf (E : VE.Environment) (Γ Γ' : List String) (σ : List
+     simp only [Term.inst, List.getElem?_eq_getElem h₁, Option.getD_some]
+     rw [hσ i h₁ hi, hs]
+ 
++theorem mapM_inst_sortOf (E : VE.Environment) (Γ Γ' : List String) (σ : List VE.Term)
++    (hl : σ.length = Γ'.length)
++    (hσ : ∀ i (h₁ : i < σ.length) (h₂ : i < Γ'.length), σ[i].sortOf E Γ = some Γ'[i])
++    (E' : VE.Environment) (hc : E'.constants = E.constants) :
++    ∀ (ts : List VE.Term) (ss : List String), ts.mapM (·.sortOf E' Γ') = some ss →
++      (ts.map (Term.inst σ)).mapM (·.sortOf E Γ) = some ss
++  | [], _, h => h
++  | t :: ts, ss, hts => by
++    simp only [List.mapM_cons, Option.bind_eq_bind, Option.bind_eq_some_iff, Option.pure_def,
++      Option.some.injEq] at hts
++    obtain ⟨s, hs, ss', hss', rfl⟩ := hts
++    simp only [List.map_cons, List.mapM_cons, term_inst_sortOf E Γ Γ' σ hl hσ E' hc t s hs,
++      mapM_inst_sortOf E Γ Γ' σ hl hσ E' hc ts ss' hss']
++    rfl
++
++theorem lift_sortOf (E : VE.Environment) (Γ Γ' : List String) (σ : List VE.Term) (s : String)
++    (hσ : ∀ i (h₁ : i < σ.length) (h₂ : i < Γ'.length), σ[i].sortOf E Γ = some Γ'[i]) :
++    ∀ i (h₁ : i < (VE.Term.var 0 :: σ.map Term.shift).length) (h₂ : i < (s :: Γ').length),
++      (VE.Term.var 0 :: σ.map Term.shift)[i].sortOf E (s :: Γ) = some (s :: Γ')[i] := by
++  intro i h₁ h₂
++  cases i with
++  | zero => rfl
++  | succ i =>
++    have h1' : i < σ.length := by simpa using h₁
++    have h2' : i < Γ'.length := by simpa using h₂
++    simp only [List.getElem_cons_succ, List.getElem_map]
++    have := hσ i h1' h2'
++    generalize σ[i] = t at this ⊢
++    cases t <;> simpa [Term.shift, VE.Term.sortOf] using this
++
+ /-- Typing of an instantiation: a formula typed over `E'` in `Γ'` becomes one
+ typed over `E` in `Γ` when every `σ[i]` has sort `Γ'[i]` and `E'` declares no
+ more than `E`. -/
+ theorem inst_wellFormed (E E' : VE.Environment) (hs : E'.sorts = E.sorts)
+     (hc : E'.constants = E.constants)
+-    (hp : ∀ r ss, E'.predicates r = some ss → E.predicates r = some ss) (a : VE.Formula) :
++    (hp : ∀ r ss, E'.predicates r = some ss → E.predicates r = some ss) (a : VE.Core.Formula) :
+     ∀ (Γ Γ' : List String) (σ : List VE.Term), σ.length = Γ'.length →
+       (∀ i (h₁ : i < σ.length) (h₂ : i < Γ'.length), σ[i].sortOf E Γ = some Γ'[i]) →
+       a.WellFormed E' Γ' → (inst σ a).WellFormed E Γ := by
+@@ -451,5 +573,18 @@ theorem inst_wellFormed (E E' : VE.Environment) (hs : E'.sorts = E.sorts)
+       have := hσ i h1' h2'
+       generalize σ[i] = t at this ⊢
+       cases t <;> simpa [Term.shift, VE.Term.sortOf] using this
++  | atom r ts =>
++    intro Γ Γ' σ hl hσ ⟨h3, h6, ss, hr, ht⟩
++    exact ⟨by simpa using h3, by simpa using h6, ss, hp _ _ hr,
++      mapM_inst_sortOf E Γ Γ' σ hl hσ E' hc ts ss ht⟩
++  | reachNamed k r t w =>
++    intro Γ Γ' σ hl hσ ⟨s, hr, ht, hw⟩
++    exact ⟨s, hp _ _ hr, term_inst_sortOf E Γ Γ' σ hl hσ E' hc t s ht,
++      term_inst_sortOf E Γ Γ' σ hl hσ E' hc w s hw⟩
++  | reachBody k s a t w ih =>
++    intro Γ Γ' σ hl hσ ⟨hs', ha, ht, hw⟩
++    refine ⟨hs ▸ hs', ih (s :: s :: Γ) (s :: s :: Γ') _ (by simp [hl]) ?_ ha,
++      term_inst_sortOf E Γ Γ' σ hl hσ E' hc t s ht, term_inst_sortOf E Γ Γ' σ hl hσ E' hc w s hw⟩
++    exact lift_sortOf E (s :: Γ) (s :: Γ') _ s (lift_sortOf E Γ Γ' σ s hσ)
+ 
+ end VE.Norms
+diff --git a/lean/VE/Norms/Checks.lean b/lean/VE/Norms/Checks.lean
+index 9e1a81951b..6a96ad3f10 100644
+--- a/lean/VE/Norms/Checks.lean
++++ b/lean/VE/Norms/Checks.lean
+@@ -29,13 +29,13 @@ def oblig (n : String) (sorts : List String) (allow : Bool) (dual : Option Strin
+ def plain (n : String) (sorts : List String) (allow : Bool) : Regulated :=
+   ⟨n, sorts, allow, .plain, none, none⟩
+ 
+-def rule (name pred : String) (sign : Bool) (guard : VE.Formula := .top)
+-    (carve : List VE.Formula := []) (over : List String := []) : Node :=
++def rule (name pred : String) (sign : Bool) (guard : VE.Core.Formula := .top)
++    (carve : List VE.Core.Formula := []) (over : List String := []) : Node :=
+   ⟨name, pred, sign, guard, carve, over⟩
+ 
+-def u (p : String) : VE.Formula := .unary p (.var 0)
++def u (p : String) : VE.Core.Formula := .unary p (.var 0)
+ 
+-def enc (a : VE.Formula) : String := (VE.Route.Wire.encodeFormula a).compress
++def enc (a : VE.Core.Formula) : String := (VE.Route.Wire.encodeFormula a).compress
+ 
+ def conflictTargets (D : Doc) : List String :=
+   (syms D.T).filterMap (fun | .reg r => some (enc (conflict D r)) | .defn _ => none) ++
+diff --git a/lean/VE/Norms/Conflict.lean b/lean/VE/Norms/Conflict.lean
+index 24f1c66883..f767c8b42e 100644
+--- a/lean/VE/Norms/Conflict.lean
++++ b/lean/VE/Norms/Conflict.lean
+@@ -25,24 +25,24 @@ theorem unique_congr {α : Sort _} {P Q : α → Prop} (h : ∀ x, P x ↔ Q x)
+ theorem denote_relation_congr {E : VE.Environment} {ns : List String}
+     (hn : ∀ r ∈ ns, E.predicates r = none) (S : VE.Structure.{u})
+     (R : String → List S.Carrier → Prop) (hR : ∀ r vs, r ∉ ns → (R r vs ↔ S.relation r vs))
+-    (a : VE.Formula) (Γ : List String) (ρ : VE.Valuation S) (hw : a.WellFormed E Γ) :
++    (a : VE.Core.Formula) (Γ : List String) (ρ : VE.Valuation S) (hw : a.WellFormed E Γ) :
+     a.denote { S with relation := R } ρ ↔ a.denote S ρ := by
+   induction a generalizing Γ ρ with
+   | unary r t =>
+     obtain ⟨_, hr, _⟩ := hw
+     have : r ∉ ns := fun h => by rw [hn r h] at hr; cases hr
+-    simp only [VE.Formula.denote, VE.Term.denote, hR r _ this]
++    simp only [VE.Core.Formula.denote, VE.Term.denote, hR r _ this]
+   | binary r t w =>
+     obtain ⟨_, _, hr, _⟩ := hw
+     have : r ∉ ns := fun h => by rw [hn r h] at hr; cases hr
+-    simp only [VE.Formula.denote, VE.Term.denote, hR r _ this]
++    simp only [VE.Core.Formula.denote, VE.Term.denote, hR r _ this]
+   | eq t w => exact Iff.rfl
+   | top | bottom => exact Iff.rfl
+-  | not a ih => simp only [VE.Formula.denote]; rw [ih Γ ρ hw]
++  | not a ih => simp only [VE.Core.Formula.denote]; rw [ih Γ ρ hw]
+   | and a b ia ib | or a b ia ib | implies a b ia ib =>
+-    simp only [VE.Formula.denote]; rw [ia Γ ρ hw.1, ib Γ ρ hw.2]
++    simp only [VE.Core.Formula.denote]; rw [ia Γ ρ hw.1, ib Γ ρ hw.2]
+   | all t a ih | ex t a ih =>
+-    simp only [VE.Formula.denote]
++    simp only [VE.Core.Formula.denote]
+     first
+     | exact forall_congr' fun v => imp_congr_right fun _ => ih (t :: Γ) (v :: ρ) hw.2
+     | exact exists_congr fun v => and_congr_right fun _ => ih (t :: Γ) (v :: ρ) hw.2
+@@ -103,7 +103,7 @@ theorem forget_interpret (S₀ : VE.Structure.{u}) (h : S₀.Admissible (envAt D
+     · simp [hr]
+ 
+ /-- Formulas below `q` have the same truth after interpreting `q`. -/
+-theorem interpret_denote (S₀ : VE.Structure.{u}) (a : VE.Formula) (Γ : List String)
++theorem interpret_denote (S₀ : VE.Structure.{u}) (a : VE.Core.Formula) (Γ : List String)
+     (ρ : VE.Valuation S₀) (hw : a.WellFormed (envAt D k) Γ) :
+     a.denote (interpret D.T q S₀) ρ ↔ a.denote S₀ ρ :=
+   denote_relation_congr (self_hidden hv hk) S₀ _ (fun r vs hr => by
+@@ -262,17 +262,17 @@ theorem conflictFree_expands (D : Doc) (h : WellFormed D = true) (r : Regulated)
+ /-! ## Base conflict formulas -/
+ 
+ /-- `conflict_p := P_p° ∧ N_p°`. -/
+-def conflict (D : Doc) (r : Regulated) : VE.Formula :=
++def conflict (D : Doc) (r : Regulated) : VE.Core.Formula :=
+   .and (subst D.T (before D r.name) (pos D.T r.name)) (subst D.T (before D r.name) (neg D.T r.name))
+ 
+ /-- `O_q°` for the regulated predicate named `n`. -/
+-def outcomeBase (D : Doc) (n : String) : VE.Formula :=
++def outcomeBase (D : Doc) (n : String) : VE.Core.Formula :=
+   match D.T.regulated.find? (·.name == n) with
+   | some r => subst D.T (before D n) (outcome D.T r)
+   | none => .bottom
+ 
+ /-- `conflict_(r,m) := O_r° ∧ ¬O_m°`. -/
+-def pairConflict (D : Doc) (pr : Pair) : VE.Formula :=
++def pairConflict (D : Doc) (pr : Pair) : VE.Core.Formula :=
+   .and (outcomeBase D pr.req) (.not (outcomeBase D pr.perm))
+ 
+ /-- `ConflictFree`: no typed base tuple satisfies any conflict formula. -/
+@@ -326,7 +326,7 @@ theorem conflict_denote {D : Doc} (hv : Valid D) {k : Nat} {r : Regulated}
+       ((Sym.reg r).clash D.T).denote S (tupleVal vs) := by
+   have hb : before D r.name = k := before_eq hv hk
+   have hρ := tupleVal_typed S _ vs hvs
+-  simp only [conflict, hb, VE.Formula.denote, Sym.clash]
++  simp only [conflict, hb, VE.Core.Formula.denote, Sym.clash]
+   rw [subst_restrict_denote hv k S hc ha (pos D.T r.name) _
+       (decides_wellFormed (rulesTyped_of_valid hv hk) true) _ hρ,
+     subst_restrict_denote hv k S hc ha (neg D.T r.name) _
+diff --git a/lean/VE/Norms/Elaborate.lean b/lean/VE/Norms/Elaborate.lean
+index e12fd3f2f2..aa7bea91c2 100644
+--- a/lean/VE/Norms/Elaborate.lean
++++ b/lean/VE/Norms/Elaborate.lean
+@@ -17,30 +17,30 @@ universe u
+ def fuel (T : Tree) : Nat := T.nodes.length
+ 
+ /-- The rule applies: its guard holds and no carve-out holds. -/
+-def applies (N : Node) : VE.Formula := .and N.guard (.not (anyF N.carveOuts))
++def applies (N : Node) : VE.Core.Formula := .and N.guard (.not (anyF N.carveOuts))
+ 
+ /-- `N`'s subtree decides (Catala: the subtree yields a value). -/
+-def yields (T : Tree) : Nat → Node → VE.Formula
++def yields (T : Tree) : Nat → Node → VE.Core.Formula
+   | 0, N => .or (applies N) (anyF [])
+   | f + 1, N => .or (applies N) (anyF ((children T N).map (yields T f)))
+ 
+ /-- `N` itself decides: it applies and no exception subtree yields. -/
+-def selects (T : Tree) (f : Nat) (N : Node) : VE.Formula :=
++def selects (T : Tree) (f : Nat) (N : Node) : VE.Core.Formula :=
+   .and (applies N) (.not (anyF ((children T N).map (yields T f))))
+ 
+ /-- Some rule of the given sign on `p` decides. -/
+-def decides (T : Tree) (p : String) (sign : Bool) : VE.Formula :=
++def decides (T : Tree) (p : String) (sign : Bool) : VE.Core.Formula :=
+   anyF (((rulesOn T p).filter (·.sign == sign)).map (selects T (fuel T)))
+ 
+-def pos (T : Tree) (p : String) : VE.Formula := decides T p true
+-def neg (T : Tree) (p : String) : VE.Formula := decides T p false
++def pos (T : Tree) (p : String) : VE.Core.Formula := decides T p true
++def neg (T : Tree) (p : String) : VE.Core.Formula := decides T p false
+ 
+ /-- The completed outcome `O_p`: `P_p` for deny, `¬N_p` for allow (4.3). -/
+-def outcome (T : Tree) (r : Regulated) : VE.Formula :=
++def outcome (T : Tree) (r : Regulated) : VE.Core.Formula :=
+   if r.allowByDefault then .not (neg T r.name) else pos T r.name
+ 
+ /-- The three clauses of `elab_p`, over the situation variables. -/
+-def elabBody (T : Tree) (r : Regulated) : VE.Formula :=
++def elabBody (T : Tree) (r : Regulated) : VE.Core.Formula :=
+   let P := pos T r.name
+   let N := neg T r.name
+   let A := atom r.name r.sorts
+@@ -48,23 +48,23 @@ def elabBody (T : Tree) (r : Regulated) : VE.Formula :=
+     .implies (.and (.not P) (.not N)) (if r.allowByDefault then A else .not A)]
+ 
+ /-- `elab_p := ∀x̄. (P → p) ∧ (N → ¬p) ∧ ((¬P ∧ ¬N) → (p ↔ d))` (4.4). -/
+-def elabPremise (T : Tree) (r : Regulated) : VE.Formula := bindAll r.sorts (elabBody T r)
++def elabPremise (T : Tree) (r : Regulated) : VE.Core.Formula := bindAll r.sorts (elabBody T r)
+ 
+ /-- W3's biconditional `∀x̄. p(x̄) ↔ body` (the shape of `VE.Definitions.Def.premise`). -/
+-def Definition.premise (d : Definition) : VE.Formula :=
++def Definition.premise (d : Definition) : VE.Core.Formula :=
+   bindAll d.args (iffF (atom d.name d.args) d.body)
+ 
+ /-- The premise generated for one layer symbol. -/
+-def Sym.premise (T : Tree) : Sym → VE.Formula
++def Sym.premise (T : Tree) : Sym → VE.Core.Formula
+   | .reg r => elabPremise T r
+   | .defn d => d.premise
+ 
+ /-- `Norms.elaborate`: the norm elaborations, in DAG order (the layer premises). -/
+-def elaborate (T : Tree) : List VE.Formula :=
++def elaborate (T : Tree) : List VE.Core.Formula :=
+   (syms T).filterMap (fun | .reg r => some (elabPremise T r) | .defn _ => none)
+ 
+ /-- W3 biconditionals in DAG order: the `definitions` slice of Background. -/
+-def definitionPremises (T : Tree) : List VE.Formula :=
++def definitionPremises (T : Tree) : List VE.Core.Formula :=
+   (syms T).filterMap (fun | .defn d => some d.premise | .reg _ => none)
+ 
+ /-! ## The direct semantics -/
+@@ -112,12 +112,12 @@ section Denote
+ variable (T : Tree) (S : VE.Structure.{u}) (ρ : VE.Valuation S)
+ 
+ theorem applies_denote (N : Node) : (applies N).denote S ρ ↔ AppliesD S ρ N := by
+-  simp [applies, AppliesD, VE.Formula.denote, anyF_denote]
++  simp [applies, AppliesD, VE.Core.Formula.denote, anyF_denote]
+ 
+ theorem yields_denote : ∀ (f : Nat) (N : Node), (yields T f N).denote S ρ ↔ YieldsD T S ρ f N
+-  | 0, N => by simp [yields, YieldsD, VE.Formula.denote, anyF_denote, applies_denote]
++  | 0, N => by simp [yields, YieldsD, VE.Core.Formula.denote, anyF_denote, applies_denote]
+   | f + 1, N => by
+-    simp only [yields, YieldsD, VE.Formula.denote, anyF_denote, applies_denote, List.mem_map]
++    simp only [yields, YieldsD, VE.Core.Formula.denote, anyF_denote, applies_denote, List.mem_map]
+     constructor
+     · rintro (h | ⟨_, ⟨C, hC, rfl⟩, hy⟩)
+       · exact Or.inl h
+@@ -127,7 +127,7 @@ theorem yields_denote : ∀ (f : Nat) (N : Node), (yields T f N).denote S ρ ↔
+       · exact Or.inr ⟨_, ⟨C, hC, rfl⟩, (yields_denote f C).mpr hy⟩
+ 
+ theorem selects_denote (f : Nat) (N : Node) : (selects T f N).denote S ρ ↔ SelectsD T S ρ f N := by
+-  simp only [selects, SelectsD, VE.Formula.denote, anyF_denote, applies_denote, List.mem_map]
++  simp only [selects, SelectsD, VE.Core.Formula.denote, anyF_denote, applies_denote, List.mem_map]
+   apply and_congr_right
+   intro _
+   apply not_congr
+@@ -150,7 +150,7 @@ theorem outcome_denote (r : Regulated) :
+     (outcome T r).denote S ρ ↔
+       (if r.allowByDefault then ¬ (neg T r.name).denote S ρ else (pos T r.name).denote S ρ) := by
+   unfold outcome
+-  cases r.allowByDefault <;> simp [VE.Formula.denote]
++  cases r.allowByDefault <;> simp [VE.Core.Formula.denote]
+ 
+ end Denote
+ 
+@@ -159,9 +159,9 @@ end Denote
+ section Typing
+ variable (T : Tree) (E : VE.Environment) (Γ : List String)
+ 
+-theorem anyF_wellFormed (l : List VE.Formula) (h : ∀ a ∈ l, a.WellFormed E Γ) :
++theorem anyF_wellFormed (l : List VE.Core.Formula) (h : ∀ a ∈ l, a.WellFormed E Γ) :
+     (anyF l).WellFormed E Γ := by
+-  suffices ∀ acc : VE.Formula, acc.WellFormed E Γ → (l.foldl .or acc).WellFormed E Γ from
++  suffices ∀ acc : VE.Core.Formula, acc.WellFormed E Γ → (l.foldl .or acc).WellFormed E Γ from
+     this _ trivial
+   induction l with
+   | nil => intro acc h; exact h
+@@ -169,9 +169,9 @@ theorem anyF_wellFormed (l : List VE.Formula) (h : ∀ a ∈ l, a.WellFormed E 
+     intro acc hacc
+     exact ih (fun b hb => h b (List.mem_cons_of_mem _ hb)) _ ⟨hacc, h a List.mem_cons_self⟩
+ 
+-theorem allF_wellFormed (l : List VE.Formula) (h : ∀ a ∈ l, a.WellFormed E Γ) :
++theorem allF_wellFormed (l : List VE.Core.Formula) (h : ∀ a ∈ l, a.WellFormed E Γ) :
+     (allF l).WellFormed E Γ := by
+-  suffices ∀ acc : VE.Formula, acc.WellFormed E Γ → (l.foldl .and acc).WellFormed E Γ from
++  suffices ∀ acc : VE.Core.Formula, acc.WellFormed E Γ → (l.foldl .and acc).WellFormed E Γ from
+     this _ trivial
+   induction l with
+   | nil => intro acc h; exact h
+@@ -227,13 +227,10 @@ theorem outcome_wellFormed {r : Regulated} (hT : RulesTyped T E Γ r.name) :
+ 
+ theorem atom_wellFormed {p : String} {sorts : List String} (ha : Arity sorts)
+     (hp : E.predicates p = some sorts) : (atom p sorts).WellFormed E sorts.reverse := by
+-  unfold Arity at ha
+-  match sorts, ha with
+-  | [s], _ => exact ⟨s, hp, rfl⟩
+-  | [s, t], _ => exact ⟨s, t, hp, rfl, rfl⟩
++  sorry -- AP-6 B1 probe
+ 
+ theorem bindAll_wellFormed {sorts : List String} (hs : ∀ s ∈ sorts, s ∈ E.sorts) :
+-    ∀ (Δ : List String) (body : VE.Formula), body.WellFormed E (sorts.reverse ++ Δ) →
++    ∀ (Δ : List String) (body : VE.Core.Formula), body.WellFormed E (sorts.reverse ++ Δ) →
+       (bindAll sorts body).WellFormed E Δ := by
+   induction sorts with
+   | nil => intro Δ body h; simpa [bindAll] using h
+@@ -242,7 +239,7 @@ theorem bindAll_wellFormed {sorts : List String} (hs : ∀ s ∈ sorts, s ∈ E.
+     refine ⟨hs s List.mem_cons_self, ?_⟩
+     exact ih (fun t ht => hs t (List.mem_cons_of_mem _ ht)) (s :: Δ) body (by simpa using h)
+ 
+-theorem bindAll_wellFormed_inv {E : VE.Environment} (body : VE.Formula) :
++theorem bindAll_wellFormed_inv {E : VE.Environment} (body : VE.Core.Formula) :
+     ∀ (ss Γ : List String), (bindAll ss body).WellFormed E Γ → body.WellFormed E (ss.reverse ++ Γ)
+   | [], Γ, h => h
+   | s :: ss, Γ, h => by
+@@ -322,8 +319,8 @@ theorem elabBody_denote (T : Tree) (r : Regulated) (ha : Arity r.sorts) (S : VE.
+           (S.relation r.name vs ↔ r.allowByDefault = true))) := by
+   have hA := atom_denote S r.name r.sorts ha vs hv
+   simp only [elabBody, allF_denote, List.mem_cons, List.mem_nil_iff, or_false, forall_eq_or_imp,
+-    forall_eq, VE.Formula.denote, hA]
+-  cases r.allowByDefault <;> simp [VE.Formula.denote, hA]
++    forall_eq, VE.Core.Formula.denote, hA]
++  cases r.allowByDefault <;> simp [VE.Core.Formula.denote, hA]
+ 
+ /-- Faithfulness at one tuple, for any structure in which the rule formulas do
+ not see `p` (as typing below `p` guarantees). -/
+@@ -422,7 +419,7 @@ theorem mem_syms_defn {T : Tree} {d : Definition} (h : Sym.defn d ∈ syms T) :
+   obtain ⟨n, _, hn⟩ := List.mem_filterMap.mp h
+   exact lookupSym_defn hn
+ 
+-theorem mem_elaborate {T : Tree} {a : VE.Formula} :
++theorem mem_elaborate {T : Tree} {a : VE.Core.Formula} :
+     a ∈ elaborate T ↔ ∃ r, Sym.reg r ∈ syms T ∧ a = elabPremise T r := by
+   simp only [elaborate, List.mem_filterMap]
+   constructor
+diff --git a/lean/VE/Norms/Examples.lean b/lean/VE/Norms/Examples.lean
+index 00b5627646..58a8e401bb 100644
+--- a/lean/VE/Norms/Examples.lean
++++ b/lean/VE/Norms/Examples.lean
+@@ -15,7 +15,7 @@ namespace VE.Norms
+ universe u
+ 
+ /-- The constant truth value of a formula without atoms and quantifiers. -/
+-def groundValue : VE.Formula → Option Bool
++def groundValue : VE.Core.Formula → Option Bool
+   | .top => some true
+   | .bottom => some false
+   | .not a => (groundValue a).map (!·)
+@@ -31,20 +31,20 @@ def groundValue : VE.Formula → Option Bool
+   | _ => none
+ 
+ theorem groundValue_denote (S : VE.Structure.{u}) (ρ : VE.Valuation S) :
+-    ∀ (a : VE.Formula) (b : Bool), groundValue a = some b → (a.denote S ρ ↔ b = true)
+-  | .top, b, h => by cases h; simp [VE.Formula.denote]
+-  | .bottom, b, h => by cases h; simp [VE.Formula.denote]
++    ∀ (a : VE.Core.Formula) (b : Bool), groundValue a = some b → (a.denote S ρ ↔ b = true)
++  | .top, b, h => by cases h; simp [VE.Core.Formula.denote]
++  | .bottom, b, h => by cases h; simp [VE.Core.Formula.denote]
+   | .not a, b, h => by
+     simp only [groundValue, Option.map_eq_some_iff] at h
+     obtain ⟨x, hx, rfl⟩ := h
+-    simp only [VE.Formula.denote, groundValue_denote S ρ a x hx]
++    simp only [VE.Core.Formula.denote, groundValue_denote S ρ a x hx]
+     cases x <;> simp
+   | .and a c, b, h => by
+     simp only [groundValue] at h
+     split at h
+     · rename_i x y hx hy
+       cases h
+-      simp only [VE.Formula.denote, groundValue_denote S ρ a x hx, groundValue_denote S ρ c y hy]
++      simp only [VE.Core.Formula.denote, groundValue_denote S ρ a x hx, groundValue_denote S ρ c y hy]
+       cases x <;> cases y <;> simp
+     · cases h
+   | .or a c, b, h => by
+@@ -52,7 +52,7 @@ theorem groundValue_denote (S : VE.Structure.{u}) (ρ : VE.Valuation S) :
+     split at h
+     · rename_i x y hx hy
+       cases h
+-      simp only [VE.Formula.denote, groundValue_denote S ρ a x hx, groundValue_denote S ρ c y hy]
++      simp only [VE.Core.Formula.denote, groundValue_denote S ρ a x hx, groundValue_denote S ρ c y hy]
+       cases x <;> cases y <;> simp
+     · cases h
+   | .implies a c, b, h => by
+@@ -60,7 +60,7 @@ theorem groundValue_denote (S : VE.Structure.{u}) (ρ : VE.Valuation S) :
+     split at h
+     · rename_i x y hx hy
+       cases h
+-      simp only [VE.Formula.denote, groundValue_denote S ρ a x hx, groundValue_denote S ρ c y hy]
++      simp only [VE.Core.Formula.denote, groundValue_denote S ρ a x hx, groundValue_denote S ρ c y hy]
+       cases x <;> cases y <;> simp
+     · cases h
+   | .unary _ _, _, h | .binary _ _ _, _, h | .eq _ _, _, h | .all _ _, _, h | .ex _ _, _, h => by
+diff --git a/lean/VE/Norms/Family.lean b/lean/VE/Norms/Family.lean
+index 56c10ee833..e7d8b1cc74 100644
+--- a/lean/VE/Norms/Family.lean
++++ b/lean/VE/Norms/Family.lean
+@@ -423,7 +423,7 @@ def regulatedOf (environment : Json) : Except String (List Regulated) := do
+   let regulated ← VE.Norms.Plain.decodeRegulatedAll (← VE.Bridge.fields (← vocabulary.getObjVal? "predicates"))
+   let sorts := (← VE.Bridge.fields (← vocabulary.getObjVal? "sorts")).map Prod.fst
+   for r in regulated do
+-    unless r.sorts.length == 1 || r.sorts.length == 2 do
++    unless 1 ≤ r.sorts.length && r.sorts.length ≤ 6 do
+       throw s!"UnsupportedArity: regulated predicate {r.name}"
+     unless r.sorts.all sorts.contains do throw s!"UnknownSymbol: sort of {r.name}"
+   pure regulated
+diff --git a/lean/VE/Norms/FamilySpec.lean b/lean/VE/Norms/FamilySpec.lean
+index 3b55865ce0..4c18c9335d 100644
+--- a/lean/VE/Norms/FamilySpec.lean
++++ b/lean/VE/Norms/FamilySpec.lean
+@@ -25,7 +25,7 @@ theorem orderTermFol_embed (t : VE.Order.Term) (h : orderTermFol t = true) :
+ /-- An order formula `orderFol` passes is the embedding of an FOL formula: no comparison and no
+ arithmetic term. -/
+ theorem orderFol_embed : ∀ (a : VE.Order.Formula), orderFol a = true →
+-    ∃ φ : VE.Formula, VE.Order.embed φ = a := by
++    ∃ φ : VE.Core.Formula, VE.Order.embed φ = a := by
+   have term := orderTermFol_embed
+   intro a h
+   induction a with
+@@ -75,8 +75,8 @@ embedding of an FOL formula (`VE.Core.embed`, whose meaning `conservativity_with
+ `VE.Order.embed` for the order family). -/
+ theorem firstOrderFormula_fol {order : Bool} {j : Json}
+     (h : firstOrderFormula order j = true) :
+-    (order = false → ∀ a, VE.Core.Bridge.decodeFormula 64 j = .ok a → ∃ φ : VE.Formula, VE.Core.embed φ = a) ∧
+-    (order = true → ∀ a, VE.Order.Wire.decodeFormula 64 j = .ok a → ∃ φ : VE.Formula, VE.Order.embed φ = a) := by
++    (order = false → ∀ a, VE.Core.Bridge.decodeFormula 64 j = .ok a → ∃ φ : VE.Core.Formula, VE.Core.embed φ = a) ∧
++    (order = true → ∀ a, VE.Order.Wire.decodeFormula 64 j = .ok a → ∃ φ : VE.Core.Formula, VE.Order.embed φ = a) := by
+   refine ⟨fun ho a ha => ?_, fun ho a ha => ?_⟩
+   · subst ho
+     simp only [firstOrderFormula, Bool.false_eq_true, ↓reduceIte, ha] at h
+@@ -94,9 +94,9 @@ theorem firstOrderDefinition_fol {order : Bool} {entry payload : Json}
+     (hd : entry.getObjVal? "defined" = .ok payload) :
+     VE.Core.Layers.folEntry entry = true ∧
+     (order = false → ∀ a, VE.Core.Bridge.decodeFormula 64 (payload.getObjValD "body") = .ok a →
+-      ∃ φ : VE.Formula, VE.Core.embed φ = a) ∧
++      ∃ φ : VE.Core.Formula, VE.Core.embed φ = a) ∧
+     (order = true → ∀ a, VE.Order.Wire.decodeFormula 64 (payload.getObjValD "body") = .ok a →
+-      ∃ φ : VE.Formula, VE.Order.embed φ = a) := by
++      ∃ φ : VE.Core.Formula, VE.Order.embed φ = a) := by
+   simp only [firstOrderDefinition, hd, Bool.and_eq_true] at h
+   exact ⟨h.1, firstOrderFormula_fol h.2⟩
+ 
+@@ -114,14 +114,14 @@ theorem firstOrder_fol {environment norms : Json} {order : Bool}
+       entry.getObjVal? "defined" = .ok payload →
+       VE.Core.Layers.folEntry entry = true ∧
+       (order = false → ∀ a, VE.Core.Bridge.decodeFormula 64 (payload.getObjValD "body") = .ok a →
+-        ∃ φ : VE.Formula, VE.Core.embed φ = a) ∧
++        ∃ φ : VE.Core.Formula, VE.Core.embed φ = a) ∧
+       (order = true → ∀ a, VE.Order.Wire.decodeFormula 64 (payload.getObjValD "body") = .ok a →
+-        ∃ φ : VE.Formula, VE.Order.embed φ = a)) ∧
++        ∃ φ : VE.Core.Formula, VE.Order.embed φ = a)) ∧
+     (∀ xs, norms = .arr xs → ∀ u ∈ xs.toList, ∀ g ∈ (match (u.getObjValD "norm").getObjValD "unless" with
+         | .arr ys => ys.toList
+         | _ => []) ++ [(u.getObjValD "norm").getObjValD "guard"],
+-      (order = false → ∀ a, VE.Core.Bridge.decodeFormula 64 g = .ok a → ∃ φ : VE.Formula, VE.Core.embed φ = a) ∧
+-      (order = true → ∀ a, VE.Order.Wire.decodeFormula 64 g = .ok a → ∃ φ : VE.Formula, VE.Order.embed φ = a)) := by
++      (order = false → ∀ a, VE.Core.Bridge.decodeFormula 64 g = .ok a → ∃ φ : VE.Core.Formula, VE.Core.embed φ = a) ∧
++      (order = true → ∀ a, VE.Order.Wire.decodeFormula 64 g = .ok a → ∃ φ : VE.Core.Formula, VE.Order.embed φ = a)) := by
+   unfold firstOrder at h
+   cases hp : VE.Route.Gate.profilesOf environment <;> simp only [hp] at h ho <;> subst ho
+   all_goals
+diff --git a/lean/VE/Norms/Flagged.lean b/lean/VE/Norms/Flagged.lean
+index 194d0dbbcf..a568a68017 100644
+--- a/lean/VE/Norms/Flagged.lean
++++ b/lean/VE/Norms/Flagged.lean
+@@ -35,7 +35,7 @@ open Lean
+ universe u
+ 
+ /-- Python `_flag_premises` over the decoded declarations. -/
+-def flagPremises (src : Wire.Source) : List VE.Formula :=
++def flagPremises (src : Wire.Source) : List VE.Core.Formula :=
+   VE.Data.Background.generate src.ne.rv.flags
+ 
+ /-- Whether some declaration carries a `total` flag. -/
+@@ -151,25 +151,25 @@ def regTable (T : Tree) : Nat → Table
+     | some (.reg r) => if n = r.name then some (substWith (regTable T k) (outcome T r)) else regTable T k n
+     | _ => regTable T k n
+ 
+-def regSubst (T : Tree) (i : Nat) (φ : VE.Formula) : VE.Formula := substWith (regTable T i) φ
++def regSubst (T : Tree) (i : Nat) (φ : VE.Core.Formula) : VE.Core.Formula := substWith (regTable T i) φ
+ 
+ /-- Python's conflict formula of a regulated predicate: `P_p ∧ N_p` with the
+ earlier regulated atoms expanded. -/
+-def conflictPy (D : Doc) (r : Regulated) : VE.Formula :=
++def conflictPy (D : Doc) (r : Regulated) : VE.Core.Formula :=
+   .and (regSubst D.T (before D r.name) (pos D.T r.name)) (regSubst D.T (before D r.name) (neg D.T r.name))
+ 
+-def outcomePy (D : Doc) (n : String) : VE.Formula :=
++def outcomePy (D : Doc) (n : String) : VE.Core.Formula :=
+   match D.T.regulated.find? (·.name == n) with
+   | some r => regSubst D.T (before D n) (outcome D.T r)
+   | none => .bottom
+ 
+ /-- Python's conflict formula of a declared pair. -/
+-def pairConflictPy (D : Doc) (pr : Pair) : VE.Formula :=
++def pairConflictPy (D : Doc) (pr : Pair) : VE.Core.Formula :=
+   .and (outcomePy D pr.req) (.not (outcomePy D pr.perm))
+ 
+ /-- Python `NormDocument.conflict_targets`, in its order: the formulas are over
+ the base environment with defined predicates, which `baseBackground` defines. -/
+-def pyTargets (D : Doc) : List (String × List String × VE.Formula) :=
++def pyTargets (D : Doc) : List (String × List String × VE.Core.Formula) :=
+   (syms D.T).filterMap (fun | .reg r => some (r.name, r.sorts, conflictPy D r) | .defn _ => none) ++
+     (pairs D.T).map (fun pr => (pr.req ++ "->" ++ pr.perm, pr.sorts, pairConflictPy D pr))
+ 
+@@ -180,7 +180,7 @@ def baseEnv (D : Doc) : VE.Environment := hide D.E (D.T.regulated.map (·.name))
+ /-- Python's Background over the base environment, in generator order: flags,
+ definitions, literals. The base environment declares no regulated predicate,
+ so it has no profile premise. -/
+-def baseBackground (src : Wire.Source) : List VE.Formula :=
++def baseBackground (src : Wire.Source) : List VE.Core.Formula :=
+   flagPremises src ++ definitionPremises src.D.T ++ backgroundBase src.D
+ 
+ /-- Every target has an accepted certificate for
+@@ -192,7 +192,7 @@ def conflictFreeCheck (src : Wire.Source) (certs : List (Option VE.Tableau.Certi
+       | none => false)
+ 
+ theorem conflictFreeCheck_target {src : Wire.Source} {certs : List (Option VE.Tableau.Certificate)}
+-    (hc : conflictFreeCheck src certs = true) {t : String × List String × VE.Formula}
++    (hc : conflictFreeCheck src certs = true) {t : String × List String × VE.Core.Formula}
+     (ht : t ∈ pyTargets src.D) :
+     ∃ c, VE.Tableau.checkCertificate (baseEnv src.D) (baseBackground src) (targetConclusion t) c = true := by
+   simp only [conflictFreeCheck, Bool.and_eq_true, beq_iff_eq, List.all_eq_true] at hc
+@@ -225,7 +225,7 @@ theorem conflictFreeCheck_sound (src : Wire.Source) (certs : List (Option VE.Tab
+ 
+ /-- `Replay.decodePackage` over `baseEnv` and `baseBackground`. -/
+ def decodePackage (src : Wire.Source) (environment norms packages : Json)
+-    (t : String × List String × VE.Formula) : Option VE.Tableau.Certificate := Id.run do
++    (t : String × List String × VE.Core.Formula) : Option VE.Tableau.Certificate := Id.run do
+   let profiles := src.ne.profiles
+   let some baseEnvJson := (Replay.baseEnvironmentJson environment).toOption | none
+   let some baseProfiles := (VE.Bridge.strings (baseEnvJson.getObjValD "profiles")).toOption | none
+@@ -253,14 +253,14 @@ structure ConflictReplay where
+   outer : List Bool
+ 
+ /-- The targets the case checks: the frozen ones, or Python's. -/
+-def ConflictReplay.targets (r : ConflictReplay) : List (String × List String × VE.Formula) :=
++def ConflictReplay.targets (r : ConflictReplay) : List (String × List String × VE.Core.Formula) :=
+   if r.plain then VE.Norms.targets r.src.D else pyTargets r.src.D
+ 
+ def ConflictReplay.conflictFree (r : ConflictReplay) : Bool :=
+   if r.plain then VE.Norms.conflictFreeCheck r.src.D r.certs else conflictFreeCheck r.src r.certs
+ 
+ /-- The certificate check of one target, as the case's verdict uses it. -/
+-def ConflictReplay.accepts (r : ConflictReplay) (t : String × List String × VE.Formula)
++def ConflictReplay.accepts (r : ConflictReplay) (t : String × List String × VE.Core.Formula)
+     (c : VE.Tableau.Certificate) : Bool :=
+   if r.plain then VE.Tableau.checkCertificate (envAt r.src.D 0) (backgroundBase r.src.D) (targetConclusion t) c
+   else VE.Tableau.checkCertificate (baseEnv r.src.D) (baseBackground r.src) (targetConclusion t) c
+diff --git a/lean/VE/Norms/FlaggedSpec.lean b/lean/VE/Norms/FlaggedSpec.lean
+index 077c3068d4..e6ee61cc32 100644
+--- a/lean/VE/Norms/FlaggedSpec.lean
++++ b/lean/VE/Norms/FlaggedSpec.lean
+@@ -84,7 +84,7 @@ theorem layer_cases {D : Doc} {n : String} (hn : n ∈ layerNames D.T) :
+ 
+ /-- A well-formed formula's predicates are declared. -/
+ theorem preds_declared {E : VE.Environment} :
+-    ∀ (a : VE.Formula) (Γ : List String), a.WellFormed E Γ → ∀ p ∈ preds a, E.predicates p ≠ none := by
++    ∀ (a : VE.Core.Formula) (Γ : List String), a.WellFormed E Γ → ∀ p ∈ preds a, E.predicates p ≠ none := by
+   intro a
+   induction a with
+   | top | bottom | eq _ _ => intro _ _ p hp; cases hp
+@@ -104,7 +104,7 @@ theorem preds_declared {E : VE.Environment} :
+ 
+ /-- Typing depends only on the declarations of the predicates a formula mentions. -/
+ theorem wf_preds_congr {E E' : VE.Environment} (hs : E'.sorts = E.sorts) (hc : E'.constants = E.constants) :
+-    ∀ (a : VE.Formula), (∀ p ∈ preds a, E'.predicates p = E.predicates p) →
++    ∀ (a : VE.Core.Formula), (∀ p ∈ preds a, E'.predicates p = E.predicates p) →
+       ∀ Γ, a.WellFormed E Γ → a.WellFormed E' Γ := by
+   intro a
+   induction a with
+@@ -170,7 +170,7 @@ theorem freeExpansion_tupleTyped (ss : List String) (vs : List B.Carrier) :
+ variable {B}
+ 
+ /-- A base formula has the same truth in `B` and in its free expansion. -/
+-theorem freeExpansion_base_denote (a : VE.Formula) (Γ : List String) (hw : a.WellFormed (envAt D 0) Γ)
++theorem freeExpansion_base_denote (a : VE.Core.Formula) (Γ : List String) (hw : a.WellFormed (envAt D 0) Γ)
+     (ρ : VE.Valuation B) : a.denote (freeExpansion D B) ρ ↔ a.denote B ρ :=
+   denote_relation_congr (fun _ hr => envAt_zero_later hr) B _
+     (fun _ vs hr => freeExpansion_base B hr vs) a Γ ρ hw
+@@ -214,7 +214,7 @@ end Expansion
+ 
+ /-! ## The regulated-only substitution -/
+ 
+-theorem regTable_some (T : Tree) : ∀ (k : Nat) (n : String) (F : VE.Formula), regTable T k n = some F →
++theorem regTable_some (T : Tree) : ∀ (k : Nat) (n : String) (F : VE.Core.Formula), regTable T k n = some F →
+     ∃ j r, j < k ∧ (syms T)[j]? = some (.reg r) ∧ r.name = n ∧ F = substWith (regTable T j) (outcome T r)
+   | 0, _, _, h => by cases h
+   | k + 1, n, F, h => by
+@@ -292,7 +292,7 @@ theorem regTable_wellFormed {D : Doc} (hv : Valid D) (k : Nat) :
+     exact substWith_wellFormed _ (envAt D j) (baseEnv D) rfl rfl (ih j hj) (regTable_none_base hv j) _ _
+       (outcome_wellFormed (rulesTyped_of_valid hv hr))
+ 
+-theorem regSubst_wellFormed {D : Doc} (hv : Valid D) (k : Nat) (φ : VE.Formula) (Γ : List String)
++theorem regSubst_wellFormed {D : Doc} (hv : Valid D) (k : Nat) (φ : VE.Core.Formula) (Γ : List String)
+     (hφ : φ.WellFormed (envAt D k) Γ) : (regSubst D.T k φ).WellFormed (baseEnv D) Γ :=
+   substWith_wellFormed _ (envAt D k) (baseEnv D) rfl rfl (regTable_wellFormed hv k) (regTable_none_base hv k) φ Γ hφ
+ 
+@@ -316,7 +316,7 @@ theorem regTable_sound {D : Doc} (hv : Valid D) (S : VE.Structure.{u}) (hc : Con
+       (ha j (.reg r) hj hr vs hvs).symm
+ 
+ theorem regSubst_denote {D : Doc} (hv : Valid D) (k : Nat) (S : VE.Structure.{u})
+-    (hc : ConstantsTyped D S) (ha : AgreesBelow D k S) (φ : VE.Formula) (Γ : List String)
++    (hc : ConstantsTyped D S) (ha : AgreesBelow D k S) (φ : VE.Core.Formula) (Γ : List String)
+     (hφ : φ.WellFormed (envAt D k) Γ) (ρ : VE.Valuation S) (hρ : VE.Valuation.Typed S Γ ρ) :
+     (regSubst D.T k φ).denote S ρ ↔ φ.denote S ρ :=
+   substWith_denote _ (envAt D k) (baseEnv D) S hc (regTable_sound hv S hc k ha) φ Γ ρ hφ hρ
+@@ -329,7 +329,7 @@ def pyStructure (D : Doc) (B : VE.Structure.{u}) : VE.Structure.{u} :=
+ /-- The two substitutions agree: Python's regulated-only expansion in
+ `pyStructure` and the spec's full expansion in `B`. -/
+ theorem regSubst_base_iff {D : Doc} (hv : Valid D) {B : VE.Structure.{u}} (hB : B.Admissible (envAt D 0))
+-    (k : Nat) (φ : VE.Formula) (Γ : List String) (hφ : φ.WellFormed (envAt D k) Γ)
++    (k : Nat) (φ : VE.Core.Formula) (Γ : List String) (hφ : φ.WellFormed (envAt D k) Γ)
+     (ρ : VE.Valuation B) (hρ : VE.Valuation.Typed B Γ ρ) :
+     (regSubst D.T k φ).denote (pyStructure D B) ρ ↔ (subst D.T k φ).denote B ρ := by
+   have hc := freeExpansion_constants hB
+@@ -347,7 +347,7 @@ theorem conflictPy_iff {D : Doc} (hv : Valid D) {B : VE.Structure.{u}} (hB : B.A
+     (conflictPy D r).denote (pyStructure D B) (tupleVal vs) ↔ (conflict D r).denote B (tupleVal vs) := by
+   have hb : before D r.name = k := before_eq hv hk
+   have hρ := tupleVal_typed B _ vs hvs
+-  simp only [conflictPy, conflict, hb, VE.Formula.denote]
++  simp only [conflictPy, conflict, hb, VE.Core.Formula.denote]
+   rw [regSubst_base_iff hv hB k (pos D.T r.name) _ (decides_wellFormed (rulesTyped_of_valid hv hk) true) _ hρ,
+     regSubst_base_iff hv hB k (neg D.T r.name) _ (decides_wellFormed (rulesTyped_of_valid hv hk) false) _ hρ]
+ 
+@@ -366,7 +366,7 @@ theorem pairConflictPy_iff {D : Doc} (hv : Valid D) {B : VE.Structure.{u}} (hB :
+     (pairConflictPy D pr).denote (pyStructure D B) (tupleVal vs) ↔
+       (pairConflict D pr).denote B (tupleVal vs) := by
+   obtain ⟨_, ⟨i, r, hi, hrn, hrs, _⟩, ⟨j, m, hj, hmn, hms, _⟩⟩ := pair_members hv hpr
+-  simp only [pairConflictPy, pairConflict, VE.Formula.denote]
++  simp only [pairConflictPy, pairConflict, VE.Core.Formula.denote]
+   rw [← hrn, ← hmn, outcomePy_iff hv hB hi vs (hrs ▸ hvs), outcomePy_iff hv hB hj vs (hms ▸ hvs)]
+ 
+ theorem pyStructure_tupleTyped (D : Doc) (B : VE.Structure.{u}) (ss : List String) (vs : List B.Carrier) :
+@@ -557,7 +557,7 @@ theorem finish_eq {E : VE.Environment} {l ds : List VE.Definitions.Def}
+   | none => rw [hb] at h; cases h; rfl
+   | some x => rw [hb] at h; cases h
+ 
+-theorem elaborate_names (E : VE.Environment) (entries : List (String × List String × VE.Formula))
++theorem elaborate_names (E : VE.Environment) (entries : List (String × List String × VE.Core.Formula))
+     (ds : List VE.Definitions.Def) (h : VE.Definitions.elaborate E entries = .ok ds) :
+     ∀ d ∈ ds, ∃ e ∈ entries, d.name = e.1 := by
+   unfold VE.Definitions.elaborate at h
+@@ -574,7 +574,7 @@ theorem elaborate_names (E : VE.Environment) (entries : List (String × List Str
+     exact ⟨_, List.mem_of_find?_eq_some he, rfl⟩
+ 
+ theorem decodeDefined_name {p : String} {ss : List String} {payload : Json}
+-    {e : String × List String × VE.Formula} (h : VE.Route.Wire.decodeDefined p ss payload = .ok e) : e.1 = p := by
++    {e : String × List String × VE.Core.Formula} (h : VE.Route.Wire.decodeDefined p ss payload = .ok e) : e.1 = p := by
+   unfold VE.Route.Wire.decodeDefined at h
+   obtain ⟨_, _, h⟩ := bind_ok h
+   obtain ⟨_, _, h⟩ := bind_ok h
+@@ -815,7 +815,7 @@ theorem decodeSource_flag_not_defined (environment norms : Json) (flags : Bool)
+ /-- One accepted conflict certificate types the whole base Background over
+ `baseEnv`: the checker requires every premise to check (`TableauChecker.lean`). -/
+ theorem conflictFreeCheck_background {src : Wire.Source} {certs : List (Option VE.Tableau.Certificate)}
+-    (hc : Flagged.conflictFreeCheck src certs = true) {t : String × List String × VE.Formula}
++    (hc : Flagged.conflictFreeCheck src certs = true) {t : String × List String × VE.Core.Formula}
+     (ht : t ∈ pyTargets src.D) : ∀ a ∈ baseBackground src, a.WellFormed (baseEnv src.D) [] := by
+   obtain ⟨c, hcc⟩ := Flagged.conflictFreeCheck_target hc ht
+   intro a ha
+diff --git a/lean/VE/Norms/Layer.lean b/lean/VE/Norms/Layer.lean
+index afda00a703..930056e807 100644
+--- a/lean/VE/Norms/Layer.lean
++++ b/lean/VE/Norms/Layer.lean
+@@ -18,7 +18,7 @@ open VE.Route
+ universe u
+ 
+ /-- The premises a layer symbol contributes on the route. -/
+-def symPremises (T : Tree) : Sym → List VE.Formula
++def symPremises (T : Tree) : Sym → List VE.Core.Formula
+   | .reg r => [elabPremise T r]
+   | .defn _ => []
+ 
+@@ -237,7 +237,7 @@ an accepted certificate for Background ++ norm elaborations ++ Γ ⊢ φ gives 
+ every admissible structure satisfying the direct semantics, the definitions,
+ the profile, `Background_base` and `Γ`. -/
+ theorem norms_route_intended (D : Doc) (h : WellFormed D = true)
+-    (Γ : List VE.Formula) (φ : VE.Formula) (c : VE.Tableau.Certificate)
++    (Γ : List VE.Core.Formula) (φ : VE.Core.Formula) (c : VE.Tableau.Certificate)
+     (accepted : VE.Tableau.checkCertificate (envAt D (size D)) (background D ++ elaborate D.T ++ Γ) φ c = true)
+     (S : VE.Structure.{u}) (hS : S.Admissible (envAt D (size D))) (hcat : holdsCatala D.T S)
+     (hdef : definitionsHold D S) (hprof : profileHold D S) (hbase : Sat S (backgroundBase D))
+@@ -260,7 +260,7 @@ document and base formulas, `φ` in every base-admissible structure satisfying
+ `Γ` (through the composed frozen route). -/
+ theorem norms_route_acceptance (D : Doc) (h : WellFormed D = true)
+     (hc : ∀ B : VE.Structure.{u}, BaseAdmissible D B → ConflictFree D B)
+-    (Γ : List VE.Formula) (φ : VE.Formula) (c : VE.Tableau.Certificate)
++    (Γ : List VE.Core.Formula) (φ : VE.Core.Formula) (c : VE.Tableau.Certificate)
+     (accepted : VE.Tableau.checkCertificate (envAt D (size D)) (background D ++ elaborate D.T ++ Γ) φ c = true) :
+     (∀ S : VE.Structure.{u}, S.Admissible (envAt D (size D)) → holdsCatala D.T S → definitionsHold D S →
+       profileHold D S → Sat S (backgroundBase D) → Sat S Γ → φ.denote S []) ∧
+@@ -284,7 +284,7 @@ theorem norms_route_acceptance (D : Doc) (h : WellFormed D = true)
+ sees (through the composed frozen route). -/
+ theorem norms_route_countermodel (D : Doc) (h : WellFormed D = true)
+     (hc : ∀ B : VE.Structure.{u}, BaseAdmissible D B → ConflictFree D B)
+-    (Γ : List VE.Formula) (φ : VE.Formula)
++    (Γ : List VE.Core.Formula) (φ : VE.Core.Formula)
+     (hΓ : ∀ a ∈ Γ, a.WellFormed (envAt D 0) []) (hφ : φ.WellFormed (envAt D 0) [])
+     (B : VE.Structure.{u}) (hB : BaseAdmissible D B) (hs : Sat B Γ) (hn : ¬ φ.denote B []) :
+     ∃ S, DocumentExpansion D B S ∧ Sat S Γ ∧ ¬ φ.denote S [] := by
+@@ -305,7 +305,7 @@ theorem norms_route_countermodel (D : Doc) (h : WellFormed D = true)
+ entailment is exactly consequence over base-admissible structures. -/
+ theorem norms_route_entails_iff (D : Doc) (h : WellFormed D = true)
+     (hc : ∀ B : VE.Structure.{u}, BaseAdmissible D B → ConflictFree D B)
+-    (Γ : List VE.Formula) (φ : VE.Formula)
++    (Γ : List VE.Core.Formula) (φ : VE.Core.Formula)
+     (hΓ : ∀ a ∈ Γ, a.WellFormed (envAt D 0) []) (hφ : φ.WellFormed (envAt D 0) []) :
+     VE.Entails.{u} (envAt D (size D)) (background D ++ elaborate D.T ++ Γ) φ ↔
+       ∀ B : VE.Structure.{u}, BaseAdmissible D B → Sat B Γ → φ.denote B [] := by
+diff --git a/lean/VE/Norms/LayersOnce.lean b/lean/VE/Norms/LayersOnce.lean
+index 4045cb348d..999f4307b3 100644
+--- a/lean/VE/Norms/LayersOnce.lean
++++ b/lean/VE/Norms/LayersOnce.lean
+@@ -24,26 +24,26 @@ holds one entry per layer symbol, newest first, each symbol's base formula built
+ (a `Thunk`), and `expAt` reads the table of any prefix from it. `expAt_expEntries` says it is `expTable`. -/
+ 
+ /-- The table of an entry list kept newest first: a name's newest entry. -/
+-def entryTable (es : List (String × Thunk VE.Formula)) : Table := fun n => (es.find? (·.1 == n)).map (·.2.get)
++def entryTable (es : List (String × Thunk VE.Core.Formula)) : Table := fun n => (es.find? (·.1 == n)).map (·.2.get)
+ 
+ /-- The entries with the next layer symbol added: its meaning under the entries before it. -/
+-def expStep (T : Tree) (es : List (String × Thunk VE.Formula)) (q : Sym) : List (String × Thunk VE.Formula) :=
++def expStep (T : Tree) (es : List (String × Thunk VE.Core.Formula)) (q : Sym) : List (String × Thunk VE.Core.Formula) :=
+   (q.name, Thunk.mk (fun _ => substWith (entryTable es) (q.meaning T))) :: es
+ 
+ /-- One entry per layer symbol of `T`, newest first. -/
+-def expEntries (T : Tree) : List (String × Thunk VE.Formula) := (syms T).foldl (expStep T) []
++def expEntries (T : Tree) : List (String × Thunk VE.Core.Formula) := (syms T).foldl (expStep T) []
+ 
+ /-- The table of the first `i` layer symbols, read from the entries of all of them. -/
+-def expAt (es : List (String × Thunk VE.Formula)) (i : Nat) : Table := entryTable (es.drop (es.length - i))
++def expAt (es : List (String × Thunk VE.Core.Formula)) (i : Nat) : Table := entryTable (es.drop (es.length - i))
+ 
+-theorem expStep_foldl_length (T : Tree) : ∀ (l : List Sym) (es : List (String × Thunk VE.Formula)),
++theorem expStep_foldl_length (T : Tree) : ∀ (l : List Sym) (es : List (String × Thunk VE.Core.Formula)),
+     (l.foldl (expStep T) es).length = es.length + l.length
+   | [], _ => rfl
+   | q :: l, es => by
+     rw [List.foldl_cons, expStep_foldl_length T l, expStep, List.length_cons, List.length_cons]
+     omega
+ 
+-theorem expStep_foldl_drop (T : Tree) : ∀ (l : List Sym) (es : List (String × Thunk VE.Formula)),
++theorem expStep_foldl_drop (T : Tree) : ∀ (l : List Sym) (es : List (String × Thunk VE.Core.Formula)),
+     (l.foldl (expStep T) es).drop l.length = es
+   | [], _ => rfl
+   | q :: l, es => by
+@@ -77,7 +77,7 @@ theorem expAt_expEntries (T : Tree) (i : Nat) : expAt (expEntries T) i = expTabl
+   rw [hl, expEntries, hs, List.foldl_append, ← hs, expStep_foldl_drop, entryTable_take]
+ 
+ /-- `subst` read from the entries. -/
+-theorem subst_expAt (T : Tree) (i : Nat) (φ : VE.Formula) : substWith (expAt (expEntries T) i) φ = subst T i φ := by
++theorem subst_expAt (T : Tree) (i : Nat) (φ : VE.Core.Formula) : substWith (expAt (expEntries T) i) φ = subst T i φ := by
+   rw [expAt_expEntries]
+   rfl
+ 
+@@ -86,7 +86,7 @@ order, their names, and the expansion table's entries. -/
+ structure Layers where
+   syms : List Sym
+   names : List String
+-  entries : List (String × Thunk VE.Formula)
++  entries : List (String × Thunk VE.Core.Formula)
+ 
+ def layersOf (D : Doc) : Layers :=
+   let ss := syms D.T
+@@ -97,22 +97,22 @@ theorem layersOf_names (D : Doc) : (layersOf D).names = layerNames D.T := rfl
+ theorem layersOf_entries (D : Doc) : (layersOf D).entries = expEntries D.T := rfl
+ 
+ /-- `subst D.T i` from a document's layers. -/
+-def substIn (L : Layers) (i : Nat) (φ : VE.Formula) : VE.Formula := substWith (expAt L.entries i) φ
++def substIn (L : Layers) (i : Nat) (φ : VE.Core.Formula) : VE.Core.Formula := substWith (expAt L.entries i) φ
+ 
+-theorem substIn_eq (D : Doc) (i : Nat) (φ : VE.Formula) : substIn (layersOf D) i φ = subst D.T i φ :=
++theorem substIn_eq (D : Doc) (i : Nat) (φ : VE.Core.Formula) : substIn (layersOf D) i φ = subst D.T i φ :=
+   subst_expAt D.T i φ
+ 
+ /-- `conflict`, `outcomeBase` and `pairConflict` from the document's layers, computed once (plan F5d). -/
+-def conflictIn (D : Doc) (L : Layers) (r : Regulated) : VE.Formula :=
++def conflictIn (D : Doc) (L : Layers) (r : Regulated) : VE.Core.Formula :=
+   let i := L.names.idxOf r.name
+   .and (substIn L i (pos D.T r.name)) (substIn L i (neg D.T r.name))
+ 
+-def outcomeBaseIn (D : Doc) (L : Layers) (n : String) : VE.Formula :=
++def outcomeBaseIn (D : Doc) (L : Layers) (n : String) : VE.Core.Formula :=
+   match D.T.regulated.find? (·.name == n) with
+   | some r => substIn L (L.names.idxOf n) (outcome D.T r)
+   | none => .bottom
+ 
+-def pairConflictIn (D : Doc) (L : Layers) (pr : Pair) : VE.Formula :=
++def pairConflictIn (D : Doc) (L : Layers) (pr : Pair) : VE.Core.Formula :=
+   .and (outcomeBaseIn D L pr.req) (.not (outcomeBaseIn D L pr.perm))
+ 
+ theorem conflictIn_eq (D : Doc) (r : Regulated) : conflictIn D (layersOf D) r = conflict D r := by
+@@ -126,7 +126,7 @@ theorem pairConflictIn_eq (D : Doc) (pr : Pair) : pairConflictIn D (layersOf D)
+   simp only [pairConflictIn, pairConflict, outcomeBaseIn_eq]
+ 
+ /-- `targets` from the document's layers, computed once (plan F5d). -/
+-def targetsIn (D : Doc) (L : Layers) : List (String × List String × VE.Formula) :=
++def targetsIn (D : Doc) (L : Layers) : List (String × List String × VE.Core.Formula) :=
+   L.syms.filterMap (fun | .reg r => some (r.name, r.sorts, conflictIn D L r) | .defn _ => none) ++
+     (pairs D.T).map (fun pr => (pr.req ++ "->" ++ pr.perm, pr.sorts, pairConflictIn D L pr))
+ 
+diff --git a/lean/VE/Norms/Once.lean b/lean/VE/Norms/Once.lean
+index 6f02499ae4..54b6c38c3e 100644
+--- a/lean/VE/Norms/Once.lean
++++ b/lean/VE/Norms/Once.lean
+@@ -19,7 +19,7 @@ def semanticCheckOnce (D : Doc) : Bool :=
+   (dependencyOrder (precedenceNodes D.T)).isOk && (dependencyOrder (stratumNodes D.T)).isOk &&
+   decide names.Nodup &&
+   ss.all (fun q => D.E.predicates q.name == some q.sorts &&
+-    (q.sorts.length == 1 || q.sorts.length == 2) && q.sorts.all D.E.sorts.contains) &&
++    (1 ≤ q.sorts.length && q.sorts.length ≤ 6) && q.sorts.all D.E.sorts.contains) &&
+   (List.range ss.length).all (fun k => match ss[k]? with
+     | some q =>
+       let E := hide D.E (names.drop k)
+diff --git a/lean/VE/Norms/Plain.lean b/lean/VE/Norms/Plain.lean
+index 918cadaea2..44b901be29 100644
+--- a/lean/VE/Norms/Plain.lean
++++ b/lean/VE/Norms/Plain.lean
+@@ -73,7 +73,7 @@ def profileOk (T : Tree) (model : Json) : Except String Unit := do
+ submitted `environment`; acceptance is `VE.Tableau.checkCertificate` over
+ `background ++ premises` (`VE.Tableau.checkCertificate_sound`). -/
+ def folCertificate (profiles : List String) (environment : Json) (rv : VE.Route.Wire.RouteVocabulary)
+-    (background : List VE.Formula) (id : String) (j : Json) : Except String Json := do
++    (background : List VE.Core.Formula) (id : String) (j : Json) : Except String Json := do
+   let E := rv.environment
+   let data := profiles.contains "data@0"
+   let premisesJson ← j.getObjVal? "premises"
+@@ -93,7 +93,7 @@ def folCertificate (profiles : List String) (environment : Json) (rv : VE.Route.
+ /-- The closure route's certificate branch over `background` (embedded), bound
+ to the submitted `environment` (`VE.Closure.Tableau.checkCertificate_sound`). -/
+ def closureCertificate (profiles : List String) (environment : Json) (rv : VE.Route.Wire.RouteVocabulary)
+-    (background : List VE.Formula) (id : String) (j : Json) : Except String Json := do
++    (background : List VE.Core.Formula) (id : String) (j : Json) : Except String Json := do
+   let E := rv.environment
+   let data := profiles.contains "data@0"
+   let premisesJson ← j.getObjVal? "premises"
+@@ -122,7 +122,7 @@ profile premises (embedded, `VE.Order.embed`), bound to the submitted
+ `environment` in Python's Background order, literals then profile
+ (`VE.Order.Tableau.checkCertificate_sound`). -/
+ def orderCertificate (profiles : List String) (environment : Json) (rv : VE.Route.Wire.RouteOrderVocabulary)
+-    (profile : List VE.Formula) (id : String) (j : Json) : Except String Json := do
++    (profile : List VE.Core.Formula) (id : String) (j : Json) : Except String Json := do
+   let E := rv.vocabulary.environment
+   let premisesJson ← j.getObjVal? "premises"
+   let _ ← VE.Route.Wire.formulasJson premisesJson (some (← j.getObjVal? "conclusion"))
+@@ -144,7 +144,7 @@ def orderCertificate (profiles : List String) (environment : Json) (rv : VE.Rout
+ /-- A certificate case over the environment without the validated extension,
+ bound to the submitted one: the family's Background, then the profile premises. -/
+ def certificate (profiles : List String) (environment stripped : Json) (T : Tree)
+-    (extra : List VE.Formula) (id : String) (j : Json) : Except String Json := do
++    (extra : List VE.Core.Formula) (id : String) (j : Json) : Except String Json := do
+   let e ← VE.Route.Gate.decodeEnvelope stripped
+   let profile := pairPremises T ++ extra
+   match e.family with
+@@ -199,7 +199,7 @@ def reduced (environment : Json) : Except String Json := do
+ those a correlated rights document adds, as the case carries them (a trusted
+ composition point: they are not environment data; the Lean soft and rights
+ routes regenerate them). Each is a closed FOL formula. -/
+-def softPremises (E : VE.Environment) (j : Json) : Except String (List VE.Formula) := do
++def softPremises (E : VE.Environment) (j : Json) : Except String (List VE.Core.Formula) := do
+   match j.getObjVal? "soft_premises" with
+   | .error _ => pure []
+   | .ok ps => (← ps.getArr?).toList.mapM fun a => do
+diff --git a/lean/VE/Norms/Prefix.lean b/lean/VE/Norms/Prefix.lean
+index 8d95e52c1a..9586404f2c 100644
+--- a/lean/VE/Norms/Prefix.lean
++++ b/lean/VE/Norms/Prefix.lean
+@@ -14,13 +14,13 @@ namespace VE.Norms
+ universe u
+ 
+ /-- A structure satisfies every formula of a list. -/
+-def Sat (S : VE.Structure.{u}) (as : List VE.Formula) : Prop := ∀ a ∈ as, a.denote S []
++def Sat (S : VE.Structure.{u}) (as : List VE.Core.Formula) : Prop := ∀ a ∈ as, a.denote S []
+ 
+ /-- The profile premise `∀x̄. r(x̄) → m(x̄)` of a declared pair (Python `ve/background.py`). -/
+-def Pair.premise (pr : Pair) : VE.Formula :=
++def Pair.premise (pr : Pair) : VE.Core.Formula :=
+   bindAll pr.sorts (.implies (atom pr.req pr.sorts) (atom pr.perm pr.sorts))
+ 
+-def pairPremises (T : Tree) : List VE.Formula := (pairs T).map Pair.premise
++def pairPremises (T : Tree) : List VE.Core.Formula := (pairs T).map Pair.premise
+ 
+ /-- The position of a layer symbol in the DAG order. -/
+ def idx (T : Tree) (n : String) : Nat := (layerNames T).idxOf n
+@@ -32,11 +32,11 @@ def Pair.closes (T : Tree) (pr : Pair) : Nat := max (idx T pr.req) (idx T pr.per
+ def pairsAt (T : Tree) (k : Nat) : List Pair := (pairs T).filter (fun pr => pr.closes T == k)
+ 
+ /-- `Background_base`: flags (none before W5) and literal distinctness. -/
+-def backgroundBase (D : Doc) : List VE.Formula := VE.Route.Background.literals D.lits
++def backgroundBase (D : Doc) : List VE.Core.Formula := VE.Route.Background.literals D.lits
+ 
+ /-- The complete regenerated Background in the P0 generator order: flags,
+ definitions, literals, profile. -/
+-def background (D : Doc) : List VE.Formula :=
++def background (D : Doc) : List VE.Core.Formula :=
+   definitionPremises D.T ++ backgroundBase D ++ pairPremises D.T
+ 
+ /-- Structural admissibility over `E_base` plus `Background_base`. -/
+@@ -57,7 +57,7 @@ def PrefixAdmissible (D : Doc) : Nat → VE.Structure.{u} → Prop
+         LayerMeaning D.T S q ∧ Sat S ((pairsAt D.T k).map Pair.premise)
+ 
+ /-- The first `i` layer premises and every pair premise closed in the prefix. -/
+-def PrefixPremises (D : Doc) (i : Nat) : List VE.Formula :=
++def PrefixPremises (D : Doc) (i : Nat) : List VE.Core.Formula :=
+   ((syms D.T).take i).map (Sym.premise D.T) ++
+     ((pairs D.T).filter (fun pr => decide (pr.closes D.T < i))).map Pair.premise
+ 
+@@ -89,7 +89,7 @@ theorem elabPremise_iff_meaning (T : Tree) (r : Regulated) (ha : Arity r.sorts)
+   apply imp_congr_right
+   intro hv
+   rw [elabBody_denote T r ha S vs hv, body_iff_clash]
+-  simp only [Sym.clash, Sym.meaning, Sym.name, VE.Formula.denote, outcome_denote]
++  simp only [Sym.clash, Sym.meaning, Sym.name, VE.Core.Formula.denote, outcome_denote]
+ 
+ theorem definition_premise_iff (d : Definition) (ha : Arity d.args) (S : VE.Structure.{u}) :
+     d.premise.denote S [] ↔
+@@ -108,7 +108,7 @@ theorem premise_iff_meaning {D : Doc} (hv : Valid D) {k : Nat} {q : Sym}
+   | reg r => exact elabPremise_iff_meaning D.T r (sym_arity hv hk) S
+   | defn d =>
+     rw [Sym.premise, definition_premise_iff d (sym_arity hv hk)]
+-    simp [Meaning, Sym.clash, Sym.meaning, Sym.name, Sym.sorts, VE.Formula.denote]
++    simp [Meaning, Sym.clash, Sym.meaning, Sym.name, Sym.sorts, VE.Core.Formula.denote]
+ 
+ theorem layerMeaning_iff {D : Doc} (hv : Valid D) {k : Nat} {q : Sym}
+     (hk : (syms D.T)[k]? = some q) (S : VE.Structure.{u}) :
+@@ -119,7 +119,7 @@ theorem layerMeaning_iff {D : Doc} (hv : Valid D) {k : Nat} {q : Sym}
+       (decides_forget hv hk [r.name] (self_hidden hv hk) S)]
+     exact elabPremise_iff_meaning D.T r (sym_arity hv hk) S
+   | defn d =>
+-    simp [LayerMeaning, Meaning, Sym.clash, Sym.meaning, Sym.name, Sym.sorts, VE.Formula.denote]
++    simp [LayerMeaning, Meaning, Sym.clash, Sym.meaning, Sym.name, Sym.sorts, VE.Core.Formula.denote]
+ 
+ theorem pair_premise_iff (pr : Pair) (ha : Arity pr.sorts) (S : VE.Structure.{u}) :
+     pr.premise.denote S [] ↔
+@@ -129,7 +129,7 @@ theorem pair_premise_iff (pr : Pair) (ha : Arity pr.sorts) (S : VE.Structure.{u}
+   intro vs
+   apply imp_congr_right
+   intro hv
+-  simp only [VE.Formula.denote, atom_denote S _ _ ha vs hv]
++  simp only [VE.Core.Formula.denote, atom_denote S _ _ ha vs hv]
+ 
+ /-! ## Positions -/
+ 
+@@ -461,7 +461,7 @@ valuation, the outcome-substituted formula has the same truth in the base
+ restriction as the formula itself. -/
+ theorem subst_sound (D : Doc) (h : WellFormed D = true) (i : Nat) (S : VE.Structure.{v})
+     (hS : S.Admissible (envAt D i)) (hlow : Sat S (PrefixPremises D i))
+-    (Γ : List String) (φ : VE.Formula) (hφ : φ.WellFormed (envAt D i) Γ)
++    (Γ : List String) (φ : VE.Core.Formula) (hφ : φ.WellFormed (envAt D i) Γ)
+     (ρ : VE.Valuation S) (hρ : VE.Valuation.Typed S Γ ρ) :
+     (subst D.T i φ).denote (restrictAll D.T S) ρ ↔ φ.denote S ρ := by
+   have hv := valid_of_wellFormed D h
+diff --git a/lean/VE/Norms/Replay.lean b/lean/VE/Norms/Replay.lean
+index 8fbd25bab6..9ecb86b4f6 100644
+--- a/lean/VE/Norms/Replay.lean
++++ b/lean/VE/Norms/Replay.lean
+@@ -24,7 +24,7 @@ universe u
+ 
+ /-- The conflict targets in Python's order: each regulated predicate in DAG
+ order (`p`), then each declared pair (`r->m`), with argument sorts. -/
+-def targets (D : Doc) : List (String × List String × VE.Formula) :=
++def targets (D : Doc) : List (String × List String × VE.Core.Formula) :=
+   (syms D.T).filterMap (fun | .reg r => some (r.name, r.sorts, conflict D r) | .defn _ => none) ++
+     (pairs D.T).map (fun pr => (pr.req ++ "->" ++ pr.perm, pr.sorts, pairConflict D pr))
+ 
+@@ -33,14 +33,14 @@ theorem targetsIn_eq (D : Doc) : targetsIn D (layersOf D) = targets D := by
+   all_goals rfl
+ 
+ /-- `targets` with the layers computed once (`VE.Norms.LayersOnce`, lean-first batch 7 review B1). -/
+-def targetsOnce (D : Doc) : List (String × List String × VE.Formula) := targetsIn D (layersOf D)
++def targetsOnce (D : Doc) : List (String × List String × VE.Core.Formula) := targetsIn D (layersOf D)
+ 
+ /-- Compiled code after this point, here and in every importer, builds the targets with `targetsOnce`. -/
+ @[csimp] theorem targets_eq_once : @targets = @targetsOnce :=
+   funext fun D => (targetsIn_eq D).symm
+ 
+ /-- `∀x̄. ¬conflict`, the certified conclusion of a target. -/
+-def targetConclusion (t : String × List String × VE.Formula) : VE.Formula :=
++def targetConclusion (t : String × List String × VE.Core.Formula) : VE.Core.Formula :=
+   bindAll t.2.1 (.not t.2.2)
+ 
+ /-- Every target has an accepted certificate for `Background_base ⊢ ∀x̄. ¬conflict`
+@@ -52,7 +52,7 @@ def conflictFreeCheck (D : Doc) (certs : List (Option VE.Tableau.Certificate)) :
+       | none => false)
+ 
+ theorem conflictFreeCheck_target {D : Doc} {certs : List (Option VE.Tableau.Certificate)}
+-    (hc : conflictFreeCheck D certs = true) {t : String × List String × VE.Formula}
++    (hc : conflictFreeCheck D certs = true) {t : String × List String × VE.Core.Formula}
+     (ht : t ∈ targets D) :
+     ∃ c, VE.Tableau.checkCertificate (envAt D 0) (backgroundBase D) (targetConclusion t) c = true := by
+   simp only [conflictFreeCheck, Bool.and_eq_true, beq_iff_eq, List.all_eq_true] at hc
+@@ -72,7 +72,7 @@ theorem conflictFreeCheck_target {D : Doc} {certs : List (Option VE.Tableau.Cert
+ 
+ /-- A certified target excludes its conflict formula on every typed tuple of
+ every base-admissible structure. -/
+-theorem certified_target {D : Doc} (t : String × List String × VE.Formula)
++theorem certified_target {D : Doc} (t : String × List String × VE.Core.Formula)
+     (c : VE.Tableau.Certificate)
+     (hc : VE.Tableau.checkCertificate (envAt D 0) (backgroundBase D) (targetConclusion t) c = true)
+     (B : VE.Structure.{u}) (hB : BaseAdmissible D B) (vs : List B.Carrier)
+@@ -131,7 +131,7 @@ def outerBound (profiles : List String) (environment norms packages : Json) (tar
+ the certificate decodes and its inner binding matches the regenerated base
+ environment, `Background_base` and conclusion. -/
+ def decodePackage (D : Doc) (profiles : List String) (environment norms packages : Json)
+-    (t : String × List String × VE.Formula) : Option VE.Tableau.Certificate := Id.run do
++    (t : String × List String × VE.Core.Formula) : Option VE.Tableau.Certificate := Id.run do
+   let some baseEnv := (baseEnvironmentJson environment).toOption | none
+   let some baseProfiles := (strings (baseEnv.getObjValD "profiles")).toOption | none
+   let some canonical := (Wire.canonicalEnvironmentJson environment).toOption | none
+@@ -202,7 +202,7 @@ def firstFailure (r : ConflictReplay) : Option String :=
+ 
+ /-- A valid finite base witness of any target refutes base conflict-freedom
+ there, unique expansion there and the document property. -/
+-theorem target_refutes (D : Doc) (h : WellFormed D = true) (t : String × List String × VE.Formula)
++theorem target_refutes (D : Doc) (h : WellFormed D = true) (t : String × List String × VE.Core.Formula)
+     (ht : t ∈ targets D) (B : VE.Structure.{u}) (hB : BaseAdmissible D B) (vs : List B.Carrier)
+     (hvs : VE.TupleTyped B t.2.1 vs) (hw : t.2.2.denote B (tupleVal vs)) :
+     ¬ ConflictFree D B ∧ ¬ VE.Route.Unique (DocumentExpansion D B) ∧
+@@ -271,7 +271,7 @@ structure WitnessData (src : Wire.Source) where
+   M : VE.FiniteModel VE.Bridge.Entity
+   valid : M.Valid (envAt src.D 0)
+   background : backgroundValid src.D M = true
+-  target : String × List String × VE.Formula
++  target : String × List String × VE.Core.Formula
+   mem : target ∈ targets src.D
+   tuple : List VE.Bridge.Entity
+   typed : VE.TupleTyped M.asStructure target.2.1 tuple
+@@ -336,8 +336,8 @@ theorem norms_wire_conflict_witness_sound (j : Json) (src : Wire.Source) (w : Wi
+ and conclusion (typed over the complete environment) and the bound certificate. -/
+ structure EntailmentReplay where
+   src : Wire.Source
+-  premises : List VE.Formula
+-  conclusion : VE.Formula
++  premises : List VE.Core.Formula
++  conclusion : VE.Core.Formula
+   cert : VE.Tableau.Certificate
+ 
+ /-- The unchanged checker on the regenerated `Background ++ layer premises ++ Γ`. -/
+diff --git a/lean/VE/Norms/SmallModel.lean b/lean/VE/Norms/SmallModel.lean
+index 7f5d1183e7..d08ee96c89 100644
+--- a/lean/VE/Norms/SmallModel.lean
++++ b/lean/VE/Norms/SmallModel.lean
+@@ -20,7 +20,7 @@ namespace VE.Norms
+ open VE.Route (Unique)
+ universe u
+ 
+-def Formula.qfree : VE.Formula → Bool
++def Formula.qfree : VE.Core.Formula → Bool
+   | .all _ _ | .ex _ _ => false
+   | .not a => Formula.qfree a
+   | .and a b | .or a b | .implies a b => Formula.qfree a && Formula.qfree b
+@@ -163,7 +163,7 @@ theorem subModel_valid : (subModel D cs S sorts vs).Valid (envAt D 0) := by
+     exact ⟨[s, t], hps, hv, hw, trivial⟩
+   · cases hp
+ 
+-theorem subModel_denote : ∀ (φ : VE.Formula), Formula.qfree φ = true →
++theorem subModel_denote : ∀ (φ : VE.Core.Formula), Formula.qfree φ = true →
+     ∀ (Γ : List String), φ.WellFormed (envAt D 0) Γ → ∀ (ρ : List S.Carrier),
+       VE.Valuation.Typed (subModel D cs S sorts vs).asStructure Γ ρ →
+       (φ.denote (subModel D cs S sorts vs).asStructure ρ ↔ φ.denote S ρ) := by
+@@ -175,7 +175,7 @@ theorem subModel_denote : ∀ (φ : VE.Formula), Formula.qfree φ = true →
+     intro _ Γ ⟨s, hp, ht⟩ ρ hρ
+     obtain ⟨v, hv, hd⟩ := term_defined_consts (subModel_constants D cs hcs S hS sorts vs) hρ ht
+     rw [term_denote_subModel] at hv
+-    simp only [VE.Formula.denote]
++    simp only [VE.Core.Formula.denote]
+     rw [term_denote_subModel, hv]
+     change (∃ v', some v = some v' ∧ [v'] ∈ subRelation D cs S sorts vs p) ↔ _
+     unfold subRelation
+@@ -192,7 +192,7 @@ theorem subModel_denote : ∀ (φ : VE.Formula), Formula.qfree φ = true →
+     obtain ⟨v, hv, hd⟩ := term_defined_consts (subModel_constants D cs hcs S hS sorts vs) hρ ht
+     obtain ⟨w, hw, hd'⟩ := term_defined_consts (subModel_constants D cs hcs S hS sorts vs) hρ hu
+     rw [term_denote_subModel] at hv hw
+-    simp only [VE.Formula.denote]
++    simp only [VE.Core.Formula.denote]
+     rw [term_denote_subModel, term_denote_subModel, hv, hw]
+     change (∃ a b, some v = some a ∧ some w = some b ∧ [a, b] ∈ subRelation D cs S sorts vs p) ↔ _
+     unfold subRelation
+@@ -208,11 +208,11 @@ theorem subModel_denote : ∀ (φ : VE.Formula), Formula.qfree φ = true →
+   | eq t u => intros; exact Iff.rfl
+   | not a ih =>
+     intro hq Γ hw ρ hρ
+-    simp only [VE.Formula.denote]; rw [ih hq Γ hw ρ hρ]
++    simp only [VE.Core.Formula.denote]; rw [ih hq Γ hw ρ hρ]
+   | and a b ia ib | or a b ia ib | implies a b ia ib =>
+     intro hq Γ hw ρ hρ
+     simp only [Formula.qfree, Bool.and_eq_true] at hq
+-    simp only [VE.Formula.denote]; rw [ia hq.1 Γ hw.1 ρ hρ, ib hq.2 Γ hw.2 ρ hρ]
++    simp only [VE.Core.Formula.denote]; rw [ia hq.1 Γ hw.1 ρ hρ, ib hq.2 Γ hw.2 ρ hρ]
+   | all s a _ | ex s a _ => intro hq; cases hq
+ 
+ end QF
+@@ -222,13 +222,13 @@ structure is true at the same tuple of the finite substructure on the constants
+ and the tuple. -/
+ theorem restrict_witness (D : Doc) (cs : List String) (hcs : ∀ c s, D.E.constants c = some s → c ∈ cs)
+     (S : VE.Structure.{u}) (hS : BaseAdmissible D S) (sorts : List String) (vs : List S.Carrier)
+-    (typed : VE.TupleTyped S sorts vs) (φ : VE.Formula) (hq : Formula.qfree φ = true)
++    (typed : VE.TupleTyped S sorts vs) (φ : VE.Core.Formula) (hq : Formula.qfree φ = true)
+     (hw : φ.WellFormed (envAt D 0) sorts.reverse) (hden : φ.denote S (tupleVal vs)) :
+     ∃ (α : Type u) (inst : DecidableEq α) (M : VE.FiniteModel α) (ws : List α),
+       M.Valid (envAt D 0) ∧ @backgroundValid α inst D M = true ∧
+       VE.TupleTyped M.asStructure sorts ws ∧
+       (∀ s, (M.domains s).length ≤ max 1 (constantsOfSort D cs s + witnessVarsOfSort sorts s)) ∧
+-      @VE.Formula.eval α inst M (tupleVal ws) φ = true := by
++      @VE.Core.Formula.eval α inst M (tupleVal ws) φ = true := by
+   classical
+   refine ⟨S.Carrier, inferInstance, subModel D cs S sorts vs, vs,
+     subModel_valid D cs hcs S hS.1 sorts vs, ?_, subModel_witness D cs S sorts vs typed,
+@@ -255,7 +255,7 @@ theorem conflict_smallModel (D : Doc) (h : WellFormed D = true) (hf : InFragment
+       M.Valid (envAt D 0) ∧ @backgroundValid α inst D M = true ∧
+       VE.TupleTyped M.asStructure r.sorts ws ∧
+       (∀ s, (M.domains s).length ≤ max 1 (constantsOfSort D cs s + witnessVarsOfSort r.sorts s)) ∧
+-      @VE.Formula.eval α inst M (tupleVal ws) (conflict D r) = true := by
++      @VE.Core.Formula.eval α inst M (tupleVal ws) (conflict D r) = true := by
+   have hv := valid_of_wellFormed D h
+   obtain ⟨k, hk⟩ := mem_syms_index (hv.regulated r hr)
+   simp only [InFragment, Bool.and_eq_true, List.all_eq_true] at hf
+@@ -271,7 +271,7 @@ theorem conflict_pair_smallModel (D : Doc) (h : WellFormed D = true) (hf : InFra
+       M.Valid (envAt D 0) ∧ @backgroundValid α inst D M = true ∧
+       VE.TupleTyped M.asStructure pr.sorts ws ∧
+       (∀ s, (M.domains s).length ≤ max 1 (constantsOfSort D cs s + witnessVarsOfSort pr.sorts s)) ∧
+-      @VE.Formula.eval α inst M (tupleVal ws) (pairConflict D pr) = true := by
++      @VE.Core.Formula.eval α inst M (tupleVal ws) (pairConflict D pr) = true := by
+   have hv := valid_of_wellFormed D h
+   simp only [InFragment, Bool.and_eq_true, List.all_eq_true] at hf
+   exact restrict_witness D cs hcs S hS pr.sorts vs typed _ (hf.2 pr hpr)
+diff --git a/lean/VE/Norms/Subst.lean b/lean/VE/Norms/Subst.lean
+index 30d8ebea8f..69d50afa2b 100644
+--- a/lean/VE/Norms/Subst.lean
++++ b/lean/VE/Norms/Subst.lean
+@@ -15,19 +15,19 @@ universe u
+ 
+ /-- The formula a layer symbol's relation must agree with: a regulated
+ predicate's completed outcome, a defined predicate's body. -/
+-def Sym.meaning (T : Tree) : Sym → VE.Formula
++def Sym.meaning (T : Tree) : Sym → VE.Core.Formula
+   | .reg r => outcome T r
+   | .defn d => d.body
+ 
+ /-- Opposite selections: both `P_p` and `N_p` hold (never for a definition). -/
+-def Sym.clash (T : Tree) : Sym → VE.Formula
++def Sym.clash (T : Tree) : Sym → VE.Core.Formula
+   | .reg r => .and (pos T r.name) (neg T r.name)
+   | .defn _ => .bottom
+ 
+-abbrev Table := String → Option VE.Formula
++abbrev Table := String → Option VE.Core.Formula
+ 
+ /-- Replace every atom of a tabled symbol by its formula at the atom's arguments. -/
+-def substWith (tbl : Table) : VE.Formula → VE.Formula
++def substWith (tbl : Table) : VE.Core.Formula → VE.Core.Formula
+   | .top => .top
+   | .bottom => .bottom
+   | .unary q t => match tbl q with
+@@ -52,7 +52,7 @@ def expTable (T : Tree) : Nat → Table
+     | none => expTable T k n
+ 
+ /-- `φ°` for a formula over the prefix `E_i`. -/
+-def subst (T : Tree) (i : Nat) (φ : VE.Formula) : VE.Formula := substWith (expTable T i) φ
++def subst (T : Tree) (i : Nat) (φ : VE.Core.Formula) : VE.Core.Formula := substWith (expTable T i) φ
+ 
+ /-- Forget every layer symbol: the base restriction. -/
+ def restrictAll (T : Tree) (S : VE.Structure.{u}) : VE.Structure.{u} := forget (layerNames T) S
+@@ -80,7 +80,7 @@ theorem expTable_none (T : Tree) : ∀ (k : Nat) (n : String), n ∉ (layerNames
+       rw [hk] at hn
+       exact expTable_none T k n hn
+ 
+-theorem expTable_some (T : Tree) : ∀ (k : Nat) (n : String) (F : VE.Formula), expTable T k n = some F →
++theorem expTable_some (T : Tree) : ∀ (k : Nat) (n : String) (F : VE.Core.Formula), expTable T k n = some F →
+     ∃ j q, j < k ∧ (syms T)[j]? = some q ∧ q.name = n ∧ F = substWith (expTable T j) (q.meaning T)
+   | 0, _, _, h => by cases h
+   | k + 1, n, F, h => by
+@@ -137,7 +137,7 @@ theorem substWith_wellFormed (tbl : Table) (Ehi Elo : VE.Environment) (hs : Elo.
+     (hc : Elo.constants = Ehi.constants)
+     (htbl : ∀ n F, tbl n = some F → ∃ ss, Ehi.predicates n = some ss ∧ F.WellFormed Elo ss.reverse)
+     (hnone : ∀ n ss, tbl n = none → Ehi.predicates n = some ss → Elo.predicates n = some ss) :
+-    ∀ (φ : VE.Formula) (Γ : List String), φ.WellFormed Ehi Γ → (substWith tbl φ).WellFormed Elo Γ := by
++    ∀ (φ : VE.Core.Formula) (Γ : List String), φ.WellFormed Ehi Γ → (substWith tbl φ).WellFormed Elo Γ := by
+   intro φ
+   induction φ with
+   | top | bottom => intro Γ h; exact h
+@@ -181,7 +181,7 @@ theorem substWith_denote (tbl : Table) (Ehi Elo : VE.Environment) (S : VE.Struct
+     (hconst : ∀ c s, Ehi.constants c = some s → ∃ v, S.constant c = some v ∧ S.domain s v)
+     (htbl : ∀ n F, tbl n = some F → ∃ ss, Ehi.predicates n = some ss ∧ F.WellFormed Elo ss.reverse ∧
+       ∀ vs, VE.TupleTyped S ss vs → (F.denote S (tupleVal vs) ↔ S.relation n vs)) :
+-    ∀ (φ : VE.Formula) (Γ : List String) (ρ : VE.Valuation S), φ.WellFormed Ehi Γ →
++    ∀ (φ : VE.Core.Formula) (Γ : List String) (ρ : VE.Valuation S), φ.WellFormed Ehi Γ →
+       VE.Valuation.Typed S Γ ρ → ((substWith tbl φ).denote S ρ ↔ φ.denote S ρ) := by
+   intro φ
+   induction φ with
+@@ -199,7 +199,7 @@ theorem substWith_denote (tbl : Table) (Ehi Elo : VE.Environment) (S : VE.Struct
+       have := hFa [v] ⟨hd, trivial⟩
+       simp only [tupleVal, List.reverse_cons, List.reverse_nil, List.nil_append] at this
+       rw [this]
+-      simp only [VE.Formula.denote]
++      simp only [VE.Core.Formula.denote]
+       exact ⟨fun h => ⟨v, hv, h⟩, fun ⟨w, hw, h⟩ => by rw [hv] at hw; cases hw; exact h⟩
+     · exact Iff.rfl
+   | binary q t w =>
+@@ -219,20 +219,20 @@ theorem substWith_denote (tbl : Table) (Ehi Elo : VE.Environment) (S : VE.Struct
+       simp only [tupleVal, List.reverse_cons, List.reverse_nil, List.nil_append,
+         List.cons_append] at this
+       rw [this]
+-      simp only [VE.Formula.denote]
++      simp only [VE.Core.Formula.denote]
+       exact ⟨fun h => ⟨v, v', hv, hv', h⟩, fun ⟨a, b, ha, hb, h⟩ => by
+         rw [hv] at ha; rw [hv'] at hb; cases ha; cases hb; exact h⟩
+     · exact Iff.rfl
+   | eq t w => intros; exact Iff.rfl
+   | not a ih =>
+     intro Γ ρ hw hρ
+-    simp only [substWith, VE.Formula.denote]; rw [ih Γ ρ hw hρ]
++    simp only [substWith, VE.Core.Formula.denote]; rw [ih Γ ρ hw hρ]
+   | and a b ia ib | or a b ia ib | implies a b ia ib =>
+     intro Γ ρ hw hρ
+-    simp only [substWith, VE.Formula.denote]; rw [ia Γ ρ hw.1 hρ, ib Γ ρ hw.2 hρ]
++    simp only [substWith, VE.Core.Formula.denote]; rw [ia Γ ρ hw.1 hρ, ib Γ ρ hw.2 hρ]
+   | all s a ih | ex s a ih =>
+     intro Γ ρ hw hρ
+-    simp only [substWith, VE.Formula.denote]
++    simp only [substWith, VE.Core.Formula.denote]
+     first
+     | exact forall_congr' fun v => imp_congr_right fun hv => ih (s :: Γ) (v :: ρ) hw.2 (VE.typed_cons hρ hv)
+     | exact exists_congr fun v => and_congr_right fun hv => ih (s :: Γ) (v :: ρ) hw.2 (VE.typed_cons hρ hv)
+@@ -284,7 +284,7 @@ theorem expTable_wellFormed {D : Doc} (hv : Valid D) (k : Nat) :
+     · rw [envAt_base hl] at hp ⊢; exact hp
+ 
+ /-- Base formulas are well-formed over `E_base` and see no layer symbol. -/
+-theorem subst_wellFormed {D : Doc} (hv : Valid D) (k : Nat) (φ : VE.Formula) (Γ : List String)
++theorem subst_wellFormed {D : Doc} (hv : Valid D) (k : Nat) (φ : VE.Core.Formula) (Γ : List String)
+     (hφ : φ.WellFormed (envAt D k) Γ) : (subst D.T k φ).WellFormed (envAt D 0) Γ := by
+   apply substWith_wellFormed _ (envAt D k) (envAt D 0) rfl rfl (expTable_wellFormed hv k) _ φ Γ hφ
+   intro n ss hn hp
+@@ -327,19 +327,19 @@ theorem expTable_sound {D : Doc} (hv : Valid D) (S : VE.Structure.{u}) (hc : Con
+ 
+ /-- Substitution is sound on structures agreeing below `k` (internal form). -/
+ theorem subst_denote {D : Doc} (hv : Valid D) (k : Nat) (S : VE.Structure.{u})
+-    (hc : ConstantsTyped D S) (ha : AgreesBelow D k S) (φ : VE.Formula) (Γ : List String)
++    (hc : ConstantsTyped D S) (ha : AgreesBelow D k S) (φ : VE.Core.Formula) (Γ : List String)
+     (hφ : φ.WellFormed (envAt D k) Γ) (ρ : VE.Valuation S) (hρ : VE.Valuation.Typed S Γ ρ) :
+     (subst D.T k φ).denote S ρ ↔ φ.denote S ρ :=
+   substWith_denote _ (envAt D k) (envAt D 0) S hc (expTable_sound hv S hc k ha) φ Γ ρ hφ hρ
+ 
+ /-- A base formula has the same truth in the base restriction. -/
+-theorem restrictAll_denote {D : Doc} (φ : VE.Formula) (Γ : List String)
++theorem restrictAll_denote {D : Doc} (φ : VE.Core.Formula) (Γ : List String)
+     (hφ : φ.WellFormed (envAt D 0) Γ) (S : VE.Structure.{u}) (ρ : VE.Valuation S) :
+     φ.denote (restrictAll D.T S) ρ ↔ φ.denote S ρ :=
+   denote_forget (fun r hr => by simp [envAt, hide, hr]) S φ Γ ρ hφ
+ 
+ theorem subst_restrict_denote {D : Doc} (hv : Valid D) (k : Nat) (S : VE.Structure.{u})
+-    (hc : ConstantsTyped D S) (ha : AgreesBelow D k S) (φ : VE.Formula) (Γ : List String)
++    (hc : ConstantsTyped D S) (ha : AgreesBelow D k S) (φ : VE.Core.Formula) (Γ : List String)
+     (hφ : φ.WellFormed (envAt D k) Γ) (ρ : VE.Valuation S) (hρ : VE.Valuation.Typed S Γ ρ) :
+     (subst D.T k φ).denote (restrictAll D.T S) ρ ↔ φ.denote S ρ :=
+   (restrictAll_denote _ Γ (subst_wellFormed hv k φ Γ hφ) S ρ).trans (subst_denote hv k S hc ha φ Γ hφ ρ hρ)
+diff --git a/lean/VE/Norms/Tree.lean b/lean/VE/Norms/Tree.lean
+index 14a471de1c..baccf66a03 100644
+--- a/lean/VE/Norms/Tree.lean
++++ b/lean/VE/Norms/Tree.lean
+@@ -32,7 +32,7 @@ structure Regulated where
+ structure Definition where
+   name : String
+   args : List String
+-  body : VE.Formula
++  body : VE.Core.Formula
+   deriving DecidableEq, Repr
+ 
+ /-- A rule. `guard` and `carveOuts` are typed in the context `(sorts pred).reverse`. -/
+@@ -40,8 +40,8 @@ structure Node where
+   name : String
+   pred : String
+   sign : Bool
+-  guard : VE.Formula
+-  carveOuts : List VE.Formula
++  guard : VE.Core.Formula
++  carveOuts : List VE.Core.Formula
+   over : List String
+   deriving DecidableEq, Repr
+ 
+@@ -135,12 +135,12 @@ def Sym.sorts : Sym → List String
+ 
+ /-- The formulas a symbol's meaning reads: its rules' guards and carve-outs, or
+ its definition body. All are typed in `sorts.reverse` over the layer below. -/
+-def Sym.formulas (T : Tree) : Sym → List VE.Formula
++def Sym.formulas (T : Tree) : Sym → List VE.Core.Formula
+   | .reg r => (rulesOn T r.name).flatMap (fun N => N.guard :: N.carveOuts)
+   | .defn d => [d.body]
+ 
+ /-- The predicates a formula mentions. -/
+-def preds : VE.Formula → List String
++def preds : VE.Core.Formula → List String
+   | .top | .bottom | .eq _ _ => []
+   | .unary p _ | .binary p _ _ => [p]
+   | .not a | .all _ a | .ex _ a => preds a
+@@ -209,7 +209,7 @@ def semanticCheck (D : Doc) : Bool :=
+   (dependencyOrder (precedenceNodes D.T)).isOk && (dependencyOrder (stratumNodes D.T)).isOk &&
+   decide (layerNames D.T).Nodup &&
+   ss.all (fun q => D.E.predicates q.name == some q.sorts &&
+-    (q.sorts.length == 1 || q.sorts.length == 2) && q.sorts.all D.E.sorts.contains) &&
++    (1 ≤ q.sorts.length && q.sorts.length ≤ 6) && q.sorts.all D.E.sorts.contains) &&
+   (List.range ss.length).all (fun k => match ss[k]? with
+     | some q => (q.formulas D.T).all (fun φ => φ.check (envAt D k) q.sorts.reverse)
+     | none => false) &&
+@@ -235,7 +235,7 @@ def termSort (E : VE.Environment) (Γ : List String) : VE.Term → Except String
+ 
+ /-- Python `_Checker.formula`'s first diagnostic, in its traversal order,
+ rendered `<code>: <message>` as 11.1 writes diagnostics. -/
+-def typeDiagnostic (E : VE.Environment) : List String → VE.Formula → Except String Unit
++def typeDiagnostic (E : VE.Environment) : List String → VE.Core.Formula → Except String Unit
+   | _, .top | _, .bottom => .ok ()
+   | Γ, .unary p t => do
+     let some sig := E.predicates p | throw s!"UnknownSymbol: Unknown predicate {pyRepr p}"
+@@ -307,7 +307,7 @@ def check (D : Doc) : Except String Unit := do
+   for r in T.regulated do
+     unless D.E.predicates r.name == some r.sorts do
+       throw s!"UnknownSymbol: regulated predicate {r.name}"
+-    unless r.sorts.length == 1 || r.sorts.length == 2 do
++    unless 1 ≤ r.sorts.length && r.sorts.length ≤ 6 do
+       throw s!"UnsupportedArity: regulated predicate {r.name}"
+     unless r.sorts.all D.E.sorts.contains do throw s!"UnknownSymbol: sort of {r.name}"
+     -- a plain act is decoded under `acts@0` only (act-phrases 3.2)
+diff --git a/lean/VE/Norms/Valid.lean b/lean/VE/Norms/Valid.lean
+index 2b5588c359..85b6ad3260 100644
+--- a/lean/VE/Norms/Valid.lean
++++ b/lean/VE/Norms/Valid.lean
+@@ -123,7 +123,7 @@ theorem envAt_base {D : Doc} {k : Nat} {r : String} (hr : r ∉ layerNames D.T)
+   have : r ∉ (layerNames D.T).drop k := fun h => hr (List.mem_of_mem_drop h)
+   simp [envAt, hide, this]
+ 
+-theorem envAt_mono {D : Doc} {k k' : Nat} (hk : k ≤ k') (a : VE.Formula) (Γ : List String)
++theorem envAt_mono {D : Doc} {k k' : Nat} (hk : k ≤ k') (a : VE.Core.Formula) (Γ : List String)
+     (h : a.WellFormed (envAt D k) Γ) : a.WellFormed (envAt D k') Γ := by
+   apply wf_hide_mono D.E _ a Γ h
+   intro r hr
+diff --git a/lean/VE/Norms/Wire.lean b/lean/VE/Norms/Wire.lean
+index dd1895ddd5..5f3282c5a9 100644
+--- a/lean/VE/Norms/Wire.lean
++++ b/lean/VE/Norms/Wire.lean
+@@ -313,7 +313,7 @@ def budgetTerm (count : Nat) (j : Json) : Except String (VE.Term × Nat) := do
+     unless i ≤ maxIndex do throw "UnboundVariable: Invalid variable index"
+   pure (t, count + 1)
+ 
+-def budgetFormula : Nat → Nat → Json → Except String (VE.Formula × Nat)
++def budgetFormula : Nat → Nat → Json → Except String (VE.Core.Formula × Nat)
+   | 0, _, _ => throw "ResourceLimit: formula depth exceeds 64"
+   | n + 1, count, j => do
+     let count := count + 1
+@@ -356,7 +356,7 @@ def budgetFormula : Nat → Nat → Json → Except String (VE.Formula × Nat)
+     | _ => throw "invalid indexed formula"
+ 
+ /-- One formula under a fresh decoder (Python `_Decoder().decode`). -/
+-def decodeBudgeted (j : Json) : Except String VE.Formula := (·.1) <$> budgetFormula VE.Limits.maxDepth 0 j
++def decodeBudgeted (j : Json) : Except String VE.Core.Formula := (·.1) <$> budgetFormula VE.Limits.maxDepth 0 j
+ 
+ /-- The one decoder of a norm's JSON envelope and scalar fields. The FOL and
+ family readers decode the returned guard and carve-outs in their own syntax. -/
+@@ -439,7 +439,7 @@ abbrev decodeFlagged : SourceDecoder := fun environment norms => decodeSource en
+ 
+ /-! ## Regenerated outputs -/
+ 
+-def enc (a : VE.Formula) : Json := VE.Route.Wire.encodeFormula a
++def enc (a : VE.Core.Formula) : Json := VE.Route.Wire.encodeFormula a
+ 
+ /-- The regenerated route premises, Background and conflict targets. -/
+ def regenerated (D : Doc) : List (String × Json) :=
+diff --git a/lean/VE/Norms/WitnessKind.lean b/lean/VE/Norms/WitnessKind.lean
+index 87f72a5288..f85b4a303d 100644
+--- a/lean/VE/Norms/WitnessKind.lean
++++ b/lean/VE/Norms/WitnessKind.lean
+@@ -4,7 +4,7 @@ import VE.Syntax
+ and rights runners and the readings route's superposed verdicts read it from here. -/
+ namespace VE.Norms
+ 
+-def witnessKind (t : String × List String × VE.Formula) : String :=
++def witnessKind (t : String × List String × VE.Core.Formula) : String :=
+   if (t.1.splitOn "->").length > 1 then s!"pair conflict on {t.1}" else s!"strict collision on {t.1}"
+ 
+ end VE.Norms

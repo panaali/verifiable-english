@@ -101,6 +101,8 @@ From [gaps.json](../../docs/usecases/safety-framework/fsf-r1/gaps.json). A unit 
 
 ## Result: agreement with the answer key
 
+**How these answers are computed today.** Lean elaborates the soft rules and replays every certificate. Python builds the rule formulas and evaluates them on each case, so a selection, a completed outcome or a CONFLICT is Python's answer. See [who computes the keyed answers](../../docs/usecases/keyed-answers.md) for the answer-by-answer table (work item `kb-10`).
+
 VE agrees with the answer key on **257 of 262** items.
 
 | Family | What it asks | Agreement |

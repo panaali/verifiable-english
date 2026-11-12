@@ -69,8 +69,25 @@ def codes() -> tuple[dict[str, str], dict[str, tuple[str, ...]], frozenset[str]]
     no sentence (`Run.codeClasses`, `Run.statusCodes`, `Run.unsentencedCodes`), as the `english.grammar` export
     gives them. `codes.json` is written from the service by `tools/english_codes.py --write`, and the suite
     checks it against the service: the relay keeps no table of its own (spec 2.6, D9)."""
+    data = _codes_file()
+    return ({code: cls for code, cls in data['codes']},
+            {status: tuple(found) for status, found in data['statuses']}, frozenset(data['unsentenced']))
+
+
+def statement_codes() -> tuple[dict[str, tuple[str, ...]], dict[str, tuple[tuple[str, ...], tuple[str, ...]]],
+                               frozenset[str]]:
+    """`english.statement`'s statuses with the codes each may carry, each status's required and optional members
+    besides `status` and `identities`, and the codes whose rejection names no sentence (`Run.statementStatusCodes`,
+    `Run.statementFields`, `Run.statementUnsentenced`; docs/spec/en-e3-norm.md M9), from the same file as `codes()`.
+    A code's class is `codes()`'s."""
+    data = _codes_file()
+    return ({status: tuple(found) for status, found in data['statement_statuses']},
+            {status: (tuple(required), tuple(optional)) for status, (required, optional) in data['statement_fields']},
+            frozenset(data['statement_unsentenced']))
+
+
+def _codes_file() -> dict:
     data = json.loads((HERE / 'codes.json').read_text())
     if data.get('format') != CODES_FORMAT:
         raise ValueError(f'{HERE / "codes.json"}: format is not {CODES_FORMAT}')
-    return ({code: cls for code, cls in data['codes']},
-            {status: tuple(found) for status, found in data['statuses']}, frozenset(data['unsentenced']))
+    return data
