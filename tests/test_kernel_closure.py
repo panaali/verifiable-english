@@ -3,8 +3,8 @@
 These tests cover the Python half (the registry's shape, the line counting, the requests sent to
 the Lean half, the census and the saved baseline's consistency) and, on the built `VE`, the Lean
 half's test of which theorems state a subject's answer. The full measurement
-(`python3 tools/kernel_closure.py`, minutes) is run by hand and saved in
-`docs/kernel/closure-baseline.json`; no gate tool runs it yet (KB-1 wires it).
+(`python3 tools/kernel_closure.py`, minutes) is saved in `docs/kernel/closure-baseline.json` by
+`tools/regen_generated.py` (entry `kernel-closure`); the release gate runs its `--check` (KB-1).
 """
 from __future__ import annotations
 
@@ -420,6 +420,9 @@ def test_the_records_quote_the_saved_measurement():
     assert f"signed total: {kernel} lines" in allowances
 
 
+KINDS = {"x": {"theorem": "T"}}  # a synthetic kernel path's kind table
+
+
 def lean_part(decls=(), stated=None, unranged=(), missing=(), open_fields=()):
     return {"lines": sum(b - a + 1 for _, a, b in decls), "axioms": [], "modules": {}, "flagged": [],
             "missing": list(missing), "unranged": list(unranged), "stated": stated or {},
@@ -431,7 +434,7 @@ def test_measure_reports_what_the_lean_half_finds(monkeypatch):
     """`measure` on a fixed Lean answer: kernel and keyed totals, a subject no theorem states, an unranged
     constant, and a writer under a subject that no covered_writers entry names."""
     registry = {"verdict_tokens": ["CONFLICT"], "keys": {"paths": ["k"], "validators": {"v": ["V"]}}, "paths": [
-        {"name": "k", "tier": "kernel", "entry": ["E"], "theorems": ["T"], "subject": ["S", "S2"]},
+        {"name": "k", "tier": "kernel", "entry": ["E"], "theorems": ["T"], "subject": ["S", "S2"], "kinds": KINDS},
         {"name": "c", "tier": "candidate", "entry": ["Ec"], "theorems": ["Tc"], "subject": ["Sc"]}]}
     raw = {"spec:k": lean_part([("M", 1, 10)], {"S": ["T"], "S2": []}), "wrap:k": lean_part([("M", 5, 12)]),
            "body:k": lean_part([("M", 30, 31)]), "spec:c": lean_part([("M", 40, 49)], {"Sc": []}),
@@ -463,7 +466,8 @@ def test_measure_reports_an_uncovered_runner_a_kernel_spec_or_wrap_reaches(monke
     uncovered = [{"name": "M.d20", "kinds": ["k"], "why": "a kind no listed theorem covers"},
                  {"name": "M.d40", "kinds": ["k"], "why": "a kind no listed theorem covers"}]
     registry = {"verdict_tokens": [], "paths": [
-        {"name": "k", "tier": "kernel", "entry": ["E"], "theorems": ["T"], "subject": ["S"], "uncovered": uncovered},
+        {"name": "k", "tier": "kernel", "entry": ["E"], "theorems": ["T"], "subject": ["S"], "uncovered": uncovered,
+         "kinds": KINDS},
         {"name": "c", "tier": "candidate", "entry": ["Ec"], "theorems": ["Tc"], "subject": ["Sc"]}]}
     raw = {"spec:k": lean_part([("M", 1, 10), ("M", 20, 21)], {"S": ["T"], "M.d20": [], "M.d40": []}),
            "wrap:k": lean_part([("M", 40, 41)]), "body:k": lean_part([]),
@@ -476,3 +480,164 @@ def test_measure_reports_an_uncovered_runner_a_kernel_spec_or_wrap_reaches(monke
     assert result["paths"][0]["stated"] == {"S": ["T"]}
     raw["spec:k"], raw["wrap:k"] = lean_part([("M", 1, 10)], {"S": ["T"]}), lean_part([("M", 5, 12)])
     assert kernel_closure.measure(registry)["problems"] == []
+
+
+# -- KB-1: the per-kind table, the writer ratchet, the signed total --------------------------------------------
+
+# The sources whose `kind == "<k>"` comparisons are each path's case kinds: the runners the path's subjects and
+# entry dispatch through (route: Run.dispatch, the families' Wire runners and the closureNary family's Core
+# runners; norms: Run.runCaseIn and the plain kinds of Norms.Plain.run). A candidate path's are read once it is
+# promoted (`certificate` compares none today).
+KIND_SOURCES = {
+    "route": ["lean/VE/Route/Run.lean", "lean/VE/Route/Wire.lean", "lean/VE/Core/Wire.lean",
+              "lean/VE/Core/Layers.lean"],
+    "norms": ["lean/VE/Norms/Run.lean", "lean/VE/Norms/Plain.lean"],
+    "softNorms": ["lean/VE/SoftNorms/Run.lean"],
+    "metered": ["lean/VE/Route/MeteredRun.lean"],
+    "certificate": ["lean/VE/CertificateWire.lean"],
+}
+KIND_LITERAL = re.compile(r'\bkind\s*==\s*"([^"]+)"')
+
+
+def kind_literals(path: str) -> set[str]:
+    return {kind for source in KIND_SOURCES[path] for kind in KIND_LITERAL.findall((ROOT / source).read_text())}
+
+
+def test_every_case_kind_of_a_kernel_runner_has_an_entry_and_every_entry_a_kind():
+    """Section 9: each kind a kernel path's runners compare with the case's `kind` is in the path's `kinds`
+    (a theorem or a nonverdict reason) or in `untied_kinds`; no entry names a kind the runners never compare."""
+    assert {path["name"] for path in KERNEL} <= set(KIND_SOURCES)
+    untied = REGISTRY["untied_kinds"]
+    for path in REGISTRY["paths"]:
+        literals = kind_literals(path["name"]) if path["name"] in KIND_SOURCES else set()
+        if path["tier"] != "kernel":
+            assert "kinds" not in path and not [u for u in untied if u["path"] == path["name"]], path["name"]
+            continue
+        whole = {u["kind"] for u in untied if u["path"] == path["name"] and "family" not in u}
+        partial = {u["kind"] for u in untied if u["path"] == path["name"] and "family" in u}
+        assert literals == set(path["kinds"]) | whole, path["name"]
+        assert partial <= set(path["kinds"]), path["name"]
+    assert kind_literals("certificate") == set()
+
+
+def test_each_kind_theorem_fixes_its_kind_and_no_theorem_states_an_untied_kind():
+    """A `kinds` theorem's statement fixes the kind on one of the path's subjects; an `untied_kinds` kind has no
+    theorem in lean/statements.txt that mentions it with a subject of its path (else tie it, do not list it)."""
+    paths = {path["name"]: path for path in KERNEL}
+    for path in KERNEL:
+        for kind, entry in path["kinds"].items():
+            if "theorem" in entry:
+                text = STATEMENTS[entry["theorem"]]
+                assert f'"{kind}"' in text and any(s + "@" in text for s in path["subject"]), (path["name"], kind)
+    for entry in REGISTRY["untied_kinds"]:
+        if "family" in entry:
+            continue
+        subjects = paths[entry["path"]]["subject"]
+        tied = [name for name, text in STATEMENTS.items()
+                if f'"{entry["kind"]}"' in text and any(s + "@" in text for s in subjects)]
+        assert tied == [], (entry, tied)
+        for near in entry.get("near", []):
+            assert near in STATEMENTS and near not in paths[entry["path"]]["theorems"], near
+
+
+def test_the_kind_table_problems_are_found_before_any_lean_runs():
+    ok = {"name": "p", "tier": "kernel", "theorems": ["T"], "kinds": {"a": {"theorem": "T"}, "b": {"nonverdict": "x" * 20}}}
+    assert kernel_closure.kind_problems({"paths": [ok]}) == []
+    cases = [
+        ({"kinds": None}, "p: a kernel path names no case kinds (kinds)"),
+        ({"kinds": {}}, "p: a kernel path names no case kinds (kinds)"),
+        ({"kinds": {"a": {"theorem": "Other"}}}, "p: kind a cites Other, not a theorem of the path"),
+        ({"kinds": {"a": {"nonverdict": "too short"}}}, "p: kind a is nonverdict without a reason of at least 20 characters"),
+        ({"kinds": {"a": {"theorem": "T", "nonverdict": "x" * 20}}}, "p: kind a must map to one theorem or one nonverdict reason"),
+        ({"kinds": {"a": {}}}, "p: kind a must map to one theorem or one nonverdict reason"),
+        ({"kinds": {"a": "T"}}, "p: kind a must map to one theorem or one nonverdict reason"),
+        ({"tier": "candidate"}, "p: kinds on a candidate path"),
+    ]
+    for change, problem in cases:
+        assert kernel_closure.kind_problems({"paths": [dict(ok, **change)]}) == [problem], change
+    why = "w" * 20
+    untied = [
+        ({"path": "q", "kind": "c", "why": why}, "untied kind c: q is not a kernel path"),
+        ({"path": "p", "kind": "c", "why": "short"}, "untied kind of p names no kind or no reason"),
+        ({"path": "p", "kind": "a", "why": why}, "p: kind a is both in kinds and untied"),
+        ({"path": "p", "kind": "b", "family": "f", "why": why},
+         "p: untied kind b names a family, but no theorem of the path fixes the kind"),
+    ]
+    for entry, problem in untied:
+        assert kernel_closure.kind_problems({"paths": [ok], "untied_kinds": [entry]}) == [problem], entry
+    assert kernel_closure.kind_problems({"paths": [ok], "untied_kinds": [
+        {"path": "p", "kind": "c", "why": why}, {"path": "p", "kind": "a", "family": "f", "why": why}]}) == []
+    assert kernel_closure.registry_problems({"paths": [dict(ok, kinds={})]}) == ["p: a kernel path names no case kinds (kinds)"]
+
+
+def writers(*outside, inside=()):
+    return {"verdict_writers": [{"name": n, "in_kernel": False} for n in outside]
+            + [{"name": n, "in_kernel": True} for n in inside]}
+
+
+def test_the_check_fails_when_verdict_writers_outside_the_kernel_rise():
+    """Section 6.3: no allowance; a fall or a writer moved inside passes, a new writer outside fails by name."""
+    saved = writers("A", "B", inside=["K"])
+    assert kernel_closure.check_writers(writers("A", "B"), saved)[0] is True
+    assert kernel_closure.check_writers(writers("A", inside=["B", "K"]), saved)[0] is True
+    ok, message = kernel_closure.check_writers(writers("A", "B", "leak"), saved)
+    assert ok is False and message == "FAIL: verdict writers outside the kernel rose from 2 to 3: leak"
+    ok, message = kernel_closure.check_writers(writers("A", "C", "D", inside=["B"]), saved)
+    assert ok is False and message.endswith("rose from 2 to 3: C, D")
+    ok, message = kernel_closure.check_writers(writers("A", "A", "B"), saved)  # a second writer of one name
+    assert ok is False and message.endswith("rose from 2 to 3: A")
+
+
+def run_main(monkeypatch, tmp_path, measured, *argv, signed=100):
+    allowances = tmp_path / "ALLOWANCES.md"
+    allowances.write_text(f"# Kernel allowances\n\nsigned total: {signed:,} lines\n")
+    monkeypatch.setattr(kernel_closure, "measure", lambda registry, timeout=3600: measured)
+    return kernel_closure.main(["--allowances", str(allowances), *argv])
+
+
+def test_the_check_command_fails_on_kernel_growth_and_on_a_new_writer_outside(monkeypatch, tmp_path, capsys):
+    saved = tmp_path / "baseline.json"
+    saved.write_text(json.dumps({"kernel_lines": 100, "paths": [], "problems": [], **writers("A")}))
+    base = {"kernel_lines": 100, "paths": [], "problems": [], **writers("A")}
+    assert run_main(monkeypatch, tmp_path, base, "--check", str(saved)) == 0
+    assert "PASS: verdict writers outside the kernel 1 <= 1" in capsys.readouterr().out
+    assert run_main(monkeypatch, tmp_path, dict(base, kernel_lines=101), "--check", str(saved)) == 1
+    assert "FAIL: the kernel grew from 100 to 101" in capsys.readouterr().out
+    assert run_main(monkeypatch, tmp_path, dict(base, **writers("A", "leak")), "--check", str(saved)) == 1
+    assert "FAIL: verdict writers outside the kernel rose from 1 to 2: leak" in capsys.readouterr().out
+
+
+def test_the_write_refuses_a_kernel_total_above_the_signed_one(monkeypatch, tmp_path, capsys):
+    """Section 6.2: `--out` saves at most the signed total of docs/kernel/ALLOWANCES.md, and nothing above it."""
+    out = tmp_path / "baseline.json"
+    measured = {"kernel_lines": 100, "paths": [], "problems": [], **writers()}
+    assert run_main(monkeypatch, tmp_path, measured, "--out", str(out)) == 0
+    assert json.loads(out.read_text())["kernel_lines"] == 100
+    out.unlink()
+    assert run_main(monkeypatch, tmp_path, dict(measured, kernel_lines=101), "--out", str(out)) == 1
+    assert not out.exists() and "REFUSED: kernel_lines 101 is above the signed total 100" in capsys.readouterr().out
+    assert run_main(monkeypatch, tmp_path, dict(measured, kernel_lines=1_200), "--out", str(out), signed=1_200) == 0
+    with pytest.raises(SystemExit, match="not 2"):
+        kernel_closure.signed_total("signed total: 1 lines\nsigned total: 2 lines\n")
+    assert kernel_closure.signed_total((ROOT / "docs/kernel/ALLOWANCES.md").read_text()) >= BASELINE["kernel_lines"]
+
+
+def test_measure_builds_the_registry_imports_before_the_lean_half(monkeypatch):
+    """The registry's `imports` (theorems only VE.Audit imports) are built before `lake env lean` imports them."""
+    calls = []
+    monkeypatch.setattr(kernel_closure, "build_imports", lambda imports, timeout: calls.append(("build", imports)))
+    monkeypatch.setattr(kernel_closure, "run_lean", lambda paths, tokens, imports, timeout: (
+        calls.append(("lean", imports)), ({}, []))[1])
+    with pytest.raises(KeyError):  # the fake Lean half answers nothing; only the order matters here
+        kernel_closure.measure(REGISTRY)
+    assert calls == [("build", REGISTRY["imports"]), ("lean", REGISTRY["imports"])]
+    assert REGISTRY["imports"] == ["VE.Route.MeteredProofs"]
+
+
+def test_the_readme_quotes_what_checked_means():
+    """The one wording of a unit's CHECKED status (DRI 2026-11-11, an admission status, not a proof) is the help's
+    (`ve document check --help`); README.md quotes it verbatim."""
+    from ve.document.cli import CHECKED_MEANS
+    assert CHECKED_MEANS.startswith("CHECKED: the core statements shown for this unit were admitted by the checker")
+    assert CHECKED_MEANS in (ROOT / "README.md").read_text()
+    assert "were proved" not in CHECKED_MEANS

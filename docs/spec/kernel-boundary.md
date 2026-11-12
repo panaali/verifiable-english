@@ -165,7 +165,13 @@ case are those fields (section 1.2).
 | `nonverdict` | exits reviewed as carrying no verdict, each with its reason |
 | `uncovered` | kernel paths: code a subject runs for case kinds no listed theorem covers, with the kinds and the reason; outside the kernel (section 3): every kernel path's spec and census body is cut there, and the tool reports one a kernel path's spec or wrap still reaches |
 | `covered_writers` | kernel paths: each verdict writer inside the kernel only because a subject runs it, with the case kinds it writes for and the listed theorems that cover them |
+| `kinds` | kernel paths: every case kind the path's runners compare with the case's `kind`, mapped to a listed theorem whose statement fixes that kind (`theorem`) or to why its answer carries no verdict (`nonverdict`) |
 | `tier` | `kernel` or `candidate` |
+
+The registry's `untied_kinds` lists the verdict-bearing kinds of kernel paths that no theorem in
+`lean/statements.txt` states (with `family` where the kind's theorem leaves a family out): the
+architect's list of theorems still to write. `tests/test_kernel_closure.py` reads the kind literals
+from the runners' sources and fails when one has no entry or an entry has no literal.
 
 The registry's `keys` names the paths and validators the frozen keys call (section 1.3); the tool
 reports the distinct lines under them and how many lie in the kernel.
@@ -352,7 +358,7 @@ if a measured document needs it (the RSP has 30 sets, S: `usecases/anthropic-rsp
 
 | Tier | Reachable from the service | May show a verdict | Enters when | Enforced by |
 |---|---|---|---|---|
-| experimental | no | no | a design passes its meaning-first screen | an import boundary: no module that `VE.Service.Protocol` imports, directly or transitively, imports it (`tools/check_lean_imports.py`, KB-1); an expiry date in its module docstring |
+| experimental | no | no | a design passes its meaning-first screen | an import boundary: no module that `VE.Service.Protocol` or `Serve` imports, directly or transitively, imports a `VE.Experimental.*` module (`tools/check_lean_imports.py`, KB-1); a line `Expires: YYYY-MM-DD` in its first docstring, a date not yet passed |
 | shell | yes | only carried kernel rows | a fidelity pass **on built code** (the family's two-seat pilot, run on what main accepts, not on plan text) and a keyed answer or audit finding that pulls it | `tools/kernel_closure.py`: the verdict-writer count outside the kernel does not rise |
 | kernel | yes | yes | the architect signs the registry change | the kernel total (section 6) |
 
@@ -363,9 +369,11 @@ verifier's amendment (an import boundary, not a flag; an expiry).
 
 ## 6. The ratchet
 
-1. `python3 tools/kernel_closure.py --check docs/kernel/closure-baseline.json` runs where
-   `tools/trust_map.py --check` runs today (KB-1 wires it). It fails when the kernel total exceeds
-   the saved one.
+1. `python3 tools/kernel_closure.py --check docs/kernel/closure-baseline.json` runs in the release
+   gate's trust stage, after the Lean build (`tools/gate.py`, stage "Kernel check"; KB-1). It fails
+   when the kernel total exceeds the saved one, or when more verdict writers are outside the kernel
+   than the saved measurement has. The baseline is generated (`tools/regen_generated.py`, entry
+   `kernel-closure`), and `--out` refuses a kernel total above `docs/kernel/ALLOWANCES.md`'s signed total.
 2. A change that raises the total updates the baseline in the same change and carries, in
    `docs/kernel/ALLOWANCES.md`, one line: lines added, door (B or C), reason, the architect's
    signature. A change that lowers it updates the baseline with no signature.
@@ -428,7 +436,7 @@ Work this decision stops or changes:
 
 | Risk | Why it may bite | What limits it |
 |---|---|---|
-| The registry's theorem lists were grouped mechanically (theorems whose hypothesis is `subject … = .ok …`) | a listed theorem may say less than a reader assumes (for example only one case kind, or only the input's profile gate, as `certificate`'s did on `runCase`) | the tool reports a kernel subject no listed theorem states the answer of (section 2), and a verdict writer under a subject that no `covered_writers` entry ties to a kind and theorem (section 3); the uncovered kinds found so far are listed `uncovered`. KB-1 adds the full per-kind table: each case kind of a kernel runner names its theorem, or is listed `nonverdict` or `uncovered` (kinds whose answers carry `valid`, `checked` or `admitted`, which are not verdict tokens, are found only by that table) |
+| The registry's theorem lists were grouped mechanically (theorems whose hypothesis is `subject … = .ok …`) | a listed theorem may say less than a reader assumes (for example only one case kind, or only the input's profile gate, as `certificate`'s did on `runCase`) | the tool reports a kernel subject no listed theorem states the answer of (section 2), and a verdict writer under a subject that no `covered_writers` entry ties to a kind and theorem (section 3); the uncovered kinds found so far are listed `uncovered`. KB-1 added the per-kind table (`kinds`, `untied_kinds`; section 2): each case kind of a kernel runner names its theorem or is `nonverdict`, and the verdict-bearing kinds no theorem states are listed `untied_kinds` (kinds whose answers carry `valid`, `checked` or `admitted`, which are not verdict tokens, are found only by that table) |
 | Carrying cases makes answers larger and the document mode slower | each verdict row now carries its case | the cases are the ones the chain already builds; measure UDHR time and memory before and after KB-2a, and refuse the batch if it is markedly slower (the lean-first rule) |
 | A fold becomes a second place where verdicts are made | a status fold reads rows and writes `CHECKED` | folds are kernel code, counted and reviewed; target: one status fold |
 | Fidelity, not soundness, loses the answers (RSP 111 → 77, Preparedness 231 → 68 after audit; S: `reviews/uc-audit-rsppf-20261111.md`) | this design does not by itself repair a mistranslation | it makes the translated core statements part of every answer, which is what a back-translation check and a per-rule distinguishing scenario need; those aids are the operations seat's and the audit loop's |
