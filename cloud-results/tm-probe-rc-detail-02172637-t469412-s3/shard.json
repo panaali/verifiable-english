@@ -1,0 +1,1 @@
+{"shard": 3, "shards": 5, "units": ["tests/test_select_tests.py", "tests/test_trust_mutants_probe_scope.py", "tests/test_relay_binding_inventory.py", "tests/test_regen_generated.py", "tests/test_readings_verdicts_split.py", "tests/test_definitions.py"], "rc": 0, "seconds": 570.3, "passed": 6}
