@@ -93,7 +93,7 @@ file), so every seeded bug is in Lean.
 - **Document mode** (`Document.lean`):
   - L1 `ownedProfiles`, L2 `eventsView` (forget the hook), L3 the written identity, L4 the document's open terms.
   - L5 and L6 `eventsAnchorChecks`, L7 `eventsLayeredOf`, L8 `chainLayeredOf` (`check`'s events branch; re-planted
-    there after the main merge, killed at `EventsDocumentExamples.lean:169`).
+    there after the main merge, killed at `EventsDocumentExamples.lean:205`).
   - L9 `events@0` named first, L10 off the soft chain.
 - **Anchor** (`Anchor.lean`): L11 `openAnchor`, L12 `legend`, L13 `anchorConstant`, L14 `anchorWording`.
 - **Catalogue** (`SourceWords.lean`): L15-L19 the five rows, L20 the row list; L21 `untilDateReadings`, L22
@@ -128,9 +128,12 @@ file), so every seeded bug is in Lean.
     cannot elaborate `RouteExamples.lean:417`. Planted by hand, each fails `RouteExamples.lean:417` and `:429` (M027
     also `:425`). They are allowed with that evidence (`trust-mutants-allow.json`). The two INVALIDs are `list-empty`
     texts Lean refuses (`softAlwaysReadings`, `causalReadings`), so they count for nothing.
-  - Fourth run, `--rescore` of the third with those allow entries, at `be0baa7bb` (the committed record; mode
-    "identical", 54 reused, 6 rerun): **50 KILLED, 8 ALLOWED, 2 INVALID, 0 SURVIVOR, 0 UNKNOWN, 144 NOT RUN** past the
-    default cap of 60 (exit 3, "none left but some NOT RUN").
+  - Fourth run, `--rescore` of the third with those allow entries, at `be0baa7bb` (mode "identical", 54 reused,
+    6 rerun): 50 KILLED, 8 ALLOWED, 2 INVALID, 0 SURVIVOR, 0 UNKNOWN, 144 NOT RUN past the default cap of 60 (exit 3,
+    "none left but some NOT RUN").
+  - The review fix's sweeps (`--max-mutants 1000`, every mutant run) are listed in the review-fix section below; the
+    committed record is the last of them, at `77e10e7a7`: **286 KILLED, 22 ALLOWED, 14 INVALID, 0 SURVIVOR, 0 UNKNOWN,
+    0 NOT RUN** (exit 0).
 - **Size** (`git diff --numstat $(git merge-base HEAD main)`, generated files left out; see the SIZE line above):
   - Product Lean: 201 added, 18 deleted (`Document.lean` 76/11, `SourceWords.lean` 75/3, `Anchor.lean` 41,
     `DocumentChain.lean` 5/3, `Wire.lean` 2/1, `VE.lean` 2).
@@ -190,9 +193,36 @@ file), so every seeded bug is in Lean.
   `ve ask`; 25 `events_view` mutants; a view on a document without events), `tests/test_events_answer.py::
   test_a_block_with_no_named_date_has_no_date_fact`, and the five events documents among the relay inventory's genuine
   document relays (`tests/test_relay_binding_inventory.py`).
-- **Seeded bugs:** `mutants.json` L29 (Lean) and P1-P9 (Python), all killed; P1 first survived (a later meaning-id check
+- **Seeded bugs:** `mutants.json` L29-L31 (Lean) and P1-P9 (Python), all killed (L30, L31: the trust sweep's
+  survivor M268 and M112, planted in `Document.lean`, fail `EventsDocumentExamples.lean:131` and `:151`); P1 first survived (a later meaning-id check
   caught the tampered constants), so the fuzz test now requires the view binding's own refusal.
-- **Trust:** V +143 (allowance +21, R16; DELTA row 2), `trust_map.py --check` PASS.
+- **Trust:** V +143 (allowance +21, R16; DELTA row 2), `trust_map.py --check` PASS. The guards' four fixtures are
+  classed T (`tools/trust-classes.json`).
+- **Trust sweep of the fix** (`mac-pytest.sh --trustmut`, `--classes trusted --max-mutants 1000`, both fixture files):
+  - Full, at `8836d0215` (12 parts on the cloud): 282 KILLED, 20 ALLOWED, 14 INVALID, **1 SURVIVOR**, 5 UNKNOWN.
+    M268 survived: the profile check names the profile it finds over the owned list a second time
+    (`Document.lean:1195`), and no guard put an owned profile before an unowned one.
+  - The class, not the example: with `soft-norms@0` listed, `environmentFault` reports nothing first, so an unowned
+    profile is reached at any place in the list (last too), and an unsorted list reaches `eventsView`'s gate. Three
+    earlier allow entries (`environmentOf` and `eventsView` `list-drop-last`, `eventsView` `list-drop-first`) called
+    their mutants equivalent on the opposite premise; that was wrong. New guards (EventsDocumentExamples "The mode's
+    profile check" and "`eventsView`'s gate over the whole list"): every owned profile before an unowned one, in the
+    middle and last (:131, :134); the hook run and its view read (:145); `readings@1` or `rights@0` first or last with
+    `events@0` first or last (:151); `soft-norms@0` or `events@0` out of order (:156); no `soft-norms@0` (:160). Each
+    sweep survivor or UNKNOWN in these lines was planted by hand and fails one of them (M268, M112, M113, M142, M152
+    KILLED by the tool afterwards; M122, M198, M214, M272, M287, M292 and later M001, M121, M129, M229 by hand).
+  - The two false `list-drop-last` entries are removed. M214's reason is corrected, and M122, M198 and M272/M287/M292
+    are allowed with the hand evidence. Each of those stops at a probe that cannot read `RouteExamples.lean:417`, which
+    the mutant fails, so `EventsDocumentExamples` (importing it) is not built.
+  - `--rescore` at `18e5ccb25` (46 rerun): 286 KILLED, 18 ALLOWED, 14 INVALID, 0 SURVIVOR, 4 UNKNOWN. M001, M121, M129
+    and M229 had been KILLED at `RouteExamples.lean:417` at `8836d0215`; rerun because their reads changed, this
+    runner's probe could not read that line. Planted by hand, each fails :145 and :156, and is allowed with that.
+  - `--rescore` at `77e10e7a7` (20 rerun, 302 reused): **286 KILLED, 22 ALLOWED, 14 INVALID, 0 SURVIVOR, 0 UNKNOWN,
+    0 NOT RUN**, exit 0 (the committed `trust-mutants.json`).
+  - Stale line references: `mutants.json` L5-L8, L11-L14, L16 and an allow reason cited lines of
+    `EventsDocumentExamples.lean` that had moved before this review (L5's `:152` was a `let`). Each is mapped by
+    content from the commit that wrote it to the guard it names now, as are L29's lines and `REPORT` L8's line, which
+    the new guards moved.
 - **Selected run** (`mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`, at `d79076db1`, on
   ve-cloud-2, 6097 s): 461 of 589 test units selected, every file exit 0, 0 failed; 21 broad files over 120 s deferred
   to the chain gate. An earlier run of the fix (at `f20f5ae92`) failed `tests/test_route_row_schemas.py` (the first
@@ -238,8 +268,9 @@ file), so every seeded bug is in Lean.
 2. Deliverables: PASS. The plan-rows table above lists every cut: the DRI's 11-10 et-5b items 1-2, and one seam (the
    English reader of an events environment: the derived-wording grammar and T9). Nothing was cut for size. There is no Python copy of a Lean decision (review F1's Python builds over Lean's view and binds it;
    it recomputes nothing of it), and no permanent report test.
-3. Tests can fail: PASS. `mutants.json` L1-L28 are all killed. The trust-mutant survivors are killed or allowed with
-   reasons (`trust-mutants-allow.json`).
+3. Tests can fail: PASS. `mutants.json` L1-L31 and P1-P9 are all killed. The trust-mutant record has 0 SURVIVOR and
+   0 UNKNOWN; each ALLOWED row has a reason (`trust-mutants-allow.json`), and every non-equivalent one cites the guards
+   its mutant, planted by hand, fails.
 4. Agreement and valid inputs: PASS. LinkNotOpen's order matches `eventsHook` (the EventsDocumentExamples guard). Empty
    lists are accepted, the off-chain lists are byte-identical, and the route-cases are unchanged after the regen.
 5. R8 binding: PASS (review F1). `events_view` is bound to the request by `ve.events.view` (a closed list of relations,
