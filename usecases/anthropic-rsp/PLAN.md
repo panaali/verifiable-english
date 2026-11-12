@@ -577,6 +577,33 @@ the pinned source with the translation fidelity checklist. Section 6 remains fro
 18. **Key findings.** None from the independent 68-cell reference or VE run. The corrections in item 15 repair
     the case facts and a rule guard; they leave PLAN section 6 and `answer-key.json` untouched.
 
+From `anthropic-rsp-fidelity-fix` (2026-11-11), the T fixes of the use-case audit (30 units, 7 items UNFAITHFUL;
+`reviews/ucfix-classify-20261111.tsv` in manage-agents). Section 6 and `answer-key.json` are unchanged; no key finding.
+
+19. **Source-fidelity fixes.** Each changed block's header quotes its whole source sentence; where an act cannot hold
+    a qualifier within 80 characters, its legend does. (a) Appendix A: each scenario has its own evidence predicate
+    (`lead_evidence`, `competitors_evidence`, `mitigation_evidence`, OT8) and each delay its own "as needed"
+    (`lead_delay_needed`, `posture_delay_needed`, OT7). F24 has no `highly_capable` guard (`in_the_lead` says
+    "have developed or will imminently develop a highly capable model"). F24's "until and unless we no longer believe
+    we have a significant lead" is an `unless` on `lead_no_longer_believed` (OT9); F25's "Until we are able to do so"
+    is an `unless` over each competitor that has or will soon develop a highly capable model (OT23). F25's act names
+    each competitor, over a new sort `competitor` (item 1's single subject sort is kept for situations): under RS5
+    noimport an empty set of such competitors requires nothing, and the release holds vacuously. RS5 import's
+    "at least one such competitor" stays a case premise (`build_document.READINGS`), so N3 enumerates RS5 with the
+    scenario's facts present only under noimport. (b) F8's "by the time of the report's publication, we have
+    determined" is its own guard (`determined_by_publication`). F9 has its own deployment predicates with no coverage
+    date ("Separate from our publication of Risk Reports"); K2, K3, K4 and G4 use them. D3 holds F16's "within 30 days
+    of receipt" with a certificate, on D5's case. (c) F13's acts name the public version; F16's only-legal rule is a
+    prohibition on redacting the version given to the reviewers unless either legal ground holds. C4's NONE rests on
+    these different acts (`basis` in results.json); C-doc checks every pair section 6.5 names, the F13/F16 pair
+    included, over M2's (RS1, RS4, RS5, RS7). (d) F5's "in which case" condition is a guard (`ai_evidence_risk`); F12,
+    F19, F20, F21 and F22 keep "promptly", "regularly", "with relevant expertise", "anonymous or identified",
+    "publicly" and their actors in the act or the legend. (e) G1 asks D1's own act `delay`, not a query-only `proceed`;
+    m2 and the N2 counterfactual add their stop rule on `delay`, and m3 its F26 delay with a query-only "as needed".
+    Regulated predicates: 64 of 64; every new guard is a classification or open term. 111/126 still match the key;
+    only C-doc's SOME condition is restated over the wider cone (still exactly RS4 = rel). The six mutants change
+    exactly their named results. Report: `docs/usecases/anthropic-rsp/anthropic-rsp-fidelity-fix/REPORT.md`.
+
 ## 13. Files for the implementation and run rounds
 
 `environment.d1.json`, `environment.d2.json`, `environment.d3.json`; `rsp.d1.ve.md`, `rsp.d2.ve.md`, `rsp.d3.ve.md`

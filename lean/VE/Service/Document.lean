@@ -117,12 +117,6 @@ def wireJson : Nat → Json → Json
 #guard wireJson 8 (Json.mkObj [("a", .null), ("b", Json.arr #[Json.mkObj [("c", .null), ("d", 1)]])]) ==
   Json.mkObj [("b", Json.arr #[Json.mkObj [("d", 1)]])]
 
-/-- Normalize only nulls the rights source decoder treats as absent. Unknown
-members, including unknown members with null values, reach its closed-field
-checks. The response schema copies the authored content without normalization. -/
-def rightsChildContext (context key : String) : String :=
-  if context == "line" && ["norm", "liberty", "recognition"].contains key then "norm" else key
-
 def rightsWireJson : Nat → String → Json → Json
   | 0, _, j => j
   | fuel + 1, context, .arr xs =>
@@ -142,10 +136,10 @@ def rightsWireJson : Nat → String → Json → Json
         | _ => []
       Json.mkObj (kvs.toList.filterMap fun (k, v) =>
         if v == .null && (known.contains k || context == "cites" || context == "fan_out") then none
-        else some (k, rightsWireJson fuel (rightsChildContext context k) v))
+        else some (k, rightsWireJson fuel (VE.Rights.Wire.rightsChildContext context k) v))
   | _, _, j => j
 
-#guard ["norm", "liberty", "recognition"].all (fun key => rightsChildContext "line" key == "norm")
+#guard ["norm", "liberty", "recognition"].all (fun key => VE.Rights.Wire.rightsChildContext "line" key == "norm")
 #guard (rightsWireJson 8 "source" (Json.mkObj [("right", Json.mkObj
   [("guard", .null), ("annotation", .null)])])).getObjValD "right" ==
   Json.mkObj [("annotation", .null)]
@@ -251,7 +245,8 @@ def hasNull : Nat → Json → Bool
   | _, _ => false
 
 /-- Which unit content's nulls the mode reads as Python's relays read them, absent (`wireJson`), while the identity
-keeps them (`nullableMeaningId`): none (`plain`); under `rights@0` every unit's content; in a soft-norms document
+keeps them (`nullableMeaningId`; a rights block's id binds `VE.Rights.Wire.rightsNormalForm`, which omits a `null` soft field of a
+line's norm objects): none (`plain`); under `rights@0` every unit's content; in a soft-norms document
 (batch 16f) the norm object of a unit's content, which only the soft route reads. -/
 inductive Nullable | plain | rights | soft
   deriving DecidableEq
@@ -1510,7 +1505,7 @@ def softCanonical (N : VE.SoftNorms.SoftNode) (authored : Json) : Json :=
 
 /-- `_content` in a rights document (`rights=True`), at the unit's place in the unit loop: a soft norm, after its
 single-rule check, in canonical form (with the unit's `cites` on a `norm` unit), then the kind check of `normRole`;
-a rights block as written. Each is bound to its content environment (`content_env`): the document's for a rights
+a rights block answered as written, its id bound to its normal form (`VE.Rights.Wire.rightsNormalForm`, rights 3.5). Each is bound to its content environment (`content_env`): the document's for a rights
 kind, `E″′` for any other. Formula and fenced content are typed in `E″′`, which the mode does not build. -/
 def rightsContentOf (E : Env) (R : RightsDoc) (kind : RowKind) (content : Json) :
     Except String (UnitContent × String) := do
@@ -1541,7 +1536,8 @@ def rightsContentOf (E : Env) (R : RightsDoc) (kind : RowKind) (content : Json) 
   if (RightsKind.ofName? key).isSome then
     -- Under any other kind the content environment is `E″′`, which has no `rights@0`.
     unless kind matches .rights _ do throw "UnsupportedProfile: rights@0 is required"
-    return (.rights content, ← bound content)
+    -- Rights 3.5: the id binds the normal form; the content is answered as written.
+    return (.rights content, ← VE.Rights.Wire.rightsMeaningId E.profiles E.envId content)
   if key == "ast" || key == "fence" then
     throw (unavailable "formula content in a rights document is typed in its extended environment")
   throw "unit fence must match its id"

@@ -1,3 +1,12 @@
+- `tests/test_document_lean_switch.py` — Lean-first batch 16b: `ve-document@1` documents are checked by the Lean `document` mode.
+- `tests/test_document_split.py` — AR-16a split `ve/document.py` into the package `ve/document/`; these pin what the split must keep.
+- `tests/test_e1_core.py` — (no module docstring)
+- `tests/test_e1_prompts.py` — (no module docstring)
+- `tests/test_eff_tests_report.py` — docs/eff-tests/REPORT.md: every number regenerated from the saved evidence in docs/eff-tests/evidence/.
+- `tests/test_eligibility_wfp.py` — Winter Fuel Payment use case (usecases/eligibility): VE against a frozen answer key.
+- `tests/test_encoder_shapes.py` — The encoder theorems (`lean/ResponseShape/Encoders.lean`) can fail (lf-1 recheck 3, B).
+- `tests/test_english.py` — Writable English boundaries, scoped references and independent ambiguity checks.
+- `tests/test_english_e26_ab.py` — English E2.6: the corpus A/B of Lean's English authority, from the saved comparisons alone (no live checkout and no git): every verdict row has a rule and a di…
 - `tests/test_english_e26_boundary.py` — English E2.6: where Lean's English reader refused an environment or a text that Python's reader admitted, found by the corpus A/B under Lean authority, Lean no…
 - `tests/test_english_e26_diagnosis.py` — English E2.6: Lean's diagnosis of a sentence without a reading (`VE.EnglishGrammar.diagnose`, spec 4.5) says what the hand parser said, where it said it: the w…
 - `tests/test_english_e26_evidence.py` — English E2.6: Lean's authority over English admission rests on saved evidence, checked from the files alone (no live checkout, no git): the readability replay …
@@ -31,6 +40,7 @@
 - `tests/test_english_lean_tokens.py` — Python's English grammar converted to word tokens reads like Python (plan section 4, S0 first cut).
 - `tests/test_english_runner_root.py` — The one-shot English executable has a distinct root and preserves its wire bytes.
 - `tests/test_english_statement_blocks.py` — The 120 pinned rule blocks: Lean's node against Python's recorded node (en-e3-norm EN-1; spec english-lean-s6 f22).
+- `tests/test_english_statement_shadow.py` — The `english.statement` shadow comparator (docs/spec/en-e3-norm.md 2.4, Shadow; fixtures E14 and P5).
 - `tests/test_english_unambiguity.py` — (no module docstring)
 - `tests/test_entailment.py` — (no module docstring)
 - `tests/test_entailment_adversarial.py` — Adversarial checks for the small trusted tableau replayer.
@@ -77,12 +87,3 @@
 - `tests/test_identity_lint.py` — `tools/identity_lint.py` (architecture plan AR-6): no new Lean-owned identity preimage in Python.
 - `tests/test_inventory_lint.py` — The Gate 2 inventory lint (tools/inventory_lint.py).
 - `tests/test_inventory_path.py` — gi-2a: the train-only files and their one accessor (docs/infra/gen-inv-design/DESIGN.md section 4, steps 1-2).
-- `tests/test_jt3_english.py` — JT-3's authoring refusal through the service (docs/spec/judgment-terms.md 9.5; DRI 2026-11-02, jt-3 items 1, 3 and 4).
-- `tests/test_jt_2c_delta.py` — jt-2c's saved delta (docs/judgment-terms/jt-2c/evidence, DELTA row 3, standing ruling R1): read from the saved records, never from a live service.
-- `tests/test_jt_crossplan_ties.py` — The ties pass of jt-crossplan-fixes: the statement it proposes for `PolicyCtx.of` is the one Lean checks.
-- `tests/test_jt_e1.py` — Local JT-E1 protocol checks; never makes a model call.
-- `tests/test_jt_e1r.py` — JT-E1r pre-call checks.
-- `tests/test_jt_e1s.py` — JT-E1s frame, revision and scoring checks.
-- `tests/test_jt_e3.py` — Small, model-free checks of JT-E3's agreement and blind runner.
-- `tests/test_judgments_answer.py` — The relay of the `document` mode's `judgments` field (judgment-terms-PLAN.md JT-2, Python; docs/spec/ judgment-terms.md 8.3): schema and binding only (R8), and…
-- `tests/test_judgments_chain.py` — PC-1: `judgments@0` beside the soft chain in Lean's document mode, and row 16, the clash validation (docs/spec/profile-composition.md 1.7, 3.1 and 5.1; the G3 …

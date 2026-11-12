@@ -72,15 +72,22 @@ def decodeSoftNorm (se : SoftEnvironment) (j : Json) : Except String SoftNode :=
   | .ok N => .ok N
   | .error f => .error f.message
 
+/-- Whether a member of a norm object is a soft field at its default value (3.4). -/
+def softDefault : String × Json → Bool
+  | ("mode", .str "strict") | ("rank", .null) | ("alterable", .arr #[]) | ("exception", .null)
+  | ("hard", .bool false) => true
+  | _ => false
+
+#guard [("mode", Json.str "strict"), ("rank", .null), ("alterable", Json.arr #[]), ("exception", .null),
+    ("hard", .bool false)].all softDefault &&
+  ![("mode", Json.str "default"), ("rank", .str "high"), ("alterable", Json.arr #[.str "court"]),
+    ("exception", Json.mkObj []), ("hard", .bool true), ("name", .str "strict"), ("guard", .null)].any softDefault
+
 /-- The canonical object of 3.4: soft fields at their default value omitted. -/
 def canonicalNorm (j : Json) : Json :=
   let raw := j.getObjValD "norm"
-  let keep := fun (kv : String × Json) => match kv with
-    | ("mode", .str "strict") | ("rank", .null) | ("alterable", .arr #[]) | ("exception", .null)
-    | ("hard", .bool false) => false
-    | _ => true
   match raw with
-  | .obj kvs => Json.mkObj [("norm", Json.mkObj (kvs.toList.filter keep))]
+  | .obj kvs => Json.mkObj [("norm", Json.mkObj (kvs.toList.filter (!softDefault ·)))]
   | _ => j
 
 /-! ## The decoded source -/
@@ -168,6 +175,12 @@ theorem softLabelledIn_eq (D : SoftDoc) : softLabelledIn D (soften D) (layersOf 
 all of them; certified results further filter by the accepted proof's use. -/
 def openCoherence (D : SoftDoc) : List String :=
   (collidingPairs D).filterMap (fun (M, N) => if Comparable D M N then none else some (cohLabel M N))
+
+/-- 7.3's situation part on a CONFLICT-FREE line whose request supplies no situation: no search ran, so the line says
+so and that the quoted budget went unused, never an UNKNOWN of a search. One owner for the rights route
+(`Rights.Run.exhibitedText`, rights-cfr-2-budget-1) and the soft route (`SoftNorms.Run.conflictFreeText`,
+soft-cf-text-1). -/
+def notSearchedText (budget : Nat) : String := s!"none supplied (not searched; budget {budget} unused)"
 
 def undeclaredTies (D : SoftDoc) : List (String × String) :=
   let rs := D.soft.ranks

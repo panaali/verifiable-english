@@ -764,7 +764,7 @@ elaborated lines and a distinguishing situation; Art. 29(1) is UNFORMALISED. No 
 
 ```text
 CONFLICT-FREE among rules on the same act, conditional on <k> coherence premises and <l> limitation premises
-  (<labels>)[, under couplings <ids>]; <j> weighing points open; situation exhibited: yes | UNKNOWN (<budget>)
+  (<labels>)[, under couplings <ids>]; <j> weighing points open (colliding default pairs no ranking resolves); situation exhibited: yes | UNKNOWN (<budget>) | none supplied (not searched; <budget> unused)
 CONFLICT: <witness kind> at <situation>            witness kind ∈ {strict collision on <p> between right <R> and
                                                    right <R′> | rule <n>, pair conflict on <act> with <strict rule |
                                                    completion> against <line of right R>}
@@ -773,6 +773,13 @@ NO DISTINCTION: independent on <predicates>; depends on protected predicates thr
   nothing is claimed about the deciders of open terms
 UNKNOWN: <target>, <budget>
 ```
+
+`<j>` counts WP(T) (soft-norms 6.2) under the request's pair evidence; a rights-conflict request carries none, so it is
+the colliding default pairs no ranking resolves, the same count the soft route prints for that evidence. `none
+supplied` is the situation part when the request gives no situation: no situation search runs, and the budget it
+quotes goes unused; `UNKNOWN (<budget>)` is reserved for a search that ran out of budget (rights-cfr-2-budget-1).
+The soft route's 7.3 line uses the same `none supplied` words for a request with no `coherent_model`, from one Lean
+definition (`VE.SoftNorms.Wire.notSearchedText`, soft-cf-text-1).
 
 ## 8. Diagnostics (shared text in Python and Lean unless marked)
 
