@@ -1486,7 +1486,10 @@
    ],
    "kind": "norm",
    "rule": "f15-diff",
-   "status": "CHECKED"
+   "open_terms": [
+    "ot1_level_reached"
+   ],
+   "status": "OPEN"
   },
   {
    "id": "s22-heading",
@@ -2688,7 +2691,10 @@
    "premises": [
     "activities-low-risk"
    ],
-   "status": "CHECKED"
+   "open_terms": [
+    "ot8_low_risk_external"
+   ],
+   "status": "OPEN"
   },
   {
    "id": "g-low-risk",
@@ -2721,7 +2727,10 @@
    "premises": [
     "activities-high-risk"
    ],
-   "status": "CHECKED"
+   "open_terms": [
+    "ot7_high_risk_internal"
+   ],
+   "status": "OPEN"
   },
   {
    "id": "g-security-mitigations",

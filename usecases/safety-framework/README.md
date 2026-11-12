@@ -156,7 +156,7 @@ has more than one reading of it. The table gives each commitment in plain Englis
 | F9 to F11 (1.3.5) | A model at a level is deemed acceptable when the stated mitigation and security conditions hold. | OPEN | two reading sets: sufficient or gate; scope or release (RS9 = same excluded) |
 | F12, F13 (2.1.2, 3.1.2) | A deployment takes place only after the governance function finds its residual risk acceptable. | OPEN | two readings: within the section's process, or for every model |
 | F14 (2.1.2, 3.1.2) | A material update to a safety case goes to the governance function for review. | CHECKED | |
-| F15 (2.2) | Mitigations against insider misuse beyond the baseline controls are not required. | CHECKED | one reading: insider misuse is not SL2+'s insider threat to the weights (RS6 = same excluded) |
+| F15 (2.2) | Mitigations against insider misuse beyond the baseline controls are not required. | OPEN | reaching a level is an open term; one reading: insider misuse is not SL2+'s insider threat to the weights (RS6 = same excluded) |
 | F16 (2.2, 3.2.2) | The recommended security level should be applied. | OPEN | two readings: a recommendation to the field only, or a "should" that also binds the developer, strictly or as a default |
 | F17 (3.2.1) | At the stealth TCL, periodic misalignment assessments run and account for high-risk internal deployments, and safeguards are added when they are needed. | OPEN | "periodic" and reaching a level are open terms |
 | F18 (5.1) | The framework is reviewed at least once a year. | CHECKED | |
@@ -255,11 +255,13 @@ on Oct 18 every unit has the same status (the table under "Re-measured on 2026-1
 | UNFORMALISED | 6,865 | 12.6% |
 
 The CHECKED share includes 1,108 bytes that the severity and date documents check. Within the main document alone,
-3,487 bytes are CHECKED. The plan expected less than 10%. After fsf-fidelity-fix: CHECKED 4,558 (3,450 in the main
-document), OPEN 7,439, LABELLED 35,511, UNFORMALISED 6,865; three units changed status (s131-four-domains CHECKED
-to LABELLED, s22-insider-not-required OPEN to CHECKED, s321-internal LABELLED to OPEN), see
-[coverage.json](coverage.json). Most of the text is exposition, examples, definitions and
-page layout. The commitments are OPEN because their conditions use open terms.
+3,487 bytes are CHECKED. The plan expected less than 10%. After fsf-fidelity-fix: CHECKED 4,043 (2,935 in the main
+document), OPEN 7,954, LABELLED 35,511, UNFORMALISED 6,865; four units changed status (s131-four-domains CHECKED
+to LABELLED; s321-internal LABELLED to OPEN; g-external and g-high-risk CHECKED to OPEN, as their premises are
+about the open terms OT8 and OT7), see [coverage.json](coverage.json). Most of the text is exposition, examples,
+definitions and page layout. The commitments are OPEN because their conditions use open terms. A unit's open terms
+are derived from the predicates its rule or premise uses (`build_document.derived_meaning`), and the builder refuses
+a document in which a CHECKED unit uses an open predicate.
 
 ## Metrics
 
@@ -267,7 +269,7 @@ page layout. The commitments are OPEN because their conditions use open terms.
 |---|---|---|
 | M1 agreement with the key | 260/262; 262/262 with the PLAN 12 entries for C3 and C-doc | 262/262, every miss explained |
 | M2 reading sets | 14 sets (13 in the main document, RS10 in the date document), placed on 18 units; at most 16 choices per item, and 64 for C-doc, the union over every act. Oct 1: VE's own readings query is UNKNOWN on every norm set. Oct 18: 7 of the 18 placed sets carry content, and VE answers CONFLICT-FREE with a model on each part document; the whole document stays UNKNOWN | as found |
-| M3 CHECKED share | 8.4% (8.5% before fsf-fidelity-fix) | under 10% |
+| M3 CHECKED share | 7.4% (8.5% before fsf-fidelity-fix) | under 10% |
 | M4 how each answer is backed | each per-choice answer rests on a case model that VE validated, a replayed certificate, or the Lean risk route | reported |
 | M5 one-off identifiers | 0 | 0 |
 | M6 untraced premises or rules | 0; one bridge, an assumption of N1 only | 0 |

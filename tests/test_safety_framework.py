@@ -411,3 +411,52 @@ def test_every_will_quote_is_the_pinned_source_text():
     text = build_document.DEFAULT_SOURCE.read_text()
     assert [f for f, quote in translation.WILL_FEATURES.items() if quote not in text] == []
 
+
+def test_the_open_predicates_are_the_environment_legend_s_open_terms():
+    """vocabulary.OPEN_PREDICATES, which the builder derives open terms from, says what the committed environment's
+    legend says: "Open term OT<n>, decided by ..." or, with no term, "Decided by ..."."""
+    predicates = json.loads((HERE / "environment.d1.json").read_text())["vocabulary"]["predicates"]
+    legend = {}
+    for name, entry in predicates.items():
+        m = re.search(r"\. Open term (OT[0-9]+), decided by |\. Decided by ", entry["description"])
+        if m:
+            legend[name] = m[1]
+    assert legend == vocabulary.OPEN_PREDICATES
+    assert {t for t in legend.values() if t} <= set(build_document.OPEN_TERM_NAMES)
+
+
+def test_a_unit_whose_rule_or_premise_uses_an_open_predicate_is_open_with_its_term():
+    """F2: f15-diff's condition uses `reached` (OT1), and the Glossary premises of g-external and g-high-risk are about
+    `low_risk` (OT8) and `high_risk` (OT7); each was CHECKED. The meanings the builder writes (derived from the
+    content) are the open terms spans.json records, and no unit with an open term is CHECKED."""
+    meanings = build_document.unit_meanings()
+    spans = {u["id"]: u for u in json.loads((HERE / "spans.json").read_text())["units"]}
+    assert set(meanings) == set(spans)
+    for uid, meaning in meanings.items():
+        terms = meaning["open"] if type(meaning) is dict and "open" in meaning else None
+        assert spans[uid].get("open_terms") == terms, uid
+        assert terms is None or spans[uid]["status"] == "OPEN", uid
+    assert spans["s22-insider-not-required"]["open_terms"] == ["ot1_level_reached"]
+    assert spans["g-external"]["open_terms"] == ["ot8_low_risk_external"]
+    assert spans["g-high-risk"]["open_terms"] == ["ot7_high_risk_internal"]
+    coverage = json.loads((HERE / "coverage.json").read_text())
+    assert coverage["master_bytes_by_status"]["CHECKED"] == 4043 and coverage["bytes_by_status"]["CHECKED"] == 2935
+
+
+def test_the_builder_refuses_a_checked_unit_whose_content_uses_an_open_predicate():
+    rule = json.loads(translation.parsed_rule("f15-diff"))
+    front = {"units": [{"id": "u", "content": {"norm": rule}}, {"id": "v"}, {"id": "w"}],
+             "reading_sets": [{"unit": "w", "readings": [{"content": None}, {"content": {"norm": rule}}]}]}
+    document = b"---\n" + json.dumps(front).encode() + b"\n---\nprose"
+    checked = {"u": "CHECKED", "v": "CHECKED", "w": "CHECKED"}
+    assert build_document.checked_but_open(document, checked) == {"u": ["reached"], "w": ["reached"]}
+    assert build_document.checked_but_open(document, {"u": "OPEN", "v": "CHECKED", "w": "OPEN"}) == {}
+    # Listed terms come first, then the derived ones; an open predicate with no term and nothing listed is refused.
+    derived = build_document.derived_meaning
+    assert derived("u", {"meaning": "specified"}, {"norm": rule}) == {"open": ["ot1_level_reached"]}
+    assert derived("u", {"meaning": {"open": ["ot12_periodic"]}}, {"norm": rule}) == {
+        "open": ["ot12_periodic", "ot1_level_reached"]}
+    assert derived("u", {"meaning": "specified"}, {"ast": ["unary", "external", ["var", 0]]}) == "specified"
+    termless = {"ast": ["unary", "internal_risk_unacceptable_without_safeguards", ["var", 0]]}
+    with pytest.raises(SystemExit, match="internal_risk_unacceptable_without_safeguards"):
+        derived("u", {"meaning": "specified"}, termless)

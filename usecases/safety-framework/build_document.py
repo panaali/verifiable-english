@@ -76,6 +76,39 @@ OPEN_TERMS = {
     "ot16_adjustment": ("developer", "a model does not possess capabilities meaningfully different from other "
                         "publicly available models that have weaker security applied (2.2)", []),
 }
+# The vocabulary's term ids ("OT1") -> the names above ("ot1_level_reached").
+OPEN_TERM_NAMES = {name.split("_", 1)[0].upper(): name for name in OPEN_TERMS}
+assert {t for t in V.OPEN_PREDICATES.values() if t} <= set(OPEN_TERM_NAMES), "an open predicate names no open term"
+
+
+def open_predicates(node):
+    """The open predicates (vocabulary.OPEN_PREDICATES) that a wire rule or formula names, sorted."""
+    found = set()
+    stack = [node]
+    while stack:
+        item = stack.pop()
+        if type(item) is str:
+            found.add(item)
+        elif type(item) is list:
+            stack.extend(item)
+        elif type(item) is dict:
+            stack.extend(item.values())
+    return sorted(found & set(V.OPEN_PREDICATES))
+
+
+def derived_meaning(uid, spec, content):
+    """The meaning of a rule or premise unit: its listed open terms (wording its act carries, such as "periodic"),
+    then the term of every open predicate its content uses, in OPEN_TERMS order. Derived, never hand-kept: a rule
+    whose condition uses `reached`, or a premise about `low_risk`, is OPEN with that term (fsf-fidelity-fix F2:
+    f15-diff, g-external and g-high-risk were CHECKED; build checklist line 8)."""
+    listed = spec["meaning"]["open"] if type(spec["meaning"]) is dict else []
+    used = open_predicates(content)
+    termless = [p for p in used if V.OPEN_PREDICATES[p] is None]
+    derived = {OPEN_TERM_NAMES[V.OPEN_PREDICATES[p]] for p in used if V.OPEN_PREDICATES[p]}
+    terms = list(listed) + [name for name in OPEN_TERMS if name in derived and name not in listed]
+    if termless and not terms:
+        raise SystemExit(f"{uid}: uses the open predicates {termless}, which name no open term")
+    return _open(terms)
 
 # Reading sets (PLAN 3.1): set id -> (harness set, readings -> rules of that reading).
 READINGS = {
@@ -607,31 +640,53 @@ def open_term_declarations(names=None):
             for name, (decider, what, factors) in OPEN_TERMS.items() if names is None or name in names]
 
 
-def build(source):
+def unit_content(env, facts, spec):
+    """The content of a premise or rule unit (None for any other unit). A unit restating a rule carries no content
+    in the document, but its meaning is still derived from this one."""
     from ve import ast as A
+    if "facts" in spec:
+        formulas = [f for block in spec["facts"] for f in facts[block]]
+        conjunction = formulas[0]
+        for f in formulas[1:]:
+            conjunction = A.And(conjunction, f)
+        return {"ast": formula_to_data(env, conjunction)}
+    if "rule" in spec:
+        return {"norm": json.loads(T.parsed_rule(spec["rule"]))}
+    return None
+
+
+def unit_meanings():
+    """Every unit's meaning as the builder writes it: derived for premise and rule units, as specified otherwise."""
+    from ve.softnorms import SoftEnvironment
+    env = SoftEnvironment(environment())
+    facts = {block_id: formulas for block_id, _, formulas in T.facts()}
+    return {uid: derived_meaning(uid, spec, unit_content(env, facts, spec)) if "facts" in spec or "rule" in spec
+            else spec["meaning"] for _, uid, spec in UNITS}
+
+
+def build(source):
     from ve.softnorms import SoftEnvironment
     raw_env = environment()
     env = SoftEnvironment(raw_env)
     facts = {block_id: formulas for block_id, _, formulas in T.facts()}
     used_rules, units, reading_sets, records = set(), [], [], []
     for (anchor, uid, spec), span in zip(UNITS, spans(source)):
+        content = unit_content(env, facts, spec)
+        if content is not None:
+            spec = {**spec, "meaning": derived_meaning(uid, spec, content)}
         unit = {"id": uid, "span": list(span), "kind": spec["kind"], "meaning": spec["meaning"],
                 "support": spec["support"]}
         record = {"id": uid, "span": list(span), "kind": spec["kind"] if type(spec["kind"]) is str
                   else spec["kind"][0]}
         if "facts" in spec:
-            formulas = [f for block in spec["facts"] for f in facts[block]]
-            conjunction = formulas[0]
-            for f in formulas[1:]:
-                conjunction = A.And(conjunction, f)
-            unit["content"] = {"ast": formula_to_data(env, conjunction)}
+            unit["content"] = content
             record["premises"] = spec["facts"]
         if "rule" in spec:
             if spec["rule"] in used_rules:
                 record["restates"] = spec["rule"]
             else:
                 used_rules.add(spec["rule"])
-                unit["content"] = {"norm": json.loads(T.parsed_rule(spec["rule"]))}
+                unit["content"] = content
                 record["rule"] = spec["rule"]
         if "reading_set" in spec and content_bearing(spec["reading_set"]):
             reading_sets.append(content_set(env, spec["reading_set"], uid, span, source))
@@ -672,7 +727,22 @@ def measure(document, path):
     path.write_bytes(document)
     loaded = load_document(path)
     statuses = {u["id"]: u["status"] for u in loaded["units"]}
+    overclaimed = checked_but_open(document, statuses)
+    if overclaimed:
+        raise SystemExit(f"CHECKED units whose content uses an open predicate: {overclaimed}")
     return coverage(loaded), statuses
+
+
+def checked_but_open(document, statuses):
+    """The units VE marked CHECKED whose content (a rule, a premise or a reading's rule) uses an open predicate,
+    with those predicates. CHECKED requires no open term (build checklist line 8; fsf-fidelity-fix F2), whatever
+    kind of unit carries it, so the builder refuses such a document instead of counting its bytes CHECKED."""
+    front = json.loads(document.split(b"\n---\n", 1)[0].removeprefix(b"---\n"))
+    content = {u["id"]: [u.get("content")] for u in front["units"]}
+    for reading_set in front["reading_sets"]:
+        content[reading_set["unit"]] += [r.get("content") for r in reading_set["readings"]]
+    return {uid: used for uid, parts in content.items()
+            if statuses[uid] == "CHECKED" and (used := open_predicates(parts))}
 
 
 def master(records, statuses, results):
