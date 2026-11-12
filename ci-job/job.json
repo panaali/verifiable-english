@@ -1,0 +1,12 @@
+{
+ "job": "testmap-8a47faa0-t446518-s0",
+ "head": "b15402667652a04619b664787ea8381349e5fd1d",
+ "argv": [
+  "testmap-8a47faa0-t446518-s0",
+  "b15402667652a04619b664787ea8381349e5fd1d",
+  "b15402667652a04619b664787ea8381349e5fd1d",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-831c388f821b.tar.zst",
+  "b4359a3c3cd9df0ac79cf6507b8602f8b5cc2472f11f4b89078898c5131d0797",
+  "shard=ulimit -s 8192; tc=$(cat lean/lean-toolchain); tc=${tc//\\//--}; mkdir -p ~/.elan/toolchains; ln -sfn /opt/lean ~/.elan/toolchains/${tc//:/---}; mkdir -p ~/.elan/bin; for t in lean lake; do [ -e ~/.elan/bin/$t ] || ln -sfn /opt/lean/bin/$t ~/.elan/bin/$t; done; uv run --frozen python tools/test_map.py record --no-merge --jobs 4 --output \"$RUNNER_TEMP/out/map-s0.json.gz\" tests/test_consolidation_tools.py tests/test_english_statement_blocks.py tests/test_packs_guard_mutants.py tests/test_inventory_path.py tests/test_document_chain.py tests/test_scope_5_4_statements.py tests/test_frozen_sources.py tests/test_gate_shards.py tests/test_readings_s1_pilot_rebuild.py tests/test_scope_document.py tests/test_kernel_closure.py tests/test_stage2_validation.py tests/test_entailment_properties.py tests/test_commands_steps.py tests/test_english_lean_lexicon.py tests/test_premise_packs_stub.py tests/test_gate_rerun.py tests/test_wire_contract_three_way.py tests/test_pc9_statements.py tests/test_ap2_limits_provisional.py tests/test_presupposition_table.py 2>&1 | tee \"$RUNNER_TEMP/out/shard-full.txt\"; exit ${PIPESTATUS[0]}"
+ ]
+}
