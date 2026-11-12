@@ -1,0 +1,12 @@
+{
+ "job": "testmap-fa722640-t475870-s1",
+ "head": "eabe5de3363ae2df871dae663eb8d46498b4478d",
+ "argv": [
+  "testmap-fa722640-t475870-s1",
+  "eabe5de3363ae2df871dae663eb8d46498b4478d",
+  "eabe5de3363ae2df871dae663eb8d46498b4478d",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-f730a05190b7.tar.zst",
+  "abb044c2712e1e17ece3292de05adcd8f4d035c3da6df5f20fc5616a9d17250f",
+  "shard=ulimit -s 8192; tc=$(cat lean/lean-toolchain); tc=${tc//\\//--}; mkdir -p ~/.elan/toolchains; ln -sfn /opt/lean ~/.elan/toolchains/${tc//:/---}; mkdir -p ~/.elan/bin; for t in lean lake; do [ -e ~/.elan/bin/$t ] || ln -sfn /opt/lean/bin/$t ~/.elan/bin/$t; done; uv run --frozen python tools/test_map.py record --no-merge --jobs 4 --output \"$RUNNER_TEMP/out/map-s1.json.gz\" tests/test_trust_mutants.py tests/test_select_tests.py tests/test_test_chunks.py tests/test_trust_budget.py tests/test_trust_ratchet.py tests/test_readings_s2_answer.py tests/test_lineage_lint.py tests/test_rights_meaning_id.py tests/test_keyed_answers_authority.py tests/test_architecture_docs.py 2>&1 | tee \"$RUNNER_TEMP/out/shard-full.txt\"; exit ${PIPESTATUS[0]}"
+ ]
+}
