@@ -234,10 +234,10 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Defaults/ZoneWire.lean` | 463 | 463 | 1–463 | `1b2585cf4016…` |
 | `lean/VE/Events/Wire.lean` | 282 | 282 | 1–282 | `41bd2b8fd8f5…` |
 | `lean/VE/Events/Chain.lean` | 206 | 206 | 1–206 | `766ad4455823…` |
-| `lean/VE/EnglishGrammar/Norm/Run.lean` | 303 | 303 | 1–303 | `3ccffd316421…` |
+| `lean/VE/EnglishGrammar/Norm/Run.lean` | 312 | 312 | 1–312 | `e6b2e54e1f18…` |
 | `lean/VE/Events/Anchor.lean` | 41 | 41 | 1–41 | `5654820c03ae…` |
 | `lean/VE/Readings/SoftSupRun.lean` | 436 | 436 | 1–436 | `30963e3cd469…` |
-| **total** | | **46,332** | | |
+| **total** | | **46,341** | | |
 <!-- END GENERATED -->
 
 Outside the decoder count: `lean/VE/Order/Surface.lean` (order text parser, `lean:order-surface-parser`), the runner
