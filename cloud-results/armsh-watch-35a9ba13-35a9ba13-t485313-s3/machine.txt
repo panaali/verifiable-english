@@ -1,0 +1,7 @@
+job=armsh-watch-35a9ba13-35a9ba13-t485313-s3 shard=3/4 nproc=4 arch=aarch64 host=runnervmkb2gk date=2026-11-12T12:09:50Z ulimit_s=16384
+Mem:              15           1           9           0           5          14
+/dev/root       145G   42G  103G  29% /
+ 12:09:50 up 2 min,  0 user,  load average: 1.44, 0.56, 0.21
+pilot/codex branches: 98
+ve-cache: lean-build exact key a8500b42912b asset lean-build-a8500b42912b-linux-aarch64.tar.zst sha256 6771ac6fd6f4 ok, seal ok, from download, 13.1 s
+p1-tokenizers: 443909a61d42 fetched
