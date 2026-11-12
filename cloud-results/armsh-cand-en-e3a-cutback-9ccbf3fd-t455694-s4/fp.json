@@ -1,0 +1,38 @@
+{
+ "audit_rc": 0,
+ "base": "345f422ce13bc2b4f8f3fc8dc2c66863d8f3c57b",
+ "changed_modules": [
+  "ResponseShape/Encoders/EnglishStatement",
+  "ResponseShapeAudit",
+  "VE/Audit",
+  "VE/EnglishGrammar/Fixed/Version",
+  "VE/EnglishGrammar/Norm/Read",
+  "VE/EnglishGrammar/Norm/Rules",
+  "VE/EnglishGrammar/Norm/Run",
+  "VE/EnglishGrammar/Norm/RunExamples"
+ ],
+ "changed_oleans": {
+  "ResponseShape/Encoders/EnglishStatement": "1c2652a62dc0eb22f1bc49bbfa58075eae50c32b751d345e891de4d419893da2",
+  "ResponseShapeAudit": null,
+  "VE/Audit": null,
+  "VE/EnglishGrammar/Fixed/Version": "2949fedf5924c79cdb3931f562c921fc2f76b2042b0556306992a7600f68765c",
+  "VE/EnglishGrammar/Norm/Read": "be798a109af99fde80b6d80f981e6a510e6ee7c3244d9d9795d2c8906ec7ac7d",
+  "VE/EnglishGrammar/Norm/Rules": "0fd34ad3bef7db7cac0c8821e8f0b360cce2490f74244c8d8db266f0b76908a3",
+  "VE/EnglishGrammar/Norm/Run": "1179c35626d78dbabc1eff4632dcc6285b201443c2c171d3099b7b0b6128eacf",
+  "VE/EnglishGrammar/Norm/RunExamples": "c8c122ff152b0cfb776e1fa55323a419c3f10f847f7ca4edb357a1228a17335e"
+ },
+ "files": {
+  "lean/ResponseShapeAudit.lean": "3d98b03b0979123f0cda17d17c9cb19b2fe3427f48fa3c26bfdbcf3a9dcd0cd8",
+  "lean/VE/Audit.lean": "274a919f5d72bd8cc53e1c407cd1cb6e5ee3cc2241c35c3a5c19c31a653b688e",
+  "lean/axioms.txt": "548504d6b4f15d1b1b826c7ee0eb4a5fdda3020f37ef9fc6129bff7031c89445",
+  "lean/declarations.txt": "530c78739752a630b52e38104fe9a9593756aab232553cf4384f9ea4ba61afd0",
+  "lean/predicates.txt": "5edd7efdcb2441a947944ce466ca2caeeda9bd27425ff399074f9bf41b713935",
+  "lean/statements.txt": "3af02cb861d8b5412fa5df032bdad9a7a1f624ab69d9924c1e4027bffca1b7ee"
+ },
+ "head": "4a1d45122994a925c9c7c874da60d85d206c4a97",
+ "lake_rc": 0,
+ "oleans_n": 852,
+ "oleans_sha256": "dc66456d63e35c00950dc8e58338071aa0320e9bd4a1fd4754ca4706d4f95209",
+ "seed": "seed-fp",
+ "statements_rc": 0
+}
