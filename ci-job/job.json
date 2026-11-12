@@ -1,0 +1,15 @@
+{
+ "job": "armsh-cand-kb-7-fd97f094-t476049-cold",
+ "head": "660cebb34a4544b515195f273bcc4d2954c1847b",
+ "argv": [
+  "armsh-cand-kb-7-fd97f094-t476049-cold",
+  "660cebb34a4544b515195f273bcc4d2954c1847b",
+  "eabe5de3363ae2df871dae663eb8d46498b4478d",
+  "-",
+  "-",
+  "4",
+  "-",
+  "-"
+ ],
+ "shadow_of": "armsh-cand-kb-7-fd97f094-t476049"
+}
