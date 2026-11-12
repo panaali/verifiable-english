@@ -298,6 +298,25 @@ def test_ask_is_read_as_ve_ask_reads_it(built):
     assert outcome == "refused" and "unused" in detail, detail
 
 
+def test_english_statement_is_read_as_the_w1_shadow_reads_it(built):
+    """`english.statement`'s reader (`ve.norm_english.statement_answer`, en-e3bb) on the gate's `one` fixture: the
+    genuine answer is accepted, and a rule row whose node is renamed, which the transport accepts, is refused."""
+    case = next(row[2] for row in G.load_cases() if row[:2] == ["service", "english.statement"]
+                and type(row[2]) is dict and row[2].get("id") == "one")
+    text = json.dumps(case, separators=(",", ":"))
+    [answer] = G._service_answers(G.DEFAULT_EXECUTABLE, "english.statement", [text])
+    assert answer["results"][0]["result"]["result"]["status"] == "one"
+    read = G.SERVICE_READERS["english.statement"](case)
+    replay = G._Replay()
+    replay.answer, replay.mutant = answer, None
+    assert G._exchange_outcome(replay, "english.statement", "[" + text + "]", read) == ("accepted", "")
+    path = ("results", 0, "result", "result", "statements", 0, "node", "norm", "name")
+    replay.answer, replay.mutant = G._replace(answer, path, "rule-9"), G.Mutant("rebind", path)
+    assert G._exchange_outcome(replay, "english.statement", "[" + text + "]") == ("accepted", "")
+    outcome, detail = G._exchange_outcome(replay, "english.statement", "[" + text + "]", read)
+    assert outcome == "refused" and "name or over" in detail, detail
+
+
 @pytest.mark.parametrize("drop", [("content", "meaning_id"), ("content",), ("meaning_id",)],
                          ids=["content and identity", "content", "identity"])
 def test_document_is_read_as_ve_document_reads_it(built, drop):
