@@ -91,13 +91,67 @@ def experimental_imports(read: dict[str, list[str]], roots=SERVICE_ROOTS, requir
     return sorted(problems)
 
 
+def _block_end(source: str, i: int) -> int:
+    """The index just past the `-/` that closes the comment opened at `i` (`/-` comments nest); -1 when unclosed."""
+    depth, i = 1, i + 2
+    while i < len(source):
+        if source.startswith("/-", i):
+            depth, i = depth + 1, i + 2
+        elif source.startswith("-/", i):
+            depth, i = depth - 1, i + 2
+            if depth == 0:
+                return i
+        else:
+            i += 1
+    return -1
+
+
 def first_docstring(source: str) -> str | None:
-    """The text of the first `/--` or `/-!` comment, up to its first `-/`; None when there is none."""
-    start = min((i for i in (source.find("/--"), source.find("/-!")) if i >= 0), default=-1)
-    if start < 0:
-        return None
-    end = source.find("-/", start + 3)
-    return None if end < 0 else source[start + 3:end]
+    """The text of the first actual `/--` or `/-!` doc comment of a Lean source; None when there is none.
+
+    kb-1 review F3: the source is read as Lean, not searched as text: string literals (raw ones included), character
+    literals, `--` line comments, `«…»` names and plain `/- … -/` comments (which nest) are skipped, so a doc-comment
+    opener inside any of them is not the module's docstring. A layout this reader cannot follow (an unclosed string or
+    comment) yields None, which the expiry rule refuses."""
+    ident = re.compile(r"[\w.'!?¹-￿]")
+    i, n = 0, len(source)
+    while i < n:
+        c, prev = source[i], source[i - 1] if i else ""
+        if source.startswith("--", i):
+            end = source.find("\n", i)
+            i = n if end < 0 else end + 1
+        elif source.startswith("/-", i):
+            end = _block_end(source, i)
+            if end < 0:
+                return None
+            if source[i + 2:i + 3] in ("-", "!") and not source.startswith("/--/", i):
+                return source[i + 3:end - 2]
+            i = end
+        elif c == '"' or (c == "r" and not ident.match(prev) and (raw := re.match(r'r(#*)"', source[i:]))):
+            if c == '"':
+                i += 1
+                while i < n and source[i] != '"':
+                    i += 2 if source[i] == "\\" else 1
+                if i >= n:
+                    return None
+                i += 1
+            else:
+                close = '"' + raw[1]
+                end = source.find(close, i + len(raw[0]))
+                if end < 0:
+                    return None
+                i = end + len(close)
+        elif c == "'" and not ident.match(prev):
+            char = re.match(r"'(?:\\(?:x[0-9a-fA-F]{2}|u[0-9a-fA-F]{4}|.)|[^\\'])'", source[i:], re.DOTALL)
+            i += len(char[0]) if char else 1
+        elif c == "«":
+            end = source.find("»", i)
+            if end < 0:
+                return None
+            i = end + 1
+        else:
+            i += 1
+    return None
 
 
 def expiry_problems(paths: dict[str, Path], today: date) -> list[str]:

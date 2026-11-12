@@ -79,9 +79,20 @@ a display prefix, not a meaning statement, and was left as it is.
 | i | `tools/gate.py` | the kernel check not run | `tests/test_gate_trust.py::test_every_gate_runs_the_kernel_check_after_the_lean_build` |
 | j | `ve/document/cli.py` | the help's wording drifts from README's | `::test_the_readme_quotes_what_checked_means` |
 | k (Lean) | `lean/VE/Kernel/Carry.lean` | `Path.row` answers `.ok case` | `lake build VE.Kernel.Carry`: "Carry.lean:49:6: Tactic `rfl` failed" (shell_provenance) |
+| l | `tools/kernel_closure.py` | review F2: `--out` skips the writer ratchet | `::test_the_write_refuses_more_verdict_writers_outside_than_the_file_it_replaces` |
+| m | `tools/check_lean_imports.py` | review F3: `first_docstring` does not skip string literals | `tests/test_lean_experimental_boundary.py::test_the_expiry_rule_reads_the_first_actual_doc_comment_not_text_inside_strings_or_comments` |
+| n | `tools/check_lean_imports.py` | review F3: plain block comments do not nest | same test |
 
 Bugs a and b were planted together and checked in one run (each message names its own cause). Bugs c to j were run
-one at a time, each with its one test (`1 failed` each). Rust: no product code changed.
+one at a time, each with its one test (`1 failed` each); so were l to n (fix round). Rust: no product code changed.
+The same list, with file and test keys, is committed as `docs/kb-1/seeded-bugs.json` (pre-review [mutants] reads it).
+
+## Fix round (reviews of 123405eeb6 and d01672d8e7)
+
+- **F1 (A)**: fixed in eeee089f5a and d01672d8e7 (DELTA row 2 reads exactly the decision's wording; REPORT no longer says the signature is needed). PROBE F1 exits 0.
+- **F2 (B)**: `tools/kernel_closure.py --out` now also runs the writer ratchet against the file it replaces and refuses (`REFUSED: verdict writers outside the kernel rose from A to B: <names>`, file left as it was) before writing; a first write (no file) has no bound. The regen entry `kernel-closure` writes through the same command, so it inherits the refusal; the gate stage runs `--check`, which already ratcheted. Regression test `test_the_write_refuses_more_verdict_writers_outside_than_the_file_it_replaces` (also pins the regen entry's command). PROBE F2 passes.
+- **F3 (B)**: `tools/check_lean_imports.py::first_docstring` now reads the source as Lean: it skips string literals (raw ones too), character literals, `--` comments, `«…»` names and nested plain `/- -/` comments, and fails closed (no docstring, so refused) on an unclosed string or comment. Regression test `test_the_expiry_rule_reads_the_first_actual_doc_comment_not_text_inside_strings_or_comments` sweeps `/--` and `/-!`, each with the real docstring expired and missing, behind six hiding places. On the 866 Lean files of the tree it finds the same first docstring as before. PROBE F3 passes.
+- **[mutants] pre-review FAIL**: the Python seeds were only in this file; now also in `docs/kb-1/seeded-bugs.json`.
 
 ## Trust mutants
 
@@ -151,7 +162,7 @@ Kernel check: `regen_generated.py --check --only kernel-closure`: kernel 9,504 <
 
 1. N.A.: no relayed Lean answer or schema changed (no service mode touched).
 2. PASS: deliverables table above, each with its commit or test; `grep` of the diff: no Python copy of a Lean decision (the kinds test reads Lean literals as a cross-check only), no report test.
-3. PASS: seeded bugs a to k; trust mutants exit 0 (`docs/kb-1/trust-mutants.json`).
+3. PASS: seeded bugs a to n (`docs/kb-1/seeded-bugs.json`); trust mutants exit 0 (`docs/kb-1/trust-mutants.json`).
 4. N.A.: no Python/Lean/Rust answer path changed.
 5. N.A.: no new field read from a Lean answer.
 6. PASS (pending the chain): selected run on the committed HEAD, its 2 failures fixed and rerun (Tests run); the chain gates the final HEAD.

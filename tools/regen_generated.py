@@ -190,7 +190,7 @@ GENERATED = (
               ((PY, "tools/kernel_closure.py", "--check", "docs/kernel/closure-baseline.json"),),
               note="the kernel measure (docs/spec/kernel-boundary.md section 6): a rise of kernel_lines needs a "
                    "signed line in docs/kernel/ALLOWANCES.md (the write refuses a total above its `signed total:`); "
-                   "verdict writers outside the kernel never rise",
+                   "verdict writers outside the kernel never rise (the write refuses a rise over the file it replaces)",
               fresh="gate:Kernel check"),
     Generated("checker-pins", ("lean/checkers.lock",), ("pin_checkers",), ("check_pins",), merge="json",
               note="both sides' pins, plus the merged ve_service build and Rust release binary", writer="train"),
