@@ -209,7 +209,7 @@
    "F6 \"It will be shared with all full-time employees as well as our Board of Directors (Board) and Long-Term Benefit Trust (LTBT)": [
     "f6-share"
    ],
-   "F6 \"We will also keep past Roadmaps available at that link\"": [
+   "F6 \"Our current Frontier Safety Roadmap is available at anthropic.com/responsible-scaling-policy/roadmap. We will also keep past Roadmaps available at that link.\" (\"that link\" is the current Roadmap's link)": [
     "f6-keep-past"
    ],
    "F6 \"We will provide updates on whether we achieve the goals": [
@@ -234,7 +234,7 @@
     "f5-evidence-strict",
     "f5-evidence-default"
    ],
-   "section 1 \"We will strive to advance these recommendations through a mixture of example-setting ...\" (RS12 default; under intent no rule)": [
+   "section 1 \"We will strive to advance these recommendations through a mixture of example-setting": [
     "s1-advance-default"
    ]
   },

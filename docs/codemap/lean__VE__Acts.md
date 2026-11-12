@@ -4,6 +4,7 @@
 - `lean/VE/Acts/DecodeTwins.lean` — The twins of the reached soundness theorems (docs/spec/act-phrases.md 6.4): each entry point's theorem at the decoder it runs an `acts@0` document on, stated w…
 - `lean/VE/Acts/Elaborate.lean` — Elaboration: joined acts become rules on simple acts (docs/spec/act-phrases.md 6.3, 6.5, 6.6; plan 2.3).
 - `lean/VE/Acts/ElaborateExamples.lean` — Fixtures of the elaboration (docs/spec/act-phrases.md 6.3, 11.3: E1 to E10, E16, E17; sorts `person`, guards `top`).
+- `lean/VE/Acts/ElaborateProofs.lean` — The split map is exact and a part is its source's declaration with atom i's act (docs/spec/act-phrases.md 6.6: `splitMap_exact`, `elaborate_parts`).
 - `lean/VE/Acts/Faithful.lean` — Faithfulness of the elaboration (docs/spec/act-phrases.md 6.6, C17): each part means what the source rules mean, read of the part.
 - `lean/VE/Acts/FaithfulExamples.lean` — Fixtures of `elaborate_faithful` (docs/spec/act-phrases.md 6.6, 11.3): both sides of the iff, computed on small finite structures.
 - `lean/VE/Acts/Grammar.lean` — The act grammar's rule table (docs/spec/act-phrases.md 5.2) and its well-formedness `grammar_wf` (5.6).

@@ -24,9 +24,11 @@ REPO = HERE.parents[1]
 sys.path.insert(0, str(REPO))
 import rsp_vocabulary as vocabulary  # noqa: E402
 
+# RS3c is no reading set: its reading "result" is excluded by the v3.4 changelog (S:20), so the continuation
+# clause is always scenario (2)'s third condition (PLAN 12; dri-decisions-20261112-anthropic-rsp-fidelity-fix-2 item 2).
 READING_SETS = {
     "RS1": ("cond", "uncond", "ov"), "RS2": ("F", "Ds"), "RS2force": ("strict", "default"),
-    "RS3o": ("suff", "iff"), "RS3i": ("suff", "iff"), "RS3c": ("third", "result"), "RS4": ("scope", "rel"),
+    "RS3o": ("suff", "iff"), "RS3i": ("suff", "iff"), "RS4": ("scope", "rel"),
     "RS5": ("import", "noimport"), "RS7": ("exec", "final"), "RS9": ("window", "bound"), "RS11": ("at", "trigger"),
     "RS13": ("default", "frequency"),
     **{f"RS6{s}": ("P", "M") for s in ("redact", "split", "notice")},
@@ -34,8 +36,11 @@ READING_SETS = {
     **{f"RS12{s}": ("default", "intent") for s in ("advance", "strive", "candid", "minimize", "justify", "review",
                                                     "before")},
 }
-# The exception headers: rule -> the rules it takes precedence over (3.4 step 5 over step 3's "ultimate").
-PRECEDENCE = {"f12-board-approval": ("f12-final",)}
+# The exception headers: rule -> the rules it takes precedence over (3.4 step 5 over step 3's "ultimate"; F24's and
+# F25's delay over F26's "need not", which releases only a delay that no other scenario requires: Appendix A, "we will
+# not necessarily delay ... in this scenario", reviews/dri-decisions-20261112-anthropic-rsp-fidelity-fix-2.md item 1).
+PRECEDENCE = {"f12-board-approval": ("f12-final",), "f24-delay": ("f26-need-not-delay",),
+              "f25-delay": ("f26-need-not-delay",)}
 
 
 @dataclass(frozen=True)

@@ -441,6 +441,7 @@ import VE.Route.Layer
 import VE.Route.Metered
 import VE.Route.MeteredProofs
 import VE.Route.MeteredRun
+import VE.Route.MeteredWire
 import VE.Route.Readings
 import VE.Route.Route
 import VE.Route.Run
@@ -488,6 +489,7 @@ import VE.Service.ScopeAdmission
 import VE.Service.Standalone
 import VE.SoftNorms.Admission
 import VE.SoftNorms.Coherence
+import VE.SoftNorms.ElaborateSound
 import VE.SoftNorms.Once
 import VE.SoftNorms.RankProof
 import VE.SoftNorms.Run
@@ -3478,6 +3480,7 @@ import VE.WireContract.Engine
 #print axioms VE.EnglishGrammar.Norm.readNorm_complete
 #print axioms VE.EnglishGrammar.Norm.readNorm_eq
 #print axioms VE.EnglishGrammar.Norm.readNorm_numbered
+#print axioms VE.EnglishGrammar.Norm.readNorm_on
 #print axioms VE.EnglishGrammar.Norm.readNorm_sound
 #print axioms VE.EnglishGrammar.Norm.readNorm_unique
 #print axioms VE.EnglishGrammar.Norm.semAll_start
@@ -8255,7 +8258,18 @@ import VE.WireContract.Engine
 #print axioms VE.Route.MeteredProofs.core_sound
 #print axioms VE.Route.MeteredProofs.fol_sound
 #print axioms VE.Route.MeteredProofs.order_sound
+#print axioms VE.Route.MeteredRun.answer_evaluate
+#print axioms VE.Route.MeteredRun.metered_wire_sound
+#print axioms VE.Route.MeteredRun.query_evaluate
+#print axioms VE.Route.MeteredRun.reportedWith_ok
 #print axioms VE.Route.MeteredRun.reportedWith_prepare
+#print axioms VE.Route.MeteredRun.request_evaluate
+#print axioms VE.Route.MeteredRun.runWith_sound
+#print axioms VE.Route.MeteredRun.run_closure_sound
+#print axioms VE.Route.MeteredRun.run_core_sound
+#print axioms VE.Route.MeteredRun.run_evaluation_sound
+#print axioms VE.Route.MeteredRun.run_fol_sound
+#print axioms VE.Route.MeteredRun.run_order_sound
 #print axioms VE.Route.Run.route_gate
 #print axioms VE.Route.Run.route_gate_rejects
 #print axioms VE.Route.Run.route_rejects_before_checking
@@ -9019,8 +9033,16 @@ import VE.WireContract.Engine
 #print axioms VE.SoftNorms.RanksValid.closure
 #print axioms VE.SoftNorms.RanksValid.declared
 #print axioms VE.SoftNorms.RanksValid.order
+#print axioms VE.SoftNorms.Run.elaborationAnswer_ok
+#print axioms VE.SoftNorms.Run.elaborationAnswer_reads
+#print axioms VE.SoftNorms.Run.excLabels_length
+#print axioms VE.SoftNorms.Run.mkObj_get_append
+#print axioms VE.SoftNorms.Run.not_elaborationAnswer_of_null_background
+#print axioms VE.SoftNorms.Run.regeneratedCore_fields
 #print axioms VE.SoftNorms.Run.runAdmission_sound
+#print axioms VE.SoftNorms.Run.softLabelled_formulas
 #print axioms VE.SoftNorms.Run.soft_wire_acceptance
+#print axioms VE.SoftNorms.Run.soft_wire_elaborate
 #print axioms VE.SoftNorms.SoftChain.A_in
 #print axioms VE.SoftNorms.SoftChain.A_out
 #print axioms VE.SoftNorms.SoftChain.E_in

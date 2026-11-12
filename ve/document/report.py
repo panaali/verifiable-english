@@ -17,6 +17,13 @@ from .source import _RIGHTS_KINDS, _environment
 from .containers import _content_bearing, _free_norms, _in_rights_source, _rights_units, _s1_attached, _soft_contents, _wire_unit
 from .load import _load
 
+# et-5b: what no route reads yet for an `events@0` document, its events premises (the block's pack). The report's
+# premise set holds them (`_report_premise_context`); a readings verdict or a conclusion would not, so it is UNKNOWN
+# (et-5c, DRI 2026-11-10 et-5b item 2), never an answer without them.
+EVENTS_READINGS_PENDING = "the readings route does not read an events@0 document's events premises"
+EVENTS_CONCLUSION = ("CheckerUnavailable: a conclusion over an events@0 document needs its events premises, which no "
+                     "conclusion route reads yet")
+
 
 def _fixed_and_active(doc):
     sets = active_reading_sets(doc["meta"].get("reading_sets", []))
@@ -49,10 +56,18 @@ def _filled_soft_elaboration(doc, active):
         source = doc["environment"].to_dict()
         source["profiles"] = [p for p in source["profiles"] if p != "readings@1"]
         attached = _s1_attached(doc["environment"].to_dict(), doc["meta"])
-        doc["_filled_soft_elaboration"] = run_case({
-            "id": "norm-defaults-elaborate", "kind": "norm-defaults-elaborate",
-            "environment": source,
-            "norms": _free_norms(doc["units"], active, attached)})
+        case = {"id": "norm-defaults-elaborate", "kind": "norm-defaults-elaborate", "environment": source,
+                "norms": _free_norms(doc["units"], active, attached)}
+        if "events_environment" in doc:
+            # et-5b: the route's own reading of the environment as written, block and open terms included, so its
+            # `events_premises` (the pack) are Lean's, bound by the events relay; the document is built over its view.
+            from ..events import elaborated
+            meta = doc["meta"]
+            row, pack = elaborated({**case, "environment": doc["events_environment"],
+                                    **({"open_terms": meta["open_terms"]} if "open_terms" in meta else {})})
+            doc["_filled_soft_elaboration"] = {**row, "events_pack": [pack.premises[label] for label in pack.premises]}
+        else:
+            doc["_filled_soft_elaboration"] = run_case(case)
     return doc["_filled_soft_elaboration"]
 
 
@@ -91,6 +106,8 @@ def _report_premise_context(doc):
     if not _unresolved_norm_reading(active):
         fixed.extend(item["ast"] for field in ("background", "premises", "fill", "soft")
                      for item in filled[field])
+    # et-5b: an events document's premise set holds the block's pack, whatever its readings (spec 1.4).
+    fixed.extend(filled.get("events_pack", ()))
     return Environment(raw), fixed, active
 
 
@@ -661,6 +678,9 @@ def _report(doc):
     if env.alternatives is not None:
         result["premises"] = {"status": "UNKNOWN",
                               "reason": "alternatives premise satisfiability requires the alternatives route"}
+    elif _content_bearing(doc) and "events_environment" in doc:
+        # et-5b: the readings route reads no events pack, and a model without it is no model of the document.
+        result["premises"] = {"status": "UNKNOWN", "reason": EVENTS_READINGS_PENDING}
     elif _content_bearing(doc):
         # composition-s2.md 1.1, 4.5 and 4.6: the premises across readings on the superposed or the enumerated
         # route, each verdict from evidence Lean checked; the pending row keeps today's UNKNOWN.
