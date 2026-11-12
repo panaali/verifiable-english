@@ -192,6 +192,22 @@ def test_an_open_field_statement_is_a_problem_on_a_kernel_path_only():
     assert kernel_closure.open_field_problems(dict(kernel, tier="candidate"), ["M.Answer"]) == []
 
 
+def test_a_listed_theorem_sits_no_lower_than_the_runner_its_statement_uses():
+    """A module whose listed theorem's statement uses a path's subject imports the subject's module,
+    so its layer (`tools/layer_policy.py`) is at least the subject's: KB-7's `VE.Route.MeteredWire`
+    and `VE.SoftNorms.ElaborateSound` are layer 4, like `VE.Route.RunSound`. Seeded for review kb-7
+    F-ready1: without ElaborateSound's entry the module falls to layer 2 under its layer-4 runner."""
+    import layer_policy
+    module_of = dict(re.findall(r"^\S+ \w+ (\S+)@(\S+)$", inventory_path("lean/declarations.txt").read_text(), re.M))
+    pairs = {(path["name"], t, s) for path in REGISTRY["paths"] for t in path["theorems"] for s in path.get("subject", [])
+             if f" {s}@{module_of[s]}" in STATEMENTS[t]}
+    assert ("softNorms", "VE.SoftNorms.Run.soft_wire_elaborate", "VE.SoftNorms.Run.runCase") in pairs
+    assert ("metered", "VE.Route.MeteredRun.runWith_sound", "VE.Route.MeteredRun.runWith") in pairs
+    low = sorted((name, module_of[t], layer_policy.lean_layer(module_of[t]), module_of[s], layer_policy.lean_layer(module_of[s]))
+                 for name, t, s in pairs if layer_policy.lean_layer(module_of[t]) < layer_policy.lean_layer(module_of[s]))
+    assert low == []
+
+
 def lean_check(source: str, where: Path) -> subprocess.CompletedProcess[str]:
     """Elaborate one Lean source against the built `VE`."""
     file = where / "Probe.lean"
