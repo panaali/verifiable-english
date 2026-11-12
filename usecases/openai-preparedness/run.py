@@ -86,7 +86,8 @@ ALTERNATIVES = {"sandbagging_bound": ("conservative_upper_bound_used",)}
 SOME_HIGH_LEVEL = {"K9"}
 
 ATOMS = {"SEC": ("security_controls", "security_practices", "development_security_controls"), "MIS": ("misuse_safeguards",),
-         "ALN": ("alignment_safeguards",), "SUF": ("safeguards_before_deployment", "safeguards_during_development"),
+         "ALN": ("alignment_safeguards",), "SUF": ("safeguards_before_deployment", "safeguards_during_development",
+                 "safeguards_before_internal_use"),
          "HALT": ("halt_development",),
          "CAPREP": ("capabilities_report_submitted",), "SAFEREP": ("safeguards_report",), "MREP": ("misalignment_report",),
          "DISC": ("safeguards_disclosed",), "PUBRES": ("public_disclosure",),
@@ -111,11 +112,12 @@ K_ITEMS = {"START_WORK_ON_SAFEGUARDS": ("safeguard_work",), "SAG_RECOMMENDS_SAFE
 ALL_OF = {"VALIDATE_AND_REVIEW_SUFFICIENCY"}  # "validating ... and reviewing ..." asks for both acts
 # Table 1, F2, F3 and F4: the rules that attach to a capability threshold (G5, G9).
 THRESHOLD_PREDICATES = ("security_controls", "security_practices", "development_security_controls", "misuse_safeguards", "alignment_safeguards",
-                        "safeguards_before_deployment", "safeguards_during_development", "halt_development",
+                        "safeguards_before_deployment", "safeguards_during_development", "safeguards_before_internal_use",
+                        "halt_development",
                         "pandemic_policy_contribution", "cyberdefense_contribution", "deployment_permitted")
 SAFEGUARD_PREDICATES = THRESHOLD_PREDICATES + ("access_limited", "misalignment_risk_minimized", "nuclear_safeguards")
 # The Critical-specific rules (Table 1's Critical rows and 4.4): G2.
-CRITICAL_PREDICATES = ("safeguards_during_development", "halt_development")
+CRITICAL_PREDICATES = ("safeguards_during_development", "safeguards_before_internal_use", "halt_development")
 
 M2_PERMISSION = ("Rule 1. Every situation may be deployed, if all of the following hold: (a) all of the following "
                  "hold: (i) there is a level such that both that situation has reached that level and that level "
@@ -651,7 +653,7 @@ def document_conflict():
 
 # --- N: never applies ------------------------------------------------------------------------------------------
 
-N1_RULES = ("f1-halt-strict", "f1-halt-default", "f3-develop", "f3-develop-inuse", "f3-reminder")
+N1_RULES = ("f1-halt-strict", "f1-halt-default", "f3-develop", "f3-develop-inuse", "f3-inuse", "f3-reminder")
 
 
 def entailed(premises, goal):
@@ -791,7 +793,8 @@ COMMITMENTS = {
            ("f1-contrib-cyb-strict", "f1-contrib-cyb-default")),
     "F2": (("f2-deploy", "f2-deploy-any", "f2-reminder", "f2-reminder-any"), ("f2-no-deploy", "f2-no-deploy-any"),
            ("f2-security-developed",)),
-    "F3": (("f3-develop", "f3-develop-inuse", "f3-reminder"), ("f3-develop-forecast", "f3-develop-inuse-forecast")),
+    "F3": (("f3-develop", "f3-develop-inuse", "f3-inuse", "f3-reminder"),
+           ("f3-develop-forecast", "f3-develop-inuse-forecast", "f3-inuse-forecast")),
     "F4": (("f4-security",),),
     "F5": (("f5-ambiguous",), ("f5-checkpoint",)),
     "F6": (("f6-rel",),),
