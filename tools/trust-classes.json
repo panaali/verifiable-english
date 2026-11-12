@@ -9067,7 +9067,12 @@
         "VE.Route.MeteredRun.Query",
         "VE.Route.MeteredRun.Request",
         "VE.Route.MeteredRun.Session",
-        "VE.Route.MeteredRun.answer",
+        {
+          "name": "VE.Route.MeteredRun.answer",
+          "tied": [
+            "VE.Route.MeteredRun.answer_evaluate"
+          ]
+        },
         "VE.Route.MeteredRun.closure",
         "VE.Route.MeteredRun.core",
         "VE.Route.MeteredRun.fol",
@@ -9075,13 +9080,43 @@
         "VE.Route.MeteredRun.nonVacuityResult",
         "VE.Route.MeteredRun.order",
         "VE.Route.MeteredRun.prepare",
-        "VE.Route.MeteredRun.query",
-        "VE.Route.MeteredRun.reportedWith",
-        "VE.Route.MeteredRun.request",
-        "VE.Route.MeteredRun.run",
-        "VE.Route.MeteredRun.runCase",
+        {
+          "name": "VE.Route.MeteredRun.query",
+          "tied": [
+            "VE.Route.MeteredRun.query_evaluate"
+          ]
+        },
+        {
+          "name": "VE.Route.MeteredRun.reportedWith",
+          "tied": [
+            "VE.Route.MeteredRun.reportedWith_ok"
+          ]
+        },
+        {
+          "name": "VE.Route.MeteredRun.request",
+          "tied": [
+            "VE.Route.MeteredRun.request_evaluate"
+          ]
+        },
+        {
+          "name": "VE.Route.MeteredRun.run",
+          "tied": [
+            "VE.Route.MeteredRun.run_evaluation_sound"
+          ]
+        },
+        {
+          "name": "VE.Route.MeteredRun.runCase",
+          "tied": [
+            "VE.Route.MeteredRun.metered_wire_sound"
+          ]
+        },
         "VE.Route.MeteredRun.runCaseReported",
-        "VE.Route.MeteredRun.runWith",
+        {
+          "name": "VE.Route.MeteredRun.runWith",
+          "tied": [
+            "VE.Route.MeteredRun.runWith_sound"
+          ]
+        },
         "VE.Route.MeteredRun.tick",
         "VE.Route.MeteredRun.tickCache"
       ]
@@ -21809,6 +21844,20 @@
       ],
       "D[V]": [
         "VE.RightClauses.unitElided"
+      ]
+    },
+    "VE/Route/MeteredWire.lean": {
+      "S": [
+        "VE.Route.MeteredRun.CaseModel",
+        "VE.Route.MeteredRun.EncodesEvaluation",
+        "VE.Route.MeteredRun.EvaluationAnswer"
+      ]
+    },
+    "VE/SoftNorms/ElaborateSound.lean": {
+      "S": [
+        "VE.SoftNorms.Run.BackgroundField",
+        "VE.SoftNorms.Run.ElaborationAnswer",
+        "VE.SoftNorms.Run.PremisesField"
       ]
     }
   }

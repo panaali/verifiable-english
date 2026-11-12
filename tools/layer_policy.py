@@ -394,7 +394,8 @@ def lean_name_layer(module: str) -> int | None:
         return 4  # states theorems on Norms.Run.runCase (docs/CONSOLIDATION-PLAN.md step 1a)
     if module in {"VE.Acts.DecodeTwins"}:
         return 4  # states the twins of Norms.Run's and NormDefaults.Run's theorems (act-phrases 6.4)
-    if module in {"VE.Route.RunSound", "VE.Norms.RunSound", "VE.Cardinality.RunTheorems"}:
+    if module in {"VE.Route.RunSound", "VE.Norms.RunSound", "VE.Cardinality.RunTheorems", "VE.Route.MeteredWire",
+                  "VE.SoftNorms.ElaborateSound"}:  # the last two: kernel boundary KB-7
         return 4  # states theorems on Route.Run.runCase and Norms.Run.runCase (step 2a), and on Cardinality.Run's runner
     if module in {"VE.Calc.Ties"}:
         return 4  # states theorems on Calc.Run's evidence and rows (the R16 ties of me-5e)
