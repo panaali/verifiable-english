@@ -111,17 +111,52 @@ def test_the_recorded_corpus_gives_one_record_in_both_engines(tmp_path):
             if comparable(python) != comparable(lean)] == []
 
 
-def test_a_refusal_before_the_frames_is_not_theirs():
-    """1.1e and 1.1f name a refusal of the frames and adverbs only: an earlier refusal (the envelope's, a fixed
-    phrase's) stays 1.1d in both engines, though the frames are refused too."""
+def _frame(head, **extra):
+    return {"head": head, "markers": [], "split": [], "modifiers": [], **extra}
+
+
+# Edits of `base()` by where the decoder refuses them: before the `acts` block's frames and adverbs (the envelope,
+# the block's members, `fixed`), at them (D-31), and after them (the sorts and predicates). Several share a generic
+# text with each other, "String expected" among them (ap-1bfb review F1).
+BEFORE = {"language": lambda raw, block: raw.update(language=5),
+          "spec_revision": lambda raw, block: raw.update(spec_revision=5),
+          "member": lambda raw, block: raw.update(x=5),
+          "fixed": lambda raw, block: block["fixed"].append(5),
+          "fixed absent": lambda raw, block: block.pop("fixed"),
+          "fixed phrase": lambda raw, block: block["fixed"].append("Naive"),
+          "block member": lambda raw, block: block.update(x=5)}
+AT = {"head": lambda raw, block: block.update(frames=[_frame(5)]),
+      "adverb": lambda raw, block: block.update(adverbs=[5]),
+      "frames": lambda raw, block: block.update(frames=5),
+      "frame member": lambda raw, block: block.update(frames=[_frame("give", x=5)]),
+      "head case": lambda raw, block: block.update(frames=[_frame("Give")]),
+      "adverbs repeated": lambda raw, block: block.update(adverbs=["promptly", "promptly"])}
+AFTER = {"description": lambda raw, block: raw["vocabulary"]["predicates"]["c"].update(description=5),
+         "sort": lambda raw, block: raw["vocabulary"]["sorts"]["person"].update(description=5)}
+
+
+def test_the_frames_members_name_only_the_first_refusal():
+    """F1 of ap-1bfb's review, as a class: 1.1e and 1.1f name a refusal of the frames and adverbs only when the
+    decoder refuses there first. An earlier refusal stays 1.1d in both engines though the frames are refused with the
+    same text; a later refusal does not hide the frames'. Every pair of edits from two of the three stages, and each
+    edit alone."""
+    rows = [((b, at, after), "1.1d" if b else "1.1f" if at else "1.1d")
+            for b in (None, *BEFORE) for at in (None, *AT) for after in (None, *AFTER)
+            if (b, at, after) != (None, None, None) and sum(x is not None for x in (b, at, after)) <= 2]
     sources = []
-    for edit in (lambda raw: raw.update(language="x"), lambda raw: raw["vocabulary"]["acts"]["fixed"].append("Naive")):
+    for edits, _ in rows:
         raw, norms = base()
-        raw["vocabulary"]["acts"]["adverbs"] = ["promptly", "promptly"]
-        edit(raw)
+        for stage, name in zip((BEFORE, AT, AFTER), edits):
+            if name is not None:
+                stage[name](raw, raw["vocabulary"]["acts"])
         sources.append((raw, norms))
     pairs = engine_records(sources)
-    assert all(python == lean and lean["check"] == "1.1d" for python, lean in pairs), pairs
+    got = [(edits, python and python["check"], lean and lean["check"]) for (edits, _), (python, lean) in zip(rows, pairs)]
+    assert [(edits, p, l) for (edits, want), (_, p, l) in zip(rows, got) if (p, l) != (want, want)] == []
+    assert [edits for (edits, _), (python, lean) in zip(rows, pairs) if comparable(python) != comparable(lean)] == []
+    # the pairs the review found: a shared text before the frames, and one after them
+    assert ("language", "head", None) in [edits for edits, _ in rows]
+    assert ("fixed", "adverb", None) in [edits for edits, _ in rows]
 
 
 def test_the_limits_are_leans_and_never_copied():
