@@ -117,11 +117,47 @@ def byName (p : String) : String := s!"CheckerUnavailable: document checks under
 -- `relational-fol@0` has an environment fault, reported first).
 #guard named ["closure@0", "norms@0", "relational-fol@0"] == byName "closure@0"
 #guard named ["norms@0", "order@0", "relational-fol@0"] == byName "order@0"
+/-- The profiles the mode owns, `events@0` aside, written out here (not read from `ownedProfiles`, which the guards
+check). -/
+def ownedButEvents : List String := ["alternatives@0", "data@0", "definitions@0", "documents@1", "judgments@0",
+  "norm-defaults@0", "norms@0", "readings@1", "relational-fol@0", "rights@0", "risk@0", "soft-norms@0", "time@0"]
+def sortedList (ps : List String) : List String := (ps.eraseDups.toArray.qsort (· < ·)).toList
 -- Each profile the mode owns, `events@0` aside (read only with a document's open terms), is never refused by name.
-#guard ["alternatives@0", "data@0", "definitions@0", "documents@1", "judgments@0", "norm-defaults@0", "norms@0",
-  "readings@1", "relational-fol@0", "rights@0", "risk@0", "soft-norms@0", "time@0"].all fun p =>
-  !(named ((["norms@0", "relational-fol@0", p].eraseDups.toArray.qsort (· < ·)).toList)).startsWith
-    "CheckerUnavailable: document checks under"
+#guard ownedButEvents.all fun p =>
+  !(named (sortedList ["norms@0", "relational-fol@0", p])).startsWith "CheckerUnavailable: document checks under"
+-- Each one before an unowned profile, in the middle or last, leaves the unowned one named, never itself (review F1's
+-- trust sweep, M268: the named profile is found over the same owned list the check tests). `soft-norms@0` is listed,
+-- so the environment mode's fault is not reported first and an unowned profile is reached at any place.
+#guard ownedButEvents.all fun p =>
+  named (sortedList [p, "norms@0", "order@0", "relational-fol@0", "soft-norms@0"]) == byName "order@0" &&
+  named (sortedList [p, "norms@0", "relational-fol@0", "soft-norms@0", "zz@0"]) == byName "zz@0"
+#guard named ["norms@0", "relational-fol@0", "soft-norms@0", "time@0", "zz@0"] == byName "zz@0"
+
+/-! `eventsView`'s gate over the whole list, with a document's open terms (review F1's trust sweep: M112, M198, M214):
+`soft-norms@0` keeps the environment mode's fault back, so unsorted lists reach the gate too, and `events@0` is read
+wherever it stands. -/
+
+def viewed (ps : List String) : String :=
+  match VE.Service.Document.environmentOf (VE.Events.RouteExamples.chainEnv ps) (terms := some (Json.arr #[])) with
+  | .ok _ => "ok" | .error e => e
+def ndList : List String := ["norm-defaults@0", "norms@0", "relational-fol@0"]
+-- Read: the hook ran, and the environment the rest of the mode reads is its view (no `events@0`).
+#guard viewed ("events@0" :: ndList ++ ["soft-norms@0"]) == "ok" &&
+  (match VE.Service.Document.environmentOf (VE.Events.RouteExamples.chainEnv ("events@0" :: ndList ++ ["soft-norms@0"]))
+      (terms := some (Json.arr #[])) with
+    | .ok E => E.events.isSome && !(VE.Compose.listedProfiles E.json).contains "events@0"
+    | .error _ => false)
+-- `readings@1` or `rights@0` first or last, `events@0` first or last: the base's refusal, by name.
+#guard [["readings@1", "events@0"] ++ ndList ++ ["soft-norms@0"], "events@0" :: ndList ++ ["soft-norms@0", "readings@1"],
+    ["rights@0", "events@0"] ++ ndList ++ ["soft-norms@0"], "events@0" :: ndList ++ ["soft-norms@0", "rights@0"],
+    ndList ++ ["readings@1", "soft-norms@0", "events@0"], ndList ++ ["rights@0", "soft-norms@0", "events@0"]].all
+  fun ps => viewed ps == byName "events@0"
+-- `soft-norms@0` or `events@0` out of order: the row reads the list and refuses it as unsorted, never by name.
+#guard [["soft-norms@0", "events@0"] ++ ndList, ["events@0", "norm-defaults@0", "soft-norms@0", "norms@0",
+    "relational-fol@0"], ndList ++ ["soft-norms@0", "events@0"], ndList ++ ["events@0", "soft-norms@0"]].all
+  fun ps => viewed ps == "UnsupportedProfile: profiles must be sorted and unique"
+-- No `soft-norms@0`: the environment mode's fault.
+#guard viewed ("events@0" :: ndList) == "UnsupportedProfile: Unsupported profile events@0"
 -- `events@0` beside a profile its row refuses, on the soft chain: the row's text (2.9 item 1), not a refusal by name.
 #guard outcome (envOf (some (blockD)) ["alternatives@0", "events@0", "norm-defaults@0", "norms@0", "relational-fol@0",
   "soft-norms@0"]) == "UnsupportedProfile: events@0 with alternatives@0"
