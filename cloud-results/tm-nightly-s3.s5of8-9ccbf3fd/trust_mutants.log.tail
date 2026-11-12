@@ -1,0 +1,7 @@
+trust_mutants: 65 definitions, 72 mutants (9 to run), 4 jobs, base a998c06909c3
+SURVIVOR lean/VE/NormDefaults/Run.lean:258 VE.NormDefaults.Run.runOtherCaseIn (G[V], trusted) and-or: && -> ||
+trust_mutants: 8 KILLED, 1 SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 63 OTHER SHARD in 3134 s
+trust_mutants: D[V], trusted: 3 KILLED, 14 OTHER SHARD
+trust_mutants: G[V], trusted: 1 KILLED, 1 SURVIVOR, 23 OTHER SHARD
+trust_mutants: S, trusted: 4 KILLED, 26 OTHER SHARD
+trust_mutants: steps: wall plan 19.6 s, scratch 4.9 s, control_build 0.4 s, probe_install 1.4 s, mutants 3103.3 s, cleanup 4 s, reads 0.1 s; lake control_build 0.4 s (1), probe_install 1.4 s (1), control_probes 51.7 s (8), mutant_builds 152.1 s (11), mutant_checks 2845.9 s (13), stage_controls 1109.7 s (4), mutant_probes 53.7 s (8)
