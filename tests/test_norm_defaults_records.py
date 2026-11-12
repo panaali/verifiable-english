@@ -1,8 +1,8 @@
-"""norm-defaults-text-1: four record claims read against what they rest on (regrade ndc2-F1, ndc2-F3, pk1c1-F1, F3).
+"""norm-defaults-text-1: four record claims read against what they rest on (regrade ndc2-F1, ndc2-F3, pk1c1-F1, F3, F4).
 
 1. The norm-defaults spec names `gate_legacy`'s proved target (read from the theorem in `Dispatch.lean`).
-1b. On a list with a wrapper the records say the answers need not agree with `todayGate`, and name a shared refusal
-    that `todayGate`'s checks give.
+1b. On a list with a wrapper the records say the answers need not agree with `todayGate`, state no condition for when
+    they agree, and name for each wrapper list only answers that Lean gives (literals checked by `#guard`s).
 2. Every record of the `alternatives@0` with `norm-defaults@0` gate row agrees with `todayGate`'s row in Lean.
 3. pk-1's identity claims cite a valid saved differential and claim no more than its sampled inputs."""
 
@@ -95,7 +95,7 @@ def test_gate_legacy_scan_refuses_old_sentences() -> None:
         assert len(found) == len(faults) and all(f in g for f, g in zip(faults, found)), (text, found)
 
 
-# 1b. review F3: on a list with a wrapper the answers need not agree; they can share a refusal ----------------------
+# 1b. review F3, F4: on a list with a wrapper the answers need not agree; the records name Lean's answers ----------
 
 ND_REPORT = ROOT / "docs/premise-packs/norm-defaults-text-1/REPORT.md"
 # Every record this item wrote or edited that could compare wrapper lists with `todayGate`.
@@ -104,9 +104,34 @@ WRAPPER_RECORDS = (ND_SPEC, ND_REPORT, COMPOSITION, NORMDEFAULTS_NOTES, INTEGRAT
 CONTRAST = re.compile(r"\b(?:is|are|was|be)\s+(?:not|never)\s+`todayGate`|\bnot\s+`todayGate`'s|"
                       r"\bdiffer(?:s|ent)?\b[^.]*?\b(?:from|than|with)\s+`todayGate`|\bunlike\s+`todayGate`|"
                       r"\bdisagrees?\s+with\s+`todayGate`")
-CHECK = re.compile(r'(?:if|else if) (.+?) then\s*\.error \(unsupported "([^"]+)"\)')
-ATOM = re.compile(r'(!?)ps\.contains "([^"]+)"')
-SHARED = re.compile(r"`\[([^\]]+)\]`[^.\[]*?\bboth\b[^.\[]*?`UnsupportedProfile: ([^`]+)`")
+GATES = ("todayGate", "dispatch", "gateOf profileTable")
+# The answers of `todayGate`, `dispatch` and `gateOf profileTable` (in that order) on every wrapper list the records
+# name, as Lean evaluates them: `test_gate_answers_are_leans` elaborates one `#guard` per answer. No derivation here:
+# a record naming another wrapper list fails until its answers are evaluated in Lean and added.
+GATE_ANSWERS = {
+    ("readings@1", "relational-fol@0"): ("UnsupportedProfile: Unsupported profile readings@1",
+                                         "UnsupportedProfile: readings@1 requires norms@0",
+                                         "UnsupportedProfile: readings@1 requires norms@0"),
+    ("alternatives@0", "norm-defaults@0", "readings@1", "relational-fol@0"):
+        ("UnsupportedProfile: alternatives@0 requires norms@0",) * 3,
+    # review F4: the lists on which the withdrawn general condition was false
+    ("norm-defaults@0", "readings@1", "relational-fol@0"): ("UnsupportedProfile: Unsupported profile readings@1",
+                                                            "UnsupportedProfile: norm-defaults@0 requires norms@0",
+                                                            "UnsupportedProfile: norm-defaults@0 requires norms@0"),
+    ("readings@1",): ("UnsupportedProfile: Unsupported profile readings@1",
+                      "UnsupportedProfile: Missing profile relational-fol@0",
+                      "UnsupportedProfile: Missing profile relational-fol@0"),
+    ("readings@1", "relational-fol@0", "speech-acts@0"): ("UnsupportedProfile: Unsupported profile readings@1",
+                                                          "UnsupportedProfile: speech-acts@0 requires norms@0",
+                                                          "UnsupportedProfile: speech-acts@0 requires norms@0"),
+}
+DIFFERING = ("readings@1", "relational-fol@0")
+SHARING = ("alternatives@0", "norm-defaults@0", "readings@1", "relational-fol@0")
+LISTED = re.compile(r"`\[([^\]]*)\]`")
+NAMED = re.compile(r"`(todayGate|dispatch|gateOf profileTable)`|`(UnsupportedProfile: [^`]+)`|\bboth\b")
+SENTENCE_END = re.compile(r"\.(?:\s|$)")
+AGREEMENT = re.compile(r"\bshare[sd]?\b|\bagree(?:s|d)?\b|\bthe same (?:answer|refusal|text)", re.I)
+CONDITION = re.compile(r"\b(?:when|whenever|if|iff|provided|unless|by a check|first refusing)\b", re.I)
 
 
 def wrapper_contrast_faults(text: str) -> list[str]:
@@ -120,42 +145,56 @@ def _wrappers(source: str) -> list[str]:
     return re.findall(r'"([^"]+)"', found.group(1))
 
 
-def _holds(cond: str, ps: list[str]) -> bool:
-    """A check's condition when it is a conjunction of `[!]ps.contains "p"` atoms (anything else fails the test)."""
-    atoms = [a.strip() for a in cond.split("&&")]
-    assert all(ATOM.fullmatch(a) for a in atoms), f"condition outside the evaluated form: {cond}"
-    return all((p in ps) != bool(neg) for neg, p in (ATOM.fullmatch(a).groups() for a in atoms))
+def wrapper_list_answers(text: str, source: str) -> tuple[dict[tuple[str, ...], list[str]], list[str]]:
+    """Each wrapper list the text names, with the answers named after it up to the next list or the sentence's end,
+    and the faults: a list whose answers were not evaluated, an answer that is not one of the list's, an answer after
+    a gate's name that is not that gate's, and "both" on a list where the gates differ."""
+    wrappers, named, faults = set(_wrappers(source)), {}, []
+    for paragraph in re.split(r"\n\s*\n", text):
+        flat = " ".join(paragraph.split())
+        found = list(LISTED.finditer(flat))
+        for m, after in zip(found, found[1:] + [None]):
+            ps = tuple(p.strip() for p in m.group(1).split(","))
+            if not set(ps) & wrappers:
+                continue
+            segment = flat[m.end():after.start() if after else len(flat)]
+            end = SENTENCE_END.search(segment)
+            segment = segment[:end.start()] if end else segment
+            answers = GATE_ANSWERS.get(ps)
+            if answers is None:
+                faults.append(f"{list(ps)}: no Lean-evaluated answers in GATE_ANSWERS")
+                continue
+            gate, texts = None, named.setdefault(ps, [])
+            for token in NAMED.finditer(segment):
+                if token.group(0) == "both" and len(set(answers)) > 1:
+                    faults.append(f"{list(ps)}: says both gates agree, but Lean answers {answers}")
+                elif token.group(1):
+                    gate = token.group(1)
+                elif token.group(2):
+                    texts.append(token.group(2))
+                    if token.group(2) not in answers:
+                        faults.append(f"{list(ps)}: `{token.group(2)}` is none of Lean's answers {answers}")
+                    elif gate and token.group(2) != answers[GATES.index(gate)]:
+                        faults.append(f"{list(ps)}: `{gate}` answers `{answers[GATES.index(gate)]}`, "
+                                      f"not `{token.group(2)}`")
+    return named, faults
 
 
-def shared_refusal_faults(text: str, source: str) -> list[str]:
-    """The record names a wrapper list on which `todayGate` and `dispatch` refuse with the same text, and that holds:
-    the refusal is `todayGate`'s first refusing check on the list, its condition names no wrapper (so the list without
-    its wrappers, which `dispatch` hands `todayGate` first, gets it too)."""
-    named = SHARED.findall(" ".join(text.split()))
-    if not named:
-        return ["names no shared-refusal list"]
-    body, wrappers, faults = _definition(source, "todayGate"), _wrappers(source), []
-    for listed, refusal in named:
-        ps = [p.strip() for p in listed.split(",")]
-        if not set(ps) & set(wrappers):
-            faults.append(f"{ps} has no wrapper profile")
-        if ps != sorted(set(ps)):
-            faults.append(f"{ps} is not sorted and unique, so the order check answers")
-        checks = CHECK.findall(body)
-        texts = [t for _, t in checks]
-        if refusal not in texts:
-            faults.append(f"`{refusal}` is no refusal text of `todayGate`")
-            continue
-        index = texts.index(refusal)
-        for cond, t in checks[1:index]:  # checks[0] is the sorted-and-unique check
-            if _holds(cond, ps) or _holds(cond, [p for p in ps if p not in wrappers]):
-                faults.append(f"`{t}` answers {ps} before `{refusal}`")
-        cond = checks[index][0]
-        if any(f'"{w}"' in cond for w in wrappers):
-            faults.append(f"`{refusal}`'s check names a wrapper profile")
-        if not (_holds(cond, ps) and _holds(cond, [p for p in ps if p not in wrappers])):
-            faults.append(f"`{refusal}`'s check does not refuse {ps} and its base")
-    return faults
+def agreement_condition_faults(text: str) -> list[str]:
+    """Sentences stating a general condition for when `todayGate` and the wrapper gate agree (review F4: none is
+    claimed; the records give examples only)."""
+    return [s for s in _sentences(text) if ("`todayGate`" in s or "both gates" in s)
+            and AGREEMENT.search(s) and CONDITION.search(s) and "need not" not in s]
+
+
+def gate_guards(answers: dict[tuple[str, ...], tuple[str, ...]]) -> str:
+    """A Lean file with one `#guard` per gate answer: it elaborates only if Lean gives every answer."""
+    lines = ["import VE.Compose.Dispatch", "open VE.Compose", "",
+             "def recordAnswer {α : Type} : Except String α → String", '  | .ok _ => "ok"', "  | .error e => e", ""]
+    for ps, texts in answers.items():
+        listed = "[" + ", ".join(f'"{p}"' for p in ps) + "]"
+        lines += [f'#guard recordAnswer ({gate} {listed}) == "{t}"' for gate, t in zip(GATES, texts)]
+    return "\n".join(lines) + "\n"
 
 
 def test_f3_probe_no_categorical_wrapper_difference() -> None:
@@ -165,16 +204,57 @@ def test_f3_probe_no_categorical_wrapper_difference() -> None:
     assert not any(re.search(pattern, " ".join((ROOT / p).read_text().split())) for p in paths)
 
 
+def test_f4_probe_no_general_shared_refusal_condition() -> None:
+    """PROBE F4 (norm-defaults-text-1-c122059-looprecheck1), verbatim but for the file's root."""
+    t = " ".join((ROOT / "docs/spec/norm-defaults.md").read_text().split())
+    assert "wrappers by a check that names no wrapper" not in t
+
+
 def test_wrapper_records_say_need_not_agree() -> None:
     faults = {p.relative_to(ROOT).as_posix(): wrapper_contrast_faults(p.read_text(encoding="utf-8"))
               for p in WRAPPER_RECORDS}
     assert {k: v for k, v in faults.items() if v} == {}
 
 
-def test_wrapper_records_name_a_shared_refusal_that_todaygate_gives() -> None:
+def test_wrapper_records_state_no_agreement_condition() -> None:
+    faults = {p.relative_to(ROOT).as_posix(): agreement_condition_faults(p.read_text(encoding="utf-8"))
+              for p in WRAPPER_RECORDS}
+    assert {k: v for k, v in faults.items() if v} == {}
+
+
+def test_wrapper_records_name_leans_answers() -> None:
     source = DISPATCH.read_text(encoding="utf-8")
-    for record in (ND_SPEC, ND_REPORT):
-        assert shared_refusal_faults(record.read_text(encoding="utf-8"), source) == [], record
+    for record in WRAPPER_RECORDS:
+        assert wrapper_list_answers(record.read_text(encoding="utf-8"), source)[1] == [], record
+    spec, _ = wrapper_list_answers(ND_SPEC.read_text(encoding="utf-8"), source)
+    assert spec[DIFFERING] == list(GATE_ANSWERS[DIFFERING][:2])  # `todayGate`'s, then `dispatch`'s
+    assert spec[SHARING] == [GATE_ANSWERS[SHARING][0]]
+    assert len(set(GATE_ANSWERS[DIFFERING])) == 2 and len(set(GATE_ANSWERS[SHARING])) == 1
+
+
+def test_gate_answers_are_leans(tmp_path: Path) -> None:
+    """GATE_ANSWERS is what Lean evaluates; a swapped answer fails to elaborate."""
+    import shutil
+    import subprocess
+
+    import pytest
+
+    from tests.lean_build import LEAN, lean_build
+    from tests.subprocesses import HANG_TIMEOUT
+    lake = shutil.which("lake")
+    if lake is None:
+        pytest.skip("lake is not available")
+    lean_build("VE")
+    wrong = dict(GATE_ANSWERS)
+    wrong[DIFFERING] = (GATE_ANSWERS[DIFFERING][1], GATE_ANSWERS[DIFFERING][0], GATE_ANSWERS[DIFFERING][2])
+    for name, answers, holds in (("Answers", GATE_ANSWERS, True), ("Swapped", wrong, False)):
+        path = tmp_path / f"{name}.lean"
+        path.write_text(gate_guards(answers), encoding="utf-8")
+        run = subprocess.run([lake, "env", "lean", str(path)], cwd=LEAN, capture_output=True, text=True,
+                             timeout=HANG_TIMEOUT)
+        assert (run.returncode == 0) == holds, (name, run.stdout + run.stderr)
+        if not holds:  # exactly the two swapped answers (`todayGate`'s and `dispatch`'s) are false
+            assert (run.stdout + run.stderr).count("did not evaluate to `true`") == 2, run.stdout + run.stderr
 
 
 def test_wrapper_scans_refuse_and_accept() -> None:
@@ -186,18 +266,33 @@ def test_wrapper_scans_refuse_and_accept() -> None:
         assert wrapper_contrast_faults(bad) == [bad]
     good = "On a list with a wrapper the answer need not agree with `todayGate`'s."
     assert wrapper_contrast_faults(good) == []
-    shared = ("on `[alternatives@0, norm-defaults@0, readings@1, relational-fol@0]` both gates answer "
-              "`UnsupportedProfile: alternatives@0 requires norms@0`.")
-    assert shared_refusal_faults(shared, source) == []
-    for text, fault in ((shared.replace("readings@1, ", ""), "has no wrapper"),
-                        (shared.replace("norm-defaults@0, readings@1", "readings@1, norm-defaults@0"), "not sorted"),
-                        (shared.replace("alternatives@0, ", "alternatives@0, norms@0, "), "does not refuse"),
-                        (shared.replace("requires norms@0", "requires readings@1"), "no refusal text"),
-                        ("They differ.", "names no shared-refusal")):
-        found = shared_refusal_faults(text, source)
+    # review F4: the withdrawn general condition, verbatim, and its kin
+    for bad in ("They share a refusal when `todayGate` refuses the list without its wrappers by a check that names "
+                "no wrapper: on `[alternatives@0, norm-defaults@0, readings@1, relational-fol@0]` both gates answer",
+                "`todayGate` and `dispatch` agree whenever the base list is refused.",
+                "Both gates give the same refusal if `todayGate` refuses first."):
+        assert agreement_condition_faults(bad) == [bad]
+    shared = ("They can share a refusal: on `[alternatives@0, norm-defaults@0, readings@1, relational-fol@0]` both "
+              "gates answer `UnsupportedProfile: alternatives@0 requires norms@0`.")
+    assert agreement_condition_faults(shared) == []
+    differ = ("They differ on `[readings@1, relational-fol@0]`: `todayGate` refuses `UnsupportedProfile: Unsupported "
+              "profile readings@1`, and `dispatch` refuses `UnsupportedProfile: readings@1 requires norms@0`.")
+    for text in (shared, differ, differ + " " + shared):
+        assert wrapper_list_answers(text, source)[1] == [], text
+    for text, fault in (
+            (shared.replace("readings@1", "readings@1, speech-acts@0"), "no Lean-evaluated answers"),
+            (shared.replace("requires norms@0", "requires readings@1"), "none of Lean's answers"),
+            (differ.replace("`todayGate` refuses", "`dispatch` refuses", 1), "`dispatch` answers"),
+            (differ.replace("`dispatch` refuses", "`todayGate` refuses"), "`todayGate` answers"),
+            # review F4's counterexamples: both gates do not share these refusals
+            ("On `[norm-defaults@0, readings@1, relational-fol@0]` both gates answer "
+             "`UnsupportedProfile: norm-defaults@0 requires norms@0`.", "says both"),
+            ("On `[readings@1]` both refuse.", "says both"),
+            ("On `[readings@1, relational-fol@0, speech-acts@0]` both gates answer "
+             "`UnsupportedProfile: speech-acts@0 requires norms@0`.", "says both")):
+        found = wrapper_list_answers(text, source)[1]
         assert any(fault in f for f in found), (text, found)
-    paired = "They differ on `[readings@1, relational-fol@0]` and share a refusal on " + shared  # names the right list
-    assert shared_refusal_faults(paired, source) == []
+    assert wrapper_list_answers("On `[norms@0, relational-fol@0]` it routes.", source) == ({}, [])
 
 
 # 2. ndc2-F3 ---------------------------------------------------------------------------------------------------------

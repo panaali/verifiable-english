@@ -305,9 +305,9 @@ agrees with `dispatch`, which strips the wrapper profiles, runs `todayGate` on t
 wrapper sits on that route (`Dispatch.lean:535-545`). On a list with a wrapper the two answers therefore need not
 agree with each other. They differ on `[readings@1, relational-fol@0]`: `todayGate` refuses
 `UnsupportedProfile: Unsupported profile readings@1`, and `dispatch` refuses
-`UnsupportedProfile: readings@1 requires norms@0`. They share a refusal when `todayGate` refuses the list without its
-wrappers by a check that names no wrapper: on `[alternatives@0, norm-defaults@0, readings@1, relational-fol@0]` both
-gates answer `UnsupportedProfile: alternatives@0 requires norms@0`.
+`UnsupportedProfile: readings@1 requires norms@0`. They can share a refusal: on
+`[alternatives@0, norm-defaults@0, readings@1, relational-fol@0]` both gates answer
+`UnsupportedProfile: alternatives@0 requires norms@0`.
 `tests/test_norm_defaults_documented_support.py` checks the two sentences below against `todayGate`:
 - `alternatives@0` with `norm-defaults@0` is admitted at profile validation: no check of `todayGate` refuses the
   pair, and it takes the alternatives route. That route answers the filled source in `runCaseU`
