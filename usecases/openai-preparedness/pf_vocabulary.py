@@ -67,7 +67,9 @@ BASE = {
     "forecast_severe_before_deployment": base(["situation"], "{0} is justified by OpenAI's forecasts and threat models as "
                                               "potentially posing a severe risk during development and prior to "
                                               "external deployment (3.2)"),
-    "distilled_from_below_high": base(["situation"], "{0} derives from a model determined below High"),
+    "distilled_finetuned_or_quantized_from_below_high": base(["situation"], "{0} is a model that OpenAI distills, fine-tunes, or quantizes "
+                                   "from a model that was previously determined not to cross a High capability "
+                                   "threshold (footnote 6)"),
     "significant_increase": base(["situation"], "there is reason to believe at {0} that a significant increase in capability "
                                      "has occurred; OpenAI ('we') decides this (OT20)"),
     "adjustment_confirmed": base(["situation"], "it is rigorously confirmed at {0} that another frontier AI developer "
@@ -119,8 +121,12 @@ BASE = {
                             "regulated": {"role": "permission", "default": "allow",
                                           "act": "{0} be tracked as a category"}},
     "deployment_permitted": permission("{0} be deployed", "1: deployment of a model that reaches High"),
-    "summary_access": permission("{0} have an employee request as well as receive a summary of testing results",
-                                 "5.1: internal transparency"),
+    "summary_access": permission("{0} have employees request as well as receive the testing as well as SAG summary",
+                                 "5.1: \u201cEmployees may also request and receive a summary of the testing results "
+                                 "and SAG recommendation on capability levels and safeguards (subject to certain "
+                                 "limits for highly sensitive information).\u201d: the summary is of the testing "
+                                 "results and of the SAG recommendation on capability levels and safeguards; the "
+                                 "limits are the rule's carve-out"),
     "decision_reversal": permission("{0} have the decision reversed by the Board",
                                     "Appendix B: the Board may reverse a decision of OpenAI Leadership"),
     "revised_course_mandated": permission("{0} have a revised course of action mandated by the Board",

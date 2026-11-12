@@ -69,7 +69,7 @@ OT = {"OT1": "threshold_determined", "OT2": "sufficient_safeguards", "OT9": "lik
       "OT21": "immediate_reaction_needed"}
 # What each case's situation states beyond its findings (cases.json "situation"), as D1 base atoms.
 SITUATIONS = {
-    "K3": ("distilled_from_below_high",), "K4": ("distilled_from_below_high",),
+    "K3": ("distilled_finetuned_or_quantized_from_below_high",), "K4": ("distilled_finetuned_or_quantized_from_below_high",),
     "K6": ("adjustment_made",), "K7": ("further_development",), "K8": ("further_development",),
     "K9": ("undermining_found",), "K10": ("sandbagging_found",), "K11": ("coverage_ambiguous",),
     "K13": ("fast_track_requested",), "K14": ("deeper_testing_warranted", "third_party_available"),
@@ -556,7 +556,7 @@ WITNESS = {
            "adjustment_conditions", "adjustment_made"),
     "C2": ("leadership_decision", "decided_without_sag"),
     "C3": ("further_development", "critical_standard_unspecified"),
-    "C4": ("covered", "distilled_from_below_high", "significant_increase"),
+    "C4": ("covered", "distilled_finetuned_or_quantized_from_below_high", "significant_increase"),
     "C5": ("covered", "external_deployment"),
     "C6": ("leadership_decision", "board_finds_necessary"),
     "m2": ("external_deployment", "misuse_standard_met"),
