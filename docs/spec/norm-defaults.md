@@ -297,9 +297,12 @@ with `permitted` unspecified: in k9 (empty rule set) all three alternatives are 
 "running the job with the memory limit" and "asking the user" move from `default_decided` to UNDECIDED. Sequencing
 is Q9.
 
-**Integration status (2026-11-10, replacing the gap note of 2026-10-01).** What is built, by profile list (the gate
-is `todayGate`, `lean/VE/Compose/Dispatch.lean:31-71`, which `gateOf profileTable` agrees with on legacy-profile
-lists by `gate_legacy`; `tests/test_norm_defaults_documented_support.py` checks these two sentences against it):
+**Integration status (2026-11-10, replacing the gap note of 2026-10-01).** What is built, by profile list. The gate
+on a list without wrapper profiles is `todayGate` (`lean/VE/Compose/Dispatch.lean:32-72`). The runners call
+`gateOf profileTable`; on legacy-profile lists `gate_legacy` (`Dispatch.lean:1307`) proves that `gateOf profileTable`
+agrees with `dispatch`, which strips the wrapper profiles, runs `todayGate` on the rest and then checks that each
+wrapper sits on that route (`Dispatch.lean:535-545`), so on a list with a wrapper it is not `todayGate`'s answer.
+`tests/test_norm_defaults_documented_support.py` checks the two sentences below against `todayGate`:
 - `alternatives@0` with `norm-defaults@0` is admitted at profile validation: no check of `todayGate` refuses the
   pair, and it takes the alternatives route. That route answers the filled source in `runCaseU`
   (`lean/VE/Alternatives/Run.lean:407`, chosen at `:422`) for the case kinds `alt-elaborate`, `alt-environment`,
@@ -310,7 +313,7 @@ lists by `gate_legacy`; `tests/test_norm_defaults_documented_support.py` checks 
   fault (`lean/VE/Service/Document.lean:1174`), the norm-defaults route (`runGated`, `NormDefaults/Run.lean:446`)
   and `decodeAltSource` (`lean/VE/Alternatives/Wire.lean:233`), which the route's `admission` kind calls.
 - `risk@0` with `norm-defaults@0` is refused at profile validation with `UnsupportedProfile: risk@0 with
-  norm-defaults@0 is not implemented` (`todayGate`, `Dispatch.lean:39`). The risk route still consumes completed
+  norm-defaults@0 is not implemented` (`todayGate`, `Dispatch.lean:40`). The risk route still consumes completed
   deny/allow norms and may not report a two-valued decision for a silent permission; risk's three-valued decision
   report and the cross-route fixture u11 are required before this pair can be enabled.
 
