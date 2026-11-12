@@ -1,0 +1,12 @@
+{
+ "job": "testmap-35a9ba13-t479996-s2",
+ "head": "33a6b8640f6b1b93b2066183be94789291df5be0",
+ "argv": [
+  "testmap-35a9ba13-t479996-s2",
+  "33a6b8640f6b1b93b2066183be94789291df5be0",
+  "33a6b8640f6b1b93b2066183be94789291df5be0",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-f730a05190b7.tar.zst",
+  "abb044c2712e1e17ece3292de05adcd8f4d035c3da6df5f20fc5616a9d17250f",
+  "shard=ulimit -s 8192; tc=$(cat lean/lean-toolchain); tc=${tc//\\//--}; mkdir -p ~/.elan/toolchains; ln -sfn /opt/lean ~/.elan/toolchains/${tc//:/---}; mkdir -p ~/.elan/bin; for t in lean lake; do [ -e ~/.elan/bin/$t ] || ln -sfn /opt/lean/bin/$t ~/.elan/bin/$t; done; uv run --frozen python tools/test_map.py record --no-merge --jobs 4 --output \"$RUNNER_TEMP/out/map-s2.json.gz\" tests/test_english_evidence.py tests/test_trust_mutants_probe_scope.py tests/test_encoder_shapes.py tests/test_wire_contract_s5_lean.py tests/test_rd9_statements.py tests/test_rust_reproducible.py tests/test_trust_budget.py tests/test_statement_scanner.py tests/test_code_map.py tests/test_gen_inv_design.py tests/test_premise_packs_stub.py tests/test_pc3_statements.py tests/test_acts_specialise_layer.py tests/test_pk1c_fixture_assurance_claim.py 2>&1 | tee \"$RUNNER_TEMP/out/shard-full.txt\"; exit ${PIPESTATUS[0]}"
+ ]
+}
