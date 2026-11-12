@@ -1,0 +1,19 @@
+{
+ "allow": [
+  {
+   "definition": "VE.EnglishGrammar.Norm.Run.statementSpans",
+   "operator": "list-last",
+   "reason": "equivalent: `(acc.reverse.take 1).getLast?` is the head of `acc.reverse`, which is `acc.getLast?` (M043, line 67); en-e3a's trust-mutants-allow.json allows the same `getLast?` of a one-element reverse"
+  },
+  {
+   "definition": "VE.EnglishGrammar.Norm.Run.statementSpans",
+   "operator": "list-empty",
+   "reason": "Lean refuses the mutated text: `[]` has no element type where `match [].getLast?` needs one, so the build fails at the mutated line itself (M011: 'the type of pattern variable contains metavariables'), never at a check; no answer can be computed from it (en-e3a's trust-mutants-allow.json allows the same class)"
+  },
+  {
+   "definition": "VE.EnglishGrammar.Norm.Run.leanReader",
+   "operator": "list-empty",
+   "reason": "Lean refuses the mutated text: `[]` has no element type where the tags must be an `Array String`, so the build fails at the mutated line itself (M002, M006: 'Type mismatch' at Run.lean:160), never at a check; no answer can be computed from it (en-e3a's trust-mutants-allow.json allows the same class)"
+  }
+ ]
+}
