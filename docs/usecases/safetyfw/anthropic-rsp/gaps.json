@@ -39,8 +39,8 @@
   },
   "JT": {
    "bytes": 11372,
-   "sole_bytes": 6892,
-   "sole_units": 33,
+   "sole_bytes": 6997,
+   "sole_units": 34,
    "statuses": {
     "OPEN": 10660,
     "UNFORMALISED": 712
@@ -94,14 +94,14 @@
    "units": 130
   },
   "readings": {
-   "bytes": 3989,
+   "bytes": 3884,
    "sole_bytes": 2106,
    "sole_units": 10,
    "statuses": {
     "LABELLED": 1047,
-    "OPEN": 2942
+    "OPEN": 2837
    },
-   "units": 17
+   "units": 16
   }
  },
  "master_bytes_by_status": {
