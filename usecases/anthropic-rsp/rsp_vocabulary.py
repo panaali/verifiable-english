@@ -118,9 +118,14 @@ BASE = {
         "in_the_lead": "at {0} we have developed or will imminently develop a highly capable model (Appendix A, "
                        "Anthropic in the lead, the scenario's first conjunct)",
         "redaction_reason_listed": "at {0} material would be redacted for one of the reasons 3.5 lists",
-        "scenario_2": "at {0} there is \"dramatic acceleration\" of the pace of AI progress for reasons that likely "
-                      "relate to the automation of AI R&D (T4 (2))",
     }.items()},
+    # T4's "if we determine that either (1) ... or (2)" governs both branches: (2) is the company's determination, as
+    # (1) is (OT15); it is OT1's T4 determination, met through scenario (2).
+    "scenario_2": _open(["situation"], "at {0} we determine that there is \"dramatic acceleration\" of the pace of AI "
+                        "progress for reasons that likely relate to the automation of AI R&D (T4 (2): \"We will "
+                        "consider this threshold to be met if we determine that either (1) ... or (2) there is "
+                        "'dramatic acceleration' of the pace of AI progress for reasons that likely relate to the "
+                        "automation of AI R&D.\")", WE + " (\"if we determine\")", "OT1"),
     # Open terms (PLAN 3.2): the decider is the text's own.
     "highly_capable": _open(["situation"], "the model of {0} is highly capable (3.6: it crosses the threshold for "
                             "automated AI R&D)", WE + " (\"if we conclude\")", "OT5"),
@@ -208,7 +213,10 @@ REGULATED = {
                                    "very high evidentiary standards with thorough and careful analysis of the "
                                    "possibility that much of the key evidence is suspect due to the possibility of "
                                    "manipulation by AI systems.\""),
-    "roadmap_maintained": _duty("{0} have the Frontier Safety Roadmap maintained", "section 2 at {0}"),
+    "roadmap_maintained": _duty("{0} have the Frontier Safety Roadmap maintained", "section 2 at {0}: \"We will "
+                                "maintain a Frontier Safety Roadmap laying out ambitious but achievable goals for "
+                                "improving our risk mitigations—charting our progress as a company and raising the "
+                                "bar over time.\""),
     "roadmap_shared": _duty("{0} have the Roadmap shared as the policy states", "the Roadmap is shared with all "
                             "full-time employees, the Board and the LTBT, and published in redacted form, at {0} "
                             "(section 2)"),
@@ -219,14 +227,19 @@ REGULATED = {
                                 "anthropic.com/responsible-scaling-policy/roadmap. We will also keep past Roadmaps "
                                 "available at that link.\""),
     "goals_kept": _duty("{0} avoid the revision", "the company avoids the revision of the goal at {0} (section 2)"),
-    "risk_reports_published": _duty("{0} have Risk Reports published", "section 3 at {0}"),
+    "risk_reports_published": _duty("{0} have Risk Reports on risks as well as continuation determinations published",
+                                    "section 3 at {0}: \"We will publish Risk Reports discussing the risks of our "
+                                    "systems and how we have made determinations about whether to continue AI "
+                                    "development and deployment in light of the risks.\""),
     "in_scope": {"arguments": ["situation"], "description": "the model of {0} is "
                  "an in-scope model of the Risk Report (3.1): a classification, never a duty",
                  "regulated": {"role": "plain", "default": "deny"}},
     "off_cycle_published": _duty("{0} have an off-cycle analysis of its model published", "an analysis of the "
                                  "model's relevant risks is published at {0} (3.1, off-cycle updates)"),
     "candid_reports": _duty("{0} have its Risk Reports candid", "the Risk Reports are direct, candid and informative "
-                            "at {0} (3.2)"),
+                            "about how we see the risks of our systems and our state of preparedness for them, at {0} "
+                            "(3.2: \"We intend for our Risk Reports to be direct, candid, and informative about how we "
+                            "see the risks of our systems and our state of preparedness for them.\")"),
     "deviation_reported": _duty("{0} have the deviation reported", "the change or deviation is tracked and reported "
                                 "at {0} (3.2)"),
     "strong_attempt": _duty("{0} make a strong attempt to keep risk from increasing significantly", "ongoing (as "
@@ -235,7 +248,10 @@ REGULATED = {
                                 "factual items of 3.3 at {0}"),
     "risk_analysed": _duty("{0} have the risk analyses provided", "the four risk analyses of 3.3 at {0}"),
     "past_reviewed": _duty("{0} have past Risk Reports reviewed", "the three review items of 3.3 at {0}"),
-    "goal_miss_addressed": _duty("{0} have the missed goal addressed in a Risk Report", "3.3 review item 3 at {0}"),
+    "roadmap_review_addressed": _duty("{0} have Roadmap changes as well as missed goals addressed in a Risk Report",
+                                      "3.3 review item 3 at {0}: \"Changes to our Frontier Safety Roadmap and any "
+                                      "cases where we failed to meet our goals.\" (both parts, with no condition: the "
+                                      "changes, and each case of a missed goal there is)"),
     "marginal_analysed": _duty("{0} have the marginal risk analyses provided", "the four analyses of 3.3's marginal "
                                "risk paragraph at {0}"),
     "assessed_in_report": _duty("{0} be assessed in a Risk Report", "the assessments of 3.3 are conducted with "
@@ -247,8 +263,11 @@ REGULATED = {
     "external_feedback": _duty("{0} have feedback sought from trusted external parties with relevant expertise",
                                "3.4 step 2 at {0}: \"We will usually also seek feedback from trusted external "
                                "parties with relevant expertise.\""),
-    "executive_approved": _duty("{0} have its Risk Report approved by the CEO with the RSO", "the report, with the "
-                                "feedback, goes to the CEO and the RSO for final review and approval (3.4 step 3)"),
+    "executive_submitted": _duty("{0} have its Risk Report sent to the CEO with the RSO", "the report, with the "
+                                 "feedback, goes to the CEO and the RSO for final review and approval (3.4 step 3: "
+                                 "\"The Risk Report, along with the internal feedback and any available external "
+                                 "feedback, will be sent to the CEO and Responsible Scaling Officer (RSO) for final "
+                                 "review and approval.\"); the duty is the submission, not an approval obtained"),
     "board_approved": _duty("{0} have its Risk Report approved by the Board as well as the LTBT", "explicit "
                             "approval by the Board and the LTBT (3.4 step 5)"),
     "governance_notified": _duty("{0} have the decision promptly shared with the Board as well as the LTBT", "3.4 "
@@ -265,9 +284,11 @@ REGULATED = {
     "redactions_justified": _duty("{0} have a brief justification of each public-version redaction given", "3.5 at "
                                   "{0}: \"and aim to give a brief justification for such redactions\" (the "
                                   "redactions made in the public version)"),
-    "redaction": _may("{0} have material redacted from the public version", "3.5 at {0}: \"We will publish a "
-                      "public version of our Risk Report.\" ... \"Reasons we may redact material include but are "
-                      "not limited to:\" (the four listed reasons do not close the class)"),
+    "redaction": _may("{0} have material redacted from the public as well as regular-clearance versions", "3.5 at "
+                      "{0}: \"We will publish a public version of our Risk Report. We will aim to minimize redactions "
+                      "to the public version of the report or to the version of the report shared with all "
+                      "regular-clearance Anthropic employees. Reasons we may redact material include but are not "
+                      "limited to:\" (both versions; the four listed reasons do not close the class)"),
     "public_review_sought": _duty("{0} have comprehensive public external review sought", "3.6 at {0}"),
     "full_review": _duty("{0} have a full external review completed with at least one external reviewer", "3.6 at "
                          "{0}"),
@@ -280,7 +301,10 @@ REGULATED = {
                                 "3.6.1 at {0}: \"In selecting external reviewers, we will consult with the Board and "
                                 "obtain the approval of the LTBT.\" (two duties, in no order)"),
     "shared_with_reviewers": _duty("{0} have the report shared with the external reviewers within one week",
-                                   "3.6.2 at {0}"),
+                                   "3.6.2 at {0}: \"The external review process will involve sharing the Risk Report "
+                                   "with one or more external reviewers within one week of submitting the same "
+                                   "report to our Board and LTBT.\" (the source's next sentence calls this group "
+                                   "\"the external reviewers\")"),
     "commentary_asked": _duty("{0} have reviewers asked to publish written findings in thirty days of receipt",
                               "3.6.2 at {0}: \"We will ask the external reviewers to provide public commentary on "
                               "our report within 30 days of receipt.\" 3.6.3: \"Public comments. We will ask the "
@@ -298,7 +322,9 @@ REGULATED = {
                                   "at {0}: \"For purposes of external review, the only redactions to the Risk Report "
                                   "will be those necessary to comply with legal prohibitions or to maintain our "
                                   "legal rights.\" (a prohibition unless one of the two grounds holds)"),
-    "rso_maintained": _duty("{0} have the position of RSO maintained", "4.1 at {0}"),
+    "rso_maintained": _duty("{0} have the position of RSO maintained", "4.1 at {0}: \"We will maintain the position "
+                            "of RSO, a designated member of staff who is responsible for the implementation of this "
+                            "policy.\" (the listed duties are s4-rso-duties)"),
     "ltbt_briefed": _duty("{0} have the LTBT regularly briefed on Risk Report plans as well as developments", "4.2 "
                           "at {0}: \"We will regularly brief the LTBT on plans and developments related to our Risk "
                           "Reports, including model training, capability evals, mitigations, and risk analyses.\" "
@@ -341,8 +367,10 @@ REGULATED = {
                                "(the cadence is OT12)"),
     "change_approved": _duty("{0} have the change approved by the Board", "4.8: proposed by the CEO and RSO, "
                              "approved by the Board in consultation with the LTBT"),
-    "update_published": _duty("{0} have the updated version published with its differences in the Change Log",
-                              "4.8: prior to or on its effective date"),
+    "update_published": _duty("{0} have the update published with its prior-draft differences in the Change Log",
+                              "4.8 at {0}: \"If we update the RSP, we will publicly share the updated version prior "
+                              "to or on its effective date and will record the differences from the prior draft in "
+                              "the Change Log.\" (published prior to or on its effective date)"),
     "website_version": _duty("{0} have the current version kept on the website", "4.8 at {0}"),
     "argument_required": _duty("{0} require a strong argument about catastrophic risk", "Appendix A at {0}: \"We "
                                "will require a strong argument that catastrophic risk is contained, along the lines "

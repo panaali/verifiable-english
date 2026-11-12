@@ -212,7 +212,7 @@
         "arguments": [
           "situation"
         ],
-        "description": "at {0} there is \"dramatic acceleration\" of the pace of AI progress for reasons that likely relate to the automation of AI R&D (T4 (2))"
+        "description": "at {0} we determine that there is \"dramatic acceleration\" of the pace of AI progress for reasons that likely relate to the automation of AI R&D (T4 (2): \"We will consider this threshold to be met if we determine that either (1) ... or (2) there is 'dramatic acceleration' of the pace of AI progress for reasons that likely relate to the automation of AI R&D.\"). Open term OT1, decided by the company (\"we\") (\"if we determine\")"
       },
       "highly_capable": {
         "arguments": [
@@ -403,7 +403,7 @@
         "arguments": [
           "situation"
         ],
-        "description": "section 2 at {0}",
+        "description": "section 2 at {0}: \"We will maintain a Frontier Safety Roadmap laying out ambitious but achievable goals for improving our risk mitigations—charting our progress as a company and raising the bar over time.\"",
         "regulated": {
           "role": "obligation",
           "default": "deny",
@@ -458,11 +458,11 @@
         "arguments": [
           "situation"
         ],
-        "description": "section 3 at {0}",
+        "description": "section 3 at {0}: \"We will publish Risk Reports discussing the risks of our systems and how we have made determinations about whether to continue AI development and deployment in light of the risks.\"",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} have Risk Reports published"
+          "act": "{0} have Risk Reports on risks as well as continuation determinations published"
         }
       },
       "in_scope": {
@@ -490,7 +490,7 @@
         "arguments": [
           "situation"
         ],
-        "description": "the Risk Reports are direct, candid and informative at {0} (3.2)",
+        "description": "the Risk Reports are direct, candid and informative about how we see the risks of our systems and our state of preparedness for them, at {0} (3.2: \"We intend for our Risk Reports to be direct, candid, and informative about how we see the risks of our systems and our state of preparedness for them.\")",
         "regulated": {
           "role": "obligation",
           "default": "deny",
@@ -552,15 +552,15 @@
           "act": "{0} have past Risk Reports reviewed"
         }
       },
-      "goal_miss_addressed": {
+      "roadmap_review_addressed": {
         "arguments": [
           "situation"
         ],
-        "description": "3.3 review item 3 at {0}",
+        "description": "3.3 review item 3 at {0}: \"Changes to our Frontier Safety Roadmap and any cases where we failed to meet our goals.\" (both parts, with no condition: the changes, and each case of a missed goal there is)",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} have the missed goal addressed in a Risk Report"
+          "act": "{0} have Roadmap changes as well as missed goals addressed in a Risk Report"
         }
       },
       "marginal_analysed": {
@@ -607,15 +607,15 @@
           "act": "{0} have feedback sought from trusted external parties with relevant expertise"
         }
       },
-      "executive_approved": {
+      "executive_submitted": {
         "arguments": [
           "situation"
         ],
-        "description": "the report, with the feedback, goes to the CEO and the RSO for final review and approval (3.4 step 3)",
+        "description": "the report, with the feedback, goes to the CEO and the RSO for final review and approval (3.4 step 3: \"The Risk Report, along with the internal feedback and any available external feedback, will be sent to the CEO and Responsible Scaling Officer (RSO) for final review and approval.\"); the duty is the submission, not an approval obtained",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} have its Risk Report approved by the CEO with the RSO"
+          "act": "{0} have its Risk Report sent to the CEO with the RSO"
         }
       },
       "board_approved": {
@@ -677,11 +677,11 @@
         "arguments": [
           "situation"
         ],
-        "description": "3.5 at {0}: \"We will publish a public version of our Risk Report.\" ... \"Reasons we may redact material include but are not limited to:\" (the four listed reasons do not close the class)",
+        "description": "3.5 at {0}: \"We will publish a public version of our Risk Report. We will aim to minimize redactions to the public version of the report or to the version of the report shared with all regular-clearance Anthropic employees. Reasons we may redact material include but are not limited to:\" (both versions; the four listed reasons do not close the class)",
         "regulated": {
           "role": "permission",
           "default": "deny",
-          "act": "{0} have material redacted from the public version"
+          "act": "{0} have material redacted from the public as well as regular-clearance versions"
         }
       },
       "public_review_sought": {
@@ -743,7 +743,7 @@
         "arguments": [
           "situation"
         ],
-        "description": "3.6.2 at {0}",
+        "description": "3.6.2 at {0}: \"The external review process will involve sharing the Risk Report with one or more external reviewers within one week of submitting the same report to our Board and LTBT.\" (the source's next sentence calls this group \"the external reviewers\")",
         "regulated": {
           "role": "obligation",
           "default": "deny",
@@ -809,7 +809,7 @@
         "arguments": [
           "situation"
         ],
-        "description": "4.1 at {0}",
+        "description": "4.1 at {0}: \"We will maintain the position of RSO, a designated member of staff who is responsible for the implementation of this policy.\" (the listed duties are s4-rso-duties)",
         "regulated": {
           "role": "obligation",
           "default": "deny",
@@ -996,11 +996,11 @@
         "arguments": [
           "situation"
         ],
-        "description": "4.8: prior to or on its effective date",
+        "description": "4.8 at {0}: \"If we update the RSP, we will publicly share the updated version prior to or on its effective date and will record the differences from the prior draft in the Change Log.\" (published prior to or on its effective date)",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} have the updated version published with its differences in the Change Log"
+          "act": "{0} have the update published with its prior-draft differences in the Change Log"
         }
       },
       "website_version": {
