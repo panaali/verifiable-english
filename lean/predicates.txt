@@ -810,6 +810,9 @@ module VE.SoftNorms.Once
 module VE.SoftNorms.Phases
 module VE.SoftNorms.RankProof
 module VE.SoftNorms.Run
+module VE.SoftNorms.Selected
+module VE.SoftNorms.SelectedExamples
+module VE.SoftNorms.SelectedSound
 module VE.SoftNorms.Semantics
 module VE.SoftNorms.Soften
 module VE.SoftNorms.Status
@@ -1639,6 +1642,8 @@ VE.SoftNorms.Run.BackgroundField@VE.SoftNorms.ElaborateSound
 VE.SoftNorms.Run.BindingsMatchSourceAndRegeneration@VE.SoftNorms.Run
 VE.SoftNorms.Run.ElaborationAnswer@VE.SoftNorms.ElaborateSound
 VE.SoftNorms.Run.PremisesField@VE.SoftNorms.ElaborateSound
+VE.SoftNorms.Run.QueryDecoded@VE.SoftNorms.SelectedSound
+VE.SoftNorms.Run.SelectedAnswer@VE.SoftNorms.SelectedSound
 VE.SoftNorms.Run.SoftAdmissionAnswer@VE.SoftNorms.Run
 VE.SoftNorms.SelectsSoftD@VE.SoftNorms.Semantics
 VE.SoftNorms.SoftConflictFree@VE.SoftNorms.Coherence

@@ -1,3 +1,6 @@
+- `tests/test_time_w6a.py` — Seven W6a date operations: endpoint and duration behavior on frozen core.
+- `tests/test_trust_budget.py` — The trust budget ratchet on the live tree (architecture decision D3): trusted Lean lines (K, S and untied [V]) rise only by an allowance the DRI signs, recorde…
+- `tests/test_trust_mutants.py` — tools/trust_mutants.py on a tiny Lean package (speed-trustmut step 3): a well-guarded definition has no survivor, a guard over `[]` leaves survivors, a failing…
 - `tests/test_trust_mutants_max_errors.py` — tools/trust_mutants.py never settles on a list Lean capped at `maxErrors` (tm-nightly-unknown-disposition-2; the nightly's M186 and M417: `lean/VE/Presuppositi…
 - `tests/test_trust_mutants_probe_scope.py` — tools/trust_mutants.py's scoped probe (eff-tm-probe-scope, design reviews/eff-tm-probe-scope-design-20261031.md section 8): a mutant's probe walks only the che…
 - `tests/test_trust_ratchet.py` — The trust budget as a ratchet (architecture plan AR-4, DRI decision D3): `tools/trust_map.py`'s `--check`, `--allow` and `--write` over small git histories, an…
@@ -5,10 +8,12 @@
 - `tests/test_units_lean_w6a.py` — W6a conformance: Lean `ve_quantity` admission, and Python's relay of it.
 - `tests/test_units_relay_w6a.py` — The W6a ground family through Python's relay of Lean's quantity typing.
 - `tests/test_units_w6a.py` — W6a admission regression cases: identity, exact grid, dates, and counting.
+- `tests/test_usecase_key_transcription.py` — Every frozen-key use case: answer-key.json is a cell-for-cell transcription of PLAN.md section 6.
 - `tests/test_vacuity.py` — (no module docstring)
 - `tests/test_ve_iface.py` — (no module docstring)
 - `tests/test_views.py` — Empirical injectivity, controlled vocabulary, and adversarial scope cases.
 - `tests/test_views_polish.py` — Review regressions: lexical limits, shared scopes, cells, and measurements.
+- `tests/test_w1_delta_suite.py` — The W1 delta's suite corpus and its tagging plugin (`docs/en-e3-norm/en-2/w1_delta.py`; en-e3bb review F1).
 - `tests/test_w6a2_looprecheck1.py` — W6a loop recheck (round 2, recheck 1) regressions: static limits, three ways.
 - `tests/test_w6a2_numeral_characters.py` — Numeral limits count Unicode characters on every W6a route: the order and countermodel routes in Python, Lean and Rust, the quantity routes in Lean and Python'…
 - `tests/test_w6a_certificate_steps.py` — Certificate replay steps: Python's 10,000-step budget, in Lean too.
