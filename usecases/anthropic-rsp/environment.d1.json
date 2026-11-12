@@ -116,7 +116,7 @@
         "arguments": [
           "situation"
         ],
-        "description": "at {0} a candidate review team's revenue, reputation and success depend entirely on Anthropic and similar companies (3.6.1, an example)"
+        "description": "at {0} a candidate review team's revenue, reputation and success depend entirely on Anthropic and similar companies continuing to work with them (3.6.1, an example)"
       },
       "submitted_under_external_review": {
         "arguments": [
@@ -128,7 +128,7 @@
         "arguments": [
           "situation"
         ],
-        "description": "{0} is a Risk Report under the external review process (3.6.2)"
+        "description": "{0} is a Risk Report under the external review process (3.6.2), including a review the LTBT requests (3.6: \"subject to the procedures outlined below\")"
       },
       "noncompliance_report_received": {
         "arguments": [
@@ -172,6 +172,12 @@
         ],
         "description": "at {0} a Risk Report described a risk mitigation and later practice deviates from it (3.2)"
       },
+      "mitigation_in_place_or_planned": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "the risk mitigation a Risk Report describes at {0} is one we have in place or plan to implement shortly (3.2: \"When a Risk Report describes risk mitigations we have in place (or plan to implement shortly)\")"
+      },
       "roadmap_goal_missed": {
         "arguments": [
           "situation"
@@ -189,18 +195,6 @@
           "situation"
         ],
         "description": "at {0} a Roadmap goal is revised in a less ambitious direction simply because it could not be achieved (section 2)"
-      },
-      "competitor_better_mitigation": {
-        "arguments": [
-          "situation"
-        ],
-        "description": "at {0} a competitor has implemented a risk mitigation that: (1) represents a significant improvement on reduction of our prioritized risks relative to our analogous mitigations; and (2) we could implement at comparable (or lower) effort or cost to our competitor (Appendix A, General upleveling)"
-      },
-      "competitors_strong_measures": {
-        "arguments": [
-          "situation"
-        ],
-        "description": "at {0} all competitors who have developed, or will soon develop, a highly capable frontier model are able to make strong arguments that catastrophic risk is contained (Appendix A)"
       },
       "in_the_lead": {
         "arguments": [
@@ -272,7 +266,7 @@
         "arguments": [
           "situation"
         ],
-        "description": "at {0} we have strong evidence that a competitor has implemented the risk mitigation of the General upleveling scenario (Appendix A). Open term OT8, decided by the company (\"we\") (\"use our best judgment\")"
+        "description": "at {0} we have strong evidence that a competitor has implemented a risk mitigation that: (1) represents a significant improvement on reduction of our prioritized risks relative to our analogous mitigations; and (2) we could implement at comparable (or lower) effort or cost to our competitor (Appendix A, General upleveling: the scenario's condition is this evidence). Open term OT8, decided by the company (\"we\") (\"use our best judgment\")"
       },
       "lead_delay_needed": {
         "arguments": [
@@ -387,7 +381,7 @@
         "arguments": [
           "situation"
         ],
-        "description": "the company works to advance the recommendations at {0} (section 1)",
+        "description": "section 1 at {0}: \"We will strive to advance these recommendations through a mixture of example-setting, addressing unsolved technical problems, advocacy through industry groups, and policy advocacy.\" (the four means; \"strive\" is RS12)",
         "regulated": {
           "role": "obligation",
           "default": "deny",
@@ -442,11 +436,11 @@
         "arguments": [
           "situation"
         ],
-        "description": "section 2 at {0}",
+        "description": "section 2 at {0}: \"Our current Frontier Safety Roadmap is available at anthropic.com/responsible-scaling-policy/roadmap. We will also keep past Roadmaps available at that link.\"",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} have past Roadmaps kept available"
+          "act": "{0} have past Roadmaps kept available at the link of the current Roadmap"
         }
       },
       "goals_kept": {
@@ -716,11 +710,11 @@
         "arguments": [
           "situation"
         ],
-        "description": "a public or private external review of the Risk Report or sections thereof (3.6)",
+        "description": "3.6 at {0}: \"In addition, upon the LTBT's request, we will conduct a public or private external review of our Risk Report or sections thereof, subject to the procedures outlined below.\" (the procedures of 3.6.1 and 3.6.2: the review is under the external review process)",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} have an external review conducted"
+          "act": "{0} have an external review conducted subject to the outlined procedures"
         }
       },
       "candidate_selected": {
@@ -738,11 +732,11 @@
         "arguments": [
           "situation"
         ],
-        "description": "3.6.1 at {0}: the Board consulted, the LTBT's approval obtained",
+        "description": "3.6.1 at {0}: \"In selecting external reviewers, we will consult with the Board and obtain the approval of the LTBT.\" (two duties, in no order)",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} have the selection approved by the LTBT after consulting the Board"
+          "act": "{0} have the Board consulted as well as the selection approved by the LTBT"
         }
       },
       "shared_with_reviewers": {
@@ -760,11 +754,11 @@
         "arguments": [
           "situation"
         ],
-        "description": "3.6.2 at {0}: \"We will ask the external reviewers to provide public commentary on our report within 30 days of receipt.\" (the day count is D3's)",
+        "description": "3.6.2 at {0}: \"We will ask the external reviewers to provide public commentary on our report within 30 days of receipt.\" 3.6.3: \"Public comments. We will ask the external reviewer to memorialize its findings on the topics above in a written report that is made public.\" (the day count is D3's)",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} have the reviewers asked to comment publicly within thirty days of receipt"
+          "act": "{0} have reviewers asked to publish written findings in thirty days of receipt"
         }
       },
       "early_full_review": {
@@ -826,7 +820,7 @@
         "arguments": [
           "situation"
         ],
-        "description": "4.2 at {0}: \"We will regularly brief the LTBT on plans and developments related to our Risk Reports.\" (\"regularly\" is OT12)",
+        "description": "4.2 at {0}: \"We will regularly brief the LTBT on plans and developments related to our Risk Reports, including model training, capability evals, mitigations, and risk analyses.\" (\"regularly\" is OT12; the \"including\" list is open: its instances are briefed, others may be)",
         "regulated": {
           "role": "obligation",
           "default": "deny",
@@ -837,11 +831,11 @@
         "arguments": [
           "situation"
         ],
-        "description": "4.3 at {0}",
+        "description": "4.3 at {0}: \"We will share final, unredacted Risk Reports with a large number of Anthropic employees (at least 200).\" (a draft does not count)",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} have unredacted Risk Reports shared with at least two hundred employees"
+          "act": "{0} have final unredacted Risk Reports given to at least two hundred employees"
         }
       },
       "minimally_redacted_shared": {
