@@ -38,8 +38,10 @@ SIZE: 0 product, 251 tests, 70 other hand-written lines (doc lines added or chan
 
 1. **ndc2-F1.** `docs/spec/norm-defaults.md` (integration status paragraph, :300-305) now says that `gate_legacy`
    (`Dispatch.lean:1307`) proves `gateOf profileTable` agrees with `dispatch`, which strips the wrapper profiles,
-   runs `todayGate` on the rest and checks each wrapper (`Dispatch.lean:535-545`), and that on a list with a wrapper
-   this is not `todayGate`'s answer. The cite of `todayGate` is corrected to `:32-72` (it said `:31-71`), and the
+   runs `todayGate` on the rest and checks each wrapper (`Dispatch.lean:535-545`). On a list with a wrapper the two
+   answers need not agree with each other; review F3 qualified this sentence with one list where they differ and the
+   shared-refusal list `[alternatives@0, norm-defaults@0, readings@1, relational-fol@0]` (both:
+   `UnsupportedProfile: alternatives@0 requires norms@0`). The cite of `todayGate` is corrected to `:32-72` (it said `:31-71`), and the
    risk check's cite at :316 to `Dispatch.lean:40` (it said `:39`).
    Test `test_norm_defaults_spec_names_gate_legacy_target` reads the theorem's statement from
    `lean/VE/Compose/Dispatch.lean` (`gateOf profileTable ps = <f> ps`; an unexpected statement form fails), reads
