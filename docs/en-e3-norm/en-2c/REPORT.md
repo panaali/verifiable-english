@@ -9,11 +9,12 @@
 
 Scope: task-en-e3b.txt deliverables (1)-(4) without what en-e3b built (reviews/dri-decisions-20261110-en-e3b.md
 item 1), under reviews/dri-decisions-20261102-en-e3-norm.md items 1-3.
-SIZE: 213 product, 470 tests, 536 other hand-written lines: `git diff --numstat $(git merge-base HEAD main)`.
-- Product is `ve/norm_english.py` 197 and `tools/relay_mutation_gate.py` 16.
-- Tests are the five test files plus 1 fixture line.
-- Other is `w1_delta.py` 289, `seed.py` 68, this report and DELTA.md.
-- Written by the scripts: `delta.json` 6,893 lines, the evidence DELTA.md 181 and `mutants.json` 83.
+SIZE: 216 product, 672 tests, about 700 other hand-written lines added: `git diff --numstat $(git merge-base HEAD main)`.
+- Product is `ve/norm_english.py` 200 and `tools/relay_mutation_gate.py` 16.
+- Tests are the six test files plus 1 fixture line.
+- Other is `w1_delta.py` 373, `seed.py` 76, this report and `en-2c/DELTA.md`.
+- Written by the scripts: `delta.json` 9,907 lines, the evidence DELTA.md 194 and `mutants.json` 118. Written by
+  `tools/history_tests.py --write`: `tests/history-dependent.json` 19.
 
 ## Review fix (en-e3bb-review.final.md)
 
@@ -23,15 +24,17 @@ SIZE: 213 product, 470 tests, 536 other hand-written lines: `git diff --numstat 
   `select_tests` uses, every unit the map records running `parse_english`, and every unit it cannot rule out
   (unrecorded, failed, opaque, or changed since the map, `select_tests.uncertain_since`). With no map, the whole
   suite runs. `delta.json` saves the derivation and pytest's summary. The tagging plugin now tags only records written
-  to the run's own log, so the shadow's own tests pass in the instrumented run. The evidence was regenerated:
+  to the run's own log, so the shadow's own tests pass in the instrumented run. The run deselects the 5 tests that
+  read its own output (`READS_OUTPUT`). `test_the_suite_run_deselects_exactly_the_tests_that_read_its_output` checks
+  that set against the test file's source. The evidence was regenerated:
   suite 73 to 210 records, soft-rights 70 to 262, plus 23 records from `ve` subprocesses.
   Tests: `tests/test_w1_delta_suite.py` (the derivation over a map built in the test, and the plugin), and
   `check_suite` in `test_the_saved_delta_report_records_every_disagreement_with_its_class`. That check covers the 10
   files, the derivation's shape, a record from a test outside the suite, and a run that did not pass, and
   `test_the_suite_check_fails_on_a_hand_kept_or_incomplete_suite` is its other direction. Probe F1 passes.
 - **F2 (A): the REPORT said Lean refuses soft-norms@0 environments, so no soft-rights W1 call is answered.** That was
-  false: Lean answers them, and the 47 unavailable rows are `InvalidGrammar`. The class is prose claims about the evidence with no check. The note is
-  corrected (Notes for the DRI, Soft environments). The cause list is now one line per corpus and class, and
+  false: Lean answers them, and the 47 unavailable rows are `InvalidGrammar`. The class is prose claims about the
+  evidence with no check. The note is corrected (Notes for the DRI, Soft environments). The cause list is now one line per corpus and class, and
   `test_the_report_s_delta_numbers_and_causes_are_the_saved_evidence` checks it against `delta.json`: the table, each
   line's count and cause, every group covered, and no "every <corpus> … `class`" sentence unless all its records have
   that class. `test_the_report_check_fails_on_review_f2_s_overclaim_and_on_a_wrong_number` is its other direction.
