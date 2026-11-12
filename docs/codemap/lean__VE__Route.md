@@ -15,6 +15,7 @@
 - `lean/VE/Route/MeteredProofs.lean` — A completed metered document has the value of the total evaluator, hence by each family's `eval_iff_denote` it has its finite-model denotation.
 - `lean/VE/Route/MeteredRun.lean` — The batch-15a Lean entry point.
 - `lean/VE/Route/MeteredTrace.lean` — Explanations are display data.
+- `lean/VE/Route/MeteredWire.lean` — Wire theorems of the `metered` mode's `evaluate-budgeted` kind (kernel boundary, KB-7).
 - `lean/VE/Route/NonVacuity.lean` — Python's conservative search-side non-vacuity condition, expressed once for the four Lean formula families.
 - `lean/VE/Route/PyDecoder.lean` — Python's view of an AST on the wire: `repr` of a name and the walk of its `_Decoder`.
 - `lean/VE/Route/Readings.lean` — The assertion-only, same-background reading-set rule.

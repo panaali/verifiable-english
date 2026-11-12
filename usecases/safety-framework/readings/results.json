@@ -18,7 +18,7 @@
    "pending": {
     "g": [
      "f10-acc",
-     "f10-dm-same or f10-dm-diff",
+     "f10-dm-diff",
      "f10-sec"
     ]
    },
@@ -193,7 +193,7 @@
       "strict",
       "default"
      ],
-     "text": "This sentence says *should*. (1) *Every proposal must have its mitigations assessed holistically in proportion to expected impact.* (2) *Every proposal should have its mitigations assessed holistically in proportion to expected impact.* They differ here: suppose the decider decides the exception applies to p. Under (1) p still must. Under (2) p is not required to. It is not certified that these two readings differ only where the decider decides that the exception applies.",
+     "text": "This sentence says *should*. (1) *Every proposal must have holistically assessed mitigations proportionate with expected impact.* (2) *Every proposal should have holistically assessed mitigations proportionate with expected impact.* They differ here: suppose the decider decides the exception applies to p. Under (1) p still must. Under (2) p is not required to. It is not certified that these two readings differ only where the decider decides that the exception applies.",
      "wording": "E14"
     }
    ],
@@ -231,7 +231,7 @@
       "strict",
       "default"
      ],
-     "text": "This sentence says *should*. (1) *Every proposal must have its residual risk brought within the acceptable levels, if there is a level such that that proposal has reached that level.* (2) *Every proposal should have its residual risk brought within the acceptable levels, if there is a level such that that proposal has reached that level.* They differ here: suppose the decider decides the exception applies to p. Under (1) p still must. Under (2) p is not required to. It is not certified that these two readings differ only where the decider decides that the exception applies.",
+     "text": "This sentence says *should*. (1) *Every proposal must have its residual risk brought within the acceptable levels.* (2) *Every proposal should have its residual risk brought within the acceptable levels.* They differ here: suppose the decider decides the exception applies to p. Under (1) p still must. Under (2) p is not required to. It is not certified that these two readings differ only where the decider decides that the exception applies.",
      "wording": "E14"
     }
    ],
@@ -254,50 +254,17 @@
    "content": false,
    "harness_set": "RS5",
    "pending": {
+    "d": [
+     "f4-check-d",
+     "f4-need-d"
+    ],
     "r": [
      "f4-check-r",
+     "f4-need-r",
      "f4-further-r"
     ]
    },
    "unit": "s132-subsequent"
-  },
-  "rs6_insider": {
-   "conflict": "CONFLICT-FREE",
-   "content": true,
-   "english": [
-    "Under every reading of the open sentence, no two rules on the same act contradict each other.",
-    "This does not depend on how sentence 1 is read.",
-    "Read sentence 1 as *Every proposal need not apply each measure to the model weights, if both of the following hold:\n  (a) there is a level such that both that proposal has reached that level and that level is misuse;\n  (b) that measure addresses insiders*: the sentences of this document can all be true together, as here: e0 is a domain; e0 is a level; e0 is a measure; e0 is a threat."
-   ],
-   "findings": {
-    "SeparatedByActOnly": 1,
-    "SeparatedByDecisionOnly": 0
-   },
-   "harness_set": "RS6",
-   "pairs": [
-    {
-     "readings": [
-      "same",
-      "different"
-     ],
-     "text": "These two readings differ in a checked situation that VE cannot yet show in words.",
-     "wording": "E24"
-    }
-   ],
-   "premises": "model",
-   "residual": {
-    "pending_candidates": 0,
-    "readings_findings": 1,
-    "separations": 1,
-    "unresolved_reading_sets": 1
-   },
-   "route": "superposed",
-   "rules": {
-    "different": "f15-diff",
-    "same": "f15-same"
-   },
-   "status": "OPEN",
-   "unit": "s22-insider-not-required"
   },
   "rs7_footnote4": {
    "content": false,
@@ -319,9 +286,6 @@
    "content": false,
    "harness_set": "RS8",
    "pending": {
-    "rel": [
-     "f10-rel-same or f10-rel-diff"
-    ],
     "scope": []
    },
    "unit": "s135-bullet3-only"
@@ -333,58 +297,20 @@
     "scope": []
    },
    "unit": "s135-bullet4-only"
-  },
-  "rs9_bullet3": {
-   "conflict": "CONFLICT-FREE",
-   "content": true,
-   "english": [
-    "Under every reading of the open sentence, no two rules on the same act contradict each other.",
-    "This does not depend on how sentence 1 is read.",
-    "Read sentence 1 as *Every proposal must have mitigations make the residual risk of harm acceptable, if all of the following hold:\n  (a) either that proposal is external or that proposal is classified as \"high_risk\", or both;\n  (b) there is a level such that all of the following hold:\n    (i) that proposal has reached that level;\n    (ii) both that level is critical and that level is classified as \"ml_rd_and_misalignment\"*: the sentences of this document can all be true together, as here: e0 is a domain; e0 is a level; e0 is a measure; e0 is a threat."
-   ],
-   "findings": {
-    "SeparatedByActOnly": 1,
-    "SeparatedByDecisionOnly": 0
-   },
-   "harness_set": "RS9",
-   "pairs": [
-    {
-     "readings": [
-      "same",
-      "different"
-     ],
-     "text": "These two readings differ here: cbrn is a domain; cyber is a domain; harmful_manipulation is a domain; ml_rd_and_misalignment_domain is a domain; cbrn_uplift_level_1 is a level; cbrn_uplift_tcl is a level; cyber_uplift_level_1 is a level; harmful_manipulation_level_1 is a level; ml_rd_acceleration_level_1 is a level; ml_rd_automation_level_1 is a level; stealth_and_situational_awareness_tcl is a level; insider_threat_measures is a measure; security_level_2_plus is a measure; security_level_3 is a measure; security_level_4 is a measure; p is a proposal; insiders is a threat; insider_threat_measures addresses insiders; cbrn_uplift_level_1 concerns cbrn; cbrn_uplift_tcl concerns cbrn; cyber_uplift_level_1 concerns cyber; harmful_manipulation_level_1 concerns harmful_manipulation; ml_rd_acceleration_level_1 concerns ml_rd_and_misalignment_domain; ml_rd_automation_level_1 concerns ml_rd_and_misalignment_domain; stealth_and_situational_awareness_tcl concerns ml_rd_and_misalignment_domain; cbrn_uplift_level_1 is critical; cyber_uplift_level_1 is critical; harmful_manipulation_level_1 is critical; ml_rd_acceleration_level_1 is critical; ml_rd_automation_level_1 is critical; p is classified as \"high_risk\"; security_level_2_plus includes insider_threat_measures; p is internal; cbrn_uplift_level_1 is misuse; cbrn_uplift_tcl is misuse; cyber_uplift_level_1 is misuse; harmful_manipulation_level_1 is misuse; ml_rd_acceleration_level_1 is classified as \"ml_rd_and_misalignment\"; ml_rd_automation_level_1 is classified as \"ml_rd_and_misalignment\"; stealth_and_situational_awareness_tcl is classified as \"ml_rd_and_misalignment\"; p has reached ml_rd_acceleration_level_1; cbrn_uplift_level_1 recommends security_level_2_plus; cyber_uplift_level_1 recommends security_level_2_plus; harmful_manipulation_level_1 recommends security_level_2_plus; ml_rd_acceleration_level_1 recommends security_level_3; ml_rd_automation_level_1 recommends security_level_4; cbrn_uplift_tcl is tracked; stealth_and_situational_awareness_tcl is tracked. Under *Every proposal must have mitigations make the residual risk of harm acceptable, if all of the following hold:\n  (a) either that proposal is external or that proposal is classified as \"high_risk\", or both;\n  (b) there is a level such that all of the following hold:\n    (i) that proposal has reached that level;\n    (ii) both that level is critical and that level is classified as \"ml_rd_and_misalignment\"*, p still must. Under *Every proposal must have mitigations make the residual risk of severe harm acceptable, if all of the following hold:\n  (a) either that proposal is external or that proposal is classified as \"high_risk\", or both;\n  (b) there is a level such that all of the following hold:\n    (i) that proposal has reached that level;\n    (ii) both that level is critical and that level is classified as \"ml_rd_and_misalignment\"*, p is not required to.",
-     "wording": "E19"
-    }
-   ],
-   "premises": "model",
-   "residual": {
-    "pending_candidates": 0,
-    "readings_findings": 1,
-    "separations": 1,
-    "unresolved_reading_sets": 1
-   },
-   "route": "superposed",
-   "rules": {
-    "different": "f10-dm-diff",
-    "same": "f10-dm-same"
-   },
-   "status": "OPEN",
-   "unit": "s135-bullet3-dm"
   }
  },
  "whole_document": {
   "conflict": null,
   "findings": {
-   "SeparatedByActOnly": 2,
+   "SeparatedByActOnly": 0,
    "SeparatedByDecisionOnly": 3
   },
   "premises": "UNKNOWN",
   "residual": {
    "pending_candidates": 0,
-   "readings_findings": 5,
-   "separations": 7,
-   "unresolved_reading_sets": 18
+   "readings_findings": 3,
+   "separations": 5,
+   "unresolved_reading_sets": 16
   },
   "route": "pending"
  }

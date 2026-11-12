@@ -507,11 +507,8 @@
     9013,
     9142
    ],
-   "kind": "asserted",
-   "premises": [
-    "bridge-one-domain"
-   ],
-   "status": "CHECKED"
+   "kind": "exposition",
+   "status": "LABELLED"
   },
   {
    "id": "s132-heading",
@@ -1035,8 +1032,6 @@
     18739
    ],
    "kind": "norm",
-   "reading_set": "rs9_bullet3",
-   "reading_content": true,
    "open_terms": [
     "ot2_residual_risk_acceptable"
    ],
@@ -1490,8 +1485,10 @@
     29622
    ],
    "kind": "norm",
-   "reading_set": "rs6_insider",
-   "reading_content": true,
+   "rule": "f15-diff",
+   "open_terms": [
+    "ot1_level_reached"
+   ],
    "status": "OPEN"
   },
   {
@@ -2065,8 +2062,13 @@
     40151,
     40326
    ],
-   "kind": "explanation",
-   "status": "LABELLED"
+   "kind": "norm",
+   "rule": "f17-hri",
+   "open_terms": [
+    "ot1_level_reached",
+    "ot7_high_risk_internal"
+   ],
+   "status": "OPEN"
   },
   {
    "id": "s321-safeguards",
@@ -2689,7 +2691,10 @@
    "premises": [
     "activities-low-risk"
    ],
-   "status": "CHECKED"
+   "open_terms": [
+    "ot8_low_risk_external"
+   ],
+   "status": "OPEN"
   },
   {
    "id": "g-low-risk",
@@ -2722,7 +2727,10 @@
    "premises": [
     "activities-high-risk"
    ],
-   "status": "CHECKED"
+   "open_terms": [
+    "ot7_high_risk_internal"
+   ],
+   "status": "OPEN"
   },
   {
    "id": "g-security-mitigations",

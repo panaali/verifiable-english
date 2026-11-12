@@ -1,1 +1,3 @@
+- `docs/en-e3-norm/en-2/w1_delta.py` — en-e3bb's W1 delta evidence (docs/spec/en-e3-norm.md 2.4, Delta report; section 6).
 - `docs/en-e3-norm/en-2b/route_fixtures.py` — Write the EN-2 route fixtures (docs/spec/en-e3-norm.md section 8: R-f1..R-f24, R-stale) into `tests/data/route-cases.jsonl` as `["english.statement", case]` li…
+- `docs/en-e3-norm/en-2c/seed.py` — en-e3bb's seeded bugs (docs/spec/en-e3-norm.md section 9, Python (EN-2)): each planted alone in a copy of its file, its test run, the file restored.
