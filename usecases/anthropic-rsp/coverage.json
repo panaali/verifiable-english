@@ -22,7 +22,7 @@
  "coverage_percent": 100,
  "default_exceptions_by_decider": {},
  "document": "rsp.d1.ve.md (built locally, not committed)",
- "document_sha256": "a6c33f552edb55796ecd7cad0e9d9151f72b3c4733dbce8b82b2d373d67ef35e",
+ "document_sha256": "85669ba7a43b436a0ae7165dd82dc715d025841065f5b543c9c8342acd0eac40",
  "master_bytes_by_status": {
   "CHECKED": 5327,
   "LABELLED": 37248,
@@ -36,10 +36,10 @@
   "holistic_overrides": 0,
   "instruction_switches": 0,
   "open_terms": 28,
-  "unresolved_reading_sets": 30,
+  "unresolved_reading_sets": 29,
   "weighing_points": 0
  },
- "residual_total": 58,
+ "residual_total": 57,
  "soft_background_labels": [],
  "soft_residual_labels": [],
  "soft_status": "CHECKED",
