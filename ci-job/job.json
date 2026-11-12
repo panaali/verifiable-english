@@ -1,0 +1,13 @@
+{
+ "job": "armsh-cand-tm-nightly-unknown-disposition-2-e78b6d94-t444771-s4",
+ "head": "7b61bcbdac4455560d74d1886755edf52a0d4724",
+ "argv": [
+  "armsh-cand-tm-nightly-unknown-disposition-2-e78b6d94-t444771-s4",
+  "7b61bcbdac4455560d74d1886755edf52a0d4724",
+  "b15402667652a04619b664787ea8381349e5fd1d",
+  "-",
+  "-",
+  "4",
+  "4/4"
+ ]
+}
