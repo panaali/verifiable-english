@@ -156,7 +156,7 @@
   {
    "id": "f6-maintain",
    "file": "rules.d1.ve",
-   "span_length": 42,
+   "span_length": 184,
    "used": [
     "roadmap_maintained"
    ],
@@ -266,22 +266,15 @@
   {
    "id": "f7-publish",
    "file": "rules.d1.ve",
-   "span_length": 116,
+   "span_length": 230,
    "used": [
     "risk_reports_published"
    ],
    "unaccounted": [
-    "discuss",
     "public",
-    "system",
     "version"
    ],
    "entries": [
-    {
-     "words": "discussing the risks of our systems",
-     "reason": "exposition",
-     "arg": ""
-    },
     {
      "words": "We will publish a public version of our Risk Report",
      "reason": "restates",
@@ -483,13 +476,11 @@
   {
    "id": "f10-candid-default",
    "file": "rules.d1.ve",
-   "span_length": 68,
+   "span_length": 149,
    "used": [
     "candid_reports"
    ],
-   "unaccounted": [
-    "intend"
-   ],
+   "unaccounted": [],
    "entries": [
     {
      "words": "We intend",
@@ -643,27 +634,10 @@
    "file": "rules.d1.ve",
    "span_length": 86,
    "used": [
-    "goal_miss_addressed",
-    "roadmap_goal_missed"
+    "roadmap_review_addressed"
    ],
-   "unaccounted": [
-    "case",
-    "chang",
-    "fail",
-    "meet"
-   ],
-   "entries": [
-    {
-     "words": "Changes to our Frontier Safety Roadmap",
-     "reason": "loss",
-     "arg": "1"
-    },
-    {
-     "words": "any cases where we failed to meet our goals",
-     "reason": "restates",
-     "arg": ""
-    }
-   ],
+   "unaccounted": [],
+   "entries": [],
    "problems": []
   },
   {
@@ -738,23 +712,12 @@
   {
    "id": "f12-approval",
    "file": "rules.d1.ve",
-   "span_length": 91,
+   "span_length": 178,
    "used": [
-    "executive_approved"
+    "executive_submitted"
    ],
-   "unaccounted": [
-    "officer",
-    "responsible",
-    "scal",
-    "sent"
-   ],
-   "entries": [
-    {
-     "words": "will be sent to the CEO and Responsible Scaling Officer (RSO)",
-     "reason": "restates",
-     "arg": ""
-    }
-   ],
+   "unaccounted": [],
+   "entries": [],
    "problems": []
   },
   {
@@ -847,7 +810,7 @@
   {
    "id": "f13-redact-p",
    "file": "rules.d1.ve",
-   "span_length": 113,
+   "span_length": 272,
    "used": [
     "redaction",
     "redaction_reason_listed"
@@ -1090,21 +1053,13 @@
   {
    "id": "f16-share-one-week",
    "file": "rules.d1.ve",
-   "span_length": 168,
+   "span_length": 191,
    "used": [
     "shared_with_reviewers",
     "submitted_under_external_review"
    ],
-   "unaccounted": [
-    "involve"
-   ],
-   "entries": [
-    {
-     "words": "The external review process will involve",
-     "reason": "restates",
-     "arg": ""
-    }
-   ],
+   "unaccounted": [],
+   "entries": [],
    "problems": []
   },
   {
@@ -1198,21 +1153,8 @@
    "used": [
     "rso_maintained"
    ],
-   "unaccounted": [
-    "designat",
-    "implement",
-    "member",
-    "policy",
-    "responsible",
-    "staff"
-   ],
-   "entries": [
-    {
-     "words": "a designated member of staff who is responsible for the implementation of this policy",
-     "reason": "loss",
-     "arg": "1"
-    }
-   ],
+   "unaccounted": [],
+   "entries": [],
    "problems": []
   },
   {
@@ -1499,24 +1441,8 @@
     "rsp_updated",
     "update_published"
    ],
-   "unaccounted": [
-    "draft",
-    "public",
-    "record",
-    "share"
-   ],
-   "entries": [
-    {
-     "words": "we will publicly share the updated version",
-     "reason": "restates",
-     "arg": ""
-    },
-    {
-     "words": "will record the differences from the prior draft",
-     "reason": "restates",
-     "arg": ""
-    }
-   ],
+   "unaccounted": [],
+   "entries": [],
    "problems": []
   },
   {
@@ -1728,24 +1654,15 @@
   {
    "id": "t4-suff",
    "file": "facts.d1.ve",
-   "span_length": 274,
+   "span_length": 377,
    "used": [
     "automated_rd",
     "crossed",
     "full_substitution_at_competitive_cost",
     "scenario_2"
    ],
-   "unaccounted": [
-    "consider",
-    "met"
-   ],
-   "entries": [
-    {
-     "words": "We will consider this threshold to be met",
-     "reason": "restates",
-     "arg": ""
-    }
-   ],
+   "unaccounted": [],
+   "entries": [],
    "problems": []
   },
   {
@@ -1774,7 +1691,6 @@
    ],
    "unaccounted": [
     "absence",
-    "consider",
     "occurr"
    ],
    "entries": [
@@ -1808,22 +1724,22 @@
  ],
  "totals": {
   "blocks": 85,
-  "blocks_with_loss": 6,
+  "blocks_with_loss": 4,
   "losses_by_class": {
-   "1": 7,
+   "1": 5,
    "limit 9": 1
   },
   "entries_by_reason": {
-   "exposition": 13,
-   "loss": 8,
+   "exposition": 12,
+   "loss": 6,
    "open": 5,
    "reading": 7,
-   "restates": 54,
+   "restates": 48,
    "rule": 5
   },
-  "unaccounted_words": 223,
-  "blocks_with_unaccounted_words": 46,
-  "quotes": 95,
+  "unaccounted_words": 198,
+  "blocks_with_unaccounted_words": 39,
+  "quotes": 96,
   "unanchored_quotes": 0,
   "elided_quotes_without_source": 0
  },
