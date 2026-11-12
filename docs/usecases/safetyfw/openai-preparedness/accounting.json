@@ -570,22 +570,13 @@
     "safeguards_during_development"
    ],
    "unaccounted": [
-    "additional",
-    "capabil",
-    "category",
     "caution",
     "danger",
-    "deploy",
-    "external",
     "extreme",
-    "forecast",
     "increas",
     "internal",
     "present",
-    "regardles",
-    "require",
     "severe",
-    "track",
     "treat",
     "use"
    ],
@@ -643,20 +634,13 @@
     "safeguards_during_development"
    ],
    "unaccounted": [
-    "additional",
-    "category",
     "caution",
     "danger",
-    "deploy",
-    "external",
     "extreme",
     "increas",
     "internal",
     "present",
-    "regardles",
-    "require",
     "severe",
-    "track",
     "treat",
     "use"
    ],
@@ -701,25 +685,17 @@
    "used": [
     "critical",
     "further_development",
-    "internal_deployment",
     "reached",
     "safeguards_during_development"
    ],
    "unaccounted": [
-    "additional",
-    "capabil",
-    "category",
     "caution",
     "danger",
-    "external",
     "extreme",
-    "forecast",
     "increas",
+    "internal",
     "present",
-    "regardles",
-    "require",
     "severe",
-    "track",
     "treat",
     "use"
    ],
@@ -755,11 +731,6 @@
      "arg": "1"
     },
     {
-     "words": "Such models require additional safeguards",
-     "reason": "loss",
-     "arg": "1"
-    },
-    {
      "words": "regardless of whether or when they are externally deployed",
      "reason": "exposition",
      "arg": ""
@@ -774,22 +745,16 @@
    "used": [
     "forecast_critical",
     "further_development",
-    "internal_deployment",
     "safeguards_during_development"
    ],
    "unaccounted": [
-    "additional",
-    "category",
     "caution",
     "danger",
-    "external",
     "extreme",
     "increas",
+    "internal",
     "present",
-    "regardles",
-    "require",
     "severe",
-    "track",
     "treat",
     "use"
    ],
@@ -815,7 +780,79 @@
      "arg": "1"
     },
     {
-     "words": "Such models require additional safeguards",
+     "words": "regardless of whether or when they are externally deployed",
+     "reason": "exposition",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f3-inuse",
+   "file": "rules.d1.ve",
+   "span_length": 378,
+   "used": [
+    "critical",
+    "internal_deployment",
+    "reached",
+    "safeguards_before_internal_use"
+   ],
+   "unaccounted": [
+    "caution",
+    "danger",
+    "external",
+    "extreme",
+    "present",
+    "regardles",
+    "severe",
+    "treat"
+   ],
+   "entries": [
+    {
+     "words": "present severe dangers",
+     "reason": "exposition",
+     "arg": ""
+    },
+    {
+     "words": "and should be treated with extreme caution",
+     "reason": "loss",
+     "arg": "1"
+    },
+    {
+     "words": "regardless of whether or when they are externally deployed",
+     "reason": "exposition",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "f3-inuse-forecast",
+   "file": "rules.d1.ve",
+   "span_length": 378,
+   "used": [
+    "forecast_critical",
+    "internal_deployment",
+    "safeguards_before_internal_use"
+   ],
+   "unaccounted": [
+    "caution",
+    "danger",
+    "external",
+    "extreme",
+    "present",
+    "regardles",
+    "severe",
+    "treat"
+   ],
+   "entries": [
+    {
+     "words": "present severe dangers",
+     "reason": "exposition",
+     "arg": ""
+    },
+    {
+     "words": "and should be treated with extreme caution",
      "reason": "loss",
      "arg": "1"
     },
@@ -838,8 +875,6 @@
     "safeguards_during_development"
    ],
    "unaccounted": [
-    "capabil",
-    "require",
     "system"
    ],
    "entries": [
@@ -1353,17 +1388,9 @@
    "span_length": 190,
    "used": [
     "beyond_sensitive_limits",
-    "employee_request",
     "summary_access"
    ],
-   "unaccounted": [
-    "capabil",
-    "certain",
-    "employe",
-    "level",
-    "safeguard",
-    "subject"
-   ],
+   "unaccounted": [],
    "entries": [
     {
      "words": "Employees",
@@ -1913,28 +1940,16 @@
   {
    "id": "f16-year",
    "file": "rules.d1.ve",
-   "span_length": 111,
+   "span_length": 130,
    "used": [
     "annual_review"
    ],
-   "unaccounted": [
-    "continu",
-    "framework",
-    "potential",
-    "preparednes",
-    "sufficiency",
-    "update"
-   ],
+   "unaccounted": [],
    "entries": [
     {
      "words": "and potentially update",
      "reason": "exposition",
      "arg": ""
-    },
-    {
-     "words": "the Preparedness Framework for continued sufficiency",
-     "reason": "loss",
-     "arg": "1"
     }
    ],
    "problems": []
@@ -1992,17 +2007,12 @@
    "span_length": 275,
    "used": [
     "additional_safety_measures",
-    "distilled_from_below_high",
+    "distilled_finetuned_or_quantized_from_below_high",
     "significant_increase"
    ],
    "unaccounted": [
     "barr",
-    "cros",
-    "fine",
-    "previous",
-    "quantize",
-    "threshold",
-    "tune"
+    "quantize"
    ],
    "entries": [
     {
@@ -2093,6 +2103,7 @@
    "used": [
     "adjustment_conditions",
     "adjustment_confirmed",
+    "reached",
     "safeguards_before_deployment"
    ],
    "unaccounted": [
@@ -2105,7 +2116,6 @@
     "but",
     "claim",
     "doing",
-    "level",
     "making",
     "occurr",
     "order",
@@ -2161,7 +2171,8 @@
    "used": [
     "adjustment_conditions",
     "adjustment_confirmed",
-    "deployment_permitted"
+    "deployment_permitted",
+    "reached"
    ],
    "unaccounted": [
     "able",
@@ -2174,7 +2185,6 @@
     "but",
     "claim",
     "doing",
-    "level",
     "making",
     "minimiz",
     "occurr",
@@ -2541,13 +2551,10 @@
    "file": "rules.d1.ve",
    "span_length": 137,
    "used": [
-    "conservative_upper_bound_used",
-    "sandbagging_bound",
-    "sandbagging_found"
+    "sandbagging_found",
+    "sandbagging_response"
    ],
-   "unaccounted": [
-    "use"
-   ],
+   "unaccounted": [],
    "entries": [
     {
      "words": "or use",
@@ -2562,12 +2569,9 @@
    "file": "rules.d1.ve",
    "span_length": 137,
    "used": [
-    "conservative_upper_bound_used",
-    "sandbagging_bound"
+    "sandbagging_response"
    ],
-   "unaccounted": [
-    "use"
-   ],
+   "unaccounted": [],
    "entries": [
     {
      "words": "or use",
@@ -2629,11 +2633,7 @@
     "robust_case",
     "undermining_found"
    ],
-   "unaccounted": [
-    "categor",
-    "require",
-    "track"
-   ],
+   "unaccounted": [],
    "entries": [
     {
      "words": "in any of the Tracked Categories, require",
@@ -2652,11 +2652,7 @@
     "reached",
     "robust_case"
    ],
-   "unaccounted": [
-    "categor",
-    "require",
-    "track"
-   ],
+   "unaccounted": [],
    "entries": [
     {
      "words": "in any of the Tracked Categories, require",
@@ -2833,6 +2829,76 @@
    "problems": []
   },
   {
+   "id": "cl-levels",
+   "file": "rules.d1.ve",
+   "span_length": 161,
+   "used": [
+    "medium"
+   ],
+   "unaccounted": [
+    "because",
+    "execution",
+    "framework",
+    "involv",
+    "operational",
+    "preparednes",
+    "work"
+   ],
+   "entries": [
+    {
+     "words": "from the Framework",
+     "reason": "restates",
+     "arg": ""
+    },
+    {
+     "words": "because those levels were not operationally involved in the execution of our Preparedness work",
+     "reason": "exposition",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
+   "id": "fn5-indicator",
+   "file": "rules.d1.ve",
+   "span_length": 245,
+   "used": [
+    "biological_and_chemical_critical",
+    "biological_and_chemical_high",
+    "biological_capability_evaluations",
+    "indicator_for"
+   ],
+   "unaccounted": [
+    "category",
+    "given",
+    "higher",
+    "ones",
+    "potential",
+    "prioritize",
+    "relative",
+    "sever",
+    "threat"
+   ],
+   "entries": [
+    {
+     "words": "Given the higher potential severity of biological threats relative to chemical ones",
+     "reason": "exposition",
+     "arg": ""
+    },
+    {
+     "words": "we will prioritize",
+     "reason": "loss",
+     "arg": "limit 21"
+    },
+    {
+     "words": "for the category",
+     "reason": "restates",
+     "arg": ""
+    }
+   ],
+   "problems": []
+  },
+  {
    "id": "bio-high",
    "file": "facts.d1.ve",
    "span_length": 23,
@@ -2965,96 +3031,26 @@
     }
    ],
    "problems": []
-  },
-  {
-   "id": "cl-levels",
-   "file": "facts.d1.ve",
-   "span_length": 161,
-   "used": [
-    "medium"
-   ],
-   "unaccounted": [
-    "because",
-    "execution",
-    "framework",
-    "involv",
-    "operational",
-    "preparednes",
-    "work"
-   ],
-   "entries": [
-    {
-     "words": "from the Framework",
-     "reason": "restates",
-     "arg": ""
-    },
-    {
-     "words": "because those levels were not operationally involved in the execution of our Preparedness work",
-     "reason": "exposition",
-     "arg": ""
-    }
-   ],
-   "problems": []
-  },
-  {
-   "id": "fn5-indicator",
-   "file": "facts.d1.ve",
-   "span_length": 245,
-   "used": [
-    "biological_and_chemical_critical",
-    "biological_and_chemical_high",
-    "biological_capability_evaluations",
-    "indicator_for"
-   ],
-   "unaccounted": [
-    "category",
-    "given",
-    "higher",
-    "ones",
-    "potential",
-    "prioritize",
-    "relative",
-    "sever",
-    "threat"
-   ],
-   "entries": [
-    {
-     "words": "Given the higher potential severity of biological threats relative to chemical ones",
-     "reason": "exposition",
-     "arg": ""
-    },
-    {
-     "words": "we will prioritize",
-     "reason": "loss",
-     "arg": "limit 21"
-    },
-    {
-     "words": "for the category",
-     "reason": "restates",
-     "arg": ""
-    }
-   ],
-   "problems": []
   }
  ],
  "totals": {
-  "blocks": 97,
-  "blocks_with_loss": 17,
+  "blocks": 99,
+  "blocks_with_loss": 18,
   "losses_by_class": {
-   "1": 23,
+   "1": 22,
    "3": 1,
    "limit 21": 1
   },
   "entries_by_reason": {
-   "exposition": 35,
-   "loss": 25,
+   "exposition": 39,
+   "loss": 24,
    "reading": 30,
    "restates": 99,
    "rule": 18
   },
-  "unaccounted_words": 606,
-  "blocks_with_unaccounted_words": 83,
-  "quotes": 110,
+  "unaccounted_words": 565,
+  "blocks_with_unaccounted_words": 79,
+  "quotes": 115,
   "unanchored_quotes": 0,
   "elided_quotes_without_source": 0
  },

@@ -266,7 +266,7 @@ def _model():
         "domains": {"situation": ["s"], "level": list(T.vocabulary.LEVELS),
                     "category": sorted({c for c, _ in T.vocabulary.LEVELS.values()}),
                     "proposal": ["p"], "requirement": ["r"], "capability": ["c"],
-                    "evaluation": ["biological_capability_evaluations"]},
+                    "evaluation": ["biological_capability_evaluations"], "framework": ["f"]},
         "constants": {c: c for c in env.constants}, "relations": relations})
 
 
