@@ -8523,6 +8523,7 @@
 'VE.SoftNorms.Run.outcomeAt_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.SoftNorms.Run.regeneratedCore_fields' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.SoftNorms.Run.runAdmission_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.SoftNorms.Run.runSelected_answer' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.SoftNorms.Run.selectedRow_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.SoftNorms.Run.selected_semantics' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.SoftNorms.Run.softLabelled_formulas' depends on axioms: [propext, Quot.sound]

@@ -5709,7 +5709,7 @@ module VE.Attribution.Words 91026dcf5695468e89ec9f44c69a8867363eaac5da7681acbaad
 19:0-29:18 def VE.Reports.finitePhrase@VE.Attribution.Words
 31:0-42:15 def VE.Reports.baseOf@VE.Attribution.Words
 44:0-54:66 def VE.Reports.wantsPhrase?@VE.Attribution.Words
-module VE.Audit 9587782ae4b5bd2f5e051c376b87868561f35d873f8057716568d8f85a56b5b9
+module VE.Audit 47358ca00dc6a84dae58ef01f23cc57c2536a940b4abe2885d07ba585cbcf27a
 module VE.Bridge 4f7b5313509e488f647f3d8b0a7916ac28dbca6601547b44bf25eda9b833d079
 8:0-8:32 def VE.Bridge.Entity@VE.Bridge
 9:0-9:37 def VE.Bridge.Fields@VE.Bridge
@@ -28515,13 +28515,14 @@ module VE.SoftNorms.SelectedExamples d416fe29a3e3abd829b9de5fd44adca9c2212307de2
 29:0-31:101 def VE.SoftNorms.SelectedExamples.selectedCase@VE.SoftNorms.SelectedExamples
 33:0-37:30 def VE.SoftNorms.SelectedExamples.answerOf@VE.SoftNorms.SelectedExamples
 39:0-43:102 def VE.SoftNorms.SelectedExamples.resultsText@VE.SoftNorms.SelectedExamples
-module VE.SoftNorms.SelectedSound 01c69a0ce3f9ab58beec2f6eac96dedf92679aa566becb0bdb0a87836bad7bf0
+module VE.SoftNorms.SelectedSound eba425b8d8643e00bfb8069a1890fa0e603e3d653b67c39999d8ae63b27d85fc
 17:0-23:56 def VE.SoftNorms.Run.QueryDecoded@VE.SoftNorms.SelectedSound
 25:0-32:67 def VE.SoftNorms.Run.SelectedAnswer@VE.SoftNorms.SelectedSound
 34:0-35:89 theorem VE.SoftNorms.Run.getStr_ok@VE.SoftNorms.SelectedSound
 37:0-52:15 theorem VE.SoftNorms.Run.decodeSelectedQuery_ok@VE.SoftNorms.SelectedSound
 54:0-78:23 theorem VE.SoftNorms.Run.decodeQueries_ok@VE.SoftNorms.SelectedSound
-80:0-127:13 theorem VE.SoftNorms.Run.soft_wire_selected@VE.SoftNorms.SelectedSound
+80:0-109:13 theorem VE.SoftNorms.Run.runSelected_answer@VE.SoftNorms.SelectedSound
+111:0-142:84 theorem VE.SoftNorms.Run.soft_wire_selected@VE.SoftNorms.SelectedSound
 module VE.SoftNorms.Semantics 0690ee8e731ad70940f8252dc9572d03f43e22c42b45cbc0be253c8fcdf6edad
 24:0-26:54 def VE.SoftNorms.LiveD@VE.SoftNorms.Semantics
 28:0-30:90 def VE.SoftNorms.StrictYieldsD@VE.SoftNorms.Semantics
