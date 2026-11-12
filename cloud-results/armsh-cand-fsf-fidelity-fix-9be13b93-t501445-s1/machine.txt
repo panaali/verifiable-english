@@ -1,0 +1,9 @@
+job=armsh-cand-fsf-fidelity-fix-9be13b93-t501445-s1 shard=1/4 nproc=4 arch=aarch64 host=runnervmkb2gk date=2026-11-12T16:38:50Z ulimit_s=16384
+Mem:              15           1           9           0           5          14
+/dev/root       145G   42G  103G  29% /
+ 16:38:51 up 1 min,  0 user,  load average: 1.93, 0.69, 0.25
+pilot/codex branches: 98
+ve-cache: lean-build exact key a8500b42912b asset lean-build-a8500b42912b-linux-aarch64.tar.zst sha256 6771ac6fd6f4 ok, seal ok, from download, 12.4 s
+seed: mode=seed match=exact asset=lean-build-a8500b42912b-linux-aarch64.tar.zst pruned=0 base=96d41b902476
+seed: lake 0.3 s (rc 0, match exact)
+p1-tokenizers: 443909a61d42 fetched
