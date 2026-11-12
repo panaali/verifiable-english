@@ -5,11 +5,11 @@ import json
 from pathlib import Path
 
 from ..ast import decimal_value
-from ..errors import VEError
+from ..errors import CheckerUnavailable, VEError
 from ..readings import active_reading_sets, check_readings
 from .containers import _content_bearing
 from .load import load_document
-from .report import _checking_environment, _fixed_premises, check_document, coverage
+from .report import EVENTS_CONCLUSION, _checking_environment, _fixed_premises, check_document, coverage
 from .render import render_document
 
 
@@ -45,6 +45,10 @@ def main(argv=None):
             raise VEError("--sentence requires --conclusion")
         elif args.assume_no_exception and not args.conclusion:
             raise VEError("--assume-no-exception requires --conclusion")
+        elif args.conclusion and "events_environment" in doc:
+            # et-5b: no conclusion route reads an events document's pack; entailment over it is et-5c's (DRI
+            # 2026-11-10 et-5b item 2), so no answer is given without it.
+            raise CheckerUnavailable(EVENTS_CONCLUSION)
         elif args.assume_no_exception:
             data = _assume_no_exception(doc, json.loads(Path(args.conclusion).read_text()), args)
         elif args.conclusion:

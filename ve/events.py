@@ -21,9 +21,14 @@ The bindings, a closed list of relations to the request's block (dates with the 
   one. Which dates are consecutive or one day apart and which links are weaker are Lean's decisions, not Python's.
   Each formula is Lean's, typed by the schema (`generated_formula`); every sort, predicate and constant it names is
   the request's (the constants those of the bound base environment), and every variable index is under a binder.
+- The `document` mode's `events_view` (et-5b, `Service.Document.eventsView`, `Events.routeView`): the environment
+  Lean's chain read, bound by `view` to the document's environment as written: its members but `events`, the profiles
+  without `events@0`, the vocabulary's members as written but `constants`, and those the relation above. The document
+  is built over it; its identities stay the written environment's (Lean's `Env.profiles` and `Env.envId`).
 """
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass
 from types import MappingProxyType
 
@@ -76,20 +81,60 @@ def _block(case: dict) -> dict:
     return block
 
 
-def _bind_constants(row: dict, environment: dict, block: dict, dates: list) -> dict:
+def _same(answered: object, written: object) -> bool:
+    """Equal as JSON values, types included (`True` is not `1`, `1.0` is not `1`)."""
+    def canonical(value):
+        return json.dumps(value, sort_keys=True, ensure_ascii=False, allow_nan=False, default=repr,
+                          separators=(",", ":"))
+    return type(answered) is type(written) and canonical(answered) == canonical(written)
+
+
+def named_dates(block: dict) -> list:
+    """The block's named dates, the anchor among them (spec 1.3), each once, in the request's order."""
+    return list(dict.fromkeys([*block["dates"], *([block["anchor"]] if "anchor" in block else [])]))
+
+
+def _bind_constants(answered: object, environment: dict, block: dict, dates: list) -> dict:
+    """The one relation between a Lean environment's constants and the request's: those written, unchanged, and one
+    constant per named date of the block's day sort, described by its ISO date (the anchor's description is Lean's
+    wording), nothing else."""
     written = environment["vocabulary"]["constants"]
-    answered = row["base_environment"]["vocabulary"]["constants"]
     named = {constant(iso): iso for iso in dates}
-    if set(answered) != set(written) | set(named) or set(written) & set(named):
-        _unavailable("the base environment's constants are not the request's and one per named date")
+    if type(answered) is not dict or set(answered) != set(written) | set(named) or set(written) & set(named):
+        _unavailable("the environment's constants are not the request's and one per named date")
     for name, entry in written.items():
-        if answered[name] != entry:
+        if not _same(answered[name], entry):
             _unavailable(f"constant {name} is not the request's")
     for name, iso in named.items():
         entry = answered[name]
-        if entry["sort"] != block["day"] or (iso != block.get("anchor") and entry["description"] != iso):
+        if (type(entry) is not dict or set(entry) != {"sort", "description"} or type(entry["description"]) is not str
+                or not _same(entry["sort"], block["day"])
+                or (iso != block.get("anchor") and entry["description"] != iso)):
             _unavailable(f"date constant {name} is not the day {iso} of the request's day sort")
     return named
+
+
+def view(answered: object, environment: dict) -> dict:
+    """Lean's `events_view` of a `document` row (`Service.Document.eventsView`: `Events.routeView`, the environment its
+    chain read), bound to the document's environment as written; `CheckerUnavailable` when it is not exactly: the
+    written members but `events`, the profiles without `events@0` in their order, the vocabulary's members as written
+    but `constants`, and those `_bind_constants`'s relation. Python builds nothing of it (R8, D1)."""
+    block = _block({"environment": environment})
+    if type(answered) is not dict or set(answered) != set(environment) - {"events"}:
+        _unavailable("the document's events view does not have the written environment's members but events")
+    if not _same(answered["profiles"], [p for p in environment["profiles"] if p != PROFILE]):
+        _unavailable("the document's events view's profiles are not the written ones without events@0")
+    for key, value in environment.items():
+        if key not in ("events", "profiles", "vocabulary") and not _same(answered[key], value):
+            _unavailable(f"the document's events view's {key} is not the request's")
+    vocabulary, written = answered["vocabulary"], environment["vocabulary"]
+    if type(vocabulary) is not dict or set(vocabulary) != set(written):
+        _unavailable("the document's events view's vocabulary does not have the written members")
+    for key, value in written.items():
+        if key != "constants" and not _same(vocabulary[key], value):
+            _unavailable(f"the document's events view's vocabulary {key} is not the request's")
+    _bind_constants(vocabulary["constants"], environment, block, named_dates(block))
+    return answered
 
 
 def label(kind: str, *names: str) -> str:
@@ -145,7 +190,8 @@ def _bind_labels(rows: list, block: dict, dates: list) -> None:
     if len(starts) == 1 and len(following) == len(facts):
         while chain[-1] in following and len(chain) <= len(dates):
             chain.append(following[chain[-1]])
-    if len(facts) != len(dates) - 1 or sorted(chain) != sorted(dates):
+    # No named date (an open anchor, spec 1.3) has no date fact: zero, not minus one.
+    if len(facts) != max(len(dates) - 1, 0) or sorted(chain) != sorted(dates):
         _unavailable("the date facts do not chain the request's named dates, one fewer than they")
     if adjacent - facts:
         _unavailable(f"premise {label('adjacent', *sorted(adjacent - facts)[0])!r} names nothing of the request")
@@ -184,8 +230,8 @@ def answer(row: object, case: dict) -> EventsAnswer:
         raise CheckerUnavailable(f"events@0 answer does not fit its schema: {exc}") from exc
     if row.get("status") != "ok" or "events_premises" not in row:
         _unavailable("the answer has no events premises")
-    dates = list(dict.fromkeys([*block["dates"], *([block["anchor"]] if "anchor" in block else [])]))
-    named = _bind_constants(row, case["environment"], block, dates)
+    dates = named_dates(block)
+    named = _bind_constants(row["base_environment"]["vocabulary"]["constants"], case["environment"], block, dates)
     _bind_labels(row["events_premises"], block, dates)
     vocabulary = case["environment"]["vocabulary"]
     names = {"sorts": vocabulary["sorts"], "predicates": vocabulary["predicates"],
@@ -198,10 +244,27 @@ def answer(row: object, case: dict) -> EventsAnswer:
                         MappingProxyType(dict(sorted(named.items()))))
 
 
+def elaborated(case: dict) -> tuple[dict, EventsAnswer]:
+    """Lean's `norm-defaults-elaborate` row for an events document `case` and its pack, relayed and bound (`answer`)."""
+    from .norm_defaults_route import run_case
+    row = run_case({**case, "kind": "norm-defaults-elaborate"})
+    return row, answer(row, case)
+
+
 def elaborate(case: dict) -> EventsAnswer:
     """Lean's elaboration of an events document (a `norm-defaults-elaborate` case), relayed and bound."""
-    from .norm_defaults_route import run_case
-    return answer(run_case({**case, "kind": "norm-defaults-elaborate"}), case)
+    return elaborated(case)[1]
+
+
+class Written:
+    """An `events@0` document's environment as written (`source`), whose identity version its `source_id` binds:
+    Lean's `Env.profiles`, `events@0` among them (`Service.Document.environmentOf`). Read through the environment's
+    own projection (`Environment.identity_version`, its one owner); it decides nothing."""
+
+    def __init__(self, source: dict):
+        from .environment import Environment
+        self.source = source
+        self.identity_version = Environment(source, _validated_projection=True).identity_version
 
 
 def english(case: dict):

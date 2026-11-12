@@ -28,7 +28,7 @@
   "lean/VE/EnglishGrammar/Rules.lean": "87aeab4e98c32ef462b90f036808de81c88cdb3967febcd13d3806bc277fe85b",
   "lean/VE/EnglishGrammar/Run.lean": "bcc1f80385cff70400435cc4e7ff18732341ecd27c380c1a338a5741c1f6da70",
   "lean/VE/EnglishGrammar/SensesRequest.lean": "46f8f486350fe97d4ac5942d8a3afb6e8e864aac64efe93dea2246eac21c6599",
-  "lean/VE/EnglishGrammar/SourceWords.lean": "f89315d9473d59e3e0d3f9a31e2a211c7dd90f2a3468faa85cd76d1ee9d3b341",
+  "lean/VE/EnglishGrammar/SourceWords.lean": "3320d4623d5ec13928414e104bd9a069beeb58eefbc6c66b9e4cd988bb235149",
   "lean/VE/EnglishGrammar/Syntax.lean": "1341142dfe73d9ad1bfeefd7ff7de4cfbdfcfd5342f12a24d692de944265bc53",
   "lean/VE/EnglishGrammar/Token.lean": "98861a1a8696810186d9f9fc934678fae257b464356c5beaf6aec07e9c7f57ac",
   "lean/VE/Grammar/Basic.lean": "74adf159cfee0b28003a2945b98ec7e7ae2fab29017a210352601c873ee044db",
@@ -40,6 +40,6 @@
   "ve/english_grammar/norms@0.json": "0e872dc5477a110e2a0e461caa6fecd1d1cd49caef3199ce04ee96bf987b2c7b",
   "ve/english_grammar/order@0.json": "ad9a8467f94c6807cb313423cca836117e107f41baf784d49afcb00173723495",
   "ve/english_grammar/relational-fol@0.json": "de8bc6f7a338611879e5b7826f6f0f48c9b59e1defb549eac406602c13a032f7",
-  "ve/english_grammar/source_words.json": "e5ef1a3ab076c5a52fc34a890ae5d6b43e5893670fd4b4fc1a07f79a6d697465"
+  "ve/english_grammar/source_words.json": "9ff91e692cf46ddc94afb3ba02878af9cfbec850bcbf8dc9d4781026a2d7226b"
  }
 }
