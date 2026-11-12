@@ -193,6 +193,14 @@ file), so every seeded bug is in Lean.
 - **Seeded bugs:** `mutants.json` L29 (Lean) and P1-P9 (Python), all killed; P1 first survived (a later meaning-id check
   caught the tampered constants), so the fuzz test now requires the view binding's own refusal.
 - **Trust:** V +143 (allowance +21, R16; DELTA row 2), `trust_map.py --check` PASS.
+- **Selected run** (`mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`, at `d79076db1`, on
+  ve-cloud-2, 6097 s): 461 of 589 test units selected, every file exit 0, 0 failed; 21 broad files over 120 s deferred
+  to the chain gate. An earlier run of the fix (at `f20f5ae92`) failed `tests/test_route_row_schemas.py` (the first
+  `events_view` shape left objects open) and `tests/test_relay_binding_inventory.py` (its fields unclassified); both
+  fixed at `41b16f024`, then 220 passed in those files and the events tests.
+- **Also run:** `lake build` (1393 jobs), `python3 lean/audit.py` PASS, `tools/lean_statements.py` `changed: 0`,
+  `tools/regen_generated.py --check` (39 entries), `tools/trust_map.py --check` PASS, `tools/relay_mutation_gate.py`
+  (49 routes, 153895 mutants, 0 failures), PROBE F1 (exit 0).
 - **Not run:** the full gate (the chain's); `tools/binding_census.py --record` (FOLLOW-UP above).
 
 ## Spec re-read
