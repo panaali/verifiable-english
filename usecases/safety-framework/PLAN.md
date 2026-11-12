@@ -87,7 +87,9 @@ Quotations below are from the extracted text and each was checked to occur in it
 Each set is cited to its source unit. The translation keeps every reading, and the harness evaluates every
 complete choice of readings (section 9). "N1" and "N2" are the only narrowings (N2 was withdrawn after the
 results review, section 12 item 21); each cites source units and is
-listed in the residual, and section 9 also reports what changes without each.
+listed in the residual, and section 9 also reports what changes without each. The "same" readings of RS6 and RS9
+were later found excluded by the text and removed (section 12, "Excluded readings"); the table keeps them as
+written at plan time.
 
 | Id | Source unit | Readings | Why the text admits each |
 |---|---|---|---|
@@ -517,7 +519,7 @@ the D2 or D3 unit's status, after checking that the byte ranges are equal (probe
 ## 12. Deviations (after running VE; empty at plan time)
 
 Each entry gives the section and cell, the old value, the new value and the reason. No answer-key cell was changed;
-the five disagreements with the key are findings and are listed in [README.md](README.md).
+the disagreements with the key are findings and are listed in [README.md](README.md).
 
 1. **Section 7, vocabulary.** Old: one obligation `meet(proposal, requirement)` with requirement constants. New: one
    obligation per act, such as `residual_assessed` with the act phrase "be subject to a residual risk assessment",
@@ -586,6 +588,43 @@ the five disagreements with the key are findings and are listed in [README.md](R
     and finds C1 conflict-free. A test checks that every "should" or "must" of RS3 and RS4 keeps a strict sibling.
 22. **build_document.py `--check`.** It wrote `fsf.d1.ve.md` beside the source, so it failed on a read-only copy.
     It now measures the document in a temporary directory and writes nothing.
+
+23. **Section 6.4, C1, C3 and C-doc (fsf-fidelity-fix; uc-audit 2026-10-29, both auditors; DRI decision
+    reviews/dri-decisions-20261029-uc-audit2.md item 1).** The key file is unchanged; these entries give the answer
+    the translation is measured against beside it.
+    - **C1.** Key: NONE. Entry: **NONE**. The key's reason (N2) was withdrawn in item 21; the answer stands for another
+      reason: F15 releases mitigations against insider *misuse* (2.2), F16 recommends measures for the weights, two acts
+      once RS6 = same is excluded.
+    - **C3.** Key: SOME(G ∧ rel ∧ RS9 same). Entry: **NONE**. The conflict existed only through RS9 = same, which
+      footnote 5 excludes; under R14 it was a translation artefact (checks 1, 3 and 4). The harness counts the key's
+      condition as a disagreement, never as a vacuous NONE, because it names an excluded reading.
+    - **C-doc.** Key: SOME(G ∧ rel ∧ RS9 same). Entry: **NONE**. With C1 and C3 NONE, the document is CONFLICT-FREE at
+      every choice.
+
+    **Excluded readings** (the text excludes them; no reading set offers them, and a rule block that names one is
+    refused when the translation is read):
+
+    | Reading | Source | Why excluded | Rules removed |
+    |---|---|---|---|
+    | RS9 = same | 1.3.5 bullets 2 and 3; footnote 5 (fsf p.7) | Footnote 5: "deployment mitigations for the ML R&D CCLs are different than those for the misuse CCLs"; bullet 3 names "the residual risk of *severe* harm". The reading wrote bullet 3's act with bullet 2's predicate (DRI-RULINGS R14). | f10-dm-same, f10-rel-same |
+    | RS6 = same | 2.2 against 2.1.1 | 2.2 says "additional mitigations beyond these established safeguards are not required" of insider *misuse*; SL2+'s "additional security measures designed to address risks from insider threats" protect the weights. R14 already named the merge an artefact. | f15-same |
+
+    Both readings are excluded under fsf-fidelity-fix (this item). RS6 and RS9 keep one reading each ("different"),
+    so the key's notation still parses; item 21's C1 = SOME(Ds ∧ strict ∧ RS6 same) and item 15's moved C3 under m6
+    no longer occur (m6 now gives C3 = NONE, as section 11 expected).
+24. **Unit repairs (fsf-fidelity-fix; the units both auditors found unfaithful).** Each rule header quotes the span it
+    follows. F4: the second determination, "whether a further critical capability assessment is required", is its
+    own obligation (f4-need-d, f4-need-r; one act phrase cannot hold both within VE's 80-character limit). F9, F10
+    classification: the conditions hold for every misuse level (F9) or ML R&D CCL (F10) reached, "for the T/CCLs the
+    model has reached" (2.1.2, 3.1.2 step 2), not for one level. F10, F11 release (RS8 = rel): further development
+    *and* internal deployment that is not high-risk, the activities "only for external deployment and high-risk
+    internal deployment" leaves out. F16: 2.2's "may be adjusted ... This may occur if, for example, ..." is no
+    exception (OT16 is a factor only); 1.3.5's "otherwise assess" (OT4, OT5) stays the excepted case. F17: the
+    periodic assessments "also account for the safety implications of high-risk internal deployments" (f17-hri).
+    F20: the mitigation must "be proportionate with expected impact" (the act phrase), and "should be brought within
+    the acceptable levels" has no reached-level guard. Item 4's bridge is no premise of the document: N1 alone uses
+    the four exclusions it needs, as its own assumption (facts.d1.ve `item N1`). Cases G7 and G8 no longer set
+    OT11 and OT3, which section 5 leaves unset.
 
 ## 13. Files for the implementation round (not this commit)
 
