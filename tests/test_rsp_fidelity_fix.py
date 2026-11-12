@@ -392,3 +392,153 @@ def test_probe_f1_fix_2_deliverables_are_present():
     assert "competitor_better_mitigation" not in body("f26-effort") + body("f26-need-not-delay")
     assert "effective-date order is not encoded" not in harness
     assert "final" in body("f19-unredacted") and "after consulting" not in body("f15-select-approval")
+
+
+# --- anthropic-rsp-fidelity-fix-3: the union-rule audit's 10 units (PLAN section 12, item 22) -----------------------
+
+def _block(name, block_id):
+    return next(b for b in rsp_translation.read_blocks(name) if b.id == block_id)
+
+
+def _header_quote(block_id, name="rules.d1.ve"):
+    """The header's first double-quoted source text (the quote a reader checks the rule against)."""
+    return re.search(r'"(.+?)"(?: \(|;|$)', _block(name, block_id).source)[1]
+
+
+# Each changed block's header quotes the whole sentence it follows; the end shown is the part the audit found cut.
+FULL_SENTENCE_ENDS = {
+    "f6-maintain": "charting our progress as a company and raising the bar over time.",
+    "f7-publish": "how we have made determinations about whether to continue AI development and deployment in light "
+                  "of the risks.",
+    "f10-candid-default": "about how we see the risks of our systems and our state of preparedness for them.",
+    "f11-goal-missed": "Changes to our Frontier Safety Roadmap and any cases where we failed to meet our goals.",
+    "f12-approval": "will be sent to the CEO and Responsible Scaling Officer (RSO) for final review and approval.",
+    "f13-redact-p": "shared with all regular-clearance Anthropic employees. Reasons we may redact material include "
+                    "but are not limited to:",
+    "f16-share-one-week": "with one or more external reviewers within one week of submitting the same report to our "
+                          "Board and LTBT.",
+    "f18-rso": "a designated member of staff who is responsible for the implementation of this policy.",
+    "f23-publish": "will record the differences from the prior draft in the Change Log.",
+}
+
+
+def test_fix_3_headers_quote_the_full_source_sentence():
+    for block_id, end in FULL_SENTENCE_ENDS.items():
+        quote = _header_quote(block_id)
+        assert "..." not in quote and "…" not in quote, block_id
+        assert quote.endswith(end), block_id
+    t4 = _header_quote("t4-suff", "facts.d1.ve")
+    assert "..." not in t4 and t4.startswith("We will consider this threshold to be met if we determine that either")
+
+
+def _determination(name):
+    """Whether `name` is an open term the company decides under T4's "if we determine"."""
+    description = rsp_vocabulary.BASE[name]["description"]
+    return "Open term OT" in description and f"decided by {rsp_vocabulary.WE} (\"if we determine\")" in description
+
+
+def test_t4_both_branches_are_the_companys_determination():
+    """FACTS: "if we determine that either (1) ... or (2)" governs branch (2) as it governs branch (1)."""
+    branches = {name: re.findall(r'classified as "([a-z0-9_]+)"', _block("facts.d1.ve", block).text)
+                for name, block in (("suff", "t4-suff"), ("iff", "t4-only-if"))}
+    assert set(branches["suff"]) == set(branches["iff"]) == {"full_substitution_at_competitive_cost", "scenario_2"}
+    assert all(_determination(name) for name in branches["suff"])
+    assert "we determine that there is" in _legend("scenario_2")
+    # The plain stipulated situation it was, the audit's finding, is caught.
+    plain = rsp_vocabulary._base(["situation"], "at {0} there is \"dramatic acceleration\" (T4 (2))")
+    saved = rsp_vocabulary.BASE["scenario_2"]
+    try:
+        rsp_vocabulary.BASE["scenario_2"] = plain
+        assert not _determination("scenario_2")
+    finally:
+        rsp_vocabulary.BASE["scenario_2"] = saved
+
+
+@needs_lean
+def test_t_answers_hold_with_the_branch_2_determination(rsp_modules):
+    assert {i: rsp_run.verdict(_answer(i)) for i in ("T3", "T5", "T6", "T7")} == {
+        "T3": "ALL", "T5": "ALL", "T6": "NONE", "T7": "NONE"}
+    saved = {r["id"]: r for r in json.loads((RSP / "results.json").read_text())["comparison"]}
+    assert all(saved[i]["status"] == "agree" for i in ("T1", "T2b", "T3", "T4b", "T5", "T6"))
+
+
+@needs_lean
+def test_f11_states_both_parts_of_review_item_3_with_no_guard(rsp_modules):
+    rule = _rule("f11-goal-missed")
+    assert rule["guard"] == ["top"] and rule["unless"] == []
+    act = _act(rule["predicate"])
+    assert "Roadmap changes" in act and "missed goals" in act
+    assert "Changes to our Frontier Safety Roadmap and any cases where we failed to meet our goals" in _legend(
+        rule["predicate"])
+
+
+@needs_lean
+def test_f12_approval_states_the_submission_not_an_approval(rsp_modules):
+    act = _act(_rule("f12-approval")["predicate"])
+    assert "sent to the CEO with the RSO" in act and "approved" not in act
+    assert "for final review and approval" in _legend(_rule("f12-approval")["predicate"])
+    # f12-share reads the approval as its own situation class, not the submission duty.
+    assert _unaries(_rule("f12-share")["guard"]) == {"risk_report_approved"}
+
+
+@needs_lean
+def test_f13_redact_p_covers_both_versions_and_keeps_its_reasons_open(rsp_modules):
+    rule = _rule("f13-redact-p")
+    act, legend = _act(rule["predicate"]), _legend(rule["predicate"])
+    assert "public" in act and "regular-clearance" in act
+    assert "..." not in legend and "regular-clearance Anthropic employees" in legend
+    assert "include but are not limited to" in legend
+    assert _unaries(rule["guard"]) == {"redaction_reason_listed"}
+
+
+@needs_lean
+def test_f23_names_the_prior_draft_baseline(rsp_modules):
+    predicate = _rule("f23-publish")["predicate"]
+    assert "prior-draft differences" in _act(predicate) and "Change Log" in _act(predicate)
+    assert "prior to or on its effective date" in _legend(predicate)
+    assert "the differences from the prior draft in the Change Log" in _legend(predicate)
+
+
+@needs_lean
+def test_f7_act_and_legend_carry_the_continuation_determinations(rsp_modules):
+    predicate = _rule("f7-publish")["predicate"]
+    assert "continuation determinations" in _act(predicate)
+    assert ("discussing the risks of our systems and how we have made determinations about whether to continue AI "
+            "development and deployment in light of the risks") in _legend(predicate)
+
+
+@needs_lean
+def test_f16_legend_keeps_one_or_more_and_the_act_picks_no_quantifier(rsp_modules):
+    predicate = _rule("f16-share-one-week")["predicate"]
+    act = _act(predicate)
+    assert "the external reviewers" in act
+    reviewers = act.split(" shared with ")[1].split(" within ")[0]
+    assert reviewers == "the external reviewers"  # no new quantifier: neither "at least one" nor "every"
+    assert ("with one or more external reviewers within one week of submitting the same report to our Board and "
+            "LTBT") in _legend(predicate)
+
+
+@needs_lean
+def test_f6_f10_f18_legends_carry_the_dropped_qualifiers(rsp_modules):
+    legends = {b: _legend(_rule(b)["predicate"]) for b in ("f6-maintain", "f10-candid-default", "f18-rso")}
+    assert "ambitious but achievable goals for improving our risk mitigations" in legends["f6-maintain"]
+    assert "raising the bar over time" in legends["f6-maintain"]
+    assert "how we see the risks of our systems and our state of preparedness for them" in legends[
+        "f10-candid-default"]
+    assert "a designated member of staff who is responsible for the implementation of this policy" in legends[
+        "f18-rso"]
+    spans = {u["id"]: u for u in json.loads((RSP / "spans.json").read_text())["units"]}
+    assert spans["s4-rso-duties"]["status"] == "LABELLED"
+
+
+def test_fix_3_items_keep_their_saved_answers():
+    """The saved run: every item these units move keeps its answer (section 29's K1, K14, D5, K17, K22a, T5)."""
+    saved = {r["id"]: r for r in json.loads((RSP / "results.json").read_text())["comparison"]}
+    assert all(saved[i]["status"] == "agree" for i in ("K1", "K7", "K14", "D5", "K17", "K22a", "K22b", "T5", "C4"))
+    assert {i: saved[i]["ve"] for i in ("T7", "C-doc")} == {"T7": "NONE", "C-doc": "NONE"}
+
+
+def test_regulated_predicates_stay_64_after_fix_3():
+    regulated = [n for n, e in rsp_vocabulary.environment()["vocabulary"]["predicates"].items() if "regulated" in e]
+    assert len(regulated) == 64
+    assert {"goal_miss_addressed", "executive_approved"}.isdisjoint(regulated)
