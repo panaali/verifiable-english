@@ -298,7 +298,8 @@ with `permitted` unspecified: in k9 (empty rule set) all three alternatives are 
 is Q9.
 
 **Integration status (2026-11-10, replacing the gap note of 2026-10-01).** What is built, by profile list. The gate
-on a list without wrapper profiles is `todayGate` (`lean/VE/Compose/Dispatch.lean:32-72`). The runners call
+on a list containing only legacy profiles and no wrapper profiles is `todayGate`
+(`lean/VE/Compose/Dispatch.lean:32-72`). The runners call
 `gateOf profileTable`; on legacy-profile lists `gate_legacy` (`Dispatch.lean:1307`) proves that `gateOf profileTable`
 agrees with `dispatch`, which strips the wrapper profiles, runs `todayGate` on the rest and then checks that each
 wrapper sits on that route (`Dispatch.lean:535-545`), so on a list with a wrapper it is not `todayGate`'s answer.
