@@ -877,7 +877,7 @@ def variants():
         "B-L2/RECSEC": item_result("RECSEC", CASES["B-L2"], variant=narrowed),
     }
     # Without N1: every rule from a "will" sentence is a prediction, not a norm.
-    prediction = (("drop", tuple(sorted(T.WILL_RULES))),)
+    prediction = (("drop", tuple(sorted(T.will_rules()))),)
     changed = []
     for item_id, case_id, kind in (("A-L2-EXT/DM", "A-L2-EXT", "DM"), ("A-L2-EXT/SEC", "A-L2-EXT", "SEC"),
                                    ("B-L2/RRA", "B-L2", "RRA"), ("B-L2/SC", "B-L2", "SC"),

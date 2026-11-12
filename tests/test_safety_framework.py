@@ -2,7 +2,7 @@
 or any change in what VE computes.
 
 The answer key is PLAN.md section 6, transcribed into answer-key.json before VE
-was run, and pinned here by hash. The five recorded disagreements are findings
+was run, and pinned here by hash. The recorded disagreements (RECORDED_DISAGREEMENTS) are findings
 documented in README.md and PLAN section 12; the key is never edited to match VE.
 `test_rerun_equals_committed_results` recomputes every result with VE.
 """
@@ -121,6 +121,10 @@ def test_metrics():
     # M7: a completed outcome depends on the default exactly at the silent or conflicted cells; the only
     # conflicted cells came from RS6 = same (F15 against a strict F16), which the text excludes.
     assert {k for k, v in RESULTS["default_sensitive"].items() if v["conflicted_choices"]} == set()
+    # PLAN 6.1: under the RS0 prediction reading (without N1) nothing is required, so every item is NONE
+    # (fsf-fidelity-fix review F1: B-L5/PRA was ALL while f17-hri was missing from the "will" rules).
+    without_n1 = {v["item"]: v["without_N1"] for v in variants["without_N1"]}
+    assert len(without_n1) == 8 and set(without_n1.values()) == {"NONE"}, without_n1
 
 
 def test_span_accounting_is_complete():
@@ -365,3 +369,45 @@ def test_a_possible_adjustment_is_no_exception_to_the_recommended_level():
         return run.describe(run.item_result("RECSEC", case))
     assert recsec() == recsec("like_public_models") == "SOME(RS3=Ds)"
     assert recsec("security_assessed_adequate") == "NONE"
+
+
+# --- fsf-fidelity-fix review: F1 (the "will" rules of RS0), F2 (a CHECKED unit that uses an open predicate) ---------
+
+def _quoted(text):
+    return " ".join(re.findall(r'"([^"]*)"', text))
+
+
+def test_every_rule_takes_its_rs0_status_from_its_source_feature():
+    """F1: the "will" rules (RS0) are derived from the feature each rule header names, with one table entry per
+    feature, so a rule added later cannot be left out (f17-hri was). A header quoting a "will" is a "will" rule, and
+    each "will" feature's entry quotes its "will"."""
+    blocks = translation.rule_blocks()
+    features = {translation.rule_feature(b) for b in blocks}
+    assert set(translation.WILL_FEATURES).isdisjoint(translation.NOT_WILL_FEATURES)
+    assert set(translation.WILL_FEATURES) | set(translation.NOT_WILL_FEATURES) == features
+    will = translation.will_rules()
+    assert will == {b.id for b in blocks if translation.rule_feature(b) in translation.WILL_FEATURES}
+    assert {"f6", "f8", "f14", "f17-pra", "f17-hri", "f17-add", "f18-yearly"} <= will
+    assert not will & {"f2", "f4-check-d", "f4-need-d", "f4-check-r", "f4-need-r", "f12-u", "f15-diff", "f19-default"}
+    assert all(re.search(r"\bwill\b", quote) for quote in translation.WILL_FEATURES.values())
+    assert {b.id for b in blocks if re.search(r"\bwill\b", _quoted(b.source))} <= will
+
+
+def test_a_rule_added_under_a_will_feature_is_a_will_rule_and_an_unclassified_feature_is_refused(monkeypatch):
+    blocks = translation.rule_blocks()
+    hri = next(b for b in blocks if b.id == "f17-hri")
+    monkeypatch.setattr(translation, "rule_blocks",
+                        lambda: blocks + [translation.Block("f17-later", hri.when, hri.source, hri.text)])
+    assert "f17-later" in translation.will_rules()
+    monkeypatch.setattr(translation, "rule_blocks",
+                        lambda: blocks + [translation.Block("f99-later", (), "F99, no feature", hri.text)])
+    with pytest.raises(SystemExit, match="F99"):
+        translation.will_rules()
+
+
+def test_every_will_quote_is_the_pinned_source_text():
+    if not build_document.DEFAULT_SOURCE.exists():
+        pytest.skip("the pinned source is not stored on this machine")
+    text = build_document.DEFAULT_SOURCE.read_text()
+    assert [f for f, quote in translation.WILL_FEATURES.items() if quote not in text] == []
+
