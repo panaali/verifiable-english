@@ -237,6 +237,7 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.EnglishStatement.lexical_fits
 #print axioms ResponseShape.Encoders.EnglishStatement.misplaced_fits
 #print axioms ResponseShape.Encoders.EnglishStatement.noSource_of_oneSpans
+#print axioms ResponseShape.Encoders.EnglishStatement.noSource_of_oneSpansOf
 #print axioms ResponseShape.Encoders.EnglishStatement.ok_fits
 #print axioms ResponseShape.Encoders.EnglishStatement.outcome_fits
 #print axioms ResponseShape.Encoders.EnglishStatement.request_identities

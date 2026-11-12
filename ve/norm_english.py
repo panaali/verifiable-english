@@ -274,6 +274,21 @@ def _parse_consequence(text, env, words):
 def parse_english(env, source, manifest=None, *, existing_names=(), _w1=False):
     if not _w1 and _soft_surface.SOFT_PROFILE in env.profiles:
         return _parse_soft_english(env, source, manifest, existing_names=existing_names)
+    # The shadow (docs/spec/en-e3-norm.md 2.4): with both flags set, Lean's `english.statement` reads the same text
+    # and the comparison is logged; Python's reading stays the answer, raised or returned as it stands.
+    log = statement_shadow_log() if type(source) is str else None
+    if log is None:
+        return _parse_w1(env, source, manifest, existing_names)
+    try:
+        document = _parse_w1(env, source, manifest, existing_names)
+    except (VEError, CheckerUnavailable) as exc:  # Python's refusal, or its own relay's unavailability
+        _shadow(log, env, source, exc)
+        raise
+    _shadow(log, env, source, [rule.to_dict()["norm"] for rule in document.rules])
+    return document
+
+
+def _parse_w1(env, source, manifest, existing_names):
     if type(source) is not str:
         raise SyntaxError("Norm English must be text")
     if manifest is not None:
@@ -416,6 +431,191 @@ def statement_record(source: str, python, lean) -> dict:
             {"status": lean["status"], "code": lean.get("code"),
              "nodes": [row["node"]["norm"] for row in lean.get("statements") or () if row["kind"] == "rule"]},
             "class": statement_class(python, lean)}
+
+
+STATEMENT_MODE = "english.statement"
+
+
+def statement_request(env, source: str) -> dict:
+    """The W1 path's request (2.4, Relay): `{id, environment, lexicon, kind: "blocks", source}`, with the lexicon
+    Python's reader selects."""
+    from .english_grammar import export
+    return {"id": STATEMENT_MODE, "environment": env.to_dict(), "lexicon": export(_words(env)), "kind": "blocks",
+            "source": source}
+
+
+def _on_boundary(raw: bytes, k: int) -> bool:
+    """Whether byte offset `k` of `raw` begins a UTF-8 character or ends the text."""
+    return k == len(raw) or raw[k] & 0xC0 != 0x80
+
+
+def _rule_problem(row: dict, targets: list, k: int, raw: bytes, env) -> str | None:
+    """R8 for one rule row of a `one` answer with `k` rule rows, whose span `statement_problem` has bound: its
+    `exception_to` entries name rules 1 … k; its node is named `rule-<number>` and its `over` names, in order, its
+    `exception_to` and then `targets`, the rules the precedence rows give it precedence over (`Norm.overOf`), so the
+    node and the rows name the same rules; its span begins with this rule's header (the rule number is the
+    request's); and its predicate is a regulated predicate of the request, and every predicate, constant and
+    variable its formulas name is the request's or in scope (R8: names are bound; typing them is Lean's)."""
+    norm, start = row["node"]["norm"], row["span"][0]
+    if not all(1 <= m <= k for m in row["exception_to"]):
+        return "an exception_to entry is not a rule of the answer"
+    over = [f"rule-{m}" for m in (*row["exception_to"], *targets)]
+    if norm["name"] != f"rule-{row['number']}" or norm["over"] != over:
+        return "a rule node's name or over is not its row's"
+    header = re.match(r"rule ([0-9]+)", raw[start:row["span"][1]][:32].decode(errors="replace").casefold())
+    if header is None or header[1] != str(row["number"]):
+        return f"the source at rule {row['number']}'s span is not its header"
+    decl = env.predicates.get(norm["predicate"])
+    if decl is None or decl.regulated is None:
+        return f"the predicate {norm['predicate']!r} is not a regulated predicate of the request"
+    try:
+        rule = NormDocument._decode({"norm": norm})
+    except VEError as exc:
+        return f"a rule node does not decode: {exc}"
+    predicates, constants, bound = _named((rule.guard, *rule.unless), len(decl.arguments))
+    if not (predicates <= env.predicates.keys() and constants <= env.constants.keys() and bound):
+        return "a rule node names a predicate, constant or variable the request does not have"
+    return None
+
+
+def _named(formulas, arity: int) -> tuple[set[str], set[str], bool]:
+    """The predicates and constants decoded formulas name, and whether every variable is bound: in scope of the
+    rule's `arity` arguments and the quantifiers above it (a node with a `sort` and a `body` binds one). Read
+    without recursion."""
+    from dataclasses import fields, is_dataclass
+    predicates, constants, bound, stack = set(), set(), True, [(f, arity) for f in formulas]
+    while stack:
+        node, depth = stack.pop()
+        if isinstance(node, ast.Const):
+            constants.add(node.name)
+        elif isinstance(node, ast.Var):
+            bound = bound and type(node.index) is int and 0 <= node.index < depth
+        elif isinstance(node, (tuple, list)):
+            stack.extend((item, depth) for item in node)
+        elif is_dataclass(node):
+            names = {f.name for f in fields(node)}
+            if "predicate" in names:
+                predicates.add(node.predicate)
+            inner = depth + 1 if {"sort", "body"} <= names else depth
+            stack.extend((getattr(node, f.name), inner if f.name == "body" else depth) for f in fields(node)
+                         if f.name != "predicate")
+    return predicates, constants, bound
+
+
+def statement_problem(row: dict, case: dict, env) -> str | None:
+    """Why `row`, a schema-checked `english.statement` row, is not Lean's answer to `case` read under `env` (R8;
+    docs/spec/en-e3-norm.md 2.4, Relay), or None: the echoed id and the identities; each status's members exactly
+    `statementFields`' and its code one of the status's, with Lean's class (`codes.json`); for `one`, the rule rows
+    numbered 1 … k in row order, every rule a row names in 1 … k, one span per rule row inside the source on UTF-8
+    character boundaries, the spans increasing and none overlapping the next (no layout check: where a block lies
+    is Lean's), all bound before any node is read, then each rule row's node and header (`_rule_problem`); for a
+    refusal, a sentence of the source exactly when its code names one, the spans inside the
+    source, two witness trees and the invalid-grammar fields as `english.read`'s relay binds them."""
+    from .backends.english_lean import _span, _trees, refusal_problem
+    from .english_grammar import actions_version, codes, grammar_id, lexicon_id, statement_codes
+    result, source = row["result"], case["source"]
+    raw = source.encode()
+    if row["id"] != case["id"]:
+        return "the answer does not echo the request's id"
+    expected = {"source_sha256": hashlib.sha256(raw).hexdigest(), "environment_id": env.environment_id,
+                "lexicon_id": lexicon_id(case["lexicon"]), "grammar_id": grammar_id(env.profiles),
+                "actions_version": actions_version()}
+    if result["identities"] != expected:
+        return "the identities are not the request's"
+    statuses, fields, unsentenced = statement_codes()
+    status = result["status"]
+    if status not in fields or status == "rendered":
+        return f"the status {status!r} is not an answer to kind blocks"
+    required, optional = fields[status]
+    members = result.keys() - {"status", "identities"}
+    if not set(required) <= members or members - set(required) - set(optional):
+        return f"a {status} answer with the members {sorted(members)}"
+    if status == "one":
+        rows = result["statements"]
+        rules = [r for r in rows if r["kind"] == "rule"]
+        k = len(rules)
+        if [r["number"] for r in rules] != list(range(1, k + 1)):
+            return "the rule rows are not numbered 1 to k in row order"
+        targets: dict[int, list[int]] = {}
+        for r in rows:
+            if r["kind"] == "precedence":
+                if not (1 <= r["rule"] <= k and 1 <= r["over"] <= k):
+                    return "a precedence row names a rule the answer does not have"
+                targets.setdefault(r["rule"], []).append(r["over"])
+        # Every span first: increasing and apart inside the source, they bound k by its length before any node is read.
+        spans = [r["span"] for r in rules]
+        if not all(start < stop <= len(raw) and _on_boundary(raw, start) and _on_boundary(raw, stop)
+                   for start, stop in spans):
+            return "a rule row's span is not a span of the source's characters"
+        if any(a[1] > b[0] for a, b in zip(spans, spans[1:])):
+            return "the rule rows' spans overlap or are out of order"
+        for r in rules:
+            if (problem := _rule_problem(r, targets.get(r["number"], []), k, raw, env)) is not None:
+                return problem
+        return None
+    code = result["code"]
+    if code not in statuses[status] or result["class"] != codes()[0].get(code):
+        return f"a {status} answer with the code {code!r} of class {result['class']!r}"
+    if status == "invalidGrammar":
+        return refusal_problem({k: v for k, v in result.items() if k != "identities"}, source)
+    if "sentence" in result and result["sentence"] >= source.count("."):
+        return "the sentence is not a sentence of the source"  # every sentence ends with a period
+    if status == "rejected" and ("sentence" in result) == (code in unsentenced):
+        return f"a {code} rejection {'names' if code in unsentenced else 'does not name'} a sentence"
+    if "span" in result and not _span(result["span"], source):
+        return "the span is not a span of the source"
+    if status == "unformalised" and not all(s["start"] < s["stop"] <= len(raw) for s in result["spans"]):
+        return "an unformalised span is not a span of the source"
+    if status == "many" and not _trees(result["witnesses"], 2):
+        return "a many answer does not carry two witness trees"
+    return None
+
+
+def statement_answer(row: dict, case: dict, env) -> dict:
+    """The result of `row`, Lean's `english.statement` row for `case`, once it has the generated shape
+    (`service_schema.check_row`) and `statement_problem` finds it bound to the request; `CheckerUnavailable`
+    otherwise. Every reader of the mode's answer reads it here."""
+    from .backends.service_schema import Invalid, check_row
+    try:
+        check_row(STATEMENT_MODE, row, case, 0)
+        if row.get("status") != "ok":
+            raise Invalid("the row is not an answer")
+        problem = statement_problem(row, case, env)
+    except Invalid as exc:
+        problem = f"it does not have the generated shape: {exc}"
+    except (KeyError, TypeError, AttributeError, IndexError, ValueError) as exc:
+        problem = f"it does not have the generated shape ({type(exc).__name__})"
+    if problem:
+        raise CheckerUnavailable(f"CheckerUnavailable: the Lean statement reader's answer is malformed: {problem}")
+    return row["result"]
+
+
+def read_statement(env, source: str) -> dict:
+    """Lean's `english.statement` answer to the W1 text `source` under `env`, through the relay, schema-checked and
+    bound (`statement_answer`). A relay failure, or a request Lean refuses (an error row, raised by the relay as
+    its code's class), is `CheckerUnavailable`: Lean did not read the text."""
+    from .backends import relay
+    case = statement_request(env, source)
+    try:
+        row = relay.decide(STATEMENT_MODE, [case])[0]
+    except VEError as exc:
+        raise CheckerUnavailable(f"CheckerUnavailable: Lean refused the request: {exc}") from exc
+    return statement_answer(row, case, env)
+
+
+def _shadow(log: Path, env, source: str, python) -> None:
+    """Ask Lean for the W1 text through the relay and append the shadow record to `log` (2.4, Shadow). A relay
+    failure, or a request Lean refuses, is a `CheckerUnavailable` answer; nothing here changes Python's answer."""
+    try:
+        try:
+            lean = read_statement(env, source)
+        except CheckerUnavailable as exc:
+            lean = exc
+        line = json.dumps(statement_record(source, python, lean), sort_keys=True, ensure_ascii=False)
+        with log.open("a", encoding="utf-8") as stream:
+            stream.write(line + "\n")
+    except (VEError, OSError):  # the request Python cannot form, or a log it cannot write: never the answer's
+        pass
 
 
 _SOFT_NOTE = re.compile(

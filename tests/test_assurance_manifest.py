@@ -595,6 +595,64 @@ def test_decoder_files_are_pinned_whole():
     assert not problems, "\n".join(problems)
 
 
+_UNREGISTERED = re.compile(r"\b(?:not (?:yet )?(?:registered|relayed)|unregistered|nothing relays)\b")
+
+
+def _named_modes(text):
+    """The service modes (the handshake's, lean/VE/Service/Protocol.lean) a text names: quoted, or bare when the
+    name has a dot or a hyphen (a bare `check` or `english` is an ordinary word)."""
+    from ve.backends.service_schema import MODES
+    named = set()
+    for mode in MODES:
+        quoted = re.search(rf"[`\"']{re.escape(mode)}[`\"']", text)
+        bare = ("." in mode or "-" in mode) and re.search(rf"(?<![\w.-]){re.escape(mode)}(?![\w-]|\.\w)", text)
+        if quoted or bare:
+            named.add(mode)
+    return named
+
+
+def _registered_called_unregistered(text):
+    """The registered modes a record calls unregistered or unrelayed: every mode it names when it says so."""
+    return sorted(_named_modes(text)) if _UNREGISTERED.search(text) else []
+
+
+def _strings(value):
+    if isinstance(value, str):
+        yield value
+    elif isinstance(value, dict):
+        for item in value.values():
+            yield from _strings(item)
+    elif isinstance(value, list):
+        for item in value:
+            yield from _strings(item)
+
+
+@pytest.mark.parametrize("text", [
+    # en-e3a-cutback F1: the two records that called the registered, relayed `english.statement` unregistered.
+    "en-e3a (docs/spec/en-e3-norm.md 2.3, EN-2): english.statement kind blocks: `answerWith` writes the answer; "
+    "not registered until en-e3ab and nothing relays to it yet; the full file is pinned conservatively",
+    "every answer of `english.statement` is the same bytes, and the mode is still not registered (en-e3ab).",
+])
+def test_the_registration_lint_catches_a_registered_mode_called_unregistered(text):
+    assert _registered_called_unregistered(text) == ["english.statement"]
+
+
+def test_no_manifest_record_calls_a_registered_mode_unregistered():
+    """The manifest is a live record: no string in it may say a mode the service registers is unregistered or
+    unrelayed (en-e3a-cutback F1: Norm/Run.lean's reason kept "not registered until en-e3ab" after en-e3b)."""
+    bad = [(names, text[:160]) for text in _strings(MANIFEST) if (names := _registered_called_unregistered(text))]
+    assert not bad, bad
+
+
+@pytest.mark.parametrize("record", ["docs/english-lean/en-e3a-cutback/DELTA.md",
+                                    "docs/english-lean/en-e3a-cutback/REPORT.md"])
+def test_en_e3a_cutback_records_do_not_call_english_statement_unregistered(record):
+    """en-e3a-cutback F1: the item's records were written after en-e3b registered and relayed the mode."""
+    paragraphs = re.split(r"\n\s*\n|\n\|", (ROOT / record).read_text())
+    bad = [p[:160] for p in paragraphs if _registered_called_unregistered(p)]
+    assert not bad, bad
+
+
 def test_full_file_decoder_pins_cover_the_current_file():
     """A refreshed hash must not leave newly added decoder lines outside a claimed full-file range."""
     for entry in MANIFEST["lean_decoders"]["files"]:
