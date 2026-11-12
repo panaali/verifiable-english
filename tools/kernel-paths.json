@@ -293,19 +293,27 @@
     "VE.Time.Document.extension"
    ],
    "subject": [
-    "VE.Time.Wire.checkW6Certificate",
-    "VE.Time.evalB",
-    "VE.Time.refutesB",
-    "VE.Time.Document.admitDocument"
+    "VE.Time.Wire.runCase",
+    "VE.Time.Document.extension"
    ],
    "theorems": [
-    "VE.Time.Wire.checkW6Certificate_sound",
-    "VE.Time.Wire.evalB_sorted_sound",
-    "VE.Time.Wire.refutesB_sorted_sound",
-    "VE.Time.Document.admit_quantity_report_sound"
+    "VE.Time.Wire.quantity_admission_wire_sound",
+    "VE.Time.Wire.quantity_countermodel_wire_sound",
+    "VE.Time.Wire.quantity_certificate_wire_sound",
+    "VE.Time.Wire.quantity_document_wire_sound",
+    "VE.Time.Wire.extension_document_sound"
    ],
    "delegates": [],
-   "nonverdict": []
+   "nonverdict": [
+    {
+     "name": "VE.Time.Wire.runCount",
+     "why": "answers the `count` kind with the canonical counting expansion of a formula (an `expansion` field); it states no truth value, entailment or admission"
+    },
+    {
+     "name": "VE.Time.Wire.runConversion",
+     "why": "answers the conversion kinds `day`, `civil`, `lower` and `render` with a day number, an ISO date, a lowered coordinate or a rendered amount; none is a verdict"
+    }
+   ]
   },
   {
    "name": "rights",
