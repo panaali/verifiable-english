@@ -447,6 +447,7 @@ module VE.Judgments.Scan
 module VE.Judgments.Status
 module VE.Judgments.Undeclared
 module VE.Kernel.Carry
+module VE.Kernel.CarryChecks
 module VE.Kit.Except
 module VE.Layout.Anchors
 module VE.Layout.Discourse
