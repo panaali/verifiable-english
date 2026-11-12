@@ -34,7 +34,7 @@ texts not chosen. The PDF states no licence, so it is not committed here.
 | File | Contents |
 |---|---|
 | [rules.d1.ve](rules.d1.ve) | 44 VE rules: one per commitment and per reading of it, each with the sentence it translates |
-| [facts.d1.ve](facts.d1.ve) | 43 VE premises: the level tables, the closure sentences, the Glossary definitions and one bridge |
+| [facts.d1.ve](facts.d1.ve) | 37 VE premises: the level tables, the closure sentences and the Glossary definitions; and N1's own bridge |
 | [vocabulary.py](vocabulary.py), [environment.d1.json](environment.d1.json) | the vocabulary; each predicate's description is its legend |
 | [cases.json](cases.json), [answer-key.json](answer-key.json) | the 85 cases and the 262 answers of PLAN sections 5 and 6, transcribed before VE ran |
 | [run.py](run.py), [translation.py](translation.py), [severity_and_dates.py](severity_and_dates.py) | the harness that runs VE on every case and compares with the key |
@@ -103,40 +103,33 @@ From [gaps.json](../../docs/usecases/safety-framework/fsf-r1/gaps.json). A unit 
 
 **How these answers are computed today.** Lean elaborates the soft rules and replays every certificate. Python builds the rule formulas and evaluates them on each case, so a selection, a completed outcome or a CONFLICT is Python's answer. See [who computes the keyed answers](../../docs/usecases/keyed-answers.md) for the answer-by-answer table (work item `kb-10`).
 
-VE agrees with the answer key on **257 of 262** items.
+VE agrees with the answer key on **260 of 262** items. The two others are key cells that PLAN section 12 (item 23)
+corrects to NONE, and VE agrees with each correction.
 
 | Family | What it asks | Agreement |
 |---|---|---|
-| A | what each level requires, for each of five activities | 157 / 160 |
+| A | what each level requires, for each of five activities | 160 / 160 |
 | B | what each level requires whatever the activity | 40 / 40 |
 | K | what the process triggers require | 18 / 18 |
 | R | when the text deems a model's risk acceptable | 11 / 11 |
-| C | conflicts | 4 / 6 |
+| C | conflicts | 4 / 6 (6 / 6 with the section-12 entries) |
 | G | gaps | 9 / 9 |
 | N | commitments that can never apply | 3 / 3 |
 | S | severity and causation | 12 / 12 |
 | D | dates | 3 / 3 |
 
-### The five disagreements
+### The two disagreements (fsf-fidelity-fix, 2026-11-12)
 
-Each disagreement is a finding. Three show an error in a note of the answer key. The other two show that the key's
-conflict answers rest on a narrowing that the results review withdrew.
+Before the fidelity fix VE disagreed on five items (A-L5/L6/L7-INT/DM, C1 and C-doc). The uc-audit of 2026-10-29
+found 18 of 47 translation units unfaithful; the fix and every answer it moved are in
+[REPORT.md](../../docs/usecases/safety-framework/fsf-fidelity-fix/REPORT.md).
 
-1. **A-L5-INT, A-L6-INT and A-L7-INT (DM).** Both VE and the key say that deployment mitigations are not required
-   for an ordinary internal deployment at these levels. The key adds that, under one reading, a rule releases them
-   ("need not"). That note is wrong. Bullets 3 and 4 of section 1.3.5 say "not further development"; they do not
-   mention internal deployment. So no rule speaks about mitigations for an ordinary internal deployment at the ML
-   R&D levels: the text is silent there. The independent Python reading ([reference.py](reference.py)) finds the
-   same.
-2. **C1 and C-doc.** The key says that the recommended security level (F16) never conflicts with the
-   insider-misuse sentence (F15). It was written under narrowing N2, which read the field's "should" as a default
-   rule only. The adjustment cases of 2.2 fit a strict rule with stated exceptions just as well, so the results
-   review withdrew N2 and the translation now keeps both forces (reading set RS3force). Under the strict force,
-   when both sentences name one act (RS6 = same), they conflict: Security level 2+ includes the insider-threat
-   measures that F15 says need not be added. VE finds a witness that satisfies every premise: CBRN uplift level 1,
-   further development. So C1 is SOME(RS3 = Ds, RS3force = strict, RS6 = same), and C-doc adds this choice to C3's.
-   With N2 restored, C1 is conflict-free at every choice (`variants.with_N2` in [results.json](results.json)). The
-   independent Python reading finds the same.
+1. **C3 and C-doc.** The key says SOME(G & rel & RS9 = same). Footnote 5 excludes RS9 = same: the deployment
+   mitigations for the ML R&D CCLs "are different than those for the misuse CCLs". So the key's condition names no
+   admissible choice, and the harness counts it as a disagreement rather than as a vacuous NONE. Both auditors
+   found the right answer is NONE; PLAN section 12 records it (the key file is unchanged), and VE answers NONE.
+2. **C1** now agrees with the key's NONE: F15 releases mitigations against insider misuse, and F16 recommends
+   security measures for the weights, two acts (RS6 = same is excluded, R14).
 
 The first run also missed K2-L1, K2-L5 and G3, which ask about an alert threshold for a Tracked Capability Level.
 The translation had read "For CCLs, we define alert thresholds" (1.3.2) as a closure, so that only a CCL could have
@@ -155,17 +148,17 @@ has more than one reading of it. The table gives each commitment in plain Englis
 |---|---|---|---|
 | F2 (1.3.2) | A critical capability assessment comes before the first external deployment of a new frontier model. | OPEN | "frontier model" is an open term |
 | F3 (footnote 4) | That assessment is not needed for a low-risk external deployment that the governance function has found acceptable. | OPEN | two readings: an exception, or "may" in the sense of "might" |
-| F4 (1.3.2) | A subsequent version is checked for substantial modification; a further assessment may be required. | OPEN | two readings of what the "if" attaches to |
+| F4 (1.3.2) | A subsequent version is checked for substantial modification and for whether a further assessment is required; a further assessment may be required. | OPEN | two readings of what the "if" attaches to |
 | F5 (1.3.2) | Material capability change assessments follow each completed post-training run. | CHECKED | |
 | F6 (1.3.3) | Reaching an alert threshold for a CCL triggers a proximity assessment and a risk analysis. | OPEN | reaching a threshold is an open term |
 | F7 (1.3.4) | A model at a TCL or CCL gets a residual risk assessment; at a CCL it is informed by a safety case. | OPEN | reaching a level is an open term |
 | F8 (1.3.5) | A model at no level is deemed acceptable. | OPEN | reaching a level is an open term |
-| F9 to F11 (1.3.5) | A model at a level is deemed acceptable when the stated mitigation and security conditions hold. | OPEN | three reading sets: sufficient or gate; scope or release; one act or two |
+| F9 to F11 (1.3.5) | A model at a level is deemed acceptable when the stated mitigation and security conditions hold. | OPEN | two reading sets: sufficient or gate; scope or release (RS9 = same excluded) |
 | F12, F13 (2.1.2, 3.1.2) | A deployment takes place only after the governance function finds its residual risk acceptable. | OPEN | two readings: within the section's process, or for every model |
 | F14 (2.1.2, 3.1.2) | A material update to a safety case goes to the governance function for review. | CHECKED | |
-| F15 (2.2) | Mitigations against insider misuse beyond the baseline controls are not required. | OPEN | two readings: the same act as Security Level 2+'s insider measures, or a different one |
+| F15 (2.2) | Mitigations against insider misuse beyond the baseline controls are not required. | CHECKED | one reading: insider misuse is not SL2+'s insider threat to the weights (RS6 = same excluded) |
 | F16 (2.2, 3.2.2) | The recommended security level should be applied. | OPEN | two readings: a recommendation to the field only, or a "should" that also binds the developer, strictly or as a default |
-| F17 (3.2.1) | At the stealth TCL, periodic misalignment assessments run, and safeguards are added when they are needed. | OPEN | "periodic" and reaching a level are open terms |
+| F17 (3.2.1) | At the stealth TCL, periodic misalignment assessments run and account for high-risk internal deployments, and safeguards are added when they are needed. | OPEN | "periodic" and reaching a level are open terms |
 | F18 (5.1) | The framework is reviewed at least once a year. | CHECKED | |
 | F18 (5.1) | It is reviewed more often when there are reasonable grounds. | OPEN | "reasonable grounds" is an open term |
 | F19 (5.2) | Information is shared with government authorities when a CCL poses an unmitigated public-safety risk. | OPEN | two readings of "we aim to" |
@@ -178,32 +171,13 @@ and its reason.
 
 ## Conflicts in the translation
 
-**Two conflicts between readings of the translation; neither is a conflict in the source.** Each needs its own
-choice of readings. Under R14 (DRI-RULINGS.md), an independent source check on a second model
-([fidelity-check.md](../../docs/usecases/safety-framework/fsf-r1/fidelity-check.md)) classified both as
-translation artefacts on 2026-10-18. Until then this section presented them as findings about the source.
-
-- **C3.** Rule F9 says that deployment mitigations need not be in place for an internal deployment of a misuse
-  model. Rule F10 says that they must be in place for a high-risk internal deployment of an ML R&D model. A model
-  that has reached both a misuse level and an ML R&D level, proposed for high-risk internal deployment, falls under
-  both. This happens only when three readings hold together: the conditions are a gate (RS1 = G), "not internal
-  deployment" is a release (RS8 = rel), and the two bullets name one act (RS9 = same).
-- **C1.** The recommended security level (F16) against the insider-misuse sentence (F15). Security level 2+ includes
-  measures against insider threats, and F15 says that mitigations against insiders beyond the baseline are not
-  required. This happens only when the recommendation binds the developer (RS3 = Ds) with strict force (RS3force =
-  strict), and both sentences name one act (RS6 = same). Under the default force, the strict "not required"
-  overrides the default rule without a conflict.
-
-VE finds a witness situation that satisfies every premise for each. These are the only conflicts in the whole
-document (C-doc).
-
-The source check traces both to a reading that merges two acts the source words differently:
-
-- C3: RS9 = same merges "residual risk of harm" (bullet 2) with "residual risk of severe harm" (bullet 3). Each
-  bullet's "This is required only for ..." sentence then releases or requires the other bullet's condition.
-- C1: RS6 = same merges mitigations against "insider misuse" with Security Level 2+'s measures against "insider
-  threats". RS3 = Ds with strict force also reads "recommend ... the field of frontier AI should apply" as the
-  developer's "must".
+**No conflict.** Until fsf-fidelity-fix the translation produced two conflicts (C1, C3), each only under a reading
+that merges two acts the source words differently: RS9 = same (bullet 2's "residual risk of harm" with bullet 3's
+"residual risk of *severe* harm") and RS6 = same (mitigations against "insider misuse" with Security Level 2+'s
+measures against "insider threats"). An independent source check classified both as translation artefacts under R14
+on 2026-10-18, and both uc-auditors found the readings excluded by the text on 2026-10-29. The DRI's decision of
+2026-10-29 (uc-audit2 item 1) removed both readings and the rules only they selected; PLAN section 12 lists them
+under "Excluded readings". The whole document (C-doc) is now CONFLICT-FREE at every choice.
 
 **No conflict in the other three pairs.**
 
@@ -227,7 +201,7 @@ The source check traces both to a reading that merges two acts the source words 
 | G9 | the governance function does not find a deployment acceptable | covered for a model at a level; for a model at no level, only if F12 covers every model |
 
 Family A adds more gaps. Of the 192 items whose answer is a selection, 146 are silent under at least one choice of
-readings, and 73 are silent under every choice. At exactly those choices, the outcome VE completes depends on the
+readings, and 70 are silent under every choice. At exactly those choices, the outcome VE completes depends on the
 default (metric M7). The text never says what happens when a stated condition fails: R3 and R7 show that a failed
 condition makes no rule conclude "acceptable", but no rule says "not acceptable" either.
 
@@ -256,15 +230,17 @@ condition makes no rule conclude "acceptable", but no rule says "not acceptable"
   deployment is high-risk or low-risk; "frontier model"; "periodic"; "reasonable grounds". The text names a
   decider for most of them ("we" or the governance function) and gives no criteria, so VE never decides them. Every
   answer in families A, B, K and R is "required, given the stated level and findings".
-- **18 reading sets.** On Oct 1, VE's own readings query returned UNKNOWN for norm readings, as the plan expected.
-  Since fsf-r1, seven sets carry content and VE separates and checks them itself; the other eleven are pending (see
-  "Re-measured on 2026-10-18"). The ALL, SOME and NONE answers still come from the harness, which builds one
+- **16 reading sets.** On Oct 1, VE's own readings query returned UNKNOWN for norm readings, as the plan expected.
+  Since fsf-r1, sets that carry content are separated and checked by VE itself (see "Re-measured on 2026-10-18").
+  fsf-fidelity-fix removed the sets of RS6 and RS9 (one reading each is left), so 16 sets are placed: five carry
+  content and eleven are pending. The ALL, SOME and NONE answers still come from the harness, which builds one
   document per choice of readings.
 - **Order of events.** VE has no deadlines inside a process, so "prior to", "after" and "upon completion" are read
   as conditions that already hold.
 - **External standards.** The RAND security levels, SAIF and the cited papers are pointers, not content.
-- **One bridge.** No level belongs to two of the four domains. The text implies this by its structure but does not
-  state it, so the premise is marked as an assumption.
+- **One bridge, N1's own.** That a cyber or manipulation level is neither a CBRN nor an ML R&D level is not stated
+  by the text. Since fsf-fidelity-fix it is no premise of the document: N1's certificate alone uses it, as an
+  assumption of that item.
 
 ## Span accounting
 
@@ -279,23 +255,26 @@ on Oct 18 every unit has the same status (the table under "Re-measured on 2026-1
 | UNFORMALISED | 6,865 | 12.6% |
 
 The CHECKED share includes 1,108 bytes that the severity and date documents check. Within the main document alone,
-3,487 bytes are CHECKED. The plan expected less than 10%. Most of the text is exposition, examples, definitions and
+3,487 bytes are CHECKED. The plan expected less than 10%. After fsf-fidelity-fix: CHECKED 4,558 (3,450 in the main
+document), OPEN 7,439, LABELLED 35,511, UNFORMALISED 6,865; three units changed status (s131-four-domains CHECKED
+to LABELLED, s22-insider-not-required OPEN to CHECKED, s321-internal LABELLED to OPEN), see
+[coverage.json](coverage.json). Most of the text is exposition, examples, definitions and
 page layout. The commitments are OPEN because their conditions use open terms.
 
 ## Metrics
 
 | Metric | Result | Expected |
 |---|---|---|
-| M1 agreement with the key | 257/262 | 262/262, every miss explained |
+| M1 agreement with the key | 260/262; 262/262 with the PLAN 12 entries for C3 and C-doc | 262/262, every miss explained |
 | M2 reading sets | 14 sets (13 in the main document, RS10 in the date document), placed on 18 units; at most 16 choices per item, and 64 for C-doc, the union over every act. Oct 1: VE's own readings query is UNKNOWN on every norm set. Oct 18: 7 of the 18 placed sets carry content, and VE answers CONFLICT-FREE with a model on each part document; the whole document stays UNKNOWN | as found |
-| M3 CHECKED share | 8.5% | under 10% |
+| M3 CHECKED share | 8.4% (8.5% before fsf-fidelity-fix) | under 10% |
 | M4 how each answer is backed | each per-choice answer rests on a case model that VE validated, a replayed certificate, or the Lean risk route | reported |
 | M5 one-off identifiers | 0 | 0 |
-| M6 untraced premises or rules | 0; one bridge marked as an assumption | 0 |
-| M7 items whose completed outcome depends on the default | 146, exactly at the silent cells and at the C1 conflict cell (B-L2 to B-L4, RECSEC) | the silent items |
+| M6 untraced premises or rules | 0; one bridge, an assumption of N1 only | 0 |
+| M7 items whose completed outcome depends on the default | 146, exactly at the silent cells (no conflicted cell since fsf-fidelity-fix) | the silent items |
 | M8 evidence | every certificate is replayed; conflict witnesses satisfy every premise; the severity answers come from the Lean risk route | reported |
 | M9 seeded mutants detected | 6/6 (m4 and m6 differ from the plan's expectation, PLAN section 12) | 6/6 |
-| M10 cost | 85 cases, 108 documents, 658 case models, 2,054 prover calls, a few minutes | reported |
+| M10 cost | 85 cases, 87 documents, 301 case models, 1,732 prover calls, a few minutes | reported |
 
 ## Deviations
 

@@ -507,11 +507,8 @@
     9013,
     9142
    ],
-   "kind": "asserted",
-   "premises": [
-    "bridge-one-domain"
-   ],
-   "status": "CHECKED"
+   "kind": "exposition",
+   "status": "LABELLED"
   },
   {
    "id": "s132-heading",
@@ -1035,8 +1032,6 @@
     18739
    ],
    "kind": "norm",
-   "reading_set": "rs9_bullet3",
-   "reading_content": true,
    "open_terms": [
     "ot2_residual_risk_acceptable"
    ],
@@ -1490,9 +1485,8 @@
     29622
    ],
    "kind": "norm",
-   "reading_set": "rs6_insider",
-   "reading_content": true,
-   "status": "OPEN"
+   "rule": "f15-diff",
+   "status": "CHECKED"
   },
   {
    "id": "s22-heading",
@@ -2065,8 +2059,13 @@
     40151,
     40326
    ],
-   "kind": "explanation",
-   "status": "LABELLED"
+   "kind": "norm",
+   "rule": "f17-hri",
+   "open_terms": [
+    "ot1_level_reached",
+    "ot7_high_risk_internal"
+   ],
+   "status": "OPEN"
   },
   {
    "id": "s321-safeguards",

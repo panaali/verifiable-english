@@ -652,12 +652,12 @@
    "ve": "NONE"
   },
   {
-   "agree": false,
+   "agree": true,
    "id": "A-L5-INT/DM",
    "key": "NONE",
    "key_rel": "SOME(G & rel)",
    "ve": "NONE",
-   "ve_rel": "NONE"
+   "ve_rel": "SOME(RS1=G & RS8=rel)"
   },
   {
    "agree": true,
@@ -776,12 +776,12 @@
    "ve": "NONE"
   },
   {
-   "agree": false,
+   "agree": true,
    "id": "A-L6-INT/DM",
    "key": "NONE",
    "key_rel": "SOME(G & rel)",
    "ve": "NONE",
-   "ve_rel": "NONE"
+   "ve_rel": "SOME(RS1=G & RS8=rel)"
   },
   {
    "agree": true,
@@ -900,12 +900,12 @@
    "ve": "NONE"
   },
   {
-   "agree": false,
+   "agree": true,
    "id": "A-L7-INT/DM",
    "key": "NONE",
    "key_rel": "SOME(G & rel)",
    "ve": "NONE",
-   "ve_rel": "NONE"
+   "ve_rel": "SOME(RS1=G & RS8=rel)"
   },
   {
    "agree": true,
@@ -1412,10 +1412,15 @@
    "ve": "ALL"
   },
   {
-   "agree": false,
+   "agree": true,
+   "deviation": {
+    "agree": true,
+    "answer": "NONE",
+    "plan_12": 23
+   },
    "id": "C1",
    "key": "NONE",
-   "ve": "SOME(RS3=Ds & RS3force=strict & RS6=same)"
+   "ve": "NONE"
   },
   {
    "agree": true,
@@ -1424,10 +1429,15 @@
    "ve": "NONE"
   },
   {
-   "agree": true,
+   "agree": false,
+   "deviation": {
+    "agree": true,
+    "answer": "NONE",
+    "plan_12": 23
+   },
    "id": "C3",
    "key": "SOME(G & rel & RS9=same)",
-   "ve": "SOME(RS1=G & RS8=rel & RS9=same)"
+   "ve": "NONE"
   },
   {
    "agree": true,
@@ -1443,9 +1453,14 @@
   },
   {
    "agree": false,
+   "deviation": {
+    "agree": true,
+    "answer": "NONE",
+    "plan_12": 23
+   },
    "id": "C-doc",
    "key": "SOME(G & rel & RS9=same)",
-   "ve": "SOME(RS1=G & RS8=rel & RS9=same | RS3=Ds & RS3force=strict & RS6=same)"
+   "ve": "NONE"
   },
   {
    "agree": true,
@@ -1625,11 +1640,11 @@
   }
  ],
  "cost": {
-  "case_models": 658,
+  "case_models": 301,
   "cases": 85,
-  "documents_built": 108,
-  "premises": 43,
-  "prover_calls": 2054,
+  "documents_built": 87,
+  "premises": 37,
+  "prover_calls": 1732,
   "rule_candidates": 44
  },
  "d2_d3": {
@@ -1776,10 +1791,10 @@
    "sensitive_choices": 2
   },
   "A-L0-DEV/DM": {
-   "choices": 8,
+   "choices": 4,
    "conflicted_choices": [],
    "mismatch": [],
-   "sensitive_choices": 8
+   "sensitive_choices": 4
   },
   "A-L0-DEV/SEC": {
    "choices": 2,
@@ -1794,10 +1809,10 @@
    "sensitive_choices": 0
   },
   "A-L0-EXT/DM": {
-   "choices": 8,
+   "choices": 4,
    "conflicted_choices": [],
    "mismatch": [],
-   "sensitive_choices": 8
+   "sensitive_choices": 4
   },
   "A-L0-EXT/SEC": {
    "choices": 2,
@@ -1812,10 +1827,10 @@
    "sensitive_choices": 2
   },
   "A-L0-HRI/DM": {
-   "choices": 8,
+   "choices": 4,
    "conflicted_choices": [],
    "mismatch": [],
-   "sensitive_choices": 8
+   "sensitive_choices": 4
   },
   "A-L0-HRI/SEC": {
    "choices": 2,
@@ -1830,10 +1845,10 @@
    "sensitive_choices": 2
   },
   "A-L0-INT/DM": {
-   "choices": 8,
+   "choices": 4,
    "conflicted_choices": [],
    "mismatch": [],
-   "sensitive_choices": 8
+   "sensitive_choices": 4
   },
   "A-L0-INT/SEC": {
    "choices": 2,
@@ -1848,10 +1863,10 @@
    "sensitive_choices": 0
   },
   "A-L0-LRX/DM": {
-   "choices": 8,
+   "choices": 4,
    "conflicted_choices": [],
    "mismatch": [],
-   "sensitive_choices": 8
+   "sensitive_choices": 4
   },
   "A-L0-LRX/SEC": {
    "choices": 2,
@@ -1866,10 +1881,10 @@
    "sensitive_choices": 2
   },
   "A-L1-DEV/DM": {
-   "choices": 8,
+   "choices": 4,
    "conflicted_choices": [],
    "mismatch": [],
-   "sensitive_choices": 6
+   "sensitive_choices": 3
   },
   "A-L1-DEV/SEC": {
    "choices": 2,
@@ -1884,10 +1899,10 @@
    "sensitive_choices": 0
   },
   "A-L1-EXT/DM": {
-   "choices": 8,
+   "choices": 4,
    "conflicted_choices": [],
    "mismatch": [],
-   "sensitive_choices": 4
+   "sensitive_choices": 2
   },
   "A-L1-EXT/SEC": {
    "choices": 2,
@@ -1902,10 +1917,10 @@
    "sensitive_choices": 2
   },
   "A-L1-HRI/DM": {
-   "choices": 8,
+   "choices": 4,
    "conflicted_choices": [],
    "mismatch": [],
-   "sensitive_choices": 6
+   "sensitive_choices": 3
   },
   "A-L1-HRI/SEC": {
    "choices": 2,
@@ -1920,10 +1935,10 @@
    "sensitive_choices": 2
   },
   "A-L1-INT/DM": {
-   "choices": 8,
+   "choices": 4,
    "conflicted_choices": [],
    "mismatch": [],
-   "sensitive_choices": 6
+   "sensitive_choices": 3
   },
   "A-L1-INT/SEC": {
    "choices": 2,
@@ -1938,10 +1953,10 @@
    "sensitive_choices": 0
   },
   "A-L1-LRX/DM": {
-   "choices": 8,
+   "choices": 4,
    "conflicted_choices": [],
    "mismatch": [],
-   "sensitive_choices": 4
+   "sensitive_choices": 2
   },
   "A-L1-LRX/SEC": {
    "choices": 2,
@@ -1956,10 +1971,10 @@
    "sensitive_choices": 2
   },
   "A-L2-DEV/DM": {
-   "choices": 8,
+   "choices": 4,
    "conflicted_choices": [],
    "mismatch": [],
-   "sensitive_choices": 6
+   "sensitive_choices": 3
   },
   "A-L2-DEV/SEC": {
    "choices": 2,
@@ -1974,10 +1989,10 @@
    "sensitive_choices": 0
   },
   "A-L2-EXT/DM": {
-   "choices": 8,
+   "choices": 4,
    "conflicted_choices": [],
    "mismatch": [],
-   "sensitive_choices": 4
+   "sensitive_choices": 2
   },
   "A-L2-EXT/SEC": {
    "choices": 2,
@@ -1992,10 +2007,10 @@
    "sensitive_choices": 2
   },
   "A-L2-HRI/DM": {
-   "choices": 8,
+   "choices": 4,
    "conflicted_choices": [],
    "mismatch": [],
-   "sensitive_choices": 6
+   "sensitive_choices": 3
   },
   "A-L2-HRI/SEC": {
    "choices": 2,
@@ -2010,10 +2025,10 @@
    "sensitive_choices": 2
   },
   "A-L2-INT/DM": {
-   "choices": 8,
+   "choices": 4,
    "conflicted_choices": [],
    "mismatch": [],
-   "sensitive_choices": 6
+   "sensitive_choices": 3
   },
   "A-L2-INT/SEC": {
    "choices": 2,
@@ -2028,10 +2043,10 @@
    "sensitive_choices": 0
   },
   "A-L2-LRX/DM": {
-   "choices": 8,
+   "choices": 4,
    "conflicted_choices": [],
    "mismatch": [],
-   "sensitive_choices": 4
+   "sensitive_choices": 2
   },
   "A-L2-LRX/SEC": {
    "choices": 2,
@@ -2046,10 +2061,10 @@
    "sensitive_choices": 2
   },
   "A-L3-DEV/DM": {
-   "choices": 8,
+   "choices": 4,
    "conflicted_choices": [],
    "mismatch": [],
-   "sensitive_choices": 6
+   "sensitive_choices": 3
   },
   "A-L3-DEV/SEC": {
    "choices": 2,
@@ -2064,10 +2079,10 @@
    "sensitive_choices": 0
   },
   "A-L3-EXT/DM": {
-   "choices": 8,
+   "choices": 4,
    "conflicted_choices": [],
    "mismatch": [],
-   "sensitive_choices": 4
+   "sensitive_choices": 2
   },
   "A-L3-EXT/SEC": {
    "choices": 2,
@@ -2082,10 +2097,10 @@
    "sensitive_choices": 2
   },
   "A-L3-HRI/DM": {
-   "choices": 8,
+   "choices": 4,
    "conflicted_choices": [],
    "mismatch": [],
-   "sensitive_choices": 6
+   "sensitive_choices": 3
   },
   "A-L3-HRI/SEC": {
    "choices": 2,
@@ -2100,10 +2115,10 @@
    "sensitive_choices": 2
   },
   "A-L3-INT/DM": {
-   "choices": 8,
+   "choices": 4,
    "conflicted_choices": [],
    "mismatch": [],
-   "sensitive_choices": 6
+   "sensitive_choices": 3
   },
   "A-L3-INT/SEC": {
    "choices": 2,
@@ -2118,10 +2133,10 @@
    "sensitive_choices": 0
   },
   "A-L3-LRX/DM": {
-   "choices": 8,
+   "choices": 4,
    "conflicted_choices": [],
    "mismatch": [],
-   "sensitive_choices": 4
+   "sensitive_choices": 2
   },
   "A-L3-LRX/SEC": {
    "choices": 2,
@@ -2136,10 +2151,10 @@
    "sensitive_choices": 2
   },
   "A-L4-DEV/DM": {
-   "choices": 8,
+   "choices": 4,
    "conflicted_choices": [],
    "mismatch": [],
-   "sensitive_choices": 6
+   "sensitive_choices": 3
   },
   "A-L4-DEV/SEC": {
    "choices": 2,
@@ -2154,10 +2169,10 @@
    "sensitive_choices": 0
   },
   "A-L4-EXT/DM": {
-   "choices": 8,
+   "choices": 4,
    "conflicted_choices": [],
    "mismatch": [],
-   "sensitive_choices": 4
+   "sensitive_choices": 2
   },
   "A-L4-EXT/SEC": {
    "choices": 2,
@@ -2172,10 +2187,10 @@
    "sensitive_choices": 2
   },
   "A-L4-HRI/DM": {
-   "choices": 8,
+   "choices": 4,
    "conflicted_choices": [],
    "mismatch": [],
-   "sensitive_choices": 6
+   "sensitive_choices": 3
   },
   "A-L4-HRI/SEC": {
    "choices": 2,
@@ -2190,10 +2205,10 @@
    "sensitive_choices": 2
   },
   "A-L4-INT/DM": {
-   "choices": 8,
+   "choices": 4,
    "conflicted_choices": [],
    "mismatch": [],
-   "sensitive_choices": 6
+   "sensitive_choices": 3
   },
   "A-L4-INT/SEC": {
    "choices": 2,
@@ -2208,10 +2223,10 @@
    "sensitive_choices": 0
   },
   "A-L4-LRX/DM": {
-   "choices": 8,
+   "choices": 4,
    "conflicted_choices": [],
    "mismatch": [],
-   "sensitive_choices": 4
+   "sensitive_choices": 2
   },
   "A-L4-LRX/SEC": {
    "choices": 2,
@@ -2226,10 +2241,10 @@
    "sensitive_choices": 2
   },
   "A-L5-DEV/DM": {
-   "choices": 8,
+   "choices": 4,
    "conflicted_choices": [],
    "mismatch": [],
-   "sensitive_choices": 6
+   "sensitive_choices": 3
   },
   "A-L5-DEV/SEC": {
    "choices": 2,
@@ -2244,10 +2259,10 @@
    "sensitive_choices": 0
   },
   "A-L5-EXT/DM": {
-   "choices": 8,
+   "choices": 4,
    "conflicted_choices": [],
    "mismatch": [],
-   "sensitive_choices": 4
+   "sensitive_choices": 2
   },
   "A-L5-EXT/SEC": {
    "choices": 2,
@@ -2262,10 +2277,10 @@
    "sensitive_choices": 2
   },
   "A-L5-HRI/DM": {
-   "choices": 8,
+   "choices": 4,
    "conflicted_choices": [],
    "mismatch": [],
-   "sensitive_choices": 4
+   "sensitive_choices": 2
   },
   "A-L5-HRI/SEC": {
    "choices": 2,
@@ -2280,10 +2295,10 @@
    "sensitive_choices": 2
   },
   "A-L5-INT/DM": {
-   "choices": 8,
+   "choices": 4,
    "conflicted_choices": [],
    "mismatch": [],
-   "sensitive_choices": 8
+   "sensitive_choices": 3
   },
   "A-L5-INT/SEC": {
    "choices": 2,
@@ -2298,10 +2313,10 @@
    "sensitive_choices": 0
   },
   "A-L5-LRX/DM": {
-   "choices": 8,
+   "choices": 4,
    "conflicted_choices": [],
    "mismatch": [],
-   "sensitive_choices": 4
+   "sensitive_choices": 2
   },
   "A-L5-LRX/SEC": {
    "choices": 2,
@@ -2316,10 +2331,10 @@
    "sensitive_choices": 2
   },
   "A-L6-DEV/DM": {
-   "choices": 8,
+   "choices": 4,
    "conflicted_choices": [],
    "mismatch": [],
-   "sensitive_choices": 6
+   "sensitive_choices": 3
   },
   "A-L6-DEV/SEC": {
    "choices": 2,
@@ -2334,10 +2349,10 @@
    "sensitive_choices": 0
   },
   "A-L6-EXT/DM": {
-   "choices": 8,
+   "choices": 4,
    "conflicted_choices": [],
    "mismatch": [],
-   "sensitive_choices": 4
+   "sensitive_choices": 2
   },
   "A-L6-EXT/SEC": {
    "choices": 2,
@@ -2352,10 +2367,10 @@
    "sensitive_choices": 2
   },
   "A-L6-HRI/DM": {
-   "choices": 8,
+   "choices": 4,
    "conflicted_choices": [],
    "mismatch": [],
-   "sensitive_choices": 4
+   "sensitive_choices": 2
   },
   "A-L6-HRI/SEC": {
    "choices": 2,
@@ -2370,10 +2385,10 @@
    "sensitive_choices": 2
   },
   "A-L6-INT/DM": {
-   "choices": 8,
+   "choices": 4,
    "conflicted_choices": [],
    "mismatch": [],
-   "sensitive_choices": 8
+   "sensitive_choices": 3
   },
   "A-L6-INT/SEC": {
    "choices": 2,
@@ -2388,10 +2403,10 @@
    "sensitive_choices": 0
   },
   "A-L6-LRX/DM": {
-   "choices": 8,
+   "choices": 4,
    "conflicted_choices": [],
    "mismatch": [],
-   "sensitive_choices": 4
+   "sensitive_choices": 2
   },
   "A-L6-LRX/SEC": {
    "choices": 2,
@@ -2406,10 +2421,10 @@
    "sensitive_choices": 2
   },
   "A-L7-DEV/DM": {
-   "choices": 8,
+   "choices": 4,
    "conflicted_choices": [],
    "mismatch": [],
-   "sensitive_choices": 6
+   "sensitive_choices": 3
   },
   "A-L7-DEV/SEC": {
    "choices": 2,
@@ -2424,10 +2439,10 @@
    "sensitive_choices": 0
   },
   "A-L7-EXT/DM": {
-   "choices": 8,
+   "choices": 4,
    "conflicted_choices": [],
    "mismatch": [],
-   "sensitive_choices": 4
+   "sensitive_choices": 2
   },
   "A-L7-EXT/SEC": {
    "choices": 2,
@@ -2442,10 +2457,10 @@
    "sensitive_choices": 2
   },
   "A-L7-HRI/DM": {
-   "choices": 8,
+   "choices": 4,
    "conflicted_choices": [],
    "mismatch": [],
-   "sensitive_choices": 4
+   "sensitive_choices": 2
   },
   "A-L7-HRI/SEC": {
    "choices": 2,
@@ -2460,10 +2475,10 @@
    "sensitive_choices": 2
   },
   "A-L7-INT/DM": {
-   "choices": 8,
+   "choices": 4,
    "conflicted_choices": [],
    "mismatch": [],
-   "sensitive_choices": 8
+   "sensitive_choices": 3
   },
   "A-L7-INT/SEC": {
    "choices": 2,
@@ -2478,10 +2493,10 @@
    "sensitive_choices": 0
   },
   "A-L7-LRX/DM": {
-   "choices": 8,
+   "choices": 4,
    "conflicted_choices": [],
    "mismatch": [],
-   "sensitive_choices": 4
+   "sensitive_choices": 2
   },
   "A-L7-LRX/SEC": {
    "choices": 2,
@@ -2502,10 +2517,10 @@
    "sensitive_choices": 1
   },
   "B-L0/RECSEC": {
-   "choices": 8,
+   "choices": 4,
    "conflicted_choices": [],
    "mismatch": [],
-   "sensitive_choices": 8
+   "sensitive_choices": 4
   },
   "B-L0/RRA": {
    "choices": 1,
@@ -2532,10 +2547,10 @@
    "sensitive_choices": 1
   },
   "B-L1/RECSEC": {
-   "choices": 8,
+   "choices": 4,
    "conflicted_choices": [],
    "mismatch": [],
-   "sensitive_choices": 8
+   "sensitive_choices": 4
   },
   "B-L1/RRA": {
    "choices": 1,
@@ -2562,16 +2577,10 @@
    "sensitive_choices": 1
   },
   "B-L2/RECSEC": {
-   "choices": 8,
-   "conflicted_choices": [
-    {
-     "RS3": "Ds",
-     "RS3force": "strict",
-     "RS6": "same"
-    }
-   ],
+   "choices": 4,
+   "conflicted_choices": [],
    "mismatch": [],
-   "sensitive_choices": 8
+   "sensitive_choices": 4
   },
   "B-L2/RRA": {
    "choices": 1,
@@ -2598,16 +2607,10 @@
    "sensitive_choices": 1
   },
   "B-L3/RECSEC": {
-   "choices": 8,
-   "conflicted_choices": [
-    {
-     "RS3": "Ds",
-     "RS3force": "strict",
-     "RS6": "same"
-    }
-   ],
+   "choices": 4,
+   "conflicted_choices": [],
    "mismatch": [],
-   "sensitive_choices": 8
+   "sensitive_choices": 4
   },
   "B-L3/RRA": {
    "choices": 1,
@@ -2634,16 +2637,10 @@
    "sensitive_choices": 1
   },
   "B-L4/RECSEC": {
-   "choices": 8,
-   "conflicted_choices": [
-    {
-     "RS3": "Ds",
-     "RS3force": "strict",
-     "RS6": "same"
-    }
-   ],
+   "choices": 4,
+   "conflicted_choices": [],
    "mismatch": [],
-   "sensitive_choices": 8
+   "sensitive_choices": 4
   },
   "B-L4/RRA": {
    "choices": 1,
@@ -2670,10 +2667,10 @@
    "sensitive_choices": 0
   },
   "B-L5/RECSEC": {
-   "choices": 8,
+   "choices": 4,
    "conflicted_choices": [],
    "mismatch": [],
-   "sensitive_choices": 8
+   "sensitive_choices": 4
   },
   "B-L5/RRA": {
    "choices": 1,
@@ -2700,10 +2697,10 @@
    "sensitive_choices": 1
   },
   "B-L6/RECSEC": {
-   "choices": 8,
+   "choices": 4,
    "conflicted_choices": [],
    "mismatch": [],
-   "sensitive_choices": 8
+   "sensitive_choices": 4
   },
   "B-L6/RRA": {
    "choices": 1,
@@ -2730,10 +2727,10 @@
    "sensitive_choices": 1
   },
   "B-L7/RECSEC": {
-   "choices": 8,
+   "choices": 4,
    "conflicted_choices": [],
    "mismatch": [],
-   "sensitive_choices": 8
+   "sensitive_choices": 4
   },
   "B-L7/RRA": {
    "choices": 1,
@@ -2979,71 +2976,33 @@
   "applied": {
    "cone": [
     "RS3",
-    "RS3force",
-    "RS6"
+    "RS3force"
    ],
    "details": {
-    "RS3=Ds,RS3force=default,RS6=different": {
+    "RS3=Ds,RS3force=default": {
      "rules": [
       "f16-ds"
      ],
      "status": "CONFLICT-FREE",
      "w1_without_premises": "CONFLICT-FREE"
     },
-    "RS3=Ds,RS3force=default,RS6=same": {
-     "rules": [
-      "f15-same",
-      "f16-ds"
-     ],
-     "status": "CONFLICT-FREE",
-     "w1_without_premises": "CONFLICT-FREE"
-    },
-    "RS3=Ds,RS3force=strict,RS6=different": {
+    "RS3=Ds,RS3force=strict": {
      "rules": [
       "f16-ds-strict"
      ],
      "status": "CONFLICT-FREE",
      "w1_without_premises": "CONFLICT-FREE"
     },
-    "RS3=Ds,RS3force=strict,RS6=same": {
-     "rules": [
-      "f15-same",
-      "f16-ds-strict"
-     ],
-     "situation": "proposal p, measure insider_threat_measures: rule f15-same releases; rule f16-ds-strict requires",
-     "status": "CONFLICT",
-     "witness": "W:cbrn_uplift_level_1:DEV"
-    },
-    "RS3=F,RS3force=default,RS6=different": {
+    "RS3=F,RS3force=default": {
      "rules": [],
      "status": "CONFLICT-FREE"
     },
-    "RS3=F,RS3force=default,RS6=same": {
-     "rules": [
-      "f15-same"
-     ],
-     "status": "CONFLICT-FREE",
-     "w1_without_premises": "CONFLICT-FREE"
-    },
-    "RS3=F,RS3force=strict,RS6=different": {
+    "RS3=F,RS3force=strict": {
      "rules": [],
      "status": "CONFLICT-FREE"
-    },
-    "RS3=F,RS3force=strict,RS6=same": {
-     "rules": [
-      "f15-same"
-     ],
-     "status": "CONFLICT-FREE",
-     "w1_without_premises": "CONFLICT-FREE"
     }
    },
-   "true": [
-    {
-     "RS3": "Ds",
-     "RS3force": "strict",
-     "RS6": "same"
-    }
-   ]
+   "true": []
   },
   "assessed": {
    "cone": [
@@ -3148,14 +3107,35 @@
    },
    "true": []
   },
+  "further_need_checked": {
+   "cone": [
+    "RS5"
+   ],
+   "details": {
+    "RS5=D": {
+     "rules": [
+      "f4-need-d"
+     ],
+     "status": "CONFLICT-FREE",
+     "w1_without_premises": "CONFLICT-FREE"
+    },
+    "RS5=R": {
+     "rules": [
+      "f4-need-r"
+     ],
+     "status": "CONFLICT-FREE",
+     "w1_without_premises": "CONFLICT-FREE"
+    }
+   },
+   "true": []
+  },
   "harm_mitigated": {
    "cone": [
     "RS1",
-    "RS8",
-    "RS9"
+    "RS8"
    ],
    "details": {
-    "RS1=G,RS8=rel,RS9=different": {
+    "RS1=G,RS8=rel": {
      "rules": [
       "f9-dm",
       "f9-rel"
@@ -3163,56 +3143,23 @@
      "status": "CONFLICT-FREE",
      "w1_without_premises": "UNKNOWN"
     },
-    "RS1=G,RS8=rel,RS9=same": {
-     "rules": [
-      "f10-dm-same",
-      "f10-rel-same",
-      "f9-dm",
-      "f9-rel"
-     ],
-     "situation": "proposal p: rule f9-rel releases; rule f10-dm-same requires",
-     "status": "CONFLICT",
-     "witness": "W:cbrn_uplift_tcl+ml_rd_acceleration_level_1:HRI"
-    },
-    "RS1=G,RS8=scope,RS9=different": {
+    "RS1=G,RS8=scope": {
      "rules": [
       "f9-dm"
      ],
      "status": "CONFLICT-FREE",
      "w1_without_premises": "CONFLICT-FREE"
     },
-    "RS1=G,RS8=scope,RS9=same": {
-     "rules": [
-      "f10-dm-same",
-      "f9-dm"
-     ],
-     "status": "CONFLICT-FREE",
-     "w1_without_premises": "CONFLICT-FREE"
-    },
-    "RS1=S,RS8=rel,RS9=different": {
+    "RS1=S,RS8=rel": {
      "rules": [],
      "status": "CONFLICT-FREE"
     },
-    "RS1=S,RS8=rel,RS9=same": {
-     "rules": [],
-     "status": "CONFLICT-FREE"
-    },
-    "RS1=S,RS8=scope,RS9=different": {
-     "rules": [],
-     "status": "CONFLICT-FREE"
-    },
-    "RS1=S,RS8=scope,RS9=same": {
+    "RS1=S,RS8=scope": {
      "rules": [],
      "status": "CONFLICT-FREE"
     }
    },
-   "true": [
-    {
-     "RS1": "G",
-     "RS8": "rel",
-     "RS9": "same"
-    }
-   ]
+   "true": []
   },
   "holistic": {
    "cone": [
@@ -3247,10 +3194,6 @@
      ],
      "status": "CONFLICT-FREE",
      "w1_without_premises": "CONFLICT-FREE"
-    },
-    "RS6=same": {
-     "rules": [],
-     "status": "CONFLICT-FREE"
     }
    },
    "true": []
@@ -3283,6 +3226,19 @@
     "-": {
      "rules": [
       "f17-pra"
+     ],
+     "status": "CONFLICT-FREE",
+     "w1_without_premises": "CONFLICT-FREE"
+    }
+   },
+   "true": []
+  },
+  "periodic_covers_internal": {
+   "cone": [],
+   "details": {
+    "-": {
+     "rules": [
+      "f17-hri"
      ],
      "status": "CONFLICT-FREE",
      "w1_without_premises": "CONFLICT-FREE"
@@ -3401,10 +3357,6 @@
      "status": "CONFLICT-FREE",
      "w1_without_premises": "UNKNOWN"
     },
-    "RS1=G,RS8=rel,RS9=same": {
-     "rules": [],
-     "status": "CONFLICT-FREE"
-    },
     "RS1=G,RS8=scope,RS9=different": {
      "rules": [
       "f10-dm-diff"
@@ -3412,23 +3364,11 @@
      "status": "CONFLICT-FREE",
      "w1_without_premises": "CONFLICT-FREE"
     },
-    "RS1=G,RS8=scope,RS9=same": {
-     "rules": [],
-     "status": "CONFLICT-FREE"
-    },
     "RS1=S,RS8=rel,RS9=different": {
      "rules": [],
      "status": "CONFLICT-FREE"
     },
-    "RS1=S,RS8=rel,RS9=same": {
-     "rules": [],
-     "status": "CONFLICT-FREE"
-    },
     "RS1=S,RS8=scope,RS9=different": {
-     "rules": [],
-     "status": "CONFLICT-FREE"
-    },
-    "RS1=S,RS8=scope,RS9=same": {
      "rules": [],
      "status": "CONFLICT-FREE"
     }
@@ -3568,17 +3508,7 @@
      "release": [],
      "rules": []
     },
-    "RS1=G,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
     "RS1=G,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=G,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
@@ -3588,17 +3518,7 @@
      "release": [],
      "rules": []
     },
-    "RS1=S,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
     "RS1=S,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=S,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
@@ -3685,17 +3605,7 @@
      "release": [],
      "rules": []
     },
-    "RS1=G,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
     "RS1=G,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=G,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
@@ -3705,17 +3615,7 @@
      "release": [],
      "rules": []
     },
-    "RS1=S,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
     "RS1=S,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=S,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
@@ -3798,17 +3698,7 @@
      "release": [],
      "rules": []
     },
-    "RS1=G,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
     "RS1=G,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=G,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
@@ -3818,17 +3708,7 @@
      "release": [],
      "rules": []
     },
-    "RS1=S,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
     "RS1=S,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=S,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
@@ -3910,17 +3790,7 @@
      "release": [],
      "rules": []
     },
-    "RS1=G,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
     "RS1=G,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=G,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
@@ -3930,17 +3800,7 @@
      "release": [],
      "rules": []
     },
-    "RS1=S,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
     "RS1=S,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=S,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
@@ -4028,17 +3888,7 @@
      "release": [],
      "rules": []
     },
-    "RS1=G,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
     "RS1=G,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=G,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
@@ -4048,17 +3898,7 @@
      "release": [],
      "rules": []
     },
-    "RS1=S,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
     "RS1=S,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=S,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
@@ -4143,19 +3983,7 @@
      ],
      "rules": []
     },
-    "RS1=G,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [
-      "f9-rel"
-     ],
-     "rules": []
-    },
     "RS1=G,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=G,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
@@ -4165,17 +3993,7 @@
      "release": [],
      "rules": []
     },
-    "RS1=S,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
     "RS1=S,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=S,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
@@ -4183,11 +4001,6 @@
    },
    "premises": "model",
    "release_true": [
-    {
-     "RS1": "G",
-     "RS8": "rel",
-     "RS9": "same"
-    },
     {
      "RS1": "G",
      "RS8": "rel",
@@ -4281,21 +4094,7 @@
       "f9-dm"
      ]
     },
-    "RS1=G,RS8=rel,RS9=same": {
-     "holds": true,
-     "release": [],
-     "rules": [
-      "f9-dm"
-     ]
-    },
     "RS1=G,RS8=scope,RS9=different": {
-     "holds": true,
-     "release": [],
-     "rules": [
-      "f9-dm"
-     ]
-    },
-    "RS1=G,RS8=scope,RS9=same": {
      "holds": true,
      "release": [],
      "rules": [
@@ -4307,17 +4106,7 @@
      "release": [],
      "rules": []
     },
-    "RS1=S,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
     "RS1=S,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=S,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
@@ -4329,17 +4118,7 @@
     {
      "RS1": "G",
      "RS8": "scope",
-     "RS9": "same"
-    },
-    {
-     "RS1": "G",
-     "RS8": "scope",
      "RS9": "different"
-    },
-    {
-     "RS1": "G",
-     "RS8": "rel",
-     "RS9": "same"
     },
     {
      "RS1": "G",
@@ -4434,19 +4213,7 @@
      ],
      "rules": []
     },
-    "RS1=G,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [
-      "f9-rel"
-     ],
-     "rules": []
-    },
     "RS1=G,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=G,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
@@ -4456,17 +4223,7 @@
      "release": [],
      "rules": []
     },
-    "RS1=S,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
     "RS1=S,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=S,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
@@ -4474,11 +4231,6 @@
    },
    "premises": "model",
    "release_true": [
-    {
-     "RS1": "G",
-     "RS8": "rel",
-     "RS9": "same"
-    },
     {
      "RS1": "G",
      "RS8": "rel",
@@ -4567,19 +4319,7 @@
      ],
      "rules": []
     },
-    "RS1=G,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [
-      "f9-rel"
-     ],
-     "rules": []
-    },
     "RS1=G,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=G,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
@@ -4589,17 +4329,7 @@
      "release": [],
      "rules": []
     },
-    "RS1=S,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
     "RS1=S,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=S,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
@@ -4607,11 +4337,6 @@
    },
    "premises": "model",
    "release_true": [
-    {
-     "RS1": "G",
-     "RS8": "rel",
-     "RS9": "same"
-    },
     {
      "RS1": "G",
      "RS8": "rel",
@@ -4706,21 +4431,7 @@
       "f9-dm"
      ]
     },
-    "RS1=G,RS8=rel,RS9=same": {
-     "holds": true,
-     "release": [],
-     "rules": [
-      "f9-dm"
-     ]
-    },
     "RS1=G,RS8=scope,RS9=different": {
-     "holds": true,
-     "release": [],
-     "rules": [
-      "f9-dm"
-     ]
-    },
-    "RS1=G,RS8=scope,RS9=same": {
      "holds": true,
      "release": [],
      "rules": [
@@ -4732,17 +4443,7 @@
      "release": [],
      "rules": []
     },
-    "RS1=S,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
     "RS1=S,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=S,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
@@ -4754,17 +4455,7 @@
     {
      "RS1": "G",
      "RS8": "scope",
-     "RS9": "same"
-    },
-    {
-     "RS1": "G",
-     "RS8": "scope",
      "RS9": "different"
-    },
-    {
-     "RS1": "G",
-     "RS8": "rel",
-     "RS9": "same"
     },
     {
      "RS1": "G",
@@ -4859,19 +4550,7 @@
      ],
      "rules": []
     },
-    "RS1=G,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [
-      "f9-rel"
-     ],
-     "rules": []
-    },
     "RS1=G,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=G,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
@@ -4881,17 +4560,7 @@
      "release": [],
      "rules": []
     },
-    "RS1=S,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
     "RS1=S,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=S,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
@@ -4899,11 +4568,6 @@
    },
    "premises": "model",
    "release_true": [
-    {
-     "RS1": "G",
-     "RS8": "rel",
-     "RS9": "same"
-    },
     {
      "RS1": "G",
      "RS8": "rel",
@@ -4997,21 +4661,7 @@
       "f9-dm"
      ]
     },
-    "RS1=G,RS8=rel,RS9=same": {
-     "holds": true,
-     "release": [],
-     "rules": [
-      "f9-dm"
-     ]
-    },
     "RS1=G,RS8=scope,RS9=different": {
-     "holds": true,
-     "release": [],
-     "rules": [
-      "f9-dm"
-     ]
-    },
-    "RS1=G,RS8=scope,RS9=same": {
      "holds": true,
      "release": [],
      "rules": [
@@ -5023,17 +4673,7 @@
      "release": [],
      "rules": []
     },
-    "RS1=S,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
     "RS1=S,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=S,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
@@ -5045,17 +4685,7 @@
     {
      "RS1": "G",
      "RS8": "scope",
-     "RS9": "same"
-    },
-    {
-     "RS1": "G",
-     "RS8": "scope",
      "RS9": "different"
-    },
-    {
-     "RS1": "G",
-     "RS8": "rel",
-     "RS9": "same"
     },
     {
      "RS1": "G",
@@ -5150,19 +4780,7 @@
      ],
      "rules": []
     },
-    "RS1=G,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [
-      "f9-rel"
-     ],
-     "rules": []
-    },
     "RS1=G,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=G,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
@@ -5172,17 +4790,7 @@
      "release": [],
      "rules": []
     },
-    "RS1=S,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
     "RS1=S,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=S,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
@@ -5190,11 +4798,6 @@
    },
    "premises": "model",
    "release_true": [
-    {
-     "RS1": "G",
-     "RS8": "rel",
-     "RS9": "same"
-    },
     {
      "RS1": "G",
      "RS8": "rel",
@@ -5283,19 +4886,7 @@
      ],
      "rules": []
     },
-    "RS1=G,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [
-      "f9-rel"
-     ],
-     "rules": []
-    },
     "RS1=G,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=G,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
@@ -5305,17 +4896,7 @@
      "release": [],
      "rules": []
     },
-    "RS1=S,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
     "RS1=S,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=S,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
@@ -5323,11 +4904,6 @@
    },
    "premises": "model",
    "release_true": [
-    {
-     "RS1": "G",
-     "RS8": "rel",
-     "RS9": "same"
-    },
     {
      "RS1": "G",
      "RS8": "rel",
@@ -5422,21 +4998,7 @@
       "f9-dm"
      ]
     },
-    "RS1=G,RS8=rel,RS9=same": {
-     "holds": true,
-     "release": [],
-     "rules": [
-      "f9-dm"
-     ]
-    },
     "RS1=G,RS8=scope,RS9=different": {
-     "holds": true,
-     "release": [],
-     "rules": [
-      "f9-dm"
-     ]
-    },
-    "RS1=G,RS8=scope,RS9=same": {
      "holds": true,
      "release": [],
      "rules": [
@@ -5448,17 +5010,7 @@
      "release": [],
      "rules": []
     },
-    "RS1=S,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
     "RS1=S,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=S,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
@@ -5470,17 +5022,7 @@
     {
      "RS1": "G",
      "RS8": "scope",
-     "RS9": "same"
-    },
-    {
-     "RS1": "G",
-     "RS8": "scope",
      "RS9": "different"
-    },
-    {
-     "RS1": "G",
-     "RS8": "rel",
-     "RS9": "same"
     },
     {
      "RS1": "G",
@@ -5575,19 +5117,7 @@
      ],
      "rules": []
     },
-    "RS1=G,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [
-      "f9-rel"
-     ],
-     "rules": []
-    },
     "RS1=G,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=G,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
@@ -5597,17 +5127,7 @@
      "release": [],
      "rules": []
     },
-    "RS1=S,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
     "RS1=S,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=S,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
@@ -5615,11 +5135,6 @@
    },
    "premises": "model",
    "release_true": [
-    {
-     "RS1": "G",
-     "RS8": "rel",
-     "RS9": "same"
-    },
     {
      "RS1": "G",
      "RS8": "rel",
@@ -5713,21 +5228,7 @@
       "f9-dm"
      ]
     },
-    "RS1=G,RS8=rel,RS9=same": {
-     "holds": true,
-     "release": [],
-     "rules": [
-      "f9-dm"
-     ]
-    },
     "RS1=G,RS8=scope,RS9=different": {
-     "holds": true,
-     "release": [],
-     "rules": [
-      "f9-dm"
-     ]
-    },
-    "RS1=G,RS8=scope,RS9=same": {
      "holds": true,
      "release": [],
      "rules": [
@@ -5739,17 +5240,7 @@
      "release": [],
      "rules": []
     },
-    "RS1=S,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
     "RS1=S,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=S,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
@@ -5761,17 +5252,7 @@
     {
      "RS1": "G",
      "RS8": "scope",
-     "RS9": "same"
-    },
-    {
-     "RS1": "G",
-     "RS8": "scope",
      "RS9": "different"
-    },
-    {
-     "RS1": "G",
-     "RS8": "rel",
-     "RS9": "same"
     },
     {
      "RS1": "G",
@@ -5866,19 +5347,7 @@
      ],
      "rules": []
     },
-    "RS1=G,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [
-      "f9-rel"
-     ],
-     "rules": []
-    },
     "RS1=G,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=G,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
@@ -5888,17 +5357,7 @@
      "release": [],
      "rules": []
     },
-    "RS1=S,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
     "RS1=S,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=S,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
@@ -5906,11 +5365,6 @@
    },
    "premises": "model",
    "release_true": [
-    {
-     "RS1": "G",
-     "RS8": "rel",
-     "RS9": "same"
-    },
     {
      "RS1": "G",
      "RS8": "rel",
@@ -5999,19 +5453,7 @@
      ],
      "rules": []
     },
-    "RS1=G,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [
-      "f9-rel"
-     ],
-     "rules": []
-    },
     "RS1=G,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=G,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
@@ -6021,17 +5463,7 @@
      "release": [],
      "rules": []
     },
-    "RS1=S,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
     "RS1=S,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=S,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
@@ -6039,11 +5471,6 @@
    },
    "premises": "model",
    "release_true": [
-    {
-     "RS1": "G",
-     "RS8": "rel",
-     "RS9": "same"
-    },
     {
      "RS1": "G",
      "RS8": "rel",
@@ -6138,21 +5565,7 @@
       "f9-dm"
      ]
     },
-    "RS1=G,RS8=rel,RS9=same": {
-     "holds": true,
-     "release": [],
-     "rules": [
-      "f9-dm"
-     ]
-    },
     "RS1=G,RS8=scope,RS9=different": {
-     "holds": true,
-     "release": [],
-     "rules": [
-      "f9-dm"
-     ]
-    },
-    "RS1=G,RS8=scope,RS9=same": {
      "holds": true,
      "release": [],
      "rules": [
@@ -6164,17 +5577,7 @@
      "release": [],
      "rules": []
     },
-    "RS1=S,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
     "RS1=S,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=S,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
@@ -6186,17 +5589,7 @@
     {
      "RS1": "G",
      "RS8": "scope",
-     "RS9": "same"
-    },
-    {
-     "RS1": "G",
-     "RS8": "scope",
      "RS9": "different"
-    },
-    {
-     "RS1": "G",
-     "RS8": "rel",
-     "RS9": "same"
     },
     {
      "RS1": "G",
@@ -6291,19 +5684,7 @@
      ],
      "rules": []
     },
-    "RS1=G,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [
-      "f9-rel"
-     ],
-     "rules": []
-    },
     "RS1=G,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=G,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
@@ -6313,17 +5694,7 @@
      "release": [],
      "rules": []
     },
-    "RS1=S,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
     "RS1=S,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=S,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
@@ -6331,11 +5702,6 @@
    },
    "premises": "model",
    "release_true": [
-    {
-     "RS1": "G",
-     "RS8": "rel",
-     "RS9": "same"
-    },
     {
      "RS1": "G",
      "RS8": "rel",
@@ -6429,21 +5795,7 @@
       "f9-dm"
      ]
     },
-    "RS1=G,RS8=rel,RS9=same": {
-     "holds": true,
-     "release": [],
-     "rules": [
-      "f9-dm"
-     ]
-    },
     "RS1=G,RS8=scope,RS9=different": {
-     "holds": true,
-     "release": [],
-     "rules": [
-      "f9-dm"
-     ]
-    },
-    "RS1=G,RS8=scope,RS9=same": {
      "holds": true,
      "release": [],
      "rules": [
@@ -6455,17 +5807,7 @@
      "release": [],
      "rules": []
     },
-    "RS1=S,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
     "RS1=S,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=S,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
@@ -6477,17 +5819,7 @@
     {
      "RS1": "G",
      "RS8": "scope",
-     "RS9": "same"
-    },
-    {
-     "RS1": "G",
-     "RS8": "scope",
      "RS9": "different"
-    },
-    {
-     "RS1": "G",
-     "RS8": "rel",
-     "RS9": "same"
     },
     {
      "RS1": "G",
@@ -6582,19 +5914,7 @@
      ],
      "rules": []
     },
-    "RS1=G,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [
-      "f9-rel"
-     ],
-     "rules": []
-    },
     "RS1=G,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=G,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
@@ -6604,17 +5924,7 @@
      "release": [],
      "rules": []
     },
-    "RS1=S,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
     "RS1=S,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=S,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
@@ -6622,11 +5932,6 @@
    },
    "premises": "model",
    "release_true": [
-    {
-     "RS1": "G",
-     "RS8": "rel",
-     "RS9": "same"
-    },
     {
      "RS1": "G",
      "RS8": "rel",
@@ -6715,19 +6020,7 @@
      ],
      "rules": []
     },
-    "RS1=G,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [
-      "f9-rel"
-     ],
-     "rules": []
-    },
     "RS1=G,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=G,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
@@ -6737,17 +6030,7 @@
      "release": [],
      "rules": []
     },
-    "RS1=S,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
     "RS1=S,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=S,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
@@ -6755,11 +6038,6 @@
    },
    "premises": "model",
    "release_true": [
-    {
-     "RS1": "G",
-     "RS8": "rel",
-     "RS9": "same"
-    },
     {
      "RS1": "G",
      "RS8": "rel",
@@ -6854,21 +6132,7 @@
       "f9-dm"
      ]
     },
-    "RS1=G,RS8=rel,RS9=same": {
-     "holds": true,
-     "release": [],
-     "rules": [
-      "f9-dm"
-     ]
-    },
     "RS1=G,RS8=scope,RS9=different": {
-     "holds": true,
-     "release": [],
-     "rules": [
-      "f9-dm"
-     ]
-    },
-    "RS1=G,RS8=scope,RS9=same": {
      "holds": true,
      "release": [],
      "rules": [
@@ -6880,17 +6144,7 @@
      "release": [],
      "rules": []
     },
-    "RS1=S,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
     "RS1=S,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=S,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
@@ -6902,17 +6156,7 @@
     {
      "RS1": "G",
      "RS8": "scope",
-     "RS9": "same"
-    },
-    {
-     "RS1": "G",
-     "RS8": "scope",
      "RS9": "different"
-    },
-    {
-     "RS1": "G",
-     "RS8": "rel",
-     "RS9": "same"
     },
     {
      "RS1": "G",
@@ -7007,19 +6251,7 @@
      ],
      "rules": []
     },
-    "RS1=G,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [
-      "f11-rel"
-     ],
-     "rules": []
-    },
     "RS1=G,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=G,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
@@ -7029,17 +6261,7 @@
      "release": [],
      "rules": []
     },
-    "RS1=S,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
     "RS1=S,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=S,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
@@ -7047,11 +6269,6 @@
    },
    "premises": "model",
    "release_true": [
-    {
-     "RS1": "G",
-     "RS8": "rel",
-     "RS9": "same"
-    },
     {
      "RS1": "G",
      "RS8": "rel",
@@ -7145,21 +6362,7 @@
       "f11-dm"
      ]
     },
-    "RS1=G,RS8=rel,RS9=same": {
-     "holds": true,
-     "release": [],
-     "rules": [
-      "f11-dm"
-     ]
-    },
     "RS1=G,RS8=scope,RS9=different": {
-     "holds": true,
-     "release": [],
-     "rules": [
-      "f11-dm"
-     ]
-    },
-    "RS1=G,RS8=scope,RS9=same": {
      "holds": true,
      "release": [],
      "rules": [
@@ -7171,17 +6374,7 @@
      "release": [],
      "rules": []
     },
-    "RS1=S,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
     "RS1=S,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=S,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
@@ -7193,17 +6386,7 @@
     {
      "RS1": "G",
      "RS8": "scope",
-     "RS9": "same"
-    },
-    {
-     "RS1": "G",
-     "RS8": "scope",
      "RS9": "different"
-    },
-    {
-     "RS1": "G",
-     "RS8": "rel",
-     "RS9": "same"
     },
     {
      "RS1": "G",
@@ -7298,21 +6481,7 @@
       "f11-dm"
      ]
     },
-    "RS1=G,RS8=rel,RS9=same": {
-     "holds": true,
-     "release": [],
-     "rules": [
-      "f11-dm"
-     ]
-    },
     "RS1=G,RS8=scope,RS9=different": {
-     "holds": true,
-     "release": [],
-     "rules": [
-      "f11-dm"
-     ]
-    },
-    "RS1=G,RS8=scope,RS9=same": {
      "holds": true,
      "release": [],
      "rules": [
@@ -7324,17 +6493,7 @@
      "release": [],
      "rules": []
     },
-    "RS1=S,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
     "RS1=S,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=S,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
@@ -7346,17 +6505,7 @@
     {
      "RS1": "G",
      "RS8": "scope",
-     "RS9": "same"
-    },
-    {
-     "RS1": "G",
-     "RS8": "scope",
      "RS9": "different"
-    },
-    {
-     "RS1": "G",
-     "RS8": "rel",
-     "RS9": "same"
     },
     {
      "RS1": "G",
@@ -7445,20 +6594,12 @@
    "details": {
     "RS1=G,RS8=rel,RS9=different": {
      "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=G,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [],
+     "release": [
+      "f11-rel"
+     ],
      "rules": []
     },
     "RS1=G,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=G,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
@@ -7468,24 +6609,20 @@
      "release": [],
      "rules": []
     },
-    "RS1=S,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
     "RS1=S,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=S,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
     }
    },
    "premises": "model",
-   "release_true": [],
+   "release_true": [
+    {
+     "RS1": "G",
+     "RS8": "rel",
+     "RS9": "different"
+    }
+   ],
    "true": []
   },
   "A-L5-INT/GOV": {
@@ -7574,21 +6711,7 @@
       "f11-dm"
      ]
     },
-    "RS1=G,RS8=rel,RS9=same": {
-     "holds": true,
-     "release": [],
-     "rules": [
-      "f11-dm"
-     ]
-    },
     "RS1=G,RS8=scope,RS9=different": {
-     "holds": true,
-     "release": [],
-     "rules": [
-      "f11-dm"
-     ]
-    },
-    "RS1=G,RS8=scope,RS9=same": {
      "holds": true,
      "release": [],
      "rules": [
@@ -7600,17 +6723,7 @@
      "release": [],
      "rules": []
     },
-    "RS1=S,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
     "RS1=S,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=S,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
@@ -7622,17 +6735,7 @@
     {
      "RS1": "G",
      "RS8": "scope",
-     "RS9": "same"
-    },
-    {
-     "RS1": "G",
-     "RS8": "scope",
      "RS9": "different"
-    },
-    {
-     "RS1": "G",
-     "RS8": "rel",
-     "RS9": "same"
     },
     {
      "RS1": "G",
@@ -7727,19 +6830,7 @@
      ],
      "rules": []
     },
-    "RS1=G,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [
-      "f10-rel-same"
-     ],
-     "rules": []
-    },
     "RS1=G,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=G,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
@@ -7749,17 +6840,7 @@
      "release": [],
      "rules": []
     },
-    "RS1=S,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
     "RS1=S,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=S,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
@@ -7767,11 +6848,6 @@
    },
    "premises": "model",
    "release_true": [
-    {
-     "RS1": "G",
-     "RS8": "rel",
-     "RS9": "same"
-    },
     {
      "RS1": "G",
      "RS8": "rel",
@@ -7865,13 +6941,6 @@
       "f10-dm-diff"
      ]
     },
-    "RS1=G,RS8=rel,RS9=same": {
-     "holds": true,
-     "release": [],
-     "rules": [
-      "f10-dm-same"
-     ]
-    },
     "RS1=G,RS8=scope,RS9=different": {
      "holds": true,
      "release": [],
@@ -7879,29 +6948,12 @@
       "f10-dm-diff"
      ]
     },
-    "RS1=G,RS8=scope,RS9=same": {
-     "holds": true,
-     "release": [],
-     "rules": [
-      "f10-dm-same"
-     ]
-    },
     "RS1=S,RS8=rel,RS9=different": {
      "holds": false,
      "release": [],
      "rules": []
     },
-    "RS1=S,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
     "RS1=S,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=S,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
@@ -7913,17 +6965,7 @@
     {
      "RS1": "G",
      "RS8": "scope",
-     "RS9": "same"
-    },
-    {
-     "RS1": "G",
-     "RS8": "scope",
      "RS9": "different"
-    },
-    {
-     "RS1": "G",
-     "RS8": "rel",
-     "RS9": "same"
     },
     {
      "RS1": "G",
@@ -8018,13 +7060,6 @@
       "f10-dm-diff"
      ]
     },
-    "RS1=G,RS8=rel,RS9=same": {
-     "holds": true,
-     "release": [],
-     "rules": [
-      "f10-dm-same"
-     ]
-    },
     "RS1=G,RS8=scope,RS9=different": {
      "holds": true,
      "release": [],
@@ -8032,29 +7067,12 @@
       "f10-dm-diff"
      ]
     },
-    "RS1=G,RS8=scope,RS9=same": {
-     "holds": true,
-     "release": [],
-     "rules": [
-      "f10-dm-same"
-     ]
-    },
     "RS1=S,RS8=rel,RS9=different": {
      "holds": false,
      "release": [],
      "rules": []
     },
-    "RS1=S,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
     "RS1=S,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=S,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
@@ -8066,17 +7084,7 @@
     {
      "RS1": "G",
      "RS8": "scope",
-     "RS9": "same"
-    },
-    {
-     "RS1": "G",
-     "RS8": "scope",
      "RS9": "different"
-    },
-    {
-     "RS1": "G",
-     "RS8": "rel",
-     "RS9": "same"
     },
     {
      "RS1": "G",
@@ -8165,20 +7173,12 @@
    "details": {
     "RS1=G,RS8=rel,RS9=different": {
      "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=G,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [],
+     "release": [
+      "f10-rel-diff"
+     ],
      "rules": []
     },
     "RS1=G,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=G,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
@@ -8188,24 +7188,20 @@
      "release": [],
      "rules": []
     },
-    "RS1=S,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
     "RS1=S,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=S,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
     }
    },
    "premises": "model",
-   "release_true": [],
+   "release_true": [
+    {
+     "RS1": "G",
+     "RS8": "rel",
+     "RS9": "different"
+    }
+   ],
    "true": []
   },
   "A-L6-INT/GOV": {
@@ -8294,13 +7290,6 @@
       "f10-dm-diff"
      ]
     },
-    "RS1=G,RS8=rel,RS9=same": {
-     "holds": true,
-     "release": [],
-     "rules": [
-      "f10-dm-same"
-     ]
-    },
     "RS1=G,RS8=scope,RS9=different": {
      "holds": true,
      "release": [],
@@ -8308,29 +7297,12 @@
       "f10-dm-diff"
      ]
     },
-    "RS1=G,RS8=scope,RS9=same": {
-     "holds": true,
-     "release": [],
-     "rules": [
-      "f10-dm-same"
-     ]
-    },
     "RS1=S,RS8=rel,RS9=different": {
      "holds": false,
      "release": [],
      "rules": []
     },
-    "RS1=S,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
     "RS1=S,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=S,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
@@ -8342,17 +7314,7 @@
     {
      "RS1": "G",
      "RS8": "scope",
-     "RS9": "same"
-    },
-    {
-     "RS1": "G",
-     "RS8": "scope",
      "RS9": "different"
-    },
-    {
-     "RS1": "G",
-     "RS8": "rel",
-     "RS9": "same"
     },
     {
      "RS1": "G",
@@ -8447,19 +7409,7 @@
      ],
      "rules": []
     },
-    "RS1=G,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [
-      "f10-rel-same"
-     ],
-     "rules": []
-    },
     "RS1=G,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=G,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
@@ -8469,17 +7419,7 @@
      "release": [],
      "rules": []
     },
-    "RS1=S,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
     "RS1=S,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=S,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
@@ -8487,11 +7427,6 @@
    },
    "premises": "model",
    "release_true": [
-    {
-     "RS1": "G",
-     "RS8": "rel",
-     "RS9": "same"
-    },
     {
      "RS1": "G",
      "RS8": "rel",
@@ -8585,13 +7520,6 @@
       "f10-dm-diff"
      ]
     },
-    "RS1=G,RS8=rel,RS9=same": {
-     "holds": true,
-     "release": [],
-     "rules": [
-      "f10-dm-same"
-     ]
-    },
     "RS1=G,RS8=scope,RS9=different": {
      "holds": true,
      "release": [],
@@ -8599,29 +7527,12 @@
       "f10-dm-diff"
      ]
     },
-    "RS1=G,RS8=scope,RS9=same": {
-     "holds": true,
-     "release": [],
-     "rules": [
-      "f10-dm-same"
-     ]
-    },
     "RS1=S,RS8=rel,RS9=different": {
      "holds": false,
      "release": [],
      "rules": []
     },
-    "RS1=S,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
     "RS1=S,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=S,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
@@ -8633,17 +7544,7 @@
     {
      "RS1": "G",
      "RS8": "scope",
-     "RS9": "same"
-    },
-    {
-     "RS1": "G",
-     "RS8": "scope",
      "RS9": "different"
-    },
-    {
-     "RS1": "G",
-     "RS8": "rel",
-     "RS9": "same"
     },
     {
      "RS1": "G",
@@ -8738,13 +7639,6 @@
       "f10-dm-diff"
      ]
     },
-    "RS1=G,RS8=rel,RS9=same": {
-     "holds": true,
-     "release": [],
-     "rules": [
-      "f10-dm-same"
-     ]
-    },
     "RS1=G,RS8=scope,RS9=different": {
      "holds": true,
      "release": [],
@@ -8752,29 +7646,12 @@
       "f10-dm-diff"
      ]
     },
-    "RS1=G,RS8=scope,RS9=same": {
-     "holds": true,
-     "release": [],
-     "rules": [
-      "f10-dm-same"
-     ]
-    },
     "RS1=S,RS8=rel,RS9=different": {
      "holds": false,
      "release": [],
      "rules": []
     },
-    "RS1=S,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
     "RS1=S,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=S,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
@@ -8786,17 +7663,7 @@
     {
      "RS1": "G",
      "RS8": "scope",
-     "RS9": "same"
-    },
-    {
-     "RS1": "G",
-     "RS8": "scope",
      "RS9": "different"
-    },
-    {
-     "RS1": "G",
-     "RS8": "rel",
-     "RS9": "same"
     },
     {
      "RS1": "G",
@@ -8885,20 +7752,12 @@
    "details": {
     "RS1=G,RS8=rel,RS9=different": {
      "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=G,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [],
+     "release": [
+      "f10-rel-diff"
+     ],
      "rules": []
     },
     "RS1=G,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=G,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
@@ -8908,24 +7767,20 @@
      "release": [],
      "rules": []
     },
-    "RS1=S,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
     "RS1=S,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=S,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
     }
    },
    "premises": "model",
-   "release_true": [],
+   "release_true": [
+    {
+     "RS1": "G",
+     "RS8": "rel",
+     "RS9": "different"
+    }
+   ],
    "true": []
   },
   "A-L7-INT/GOV": {
@@ -9014,13 +7869,6 @@
       "f10-dm-diff"
      ]
     },
-    "RS1=G,RS8=rel,RS9=same": {
-     "holds": true,
-     "release": [],
-     "rules": [
-      "f10-dm-same"
-     ]
-    },
     "RS1=G,RS8=scope,RS9=different": {
      "holds": true,
      "release": [],
@@ -9028,29 +7876,12 @@
       "f10-dm-diff"
      ]
     },
-    "RS1=G,RS8=scope,RS9=same": {
-     "holds": true,
-     "release": [],
-     "rules": [
-      "f10-dm-same"
-     ]
-    },
     "RS1=S,RS8=rel,RS9=different": {
      "holds": false,
      "release": [],
      "rules": []
     },
-    "RS1=S,RS8=rel,RS9=same": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
     "RS1=S,RS8=scope,RS9=different": {
-     "holds": false,
-     "release": [],
-     "rules": []
-    },
-    "RS1=S,RS8=scope,RS9=same": {
      "holds": false,
      "release": [],
      "rules": []
@@ -9062,17 +7893,7 @@
     {
      "RS1": "G",
      "RS8": "scope",
-     "RS9": "same"
-    },
-    {
-     "RS1": "G",
-     "RS8": "scope",
      "RS9": "different"
-    },
-    {
-     "RS1": "G",
-     "RS8": "rel",
-     "RS9": "same"
     },
     {
      "RS1": "G",
@@ -9164,39 +7985,22 @@
   "B-L0/RECSEC": {
    "cone": [
     "RS3",
-    "RS3force",
-    "RS6"
+    "RS3force"
    ],
    "details": {
-    "RS3=Ds,RS3force=default,RS6=different": {
+    "RS3=Ds,RS3force=default": {
      "holds": false,
      "rules": []
     },
-    "RS3=Ds,RS3force=default,RS6=same": {
+    "RS3=Ds,RS3force=strict": {
      "holds": false,
      "rules": []
     },
-    "RS3=Ds,RS3force=strict,RS6=different": {
+    "RS3=F,RS3force=default": {
      "holds": false,
      "rules": []
     },
-    "RS3=Ds,RS3force=strict,RS6=same": {
-     "holds": false,
-     "rules": []
-    },
-    "RS3=F,RS3force=default,RS6=different": {
-     "holds": false,
-     "rules": []
-    },
-    "RS3=F,RS3force=default,RS6=same": {
-     "holds": false,
-     "rules": []
-    },
-    "RS3=F,RS3force=strict,RS6=different": {
-     "holds": false,
-     "rules": []
-    },
-    "RS3=F,RS3force=strict,RS6=same": {
+    "RS3=F,RS3force=strict": {
      "holds": false,
      "rules": []
     }
@@ -9257,39 +8061,22 @@
   "B-L1/RECSEC": {
    "cone": [
     "RS3",
-    "RS3force",
-    "RS6"
+    "RS3force"
    ],
    "details": {
-    "RS3=Ds,RS3force=default,RS6=different": {
+    "RS3=Ds,RS3force=default": {
      "holds": false,
      "rules": []
     },
-    "RS3=Ds,RS3force=default,RS6=same": {
+    "RS3=Ds,RS3force=strict": {
      "holds": false,
      "rules": []
     },
-    "RS3=Ds,RS3force=strict,RS6=different": {
+    "RS3=F,RS3force=default": {
      "holds": false,
      "rules": []
     },
-    "RS3=Ds,RS3force=strict,RS6=same": {
-     "holds": false,
-     "rules": []
-    },
-    "RS3=F,RS3force=default,RS6=different": {
-     "holds": false,
-     "rules": []
-    },
-    "RS3=F,RS3force=default,RS6=same": {
-     "holds": false,
-     "rules": []
-    },
-    "RS3=F,RS3force=strict,RS6=different": {
-     "holds": false,
-     "rules": []
-    },
-    "RS3=F,RS3force=strict,RS6=same": {
+    "RS3=F,RS3force=strict": {
      "holds": false,
      "rules": []
     }
@@ -9354,47 +8141,26 @@
   "B-L2/RECSEC": {
    "cone": [
     "RS3",
-    "RS3force",
-    "RS6"
+    "RS3force"
    ],
    "details": {
-    "RS3=Ds,RS3force=default,RS6=different": {
+    "RS3=Ds,RS3force=default": {
      "holds": true,
      "rules": [
       "f16-ds"
      ]
     },
-    "RS3=Ds,RS3force=default,RS6=same": {
-     "holds": true,
-     "rules": [
-      "f16-ds"
-     ]
-    },
-    "RS3=Ds,RS3force=strict,RS6=different": {
+    "RS3=Ds,RS3force=strict": {
      "holds": true,
      "rules": [
       "f16-ds-strict"
      ]
     },
-    "RS3=Ds,RS3force=strict,RS6=same": {
-     "holds": true,
-     "rules": [
-      "f16-ds-strict"
-     ]
-    },
-    "RS3=F,RS3force=default,RS6=different": {
+    "RS3=F,RS3force=default": {
      "holds": false,
      "rules": []
     },
-    "RS3=F,RS3force=default,RS6=same": {
-     "holds": false,
-     "rules": []
-    },
-    "RS3=F,RS3force=strict,RS6=different": {
-     "holds": false,
-     "rules": []
-    },
-    "RS3=F,RS3force=strict,RS6=same": {
+    "RS3=F,RS3force=strict": {
      "holds": false,
      "rules": []
     }
@@ -9403,23 +8169,11 @@
    "true": [
     {
      "RS3": "Ds",
-     "RS3force": "strict",
-     "RS6": "same"
+     "RS3force": "strict"
     },
     {
      "RS3": "Ds",
-     "RS3force": "strict",
-     "RS6": "different"
-    },
-    {
-     "RS3": "Ds",
-     "RS3force": "default",
-     "RS6": "same"
-    },
-    {
-     "RS3": "Ds",
-     "RS3force": "default",
-     "RS6": "different"
+     "RS3force": "default"
     }
    ]
   },
@@ -9484,47 +8238,26 @@
   "B-L3/RECSEC": {
    "cone": [
     "RS3",
-    "RS3force",
-    "RS6"
+    "RS3force"
    ],
    "details": {
-    "RS3=Ds,RS3force=default,RS6=different": {
+    "RS3=Ds,RS3force=default": {
      "holds": true,
      "rules": [
       "f16-ds"
      ]
     },
-    "RS3=Ds,RS3force=default,RS6=same": {
-     "holds": true,
-     "rules": [
-      "f16-ds"
-     ]
-    },
-    "RS3=Ds,RS3force=strict,RS6=different": {
+    "RS3=Ds,RS3force=strict": {
      "holds": true,
      "rules": [
       "f16-ds-strict"
      ]
     },
-    "RS3=Ds,RS3force=strict,RS6=same": {
-     "holds": true,
-     "rules": [
-      "f16-ds-strict"
-     ]
-    },
-    "RS3=F,RS3force=default,RS6=different": {
+    "RS3=F,RS3force=default": {
      "holds": false,
      "rules": []
     },
-    "RS3=F,RS3force=default,RS6=same": {
-     "holds": false,
-     "rules": []
-    },
-    "RS3=F,RS3force=strict,RS6=different": {
-     "holds": false,
-     "rules": []
-    },
-    "RS3=F,RS3force=strict,RS6=same": {
+    "RS3=F,RS3force=strict": {
      "holds": false,
      "rules": []
     }
@@ -9533,23 +8266,11 @@
    "true": [
     {
      "RS3": "Ds",
-     "RS3force": "strict",
-     "RS6": "same"
+     "RS3force": "strict"
     },
     {
      "RS3": "Ds",
-     "RS3force": "strict",
-     "RS6": "different"
-    },
-    {
-     "RS3": "Ds",
-     "RS3force": "default",
-     "RS6": "same"
-    },
-    {
-     "RS3": "Ds",
-     "RS3force": "default",
-     "RS6": "different"
+     "RS3force": "default"
     }
    ]
   },
@@ -9614,47 +8335,26 @@
   "B-L4/RECSEC": {
    "cone": [
     "RS3",
-    "RS3force",
-    "RS6"
+    "RS3force"
    ],
    "details": {
-    "RS3=Ds,RS3force=default,RS6=different": {
+    "RS3=Ds,RS3force=default": {
      "holds": true,
      "rules": [
       "f16-ds"
      ]
     },
-    "RS3=Ds,RS3force=default,RS6=same": {
-     "holds": true,
-     "rules": [
-      "f16-ds"
-     ]
-    },
-    "RS3=Ds,RS3force=strict,RS6=different": {
+    "RS3=Ds,RS3force=strict": {
      "holds": true,
      "rules": [
       "f16-ds-strict"
      ]
     },
-    "RS3=Ds,RS3force=strict,RS6=same": {
-     "holds": true,
-     "rules": [
-      "f16-ds-strict"
-     ]
-    },
-    "RS3=F,RS3force=default,RS6=different": {
+    "RS3=F,RS3force=default": {
      "holds": false,
      "rules": []
     },
-    "RS3=F,RS3force=default,RS6=same": {
-     "holds": false,
-     "rules": []
-    },
-    "RS3=F,RS3force=strict,RS6=different": {
-     "holds": false,
-     "rules": []
-    },
-    "RS3=F,RS3force=strict,RS6=same": {
+    "RS3=F,RS3force=strict": {
      "holds": false,
      "rules": []
     }
@@ -9663,23 +8363,11 @@
    "true": [
     {
      "RS3": "Ds",
-     "RS3force": "strict",
-     "RS6": "same"
+     "RS3force": "strict"
     },
     {
      "RS3": "Ds",
-     "RS3force": "strict",
-     "RS6": "different"
-    },
-    {
-     "RS3": "Ds",
-     "RS3force": "default",
-     "RS6": "same"
-    },
-    {
-     "RS3": "Ds",
-     "RS3force": "default",
-     "RS6": "different"
+     "RS3force": "default"
     }
    ]
   },
@@ -9736,6 +8424,7 @@
     "-": {
      "holds": true,
      "rules": [
+      "f17-hri",
       "f17-pra"
      ]
     }
@@ -9748,39 +8437,22 @@
   "B-L5/RECSEC": {
    "cone": [
     "RS3",
-    "RS3force",
-    "RS6"
+    "RS3force"
    ],
    "details": {
-    "RS3=Ds,RS3force=default,RS6=different": {
+    "RS3=Ds,RS3force=default": {
      "holds": false,
      "rules": []
     },
-    "RS3=Ds,RS3force=default,RS6=same": {
+    "RS3=Ds,RS3force=strict": {
      "holds": false,
      "rules": []
     },
-    "RS3=Ds,RS3force=strict,RS6=different": {
+    "RS3=F,RS3force=default": {
      "holds": false,
      "rules": []
     },
-    "RS3=Ds,RS3force=strict,RS6=same": {
-     "holds": false,
-     "rules": []
-    },
-    "RS3=F,RS3force=default,RS6=different": {
-     "holds": false,
-     "rules": []
-    },
-    "RS3=F,RS3force=default,RS6=same": {
-     "holds": false,
-     "rules": []
-    },
-    "RS3=F,RS3force=strict,RS6=different": {
-     "holds": false,
-     "rules": []
-    },
-    "RS3=F,RS3force=strict,RS6=same": {
+    "RS3=F,RS3force=strict": {
      "holds": false,
      "rules": []
     }
@@ -9845,47 +8517,26 @@
   "B-L6/RECSEC": {
    "cone": [
     "RS3",
-    "RS3force",
-    "RS6"
+    "RS3force"
    ],
    "details": {
-    "RS3=Ds,RS3force=default,RS6=different": {
+    "RS3=Ds,RS3force=default": {
      "holds": true,
      "rules": [
       "f16-ds"
      ]
     },
-    "RS3=Ds,RS3force=default,RS6=same": {
-     "holds": true,
-     "rules": [
-      "f16-ds"
-     ]
-    },
-    "RS3=Ds,RS3force=strict,RS6=different": {
+    "RS3=Ds,RS3force=strict": {
      "holds": true,
      "rules": [
       "f16-ds-strict"
      ]
     },
-    "RS3=Ds,RS3force=strict,RS6=same": {
-     "holds": true,
-     "rules": [
-      "f16-ds-strict"
-     ]
-    },
-    "RS3=F,RS3force=default,RS6=different": {
+    "RS3=F,RS3force=default": {
      "holds": false,
      "rules": []
     },
-    "RS3=F,RS3force=default,RS6=same": {
-     "holds": false,
-     "rules": []
-    },
-    "RS3=F,RS3force=strict,RS6=different": {
-     "holds": false,
-     "rules": []
-    },
-    "RS3=F,RS3force=strict,RS6=same": {
+    "RS3=F,RS3force=strict": {
      "holds": false,
      "rules": []
     }
@@ -9894,23 +8545,11 @@
    "true": [
     {
      "RS3": "Ds",
-     "RS3force": "strict",
-     "RS6": "same"
+     "RS3force": "strict"
     },
     {
      "RS3": "Ds",
-     "RS3force": "strict",
-     "RS6": "different"
-    },
-    {
-     "RS3": "Ds",
-     "RS3force": "default",
-     "RS6": "same"
-    },
-    {
-     "RS3": "Ds",
-     "RS3force": "default",
-     "RS6": "different"
+     "RS3force": "default"
     }
    ]
   },
@@ -9975,47 +8614,26 @@
   "B-L7/RECSEC": {
    "cone": [
     "RS3",
-    "RS3force",
-    "RS6"
+    "RS3force"
    ],
    "details": {
-    "RS3=Ds,RS3force=default,RS6=different": {
+    "RS3=Ds,RS3force=default": {
      "holds": true,
      "rules": [
       "f16-ds"
      ]
     },
-    "RS3=Ds,RS3force=default,RS6=same": {
-     "holds": true,
-     "rules": [
-      "f16-ds"
-     ]
-    },
-    "RS3=Ds,RS3force=strict,RS6=different": {
+    "RS3=Ds,RS3force=strict": {
      "holds": true,
      "rules": [
       "f16-ds-strict"
      ]
     },
-    "RS3=Ds,RS3force=strict,RS6=same": {
-     "holds": true,
-     "rules": [
-      "f16-ds-strict"
-     ]
-    },
-    "RS3=F,RS3force=default,RS6=different": {
+    "RS3=F,RS3force=default": {
      "holds": false,
      "rules": []
     },
-    "RS3=F,RS3force=default,RS6=same": {
-     "holds": false,
-     "rules": []
-    },
-    "RS3=F,RS3force=strict,RS6=different": {
-     "holds": false,
-     "rules": []
-    },
-    "RS3=F,RS3force=strict,RS6=same": {
+    "RS3=F,RS3force=strict": {
      "holds": false,
      "rules": []
     }
@@ -10024,23 +8642,11 @@
    "true": [
     {
      "RS3": "Ds",
-     "RS3force": "strict",
-     "RS6": "same"
+     "RS3force": "strict"
     },
     {
      "RS3": "Ds",
-     "RS3force": "strict",
-     "RS6": "different"
-    },
-    {
-     "RS3": "Ds",
-     "RS3force": "default",
-     "RS6": "same"
-    },
-    {
-     "RS3": "Ds",
-     "RS3force": "default",
-     "RS6": "different"
+     "RS3force": "default"
     }
    ]
   },
@@ -10075,136 +8681,8 @@
    ]
   },
   "C-doc": {
-   "cone": [
-    "RS1",
-    "RS3",
-    "RS3force",
-    "RS6",
-    "RS8",
-    "RS9"
-   ],
-   "true": [
-    {
-     "RS1": "S",
-     "RS3": "Ds",
-     "RS3force": "strict",
-     "RS6": "same",
-     "RS8": "scope",
-     "RS9": "same"
-    },
-    {
-     "RS1": "S",
-     "RS3": "Ds",
-     "RS3force": "strict",
-     "RS6": "same",
-     "RS8": "scope",
-     "RS9": "different"
-    },
-    {
-     "RS1": "S",
-     "RS3": "Ds",
-     "RS3force": "strict",
-     "RS6": "same",
-     "RS8": "rel",
-     "RS9": "same"
-    },
-    {
-     "RS1": "S",
-     "RS3": "Ds",
-     "RS3force": "strict",
-     "RS6": "same",
-     "RS8": "rel",
-     "RS9": "different"
-    },
-    {
-     "RS1": "G",
-     "RS3": "F",
-     "RS3force": "strict",
-     "RS6": "same",
-     "RS8": "rel",
-     "RS9": "same"
-    },
-    {
-     "RS1": "G",
-     "RS3": "F",
-     "RS3force": "strict",
-     "RS6": "different",
-     "RS8": "rel",
-     "RS9": "same"
-    },
-    {
-     "RS1": "G",
-     "RS3": "F",
-     "RS3force": "default",
-     "RS6": "same",
-     "RS8": "rel",
-     "RS9": "same"
-    },
-    {
-     "RS1": "G",
-     "RS3": "F",
-     "RS3force": "default",
-     "RS6": "different",
-     "RS8": "rel",
-     "RS9": "same"
-    },
-    {
-     "RS1": "G",
-     "RS3": "Ds",
-     "RS3force": "strict",
-     "RS6": "same",
-     "RS8": "scope",
-     "RS9": "same"
-    },
-    {
-     "RS1": "G",
-     "RS3": "Ds",
-     "RS3force": "strict",
-     "RS6": "same",
-     "RS8": "scope",
-     "RS9": "different"
-    },
-    {
-     "RS1": "G",
-     "RS3": "Ds",
-     "RS3force": "strict",
-     "RS6": "same",
-     "RS8": "rel",
-     "RS9": "same"
-    },
-    {
-     "RS1": "G",
-     "RS3": "Ds",
-     "RS3force": "strict",
-     "RS6": "same",
-     "RS8": "rel",
-     "RS9": "different"
-    },
-    {
-     "RS1": "G",
-     "RS3": "Ds",
-     "RS3force": "strict",
-     "RS6": "different",
-     "RS8": "rel",
-     "RS9": "same"
-    },
-    {
-     "RS1": "G",
-     "RS3": "Ds",
-     "RS3force": "default",
-     "RS6": "same",
-     "RS8": "rel",
-     "RS9": "same"
-    },
-    {
-     "RS1": "G",
-     "RS3": "Ds",
-     "RS3force": "default",
-     "RS6": "different",
-     "RS8": "rel",
-     "RS9": "same"
-    }
-   ]
+   "cone": [],
+   "true": []
   },
   "C1": {
    "cone": [
@@ -10221,14 +8699,6 @@
      "status": "CONFLICT-FREE",
      "w1_without_premises": "CONFLICT-FREE"
     },
-    "RS3=Ds,RS3force=default,RS6=same": {
-     "rules": [
-      "f15-same",
-      "f16-ds"
-     ],
-     "status": "CONFLICT-FREE",
-     "w1_without_premises": "CONFLICT-FREE"
-    },
     "RS3=Ds,RS3force=strict,RS6=different": {
      "rules": [
       "f15-diff",
@@ -10237,25 +8707,9 @@
      "status": "CONFLICT-FREE",
      "w1_without_premises": "CONFLICT-FREE"
     },
-    "RS3=Ds,RS3force=strict,RS6=same": {
-     "rules": [
-      "f15-same",
-      "f16-ds-strict"
-     ],
-     "situation": "proposal p, measure insider_threat_measures: rule f15-same releases; rule f16-ds-strict requires",
-     "status": "CONFLICT",
-     "witness": "W:cbrn_uplift_level_1:DEV"
-    },
     "RS3=F,RS3force=default,RS6=different": {
      "rules": [
       "f15-diff"
-     ],
-     "status": "CONFLICT-FREE",
-     "w1_without_premises": "CONFLICT-FREE"
-    },
-    "RS3=F,RS3force=default,RS6=same": {
-     "rules": [
-      "f15-same"
      ],
      "status": "CONFLICT-FREE",
      "w1_without_premises": "CONFLICT-FREE"
@@ -10266,22 +8720,9 @@
      ],
      "status": "CONFLICT-FREE",
      "w1_without_premises": "CONFLICT-FREE"
-    },
-    "RS3=F,RS3force=strict,RS6=same": {
-     "rules": [
-      "f15-same"
-     ],
-     "status": "CONFLICT-FREE",
-     "w1_without_premises": "CONFLICT-FREE"
     }
    },
-   "true": [
-    {
-     "RS3": "Ds",
-     "RS3force": "strict",
-     "RS6": "same"
-    }
-   ]
+   "true": []
   },
   "C2": {
    "cone": [
@@ -10323,28 +8764,9 @@
      "status": "CONFLICT-FREE",
      "w1_without_premises": "UNKNOWN"
     },
-    "RS1=G,RS8=rel,RS9=same": {
-     "rules": [
-      "f10-dm-same",
-      "f10-rel-same",
-      "f9-dm",
-      "f9-rel"
-     ],
-     "situation": "proposal p: rule f9-rel releases; rule f10-dm-same requires",
-     "status": "CONFLICT",
-     "witness": "W:cbrn_uplift_tcl+ml_rd_acceleration_level_1:HRI"
-    },
     "RS1=G,RS8=scope,RS9=different": {
      "rules": [
       "f10-dm-diff",
-      "f9-dm"
-     ],
-     "status": "CONFLICT-FREE",
-     "w1_without_premises": "CONFLICT-FREE"
-    },
-    "RS1=G,RS8=scope,RS9=same": {
-     "rules": [
-      "f10-dm-same",
       "f9-dm"
      ],
      "status": "CONFLICT-FREE",
@@ -10354,36 +8776,21 @@
      "rules": [],
      "status": "CONFLICT-FREE"
     },
-    "RS1=S,RS8=rel,RS9=same": {
-     "rules": [],
-     "status": "CONFLICT-FREE"
-    },
     "RS1=S,RS8=scope,RS9=different": {
-     "rules": [],
-     "status": "CONFLICT-FREE"
-    },
-    "RS1=S,RS8=scope,RS9=same": {
      "rules": [],
      "status": "CONFLICT-FREE"
     }
    },
-   "true": [
-    {
-     "RS1": "G",
-     "RS8": "rel",
-     "RS9": "same"
-    }
-   ]
+   "true": []
   },
   "C4": {
    "cone": [
     "RS1",
     "RS3",
-    "RS3force",
-    "RS6"
+    "RS3force"
    ],
    "details": {
-    "RS1=G,RS3=Ds,RS3force=default,RS6=different": {
+    "RS1=G,RS3=Ds,RS3force=default": {
      "rules": [
       "f10-sec",
       "f16-ds",
@@ -10392,16 +8799,7 @@
      "status": "CONFLICT-FREE",
      "w1_without_premises": "CONFLICT-FREE"
     },
-    "RS1=G,RS3=Ds,RS3force=default,RS6=same": {
-     "rules": [
-      "f10-sec",
-      "f16-ds",
-      "f9-sec"
-     ],
-     "status": "CONFLICT-FREE",
-     "w1_without_premises": "CONFLICT-FREE"
-    },
-    "RS1=G,RS3=Ds,RS3force=strict,RS6=different": {
+    "RS1=G,RS3=Ds,RS3force=strict": {
      "rules": [
       "f10-sec",
       "f16-ds-strict",
@@ -10410,16 +8808,7 @@
      "status": "CONFLICT-FREE",
      "w1_without_premises": "CONFLICT-FREE"
     },
-    "RS1=G,RS3=Ds,RS3force=strict,RS6=same": {
-     "rules": [
-      "f10-sec",
-      "f16-ds-strict",
-      "f9-sec"
-     ],
-     "status": "CONFLICT-FREE",
-     "w1_without_premises": "CONFLICT-FREE"
-    },
-    "RS1=G,RS3=F,RS3force=default,RS6=different": {
+    "RS1=G,RS3=F,RS3force=default": {
      "rules": [
       "f10-sec",
       "f9-sec"
@@ -10427,7 +8816,7 @@
      "status": "CONFLICT-FREE",
      "w1_without_premises": "CONFLICT-FREE"
     },
-    "RS1=G,RS3=F,RS3force=default,RS6=same": {
+    "RS1=G,RS3=F,RS3force=strict": {
      "rules": [
       "f10-sec",
       "f9-sec"
@@ -10435,63 +8824,25 @@
      "status": "CONFLICT-FREE",
      "w1_without_premises": "CONFLICT-FREE"
     },
-    "RS1=G,RS3=F,RS3force=strict,RS6=different": {
-     "rules": [
-      "f10-sec",
-      "f9-sec"
-     ],
-     "status": "CONFLICT-FREE",
-     "w1_without_premises": "CONFLICT-FREE"
-    },
-    "RS1=G,RS3=F,RS3force=strict,RS6=same": {
-     "rules": [
-      "f10-sec",
-      "f9-sec"
-     ],
-     "status": "CONFLICT-FREE",
-     "w1_without_premises": "CONFLICT-FREE"
-    },
-    "RS1=S,RS3=Ds,RS3force=default,RS6=different": {
+    "RS1=S,RS3=Ds,RS3force=default": {
      "rules": [
       "f16-ds"
      ],
      "status": "CONFLICT-FREE",
      "w1_without_premises": "CONFLICT-FREE"
     },
-    "RS1=S,RS3=Ds,RS3force=default,RS6=same": {
-     "rules": [
-      "f16-ds"
-     ],
-     "status": "CONFLICT-FREE",
-     "w1_without_premises": "CONFLICT-FREE"
-    },
-    "RS1=S,RS3=Ds,RS3force=strict,RS6=different": {
+    "RS1=S,RS3=Ds,RS3force=strict": {
      "rules": [
       "f16-ds-strict"
      ],
      "status": "CONFLICT-FREE",
      "w1_without_premises": "CONFLICT-FREE"
     },
-    "RS1=S,RS3=Ds,RS3force=strict,RS6=same": {
-     "rules": [
-      "f16-ds-strict"
-     ],
-     "status": "CONFLICT-FREE",
-     "w1_without_premises": "CONFLICT-FREE"
-    },
-    "RS1=S,RS3=F,RS3force=default,RS6=different": {
+    "RS1=S,RS3=F,RS3force=default": {
      "rules": [],
      "status": "CONFLICT-FREE"
     },
-    "RS1=S,RS3=F,RS3force=default,RS6=same": {
-     "rules": [],
-     "status": "CONFLICT-FREE"
-    },
-    "RS1=S,RS3=F,RS3force=strict,RS6=different": {
-     "rules": [],
-     "status": "CONFLICT-FREE"
-    },
-    "RS1=S,RS3=F,RS3force=strict,RS6=same": {
+    "RS1=S,RS3=F,RS3force=strict": {
      "rules": [],
      "status": "CONFLICT-FREE"
     }
@@ -10597,19 +8948,7 @@
       "f8"
      ]
     },
-    "RS1=G,RS8=rel,RS9=same": {
-     "holds": true,
-     "rules": [
-      "f8"
-     ]
-    },
     "RS1=G,RS8=scope,RS9=different": {
-     "holds": true,
-     "rules": [
-      "f8"
-     ]
-    },
-    "RS1=G,RS8=scope,RS9=same": {
      "holds": true,
      "rules": [
       "f8"
@@ -10621,19 +8960,7 @@
       "f8"
      ]
     },
-    "RS1=S,RS8=rel,RS9=same": {
-     "holds": true,
-     "rules": [
-      "f8"
-     ]
-    },
     "RS1=S,RS8=scope,RS9=different": {
-     "holds": true,
-     "rules": [
-      "f8"
-     ]
-    },
-    "RS1=S,RS8=scope,RS9=same": {
      "holds": true,
      "rules": [
       "f8"
@@ -10645,17 +8972,7 @@
     {
      "RS1": "S",
      "RS8": "scope",
-     "RS9": "same"
-    },
-    {
-     "RS1": "S",
-     "RS8": "scope",
      "RS9": "different"
-    },
-    {
-     "RS1": "S",
-     "RS8": "rel",
-     "RS9": "same"
     },
     {
      "RS1": "S",
@@ -10665,17 +8982,7 @@
     {
      "RS1": "G",
      "RS8": "scope",
-     "RS9": "same"
-    },
-    {
-     "RS1": "G",
-     "RS8": "scope",
      "RS9": "different"
-    },
-    {
-     "RS1": "G",
-     "RS8": "rel",
-     "RS9": "same"
     },
     {
      "RS1": "G",
@@ -10697,19 +9004,7 @@
       "f8"
      ]
     },
-    "RS1=G,RS8=rel,RS9=same": {
-     "holds": true,
-     "rules": [
-      "f8"
-     ]
-    },
     "RS1=G,RS8=scope,RS9=different": {
-     "holds": true,
-     "rules": [
-      "f8"
-     ]
-    },
-    "RS1=G,RS8=scope,RS9=same": {
      "holds": true,
      "rules": [
       "f8"
@@ -10721,19 +9016,7 @@
       "f8"
      ]
     },
-    "RS1=S,RS8=rel,RS9=same": {
-     "holds": true,
-     "rules": [
-      "f8"
-     ]
-    },
     "RS1=S,RS8=scope,RS9=different": {
-     "holds": true,
-     "rules": [
-      "f8"
-     ]
-    },
-    "RS1=S,RS8=scope,RS9=same": {
      "holds": true,
      "rules": [
       "f8"
@@ -10745,17 +9028,7 @@
     {
      "RS1": "S",
      "RS8": "scope",
-     "RS9": "same"
-    },
-    {
-     "RS1": "S",
-     "RS8": "scope",
      "RS9": "different"
-    },
-    {
-     "RS1": "S",
-     "RS8": "rel",
-     "RS9": "same"
     },
     {
      "RS1": "S",
@@ -10765,17 +9038,7 @@
     {
      "RS1": "G",
      "RS8": "scope",
-     "RS9": "same"
-    },
-    {
-     "RS1": "G",
-     "RS8": "scope",
      "RS9": "different"
-    },
-    {
-     "RS1": "G",
-     "RS8": "rel",
-     "RS9": "same"
     },
     {
      "RS1": "G",
@@ -11241,13 +9504,16 @@
    "goals": {
     "cyber": {
      "certificate_replayed": true,
-     "certificate_sha256": "4d050a8a6c58fca909254c7f6dbed8f196b0f6d78a80b4e859e01982288caf77"
+     "certificate_sha256": "536f0f2a9eac7dd13b3dbc9da25d4d0304269fe2924f95ff783098a4fdbe4a70"
     },
     "harmful_manipulation": {
      "certificate_replayed": true,
-     "certificate_sha256": "8dadfea458b4750f76a1d5eec1f8e881227852eba6a91deddc05e3d2defd7738"
+     "certificate_sha256": "f8df594d32117155583fd38053ed0b6ee0c1175a1d76e63f99e516335db0c26a"
     }
    },
+   "own_premises": [
+    "bridge-one-domain"
+   ],
    "verdict": "ALL"
   },
   "N2": {
@@ -11270,9 +9536,7 @@
    "witnesses": {
     "f10-acc": "R5",
     "f10-dm-diff": "A-L6-HRI",
-    "f10-dm-same": "A-L6-HRI",
     "f10-rel-diff": "A-L6-DEV",
-    "f10-rel-same": "A-L6-DEV",
     "f10-sec": "A-L6-DEV",
     "f11-acc": "R6",
     "f11-dm": "A-L5-HRI",
@@ -11284,10 +9548,10 @@
     "f13-u": "A-L0-HRI",
     "f14": "K5",
     "f15-diff": "A-L1-DEV",
-    "f15-same": "A-L1-DEV",
     "f16-ds": "A-L2-DEV",
     "f16-ds-strict": "A-L2-DEV",
     "f17-add": "K7",
+    "f17-hri": "A-L5-DEV",
     "f17-pra": "A-L5-DEV",
     "f18-frequent": "K8",
     "f18-yearly": "A-L0-DEV",
@@ -11297,12 +9561,14 @@
     "f20-elicitation-strict": "A-L0-DEV",
     "f20-holistic-default": "A-L0-DEV",
     "f20-holistic-strict": "A-L0-DEV",
-    "f20-within-default": "A-L1-DEV",
-    "f20-within-strict": "A-L1-DEV",
+    "f20-within-default": "A-L0-DEV",
+    "f20-within-strict": "A-L0-DEV",
     "f3": "A-L0-LRX",
     "f4-check-d": "K3",
     "f4-check-r": "K3",
     "f4-further-r": "K3",
+    "f4-need-d": "K3",
+    "f4-need-r": "K3",
     "f5": "K4",
     "f6": "K1-L2",
     "f7-rra": "A-L1-DEV",
@@ -11488,10 +9754,8 @@
   "rules_per_source": {
    "F10": [
     "f10-acc",
-    "f10-dm-same",
     "f10-dm-diff",
     "f10-sec",
-    "f10-rel-same",
     "f10-rel-diff"
    ],
    "F11": [
@@ -11512,7 +9776,6 @@
     "f14"
    ],
    "F15": [
-    "f15-same",
     "f15-diff"
    ],
    "F16": [
@@ -11521,6 +9784,7 @@
    ],
    "F17": [
     "f17-pra",
+    "f17-hri",
     "f17-add"
    ],
    "F18": [
@@ -11546,7 +9810,9 @@
    ],
    "F4": [
     "f4-check-d",
+    "f4-need-d",
     "f4-check-r",
+    "f4-need-r",
     "f4-further-r"
    ],
    "F5": [
@@ -12005,53 +10271,32 @@
    "A-L4-DEV/DM": "SOME(RS1=G)",
    "A-L4-HRI/DM": "SOME(RS1=G)",
    "A-L4-INT/DM": "SOME(RS1=G)",
-   "C3": "SOME(RS1=G & RS8=rel & RS9=same)"
+   "C3": "NONE"
   },
   "with_N2": {
    "B-L2/RECSEC": {
     "cone": [
      "RS3",
-     "RS3force",
-     "RS6"
+     "RS3force"
     ],
     "details": {
-     "RS3=Ds,RS3force=default,RS6=different": {
+     "RS3=Ds,RS3force=default": {
       "holds": true,
       "rules": [
        "f16-ds"
       ]
      },
-     "RS3=Ds,RS3force=default,RS6=same": {
-      "holds": true,
-      "rules": [
-       "f16-ds"
-      ]
-     },
-     "RS3=Ds,RS3force=strict,RS6=different": {
+     "RS3=Ds,RS3force=strict": {
       "holds": true,
       "rules": [
        "f16-ds-n2"
       ]
      },
-     "RS3=Ds,RS3force=strict,RS6=same": {
-      "holds": true,
-      "rules": [
-       "f16-ds-n2"
-      ]
-     },
-     "RS3=F,RS3force=default,RS6=different": {
+     "RS3=F,RS3force=default": {
       "holds": false,
       "rules": []
      },
-     "RS3=F,RS3force=default,RS6=same": {
-      "holds": false,
-      "rules": []
-     },
-     "RS3=F,RS3force=strict,RS6=different": {
-      "holds": false,
-      "rules": []
-     },
-     "RS3=F,RS3force=strict,RS6=same": {
+     "RS3=F,RS3force=strict": {
       "holds": false,
       "rules": []
      }
@@ -12059,23 +10304,11 @@
     "true": [
      {
       "RS3": "Ds",
-      "RS3force": "strict",
-      "RS6": "same"
+      "RS3force": "strict"
      },
      {
       "RS3": "Ds",
-      "RS3force": "strict",
-      "RS6": "different"
-     },
-     {
-      "RS3": "Ds",
-      "RS3force": "default",
-      "RS6": "same"
-     },
-     {
-      "RS3": "Ds",
-      "RS3force": "default",
-      "RS6": "different"
+      "RS3force": "default"
      }
     ]
    },
@@ -12094,25 +10327,9 @@
       "status": "CONFLICT-FREE",
       "w1_without_premises": "CONFLICT-FREE"
      },
-     "RS3=Ds,RS3force=default,RS6=same": {
-      "rules": [
-       "f15-same",
-       "f16-ds"
-      ],
-      "status": "CONFLICT-FREE",
-      "w1_without_premises": "CONFLICT-FREE"
-     },
      "RS3=Ds,RS3force=strict,RS6=different": {
       "rules": [
        "f15-diff",
-       "f16-ds-n2"
-      ],
-      "status": "CONFLICT-FREE",
-      "w1_without_premises": "CONFLICT-FREE"
-     },
-     "RS3=Ds,RS3force=strict,RS6=same": {
-      "rules": [
-       "f15-same",
        "f16-ds-n2"
       ],
       "status": "CONFLICT-FREE",
@@ -12125,23 +10342,9 @@
       "status": "CONFLICT-FREE",
       "w1_without_premises": "CONFLICT-FREE"
      },
-     "RS3=F,RS3force=default,RS6=same": {
-      "rules": [
-       "f15-same"
-      ],
-      "status": "CONFLICT-FREE",
-      "w1_without_premises": "CONFLICT-FREE"
-     },
      "RS3=F,RS3force=strict,RS6=different": {
       "rules": [
        "f15-diff"
-      ],
-      "status": "CONFLICT-FREE",
-      "w1_without_premises": "CONFLICT-FREE"
-     },
-     "RS3=F,RS3force=strict,RS6=same": {
-      "rules": [
-       "f15-same"
       ],
       "status": "CONFLICT-FREE",
       "w1_without_premises": "CONFLICT-FREE"
@@ -12174,7 +10377,7 @@
    {
     "item": "B-L5/PRA",
     "with_N1": "ALL",
-    "without_N1": "NONE"
+    "without_N1": "ALL"
    },
    {
     "item": "K5/SUBMISSION",

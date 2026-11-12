@@ -281,6 +281,17 @@
           "act": "{0} be preceded by a determination of any substantial modification"
         }
       },
+      "further_need_checked": {
+        "arguments": [
+          "proposal"
+        ],
+        "description": "before {0}, the developer determines whether a further critical capability assessment is required (1.3.2)",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} be preceded by a determination of any further capability assessment needed"
+        }
+      },
       "further_assessed": {
         "arguments": [
           "proposal"
@@ -346,6 +357,17 @@
           "role": "obligation",
           "default": "deny",
           "act": "{0} be subject to periodic residual risk assessments of misalignment risk"
+        }
+      },
+      "periodic_covers_internal": {
+        "arguments": [
+          "proposal"
+        ],
+        "description": "the periodic residual risk assessments for {0} also account for the safety implications of high-risk internal deployments (3.2.1)",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} have its periodic assessments cover high-risk internal deployments"
         }
       },
       "safeguards_added": {
@@ -507,11 +529,11 @@
         "arguments": [
           "proposal"
         ],
-        "description": "the mitigation for {0} and its effects are assessed holistically and proportionately (1.3.5 Note)",
+        "description": "the mitigation for {0} and its effects are assessed holistically, and the mitigation is proportionate with the expected impact of the model's risk (1.3.5 Note)",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} have its mitigations assessed holistically in proportion to expected impact"
+          "act": "{0} have holistically assessed mitigations proportionate with expected impact"
         }
       },
       "within_levels": {
