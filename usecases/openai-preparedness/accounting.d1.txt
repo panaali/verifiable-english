@@ -87,6 +87,8 @@ f17-iff | omits: "We treat a frontier capability as a Tracked Category" restates
 f17-iff-only | omits: "We treat a frontier capability as a Tracked Category" restates ; "if the capability creates a risk that meets five criteria" reading RS12
 f13-review | omits: "We will periodically review the latest research and findings for each Research Category" restates
 f13-results | omits: "and evaluate whether there is sufficient evidence to recommend updates to our internal practices or to the Preparedness Framework" loss 1
+cl-levels | omits: "from the Framework" restates ; "because those levels were not operationally involved in the execution of our Preparedness work" exposition
+fn5-indicator | omits: "Given the higher potential severity of biological threats relative to chemical ones" exposition ; "we will prioritize" loss limit 21 ; "for the category" restates
 bio-high | omits: nothing
 bio-critical | omits: nothing
 cyb-high | omits: nothing
@@ -95,5 +97,3 @@ ais-high | omits: nothing
 ais-critical | omits: nothing
 rs2-nest | omits: "Systems that reach Critical capability also require safeguards that sufficiently minimize associated risks during development" reading RS2
 no-critical-models | omits: "We do not currently possess any models that have Critical levels of capability" restates ; "and we expect to further update this Preparedness Framework before reaching such a level with any model" exposition
-cl-levels | omits: "from the Framework" restates ; "because those levels were not operationally involved in the execution of our Preparedness work" exposition
-fn5-indicator | omits: "Given the higher potential severity of biological threats relative to chemical ones" exposition ; "we will prioritize" loss limit 21 ; "for the category" restates

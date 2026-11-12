@@ -171,7 +171,7 @@ def invention_audit():
     placed = {value[1] for value in B.PLACEMENTS.values() if value[0] in ("rule", "blocked_rule")}
     placed |= set(B.FACT_ANCHORS)
     readings = {block for _, choices in B.READINGS.values() for blocks in choices.values() for block in blocks}
-    blocks = list(T.rule_blocks()) + list(T.read_blocks("facts.d1.ve"))
+    blocks = list(T.rule_blocks()) + list(T.fact_blocks())
     untraced = [b.id for b in blocks if not b.source.strip() or b.id not in placed | readings]
     defaults = [b.id for b in T.rule_blocks() if json.loads(T.parsed_rule(b.id)).get("mode") == "default"
                 and b.id not in readings]
@@ -179,7 +179,7 @@ def invention_audit():
     for set_id, (harness, choices) in B.READINGS.items():
         for choice, ids in choices.items():
             for block_id in ids:
-                block = next((b for b in (*T.rule_blocks(), *T.read_blocks("facts.d1.ve"))
+                block = next((b for b in (*T.rule_blocks(), *T.fact_blocks())
                               if b.id == block_id), None)
                 if block is None or (block.when and (harness, choice) not in block.when):
                     choice_mismatches.append((set_id, choice, block_id))
