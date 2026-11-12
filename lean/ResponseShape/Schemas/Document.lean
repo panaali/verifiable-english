@@ -269,7 +269,18 @@ def «row» : Shape :=
         ("composed", copied "Service.Document.composedJson: under cardinality@0's chain list, each reading's document and what the row does not certify; the client binds them to the request" <|
           n [obj, .required ["counting_document", "chain_document", "not_certified", "scope"], closed [
             ("counting_document", str), ("chain_document", str),
-            ("not_certified", ref "common.json#/$defs/strings"), ("scope", str)]])]]]
+            ("not_certified", ref "common.json#/$defs/strings"), ("scope", str)]]),
+        ("events_view", copied "Service.Document.eventsView: under events@0 (et-5b), the environment the mode read (Events.routeView: the written one without its block and events@0, one day constant per named date); the client binds it whole to the document's environment as written (ve.events.view) and builds the document over it" <|
+          n [obj, .required ["language", "profiles", "spec_revision", "vocabulary"], closed [
+            ("language", str), ("profiles", ref "common.json#/$defs/strings"), ("spec_revision", str),
+            -- The canonical environment's vocabulary members (common.json `environment`); each declaration the
+            -- written one's, compared whole by the client, but the named dates' constants, Lean's own.
+            ("vocabulary", n [obj, .required ["sorts", "predicates", "constants"], closed [
+              ("sorts", n [obj, .object [] (some (.bool true))]),
+              ("predicates", n [obj, .object [] (some (ref "common.json#/$defs/environment_predicate"))]),
+              ("constants", n [obj, .object [] (some (n [obj, .required ["sort", "description"],
+                closed [("sort", str), ("description", str), ("verbalisation", .bool true)]]))]),
+              ("soft", .bool true), ("rights", .bool true), ("acts", .bool true)]])]])]]]
 
 def file : File where
   name := "document.json"
@@ -282,8 +293,8 @@ def file : File where
     ("rights_line", .schema rights_line), ("rights_condition", .schema rights_condition),
     ("rights_block", .schema rights_block)]
 
--- The document protocol includes every composed-reading field and every existing row.
+-- The document protocol includes every composed-reading field and every existing row, and `events_view` (et-5b).
 -- Its rendered fingerprint is fixed with this wire change; changing the shape requires review.
-#guard (file.render.toOption.map (hash ·.compress)) == some 10036135824260254077
+#guard (file.render.toOption.map (hash ·.compress)) == some 3654778105975326606
 
 end ResponseShape.Schemas.Document

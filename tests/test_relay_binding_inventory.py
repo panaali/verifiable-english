@@ -333,11 +333,14 @@ _NOT_THIS_CHAIN = {
 
 
 def _soft_defaults_inventory():
-    """Every field of the document row: `_SOFT_DEFAULTS_ROW`, or a family of `_NOT_THIS_CHAIN`, or none (the test below
-    fails on a field no entry names)."""
+    """Every field of the document row: `_SOFT_DEFAULTS_ROW`, or `events_view`'s (et-5b review F1: bound whole to the
+    written environment by `ve.events.view`; its events documents are among `_document_relays`'), or a family of
+    `_NOT_THIS_CHAIN`, or none (the test below fails on a field no entry names)."""
     classified = dict(_SOFT_DEFAULTS_ROW)
     for path in schema_fields("document-soft-defaults"):
-        if path not in classified:
+        if path == "events_view" or path.startswith(("events_view.", "events_view[", "events_view{")):
+            classified[path] = BOUND
+        elif path not in classified:
             family = next((f for f in _NOT_THIS_CHAIN if path == f or path.startswith(f) or
                            path.startswith((f"{f}.", f"{f}[", f"{f}{{"))), None)
             if family is not None:
@@ -743,8 +746,11 @@ def _document_relays(monkeypatch):
     """Every document of F2.3's corpus Lean answers with a row: rules, parts, reading sets, open terms, claim graphs."""
     from tests.document_chain_corpus import corpus
     from ve.document.load import _load
+    from tests.test_events_document_cli import DOCUMENTS, _text
     relays = {}
-    for name, raw in corpus()[0].items():
+    # et-5b review F1: the soft chain's events documents, whose rows carry `events_view`.
+    events = {f"events {name}": _text(document).encode() for name, document in DOCUMENTS.items()}
+    for name, raw in {**corpus()[0], **events}.items():
         if service_relay.answer("document", {"id": "document", "document": raw.decode(), "admit": False})[1] is None:
             calls = {"document-soft-defaults": lambda raw=raw: _load(Path("document.ve.md"), admit=False, raw=raw)}
             relay = DocumentRelay("document", calls, None, [])

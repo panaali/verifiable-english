@@ -58290,6 +58290,37 @@ theorem VE.Route.MeteredProofs.order_sound
           b = fs.all fun f => VE.Order.Formula.eval M [] f
   -- uses VE.Order.FiniteModel.relations@VE.Order.Finite VE.Order.FiniteModel@VE.Order.Finite VE.Order.Formula.eval@VE.Order.Finite VE.Order.Formula@VE.Order.Syntax VE.Order.Value@VE.Order.Semantics VE.Order.Wire.Entity@VE.Order.Wire VE.Route.Metered.Result.value@VE.Route.Metered VE.Route.Metered.evaluate@VE.Route.Metered VE.Time.evalB@VE.Time.Budget
   -- expr 1155899805
+theorem VE.Route.MeteredRun.answer_evaluate
+  ∀ {α ρ σ entity : Type} (q : VE.Route.MeteredRun.Query) (s : VE.Route.MeteredRun.Session α ρ σ entity) (fs : List α),
+    VE.Route.MeteredRun.EncodesEvaluation q.id (s.document fs)
+      (VE.Route.MeteredRun.answer q s (VE.Route.MeteredRun.Request.evaluate fs))
+  -- uses VE.Route.MeteredRun.EncodesEvaluation@VE.Route.MeteredWire VE.Route.MeteredRun.Query.id@VE.Route.MeteredRun VE.Route.MeteredRun.Query@VE.Route.MeteredRun VE.Route.MeteredRun.Request.evaluate@VE.Route.MeteredRun VE.Route.MeteredRun.Session.document@VE.Route.MeteredRun VE.Route.MeteredRun.Session@VE.Route.MeteredRun VE.Route.MeteredRun.answer@VE.Route.MeteredRun
+  -- expr 4266498267
+theorem VE.Route.MeteredRun.metered_wire_sound
+  ∀ (j answer : Lean.Json),
+    VE.Route.MeteredRun.runCase j = Except.ok answer →
+      VE.Bridge.stringField j "kind" = Except.ok "evaluate-budgeted" →
+        ∃ id environment checked model q,
+          VE.Bridge.stringField j "id" = Except.ok id ∧
+            j.getObjVal? "environment" = Except.ok environment ∧
+              VE.Service.Standalone.evaluable environment = Except.ok checked ∧
+                VE.Route.MeteredRun.CaseModel j checked (VE.Route.MeteredRun.prepare environment) model ∧
+                  VE.Route.MeteredRun.query j id Bool.false = Except.ok q ∧
+                    q.id = id ∧
+                      VE.Route.MeteredRun.EvaluationAnswer q checked (VE.Route.MeteredRun.prepare environment) model
+                        answer
+  -- uses VE.Bridge.stringField@VE.Bridge VE.Route.MeteredRun.CaseModel@VE.Route.MeteredWire VE.Route.MeteredRun.EvaluationAnswer@VE.Route.MeteredWire VE.Route.MeteredRun.Query.id@VE.Route.MeteredRun VE.Route.MeteredRun.Query@VE.Route.MeteredRun VE.Route.MeteredRun.prepare@VE.Route.MeteredRun VE.Route.MeteredRun.query@VE.Route.MeteredRun VE.Route.MeteredRun.runCase@VE.Route.MeteredRun VE.Service.Standalone.Validated@VE.Service.Standalone VE.Service.Standalone.evaluable@VE.Service.Standalone
+  -- expr 1220572776
+theorem VE.Route.MeteredRun.query_evaluate
+  ∀ (j : Lean.Json) (id : String) (q : VE.Route.MeteredRun.Query),
+    VE.Route.MeteredRun.query j id Bool.false = Except.ok q → q.nonVacuity = Bool.false ∧ q.id = id
+  -- uses VE.Route.MeteredRun.Query.id@VE.Route.MeteredRun VE.Route.MeteredRun.Query.nonVacuity@VE.Route.MeteredRun VE.Route.MeteredRun.Query@VE.Route.MeteredRun VE.Route.MeteredRun.query@VE.Route.MeteredRun
+  -- expr 3971862442
+theorem VE.Route.MeteredRun.reportedWith_ok
+  ∀ (prepared : Except String VE.Route.MeteredRun.Prepared) (j answer : Lean.Json),
+    VE.Route.MeteredRun.runWith prepared j = Except.ok answer → VE.Route.MeteredRun.reportedWith prepared j = answer
+  -- uses VE.Route.MeteredRun.Prepared@VE.Route.MeteredRun VE.Route.MeteredRun.reportedWith@VE.Route.MeteredRun VE.Route.MeteredRun.runWith@VE.Route.MeteredRun
+  -- expr 1473178297
 theorem VE.Route.MeteredRun.reportedWith_prepare
   ∀ (j environment : Lean.Json),
     j.getObjVal? "environment" = Except.ok environment →
@@ -58297,6 +58328,96 @@ theorem VE.Route.MeteredRun.reportedWith_prepare
         VE.Route.MeteredRun.runCaseReported j
   -- uses VE.Route.MeteredRun.Prepared@VE.Route.MeteredRun VE.Route.MeteredRun.prepare@VE.Route.MeteredRun VE.Route.MeteredRun.reportedWith@VE.Route.MeteredRun VE.Route.MeteredRun.runCaseReported@VE.Route.MeteredRun
   -- expr 2173106182
+theorem VE.Route.MeteredRun.request_evaluate
+  ∀ {α : Type} (q : VE.Route.MeteredRun.Query) (formula : Lean.Json → Except String α)
+    (formulas : Lean.Json → Except String (List α)) (r : VE.Route.MeteredRun.Request α),
+    q.nonVacuity = Bool.false →
+      VE.Route.MeteredRun.request q formula formulas = Except.ok r →
+        ∃ fs, formulas q.input = Except.ok fs ∧ fs ≠ [] ∧ r = VE.Route.MeteredRun.Request.evaluate fs
+  -- uses VE.Route.MeteredRun.Query.input@VE.Route.MeteredRun VE.Route.MeteredRun.Query.nonVacuity@VE.Route.MeteredRun VE.Route.MeteredRun.Query@VE.Route.MeteredRun VE.Route.MeteredRun.Request.evaluate@VE.Route.MeteredRun VE.Route.MeteredRun.Request@VE.Route.MeteredRun VE.Route.MeteredRun.request@VE.Route.MeteredRun
+  -- expr 1811396450
+theorem VE.Route.MeteredRun.runWith_sound
+  ∀ (prepared : Except String VE.Route.MeteredRun.Prepared) (j answer : Lean.Json),
+    VE.Route.MeteredRun.runWith prepared j = Except.ok answer →
+      VE.Bridge.stringField j "kind" = Except.ok "evaluate-budgeted" →
+        ∃ id p checked model q,
+          VE.Bridge.stringField j "id" = Except.ok id ∧
+            prepared = Except.ok p ∧
+              p.checked = Except.ok checked ∧
+                VE.Route.MeteredRun.CaseModel j checked p model ∧
+                  VE.Route.MeteredRun.query j id Bool.false = Except.ok q ∧
+                    q.id = id ∧ VE.Route.MeteredRun.EvaluationAnswer q checked p model answer
+  -- uses VE.Bridge.stringField@VE.Bridge VE.Route.MeteredRun.CaseModel@VE.Route.MeteredWire VE.Route.MeteredRun.EvaluationAnswer@VE.Route.MeteredWire VE.Route.MeteredRun.Prepared.checked@VE.Route.MeteredRun VE.Route.MeteredRun.Prepared@VE.Route.MeteredRun VE.Route.MeteredRun.Query.id@VE.Route.MeteredRun VE.Route.MeteredRun.Query@VE.Route.MeteredRun VE.Route.MeteredRun.query@VE.Route.MeteredRun VE.Route.MeteredRun.runWith@VE.Route.MeteredRun VE.Service.Standalone.Validated@VE.Service.Standalone
+  -- expr 1377892341
+theorem VE.Route.MeteredRun.run_closure_sound
+  ∀ (q : VE.Route.MeteredRun.Query) (checked : VE.Service.Standalone.Validated) (p : VE.Route.MeteredRun.Prepared)
+    (model answer : Lean.Json),
+    VE.Route.MeteredRun.run q checked p model = Except.ok answer →
+      checked.envelope.family = VE.Route.Gate.Family.closure →
+        q.nonVacuity = Bool.false →
+          ∃ rv fs M result,
+            p.route.get = Except.ok rv ∧
+              VE.Closure.Bridge.decodeFormulas rv.environment q.input = Except.ok fs ∧
+                fs ≠ [] ∧
+                  VE.Route.Wire.decodeDataModel rv model = Except.ok M ∧
+                    VE.Route.MeteredRun.EncodesEvaluation q.id result answer ∧
+                      ∀ (b : Bool), result.value = Option.some b → b = fs.all fun f => VE.Closure.Formula.eval M [] f
+  -- uses VE.Bridge.Entity@VE.Bridge VE.Closure.Bridge.decodeFormulas@VE.Closure.Bridge VE.Closure.Formula.eval@VE.Closure.Finite VE.Closure.Formula@VE.Closure.Syntax VE.FiniteModel@VE.Finite VE.Route.Gate.Envelope.family@VE.Route.Gate VE.Route.Gate.Family.closure@VE.Route.Gate VE.Route.Gate.Family@VE.Route.Gate VE.Route.Metered.Result.value@VE.Route.Metered VE.Route.Metered.Result@VE.Route.Metered VE.Route.MeteredRun.EncodesEvaluation@VE.Route.MeteredWire VE.Route.MeteredRun.Prepared.route@VE.Route.MeteredRun VE.Route.MeteredRun.Prepared@VE.Route.MeteredRun VE.Route.MeteredRun.Query.id@VE.Route.MeteredRun VE.Route.MeteredRun.Query.input@VE.Route.MeteredRun VE.Route.MeteredRun.Query.nonVacuity@VE.Route.MeteredRun VE.Route.MeteredRun.Query@VE.Route.MeteredRun VE.Route.MeteredRun.run@VE.Route.MeteredRun VE.Route.Wire.RouteVocabulary.environment@VE.Route.Wire VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.Wire.decodeDataModel@VE.Route.Wire VE.Service.Standalone.Validated.envelope@VE.Service.Standalone VE.Service.Standalone.Validated@VE.Service.Standalone
+  -- expr 4130045629
+theorem VE.Route.MeteredRun.run_core_sound
+  ∀ (q : VE.Route.MeteredRun.Query) (checked : VE.Service.Standalone.Validated) (p : VE.Route.MeteredRun.Prepared)
+    (model answer : Lean.Json),
+    VE.Route.MeteredRun.run q checked p model = Except.ok answer →
+      checked.envelope.family = VE.Route.Gate.Family.closureNary →
+        q.nonVacuity = Bool.false →
+          ∃ v fs M result,
+            p.core.get = Except.ok v ∧
+              VE.Core.Bridge.decodeFormulas v.environment q.input = Except.ok fs ∧
+                fs ≠ [] ∧
+                  VE.Core.Wire.decodeModel v model = Except.ok M ∧
+                    VE.Route.MeteredRun.EncodesEvaluation q.id result answer ∧
+                      ∀ (b : Bool), result.value = Option.some b → b = fs.all fun f => VE.Core.Formula.eval M [] f
+  -- uses VE.Bridge.Entity@VE.Bridge VE.Bridge.Vocabulary.environment@VE.Bridge VE.Bridge.Vocabulary@VE.Bridge VE.Core.Bridge.decodeFormulas@VE.Core.Bridge VE.Core.Formula.eval@VE.Core.Finite VE.Core.Formula@VE.Core.Syntax VE.Core.Wire.decodeModel@VE.Core.Wire VE.FiniteModel@VE.Finite VE.Route.Gate.Envelope.family@VE.Route.Gate VE.Route.Gate.Family.closureNary@VE.Route.Gate VE.Route.Gate.Family@VE.Route.Gate VE.Route.Metered.Result.value@VE.Route.Metered VE.Route.Metered.Result@VE.Route.Metered VE.Route.MeteredRun.EncodesEvaluation@VE.Route.MeteredWire VE.Route.MeteredRun.Prepared.core@VE.Route.MeteredRun VE.Route.MeteredRun.Prepared@VE.Route.MeteredRun VE.Route.MeteredRun.Query.id@VE.Route.MeteredRun VE.Route.MeteredRun.Query.input@VE.Route.MeteredRun VE.Route.MeteredRun.Query.nonVacuity@VE.Route.MeteredRun VE.Route.MeteredRun.Query@VE.Route.MeteredRun VE.Route.MeteredRun.run@VE.Route.MeteredRun VE.Service.Standalone.Validated.envelope@VE.Service.Standalone VE.Service.Standalone.Validated@VE.Service.Standalone
+  -- expr 1844886722
+theorem VE.Route.MeteredRun.run_evaluation_sound
+  ∀ (q : VE.Route.MeteredRun.Query) (checked : VE.Service.Standalone.Validated) (p : VE.Route.MeteredRun.Prepared)
+    (model answer : Lean.Json),
+    VE.Route.MeteredRun.run q checked p model = Except.ok answer →
+      q.nonVacuity = Bool.false → VE.Route.MeteredRun.EvaluationAnswer q checked p model answer
+  -- uses VE.Route.MeteredRun.EvaluationAnswer@VE.Route.MeteredWire VE.Route.MeteredRun.Prepared@VE.Route.MeteredRun VE.Route.MeteredRun.Query.nonVacuity@VE.Route.MeteredRun VE.Route.MeteredRun.Query@VE.Route.MeteredRun VE.Route.MeteredRun.run@VE.Route.MeteredRun VE.Service.Standalone.Validated@VE.Service.Standalone
+  -- expr 3969662734
+theorem VE.Route.MeteredRun.run_fol_sound
+  ∀ (q : VE.Route.MeteredRun.Query) (checked : VE.Service.Standalone.Validated) (p : VE.Route.MeteredRun.Prepared)
+    (model answer : Lean.Json),
+    VE.Route.MeteredRun.run q checked p model = Except.ok answer →
+      checked.envelope.family = VE.Route.Gate.Family.fol →
+        q.nonVacuity = Bool.false →
+          ∃ rv fs M result,
+            p.route.get = Except.ok rv ∧
+              VE.Route.Wire.decodeFormulas rv.environment q.input (checked.envelope.profiles.contains "data@0") =
+                  Except.ok fs ∧
+                fs ≠ [] ∧
+                  VE.Route.Wire.decodeDataModel rv model = Except.ok M ∧
+                    VE.Route.MeteredRun.EncodesEvaluation q.id result answer ∧
+                      ∀ (b : Bool), result.value = Option.some b → b = fs.all fun f => VE.Formula.eval M [] f
+  -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel@VE.Finite VE.Formula.eval@VE.Finite VE.Formula@VE.Syntax VE.Route.Gate.Envelope.family@VE.Route.Gate VE.Route.Gate.Envelope.profiles@VE.Route.Gate VE.Route.Gate.Family.fol@VE.Route.Gate VE.Route.Gate.Family@VE.Route.Gate VE.Route.Metered.Result.value@VE.Route.Metered VE.Route.Metered.Result@VE.Route.Metered VE.Route.MeteredRun.EncodesEvaluation@VE.Route.MeteredWire VE.Route.MeteredRun.Prepared.route@VE.Route.MeteredRun VE.Route.MeteredRun.Prepared@VE.Route.MeteredRun VE.Route.MeteredRun.Query.id@VE.Route.MeteredRun VE.Route.MeteredRun.Query.input@VE.Route.MeteredRun VE.Route.MeteredRun.Query.nonVacuity@VE.Route.MeteredRun VE.Route.MeteredRun.Query@VE.Route.MeteredRun VE.Route.MeteredRun.run@VE.Route.MeteredRun VE.Route.Wire.RouteVocabulary.environment@VE.Route.Wire VE.Route.Wire.RouteVocabulary@VE.Route.Wire VE.Route.Wire.decodeDataModel@VE.Route.Wire VE.Route.Wire.decodeFormulas@VE.Route.Wire VE.Service.Standalone.Validated.envelope@VE.Service.Standalone VE.Service.Standalone.Validated@VE.Service.Standalone
+  -- expr 1757146407
+theorem VE.Route.MeteredRun.run_order_sound
+  ∀ (q : VE.Route.MeteredRun.Query) (checked : VE.Service.Standalone.Validated) (p : VE.Route.MeteredRun.Prepared)
+    (model answer : Lean.Json),
+    VE.Route.MeteredRun.run q checked p model = Except.ok answer →
+      checked.envelope.family = VE.Route.Gate.Family.order →
+        q.nonVacuity = Bool.false →
+          ∃ rv fs d result,
+            p.order.get = Except.ok rv ∧
+              VE.Order.Wire.decodeFormulas rv.vocabulary.environment q.input = Except.ok fs ∧
+                fs ≠ [] ∧
+                  VE.Route.Wire.decodeOrderModel rv model = Except.ok d ∧
+                    VE.Route.MeteredRun.EncodesEvaluation q.id result answer ∧
+                      ∀ (b : Bool),
+                        result.value = Option.some b → b = fs.all fun f => VE.Order.Formula.eval d.toModel [] f
+  -- uses VE.Order.Formula.eval@VE.Order.Finite VE.Order.Formula@VE.Order.Syntax VE.Order.ModelData.toModel@VE.Order.ModelCheck VE.Order.ModelData@VE.Order.ModelCheck VE.Order.Value@VE.Order.Semantics VE.Order.Vocabulary.environment@VE.Order.ModelCheck VE.Order.Wire.Entity@VE.Order.Wire VE.Order.Wire.decodeFormulas@VE.Order.Wire VE.Route.Gate.Envelope.family@VE.Route.Gate VE.Route.Gate.Family.order@VE.Route.Gate VE.Route.Gate.Family@VE.Route.Gate VE.Route.Metered.Result.value@VE.Route.Metered VE.Route.Metered.Result@VE.Route.Metered VE.Route.MeteredRun.EncodesEvaluation@VE.Route.MeteredWire VE.Route.MeteredRun.Prepared.order@VE.Route.MeteredRun VE.Route.MeteredRun.Prepared@VE.Route.MeteredRun VE.Route.MeteredRun.Query.id@VE.Route.MeteredRun VE.Route.MeteredRun.Query.input@VE.Route.MeteredRun VE.Route.MeteredRun.Query.nonVacuity@VE.Route.MeteredRun VE.Route.MeteredRun.Query@VE.Route.MeteredRun VE.Route.MeteredRun.run@VE.Route.MeteredRun VE.Route.Wire.RouteOrderVocabulary.vocabulary@VE.Route.Wire VE.Route.Wire.RouteOrderVocabulary@VE.Route.Wire VE.Route.Wire.decodeOrderModel@VE.Route.Wire VE.Service.Standalone.Validated.envelope@VE.Service.Standalone VE.Service.Standalone.Validated@VE.Service.Standalone
+  -- expr 3026904157
 theorem VE.Route.Run.route_gate
   ∀ (j r : Lean.Json),
     VE.Route.Run.runCase j = Except.ok r →
@@ -64511,12 +64632,65 @@ theorem VE.SoftNorms.RanksValid.order
     VE.SoftNorms.RanksValid env → ∃ o, VE.Route.dependencyOrder (VE.SoftNorms.rankNodes env) = Except.ok o
   -- uses VE.Route.dependencyOrder@VE.Route.Route VE.SoftNorms.RanksValid@VE.SoftNorms.Tree VE.SoftNorms.SoftEnv@VE.SoftNorms.Tree VE.SoftNorms.rankNodes@VE.SoftNorms.Tree
   -- expr 1425841079
+theorem VE.SoftNorms.Run.elaborationAnswer_ok
+  ∀ (id : String) (D : VE.SoftNorms.SoftDoc) (prime decisions derived order background premises : Lean.Json)
+    (tail : List (String × Lean.Json)),
+    (∀ (k : String), k ∈ ["id", "status", "background", "premises"] → ¬k ∈ List.map (fun x => x.fst) tail) →
+      VE.SoftNorms.Run.BackgroundField D background →
+        VE.SoftNorms.Run.PremisesField D premises →
+          VE.SoftNorms.Run.ElaborationAnswer id D
+            (VE.Route.Wire.ok id
+              ([("environment_prime", prime), ("decisions", decisions), ("derived", derived), ("order", order),
+                  ("background", background), ("premises", premises)] ++
+                tail))
+  -- uses VE.Route.Wire.ok@VE.Route.Wire VE.SoftNorms.Run.BackgroundField@VE.SoftNorms.ElaborateSound VE.SoftNorms.Run.ElaborationAnswer@VE.SoftNorms.ElaborateSound VE.SoftNorms.Run.PremisesField@VE.SoftNorms.ElaborateSound VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree
+  -- expr 148320765
+theorem VE.SoftNorms.Run.elaborationAnswer_reads
+  ∀ {id : String} {D : VE.SoftNorms.SoftDoc} {answer : Lean.Json},
+    VE.SoftNorms.Run.ElaborationAnswer id D answer →
+      answer.getObjValD "id" = Lean.Json.str id ∧
+        answer.getObjValD "status" = Lean.Json.str "ok" ∧
+          VE.SoftNorms.Run.BackgroundField D (answer.getObjValD "background") ∧
+            VE.SoftNorms.Run.PremisesField D (answer.getObjValD "premises")
+  -- uses VE.SoftNorms.Run.BackgroundField@VE.SoftNorms.ElaborateSound VE.SoftNorms.Run.ElaborationAnswer@VE.SoftNorms.ElaborateSound VE.SoftNorms.Run.PremisesField@VE.SoftNorms.ElaborateSound VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree
+  -- expr 2580229401
+theorem VE.SoftNorms.Run.excLabels_length
+  ∀ (D : VE.SoftNorms.SoftDoc), (VE.SoftNorms.Wire.excLabels D).length = (VE.SoftNorms.excPremises D).length
+  -- uses VE.Formula@VE.Syntax VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.Wire.excLabels@VE.SoftNorms.Wire VE.SoftNorms.excPremises@VE.SoftNorms.Soften
+  -- expr 3163521560
+theorem VE.SoftNorms.Run.mkObj_get_append
+  ∀ {pre rest : List (String × Lean.Json)} {k : String} {v : Lean.Json},
+    (List.map (fun x => x.fst) pre).Nodup →
+      (k, v) ∈ pre → ¬k ∈ List.map (fun x => x.fst) rest → (Lean.Json.mkObj (pre ++ rest)).getObjVal? k = Except.ok v
+  -- uses
+  -- expr 3129764167
+theorem VE.SoftNorms.Run.not_elaborationAnswer_of_null_background
+  ∀ (id : String) (D : VE.SoftNorms.SoftDoc) (answer : Lean.Json),
+    answer.getObjValD "background" = Lean.Json.null → ¬VE.SoftNorms.Run.ElaborationAnswer id D answer
+  -- uses VE.SoftNorms.Run.ElaborationAnswer@VE.SoftNorms.ElaborateSound VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree
+  -- expr 1875777254
+theorem VE.SoftNorms.Run.regeneratedCore_fields
+  ∀ (D : VE.SoftNorms.SoftDoc) (environment : Lean.Json),
+    ∃ prime decisions derived order background premises rest,
+      VE.SoftNorms.Wire.regeneratedCore D environment =
+          [("environment_prime", prime), ("decisions", decisions), ("derived", derived), ("order", order),
+              ("background", background), ("premises", premises)] ++
+            rest ∧
+        List.map (fun x => x.fst) rest =
+            ["colliding_pairs", "conflict_targets", "conditional_on", "fragment", "warnings"] ∧
+          VE.SoftNorms.Run.BackgroundField D background ∧ VE.SoftNorms.Run.PremisesField D premises
+  -- uses VE.SoftNorms.Run.BackgroundField@VE.SoftNorms.ElaborateSound VE.SoftNorms.Run.PremisesField@VE.SoftNorms.ElaborateSound VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.Wire.regeneratedCore@VE.SoftNorms.Wire
+  -- expr 3237638150
 theorem VE.SoftNorms.Run.runAdmission_sound
   ∀ (id : String) (environment document answer : Lean.Json),
     VE.SoftNorms.Run.runAdmission id environment document = Except.ok answer →
       VE.SoftNorms.Run.SoftAdmissionAnswer id environment document answer
   -- uses VE.SoftNorms.Run.SoftAdmissionAnswer@VE.SoftNorms.Run VE.SoftNorms.Run.runAdmission@VE.SoftNorms.Run
   -- expr 4089353554
+theorem VE.SoftNorms.Run.softLabelled_formulas
+  ∀ (D : VE.SoftNorms.SoftDoc), List.map (fun x => x.snd) (VE.SoftNorms.Wire.softLabelled D) = VE.SoftNorms.softPremises D
+  -- uses VE.Formula@VE.Syntax VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.Wire.softLabelled@VE.SoftNorms.Wire VE.SoftNorms.softPremises@VE.SoftNorms.Soften
+  -- expr 2529973739
 theorem VE.SoftNorms.Run.soft_wire_acceptance
   ∀ (j answer : Lean.Json),
     VE.SoftNorms.Run.runCase j = Except.ok answer →
@@ -64527,6 +64701,18 @@ theorem VE.SoftNorms.Run.soft_wire_acceptance
               VE.SoftNorms.Run.SoftAdmissionAnswer id (j.getObjValD "environment") (j.getObjValD "document") answer
   -- uses VE.Bridge.stringField@VE.Bridge VE.Route.Run.caseKind@VE.Route.Run VE.SoftNorms.Run.SoftAdmissionAnswer@VE.SoftNorms.Run VE.SoftNorms.Run.runCase@VE.SoftNorms.Run VE.SoftNorms.Run.usesSoftPath@VE.SoftNorms.Run
   -- expr 3819520681
+theorem VE.SoftNorms.Run.soft_wire_elaborate
+  ∀ (j answer : Lean.Json),
+    VE.SoftNorms.Run.runCase j = Except.ok answer →
+      VE.Route.Run.caseKind j = Except.ok "soft-elaborate" →
+        VE.SoftNorms.Run.usesSoftPath j = Bool.true →
+          ∃ id environment src,
+            VE.Bridge.stringField j "id" = Except.ok id ∧
+              j.getObjVal? "environment" = Except.ok environment ∧
+                VE.SoftNorms.Wire.decodeSoftSource environment (j.getObjValD "norms") = Except.ok src ∧
+                  VE.SoftNorms.Run.ElaborationAnswer id src.D answer
+  -- uses VE.Bridge.stringField@VE.Bridge VE.Route.Run.caseKind@VE.Route.Run VE.SoftNorms.Run.ElaborationAnswer@VE.SoftNorms.ElaborateSound VE.SoftNorms.Run.runCase@VE.SoftNorms.Run VE.SoftNorms.Run.usesSoftPath@VE.SoftNorms.Run VE.SoftNorms.Wire.SoftSource.D@VE.SoftNorms.Wire VE.SoftNorms.Wire.SoftSource@VE.SoftNorms.Wire VE.SoftNorms.Wire.decodeSoftSource@VE.SoftNorms.Wire
+  -- expr 1684767954
 theorem VE.SoftNorms.SoftChain.A_in
   ∀ {D : VE.SoftNorms.SoftDoc} {k : Nat} (self : VE.SoftNorms.SoftChain D k) (S : VE.Route.fol.Model),
     self.R.Admissible_in S ↔ VE.SoftNorms.PrefixAdmissible' D 0 S

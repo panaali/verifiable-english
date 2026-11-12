@@ -305,6 +305,7 @@ import VE.NormDefaults.Examples
 import VE.Core.Checks
 import VE.TableauChecks
 import VE.Events.Decl
+import VE.Events.Anchor
 import VE.Events.Premises
 import VE.Events.Calendar
 import VE.Events.Completion
@@ -312,6 +313,7 @@ import VE.Events.Examples
 import VE.Events.WireExamples
 import VE.Events.Chain
 import VE.Events.RouteExamples
+import VE.Service.EventsDocumentExamples
 import VE.NormDefaults.Packs
 import VE.NormDefaults.PacksLegacy
 import VE.NormDefaults.PacksLabels
@@ -391,3 +393,5 @@ import VE.Defaults.ZoneWire
 import VE.Defaults.ZoneWireExamples
 import VE.Attitudes.Examples
 import VE.Attitudes.Theorems
+import VE.Route.MeteredWire
+import VE.SoftNorms.ElaborateSound

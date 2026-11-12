@@ -1,0 +1,374 @@
+{
+ "item": "et-5b",
+ "note": "each planted alone in the source tree after the self-review fixes, its module rebuilt, the fixture files run with `lake env lean`, then restored. L1-L28: no Python, tools or Rust product file changed then, so every seeded bug was Lean. The review fix (et-5b-review.final.md F1) changed Lean and Python product code: L29 is planted the same way; P1-P9 each alone in the Python source, the named test file run with pytest, then restored (no Rust file changed). L30-L31 (the review fix's trust sweep): each planted alone in Document.lean, `lake build VE.Service.EventsDocumentExamples` fails at the named guard, then restored.",
+ "mutants": [
+  {
+   "id": "L1",
+   "language": "Lean",
+   "file": "lean/VE/Service/Document.lean",
+   "definition": "VE.Service.Document.ownedProfiles",
+   "mutant": "\"documents@1\", \"events@0\", \"judgments@0\", -> \"documents@1\", \"judgments@0\",",
+   "test": "lean/VE/Service/EventsDocumentExamples.lean:90",
+   "killed": true
+  },
+  {
+   "id": "L2",
+   "language": "Lean",
+   "file": "lean/VE/Service/Document.lean",
+   "definition": "VE.Service.Document.eventsView",
+   "mutant": "| some H => pure (H.view, some (environment, H)) -> | some H => pure (H.view, none)",
+   "test": "lean/VE/Service/EventsDocumentExamples.lean:90",
+   "killed": true
+  },
+  {
+   "id": "L3",
+   "language": "Lean",
+   "file": "lean/VE/Service/Document.lean",
+   "definition": "VE.Service.Document.environmentOf (the written identity)",
+   "mutant": "pure { E with profiles := ps, envId := ← Standalone.environmentIdOf ps written, events := some (writ -> pure { E with profiles := ps, events := some (written, H) }",
+   "test": "lean/VE/Service/EventsDocumentExamples.lean:95",
+   "killed": true
+  },
+  {
+   "id": "L4",
+   "language": "Lean",
+   "file": "lean/VE/Service/Document.lean",
+   "definition": "VE.Service.Document.eventsView (the document's open terms)",
+   "mutant": "match ← VE.Events.eventsHook environment terms with -> match ← VE.Events.eventsHook environment (Json.arr #[]) with",
+   "test": "lean/VE/Service/EventsDocumentExamples.lean:90",
+   "killed": true
+  },
+  {
+   "id": "L5",
+   "language": "Lean",
+   "file": "lean/VE/Service/Document.lean",
+   "definition": "VE.Service.DocumentChain.eventsAnchorChecks (the check)",
+   "mutant": "if candidates.contains c then throw s!\"AnchorOpen: {c}\" -> if candidates.contains c && false then throw s!\"AnchorOpen: {c}\"",
+   "test": "lean/VE/Service/EventsDocumentExamples.lean:209",
+   "killed": true
+  },
+  {
+   "id": "L6",
+   "language": "Lean",
+   "file": "lean/VE/Service/Document.lean",
+   "definition": "VE.Service.DocumentChain.eventsAnchorChecks (the candidates)",
+   "mutant": "| .refuse c _ _ => if r.frame == \"source no anchor\" then some c else none -> | .refuse c _ _ => if r.frame == \"authored\" then some c else none",
+   "test": "lean/VE/Service/EventsDocumentExamples.lean:209",
+   "killed": true
+  },
+  {
+   "id": "L7",
+   "language": "Lean",
+   "file": "lean/VE/Service/Document.lean",
+   "definition": "VE.Service.DocumentChain.eventsLayeredOf",
+   "mutant": "eventsAnchorChecks environment H.decoded front -> (deleted)",
+   "test": "lean/VE/Service/EventsDocumentExamples.lean:205",
+   "killed": true
+  },
+  {
+   "id": "L8",
+   "language": "Lean",
+   "file": "lean/VE/Service/Document.lean",
+   "definition": "VE.Service.DocumentChain.chainLayeredOf (check's events branch, moved out of check at the main merge)",
+   "mutant": "| some (written, H) => eventsLayeredOf E front units written H -> | some _ => layeredOf E front units",
+   "test": "lean/VE/Service/EventsDocumentExamples.lean:205",
+   "killed": true
+  },
+  {
+   "id": "L9",
+   "language": "Lean",
+   "file": "lean/VE/Service/Document.lean",
+   "definition": "VE.Service.Document.environmentOf (events@0 named first)",
+   "mutant": "if let some p := listed.find? fun p => p == \"events@0\" || !ownedProfiles.contains p then -> if let some p := listed.find? fun p => !ownedProfiles.contains p then",
+   "test": "lean/VE/Service/EventsDocumentExamples.lean:104",
+   "killed": true
+  },
+  {
+   "id": "L10",
+   "language": "Lean",
+   "file": "lean/VE/Service/Document.lean",
+   "definition": "VE.Service.Document.eventsView (off the soft chain)",
+   "mutant": "listed.any ([\"rights@0\", \"readings@1\"].contains ·) then throw refusal -> listed.any ([\"readings@1\"].contains ·) then throw refusal",
+   "test": "lean/VE/Service/EventsDocumentExamples.lean:106",
+   "killed": true
+  },
+  {
+   "id": "L11",
+   "language": "Lean",
+   "file": "lean/VE/Events/Anchor.lean",
+   "definition": "VE.Events.openAnchor",
+   "mutant": "c.getObjValD \"description\" == .str anchorWording && V.anchor.isNone then -> c.getObjValD \"description\" == .str anchorWording then",
+   "test": "lean/VE/Service/EventsDocumentExamples.lean:207",
+   "killed": true
+  },
+  {
+   "id": "L12",
+   "language": "Lean",
+   "file": "lean/VE/Events/Anchor.lean",
+   "definition": "VE.Events.legend",
+   "mutant": "(if isOpen then [s! -> (if !isOpen then [s!",
+   "test": "lean/VE/Service/EventsDocumentExamples.lean:236",
+   "killed": true
+  },
+  {
+   "id": "L13",
+   "language": "Lean",
+   "file": "lean/VE/Events/Anchor.lean",
+   "definition": "VE.Events.anchorConstant",
+   "mutant": "def anchorConstant : String := \"date_of_this_document\" -> def anchorConstant : String := \"date_of_this_doc\"",
+   "test": "lean/VE/Service/EventsDocumentExamples.lean:205",
+   "killed": true
+  },
+  {
+   "id": "L14",
+   "language": "Lean",
+   "file": "lean/VE/Events/Anchor.lean",
+   "definition": "VE.Events.anchorWording",
+   "mutant": "def anchorWording : String := \"the date of this document\" -> def anchorWording : String := \"the date of the document\"",
+   "test": "lean/VE/Service/EventsDocumentExamples.lean:204",
+   "killed": true
+  },
+  {
+   "id": "L15",
+   "language": "Lean",
+   "file": "lean/VE/EnglishGrammar/SourceWords.lean",
+   "definition": "VE.EnglishGrammar.alwaysReadings",
+   "mutant": "\"<clause> on each day, if that day is on or after the date of this document.\"] -> \"<clause> on each day, if that day is after the date of this document.\"]",
+   "test": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:187",
+   "killed": true
+  },
+  {
+   "id": "L16",
+   "language": "Lean",
+   "file": "lean/VE/EnglishGrammar/SourceWords.lean",
+   "definition": "VE.EnglishGrammar.eventuallyReadings",
+   "mutant": "\"There is a day such that that day is after the date of this document and <clause> on that day.\"] -> \"There is a day such that that day is on or after the date of this document and <clause> on that day",
+   "test": "lean/VE/Service/EventsDocumentExamples.lean:291",
+   "killed": true
+  },
+  {
+   "id": "L17",
+   "language": "Lean",
+   "file": "lean/VE/EnglishGrammar/SourceWords.lean",
+   "definition": "VE.EnglishGrammar.alwaysNoAnchorReadings",
+   "mutant": "(.refuse \"A2\" -> (.refuse \"A3\"",
+   "test": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:199",
+   "killed": true
+  },
+  {
+   "id": "L18",
+   "language": "Lean",
+   "file": "lean/VE/EnglishGrammar/SourceWords.lean",
+   "definition": "VE.EnglishGrammar.eventuallyNoAnchorReadings",
+   "mutant": "\"There is a day such that <clause> on that day.\") -> \"There is a day after the date of this document such that <clause> on that day.\")",
+   "test": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:191",
+   "killed": true
+  },
+  {
+   "id": "L19",
+   "language": "Lean",
+   "file": "lean/VE/EnglishGrammar/SourceWords.lean",
+   "definition": "VE.EnglishGrammar.softAlwaysReadings",
+   "mutant": "\"<agent> must <act>.\", \"<agent> should <act>.\"].map -> \"<agent> must <act>.\", \"<agent> should <act> by default.\"].map",
+   "test": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:179",
+   "killed": true
+  },
+  {
+   "id": "L20",
+   "language": "Lean",
+   "file": "lean/VE/EnglishGrammar/SourceWords.lean",
+   "definition": "VE.EnglishGrammar.sourceWords (the rows listed)",
+   "mutant": "eventsFixed ++ [softAlwaysReadings] -> eventsFixed",
+   "test": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:179",
+   "killed": true
+  },
+  {
+   "id": "L21",
+   "language": "Lean",
+   "file": "lean/VE/EnglishGrammar/SourceWords.lean",
+   "definition": "VE.EnglishGrammar.untilDateReadings",
+   "mutant": "the fourth candidate's 'no later than <date>' -> 'before <date>'",
+   "test": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:264",
+   "killed": true
+  },
+  {
+   "id": "L22",
+   "language": "Lean",
+   "file": "lean/VE/EnglishGrammar/SourceWords.lean",
+   "definition": "VE.EnglishGrammar.byReadings",
+   "mutant": "B2 'no later than <date>' -> 'after <date>'",
+   "test": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:270",
+   "killed": true
+  },
+  {
+   "id": "L23",
+   "language": "Lean",
+   "file": "lean/VE/EnglishGrammar/SourceWords.lean",
+   "definition": "VE.EnglishGrammar.whileReadings",
+   "mutant": "the contrast candidate gains the state guard",
+   "test": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:278",
+   "killed": true
+  },
+  {
+   "id": "L24",
+   "language": "Lean",
+   "file": "lean/VE/EnglishGrammar/SourceWords.lean",
+   "definition": "VE.EnglishGrammar.sinceReadings",
+   "mutant": "S2 'no later than that day' -> 'after that day'",
+   "test": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:275",
+   "killed": true
+  },
+  {
+   "id": "L25",
+   "language": "Lean",
+   "file": "lean/VE/EnglishGrammar/SourceWords.lean",
+   "definition": "VE.EnglishGrammar.linkCandidate",
+   "mutant": "'{1}' -> '<cause>' (both places the cause)",
+   "test": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:282",
+   "killed": true
+  },
+  {
+   "id": "L26",
+   "language": "Lean",
+   "file": "lean/VE/EnglishGrammar/SourceWords.lean",
+   "definition": "VE.EnglishGrammar.causalReadings",
+   "mutant": "the source form 'cause' dropped from the word list",
+   "test": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:234",
+   "killed": true
+  },
+  {
+   "id": "L27",
+   "language": "Lean",
+   "file": "lean/VE/EnglishGrammar/SourceWords.lean",
+   "definition": "VE.EnglishGrammar.causalReadings",
+   "mutant": "C3 'leads to' -> 'causes'",
+   "test": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:282",
+   "killed": true
+  },
+  {
+   "id": "L28",
+   "language": "Lean",
+   "file": "lean/VE/EnglishGrammar/SourceWords.lean",
+   "definition": "VE.EnglishGrammar.eventsReadingSets",
+   "mutant": "sinceReadings dropped from the list",
+   "test": "lean/VE/EnglishGrammar/SourceWordsExamples.lean:234",
+   "killed": true
+  },
+  {
+   "id": "L29",
+   "language": "Lean",
+   "file": "lean/VE/Service/Document.lean",
+   "definition": "VE.Service.Document.Env.eventsView",
+   "mutant": "the view dropped: `(E.events.map (·.2.view)).bind fun _ => none`",
+   "test": "lean/VE/Service/EventsDocumentExamples.lean:309, :311, :315",
+   "killed": true
+  },
+  {
+   "id": "L30",
+   "language": "Lean",
+   "file": "lean/VE/Service/Document.lean",
+   "definition": "VE.Service.Document.environmentOf (the profile named)",
+   "mutant": "listed.find? fun p => p == \"events@0\" || !ownedProfiles.contains p -> listed.find? fun p => p == \"events@0\" || !(ownedProfiles.drop 1).contains p (trust sweep M268, its survivor)",
+   "test": "lean/VE/Service/EventsDocumentExamples.lean:131",
+   "killed": true
+  },
+  {
+   "id": "L31",
+   "language": "Lean",
+   "file": "lean/VE/Service/Document.lean",
+   "definition": "VE.Service.Document.eventsView (events@0 read wherever it stands)",
+   "mutant": "unless listed.contains \"events@0\" -> unless listed.dropLast.contains \"events@0\" (trust sweep M112, allowed before as equivalent)",
+   "test": "lean/VE/Service/EventsDocumentExamples.lean:151",
+   "killed": true
+  },
+  {
+   "id": "P1",
+   "language": "Python",
+   "file": "ve/events.py",
+   "definition": "ve.events.view",
+   "mutant": "the constants relation (`_bind_constants`) not called",
+   "test": "tests/test_events_document_cli.py::test_a_tampered_events_view_is_unavailable[constant-dropped], [anchor-rebound], [date-description], [date-member], [date-retyped], [anchor-dropped]",
+   "killed": true
+  },
+  {
+   "id": "P2",
+   "language": "Python",
+   "file": "ve/document/cli.py",
+   "definition": "ve.document.cli.main",
+   "mutant": "the conclusion guard over an events document removed (`elif False:`)",
+   "test": "tests/test_events_document_cli.py::test_a_conclusion_over_an_events_document_is_unavailable (every document, plain, --under and --assume-no-exception)",
+   "killed": true
+  },
+  {
+   "id": "P3",
+   "language": "Python",
+   "file": "ve/document/report.py",
+   "definition": "ve.document.report._report_premise_context",
+   "mutant": "the events pack not added to the premise set",
+   "test": "tests/test_events_document_cli.py::test_the_check_premise_set_holds_the_events_pack",
+   "killed": true
+  },
+  {
+   "id": "P4",
+   "language": "Python",
+   "file": "ve/events.py",
+   "definition": "ve.events._bind_labels",
+   "mutant": "the date-fact count back to `len(dates) - 1` (minus one for no named date)",
+   "test": "tests/test_events_answer.py::test_a_block_with_no_named_date_has_no_date_fact; tests/test_events_document_cli.py::test_probe_f1_check_document_counts_the_checked_byte",
+   "killed": true
+  },
+  {
+   "id": "P5",
+   "language": "Python",
+   "file": "ve/document/report.py",
+   "definition": "ve.document.report._report",
+   "mutant": "the content-bearing readings guard under events removed (`elif False:`)",
+   "test": "tests/test_events_document_cli.py::test_content_bearing_readings_premises_are_unknown_under_events",
+   "killed": true
+  },
+  {
+   "id": "P6",
+   "language": "Python",
+   "file": "ve/document/lean.py",
+   "definition": "ve.document.lean._chain_environments",
+   "mutant": "the identities read the view (`_environment(view)` twice), not the written environment",
+   "test": "tests/test_events_document_cli.py::test_probe_f1_check_document_counts_the_checked_byte; test_every_subcommand_admits_a_soft_chain_events_document",
+   "killed": true
+  },
+  {
+   "id": "P7",
+   "language": "Python",
+   "file": "ve/events.py",
+   "definition": "ve.events.view",
+   "mutant": "the profiles compared with themselves (no relation to the written profiles)",
+   "test": "tests/test_events_document_cli.py::test_a_tampered_events_view_is_unavailable[events-profile-kept], [profiles-reordered], [profile-dropped]",
+   "killed": true
+  },
+  {
+   "id": "P8",
+   "language": "Python",
+   "file": "ve/events.py",
+   "definition": "ve.events.view",
+   "mutant": "the member-set check removed",
+   "test": "tests/test_events_document_cli.py::test_a_tampered_events_view_is_unavailable[extra-member], [block-kept], [member-dropped]",
+   "killed": true
+  },
+  {
+   "id": "P9",
+   "language": "Python",
+   "file": "ve/document/lean.py",
+   "definition": "ve.document.lean._bind_document_answer",
+   "mutant": "`events_view` allowed in the row's member set whenever present",
+   "test": "tests/test_events_document_cli.py::test_an_events_view_on_a_document_without_events_is_unavailable",
+   "killed": true
+  }
+ ],
+ "equivalent": [
+  {
+   "definition": "VE.Service.Document.check (the open terms it passes)",
+   "file": "lean/VE/Service/Document.lean",
+   "mutant": "pass the front matter's open terms on the scope path too (`some ...` for a lowered front)",
+   "reason": "`governed` reaches `check` only from the scope route, after `VE.Scope.decodeScope` has read the same environment through `environmentOf` with no open terms, which already gives the base refusal for an events@0 list"
+  }
+ ]
+}

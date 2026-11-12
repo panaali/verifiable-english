@@ -104,7 +104,7 @@ OPEN_TERMS = {
                                "candid and disinterested\"", ["the examples of 3.6.1"]),
     "ot26_upleveling": (WE, "Appendix A \"General upleveling\": a significant improvement, comparable (or lower) "
                         "effort or cost", []),
-    "ot28_continuation": (WE, "(b)'s continuation clause (under RS3c = third)", []),
+    "ot28_continuation": (WE, "(b)'s continuation clause, the third condition of scenario (2)", []),
 }
 
 # Reading sets (PLAN 3.1): set id -> (harness set, readings -> the rules or premises of that reading). An entry
@@ -131,9 +131,7 @@ READINGS = {
     "rs12_strive_advance": _aim("RS12advance", "s1-advance-default"),
     "rs8_evidentiary": _force("RS8evidence", "f5-evidence"),
     "rs3o_t4": ("RS3o", {"suff": ["t4-suff"], "iff": ["t4-suff", "t4-only-if"]}),
-    "rs3i_t4": ("RS3i", {"suff": ["s2-suff-result or s2-suff-third"],
-                         "iff": ["s2-suff-result or s2-suff-third", "s2-only-if-result or s2-only-if-third"]}),
-    "rs3c_t4": ("RS3c", {"third": ["s2-suff-third"], "result": ["s2-suff-result"]}),
+    "rs3i_t4": ("RS3i", {"suff": ["s2-suff-third"], "iff": ["s2-suff-third", "s2-only-if-third"]}),
     "rs12_less_ambitious": _aim("RS12strive", "f6-strive-default"),
     "rs9_cadence": ("RS9", {"window": ["case: each interval at least 3 and at most 6 months (D3)"],
                             "bound": ["case: each interval at most 6 months (D3)"]}),
@@ -158,7 +156,7 @@ READINGS = {
 # word's default reading is a default (DF), an aim is an attitude (AT), a cadence or a deadline is time (ET); a set
 # whose readings differ in which rules hold is a reading set VE cannot yet decide (readings).
 SET_FAMILIES = {"RS1": "readings", "RS2 and RS2force": "SC", "RS3o": "readings", "RS3i": "readings",
-                "RS3c": "readings", "RS4": "readings", "RS5": "SC", "RS7": "readings", "RS9": "ET", "RS11": "ET",
+                "RS4": "readings", "RS5": "SC", "RS7": "readings", "RS9": "ET", "RS11": "ET",
                 "RS13": "DF", **{f"RS6{s}": "readings" for s in ("redact", "split", "notice")},
                 **{f"RS8{s}": "DF" for s in ("evidence", "attempt", "revenue")},
                 **{f"RS12{s}": "AT" for s in ("advance", "strive", "candid", "minimize", "justify", "review",
@@ -167,11 +165,9 @@ SET_FAMILIES = {"RS1": "readings", "RS2 and RS2force": "SC", "RS3o": "readings",
 # over one situation `s`.
 DISTINGUISHING = {"RS1": [("crossed", "s", "novel_chem_bio_weapons")], "RS2 and RS2force": [
     ("crossed", "s", "automated_rd")], "RS3o": [("full_substitution_at_competitive_cost", "s")],
-    "RS3i": [("double_rate", "s"), ("automation_attributable", "s")], "RS3c": [("double_rate", "s"),
-                                                                              ("automation_attributable", "s")],
-    "RS4": [("competitor_better_mitigation", "s"), ("mitigation_evidence", "s")],
-    "RS5": [("competitors_strong_measures", "s"), ("competitors_evidence", "s"), ("highly_capable", "s"),
-            ("develops_highly_capable", "c")],
+    "RS3i": [("double_rate", "s"), ("automation_attributable", "s")],
+    "RS4": [("mitigation_evidence", "s")],
+    "RS5": [("competitors_evidence", "s"), ("highly_capable", "s"), ("develops_highly_capable", "c")],
     "RS7": [("risk_report_approved", "s")], "RS9": [], "RS11": [("off_cycle_public_deployment", "s"),
                                                                ("more_capable_than_analyzed", "s")],
     "RS13": [], "RS6redact": [("redaction_reason_listed", "s")], "RS6split": [("external_review_process", "s")],
@@ -334,7 +330,8 @@ UNITS = [
     # Page 10
     ("Capability or usage threshold Mitigations", "p10-table-header", meta()),
     ("factors, such as increased headcount", "t4-scenario-2-factors", label("example")),
-    ("), such that continuation of the trend", "t4-continuation", readings("rs3c_t4", "ot28_continuation")),
+    # The continuation clause is scenario (2)'s third condition (RS3c = result is excluded: PLAN 12).
+    ("), such that continuation of the trend", "t4-continuation", condition("ot28_continuation")),
     ("This capability threshold is intended", "t4-highly-capable", label("definition")),
     ("It may be sensible to add earlier", "t4-may-add", hedged()),
     ("● Publish Risk Reports with the status of", "t4-plan-publish", condition("ot25_reviewer_criteria")),

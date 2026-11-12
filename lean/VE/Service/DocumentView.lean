@@ -236,11 +236,13 @@ theorem foldedRows_zip (f : Json → Json) (hf : ∀ u, unitJson (readStatus u (
     congr 1
     · exact hf u
 
+-- et-5b: `encode`'s `events_view` arm doubles the cases `rfl` reduces.
+set_option maxHeartbeats 800000 in
 theorem encode_units (id : String) (c : Checked) :
     (encode id c).getObjValD "units" = toJson (c.rows.map unitJson) ∧
       (encode id c).getObjValD "source" = .str c.source := by
   unfold encode VE.Route.Wire.ok
-  cases c.judgments <;> cases c.cardinality <;> cases c.composed <;> exact ⟨rfl, rfl⟩
+  cases c.judgments <;> cases c.cardinality <;> cases c.composed <;> cases c.eventsView <;> exact ⟨rfl, rfl⟩
 
 theorem toJson_jsons (l : List Json) : toJson l = Json.arr l.toArray := by
   show Json.arr (l.toArray.map toJson) = _
