@@ -56,6 +56,15 @@
       "mutation": "VE.SoftNorms.ElaborateSound removed from lean_name_layer's layer-4 set (it falls to layer 2)",
       "failing": "tests/test_kernel_closure.py::test_a_listed_theorem_sits_no_lower_than_the_runner_its_statement_uses; python3 tools/check_lean_imports.py (regen_generated --check, layer-ledgers)",
       "result": "the test: ('softNorms', 'VE.SoftNorms.ElaborateSound', 2, 'VE.SoftNorms.Run', 4); the import check exits 1: new outward Lean import VE.SoftNorms.ElaborateSound -> VE.SoftNorms.Run (layer 2 -> 4)"
+    },
+    {
+      "id": "S6",
+      "language": "data",
+      "file": "ve/assurance-manifest.json",
+      "claim": "every JSON-handling Lean file is classified (KB-7's two theorem files were not)",
+      "mutation": "none planted: the reviewed tree (450564cc03) lacks the two other_json entries",
+      "failing": "tests/test_assurance_manifest.py::test_every_json_handling_lean_file_is_classified",
+      "result": "failed on the reviewed tree with 'Extra items in the left set: lean/VE/SoftNorms/ElaborateSound.lean, lean/VE/Route/MeteredWire.lean'; passes with the entries"
     }
   ],
   "earlier": "The build round's two seeded bugs in lean/VE/Route/MeteredRun.lean (answer, fol) are in the build report (kb-7-build.final.md); this round did not change MeteredWire.lean."

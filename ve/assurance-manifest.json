@@ -2400,6 +2400,8 @@
       "lean/VE/WireContract/Diagnose.lean": "diagnostic only: no verdict depends on it. The ve_diagnose runner: case dispatch through VE.JsonInput.parseCases, the contract registry and response rows (docs/spec/wire-contract.md 4.2)",
       "lean/VE/Route/WireSound.lean": "statements about the route runners' answers (getObjValD of the case and the valid, refutes and values fields), the family decoders as the runners call them, and decoder rejection lemmas; no runtime JSON handling",
       "lean/VE/Route/RunSound.lean": "statements about Route.Run.runCase answers (getObjValD of the case's environment and answer fields); no runtime JSON handling",
+      "lean/VE/Route/MeteredWire.lean": "statements about MeteredRun.runWith and runCase evaluate-budgeted answers (Wire.ok under the case's id with an evaluation object of Metered.resultFields and an open explanation; getObjVal? of the case's environment and model, and the family decoders as the runner calls them); no runtime JSON handling",
+      "lean/VE/SoftNorms/ElaborateSound.lean": "statements about SoftNorms.Run.runCase soft-elaborate answers (getObjVal? of the id, status, background and premises fields, and lookups through Json.mkObj); no runtime JSON handling",
       "lean/VE/Norms/RunSound.lean": "statements about Norms.Run.runCase norms-certificate answers (getObjValD of the case and the valid field); no runtime JSON handling",
       "lean/VE/EnglishGrammar/ReadExamples.lean": "fixtures only: #guard checks of docs/spec/english-lean-s2.md section 8 build environment JSON for Env.decode; no runner path",
       "lean/VE/Senses/Examples.lean": "fixtures only: #guard checks of docs/spec/senses.md section 8 compare projected environment JSON; no runner path",
