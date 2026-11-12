@@ -1,0 +1,71 @@
+{
+  "item": "kb-7",
+  "round": "fix 1 (review kb-7-review.final.md: F1, F2, F-ready1)",
+  "note": "Each bug was planted in the worktree, the named check was run and failed as recorded, and the file was restored from git (git checkout) and rebuilt; the restored tree passes every check named here.",
+  "seeds": [
+    {
+      "id": "S1",
+      "language": "lean",
+      "file": "lean/VE/SoftNorms/Wire.lean",
+      "claim": "F1: no field after the six can override background or premises (the review's mutant)",
+      "mutation": "regenerated appends (\"premises\", Json.arr #[]) and (\"background\", Json.arr #[]) after default_exceptions_by_decider",
+      "failing": "lake build VE.SoftNorms.ElaborateSound",
+      "result": "soft_wire_elaborate does not build: lean/VE/SoftNorms/ElaborateSound.lean:150 unsolved goals (the tail-keys goal for background)"
+    },
+    {
+      "id": "S1b",
+      "language": "lean",
+      "file": "lean/VE/SoftNorms/Wire.lean",
+      "claim": "F1: regeneratedCore's tail binds none of the stated keys",
+      "mutation": "regeneratedCore appends (\"premises\", Json.null) after warnings",
+      "failing": "lake build VE.SoftNorms.ElaborateSound",
+      "result": "regeneratedCore_fields does not build: lean/VE/SoftNorms/ElaborateSound.lean:118 application type mismatch (its closed key list)"
+    },
+    {
+      "id": "S2",
+      "language": "lean",
+      "file": "lean/VE/SoftNorms/ElaborateSound.lean",
+      "claim": "F1 class: a kernel statement that leaves answer fields open is found",
+      "mutation": "the reviewed file (450564cc03): ElaborationAnswer as Wire.ok id (six ++ rest) with rest open",
+      "failing": "tests/test_kernel_closure.py::test_no_kernel_statement_leaves_answer_fields_open; tests/test_kernel_closure.py::test_a_soft_elaborate_answer_has_no_tail_that_overrides_its_fields; python3 tools/kernel_closure.py --check docs/kernel/closure-baseline.json",
+      "result": "the first: {'softNorms': ['VE.SoftNorms.Run.ElaborationAnswer']} != {'softNorms': []}; the second: the review's probe elaborates (returncode 0); the tool exits 1 with 'problem: softNorms: a statement leaves answer fields open (state them by key): VE.SoftNorms.Run.ElaborationAnswer'"
+    },
+    {
+      "id": "S3",
+      "language": "lean",
+      "file": "tools/kernel_closure.lean",
+      "claim": "the open-fields detector cannot silently find nothing",
+      "mutation": "hasOpenFields reads the Exists predicate (x.appArg!) instead of its binder type (x.appFn!.appArg!)",
+      "failing": "tests/test_kernel_closure.py::test_the_lean_half_finds_answer_fields_left_open_and_passes_fields_read_by_key; tests/test_kernel_closure.py::test_no_kernel_statement_leaves_answer_fields_open",
+      "result": "both error: kernel_closure.lean refuses to run, 'the open-fields detector misses its fixture: [], []'"
+    },
+    {
+      "id": "S4",
+      "language": "python",
+      "file": "tools/kernel_closure.py",
+      "claim": "an open-field statement is a problem on a kernel path",
+      "mutation": "open_field_problems returns [] always",
+      "failing": "tests/test_kernel_closure.py::test_an_open_field_statement_is_a_problem_on_a_kernel_path_only",
+      "result": "failed"
+    },
+    {
+      "id": "S5",
+      "language": "python",
+      "file": "tools/layer_policy.py",
+      "claim": "F-ready1: KB-7's theorem modules are layer 4, at or above the runners their statements use",
+      "mutation": "VE.SoftNorms.ElaborateSound removed from lean_name_layer's layer-4 set (it falls to layer 2)",
+      "failing": "tests/test_kernel_closure.py::test_a_listed_theorem_sits_no_lower_than_the_runner_its_statement_uses; python3 tools/check_lean_imports.py (regen_generated --check, layer-ledgers)",
+      "result": "the test: ('softNorms', 'VE.SoftNorms.ElaborateSound', 2, 'VE.SoftNorms.Run', 4); the import check exits 1: new outward Lean import VE.SoftNorms.ElaborateSound -> VE.SoftNorms.Run (layer 2 -> 4)"
+    },
+    {
+      "id": "S6",
+      "language": "data",
+      "file": "ve/assurance-manifest.json",
+      "claim": "every JSON-handling Lean file is classified (KB-7's two theorem files were not)",
+      "mutation": "none planted: the reviewed tree (450564cc03) lacks the two other_json entries",
+      "failing": "tests/test_assurance_manifest.py::test_every_json_handling_lean_file_is_classified",
+      "result": "failed on the reviewed tree with 'Extra items in the left set: lean/VE/SoftNorms/ElaborateSound.lean, lean/VE/Route/MeteredWire.lean'; passes with the entries"
+    }
+  ],
+  "earlier": "The build round's two seeded bugs in lean/VE/Route/MeteredRun.lean (answer, fol) are in the build report (kb-7-build.final.md); this round did not change MeteredWire.lean."
+}
