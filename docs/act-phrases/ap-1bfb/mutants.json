@@ -7,51 +7,139 @@
   "test": "lean/VE/WireContract/Hooks/Acts.lean #guard (lake build VE.WireContract.Hooks.Acts)",
   "status": "KILLED",
   "failures": [
-   "error: VE/WireContract/Hooks/Acts.lean:180:0: Expression",
-   "error: VE/WireContract/Hooks/Acts.lean:260:0: Expression"
+   "error: VE/WireContract/Hooks/Acts.lean:205:0: Expression",
+   "error: VE/WireContract/Hooks/Acts.lean:322:0: Expression"
   ]
  },
  {
   "id": "lean-typing-without-acts",
   "file": "lean/VE/WireContract/Hooks/Acts.lean",
-  "definition": "typingEnvironment",
+  "definition": "decodeOf",
   "bug": "decoded without `acts := true`",
   "test": "lean/VE/WireContract/Hooks/Acts.lean #guard (lake build VE.WireContract.Hooks.Acts)",
   "status": "KILLED",
   "failures": [
-   "error: VE/WireContract/Hooks/Acts.lean:223:0: Expression",
-   "error: VE/WireContract/Hooks/Acts.lean:225:0: Expression",
-   "error: VE/WireContract/Hooks/Acts.lean:226:0: Expression",
-   "error: VE/WireContract/Hooks/Acts.lean:243:0: Expression",
-   "error: VE/WireContract/Hooks/Acts.lean:246:0: Expression",
-   "error: VE/WireContract/Hooks/Acts.lean:258:0: Expression"
+   "error: VE/WireContract/Hooks/Acts.lean:188:0: Expression",
+   "error: VE/WireContract/Hooks/Acts.lean:189:0: Expression",
+   "error: VE/WireContract/Hooks/Acts.lean:190:0: Expression",
+   "error: VE/WireContract/Hooks/Acts.lean:191:0: Expression",
+   "error: VE/WireContract/Hooks/Acts.lean:192:0: Expression",
+   "error: VE/WireContract/Hooks/Acts.lean:193:0: Expression"
   ]
  },
  {
   "id": "lean-typing-error-ignored",
-  "file": "lean/VE/WireContract/Hooks/Acts.lean",
-  "definition": "ruleTyping",
+  "file": "lean/VE/WireContract/Hooks/Norms.lean",
+  "definition": "typingList",
   "bug": "the refused rule's member dropped",
-  "test": "lean/VE/WireContract/Hooks/Acts.lean #guard (lake build VE.WireContract.Hooks.Acts)",
+  "test": "lean/VE/WireContract/Hooks/Norms.lean #guard (lake build VE.WireContract.Hooks.Acts)",
   "status": "KILLED",
   "failures": [
-   "error: VE/WireContract/Hooks/Acts.lean:225:0: Expression",
-   "error: VE/WireContract/Hooks/Acts.lean:226:0: Expression",
-   "error: VE/WireContract/Hooks/Acts.lean:243:0: Expression",
-   "error: VE/WireContract/Hooks/Acts.lean:246:0: Expression",
-   "error: VE/WireContract/Hooks/Acts.lean:258:0: Expression"
+   "error: VE/WireContract/Hooks/Acts.lean:264:0: Expression",
+   "error: VE/WireContract/Hooks/Acts.lean:265:0: Expression",
+   "error: VE/WireContract/Hooks/Acts.lean:282:0: Expression",
+   "error: VE/WireContract/Hooks/Acts.lean:285:0: Expression",
+   "error: VE/WireContract/Hooks/Acts.lean:297:0: Expression",
+   "error: VE/WireContract/Hooks/Acts.lean:317:0: Expression"
   ]
  },
  {
   "id": "lean-typing-first-rule-only",
-  "file": "lean/VE/WireContract/Hooks/Acts.lean",
-  "definition": "ruleTyping",
+  "file": "lean/VE/WireContract/Hooks/Norms.lean",
+  "definition": "tableAt",
   "bug": "every item typed as the first rule",
+  "test": "lean/VE/WireContract/Hooks/Norms.lean #guard (lake build VE.WireContract.Hooks.Acts)",
+  "status": "KILLED",
+  "failures": [
+   "error: VE/WireContract/Hooks/Acts.lean:264:0: Expression",
+   "error: VE/WireContract/Hooks/Acts.lean:297:0: Expression"
+  ]
+ },
+ {
+  "id": "lean-frames-first-refusal",
+  "file": "lean/VE/WireContract/Hooks/Acts.lean",
+  "definition": "framesRefusal",
+  "bug": "an earlier refusal read as the frames' (F1 again)",
   "test": "lean/VE/WireContract/Hooks/Acts.lean #guard (lake build VE.WireContract.Hooks.Acts)",
   "status": "KILLED",
   "failures": [
-   "error: VE/WireContract/Hooks/Acts.lean:225:0: Expression",
-   "error: VE/WireContract/Hooks/Acts.lean:258:0: Expression"
+   "error: VE/WireContract/Hooks/Acts.lean:193:0: Expression",
+   "error: VE/WireContract/Hooks/Acts.lean:195:0: Expression",
+   "error: VE/WireContract/Hooks/Acts.lean:199:0: Expression",
+   "error: VE/WireContract/Hooks/Acts.lean:201:0: Expression",
+   "error: VE/WireContract/Hooks/Acts.lean:212:0: Expression",
+   "error: VE/WireContract/Hooks/Acts.lean:236:0: Expression"
+  ]
+ },
+ {
+  "id": "lean-alone-fixed-emptied",
+  "file": "lean/VE/WireContract/Hooks/Acts.lean",
+  "definition": "alone",
+  "bug": "the block's `fixed` emptied, as Python's oracle did (F1 again)",
+  "test": "lean/VE/WireContract/Hooks/Acts.lean #guard (lake build VE.WireContract.Hooks.Acts)",
+  "status": "KILLED",
+  "failures": [
+   "error: VE/WireContract/Hooks/Acts.lean:248:0: Expression"
+  ]
+ },
+ {
+  "id": "lean-hooks-per-rule",
+  "file": "lean/VE/WireContract/Hooks/Acts.lean",
+  "definition": "hooksFor",
+  "bug": "the run's hooks decode and type at every rule (F2 again)",
+  "test": "tests/test_wire_contract_once.py::test_rule_typing_reads_the_environment_and_each_rule_once_per_run",
+  "status": "KILLED",
+  "failures": [
+   "FAILED tests/test_wire_contract_once.py::test_rule_typing_reads_the_environment_and_each_rule_once_per_run[acts@0-joined_source-registry0]"
+  ]
+ },
+ {
+  "id": "py-once-not-kept",
+  "file": "ve/wire_contract/registry.py",
+  "definition": "once",
+  "bug": "every read evaluated again (F2 again)",
+  "test": "tests/test_wire_contract_once.py",
+  "status": "KILLED",
+  "failures": [
+   "FAILED tests/test_wire_contract_once.py::test_once_reads_a_value_once_per_run_and_root",
+   "FAILED tests/test_wire_contract_once.py::test_rule_typing_reads_the_environment_and_each_rule_once_per_run[acts@0-joined_source-registry0]",
+   "FAILED tests/test_wire_contract_once.py::test_rule_typing_reads_the_environment_and_each_rule_once_per_run[norms@0-<lambda>-registry1]",
+   "FAILED tests/test_wire_contract_once.py::test_a_typing_fault_at_a_late_rule_is_found_with_each_rule_typed_once",
+   "FAILED tests/test_wire_contract_once.py::test_soft_rule_typing_reads_the_declarations_once_per_run"
+  ]
+ },
+ {
+  "id": "py-typing-per-rule",
+  "file": "ve/norms_contract.py",
+  "definition": "rule_typing",
+  "bug": "a typing pass from the first rule at every rule",
+  "test": "tests/test_wire_contract_once.py::test_a_typing_fault_at_a_late_rule_is_found_with_each_rule_typed_once",
+  "status": "KILLED",
+  "failures": [
+   "FAILED tests/test_wire_contract_once.py::test_a_typing_fault_at_a_late_rule_is_found_with_each_rule_typed_once"
+  ]
+ },
+ {
+  "id": "py-environment-per-read",
+  "file": "ve/norms_contract.py",
+  "definition": "decoded_environment",
+  "bug": "the environment decoded at each read",
+  "test": "tests/test_wire_contract_once.py::test_rule_typing_reads_the_environment_and_each_rule_once_per_run",
+  "status": "KILLED",
+  "failures": [
+   "FAILED tests/test_wire_contract_once.py::test_rule_typing_reads_the_environment_and_each_rule_once_per_run[acts@0-joined_source-registry0]",
+   "FAILED tests/test_wire_contract_once.py::test_rule_typing_reads_the_environment_and_each_rule_once_per_run[norms@0-<lambda>-registry1]"
+  ]
+ },
+ {
+  "id": "py-soft-declarations-per-rule",
+  "file": "conformance/softnorms_contract.py",
+  "definition": "rule_typing",
+  "bug": "soft-norms@0's declarations decoded at every rule",
+  "test": "tests/test_wire_contract_once.py::test_soft_rule_typing_reads_the_declarations_once_per_run",
+  "status": "KILLED",
+  "failures": [
+   "FAILED tests/test_wire_contract_once.py::test_soft_rule_typing_reads_the_declarations_once_per_run"
   ]
  },
  {
@@ -62,12 +150,12 @@
   "test": "lean/VE/WireContract/Hooks/Acts.lean #guard (lake build VE.WireContract.Hooks.Acts)",
   "status": "KILLED",
   "failures": [
-   "error: VE/WireContract/Hooks/Acts.lean:205:0: Expression",
-   "error: VE/WireContract/Hooks/Acts.lean:206:0: Expression",
-   "error: VE/WireContract/Hooks/Acts.lean:207:0: Expression",
-   "error: VE/WireContract/Hooks/Acts.lean:208:0: Expression",
-   "error: VE/WireContract/Hooks/Acts.lean:209:0: Expression",
-   "error: VE/WireContract/Hooks/Acts.lean:212:0: Expression"
+   "error: VE/WireContract/Hooks/Acts.lean:230:0: Expression",
+   "error: VE/WireContract/Hooks/Acts.lean:231:0: Expression",
+   "error: VE/WireContract/Hooks/Acts.lean:232:0: Expression",
+   "error: VE/WireContract/Hooks/Acts.lean:233:0: Expression",
+   "error: VE/WireContract/Hooks/Acts.lean:234:0: Expression",
+   "error: VE/WireContract/Hooks/Acts.lean:237:0: Expression"
   ]
  },
  {
@@ -78,12 +166,12 @@
   "test": "lean/VE/WireContract/Hooks/Acts.lean #guard (lake build VE.WireContract.Hooks.Acts)",
   "status": "KILLED",
   "failures": [
-   "error: VE/WireContract/Hooks/Acts.lean:205:0: Expression",
-   "error: VE/WireContract/Hooks/Acts.lean:206:0: Expression",
-   "error: VE/WireContract/Hooks/Acts.lean:207:0: Expression",
-   "error: VE/WireContract/Hooks/Acts.lean:208:0: Expression",
-   "error: VE/WireContract/Hooks/Acts.lean:209:0: Expression",
-   "error: VE/WireContract/Hooks/Acts.lean:212:0: Expression"
+   "error: VE/WireContract/Hooks/Acts.lean:230:0: Expression",
+   "error: VE/WireContract/Hooks/Acts.lean:231:0: Expression",
+   "error: VE/WireContract/Hooks/Acts.lean:232:0: Expression",
+   "error: VE/WireContract/Hooks/Acts.lean:233:0: Expression",
+   "error: VE/WireContract/Hooks/Acts.lean:234:0: Expression",
+   "error: VE/WireContract/Hooks/Acts.lean:237:0: Expression"
   ]
  },
  {
@@ -94,11 +182,12 @@
   "test": "lean/VE/WireContract/Hooks/Acts.lean #guard (lake build VE.WireContract.Hooks.Acts)",
   "status": "KILLED",
   "failures": [
-   "error: VE/WireContract/Hooks/Acts.lean:222:0: Expression",
-   "error: VE/WireContract/Hooks/Acts.lean:223:0: Expression",
-   "error: VE/WireContract/Hooks/Acts.lean:240:0: Expression",
-   "error: VE/WireContract/Hooks/Acts.lean:243:0: Expression",
-   "error: VE/WireContract/Hooks/Acts.lean:255:0: Expression"
+   "error: VE/WireContract/Hooks/Acts.lean:262:0: Expression",
+   "error: VE/WireContract/Hooks/Acts.lean:263:0: Expression",
+   "error: VE/WireContract/Hooks/Acts.lean:280:0: Expression",
+   "error: VE/WireContract/Hooks/Acts.lean:283:0: Expression",
+   "error: VE/WireContract/Hooks/Acts.lean:295:0: Expression",
+   "error: VE/WireContract/Hooks/Acts.lean:307:0: Expression"
   ]
  },
  {
@@ -109,7 +198,7 @@
   "test": "lean/VE/WireContract/Hooks/Acts.lean #guard (lake build VE.WireContract.Hooks.Acts)",
   "status": "KILLED",
   "failures": [
-   "error: VE/WireContract/Hooks/Acts.lean:228:0: Expression"
+   "error: VE/WireContract/Hooks/Acts.lean:267:0: Expression"
   ]
  },
  {
@@ -120,7 +209,7 @@
   "test": "lean/VE/WireContract/Hooks/Acts.lean #guard (lake build VE.WireContract.Hooks.Acts)",
   "status": "KILLED",
   "failures": [
-   "error: VE/WireContract/Hooks/Acts.lean:124:0: Expression"
+   "error: VE/WireContract/Hooks/Acts.lean:149:0: Expression"
   ]
  },
  {
@@ -161,10 +250,21 @@
   "file": "conformance/acts_contract.py",
   "definition": "vocabulary_refusal",
   "bug": "an earlier refusal read as the frames'",
-  "test": "tests/test_acts_contract.py::test_a_refusal_before_the_frames_is_not_theirs",
+  "test": "tests/test_acts_contract.py::test_the_frames_members_name_only_the_first_refusal",
   "status": "KILLED",
   "failures": [
-   "FAILED tests/test_acts_contract.py::test_a_refusal_before_the_frames_is_not_theirs"
+   "FAILED tests/test_acts_contract.py::test_the_frames_members_name_only_the_first_refusal"
+  ]
+ },
+ {
+  "id": "py-alone-fixed-emptied",
+  "file": "conformance/acts_contract.py",
+  "definition": "vocabulary_refusal",
+  "bug": "the block's `fixed` emptied (F1 again)",
+  "test": "tests/test_acts_contract.py::test_the_frames_members_name_only_the_first_refusal",
+  "status": "KILLED",
+  "failures": [
+   "FAILED tests/test_acts_contract.py::test_the_frames_members_name_only_the_first_refusal"
   ]
  },
  {
