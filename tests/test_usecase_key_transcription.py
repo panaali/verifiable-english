@@ -177,10 +177,15 @@ def keyed(entry):
     return [norm(v) for v in key.values()] if isinstance(key, dict) else norm(key)
 
 
-def mismatches(case):
-    """Every transcription cell that differs from section 6, and every item or field section 6 lacks."""
+def transcription(case):
+    return json.loads((USECASES / case / "answer-key.json").read_text(encoding="utf-8"))["items"]
+
+
+def mismatches(case, rows_=None):
+    """Every transcription cell that differs from section 6, and every item or field section 6 lacks; `rows_` is a
+    scratch copy of answer-key.json's items (default: the file)."""
     cells = section_6_cells(case)
-    rows_ = json.loads((USECASES / case / "answer-key.json").read_text())["items"]
+    rows_ = transcription(case) if rows_ is None else rows_
     bad = []
     for entry in rows_:
         extra = set(entry) - LOCATORS - CELL_FIELDS - SITUATION_FIELDS
@@ -221,3 +226,52 @@ def test_section_6_parses_into_every_item(case):
 def test_answer_key_transcribes_section_6(case):
     """Every answer-key.json cell equals its section-6 cell, and none exists that section 6 lacks."""
     assert mismatches(case) == []
+
+
+def _changed(case, change):
+    rows_ = transcription(case)
+    change(rows_)
+    return {m[0] for m in mismatches(case, rows_)}
+
+
+def _set(ident, field, value):
+    def change(rows_):
+        item = next(r for r in rows_ if r["id"] == ident)
+        if value is None:
+            item.pop(field)
+        else:
+            item[field] = value
+    return change
+
+
+# One scratch change per kind of transcription error, in each frozen-key use case: a key retyped, cut or given in
+# the wrong notation, a soft marker added, dropped or moved to another reading, a note section 6 lacks, an item
+# moved to another subsection, added, dropped or given an extra field.
+SCRATCH = [
+    ("openai-preparedness", "B-BIO-H/MREP", _set("B-BIO-H/MREP", "key", "SOME(N")),
+    ("openai-preparedness", "B-AIS-C/MREP", _set("B-AIS-C/MREP", "soft", "RS1=default")),
+    ("openai-preparedness", "B-BIO-C/CONTRIB", _set("B-BIO-C/CONTRIB", "soft", None)),
+    ("openai-preparedness", "K13", _set("K13", "soft", "RS1=default")),
+    ("openai-preparedness", "A-BIO-C-INT/SUF", _set("A-BIO-C-INT/SUF", "key", "SOME(inuse | nest & any)")),
+    ("openai-preparedness", "C6", _set("C6", "key", "SOME(final | bperm)")),
+    ("openai-preparedness", "G5", _set("G5", "note", "only K18 under P")),
+    ("openai-preparedness", "D2", _set("D2", "plan", "6.8")),
+    ("openai-preparedness", "N3", _set("N3", "verdict", "NONE")),
+    ("openai-preparedness", "K21", lambda rows_: rows_.append({**rows_[-1], "id": "K21"})),
+    ("openai-preparedness", "S8", lambda rows_: rows_.remove(next(r for r in rows_ if r["id"] == "S8"))),
+    ("anthropic-rsp", "A-T2/PROT2", _set("A-T2/PROT2", "key", "SOME(uncond)")),
+    ("anthropic-rsp", "A-T3/ARG3", _set("A-T3/ARG3", "soft", None)),
+    ("anthropic-rsp", "A-T0/PROT1", _set("A-T0/PROT1", "soft", "only under the default force")),
+    ("anthropic-rsp", "T4b", _set("T4b", "key", "SOME(iffo | iffi)")),
+    ("anthropic-rsp", "G7", _set("G7", "key", {"REQUIRED:PROMPT_BOARD_NOTICE": "ALL",
+                                                "COVERED:QUARTERLY_UPDATE": "ALL"})),
+    ("anthropic-rsp", "S1-T4", _set("S1-T4", "key", "catastrophic")),
+    ("anthropic-rsp", "D3a", _set("D3a", "note", "42 days > 31")),
+    ("anthropic-rsp", "B-VOL/ASSESS", lambda rows_: rows_.remove(next(r for r in rows_ if r["id"] == "B-VOL/ASSESS"))),
+]
+
+
+@pytest.mark.parametrize("case, ident, change", SCRATCH, ids=[f"{c}:{i}" for c, i, _ in SCRATCH])
+def test_one_changed_cell_is_caught(case, ident, change):
+    """A scratch copy of answer-key.json with one cell changed is caught at that cell and nowhere else."""
+    assert _changed(case, change) == {ident}
