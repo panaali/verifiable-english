@@ -1,7 +1,7 @@
 # norm-defaults-text-1: record corrections and review fixes (REPORT)
 
-Summary: READY FOR RECHECK. Review F1 and F2 are fixed in 41ce344aa3 and recheck F3 in f3f360c1c3; each listed probe
-failed before and passes after. Selected tests passed (35 units, 0 failures); `lake build` and `lean/audit.py` passed.
+Summary: READY FOR RECHECK. Review F1 and F2 are fixed in 41ce344aa3, recheck F3 in f3f360c1c3 and recheck F4 in
+F4COMMIT; each listed probe failed before and passes after. Selected tests passed (35 units, 0 failures); `lake build` and `lean/audit.py` passed.
 The merge train owns the full gate.
 No product behavior changed, no DELTA row is needed under the item's no-DELTA ruling, and no signature is reserved.
 
@@ -30,22 +30,53 @@ this review fix changes documentation and its tests only.
   refuse with `UnsupportedProfile: alternatives@0 requires norms@0`. No other record the
   branch touched stated the categorical difference (grep "wrapper" over the branch's files) ->
   `tests/test_norm_defaults_records.py::test_f3_probe_no_categorical_wrapper_difference` (the probe, verbatim),
-  `::test_wrapper_records_say_need_not_agree` (every record the item touched),
-  `::test_wrapper_records_name_a_shared_refusal_that_todaygate_gives` (reads `todayGate`'s checks and
-  `wrapperProfiles` from `Dispatch.lean`: the named refusal is the first refusing check on the list and on its base,
-  and its condition names no wrapper) and `::test_wrapper_scans_refuse_and_accept` -> f3f360c1c3.
+  `::test_wrapper_records_say_need_not_agree` (every record the item touched), a shared-refusal test and
+  `::test_wrapper_scans_refuse_and_accept` -> f3f360c1c3. Recheck F4 (below) replaced the shared-refusal test,
+  whose parser of `todayGate`'s checks could not back the claim it was written for.
 
 Both lists' answers were read by direct Lean evaluation at 302316a182 (`lake env lean` on a scratch file evaluating
 `todayGate`, `dispatch` and `gateOf profileTable`). PROBE F3 exited 1 before the fix and 0 after. With the two records
 restored from 302316a182 the three record tests failed (`3 failed, 9 passed`); after the fix the file passes 12.
 Writing this section, the shared-refusal check paired a differing list with the shared refusal when both sat in one
-sentence; its pattern now stops at the next list (the `paired` case of `::test_wrapper_scans_refuse_and_accept`),
-and this section names the two lists in separate sentences. The
+sentence; its pattern was made to stop at the next list, and this section names the two lists in separate sentences.
+The
 selected run (VM fallback; cloud slots busy) passed 35 units with 0 failures and deferred `tests/test_repo_map.py`
 and `tests/test_select_tests.py` to the chain gate. `lake build` completed 1429 jobs; `python3 lean/audit.py` passed
 (864 source files, 9911 theorem declarations). Docs and tests only: no Lean, Python or Rust product change, so no
 seeded product bug applies; trust +0; no DELTA row (item-specific no-DELTA ruling); no signature reserved. The
 three `main-known-red.txt` tests are pre-existing, not edited and not selected.
+
+## Recheck fix (2026-11-12, looprecheck1 F4; DRI note reviews/dri-decisions-20261112-norm-defaults-text-1.md item 2)
+
+- F4 -> the integration status paragraph of `docs/spec/norm-defaults.md` no longer states a general condition for
+  when the two gates agree. It keeps the shared refusal as an example only: "They can share a refusal: on
+  `[alternatives@0, norm-defaults@0, readings@1, relational-fol@0]` both gates answer `UnsupportedProfile:
+  alternatives@0 requires norms@0`". No other record the branch wrote states the condition (grep "names no wrapper",
+  "share a refusal"). This REPORT's F3 entry described the removed test as finding the check that refuses a list
+  first; it is corrected above.
+  The shared-refusal test is removed with its parser. In its place:
+  - `tests/test_norm_defaults_records.py::GATE_ANSWERS` holds literal answers of `todayGate`, `dispatch` and
+    `gateOf profileTable` for five wrapper lists: the two the spec names and F4's three counterexamples
+    (`[norm-defaults@0, readings@1, relational-fol@0]`, `[readings@1]`,
+    `[readings@1, relational-fol@0, speech-acts@0]`). They were read with `#eval` in Lean (`lake env lean` on a
+    scratch file importing `VE.Compose.Dispatch`, at 006b99ae3e).
+  - `::test_gate_answers_are_leans` writes one `#guard` per literal answer into a file under `tmp_path` and elaborates
+    it with `lake env lean`; the file must elaborate. A copy with `todayGate`'s and `dispatch`'s answers on
+    `[readings@1, relational-fol@0]` swapped must fail at exactly those two guards.
+  - `::test_wrapper_records_name_leans_answers`: in every record of `WRAPPER_RECORDS`, each list naming a wrapper
+    profile must be a key of `GATE_ANSWERS`. Each answer named after it (up to the next list or the sentence's end)
+    must be one of that list's answers. An answer after a gate's name must be that gate's answer, and "both" may only
+    appear on a list whose three answers are equal. The spec must name `todayGate`'s and then `dispatch`'s answer on
+    `[readings@1, relational-fol@0]`, and the single shared answer on the alternatives list.
+  - `::test_wrapper_records_state_no_agreement_condition`: no sentence of `WRAPPER_RECORDS` that names `todayGate` or
+    the two gates together pairs a word of agreement (the test's `AGREEMENT`) with a conditional word (`CONDITION`).
+  - `::test_f4_probe_no_general_shared_refusal_condition`: PROBE F4, verbatim but rooted at the checkout.
+  - `::test_wrapper_scans_refuse_and_accept`: the scans refuse the withdrawn sentence verbatim and F4's three
+    counterexamples stated as shared refusals, and accept the spec's two sentences.
+
+PROBE F4 exited 1 on 006b99ae3e and exits 0 after the fix; PROBE F3 still exits 0. Docs and tests only: no Lean,
+Python or Rust product change, so no seeded product bug applies; trust +0; no DELTA row (item-specific no-DELTA
+ruling, item 1 of that decision file); no signature reserved. The three `main-known-red.txt` tests are pre-existing, not edited.
 
 ## Initial build record
 
