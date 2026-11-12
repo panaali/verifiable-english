@@ -12,6 +12,7 @@
 - `tools/cache_store.py` — The content-keyed entry store shared by the repository's caches (`tools/run_cache.py`, `tools/lean_dump_cache.py`).
 - `tools/calc_units_fixtures.py` — Write or check `lean/VE/Calc/UnitsExamples.lean`, the Lean `#guard`s of the `ve-units@2` fixture table.
 - `tools/change_units.py` — Split a Python source into the units a change can touch, using `ast`.
+- `tools/check_ap56_statements.py` — Compare AP-2's Lean declarations with the Lean block of docs/spec/act-phrases.md 5.6 (build checklist 17), read as tools/check_pc3_statements.py reads PC-3's (…
 - `tools/check_english_e2_statements.py` — Check the twelve E2 theorem statements against the approved section 5.5 text, with Lean as the oracle.
 - `tools/check_english_s3_statements.py` — Compare the ten added S3 theorem statements with the approved section 5.5 text.
 - `tools/check_lean_imports.py` — Reject new outward Lean imports and stale, exact legacy exceptions.
@@ -38,9 +39,6 @@
 - `tools/history_tests.py` — The tests whose result can depend on git history: `tests/history-dependent.json` and its lint.
 - `tools/identity_lint.py` — Fail on a new identity preimage built in Python (architecture plan AR-6, rule 4 of the relay lint; DRI D7).
 - `tools/inventory_lint.py` — Gate 2 inventory lint: no retained code imports a class-A body.
-- `tools/kernel_closure.lean` — The reading closure of a verdict path (docs/spec/kernel-boundary.md, section 2).
-- `tools/kernel_closure.py` — The kernel boundary, measured (docs/spec/kernel-boundary.md, section 2).
-- `tools/kernel_trace.py` — Run a use-case harness and record which Lean service modes and case kinds it asks for.
 - `tools/lake_output_hash.lean` — (no module docstring)
 - `tools/lake_outputs.py` — Lake's executables as they are on disk, not as their traces say (finding class 13: a stale binary).
 - `tools/layer_declarations.py` — List every in-module layer declaration, Lean and Python, with its layer and reason; refuse a malformed one.
@@ -96,3 +94,4 @@
 - `tools/select_tests_evidence.py` — Measure tools/select_tests.py on past commits and on seeded bugs.
 - `tools/select_tests_seeds.py` — Seeded edits that check tools/select_tests.py against the complete suite.
 - `tools/semantic_inventory.py` — Generate the Stage 0, AST based dependency and deletion inventory.
+- `tools/since_pass.py` — Select against the branch's last passing tree, not against main (test-speed plan, batch B3).

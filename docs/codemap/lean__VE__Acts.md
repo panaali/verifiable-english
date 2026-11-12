@@ -4,7 +4,6 @@
 - `lean/VE/Acts/DecodeTwins.lean` — The twins of the reached soundness theorems (docs/spec/act-phrases.md 6.4): each entry point's theorem at the decoder it runs an `acts@0` document on, stated w…
 - `lean/VE/Acts/Elaborate.lean` — Elaboration: joined acts become rules on simple acts (docs/spec/act-phrases.md 6.3, 6.5, 6.6; plan 2.3).
 - `lean/VE/Acts/ElaborateExamples.lean` — Fixtures of the elaboration (docs/spec/act-phrases.md 6.3, 11.3: E1 to E10, E16, E17; sorts `person`, guards `top`).
-- `lean/VE/Acts/ElaborateProofs.lean` — The split map is exact and a part is its source's declaration with atom i's act (docs/spec/act-phrases.md 6.6: `splitMap_exact`, `elaborate_parts`).
 - `lean/VE/Acts/Faithful.lean` — Faithfulness of the elaboration (docs/spec/act-phrases.md 6.6, C17): each part means what the source rules mean, read of the part.
 - `lean/VE/Acts/FaithfulExamples.lean` — Fixtures of `elaborate_faithful` (docs/spec/act-phrases.md 6.6, 11.3): both sides of the iff, computed on small finite structures.
 - `lean/VE/Acts/Grammar.lean` — The act grammar's rule table (docs/spec/act-phrases.md 5.2) and its well-formedness `grammar_wf` (5.6).
@@ -17,6 +16,10 @@
 - `lean/VE/Acts/Linearize.lean` — The normal form and the text of a simple act (docs/spec/act-phrases.md 5.5).
 - `lean/VE/Acts/Meaning.lean` — The meaning of a derivation of an act phrase: its act tree (docs/spec/act-phrases.md 1.5, 5.3; plan D9 (i)).
 - `lean/VE/Acts/MeaningExamples.lean` — Fixtures of the meaning, `readings`, `read` and `analyse` (docs/spec/act-phrases.md 5.3, 5.4, 11.2, 11.2b).
+- `lean/VE/Acts/NormalBlocks.lean` — The elements, the object and the head of a normal form read back, for the uniqueness half of `read_normal` (docs/spec/act-phrases.md 5.6; `VE.Acts.NormalUnique…
+- `lean/VE/Acts/NormalInverse.lean` — Reading a derivation of the act grammar backwards, for the uniqueness half of `read_normal` (docs/spec/act-phrases.md 5.6; `VE.Acts.NormalUnique`).
+- `lean/VE/Acts/NormalProofs.lean` — The existence and bounds halves of `read_normal` (docs/spec/act-phrases.md 5.6); `read_normal` itself, with the uniqueness half, is in `VE.Acts.NormalUnique`.
+- `lean/VE/Acts/NormalUnique.lean` — The uniqueness half of `read_normal` (docs/spec/act-phrases.md 5.6), and `read_normal` itself.
 - `lean/VE/Acts/ParseIndexExamples.lean` — ap-parse-index's fixtures: the steps of a growing vocabulary, the hashed indexes, and the compiled forms. L6 (`V5`'s 64 readings) with `n` more frames, up to t…
 - `lean/VE/Acts/Read.lean` — Readings and reading of an act phrase, with the limits of D2 (docs/spec/act-phrases.md 1.6, 5.4, 5.6).
 - `lean/VE/Acts/Readings.lean` — The readings of an act phrase, `read` and `analyse` (docs/spec/act-phrases.md 1.6, 5.4), and spec 5.6's theorems about them.

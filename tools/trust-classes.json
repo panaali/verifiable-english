@@ -16434,8 +16434,10 @@
     },
     "VE/Acts/RenderExamples.lean": {
       "T": [
+        "VE.Acts.RenderExamples.ReadsBack",
         "VE.Acts.RenderExamples.V2s",
         "VE.Acts.RenderExamples.Vk",
+        "VE.Acts.RenderExamples.Vk1",
         "VE.Acts.RenderExamples.Vo",
         "VE.Acts.RenderExamples.Vs",
         "VE.Acts.RenderExamples.atMod",
@@ -21753,6 +21755,68 @@
       ],
       "D[V]": [
         "VE.RightClauses.unitElided"
+      ]
+    },
+    "VE/Acts/NormalBlocks.lean": {
+      "P": [
+        "VE.Acts.NormalProofs.ADV",
+        "VE.Acts.NormalProofs.NTA",
+        "VE.Acts.NormalProofs.ObjOk",
+        "VE.Acts.NormalProofs.TB",
+        "VE.Acts.NormalProofs.fwToks",
+        "VE.Acts.NormalProofs.objPieces",
+        "VE.Acts.NormalProofs.objToks"
+      ]
+    },
+    "VE/Acts/NormalInverse.lean": {
+      "P": [
+        "VE.Acts.NormalProofs.Blk",
+        "VE.Acts.NormalProofs.Blk.marker",
+        "VE.Acts.NormalProofs.Blk.piece",
+        "VE.Acts.NormalProofs.Blk.rest",
+        "VE.Acts.NormalProofs.Blk.toks",
+        "VE.Acts.NormalProofs.BlkOk",
+        "VE.Acts.NormalProofs.Box",
+        "VE.Acts.NormalProofs.EF",
+        "VE.Acts.NormalProofs.ExclW",
+        "VE.Acts.NormalProofs.FillW",
+        "VE.Acts.NormalProofs.IsTok",
+        "VE.Acts.NormalProofs.JC",
+        "VE.Acts.NormalProofs.Next",
+        "VE.Acts.NormalProofs.Stop",
+        "VE.Acts.NormalProofs.VocabOk",
+        "VE.Acts.NormalProofs.blocks",
+        "VE.Acts.NormalProofs.tacticRules_of___",
+        "VE.Acts.NormalProofs.tailToks"
+      ]
+    },
+    "VE/Acts/NormalProofs.lean": {
+      "P": [
+        "VE.Acts.NormalProofs.FinD",
+        "VE.Acts.NormalProofs.FinDs",
+        "VE.Acts.NormalProofs.FrameOk",
+        "VE.Acts.NormalProofs.Gen",
+        "VE.Acts.NormalProofs.GenAll",
+        "VE.Acts.NormalProofs.PartOk",
+        "VE.Acts.NormalProofs.advWords",
+        "VE.Acts.NormalProofs.nm",
+        "VE.Acts.NormalProofs.posRhs",
+        "VE.Acts.NormalProofs.preps",
+        "VE.Acts.NormalProofs.rowB",
+        "VE.Acts.NormalProofs.spans",
+        "VE.Acts.NormalProofs.symB",
+        "VE.Acts.NormalProofs.symRank",
+        "VE.Acts.NormalProofs.tacticAp_tac",
+        "VE.Acts.NormalProofs.tacticFrame_unfold",
+        "VE.Acts.NormalProofs.tacticGlobal_unfold",
+        "VE.Acts.NormalProofs.term𝔽_"
+      ]
+    },
+    "VE/Acts/NormalUnique.lean": {
+      "P": [
+        "VE.Acts.NormalProofs.Adj",
+        "VE.Acts.NormalProofs.EndOk",
+        "VE.Acts.NormalProofs.coreToks"
       ]
     }
   }
