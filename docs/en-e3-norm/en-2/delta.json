@@ -1,5 +1,5 @@
 {
- "commit": "35277aba8ec4dec5c7490a7710f77e94db650143",
+ "commit": "eebfc9c619fc265fda213c75699915240fcaeea6",
  "corpora": [
   {
    "name": "constitution",
@@ -9791,6 +9791,7 @@
    "tests/test_test_chunks.py",
    "tests/test_test_speed_b2.py",
    "tests/test_vacuity.py",
+   "tests/test_w1_delta_suite.py",
    "tests/test_wire_gate_corpus.py",
    "tests/test_words.py",
    "tools/test_layer_policy.py"
@@ -9822,7 +9823,7 @@
    "tests/test_soft_review_regressions.py",
    "tests/test_wire_gate_corpus.py"
   ],
-  "result": "7 failed, 4106 passed, 4 skipped, 13 warnings",
+  "result": "4110 passed, 4 skipped, 12 warnings",
   "unknown": [
    "tests/test_answer_cutoff.py",
    "tests/test_argument.py",
@@ -9898,6 +9899,7 @@
    "tests/test_test_chunks.py",
    "tests/test_test_speed_b2.py",
    "tests/test_vacuity.py",
+   "tests/test_w1_delta_suite.py",
    "tests/test_words.py",
    "tools/test_layer_policy.py"
   ]

@@ -69,7 +69,7 @@ DELTA.md quotes both counts and the summary.
 | corpus | records | lean-unavailable | agree | lean-stricter | lean-looser | both-refuse |
 |---|---|---|---|---|---|---|
 | pinned (120 blocks) | 120 | 0 | 120 | 0 | 0 | 0 |
-| suite (99 test units, derived from coverage) | 210 | 1 | 144 | 18 | 3 | 44 |
+| suite (100 test units, derived from coverage) | 210 | 1 | 144 | 18 | 3 | 44 |
 | suite-subprocess (`ve` processes the suite starts) | 23 | 0 | 16 | 0 | 1 | 6 |
 | soft-rights (`_w1=True` calls) | 262 | 47 | 211 | 0 | 4 | 0 |
 | udhr (norm units and readings, one at a time) | 47 | 1 | 0 | 37 | 0 | 9 |
