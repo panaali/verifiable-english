@@ -271,8 +271,8 @@ class FakeLake:
     """`probe`'s `lake`: records the env and the text written to the probe's path, and prints each named check's
     entry (`done` included but for the names in `cut`) under the call's nonce."""
 
-    def __init__(self, path: Path, cut: tuple = ()):
-        self.path, self.cut, self.calls = path, cut, []
+    def __init__(self, path: Path, cut: tuple = (), code: int = 0):
+        self.path, self.cut, self.code, self.calls = path, cut, code, []
 
     def __call__(self, env: dict, *args: str):
         text = self.path.read_text()
@@ -282,7 +282,7 @@ class FakeLake:
         nonce = env["TM_TRUST_NONCE"]
         said = [f"{nonce} {n} {x}" for n in names for x in ("hash 7", "const Demo.f 11", "done") if
                 not (x == "done" and n in self.cut)]
-        return 0, "\n".join(["noise", *said, f"{nonce[:-1]}x tmChk_2 sorry"])
+        return self.code, "\n".join(["noise", *said, f"{nonce[:-1]}x tmChk_2 sorry"])
 
 
 def test_probe_walks_only_its_checks_and_drops_the_text_after_them(tmp_path):
@@ -314,8 +314,8 @@ def test_probe_keeps_an_entry_whose_walk_did_not_finish_without_done(tmp_path):
 
 def test_a_probe_past_the_build_timeout_says_so_and_stays_unknown(tmp_path):
     """tm-m509-reads-linear (2): a probe run killed at --build-timeout (`TIMED_OUT`, the scoped one and the whole
-    file's) leaves each check it was to walk unknown with that reason, not "Lean could not elaborate it"; a run Lean
-    failed keeps the old reason."""
+    file's) leaves each check it was to walk unknown with that reason, not "Lean could not elaborate it"; the text is
+    the one tm-nightly.py build_timeout() counts (tm-probe-rc-detail (2))."""
     path, calls = tmp_path / "A.lean", []
 
     def lake(env, *args):
@@ -328,9 +328,35 @@ def test_a_probe_past_the_build_timeout_says_so_and_stays_unknown(tmp_path):
                     lambda key: tm.refusal(probes(key), whole()))
     assert calls == ["tmChk_2", None]  # the scoped probe, then the whole file's (`Probes`)
     assert got[0] == "UNKNOWN" and got[1].endswith("(the probe did not finish in 500 s (--build-timeout))"), got
-    failed = tm.probe(lambda env, *args: (1, "error"), {}, PROBED, PROBED_ROLES, path)
-    assert failed == {} and tm.refusal(failed.get((2, 2)), whole()) == "Lean could not elaborate it in the probe"
     assert tm.refusal(whole(), probes(("A.lean", (2, 2)))) == "the probe did not finish in 500 s (--build-timeout)"
+    assert re.search(r"did not finish in ([0-9.]+) s \(--build-timeout\)", got[1])  # tm-nightly.py build_timeout()
+
+
+def test_a_probe_whose_lake_run_exits_non_zero_names_its_rc_and_stays_unknown(tmp_path):
+    """tm-probe-rc-detail: a probe run that exits non-zero, not past --build-timeout (a crash, a kill for memory, an
+    error), leaves each check it was to walk unknown with that rc, never "Lean could not elaborate it", and the text
+    is not one tm-nightly.py build_timeout() counts as a timeout. A run that exits 0 without a check's entry keeps the
+    old reason."""
+    path, calls = tmp_path / "A.lean", []
+
+    def lake(env, *args):
+        calls.append(env.get("TM_TRUST_ONLY"))
+        return 137, "Killed"
+    probes = tm.Probes(lambda f, only: (tm.probe(lake, {}, PROBED, PROBED_ROLES, path, only=only),
+                                        {(2, 2), (4, 5), (6, 6), (7, 7)}))
+    probes.scope({("A.lean", (2, 2))})
+    got = tm.settle([("A.lean", 2, REFUTE)], lambda f: PROBED, lambda f: PROBED, {"A.lean": PROBED_ROLES}, None,
+                    lambda key: tm.refusal(probes(key), whole()))
+    assert calls == ["tmChk_2", None]  # the scoped probe, then the whole file's (`Probes`)
+    assert got[0] == "UNKNOWN" and got[1].endswith("(the probe's lake run exited with rc 137)"), got
+    assert not re.search(r"did not finish in ([0-9.]+) s \(--build-timeout\)", got[1])
+    failed = tm.probe(lambda env, *args: (1, "error"), {}, PROBED, PROBED_ROLES, path)
+    assert tm.refusal(failed.get((2, 2)), whole()) == "the probe's lake run exited with rc 1"
+    assert tm.refusal(whole(), failed.get((6, 6))) == "the probe's lake run exited with rc 1"
+    assert tm.probe(lambda env, *args: (0, ""), {}, PROBED, PROBED_ROLES, path) == {}
+    # an error after the set (a cut, `kept`) leaves a whole entry as the whole file's, the cut one names the rc
+    got = tm.probe(FakeLake(path, cut=("tmChk_4",), code=1), {}, PROBED, PROBED_ROLES, path, only={(2, 2), (4, 5)})
+    assert got[(2, 2)] == {"flags": {"hash 7", "done"}, "consts": {"Demo.f": "11"}} and "rc" in got[(4, 5)]
 
 
 # F3's shapes (review 5): a `mutual … end` holding a `decide` theorem, `where` and `termination_by` tails, a docstring

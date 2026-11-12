@@ -707,10 +707,11 @@ def probe(lake, env: dict, text: str, roles: list[tuple], path: Path, outside: b
                 entry["consts"][constant] = value
             else:
                 entry["flags"].add(rest)
-    if code == TIMED_OUT:  # each walk it cut short says so (`refusal`), not that Lean could not elaborate it
-        for span in spans.values():
-            if only is None or span in only:
-                out.setdefault(span, {"flags": set(), "consts": {}})["late"] = said.partition(" did not ")[2]
+    if code:  # each walk it cut short says why (`refusal`): past --build-timeout (`late`) or lake's `rc` (a crash,
+        for span in spans.values():  # a kill for memory, an error: tm-probe-rc-detail), not "could not elaborate"
+            if (only is None or span in only) and (code == TIMED_OUT or not complete(out.get(span))):
+                entry = out.setdefault(span, {"flags": set(), "consts": {}})
+                entry.update({"late": said.partition(" did not ")[2]} if code == TIMED_OUT else {"rc": code})
     return out
 
 
@@ -782,10 +783,14 @@ class ControlProbes:
 def refusal(entry: dict | None, control: dict | None) -> str | None:
     """Why the check whose `probe` entries in the mutant's build and in the control's are these cannot refute the
     mutated definition, or None. An entry that is not whole (`complete`) is absent; one of a probe run past
-    --build-timeout (`late`) says so."""
+    --build-timeout (`late`) says so; one of a probe whose lake run exited non-zero (`rc`) names that rc, a text
+    tm-nightly.py build_timeout() does not count as a timeout."""
     if not complete(entry) or not complete(control):
-        if late := next((x["late"] for x in (entry, control) if x and not complete(x) and "late" in x), None):
+        cut = [x for x in (entry, control) if x and not complete(x)]
+        if late := next((x["late"] for x in cut if "late" in x), None):
             return f"the probe did not {late}"  # TIMED_OUT: `probe`'s run past --build-timeout
+        if (rc := next((x["rc"] for x in cut if "rc" in x), None)) is not None:
+            return f"the probe's lake run exited with rc {rc}"
         return "Lean could not elaborate it in the probe"
     if "hyps" in entry["flags"]:
         return "its goal has a hypothesis"

@@ -132,9 +132,10 @@ def test_f25_quantifies_over_each_competitor_and_n3_enumerates_rs5(rsp_modules):
     n3 = rsp_run.answer({"id": "N3", "case": None, "item": "NEVER:F25_IN_LEAD_SCENARIO_WITHOUT_COMPETITOR"})
     assert n3["cone"] == ["RS5"] and [r["choice"]["RS5"] for r in n3["choices"]] == ["import", "noimport"]
     assert rsp_run.verdict(n3) == "ALL" and all(r["rules"] == ["f24-delay"] for r in n3["choices"])
-    # Opposite direction: with a competitor whose posture is not yet attainable, F25 does require the delay.
-    c7 = rsp_run.conflict("C7")
-    assert [r["holds"] for r in c7["choices"]] == [False, True]
+    # Opposite direction: with a competitor whose posture is not yet attainable, F25 does require the delay (and,
+    # since fix-2, prevails over F26's release, so C7 is NONE: PLAN 12, item 21).
+    delay = rsp_run.query(rsp_run.witness("C7"), "delay")
+    assert rsp_run.verdict(delay) == "ALL" and "f25-delay" in {n for r in delay["choices"] for n in r["rules"]}
 
 
 # --- F8, F9 and D3 ------------------------------------------------------------------------------------------------------
@@ -185,7 +186,7 @@ def test_c_doc_checks_the_f13_f16_pair_over_plan_m2s_cone():
     saved = json.loads((RSP / "results.json").read_text())["items"]["C-doc"]
     assert saved["cone"] == list(rsp_run.C_DOC_SETS) and len(saved["choices"]) == 24
     assert all(["f13-redact-p", "f16-only-legal"] in row["rules"] for row in saved["choices"])
-    assert all(row["holds"] == (row["choice"]["RS4"] == "rel") for row in saved["choices"])
+    assert not any(row["holds"] for row in saved["choices"])  # F26 yields to F24/F25: NONE (PLAN 12, item 21)
 
 
 # --- G1, the predicate budget ------------------------------------------------------------------------------------------
@@ -205,3 +206,189 @@ def test_g1_asks_the_translated_delay_act(rsp_modules):
 def test_regulated_predicates_stay_within_lean_limit():
     regulated = [n for n, e in rsp_vocabulary.environment()["vocabulary"]["predicates"].items() if "regulated" in e]
     assert len(regulated) == 64
+
+
+# --- anthropic-rsp-fidelity-fix-2: the 11-11 re-audit's T fixes and the DRI's rulings (PLAN section 12, items 20-21) ---
+
+KEY = {k["id"]: k for k in base.items("anthropic-rsp")}
+
+
+def _act(predicate):
+    return rsp_vocabulary.REGULATED[predicate]["regulated"]["act"]
+
+
+def _legend(predicate):
+    return {**rsp_vocabulary.BASE, **rsp_vocabulary.REGULATED}[predicate]["description"]
+
+
+def _answer(id_):
+    return rsp_run.answer(KEY[id_])
+
+
+def _rules(result):
+    return sorted({name for row in result["choices"] for name in row.get("rules", ())})
+
+
+def evidence_twins(predicates):
+    """Pairs (evidence term, predicate) where a predicate states the very fact an evidence term is about: a guard on
+    both requires the fact as well as the evidence, which "We have strong evidence that ..." does not (class 7)."""
+    out = []
+    for name, entry in predicates.items():
+        found = re.search(r"we have (?:strong|clear) evidence that (?:all |a |no )?(.{40})", entry["description"])
+        if found:
+            out += [(name, other) for other, e in predicates.items() if other != name and found[1] in e["description"]]
+    return sorted(out)
+
+
+def test_no_predicate_restates_the_fact_an_evidence_term_is_about():
+    predicates = rsp_vocabulary.environment()["vocabulary"]["predicates"]
+    assert evidence_twins(predicates) == []
+    # Seeded: the cycle-1 fact predicates are found again.
+    fact = {"description": "at {0} a competitor has implemented a risk mitigation that: (1) represents a significant "
+                           "improvement on reduction of our prioritized risks relative to our analogous mitigations"}
+    assert evidence_twins({**predicates, "competitor_better_mitigation": fact}) == [
+        ("mitigation_evidence", "competitor_better_mitigation")]
+
+
+@needs_lean
+def test_appendix_a_guards_are_the_evidence_alone(rsp_modules):
+    assert _unaries(_rule("f25-meet")["guard"]) == {"develops_highly_capable", "highly_capable", "competitors_evidence"}
+    assert _unaries(_rule("f25-delay")["guard"]) == {"competitors_evidence", "highly_capable", "posture_delay_needed"}
+    assert _unaries(_rule("f26-effort")["guard"]) == _unaries(_rule("f26-need-not-delay")["guard"]) == {
+        "mitigation_evidence"}
+    assert "(1) represents a significant improvement" in _legend("mitigation_evidence")
+    assert "(2) we could implement at comparable (or lower) effort" in _legend("mitigation_evidence")
+
+
+@needs_lean
+def test_cases_set_only_declared_atoms_and_the_stipulated_evidence(rsp_modules):
+    declared = set(rsp_vocabulary.environment()["vocabulary"]["predicates"])
+    assert not set(rsp_run.SCENARIO_TERMS) & declared  # a scenario is a label, never an atom
+    for case in rsp_run.CASES.values():
+        assert {atom[0] for atom in rsp_run.atoms(case)} <= declared, case["id"]
+    k20, k21 = ({atom[0] for atom in rsp_run.atoms(rsp_run.CASES[c])} for c in ("K20", "K21"))
+    assert "competitors_evidence" in k20 and "mitigation_evidence" in k21
+    assert {i: rsp_run.verdict(_answer(i)) for i in ("K20", "K21a", "K21b")} == {"K20": "ALL", "K21a": "ALL",
+                                                                                  "K21b": "NONE"}
+
+
+@needs_lean
+def test_no_k_limit_hides_an_answer_the_selected_rules_give(rsp_modules):
+    """A K item is undecided only where its selected rules give a wrong answer; K15a, K17, K12a and K12b are
+    answered by the rules that encode them (f20-notify-board's "promptly", f23-publish's effective date, F15's
+    unordered consultation and approval)."""
+    for id_ in rsp_run.K_LIMITS:
+        kind = KEY[id_]["item"]
+        raw = rsp_run.query(rsp_run.CASES[KEY[id_]["case"]], rsp_run.PREDICATES[kind.split(":", 1)[-1]])
+        assert not rsp_run.same_set(KEY[id_]["key"], raw), id_
+    expected = {"K15a": "f20-notify-board", "K17": "f23-publish", "K12a": "f15-select-approval",
+                "K12b": "f15-select-approval"}
+    for id_, rule in expected.items():
+        result = _answer(id_)
+        assert "undecided" not in result and rsp_run.verdict(result) == "ALL" and _rules(result) == [rule], id_
+    assert "promptly" in _act("board_notified") and "effective date" in _legend("update_published")
+
+
+@needs_lean
+def test_f10_in_line_guard_is_live_both_ways(rsp_modules):
+    """K18 as PLAN 5 states it leaves the mitigation's status open: NONE (PLAN 12, item 21); with the mitigation in
+    place or planned shortly, F10 requires the deviation report."""
+    assert rsp_run.verdict(_answer("K18")) == "NONE"
+    stated = {**rsp_run.CASES["K18"], "extra": ("mitigation_in_place_or_planned",)}
+    result = rsp_run.query(stated, "deviation_reported")
+    assert rsp_run.verdict(result) == "ALL" and _rules(result) == ["f10-in-line"]
+    assert {"describes_mitigation_and_deviates", "mitigation_in_place_or_planned", "noteworthy"} == _unaries(
+        _rule("f10-in-line")["guard"])
+
+
+def test_acts_and_legends_carry_the_restored_qualifiers():
+    assert _act("unredacted_shared").startswith("{0} have final unredacted Risk Reports")
+    approval = _act("reviewers_approved")
+    assert "after" not in approval.split() and "Board consulted" in approval and "approved by the LTBT" in approval
+    assert "publish written findings" in _act("commentary_asked") and "of receipt" in _act("commentary_asked")
+    assert "written report that is made public" in _legend("commentary_asked")
+    assert "subject to the outlined procedures" in _act("ltbt_review") and "3.6.1 and 3.6.2" in _legend("ltbt_review")
+    assert "subject to the procedures outlined below" in _legend("external_review_process")
+    assert "continuing to work with them" in _legend("candidate_revenue_dependent")
+    assert all(means in _legend("advance_recommendations") for means in (
+        "example-setting", "addressing unsolved technical problems", "advocacy through industry groups",
+        "policy advocacy"))
+    assert "link" in _act("past_roadmaps_kept") and "responsible-scaling-policy/roadmap" in _legend("past_roadmaps_kept")
+    assert "including model training, capability evals, mitigations, and risk analyses" in _legend("ltbt_briefed")
+
+
+@needs_lean
+def test_f26_release_yields_to_f24_and_f25(rsp_modules):
+    """DRI ruling: under RS4 = rel F26 releases only its own scenario's delay; on the joint C1 and C7 witnesses no
+    conflict is selected, and N2 stays ALL."""
+    for id_ in ("C1", "C7"):
+        result = rsp_run.conflict(id_)
+        assert [row["choice"]["RS4"] for row in result["choices"]] == ["scope", "rel"], id_
+        assert [row["holds"] for row in result["choices"]] == [False, False], id_
+    assert {i: rsp_run.verdict(_answer(i)) for i in ("C1", "C7", "C-doc", "N2")} == {
+        "C1": "NONE", "C7": "NONE", "C-doc": "NONE", "N2": "ALL"}
+    assert {"f24-delay", "f25-delay"} == {r for r, over in rsp_translation.PRECEDENCE.items()
+                                         if "f26-need-not-delay" in over}
+
+
+def offers_rs3c_result(reading_sets, blocks, readings):
+    """The places RS3c = result could be offered again: a reading set, a block's `when`, a READINGS entry."""
+    found = [f"READING_SETS {name}" for name, values in reading_sets.items() if name == "RS3c" or "result" in values]
+    found += [f"block {b.id}" for b in blocks if any(name == "RS3c" for name, _ in b.when)]
+    found += [f"READINGS {unit}" for unit, (name, by_reading) in readings.items()
+              if name == "RS3c" or "result" in by_reading]
+    return found
+
+
+def test_rs3c_result_is_never_offered():
+    blocks = list(rsp_translation.rule_blocks()) + list(rsp_translation.read_blocks("facts.d1.ve"))
+    readings = base.rsp_build.READINGS
+    assert offers_rs3c_result(rsp_translation.READING_SETS, blocks, readings) == []
+    assert {"s2-suff-result", "s2-only-if-result"}.isdisjoint(b.id for b in blocks)
+    # Seeded: each way of offering it again is caught.
+    tagged = rsp_translation.Block("s2-suff-result", (("RS3c", "result"),), "row T4", "")
+    assert offers_rs3c_result({**rsp_translation.READING_SETS, "RS3c": ("third", "result")}, blocks + [tagged],
+                              {**readings, "rs3c_t4": ("RS3c", {"result": []})}) == [
+        "READING_SETS RS3c", "block s2-suff-result", "READINGS rs3c_t4"]
+
+
+@needs_lean
+def test_t7_answers_none(rsp_modules):
+    assert rsp_run.verdict(_answer("T7")) == "NONE"
+    assert rsp_run.verdict(_answer("T3")) == "ALL"
+
+
+def test_key_deviations_are_plan_section_12s_and_the_saved_causes_cite_them():
+    deviations = rsp_run.key_deviations()
+    assert sorted(deviations) == ["C-doc", "C1", "C7", "K18", "T7"]
+    assert all(row["key"] == KEY[id_]["key"] and row["answer"] == "NONE" for id_, row in deviations.items())
+    saved = {r["id"]: r for r in json.loads((RSP / "results.json").read_text())["comparison"]}
+    for id_ in deviations:
+        assert saved[id_]["ve"] == "NONE" and saved[id_]["cause"]["kind"] == "key finding", id_
+    assert {i for i, r in saved.items() if r["status"] == "disagree"} == set(deviations)
+    # The reader sees only section 12's table: the same row elsewhere, or no table, gives nothing.
+    plan = (RSP / "PLAN.md").read_text()
+    assert rsp_run.key_deviations(plan.replace("| Key deviation |", "| Other |")) == {}
+    moved = plan.replace("\n## 13.", "\n## 13x.").replace("\n## 12.", "\n## 12.\n## 13.", 1)
+    assert rsp_run.key_deviations(moved) == {}
+
+
+def test_regulated_predicates_stay_64_after_fix_2():
+    regulated = [n for n, e in rsp_vocabulary.environment()["vocabulary"]["predicates"].items() if "regulated" in e]
+    assert len(regulated) == 64 and "mitigation_in_place_or_planned" not in regulated
+
+
+def test_probe_f1_fix_2_deliverables_are_present():
+    """Review fix round 1, PROBE F1: the item's text deliverables exist on the branch."""
+    rules = (RSP / "rules.d1.ve").read_text()
+    harness = (RSP / "run.py").read_text()
+
+    def body(block_id):
+        return rules.split(f"\n## {block_id} ")[1].split("\n## ")[0].split("\n", 1)[1]
+
+    report = base.REPO / "docs/usecases/anthropic-rsp/anthropic-rsp-fidelity-fix-2/REPORT.md"
+    assert report.exists()
+    assert "competitors_strong_measures" not in body("f25-meet") + body("f25-delay")
+    assert "competitor_better_mitigation" not in body("f26-effort") + body("f26-need-not-delay")
+    assert "effective-date order is not encoded" not in harness
+    assert "final" in body("f19-unredacted") and "after consulting" not in body("f15-select-approval")
