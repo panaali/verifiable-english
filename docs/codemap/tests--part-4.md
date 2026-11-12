@@ -79,6 +79,6 @@
 - `tests/test_norm_defaults_differential.py` — norm-defaults@0 evidence against brute force (docs/spec/norm-defaults.md 2.5, 3.1, 8).
 - `tests/test_norm_defaults_documented_support.py` — The norm-defaults spec's profile-validation claims with `norm-defaults@0` agree with Lean's `todayGate`.
 - `tests/test_norm_defaults_layered.py` — norm-defaults@0 on the soft and rights routes, in Lean (lean-first batch 10a; docs/spec/norm-defaults.md 2.3 and 3.3; lean/VE/NormDefaults/Layered.lean).
-- `tests/test_norm_defaults_records.py` — norm-defaults-text-1: three record claims read against what they rest on (regrade ndc2-F1, ndc2-F3, pk1c1-F1).
+- `tests/test_norm_defaults_records.py` — norm-defaults-text-1: four record claims read against what they rest on (regrade ndc2-F1, ndc2-F3, pk1c1-F1, F3).
 - `tests/test_norm_defaults_relay_english.py` — The English display formats the Lean accepted norm-defaults rows and nothing else.
 - `tests/test_norm_defaults_report.py` — norm-defaults@0 report in Lean (lean-first batch 10a; docs/spec/norm-defaults.md 3.2 and 5).
