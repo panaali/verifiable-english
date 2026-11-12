@@ -1,0 +1,7 @@
+trust_mutants: 41 definitions, 71 mutants (8 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/Events/Wire.lean:25 VE.Events.EventsDecoded (D[V], trusted) eq-le: = -> ≤ (lean/VE/Events/Wire.lean:25: failed to synthesize)
+trust_mutants: 7 KILLED, 0 SURVIVOR, 1 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 63 OTHER SHARD in 259 s
+trust_mutants: D[V], trusted: 1 KILLED, 1 UNKNOWN, 21 OTHER SHARD
+trust_mutants: G[V], trusted: 6 KILLED, 25 OTHER SHARD
+trust_mutants: S, trusted: 17 OTHER SHARD
+trust_mutants: steps: wall plan 15.7 s, scratch 3.9 s, control_build 0.3 s, probe_install 1.2 s, mutants 232 s, cleanup 6 s, reads 0.1 s; lake control_build 0.3 s (1), probe_install 1.2 s (1), control_probes 20.5 s (6), mutant_builds 36.9 s (12), mutant_checks 315.9 s (5), stage_controls 78.1 s (5), mutant_probes 21.8 s (7)
