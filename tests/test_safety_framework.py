@@ -352,3 +352,16 @@ def test_one_mitigated_level_does_not_discharge_another_reached_level(levels, ac
         return run.describe(run.item_result("ACCEPTABLE", case))
     assert acceptable(levels) == "ALL"
     assert acceptable(levels[:1]) == "NONE"
+
+
+def test_a_possible_adjustment_is_no_exception_to_the_recommended_level():
+    """f16-ds, f16-ds-strict: 2.2's "may be adjusted if ... This may occur if, for example, a model does not possess
+    capabilities meaningfully different from other publicly available models" gives a reason, not a sufficient
+    condition. With that finding (OT16) at L2 the recommended level is still required under RS3 = Ds, as without it;
+    1.3.5's "we otherwise assess that the level of security applied is adequate" (OT4) remains the excepted case."""
+    def recsec(*findings):
+        case = {"id": "fsf-fix:recsec", "family": "B", "levels": ["cbrn_uplift_level_1"], "activity": None,
+                "findings": [[f, "p"] for f in findings]}
+        return run.describe(run.item_result("RECSEC", case))
+    assert recsec() == recsec("like_public_models") == "SOME(RS3=Ds)"
+    assert recsec("security_assessed_adequate") == "NONE"
