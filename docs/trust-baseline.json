@@ -2693,6 +2693,13 @@
    "reason": "en-e3a-cutback: VE/EnglishGrammar/Norm/Run.lean +9 (statementSpans -2, oneSpansOf +6 new, oneSpans -3, Reader +2, answerWith +3, leanReader +2, outcomeFields +1), VE/EnglishGrammar/Norm/Rules.lean -3 (normTags deleted); K +0, S +0, V +6",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), en-e3a-cutback, 2026-10-18",
    "commit": "c81d6a9d910f00a2466fa3811168b1c2d825a3ed"
+  },
+  {
+   "class": "K",
+   "lines": 34,
+   "reason": "kb-1: the carry rule (VE.Kernel.Carry: Path, Row, Path.row, Path.Ran, shell, carry), K by the architect seat; spec kernel-boundary.md KB-1",
+   "signature": "DRI-20261112-kb1 (reviews/dri-decisions-20261112-kb-1.md item 1)",
+   "commit": "35a9ba135fe26df92ec412586a1999911839c15f"
   }
  ]
 }
