@@ -14,19 +14,19 @@
   "unformalised": 6865
  },
  "bytes_by_status": {
-  "CHECKED": 3450,
+  "CHECKED": 2935,
   "LABELLED": 36619,
-  "OPEN": 7439,
+  "OPEN": 7954,
   "UNFORMALISED": 6865
  },
  "coverage_percent": 100,
  "default_exceptions_by_decider": {},
  "document": "fsf.d1.ve.md (built locally, not committed)",
- "document_sha256": "35aeb8d220e3decc1cabf4790100a5bdbe2e50569fd8706e7170efc2e8d63bf1",
+ "document_sha256": "dcfa4d85856ba6edf62d7038fc5de8d3b714331df271f094ed179fd8f7b79e0f",
  "master_bytes_by_status": {
-  "CHECKED": 4558,
+  "CHECKED": 4043,
   "LABELLED": 35511,
-  "OPEN": 7439,
+  "OPEN": 7954,
   "UNFORMALISED": 6865
  },
  "residual": {

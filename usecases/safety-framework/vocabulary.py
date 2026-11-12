@@ -45,7 +45,7 @@ def _base(args, description, verbalisation=None):
 def _open(args, description, decider, verbalisation=None, term=None):
     """An open-term predicate: VE never decides it; the case stipulates the decider's finding."""
     text = f"{description}. Open term {term}, decided by {decider}" if term else f"{description}. Decided by {decider}"
-    return _base(args, text, verbalisation)
+    return {**_base(args, text, verbalisation), "_open": term}
 
 
 BASE = {
@@ -130,6 +130,10 @@ BASE = {
     "circumvention_evidence": _base(["proposal"], "post-market monitoring of {0} shows that safeguards are being "
                                     "circumvented (a stipulated situation for gap G8; no rule mentions it)"),
 }
+# The open predicates (`_open`) and their open term ("OT1" ...; None: open, decided by someone, with no OT id).
+# The one owner of "this predicate is open": build_document makes a unit whose rule uses one OPEN with its term
+# (fsf-fidelity-fix F2). The marker is taken out of BASE, so environment.d1.json does not carry it.
+OPEN_PREDICATES = {name: entry.pop("_open") for name, entry in BASE.items() if "_open" in entry}
 
 
 def _obligation(args, act, description):
