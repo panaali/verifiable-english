@@ -19,13 +19,12 @@
 - `docs/act-phrases/ap-2/seed_bugs.py` — ap-2 seeded bugs: plant each bug, show that its check fails, restore the file.
 - `docs/act-phrases/ap-2b/seed_bugs.py` — ap-2b seeded bugs: plant each in lean/VE/Acts/Grammar.lean with its proofs cut (so a fixture must catch it, not a proof), build VE.Acts.RuleExamples, record th…
 - `docs/act-phrases/ap-2bb/seed_bugs.py` — ap-2bb's seeded bugs: plant each bug in the Lean file this item changed, build VE.Acts.RenderExamples, record the failing `#guard` lines (KILLED; a plant that …
+- `docs/act-phrases/ap-2bc/seed_bugs.py` — ap-2bc's seeded bugs: plant each bug, then record what fails.
 - `docs/act-phrases/ap-2c/seed_bugs.py` — ap-2c seeded bugs: plant each in its file (Readings.lean with its theorems cut, so a fixture must catch it, not a proof), build VE.Acts.MeaningExamples, record…
 - `docs/act-phrases/ap-3/seed_bugs.py` — ap-3 seeded bugs and hand mutants: plant each one, build the fixtures, restore the file.
 - `docs/act-phrases/ap-3b/seed_bugs.py` — ap-3b seeded bugs and the constructor sweep: plant each one, show that the fixtures fail, restore the file.
 - `docs/act-phrases/ap-3c/check_statements.py` — ap-3c statement gate: each 6.6 theorem Elaborate.lean proves equals draft 2's text, whitespace normalised.
 - `docs/act-phrases/ap-3c/seed_bugs.py` — ap-3c seeded bugs: plant each one in Elaborate.lean, show that a fixture fails, restore the file.
-- `docs/act-phrases/ap-3cb-adapt/check_statements.py` — ap-3cb-adapt statement gate: each 6.6 theorem ElaborateProofs.lean proves equals the spec's text, whitespace normalised.
-- `docs/act-phrases/ap-3cb-adapt/seed_bugs.py` — ap-3cb-adapt seeded bugs: each bug breaks `splitMap_exact` or `elaborate_parts`, in a /tmp copy only.
 - `docs/act-phrases/ap-3d/check_statements.py` — ap-3d statement gate: each theorem this item proves equals the specification's text, whitespace normalised.
 - `docs/act-phrases/ap-3d/seed_bugs.py` — ap-3d seeded bugs: plant each one, show that a fixture fails, restore the files.
 - `docs/act-phrases/ap-3db/check_statements.py` — ap-3db statement gate: the theorems of spec 6.4 this item reaches keep the specification's text.
@@ -37,8 +36,11 @@
 - `docs/act-phrases/ap-4a/seed_bugs.py` — ap-4a's seeded bugs: plant each bug in the Lean file this item changed, build VE.Acts.ReadingsExamples, record the failing `#guard` or theorem lines (KILLED), …
 - `docs/act-phrases/ap-4b/check_statements.py` — ap-4b statement gate: each declaration below equals the specification's text, whitespace normalised.
 - `docs/act-phrases/ap-4b/seed_bugs.py` — ap-4b's seeded bugs: plant each bug, build VE.Acts.ReadingsExamples, record the failing `#guard` or theorem lines (KILLED), restore the file, and write mutants…
+- `docs/act-phrases/ap-4bb/check_statements.py` — ap-4bb statement gate: ap-4b's declarations plus `sourceCheck_complete` equal spec 7's text, whitespace normalised.
+- `docs/act-phrases/ap-4bb/seed_bugs.py` — ap-4bb seeded bugs: plant each, build the fixtures, record what fails, restore.
 - `docs/act-phrases/ap-5/check_statements.py` — ap-5 statement gate: each item of spec section 8's Lean block (each `structure`, `def`, `theorem` and docstring) is in lean/VE/Acts/Specialise.lean unchanged a…
 - `docs/act-phrases/ap-5/seed_bugs.py` — ap-5 seeded bugs and mutants: plant each in lean/VE/Acts/Specialise.lean with its theorems cut (so a fixture must catch it, not a proof), build VE.Acts.Special…
 - `docs/act-phrases/ap-7/draw.py` — AP-7's constitution draw: 30 norm sentences with *and*, *or* or *nor* inside the verb phrase (PRE-REGISTRATION.md).
 - `docs/act-phrases/ap-7/dump.py` — Lean's side of AP-7: `phraseReadings` over every sample phrase under its declared vocabulary, modal included.
 - `docs/act-phrases/ap-7/runner.py` — AP-7 blind calls and scoring (PRE-REGISTRATION.md); the call and record handling is jt-e1r's runner's, for Opus.
+- `docs/act-phrases/ap-parse-index/seed_bugs.py` — ap-parse-index's seeded bugs: plant each, build the Lean module that must catch it (a proof of equality with the definition it replaces in compiled code, or a …

@@ -62,7 +62,9 @@ every other case is UNKNOWN (review F11/F12, the DRI's note 2026-10-19c). The mu
   check (review F8: a definition's broken proof term leaves `sorry` there, which a check may refuse); a check
   whose message states no refutation (out of budget, stuck, a tactic that fails, an unclassified message: F10,
   F11); an error in the mutated declaration that is no refusal (a tactic, a type mismatch, Lean's budget: F12);
-  and a mutant that moves a line after its declaration (a longer replacement no blank line there can take: F9);
+  and a mutant that moves a line after its declaration (a longer replacement no blank line there can take: F9).
+  Every one of these rules reads a file's whole error list: where Lean stopped at its error cap (`maxErrors`), the
+  file is checked again with no cap (`whole`, `WHOLE`), and UNKNOWN naming maxErrors when that list cannot be read;
 - NOT RUN past --max-mutants (every definition and operator gets its k-th mutant before any gets its k+1-th).
 
 A mutant's probe (eff-tm-probe-scope) elaborates the check file as the whole-file probe does, but walks only the
@@ -234,6 +236,13 @@ NO_ANSWER = re.compile(r"maximum recursion depth|maximum number of heartbeats|\(
                        r"(?:deep recursion|deterministic timeout|interrupted)|stack overflow|"
                        r"Tactic `(?:decide|native_decide)` failed")
 KILL, RFL, NONE = "KILL", "RFL", "UNKNOWN"  # `judge`'s verdicts on one error
+# Lean stopped reporting a file's errors at its cap (option `maxErrors`, 100), so the errors after it were never read
+# and no verdict may rest on that list (tm-nightly-unknown-disposition-2: M186, M417). Lean reads the cap from its
+# command line only (Lean 4.24 `runFrontend` reports with the command line's options; a `set_option` in the file does
+# not lift it), so the file is checked again by `lake env lean` with WHOLE, no limit (`whole`). Lake names the file in
+# its line (`error: <file>:0:0: maximum ...`); `lake env lean` gives it no file (`:0:0: error: maximum ...`).
+CAPPED = re.compile(r"maximum number of errors \(\d+; from option `maxErrors`\) reached")
+WHOLE = "-DmaxErrors=0"
 TIMED_OUT = -1000  # `Scratch.lake`'s code for a run killed past its time limit
 STATUSES = ("KILLED", "SURVIVOR", "UNKNOWN", "INVALID", "ALLOWED", "NOT RUN")
 OTHER = "OTHER SHARD"  # a --shard part's status of a mutant another part owns
@@ -924,6 +933,32 @@ def located(output: str, pattern: re.Pattern = ERROR) -> list[tuple[str, int, in
     return [(f, int(n), int(c), message.rstrip()) for f, n, c, message in pattern.findall(output)]
 
 
+def whole(output: str, found: list[tuple[str, int, int, str]], lake) -> list[tuple[str, int, int, str]]:
+    """`found`, the located errors (`located`) of a Lake build's `output`, with the list of each file where Lean
+    stopped at its error cap (`CAPPED`) replaced by that file's whole list: `lake("env", "lean", WHOLE, file)` checks
+    it again with no cap (`lake env lean`'s own form, `LEAN_ERROR`). The verdict is then read from every error under
+    the same rule (`settle`), never from the capped list. A whole list that cannot be read (that run past its time
+    limit, capped again, or with no located error, or one in another file) gives [("", 0, 0, why)], no located error,
+    which `run` reads as UNKNOWN with `why` naming maxErrors. `found` itself when Lean capped nothing."""
+    if not CAPPED.search(output):
+        return found
+    files = sorted({f for f, _, _, message in found if CAPPED.search(message)})
+    if not files:
+        return [("", 0, 0, f"maxErrors: Lean stopped at its error cap in a file its output does not name: "
+                           f"{brief(output[CAPPED.search(output).start():])}")]
+    rows = [x for x in found if x[0] not in files]
+    for f in files:
+        code, out = lake("env", "lean", WHOLE, f)
+        mine = located(out, LEAN_ERROR)
+        why = (out if code == TIMED_OUT else "capped again" if CAPPED.search(out) else "no located error" if not mine
+               else f"an error in {mine[0][0]}" if any(g != f for g, *_ in mine) else "")
+        if why:
+            return [("", 0, 0, f"lean/{f}: maxErrors: Lean stopped at its error cap and the whole list could not be "
+                               f"read ({brief(why)})")]
+        rows += mine
+    return rows
+
+
 def refutes(message: str, name: str | None) -> bool:
     """Whether `message`, an error at a check whose `#` command is `name` (`command`), states a refutation: one of
     `REFUTED`, whole, or a `#guard_msgs` diff with refutations on one side only (two refutations that differ are one
@@ -1322,9 +1357,9 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
         for attempt in range(3):  # again: Lake can fail with no located error under load
             with STEPS.step(step or ("mutant_builds" if stage == built[:1] else "mutant_checks")):
                 code, output = lake(env, "build", *(f"+{x}" for x in stage))
-            if code == TIMED_OUT:
-                return code, [("", 0, output, 0)]
-            found = located(output)
+                if code == TIMED_OUT:
+                    return code, [("", 0, output, 0)]
+                found = whole(output, located(output), lambda *a: lake(env, *a))  # never a capped list (`CAPPED`)
             if code == 0 or found:
                 return code, [(f, n, message, c) for f, n, c, message in found]
         return code, [("", 0, "the build failed with no located error: " + output[-300:], 0)]
@@ -1416,7 +1451,7 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
             else:
                 return "UNKNOWN", "the proof cuts did not settle"
         with STEPS.step("outside_checks"):
-            failing = {t: out for t in outside if (out := lake(env, "env", "lean", str(t)))[0]}
+            failing = {t: out for t in outside if (out := lake(env, "env", "lean", WHOLE, str(t)))[0]}
         if late := next((t for t in failing if failing[t][0] == TIMED_OUT), None):
             return "UNKNOWN", f"{late}: {failing[late][1]}"
         if not failing:  # review sc-1ae F1: the proofs it broke, each cut, which an --allow reason cites
@@ -1427,7 +1462,7 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
             write(m.file, False)
             ok = all(build(stage, "stage_controls")[0] == 0 for stage in (built[:1], built[1:]) if stage)
             with STEPS.step("stage_controls"):
-                controls[key] = [t for t in outside if not ok or lake(env, "env", "lean", str(t))[0]]
+                controls[key] = [t for t in outside if not ok or lake(env, "env", "lean", WHOLE, str(t))[0]]
             write(m.file, True)
         if not (new := [t for t in failing if t not in controls[key]]):
             return "UNKNOWN", f"{next(iter(failing))} fails without the mutant too"
@@ -1437,13 +1472,17 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
             copy.parent.mkdir(exist_ok=True)
             copy.write_text(now[str(t)])
             with STEPS.step("outside_checks"):
-                code, output = lake(env, "env", "lean", str(copy))
+                code, output = lake(env, "env", "lean", WHOLE, str(copy))
+            if CAPPED.search(output):  # `WHOLE` lifts the cap: never read a capped list
+                return None
             found = [(str(t) if f == str(copy) else f, n, message) for f, n, _, message in located(output, LEAN_ERROR)]
             return None if not built_mutant() or code and not found else found
 
         first = ""
         for t in new:  # the same rule as inside lean/ (`settle`), on the file's own commands (`file_roles`)
             found = [(f, n, message) for f, n, _, message in located(failing[t][1], LEAN_ERROR)]
+            if CAPPED.search(failing[t][1]):  # `WHOLE` lifts the cap; a capped list is never read (`whole`)
+                return "UNKNOWN", f"{t}: maxErrors: Lean stopped at its error cap: {brief(failing[t][1][-300:])}"
             if not found:
                 return "UNKNOWN", f"{t} fails with no located error: {failing[t][1][-200:]}"
             text = t.read_text()

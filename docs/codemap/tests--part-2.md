@@ -1,3 +1,4 @@
+- `tests/test_b16c_evidence.py` — The 16c progress report is a view of saved evidence, independent of live git HEAD.
 - `tests/test_b16d_document.py` — Batch 16d: norm-defaults and fenced documents are Lean document answers.
 - `tests/test_b16d_evidence.py` — Check batch 16d's committed measurements without consulting live git state.
 - `tests/test_b16d_norm_roles.py` — Batch 16d review B1 and B2: which norm units make the norm-defaults document.
@@ -81,10 +82,10 @@
 - `tests/test_discourse_three_way.py` — Discourse evidence on one text (docs/spec/discourse.md 10 alpha and alpha-prime, 11).
 - `tests/test_document.py` — (no module docstring)
 - `tests/test_document_chain.py` — PC-2a: `ve document check` composes soft-norms@0 with norm-defaults@0 through the norm-defaults mode's own decoder (docs/spec/profile-composition.md 3.2 and 5.…
-- `tests/test_document_cli_errors.py` — `ve document` errors are structured answers (item document-cli-structured-errors, reviews/dri-decisions-20261110-df-5b.md item 2): a `VEError` gives `{status, …
 - `tests/test_document_lean_switch.py` — Lean-first batch 16b: `ve-document@1` documents are checked by the Lean `document` mode.
 - `tests/test_document_split.py` — AR-16a split `ve/document.py` into the package `ve/document/`; these pin what the split must keep.
 - `tests/test_e1_core.py` — (no module docstring)
 - `tests/test_e1_prompts.py` — (no module docstring)
 - `tests/test_eff_tests_report.py` — docs/eff-tests/REPORT.md: every number regenerated from the saved evidence in docs/eff-tests/evidence/.
 - `tests/test_eligibility_wfp.py` — Winter Fuel Payment use case (usecases/eligibility): VE against a frozen answer key.
+- `tests/test_encoder_shapes.py` — The encoder theorems (`lean/ResponseShape/Encoders.lean`) can fail (lf-1 recheck 3, B).

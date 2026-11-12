@@ -12,6 +12,7 @@
 - `tools/cache_store.py` — The content-keyed entry store shared by the repository's caches (`tools/run_cache.py`, `tools/lean_dump_cache.py`).
 - `tools/calc_units_fixtures.py` — Write or check `lean/VE/Calc/UnitsExamples.lean`, the Lean `#guard`s of the `ve-units@2` fixture table.
 - `tools/change_units.py` — Split a Python source into the units a change can touch, using `ast`.
+- `tools/check_ap56_statements.py` — Compare AP-2's Lean declarations with the Lean block of docs/spec/act-phrases.md 5.6 (build checklist 17), read as tools/check_pc3_statements.py reads PC-3's (…
 - `tools/check_english_e2_statements.py` — Check the twelve E2 theorem statements against the approved section 5.5 text, with Lean as the oracle.
 - `tools/check_english_s3_statements.py` — Compare the ten added S3 theorem statements with the approved section 5.5 text.
 - `tools/check_lean_imports.py` — Reject new outward Lean imports and stale, exact legacy exceptions.
@@ -94,5 +95,3 @@
 - `tools/select_tests_seeds.py` — Seeded edits that check tools/select_tests.py against the complete suite.
 - `tools/semantic_inventory.py` — Generate the Stage 0, AST based dependency and deletion inventory.
 - `tools/since_pass.py` — Select against the branch's last passing tree, not against main (test-speed plan, batch B3).
-- `tools/source_graph.py` — Static dependency graph of the repository's Python files, Lean modules and tests.
-- `tools/source_words_export.lean` — (no module docstring)

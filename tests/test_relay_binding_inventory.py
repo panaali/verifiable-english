@@ -365,6 +365,13 @@ INVENTORY["english.command"] = {
     "result.readings": UNORDERED, **_command_reading("result.readings[]"),
     "result.code": lean("the refusal's code"), "result.class": lean("the refusal's class, one of `ve.errors`"),
     "result.text": lean("the refusal's or the limit's text"),
+    # ci-3: a `many` is bound as one alternative per reading at its own position; `steps` and `mixed` are refused
+    # by the relay (CheckerUnavailable) until ci-3c binds them.
+    "result.after_previous": lean("whether the reading is a Then step (section 7), Lean's"),
+    "result.alternatives": BOUND, "result.alternatives[].readings": BOUND, "result.alternatives[].readings[]": BOUND,
+    "result.alternatives[].shape": lean("the alternative's shape, Lean's"),
+    "result.paraphrase": lean("speech-acts' paraphraseSteps of a steps outcome, which the relay refuses until ci-3c"),
+    "result.purpose": lean("CI-7b's purpose clause; no reader writes it and the relay refuses mixed"),
     "error": lean("a refusal of the request, raised by the relay as Lean's diagnostic"),
     "case_index": lean("an error row's position; a refusal is raised, not read"),
 }
