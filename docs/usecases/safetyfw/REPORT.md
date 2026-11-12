@@ -124,7 +124,12 @@ No key cell was edited. `usecase-pf-run` found one transcription defect: `answer
 sentence (Table 2, Long-range Autonomy): "If a model has High or Critical capabilities in any of the Tracked
 Categories, require a "misalignment" safeguards report (see Section 4.2)." VE's answer and the independent
 `reference.py` both equal the PLAN cell; the six rows are scored as disagreements with cause "key finding" (OpenAI
-PLAN 12 item 15). Whether to repair the pinned transcription is the DRI's decision. Before this item neither
+PLAN 12 item 15). Whether to repair the pinned transcription is the DRI's decision. **Repaired (`usecase-pf-keyfix`,
+2026-11-12):** reviews/dri-decisions-20261030-usecase-pf-run.md item 1 ruled it a transcription error; the six cells
+now say `SOME(N ∧ unscoped)` with no "soft", section 6 is unchanged, `tests/test_usecase_key_transcription.py` checks
+both frozen keys cell by cell (anthropic-rsp: no mismatch), and the six rows agree (236/239; the three remaining
+disagreements are the K findings C6, C-doc and G9). See
+[the item's REPORT](../openai-preparedness/usecase-pf-keyfix/REPORT.md). Before this item neither
 baseline answered key items. OpenAI PLAN 12 documents translation
 gaps, especially the unrepresented quantity bridges, without changing an answer.
 
