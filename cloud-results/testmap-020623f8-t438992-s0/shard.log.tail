@@ -1,0 +1,126 @@
+info: syncing channel updates for 1.98.1-x86_64-unknown-linux-gnu
+info: latest update on 2026-09-03 for version 1.98.1 (48a229cea 2026-09-01)
+info: downloading 3 components
+warn: the missing active toolchain `1.98.1-x86_64-unknown-linux-gnu` has been auto-installed
+warn: this might cause rustup commands to take longer time to finish than expected
+info: you may opt out with `RUSTUP_AUTO_INSTALL=0` or `rustup set auto-install disable`
+    Updating crates.io index
+ Downloading crates ...
+  Downloaded autocfg v1.5.1
+  Downloaded generic-array v0.14.7
+  Downloaded cpufeatures v0.2.17
+  Downloaded cfg-if v1.0.5
+  Downloaded crypto-common v0.1.7
+  Downloaded num-traits v0.2.19
+  Downloaded block-buffer v0.10.4
+  Downloaded digest v0.10.7
+  Downloaded version_check v0.9.5
+  Downloaded zmij v1.0.23
+  Downloaded itoa v1.0.18
+  Downloaded num-integer v0.1.47
+  Downloaded quote v1.0.47
+  Downloaded serde v1.0.229
+  Downloaded sha2 v0.10.9
+  Downloaded unicode-ident v1.0.26
+  Downloaded serde_derive v1.0.229
+  Downloaded proc-macro2 v1.0.107
+  Downloaded serde_core v1.0.229
+  Downloaded memchr v2.8.3
+  Downloaded typenum v1.20.1
+  Downloaded num-bigint v0.4.8
+  Downloaded serde_json v1.0.151
+  Downloaded syn v3.0.6
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling typenum v1.20.1
+   Compiling unicode-ident v1.0.26
+   Compiling quote v1.0.47
+   Compiling autocfg v1.5.1
+   Compiling generic-array v0.14.7
+   Compiling serde_core v1.0.229
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling syn v3.0.6
+   Compiling serde_json v1.0.151
+   Compiling serde v1.0.229
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling memchr v2.8.3
+   Compiling itoa v1.0.18
+   Compiling serde_derive v1.0.229
+   Compiling cpufeatures v0.2.17
+   Compiling cfg-if v1.0.5
+   Compiling sha2 v0.10.9
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `release` profile [optimized] target(s) in 17.40s
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.26
+   Compiling typenum v1.20.1
+   Compiling autocfg v1.5.1
+   Compiling generic-array v0.14.7
+   Compiling serde_core v1.0.229
+   Compiling num-traits v0.2.19
+   Compiling zmij v1.0.23
+   Compiling syn v3.0.6
+   Compiling serde v1.0.229
+   Compiling serde_json v1.0.151
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling cpufeatures v0.2.17
+   Compiling memchr v2.8.3
+   Compiling itoa v1.0.18
+   Compiling cfg-if v1.0.5
+   Compiling sha2 v0.10.9
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling serde_derive v1.0.229
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 9.14s
+recording 34 units with 4 jobs in /tmp/ve-testmap-d7b7f558647ee4a5f39ce351ce6ebab15a9d8353
+  tests/test_cedar_norms.py: exit 0 in 3.8 s, 654 functions
+  tests/test_closure_core_replay.py: exit 0 in 5.8 s, 575 functions
+  tests/test_commands_steps.py: exit 0 in 4.5 s, 604 functions
+  tests/test_constitution_w6a_controls.py: exit 0 in 0.9 s, 424 functions
+  tests/test_defaults_readings.py: exit 0 in 7.3 s, 1283 functions
+  tests/test_document_split.py: exit 0 in 12.0 s, 274 functions
+  tests/test_english_lean_lexicon.py: exit 0 in 2.9 s, 735 functions
+  tests/test_grammar_backends.py: exit 0 in 0.9 s, 389 functions
+  tests/test_judgments_answer.py: exit 0 in 19.6 s, 954 functions
+  tests/test_judgments_undeclared.py: exit 0 in 1.3 s, 440 functions
+  tests/test_asimov_laws.py: exit 0 in 65.3 s, 724 functions
+  tests/test_answer_cutoff.py: exit 0 in 66.2 s, 564 functions, OPAQUE
+  tests/test_lean_first_b12_report.py: exit 0 in 6.6 s, 261 functions
+  tests/test_lean_first_b13a.py: exit 0 in 6.4 s, 484 functions
+  tests/test_lean_import_reader.py: exit 0 in 36.1 s, 191 functions
+  tests/test_lean_limits.py: exit 0 in 3.3 s, 173 functions
+  tests/test_legend.py: exit 0 in 1.5 s, 460 functions
+  tests/test_nary_folio.py: exit 0 in 1.1 s, 413 functions
+  tests/test_question_answering_measure_report.py: exit 0 in 2.8 s, 850 functions
+  tests/test_readings_sd_differential.py: exit 0 in 19.2 s, 734 functions
+  tests/test_relay_english_scale.py: exit 0 in 2.3 s, 512 functions
+  tests/test_lean_audit_record.py: exit 0 in 138.2 s, 259 functions
+  tests/test_rights_lean.py: exit 0 in 1.5 s, 703 functions
+  tests/test_rights.py: exit 0 in 80.2 s, 1169 functions
+  tests/test_search_options.py: exit 0 in 2.3 s, 608 functions
+  tests/test_rights_three_way.py: exit 0 in 42.8 s, 654 functions
+  tests/test_softnorms_public_contract.py: exit 0 in 1.9 s, 678 functions
+  tests/test_speech_source_lean.py: exit 0 in 58.0 s, 895 functions
+  tests/test_vacuity.py: exit 0 in 1.0 s, 665 functions
+  tests/test_w6a_citations.py: exit 0 in 2.8 s, 602 functions
+  tests/test_w6a_looprecheck2.py: exit 0 in 4.5 s, 489 functions
+  tests/test_shape_binding_mutants.py: exit 0 in 95.5 s, 362 functions
+  tests/test_lean_document_wrapper.py: exit 0 in 538.0 s, 1573 functions
+  tests/test_consolidation_tools.py: exit 0 in 2201.9 s, 1247 functions
+wrote /home/runner/work/_temp/out/map-s0.json.gz (60 KiB); recorded 34 units; 0 failed and are left to the static graph: []
