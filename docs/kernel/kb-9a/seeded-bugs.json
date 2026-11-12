@@ -1,0 +1,78 @@
+{
+  "item": "kb-9a",
+  "note": "Each bug was planted in the worktree, `lake build VE.Route.CodecRoundTrip` was run and failed as recorded, and the file was restored from git (git checkout, or a saved copy for the new module) and rebuilt; the restored tree builds. Logs were /tmp/kb9a/s<id>.log at the time; CodecRoundTrip.lean line numbers are those of the file at each run (the header gained one line after the last seed).",
+  "seeds": [
+    {
+      "id": "S1",
+      "language": "lean",
+      "file": "lean/VE/Route/Wire.lean",
+      "claim": "task seed (a): the round trip pins the order of a binary atom's arguments",
+      "mutation": "encodeFormula: .binary p t u => Json.arr #[.str \"binary\", .str p, encodeTerm u, encodeTerm t]",
+      "failing": "lake build VE.Route.CodecRoundTrip",
+      "result": "decodeFormula_encodeFormula (binary case, CodecRoundTrip.lean:43 'show' failed) and walk_pairAtom (:170 rfl) do not build"
+    },
+    {
+      "id": "S2a",
+      "language": "lean",
+      "file": "lean/VE/Route/Wire.lean",
+      "claim": "task seed (b), fuel only: decodeFormulas and decodeClosed decode with fuel maxDepth + 1",
+      "mutation": "decodeFormula VE.Limits.maxDepth -> decodeFormula (VE.Limits.maxDepth + 1) at Wire.lean:536 and :546",
+      "failing": "lake build VE.Route.CodecRoundTrip",
+      "result": "decodeClosed_encodeFormula (:305) and decodeFormulas_encode (:335) do not build, but only because their proofs rewrite at the literal fuel; their statements stay true. decodeClosed_refuses_depth and decodeFormulas_refuses_depth still build: AstLimit.check refuses depth 65 first with the same diagnostic, so this change alone changes no answer (finding, see REPORT)"
+    },
+    {
+      "id": "S2b",
+      "language": "lean",
+      "file": "lean/VE/Route/AstLimit.lean",
+      "claim": "task seed (b), both depth checks: the decoder accepts depth maxDepth + 1",
+      "mutation": "S2a plus AstLimit.walk: depth > maxDepth -> depth > maxDepth + 1",
+      "failing": "lake build VE.Route.CodecRoundTrip",
+      "result": "decodeClosed_refuses_depth (:358) and decodeFormulas_refuses_depth (:365) fail (maximum recursion depth while checking rfl); #eval of decodeClosed on the 65-level chain returned ok under the seed and 'ResourceLimit: formula depth exceeds 64' after the restore, so the statements are false under the seed. The walk unfolding lemmas (:153-180) fail too"
+    },
+    {
+      "id": "S3",
+      "language": "lean",
+      "file": "lean/VE/Route/CodecRoundTrip.lean",
+      "claim": "hDepth is needed as stated (strict): the decoder's bound, not a weaker one",
+      "mutation": "decodeClosed_encodeFormula's hDepth: formulaDepth φ < maxDepth -> formulaDepth φ ≤ maxDepth",
+      "failing": "lake build VE.Route.CodecRoundTrip",
+      "result": "decodeClosed_encodeFormula (:302-305) and decodeClosed_encodeFormula_wellFormed (:314) do not build"
+    },
+    {
+      "id": "S4",
+      "language": "lean",
+      "file": "lean/VE/Route/Wire.lean",
+      "claim": "decodeFormulas_encode holds up to the list-level node limit itself (hNodes is the decoder's bound)",
+      "mutation": "nodeLimit: foldl (· + ·) 0 > maxNodes -> ≥ maxNodes",
+      "failing": "lake build VE.Route.CodecRoundTrip",
+      "result": "decodeFormulas_encode does not build (:327 the nodeLimit step)"
+    },
+    {
+      "id": "S5",
+      "language": "lean",
+      "file": "lean/VE/Route/AstLimit.lean",
+      "claim": "the hNodes counterexample is refused by the node limit",
+      "mutation": "AstLimit.walk: n > maxNodes -> n > 2 * maxNodes",
+      "failing": "lake build VE.Route.CodecRoundTrip",
+      "result": "caught first by AstLimit.lean's own #guards (:113, :116, :121), before CodecRoundTrip builds"
+    },
+    {
+      "id": "S6",
+      "language": "lean",
+      "file": "lean/VE/Route/Wire.lean",
+      "claim": "the hData counterexample is refused on a data route",
+      "mutation": "decodeClosed: if data && usesStringBinder a -> if false && data && usesStringBinder a",
+      "failing": "lake build VE.Route.CodecRoundTrip",
+      "result": "the hData #guard fails (CodecRoundTrip.lean:394)"
+    },
+    {
+      "id": "S7",
+      "language": "lean",
+      "file": "lean/VE/Route/Wire.lean",
+      "claim": "the hCheck counterexample is refused by the typing gate",
+      "mutation": "decodeClosed: unless a.check E [] -> unless (a.check E [] || true)",
+      "failing": "lake build VE.Route.CodecRoundTrip",
+      "result": "the hCheck #guard fails (CodecRoundTrip.lean:389)"
+    }
+  ]
+}
