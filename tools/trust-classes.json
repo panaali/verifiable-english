@@ -21975,6 +21975,14 @@
         "VE.Kernel.carry",
         "VE.Kernel.shell"
       ]
+    },
+    "VE/Kernel/CarryChecks.lean": {
+      "T": [
+        "VE.Kernel.CarryChecks.cases",
+        "VE.Kernel.CarryChecks.text",
+        "VE.Kernel.CarryChecks.toy",
+        "VE.Kernel.CarryChecks.toyRun"
+      ]
     }
   }
 }
