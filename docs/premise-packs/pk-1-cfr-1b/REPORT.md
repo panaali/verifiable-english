@@ -93,8 +93,11 @@ No product code changed in any language, so no product-language seeded bug appli
 
 - SIZE: 0 product, 73 tests, 72 other hand-written lines: the two evidence scripts, 39 + 33. This REPORT and the
   saved outputs are not counted.
-- Trust: +0. No `lean/`, `ve/` or `rust/` file changed. `python3 -I …/light-lane.py check` prints LIGHT, so there
-  was no trust_mutants sweep.
+- Trust: +0. `tools/trust_map.py --check` reports K +0, S +0, trusted +0 and PASS. No `lean/`, `ve/` or `rust/`
+  file changed.
+- No trust_mutants sweep, because nothing here could be mutated. `light-lane.py check` prints NOT, but only
+  because it counts the saved evidence and this REPORT (344 lines, no trusted-core file). The build checklist's
+  sweep (13a) applies only to trusted Lean growth, and this item has none.
 - DELTA: none (evidence only, no user-visible change).
 - Pilot bytes expected to move: none.
 
@@ -116,4 +119,41 @@ No product code changed in any language, so no product-language seeded bug appli
 - pk-1's full differential (`ab_full.txt`, base `93131f967`, head pk-1's branch before main merges) and this one
   (base `3cc70f557e`, head the merge) use different commit pairs. Both exited 0 and found no difference.
 
+- Spec re-read: L1/L2 against `docs/spec/premise-packs.md:260-261`. L1 names two sources:
+  - every `norm-defaults-*` case of `tests/data/route-cases.jsonl`. This record covers all 33 lines that the
+    `norm-defaults` mode sends, a superset that also includes the `admission` cases and the `no-such-kind`
+    refusal;
+  - the layered tests (`test_norm_defaults_layered.py`, `test_route_transport.py`). pk-1's `ab_full.txt`
+    recorded those, and they are not re-run here.
+
 Next item: none in this stream.
+
+## Self-review against BUILDER-CHECKLIST
+
+1. Typed and contained Lean answers: N.A., no relayed answer or Lean code changed.
+2. Every deliverable built: PASS. The differential is `evidence/ab_route_cases_valid.txt`, and the test is
+   `test_pk1_required_route_case_differential_is_valid`.
+3. Tests can fail: PASS. S1-S3 above, and `test_differential_check_refuses_invalid_records`.
+4. Python, Lean and Rust agree: PASS for the claim made here. Base and head Lean outputs agree on 382
+   invocations (`evidence/ab_route_cases_valid.txt`). No Python or Rust code changed.
+5. R8 binding: N.A., no relay changed.
+6. Gate evidence matches HEAD: PASS. The record names its commits, and the test reads only the saved record
+   (D4).
+7. No unsigned item: PASS. No DELTA and no reserved signature.
+8. DELTA: N.A., no user-visible change. `git diff --stat main...HEAD` shows only `tests/` and
+   `docs/premise-packs/pk-1-cfr-1b/`.
+9. Selection: PASS. `select_tests --paths` selects `tests/test_pk1_route_case_differential.py` for the record and
+   this REPORT.
+10. Lean statements: N.A., none changed.
+11. Budgets fail closed: N.A., no evaluator. The record's `0 timed out` is checked by the summary rule in
+    `differential_faults`.
+12. CPU and memory: N.A., no product code.
+13. Test-removed trailer: N.A., no test removed.
+14. Both directions, cited evidence, spec: PASS. The test accepts the valid record and refuses S1-S3, `exit 1`
+    and a rebuilt executable with no invocation. Each count in this REPORT cites its record line. The spec
+    re-read is above.
+15. Overclaim, silent cut, new check can fail, limits:
+    - Overclaim: PASS. This REPORT claims identity only for the 33 cases and the corpora this run covers.
+    - Silent cut: PASS, nothing was cut.
+    - New check can fail: PASS, S1-S3.
+    - Limits: N.A., no evaluator.
