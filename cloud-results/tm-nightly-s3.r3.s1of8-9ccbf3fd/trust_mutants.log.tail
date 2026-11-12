@@ -1,0 +1,7 @@
+trust_mutants: 91 definitions, 92 mutants (12 to run), 4 jobs, base a998c06909c3
+UNKNOWN lean/VE/SpeechActs/Source/Run.lean:780 VE.SpeechActs.Source.readSource (D[V], trusted) eq-le: = -> ≤ (lean/VE/SpeechActs/Source/Run.lean:780: failed to synthesize)
+trust_mutants: 11 KILLED, 0 SURVIVOR, 1 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN, 80 OTHER SHARD in 1620 s
+trust_mutants: D[V], trusted: 2 KILLED, 1 UNKNOWN, 20 OTHER SHARD
+trust_mutants: G[V], trusted: 5 KILLED, 30 OTHER SHARD
+trust_mutants: S, trusted: 4 KILLED, 30 OTHER SHARD
+trust_mutants: steps: wall plan 12.2 s, scratch 3.8 s, control_build 0.2 s, probe_install 1.1 s, mutants 1588.7 s, cleanup 13.9 s, reads 0.2 s; lake control_build 0.2 s (1), probe_install 1.1 s (1), control_probes 132.1 s (11), mutant_builds 69.1 s (13), mutant_checks 2560.1 s (14), stage_controls 622.3 s (5), mutant_probes 190.6 s (11)
