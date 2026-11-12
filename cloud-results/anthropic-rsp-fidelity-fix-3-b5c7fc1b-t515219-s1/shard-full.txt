@@ -1,0 +1,177 @@
+shard 2/3: 15 units; commands: []
+info: syncing channel updates for 1.98.1-x86_64-unknown-linux-gnu
+info: latest update on 2026-09-03 for version 1.98.1 (48a229cea 2026-09-01)
+info: downloading 3 components
+warn: the missing active toolchain `1.98.1-x86_64-unknown-linux-gnu` has been auto-installed
+warn: this might cause rustup commands to take longer time to finish than expected
+info: you may opt out with `RUSTUP_AUTO_INSTALL=0` or `rustup set auto-install disable`
+    Updating crates.io index
+ Downloading crates ...
+  Downloaded cfg-if v1.0.5
+  Downloaded typenum v1.20.1
+  Downloaded generic-array v0.14.7
+  Downloaded serde_core v1.0.229
+  Downloaded block-buffer v0.10.4
+  Downloaded autocfg v1.5.1
+  Downloaded crypto-common v0.1.7
+  Downloaded num-integer v0.1.47
+  Downloaded zmij v1.0.23
+  Downloaded serde_derive v1.0.229
+  Downloaded syn v3.0.6
+  Downloaded unicode-ident v1.0.26
+  Downloaded cpufeatures v0.2.17
+  Downloaded itoa v1.0.18
+  Downloaded memchr v2.8.3
+  Downloaded num-bigint v0.4.8
+  Downloaded sha2 v0.10.9
+  Downloaded proc-macro2 v1.0.107
+  Downloaded quote v1.0.47
+  Downloaded num-traits v0.2.19
+  Downloaded serde_json v1.0.151
+  Downloaded version_check v0.9.5
+  Downloaded serde v1.0.229
+  Downloaded digest v0.10.7
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling typenum v1.20.1
+   Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.26
+   Compiling generic-array v0.14.7
+   Compiling serde_core v1.0.229
+   Compiling autocfg v1.5.1
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling syn v3.0.6
+   Compiling serde v1.0.229
+   Compiling serde_json v1.0.151
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling cpufeatures v0.2.17
+   Compiling itoa v1.0.18
+   Compiling cfg-if v1.0.5
+   Compiling memchr v2.8.3
+   Compiling sha2 v0.10.9
+   Compiling serde_derive v1.0.229
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `release` profile [optimized] target(s) in 14.59s
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling quote v1.0.47
+   Compiling typenum v1.20.1
+   Compiling unicode-ident v1.0.26
+   Compiling generic-array v0.14.7
+   Compiling autocfg v1.5.1
+   Compiling serde_core v1.0.229
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling syn v3.0.6
+   Compiling serde_json v1.0.151
+   Compiling serde v1.0.229
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling cfg-if v1.0.5
+   Compiling itoa v1.0.18
+   Compiling memchr v2.8.3
+   Compiling cpufeatures v0.2.17
+   Compiling sha2 v0.10.9
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling serde_derive v1.0.229
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 7.77s
+order: failed last time []; changed ['tests/test_rsp_fidelity_fix.py']; then the rest; --maxfail 5
+recording 15 units with 4 jobs in /tmp/ve-select-run-jric2tm1
+  tests/test_rsp_fidelity_fix.py: exit 0 in 38.9 s, 1043 functions
+  tests/test_history_tests.py: exit 0 in 81.1 s, 349 functions
+  tests/test_regen_generated.py: exit 0 in 65.4 s, 804 functions
+  tests/test_platform_contract.py: exit 0 in 22.8 s, 397 functions
+  tests/test_gate_quarantine.py: exit 0 in 65.6 s, 3326 functions
+  tests/test_test_chunks.py: exit 0 in 21.3 s, 385 functions, OPAQUE
+  tests/test_definitions.py: exit 0 in 7.8 s, 739 functions
+  tests/test_readings_verdicts_split.py: exit 0 in 9.8 s, 203 functions
+  tests/test_english_lean_lexicon.py: exit 1 in 2.4 s, 742 functions
+  tests/test_code_map.py: exit 0 in 6.6 s, 193 functions
+  tests/test_english_e2_integer_marks.py: exit 0 in 2.5 s, 694 functions
+  tests/test_english_statement_answer.py: exit 0 in 3.3 s, 638 functions
+  tools/test_layer_policy.py: exit 0 in 94.2 s, 314 functions
+  tests/test_difffuzz.py: exit 0 in 325.7 s, 2174 functions
+  tests/test_english_statement_blocks.py: exit 1 in 480.7 s, 619 functions
+stopping after 5 failed tests (--maxfail 5)
+FAILED tests/test_english_statement_blocks.py (exit 1): tests/test_english_statement_blocks.py::test_each_pinned_block_through_the_mode, tests/test_english_statement_blocks.py::test_every_pinned_block_has_its_python_node[rsp], tests/test_english_statement_blocks.py::test_lean_reads_each_pinned_block_as_python, tests/test_english_statement_blocks.py::test_the_route_fixtures_are_recorded; log /tmp/ve-select-run-jric2tm1/tests__test_english_statement_blocks.py.log
+                        '"ml_rd_automation_level_1"',
+                    ],
+                    [
+                        'security_level_2_plus',
+                        '"security_level_2_plus"',
+                    ],
+                    [
+                        'security_level_3',
+                        '"security_level_3"',
+                    ],
+                    [
+                        'security_level_4',
+                        '"security_level_4"',
+                    ],
+                    [
+                        'stealth_and_situational_awareness_tcl',
+                        '"stealth_and_situational_awareness_tcl"',
+                    ],
+                ],
+            },
+            'kind': 'blocks',
+            'source': 'Rule 1. Every instance of Claude must not directly deny being Claude.',
+        },
+    ]
+4 failed, 5 passed in 478.94s (0:07:58)
+FAILED tests/test_english_lean_lexicon.py (exit 1): tests/test_english_lean_lexicon.py::test_every_corpus_environment_has_a_valid_selected_lexicon; log /tmp/ve-select-run-jric2tm1/tests__test_english_lean_lexicon.py.log
+  -             'failures': [],
+            },
+            {
+                'environment': 'usecases/us-constitution-14th-s1/environment.json',
+  +             'failures': [],
+                'lexicon_id': '83e3b3b0336246a2b670602feda0f76836c4869840a29d287fcddc870fdaff89',
+                'symbols': 16,
+  -             'failures': [],
+            },
+            {
+                'environment': 'usecases/us-constitution-14th-s1/environment.json+overlay',
+  +             'failures': [],
+                'lexicon_id': '4ebb3ff0271140bfaa11386fb9c33eb7eabdb796f7b2e5a17fac02df0a589f00',
+                'symbols': 16,
+  -             'failures': [],
+            },
+        ],
+        'failures_by_condition': {},
+  +     'format': 've.english-lean-lexicon-report@1',
+  +     'invalid': 0,
+        'valid': 43,
+  -     'invalid': 0,
+        'wording_key_differences': [],
+    }
+1 failed, 55 passed in 1.74s
+recorded 15 units for tree fbb1e7cc66; 0 others left to the static graph until they run; 2 failed
+UNITLOG tests__test_code_map.py.log: 6 passed in 6.05s
+UNITLOG tests__test_definitions.py.log: 11 passed in 7.20s
+UNITLOG tests__test_difffuzz.py.log: 103 passed in 323.09s (0:05:23)
+UNITLOG tests__test_english_e2_integer_marks.py.log: 2 passed in 1.88s
+UNITLOG tests__test_english_lean_lexicon.py.log: 1 failed, 55 passed in 1.74s
+UNITLOG tests__test_english_statement_answer.py.log: 12 passed in 2.34s
+UNITLOG tests__test_english_statement_blocks.py.log: 4 failed, 5 passed in 478.94s (0:07:58)
+UNITLOG tests__test_gate_quarantine.py.log: 38 passed in 65.02s (0:01:05)
+UNITLOG tests__test_history_tests.py.log: 27 passed in 79.34s (0:01:19)
+UNITLOG tests__test_platform_contract.py.log: 59 passed in 22.30s
+UNITLOG tests__test_readings_verdicts_split.py.log: 37 passed in 9.08s
+UNITLOG tests__test_regen_generated.py.log: 62 passed in 63.59s (0:01:03)
+UNITLOG tests__test_rsp_fidelity_fix.py.log: 35 passed in 36.37s
+UNITLOG tests__test_test_chunks.py.log: 59 passed in 20.69s
+UNITLOG tools__test_layer_policy.py.log: (no count line)
