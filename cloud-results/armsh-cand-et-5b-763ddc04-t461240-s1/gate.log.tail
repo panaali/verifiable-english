@@ -1,0 +1,200 @@
+_______________ ERROR collecting tests/test_english_evidence.py ________________
+tests/test_english_evidence.py:217: in <module>
+    MIXED = [name for name, _, _ in english_mixed.all_configurations()]
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+conformance/english_mixed.py:117: in all_configurations
+    return list(chain(configurations(), (nary_configuration(),)))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+conformance/english_surface.py:104: in configurations
+    yield from adopted_configurations()
+conformance/english_surface.py:117: in adopted_configurations
+    preview = propose(env, sentence, overlay, acknowledge=['us_citizen'])
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ve/propose.py:191: in propose
+    parsed = parse_english_with_metadata(parser.env, source, vocabulary=parser.overlay,
+ve/assurance.py:127: in guarded
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+ve/english.py:1868: in parse_english_with_metadata
+    document, source, words, conclusions = _parse_english_document(env, source, **options)
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ve/english.py:1828: in _parse_english_document
+    return _parse_english_document_uncached(env, source, _with_structure=_with_structure,
+ve/english.py:1799: in _parse_english_document_uncached
+    reading = _lean_reading(env, source, words, options)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ve/english.py:1779: in _lean_reading
+    reading = english_lean.read(env, source, words, options)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ve/backends/english_lean.py:373: in read
+    raise CheckerUnavailable(f"CheckerUnavailable: the Lean English reader's answer is malformed: {problem}")
+E   ve.errors.CheckerUnavailable: CheckerUnavailable: the Lean English reader's answer is malformed: actions_version '48' is not the request's '47'
+________________ ERROR collecting tests/test_pf_fidelity_fix.py ________________
+tests/test_pf_fidelity_fix.py:37: in <module>
+    MODULES = _load()
+              ^^^^^^^
+tests/test_pf_fidelity_fix.py:28: in _load
+    return {name: importlib.import_module(name) for name in NAMES}
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../../.local/share/uv/python/cpython-3.14.7-linux-aarch64-gnu/lib/python3.14/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1406: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1371: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1342: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:938: in _load_unlocked
+    ???
+<frozen importlib._bootstrap_external>:759: in exec_module
+    ???
+<frozen importlib._bootstrap>:491: in _call_with_frames_removed
+    ???
+usecases/openai-preparedness/run.py:48: in <module>
+    RSP = _rsp_run()
+          ^^^^^^^^^^
+usecases/openai-preparedness/run.py:41: in _rsp_run
+    spec.loader.exec_module(module)
+<frozen importlib._bootstrap_external>:759: in exec_module
+    ???
+<frozen importlib._bootstrap>:491: in _call_with_frames_removed
+    ???
+usecases/anthropic-rsp/run.py:30: in <module>
+    for block, formulas in T.facts() if block.id.startswith("threshold-") for formula in formulas}
+                           ^^^^^^^^^
+usecases/anthropic-rsp/rsp_translation.py:107: in facts
+    return tuple((block, tuple(parse_english(base_environment(), block.text).formulas))
+           ^^^^^
+usecases/anthropic-rsp/rsp_translation.py:107: in <genexpr>
+    return tuple((block, tuple(parse_english(base_environment(), block.text).formulas))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ve/assurance.py:127: in guarded
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+ve/english.py:1888: in parse_english
+    return _parse_english_document(env, source, **options)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ve/english.py:1828: in _parse_english_document
+    return _parse_english_document_uncached(env, source, _with_structure=_with_structure,
+ve/english.py:1799: in _parse_english_document_uncached
+    reading = _lean_reading(env, source, words, options)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ve/english.py:1779: in _lean_reading
+    reading = english_lean.read(env, source, words, options)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ve/backends/english_lean.py:373: in read
+    raise CheckerUnavailable(f"CheckerUnavailable: the Lean English reader's answer is malformed: {problem}")
+E   ve.errors.CheckerUnavailable: CheckerUnavailable: the Lean English reader's answer is malformed: actions_version '48' is not the request's '47'
+_______________ ERROR collecting tests/test_rsp_fidelity_fix.py ________________
+tests/test_rsp_fidelity_fix.py:11: in <module>
+    import test_safetyfw_usecases as base
+<frozen importlib._bootstrap>:1371: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1342: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:938: in _load_unlocked
+    ???
+.venv/lib/python3.14/site-packages/_pytest/assertion/rewrite.py:188: in exec_module
+    exec(co, module.__dict__)
+tests/test_safetyfw_usecases.py:141: in <module>
+    RSP_MODULES = _load_rsp()
+                  ^^^^^^^^^^^
+tests/test_safetyfw_usecases.py:133: in _load_rsp
+    return {name: importlib.import_module(name) for name in RSP_NAMES}
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../../.local/share/uv/python/cpython-3.14.7-linux-aarch64-gnu/lib/python3.14/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+usecases/anthropic-rsp/run.py:30: in <module>
+    for block, formulas in T.facts() if block.id.startswith("threshold-") for formula in formulas}
+                           ^^^^^^^^^
+usecases/anthropic-rsp/rsp_translation.py:107: in facts
+    return tuple((block, tuple(parse_english(base_environment(), block.text).formulas))
+           ^^^^^
+usecases/anthropic-rsp/rsp_translation.py:107: in <genexpr>
+    return tuple((block, tuple(parse_english(base_environment(), block.text).formulas))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ve/assurance.py:127: in guarded
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+ve/english.py:1888: in parse_english
+    return _parse_english_document(env, source, **options)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ve/english.py:1828: in _parse_english_document
+    return _parse_english_document_uncached(env, source, _with_structure=_with_structure,
+ve/english.py:1799: in _parse_english_document_uncached
+    reading = _lean_reading(env, source, words, options)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ve/english.py:1779: in _lean_reading
+    reading = english_lean.read(env, source, words, options)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ve/backends/english_lean.py:373: in read
+    raise CheckerUnavailable(f"CheckerUnavailable: the Lean English reader's answer is malformed: {problem}")
+E   ve.errors.CheckerUnavailable: CheckerUnavailable: the Lean English reader's answer is malformed: actions_version '48' is not the request's '47'
+_______________ ERROR collecting tests/test_safetyfw_usecases.py _______________
+tests/test_safetyfw_usecases.py:141: in <module>
+    RSP_MODULES = _load_rsp()
+                  ^^^^^^^^^^^
+tests/test_safetyfw_usecases.py:133: in _load_rsp
+    return {name: importlib.import_module(name) for name in RSP_NAMES}
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../../.local/share/uv/python/cpython-3.14.7-linux-aarch64-gnu/lib/python3.14/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1406: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1371: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1342: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:938: in _load_unlocked
+    ???
+<frozen importlib._bootstrap_external>:759: in exec_module
+    ???
+<frozen importlib._bootstrap>:491: in _call_with_frames_removed
+    ???
+usecases/anthropic-rsp/run.py:30: in <module>
+    for block, formulas in T.facts() if block.id.startswith("threshold-") for formula in formulas}
+                           ^^^^^^^^^
+usecases/anthropic-rsp/rsp_translation.py:107: in facts
+    return tuple((block, tuple(parse_english(base_environment(), block.text).formulas))
+           ^^^^^
+usecases/anthropic-rsp/rsp_translation.py:107: in <genexpr>
+    return tuple((block, tuple(parse_english(base_environment(), block.text).formulas))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ve/assurance.py:127: in guarded
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+ve/english.py:1888: in parse_english
+    return _parse_english_document(env, source, **options)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ve/english.py:1828: in _parse_english_document
+    return _parse_english_document_uncached(env, source, _with_structure=_with_structure,
+ve/english.py:1799: in _parse_english_document_uncached
+    reading = _lean_reading(env, source, words, options)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ve/english.py:1779: in _lean_reading
+    reading = english_lean.read(env, source, words, options)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ve/backends/english_lean.py:373: in read
+    raise CheckerUnavailable(f"CheckerUnavailable: the Lean English reader's answer is malformed: {problem}")
+E   ve.errors.CheckerUnavailable: CheckerUnavailable: the Lean English reader's answer is malformed: actions_version '48' is not the request's '47'
+=========================== short test summary info ============================
+ERROR tests/test_english_evidence.py - ve.errors.CheckerUnavailable: CheckerU...
+ERROR tests/test_pf_fidelity_fix.py - ve.errors.CheckerUnavailable: CheckerUn...
+ERROR tests/test_rsp_fidelity_fix.py - ve.errors.CheckerUnavailable: CheckerU...
+ERROR tests/test_safetyfw_usecases.py - ve.errors.CheckerUnavailable: Checker...
+!!!!!!!!!!!!!!!!!!! Interrupted: 4 errors during collection !!!!!!!!!!!!!!!!!!!!
+34279/34280 tests collected (1 deselected), 4 errors in 34.41s
+[gate] commit: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false rev-parse HEAD
+38ebb43c597795df4297efa3cce737d2e7fd66fb
+[gate] worktree status: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false status --porcelain --untracked-files=all
+
+[gate] worktree index: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false read-tree 38ebb43c597795df4297efa3cce737d2e7fd66fb
+
+[gate] worktree content: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false status --porcelain --untracked-files=all
+ M lean/checkers.lock
+[gate-wrap] lean/checkers.lock differs from the commit by this runner's pins only (blob 1f5e3584d508008b021d185541a07fc0260343e3, taken at the wrapper's start)
+[gate] failed: /home/runner/work/verifiable-english/verifiable-english/gate-result.json; 0 passed, 0 skipped, 1 failures
+[gate] FAILURE: gate:  Python collection: exit 2
