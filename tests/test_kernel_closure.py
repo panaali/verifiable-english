@@ -25,6 +25,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
 
 import kernel_closure  # noqa: E402
+import regen_generated  # noqa: E402
 from lean_statements import inventory_path  # noqa: E402
 
 REGISTRY = json.loads((ROOT / "tools/kernel-paths.json").read_text())
@@ -620,6 +621,26 @@ def test_the_write_refuses_a_kernel_total_above_the_signed_one(monkeypatch, tmp_
     with pytest.raises(SystemExit, match="not 2"):
         kernel_closure.signed_total("signed total: 1 lines\nsigned total: 2 lines\n")
     assert kernel_closure.signed_total((ROOT / "docs/kernel/ALLOWANCES.md").read_text()) >= BASELINE["kernel_lines"]
+
+
+def test_the_write_refuses_more_verdict_writers_outside_than_the_file_it_replaces(monkeypatch, tmp_path, capsys):
+    """kb-1 review F2: section 6.3 has no allowance, so `--out` (the regen entry's write) may not reset the ratchet
+    that `--check` enforces: a new outside writer is refused and the old file stays; a fall or a first write passes."""
+    out = tmp_path / "baseline.json"
+    old = json.dumps({"kernel_lines": 100, "paths": [], "problems": [], **writers("A")}, indent=1, sort_keys=True)
+    out.write_text(old + "\n")
+    measured = {"kernel_lines": 100, "paths": [], "problems": [], **writers("A", "leak")}
+    assert run_main(monkeypatch, tmp_path, measured, "--out", str(out)) == 1
+    assert "REFUSED: verdict writers outside the kernel rose from 1 to 2: leak" in capsys.readouterr().out
+    assert out.read_text() == old + "\n"
+    assert run_main(monkeypatch, tmp_path, dict(measured, **writers("A", inside=["leak"])), "--out", str(out)) == 0
+    assert run_main(monkeypatch, tmp_path, dict(measured, **writers()), "--out", str(out)) == 0  # a fall
+    assert json.loads(out.read_text())["verdict_writers"] == []
+    assert run_main(monkeypatch, tmp_path, measured, "--out", str(out)) == 1  # the fall is the new bound
+    out.unlink()
+    assert run_main(monkeypatch, tmp_path, measured, "--out", str(out)) == 0  # a first write has no bound
+    entry = next(g for g in regen_generated.GENERATED if g.name == "kernel-closure")
+    assert entry.write == ((regen_generated.PY, "tools/kernel_closure.py", "--out", "docs/kernel/closure-baseline.json"),)
 
 
 def test_measure_builds_the_registry_imports_before_the_lean_half(monkeypatch):

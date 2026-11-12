@@ -94,3 +94,36 @@ def test_an_experimental_module_carries_an_expiry_date_not_yet_passed(tmp_path):
     assert problems("/-! A trial design. Expires: 2026-12-31 -/\n") == missing  # not a line of its own
     assert problems(EXPERIMENT.format(expires="2026-12-31") + "/-- Expires: 2027-01-01 -/\ndef x := 1\n") == []
     assert problems("/-! Trial.\nExpires: 2026-12-31\nExpires: 2027-12-31\n-/\n") == missing  # one date, not two
+
+
+def test_the_expiry_rule_reads_the_first_actual_doc_comment_not_text_inside_strings_or_comments():
+    """kb-1 review F3: a doc-comment opener inside a string, a character literal, a `--` comment or a plain `/- -/`
+    comment (which nests) is not the module's docstring; with `/--` and `/-!`, each with the actual docstring expired
+    or missing, a future date hidden in any of them is refused. An unclosed string or comment is refused too."""
+    def problems(text: str) -> list[str]:
+        return expiry_problems({"VE.Experimental.Trial": Fake(text)}, TODAY)
+
+    expired = ["VE.Experimental.Trial: expired on 2000-01-01; promote it to the shell or delete it"]
+    missing = ["VE.Experimental.Trial: an experimental module's first docstring needs one line `Expires: YYYY-MM-DD`"]
+    for opener in ("/--", "/-!"):
+        decoy = opener + "\nExpires: 2099-01-01\n-/"
+        actual = opener + " Trial.\nExpires: 2000-01-01\n-/\n"
+        for hide in ('def t : String := "' + decoy + '"\n', 'def t : String := r#"' + decoy + '"#\n',
+                     "def t := '\"'\ndef u : String := \"" + decoy + '"\n',
+                     "-- " + decoy.replace("\n", " ") + "\n", "/- outer /- inner -/\n" + decoy + "\n-/\n",
+                     'def t : String := "\\"" ++ "' + decoy + '"\n'):
+            assert problems(hide + actual + "def x := 1\n") == expired, hide
+            assert problems(hide + "def x := 1\n") == missing, hide
+            assert problems(hide + actual.replace("2000-01-01", "2026-12-31")) == [], hide
+    assert problems('def t : String := "/-! Expires: 2099-01-01 -/\n') == missing  # an unclosed string
+    assert problems("/-! Trial.\nExpires: 2099-01-01\n") == missing  # an unclosed docstring
+    assert problems("def h' := 1\n/-! Trial.\nExpires: 2026-12-31\n-/\n") == []  # a primed name is no char literal
+
+
+class Fake:
+    def __init__(self, text: str):
+        self.text = text
+
+    def read_text(self) -> str:
+        return self.text
+
