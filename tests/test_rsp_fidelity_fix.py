@@ -429,6 +429,10 @@ def test_fix_3_headers_quote_the_full_source_sentence():
         assert quote.endswith(end), block_id
     t4 = _header_quote("t4-suff", "facts.d1.ve")
     assert "..." not in t4 and t4.startswith("We will consider this threshold to be met if we determine that either")
+    legends = ("scenario_2", "roadmap_maintained", "risk_reports_published", "candid_reports",
+               "roadmap_review_addressed", "executive_submitted", "redaction", "shared_with_reviewers",
+               "rso_maintained", "update_published")
+    assert [p for p in legends if "..." in _legend(p) or "\u2026" in _legend(p)] == []
 
 
 def _determination(name):
